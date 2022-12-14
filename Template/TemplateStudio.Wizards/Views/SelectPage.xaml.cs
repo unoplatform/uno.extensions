@@ -28,7 +28,7 @@ public sealed partial class SelectPage : Page
 							return new ProjectPlatformsViewModel(mvm.Replacements);
 						}
 						return null;
-					})),
+					}).Source(this)),
 					new SelectFeaturesView().DataContext(x => x.Bind(() => this.DataContext).Convert(dc =>
 					{
 						if (dc is MainViewModel mvm)
@@ -36,7 +36,7 @@ public sealed partial class SelectPage : Page
 							return new FeaturesViewModel(mvm.Replacements);
 						}
 						return null;
-					})),
+					}).Source(this)),
 					new SelectExtensionsView().DataContext(x => x.Bind(() => this.DataContext).Convert(dc =>
 					{
 						if (dc is MainViewModel mvm)
@@ -44,7 +44,7 @@ public sealed partial class SelectPage : Page
 							return new ExtensionsViewModel(mvm.Replacements);
 						}
 						return null;
-					})),
+					}).Source(this)),
 
 					new SelectAppConfigurationView().DataContext(x => x.Bind(() => this.DataContext).Convert(dc =>
 					{
@@ -53,7 +53,7 @@ public sealed partial class SelectPage : Page
 							return new AppConfigurationViewModel(mvm.Replacements);
 						}
 						return null;
-					}))
+					}).Source(this))
 				)
 			)
 		);

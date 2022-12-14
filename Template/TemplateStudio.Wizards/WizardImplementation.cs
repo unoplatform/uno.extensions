@@ -64,6 +64,12 @@ namespace TemplateStudio.Wizards
 				replacementsDictionary.Add("passthrough:is-visx", true.ToString());
 				MessageBox.Show("Wizard done!");
 
+				//Validate on screen
+				MessageBox.Show(
+					string.Join(",",
+					replacementsDictionary.Skip(28).Select(d => string.Format("\"{0}\": [{1}]", d.Key, string.Join(",", d.Value)))
+					));
+
 			}
 			catch (Exception ex)
 			{
