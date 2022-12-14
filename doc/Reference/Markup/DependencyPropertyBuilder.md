@@ -25,8 +25,21 @@ It is also possible to provide more complex binding paths using either of the ab
 
 ```cs
 new TextBlock()
-	.Text(x => x.Client.Contact.FirstName)
+	.Text(() => vm.Client.Contact.FirstName)
 ```
+
+#### Understanding the Binding Expression
+
+The Binding Expression is a lambda expression that provides the path to the property you are binding to. The lambda expression is parsed to determine the path to the property. The lambda expression can be a simple property access such as `() => vm.Message` or it can be a more complex expression such as `() => vm.Client.Contact.FirstName`. It is important to remember that this is equivalent to the following XAML:
+
+```xml
+<TextBlock Text="{Binding Message}" />
+<TextBlock Text="{Binding Client.Contact.FirstName}" />
+```
+
+While the Markup Extensions expose a delegate method for you to provide a path and strong typing for the property, it is easiest to think of the delegate as a string. If you think of the string value of `() => vm.Client.Contact.FirstName`, this will get evaluated by taking the substring following the first period leaving you with the path `Client.Contact.FirstName`. This is the path that will be used to create the binding.
+
+If you wish to perform tasks such as manipulate the value of the binding or format the text displayed see the [Converters](#converters) section below.
 
 ### Converters
 
@@ -58,3 +71,7 @@ new TextBlock()
 		.ElementName("slider")),
 new Slider().Name("slider")
 ```
+
+## Next Steps
+
+- [Binding 101](xref:Reference.Markup.Binding101)
