@@ -3,6 +3,7 @@ global using System;
 global using System.Collections.Generic;
 global using System.Linq;
 global using System.Net.Http;
+global using System.Threading;
 global using System.Threading.Tasks;
 global using Microsoft.Extensions.DependencyInjection;
 global using Microsoft.Extensions.Hosting;
@@ -40,6 +41,9 @@ global using Uno.Extensions.Http;
 #endif
 #if use-localization
 global using Uno.Extensions.Localization;
+#endif
+#if use-logging
+global using Uno.Extensions.Logging;
 #endif
 global using Uno.Extensions.Navigation;
 #if use-csharp-markup

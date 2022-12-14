@@ -3,12 +3,18 @@
 		<OutputType Condition="'$(Configuration)'=='Release'">WinExe</OutputType>
 		<OutputType Condition="'$(Configuration)'=='Debug'">Exe</OutputType>
 		<TargetFramework>net6.0</TargetFramework>
-		<UnoSingleLocationProject>true</UnoSingleLocationProject>
 	</PropertyGroup>
+	<!--#if winAppSdk-->
 	<ItemGroup Condition="exists('Platforms\Windows')">
 		<EmbeddedResource Include="Platforms\Windows\Package.appxmanifest" LogicalName="Package.appxmanifest" />
 		<Content Include="Platforms\Windows\Images\StoreLogo.png" />
 	</ItemGroup>
+	<!--#else-->
+	<ItemGroup>
+		<EmbeddedResource Include="Package.appxmanifest" />
+		<Content Include="Images\StoreLogo.png" />
+	</ItemGroup>
+	<!--#endif-->
 	<ItemGroup>
 		<!--#if (use-csharp-markup)-->
 		<PackageReference Include="Uno.WinUI.Markup" Version="4.6.0-dev.13" />
@@ -71,4 +77,5 @@
 		<ProjectReference Include="..\MyExtensionsApp.DataContracts\MyExtensionsApp.DataContracts.csproj" />
 		<!--#endif-->
 	</ItemGroup>
+	<Import Project="../MyExtensionsApp.UI/Shared.props" />
 </Project>

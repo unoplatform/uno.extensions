@@ -66,7 +66,6 @@
 		<!-- Required for C# Hot Reload -->
 		<UseInterpreter Condition="'$(Configuration)' == 'Debug' and '$(TargetFramework)' != 'net6.0-maccatalyst'">True</UseInterpreter>
 		<IsUnoHead>true</IsUnoHead>
-		<UnoSingleLocationProject>true</UnoSingleLocationProject>
 		<!--#if (ios)-->
 		<SupportedOSPlatformVersion Condition="'$(TargetFramework)' == 'net6.0-ios'">14.2</SupportedOSPlatformVersion>
 		<!--#endif -->
@@ -193,4 +192,5 @@
 		<ProjectReference Include="..\MyExtensionsApp.DataContracts\MyExtensionsApp.DataContracts.csproj" />
 		<!--#endif-->
 	</ItemGroup>
+	<Import Project="../MyExtensionsApp.UI/Shared.props" />
 </Project>

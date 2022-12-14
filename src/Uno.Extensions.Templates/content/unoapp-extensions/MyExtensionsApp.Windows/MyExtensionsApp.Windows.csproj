@@ -1,13 +1,21 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<OutputType Condition="'$(Configuration)'=='Release'">WinExe</OutputType>
-		<OutputType Condition="'$(Configuration)'=='Debug'">Exe</OutputType>
-		<TargetFramework>net6.0</TargetFramework>
-		<UnoSingleLocationProject>true</UnoSingleLocationProject>
+		<OutputType>WinExe</OutputType>
+		<TargetFramework>net6.0-windows10.0.19041.0</TargetFramework>
+		<TargetPlatformMinVersion>10.0.18362.0</TargetPlatformMinVersion>
+		<RootNamespace>UnoWinUIQuickStart</RootNamespace>
+		<Platforms>x86;x64;arm64</Platforms>
+		<RuntimeIdentifiers>win10-x86;win10-x64;win10-arm64</RuntimeIdentifiers>
+		<PublishProfile>win10-$(Platform).pubxml</PublishProfile>
+		<UseWinUI>true</UseWinUI>
+		<EnableMsixTooling>true</EnableMsixTooling>
+		<WindowsPackageType>MSIX</WindowsPackageType>
+		<WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
 	</PropertyGroup>
-	<ItemGroup Condition="exists('Platforms\Windows')">
-		<EmbeddedResource Include="Platforms\Windows\Package.appxmanifest" LogicalName="Package.appxmanifest" />
-		<Content Include="Platforms\Windows\Images\StoreLogo.png" />
+
+	<ItemGroup>
+		<Content Include="Images\**" />
+		<Manifest Include="$(ApplicationManifest)" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -18,10 +26,10 @@
 		<!--#endif-->
 		<PackageReference Include="Uno.Themes.WinUI.Markup" />
 		<!--#endif-->
-		<PackageReference Include="Uno.WinUI.Skia.Gtk" />
-		<PackageReference Include="Uno.WinUI.RemoteControl" Condition="'$(Configuration)'=='Debug'" />
-		<PackageReference Include="SkiaSharp.Views.Uno.WinUI" />
-		<PackageReference Include="SkiaSharp.Skottie" />
+		<PackageReference Include="Microsoft.WindowsAppSDK" />
+		<PackageReference Include="Microsoft.Windows.SDK.BuildTools" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Console" />
+		<PackageReference Include="Uno.Core.Extensions.Logging.Singleton" />
 		<PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" />
 		<!--#if (use-material)-->
 		<PackageReference Include="Uno.Material.WinUI" />
@@ -66,10 +74,27 @@
 		<PackageReference Include="Uno.Extensions.Serialization.Refit" />
 		<!--#endif-->
 	</ItemGroup>
+
 	<ItemGroup>
 		<ProjectReference Include="..\MyExtensionsApp\MyExtensionsApp.csproj" />
 		<!--#if (use-http)-->
 		<ProjectReference Include="..\MyExtensionsApp.DataContracts\MyExtensionsApp.DataContracts.csproj" />
 		<!--#endif-->
 	</ItemGroup>
+
+	<ItemGroup>
+		<!--
+		If you encounter this error message:
+
+			error NETSDK1148: A referenced assembly was compiled using a newer version of Microsoft.Windows.SDK.NET.dll. Please update to a newer .NET SDK in order to reference this assembly.
+
+		This means that the two packages below must be aligned with the "build" version number of
+		the "Microsoft.Windows.SDK.BuildTools" package above, and the "revision" version number
+		must be the highest found in https://www.nuget.org/packages/Microsoft.Windows.SDK.NET.Ref.
+		-->
+		<FrameworkReference Update="Microsoft.Windows.SDK.NET.Ref" RuntimeFrameworkVersion="10.0.22000.27" />
+		<FrameworkReference Update="Microsoft.Windows.SDK.NET.Ref" TargetingPackVersion="10.0.22000.27" />
+	</ItemGroup>
+	<Import Project="../MyExtensionsApp.UI/Shared.props" />
+
 </Project>

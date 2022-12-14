@@ -2,12 +2,19 @@
 	<PropertyGroup>
 		<OutputType Condition="'$(Configuration)'=='Release'">WinExe</OutputType>
 		<OutputType Condition="'$(Configuration)'=='Debug'">Exe</OutputType>
-		<TargetFramework>net6.0</TargetFramework>
-		<UnoSingleLocationProject>true</UnoSingleLocationProject>
+		<TargetFramework>net6.0-windows</TargetFramework>
+		<UseWPF>true</UseWPF>
 	</PropertyGroup>
-	<ItemGroup Condition="exists('Platforms\Windows')">
-		<EmbeddedResource Include="Platforms\Windows\Package.appxmanifest" LogicalName="Package.appxmanifest" />
-		<Content Include="Platforms\Windows\Images\StoreLogo.png" />
+	<ItemGroup Label="AssemblyInfo">
+		<AssemblyAttribute Include="System.Runtime.InteropServices.ComVisibleAttribute">
+			<_Parameter1>false</_Parameter1>
+		</AssemblyAttribute>
+		<AssemblyAttribute Include="System.Windows.ThemeInfo">
+			<_Parameter1>System.Windows.ResourceDictionaryLocation.None</_Parameter1>
+			<_Parameter1_IsLiteral>true</_Parameter1_IsLiteral>
+			<_Parameter2>System.Windows.ResourceDictionaryLocation.SourceAssembly</_Parameter2>
+			<_Parameter2_IsLiteral>true</_Parameter2_IsLiteral>
+		</AssemblyAttribute>
 	</ItemGroup>
 	<ItemGroup>
 		<!--#if (use-csharp-markup)-->
@@ -17,7 +24,7 @@
 		<!--#endif-->
 		<PackageReference Include="Uno.Themes.WinUI.Markup" />
 		<!--#endif-->
-		<PackageReference Include="Uno.WinUI.Skia.Linux.FrameBuffer" />
+		<PackageReference Include="Uno.WinUI.Skia.Wpf" />
 		<PackageReference Include="Uno.WinUI.RemoteControl" Condition="'$(Configuration)'=='Debug'" />
 		<PackageReference Include="SkiaSharp.Views.Uno.WinUI" />
 		<PackageReference Include="SkiaSharp.Skottie" />
@@ -65,10 +72,12 @@
 		<PackageReference Include="Uno.Extensions.Serialization.Refit" />
 		<!--#endif-->
 	</ItemGroup>
+
 	<ItemGroup>
 		<ProjectReference Include="..\MyExtensionsApp\MyExtensionsApp.csproj" />
 		<!--#if (use-http)-->
 		<ProjectReference Include="..\MyExtensionsApp.DataContracts\MyExtensionsApp.DataContracts.csproj" />
 		<!--#endif-->
 	</ItemGroup>
+	<Import Project="../MyExtensionsApp.UI/Shared.props" />
 </Project>

@@ -14,7 +14,7 @@
       "dotnetRunMessages": true,
       "launchBrowser": true,
       //#if wasm
-      "launchUrl": "/",
+      "launchUrl": "",
       //#else
       "launchUrl": "swagger",
       //#endif
@@ -27,7 +27,7 @@
       "commandName": "IISExpress",
       "launchBrowser": true,
       //#if wasm
-      "launchUrl": "/",
+      "launchUrl": "",
       //#else
       "launchUrl": "swagger",
       //#endif

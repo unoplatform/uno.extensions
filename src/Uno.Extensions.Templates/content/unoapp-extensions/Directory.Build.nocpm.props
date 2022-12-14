@@ -12,16 +12,6 @@
 		<NoWarn>$(NoWarn);Uno0001;CS1998;CA1416;NU1507</NoWarn>
 	</PropertyGroup>
 
-	<!--
-	Adjust the output paths for runtime project in order for those
-	projects to stay in the same folder as the original reference one.
-	-->
-	<PropertyGroup>
-		<BaseOutputPath>bin\$(MSBuildProjectName)</BaseOutputPath>
-		<BaseIntermediateOutputPath>obj\$(MSBuildProjectName)</BaseIntermediateOutputPath>
-		<DefaultItemExcludes>$(DefaultItemExcludes);obj/**;bin/**</DefaultItemExcludes>
-	</PropertyGroup>
-
 	<ItemGroup>
 		<!--This override is used to validate the use of specific version of the C# Compiler-->
 		<PackageReference Include="Microsoft.Net.Compilers.Toolset" Version="4.2.0"  PrivateAssets="all" />

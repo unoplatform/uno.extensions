@@ -3,17 +3,17 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 17.2.32210.308
 MinimumVisualStudioVersion = 15.0.26124.0
 
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyExtensionsApp.Mobile", "MyExtensionsApp.App\MyExtensionsApp.Mobile.csproj", "{24D56E12-2373-4CBD-9AD4-5C931D15FB0D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyExtensionsApp.Mobile", "MyExtensionsApp.Mobile\MyExtensionsApp.Mobile.csproj", "{24D56E12-2373-4CBD-9AD4-5C931D15FB0D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyExtensionsApp.Wasm", "MyExtensionsApp.App\MyExtensionsApp.Wasm.csproj", "{40EA03F7-8A22-4143-B251-79BAC3EB13D2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyExtensionsApp.Wasm", "MyExtensionsApp.Wasm\MyExtensionsApp.Wasm.csproj", "{40EA03F7-8A22-4143-B251-79BAC3EB13D2}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyExtensionsApp.Skia.Gtk", "MyExtensionsApp.App\MyExtensionsApp.Skia.Gtk.csproj", "{A5B8155A-118F-4794-B551-C6F3CF7E5411}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyExtensionsApp.Skia.Gtk", "MyExtensionsApp.Skia.Gtk\MyExtensionsApp.Skia.Gtk.csproj", "{A5B8155A-118F-4794-B551-C6F3CF7E5411}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyExtensionsApp.Skia.WPF", "MyExtensionsApp.App\MyExtensionsApp.Skia.WPF.csproj", "{6C744695-DA38-44D9-B487-FE5804C5508D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyExtensionsApp.Skia.WPF", "MyExtensionsApp.Skia.WPF\MyExtensionsApp.Skia.WPF.csproj", "{6C744695-DA38-44D9-B487-FE5804C5508D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyExtensionsApp.Windows", "MyExtensionsApp.App\MyExtensionsApp.Windows.csproj", "{5A78EE9A-1922-468C-96E3-45817727511C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyExtensionsApp.Windows", "MyExtensionsApp.Windows\MyExtensionsApp.Windows.csproj", "{5A78EE9A-1922-468C-96E3-45817727511C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyExtensionsApp.Skia.Linux.FrameBuffer", "MyExtensionsApp.App\MyExtensionsApp.Skia.Linux.FrameBuffer.csproj", "{925C7A3E-6532-4E27-8ABE-37A4F9B73C8B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyExtensionsApp.Skia.Linux.FrameBuffer", "MyExtensionsApp.Skia.Linux.FrameBuffer\MyExtensionsApp.Skia.Linux.FrameBuffer.csproj", "{925C7A3E-6532-4E27-8ABE-37A4F9B73C8B}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyExtensionsApp.Server", "MyExtensionsApp.Server\MyExtensionsApp.Server.csproj", "{1ADD4B1D-2758-4ED5-963A-FE3F4206BF20}"
 EndProject

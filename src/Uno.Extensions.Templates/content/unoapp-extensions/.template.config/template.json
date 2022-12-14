@@ -33,6 +33,7 @@
     "C7433AE2-B1A0-4C1A-887E-5CAA7AAF67A6", // Solution file (SolutionGuid)
     "FAA2C1DE-F859-4053-9573-6245F7E832EF", // src solution folder
     "BACDD33A-304C-46C4-9B00-AC166978D7E0", // (core) library
+    "7B230AD7-BE88-4AE7-84B6-4E652A59083B", // UI
     "339C569C-EE23-445E-B908-743673EE5BC9", // Platforms solution folder
     "BA1ACE40-623E-4F42-94BB-11CF4D52C445", // Web solution folder
     "24D56E12-2373-4CBD-9AD4-5C931D15FB0D", // Mobile
@@ -185,11 +186,11 @@
       "description": "Enables the Skia/WPF platform support project"
     },
     "skia-linux-fb": {
-      "displayName": "Desktop - Linux Framebuffer",
+      "displayName": "Desktop - Linux FrameBuffer",
       "type": "parameter",
       "dataType": "bool",
       "defaultValue": "true",
-      "description": "Enables the Skia/Linux Framebuffer platform support project"
+      "description": "Enables the Skia/Linux FrameBuffer platform support project"
     },
     "winAppSdk": {
       "displayName": "Desktop - WinUI (Windows App SDK)",
@@ -361,14 +362,22 @@
       "type": "computed",
       "datatype": "bool",
       "value": "navigation == 'toolkit'"
+    },
+    "HostIdentifier": {
+      "type": "bind",
+      "binding": "HostIdentifier"
     }
   },
   "primaryOutputs": [
     {
+      "condition": "(HostIdentifier == \"dotnetcli\" || HostIdentifier == \"dotnetcli-preview\" || HostIdentifier == \"vs\")",
       "path": "MyExtensionsApp.sln"
     },
     {
       "path": "MyExtensionsApp\\MyExtensionsApp.csproj"
+    },
+    {
+      "path": "MyExtensionsApp.UI\\MyExtensionsApp.UI.csproj"
     },
     {
       "condition": "server",
@@ -392,27 +401,27 @@
     },
     {
       "condition": "mobile",
-      "path": "MyExtensionsApp.App\\MyExtensionsApp.Mobile.csproj"
+      "path": "MyExtensionsApp.Mobile\\MyExtensionsApp.Mobile.csproj"
     },
     {
       "condition": "winAppSdk",
-      "path": "MyExtensionsApp.App\\MyExtensionsApp.Windows.csproj"
+      "path": "MyExtensionsApp.Windows\\MyExtensionsApp.Windows.csproj"
     },
     {
       "condition": "wasm",
-      "path": "MyExtensionsApp.App\\MyExtensionsApp.Wasm.csproj"
+      "path": "MyExtensionsApp.Wasm\\MyExtensionsApp.Wasm.csproj"
     },
     {
       "condition": "skia-gtk",
-      "path": "MyExtensionsApp.App\\MyExtensionsApp.Skia.Gtk.csproj"
+      "path": "MyExtensionsApp.Skia.Gtk\\MyExtensionsApp.Skia.Gtk.csproj"
     },
     {
       "condition": "skia-wpf",
-      "path": "MyExtensionsApp.App\\MyExtensionsApp.Skia.Wpf.csproj"
+      "path": "MyExtensionsApp.Skia.WPF\\MyExtensionsApp.Skia.Wpf.csproj"
     },
     {
       "condition": "skia-linux-fb",
-      "path": "MyExtensionsApp.App\\MyExtensionsApp.Skia.Linux.FrameBuffer.csproj"
+      "path": "MyExtensionsApp.Skia.Linux.FrameBuffer\\MyExtensionsApp.Skia.Linux.FrameBuffer.csproj"
     }
   ],
   "sources": [
@@ -433,72 +442,75 @@
         {
           "condition": "(!android)",
           "exclude": [
-            "MyExtensionsApp.App/Platforms/Android/**/*"
+            "MyExtensionsApp.Mobile/Platforms/Android/**/*"
           ]
         },
         {
           "condition": "(!ios)",
           "exclude": [
-            "MyExtensionsApp.App/Platforms/iOS/**/*"
+            "MyExtensionsApp.Mobile/Platforms/iOS/**/*"
           ]
         },
         {
           "condition": "(!macos)",
           "exclude": [
-            "MyExtensionsApp.App/Platforms/macOS/**/*"
+            "MyExtensionsApp.Mobile/Platforms/macOS/**/*"
           ]
         },
         {
           "condition": "(!maccatalyst)",
           "exclude": [
-            "MyExtensionsApp.App/Platforms/MacCatalyst/**/*"
+            "MyExtensionsApp.Mobile/Platforms/MacCatalyst/**/*"
           ]
         },
         {
           "condition": "(!mobile)",
           "exclude": [
-            "MyExtensionsApp.App/MyExtensionsApp.Mobile.csproj",
-            "MyExtensionsApp.App/MyExtensionsApp.Mobile.nocpm.csproj"
+            "MyExtensionsApp.Mobile/**/*"
           ]
         },
         {
           "condition": "(!wasm)",
           "exclude": [
-            "MyExtensionsApp.App/Platforms/WebAssembly/**/*",
-            "MyExtensionsApp.App/MyExtensionsApp.Wasm.csproj",
-            "MyExtensionsApp.App/MyExtensionsApp.Wasm.nocpm.csproj"
+            "MyExtensionsApp.Wasm**/*"
           ]
         },
         {
           "condition": "(!skia-gtk)",
           "exclude": [
-            "MyExtensionsApp.App/Platforms/Skia.Gtk/**/*",
-            "MyExtensionsApp.App/MyExtensionsApp.Skia.Gtk.csproj",
-            "MyExtensionsApp.App/MyExtensionsApp.Skia.Gtk.nocpm.csproj"
+            "MyExtensionsApp.Skia.Gtk/**/*"
           ]
         },
         {
           "condition": "(!skia-wpf)",
           "exclude": [
-            "MyExtensionsApp.App/Platforms/Skia.WPF/**/*",
-            "MyExtensionsApp.App/MyExtensionsApp.Skia.WPF.csproj",
-            "MyExtensionsApp.App/MyExtensionsApp.Skia.WPF.nocpm.csproj"
+            "MyExtensionsApp.Skia.WPF/**/*"
           ]
         },
         {
           "condition": "(!skia-linux-fb)",
           "exclude": [
-            "MyExtensionsApp.App/Platforms/Skia.FrameBuffer/**/*",
-            "MyExtensionsApp.App/MyExtensionsApp.Skia.Linux.FrameBuffer.csproj",
-            "MyExtensionsApp.App/MyExtensionsApp.Skia.Linux.FrameBuffer.nocpm.csproj"
+            "MyExtensionsApp.Skia.Linux.FrameBuffer/**/*"
+          ]
+        },
+        {
+          "condition": "(winAppSdk && skia-gtk)",
+          "exclude": [
+            "MyExtensionsApp.Skia.Gtk/Package.appxmanifest",
+            "MyExtensionsApp.Skia.Gtk/Images/StoreLogo.png"
+          ]
+        },
+        {
+          "condition": "(winAppSdk && skia-linux-fb)",
+          "exclude": [
+            "MyExtensionsApp.Skia.Linux.FrameBuffer/Package.appxmanifest",
+            "MyExtensionsApp.Skia.Linux.FrameBuffer/Images/StoreLogo.png"
           ]
         },
         {
           "condition": "(!winAppSdk)",
           "exclude": [
-            "MyExtensionsApp.App/Platforms/Windows/**/*",
-            "MyExtensionsApp.App/MyExtensionsApp.Windows.csproj",
-            "MyExtensionsApp.App/MyExtensionsApp.Windows.nocpm.csproj"
+            "MyExtensionsApp.Windows/**/*"
           ]
         },
         {
@@ -535,12 +547,12 @@
           "condition": "(!cpm)",
           "exclude": [
             "MyExtensionsApp/MyExtensionsApp.csproj",
-            "MyExtensionsApp.App/MyExtensionsApp.Mobile.csproj",
-            "MyExtensionsApp.App/MyExtensionsApp.Skia.Gtk.csproj",
-            "MyExtensionsApp.App/MyExtensionsApp.Skia.Linux.FrameBuffer.csproj",
-            "MyExtensionsApp.App/MyExtensionsApp.Skia.WPF.csproj",
-            "MyExtensionsApp.App/MyExtensionsApp.Wasm.csproj",
-            "MyExtensionsApp.App/MyExtensionsApp.Windows.csproj",
+            "MyExtensionsApp.Mobile/MyExtensionsApp.Mobile.csproj",
+            "MyExtensionsApp.Skia.Gtk/MyExtensionsApp.Skia.Gtk.csproj",
+            "MyExtensionsApp.Skia.Linux.FrameBuffer/MyExtensionsApp.Skia.Linux.FrameBuffer.csproj",
+            "MyExtensionsApp.Skia.WPF/MyExtensionsApp.Skia.WPF.csproj",
+            "MyExtensionsApp.Wasm/MyExtensionsApp.Wasm.csproj",
+            "MyExtensionsApp.Windows/MyExtensionsApp.Windows.csproj",
             "MyExtensionsApp.ServerApp/MyExtensionsApp.Server.csproj",
             "MyExtensionsApp.Tests/MyExtensionsApp.Tests.csproj",
             "MyExtensionsApp.UITests/MyExtensionsApp.UITests.csproj",
@@ -564,8 +576,8 @@
         {
           "condition": "(!wasm-pwa-manifest)",
           "exclude": [
-            "MyExtensionsApp.App/Platforms/WebAssembly/manifest.json",
-            "MyExtensionsApp.App/Platforms/WebAssembly/Assets/AppIcon-*"
+            "MyExtensionsApp.Wasm/manifest.json",
+            "MyExtensionsApp.Wasm/Assets/AppIcon-*"
           ]
         },
         {
@@ -578,43 +590,43 @@
         {
           "condition": "(!use-csharp-markup)",
           "exclude": [
-            "MyExtensionsApp.App/Infrastructure/ApplicationBuilderExtensions.cs",
-            "MyExtensionsApp.App/Styles/*.cs"
+            "MyExtensionsApp.UI/Infrastructure/ApplicationBuilderExtensions.cs",
+            "MyExtensionsApp.UI/Styles/*.cs"
           ]
         },
         {
           "condition": "(use-csharp-markup)",
           "exclude": [
-            "MyExtensionsApp.App/Styles/*.xaml",
-            "MyExtensionsApp.App/Views/*.xaml"
+            "MyExtensionsApp.UI/Styles/*.xaml",
+            "MyExtensionsApp.UI/Views/*.xaml"
           ],
           "rename": {
-            "MyExtensionsApp.App/Views/MainPage.xaml.cs": "MyExtensionsApp.App/Views/MainPage.cs",
-            "MyExtensionsApp.App/Views/SecondPage.xaml.cs": "MyExtensionsApp.App/Views/SecondPage.cs",
-            "MyExtensionsApp.App/Views/Shell.xaml.cs": "MyExtensionsApp.App/Views/Shell.cs"
+            "MyExtensionsApp.UI/Views/MainPage.xaml.cs": "MyExtensionsApp.UI/Views/MainPage.cs",
+            "MyExtensionsApp.UI/Views/SecondPage.xaml.cs": "MyExtensionsApp.UI/Views/SecondPage.cs",
+            "MyExtensionsApp.UI/Views/Shell.xaml.cs": "MyExtensionsApp.UI/Views/Shell.cs"
           }
         },
         {
           "condition": "(use-frame-nav)",
           "exclude": [
             "MyExtensionsApp/Presentation/**",
-            "MyExtensionsApp.App/Views/MainPage.xaml",
-            "MyExtensionsApp.App/Views/MainPage.xaml.cs",
-            "MyExtensionsApp.App/Views/SecondPage.xaml",
-            "MyExtensionsApp.App/Views/SecondPage.xaml.cs",
-            "MyExtensionsApp.App/Views/Shell.xaml",
-            "MyExtensionsApp.App/Views/Shell.xaml.cs"
+            "MyExtensionsApp.UI/Views/MainPage.xaml",
+            "MyExtensionsApp.UI/Views/MainPage.xaml.cs",
+            "MyExtensionsApp.UI/Views/SecondPage.xaml",
+            "MyExtensionsApp.UI/Views/SecondPage.xaml.cs",
+            "MyExtensionsApp.UI/Views/Shell.xaml",
+            "MyExtensionsApp.UI/Views/Shell.xaml.cs"
           ],
           "rename": {
-            "MyExtensionsApp.App/Views/Blank.xaml": "MyExtensionsApp.App/Views/MainPage.xaml",
-            "MyExtensionsApp.App/Views/Blank.xaml.cs": "MyExtensionsApp.App/Views/MainPage.xaml.cs"
+            "MyExtensionsApp.UI/Views/BlankPage.xaml": "MyExtensionsApp.UI/Views/MainPage.xaml",
+            "MyExtensionsApp.UI/Views/BlankPage.xaml.cs": "MyExtensionsApp.UI/Views/MainPage.xaml.cs"
           }
         },
         {
           "condition": "(use-toolkit-nav)",
           "exclude": [
-            "MyExtensionsApp.App/Views/Blank.xaml",
-            "MyExtensionsApp.App/Views/Blank.xaml.cs"
+            "MyExtensionsApp.UI/Views/BlankPage.xaml",
+            "MyExtensionsApp.UI/Views/BlankPage.xaml.cs"
           ]
         }
       ]

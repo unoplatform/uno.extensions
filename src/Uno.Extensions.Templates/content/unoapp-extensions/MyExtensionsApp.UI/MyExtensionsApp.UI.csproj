@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.Build.NoTargets/3.7.0">
+
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<None Include="**" Exclude="bin/**;obj/**;*.csproj" />
+		<None Update="**\*.xaml.cs" DependentUpon="%(Filename)" />
+		<None Update="Shared.props" LinkBase="Properties" />
+		<None Update="appsettings.*.json" DependentUpon="appsettings.json" />
+	</ItemGroup>
+
+</Project>
