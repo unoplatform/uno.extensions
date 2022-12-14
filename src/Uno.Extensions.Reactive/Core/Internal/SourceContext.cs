@@ -2,13 +2,16 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Uno.Extensions.Reactive.Logging;
 using Uno.Extensions.Reactive.Utils;
+using Uno.Extensions.Reactive.Utils.Debugging;
 
 namespace Uno.Extensions.Reactive.Core;
 
@@ -26,7 +29,7 @@ public sealed class SourceContext : IAsyncDisposable
 		+ "If you are trying to react to an external source within a VM, use context of that VM which can be accessed using the static SourceContext.GetOrCreate(VM)."
 		+ "More info: https://github.com/unoplatform/uno.extensions/blob/main/doc/Reference/Reactive/Reactive%20-%20Dev.md";
 
-	private static readonly SourceContext _none = new(isNone: true);
+	private static readonly SourceContext _none = new();
 	private static readonly AsyncLocal<SourceContext> _current = new();
 	private static readonly ConditionalWeakTable<object, SourceContext> _contexts = new();
 
@@ -70,7 +73,7 @@ public sealed class SourceContext : IAsyncDisposable
 
 		lock (_contexts)
 		{
-			ctx = new SourceContext();
+			ctx = new SourceContext(RootOwner.Create(owner));
 			if (owner is not ISourceContextAware)
 			{
 				ConditionalDisposable.Link(owner, ctx);
@@ -107,10 +110,11 @@ public sealed class SourceContext : IAsyncDisposable
 	/// <summary>
 	/// Creates a child context given a request source.
 	/// </summary>
+	/// <param name="owner">The info about the owner that it creating a child context</param>
 	/// <param name="requests">The request source to use for the new context.</param>
 	/// <returns>A new child SourceContext.</returns>
-	internal SourceContext CreateChild(IRequestSource requests)
-		=> new(this, requests: requests);
+	internal SourceContext CreateChild(ISourceContextOwner owner, IRequestSource requests)
+		=> new(this, owner, requests: requests);
 	#endregion
 
 	private static long _nextRootId = 1;
@@ -121,29 +125,30 @@ public sealed class SourceContext : IAsyncDisposable
 	private readonly IStateStore? _localStates;
 	private readonly IRequestSource? _localRequests;
 
-	// Creates a root (or none) context
-	private SourceContext(bool isNone = false)
+	// Create the "None" context
+	private SourceContext()
 	{
-		if (isNone)
-		{
-			_isNone = isNone;
+		_isNone = true;
 
-			States = new NoneStateStore();
-			RequestSource = new NoneRequestSource();
-		}
-		else
-		{
-			_ct = new CancellationTokenSource();
+		Owner = new NoneOwner();
+		States = new NoneStateStore();
+		RequestSource = new NoneRequestSource();
+	}
 
-			Token = _ct.Token;
-			RootId = (uint)Interlocked.Increment(ref _nextRootId);
-			States = _localStates = new StateStore(this);
-			RequestSource = _localRequests = new NoneRequestSource(); // Currently we do not support messages directly on the root, using None allows AsyncFeed to complete enumeration
-		}
+	// Creates a root (or none) context
+	private SourceContext(RootOwner ownerInfo)
+	{
+		_ct = new CancellationTokenSource();
+		Owner = ownerInfo;
+
+		Token = _ct.Token;
+		RootId = (uint)Interlocked.Increment(ref _nextRootId);
+		States = _localStates = new StateStore(this);
+		RequestSource = _localRequests = new NoneRequestSource(); // Currently we do not support messages directly on the root, using None allows AsyncFeed to complete enumeration
 	}
 
 	// Creates a sub context
-	private SourceContext(SourceContext parent, IStateStore? states = null, IRequestSource? requests = null)
+	private SourceContext(SourceContext parent, ISourceContextOwner owner, IStateStore? states = null, IRequestSource? requests = null)
 	{
 		if (parent._isNone)
 		{
@@ -156,6 +161,8 @@ public sealed class SourceContext : IAsyncDisposable
 
 		Token = _ct.Token;
 		RootId = parent.RootId;
+		Parent = parent;
+		Owner = owner;
 		States = states ?? parent.States;
 		RequestSource = requests ?? parent.RequestSource;
 	}
@@ -169,6 +176,16 @@ public sealed class SourceContext : IAsyncDisposable
 	/// Gets an identifier of the root context.
 	/// </summary>
 	internal uint RootId { get; }
+
+	/// <summary>
+	/// The parent context, if any.
+	/// </summary>
+	internal SourceContext? Parent { get; }
+
+	/// <summary>
+	/// Gets information about the owner of this context
+	/// </summary>
+	internal ISourceContextOwner Owner { get; }
 
 	/// <summary>
 	/// The states store that holds all the states linked to this current context.
@@ -390,5 +407,19 @@ public sealed class SourceContext : IAsyncDisposable
 				_current.Value = _previous;
 			}
 		}
+	}
+
+	private record RootOwner(string Name) : ISourceContextOwner
+	{
+		public static RootOwner Create(object owner)
+			=> new(DebugConfiguration.IsDebugging ? owner.GetType().Name + " - " + owner.GetHashCode().ToString("X8") : "-debugging disabled-");
+
+		public IDispatcher? Dispatcher => null;
+	}
+
+	private record NoneOwner : ISourceContextOwner
+	{
+		public string Name => "None context";
+		public IDispatcher? Dispatcher => null;
 	}
 }

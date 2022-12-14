@@ -128,7 +128,10 @@ namespace Uno.Extensions.Reactive.Bindings.Collections
 		{
 			_dataStructure = dataStructure;
 			_current = initial;
-			_holder = new DispatcherLocal<DataLayer>(context => DataLayer.Create(_dataStructure.GetRoot(), _current ?? EmptyObservableCollection<object>.Instance, services, context), schedulersProvider);
+			_holder = new DispatcherLocal<DataLayer>(
+				context => DataLayer.Create(_dataStructure.GetRoot(), _current ?? EmptyObservableCollection<object>.Instance, services, context),
+				schedulersProvider,
+				allowCreationFromAnotherThread: true);
 		}
 
 		/// <summary>
@@ -158,11 +161,18 @@ namespace Uno.Extensions.Reactive.Bindings.Collections
 		}
 
 		/// <summary>
-		/// Get a direct access to the ICollectionView implementation for a given thread.
+		/// Get a direct access to the ICollectionView implementation for the current thread.
 		/// </summary>
 		/// <returns></returns>
 		public ICollectionView GetForCurrentThread()
 			=> _holder.Value.View;
+
+		/// <summary>
+		/// Get a direct access to the ICollectionView implementation for the given UI thread.
+		/// </summary>
+		/// <returns></returns>
+		public ICollectionView GetFor(IDispatcher dispatcher)
+			=> _holder.GetValue(dispatcher).View;
 
 		#region ICollectionView
 		/// <inheritdoc />
