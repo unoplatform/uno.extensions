@@ -56,7 +56,10 @@ namespace TemplateStudio.Wizards
 		{
 			try
 			{
-				
+				//Get Uno Check Result File
+				Helpers.ProcessCommand.getUnoCheck();
+
+
 				var host = new WizardHost();
 				host.DataContext = new MainViewModel() { Replacements = replacementsDictionary };
 				UI.ShowModal(host);

@@ -12,6 +12,15 @@ namespace TemplateStudio.Wizards;
 
 public sealed partial class SelectPage : Page
 {
+
+	//private TextBlock TextBlockFileUnoCheck()
+	//	  => new TextBlock()
+	//	.Width(1024)
+	//	.Height(800)
+	//	.HorizontalAlignment(HorizontalAlignment.Center)
+	//	.Text(Helpers.ProcessCommand.getFileContent());
+
+
 	public SelectPage()
 	{
 		//this.InitializeComponent();
@@ -21,6 +30,10 @@ public sealed partial class SelectPage : Page
 				.HorizontalAlignment(HorizontalAlignment.Center)
 				.VerticalAlignment(VerticalAlignment.Top)
 				.Children(
+					//TextBlockFileUnoCheck(),
+					new TextBlock()
+						.Text(Helpers.ProcessCommand.getFileContent()),
+
 					new SelectPlatformView().DataContext(x => x.Bind(() => this.DataContext).Convert(dc =>
 					{
 						if (dc is MainViewModel mvm)
