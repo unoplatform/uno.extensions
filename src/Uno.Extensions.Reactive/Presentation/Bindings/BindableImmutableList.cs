@@ -34,15 +34,19 @@ public class BindableImmutableList<TItem, TBindableItem> : BindableEnumerable<II
 		BindablePropertyInfo<IImmutableList<TItem>> property,
 		Func<BindablePropertyInfo<TItem>, TBindableItem> bindableFactory,
 		ItemComparer<TItem> comparer)
-		: base(property, bindableFactory)
+		: base(property, bindableFactory, BindableConfig.Default & ~BindableConfig.AutoInit)
 	{
 		_analyzer = new CollectionAnalyzer<TItem>(ListFeed<TItem>.GetComparer(comparer));
+
+		// As we disabled the `AutoInit`, we make sure to init by our own.
+		Initialize();
 	}
 
 	/// <inheritdoc />
 	private protected override CollectionChangeSet<TItem> GetChanges(IImmutableList<TItem> previous, IImmutableList<TItem> current)
 		// '_analyzer' might be null when the base.ctor subscribe to the 'property' and invokes the 'OnOwnerUpdated'
-		// We can safely fallback on ListFeed<TItem>.DefaultAnalyzer as in that case the 'previous' will be null/empty anyway.
+		// That's should not happen since the `AutoInit` has been disable, but for safety we fallback on ListFeed<TItem>.DefaultAnalyzer.
+		// This is valid as in that case the 'previous' will be null/empty anyway.
 		=> (_analyzer ?? ListFeed<TItem>.DefaultAnalyzer).GetChanges(previous ?? ImmutableList<TItem>.Empty, current);
 
 	private protected override IImmutableList<TItem> Replace(IImmutableList<TItem>? items, TItem oldItem, TItem newItem)
