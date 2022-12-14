@@ -9,6 +9,7 @@ using Uno.Extensions.Collections.Tracking;
 using Uno.Extensions.Reactive.Bindings.Collections;
 using Uno.Extensions.Reactive.Bindings.Collections.Services;
 using Uno.Extensions.Reactive.Core;
+using Uno.Extensions.Reactive.UI.Utils;
 
 namespace Uno.Extensions.Reactive.Bindings;
 
@@ -61,7 +62,9 @@ public sealed partial class BindableListFeed<T> : ISignal<IMessage>, IListState<
 		// Instead of being an IFeed<IIMutableList<T>> we are instead exposing an IFeed<ICollectionView>.
 		// WARNING: **The ICollectionView is mutable**
 
-		var collectionViewForCurrentThread = _items.GetForCurrentThread();
+		var collectionView = context.FindDispatcher() is {} dispatcher
+			? _items.GetFor(dispatcher)
+			: _items.GetForCurrentThread();
 		var localMsg = new MessageManager<IImmutableList<T>, ICollectionView>();
 
 		await foreach (var parentMsg in _state.GetSource(context, ct).WithCancellation(ct).ConfigureAwait(false))
@@ -69,8 +72,8 @@ public sealed partial class BindableListFeed<T> : ISignal<IMessage>, IListState<
 			if (localMsg.Update(
 					(current, @params) => current
 						.With(@params.parentMsg)
-						.Data(@params.parentMsg.Current.Data.Map(_ => @params.collectionViewForCurrentThread)),
-					(parentMsg, collectionViewForCurrentThread)))
+						.Data(@params.parentMsg.Current.Data.Map(_ => @params.collectionView)),
+					(parentMsg, collectionView)))
 			{
 				yield return localMsg.Current;
 			}
@@ -120,7 +123,7 @@ public sealed partial class BindableListFeed<T> : ISignal<IMessage>, IListState<
 		// Note: we have to listen for collection changes on bindable _items to update the state.
 		// https://github.com/unoplatform/uno.extensions/issues/370
 
-		state.GetSource(ctx.CreateChild(requests), ctx.Token).ForEachAsync(
+		state.GetSource(SourceContextHelper.CreateChildContext(ctx, collection, state, requests), ctx.Token).ForEachAsync(
 			msg =>
 			{
 				if (ctx.Token.IsCancellationRequested)
