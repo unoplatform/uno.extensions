@@ -94,6 +94,7 @@ public partial class MyPage : Page
 Learn more about:
 
 - [Binding, Static & Theme Resources](xref:Reference.Markup.DependencyPropertyBuilder)
+- [Binding 101](xref:Reference.Markup.Binding101)
 - [Attached Properties](xref:Reference.Markup.AttachedProperties)
 - [Styles](xref:Reference.Markup.Styles)
 - [Templates](xref:Reference.Markup.Templates)
