@@ -4,19 +4,31 @@ public static class HostBuilderExtensions
 {
 	private static bool _isRegistered;
 	public static IHostBuilder UseValidation(
-		this IHostBuilder hostBuilder)
+		this IHostBuilder hostBuilder,
+		Action<HostBuilderContext, IServiceCollection>? configureDelegate = default)
 	{
 		if (_isRegistered)
 		{
 			return hostBuilder;
 		}
 		_isRegistered = true;
-		return hostBuilder
+		hostBuilder
 		.ConfigureServices((ctx, services) =>
 		{
 			_ = services
-			.AddScoped(typeof(IValidator<>), typeof(SystemValidator<>))
-			.AddTransient<IValidator, Validator>();
+			//.AddScoped(typeof(IValidator<>), typeof(SystemValidator<>))
+			.AddScoped<IValidator, Validator>();
 		});
+
+		return configureDelegate is not null ? hostBuilder.ConfigureServices(configureDelegate) : hostBuilder;
+	}
+
+	public static IServiceCollection RegisterEntity<TEntity>(
+	this IServiceCollection services)
+	where TEntity : class
+	{
+		return services
+			.AddScoped(typeof(IValidator<TEntity>), typeof(SystemValidator<TEntity>))
+			.AddInstanceTypeInfo<TEntity>();
 	}
 }

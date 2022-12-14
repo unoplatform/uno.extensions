@@ -1,4 +1,5 @@
 ﻿namespace Playground;
+
 internal static class AppHost
 {
 	public static IApplicationBuilder ConfigureApp(this IApplicationBuilder builder)
@@ -31,12 +32,27 @@ internal static class AppHost
 
 			.UseThemeSwitching()
 
-			//.UseValidation()
-
-			//.UseFluentValidation((context, services) =>
+			//.UseValidation(
+			//configureDelegate: (ctx, services) =>
 			//{
-			//	//Register Fluent validators with Fluent IValidator
-			//	services.AddScoped<FluentValidation.IValidator<Game>, UserValidator>();
+			//	//Register IValidatableObjects
+			//	services.RegisterEntity<Game>();
+			//})
+
+			//.UseCommunityToolkitValidation(
+			//configureDelegate: (ctx, services) =>
+			//{
+			//	//Register ObservableValidators
+			//	services.RegisterObservableValidator<ObservableModel>();
+			//})
+
+			//.UseFluentValidation(
+			//configureDelegate: (ctx, services) =>
+			//{
+			//	//Register FluentValidators
+			//	services.RegisterValidator<
+			//		ValidationUser,
+			//		ValidationUserValidator>();
 			//})
 
 			// Register Json serializer jsontypeinfo definitions

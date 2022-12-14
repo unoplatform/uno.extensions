@@ -1,9 +1,11 @@
-﻿namespace Uno.Extensions.Validation;
+﻿using System.ComponentModel;
+
+namespace Uno.Extensions.Validation;
 
 /// <summary>
 /// Class that can be used to validate objects, properties and methods for a given ObservableValidator class. 
 /// </summary>
-public class CommunityToolkitValidator<T>: IValidator where T : ObservableValidator
+public class CommunityToolkitValidator<T>: IValidator<T> where T : ObservableValidator
 {
 	///<inheritdoc/>
 	public ValueTask<IEnumerable<ValidationResult>> ValidateAsync(
@@ -14,10 +16,7 @@ public class CommunityToolkitValidator<T>: IValidator where T : ObservableValida
 		ICollection<ValidationResult> results = new List<ValidationResult>();
 		if (instance is ObservableValidator _instance)
 		{
-			foreach (var error in _instance.GetErrors())
-			{
-				results.Add(new ValidationResult(error.ErrorMessage));
-			}
+			results = _instance.GetErrors().ToList();
 		}
 
 		return new ValueTask<IEnumerable<ValidationResult>>(results.ToList());

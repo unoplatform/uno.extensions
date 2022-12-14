@@ -4,7 +4,7 @@
 /// Class that can be used to validate objects, properties and methods based on the associated Fluent Validators. 
 /// </summary>
 /// <typeparam name="T">Type</typeparam>
-public class FluentValidator<T> : IValidator
+public class FluentValidator<T> : IValidator<T>
 {
 	/// <summary>
 	/// Fluent validator

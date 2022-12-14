@@ -18,6 +18,7 @@ public static class HostBuilderExtensions
 		where TEntity : class
 	{
 		return services
+			.AddInstanceTypeInfo<TEntity>()
 			.AddScoped(typeof(IValidator<TEntity>), typeof(FluentValidator<TEntity>))
 			.AddScoped<FluentValidation.IValidator<TEntity>, TValidator>();
 	}
