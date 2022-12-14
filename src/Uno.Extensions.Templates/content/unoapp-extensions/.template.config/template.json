@@ -442,25 +442,25 @@
         {
           "condition": "(!android)",
           "exclude": [
-            "MyExtensionsApp.Mobile/Platforms/Android/**/*"
+            "MyExtensionsApp.Mobile/Android/**/*"
           ]
         },
         {
           "condition": "(!ios)",
           "exclude": [
-            "MyExtensionsApp.Mobile/Platforms/iOS/**/*"
+            "MyExtensionsApp.Mobile/iOS/**/*"
           ]
         },
         {
           "condition": "(!macos)",
           "exclude": [
-            "MyExtensionsApp.Mobile/Platforms/macOS/**/*"
+            "MyExtensionsApp.Mobile/macOS/**/*"
           ]
         },
         {
           "condition": "(!maccatalyst)",
           "exclude": [
-            "MyExtensionsApp.Mobile/Platforms/MacCatalyst/**/*"
+            "MyExtensionsApp.Mobile/MacCatalyst/**/*"
           ]
         },
         {

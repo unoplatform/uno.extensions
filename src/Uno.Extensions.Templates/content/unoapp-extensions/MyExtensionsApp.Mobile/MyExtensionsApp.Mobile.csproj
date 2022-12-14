@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<!--#if (android && ios && macos && maccatalyst)-->
 		<TargetFrameworks>net6.0-android;net6.0-ios;net6.0-maccatalyst</TargetFrameworks>
@@ -141,7 +141,7 @@
 				<PackageReference Include="Uno.UniversalImageLoader" />
 			</ItemGroup>
 			<ItemGroup>
-				<AndroidEnvironment Include="Platforms/Android/environment.conf" />
+				<AndroidEnvironment Include="Android/environment.conf" />
 			</ItemGroup>
 		</When>
 		<!--#endif-->
