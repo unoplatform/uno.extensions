@@ -11,16 +11,10 @@ public static class UIHelper
 {
 	private static TimeSpan DefaultTimeout => Debugger.IsAttached ? TimeSpan.FromMinutes(60) : TimeSpan.FromSeconds(1);
 
-	[EditorBrowsable(EditorBrowsableState.Never)]
-	public static Action<UIElement?>? ContentSetter { get; set; }
-
-	[EditorBrowsable(EditorBrowsableState.Never)]
-	public static Func<UIElement?>? ContentGetter { get; set; }
-
 	public static UIElement? Content
 	{
-		get => ContentGetter?.Invoke();
-		set => ContentSetter?.Invoke(value);
+		get => UnitTestsUIContentHelper.Content;
+		set => UnitTestsUIContentHelper.Content = value;
 	}
 
 	public static async Task Load(FrameworkElement element, CancellationToken ct)

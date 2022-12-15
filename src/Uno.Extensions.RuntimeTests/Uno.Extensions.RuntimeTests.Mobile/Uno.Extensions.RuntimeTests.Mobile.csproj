@@ -17,7 +17,7 @@
 		<SupportedOSPlatformVersion Condition="'$(TargetFramework)' == 'net6.0-ios'">14.2</SupportedOSPlatformVersion>
 		<SupportedOSPlatformVersion Condition="'$(TargetFramework)' == 'net6.0-maccatalyst'">14.0</SupportedOSPlatformVersion>
 		<SupportedOSPlatformVersion Condition="'$(TargetFramework)' == 'net6.0-android'">21.0</SupportedOSPlatformVersion>
-		<SupportedOSPlatformVersion Condition="'$(TargetFramework)'=='net6.0-macos'">10.14</SupportedOSPlatformVersion>
+		<SupportedOSPlatformVersion Condition="'$(TargetFramework)' == 'net6.0-macos'">10.14</SupportedOSPlatformVersion>
 		<ManagePackageVersionsCentrally>false</ManagePackageVersionsCentrally>
 		<DefineConstants>$(DefineConstants);WINDOWS_WINUI</DefineConstants>
 		<!--<RootNamespace>Uno.Extensions.RuntimeTests</RootNamespace>-->
@@ -38,9 +38,6 @@
 	</ItemGroup>
 	<Choose>
 		<When Condition="'$(TargetFramework)'=='net6.0-android'">
-			<PropertyGroup>
-				<UnoUISourceGeneratorDebuggerBreak>True</UnoUISourceGeneratorDebuggerBreak>
-			</PropertyGroup>
 			<ItemGroup>
 				<PackageReference Include="Xamarin.Google.Android.Material" Version="1.4.0.4" />
 				<PackageReference Include="Uno.UniversalImageLoader" Version="1.9.36" />
