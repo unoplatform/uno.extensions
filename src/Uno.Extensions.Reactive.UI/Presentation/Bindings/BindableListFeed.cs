@@ -100,11 +100,13 @@ public sealed partial class BindableListFeed<T> : ISignal<IMessage>, IListState<
 		var currentCount = 0;
 		var pageTokens = new TokenSetAwaiter<PageToken>();
 
+		var collection = default(BindableCollection);
 		var requests = new RequestSource();
 		var pagination = new PaginationService(LoadMore);
 		var selection = new SelectionService(SetSelected);
 		var services = new SingletonServiceProvider(pagination, selection);
-		var collection = BindableCollection.Create(
+		
+		collection = BindableCollection.Create(
 			services: services,
 			itemComparer: ListFeed<T>.DefaultComparer);
 

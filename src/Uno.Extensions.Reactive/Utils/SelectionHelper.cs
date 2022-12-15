@@ -104,39 +104,4 @@ internal static class SelectionHelper
 
 		return result;
 	}
-
-	//public static SelectionIndexRange? Except(SelectionIndexRange range, SelectionIndexRange exclusion)
-	//{
-	//	if (range == exclusion)
-	//	{
-	//		return null;
-	//	}
-
-	//	var firstIndex = range.FirstIndex;
-	//	var length = (int)range.Length;
-	//	if (range.FirstIndex >= exclusion.FirstIndex)
-	//	{
-	//		var intersectAtRangeHead = range.FirstIndex - (int)exclusion.LastIndex + 1;
-	//		if (intersectAtRangeHead > 0)
-	//		{
-	//			firstIndex = exclusion.LastIndex + 1;
-	//			length -= (int)intersectAtRangeHead;
-	//		}
-	//	}
-
-
-	//	if (range.LastIndex <= exclusion.LastIndex)
-	//	{
-	//		var intersectAtRangeTail = range.LastIndex - (int)exclusion.FirstIndex + 1;
-	//		if (intersectAtRangeTail > 0)
-	//		{
-	//			length -= (int)intersectAtRangeTail;
-	//		}
-	//	}
-
-	//	return length == range.Length
-	//		? range
-	//		: new(firstIndex, (uint)length);
-	//}
-
 }
