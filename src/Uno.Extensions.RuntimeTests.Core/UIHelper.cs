@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Media;
 
 namespace Uno.UI.RuntimeTests;
 
@@ -21,6 +23,22 @@ public static class UIHelper
 	{
 		Content = element;
 		await WaitForLoaded(element, ct);
+	}
+
+	public static IEnumerable<T> FindChildren<T>(DependencyObject element)
+	{
+		if (element is T t)
+		{
+			yield return t;
+		}
+
+		for (var i = 0; i < VisualTreeHelper.GetChildrenCount(element); i++)
+		{
+			foreach (var child in FindChildren<T>(VisualTreeHelper.GetChild(element, i)))
+			{
+				yield return child;
+			}
+		}
 	}
 
 	public static async Task WaitForLoaded(FrameworkElement element, CancellationToken ct)
