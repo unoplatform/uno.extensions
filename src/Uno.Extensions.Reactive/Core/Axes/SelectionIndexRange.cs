@@ -13,9 +13,9 @@ public sealed record SelectionIndexRange(uint FirstIndex, uint Length)
 	/// <summary>
 	/// Gets the index of the last selected item.
 	/// </summary>
-	public uint LastIndex { get; } = FirstIndex + Length - 1;
+	public uint LastIndex { get; } = Length is 0 ? FirstIndex : FirstIndex + Length - 1;
 
 	/// <inheritdoc />
 	public override string ToString()
-		=> $"[{FirstIndex}, {LastIndex}[";
+		=> $"[{FirstIndex}, {LastIndex}]";
 };
