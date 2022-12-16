@@ -50,7 +50,7 @@ internal static class AppHost
 			//configureDelegate: (ctx, services) =>
 			//{
 			//	//Register FluentValidators
-			//	services.RegisterValidator<
+			//	services.RegisterFluentValidator<
 			//		ValidationUser,
 			//		ValidationUserValidator>();
 			//})

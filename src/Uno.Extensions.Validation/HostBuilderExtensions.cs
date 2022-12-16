@@ -16,7 +16,6 @@ public static class HostBuilderExtensions
 		.ConfigureServices((ctx, services) =>
 		{
 			_ = services
-			//.AddScoped(typeof(IValidator<>), typeof(SystemValidator<>))
 			.AddScoped<IValidator, Validator>();
 		});
 

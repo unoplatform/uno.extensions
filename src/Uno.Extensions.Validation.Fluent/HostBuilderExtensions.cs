@@ -12,7 +12,7 @@ public static class HostBuilderExtensions
 		return configureDelegate is not null ? hostBuilder.ConfigureServices(configureDelegate) : hostBuilder;
 	}
 
-	public static IServiceCollection RegisterValidator<TEntity, TValidator>(
+	public static IServiceCollection RegisterFluentValidator<TEntity, TValidator>(
 		this IServiceCollection services)
 		where TValidator: class, FluentValidation.IValidator<TEntity>
 		where TEntity : class
