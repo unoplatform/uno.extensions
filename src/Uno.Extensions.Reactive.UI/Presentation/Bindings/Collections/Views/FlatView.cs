@@ -8,6 +8,7 @@ using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Uno.Extensions.Collections;
 using Uno.Extensions.Collections.Facades.Composite;
+using Uno.Extensions.Collections.Facades.Differential;
 using Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Facets;
 
 namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Views
@@ -115,7 +116,7 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Views
 
 			return -1;
 		}
-		public IEnumerator<object?> GetEnumerator() => new CompositeEnumerator<object?>(_source.Where(group => group is not null).Cast<IEnumerable<object?>>());
+		public IEnumerator<object?> GetEnumerator() => new CompositeEnumerator<object?>(_source.Head.AsList<object?>().Where(group => group is not null).Cast<IEnumerable<object?>>());
 		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 		public void CopyTo(object[] array, int arrayIndex)
 		{

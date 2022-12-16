@@ -17,7 +17,7 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Facet
 	/// A collection which applies a differential logic to maintain its state
 	/// <remarks>This collection is NOT THREAD SAFE </remarks>
 	/// </summary>
-	internal partial class CollectionFacet : IList, IObservableVector<object?>, INotifyCollectionChanged
+	internal partial class CollectionFacet : INotifyCollectionChanged, IDifferentialCollection
 	{
 		private static readonly object[] EmptyItems = Array.Empty<object>();
 		private static readonly IDifferentialCollectionNode Empty = new ResetNode(EmptyItems);
@@ -176,10 +176,8 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Facet
 		public BatchUpdateOperation BatchUpdateTo(IList finalCollection)
 			=> new(this, finalCollection);
 
-		/// <summary>
-		/// Creates an immutable copy of this collection
-		/// </summary>
-		public IList ToImmutable() => new DifferentialReadOnlyList(_head);
+		/// <inheritdoc />
+		public IDifferentialCollectionNode Head => _head;
 
 		#region IObservableVector
 		public event VectorChangedEventHandler<object?> VectorChanged
@@ -195,11 +193,7 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Facet
 		}
 
 		/// <inheritdoc />
-		public object? this[int index]
-		{
-			get => ElementAt(index);
-			set => throw new NotSupportedException("'__setItem[]' not supported on read only collection.");
-		}
+		public object? this[int index] => ElementAt(index);
 
 		/// <inheritdoc />
 		public int Count => _head.Count;
@@ -212,7 +206,6 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Facet
 		public bool Contains(object? value) => _head.IndexOf(value, 0, EqualityComparer<object>.Default) >= 0;
 		/// <inheritdoc />
 		public IEnumerator<object?> GetEnumerator() => new Enumerator(_head);
-		IEnumerator IEnumerable.GetEnumerator() => new Enumerator(_head);
 		/// <inheritdoc />
 		public void CopyTo(Array array, int index)
 		{
@@ -230,33 +223,6 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Facet
 				array.SetValue(enumerator.Current, index++);
 			}
 		}
-
-		/// <inheritdoc />
-		public bool IsReadOnly => true;
-		/// <inheritdoc />
-		public bool IsFixedSize => false;
-		/// <inheritdoc />
-		public bool IsSynchronized => true;
-		/// <inheritdoc />
-		public object SyncRoot { get; } = new();
-
-		/// <summary>Not supported on this collection</summary>
-		/// <exception cref="NotSupportedException">In any cases, this method is not supported on this collection.</exception>
-		public int Add(object? value) => throw new NotSupportedException("'Add' not supported on read only collection.");
-		void ICollection<object?>.Add(object? item) => throw new NotSupportedException("'Add' not supported on read only collection.");
-		/// <summary>Not supported on this collection</summary>
-		/// <exception cref="NotSupportedException">In any cases, this method is not supported on this collection.</exception>
-		public void Insert(int index, object? value) => throw new NotSupportedException("'Insert' not supported on read only collection.");
-		/// <summary>Not supported on this collection</summary>
-		/// <exception cref="NotSupportedException">In any cases, this method is not supported on this collection.</exception>
-		public void RemoveAt(int index) => throw new NotSupportedException("'RemoveAt' not supported on read only collection.");
-		/// <summary>Not supported on this collection</summary>
-		/// <exception cref="NotSupportedException">In any cases, this method is not supported on this collection.</exception>
-		public bool Remove(object? value) => throw new NotSupportedException("'Remove' not supported on read only collection.");
-		void IList.Remove(object? item) => throw new NotSupportedException("'Remove' not supported on read only collection.");
-		/// <summary>Not supported on this collection</summary>
-		/// <exception cref="NotSupportedException">In any cases, this method is not supported on this collection.</exception>
-		public void Clear() => throw new NotSupportedException("'Clear' not supported on read only collection.");
 		#endregion
 
 		private void Raise(NotifyCollectionChangedEventArgs arg)
@@ -567,12 +533,12 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Facet
 		private void ResetHead(IList updated)
 		{
 #if DEBUG
-			var before = this.ToArray();
+			var before = _head.AsList<object>();
 #endif
 			// When all event has been raised, we can override the _head (without any events)
 			_head = new ResetNode(updated);
 #if DEBUG
-			var after = this.ToArray();
+			var after = _head.AsList<object>();
 			Debug.Assert(before.SequenceEqual(after), "There is an inconsistency between the current updated by events, and the result collection.");
 #endif
 		}
