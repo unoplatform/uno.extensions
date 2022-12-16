@@ -26,14 +26,24 @@ public sealed partial class SelectPage : Page
 		//this.InitializeComponent();
 		this.DataContext<MainViewModel>((page, vm) => page
 		.Content(
+
 				new StackPanel()
 				.HorizontalAlignment(HorizontalAlignment.Center)
 				.VerticalAlignment(VerticalAlignment.Top)
 				.Children(
+					new TextBlock().Text("UnoCheck").FontSize(16),
 					//TextBlockFileUnoCheck(),
-					new TextBlock()
-						.Text(Helpers.ProcessCommand.getFileContent()),
-
+					new ScrollViewer()
+					.Height(200)
+					.Width(600)
+					.HorizontalScrollBarVisibility(ScrollBarVisibility.Visible )
+					.VerticalScrollBarVisibility(ScrollBarVisibility.Visible)
+					.Content(
+						new TextBlock()
+						.Width(600)
+						.TextWrapping(TextWrapping.Wrap)
+						.Text(x => x.Bind(() => vm.UnoCheck).TwoWay() )
+					),
 					new SelectPlatformView().DataContext(x => x.Bind(() => this.DataContext).Convert(dc =>
 					{
 						if (dc is MainViewModel mvm)

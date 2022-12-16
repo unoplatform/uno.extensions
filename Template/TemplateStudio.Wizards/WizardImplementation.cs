@@ -56,13 +56,16 @@ namespace TemplateStudio.Wizards
 		{
 			try
 			{
-				//Get Uno Check Result File
-				Helpers.ProcessCommand.getUnoCheck();
 
+				var mvm = new MainViewModel() { Replacements = replacementsDictionary };
+				//Get Uno Check Result File
+				Helpers.ProcessCommand.getAsyncUnoCheck(mvm);
 
 				var host = new WizardHost();
-				host.DataContext = new MainViewModel() { Replacements = replacementsDictionary };
+				host.DataContext = mvm;
 				UI.ShowModal(host);
+
+				
 
 				replacementsDictionary.Add("passthrough:is-visx", true.ToString());
 				MessageBox.Show("Wizard done!");

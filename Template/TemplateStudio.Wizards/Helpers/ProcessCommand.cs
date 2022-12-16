@@ -7,24 +7,25 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using TemplateStudio.Wizards.ViewModels;
 
 namespace TemplateStudio.Wizards.Helpers;
 
 public static class ProcessCommand
 {
-	public static void getAsyncUnoCheck()
+	internal static void getAsyncUnoCheck(MainViewModel mvm)
 	{
 		Thread objThread = new Thread(new ParameterizedThreadStart(getUnoCheck));
 		objThread.IsBackground = true;
 		objThread.Priority = ThreadPriority.AboveNormal;
-		objThread.Start();
+		objThread.Start(mvm);
 	}
 
-	public static void getUnoCheck(object command = null)
+	public static void getUnoCheck(object _mvm = null)
 	{
-
 		try
 		{
+			MainViewModel mvm = (MainViewModel)_mvm;
 			string path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\Uno";
 			DirectoryInfo di = Directory.CreateDirectory(path);
 
@@ -35,23 +36,23 @@ public static class ProcessCommand
 					CreateNoWindow = true,
 					WindowStyle = ProcessWindowStyle.Hidden,
 					RedirectStandardInput = true,
-					RedirectStandardOutput = false,
-					RedirectStandardError = false,
+					RedirectStandardOutput = true,
+					RedirectStandardError = true,
 					UseShellExecute = false,
 					WorkingDirectory = path
 				};
 
-
 				//To get line by line on p_OutputDataReceived
 				//p.OutputDataReceived += p_OutputDataReceived;
-				//p.ErrorDataReceived += p_ErrorDataReceived;
+				p.OutputDataReceived += (Object _sender, DataReceivedEventArgs _args) => p_OutputDataReceived(mvm, _sender, _args);
+				p.ErrorDataReceived += p_ErrorDataReceived;
 
 				p.Start();
 				p.StandardInput.Write("dotnet tool install -g uno.check" + p.StandardInput.NewLine);
-				p.StandardInput.Write("uno-check > resultUnoCheck.txt" + p.StandardInput.NewLine + p.StandardInput.NewLine);
+				//p.StandardInput.Write("uno-check > resultUnoCheck.txt" + p.StandardInput.NewLine + p.StandardInput.NewLine);
 
 				//To get line by line on p_OutputDataReceived, not the file resultUnoCheck
-				//p.StandardInput.Write("uno-check" + p.StandardInput.NewLine + p.StandardInput.NewLine);
+				p.StandardInput.Write("uno-check" + p.StandardInput.NewLine + p.StandardInput.NewLine);
 
 				p.BeginOutputReadLine();
 				p.BeginErrorReadLine();
@@ -70,7 +71,7 @@ public static class ProcessCommand
 	{
 		try
 		{
-			string ContentFile = "";
+			string ContentFile = "Start";
 			string path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\Uno\\resultUnoCheck.txt";
 
 			using (var stream = File.Open(path, FileMode.Open))
@@ -88,20 +89,28 @@ public static class ProcessCommand
 		}
 	}
 
-	//public static void p_ErrorDataReceived(object sender, DataReceivedEventArgs e)
-	//{
-	//	Process p = sender as Process;
-	//	if (p == null)
-	//		return;
-	//	Console.WriteLine(e.Data);
-	//}
-
+	public static void p_ErrorDataReceived(object sender, DataReceivedEventArgs e)
+	{
+		Process p = sender as Process;
+		if (p == null)
+			return;
+		Console.WriteLine(e.Data);
+	}
+	
+	internal static void p_OutputDataReceived(MainViewModel mvm, Object sender, DataReceivedEventArgs e)
+	{
+		Process p = sender as Process;
+		if (p == null)
+			return;
+		mvm.UnoCheck += e.Data + Environment.NewLine;
+		//Console.WriteLine(e.Data);
+	}
 	//public static void p_OutputDataReceived(object sender, DataReceivedEventArgs e)
 	//{
 	//	Process p = sender as Process;
 	//	if (p == null)
 	//		return;
-	//	Console.WriteLine(e.Data);
+	//	Console.WriteLine(e.Data + Environment.NewLine);
 	//}
 
 }
