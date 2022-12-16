@@ -6,7 +6,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace Uno.Extensions.Reactive.Testing;
 
 /// <summary>
-/// Base class to tests a class that is using the reactive framework.
+/// Base class to test a class that is using the reactive framework.
 /// </summary>
 public class FeedTests
 {

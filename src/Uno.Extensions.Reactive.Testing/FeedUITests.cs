@@ -12,7 +12,7 @@ using Uno.Extensions.Reactive.Dispatching;
 namespace Uno.Extensions.Reactive.Testing;
 
 /// <summary>
-/// Base class to tests a class that is using the reactive framework from the UI.
+/// Base class to test a class that is using the reactive framework from the UI.
 /// </summary>
 public class FeedUITests : FeedTests, ISourceContextOwner
 {

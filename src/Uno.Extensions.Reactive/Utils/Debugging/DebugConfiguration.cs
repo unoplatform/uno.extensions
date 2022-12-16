@@ -10,5 +10,5 @@ internal class DebugConfiguration
 {
 	private static bool? _isDebugging;
 
-	public static bool IsDebugging => _isDebugging ??= Debugger.IsAttached | Logging.LogExtensions.Log<ISignal>().IsEnabled(LogLevel.Debug);
+	public static bool IsDebugging => _isDebugging ??= Debugger.IsAttached || Logging.LogExtensions.Log<ISignal>().IsEnabled(LogLevel.Debug);
 }
