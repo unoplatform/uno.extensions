@@ -68,9 +68,6 @@ internal static class SelectionHelper
 				continue;
 			}
 
-			//var firstIndex = range.FirstIndex;
-			//var length = (int)range.Length;
-
 			if (range.FirstIndex < removed.FirstIndex)
 			{
 				var lastIndex = Math.Min(range.LastIndex, removed.FirstIndex);
