@@ -11,7 +11,7 @@ namespace Uno.UI.RuntimeTests;
 
 public static class UIHelper
 {
-	private static TimeSpan DefaultTimeout => Debugger.IsAttached ? TimeSpan.FromMinutes(60) : TimeSpan.FromSeconds(1);
+	public static TimeSpan DefaultTimeout => Debugger.IsAttached ? TimeSpan.FromMinutes(60) : TimeSpan.FromSeconds(1);
 
 	public static UIElement? Content
 	{
