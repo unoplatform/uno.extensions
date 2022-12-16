@@ -8,24 +8,30 @@ using Uno.Extensions.Reactive.Core;
 
 namespace Uno.Extensions.Reactive.Testing;
 
+/// <summary>
+/// The context of test which involves reactive framework.
+/// </summary>
 public class FeedTestContext : ISourceContextAware, IDisposable
 {
 	private static long _contextCount = 0;
-	private long _contextId = Interlocked.Increment(ref _contextCount);
+	private readonly long _contextId = Interlocked.Increment(ref _contextCount);
 
 	private readonly string _name;
-	private readonly SourceContext _sourceCtx;
-			
+
 	private SourceContext.CurrentSubscription _subscription;
 
+	/// <summary>
+	/// Creates a new context given the context of the test itself.
+	/// </summary>
+	/// <param name="testContext">The context of the test engine.</param>
 	public FeedTestContext(TestContext testContext)
 	{
 		_name = testContext is null // On runtime test
 			? $"runtime_tests.{_contextId:D4}"
 			: $"{testContext.FullyQualifiedTestClassName}.{testContext.TestName}";
 
-		_sourceCtx = SourceContext.GetOrCreate(this);
-		_subscription = _sourceCtx.AsCurrent();
+		SourceContext = SourceContext.GetOrCreate(this);
+		_subscription = SourceContext.AsCurrent();
 
 		testContext?.CancellationTokenSource.Token.Register(Dispose);
 
@@ -33,24 +39,38 @@ public class FeedTestContext : ISourceContextAware, IDisposable
 		FeedSubscription.IsInitialSyncValuesSkippingAllowed = false;
 	}
 
+	/// <summary>
+	/// Creates a new context given a name used to identify it.
+	/// </summary>
+	/// <param name="name">The name used to identify this context. Do not provided: it will be provided by the compilator.</param>
+	/// <exception cref="ArgumentNullException">If `null` is provided for the <paramref name="name"/>.</exception>
 	public FeedTestContext([CallerMemberName] string? name = null)
 	{
 		_name = name ?? throw new ArgumentNullException("Context must be named.");
-		_sourceCtx = SourceContext.GetOrCreate(this);
-		_subscription = _sourceCtx.AsCurrent();
+		SourceContext = SourceContext.GetOrCreate(this);
+		_subscription = SourceContext.AsCurrent();
 
 		// For tests we prefer to replay all vales
 		FeedSubscription.IsInitialSyncValuesSkippingAllowed = false;
 	}
 
-	public SourceContext SourceContext => _sourceCtx;
+	/// <summary>
+	/// The <see cref="SourceContext"/> that has been created, and set as current, for the test.
+	/// </summary>
+	public SourceContext SourceContext { get; }
 
+	/// <summary>
+	/// Restores the <see cref="SourceContext"/> as <see cref="Core.SourceContext.Current"/>.
+	/// </summary>
 	public void RestoreCurrent()
 	{
 		ResignCurrent();
-		_subscription = _sourceCtx.AsCurrent();
+		_subscription = SourceContext.AsCurrent();
 	}
 
+	/// <summary>
+	/// Removes the <see cref="SourceContext"/> from <see cref="Core.SourceContext.Current"/>.
+	/// </summary>
 	public void ResignCurrent()
 		=> _subscription.Dispose();
 
@@ -58,11 +78,15 @@ public class FeedTestContext : ISourceContextAware, IDisposable
 	public void Dispose()
 	{
 		_subscription.Dispose();
-		_sourceCtx.DisposeAsync().AsTask().Wait(1000);
+		SourceContext.DisposeAsync().AsTask().Wait(1000);
 	}
 
+	/// <summary>
+	/// Implicitly gets the <see cref="SourceContext"/> from a <see cref="FeedTestContext"/>.
+	/// </summary>
+	/// <param name="context"></param>
 	public static implicit operator SourceContext(FeedTestContext context)
-		=> context._sourceCtx;
+		=> context.SourceContext;
 
 	/// <inheritdoc />
 	public override string ToString()
