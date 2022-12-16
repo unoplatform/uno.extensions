@@ -36,6 +36,9 @@ internal static class LogExtensions
 	public static void SetProvider(ILoggerProvider provider)
 		=> _provider = provider;
 
+	public static ILogger Log<T>()
+		=> Holder<T>.Logger;
+
 	public static ILogger Log<T>(this T owner)
 		=> Holder<T>.Logger;
 

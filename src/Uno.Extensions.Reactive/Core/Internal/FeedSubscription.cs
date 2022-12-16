@@ -24,7 +24,7 @@ internal class FeedSubscription
 	public static bool IsInitialSyncValuesSkippingAllowed { get; set; } = true;
 }
 
-internal class FeedSubscription<T> : IAsyncDisposable
+internal class FeedSubscription<T> : IAsyncDisposable, ISourceContextOwner
 {
 	private readonly SourceContext _rootContext;
 	private readonly CompositeRequestSource _requests = new();
@@ -34,11 +34,16 @@ internal class FeedSubscription<T> : IAsyncDisposable
 	public FeedSubscription(ISignal<Message<T>> feed, SourceContext rootContext)
 	{
 		_rootContext = rootContext;
-		_context = rootContext.CreateChild(_requests);
+		_context = rootContext.CreateChild(this, _requests);
 		_source = new ReplayOneAsyncEnumerable<Message<T>>(
 			 feed.GetSource(_context),
 			isInitialSyncValuesSkippingAllowed: FeedSubscription.IsInitialSyncValuesSkippingAllowed);
 	}
+
+	string ISourceContextOwner.Name => $"Sub on {_source} for ctx '{_context.Parent!.Owner.Name}'.";
+
+	IDispatcher? ISourceContextOwner.Dispatcher => null;
+
 
 	public async IAsyncEnumerable<Message<T>> GetMessages(SourceContext subscriberContext, [EnumeratorCancellation] CancellationToken ct)
 	{

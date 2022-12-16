@@ -44,7 +44,7 @@ public static class DispatcherHelper
 			?? GetForCurrentThread()
 			?? throw new InvalidOperationException("Failed to get dispatcher to use. Either explicitly provide the dispatcher to use, either make sure to invoke this on the UI thread.");
 
-	private static IDispatcher NotConfigured()
+	internal static IDispatcher NotConfigured()
 		=> throw new InvalidOperationException(
 			"The API you are using requires access to the dispatcher but it has not been setup for this platform. "
 			+ "You need to add a reference to Uno.Extensions.Reactive.UI or Uno.Extensions.Reactive.WinUI package in you application head, "

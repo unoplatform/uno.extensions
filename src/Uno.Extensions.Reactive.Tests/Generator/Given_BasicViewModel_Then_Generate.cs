@@ -5,6 +5,7 @@ using System.Windows.Input;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Uno.Extensions.Reactive.Testing;
 
 namespace Uno.Extensions.Reactive.Tests.Generator;
 

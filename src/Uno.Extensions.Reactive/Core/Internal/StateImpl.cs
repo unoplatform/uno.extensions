@@ -11,7 +11,7 @@ using Uno.Extensions.Reactive.Utils;
 
 namespace Uno.Extensions.Reactive.Core;
 
-internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, IStateImpl
+internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, IStateImpl, ISourceContextOwner
 {
 	private readonly object _updateGate = new();
 	private readonly UpdateFeed<T>? _updates;
@@ -29,6 +29,10 @@ internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, ISta
 	SourceContext IStateImpl.Context => Context;
 
 	internal Message<T> Current => _current;
+
+	string ISourceContextOwner.Name => $"State<{typeof(T).Name}> for ctx '{Context.Parent!.Owner.Name}'.";
+
+	IDispatcher? ISourceContextOwner.Dispatcher => null;
 
 	private readonly struct Node
 	{
@@ -54,7 +58,7 @@ internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, ISta
 		StateSubscriptionMode mode = StateSubscriptionMode.Default,
 		StateUpdateKind updatesKind = StateUpdateKind.Volatile)
 	{
-		Context = context.CreateChild(_requests);
+		Context = context.CreateChild(this, _requests);
 
 		if (updatesKind is StateUpdateKind.Persistent)
 		{
@@ -86,7 +90,7 @@ internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, ISta
 
 	public StateImpl(SourceContext context, Option<T> defaultValue)
 	{
-		Context = context?.CreateChild(_requests)!; // Null check override only for legacy IInput support
+		Context = context?.CreateChild(this, _requests)!; // Null check override only for legacy IInput support
 
 		_hasCurrent = true; // Even if undefined, we consider that we do have a value in order to produce an initial state
 		if (!defaultValue.IsUndefined())
