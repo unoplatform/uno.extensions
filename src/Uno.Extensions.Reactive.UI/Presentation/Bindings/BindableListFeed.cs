@@ -100,11 +100,13 @@ public sealed partial class BindableListFeed<T> : ISignal<IMessage>, IListState<
 		var currentCount = 0;
 		var pageTokens = new TokenSetAwaiter<PageToken>();
 
+		var collection = default(BindableCollection);
 		var requests = new RequestSource();
 		var pagination = new PaginationService(LoadMore);
 		var selection = new SelectionService(SetSelected);
 		var services = new SingletonServiceProvider(pagination, selection);
-		var collection = BindableCollection.Create(
+		
+		collection = BindableCollection.Create(
 			services: services,
 			itemComparer: ListFeed<T>.DefaultComparer);
 
@@ -150,13 +152,11 @@ public sealed partial class BindableListFeed<T> : ISignal<IMessage>, IListState<
 					pageTokens.Received(page.Tokens);
 				}
 
-				if (msg.Changes.Contains(MessageAxis.Selection) && msg.Current.GetSelectionInfo() is {} selectionInfo)
+				if (msg.Changes.Contains(MessageAxis.Selection)
+					&& msg.Current.GetSelectionInfo() is { } selectionInfo
+					&& msg.Current.Get(BindableViewModelBase.BindingSource) != collection)
 				{
-					var selectedIndex = selectionInfo.IsEmpty
-						? null
-						: selectionInfo.GetSelectedIndex(items ??= msg.Current.Data.SomeOrDefault(ImmutableList<T>.Empty), failIfOutOfRange: false, failIfMultiple: false);
-
-					selection.SelectFromModel(selectedIndex);
+					selection.SetFromSource(selectionInfo);
 				}
 			},
 			ctx.Token);
@@ -172,13 +172,8 @@ public sealed partial class BindableListFeed<T> : ISignal<IMessage>, IListState<
 			return (uint)Math.Max(0, resultCount - originalCount);
 		}
 
-		async ValueTask SetSelected(uint? selectedIndex, CancellationToken ct)
-		{
-			var info = selectedIndex is null
-				? SelectionInfo.Empty
-				: SelectionInfo.Single(selectedIndex.Value);
-			await state.UpdateMessage(msg => msg.Selected(info), ct);
-		}
+		async ValueTask SetSelected(SelectionInfo info, CancellationToken ct)
+			=> await state.UpdateMessage(msg => msg.Selected(info).Set(BindableViewModelBase.BindingSource, collection), ct);
 
 		return collection;
 	}
