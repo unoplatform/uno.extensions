@@ -22,7 +22,7 @@ internal class EditionFacet
 		_service = source.GetService(typeof(IEditionService)) as IEditionService;
 	}
 
-	public bool IsReadOnly => _service is not null;
+	public bool IsReadOnly => _service is null;
 
 	public void SetItem(int index, object? value)
 	{

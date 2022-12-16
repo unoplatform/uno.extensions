@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Uno.Extensions.Collections.Facades.Differential;
+using Uno.Extensions.Reactive.Dispatching;
 using Uno.Extensions.Threading;
 
 namespace Uno.Extensions.Reactive.Bindings.Collections.Services;
@@ -26,7 +27,25 @@ internal class EditionService : IEditionService, IDisposable
 	public void Update(Func<IDifferentialCollectionNode, IDifferentialCollectionNode> edition)
 	{
 		ImmutableInterlocked.Enqueue(ref _editions, edition);
-		Task.Run(Dequeue, _ct.Token);
+		if(DispatcherHelper.GetForCurrentThread() is {} dispatcher)
+		{
+			Task.Run(
+				async () =>
+				{
+					// If we are on a dispatcher (expected to always be teh case), we try to defer to the next dispatcher loop
+					// So we if we are to get and Remove then Add (like ListView items reordering), we will produce only on message.
+					var tcs = new TaskCompletionSource<object?>();
+					using var _ = _ct.Token.Register(() => tcs.TrySetCanceled());
+					dispatcher.TryEnqueue(() => tcs.TrySetResult(default));
+					await tcs.Task;
+					await Dequeue();
+				},
+				_ct.Token);
+		}
+		else
+		{
+			Task.Run(Dequeue, _ct.Token);
+		}
 	}
 
 	private async Task Dequeue()
