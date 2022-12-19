@@ -199,10 +199,6 @@
       <Project>{130528a4-9934-4dd4-9743-1c395e703fc4}</Project>
       <Name>Uno.Extensions.Toolkit</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\src\Uno.Extensions.Validation.CommunityToolkit\Uno.Extensions.Validation.CommunityToolkit.csproj">
-      <Project>{12fd0d8f-328d-4acf-8f72-785bdda1d4ad}</Project>
-      <Name>Uno.Extensions.Validation.CommunityToolkit</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\..\src\Uno.Extensions.Validation.Fluent\Uno.Extensions.Validation.Fluent.csproj">
       <Project>{349e684d-bc28-4d6e-8ca6-6646de7fd478}</Project>
       <Name>Uno.Extensions.Validation.Fluent</Name>

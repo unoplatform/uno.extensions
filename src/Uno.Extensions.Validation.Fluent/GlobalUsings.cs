@@ -6,3 +6,4 @@ global using System.Threading.Tasks;
 global using ValidationResult = System.ComponentModel.DataAnnotations.ValidationResult;
 global using Microsoft.Extensions.Hosting;
 global using Microsoft.Extensions.DependencyInjection;
+global using System.Linq;

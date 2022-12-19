@@ -1,5 +1,4 @@
 ﻿namespace Playground;
-
 internal static class AppHost
 {
 	public static IApplicationBuilder ConfigureApp(this IApplicationBuilder builder)
@@ -35,22 +34,8 @@ internal static class AppHost
 			//.UseValidation(
 			//configureDelegate: (ctx, services) =>
 			//{
-			//	//Register IValidatableObjects
-			//	services.RegisterEntity<Game>();
-			//})
-
-			//.UseCommunityToolkitValidation(
-			//configureDelegate: (ctx, services) =>
-			//{
-			//	//Register ObservableValidators
-			//	services.RegisterObservableValidator<ObservableModel>();
-			//})
-
-			//.UseFluentValidation(
-			//configureDelegate: (ctx, services) =>
-			//{
 			//	//Register FluentValidators
-			//	services.RegisterFluentValidator<
+			//	services.WithValidator<
 			//		ValidationUser,
 			//		ValidationUserValidator>();
 			//})

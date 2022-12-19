@@ -1,6 +1,4 @@
-﻿using System.IO;
-
-namespace Uno.Extensions.Validation;
+﻿namespace Uno.Extensions.Validation;
 
 /// <summary>
 /// Defines an interface for a data validator.

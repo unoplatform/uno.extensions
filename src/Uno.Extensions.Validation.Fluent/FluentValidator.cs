@@ -22,15 +22,12 @@ public class FluentValidator<T> : IValidator<T>
 		ValidationContext? context = null,
 		CancellationToken cancellationToken = default)
 	{
-		List<ValidationResult> result = new List<ValidationResult>();
+		List<ValidationResult>? result = new List<ValidationResult>();
 		
 		var validationResult = (await _validator.ValidateAsync((T)instance, cancellationToken));
-		validationResult?.Errors.ForEach(error =>
-		{
-			result.Add(new ValidationResult(error.ErrorMessage));
-		});
+		result = validationResult?.Errors.Select(x => new ValidationResult(x.ErrorMessage))?.ToList();
 
-		return result;
+		return result ?? new List<ValidationResult>();
 	}
 }
 

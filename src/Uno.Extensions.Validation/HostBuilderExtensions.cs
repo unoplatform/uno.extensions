@@ -21,13 +21,4 @@ public static class HostBuilderExtensions
 
 		return configureDelegate is not null ? hostBuilder.ConfigureServices(configureDelegate) : hostBuilder;
 	}
-
-	public static IServiceCollection RegisterEntity<TEntity>(
-	this IServiceCollection services)
-	where TEntity : class
-	{
-		return services
-			.AddScoped(typeof(IValidator<TEntity>), typeof(SystemValidator<TEntity>))
-			.AddInstanceTypeInfo<TEntity>();
-	}
 }
