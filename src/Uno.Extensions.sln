@@ -186,8 +186,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Validation",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Validation.Fluent", "Uno.Extensions.Validation.Fluent\Uno.Extensions.Validation.Fluent.csproj", "{EEF81643-E541-4298-92FF-F0AF8433C44B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Validation.CommunityToolkit", "Uno.Extensions.Validation.CommunityToolkit\Uno.Extensions.Validation.CommunityToolkit.csproj", "{1664014D-148F-4FD8-9BC4-7809A17BA77A}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
