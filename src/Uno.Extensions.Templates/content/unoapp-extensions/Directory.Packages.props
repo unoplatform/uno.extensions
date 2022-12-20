@@ -18,7 +18,7 @@
     <PackageVersion Include="Microsoft.Windows.Compatibility" Version="7.0.0" />
     <!--#endif-->
     <PackageVersion Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.755" />
-    <PackageVersion Include="Microsoft.WindowsAppSDK" Version="1.2.221116.1" />
+    <PackageVersion Include="Microsoft.WindowsAppSDK" Version="1.2.221209.1" />
     <PackageVersion Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageVersion Include="NUnit" Version="3.13.2" />
     <PackageVersion Include="NUnit3TestAdapter" Version="4.0.0" />
@@ -55,8 +55,8 @@
     <PackageVersion Include="Uno.Extensions.Serialization" Version="255.255.255.255" />
     <PackageVersion Include="Uno.Extensions.Serialization.Http" Version="255.255.255.255" />
     <PackageVersion Include="Uno.Extensions.Serialization.Refit" Version="255.255.255.255" />
-    <PackageVersion Include="Uno.Material.WinUI" Version="2.3.0" />
-    <PackageVersion Include="Uno.Toolkit.WinUI" Version="2.4.0-dev.129" />
+    <PackageVersion Include="Uno.Material.WinUI" Version="2.4.1" />
+    <PackageVersion Include="Uno.Toolkit.WinUI" Version="2.4.2" />
     <PackageVersion Include="Uno.Toolkit.WinUI.Material" Version=" 2.4.0-dev.129" />
     <PackageVersion Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="4.6.19" />
     <PackageVersion Include="Uno.UITest.Helpers" Version="1.1.0-dev.32" />
@@ -66,7 +66,7 @@
     <PackageVersion Include="Uno.WinUI" Version="4.6.19" />
     <!--#if (markup)-->
     <PackageVersion Include="Uno.WinUI.Markup" Version="4.6.0-dev.13" />
-    <PackageVersion Include="Uno.Toolkit.WinUI.Markup" Version="2.4.0-dev.129" />
+    <PackageVersion Include="Uno.Toolkit.WinUI.Markup" Version="2.4.0-dev.140" />
     <!--#endif-->
     <PackageVersion Include="Uno.WinUI.RemoteControl" Version="4.6.19" />
     <PackageVersion Include="Uno.WinUI.Skia.Gtk" Version="4.6.19" />

@@ -39,7 +39,7 @@
     <!--#if (markup)-->
     <PackageReference Include="Uno.WinUI.Markup" Version="4.6.0-dev.13" />
     <!--#endif-->
-    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.2.221116.1" />
+    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.2.221209.1" />
     <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.755" />
     <!--#if (msftextv6) -->
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="6.0.0" />
@@ -49,12 +49,12 @@
     <!--#endif-->
     <PackageReference Include="Uno.Core.Extensions.Logging.Singleton" Version="4.0.1" />
     <PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="4.6.19" />
-    <PackageReference Include="Uno.Material.WinUI" Version="2.3.0" />
-    <PackageReference Include="Uno.Toolkit.WinUI.Material" Version="2.4.0-dev.129" />
+    <PackageReference Include="Uno.Material.WinUI" Version="2.4.1" />
+    <PackageReference Include="Uno.Toolkit.WinUI.Material" Version="2.4.2" />
     <!--#if (markup)-->
-    <PackageReference Include="Uno.Toolkit.WinUI.Markup" Version="2.4.0-dev.129" />
+    <PackageReference Include="Uno.Toolkit.WinUI.Markup" Version="2.4.0-dev.140" />
     <!--#else-->
-    <PackageReference Include="Uno.Toolkit.WinUI" Version="2.4.0-dev.129" />
+    <PackageReference Include="Uno.Toolkit.WinUI" Version="2.4.2" />
     <!--#endif-->
     <PackageReference Include="Uno.Extensions.Authentication" Version="255.255.255.255" />
     <PackageReference Include="Uno.Extensions.Authentication.WinUI" Version="255.255.255.255" />
