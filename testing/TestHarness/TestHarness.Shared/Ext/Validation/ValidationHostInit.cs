@@ -1,4 +1,5 @@
 ﻿using Uno.Extensions.Validation;
+using TestHarness.Ext.Navigation.Validation;
 
 namespace TestHarness;
 
@@ -6,15 +7,9 @@ public class ValidationHostInit : BaseHostInitialization
 {
 	protected override IHostBuilder Custom(IHostBuilder builder)
 		=>builder
-			.UseValidation()
-			.UseCommunityToolkitValidation()
-			.UseFluentValidation(
-			configureDelegate: (ctx,services)=>
-			{
-				services.RegisterValidator<
-					TestHarness.Ext.Navigation.Validation.ValidationUser,
-					TestHarness.Ext.Navigation.Validation.ValidationUserValidator>();
-			});
+			.UseValidation(configure:
+			builder=>
+				builder.Validator<ValidationUser,ValidationUserValidator>());
 
 	protected override void RegisterRoutes(IViewRegistry views, IRouteRegistry routes)
 	{

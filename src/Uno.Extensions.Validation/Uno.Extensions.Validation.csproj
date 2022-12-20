@@ -16,4 +16,9 @@
 	  <PackageReference Include="System.ComponentModel.Annotations" />
 	  <PackageReference Include="System.Threading.Tasks.Extensions" />
 	</ItemGroup>
+
+	<ItemGroup>
+		<InternalsVisibleTo Include="$(AssemblyName).Fluent" />
+	</ItemGroup>
+
 </Project>

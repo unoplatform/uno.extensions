@@ -32,5 +32,14 @@ public static class HostBuilderExtensions
 		return hostBuilder;
 	}
 
-	
+
+	internal static IConfigBuilder AsConfigBuilder(this IHostBuilder hostBuilder)
+	{
+		if (hostBuilder is ConfigBuilder configBuilder)
+		{
+			return configBuilder;
+		}
+
+		return new ConfigBuilder(hostBuilder);
+	}
 }

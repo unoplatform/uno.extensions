@@ -6,17 +6,10 @@ namespace TestHarness.Ext.Navigation.Validation;
 [ReactiveBindable(false)]
 public partial class ValidationOneViewModel : ObservableObject
 {
-	private readonly IValidator<SimpleEntity> _simpleValidator;
-	private readonly IValidator<ValidationUser> _userValidator;
-	private readonly IValidator<SimpleObservableUser> _simpleObservableUser;
-	public ValidationOneViewModel(
-		IValidator<SimpleEntity> simpleValidator,
-		IValidator<ValidationUser> userValidator,
-		IValidator<SimpleObservableUser> simpleObservableUser)
+	private readonly IValidator _validator;
+	public ValidationOneViewModel(IValidator validator)
 	{
-		_simpleValidator = simpleValidator;
-		_userValidator = userValidator;
-		_simpleObservableUser = simpleObservableUser;
+		_validator = validator;
 
 		_ = ValidateEntities();
 	}
@@ -24,13 +17,13 @@ public partial class ValidationOneViewModel : ObservableObject
 	private async Task ValidateEntities()
 	{
 		var entity = new SimpleEntity();
-		var results = await _simpleValidator.ValidateAsync(entity);
+		var results = await _validator.ValidateAsync(entity);
 
 		var user = new ValidationUser();
-		var userResult = await _userValidator.ValidateAsync(user);
+		var userResult = await _validator.ValidateAsync(user);
 
 		var observableUser = new SimpleObservableUser();
-		var observableUserResult = _simpleObservableUser.ValidateAsync(observableUser);
+		var observableUserResult = await _validator.ValidateAsync(observableUser);
 	}
 
 
