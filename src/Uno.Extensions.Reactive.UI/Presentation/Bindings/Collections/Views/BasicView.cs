@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Facets;
@@ -18,19 +19,22 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Views
 		private readonly CollectionChangedFacet _collectionChanged;
 		private readonly SelectionFacet? _selection;
 		private readonly PaginationFacet? _pagination;
+		private readonly EditionFacet? _edition;
 
 		public BasicView(
 			CollectionFacet collectionFacet,
 			CollectionChangedFacet collectionChangedFacet,
 			BindableCollectionExtendedProperties extendedProperties,
 			SelectionFacet? selectionFacet = null,
-			PaginationFacet? paginationFacet = null)
+			PaginationFacet? paginationFacet = null,
+			EditionFacet? editionFacet = null)
 		{
 			_collection = collectionFacet;
 			_collectionChanged = collectionChangedFacet;
 			ExtendedProperties = extendedProperties;
 			_selection = selectionFacet;
 			_pagination = paginationFacet;
+			_edition = editionFacet;
 		}
 
 		#region ICollection
@@ -46,33 +50,36 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Views
 		}
 
 		public int Count => _collection.Count;
-		public bool IsReadOnly => _collection.IsReadOnly;
+		public bool IsReadOnly => _edition?.IsReadOnly ?? false;
 
 		public object? this[int index]
 		{
 			get => _collection[index];
-			set => _collection[index] = value;
+			set => (_edition ?? throw EditionNotSupported()).SetItem(index, value);
 		}
-
-		public void Add(object item) => _collection.Add(item);
-
-		public void Insert(int index, object item) => _collection.Insert(index, item);
 
 		public int IndexOf(object item) => _collection.IndexOf(item);
 
 		public bool Contains(object item) => _collection.Contains(item);
 
-		public bool Remove(object item) => _collection.Remove(item);
+		public void Add(object item) => (_edition ?? throw EditionNotSupported()).Add(item);
 
-		public void RemoveAt(int index) => _collection.RemoveAt(index);
+		public void Insert(int index, object item) => (_edition ?? throw EditionNotSupported()).Insert(index, item);
 
-		public void Clear() => _collection.Clear();
+		public bool Remove(object item) => (_edition ?? throw EditionNotSupported()).Remove(item);
+
+		public void RemoveAt(int index) => (_edition ?? throw EditionNotSupported()).RemoveAt(index);
+
+		public void Clear() => (_edition ?? throw EditionNotSupported()).Clear();
 
 		IEnumerator<object?> IEnumerable<object?>.GetEnumerator() => _collection.GetEnumerator();
 		IEnumerator IEnumerable.GetEnumerator() => _collection.GetEnumerator();
 
 		public void CopyTo(object[] array, int arrayIndex) => _collection.CopyTo(array, arrayIndex);
-#endregion
+
+		private NotSupportedException EditionNotSupported([CallerMemberName] string? method = null)
+			=> new($"{method} is not supported on a read-only collection.");
+		#endregion
 
 		#region Selection (Single)
 		/// <inheritdoc />

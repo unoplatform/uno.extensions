@@ -23,10 +23,11 @@ public class Bindable<T> : IBindable, INotifyPropertyChanged, IFeed<T>
 	private T _value = default!; // This is going to be init by property.Subscribe(OnOwnerUpdated);, and anyway with bindings we cannot ensure non-null!
 	private CancellationTokenSource? _asyncSetCt;
 	private List<Action<T>>? _onUpdated;
+	private bool _isInitialized = false;
 
 	private readonly BindablePropertyInfo<T> _property;
 	private readonly bool _hasValueProperty;
-	private readonly bool _isInherited;
+	private readonly bool _isDenormalizedBindable;
 
 	/// <summary>
 	/// Gets the name of the property backed by this bindable
@@ -41,6 +42,11 @@ public class Bindable<T> : IBindable, INotifyPropertyChanged, IFeed<T>
 	/// <param name="property">Info of the property that is backed by this instance.</param>
 	/// <exception cref="ArgumentException">If the property is invalid</exception>
 	public Bindable(BindablePropertyInfo<T> property)
+		: this(property, BindableConfig.Default)
+	{
+	}
+
+	private protected Bindable(BindablePropertyInfo<T> property, BindableConfig config = BindableConfig.Default)
 	{
 		if (!property.IsValid)
 		{
@@ -48,10 +54,13 @@ public class Bindable<T> : IBindable, INotifyPropertyChanged, IFeed<T>
 		}
 
 		_property = property;
-		_hasValueProperty = false;
-		_isInherited = false;
+		_hasValueProperty = config.HasFlag(BindableConfig.RaiseValuePropertyChanged);
+		_isDenormalizedBindable = false;
 
-		property.Subscribe(OnOwnerUpdated);
+		if (config.HasFlag(BindableConfig.AutoInit))
+		{
+			Initialize();
+		}
 	}
 
 	/// <summary>
@@ -76,9 +85,18 @@ public class Bindable<T> : IBindable, INotifyPropertyChanged, IFeed<T>
 		// but it's compliant with the generated code which should be the only one which creates derives type of this.
 		// A more valid approach would be to do _isInherited = hasValueProperty || GetType() != typeof(Bindable<T>) but would involve reflection.
 		// See usage of this flag to understand consequences (and why it's acceptable to not have that flag set is miss-used).
-		_isInherited = true;
+		_isDenormalizedBindable = true;
 
-		property.Subscribe(OnOwnerUpdated);
+		Initialize();
+	}
+
+	private protected void Initialize()
+	{
+		if (!_isInitialized)
+		{
+			_isInitialized = true;
+			_property.Subscribe(OnOwnerUpdated);
+		}
 	}
 
 	/// <summary>
@@ -177,7 +195,7 @@ public class Bindable<T> : IBindable, INotifyPropertyChanged, IFeed<T>
 		// however when we use generated `BindableMyEntity : Bindable<MyEntity>`,
 		// we keep the same instance of `BindableMyEntity` so bindings are not re-evaluated.
 		// In that case we will also raise a 'PropertyChanged("")' in order to force the binding engine to re-evaluate all properties.
-		if (_isInherited)
+		if (_isDenormalizedBindable)
 		{
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(""));
 		}

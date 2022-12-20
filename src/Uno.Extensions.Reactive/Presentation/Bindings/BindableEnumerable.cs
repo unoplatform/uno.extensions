@@ -40,13 +40,21 @@ public abstract class BindableEnumerable<TCollection, TItem, TBindableItem> : Bi
 	/// </summary>
 	/// <param name="property">Info of the property that is backed by this instance.</param>
 	/// <param name="bindableFactory">The factory to create an instance of <typeparamref name="TBindableItem"/>.</param>
+	/// <param name="config">Advanced configuration of the base bindable.</param>
 	private protected BindableEnumerable(
 		BindablePropertyInfo<TCollection> property,
-		Func<BindablePropertyInfo<TItem>, TBindableItem> bindableFactory)
-		: base(property)
+		Func<BindablePropertyInfo<TItem>, TBindableItem> bindableFactory,
+		BindableConfig config)
+		: base(property, config & ~BindableConfig.AutoInit)
 	{
 		_listProperty = property;
 		_bindableFactory = bindableFactory;
+
+		// As we disabled auto-init on parent, if sub-classes kept it enabled, we have to invoke it by our own.
+		if (config.HasFlag(BindableConfig.AutoInit))
+		{
+			Initialize();
+		}
 	}
 
 	private protected abstract CollectionChangeSet<TItem> GetChanges(TCollection previous, TCollection current);

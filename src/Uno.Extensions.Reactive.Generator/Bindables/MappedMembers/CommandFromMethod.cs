@@ -179,7 +179,7 @@ internal partial record CommandFromMethod : IMappedMember
 				{
 					return args => parameters
 						.Select((p, i) => p.Symbol is { Type.IsValueType: false, NullableAnnotation: NullableAnnotation.NotAnnotated }
-							? $"{args}.Item{i} is not null"
+							? $"{args}.Item{i+1} is not null"
 							: null)
 						.Where(s => s is not null)
 						.JoinBy(" && ");

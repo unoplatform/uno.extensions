@@ -49,10 +49,6 @@ namespace Uno.Extensions.RuntimeTests
 			_window = Microsoft.UI.Xaml.Window.Current;
 #endif
 
-			// Initialize the UnitTestsUIContentHelperProxy for the test assembly
-			UIHelper.ContentSetter = e => UnitTestsUIContentHelper.Content = e;
-			UIHelper.ContentGetter = () => UnitTestsUIContentHelper.Content;
-
 			ForceAssemblyLoading();
 			_window.Content ??= new Uno.UI.RuntimeTests.UnitTestsControl();
 		}

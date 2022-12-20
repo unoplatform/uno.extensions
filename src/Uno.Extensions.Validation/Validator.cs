@@ -27,13 +27,13 @@ public class Validator : IValidator
 			try
 			{
 				context ??= new ValidationContext(instance);
-				if (instance is INotifyDataErrorInfo _instance)
+				System.ComponentModel.DataAnnotations.Validator.TryValidateObject(instance, context, results, true);
+
+				if (!results.Any() && instance is INotifyDataErrorInfo _instance)
 				{
 					results = _instance?.GetErrors(null).OfType<ValidationResult>()?.ToList()
 						?? new List<ValidationResult>();
 				}
-
-				if (!results.Any()) System.ComponentModel.DataAnnotations.Validator.TryValidateObject(instance, context, results, true);
 			}
 			catch { }
 			if (results.Any()) return results;

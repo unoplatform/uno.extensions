@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using Uno.Extensions.Collections;
 using Uno.Extensions.Reactive.Dispatching;
 
 namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection;
@@ -28,4 +29,10 @@ internal interface IBindableCollectionViewSource : IServiceProvider
 	/// <returns>The requested facet.</returns>
 	/// <exception cref="InvalidOperationException">If the requested facet is not available on this collection.</exception>
 	TFacet GetFacet<TFacet>();
+
+	/// <summary>
+	/// Update the source from the View
+	/// </summary>
+	/// <param name="args">The change args to apply.</param>
+	void Update(RichNotifyCollectionChangedEventArgs args);
 }

@@ -6,6 +6,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using Windows.Foundation.Collections;
 using Uno.Extensions.Collections;
+using Uno.Extensions.Collections.Facades.Differential;
 using Uno.Extensions.Collections.Facades.Map;
 using Uno.Extensions.Conversion;
 using Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Facets;
@@ -141,7 +142,7 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Views
 		/// <inheritdoc />
 		public IEnumerator<object?> GetEnumerator() => new MapEnumerator<object?, object?>(_converter, _source.GetEnumerator());
 		/// <inheritdoc />
-		public void CopyTo(object?[] array, int arrayIndex) => _converter.ArrayCopy(_source, array, arrayIndex);
+		public void CopyTo(object?[] array, int arrayIndex) => _converter.ArrayCopy(_source.Head.AsList(), array, arrayIndex);
 
 		private NotSupportedException NotSupported([CallerMemberName] string? methodName = null)
 			=> new NotSupportedException(methodName + " is not supported on this collection.");

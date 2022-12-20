@@ -59,6 +59,12 @@ internal class DataLayerChangesBuffer : IDisposable
 	/// </summary>
 	public IObservableCollection Collection { get; }
 
+	/// <summary>
+	/// Indicates if a collection change has been received for the current collection.
+	/// There are 2 source of updates: The  Collection.NotifyCollectionChanged itself, or an update from the View (e.g. Reorder)
+	/// </summary>
+	public bool HasBeenEdited { get; private set; }
+
 	public DataLayerChangesBuffer(ILayerHolder layer, IObservableCollection source, ILayerTracker changesTracker)
 		: this(null, layer, source, null, changesTracker)
 	{
@@ -90,7 +96,7 @@ internal class DataLayerChangesBuffer : IDisposable
 			oldItems = null;
 
 			// This is the initial tracker, we don't have to detect changes, we only have to propagate collection changes
-			_subscription.Disposable = Collection.AddCollectionChangedHandler(Buffer, out newItems);
+			_subscription.Disposable = Collection.AddCollectionChangedHandler(Add, out newItems);
 		}
 		else
 		{
@@ -98,10 +104,11 @@ internal class DataLayerChangesBuffer : IDisposable
 			_previous = null; // prevent leak
 
 			// Init the buffer and then start collection change buffering / propagation
-			_subscription.Disposable = Collection.AddCollectionChangedHandler(Buffer, out newItems);
+			_subscription.Disposable = Collection.AddCollectionChangedHandler(Add, out newItems);
 		}
 
-		var updater = tracker.GetChanges(oldItems, newItems, _changes, _layer.Items.HasListener);
+		var preComputedChanges = _previous is { HasBeenEdited: true } ? null : _changes;
+		var updater = tracker.GetChanges(oldItems, newItems, preComputedChanges, _layer.Items.HasListener);
 
 		return new DataLayerUpdate(oldItems, updater, newItems, _layer.Items, tracker.Context, this);
 	}
@@ -138,7 +145,7 @@ internal class DataLayerChangesBuffer : IDisposable
 		if (Interlocked.CompareExchange(ref _state, State.Stopped, State.Initialized) is State.Initialized
 			|| Interlocked.CompareExchange(ref _state, State.Stopped, State.Running) is State.Running)
 		{
-			Collection.RemoveCollectionChangedHandler(Buffer, out _stopItems);
+			Collection.RemoveCollectionChangedHandler(Add, out _stopItems);
 			_subscription.Dispose();
 		}
 		else if (_stopItems is null)
@@ -157,13 +164,16 @@ internal class DataLayerChangesBuffer : IDisposable
 		return _stopItems!;
 	}
 
-	private void Buffer(RichNotifyCollectionChangedEventArgs arg)
+	public void Add(RichNotifyCollectionChangedEventArgs arg)
 	{
+		// Note: This can be invoked from any thread, background or UI
 		// Note: even for 'Reset' we properly detect changes (instead of clearing the _buffer). 
 		//		 This is to avoid invalid state due to ui callbacks not being invoked.
 
+		HasBeenEdited = true;
+
 		var changes = _changesTracker.GetChanges(arg);
-		ImmutableInterlocked.Update(ref _buffer, (buffer, c) => buffer.Add(c), changes);
+		ImmutableInterlocked.Update(ref _buffer, static (buffer, c) => buffer.Add(c), changes);
 
 		// Wait for initialization completion before auto flush
 		if (_state == State.Running)
