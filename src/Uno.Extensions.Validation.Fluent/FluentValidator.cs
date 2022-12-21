@@ -4,7 +4,7 @@
 /// Class that can be used to validate objects, properties and methods based on the associated Fluent Validators. 
 /// </summary>
 /// <typeparam name="T">Type</typeparam>
-public class FluentValidator<T> : IValidator<T>
+internal class FluentValidator<T> : IValidator<T>
 {
 	/// <summary>
 	/// Fluent validator
@@ -22,10 +22,13 @@ public class FluentValidator<T> : IValidator<T>
 		ValidationContext? context = null,
 		CancellationToken cancellationToken = default)
 	{
-		List<ValidationResult>? result = new List<ValidationResult>();
-		
-		var validationResult = (await _validator.ValidateAsync((T)instance, cancellationToken));
-		result = validationResult?.Errors.Select(x => new ValidationResult(x.ErrorMessage))?.ToList();
+		var result = new List<ValidationResult>();
+
+		if (instance is T tInstance)
+		{
+			var validationResult = (await _validator.ValidateAsync(tInstance, cancellationToken));
+			result = validationResult?.Errors.Select(x => new ValidationResult(x.ErrorMessage))?.ToList();
+		}
 
 		return result ?? new List<ValidationResult>();
 	}

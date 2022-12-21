@@ -17,7 +17,7 @@ public static class HostBuilderExtensions
 		.ConfigureServices((ctx, services) =>
 		{
 			_ = services
-			.AddScoped<IValidator, Validator>();
+			.AddSingleton<IValidator, Validator>();
 		});
 
 		hostBuilder= configureDelegate is not null ? hostBuilder.ConfigureServices(configureDelegate) : hostBuilder;

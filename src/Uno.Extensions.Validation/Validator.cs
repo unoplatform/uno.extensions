@@ -1,6 +1,6 @@
 ﻿namespace Uno.Extensions.Validation;
 
-public class Validator : IValidator
+internal class Validator : IValidator
 {
 	private readonly IServiceProvider _services;
 	private IInstanceType? TypedValidator(Type instanceType) => _services.GetServices<IInstanceType>().FirstOrDefault(x => x.InstanceType == instanceType);

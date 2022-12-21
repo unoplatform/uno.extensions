@@ -10,8 +10,8 @@ public static class ValidationBuilderExtensions
 		return builder.ConfigureServices((ctx, services) =>
 					services
 						.AddInstanceTypeInfo<TEntity>()
-						.AddScoped(typeof(IValidator<TEntity>), typeof(FluentValidator<TEntity>))
-						.AddScoped<FluentValidation.IValidator<TEntity>, TValidator>())
+						.AddSingleton(typeof(IValidator<TEntity>), typeof(FluentValidator<TEntity>))
+						.AddSingleton<FluentValidation.IValidator<TEntity>, TValidator>())
 			.AsValidationBuilder();
 	}
 }
