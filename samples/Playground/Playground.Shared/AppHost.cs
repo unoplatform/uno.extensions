@@ -31,15 +31,6 @@ internal static class AppHost
 
 			.UseThemeSwitching()
 
-			//.UseValidation(
-			//configureDelegate: (ctx, services) =>
-			//{
-			//	//Register FluentValidators
-			//	services.WithValidator<
-			//		ValidationUser,
-			//		ValidationUserValidator>();
-			//})
-
 			// Register Json serializer jsontypeinfo definitions
 			.UseSerialization(
 				services => services
