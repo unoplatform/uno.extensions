@@ -8,8 +8,8 @@ public class ValidationHostInit : BaseHostInitialization
 	protected override IHostBuilder Custom(IHostBuilder builder)
 		=>builder
 			.UseValidation(configure:
-			builder=>
-				builder.Validator<ValidationUser,ValidationUserValidator>());
+			 validationBuilder=>
+				validationBuilder.Validator<ValidationUser,ValidationUserValidator>());
 
 	protected override void RegisterRoutes(IViewRegistry views, IRouteRegistry routes)
 	{

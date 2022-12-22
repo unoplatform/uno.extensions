@@ -4,7 +4,7 @@
 /// Defines an interface for a data validator.
 /// </summary>
 /// <typeparam name="T">Instance to validate</typeparam>
-public interface IValidator<in T> : IValidator { }
+internal interface IValidator<in T> : IValidator { }
 
 public interface IValidator
 {

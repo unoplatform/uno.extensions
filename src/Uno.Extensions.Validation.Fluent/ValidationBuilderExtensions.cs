@@ -2,7 +2,7 @@
 
 public static class ValidationBuilderExtensions
 {
-	public static IHostBuilder Validator<TEntity, TValidator>(
+	public static IValidationBuilder Validator<TEntity, TValidator>(
 		this IValidationBuilder builder)
 		where TValidator : class, FluentValidation.IValidator<TEntity>
 		where TEntity : class

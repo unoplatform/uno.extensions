@@ -7,17 +7,17 @@ public static class ServiceCollectionExtensions
 	)where TEntity : class
 	{
 		return services
-			.AddSingleton<IInstanceType>(sp => new IInstanceTypeWrapper<TEntity>(sp));
+			.AddSingleton<IValidatorTypedInstance>(sp => new ValidatorTypedInstance<TEntity>(sp));
 		
 	}
 }
 
-internal interface IInstanceType : IValidator
+internal interface IValidatorTypedInstance : IValidator
 {
 	Type InstanceType { get; }
 }
 
-internal record IInstanceTypeWrapper<T>(IServiceProvider Services) : IInstanceType
+internal record ValidatorTypedInstance<T>(IServiceProvider Services) : IValidatorTypedInstance
 {
 	public Type InstanceType => typeof(T);
 	public IValidator<T> Validator => Services.GetRequiredService<IValidator<T>>();

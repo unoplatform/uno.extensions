@@ -1,4 +1,5 @@
 ﻿
+using System.Collections.ObjectModel;
 using static FluentValidation.DefaultValidatorExtensions;
 
 namespace TestHarness.Ext.Navigation.Validation;
@@ -7,6 +8,15 @@ namespace TestHarness.Ext.Navigation.Validation;
 public partial class ValidationOneViewModel : ObservableObject
 {
 	private readonly IValidator _validator;
+
+	[ObservableProperty]
+	private List<ValidationResult> validatableObjectErrors;
+
+	[ObservableProperty]
+	private List<ValidationResult> observableValidatorErrors;
+
+	[ObservableProperty]
+	private List<ValidationResult> fluentValidatorErrors;
 	public ValidationOneViewModel(IValidator validator)
 	{
 		_validator = validator;
@@ -17,13 +27,16 @@ public partial class ValidationOneViewModel : ObservableObject
 	private async Task ValidateEntities()
 	{
 		var entity = new SimpleEntity();
-		var results = await _validator.ValidateAsync(entity);
+		var errors = await _validator.ValidateAsync(entity);
+		ValidatableObjectErrors = new List<ValidationResult>(errors);
 
 		var user = new ValidationUser();
-		var userResult = await _validator.ValidateAsync(user);
+		errors = await _validator.ValidateAsync(user);
+		FluentValidatorErrors = new List<ValidationResult>(errors);
 
 		var observableUser = new SimpleObservableUser();
-		var observableUserResult = await _validator.ValidateAsync(observableUser);
+		errors = await _validator.ValidateAsync(observableUser);
+		ObservableValidatorErrors = new List<ValidationResult>(errors);
 	}
 
 
