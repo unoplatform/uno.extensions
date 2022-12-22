@@ -24,12 +24,12 @@
     <PackageReference Include="Uno.WinUI.Skia.Gtk" Version="4.6.19" />
     <PackageReference Include="Uno.WinUI.RemoteControl" Version="4.6.19" Condition="'$(Configuration)'=='Debug'" />
     <PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="4.6.19" />
-    <PackageReference Include="Uno.Material.WinUI" Version="2.3.0" />
-    <PackageReference Include="Uno.Toolkit.WinUI.Material" Version="2.4.0-dev.129" />
+    <PackageReference Include="Uno.Material.WinUI" Version="2.4.1" />
+    <PackageReference Include="Uno.Toolkit.WinUI.Material" Version="2.4.2" />
     <!--#if (markup)-->
-    <PackageReference Include="Uno.Toolkit.WinUI.Markup" Version="2.4.0-dev.129" />
+    <PackageReference Include="Uno.Toolkit.WinUI.Markup" Version="2.4.0-dev.140" />
     <!--#else-->
-    <PackageReference Include="Uno.Toolkit.WinUI" Version="2.4.0-dev.129" />
+    <PackageReference Include="Uno.Toolkit.WinUI" Version="2.4.2" />
     <!--#endif-->
     <PackageReference Include="Uno.Extensions.Authentication" Version="255.255.255.255" />
     <PackageReference Include="Uno.Extensions.Authentication.WinUI" Version="255.255.255.255" />
