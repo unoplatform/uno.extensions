@@ -21,8 +21,10 @@
 	</PropertyGroup>
 	<ItemGroup>
 		<PackageReference Include="CommunityToolkit.Mvvm" />
-		<PackageReference Include="IdentityModel.OidcClient" />
+		<PackageReference Include="System.ComponentModel.Annotations" />
 		<PackageReference Include="Uno.CommunityToolkit.WinUI.UI" />
+		<PackageReference Include="FluentValidation" />
+		<PackageReference Include="IdentityModel.OidcClient" />
 		<PackageReference Include="Microsoft.Identity.Client" />
 		<PackageReference Include="Uno.WinUI" />
 		<PackageReference Include="Uno.WinUI.RemoteControl" Condition="'$(Configuration)'=='Debug'" />
@@ -59,6 +61,8 @@
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Serialization\Uno.Extensions.Serialization.csproj" />
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Http\Uno.Extensions.Http.csproj" />
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Http.Refit\Uno.Extensions.Http.Refit.csproj" />
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Validation\Uno.Extensions.Validation.csproj" />
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Validation.Fluent\Uno.Extensions.Validation.Fluent.csproj" />
 		<ProjectReference Include="..\TestHarness.Core\TestHarness.Core.csproj" />
 	</ItemGroup>
 	<ItemGroup>

@@ -265,6 +265,14 @@
       <Project>{130528a4-9934-4dd4-9743-1c395e703fc4}</Project>
       <Name>Uno.Extensions.Toolkit</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\src\Uno.Extensions.Validation.Fluent\Uno.Extensions.Validation.Fluent.csproj">
+      <Project>{349e684d-bc28-4d6e-8ca6-6646de7fd478}</Project>
+      <Name>Uno.Extensions.Validation.Fluent</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\src\Uno.Extensions.Validation\Uno.Extensions.Validation.csproj">
+      <Project>{15da44e8-1aaa-46fb-9e62-14fec0dfa401}</Project>
+      <Name>Uno.Extensions.Validation</Name>
+    </ProjectReference>
   </ItemGroup>
   <!-- Reference to Reactive.props only required when referencing Reactive as source code -->
   <Import Project="..\Playground.Shared\Playground.Shared.projitems" Label="Shared" />

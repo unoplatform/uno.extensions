@@ -28,5 +28,6 @@ public enum TestSections
 	Core_Storage,
 	Localization,
 	Http_Endpoints,
-	Http_Refit
+	Http_Refit,
+	Validation
 }

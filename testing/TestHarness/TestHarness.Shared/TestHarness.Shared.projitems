@@ -363,6 +363,10 @@
       <DependentUpon>TabBarSettingsPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\TabBar\TabBarSettingsViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Validation\ValidationHostInit.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Validation\ValidationMainPage.xaml.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Validation\ValidationOnePage.xaml.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Validation\ValidationOneViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)GlobalUsings.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)HostBuilderHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IHostInitialization.cs" />

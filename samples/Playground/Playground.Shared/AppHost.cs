@@ -1,5 +1,4 @@
 ﻿namespace Playground;
-
 internal static class AppHost
 {
 	public static IApplicationBuilder ConfigureApp(this IApplicationBuilder builder)

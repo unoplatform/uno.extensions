@@ -33,16 +33,16 @@ public static class ServiceCollectionExtensions
 	{
 		return services
 			.AddSingleton(instance)
-			.AddSingleton<IJsonTypeInfoWrapper>(sp => new JsonTypeInfoWrapper<TEntity>(sp, instance));
+			.AddSingleton<ISerializerTypedInstance>(sp => new SerializerTypedInstance<TEntity>(sp, instance));
 	}
 }
 
-internal interface IJsonTypeInfoWrapper : ISerializer
+internal interface ISerializerTypedInstance : ISerializer
 {
 	Type JsonType { get; }
 }
 
-internal record JsonTypeInfoWrapper<T>(IServiceProvider Services, JsonTypeInfo<T> TypeInfo) : IJsonTypeInfoWrapper
+internal record SerializerTypedInstance<T>(IServiceProvider Services, JsonTypeInfo<T> TypeInfo) : ISerializerTypedInstance
 {
 	public Type JsonType => typeof(T);
 

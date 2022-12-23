@@ -1,6 +1,8 @@
 ﻿global using System;
 global using System.Collections.Generic;
+global using System.ComponentModel.DataAnnotations;
 global using System.Diagnostics;
+global using System.Globalization;
 global using System.Linq;
 global using System.Net.Http;
 global using System.Reflection;
@@ -12,7 +14,9 @@ global using CommunityToolkit.Mvvm.ComponentModel;
 global using CommunityToolkit.Mvvm.Input;
 global using Microsoft.Extensions.DependencyInjection;
 global using Microsoft.Extensions.Hosting;
+global using Microsoft.Extensions.Localization;
 global using Microsoft.Extensions.Logging;
+global using Microsoft.Extensions.Options;
 global using Refit;
 global using TestHarness.Ext.Authentication.Custom;
 global using TestHarness.Models;
@@ -25,9 +29,9 @@ global using Uno.Extensions.Localization;
 global using Uno.Extensions.Logging;
 global using Uno.Extensions.Navigation;
 global using Uno.Extensions.Navigation.Regions;
-global using Uno.Extensions.Navigation.UI;
 global using Uno.Extensions.Reactive;
 global using Uno.Extensions.Serialization;
+global using Uno.Extensions.Validation;
 
 #if WINUI
 	global using Microsoft.UI.Dispatching;
@@ -60,3 +64,4 @@ global using Uno.Extensions.Serialization;
 	global using Application = Windows.UI.Xaml.Application;
 global using ToggleButton = Windows.UI.Xaml.Controls.Primitives.ToggleButton;
 #endif
+

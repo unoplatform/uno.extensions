@@ -102,14 +102,4 @@ public static class ConfigBuilderExtensions
 				.ConfigureHostConfiguration(
 					configurationBuilder => configurationBuilder.AddSectionFromEntity(entity, sectionName)).AsConfigBuilder();
 	}
-
-	public static IConfigBuilder AsConfigBuilder(this IHostBuilder hostBuilder)
-	{
-		if(hostBuilder is ConfigBuilder configBuilder)
-		{
-			return configBuilder;
-		}
-
-		return new ConfigBuilder(hostBuilder);
-	}
 }
