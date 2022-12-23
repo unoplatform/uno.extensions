@@ -1,4 +1,4 @@
-﻿{
+{
   "$schema": "http://json.schemastore.org/template",
   "author": "Uno Platform",
   "classifications": [
@@ -6,14 +6,14 @@
     "Uno Platform",
     "Android",
     "iOS",
-    "Windows",
     "macOS",
+    "Mac Catalyst",
+    "Windows",
     "Linux",
-    "WebAssembly",
-    "WinUI",
-    "WindowsAppSdk",
-    "Extensions",
-    "dotnet-new"
+    "WebAssembly"
+    // "WinUI",
+    // "WindowsAppSdk",
+    // "Extensions"
   ],
   "name": "Multi-Platform App (Uno.Extensions)",
   "identity": "Uno.Extensions.TemplateStudio.CSharp",
@@ -33,7 +33,6 @@
     "C7433AE2-B1A0-4C1A-887E-5CAA7AAF67A6", // Solution file (SolutionGuid)
     "FAA2C1DE-F859-4053-9573-6245F7E832EF", // src solution folder
     "BACDD33A-304C-46C4-9B00-AC166978D7E0", // (core) library
-    "7B230AD7-BE88-4AE7-84B6-4E652A59083B", // UI
     "339C569C-EE23-445E-B908-743673EE5BC9", // Platforms solution folder
     "BA1ACE40-623E-4F42-94BB-11CF4D52C445", // Web solution folder
     "24D56E12-2373-4CBD-9AD4-5C931D15FB0D", // Mobile
@@ -51,6 +50,25 @@
     "5ED31500-DF01-462D-9436-EC2EDCAA1965" // DataContracts
   ],
   "symbols": {
+    "template-type": {
+      "displayName": "Type",
+      "type": "parameter",
+      "datatype": "choice",
+      "defaultValue": "default",
+      "description": "Selects whether to use the default Extensions Template or Blank App",
+      "choices": [
+        {
+          "choice": "default",
+          "description": "A basic project using Uno.Extensions",
+          "displayName": "Default"
+        },
+        {
+          "choice": "blank",
+          "description": "A Blank app without Uno.Extensions",
+          "displayName": "Blank"
+        }
+      ]
+    },
     "appid": {
       "displayName": "App ID",
       "type": "parameter",
@@ -268,17 +286,17 @@
       "datatype": "choice",
       "choices": [
         {
-          "choice": "frame",
-          "displayName": "Frame (use single Frame for navigation)",
-          "description": "This provides basic Frame navigation similar to a standard blank template."
+          "choice": "default",
+          "displayName": "Default",
+          "description": "Provides a simple 2 page sample with a Splash Screen."
         },
         {
-          "choice": "toolkit",
-          "displayName": "ExtendedSplashScreen (using Uno.Extensions.Navigation.Toolkit.WinUI)",
-          "description": "This provides navigation using the Uno.Extensions.Navigation.Toolkit.WinUI package."
+          "choice": "frame",
+          "displayName": "Frame",
+          "description": "Uses the Frame control for navigation."
         }
       ],
-      "defaultValue": "toolkit",
+      "defaultValue": "default",
       "description": "Sets the base type of navigation used in the app."
     },
     "cpm": {
@@ -353,15 +371,39 @@
       "datatype": "bool",
       "value": "tfm == 'net7.0'"
     },
+    "libarybasetargetframework": {
+      "type": "generated",
+      "generator": "switch",
+      "replaces": "$libarybasetargetframework$",
+      "parameters": {
+        "evaluator": "C++",
+        "datatype": "string",
+        "cases": [
+          {
+            "condition": "(tfm == 'net6.0')",
+            "value": "netstandard2.1"
+          },
+          {
+            "condition": "(tfm == 'net7.0')",
+            "value": "net7.0"
+          }
+        ]
+      }
+    },
+    "blank-app-template": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "template-type == 'blank'"
+    },
+    "use-default-nav": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "navigation == 'default'"
+    },
     "use-frame-nav": {
       "type": "computed",
       "datatype": "bool",
       "value": "navigation == 'frame'"
-    },
-    "use-toolkit-nav": {
-      "type": "computed",
-      "datatype": "bool",
-      "value": "navigation == 'toolkit'"
     },
     "HostIdentifier": {
       "type": "bind",
@@ -370,14 +412,14 @@
   },
   "primaryOutputs": [
     {
+      "path": "MyExtensionsApp.Base\\App.xaml.cs"
+    },
+    {
       "condition": "(HostIdentifier == \"dotnetcli\" || HostIdentifier == \"dotnetcli-preview\" || HostIdentifier == \"vs\")",
       "path": "MyExtensionsApp.sln"
     },
     {
       "path": "MyExtensionsApp\\MyExtensionsApp.csproj"
-    },
-    {
-      "path": "MyExtensionsApp.UI\\MyExtensionsApp.UI.csproj"
     },
     {
       "condition": "server",
@@ -526,6 +568,22 @@
           ]
         },
         {
+          "condition": "(architecture == 'mvvm')",
+          "exclude": [
+            "MyExtensionsApp/Presentation/MainModel.cs",
+            "MyExtensionsApp/Presentation/SecondModel.cs",
+            "MyExtensionsApp/Presentation/ShellModel.cs"
+          ]
+        },
+        {
+          "condition": "(architecture == 'mvux')",
+          "exclude": [
+            "MyExtensionsApp/Presentation/MainViewModel.cs",
+            "MyExtensionsApp/Presentation/SecondViewModel.cs",
+            "MyExtensionsApp/Presentation/ShellViewModel.cs"
+          ]
+        },
+        {
           "condition": "(!use-http)",
           "exclude": [
             "MyExtensionsApp/Services/IApiClient.cs"
@@ -555,7 +613,7 @@
             "MyExtensionsApp.Windows/MyExtensionsApp.Windows.csproj",
             "MyExtensionsApp.ServerApp/MyExtensionsApp.Server.csproj",
             "MyExtensionsApp.Tests/MyExtensionsApp.Tests.csproj",
-            "MyExtensionsApp.UITests/MyExtensionsApp.UITests.csproj",
+            "MyExtensionsAppTests/MyExtensionsAppTests.csproj",
             "Directory.Build.props",
             "Directory.Packages.props"
           ]
@@ -590,49 +648,62 @@
         {
           "condition": "(!use-csharp-markup)",
           "exclude": [
-            "MyExtensionsApp.UI/Infrastructure/ApplicationBuilderExtensions.cs",
-            "MyExtensionsApp.UI/Styles/*.cs"
+            "MyExtensionsApp/Infrastructure/ApplicationBuilderExtensions.cs",
+            "MyExtensionsApp/Styles/*.cs"
           ]
         },
         {
           "condition": "(use-csharp-markup)",
           "exclude": [
-            "MyExtensionsApp.UI/Styles/*.xaml",
-            "MyExtensionsApp.UI/Views/*.xaml"
+            "MyExtensionsApp/Styles/*.xaml",
+            "MyExtensionsApp/**/*.xaml"
           ],
           "rename": {
-            "MyExtensionsApp.UI/Views/MainPage.xaml.cs": "MyExtensionsApp.UI/Views/MainPage.cs",
-            "MyExtensionsApp.UI/Views/SecondPage.xaml.cs": "MyExtensionsApp.UI/Views/SecondPage.cs",
-            "MyExtensionsApp.UI/Views/Shell.xaml.cs": "MyExtensionsApp.UI/Views/Shell.cs"
+            "MyExtensionsApp/MainPage.xaml.cs": "MyExtensionsApp/MainPage.cs",
+            "MyExtensionsApp/Presentation/MainPage.xaml.cs": "MyExtensionsApp/Presentation/MainPage.cs",
+            "MyExtensionsApp/Presentation/SecondPage.xaml.cs": "MyExtensionsApp/Presentation/SecondPage.cs",
+            "MyExtensionsApp/Presentation/Shell.xaml.cs": "MyExtensionsApp/Presentation/Shell.cs"
           }
         },
         {
-          "condition": "(use-frame-nav)",
+          "condition": "(blank-app-template)",
           "exclude": [
+            "MyExtensionsApp/Business/**",
+            "MyExtensionsApp/Infrastructure/**",
             "MyExtensionsApp/Presentation/**",
-            "MyExtensionsApp.UI/Views/MainPage.xaml",
-            "MyExtensionsApp.UI/Views/MainPage.xaml.cs",
-            "MyExtensionsApp.UI/Views/SecondPage.xaml",
-            "MyExtensionsApp.UI/Views/SecondPage.xaml.cs",
-            "MyExtensionsApp.UI/Views/Shell.xaml",
-            "MyExtensionsApp.UI/Views/Shell.xaml.cs"
-          ],
-          "rename": {
-            "MyExtensionsApp.UI/Views/BlankPage.xaml": "MyExtensionsApp.UI/Views/MainPage.xaml",
-            "MyExtensionsApp.UI/Views/BlankPage.xaml.cs": "MyExtensionsApp.UI/Views/MainPage.xaml.cs"
-          }
+            "MyExtensionsApp/Services/**",
+            "MyExtensionsApp/Styles/**",
+            "MyExtensionsApp/appsettings.*"
+          ]
         },
         {
-          "condition": "(use-toolkit-nav)",
+          "condition": "(!blank-app-template)",
           "exclude": [
-            "MyExtensionsApp.UI/Views/BlankPage.xaml",
-            "MyExtensionsApp.UI/Views/BlankPage.xaml.cs"
+            "MyExtensionsApp/MainPage.xaml",
+            "MyExtensionsApp/MainPage.xaml.cs"
+          ]
+        },
+        {
+          "condition": "(tfm == 'net7.0')",
+          "exclude": [
+            "MyExtensionsApp.DataContracts/_Compat/**"
           ]
         }
       ]
     }
   ],
   "postActions": [
+    {
+        "id": "openInEditor",
+        "condition": "(HostIdentifier != \"dotnetcli\" && HostIdentifier != \"dotnetcli-preview\")",
+        "description": "Opens App.xaml.cs in the editor.",
+        "manualInstructions": [],
+        "actionId": "84C0DA21-51C8-4541-9940-6CA19AF04EE6",
+        "args": {
+            "files": "0"
+        },
+        "continueOnError": true
+    },
     {
       "condition": "(!skipRestore)",
       "description": "Restore NuGet packages required by this project",

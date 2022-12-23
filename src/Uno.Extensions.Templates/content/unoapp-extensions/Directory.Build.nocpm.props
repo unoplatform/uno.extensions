@@ -1,6 +1,6 @@
 <Project ToolsVersion="15.0">
 	<PropertyGroup>
-		<LangVersion>10.0</LangVersion>
+		<LangVersion>latest</LangVersion>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 
@@ -10,6 +10,53 @@
 
 		<TreatWarningsAsErrors>True</TreatWarningsAsErrors>
 		<NoWarn>$(NoWarn);Uno0001;CS1998;CA1416;NU1507</NoWarn>
+
+		<!--#if (android)-->
+		<IsAndroid>false</IsAndroid>
+		<IsAndroid Condition="$(TargetFramework) != 'net6.0' AND $(TargetFramework) != 'netstandard2.1' AND $([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">true</IsAndroid>
+		<!--#endif-->
+		<!--#if (ios)-->
+		<IsIOS>false</IsIOS>
+		<IsIOS Condition="$(TargetFramework) != 'net6.0' AND $(TargetFramework) != 'netstandard2.1' AND $([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">true</IsIOS>
+		<!--#endif-->
+		<!--#if (macos)-->
+		<IsMac>false</IsMac>
+		<IsMac Condition="$(TargetFramework) != 'net6.0' AND $(TargetFramework) != 'netstandard2.1' AND $([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'macos'">true</IsMac>
+		<!--#endif-->
+		<!--#if (maccatalyst)-->
+		<IsMacCatalyst>false</IsMacCatalyst>
+		<IsMacCatalyst Condition="$(TargetFramework) != 'net6.0' AND $(TargetFramework) != 'netstandard2.1' AND $([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">true</IsMacCatalyst>
+		<!--#endif-->
+		<TargetWinUI>false</TargetWinUI>
+		<TargetWinUI Condition="$(TargetFramework.Contains('windows10'))">true</TargetWinUI>
+	</PropertyGroup>
+
+	<PropertyGroup>
+		<!--#if (ios)-->
+		<RuntimeIdentifier Condition="$(IsIOS)">iossimulator-x64</RuntimeIdentifier>
+		<!--#endif-->
+		<!--#if (maccatalyst)-->
+		<RuntimeIdentifier Condition="$(IsMacCatalyst)">maccatalyst-x64</RuntimeIdentifier>
+		<!--#endif-->
+		<!--#if (macos)-->
+		<RuntimeIdentifier Condition="$(IsMac)">osx-x64</RuntimeIdentifier>
+		<!--#endif-->
+		<!--#if (ios)-->
+		<SupportedOSPlatformVersion Condition="$(IsIOS)">14.2</SupportedOSPlatformVersion>
+		<!--#endif -->
+		<!--#if (maccatalyst)-->
+		<SupportedOSPlatformVersion Condition="$(IsMacCatalyst)">14.0</SupportedOSPlatformVersion>
+		<!--#endif -->
+		<!--#if (android)-->
+		<SupportedOSPlatformVersion Condition="$(IsAndroid)">21.0</SupportedOSPlatformVersion>
+		<!--#endif -->
+		<!--#if (macos)-->
+		<SupportedOSPlatformVersion Condition="$(IsMac)">10.14</SupportedOSPlatformVersion>
+		<!--#endif -->
+		<!--#if (winAppSdk)-->
+		<SupportedOSPlatformVersion Condition="$(TargetWinUI)">10.0.18362.0</SupportedOSPlatformVersion>
+		<TargetPlatformMinVersion Condition="$(TargetWinUI)">10.0.18362.0</TargetPlatformMinVersion>
+		<!--#endif -->
 	</PropertyGroup>
 
 	<ItemGroup>

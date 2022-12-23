@@ -1,6 +1,4 @@
-﻿//-:cnd:noEmit
-
-namespace MyExtensionsApp.Views;
+﻿namespace MyExtensionsApp.Presentation;
 
 public sealed partial class MainPage : Page
 {
@@ -12,7 +10,7 @@ public sealed partial class MainPage : Page
 #if(reactive)
 		this.DataContext<BindableMainModel>((page, vm) => page
 #else
-		this.DataContext<MainModel>((page, vm) => page
+		this.DataContext<MainViewModel>((page, vm) => page
 #endif
 			.Background(Theme.Brushes.Background.Default)
 			.Content(new Grid().RowDefinitions(GridLength.Auto, new GridLength(1, GridUnitType.Star))
@@ -34,6 +32,5 @@ public sealed partial class MainPage : Page
 #else
 		this.InitializeComponent();
 #endif
-//-:cnd:noEmit
 	}
 }

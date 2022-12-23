@@ -17,7 +17,6 @@
 #//#if (server || use-http)
       "MyExtensionsApp.DataContracts\\MyExtensionsApp.DataContracts.csproj",
 #//#endif
-      "MyExtensionsApp.UI\\MyExtensionsApp.UI.csproj",
       "MyExtensionsApp\\MyExtensionsApp.csproj"
     ]
   }

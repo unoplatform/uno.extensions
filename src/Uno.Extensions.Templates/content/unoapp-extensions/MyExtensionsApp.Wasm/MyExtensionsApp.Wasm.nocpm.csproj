@@ -1,31 +1,61 @@
-<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk.Web">
 	<PropertyGroup>
-		<OutputType Condition="'$(Configuration)'=='Release'">WinExe</OutputType>
-		<OutputType Condition="'$(Configuration)'=='Debug'">Exe</OutputType>
+		<OutputType>Exe</OutputType>
 		<TargetFramework>net6.0</TargetFramework>
+		<NoWarn>$(NoWarn);NU1504;NU1505;NU1701</NoWarn>
+		<!-- Disabled due to issue with Central Package Management with implicit using -->
+		<ImplicitUsings>disable</ImplicitUsings>
+		<!--#if (wasm-pwa-manifest)-->
+		<WasmPWAManifestFile>manifest.json</WasmPWAManifestFile>
+		<!--#endif -->
+		<AppDesignerFolder>Properties</AppDesignerFolder>
 	</PropertyGroup>
-	<!--#if winAppSdk-->
-	<ItemGroup Condition="exists('Platforms\Windows')">
-		<EmbeddedResource Include="Platforms\Windows\Package.appxmanifest" LogicalName="Package.appxmanifest" />
-		<Content Include="Platforms\Windows\Images\StoreLogo.png" />
-	</ItemGroup>
-	<!--#else-->
+	<PropertyGroup Condition="'$(Configuration)'=='Debug'">
+		<MonoRuntimeDebuggerEnabled>true</MonoRuntimeDebuggerEnabled>
+		<DefineConstants>$(DefineConstants);TRACE;DEBUG</DefineConstants>
+		<DebugType>portable</DebugType>
+		<DebugSymbols>true</DebugSymbols>
+		<!--
+			IL Linking is disabled in Debug configuration.
+			When building in Release, see https://platform.uno/docs/articles/features/using-il-linker-WebAssembly.html
+		-->
+		<WasmShellILLinkerEnabled>false</WasmShellILLinkerEnabled>
+	</PropertyGroup>
 	<ItemGroup>
-		<EmbeddedResource Include="Package.appxmanifest" />
-		<Content Include="Images\StoreLogo.png" />
+		<Content Include="Assets\SplashScreen.png" />
+		<!--#if (wasm-pwa-manifest)-->
+		<Content Include="Assets\AppIcon-*.png" />
+		<!--#endif -->
 	</ItemGroup>
-	<!--#endif-->
 	<ItemGroup>
-		<!--#if (use-csharp-markup)-->
-		<PackageReference Include="Uno.WinUI.Markup" Version="4.6.0-dev.15" />
-		<!--#if (use-material)-->
-		<PackageReference Include="Uno.Material.WinUI.Markup" Version="2.5.0-dev.1" />
-		<!--#endif-->
-		<PackageReference Include="Uno.Themes.WinUI.Markup" Version="2.5.0-dev.1" />
-		<!--#endif-->
-		<PackageReference Include="SkiaSharp.Views.Uno.WinUI" Version="2.88.3" />
-		<PackageReference Include="SkiaSharp.Skottie" Version="2.88.3" />
-		<PackageReference Include="Uno.WinUI.Skia.Linux.FrameBuffer" Version="4.7.0-dev.703" />
+		<EmbeddedResource Include="WasmCSS\Fonts.css" />
+		<EmbeddedResource Include="WasmScripts\AppManifest.js" />
+	</ItemGroup>
+	<ItemGroup>
+		<LinkerDescriptor Include="LinkerConfig.xml" />
+	</ItemGroup>
+	<ItemGroup>
+		<!--
+		This item group is required by the project template because of the
+		new SDK-Style project, otherwise some files are not added automatically.
+
+		You can safely remove this ItemGroup completely.
+		-->
+		<None Include="Program.cs" />
+		<None Include="LinkerConfig.xml" />
+		<None Include="wwwroot\web.config" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<!--#if (msftextv6) -->
+		<PackageReference Include="Microsoft.Windows.Compatibility" Version="6.0.0" />
+		<!--#endif -->
+		<!--#if (msftextv7) -->
+		<PackageReference Include="Microsoft.Windows.Compatibility" Version="7.0.0" />
+		<!--#endif -->
+		<PackageReference Include="Uno.Wasm.Bootstrap" Version="7.0.11" />
+		<PackageReference Include="Uno.Wasm.Bootstrap.DevServer" Version="7.0.11" />
+		<PackageReference Include="Uno.WinUI.WebAssembly" Version="4.7.0-dev.703" />
 		<PackageReference Include="Uno.WinUI.RemoteControl" Version="4.7.0-dev.703" Condition="'$(Configuration)'=='Debug'" />
 		<PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="4.7.0-dev.703" />
 		<!--#if (use-material)-->
@@ -45,6 +75,7 @@
 		<PackageReference Include="Uno.Extensions.Localization.WinUI" Version="255.255.255.255" />
 		<!--#endif-->
 		<!--#if (use-logging)-->
+		<PackageReference Include="Uno.Extensions.Logging.WebAssembly.Console" Version="1.4.0" />
 		<PackageReference Include="Uno.Extensions.Logging.WinUI" Version="255.255.255.255" />
 		<!--#endif-->
 		<!--#if (use-serilog)-->

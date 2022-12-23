@@ -1,6 +1,6 @@
 //-:cnd:noEmit
 
-namespace MyExtensionsApp.Views;
+namespace MyExtensionsApp;
 
 public sealed partial class MainPage : Page
 {
@@ -10,7 +10,8 @@ public sealed partial class MainPage : Page
 #if use-csharp-markup
 		this.Content(new Grid().Children(
 			new TextBlock()
-				.Text("Hello World!")
+				.Grid(row: 0, column: 0)
+				.Text("Hello Uno Platform!")
 				.HorizontalAlignment(HorizontalAlignment.Center)
 				.VerticalAlignment(VerticalAlignment.Center)
 		));

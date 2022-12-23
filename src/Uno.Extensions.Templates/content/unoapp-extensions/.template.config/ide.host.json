@@ -11,6 +11,10 @@
   "learnMoreLink": "https://github.com/unoplatform/uno",
   "symbolInfo": [
     {
+      "id": "template-type",
+      "defaultValue": "default"
+    },
+    {
       "id": "appid",
       "name": {
         "text": "Application Id"
@@ -284,7 +288,7 @@
       {
         "text": "Sets the base Navigation style"
       },
-      "defaultValue": "toolkit"
+      "defaultValue": "default"
     },
     {
       "id": "cpm",

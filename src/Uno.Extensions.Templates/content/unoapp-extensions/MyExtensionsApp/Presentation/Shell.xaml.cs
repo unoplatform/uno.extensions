@@ -1,6 +1,6 @@
 ﻿using Uno.Toolkit.UI;
 
-namespace MyExtensionsApp.Views;
+namespace MyExtensionsApp.Presentation;
 
 public sealed partial class Shell : UserControl, IContentControlProvider
 {

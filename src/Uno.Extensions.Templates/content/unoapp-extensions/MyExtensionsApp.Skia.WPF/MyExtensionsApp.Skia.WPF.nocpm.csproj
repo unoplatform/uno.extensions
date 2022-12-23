@@ -2,19 +2,20 @@
 	<PropertyGroup>
 		<OutputType Condition="'$(Configuration)'=='Release'">WinExe</OutputType>
 		<OutputType Condition="'$(Configuration)'=='Debug'">Exe</OutputType>
-		<TargetFramework>net6.0</TargetFramework>
+		<TargetFramework>net6.0-windows</TargetFramework>
+		<UseWPF>true</UseWPF>
 	</PropertyGroup>
-	<!--#if winAppSdk-->
-	<ItemGroup Condition="exists('Platforms\Windows')">
-		<EmbeddedResource Include="Platforms\Windows\Package.appxmanifest" LogicalName="Package.appxmanifest" />
-		<Content Include="Platforms\Windows\Images\StoreLogo.png" />
+	<ItemGroup Label="AssemblyInfo">
+		<AssemblyAttribute Include="System.Runtime.InteropServices.ComVisibleAttribute">
+			<_Parameter1>false</_Parameter1>
+		</AssemblyAttribute>
+		<AssemblyAttribute Include="System.Windows.ThemeInfo">
+			<_Parameter1>System.Windows.ResourceDictionaryLocation.None</_Parameter1>
+			<_Parameter1_IsLiteral>true</_Parameter1_IsLiteral>
+			<_Parameter2>System.Windows.ResourceDictionaryLocation.SourceAssembly</_Parameter2>
+			<_Parameter2_IsLiteral>true</_Parameter2_IsLiteral>
+		</AssemblyAttribute>
 	</ItemGroup>
-	<!--#else-->
-	<ItemGroup>
-		<EmbeddedResource Include="Package.appxmanifest" />
-		<Content Include="Images\StoreLogo.png" />
-	</ItemGroup>
-	<!--#endif-->
 	<ItemGroup>
 		<!--#if (use-csharp-markup)-->
 		<PackageReference Include="Uno.WinUI.Markup" Version="4.6.0-dev.15" />
@@ -25,7 +26,7 @@
 		<!--#endif-->
 		<PackageReference Include="SkiaSharp.Views.Uno.WinUI" Version="2.88.3" />
 		<PackageReference Include="SkiaSharp.Skottie" Version="2.88.3" />
-		<PackageReference Include="Uno.WinUI.Skia.Linux.FrameBuffer" Version="4.7.0-dev.703" />
+		<PackageReference Include="Uno.WinUI.Skia.Wpf" Version="4.7.0-dev.703" />
 		<PackageReference Include="Uno.WinUI.RemoteControl" Version="4.7.0-dev.703" Condition="'$(Configuration)'=='Debug'" />
 		<PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="4.7.0-dev.703" />
 		<!--#if (use-material)-->

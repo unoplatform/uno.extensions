@@ -1,6 +1,4 @@
-﻿//-:cnd:noEmit
-
-namespace MyExtensionsApp.Views;
+﻿namespace MyExtensionsApp.Presentation;
 
 public sealed partial class SecondPage : Page
 {
@@ -11,7 +9,7 @@ public sealed partial class SecondPage : Page
 #if(reactive)
 		this.DataContext<BindableSecondModel>((page, vm) => page
 #else
-		this.DataContext<SecondModel>((page, vm) => page
+		this.DataContext<SecondViewModel>((page, vm) => page
 #endif
 			.Background(Theme.Brushes.Background.Default)
 			.Content(new Grid().Children(
@@ -27,7 +25,6 @@ public sealed partial class SecondPage : Page
 #else
 		this.InitializeComponent();
 #endif
-//-:cnd:noEmit
 	}
 }
 

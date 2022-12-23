@@ -1,8 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<TargetFramework>net6.0</TargetFramework>
-		<Nullable>enable</Nullable>
+		<TargetFramework>$libarybasetargetframework$</TargetFramework>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<!-- Suppress Compiler warnings for elements without XML Docs -->
 		<NoWarn>$(NoWarn);CS1591</NoWarn>
 	</PropertyGroup>
 </Project>

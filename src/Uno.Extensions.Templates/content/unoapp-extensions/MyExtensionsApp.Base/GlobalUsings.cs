@@ -27,7 +27,6 @@ global using MyExtensionsApp.Presentation;
 #if use-http
 global using MyExtensionsApp.Services;
 #endif
-global using MyExtensionsApp.Views;
 #if use-http
 global using Refit;
 #endif
