@@ -10,6 +10,12 @@ jobs:
       DefaultArguments:
         createdProjectName: UnoApp01
         templateArgs: ''
+      BlankApp:
+        createdProjectName: UnoAppBlank01
+        templateArgs: '--template-type blank'
+      BlankMarkupApp:
+        createdProjectName: UnoAppBlank01
+        templateArgs: '--template-type blank --ui-markup csharp'
       MVVM:
         createdProjectName: UnoAppNoReactive01
         templateArgs: '-presentation mvvm'
@@ -21,7 +27,7 @@ jobs:
         templateArgs: '--ui-markup csharp'
       NoExtensions:
         createdProjectName: UnoAppNoExtensions01
-        templateArgs: '-config false -loc false -log false'
+        templateArgs: '-config false -loc false -log false --navigation frame'
       Serilog:
         createdProjectName: UnoAppSerilog01
         templateArgs: '--logging-serilog'
@@ -31,6 +37,9 @@ jobs:
       NoServerNoHttp:
         createdProjectName: UnoAppNoServerNoHttp01
         templateArgs: '-server false -http false'
+      FrameNavigation:
+        createdProjectName: UnoAppFrameNavigation01
+        templateArgs: '--navigation frame'
 
   variables:
     - name: UseDotNetNativeToolchain
