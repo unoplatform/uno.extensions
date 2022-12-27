@@ -51,11 +51,13 @@ global using Uno.Toolkit.UI;
 global using Uno.Toolkit.UI.Material;
 #else
 global using Uno.Toolkit.UI;
+#endif
+#else if use-csharp-markup
+global using Uno.Themes.Markup;
+#endif
+global using Windows.ApplicationModel;
 #if use-csharp-markup
 global using Button = Microsoft.UI.Xaml.Controls.Button;
 global using Color = Windows.UI.Color;
 #endif
-#endif
-#endif
-global using Windows.ApplicationModel;
 //-:cnd:noEmit
