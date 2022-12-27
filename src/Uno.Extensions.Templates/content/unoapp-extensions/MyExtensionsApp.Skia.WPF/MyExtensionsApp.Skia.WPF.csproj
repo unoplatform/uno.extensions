@@ -74,6 +74,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<ApplicationDefinition Include="Wpf\App.xaml" XamlRuntime="Wpf" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<ProjectReference Include="..\MyExtensionsApp\MyExtensionsApp.csproj" />
 		<!--#if (use-http)-->
 		<ProjectReference Include="..\MyExtensionsApp.DataContracts\MyExtensionsApp.DataContracts.csproj" />
