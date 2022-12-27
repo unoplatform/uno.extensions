@@ -20,25 +20,25 @@
 		<!--#if (use-csharp-markup)-->
 		<PackageReference Include="Uno.WinUI.Markup" Version="4.6.0-dev.15" />
 		<!--#if (use-material)-->
-		<PackageReference Include="Uno.Material.WinUI.Markup" Version="2.5.0-dev.1" />
+		<PackageReference Include="Uno.Material.WinUI.Markup" Version="2.5.0-dev.3" />
 		<!--#endif-->
-		<PackageReference Include="Uno.Themes.WinUI.Markup" Version="2.5.0-dev.1" />
+		<PackageReference Include="Uno.Themes.WinUI.Markup" Version="2.5.0-dev.3" />
 		<!--#endif-->
 		<PackageReference Include="SkiaSharp.Views.Uno.WinUI" Version="2.88.3" />
 		<PackageReference Include="SkiaSharp.Skottie" Version="2.88.3" />
-		<PackageReference Include="Uno.WinUI.Skia.Wpf" Version="4.7.0-dev.703" />
-		<PackageReference Include="Uno.WinUI.RemoteControl" Version="4.7.0-dev.703" Condition="'$(Configuration)'=='Debug'" />
-		<PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="4.7.0-dev.703" />
+		<PackageReference Include="Uno.WinUI.Skia.Wpf" Version="4.7.0-dev.730" />
+		<PackageReference Include="Uno.WinUI.RemoteControl" Version="4.7.0-dev.730" Condition="'$(Configuration)'=='Debug'" />
+		<PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="4.7.0-dev.730" />
 		<!--#if (use-material)-->
-		<PackageReference Include="Uno.Material.WinUI" Version="2.5.0-dev.1" />
-		<PackageReference Include="Uno.Toolkit.WinUI.Material" Version="2.4.2" />
+		<PackageReference Include="Uno.Material.WinUI" Version="2.5.0-dev.3" />
+		<PackageReference Include="Uno.Toolkit.WinUI.Material" Version="2.5.0-dev.6" />
 		<!--#elif (use-cupertino)-->
-		<PackageReference Include="Uno.Cupertino.WinUI" Version="2.5.0-dev.1" />
+		<PackageReference Include="Uno.Cupertino.WinUI" Version="2.5.0-dev.3" />
 		<!--#endif-->
 		<!--#if (use-csharp-markup)-->
-		<PackageReference Include="Uno.Toolkit.WinUI.Markup" Version="2.4.2" />
+		<PackageReference Include="Uno.Toolkit.WinUI.Markup" Version="2.5.0-dev.6" />
 		<!--#else-->
-		<PackageReference Include="Uno.Toolkit.WinUI" Version="2.4.2" />
+		<PackageReference Include="Uno.Toolkit.WinUI" Version="2.5.0-dev.6" />
 		<!--#endif-->
 		<PackageReference Include="Uno.Extensions.Authentication.WinUI" Version="255.255.255.255" />
 		<PackageReference Include="Uno.Extensions.Hosting.WinUI" Version="255.255.255.255" />
