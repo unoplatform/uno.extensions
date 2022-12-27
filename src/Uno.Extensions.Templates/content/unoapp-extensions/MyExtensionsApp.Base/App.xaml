@@ -19,9 +19,9 @@
 <!--#if (!blank-app-template)-->
 <!--#if (use-material)-->
 				<MaterialColors xmlns="using:Uno.Material"
-								OverrideSource="ms-appx:///Styles/ColorPaletteOverride.xaml" />
+								OverrideSource="ms-appx:///MyExtensionsApp/Styles/ColorPaletteOverride.xaml" />
 				<MaterialFonts xmlns="using:Uno.Material"
-							   OverrideSource="ms-appx:///Styles/MaterialFontsOverride.xaml" />
+								OverrideSource="ms-appx:///MyExtensionsApp/Styles/MaterialFontsOverride.xaml" />
 				<MaterialResources xmlns="using:Uno.Material" />
 <!--#elif (use-cupertino)-->
 				<CupertinoColors xmlns="using:Uno.Cupertino" />

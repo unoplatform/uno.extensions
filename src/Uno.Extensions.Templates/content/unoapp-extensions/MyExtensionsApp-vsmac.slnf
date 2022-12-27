@@ -9,7 +9,7 @@
       "MyExtensionsApp.Skia.Gtk\\MyExtensionsApp.Skia.Gtk.csproj",
 #//#endif
 #//#if (wasm)
-      "MyExtensionsApp.Skia.Wasm\\MyExtensionsApp.Wasm.csproj",
+      "MyExtensionsApp.Wasm\\MyExtensionsApp.Wasm.csproj",
 #//#endif
 #//#if (server)
       "MyExtensionsApp.Server\\MyExtensionsApp.Server.csproj",
