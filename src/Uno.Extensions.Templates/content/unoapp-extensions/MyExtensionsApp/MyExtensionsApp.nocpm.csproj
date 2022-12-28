@@ -29,7 +29,7 @@
 		<!--#endif-->
 		<PackageReference Include="Uno.Themes.WinUI.Markup" Version="2.5.0-dev.3" />
 		<!--#endif-->
-		<!--#if (!blank-app-template)-->
+		<!--#if (default-app-template)-->
 		<!--#if (!reactive) -->
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.0.0" />
 		<!--#endif -->
@@ -52,7 +52,7 @@
 		<!--#if (use-serilog)-->
 		<PackageReference Include="Uno.Extensions.Logging.Serilog" Version="255.255.255.255" />
 		<!--#endif-->
-		<!--#if (!blank-app-template)-->
+		<!--#if (default-app-template)-->
 		<PackageReference Include="Uno.Extensions.Navigation" Version="255.255.255.255" />
 		<!--#endif-->
 		<!--#if (reactive) -->

@@ -390,10 +390,34 @@
         ]
       }
     },
+    "msftextlibversion": {
+        "type": "generated",
+        "generator": "switch",
+        "replaces": "$msftextlibversion$",
+        "parameters": {
+          "evaluator": "C++",
+          "datatype": "string",
+          "cases": [
+            {
+              "condition": "(tfm == 'net6.0')",
+              "value": "6.0.0"
+            },
+            {
+              "condition": "(tfm == 'net7.0')",
+              "value": "7.0.0"
+            }
+          ]
+        }
+      },
     "blank-app-template": {
       "type": "computed",
       "datatype": "bool",
       "value": "template-type == 'blank'"
+    },
+    "default-app-template": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "template-type == 'default'"
     },
     "use-default-nav": {
       "type": "computed",
@@ -667,20 +691,28 @@
         },
         {
           "condition": "(blank-app-template)",
+          "rename": {
+            "MyExtensionsApp.Base/App.blank.cs": "MyExtensionsApp.Base/App.xaml.cs"
+          },
           "exclude": [
             "MyExtensionsApp/Business/**",
             "MyExtensionsApp/Infrastructure/**",
             "MyExtensionsApp/Presentation/**",
             "MyExtensionsApp/Services/**",
             "MyExtensionsApp/Styles/**",
-            "MyExtensionsApp/appsettings.*"
+            "MyExtensionsApp/appsettings.*",
+            "MyExtensionsApp.Base/App.default.cs"
           ]
         },
         {
-          "condition": "(!blank-app-template)",
+          "condition": "(default-app-template)",
+          "rename": {
+            "MyExtensionsApp.Base/App.default.cs": "MyExtensionsApp.Base/App.xaml.cs"
+          },
           "exclude": [
             "MyExtensionsApp/MainPage.xaml",
-            "MyExtensionsApp/MainPage.xaml.cs"
+            "MyExtensionsApp/MainPage.xaml.cs",
+            "MyExtensionsApp.Base/App.blank.cs"
           ]
         },
         {

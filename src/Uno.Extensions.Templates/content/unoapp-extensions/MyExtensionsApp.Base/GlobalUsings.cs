@@ -6,10 +6,12 @@ global using System.Net.Http;
 global using System.Threading;
 global using System.Threading.Tasks;
 global using Microsoft.Extensions.DependencyInjection;
+//+:cnd:noEmit
+#if default-app-template
 global using Microsoft.Extensions.Hosting;
+#endif
 global using Microsoft.Extensions.Logging;
 global using Microsoft.UI.Xaml;
-//+:cnd:noEmit
 #if use-csharp-markup
 global using Microsoft.UI.Xaml.Automation;
 global using Microsoft.UI.Xaml.Controls;
@@ -19,6 +21,7 @@ global using Microsoft.UI.Xaml.Controls;
 #endif
 global using Microsoft.UI.Xaml.Media;
 global using Microsoft.UI.Xaml.Navigation;
+#if default-app-template
 global using MyExtensionsApp.Business.Models;
 #if use-http
 global using MyExtensionsApp.Infrastructure;
@@ -53,8 +56,10 @@ global using Uno.Toolkit.UI.Material;
 #else
 global using Uno.Toolkit.UI;
 #endif
+#endif
 global using Windows.ApplicationModel;
 global using Application = Microsoft.UI.Xaml.Application;
+global using ApplicationExecutionState = Windows.ApplicationModel.Activation.ApplicationExecutionState;
 #if use-csharp-markup
 global using Button = Microsoft.UI.Xaml.Controls.Button;
 global using Color = Windows.UI.Color;

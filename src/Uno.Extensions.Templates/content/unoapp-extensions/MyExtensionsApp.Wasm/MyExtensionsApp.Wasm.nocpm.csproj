@@ -46,13 +46,23 @@
 		<None Include="wwwroot\web.config" />
 	</ItemGroup>
 
+	<!--#if (blank-app-template)-->
 	<ItemGroup>
-		<!--#if (msftextv6) -->
-		<PackageReference Include="Microsoft.Windows.Compatibility" Version="6.0.0" />
-		<!--#endif -->
-		<!--#if (msftextv7) -->
-		<PackageReference Include="Microsoft.Windows.Compatibility" Version="7.0.0" />
-		<!--#endif -->
+		<PackageReference Include="Microsoft.Windows.Compatibility" Version="$msftextlibversion$" />
+		<!--#if (use-csharp-markup)-->
+		<PackageReference Include="Uno.WinUI.Markup" Version="4.6.0-dev.15" />
+		<!--#endif-->
+		<PackageReference Include="Uno.Wasm.Bootstrap" Version="7.0.11" />
+		<PackageReference Include="Uno.Wasm.Bootstrap.DevServer" Version="7.0.11" />
+		<PackageReference Include="Uno.WinUI.WebAssembly" Version="4.7.0-dev.730" />
+		<PackageReference Include="Uno.WinUI.RemoteControl" Version="4.7.0-dev.730" Condition="'$(Configuration)'=='Debug'" />
+		<PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="4.7.0-dev.730" />
+		<PackageReference Include="Uno.Extensions.Logging.WebAssembly.Console" Version="1.4.0" />
+	</ItemGroup>
+	<!--#endif-->
+	<!--#if (default-app-template)-->
+	<ItemGroup>
+		<PackageReference Include="Microsoft.Windows.Compatibility" Version="$msftextlibversion$" />
 		<PackageReference Include="Uno.Wasm.Bootstrap" Version="7.0.11" />
 		<PackageReference Include="Uno.Wasm.Bootstrap.DevServer" Version="7.0.11" />
 		<PackageReference Include="Uno.WinUI.WebAssembly" Version="4.7.0-dev.730" />
@@ -81,7 +91,7 @@
 		<!--#if (use-serilog)-->
 		<PackageReference Include="Uno.Extensions.Logging.Serilog" Version="255.255.255.255" />
 		<!--#endif-->
-		<!--#if (!blank-app-template)-->
+		<!--#if (!use-frame-nav)-->
 		<PackageReference Include="Uno.Extensions.Navigation.Toolkit.WinUI" Version="255.255.255.255" />
 		<PackageReference Include="Uno.Extensions.Navigation.WinUI" Version="255.255.255.255" />
 		<!--#endif-->
@@ -102,6 +112,7 @@
 		<PackageReference Include="Uno.Extensions.Serialization.Refit" Version="255.255.255.255" />
 		<!--#endif-->
 	</ItemGroup>
+	<!--#endif-->
 	<ItemGroup>
 		<ProjectReference Include="..\MyExtensionsApp\MyExtensionsApp.csproj" />
 		<!--#if (use-http)-->

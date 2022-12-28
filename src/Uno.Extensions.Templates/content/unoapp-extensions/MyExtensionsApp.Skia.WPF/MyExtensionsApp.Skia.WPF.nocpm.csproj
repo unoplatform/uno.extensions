@@ -16,6 +16,17 @@
 			<_Parameter2_IsLiteral>true</_Parameter2_IsLiteral>
 		</AssemblyAttribute>
 	</ItemGroup>
+	<!--#if (blank-app-template)-->
+	<ItemGroup>
+		<!--#if (use-csharp-markup)-->
+		<PackageReference Include="Uno.WinUI.Markup" Version="4.6.0-dev.15" />
+		<!--#endif-->
+		<PackageReference Include="Uno.WinUI.Skia.Wpf" Version="4.7.0-dev.730" />
+		<PackageReference Include="Uno.WinUI.RemoteControl" Version="4.7.0-dev.730" Condition="'$(Configuration)'=='Debug'" />
+		<PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="4.7.0-dev.730" />
+	</ItemGroup>
+	<!--#endif-->
+	<!--#if (default-app-template)-->
 	<ItemGroup>
 		<!--#if (use-csharp-markup)-->
 		<PackageReference Include="Uno.WinUI.Markup" Version="4.6.0-dev.15" />
@@ -51,7 +62,7 @@
 		<!--#if (use-serilog)-->
 		<PackageReference Include="Uno.Extensions.Logging.Serilog" Version="255.255.255.255" />
 		<!--#endif-->
-		<!--#if (!blank-app-template)-->
+		<!--#if (!use-frame-nav)-->
 		<PackageReference Include="Uno.Extensions.Navigation.Toolkit.WinUI" Version="255.255.255.255" />
 		<PackageReference Include="Uno.Extensions.Navigation.WinUI" Version="255.255.255.255" />
 		<!--#endif-->
@@ -72,6 +83,7 @@
 		<PackageReference Include="Uno.Extensions.Serialization.Refit" Version="255.255.255.255" />
 		<!--#endif-->
 	</ItemGroup>
+	<!--#endif-->
 	<ItemGroup>
 		<ApplicationDefinition Include="Wpf\App.xaml" XamlRuntime="Wpf" />
 	</ItemGroup>

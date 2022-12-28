@@ -16,7 +16,7 @@
 			<ResourceDictionary.MergedDictionaries>
 				<!-- Load WinUI resources -->
 				<XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls" />
-<!--#if (!blank-app-template)-->
+<!--#if (default-app-template)-->
 <!--#if (use-material)-->
 				<MaterialColors xmlns="using:Uno.Material"
 								OverrideSource="ms-appx:///MyExtensionsApp/Styles/ColorPaletteOverride.xaml" />
@@ -34,11 +34,9 @@
 <!--#if (use-material)-->
 				<MaterialToolkitResources xmlns="using:Uno.Toolkit.UI.Material" />
 <!--#endif-->
-
-				<!-- Load Uno.UI.Toolkit resources -->
-				<UnoResources xmlns="using:Uno.UI" />
 <!--#endif-->
 			</ResourceDictionary.MergedDictionaries>
+			<!-- Add resources here -->
 		</ResourceDictionary>
 	</Application.Resources>
 

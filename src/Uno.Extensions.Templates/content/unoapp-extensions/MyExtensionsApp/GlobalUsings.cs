@@ -6,10 +6,12 @@ global using System.Net.Http;
 global using System.Threading;
 global using System.Threading.Tasks;
 global using Microsoft.Extensions.DependencyInjection;
+//+:cnd:noEmit
+#if (default-app-template)
 global using Microsoft.Extensions.Hosting;
+#endif
 global using Microsoft.Extensions.Logging;
 global using Microsoft.UI.Xaml;
-//+:cnd:noEmit
 #if use-csharp-markup
 global using Microsoft.UI.Xaml.Automation;
 global using Microsoft.UI.Xaml.Controls;
@@ -19,7 +21,7 @@ global using Microsoft.UI.Xaml.Controls;
 #endif
 global using Microsoft.UI.Xaml.Media;
 global using Microsoft.UI.Xaml.Navigation;
-#if (!blank-app-template)
+#if (default-app-template)
 #if (use-configuration)
 global using Microsoft.Extensions.Options;
 #endif
@@ -52,8 +54,6 @@ global using Uno.Toolkit.UI.Material;
 #else
 global using Uno.Toolkit.UI;
 #endif
-#else if use-csharp-markup
-global using Uno.Themes.Markup;
 #endif
 global using Windows.ApplicationModel;
 #if use-csharp-markup

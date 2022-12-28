@@ -11,9 +11,13 @@ public static class ApplicationBuilderExtensions
 
 			// Load Material Resources
 			new MaterialColors()
-				.Build(mc => mc.Merged(new Styles.ColorPaletteOverride())),
+			{
+				OverrideDictionary = new Styles.ColorPaletteOverride()
+			},
 			new MaterialFonts()
-				.Build(mf => mf.Merged(new Styles.MaterialFontsOverride())),
+			{
+				OverrideDictionary = new Styles.MaterialFontsOverride()
+			},
 			new MaterialResources(),
 
 			// Load Uno.UI.Toolkit resources

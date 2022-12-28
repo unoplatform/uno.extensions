@@ -1,0 +1,133 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<TargetFramework>net6.0</TargetFramework>
+		<NoWarn>$(NoWarn);NU1504;NU1505;NU1701</NoWarn>
+		<!-- Disabled due to issue with Central Package Management with implicit using -->
+		<ImplicitUsings>disable</ImplicitUsings>
+		<!--#if (wasm-pwa-manifest)-->
+		<WasmPWAManifestFile>manifest.json</WasmPWAManifestFile>
+		<!--#endif -->
+		<AppDesignerFolder>Properties</AppDesignerFolder>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)'=='Debug'">
+		<MonoRuntimeDebuggerEnabled>true</MonoRuntimeDebuggerEnabled>
+		<DefineConstants>$(DefineConstants);TRACE;DEBUG</DefineConstants>
+		<DebugType>portable</DebugType>
+		<DebugSymbols>true</DebugSymbols>
+		<!--
+			IL Linking is disabled in Debug configuration.
+			When building in Release, see https://platform.uno/docs/articles/features/using-il-linker-WebAssembly.html
+		-->
+		<WasmShellILLinkerEnabled>false</WasmShellILLinkerEnabled>
+	</PropertyGroup>
+	<ItemGroup>
+		<Content Include="Assets\SplashScreen.png" />
+		<!--#if (wasm-pwa-manifest)-->
+		<Content Include="Assets\AppIcon-*.png" />
+		<!--#endif -->
+	</ItemGroup>
+	<ItemGroup>
+		<EmbeddedResource Include="WasmCSS\Fonts.css" />
+		<EmbeddedResource Include="WasmScripts\AppManifest.js" />
+	</ItemGroup>
+	<ItemGroup>
+		<LinkerDescriptor Include="LinkerConfig.xml" />
+	</ItemGroup>
+	<ItemGroup>
+		<!--
+		This item group is required by the project template because of the
+		new SDK-Style project, otherwise some files are not added automatically.
+
+		You can safely remove this ItemGroup completely.
+		-->
+		<None Include="Program.cs" />
+		<None Include="LinkerConfig.xml" />
+		<None Include="wwwroot\web.config" />
+	</ItemGroup>
+
+	<!--#if (blank-app-template)-->
+	<ItemGroup>
+		<!--#if (msftextv6) -->
+		<PackageReference Include="Microsoft.Windows.Compatibility" />
+		<!--#endif -->
+		<!--#if (msftextv7) -->
+		<PackageReference Include="Microsoft.Windows.Compatibility" />
+		<!--#endif -->
+		<!--#if (use-csharp-markup)-->
+		<PackageReference Include="Uno.WinUI.Markup" />
+		<!--#endif-->
+		<PackageReference Include="Uno.Wasm.Bootstrap" />
+		<PackageReference Include="Uno.Wasm.Bootstrap.DevServer" />
+		<PackageReference Include="Uno.WinUI.WebAssembly" />
+		<PackageReference Include="Uno.WinUI.RemoteControl" />
+		<PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" />
+		<PackageReference Include="Uno.Extensions.Logging.WebAssembly.Console" />
+	</ItemGroup>
+	<!--#endif-->
+	<!--#if (default-app-template)-->
+	<ItemGroup>
+		<!--#if (msftextv6) -->
+		<PackageReference Include="Microsoft.Windows.Compatibility" />
+		<!--#endif -->
+		<!--#if (msftextv7) -->
+		<PackageReference Include="Microsoft.Windows.Compatibility" />
+		<!--#endif -->
+		<PackageReference Include="Uno.Wasm.Bootstrap" />
+		<PackageReference Include="Uno.Wasm.Bootstrap.DevServer" />
+		<PackageReference Include="Uno.WinUI.WebAssembly" />
+		<PackageReference Include="Uno.WinUI.RemoteControl" />
+		<PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" />
+		<!--#if (use-material)-->
+		<PackageReference Include="Uno.Material.WinUI" />
+		<PackageReference Include="Uno.Toolkit.WinUI.Material" />
+		<!--#elif (use-cupertino)-->
+		<PackageReference Include="Uno.Cupertino.WinUI" />
+		<!--#endif-->
+		<!--#if (use-csharp-markup)-->
+		<PackageReference Include="Uno.Toolkit.WinUI.Markup" />
+		<!--#else-->
+		<PackageReference Include="Uno.Toolkit.WinUI" />
+		<!--#endif-->
+		<PackageReference Include="Uno.Extensions.Authentication.WinUI" />
+		<PackageReference Include="Uno.Extensions.Hosting.WinUI" />
+		<!--#if (use-localization)-->
+		<PackageReference Include="Uno.Extensions.Localization.WinUI" />
+		<!--#endif-->
+		<!--#if (use-logging)-->
+		<PackageReference Include="Uno.Extensions.Logging.WebAssembly.Console" />
+		<PackageReference Include="Uno.Extensions.Logging.WinUI" />
+		<!--#endif-->
+		<!--#if (use-serilog)-->
+		<PackageReference Include="Uno.Extensions.Logging.Serilog" />
+		<!--#endif-->
+		<!--#if (!use-frame-nav)-->
+		<PackageReference Include="Uno.Extensions.Navigation.Toolkit.WinUI" />
+		<PackageReference Include="Uno.Extensions.Navigation.WinUI" />
+		<!--#endif-->
+		<!--#if (use-configuration)-->
+		<PackageReference Include="Uno.Extensions.Configuration" />
+		<!--#endif-->
+		<PackageReference Include="Uno.Extensions.Core" />
+		<!--#if (use-http)-->
+		<PackageReference Include="Uno.Extensions.Http" />
+		<PackageReference Include="Uno.Extensions.Http.Refit" />
+		<!--#endif-->
+		<!--#if (reactive)-->
+		<PackageReference Include="Uno.Extensions.Reactive.WinUI" />
+		<!--#endif-->
+		<PackageReference Include="Uno.Extensions.Serialization" />
+		<!--#if (use-http)-->
+		<PackageReference Include="Uno.Extensions.Serialization.Http" />
+		<PackageReference Include="Uno.Extensions.Serialization.Refit" />
+		<!--#endif-->
+	</ItemGroup>
+	<!--#endif-->
+	<ItemGroup>
+		<ProjectReference Include="..\MyExtensionsApp\MyExtensionsApp.csproj" />
+		<!--#if (use-http)-->
+		<ProjectReference Include="..\MyExtensionsApp.DataContracts\MyExtensionsApp.DataContracts.csproj" />
+		<!--#endif-->
+	</ItemGroup>
+	<Import Project="../MyExtensionsApp.Base/base.props" />
+</Project>

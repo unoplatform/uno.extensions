@@ -16,7 +16,7 @@ public sealed partial class SecondPage : Page
 				new NavigationBar()
 					.Content("Second Page")
 					.MainCommand(new AppBarButton()
-						.Icon(new BitmapIcon().UriSource(new Uri("ms-appx:///Assets/Icons/back.png")))
+						.Icon(new BitmapIcon().UriSource(new Uri("ms-appx:///MyExtensionsApp/Assets/Icons/back.png")))
 					),
 				new TextBlock()
 					.Text(() => vm.Entity.Name)

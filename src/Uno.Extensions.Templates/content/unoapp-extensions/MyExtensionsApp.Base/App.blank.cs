@@ -1,28 +1,18 @@
-#if use-csharp-markup
-using MyExtensionsApp.Infrastructure;
-
-#endif
+//-:cnd:noEmit
 namespace MyExtensionsApp;
 
 public sealed partial class App : global::Microsoft.UI.Xaml.Application
 {
 	private Window? _window;
-#if !blank-app-template
-	private IHost? _host;
-#endif
 
 	public App()
 	{
-#if blank-app-template
 		InitializeLogging();
-#endif
 		this.InitializeComponent();
 
-//-:cnd:noEmit
 #if HAS_UNO || NETFX_CORE
 		this.Suspending += OnSuspending;
 #endif
-//+:cnd:noEmit
 	}
 
 	/// <summary>
@@ -30,10 +20,8 @@ public sealed partial class App : global::Microsoft.UI.Xaml.Application
 	/// will be used such as when the application is launched to open a specific file.
 	/// </summary>
 	/// <param name="args">Details about the launch request and process.</param>
-#if blank-app-template
 	protected async override void OnLaunched(LaunchActivatedEventArgs args)
 	{
-//-:cnd:noEmit
 #if DEBUG
 		if (System.Diagnostics.Debugger.IsAttached)
 		{
@@ -80,7 +68,6 @@ public sealed partial class App : global::Microsoft.UI.Xaml.Application
 			// Ensure the current window is active
 			_window.Activate();
 		}
-//+:cnd:noEmit
 	}
 
 	/// <summary>
@@ -161,115 +148,6 @@ public sealed partial class App : global::Microsoft.UI.Xaml.Application
 #endif
 #endif
     }
-#else
-	protected async override void OnLaunched(LaunchActivatedEventArgs args)
-	{
-		var builder = this.CreateBuilder(args)
-//+:cnd:noEmit
-#if use-csharp-markup
-			.ConfigureResources()
-#endif
-			// Add navigation support for toolkit controls such as TabBar and NavigationView
-			.UseToolkitNavigation()
-//-:cnd:noEmit
-			.Configure(host => host
-#if DEBUG
-				// Switch to Development environment when running in DEBUG
-				.UseEnvironment(Environments.Development)
-#endif
-//+:cnd:noEmit
-#if use-logging
-				.UseLogging(configure: (context, logBuilder) =>
-				{
-					// Configure log levels for different categories of logging
-					logBuilder.SetMinimumLevel(
-						context.HostingEnvironment.IsDevelopment() ?
-							LogLevel.Information :
-							LogLevel.Warning);
-				}, enableUnoLogging: true)
-#if use-serilog
-				.UseSerilog(consoleLoggingEnabled: true, fileLoggingEnabled: true)
-#endif
-#endif
-#if use-configuration
-				.UseConfiguration(configure: configBuilder =>
-					configBuilder
-						.EmbeddedSource<App>()
-						.Section<AppConfig>()
-				)
-#endif
-#if use-localization
-				// Enable localization (see appsettings.json for supported languages)
-				.UseLocalization()
-#endif
-				// Register Json serializers (ISerializer and ISerializer)
-				.UseSerialization()
-				.ConfigureServices((context, services) => {
-#if use-http
-					// Register HttpClient
-					services
-//-:cnd:noEmit
-#if DEBUG
-						// DelegatingHandler will be automatically injected into Refit Client
-						.AddTransient<DelegatingHandler, DebugHttpHandler>()
-#endif
-//+:cnd:noEmit
-						.AddRefitClient<IApiClient>(context);
-
-#endif
-					// TODO: Register your services
-					//services.AddSingleton<IMyService, MyService>();
-				})
-#if (reactive)
-				.UseNavigation(ReactiveViewModelMappings.ViewModelMappings, RegisterRoutes)
-#else
-				.UseNavigation(RegisterRoutes)
-#endif
-			);
-		_window = builder.Window;
-
-#if use-frame-nav
-//-:cnd:noEmit
-		_host = builder.Build();
-
-		// Do not repeat app initialization when the Window already has content,
-		// just ensure that the window is active
-		if (_window.Content is not Frame rootFrame)
-		{
-			// Create a Frame to act as the navigation context and navigate to the first page
-			rootFrame = new Frame();
-
-			rootFrame.NavigationFailed += OnNavigationFailed;
-
-			if (args.UWPLaunchActivatedEventArgs.PreviousExecutionState == ApplicationExecutionState.Terminated)
-			{
-				// TODO: Load state from previously suspended application
-			}
-
-			// Place the frame in the current Window
-			_window.Content = rootFrame;
-		}
-
-#if !(NET6_0_OR_GREATER && WINDOWS)
-		if (args.UWPLaunchActivatedEventArgs.PrelaunchActivated == false)
-#endif
-		{
-			if (rootFrame.Content == null)
-			{
-				// When the navigation stack isn't restored navigate to the first page,
-				// configuring the new page by passing required information as a navigation
-				// parameter
-				rootFrame.Navigate(typeof(MainPage), args.Arguments);
-			}
-			// Ensure the current window is active
-			_window.Activate();
-		}
-//+:cnd:noEmit
-#else
-		_host = await builder.NavigateAsync<Shell>();
-#endif
-	}
-#endif
 
 	/// <summary>
 	/// Invoked when application execution is being suspended.  Application state is saved
@@ -284,45 +162,5 @@ public sealed partial class App : global::Microsoft.UI.Xaml.Application
 		// TODO: Save application state and stop any background activity
 		deferral.Complete();
 	}
-#if !use-frame-nav
-
-	private static void RegisterRoutes(IViewRegistry views, IRouteRegistry routes)
-	{
-#if use-default-nav
-#if (reactive)
-		views.Register(
-			new ViewMap(ViewModel: typeof(ShellModel)),
-			new ViewMap<MainPage, MainModel>(),
-			new DataViewMap<SecondPage, SecondModel, Entity>()
-		);
-
-		routes.Register(
-			new RouteMap("", View: views.FindByViewModel<ShellModel>(),
-				Nested: new RouteMap[]
-				{
-					new RouteMap("Main", View: views.FindByViewModel<MainModel>()),
-					new RouteMap("Second", View: views.FindByViewModel<SecondModel>()),
-				}
-			)
-		);
-#else
-		views.Register(
-			new ViewMap(ViewModel: typeof(ShellViewModel)),
-			new ViewMap<MainPage, MainViewModel>(),
-			new DataViewMap<SecondPage, SecondViewModel, Entity>()
-		);
-
-		routes.Register(
-			new RouteMap("", View: views.FindByViewModel<ShellViewModel>(),
-				Nested: new RouteMap[]
-				{
-					new RouteMap("Main", View: views.FindByViewModel<MainViewModel>()),
-					new RouteMap("Second", View: views.FindByViewModel<SecondViewModel>()),
-				}
-			)
-		);
-#endif
-#endif
-	}
-#endif
 }
+//+:cnd:noEmit
