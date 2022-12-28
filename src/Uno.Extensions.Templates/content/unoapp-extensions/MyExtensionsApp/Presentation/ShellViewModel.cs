@@ -1,11 +1,11 @@
 //-:cnd:noEmit
 namespace MyExtensionsApp.Presentation;
 
-public class ShellModel
+public class ShellViewModel
 {
 	private INavigator Navigator { get; }
 
-	public ShellModel(INavigator navigator)
+	public ShellViewModel(INavigator navigator)
 	{
 		Navigator = navigator;
 
@@ -14,6 +14,6 @@ public class ShellModel
 
 	public async Task Start()
 	{
-		await Navigator.NavigateViewModelAsync<MainModel>(this);
+		await Navigator.NavigateViewModelAsync<MainViewModel>(this);
 	}
 }

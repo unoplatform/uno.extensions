@@ -252,6 +252,7 @@ public sealed partial class App : global::Microsoft.UI.Xaml.Application
 	private static void RegisterRoutes(IViewRegistry views, IRouteRegistry routes)
 	{
 #if use-default-nav
+#if (reactive)
 		views.Register(
 			new ViewMap(ViewModel: typeof(ShellModel)),
 			new ViewMap<MainPage, MainModel>(),
@@ -267,6 +268,23 @@ public sealed partial class App : global::Microsoft.UI.Xaml.Application
 				}
 			)
 		);
+#else
+		views.Register(
+			new ViewMap(ViewModel: typeof(ShellViewModel)),
+			new ViewMap<MainPage, MainViewModel>(),
+			new DataViewMap<SecondPage, SecondViewModel, Entity>()
+		);
+
+		routes.Register(
+			new RouteMap("", View: views.FindByViewModel<ShellViewModel>(),
+				Nested: new RouteMap[]
+				{
+					new RouteMap("Main", View: views.FindByViewModel<MainViewModel>()),
+					new RouteMap("Second", View: views.FindByViewModel<SecondViewModel>()),
+				}
+			)
+		);
+#endif
 #endif
 	}
 #endif
