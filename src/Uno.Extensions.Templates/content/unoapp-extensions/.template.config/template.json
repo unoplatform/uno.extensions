@@ -706,7 +706,8 @@
             "MyExtensionsApp/Services/**",
             "MyExtensionsApp/Styles/**",
             "MyExtensionsApp/appsettings.*",
-            "MyExtensionsApp.Base/App.default.cs"
+            "MyExtensionsApp.Base/App.default.cs",
+            "MyExtensionsApp.Tests/AppInfoTests.cs"
           ]
         },
         {
@@ -715,7 +716,8 @@
             "MyExtensionsApp.Base/App.default.cs": "MyExtensionsApp.Base/App.xaml.cs"
           },
           "exclude": [
-            "MyExtensionsApp.Base/App.blank.cs"
+            "MyExtensionsApp.Base/App.blank.cs",
+            "MyExtensionsApp.Tests/UnitTest1.cs"
           ]
         },
         {
