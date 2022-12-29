@@ -26,7 +26,9 @@ global using Microsoft.UI.Xaml.Navigation;
 global using Microsoft.Extensions.Options;
 #endif
 global using MyExtensionsApp.Business.Models;
+#if (not-frame-nav)
 global using MyExtensionsApp.Presentation;
+#endif
 #if (use-http)
 global using MyExtensionsApp.Services;
 global using Uno.Extensions.Http;

@@ -26,7 +26,9 @@ global using MyExtensionsApp.Business.Models;
 #if use-http
 global using MyExtensionsApp.Infrastructure;
 #endif
+#if (not-frame-nav)
 global using MyExtensionsApp.Presentation;
+#endif
 #if use-http
 global using MyExtensionsApp.Services;
 #endif

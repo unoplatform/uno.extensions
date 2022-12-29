@@ -429,6 +429,11 @@
       "datatype": "bool",
       "value": "navigation == 'frame'"
     },
+    "not-frame-nav": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "navigation != 'frame'"
+    },
     "HostIdentifier": {
       "type": "bind",
       "binding": "HostIdentifier"
