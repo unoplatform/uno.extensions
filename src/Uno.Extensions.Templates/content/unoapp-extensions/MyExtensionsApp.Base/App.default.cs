@@ -32,8 +32,10 @@ public sealed partial class App : global::Microsoft.UI.Xaml.Application
 #if use-csharp-markup
 			.ConfigureResources()
 #endif
+#if (use-default-nav)
 			// Add navigation support for toolkit controls such as TabBar and NavigationView
 			.UseToolkitNavigation()
+#endif
 //-:cnd:noEmit
 			.Configure(host => host
 #if DEBUG
@@ -57,7 +59,7 @@ public sealed partial class App : global::Microsoft.UI.Xaml.Application
 #if use-configuration
 				.UseConfiguration(configure: configBuilder =>
 					configBuilder
-						.EmbeddedSource<App>()
+						.EmbeddedSource<MainPage>()
 						.Section<AppConfig>()
 				)
 #endif
@@ -83,7 +85,7 @@ public sealed partial class App : global::Microsoft.UI.Xaml.Application
 					// TODO: Register your services
 					//services.AddSingleton<IMyService, MyService>();
 				})
-#if (!use-frame-nav)
+#if (use-default-nav)
 #if (reactive)
 				.UseNavigation(ReactiveViewModelMappings.ViewModelMappings, RegisterRoutes)
 #else

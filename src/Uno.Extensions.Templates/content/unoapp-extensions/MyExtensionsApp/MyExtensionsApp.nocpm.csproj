@@ -153,6 +153,10 @@
 	<!--#endif-->
 
 	<ItemGroup>
+		<None Remove="appsettings*.json" />
+		<EmbeddedResource Include="appsettings.json" />
+		<EmbeddedResource Include="appsettings.*.json"
+											DependentUpon="appsettings.json" />
 		<UpToDateCheckInput Include="**\*.xaml" Exclude="bin\**\*.xaml;obj\**\*.xaml" />
 	</ItemGroup>
 </Project>

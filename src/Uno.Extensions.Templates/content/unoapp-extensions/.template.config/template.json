@@ -710,9 +710,20 @@
             "MyExtensionsApp.Base/App.default.cs": "MyExtensionsApp.Base/App.xaml.cs"
           },
           "exclude": [
-            "MyExtensionsApp/MainPage.xaml",
-            "MyExtensionsApp/MainPage.xaml.cs",
             "MyExtensionsApp.Base/App.blank.cs"
+          ]
+        },
+        {
+          "condition": "(blank-app-template || navigation == 'frame')",
+          "exclude": [
+            "MyExtensionsApp/Presentation/**"
+          ]
+        },
+        {
+          "condition": "(default-app-template && navigation != 'frame')",
+          "exclude": [
+            "MyExtensionsApp/MainPage.xaml",
+            "MyExtensionsApp/MainPage.xaml.cs"
           ]
         },
         {
