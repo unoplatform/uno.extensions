@@ -12,33 +12,52 @@
 
 		<TreatWarningsAsErrors>True</TreatWarningsAsErrors>
 		<NoWarn>$(NoWarn);Uno0001;CS1998;CA1416;NU1507</NoWarn>
+
+		<!--#if (android)-->
+		<IsAndroid>false</IsAndroid>
+		<IsAndroid Condition="$(TargetFramework) != 'net6.0' AND $(TargetFramework) != 'netstandard2.1' AND $([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">true</IsAndroid>
+		<!--#endif-->
+		<!--#if (ios)-->
+		<IsIOS>false</IsIOS>
+		<IsIOS Condition="$(TargetFramework) != 'net6.0' AND $(TargetFramework) != 'netstandard2.1' AND $([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">true</IsIOS>
+		<!--#endif-->
+		<!--#if (macos)-->
+		<IsMac>false</IsMac>
+		<IsMac Condition="$(TargetFramework) != 'net6.0' AND $(TargetFramework) != 'netstandard2.1' AND $([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'macos'">true</IsMac>
+		<!--#endif-->
+		<!--#if (maccatalyst)-->
+		<IsMacCatalyst>false</IsMacCatalyst>
+		<IsMacCatalyst Condition="$(TargetFramework) != 'net6.0' AND $(TargetFramework) != 'netstandard2.1' AND $([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">true</IsMacCatalyst>
+		<!--#endif-->
+		<TargetWinUI>false</TargetWinUI>
+		<TargetWinUI Condition="$(TargetFramework.Contains('windows10'))">true</TargetWinUI>
 	</PropertyGroup>
 
-	<PropertyGroup Condition="$(MSBuildProjectName.EndsWith('Mobile')) OR $(MSBuildProjectName.EndsWith('Windows'))">
+	<PropertyGroup>
 		<!--#if (ios)-->
-		<RuntimeIdentifier Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">iossimulator-x64</RuntimeIdentifier>
+		<RuntimeIdentifier Condition="$(IsIOS)">iossimulator-x64</RuntimeIdentifier>
 		<!--#endif-->
 		<!--#if (maccatalyst)-->
-		<RuntimeIdentifier Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">maccatalyst-x64</RuntimeIdentifier>
+		<RuntimeIdentifier Condition="$(IsMacCatalyst)">maccatalyst-x64</RuntimeIdentifier>
 		<!--#endif-->
 		<!--#if (macos)-->
-		<RuntimeIdentifier Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'macos'">osx-x64</RuntimeIdentifier>
+		<RuntimeIdentifier Condition="$(IsMac)">osx-x64</RuntimeIdentifier>
 		<!--#endif-->
 		<!--#if (ios)-->
-		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">14.2</SupportedOSPlatformVersion>
+		<SupportedOSPlatformVersion Condition="$(IsIOS)">14.2</SupportedOSPlatformVersion>
 		<!--#endif -->
 		<!--#if (maccatalyst)-->
-		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">14.0</SupportedOSPlatformVersion>
+		<SupportedOSPlatformVersion Condition="$(IsMacCatalyst)">14.0</SupportedOSPlatformVersion>
 		<!--#endif -->
 		<!--#if (android)-->
-		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">21.0</SupportedOSPlatformVersion>
+		<SupportedOSPlatformVersion Condition="$(IsAndroid)">21.0</SupportedOSPlatformVersion>
 		<!--#endif -->
 		<!--#if (macos)-->
-		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'macos'">10.14</SupportedOSPlatformVersion>
+		<SupportedOSPlatformVersion Condition="$(IsMac)">10.14</SupportedOSPlatformVersion>
 		<!--#endif -->
 		<!--#if (winAppSdk)-->
-		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.18362.0</SupportedOSPlatformVersion>
-		<TargetPlatformMinVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.18362.0</TargetPlatformMinVersion>
+		<SupportedOSPlatformVersion Condition="$(TargetWinUI)">10.0.18362.0</SupportedOSPlatformVersion>
+		<TargetPlatformMinVersion Condition="$(TargetWinUI)">10.0.18362.0</TargetPlatformMinVersion>
 		<!--#endif -->
 	</PropertyGroup>
 
