@@ -98,7 +98,7 @@
     },
     "architecture": {
       "displayName": "Presentation",
-      "description": "Selects either MVVM or MVUX for the design architecture.",
+      "description": "Selects either MVVM or MVU-X for the design architecture.",
       "type": "parameter",
       "datatype": "choice",
       "defaultValue": "mvux",
@@ -110,13 +110,14 @@
         },
         {
           "choice": "mvux",
-          "description": "Use the MVUX design pattern with Uno.Extensions.Reactive",
+          "description": "Use the MVU-X design pattern with Uno.Extensions.Reactive",
           "displayName": "MVU-X (Model-View-Update XAML Friendly)"
         }
       ]
     },
     "ui-markup": {
       "displayName": "UI Markup",
+      "description": "Selects either XAML or C# Markup for the UI.",
       "type": "parameter",
       "datatype": "choice",
       "choices": [
@@ -140,6 +141,7 @@
     },
     "app-theme": {
       "displayName": "Theme",
+      "description": "Selects the theme design system for the application.",
       "type": "parameter",
       "datatype": "choice",
       "choices": [
@@ -247,41 +249,58 @@
     },
     "use-configuration": {
       "displayName": "Extensions - Configuration",
+      "description": "Includes Uno.Extensions.Configuration",
       "type": "parameter",
       "datatype": "bool",
       "defaultValue": "true",
-      "description": "Includes Uno.Extensions.Configuration"
+      "onlyIf": {
+        "template-type": "default"
+      }
     },
     "use-http": {
       "displayName": "Extensions - HTTP",
+      "description": "Includes Uno.Extensions.Http",
       "type": "parameter",
       "datatype": "bool",
-      "defaultValue": "true"
+      "defaultValue": "true",
+      "onlyIf": {
+        "template-type": "default"
+      }
     },
     "use-localization": {
       "displayName": "Extensions - Localization",
+      "description": "Includes Uno.Extensions.Localization",
       "type": "parameter",
       "datatype": "bool",
       "defaultValue": "true",
-      "description": "Includes  Uno.Extensions.Localization"
+      "onlyIf": {
+        "template-type": "default"
+      }
     },
     "logging": {
       "displayName": "Extensions - Logging",
+      "description": "Includes Uno.Extensions.Logging",
       "type": "parameter",
       "datatype": "bool",
       "defaultValue": "true",
-      "description": "Includes Uno.Extensions.Logging"
+      "onlyIf": {
+        "template-type": "default"
+      }
     },
     "serilog": {
       "displayName": "Extensions - Serilog",
+      "description": "Includes Uno.Extensions.Logging.Serilog when logging is enabled",
       "type": "parameter",
       "datatype": "bool",
       "defaultValue": "true",
-      "description": "Includes Uno.Extensions.Logging.Serilog when logging is enabled",
-      "isEnabled": "logging"
+      "onlyIf": {
+        "template-type": "default",
+        "logging": "true"
+      }
     },
     "navigation": {
       "displayName": "Extensions - Navigation",
+      "description": "Sets the base type of navigation used in the app.",
       "type": "parameter",
       "datatype": "choice",
       "choices": [
@@ -297,7 +316,9 @@
         }
       ],
       "defaultValue": "default",
-      "description": "Sets the base type of navigation used in the app."
+      "onlyIf": {
+        "template-type": "default"
+      }
     },
     "cpm": {
       "displayName": "Central Package Management",
@@ -311,18 +332,25 @@
       "type": "parameter",
       "dataType": "bool",
       "defaultValue": "false",
+      "onlyIf": {
+        "wasm": "true"
+      },
       "description": "Adds the Visual Studio Code Debugging support files for WebAssembly"
     },
     "wasm-pwa-manifest": {
       "displayName": "WebAssembly - PWA Manifest",
+      "description": "Enables the generation of a PWA manifest for WebAssembly",
       "type": "parameter",
       "datatype": "bool",
-      "description": "Enables the generation of a PWA manifest for WebAssembly",
-      "defaultValue": "true"
+      "defaultValue": "true",
+      "onlyIf": {
+        "wasm": "true"
+      }
     },
     "skipRestore": {
       "type": "parameter",
       "datatype": "bool",
+      "displayName": "Skip Restore",
       "description": "If specified, skips the automatic restore of the project on create.",
       "defaultValue": "false"
     },
@@ -754,6 +782,20 @@
         },
         "continueOnError": true
     },
+    // {
+    //   "actionId": "3A7C4B45-1F5D-4A30-959A-51B88E82B5D2",
+    //   "args": {
+    //     "executable": "setup-languages.ps1",
+    //     "args": "-Languages 'es;fr' -ProjectName MyExtensionsApp",
+    //     "redirectStandardOutput": false,
+    //     "redirectStandardError": false
+    //   },
+    //   "manualInstructions": [{
+    //     "text": "Run 'setup-languages.ps1 -Languages 'es;fr' -ProjectName MyExtensionsApp'"
+    //   }],
+    //   "continueOnError": false,
+    //   "description ": "setups the project by calling setup-languages.ps1"
+    // },
     {
       "condition": "(!skipRestore)",
       "description": "Restore NuGet packages required by this project",
