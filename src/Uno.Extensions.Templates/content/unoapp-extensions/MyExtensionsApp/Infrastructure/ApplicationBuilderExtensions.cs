@@ -5,25 +5,19 @@ public static class ApplicationBuilderExtensions
 {
 	public static IApplicationBuilder ConfigureResources(this IApplicationBuilder builder)
 	{
+		// Load WinUI Resources
 		builder.App.Resources(r => r.Merged(
-			// Load WinUI Resources
-			new XamlControlsResources(),
+			new XamlControlsResources()));
 
-			// Load Material Resources
-			new MaterialColors()
-			{
-				OverrideDictionary = new Styles.ColorPaletteOverride()
-			},
-			new MaterialFonts()
-			{
-				OverrideDictionary = new Styles.MaterialFontsOverride()
-			},
-			new MaterialResources(),
+		// Load Material Resources
+		builder.App.UseMaterial(
+			colorOverride: new Styles.ColorPaletteOverride(),
+			fontOverride: new Styles.MaterialFontsOverride());
 
-			// Load Uno.UI.Toolkit resources
+		// Load Uno.UI.Toolkit Resources
+		builder.App.Resources(r => r.Merged(
 			new ToolkitResources(),
-			new MaterialToolkitResources()
-		));
+			new MaterialToolkitResources()));
 		return builder;
 	}
 }
