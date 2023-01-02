@@ -22,7 +22,7 @@ namespace Uno.Extensions.Reactive.Bindings.Collections
 	/// <summary>
 	/// A collection which is responsible to manage the items tracking.
 	/// </summary>
-	internal sealed partial class BindableCollection : ICollectionView, INotifyCollectionChanged
+	internal sealed partial class BindableCollection : ICollectionView, INotifyCollectionChanged, ISelectionInfo
 	{
 		private readonly IBindableCollectionDataStructure _dataStructure;
 		private readonly DispatcherLocal<DataLayer> _holder;
@@ -293,6 +293,29 @@ namespace Uno.Extensions.Reactive.Bindings.Collections
 			add => AddCurrentChangingHandler(value);
 			remove => RemoveCurrentChangingHandler(value);
 		}
+		#endregion
+
+		#region ISelectionInfo
+		#pragma warning disable Uno0001 // ISelectionInfo is just an interface
+		public ISelectionInfo? GetSelectionForCurrentThread()
+			=> _holder.Value.View as ISelectionInfo;
+
+		/// <inheritdoc />
+		public void SelectRange(ItemIndexRange itemIndexRange)
+			=> GetSelectionForCurrentThread()?.SelectRange(itemIndexRange);
+
+		/// <inheritdoc />
+		public void DeselectRange(ItemIndexRange itemIndexRange)
+			=> GetSelectionForCurrentThread()?.DeselectRange(itemIndexRange);
+
+		/// <inheritdoc />
+		public bool IsSelected(int index)
+			=> GetSelectionForCurrentThread()?.IsSelected(index) ?? false;
+
+		/// <inheritdoc />
+		public IReadOnlyList<ItemIndexRange> GetSelectedRanges()
+			=> GetSelectionForCurrentThread()?.GetSelectedRanges() ?? Array.Empty<ItemIndexRange>();
+		#pragma warning restore Uno0001
 		#endregion
 
 		internal EventRegistrationToken AddVectorChangedHandler(VectorChangedEventHandler<object?>? handler)

@@ -236,4 +236,45 @@ public sealed record SelectionInfo
 		=> IsEmpty
 			? "--Empty--"
 			: string.Join(" & ", Ranges);
+
+	/// <inheritdoc />
+	public bool Equals(SelectionInfo? other)
+		=> Equals(Ranges, other?.Ranges);
+
+	/// <inheritdoc />
+	public override int GetHashCode()
+		=> (int)Count;
+
+	private static bool Equals(IReadOnlyList<SelectionIndexRange>? leftRanges, IReadOnlyList<SelectionIndexRange>? rightRanges)
+	{
+		if (object.ReferenceEquals(leftRanges, rightRanges))
+		{
+			return true;
+		}
+
+		if (leftRanges is null || rightRanges is null)
+		{
+			return false;
+		}
+
+		var count = leftRanges.Count;
+		if (count is 0)
+		{
+			return rightRanges.Count == 0;
+		}
+		else if (count != rightRanges.Count)
+		{
+			return false;
+		}
+
+		for (var i = 0; i < leftRanges.Count; i++)
+		{
+			if (!leftRanges[i].Equals(rightRanges[i]))
+			{
+				return false;
+			}
+		}
+
+		return true;
+	}
 }

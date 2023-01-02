@@ -24,10 +24,10 @@ internal static class SelectionHelper
 		while (enumerator.MoveNext())
 		{
 			var current = enumerator.Current;
-			var intersect = previous.LastIndex - current.FirstIndex;
+			var intersect = (long)previous.LastIndex + 1 - current.FirstIndex;
 			if (intersect >= 0)
 			{
-				previous = previous with { Length = previous.Length + current.Length - intersect };
+				previous = previous with { Length = previous.Length + current.Length - (uint)intersect };
 			}
 			else
 			{

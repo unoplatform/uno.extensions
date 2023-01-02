@@ -50,7 +50,7 @@ internal sealed class SelectionService : ISelectionService, IDisposable, ISelect
 	/// <inheritdoc />
 	public void SelectRange(ItemIndexRange itemIndexRange)
 	{
-		if (Update((info, removed) => info.Add(removed), new SelectionIndexRange((uint)itemIndexRange.FirstIndex, (uint)itemIndexRange.LastIndex)))
+		if (Update((info, added) => info.Add(added), new SelectionIndexRange((uint)itemIndexRange.FirstIndex, itemIndexRange.Length)))
 		{
 			PushToSource();
 		}
@@ -59,7 +59,7 @@ internal sealed class SelectionService : ISelectionService, IDisposable, ISelect
 	/// <inheritdoc />
 	public void DeselectRange(ItemIndexRange itemIndexRange)
 	{
-		if (Update((info, removed) => info.Remove(removed), new SelectionIndexRange((uint)itemIndexRange.FirstIndex, (uint)itemIndexRange.LastIndex)))
+		if (Update((info, removed) => info.Remove(removed), new SelectionIndexRange((uint)itemIndexRange.FirstIndex, itemIndexRange.Length)))
 		{
 			PushToSource();
 		}
