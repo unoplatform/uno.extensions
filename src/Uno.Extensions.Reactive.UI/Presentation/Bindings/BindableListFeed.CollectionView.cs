@@ -8,7 +8,7 @@ using Windows.Foundation.Collections;
 
 namespace Uno.Extensions.Reactive.Bindings;
 
-partial class BindableListFeed<T> : ICollectionView, INotifyCollectionChanged
+partial class BindableListFeed<T> : ICollectionView, INotifyCollectionChanged, ISelectionInfo
 {
 	/// <inheritdoc />
 	public IEnumerator<object> GetEnumerator()
@@ -136,4 +136,20 @@ partial class BindableListFeed<T> : ICollectionView, INotifyCollectionChanged
 		add => _items.CollectionChanged += value;
 		remove => _items.CollectionChanged -= value;
 	}
+
+	/// <inheritdoc />
+	public void SelectRange(ItemIndexRange itemIndexRange)
+		=> _items.SelectRange(itemIndexRange);
+
+	/// <inheritdoc />
+	public void DeselectRange(ItemIndexRange itemIndexRange)
+		=> _items.DeselectRange(itemIndexRange);
+
+	/// <inheritdoc />
+	public bool IsSelected(int index)
+		=> _items.IsSelected(index);
+
+	/// <inheritdoc />
+	public IReadOnlyList<ItemIndexRange> GetSelectedRanges()
+		=> _items.GetSelectedRanges();
 }

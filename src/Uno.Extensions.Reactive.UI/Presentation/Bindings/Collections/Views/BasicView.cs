@@ -13,7 +13,7 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Views
 	/// <summary>
 	/// A basic view on a <see cref="IBindableCollectionViewSource"/>.
 	/// </summary>
-	internal partial class BasicView : INotifyCollectionChanged, ICollectionView, ISupportIncrementalLoading, IDisposable
+	internal partial class BasicView : INotifyCollectionChanged, ICollectionView, ISupportIncrementalLoading, IDisposable, ISelectionInfo
 	{
 		private readonly CollectionFacet _collection;
 		private readonly CollectionChangedFacet _collectionChanged;
@@ -81,7 +81,7 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Views
 			=> new($"{method} is not supported on a read-only collection.");
 		#endregion
 
-		#region Selection (Single)
+		#region Selection (Single - ICollectionView.Current)
 		/// <inheritdoc />
 		public event CurrentChangingEventHandler CurrentChanging
 		{
@@ -133,6 +133,24 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Views
 
 		/// <inheritdoc />
 		public bool MoveCurrentToPrevious() => _selection?.MoveCurrentToPrevious() ?? false;
+		#endregion
+
+		#region Selection (Multiple - ISelectionInfo)
+		/// <inheritdoc />
+		public void SelectRange(ItemIndexRange itemIndexRange)
+			=> _selection?.SelectRange(itemIndexRange);
+
+		/// <inheritdoc />
+		public void DeselectRange(ItemIndexRange itemIndexRange)
+			=> _selection?.DeselectRange(itemIndexRange);
+
+		/// <inheritdoc />
+		public bool IsSelected(int index)
+			=> _selection?.IsSelected(index) ?? false;
+
+		/// <inheritdoc />
+		public IReadOnlyList<ItemIndexRange> GetSelectedRanges()
+			=> _selection?.GetSelectedRanges() ?? Array.Empty<ItemIndexRange>();
 		#endregion
 
 		#region Pagination
