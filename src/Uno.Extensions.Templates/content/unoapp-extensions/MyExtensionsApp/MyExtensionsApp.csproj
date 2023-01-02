@@ -80,7 +80,7 @@
 	</ItemGroup>
 
 	<Choose>
-		<When Condition="$(TargetWinUI)">
+		<When Condition="$(IsWinAppSdk)">
 			<ItemGroup>
 				<PackageReference Include="Microsoft.WindowsAppSDK" />
 				<PackageReference Include="Microsoft.Windows.SDK.BuildTools" />
@@ -113,7 +113,7 @@
 	</ItemGroup>
 	<!--#endif-->
 
-	<ItemGroup Condition="!$(TargetWinUI)">
+	<ItemGroup Condition="!$(IsWinAppSdk)">
 		<Content Include="Assets\**" />
 		<Page Include="**\*.xaml" Exclude="bin\**\*.xaml;obj\**\*.xaml" />
 		<ApplicationDefinition Include="App.xaml" Condition="exists('App.xaml')" />

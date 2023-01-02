@@ -27,8 +27,8 @@
 		<IsMacCatalyst>false</IsMacCatalyst>
 		<IsMacCatalyst Condition="$(TargetFramework) != 'net6.0' AND $(TargetFramework) != 'netstandard2.1' AND $([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">true</IsMacCatalyst>
 		<!--#endif-->
-		<TargetWinUI>false</TargetWinUI>
-		<TargetWinUI Condition="$(TargetFramework.Contains('windows10'))">true</TargetWinUI>
+		<IsWinAppSdk>false</IsWinAppSdk>
+		<IsWinAppSdk Condition="$(TargetFramework.Contains('windows10'))">true</IsWinAppSdk>
 	</PropertyGroup>
 
 	<PropertyGroup>
@@ -54,8 +54,8 @@
 		<SupportedOSPlatformVersion Condition="$(IsMac)">10.14</SupportedOSPlatformVersion>
 		<!--#endif -->
 		<!--#if (winAppSdk)-->
-		<SupportedOSPlatformVersion Condition="$(TargetWinUI)">10.0.18362.0</SupportedOSPlatformVersion>
-		<TargetPlatformMinVersion Condition="$(TargetWinUI)">10.0.18362.0</TargetPlatformMinVersion>
+		<SupportedOSPlatformVersion Condition="$(IsWinAppSdk)">10.0.18362.0</SupportedOSPlatformVersion>
+		<TargetPlatformMinVersion Condition="$(IsWinAppSdk)">10.0.18362.0</TargetPlatformMinVersion>
 		<!--#endif -->
 	</PropertyGroup>
 

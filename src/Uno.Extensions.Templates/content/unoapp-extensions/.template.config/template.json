@@ -469,9 +469,6 @@
   },
   "primaryOutputs": [
     {
-      "path": "MyExtensionsApp.Base\\App.xaml.cs"
-    },
-    {
       "condition": "(HostIdentifier == \"dotnetcli\" || HostIdentifier == \"dotnetcli-preview\" || HostIdentifier == \"vs\")",
       "path": "MyExtensionsApp.sln"
     },
@@ -772,31 +769,7 @@
   ],
   "postActions": [
     {
-        "id": "openInEditor",
-        "condition": "(HostIdentifier != \"dotnetcli\" && HostIdentifier != \"dotnetcli-preview\")",
-        "description": "Opens App.xaml.cs in the editor.",
-        "manualInstructions": [],
-        "actionId": "84C0DA21-51C8-4541-9940-6CA19AF04EE6",
-        "args": {
-            "files": "0"
-        },
-        "continueOnError": true
-    },
-    // {
-    //   "actionId": "3A7C4B45-1F5D-4A30-959A-51B88E82B5D2",
-    //   "args": {
-    //     "executable": "setup-languages.ps1",
-    //     "args": "-Languages 'es;fr' -ProjectName MyExtensionsApp",
-    //     "redirectStandardOutput": false,
-    //     "redirectStandardError": false
-    //   },
-    //   "manualInstructions": [{
-    //     "text": "Run 'setup-languages.ps1 -Languages 'es;fr' -ProjectName MyExtensionsApp'"
-    //   }],
-    //   "continueOnError": false,
-    //   "description ": "setups the project by calling setup-languages.ps1"
-    // },
-    {
+      "id": "nugetRestore",
       "condition": "(!skipRestore)",
       "description": "Restore NuGet packages required by this project",
       "manualInstructions": [
@@ -807,5 +780,27 @@
       "actionId": "210D431B-A78B-4D2F-B762-4ED3E3EA9025",
       "continueOnError": true
     }
-  ]
+  ],
+  "constraints": {
+    "android": {
+      "type": "workload",
+      "args": "android"
+    },
+    "ios": {
+      "type": "workload",
+      "args": "ios"
+    },
+    "macos": {
+      "type": "workload",
+      "args": "macos"
+    },
+    "maccatalyst": {
+      "type": "workload",
+      "args": "maccatalyst"
+    },
+    "wasm-tools": {
+      "type": "workload",
+      "args": "wasm-tools"
+    }
+  }
 }

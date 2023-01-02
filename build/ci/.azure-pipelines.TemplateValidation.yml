@@ -28,9 +28,9 @@ jobs:
       NoExtensions:
         createdProjectName: UnoAppNoExtensions01
         templateArgs: '-config false -loc false -log false --navigation frame'
-      Serilog:
-        createdProjectName: UnoAppSerilog01
-        templateArgs: '--logging-serilog'
+      NoSerilog:
+        createdProjectName: UnoAppNoSerilog01
+        templateArgs: '--logging-serilog false'
       NoServer:
         createdProjectName: UnoAppNoServer01
         templateArgs: '-server false'
@@ -90,6 +90,10 @@ jobs:
 
         # Create app with defaults
         Invoke-Expression -Command "dotnet new unoapp-extensions -o $env:createdProjectName $env:templateArgs"
+        if ($LASTEXITCODE -ne 0)
+        {
+            throw "Exit code must be zero."
+        }
 
         cd $env:createdProjectName
         & $msbuild /r /m $env:createdProjectName.sln
