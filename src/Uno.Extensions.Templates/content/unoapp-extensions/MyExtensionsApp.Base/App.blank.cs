@@ -29,6 +29,12 @@ public sealed partial class App : global::Microsoft.UI.Xaml.Application
 		}
 #endif
 
+//+:cnd:noEmit
+#if use-csharp-markup
+		this.Resources(r => r.Merged(new XamlControlsResources()));
+#endif
+//-:cnd:noEmit
+
 #if NET6_0_OR_GREATER && WINDOWS && !HAS_UNO
 		_window = new Window();
 		_window.Activate();
@@ -75,7 +81,7 @@ public sealed partial class App : global::Microsoft.UI.Xaml.Application
 	/// </summary>
 	/// <param name="sender">The Frame which failed navigation</param>
 	/// <param name="e">Details about the navigation failure</param>
-	void OnNavigationFailed(object sender, NavigationFailedEventArgs e)
+	private void OnNavigationFailed(object sender, NavigationFailedEventArgs e)
 	{
 		throw new InvalidOperationException($"Failed to load {e.SourcePageType.FullName}: {e.Exception}");
 	}
@@ -147,7 +153,7 @@ public sealed partial class App : global::Microsoft.UI.Xaml.Application
 		global::Uno.UI.Adapter.Microsoft.Extensions.Logging.LoggingAdapter.Initialize();
 #endif
 #endif
-    }
+	}
 
 	/// <summary>
 	/// Invoked when application execution is being suspended.  Application state is saved
@@ -162,5 +168,5 @@ public sealed partial class App : global::Microsoft.UI.Xaml.Application
 		// TODO: Save application state and stop any background activity
 		deferral.Complete();
 	}
-}
 //+:cnd:noEmit
+}
