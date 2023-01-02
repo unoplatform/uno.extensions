@@ -21,6 +21,21 @@
 		<!-- Ensures the .xr.xml files are generated in a proper layout folder -->
 		<GenerateLibraryLayout>true</GenerateLibraryLayout>
 	</PropertyGroup>
+	<!--#if (blank-app-template)-->
+	<ItemGroup>
+		<!--#if (use-csharp-markup)-->
+		<PackageReference Include="Uno.WinUI.Markup" Version="4.6.0-dev.16" />
+		<PackageReference Include="Uno.Themes.WinUI.Markup" Version="2.5.0-dev.6" />
+		<!--#endif-->
+		<!--#if (msftextv6) -->
+		<PackageReference Include="Microsoft.Extensions.Logging.Console" Version="6.0.0" />
+		<!--#endif-->
+		<!--#if (msftextv7) -->
+		<PackageReference Include="Microsoft.Extensions.Logging.Console" Version="7.0.0" />
+		<!--#endif-->
+	</ItemGroup>
+	<!--#endif-->
+	<!--#if (default-app-template)-->
 	<ItemGroup>
 		<!--#if (use-csharp-markup)-->
 		<PackageReference Include="Uno.WinUI.Markup" Version="4.6.0-dev.16" />
@@ -52,7 +67,6 @@
 		<!--#if (use-serilog)-->
 		<PackageReference Include="Uno.Extensions.Logging.Serilog" Version="255.255.255.255" />
 		<!--#endif-->
-		<!--#if (default-app-template)-->
 		<PackageReference Include="Uno.Extensions.Navigation" Version="255.255.255.255" />
 		<!--#endif-->
 		<!--#if (reactive) -->
@@ -79,12 +93,10 @@
 		<!--#if (use-localization)-->
 		<PackageReference Include="Uno.Extensions.Localization.WinUI" Version="255.255.255.255" />
 		<!--#endif-->
-
 		<PackageReference Include="Uno.Extensions.Navigation.Toolkit.WinUI" Version="255.255.255.255" />
 		<PackageReference Include="Uno.Extensions.Navigation.WinUI" Version="255.255.255.255" />
 		<!--#if (reactive)-->
 		<PackageReference Include="Uno.Extensions.Reactive.WinUI" Version="255.255.255.255" />
-		<!--#endif-->
 		<!--#endif-->
 		<!--#if (msftextv6) -->
 		<PackageReference Include="Microsoft.Extensions.Logging.Console" Version="6.0.0" />
@@ -93,6 +105,7 @@
 		<PackageReference Include="Microsoft.Extensions.Logging.Console" Version="7.0.0" />
 		<!--#endif-->
 	</ItemGroup>
+	<!--#endif-->
 
 	<!--#if (winAppSdk) -->
 	<Choose>

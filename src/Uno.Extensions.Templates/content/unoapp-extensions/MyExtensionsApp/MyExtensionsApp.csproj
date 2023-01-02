@@ -22,6 +22,16 @@
 		<GenerateLibraryLayout>true</GenerateLibraryLayout>
 	</PropertyGroup>
 
+	<!--#if (blank-app-template)-->
+	<ItemGroup>
+		<!--#if (use-csharp-markup)-->
+		<PackageReference Include="Uno.WinUI.Markup" />
+		<PackageReference Include="Uno.Themes.WinUI.Markup" />
+		<!--#endif-->
+		<PackageReference Include="Microsoft.Extensions.Logging.Console" />
+	</ItemGroup>
+	<!--#endif-->
+	<!--#if (default-app-template)-->
 	<ItemGroup>
 		<!--#if (use-csharp-markup)-->
 		<PackageReference Include="Uno.WinUI.Markup" />
@@ -30,7 +40,6 @@
 		<!--#endif-->
 		<PackageReference Include="Uno.Themes.WinUI.Markup" />
 		<!--#endif-->
-		<!--#if (default-app-template)-->
 		<!--#if (!reactive) -->
 		<PackageReference Include="CommunityToolkit.Mvvm" />
 		<!--#endif -->
@@ -76,8 +85,8 @@
 		<!--#if (reactive)-->
 		<PackageReference Include="Uno.Extensions.Reactive.WinUI" />
 		<!--#endif-->
-		<!--#endif-->
 	</ItemGroup>
+	<!--#endif-->
 
 	<Choose>
 		<When Condition="$(IsWinAppSdk)">
