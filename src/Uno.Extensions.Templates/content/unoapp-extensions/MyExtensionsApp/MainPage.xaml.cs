@@ -6,7 +6,7 @@ public sealed partial class MainPage : Page
 	public MainPage()
 	{
 //+:cnd:noEmit
-#if use-csharp-markup
+#if useCsharpMarkup
 		this.Content(new StackPanel()
 			.VerticalAlignment(VerticalAlignment.Center)
 			.HorizontalAlignment(HorizontalAlignment.Center)

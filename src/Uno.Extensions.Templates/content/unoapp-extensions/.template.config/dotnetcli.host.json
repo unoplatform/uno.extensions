@@ -1,11 +1,11 @@
-﻿{
+{
   "$schema": "http://json.schemastore.org/dotnetcli.host",
   "symbolInfo": {
-    "template-type": {
+    "templateType": {
       "longName": "template-type",
       "shortName": "type"
     },
-    "appid": {
+    "appId": {
       "longName": "app-id",
       "shortName": "id"
     },
@@ -17,11 +17,11 @@
       "longName": "presentation",
       "shortName": "presentation"
     },
-    "ui-markup": {
+    "uiMarkup": {
       "longName": "ui-markup",
       "shortName": "ui"
     },
-    "app-theme": {
+    "appTheme": {
       "longName": "app-theme",
       "shortName": "theme"
     },
@@ -41,15 +41,15 @@
       "longName": "maccatalyst",
       "shortName": "catalyst"
     },
-    "skia-wpf": {
+    "skiaWpf": {
       "longName": "skia-wpf",
       "shortName": "wpf"
     },
-    "skia-gtk": {
+    "skiaGtk": {
       "longName": "skia-gtk",
       "shortName": "gtk"
     },
-    "skia-linux-fb": {
+    "skiaLinuxFb": {
       "longName": "skia-linux-fb",
       "shortName": "linux"
     },
@@ -65,11 +65,11 @@
       "longName": "server",
       "shortName": "server"
     },
-    "wasm-pwa-manifest": {
+    "wasmPwaManifest": {
       "longName": "wasm-pwa-manifest",
       "shortName": "pwa"
     },
-    "unittest": {
+    "unitTest": {
       "longName": "unit-tests",
       "shortName": "unit-tests"
     },
@@ -77,15 +77,15 @@
       "longName": "ui-tests",
       "shortName": "ui-tests"
     },
-    "use-configuration": {
+    "configuration": {
       "longName": "configuration",
       "shortName": "config"
     },
-    "use-http": {
+    "http": {
       "longName": "use-http",
       "shortName": "http"
     },
-    "use-localization": {
+    "localization": {
       "longName": "localization",
       "shortName": "loc"
     },
@@ -113,7 +113,7 @@
       "longName": "skip-restore",
       "shortName": "skip"
     },
-    "is-vsix": {
+    "isVsix": {
       "isHidden": true
     }
   }

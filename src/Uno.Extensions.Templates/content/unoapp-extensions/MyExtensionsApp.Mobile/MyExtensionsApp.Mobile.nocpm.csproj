@@ -54,9 +54,9 @@
 		<UseInterpreter Condition="'$(Configuration)' == 'Debug' and '$(TargetFramework)' != 'net6.0-maccatalyst'">True</UseInterpreter>
 		<IsUnoHead>true</IsUnoHead>
 	</PropertyGroup>
-	<!--#if (blank-app-template)-->
+	<!--#if (useBlankAppTemplate)-->
 	<ItemGroup>
-		<!--#if (use-csharp-markup)-->
+		<!--#if (useCsharpMarkup)-->
 		<PackageReference Include="Uno.WinUI.Markup" Version="4.6.0-dev.16" />
 		<!--#endif-->
 		<PackageReference Include="Uno.WinUI" Version="4.7.0-dev.730" />
@@ -64,11 +64,11 @@
 		<PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="4.7.0-dev.730" />
 	</ItemGroup>
 	<!--#endif-->
-	<!--#if (default-app-template)-->
+	<!--#if (useDefaultAppTemplate)-->
 	<ItemGroup>
-		<!--#if (use-csharp-markup)-->
+		<!--#if (useCsharpMarkup)-->
 		<PackageReference Include="Uno.WinUI.Markup" Version="4.6.0-dev.16" />
-		<!--#if (use-material)-->
+		<!--#if (useMaterial)-->
 		<PackageReference Include="Uno.Material.WinUI.Markup" Version="2.5.0-dev.6" />
 		<!--#endif-->
 		<PackageReference Include="Uno.Themes.WinUI.Markup" Version="2.5.0-dev.6" />
@@ -76,46 +76,46 @@
 		<PackageReference Include="Uno.WinUI" Version="4.7.0-dev.730" />
 		<PackageReference Include="Uno.WinUI.RemoteControl" Version="4.7.0-dev.730" Condition="'$(Configuration)'=='Debug'" />
 		<PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="4.7.0-dev.730" />
-		<!--#if (use-material)-->
+		<!--#if (useMaterial)-->
 		<PackageReference Include="Uno.Material.WinUI" Version="2.5.0-dev.6" />
 		<PackageReference Include="Uno.Toolkit.WinUI.Material" Version="2.5.0-dev.8" />
-		<!--#elif (use-cupertino)-->
+		<!--#elif (useCupertino)-->
 		<PackageReference Include="Uno.Cupertino.WinUI" Version="2.5.0-dev.6" />
 		<!--#endif-->
-		<!--#if (use-csharp-markup)-->
+		<!--#if (useCsharpMarkup)-->
 		<PackageReference Include="Uno.Toolkit.WinUI.Markup" Version="2.5.0-dev.8" />
 		<!--#else-->
 		<PackageReference Include="Uno.Toolkit.WinUI" Version="2.5.0-dev.8" />
 		<!--#endif-->
 		<PackageReference Include="Uno.Extensions.Authentication.WinUI" Version="255.255.255.255" />
 		<PackageReference Include="Uno.Extensions.Hosting.WinUI" Version="255.255.255.255" />
-		<!--#if (use-localization)-->
+		<!--#if (localization)-->
 		<PackageReference Include="Uno.Extensions.Localization" Version="255.255.255.255" />
 		<PackageReference Include="Uno.Extensions.Localization.WinUI" Version="255.255.255.255" />
 		<!--#endif-->
-		<!--#if (use-logging)-->
+		<!--#if (logging)-->
 		<PackageReference Include="Uno.Extensions.Logging.WinUI" Version="255.255.255.255" />
 		<!--#endif-->
-		<!--#if (use-serilog)-->
+		<!--#if (useSerilog)-->
 		<PackageReference Include="Uno.Extensions.Logging.Serilog" Version="255.255.255.255" />
 		<!--#endif-->
-		<!--#if (not-frame-nav)-->
+		<!--#if (notFrameNav)-->
 		<PackageReference Include="Uno.Extensions.Navigation.Toolkit.WinUI" Version="255.255.255.255" />
 		<PackageReference Include="Uno.Extensions.Navigation.WinUI" Version="255.255.255.255" />
 		<!--#endif-->
-		<!--#if (use-configuration)-->
+		<!--#if (useConfiguration)-->
 		<PackageReference Include="Uno.Extensions.Configuration" Version="255.255.255.255" />
 		<!--#endif-->
 		<PackageReference Include="Uno.Extensions.Core" Version="255.255.255.255" />
-		<!--#if (use-http)-->
+		<!--#if (http)-->
 		<PackageReference Include="Uno.Extensions.Http" Version="255.255.255.255" />
 		<PackageReference Include="Uno.Extensions.Http.Refit" Version="255.255.255.255" />
 		<!--#endif-->
-		<!--#if (reactive)-->
+		<!--#if (useMvux)-->
 		<PackageReference Include="Uno.Extensions.Reactive.WinUI" Version="255.255.255.255" />
 		<!--#endif-->
 		<PackageReference Include="Uno.Extensions.Serialization" Version="255.255.255.255" />
-		<!--#if (use-http)-->
+		<!--#if (http)-->
 		<PackageReference Include="Uno.Extensions.Serialization.Http" Version="255.255.255.255" />
 		<PackageReference Include="Uno.Extensions.Serialization.Refit" Version="255.255.255.255" />
 		<!--#endif-->
@@ -142,7 +142,7 @@
 				<!-- https://github.com/xamarin/xamarin-macios/issues/14812 -->
 				<MtouchExtraArgs>$(MtouchExtraArgs) --marshal-objectivec-exceptions:disable</MtouchExtraArgs>
 			</PropertyGroup>
-			<!--#if (use-logging || blank-app-template)-->
+			<!--#if (logging || useBlankAppTemplate)-->
 			<ItemGroup>
 				<PackageReference Include="Uno.Extensions.Logging.OSLog" Version="1.4.0" />
 			</ItemGroup>
@@ -161,7 +161,7 @@
 				<!-- Full globalization is required for Uno -->
 				<InvariantGlobalization>false</InvariantGlobalization>
 			</PropertyGroup>
-			<!--#if (use-logging || blank-app-template)-->
+			<!--#if (logging || useBlankAppTemplate)-->
 			<ItemGroup>
 				<PackageReference Include="Uno.Extensions.Logging.OSLog" Version="1.4.0" />
 			</ItemGroup>
@@ -178,7 +178,7 @@
 	</Choose>
 	<ItemGroup>
 		<ProjectReference Include="..\MyExtensionsApp\MyExtensionsApp.csproj" />
-		<!--#if (use-http)-->
+		<!--#if (http)-->
 		<ProjectReference Include="..\MyExtensionsApp.DataContracts\MyExtensionsApp.DataContracts.csproj" />
 		<!--#endif-->
 	</ItemGroup>

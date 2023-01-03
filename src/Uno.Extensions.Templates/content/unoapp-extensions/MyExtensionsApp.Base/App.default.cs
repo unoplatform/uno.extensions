@@ -1,4 +1,4 @@
-#if use-csharp-markup
+#if useCsharpMarkup
 using MyExtensionsApp.Infrastructure;
 
 #endif
@@ -12,12 +12,6 @@ public sealed partial class App : global::Microsoft.UI.Xaml.Application
 	public App()
 	{
 		this.InitializeComponent();
-
-//-:cnd:noEmit
-#if HAS_UNO || NETFX_CORE
-		this.Suspending += OnSuspending;
-#endif
-//+:cnd:noEmit
 	}
 
 	/// <summary>
@@ -29,10 +23,10 @@ public sealed partial class App : global::Microsoft.UI.Xaml.Application
 	{
 		var builder = this.CreateBuilder(args)
 //+:cnd:noEmit
-#if use-csharp-markup
+#if useCsharpMarkup
 			.ConfigureResources()
 #endif
-#if (use-default-nav)
+#if (useDefaultNav)
 			// Add navigation support for toolkit controls such as TabBar and NavigationView
 			.UseToolkitNavigation()
 #endif
@@ -43,7 +37,7 @@ public sealed partial class App : global::Microsoft.UI.Xaml.Application
 				.UseEnvironment(Environments.Development)
 #endif
 //+:cnd:noEmit
-#if use-logging
+#if logging
 				.UseLogging(configure: (context, logBuilder) =>
 				{
 					// Configure log levels for different categories of logging
@@ -52,25 +46,29 @@ public sealed partial class App : global::Microsoft.UI.Xaml.Application
 							LogLevel.Information :
 							LogLevel.Warning);
 				}, enableUnoLogging: true)
-#if use-serilog
+#if useSerilog
 				.UseSerilog(consoleLoggingEnabled: true, fileLoggingEnabled: true)
 #endif
 #endif
-#if use-configuration
+#if useConfiguration
 				.UseConfiguration(configure: configBuilder =>
 					configBuilder
-						.EmbeddedSource<MainPage>()
+#if configuration
+						.EmbeddedSource<AppConfig>()
 						.Section<AppConfig>()
+#else
+						.EmbeddedSource<MainPage>()
+#endif
 				)
 #endif
-#if use-localization
+#if localization
 				// Enable localization (see appsettings.json for supported languages)
 				.UseLocalization()
 #endif
 				// Register Json serializers (ISerializer and ISerializer)
 				.UseSerialization()
 				.ConfigureServices((context, services) => {
-#if use-http
+#if http
 					// Register HttpClient
 					services
 //-:cnd:noEmit
@@ -85,8 +83,8 @@ public sealed partial class App : global::Microsoft.UI.Xaml.Application
 					// TODO: Register your services
 					//services.AddSingleton<IMyService, MyService>();
 				})
-#if (use-default-nav)
-#if (reactive)
+#if (useDefaultNav)
+#if (useMvux)
 				.UseNavigation(ReactiveViewModelMappings.ViewModelMappings, RegisterRoutes)
 #else
 				.UseNavigation(RegisterRoutes)
@@ -95,7 +93,7 @@ public sealed partial class App : global::Microsoft.UI.Xaml.Application
 			);
 		_window = builder.Window;
 
-#if use-frame-nav
+#if useFrameNav
 //-:cnd:noEmit
 		_host = builder.Build();
 
@@ -137,21 +135,7 @@ public sealed partial class App : global::Microsoft.UI.Xaml.Application
 #endif
 	}
 
-	/// <summary>
-	/// Invoked when application execution is being suspended.  Application state is saved
-	/// without knowing whether the application will be terminated or resumed with the contents
-	/// of memory still intact.
-	/// </summary>
-	/// <param name="sender">The source of the suspend request.</param>
-	/// <param name="e">Details about the suspend request.</param>
-	private void OnSuspending(object sender, SuspendingEventArgs e)
-	{
-		var deferral = e.SuspendingOperation.GetDeferral();
-		// TODO: Save application state and stop any background activity
-		deferral.Complete();
-	}
-
-#if use-frame-nav
+#if useFrameNav
 	/// <summary>
 	/// Invoked when Navigation to a certain page fails
 	/// </summary>
@@ -164,8 +148,8 @@ public sealed partial class App : global::Microsoft.UI.Xaml.Application
 #else
 	private static void RegisterRoutes(IViewRegistry views, IRouteRegistry routes)
 	{
-#if use-default-nav
-#if (reactive)
+#if useDefaultNav
+#if (useMvux)
 		views.Register(
 			new ViewMap(ViewModel: typeof(ShellModel)),
 			new ViewMap<MainPage, MainModel>(),

@@ -9,14 +9,21 @@ public partial record MainModel
 
 	public IState<string> Name { get; }
 
+//+:cnd:noEmit
+#if configuration
 	public MainModel(
 		INavigator navigator,
 		IOptions<AppConfig> appInfo)
 	{
-
 		_navigator = navigator;
 		Title = $"Main - {appInfo?.Value?.Title}";
-
+#else
+	public MainModel(INavigator navigator)
+	{
+		_navigator = navigator;
+		Title = "Main - MyExtensionsApp";
+#endif
+//-:cnd:noEmit
 		Name = State<string>.Value(this, ()=>"");
 	}
 

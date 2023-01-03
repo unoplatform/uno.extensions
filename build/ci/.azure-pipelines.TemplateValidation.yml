@@ -27,7 +27,16 @@ jobs:
         templateArgs: '--ui-markup csharp'
       NoExtensions:
         createdProjectName: UnoAppNoExtensions01
-        templateArgs: '-config false -loc false -log false --navigation frame'
+        templateArgs: '-config false -loc false -http false -log false --navigation frame'
+      NoConfiguration:
+        createdProjectName: UnoAppNoConfiguration01
+        templateArgs: '-config false'
+      NoLocalization:
+        createdProjectName: UnoAppNoLocalization01
+        templateArgs: '-loc false'
+      NoHttp:
+        createdProjectName: UnoAppNoHttp01
+        templateArgs: '-http false'
       NoSerilog:
         createdProjectName: UnoAppNoSerilog01
         templateArgs: '--logging-serilog false'

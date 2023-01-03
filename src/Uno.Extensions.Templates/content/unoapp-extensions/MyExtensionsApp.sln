@@ -11,14 +11,14 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Backend", "Backend", "{BA1ACE40-623E-4F42-94BB-11CF4D52C445}"
 EndProject
 //#endif
-#//#if (tests || unittest)
+#//#if (tests || unitTest)
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{7EF70027-9874-4112-A14F-33F02169CF8A}"
 EndProject
 #//#endif
 
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyExtensionsApp", "MyExtensionsApp\MyExtensionsApp.csproj", "{BACDD33A-304C-46C4-9B00-AC166978D7E0}"
 EndProject
-#//#if (mobile)
+#//#if (useMobile)
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyExtensionsApp.Mobile", "MyExtensionsApp.Mobile\MyExtensionsApp.Mobile.csproj", "{24D56E12-2373-4CBD-9AD4-5C931D15FB0D}"
 EndProject
 #//#endif
@@ -26,11 +26,11 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyExtensionsApp.Wasm", "MyExtensionsApp.Wasm\MyExtensionsApp.Wasm.csproj", "{40EA03F7-8A22-4143-B251-79BAC3EB13D2}"
 EndProject
 #//#endif
-#//#if (skia-gtk)
+#//#if (skiaGtk)
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyExtensionsApp.Skia.Gtk", "MyExtensionsApp.Skia.Gtk\MyExtensionsApp.Skia.Gtk.csproj", "{A5B8155A-118F-4794-B551-C6F3CF7E5411}"
 EndProject
 #//#endif
-#//#if (skia-wpf)
+#//#if (skiaWpf)
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyExtensionsApp.Skia.WPF", "MyExtensionsApp.Skia.WPF\MyExtensionsApp.Skia.WPF.csproj", "{6C744695-DA38-44D9-B487-FE5804C5508D}"
 EndProject
 #//#endif
@@ -38,7 +38,7 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyExtensionsApp.Windows", "MyExtensionsApp.Windows\MyExtensionsApp.Windows.csproj", "{5A78EE9A-1922-468C-96E3-45817727511C}"
 EndProject
 #//#endif
-#//#if (skia-linux-fb)
+#//#if (skiaLinuxFb)
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyExtensionsApp.Skia.Linux.FrameBuffer", "MyExtensionsApp.Skia.Linux.FrameBuffer\MyExtensionsApp.Skia.Linux.FrameBuffer.csproj", "{925C7A3E-6532-4E27-8ABE-37A4F9B73C8B}"
 EndProject
 #//#endif
@@ -46,11 +46,11 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyExtensionsApp.Server", "MyExtensionsApp.Server\MyExtensionsApp.Server.csproj", "{1ADD4B1D-2758-4ED5-963A-FE3F4206BF20}"
 EndProject
 #//#endif
-#//#if (server || use-http)
+#//#if (server || http)
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyExtensionsApp.DataContracts", "MyExtensionsApp.DataContracts\MyExtensionsApp.DataContracts.csproj", "{5ED31500-DF01-462D-9436-EC2EDCAA1965}"
 EndProject
 #//#endif
-#//#if (unittest)
+#//#if (unitTest)
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyExtensionsApp.Tests", "MyExtensionsApp.Tests\MyExtensionsApp.Tests.csproj", "{EB3EB846-D5CB-4140-834F-1CC40A0FD6D0}"
 EndProject
 #//#endif
@@ -87,7 +87,7 @@ Global
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-#//#if (mobile)
+#//#if (useMobile)
 		{24D56E12-2373-4CBD-9AD4-5C931D15FB0D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{24D56E12-2373-4CBD-9AD4-5C931D15FB0D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{24D56E12-2373-4CBD-9AD4-5C931D15FB0D}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
@@ -161,7 +161,7 @@ Global
 		{40EA03F7-8A22-4143-B251-79BAC3EB13D2}.Release|x86.ActiveCfg = Release|Any CPU
 		{40EA03F7-8A22-4143-B251-79BAC3EB13D2}.Release|x86.Build.0 = Release|Any CPU
 #//#endif
-#//#if (skia-gtk)
+#//#if (skiaGtk)
 		{A5B8155A-118F-4794-B551-C6F3CF7E5411}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{A5B8155A-118F-4794-B551-C6F3CF7E5411}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A5B8155A-118F-4794-B551-C6F3CF7E5411}.Debug|ARM.ActiveCfg = Debug|Any CPU
@@ -191,7 +191,7 @@ Global
 		{A5B8155A-118F-4794-B551-C6F3CF7E5411}.Release|x86.ActiveCfg = Release|Any CPU
 		{A5B8155A-118F-4794-B551-C6F3CF7E5411}.Release|x86.Build.0 = Release|Any CPU
 #//#endif
-#//#if (skia-wpf)
+#//#if (skiaWpf)
 		{6C744695-DA38-44D9-B487-FE5804C5508D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{6C744695-DA38-44D9-B487-FE5804C5508D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6C744695-DA38-44D9-B487-FE5804C5508D}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
@@ -262,7 +262,7 @@ Global
 		{1ADD4B1D-2758-4ED5-963A-FE3F4206BF20}.Release|x86.ActiveCfg = Release|Any CPU
 		{1ADD4B1D-2758-4ED5-963A-FE3F4206BF20}.Release|x86.Build.0 = Release|Any CPU
 #//#endif
-#//#if (server || use-http)
+#//#if (server || http)
 		{5ED31500-DF01-462D-9436-EC2EDCAA1965}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{5ED31500-DF01-462D-9436-EC2EDCAA1965}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5ED31500-DF01-462D-9436-EC2EDCAA1965}.Debug|ARM.ActiveCfg = Debug|Any CPU
@@ -320,7 +320,7 @@ Global
 		{BACDD33A-304C-46C4-9B00-AC166978D7E0}.Release|x64.Build.0 = Release|Any CPU
 		{BACDD33A-304C-46C4-9B00-AC166978D7E0}.Release|x86.ActiveCfg = Release|Any CPU
 		{BACDD33A-304C-46C4-9B00-AC166978D7E0}.Release|x86.Build.0 = Release|Any CPU
-#//#if (unittest)
+#//#if (unitTest)
 		{EB3EB846-D5CB-4140-834F-1CC40A0FD6D0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{EB3EB846-D5CB-4140-834F-1CC40A0FD6D0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EB3EB846-D5CB-4140-834F-1CC40A0FD6D0}.Debug|ARM.ActiveCfg = Debug|Any CPU
@@ -416,7 +416,7 @@ Global
 		{5A78EE9A-1922-468C-96E3-45817727511C}.Release|x86.ActiveCfg = Release|x86
 		{5A78EE9A-1922-468C-96E3-45817727511C}.Release|x86.Build.0 = Release|x86
 #//#endif
-#//#if (skia-linux-fb)
+#//#if (skiaLinuxFb)
 		{925C7A3E-6532-4E27-8ABE-37A4F9B73C8B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{925C7A3E-6532-4E27-8ABE-37A4F9B73C8B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{925C7A3E-6532-4E27-8ABE-37A4F9B73C8B}.Debug|ARM.ActiveCfg = Debug|Any CPU
@@ -452,35 +452,35 @@ Global
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{BACDD33A-304C-46C4-9B00-AC166978D7E0} = {FAA2C1DE-F859-4053-9573-6245F7E832EF}
-//#if (server || use-http)
+//#if (server || http)
 		{5ED31500-DF01-462D-9436-EC2EDCAA1965} = {FAA2C1DE-F859-4053-9573-6245F7E832EF}
 //#endif
 		{339C569C-EE23-445E-B908-743673EE5BC9} = {FAA2C1DE-F859-4053-9573-6245F7E832EF}
 //#if (server)
 		{BA1ACE40-623E-4F42-94BB-11CF4D52C445} = {FAA2C1DE-F859-4053-9573-6245F7E832EF}
 //#endif
-#//#if (mobile)
+#//#if (useMobile)
 		{24D56E12-2373-4CBD-9AD4-5C931D15FB0D} = {339C569C-EE23-445E-B908-743673EE5BC9}
 #//#endif
 #//#if (wasm)
 		{40EA03F7-8A22-4143-B251-79BAC3EB13D2} = {339C569C-EE23-445E-B908-743673EE5BC9}
 #//#endif
-#//#if (skia-gtk)
+#//#if (skiaGtk)
 		{A5B8155A-118F-4794-B551-C6F3CF7E5411} = {339C569C-EE23-445E-B908-743673EE5BC9}
 #//#endif
-#//#if (skia-wpf)
+#//#if (skiaWpf)
 		{6C744695-DA38-44D9-B487-FE5804C5508D} = {339C569C-EE23-445E-B908-743673EE5BC9}
 #//#endif
 #//#if (winAppSdk)
 		{5A78EE9A-1922-468C-96E3-45817727511C} = {339C569C-EE23-445E-B908-743673EE5BC9}
 #//#endif
-#//#if (skia-linux-fb)
+#//#if (skiaLinuxFb)
 		{925C7A3E-6532-4E27-8ABE-37A4F9B73C8B} = {339C569C-EE23-445E-B908-743673EE5BC9}
 #//#endif
 #//#if (server)
 		{1ADD4B1D-2758-4ED5-963A-FE3F4206BF20} = {BA1ACE40-623E-4F42-94BB-11CF4D52C445}
 #//#endif
-#//#if (unittest)
+#//#if (unitTest)
 		{EB3EB846-D5CB-4140-834F-1CC40A0FD6D0} = {7EF70027-9874-4112-A14F-33F02169CF8A}
 #//#endif
 #//#if (tests)

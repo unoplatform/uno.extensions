@@ -58,9 +58,9 @@
 		<UseInterpreter Condition="'$(Configuration)' == 'Debug' and '$(TargetFramework)' != 'net6.0-maccatalyst'">True</UseInterpreter>
 		<IsUnoHead>true</IsUnoHead>
 	</PropertyGroup>
-	<!--#if (blank-app-template)-->
+	<!--#if (useBlankAppTemplate)-->
 	<ItemGroup>
-		<!--#if (use-csharp-markup)-->
+		<!--#if (useCsharpMarkup)-->
 		<PackageReference Include="Uno.WinUI.Markup" />
 		<!--#endif-->
 		<PackageReference Include="Uno.WinUI" />
@@ -68,11 +68,11 @@
 		<PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" />
 	</ItemGroup>
 	<!--#endif-->
-	<!--#if (default-app-template)-->
+	<!--#if (useDefaultAppTemplate)-->
 	<ItemGroup>
-		<!--#if (use-csharp-markup)-->
+		<!--#if (useCsharpMarkup)-->
 		<PackageReference Include="Uno.WinUI.Markup" />
-		<!--#if (use-material)-->
+		<!--#if (useMaterial)-->
 		<PackageReference Include="Uno.Material.WinUI.Markup" />
 		<!--#endif-->
 		<PackageReference Include="Uno.Themes.WinUI.Markup" />
@@ -80,45 +80,45 @@
 		<PackageReference Include="Uno.WinUI" />
 		<PackageReference Include="Uno.WinUI.RemoteControl" Condition="'$(Configuration)'=='Debug'" />
 		<PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" />
-		<!--#if (use-material)-->
+		<!--#if (useMaterial)-->
 		<PackageReference Include="Uno.Material.WinUI" />
 		<PackageReference Include="Uno.Toolkit.WinUI.Material" />
-		<!--#elif (use-cupertino)-->
+		<!--#elif (useCupertino)-->
 		<PackageReference Include="Uno.Cupertino.WinUI" />
 		<!--#endif-->
-		<!--#if (use-csharp-markup)-->
+		<!--#if (useCsharpMarkup)-->
 		<PackageReference Include="Uno.Toolkit.WinUI.Markup" />
 		<!--#else-->
 		<PackageReference Include="Uno.Toolkit.WinUI" />
 		<!--#endif-->
 		<PackageReference Include="Uno.Extensions.Authentication.WinUI" />
-		<!--#if (use-configuration)-->
+		<!--#if (useConfiguration)-->
 		<PackageReference Include="Uno.Extensions.Configuration" />
 		<!--#endif-->
 		<PackageReference Include="Uno.Extensions.Core" />
 		<PackageReference Include="Uno.Extensions.Hosting.WinUI" />
-		<!--#if (use-localization)-->
+		<!--#if (localization)-->
 		<PackageReference Include="Uno.Extensions.Localization.WinUI" />
 		<!--#endif-->
-		<!--#if (use-logging)-->
+		<!--#if (logging)-->
 		<PackageReference Include="Uno.Extensions.Logging.WinUI" />
 		<!--#endif-->
-		<!--#if (use-serilog)-->
+		<!--#if (useSerilog)-->
 		<PackageReference Include="Uno.Extensions.Logging.Serilog" />
 		<!--#endif-->
-		<!--#if (not-frame-nav)-->
+		<!--#if (notFrameNav)-->
 		<PackageReference Include="Uno.Extensions.Navigation.Toolkit.WinUI" />
 		<PackageReference Include="Uno.Extensions.Navigation.WinUI" />
 		<!--#endif-->
-		<!--#if (use-http)-->
+		<!--#if (http)-->
 		<PackageReference Include="Uno.Extensions.Http" />
 		<PackageReference Include="Uno.Extensions.Http.Refit" />
 		<!--#endif-->
-		<!--#if (reactive)-->
+		<!--#if (useMvux)-->
 		<PackageReference Include="Uno.Extensions.Reactive.WinUI" />
 		<!--#endif-->
 		<PackageReference Include="Uno.Extensions.Serialization" />
-		<!--#if (use-http)-->
+		<!--#if (http)-->
 		<PackageReference Include="Uno.Extensions.Serialization.Http" />
 		<PackageReference Include="Uno.Extensions.Serialization.Refit" />
 		<!--#endif-->
@@ -144,7 +144,7 @@
 				<MtouchExtraArgs>$(MtouchExtraArgs) --marshal-objectivec-exceptions:disable</MtouchExtraArgs>
 				<MtouchExtraArgs>$(MtouchExtraArgs) --registrar:static</MtouchExtraArgs>
 			</PropertyGroup>
-			<!--#if (use-logging)-->
+			<!--#if (logging)-->
 			<ItemGroup>
 				<PackageReference Include="Uno.Extensions.Logging.OSLog" />
 			</ItemGroup>
@@ -163,7 +163,7 @@
 				<!-- Full globalization is required for Uno -->
 				<InvariantGlobalization>false</InvariantGlobalization>
 			</PropertyGroup>
-			<!--#if (use-logging)-->
+			<!--#if (logging)-->
 			<ItemGroup>
 				<PackageReference Include="Uno.Extensions.Logging.OSLog" />
 			</ItemGroup>
@@ -180,7 +180,7 @@
 	</Choose>
 	<ItemGroup>
 		<ProjectReference Include="..\MyExtensionsApp\MyExtensionsApp.csproj" />
-		<!--#if (use-http)-->
+		<!--#if (http)-->
 		<ProjectReference Include="..\MyExtensionsApp.DataContracts\MyExtensionsApp.DataContracts.csproj" />
 		<!--#endif-->
 	</ItemGroup>

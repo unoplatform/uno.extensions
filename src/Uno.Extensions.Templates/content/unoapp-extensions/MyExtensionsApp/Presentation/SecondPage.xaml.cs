@@ -5,8 +5,8 @@ public sealed partial class SecondPage : Page
 	public SecondPage()
 	{
 //+:cnd:noEmit
-#if use-csharp-markup
-#if(reactive)
+#if useCsharpMarkup
+#if(useMvux)
 		this.DataContext<BindableSecondModel>((page, vm) => page
 #else
 		this.DataContext<SecondViewModel>((page, vm) => page

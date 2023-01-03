@@ -1,5 +1,5 @@
 //+:cnd:noEmit
-#if (use-serilog)
+#if (useSerilog)
 using Serilog;
 #endif
 #if wasm
@@ -8,14 +8,14 @@ using Uno.Wasm.Bootstrap.Server;
 
 try
 {
-#if (use-serilog)
+#if (useSerilog)
 	Log.Logger = new LoggerConfiguration()
 			.WriteTo.Console()
 			.WriteTo.File(Path.Combine("App_Data", "Logs", "log.txt"))
 			.CreateLogger();
 #endif
 	var builder = WebApplication.CreateBuilder(args);
-#if (use-serilog)
+#if (useSerilog)
 	builder.Host.UseSerilog();
 #endif
 
@@ -64,7 +64,7 @@ try
 }
 catch (Exception ex)
 {
-#if (use-serilog)
+#if (useSerilog)
 	Log.Fatal(ex, "Application terminated unexpectedly");
 #else
 	Console.Error.WriteLine("Application terminated unexpectedly");
@@ -75,7 +75,7 @@ catch (Exception ex)
 		System.Diagnostics.Debugger.Break();
 	}
 }
-#if (use-serilog)
+#if (useSerilog)
 finally
 {
 	Log.CloseAndFlush();

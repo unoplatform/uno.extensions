@@ -18,77 +18,72 @@
 		<Manifest Include="$(ApplicationManifest)" />
 	</ItemGroup>
 
-	<!--#if (blank-app-template)-->
+	<!--#if (useBlankAppTemplate)-->
 	<ItemGroup>
-		<!--#if (use-csharp-markup)-->
+		<!--#if (useCsharpMarkup)-->
 		<PackageReference Include="Uno.WinUI.Markup" Version="4.6.0-dev.16" />
 		<!--#endif-->
 		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.2.221209.1" />
 		<PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.755" />
-		<PackageReference Include="Microsoft.Extensions.Logging.Console" Version="$msftextlibversion$" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Console" Version="7.0.0" />
 		<PackageReference Include="Uno.Core.Extensions.Logging.Singleton" Version="4.0.1" />
 		<PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="4.7.0-dev.730" />
 	</ItemGroup>
 	<!--#endif-->
-	<!--#if (default-app-template)-->
+	<!--#if (useDefaultAppTemplate)-->
 	<ItemGroup>
 		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.2.221209.1" />
 		<PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.755" />
-		<!--#if (msftextv6) -->
-		<PackageReference Include="Microsoft.Extensions.Logging.Console" Version="6.0.0" />
-		<!--#endif-->
-		<!--#if (msftextv7) -->
 		<PackageReference Include="Microsoft.Extensions.Logging.Console" Version="7.0.0" />
-		<!--#endif-->
 		<PackageReference Include="Uno.Core.Extensions.Logging.Singleton" Version="4.0.1" />
 		<PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="4.7.0-dev.730" />
-		<!--#if (use-csharp-markup)-->
+		<!--#if (useCsharpMarkup)-->
 		<PackageReference Include="Uno.WinUI.Markup" Version="4.6.0-dev.16" />
-		<!--#if (use-material)-->
+		<!--#if (useMaterial)-->
 		<PackageReference Include="Uno.Material.WinUI.Markup" Version="2.5.0-dev.6" />
 		<!--#endif-->
 		<PackageReference Include="Uno.Themes.WinUI.Markup" Version="2.5.0-dev.6" />
 		<!--#endif-->
-		<!--#if (use-material)-->
+		<!--#if (useMaterial)-->
 		<PackageReference Include="Uno.Material.WinUI" Version="2.5.0-dev.6" />
 		<PackageReference Include="Uno.Toolkit.WinUI.Material" Version="2.5.0-dev.8" />
-		<!--#elif (use-cupertino)-->
+		<!--#elif (useCupertino)-->
 		<PackageReference Include="Uno.Cupertino.WinUI" Version="2.5.0-dev.6" />
 		<!--#endif-->
-		<!--#if (use-csharp-markup)-->
+		<!--#if (useCsharpMarkup)-->
 		<PackageReference Include="Uno.Toolkit.WinUI.Markup" Version="2.5.0-dev.8" />
 		<!--#else-->
 		<PackageReference Include="Uno.Toolkit.WinUI" Version="2.5.0-dev.8" />
 		<!--#endif-->
 		<PackageReference Include="Uno.Extensions.Authentication.WinUI" Version="255.255.255.255" />
 		<PackageReference Include="Uno.Extensions.Hosting.WinUI" Version="255.255.255.255" />
-		<!--#if (use-localization)-->
+		<!--#if (localization)-->
 		<PackageReference Include="Uno.Extensions.Localization" Version="255.255.255.255" />
 		<PackageReference Include="Uno.Extensions.Localization.WinUI" Version="255.255.255.255" />
 		<!--#endif-->
-		<!--#if (use-logging)-->
+		<!--#if (logging)-->
 		<PackageReference Include="Uno.Extensions.Logging.WinUI" Version="255.255.255.255" />
 		<!--#endif-->
-		<!--#if (use-serilog)-->
+		<!--#if (useSerilog)-->
 		<PackageReference Include="Uno.Extensions.Logging.Serilog" Version="255.255.255.255" />
 		<!--#endif-->
-		<!--#if (not-frame-nav)-->
+		<!--#if (notFrameNav)-->
 		<PackageReference Include="Uno.Extensions.Navigation.Toolkit.WinUI" Version="255.255.255.255" />
 		<PackageReference Include="Uno.Extensions.Navigation.WinUI" Version="255.255.255.255" />
 		<!--#endif-->
-		<!--#if (use-configuration)-->
+		<!--#if (useConfiguration)-->
 		<PackageReference Include="Uno.Extensions.Configuration" Version="255.255.255.255" />
 		<!--#endif-->
 		<PackageReference Include="Uno.Extensions.Core" Version="255.255.255.255" />
-		<!--#if (use-http)-->
+		<!--#if (http)-->
 		<PackageReference Include="Uno.Extensions.Http" Version="255.255.255.255" />
 		<PackageReference Include="Uno.Extensions.Http.Refit" Version="255.255.255.255" />
 		<!--#endif-->
-		<!--#if (reactive)-->
+		<!--#if (useMvux)-->
 		<PackageReference Include="Uno.Extensions.Reactive.WinUI" Version="255.255.255.255" />
 		<!--#endif-->
 		<PackageReference Include="Uno.Extensions.Serialization" Version="255.255.255.255" />
-		<!--#if (use-http)-->
+		<!--#if (http)-->
 		<PackageReference Include="Uno.Extensions.Serialization.Http" Version="255.255.255.255" />
 		<PackageReference Include="Uno.Extensions.Serialization.Refit" Version="255.255.255.255" />
 		<!--#endif-->
@@ -97,7 +92,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\MyExtensionsApp\MyExtensionsApp.csproj" />
-		<!--#if (use-http)-->
+		<!--#if (http)-->
 		<ProjectReference Include="..\MyExtensionsApp.DataContracts\MyExtensionsApp.DataContracts.csproj" />
 		<!--#endif-->
 	</ItemGroup>

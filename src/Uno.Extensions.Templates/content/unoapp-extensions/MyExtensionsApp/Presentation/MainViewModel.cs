@@ -13,14 +13,21 @@ public partial class MainViewModel : ObservableObject
 
 	public ICommand GoToSecond { get; }
 
+//+:cnd:noEmit
+#if configuration
 	public MainViewModel(
 		INavigator navigator,
 		IOptions<AppConfig> appInfo)
 	{
-
 		_navigator = navigator;
 		Title = $"Main - {appInfo?.Value?.Title}";
-
+#else
+	public MainViewModel(INavigator navigator)
+	{
+		_navigator = navigator;
+		Title = "Main - MyExtensionsApp";
+#endif
+//-:cnd:noEmit
 		GoToSecond = new AsyncRelayCommand(GoToSecondView);
 	}
 

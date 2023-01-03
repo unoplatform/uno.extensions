@@ -1,4 +1,4 @@
-﻿{
+{
   "$schema": "http://json.schemastore.org/ide.host",
   "name": {
     "text": "Multi-Platform App (Uno.Extensions)"
@@ -11,11 +11,11 @@
   "learnMoreLink": "https://github.com/unoplatform/uno",
   "symbolInfo": [
     {
-      "id": "template-type",
+      "id": "templateType",
       "defaultValue": "default"
     },
     {
-      "id": "appid",
+      "id": "appId",
       "name": {
         "text": "Application Id"
       },
@@ -63,7 +63,7 @@
       "isVisible":true
     },
     {
-      "id": "ui-markup",
+      "id": "uiMarkup",
       "name": {
         "text": "UI Markup"
       },
@@ -74,7 +74,7 @@
       "defaultValue": "xaml"
     },
     {
-      "id": "app-theme",
+      "id": "appTheme",
       "name": {
         "text": "Theme"
       },
@@ -133,7 +133,7 @@
       "isVisible":true
     },
     {
-      "id": "skia-gtk",
+      "id": "skiaGtk",
       "name": {
         "text": "Desktop - Gtk (Linux, macOS, Windows 7 or later)"
       },
@@ -169,7 +169,7 @@
       "isVisible":true
     },
     {
-      "id": "skia-wpf",
+      "id": "skiaWpf",
       "name": {
         "text": "Desktop - WPF (Windows 7 or later)"
       },
@@ -181,7 +181,7 @@
       "isVisible":true
     },
     {
-      "id": "skia-linux-fb",
+      "id": "skiaLinuxFb",
       "name": {
         "text": "Desktop - Linux Framebuffer"
       },
@@ -193,7 +193,7 @@
       "isVisible":true
     },
     {
-      "id": "unittest",
+      "id": "unitTest",
       "name": {
         "text": "Unit Tests"
       },
@@ -226,7 +226,7 @@
       "isVisible": true
     },
     {
-      "id": "use-configuration",
+      "id": "configuration",
       "name": {
         "text": "Extensions - Configuration"
       },
@@ -236,7 +236,7 @@
       }
     },
     {
-      "id": "use-http",
+      "id": "http",
       "name": {
         "text": "Extensions - Http"
       },
@@ -247,7 +247,7 @@
       "defaultValue": "true"
     },
     {
-      "id": "use-localization",
+      "id": "localization",
       "name": {
         "text": "Extensions - Localization"
       },
@@ -311,7 +311,7 @@
       "isVisible": false
     },
     {
-      "id": "is-vsix",
+      "id": "isVsix",
       "isVisible": false,
       "defaultValue": "true"
     }

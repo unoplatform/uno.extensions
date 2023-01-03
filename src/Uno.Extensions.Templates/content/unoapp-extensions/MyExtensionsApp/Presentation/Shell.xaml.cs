@@ -7,7 +7,7 @@ public sealed partial class Shell : UserControl, IContentControlProvider
 	public Shell()
 	{
 //+:cnd:noEmit
-#if use-csharp-markup
+#if useCsharpMarkup
 		this.Content(
 			new ExtendedSplashScreen()
 				.Assign(out var splash)
@@ -34,7 +34,7 @@ public sealed partial class Shell : UserControl, IContentControlProvider
 //-:cnd:noEmit
 	}
 //+:cnd:noEmit
-#if use-csharp-markup
+#if useCsharpMarkup
 
 	private ExtendedSplashScreen Splash { get; }
 #endif

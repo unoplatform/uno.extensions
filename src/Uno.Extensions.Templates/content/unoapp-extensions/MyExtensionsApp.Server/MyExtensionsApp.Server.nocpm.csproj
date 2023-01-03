@@ -14,7 +14,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<!--#if (use-serilog)-->
+		<!--#if (useSerilog)-->
 		<PackageReference Include="Serilog.AspNetCore" Version="6.1.0" />
 		<!--#endif-->
 		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />

@@ -18,9 +18,9 @@
 		<Manifest Include="$(ApplicationManifest)" />
 	</ItemGroup>
 
-	<!--#if (blank-app-template)-->
+	<!--#if (useBlankAppTemplate)-->
 	<ItemGroup>
-		<!--#if (use-csharp-markup)-->
+		<!--#if (useCsharpMarkup)-->
 		<PackageReference Include="Uno.WinUI.Markup" />
 		<!--#endif-->
 		<PackageReference Include="Microsoft.WindowsAppSDK" />
@@ -30,60 +30,60 @@
 		<PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" />
 	</ItemGroup>
 	<!--#endif-->
-	<!--#if (default-app-template)-->
+	<!--#if (useDefaultAppTemplate)-->
 	<ItemGroup>
 		<PackageReference Include="Microsoft.WindowsAppSDK" />
 		<PackageReference Include="Microsoft.Windows.SDK.BuildTools" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Console" />
 		<PackageReference Include="Uno.Core.Extensions.Logging.Singleton" />
 		<PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" />
-		<!--#if (use-csharp-markup)-->
+		<!--#if (useCsharpMarkup)-->
 		<PackageReference Include="Uno.WinUI.Markup" />
-		<!--#if (use-material)-->
+		<!--#if (useMaterial)-->
 		<PackageReference Include="Uno.Material.WinUI.Markup" />
 		<!--#endif-->
 		<PackageReference Include="Uno.Themes.WinUI.Markup" />
 		<!--#endif-->
-		<!--#if (use-material)-->
+		<!--#if (useMaterial)-->
 		<PackageReference Include="Uno.Material.WinUI" />
 		<PackageReference Include="Uno.Toolkit.WinUI.Material" />
-		<!--#elif (use-cupertino)-->
+		<!--#elif (useCupertino)-->
 		<PackageReference Include="Uno.Cupertino.WinUI" />
 		<!--#endif-->
-		<!--#if (use-csharp-markup)-->
+		<!--#if (useCsharpMarkup)-->
 		<PackageReference Include="Uno.Toolkit.WinUI.Markup" />
 		<!--#else-->
 		<PackageReference Include="Uno.Toolkit.WinUI" />
 		<!--#endif-->
 		<PackageReference Include="Uno.Extensions.Authentication.WinUI" />
 		<PackageReference Include="Uno.Extensions.Hosting.WinUI" />
-		<!--#if (use-localization)-->
+		<!--#if (localization)-->
 		<PackageReference Include="Uno.Extensions.Localization" />
 		<PackageReference Include="Uno.Extensions.Localization.WinUI" />
 		<!--#endif-->
-		<!--#if (use-logging)-->
+		<!--#if (logging)-->
 		<PackageReference Include="Uno.Extensions.Logging.WinUI" />
 		<!--#endif-->
-		<!--#if (use-serilog)-->
+		<!--#if (useSerilog)-->
 		<PackageReference Include="Uno.Extensions.Logging.Serilog" />
 		<!--#endif-->
-		<!--#if (not-frame-nav)-->
+		<!--#if (notFrameNav)-->
 		<PackageReference Include="Uno.Extensions.Navigation.Toolkit.WinUI" />
 		<PackageReference Include="Uno.Extensions.Navigation.WinUI" />
 		<!--#endif-->
-		<!--#if (use-configuration)-->
+		<!--#if (useConfiguration)-->
 		<PackageReference Include="Uno.Extensions.Configuration" />
 		<!--#endif-->
 		<PackageReference Include="Uno.Extensions.Core" />
-		<!--#if (use-http)-->
+		<!--#if (http)-->
 		<PackageReference Include="Uno.Extensions.Http" />
 		<PackageReference Include="Uno.Extensions.Http.Refit" />
 		<!--#endif-->
-		<!--#if (reactive)-->
+		<!--#if (useMvux)-->
 		<PackageReference Include="Uno.Extensions.Reactive.WinUI" />
 		<!--#endif-->
 		<PackageReference Include="Uno.Extensions.Serialization" />
-		<!--#if (use-http)-->
+		<!--#if (http)-->
 		<PackageReference Include="Uno.Extensions.Serialization.Http" />
 		<PackageReference Include="Uno.Extensions.Serialization.Refit" />
 		<!--#endif-->
@@ -92,7 +92,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\MyExtensionsApp\MyExtensionsApp.csproj" />
-		<!--#if (use-http)-->
+		<!--#if (http)-->
 		<ProjectReference Include="..\MyExtensionsApp.DataContracts\MyExtensionsApp.DataContracts.csproj" />
 		<!--#endif-->
 	</ItemGroup>

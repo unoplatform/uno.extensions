@@ -30,7 +30,7 @@ public sealed partial class App : global::Microsoft.UI.Xaml.Application
 #endif
 
 //+:cnd:noEmit
-#if use-csharp-markup
+#if useCsharpMarkup
 		this.Resources(r => r.Merged(new XamlControlsResources()));
 #endif
 //-:cnd:noEmit

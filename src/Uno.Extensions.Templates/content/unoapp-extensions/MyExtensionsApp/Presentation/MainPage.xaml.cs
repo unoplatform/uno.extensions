@@ -5,9 +5,9 @@ public sealed partial class MainPage : Page
 	public MainPage()
 	{
 //+:cnd:noEmit
-#if use-csharp-markup
+#if useCsharpMarkup
 		NavigationCacheMode = NavigationCacheMode.Required;
-#if(reactive)
+#if(useMvux)
 		this.DataContext<BindableMainModel>((page, vm) => page
 #else
 		this.DataContext<MainViewModel>((page, vm) => page

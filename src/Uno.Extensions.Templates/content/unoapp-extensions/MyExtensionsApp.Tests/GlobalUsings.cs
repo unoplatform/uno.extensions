@@ -1,7 +1,7 @@
 ﻿//+:cnd:noEmit
 
 global using FluentAssertions;
-#if default-app-template
+#if useDefaultAppTemplate
 global using MyExtensionsApp.Business.Models;
 #endif
 global using NUnit.Framework;

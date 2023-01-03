@@ -3,16 +3,16 @@
     <PackageVersion Include="CommunityToolkit.Mvvm" Version="8.0.0" />
     <PackageVersion Include="coverlet.collector" Version="3.2.0" />
     <PackageVersion Include="FluentAssertions" Version="6.8.0" />
-    <PackageVersion Include="Microsoft.Extensions.Logging.Console" Version="$msftextlibversion$" />
+    <PackageVersion Include="Microsoft.Extensions.Logging.Console" Version="7.0.0" />
     <PackageVersion Include="Microsoft.Net.Compilers.Toolset" Version="4.2.0" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.4.0" />
-    <PackageVersion Include="Microsoft.Windows.Compatibility" Version="$msftextlibversion$" />
+    <PackageVersion Include="Microsoft.Windows.Compatibility" Version="7.0.0" />
     <PackageVersion Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.755" />
     <PackageVersion Include="Microsoft.WindowsAppSDK" Version="1.2.221209.1" />
     <PackageVersion Include="Newtonsoft.Json" Version="13.0.2" />
     <PackageVersion Include="NUnit" Version="3.13.3" />
     <PackageVersion Include="NUnit3TestAdapter" Version="4.3.1" />
-    <!--#if (server && use-serilog)-->
+    <!--#if (server && useSerilog)-->
     <PackageVersion Include="Serilog.AspNetCore" Version="6.1.0" />
     <!--#endif-->
     <PackageVersion Include="SkiaSharp.Skottie" Version="2.88.3" />
@@ -23,7 +23,7 @@
     <PackageVersion Include="Uno.Core.Extensions.Logging.Singleton" Version="4.0.1" />
     <PackageVersion Include="Uno.Extensions.Authentication" Version="255.255.255.255" />
     <PackageVersion Include="Uno.Extensions.Authentication.WinUI" Version="255.255.255.255" />
-    <!--#if (use-configuration)-->
+    <!--#if (useConfiguration)-->
     <PackageVersion Include="Uno.Extensions.Configuration" Version="255.255.255.255" />
     <!--#endif-->
     <PackageVersion Include="Uno.Extensions.Core" Version="255.255.255.255" />
@@ -31,13 +31,13 @@
     <PackageVersion Include="Uno.Extensions.Hosting.WinUI" Version="255.255.255.255" />
     <PackageVersion Include="Uno.Extensions.Http" Version="255.255.255.255" />
     <PackageVersion Include="Uno.Extensions.Http.Refit" Version="255.255.255.255" />
-    <!--#if (use-localization)-->
+    <!--#if (localization)-->
     <PackageVersion Include="Uno.Extensions.Localization" Version="255.255.255.255" />
     <PackageVersion Include="Uno.Extensions.Localization.WinUI" Version="255.255.255.255" />
     <!--#endif-->
-    <!--#if (use-logging)-->
+    <!--#if (logging)-->
     <PackageVersion Include="Uno.Extensions.Logging.OSLog" Version="1.4.0" />
-    <!--#if (use-serilog)-->
+    <!--#if (useSerilog)-->
     <PackageVersion Include="Uno.Extensions.Logging.Serilog" Version="255.255.255.255" />
     <!--#endif-->
     <PackageVersion Include="Uno.Extensions.Logging.WebAssembly.Console" Version="1.4.0" />
@@ -51,13 +51,13 @@
     <PackageVersion Include="Uno.Extensions.Serialization" Version="255.255.255.255" />
     <PackageVersion Include="Uno.Extensions.Serialization.Http" Version="255.255.255.255" />
     <PackageVersion Include="Uno.Extensions.Serialization.Refit" Version="255.255.255.255" />
-    <!--#if (use-material)-->
+    <!--#if (useMaterial)-->
     <PackageVersion Include="Uno.Material.WinUI" Version="2.5.0-dev.6" />
-    <!--#elif (use-cupertino)-->
+    <!--#elif (useCupertino)-->
     <PackageVersion Include="Uno.Cupertino.WinUI" Version="2.5.0-dev.6" />
     <!--#endif-->
     <PackageVersion Include="Uno.Toolkit.WinUI" Version="2.5.0-dev.8" />
-    <!--#if (use-material)-->
+    <!--#if (useMaterial)-->
     <PackageVersion Include="Uno.Toolkit.WinUI.Material" Version=" 2.5.0-dev.8" />
     <!--#endif-->
     <PackageVersion Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="4.7.0-dev.730" />
@@ -67,10 +67,10 @@
     <PackageVersion Include="Uno.Wasm.Bootstrap.DevServer" Version="7.0.11" />
     <PackageVersion Include="Uno.Wasm.Bootstrap.Server" Version="7.0.11" />
     <PackageVersion Include="Uno.WinUI" Version="4.7.0-dev.730" />
-    <!--#if (use-csharp-markup)-->
+    <!--#if (useCsharpMarkup)-->
     <PackageVersion Include="Uno.WinUI.Markup" Version="4.6.0-dev.16" />
     <PackageVersion Include="Uno.Toolkit.WinUI.Markup" Version="2.5.0-dev.8" />
-    <!--#if (use-material)-->
+    <!--#if (useMaterial)-->
     <PackageVersion Include="Uno.Material.WinUI.Markup" Version="2.5.0-dev.6" />
     <!--#endif-->
     <PackageVersion Include="Uno.Themes.WinUI.Markup" Version="2.5.0-dev.6" />

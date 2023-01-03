@@ -1,6 +1,6 @@
 <Project ToolsVersion="15.0">
 	<PropertyGroup>
-		<LangVersion>latest</LangVersion>
+		<LangVersion>10</LangVersion>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 

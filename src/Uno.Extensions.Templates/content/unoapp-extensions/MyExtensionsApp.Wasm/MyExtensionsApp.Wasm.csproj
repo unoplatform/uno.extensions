@@ -5,7 +5,7 @@
 		<NoWarn>$(NoWarn);NU1504;NU1505;NU1701</NoWarn>
 		<!-- Disabled due to issue with Central Package Management with implicit using -->
 		<ImplicitUsings>disable</ImplicitUsings>
-		<!--#if (wasm-pwa-manifest)-->
+		<!--#if (wasmPwaManifest)-->
 		<WasmPWAManifestFile>manifest.json</WasmPWAManifestFile>
 		<!--#endif -->
 		<AppDesignerFolder>Properties</AppDesignerFolder>
@@ -23,7 +23,7 @@
 	</PropertyGroup>
 	<ItemGroup>
 		<Content Include="Assets\SplashScreen.png" />
-		<!--#if (wasm-pwa-manifest)-->
+		<!--#if (wasmPwaManifest)-->
 		<Content Include="Assets\AppIcon-*.png" />
 		<!--#endif -->
 	</ItemGroup>
@@ -46,15 +46,10 @@
 		<None Include="wwwroot\web.config" />
 	</ItemGroup>
 
-	<!--#if (blank-app-template)-->
+	<!--#if (useBlankAppTemplate)-->
 	<ItemGroup>
-		<!--#if (msftextv6) -->
 		<PackageReference Include="Microsoft.Windows.Compatibility" />
-		<!--#endif -->
-		<!--#if (msftextv7) -->
-		<PackageReference Include="Microsoft.Windows.Compatibility" />
-		<!--#endif -->
-		<!--#if (use-csharp-markup)-->
+		<!--#if (useCsharpMarkup)-->
 		<PackageReference Include="Uno.WinUI.Markup" />
 		<!--#endif-->
 		<PackageReference Include="Uno.Wasm.Bootstrap" />
@@ -65,59 +60,54 @@
 		<PackageReference Include="Uno.Extensions.Logging.WebAssembly.Console" />
 	</ItemGroup>
 	<!--#endif-->
-	<!--#if (default-app-template)-->
+	<!--#if (useDefaultAppTemplate)-->
 	<ItemGroup>
-		<!--#if (msftextv6) -->
 		<PackageReference Include="Microsoft.Windows.Compatibility" />
-		<!--#endif -->
-		<!--#if (msftextv7) -->
-		<PackageReference Include="Microsoft.Windows.Compatibility" />
-		<!--#endif -->
 		<PackageReference Include="Uno.Wasm.Bootstrap" />
 		<PackageReference Include="Uno.Wasm.Bootstrap.DevServer" />
 		<PackageReference Include="Uno.WinUI.WebAssembly" />
 		<PackageReference Include="Uno.WinUI.RemoteControl" />
 		<PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" />
-		<!--#if (use-material)-->
+		<!--#if (useMaterial)-->
 		<PackageReference Include="Uno.Material.WinUI" />
 		<PackageReference Include="Uno.Toolkit.WinUI.Material" />
-		<!--#elif (use-cupertino)-->
+		<!--#elif (useCupertino)-->
 		<PackageReference Include="Uno.Cupertino.WinUI" />
 		<!--#endif-->
-		<!--#if (use-csharp-markup)-->
+		<!--#if (useCsharpMarkup)-->
 		<PackageReference Include="Uno.Toolkit.WinUI.Markup" />
 		<!--#else-->
 		<PackageReference Include="Uno.Toolkit.WinUI" />
 		<!--#endif-->
 		<PackageReference Include="Uno.Extensions.Authentication.WinUI" />
 		<PackageReference Include="Uno.Extensions.Hosting.WinUI" />
-		<!--#if (use-localization)-->
+		<!--#if (localization)-->
 		<PackageReference Include="Uno.Extensions.Localization.WinUI" />
 		<!--#endif-->
-		<!--#if (use-logging)-->
+		<!--#if (logging)-->
 		<PackageReference Include="Uno.Extensions.Logging.WebAssembly.Console" />
 		<PackageReference Include="Uno.Extensions.Logging.WinUI" />
 		<!--#endif-->
-		<!--#if (use-serilog)-->
+		<!--#if (useSerilog)-->
 		<PackageReference Include="Uno.Extensions.Logging.Serilog" />
 		<!--#endif-->
-		<!--#if (not-frame-nav)-->
+		<!--#if (notFrameNav)-->
 		<PackageReference Include="Uno.Extensions.Navigation.Toolkit.WinUI" />
 		<PackageReference Include="Uno.Extensions.Navigation.WinUI" />
 		<!--#endif-->
-		<!--#if (use-configuration)-->
+		<!--#if (useConfiguration)-->
 		<PackageReference Include="Uno.Extensions.Configuration" />
 		<!--#endif-->
 		<PackageReference Include="Uno.Extensions.Core" />
-		<!--#if (use-http)-->
+		<!--#if (http)-->
 		<PackageReference Include="Uno.Extensions.Http" />
 		<PackageReference Include="Uno.Extensions.Http.Refit" />
 		<!--#endif-->
-		<!--#if (reactive)-->
+		<!--#if (useMvux)-->
 		<PackageReference Include="Uno.Extensions.Reactive.WinUI" />
 		<!--#endif-->
 		<PackageReference Include="Uno.Extensions.Serialization" />
-		<!--#if (use-http)-->
+		<!--#if (http)-->
 		<PackageReference Include="Uno.Extensions.Serialization.Http" />
 		<PackageReference Include="Uno.Extensions.Serialization.Refit" />
 		<!--#endif-->
@@ -125,7 +115,7 @@
 	<!--#endif-->
 	<ItemGroup>
 		<ProjectReference Include="..\MyExtensionsApp\MyExtensionsApp.csproj" />
-		<!--#if (use-http)-->
+		<!--#if (http)-->
 		<ProjectReference Include="..\MyExtensionsApp.DataContracts\MyExtensionsApp.DataContracts.csproj" />
 		<!--#endif-->
 	</ItemGroup>
