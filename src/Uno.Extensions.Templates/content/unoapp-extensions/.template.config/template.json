@@ -780,27 +780,5 @@
       "actionId": "210D431B-A78B-4D2F-B762-4ED3E3EA9025",
       "continueOnError": true
     }
-  ],
-  "constraints": {
-    "android": {
-      "type": "workload",
-      "args": "android"
-    },
-    "ios": {
-      "type": "workload",
-      "args": "ios"
-    },
-    "macos": {
-      "type": "workload",
-      "args": "macos"
-    },
-    "maccatalyst": {
-      "type": "workload",
-      "args": "maccatalyst"
-    },
-    "wasm-tools": {
-      "type": "workload",
-      "args": "wasm-tools"
-    }
-  }
+  ]
 }
