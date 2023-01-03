@@ -5,7 +5,7 @@
 		<Authors>Uno Platform</Authors>
 		<PackageProjectUrl>https://github.com/unoplatform/uno.extensions</PackageProjectUrl>
 		<PackageIconUrl>https://nv-assets.azurewebsites.net/logos/uno.png</PackageIconUrl>
-		<RepositoryUrl>https://github.com/unoplatform/uno.core</RepositoryUrl>
+		<RepositoryUrl>https://github.com/unoplatform/uno.extensions</RepositoryUrl>
 		<RepositoryUrl>$(BUILD_REPOSITORY_URI)</RepositoryUrl>
 		<Copyright>Copyright (C) 2015-$([System.DateTime]::Now.ToString(`yyyy`)) Uno Platform - all rights reserved</Copyright>
 		<Product>$(AssemblyName) ($(TargetFramework))</Product>
@@ -150,7 +150,7 @@
 			</ItemGroup>
 		</When>
 	</Choose>
-	
+
 	<!--
 		Adjust the output paths for runtime project in order for those
 		projects to stay in the same folder as the original reference one.

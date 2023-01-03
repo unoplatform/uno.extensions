@@ -16,53 +16,54 @@
 	</PropertyGroup>
 
 	<PropertyGroup>
-		<Authors>nventive</Authors>
-		<PackageProjectUrl>https://github.com/unoplatform/uno.extensions</PackageProjectUrl>
-		<PackageIconUrl>https://nv-assets.azurewebsites.net/logos/uno.png</PackageIconUrl>
-		<RepositoryUrl>https://github.com/unoplatform/uno.extensions</RepositoryUrl>
 		<Description>Quickstart template for using Uno Extensions.</Description>
-		<GeneratePackageOnBuild Condition="'$(Configuration)'=='Release'">true</GeneratePackageOnBuild>
+		<GeneratePackageOnBuild Condition="'$(IsPackable)'!='false'">true</GeneratePackageOnBuild>
 		<PackageTags>dotnet-new;templates;uno-platform;webassembly;ios;android;winui;macos;uno-extensions</PackageTags>
 		<NoWarn>$(NoWarn);NU5128</NoWarn>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<UpToDateCheckInput Include="content\**" />
-		<Content Include="content/**/*"
-				Exclude="**/obj/**;**/bin/**;**/*.Debugging.sln"
-				KeepDuplicates="False"
-				PackagePath="content"
-				Pack="true" />
-		<Content Include="content/unoapp-extensions/MyExtensionsApp.Windows/app.manifest"
-				PackagePath="content/unoapp-extensions/MyExtensionsApp.Skia.Gtk/app.manifest"
-				Pack="true" />
-		<Content Include="content/unoapp-extensions/MyExtensionsApp.Windows/Images/StoreLogo.png"
-				PackagePath="content/unoapp-extensions/MyExtensionsApp.Skia.Gtk/Images/StoreLogo.png"
-				Pack="true" />
-		<Content Include="content/unoapp-extensions/MyExtensionsApp.Windows/app.manifest"
-				PackagePath="content/unoapp-extensions/MyExtensionsApp.Skia.Linux.FrameBuffer/app.manifest"
-				Pack="true" />
-		<Content Include="content/unoapp-extensions/MyExtensionsApp.Windows/Images/StoreLogo.png"
-				PackagePath="content/unoapp-extensions/MyExtensionsApp.Skia.Linux.FrameBuffer/Images/StoreLogo.png"
-				Pack="true" />
-		<_AllCSProjFiles Include="content/**/*.csproj" />
-		<_AllCSProjFiles Include="content/**/Directory.Packages.props" />
+		<TemplateFile Include="content/**/*"
+					Exclude="**/obj/**;**/bin/**;**/*.Debugging.sln" />
+		<UpToDateCheckInput Include="@(TemplateFile)" />
 	</ItemGroup>
 
-	<Target Name="ReplaceVersions" BeforeTargets="BeforeBuild">
+	<Target Name="PrepareTemplateFiles" BeforeTargets="ReplaceVersions;BeforeBuild">
+		<Copy
+			SourceFiles="@(TemplateFile)"
+			DestinationFiles="$(IntermediateOutputPath)/content/%(RecursiveDir)%(Filename)%(Extension)"
+			SkipUnchangedFiles="false" />
+		<Copy
+			SourceFiles="content/unoapp-extensions/MyExtensionsApp.Windows/app.manifest"
+			DestinationFiles="$(IntermediateOutputPath)/content/unoapp-extensions/MyExtensionsApp.Skia.Gtk/app.manifest"
+			SkipUnchangedFiles="false" />
+		<Copy
+			SourceFiles="content/unoapp-extensions/MyExtensionsApp.Windows/Images/StoreLogo.png"
+			DestinationFiles="$(IntermediateOutputPath)/content/unoapp-extensions/MyExtensionsApp.Skia.Gtk/Images/StoreLogo.png"
+			SkipUnchangedFiles="false" />
+		<Copy
+			SourceFiles="content/unoapp-extensions/MyExtensionsApp.Windows/app.manifest"
+			DestinationFiles="$(IntermediateOutputPath)/content/unoapp-extensions/MyExtensionsApp.Skia.Linux.FrameBuffer/app.manifest"
+			SkipUnchangedFiles="false" />
+		<Copy
+			SourceFiles="content/unoapp-extensions/MyExtensionsApp.Windows/Images/StoreLogo.png"
+			DestinationFiles="$(IntermediateOutputPath)/content/unoapp-extensions/MyExtensionsApp.Skia.Linux.FrameBuffer/Images/StoreLogo.png"
+			SkipUnchangedFiles="false" />
 
+		<ItemGroup>
+			<_PackageFiles Include="$(IntermediateOutputPath)/content/**/*"
+							 PackagePath="content" />
+		</ItemGroup>
+	</Target>
+
+	<Target Name="ReplaceVersions" BeforeTargets="BeforeBuild" AfterTargets="PrepareTemplateFiles">
+		<ItemGroup>
+			<_AllCSProjFiles Include="$(IntermediateOutputPath)/content/**/*.csproj" />
+			<_AllCSProjFiles Include="$(IntermediateOutputPath)/content/**/Directory.Packages.props" />
+		</ItemGroup>
 		<ReplaceFileText Filename="%(_AllCSProjFiles.Identity)"
 					MatchExpression="Version=&quot;255.255.255.255&quot;"
 					ReplacementText="Version=&quot;$(PackageVersion)&quot;" />
-
-	</Target>
-
-	<Target Name="ResetVersions" AfterTargets="AfterBuild;Pack">
-
-		<ReplaceFileText Filename="%(_AllCSProjFiles.Identity)"
-					MatchExpression="Version=&quot;$(PackageVersion)&quot;"
-					ReplacementText="Version=&quot;255.255.255.255&quot;" />
-
 	</Target>
 
 	<!-- Using Regex Replace prevents XmlPoke from replacing Tabs with Spaces -->
