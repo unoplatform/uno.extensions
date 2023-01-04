@@ -1,0 +1,7 @@
+{
+	"profiles": {
+		"MyExtensionsApp.Windows (Package)": {
+			"commandName": "MsixPackage"
+		}
+	}
+}
