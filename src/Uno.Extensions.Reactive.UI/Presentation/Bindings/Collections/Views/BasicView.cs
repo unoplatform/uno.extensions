@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using Windows.Foundation;
@@ -13,7 +14,7 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Views
 	/// <summary>
 	/// A basic view on a <see cref="IBindableCollectionViewSource"/>.
 	/// </summary>
-	internal partial class BasicView : INotifyCollectionChanged, ICollectionView, ISupportIncrementalLoading, IDisposable, ISelectionInfo
+	internal partial class BasicView : INotifyCollectionChanged, INotifyPropertyChanged, ICollectionView, ISupportIncrementalLoading, IDisposable, ISelectionInfo
 	{
 		private readonly CollectionFacet _collection;
 		private readonly CollectionChangedFacet _collectionChanged;
@@ -79,6 +80,14 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Views
 
 		private NotSupportedException EditionNotSupported([CallerMemberName] string? method = null)
 			=> new($"{method} is not supported on a read-only collection.");
+		#endregion
+
+		#region INotifyPropertyChanged
+		public event PropertyChangedEventHandler? PropertyChanged
+		{
+			add => _collectionChanged.AddPropertyChangedHandler(value!);
+			remove => _collectionChanged.RemovePropertyChangedHandler(value!);
+		}
 		#endregion
 
 		#region Selection (Single - ICollectionView.Current)

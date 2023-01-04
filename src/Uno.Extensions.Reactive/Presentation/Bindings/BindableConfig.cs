@@ -23,7 +23,7 @@ internal enum BindableConfig
 
 	/// <summary>
 	/// Indicates that the inheritor has a property name `Value` which can be data bind directly instead of <see cref="Bindable{T}.GetValue"/> and <see cref="Bindable{T}.SetValue(T)"/>.
-	/// Is so, the <see cref="INotifyPropertyChanged.PropertyChanged"/> will be raise accordingly.
+	/// If so, the <see cref="INotifyPropertyChanged.PropertyChanged"/> will be raise accordingly.
 	/// </summary>
 	RaiseValuePropertyChanged,
 

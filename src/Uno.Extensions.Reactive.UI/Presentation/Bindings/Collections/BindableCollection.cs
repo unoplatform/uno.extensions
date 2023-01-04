@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Threading;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
@@ -22,7 +23,7 @@ namespace Uno.Extensions.Reactive.Bindings.Collections
 	/// <summary>
 	/// A collection which is responsible to manage the items tracking.
 	/// </summary>
-	internal sealed partial class BindableCollection : ICollectionView, INotifyCollectionChanged, ISelectionInfo
+	internal sealed partial class BindableCollection : ICollectionView, INotifyCollectionChanged, INotifyPropertyChanged, ISelectionInfo
 	{
 		private readonly IBindableCollectionDataStructure _dataStructure;
 		private readonly DispatcherLocal<DataLayer> _holder;
@@ -242,6 +243,12 @@ namespace Uno.Extensions.Reactive.Bindings.Collections
 		{
 			add => _holder.Value.GetFacet<CollectionChangedFacet>().AddCollectionChangedHandler(value!);
 			remove => _holder.Value.GetFacet<CollectionChangedFacet>().RemoveCollectionChangedHandler(value!);
+		}
+
+		public event PropertyChangedEventHandler? PropertyChanged
+		{
+			add => _holder.Value.GetFacet<CollectionChangedFacet>().AddPropertyChangedHandler(value!);
+			remove => _holder.Value.GetFacet<CollectionChangedFacet>().RemovePropertyChangedHandler(value!);
 		}
 
 		/// <inheritdoc />

@@ -34,7 +34,7 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Data
 
 			if (_isRoot) // I.e. Collection is not grouped
 			{
-				var paginationFacet = new PaginationFacet(source, extendedPropertiesFacet);
+				var paginationFacet = new PaginationFacet(source, collectionChangedFacet, extendedPropertiesFacet);
 				var selectionFacet = new SelectionFacet(source, () => view ?? throw new InvalidOperationException("The owner provider must be resolved lazily!"));
 				var editionFacet = new EditionFacet(source, collectionFacet);
 
