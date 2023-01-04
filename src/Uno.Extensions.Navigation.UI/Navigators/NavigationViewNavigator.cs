@@ -1,4 +1,6 @@
-﻿namespace Uno.Extensions.Navigation.Navigators;
+﻿using System.Collections;
+
+namespace Uno.Extensions.Navigation.Navigators;
 
 public class NavigationViewNavigator : SelectorNavigator<Microsoft.UI.Xaml.Controls.NavigationView>
 {
@@ -14,17 +16,75 @@ public class NavigationViewNavigator : SelectorNavigator<Microsoft.UI.Xaml.Contr
 
 	protected override FrameworkElement? SelectedItem
 	{
-		get => Control?.SelectedItem as FrameworkElement;
+		get => Control is null ? null : MenuItemToFrameworkElement(Control.SelectedItem);
 		set
 		{
-			if (Control is not null)
+			if (Control is not null && value is not null)
 			{
-				Control.SelectedItem = value;
+				Control.SelectedItem = FrameworkElementToMenuItem(value);
 			}
 		}
 	}
 
-	protected override IEnumerable<FrameworkElement> Items => Control?.MenuItems.OfType<FrameworkElement>() ?? new FrameworkElement[] { };
+	private FrameworkElement? MenuItemToFrameworkElement(object mi)
+	{
+		if (Control is null)
+		{
+			return null;
+		}
+
+		return mi is FrameworkElement fe ? fe : Control.ContainerFromMenuItem(mi) as FrameworkElement;
+	}
+
+	private object? FrameworkElementToMenuItem(FrameworkElement fe)
+	{
+		if (Control is null)
+		{
+			return null;
+		}
+
+		var item = (from mi in NavigationMenuItems
+					let element = MenuItemToFrameworkElement(mi)
+					where element == fe
+					select element).FirstOrDefault();
+		return item;
+	}
+
+	private object[] NavigationMenuItems
+	{
+		get
+		{
+			if (Control is null)
+			{
+				return new object[] { };
+			}
+
+
+			if (Control.MenuItemsSource is IEnumerable items)
+			{
+				return items.OfType<object>().ToArray();
+			}
+
+			return Control.MenuItems.ToArray();
+		}
+	}
+
+	protected override IEnumerable<FrameworkElement> Items
+	{
+		get
+		{
+			if (Control is null)
+			{
+				return new FrameworkElement[] { };
+			}
+
+			var elements = (from mi in NavigationMenuItems
+							let element = MenuItemToFrameworkElement(mi)
+							where element is not null
+							select element).ToArray();
+			return elements;
+		}
+	}
 
 	protected override Action? AttachSelectionChanged(Action<FrameworkElement, FrameworkElement?> selectionChanged)
 	{
@@ -35,7 +95,14 @@ public class NavigationViewNavigator : SelectorNavigator<Microsoft.UI.Xaml.Contr
 		}
 
 		TypedEventHandler<Microsoft.UI.Xaml.Controls.NavigationView, Microsoft.UI.Xaml.Controls.NavigationViewSelectionChangedEventArgs> handler =
-			(nv, args) => selectionChanged(nv, args.SelectedItem as FrameworkElement);
+			(nv, args) =>
+			{
+				var selectedElement = MenuItemToFrameworkElement(args.SelectedItem);
+				if (selectedElement is not null)
+				{
+					selectionChanged(nv, selectedElement);
+				}
+			};
 
 		control.SelectionChanged += handler;
 		return () => control.SelectionChanged -= handler;
