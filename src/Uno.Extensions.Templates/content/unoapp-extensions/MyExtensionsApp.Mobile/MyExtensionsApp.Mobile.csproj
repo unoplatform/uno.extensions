@@ -1,19 +1,28 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<!--#if (android && ios && macos && maccatalyst)-->
-		<TargetFrameworks>net6.0-android;net6.0-ios;net6.0-macos;net6.0-maccatalyst</TargetFrameworks>
+		<TargetFrameworks>net6.0-android;net6.0-ios;net6.0-maccatalyst</TargetFrameworks>
+		<!-- Disabled because of https://github.com/xamarin/xamarin-macios/issues/16401-->
+		<!-- <TargetFrameworks>$(TargetFrameworks);net6.0-macos</TargetFrameworks> -->
 		<!--#elif (android && ios && macos && !maccatalyst)-->
-		<TargetFrameworks>net6.0-android;net6.0-ios;net6.0-macos</TargetFrameworks>
+		<!-- Disabled because of https://github.com/xamarin/xamarin-macios/issues/16401-->
+		<TargetFrameworks>net6.0-android;net6.0-ios</TargetFrameworks>
+		<!-- Disabled because of https://github.com/xamarin/xamarin-macios/issues/16401-->
+		<!-- <TargetFrameworks>$(TargetFrameworks);net6.0-macos</TargetFrameworks> -->
 		<!--#elif (android && ios && !macos && maccatalyst)-->
 		<TargetFrameworks>net6.0-android;net6.0-ios;net6.0-maccatalyst</TargetFrameworks>
 		<!--#elif (!android && ios && macos && maccatalyst)-->
-		<TargetFrameworks>net6.0-ios;net6.0-macos;net6.0-maccatalyst</TargetFrameworks>
+		<TargetFrameworks>net6.0-ios;net6.0-maccatalyst</TargetFrameworks>
+		<!-- Disabled because of https://github.com/xamarin/xamarin-macios/issues/16401-->
+		<!-- <TargetFrameworks>$(TargetFrameworks);net6.0-macos</TargetFrameworks> -->
 		<!--#elif (android && ios && !macos && !maccatalyst)-->
 		<TargetFrameworks>net6.0-android;net6.0-ios</TargetFrameworks>
 		<!--#elif (!android && ios && !macos && maccatalyst)-->
 		<TargetFrameworks>net6.0-ios;net6.0-maccatalyst</TargetFrameworks>
 		<!--#elif (!android && ios && macos && !maccatalyst)-->
-		<TargetFrameworks>net6.0-ios;net6.0-macos</TargetFrameworks>
+		<TargetFrameworks>net6.0-ios</TargetFrameworks>
+		<!-- Disabled because of https://github.com/xamarin/xamarin-macios/issues/16401-->
+		<!-- <TargetFrameworks>$(TargetFrameworks);net6.0-macos</TargetFrameworks> -->
 		<!--#else-->
 		<!--#if (android)-->
 		<TargetFrameworks>$(TargetFrameworks);net6.0-android</TargetFrameworks>
@@ -22,7 +31,8 @@
 		<TargetFrameworks>$(TargetFrameworks);net6.0-ios</TargetFrameworks>
 		<!--#endif-->
 		<!--#if (macos)-->
-		<TargetFrameworks>$(TargetFrameworks);net6.0-macos</TargetFrameworks>
+		<!-- Disabled because of https://github.com/xamarin/xamarin-macios/issues/16401-->
+		<!-- <TargetFrameworks>$(TargetFrameworks);net6.0-macos</TargetFrameworks> -->
 		<!--#endif-->
 		<!--#if (maccatalyst)-->
 		<TargetFrameworks>$(TargetFrameworks);net6.0-maccatalyst</TargetFrameworks>
@@ -30,77 +40,90 @@
 		<!--#endif -->
 		<SingleProject>true</SingleProject>
 		<OutputType>Exe</OutputType>
-		<!--#if (ios)-->
-		<RuntimeIdentifier Condition="'$(TargetFramework)' == 'net6.0-ios'">iossimulator-x64</RuntimeIdentifier>
-		<!--#endif-->
-		<!--#if (maccatalyst)-->
-		<RuntimeIdentifier Condition="'$(TargetFramework)' == 'net6.0-maccatalyst'">maccatalyst-x64</RuntimeIdentifier>
-		<!--#endif-->
-		<!--#if (macos)-->
-		<RuntimeIdentifier Condition="'$(TargetFramework)' == 'net6.0-macos'">osx-x64</RuntimeIdentifier>
-		<!--#endif-->
+
+		<!-- Display name -->
+		<ApplicationTitle>MyExtensionsApp</ApplicationTitle>
+
+		<!-- App Identifier -->
+		<ApplicationId>com.companyname.myextensionsapp</ApplicationId>
+		<ApplicationIdGuid>F5EAE47C-F7DF-4D61-8A30-92251720AC4B</ApplicationIdGuid>
+
+		<!-- Versions -->
+		<ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
+		<ApplicationVersion>1</ApplicationVersion>
+
 		<!-- Debugger workaround https://github.com/dotnet/maui-samples/blob/8aa6b8780b12e97b157514c3bdc54bb4a13001cd/HelloMacCatalyst/HelloMacCatalyst.csproj#L7 -->
 		<!-- <MtouchExtraArgs Condition="'$(TargetFramework)' == 'net6.0-maccatalyst'">$(MtouchExtraArgs) -setenv:MONO_THREADS_SUSPEND=preemptive</MtouchExtraArgs> -->
 		<!-- Required for C# Hot Reload -->
 		<UseInterpreter Condition="'$(Configuration)' == 'Debug' and '$(TargetFramework)' != 'net6.0-maccatalyst'">True</UseInterpreter>
 		<IsUnoHead>true</IsUnoHead>
-		<!--#if (ios)-->
-		<SupportedOSPlatformVersion Condition="'$(TargetFramework)' == 'net6.0-ios'">14.2</SupportedOSPlatformVersion>
-		<!--#endif -->
-		<!--#if (maccatalyst)-->
-		<SupportedOSPlatformVersion Condition="'$(TargetFramework)' == 'net6.0-maccatalyst'">14.0</SupportedOSPlatformVersion>
-		<!--#endif -->
-		<!--#if (android)-->
-		<SupportedOSPlatformVersion Condition="'$(TargetFramework)' == 'net6.0-android'">21.0</SupportedOSPlatformVersion>
-		<!--#endif -->
-		<!--#if (macos)-->
-		<SupportedOSPlatformVersion Condition="'$(TargetFramework)'=='net6.0-macos'">10.14</SupportedOSPlatformVersion>
-		<!--#endif -->
 	</PropertyGroup>
+	<!--#if (useBlankAppTemplate)-->
 	<ItemGroup>
-		<!--#if (markup)-->
+		<!--#if (useCsharpMarkup)-->
 		<PackageReference Include="Uno.WinUI.Markup" />
-		<!--#else-->
-		<PackageReference Include="Uno.WinUI" />
 		<!--#endif-->
+		<PackageReference Include="Uno.WinUI" />
 		<PackageReference Include="Uno.WinUI.RemoteControl" Condition="'$(Configuration)'=='Debug'" />
 		<PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" />
+	</ItemGroup>
+	<!--#endif-->
+	<!--#if (useDefaultAppTemplate)-->
+	<ItemGroup>
+		<!--#if (useCsharpMarkup)-->
+		<PackageReference Include="Uno.WinUI.Markup" />
+		<!--#if (useMaterial)-->
+		<PackageReference Include="Uno.Material.WinUI.Markup" />
+		<!--#endif-->
+		<PackageReference Include="Uno.Themes.WinUI.Markup" />
+		<!--#endif-->
+		<PackageReference Include="Uno.WinUI" />
+		<PackageReference Include="Uno.WinUI.RemoteControl" Condition="'$(Configuration)'=='Debug'" />
+		<PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" />
+		<!--#if (useMaterial)-->
 		<PackageReference Include="Uno.Material.WinUI" />
 		<PackageReference Include="Uno.Toolkit.WinUI.Material" />
-		<!--#if (markup)-->
+		<!--#elif (useCupertino)-->
+		<PackageReference Include="Uno.Cupertino.WinUI" />
+		<!--#endif-->
+		<!--#if (useCsharpMarkup)-->
 		<PackageReference Include="Uno.Toolkit.WinUI.Markup" />
 		<!--#else-->
 		<PackageReference Include="Uno.Toolkit.WinUI" />
 		<!--#endif-->
-		<PackageReference Include="Uno.Extensions.Authentication" />
 		<PackageReference Include="Uno.Extensions.Authentication.WinUI" />
-		<!--#if (configuration)-->
+		<!--#if (useConfiguration)-->
 		<PackageReference Include="Uno.Extensions.Configuration" />
 		<!--#endif-->
 		<PackageReference Include="Uno.Extensions.Core" />
 		<PackageReference Include="Uno.Extensions.Hosting.WinUI" />
 		<!--#if (localization)-->
-		<PackageReference Include="Uno.Extensions.Localization" />
 		<PackageReference Include="Uno.Extensions.Localization.WinUI" />
 		<!--#endif-->
-		<!--#if (uselogging)-->
+		<!--#if (logging)-->
 		<PackageReference Include="Uno.Extensions.Logging.WinUI" />
 		<!--#endif-->
-		<!--#if (useserilog)-->
+		<!--#if (useSerilog)-->
 		<PackageReference Include="Uno.Extensions.Logging.Serilog" />
 		<!--#endif-->
-		<PackageReference Include="Uno.Extensions.Navigation" />
+		<!--#if (notFrameNav)-->
 		<PackageReference Include="Uno.Extensions.Navigation.Toolkit.WinUI" />
 		<PackageReference Include="Uno.Extensions.Navigation.WinUI" />
-		<PackageReference Include="Uno.Extensions.Hosting" />
+		<!--#endif-->
+		<!--#if (http)-->
 		<PackageReference Include="Uno.Extensions.Http" />
 		<PackageReference Include="Uno.Extensions.Http.Refit" />
+		<!--#endif-->
+		<!--#if (useMvux)-->
+		<PackageReference Include="Uno.Extensions.Reactive.WinUI" />
+		<!--#endif-->
 		<PackageReference Include="Uno.Extensions.Serialization" />
+		<!--#if (http)-->
 		<PackageReference Include="Uno.Extensions.Serialization.Http" />
 		<PackageReference Include="Uno.Extensions.Serialization.Refit" />
-		<PackageReference Include="Uno.Extensions.Reactive" />
-		<PackageReference Include="Uno.Extensions.Reactive.WinUI" />
+		<!--#endif-->
 	</ItemGroup>
+	<!--#endif-->
 	<Choose>
 		<!--#if (android)-->
 		<When Condition="'$(TargetFramework)'=='net6.0-android'">
@@ -121,7 +144,7 @@
 				<MtouchExtraArgs>$(MtouchExtraArgs) --marshal-objectivec-exceptions:disable</MtouchExtraArgs>
 				<MtouchExtraArgs>$(MtouchExtraArgs) --registrar:static</MtouchExtraArgs>
 			</PropertyGroup>
-			<!--#if (uselogging)-->
+			<!--#if (logging)-->
 			<ItemGroup>
 				<PackageReference Include="Uno.Extensions.Logging.OSLog" />
 			</ItemGroup>
@@ -140,7 +163,7 @@
 				<!-- Full globalization is required for Uno -->
 				<InvariantGlobalization>false</InvariantGlobalization>
 			</PropertyGroup>
-			<!--#if (uselogging)-->
+			<!--#if (logging)-->
 			<ItemGroup>
 				<PackageReference Include="Uno.Extensions.Logging.OSLog" />
 			</ItemGroup>
@@ -150,13 +173,16 @@
 		<!--#if (macos)-->
 		<When Condition="'$(TargetFramework)'=='net6.0-macos'">
 			<PropertyGroup>
+				<TrimMode Condition="'$(Configuration)'=='Release'">link</TrimMode>
 			</PropertyGroup>
 		</When>
 		<!--#endif-->
 	</Choose>
 	<ItemGroup>
 		<ProjectReference Include="..\MyExtensionsApp\MyExtensionsApp.csproj" />
+		<!--#if (http)-->
+		<ProjectReference Include="..\MyExtensionsApp.DataContracts\MyExtensionsApp.DataContracts.csproj" />
+		<!--#endif-->
 	</ItemGroup>
-
-	<Import Project="..\MyExtensionsApp.UI\MyExtensionsApp.UI.projitems" Label="Shared" />
+	<Import Project="../MyExtensionsApp.Base/base.props" />
 </Project>

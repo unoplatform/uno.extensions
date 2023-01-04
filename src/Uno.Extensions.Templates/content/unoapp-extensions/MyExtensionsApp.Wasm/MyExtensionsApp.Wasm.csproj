@@ -5,6 +5,10 @@
 		<NoWarn>$(NoWarn);NU1504;NU1505;NU1701</NoWarn>
 		<!-- Disabled due to issue with Central Package Management with implicit using -->
 		<ImplicitUsings>disable</ImplicitUsings>
+		<!--#if (wasmPwaManifest)-->
+		<WasmPWAManifestFile>manifest.json</WasmPWAManifestFile>
+		<!--#endif -->
+		<AppDesignerFolder>Properties</AppDesignerFolder>
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)'=='Debug'">
 		<MonoRuntimeDebuggerEnabled>true</MonoRuntimeDebuggerEnabled>
@@ -12,20 +16,16 @@
 		<DebugType>portable</DebugType>
 		<DebugSymbols>true</DebugSymbols>
 		<!--
-		IL Linking is disabled in Debug configuration.
-		When building in Release, see https://platform.uno/docs/articles/features/using-il-linker-webassembly.html
+			IL Linking is disabled in Debug configuration.
+			When building in Release, see https://platform.uno/docs/articles/features/using-il-linker-WebAssembly.html
 		-->
 		<WasmShellILLinkerEnabled>false</WasmShellILLinkerEnabled>
 	</PropertyGroup>
-	<PropertyGroup Condition="'$(Configuration)'=='Debug' or '$(IsUiAutomationMappingEnabled)'=='True'">
-		<IsUiAutomationMappingEnabled>True</IsUiAutomationMappingEnabled>
-		<DefineConstants>$(DefineConstants);USE_UITESTS</DefineConstants>
-	</PropertyGroup>
 	<ItemGroup>
 		<Content Include="Assets\SplashScreen.png" />
-	</ItemGroup>
-	<ItemGroup>
-		<UpToDateCheckInput Include="..\MyExtensionsApp.UI\**\*.xaml" />
+		<!--#if (wasmPwaManifest)-->
+		<Content Include="Assets\AppIcon-*.png" />
+		<!--#endif -->
 	</ItemGroup>
 	<ItemGroup>
 		<EmbeddedResource Include="WasmCSS\Fonts.css" />
@@ -46,56 +46,78 @@
 		<None Include="wwwroot\web.config" />
 	</ItemGroup>
 
+	<!--#if (useBlankAppTemplate)-->
 	<ItemGroup>
-		<!--#if (markup)-->
+		<PackageReference Include="Microsoft.Windows.Compatibility" />
+		<!--#if (useCsharpMarkup)-->
 		<PackageReference Include="Uno.WinUI.Markup" />
 		<!--#endif-->
-		<PackageReference Include="Microsoft.Windows.Compatibility" />
-		<PackageReference Include="Uno.WinUI.WebAssembly" />
-		<PackageReference Include="Uno.WinUI.RemoteControl" Condition="'$(Configuration)'=='Debug'" />
 		<PackageReference Include="Uno.Wasm.Bootstrap" />
 		<PackageReference Include="Uno.Wasm.Bootstrap.DevServer" />
+		<PackageReference Include="Uno.WinUI.WebAssembly" />
+		<PackageReference Include="Uno.WinUI.RemoteControl" />
 		<PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" />
+		<PackageReference Include="Uno.Extensions.Logging.WebAssembly.Console" />
+	</ItemGroup>
+	<!--#endif-->
+	<!--#if (useDefaultAppTemplate)-->
+	<ItemGroup>
+		<PackageReference Include="Microsoft.Windows.Compatibility" />
+		<PackageReference Include="Uno.Wasm.Bootstrap" />
+		<PackageReference Include="Uno.Wasm.Bootstrap.DevServer" />
+		<PackageReference Include="Uno.WinUI.WebAssembly" />
+		<PackageReference Include="Uno.WinUI.RemoteControl" />
+		<PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" />
+		<!--#if (useMaterial)-->
 		<PackageReference Include="Uno.Material.WinUI" />
 		<PackageReference Include="Uno.Toolkit.WinUI.Material" />
-		<!--#if (markup)-->
+		<!--#elif (useCupertino)-->
+		<PackageReference Include="Uno.Cupertino.WinUI" />
+		<!--#endif-->
+		<!--#if (useCsharpMarkup)-->
 		<PackageReference Include="Uno.Toolkit.WinUI.Markup" />
 		<!--#else-->
 		<PackageReference Include="Uno.Toolkit.WinUI" />
 		<!--#endif-->
-		<PackageReference Include="Uno.Extensions.Authentication" />
 		<PackageReference Include="Uno.Extensions.Authentication.WinUI" />
-		<PackageReference Include="Uno.Extensions.Hosting" />
 		<PackageReference Include="Uno.Extensions.Hosting.WinUI" />
-		<!--#if (configuration)-->
-		<PackageReference Include="Uno.Extensions.Configuration" />
-		<!--#endif-->
 		<!--#if (localization)-->
-		<PackageReference Include="Uno.Extensions.Localization" />
 		<PackageReference Include="Uno.Extensions.Localization.WinUI" />
 		<!--#endif-->
-		<!--#if (uselogging)-->
-		<PackageReference Include="Uno.Extensions.Logging.WinUI" />
+		<!--#if (logging)-->
 		<PackageReference Include="Uno.Extensions.Logging.WebAssembly.Console" />
+		<PackageReference Include="Uno.Extensions.Logging.WinUI" />
 		<!--#endif-->
-    <!--#if (useserilog)-->
+		<!--#if (useSerilog)-->
 		<PackageReference Include="Uno.Extensions.Logging.Serilog" />
 		<!--#endif-->
-		<PackageReference Include="Uno.Extensions.Navigation" />
+		<!--#if (notFrameNav)-->
 		<PackageReference Include="Uno.Extensions.Navigation.Toolkit.WinUI" />
 		<PackageReference Include="Uno.Extensions.Navigation.WinUI" />
+		<!--#endif-->
+		<!--#if (useConfiguration)-->
+		<PackageReference Include="Uno.Extensions.Configuration" />
+		<!--#endif-->
 		<PackageReference Include="Uno.Extensions.Core" />
+		<!--#if (http)-->
 		<PackageReference Include="Uno.Extensions.Http" />
 		<PackageReference Include="Uno.Extensions.Http.Refit" />
+		<!--#endif-->
+		<!--#if (useMvux)-->
+		<PackageReference Include="Uno.Extensions.Reactive.WinUI" />
+		<!--#endif-->
 		<PackageReference Include="Uno.Extensions.Serialization" />
+		<!--#if (http)-->
 		<PackageReference Include="Uno.Extensions.Serialization.Http" />
 		<PackageReference Include="Uno.Extensions.Serialization.Refit" />
-		<PackageReference Include="Uno.Extensions.Reactive" />
-		<PackageReference Include="Uno.Extensions.Reactive.WinUI" />
+		<!--#endif-->
 	</ItemGroup>
+	<!--#endif-->
 	<ItemGroup>
 		<ProjectReference Include="..\MyExtensionsApp\MyExtensionsApp.csproj" />
+		<!--#if (http)-->
+		<ProjectReference Include="..\MyExtensionsApp.DataContracts\MyExtensionsApp.DataContracts.csproj" />
+		<!--#endif-->
 	</ItemGroup>
-
-	<Import Project="..\MyExtensionsApp.UI\MyExtensionsApp.UI.projitems" Label="Shared" Condition="Exists('..\MyExtensionsApp.UI\MyExtensionsApp.UI.projitems')" />
+	<Import Project="../MyExtensionsApp.Base/base.props" />
 </Project>

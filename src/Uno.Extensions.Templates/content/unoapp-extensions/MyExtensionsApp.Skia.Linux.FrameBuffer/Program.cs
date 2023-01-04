@@ -1,10 +1,10 @@
 using Uno.UI.Runtime.Skia;
 
-namespace MyExtensionsApp;
+namespace MyExtensionsApp.Skia.Framebuffer;
 
-class Program
+public class Program
 {
-	static void Main(string[] args)
+	public static void Main(string[] args)
 	{
 		try
 		{

@@ -10,21 +10,45 @@ jobs:
       DefaultArguments:
         createdProjectName: UnoApp01
         templateArgs: ''
+      BlankApp:
+        createdProjectName: UnoAppBlank01
+        templateArgs: '--template-type blank'
+      BlankMarkupApp:
+        createdProjectName: UnoAppBlank01
+        templateArgs: '--template-type blank --ui-markup csharp'
       MVVM:
         createdProjectName: UnoAppNoReactive01
-        templateArgs: '--architecture mvvm'
+        templateArgs: '-presentation mvvm'
       CentralPackageManagement:
         createdProjectName: UnoAppCPM01
         templateArgs: '--cpm true'
       CSharpMarkup:
         createdProjectName: UnoAppCSharpMarkup01
-        templateArgs: '--csharp-markup true'
+        templateArgs: '--ui-markup csharp'
       NoExtensions:
         createdProjectName: UnoAppNoExtensions01
-        templateArgs: '-config false -loc false -log None'
-      Serilog:
-        createdProjectName: UnoAppSerilog01
-        templateArgs: '--logging Serilog'
+        templateArgs: '-config false -loc false -http false -log false --navigation frame'
+      NoConfiguration:
+        createdProjectName: UnoAppNoConfiguration01
+        templateArgs: '-config false'
+      NoLocalization:
+        createdProjectName: UnoAppNoLocalization01
+        templateArgs: '-loc false'
+      NoHttp:
+        createdProjectName: UnoAppNoHttp01
+        templateArgs: '-http false'
+      NoSerilog:
+        createdProjectName: UnoAppNoSerilog01
+        templateArgs: '--logging-serilog false'
+      NoServer:
+        createdProjectName: UnoAppNoServer01
+        templateArgs: '-server false'
+      NoServerNoHttp:
+        createdProjectName: UnoAppNoServerNoHttp01
+        templateArgs: '-server false -http false'
+      FrameNavigation:
+        createdProjectName: UnoAppFrameNavigation01
+        templateArgs: '--navigation frame'
 
   variables:
     - name: UseDotNetNativeToolchain
@@ -75,6 +99,10 @@ jobs:
 
         # Create app with defaults
         Invoke-Expression -Command "dotnet new unoapp-extensions -o $env:createdProjectName $env:templateArgs"
+        if ($LASTEXITCODE -ne 0)
+        {
+            throw "Exit code must be zero."
+        }
 
         cd $env:createdProjectName
         & $msbuild /r /m $env:createdProjectName.sln

@@ -1,4 +1,4 @@
-﻿{
+{
   "$schema": "http://json.schemastore.org/template",
   "author": "Uno Platform",
   "classifications": [
@@ -6,17 +6,15 @@
     "Uno Platform",
     "Android",
     "iOS",
-    "Windows",
     "macOS",
+    "Mac Catalyst",
+    "Windows",
     "Linux",
     "WebAssembly",
-    "WinUI",
-    "WindowsAppSdk",
-    "Extensions",
-    "dotnet-new"
+    "WinUI"
   ],
   "name": "Multi-Platform App (Uno.Extensions)",
-  "identity": "Uno.Extensions",
+  "identity": "Uno.Extensions.CSharp",
   "groupIdentity": "Uno.Extensions",
   "description": "Solution template for creating a multi-platform C# & XAML application targeting Windows App SDK, Android, iOS, macOS, WebAssembly, Skia/WPF and Skia/GTK for Linux.",
   "precedence": "6001",
@@ -31,22 +29,45 @@
   "preferNameDirectory": true,
   "guids": [
     "C7433AE2-B1A0-4C1A-887E-5CAA7AAF67A6", // Solution file (SolutionGuid)
-    "BACDD33A-304C-46C4-9B00-AC166978D7E0", // (core) .NET Standard Library
-    "6279C845-92F8-4333-AB99-3D213163593C", // UI
-    "339C569C-EE23-445E-B908-743673EE5BC9", // Platforms Solution folder
+    "FAA2C1DE-F859-4053-9573-6245F7E832EF", // src solution folder
+    "BACDD33A-304C-46C4-9B00-AC166978D7E0", // (core) library
+    "339C569C-EE23-445E-B908-743673EE5BC9", // Platforms solution folder
+    "BA1ACE40-623E-4F42-94BB-11CF4D52C445", // Web solution folder
     "24D56E12-2373-4CBD-9AD4-5C931D15FB0D", // Mobile
     "40EA03F7-8A22-4143-B251-79BAC3EB13D2", // Wasm
     "A5B8155A-118F-4794-B551-C6F3CF7E5411", // Skia.Gtk
     "6C744695-DA38-44D9-B487-FE5804C5508D", // Skia.WPF
     "5A78EE9A-1922-468C-96E3-45817727511C", // Windows
     "925C7A3E-6532-4E27-8ABE-37A4F9B73C8B", // Skia.Linux.FrameBuffer
+    "1ADD4B1D-2758-4ED5-963A-FE3F4206BF20", // Server
     "7EF70027-9874-4112-A14F-33F02169CF8A", // Tests Solution folder
     "EB3EB846-D5CB-4140-834F-1CC40A0FD6D0", // Tests
     "7229D034-7DBE-4FD7-B0E4-38D617571F93", // UITests
     "E2821155-50B7-468D-A15B-E0EAF55DAC2B", // WINDOWS - Package.appxmanifest Identity.Name
+    "F5EAE47C-F7DF-4D61-8A30-92251720AC4B", // Mobile Application Id
+    "5ED31500-DF01-462D-9436-EC2EDCAA1965" // DataContracts
   ],
   "symbols": {
-    "appid": {
+    "templateType": {
+      "displayName": "Type",
+      "type": "parameter",
+      "datatype": "choice",
+      "defaultValue": "default",
+      "description": "Selects whether to use the default Extensions Template or Blank App",
+      "choices": [
+        {
+          "choice": "default",
+          "description": "A basic project using Uno.Extensions",
+          "displayName": "Default"
+        },
+        {
+          "choice": "blank",
+          "description": "A Blank app without Uno.Extensions",
+          "displayName": "Blank"
+        }
+      ]
+    },
+    "appId": {
       "displayName": "App ID",
       "type": "parameter",
       "datatype": "string",
@@ -55,25 +76,28 @@
       "defaultValue": "com.companyname.myextensionsapp"
     },
     "tfm": {
-      "displayName": "Target Framework",
+      "displayName": "Framework",
       "type": "parameter",
       "datatype": "choice",
+      "enableQuotelessLiterals": true,
       "replaces": "net6.0",
-      "description": "The target framework for the project.",
+      "description": "Target Framework",
       "choices": [
         {
           "choice": "net6.0",
-          "description": "Target net6.0 (Long Term Support)"
+          "displayName": ".NET 6.0 (Long Term Support)",
+          "description": "Target .NET 6.0 (Long Term Support)"
         },
         {
           "choice": "net7.0",
-          "description": "Target net7.0 (Standard Term Support)"
+          "displayName": ".NET 7.0 (Standard Term Support)",
+          "description": "Target .NET 7.0 (Standard Term Support)"
         }
       ]
     },
     "architecture": {
-      "displayName": "Design Architecture",
-      "description": "Selects either MVVM or MVUx for the design architecture.",
+      "displayName": "Presentation",
+      "description": "Selects either MVVM or MVU-X for the design architecture.",
       "type": "parameter",
       "datatype": "choice",
       "defaultValue": "mvux",
@@ -81,21 +105,57 @@
         {
           "choice": "mvvm",
           "description": "Use the MVVM design pattern",
-          "displayName": "MVVM"
+          "displayName": "MVVM (Model-View-ViewModel)"
         },
         {
           "choice": "mvux",
-          "description": "Use the MVUx design pattern with Uno.Extensions.Reactive",
-          "displayName": "MVUx"
+          "description": "Use the MVU-X design pattern",
+          "displayName": "MVU-X (Model-View-Update XAML Friendly)"
         }
       ]
     },
-    "markup": {
-      "displayName": "C# Markup",
+    "uiMarkup": {
+      "displayName": "UI Markup",
+      "description": "Selects either XAML or C# Markup for the UI.",
       "type": "parameter",
-      "datatype": "bool",
-      "defaultValue": "false",
-      "description": "Use C# Markup Extensions instead of XAML"
+      "datatype": "choice",
+      "choices": [
+        {
+          "choice": "xaml",
+          "description": "Use XAML for the UI",
+          "displayName": "XAML"
+        },
+        {
+          "choice": "csharp",
+          "description": "Use C# Markup for the UI",
+          "displayName": "C# Markup"
+        }
+      ],
+      "defaultValue": "xaml"
+    },
+    "appTheme": {
+      "displayName": "Theme",
+      "description": "Selects the theme design system for the application.",
+      "type": "parameter",
+      "datatype": "choice",
+      "choices": [
+        {
+          "choice": "material",
+          "description": "Uses the Material Design theme",
+          "displayName": "Material"
+        },
+        {
+          "choice": "fluent",
+          "description": "Uses the Fluent Design theme",
+          "displayName": "Fluent"
+        },
+        {
+          "choice": "cupertino",
+          "description": "Uses the Cupertino theme",
+          "displayName": "Cupertino"
+        }
+      ],
+      "defaultValue": "material"
     },
     "android": {
       "displayName": "Mobile - Android",
@@ -125,26 +185,26 @@
       "defaultValue": "true",
       "description": "Enables the macOS (AppKit) platform in the Mobile support project"
     },
-    "skia-gtk": {
+    "skiaGtk": {
       "displayName": "Desktop - Gtk (Linux, macOS, Windows 7 or later)",
       "type": "parameter",
       "dataType": "bool",
       "defaultValue": "true",
       "description": "Enables the Skia/GTK platform support project"
     },
-    "skia-wpf": {
+    "skiaWpf": {
       "displayName": "Desktop - WPF (Windows 7 or later)",
       "type": "parameter",
       "dataType": "bool",
       "defaultValue": "true",
       "description": "Enables the Skia/WPF platform support project"
     },
-    "skia-linux-fb": {
-      "displayName": "Desktop - Linux Framebuffer",
+    "skiaLinuxFb": {
+      "displayName": "Desktop - Linux FrameBuffer",
       "type": "parameter",
       "dataType": "bool",
       "defaultValue": "true",
-      "description": "Enables the Skia/Linux Framebuffer platform support project"
+      "description": "Enables the Skia/Linux FrameBuffer platform support project"
     },
     "winAppSdk": {
       "displayName": "Desktop - WinUI (Windows App SDK)",
@@ -160,7 +220,7 @@
       "defaultValue": "true",
       "description": "Enables the WebAssembly platform support project"
     },
-    "unittest": {
+    "unitTest": {
       "displayName": "Tests - Unit Tests",
       "type": "parameter",
       "datatype": "bool",
@@ -174,55 +234,85 @@
       "defaultValue": "true",
       "description": "Includes the UI test project"
     },
-    "configuration": {
-      "displayName": "Extensions - Configuration",
+    "server": {
+      "displayName": "Server - API",
       "type": "parameter",
       "datatype": "bool",
       "defaultValue": "true",
-      "description": "Includes Uno.Extensions.Configuration"
+      "description": "Includes a Server project for an API & host for the WebAssembly project"
+    },
+    "configuration": {
+      "displayName": "Extensions - Configuration",
+      "description": "Includes Uno.Extensions.Configuration",
+      "type": "parameter",
+      "datatype": "bool",
+      "defaultValue": "true",
+      "onlyIf": {
+        "templateType": "default"
+      }
+    },
+    "http": {
+      "displayName": "Extensions - HTTP",
+      "description": "Includes Uno.Extensions.Http",
+      "type": "parameter",
+      "datatype": "bool",
+      "defaultValue": "true",
+      "onlyIf": {
+        "templateType": "default"
+      }
     },
     "localization": {
       "displayName": "Extensions - Localization",
+      "description": "Includes Uno.Extensions.Localization",
       "type": "parameter",
       "datatype": "bool",
       "defaultValue": "true",
-      "description": ""
+      "onlyIf": {
+        "templateType": "default"
+      }
     },
     "logging": {
       "displayName": "Extensions - Logging",
+      "description": "Includes Uno.Extensions.Logging",
+      "type": "parameter",
+      "datatype": "bool",
+      "defaultValue": "true",
+      "onlyIf": {
+        "templateType": "default"
+      }
+    },
+    "serilog": {
+      "displayName": "Extensions - Serilog",
+      "description": "Includes Uno.Extensions.Logging.Serilog when logging is enabled",
+      "type": "parameter",
+      "datatype": "bool",
+      "defaultValue": "true",
+      "onlyIf": {
+        "templateType": "default",
+        "logging": "true"
+      }
+    },
+    "navigation": {
+      "displayName": "Extensions - Navigation",
+      "description": "Sets the base type of navigation used in the app.",
       "type": "parameter",
       "datatype": "choice",
-      "defaultValue": "Enabled",
       "choices": [
         {
-          "choice": "None",
-          "description": "No logging"
+          "choice": "default",
+          "displayName": "Default",
+          "description": "Provides a simple 2 page sample with a Splash Screen."
         },
         {
-          "choice": "Enabled",
-          "description": "Enables Logging"
-        },
-        {
-          "choice": "Serilog",
-          "description": "Adds Logging with Serilog"
+          "choice": "frame",
+          "displayName": "Frame",
+          "description": "Uses the Frame control for navigation."
         }
       ],
-      "description": ""
-    },
-    "uselogging": {
-      "type": "computed",
-      "datatype": "bool",
-      "value": "logging != 'None'"
-    },
-    "useserilog": {
-      "type": "computed",
-      "datatype": "bool",
-      "value": "logging == 'Serilog'"
-    },
-    "reactive": {
-      "type": "computed",
-      "datatype": "bool",
-      "value": "architecture == 'mvux'"
+      "defaultValue": "default",
+      "onlyIf": {
+        "templateType": "default"
+      }
     },
     "cpm": {
       "displayName": "Central Package Management",
@@ -231,60 +321,151 @@
       "defaultValue": "false",
       "description": "Whether or not to use Central Package Management - package versions are via central Directory.Packages.props file"
     },
-    "mobile": {
-      "type": "computed",
-      "dataType": "bool",
-      "value": "(android || ios || macos || maccatalyst)"
-    },
     "vscode": {
       "displayName": "WebAssembly - Visual Studio Code Debugging",
       "type": "parameter",
       "dataType": "bool",
       "defaultValue": "false",
+      "onlyIf": {
+        "wasm": "true"
+      },
       "description": "Adds the Visual Studio Code Debugging support files for WebAssembly"
+    },
+    "wasmPwaManifest": {
+      "displayName": "WebAssembly - PWA Manifest",
+      "description": "Enables the generation of a PWA manifest for WebAssembly",
+      "type": "parameter",
+      "datatype": "bool",
+      "defaultValue": "true",
+      "onlyIf": {
+        "wasm": "true"
+      }
     },
     "skipRestore": {
       "type": "parameter",
       "datatype": "bool",
+      "displayName": "Skip Restore",
       "description": "If specified, skips the automatic restore of the project on create.",
       "defaultValue": "false"
     },
-    "wasm-pwa-manifest": {
-      "displayName": "WebAssembly - PWA Manifest",
+    "isVsix": {
       "type": "parameter",
       "datatype": "bool",
-      "description": "Enables the generation of a PWA manifest for WebAssembly",
-      "defaultValue": "true"
+      "defaultValue": "false",
+      "description": "Supplied by Uno Studio"
     },
-    "msftextv6" :{
+    "useCsharpMarkup": {
       "type": "computed",
       "datatype": "bool",
-      "value": "tfm == 'net6.0'"
+      "value": "(uiMarkup == 'csharp')"
     },
-    "msftextv7": {
+    "useMaterial": {
       "type": "computed",
       "datatype": "bool",
-      "value": "tfm == 'net7.0'"
+      "value": "(appTheme == 'material')"
     },
-    "is-vsix": {
-      "type": "parameter",
+    "useFluent": {
+      "type": "computed",
       "datatype": "bool",
-      "defaultValue": "false"
+      "value": "(appTheme == 'fluent')"
+    },
+    "useCupertino": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "(appTheme == 'cupertino')"
+    },
+    "useSerilog": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "(logging && serilog)"
+    },
+    "useMvux": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "architecture == 'mvux'"
+    },
+    "useMvvm": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "architecture == 'mvvm'"
+    },
+    "useMobile": {
+      "type": "computed",
+      "dataType": "bool",
+      "value": "(android || ios || macos || maccatalyst)"
+    },
+    "useConfiguration": {
+      "type": "computed",
+      "dataType": "bool",
+      "value": "(configuration || localization || http)"
+    },
+    "libarybasetargetframework": {
+      "type": "generated",
+      "generator": "switch",
+      "replaces": "$libarybasetargetframework$",
+      "parameters": {
+        "evaluator": "C++",
+        "datatype": "string",
+        "cases": [
+          {
+            "condition": "(tfm == 'net6.0')",
+            "value": "netstandard2.1"
+          },
+          {
+            "condition": "(tfm == 'net7.0')",
+            "value": "net7.0"
+          }
+        ]
+      }
+    },
+    "useBlankAppTemplate": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "templateType == 'blank'"
+    },
+    "useDefaultAppTemplate": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "templateType == 'default'"
+    },
+    "useDefaultNav": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "navigation == 'default'"
+    },
+    "useFrameNav": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "navigation == 'frame'"
+    },
+    "notFrameNav": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "navigation != 'frame'"
+    },
+    "HostIdentifier": {
+      "type": "bind",
+      "binding": "HostIdentifier"
     }
   },
   "primaryOutputs": [
     {
-      "path": "MyExtensionsApp.sln",
-      "condition": "!is-vsix"
-    },
-    {
-      "path": "MyExtensionsApp.UI\\MyExtensionsApp.UI.shproj"
+      "condition": "!isVsix",
+      "path": "MyExtensionsApp.sln"
     },
     {
       "path": "MyExtensionsApp\\MyExtensionsApp.csproj"
     },
     {
-      "condition": "unittest",
+      "condition": "server",
+      "path": "MyExtensionsApp.Server\\MyExtensionsApp.Server.csproj"
+    },
+    {
+      "condition": "server || http",
+      "path": "MyExtensionsApp.DataContracts\\MyExtensionsApp.DataContracts.csproj"
+    },
+    {
+      "condition": "unitTest",
       "path": "MyExtensionsApp.Tests\\MyExtensionsApp.Tests.csproj"
     },
     {
@@ -296,7 +477,7 @@
       "path": "Directory.Packages.props"
     },
     {
-      "condition": "mobile",
+      "condition": "useMobile",
       "path": "MyExtensionsApp.Mobile\\MyExtensionsApp.Mobile.csproj"
     },
     {
@@ -308,15 +489,15 @@
       "path": "MyExtensionsApp.Wasm\\MyExtensionsApp.Wasm.csproj"
     },
     {
-      "condition": "skia-gtk",
+      "condition": "skiaGtk",
       "path": "MyExtensionsApp.Skia.Gtk\\MyExtensionsApp.Skia.Gtk.csproj"
     },
     {
-      "condition": "skia-wpf",
+      "condition": "skiaWpf",
       "path": "MyExtensionsApp.Skia.WPF\\MyExtensionsApp.Skia.Wpf.csproj"
     },
     {
-      "condition": "skia-linux-fb",
+      "condition": "skiaLinuxFb",
       "path": "MyExtensionsApp.Skia.Linux.FrameBuffer\\MyExtensionsApp.Skia.Linux.FrameBuffer.csproj"
     }
   ],
@@ -330,17 +511,9 @@
             "**/*.gif",
             "**/*.woff",
             "**/*.ttf"
-          ]
-        },
-        {
+          ],
           "exclude": [
             "MyExtensionsApp.Debugging.sln"
-          ]
-        },
-        {
-          "condition": "is-vsix",
-          "exclude": [
-            "**/*.sln"
           ]
         },
         {
@@ -368,7 +541,7 @@
           ]
         },
         {
-          "condition": "(!mobile)",
+          "condition": "(!useMobile)",
           "exclude": [
             "MyExtensionsApp.Mobile/**/*"
           ]
@@ -376,25 +549,39 @@
         {
           "condition": "(!wasm)",
           "exclude": [
-            "MyExtensionsApp.Wasm/**/*"
+            "MyExtensionsApp.Wasm**/*"
           ]
         },
         {
-          "condition": "(!skia-gtk)",
+          "condition": "(!skiaGtk)",
           "exclude": [
             "MyExtensionsApp.Skia.Gtk/**/*"
           ]
         },
         {
-          "condition": "(!skia-wpf)",
+          "condition": "(!skiaWpf)",
           "exclude": [
             "MyExtensionsApp.Skia.WPF/**/*"
           ]
         },
         {
-          "condition": "(!skia-linux-fb)",
+          "condition": "(!skiaLinuxFb)",
           "exclude": [
             "MyExtensionsApp.Skia.Linux.FrameBuffer/**/*"
+          ]
+        },
+        {
+          "condition": "(winAppSdk && skiaGtk)",
+          "exclude": [
+            "MyExtensionsApp.Skia.Gtk/Package.appxmanifest",
+            "MyExtensionsApp.Skia.Gtk/Images/StoreLogo.png"
+          ]
+        },
+        {
+          "condition": "(winAppSdk && skiaLinuxFb)",
+          "exclude": [
+            "MyExtensionsApp.Skia.Linux.FrameBuffer/Package.appxmanifest",
+            "MyExtensionsApp.Skia.Linux.FrameBuffer/Images/StoreLogo.png"
           ]
         },
         {
@@ -404,7 +591,41 @@
           ]
         },
         {
-          "condition": "(!unittest)",
+          "condition": "(!server)",
+          "exclude": [
+            "MyExtensionsApp.Server/**/*"
+          ]
+        },
+        {
+          "condition": "(!http && !server)",
+          "exclude": [
+            "MyExtensionsApp.DataContracts/**/*"
+          ]
+        },
+        {
+          "condition": "(useMvvm)",
+          "exclude": [
+            "MyExtensionsApp/Presentation/MainModel.cs",
+            "MyExtensionsApp/Presentation/SecondModel.cs",
+            "MyExtensionsApp/Presentation/ShellModel.cs"
+          ]
+        },
+        {
+          "condition": "(useMvux)",
+          "exclude": [
+            "MyExtensionsApp/Presentation/MainViewModel.cs",
+            "MyExtensionsApp/Presentation/SecondViewModel.cs",
+            "MyExtensionsApp/Presentation/ShellViewModel.cs"
+          ]
+        },
+        {
+          "condition": "(!http)",
+          "exclude": [
+            "MyExtensionsApp/Services/IApiClient.cs"
+          ]
+        },
+        {
+          "condition": "(!unitTest)",
           "exclude": [
             "MyExtensionsApp.Tests/**/*"
           ]
@@ -418,15 +639,16 @@
         {
           "condition": "(!cpm)",
           "exclude": [
-            "MyExtensionsApp//MyExtensionsApp.csproj",
-            "MyExtensionsApp.Mobile//MyExtensionsApp.Mobile.csproj",
-            "MyExtensionsApp.Skia.Gtk//MyExtensionsApp.Skia.Gtk.csproj",
-            "MyExtensionsApp.Skia.Linux.FrameBuffer//MyExtensionsApp.Skia.Linux.FrameBuffer.csproj",
-            "MyExtensionsApp.Skia.WPF//MyExtensionsApp.Skia.WPF.csproj",
-            "MyExtensionsApp.Tests//MyExtensionsApp.Tests.csproj",
-            "MyExtensionsApp.UITests//MyExtensionsApp.UITests.csproj",
-            "MyExtensionsApp.Wasm//MyExtensionsApp.Wasm.csproj",
-            "MyExtensionsApp.Windows//MyExtensionsApp.Windows.csproj",
+            "MyExtensionsApp/MyExtensionsApp.csproj",
+            "MyExtensionsApp.Mobile/MyExtensionsApp.Mobile.csproj",
+            "MyExtensionsApp.Skia.Gtk/MyExtensionsApp.Skia.Gtk.csproj",
+            "MyExtensionsApp.Skia.Linux.FrameBuffer/MyExtensionsApp.Skia.Linux.FrameBuffer.csproj",
+            "MyExtensionsApp.Skia.WPF/MyExtensionsApp.Skia.WPF.csproj",
+            "MyExtensionsApp.Wasm/MyExtensionsApp.Wasm.csproj",
+            "MyExtensionsApp.Windows/MyExtensionsApp.Windows.csproj",
+            "MyExtensionsApp.ServerApp/MyExtensionsApp.Server.csproj",
+            "MyExtensionsApp.Tests/MyExtensionsApp.Tests.csproj",
+            "MyExtensionsAppTests/MyExtensionsAppTests.csproj",
             "Directory.Build.props",
             "Directory.Packages.props"
           ]
@@ -445,11 +667,11 @@
           ]
         },
         {
-        "condition": "(!wasm-pwa-manifest)",
-        "exclude": [
-          "MyExtensionsApp.Wasm/manifest.json",
-          "MyExtensionsApp.Wasm/Assets/AppIcon-*"
-        ]
+          "condition": "(!wasmPwaManifest)",
+          "exclude": [
+            "MyExtensionsApp.Wasm/manifest.json",
+            "MyExtensionsApp.Wasm/Assets/AppIcon-*"
+          ]
         },
         {
           "condition": "(!cpm)",
@@ -459,29 +681,98 @@
           }
         },
         {
-          "condition": "(!markup)",
+          "condition": "(!useCsharpMarkup)",
           "exclude": [
-            "MyExtensionsApp.UI/Extensions/ApplicationBuilderExtensions.cs",
-            "MyExtensionsApp.UI/**/Styles/*.cs"
+            "MyExtensionsApp/Infrastructure/ApplicationBuilderExtensions.cs",
+            "MyExtensionsApp/Styles/*.cs"
           ]
         },
         {
-          "condition": "(markup)",
+          "condition": "(useCsharpMarkup)",
           "exclude": [
-            "MyExtensionsApp.UI/**/Styles/*.xaml",
-            "MyExtensionsApp.UI/**/Views/*.xaml"
+            "MyExtensionsApp/**/*.xaml"
           ],
           "rename": {
-            "MyExtensionsApp.UI/Views/MainPage.xaml.cs": "MyExtensionsApp.UI/Views/MainPage.cs",
-            "MyExtensionsApp.UI/Views/SecondPage.xaml.cs": "MyExtensionsApp.UI/Views/SecondPage.cs",
-            "MyExtensionsApp.UI/Views/Shell.xaml.cs": "MyExtensionsApp.UI/Views/Shell.cs"
+            "MyExtensionsApp/MainPage.xaml.cs": "MyExtensionsApp/MainPage.cs",
+            "MyExtensionsApp/Presentation/MainPage.xaml.cs": "MyExtensionsApp/Presentation/MainPage.cs",
+            "MyExtensionsApp/Presentation/SecondPage.xaml.cs": "MyExtensionsApp/Presentation/SecondPage.cs",
+            "MyExtensionsApp/Presentation/Shell.xaml.cs": "MyExtensionsApp/Presentation/Shell.cs"
           }
+        },
+        {
+          "condition": "(useBlankAppTemplate)",
+          "rename": {
+            "MyExtensionsApp.Base/App.blank.cs": "MyExtensionsApp.Base/App.xaml.cs"
+          },
+          "exclude": [
+            "MyExtensionsApp/Business/**",
+            "MyExtensionsApp/Infrastructure/**",
+            "MyExtensionsApp/Presentation/**",
+            "MyExtensionsApp/Services/**",
+            "MyExtensionsApp/Styles/**",
+            "MyExtensionsApp/appsettings.*",
+            "MyExtensionsApp.Base/App.default.cs",
+            "MyExtensionsApp.Tests/AppInfoTests.cs"
+          ]
+        },
+        {
+          "condition": "(useDefaultAppTemplate)",
+          "rename": {
+            "MyExtensionsApp.Base/App.default.cs": "MyExtensionsApp.Base/App.xaml.cs"
+          },
+          "exclude": [
+            "MyExtensionsApp.Base/App.blank.cs"
+          ]
+        },
+        {
+          "condition": "(useDefaultAppTemplate && !configuration)",
+          "exclude": [
+            "MyExtensionsApp.Tests/AppInfoTests.cs"
+          ]
+        },
+        {
+          "condition": "(useDefaultAppTemplate && configuration)",
+          "exclude": [
+            "MyExtensionsApp.Tests/UnitTest1.cs"
+          ]
+        },
+        {
+          "condition": "(useBlankAppTemplate || useFrameNav)",
+          "exclude": [
+            "MyExtensionsApp/Presentation/**"
+          ]
+        },
+        {
+          "condition": "(useDefaultAppTemplate && notFrameNav)",
+          "exclude": [
+            "MyExtensionsApp/MainPage.xaml",
+            "MyExtensionsApp/MainPage.xaml.cs"
+          ]
+        },
+        {
+          "condition": "(tfm == 'net7.0')",
+          "exclude": [
+            "MyExtensionsApp.DataContracts/_Compat/**"
+          ]
+        },
+        {
+          "condition": "(!configuration)",
+          "exclude": [
+            "MyExtensionsApp/Business/Models/AppConfig.cs"
+          ]
+        },
+        {
+          "condition": "(!useConfiguration)",
+          "exclude": [
+            "MyExtensionsApp/appsettings.*"
+          ]
         }
       ]
     }
   ],
   "postActions": [
     {
+      "id": "nugetRestore",
       "condition": "(!skipRestore)",
       "description": "Restore NuGet packages required by this project",
       "manualInstructions": [

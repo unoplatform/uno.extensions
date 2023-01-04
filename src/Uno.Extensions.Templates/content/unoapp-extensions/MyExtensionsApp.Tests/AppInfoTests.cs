@@ -1,7 +1,4 @@
 //-:cnd:noEmit
-
-
-
 namespace MyExtensionsApp.Tests;
 
 public class AppInfoTests

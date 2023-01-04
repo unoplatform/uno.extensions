@@ -1,4 +1,4 @@
-﻿{
+{
   "$schema": "http://json.schemastore.org/ide.host",
   "name": {
     "text": "Multi-Platform App (Uno.Extensions)"
@@ -11,7 +11,11 @@
   "learnMoreLink": "https://github.com/unoplatform/uno",
   "symbolInfo": [
     {
-      "id": "appid",
+      "id": "templateType",
+      "defaultValue": "default"
+    },
+    {
+      "id": "appId",
       "name": {
         "text": "Application Id"
       },
@@ -24,7 +28,7 @@
     {
       "id": "tfm",
       "name": {
-        "text": "Target Framework"
+        "text": "Framework"
       },
       "description": {
         "text": "The target framework for the project (e.g. net6.0 or net7.0)"
@@ -33,11 +37,15 @@
       "choices": [
         {
           "id": "net6.0",
-          "description": "Use the net6.0 target framework"
+          "name": {
+            "text": ".NET 6.0 (Long Term Support)"
+          }
         },
         {
           "id": "net7.0",
-          "description": "Use the net7.0 target framework"
+           "name": {
+             "text": ".NET 7.0 (Standard Term Support)"
+           }
         }
       ],
       "isVisible": true
@@ -45,26 +53,36 @@
     {
       "id": "architecture",
       "name": {
-        "text": "Design - Use MVVM or MVUx"
+        "text": "Presentation"
       },
       "description":
       {
-        "text": "Select between MVVM or MVUx for a design pattern"
+        "text": "Select between MVVM or MVUX for a design pattern"
       },
       "defaultValue": "mvux",
       "isVisible":true
     },
     {
-      "id": "markup",
+      "id": "uiMarkup",
       "name": {
-        "text": "Code Style - Use C# Markup"
+        "text": "UI Markup"
       },
       "description":
       {
-        "text": "Uses Uno C# Markup for your UI instead of XAML"
+        "text": "Choose whether to use XAML or C# Markup for your UI"
       },
-      "defaultValue": "Serilog",
-      "isVisible": false
+      "defaultValue": "xaml"
+    },
+    {
+      "id": "appTheme",
+      "name": {
+        "text": "Theme"
+      },
+      "description":
+      {
+        "text": "Choose whether to use the Material, Fluent or Cupertino theme"
+      },
+      "defaultValue": "material"
     },
     {
       "id": "wasm",
@@ -115,7 +133,7 @@
       "isVisible":true
     },
     {
-      "id": "skia-gtk",
+      "id": "skiaGtk",
       "name": {
         "text": "Desktop - Gtk (Linux, macOS, Windows 7 or later)"
       },
@@ -151,7 +169,7 @@
       "isVisible":true
     },
     {
-      "id": "skia-wpf",
+      "id": "skiaWpf",
       "name": {
         "text": "Desktop - WPF (Windows 7 or later)"
       },
@@ -163,7 +181,7 @@
       "isVisible":true
     },
     {
-      "id": "skia-linux-fb",
+      "id": "skiaLinuxFb",
       "name": {
         "text": "Desktop - Linux Framebuffer"
       },
@@ -175,7 +193,7 @@
       "isVisible":true
     },
     {
-      "id": "unittest",
+      "id": "unitTest",
       "name": {
         "text": "Unit Tests"
       },
@@ -197,6 +215,17 @@
       "isVisible": true
     },
     {
+      "id": "server",
+      "name": {
+        "text": "Server - API (WASM Host)"
+      },
+      "description": {
+        "text": "Includes API Server project which will additionally host the WASM head if included"
+      },
+      "defaultValue": "true",
+      "isVisible": true
+    },
+    {
       "id": "configuration",
       "name": {
         "text": "Extensions - Configuration"
@@ -204,8 +233,18 @@
       "description":
       {
         "text": "Uses Configuration extensions to support appsettings.json"
+      }
+    },
+    {
+      "id": "http",
+      "name": {
+        "text": "Extensions - Http"
       },
-      "isVisible": false
+      "description":
+      {
+        "text": "Enables Http & Refit Extensions"
+      },
+      "defaultValue": "true"
     },
     {
       "id": "localization",
@@ -216,8 +255,7 @@
       {
         "text": "Uses Localization Extensions"
       },
-      "defaultValue": "true",
-      "isVisible": false
+      "defaultValue": "true"
     },
     {
       "id": "logging",
@@ -228,8 +266,29 @@
       {
         "text": "Enables app logging"
       },
-      "defaultValue": "Enabled",
-      "isVisible": false
+      "defaultValue": "true"
+    },
+    {
+      "id": "serilog",
+      "name": {
+        "text": "Extensions - Logging Serilog"
+      },
+      "description":
+      {
+        "text": "Enables app logging with Serilog"
+      },
+      "defaultValue": "true"
+    },
+    {
+      "id": "navigation",
+      "name": {
+        "text": "Navigation"
+      },
+      "description":
+      {
+        "text": "Sets the base Navigation style"
+      },
+      "defaultValue": "default"
     },
     {
       "id": "cpm",
@@ -252,7 +311,7 @@
       "isVisible": false
     },
     {
-      "id": "is-vsix",
+      "id": "isVsix",
       "isVisible": false,
       "defaultValue": "true"
     }

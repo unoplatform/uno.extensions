@@ -1,2 +1,10 @@
-﻿dotnet new -u Uno.Extensions.Templates
-dotnet new -i .\bin\Uno.Extensions.Templates\Release\Uno.Extensions.Templates.255.255.255.255.nupkg
+﻿param(
+    # Version of published Uno.Extensions packages
+    [string]$Version = "255.255.255.255"
+)
+dotnet new uninstall Uno.Extensions.Templates
+dotnet build -p:Version=$Version -c Release
+if($LASTEXITCODE -ne 0) {
+    exit $LASTEXITCODE
+}
+dotnet new install $PSScriptRoot\bin\Uno.Extensions.Templates\Release\Uno.Extensions.Templates.$Version.nupkg

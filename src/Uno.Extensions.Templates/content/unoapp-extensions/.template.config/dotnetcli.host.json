@@ -1,7 +1,11 @@
-﻿{
+{
   "$schema": "http://json.schemastore.org/dotnetcli.host",
   "symbolInfo": {
-    "appid": {
+    "templateType": {
+      "longName": "template-type",
+      "shortName": "type"
+    },
+    "appId": {
       "longName": "app-id",
       "shortName": "id"
     },
@@ -10,12 +14,16 @@
       "shortName": "tfm"
     },
     "architecture": {
-      "longName": "architecture",
-      "shortName": "arch"
+      "longName": "presentation",
+      "shortName": "presentation"
     },
-    "markup": {
-      "longName": "csharp-markup",
-      "shortName": "markup"
+    "uiMarkup": {
+      "longName": "ui-markup",
+      "shortName": "ui"
+    },
+    "appTheme": {
+      "longName": "app-theme",
+      "shortName": "theme"
     },
     "android": {
       "longName": "android",
@@ -33,15 +41,15 @@
       "longName": "maccatalyst",
       "shortName": "catalyst"
     },
-    "skia-wpf": {
+    "skiaWpf": {
       "longName": "skia-wpf",
       "shortName": "wpf"
     },
-    "skia-gtk": {
+    "skiaGtk": {
       "longName": "skia-gtk",
       "shortName": "gtk"
     },
-    "skia-linux-fb": {
+    "skiaLinuxFb": {
       "longName": "skia-linux-fb",
       "shortName": "linux"
     },
@@ -53,21 +61,29 @@
       "longName": "webassembly",
       "shortName": "wasm"
     },
-    "wasm-pwa-manifest": {
+    "server": {
+      "longName": "server",
+      "shortName": "server"
+    },
+    "wasmPwaManifest": {
       "longName": "wasm-pwa-manifest",
       "shortName": "pwa"
     },
-    "unittest": {
-      "longName": "unittest",
-      "shortName": "unittest"
+    "unitTest": {
+      "longName": "unit-tests",
+      "shortName": "unit-tests"
     },
     "tests": {
       "longName": "ui-tests",
-      "shortName": "tests"
+      "shortName": "ui-tests"
     },
     "configuration": {
       "longName": "configuration",
       "shortName": "config"
+    },
+    "http": {
+      "longName": "use-http",
+      "shortName": "http"
     },
     "localization": {
       "longName": "localization",
@@ -76,6 +92,14 @@
     "logging": {
       "longName": "logging",
       "shortName": "log"
+    },
+    "serilog": {
+      "longName": "logging-serilog",
+      "shortName": "serilog"
+    },
+    "navigation": {
+      "longName": "navigation",
+      "shortName": "nav"
     },
     "cpm": {
       "longName": "cpm",
@@ -86,10 +110,10 @@
       "shortName": "vscode"
     },
     "skipRestore": {
-      "longName": "skipRestore",
+      "longName": "skip-restore",
       "shortName": "skip"
     },
-    "is-vsix": {
+    "isVsix": {
       "isHidden": true
     }
   }

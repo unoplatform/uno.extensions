@@ -1,16 +1,12 @@
 //-:cnd:noEmit
-
 namespace MyExtensionsApp.Presentation;
 
 public class ShellModel
 {
 	private INavigator Navigator { get; }
 
-
-	public ShellModel(
-		INavigator navigator)
+	public ShellModel(INavigator navigator)
 	{
-
 		Navigator = navigator;
 
 		_ = Start();

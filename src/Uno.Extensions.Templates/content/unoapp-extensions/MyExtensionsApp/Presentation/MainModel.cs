@@ -1,29 +1,29 @@
-//+:cnd:noEmit
-#if(reactive)
+//-:cnd:noEmit
 using Uno.Extensions.Reactive;
-#else
-using System.Windows.Input;
-using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
-#endif
 
 namespace MyExtensionsApp.Presentation;
 
-#if (reactive)
 public partial record MainModel
 {
 	public string? Title { get; }
 
 	public IState<string> Name { get; }
 
+//+:cnd:noEmit
+#if configuration
 	public MainModel(
 		INavigator navigator,
 		IOptions<AppConfig> appInfo)
 	{
-
 		_navigator = navigator;
 		Title = $"Main - {appInfo?.Value?.Title}";
-
+#else
+	public MainModel(INavigator navigator)
+	{
+		_navigator = navigator;
+		Title = "Main - MyExtensionsApp";
+#endif
+//-:cnd:noEmit
 		Name = State<string>.Value(this, ()=>"");
 	}
 
@@ -35,35 +35,3 @@ public partial record MainModel
 
 	private INavigator _navigator;
 }
-#else
-public partial class MainModel : ObservableObject
-{
-	public string? Title { get; }
-
-	[ObservableProperty]
-	private string? name;
-
-	public ICommand GoToSecond { get; }
-
-	public MainModel(
-		INavigator navigator,
-		IOptions<AppConfig> appInfo)
-	{
-
-		_navigator = navigator;
-		Title = $"Main - {appInfo?.Value?.Title}";
-
-		GoToSecond = new AsyncRelayCommand(GoToSecondView);
-	}
-
-	public async Task GoToSecondView()
-	{
-		await _navigator.NavigateViewModelAsync<SecondModel>(this, data: new Entity(Name!));
-	}
-
-	private INavigator _navigator;
-}
-#endif
-
-//-:cnd:noEmit
-
