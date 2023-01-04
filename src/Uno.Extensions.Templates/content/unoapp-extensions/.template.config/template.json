@@ -721,7 +721,18 @@
             "MyExtensionsApp.Base/App.default.cs": "MyExtensionsApp.Base/App.xaml.cs"
           },
           "exclude": [
-            "MyExtensionsApp.Base/App.blank.cs",
+            "MyExtensionsApp.Base/App.blank.cs"
+          ]
+        },
+        {
+          "condition": "(useDefaultAppTemplate && !configuration)",
+          "exclude": [
+            "MyExtensionsApp.Tests/AppInfoTests.cs"
+          ]
+        },
+        {
+          "condition": "(useDefaultAppTemplate && configuration)",
+          "exclude": [
             "MyExtensionsApp.Tests/UnitTest1.cs"
           ]
         },
