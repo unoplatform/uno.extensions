@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -619,6 +619,84 @@ public partial class Given_Methods_Then_GenerateCommands : FeedUITests
 		vm.EndedCount.Should().Be(1);
 	}
 
+	public partial class When_MultipleFeedParameter_ViewModel
+	{
+		public IFeed<string> MyParameter => Feed.Async(async ct => nameof(MyParameter));
+		public IFeed<string> MyParameter2 => Feed.Async(async ct => nameof(MyParameter2));
+
+		public int InvokeCount { get; set; }
+		public (string method, object[] args) LastInvoke { get; set; }
+
+		public void MyMethod(string myParameter, string myParameter2)
+		{
+			LastInvoke = (nameof(MyMethod), new object[] { myParameter, myParameter2 });
+			InvokeCount++;
+		}
+
+		public void MyMethodWithCt(string myParameter, string myParameter2, CancellationToken ct)
+		{
+			LastInvoke = (nameof(MyMethodWithCt), new object[] { myParameter, myParameter2, _ct });
+			InvokeCount++;
+		}
+	}
+
+	[TestMethod]
+	[DataRow(nameof(When_MultipleFeedParameter_ViewModel.MyMethod))]
+	[DataRow(nameof(When_MultipleFeedParameter_ViewModel.MyMethodWithCt))]
+	public async Task When_MultipleFeedParameter_ViewModel_CanExecuteWithoutParameter(string method)
+	{
+		await using var vm = new BindableWhen_MultipleFeedParameter_ViewModel();
+
+		var commandInfo = vm.GetType().GetMember(method).Single();
+		commandInfo.Should().BeAssignableTo<PropertyInfo>(because: "a command should have been generated for that method");
+
+		var command = ((PropertyInfo)commandInfo).GetValue(vm) as ICommand;
+		command.Should().NotBeNull();
+
+		// We have to wait for the external parameter to be provided by the feed
+		await WaitFor(() => command!.CanExecute(null));
+
+		command!.CanExecute(null).Should().BeTrue();
+	}
+
+	[TestMethod]
+	[DataRow(nameof(When_MultipleFeedParameter_ViewModel.MyMethod))]
+	[DataRow(nameof(When_MultipleFeedParameter_ViewModel.MyMethodWithCt))]
+	public async Task When_MultipleFeedParameter_ViewModel_CanExecuteOnlyWithoutParameter(string method)
+	{
+		await using var vm = new BindableWhen_MultipleFeedParameter_ViewModel();
+
+		var commandInfo = vm.GetType().GetMember(method).Single();
+		commandInfo.Should().BeAssignableTo<PropertyInfo>(because: "a command should have been generated for that method");
+
+		var command = ((PropertyInfo)commandInfo).GetValue(vm) as ICommand;
+		command.Should().NotBeNull();
+
+		command!.CanExecute(_viewParam).Should().BeFalse();
+	}
+
+	[TestMethod]
+	[DataRow(nameof(When_MultipleFeedParameter_ViewModel.MyMethod), nameof(When_MixedViewAndFeedParameter_ViewModel.MyParameter))]
+	[DataRow(nameof(When_MultipleFeedParameter_ViewModel.MyMethodWithCt), nameof(When_MixedViewAndFeedParameter_ViewModel.MyParameter), _ct)]
+	private async Task When_MultipleFeedParameter_ViewModel_ArgsReDispatchedProperly(string method, params string[] expectedArgs)
+	{
+		await using var vm = new BindableWhen_MultipleFeedParameter_ViewModel();
+
+		var commandInfo = vm.GetType().GetMember(method).Single();
+		commandInfo.Should().BeAssignableTo<PropertyInfo>(because: "a command should have been generated for that method");
+
+		var command = ((PropertyInfo)commandInfo).GetValue(vm) as ICommand;
+		command.Should().NotBeNull();
+
+		command!.Execute(null);
+
+		await WaitFor(() => vm.InvokeCount == 1);
+
+		vm.InvokeCount.Should().Be(1);
+		vm.LastInvoke.method.Should().Be(method);
+		vm.LastInvoke.args.Should().BeEquivalentTo(expectedArgs);
+	}
+
 	public partial class When_MixedViewAndFeedParameter_ViewModel
 	{
 		public IFeed<string> MyParameter => Feed.Async(async ct => nameof(MyParameter));
@@ -669,8 +747,8 @@ public partial class Given_Methods_Then_GenerateCommands : FeedUITests
 	[DataRow(nameof(When_MixedViewAndFeedParameter_ViewModel.MyMethodWithCt))]
 	[DataRow(nameof(When_MixedViewAndFeedParameter_ViewModel.MyMethod2))]
 	[DataRow(nameof(When_MixedViewAndFeedParameter_ViewModel.MyMethod2WithCt))]
-	[DataRow(nameof(When_MixedViewAndFeedParameter_ViewModel.MyMethod))]
-	[DataRow(nameof(When_MixedViewAndFeedParameter_ViewModel.MyMethodWithCt))]
+	[DataRow(nameof(When_MixedViewAndFeedParameter_ViewModel.MyMethod3))]
+	[DataRow(nameof(When_MixedViewAndFeedParameter_ViewModel.MyMethod3WithCt))]
 	public async Task When_MixedViewAndFeedParameter_ViewModel_CanExecuteWithParameter(string method)
 	{
 		await using var vm = new BindableWhen_MixedViewAndFeedParameter_ViewModel();
@@ -692,8 +770,8 @@ public partial class Given_Methods_Then_GenerateCommands : FeedUITests
 	[DataRow(nameof(When_MixedViewAndFeedParameter_ViewModel.MyMethodWithCt))]
 	[DataRow(nameof(When_MixedViewAndFeedParameter_ViewModel.MyMethod2))]
 	[DataRow(nameof(When_MixedViewAndFeedParameter_ViewModel.MyMethod2WithCt))]
-	[DataRow(nameof(When_MixedViewAndFeedParameter_ViewModel.MyMethod))]
-	[DataRow(nameof(When_MixedViewAndFeedParameter_ViewModel.MyMethodWithCt))]
+	[DataRow(nameof(When_MixedViewAndFeedParameter_ViewModel.MyMethod3))]
+	[DataRow(nameof(When_MixedViewAndFeedParameter_ViewModel.MyMethod3WithCt))]
 	public async Task When_MixedViewAndFeedParameter_ViewModel_CanExecuteOnlyWithParameter(string method)
 	{
 		await using var vm = new BindableWhen_MixedViewAndFeedParameter_ViewModel();
@@ -715,8 +793,8 @@ public partial class Given_Methods_Then_GenerateCommands : FeedUITests
 	[DataRow(nameof(When_MixedViewAndFeedParameter_ViewModel.MyMethodWithCt), _viewParam, nameof(When_MixedViewAndFeedParameter_ViewModel.MyParameter), _ct)]
 	[DataRow(nameof(When_MixedViewAndFeedParameter_ViewModel.MyMethod2), nameof(When_MixedViewAndFeedParameter_ViewModel.MyParameter), _viewParam)]
 	[DataRow(nameof(When_MixedViewAndFeedParameter_ViewModel.MyMethod2WithCt), nameof(When_MixedViewAndFeedParameter_ViewModel.MyParameter), _viewParam, _ct)]
-	[DataRow(nameof(When_MixedViewAndFeedParameter_ViewModel.MyMethod), _viewParam, nameof(When_MixedViewAndFeedParameter_ViewModel.MyParameter), nameof(When_MixedViewAndFeedParameter_ViewModel.MyParameter2))]
-	[DataRow(nameof(When_MixedViewAndFeedParameter_ViewModel.MyMethodWithCt), _viewParam, nameof(When_MixedViewAndFeedParameter_ViewModel.MyParameter), nameof(When_MixedViewAndFeedParameter_ViewModel.MyParameter2), _ct)]
+	[DataRow(nameof(When_MixedViewAndFeedParameter_ViewModel.MyMethod3), _viewParam, nameof(When_MixedViewAndFeedParameter_ViewModel.MyParameter), nameof(When_MixedViewAndFeedParameter_ViewModel.MyParameter2))]
+	[DataRow(nameof(When_MixedViewAndFeedParameter_ViewModel.MyMethod3WithCt), _viewParam, nameof(When_MixedViewAndFeedParameter_ViewModel.MyParameter), nameof(When_MixedViewAndFeedParameter_ViewModel.MyParameter2), _ct)]
 	private async Task When_MixedViewAndFeedParameter_ArgsReDispatchedProperly(string method, params string[] expectedArgs)
 	{
 		await using var vm = new BindableWhen_MixedViewAndFeedParameter_ViewModel();
