@@ -115,7 +115,7 @@
 			</ItemGroup>
 		</Otherwise>
 	</Choose>
-	<!--#if (http)-->
+	<!--#if (http && useDefaultAppTemplate)-->
 
 	<ItemGroup>
 		<ProjectReference Include="..\MyExtensionsApp.DataContracts\MyExtensionsApp.DataContracts.csproj" />

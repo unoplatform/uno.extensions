@@ -10,7 +10,9 @@
 		<!--#if (wasm)-->
 		<ProjectReference Include="..\MyExtensionsApp.Wasm\MyExtensionsApp.Wasm.csproj" />
 		<!--#endif -->
+		<!--#if (useDefaultAppTemplate)-->
 		<ProjectReference Include="..\MyExtensionsApp.DataContracts\MyExtensionsApp.DataContracts.csproj" />
+		<!--#endif -->
 	</ItemGroup>
 
 	<ItemGroup>

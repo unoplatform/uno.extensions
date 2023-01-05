@@ -46,7 +46,7 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyExtensionsApp.Server", "MyExtensionsApp.Server\MyExtensionsApp.Server.csproj", "{1ADD4B1D-2758-4ED5-963A-FE3F4206BF20}"
 EndProject
 #//#endif
-#//#if (server || http)
+#//#if (useDefaultAppTemplate && (server || http))
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyExtensionsApp.DataContracts", "MyExtensionsApp.DataContracts\MyExtensionsApp.DataContracts.csproj", "{5ED31500-DF01-462D-9436-EC2EDCAA1965}"
 EndProject
 #//#endif
@@ -262,7 +262,7 @@ Global
 		{1ADD4B1D-2758-4ED5-963A-FE3F4206BF20}.Release|x86.ActiveCfg = Release|Any CPU
 		{1ADD4B1D-2758-4ED5-963A-FE3F4206BF20}.Release|x86.Build.0 = Release|Any CPU
 #//#endif
-#//#if (server || http)
+#//#if (useDefaultAppTemplate && (server || http))
 		{5ED31500-DF01-462D-9436-EC2EDCAA1965}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{5ED31500-DF01-462D-9436-EC2EDCAA1965}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5ED31500-DF01-462D-9436-EC2EDCAA1965}.Debug|ARM.ActiveCfg = Debug|Any CPU
@@ -452,7 +452,7 @@ Global
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{BACDD33A-304C-46C4-9B00-AC166978D7E0} = {FAA2C1DE-F859-4053-9573-6245F7E832EF}
-//#if (server || http)
+//#if (useDefaultAppTemplate && (server || http))
 		{5ED31500-DF01-462D-9436-EC2EDCAA1965} = {FAA2C1DE-F859-4053-9573-6245F7E832EF}
 //#endif
 		{339C569C-EE23-445E-B908-743673EE5BC9} = {FAA2C1DE-F859-4053-9573-6245F7E832EF}
