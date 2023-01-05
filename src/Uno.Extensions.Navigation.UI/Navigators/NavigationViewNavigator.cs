@@ -56,7 +56,7 @@ public class NavigationViewNavigator : SelectorNavigator<Microsoft.UI.Xaml.Contr
 		{
 			if (Control is null)
 			{
-				return new object[] { };
+				return Array.Empty<object>();
 			}
 
 
@@ -75,7 +75,7 @@ public class NavigationViewNavigator : SelectorNavigator<Microsoft.UI.Xaml.Contr
 		{
 			if (Control is null)
 			{
-				return new FrameworkElement[] { };
+				return Array.Empty<FrameworkElement>();
 			}
 
 			var elements = (from mi in NavigationMenuItems
