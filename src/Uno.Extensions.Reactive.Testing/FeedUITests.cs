@@ -38,7 +38,7 @@ public class FeedUITests : FeedTests, ISourceContextOwner
 		if (DispatcherHelper.GetForCurrentThread == DispatcherHelper.NotConfigured)
 		{
 			_testDispatcher = new();
-			DispatcherHelper.GetForCurrentThread  = () => Dispatcher.HasThreadAccess ? Dispatcher : null;
+			DispatcherHelper.GetForCurrentThread  = () => _testDispatcher.HasThreadAccess ? _testDispatcher : null;
 		}
 		else
 		{

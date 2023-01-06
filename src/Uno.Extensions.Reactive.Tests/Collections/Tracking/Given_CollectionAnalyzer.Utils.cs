@@ -81,7 +81,7 @@ internal abstract class CollectionTrackerTester<TCollection, T>
 
 			var node = updater
 				.GetType()
-				.GetField("_head", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)
+				.GetField("_head", global::System.Reflection.BindingFlags.Instance | global::System.Reflection.BindingFlags.NonPublic)
 				?.GetValue(updater) as CollectionUpdater.Update;
 
 			while(node != null)

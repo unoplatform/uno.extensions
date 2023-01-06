@@ -78,7 +78,7 @@ internal class BindableGenerator : ICodeGenTool
 						? GetPropertyInfo(_ctx.IImmutableList.Construct(itemType), (prop.Type, v => $"global::System.Collections.Immutable.ImmutableList.ToImmutableList({v})"))
 						: GetPropertyInfo(prop.Type);
 
-					bindable = $"{NS.Bindings}.BindableImmutableList<{itemType}, {itemBindableType}>";
+					bindable = $"{NS.Bindings}.BindableImmutableList<{itemType.ToFullString()}, {itemBindableType}>";
 					initializer = $@"_{camelName} = new {bindable}(
 						{propertyInfo.Align(6)},
 						p => new {itemBindableType}(p));";
@@ -109,7 +109,7 @@ internal class BindableGenerator : ICodeGenTool
 				}
 				else
 				{
-					bindable = $"{NS.Bindings}.Bindable<{prop.Type}>";
+					bindable = $"{NS.Bindings}.Bindable<{prop.Type.ToFullString()}>";
 					initializer = $@"_{camelName} = new {bindable}({GetPropertyInfo(prop.Type)});";
 					property = Property.FromProperty(prop, allowInitOnlySetter: true) with
 					{
@@ -132,9 +132,9 @@ internal class BindableGenerator : ICodeGenTool
 				);
 
 				string GetPropertyInfo(ITypeSymbol type, (ITypeSymbol type, Func<string, string> cast)? concrete = null)
-					=> $@"base.Property<{type}>(
+					=> $@"base.Property<{type.ToFullString()}>(
 							nameof({prop.Name}),
-							{record.GetCamelCaseName()} => {(canRead ? $"{record.GetCamelCaseName()}?.{prop.Name} ?? default({concrete?.type ?? type})" : $"default({concrete?.type ?? type})")},
+							{record.GetCamelCaseName()} => {(canRead ? $"{record.GetCamelCaseName()}?.{prop.Name} ?? default({(concrete?.type ?? type).ToFullString()})" : $"default({(concrete?.type ?? type).ToFullString()})")},
 							({record.GetCamelCaseName()}, {camelName}) => {(canWrite ? $"({record.GetCamelCaseName()} ?? CreateDefault()) with {{{prop.Name} = {concrete?.cast(camelName) ?? camelName}}}" : record.GetCamelCaseName())})";
 			})
 			.ToList();
@@ -168,7 +168,7 @@ namespace {record.ContainingNamespace}
 		}}
 
 		private static {record} CreateDefault()
-			=> new({_ctx.GetDefaultCtor(record)!.Parameters.Select(p => $"default({p.Type})!").JoinBy(", ")});
+			=> new({_ctx.GetDefaultCtor(record)!.Parameters.Select(p => $"default({p.Type.ToFullString()})!").JoinBy(", ")});
 
 		{valueProperty}
 

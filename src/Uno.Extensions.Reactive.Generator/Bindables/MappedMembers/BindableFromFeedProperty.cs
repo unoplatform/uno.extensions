@@ -9,7 +9,7 @@ internal record BindableFromFeedProperty(IPropertySymbol _property, ITypeSymbol 
 {
 	private readonly IPropertySymbol _property = _property;
 	private readonly ITypeSymbol _valueType = _valueType;
-	private readonly string _bindableValueType = _bindableValueType ?? $"{NS.Bindings}.Bindable<{_valueType}>";
+	private readonly string _bindableValueType = _bindableValueType ?? $"{NS.Bindings}.Bindable<{_valueType.ToFullString()}>";
 
 	/// <inheritdoc />
 	public string Name => _property.Name;
@@ -24,5 +24,5 @@ internal record BindableFromFeedProperty(IPropertySymbol _property, ITypeSymbol 
 
 	/// <inheritdoc />
 	public string? GetInitialization()
-		=> $"{_property.Name} = new {_bindableValueType}(base.Property<{_valueType}>(nameof({_property.Name}), {N.Ctor.Model}.{_property.Name} ?? throw new NullReferenceException(\"The feed field '{_property.Name}' is null. Public feeds fields must be initialized in the constructor.\")));";
+		=> $"{_property.Name} = new {_bindableValueType}(base.Property<{_valueType.ToFullString()}>(nameof({_property.Name}), {N.Ctor.Model}.{_property.Name} ?? throw new NullReferenceException(\"The feed field '{_property.Name}' is null. Public feeds fields must be initialized in the constructor.\")));";
 }
