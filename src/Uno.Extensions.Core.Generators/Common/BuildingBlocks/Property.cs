@@ -16,12 +16,12 @@ internal record Property(Accessibility Accessibility, string Type, string Name)
 		};
 
 	public Property(Accessibility accessibility, ITypeSymbol type, string name)
-		: this(accessibility, type.ToString(), name)
+		: this(accessibility, type.ToFullString(), name)
 	{
 	}
 
 	public Property(ITypeSymbol type, string name)
-		: this(type.DeclaredAccessibility, type.ToString(), name)
+		: this(type.DeclaredAccessibility, type.ToFullString(), name)
 	{
 	}
 

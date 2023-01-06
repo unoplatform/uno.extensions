@@ -106,12 +106,12 @@ internal class ViewModelGenTool_2 : ICodeGenTool
 						.Where(_ctx.IsGenerationNotDisable)
 						.Select(ctor => $@"
 							{GetCtorAccessibility(ctor)} {vmName}({ctor.Parameters.Select(p => p.ToFullString()).JoinBy(", ")})
-								: this(new {model}({ctor.Parameters.Select(p => p.Name).JoinBy(", ")}))
+								: this(new {model.ToFullString()}({ctor.Parameters.Select(p => p.Name).JoinBy(", ")}))
 							{{
 							}}")
 						.Align(5)}
 
-					protected {vmName}({model} {N.Ctor.Model}){(hasBaseType ? $" : base({N.Ctor.Model})" : "")}
+					protected {vmName}({model.ToFullString()} {N.Ctor.Model}){(hasBaseType ? $" : base({N.Ctor.Model})" : "")}
 					{{
 						var {N.Ctor.Ctx} = {NS.Core}.SourceContext.GetOrCreate({N.Ctor.Model});
 
@@ -125,7 +125,7 @@ internal class ViewModelGenTool_2 : ICodeGenTool
 						{members.Select(member => member.GetInitialization()).Align(6)}
 					}}
 
-					public {(hasBaseType ? $"new {model} {N.Model} => ({model}) base.{N.Model};" : $"{model} {N.Model} {{ get; }}")}
+					public {(hasBaseType ? $"new {model.ToFullString()} {N.Model} => ({model.ToFullString()}) base.{N.Model};" : $"{model} {N.Model} {{ get; }}")}
 
 					{members.Select(member => member.GetDeclaration()).Align(5)}
 				}}");

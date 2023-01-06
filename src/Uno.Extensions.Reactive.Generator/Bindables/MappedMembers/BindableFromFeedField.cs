@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using Microsoft.CodeAnalysis;
+using Uno.Extensions.Generators;
 
 namespace Uno.Extensions.Reactive.Generator;
 
@@ -23,5 +24,5 @@ internal record BindableFromFeedField(IFieldSymbol _field, ITypeSymbol _valueTyp
 
 	/// <inheritdoc />
 	public string? GetInitialization()
-		=> $"{_field.Name} = new {_bindableValueType}(base.Property<{_valueType}>(nameof({_field.Name}), {N.Ctor.Model}.{_field.Name} ?? throw new NullReferenceException(\"The feed field '{_field.Name}' is null. Public feeds fields must be initialized in the constructor.\")));";
+		=> $"{_field.Name} = new {_bindableValueType}(base.Property<{_valueType.ToFullString()}>(nameof({_field.Name}), {N.Ctor.Model}.{_field.Name} ?? throw new NullReferenceException(\"The feed field '{_field.Name}' is null. Public feeds fields must be initialized in the constructor.\")));";
 }

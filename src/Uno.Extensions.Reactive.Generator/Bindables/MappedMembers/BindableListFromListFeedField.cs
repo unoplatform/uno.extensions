@@ -19,7 +19,7 @@ internal record BindableListFromListFeedField(IFieldSymbol _field, ITypeSymbol _
 
 	/// <inheritdoc />
 	public string GetDeclaration()
-		=> $"{_field.GetAccessibilityAsCSharpCodeString()} {NS.Reactive}.IListFeed<{_valueType}> {_field.Name};"; // Note: This should be a State
+		=> $"{_field.GetAccessibilityAsCSharpCodeString()} {NS.Reactive}.IListFeed<{_valueType.ToFullString()}> {_field.Name};"; // Note: This should be a State
 
 	/// <inheritdoc />
 	public string? GetInitialization()

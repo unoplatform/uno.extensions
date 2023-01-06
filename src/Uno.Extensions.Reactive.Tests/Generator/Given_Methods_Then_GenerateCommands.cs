@@ -819,6 +819,22 @@ public partial class Given_Methods_Then_GenerateCommands : FeedUITests
 		GetSubCommands(vm.WithExplicitAttributeWithName).Any(HasExternalParameter).Should().BeTrue();
 	}
 
+	public partial class When_UsingConflictingTypesParameter_ViewModel
+	{
+		public void ConflictWhenNotPrefixedByGlobal1(Uno.System.DateTime parameter) { }
+
+		public void ConflictWhenNotPrefixedByGlobal2(global::System.DateTime parameter) { }
+	}
+
+	[TestMethod]
+	public async Task When_When_UsingConflictingTypesParameter_Then_Compiles()
+	{
+		await using var vm = new BindableWhen_UsingConflictingTypesParameter_ViewModel();
+
+		vm.ConflictWhenNotPrefixedByGlobal1.CanExecute(new Uno.System.DateTime()).Should().BeTrue();
+		vm.ConflictWhenNotPrefixedByGlobal1.CanExecute(new global::System.DateTime()).Should().BeFalse();
+	}
+
 	private async ValueTask WaitFor(Func<bool> predicate)
 	{
 		await Task.Yield();
