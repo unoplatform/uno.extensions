@@ -377,7 +377,7 @@
     "useSerilog": {
       "type": "computed",
       "datatype": "bool",
-      "value": "(logging && serilog)"
+      "value": "(logging && serilog && templateType == 'default')"
     },
     "useMvux": {
       "type": "computed",
@@ -461,15 +461,15 @@
       "path": "MyExtensionsApp.Server\\MyExtensionsApp.Server.csproj"
     },
     {
-      "condition": "server || http",
+      "condition": "server || (http && useDefaultAppTemplate)",
       "path": "MyExtensionsApp.DataContracts\\MyExtensionsApp.DataContracts.csproj"
     },
     {
-      "condition": "unitTest",
+      "condition": "unitTest && useDefaultAppTemplate",
       "path": "MyExtensionsApp.Tests\\MyExtensionsApp.Tests.csproj"
     },
     {
-      "condition": "tests",
+      "condition": "tests && useDefaultAppTemplate",
       "path": "MyExtensionsApp.UITests\\MyExtensionsApp.UITests.csproj"
     },
     {
@@ -597,7 +597,13 @@
           ]
         },
         {
-          "condition": "(!http && !server)",
+          "condition": "(useDefaultAppTemplate)",
+          "exclude": [
+            "MyExtensionsApp.Server/WeatherForecast.cs"
+          ]
+        },
+        {
+          "condition": "(useBlankAppTemplate || ((!http && useDefaultAppTemplate) && !server))",
           "exclude": [
             "MyExtensionsApp.DataContracts/**/*"
           ]
@@ -625,13 +631,13 @@
           ]
         },
         {
-          "condition": "(!unitTest)",
+          "condition": "(!unitTest || useBlankAppTemplate)",
           "exclude": [
             "MyExtensionsApp.Tests/**/*"
           ]
         },
         {
-          "condition": "(!tests)",
+          "condition": "(!tests || useBlankAppTemplate)",
           "exclude": [
             "MyExtensionsApp.UITests/**/*"
           ]

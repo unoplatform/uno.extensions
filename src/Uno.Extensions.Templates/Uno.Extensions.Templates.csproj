@@ -34,6 +34,10 @@
 			DestinationFiles="$(IntermediateOutputPath)/content/%(RecursiveDir)%(Filename)%(Extension)"
 			SkipUnchangedFiles="false" />
 		<Copy
+			SourceFiles="content/unoapp-extensions/MyExtensionsApp.DataContracts/WeatherForecast.cs"
+			DestinationFiles="$(IntermediateOutputPath)/content/unoapp-extensions/MyExtensionsApp.Server/WeatherForecast.cs"
+			SkipUnchangedFiles="false" />
+		<Copy
 			SourceFiles="content/unoapp-extensions/MyExtensionsApp.Windows/app.manifest"
 			DestinationFiles="$(IntermediateOutputPath)/content/unoapp-extensions/MyExtensionsApp.Skia.Gtk/app.manifest"
 			SkipUnchangedFiles="false" />
