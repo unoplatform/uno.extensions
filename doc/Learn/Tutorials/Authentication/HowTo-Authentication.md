@@ -180,7 +180,7 @@ From this walk through you can see how the IAuthenticationService can be used to
       "AppConfig": {
         "Title": "AuthSample"
       },
-      "LocalizationSettings": {
+      "LocalizationConfiguration": {
         "Cultures": [ "en" ]
       },
       "DummyJsonEndpoint": {
