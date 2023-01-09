@@ -164,6 +164,7 @@
 											DependentUpon="appsettings.json" />
 		<!--#endif-->
 		<!--#endif-->
+		<PRIResource Include="Strings\**\*.resw" />
 		<UpToDateCheckInput Include="**\*.xaml" Exclude="bin\**\*.xaml;obj\**\*.xaml" />
 	</ItemGroup>
 </Project>
