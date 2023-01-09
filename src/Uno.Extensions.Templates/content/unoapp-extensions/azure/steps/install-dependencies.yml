@@ -1,0 +1,114 @@
+parameters:
+# Azure subscription
+- name: azure_subscription
+  type: string
+  default: ''
+- name: install_windowsSDK
+  type: string
+  default: 'false'  
+- name: install_gtk
+  type: string
+  default: 'false'
+- name: install_mobileWorkloads
+  type: string
+  default: 'false'
+
+steps:
+    - task: UseDotNet@2
+      displayName: 'Install .NET 6.0'
+      inputs:
+        version: '6.0.404'
+
+    - task: AzurePowerShell@5
+      displayName: 'Install Windows SDK 1903'
+      inputs:
+        azureSubscription: '${{ parameters.azure_subscription }}' 
+        ScriptType: 'inlineScript'
+        Inline: |
+          if('true' -eq '${{ parameters.install_windowsSDK }}'){
+            $Folder = 'C:\Program Files (x86)\Windows Kits\10\'
+            Write-Host "Checking if Windows SDK is installed"
+            if (Test-Path -Path $Folder) {
+              Write-Host "SDK already installed"
+            } else {
+              Write-Host "Installing Windows SDK 1903 (10.0.18362.1)..." -ForegroundColor Cyan
+
+              Write-Host "Downloading..."
+              $exePath = "$env:temp\wdksetup.exe"
+              (New-Object Net.WebClient).DownloadFile('https://go.microsoft.com/fwlink/?linkid=2083338', $exePath)
+
+              Write-Host "Installing..."
+              cmd /c start /wait $exePath /features + /quiet
+
+              Remove-Item $exePath
+              Write-Host "Installed" -ForegroundColor Green
+            }
+          }
+        azurePowerShellVersion: 'LatestVersion'
+
+    #Install .net6.0 Mobile Workloads
+    - task: AzurePowerShell@5
+      displayName: 'Install Mobile Workloads'
+      inputs:
+        azureSubscription: '${{ parameters.azure_subscription }}' 
+        ScriptType: 'inlineScript'
+        Inline: |
+            if('true' -eq '${{ parameters.install_mobileWorkloads }}'){
+                $availableWorkloads = dotnet workload list| Format-Table -HideTableHeaders | Out-String
+                Write-Host "Installed Workloads: $availableWorkloads" 
+                $isAndroidInstalled = $availableWorkloads.Contains("android")
+                $isiOSInstalled = $availableWorkloads.Contains("ios")
+                $isMacCatalyst = $availableWorkloads.Contains("maccatalyst")
+
+                if(-Not $isAndroidInstalled){
+                  if('true' -eq '${{ parameters.install_mobileWorkloads }}'){
+                      Write-Host  "Installing Android Workload"
+                      dotnet workload install android
+                  }
+                }
+
+                if(-Not $isiOSInstalled){
+                  if('true' -eq '${{ parameters.install_mobileWorkloads }}'){
+                      Write-Host "Installing iOS workload"
+                      dotnet workload install ios
+                  }
+                }
+
+                if(-Not $isMacCatalyst){
+                  if('true' -eq '${{ parameters.install_mobileWorkloads }}'){
+                      Write-Host "Installing maccatalyst workload"
+                      dotnet workload install maccatalyst
+                  }
+                }
+            }
+        azurePowerShellVersion: 'LatestVersion'
+
+    - task: AzurePowerShell@5
+      displayName: 'Install GTK4'
+      continueOnError: true
+      inputs:
+        azureSubscription: '${{ parameters.azure_subscription }}' 
+        ScriptType: 'inlineScript'
+        Inline: |
+            if('true' -eq  '${{ parameters.install_gtk }}'){
+                Write-Host "Installing GTK4"
+                Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+                choco install git
+                choco install msys2
+                choco install visualstudio2022-workload-vctools
+
+                Write-Host "Installing Python"
+                choco install python
+                Write-Host "Python Installation Finished"
+
+                python -m pip install --user pipx
+                python -m pipx ensurepath
+                pipx install gvsbuild
+                #build GTK
+                gvsbuild build gtk4
+
+                Write-Host "Adding GTK4 to Path"
+                $env:Path = "C:\gtk-build\gtk\x64\release\bin;" + $env:Path
+                Write-Host "GTK4 Installation Finished"
+            }
+        azurePowerShellVersion: 'LatestVersion'

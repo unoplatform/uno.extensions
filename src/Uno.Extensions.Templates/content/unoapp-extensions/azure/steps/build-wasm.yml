@@ -1,0 +1,45 @@
+parameters:
+# Azure subscription
+- name: azure_subscription
+  type: string
+  default: ''
+- name: major
+  type: string
+  default: '0'  
+- name: minor
+  type: string
+  default: '0'
+- name: package_id
+  type: string
+  default: 'release_Mobile'
+- name: project_to_build
+  type: string
+  default: ''  
+
+steps:
+    # Compile Mobile
+    - task: AzurePowerShell@5
+      displayName: 'Build and Package'
+      inputs:
+        azureSubscription: '${{ parameters.azure_subscription }}' 
+        ScriptType: 'inlineScript'
+        Inline: |
+            Write-Host  ""
+            Write-Host "Building ${{ parameters.package_id }}"
+            dotnet build  -c Release -o .\bin\Release\ ${{ parameters.project_to_build }}
+
+            $finalPackageFolder = ".\artifacts"
+            Write-Host "Creating package folder: $finalPackageFolder"
+            New-Item -ItemType Directory -Force -Path $finalPackageFolder
+
+            $finalPackageName = "$finalPackageFolder\${{ parameters.package_id }}_${{parameters.major}}.${{parameters.minor}}.$(Build.BuildNumber).zip"
+            Write-Host "Compressing final package: $finalPackageName"
+            Compress-Archive -Path '.\bin\Release\*' -DestinationPath $finalPackageName    
+        azurePowerShellVersion: 'LatestVersion'
+
+    - task: PublishPipelineArtifact@1
+      displayName: 'Publish Artifact'
+      inputs:
+        targetPath: .\artifacts
+        artifactName: ${{ parameters.package_id }}_${{parameters.major}}.${{parameters.minor}}.$(Build.BuildNumber)
+    

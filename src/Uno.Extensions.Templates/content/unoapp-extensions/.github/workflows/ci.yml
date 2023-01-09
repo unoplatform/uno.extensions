@@ -1,0 +1,78 @@
+name: CI
+
+on: 
+  push:
+    branches:
+      - main
+      - release/**
+
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches:
+      - main
+      - release/**
+
+jobs:
+  build_tool:
+    name: Build MyExtensionsApp
+    runs-on: windows-latest
+    timeout-minutes: 60
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+         fetch-depth: 0 
+
+      - name: Install Dependencies
+        uses: "./.github/workflows/steps/install_dependencies"         
+
+      - name: Build Windows
+        uses: "./.github/workflows/steps/build_desktop"
+        with:
+          package-id: "Windows"
+          project-to-build: "MyExtensionsApp.Windows/MyExtensionsApp.Windows.csproj"  
+
+      - name: Build WPF
+        uses: "./.github/workflows/steps/build_desktop"
+        with:
+          package-id: "WPF"
+          project-to-build: "MyExtensionsApp.Skia.WPF/MyExtensionsApp.Skia.WPF.csproj"  
+                  
+      - name: Build GTK
+        uses: "./.github/workflows/steps/build_desktop"
+        with:
+          package-id: "GTK"
+          project-to-build: "MyExtensionsApp.Skia.Gtk/MyExtensionsApp.Skia.Gtk.csproj"       
+
+      - name: Build Linux
+        uses: "./.github/workflows/steps/build_desktop"
+        with:
+          package-id: "Linux.FrameBuffer"
+          project-to-build: "MyExtensionsApp.Skia.Linux.FrameBuffer/MyExtensionsApp.Skia.Linux.FrameBuffer.csproj"             
+       
+      - name: Build Mobile (Android)
+        uses: "./.github/workflows/steps/build_mobile"
+        with:
+          package-id: "Mobile_Android"
+          project-to-build: "MyExtensionsApp.Mobile/MyExtensionsApp.Mobile.csproj" 
+          target-framework: "net6.0-android"
+
+      - name: Build Mobile (iOS)
+        uses: "./.github/workflows/steps/build_mobile"
+        with:
+          package-id: "Mobile_iOS"
+          project-to-build: "MyExtensionsApp.Mobile/MyExtensionsApp.Mobile.csproj" 
+          target-framework: "net6.0-ios"
+
+      - name: Build Mobile (MacCatalyst)
+        uses: "./.github/workflows/steps/build_mobile"
+        with:
+          package-id: "Mobile_MacCatalyst"
+          project-to-build: "MyExtensionsApp.Mobile/MyExtensionsApp.Mobile.csproj" 
+          target-framework: "net6.0-maccatalyst"
+
+      - name: Build Wasm
+        uses: "./.github/workflows/steps/build_wasm"
+        with:
+          package-id: "Wasm"
+          project-to-build: "MyExtensionsApp.Wasm/MyExtensionsApp.Wasm.csproj"   

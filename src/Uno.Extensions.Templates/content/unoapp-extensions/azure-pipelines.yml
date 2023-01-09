@@ -1,0 +1,138 @@
+trigger:
+- master
+- release
+
+pool:
+  vmImage: 'windows-latest'
+
+variables:
+- name: azureAccount
+  value: '' #[REQUIRED] AzureSubscription 
+- name: jobTimeout
+  value: '40'   
+  
+stages:
+  - stage: Build_MyExtensionsApp
+    pool:
+      vmImage: 'windows-latest'
+
+    jobs:
+    - job: Wasm
+      timeoutInMinutes: '${{ variables.jobTimeout }}'
+      steps:
+        - template: /azure/steps/install-dependencies.yml  
+          parameters:
+            azure_subscription: '${{ variables.azureAccount }}'
+            install_mobileWorkloads: 'true'
+
+        - template: /azure/steps/build-wasm.yml
+          parameters:
+            azure_subscription: '${{ variables.azureAccount }}'
+            package_id: 'Wasm'
+            project_to_build: 'MyExtensionsApp.Wasm/MyExtensionsApp.Wasm.csproj'     
+            
+    - job: Android
+      timeoutInMinutes: '${{ variables.jobTimeout }}'
+      steps:
+        - template: /azure/steps/install-dependencies.yml  
+          parameters:
+            azure_subscription: '${{ variables.azureAccount }}'
+            install_mobileWorkloads: 'true'
+
+        - template: /azure/steps/build-mobile.yml
+          parameters:
+            azure_subscription: '${{ variables.azureAccount }}'
+            package_id: 'Mobile_Android'
+            project_to_build: 'MyExtensionsApp.Mobile/MyExtensionsApp.Mobile.csproj'
+            target_framework: 'net6.0-android'
+            
+    - job: iOS
+      timeoutInMinutes: '${{ variables.jobTimeout }}'
+      steps:
+        - template: /azure/steps/install-dependencies.yml  
+          parameters:
+            azure_subscription: '${{ variables.azureAccount }}'
+            install_mobileWorkloads: 'true'
+
+        - template: /azure/steps/build-mobile.yml
+          parameters:
+            azure_subscription: '${{ variables.azureAccount }}'
+            package_id: 'Mobile_iOS'
+            project_to_build: 'MyExtensionsApp.Mobile/MyExtensionsApp.Mobile.csproj'
+            target_framework: 'net6.0-ios'
+
+    - job: MacCatalyst
+      timeoutInMinutes: '${{ variables.jobTimeout }}'
+      steps:
+        - template: /azure/steps/install-dependencies.yml  
+          parameters:
+            azure_subscription: '${{ variables.azureAccount }}'
+            install_mobileWorkloads: 'true'
+
+        - template: /azure/steps/build-mobile.yml
+          parameters:
+            azure_subscription: '${{ variables.azureAccount }}'
+            package_id: 'Mobile_MacCatalyst'
+            project_to_build: 'MyExtensionsApp.Mobile/MyExtensionsApp.Mobile.csproj'
+            target_framework: 'net6.0-maccatalyst'
+            
+    - job: Windows
+      timeoutInMinutes: '${{ variables.jobTimeout }}'
+      steps:
+        - template: /azure/steps/install-dependencies.yml  
+          parameters:
+            azure_subscription: '${{ variables.azureAccount }}'
+            install_windowsSDK: 'true'
+            install_mobileWorkloads: 'true'
+
+        - template: /azure/steps/build-desktop.yml
+          parameters:
+            azure_subscription: '${{ variables.azureAccount }}' 
+            package_id: 'Windows'
+            project_to_build: 'MyExtensionsApp.Windows/MyExtensionsApp.Windows.csproj'    
+
+    - job: WPF
+      timeoutInMinutes: '${{ variables.jobTimeout }}'
+      steps:
+        - template: /azure/steps/install-dependencies.yml  
+          parameters:
+            azure_subscription: '${{ variables.azureAccount }}'
+            install_windowsSDK: 'true'
+            install_mobileWorkloads: 'true'
+
+        - template: /azure/steps/build-desktop.yml
+          parameters:
+            azure_subscription: '${{ variables.azureAccount }}'
+            package_id: 'WPF'
+            project_to_build: 'MyExtensionsApp.Skia.WPF/MyExtensionsApp.Skia.WPF.csproj'                
+            
+    - job: GTK
+      timeoutInMinutes: '${{ variables.jobTimeout }}'
+      steps:
+        - template: /azure/steps/install-dependencies.yml  
+          parameters:
+            azure_subscription: '${{ variables.azureAccount }}'
+            install_windowsSDK: 'true'
+            install_gtk: 'true'
+            install_mobileWorkloads: 'true'
+
+        - template: /azure/steps/build-desktop.yml
+          parameters:
+            azure_subscription: '${{ variables.azureAccount }}'
+            package_id: 'GTK'
+            project_to_build: 'MyExtensionsApp.Skia.Gtk/MyExtensionsApp.Skia.Gtk.csproj'               
+            
+    - job: Linux
+      timeoutInMinutes: '${{ variables.jobTimeout }}'
+      steps:
+        - template: /azure/steps/install-dependencies.yml  
+          parameters:
+            azure_subscription: '${{ variables.azureAccount }}'
+            install_windowsSDK: 'true'
+            install_mobileWorkloads: 'true'
+
+        - template: /azure/steps/build-desktop.yml
+          parameters:
+            azure_subscription: '${{ variables.azureAccount }}' 
+            package_id: 'Linux'
+            project_to_build: 'MyExtensionsApp.Skia.Linux.FrameBuffer/MyExtensionsApp.Skia.Linux.FrameBuffer.csproj'             

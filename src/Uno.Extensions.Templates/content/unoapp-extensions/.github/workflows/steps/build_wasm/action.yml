@@ -1,0 +1,52 @@
+name: Build Wasm
+description: ""
+
+inputs:
+  package_Id:  # id of input
+    description: 'Compiled Package ID'
+    required: true
+    default: 'release_wasm'
+  project-to-build:  # version of release package
+    description: 'Relative path to .csproj file'
+    required: true
+    default: ''
+  artifact-retention-policy: 
+    description: 'Number of days to keep the build artifacts'
+    required: false
+    default: '90'
+runs:
+  using: "composite"
+  steps:
+    - name: Setup GitVersion
+      uses: gittools/actions/gitversion/setup@v0.9.9
+      with:
+        versionSpec: '5.x'
+
+    - name: GitVersion
+      id: gitversion
+      uses: gittools/actions/gitversion/execute@v0.9.9
+      with:
+        useConfigFile: true
+        configFilePath: ./.github/workflows/config/gitversion.yml
+
+    # Create the app package by building and packaging the project
+    - name: Build and create package
+      shell: pwsh
+      run: |
+        Write-Host "Building.."
+        dotnet build  -c Release -o .\bin\Release\ ${{ inputs.project-to-build }}
+
+        $finalPackageFolder = ".\artifacts"
+        Write-Host "Creating package folder: $finalPackageFolder"
+        New-Item -ItemType Directory -Force -Path $finalPackageFolder
+
+        $finalPackageName = "$finalPackageFolder\${{ inputs.package-id }}_${{ steps.gitversion.outputs.assemblySemVer }}.zip"
+        Write-Host "Compressing final package: $finalPackageName"
+        Compress-Archive -Path '.\bin\Release\*' -DestinationPath $finalPackageName
+
+    - name: Upload Artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: "${{ inputs.package-id }}_${{ steps.gitversion.outputs.assemblySemVer }}"
+        path: .\artifacts
+        retention-days: ${{ inputs.artifact-retention-policy }}
