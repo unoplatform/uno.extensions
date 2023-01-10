@@ -1,6 +1,5 @@
 <Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<EnableMsixTooling>true</EnableMsixTooling>
 		<GenerateLibraryLayout>true</GenerateLibraryLayout>
 		<TargetFramework>$libarybasetargetframework$</TargetFramework>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
