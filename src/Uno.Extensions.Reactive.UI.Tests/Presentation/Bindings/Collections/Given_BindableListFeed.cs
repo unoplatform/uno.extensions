@@ -40,4 +40,21 @@ public partial class Given_BindableListFeed : FeedUITests
 		async Task<object?> GetBindableCollection(SourceContext context)
 			=> (await ((ISignal<IMessage>)sut!).GetSource(context).FirstAsync(CT)).Current.Data.SomeOrDefault();
 	}
+
+	[TestMethod]
+	public async Task When_CollectionChanged_Then_CountPropertyChangedRaised()
+	{
+		var vm = new BindableGiven_BindableListFeed_Model();
+		var sut = vm.Items as BindableListFeed<int>;
+
+		sut.Should().NotBeNull();
+
+		var countHasChanged = false;
+		sut!.PropertyChanged += (snd, e) => countHasChanged |= e.PropertyName is null or { Length: 0 } or "Count";
+
+		await Task.Run(async () => await vm.Model.Items.AddAsync(44, CT), CT);
+
+		await UIHelper.WaitFor(() => countHasChanged, CT);
+		countHasChanged.Should().BeTrue();
+	}
 }

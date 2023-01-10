@@ -235,6 +235,7 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Facet
 			{
 				// We don't have any event to raise, just update the _head
 				UpdateHead(arg);
+				_collectionChanged.PropertyChanged();
 			}
 #if XAMARIN // the ListView on windows does not supports event for multiple items at once (except insert at the end of the list).
 			else if (_collectionChanged.VectorChanged == null)
@@ -373,6 +374,7 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Facet
 
 			_collectionChanged.CollectionChanged?.Invoke(arg);
 			_collectionChanged.VectorChanged?.Invoke(new VectorChangedEventArgs(CollectionChange.ItemInserted, (uint)arg.NewStartingIndex));
+			_collectionChanged.PropertyChanged();
 		}
 
 		private void RaiseMove(NotifyCollectionChangedEventArgs arg, string? logMeta = null, (int number, int of)? item = null)
@@ -399,6 +401,7 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Facet
 
 				_collectionChanged.VectorChanged?.Invoke(new VectorChangedEventArgs(CollectionChange.ItemInserted, (uint)toIndex));
 			}
+			_collectionChanged.PropertyChanged();
 		}
 
 		private void RaiseReplace(NotifyCollectionChangedEventArgs arg, string? logMeta = null, (int number, int of)? item = null)
@@ -412,6 +415,7 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Facet
 
 			_collectionChanged.CollectionChanged?.Invoke(arg);
 			_collectionChanged.VectorChanged?.Invoke(new VectorChangedEventArgs(CollectionChange.ItemChanged, (uint)arg.NewStartingIndex));
+			_collectionChanged.PropertyChanged();
 		}
 
 		private void RaiseRemove(NotifyCollectionChangedEventArgs arg, string? logMeta = null, (int number, int of)? item = null)
@@ -425,6 +429,7 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Facet
 
 			_collectionChanged.CollectionChanged?.Invoke(arg);
 			_collectionChanged.VectorChanged?.Invoke(new VectorChangedEventArgs(CollectionChange.ItemRemoved, (uint)arg.OldStartingIndex));
+			_collectionChanged.PropertyChanged();
 		}
 		private void RaiseReset(NotifyCollectionChangedEventArgs poor)
 		{
@@ -490,6 +495,7 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Facet
 			}
 
 			_onReseted?.Invoke();
+			_collectionChanged.PropertyChanged();
 		}
 
 		private void UpdateHead(NotifyCollectionChangedEventArgs change)
