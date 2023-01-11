@@ -18,7 +18,13 @@ public class NavigationViewHostInit : BaseHostInitialization
 				Nested: new[]
 				{
 						new RouteMap("Home", View: views.FindByViewModel<NavigationViewHomeViewModel>()),
-						new RouteMap("DataBound", View: views.FindByViewModel<NavigationViewDataBoundViewModel>()),
+						new RouteMap("DataBound", View: views.FindByViewModel<NavigationViewDataBoundViewModel>(),
+						Nested: new[]
+						{
+							new RouteMap("Profile"),
+							new RouteMap("Deals"),
+							new RouteMap("Products")
+						}),
 						new RouteMap("Settings", View: views.FindByViewModel<NavigationViewSettingsViewModel>()),
 				}));
 	}
