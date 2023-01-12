@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<TargetFrameworks>$libarybasetargetframework$</TargetFrameworks>
 		<!--#if (winAppSdk) -->
@@ -136,11 +136,18 @@
 		<!--#if (useConfiguration)-->
 		<None Remove="appsettings*.json" />
 		<EmbeddedResource Include="appsettings.json" />
-		<EmbeddedResource Include="appsettings.*.json"
-											DependentUpon="appsettings.json" />
+		<EmbeddedResource Include="appsettings.*.json" DependentUpon="appsettings.json" />
 		<!--#endif-->
 		<!--#endif-->
 		<PRIResource Include="Strings\**\*.resw" />
 		<UpToDateCheckInput Include="**\*.xaml" Exclude="bin\**\*.xaml;obj\**\*.xaml" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Remove="Assets\Logo.scale-100.png" />
+	  <None Remove="Assets\Logo.scale-125.png" />
+	  <None Remove="Assets\Logo.scale-150.png" />
+	  <None Remove="Assets\Logo.scale-200.png" />
+	  <None Remove="Assets\Logo.scale-400.png" />
 	</ItemGroup>
 </Project>
