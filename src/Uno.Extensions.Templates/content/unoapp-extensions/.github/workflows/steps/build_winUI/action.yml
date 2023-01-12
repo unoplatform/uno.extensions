@@ -68,28 +68,24 @@ runs:
     - name: Build and Create Package
       shell: pwsh
       run:  |
-        if (Test-Path -Path '.\artifacts') {
-          Get-ChildItem -Path .\artifacts -Include *.* -File -Recurse | foreach { $_.Delete()}
-        }
-
         if ('true' -eq '${{ inputs.sign-package }}') {
           msbuild ${{ inputs.project-to-build }} /p:Configuration=$env:Configuration /p:Platform=$env:Platform /p:UapAppxPackageBuildMode=$env:Appx_Package_Build_Mode /p:AppxBundle=$env:Appx_Bundle /p:PackageCertificateKeyFile=${{ inputs.package-id }}_TemporaryKey.pfx /p:AppxPackageDir="$env:Appx_Package_Dir" /p:GenerateAppxPackageOnBuild=true
         }else{
           msbuild ${{ inputs.project-to-build }} /p:AppxPackageSigningEnabled=false /p:Configuration=$env:Configuration /p:Platform=$env:Platform /p:UapAppxPackageBuildMode=$env:Appx_Package_Build_Mode /p:AppxBundle=$env:Appx_Bundle /p:AppxPackageDir="$env:Appx_Package_Dir" /p:GenerateAppxPackageOnBuild=true
         }
 
-        $finalPackageFolder = ".\artifacts"
+        $finalPackageFolder = ".\artifacts${{ inputs.package-id }}"
         Write-Host "Creating package folder: $finalPackageFolder"
         New-Item -ItemType Directory -Force -Path $finalPackageFolder
 
         $finalPackageName = "$finalPackageFolder\${{ inputs.package-id }}(${{ inputs.project-platform }})_${{ steps.gitversion.outputs.assemblySemVer }}.zip"
         Write-Host "Compressing final package: $finalPackageName"
-        Compress-Archive -Path '${{ inputs.project-folder }}\bin\Release\*' -DestinationPath $finalPackageName      
+        Compress-Archive -Path '${{ inputs.project-folder }}\bin\Release${{ inputs.package-id }}\*' -DestinationPath $finalPackageName      
       
       env:
         Appx_Bundle: Never
         Appx_Package_Build_Mode: SideloadOnly
-        Appx_Package_Dir:  .\bin\Release\
+        Appx_Package_Dir:  .\bin\Release${{ inputs.package-id }}\
         Configuration: Release
         Platform: ${{ inputs.project-platform }}
 
@@ -105,5 +101,5 @@ runs:
       uses: actions/upload-artifact@v2
       with:
         name: "${{ inputs.package-id }}(${{ inputs.project-platform }})_${{ steps.gitversion.outputs.assemblySemVer }}" 
-        path: .\artifacts
+        path: .\artifacts${{ inputs.package-id }}
         retention-days: ${{ inputs.artifact-retention-policy }}

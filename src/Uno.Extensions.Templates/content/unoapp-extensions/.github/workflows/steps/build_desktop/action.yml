@@ -72,25 +72,21 @@ runs:
     - name: Build and Create Package
       shell: pwsh
       run: |
-        if (Test-Path -Path '.\artifacts') {
-          Get-ChildItem -Path .\artifacts -Include *.* -File -Recurse | foreach { $_.Delete()}
-        }
-
         Write-Host  ""
         Write-Host "Building ${{ inputs.package-id }}"
-        dotnet build  -c Release -p:Platform=${{ inputs.project-platform }}  -o .\bin\Release\ ${{ inputs.project-to-build }}
+        dotnet build  -c Release -p:Platform=${{ inputs.project-platform }}  -o .\bin\Release${{ inputs.package-id }}\ ${{ inputs.project-to-build }}
 
-        $finalPackageFolder = ".\artifacts"
+        $finalPackageFolder = ".\artifacts${{ inputs.package-id }}"
         Write-Host "Creating package folder: $finalPackageFolder"
         New-Item -ItemType Directory -Force -Path $finalPackageFolder
 
         $finalPackageName = "$finalPackageFolder\${{ inputs.package-id }}(${{ inputs.project-platform }})_${{ steps.gitversion.outputs.assemblySemVer }}.zip"
         Write-Host "Compressing final package: $finalPackageName"
-        Compress-Archive -Path '.\bin\Release\*' -DestinationPath $finalPackageName
+        Compress-Archive -Path '.\bin\Release${{ inputs.package-id }}\*' -DestinationPath $finalPackageName
 
     - name: Upload Artifacts
       uses: actions/upload-artifact@v2
       with:
         name: "${{ inputs.package-id }}(${{ inputs.project-platform }})_${{ steps.gitversion.outputs.assemblySemVer }}" 
-        path: .\artifacts
+        path: .\artifacts${{ inputs.package-id }}
         retention-days: ${{ inputs.artifact-retention-policy }}
