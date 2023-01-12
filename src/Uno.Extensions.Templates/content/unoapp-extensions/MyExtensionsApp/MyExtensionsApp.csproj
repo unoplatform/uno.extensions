@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<TargetFrameworks>$libarybasetargetframework$</TargetFrameworks>
 		<!--#if (winAppSdk) -->
@@ -52,7 +52,7 @@
 		<PackageReference Include="Uno.Extensions.Http" />
 		<PackageReference Include="Uno.Extensions.Http.Refit" />
 		<!--#endif-->
-		 <!--#if (localization)-->
+		<!--#if (localization)-->
 		<PackageReference Include="Uno.Extensions.Localization" />
 		<!--#endif-->
 		<PackageReference Include="Uno.Extensions.Navigation" />
