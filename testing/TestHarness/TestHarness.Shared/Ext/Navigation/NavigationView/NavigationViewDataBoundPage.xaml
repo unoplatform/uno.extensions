@@ -15,6 +15,7 @@
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto" />
 			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
 			<RowDefinition />
 		</Grid.RowDefinitions>
 		<utu:NavigationBar Content="NavigationView DataBound"
@@ -23,9 +24,18 @@
 				   Grid.Row="1"
 				   x:Name="CurrentNavigationViewItemText"
 				   AutomationProperties.AutomationId="CurrentNavigationViewItemTextBlock" />
+		<StackPanel Orientation="Horizontal">
+			<Button Content="Profile"
+					Click="{x:Bind ViewModel.SelectProfile}" />
+			<Button Content="Deals"
+					Click="{x:Bind ViewModel.SelectDeals}" />
+			<Button Content="Products"
+					Click="{x:Bind ViewModel.SelectProducts}" />
+		</StackPanel>
 		<muxc:NavigationView uen:Region.Attached="true"
-							 Grid.Row="2"
+							 Grid.Row="3"
 							 SelectionChanged="NavigationViewItemChanged"
+							 SelectedItem="{Binding SelectedNavigationItem, Mode=TwoWay}"
 							 ItemInvoked="NavigationItemInvoked"
 							 MenuItemsSource="{Binding NavigationItems}"
 							 IsSettingsVisible="True">

@@ -3,6 +3,7 @@ namespace TestHarness.Ext.Navigation.NavigationView;
 
 public sealed partial class NavigationViewDataBoundPage : Page
 {
+	public NavigationViewDataBoundViewModel? ViewModel => DataContext as NavigationViewDataBoundViewModel;
 	public NavigationViewDataBoundPage()
 	{
 		this.InitializeComponent();
