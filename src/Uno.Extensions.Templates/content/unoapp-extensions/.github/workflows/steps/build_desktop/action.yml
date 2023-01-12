@@ -1,4 +1,4 @@
-name: Build Windows
+name: Build Desktop
 description: ""
 
 inputs:
@@ -18,6 +18,10 @@ inputs:
     description: 'Number of days to keep the build artifacts'
     required: false
     default: '90'
+  is-gtk: 
+    description: 'If true, current step will install GTK4'
+    required: false
+    default: 'false'    
 runs:
   using: "composite"
   steps:
@@ -33,10 +37,45 @@ runs:
         useConfigFile: true
         configFilePath: ./.github/workflows/config/gitversion.yml
 
+    # Install GTK4
+    - name: Install GTK4
+      continue-on-error: true
+      shell: pwsh
+      run: |
+          if ('true' -eq '${{ inputs.is-gtk }}') {
+            Write-Host "Installing GTK4"
+            Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+            choco install git
+            choco install msys2
+            choco install visualstudio2022-workload-vctools
+
+            Write-Host "Installing Python"
+            choco install python
+            Write-Host "Python Installation Finished"
+
+            python -m pip install --user pipx
+            python -m pipx ensurepath
+            pipx install gvsbuild
+            
+            gvsbuild build gtk4
+
+            Write-Host "Adding GTK4 to Path"
+            $env:Path = "C:\gtk-build\gtk\x64\release\bin;" + $env:Path
+            Write-Host "GTK4 Installation Finished"
+          }
+
+    - name: Sleep for 15s to release dotnet.exe
+      run: Start-Sleep -s 15
+      shell: pwsh        
+
     # Create the app package by building and packaging the project
     - name: Build and Create Package
       shell: pwsh
       run: |
+        if (Test-Path -Path '.\artifacts') {
+          Get-ChildItem -Path .\artifacts -Include *.* -File -Recurse | foreach { $_.Delete()}
+        }
+
         Write-Host  ""
         Write-Host "Building ${{ inputs.package-id }}"
         dotnet build  -c Release -p:Platform=${{ inputs.project-platform }}  -o .\bin\Release\ ${{ inputs.project-to-build }}

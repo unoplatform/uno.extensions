@@ -12,6 +12,14 @@ on:
       - main
       - release/**
 
+env:
+  #[REQUIRED FOR build_winUI if sign-package: 'true']
+  WINUI_BASE64_PFX_CERTIFICATE: ""
+  
+  #[REQUIRED FOR build_Android]
+  ANDROID_BASE64_JKS_CERTIFICATE: ""
+  ANDROID_JKS_CERTIFICATE_PASSWORD: ""
+  ANDROID_JKS_CERTIFICATE_ALIAS: ""
 jobs:
   build_tool:
     name: Build MyExtensionsApp
@@ -25,31 +33,19 @@ jobs:
 
       - name: Install Dependencies
         uses: "./.github/workflows/steps/install_dependencies"         
-
-      - name: Build Windows
-        uses: "./.github/workflows/steps/build_desktop"
-        with:
-          package-id: "Windows"
-          project-to-build: "MyExtensionsApp.Windows/MyExtensionsApp.Windows.csproj"  
-
-      - name: Build WPF
-        uses: "./.github/workflows/steps/build_desktop"
-        with:
-          package-id: "WPF"
-          project-to-build: "MyExtensionsApp.Skia.WPF/MyExtensionsApp.Skia.WPF.csproj"  
-                  
-      - name: Build GTK
-        uses: "./.github/workflows/steps/build_desktop"
-        with:
-          package-id: "GTK"
-          project-to-build: "MyExtensionsApp.Skia.Gtk/MyExtensionsApp.Skia.Gtk.csproj"       
-
-      - name: Build Linux
-        uses: "./.github/workflows/steps/build_desktop"
-        with:
-          package-id: "Linux.FrameBuffer"
-          project-to-build: "MyExtensionsApp.Skia.Linux.FrameBuffer/MyExtensionsApp.Skia.Linux.FrameBuffer.csproj"             
        
+      ###################################################################
+      #  MAKE SURE TOP VARIABLES ARE NOT EMPTY BEFORE RUNNING THIS STEP #                                     
+      ###################################################################
+      # - name: Build and Sign Mobile (Android)
+      #   uses: "./.github/workflows/steps/build_android"
+      #   with:
+      #     package-id: "Mobile_Android_Signed"
+      #     certificate:  "$ANDROID_BASE64_JKS_CERTIFICATE"
+      #     certificate-password: "$ANDROID_JKS_CERTIFICATE_PASSWORD"
+      #     certificate-alias: "$ANDROID_JKS_CERTIFICATE_ALIAS"
+      #     project-to-build: "MyExtensionsApp.Mobile/MyExtensionsApp.Mobile.csproj" 
+
       - name: Build Mobile (Android)
         uses: "./.github/workflows/steps/build_mobile"
         with:
@@ -75,4 +71,43 @@ jobs:
         uses: "./.github/workflows/steps/build_wasm"
         with:
           package-id: "Wasm"
-          project-to-build: "MyExtensionsApp.Wasm/MyExtensionsApp.Wasm.csproj"   
+          project-to-build: "MyExtensionsApp.Wasm/MyExtensionsApp.Wasm.csproj" 
+
+      ###################################################################
+      #  MAKE SURE TOP VARIABLES ARE NOT EMPTY BEFORE RUNNING THIS STEP #                                     
+      ###################################################################
+      # - name: Build and Publish Windows(Signed)
+      #   uses: "./.github/workflows/steps/build_winUI"
+      #   with:
+      #     package-id: "WindowsSigned"
+      #     certificate: "$WINUI_BASE64_PFX_CERTIFICATE"
+      #     project-to-build: "MyExtensionsApp.Windows/MyExtensionsApp.Windows.csproj"  
+      #     project-folder: "MyExtensionsApp.Windows" 
+
+      - name: Build and Publish Windows(Unsigned)
+        uses: "./.github/workflows/steps/build_winUI"
+        with:
+          package-id: "WindowsUnsigned"
+          sign-package: 'false'
+          project-to-build: "MyExtensionsApp.Windows/MyExtensionsApp.Windows.csproj"  
+          project-folder: "MyExtensionsApp.Windows"            
+
+      - name: Build Linux
+        uses: "./.github/workflows/steps/build_desktop"
+        with:
+          package-id: "Linux"
+          project-to-build: "MyExtensionsApp.Skia.Linux.FrameBuffer/MyExtensionsApp.Skia.Linux.FrameBuffer.csproj"  
+
+      - name: Build WPF
+        uses: "./.github/workflows/steps/build_desktop"
+        with:
+          package-id: "WPF"
+          project-to-build: "MyExtensionsApp.Skia.WPF/MyExtensionsApp.Skia.WPF.csproj"  
+
+      #THIS STEP IS THE LAST ONE AS IT TAKES MORE TIME TO INSTALL AND CONFIGURE GTK DEPENDENCIES            
+      - name: Build GTK
+        uses: "./.github/workflows/steps/build_desktop"
+        with:
+          package-id: "GTK"
+          project-to-build: "MyExtensionsApp.Skia.Gtk/MyExtensionsApp.Skia.Gtk.csproj"  
+          is-gtk: 'true'                                 

@@ -1,4 +1,4 @@
-name: Build Windows
+name: Build WinUI
 description: ""
 
 runs:
@@ -18,16 +18,10 @@ runs:
       run: Start-Sleep -s 15
       shell: pwsh
 
-
     # Install Windows SDK
     - name: Install Windows SDK 1903
       shell: pwsh
       run: |
-        $Folder = 'C:\Program Files (x86)\Windows Kits\10\'
-        Write-Host "Checking if Windows SDK is installed"
-        if (Test-Path -Path $Folder) {
-            Write-Host "SDK already installed"
-        } else {
             Write-Host "Installing Windows SDK 1903 (10.0.18362.1)..." -ForegroundColor Cyan
 
             Write-Host "Downloading..."
@@ -39,7 +33,6 @@ runs:
 
             Remove-Item $exePath
             Write-Host "Installed" -ForegroundColor Green
-        }
 
     - name: Sleep for 15s to release dotnet.exe
       run: Start-Sleep -s 15
@@ -69,42 +62,6 @@ runs:
           Write-Host "Installing maccatalyst workload"
           dotnet workload install maccatalyst
         }     
-
-    - name: Sleep for 15s to release dotnet.exe
-      run: Start-Sleep -s 15
-      shell: pwsh
-      
-    # Install GTK4
-    - name: Install GTK4
-      continue-on-error: true
-      shell: pwsh
-      run: |
-        $Folder = 'C:\gtk-build\gtk\x64\release\bin\'
-        Write-Host "Checking if GTK4 is installed"
-
-        if (Test-Path -Path $Folder) {
-            Write-Host "SDK already installed"
-        } else {
-            Write-Host "Installing GTK4"
-            Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
-            choco install git
-            choco install msys2
-            choco install visualstudio2022-workload-vctools
-
-            Write-Host "Installing Python"
-            choco install python
-            Write-Host "Python Installation Finished"
-
-            python -m pip install --user pipx
-            python -m pipx ensurepath
-            pipx install gvsbuild
-            #build GTK
-            gvsbuild build gtk4
-
-            Write-Host "Adding GTK4 to Path"
-            $env:Path = "C:\gtk-build\gtk\x64\release\bin;" + $env:Path
-            Write-Host "GTK4 Installation Finished"
-        }
 
     - name: Sleep for 15s to release dotnet.exe
       run: Start-Sleep -s 15

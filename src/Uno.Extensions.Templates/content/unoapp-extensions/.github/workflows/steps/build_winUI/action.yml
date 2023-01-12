@@ -1,0 +1,109 @@
+name: Build Windows
+description: ""
+
+inputs:
+  package-id:
+    description: 'Compiled Package ID'
+    required: true
+    default: 'release_Windows'
+  project-to-build:
+    description: 'Relative path to .csproj file'
+    required: true
+    default: ''
+  project-folder:
+    description: 'csproj folder'
+    required: true
+    default: ''    
+  project-platform:
+    description: 'Platform to build'
+    required: false
+    default: 'x86'
+  artifact-retention-policy: 
+    description: 'Number of days to keep the build artifacts'
+    required: false
+    default: '90'
+  certificate: 
+     description: "Base64 Certificate for signing .Msix package"
+     required: true
+     default: ''
+  sign-package: 
+     description: "Defines if final .msix package will be signed using certificate input"
+     required: false
+     default: 'true'     
+runs:
+  using: "composite"
+  steps:
+    - name: Setup GitVersion
+      uses: gittools/actions/gitversion/setup@v0.9.9
+      with:
+        versionSpec: '5.x'
+
+    - name: GitVersion
+      id: gitversion
+      uses: gittools/actions/gitversion/execute@v0.9.9
+      with:
+        useConfigFile: true
+        configFilePath: ./.github/workflows/config/gitversion.yml
+
+    # Add  MSBuild to the PATH: https://github.com/microsoft/setup-msbuild
+    - name: Setup MSBuild.exe
+      uses: microsoft/setup-msbuild@v1.0.2      
+
+    - name: Restore the application
+      shell: pwsh
+      run: msbuild /t:Restore ${{ inputs.project-to-build }} /p:Configuration=Release /p:Platform=${{ inputs.project-platform }}
+
+    # Decode the base 64 encoded pfx and save the Signing_Certificate
+    - name: Decode the pfx
+      shell: pwsh
+      run: |
+        if ('true' -eq '${{ inputs.sign-package }}') {
+          Write-Host "Decoding pfx certificate"
+          $pfx_cert_byte = [System.Convert]::FromBase64String("${{ inputs.certificate }}")
+          $certificatePath = "${{ inputs.package-id }}_TemporaryKey.pfx"
+          [IO.File]::WriteAllBytes("$certificatePath", $pfx_cert_byte)
+        }
+
+    # Create the app package by building and packaging the project
+    - name: Build and Create Package
+      shell: pwsh
+      run:  |
+        if (Test-Path -Path '.\artifacts') {
+          Get-ChildItem -Path .\artifacts -Include *.* -File -Recurse | foreach { $_.Delete()}
+        }
+
+        if ('true' -eq '${{ inputs.sign-package }}') {
+          msbuild ${{ inputs.project-to-build }} /p:Configuration=$env:Configuration /p:Platform=$env:Platform /p:UapAppxPackageBuildMode=$env:Appx_Package_Build_Mode /p:AppxBundle=$env:Appx_Bundle /p:PackageCertificateKeyFile=${{ inputs.package-id }}_TemporaryKey.pfx /p:AppxPackageDir="$env:Appx_Package_Dir" /p:GenerateAppxPackageOnBuild=true
+        }else{
+          msbuild ${{ inputs.project-to-build }} /p:AppxPackageSigningEnabled=false /p:Configuration=$env:Configuration /p:Platform=$env:Platform /p:UapAppxPackageBuildMode=$env:Appx_Package_Build_Mode /p:AppxBundle=$env:Appx_Bundle /p:AppxPackageDir="$env:Appx_Package_Dir" /p:GenerateAppxPackageOnBuild=true
+        }
+
+        $finalPackageFolder = ".\artifacts"
+        Write-Host "Creating package folder: $finalPackageFolder"
+        New-Item -ItemType Directory -Force -Path $finalPackageFolder
+
+        $finalPackageName = "$finalPackageFolder\${{ inputs.package-id }}(${{ inputs.project-platform }})_${{ steps.gitversion.outputs.assemblySemVer }}.zip"
+        Write-Host "Compressing final package: $finalPackageName"
+        Compress-Archive -Path '${{ inputs.project-folder }}\bin\Release\*' -DestinationPath $finalPackageName      
+      
+      env:
+        Appx_Bundle: Never
+        Appx_Package_Build_Mode: SideloadOnly
+        Appx_Package_Dir:  .\bin\Release\
+        Configuration: Release
+        Platform: ${{ inputs.project-platform }}
+
+    # Remove the pfx
+    - name: Remove the pfx
+      shell: pwsh
+      run: |
+        if ('true' -eq '${{ inputs.sign-package }}') {
+          Remove-Item -path ${{ inputs.package-id }}_TemporaryKey.pfx
+        }
+
+    - name: Upload Artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: "${{ inputs.package-id }}(${{ inputs.project-platform }})_${{ steps.gitversion.outputs.assemblySemVer }}" 
+        path: .\artifacts
+        retention-days: ${{ inputs.artifact-retention-policy }}
