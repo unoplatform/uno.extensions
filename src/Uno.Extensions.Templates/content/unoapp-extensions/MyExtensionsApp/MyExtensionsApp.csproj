@@ -136,8 +136,7 @@
 		<!--#if (useConfiguration)-->
 		<None Remove="appsettings*.json" />
 		<EmbeddedResource Include="appsettings.json" />
-		<EmbeddedResource Include="appsettings.*.json"
-											DependentUpon="appsettings.json" />
+		<EmbeddedResource Include="appsettings.*.json" DependentUpon="appsettings.json" />
 		<!--#endif-->
 		<!--#endif-->
 		<PRIResource Include="Strings\**\*.resw" />
