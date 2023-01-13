@@ -1,7 +1,12 @@
 //-:cnd:noEmit
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Navigation;
+using Application = Microsoft.UI.Xaml.Application;
+
 namespace MyExtensionsApp;
 
-public sealed partial class App : global::Microsoft.UI.Xaml.Application
+public sealed partial class App : Application
 {
 	private Window? _window;
 

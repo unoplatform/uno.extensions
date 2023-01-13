@@ -443,6 +443,11 @@
       "datatype": "bool",
       "value": "navigation != 'frame'"
     },
+    "useInfrastructureNamespace": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "(useDefaultAppTemplate && http) || useCsharpMarkup"
+    },
     "HostIdentifier": {
       "type": "bind",
       "binding": "HostIdentifier"

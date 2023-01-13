@@ -1,7 +1,7 @@
 //+:cnd:noEmit
 namespace MyExtensionsApp.Infrastructure;
 
-public class DebugHttpHandler : DelegatingHandler
+internal class DebugHttpHandler : DelegatingHandler
 {
 #if logging
 	private readonly ILogger _logger;
