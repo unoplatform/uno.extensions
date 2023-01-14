@@ -1,9 +1,10 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<OutputType Condition="'$(Configuration)'=='Release'">WinExe</OutputType>
 		<OutputType Condition="'$(Configuration)'=='Debug'">Exe</OutputType>
 		<TargetFramework>net6.0-windows</TargetFramework>
 		<UseWPF>true</UseWPF>
+		<ApplicationIcon>Images\logo.ico</ApplicationIcon>
 	</PropertyGroup>
 	<ItemGroup Label="AssemblyInfo">
 		<AssemblyAttribute Include="System.Runtime.InteropServices.ComVisibleAttribute">
@@ -86,11 +87,12 @@
 		<!--#endif-->
 	</ItemGroup>
 	<!--#endif-->
-
 	<ItemGroup>
 		<ApplicationDefinition Include="Wpf\App.xaml" XamlRuntime="Wpf" />
 	</ItemGroup>
-
+	<ItemGroup>
+	  <Content Include="Images\logo.ico" />
+	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\MyExtensionsApp\MyExtensionsApp.csproj" />
 		<!--#if (http && useDefaultAppTemplate)-->
