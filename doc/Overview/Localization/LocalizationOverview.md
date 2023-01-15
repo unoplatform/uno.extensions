@@ -40,23 +40,25 @@ var isResourceNotFound = myString.ResourceNotFound;
 
 ## UI Culture
 
-Current culture/locale can be changed by updating LocalizationSettings. This requires an app restart. 
+Current culture/locale can be changed using the ILocalizationService. This requires an app restart. 
+
 
 ```csharp
-public class MainPageViewModel : ObservableValidator
+public class MainViewModel
 {
-    private readonly IWritableOptions<LocalizationSettings> _localizationSettings;
-    public MainPageViewModel(IWritableOptions<LocalizationSettings> localizationSettings)
-    {
-        _localizationSettings = localizationSettings;
-    }
+    private readonly ILocalizationService localizationService;
 
-    public void ToggleLocalization()
+    public MainViewModel(ILocalizationService localizationService)
     {
-        _localizationSettings.Update(settings =>
-        {
-            settings.CurrentCulture = settings.CurrentCulture == "en-US" ? "fr-CA" : "en-US";
-        });
+        this.localizationService = localizationService;
+    } 
+    
+    public async Task ToggleLocalization()
+    {
+        var currentCulture = localizationService.CurrentCulture;
+        
+        var culture = localizationService.SupportedCultures.First(culture => culture.Name != currentCulture.Name);
+        await localizationService.SetCurrentCultureAsync(culture);
     }
 }
 ```

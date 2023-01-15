@@ -1,8 +1,13 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
+	<Import Project="..\tfms-non-ui.props" />
 
 	<PropertyGroup>
-		<TargetFramework>netstandard2.0</TargetFramework>
 		<Description>Reactive Extensions for the Uno Platform, UWP and WinUI</Description>
+
+		<!--
+			As we are InternalsVisibleTo(Uno.Extensions.Reactive.Tests), we disable some compatibility types that are not used by Reactive package itself.
+		-->
+		<UnoExtensionsGeneration_DisableModuleInitializerAttribute>True</UnoExtensionsGeneration_DisableModuleInitializerAttribute>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -12,9 +17,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="System.Collections.Immutable" Version="1.3.1" /><!--Lower version breaks build of reactive.<UI|WinUI>--> 
-		<PackageReference Include="System.Linq.Async" Version="4.0.0" />
-		<PackageReference Include="Uno.SourceGenerationTasks" Version="4.0.2" PrivateAssets="None" />
+		<PackageReference Include="System.Collections.Immutable" /> 
+		<PackageReference Include="System.Linq.Async" />
+		<PackageReference Include="Uno.Toolkit" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -29,7 +34,7 @@
 		</ProjectReference>
 	</ItemGroup>
 
-	<Target Name="_IncludeGenerator" BeforeTargets="Build;Pack">
+	<Target Name="_IncludeUnoExtensionsReactiveGenerator" BeforeTargets="Build;Pack">
 		<ItemGroup>
 			<Content Include="..\Uno.Extensions.Reactive.Generator\buildTransitive\**\*.*" Link="buildTransitive\%(RecursiveDir)%(Filename)%(Extension)">
 				<Pack>true</Pack>

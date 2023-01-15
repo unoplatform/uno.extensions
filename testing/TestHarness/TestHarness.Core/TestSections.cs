@@ -2,6 +2,8 @@
 
 public enum TestSections
 {
+	AdHoc,
+	Navigation_ContentControl,
 	Navigation_PageNavigation,
 	Navigation_PageNavigationRegistered,
 	Navigation_Dialogs,
@@ -24,5 +26,8 @@ public enum TestSections
 	Authentication_Web,
 	Authentication_Web_Settings,
 	Core_Storage,
-	Localization
+	Localization,
+	Http_Endpoints,
+	Http_Refit,
+	Validation
 }

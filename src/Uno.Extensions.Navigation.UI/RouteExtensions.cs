@@ -86,7 +86,7 @@ public static class RouteExtensions
 		var segments = route.ForwardSegments(resolver);
 
 		var navRoute = (navigator is IStackNavigator deepNav) ? deepNav.FullRoute : navigator.Route;
-		if(!isClear && navRoute is not null && !navRoute.IsEmpty())
+		if (!isClear && navRoute is not null && !navRoute.IsEmpty())
 		{
 			return segments.Where(x => !navRoute.Contains(x.Path)).ToArray();
 		}
@@ -103,15 +103,14 @@ public static class RouteExtensions
 		while (rm is not null)
 		{
 			segments.Add(rm);
-			route=route.Next();
+			route = route.Next();
 			rm = resolver.FindByPath(route.Base);
 		}
 
 		return segments.ToArray();
 	}
 
-	public static object? ResponseData(this Route route) =>
-		(route?.Data?.TryGetValue(string.Empty, out var result) ?? false) ? result : null;
+	public static object? ResponseData(this Route route) => route.NavigationData();
 
 
 	public static Route TrimQualifier(this Route route, string qualifierToTrim)
@@ -168,10 +167,12 @@ public static class RouteExtensions
 			return route with { Base = routeToAppend.Base };
 		}
 
-		return route with {
-			Path = string.IsNullOrWhiteSpace( route.Path) ?
-						routeToAppend.Base + (!string.IsNullOrWhiteSpace(routeToAppend.Base) && !string.IsNullOrWhiteSpace(routeToAppend.Path)? Qualifiers.Separator:"") + routeToAppend.Path :
-						route.Path + ((routeToAppend.Qualifier == Qualifiers.Nested  || routeToAppend.Qualifier==Qualifiers.None)? Qualifiers.Separator : routeToAppend.Qualifier) + routeToAppend.Base + routeToAppend.Path };
+		return route with
+		{
+			Path = string.IsNullOrWhiteSpace(route.Path) ?
+						routeToAppend.Base + (!string.IsNullOrWhiteSpace(routeToAppend.Base) && !string.IsNullOrWhiteSpace(routeToAppend.Path) ? Qualifiers.Separator : "") + routeToAppend.Path :
+						route.Path + ((routeToAppend.Qualifier == Qualifiers.Nested || routeToAppend.Qualifier == Qualifiers.None) ? Qualifiers.Separator : routeToAppend.Qualifier) + routeToAppend.Base + routeToAppend.Path
+		};
 	}
 
 	public static Route AppendPage<TPage>(this Route route)
@@ -227,7 +228,7 @@ public static class RouteExtensions
 
 	public static bool Contains(this Route route, string path)
 	{
-		return route.Base == path || (route.Path?.Split('/').Any(x=>x==path)?? false);
+		return route.Base == path || (route.Path?.Split('/').Any(x => x == path) ?? false);
 	}
 
 	public static Route Next(this Route route)
@@ -348,6 +349,11 @@ public static class RouteExtensions
 		};
 	}
 
+	public static Route AsInternal(this Route route)
+	{
+		return route with { IsInternal = true };
+	}
+
 	public static IDictionary<string, object> AsParameters(this IDictionary<string, object> data, RouteInfo mapping)
 	{
 		if (data is null || mapping is null)
@@ -417,69 +423,10 @@ public static class RouteExtensions
 
 		while (rm is not null)
 		{
-			segments.Insert(0,rm);
+			segments.Insert(0, rm);
 			rm = rm.DependsOnRoute;
 		}
 
 		return segments.ToArray();
-	}
-
-	public static Route RootDependsOn(this Route currentRoute, IRouteResolver resolver, IRegion region, bool includeCurrentRegion)
-	{
-		var rm = resolver.FindByPath(currentRoute.Base);
-
-		var dependsRoute = Route.Empty;
-
-		var ancestors = region.Ancestors(true);
-		while (rm is not null)
-		{
-			if (!currentRoute.IsClearBackstack() &&
-				ancestors.Any(x => x.Item1?.Contains(rm.Path) ?? false))
-			{
-				var nav = region.Navigator();
-				var route = (nav is IStackNavigator deepnav) ? deepnav.FullRoute : nav?.Route;
-				// In the scenario where we're testing to see if we can navigate to the currentRoute
-				// the root Route needs to include the route for the current region
-				// In the scenario where we're navigating to the currentRoute, we don't
-				// want to include the route for the current region (since the region
-				// is already at that route)
-				if (includeCurrentRegion &&
-					(route?.Contains(rm.Path) ?? false))
-				{
-					dependsRoute = dependsRoute.Insert(rm.Path);
-				}
-				//currentRoute = currentRoute.Next();
-				//while(!currentRoute.IsEmpty())
-				//{
-				//	dependsRoute = dependsRoute.Append(currentRoute.Base!);
-				//	currentRoute = currentRoute.Next();
-				//}
-				return dependsRoute;
-			}
-			else
-			{
-				if (dependsRoute.IsEmpty())
-				{
-					dependsRoute = dependsRoute.Insert(rm.Path);
-
-					//currentRoute = currentRoute.Next();
-					//while (!currentRoute.IsEmpty())
-					//{
-					//	dependsRoute = dependsRoute.Append(currentRoute.Base!);
-					//	currentRoute = currentRoute.Next();
-					//}
-				}
-				else
-				{
-					dependsRoute = dependsRoute.Insert(rm.Path);
-				}
-
-
-				rm = rm.DependsOnRoute;
-			}
-		}
-
-		return dependsRoute;
-
 	}
 }

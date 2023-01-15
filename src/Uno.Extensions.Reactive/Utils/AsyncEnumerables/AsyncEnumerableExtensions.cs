@@ -52,4 +52,10 @@ internal static class AsyncEnumerableExtensions
 
 	public static IAsyncEnumerable<T> Merge<T>(params IAsyncEnumerable<T>[] asyncEnumerables)
 		=> new MergeAsyncEnumerable<T>(asyncEnumerables);
+
+	public static IAsyncEnumerable<T> ToDeferredEnumerable<T>(this IAsyncEnumerable<T> source)
+		=> new DeferredAsyncEnumerable<T>(source);
+
+	public static IAsyncEnumerable<T> ToDeferredEnumerable<T>(this IAsyncEnumerable<T> source, Func<bool> deferringCondition)
+		=> new ConditionalDeferredAsyncEnumerable<T>(source, deferringCondition);
 }

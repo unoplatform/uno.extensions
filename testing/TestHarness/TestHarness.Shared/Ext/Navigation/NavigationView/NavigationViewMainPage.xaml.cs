@@ -1,6 +1,6 @@
 ﻿namespace TestHarness.Ext.Navigation.NavigationView;
 
-[TestSectionRoot("NavigationView",TestSections.Navigation_NavigationView, typeof(NavigationViewHostInit))]
+[TestSectionRoot("NavigationView", TestSections.Navigation_NavigationView, typeof(NavigationViewHostInit))]
 public sealed partial class NavigationViewMainPage : BaseTestSectionPage
 {
 	public NavigationViewMainPage()
@@ -10,7 +10,10 @@ public sealed partial class NavigationViewMainPage : BaseTestSectionPage
 
 	public async void NavigationViewHomeClick(object sender, RoutedEventArgs e)
 	{
-		await NavigationRoot.Navigator()!.NavigateViewModelAsync<NavigationViewHomeViewModel>(this);
+		await Navigator.NavigateViewModelAsync<NavigationViewHomeViewModel>(this);
 	}
-
+	public async void NavigationViewDataBoundClick(object sender, RoutedEventArgs e)
+	{
+		await Navigator.NavigateViewModelAsync<NavigationViewDataBoundViewModel>(this);
+	}
 }

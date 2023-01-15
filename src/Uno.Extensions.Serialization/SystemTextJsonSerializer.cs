@@ -5,7 +5,7 @@ public class SystemTextJsonSerializer : ISerializer
 	private readonly JsonSerializerOptions? _serializerOptions;
 	private readonly IServiceProvider _services;
 
-	private IJsonTypeInfoWrapper? TypedSerializer(Type jsonType) => _services.GetServices<IJsonTypeInfoWrapper>().FirstOrDefault(x => x.JsonType == jsonType);
+	private ISerializerTypedInstance? TypedSerializer(Type jsonType) => _services.GetServices<ISerializerTypedInstance>().FirstOrDefault(x => x.JsonType == jsonType);
 
 	public SystemTextJsonSerializer(IServiceProvider services, JsonSerializerOptions? serializerOptions = null)
 	{

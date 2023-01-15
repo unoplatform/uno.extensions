@@ -35,7 +35,7 @@ The `dotnet` templates included in the `Uno.Extensions.Templates` package are us
 
 * Open a command prompt and run the following
 
-    `dotnet new -i Uno.Extensions.Templates`
+    `dotnet new install Uno.Extensions.Templates`
 
 * Navigate to the desired projects directory, and use the `unoapp-extensions` template to generate the starter solution discussed above
 

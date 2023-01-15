@@ -27,16 +27,7 @@ public static class ListState<T>
 	/// <returns>A feed that encapsulate the source.</returns>
 	public static IListState<T> Create<TOwner>(TOwner owner, Func<CancellationToken, IAsyncEnumerable<Message<IImmutableList<T>>>> sourceProvider)
 		where TOwner : class
-		=> AttachedProperty.GetOrCreate(owner, sourceProvider, (o, sp) => S(o, new CustomFeed<IImmutableList<T>>(sp)));
-
-	/// <summary>
-	/// Creates a custom feed from a raw <see cref="IAsyncEnumerable{T}"/> sequence of <see cref="Message{T}"/>.
-	/// </summary>
-	/// <param name="sourceProvider">The provider of the message enumerable sequence.</param>
-	/// <returns>A feed that encapsulate the source.</returns>
-	[EditorBrowsable(EditorBrowsableState.Never)]
-	internal static IListState<T> Create(Func<CancellationToken, IAsyncEnumerable<Message<IImmutableList<T>>>> sourceProvider)
-		=> AttachedProperty.GetOrCreate(Validate(sourceProvider), sp => S(sp, new CustomFeed<IImmutableList<T>>(sp)));
+		=> AttachedProperty.GetOrCreate(owner, sourceProvider, static (o, sp) => S(o, new CustomFeed<IImmutableList<T>>(sp)));
 
 	/// <summary>
 	/// Creates a custom feed from a raw <see cref="IAsyncEnumerable{T}"/> sequence of <see cref="Message{T}"/>.
@@ -47,16 +38,7 @@ public static class ListState<T>
 	/// <returns>A feed that encapsulate the source.</returns>
 	public static IListState<T> Create<TOwner>(TOwner owner, Func<IAsyncEnumerable<Message<IImmutableList<T>>>> sourceProvider)
 		where TOwner : class
-		=> AttachedProperty.GetOrCreate(owner, sourceProvider, (o, sp) => S(o, new CustomFeed<IImmutableList<T>>(_ => sp())));
-
-	/// <summary>
-	/// Creates a custom feed from a raw <see cref="IAsyncEnumerable{T}"/> sequence of <see cref="Message{T}"/>.
-	/// </summary>
-	/// <param name="sourceProvider">The provider of the message enumerable sequence.</param>
-	/// <returns>A feed that encapsulate the source.</returns>
-	[EditorBrowsable(EditorBrowsableState.Never)]
-	internal static IListState<T> Create(Func<IAsyncEnumerable<Message<IImmutableList<T>>>> sourceProvider)
-		=> AttachedProperty.GetOrCreate(Validate(sourceProvider), sp => S(sp, new CustomFeed<IImmutableList<T>>(_ => sp())));
+		=> AttachedProperty.GetOrCreate(owner, sourceProvider, static (o, sp) => S(o, new CustomFeed<IImmutableList<T>>(_ => sp())));
 
 	/// <summary>
 	/// Gets or creates an empty list state.
@@ -74,19 +56,7 @@ public static class ListState<T>
 				name ?? throw new InvalidOperationException("The name of the list state must not be null"),
 				line < 0 ? throw new InvalidOperationException("The provided line number is invalid.") : line
 			),
-			(o, _) => SourceContext.GetOrCreate(o).CreateListState(Option<IImmutableList<T>>.None()));
-
-	/// <summary>
-	/// Gets or creates a list state from a static initial list of items.
-	/// </summary>
-	/// <typeparam name="TOwner">Type of the owner of the state.</typeparam>
-	/// <param name="owner">The owner of the state.</param>
-	/// <param name="valueProvider">The provider of the initial value of the state.</param>
-	/// <returns>A feed that encapsulate the source.</returns>
-	public static IListState<T> Value<TOwner>(TOwner owner, Func<ImmutableList<T>> valueProvider)
-		where TOwner : class
-	// Note: We force the usage of delegate so 2 properties which are doing State.Value(this, () => 42) will effectively have 2 distinct states.
-		=> AttachedProperty.GetOrCreate(owner, valueProvider, (o, v) => SourceContext.GetOrCreate(o).CreateListState(Option<IImmutableList<T>>.Some(v())));
+			static (o, _) => SourceContext.GetOrCreate(o).CreateListState(Option<IImmutableList<T>>.None()));
 
 	/// <summary>
 	/// Gets or creates a list state from a static initial list of items.
@@ -98,7 +68,19 @@ public static class ListState<T>
 	public static IListState<T> Value<TOwner>(TOwner owner, Func<IImmutableList<T>> valueProvider)
 		where TOwner : class
 		// Note: We force the usage of delegate so 2 properties which are doing State.Value(this, () => 42) will effectively have 2 distinct states.
-		=> AttachedProperty.GetOrCreate(owner, valueProvider, (o, v) => SourceContext.GetOrCreate(o).CreateListState(Option<IImmutableList<T>>.Some(v())));
+		=> AttachedProperty.GetOrCreate(owner, valueProvider, static (o, v) => SourceContext.GetOrCreate(o).CreateListState(Option<IImmutableList<T>>.Some(v())));
+
+	/// <summary>
+	/// Gets or creates a list state from a static initial list of items.
+	/// </summary>
+	/// <typeparam name="TOwner">Type of the owner of the state.</typeparam>
+	/// <param name="owner">The owner of the state.</param>
+	/// <param name="valueProvider">The provider of the initial value of the state.</param>
+	/// <returns>A feed that encapsulate the source.</returns>
+	public static IListState<T> Value<TOwner>(TOwner owner, Func<ImmutableList<T>> valueProvider)
+		where TOwner : class
+		// Note: We force the usage of delegate so 2 properties which are doing State.Value(this, () => 42) will effectively have 2 distinct states.
+		=> AttachedProperty.GetOrCreate(owner, valueProvider, static (o, v) => SourceContext.GetOrCreate(o).CreateListState(Option<IImmutableList<T>>.Some(v())));
 
 	/// <summary>
 	/// Gets or creates a list state from a static initial list of items.
@@ -110,7 +92,19 @@ public static class ListState<T>
 	public static IListState<T> Value<TOwner>(TOwner owner, Func<Option<IImmutableList<T>>> valueProvider)
 		where TOwner : class
 		// Note: We force the usage of delegate so 2 properties which are doing State.Value(this, () => 42) will effectively have 2 distinct states.
-		=> AttachedProperty.GetOrCreate(owner, valueProvider, (o, v) => SourceContext.GetOrCreate(owner).CreateListState(v()));
+		=> AttachedProperty.GetOrCreate(owner, valueProvider, static (o, v) => SourceContext.GetOrCreate(o).CreateListState(v()));
+
+	/// <summary>
+	/// Gets or creates a list state from a static initial list of items.
+	/// </summary>
+	/// <typeparam name="TOwner">Type of the owner of the state.</typeparam>
+	/// <param name="owner">The owner of the state.</param>
+	/// <param name="valueProvider">The provider of the initial value of the state.</param>
+	/// <returns>A feed that encapsulate the source.</returns>
+	public static IListState<T> Value<TOwner>(TOwner owner, Func<Option<ImmutableList<T>>> valueProvider)
+		where TOwner : class
+		// Note: We force the usage of delegate so 2 properties which are doing State.Value(this, () => 42) will effectively have 2 distinct states.
+		=> AttachedProperty.GetOrCreate(owner, valueProvider, static (o, v) => SourceContext.GetOrCreate(o).CreateListState(v().Map(l => l as IImmutableList<T>)));
 
 	/// <summary>
 	/// Creates a custom feed from an async method.
@@ -122,19 +116,19 @@ public static class ListState<T>
 	/// <returns>A feed that encapsulate the source.</returns>
 	public static IListState<T> Async<TOwner>(TOwner owner, AsyncFunc<Option<IImmutableList<T>>> valueProvider, Signal? refresh = null)
 		where TOwner : class
-		=> AttachedProperty.GetOrCreate(owner, (valueProvider, refresh), (o, args) => S(o, new AsyncFeed<IImmutableList<T>>(args.valueProvider, args.refresh)));
+		=> AttachedProperty.GetOrCreate(owner, (valueProvider, refresh), static (o, args) => S(o, new AsyncFeed<IImmutableList<T>>(args.valueProvider, args.refresh)));
 
 	/// <summary>
 	/// Creates a custom feed from an async method.
 	/// </summary>
+	/// <typeparam name="TOwner">Type of the owner of the state.</typeparam>
+	/// <param name="owner">The owner of the state.</param>
 	/// <param name="valueProvider">The async method to use to load the value of the resulting feed.</param>
 	/// <param name="refresh">A refresh trigger to reload the <paramref name="valueProvider"/>.</param>
 	/// <returns>A feed that encapsulate the source.</returns>
-	[EditorBrowsable(EditorBrowsableState.Never)]
-	internal static IListState<T> Async(AsyncFunc<Option<IImmutableList<T>>> valueProvider, Signal? refresh = null)
-		=> refresh is null
-			? AttachedProperty.GetOrCreate(Validate(valueProvider), vp => S(vp, new AsyncFeed<IImmutableList<T>>(vp)))
-			: AttachedProperty.GetOrCreate(refresh, Validate(valueProvider), (r, vp) => S(vp, new AsyncFeed<IImmutableList<T>>(vp, r)));
+	public static IListState<T> Async<TOwner>(TOwner owner, AsyncFunc<Option<ImmutableList<T>>> valueProvider, Signal? refresh = null)
+		where TOwner : class
+		=> AttachedProperty.GetOrCreate(owner, (valueProvider, refresh), static (o, args) => S(o, new AsyncFeed<IImmutableList<T>>(async ct => (await args.valueProvider(ct)).Map(l => l as IImmutableList<T>), args.refresh)));
 
 	/// <summary>
 	/// Creates a custom feed from an async method.
@@ -146,19 +140,19 @@ public static class ListState<T>
 	/// <returns>A feed that encapsulate the source.</returns>
 	public static IListState<T> Async<TOwner>(TOwner owner, AsyncFunc<IImmutableList<T>> valueProvider, Signal? refresh = null)
 		where TOwner : class
-		=> AttachedProperty.GetOrCreate(owner, (valueProvider, refresh), (o, args) => S(o, new AsyncFeed<IImmutableList<T>>(args.valueProvider, args.refresh)));
+		=> AttachedProperty.GetOrCreate(owner, (valueProvider, refresh), static (o, args) => S(o, new AsyncFeed<IImmutableList<T>>(args.valueProvider, args.refresh)));
 
 	/// <summary>
 	/// Creates a custom feed from an async method.
 	/// </summary>
+	/// <typeparam name="TOwner">Type of the owner of the state.</typeparam>
+	/// <param name="owner">The owner of the state.</param>
 	/// <param name="valueProvider">The async method to use to load the value of the resulting feed.</param>
 	/// <param name="refresh">A refresh trigger to reload the <paramref name="valueProvider"/>.</param>
 	/// <returns>A feed that encapsulate the source.</returns>
-	[EditorBrowsable(EditorBrowsableState.Never)]
-	internal static IListState<T> Async(AsyncFunc<IImmutableList<T>> valueProvider, Signal? refresh = null)
-		=> refresh is null
-			? AttachedProperty.GetOrCreate(Validate(valueProvider), vp => S(vp, new AsyncFeed<IImmutableList<T>>(vp)))
-			: AttachedProperty.GetOrCreate(refresh, Validate(valueProvider), (r, vp) => S(vp, new AsyncFeed<IImmutableList<T>>(vp, r)));
+	public static IListState<T> Async<TOwner>(TOwner owner, AsyncFunc<ImmutableList<T>> valueProvider, Signal? refresh = null)
+		where TOwner : class
+		=> AttachedProperty.GetOrCreate(owner, (valueProvider, refresh), static (o, args) => S(o, new AsyncFeed<IImmutableList<T>>(async ct => await args.valueProvider(ct) as IImmutableList<T>, args.refresh)));
 
 	/// <summary>
 	/// Creates a custom feed from an async enumerable sequence of value.
@@ -169,7 +163,7 @@ public static class ListState<T>
 	/// <returns>A feed that encapsulate the source.</returns>
 	public static IListState<T> AsyncEnumerable<TOwner>(TOwner owner, Func<CancellationToken, IAsyncEnumerable<Option<IImmutableList<T>>>> enumerableProvider)
 		where TOwner : class
-		=> AttachedProperty.GetOrCreate(owner, enumerableProvider, (o, ep) => S(o, new AsyncEnumerableFeed<IImmutableList<T>>(ep)));
+		=> AttachedProperty.GetOrCreate(owner, enumerableProvider, static (o, ep) => S(o, new AsyncEnumerableFeed<IImmutableList<T>>(ep)));
 
 	/// <summary>
 	/// Creates a custom feed from an async enumerable sequence of value.
@@ -180,7 +174,7 @@ public static class ListState<T>
 	/// <returns>A feed that encapsulate the source.</returns>
 	public static IListState<T> AsyncEnumerable<TOwner>(TOwner owner, Func<IAsyncEnumerable<Option<IImmutableList<T>>>> enumerableProvider)
 		where TOwner : class
-		=> AttachedProperty.GetOrCreate(owner, enumerableProvider, (o, ep) => S(o, new AsyncEnumerableFeed<IImmutableList<T>>(ep)));
+		=> AttachedProperty.GetOrCreate(owner, enumerableProvider, static (o, ep) => S(o, new AsyncEnumerableFeed<IImmutableList<T>>(ep)));
 
 	/// <summary>
 	/// Creates a custom feed from an async enumerable sequence of value.
@@ -189,7 +183,7 @@ public static class ListState<T>
 	/// <returns>A feed that encapsulate the source.</returns>
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	internal static IListState<T> AsyncEnumerable(Func<IAsyncEnumerable<Option<IImmutableList<T>>>> enumerableProvider)
-		=> AttachedProperty.GetOrCreate(Validate(enumerableProvider), ep => S(ep, new AsyncEnumerableFeed<IImmutableList<T>>(ep)));
+		=> AttachedProperty.GetOrCreate(Validate(enumerableProvider), static ep => S(ep, new AsyncEnumerableFeed<IImmutableList<T>>(ep)));
 
 	/// <summary>
 	/// Creates a custom feed from an async enumerable sequence of value.
@@ -200,7 +194,7 @@ public static class ListState<T>
 	/// <returns>A feed that encapsulate the source.</returns>
 	public static IListState<T> AsyncEnumerable<TOwner>(TOwner owner, Func<CancellationToken, IAsyncEnumerable<IImmutableList<T>>> enumerableProvider)
 		where TOwner : class
-		=> AttachedProperty.GetOrCreate(owner, enumerableProvider, (o, ep) => S(o, new AsyncEnumerableFeed<IImmutableList<T>>(ep)));
+		=> AttachedProperty.GetOrCreate(owner, enumerableProvider, static (o, ep) => S(o, new AsyncEnumerableFeed<IImmutableList<T>>(ep)));
 
 	/// <summary>
 	/// Creates a custom feed from an async enumerable sequence of value.
@@ -211,7 +205,7 @@ public static class ListState<T>
 	/// <returns>A feed that encapsulate the source.</returns>
 	public static IListState<T> AsyncEnumerable<TOwner>(TOwner owner, Func<IAsyncEnumerable<IImmutableList<T>>> enumerableProvider)
 		where TOwner : class
-		=> AttachedProperty.GetOrCreate(owner, enumerableProvider, (o, ep) => S(o, new AsyncEnumerableFeed<IImmutableList<T>>(ep)));
+		=> AttachedProperty.GetOrCreate(owner, enumerableProvider, static (o, ep) => S(o, new AsyncEnumerableFeed<IImmutableList<T>>(ep)));
 
 	/// <summary>
 	/// Creates a custom feed from an async enumerable sequence of value.
@@ -220,7 +214,18 @@ public static class ListState<T>
 	/// <returns>A feed that encapsulate the source.</returns>
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	internal static IListState<T> AsyncEnumerable(Func<IAsyncEnumerable<IImmutableList<T>>> enumerableProvider)
-		=> AttachedProperty.GetOrCreate(Validate(enumerableProvider), ep => S(ep, new AsyncEnumerableFeed<IImmutableList<T>>(ep)));
+		=> AttachedProperty.GetOrCreate(Validate(enumerableProvider), static ep => S(ep, new AsyncEnumerableFeed<IImmutableList<T>>(ep)));
+
+	/// <summary>
+	/// Gets or creates a state from an async enumerable sequence of value.
+	/// </summary>
+	/// <typeparam name="TOwner">Type of the owner of the state.</typeparam>
+	/// <param name="owner">The owner of the state.</param>
+	/// <param name="feed">The source feed of the resulting state.</param>
+	/// <returns>A feed that encapsulate the source.</returns>
+	public static IListState<T> FromFeed<TOwner>(TOwner owner, IListFeed<T> feed)
+		where TOwner : class
+		=> AttachedProperty.GetOrCreate(owner, feed, static (o, f) => S(o, f));
 
 	// WARNING: This not implemented for restrictions described in the remarks section of the AsyncPaginated
 	//			While restrictions are acceptable for a paginated by index ListState, it would be invalid for custom cursors.
@@ -255,7 +260,7 @@ public static class ListState<T>
 	/// </remarks>
 	public static IListState<T> AsyncPaginated<TOwner>(TOwner owner, AsyncFunc<PageRequest, IImmutableList<T>> getPage)
 		where TOwner : class
-		=> AttachedProperty.GetOrCreate(owner, getPage, (o, gp) =>
+		=> AttachedProperty.GetOrCreate(owner, getPage, static (o, gp) =>
 		{
 			ListStateImpl<T>? state = default;
 			var paginatedFeed = new PaginatedListFeed<ByIndexCursor<T>, T>(ByIndexCursor<T>.First, ByIndexCursor<T>.GetPage(GetPage));

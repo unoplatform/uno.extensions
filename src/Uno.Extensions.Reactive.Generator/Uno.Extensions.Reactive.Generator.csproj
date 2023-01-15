@@ -3,7 +3,12 @@
 	<PropertyGroup>
 		<TargetFramework>netstandard2.0</TargetFramework>
 		<IsPackable>false</IsPackable>
-		<RuntimeIdentifiers>win10-x86;win10-x64;win10-arm64</RuntimeIdentifiers>
+
+		<!--
+			Defines that this project output is a tool of the given package ID,
+			so nuget override will copy it in the 'tools' directory of that package instead of the 'lib' of the current package folder.
+		-->
+		<ToolOfPackage>Uno.Extensions.Reactive</ToolOfPackage>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -11,20 +16,18 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Uno.Roslyn" Version="1.3.0-dev.12" PrivateAssets="All" />
-		<PackageReference Include="Microsoft.CodeAnalysis.Common" Version="4.0.1" PrivateAssets="All" />
-		<PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.0.1" PrivateAssets="All" />
-		<PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.0.1" PrivateAssets="All" />
-		<PackageReference Include="Microsoft.CodeAnalysis.Workspaces.Common" Version="4.0.1" PrivateAssets="All" />
+		<PackageReference Include="Uno.Roslyn" PrivateAssets="All" />
+		<PackageReference Include="Microsoft.CodeAnalysis.Common" PrivateAssets="All" />
+		<PackageReference Include="Microsoft.CodeAnalysis.CSharp" PrivateAssets="All" />
+		<PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" PrivateAssets="All" />
+		<PackageReference Include="Microsoft.CodeAnalysis.Workspaces.Common" PrivateAssets="All" />
 	</ItemGroup>
 
 	<ItemGroup>
+		<Compile Include="..\Uno.Extensions.Core\_Compat\**\*.cs" Link="_Compat\%(RecursiveDir)%(Filename)%(Extension)" />
+		<Compile Include="..\Uno.Extensions.Core.Generators\Common\**\*.cs" Link="Common\%(RecursiveDir)%(Filename)%(Extension)" />
+
 		<Compile Include="..\Uno.Extensions.Reactive\**\*Attribute.cs" Link="Attributes\%(RecursiveDir)%(Filename)%(Extension)" />
 		<Compile Include="..\Uno.Extensions.Reactive.UI\**\*Attribute.cs" Link="Attributes\%(RecursiveDir)%(Filename)%(Extension)" />
 	</ItemGroup>
-
-	<ItemGroup>
-	  <ProjectReference Include="..\Uno.Extensions.Core\Uno.Extensions.Core.csproj" />
-	</ItemGroup>
-
 </Project>

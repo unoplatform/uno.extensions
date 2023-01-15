@@ -201,4 +201,27 @@ public static partial class ListFeed
 		// Note: DO NOT unwrap FeedToListFeedAdapter, as it adds some behavior
 		=> AttachedProperty.GetOrCreate(source, typeof(TItem), (s, _) => new ListFeedToFeedAdapter<TItem>(s));
 	#endregion
+
+	/// <summary>
+	/// Gets the selected items of a list feed, or an empty collection if none.
+	/// </summary>
+	/// <typeparam name="T">Type of the items of the list feed.</typeparam>
+	/// <param name="source">The source list feed to get selected items for.</param>
+	/// <param name="ct">A cancellation to cancel the async operation.</param>
+	/// <returns>The selected items, or an empty collection if none.</returns>
+	[EditorBrowsable(EditorBrowsableState.Never)]
+	public static async ValueTask<IImmutableList<T>> GetSelectedItems<T>(this IListFeed<T> source, CancellationToken ct)
+		=> (await source.Message(ct)).Current.GetSelectedItems();
+
+	/// <summary>
+	/// Gets the selected item of a list feed, or null if none.
+	/// </summary>
+	/// <typeparam name="T">Type of the items of the list feed.</typeparam>
+	/// <param name="source">The source list feed to get selected items for.</param>
+	/// <param name="ct">A cancellation to cancel the async operation.</param>
+	/// <returns>The selected item, or null if none.</returns>
+	[EditorBrowsable(EditorBrowsableState.Never)]
+	public static async ValueTask<T?> GetSelectedItem<T>(this IListFeed<T> source, CancellationToken ct)
+		where T : notnull
+		=> (await source.Message(ct)).Current.GetSelectedItem();
 }

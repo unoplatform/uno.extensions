@@ -65,7 +65,7 @@ public static partial class Feed
 	public static IFeed<TSource> Where<TSource>(
 		this IFeed<TSource> source,
 		Predicate<TSource> predicate)
-		=> AttachedProperty.GetOrCreate(source, predicate, (src, p) => new WhereFeed<TSource>(src, p));
+		=> AttachedProperty.GetOrCreate(source, predicate, static (src, p) => new WhereFeed<TSource>(src, p));
 
 	/// <summary>
 	/// Gets or create a feed that projects each value of a source feed.
@@ -78,7 +78,7 @@ public static partial class Feed
 	public static IFeed<TResult> Select<TSource, TResult>(
 		this IFeed<TSource> source,
 		Func<TSource, TResult> selector)
-		=> AttachedProperty.GetOrCreate(source, selector, (src, s) => new SelectFeed<TSource, TResult>(src, s));
+		=> AttachedProperty.GetOrCreate(source, selector, static (src, s) => new SelectFeed<TSource, TResult>(src, s));
 
 	/// <summary>
 	/// Gets or create a feed that asynchronously projects each value of a source feed.
@@ -91,6 +91,6 @@ public static partial class Feed
 	public static IFeed<TResult> SelectAsync<TSource, TResult>(
 		this IFeed<TSource> source,
 		AsyncFunc<TSource, TResult> selector)
-		=> AttachedProperty.GetOrCreate(source, selector, (src, s) => new SelectAsyncFeed<TSource, TResult>(src, s));
+		=> AttachedProperty.GetOrCreate(source, selector, static (src, s) => new SelectAsyncFeed<TSource, TResult>(src, s));
 	#endregion
 }

@@ -12,15 +12,16 @@
 		<ProjectReference Include="..\Uno.Extensions.Core\Uno.Extensions.Core.csproj" />
 		<ProjectReference Include="..\Uno.Extensions.Storage\Uno.Extensions.Storage.csproj" />
 		<ProjectReference Include="..\Uno.Extensions.Serialization\Uno.Extensions.Serialization.csproj" />
+		<ProjectReference Include="..\Uno.Extensions.Configuration\Uno.Extensions.Configuration.csproj" />
 	</ItemGroup>
 
 	<ItemGroup Condition="'$(_IsUWP)' == 'true'">
-		<PackageReference Include="Microsoft.UI.Xaml" Version="2.7.1" />
-		<PackageReference Include="System.Threading.Tasks.Extensions" Version="4.5.4" />
+		<PackageReference Include="Microsoft.UI.Xaml" />
+		<PackageReference Include="System.Threading.Tasks.Extensions" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Uno.Core" Version="4.0.1" />
+		<PackageReference Include="Uno.Core" />
 	</ItemGroup>
 
 	<ItemGroup>

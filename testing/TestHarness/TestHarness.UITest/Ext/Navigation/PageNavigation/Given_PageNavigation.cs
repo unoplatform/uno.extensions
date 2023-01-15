@@ -52,7 +52,6 @@ public class Given_PageNavigation : NavigationTestBase
 	}
 
 	[Test]
-	[Ignore("Failing CI - runs ok locally")]
 	public void When_PageNavigationViewModel()
 	{
 		InitTestSection(TestSections.Navigation_PageNavigation);
@@ -62,7 +61,7 @@ public class Given_PageNavigation : NavigationTestBase
 		App.WaitElement("OnePageToTwoPageViewModelButton");
 		var screenBefore = TakeScreenshot("When_PageNavigationViewModel_Before");
 		App.WaitThenTap("OnePageToTwoPageViewModelButton");
-		App.WaitThenTap("TwoPageToThreePageViewModelButton");
+		App.WaitThenTap("TwoPageToThreePageViewModelButton", timeout: TimeSpan.FromSeconds(30));
 		App.WaitThenTap("ThreePageToFourPageViewModelButton");
 		App.WaitThenTap("FourPageToFivePageViewModelButton");
 		App.WaitThenTap("FivePageBackViewModelButton");

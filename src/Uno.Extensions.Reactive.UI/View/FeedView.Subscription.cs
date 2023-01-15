@@ -2,9 +2,12 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Uno.Extensions.Reactive.Bindings;
 using Uno.Extensions.Reactive.Core;
+using Uno.Extensions.Reactive.Dispatching;
 using Uno.Extensions.Reactive.Logging;
 using Uno.Extensions.Reactive.Sources;
+using Uno.Extensions.Reactive.UI.Utils;
 using Uno.Extensions.Reactive.Utils;
 #if WINUI
 using _Page = Microsoft.UI.Xaml.Controls.Page;
@@ -42,6 +45,9 @@ public partial class FeedView
 		{
 			try
 			{
+				// When feed changes, we consider us as loading (but only until we get the first non transient value)
+				_view.SetIsLoading(true);
+
 				// Note: Here we expect the Feed to be an IState, so we use the Feed.GetSource instead of ctx.GetOrCreateSource().
 				//		 The 'ctx' is provided only for safety to improve caching, but it's almost equivalent to SourceContext.None
 				//		 (especially when using SourceContext.GetOrCreate(_view)).
@@ -49,13 +55,15 @@ public partial class FeedView
 				var ctx = SourceContext.Find(_view.DataContext)
 					?? SourceContext.Find(FindPage()?.DataContext)
 					?? SourceContext.GetOrCreate(_view);
+				ctx = SourceContextHelper.CreateChildContext(ctx, _view, _requests);
 
-				await foreach (var message in Feed.GetSource(ctx.CreateChild(_requests), _ct.Token).WithCancellation(_ct.Token).ConfigureAwait(true))
+				await foreach (var message in FeedUIHelper.GetSource(Feed, ctx).WithCancellation(_ct.Token).ConfigureAwait(true))
 				{
 					Update(message);
 
 					if (!message.Current.IsTransient)
 					{
+						_view.SetIsLoading(false);
 						_refresh.Received(message.Current.Get(MessageAxis.Refresh));
 					}
 				}

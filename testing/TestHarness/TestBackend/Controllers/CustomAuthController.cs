@@ -1,7 +1,10 @@
 using System.IdentityModel.Tokens.Jwt;
+using System.Net;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Net.Http.Headers;
+using TestHarness;
 using SameSiteMode = Microsoft.AspNetCore.Http.SameSiteMode;
 
 namespace TestBackend.Controllers;
@@ -20,8 +23,15 @@ public class CustomAuthController : ControllerBase
 	}
 
 	[HttpGet(Name = "Login")]
-	public AuthResponse Login(string username, string password)
+	public AuthResponse? Login(string username, string password)
 	{
+		if(username != DummyJsonEndpointConstants.ValidUserName ||
+			password != DummyJsonEndpointConstants.ValidPassword)
+		{
+			Response.StatusCode = StatusCodes.Status401Unauthorized;
+			return default;
+		}
+
 		var token = $"{username}:{password}".Base64Encode();
 		_logger.LogTrace($"Token: {token}");
 		return new AuthResponse(token);
@@ -30,6 +40,13 @@ public class CustomAuthController : ControllerBase
 	[HttpPost(Name = "LoginCookie")]
 	public void LoginCookie([FromQuery] string username, [FromQuery] string password)
 	{
+		if (username != DummyJsonEndpointConstants.ValidUserName ||
+			password != DummyJsonEndpointConstants.ValidPassword)
+		{
+			Response.StatusCode = StatusCodes.Status401Unauthorized;
+			return;
+		}
+
 		var token = $"{username}:{password}".Base64Encode();
 		_logger.LogTrace($"Token: {token}");
 

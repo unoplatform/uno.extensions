@@ -9,4 +9,11 @@ internal class NavigationDataProvider
 	{
 		return (Parameters?.TryGetValue(string.Empty, out var data) ?? false) ? data as TData : default;
 	}
+
+	public object? GetData(Type dataType)
+	{
+		return (Parameters?.TryGetValue(string.Empty, out var data) ?? false) &&
+			(data.GetType() == dataType || data.GetType().IsSubclassOf(dataType)) ? data : default;
+	}
+
 }

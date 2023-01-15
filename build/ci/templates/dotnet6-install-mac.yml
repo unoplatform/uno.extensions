@@ -1,7 +1,7 @@
 parameters:
-  DotNetVersion: '6.0.302'
-  UnoCheck_Version: '1.3.0'
-  UnoCheck_Manifest: 'https://raw.githubusercontent.com/unoplatform/uno.check/8c7f669060a6cca50f71bb0845281c424ad7eb0d/manifests/uno.ui-preview.manifest.json'
+  DotNetVersion: '6.0.402'
+  UnoCheck_Version: '1.5.4'
+  UnoCheck_Manifest: 'https://raw.githubusercontent.com/unoplatform/uno.check/34b1a60f5c1c51604b47362781969dde46979fd5/manifests/uno.ui.manifest.json'
   Dotnet_Root: '/usr/local/share/dotnet/'
   Dotnet_Tools: '~/.dotnet/tools'
 
@@ -37,7 +37,7 @@ steps:
     inputs:
       packageType: sdk
       version: ${{ parameters.DotNetVersion }}
-      includePreviewVersions: true
+      includePreviewVersions: false
 
   - template: jdk-setup.yml
 

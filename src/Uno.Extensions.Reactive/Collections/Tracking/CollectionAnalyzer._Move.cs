@@ -8,11 +8,11 @@ namespace Uno.Extensions.Collections.Tracking;
 
 partial class CollectionAnalyzer
 {
-	private sealed class _Move : Change
+	private sealed class _Move<T> : Change<T>
 	{
 		private readonly int _to;
 		private readonly int _indexOffset;
-		private readonly List<object?> _items;
+		private readonly List<T> _items;
 
 		public _Move(int from, int to, int capacity)
 			: this(from, to, 0, capacity)
@@ -27,14 +27,18 @@ partial class CollectionAnalyzer
 			_items = new(capacity);
 		}
 
-		public void Append(object? item)
+		public void Append(T item)
 		{
 			_items.Add(item);
 			Ends++;
 		}
 
 		public override RichNotifyCollectionChangedEventArgs ToEvent()
-			=> RichNotifyCollectionChangedEventArgs.MoveSome(_items, Starts + _indexOffset, _to + _indexOffset);
+			=> RichNotifyCollectionChangedEventArgs.MoveSome<T>(_items, Starts + _indexOffset, _to + _indexOffset);
+
+		/// <inheritdoc />
+		protected internal override void Visit(ICollectionChangeSetVisitor<T> visitor)
+			=> visitor.Move(_items, Starts + _indexOffset, _to + _indexOffset);
 
 		/// <inheritdoc />
 		protected override CollectionUpdater.Update ToUpdaterCore(ICollectionUpdaterVisitor visitor)

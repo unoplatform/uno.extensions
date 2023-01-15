@@ -4,15 +4,33 @@ public static class ServiceCollectionExtensions
 {
 	private const string DefaultInstanceKey = "Default";
 
+	public static IServiceCollection AddNamedSingleton<TService, TImplementation>(this IServiceCollection services, string Name, Func<IServiceProvider, TImplementation> implementationFactory)
+	where TService : class where TImplementation : class, TService
+	{
+		// Register the concrete type (the NamedInstance will use this
+		// rather than iterating through all the registered implementations
+		// of TService
+		services.TryAddTransient(implementationFactory);
+		return services.AddNamedSingletonImplementation<TService, TImplementation>(Name);
+
+	}
+
 	public static IServiceCollection AddNamedSingleton<TService, TImplementation>(this IServiceCollection services, string Name)
 		where TService : class where TImplementation : class, TService
 	{
 		// Register the concrete type (the NamedInstance will use this
 		// rather than iterating through all the registered implementations
 		// of TService
-		services.TryAddSingleton<TImplementation>();
+		services.TryAddTransient<TImplementation>();
+		return services.AddNamedSingletonImplementation<TService, TImplementation>(Name);
+	}
+
+
+	private static IServiceCollection AddNamedSingletonImplementation<TService, TImplementation>(this IServiceCollection services, string Name)
+		where TService : class where TImplementation : class, TService
+	{
 		// Register for TService
-		services.TryAddSingleton<TService>(sp => sp.GetService<TImplementation>());
+		services.TryAddTransient<TService>(sp => sp.GetRequiredService<TImplementation>());
 		return services
 				// Register the named resolve
 				.AddSingleton<INamedInstance<TService>>(sp=>new NamedInstance<TService,TImplementation>(sp,Name));

@@ -2,8 +2,8 @@
 
 internal interface IRouteUpdater
 {
-	Guid StartNavigation(IRegion region);
+	void StartNavigation(INavigator navigator, IRegion region, NavigationRequest request);
 
-	Task EndNavigation(Guid regionUpdateId);
+	void EndNavigation(INavigator navigator, IRegion region, NavigationRequest request);
 }
 

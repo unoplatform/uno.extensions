@@ -1,11 +1,5 @@
-//-:cnd:noEmit
-
 namespace MyExtensionsApp.Presentation;
 
-public partial class SecondViewModel
+public partial record SecondViewModel (Entity Entity)
 {
-	
-	public SecondViewModel()
-	{
-	}
 }

@@ -78,20 +78,23 @@
 				<StackPanel Orientation="Horizontal">
 					<Button AutomationProperties.AutomationId="FirstDealButton"
 							Content="First Deal - UI Thread"
-							Click="{x:Bind ViewModel.ShowFirstProductUIThread}" />
+							Click="{x:Bind ViewModel.ShowFirstDealUIThread}" />
 					<Button AutomationProperties.AutomationId="FirstDealBackgroundButton"
 							Content="First Deal - Background Thread"
-							Click="{x:Bind ViewModel.ShowFirstProductBackgroundThread}" />
+							Click="{x:Bind ViewModel.ShowFirstDealBackgroundThread}" />
+					<Button AutomationProperties.AutomationId="ProductButton"
+							Content="Product Details"
+							Click="{x:Bind ViewModel.ShowProduct}" />
 				</StackPanel>
 				<utu:TabBar uen:Region.Attached="True" Grid.Row="1">
 					<utu:TabBarItem x:Uid="DealsPage_DealsTab"
-									AutomationProperties.Name="TabBarItem"
+									AutomationProperties.AutomationId="DealsPage_DealsTabBarItem"
 									Content="Deals"
 									uen:Region.Name="DealsTab"
 									utu:AutoLayout.CounterAlignment="Center"
 									utu:AutoLayout.PrimaryAlignment="Stretch" />
 					<utu:TabBarItem x:Uid="DealsPage_FavoritesTab"
-									AutomationProperties.Name="TabBarItem"
+									AutomationProperties.AutomationId="DealsPage_FavoritesTabBarItem"
 									Content="Favorites"
 									uen:Region.Name="FavoritesTab"
 									utu:AutoLayout.CounterAlignment="Center"

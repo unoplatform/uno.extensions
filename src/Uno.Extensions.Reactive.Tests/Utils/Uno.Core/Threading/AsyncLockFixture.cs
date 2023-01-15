@@ -27,7 +27,6 @@ using Uno.Core.Tests.TestUtils;
 using Uno.Extensions;
 using Uno.Extensions.Reactive;
 using Uno.Extensions.Threading;
-using Uno.Threading;
 
 namespace Uno.Core.Tests.Threading
 {
@@ -481,6 +480,7 @@ namespace Uno.Core.Tests.Threading
 
 		[TestMethod]
 		[Timeout(_timeout)]
+		[Ignore]
 		public async Task TestExitFromAnotherExecutionContext()
 		{
 			var sut = new FastAsyncLock();

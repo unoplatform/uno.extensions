@@ -96,16 +96,23 @@ public partial class Given_ViewModel_Then_GenerateBindable
 		=> Assert.IsNotNull(GetBindable(typeof(NestedSubViewModel)));
 
 	private Type? GetBindable(Type vmType)
-		=> vmType.GetNestedType($"Bindable{vmType.Name}");
+		=> GetBindable(vmType.FullName!);
 
 	private Type? GetBindable(string vmType)
 	{
-		var index = vmType.LastIndexOf('.');
-		var bindableType = index >= 0
-			? $"{vmType.Substring(0, index)}.Bindable{vmType.Substring(index + 1)}"
-			: "Bindable" + vmType;
+		var index = vmType.LastIndexOf('+');
+		if (index >= 0)
+		{
+			return GetType().Assembly.GetType($"{vmType.Substring(0, index)}+Bindable{vmType.Substring(index + 1)}");
+		}
 
-		return GetType().Assembly.GetType(bindableType);
+		index = vmType.LastIndexOf('.');
+		if (index >= 0)
+		{
+			return GetType().Assembly.GetType($"{vmType.Substring(0, index)}.Bindable{vmType.Substring(index + 1)}");
+		}
+
+		return GetType().Assembly.GetType("Bindable" + vmType);
 	}
 
 	public partial class Nested_ViewModel { }

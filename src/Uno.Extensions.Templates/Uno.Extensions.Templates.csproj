@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<TargetFramework>netstandard2.0</TargetFramework>
@@ -6,6 +6,7 @@
 		<IncludeBuildOutput>false</IncludeBuildOutput>
 		<PackageType>Template</PackageType>
 		<ContentTargetFolders>content</ContentTargetFolders>
+		<EnableDefaultItems>False</EnableDefaultItems>
 
 		<!-- required for .vsconfig -->
 		<NoDefaultExcludes>true</NoDefaultExcludes>
@@ -15,188 +16,81 @@
 	</PropertyGroup>
 
 	<PropertyGroup>
-		<Authors>nventive</Authors>
-		<PackageProjectUrl>https://github.com/unoplatform/uno.extensions</PackageProjectUrl>
-		<PackageIconUrl>https://nv-assets.azurewebsites.net/logos/uno.png</PackageIconUrl>
-		<RepositoryUrl>https://github.com/unoplatform/uno.extensions</RepositoryUrl>
-		<Description></Description>
-		<Copyright>Copyright (C) 2015-2022 nventive inc. - all rights reserved</Copyright>
-		<GeneratePackageOnBuild Condition="'$(Configuration)'=='Release'">true</GeneratePackageOnBuild>
+		<Description>Quickstart template for using Uno Extensions.</Description>
+		<GeneratePackageOnBuild Condition="'$(IsPackable)'!='false'">true</GeneratePackageOnBuild>
 		<PackageTags>dotnet-new;templates;uno-platform;webassembly;ios;android;winui;macos;uno-extensions</PackageTags>
 		<NoWarn>$(NoWarn);NU5128</NoWarn>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<UpToDateCheckInput Include="content\**" />
+		<TemplateFile Include="content/**/*"
+					Exclude="**/obj/**;**/bin/**;**/*.Debugging.sln" />
+		<UpToDateCheckInput Include="@(TemplateFile)" />
 	</ItemGroup>
 
-	<ItemGroup>
-		<Compile Remove="content/**/*.cs" />
-		<None Include="content/**/*.cs" />
-	</ItemGroup>
-	
-	<Target Name="ReplaceTemplateCode" BeforeTargets="BeforeBuild">
-		<!-- <ItemGroup>
-			<MyTemplateSourceUIFiles Include="content\unoapp-extensions-net6\MyExtensionsApp.UI\**\*" />
-		</ItemGroup>
-
-		<Copy SourceFiles="@(MyTemplateSourceUIFiles)" DestinationFiles="@(MyTemplateSourceUIFiles->'content\unoapp-extensions\MyExtensionsApp.UI\%(RecursiveDir)%(Filename)%(Extension)')" /> 
+	<Target Name="PrepareTemplateFiles" BeforeTargets="ReplaceVersions;BeforeBuild">
+		<Copy
+			SourceFiles="@(TemplateFile)"
+			DestinationFiles="$(IntermediateOutputPath)/content/%(RecursiveDir)%(Filename)%(Extension)"
+			SkipUnchangedFiles="false" />
+		<Copy
+			SourceFiles="content/unoapp-extensions/MyExtensionsApp.DataContracts/WeatherForecast.cs"
+			DestinationFiles="$(IntermediateOutputPath)/content/unoapp-extensions/MyExtensionsApp.Server/WeatherForecast.cs"
+			SkipUnchangedFiles="false" />
+		<Copy
+			SourceFiles="content/unoapp-extensions/MyExtensionsApp.Windows/app.manifest"
+			DestinationFiles="$(IntermediateOutputPath)/content/unoapp-extensions/MyExtensionsApp.Skia.Gtk/app.manifest"
+			SkipUnchangedFiles="false" />
+		<Copy
+			SourceFiles="content/unoapp-extensions/MyExtensionsApp.Windows/Images/StoreLogo.png"
+			DestinationFiles="$(IntermediateOutputPath)/content/unoapp-extensions/MyExtensionsApp.Skia.Gtk/Images/StoreLogo.png"
+			SkipUnchangedFiles="false" />
+		<Copy
+			SourceFiles="content/unoapp-extensions/MyExtensionsApp.Windows/app.manifest"
+			DestinationFiles="$(IntermediateOutputPath)/content/unoapp-extensions/MyExtensionsApp.Skia.Linux.FrameBuffer/app.manifest"
+			SkipUnchangedFiles="false" />
+		<Copy
+			SourceFiles="content/unoapp-extensions/MyExtensionsApp.Windows/Images/StoreLogo.png"
+			DestinationFiles="$(IntermediateOutputPath)/content/unoapp-extensions/MyExtensionsApp.Skia.Linux.FrameBuffer/Images/StoreLogo.png"
+			SkipUnchangedFiles="false" />
 
 		<ItemGroup>
-			<MyTemplateSourceFiles Include="content\unoapp-extensions-net6\MyExtensionsApp\**\*" />
-		</ItemGroup>
-
-		<Copy SourceFiles="@(MyTemplateSourceFiles)" DestinationFiles="@(MyTemplateSourceFiles->'content\unoapp-extensions\MyExtensionsApp\%(RecursiveDir)%(Filename)%(Extension)')" />  -->
-
-
-		<ItemGroup>
-			<!-- <Content Include="content\unoapp-extensions\**" KeepDuplicates="False">
-				<PackagePath>content\unoapp-extensions</PackagePath>
-				<Pack>true</Pack>
-			</Content> -->
-			<Content Include="content\unoapp-extensions\**" KeepDuplicates="False">
-				<PackagePath>content\unoapp-extensions</PackagePath>
-				<Pack>true</Pack>
-			</Content>
+			<_PackageFiles Include="$(IntermediateOutputPath)/content/**/*"
+							 PackagePath="content" />
 		</ItemGroup>
 	</Target>
 
-	<Target Name="ReplaceVersions" BeforeTargets="BeforeBuild">
-	 <!-- Condition="'$(PackageVersion)'!='255.255.255.255'" -->
-		<!-- <ItemGroup>
-			<MySourceFiles Include="..\..\samples\Commerce\Commerce.Shared\**\*" />
-		</ItemGroup> -->
-
-		<!-- <Copy SourceFiles="@(MySourceFiles)" DestinationFiles="@(MySourceFiles->'content\unoapp-samples-commerce\MyExtensionsApp.Shared\%(RecursiveDir)%(Filename)%(Extension)')" />
-
-		<RenameFiles SourcePath="content\unoapp-samples-commerce\MyExtensionsApp.Shared" SourceName="Commerce" TargetName="MyExtensionsApp" /> -->
-		
-		<PropertyGroup>
-			<MSBuildDeveloperNamespace>
-				<Namespace Prefix="x" Uri="http://schemas.microsoft.com/developer/msbuild/2003" />
-			</MSBuildDeveloperNamespace>
-		</PropertyGroup>
-
+	<Target Name="ReplaceVersions" BeforeTargets="BeforeBuild" AfterTargets="PrepareTemplateFiles">
 		<ItemGroup>
-			<_AllCSProjFiles Include="content/**/*.csproj" />
-			<_AllCSProjFiles Include="content/**/Extensions.props" />
+			<_AllCSProjFiles Include="$(IntermediateOutputPath)/content/**/*.csproj" />
+			<_AllCSProjFiles Include="$(IntermediateOutputPath)/content/**/Directory.Packages.props" />
 		</ItemGroup>
-
-		<!-- Legacy projects -->
-		<XmlPoke XmlInputPath="%(_AllCSProjFiles.Identity)" Query="//x:PackageReference[@Version='255.255.255.255']/@Version" Value="$(PackageVersion)" Namespaces="$(MSBuildDeveloperNamespace)" />
-
-		<!-- SDK Style projects -->
-		<XmlPoke XmlInputPath="%(_AllCSProjFiles.Identity)" Query="//PackageReference[@Version='255.255.255.255']/@Version" Value="$(PackageVersion)" Namespaces="" />
-
-		<!-- <XmlPeek XmlInputPath="..\..\samples\Commerce\Commerce.Wasm\Commerce.Wasm.csproj" Query="//PackageReference[@Include='Uno.Toolkit.WinUI']/@Version">
-			<Output TaskParameter="Result" ItemName="Uno_Toolkit_WinUI_Version" />
-		</XmlPeek>
-		<XmlPeek XmlInputPath="..\..\samples\Commerce\Commerce.Wasm\Commerce.Wasm.csproj" Query="//PackageReference[@Include='Uno.Toolkit.WinUI.Material']/@Version">
-			<Output TaskParameter="Result" ItemName="Uno_Toolkit_WinUI_Material_Version" />
-		</XmlPeek>
-		<XmlPeek XmlInputPath="..\..\samples\Commerce\Commerce.Wasm\Commerce.Wasm.csproj" Query="//PackageReference[@Include='Uno.Material.WinUI']/@Version">
-			<Output TaskParameter="Result" ItemName="Uno_Material_WinUI_Version" />
-		</XmlPeek> -->
-
-		<!-- Uno_Toolkit_WinUI_Version -->
-		<!-- <XmlPoke XmlInputPath="%(_AllCSProjFiles.Identity)"
-						 Query="//x:PackageReference[@Include='Uno.Toolkit.WinUI']/@Version"
-						 Value="@(Uno_Toolkit_WinUI_Version)"
-						 Namespaces="$(MSBuildDeveloperNamespace)" />
-		<XmlPoke XmlInputPath="%(_AllCSProjFiles.Identity)"
-						 Query="//PackageReference[@Include='Uno.Toolkit.WinUI']/@Version"
-						 Value="@(Uno_Toolkit_WinUI_Version)"
-						 Namespaces="" /> -->
-
-		<!-- Uno_Toolkit_WinUI_Material_Version -->
-		<!-- <XmlPoke XmlInputPath="%(_AllCSProjFiles.Identity)"
-						 Query="//x:PackageReference[@Include='Uno.Toolkit.WinUI.Material']/@Version"
-						 Value="@(Uno_Toolkit_WinUI_Material_Version)"
-						 Namespaces="$(MSBuildDeveloperNamespace)" />
-		<XmlPoke XmlInputPath="%(_AllCSProjFiles.Identity)"
-						 Query="//PackageReference[@Include='Uno.Toolkit.WinUI.Material']/@Version"
-						 Value="@(Uno_Toolkit_WinUI_Material_Version)"
-						 Namespaces="" /> -->
-
-		<!-- Uno_Material_WinUI_Version -->
-		<!-- <XmlPoke XmlInputPath="%(_AllCSProjFiles.Identity)"
-						 Query="//x:PackageReference[@Include='Uno.Material.WinUI']/@Version"
-						 Value="@(Uno_Material_WinUI_Version)"
-						 Namespaces="$(MSBuildDeveloperNamespace)" />
-		<XmlPoke XmlInputPath="%(_AllCSProjFiles.Identity)"
-						 Query="//PackageReference[@Include='Uno.Material.WinUI']/@Version"
-						 Value="@(Uno_Material_WinUI_Version)"
-						 Namespaces="" /> -->
-
-		<!-- <ItemGroup>
-			<Content Include="content\unoapp-samples-commerce\**" KeepDuplicates="False">
-				<PackagePath>content\unoapp-samples-commerce</PackagePath>
-				<Pack>true</Pack>
-			</Content>
-		</ItemGroup> -->
+		<ReplaceFileText Filename="%(_AllCSProjFiles.Identity)"
+					MatchExpression="Version=&quot;255.255.255.255&quot;"
+					ReplacementText="Version=&quot;$(PackageVersion)&quot;" />
 	</Target>
 
-	<UsingTask TaskName="RenameFiles" TaskFactory="CodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll">
+	<!-- Using Regex Replace prevents XmlPoke from replacing Tabs with Spaces -->
+	<UsingTask TaskName="ReplaceFileText"
+			TaskFactory="RoslynCodeTaskFactory"
+			AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll">
 		<ParameterGroup>
-			<SourcePath ParameterType="System.String" Required="True" Output="False" />
-			<SourceName ParameterType="System.String" Required="True" Output="False" />
-			<TargetName ParameterType="System.String" Required="True" Output="False" />
+			<Filename ParameterType="System.String" Required="true" />
+			<MatchExpression ParameterType="System.String" Required="true" />
+			<ReplacementText ParameterType="System.String" Required="true" />
 		</ParameterGroup>
 		<Task>
-			<Reference Include="System.Xml" />
 			<Using Namespace="System" />
-			<Using Namespace="System.Linq" />
 			<Using Namespace="System.IO" />
+			<Using Namespace="System.Text.RegularExpressions" />
 			<Code Type="Fragment" Language="cs">
 				<![CDATA[
-					string[] filters = new[] { "*.cs", "*.xml", "*.xaml", "*.plist", "*.js", "*.config", "*.appxmanifest", "*.projitems", "*.shproj", "*.csproj", "*.sln" };
-					foreach (var file in filters.SelectMany(f => Directory.EnumerateFiles(SourcePath, f, SearchOption.AllDirectories)))
-					{
-						Log.LogMessage("Converting file: " + file);
-						var s = File.ReadAllText(file);
-						s = s
-							.Replace(SourceName, TargetName)
-							;
-							
-						if(Path.GetExtension(file).ToLower() == ".cs" && !s.StartsWith("//-:cnd:noEmit"))
-						{
-							// Disable conditionals for all imported files
-							s = "//-:cnd:noEmit\r\n" + s;
-						}
-
-						var fileName = Path.GetFileName(file);
-						var filePath = Path.GetDirectoryName(file);
-						var updatedFileName = fileName.Replace(SourceName, TargetName);
-						
-						File.WriteAllText(file, s);
-						if(updatedFileName != fileName)
-						{
-							File.Delete(Path.Combine(filePath, updatedFileName));
-							Log.LogMessage("Move file: " + file + " to " + Path.Combine(filePath, updatedFileName));
-							File.Move(file, Path.Combine(filePath, updatedFileName));
-						}
-					}
-					Func<string[]> getFolders = () => Directory.GetDirectories(SourcePath, "*.*", SearchOption.AllDirectories);
-					var folders = getFolders();
-					for (int i = 0; i < folders.Length; i++)
-					{
-						var dir = folders[i];
-						if(!Directory.Exists(dir)) continue;
-						var dirName = Path.GetFileName(dir);
-						var path = Path.GetDirectoryName(dir);
-						var updatedDirName = dirName.Replace(SourceName, TargetName);
-						if(updatedDirName != dirName)
-						{
-							i = 0;
-							folders = getFolders();
-							var target = Path.Combine(path, updatedDirName);
-							Log.LogMessage("Moving: " + dir + " to " + target);
-							Directory.Move(dir, target);
-						}
-					}
+					File.WriteAllText(
+						Filename,
+						Regex.Replace(File.ReadAllText(Filename), MatchExpression, ReplacementText)
+						);
 				]]>
 			</Code>
 		</Task>
 	</UsingTask>
-
 </Project>

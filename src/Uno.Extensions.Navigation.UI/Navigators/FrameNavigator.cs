@@ -31,8 +31,6 @@ public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 			Control.Navigated += Frame_Navigated;
 		}
 	}
-	// TODO: IsUnnamed and  composite region
-	protected override bool CanNavigateToDependentRoutes => !Region.Children.Any(x => x.IsUnnamed(this.Route) && !(x.Navigator()?.IsComposite() ?? false));
 
 	protected override async Task<bool> RegionCanNavigate(Route route, RouteInfo? routeMap)
 	{
@@ -65,14 +63,6 @@ public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 		{
 			return false;
 		}
-
-		//// If the route is dependent on another page, make sure
-		//// that page is already navigated to, or is in the backstack
-		//if (!string.IsNullOrWhiteSpace(routeMap?.DependsOn))
-		//{
-		//	var dependsRoute = route.RootDependsOn(Resolver, Region, true);
-		//	return (FullRoute?.IsEmpty() ?? true) || FullRoute.Contains(dependsRoute.Base!);
-		//}
 
 		return true;
 
@@ -129,15 +119,18 @@ public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 		// displaying the correct page
 		if (Control!.SourcePageType != lastMap.RenderView)
 		{
-			await Show(lastMap.Path, lastMap.RenderView, request.Route.Data);
+			await Show(lastMap.Path, lastMap.RenderView, request.Route.NavigationData());
 		}
 		else
 		{
+			_content = Control.Content as FrameworkElement;
+
 			// Rebuild the nested region hierarchy
 			Control.ReassignRegionParent();
 			if (segments.Length > 1 ||
 				!string.IsNullOrWhiteSpace(request.Route.Path) ||
-				request.Route.Data?.Count > 0)
+				request.Route.Data?.Count > 0 ||
+				request.Route.IsClearBackstack())
 			{
 				refreshViewModel = true;
 			}
@@ -173,7 +166,6 @@ public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 		}
 		firstSegment = firstSegment.Append(lastMap.Path);
 
-		_content = Control?.Content as FrameworkElement;
 
 		await InitializeCurrentView(request, lastMap.AsRoute() with { Data = request.Route.Data}, lastMap, refreshViewModel);
 
@@ -215,18 +207,22 @@ public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 			{
 				var previousMapping = Resolver.FindByView(Control.BackStack.Last().SourcePageType, this);
 				// Invoke the navigation (which will be a back navigation)
-				FrameGoBack(route.Data, previousMapping);
+				FrameGoBack(route.NavigationData(), previousMapping);
+			}
+			else
+			{
+				_content = Control.Content as FrameworkElement;
 			}
 		}
 		else
 		{
 			// Attempting to navigate back when there's no previous page
 			responseRoute = Route.Empty;
+			_content = Control.Content as FrameworkElement;
 		}
 
 		var mapping = Resolver.FindByView(Control.Content.GetType(), this);
 
-		_content = Control?.Content as FrameworkElement;
 
 		await InitializeCurrentView(request, previousRoute ?? Route.Empty, mapping);
 
@@ -269,20 +265,10 @@ public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 		try
 		{
 			Control.Navigated -= Frame_Navigated;
-			if (parameter is not null)
-			{
-				if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Replacing last backstack item to inject parameter '{parameter.GetType().Name}'");
-				// If a parameter is being sent back, we need to replace
-				// the last frame on the backstack with one that has the correct
-				// parameter value. This value can be extracted via the OnNavigatedTo method
-				var entry = Control.BackStack.Last();
-				var newEntry = new PageStackEntry(entry.SourcePageType, parameter, entry.NavigationTransitionInfo);
-				Control.BackStack.Remove(entry);
-				Control.BackStack.Add(newEntry);
-			}
 			if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Invoking Frame.GoBack");
 			Control.GoBack();
 
+			_content = Control.Content as FrameworkElement;
 			await EnsurePageLoaded(previousMapping?.Path);
 
 			if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Frame.GoBack completed");
@@ -308,6 +294,7 @@ public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 			{
 				if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Invoking Frame.Navigate to type '{viewType.Name}'");
 				var nav = Control.Navigate(viewType, data);
+				_content = Control.Content as FrameworkElement;
 
 				var currentPage = Control.Content as Page;
 				if (currentPage is not null)

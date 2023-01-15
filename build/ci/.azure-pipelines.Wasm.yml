@@ -1,10 +1,17 @@
 jobs:
-- job: WebAssembly
+- job: Samples_WebAssembly
+  displayName: 'Samples - WebAssembly'
 
   pool:
     vmImage: 'ubuntu-latest'
 
   steps:
+  - task: UseDotNet@2
+    displayName: 'Use .NET 5.0.x'
+    inputs:
+        packageType: runtime
+        version: 5.0.x
+
   - checkout: self
     clean: 'true'
 
@@ -39,5 +46,6 @@ jobs:
       flattenFolders: false
 
   - task: PublishBuildArtifacts@1
+    condition: always()
     inputs:
         ArtifactName: $(Build.DefinitionName)

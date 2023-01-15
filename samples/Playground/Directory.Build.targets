@@ -24,7 +24,7 @@
       <ItemGroup>
 
         <!--This override is used to validate the user of specific version of the C# Compiler-->
-        <PackageReference Include="Microsoft.Net.Compilers" Version="$(MicrosoftNetCompilerVersionOverride)">
+        <PackageReference Include="Microsoft.Net.Compilers.Toolset" VersionOverride="$(MicrosoftNetCompilerVersionOverride)">
           <PrivateAssets>all</PrivateAssets>
           <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
         </PackageReference>
@@ -32,4 +32,11 @@
 
     </When>
   </Choose>
+
+	<Import Project="..\..\src\xamarinmac-workaround.targets" Condition="exists('..\..\src\xamarinmac-workaround.targets') and $(TargetFramework.ToLower().StartsWith('xamarin')) and $(TargetFramework.ToLower().Contains('mac'))" />
+
+	<!-- Uno.WinUI.MSAL references Uno.WinUI for windows10 tfm. This target
+		overrides the protection in uno.winui.targets that raises an error 
+		that breaks build -->
+	<Target Name="_WinAppSDKNotSupported" BeforeTargets="BeforeBuild" />
 </Project>

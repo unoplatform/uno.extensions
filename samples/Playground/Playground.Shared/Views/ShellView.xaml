@@ -9,7 +9,7 @@
 			 d:DesignHeight="300"
 			 d:DesignWidth="400">
 
-	<Grid>
-		<Frame uen:Region.Attached="true" />
+	<Grid Background="Pink">
+		<Frame uen:Region.Attached="true" Margin="20"/>
 	</Grid>
 </UserControl>

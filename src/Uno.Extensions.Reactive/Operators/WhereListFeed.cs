@@ -10,9 +10,9 @@ using Uno.Extensions.Reactive.Core;
 
 namespace Uno.Extensions.Reactive.Operators;
 
-internal class WhereListFeed<T> : IListFeed<T>
+internal sealed class WhereListFeed<T> : IListFeed<T>
 {
-	private static readonly CollectionAnalyzer<T> _analyzer = CollectionAnalyzer<T>.Default;
+	private static readonly CollectionAnalyzer<T> _analyzer = ListFeed<T>.DefaultAnalyzer;
 
 	private readonly IListFeed<T> _parent;
 	private readonly Predicate<T> _predicate;
@@ -74,7 +74,7 @@ internal class WhereListFeed<T> : IListFeed<T>
 						//	changes = FeedToListFeedAdapter<T>.GetChangeSet(parentMsg.Previous.Data, data);
 						//}
 
-						var updatedFilteredItems = updatedItems.Where(item => _predicate(item)).ToImmutableList();
+						var updatedFilteredItems = updatedItems.Where(item => _predicate(item)).ToImmutableList() as IImmutableList<T>;
 						if (updatedFilteredItems is { Count: 0 })
 						{
 							updated

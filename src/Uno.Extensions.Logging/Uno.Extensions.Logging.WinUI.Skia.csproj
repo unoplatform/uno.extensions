@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
+	<Import Project="..\tfms-non-ui.props" />
 
 	<PropertyGroup>
-		<TargetFramework>netstandard2.0</TargetFramework>
 		<IsPackable>false</IsPackable>
 		<RootNamespace>Uno.Extensions.Logging.WinUI</RootNamespace>
 		<UnoRuntimeIdentifier>skia</UnoRuntimeIdentifier>
@@ -9,8 +9,8 @@
 		<AssemblyName>Uno.Extensions.Logging.WinUI</AssemblyName>
 	</PropertyGroup>
 
-	<ItemGroup>
-		<PackageReference Include="Uno.WinUI" Version="4.3.6" />
+	<ItemGroup Condition="'$(_IsWinUI)'=='false'">
+		<PackageReference Include="Uno.WinUI" />
 	</ItemGroup>
 
 	<Import Project="common.props" />

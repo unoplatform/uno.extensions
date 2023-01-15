@@ -11,7 +11,7 @@ using Uno.Extensions.Reactive.Utils;
 
 namespace Uno.Extensions.Reactive.Core;
 
-internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, IStateImpl
+internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, IStateImpl, ISourceContextOwner
 {
 	private readonly object _updateGate = new();
 	private readonly UpdateFeed<T>? _updates;
@@ -25,10 +25,14 @@ internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, ISta
 	/// <summary>
 	/// Gets the context to which this state belongs.
 	/// </summary>
-	internal SourceContext Context { get; }
+	public SourceContext Context { get; }
 	SourceContext IStateImpl.Context => Context;
 
 	internal Message<T> Current => _current;
+
+	string ISourceContextOwner.Name => $"State<{typeof(T).Name}> for ctx '{Context.Parent!.Owner.Name}'.";
+
+	IDispatcher? ISourceContextOwner.Dispatcher => null;
 
 	private readonly struct Node
 	{
@@ -54,7 +58,7 @@ internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, ISta
 		StateSubscriptionMode mode = StateSubscriptionMode.Default,
 		StateUpdateKind updatesKind = StateUpdateKind.Volatile)
 	{
-		Context = context.CreateChild(_requests);
+		Context = context.CreateChild(this, _requests);
 
 		if (updatesKind is StateUpdateKind.Persistent)
 		{
@@ -86,7 +90,7 @@ internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, ISta
 
 	public StateImpl(SourceContext context, Option<T> defaultValue)
 	{
-		Context = context?.CreateChild(_requests)!; // Null check override only for legacy IInput support
+		Context = context?.CreateChild(this, _requests)!; // Null check override only for legacy IInput support
 
 		_hasCurrent = true; // Even if undefined, we consider that we do have a value in order to produce an initial state
 		if (!defaultValue.IsUndefined())
@@ -118,17 +122,20 @@ internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, ISta
 
 		var isFirstMessage = true;
 		TaskCompletionSource<Node>? next;
+		(bool hasMessage, Message<T> message) initial;
 		lock(_updateGate)
 		{
 			// We access to the _current only in the _updateGate, so we make sure that we would never miss or replay a value
 			// by listening to the _next too late/early
-			if (_hasCurrent)
-			{
-				yield return Message<T>.Initial.OverrideBy(_current);
-				isFirstMessage = false;
-			}
+			initial = (_hasCurrent, _current);
 
 			next = _next;
+		}
+
+		if (initial.hasMessage)
+		{
+			yield return Message<T>.Initial.OverrideBy(initial.message);
+			isFirstMessage = false;
 		}
 
 		while (!ct.IsCancellationRequested && next is not null)
@@ -163,9 +170,12 @@ internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, ISta
 	{
 		if (_updates is not null)
 		{
+			// WARNING: There is a MAJOR issue here: if updater fails, the error will be propagated into the output feed instead of the caller!
+			// This is acceptable for now as so far there is no way to reach this code from public API
+
 			// First we make sure that the UpdateFeed is active, so the update will be applied ^^
 			_innerEnumeration?.Enable();
-			return _updates.Update(_ => true, updater, ct);
+			return _updates.Update((_, _) => true, (_, msg) => updater(new(msg.Get, ((IMessageBuilder)msg).Set)), ct);
 		}
 		else
 		{

@@ -1,8 +1,7 @@
-﻿<Project Sdk="MSBuild.Sdk.Extras" ToolsVersion="15.0">
+<Project Sdk="MSBuild.Sdk.Extras" ToolsVersion="15.0">
+	<Import Project="..\tfms-ui-uwp.props" />
+
 	<PropertyGroup>
-		<TargetFrameworks Condition="'$(UnoTargetFrameworkOverride)'!=''">$(UnoTargetFrameworkOverride)</TargetFrameworks>
-		<TargetFrameworks Condition="'$(UnoTargetFrameworkOverride)'==''">netstandard2.0;xamarinios10;xamarinmac20;monoandroid11.0</TargetFrameworks>
-		<TargetFrameworks Condition="'$(UnoTargetFrameworkOverride)'=='' and '$(UnoExtensionsDisableNet6)'==''">$(TargetFrameworks);uap10.0.18362;net6.0-ios;net6.0-macos;net6.0-android;net6.0-maccatalyst</TargetFrameworks>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -18,12 +17,12 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Uno.UI" Version="4.3.6" />
+		<PackageReference Include="Uno.UI" />
 	</ItemGroup>
 
 
 	<ItemGroup Condition="'$(_IsIOS)' == 'true'">
-		<PackageReference Include="uno.extensions.logging.oslog" Version="1.3.0" />
+		<PackageReference Include="Uno.Extensions.Logging.OSLog" />
 	</ItemGroup>
 
 
@@ -36,13 +35,13 @@
 			CopyLocal="false"
 			SkipGetTargetFrameworkProperties="true"
 			GlobalPropertiesToRemove="TargetFramework"
-    />
+		/>
 		<ProjectReference Include="Uno.Extensions.Logging.UWP.Skia.csproj"
 			ReferenceOutputAssembly="false"
 			LinkLibraryDependencies="false"
 			CopyLocal="false"
 			SkipGetTargetFrameworkProperties="true"
 			GlobalPropertiesToRemove="TargetFramework"
-    />
+		/>
 	</ItemGroup>
 </Project>

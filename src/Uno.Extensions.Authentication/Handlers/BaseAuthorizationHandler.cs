@@ -92,8 +92,8 @@ internal abstract class BaseAuthorizationHandler : DelegatingHandler
 				{
 					if (_logger.IsEnabled(LogLevel.Debug)) _logger.LogDebugMessage($"The request '{request.RequestUri}' was unauthorized and the tokens cannot be refreshed. Considering the session has expired.");
 
-			// Request was unauthorized and we cannot refresh the authentication token.
-			await _tokens.ClearAsync(ct);
+					// Request was unauthorized and we cannot refresh the authentication token.
+					await _tokens.ClearAsync(ct);
 
 					return response;
 				}
@@ -104,8 +104,8 @@ internal abstract class BaseAuthorizationHandler : DelegatingHandler
 				{
 					if (_logger.IsEnabled(LogLevel.Debug)) _logger.LogDebugMessage($"The request '{request.RequestUri}' was unauthorized and the token failed to refresh. Considering the session has expired.");
 
-			// No authentication token to use.
-			await _tokens.ClearAsync(ct);
+					// No authentication token to use.
+					await _tokens.ClearAsync(ct);
 
 					return response;
 				}
@@ -159,7 +159,7 @@ internal abstract class BaseAuthorizationHandler : DelegatingHandler
 		{
 			return await _authenticationService.RefreshAsync(ct);
 		}
-		catch(Exception ex)
+		catch (Exception ex)
 		{
 			if (_logger.IsEnabled(LogLevel.Debug)) _logger.LogDebugMessage($"Error refreshing token - {ex.Message}");
 			return false;

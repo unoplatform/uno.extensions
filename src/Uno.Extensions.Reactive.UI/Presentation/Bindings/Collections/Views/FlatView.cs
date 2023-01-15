@@ -8,6 +8,7 @@ using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Uno.Extensions.Collections;
 using Uno.Extensions.Collections.Facades.Composite;
+using Uno.Extensions.Collections.Facades.Differential;
 using Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Facets;
 
 namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Views
@@ -16,7 +17,7 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Views
 	/// A view which flatten the items of a <see cref="IBindableCollectionViewSource"/>
 	/// <remarks>This view assume that the items of the source <see cref="IBindableCollectionViewSource"/> are of type <see cref="IObservableGroup"/>.</remarks>
 	/// </summary>
-	internal partial class FlatView : ICollectionView, INotifyCollectionChanged, ISupportIncrementalLoading, IDisposable
+	internal partial class FlatView : ICollectionView, INotifyCollectionChanged, ISupportIncrementalLoading, IDisposable, ISelectionInfo
 	{
 		private readonly CollectionFacet _source;
 		private readonly SelectionFacet _selection;
@@ -115,7 +116,7 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Views
 
 			return -1;
 		}
-		public IEnumerator<object?> GetEnumerator() => new CompositeEnumerator<object?>(_source.Where(group => group is not null).Cast<IEnumerable<object?>>());
+		public IEnumerator<object?> GetEnumerator() => new CompositeEnumerator<object?>(_source.Head.AsList<object?>().Where(group => group is not null).Cast<IEnumerable<object?>>());
 		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 		public void CopyTo(object[] array, int arrayIndex)
 		{
@@ -131,7 +132,7 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Views
 			}
 		}
 
-		#region Selection (Single)
+		#region Selection (Single - ICollectionView.Current)
 		/// <inheritdoc />
 		public event CurrentChangingEventHandler CurrentChanging
 		{
@@ -175,7 +176,25 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Views
 
 		/// <inheritdoc />
 		public bool MoveCurrentToPrevious() => _selection.MoveCurrentToPrevious();
-#endregion
+		#endregion
+
+		#region Selection (Multiple - ISelectionInfo)
+		/// <inheritdoc />
+		public void SelectRange(ItemIndexRange itemIndexRange)
+			=> _selection.SelectRange(itemIndexRange);
+
+		/// <inheritdoc />
+		public void DeselectRange(ItemIndexRange itemIndexRange)
+			=> _selection.DeselectRange(itemIndexRange);
+
+		/// <inheritdoc />
+		public bool IsSelected(int index)
+			=> _selection.IsSelected(index);
+
+		/// <inheritdoc />
+		public IReadOnlyList<ItemIndexRange> GetSelectedRanges()
+			=> _selection.GetSelectedRanges();
+		#endregion
 
 		#region Pagination
 		/// <inheritdoc />

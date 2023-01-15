@@ -2,8 +2,12 @@
 
 namespace TestHarness.Ext.Navigation.PageNavigation;
 
-public record PageNavigationOneViewModel(IServiceProvider Services, INavigator Navigator, IWritableOptions<PageNavigationSettings> Settings)
+public record PageNavigationOneViewModel(IServiceProvider Services, INavigator Navigator, IDispatcher Dispatcher, IWritableOptions<PageNavigationSettings> Settings)
+	: BasePageNavigationViewModel(Dispatcher)
 {
+
+	public List<PageNavigationModel> Items { get; } = Enumerable.Range(0, 50).Select(x => new PageNavigationModel(x)).ToList();
+
 	public async void GoToTwo()
 	{
 		await Settings.UpdateAsync(s => s with { PagesVisited = s.PagesVisited.Add(this.GetType().Name) });
@@ -15,7 +19,7 @@ public record PageNavigationOneViewModel(IServiceProvider Services, INavigator N
 		var tasks = new List<Task>();
 		for (int i = 0; i < 5; i++)
 		{
-			tasks.Add(Task.Run(()=>ReadWriteTest()));
+			tasks.Add(Task.Run(() => ReadWriteTest()));
 		}
 		await Task.WhenAll(tasks);
 	}
@@ -34,6 +38,18 @@ public record PageNavigationOneViewModel(IServiceProvider Services, INavigator N
 			settings = accessor.Value;
 		}
 
+	}
+
+}
+
+public record PageNavigationModel(int Value);
+
+public record BasePageNavigationViewModel
+{
+	public bool CreatedOnUIThread { get; }
+	public BasePageNavigationViewModel(IDispatcher dispatcher)
+	{
+		CreatedOnUIThread = dispatcher.HasThreadAccess;
 	}
 
 }

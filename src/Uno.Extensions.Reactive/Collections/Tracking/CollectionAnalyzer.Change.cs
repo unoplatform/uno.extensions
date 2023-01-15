@@ -7,7 +7,7 @@ namespace Uno.Extensions.Collections.Tracking;
 
 partial class CollectionAnalyzer
 {
-	internal abstract class Change : ICollectionChange
+	internal abstract class Change<T> : ICollectionChange
 	{
 		public Change(int at)
 		{
@@ -28,7 +28,7 @@ partial class CollectionAnalyzer
 		/// <summary>
 		/// Gets or sets the next node of the linked list
 		/// </summary>
-		public Change? Next { get; set; }
+		public Change<T>? Next { get; set; }
 
 		public abstract RichNotifyCollectionChangedEventArgs? ToEvent();
 
@@ -58,21 +58,23 @@ partial class CollectionAnalyzer
 		}
 
 		protected abstract CollectionUpdater.Update ToUpdaterCore(ICollectionUpdaterVisitor visitor);
+
+		protected internal abstract void Visit(ICollectionChangeSetVisitor<T> visitor);
 	}
 
 	/// <summary>
 	/// A base change specialized from changes that are only altering entities within a collection
 	/// (i.e. they are not impacting indices - e.g. Replace and Same)
 	/// </summary>
-	private abstract class EntityChange : Change
+	private abstract class EntityChange<T> : Change<T>
 	{
 		protected readonly int _indexOffset;
-		protected readonly List<object?> _oldItems = new();
-		protected readonly List<object?> _newItems = new();
+		protected readonly List<T> _oldItems = new();
+		protected readonly List<T> _newItems = new();
 
-		public new EntityChange? Next
+		public new EntityChange<T>? Next
 		{
-			get => base.Next as EntityChange;
+			get => base.Next as EntityChange<T>;
 			set => base.Next = value;
 		}
 
@@ -83,7 +85,7 @@ partial class CollectionAnalyzer
 			Ends = at;
 		}
 
-		public void Append(object? oldItem, object? newItem)
+		public void Append(T oldItem, T newItem)
 		{
 			_oldItems.Add(oldItem);
 			_newItems.Add(newItem);

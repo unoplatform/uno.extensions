@@ -1,7 +1,4 @@
-﻿
-
-
-
+﻿using FastAsyncLock = Uno.Extensions.Threading.FastAsyncLock;
 
 namespace Uno.Extensions.Storage.KeyValueStorage;
 
@@ -68,7 +65,7 @@ internal record InMemoryKeyValueStorage(ILogger<InMemoryKeyValueStorage> Logger)
 				Logger.LogInformationMessage($"Key '{name}' not found.");
 			}
 
-			throw new KeyNotFoundException($"Key '{name}' not found");
+			return default(T?);
 		}
 	}
 

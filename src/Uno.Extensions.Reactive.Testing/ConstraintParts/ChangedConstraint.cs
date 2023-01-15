@@ -16,6 +16,9 @@ public readonly struct ChangedConstraint<T>
 		Value = value;
 	}
 
+	public static implicit operator ChangedConstraint<T>(MessageAxis axis)
+		=> new Changed(axis);
+
 	public static implicit operator ChangedConstraint<T>(Changed axes)
 		=> new(axes);
 

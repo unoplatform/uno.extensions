@@ -84,7 +84,7 @@ public partial class AdHocViewModel:ObservableObject
 
 	public async Task LoadWidgets()
 	{
-		var widgets = await _dataService.ReadFileAsync<Widget[]>(_serializer, "data.json");
+		var widgets = await _dataService.ReadPackageFileAsync<Widget[]>(_serializer, "data.json");
 	}
 
 	public async Task RunBackgroundTask()

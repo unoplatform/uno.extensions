@@ -5,6 +5,7 @@ using System.Collections.Immutable;
 using System.Text;
 using Uno.Extensions.Collections.Facades.Slice;
 using Uno.Extensions.Collections.Tracking;
+using Uno.Extensions.Equality;
 using Uno.Extensions.Reactive.Collections.Facades.Adapters;
 
 namespace Uno.Extensions.Reactive.Utils;
@@ -53,6 +54,58 @@ internal static class ListExtensions
 						for (var i = index; i < index + count; i++)
 						{
 							if (comparer.Equals(list[i], value))
+							{
+								return i;
+							}
+						}
+
+						return -1;
+					};
+			}
+		}
+	}
+
+	public static CollectionAnalyzer.IndexOfHandler<T> GetIndexOf<T>(this IList list, IEqualityComparer<T>? comparer)
+	{
+		if (comparer is null)
+		{
+			switch (list)
+			{
+				case IImmutableList<T> immutable:
+					return immutable.IndexOf;
+				case List<T> impl:
+					return impl.IndexOf;
+				case Array array:
+					return (value, index, count) => Array.IndexOf(array, value, index, count);
+				default:
+					return (value, index, count) =>
+					{
+						for (var i = index; i < index + count; i++)
+						{
+							if (object.Equals(list[i], value))
+							{
+								return i;
+							}
+						}
+
+						return -1;
+					};
+			}
+		}
+		else
+		{
+			switch (list)
+			{
+				case IImmutableList<T> immutable:
+				{
+					return (value, index, count) => immutable.IndexOf(value, index, count, comparer);
+				}
+				default:
+					return (value, index, count) =>
+					{
+						for (var i = index; i < index + count; i++)
+						{
+							if (comparer.Equals((T)list[i], value))
 							{
 								return i;
 							}
@@ -290,6 +343,15 @@ internal static class ListExtensions
 	public static IList Slice(this IList list, int index, int count)
 		=> new SliceList(list, index, count);
 
+	public static IList AsUntypedList<T>(this IList<T> list)
+		=> list as IList ?? (list is ICollectionAdapter { Adaptee: IList untyped } ? untyped : new ListToUntypedList<T>(list));
+
 	public static IList AsUntypedList<T>(this IImmutableList<T> immutable)
-		=> immutable as IList ?? new ImmutableListToUntypedList<T>(immutable);
+		=> immutable as IList ?? (immutable is ICollectionAdapter { Adaptee: IList untyped } ? untyped : new ImmutableListToUntypedList<T>(immutable));
+
+	public static IList<T> AsTypedList<T>(this IList list)
+		=> list as IList<T> ?? (list is ICollectionAdapter { Adaptee: IList<T> typed } ? typed : new UntypedListToList<T>(list));
+
+	public static IReadOnlyList<T> AsTypedReadOnlyList<T>(this IList list)
+		=> list as IReadOnlyList<T> ?? (list is ICollectionAdapter { Adaptee: IReadOnlyList<T> @readonly } ? @readonly : new UntypedListToList<T>(list));
 }

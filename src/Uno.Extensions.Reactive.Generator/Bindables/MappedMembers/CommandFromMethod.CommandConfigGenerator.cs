@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using Uno.Extensions.Generators;
 using Uno.RoslynHelpers;
 
 namespace Uno.Extensions.Reactive.Generator;

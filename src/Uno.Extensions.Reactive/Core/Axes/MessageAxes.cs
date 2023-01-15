@@ -36,6 +36,16 @@ public static class MessageAxes
 	internal const string Pagination = nameof(Pagination);
 
 	/// <summary>
+	/// Name of the selection axis.
+	/// </summary>
+	internal const string Selection = nameof(Selection);
+
+	/// <summary>
+	/// Name of the axe used to de-bounce data bound values
+	/// </summary>
+	internal const string SelectionSource = nameof(SelectionSource);
+
+	/// <summary>
 	/// Name of the axe used to de-bounce data bound values
 	/// </summary>
 	internal const string BindingSource = nameof(BindingSource);

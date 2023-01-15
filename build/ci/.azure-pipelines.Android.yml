@@ -1,5 +1,6 @@
 jobs:
-- job: Android
+- job: Samples_Android
+  displayName: 'Samples - Android'
 
   pool:
     vmImage: macos-latest
@@ -31,7 +32,7 @@ jobs:
   - template: templates/dotnet6-install-mac.yml
 
   - script: |
-      mono '$(VS_MSBUILD)' '$(build.sourcesdirectory)/samples/Playground/Playground.Droid/Playground.Droid.csproj' /r /p:Configuration=Release /bl:$(build.artifactstagingdirectory)/build.binlog "/p:InformationalVersion=$GITVERSION_INFORMATIONALVERSION" /p:UnoExtensionsDisableNet6=true /p:AotAssemblies=false /p:AndroidBuildApplicationPackage=True
+      mono '$(VS_MSBUILD)' '$(build.sourcesdirectory)/samples/Playground/Playground.Droid/Playground.Droid.csproj' /r /p:Configuration=Release "/bl:$(build.artifactstagingdirectory)/samples-android-1.binlog" "/p:InformationalVersion=$GITVERSION_INFORMATIONALVERSION" /p:UnoExtensionsDisableNet6=true /p:AotAssemblies=false /p:AndroidBuildApplicationPackage=True
 
     displayName: Build Android App
     
@@ -48,7 +49,7 @@ jobs:
       flattenFolders: false
 
   - script: |
-      mono '$(VS_MSBUILD)' '$(build.sourcesdirectory)/samples/Playground/Playground.Droid/Playground.Droid.csproj' /r /p:Configuration=Release /bl:$(build.artifactstagingdirectory)/build.binlog "/p:InformationalVersion=$GITVERSION_INFORMATIONALVERSION" /p:UnoExtensionsDisableNet6=true /p:AotAssemblies=false /p:BuildForPlayStore=true /p:AndroidBuildApplicationPackage=True
+      mono '$(VS_MSBUILD)' '$(build.sourcesdirectory)/samples/Playground/Playground.Droid/Playground.Droid.csproj' /r /p:Configuration=Release "/bl:$(build.artifactstagingdirectory)/samples-android-2.binlog" "/p:InformationalVersion=$GITVERSION_INFORMATIONALVERSION" /p:UnoExtensionsDisableNet6=true /p:AotAssemblies=false /p:BuildForPlayStore=true /p:AndroidBuildApplicationPackage=True
 
     displayName: Build Android PlayStore App
     
@@ -65,5 +66,6 @@ jobs:
       flattenFolders: false
 
   - task: PublishBuildArtifacts@1
+    condition: always()
     inputs:
         ArtifactName: $(Build.DefinitionName)

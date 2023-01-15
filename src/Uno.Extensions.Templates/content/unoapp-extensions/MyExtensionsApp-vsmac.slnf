@@ -2,10 +2,21 @@
   "solution": {
     "path": "MyExtensionsApp.sln",
     "projects": [
+#//#if (useMobile)
       "MyExtensionsApp.Mobile\\MyExtensionsApp.Mobile.csproj",
+#//#endif
+#//#if (skiaGtk)
       "MyExtensionsApp.Skia.Gtk\\MyExtensionsApp.Skia.Gtk.csproj",
-      "MyExtensionsApp.UI\\MyExtensionsApp.UI.shproj",
+#//#endif
+#//#if (wasm)
       "MyExtensionsApp.Wasm\\MyExtensionsApp.Wasm.csproj",
+#//#endif
+#//#if (server)
+      "MyExtensionsApp.Server\\MyExtensionsApp.Server.csproj",
+#//#endif
+#//#if (server || http)
+      "MyExtensionsApp.DataContracts\\MyExtensionsApp.DataContracts.csproj",
+#//#endif
       "MyExtensionsApp\\MyExtensionsApp.csproj"
     ]
   }

@@ -1,6 +1,7 @@
 ﻿namespace TestHarness.Ext.Navigation.PageNavigation;
 
-public record PageNavigationThreeViewModel(INavigator Navigator, IWritableOptions<PageNavigationSettings> Settings)
+public record PageNavigationThreeViewModel(INavigator Navigator, IDispatcher Dispatcher, IWritableOptions<PageNavigationSettings> Settings)
+	: BasePageNavigationViewModel(Dispatcher)
 {
 	public async void GoToFour()
 	{

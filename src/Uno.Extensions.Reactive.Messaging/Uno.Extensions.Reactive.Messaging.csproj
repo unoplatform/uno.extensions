@@ -1,11 +1,8 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-
-	<PropertyGroup>
-		<TargetFramework>netstandard2.0</TargetFramework>
-	</PropertyGroup>
+﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
+	<Import Project="..\tfms-non-ui.props" />
 
 	<ItemGroup>
-		<PackageReference Include="CommunityToolkit.Mvvm" Version="7.0.1" />
+		<PackageReference Include="CommunityToolkit.Mvvm" />
 	</ItemGroup>
 
 	<ItemGroup>

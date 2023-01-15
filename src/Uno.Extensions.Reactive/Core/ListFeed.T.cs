@@ -14,7 +14,7 @@ namespace Uno.Extensions.Reactive;
 /// Provides a set of static methods to create and manipulate <see cref="IListFeed{T}"/>.
 /// </summary>
 /// <typeparam name="T">The type of the items.</typeparam>
-public static class ListFeed<T>
+public static partial class ListFeed<T>
 {
 	/// <summary>
 	/// Creates a custom feed from a raw <see cref="IAsyncEnumerable{T}"/> sequence of <see cref="Uno.Extensions.Reactive.Message{T}"/>.
@@ -74,7 +74,7 @@ public static class ListFeed<T>
 	/// <param name="getPage">The async method to load a page of items.</param>
 	/// <returns>A paginated list feed.</returns>
 	public static IListFeed<T> AsyncPaginatedByCursor<TCursor>(TCursor firstPage, GetPage<TCursor, T> getPage)
-		=> AttachedProperty.GetOrCreate(getPage.Target ?? getPage.Method, (firstPage, getPage), (_, args) => new PaginatedListFeed<TCursor,T>(args.firstPage, args.getPage));
+		=> AttachedProperty.GetOrCreate(getPage.Target ?? getPage.Method, (firstPage, getPage), static (_, args) => new PaginatedListFeed<TCursor,T>(args.firstPage, args.getPage));
 
 	/// <summary>
 	/// Creates a list feed for a paginated collection.
@@ -82,5 +82,5 @@ public static class ListFeed<T>
 	/// <param name="getPage">The async method to load a page of items.</param>
 	/// <returns>A paginated list feed.</returns>
 	public static IListFeed<T> AsyncPaginated(AsyncFunc<PageRequest, IImmutableList<T>> getPage)
-		=> AttachedProperty.GetOrCreate(getPage, gp => new PaginatedListFeed<ByIndexCursor<T>, T>(ByIndexCursor<T>.First, ByIndexCursor<T>.GetPage(gp)));
+		=> AttachedProperty.GetOrCreate(getPage, static gp => new PaginatedListFeed<ByIndexCursor<T>, T>(ByIndexCursor<T>.First, ByIndexCursor<T>.GetPage(gp)));
 }

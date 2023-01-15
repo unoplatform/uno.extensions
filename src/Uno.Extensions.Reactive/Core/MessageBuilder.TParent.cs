@@ -66,9 +66,9 @@ public readonly struct MessageBuilder<TParent, TResult> : IMessageEntry, IMessag
 	bool IMessageEntry.IsTransient => CurrentIsTransient;
 	MessageAxisValue IMessageEntry.this[MessageAxis axis] => Get(axis).value;
 
-	internal Option<TResult> CurrentData => (Option<TResult>)Get(MessageAxis.Data).value.Value!;
-	internal Exception? CurrentError => (Exception?)Get(MessageAxis.Data).value.Value;
-	internal bool CurrentIsTransient => Get(MessageAxis.Progress).value is { IsSet: true } progress && (bool)progress.Value!;
+	internal Option<TResult> CurrentData => MessageAxis.Data.FromMessageValue<TResult>(Get(MessageAxis.Data).value);
+	internal Exception? CurrentError => MessageAxis.Error.FromMessageValue(Get(MessageAxis.Error).value);
+	internal bool CurrentIsTransient => MessageAxis.Progress.FromMessageValue(Get(MessageAxis.Progress).value);
 
 	/// <inheritdoc />
 	(MessageAxisValue value, IChangeSet? changes) IMessageBuilder.Get(MessageAxis axis)

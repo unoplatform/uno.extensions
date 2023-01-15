@@ -20,7 +20,7 @@
     <AndroidUseAapt2>true</AndroidUseAapt2>
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
     <AndroidUseLatestPlatformSdk>False</AndroidUseLatestPlatformSdk>
-    <TargetFrameworkVersion>v11.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v12.0</TargetFrameworkVersion>
     <AndroidManifest>Properties\AndroidManifest.xml</AndroidManifest>
     <AndroidUseIntermediateDesignerFile>True</AndroidUseIntermediateDesignerFile>
     <ResourcesDirectory>..\Playground.Shared\Strings</ResourcesDirectory>
@@ -64,22 +64,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="CommunityToolkit.Mvvm">
-      <Version>7.1.2</Version>
-    </PackageReference>
-    <PackageReference Include="System.Text.Json" Version="6.0.3" />
-    <PackageReference Include="Refit">
-      <Version>6.3.2</Version>
-    </PackageReference>
-    <PackageReference Include="Refit.HttpClientFactory">
-      <Version>6.3.2</Version>
-    </PackageReference>
-    <PackageReference Include="Uno.UI" Version="4.3.8" />
-    <PackageReference Include="Uno.UI.RemoteControl" Version="4.3.8" Condition="'$(Configuration)'=='Debug'" />
-    <PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="4.3.8" />
-    <PackageReference Include="Uno.UniversalImageLoader" Version="1.9.33" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="6.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
+    <PackageReference Include="CommunityToolkit.Mvvm" />
+    <PackageReference Include="System.Text.Json" />
+    <PackageReference Include="Refit" />
+    <PackageReference Include="Refit.HttpClientFactory" />
+    <PackageReference Include="Uno.UI" />
+    <PackageReference Include="Uno.UI.RemoteControl" Condition="'$(Configuration)'=='Debug'" />
+    <PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" />
+    <PackageReference Include="Uno.UniversalImageLoader" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Console" />
+    <PackageReference Include="Microsoft.Extensions.Logging" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MainActivity.cs" />
@@ -134,7 +128,7 @@
       <Project>{9f8db209-a0d3-439e-8624-0ddd3608e886}</Project>
       <Name>Uno.Extensions.Http</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\src\Uno.Extensions.Localization\Uno.Extensions.Localization.csproj">
+    <ProjectReference Include="..\..\..\src\Uno.Extensions.Localization.UI\Uno.Extensions.Localization.UI.csproj">
       <Project>{18bb4421-14a0-4402-8d78-d6c1f73d0202}</Project>
       <Name>Uno.Extensions.Localization</Name>
     </ProjectReference>
@@ -186,9 +180,24 @@
       <Project>{2397a664-9140-45e6-bec0-6e975fcc31d1}</Project>
       <Name>Uno.Extensions.Storage</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\src\Uno.Extensions.Toolkit.UI\Uno.Extensions.Toolkit.UI.csproj">
+      <Project>{7bdd06ab-9ad2-403e-94b4-c9e39354ebf8}</Project>
+      <Name>Uno.Extensions.Toolkit.UI</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\src\Uno.Extensions.Toolkit\Uno.Extensions.Toolkit.csproj">
+      <Project>{130528a4-9934-4dd4-9743-1c395e703fc4}</Project>
+      <Name>Uno.Extensions.Toolkit</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\src\Uno.Extensions.Validation.Fluent\Uno.Extensions.Validation.Fluent.csproj">
+      <Project>{349e684d-bc28-4d6e-8ca6-6646de7fd478}</Project>
+      <Name>Uno.Extensions.Validation.Fluent</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\src\Uno.Extensions.Validation\Uno.Extensions.Validation.csproj">
+      <Project>{15da44e8-1aaa-46fb-9e62-14fec0dfa401}</Project>
+      <Name>Uno.Extensions.Validation</Name>
+    </ProjectReference>
   </ItemGroup>
   <!-- Reference to Reactive.props only required when referencing Reactive as source code -->
-  <Import Project="..\..\..\src\Uno.Extensions.Reactive.Generator\buildTransitive\Uno.Extensions.Reactive.props" />
   <Import Project="..\Playground.Shared\Playground.Shared.projitems" Label="Shared" />
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <Target Name="Issue3897Workaround" Condition=" '$(ManagedDesignTimeBuild)' == 'True' " AfterTargets="_RemoveLegacyDesigner">

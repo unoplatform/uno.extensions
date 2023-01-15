@@ -1,25 +1,41 @@
 ﻿<Project>
-    <ItemGroup>
-    <PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="5.0.3">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
-    </PackageReference>
-  </ItemGroup>
-  <PropertyGroup>
-  <AnalysisMode>AllEnabledByDefault</AnalysisMode>
-</PropertyGroup>
+	<!-- Disabling for the moment as will cause too many breaks -->
+	<!--<ItemGroup>
+		<PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="5.0.3">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+		</PackageReference>
+	</ItemGroup>
+	<PropertyGroup>
+		<AnalysisMode>AllEnabledByDefault</AnalysisMode>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <AdditionalFiles Include="..\..\..\stylecop.json" />
-  </ItemGroup>
+	<ItemGroup>
+		<AdditionalFiles Include="..\..\..\stylecop.json" />
+	</ItemGroup>-->
 
-  <PropertyGroup>
+	<PropertyGroup>
 		<!-- Forces Uno's XamlFileGenerator to write error when XAML is invalid-->
 		<ShouldWriteErrorOnInvalidXaml>True</ShouldWriteErrorOnInvalidXaml>
 	</PropertyGroup>
 
+	<PropertyGroup>
+		<Build_Android>true</Build_Android>
+		<Build_iOS>true</Build_iOS>
+		<Build_MacOS>true</Build_MacOS>
+		<Build_Windows>true</Build_Windows>
+	</PropertyGroup>
+
+	<Import Project="DebugPlatforms.props" Condition="exists('DebugPlatforms.props')" />
+
+	 <Target Name="Log disabled platforms" BeforeTargets="BeforeBuild">
+        <Message Importance="high" Condition="!$(Build_Android)" Text="Android not included in build" />
+        <Message Importance="high" Condition="!$(Build_iOS)" Text="iOS not included in build" />
+        <Message Importance="high" Condition="!$(Build_MacOS)" Text="MacOS not included in build" />
+        <Message Importance="high" Condition="!$(Build_Windows)" Text="Windows not included in build" />
+    </Target>
 </Project>

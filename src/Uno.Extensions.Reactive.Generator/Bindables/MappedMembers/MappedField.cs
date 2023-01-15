@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using Microsoft.CodeAnalysis;
+using Uno.Extensions.Generators;
 
 namespace Uno.Extensions.Reactive.Generator;
 
@@ -17,7 +18,7 @@ internal record MappedField(IFieldSymbol _field) : IMappedMember
 
 	/// <inheritdoc />
 	public string GetDeclaration()
-		=> $@"{_field.GetAccessibilityAsCSharpCodeString()} {_field.Type} {_field.Name}
+		=> $@"{_field.GetAccessibilityAsCSharpCodeString()} {_field.Type.ToFullString()} {_field.Name}
 			{{
 				get => {N.Model}.{_field.Name};
 				set => {N.Model}.{_field.Name} = value;

@@ -10,19 +10,12 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="6.0.0" />
+		<PackageReference Include="Microsoft.Bcl.AsyncInterfaces" />
 	</ItemGroup>
   
 	<ItemGroup>
 		<ProjectReference Include="..\Uno.Extensions.Reactive\Uno.Extensions.Reactive.csproj" />
 	</ItemGroup>
-
-	<ItemGroup>
-		<Compile Remove="..\Uno.Extensions.Core\_Compat\IsExternalInit.cs" />
-		<Compile Remove="..\Uno.Extensions.Core\_Compat\NotNullIfNotNullAttribute.cs" />
-		<Compile Remove="..\Uno.Extensions.Core\_Compat\NotNullWhenAttribute.cs" />
-	</ItemGroup>
-
 
 	<ItemGroup>
 		<Page Include="**\*.xaml" Exclude="bin\**\*.xaml;obj\**\*.xaml" />

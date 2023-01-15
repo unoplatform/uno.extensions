@@ -31,7 +31,7 @@ public class NavigationViewItemRequestHandler : ActionRequestHandlerBase<Navigat
 			{
 				if ((args.InvokedItemContainer is FrameworkElement navItem && navItem == viewButton))
 				{
-					action((FrameworkElement)args.InvokedItemContainer);
+					action((FrameworkElement)args.InvokedItemContainer, default);
 				}
 			}),
 			(element, handler) => element.ItemInvoked += handler,

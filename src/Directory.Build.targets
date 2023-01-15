@@ -1,37 +1,97 @@
 <Project ToolsVersion="15.0">
-  
-  <PropertyGroup>
-	<!--
-      macOS needs an explicit override of the current compiler when running under mono.
-      On other targets, .NET 6.0's compiler takes precedence.
-      -->
-	<MicrosoftNetCompilerVersionOverride Condition="'$(MSBuildRuntimeType)'!='Core' and ($([MSBuild]::IsOSPlatform('OSX')) or '$(MSBuildVersion)' &lt; '17.0')">4.1.0</MicrosoftNetCompilerVersionOverride>
-  </PropertyGroup>
 
-  <!--
-  This file is imported from Directory.Build.props as the nuget tooling
-  in VS is skipping ItemGroup conditions for legacy projects (iOS, Android, ...).
-  -->
-  <Choose>
-	<When Condition="'$(MicrosoftNetCompilerVersionOverride)'!=''">
-	  <PropertyGroup>
+	<PropertyGroup>
 		<!--
-          Disable shared compilation for the override to take place
-          https://github.com/dotnet/roslyn/blob/315c2e149ba7889b0937d872274c33fcbfe9af5f/src/NuGet/Microsoft.Net.Compilers/build/Microsoft.Net.Compilers.props#L36
-          -->
-		<UseSharedCompilation>false</UseSharedCompilation>
-	  </PropertyGroup>
-	  <ItemGroup>
+			macOS needs an explicit override of the current compiler when running under mono.
+			On other targets, .NET 6.0's compiler takes precedence.
+		-->
+		<MicrosoftNetCompilerVersionOverride Condition="'$(MSBuildRuntimeType)'!='Core' and ($([MSBuild]::IsOSPlatform('OSX')) or '$(MSBuildVersion)' &lt; '17.0')">4.1.0</MicrosoftNetCompilerVersionOverride>
+	</PropertyGroup>
 
-		<!--This override is used to validate the user of specific version of the C# Compiler-->
-		<PackageReference Include="Microsoft.Net.Compilers" Version="$(MicrosoftNetCompilerVersionOverride)">
-		  <PrivateAssets>all</PrivateAssets>
-		  <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
-		</PackageReference>
-	  </ItemGroup>
+	<!--
+		This file is imported from Directory.Build.props as the nuget tooling
+		in VS is skipping ItemGroup conditions for legacy projects (iOS, Android, ...).
+	-->
+	<Choose>
+		<When Condition="'$(MicrosoftNetCompilerVersionOverride)'!=''">
+		  <PropertyGroup>
+			<!--
+			  Disable shared compilation for the override to take place
+			  https://github.com/dotnet/roslyn/blob/315c2e149ba7889b0937d872274c33fcbfe9af5f/src/NuGet/Microsoft.Net.Compilers/build/Microsoft.Net.Compilers.props#L36
+			  -->
+			<UseSharedCompilation>false</UseSharedCompilation>
+		  </PropertyGroup>
+		  <ItemGroup>
 
-	</When>
-  </Choose>
+			<!--This override is used to validate the user of specific version of the C# Compiler-->
+			<PackageReference Include="Microsoft.Net.Compilers.Toolset" VersionOverride="$(MicrosoftNetCompilerVersionOverride)">
+			  <PrivateAssets>all</PrivateAssets>
+			  <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+			</PackageReference>
+		  </ItemGroup>
 
-  <Import Project="winappsdk-workaround.targets" />
+		</When>
+	</Choose>
+
+	<!-- Enable the Core.Generators for all projects, except Core itself and other generators -->
+	<Choose>
+		<When Condition="'$(IsCoreProject)'== 'False' And '$(IsGeneratorProject)' == 'False'" >
+			<ItemGroup>
+				<ProjectReference Include="$(MSBuildThisFileDirectory)\Uno.Extensions.Core.Generators\Uno.Extensions.Core.Generators.csproj">
+					<ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+					<SkipGetTargetFrameworkProperties>true</SkipGetTargetFrameworkProperties>
+					<UndefineProperties>TargetFramework;RuntimeIdentifiers;RuntimeIdentifier</UndefineProperties>
+				</ProjectReference>
+			</ItemGroup>
+		</When>
+	</Choose>
+	<Import
+		Condition="'$(IsCoreProject)'== 'False' And '$(IsGeneratorProject)' == 'False'"
+		Project="$(MSBuildThisFileDirectory)\Uno.Extensions.Core.Generators\buildTransitive\Uno.Extensions.Core.props" />
+
+	<Choose>
+		<When Condition="$(_IsWinUI)">
+			<ItemGroup>
+				<PackageReference Include="Microsoft.WindowsAppSDK" />
+				<PackageReference Include="Microsoft.Windows.SDK.BuildTools" />
+
+				<FrameworkReference Update="Microsoft.Windows.SDK.NET.Ref" RuntimeFrameworkVersion="10.0.22000.25" />
+				<FrameworkReference Update="Microsoft.Windows.SDK.NET.Ref" TargetingPackVersion="10.0.22000.25" />
+			</ItemGroup>
+		</When>
+	</Choose>
+
+	<Choose>
+		<When Condition="$(_IsAndroid)">
+			<PropertyGroup Condition="'$(AndroidApplication)'!='True'">
+				<AndroidGenerateResourceDesigner>false</AndroidGenerateResourceDesigner>
+				<AndroidUseIntermediateDesignerFile>false</AndroidUseIntermediateDesignerFile>
+			</PropertyGroup>
+		</When>
+		<Otherwise>
+			<PropertyGroup>
+				<!--
+				This works around the fact that AndroidResgenFile is
+				automatically included as compiled file, even if AndroidUseIntermediateDesignerFile
+				is set to true.
+				-->
+				<AndroidUseIntermediateDesignerFile>True</AndroidUseIntermediateDesignerFile>
+				<AndroidResgenFile>obj\$(TargetFramework)\Resources\Resource.Designer.cs</AndroidResgenFile>
+			</PropertyGroup>
+		</Otherwise>
+	</Choose>
+
+	<Target Name="AndroidResourceGenWorkaround" BeforeTargets="Build" Condition="'$(AndroidUseIntermediateDesignerFile)'=='True' and $(IsMonoAndroid) and '$(TargetFramework)'!='net6.0-android'">
+		<Message Importance="high" Text="************************* Making Resources DIR" />
+		<MakeDir Directories="obj\$(TargetFramework)\Resources" />
+		<WriteLinesToFile File="$(AndroidResgenFile)" Lines="// Empty Content from uno.ui Directory.Build.targets." />
+	</Target>
+
+	<Target Name="AndroidResourceGenWorkaround_16_2" AfterTargets="_UpdateAndroidResgen" Condition="'$(AndroidUseIntermediateDesignerFile)'=='True' and !Exists($(_AndroidResourceDesignerFile))">
+		<Message Importance="high" Text="************************* Empyt designer file" />
+		<WriteLinesToFile File="$(_AndroidResourceDesignerFile)" Lines="// Empty Content from uno.ui Directory.Build.targets." />
+	</Target>
+
+	<Import Project="winappsdk-workaround.targets" Condition="exists('winappsdk-workaround.targets')" />
+	<Import Project="xamarinmac-workaround.targets" Condition="exists('xamarinmac-workaround.targets') and $(TargetFramework.ToLower().StartsWith('xamarin')) and $(TargetFramework.ToLower().Contains('mac'))" />
 </Project>

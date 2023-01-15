@@ -8,7 +8,7 @@ public class RouteResolverDefault : RouteResolver
 
 	public string[] ViewSuffixes { get; set; } = new[] { "View", "Page", "Control", "Flyout", "Dialog", "Popup" };
 
-	public string[] ViewModelSuffixes { get; set; } = new[] { "ViewModel", "VM" };
+	public string[] ViewModelSuffixes { get; set; } = new[] { "Model", "ViewModel", "VM" };
 
 	private IDictionary<string, Type>? loadedTypes;
 
@@ -189,12 +189,17 @@ public class RouteResolverDefault : RouteResolver
 			return string.Empty;
 		}
 
+		var best = path;
 		foreach (var item in suffixes)
 		{
-			path = path.TrimEnd(item, StringComparison.InvariantCultureIgnoreCase);
+			var candidate = path.TrimEnd(item, StringComparison.InvariantCultureIgnoreCase);
+			if (candidate.Length < best.Length)
+			{
+				best = candidate;
+			}
 		}
 
-		return path;
+		return best;
 	}
 
 	public IDictionary<string, Type> LoadedTypes

@@ -18,7 +18,39 @@ public class Dispatcher : IDispatcher
 #endif
 	}
 
+	public Dispatcher(FrameworkElement element)
+	{
+#if WINUI
+		// We can't grab the DispatcherQueue from the window because it's not supported in Uno yet
+		_dispatcher = global::Microsoft.UI.Dispatching.DispatcherQueue.GetForCurrentThread();
+#else
+		_dispatcher = element.Dispatcher;
+#endif
+
+	}
+
+	/// <inheritdoc />
+	public bool TryEnqueue(Action action)
+#if WINUI
+		=> _dispatcher.TryEnqueue(() => action());
+#else
+	{
+		_ = _dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => action());
+		return true;
+	}
+#endif
+
 	/// <inheritdoc />
 	public async ValueTask<TResult> ExecuteAsync<TResult>(AsyncFunc<TResult> func, CancellationToken cancellation)
-		=> await _dispatcher.ExecuteAsync(func, cancellation);
+	{
+		if (PlatformHelper.IsThreadingEnabled && 
+			HasThreadAccess)
+		{
+			return await func(cancellation);
+		}
+		return await _dispatcher.ExecuteAsync(func, cancellation);
+	}
+
+	/// <inheritdoc />
+	public bool HasThreadAccess => _dispatcher.HasThreadAccess;
 }

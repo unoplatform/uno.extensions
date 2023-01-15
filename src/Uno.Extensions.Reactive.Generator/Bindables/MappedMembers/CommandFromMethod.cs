@@ -9,6 +9,7 @@ using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using Microsoft.CodeAnalysis;
+using Uno.Extensions.Generators;
 using Uno.Extensions.Reactive.Config;
 
 namespace Uno.Extensions.Reactive.Generator;
@@ -117,8 +118,8 @@ internal partial record CommandFromMethod : IMappedMember
 				configs.Add(new CommandConfigGenerator(this)
 				{
 					ExternalParameter = $"ctx => ctx.GetOrCreateSource({sourceFeed})",
-					ParametersCoercer = $"{NS.Commands}.CommandParametersCoercingStrategy.UseBoth((viewParameter, feedParameter) => (viewParameter is {viewParameter.Symbol.Type} vp ? vp : default, feedParameter is {GetTypeOrTuple(feedParameters)} fp ? fp : default))",
-					ParameterType = $"global::System.ValueTuple<{viewParameter.Symbol.Type}, {GetTypeOrTuple(feedParameters)}>",
+					ParametersCoercer = $"{NS.Commands}.CommandParametersCoercingStrategy.UseBoth((viewParameter, feedParameter) => (viewParameter is {viewParameter.Symbol.Type.ToFullString()} vp ? vp : default, feedParameter is {GetTypeOrTuple(feedParameters)} fp ? fp : default))",
+					ParameterType = $"global::System.ValueTuple<{viewParameter.Symbol.Type.ToFullString()}, {GetTypeOrTuple(feedParameters)}>",
 					DeconstructParameters = (args, ct) => GetDeconstruct($"{args}.Item2", ct, viewArg: $"{args}.Item1"),
 					CanExecute = CheckForNulls(new[] { viewParameter }) is { } check ? args => check($"{args}.Item1") : null,
 				});
@@ -160,8 +161,8 @@ internal partial record CommandFromMethod : IMappedMember
 
 		string GetTypeOrTuple(IEnumerable<CommandParameter> parameters)
 			=> parameters.Count() is 1
-				? parameters.First().Symbol.Type.ToString()
-				: $"global::System.ValueTuple<{parameters.Select(p => p.Symbol.Type.ToString()).JoinBy(", ")}>";
+				? parameters.First().Symbol.Type.ToFullString()
+				: $"global::System.ValueTuple<{parameters.Select(p => p.Symbol.Type.ToFullString()).JoinBy(", ")}>";
 
 		Func<string, string>? CheckForNulls(IEnumerable<CommandParameter> parameters)
 		{
@@ -178,7 +179,7 @@ internal partial record CommandFromMethod : IMappedMember
 				{
 					return args => parameters
 						.Select((p, i) => p.Symbol is { Type.IsValueType: false, NullableAnnotation: NullableAnnotation.NotAnnotated }
-							? $"{args}.Item{i} is not null"
+							? $"{args}.Item{i+1} is not null"
 							: null)
 						.Where(s => s is not null)
 						.JoinBy(" && ");
@@ -244,7 +245,7 @@ internal partial record CommandFromMethod : IMappedMember
 			var propertyAttr = parameter.FindAttributeValue(ctx.CommandParameterAttribute, ctorPosition: 0);
 			if (propertyAttr is { isDefined: true } || isImplicitParametersEnabled)
 			{
-				var property = type.FindProperty(propertyAttr.value ?? parameter.Name, StringComparison.OrdinalIgnoreCase);
+				var property = type.FindProperty(propertyAttr.value ?? parameter.Name, allowBaseTypes: true, comparison: StringComparison.OrdinalIgnoreCase);
 				if (propertyAttr.isDefined)
 				{
 					if (property is null)
@@ -266,7 +267,7 @@ internal partial record CommandFromMethod : IMappedMember
 
 				if (property is not null
 					&& ctx.IsListFeed(property.Type, out var itemType)
-					&& SymbolEqualityComparer.Default.Equals(parameter.Type, ctx.ImmutableList.Construct(itemType)))
+					&& SymbolEqualityComparer.Default.Equals(parameter.Type, ctx.IImmutableList.Construct(itemType)))
 				{
 					return new CommandParameter(parameter, property) { IsListFeedParameter = true };
 				}

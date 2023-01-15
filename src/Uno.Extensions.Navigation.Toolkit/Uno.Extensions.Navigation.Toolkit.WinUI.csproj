@@ -1,10 +1,8 @@
 ﻿<Project Sdk="MSBuild.Sdk.Extras" ToolsVersion="15.0">
+	<Import Project="..\tfms-ui-winui.props" />
+
 	<PropertyGroup>
 		<Description>Navigation Extensions for working with the Uno Toolkit on the Uno Platform (WinUI)</Description>
-
-		<TargetFrameworks Condition="'$(UnoTargetFrameworkOverride)'!=''">$(UnoTargetFrameworkOverride)</TargetFrameworks>
-		<TargetFrameworks Condition="'$(UnoTargetFrameworkOverride)'==''">netstandard2.0;xamarinios10;xamarinmac20;monoandroid11.0</TargetFrameworks>
-		<TargetFrameworks Condition="'$(UnoTargetFrameworkOverride)'=='' and '$(UnoExtensionsDisableNet6)'==''">$(TargetFrameworks);net5.0-windows10.0.18362.0;net6.0-windows10.0.18362.0;net6.0-ios;net6.0-macos;net6.0-android;net6.0-maccatalyst</TargetFrameworks>
 		<EnableDefaultPageItems>false</EnableDefaultPageItems>
 	</PropertyGroup>
 
@@ -19,17 +17,12 @@
 	  <None Remove="LinkerDefinition.xml" />
 	</ItemGroup>
 
-	<ItemGroup>
-		<PackageReference Include="Uno.WinUI" Version="4.3.6" />
-		<PackageReference Include="Uno.Toolkit.WinUI" Version="2.0.0" />
-		<ProjectReference Include="..\Uno.Extensions.Navigation.UI\Uno.Extensions.Navigation.WinUI.csproj" />
+	<ItemGroup Condition="'$(_IsWinUI)'=='false'">
+		<PackageReference Include="Uno.WinUI" />
 	</ItemGroup>
-
-	<ItemGroup Condition="$(_IsWinUI)">
-		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.0.2" />
-		<PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22000.197" />
-
-		<FrameworkReference Update="Microsoft.Windows.SDK.NET.Ref" RuntimeFrameworkVersion="10.0.18362.24" />
-		<FrameworkReference Update="Microsoft.Windows.SDK.NET.Ref" TargetingPackVersion="10.0.18362.24" />
+	<ItemGroup>
+		<PackageReference Include="Uno.Toolkit.WinUI" />
+		<ProjectReference Include="..\Uno.Extensions.Toolkit.UI\Uno.Extensions.Toolkit.WinUI.csproj" />
+		<ProjectReference Include="..\Uno.Extensions.Navigation.UI\Uno.Extensions.Navigation.WinUI.csproj" />
 	</ItemGroup>
 </Project>

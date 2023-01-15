@@ -29,4 +29,13 @@ namespace Uno.Extensions.Reactive.Collections;
 ///	For both comparer, prefer to provide `null` than <see cref="EqualityComparer{T}.Default"/>.
 /// This allow user of this struct to use fast-paths when possible.
 /// </remarks>
-internal record struct ItemComparer(IEqualityComparer? Entity, IEqualityComparer? Version);
+internal record struct ItemComparer(IEqualityComparer? Entity, IEqualityComparer? Version)
+{
+	public static ItemComparer Null => new();
+
+	public static ItemComparer Default => new(null, null);
+
+	// A bool which indicates that we went trough a constructor instead of using default(ItemComparer<T>) (both comparers can still be null)
+	public bool IsSet { get; init; } = true;
+	public bool IsNull => !IsSet;
+}

@@ -5,10 +5,13 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
+using Uno.Extensions.Collections;
+using Uno.Extensions.Collections.Facades.Differential;
 using Uno.Extensions.Collections.Tracking;
 using Uno.Extensions.Reactive.Bindings.Collections;
 using Uno.Extensions.Reactive.Bindings.Collections.Services;
 using Uno.Extensions.Reactive.Core;
+using Uno.Extensions.Reactive.UI.Utils;
 
 namespace Uno.Extensions.Reactive.Bindings;
 
@@ -32,8 +35,24 @@ public sealed partial class BindableListFeed<T> : ISignal<IMessage>, IListState<
 		PropertyName = propertyName;
 
 		_state = ctx.GetOrCreateListState(source);
-		_items = CreateBindableCollection(ctx);
+		_items = CreateBindableCollection(_state);
 	}
+
+	/// <summary>
+	/// Creates a new instance.
+	/// </summary>
+	/// <param name="propertyName">The name of the property backed by the object.</param>
+	/// <param name="source">The source data stream.</param>
+	public BindableListFeed(string propertyName, IListState<T> source)
+	{
+		PropertyName = propertyName;
+
+		_state = source;
+		_items = CreateBindableCollection(source);
+	}
+
+	/// <inheritdoc />
+	SourceContext IState.Context => _state.Context;
 
 	/// <inheritdoc />
 	public string PropertyName { get; }
@@ -45,7 +64,9 @@ public sealed partial class BindableListFeed<T> : ISignal<IMessage>, IListState<
 		// Instead of being an IFeed<IIMutableList<T>> we are instead exposing an IFeed<ICollectionView>.
 		// WARNING: **The ICollectionView is mutable**
 
-		var collectionViewForCurrentThread = _items.GetForCurrentThread();
+		var collectionView = context.FindDispatcher() is {} dispatcher
+			? _items.GetFor(dispatcher)
+			: _items.GetForCurrentThread();
 		var localMsg = new MessageManager<IImmutableList<T>, ICollectionView>();
 
 		await foreach (var parentMsg in _state.GetSource(context, ct).WithCancellation(ct).ConfigureAwait(false))
@@ -53,8 +74,8 @@ public sealed partial class BindableListFeed<T> : ISignal<IMessage>, IListState<
 			if (localMsg.Update(
 					(current, @params) => current
 						.With(@params.parentMsg)
-						.Data(@params.parentMsg.Current.Data.Map(_ => @params.collectionViewForCurrentThread)),
-					(parentMsg, collectionViewForCurrentThread)))
+						.Data(@params.parentMsg.Current.Data.Map(_ => @params.collectionView)),
+					(parentMsg, collectionView)))
 			{
 				yield return localMsg.Current;
 			}
@@ -78,15 +99,22 @@ public sealed partial class BindableListFeed<T> : ISignal<IMessage>, IListState<
 		=> _state.UpdateMessage(updater, ct);
 
 
-	private BindableCollection CreateBindableCollection(SourceContext ctx)
+	private static BindableCollection CreateBindableCollection(IListState<T> state)
 	{
+		var ctx = state.Context;
 		var currentCount = 0;
 		var pageTokens = new TokenSetAwaiter<PageToken>();
 
+		var collection = default(BindableCollection);
 		var requests = new RequestSource();
 		var pagination = new PaginationService(LoadMore);
-		var services = new SingletonServiceProvider(pagination);
-		var collection = BindableCollection.Create<T>(services: services);
+		var selection = new SelectionService(SetSelected);
+		var edition = new EditionService(Edit);
+		var services = new SingletonServiceProvider(pagination, selection, edition);
+
+		collection = BindableCollection.Create(
+			services: services,
+			itemComparer: ListFeed<T>.DefaultComparer);
 
 		if (ctx.Token.CanBeCanceled)
 		{
@@ -98,7 +126,7 @@ public sealed partial class BindableListFeed<T> : ISignal<IMessage>, IListState<
 		// Note: we have to listen for collection changes on bindable _items to update the state.
 		// https://github.com/unoplatform/uno.extensions/issues/370
 
-		_state.GetSource(ctx.CreateChild(requests), ctx.Token).ForEachAsync(
+		state.GetSource(SourceContextHelper.CreateChildContext(ctx, collection, state, requests), ctx.Token).ForEachAsync(
 			msg =>
 			{
 				if (ctx.Token.IsCancellationRequested)
@@ -106,9 +134,10 @@ public sealed partial class BindableListFeed<T> : ISignal<IMessage>, IListState<
 					return;
 				}
 
+				var items = default(IImmutableList<T>);
 				if (msg.Changes.Contains(MessageAxis.Data, out var changes))
 				{
-					var items = msg.Current.Data.SomeOrDefault(ImmutableList<T>.Empty);
+					items = msg.Current.Data.SomeOrDefault(ImmutableList<T>.Empty);
 					currentCount = items.Count;
 
 					collection.Switch(new ImmutableObservableCollection<T>(items), changes as CollectionChangeSet);
@@ -128,6 +157,13 @@ public sealed partial class BindableListFeed<T> : ISignal<IMessage>, IListState<
 				{
 					pageTokens.Received(page.Tokens);
 				}
+
+				if (msg.Changes.Contains(MessageAxis.Selection)
+					&& msg.Current.GetSelectionInfo() is { } selectionInfo
+					&& msg.Current.Get(BindableViewModelBase.BindingSource) != collection)
+				{
+					selection.SetFromSource(selectionInfo);
+				}
 			},
 			ctx.Token);
 
@@ -141,6 +177,29 @@ public sealed partial class BindableListFeed<T> : ISignal<IMessage>, IListState<
 
 			return (uint)Math.Max(0, resultCount - originalCount);
 		}
+
+		async ValueTask SetSelected(SelectionInfo info, CancellationToken ct)
+			=> await state.UpdateMessage(msg => msg.Selected(info).Set(BindableViewModelBase.BindingSource, collection), ct);
+
+		async ValueTask Edit(Func<IDifferentialCollectionNode, IDifferentialCollectionNode> change, CancellationToken ct)
+			=> await state.UpdateMessage(msg =>
+			{
+				// Note: The change might have been computed on an older version of the collection
+				// We are NOT validating this. It means that we cou;d get an out-of-range for remove for instance.
+
+				var currentItems = msg.CurrentData.SomeOrDefault();
+				var currentHead = currentItems switch
+				{
+					IDifferentialCollection diffCollection => diffCollection.Head,
+					null => new EmptyNode(),
+					_ => new ResetNode<T>(currentItems)
+				};
+				var newHead = change(currentHead);
+				var newItems = new DifferentialImmutableList<T>(newHead) as IImmutableList<T>;
+
+				msg.Data(newItems).Set(BindableViewModelBase.BindingSource, collection);
+			},
+				ct);
 
 		return collection;
 	}

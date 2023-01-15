@@ -4,12 +4,7 @@ using System.Linq;
 using Uno.Extensions.Collections;
 using Uno.Extensions.Collections.Tracking;
 using Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Facets;
-
-#if WINUI
-using ISchedulerInfo = Microsoft.UI.Dispatching.DispatcherQueue;
-#else
-using ISchedulerInfo = Windows.System.DispatcherQueue;
-#endif
+using Uno.Extensions.Reactive.Dispatching;
 
 namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Data
 {
@@ -20,7 +15,7 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Data
 	{
 		private readonly DataLayer? _parent;
 		private readonly IServiceProvider? _services;
-		private readonly ISchedulerInfo? _context;
+		private readonly IDispatcher? _context;
 		private readonly IBindableCollectionDataLayerStrategy _layerStrategy;
 		private readonly IEnumerable<object> _facets;
 
@@ -39,6 +34,8 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Data
 
 		public IBindableCollectionViewSource? Parent => _parent;
 
+		public IDispatcher? Dispatcher => _context;
+
 		/// <summary>
 		/// Creates a holder for the root layer of data
 		/// </summary>
@@ -46,7 +43,7 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Data
 			IBindableCollectionDataLayerStrategy layerStrategy,
 			IObservableCollection items,
 			IServiceProvider? services,
-			ISchedulerInfo? context)
+			IDispatcher? context)
 		{
 			var holder = new DataLayer(null, services, layerStrategy, context);
 			var initContext = layerStrategy.CreateUpdateContext(VisitorType.InitializeCollection, TrackingMode.Reset);
@@ -70,7 +67,7 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Data
 			return (holder, initializer);
 		}
 
-		private DataLayer(DataLayer? parent, IServiceProvider? services, IBindableCollectionDataLayerStrategy layerStrategy, ISchedulerInfo? context)
+		private DataLayer(DataLayer? parent, IServiceProvider? services, IBindableCollectionDataLayerStrategy layerStrategy, IDispatcher? context)
 		{
 			_context = context;
 			_parent = parent;
@@ -198,6 +195,9 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Data
 		/// <inheritdoc />
 		public object? GetService(Type serviceType)
 			=> _services?.GetService(serviceType);
+
+		public void Update(RichNotifyCollectionChangedEventArgs args)
+			=> _currentChangesBuffer?.Add(args); // Note: _currentChangesBuffer should never be 'null' here.
 		#endregion
 
 		public void Schedule(Action action)
@@ -206,9 +206,9 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Data
 			{
 				_parent.Schedule(action);
 			}
-			else if (_context is not null and {HasThreadAccess: false})
+			else if (_context is not null and { HasThreadAccess: false })
 			{
-				_context.TryEnqueue(() => action());
+				_context.TryEnqueue(action);
 			}
 			else
 			{

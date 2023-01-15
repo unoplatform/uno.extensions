@@ -46,6 +46,7 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Facet
 						VectorChanged?.Invoke(new VectorChangedEventArgs(CollectionChange.ItemInserted, (uint)i));
 					}
 				}
+				PropertyChanged();
 			}
 		}
 
@@ -73,6 +74,7 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Facet
 						VectorChanged?.Invoke(new VectorChangedEventArgs(CollectionChange.ItemRemoved, (uint)i));
 					}
 				}
+				PropertyChanged();
 			}
 		}
 
@@ -83,6 +85,7 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Facet
 		{
 			CollectionChanged?.Invoke(Uno.Extensions.Collections.CollectionChanged.Reset());
 			VectorChanged?.Invoke(new VectorChangedEventArgs(CollectionChange.Reset, 0));
+			PropertyChanged();
 		}
 
 		private void OnVectorChanged(IObservableVector<object?> sender, IVectorChangedEventArgs args)

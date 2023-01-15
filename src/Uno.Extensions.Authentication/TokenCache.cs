@@ -33,17 +33,23 @@ internal record TokenCache : ITokenCache
 	public async ValueTask ClearAsync(CancellationToken cancellation)
 	{
 		if (_logger.IsEnabled(LogLevel.Trace)) _logger.LogTraceMessage("Clearing tokens by invoking SaveAsync with empty dictionary");
-		// Don't acquire lock since this is done in the Save method
+		// Don't acquire lock since this is done in the Get/Save methods respectively
+		var existingTokens = await GetAsync(cancellation);
 		await SaveAsync(string.Empty, new Dictionary<string, string>(), cancellation);
 		if (_logger.IsEnabled(LogLevel.Trace)) _logger.LogTraceMessage("Tokens cleared");
-		try
+		if (existingTokens.Any())
 		{
-			if (_logger.IsEnabled(LogLevel.Trace)) _logger.LogTraceMessage("Raising Cleared event");
-			Cleared?.Invoke(this, EventArgs.Empty);
-		}
-		catch (Exception ex)
-		{
-			if (_logger.IsEnabled(LogLevel.Error)) _logger.LogErrorMessage($"Error raising Cleared event - check listeners to fix errors handling this event {ex.Message}");
+			// Only triggered cleared event if there were actually tokens to be cleared
+			// This prevents Cleared being raised when the user isn't logged in
+			try
+			{
+				if (_logger.IsEnabled(LogLevel.Trace)) _logger.LogTraceMessage("Raising Cleared event");
+				Cleared?.Invoke(this, EventArgs.Empty);
+			}
+			catch (Exception ex)
+			{
+				if (_logger.IsEnabled(LogLevel.Error)) _logger.LogErrorMessage($"Error raising Cleared event - check listeners to fix errors handling this event {ex.Message}");
+			}
 		}
 	}
 

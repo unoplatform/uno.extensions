@@ -1,6 +1,6 @@
 jobs:
 - job: Wasm_UITests
-  displayName: 'WebAssembly UI Tests'
+  displayName: 'UI Tests - WebAssembly'
   container: unoplatform/wasm-build:3.0
 
   pool:

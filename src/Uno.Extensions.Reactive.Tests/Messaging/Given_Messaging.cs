@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.Messaging;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Uno.Extensions.Equality;
 using Uno.Extensions.Reactive.Messaging;
 using Uno.Extensions.Reactive.Testing;
 
@@ -260,5 +261,6 @@ public class Given_Messaging : FeedTests
 	private static IImmutableList<MyEntity> Items(params (int key, int version)[] items)
 		=> items.Select(i => new MyEntity(i.key, i.version)).ToImmutableList();
 
+	[ImplicitKeys(IsEnabled = false)]
 	private record MyEntity(int Key, int Version = 0);
 }

@@ -1,10 +1,8 @@
 ﻿<Project Sdk="MSBuild.Sdk.Extras" ToolsVersion="15.0">
+	<Import Project="..\tfms-ui-uwp.props" />
+
 	<PropertyGroup>
 		<Description>Navigation Extensions for working with the Uno Toolkit on the Uno Platform (UWP)</Description>
-
-		<TargetFrameworks Condition="'$(UnoTargetFrameworkOverride)'!=''">$(UnoTargetFrameworkOverride)</TargetFrameworks>
-		<TargetFrameworks Condition="'$(UnoTargetFrameworkOverride)'==''">netstandard2.0;xamarinios10;xamarinmac20;monoandroid11.0</TargetFrameworks>
-		<TargetFrameworks Condition="'$(UnoTargetFrameworkOverride)'=='' and '$(UnoExtensionsDisableNet6)'==''">$(TargetFrameworks);uap10.0.18362;net6.0-ios;net6.0-macos;net6.0-android;net6.0-maccatalyst</TargetFrameworks>
 	</PropertyGroup>
 
 	<PropertyGroup>
@@ -12,12 +10,13 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\Uno.Extensions.Toolkit.UI\Uno.Extensions.Toolkit.UI.csproj" />
 		<ProjectReference Include="..\Uno.Extensions.Navigation.UI\Uno.Extensions.Navigation.UI.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Uno.UI" Version="4.3.6" />
-		<PackageReference Include="Uno.Toolkit.UI" Version="2.0.0" />
+		<PackageReference Include="Uno.UI" />
+		<PackageReference Include="Uno.Toolkit.UI" />
 	</ItemGroup>
 
 	<Import Project="common.props" />

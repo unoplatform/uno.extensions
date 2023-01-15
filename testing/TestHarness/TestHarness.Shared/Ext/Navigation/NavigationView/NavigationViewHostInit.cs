@@ -7,6 +7,7 @@ public class NavigationViewHostInit : BaseHostInitialization
 
 		views.Register(
 			new ViewMap<NavigationViewHomePage, NavigationViewHomeViewModel>(),
+			new ViewMap<NavigationViewDataBoundPage, NavigationViewDataBoundViewModel>(),
 			new ViewMap<NavigationViewSettingsPage, NavigationViewSettingsViewModel>()
 			);
 
@@ -17,6 +18,13 @@ public class NavigationViewHostInit : BaseHostInitialization
 				Nested: new[]
 				{
 						new RouteMap("Home", View: views.FindByViewModel<NavigationViewHomeViewModel>()),
+						new RouteMap("DataBound", View: views.FindByViewModel<NavigationViewDataBoundViewModel>(),
+						Nested: new[]
+						{
+							new RouteMap("Profile"),
+							new RouteMap("Deals"),
+							new RouteMap("Products")
+						}),
 						new RouteMap("Settings", View: views.FindByViewModel<NavigationViewSettingsViewModel>()),
 				}));
 	}

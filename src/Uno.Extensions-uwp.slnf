@@ -16,6 +16,7 @@
       "Uno.Extensions.Http.Tests\\Uno.Extensions.Http.Tests.csproj",
       "Uno.Extensions.Http\\Uno.Extensions.Http.csproj",
       "Uno.Extensions.Localization\\Uno.Extensions.Localization.csproj",
+      "Uno.Extensions.Localization.UI\\Uno.Extensions.Localization.UI.csproj",
       "Uno.Extensions.Logging.Serilog\\Uno.Extensions.Logging.Serilog.csproj",
       "Uno.Extensions.Logging\\Uno.Extensions.Logging.UWP.Skia.csproj",
       "Uno.Extensions.Logging\\Uno.Extensions.Logging.UWP.Wasm.csproj",
@@ -34,7 +35,11 @@
       "Uno.Extensions.Serialization.Tests\\Uno.Extensions.Serialization.Tests.csproj",
       "Uno.Extensions.Serialization\\Uno.Extensions.Serialization.csproj",
       "Uno.Extensions.Templates\\Uno.Extensions.Templates.csproj",
-      "Uno.Extensions\\Uno.Extensions.csproj"
+      "Uno.Extensions\\Uno.Extensions.csproj",
+	  "Uno.Extensions.Toolkit\\Uno.Extensions.Toolkit.csproj",
+	  "Uno.Extensions.Toolkit.UI\\Uno.Extensions.Toolkit.UI.csproj",
+	  "Uno.Extensions.Validation\\Uno.Extensions.Validation.csproj",
+	  "Uno.Extensions.Validation.Fluent\\Uno.Extensions.Validation.Fluent.csproj"
     ]
   }
 }

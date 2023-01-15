@@ -5,6 +5,7 @@ using System.Collections.Immutable;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Uno.Extensions.Collections.Tracking;
+using Uno.Extensions.Reactive.Collections;
 using Uno.Extensions.Reactive.Tests._Utils;
 using static Uno.Extensions.Collections.CollectionChanged;
 
@@ -2215,7 +2216,11 @@ public partial class Given_CollectionAnalyzer_Immutable
 			=> collection;
 
 		/// <inheritdoc />
-		protected override CollectionUpdater GetUpdater(CollectionAnalyzer<T> analyzer, IImmutableList<T> previous, IImmutableList<T> updated, ICollectionUpdaterVisitor visitor)
-			=> analyzer.GetUpdater(previous, updated, visitor);
+		protected override CollectionUpdater GetUpdater(ItemComparer<T> comparer, IImmutableList<T> previous, IImmutableList<T> updated, ICollectionUpdaterVisitor visitor)
+			=> new CollectionAnalyzer<T>(comparer).GetUpdater(previous, updated, visitor);
+
+		/// <inheritdoc />
+		protected override CollectionChangeSet<T> GetChanges(ItemComparer<T> comparer, IImmutableList<T> previous, IImmutableList<T> updated)
+			=> new CollectionAnalyzer<T>(comparer).GetChanges(previous, updated);
 	}
 }

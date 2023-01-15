@@ -1,9 +1,11 @@
 <Project ToolsVersion="15.0">
+	<Import Project="..\Directory.Build.props" />
+
 	<PropertyGroup>
 		<Authors>Uno Platform</Authors>
 		<PackageProjectUrl>https://github.com/unoplatform/uno.extensions</PackageProjectUrl>
 		<PackageIconUrl>https://nv-assets.azurewebsites.net/logos/uno.png</PackageIconUrl>
-		<RepositoryUrl>https://github.com/unoplatform/uno.core</RepositoryUrl>
+		<RepositoryUrl>https://github.com/unoplatform/uno.extensions</RepositoryUrl>
 		<RepositoryUrl>$(BUILD_REPOSITORY_URI)</RepositoryUrl>
 		<Copyright>Copyright (C) 2015-$([System.DateTime]::Now.ToString(`yyyy`)) Uno Platform - all rights reserved</Copyright>
 		<Product>$(AssemblyName) ($(TargetFramework))</Product>
@@ -20,10 +22,11 @@
 		<LangVersion>10.0</LangVersion>
 		<Nullable>enable</Nullable>
 		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-		<NoWarn>$(NoWarn);NU5104;NU5100;NU5118;NU5123;NU1603;CS1701;CS1702;XA0101;MSB3277;CS8785;CS8669;CS1998</NoWarn>
+		<NoWarn>$(NoWarn);NU5104;NU5100;NU5118;NU5123;NU1603;CS1701;CS1702;XA0101;MSB3277;CS8785;CS8669;CS1998;NU1507</NoWarn>
 
 		<DebugType>portable</DebugType>
 		<DebugSymbols>True</DebugSymbols>
+		<ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)'=='Release'">
@@ -36,13 +39,13 @@
 
 	<PropertyGroup>
 		<IsMonoAndroid>false</IsMonoAndroid>
-		<IsMonoAndroid Condition="'$(TargetFramework)'=='net6.0-android' or $(TargetFramework.ToLower().StartsWith('monoandroid'))">true</IsMonoAndroid>
+		<IsMonoAndroid Condition="$(TargetFramework.ToLower().StartsWith('monoandroid'))">true</IsMonoAndroid>
 
 		<IsXamarinIOS>false</IsXamarinIOS>
-		<IsXamarinIOS Condition="'$(TargetFramework)'=='net6.0-ios' or '$(TargetFramework)'=='net6.0-maccatalyst' or $(TargetFramework.ToLower().StartsWith('xamarinios'))">true</IsXamarinIOS>
+		<IsXamarinIOS Condition="$(TargetFramework.ToLower().StartsWith('xamarinios'))">true</IsXamarinIOS>
 
 		<IsXamarinMac>false</IsXamarinMac>
-		<IsXamarinMac Condition="$(TargetFramework.ToLower().StartsWith('xamarinmac')) or '$(TargetFramework)'=='net6.0-macos'">true</IsXamarinMac>
+		<IsXamarinMac Condition="$(TargetFramework.ToLower().StartsWith('xamarinmac'))">true</IsXamarinMac>
 
 		<_IsAndroid>false</_IsAndroid>
 		<_IsAndroid Condition="$(IsMonoAndroid) or '$(TargetFramework)'=='net6.0-android'">true</_IsAndroid>
@@ -54,11 +57,11 @@
 		<_IsIOS Condition="$(IsXamarinIOS) or '$(TargetFramework)'=='net6.0-ios' or '$(TargetFramework)'=='net6.0-maccatalyst'">true</_IsIOS>
 
 		<_IsMacOS>false</_IsMacOS>
-		<_IsMacOS Condition="'$(TargetFramework)'=='xamarinmac20' or '$(TargetFramework)'=='net6.0-macos'">true</_IsMacOS>
+		<_IsMacOS Condition="$(IsXamarinMac) or '$(TargetFramework)'=='net6.0-macos'">true</_IsMacOS>
 
 		<_IsNet>false</_IsNet>
 		<_IsNet Condition="'$(TargetFramework)'=='net461'">true</_IsNet>
-		
+
 		<_IsNetCore>false</_IsNetCore>
 		<_IsNetCore Condition="'$(TargetFramework)'=='net5.0'">true</_IsNetCore>
 
@@ -95,8 +98,6 @@
 	</PropertyGroup>
 
 	<PropertyGroup Condition="$(_IsAndroid)">
-		<AndroidUseIntermediateDesignerFile>True</AndroidUseIntermediateDesignerFile>
-		<AndroidResgenFile>Resources\Resource.Designer.cs</AndroidResgenFile>
 		<DefineConstants>$(DefineConstants);__ANDROID__;XAMARIN;MONOANDROID5_0;XAMARIN_ANDROID</DefineConstants>
 		<SupportedOSPlatformVersion>21.0</SupportedOSPlatformVersion>
 		<TargetPlatformMinVersion>21.0</TargetPlatformMinVersion>
@@ -115,11 +116,13 @@
 
 		<IsSampleProject>False</IsSampleProject>
 		<IsSampleProject Condition="$(MSBuildProjectName.Contains('Sample'))">True</IsSampleProject>
+
+		<IsGeneratorProject>False</IsGeneratorProject>
+		<IsGeneratorProject Condition="$(MSBuildProjectName.Contains('Generator'))">True</IsGeneratorProject>
 	</PropertyGroup>
 
 	<ItemGroup>
 		<None Include="$(MSBuildThisFileDirectory)..\build\uno-logo.png" Pack="true" Visible="false" PackagePath="\"/>
-		<Compile Condition="'$(IsCoreProject)' == 'False'" Include="$(MSBuildThisFileDirectory)\Uno.Extensions.Core\_Compat\**\*.cs" Link="_Compat\%(RecursiveDir)%(Filename)%(Extension)" />
 	</ItemGroup>
 
 	<Choose>
@@ -142,8 +145,8 @@
 				<AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
 			</PropertyGroup>
 			<ItemGroup>
-				<PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All"/>
-				<PackageReference Include="DotNet.ReproducibleBuilds" Version="1.1.1" PrivateAssets="All" />
+				<PackageReference Include="Microsoft.SourceLink.GitHub" PrivateAssets="All"/>
+				<PackageReference Include="DotNet.ReproducibleBuilds" PrivateAssets="All" />
 			</ItemGroup>
 		</When>
 	</Choose>

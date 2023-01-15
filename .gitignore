@@ -333,3 +333,7 @@ ASALocalRun/
 /testing/**/*.txt
 
 .vscode/**/*.*
+DebugPlatforms.props
+
+# Preserve Template files
+!**/Uno.Extensions.Templates/**/Properties/**/*

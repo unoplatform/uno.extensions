@@ -60,12 +60,17 @@ public class PanelVisiblityNavigator : ControlNavigator<Panel>
 
 				if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Creating instance of type '{viewType.Name}'");
 				controlToShow = Activator.CreateInstance(viewType) as FrameworkElement;
-				if (!string.IsNullOrWhiteSpace(regionName) &&
-					controlToShow is FrameworkElement fe)
+				if (controlToShow is not null)
 				{
-					fe.SetName(regionName!);
+					if (!string.IsNullOrWhiteSpace(regionName) &&
+						controlToShow is FrameworkElement fe)
+					{
+						fe.SetName(regionName!);
+					}
+					controlToShow.Visibility = Visibility.Visible;
+					controlToShow.Opacity = 0;
+					Control.Children.Add(controlToShow);
 				}
-				Control.Children.Add(controlToShow);
 				if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage("Instance created");
 			}
 			catch (Exception ex)
@@ -83,12 +88,8 @@ public class PanelVisiblityNavigator : ControlNavigator<Panel>
 		{
 			if (controlToShow is not null)
 			{
+				controlToShow.Opacity = 0;
 				controlToShow.Visibility = Visibility.Visible;
-			}
-
-			if (CurrentlyVisibleControl != null)
-			{
-				CurrentlyVisibleControl.Visibility = Visibility.Collapsed;
 			}
 			CurrentlyVisibleControl = controlToShow;
 		}
@@ -96,6 +97,30 @@ public class PanelVisiblityNavigator : ControlNavigator<Panel>
 		Control.ReassignRegionParent();
 
 		return path;
+	}
+
+	protected override async Task PostNavigateAsync()
+	{
+		if (Control is not null)
+		{
+			await Dispatcher.ExecuteAsync(async cancellation =>
+			{
+				foreach (var child in Control.Children.OfType<FrameworkElement>())
+				{
+					if (child == CurrentlyVisibleControl)
+					{
+						child.Opacity = 1;
+						child.Visibility = Visibility.Visible;
+					}
+					else
+					{
+						child.Opacity = 0;
+						child.Visibility = Visibility.Collapsed;
+
+					}
+				}
+			});
+		}
 	}
 
 	private FrameworkElement? FindByPath(string? path)

@@ -33,8 +33,7 @@
 				<utu:ChipGroup x:Name="LanguageChipGroup"
 							   SelectionMode="Single"
 							   SelectedItem="{Binding SelectedCulture, Mode=TwoWay}"
-							   ItemsSource="{Binding SupportedCultures}"
-							   Style="{StaticResource MaterialFilledChoiceChipGroupStyle}">
+							   ItemsSource="{Binding SupportedCultures}">
 					<utu:ChipGroup.ItemTemplate>
 						<DataTemplate>
 							<TextBlock Text="{Binding}"
@@ -75,6 +74,8 @@
 						Content="Ad Hoc Tests" />
 				<Button uen:Navigation.Request="List"
 						Content="List Tests" />
+				<Button uen:Navigation.Request="ThemeSwitch"
+						Content="Theme Switch" />
 			</StackPanel>
 		</ScrollViewer>
 	</Grid>

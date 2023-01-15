@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<NoWarn>$(NoWarn);CS1591</NoWarn>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<!--#if (wasm)-->
+		<ProjectReference Include="..\MyExtensionsApp.Wasm\MyExtensionsApp.Wasm.csproj" />
+		<!--#endif -->
+		<!--#if (useDefaultAppTemplate)-->
+		<ProjectReference Include="..\MyExtensionsApp.DataContracts\MyExtensionsApp.DataContracts.csproj" />
+		<!--#endif -->
+	</ItemGroup>
+
+	<ItemGroup>
+		<!--#if (useSerilog)-->
+		<PackageReference Include="Serilog.AspNetCore" Version="6.1.0" />
+		<!--#endif-->
+		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
+		<!--#if (wasm)-->
+		<PackageReference Include="Uno.Wasm.Bootstrap.Server" Version="7.0.11" />
+		<!--#endif -->
+	</ItemGroup>
+
+</Project>

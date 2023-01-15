@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using Uno.Extensions.Diagnostics;
 using Uno.Extensions.Logging;
 
 namespace Uno.Extensions.Navigation;
@@ -13,48 +14,46 @@ public class RouteNotifier : IRouteNotifier, IRouteUpdater
 		Logger = logger;
 	}
 
-	private IDictionary<Guid, IRegion> regionRoots= new Dictionary<Guid, IRegion>();
-	private IDictionary<IRegion, int> runningNavigations = new Dictionary<IRegion, int>();
-	private IDictionary<IRegion, Stopwatch> timers = new Dictionary<IRegion, Stopwatch>();
+	private IDictionary<Guid, StringBuilder> navigationSegments = new Dictionary<Guid, StringBuilder>();
+	private IDictionary<Guid, int> runningNavigations = new Dictionary<Guid, int>();
 
-	public Guid StartNavigation(IRegion region)
+
+	public void StartNavigation(INavigator navigator, IRegion region, NavigationRequest request)
 	{
-		var regionUpdateId = Guid.NewGuid();
-		var root = region.Root();
-		regionRoots[regionUpdateId] = root;
-
-		if (!runningNavigations.TryGetValue(root, out var count) ||
+		var id = request.Id;
+		if (!runningNavigations.TryGetValue(id, out var count) ||
 			count == 0)
 		{
-			if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"Pre-navigation: - {root.ToString()}");
-			runningNavigations[root] = 1;
-			var timer = new Stopwatch();
-			timers[root] = timer;
-			timer.Start();
+			runningNavigations[id] = 1;
+			navigationSegments[id] = new StringBuilder();
+			navigationSegments[id].AppendLine($"[{id}] Navigation Start");
+			PerformanceTimer.Start(Logger, LogLevel.Trace, id);
 		}
 		else
 		{
-			runningNavigations[root] = runningNavigations[root] + 1;
-			timers[root].Restart();
+			runningNavigations[id] = runningNavigations[id] + 1;
 		}
-
-		return regionUpdateId;
+		if (Logger.IsEnabled(LogLevel.Trace))
+		{
+			navigationSegments[id].AppendLine($"[{id} - {PerformanceTimer.Split(id).TotalMilliseconds}] {navigator.GetType().Name} - {region.Name??"unnamed"} - {request.Route} {(request.Route.IsInternal?"(internal)":"")}");
+		}
 	}
 
-	public async Task EndNavigation(Guid regionUpdateId)
+	public void EndNavigation(INavigator navigator, IRegion region, NavigationRequest request)
 	{
-		var root= regionRoots[regionUpdateId];
-		regionRoots.Remove(regionUpdateId);
-		runningNavigations[root] = runningNavigations[root] - 1;
+		var id = request.Id;
+		runningNavigations[id] = runningNavigations[id] - 1;
 
-		if (runningNavigations[root] == 0)
+		if (runningNavigations[id] == 0)
 		{
-			timers[root].Stop();
-			if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"Elapsed navigation: {timers[root].ElapsedMilliseconds}");
-			if (Logger.IsEnabled(LogLevel.Trace) && root is NavigationRegion navRegion) Logger.LogTraceMessage($"Post-navigation: {await navRegion.GetStringAsync()}");
-			if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"Post-navigation (route): {root.GetRoute()}");
-
-			RouteChanged?.Invoke(this, new RouteChangedEventArgs(root));
+			var elapsed = PerformanceTimer.Stop(Logger, LogLevel.Trace, id);
+			if (Logger.IsEnabled(LogLevel.Trace))
+			{
+				navigationSegments[id].AppendLine($"[{id} - {elapsed.TotalMilliseconds}] Navigation End");
+				Logger.LogTraceMessage($"Post-navigation (summary):\n{navigationSegments[id]}");
+			}
+			navigationSegments.Remove(id);
+			RouteChanged?.Invoke(this, new RouteChangedEventArgs(region.Root()));
 		}
 	}
 }

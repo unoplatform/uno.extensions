@@ -5,7 +5,7 @@ namespace Uno.Extensions.Collections.Tracking;
 
 partial class CollectionAnalyzer
 {
-	private sealed class _Same : EntityChange
+	private sealed class _Same<T> : EntityChange<T>
 	{
 		/// <inheritdoc />
 		public _Same(int at, int indexOffset)
@@ -16,6 +16,10 @@ partial class CollectionAnalyzer
 		/// <inheritdoc />
 		public override RichNotifyCollectionChangedEventArgs? ToEvent()
 			=> null;
+
+		/// <inheritdoc />
+		protected internal override void Visit(ICollectionChangeSetVisitor<T> visitor)
+			=> visitor.Same(_oldItems, _newItems, Starts + _indexOffset);
 
 		/// <inheritdoc />
 		protected override CollectionUpdater.Update ToUpdaterCore(ICollectionUpdaterVisitor visitor)
@@ -32,6 +36,6 @@ partial class CollectionAnalyzer
 
 		/// <inheritdoc />
 		public override string ToString()
-			=> $"Keep {_oldItems.Count} items at {Starts} (Same instance that may require a deep diff)";
+			=> $"Keep {_oldItems.Count} items at {Starts} (Same instance or Comparer.Version.Equals that may require a deep diff)";
 	}
 }

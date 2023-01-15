@@ -10,7 +10,7 @@ public class Given_MessageDialog : NavigationTestBase
 		App.WaitThenTap("MessageDialogsButton");
 		
 		App.WaitElement("MessageDialogFromXamlButton");
-		var screenBefore=TakeScreenshot("When_MessageDialogFromXAML_Before");
+		var screenBefore = TakeScreenshot("When_MessageDialogFromXAML_Before");
 		App.Tap("MessageDialogFromXamlButton");
 		var screenAfter = TakeScreenshot("When_MessageDialogFromXAML_After");
 		ImageAssert.AreNotEqual(screenBefore, screenAfter);

@@ -2,16 +2,18 @@
 
 	<PropertyGroup>
 		<TargetFramework>net6.0</TargetFramework>
-		<Nullable>enable</Nullable>
-		<ImplicitUsings>enable</ImplicitUsings>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
-		<PackageReference Include="AspNet.Security.OAuth.Apple" Version="6.0.4" />
-		<PackageReference Include="Microsoft.AspNetCore.Authentication.Facebook" Version="6.0.7" />
-		<PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="6.0.7" />
-		<PackageReference Include="Microsoft.AspNetCore.Authentication.MicrosoftAccount" Version="6.0.7" />
+		<PackageReference Include="Swashbuckle.AspNetCore" />
+		<PackageReference Include="AspNet.Security.OAuth.Apple" />
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.Facebook" />
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.Google" />
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.MicrosoftAccount" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\TestHarness.Core\TestHarness.Core.csproj" />
 	</ItemGroup>
 
 </Project>

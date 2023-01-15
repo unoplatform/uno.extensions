@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Linq;
 
-namespace Uno.Extensions.Reactive.Generator;
+namespace Uno.Extensions.Generators;
 
-internal static class NS
+internal static partial class NS
 {
 	public const string Reactive = "global::Uno.Extensions.Reactive";
 	public const string Bindings = Reactive + ".Bindings";

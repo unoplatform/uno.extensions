@@ -196,30 +196,36 @@ public abstract class ControlNavigator : Navigator
 
 			if (vm is null)
 			{
-				// Attempt to create view model using the DI container
-				var dataFactor = services.GetRequiredService<NavigationDataProvider>();
-				dataFactor.Parameters = route.Data ?? new Dictionary<string, object>();
-
-				services.AddScopedInstance(request);
-
-				vm = services.GetService(mapping!.ViewModel);
-			}
-
-			if (vm is null)
-			{
-				// Attempt to create view model using reflection
-				try
+				vm = await Task.Run(async () =>
 				{
-					var ctr = mapping.ViewModel.GetNavigationConstructor(navigator!, Region.Services!, out var args);
-					if (ctr is not null)
+
+					// Attempt to create view model using the DI container
+					var dataFactor = services.GetRequiredService<NavigationDataProvider>();
+					dataFactor.Parameters = route.Data ?? new Dictionary<string, object>();
+
+					services.AddScopedInstance(request);
+
+					var created = services.GetService(mapping!.ViewModel);
+
+					if (created is not null)
 					{
-						vm = ctr.Invoke(args);
+						return created;
 					}
-				}
-				catch
-				{
-					Logger.LogInformationMessage("ViewModel not included in RouteMap, and unable to instance using Activator instead of ServiceProvider");
-				}
+					// Attempt to create view model using reflection
+					try
+					{
+						var ctr = mapping.ViewModel.GetNavigationConstructor(navigator!, Region.Services!, out var args);
+						if (ctr is not null)
+						{
+							return ctr.Invoke(args);
+						}
+					}
+					catch
+					{
+						Logger.LogInformationMessage("ViewModel not included in RouteMap, and unable to instance using Activator instead of ServiceProvider");
+					}
+					return default;
+				});
 			}
 
 			if (vm is IInjectable<INavigator> navAware)

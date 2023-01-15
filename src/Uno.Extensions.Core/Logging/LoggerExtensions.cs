@@ -33,6 +33,11 @@ public static class LoggerExtensions
 		logger?.LogError(FormatLogText(callerMethod, message));
 	}
 
+	public static void LogErrorMessage(this ILogger logger, Exception ex, string message, [CallerMemberName] string callerMethod = "")
+	{
+		logger?.LogError(ex, FormatLogText(callerMethod, message));
+	}
+
 	public static void LogCriticalMessage(this ILogger logger, string message, [CallerMemberName] string callerMethod = "")
 	{
 		logger?.LogCritical(FormatLogText(callerMethod, message));

@@ -2,25 +2,28 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Threading;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Uno.Extensions.Collections;
 using Uno.Extensions.Collections.Tracking;
+using Uno.Extensions.Equality;
 using Uno.Extensions.Reactive.Bindings.Collections._BindableCollection;
 using Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Data;
 using Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Facets;
 using Uno.Extensions.Reactive.Bindings.Collections.Services;
+using Uno.Extensions.Reactive.Collections;
 using Uno.Extensions.Reactive.Dispatching;
 using Uno.Extensions.Reactive.Utils;
-using ISchedulersProvider = Uno.Extensions.Reactive.Dispatching.DispatcherHelper.FindDispatcher;
+using ISchedulersProvider = Uno.Extensions.Reactive.Dispatching.FindDispatcher;
 
 namespace Uno.Extensions.Reactive.Bindings.Collections
 {
 	/// <summary>
 	/// A collection which is responsible to manage the items tracking.
 	/// </summary>
-	internal sealed partial class BindableCollection : ICollectionView, INotifyCollectionChanged
+	internal sealed partial class BindableCollection : ICollectionView, INotifyCollectionChanged, INotifyPropertyChanged, ISelectionInfo
 	{
 		private readonly IBindableCollectionDataStructure _dataStructure;
 		private readonly DispatcherLocal<DataLayer> _holder;
@@ -31,21 +34,7 @@ namespace Uno.Extensions.Reactive.Bindings.Collections
 		/// Creates a new instance of a <see cref="BindableCollection"/>.
 		/// </summary>
 		/// <param name="initial">The initial items in the collection.</param>
-		/// <param name="itemComparer">
-		/// Comparer used to detect multiple versions of the **same entity (T)**, or null to use default.
-		/// <remarks>Usually this should only compare the ID of the entities in order to properly track the changes made on an entity.</remarks>
-		/// <remarks>For better performance, prefer provide null instead of <see cref="EqualityComparer{T}.Default"/> (cf. MapObservableCollection).</remarks>
-		/// </param>
-		/// <param name="itemVersionComparer">
-		/// Comparer used to detect multiple instance of the **same version** of the **same entity (T)**, or null to rely only on the <paramref name="itemComparer"/> (not recommanded).
-		/// <remarks>
-		/// This comparer will determine if two instances of the same entity (which was considered as equals by the <paramref name="itemComparer"/>),
-		/// are effectively equals or not (i.e. same version or not).
-		/// <br />
-		/// * If **Equals**: it's 2 **instances** of the **same version** of the **same entity** (all properties are equals), so we don't have to raise a <see cref="NotifyCollectionChangedAction.Replace"/>.<br />
-		/// * If **NOT Equals**: it's 2 **distinct versions** of the **same entity** (not all properties are equals) and we have to raise a 'Replace' to re-evaluate those properties.
-		/// </remarks>
-		/// </param>
+		/// <param name="itemComparer">Comparer used to track items.</param>
 		/// <param name="schedulersProvider">Schedulers provider to use to handle concurrency.</param>
 		/// <param name="services">A set of services that the collection can use (cf. Remarks)</param>
 		/// <param name="resetThreshold">Threshold on which the a single reset is raised instead of multiple collection changes.</param>
@@ -54,16 +43,12 @@ namespace Uno.Extensions.Reactive.Bindings.Collections
 		/// </remarks>
 		internal static BindableCollection Create<T>(
 			IObservableCollection<T>? initial = null,
-			IEqualityComparer<T>? itemComparer = null,
-			IEqualityComparer<T>? itemVersionComparer = null,
+			ItemComparer<T> itemComparer = default,
 			ISchedulersProvider? schedulersProvider = null,
 			IServiceProvider? services = null,
 			int resetThreshold = DataStructure.DefaultResetThreshold)
 		{
-			var dataStructure = new DataStructure
-			(
-				(itemComparer?.ToEqualityComparer(), itemVersionComparer?.ToEqualityComparer())
-			)
+			var dataStructure = new DataStructure((ItemComparer)itemComparer)
 			{
 				ResetThreshold = resetThreshold
 			};
@@ -76,16 +61,12 @@ namespace Uno.Extensions.Reactive.Bindings.Collections
 		/// </summary>
 		internal static BindableCollection CreateUntyped(
 			IObservableCollection? initial = null,
-			IEqualityComparer? itemComparer = null,
-			IEqualityComparer? itemVersionComparer = null,
+			ItemComparer itemComparer = default,
 			ISchedulersProvider? schedulersProvider = null,
 			int resetThreshold = DataStructure.DefaultResetThreshold
 		)
 		{
-			var dataStructure = new DataStructure
-			(
-				(itemComparer, itemVersionComparer)
-			)
+			var dataStructure = new DataStructure(itemComparer)
 			{
 				ResetThreshold = resetThreshold
 			};
@@ -95,19 +76,13 @@ namespace Uno.Extensions.Reactive.Bindings.Collections
 
 		internal static BindableCollection CreateGrouped<TKey, T>(
 			IObservableCollection<TKey> initial,
-			IEqualityComparer<TKey>? keyComparer,
-			IEqualityComparer<TKey>? keyVersionComparer,
-			IEqualityComparer<T>? itemComparer = null,
-			IEqualityComparer<T>? itemVersionComparer = null,
+			ItemComparer<TKey> keyComparer,
+			ItemComparer<T> itemComparer = default,
 			ISchedulersProvider? schedulersProvider = null,
 			int resetThreshold = DataStructure.DefaultResetThreshold)
 			where TKey : IObservableGroup<T>
 		{
-			var dataStructure = new DataStructure
-			(
-				(keyComparer?.ToEqualityComparer(), keyVersionComparer?.ToEqualityComparer()),
-				(itemComparer?.ToEqualityComparer(), itemVersionComparer?.ToEqualityComparer())
-			)
+			var dataStructure = new DataStructure((ItemComparer)keyComparer, (ItemComparer)itemComparer)
 			{
 				ResetThreshold = resetThreshold
 			};
@@ -117,19 +92,13 @@ namespace Uno.Extensions.Reactive.Bindings.Collections
 
 		internal static BindableCollection CreateGrouped<TGroup>(
 			IObservableCollection initial,
-			IEqualityComparer<TGroup>? groupComparer,
-			IEqualityComparer<TGroup>? groupVersionComparer,
-			IEqualityComparer? itemComparer,
-			IEqualityComparer? itemVersionComparer,
+			ItemComparer<TGroup> groupComparer,
+			ItemComparer itemComparer,
 			ISchedulersProvider? schedulersProvider = null,
 			int resetThreshold = DataStructure.DefaultResetThreshold)
 			where TGroup : IObservableGroup
 		{
-			var dataStructure = new DataStructure
-			(
-				(groupComparer?.ToEqualityComparer(), groupVersionComparer?.ToEqualityComparer()),
-				(itemComparer, itemVersionComparer)
-			)
+			var dataStructure = new DataStructure((ItemComparer)groupComparer, itemComparer)
 			{
 				ResetThreshold = resetThreshold
 			};
@@ -139,18 +108,12 @@ namespace Uno.Extensions.Reactive.Bindings.Collections
 
 		internal static BindableCollection CreateUntypedGrouped(
 			IObservableCollection initial,
-			IEqualityComparer? groupComparer,
-			IEqualityComparer? groupVersionComparer,
-			IEqualityComparer? itemComparer,
-			IEqualityComparer? itemVersionComparer,
+			ItemComparer groupComparer,
+			ItemComparer itemComparer,
 			ISchedulersProvider? schedulersProvider = null,
 			int resetThreshold = DataStructure.DefaultResetThreshold)
 		{
-			var dataStructure = new DataStructure
-			(
-				(groupComparer, groupVersionComparer),
-				(itemComparer, itemVersionComparer)
-			)
+			var dataStructure = new DataStructure(groupComparer, itemComparer)
 			{
 				ResetThreshold = resetThreshold
 			};
@@ -166,7 +129,10 @@ namespace Uno.Extensions.Reactive.Bindings.Collections
 		{
 			_dataStructure = dataStructure;
 			_current = initial;
-			_holder = new DispatcherLocal<DataLayer>(context => DataLayer.Create(_dataStructure.GetRoot(), _current ?? EmptyObservableCollection<object>.Instance, services, context), schedulersProvider);
+			_holder = new DispatcherLocal<DataLayer>(
+				context => DataLayer.Create(_dataStructure.GetRoot(), _current ?? EmptyObservableCollection<object>.Instance, services, context),
+				schedulersProvider,
+				allowCreationFromAnotherThread: true);
 		}
 
 		/// <summary>
@@ -196,11 +162,18 @@ namespace Uno.Extensions.Reactive.Bindings.Collections
 		}
 
 		/// <summary>
-		/// Get a direct access to the ICollectionView implementation for a given thread.
+		/// Get a direct access to the ICollectionView implementation for the current thread.
 		/// </summary>
 		/// <returns></returns>
 		public ICollectionView GetForCurrentThread()
 			=> _holder.Value.View;
+
+		/// <summary>
+		/// Get a direct access to the ICollectionView implementation for the given UI thread.
+		/// </summary>
+		/// <returns></returns>
+		public ICollectionView GetFor(IDispatcher dispatcher)
+			=> _holder.GetValue(dispatcher).View;
 
 		#region ICollectionView
 		/// <inheritdoc />
@@ -272,6 +245,12 @@ namespace Uno.Extensions.Reactive.Bindings.Collections
 			remove => _holder.Value.GetFacet<CollectionChangedFacet>().RemoveCollectionChangedHandler(value!);
 		}
 
+		public event PropertyChangedEventHandler? PropertyChanged
+		{
+			add => _holder.Value.GetFacet<CollectionChangedFacet>().AddPropertyChangedHandler(value!);
+			remove => _holder.Value.GetFacet<CollectionChangedFacet>().RemovePropertyChangedHandler(value!);
+		}
+
 		/// <inheritdoc />
 		public bool MoveCurrentTo(object item)
 			=> GetForCurrentThread().MoveCurrentTo(item);
@@ -331,6 +310,29 @@ namespace Uno.Extensions.Reactive.Bindings.Collections
 			add => AddCurrentChangingHandler(value);
 			remove => RemoveCurrentChangingHandler(value);
 		}
+		#endregion
+
+		#region ISelectionInfo
+		#pragma warning disable Uno0001 // ISelectionInfo is just an interface
+		public ISelectionInfo? GetSelectionForCurrentThread()
+			=> _holder.Value.View as ISelectionInfo;
+
+		/// <inheritdoc />
+		public void SelectRange(ItemIndexRange itemIndexRange)
+			=> GetSelectionForCurrentThread()?.SelectRange(itemIndexRange);
+
+		/// <inheritdoc />
+		public void DeselectRange(ItemIndexRange itemIndexRange)
+			=> GetSelectionForCurrentThread()?.DeselectRange(itemIndexRange);
+
+		/// <inheritdoc />
+		public bool IsSelected(int index)
+			=> GetSelectionForCurrentThread()?.IsSelected(index) ?? false;
+
+		/// <inheritdoc />
+		public IReadOnlyList<ItemIndexRange> GetSelectedRanges()
+			=> GetSelectionForCurrentThread()?.GetSelectedRanges() ?? Array.Empty<ItemIndexRange>();
+		#pragma warning restore Uno0001
 		#endregion
 
 		internal EventRegistrationToken AddVectorChangedHandler(VectorChangedEventHandler<object?>? handler)

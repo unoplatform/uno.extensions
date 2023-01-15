@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Uno.Extensions.Collections;
 using Uno.Extensions.Collections.Facades.Differential;
 using Uno.Extensions.Collections.Tracking;
+using Uno.Extensions.Reactive.Collections;
 using Uno.Extensions.Reactive.Core;
 using Uno.Extensions.Reactive.Utils;
 
@@ -18,11 +19,11 @@ internal class PaginatedListFeed<TCursor, TItem> : IListFeed<TItem>, IRefreshabl
 	private readonly GetPage<TCursor, TItem> _getPage;
 	private readonly CollectionAnalyzer<TItem> _diffAnalyzer;
 
-	public PaginatedListFeed(TCursor firstPage, GetPage<TCursor, TItem> getPage)
+	public PaginatedListFeed(TCursor firstPage, GetPage<TCursor, TItem> getPage, ItemComparer<TItem> itemComparer = default)
 	{
 		_firstPage = firstPage;
 		_getPage = getPage;
-		_diffAnalyzer = new CollectionAnalyzer<TItem>(default);
+		_diffAnalyzer = ListFeed<TItem>.GetAnalyzer(itemComparer);
 	}
 
 	/// <inheritdoc />
@@ -167,10 +168,10 @@ internal class PaginatedListFeed<TCursor, TItem> : IListFeed<TItem>, IRefreshabl
 
 			(items, changes) = (hadItems, hasItems, isFirstPage) switch
 			{
-				(false, false, _) => (DifferentialImmutableList<TItem>.Empty, CollectionChangeSet.Empty),
+				(false, false, _) => (DifferentialImmutableList<TItem>.Empty, CollectionChangeSet<TItem>.Empty),
 				(false, true, _) => Reset(items, page.Items),
 				(true, false, true) => Clear(items),
-				(true, false, false) => (items, CollectionChangeSet.Empty),
+				(true, false, false) => (items, CollectionChangeSet<TItem>.Empty),
 				(true, true, true) => Reset(items, page.Items),
 				(true, true, false) => Add(items, page.Items),
 			};
@@ -225,12 +226,12 @@ internal class PaginatedListFeed<TCursor, TItem> : IListFeed<TItem>, IRefreshabl
 	{
 		var updated = new DifferentialImmutableList<TItem>(page);
 
-		return (updated, ((CollectionAnalyzer)_diffAnalyzer).GetResetChange(current, updated));
+		return (updated, _diffAnalyzer.GetResetChange(current, updated));
 	}
 
 	private (DifferentialImmutableList<TItem> items, CollectionChangeSet changes) Clear(DifferentialImmutableList<TItem> current)
 	{
-		return (DifferentialImmutableList<TItem>.Empty, ((CollectionAnalyzer)_diffAnalyzer).GetResetChange(current, Array.Empty<TItem>()));
+		return (DifferentialImmutableList<TItem>.Empty, _diffAnalyzer.GetResetChange(current, DifferentialImmutableList<TItem>.Empty));
 	}
 
 	private (DifferentialImmutableList<TItem> items, CollectionChangeSet changes) Add(DifferentialImmutableList<TItem> current, IImmutableList<TItem> page)

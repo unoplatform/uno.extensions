@@ -10,6 +10,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Tags;
+using Uno.Extensions.Generators;
 using Uno.Extensions.Reactive.Bindings;
 using Uno.Extensions.Reactive.Config;
 using Uno.Extensions.Reactive.Commands;
@@ -20,98 +21,36 @@ internal record BindableGenerationContext(
 	GeneratorExecutionContext Context,
 
 	// Core types
-	INamedTypeSymbol Feed,
-	INamedTypeSymbol Input,
-	INamedTypeSymbol ListFeed,
-	INamedTypeSymbol CommandBuilder,
-	INamedTypeSymbol CommandBuilderOfT,
+	[ContextType("Uno.Extensions.Reactive.IFeed`1")] INamedTypeSymbol Feed,
+	[ContextType("Uno.Extensions.Reactive.IInput`1")] INamedTypeSymbol Input,
+	[ContextType("Uno.Extensions.Reactive.IListFeed`1")] INamedTypeSymbol ListFeed,
+	[ContextType("Uno.Extensions.Reactive.ICommandBuilder")] INamedTypeSymbol CommandBuilder,
+	[ContextType("Uno.Extensions.Reactive.ICommandBuilder`1")] INamedTypeSymbol CommandBuilderOfT,
 
 	// Generation config attributes
-	INamedTypeSymbol ImplicitCommandsAttribute,
-	INamedTypeSymbol ImplicitCommandParametersAttribute,
+	[ContextType(typeof(ImplicitCommandsAttribute))] INamedTypeSymbol ImplicitCommandsAttribute,
+	[ContextType(typeof(ImplicitFeedCommandParametersAttribute))]  INamedTypeSymbol ImplicitCommandParametersAttribute,
 
 	// Bindable attributes
-	INamedTypeSymbol BindableAttribute,
-	INamedTypeSymbol InputAttribute,
-	INamedTypeSymbol ValueAttribute,
-	INamedTypeSymbol DefaultCtorAttribute,
+	[ContextType(typeof(ReactiveBindableAttribute))] INamedTypeSymbol BindableAttribute,
+	[ContextType(typeof(InputAttribute))] INamedTypeSymbol InputAttribute,
+	[ContextType(typeof(ValueAttribute))] INamedTypeSymbol ValueAttribute,
+	[ContextType(typeof(BindableDefaultConstructorAttribute))]  INamedTypeSymbol DefaultCtorAttribute,
 
 	// Commands attributes
-	INamedTypeSymbol CommandAttribute,
-	INamedTypeSymbol CommandParameterAttribute,
+	[ContextType(typeof(CommandAttribute))] INamedTypeSymbol CommandAttribute,
+	[ContextType(typeof(FeedParameterAttribute))]  INamedTypeSymbol CommandParameterAttribute,
 
 	// General stuff types
-	INamedTypeSymbol CancellationToken,
-	INamedTypeSymbol ImmutableArray,
-	INamedTypeSymbol ImmutableList,
-	INamedTypeSymbol ImmutableQueue,
-	INamedTypeSymbol ImmutableSet,
-	INamedTypeSymbol ImmutableStack)
+	[ContextType(typeof(CancellationToken))] INamedTypeSymbol CancellationToken,
+	[ContextType(typeof(IEnumerable<>))] INamedTypeSymbol IEnumerable,
+	[ContextType(typeof(ImmutableArray<>))] INamedTypeSymbol IImmutableArray,
+	[ContextType(typeof(IImmutableList<>))] INamedTypeSymbol IImmutableList,
+	[ContextType(typeof(ImmutableList<>))] INamedTypeSymbol ImmutableList,
+	[ContextType(typeof(IImmutableQueue<>))] INamedTypeSymbol IImmutableQueue,
+	[ContextType(typeof(IImmutableSet<>))] INamedTypeSymbol IImmutableSet,
+	[ContextType(typeof(IImmutableStack<>))]  INamedTypeSymbol IImmutableStack)
 {
-	public static BindableGenerationContext? TryGet(GeneratorExecutionContext context, out string? error)
-	{
-		var compilation = context.Compilation;
-
-		INamedTypeSymbol? feed = default, input = default, listFeed = default, commandBuilder = default, commandBuilderOfT = default;
-		INamedTypeSymbol? implicitCommandsAttribute = default, implicitCommandParametersAttribute = default;
-		INamedTypeSymbol? bindableAttribute = default, inputAttribute = default, valueAttribute = default, defaultCtorAttribute = default;
-		INamedTypeSymbol? commandAttribute = default, commandParameterAttribute = default;
-		INamedTypeSymbol? cancellationToken = default, immutableArray = default, immutableList = default, immutableQueue = default, immutableSet = default, immutableStack = default;
-
-		IEnumerable<string?> Resolve()
-		{
-			yield return ByName("Uno.Extensions.Reactive.IFeed`1", out feed);
-			yield return ByName("Uno.Extensions.Reactive.IInput`1", out input);
-			yield return ByName("Uno.Extensions.Reactive.IListFeed`1", out listFeed);
-			yield return ByName("Uno.Extensions.Reactive.ICommandBuilder", out commandBuilder);
-			yield return ByName("Uno.Extensions.Reactive.ICommandBuilder`1", out commandBuilderOfT);
-
-			yield return ByType(typeof(ImplicitCommandsAttribute), out implicitCommandsAttribute);
-			yield return ByType(typeof(ImplicitFeedCommandParametersAttribute), out implicitCommandParametersAttribute);
-
-			yield return ByType(typeof(ReactiveBindableAttribute), out bindableAttribute);
-			yield return ByType(typeof(InputAttribute), out inputAttribute);
-			yield return ByType(typeof(ValueAttribute), out valueAttribute);
-			yield return ByType(typeof(BindableDefaultConstructorAttribute), out defaultCtorAttribute);
-
-			yield return ByType(typeof(CommandAttribute), out commandAttribute);
-			yield return ByType(typeof(FeedParameterAttribute), out commandParameterAttribute);
-
-			yield return ByType(typeof(CancellationToken), out cancellationToken);
-			yield return ByType(typeof(ImmutableArray<>), out immutableArray);
-			yield return ByType(typeof(IImmutableList<>), out immutableList);
-			yield return ByType(typeof(IImmutableQueue<>), out immutableQueue);
-			yield return ByType(typeof(IImmutableSet<>), out immutableSet);
-			yield return ByType(typeof(IImmutableStack<>), out immutableStack);
-		}
-
-		string? ByType(Type type, out INamedTypeSymbol symbol)
-			=> ByName(type.FullName, out symbol);
-
-		string? ByName(string type, out INamedTypeSymbol symbol)
-		{
-			symbol = compilation!.GetTypeByMetadataName(type)!;
-			return symbol is null ? type : null;
-		}
-
-		if (Resolve().Where(missing => missing is not null).ToList() is { Count: > 0 } missings)
-		{
-			error = $"Failed to resolve {missings.JoinBy(", ")}";
-			return null;
-		}
-
-		error = null;
-		return new BindableGenerationContext
-		(
-			context,
-			feed!, input!, listFeed!, commandBuilder!, commandBuilderOfT!,
-			implicitCommandsAttribute!, implicitCommandParametersAttribute!,
-			bindableAttribute!, inputAttribute!, valueAttribute!, defaultCtorAttribute!,
-			commandAttribute!, commandParameterAttribute!,
-			cancellationToken!, immutableArray!, immutableList!, immutableQueue!, immutableSet!, immutableStack!
-		);
-	}
-
 	public bool IsGenerationNotDisable(ISymbol symbol)
 		=> IsGenerationEnabled(symbol) ?? true;
 
@@ -234,27 +173,27 @@ internal record BindableGenerationContext(
 			itemType = array.ElementType;
 			return true;
 		}
-		if (type.IsOrImplements(ImmutableArray, out var immutableArray))
+		if (type.IsOrImplements(IImmutableArray, out var immutableArray))
 		{
 			itemType = immutableArray.TypeArguments.Single();
 			return true;
 		}
-		if (type.IsOrImplements(ImmutableList, out var immutableList))
+		if (type.IsOrImplements(IImmutableList, out var immutableList))
 		{
 			itemType = immutableList.TypeArguments.Single();
 			return true;
 		}
-		if (type.IsOrImplements(ImmutableQueue, out var immutableQueue))
+		if (type.IsOrImplements(IImmutableQueue, out var immutableQueue))
 		{
 			itemType = immutableQueue.TypeArguments.Single();
 			return true;
 		}
-		if (type.IsOrImplements(ImmutableSet, out var immutableSet))
+		if (type.IsOrImplements(IImmutableSet, out var immutableSet))
 		{
 			itemType = immutableSet.TypeArguments.Single();
 			return true;
 		}
-		if (type.IsOrImplements(ImmutableStack, out var immutableStack))
+		if (type.IsOrImplements(IImmutableStack, out var immutableStack))
 		{
 			itemType = immutableStack.TypeArguments.Single();
 			return true;

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -8,11 +8,11 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using Windows.UI.Xaml;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestPlatform.Common.Utilities;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Uno.Extensions.Reactive.Config;
+using Uno.Extensions.Reactive.Testing;
 
 namespace Uno.Extensions.Reactive.Tests.Generator;
 
@@ -30,7 +30,7 @@ public partial class Given_Methods_Then_GenerateCommands : FeedUITests
 	[TestMethod]
 	public async Task When_ParameterLess_Void()
 	{
-		var vm = new When_ParameterLess_Void_ViewModel.BindableWhen_ParameterLess_Void_ViewModel();
+		await using var vm = new BindableWhen_ParameterLess_Void_ViewModel();
 
 		vm.MyMethod.Execute(null);
 		await WaitFor(() => vm.InvokeCount == 1);
@@ -54,7 +54,7 @@ public partial class Given_Methods_Then_GenerateCommands : FeedUITests
 	[TestMethod]
 	public async Task When_OneParameter_Void()
 	{
-		var vm = new When_OneParameter_Void_ViewModel.BindableWhen_OneParameter_Void_ViewModel();
+		await using var vm = new BindableWhen_OneParameter_Void_ViewModel();
 
 		vm.MyMethod.Execute("42");
 		await WaitFor(() => vm.InvokeCount == 1);
@@ -79,7 +79,7 @@ public partial class Given_Methods_Then_GenerateCommands : FeedUITests
 	[TestMethod]
 	public async Task When_OneValueTypeParameter_Void()
 	{
-		var vm = new When_OneValueTypeParameter_Void_ViewModel.BindableWhen_OneValueTypeParameter_Void_ViewModel();
+		await using var vm = new BindableWhen_OneValueTypeParameter_Void_ViewModel();
 
 		vm.MyMethod.Execute(new DateTimeOffset(1983, 9, 9, 15, 00, 00, TimeSpan.FromHours(1)));
 		await WaitFor(() => vm.InvokeCount == 1);
@@ -104,7 +104,7 @@ public partial class Given_Methods_Then_GenerateCommands : FeedUITests
 	[TestMethod]
 	public async Task When_OneNullableValueTypeParameter_Void()
 	{
-		var vm = new When_OneNullableValueTypeParameter_Void_ViewModel.BindableWhen_OneNullableValueTypeParameter_Void_ViewModel();
+		await using var vm = new BindableWhen_OneNullableValueTypeParameter_Void_ViewModel();
 
 		vm.MyMethod.Execute(new DateTimeOffset(1983, 9, 9, 15, 00, 00, TimeSpan.FromHours(1)));
 		await WaitFor(() => vm.InvokeCount == 1);
@@ -129,7 +129,7 @@ public partial class Given_Methods_Then_GenerateCommands : FeedUITests
 	[TestMethod]
 	public async Task When_OneParameterAndCT_Void()
 	{
-		var vm = new When_OneParameterAndCT_Void_ViewModel.BindableWhen_OneParameterAndCT_Void_ViewModel();
+		await using var vm = new BindableWhen_OneParameterAndCT_Void_ViewModel();
 
 		vm.MyMethod.Execute("42");
 		await WaitFor(() => vm.InvokeCount == 1);
@@ -161,7 +161,7 @@ public partial class Given_Methods_Then_GenerateCommands : FeedUITests
 	[TestMethod]
 	public async Task When_ParameterLess_Task()
 	{
-		var vm = new When_ParameterLess_Task_ViewModel.BindableWhen_ParameterLess_Task_ViewModel();
+		await using var vm = new BindableWhen_ParameterLess_Task_ViewModel();
 
 		vm.MyMethod.Execute(null);
 		await WaitFor(() => vm.InvokeCount == 1);
@@ -201,7 +201,7 @@ public partial class Given_Methods_Then_GenerateCommands : FeedUITests
 	[TestMethod]
 	public async Task When_OneParameter_Task()
 	{
-		var vm = new When_OneParameter_Task_ViewModel.BindableWhen_OneParameter_Task_ViewModel();
+		await using var vm = new BindableWhen_OneParameter_Task_ViewModel();
 
 		vm.MyMethod.Execute("42");
 		await WaitFor(() => vm.InvokeCount == 1);
@@ -239,7 +239,7 @@ public partial class Given_Methods_Then_GenerateCommands : FeedUITests
 	[TestMethod]
 	public async Task When_ParameterLess_ValueTask()
 	{
-		var vm = new When_ParameterLess_ValueTask_ViewModel.BindableWhen_ParameterLess_ValueTask_ViewModel();
+		await using var vm = new BindableWhen_ParameterLess_ValueTask_ViewModel();
 
 		vm.MyMethod.Execute(null);
 		await WaitFor(() => vm.InvokeCount == 1);
@@ -279,7 +279,7 @@ public partial class Given_Methods_Then_GenerateCommands : FeedUITests
 	[TestMethod]
 	public async Task When_OneParameter_ValueTask()
 	{
-		var vm = new When_OneParameter_ValueTask_ViewModel.BindableWhen_OneParameter_ValueTask_ViewModel();
+		await using var vm = new BindableWhen_OneParameter_ValueTask_ViewModel();
 
 		vm.MyMethod.Execute("42");
 		await WaitFor(() => vm.InvokeCount == 1);
@@ -320,7 +320,7 @@ public partial class Given_Methods_Then_GenerateCommands : FeedUITests
 	[TestMethod]
 	public async Task When_OneParameterAndCT_ValueTask()
 	{
-		var vm = new When_OneParameterAndCT_ValueTask_ViewModel.BindableWhen_OneParameterAndCT_ValueTask_ViewModel();
+		await using var vm = new BindableWhen_OneParameterAndCT_ValueTask_ViewModel();
 
 		vm.MyMethod.Execute("42");
 		await WaitFor(() => vm.InvokeCount == 1);
@@ -357,7 +357,10 @@ public partial class Given_Methods_Then_GenerateCommands : FeedUITests
 	[TestMethod]
 	public async Task When_OneFeedParameter_Void_WithoutCommandParameter()
 	{
-		var vm = new When_OneFeedParameter_Void_ViewModel.BindableWhen_OneFeedParameter_Void_ViewModel();
+		await using var vm = new BindableWhen_OneFeedParameter_Void_ViewModel();
+
+		// We have to wait for the external parameter to be provided by the feed
+		await WaitFor(() => vm.MyMethod.CanExecute(null));
 
 		vm.MyMethod.Execute(null);
 		await WaitFor(() => vm.InvokeCount == 1);
@@ -369,7 +372,7 @@ public partial class Given_Methods_Then_GenerateCommands : FeedUITests
 	[TestMethod]
 	public async Task When_OneFeedParameter_Void_WithCommandParameter()
 	{
-		var vm = new When_OneFeedParameter_Void_ViewModel.BindableWhen_OneFeedParameter_Void_ViewModel();
+		await using var vm = new BindableWhen_OneFeedParameter_Void_ViewModel();
 
 		vm.MyMethod.Execute("43");
 		await WaitFor(() => vm.InvokeCount == 1);
@@ -400,7 +403,10 @@ public partial class Given_Methods_Then_GenerateCommands : FeedUITests
 	[TestMethod]
 	public async Task When_OneFeedParameterAndCT_Void_WithoutCommandParameter()
 	{
-		var vm = new When_OneFeedParameterAndCT_Void_ViewModel.BindableWhen_OneFeedParameterAndCT_Void_ViewModel();
+		await using var vm = new BindableWhen_OneFeedParameterAndCT_Void_ViewModel();
+
+		// We have to wait for the external parameter to be provided by the feed
+		await WaitFor(() => vm.MyMethod.CanExecute(null));
 
 		vm.MyMethod.Execute(null);
 		await WaitFor(() => vm.InvokeCount == 1);
@@ -412,7 +418,7 @@ public partial class Given_Methods_Then_GenerateCommands : FeedUITests
 	[TestMethod]
 	public async Task When_OneFeedParameterAndCT_Void_WithCommandParameter()
 	{
-		var vm = new When_OneFeedParameterAndCT_Void_ViewModel.BindableWhen_OneFeedParameterAndCT_Void_ViewModel();
+		await using var vm = new BindableWhen_OneFeedParameterAndCT_Void_ViewModel();
 
 		vm.MyMethod.Execute("43");
 		await WaitFor(() => vm.InvokeCount == 1);
@@ -449,7 +455,10 @@ public partial class Given_Methods_Then_GenerateCommands : FeedUITests
 	[TestMethod]
 	public async Task When_OneFeedParameter_ValueTask_WithoutCommandParameter()
 	{
-		var vm = new When_OneFeedParameter_ValueTask_ViewModel.BindableWhen_OneFeedParameter_ValueTask_ViewModel();
+		await using var vm = new BindableWhen_OneFeedParameter_ValueTask_ViewModel();
+
+		// We have to wait for the external parameter to be provided by the feed
+		await WaitFor(() => vm.MyMethod.CanExecute(null));
 
 		vm.MyMethod.Execute(null);
 		await WaitFor(() => vm.InvokeCount == 1);
@@ -467,7 +476,7 @@ public partial class Given_Methods_Then_GenerateCommands : FeedUITests
 	[TestMethod]
 	public async Task When_OneFeedParameter_ValueTask_WithCommandParameter()
 	{
-		var vm = new When_OneFeedParameter_ValueTask_ViewModel.BindableWhen_OneFeedParameter_ValueTask_ViewModel();
+		await using var vm = new BindableWhen_OneFeedParameter_ValueTask_ViewModel();
 
 		vm.MyMethod.Execute("43");
 		await WaitFor(() => vm.InvokeCount == 1);
@@ -510,7 +519,10 @@ public partial class Given_Methods_Then_GenerateCommands : FeedUITests
 	[TestMethod]
 	public async Task When_OneListFeedParameter_ValueTask_WithoutCommandParameter()
 	{
-		var vm = new When_OneListFeedParameter_ValueTask_ViewModel.BindableWhen_OneListFeedParameter_ValueTask_ViewModel();
+		await using var vm = new BindableWhen_OneListFeedParameter_ValueTask_ViewModel();
+
+		// We have to wait for the external parameter to be provided by the feed
+		await WaitFor(() => vm.MyMethod.CanExecute(null));
 
 		vm.MyMethod.Execute(null);
 		await WaitFor(() => vm.InvokeCount == 1);
@@ -528,7 +540,7 @@ public partial class Given_Methods_Then_GenerateCommands : FeedUITests
 	[TestMethod]
 	public async Task When_OneListFeedParameter_ValueTask_WithCommandParameter()
 	{
-		var vm = new When_OneListFeedParameter_ValueTask_ViewModel.BindableWhen_OneListFeedParameter_ValueTask_ViewModel();
+		await using var vm = new BindableWhen_OneListFeedParameter_ValueTask_ViewModel();
 
 		vm.MyMethod.Execute(ImmutableList.Create("51", "52", "53"));
 		await WaitFor(() => vm.InvokeCount == 1);
@@ -571,7 +583,10 @@ public partial class Given_Methods_Then_GenerateCommands : FeedUITests
 	[TestMethod]
 	public async Task When_OneFeedParameterAndCT_ValueTask_WithoutCommandParameter()
 	{
-		var vm = new When_OneFeedParameterAndCT_ValueTask_ViewModel.BindableWhen_OneFeedParameterAndCT_ValueTask_ViewModel();
+		await using var vm = new BindableWhen_OneFeedParameterAndCT_ValueTask_ViewModel();
+
+		// We have to wait for the external parameter to be provided by the feed
+		await WaitFor(() => vm.MyMethod.CanExecute(null));
 
 		vm.MyMethod.Execute(null);
 		await WaitFor(() => vm.InvokeCount == 1);
@@ -589,7 +604,7 @@ public partial class Given_Methods_Then_GenerateCommands : FeedUITests
 	[TestMethod]
 	public async Task When_OneFeedParameterAndCT_ValueTask_WithCommandParameter()
 	{
-		var vm = new When_OneFeedParameterAndCT_ValueTask_ViewModel.BindableWhen_OneFeedParameterAndCT_ValueTask_ViewModel();
+		await using var vm = new BindableWhen_OneFeedParameterAndCT_ValueTask_ViewModel();
 
 		vm.MyMethod.Execute("43");
 		await WaitFor(() => vm.InvokeCount == 1);
@@ -602,6 +617,84 @@ public partial class Given_Methods_Then_GenerateCommands : FeedUITests
 		await WaitFor(() => vm.EndedCount == 1);
 
 		vm.EndedCount.Should().Be(1);
+	}
+
+	public partial class When_MultipleFeedParameter_ViewModel
+	{
+		public IFeed<string> MyParameter => Feed.Async(async ct => nameof(MyParameter));
+		public IFeed<string> MyParameter2 => Feed.Async(async ct => nameof(MyParameter2));
+
+		public int InvokeCount { get; set; }
+		public (string method, object[] args) LastInvoke { get; set; }
+
+		public void MyMethod(string myParameter, string myParameter2)
+		{
+			LastInvoke = (nameof(MyMethod), new object[] { myParameter, myParameter2 });
+			InvokeCount++;
+		}
+
+		public void MyMethodWithCt(string myParameter, string myParameter2, CancellationToken ct)
+		{
+			LastInvoke = (nameof(MyMethodWithCt), new object[] { myParameter, myParameter2, _ct });
+			InvokeCount++;
+		}
+	}
+
+	[TestMethod]
+	[DataRow(nameof(When_MultipleFeedParameter_ViewModel.MyMethod))]
+	[DataRow(nameof(When_MultipleFeedParameter_ViewModel.MyMethodWithCt))]
+	public async Task When_MultipleFeedParameter_ViewModel_CanExecuteWithoutParameter(string method)
+	{
+		await using var vm = new BindableWhen_MultipleFeedParameter_ViewModel();
+
+		var commandInfo = vm.GetType().GetMember(method).Single();
+		commandInfo.Should().BeAssignableTo<PropertyInfo>(because: "a command should have been generated for that method");
+
+		var command = ((PropertyInfo)commandInfo).GetValue(vm) as ICommand;
+		command.Should().NotBeNull();
+
+		// We have to wait for the external parameter to be provided by the feed
+		await WaitFor(() => command!.CanExecute(null));
+
+		command!.CanExecute(null).Should().BeTrue();
+	}
+
+	[TestMethod]
+	[DataRow(nameof(When_MultipleFeedParameter_ViewModel.MyMethod))]
+	[DataRow(nameof(When_MultipleFeedParameter_ViewModel.MyMethodWithCt))]
+	public async Task When_MultipleFeedParameter_ViewModel_CanExecuteOnlyWithoutParameter(string method)
+	{
+		await using var vm = new BindableWhen_MultipleFeedParameter_ViewModel();
+
+		var commandInfo = vm.GetType().GetMember(method).Single();
+		commandInfo.Should().BeAssignableTo<PropertyInfo>(because: "a command should have been generated for that method");
+
+		var command = ((PropertyInfo)commandInfo).GetValue(vm) as ICommand;
+		command.Should().NotBeNull();
+
+		command!.CanExecute(_viewParam).Should().BeFalse();
+	}
+
+	[TestMethod]
+	[DataRow(nameof(When_MultipleFeedParameter_ViewModel.MyMethod), nameof(When_MixedViewAndFeedParameter_ViewModel.MyParameter))]
+	[DataRow(nameof(When_MultipleFeedParameter_ViewModel.MyMethodWithCt), nameof(When_MixedViewAndFeedParameter_ViewModel.MyParameter), _ct)]
+	private async Task When_MultipleFeedParameter_ViewModel_ArgsReDispatchedProperly(string method, params string[] expectedArgs)
+	{
+		await using var vm = new BindableWhen_MultipleFeedParameter_ViewModel();
+
+		var commandInfo = vm.GetType().GetMember(method).Single();
+		commandInfo.Should().BeAssignableTo<PropertyInfo>(because: "a command should have been generated for that method");
+
+		var command = ((PropertyInfo)commandInfo).GetValue(vm) as ICommand;
+		command.Should().NotBeNull();
+
+		command!.Execute(null);
+
+		await WaitFor(() => vm.InvokeCount == 1);
+
+		vm.InvokeCount.Should().Be(1);
+		vm.LastInvoke.method.Should().Be(method);
+		vm.LastInvoke.args.Should().BeEquivalentTo(expectedArgs);
 	}
 
 	public partial class When_MixedViewAndFeedParameter_ViewModel
@@ -654,17 +747,20 @@ public partial class Given_Methods_Then_GenerateCommands : FeedUITests
 	[DataRow(nameof(When_MixedViewAndFeedParameter_ViewModel.MyMethodWithCt))]
 	[DataRow(nameof(When_MixedViewAndFeedParameter_ViewModel.MyMethod2))]
 	[DataRow(nameof(When_MixedViewAndFeedParameter_ViewModel.MyMethod2WithCt))]
-	[DataRow(nameof(When_MixedViewAndFeedParameter_ViewModel.MyMethod))]
-	[DataRow(nameof(When_MixedViewAndFeedParameter_ViewModel.MyMethodWithCt))]
+	[DataRow(nameof(When_MixedViewAndFeedParameter_ViewModel.MyMethod3))]
+	[DataRow(nameof(When_MixedViewAndFeedParameter_ViewModel.MyMethod3WithCt))]
 	public async Task When_MixedViewAndFeedParameter_ViewModel_CanExecuteWithParameter(string method)
 	{
-		var vm = new When_MixedViewAndFeedParameter_ViewModel.BindableWhen_MixedViewAndFeedParameter_ViewModel();
+		await using var vm = new BindableWhen_MixedViewAndFeedParameter_ViewModel();
 
 		var commandInfo = vm.GetType().GetMember(method).Single();
 		commandInfo.Should().BeAssignableTo<PropertyInfo>(because: "a command should have been generated for that method");
 
 		var command = ((PropertyInfo)commandInfo).GetValue(vm) as ICommand;
 		command.Should().NotBeNull();
+
+		// We have to wait for the external parameter to be provided by the feed
+		await WaitFor(() => command!.CanExecute(_viewParam));
 
 		command!.CanExecute(_viewParam).Should().BeTrue();
 	}
@@ -674,11 +770,11 @@ public partial class Given_Methods_Then_GenerateCommands : FeedUITests
 	[DataRow(nameof(When_MixedViewAndFeedParameter_ViewModel.MyMethodWithCt))]
 	[DataRow(nameof(When_MixedViewAndFeedParameter_ViewModel.MyMethod2))]
 	[DataRow(nameof(When_MixedViewAndFeedParameter_ViewModel.MyMethod2WithCt))]
-	[DataRow(nameof(When_MixedViewAndFeedParameter_ViewModel.MyMethod))]
-	[DataRow(nameof(When_MixedViewAndFeedParameter_ViewModel.MyMethodWithCt))]
+	[DataRow(nameof(When_MixedViewAndFeedParameter_ViewModel.MyMethod3))]
+	[DataRow(nameof(When_MixedViewAndFeedParameter_ViewModel.MyMethod3WithCt))]
 	public async Task When_MixedViewAndFeedParameter_ViewModel_CanExecuteOnlyWithParameter(string method)
 	{
-		var vm = new When_MixedViewAndFeedParameter_ViewModel.BindableWhen_MixedViewAndFeedParameter_ViewModel();
+		await using var vm = new BindableWhen_MixedViewAndFeedParameter_ViewModel();
 
 		var commandInfo = vm.GetType().GetMember(method).Single();
 		commandInfo.Should().BeAssignableTo<PropertyInfo>(because: "a command should have been generated for that method");
@@ -697,11 +793,11 @@ public partial class Given_Methods_Then_GenerateCommands : FeedUITests
 	[DataRow(nameof(When_MixedViewAndFeedParameter_ViewModel.MyMethodWithCt), _viewParam, nameof(When_MixedViewAndFeedParameter_ViewModel.MyParameter), _ct)]
 	[DataRow(nameof(When_MixedViewAndFeedParameter_ViewModel.MyMethod2), nameof(When_MixedViewAndFeedParameter_ViewModel.MyParameter), _viewParam)]
 	[DataRow(nameof(When_MixedViewAndFeedParameter_ViewModel.MyMethod2WithCt), nameof(When_MixedViewAndFeedParameter_ViewModel.MyParameter), _viewParam, _ct)]
-	[DataRow(nameof(When_MixedViewAndFeedParameter_ViewModel.MyMethod), _viewParam, nameof(When_MixedViewAndFeedParameter_ViewModel.MyParameter), nameof(When_MixedViewAndFeedParameter_ViewModel.MyParameter2))]
-	[DataRow(nameof(When_MixedViewAndFeedParameter_ViewModel.MyMethodWithCt), _viewParam, nameof(When_MixedViewAndFeedParameter_ViewModel.MyParameter), nameof(When_MixedViewAndFeedParameter_ViewModel.MyParameter2), _ct)]
+	[DataRow(nameof(When_MixedViewAndFeedParameter_ViewModel.MyMethod3), _viewParam, nameof(When_MixedViewAndFeedParameter_ViewModel.MyParameter), nameof(When_MixedViewAndFeedParameter_ViewModel.MyParameter2))]
+	[DataRow(nameof(When_MixedViewAndFeedParameter_ViewModel.MyMethod3WithCt), _viewParam, nameof(When_MixedViewAndFeedParameter_ViewModel.MyParameter), nameof(When_MixedViewAndFeedParameter_ViewModel.MyParameter2), _ct)]
 	private async Task When_MixedViewAndFeedParameter_ArgsReDispatchedProperly(string method, params string[] expectedArgs)
 	{
-		var vm = new When_MixedViewAndFeedParameter_ViewModel.BindableWhen_MixedViewAndFeedParameter_ViewModel();
+		await using var vm = new BindableWhen_MixedViewAndFeedParameter_ViewModel();
 
 		var commandInfo = vm.GetType().GetMember(method).Single();
 		commandInfo.Should().BeAssignableTo<PropertyInfo>(because: "a command should have been generated for that method");
@@ -743,7 +839,7 @@ public partial class Given_Methods_Then_GenerateCommands : FeedUITests
 		GetMember(nameof(When_ImplicitCommandDisabled_ViewModel.AsyncWithParameter2)).Should().NotBeNull().And.BeAssignableTo<MethodInfo>();
 
 		MemberInfo GetMember(string name)
-			=> typeof(When_ImplicitCommandDisabled_ViewModel.BindableWhen_ImplicitCommandDisabled_ViewModel).GetMember(name, BindingFlags.Instance | BindingFlags.Public).Single();
+			=> typeof(BindableWhen_ImplicitCommandDisabled_ViewModel).GetMember(name, BindingFlags.Instance | BindingFlags.Public).Single();
 	}
 
 	[TestMethod]
@@ -755,7 +851,7 @@ public partial class Given_Methods_Then_GenerateCommands : FeedUITests
 			.Subject.PropertyType.Should().BeAssignableTo(typeof(ICommand));
 
 		MemberInfo GetMember(string name)
-			=> typeof(When_ImplicitCommandDisabled_ViewModel.BindableWhen_ImplicitCommandDisabled_ViewModel).GetMember(name, BindingFlags.Instance | BindingFlags.Public).Single();
+			=> typeof(BindableWhen_ImplicitCommandDisabled_ViewModel).GetMember(name, BindingFlags.Instance | BindingFlags.Public).Single();
 	}
 
 	[ImplicitFeedCommandParameters(false)]
@@ -773,7 +869,7 @@ public partial class Given_Methods_Then_GenerateCommands : FeedUITests
 	[TestMethod]
 	public async Task When_ImplicitFeedCommandDisabled_ViewModel_Then_ParameterNotUsed()
 	{
-		var vm = new When_ImplicitFeedCommandDisabled_ViewModel.BindableWhen_ImplicitFeedCommandDisabled_ViewModel();
+		await using var vm = new BindableWhen_ImplicitFeedCommandDisabled_ViewModel();
 
 		var subs = GetSubCommands(vm.SyncWithParameter);
 		subs.Should().HaveCount(1);
@@ -791,7 +887,7 @@ public partial class Given_Methods_Then_GenerateCommands : FeedUITests
 	[TestMethod]
 	public async Task When_ImplicitFeedCommandDisabledWithExplicitAttribute_ViewModel_Then_ParameterUsed()
 	{
-		var vm = new When_ImplicitFeedCommandDisabled_ViewModel.BindableWhen_ImplicitFeedCommandDisabled_ViewModel();
+		await using var vm = new BindableWhen_ImplicitFeedCommandDisabled_ViewModel();
 
 		// We wait for the feed parameter to be full-filed
 		await WaitFor(() => vm.WithExplicitAttribute.CanExecute(null));
@@ -799,6 +895,22 @@ public partial class Given_Methods_Then_GenerateCommands : FeedUITests
 
 		GetSubCommands(vm.WithExplicitAttribute).Any(HasExternalParameter).Should().BeTrue(); 
 		GetSubCommands(vm.WithExplicitAttributeWithName).Any(HasExternalParameter).Should().BeTrue();
+	}
+
+	public partial class When_UsingConflictingTypesParameter_ViewModel
+	{
+		public void ConflictWhenNotPrefixedByGlobal1(Uno.System.DateTime parameter) { }
+
+		public void ConflictWhenNotPrefixedByGlobal2(global::System.DateTime parameter) { }
+	}
+
+	[TestMethod]
+	public async Task When_When_UsingConflictingTypesParameter_Then_Compiles()
+	{
+		await using var vm = new BindableWhen_UsingConflictingTypesParameter_ViewModel();
+
+		vm.ConflictWhenNotPrefixedByGlobal1.CanExecute(new Uno.System.DateTime()).Should().BeTrue();
+		vm.ConflictWhenNotPrefixedByGlobal1.CanExecute(new global::System.DateTime()).Should().BeFalse();
 	}
 
 	private async ValueTask WaitFor(Func<bool> predicate)

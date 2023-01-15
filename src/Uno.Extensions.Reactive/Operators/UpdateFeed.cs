@@ -9,26 +9,43 @@ using Uno.Extensions.Reactive.Utils;
 
 namespace Uno.Extensions.Reactive.Operators;
 
-internal record FeedUpdate<T>(Predicate<MessageBuilder<T>> IsActive, Action<MessageBuilder<T>> Apply);
-
-internal class UpdateFeed<T> : IFeed<T>
+internal interface IFeedUpdate<T>
 {
-	private readonly AsyncEnumerableSubject<(UpdateAction action, FeedUpdate<T> update)> _updates = new(ReplayMode.Disabled);
-	private readonly IFeed<T> _source;
+	bool IsActive(bool parentChanged, MessageBuilder<T, T> message);
 
-	private enum UpdateAction
-	{
-		Add,
-		Remove
-	}
+	void Apply(bool parentChanged, MessageBuilder<T, T> message);
+}
+
+internal record FeedUpdate<T>(Func<bool, MessageBuilder<T, T>, bool> IsActive, Action<bool, MessageBuilder<T, T>> Apply) : IFeedUpdate<T>
+{
+	bool IFeedUpdate<T>.IsActive(bool parentChanged, MessageBuilder<T, T> message) => IsActive(parentChanged, message);
+	void IFeedUpdate<T>.Apply(bool parentChanged, MessageBuilder<T, T> message) => Apply(parentChanged, message);
+};
+
+internal sealed class UpdateFeed<T> : IFeed<T>
+{
+	private readonly AsyncEnumerableSubject<(IFeedUpdate<T>[]? added, IFeedUpdate<T>[]? removed)> _updates = new(ReplayMode.Disabled);
+	private readonly IFeed<T> _source;
 
 	public UpdateFeed(IFeed<T> source)
 	{
 		_source = source;
 	}
 
-	public async ValueTask Update(Predicate<MessageBuilder<T>> predicate, Action<MessageBuilder<T>> updater, CancellationToken ct)
-		=> _updates.SetNext((UpdateAction.Add, new FeedUpdate<T>(predicate, updater)));
+	public async ValueTask Update(Func<bool, MessageBuilder<T, T>, bool> predicate, Action<bool, MessageBuilder<T, T>> updater, CancellationToken ct)
+	{
+		var update = new FeedUpdate<T>(predicate, updater);
+		_updates.SetNext((new[] { update }, null));
+	}
+
+	internal void Add(IFeedUpdate<T> update)
+		=> _updates.SetNext((new[] { update }, null));
+
+	internal void Replace(IFeedUpdate<T> previous, IFeedUpdate<T> current)
+		=> _updates.SetNext((new[] { current }, new[] { previous }));
+
+	internal void Remove(IFeedUpdate<T> update)
+		=> _updates.SetNext((null, new[] { update }));
 
 	/// <inheritdoc />
 	public IAsyncEnumerable<Message<T>> GetSource(SourceContext context, CancellationToken ct)
@@ -40,7 +57,7 @@ internal class UpdateFeed<T> : IFeed<T>
 		private readonly AsyncEnumerableSubject<Message<T>> _subject;
 		private readonly MessageManager<T, T> _message;
 
-		private ImmutableList<FeedUpdate<T>> _activeUpdates;
+		private ImmutableList<IFeedUpdate<T>> _activeUpdates;
 		private bool _isInError;
 
 		public UpdateFeedSource(UpdateFeed<T> owner, SourceContext context, CancellationToken ct)
@@ -48,7 +65,7 @@ internal class UpdateFeed<T> : IFeed<T>
 			_ct = ct;
 			_subject = new AsyncEnumerableSubject<Message<T>>(ReplayMode.EnabledForFirstEnumeratorOnly);
 			_message = new MessageManager<T, T>(_subject.SetNext);
-			_activeUpdates = ImmutableList<FeedUpdate<T>>.Empty;
+			_activeUpdates = ImmutableList<IFeedUpdate<T>>.Empty;
 
 			// mode=AbortPrevious => When we receive a new update, we can abort the update and start a new one
 			owner._updates.ForEachAsync(OnUpdateReceived, ct);
@@ -59,29 +76,28 @@ internal class UpdateFeed<T> : IFeed<T>
 		public IAsyncEnumerator<Message<T>> GetAsyncEnumerator(CancellationToken ct = default)
 			=> _subject.GetAsyncEnumerator(ct);
 
-		private void OnUpdateReceived((UpdateAction action, FeedUpdate<T> update) args)
+		private void OnUpdateReceived((IFeedUpdate<T>[]? added, IFeedUpdate<T>[]? removed) args)
 		{
 			lock (this)
 			{
-				switch (args.action)
+				var canDoIncrementalUpdate = !_isInError;
+				if (args.removed is { Length: > 0 } removed)
 				{
-					case UpdateAction.Add:
-						_activeUpdates = _activeUpdates.Add(args.update);
-						if (!_isInError)
-						{
-							IncrementalUpdate(args.update);
-							return;
-						}
-						break;
-
-					case UpdateAction.Remove:
-						_activeUpdates = _activeUpdates.Remove(args.update);
-						break;
-
-					default:
-						throw new ArgumentOutOfRangeException($"Unkown update action '{args.action}'");
+					canDoIncrementalUpdate = false;
+					_activeUpdates = _activeUpdates.RemoveRange(removed);
 				}
-				
+
+				if (args.added is { Length: > 0 } added)
+				{
+					_activeUpdates = _activeUpdates.AddRange(added);
+
+					if (canDoIncrementalUpdate)
+					{
+						IncrementalUpdate(added);
+						return;
+					}
+				}
+
 				RebuildMessage(parentMsg: default);
 			}
 		}
@@ -94,27 +110,31 @@ internal class UpdateFeed<T> : IFeed<T>
 			}
 		}
 
-		private void IncrementalUpdate(FeedUpdate<T> update)
-			=> _message.Update(
+		private void IncrementalUpdate(IFeedUpdate<T>[] updates)
+		{
+			_message.Update(
 				(current, u) =>
 				{
 					try
 					{
 						var msg = current.With();
-						u.Apply(new (msg.Get, ((IMessageBuilder)msg).Set));
+						foreach (var update in u)
+						{
+							update.Apply(false, msg);
+						}
 						return msg;
 					}
 					catch (Exception error)
 					{
 						_isInError = true;
-						return current
-							.WithParentOnly(null)
+						return current.WithParentOnly(null)
 							.Data(Option<T>.Undefined())
 							.Error(error);
 					}
 				},
-				update,
+				updates,
 				_ct);
+		}
 
 		private void RebuildMessage(Message<T>? parentMsg)
 		{
@@ -124,13 +144,13 @@ internal class UpdateFeed<T> : IFeed<T>
 				{
 					try
 					{
+						var parentChanged = parent is not null;
 						var msg = current.WithParentOnly(parent);
 						foreach (var update in _activeUpdates)
 						{
-							var builder = new MessageBuilder<T>(msg.Get, ((IMessageBuilder)msg).Set);
-							if (update.IsActive(builder))
+							if (update.IsActive(parentChanged, msg))
 							{
-								update.Apply(builder);
+								update.Apply(parentChanged, msg);
 							}
 							else
 							{
