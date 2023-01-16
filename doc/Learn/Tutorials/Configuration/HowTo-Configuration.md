@@ -3,7 +3,7 @@ uid: Learn.Tutorials.Configuration.HowToConfiguration
 ---
 # How-To: Get Started with Configuration
 
-`Uno.Extensions.Configuration` provides you with a consistent way to view configuration data from a number of distinct sources. It leverages the `IOptions<T>` interface from [Microsoft.Extensions.Options](https://docs.microsoft.com/dotnet/api/microsoft.extensions.options) to offer [read-only](https://docs.microsoft.com/dotnet/core/extensions/configuration#concepts-and-abstractions) access to values organized into sections. Unlike the Writable Configuration (aka Settings) [pattern](./HowTo-WritableConfiguration.md), this does not allow for programmatic writing by itself.
+`Uno.Extensions.Configuration` provides you with a consistent way to view configuration data from a number of distinct sources. It leverages the `IOptions<T>` interface from [Microsoft.Extensions.Options](https://docs.microsoft.com/dotnet/api/microsoft.extensions.options) to offer [read-only](https://docs.microsoft.com/dotnet/core/extensions/configuration#concepts-and-abstractions) access to values organized into sections. Unlike the [Writable Configuration](xref:Learn.Tutorials.Configuration.HowToWritableConfiguration) (aka Settings) pattern, this does not allow for programmatic writing by itself.
 
 ## Step-by-steps
 

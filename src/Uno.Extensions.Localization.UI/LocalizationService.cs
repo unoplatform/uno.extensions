@@ -3,7 +3,7 @@ using Uno.Extensions.Hosting;
 
 namespace Uno.Extensions.Localization;
 
-public class LocalizationService : IServiceInitialize, ILocalizationService
+public class LocalizationService : IServiceInitialize, ILocalizationService, IDisposable
 {
 	private static string DefaultCulture = "en-US";
 
@@ -25,21 +25,21 @@ public class LocalizationService : IServiceInitialize, ILocalizationService
 		get
 		{
 			var settingsCulture = _settings?.CurrentValue?.CurrentCulture?.AsCulture();
-			if(settingsCulture is null)
+			if (settingsCulture is null)
 			{
 				var defaultCulture = ApplicationLanguages.PrimaryLanguageOverride ??
 							CultureInfo.DefaultThreadCurrentUICulture?.Name ??
 							CultureInfo.DefaultThreadCurrentCulture?.Name ??
 							_uiThread?.CurrentUICulture?.Name ??
 							_uiThread?.CurrentCulture?.Name;
-				settingsCulture = string.IsNullOrWhiteSpace(defaultCulture)?
-									SupportedCultures.First():
-									SupportedCultures.FirstOrDefault(x=>x.Name==defaultCulture) ??		// Handles full culture match  eg en-AU == en-AU
-										SupportedCultures.FirstOrDefault(x=>x.Name.StartsWith(defaultCulture))?? // Handles language only match eg en-AU.StartsWith(en)
-										SupportedCultures.First(); 
+				settingsCulture = string.IsNullOrWhiteSpace(defaultCulture) ?
+									SupportedCultures.First() :
+									SupportedCultures.FirstOrDefault(x => x.Name == defaultCulture) ??      // Handles full culture match  eg en-AU == en-AU
+										SupportedCultures.FirstOrDefault(x => x.Name.StartsWith(defaultCulture)) ?? // Handles language only match eg en-AU.StartsWith(en)
+										SupportedCultures.First();
 
 			}
-			return	settingsCulture;
+			return settingsCulture;
 		}
 	}
 
@@ -104,5 +104,11 @@ public class LocalizationService : IServiceInitialize, ILocalizationService
 		return
 			SupportedCultures.FirstOrDefault(supported => supported.Name == culture.Name) ??
 			SupportedCultures.FirstOrDefault(supported => supported.TwoLetterISOLanguageName == culture.TwoLetterISOLanguageName);
+	}
+
+	public void Dispose()
+	{
+		_settingsListener?.Dispose();
+		_settingsListener = null;
 	}
 }

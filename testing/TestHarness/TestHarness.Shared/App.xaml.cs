@@ -27,7 +27,20 @@ public sealed partial class App : Application
 		_window = Window.Current;
 #endif
 
-
+		// Need to manually create and then dispose an IHost in order to set
+		// the correct locale for the app. This is required for the Localization
+		// tests to work when app is restarted
+		var host = UnoHost
+					.CreateDefaultBuilder()
+					.UseConfiguration(
+						configureHostConfiguration: builder => builder.AddSectionFromEntity(new LocalizationConfiguration { Cultures = new[] { "en", "en-AU", "fr" } }))
+					.UseLocalization()
+					.Build();
+		var locals = host.Services.GetServices<IServiceInitialize>();
+		foreach (var local in locals.OfType<IDisposable>())
+		{
+			local.Dispose();
+		}
 
 		var rootFrame = _window.Content as TestFrameHost;
 

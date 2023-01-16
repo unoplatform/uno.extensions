@@ -21,7 +21,22 @@ public App()
 }
 ```
 
-## Async Initialization
+## Service Initialization
+
+Some service instances need to be created and initialized as soon as possible after the `IHost` has been built. The `IServiceInitialize` interface identifies services that need to be created and initialize immediately after the `IHost` instance is created 
+
+```csharp 
+public interface IServiceInitialize
+{
+	void Initialize();
+}
+```
+
+> [!TIP]
+> Avoid using the `IServiceInitialize` interface unless absolutely required as it will add to the startup time for the application. It's recommended to implement the IHostedService interface for services that can be created and started asynchronously (see next section).
+
+
+## Async Initialization with IHostedService
 
 The initialization of the application hosting is intentionally a synchronous process which makes it unsuitable for long running initialization code. Asynchronous initialization can be done by registering an implementation of IHostedService. eg:
 
@@ -65,10 +80,10 @@ protected override void OnLaunched(LaunchActivatedEventArgs e)
 }
 ```
 
-If you require your hosted service to start prior to the first navigation (if using [Navigation](./07-Navigation.md)) you can implement the `IStartupService` interface, returning a task that can be awaited in the `StartupComplete` method. This might be useful for pre-loading data in order to work out which view to navigate to eg:
+If you require your hosted service to complete startup prior to the first navigation (if using [Navigation](xref:uid: Overview.Navigation)) you can implement the `IStartupService` interface, returning a task that can be awaited in the `StartupComplete` method. This might be useful for pre-loading data in order to work out which view to navigate to eg:
 
 ```csharp
-public class SimpleStartupService:IHostedService, IStartupService
+public class SimpleStartupService : IHostedService, IStartupService
 {
 	private TaskCompletionSource<object> _completion = new TaskCompletionSource<object>();
 	public Task StartAsync(CancellationToken cancellationToken)
@@ -129,8 +144,7 @@ The current hosting environment can also used when configuring the host builder.
         .Build();
 ```
 
-**NOTE: In general it's good to avoid writing code that contains logic specific to any environment. It's preferable to have all environments behave as close as possible to each other, thus minimizing any environment specific bugs that may be introduced by environment specific code.
-
-Any environment specific secure variables should be set as part of a multi-environment CI/CD pipeline. For example service urls, application key, account information etc. Non-secure per-environment variables can be included using a settings file (this is covered in [Configuration](./02 Configuration.md).  
-
+> [!TIP]
+> In general it's good to avoid writing code that contains logic specific to any environment. It's preferable to have all environments behave as close as possible to each other, thus minimizing any environment specific bugs that may be introduced by environment specific code.  
+> Any environment specific secure variables should be set as part of a multi-environment CI/CD pipeline. For example service urls, application key, account information etc. Non-secure per-environment variables can be included using a settings file (this is covered in [Configuration](xref:uid: Overview.Configuration).  
 
