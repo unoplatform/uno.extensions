@@ -2,6 +2,7 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
+using Windows.ApplicationModel;
 using Application = Microsoft.UI.Xaml.Application;
 
 namespace MyExtensionsApp;

@@ -1,6 +1,6 @@
+//+:cnd:noEmit
 #if useCsharpMarkup
 using MyExtensionsApp.Infrastructure;
-
 #endif
 using Microsoft.UI.Xaml;
 using Application = Microsoft.UI.Xaml.Application;
