@@ -26,6 +26,9 @@ global using Microsoft.UI.Xaml.Navigation;
 global using Microsoft.Extensions.Options;
 #endif
 global using MyExtensionsApp.Business.Models;
+#if (useInfrastructureNamespace)
+global using MyExtensionsApp.Infrastructure;
+#endif
 #if (notFrameNav)
 global using MyExtensionsApp.Presentation;
 #endif
@@ -58,6 +61,8 @@ global using Uno.Toolkit.UI;
 #endif
 #endif
 global using Windows.ApplicationModel;
+global using Application = Microsoft.UI.Xaml.Application;
+global using ApplicationExecutionState = Windows.ApplicationModel.Activation.ApplicationExecutionState;
 #if useCsharpMarkup
 global using Button = Microsoft.UI.Xaml.Controls.Button;
 global using Color = Windows.UI.Color;

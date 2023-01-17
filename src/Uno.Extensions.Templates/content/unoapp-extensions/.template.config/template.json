@@ -443,6 +443,11 @@
       "datatype": "bool",
       "value": "navigation != 'frame'"
     },
+    "useInfrastructureNamespace": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "(useDefaultAppTemplate && http) || useCsharpMarkup"
+    },
     "HostIdentifier": {
       "type": "bind",
       "binding": "HostIdentifier"
@@ -716,6 +721,7 @@
             "MyExtensionsApp/Presentation/**",
             "MyExtensionsApp/Services/**",
             "MyExtensionsApp/Styles/**",
+            "MyExtensionsApp/AppStart.cs",
             "MyExtensionsApp/appsettings.*",
             "MyExtensionsApp.Base/App.default.cs",
             "MyExtensionsApp.Tests/AppInfoTests.cs"

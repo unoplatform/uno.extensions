@@ -5,6 +5,7 @@
 dotnet new uninstall Uno.Extensions.Templates
 dotnet build -p:Version=$Version -c Release
 if($LASTEXITCODE -ne 0) {
+    Write-Error "Building NuGet Package failed."
     exit $LASTEXITCODE
 }
 dotnet new install $PSScriptRoot\bin\Uno.Extensions.Templates\Release\Uno.Extensions.Templates.$Version.nupkg

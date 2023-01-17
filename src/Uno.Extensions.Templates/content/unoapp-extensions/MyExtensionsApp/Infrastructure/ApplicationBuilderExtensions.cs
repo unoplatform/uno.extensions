@@ -1,7 +1,7 @@
 //-:cnd:noEmit
 namespace MyExtensionsApp;
 
-public static class ApplicationBuilderExtensions
+internal static class ApplicationBuilderExtensions
 {
 	public static IApplicationBuilder ConfigureResources(this IApplicationBuilder builder)
 	{

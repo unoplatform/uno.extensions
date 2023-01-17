@@ -39,33 +39,22 @@
 		<!--#endif-->
 		<PackageReference Include="Uno.Themes.WinUI.Markup" Version="2.5.0-dev.6" />
 		<!--#endif-->
-		<!--#if (useDefaultAppTemplate)-->
 		<!--#if (!useMvux) -->
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.0.0" />
 		<!--#endif -->
-		<PackageReference Include="Uno.Extensions.Authentication" Version="255.255.255.255" />
 		<!--#if (useConfiguration)-->
 		<PackageReference Include="Uno.Extensions.Configuration" Version="255.255.255.255" />
 		<!--#endif-->
 		<PackageReference Include="Uno.Extensions.Core" Version="255.255.255.255" />
-		<PackageReference Include="Uno.Extensions.Hosting" Version="255.255.255.255" />
 		<!--#if (http)-->
 		<PackageReference Include="Uno.Extensions.Http" Version="255.255.255.255" />
 		<PackageReference Include="Uno.Extensions.Http.Refit" Version="255.255.255.255" />
 		<!--#endif-->
-		<!--#if (localization)-->
-		<PackageReference Include="Uno.Extensions.Localization" Version="255.255.255.255" />
-		<!--#endif-->
-		<!--#if (logging && !useSerilog)-->
+		<!--#if (logging)-->
 		<PackageReference Include="Uno.Extensions.Logging.WinUI" Version="255.255.255.255" />
-		<!--#endif-->
 		<!--#if (useSerilog)-->
 		<PackageReference Include="Uno.Extensions.Logging.Serilog" Version="255.255.255.255" />
 		<!--#endif-->
-		<PackageReference Include="Uno.Extensions.Navigation" Version="255.255.255.255" />
-		<!--#endif-->
-		<!--#if (useMvux) -->
-		<PackageReference Include="Uno.Extensions.Reactive" Version="255.255.255.255" />
 		<!--#endif-->
 		<PackageReference Include="Uno.Extensions.Serialization" Version="255.255.255.255" />
 		<!--#if (http)-->

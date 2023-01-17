@@ -24,7 +24,7 @@ public partial record MainModel
 		Title = "Main - MyExtensionsApp";
 #endif
 //-:cnd:noEmit
-		Name = State<string>.Value(this, ()=>"");
+		Name = State<string>.Value(this, () => string.Empty);
 	}
 
 	public async Task GoToSecond()

@@ -55,6 +55,12 @@
 		<!--#if (localization)-->
 		<PackageReference Include="Uno.Extensions.Localization" />
 		<!--#endif-->
+		<!--#if (logging)-->
+		<PackageReference Include="Uno.Extensions.Logging.WinUI" />
+		<!--#if (useSerilog)-->
+		<PackageReference Include="Uno.Extensions.Logging.Serilog" />
+		<!--#endif-->
+		<!--#endif-->
 		<PackageReference Include="Uno.Extensions.Navigation" />
 		<!--#if (useMvux) -->
 		<PackageReference Include="Uno.Extensions.Reactive" />
