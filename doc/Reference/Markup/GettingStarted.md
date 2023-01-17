@@ -9,6 +9,12 @@ Uno.Extensions.Markup is a collection of packages to make it easier for develope
 
 In addition to the core package and generator the Uno team is shipping and will begin shipping a growing set of pre-generated extension libraries for building your apps with C# Markup. These libraries include Uno.WinUI, Uno.Extensions and the Uno.Toolkit. You can find the package with the naming convention `{package name}.Markup`.
 
+- [Uno.WinUI.Markup](https://www.nuget.org/packages/Uno.WinUI.Markup)
+- [Uno.Toolkit.WinUI.Markup](https://www.nuget.org/packages/Uno.Toolkit.WinUI.Markup)
+- [Uno.Material.WinUI.Markup](https://www.nuget.org/packages/Uno.Material.WinUI.Markup)
+- [Uno.Extensions.Navigation.WinUI.Markup](https://www.nuget.org/packages/Uno.Extensions.Navigation.WinUI.Markup)
+- [Uno.Extensions.Reactive.WinUI.Markup](https://www.nuget.org/packages/Uno.Extensions.Reactive.WinUI.Markup)
+
 > [!TIP]
 > For more information on generating extensions on your own libraries see [Generating Extensions](xref:Reference.Markup.GeneratingExtensions).
 
