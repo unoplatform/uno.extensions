@@ -23,13 +23,17 @@ inputs:
     required: false
     default: '90'
   certificate: 
-     description: "Base64 Certificate for signing .Msix package"
-     required: true
+     description: "Base64 Certificate for signing .Msix package. Required if 'sign-package': 'true'"
+     required: false
      default: ''
   sign-package: 
      description: "Defines if final .msix package will be signed using certificate input"
      required: false
-     default: 'true'     
+     default: 'false'
+  publish-artifacts: 
+     description: "If true, compilation artifacts will be published and put under Job Summary section"
+     required: false
+     default: 'true'               
 runs:
   using: "composite"
   steps:
@@ -78,9 +82,10 @@ runs:
         Write-Host "Creating package folder: $finalPackageFolder"
         New-Item -ItemType Directory -Force -Path $finalPackageFolder
 
-        $finalPackageName = "$finalPackageFolder\${{ inputs.package-id }}(${{ inputs.project-platform }})_${{ steps.gitversion.outputs.assemblySemVer }}.zip"
-        Write-Host "Compressing final package: $finalPackageName"
-        Compress-Archive -Path '${{ inputs.project-folder }}\bin\Release${{ inputs.package-id }}\*' -DestinationPath $finalPackageName      
+        if ('true' -eq '${{ inputs.publish-artifacts }}') {
+          Write-Host "Compressing final package: $finalPackageName"
+          Copy-Item -Path '${{ inputs.project-folder }}\bin\Release${{ inputs.package-id }}\*' -Destination ".\artifacts${{ inputs.package-id }}" -recurse -Force  
+        } 
       
       env:
         Appx_Bundle: Never

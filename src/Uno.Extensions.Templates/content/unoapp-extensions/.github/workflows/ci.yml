@@ -13,16 +13,36 @@ on:
       - release/**
 
 env:
-  #[REQUIRED FOR build_winUI if sign-package: 'true']
+  # *** [REQUIRED FOR GENERATING SIGNED .MSIX PACKAGE] ***
+  #For Creating a valid PFX certificate:
+  # 1.- Open a new powershell terminal as administrator and use this command: New-SelfSignedCertificate -DnsName {YOURCERT.NAME.COM} -CertStoreLocation cert:\LocalMachine\My
+  # 2.-When Finished press Win + R and type  certlm.msc. Then go to Personal folder -> Certificates and you should be able to see your previously created certificate
+  # 3.-Double Click it then go to Details tab. Click on the bottom right button 'Copy to file'. A wizard will open
+  # 4.-On first page Click Next 
+  #   -> Second page click "Yes, Export the private key" 
+  #   -> Third page select third option "PKCS #12 (.PFX)" and click on Next 
+  #   -> In Fourth page (Security) set a password for the certificate and click on Next
+  #   -> In last page please set a Name for the certificate and select where to put it. Use a simple location like C:\
+  # 5.-Last part consists in converting the .pfx certificate to Base64 format. For doing that please navigate to the path where you exported the certificate (C:\ in this example) and open a Powershell terminal as administrator, then use this command: [convert]::ToBase64String((Get-Content -path "C:\{YOUR_PFX_FILE.pfx}" -Encoding byte))
+  # 6.-After that you will be able to see the Base64 string in the terminal output. Now you can copy that string and create a new Encrypted Secret in your repository and then use it as variable value. 
+  # See how to create an encrypted secret in here:https://docs.github.com/es/actions/security-guides/encrypted-secrets
   WINUI_BASE64_PFX_CERTIFICATE: ""
   
-  #[REQUIRED FOR build_Android]
+  # *** [REQUIRED FOR GENERATING SIGNED .APK PACKAGE] ***
+  # For creating a valid .jks certificate:
+  # 1.- Go to C:\ and open a powershell terminal as administrator
+  # 2.- Copy and paste this command keytool –genkey –alias contoso -keyalg RSA –keystore cert.jks –keysize 2048 and execute it
+  # 3.- You will be asked to answer some questions like Password, Alias, Country, etc for your certificate
+  # 4.-Last part consists in converting the .pfx certificate to Base64 format, so navigate to C:\ and copy and paste this command: [convert]::ToBase64String((Get-Content -path "C:\{YOUR_JKS_FILE.jks}" -Encoding byte))
+  # 5.-After that you will be able to see the Base64 string in the terminal output. Now you can copy that string and create a new Encrypted Secret in your repository and then use it as variable value. 
+  # See how to create an encrypted secret in here:https://docs.github.com/es/actions/security-guides/encrypted-secrets
   ANDROID_BASE64_JKS_CERTIFICATE: ""
   ANDROID_JKS_CERTIFICATE_PASSWORD: ""
   ANDROID_JKS_CERTIFICATE_ALIAS: ""
+  
 jobs:
-  build_tool:
-    name: Build MyExtensionsApp
+  build_android:
+    name: Build Android Unsigned
     runs-on: windows-latest
     timeout-minutes: 60
     steps:
@@ -32,82 +52,149 @@ jobs:
          fetch-depth: 0 
 
       - name: Install Dependencies
-        uses: "./.github/workflows/steps/install_dependencies"         
-       
-      ###################################################################
-      #  MAKE SURE TOP VARIABLES ARE NOT EMPTY BEFORE RUNNING THIS STEP #                                     
-      ###################################################################
-      # - name: Build and Sign Mobile (Android)
-      #   uses: "./.github/workflows/steps/build_android"
-      #   with:
-      #     package-id: "Mobile_Android_Signed"
-      #     certificate:  "$ANDROID_BASE64_JKS_CERTIFICATE"
-      #     certificate-password: "$ANDROID_JKS_CERTIFICATE_PASSWORD"
-      #     certificate-alias: "$ANDROID_JKS_CERTIFICATE_ALIAS"
-      #     project-to-build: "MyExtensionsApp.Mobile/MyExtensionsApp.Mobile.csproj" 
-
+        uses: "./.github/workflows/steps/install_dependencies"                
+      
       - name: Build Mobile (Android)
         uses: "./.github/workflows/steps/build_mobile"
         with:
-          package-id: "Mobile_Android"
-          project-to-build: "MyExtensionsApp.Mobile/MyExtensionsApp.Mobile.csproj" 
+          package-id: "Android"
+          project-to-build: "Demo.Mobile/Demo.Mobile.csproj" 
           target-framework: "net6.0-android"
 
+  build_ios:
+    name: Build iOS
+    runs-on: windows-latest
+    timeout-minutes: 60
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+         fetch-depth: 0 
+
+      - name: Install Dependencies
+        uses: "./.github/workflows/steps/install_dependencies"                
+      
       - name: Build Mobile (iOS)
         uses: "./.github/workflows/steps/build_mobile"
         with:
           package-id: "Mobile_iOS"
-          project-to-build: "MyExtensionsApp.Mobile/MyExtensionsApp.Mobile.csproj" 
+          project-to-build: "Demo.Mobile/Demo.Mobile.csproj" 
           target-framework: "net6.0-ios"
 
+  build_maccatalyst:
+    name: Build MacCatalyst
+    runs-on: windows-latest
+    timeout-minutes: 60
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+         fetch-depth: 0 
+
+      - name: Install Dependencies
+        uses: "./.github/workflows/steps/install_dependencies"                
+      
       - name: Build Mobile (MacCatalyst)
         uses: "./.github/workflows/steps/build_mobile"
         with:
           package-id: "Mobile_MacCatalyst"
-          project-to-build: "MyExtensionsApp.Mobile/MyExtensionsApp.Mobile.csproj" 
+          project-to-build: "Demo.Mobile/Demo.Mobile.csproj" 
           target-framework: "net6.0-maccatalyst"
 
+  build_wasm:
+    name: Build Wasm
+    runs-on: windows-latest
+    timeout-minutes: 60
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+         fetch-depth: 0 
+
+      - name: Install Dependencies
+        uses: "./.github/workflows/steps/install_dependencies"                
+      
       - name: Build Wasm
         uses: "./.github/workflows/steps/build_wasm"
         with:
           package-id: "Wasm"
-          project-to-build: "MyExtensionsApp.Wasm/MyExtensionsApp.Wasm.csproj" 
+          project-to-build: "Demo.Wasm/Demo.Wasm.csproj" 
 
-      ###################################################################
-      #  MAKE SURE TOP VARIABLES ARE NOT EMPTY BEFORE RUNNING THIS STEP #                                     
-      ###################################################################
-      # - name: Build and Publish Windows(Signed)
-      #   uses: "./.github/workflows/steps/build_winUI"
-      #   with:
-      #     package-id: "WindowsSigned"
-      #     certificate: "$WINUI_BASE64_PFX_CERTIFICATE"
-      #     project-to-build: "MyExtensionsApp.Windows/MyExtensionsApp.Windows.csproj"  
-      #     project-folder: "MyExtensionsApp.Windows" 
+  build_windows_unsigned:
+    name: Build Windows Unsigned
+    runs-on: windows-latest
+    timeout-minutes: 60
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+         fetch-depth: 0 
 
+      - name: Install Dependencies
+        uses: "./.github/workflows/steps/install_dependencies"                
+      
       - name: Build and Publish Windows(Unsigned)
-        uses: "./.github/workflows/steps/build_winUI"
+        uses: "./.github/workflows/steps/build_windows"
         with:
           package-id: "WindowsUnsigned"
-          sign-package: 'false'
-          project-to-build: "MyExtensionsApp.Windows/MyExtensionsApp.Windows.csproj"  
-          project-folder: "MyExtensionsApp.Windows"            
+          project-to-build: "Demo.Windows/Demo.Windows.csproj"  
+          project-folder: "Demo.Windows"            
 
+  build_linux:
+    name: Build Linux
+    runs-on: windows-latest
+    timeout-minutes: 60
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+         fetch-depth: 0 
+
+      - name: Install Dependencies
+        uses: "./.github/workflows/steps/install_dependencies"                
+      
       - name: Build Linux
         uses: "./.github/workflows/steps/build_desktop"
         with:
           package-id: "Linux"
-          project-to-build: "MyExtensionsApp.Skia.Linux.FrameBuffer/MyExtensionsApp.Skia.Linux.FrameBuffer.csproj"  
+          project-to-build: "Demo.Skia.Linux.FrameBuffer/Demo.Skia.Linux.FrameBuffer.csproj"  
 
+  build_wpf:
+    name: Build WPF
+    runs-on: windows-latest
+    timeout-minutes: 60
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+         fetch-depth: 0 
+
+      - name: Install Dependencies
+        uses: "./.github/workflows/steps/install_dependencies"                
+      
       - name: Build WPF
         uses: "./.github/workflows/steps/build_desktop"
         with:
           package-id: "WPF"
-          project-to-build: "MyExtensionsApp.Skia.WPF/MyExtensionsApp.Skia.WPF.csproj"  
+          project-to-build: "Demo.Skia.WPF/Demo.Skia.WPF.csproj"  
 
-      #THIS STEP IS THE LAST ONE AS IT TAKES MORE TIME TO INSTALL AND CONFIGURE GTK DEPENDENCIES            
+  build_gtk:
+    name: Build Gtk
+    runs-on: windows-latest
+    timeout-minutes: 60
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+         fetch-depth: 0 
+
+      - name: Install Dependencies
+        uses: "./.github/workflows/steps/install_dependencies"       
+        with:
+          install-gtk: 'true'           
+              
       - name: Build GTK
         uses: "./.github/workflows/steps/build_desktop"
         with:
           package-id: "GTK"
-          project-to-build: "MyExtensionsApp.Skia.Gtk/MyExtensionsApp.Skia.Gtk.csproj"  
-          is-gtk: 'true'                                 
+          project-to-build: "Demo.Skia.Gtk/Demo.Skia.Gtk.csproj"                            
