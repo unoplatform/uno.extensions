@@ -23,11 +23,12 @@ public record MessageDialogViewMap(
 	Type? ViewModel = default,
 	DataMap? Data = default,
 	Type? ResultData = default
-) : ViewMap<MessageDialog>(
-		ViewModel,
-		Data,
-		ResultData,
-		new MessageDialogAttributes(
+) : ViewMap(
+		View: typeof(MessageDialog),
+		ViewModel: ViewModel,
+		Data: Data,
+		ResultData: ResultData,
+		ViewAttributes: new MessageDialogAttributes(
 			ContentProvider: _ => Content,
 			TitleProvider: _ => Title,
 			DelayUserInput,
@@ -48,11 +49,12 @@ public record LocalizableMessageDialogViewMap(
 	Type? ViewModel = default,
 	DataMap? Data = default,
 	Type? ResultData = default
-) : ViewMap<MessageDialog>(
-		ViewModel,
-		Data,
-		ResultData,
-		new MessageDialogAttributes(
+) : ViewMap(
+		View: typeof(MessageDialog),
+		ViewModel: ViewModel,
+		Data: Data,
+		ResultData: ResultData,
+		ViewAttributes: new MessageDialogAttributes(
 			ContentProvider: Content,
 			TitleProvider: Title,
 			DelayUserInput,

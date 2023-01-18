@@ -38,14 +38,21 @@ public record ViewMap<TView>(
 	Type? ResultData = null,
 	object? ViewAttributes = null
 ) : ViewMap(View: typeof(TView), ViewModel: ViewModel, Data: Data, ResultData: ResultData, ViewAttributes: ViewAttributes)
+	where TView: class, new()
 {
+	public override void RegisterTypes(IServiceCollection services)
+	{
+		services.AddTransient<TView>(sp => new TView());
+		base.RegisterTypes(services);
+	}
 }
 
 public record ViewMap<TView, TViewModel>(
 	DataMap? Data = null,
 	Type? ResultData = null,
 	object? ViewAttributes = null
-) : ViewMap(View: typeof(TView), ViewModel: typeof(TViewModel), Data: Data, ResultData: ResultData, ViewAttributes: ViewAttributes)
+) : ViewMap<TView>(ViewModel: typeof(TViewModel), Data: Data, ResultData: ResultData, ViewAttributes: ViewAttributes)
+	where TView : class, new()
 {
 }
 
@@ -54,7 +61,8 @@ public record DataViewMap<TView, TViewModel, TData>(
 	Func<IServiceProvider, IDictionary<string, object>, Task<TData?>>? FromQuery = null,
 	Type? ResultData = null,
 	object? ViewAttributes = null
-) : ViewMap(View: typeof(TView), ViewModel: typeof(TViewModel), Data: new DataMap<TData>(ToQuery, FromQuery), ResultData: ResultData, ViewAttributes: ViewAttributes)
+) : ViewMap<TView,TViewModel>(Data: new DataMap<TData>(ToQuery, FromQuery), ResultData: ResultData, ViewAttributes: ViewAttributes)
+	where TView : class, new()
 	where TData : class
 {
 }
@@ -62,8 +70,9 @@ public record DataViewMap<TView, TViewModel, TData>(
 public record ResultDataViewMap<TView, TViewModel, TResultData>(
 	DataMap? Data = null,
 	object? ViewAttributes = null
-) : ViewMap(View: typeof(TView), ViewModel: typeof(TViewModel), Data: Data, ResultData: typeof(TResultData), ViewAttributes: ViewAttributes)
-		where TResultData : class
+) : ViewMap<TView,TViewModel>(Data: Data, ResultData: typeof(TResultData), ViewAttributes: ViewAttributes)
+	where TView : class, new()
+	where TResultData : class
 {
 	internal override void RegisterResultDataType(IServiceCollection services)
 	{
