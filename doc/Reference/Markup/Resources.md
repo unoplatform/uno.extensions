@@ -11,8 +11,10 @@ To merge resource dictionaries you simply need to add a Resource Dictionary to t
 
 ```cs
 new Page()
-	// Where MyColorResources is a ResourceDictionary
-	.Resources(new MyColorResources())
+	// Where MyColorResources & MyFontResources are both a ResourceDictionary
+	.Resources(r => r.Merged(
+		new MyColorResources(),
+		new MyFontResources()))
 ```
 
 ## Adding Resources
@@ -75,22 +77,14 @@ Similarly with Implicit Styles you can simply pass in a Light and Dark theme ver
 new Page()
 	.Resources(resources => resources
 		.Add(
+			// Light Theme Style
 			new Style<TextBlock>()
 				.Setters(s => s.Foreground(Colors.Black)),
+			// Dark Theme Style
 			new Style<TextBlock>()
 				.Setters(s => s.Foreground(Colors.White))
 		)
 	)
-```
-
-### Adding Merged Dictionaries
-
-To add a merged Dictionary you can use the fluent builder like:
-
-```cs
-new Page()
-	.Resources(resources => resources
-		.Merged(new MyOtherResources()))
 ```
 
 ### Adding Theme Dictionaries
@@ -101,4 +95,47 @@ To add a Theme Dictionary you can use the fluent builder like:
 new Page()
 	.Resources(resources => resources
 		.Theme("MyKey", new MyThemeDictionary()))
+```
+
+## Creating Resources
+
+One of the benefits of C# Markup is a strongly typed context. For this reason we have added a few helpers to make it easier to create and reference Resources eliminating the need to use magic strings and while maintaining type safety.
+
+```cs
+public static class MyResources
+{
+	public static readonly Resource<Geometry> MyIcon =
+		StaticResource.Create<Geometry>(nameof(MyIcon), "M 0 0 L 10 10");
+}
+```
+
+The API is meant to be self documenting, as you can see that we are working with a `Resource<Geometry>` and we are creating a `StaticResource`. Similarly we can create a ThemeResource like:
+
+```cs
+public static class MyResources
+{
+    public static readonly ThemeResource<Color> MyColor =
+        ThemeResource.Create<Color>(nameof(MyColor), "#FF0000", "#FFFFFF");
+}
+```
+
+Whether we have a StaticResource or ThemeResource, once we have it defined we can use it in our markup like:
+
+```cs
+public class MyPage : Page
+{
+	public MyPage()
+	{
+		this.Resources(r => r.Add(MyResources.MyIcon))
+			.Content(new PathIcon()
+				.Data(MyResources.MyIcon));
+	}
+}
+```
+
+It's important to note that this is not simply returning the value that was defined when we created the resource. Instead when being added to the ResourceDictionaryBuilder it will extract the key and value(s) to be added. Then when referenced in the Data property in the above example it is implicitly converted to an `Action<IDepenendencyPropertyBuilder<Geometry>>` giving you the equivalent of:
+
+```cs
+new PathIcon()
+	.Data(x => x.StaticResource("MyIcon"))
 ```
