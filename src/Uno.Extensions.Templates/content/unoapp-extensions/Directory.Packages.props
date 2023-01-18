@@ -70,6 +70,10 @@
     <!--#if (useCsharpMarkup)-->
     <PackageVersion Include="Uno.WinUI.Markup" Version="4.6.0-dev.16" />
     <PackageVersion Include="Uno.Toolkit.WinUI.Markup" Version="2.5.0-dev.8" />
+    <PackageVersion Include="Uno.Extensions.Navigation.WinUI.Markup" Version="255.255.255.255" />
+    <!--#if (reactive)-->
+    <PackageVersion Include="Uno.Extensions.Reactive.WinUI.Markup" Version="255.255.255.255" />
+    <!--#endif-->
     <!--#if (useMaterial)-->
     <PackageVersion Include="Uno.Material.WinUI.Markup" Version="2.5.0-dev.6" />
     <!--#endif-->

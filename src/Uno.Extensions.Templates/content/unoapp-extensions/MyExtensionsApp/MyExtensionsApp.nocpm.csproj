@@ -79,8 +79,14 @@
 		<!--#endif-->
 		<PackageReference Include="Uno.Extensions.Navigation.Toolkit.WinUI" Version="255.255.255.255" />
 		<PackageReference Include="Uno.Extensions.Navigation.WinUI" Version="255.255.255.255" />
+		<!--#if (useCsharpMarkup)-->
+		<PackageReference Include="Uno.Extensions.Navigation.WinUI.Markup" Version="255.255.255.255" />
+		<!--#endif-->
 		<!--#if (useMvux)-->
 		<PackageReference Include="Uno.Extensions.Reactive.WinUI" Version="255.255.255.255" />
+		<!--#if (useCsharpMarkup)-->
+		<PackageReference Include="Uno.Extensions.Reactive.WinUI.Markup" Version="255.255.255.255" />
+		<!--#endif-->
 		<!--#endif-->
 		<PackageReference Include="Microsoft.Extensions.Logging.Console" Version="7.0.0" />
 	</ItemGroup>
