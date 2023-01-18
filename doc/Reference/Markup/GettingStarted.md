@@ -7,7 +7,7 @@ Uno.Extensions.Markup is a collection of packages to make it easier for develope
 
 ## Pre-Generated Markup Extensions
 
-In addition to the core package and generator the Uno team is shipping and will begin shipping a growing set of pre-generated extension libraries for building your apps with C# Markup. These libraries include Uno.WinUI, Uno.Extensions and the Uno.Toolkit. You can find the package with the naming convention `{package name}.Markup`.
+In addition to the core package and generator the Uno team is shipping a number of pre-generated extension libraries for building your apps with C# Markup. You can find the package with the naming convention `{package name}.Markup`. Some common ones you may want to use are:
 
 - [Uno.WinUI.Markup](https://www.nuget.org/packages/Uno.WinUI.Markup)
 - [Uno.Toolkit.WinUI.Markup](https://www.nuget.org/packages/Uno.Toolkit.WinUI.Markup)
@@ -20,7 +20,7 @@ In addition to the core package and generator the Uno team is shipping and will 
 
 ## Using the Markup Extensions
 
-A fundamental premise of the Uno.Extensions.Markup library is that it should be easy to use with extensions that are generally discoverable. Extensions exist within the namespace of the type they are generated for with the explicit exception of types in the `Microsoft.UI.Xaml.Controls.Primitives` namespace which instead are generated in the `Microsoft.UI.Xaml.Controls` namespace. Extensions are generated generically for all types that are not sealed in an effort to reduce the number of extensions that are required for each class. Getting started couldn't be easier!
+A fundamental premise of the Uno.Extensions.Markup library is that it should be easy to use with extensions that are generally discoverable. For this reason, the markup extensions exist within the namespace of the type they are generated for with the explicit exception of types in the `Microsoft.UI.Xaml.Controls.Primitives` namespace which instead are generated in the `Microsoft.UI.Xaml.Controls` namespace. Extensions are generated generically for all types that are not sealed in an effort to reduce the number of extensions that are required for each class. Getting started couldn't be easier!
 
 ```cs
 new TextBlock()
