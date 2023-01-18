@@ -1,3 +1,3 @@
-﻿using Microsoft.UI.Xaml.Generator;
+﻿using Uno.Extensions.Markup.Generator;
 
 [assembly: GenerateMarkupForAssembly(typeof(Uno.Extensions.Reactive.UI.FeedView))]
