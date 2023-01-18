@@ -12,6 +12,9 @@ parameters:
 - name: install_mobileWorkloads
   type: string
   default: 'false'
+- name: install_vsBuildTools
+  type: string
+  default: 'false'
 
 steps:
     - task: UseDotNet@2
@@ -20,12 +23,25 @@ steps:
         version: '6.0.404'
 
     - task: AzurePowerShell@5
-      displayName: 'Install Windows SDK 1903'
+      displayName: 'Install VisualStudio2022 Build Tools'
+      condition:  eq('${{ parameters.install_vsBuildTools }}', 'true')
       inputs:
         azureSubscription: '${{ parameters.azure_subscription }}' 
         ScriptType: 'inlineScript'
         Inline: |
-          if('true' -eq '${{ parameters.install_windowsSDK }}'){
+            Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+            choco install visualstudio2022buildtools
+            choco install vswhere
+          
+        azurePowerShellVersion: 'LatestVersion'
+
+    - task: AzurePowerShell@5
+      displayName: 'Install Windows SDK 1903'
+      condition:  eq('${{ parameters.install_windowsSDK }}', 'true')
+      inputs:
+        azureSubscription: '${{ parameters.azure_subscription }}' 
+        ScriptType: 'inlineScript'
+        Inline: |
             $Folder = 'C:\Program Files (x86)\Windows Kits\10\'
             Write-Host "Checking if Windows SDK is installed"
             if (Test-Path -Path $Folder) {
@@ -43,17 +59,17 @@ steps:
               Remove-Item $exePath
               Write-Host "Installed" -ForegroundColor Green
             }
-          }
+          
         azurePowerShellVersion: 'LatestVersion'
 
     #Install .net6.0 Mobile Workloads
     - task: AzurePowerShell@5
       displayName: 'Install Mobile Workloads'
+      condition:  eq('${{ parameters.install_mobileWorkloads }}', 'true')
       inputs:
         azureSubscription: '${{ parameters.azure_subscription }}' 
         ScriptType: 'inlineScript'
         Inline: |
-            if('true' -eq '${{ parameters.install_mobileWorkloads }}'){
                 $availableWorkloads = dotnet workload list| Format-Table -HideTableHeaders | Out-String
                 Write-Host "Installed Workloads: $availableWorkloads" 
                 $isAndroidInstalled = $availableWorkloads.Contains("android")
@@ -61,36 +77,29 @@ steps:
                 $isMacCatalyst = $availableWorkloads.Contains("maccatalyst")
 
                 if(-Not $isAndroidInstalled){
-                  if('true' -eq '${{ parameters.install_mobileWorkloads }}'){
                       Write-Host  "Installing Android Workload"
                       dotnet workload install android
-                  }
                 }
 
                 if(-Not $isiOSInstalled){
-                  if('true' -eq '${{ parameters.install_mobileWorkloads }}'){
                       Write-Host "Installing iOS workload"
                       dotnet workload install ios
-                  }
                 }
 
                 if(-Not $isMacCatalyst){
-                  if('true' -eq '${{ parameters.install_mobileWorkloads }}'){
                       Write-Host "Installing maccatalyst workload"
                       dotnet workload install maccatalyst
-                  }
                 }
-            }
+            
         azurePowerShellVersion: 'LatestVersion'
 
     - task: AzurePowerShell@5
       displayName: 'Install GTK4'
-      continueOnError: true
+      condition:  eq('${{ parameters.install_gtk }}', 'true')
       inputs:
         azureSubscription: '${{ parameters.azure_subscription }}' 
         ScriptType: 'inlineScript'
         Inline: |
-            if('true' -eq  '${{ parameters.install_gtk }}'){
                 Write-Host "Installing GTK4"
                 Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
                 choco install git
@@ -110,5 +119,5 @@ steps:
                 Write-Host "Adding GTK4 to Path"
                 $env:Path = "C:\gtk-build\gtk\x64\release\bin;" + $env:Path
                 Write-Host "GTK4 Installation Finished"
-            }
+            
         azurePowerShellVersion: 'LatestVersion'

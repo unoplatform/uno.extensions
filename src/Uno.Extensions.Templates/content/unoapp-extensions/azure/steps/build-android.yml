@@ -18,14 +18,33 @@ parameters:
 - name: target_framework
   type: string
   default: 'net6.0-android'  
+- name: certificate
+  type: string
+  default: ''       
+- name: certificate_password
+  type: string
+  default: ''   
+- name: certificate_alias
+  type: string
+  default: ''   
+- name: sign_package
+  type: string
+  default: 'false'
 - name: publish_artifacts
   type: string
-  default: 'true'      
+  default: 'true'   
 - name: compress_artifacts
   type: string
-  default: 'true'      
+  default: 'true'       
 
 steps:
+    - task: DownloadSecureFile@1
+      name: keyStore
+      displayName: "Download .jks from secure files"
+      condition:  eq('${{ parameters.sign_package }}', 'true')
+      inputs:
+        secureFile: ${{ parameters.certificate }}
+      
     # Compile Mobile
     - task: AzurePowerShell@5
       displayName: 'Build and Package'
@@ -33,18 +52,22 @@ steps:
         azureSubscription: '${{ parameters.azure_subscription }}' 
         ScriptType: 'inlineScript'
         Inline: |
-            Write-Host  ""
             Write-Host "Building ${{ parameters.package_id }}"
-            dotnet build  -c Release -p:TargetFramework=${{ parameters.target_framework }}  -o .\bin\Release\ ${{ parameters.project_to_build }}
+
+            if ('true' -eq '${{ parameters.sign_package }}') {
+              dotnet publish  -c Release -p:TargetFramework=net6.0-android  -o .\bin\Release\ ${{ parameters.project_to_build }} /p:AndroidSigningKeyStore=$(keyStore.secureFilePath) /p:AndroidSigningStorePass=${{ parameters.certificate_password }} /p:AndroidSigningKeyAlias=${{ parameters.certificate_alias }} 
+            }else{
+              dotnet publish  -c Release -p:TargetFramework=net6.0-android  -o .\bin\Release\ ${{ parameters.project_to_build }} 
+            }
 
             $finalPackageFolder = ".\artifacts"
             Write-Host "Creating package folder: $finalPackageFolder"
             New-Item -ItemType Directory -Force -Path $finalPackageFolder
 
-            if ('true' -eq '${{ parameters.publish_artifacts }}') {
+            if ('true' -eq '${{ parameters.publish_artifacts }}') {      
               if ('true' -eq '${{ parameters.compress_artifacts }}') {
                 Write-Host "Compressing final package"
-                Compress-Archive -Path '.\bin\Release\*' -DestinationPath ".\artifacts"  
+                Compress-Archive -Path '.\bin\Release\*' -DestinationPath ".\artifacts" 
               }else{
                 Copy-Item -Path '.\bin\Release\*' -Destination ".\artifacts" -recurse -Force  
               }

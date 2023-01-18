@@ -33,13 +33,12 @@ env:
   # 1.- Go to C:\ and open a powershell terminal as administrator
   # 2.- Copy and paste this command keytool –genkey –alias contoso -keyalg RSA –keystore cert.jks –keysize 2048 and execute it
   # 3.- You will be asked to answer some questions like Password, Alias, Country, etc for your certificate
-  # 4.-Last part consists in converting the .pfx certificate to Base64 format, so navigate to C:\ and copy and paste this command: [convert]::ToBase64String((Get-Content -path "C:\{YOUR_JKS_FILE.jks}" -Encoding byte))
+  # 4.-Last part consists in converting the certificate to Base64 format, so navigate to C:\ and copy and paste this command: [convert]::ToBase64String((Get-Content -path "C:\{YOUR_JKS_FILE.jks}" -Encoding byte))
   # 5.-After that you will be able to see the Base64 string in the terminal output. Now you can copy that string and create a new Encrypted Secret in your repository and then use it as variable value. 
   # See how to create an encrypted secret in here:https://docs.github.com/es/actions/security-guides/encrypted-secrets
   ANDROID_BASE64_JKS_CERTIFICATE: ""
   ANDROID_JKS_CERTIFICATE_PASSWORD: ""
   ANDROID_JKS_CERTIFICATE_ALIAS: ""
-  
 jobs:
   build_android:
     name: Build Android Unsigned
@@ -58,7 +57,7 @@ jobs:
         uses: "./.github/workflows/steps/build_mobile"
         with:
           package-id: "Android"
-          project-to-build: "Demo.Mobile/Demo.Mobile.csproj" 
+          project-to-build: "MyExtensionsApp.Mobile/MyExtensionsApp.Mobile.csproj" 
           target-framework: "net6.0-android"
 
   build_ios:
@@ -78,7 +77,7 @@ jobs:
         uses: "./.github/workflows/steps/build_mobile"
         with:
           package-id: "Mobile_iOS"
-          project-to-build: "Demo.Mobile/Demo.Mobile.csproj" 
+          project-to-build: "MyExtensionsApp.Mobile/MyExtensionsApp.Mobile.csproj" 
           target-framework: "net6.0-ios"
 
   build_maccatalyst:
@@ -98,7 +97,7 @@ jobs:
         uses: "./.github/workflows/steps/build_mobile"
         with:
           package-id: "Mobile_MacCatalyst"
-          project-to-build: "Demo.Mobile/Demo.Mobile.csproj" 
+          project-to-build: "MyExtensionsApp.Mobile/MyExtensionsApp.Mobile.csproj" 
           target-framework: "net6.0-maccatalyst"
 
   build_wasm:
@@ -118,7 +117,7 @@ jobs:
         uses: "./.github/workflows/steps/build_wasm"
         with:
           package-id: "Wasm"
-          project-to-build: "Demo.Wasm/Demo.Wasm.csproj" 
+          project-to-build: "MyExtensionsApp.Wasm/MyExtensionsApp.Wasm.csproj" 
 
   build_windows_unsigned:
     name: Build Windows Unsigned
@@ -137,8 +136,8 @@ jobs:
         uses: "./.github/workflows/steps/build_windows"
         with:
           package-id: "WindowsUnsigned"
-          project-to-build: "Demo.Windows/Demo.Windows.csproj"  
-          project-folder: "Demo.Windows"            
+          project-to-build: "MyExtensionsApp.Windows/MyExtensionsApp.Windows.csproj"  
+          project-folder: "MyExtensionsApp.Windows"            
 
   build_linux:
     name: Build Linux
@@ -157,7 +156,7 @@ jobs:
         uses: "./.github/workflows/steps/build_desktop"
         with:
           package-id: "Linux"
-          project-to-build: "Demo.Skia.Linux.FrameBuffer/Demo.Skia.Linux.FrameBuffer.csproj"  
+          project-to-build: "MyExtensionsApp.Skia.Linux.FrameBuffer/MyExtensionsApp.Skia.Linux.FrameBuffer.csproj"  
 
   build_wpf:
     name: Build WPF
@@ -176,7 +175,7 @@ jobs:
         uses: "./.github/workflows/steps/build_desktop"
         with:
           package-id: "WPF"
-          project-to-build: "Demo.Skia.WPF/Demo.Skia.WPF.csproj"  
+          project-to-build: "MyExtensionsApp.Skia.WPF/MyExtensionsApp.Skia.WPF.csproj"  
 
   build_gtk:
     name: Build Gtk
@@ -197,4 +196,4 @@ jobs:
         uses: "./.github/workflows/steps/build_desktop"
         with:
           package-id: "GTK"
-          project-to-build: "Demo.Skia.Gtk/Demo.Skia.Gtk.csproj"                            
+          project-to-build: "MyExtensionsApp.Skia.Gtk/MyExtensionsApp.Skia.Gtk.csproj"                            

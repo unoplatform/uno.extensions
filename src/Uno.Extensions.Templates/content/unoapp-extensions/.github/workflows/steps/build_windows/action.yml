@@ -83,7 +83,6 @@ runs:
         New-Item -ItemType Directory -Force -Path $finalPackageFolder
 
         if ('true' -eq '${{ inputs.publish-artifacts }}') {
-          Write-Host "Compressing final package: $finalPackageName"
           Copy-Item -Path '${{ inputs.project-folder }}\bin\Release${{ inputs.package-id }}\*' -Destination ".\artifacts${{ inputs.package-id }}" -recurse -Force  
         } 
       

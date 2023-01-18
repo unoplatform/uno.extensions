@@ -28,11 +28,6 @@ runs:
       with:
         dotnet-version: '6.0.404'
 
-    - name: Sleep for 15s to release dotnet.exe
-      run: Start-Sleep -s 15
-      shell: pwsh
-
-
     # Install Windows SDK
     - name: Install Windows SDK 1903
       shell: pwsh
@@ -54,12 +49,9 @@ runs:
 
               Remove-Item $exePath
               Write-Host "Installed" -ForegroundColor Green
+              Start-Sleep -s 15 #wait for dotnet.exe to release
           }
         }
-
-    - name: Sleep for 15s to release dotnet.exe
-      run: Start-Sleep -s 15
-      shell: pwsh
 
     # Install .net6.0 Mobile Workloads
     - name: Install Mobile Workloads
@@ -88,10 +80,6 @@ runs:
           }     
         }
 
-    - name: Sleep for 15s to release dotnet.exe
-      run: Start-Sleep -s 15
-      shell: pwsh
-      
     # Install GTK4
     - name: Install GTK4
       continue-on-error: true
@@ -123,9 +111,6 @@ runs:
               Write-Host "Adding GTK4 to Path"
               $env:Path = "C:\gtk-build\gtk\x64\release\bin;" + $env:Path
               Write-Host "GTK4 Installation Finished"
+              Start-Sleep -s 15 #wait for dotnet.exe to release
           }
         }
-
-    - name: Sleep for 15s to release dotnet.exe
-      run: Start-Sleep -s 15
-      shell: pwsh

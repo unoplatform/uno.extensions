@@ -18,6 +18,12 @@ parameters:
 - name: project_platform
   type: string
   default: 'x86'  
+- name: publish_artifacts
+  type: string
+  default: 'true'    
+- name: compress_artifacts
+  type: string
+  default: 'true' 
 
 steps:
     # Compile Mobile
@@ -35,13 +41,19 @@ steps:
             Write-Host "Creating package folder: $finalPackageFolder"
             New-Item -ItemType Directory -Force -Path $finalPackageFolder
 
-            $finalPackageName = "$finalPackageFolder\${{ parameters.package_id }}(${{ parameters.project_platform }})_${{parameters.major}}.${{parameters.minor}}.$(Build.BuildNumber).zip"
-            Write-Host "Compressing final package: $finalPackageName"
-            Compress-Archive -Path '.\bin\Release\*' -DestinationPath $finalPackageName    
+            if ('true' -eq '${{ parameters.publish_artifacts }}') {
+              if ('true' -eq '${{ parameters.compress_artifacts }}') {
+                Write-Host "Compressing final package"
+                Compress-Archive -Path '.\bin\Release\*' -DestinationPath ".\artifacts"  
+              }else{
+                Copy-Item -Path '.\bin\Release\*' -Destination ".\artifacts" -recurse -Force  
+              }
+            }
         azurePowerShellVersion: 'LatestVersion'
 
     - task: PublishPipelineArtifact@1
       displayName: 'Publish Artifact'
+      condition:  eq('${{ parameters.publish_artifacts }}', 'true')
       inputs:
         targetPath: .\artifacts
         artifactName: ${{ parameters.package_id }}(${{ parameters.project_platform }})_${{parameters.major}}.${{parameters.minor}}.$(Build.BuildNumber)
