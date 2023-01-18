@@ -52,6 +52,7 @@ global using Uno.Extensions.Localization;
 global using Uno.Extensions.Logging;
 #endif
 #if useCsharpMarkup
+global using Uno.Extensions.Markup;
 global using Uno.Material;
 global using Uno.Themes.Markup;
 global using Uno.Toolkit.UI;
