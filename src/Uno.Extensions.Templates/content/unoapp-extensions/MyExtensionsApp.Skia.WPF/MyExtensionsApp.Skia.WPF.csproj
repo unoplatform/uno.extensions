@@ -4,6 +4,7 @@
 		<OutputType Condition="'$(Configuration)'=='Debug'">Exe</OutputType>
 		<TargetFramework>net6.0-windows</TargetFramework>
 		<UseWPF>true</UseWPF>
+		<ApplicationIcon>Images\logo.ico</ApplicationIcon>
 	</PropertyGroup>
 	<ItemGroup Label="AssemblyInfo">
 		<AssemblyAttribute Include="System.Runtime.InteropServices.ComVisibleAttribute">
@@ -90,7 +91,9 @@
 	<ItemGroup>
 		<ApplicationDefinition Include="Wpf\App.xaml" XamlRuntime="Wpf" />
 	</ItemGroup>
-
+	<ItemGroup>
+	  <Content Include="Images\logo.ico" />
+	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\MyExtensionsApp\MyExtensionsApp.csproj" />
 		<!--#if (http && useDefaultAppTemplate)-->

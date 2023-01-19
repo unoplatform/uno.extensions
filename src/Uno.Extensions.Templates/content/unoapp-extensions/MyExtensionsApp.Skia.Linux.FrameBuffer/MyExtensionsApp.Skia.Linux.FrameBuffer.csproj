@@ -3,6 +3,7 @@
 		<OutputType Condition="'$(Configuration)'=='Release'">WinExe</OutputType>
 		<OutputType Condition="'$(Configuration)'=='Debug'">Exe</OutputType>
 		<TargetFramework>net6.0</TargetFramework>
+		<ApplicationIcon>Images\logo.ico</ApplicationIcon>
 	</PropertyGroup>
 	<!--#if winAppSdk-->
 	<ItemGroup Condition="exists('Platforms\Windows')">
@@ -12,7 +13,7 @@
 	<!--#else-->
 	<ItemGroup>
 		<EmbeddedResource Include="Package.appxmanifest" />
-		<Content Include="Images\StoreLogo.png" />
+		<Content Include="Images\logo.ico" />
 	</ItemGroup>
 	<!--#endif-->
 	<!--#if (useBlankAppTemplate)-->
