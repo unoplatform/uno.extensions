@@ -4,7 +4,6 @@ public class ContentControlNavigator : ControlNavigator<ContentControl>
 {
 	protected override FrameworkElement? CurrentView => _content;
 	private FrameworkElement? _content;
-
 	public ContentControlNavigator(
 		ILogger<ContentControlNavigator> logger,
 		IDispatcher dispatcher,
@@ -53,7 +52,7 @@ public class ContentControlNavigator : ControlNavigator<ContentControl>
 			Region.Children.Clear();
 
 			if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Creating instance of type '{viewType.Name}'");
-			var content = Activator.CreateInstance(viewType);
+			var content = CreateControlFromType(viewType); 
 			if (path is not null &&
 					content is UI.Controls.FrameView fe)
 			{

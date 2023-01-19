@@ -1,6 +1,6 @@
 ﻿namespace Uno.Extensions.Navigation;
 
-public record MappedViewMap(
+internal record MappedViewMap(
 		Type? View = null,
 		Func<Type?>? ViewSelector = null,
 		Type? ViewModel = null,
