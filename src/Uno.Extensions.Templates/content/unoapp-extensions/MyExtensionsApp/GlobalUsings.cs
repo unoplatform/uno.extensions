@@ -32,12 +32,12 @@ global using MyExtensionsApp.Infrastructure;
 #if (notFrameNav)
 global using MyExtensionsApp.Presentation;
 #endif
-#if (http)
+#if (useHttp)
 global using MyExtensionsApp.Services;
 global using Uno.Extensions.Http;
 #endif
 global using Uno.Extensions.Navigation;
-#if (http)
+#if (useHttp)
 global using Refit;
 #endif
 global using Uno.Extensions;

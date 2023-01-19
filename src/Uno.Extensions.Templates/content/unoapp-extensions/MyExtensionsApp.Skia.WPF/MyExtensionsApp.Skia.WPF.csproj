@@ -59,7 +59,7 @@
 		<!--#if (useConfiguration)-->
 		<PackageReference Include="Uno.Extensions.Configuration" />
 		<!--#endif-->
-		<!--#if (localization)-->
+		<!--#if (useLocalization)-->
 		<PackageReference Include="Uno.Extensions.Localization.WinUI" />
 		<!--#endif-->
 		<!--#if (logging)-->
@@ -73,7 +73,7 @@
 		<PackageReference Include="Uno.Extensions.Navigation.WinUI" />
 		<!--#endif-->
 		<PackageReference Include="Uno.Extensions.Core" />
-		<!--#if (http)-->
+		<!--#if (useHttp)-->
 		<PackageReference Include="Uno.Extensions.Http" />
 		<PackageReference Include="Uno.Extensions.Http.Refit" />
 		<!--#endif-->
@@ -81,7 +81,7 @@
 		<PackageReference Include="Uno.Extensions.Reactive.WinUI" />
 		<!--#endif-->
 		<PackageReference Include="Uno.Extensions.Serialization" />
-		<!--#if (http)-->
+		<!--#if (useHttp)-->
 		<PackageReference Include="Uno.Extensions.Serialization.Http" />
 		<PackageReference Include="Uno.Extensions.Serialization.Refit" />
 		<!--#endif-->
@@ -96,7 +96,7 @@
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\MyExtensionsApp\MyExtensionsApp.csproj" />
-		<!--#if (http && useDefaultAppTemplate)-->
+		<!--#if (useHttp)-->
 		<ProjectReference Include="..\MyExtensionsApp.DataContracts\MyExtensionsApp.DataContracts.csproj" />
 		<!--#endif-->
 	</ItemGroup>

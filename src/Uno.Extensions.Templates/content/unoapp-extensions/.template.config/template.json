@@ -362,22 +362,27 @@
     "useMaterial": {
       "type": "computed",
       "datatype": "bool",
-      "value": "(appTheme == 'material')"
+      "value": "(appTheme == 'material' && templateType == 'default')"
     },
     "useFluent": {
       "type": "computed",
       "datatype": "bool",
-      "value": "(appTheme == 'fluent')"
+      "value": "(appTheme == 'fluent' && templateType == 'default')"
     },
     "useCupertino": {
       "type": "computed",
       "datatype": "bool",
-      "value": "(appTheme == 'cupertino')"
+      "value": "(appTheme == 'cupertino' && templateType == 'default')"
+    },
+    "useLogging": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "(dependencyInjection && logging && templateType == 'default')"
     },
     "useSerilog": {
       "type": "computed",
       "datatype": "bool",
-      "value": "(logging && serilog && templateType == 'default')"
+      "value": "(serilog && useLogging)"
     },
     "useMvux": {
       "type": "computed",
@@ -397,7 +402,27 @@
     "useConfiguration": {
       "type": "computed",
       "dataType": "bool",
-      "value": "(configuration || localization || http)"
+      "value": "(useDefaultAppTemplate && configuration && dependencyInjection)"
+    },
+    "useHttp": {
+      "type": "computed",
+      "dataType": "bool",
+      "value": "(http && useConfiguration)"
+    },
+    "useLocalization": {
+      "type": "computed",
+      "dataType": "bool",
+      "value": "(localization && useConfiguration)"
+    },
+    "useNetSix": {
+      "type": "computed",
+      "dataType": "bool",
+      "value": "(tfm == 'net6.0')"
+    },
+    "useNetSeven": {
+      "type": "computed",
+      "dataType": "bool",
+      "value": "(tfm == 'net7.0')"
     },
     "libarybasetargetframework": {
       "type": "generated",

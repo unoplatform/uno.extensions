@@ -54,7 +54,7 @@
 		<!--#endif-->
 		<PackageReference Include="Uno.Extensions.Authentication.WinUI" Version="255.255.255.255" />
 		<PackageReference Include="Uno.Extensions.Hosting.WinUI" Version="255.255.255.255" />
-		<!--#if (localization)-->
+		<!--#if (useLocalization)-->
 		<PackageReference Include="Uno.Extensions.Localization.WinUI" Version="255.255.255.255" />
 		<!--#endif-->
 		<!--#if (logging)-->
@@ -71,7 +71,7 @@
 		<PackageReference Include="Uno.Extensions.Configuration" Version="255.255.255.255" />
 		<!--#endif-->
 		<PackageReference Include="Uno.Extensions.Core" Version="255.255.255.255" />
-		<!--#if (http)-->
+		<!--#if (useHttp)-->
 		<PackageReference Include="Uno.Extensions.Http" Version="255.255.255.255" />
 		<PackageReference Include="Uno.Extensions.Http.Refit" Version="255.255.255.255" />
 		<!--#endif-->
@@ -79,7 +79,7 @@
 		<PackageReference Include="Uno.Extensions.Reactive.WinUI" Version="255.255.255.255" />
 		<!--#endif-->
 		<PackageReference Include="Uno.Extensions.Serialization" Version="255.255.255.255" />
-		<!--#if (http)-->
+		<!--#if (useHttp)-->
 		<PackageReference Include="Uno.Extensions.Serialization.Http" Version="255.255.255.255" />
 		<PackageReference Include="Uno.Extensions.Serialization.Refit" Version="255.255.255.255" />
 		<!--#endif-->
@@ -87,7 +87,7 @@
 	<!--#endif-->
 	<ItemGroup>
 		<ProjectReference Include="..\MyExtensionsApp\MyExtensionsApp.csproj" />
-		<!--#if (http && useDefaultAppTemplate)-->
+		<!--#if (useHttp)-->
 		<ProjectReference Include="..\MyExtensionsApp.DataContracts\MyExtensionsApp.DataContracts.csproj" />
 		<!--#endif-->
 	</ItemGroup>

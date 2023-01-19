@@ -31,7 +31,7 @@
     <PackageVersion Include="Uno.Extensions.Hosting.WinUI" Version="255.255.255.255" />
     <PackageVersion Include="Uno.Extensions.Http" Version="255.255.255.255" />
     <PackageVersion Include="Uno.Extensions.Http.Refit" Version="255.255.255.255" />
-    <!--#if (localization)-->
+    <!--#if (useLocalization)-->
     <PackageVersion Include="Uno.Extensions.Localization" Version="255.255.255.255" />
     <PackageVersion Include="Uno.Extensions.Localization.WinUI" Version="255.255.255.255" />
     <!--#endif-->
@@ -46,11 +46,15 @@
     <PackageVersion Include="Uno.Extensions.Navigation" Version="255.255.255.255" />
     <PackageVersion Include="Uno.Extensions.Navigation.Toolkit.WinUI" Version="255.255.255.255" />
     <PackageVersion Include="Uno.Extensions.Navigation.WinUI" Version="255.255.255.255" />
+    <!--#if (useMvux)-->
     <PackageVersion Include="Uno.Extensions.Reactive" Version="255.255.255.255" />
     <PackageVersion Include="Uno.Extensions.Reactive.WinUI" Version="255.255.255.255" />
+    <!--#endif-->
+    <!--#if (useHttp)-->
     <PackageVersion Include="Uno.Extensions.Serialization" Version="255.255.255.255" />
     <PackageVersion Include="Uno.Extensions.Serialization.Http" Version="255.255.255.255" />
     <PackageVersion Include="Uno.Extensions.Serialization.Refit" Version="255.255.255.255" />
+    <!--#endif-->
     <!--#if (useMaterial)-->
     <PackageVersion Include="Uno.Material.WinUI" Version="2.5.0-dev.6" />
     <!--#elif (useCupertino)-->
