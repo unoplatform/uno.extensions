@@ -1,31 +1,9 @@
 ---
-uid: Overview.Extensions
+uid: GettingStarted
 ---
-# How-To: Get Started with Uno.Extensions
+# How-To: Creating an application with Uno.Extensions
 
-Uno.Extensions is a series of NuGet packages designed to encapsulate common developer tasks associated with building multi-platform mobile, desktop and web applications using the Uno platform.
-
-The Uno.Extensions follows the Microsoft.Extensions model that creates a host environment where you can register additional dependencies. The registered dependencies are then available throughout the application via Services (IServiceProvider) property on the IHost instance.
-
-For a more specific description of the functionality included in each referenced package—such as
-Configuration, Logging, Navigation, and
-Reactive—refer to the relevant Uno.Extensions documentation.
-
-In addition to referencing Uno, the Guidance Template also references the following packages.
-
-| Package                      |                                                                                      |
-|------------------------------|--------------------------------------------------------------------------------------|
-| Uno.Extensions.Hosting       | Initializes the hosting environment, including initialising the dependency container |
-| Uno.Extensions.Configuration | Loads configuration information from various sources                                 |
-| Uno.Extensions.Logging       | Configures application logging                                                       |
-| Uno.Extensions.Navigation    | Routing framework for navigation                                                     |
-| Uno.Extensions.Reactive      | Development framework for reactive applications                                      |
-| Uno.Extensions.Localization  | Provides access to localizable resources                                             |
-| Uno.Extensions.Serialization | Helpers for json serialization                                                       |
-| Uno.Extensions.Http          | Configures native http handlers and register endpoints                               |
-
-
-This tutorial will walk through how to create an Uno application with the `dotnet new` tool, that is already configured to use the Uno.Extensions.
+This tutorial will walk through how to create an Uno application with the `dotnet new` tool, that is already configured to use the Uno Extensions.
 
 ## Step-by-steps
 
@@ -56,13 +34,13 @@ The generated solution will contain:
 * *Platforms/MyProjectName.** - platform-specific projects for each supported platform.
 * *MyProjectName.Tests* and *MyProjectName.UI.Tests* - for writing unit and UI tests respectively.
 
-    ![The structure of the generated solution](./images/ProjectStructure-min.png)
+    ![The structure of the generated solution](./Overview/images/ProjectStructure-min.png)
 
 #### 3. Running the Application
 
 * Select a target from the drop-down as pictured below
 
-    ![A screenshot of the generated targets](./images/GeneratedTargets-min.png)
+    ![A screenshot of the generated targets](./Overview/images/GeneratedTargets-min.png)
 
 * Click the “play” button, or press F5 to start debugging. The necessary projects in the solution will be compiled and deployed based on the target platform.
 
@@ -99,4 +77,4 @@ The generated solution will contain:
 
 * Go back to the project *Tests\\MyProjectName.UI.Tests* and right click. Then, *Run Tests*
 
-    ![Test Explorer in VS](./images/TestExplorer-min.png)
+    ![Test Explorer in VS](./Overview/images/TestExplorer-min.png)
