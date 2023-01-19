@@ -1,25 +1,19 @@
 {
-  "$schema": "https://json.schemastore.org/launchsettings.json",
   "iisSettings": {
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
     "iisExpress": {
-      "applicationUrl": "http://localhost:5000",
-      "sslPort": 5001
+      "applicationUrl": "http://localhost:8080",
+      "sslPort": 0
     }
   },
   "profiles": {
-    "MyExtensionsApp.Server": {
+    "MyExtensionsApp.Wasm": {
       "commandName": "Project",
       "dotnetRunMessages": true,
       "launchBrowser": true,
-      //#if wasm
-      "launchUrl": "",
+      "applicationUrl": "http://localhost:5000",
       "inspectUri": "{wsProtocol}://{url.hostname}:{url.port}/_framework/debug/ws-proxy?browser={browserInspectUri}",
-      //#else
-      "launchUrl": "swagger",
-      //#endif
-      "applicationUrl": "https://localhost:5000;http://localhost:5001",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
@@ -27,12 +21,7 @@
     "IIS Express": {
       "commandName": "IISExpress",
       "launchBrowser": true,
-      //#if wasm
-      "launchUrl": "",
       "inspectUri": "{wsProtocol}://{url.hostname}:{url.port}/_framework/debug/ws-proxy?browser={browserInspectUri}",
-      //#else
-      "launchUrl": "swagger",
-      //#endif
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
