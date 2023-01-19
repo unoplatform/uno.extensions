@@ -545,6 +545,40 @@
         ]
       }
     },
+    "mainDataContext":{
+      "type": "generated",
+      "generator": "switch",
+      "replaces": "$mainDataContext$",
+      "parameters": {
+        "cases": [
+          {
+            "condition": "(useMvux == 'true')",
+            "value": "BindableMainModel"
+          },
+          {
+            "condition": "(useMvvm == 'true')",
+            "value": "MainViewModel"
+          }
+        ]
+      }
+    },
+    "secondDataContext":{
+      "type": "generated",
+      "generator": "switch",
+      "replaces": "$secondDataContext$",
+      "parameters": {
+        "cases": [
+          {
+            "condition": "(useMvux == 'true')",
+            "value": "BindableSecondModel"
+          },
+          {
+            "condition": "(useMvvm == 'true')",
+            "value": "SecondViewModel"
+          }
+        ]
+      }
+    },
     "useExtensionsNavigation": {
       "type": "computed",
       "datatype": "bool",

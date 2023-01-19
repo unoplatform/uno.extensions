@@ -14,7 +14,7 @@ public partial class MainViewModel : ObservableObject
 	public ICommand GoToSecond { get; }
 
 //+:cnd:noEmit
-#if configuration
+#if useConfiguration
 	public MainViewModel(
 		INavigator navigator,
 		IOptions<AppConfig> appInfo)

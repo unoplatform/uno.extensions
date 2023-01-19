@@ -6,11 +6,7 @@ public sealed partial class MainPage : Page
 	{
 //+:cnd:noEmit
 #if useCsharpMarkup
-#if(useMvux)
-		this.DataContext<BindableMainModel>((page, vm) => page
-#else
-		this.DataContext<MainViewModel>((page, vm) => page
-#endif
+		this.DataContext<$mainDataContext$>((page, vm) => page
 			.NavigationCacheMode(NavigationCacheMode.Required)
 			.Background(Theme.Brushes.Background.Default)
 			.Content(new Grid().RowDefinitions(GridLength.Auto, new GridLength(1, GridUnitType.Star))
