@@ -3,7 +3,7 @@ uid: GettingStarted
 ---
 # How-To: Creating an application with Uno.Extensions
 
-This tutorial will walk through how to create an Uno application with the `dotnet new` tool, that is already configured to use the Uno Extensions.
+This tutorial will walk through how to create an Uno application with the `dotnet new` tool, which is already configured to use the Uno Extensions.
 
 ## Step-by-steps
 
