@@ -424,10 +424,10 @@
       "dataType": "bool",
       "value": "(tfm == 'net7.0')"
     },
-    "libarybasetargetframework": {
+    "libraryBaseTargetFramework": {
       "type": "generated",
       "generator": "switch",
-      "replaces": "$libarybasetargetframework$",
+      "replaces": "$libraryBaseTargetFramework$",
       "parameters": {
         "evaluator": "C++",
         "datatype": "string",
@@ -439,6 +439,77 @@
           {
             "condition": "(tfm == 'net7.0')",
             "value": "net7.0"
+          }
+        ]
+      }
+    },
+    "mobileTargetFrameworks": {
+      "type": "generated",
+      "generator": "switch",
+      "replaces": "$mobileTargetFrameworks$",
+      "parameters": {
+        "evaluator": "C++",
+        "datatype": "string",
+        "cases": [
+          {
+            "condition": "(tfm == 'net6.0' && android == 'true' && ios == 'true' && maccatalyst == 'true')",
+            "value": "net6.0-ios;net6.0-android;net6.0-maccatalyst"
+          },
+          {
+            "condition": "(tfm == 'net7.0' && android == 'true' && ios == 'true' && maccatalyst == 'true')",
+            "value": "net7.0-ios;net7.0-android;net7.0-maccatalyst"
+          },
+          {
+            "condition": "(tfm == 'net6.0' && android == 'true' && ios == 'true' && maccatalyst == 'false')",
+            "value": "net6.0-ios;net6.0-android"
+          },
+          {
+            "condition": "(tfm == 'net7.0' && android == 'true' && ios == 'true' && maccatalyst == 'false')",
+            "value": "net7.0-ios;net7.0-android"
+          },
+          {
+            "condition": "(tfm == 'net6.0' && android == 'false' && ios == 'true' && maccatalyst == 'true')",
+            "value": "net6.0-ios;net6.0-maccatalyst"
+          },
+          {
+            "condition": "(tfm == 'net7.0' && android == 'false' && ios == 'true' && maccatalyst == 'true')",
+            "value": "net7.0-ios;net7.0-maccatalyst"
+          },
+          {
+            "condition": "(tfm == 'net6.0' && android == 'true' && ios == 'false' && maccatalyst == 'true')",
+            "value": "net6.0-android;net7.0-maccatalyst"
+          },
+          {
+            "condition": "(tfm == 'net7.0' && android == 'true' && ios == 'false' && maccatalyst == 'true')",
+            "value": "net7.0-android;net7.0-maccatalyst"
+          },
+          {
+            "condition": "(tfm == 'net6.0' && android == 'true' && ios == 'false' && maccatalyst == 'false')",
+            "value": "net6.0-android"
+          },
+          {
+            "condition": "(tfm == 'net7.0' && android == 'true' && ios == 'false' && maccatalyst == 'false')",
+            "value": "net7.0-android"
+          },
+          {
+            "condition": "(tfm == 'net6.0' && android == 'false' && ios == 'true' && maccatalyst == 'false')",
+            "value": "net6.0-ios"
+          },
+          {
+            "condition": "(tfm == 'net7.0' && android == 'false' && ios == 'true' && maccatalyst == 'false')",
+            "value": "net7.0-ios"
+          },
+          {
+            "condition": "(tfm == 'net6.0' && android == 'false' && ios == 'false' && maccatalyst == 'true')",
+            "value": "net6.0-maccatalyst"
+          },
+          {
+            "condition": "(tfm == 'net7.0' && android == 'false' && ios == 'false' && maccatalyst == 'true')",
+            "value": "net7.0-maccatalyst"
+          },
+          {
+            "condition": "(android == 'false' && ios == 'false' && maccatalyst == 'false')",
+            "value": ""
           }
         ]
       }

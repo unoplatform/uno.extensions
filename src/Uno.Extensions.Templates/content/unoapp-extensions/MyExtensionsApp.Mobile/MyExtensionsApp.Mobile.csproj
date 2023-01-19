@@ -1,43 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<!--#if (android && ios && macos && maccatalyst)-->
-		<TargetFrameworks>net6.0-android;net6.0-ios;net6.0-maccatalyst</TargetFrameworks>
-		<!-- Disabled because of https://github.com/xamarin/xamarin-macios/issues/16401-->
-		<!-- <TargetFrameworks>$(TargetFrameworks);net6.0-macos</TargetFrameworks> -->
-		<!--#elif (android && ios && macos && !maccatalyst)-->
-		<!-- Disabled because of https://github.com/xamarin/xamarin-macios/issues/16401-->
-		<TargetFrameworks>net6.0-android;net6.0-ios</TargetFrameworks>
-		<!-- Disabled because of https://github.com/xamarin/xamarin-macios/issues/16401-->
-		<!-- <TargetFrameworks>$(TargetFrameworks);net6.0-macos</TargetFrameworks> -->
-		<!--#elif (android && ios && !macos && maccatalyst)-->
-		<TargetFrameworks>net6.0-android;net6.0-ios;net6.0-maccatalyst</TargetFrameworks>
-		<!--#elif (!android && ios && macos && maccatalyst)-->
-		<TargetFrameworks>net6.0-ios;net6.0-maccatalyst</TargetFrameworks>
-		<!-- Disabled because of https://github.com/xamarin/xamarin-macios/issues/16401-->
-		<!-- <TargetFrameworks>$(TargetFrameworks);net6.0-macos</TargetFrameworks> -->
-		<!--#elif (android && ios && !macos && !maccatalyst)-->
-		<TargetFrameworks>net6.0-android;net6.0-ios</TargetFrameworks>
-		<!--#elif (!android && ios && !macos && maccatalyst)-->
-		<TargetFrameworks>net6.0-ios;net6.0-maccatalyst</TargetFrameworks>
-		<!--#elif (!android && ios && macos && !maccatalyst)-->
-		<TargetFrameworks>net6.0-ios</TargetFrameworks>
-		<!-- Disabled because of https://github.com/xamarin/xamarin-macios/issues/16401-->
-		<!-- <TargetFrameworks>$(TargetFrameworks);net6.0-macos</TargetFrameworks> -->
-		<!--#else-->
-		<!--#if (android)-->
-		<TargetFrameworks>$(TargetFrameworks);net6.0-android</TargetFrameworks>
-		<!--#endif-->
-		<!--#if (ios)-->
-		<TargetFrameworks>$(TargetFrameworks);net6.0-ios</TargetFrameworks>
-		<!--#endif-->
+		<TargetFrameworks>$mobileTargetFrameworks$</TargetFrameworks>
 		<!--#if (macos)-->
 		<!-- Disabled because of https://github.com/xamarin/xamarin-macios/issues/16401-->
 		<!-- <TargetFrameworks>$(TargetFrameworks);net6.0-macos</TargetFrameworks> -->
 		<!--#endif-->
-		<!--#if (maccatalyst)-->
-		<TargetFrameworks>$(TargetFrameworks);net6.0-maccatalyst</TargetFrameworks>
-		<!--#endif -->
-		<!--#endif -->
 		<SingleProject>true</SingleProject>
 		<OutputType>Exe</OutputType>
 
