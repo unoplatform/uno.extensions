@@ -106,6 +106,13 @@
 		<ProjectReference Include="..\MyExtensionsApp.DataContracts\MyExtensionsApp.DataContracts.csproj" />
 	</ItemGroup>
 	<!--#endif-->
+	<!--# (useNetSix)-->
+
+	<ItemGroup>
+		<Compile Include="..\MyExtensionsApp.Base\IsExternalInit.cs"
+						 Visible="false" />
+	</ItemGroup>
+	<!--#endif-->
 
 	<!--#if (winAppSdk) -->
 	<Choose>

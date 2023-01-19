@@ -1,8 +1,15 @@
 <Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<TargetFramework>$libarybasetargetframework$</TargetFramework>
+		<TargetFramework>$libraryBaseTargetFramework$</TargetFramework>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 		<!-- Suppress Compiler warnings for elements without XML Docs -->
 		<NoWarn>$(NoWarn);CS1591</NoWarn>
 	</PropertyGroup>
+	<!--# (useNetSix)-->
+
+	<ItemGroup>
+		<Compile Include="..\MyExtensionsApp.Base\IsExternalInit.cs"
+						 Visible="false" />
+	</ItemGroup>
+	<!--#endif-->
 </Project>

@@ -91,6 +91,13 @@
 		<PackageReference Include="Microsoft.Extensions.Logging.Console" Version="7.0.0" />
 	</ItemGroup>
 	<!--#endif-->
+	<!--# (useNetSix)-->
+
+	<ItemGroup>
+		<Compile Include="..\MyExtensionsApp.Base\IsExternalInit.cs"
+						 Visible="false" />
+	</ItemGroup>
+	<!--#endif-->
 
 	<!--#if (winAppSdk) -->
 	<Choose>
