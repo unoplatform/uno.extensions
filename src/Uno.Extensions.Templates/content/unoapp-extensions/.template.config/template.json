@@ -85,12 +85,12 @@
       "choices": [
         {
           "choice": "net6.0",
-          "displayName": ".NET 6.0 (Long Term Support)",
+          "displayName": ".NET 6.0",
           "description": "Target .NET 6.0 (Long Term Support)"
         },
         {
           "choice": "net7.0",
-          "displayName": ".NET 7.0 (Standard Term Support)",
+          "displayName": ".NET 7.0",
           "description": "Target .NET 7.0 (Standard Term Support)"
         }
       ]
@@ -105,12 +105,12 @@
         {
           "choice": "mvvm",
           "description": "Use the MVVM design pattern",
-          "displayName": "MVVM (Model-View-ViewModel)"
+          "displayName": "MVVM"
         },
         {
           "choice": "mvux",
-          "description": "Use the MVU-X design pattern",
-          "displayName": "MVU-X (Model-View-Update XAML Friendly)"
+          "description": "Use the MVU-X (Model-View-Update XAML Friendly) design pattern ",
+          "displayName": "MVU-X"
         }
       ]
     },
@@ -158,60 +158,60 @@
       "defaultValue": "material"
     },
     "android": {
-      "displayName": "Mobile - Android",
+      "displayName": "Android",
       "type": "parameter",
       "dataType": "bool",
       "defaultValue": "true",
       "description": "Enables the Android platform in the Mobile support project"
     },
     "ios": {
-      "displayName": "Mobile - iOS",
+      "displayName": "iOS",
       "type": "parameter",
       "dataType": "bool",
       "defaultValue": "true",
       "description": "Enables the iOS platform in the Mobile support project"
     },
     "maccatalyst": {
-      "displayName": "Desktop - macOS (Catalyst)",
+      "displayName": "macOS (Catalyst)",
       "type": "parameter",
       "dataType": "bool",
       "defaultValue": "true",
       "description": "Enables the macOS (Catalyst) platform in the Mobile support project"
     },
     "macos": {
-      "displayName": "Desktop - macOS (AppKit)",
+      "displayName": "macOS (AppKit)",
       "type": "parameter",
       "dataType": "bool",
       "defaultValue": "true",
       "description": "Enables the macOS (AppKit) platform in the Mobile support project"
     },
     "skiaGtk": {
-      "displayName": "Desktop - Gtk (Linux, macOS, Windows 7 or later)",
+      "displayName": "Gtk",
       "type": "parameter",
       "dataType": "bool",
       "defaultValue": "true",
-      "description": "Enables the Skia/GTK platform support project"
+      "description": "Enables the Skia/GTK platform support project (Linux, macOS, Windows 7 or later)"
     },
     "skiaWpf": {
-      "displayName": "Desktop - WPF (Windows 7 or later)",
+      "displayName": "Windows WPF",
       "type": "parameter",
       "dataType": "bool",
       "defaultValue": "true",
-      "description": "Enables the Skia/WPF platform support project"
+      "description": "Enables the Skia/WPF (Windows 7 or later) platform support project"
     },
     "skiaLinuxFb": {
-      "displayName": "Desktop - Linux FrameBuffer",
+      "displayName": "Linux FrameBuffer",
       "type": "parameter",
       "dataType": "bool",
       "defaultValue": "true",
       "description": "Enables the Skia/Linux FrameBuffer platform support project"
     },
     "winAppSdk": {
-      "displayName": "Desktop - WinUI (Windows App SDK)",
+      "displayName": "Windows WinUI",
       "type": "parameter",
       "dataType": "bool",
       "defaultValue": "true",
-      "description": "Enables the Windows App Sdk platform support project"
+      "description": "Enables the Windows App Sdk (Windows App SDK) platform support project"
     },
     "wasm": {
       "displayName": "Web - WebAssembly",
@@ -221,28 +221,28 @@
       "description": "Enables the WebAssembly platform support project"
     },
     "unitTest": {
-      "displayName": "Tests - Unit Tests",
+      "displayName": "Unit Tests",
       "type": "parameter",
       "datatype": "bool",
       "defaultValue": "true",
       "description": "Includes the Unit test project"
     },
     "tests": {
-      "displayName": "Tests - UI Tests",
+      "displayName": "UI Tests",
       "type": "parameter",
       "datatype": "bool",
       "defaultValue": "true",
       "description": "Includes the UI test project"
     },
     "server": {
-      "displayName": "Server - API",
+      "displayName": "Server",
       "type": "parameter",
       "datatype": "bool",
       "defaultValue": "true",
       "description": "Includes a Server project for an API & host for the WebAssembly project"
     },
     "configuration": {
-      "displayName": "Extensions - Configuration",
+      "displayName": "Configuration",
       "description": "Includes Uno.Extensions.Configuration",
       "type": "parameter",
       "datatype": "bool",
@@ -252,7 +252,7 @@
       }
     },
     "http": {
-      "displayName": "Extensions - HTTP",
+      "displayName": "HTTP",
       "description": "Includes Uno.Extensions.Http",
       "type": "parameter",
       "datatype": "bool",
@@ -262,7 +262,7 @@
       }
     },
     "localization": {
-      "displayName": "Extensions - Localization",
+      "displayName": "Localization",
       "description": "Includes Uno.Extensions.Localization",
       "type": "parameter",
       "datatype": "bool",
@@ -272,7 +272,7 @@
       }
     },
     "logging": {
-      "displayName": "Extensions - Logging",
+      "displayName": "Logging",
       "description": "Includes Uno.Extensions.Logging",
       "type": "parameter",
       "datatype": "bool",
@@ -282,7 +282,7 @@
       }
     },
     "serilog": {
-      "displayName": "Extensions - Serilog",
+      "displayName": "Serilog",
       "description": "Includes Uno.Extensions.Logging.Serilog when logging is enabled",
       "type": "parameter",
       "datatype": "bool",
@@ -293,7 +293,7 @@
       }
     },
     "navigation": {
-      "displayName": "Extensions - Navigation",
+      "displayName": "Navigation",
       "description": "Sets the base type of navigation used in the app.",
       "type": "parameter",
       "datatype": "choice",
@@ -319,10 +319,10 @@
       "type": "parameter",
       "dataType": "bool",
       "defaultValue": "false",
-      "description": "Whether or not to use Central Package Management - package versions are via central Directory.Packages.props file"
+      "description": "Package versions are managed by the central Directory.Packages.props file"
     },
     "vscode": {
-      "displayName": "WebAssembly - Visual Studio Code Debugging",
+      "displayName": "Visual Studio Code Debugging",
       "type": "parameter",
       "dataType": "bool",
       "defaultValue": "false",
@@ -332,7 +332,7 @@
       "description": "Adds the Visual Studio Code Debugging support files for WebAssembly"
     },
     "wasmPwaManifest": {
-      "displayName": "WebAssembly - PWA Manifest",
+      "displayName": "PWA Manifest",
       "description": "Enables the generation of a PWA manifest for WebAssembly",
       "type": "parameter",
       "datatype": "bool",
