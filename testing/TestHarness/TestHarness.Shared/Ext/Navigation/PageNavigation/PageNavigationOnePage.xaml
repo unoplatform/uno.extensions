@@ -42,13 +42,16 @@
 								uen:Navigation.Request="PageNavigationTwo">
 				<muxc:ItemsRepeater.ItemTemplate>
 					<DataTemplate>
-						<Border Height="200"
+						<Grid Height="200"
 								Width="200"
 								Background="Red">
 							<TextBlock Text="{Binding}"
 									   VerticalAlignment="Center"
 									   HorizontalAlignment="Center" />
-						</Border>
+							<Button VerticalAlignment="Bottom"
+									Content="Go to Three"
+									uen:Navigation.Request="PageNavigationThree" />
+						</Grid>
 					</DataTemplate>
 				</muxc:ItemsRepeater.ItemTemplate>
 			</muxc:ItemsRepeater>

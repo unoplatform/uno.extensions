@@ -39,6 +39,13 @@ public class ItemsRepeaterRequestHandler : ControlRequestHandlerBase<ItemsRepeat
 			var elt = actionArgs.OriginalSource as DependencyObject;
 			while (elt is not null)
 			{
+				if(elt is ButtonBase button &&
+					button.IsEnabled)
+				{
+					// Assume that Button captures all tapped events
+					return;
+				}
+
 				var parent = VisualTreeHelper.GetParent(elt);
 				if (parent == sender)
 				{
