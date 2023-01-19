@@ -29,7 +29,7 @@ global using MyExtensionsApp.Business.Models;
 #if (useInfrastructureNamespace)
 global using MyExtensionsApp.Infrastructure;
 #endif
-#if (notFrameNav)
+#if (useExtensionsNavigation)
 global using MyExtensionsApp.Presentation;
 #endif
 #if (useHttp)

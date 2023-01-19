@@ -55,6 +55,9 @@
 		<PackageReference Include="Uno.Extensions.Navigation" />
 		<!--#if (useMvux) -->
 		<PackageReference Include="Uno.Extensions.Reactive" />
+		<!--#if (useCsharpMarkup)-->
+		<PackageReference Include="Uno.Extensions.Reactive.Markup" />
+		<!--#endif-->
 		<!--#endif-->
 		<PackageReference Include="Uno.Extensions.Serialization" />
 		<!--#if (useHttp)-->
@@ -90,7 +93,6 @@
 		<!--#endif-->
 	</ItemGroup>
 	<!--#endif-->
-
 	<!--#if (useHttp)-->
 
 	<ItemGroup>
@@ -156,13 +158,11 @@
 	<!--#endif-->
 
 	<ItemGroup>
-		<!--#if (useDefaultAppTemplate)-->
 		<!--#if (useConfiguration)-->
 		<None Remove="appsettings*.json" />
 		<EmbeddedResource Include="appsettings.json" />
 		<EmbeddedResource Include="appsettings.*.json"
 											DependentUpon="appsettings.json" />
-		<!--#endif-->
 		<!--#endif-->
 		<PRIResource Include="Strings\**\*.resw" />
 		<UpToDateCheckInput Include="**\*.xaml" Exclude="bin\**\*.xaml;obj\**\*.xaml" />

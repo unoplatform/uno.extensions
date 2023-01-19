@@ -77,6 +77,10 @@
       "longName": "ui-tests",
       "shortName": "ui-tests"
     },
+    "dependencyInjection": {
+      "longName": "dependency-injection",
+      "shortName": "di"
+    },
     "configuration": {
       "longName": "configuration",
       "shortName": "config"

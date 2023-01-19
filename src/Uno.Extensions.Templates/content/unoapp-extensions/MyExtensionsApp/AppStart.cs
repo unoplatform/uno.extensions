@@ -71,12 +71,10 @@ public class AppStart
 					// TODO: Register your services
 					//services.AddSingleton<IMyService, MyService>();
 				})
-#if (useDefaultNav)
-#if (useMvux)
+#if (useReactiveExtensionsNavigation)
 				.UseNavigation(ReactiveViewModelMappings.ViewModelMappings, RegisterRoutes)
-#else
+#elif (useExtensionsNavigation)
 				.UseNavigation(RegisterRoutes)
-#endif
 #endif
 			);
 		Window = builder.Window;
@@ -103,7 +101,7 @@ public class AppStart
 			Window.Content = rootFrame;
 		}
 
-#if !(NET6_0_OR_GREATER && WINDOWS)
+#if !(NETSTANDARD && WINDOWS)
 		if (args.UWPLaunchActivatedEventArgs.PrelaunchActivated == false)
 #endif
 		{

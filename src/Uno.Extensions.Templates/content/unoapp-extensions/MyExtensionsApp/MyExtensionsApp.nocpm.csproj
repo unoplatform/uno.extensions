@@ -30,7 +30,7 @@
 		<!--#endif-->
 		<PackageReference Include="Uno.Themes.WinUI.Markup" Version="2.5.0-dev.6" />
 		<!--#endif-->
-		<!--#if (!useMvux) -->
+		<!--#if (useMvvm) -->
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.0.0" />
 		<!--#endif -->
 		<!--#if (useConfiguration)-->
@@ -41,11 +41,11 @@
 		<PackageReference Include="Uno.Extensions.Http" Version="255.255.255.255" />
 		<PackageReference Include="Uno.Extensions.Http.Refit" Version="255.255.255.255" />
 		<!--#endif-->
-		<!--#if (logging)-->
+		<!--#if (useLogging)-->
 		<PackageReference Include="Uno.Extensions.Logging.WinUI" Version="255.255.255.255" />
+		<!--#endif-->
 		<!--#if (useSerilog)-->
 		<PackageReference Include="Uno.Extensions.Logging.Serilog" Version="255.255.255.255" />
-		<!--#endif-->
 		<!--#endif-->
 		<PackageReference Include="Uno.Extensions.Serialization" Version="255.255.255.255" />
 		<!--#if (useHttp)-->
@@ -147,13 +147,11 @@
 	<!--#endif-->
 
 	<ItemGroup>
-		<!--#if (useDefaultAppTemplate)-->
 		<!--#if (useConfiguration)-->
 		<None Remove="appsettings*.json" />
 		<EmbeddedResource Include="appsettings.json" />
 		<EmbeddedResource Include="appsettings.*.json"
 											DependentUpon="appsettings.json" />
-		<!--#endif-->
 		<!--#endif-->
 		<PRIResource Include="Strings\**\*.resw" />
 		<UpToDateCheckInput Include="**\*.xaml" Exclude="bin\**\*.xaml;obj\**\*.xaml" />

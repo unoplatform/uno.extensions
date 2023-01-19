@@ -91,7 +91,7 @@
 		<!--#if (useSerilog)-->
 		<PackageReference Include="Uno.Extensions.Logging.Serilog" Version="255.255.255.255" />
 		<!--#endif-->
-		<!--#if (notFrameNav)-->
+		<!--#if (useExtensionsNavigation)-->
 		<PackageReference Include="Uno.Extensions.Navigation.Toolkit.WinUI" Version="255.255.255.255" />
 		<PackageReference Include="Uno.Extensions.Navigation.WinUI" Version="255.255.255.255" />
 		<!--#endif-->

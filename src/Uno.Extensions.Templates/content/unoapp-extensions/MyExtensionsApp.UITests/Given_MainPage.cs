@@ -1,7 +1,4 @@
-﻿//-:cnd:noEmit
-
-
-namespace MyExtensionsApp.UITests;
+﻿namespace MyExtensionsApp.UITests;
 
 public class Given_MainPage : TestBase
 {
@@ -13,7 +10,7 @@ public class Given_MainPage : TestBase
 		// the port that is being used and update the Constants.cs file
 		// in the UITests project with the correct port number.
 
-#if (useDefaultAppTemplate && notFrameNav)
+#if (useExtensionsNavigation)
 		// Query for the SecondPageButton and then tap it
 		Query xamlButton = q => q.All().Marked("SecondPageButton");
 		App.WaitForElement(xamlButton);

@@ -1,4 +1,4 @@
-{
+﻿{
   "$schema": "http://json.schemastore.org/template",
   "author": "Uno Platform",
   "classifications": [
@@ -241,6 +241,16 @@
       "defaultValue": "true",
       "description": "Includes a Server project for an API & host for the WebAssembly project"
     },
+    "dependencyInjection": {
+      "displayName": "Extensions - Dependency Injection",
+      "description": "Includes Uno.Extensions.DependencyInjection",
+      "type": "parameter",
+      "datatype": "bool",
+      "defaultValue": "true",
+      "onlyIf": {
+        "templateType": "default"
+      }
+    },
     "configuration": {
       "displayName": "Extensions - Configuration",
       "description": "Includes Uno.Extensions.Configuration",
@@ -248,7 +258,8 @@
       "datatype": "bool",
       "defaultValue": "true",
       "onlyIf": {
-        "templateType": "default"
+        "templateType": "default",
+        "dependencyInjection": "true"
       }
     },
     "http": {
@@ -258,7 +269,8 @@
       "datatype": "bool",
       "defaultValue": "true",
       "onlyIf": {
-        "templateType": "default"
+        "templateType": "default",
+        "dependencyInjection": "true"
       }
     },
     "localization": {
@@ -268,7 +280,8 @@
       "datatype": "bool",
       "defaultValue": "true",
       "onlyIf": {
-        "templateType": "default"
+        "templateType": "default",
+        "dependencyInjection": "true"
       }
     },
     "logging": {
@@ -278,7 +291,8 @@
       "datatype": "bool",
       "defaultValue": "true",
       "onlyIf": {
-        "templateType": "default"
+        "templateType": "default",
+        "dependencyInjection": "true"
       }
     },
     "serilog": {
@@ -289,6 +303,7 @@
       "defaultValue": "true",
       "onlyIf": {
         "templateType": "default",
+        "dependencyInjection": "true",
         "logging": "true"
       }
     },
@@ -311,7 +326,8 @@
       ],
       "defaultValue": "default",
       "onlyIf": {
-        "templateType": "default"
+        "templateType": "default",
+        "dependencyInjection": "true"
       }
     },
     "cpm": {
@@ -354,6 +370,16 @@
       "defaultValue": "false",
       "description": "Supplied by Uno Studio"
     },
+    "useBlankAppTemplate": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "templateType == 'blank'"
+    },
+    "useDefaultAppTemplate": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "templateType == 'default'"
+    },
     "useCsharpMarkup": {
       "type": "computed",
       "datatype": "bool",
@@ -377,7 +403,7 @@
     "useLogging": {
       "type": "computed",
       "datatype": "bool",
-      "value": "(dependencyInjection && logging && templateType == 'default')"
+      "value": "(useDependencyInjection && logging)"
     },
     "useSerilog": {
       "type": "computed",
@@ -399,10 +425,15 @@
       "dataType": "bool",
       "value": "(android || ios || macos || maccatalyst)"
     },
+    "useDependencyInjection": {
+      "type": "computed",
+      "dataType": "bool",
+      "value": "(dependencyInjection && templateType == 'default')"
+    },
     "useConfiguration": {
       "type": "computed",
       "dataType": "bool",
-      "value": "(useDefaultAppTemplate && configuration && dependencyInjection)"
+      "value": "(useDependencyInjection && configuration)"
     },
     "useHttp": {
       "type": "computed",
@@ -514,30 +545,25 @@
         ]
       }
     },
-    "useBlankAppTemplate": {
+    "useExtensionsNavigation": {
       "type": "computed",
       "datatype": "bool",
-      "value": "templateType == 'blank'"
+      "value": "useDependencyInjection && navigation != 'frame'"
     },
-    "useDefaultAppTemplate": {
+    "useReactiveExtensionsNavigation": {
       "type": "computed",
       "datatype": "bool",
-      "value": "templateType == 'default'"
+      "value": "useExtensionsNavigation && useMvux"
     },
     "useDefaultNav": {
       "type": "computed",
       "datatype": "bool",
-      "value": "navigation == 'default'"
+      "value": "useExtensionsNavigation && navigation == 'default'"
     },
     "useFrameNav": {
       "type": "computed",
       "datatype": "bool",
-      "value": "navigation == 'frame'"
-    },
-    "notFrameNav": {
-      "type": "computed",
-      "datatype": "bool",
-      "value": "navigation != 'frame'"
+      "value": "useDefaultAppTemplate && navigation == 'frame'"
     },
     "useInfrastructureNamespace": {
       "type": "computed",
@@ -615,6 +641,12 @@
           ],
           "exclude": [
             "MyExtensionsApp.Debugging.sln"
+          ]
+        },
+        {
+          "condition": "(useNetSeven)",
+          "exclude": [
+            "**/IsExternalInit.cs"
           ]
         },
         {
@@ -698,13 +730,28 @@
           ]
         },
         {
+          "condition": "(useDependencyInjection)",
+          "exclude": [
+            "MyExtensionsApp/AppStart.nodi.cs"
+          ]
+        },
+        {
+          "condition": "(!useDependencyInjection)",
+          "exclude": [
+            "MyExtensionsApp/AppStart.cs"
+          ],
+          "rename": {
+            "MyExtensionsApp/AppStart.nodi.cs": "MyExtensionsApp/AppStart.cs"
+          }
+        },
+        {
           "condition": "(useDefaultAppTemplate)",
           "exclude": [
             "MyExtensionsApp.Server/WeatherForecast.cs"
           ]
         },
         {
-          "condition": "(useBlankAppTemplate || ((!http && useDefaultAppTemplate) && !server))",
+          "condition": "(useBlankAppTemplate || (!useHttp && !server))",
           "exclude": [
             "MyExtensionsApp.DataContracts/**/*"
           ]
@@ -726,7 +773,7 @@
           ]
         },
         {
-          "condition": "(!http)",
+          "condition": "(!useHttp)",
           "exclude": [
             "MyExtensionsApp/Services/IApiClient.cs"
           ]
@@ -851,7 +898,7 @@
           ]
         },
         {
-          "condition": "(useDefaultAppTemplate && notFrameNav)",
+          "condition": "(useDefaultAppTemplate && useExtensionsNavigation)",
           "exclude": [
             "MyExtensionsApp/MainPage.xaml",
             "MyExtensionsApp/MainPage.xaml.cs"
