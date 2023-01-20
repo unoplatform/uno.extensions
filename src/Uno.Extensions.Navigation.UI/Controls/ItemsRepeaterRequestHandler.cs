@@ -28,7 +28,10 @@ public class ItemsRepeaterRequestHandler : ControlRequestHandlerBase<ItemsRepeat
 			await nav.NavigateRouteAsync(sender, path, Qualifiers.None, navdata);
 		};
 
-		TappedEventHandler tappedAction = async (actionSender, actionArgs) =>
+		var isCaptured = false;
+		object? dataContext = default;
+		FrameworkElement? pointerElement = default;
+		PointerEventHandler pointerPressed = (actionSender, actionArgs) =>
 		{
 			var sender = actionSender as ItemsRepeater;
 			if (sender is null)
@@ -36,31 +39,66 @@ public class ItemsRepeaterRequestHandler : ControlRequestHandlerBase<ItemsRepeat
 				return;
 			}
 
-			var elt = actionArgs.OriginalSource as DependencyObject;
-			while (elt is not null)
+			isCaptured = sender.CapturePointer(actionArgs.Pointer);
+			if (isCaptured)
 			{
-				if(elt is ButtonBase button &&
-					button.IsEnabled)
+				actionArgs.Handled = true;
+				dataContext = default; // Reset from any prior pointer pressed events
+				var elt = actionArgs.OriginalSource as DependencyObject;
+				while (elt is not null)
 				{
-					// Assume that Button captures all tapped events
-					return;
+					var parent = VisualTreeHelper.GetParent(elt);
+					if (parent == sender)
+					{
+						pointerElement = elt as FrameworkElement;
+						dataContext = (elt as ContentControl)?.Content ?? (elt as FrameworkElement)?.DataContext;
+					}
+					elt = parent;
 				}
+			}
 
-				var parent = VisualTreeHelper.GetParent(elt);
-				if (parent == sender)
+		};
+
+		PointerEventHandler pointerReleased = async (actionSender, actionArgs) =>
+		{
+			var sender = actionSender as ItemsRepeater;
+			if (sender is null)
+			{
+				return;
+			}
+
+			if (isCaptured)
+			{
+				pointerElement ??= sender;
+				var _pointerPosition = actionArgs.GetCurrentPoint(pointerElement).Position;
+
+				// Tolerance is consistent with use in ButtonBase
+				// https://github.com/unoplatform/uno/blob/4bc829e4ef01f2b89733b74c61a3161780818a8b/src/Uno.UI/UI/Xaml/Controls/Primitives/ButtonBase/ButtonBase.mux.cs#LL490C4-L494C88
+				const double tolerance = 0.05;
+				var layoutRect = LayoutInformation.GetLayoutSlot(pointerElement);
+				var pointerInControl =
+					-tolerance <= _pointerPosition.X && _pointerPosition.X <= layoutRect.Width + tolerance &&
+					-tolerance <= _pointerPosition.Y && _pointerPosition.Y <= layoutRect.Height + tolerance;
+				if (pointerInControl)
 				{
-					var itemClicked = (elt as ContentControl)?.Content ?? (elt as FrameworkElement)?.DataContext;
-					await action(sender, itemClicked);
-
+					actionArgs.Handled = true;
+					await action(sender, dataContext);
 				}
-				elt = parent;
 			}
 
 		};
 
 
-		Action connect = () => viewList.Tapped += tappedAction;
-		Action disconnect = () => viewList.Tapped -= tappedAction;
+		Action connect = () =>
+		{
+			viewList.PointerPressed += pointerPressed;
+			viewList.PointerReleased += pointerReleased;
+		};
+		Action disconnect = () =>
+		{
+			viewList.PointerPressed -= pointerPressed;
+			viewList.PointerReleased -= pointerReleased;
+		};
 
 		if (viewList.IsLoaded)
 		{

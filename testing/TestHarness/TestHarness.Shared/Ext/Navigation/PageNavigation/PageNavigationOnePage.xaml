@@ -19,7 +19,8 @@
 		<utu:NavigationBar Content="Page Navigation - One"
 						   AutomationProperties.AutomationId="PageNavigationOne" />
 		<StackPanel HorizontalAlignment="Center"
-					VerticalAlignment="Center" Grid.Row="1">
+					VerticalAlignment="Center"
+					Grid.Row="1">
 			<TextBlock>
 				<Run Text="Created on UI Thread: " /><Run Text="{Binding CreatedOnUIThread}" />
 			</TextBlock>
@@ -28,33 +29,33 @@
 					uen:Navigation.Request="PageNavigationTwo" />
 			<Button AutomationProperties.AutomationId="OnePageToTwoPageCodebehindButton"
 					Content="Two (Codebehind)"
-					Click="OnePageToTwoPageCodebehindClick"
-					/>
+					Click="OnePageToTwoPageCodebehindClick" />
 			<Button AutomationProperties.AutomationId="OnePageToTwoPageViewModelButton"
 					Content="Two (ViewModel)"
-					Click="{x:Bind ViewModel.GoToTwo}"/>
+					Click="{x:Bind ViewModel.GoToTwo}" />
 			<Button AutomationProperties.AutomationId="RapidSettingsWriteTestButton"
 					Content="Settings Write Test"
 					Click="{x:Bind ViewModel.SettingsWriteTest}" />
 		</StackPanel>
 		<ScrollViewer Grid.Row="2">
-			<muxc:ItemsRepeater ItemsSource="{Binding Items}"
-								uen:Navigation.Request="PageNavigationTwo">
-				<muxc:ItemsRepeater.ItemTemplate>
-					<DataTemplate>
-						<Grid Height="200"
-								Width="200"
-								Background="Red">
-							<TextBlock Text="{Binding}"
-									   VerticalAlignment="Center"
-									   HorizontalAlignment="Center" />
-							<Button VerticalAlignment="Bottom"
-									Content="Go to Three"
-									uen:Navigation.Request="PageNavigationThree" />
-						</Grid>
-					</DataTemplate>
-				</muxc:ItemsRepeater.ItemTemplate>
-			</muxc:ItemsRepeater>
+		<muxc:ItemsRepeater ItemsSource="{Binding Items}"
+							uen:Navigation.Request="PageNavigationTwo">
+			<muxc:ItemsRepeater.ItemTemplate>
+				<DataTemplate>
+					<Grid Height="200"
+						  Background="Red">
+						<Border Background="Pink"
+								VerticalAlignment="Top"
+								HorizontalAlignment="Center">
+							<TextBlock Text="{Binding}"/>
+						</Border>
+						<Button VerticalAlignment="Bottom"
+								Content="Go to Three"
+								uen:Navigation.Request="PageNavigationThree" />
+					</Grid>
+				</DataTemplate>
+			</muxc:ItemsRepeater.ItemTemplate>
+		</muxc:ItemsRepeater>
 		</ScrollViewer>
 	</Grid>
 </Page>
