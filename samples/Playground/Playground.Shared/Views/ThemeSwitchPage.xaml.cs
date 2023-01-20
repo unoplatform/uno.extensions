@@ -14,5 +14,22 @@ namespace Playground.Views
 		{
 			ViewModel = args.NewValue as ThemeSwitchViewModel;
 		}
+
+		private async void ElementChangeToLightClick(object sender, RoutedEventArgs e)
+		{
+			var ts = (sender as UIElement)!.GetThemeService();
+			await ts.SetThemeAsync(AppTheme.Light);
+		}
+		private async void ElementChangeToDarkClick(object sender, RoutedEventArgs e)
+		{
+			var ts = (sender as UIElement)!.GetThemeService();
+			await ts.SetThemeAsync(AppTheme.Dark);
+		}
+		private async void ElementChangeToSystemClick(object sender, RoutedEventArgs e)
+		{
+			var ts = (sender as UIElement)!.GetThemeService();
+			await ts.SetThemeAsync(AppTheme.System);
+
+		}
 	}
 }

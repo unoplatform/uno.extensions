@@ -41,6 +41,12 @@
 			<Button
 				Content="Change To System"
 				Click="{x:Bind ViewModel.ChangeToSystem}" />
+			<Button Content="Change To Dark (Element ThemeService)"
+					Click="ElementChangeToDarkClick" />
+			<Button Content="Change To Light (Element ThemeService)"
+					Click="ElementChangeToLightClick" />
+			<Button Content="Change To System (Element ThemeService)"
+					Click="ElementChangeToSystemClick" />
 		</StackPanel>
 
 	</Grid>

@@ -8,9 +8,6 @@ public sealed partial class App : Application
 	public App()
 	{
 		this.InitializeComponent();
-
-		// TODO: Remove once https://github.com/unoplatform/uno/issues/10990 is resolved
-		var type = typeof(Uno.UI.FluentTheme.GlobalStaticResources);
 	}
 
 	protected override void OnLaunched(LaunchActivatedEventArgs args)
