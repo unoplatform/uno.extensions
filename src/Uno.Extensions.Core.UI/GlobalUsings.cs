@@ -10,6 +10,5 @@ global using System.Threading;
 #else
 global using Windows.System;
 global using Windows.UI.Core;
-global using Microsoft.UI.Xaml;
 	global using Windows.UI.Xaml;
 #endif
