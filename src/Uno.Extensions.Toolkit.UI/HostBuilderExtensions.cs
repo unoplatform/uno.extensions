@@ -30,7 +30,7 @@ public static class HostBuilderExtensions
 			.ConfigureServices((ctx, services) =>
 			{
 				_ = services
-				.AddScoped<IThemeService, ThemeService>();
+				.AddScoped<IThemeService, ScopedThemeService>();
 			});
 	}
 }

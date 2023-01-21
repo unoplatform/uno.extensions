@@ -9,6 +9,7 @@
       "..\\..\\src\\Uno.Extensions.Authentication\\Uno.Extensions.Authentication.csproj",
       "..\\..\\src\\Uno.Extensions.Configuration\\Uno.Extensions.Configuration.csproj",
       "..\\..\\src\\Uno.Extensions.Core.Generators\\Uno.Extensions.Core.Generators.csproj",
+      "..\\..\\src\\Uno.Extensions.Core.UI\\Uno.Extensions.Core.WinUI.csproj",
       "..\\..\\src\\Uno.Extensions.Core\\Uno.Extensions.Core.csproj",
       "..\\..\\src\\Uno.Extensions.Hosting.UI\\Uno.Extensions.Hosting.WinUI.Skia.csproj",
       "..\\..\\src\\Uno.Extensions.Hosting.UI\\Uno.Extensions.Hosting.WinUI.Wasm.csproj",

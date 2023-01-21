@@ -1,4 +1,6 @@
-﻿namespace Uno.Extensions;
+﻿
+
+namespace Uno.Extensions;
 
 public class Dispatcher : IDispatcher
 {
@@ -18,7 +20,7 @@ public class Dispatcher : IDispatcher
 #endif
 	}
 
-	public Dispatcher(FrameworkElement element)
+	public Dispatcher(UIElement element)
 	{
 #if WINUI
 		// We can't grab the DispatcherQueue from the window because it's not supported in Uno yet

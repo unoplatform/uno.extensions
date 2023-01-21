@@ -2,23 +2,17 @@
 	<Import Project="..\tfms-ui-winui.props" />
 
 	<PropertyGroup>
-		<Description>Toolkit Extensions for the Uno Platform (WinUI)</Description>
+		<Description>Core Extensions for the Uno Platform (WinUI)</Description>
 	</PropertyGroup>
 	
 	<Import Project="common.props" />
 
 	<PropertyGroup>
-		<PackageId>Uno.Extensions.Toolkit.WinUI</PackageId>
+		<PackageId>Uno.Extensions.Core.WinUI</PackageId>
 		<DefineConstants>$(DefineConstants);WINUI</DefineConstants>
 	</PropertyGroup>
 
-	<ItemGroup>
-		<PackageReference Include="Uno.Toolkit.WinUI" />
-	</ItemGroup>
 	<ItemGroup Condition="'$(_IsWinUI)'=='false'">
 		<PackageReference Include="Uno.WinUI" />
-	</ItemGroup>
-	<ItemGroup>
-		<ProjectReference Include="..\Uno.Extensions.Core.UI\Uno.Extensions.Core.WinUI.csproj" />
 	</ItemGroup>
 </Project>

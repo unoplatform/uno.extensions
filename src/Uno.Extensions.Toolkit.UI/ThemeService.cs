@@ -1,29 +1,30 @@
-﻿namespace Uno.Extensions.Toolkit;
+﻿using Windows.Storage;
+using Windows.UI.Xaml;
+
+namespace Uno.Extensions.Toolkit;
 
 internal class ThemeService : IThemeService
 {
-	private readonly Window _window;
+	private const string CurrentThemeSettingsKey = "CurrentTheme";
+	private readonly Func<XamlRoot?> _xamlRootAccessor;
 	private readonly IDispatcher _dispatcher;
-	private readonly ILogger<ThemeService> _logger;
-	private readonly IWritableOptions<ThemeSettings> _writeSettings;
+	private readonly ILogger? _logger;
 
 	/// <inheritdoc/>
 	public event EventHandler<AppTheme>? DesiredThemeChanged;
 
-	public ThemeService(
-		ILogger<ThemeService> logger,
-		Window window,
+	internal ThemeService(
+		Func<XamlRoot?> xamlRootAccessor,
 		IDispatcher dispatcher,
-		IWritableOptions<ThemeSettings> writeSettings)
+		ILogger? logger = default)
 	{
-		_window = window;
+		_xamlRootAccessor = xamlRootAccessor;
 		_dispatcher = dispatcher;
-		_writeSettings = writeSettings;
 		_logger = logger;
 	}
 
 	/// <inheritdoc/>
-	public bool IsDark => SystemThemeHelper.IsRootInDarkMode(_window.Content.XamlRoot!);
+	public bool IsDark => _xamlRootAccessor() is { } xamlRoot ? SystemThemeHelper.IsRootInDarkMode(xamlRoot) : false;
 
 	/// <inheritdoc/>
 	public AppTheme Theme => GetSavedTheme();
@@ -31,20 +32,22 @@ internal class ThemeService : IThemeService
 	/// <inheritdoc/>
 	public async Task SetThemeAsync(AppTheme theme)
 	{
-		if (theme != AppTheme.System)
+		await _dispatcher.ExecuteAsync(async () =>
 		{
-			await _dispatcher.ExecuteAsync(async () =>
+			if (_xamlRootAccessor() is { } xamlRoot)
 			{
-				SystemThemeHelper.SetRootTheme(_window.Content.XamlRoot, theme == AppTheme.Dark);
-			});
-
-		}
-		else
-		{
-			//Set System theme
-			var systemTheme = SystemThemeHelper.GetCurrentOsTheme();
-			SystemThemeHelper.SetRootTheme(_window.Content.XamlRoot, systemTheme == ApplicationTheme.Dark);
-		}
+				if (theme != AppTheme.System)
+				{
+					SystemThemeHelper.SetRootTheme(xamlRoot, theme == AppTheme.Dark);
+				}
+				else
+				{
+					//Set System theme
+					var systemTheme = SystemThemeHelper.GetCurrentOsTheme();
+					SystemThemeHelper.SetRootTheme(xamlRoot, systemTheme == ApplicationTheme.Dark);
+				}
+			}
+		});
 
 		await SaveDesiredTheme(theme);
 		DesiredThemeChanged?.Invoke(this, theme);
@@ -54,11 +57,11 @@ internal class ThemeService : IThemeService
 	{
 		try
 		{
-			await _writeSettings.UpdateAsync(themeSetting => themeSetting with { CurrentTheme = theme });
+			ApplicationData.Current.LocalSettings.Values[CurrentThemeSettingsKey] = theme.ToString();
 		}
-		catch(Exception ex)
+		catch (Exception ex)
 		{
-			if(_logger.IsEnabled(LogLevel.Error)) _logger.LogError(ex, $"[ThemeService.SaveDesiredTheme({theme})] - Error while updating current theme.");
+			if (_logger?.IsEnabled(LogLevel.Error) ?? false) _logger.LogError(ex, $"[ThemeService.SaveDesiredTheme({theme})] - Error while updating current theme.");
 		}
 	}
 
@@ -66,11 +69,11 @@ internal class ThemeService : IThemeService
 	{
 		try
 		{
-			return _writeSettings.Value.CurrentTheme;
+			return Enum.TryParse<AppTheme>(ApplicationData.Current.LocalSettings.Values[CurrentThemeSettingsKey] + string.Empty, out var theme) ? theme : AppTheme.System;
 		}
 		catch (Exception ex)
 		{
-			if (_logger.IsEnabled(LogLevel.Error)) _logger.LogErrorMessage(ex, $"[ThemeService.GetSavedTheme()] - Error while reading stored theme.");
+			if (_logger?.IsEnabled(LogLevel.Error) ?? false) _logger.LogErrorMessage(ex, $"[ThemeService.GetSavedTheme()] - Error while reading stored theme.");
 		}
 
 		return AppTheme.System;
