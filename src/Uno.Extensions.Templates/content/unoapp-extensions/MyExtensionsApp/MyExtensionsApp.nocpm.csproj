@@ -114,7 +114,7 @@
 		</When>
 		<Otherwise>
 			<ItemGroup>
-				<PackageReference Include="Uno.WinUI" Version="4.7.0-dev.972" />
+				<PackageReference Include="Uno.WinUI" Version="4.7.0-dev.1036" />
 			</ItemGroup>
 
 			<ItemGroup>
@@ -128,7 +128,7 @@
 	</Choose>
 	<!--#else-->
 	<ItemGroup>
-		<PackageReference Include="Uno.WinUI" Version="4.7.0-dev.972" />
+		<PackageReference Include="Uno.WinUI" Version="4.7.0-dev.1036" />
 	</ItemGroup>
 
 	<ItemGroup>
