@@ -909,6 +909,7 @@
             "MyExtensionsApp/Services/**",
             "MyExtensionsApp/Styles/**",
             "MyExtensionsApp/AppStart.cs",
+            "MyExtensionsApp/AppStart.nodi.cs",
             "MyExtensionsApp/appsettings.*",
             "MyExtensionsApp.Base/App.default.cs",
             "MyExtensionsApp.Tests/AppInfoTests.cs"
