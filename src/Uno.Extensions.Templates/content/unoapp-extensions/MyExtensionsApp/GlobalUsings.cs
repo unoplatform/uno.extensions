@@ -7,12 +7,12 @@ global using System.Threading;
 global using System.Threading.Tasks;
 global using Microsoft.Extensions.DependencyInjection;
 //+:cnd:noEmit
-#if (useDefaultAppTemplate)
+#if (useDependencyInjection)
 global using Microsoft.Extensions.Hosting;
 #endif
 global using Microsoft.Extensions.Logging;
 global using Microsoft.UI.Xaml;
-#if useCsharpMarkup
+#if (useCsharpMarkup)
 global using Microsoft.UI.Xaml.Automation;
 global using Microsoft.UI.Xaml.Controls;
 global using Microsoft.UI.Xaml.Data;
@@ -21,7 +21,6 @@ global using Microsoft.UI.Xaml.Controls;
 #endif
 global using Microsoft.UI.Xaml.Media;
 global using Microsoft.UI.Xaml.Navigation;
-#if (useDefaultAppTemplate)
 #if (useConfiguration)
 global using Microsoft.Extensions.Options;
 #endif
@@ -41,17 +40,17 @@ global using Uno.Extensions.Navigation;
 global using Refit;
 #endif
 global using Uno.Extensions;
-#if useConfiguration
+#if (useConfiguration)
 global using Uno.Extensions.Configuration;
 #endif
 global using Uno.Extensions.Hosting;
-#if localization
+#if (useLocalization)
 global using Uno.Extensions.Localization;
 #endif
-#if logging
+#if (useLogging)
 global using Uno.Extensions.Logging;
 #endif
-#if useCsharpMarkup
+#if (useCsharpMarkup)
 global using Uno.Extensions.Markup;
 global using Uno.Material;
 global using Uno.Themes.Markup;
@@ -60,11 +59,10 @@ global using Uno.Toolkit.UI.Material;
 #else
 global using Uno.Toolkit.UI;
 #endif
-#endif
 global using Windows.ApplicationModel;
 global using Application = Microsoft.UI.Xaml.Application;
 global using ApplicationExecutionState = Windows.ApplicationModel.Activation.ApplicationExecutionState;
-#if useCsharpMarkup
+#if (useCsharpMarkup)
 global using Button = Microsoft.UI.Xaml.Controls.Button;
 global using Color = Windows.UI.Color;
 #endif

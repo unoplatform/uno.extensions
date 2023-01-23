@@ -31,7 +31,7 @@ public partial class MainViewModel : ObservableObject
 		GoToSecond = new AsyncRelayCommand(GoToSecondView);
 	}
 
-	public async Task GoToSecondView()
+	private async Task GoToSecondView()
 	{
 		await _navigator.NavigateViewModelAsync<SecondViewModel>(this, data: new Entity(Name!));
 	}

@@ -594,6 +594,16 @@
       "datatype": "bool",
       "value": "useExtensionsNavigation && navigation == 'default'"
     },
+    "useDefaultNavMvux": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "useDefaultNav && useMvux"
+    },
+    "useDefaultNavMvvm": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "useDefaultNav && useMvvm"
+    },
     "useFrameNav": {
       "type": "computed",
       "datatype": "bool",
