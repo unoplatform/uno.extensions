@@ -38,7 +38,9 @@
 		<!--#if (useConfiguration)-->
 		<PackageReference Include="Uno.Extensions.Configuration" />
 		<!--#endif-->
-		<PackageReference Include="Uno.Extensions.Hosting" />
+		<!--#if (useDependencyInjection)-->
+		<PackageReference Include="Uno.Extensions.Hosting.WinUI" />
+		<!--#endif-->
 		<!--#if (useHttp)-->
 		<PackageReference Include="Uno.Extensions.Http" />
 		<PackageReference Include="Uno.Extensions.Http.Refit" />
@@ -76,7 +78,6 @@
 		<PackageReference Include="Uno.Toolkit.WinUI" />
 		<!--#endif-->
 		<PackageReference Include="Uno.Extensions.Authentication.WinUI" />
-		<PackageReference Include="Uno.Extensions.Hosting.WinUI" />
 		<!--#if (useLocalization)-->
 		<PackageReference Include="Uno.Extensions.Localization.WinUI" />
 		<!--#endif-->
@@ -99,7 +100,7 @@
 		<ProjectReference Include="..\MyExtensionsApp.DataContracts\MyExtensionsApp.DataContracts.csproj" />
 	</ItemGroup>
 	<!--#endif-->
-	<!--# (useNetSix)-->
+	<!--#if (useNetSix)-->
 
 	<ItemGroup>
 		<Compile Include="..\MyExtensionsApp.Base\IsExternalInit.cs"

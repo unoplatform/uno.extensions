@@ -64,7 +64,9 @@
 		<PackageReference Include="Uno.Toolkit.WinUI" Version="2.5.0-dev.17" />
 		<!--#endif-->
 		<PackageReference Include="Uno.Extensions.Authentication.WinUI" Version="255.255.255.255" />
+		<!--#if (useDependencyInjection)-->
 		<PackageReference Include="Uno.Extensions.Hosting.WinUI" Version="255.255.255.255" />
+		<!--#endif-->
 		<!--#if (useLocalization)-->
 		<PackageReference Include="Uno.Extensions.Localization.WinUI" Version="255.255.255.255" />
 		<!--#endif-->
@@ -82,7 +84,7 @@
 		<PackageReference Include="Microsoft.Extensions.Logging.Console" Version="7.0.0" />
 	</ItemGroup>
 	<!--#endif-->
-	<!--# (useNetSix)-->
+	<!--#if (useNetSix)-->
 
 	<ItemGroup>
 		<Compile Include="..\MyExtensionsApp.Base\IsExternalInit.cs"
