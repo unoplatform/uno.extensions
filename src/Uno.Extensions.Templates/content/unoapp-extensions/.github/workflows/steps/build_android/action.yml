@@ -14,6 +14,14 @@ inputs:
     description: 'Number of days to keep the build artifacts'
     required: false
     default: '90'
+  # *** [REQUIRED FOR GENERATING SIGNED .APK PACKAGE] ***
+  # For creating a valid .jks certificate:
+  # 1.- Go to C:\ and open a powershell terminal as administrator
+  # 2.- Copy and paste this command keytool –genkey –alias contoso -keyalg RSA –keystore cert.jks –keysize 2048 and execute it
+  # 3.- You will be asked to answer some questions like Password, Alias, Country, etc for your certificate
+  # 4.-Last part consists in converting the certificate to Base64 format, so navigate to C:\ and copy and paste this command: [convert]::ToBase64String((Get-Content -path "C:\{YOUR_JKS_FILE.jks}" -Encoding byte))
+  # 5.-After that you will be able to see the Base64 string in the terminal output. Now you can copy that string and create a new Encrypted Secret in your repository and then use it as variable value. 
+  # See how to create an encrypted secret in here:https://docs.github.com/es/actions/security-guides/encrypted-secrets  
   certificate: 
      description: "Base64 Certificate for signing .apk package. Required if 'sign-package': 'true'"
      required: false    
@@ -74,7 +82,8 @@ runs:
         New-Item -ItemType Directory -Force -Path $finalPackageFolder
 
         if ('true' -eq '${{ inputs.publish-artifacts }}') {
-          Copy-Item -Path '.\bin\Release${{ inputs.package-id }}\*' -Destination ".\" -recurse -Force  
+          Write-Host "Compressing final package"
+          Copy-Item -Path '.\bin\Release${{ inputs.package-id }}\*' -Destination ".\artifacts${{ inputs.package-id }}" -recurse -Force  
         }
 
     # Remove the jks

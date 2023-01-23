@@ -49,7 +49,8 @@ runs:
 
               Remove-Item $exePath
               Write-Host "Installed" -ForegroundColor Green
-              Start-Sleep -s 15 #wait for dotnet.exe to release
+
+              Start-Sleep -s 15
           }
         }
 
@@ -77,9 +78,11 @@ runs:
           if(-Not $isMacCatalyst){
             Write-Host "Installing maccatalyst workload"
             dotnet workload install maccatalyst
-          }     
-        }
+          } 
 
+          Start-Sleep -s 15    
+        }
+      
     # Install GTK4
     - name: Install GTK4
       continue-on-error: true
@@ -111,6 +114,7 @@ runs:
               Write-Host "Adding GTK4 to Path"
               $env:Path = "C:\gtk-build\gtk\x64\release\bin;" + $env:Path
               Write-Host "GTK4 Installation Finished"
-              Start-Sleep -s 15 #wait for dotnet.exe to release
+              
+              Start-Sleep -s 15
           }
         }

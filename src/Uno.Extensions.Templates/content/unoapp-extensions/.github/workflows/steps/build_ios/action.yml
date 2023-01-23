@@ -1,0 +1,117 @@
+name: Build Android
+description: ""
+
+inputs:
+  package-id:
+    description: 'Compiled Package ID'
+    required: true
+    default: 'release_Mobile'
+  project-to-build:
+    description: 'Relative path to .csproj file'
+    required: true
+    default: ''   
+  project-folder:
+    description: 'csproj folder'
+    required: true
+    default: ''        
+  artifact-retention-policy: 
+    description: 'Number of days to keep the build artifacts'
+    required: false
+    default: '90'
+  certificate: 
+     description: "Apple .p12 Base64 Certificate for signing final .ipa package."
+     required: true    
+     default: ''
+  certificate-password: 
+     description: "Apple .p12 certificate password."
+     required: true      
+     default: ''
+  provisioning-profile: 
+     description: "Base64 provisioning profile"
+     required: true
+     default: ''
+  keychain-password: 
+     description: "New keychain password. This can be a random string value"
+     required: false
+     default: 'KEYCHAIN_PASSWORD'      
+  publish-artifacts: 
+     description: "If true, compilation artifacts will be published and put under Job Summary section"
+     required: false
+     default: 'true' 
+
+runs:
+  using: "composite"
+  steps:
+    - name: Setup GitVersion
+      uses: gittools/actions/gitversion/setup@v0.9.9
+      with:
+        versionSpec: '5.x'
+
+    - name: GitVersion
+      id: gitversion
+      uses: gittools/actions/gitversion/execute@v0.9.9
+      with:
+        useConfigFile: true
+        configFilePath: ./.github/workflows/config/gitversion.yml
+
+    #############################################
+    #                 IMPORTANT                 #
+    #############################################
+    #Uncomment this step if you see an error indicating the build its expecting a different version of XCode, update the correct number in the lines 65 and 66 and try again
+    # - name: Set XCode Version
+    #   if: runner.os == 'macOS'
+    #   shell: bash
+    #   run: |
+    #     sudo xcode-select -s "/Applications/Xcode_14.1.app"
+    #     echo "MD_APPLE_SDK_ROOT=/Applications/Xcode_14.1.app" >> $GITHUB_ENV
+        
+    - name: Install the Apple certificate and provisioning profile
+      shell: bash
+      env:
+        BUILD_CERTIFICATE_BASE64: ${{ inputs.certificate }}
+        P12_PASSWORD: ${{ inputs.certificate-password }}
+        BUILD_PROVISION_PROFILE_BASE64: ${{ inputs.provisioning-profile }}
+        KEYCHAIN_PASSWORD: ${{ inputs.keychain-password }}
+      run: |
+          echo -n "create variables"
+          CERTIFICATE_PATH=$RUNNER_TEMP/build_certificate.p12
+          PP_PATH=$RUNNER_TEMP/build_pp.mobileprovision
+          KEYCHAIN_PATH=$RUNNER_TEMP/app-signing.keychain-db
+
+          echo -n "import certificate and provisioning profile from secrets"
+          echo -n "$BUILD_CERTIFICATE_BASE64" | base64 --decode -o $CERTIFICATE_PATH
+          echo -n "$BUILD_PROVISION_PROFILE_BASE64" | base64 --decode -o $PP_PATH
+
+          echo -n "create temporary keychain"
+          security create-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
+          security set-keychain-settings -lut 21600 $KEYCHAIN_PATH
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
+
+          echo -n "import certificate to keychain"
+          security import $CERTIFICATE_PATH -P "$P12_PASSWORD" -A -t cert -f pkcs12 -k $KEYCHAIN_PATH
+          security list-keychain -d user -s $KEYCHAIN_PATH
+
+          echo -n "apply provisioning profile"
+          mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
+          cp $PP_PATH ~/Library/MobileDevice/Provisioning\ Profiles
+          
+    # Create the app package by building and packaging the project
+    - name: Build and create package
+      shell: pwsh
+      run: |
+        dotnet publish  -c Release -p:RuntimeIdentifier='ios-arm64' -p:CodesignProvision='EnviosDev2022' -p:CodesignKey='Apple Development: Patricio Valdes (752234A22L)' -p:TargetFramework=net6.0-ios /p:ArchiveOnBuild=true  -o ${{ inputs.project-folder }}\bin\Release${{ inputs.package-id }}\ ${{ inputs.project-to-build }} 
+
+        $finalPackageFolder = "artifacts${{ inputs.package-id }}"
+        Write-Host "Creating package folder: $finalPackageFolder"
+        New-Item -ItemType Directory -Force -Path $finalPackageFolder
+
+        if ('true' -eq '${{ inputs.publish-artifacts }}') {
+          Copy-Item -Path '${{ inputs.project-folder }}\bin\Release${{ inputs.package-id }}\*' -Destination "artifacts${{ inputs.package-id }}" -recurse -Force  
+        }
+
+    - name: Upload Artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: "${{ inputs.package-id }}_${{ steps.gitversion.outputs.assemblySemVer }}" 
+        path: artifacts${{ inputs.package-id }}
+        retention-days: ${{ inputs.artifact-retention-policy }}

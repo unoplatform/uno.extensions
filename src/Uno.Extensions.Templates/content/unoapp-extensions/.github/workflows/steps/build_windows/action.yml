@@ -22,6 +22,19 @@ inputs:
     description: 'Number of days to keep the build artifacts'
     required: false
     default: '90'
+  # *** [REQUIRED FOR GENERATING SIGNED .MSIX PACKAGE] ***
+  #For Creating a valid PFX certificate:
+  # 1.- Open a new powershell terminal as administrator and use this command: New-SelfSignedCertificate -DnsName {YOURCERT.NAME.COM} -CertStoreLocation cert:\LocalMachine\My
+  # 2.-When Finished press Win + R and type  certlm.msc. Then go to Personal folder -> Certificates and you should be able to see your previously created certificate
+  # 3.-Double Click it then go to Details tab. Click on the bottom right button 'Copy to file'. A wizard will open
+  # 4.-On first page Click Next 
+  #   -> Second page click "Yes, Export the private key" 
+  #   -> Third page select third option "PKCS #12 (.PFX)" and click on Next 
+  #   -> In Fourth page (Security) set a password for the certificate and click on Next
+  #   -> In last page please set a Name for the certificate and select where to put it. Use a simple location like C:\
+  # 5.-Last part consists in converting the .pfx certificate to Base64 format. For doing that please navigate to the path where you exported the certificate (C:\ in this example) and open a Powershell terminal as administrator, then use this command: [convert]::ToBase64String((Get-Content -path "C:\{YOUR_PFX_FILE.pfx}" -Encoding byte))
+  # 6.-After that you will be able to see the Base64 string in the terminal output. Now you can copy that string and create a new Encrypted Secret in your repository and then use it as variable value. 
+  # See how to create an encrypted secret in here:https://docs.github.com/es/actions/security-guides/encrypted-secrets
   certificate: 
      description: "Base64 Certificate for signing .Msix package. Required if 'sign-package': 'true'"
      required: false
