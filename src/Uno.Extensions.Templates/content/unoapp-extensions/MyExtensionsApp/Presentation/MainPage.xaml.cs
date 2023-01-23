@@ -9,7 +9,8 @@ public sealed partial class MainPage : Page
 		this.DataContext<$mainDataContext$>((page, vm) => page
 			.NavigationCacheMode(NavigationCacheMode.Required)
 			.Background(Theme.Brushes.Background.Default)
-			.Content(new Grid().RowDefinitions<Grid>("Auto,*"))
+			.Content(new Grid()
+				.RowDefinitions<Grid>("Auto,*")
 				.Children(
 					new NavigationBar().Content(() => vm.Title),
 					new StackPanel()
