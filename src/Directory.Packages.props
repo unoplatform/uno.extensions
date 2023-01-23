@@ -22,7 +22,7 @@
 		<PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.1.0" />
 		<PackageVersion Include="Microsoft.Net.Compilers.Toolset" Version="4.2.0" />
 		<PackageVersion Include="Microsoft.SourceLink.GitHub" Version="1.1.1" />
-		<PackageVersion Include="Microsoft.UI.Xaml" Version="2.7.1" />
+		<PackageVersion Include="Microsoft.UI.Xaml" Version="2.8.2" />
 		<PackageVersion Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22000.197" />
 		<PackageVersion Include="Microsoft.WindowsAppSDK" Version="1.1.0" />
 		<PackageVersion Include="Moq" Version="4.17.2" />
