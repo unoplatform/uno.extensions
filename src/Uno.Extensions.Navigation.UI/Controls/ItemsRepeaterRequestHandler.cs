@@ -84,6 +84,10 @@ public class ItemsRepeaterRequestHandler : ControlRequestHandlerBase<ItemsRepeat
 					actionArgs.Handled = true;
 					await action(sender, dataContext);
 				}
+				
+				isCaptured = false;
+				dataContext = null;
+				pointerElement = null;
 			}
 
 		};
