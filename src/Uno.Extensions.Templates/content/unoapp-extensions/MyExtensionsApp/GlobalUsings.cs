@@ -24,7 +24,7 @@ global using Microsoft.UI.Xaml.Navigation;
 #if (useConfiguration)
 global using Microsoft.Extensions.Options;
 #endif
-#if (useDefaultAppTemplate)
+#if (useBusinessModelsNamespace)
 global using MyExtensionsApp.Business.Models;
 #endif
 #if (useInfrastructureNamespace)

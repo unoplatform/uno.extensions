@@ -1,4 +1,4 @@
-﻿{
+{
   "$schema": "http://json.schemastore.org/template",
   "author": "Uno Platform",
   "classifications": [
@@ -627,7 +627,12 @@
     "useInfrastructureNamespace": {
       "type": "computed",
       "datatype": "bool",
-      "value": "templateType == 'default' && (http || useCsharpMarkup)"
+      "value": "templateType == 'default' && ((http && dependencyInjection) || useCsharpMarkup)"
+    },
+    "useBusinessModelsNamespace": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "templateType == 'default' && dependencyInjection && (configuration || navigation != 'frame')"
     },
     "HostIdentifier": {
       "type": "bind",
