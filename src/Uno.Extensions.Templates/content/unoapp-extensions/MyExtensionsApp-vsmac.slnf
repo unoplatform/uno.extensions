@@ -2,6 +2,12 @@
   "solution": {
     "path": "MyExtensionsApp.sln",
     "projects": [
+#//#if (useUnitTests)
+      "MyExtensionsApp.Tests\\MyExtensionsApp.Tests.csproj",
+#//#endif
+#//#if (useUITests)
+      "MyExtensionsApp.UITests\\MyExtensionsApp.UITests.csproj",
+#//#endif
 #//#if (useMobile)
       "MyExtensionsApp.Mobile\\MyExtensionsApp.Mobile.csproj",
 #//#endif
