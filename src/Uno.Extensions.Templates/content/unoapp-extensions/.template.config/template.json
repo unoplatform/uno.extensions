@@ -425,6 +425,21 @@
       "dataType": "bool",
       "value": "(android || ios || macos || maccatalyst)"
     },
+    "useDataContracts": {
+      "type": "computed",
+      "dataType": "bool",
+      "value": "(templateType == 'default' && ((useDependencyInjection && http) || server))"
+    },
+    "useUnitTests": {
+      "type": "computed",
+      "dataType": "bool",
+      "value": "(templateType == 'default' && unitTests)"
+    },
+    "useUITests": {
+      "type": "computed",
+      "dataType": "bool",
+      "value": "(templateType == 'default' && tests)"
+    },
     "useDependencyInjection": {
       "type": "computed",
       "dataType": "bool",

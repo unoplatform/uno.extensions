@@ -14,7 +14,7 @@
 #//#if (server)
       "MyExtensionsApp.Server\\MyExtensionsApp.Server.csproj",
 #//#endif
-#//#if (server || http)
+#//#if (useDataContracts)
       "MyExtensionsApp.DataContracts\\MyExtensionsApp.DataContracts.csproj",
 #//#endif
       "MyExtensionsApp\\MyExtensionsApp.csproj"
