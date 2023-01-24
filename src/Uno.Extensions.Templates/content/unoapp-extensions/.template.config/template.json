@@ -552,11 +552,11 @@
       "parameters": {
         "cases": [
           {
-            "condition": "(useMvux == 'true')",
+            "condition": "(architecture == 'mvux')",
             "value": "BindableMainModel"
           },
           {
-            "condition": "(useMvvm == 'true')",
+            "condition": "(architecture == 'mvvm')",
             "value": "MainViewModel"
           }
         ]
@@ -569,11 +569,11 @@
       "parameters": {
         "cases": [
           {
-            "condition": "(useMvux == 'true')",
+            "condition": "(architecture == 'mvux')",
             "value": "BindableSecondModel"
           },
           {
-            "condition": "(useMvvm == 'true')",
+            "condition": "(architecture == 'mvvm')",
             "value": "SecondViewModel"
           }
         ]
@@ -607,12 +607,12 @@
     "useFrameNav": {
       "type": "computed",
       "datatype": "bool",
-      "value": "useDefaultAppTemplate && navigation == 'frame'"
+      "value": "templateType == 'blank' || !useDependencyInjection || navigation == 'frame'"
     },
     "useInfrastructureNamespace": {
       "type": "computed",
       "datatype": "bool",
-      "value": "(useDefaultAppTemplate && http) || useCsharpMarkup"
+      "value": "templateType == 'default' && (http || useCsharpMarkup)"
     },
     "HostIdentifier": {
       "type": "bind",
@@ -782,7 +782,10 @@
         {
           "condition": "(!useDependencyInjection)",
           "exclude": [
-            "MyExtensionsApp/AppStart.cs"
+            "MyExtensionsApp/AppStart.cs",
+            "MyExtensionsApp/Infrastructure/DebugHandler.cs",
+            "MyExtensionsApp/Business/**",
+            "MyExtensionsApp/Presentation/**"
           ],
           "rename": {
             "MyExtensionsApp/AppStart.nodi.cs": "MyExtensionsApp/AppStart.cs"
@@ -943,16 +946,10 @@
           ]
         },
         {
-          "condition": "(useDefaultAppTemplate && useExtensionsNavigation)",
+          "condition": "(useDefaultAppTemplate && useExtensionsNavigation && useDependencyInjection)",
           "exclude": [
             "MyExtensionsApp/MainPage.xaml",
             "MyExtensionsApp/MainPage.xaml.cs"
-          ]
-        },
-        {
-          "condition": "(tfm == 'net7.0')",
-          "exclude": [
-            "MyExtensionsApp.DataContracts/_Compat/**"
           ]
         },
         {
