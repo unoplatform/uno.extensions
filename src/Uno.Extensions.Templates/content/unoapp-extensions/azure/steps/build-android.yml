@@ -14,10 +14,7 @@ parameters:
   default: 'release_Wasm'
 - name: project_to_build
   type: string
-  default: ''  
-- name: target_framework
-  type: string
-  default: 'net6.0-android'  
+  default: ''   
   # *** [REQUIRED FOR GENERATING SIGNED .APK PACKAGE] ***
   # For creating a valid .jks certificate:
   # 1.- Go to C:\ and open a powershell terminal as administrator

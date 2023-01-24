@@ -23,9 +23,6 @@ parameters:
 - name: project_folder
   type: string
   default: ''       
-- name: target_framework
-  type: string
-  default: 'net6.0-android'  
 - name: publish_artifacts
   type: string
   default: 'true'

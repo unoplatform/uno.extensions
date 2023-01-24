@@ -20,7 +20,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Install Dependencies
-        uses: "./.github/workflows/steps/install_dependencies"                
+        uses: "./.github/workflows/steps/install_dependencies"
       
       - name: Build Mobile (Android)
         uses: "./.github/workflows/steps/build_mobile"
@@ -36,7 +36,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Install Dependencies
-        uses: "./.github/workflows/steps/install_dependencies"                
+        uses: "./.github/workflows/steps/install_dependencies"
       
       - name: Build Mobile (iOS)
         uses: "./.github/workflows/steps/build_mobile"
@@ -52,7 +52,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Install Dependencies
-        uses: "./.github/workflows/steps/install_dependencies"                
+        uses: "./.github/workflows/steps/install_dependencies"
       
       - name: Build Mobile (MacCatalyst)
         uses: "./.github/workflows/steps/build_mobile"
@@ -68,7 +68,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Install Dependencies
-        uses: "./.github/workflows/steps/install_dependencies"                
+        uses: "./.github/workflows/steps/install_dependencies"
       
       - name: Build Wasm
         uses: "./.github/workflows/steps/build_wasm"
@@ -83,7 +83,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Install Dependencies
-        uses: "./.github/workflows/steps/install_dependencies"                
+        uses: "./.github/workflows/steps/install_dependencies"
       
       - name: Build and Publish Windows(Unsigned)
         uses: "./.github/workflows/steps/build_windows"
@@ -99,7 +99,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Install Dependencies
-        uses: "./.github/workflows/steps/install_dependencies"                
+        uses: "./.github/workflows/steps/install_dependencies"
       
       - name: Build Linux
         uses: "./.github/workflows/steps/build_desktop"
@@ -114,7 +114,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Install Dependencies
-        uses: "./.github/workflows/steps/install_dependencies"                
+        uses: "./.github/workflows/steps/install_dependencies"
       
       - name: Build WPF
         uses: "./.github/workflows/steps/build_desktop"
@@ -129,12 +129,70 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Install Dependencies
-        uses: "./.github/workflows/steps/install_dependencies"       
+        uses: "./.github/workflows/steps/install_dependencies"
         with:
-          install-gtk: 'true'           
+          install-gtk: 'true'
               
       - name: Build GTK
         uses: "./.github/workflows/steps/build_desktop"
         with:
           package-id: "GTK"
-          project-to-build: "MyExtensionsApp.Skia.Gtk/MyExtensionsApp.Skia.Gtk.csproj"                            
+          project-to-build: "MyExtensionsApp.Skia.Gtk/MyExtensionsApp.Skia.Gtk.csproj"
+
+  # build_android_signed:
+  #   name: Build and Sign Android
+  #   runs-on: windows-latest
+  #   timeout-minutes: 60
+  #   steps:
+  #     - uses: actions/checkout@v3
+  #     - name: Install Dependencies
+  #       uses: "./.github/workflows/steps/install_dependencies"
+      
+  #     - name: Build and Sign Mobile (Android)
+  #       uses: "./.github/workflows/steps/build_android"
+  #       with:
+  #         sign-package: 'true'
+  #         package-id: "signed_android"
+  #         certificate: "ANDROID_BASE64_JKS_CERTIFICATE"
+  #         certificate-password:  "ANDROID_JKS_CERTIFICATE_PASSWORD"
+  #         certificate-alias:  "ANDROID_JKS_CERTIFICATE_ALIAS"
+  #         project-to-build: "MyExtensionsApp.Mobile/MyExtensionsApp.Mobile.csproj" 
+
+  # build_windows_signed:
+  #   name: Build and Sign Windows
+  #   runs-on: windows-latest
+  #   timeout-minutes: 60
+  #   steps:
+  #     - uses: actions/checkout@v3
+  #     - name: Install Dependencies
+  #       uses: "./.github/workflows/steps/install_dependencies"
+            
+  #     - name: Build and Publish Windows(Signed)
+  #       uses: "./.github/workflows/steps/build_windows"
+  #       with:
+  #         package-id: "signed_windows"
+  #         certificate: "WINDOWS_BASE64_PFX_CERTIFICATE"
+  #         project-to-build: "MyExtensionsApp.Windows/MyExtensionsApp.Windows.csproj"  
+  #         project-folder: "MyExtensionsApp.Windows"
+
+  # build_ios_signed:
+  #   name: Build and Sign iOS
+  #   runs-on: macos-latest
+  #   timeout-minutes: 60
+  #   steps:
+  #     - uses: actions/checkout@v3
+
+  #     - name: Install Dependencies
+  #       uses: "./.github/workflows/steps/install_dependencies"     
+  #       with:
+  #         install-windowsSDK: 'false'
+      
+  #     - name: Build Mobile (iOS)
+  #       uses: "./.github/workflows/steps/build_ios"
+  #       with:
+  #         package-id: "signed_ios"
+  #         certificate: 'BASE64_p12_CERTIFICATE'
+  #         certificate-password: 'contoso'
+  #         provisioning-profile: 'BASE64_PROV_PROFILE'
+  #         project-folder: 'MyExtensionsApp.Mobile'
+  #         project-to-build: "MyExtensionsApp.Mobile/MyExtensionsApp.Mobile.csproj" 

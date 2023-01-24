@@ -20,7 +20,7 @@ variables:
   value: '' 
 
 - name: jobTimeout
-  value: '40'   
+  value: '40'
 
 stages:
   - stage: Build_UNO
@@ -40,7 +40,7 @@ stages:
           parameters:
             azure_subscription: '${{ variables.azureAccount }}'
             package_id: 'Wasm'
-            project_to_build: 'MyExtensionsApp.Wasm/MyExtensionsApp.Wasm.csproj'     
+            project_to_build: 'MyExtensionsApp.Wasm/MyExtensionsApp.Wasm.csproj'
             
     - job: Android
       timeoutInMinutes: '${{ variables.jobTimeout }}'
@@ -102,7 +102,7 @@ stages:
             azure_subscription: '${{ variables.azureAccount }}' 
             package_id: 'Windows'
             project_folder: 'MyExtensionsApp.Windows'
-            project_to_build: 'MyExtensionsApp.Windows/MyExtensionsApp.Windows.csproj'    
+            project_to_build: 'MyExtensionsApp.Windows/MyExtensionsApp.Windows.csproj'
 
     - job: WPF
       timeoutInMinutes: '${{ variables.jobTimeout }}'
@@ -117,7 +117,7 @@ stages:
           parameters:
             azure_subscription: '${{ variables.azureAccount }}'
             package_id: 'WPF'
-            project_to_build: 'MyExtensionsApp.Skia.WPF/MyExtensionsApp.Skia.WPF.csproj'              
+            project_to_build: 'MyExtensionsApp.Skia.WPF/MyExtensionsApp.Skia.WPF.csproj'
             
     - job: GTK
       timeoutInMinutes: '${{ variables.jobTimeout }}'
@@ -133,12 +133,12 @@ stages:
           parameters:
             azure_subscription: '${{ variables.azureAccount }}'
             package_id: 'GTK'
-            project_to_build: 'MyExtensionsApp.Skia.Gtk/MyExtensionsApp.Skia.Gtk.csproj'                
+            project_to_build: 'MyExtensionsApp.Skia.Gtk/MyExtensionsApp.Skia.Gtk.csproj'
             
     - job: Linux
       timeoutInMinutes: '${{ variables.jobTimeout }}'
       steps:
-        - template: /azure/steps/install-dependencies.yml  
+        - template: /azure/steps/install-dependencies.yml
           parameters:
             azure_subscription: '${{ variables.azureAccount }}'
             install_windowsSDK: 'true'
@@ -146,6 +146,65 @@ stages:
 
         - template: /azure/steps/build-desktop.yml
           parameters:
-            azure_subscription: '${{ variables.azureAccount }}' 
+            azure_subscription: '${{ variables.azureAccount }}'
             package_id: 'Linux'
-            project_to_build: 'MyExtensionsApp.Skia.Linux.FrameBuffer/MyExtensionsApp.Skia.Linux.FrameBuffer.csproj'           
+            project_to_build: 'MyExtensionsApp.Skia.Linux.FrameBuffer/MyExtensionsApp.Skia.Linux.FrameBuffer.csproj'
+
+    # - job: iOS_Signed
+    #   timeoutInMinutes: '${{ variables.jobTimeout }}'
+    #   steps:
+    #     - template: /azure/steps/install-dependencies.yml  
+    #       parameters:
+    #         azure_subscription: '${{ variables.azureAccount }}'
+    #         install_mobileWorkloads: 'true'
+    #         install_windowsSDK: 'false'
+
+    #     - template: /azure/steps/build-ios.yml
+    #       parameters:
+    #         azure_subscription: '${{ variables.azureAccount }}'
+    #         package_id: 'signed_ios'
+    #         project_folder: 'MyExtensionsApp.Mobile'
+    #         project_to_build: 'MyExtensionsApp.Mobile/MyExtensionsApp.Mobile.csproj'
+    #         certificate: 'cert.p12'
+    #         certificate_password: 'contoso'
+    #         provisioning_profile: 'contoso.mobileprovision'
+    #         codesign_provision: 'MyExtensionsApp'
+    #         codesign_key: 'Apple Development: Contoso Contoso (572224A42L)'
+    #   pool:
+    #     vmImage: macOS-latest
+
+    # - job: Android_Signed
+    #   timeoutInMinutes: '${{ variables.jobTimeout }}'
+    #   steps:
+    #     - template: /azure/steps/install-dependencies.yml  
+    #       parameters:
+    #         azure_subscription: '${{ variables.azureAccount }}'
+    #         install_mobileWorkloads: 'true'
+
+    #     - template: /azure/steps/build-android.yml
+    #       parameters:
+    #         sign_package: 'true'
+    #         certificate:  'cert.jks'
+    #         certificate_password: 'contoso'
+    #         certificate_alias: 'contoso'
+    #         azure_subscription: '${{ variables.azureAccount }}'
+    #         package_id: 'signed_android'
+    #         project_to_build: 'MyExtensionsApp.Mobile/MyExtensionsApp.Mobile.csproj'
+
+    # - job: Windows_Signed
+    #   timeoutInMinutes: '${{ variables.jobTimeout }}'
+    #   steps:
+    #     - template: /azure/steps/install-dependencies.yml  
+    #       parameters:
+    #         azure_subscription: '${{ variables.azureAccount }}'
+    #         install_windowsSDK: 'true'
+    #         install_mobileWorkloads: 'true'
+    #         install_vsBuildTools: 'true'
+    #     - template: /azure/steps/build-windows.yml
+    #       parameters:
+    #         sign_package: 'true'
+    #         certificate: 'cert.pfx' 
+    #         azure_subscription: '${{ variables.azureAccount }}'
+    #         package_id: 'signed_windows'
+    #         project_folder: 'MyExtensionsApp.Windows'
+    #         project_to_build: 'MyExtensionsApp.Windows/MyExtensionsApp.Windows.csproj'
