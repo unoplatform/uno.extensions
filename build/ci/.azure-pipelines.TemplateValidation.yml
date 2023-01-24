@@ -16,6 +16,9 @@ jobs:
       BlankMarkupApp:
         createdProjectName: UnoAppBlank01
         templateArgs: '--template-type blank --ui-markup csharp'
+      BlankAppCpm:
+        createdProjectName: UnoAppBlank01
+        templateArgs: '--template-type blank --cpm true'
       MVVM:
         createdProjectName: UnoAppNoReactive01
         templateArgs: '-presentation mvvm'
@@ -25,8 +28,11 @@ jobs:
       CSharpMarkup:
         createdProjectName: UnoAppCSharpMarkup01
         templateArgs: '--ui-markup csharp'
-      NoExtensions:
-        createdProjectName: UnoAppNoExtensions01
+      NoAppHosting:
+        createdProjectName: UnoAppNoAppHosting01
+        templateArgs: '-di false'
+      HostingOnly:
+        createdProjectName: UnoAppHostingOnly01
         templateArgs: '-config false -loc false -http false -log false --navigation frame'
       NoConfiguration:
         createdProjectName: UnoAppNoConfiguration01
