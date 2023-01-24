@@ -28,7 +28,7 @@
 	</PropertyGroup>
 
 	<PropertyGroup>
-		<RuntimeIdentifier Condition="$(IsIOS)">iossimulator-x64</RuntimeIdentifier>
+		<RuntimeIdentifier Condition="$(IsIOS)">iossimulator-arm64</RuntimeIdentifier>
 		<RuntimeIdentifier Condition="$(IsMacCatalyst)">maccatalyst-x64</RuntimeIdentifier>
 		<RuntimeIdentifier Condition="$(IsMac)">osx-x64</RuntimeIdentifier>
 		<SupportedOSPlatformVersion Condition="$(IsIOS)">14.2</SupportedOSPlatformVersion>

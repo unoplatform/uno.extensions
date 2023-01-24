@@ -143,6 +143,7 @@
 				<!-- https://github.com/xamarin/xamarin-macios/issues/14812 -->
 				<MtouchExtraArgs>$(MtouchExtraArgs) --marshal-objectivec-exceptions:disable</MtouchExtraArgs>
 				<MtouchExtraArgs>$(MtouchExtraArgs) --registrar:static</MtouchExtraArgs>
+				<RuntimeIdentifier>ios-arm64</RuntimeIdentifier>
 			</PropertyGroup>
 			<!--#if (logging)-->
 			<ItemGroup>

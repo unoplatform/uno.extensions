@@ -1,11 +1,11 @@
-name: Build Android
+name: Build iOS
 description: ""
 
 inputs:
   package-id:
     description: 'Compiled Package ID'
     required: true
-    default: 'release_Mobile'
+    default: 'release_ios'
   project-to-build:
     description: 'Relative path to .csproj file'
     required: true
@@ -26,6 +26,14 @@ inputs:
      description: "Apple .p12 certificate password."
      required: true      
      default: ''
+  codesign-key: 
+     description: "The name of the distribution certificate . Ex Apple Development: Contoso Contoso (752234A22L)"
+     required: true      
+     default: ''     
+  codesign-provision: 
+     description: "The provisioning profile name. This is the name you entered in the Apple Developer portal when creating your provisioning profile."
+     required: true      
+     default: ''          
   provisioning-profile: 
      description: "Base64 provisioning profile"
      required: true
@@ -57,7 +65,7 @@ runs:
     #############################################
     #                 IMPORTANT                 #
     #############################################
-    #Uncomment this step if you see an error indicating the build its expecting a different version of XCode, update the correct number in the lines 65 and 66 and try again
+    #Uncomment this step if you see an error indicating the build its expecting a different version of XCode, update the correct number in the lines 73 and 74 and try again
     # - name: Set XCode Version
     #   if: runner.os == 'macOS'
     #   shell: bash
@@ -99,7 +107,7 @@ runs:
     - name: Build and create package
       shell: pwsh
       run: |
-        dotnet publish  -c Release -p:RuntimeIdentifier='ios-arm64' -p:CodesignProvision='EnviosDev2022' -p:CodesignKey='Apple Development: Patricio Valdes (752234A22L)' -p:TargetFramework=net6.0-ios /p:ArchiveOnBuild=true  -o ${{ inputs.project-folder }}\bin\Release${{ inputs.package-id }}\ ${{ inputs.project-to-build }} 
+        dotnet publish  -c Release -p:RuntimeIdentifier='ios-arm64' -p:CodesignProvision='${{ inputs.codesign-provision }}' -p:CodesignKey='${{ inputs.codesign-key }}' -p:TargetFramework=net6.0-ios /p:ArchiveOnBuild=true  -o ${{ inputs.project-folder }}\bin\Release${{ inputs.package-id }}\ ${{ inputs.project-to-build }} 
 
         $finalPackageFolder = "artifacts${{ inputs.package-id }}"
         Write-Host "Creating package folder: $finalPackageFolder"

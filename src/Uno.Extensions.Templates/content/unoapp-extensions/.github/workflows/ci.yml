@@ -18,11 +18,7 @@ jobs:
     runs-on: windows-latest
     timeout-minutes: 60
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-        with:
-         fetch-depth: 0 
-
+      - uses: actions/checkout@v3
       - name: Install Dependencies
         uses: "./.github/workflows/steps/install_dependencies"                
       
@@ -38,11 +34,7 @@ jobs:
     runs-on: windows-latest
     timeout-minutes: 60
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-        with:
-         fetch-depth: 0 
-
+      - uses: actions/checkout@v3
       - name: Install Dependencies
         uses: "./.github/workflows/steps/install_dependencies"                
       
@@ -58,11 +50,7 @@ jobs:
     runs-on: windows-latest
     timeout-minutes: 60
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-        with:
-         fetch-depth: 0 
-
+      - uses: actions/checkout@v3
       - name: Install Dependencies
         uses: "./.github/workflows/steps/install_dependencies"                
       
@@ -78,11 +66,7 @@ jobs:
     runs-on: windows-latest
     timeout-minutes: 60
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-        with:
-         fetch-depth: 0 
-
+      - uses: actions/checkout@v3
       - name: Install Dependencies
         uses: "./.github/workflows/steps/install_dependencies"                
       
@@ -97,11 +81,7 @@ jobs:
     runs-on: windows-latest
     timeout-minutes: 60
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-        with:
-         fetch-depth: 0 
-
+      - uses: actions/checkout@v3
       - name: Install Dependencies
         uses: "./.github/workflows/steps/install_dependencies"                
       
@@ -117,11 +97,7 @@ jobs:
     runs-on: windows-latest
     timeout-minutes: 60
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-        with:
-         fetch-depth: 0 
-
+      - uses: actions/checkout@v3
       - name: Install Dependencies
         uses: "./.github/workflows/steps/install_dependencies"                
       
@@ -136,11 +112,7 @@ jobs:
     runs-on: windows-latest
     timeout-minutes: 60
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-        with:
-         fetch-depth: 0 
-
+      - uses: actions/checkout@v3
       - name: Install Dependencies
         uses: "./.github/workflows/steps/install_dependencies"                
       
@@ -155,11 +127,7 @@ jobs:
     runs-on: windows-latest
     timeout-minutes: 60
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-        with:
-         fetch-depth: 0 
-
+      - uses: actions/checkout@v3
       - name: Install Dependencies
         uses: "./.github/workflows/steps/install_dependencies"       
         with:

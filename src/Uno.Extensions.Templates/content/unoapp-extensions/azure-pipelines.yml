@@ -22,35 +22,6 @@ variables:
 - name: jobTimeout
   value: '40'   
 
-  # *** [REQUIRED FOR GENERATING SIGNED .MSIX PACKAGE] ***
-  #For Creating a valid PFX certificate:
-  # 1.- Open a new powershell terminal as administrator and use this command: New-SelfSignedCertificate -DnsName {YOURCERT.NAME.COM} -CertStoreLocation cert:\LocalMachine\My
-  # 2.-When Finished press Win + R and type  certlm.msc. Then go to Personal folder -> Certificates and you should be able to see your previously created certificate
-  # 3.-Double Click it then go to Details tab. Click on the bottom right button 'Copy to file'. A wizard will open
-  # 4.-On first page Click Next 
-  #   -> Second page click "Yes, Export the private key" 
-  #   -> Third page select third option "PKCS #12 (.PFX)" and click on Next 
-  #   -> In Fourth page (Security) set a password for the certificate and click on Next
-  #   -> In last page please set a Name for the certificate and select where to put it. Use a simple location like C:\
-  # 5.-Last part consists in uploading the new pfx certificate to your azuredevops secure storage. See more details here: https://learn.microsoft.com/en-us/azure/devops/pipelines/library/secure-files?view=azure-devops
-- name: WINDOWS_PFX_CERTIFICATE
-  value: '' #certName.pfx
-
-  # *** [REQUIRED FOR GENERATING SIGNED .APK PACKAGE] ***
-  # For creating a valid .jks certificate:
-  # 1.- Go to C:\ and open a powershell terminal as administrator
-  # 2.- Copy and paste this command keytool –genkey –alias contoso -keyalg RSA –keystore cert.jks –keysize 2048 and execute it
-  # 3.- You will be asked to answer some questions like Password, Alias, Country, etc for your certificate
-  # 4.-Last part consists in converting the certificate to Base64 format, so navigate to C:\ and copy and paste this command: [convert]::ToBase64String((Get-Content -path "C:\{YOUR_JKS_FILE.jks}" -Encoding byte))
-  # 5.-Last part consists in uploading the new certificate to your azuredevops secure storage. See more details here: https://learn.microsoft.com/en-us/azure/devops/pipelines/library/secure-files?view=azure-devops
-- name: ANDROID_JKS_CERTIFICATE
-  value: '' #certName.jks
-- name: ANDROID_JKS_PASSWORD
-  value: ''
-- name: ANDROID_JKS_ALIAS
-  value: ''
-  
-
 stages:
   - stage: Build_UNO
     pool:

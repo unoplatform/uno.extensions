@@ -1,0 +1,109 @@
+    ###################################################################
+    #                           IMPORTANT                             #
+    # DO NOT FORGET TO SET THE BUNDLEID IN info.plist BEFORE PUBLISH  #
+    ###################################################################
+
+parameters:
+# [Required] Azure subscription
+- name: azure_subscription
+  type: string
+  default: ''
+- name: major
+  type: string
+  default: '0'  
+- name: minor
+  type: string
+  default: '0'
+- name: package_id
+  type: string
+  default: 'release_ios'
+- name: project_to_build
+  type: string
+  default: ''  
+- name: project_folder
+  type: string
+  default: ''       
+- name: target_framework
+  type: string
+  default: 'net6.0-android'  
+- name: publish_artifacts
+  type: string
+  default: 'true'
+  #[Required] Name of the .p12 certificate stored in secure files.
+- name: certificate 
+  type: string  
+  default: ''
+  #[Required] .p12 certificate password.   
+- name: certificate_password 
+  type: string  
+  default: ''
+  #[Required] The name of the distribution certificate . Ex Apple Development: Contoso Contoso (752234A22L)   
+- name: codesign_key 
+  type: string  
+  default: ''
+  #[Required] The provisioning profile name. This is the name you entered in the Apple Developer portal when creating your provisioning profile.   
+- name: codesign_provision 
+  type: string  
+  default: ''      
+  #[Required] Name of the provisioning profile stored in secure files          
+- name: provisioning_profile 
+  type: string  
+  default: ''
+
+steps:
+
+    #############################################
+    #                 IMPORTANT                 #
+    #############################################
+    #Uncomment this step if you see an error indicating the build its expecting a different version of XCode, update the correct number in the lines 65 and 66 and try again
+    # - task: Bash@3
+    #   name: 'Set XCode Version'
+    #   inputs:
+    #     azureSubscription: '${{ parameters.azure_subscription }}' 
+    #     targetType: 'inline'
+    #   script: |
+    #     sudo xcode-select -s "/Applications/Xcode_14.1.app"
+    #     echo "MD_APPLE_SDK_ROOT=/Applications/Xcode_14.1.app" >> $GITHUB_ENV            
+
+    - task: InstallAppleCertificate@2
+      displayName: 'Install .p12 certificate'
+      inputs:
+        certSecureFile:  '${{ parameters.certificate }}'
+        certPwd: '${{ parameters.certificate_password }}'
+      # Advanced
+        keychain: 'temp' # 'default' | 'temp' | 'custom'. Required. Keychain. Default: temp.
+
+    - task: InstallAppleProvisioningProfile@1
+      displayName: 'Install provisioning profile'
+      inputs:
+        provisioningProfileLocation: 'secureFiles' # 'secureFiles' | 'sourceRepository'. Required. Provisioning profile location. Default: secureFiles.
+        provProfileSecureFile: '${{ parameters.provisioning_profile }}'
+
+    # Compile Mobile
+    - task: AzurePowerShell@5
+      displayName: 'Build and Package'
+      inputs:
+        azureSubscription: '${{ parameters.azure_subscription }}' 
+        ScriptType: 'inlineScript'
+        Inline: |
+            Write-Host  ""
+            Write-Host "Building ${{ parameters.package_id }}"
+            dotnet publish  -c Release -p:CodesignProvision='${{ parameters.codesign_provision }}' -p:CodesignKey='${{ parameters.codesign_key }}' -p:TargetFramework=net6.0-ios /p:ArchiveOnBuild=true  -o ${{ parameters.project_folder }}\bin\Release ${{ parameters.project_to_build }} 
+
+            $finalPackageFolder = "artifacts"
+            Write-Host "Creating package folder: $finalPackageFolder"
+            New-Item -ItemType Directory -Force -Path $finalPackageFolder
+
+            if ('true' -eq '${{ parameters.publish_artifacts }}') {
+                Compress-Archive -Path '${{ parameters.project_folder }}\bin\Release\*' -DestinationPath "artifacts\${{ parameters.package_id }}"  
+            }
+        azurePowerShellVersion: 'LatestVersion'
+
+    - task: PublishPipelineArtifact@1
+      displayName: 'Publish Artifact'
+      condition:  eq('${{ parameters.publish_artifacts }}', 'true')
+      inputs:
+        targetPath: artifacts
+        artifactName: ${{ parameters.package_id }}_${{parameters.major}}.${{parameters.minor}}.$(Build.BuildNumber)
+
+    

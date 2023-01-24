@@ -18,6 +18,13 @@ parameters:
 - name: target_framework
   type: string
   default: 'net6.0-android'  
+  # *** [REQUIRED FOR GENERATING SIGNED .APK PACKAGE] ***
+  # For creating a valid .jks certificate:
+  # 1.- Go to C:\ and open a powershell terminal as administrator
+  # 2.- Copy and paste this command keytool –genkey –alias contoso -keyalg RSA –keystore cert.jks –keysize 2048 and execute it
+  # 3.- You will be asked to answer some questions like Password, Alias, Country, etc for your certificate
+  # 4.-Last part consists in converting the certificate to Base64 format, so navigate to C:\ and copy and paste this command: [convert]::ToBase64String((Get-Content -path "C:\{YOUR_JKS_FILE.jks}" -Encoding byte))
+  # 5.-Last part consists in uploading the new certificate to your azuredevops secure storage. See more details here: https://learn.microsoft.com/en-us/azure/devops/pipelines/library/secure-files?view=azure-devops
 - name: certificate
   type: string
   default: ''       
