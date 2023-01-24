@@ -24,7 +24,9 @@ global using Microsoft.UI.Xaml.Navigation;
 #if (useConfiguration)
 global using Microsoft.Extensions.Options;
 #endif
+#if (useDefaultAppTemplate)
 global using MyExtensionsApp.Business.Models;
+#endif
 #if (useInfrastructureNamespace)
 global using MyExtensionsApp.Infrastructure;
 #endif
@@ -35,15 +37,21 @@ global using MyExtensionsApp.Presentation;
 global using MyExtensionsApp.Services;
 global using Uno.Extensions.Http;
 #endif
+#if (useExtensionsNavigation)
 global using Uno.Extensions.Navigation;
+#endif
 #if (useHttp)
 global using Refit;
 #endif
+#if (useDefaultAppTemplate)
 global using Uno.Extensions;
+#endif
 #if (useConfiguration)
 global using Uno.Extensions.Configuration;
 #endif
+#if (useDependencyInjection)
 global using Uno.Extensions.Hosting;
+#endif
 #if (useLocalization)
 global using Uno.Extensions.Localization;
 #endif
@@ -52,11 +60,17 @@ global using Uno.Extensions.Logging;
 #endif
 #if (useCsharpMarkup)
 global using Uno.Extensions.Markup;
+#if (useMaterial)
 global using Uno.Material;
+#endif
 global using Uno.Themes.Markup;
+#if (useDefaultAppTemplate)
 global using Uno.Toolkit.UI;
+#if (useMaterial)
 global using Uno.Toolkit.UI.Material;
-#else
+#endif
+#endif
+#elif (useDefaultAppTemplate)
 global using Uno.Toolkit.UI;
 #endif
 global using Windows.ApplicationModel;
