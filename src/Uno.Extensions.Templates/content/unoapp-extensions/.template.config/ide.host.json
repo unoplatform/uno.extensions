@@ -226,6 +226,16 @@
       "isVisible": true
     },
     {
+      "id": "dependencyInjection",
+      "name": {
+        "text": "Extensions - Hosting"
+      },
+      "description":
+      {
+        "text": "Uses Uno.Extensions.Hosting with Microsoft.Extensions.DependencyInjection & Microsoft.Extensions.Hosting"
+      }
+    },
+    {
       "id": "configuration",
       "name": {
         "text": "Extensions - Configuration"

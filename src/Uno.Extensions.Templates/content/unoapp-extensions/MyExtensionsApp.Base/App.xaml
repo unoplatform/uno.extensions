@@ -16,7 +16,6 @@
 			<ResourceDictionary.MergedDictionaries>
 				<!-- Load WinUI resources -->
 				<XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls" />
-<!--#if (useDefaultAppTemplate)-->
 <!--#if (useMaterial)-->
 				<MaterialColors xmlns="using:Uno.Material" />
 								<!-- Temporarily removing due to issue in Uno.Material-->
@@ -29,12 +28,13 @@
 				<CupertinoFonts xmlns="using:Uno.Cupertino" />
 				<CupertinoResources xmlns="using:Uno.Cupertino" />
 <!--#endif-->
+<!--#if (useDefaultAppTemplate)-->
 
 				<!-- Load Uno.UI.Toolkit resources -->
 				<ToolkitResources xmlns="using:Uno.Toolkit.UI" />
+<!--#endif-->
 <!--#if (useMaterial)-->
 				<MaterialToolkitResources xmlns="using:Uno.Toolkit.UI.Material" />
-<!--#endif-->
 <!--#endif-->
 			</ResourceDictionary.MergedDictionaries>
 			<!-- Add resources here -->

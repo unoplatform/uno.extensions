@@ -27,7 +27,7 @@ public class AppStart
 				.UseEnvironment(Environments.Development)
 #endif
 //+:cnd:noEmit
-#if logging
+#if useLogging
 				.UseLogging(configure: (context, logBuilder) =>
 				{
 					// Configure log levels for different categories of logging
@@ -44,19 +44,17 @@ public class AppStart
 				.UseConfiguration(configure: configBuilder =>
 					configBuilder
 						.EmbeddedSource<AppStart>()
-#if configuration
 						.Section<AppConfig>()
-#endif
 				)
 #endif
-#if localization
+#if useLocalization
 				// Enable localization (see appsettings.json for supported languages)
 				.UseLocalization()
 #endif
 				// Register Json serializers (ISerializer and ISerializer)
 				.UseSerialization()
 				.ConfigureServices((context, services) => {
-#if http
+#if useHttp
 					// Register HttpClient
 					services
 //-:cnd:noEmit
@@ -71,12 +69,10 @@ public class AppStart
 					// TODO: Register your services
 					//services.AddSingleton<IMyService, MyService>();
 				})
-#if (useDefaultNav)
-#if (useMvux)
+#if (useReactiveExtensionsNavigation)
 				.UseNavigation(ReactiveViewModelMappings.ViewModelMappings, RegisterRoutes)
-#else
+#elif (useExtensionsNavigation)
 				.UseNavigation(RegisterRoutes)
-#endif
 #endif
 			);
 		Window = builder.Window;
@@ -103,7 +99,7 @@ public class AppStart
 			Window.Content = rootFrame;
 		}
 
-#if !(NET6_0_OR_GREATER && WINDOWS)
+#if !(NETSTANDARD && WINDOWS)
 		if (args.UWPLaunchActivatedEventArgs.PrelaunchActivated == false)
 #endif
 		{
@@ -136,8 +132,7 @@ public class AppStart
 #else
 	private static void RegisterRoutes(IViewRegistry views, IRouteRegistry routes)
 	{
-#if useDefaultNav
-#if (useMvux)
+#if (useDefaultNavMvux)
 		views.Register(
 			new ViewMap(ViewModel: typeof(ShellModel)),
 			new ViewMap<MainPage, MainModel>(),
@@ -153,7 +148,7 @@ public class AppStart
 				}
 			)
 		);
-#else
+#elif (useDefaultNavMvvm)
 		views.Register(
 			new ViewMap(ViewModel: typeof(ShellViewModel)),
 			new ViewMap<MainPage, MainViewModel>(),
@@ -169,7 +164,6 @@ public class AppStart
 				}
 			)
 		);
-#endif
 #endif
 	}
 #endif

@@ -1,17 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<TargetFrameworks>$libarybasetargetframework$</TargetFrameworks>
+		<TargetFrameworks>$libraryBaseTargetFramework$;$mobileTargetFrameworks$</TargetFrameworks>
 		<!--#if (winAppSdk) -->
 		<TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows')) or '$(EnableWindowsTargeting)' == 'true'">$(TargetFrameworks);net6.0-windows10.0.19041</TargetFrameworks>
-		<!--#endif -->
-		<!--#if (android) -->
-		<TargetFrameworks>$(TargetFrameworks);net6.0-android</TargetFrameworks>
-		<!--#endif -->
-		<!--#if (ios) -->
-		<TargetFrameworks>$(TargetFrameworks);net6.0-ios</TargetFrameworks>
-		<!--#endif -->
-		<!--#if (maccatalyst) -->
-		<TargetFrameworks>$(TargetFrameworks);net6.0-maccatalyst</TargetFrameworks>
 		<!--#endif -->
 		<!--#if (macos)-->
 		<!-- Disabled because of https://github.com/xamarin/xamarin-macios/issues/16401-->
@@ -40,33 +31,38 @@
 		<!--#endif-->
 		<PackageReference Include="Uno.Themes.WinUI.Markup" />
 		<!--#endif-->
-		<!--#if (!useMvux) -->
+		<!--#if (useMvvm) -->
 		<PackageReference Include="CommunityToolkit.Mvvm" />
 		<!--#endif -->
 		<PackageReference Include="Uno.Extensions.Authentication" />
 		<!--#if (useConfiguration)-->
 		<PackageReference Include="Uno.Extensions.Configuration" />
 		<!--#endif-->
-		<PackageReference Include="Uno.Extensions.Hosting" />
-		<!--#if (http)-->
+		<!--#if (useDependencyInjection)-->
+		<PackageReference Include="Uno.Extensions.Hosting.WinUI" />
+		<!--#endif-->
+		<!--#if (useHttp)-->
 		<PackageReference Include="Uno.Extensions.Http" />
 		<PackageReference Include="Uno.Extensions.Http.Refit" />
 		<!--#endif-->
-		<!--#if (localization)-->
+		<!--#if (useLocalization)-->
 		<PackageReference Include="Uno.Extensions.Localization" />
 		<!--#endif-->
-		<!--#if (logging)-->
+		<!--#if (useLogging)-->
 		<PackageReference Include="Uno.Extensions.Logging.WinUI" />
+		<!--#endif-->
 		<!--#if (useSerilog)-->
 		<PackageReference Include="Uno.Extensions.Logging.Serilog" />
-		<!--#endif-->
 		<!--#endif-->
 		<PackageReference Include="Uno.Extensions.Navigation" />
 		<!--#if (useMvux) -->
 		<PackageReference Include="Uno.Extensions.Reactive" />
+		<!--#if (useCsharpMarkup)-->
+		<PackageReference Include="Uno.Extensions.Reactive.Markup" />
+		<!--#endif-->
 		<!--#endif-->
 		<PackageReference Include="Uno.Extensions.Serialization" />
-		<!--#if (http)-->
+		<!--#if (useHttp)-->
 		<PackageReference Include="Uno.Extensions.Serialization.Http" />
 		<PackageReference Include="Uno.Extensions.Serialization.Refit" />
 		<!--#endif-->
@@ -82,8 +78,7 @@
 		<PackageReference Include="Uno.Toolkit.WinUI" />
 		<!--#endif-->
 		<PackageReference Include="Uno.Extensions.Authentication.WinUI" />
-		<PackageReference Include="Uno.Extensions.Hosting.WinUI" />
-		<!--#if (localization)-->
+		<!--#if (useLocalization)-->
 		<PackageReference Include="Uno.Extensions.Localization.WinUI" />
 		<!--#endif-->
 		<PackageReference Include="Uno.Extensions.Navigation.Toolkit.WinUI" />
@@ -99,7 +94,21 @@
 		<!--#endif-->
 	</ItemGroup>
 	<!--#endif-->
+	<!--#if (useHttp)-->
 
+	<ItemGroup>
+		<ProjectReference Include="..\MyExtensionsApp.DataContracts\MyExtensionsApp.DataContracts.csproj" />
+	</ItemGroup>
+	<!--#endif-->
+	<!--#if (useNetSix)-->
+
+	<ItemGroup>
+		<Compile Include="..\MyExtensionsApp.Base\IsExternalInit.cs"
+						 Visible="false" />
+	</ItemGroup>
+	<!--#endif-->
+
+	<!--#if (winAppSdk) -->
 	<Choose>
 		<When Condition="$(IsWinAppSdk)">
 			<ItemGroup>
@@ -125,32 +134,36 @@
 			<ItemGroup>
 				<PackageReference Include="Uno.WinUI" />
 			</ItemGroup>
+
+			<ItemGroup>
+				<Content Include="Assets\**" />
+				<Page Include="**\*.xaml" Exclude="bin\**\*.xaml;obj\**\*.xaml" />
+				<Compile Update="**\*.xaml.cs">
+					<DependentUpon>%(Filename)</DependentUpon>
+				</Compile>
+			</ItemGroup>
 		</Otherwise>
 	</Choose>
-	<!--#if (http && useDefaultAppTemplate)-->
+	<!--#else-->
+	<ItemGroup>
+		<PackageReference Include="Uno.WinUI" />
+	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\MyExtensionsApp.DataContracts\MyExtensionsApp.DataContracts.csproj" />
-	</ItemGroup>
-	<!--#endif-->
-
-	<ItemGroup Condition="!$(IsWinAppSdk)">
 		<Content Include="Assets\**" />
 		<Page Include="**\*.xaml" Exclude="bin\**\*.xaml;obj\**\*.xaml" />
-		<ApplicationDefinition Include="App.xaml" Condition="exists('App.xaml')" />
 		<Compile Update="**\*.xaml.cs">
 			<DependentUpon>%(Filename)</DependentUpon>
 		</Compile>
 	</ItemGroup>
+	<!--#endif-->
 
 	<ItemGroup>
-		<!--#if (useDefaultAppTemplate)-->
 		<!--#if (useConfiguration)-->
 		<None Remove="appsettings*.json" />
 		<EmbeddedResource Include="appsettings.json" />
 		<EmbeddedResource Include="appsettings.*.json"
 											DependentUpon="appsettings.json" />
-		<!--#endif-->
 		<!--#endif-->
 		<PRIResource Include="Strings\**\*.resw" />
 		<UpToDateCheckInput Include="**\*.xaml" Exclude="bin\**\*.xaml;obj\**\*.xaml" />

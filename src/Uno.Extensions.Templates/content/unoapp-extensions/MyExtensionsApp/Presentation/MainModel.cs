@@ -10,7 +10,7 @@ public partial record MainModel
 	public IState<string> Name { get; }
 
 //+:cnd:noEmit
-#if configuration
+#if useConfiguration
 	public MainModel(
 		INavigator navigator,
 		IOptions<AppConfig> appInfo)

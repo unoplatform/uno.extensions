@@ -1,43 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<!--#if (android && ios && macos && maccatalyst)-->
-		<TargetFrameworks>net6.0-android;net6.0-ios;net6.0-maccatalyst</TargetFrameworks>
-		<!-- Disabled because of https://github.com/xamarin/xamarin-macios/issues/16401-->
-		<!-- <TargetFrameworks>$(TargetFrameworks);net6.0-macos</TargetFrameworks> -->
-		<!--#elif (android && ios && macos && !maccatalyst)-->
-		<!-- Disabled because of https://github.com/xamarin/xamarin-macios/issues/16401-->
-		<TargetFrameworks>net6.0-android;net6.0-ios</TargetFrameworks>
-		<!-- Disabled because of https://github.com/xamarin/xamarin-macios/issues/16401-->
-		<!-- <TargetFrameworks>$(TargetFrameworks);net6.0-macos</TargetFrameworks> -->
-		<!--#elif (android && ios && !macos && maccatalyst)-->
-		<TargetFrameworks>net6.0-android;net6.0-ios;net6.0-maccatalyst</TargetFrameworks>
-		<!--#elif (!android && ios && macos && maccatalyst)-->
-		<TargetFrameworks>net6.0-ios;net6.0-maccatalyst</TargetFrameworks>
-		<!-- Disabled because of https://github.com/xamarin/xamarin-macios/issues/16401-->
-		<!-- <TargetFrameworks>$(TargetFrameworks);net6.0-macos</TargetFrameworks> -->
-		<!--#elif (android && ios && !macos && !maccatalyst)-->
-		<TargetFrameworks>net6.0-android;net6.0-ios</TargetFrameworks>
-		<!--#elif (!android && ios && !macos && maccatalyst)-->
-		<TargetFrameworks>net6.0-ios;net6.0-maccatalyst</TargetFrameworks>
-		<!--#elif (!android && ios && macos && !maccatalyst)-->
-		<TargetFrameworks>net6.0-ios</TargetFrameworks>
-		<!-- Disabled because of https://github.com/xamarin/xamarin-macios/issues/16401-->
-		<!-- <TargetFrameworks>$(TargetFrameworks);net6.0-macos</TargetFrameworks> -->
-		<!--#else-->
-		<!--#if (android)-->
-		<TargetFrameworks>$(TargetFrameworks);net6.0-android</TargetFrameworks>
-		<!--#endif-->
-		<!--#if (ios)-->
-		<TargetFrameworks>$(TargetFrameworks);net6.0-ios</TargetFrameworks>
-		<!--#endif-->
+		<TargetFrameworks>$mobileTargetFrameworks$</TargetFrameworks>
 		<!--#if (macos)-->
 		<!-- Disabled because of https://github.com/xamarin/xamarin-macios/issues/16401-->
 		<!-- <TargetFrameworks>$(TargetFrameworks);net6.0-macos</TargetFrameworks> -->
 		<!--#endif-->
-		<!--#if (maccatalyst)-->
-		<TargetFrameworks>$(TargetFrameworks);net6.0-maccatalyst</TargetFrameworks>
-		<!--#endif -->
-		<!--#endif -->
 		<SingleProject>true</SingleProject>
 		<OutputType>Exe</OutputType>
 
@@ -97,7 +64,7 @@
 		<!--#endif-->
 		<PackageReference Include="Uno.Extensions.Core" />
 		<PackageReference Include="Uno.Extensions.Hosting.WinUI" />
-		<!--#if (localization)-->
+		<!--#if (useLocalization)-->
 		<PackageReference Include="Uno.Extensions.Localization.WinUI" />
 		<!--#endif-->
 		<!--#if (logging)-->
@@ -106,11 +73,11 @@
 		<!--#if (useSerilog)-->
 		<PackageReference Include="Uno.Extensions.Logging.Serilog" />
 		<!--#endif-->
-		<!--#if (notFrameNav)-->
+		<!--#if (useExtensionsNavigation)-->
 		<PackageReference Include="Uno.Extensions.Navigation.Toolkit.WinUI" />
 		<PackageReference Include="Uno.Extensions.Navigation.WinUI" />
 		<!--#endif-->
-		<!--#if (http)-->
+		<!--#if (useHttp)-->
 		<PackageReference Include="Uno.Extensions.Http" />
 		<PackageReference Include="Uno.Extensions.Http.Refit" />
 		<!--#endif-->
@@ -118,7 +85,7 @@
 		<PackageReference Include="Uno.Extensions.Reactive.WinUI" />
 		<!--#endif-->
 		<PackageReference Include="Uno.Extensions.Serialization" />
-		<!--#if (http)-->
+		<!--#if (useHttp)-->
 		<PackageReference Include="Uno.Extensions.Serialization.Http" />
 		<PackageReference Include="Uno.Extensions.Serialization.Refit" />
 		<!--#endif-->
@@ -180,7 +147,7 @@
 	</Choose>
 	<ItemGroup>
 		<ProjectReference Include="..\MyExtensionsApp\MyExtensionsApp.csproj" />
-		<!--#if (http && useDefaultAppTemplate)-->
+		<!--#if (useHttp)-->
 		<ProjectReference Include="..\MyExtensionsApp.DataContracts\MyExtensionsApp.DataContracts.csproj" />
 		<!--#endif-->
 	</ItemGroup>

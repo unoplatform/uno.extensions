@@ -241,6 +241,16 @@
       "defaultValue": "true",
       "description": "Includes a Server project for an API & host for the WebAssembly project"
     },
+    "dependencyInjection": {
+      "displayName": "Extensions - Dependency Injection",
+      "description": "Includes Uno.Extensions.DependencyInjection",
+      "type": "parameter",
+      "datatype": "bool",
+      "defaultValue": "true",
+      "onlyIf": {
+        "templateType": "default"
+      }
+    },
     "configuration": {
       "displayName": "Extensions - Configuration",
       "description": "Includes Uno.Extensions.Configuration",
@@ -248,7 +258,8 @@
       "datatype": "bool",
       "defaultValue": "true",
       "onlyIf": {
-        "templateType": "default"
+        "templateType": "default",
+        "dependencyInjection": "true"
       }
     },
     "http": {
@@ -258,7 +269,8 @@
       "datatype": "bool",
       "defaultValue": "true",
       "onlyIf": {
-        "templateType": "default"
+        "templateType": "default",
+        "dependencyInjection": "true"
       }
     },
     "localization": {
@@ -268,7 +280,8 @@
       "datatype": "bool",
       "defaultValue": "true",
       "onlyIf": {
-        "templateType": "default"
+        "templateType": "default",
+        "dependencyInjection": "true"
       }
     },
     "logging": {
@@ -278,7 +291,8 @@
       "datatype": "bool",
       "defaultValue": "true",
       "onlyIf": {
-        "templateType": "default"
+        "templateType": "default",
+        "dependencyInjection": "true"
       }
     },
     "serilog": {
@@ -289,6 +303,7 @@
       "defaultValue": "true",
       "onlyIf": {
         "templateType": "default",
+        "dependencyInjection": "true",
         "logging": "true"
       }
     },
@@ -311,7 +326,8 @@
       ],
       "defaultValue": "default",
       "onlyIf": {
-        "templateType": "default"
+        "templateType": "default",
+        "dependencyInjection": "true"
       }
     },
     "cpm": {
@@ -354,6 +370,16 @@
       "defaultValue": "false",
       "description": "Supplied by Uno Studio"
     },
+    "useBlankAppTemplate": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "templateType == 'blank'"
+    },
+    "useDefaultAppTemplate": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "templateType == 'default'"
+    },
     "useCsharpMarkup": {
       "type": "computed",
       "datatype": "bool",
@@ -362,22 +388,27 @@
     "useMaterial": {
       "type": "computed",
       "datatype": "bool",
-      "value": "(appTheme == 'material')"
+      "value": "(appTheme == 'material' && templateType == 'default')"
     },
     "useFluent": {
       "type": "computed",
       "datatype": "bool",
-      "value": "(appTheme == 'fluent')"
+      "value": "(appTheme == 'fluent' && templateType == 'default')"
     },
     "useCupertino": {
       "type": "computed",
       "datatype": "bool",
-      "value": "(appTheme == 'cupertino')"
+      "value": "(appTheme == 'cupertino' && templateType == 'default')"
+    },
+    "useLogging": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "(useDependencyInjection && logging)"
     },
     "useSerilog": {
       "type": "computed",
       "datatype": "bool",
-      "value": "(logging && serilog && templateType == 'default')"
+      "value": "(serilog && useLogging)"
     },
     "useMvux": {
       "type": "computed",
@@ -394,15 +425,55 @@
       "dataType": "bool",
       "value": "(android || ios || macos || maccatalyst)"
     },
+    "useDataContracts": {
+      "type": "computed",
+      "dataType": "bool",
+      "value": "(templateType == 'default' && ((useDependencyInjection && http) || server))"
+    },
+    "useUnitTests": {
+      "type": "computed",
+      "dataType": "bool",
+      "value": "(templateType == 'default' && unitTests)"
+    },
+    "useUITests": {
+      "type": "computed",
+      "dataType": "bool",
+      "value": "(templateType == 'default' && tests)"
+    },
+    "useDependencyInjection": {
+      "type": "computed",
+      "dataType": "bool",
+      "value": "(dependencyInjection && templateType == 'default')"
+    },
     "useConfiguration": {
       "type": "computed",
       "dataType": "bool",
-      "value": "(configuration || localization || http)"
+      "value": "(useDependencyInjection && configuration)"
     },
-    "libarybasetargetframework": {
+    "useHttp": {
+      "type": "computed",
+      "dataType": "bool",
+      "value": "(http && useConfiguration)"
+    },
+    "useLocalization": {
+      "type": "computed",
+      "dataType": "bool",
+      "value": "(localization && useConfiguration)"
+    },
+    "useNetSix": {
+      "type": "computed",
+      "dataType": "bool",
+      "value": "(tfm == 'net6.0')"
+    },
+    "useNetSeven": {
+      "type": "computed",
+      "dataType": "bool",
+      "value": "(tfm == 'net7.0')"
+    },
+    "libraryBaseTargetFramework": {
       "type": "generated",
       "generator": "switch",
-      "replaces": "$libarybasetargetframework$",
+      "replaces": "$libraryBaseTargetFramework$",
       "parameters": {
         "evaluator": "C++",
         "datatype": "string",
@@ -418,35 +489,150 @@
         ]
       }
     },
-    "useBlankAppTemplate": {
-      "type": "computed",
-      "datatype": "bool",
-      "value": "templateType == 'blank'"
+    "mobileTargetFrameworks": {
+      "type": "generated",
+      "generator": "switch",
+      "replaces": "$mobileTargetFrameworks$",
+      "parameters": {
+        "evaluator": "C++",
+        "datatype": "string",
+        "cases": [
+          {
+            "condition": "(tfm == 'net6.0' && android && ios && maccatalyst)",
+            "value": "net6.0-ios;net6.0-android;net6.0-maccatalyst"
+          },
+          {
+            "condition": "(tfm == 'net7.0' && android && ios && maccatalyst)",
+            "value": "net7.0-ios;net7.0-android;net7.0-maccatalyst"
+          },
+          {
+            "condition": "(tfm == 'net6.0' && android && ios && !maccatalyst)",
+            "value": "net6.0-ios;net6.0-android"
+          },
+          {
+            "condition": "(tfm == 'net7.0' && android && ios && !maccatalyst)",
+            "value": "net7.0-ios;net7.0-android"
+          },
+          {
+            "condition": "(tfm == 'net6.0' && !android && ios && maccatalyst)",
+            "value": "net6.0-ios;net6.0-maccatalyst"
+          },
+          {
+            "condition": "(tfm == 'net7.0' && !android && ios && maccatalyst)",
+            "value": "net7.0-ios;net7.0-maccatalyst"
+          },
+          {
+            "condition": "(tfm == 'net6.0' && android && !ios && maccatalyst)",
+            "value": "net6.0-android;net7.0-maccatalyst"
+          },
+          {
+            "condition": "(tfm == 'net7.0' && android && !ios && maccatalyst)",
+            "value": "net7.0-android;net7.0-maccatalyst"
+          },
+          {
+            "condition": "(tfm == 'net6.0' && android && !ios && !maccatalyst)",
+            "value": "net6.0-android"
+          },
+          {
+            "condition": "(tfm == 'net7.0' && android && !ios && !maccatalyst)",
+            "value": "net7.0-android"
+          },
+          {
+            "condition": "(tfm == 'net6.0' && !android && ios && !maccatalyst)",
+            "value": "net6.0-ios"
+          },
+          {
+            "condition": "(tfm == 'net7.0' && !android && ios && !maccatalyst)",
+            "value": "net7.0-ios"
+          },
+          {
+            "condition": "(tfm == 'net6.0' && !android && !ios && maccatalyst)",
+            "value": "net6.0-maccatalyst"
+          },
+          {
+            "condition": "(tfm == 'net7.0' && !android && !ios && maccatalyst)",
+            "value": "net7.0-maccatalyst"
+          },
+          {
+            "condition": "(!android && !ios && !maccatalyst)",
+            "value": ""
+          }
+        ]
+      }
     },
-    "useDefaultAppTemplate": {
+    "mainDataContext":{
+      "type": "generated",
+      "generator": "switch",
+      "replaces": "$mainDataContext$",
+      "parameters": {
+        "cases": [
+          {
+            "condition": "(architecture == 'mvux')",
+            "value": "BindableMainModel"
+          },
+          {
+            "condition": "(architecture == 'mvvm')",
+            "value": "MainViewModel"
+          }
+        ]
+      }
+    },
+    "secondDataContext":{
+      "type": "generated",
+      "generator": "switch",
+      "replaces": "$secondDataContext$",
+      "parameters": {
+        "cases": [
+          {
+            "condition": "(architecture == 'mvux')",
+            "value": "BindableSecondModel"
+          },
+          {
+            "condition": "(architecture == 'mvvm')",
+            "value": "SecondViewModel"
+          }
+        ]
+      }
+    },
+    "useExtensionsNavigation": {
       "type": "computed",
       "datatype": "bool",
-      "value": "templateType == 'default'"
+      "value": "useDependencyInjection && navigation != 'frame'"
+    },
+    "useReactiveExtensionsNavigation": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "useExtensionsNavigation && useMvux"
     },
     "useDefaultNav": {
       "type": "computed",
       "datatype": "bool",
-      "value": "navigation == 'default'"
+      "value": "useExtensionsNavigation && navigation == 'default'"
+    },
+    "useDefaultNavMvux": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "useDefaultNav && useMvux"
+    },
+    "useDefaultNavMvvm": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "useDefaultNav && useMvvm"
     },
     "useFrameNav": {
       "type": "computed",
       "datatype": "bool",
-      "value": "navigation == 'frame'"
-    },
-    "notFrameNav": {
-      "type": "computed",
-      "datatype": "bool",
-      "value": "navigation != 'frame'"
+      "value": "templateType == 'blank' || !useDependencyInjection || navigation == 'frame'"
     },
     "useInfrastructureNamespace": {
       "type": "computed",
       "datatype": "bool",
-      "value": "(useDefaultAppTemplate && http) || useCsharpMarkup"
+      "value": "templateType == 'default' && ((http && dependencyInjection) || useCsharpMarkup)"
+    },
+    "useBusinessModelsNamespace": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "templateType == 'default' && dependencyInjection && (configuration || navigation != 'frame')"
     },
     "HostIdentifier": {
       "type": "bind",
@@ -519,6 +705,12 @@
           ],
           "exclude": [
             "MyExtensionsApp.Debugging.sln"
+          ]
+        },
+        {
+          "condition": "(useNetSeven)",
+          "exclude": [
+            "**/IsExternalInit.cs"
           ]
         },
         {
@@ -602,13 +794,31 @@
           ]
         },
         {
+          "condition": "(useDependencyInjection)",
+          "exclude": [
+            "MyExtensionsApp/AppStart.nodi.cs"
+          ]
+        },
+        {
+          "condition": "(!useDependencyInjection)",
+          "exclude": [
+            "MyExtensionsApp/AppStart.cs",
+            "MyExtensionsApp/Infrastructure/DebugHandler.cs",
+            "MyExtensionsApp/Business/**",
+            "MyExtensionsApp/Presentation/**"
+          ],
+          "rename": {
+            "MyExtensionsApp/AppStart.nodi.cs": "MyExtensionsApp/AppStart.cs"
+          }
+        },
+        {
           "condition": "(useDefaultAppTemplate)",
           "exclude": [
             "MyExtensionsApp.Server/WeatherForecast.cs"
           ]
         },
         {
-          "condition": "(useBlankAppTemplate || ((!http && useDefaultAppTemplate) && !server))",
+          "condition": "(useBlankAppTemplate || (!useHttp && !server))",
           "exclude": [
             "MyExtensionsApp.DataContracts/**/*"
           ]
@@ -630,7 +840,7 @@
           ]
         },
         {
-          "condition": "(!http)",
+          "condition": "(!useHttp)",
           "exclude": [
             "MyExtensionsApp/Services/IApiClient.cs"
           ]
@@ -722,6 +932,7 @@
             "MyExtensionsApp/Services/**",
             "MyExtensionsApp/Styles/**",
             "MyExtensionsApp/AppStart.cs",
+            "MyExtensionsApp/AppStart.nodi.cs",
             "MyExtensionsApp/appsettings.*",
             "MyExtensionsApp.Base/App.default.cs",
             "MyExtensionsApp.Tests/AppInfoTests.cs"
@@ -737,13 +948,13 @@
           ]
         },
         {
-          "condition": "(useDefaultAppTemplate && !configuration)",
+          "condition": "(!useConfiguration)",
           "exclude": [
             "MyExtensionsApp.Tests/AppInfoTests.cs"
           ]
         },
         {
-          "condition": "(useDefaultAppTemplate && configuration)",
+          "condition": "(useConfiguration)",
           "exclude": [
             "MyExtensionsApp.Tests/UnitTest1.cs"
           ]
@@ -755,16 +966,10 @@
           ]
         },
         {
-          "condition": "(useDefaultAppTemplate && notFrameNav)",
+          "condition": "(useDefaultAppTemplate && useExtensionsNavigation && useDependencyInjection)",
           "exclude": [
             "MyExtensionsApp/MainPage.xaml",
             "MyExtensionsApp/MainPage.xaml.cs"
-          ]
-        },
-        {
-          "condition": "(tfm == 'net7.0')",
-          "exclude": [
-            "MyExtensionsApp.DataContracts/_Compat/**"
           ]
         },
         {
