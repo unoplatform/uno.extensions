@@ -15,9 +15,6 @@ parameters:
 - name: project_to_build
   type: string
   default: ''  
-- name: target_framework
-  type: string
-  default: 'net6.0-android'  
 - name: publish_artifacts
   type: string
   default: 'true'      
@@ -35,7 +32,7 @@ steps:
         Inline: |
             Write-Host  ""
             Write-Host "Building ${{ parameters.package_id }}"
-            dotnet build  -c Release -p:TargetFramework=${{ parameters.target_framework }}  -o .\bin\Release\ ${{ parameters.project_to_build }}
+            dotnet build  -c Release -o .\bin\Release\ ${{ parameters.project_to_build }}
 
             $finalPackageFolder = ".\artifacts"
             Write-Host "Creating package folder: $finalPackageFolder"
@@ -44,7 +41,8 @@ steps:
             if ('true' -eq '${{ parameters.publish_artifacts }}') {
               if ('true' -eq '${{ parameters.compress_artifacts }}') {
                 Write-Host "Compressing final package"
-                Compress-Archive -Path '.\bin\Release\*' -DestinationPath ".\artifacts"  
+                $finalPackageName = "$finalPackageFolder\${{ parameters.package_id }}_${{parameters.major}}.${{parameters.minor}}.$(Build.BuildNumber).zip"
+                Compress-Archive -Path '.\bin\Release\*' -DestinationPath $finalPackageName
               }else{
                 Copy-Item -Path '.\bin\Release\*' -Destination ".\artifacts" -recurse -Force  
               }

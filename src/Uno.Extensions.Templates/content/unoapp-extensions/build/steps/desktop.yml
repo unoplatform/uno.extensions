@@ -44,7 +44,8 @@ steps:
             if ('true' -eq '${{ parameters.publish_artifacts }}') {
               if ('true' -eq '${{ parameters.compress_artifacts }}') {
                 Write-Host "Compressing final package"
-                Compress-Archive -Path '.\bin\Release\*' -DestinationPath ".\artifacts"  
+                $finalPackageName = "$finalPackageFolder\${{ parameters.package_id }}(${{ parameters.project_platform }})_${{parameters.major}}.${{parameters.minor}}.$(Build.BuildNumber).zip"
+                Compress-Archive -Path '.\bin\Release\*' -DestinationPath $finalPackageName
               }else{
                 Copy-Item -Path '.\bin\Release\*' -Destination ".\artifacts" -recurse -Force  
               }

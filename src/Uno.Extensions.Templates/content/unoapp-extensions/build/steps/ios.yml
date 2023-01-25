@@ -92,7 +92,8 @@ steps:
             New-Item -ItemType Directory -Force -Path $finalPackageFolder
 
             if ('true' -eq '${{ parameters.publish_artifacts }}') {
-                Compress-Archive -Path '${{ parameters.project_folder }}\bin\Release\*' -DestinationPath "artifacts\${{ parameters.package_id }}"  
+                $finalPackageName = "$finalPackageFolder\${{ parameters.package_id }}_${{parameters.major}}.${{parameters.minor}}.$(Build.BuildNumber).zip"
+                Compress-Archive -Path '${{ parameters.project_folder }}\bin\Release\*' -DestinationPath $finalPackageName
             }
         azurePowerShellVersion: 'LatestVersion'
 

@@ -36,7 +36,7 @@ stages:
             azure_subscription: '${{ variables.azureAccount }}'
             install_mobileWorkloads: 'true'
 
-        - template: /azure/steps/build-wasm.yml
+        - template: /azure/steps/wasm.yml
           parameters:
             azure_subscription: '${{ variables.azureAccount }}'
             package_id: 'Wasm'
@@ -50,12 +50,11 @@ stages:
             azure_subscription: '${{ variables.azureAccount }}'
             install_mobileWorkloads: 'true'
 
-        - template: /azure/steps/build-android.yml
+        - template: /azure/steps/android.yml
           parameters:
             azure_subscription: '${{ variables.azureAccount }}'
             package_id: 'Android'
             project_to_build: 'MyExtensionsApp.Mobile/MyExtensionsApp.Mobile.csproj'
-            target_framework: 'net6.0-android'
 
     - job: iOS
       timeoutInMinutes: '${{ variables.jobTimeout }}'
@@ -65,7 +64,7 @@ stages:
             azure_subscription: '${{ variables.azureAccount }}'
             install_mobileWorkloads: 'true'
 
-        - template: /azure/steps/build-mobile.yml
+        - template: /azure/steps/mobile.yml
           parameters:
             azure_subscription: '${{ variables.azureAccount }}'
             package_id: 'Mobile_iOS'
@@ -80,7 +79,7 @@ stages:
             azure_subscription: '${{ variables.azureAccount }}'
             install_mobileWorkloads: 'true'
 
-        - template: /azure/steps/build-mobile.yml
+        - template: /azure/steps/mobile.yml
           parameters:
             azure_subscription: '${{ variables.azureAccount }}'
             package_id: 'Mobile_MacCatalyst'
@@ -97,7 +96,7 @@ stages:
             install_mobileWorkloads: 'true'
             install_vsBuildTools: 'true'
 
-        - template: /azure/steps/build-windows.yml
+        - template: /azure/steps/windows.yml
           parameters:
             azure_subscription: '${{ variables.azureAccount }}' 
             package_id: 'Windows'
@@ -113,7 +112,7 @@ stages:
             install_windowsSDK: 'true'
             install_mobileWorkloads: 'true'
 
-        - template: /azure/steps/build-desktop.yml
+        - template: /azure/steps/desktop.yml
           parameters:
             azure_subscription: '${{ variables.azureAccount }}'
             package_id: 'WPF'
@@ -129,7 +128,7 @@ stages:
             install_gtk: 'true'
             install_mobileWorkloads: 'true'
 
-        - template: /azure/steps/build-desktop.yml
+        - template: /azure/steps/desktop.yml
           parameters:
             azure_subscription: '${{ variables.azureAccount }}'
             package_id: 'GTK'
@@ -144,7 +143,7 @@ stages:
             install_windowsSDK: 'true'
             install_mobileWorkloads: 'true'
 
-        - template: /azure/steps/build-desktop.yml
+        - template: /azure/steps/desktop.yml
           parameters:
             azure_subscription: '${{ variables.azureAccount }}'
             package_id: 'Linux'
@@ -159,7 +158,7 @@ stages:
     #         install_mobileWorkloads: 'true'
     #         install_windowsSDK: 'false'
 
-    #     - template: /azure/steps/build-ios.yml
+    #     - template: /azure/steps/ios.yml
     #       parameters:
     #         azure_subscription: '${{ variables.azureAccount }}'
     #         package_id: 'signed_ios'
@@ -181,7 +180,7 @@ stages:
     #         azure_subscription: '${{ variables.azureAccount }}'
     #         install_mobileWorkloads: 'true'
 
-    #     - template: /azure/steps/build-android.yml
+    #     - template: /azure/steps/android.yml
     #       parameters:
     #         sign_package: 'true'
     #         certificate:  'cert.jks'
@@ -200,7 +199,7 @@ stages:
     #         install_windowsSDK: 'true'
     #         install_mobileWorkloads: 'true'
     #         install_vsBuildTools: 'true'
-    #     - template: /azure/steps/build-windows.yml
+    #     - template: /azure/steps/windows.yml
     #       parameters:
     #         sign_package: 'true'
     #         certificate: 'cert.pfx' 
