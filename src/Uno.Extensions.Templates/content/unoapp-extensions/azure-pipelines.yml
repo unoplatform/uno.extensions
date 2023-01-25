@@ -7,7 +7,7 @@ pool:
   vmImage: 'windows-latest'
 
 variables:
-  #[REQUIRED] AzureSubscription ***
+  #[REQUIRED]
   #For connecting your azureSubscription to the pipeline:
   #1.- Go to your project settings (Bottom Left option)
   #2.- Scroll down to 'Service Connections'
@@ -148,6 +148,14 @@ stages:
             azure_subscription: '${{ variables.azureAccount }}'
             package_id: 'Linux'
             project_to_build: 'MyExtensionsApp.Skia.Linux.FrameBuffer/MyExtensionsApp.Skia.Linux.FrameBuffer.csproj'
+
+    ###################################################
+    #                    IMPORTANT                    #
+    # Store certificates and mobile provision files   #
+    # in secure files, then just replace the pfx,jks  #
+    # p12 and mobileprovision variables down below    #
+    # with the appropiate filenames                   #
+    ###################################################
 
     # - job: iOS_Signed
     #   timeoutInMinutes: '${{ variables.jobTimeout }}'
