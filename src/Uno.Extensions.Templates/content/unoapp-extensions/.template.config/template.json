@@ -342,7 +342,7 @@
       }
     },
     "continuousIntegration": {
-      "displayName": "Type",
+      "displayName": "CI Templates",
       "type": "parameter",
       "datatype": "choice",
       "defaultValue": "default",
@@ -350,7 +350,7 @@
       "choices": [
         {
           "choice": "default",
-          "description": "Disabled CI templates",
+          "description": "CI templates disabled",
           "displayName": "None"
         },
         {
@@ -364,6 +364,14 @@
           "displayName": "Azure"
         }
       ]
+    },
+    "azureSubscription": {
+      "displayName": "AzureDevOps Subscription",
+      "type": "parameter",
+      "datatype": "string",
+      "replaces": "$azureSubscription$",
+      "description": "The azure subscription to be used when running the CI pipeline",
+      "defaultValue": ""
     },
     "skipRestore": {
       "type": "parameter",

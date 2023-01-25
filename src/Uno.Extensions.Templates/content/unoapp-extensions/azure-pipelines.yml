@@ -17,7 +17,7 @@ variables:
   #6.- Select the subscription you want to use and set a Name for your new service connection
   #7.- Finally, use the name you defined in previous step as value for this variable
 - name: azureAccount
-  value: '' 
+  value: '$azureSubscription$' 
 
 - name: jobTimeout
   value: '40'
