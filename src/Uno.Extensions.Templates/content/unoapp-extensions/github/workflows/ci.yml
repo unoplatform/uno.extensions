@@ -187,9 +187,9 @@ jobs:
   #       with:
   #         sign-package: 'true'
   #         package-id: "signed_android"
-  #         certificate:  ${{ secrets.ANDROID_BASE64_JKS_CERTIFICATE }}
-  #         certificate-password:  ${{ secrets.ANDROID_JKS_CERTIFICATE_PASSWORD }}
-  #         certificate-alias:  ${{ secrets.ANDROID_JKS_CERTIFICATE_ALIAS }}
+  #         certificate:  "${{ secrets.ANDROID_BASE64_JKS_CERTIFICATE }}"
+  #         certificate-password:  "${{ secrets.ANDROID_JKS_CERTIFICATE_PASSWORD }}"
+  #         certificate-alias:  "${{ secrets.ANDROID_JKS_CERTIFICATE_ALIAS }}"
   #         project-to-build: "MyExtensionsApp.Mobile/MyExtensionsApp.Mobile.csproj" 
 
   # build_windows_signed:
@@ -208,7 +208,7 @@ jobs:
   #       uses: "./.github/workflows/steps/build_windows"
   #       with:
   #         package-id: "signed_windows"
-  #         certificate: ${{ secrets.WINDOWS_BASE64_PFX_CERTIFICATE }}
+  #         certificate: "${{ secrets.WINDOWS_BASE64_PFX_CERTIFICATE }}"
   #         project-to-build: "MyExtensionsApp.Windows/MyExtensionsApp.Windows.csproj"  
   #         project-folder: "MyExtensionsApp.Windows"
 
@@ -230,8 +230,8 @@ jobs:
   #       uses: "./.github/workflows/steps/build_ios"
   #       with:
   #         package-id: "signed_ios"
-  #         certificate: ${{ secrets.BASE64_P12_CERTIFICATE }}
-  #         certificate-password: ${{ secrets.BASE64_P12_PASSWORD }}
-  #         provisioning-profile: ${{ secrets.BASE64_PROV_PROFILE }}
+  #         certificate: "${{ secrets.BASE64_P12_CERTIFICATE }}"
+  #         certificate-password: "${{ secrets.BASE64_P12_PASSWORD }}"
+  #         provisioning-profile: "${{ secrets.BASE64_PROV_PROFILE }}"
   #         project-folder: 'MyExtensionsApp.Mobile'
   #         project-to-build: "MyExtensionsApp.Mobile/MyExtensionsApp.Mobile.csproj" 
