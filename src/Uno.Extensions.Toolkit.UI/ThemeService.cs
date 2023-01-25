@@ -1,12 +1,11 @@
 ﻿using Windows.Storage;
-using Windows.UI.Xaml;
 
 namespace Uno.Extensions.Toolkit;
 
 internal class ThemeService : IThemeService
 {
 	private const string CurrentThemeSettingsKey = "CurrentTheme";
-	private readonly Func<XamlRoot?> _xamlRootAccessor;
+	private UIElement? _rootAccessorElement;
 	private readonly IDispatcher _dispatcher;
 	private readonly ILogger? _logger;
 
@@ -14,27 +13,46 @@ internal class ThemeService : IThemeService
 	public event EventHandler<AppTheme>? DesiredThemeChanged;
 
 	internal ThemeService(
-		Func<XamlRoot?> xamlRootAccessor,
+		Window window,
 		IDispatcher dispatcher,
 		ILogger? logger = default)
 	{
-		_xamlRootAccessor = xamlRootAccessor;
 		_dispatcher = dispatcher;
 		_logger = logger;
+
+		_ = _dispatcher.ExecuteAsync(async ct =>
+		{
+			_rootAccessorElement = window.Content;
+			await InitializeAsync();
+		});
+	}
+
+	internal ThemeService(
+		UIElement rootAccessorElement,
+		IDispatcher dispatcher,
+		ILogger? logger = default)
+	{
+		_rootAccessorElement = rootAccessorElement;
+		_dispatcher = dispatcher;
+		_logger = logger;
+
+		_ = InitializeAsync();
 	}
 
 	/// <inheritdoc/>
-	public bool IsDark => _xamlRootAccessor() is { } xamlRoot ? SystemThemeHelper.IsRootInDarkMode(xamlRoot) : false;
+	public bool IsDark => _rootAccessorElement?.XamlRoot is { } xamlRoot ? SystemThemeHelper.IsRootInDarkMode(xamlRoot) : false;
 
 	/// <inheritdoc/>
 	public AppTheme Theme => GetSavedTheme();
 
+
 	/// <inheritdoc/>
-	public async Task SetThemeAsync(AppTheme theme)
+	public async Task<bool> SetThemeAsync(AppTheme theme)
 	{
-		await _dispatcher.ExecuteAsync(async () =>
+		var existingIsDark = IsDark;
+		var success = await _dispatcher.ExecuteAsync(async (ct) =>
 		{
-			if (_xamlRootAccessor() is { } xamlRoot)
+			if (_rootAccessorElement?.XamlRoot is { } xamlRoot)
 			{
 				if (theme != AppTheme.System)
 				{
@@ -46,11 +64,20 @@ internal class ThemeService : IThemeService
 					var systemTheme = SystemThemeHelper.GetCurrentOsTheme();
 					SystemThemeHelper.SetRootTheme(xamlRoot, systemTheme == ApplicationTheme.Dark);
 				}
+				return true;
 			}
+			return false;
 		});
 
+		if (!success) return false;
+
 		await SaveDesiredTheme(theme);
-		DesiredThemeChanged?.Invoke(this, theme);
+
+		if (existingIsDark != IsDark)
+		{
+			DesiredThemeChanged?.Invoke(this, theme);
+		}
+		return true;
 	}
 
 	private async Task SaveDesiredTheme(AppTheme theme)
@@ -77,5 +104,28 @@ internal class ThemeService : IThemeService
 		}
 
 		return AppTheme.System;
+	}
+
+	private async Task InitializeAsync()
+	{
+		var theme = GetSavedTheme();
+		var success = await SetThemeAsync(theme);
+		if (!success)
+		{
+			if (_rootAccessorElement is FrameworkElement fe)
+			{
+				async void OnLoaded(object sender, RoutedEventArgs args)
+				{
+					fe.Loaded -= OnLoaded;
+					await SetThemeAsync(theme);
+				}
+
+				fe.Loaded += OnLoaded;
+			}
+			else
+			{
+				if (_logger?.IsEnabled(LogLevel.Warning) ?? false) _logger.LogWarningMessage("Unable to attach to Loaded event. Use FrameworkElement instead of UIElement");
+			}
+		}
 	}
 }

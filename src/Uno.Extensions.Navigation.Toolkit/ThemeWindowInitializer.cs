@@ -10,24 +10,12 @@ internal class ThemeWindowInitializer : IWindowInitializer
 			return;
 		}
 		var sp = root.FindServiceProvider();
+		// Resolving the IThemeService should be enough to trigger the initialization
+		// See internal InitializeAsync method on ThemeService
 		var themeService = sp?.GetService<IThemeService>();
 		if (themeService is null)
 		{
 			return;
 		}
-
-		var desired = themeService.Theme;
-		if (root.XamlRoot is not null)
-		{
-			await themeService.SetThemeAsync(desired);
-		}
-		else
-		{
-			root.Loaded += async (_, _) =>
-			{
-				await themeService.SetThemeAsync(desired);
-			};
-		}
-
 	}
 }
