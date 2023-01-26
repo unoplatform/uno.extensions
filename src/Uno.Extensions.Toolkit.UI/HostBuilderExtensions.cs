@@ -21,12 +21,6 @@ public static class HostBuilderExtensions
 		_didRegisterThemeSwitching = true;
 
 		return hostBuilder
-			.UseConfiguration(
-				configure: configBuilder =>
-					configBuilder
-						.Section<ThemeSettings>()
-					)
-
 			.ConfigureServices((ctx, services) =>
 			{
 				_ = services

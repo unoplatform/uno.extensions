@@ -5,7 +5,7 @@ internal class ScopedThemeService : ThemeService
 	public ScopedThemeService(
 		ILogger<ScopedThemeService> logger,
 		Window window,
-		IDispatcher dispatcher) : base(() => window.Content?.XamlRoot, dispatcher, logger)
+		IDispatcher dispatcher) : base(window, dispatcher, logger)
 	{
 	}
 }

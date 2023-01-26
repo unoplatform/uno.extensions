@@ -32,6 +32,10 @@
 
 		<StackPanel
 			Grid.Row="1">
+			<TextBlock>
+				<Run Text="Is dark theme:" />
+				<Run Text="{x:Bind ViewModel.IsDarkTheme, Mode=OneWay}" />
+			</TextBlock>
 			<Button
 				Content="Change To Dark"
 				Click="{x:Bind ViewModel.ChangeToDark}"/>

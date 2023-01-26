@@ -15,7 +15,8 @@ public interface IThemeService
 	/// <summary>
 	/// Sets the system theme for the provided XamlRoot.
 	/// </summary>
-	Task SetThemeAsync(AppTheme theme);
+	/// <returns>Indicates success; Fails if no XamlRoot found</returns>
+	Task<bool> SetThemeAsync(AppTheme theme);
 
 	/// <summary>
 	/// Event that fires up whenever SetThemeAsync() is called.
