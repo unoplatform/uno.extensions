@@ -8,7 +8,7 @@
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.4.0" />
     <PackageVersion Include="Microsoft.Windows.Compatibility" Version="7.0.0" />
     <PackageVersion Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.755" />
-    <PackageVersion Include="Microsoft.WindowsAppSDK" Version="1.2.221209.1" />
+    <PackageVersion Include="Microsoft.WindowsAppSDK" Version="1.2.230118.102" />
     <PackageVersion Include="Newtonsoft.Json" Version="13.0.2" />
     <PackageVersion Include="NUnit" Version="3.13.3" />
     <PackageVersion Include="NUnit3TestAdapter" Version="4.3.1" />
