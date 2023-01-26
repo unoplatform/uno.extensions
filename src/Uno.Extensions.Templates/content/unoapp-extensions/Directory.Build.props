@@ -27,10 +27,13 @@
 		<IsWinAppSdk Condition="$(TargetFramework.Contains('windows10'))">true</IsWinAppSdk>
 	</PropertyGroup>
 
-	<PropertyGroup>
+	<PropertyGroup Condition="'$(RuntimeIdentifier)'==''">
 		<RuntimeIdentifier Condition="$(IsIOS)">iossimulator-x64</RuntimeIdentifier>
 		<RuntimeIdentifier Condition="$(IsMacCatalyst)">maccatalyst-x64</RuntimeIdentifier>
 		<RuntimeIdentifier Condition="$(IsMac)">osx-x64</RuntimeIdentifier>
+	</PropertyGroup>
+	
+	<PropertyGroup>
 		<SupportedOSPlatformVersion Condition="$(IsIOS)">14.2</SupportedOSPlatformVersion>
 		<SupportedOSPlatformVersion Condition="$(IsMacCatalyst)">14.0</SupportedOSPlatformVersion>
 		<SupportedOSPlatformVersion Condition="$(IsAndroid)">21.0</SupportedOSPlatformVersion>
