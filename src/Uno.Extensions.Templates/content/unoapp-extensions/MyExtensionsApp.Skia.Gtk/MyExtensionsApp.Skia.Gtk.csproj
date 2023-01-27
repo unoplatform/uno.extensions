@@ -29,7 +29,7 @@
 		<PackageReference Include="SkiaSharp.Skottie" />
 	</ItemGroup>
 	<!--#endif-->
-	<!--#if (useDefaultAppTemplate)-->
+	<!--#if (useRecommendedAppTemplate)-->
 	<ItemGroup>
 		<!--#if (useCsharpMarkup)-->
 		<PackageReference Include="Uno.WinUI.Markup" />

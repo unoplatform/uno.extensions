@@ -64,7 +64,7 @@
 		<PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="4.7.30" />
 	</ItemGroup>
 	<!--#endif-->
-	<!--#if (useDefaultAppTemplate)-->
+	<!--#if (useRecommendedAppTemplate)-->
 	<ItemGroup>
 		<!--#if (useCsharpMarkup)-->
 		<PackageReference Include="Uno.WinUI.Markup" Version="4.6.0-dev.16" />

@@ -28,7 +28,7 @@
 		<PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" />
 	</ItemGroup>
 	<!--#endif-->
-	<!--#if (useDefaultAppTemplate)-->
+	<!--#if (useRecommendedAppTemplate)-->
 	<ItemGroup>
 		<!--#if (useCsharpMarkup)-->
 		<PackageReference Include="Uno.WinUI.Markup" />

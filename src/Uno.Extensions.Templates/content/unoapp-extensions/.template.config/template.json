@@ -48,15 +48,15 @@
     "5ED31500-DF01-462D-9436-EC2EDCAA1965" // DataContracts
   ],
   "symbols": {
-    "templateType": {
+    "preset": {
       "displayName": "Type",
       "type": "parameter",
       "datatype": "choice",
-      "defaultValue": "default",
-      "description": "Selects whether to use the default Extensions Template or Blank App",
+      "defaultValue": "recommended",
+      "description": "Selects whether to use the recommended Extensions Template or Blank App",
       "choices": [
         {
-          "choice": "default",
+          "choice": "recommended",
           "description": "A basic project using Uno.Extensions",
           "displayName": "Default"
         },
@@ -248,7 +248,7 @@
       "datatype": "bool",
       "defaultValue": "true",
       "onlyIf": {
-        "templateType": "default"
+        "preset": "recommended"
       }
     },
     "configuration": {
@@ -258,7 +258,7 @@
       "datatype": "bool",
       "defaultValue": "true",
       "onlyIf": {
-        "templateType": "default",
+        "preset": "recommended",
         "dependencyInjection": "true"
       }
     },
@@ -269,7 +269,7 @@
       "datatype": "bool",
       "defaultValue": "true",
       "onlyIf": {
-        "templateType": "default",
+        "preset": "recommended",
         "dependencyInjection": "true"
       }
     },
@@ -280,7 +280,7 @@
       "datatype": "bool",
       "defaultValue": "true",
       "onlyIf": {
-        "templateType": "default",
+        "preset": "recommended",
         "dependencyInjection": "true"
       }
     },
@@ -291,7 +291,7 @@
       "datatype": "bool",
       "defaultValue": "true",
       "onlyIf": {
-        "templateType": "default",
+        "preset": "recommended",
         "dependencyInjection": "true"
       }
     },
@@ -302,7 +302,7 @@
       "datatype": "bool",
       "defaultValue": "true",
       "onlyIf": {
-        "templateType": "default",
+        "preset": "recommended",
         "dependencyInjection": "true",
         "logging": "true"
       }
@@ -326,7 +326,7 @@
       ],
       "defaultValue": "default",
       "onlyIf": {
-        "templateType": "default",
+        "preset": "recommended",
         "dependencyInjection": "true"
       }
     },
@@ -373,12 +373,12 @@
     "useBlankAppTemplate": {
       "type": "computed",
       "datatype": "bool",
-      "value": "templateType == 'blank'"
+      "value": "preset == 'blank'"
     },
-    "useDefaultAppTemplate": {
+    "useRecommendedAppTemplate": {
       "type": "computed",
       "datatype": "bool",
-      "value": "templateType == 'default'"
+      "value": "preset == 'recommended'"
     },
     "useCsharpMarkup": {
       "type": "computed",
@@ -393,17 +393,17 @@
     "useMaterial": {
       "type": "computed",
       "datatype": "bool",
-      "value": "(appTheme == 'material' && templateType == 'default')"
+      "value": "(appTheme == 'material' && preset == 'recommended')"
     },
     "useFluent": {
       "type": "computed",
       "datatype": "bool",
-      "value": "(appTheme == 'fluent' && templateType == 'default')"
+      "value": "(appTheme == 'fluent' && preset == 'recommended')"
     },
     "useCupertino": {
       "type": "computed",
       "datatype": "bool",
-      "value": "(appTheme == 'cupertino' && templateType == 'default')"
+      "value": "(appTheme == 'cupertino' && preset == 'recommended')"
     },
     "useLogging": {
       "type": "computed",
@@ -433,22 +433,22 @@
     "useDataContracts": {
       "type": "computed",
       "dataType": "bool",
-      "value": "(templateType == 'default' && ((useDependencyInjection && http) || server))"
+      "value": "(preset == 'recommended' && ((useDependencyInjection && http) || server))"
     },
     "useUnitTests": {
       "type": "computed",
       "dataType": "bool",
-      "value": "(templateType == 'default' && unitTests)"
+      "value": "(preset == 'recommended' && unitTests)"
     },
     "useUITests": {
       "type": "computed",
       "dataType": "bool",
-      "value": "(templateType == 'default' && tests)"
+      "value": "(preset == 'recommended' && tests)"
     },
     "useDependencyInjection": {
       "type": "computed",
       "dataType": "bool",
-      "value": "(dependencyInjection && templateType == 'default')"
+      "value": "(dependencyInjection && preset == 'recommended')"
     },
     "useConfiguration": {
       "type": "computed",
@@ -627,17 +627,17 @@
     "useFrameNav": {
       "type": "computed",
       "datatype": "bool",
-      "value": "templateType == 'blank' || !useDependencyInjection || navigation == 'frame'"
+      "value": "preset  == 'blank' || !useDependencyInjection || navigation == 'frame'"
     },
     "useInfrastructureNamespace": {
       "type": "computed",
       "datatype": "bool",
-      "value": "templateType == 'default' && ((http && dependencyInjection) || useCsharpMarkup)"
+      "value": "preset == 'recommended' && ((http && dependencyInjection) || useCsharpMarkup)"
     },
     "useBusinessModelsNamespace": {
       "type": "computed",
       "datatype": "bool",
-      "value": "templateType == 'default' && dependencyInjection && (configuration || navigation != 'frame')"
+      "value": "preset == 'recommended' && dependencyInjection && (configuration || navigation != 'frame')"
     },
     "HostIdentifier": {
       "type": "bind",
@@ -657,15 +657,15 @@
       "path": "MyExtensionsApp.Server\\MyExtensionsApp.Server.csproj"
     },
     {
-      "condition": "server || (http && useDefaultAppTemplate)",
+      "condition": "server || (http && useRecommendedAppTemplate)",
       "path": "MyExtensionsApp.DataContracts\\MyExtensionsApp.DataContracts.csproj"
     },
     {
-      "condition": "unitTest && useDefaultAppTemplate",
+      "condition": "unitTest && useRecommendedAppTemplate",
       "path": "MyExtensionsApp.Tests\\MyExtensionsApp.Tests.csproj"
     },
     {
-      "condition": "tests && useDefaultAppTemplate",
+      "condition": "tests && useRecommendedAppTemplate",
       "path": "MyExtensionsApp.UITests\\MyExtensionsApp.UITests.csproj"
     },
     {
@@ -817,7 +817,7 @@
           }
         },
         {
-          "condition": "(useDefaultAppTemplate)",
+          "condition": "(useRecommendedAppTemplate)",
           "exclude": [
             "MyExtensionsApp.Server/WeatherForecast.cs"
           ]
@@ -944,7 +944,7 @@
           ]
         },
         {
-          "condition": "(useDefaultAppTemplate)",
+          "condition": "(useRecommendedAppTemplate)",
           "rename": {
             "MyExtensionsApp.Base/App.default.cs": "MyExtensionsApp.Base/App.xaml.cs"
           },
@@ -971,7 +971,7 @@
           ]
         },
         {
-          "condition": "(useDefaultAppTemplate && useExtensionsNavigation && useDependencyInjection)",
+          "condition": "(useRecommendedAppTemplate && useExtensionsNavigation && useDependencyInjection)",
           "exclude": [
             "MyExtensionsApp/MainPage.xaml",
             "MyExtensionsApp/MainPage.xaml.cs"

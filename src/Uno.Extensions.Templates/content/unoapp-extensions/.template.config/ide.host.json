@@ -11,8 +11,8 @@
   "learnMoreLink": "https://github.com/unoplatform/uno",
   "symbolInfo": [
     {
-      "id": "templateType",
-      "defaultValue": "default"
+      "id": "preset",
+      "defaultValue": "recommended"
     },
     {
       "id": "appId",
