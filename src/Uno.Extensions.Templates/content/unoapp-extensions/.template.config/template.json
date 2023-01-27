@@ -385,6 +385,11 @@
       "datatype": "bool",
       "value": "(uiMarkup == 'csharp')"
     },
+    "useXaml": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "(uiMarkup == 'xaml')"
+    },
     "useMaterial": {
       "type": "computed",
       "datatype": "bool",

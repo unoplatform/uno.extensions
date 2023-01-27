@@ -5,7 +5,7 @@
 		<!-- Suppress Compiler warnings for elements without XML Docs -->
 		<NoWarn>$(NoWarn);CS1591</NoWarn>
 	</PropertyGroup>
-	<!--# (useNetSix)-->
+	<!--#if (useNetSix)-->
 
 	<ItemGroup>
 		<Compile Include="..\MyExtensionsApp.Base\IsExternalInit.cs"
