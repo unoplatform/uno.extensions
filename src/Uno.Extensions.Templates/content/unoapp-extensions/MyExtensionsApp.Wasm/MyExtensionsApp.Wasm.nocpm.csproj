@@ -52,8 +52,8 @@
 		<!--#if (useCsharpMarkup)-->
 		<PackageReference Include="Uno.WinUI.Markup" Version="4.6.0-dev.16" />
 		<!--#endif-->
-		<PackageReference Include="Uno.Wasm.Bootstrap" Version="7.0.11" />
-		<PackageReference Include="Uno.Wasm.Bootstrap.DevServer" Version="7.0.11" />
+		<PackageReference Include="Uno.Wasm.Bootstrap" Version="7.0.12" />
+		<PackageReference Include="Uno.Wasm.Bootstrap.DevServer" Version="7.0.12" />
 		<PackageReference Include="Uno.WinUI.WebAssembly" Version="4.7.0-dev.1036" />
 		<PackageReference Include="Uno.WinUI.RemoteControl" Version="4.7.0-dev.1036" Condition="'$(Configuration)'=='Debug'" />
 		<PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="4.7.0-dev.1036" />
@@ -63,8 +63,8 @@
 	<!--#if (useDefaultAppTemplate)-->
 	<ItemGroup>
 		<PackageReference Include="Microsoft.Windows.Compatibility" Version="7.0.0" />
-		<PackageReference Include="Uno.Wasm.Bootstrap" Version="7.0.11" />
-		<PackageReference Include="Uno.Wasm.Bootstrap.DevServer" Version="7.0.11" />
+		<PackageReference Include="Uno.Wasm.Bootstrap" Version="7.0.12" />
+		<PackageReference Include="Uno.Wasm.Bootstrap.DevServer" Version="7.0.12" />
 		<PackageReference Include="Uno.WinUI.WebAssembly" Version="4.7.0-dev.1036" />
 		<PackageReference Include="Uno.WinUI.RemoteControl" Version="4.7.0-dev.1036" Condition="'$(Configuration)'=='Debug'" />
 		<PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="4.7.0-dev.1036" />
