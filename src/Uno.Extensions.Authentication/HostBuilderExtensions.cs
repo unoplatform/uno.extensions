@@ -80,8 +80,13 @@ public static class HostBuilderExtensions
 		build?.Invoke(authBuilder);
 
 		return builder
-			.ConfigureServices(services =>
+			.ConfigureServices((ctx,services) =>
 			{
+				if (ctx.IsRegistered(nameof(UseAuthentication)))
+				{
+					return;
+				}
+
 				services
 					.AddSingleton<ITokenCache>(sp =>
 							new TokenCache(

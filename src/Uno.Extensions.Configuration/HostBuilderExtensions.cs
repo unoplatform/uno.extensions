@@ -20,6 +20,13 @@ public static class HostBuilderExtensions
 
 		hostBuilder = hostBuilder.ConfigureServices((ctx, s) =>
 				{
+					// We're doing the IsRegistered check here so that the
+					// other configure delegates still run if required
+					if (ctx.IsRegistered(nameof(UseConfiguration)))
+					{
+						return;
+					}
+
 					s.TryAddSingleton(a => ctx.Configuration);
 					s.TryAddSingleton(a => (IConfigurationRoot)ctx.Configuration);
 					s.TryAddSingleton<Reloader>();

@@ -61,7 +61,7 @@ public class CustomAuthenticationTestBackendHostInit : BaseHostInitialization
 				.ConfigureServices((context, services) =>
 				{
 					services
-							.AddNativeHandler()
+							.AddNativeHandler(context)
 
 							.AddRefitClient<ICustomAuthenticationTestBackendEndpoint>(context);
 				});

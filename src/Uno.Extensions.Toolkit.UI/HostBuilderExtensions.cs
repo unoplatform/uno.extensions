@@ -8,17 +8,13 @@ public static class HostBuilderExtensions
 		return hostBuilder.UseThemeSwitching();
 	}
 
-	private static bool _didRegisterThemeSwitching;
-
 	public static IHostBuilder UseThemeSwitching(
 		this IHostBuilder hostBuilder)
 	{
-		if (_didRegisterThemeSwitching)
+		if (hostBuilder.IsRegistered(nameof(UseThemeSwitching)))
 		{
 			return hostBuilder;
 		}
-
-		_didRegisterThemeSwitching = true;
 
 		return hostBuilder
 			.ConfigureServices((ctx, services) =>

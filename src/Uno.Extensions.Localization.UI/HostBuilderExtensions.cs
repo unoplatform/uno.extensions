@@ -15,6 +15,11 @@ public static class HostBuilderExtensions
 		this IHostBuilder hostBuilder,
 		Action<HostBuilderContext, IServiceCollection>? configure = default)
 	{
+		if (hostBuilder.IsRegistered(nameof(UseLocalization)))
+		{
+			return hostBuilder;
+		}
+
 		return hostBuilder
 			.UseConfiguration(
 				configure: configBuilder =>

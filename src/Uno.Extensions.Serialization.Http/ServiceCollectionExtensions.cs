@@ -1,4 +1,6 @@
-﻿namespace Uno.Extensions;
+﻿using Microsoft.Extensions.Hosting;
+
+namespace Uno.Extensions;
 
 /// <summary>
 /// This class is used for serialization configuration.
@@ -6,14 +8,19 @@
 /// </summary>
 public static class ServiceCollectionExtensions
 {
-    /// <summary>
-    /// Adds the serialization services to the <see cref="IServiceCollection"/>.
-    /// </summary>
-    /// <param name="services">Service collection.</param>
-    /// <returns><see cref="IServiceCollection"/>.</returns>
-    public static IServiceCollection AddResponseContentDeserializer(this IServiceCollection services)
+	/// <summary>
+	/// Adds the serialization services to the <see cref="IServiceCollection"/>.
+	/// </summary>
+	/// <param name="services">Service collection.</param>
+	/// <param name="context">The <see cref="HostBuilderContext"/> to use when adding services</param>
+	/// <returns><see cref="IServiceCollection"/>.</returns>
+	public static IServiceCollection AddResponseContentDeserializer(this IServiceCollection services, HostBuilderContext context)
     {
-        return services
+		if (context.IsRegistered(nameof(AddResponseContentDeserializer)))
+		{
+			return services;
+		}
+		return services
             .AddSingleton<IResponseContentDeserializer, SerializerToResponseContentDeserializer>();
     }
 }

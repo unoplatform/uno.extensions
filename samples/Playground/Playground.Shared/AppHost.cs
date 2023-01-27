@@ -44,9 +44,9 @@ internal static class AppHost
 				services
 					.AddSingleton<IAuthenticationTokenProvider>(new SimpleAuthenticationToken { AccessToken = "My access token" })
 					.AddScoped<NeedsADispatcherService>()
-					.AddNativeHandler()
+					.AddNativeHandler(context)
 					.AddTransient<DebugHttpHandler>()
-					.AddContentSerializer()
+					.AddContentSerializer(context)
 
 					.AddRefitClient<IToDoTaskListEndpoint>(context,
 							// Leaving this commented code here as an example of using the settingsBuilder callback

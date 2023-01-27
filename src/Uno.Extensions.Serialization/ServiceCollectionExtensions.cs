@@ -10,10 +10,17 @@ public static class ServiceCollectionExtensions
 	/// Adds the serialization services to the <see cref="IServiceCollection"/>.
 	/// </summary>
 	/// <param name="services">Service collection.</param>
+	/// <param name="context">The <see cref="HostBuilderContext"/> to use when adding services</param>
 	/// <returns><see cref="IServiceCollection"/>.</returns>
 	public static IServiceCollection AddSystemTextJsonSerialization(
-		this IServiceCollection services)
+		this IServiceCollection services,
+		HostBuilderContext context)
 	{
+		if (context.IsRegistered(nameof(AddSystemTextJsonSerialization)))
+		{
+			return services;
+		}
+
 		return services
 			.AddSingleton(sp => new JsonSerializerOptions
 			{
