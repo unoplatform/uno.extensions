@@ -8,6 +8,7 @@ internal class ThemeService : IThemeService
 	private UIElement? _rootAccessorElement;
 	private readonly IDispatcher _dispatcher;
 	private readonly ILogger? _logger;
+	private readonly TaskCompletionSource<bool> _initialization = new TaskCompletionSource<bool>();
 
 	/// <inheritdoc/>
 	public event EventHandler<AppTheme>? DesiredThemeChanged;
@@ -49,9 +50,17 @@ internal class ThemeService : IThemeService
 	/// <inheritdoc/>
 	public async Task<bool> SetThemeAsync(AppTheme theme)
 	{
-		var existingIsDark = IsDark;
-		var success = await _dispatcher.ExecuteAsync(async (ct) =>
+		// Make sure initialization completes before attempting to set new theme
+		await _initialization.Task;
+
+		return await InternalSetThemeAsync(theme);
+	}
+
+	private async Task<bool> InternalSetThemeAsync(AppTheme theme)
+	{
+		return await _dispatcher.ExecuteAsync(async (ct) =>
 		{
+			var existingIsDark = IsDark;
 			if (_rootAccessorElement?.XamlRoot is { } xamlRoot)
 			{
 				if (theme != AppTheme.System)
@@ -64,20 +73,18 @@ internal class ThemeService : IThemeService
 					var systemTheme = SystemThemeHelper.GetCurrentOsTheme();
 					SystemThemeHelper.SetRootTheme(xamlRoot, systemTheme == ApplicationTheme.Dark);
 				}
+
+				await SaveDesiredTheme(theme);
+
+				if (existingIsDark != IsDark)
+				{
+					DesiredThemeChanged?.Invoke(this, theme);
+				}
 				return true;
 			}
 			return false;
 		});
 
-		if (!success) return false;
-
-		await SaveDesiredTheme(theme);
-
-		if (existingIsDark != IsDark)
-		{
-			DesiredThemeChanged?.Invoke(this, theme);
-		}
-		return true;
 	}
 
 	private async Task SaveDesiredTheme(AppTheme theme)
@@ -109,7 +116,7 @@ internal class ThemeService : IThemeService
 	private async Task InitializeAsync()
 	{
 		var theme = GetSavedTheme();
-		var success = await SetThemeAsync(theme);
+		var success = await InternalSetThemeAsync(theme);
 		if (!success)
 		{
 			if (_rootAccessorElement is FrameworkElement fe)
@@ -117,7 +124,8 @@ internal class ThemeService : IThemeService
 				async void OnLoaded(object sender, RoutedEventArgs args)
 				{
 					fe.Loaded -= OnLoaded;
-					await SetThemeAsync(theme);
+					await InternalSetThemeAsync(theme);
+					_initialization.TrySetResult(true);
 				}
 
 				fe.Loaded += OnLoaded;
@@ -125,7 +133,9 @@ internal class ThemeService : IThemeService
 			else
 			{
 				if (_logger?.IsEnabled(LogLevel.Warning) ?? false) _logger.LogWarningMessage("Unable to attach to Loaded event. Use FrameworkElement instead of UIElement");
+				_initialization.TrySetResult(false);
 			}
 		}
+		_initialization.TrySetResult(true);
 	}
 }
