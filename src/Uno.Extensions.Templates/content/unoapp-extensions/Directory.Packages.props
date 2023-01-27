@@ -64,13 +64,13 @@
     <!--#if (useMaterial)-->
     <PackageVersion Include="Uno.Toolkit.WinUI.Material" Version=" 2.5.0-dev.17" />
     <!--#endif-->
-    <PackageVersion Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="4.7.0-dev.1036" />
+    <PackageVersion Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="4.7.30" />
     <PackageVersion Include="Uno.UITest.Helpers" Version="1.1.0-dev.32" />
     <PackageVersion Include="Uno.UniversalImageLoader" Version="1.9.36" />
-    <PackageVersion Include="Uno.Wasm.Bootstrap" Version="7.0.11" />
-    <PackageVersion Include="Uno.Wasm.Bootstrap.DevServer" Version="7.0.11" />
+    <PackageVersion Include="Uno.Wasm.Bootstrap" Version="7.0.12" />
+    <PackageVersion Include="Uno.Wasm.Bootstrap.DevServer" Version="7.0.12" />
     <PackageVersion Include="Uno.Wasm.Bootstrap.Server" Version="7.0.11" />
-    <PackageVersion Include="Uno.WinUI" Version="4.7.0-dev.1036" />
+    <PackageVersion Include="Uno.WinUI" Version="4.7.30" />
     <!--#if (useCsharpMarkup)-->
     <PackageVersion Include="Uno.WinUI.Markup" Version="4.6.0-dev.16" />
     <PackageVersion Include="Uno.Toolkit.WinUI.Markup" Version="2.5.0-dev.17" />
@@ -83,11 +83,11 @@
     <!--#endif-->
     <PackageVersion Include="Uno.Themes.WinUI.Markup" Version="2.5.0-dev.14" />
     <!--#endif-->
-    <PackageVersion Include="Uno.WinUI.RemoteControl" Version="4.7.0-dev.1036" />
-    <PackageVersion Include="Uno.WinUI.Skia.Gtk" Version="4.7.0-dev.1036" />
-    <PackageVersion Include="Uno.WinUI.Skia.Linux.FrameBuffer" Version="4.7.0-dev.1036" />
-    <PackageVersion Include="Uno.WinUI.Skia.Wpf" Version="4.7.0-dev.1036" />
-    <PackageVersion Include="Uno.WinUI.WebAssembly" Version="4.7.0-dev.1036" />
+    <PackageVersion Include="Uno.WinUI.RemoteControl" Version="4.7.30" />
+    <PackageVersion Include="Uno.WinUI.Skia.Gtk" Version="4.7.30" />
+    <PackageVersion Include="Uno.WinUI.Skia.Linux.FrameBuffer" Version="4.7.30" />
+    <PackageVersion Include="Uno.WinUI.Skia.Wpf" Version="4.7.30" />
+    <PackageVersion Include="Uno.WinUI.WebAssembly" Version="4.7.30" />
     <PackageVersion Include="Xamarin.Google.Android.Material" Version="1.7.0.1" />
     <PackageVersion Include="Xamarin.UITest" Version="4.0.1" />
   </ItemGroup>
