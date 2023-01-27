@@ -30,17 +30,26 @@ public partial class ThemeSwitchViewModel:ObservableObject
 
 	public async Task ChangeToSystem()
 	{
-		await _ts.SetThemeAsync(AppTheme.System);
+		await Task.Run(async () =>
+		{
+			await _ts.SetThemeAsync(AppTheme.System);
+		});
 	}
 
 	public async Task ChangeToLight()
 	{
-		await _ts.SetThemeAsync(AppTheme.Light);
+		await Task.Run(async () =>
+		{
+			await _ts.SetThemeAsync(AppTheme.Light);
+		});
 	}
 
 	public async Task ChangeToDark()
 	{
-		await _ts.SetThemeAsync(AppTheme.Dark);
+		await Task.Run(async () =>
+		{
+			await _ts.SetThemeAsync(AppTheme.Dark);
+		});
 	}
 }
 
