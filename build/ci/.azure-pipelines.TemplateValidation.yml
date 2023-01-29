@@ -55,6 +55,9 @@ jobs:
       FrameNavigation:
         createdProjectName: UnoAppFrameNavigation01
         templateArgs: '--navigation frame'
+      Net7:
+        createdProjectName: UnoAppNet7
+        templateArgs: '-tfm net7.0'
 
   variables:
     - name: UseDotNetNativeToolchain
