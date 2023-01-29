@@ -160,12 +160,13 @@
 
 	<ItemGroup>
 		<!--#if (useConfiguration)-->
-		<None Remove="appsettings*.json" />
 		<EmbeddedResource Include="appsettings.json" />
 		<EmbeddedResource Include="appsettings.*.json"
 											DependentUpon="appsettings.json" />
 		<!--#endif-->
 		<PRIResource Include="Strings\**\*.resw" />
+		<!--#if (useXaml)-->
 		<UpToDateCheckInput Include="**\*.xaml" Exclude="bin\**\*.xaml;obj\**\*.xaml" />
+		<!--#endif-->
 	</ItemGroup>
 </Project>
