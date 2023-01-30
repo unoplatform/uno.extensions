@@ -20,7 +20,7 @@
 		<StackPanel Grid.Row="1">
 			<TextBlock>
 				<Run Text="Is dark theme:" />
-				<Run Text="{x:Bind ViewModel.IsDarkTheme, Mode=OneWay}" />
+				<Run Text="{Binding IsDarkTheme}" />
 			</TextBlock>
 			<Button Content="Change To Dark"
 					Click="{x:Bind ViewModel.ChangeToDark}" />

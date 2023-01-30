@@ -18,14 +18,16 @@ internal class ThemeService : IThemeService
 	internal ThemeService(
 		Window window,
 		IDispatcher dispatcher,
-		bool assumeUIThread = false,
+		bool doSynchronousInit = false,
 		ILogger? logger = default)
 	{
 		_dispatcher = dispatcher;
 		_logger = logger;
+		_doSynchronousInit = doSynchronousInit;
 
-		if (!assumeUIThread)
+		if (!_doSynchronousInit)
 		{
+			// Need to dispatch in order to access window.Content on UI thread
 			_ = _dispatcher.ExecuteAsync(InitWindow);
 		}
 		else
@@ -43,12 +45,13 @@ internal class ThemeService : IThemeService
 	internal ThemeService(
 		UIElement rootAccessorElement,
 		IDispatcher dispatcher,
-		bool assumeUIThread = false,
+		bool doSynchronousInit = false,
 		ILogger? logger = default)
 	{
 		_rootAccessorElement = rootAccessorElement;
 		_dispatcher = dispatcher;
 		_logger = logger;
+		_doSynchronousInit = doSynchronousInit;
 
 		_ = InitializeAsync();
 	}
@@ -63,7 +66,7 @@ internal class ThemeService : IThemeService
 	/// <inheritdoc/>
 	public async Task<bool> SetThemeAsync(AppTheme theme)
 	{
-		if(_initialization is null)
+		if (_initialization is null)
 		{
 			throw new NullReferenceException($"Theme service not initialized, {nameof(InitializeAsync)} needs to complete before SetThemeAsync can be called");
 		}
@@ -74,38 +77,50 @@ internal class ThemeService : IThemeService
 		return await InternalSetThemeAsync(theme);
 	}
 
-	private async Task<bool> InternalSetThemeAsync(AppTheme theme)
+	private async Task<bool> InternalSetThemeAsync(AppTheme theme, bool runSynchronously = false)
 	{
-		return await _dispatcher.ExecuteAsync(async (ct) =>
+		if (runSynchronously)
 		{
-			var existingIsDark = IsDark;
-			if (_rootAccessorElement?.XamlRoot is { } xamlRoot)
+			return InternalSetThemeOnUIThread(theme);
+		}
+		else
+		{
+			return await _dispatcher.ExecuteAsync(async (ct) =>
 			{
-				if (theme != AppTheme.System)
-				{
-					SystemThemeHelper.SetRootTheme(xamlRoot, theme == AppTheme.Dark);
-				}
-				else
-				{
-					//Set System theme
-					var systemTheme = SystemThemeHelper.GetCurrentOsTheme();
-					SystemThemeHelper.SetRootTheme(xamlRoot, systemTheme == ApplicationTheme.Dark);
-				}
+				return InternalSetThemeOnUIThread(theme);
+			});
+		}
 
-				await SaveDesiredTheme(theme);
+	}
 
-				if (existingIsDark != IsDark)
-				{
-					ThemeChanged?.Invoke(this, theme);
-				}
-				return true;
+	private bool InternalSetThemeOnUIThread(AppTheme theme)
+	{
+		var existingIsDark = IsDark;
+		if (_rootAccessorElement?.XamlRoot is { } xamlRoot)
+		{
+			if (theme != AppTheme.System)
+			{
+				SystemThemeHelper.SetRootTheme(xamlRoot, theme == AppTheme.Dark);
 			}
-			return false;
+			else
+			{
+				//Set System theme
+				var systemTheme = SystemThemeHelper.GetCurrentOsTheme();
+				SystemThemeHelper.SetRootTheme(xamlRoot, systemTheme == ApplicationTheme.Dark);
+			}
+
+			SaveDesiredTheme(theme);
+
+			if (existingIsDark != IsDark)
+			{
+				ThemeChanged?.Invoke(this, theme);
+			}
+			return true;
 		});
 
 	}
 
-	private async Task SaveDesiredTheme(AppTheme theme)
+	private void SaveDesiredTheme(AppTheme theme)
 	{
 		try
 		{
@@ -136,15 +151,16 @@ internal class ThemeService : IThemeService
 	{
 		// Allow InitializeAsync to be called multiple times but only
 		// do init once
-		if(_initialization is not null)
+		if (_initialization is not null)
 		{
 			await _initialization.Task.ConfigureAwait(false);
+			return;
 		}
 
 		_initialization = new TaskCompletionSource<bool>();
 
 		var theme = GetSavedTheme();
-		var success = await InternalSetThemeAsync(theme);
+		var success = await InternalSetThemeAsync(theme, _doSynchronousInit);
 		if (!success)
 		{
 			if (_rootAccessorElement is FrameworkElement fe)
@@ -152,7 +168,7 @@ internal class ThemeService : IThemeService
 				async void OnLoaded(object sender, RoutedEventArgs args)
 				{
 					fe.Loaded -= OnLoaded;
-					await InternalSetThemeAsync(theme);
+					await InternalSetThemeAsync(theme, true);
 					_initialization.TrySetResult(true);
 				}
 

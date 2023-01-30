@@ -58,8 +58,6 @@ public sealed partial class App : Application
 			// Place the frame in the current Window
 			_window.Content = rootFrame;
 		}
-		await _window.Content.GetThemeService().InitializeAsync();
-		//(_window.Content as FrameworkElement)!.RequestedTheme = ElementTheme.Light;
 		_window.Activate();
 	}
 }
