@@ -51,7 +51,8 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 		RouteUpdater.StartNavigation(this, Region, request);
 		try
 		{
-
+			// Uncomment this to prevent thread jumping
+			// request = request with { InProgress = true };
 			if (Dispatcher.HasThreadAccess &&
 				!request.InProgress)
 			{
