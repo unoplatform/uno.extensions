@@ -31,6 +31,9 @@
 			<Button AutomationProperties.AutomationId="ShowTabBarHomeButton"
 					Content="TabBar Home"
 					Click="TabBarHomeClick" />
+			<Button AutomationProperties.AutomationId="ShowTabBarListButton"
+					Content="TabBar List"
+					Click="TabBarListClick" />
 		</StackPanel>
 	</Grid>
 
