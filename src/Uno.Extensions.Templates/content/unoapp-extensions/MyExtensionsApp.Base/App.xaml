@@ -28,7 +28,7 @@
 				<CupertinoFonts xmlns="using:Uno.Cupertino" />
 				<CupertinoResources xmlns="using:Uno.Cupertino" />
 <!--#endif-->
-<!--#if (useDefaultAppTemplate)-->
+<!--#if (useRecommendedAppTemplate)-->
 
 				<!-- Load Uno.UI.Toolkit resources -->
 				<ToolkitResources xmlns="using:Uno.Toolkit.UI" />

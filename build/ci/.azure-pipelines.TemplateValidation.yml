@@ -12,13 +12,13 @@ jobs:
         templateArgs: ''
       BlankApp:
         createdProjectName: UnoAppBlank01
-        templateArgs: '--template-type blank'
+        templateArgs: '-preset blank'
       BlankMarkupApp:
         createdProjectName: UnoAppBlank01
-        templateArgs: '--template-type blank --ui-markup csharp'
+        templateArgs: '-preset blank --ui-markup csharp'
       BlankAppCpm:
         createdProjectName: UnoAppBlank01
-        templateArgs: '--template-type blank --cpm true'
+        templateArgs: '-preset blank --cpm true'
       MVVM:
         createdProjectName: UnoAppNoReactive01
         templateArgs: '-presentation mvvm'

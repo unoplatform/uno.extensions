@@ -43,7 +43,7 @@ global using Uno.Extensions.Navigation;
 #if (useHttp)
 global using Refit;
 #endif
-#if (useDefaultAppTemplate)
+#if (useRecommendedAppTemplate)
 global using Uno.Extensions;
 #endif
 #if (useConfiguration)
@@ -64,13 +64,13 @@ global using Uno.Extensions.Markup;
 global using Uno.Material;
 #endif
 global using Uno.Themes.Markup;
-#if (useDefaultAppTemplate)
+#if (useRecommendedAppTemplate)
 global using Uno.Toolkit.UI;
 #if (useMaterial)
 global using Uno.Toolkit.UI.Material;
 #endif
 #endif
-#elif (useDefaultAppTemplate)
+#elif (useRecommendedAppTemplate)
 global using Uno.Toolkit.UI;
 #endif
 global using Windows.ApplicationModel;

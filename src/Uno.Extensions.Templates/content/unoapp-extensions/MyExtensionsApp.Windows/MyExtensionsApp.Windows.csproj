@@ -35,7 +35,7 @@
 		<PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" />
 	</ItemGroup>
 	<!--#endif-->
-	<!--#if (useDefaultAppTemplate)-->
+	<!--#if (useRecommendedAppTemplate)-->
 	<ItemGroup>
 		<PackageReference Include="Microsoft.WindowsAppSDK" />
 		<PackageReference Include="Microsoft.Windows.SDK.BuildTools" />

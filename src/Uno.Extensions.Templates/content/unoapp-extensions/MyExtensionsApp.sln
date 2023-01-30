@@ -11,7 +11,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Backend", "Backend", "{BA1ACE40-623E-4F42-94BB-11CF4D52C445}"
 EndProject
 //#endif
-#//#if (useDefaultAppTemplate && (tests || unitTest))
+#//#if (useRecommendedAppTemplate && (tests || unitTest))
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{7EF70027-9874-4112-A14F-33F02169CF8A}"
 EndProject
 #//#endif
