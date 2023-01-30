@@ -373,6 +373,10 @@
       <DependentUpon>TabBarSettingsPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\TabBar\TabBarSettingsViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Toolkit\ThemeService\ThemeServiceHostInit.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Toolkit\ThemeService\ThemeServiceMainPage.xaml.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Toolkit\ThemeService\ThemeServiceOnePage.xaml.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Toolkit\ThemeService\ThemeServiceOneViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Validation\ValidationHostInit.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Validation\ValidationMainPage.xaml.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Validation\ValidationOnePage.xaml.cs" />

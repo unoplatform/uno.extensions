@@ -3,5 +3,5 @@
 public static class UIElementExtensions
 {
 	public static IThemeService GetThemeService(this UIElement element, ILogger? logger = default) =>
-		new ThemeService(element, new Dispatcher(element), logger);
+		new ThemeService(element, new Dispatcher(element), true, logger);
 }
