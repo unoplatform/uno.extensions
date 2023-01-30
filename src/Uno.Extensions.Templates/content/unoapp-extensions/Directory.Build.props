@@ -9,8 +9,10 @@
 		<DebugType>portable</DebugType>
 		<DebugSymbols>True</DebugSymbols>
 		<SynthesizeLinkMetadata>true</SynthesizeLinkMetadata>
+		<!--#if (cpm)-->
 
 		<ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+		<!--#endif-->
 
 		<TreatWarningsAsErrors>True</TreatWarningsAsErrors>
 		<NoWarn>$(NoWarn);Uno0001;CS1998;CA1416;NU1507</NoWarn>
@@ -43,9 +45,4 @@
 		<SupportedOSPlatformVersion Condition="$(IsWinAppSdk)">10.0.18362.0</SupportedOSPlatformVersion>
 		<TargetPlatformMinVersion Condition="$(IsWinAppSdk)">10.0.18362.0</TargetPlatformMinVersion>
 	</PropertyGroup>
-
-	<ItemGroup>
-		<!--This override is used to validate the use of specific version of the C# Compiler-->
-		<PackageReference Include="Microsoft.Net.Compilers.Toolset" PrivateAssets="all" />
-	</ItemGroup>
 </Project>

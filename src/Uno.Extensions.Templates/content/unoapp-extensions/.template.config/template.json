@@ -875,7 +875,6 @@
             "MyExtensionsApp.ServerApp/MyExtensionsApp.Server.csproj",
             "MyExtensionsApp.Tests/MyExtensionsApp.Tests.csproj",
             "MyExtensionsAppTests/MyExtensionsAppTests.csproj",
-            "Directory.Build.props",
             "Directory.Packages.props"
           ]
         },
@@ -902,8 +901,7 @@
         {
           "condition": "(!cpm)",
           "rename": {
-              ".nocpm.csproj": ".csproj",
-              "Directory.Build.nocpm.props": "Directory.Build.props"
+            ".nocpm.csproj": ".csproj"
           }
         },
         {
