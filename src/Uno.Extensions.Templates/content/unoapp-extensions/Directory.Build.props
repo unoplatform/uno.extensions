@@ -1,8 +1,6 @@
 <Project ToolsVersion="15.0">
 	<PropertyGroup>
-		<!--#if (useNetSix)-->
-		<LangVersion>10</LangVersion>
-		<!--#endif-->
+		<LangVersion>$langVersion$</LangVersion>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 
