@@ -18,6 +18,8 @@ public static class HostBuilderExtensions
 		return hostBuilder
 				.ConfigureLogging((context, builder) =>
 				{
+					if (!context.IsRegistered(nameof(UseLogging)))
+					{
 #if !__WASM__
 #if __IOS__
 #pragma warning disable CA1416 // Validate platform compatibility: The net6.0 version is not used on older versions of OS
@@ -26,16 +28,25 @@ public static class HostBuilderExtensions
 #elif NET6_0_OR_GREATER // Console isn't supported on all Xamarin targets, so only adding for net6.0 and above
 					builder.AddConsole();
 #endif
-					builder.AddDebug();
+						builder.AddDebug();
 #elif __WASM__
 					builder.AddProvider(new global::Uno.Extensions.Logging.WebAssembly.WebAssemblyConsoleLoggerProvider());
 #endif
+					}
+
 					configure?.Invoke(context, builder);
 				})
-				.ConfigureServices(services =>
+				.ConfigureServices((ctx, services) =>
 				{
+					if (ctx.IsRegistered(nameof(HostExtensions.ConnectUnoLogging)))
+					{
+						return;
+					}
+
 					if (enableUnoLogging)
+					{
 						services.AddSingleton<IServiceInitialize, LoggingInitializer>();
+					}
 				});
 	}
 

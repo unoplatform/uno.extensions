@@ -16,7 +16,7 @@ public abstract class BaseMsalHostInitialization : BaseHostInitialization
 				.ConfigureServices((context, services) =>
 				{
 					services
-							.AddNativeHandler()
+							.AddNativeHandler(context)
 							.AddRefitClient<IMsalAuthenticationTaskListEndpoint>(context);
 				});
 	}

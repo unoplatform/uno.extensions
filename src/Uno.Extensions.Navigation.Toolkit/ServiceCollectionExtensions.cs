@@ -5,21 +5,21 @@
 /// </summary>
 public static class ServiceCollectionExtensions
 {
-	private static bool _didRegisterServices;
 	/// <summary>
 	/// Adds navigation support for toolkit controls such as TabBar and DrawControl
 	/// </summary>
 	/// <param name="services">The <see cref="IServiceCollection"/> to add the service to.</param>
+	/// <param name="context">The <see cref="HostBuilderContext"/> to use when adding services</param>
 	/// <returns>A reference to this instance after the operation has completed.</returns>
 	public static IServiceCollection AddToolkitNavigation(
-		this IServiceCollection services)
+		this IServiceCollection services,
+		HostBuilderContext context)
 	{
-		if (_didRegisterServices)
+		if(context.IsRegistered(nameof(AddToolkitNavigation)))
 		{
 			return services;
 		}
 
-		_didRegisterServices = true;
 		return services
 					.AddTransient<Flyout, ModalFlyout>()
 
