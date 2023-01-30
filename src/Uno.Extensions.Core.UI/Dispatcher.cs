@@ -1,5 +1,7 @@
 ﻿
 
+using System.Diagnostics;
+
 namespace Uno.Extensions;
 
 public class Dispatcher : IDispatcher
@@ -50,6 +52,8 @@ public class Dispatcher : IDispatcher
 		{
 			return await func(cancellation);
 		}
+
+		Debug.WriteLine(">>>>>>>>>>>> Hop, Hop, Hop <<<<<<<<<<<<");
 		return await _dispatcher.ExecuteAsync(func, cancellation);
 	}
 
