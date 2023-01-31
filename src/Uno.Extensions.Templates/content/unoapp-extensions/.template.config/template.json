@@ -183,7 +183,7 @@
       "displayName": "Desktop - macOS (AppKit)",
       "type": "parameter",
       "dataType": "bool",
-      "defaultValue": "true",
+      "defaultValue": "false",
       "description": "Enables the macOS (AppKit) platform in the Mobile support project"
     },
     "skiaGtk": {
