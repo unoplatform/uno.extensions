@@ -83,9 +83,7 @@ jobs:
 #       packageType: sdk
 #       version: 6.0.x
 
-  - template: templates/dotnet6-install-windows.yml
-    parameters:
-      DotNetVersion: 7.0.x
+  - template: templates/dotnet7-install-windows.yml
   - template: templates/install-windows-sdk.yml
     parameters:
       sdkVersion: 18362
