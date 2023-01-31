@@ -6,8 +6,6 @@ public record NavigationRequest(object Sender, Route Route, CancellationToken? C
 {
 	internal Guid Id { get; } = Guid.NewGuid();
 
-	internal bool InProgress { get; init; }
-
 	public override string ToString() => $"Request [Sender: {Sender.GetType().Name}, Route:{Route}, Result: {Result?.Name ?? "N/A"}]";
 
 	internal virtual IResponseNavigator? GetResponseNavigator(IResponseNavigatorFactory responseFactory, INavigator navigator) => default;

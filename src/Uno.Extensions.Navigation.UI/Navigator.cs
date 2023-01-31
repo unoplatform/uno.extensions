@@ -51,17 +51,6 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 		RouteUpdater.StartNavigation(this, Region, request);
 		try
 		{
-			// Uncomment this to prevent thread jumping
-			 request = request with { InProgress = true };
-			if (Dispatcher.HasThreadAccess &&
-				!request.InProgress)
-			{
-				Debug.WriteLine("*********** Jump, Jump, Jump ************");
-				request = request with { InProgress = true }; // Prevent multiple re-entrance where HasThreadAccess always returns true eg WASM
-				if (Logger.IsEnabled(LogLevel.Information)) Logger.LogInformationMessage($"Navigation started on UI thread, so moving to background thread");
-				return await Task.Run(() => NavigateAsync(request));
-			}
-
 			if (request.Source is null)
 			{
 				if (Logger.IsEnabled(LogLevel.Information)) Logger.LogInformationMessage($"Starting Navigation - Navigator: {this.GetType().Name} Request: {request.Route}");
