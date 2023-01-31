@@ -49,7 +49,7 @@
   ],
   "symbols": {
     "preset": {
-      "displayName": "Type",
+      "displayName": "Preset",
       "type": "parameter",
       "datatype": "choice",
       "defaultValue": "recommended",
