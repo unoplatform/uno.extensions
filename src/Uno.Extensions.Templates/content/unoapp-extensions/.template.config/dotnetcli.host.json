@@ -35,7 +35,8 @@
     },
     "macos": {
       "longName": "macos",
-      "shortName": "macos"
+      "shortName": "macos",
+      "isHidden": true
     },
     "maccatalyst": {
       "longName": "maccatalyst",

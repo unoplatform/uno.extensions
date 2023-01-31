@@ -146,15 +146,7 @@
     },
     {
       "id": "macos",
-      "name": {
-        "text": "Desktop - macOS (AppKit)"
-      },
-      "description":
-      {
-        "text": "Enables the macOS (AppKit) platform in the Mobile support project"
-      },
-      "defaultValue": "false",
-      "isVisible":true
+      "isVisible": false
     },
     {
       "id": "maccatalyst",
