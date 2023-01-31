@@ -80,7 +80,8 @@
       "type": "parameter",
       "datatype": "choice",
       "enableQuotelessLiterals": true,
-      "replaces": "net6.0",
+      "replaces": "$baseTargetFramework$",
+      "defaultValue": "net7.0",
       "description": "Target Framework",
       "choices": [
         {

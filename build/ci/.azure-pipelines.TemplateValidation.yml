@@ -55,9 +55,9 @@ jobs:
       FrameNavigation:
         createdProjectName: UnoAppFrameNavigation01
         templateArgs: '--navigation frame'
-      Net7:
-        createdProjectName: UnoAppNet7
-        templateArgs: '-tfm net7.0'
+      Net6:
+        createdProjectName: UnoAppNet6
+        templateArgs: '-tfm net6.0'
 
   variables:
     - name: UseDotNetNativeToolchain
@@ -77,11 +77,11 @@ jobs:
       configFilePath: build/ci/gitversion.yml
     displayName: Use GitVersion
 
-  - task: UseDotNet@2
-    displayName: 'Use .NET 6.0.x'
-    inputs:
-      packageType: sdk
-      version: 6.0.x
+#   - task: UseDotNet@2
+#     displayName: 'Use .NET 6.0.x'
+#     inputs:
+#       packageType: sdk
+#       version: 6.0.x
 
   - template: templates/dotnet6-install-windows.yml
     parameters:
