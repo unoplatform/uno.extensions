@@ -1,10 +1,9 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using System.Threading;
+﻿using System.Threading;
 using Windows.Storage;
 
 namespace Uno.Extensions.Toolkit;
 
-internal class ThemeService : IThemeService
+internal class ThemeService : IThemeService, IDisposable
 {
 	private const string CurrentThemeSettingsKey = "CurrentTheme";
 	private UIElement? _rootAccessorElement;
@@ -18,14 +17,12 @@ internal class ThemeService : IThemeService
 	internal ThemeService(
 		Window window,
 		IDispatcher dispatcher,
-		bool doSynchronousInit = false,
 		ILogger? logger = default)
 	{
 		_dispatcher = dispatcher;
 		_logger = logger;
-		_doSynchronousInit = doSynchronousInit;
 
-		if (!_doSynchronousInit)
+		if (!_dispatcher.HasThreadAccess)
 		{
 			// Need to dispatch in order to access window.Content on UI thread
 			_ = _dispatcher.ExecuteAsync(InitWindow);
@@ -37,7 +34,7 @@ internal class ThemeService : IThemeService
 
 		async ValueTask InitWindow(CancellationToken ct)
 		{
-			_rootAccessorElement = window.Content;
+			RootElement = window.Content;
 			await InitializeAsync();
 		}
 	}
@@ -45,34 +42,47 @@ internal class ThemeService : IThemeService
 	internal ThemeService(
 		UIElement rootAccessorElement,
 		IDispatcher dispatcher,
-		bool doSynchronousInit = false,
 		ILogger? logger = default)
 	{
-		_rootAccessorElement = rootAccessorElement;
+		RootElement = rootAccessorElement;
 		_dispatcher = dispatcher;
 		_logger = logger;
-		_doSynchronousInit = doSynchronousInit;
 
 		_ = InitializeAsync();
 	}
 
 	/// <inheritdoc/>
-	public bool IsDark
-	{
-		get
-		{
-			var element = _rootAccessorElement as FrameworkElement;
-			if (_rootAccessorElement?.XamlRoot is { } xamlRoot)
-			{
-				element = xamlRoot.Content as FrameworkElement;
-			}
-			return element?.ActualTheme == ElementTheme.Dark;
-		}
-	}
+	public bool IsDark => (RootElement as FrameworkElement)?.ActualTheme == ElementTheme.Dark;
 
 	/// <inheritdoc/>
 	public AppTheme Theme => GetSavedTheme();
 
+
+	public UIElement? RootElement
+	{
+		get => _rootAccessorElement;
+		set
+		{
+			if(_rootAccessorElement == value)
+			{
+				return;
+			}
+			if (_rootAccessorElement is FrameworkElement oldElement)
+			{
+				oldElement.ActualThemeChanged -= ElementThemeChanged;
+			}
+			_rootAccessorElement = value;
+			if(_rootAccessorElement is FrameworkElement element)
+			{
+				element.ActualThemeChanged += ElementThemeChanged;
+			}
+		}
+	}
+
+	private void ElementThemeChanged(FrameworkElement sender, object args)
+	{
+		ThemeChanged?.Invoke(this, GetSavedTheme());
+	}
 
 	/// <inheritdoc/>
 	public async Task<bool> SetThemeAsync(AppTheme theme)
@@ -88,9 +98,9 @@ internal class ThemeService : IThemeService
 		return await InternalSetThemeAsync(theme);
 	}
 
-	private async Task<bool> InternalSetThemeAsync(AppTheme theme, bool runSynchronously = false)
+	private async Task<bool> InternalSetThemeAsync(AppTheme theme)
 	{
-		if (runSynchronously)
+		if (_dispatcher.HasThreadAccess)
 		{
 			return InternalSetThemeOnUIThread(theme);
 		}
@@ -107,11 +117,7 @@ internal class ThemeService : IThemeService
 	private bool InternalSetThemeOnUIThread(AppTheme theme)
 	{
 		var existingIsDark = IsDark;
-		var rootElement = _rootAccessorElement as FrameworkElement;
-		if (_rootAccessorElement?.XamlRoot is { } xamlRoot)
-		{
-			rootElement = xamlRoot.Content as FrameworkElement;
-		}
+		var rootElement = RootElement?.XamlRoot?.Content as FrameworkElement;
 
 		if (rootElement is null)
 		{
@@ -138,70 +144,91 @@ internal class ThemeService : IThemeService
 
 	}
 
-private void SaveDesiredTheme(AppTheme theme)
-{
-	try
+	private void SaveDesiredTheme(AppTheme theme)
 	{
-		ApplicationData.Current.LocalSettings.Values[CurrentThemeSettingsKey] = theme.ToString();
-	}
-	catch (Exception ex)
-	{
-		if (_logger?.IsEnabled(LogLevel.Error) ?? false) _logger.LogError(ex, $"[ThemeService.SaveDesiredTheme({theme})] - Error while updating current theme.");
-	}
-}
-
-private AppTheme GetSavedTheme()
-{
-	try
-	{
-		return Enum.TryParse<AppTheme>(ApplicationData.Current.LocalSettings.Values[CurrentThemeSettingsKey] + string.Empty, out var theme) ? theme : AppTheme.System;
-	}
-	catch (Exception ex)
-	{
-		if (_logger?.IsEnabled(LogLevel.Error) ?? false) _logger.LogErrorMessage(ex, $"[ThemeService.GetSavedTheme()] - Error while reading stored theme.");
-	}
-
-	return AppTheme.System;
-}
-
-/// <inheritdoc/>
-public async Task InitializeAsync()
-{
-	// Allow InitializeAsync to be called multiple times but only
-	// do init once
-	if (_initialization is not null)
-	{
-		await _initialization.Task.ConfigureAwait(false);
-		return;
-	}
-
-	_initialization = new TaskCompletionSource<bool>();
-
-	var theme = GetSavedTheme();
-	var success = await InternalSetThemeAsync(theme, _doSynchronousInit);
-	if (!success)
-	{
-		if (_rootAccessorElement is FrameworkElement fe)
+		try
 		{
-			async void OnLoaded(object sender, RoutedEventArgs args)
-			{
-				fe.Loaded -= OnLoaded;
-				await InternalSetThemeAsync(theme, true);
-				_initialization.TrySetResult(true);
-			}
+			ApplicationData.Current.LocalSettings.Values[CurrentThemeSettingsKey] = theme.ToString();
+		}
+		catch (Exception ex)
+		{
+			if (_logger?.IsEnabled(LogLevel.Error) ?? false) _logger.LogError(ex, $"[ThemeService.SaveDesiredTheme({theme})] - Error while updating current theme.");
+		}
+	}
 
-			fe.Loaded += OnLoaded;
-			await _initialization.Task;
+	private AppTheme GetSavedTheme()
+	{
+		try
+		{
+			return Enum.TryParse<AppTheme>(ApplicationData.Current.LocalSettings.Values[CurrentThemeSettingsKey] + string.Empty, out var theme) ? theme : AppTheme.System;
+		}
+		catch (Exception ex)
+		{
+			if (_logger?.IsEnabled(LogLevel.Error) ?? false) _logger.LogErrorMessage(ex, $"[ThemeService.GetSavedTheme()] - Error while reading stored theme.");
+		}
+
+		return AppTheme.System;
+	}
+
+	/// <inheritdoc/>
+	public async Task InitializeAsync()
+	{
+		// Allow InitializeAsync to be called multiple times but only
+		// do init once
+		if (_initialization is not null)
+		{
+			await _initialization.Task.ConfigureAwait(false);
+			return;
+		}
+
+		_initialization = new TaskCompletionSource<bool>();
+		
+		var theme = GetSavedTheme();
+		var success = await InternalSetThemeAsync(theme);
+		if (!success)
+		{
+			if (RootElement is FrameworkElement fe)
+			{
+				async void OnLoaded(object sender, RoutedEventArgs args)
+				{
+					fe.Loaded -= OnLoaded;
+					var themeSet = await InternalSetThemeAsync(theme);
+					CompleteInitialization(themeSet);
+				}
+
+				fe.Loaded += OnLoaded;
+				await _initialization.Task;
+			}
+			else
+			{
+				if (_logger?.IsEnabled(LogLevel.Warning) ?? false) _logger.LogWarningMessage("Unable to attach to Loaded event. Use FrameworkElement instead of UIElement");
+				CompleteInitialization(false);
+			}
 		}
 		else
 		{
-			if (_logger?.IsEnabled(LogLevel.Warning) ?? false) _logger.LogWarningMessage("Unable to attach to Loaded event. Use FrameworkElement instead of UIElement");
-			_initialization.TrySetResult(false);
+			CompleteInitialization(true);
 		}
 	}
-	else
+
+	private void CompleteInitialization(bool success)
 	{
-		_initialization.TrySetResult(true);
+		var init = _initialization;
+		if(init is null)
+		{
+			return;
+		}
+
+		if (success)
+		{
+
+		}
+		init.TrySetResult(success);
 	}
-}
+
+	public void Dispose()
+	{
+		// drop reference, including event handler
+		RootElement = null;
+	}
 }

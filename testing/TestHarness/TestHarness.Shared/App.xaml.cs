@@ -57,6 +57,9 @@ public sealed partial class App : Application
 
 			// Place the frame in the current Window
 			_window.Content = rootFrame;
+
+			//_window.GetThemeService();
+
 		}
 		_window.Activate();
 	}

@@ -13,7 +13,7 @@ public partial class ThemeServiceOneViewModel : ObservableObject
 	public ThemeServiceOneViewModel(IThemeService themeService, IDispatcher dispatcher)
 	{
 		_ts = themeService;
-		_ts.DesiredThemeChanged += ts_DesiredThemeChanged;
+		_ts.ThemeChanged += ts_DesiredThemeChanged;
 		_ = dispatcher.ExecuteAsync(() =>
 		{
 			IsDarkTheme = themeService.IsDark.ToString();
