@@ -17,9 +17,9 @@
       "longName": "presentation",
       "shortName": "presentation"
     },
-    "uiMarkup": {
-      "longName": "ui-markup",
-      "shortName": "ui"
+    "markup": {
+      "longName": "markup",
+      "shortName": "markup"
     },
     "appTheme": {
       "longName": "app-theme",
