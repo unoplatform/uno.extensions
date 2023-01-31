@@ -1,16 +1,16 @@
 <Project ToolsVersion="15.0">
 	<PropertyGroup>
-		<!--#if (useNetSix)-->
-		<LangVersion>10</LangVersion>
-		<!--#endif-->
+		<LangVersion>$langVersion$</LangVersion>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 
 		<DebugType>portable</DebugType>
 		<DebugSymbols>True</DebugSymbols>
 		<SynthesizeLinkMetadata>true</SynthesizeLinkMetadata>
+		<!--#if (cpm)-->
 
 		<ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+		<!--#endif-->
 
 		<TreatWarningsAsErrors>True</TreatWarningsAsErrors>
 		<NoWarn>$(NoWarn);Uno0001;CS1998;CA1416;NU1507</NoWarn>
@@ -18,34 +18,46 @@
 		<DefaultLanguage>en</DefaultLanguage>
 
 		<IsAndroid>false</IsAndroid>
-		<IsAndroid Condition="$(TargetFramework) != 'net6.0' AND $(TargetFramework) != 'netstandard2.1' AND $([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">true</IsAndroid>
 		<IsIOS>false</IsIOS>
-		<IsIOS Condition="$(TargetFramework) != 'net6.0' AND $(TargetFramework) != 'netstandard2.1' AND $([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">true</IsIOS>
 		<IsMac>false</IsMac>
-		<IsMac Condition="$(TargetFramework) != 'net6.0' AND $(TargetFramework) != 'netstandard2.1' AND $([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'macos'">true</IsMac>
 		<IsMacCatalyst>false</IsMacCatalyst>
-		<IsMacCatalyst Condition="$(TargetFramework) != 'net6.0' AND $(TargetFramework) != 'netstandard2.1' AND $([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">true</IsMacCatalyst>
 		<IsWinAppSdk>false</IsWinAppSdk>
-		<IsWinAppSdk Condition="$(TargetFramework.Contains('windows10'))">true</IsWinAppSdk>
 	</PropertyGroup>
 
-	<PropertyGroup Condition="'$(RuntimeIdentifier)'==''">
-		<RuntimeIdentifier Condition="$(IsIOS)">iossimulator-x64</RuntimeIdentifier>
-		<RuntimeIdentifier Condition="$(IsMacCatalyst)">maccatalyst-x64</RuntimeIdentifier>
-		<RuntimeIdentifier Condition="$(IsMac)">osx-x64</RuntimeIdentifier>
-	</PropertyGroup>
-
-	<PropertyGroup>
-		<SupportedOSPlatformVersion Condition="$(IsIOS)">14.2</SupportedOSPlatformVersion>
-		<SupportedOSPlatformVersion Condition="$(IsMacCatalyst)">14.0</SupportedOSPlatformVersion>
-		<SupportedOSPlatformVersion Condition="$(IsAndroid)">21.0</SupportedOSPlatformVersion>
-		<SupportedOSPlatformVersion Condition="$(IsMac)">10.14</SupportedOSPlatformVersion>
-		<SupportedOSPlatformVersion Condition="$(IsWinAppSdk)">10.0.18362.0</SupportedOSPlatformVersion>
-		<TargetPlatformMinVersion Condition="$(IsWinAppSdk)">10.0.18362.0</TargetPlatformMinVersion>
-	</PropertyGroup>
-
-	<ItemGroup>
-		<!--This override is used to validate the use of specific version of the C# Compiler-->
-		<PackageReference Include="Microsoft.Net.Compilers.Toolset" PrivateAssets="all" />
-	</ItemGroup>
+	<Choose>
+		<When Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">
+			<PropertyGroup>
+				<IsAndroid>true</IsAndroid>
+				<SupportedOSPlatformVersion>21.0</SupportedOSPlatformVersion>
+			</PropertyGroup>
+		</When>
+		<When Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">
+			<PropertyGroup>
+				<IsIOS>true</IsIOS>
+				<SupportedOSPlatformVersion>14.2</SupportedOSPlatformVersion>
+				<RuntimeIdentifier Condition="'$(RuntimeIdentifier)'==''">iossimulator-x64</RuntimeIdentifier>
+			</PropertyGroup>
+		</When>
+		<When Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'macos'">
+			<PropertyGroup>
+				<IsMac>true</IsMac>
+				<SupportedOSPlatformVersion>10.14</SupportedOSPlatformVersion>
+				<RuntimeIdentifier Condition="'$(RuntimeIdentifier)'==''">osx-x64</RuntimeIdentifier>
+			</PropertyGroup>
+		</When>
+		<When Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">
+			<PropertyGroup>
+				<IsMacCatalyst>true</IsMacCatalyst>
+				<SupportedOSPlatformVersion>14.0</SupportedOSPlatformVersion>
+				<RuntimeIdentifier Condition="'$(RuntimeIdentifier)'==''">maccatalyst-x64</RuntimeIdentifier>
+			</PropertyGroup>
+		</When>
+		<When Condition="$(TargetFramework.Contains('windows10'))">
+			<PropertyGroup>
+				<IsWinAppSdk>true</IsWinAppSdk>
+				<SupportedOSPlatformVersion>10.0.18362.0</SupportedOSPlatformVersion>
+				<TargetPlatformMinVersion>10.0.18362.0</TargetPlatformMinVersion>
+			</PropertyGroup>
+		</When>
+	</Choose>
 </Project>

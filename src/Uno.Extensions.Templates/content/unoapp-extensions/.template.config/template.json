@@ -49,7 +49,7 @@
   ],
   "symbols": {
     "preset": {
-      "displayName": "Type",
+      "displayName": "Preset",
       "type": "parameter",
       "datatype": "choice",
       "defaultValue": "recommended",
@@ -80,7 +80,8 @@
       "type": "parameter",
       "datatype": "choice",
       "enableQuotelessLiterals": true,
-      "replaces": "net6.0",
+      "replaces": "$baseTargetFramework$",
+      "defaultValue": "net7.0",
       "description": "Target Framework",
       "choices": [
         {
@@ -182,7 +183,7 @@
       "displayName": "Desktop - macOS (AppKit)",
       "type": "parameter",
       "dataType": "bool",
-      "defaultValue": "true",
+      "defaultValue": "false",
       "description": "Enables the macOS (AppKit) platform in the Mobile support project"
     },
     "skiaGtk": {
@@ -474,6 +475,25 @@
       "type": "computed",
       "dataType": "bool",
       "value": "(tfm == 'net7.0')"
+    },
+    "langVersion": {
+      "type": "generated",
+      "generator": "switch",
+      "replaces": "$langVersion$",
+      "parameters": {
+        "evaluator": "C++",
+        "datatype": "string",
+        "cases": [
+          {
+            "condition": "(tfm == 'net6.0')",
+            "value": "10"
+          },
+          {
+            "condition": "(tfm == 'net7.0')",
+            "value": "11"
+          }
+        ]
+      }
     },
     "libraryBaseTargetFramework": {
       "type": "generated",
@@ -875,7 +895,6 @@
             "MyExtensionsApp.ServerApp/MyExtensionsApp.Server.csproj",
             "MyExtensionsApp.Tests/MyExtensionsApp.Tests.csproj",
             "MyExtensionsAppTests/MyExtensionsAppTests.csproj",
-            "Directory.Build.props",
             "Directory.Packages.props"
           ]
         },
@@ -902,8 +921,7 @@
         {
           "condition": "(!cpm)",
           "rename": {
-              ".nocpm.csproj": ".csproj",
-              "Directory.Build.nocpm.props": "Directory.Build.props"
+            ".nocpm.csproj": ".csproj"
           }
         },
         {
