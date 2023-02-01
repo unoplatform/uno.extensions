@@ -21,5 +21,5 @@ public interface IThemeService
 	/// <summary>
 	/// Event that fires up whenever SetThemeAsync() is called.
 	/// </summary>
-	event EventHandler<AppTheme> DesiredThemeChanged;
+	event EventHandler<AppTheme> ThemeChanged;
 }

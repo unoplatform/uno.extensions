@@ -11,7 +11,7 @@ internal class ThemeService : IThemeService
 	private readonly TaskCompletionSource<bool> _initialization = new TaskCompletionSource<bool>();
 
 	/// <inheritdoc/>
-	public event EventHandler<AppTheme>? DesiredThemeChanged;
+	public event EventHandler<AppTheme>? ThemeChanged;
 
 	internal ThemeService(
 		Window window,
@@ -78,7 +78,7 @@ internal class ThemeService : IThemeService
 
 				if (existingIsDark != IsDark)
 				{
-					DesiredThemeChanged?.Invoke(this, theme);
+					ThemeChanged?.Invoke(this, theme);
 				}
 				return true;
 			}
