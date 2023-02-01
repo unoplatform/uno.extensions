@@ -59,7 +59,7 @@ public class PanelVisiblityNavigator : ControlNavigator<Panel>
 				}
 
 				if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Creating instance of type '{viewType.Name}'");
-				controlToShow = Activator.CreateInstance(viewType) as FrameworkElement;
+				controlToShow = CreateControlFromType(viewType) as FrameworkElement;
 				if (controlToShow is not null)
 				{
 					if (!string.IsNullOrWhiteSpace(regionName) &&

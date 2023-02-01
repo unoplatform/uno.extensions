@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using Windows.Foundation.Collections;
@@ -148,5 +149,23 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Facet
 				}
 			}
 		}
+
+		#region INotifyPropertyChanged
+		private static readonly PropertyChangedEventArgs _allPropertiesChanged = new(null);
+
+		private event PropertyChangedEventHandler? _propertyChanged;
+
+		public void PropertyChanged()
+			=> _propertyChanged?.Invoke(Sender, _allPropertiesChanged);
+
+		public void PropertyChanged(string propertyName)
+			=> _propertyChanged?.Invoke(Sender, new PropertyChangedEventArgs(propertyName));
+
+		public void AddPropertyChangedHandler(PropertyChangedEventHandler value)
+			=> _propertyChanged += value;
+
+		public void RemovePropertyChangedHandler(PropertyChangedEventHandler value)
+			=> _propertyChanged -= value;
+		#endregion
 	}
 }

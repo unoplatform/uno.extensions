@@ -32,6 +32,10 @@
 
 		<StackPanel
 			Grid.Row="1">
+			<TextBlock>
+				<Run Text="Is dark theme:" />
+				<Run Text="{x:Bind ViewModel.IsDarkTheme, Mode=OneWay}" />
+			</TextBlock>
 			<Button
 				Content="Change To Dark"
 				Click="{x:Bind ViewModel.ChangeToDark}"/>
@@ -41,6 +45,12 @@
 			<Button
 				Content="Change To System"
 				Click="{x:Bind ViewModel.ChangeToSystem}" />
+			<Button Content="Change To Dark (Element ThemeService)"
+					Click="ElementChangeToDarkClick" />
+			<Button Content="Change To Light (Element ThemeService)"
+					Click="ElementChangeToLightClick" />
+			<Button Content="Change To System (Element ThemeService)"
+					Click="ElementChangeToSystemClick" />
 		</StackPanel>
 
 	</Grid>

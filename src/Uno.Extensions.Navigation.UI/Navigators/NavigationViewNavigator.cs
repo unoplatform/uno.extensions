@@ -14,6 +14,18 @@ public class NavigationViewNavigator : SelectorNavigator<Microsoft.UI.Xaml.Contr
 	{
 	}
 
+	public override void ControlInitialize()
+	{
+		// Make sure selectionchanged event handlers are wired up
+		base.ControlInitialize();
+
+		if(Control?.SelectedItem is not null)
+		{
+			_ = SelectionChanged(Control, MenuItemToFrameworkElement(Control.SelectedItem));
+		}
+
+	}
+
 	protected override FrameworkElement? SelectedItem
 	{
 		get => Control is null ? null : MenuItemToFrameworkElement(Control.SelectedItem);

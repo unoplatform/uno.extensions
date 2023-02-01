@@ -11,7 +11,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Backend", "Backend", "{BA1ACE40-623E-4F42-94BB-11CF4D52C445}"
 EndProject
 //#endif
-#//#if (useDefaultAppTemplate && (tests || unitTest))
+#//#if (useTestSolutionFolder)
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{7EF70027-9874-4112-A14F-33F02169CF8A}"
 EndProject
 #//#endif
@@ -46,15 +46,15 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyExtensionsApp.Server", "MyExtensionsApp.Server\MyExtensionsApp.Server.csproj", "{1ADD4B1D-2758-4ED5-963A-FE3F4206BF20}"
 EndProject
 #//#endif
-#//#if (useDefaultAppTemplate && (server || http))
+#//#if (useDataContracts)
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyExtensionsApp.DataContracts", "MyExtensionsApp.DataContracts\MyExtensionsApp.DataContracts.csproj", "{5ED31500-DF01-462D-9436-EC2EDCAA1965}"
 EndProject
 #//#endif
-#//#if (unitTest && useDefaultAppTemplate)
+#//#if (useUnitTests)
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyExtensionsApp.Tests", "MyExtensionsApp.Tests\MyExtensionsApp.Tests.csproj", "{EB3EB846-D5CB-4140-834F-1CC40A0FD6D0}"
 EndProject
 #//#endif
-#//#if (tests && useDefaultAppTemplate)
+#//#if (useUITests)
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyExtensionsApp.UITests", "MyExtensionsApp.UITests\MyExtensionsApp.UITests.csproj", "{7229D034-7DBE-4FD7-B0E4-38D617571F93}"
 EndProject
 #//#endif
@@ -262,7 +262,7 @@ Global
 		{1ADD4B1D-2758-4ED5-963A-FE3F4206BF20}.Release|x86.ActiveCfg = Release|Any CPU
 		{1ADD4B1D-2758-4ED5-963A-FE3F4206BF20}.Release|x86.Build.0 = Release|Any CPU
 #//#endif
-#//#if (useDefaultAppTemplate && (server || http))
+#//#if (useDataContracts)
 		{5ED31500-DF01-462D-9436-EC2EDCAA1965}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{5ED31500-DF01-462D-9436-EC2EDCAA1965}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5ED31500-DF01-462D-9436-EC2EDCAA1965}.Debug|ARM.ActiveCfg = Debug|Any CPU
@@ -320,7 +320,7 @@ Global
 		{BACDD33A-304C-46C4-9B00-AC166978D7E0}.Release|x64.Build.0 = Release|Any CPU
 		{BACDD33A-304C-46C4-9B00-AC166978D7E0}.Release|x86.ActiveCfg = Release|Any CPU
 		{BACDD33A-304C-46C4-9B00-AC166978D7E0}.Release|x86.Build.0 = Release|Any CPU
-#//#if (unitTest && useDefaultAppTemplate)
+#//#if (useUnitTests)
 		{EB3EB846-D5CB-4140-834F-1CC40A0FD6D0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{EB3EB846-D5CB-4140-834F-1CC40A0FD6D0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EB3EB846-D5CB-4140-834F-1CC40A0FD6D0}.Debug|ARM.ActiveCfg = Debug|Any CPU
@@ -350,7 +350,7 @@ Global
 		{EB3EB846-D5CB-4140-834F-1CC40A0FD6D0}.Release|x86.ActiveCfg = Release|Any CPU
 		{EB3EB846-D5CB-4140-834F-1CC40A0FD6D0}.Release|x86.Build.0 = Release|Any CPU
 #//#endif
-#//#if (tests && useDefaultAppTemplate)
+#//#if (useUITests)
 		{7229D034-7DBE-4FD7-B0E4-38D617571F93}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{7229D034-7DBE-4FD7-B0E4-38D617571F93}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7229D034-7DBE-4FD7-B0E4-38D617571F93}.Debug|ARM.ActiveCfg = Debug|Any CPU
@@ -452,7 +452,7 @@ Global
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{BACDD33A-304C-46C4-9B00-AC166978D7E0} = {FAA2C1DE-F859-4053-9573-6245F7E832EF}
-//#if (useDefaultAppTemplate && (server || http))
+//#if (useDataContracts)
 		{5ED31500-DF01-462D-9436-EC2EDCAA1965} = {FAA2C1DE-F859-4053-9573-6245F7E832EF}
 //#endif
 		{339C569C-EE23-445E-B908-743673EE5BC9} = {FAA2C1DE-F859-4053-9573-6245F7E832EF}
@@ -480,10 +480,10 @@ Global
 #//#if (server)
 		{1ADD4B1D-2758-4ED5-963A-FE3F4206BF20} = {BA1ACE40-623E-4F42-94BB-11CF4D52C445}
 #//#endif
-#//#if (unitTest && useDefaultAppTemplate)
+#//#if (useUnitTests)
 		{EB3EB846-D5CB-4140-834F-1CC40A0FD6D0} = {7EF70027-9874-4112-A14F-33F02169CF8A}
 #//#endif
-#//#if (tests && useDefaultAppTemplate)
+#//#if (useUITests)
 		{7229D034-7DBE-4FD7-B0E4-38D617571F93} = {7EF70027-9874-4112-A14F-33F02169CF8A}
 #//#endif
 	EndGlobalSection

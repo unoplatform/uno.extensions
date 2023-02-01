@@ -1,5 +1,7 @@
 ﻿
 
+using Uno.Extensions.Configuration;
+
 namespace Uno.Extensions;
 
 public static class HostBuilderExtensions
@@ -18,16 +20,24 @@ public static class HostBuilderExtensions
 		return builder
 			.UseConfiguration(
 				configure: configBuilder =>
-				configBuilder
-						.Section<KeyValueStorageConfiguration>(nameof(KeyValueStorageConfiguration))
-					)
-			.ConfigureServices((ctx, services) =>
-		{
-			_ = services
-				.AddFileStorage()
-				.AddKeyedStorage();
+				{
+					if (configBuilder.IsRegistered(nameof(KeyValueStorageConfiguration)))
+					{
+						return configBuilder;
+					}
 
-			configure?.Invoke(ctx, services);
-		});
+					return configBuilder
+							.Section<KeyValueStorageConfiguration>(nameof(KeyValueStorageConfiguration));
+				})
+			.ConfigureServices((ctx, services) =>
+			{
+				if (!ctx.IsRegistered(nameof(UseStorage)))
+				{
+					_ = services
+						.AddFileStorage()
+						.AddKeyedStorage();
+				}
+				configure?.Invoke(ctx, services);
+			});
 	}
 }

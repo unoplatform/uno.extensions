@@ -1,3 +1,5 @@
+using Uno.Extensions.Diagnostics;
+
 namespace TestHarness;
 
 public sealed partial class App : Application
@@ -7,7 +9,11 @@ public sealed partial class App : Application
 
 	public App()
 	{
+		PerformanceTimer.InitializeTimers();
 		this.InitializeComponent();
+
+		// TODO: Remove once https://github.com/unoplatform/uno/issues/10990 is resolved
+		var type = typeof(Uno.UI.FluentTheme.GlobalStaticResources);
 	}
 
 	protected override void OnLaunched(LaunchActivatedEventArgs args)
@@ -27,7 +33,20 @@ public sealed partial class App : Application
 		_window = Window.Current;
 #endif
 
-
+		// Need to manually create and then dispose an IHost in order to set
+		// the correct locale for the app. This is required for the Localization
+		// tests to work when app is restarted
+		var host = UnoHost
+					.CreateDefaultBuilder()
+					.UseConfiguration(
+						configureHostConfiguration: builder => builder.AddSectionFromEntity(new LocalizationConfiguration { Cultures = new[] { "en", "en-AU", "fr" } }))
+					.UseLocalization()
+					.Build();
+		var locals = host.Services.GetServices<IServiceInitialize>();
+		foreach (var local in locals.OfType<IDisposable>())
+		{
+			local.Dispose();
+		}
 
 		var rootFrame = _window.Content as TestFrameHost;
 

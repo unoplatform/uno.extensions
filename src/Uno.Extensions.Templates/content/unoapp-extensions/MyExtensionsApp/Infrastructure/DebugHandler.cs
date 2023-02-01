@@ -1,9 +1,9 @@
 //+:cnd:noEmit
 namespace MyExtensionsApp.Infrastructure;
 
-public class DebugHttpHandler : DelegatingHandler
+internal class DebugHttpHandler : DelegatingHandler
 {
-#if logging
+#if (useLogging)
 	private readonly ILogger _logger;
 	public DebugHttpHandler(ILogger<DebugHttpHandler> logger, HttpMessageHandler? innerHandler = null)
 		: base(innerHandler ?? new HttpClientHandler())
@@ -27,7 +27,7 @@ public class DebugHttpHandler : DelegatingHandler
 //+:cnd:noEmit
 		if(!response.IsSuccessStatusCode)
 		{
-#if logging
+#if (useLogging)
 			_logger.LogDebugMessage("Unsuccessful API Call");
 			if(request.RequestUri is not null)
 				_logger.LogDebugMessage($"{request.RequestUri} ({request.Method})");

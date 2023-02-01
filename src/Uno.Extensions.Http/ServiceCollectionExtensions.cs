@@ -46,7 +46,7 @@ public static class ServiceCollectionExtensions
 	  )
 		  where TInterface : class
 	{
-		var optionsName = name??( typeof(TInterface).IsInterface ? typeof(TInterface).Name.TrimStart(InterfaceNamePrefix) : typeof(TInterface).Name);
+		var optionsName = name ?? (typeof(TInterface).IsInterface ? typeof(TInterface).Name.TrimStart(InterfaceNamePrefix) : typeof(TInterface).Name);
 		options ??= ConfigurationBinder.Get<EndpointOptions>(context.Configuration.GetSection(optionsName));
 
 		httpClientFactory ??=
@@ -146,8 +146,13 @@ public static class ServiceCollectionExtensions
 			.AddTypedClient(factory);
 	}
 
-	public static IServiceCollection AddNativeHandler(this IServiceCollection services)
+	public static IServiceCollection AddNativeHandler(this IServiceCollection services, HostBuilderContext context)
 	{
+		if (context.IsRegistered(nameof(AddNativeHandler)))
+		{
+			return services;
+		}
+
 		return services
 			.AddSingleton<ICookieManager, CookieManager>()
 			.AddTransient<HttpMessageHandler>(s =>
@@ -157,13 +162,13 @@ public static class ServiceCollectionExtensions
 #if NET6_0_OR_GREATER
 				new Xamarin.Android.Net.AndroidMessageHandler()
 #else
-                new Xamarin.Android.Net.AndroidClientHandler()
+			new Xamarin.Android.Net.AndroidClientHandler()
 #endif
 #elif WINDOWS || WINDOWS_UWP
 				new WinHttpHandler()
 #else
 			new HttpClientHandler()
 #endif
-		);
+	);
 	}
 }

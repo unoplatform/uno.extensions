@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Uno.Extensions.Serialization.Tests;
@@ -18,8 +20,9 @@ public class ServiceCollectionExtensionsTests
 	[TestMethod]
 	public void AddSystemTextJsonSerializationTest()
 	{
+		var context = new HostBuilderContext(new Dictionary<object,object>());
 		var services = new ServiceCollection();
-		services.AddSystemTextJsonSerialization();
+		services.AddSystemTextJsonSerialization(context);
 		_services = services.BuildServiceProvider();
 
 		var serializer = _services.GetService<ISerializer>();

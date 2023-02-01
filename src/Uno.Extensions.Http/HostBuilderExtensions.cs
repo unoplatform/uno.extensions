@@ -16,9 +16,12 @@ public static class HostBuilderExtensions
 		return builder
 			.ConfigureServices((ctx, services) =>
 		{
-			_ = services
-				.AddNativeHandler()
-				.AddTransient<DelegatingHandler, DiagnosticHandler>();
+			if (!ctx.IsRegistered(nameof(UseHttp)))
+			{
+				_ = services
+					.AddNativeHandler(ctx)
+					.AddTransient<DelegatingHandler, DiagnosticHandler>();
+			}
 
 			configure?.Invoke(ctx, services);
 		});

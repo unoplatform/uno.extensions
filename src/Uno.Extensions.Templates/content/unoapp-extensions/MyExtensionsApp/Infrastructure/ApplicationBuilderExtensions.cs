@@ -1,7 +1,7 @@
 //-:cnd:noEmit
 namespace MyExtensionsApp;
 
-public static class ApplicationBuilderExtensions
+internal static class ApplicationBuilderExtensions
 {
 	public static IApplicationBuilder ConfigureResources(this IApplicationBuilder builder)
 	{
@@ -9,6 +9,7 @@ public static class ApplicationBuilderExtensions
 		builder.App.Resources(r => r.Merged(
 			new XamlControlsResources()));
 
+#if useMaterial
 		// Load Material Resources
 		builder.App.UseMaterial(
 			colorOverride: new Styles.ColorPaletteOverride(),
@@ -18,6 +19,11 @@ public static class ApplicationBuilderExtensions
 		builder.App.Resources(r => r.Merged(
 			new ToolkitResources(),
 			new MaterialToolkitResources()));
+#else
+		// Load Uno.UI.Toolkit Resources
+		builder.App.Resources(r => r.Merged(
+			new ToolkitResources()));
+#endif
 		return builder;
 	}
 }

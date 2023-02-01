@@ -8,29 +8,19 @@ public static class HostBuilderExtensions
 		return hostBuilder.UseThemeSwitching();
 	}
 
-	private static bool _didRegisterThemeSwitching;
-
 	public static IHostBuilder UseThemeSwitching(
 		this IHostBuilder hostBuilder)
 	{
-		if (_didRegisterThemeSwitching)
+		if (hostBuilder.IsRegistered(nameof(UseThemeSwitching)))
 		{
 			return hostBuilder;
 		}
 
-		_didRegisterThemeSwitching = true;
-
 		return hostBuilder
-			.UseConfiguration(
-				configure: configBuilder =>
-					configBuilder
-						.Section<ThemeSettings>()
-					)
-
 			.ConfigureServices((ctx, services) =>
 			{
 				_ = services
-				.AddScoped<IThemeService, ThemeService>();
+				.AddScoped<IThemeService, ScopedThemeService>();
 			});
 	}
 }

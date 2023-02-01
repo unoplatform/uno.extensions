@@ -24,8 +24,8 @@ public class WebAuthenticationSettingsHostInit : BaseHostInitialization
 				.ConfigureServices((context, services) =>
 				{
 					services
-							.AddNativeHandler()
-							.AddContentSerializer()
+							.AddNativeHandler(context)
+							.AddContentSerializer(context)
 
 							.AddRefitClient<IWebAuthenticationTestEndpoint>(context);
 				});

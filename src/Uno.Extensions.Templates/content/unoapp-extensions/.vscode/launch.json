@@ -32,7 +32,7 @@
       "request": "launch",
       "preLaunchTask": "build-skia-gtk",
       // If you have changed target frameworks, make sure to update the program path.
-      "program": "${workspaceFolder}/MyExtensionsApp.Skia.Gtk/bin/Debug/net6.0/MyExtensionsApp.Skia.Gtk.dll",
+      "program": "${workspaceFolder}/MyExtensionsApp.Skia.Gtk/bin/Debug/$baseTargetFramework$/MyExtensionsApp.Skia.Gtk.dll",
       "args": [],
       "env": {
         "DOTNET_MODIFIABLE_ASSEMBLIES": "debug"

@@ -28,7 +28,10 @@ public class ItemsRepeaterRequestHandler : ControlRequestHandlerBase<ItemsRepeat
 			await nav.NavigateRouteAsync(sender, path, Qualifiers.None, navdata);
 		};
 
-		TappedEventHandler tappedAction = async (actionSender, actionArgs) =>
+		var isCaptured = false;
+		object? dataContext = default;
+		FrameworkElement? pointerElement = default;
+		PointerEventHandler pointerPressed = (actionSender, actionArgs) =>
 		{
 			var sender = actionSender as ItemsRepeater;
 			if (sender is null)
@@ -36,24 +39,70 @@ public class ItemsRepeaterRequestHandler : ControlRequestHandlerBase<ItemsRepeat
 				return;
 			}
 
-			var elt = actionArgs.OriginalSource as DependencyObject;
-			while (elt is not null)
+			isCaptured = sender.CapturePointer(actionArgs.Pointer);
+			if (isCaptured)
 			{
-				var parent = VisualTreeHelper.GetParent(elt);
-				if (parent == sender)
+				actionArgs.Handled = true;
+				dataContext = default; // Reset from any prior pointer pressed events
+				var elt = actionArgs.OriginalSource as DependencyObject;
+				while (elt is not null)
 				{
-					var itemClicked = (elt as ContentControl)?.Content ?? (elt as FrameworkElement)?.DataContext;
-					await action(sender, itemClicked);
-
+					var parent = VisualTreeHelper.GetParent(elt);
+					if (parent == sender)
+					{
+						pointerElement = elt as FrameworkElement;
+						dataContext = (elt as ContentControl)?.Content ?? (elt as FrameworkElement)?.DataContext;
+					}
+					elt = parent;
 				}
-				elt = parent;
+			}
+
+		};
+
+		PointerEventHandler pointerReleased = async (actionSender, actionArgs) =>
+		{
+			var sender = actionSender as ItemsRepeater;
+			if (sender is null)
+			{
+				return;
+			}
+
+			if (isCaptured)
+			{
+				pointerElement ??= sender;
+				var pointerPosition = actionArgs.GetCurrentPoint(pointerElement).Position;
+
+				// Tolerance is consistent with use in ButtonBase
+				// https://github.com/unoplatform/uno/blob/4bc829e4ef01f2b89733b74c61a3161780818a8b/src/Uno.UI/UI/Xaml/Controls/Primitives/ButtonBase/ButtonBase.mux.cs#LL490C4-L494C88
+				const double tolerance = 0.05;
+				var layoutRect = LayoutInformation.GetLayoutSlot(pointerElement);
+				var pointerInControl =
+					-tolerance <= pointerPosition.X && pointerPosition.X <= layoutRect.Width + tolerance &&
+					-tolerance <= pointerPosition.Y && pointerPosition.Y <= layoutRect.Height + tolerance;
+				if (pointerInControl)
+				{
+					actionArgs.Handled = true;
+					await action(sender, dataContext);
+				}
+				
+				isCaptured = false;
+				dataContext = null;
+				pointerElement = null;
 			}
 
 		};
 
 
-		Action connect = () => viewList.Tapped += tappedAction;
-		Action disconnect = () => viewList.Tapped -= tappedAction;
+		Action connect = () =>
+		{
+			viewList.PointerPressed += pointerPressed;
+			viewList.PointerReleased += pointerReleased;
+		};
+		Action disconnect = () =>
+		{
+			viewList.PointerPressed -= pointerPressed;
+			viewList.PointerReleased -= pointerReleased;
+		};
 
 		if (viewList.IsLoaded)
 		{

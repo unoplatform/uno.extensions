@@ -72,7 +72,7 @@ public class CustomAuthenticationHostInit : BaseHostInitialization
 				.ConfigureServices((context, services) =>
 				{
 					services
-							.AddNativeHandler()
+							.AddNativeHandler(context)
 
 							.AddRefitClient<ICustomAuthenticationDummyJsonEndpoint>(context);
 				});

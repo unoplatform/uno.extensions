@@ -6,11 +6,7 @@ public sealed partial class SecondPage : Page
 	{
 //+:cnd:noEmit
 #if useCsharpMarkup
-#if(useMvux)
-		this.DataContext<BindableSecondModel>((page, vm) => page
-#else
-		this.DataContext<SecondViewModel>((page, vm) => page
-#endif
+		this.DataContext<$secondDataContext$>((page, vm) => page
 			.Background(Theme.Brushes.Background.Default)
 			.Content(new Grid().Children(
 				new NavigationBar()

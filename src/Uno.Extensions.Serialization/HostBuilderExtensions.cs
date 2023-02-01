@@ -8,12 +8,12 @@ public static class HostBuilderExtensions
 	}
 
 	public static IHostBuilder UseSerialization(this IHostBuilder hostBuilder, Action<HostBuilderContext, IServiceCollection>? configure = default)
-    {
-        return hostBuilder
-                .ConfigureServices((ctx, s) =>
+	{
+		return hostBuilder
+				.ConfigureServices((ctx, s) =>
 				{
-					_=s.AddSystemTextJsonSerialization();
-					configure?.Invoke(ctx,s);
+					_ = s.AddSystemTextJsonSerialization(ctx);
+					configure?.Invoke(ctx, s);
 				});
-    }
+	}
 }

@@ -9,7 +9,7 @@ public abstract class SelectorNavigator<TControl> : ControlNavigator<TControl>
 	{
 		if (Control is not null)
 		{
-			_detachSelectionChanged = AttachSelectionChanged(SelectionChanged);
+			_detachSelectionChanged = AttachSelectionChanged((sender, selected) => _ = SelectionChanged(sender, selected));
 		}
 	}
 
@@ -23,7 +23,7 @@ public abstract class SelectorNavigator<TControl> : ControlNavigator<TControl>
 
 	protected override async Task<bool> RegionCanNavigate(Route route, RouteInfo? routeMap)
 	{
-		if(!await base.RegionCanNavigate(route, routeMap))
+		if (!await base.RegionCanNavigate(route, routeMap))
 		{
 			return false;
 		}
@@ -73,11 +73,11 @@ public abstract class SelectorNavigator<TControl> : ControlNavigator<TControl>
 		}
 		finally
 		{
-			_detachSelectionChanged = AttachSelectionChanged(SelectionChanged);
+			_detachSelectionChanged = AttachSelectionChanged((sender, selected) => _ = SelectionChanged(sender, selected));
 		}
 	}
 
-	private async void SelectionChanged(FrameworkElement sender, FrameworkElement? selectedItem)
+	protected async Task SelectionChanged(FrameworkElement sender, FrameworkElement? selectedItem)
 	{
 		if (selectedItem is null)
 		{

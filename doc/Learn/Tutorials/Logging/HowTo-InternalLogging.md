@@ -6,7 +6,7 @@ uid: Learn.Tutorials.Logging.UseInternalLogging
 `Uno.Extensions.Logging` provides logging capabilities tailored to your target platform. It allows the recording of events for XAML layout, Uno-internal messages, and custom events with severity and verbosity levels of your choice.
 
 > [!Tip] 
-> This guide assumes your application has already opted into logging. To find out how to do this, refer to the tutorial [here](./HowTo-Logging.md)
+> This guide assumes your application has already opted into logging. To find out how to do this, refer to the tutorial [here](xref:Learn.Tutorials.Logging.UseLogging)
 
 ## Step-by-steps
 

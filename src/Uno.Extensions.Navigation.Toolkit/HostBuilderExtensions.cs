@@ -7,9 +7,9 @@ public static class HostBuilderExtensions
 	{
 		return builder
 			.UseToolkit()
-			.ConfigureServices(sp =>
+			.ConfigureServices((ctx,sp) =>
 			{
-				_ = sp.AddToolkitNavigation();
+				_ = sp.AddToolkitNavigation(ctx);
 			});
 	}
 }

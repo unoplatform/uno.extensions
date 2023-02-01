@@ -41,6 +41,13 @@ public class RouteResolverDefault : RouteResolver
 
 	private RouteInfo[] DefaultMapping(string? path = null, Type? view = null, Type? viewModel = null)
 	{
+		if(path is null &&
+			view is null &&
+			viewModel is null)
+		{
+			return Array.Empty<RouteInfo>();
+		}
+
 		if (!ReturnImplicitMapping)
 		{
 			if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage("Implicit mapping disabled");

@@ -77,7 +77,7 @@ public class CustomAuthenticationServiceHostInit : BaseHostInitialization
 				.ConfigureServices((context, services) =>
 				{
 					services
-							.AddNativeHandler()
+							.AddNativeHandler(context)
 							.AddTransient<DelegatingHandler, DynamicUrlHandler>()
 							.AddRefitClient<ICustomAuthenticationDummyJsonEndpoint>(context);
 				});

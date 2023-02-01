@@ -95,6 +95,28 @@ public abstract class ControlNavigator<TControl> : ControlNavigator
 
 
 	protected override string NavigatorToString => (Route?.ToString()) ?? string.Empty;
+
+	protected object? CreateControlFromType(Type typeToCreate)
+	{
+		try
+		{
+			var services = this.Get<IServiceProvider>();
+
+			if (typeToCreate is null) return default;
+			if (Logger.IsEnabled(LogLevel.Information)) Logger.LogInformationMessage($"Creating control of type {typeToCreate.Name}");
+			if (typeToCreate == typeof(FrameView)) return new FrameView();
+			if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"Control not FrameView - {typeToCreate.Name}");
+			if (services?.GetService(typeToCreate) is { } ctrl) return ctrl;
+			if (Logger.IsEnabled(LogLevel.Warning)) Logger.LogWarningMessage($"Type not registered {typeToCreate.Name}, so calling Activator");
+
+			return Activator.CreateInstance(typeToCreate);
+		}
+		catch
+		{
+			if (Logger.IsEnabled(LogLevel.Error)) Logger.LogErrorMessage($"Unable to create control of type {typeToCreate.Name}");
+			return default;
+		}
+	}
 }
 
 public abstract class ControlNavigator : Navigator
@@ -222,7 +244,7 @@ public abstract class ControlNavigator : Navigator
 					}
 					catch
 					{
-						Logger.LogInformationMessage("ViewModel not included in RouteMap, and unable to instance using Activator instead of ServiceProvider");
+						if (Logger.IsEnabled(LogLevel.Information)) Logger.LogInformationMessage("ViewModel not included in RouteMap, and unable to instance using Activator instead of ServiceProvider");
 					}
 					return default;
 				});

@@ -15,6 +15,7 @@
       "launchBrowser": true,
       //#if wasm
       "launchUrl": "",
+      "inspectUri": "{wsProtocol}://{url.hostname}:{url.port}/_framework/debug/ws-proxy?browser={browserInspectUri}",
       //#else
       "launchUrl": "swagger",
       //#endif
@@ -28,6 +29,7 @@
       "launchBrowser": true,
       //#if wasm
       "launchUrl": "",
+      "inspectUri": "{wsProtocol}://{url.hostname}:{url.port}/_framework/debug/ws-proxy?browser={browserInspectUri}",
       //#else
       "launchUrl": "swagger",
       //#endif

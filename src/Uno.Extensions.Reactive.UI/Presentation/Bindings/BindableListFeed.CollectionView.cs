@@ -2,13 +2,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Linq;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 
 namespace Uno.Extensions.Reactive.Bindings;
 
-partial class BindableListFeed<T> : ICollectionView, INotifyCollectionChanged, ISelectionInfo
+partial class BindableListFeed<T> : ICollectionView, INotifyCollectionChanged, INotifyPropertyChanged, ISelectionInfo
 {
 	/// <inheritdoc />
 	public IEnumerator<object> GetEnumerator()
@@ -135,6 +136,13 @@ partial class BindableListFeed<T> : ICollectionView, INotifyCollectionChanged, I
 	{
 		add => _items.CollectionChanged += value;
 		remove => _items.CollectionChanged -= value;
+	}
+
+	/// <inheritdoc />
+	public event PropertyChangedEventHandler? PropertyChanged
+	{
+		add => _items.PropertyChanged += value;
+		remove => _items.PropertyChanged -= value;
 	}
 
 	/// <inheritdoc />

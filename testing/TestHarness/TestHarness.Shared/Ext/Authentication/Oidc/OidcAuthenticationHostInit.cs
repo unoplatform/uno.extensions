@@ -30,8 +30,8 @@ public class OidcAuthenticationHostInit : BaseHostInitialization
 				.ConfigureServices((context, services) =>
 				{
 					services
-							.AddNativeHandler()
-							.AddContentSerializer()
+							.AddNativeHandler(context)
+							.AddContentSerializer(context)
 
 							.AddRefitClient<IOidcAuthenticationTestEndpoint>(context);
 				});
