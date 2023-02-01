@@ -103,17 +103,6 @@
       "isVisible": true
     },
     {
-      "id": "serilog",
-      "name": {
-        "text": "Extensions - Logging Serilog"
-      },
-      "description":
-      {
-        "text": "Enables app logging with Serilog"
-      },
-      "defaultValue": "true"
-    },
-    {
       "id": "navigation",
       "isVisible": true
     },
