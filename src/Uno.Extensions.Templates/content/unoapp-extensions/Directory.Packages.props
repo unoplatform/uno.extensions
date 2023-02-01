@@ -35,12 +35,14 @@
     <PackageVersion Include="Uno.Extensions.Localization" Version="255.255.255.255" />
     <PackageVersion Include="Uno.Extensions.Localization.WinUI" Version="255.255.255.255" />
     <!--#endif-->
-    <!--#if (useLogging)-->
+    <!--#if (useOSLoggingPackage)-->
     <PackageVersion Include="Uno.Extensions.Logging.OSLog" Version="1.4.0" />
+    <PackageVersion Include="Uno.Extensions.Logging.WebAssembly.Console" Version="1.4.0" />
+    <!--#endif-->
     <!--#if (useSerilog)-->
     <PackageVersion Include="Uno.Extensions.Logging.Serilog" Version="255.255.255.255" />
     <!--#endif-->
-    <PackageVersion Include="Uno.Extensions.Logging.WebAssembly.Console" Version="1.4.0" />
+    <!--#if (useLogging)-->
     <PackageVersion Include="Uno.Extensions.Logging.WinUI" Version="255.255.255.255" />
     <!--#endif-->
     <PackageVersion Include="Uno.Extensions.Navigation" Version="255.255.255.255" />
