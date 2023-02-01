@@ -22,7 +22,6 @@ internal class ThemeService : IThemeService, IDisposable
 		_dispatcher = dispatcher;
 		_logger = logger;
 
-		Console.WriteLine($"Thread access: {_dispatcher.HasThreadAccess}");
 		if (!_dispatcher.HasThreadAccess && PlatformHelper.IsThreadingEnabled)
 		{
 			// Need to dispatch in order to access window.Content on UI thread
@@ -58,8 +57,7 @@ internal class ThemeService : IThemeService, IDisposable
 	/// <inheritdoc/>
 	public AppTheme Theme => GetSavedTheme();
 
-
-	public UIElement? RootElement
+	private UIElement? RootElement
 	{
 		get => _rootAccessorElement;
 		set
@@ -221,10 +219,6 @@ internal class ThemeService : IThemeService, IDisposable
 			return;
 		}
 
-		if (success)
-		{
-
-		}
 		init.TrySetResult(success);
 	}
 
