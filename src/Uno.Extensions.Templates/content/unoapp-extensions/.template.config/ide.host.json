@@ -16,133 +16,43 @@
     },
     {
       "id": "appId",
-      "name": {
-        "text": "Application Id"
-      },
-      "description": {
-        "text": "The application identifier used to identify the app (e.g. com.mycompany.myapp)"
-      },
-      "defaultValue": "com.companyname.myapp",
       "isVisible": true
     },
     {
       "id": "tfm",
-      "name": {
-        "text": "Framework"
-      },
-      "description": {
-        "text": "The target framework for the project (e.g. net6.0 or net7.0)"
-      },
-      "defaultValue": "net6.0",
-      "choices": [
-        {
-          "id": "net6.0",
-          "name": {
-            "text": ".NET 6.0 (Long Term Support)"
-          }
-        },
-        {
-          "id": "net7.0",
-           "name": {
-             "text": ".NET 7.0 (Standard Term Support)"
-           }
-        }
-      ],
       "isVisible": true
     },
     {
       "id": "architecture",
-      "name": {
-        "text": "Presentation"
-      },
-      "description":
-      {
-        "text": "Select between MVVM or MVUX for a design pattern"
-      },
-      "defaultValue": "mvux",
-      "isVisible":true
+      "isVisible": true
     },
     {
-      "id": "uiMarkup",
-      "name": {
-        "text": "UI Markup"
-      },
-      "description":
-      {
-        "text": "Choose whether to use XAML or C# Markup for your UI"
-      },
-      "defaultValue": "xaml"
+      "id": "markup",
+      "isVisible": true
     },
     {
       "id": "appTheme",
-      "name": {
-        "text": "Theme"
-      },
-      "description":
-      {
-        "text": "Choose whether to use the Material, Fluent or Cupertino theme"
-      },
-      "defaultValue": "material"
+      "isVisible": true
     },
     {
       "id": "wasm",
-      "name": {
-        "text": "Web - WebAssembly"
-      },
-      "description":
-      {
-        "text": "Enables the WebAssembly platform support project"
-      },
-      "defaultValue": "true",
-      "isVisible":true
+      "isVisible": true
     },
     {
       "id": "ios",
-      "name": {
-        "text": "Mobile - iOS"
-      },
-      "description":
-      {
-        "text": "Enables the iOS platform in the Mobile support project"
-      },
-      "defaultValue": "true",
-      "isVisible":true
+      "isVisible": true
     },
     {
       "id": "android",
-      "name": {
-        "text": "Mobile - Android"
-      },
-      "description":
-      {
-        "text": "Enables the Android platform in the Mobile support project"
-      },
-      "defaultValue": "true",
-      "isVisible":true
+      "isVisible": true
     },
     {
       "id": "winAppSdk",
-      "name": {
-        "text": "Desktop - WinUI (Windows App SDK)"
-      },
-      "description":
-      {
-        "text": "Enables the Widnows App SDK platform support project"
-      },
-      "defaultValue": "true",
-      "isVisible":true
+      "isVisible": true
     },
     {
       "id": "skiaGtk",
-      "name": {
-        "text": "Desktop - Gtk (Linux, macOS, Windows 7 or later)"
-      },
-      "description":
-      {
-        "text": "Enables the Skia/GTK platform support project"
-      },
-      "defaultValue": "true",
-      "isVisible":true
+      "isVisible": true
     },
     {
       "id": "macos",
@@ -150,159 +60,59 @@
     },
     {
       "id": "maccatalyst",
-      "name": {
-        "text": "Desktop - macOS (Catalyst)"
-      },
-      "description":
-      {
-        "text": "Enables the macOS (Catalyst) platform in the Mobile support project"
-      },
-      "defaultValue": "true",
-      "isVisible":true
+      "isVisible": true
     },
     {
       "id": "skiaWpf",
-      "name": {
-        "text": "Desktop - WPF (Windows 7 or later)"
-      },
-      "description":
-      {
-        "text": "Enables the Skia/WPF platform support project"
-      },
-      "defaultValue": "false",
-      "isVisible":true
+      "isVisible": true
     },
     {
       "id": "skiaLinuxFb",
-      "name": {
-        "text": "Desktop - Linux Framebuffer"
-      },
-      "description":
-      {
-        "text": "Enables the Skia/Linux Framebuffer platform support project"
-      },
-      "defaultValue": "false",
-      "isVisible":true
+      "isVisible": true
     },
     {
       "id": "unitTest",
-      "name": {
-        "text": "Unit Tests"
-      },
-      "description": {
-        "text": "Includes Unit Test Project"
-      },
-      "defaultValue": "true",
       "isVisible": true
     },
     {
       "id": "tests",
-      "name": {
-        "text": "UI Tests"
-      },
-      "description": {
-        "text": "Includes UI Test Project"
-      },
-      "defaultValue": "true",
       "isVisible": true
     },
     {
       "id": "server",
-      "name": {
-        "text": "Server - API (WASM Host)"
-      },
-      "description": {
-        "text": "Includes API Server project which will additionally host the WASM head if included"
-      },
-      "defaultValue": "true",
       "isVisible": true
     },
     {
       "id": "dependencyInjection",
-      "name": {
-        "text": "Extensions - Hosting"
-      },
-      "description":
-      {
-        "text": "Uses Uno.Extensions.Hosting with Microsoft.Extensions.DependencyInjection & Microsoft.Extensions.Hosting"
-      }
+      "isVisible": true
     },
     {
       "id": "configuration",
-      "name": {
-        "text": "Extensions - Configuration"
-      },
-      "description":
-      {
-        "text": "Uses Configuration extensions to support appsettings.json"
-      }
+      "isVisible": true
     },
     {
       "id": "http",
-      "name": {
-        "text": "Extensions - Http"
-      },
-      "description":
-      {
-        "text": "Enables Http & Refit Extensions"
-      },
-      "defaultValue": "true"
+      "isVisible": true
     },
     {
       "id": "localization",
-      "name": {
-        "text": "Extensions - Localization"
-      },
-      "description":
-      {
-        "text": "Uses Localization Extensions"
-      },
-      "defaultValue": "true"
+      "isVisible": true
     },
     {
       "id": "logging",
-      "name": {
-        "text": "Extensions - Logging"
-      },
-      "description":
-      {
-        "text": "Enables app logging"
-      },
-      "defaultValue": "true"
+      "isVisible": true
     },
     {
       "id": "serilog",
-      "name": {
-        "text": "Extensions - Logging Serilog"
-      },
-      "description":
-      {
-        "text": "Enables app logging with Serilog"
-      },
-      "defaultValue": "true"
+      "isVisible": true
     },
     {
       "id": "navigation",
-      "name": {
-        "text": "Navigation"
-      },
-      "description":
-      {
-        "text": "Sets the base Navigation style"
-      },
-      "defaultValue": "default"
+      "isVisible": true
     },
     {
       "id": "cpm",
-      "name": {
-        "text": "Central Package Management"
-      },
-      "description":
-      {
-        "text": "Enables Central Package Management - packages are versioned in central Directory.Packages.props file"
-      },
-      "defaultValue": "false",
-      "isVisible":false
+      "isVisible": true
     },
     {
       "id": "vscode",

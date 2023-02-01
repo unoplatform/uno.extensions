@@ -15,7 +15,7 @@ jobs:
         templateArgs: '-preset blank'
       BlankMarkupApp:
         createdProjectName: UnoAppBlank01
-        templateArgs: '-preset blank --ui-markup csharp'
+        templateArgs: '-preset blank -markup csharp'
       BlankAppCpm:
         createdProjectName: UnoAppBlank01
         templateArgs: '-preset blank --cpm true'
@@ -27,7 +27,7 @@ jobs:
         templateArgs: '--cpm true'
       CSharpMarkup:
         createdProjectName: UnoAppCSharpMarkup01
-        templateArgs: '--ui-markup csharp'
+        templateArgs: '-markup csharp'
       NoAppHosting:
         createdProjectName: UnoAppNoAppHosting01
         templateArgs: '-di false'

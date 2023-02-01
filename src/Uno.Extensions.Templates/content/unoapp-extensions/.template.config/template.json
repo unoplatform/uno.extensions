@@ -115,7 +115,7 @@
         }
       ]
     },
-    "uiMarkup": {
+    "markup": {
       "displayName": "UI Markup",
       "description": "Selects either XAML or C# Markup for the UI.",
       "type": "parameter",
@@ -342,7 +342,7 @@
       "displayName": "WebAssembly - Visual Studio Code Debugging",
       "type": "parameter",
       "dataType": "bool",
-      "defaultValue": "false",
+      "defaultValue": "true",
       "onlyIf": {
         "wasm": "true"
       },
@@ -384,12 +384,12 @@
     "useCsharpMarkup": {
       "type": "computed",
       "datatype": "bool",
-      "value": "(uiMarkup == 'csharp')"
+      "value": "(markup == 'csharp')"
     },
     "useXaml": {
       "type": "computed",
       "datatype": "bool",
-      "value": "(uiMarkup == 'xaml')"
+      "value": "(markup == 'xaml')"
     },
     "useMaterial": {
       "type": "computed",
