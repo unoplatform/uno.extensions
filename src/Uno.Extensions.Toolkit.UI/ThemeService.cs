@@ -22,7 +22,8 @@ internal class ThemeService : IThemeService, IDisposable
 		_dispatcher = dispatcher;
 		_logger = logger;
 
-		if (!_dispatcher.HasThreadAccess)
+		Console.WriteLine($"Thread access: {_dispatcher.HasThreadAccess}");
+		if (!_dispatcher.HasThreadAccess && PlatformHelper.IsThreadingEnabled)
 		{
 			// Need to dispatch in order to access window.Content on UI thread
 			_ = _dispatcher.ExecuteAsync(InitWindow);
@@ -100,7 +101,8 @@ internal class ThemeService : IThemeService, IDisposable
 
 	private async Task<bool> InternalSetThemeAsync(AppTheme theme)
 	{
-		if (_dispatcher.HasThreadAccess)
+		if (_dispatcher.HasThreadAccess ||
+			(!PlatformHelper.IsThreadingEnabled && !(_initialization?.Task.IsCompleted??false)))
 		{
 			return InternalSetThemeOnUIThread(theme);
 		}
