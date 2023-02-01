@@ -33,7 +33,7 @@ jobs:
         templateArgs: '-di false'
       HostingOnly:
         createdProjectName: UnoAppHostingOnly01
-        templateArgs: '-config false -loc false -http false -log false --navigation frame'
+        templateArgs: '-config false -loc false -http false -log none --navigation frame'
       NoConfiguration:
         createdProjectName: UnoAppNoConfiguration01
         templateArgs: '-config false'
@@ -45,7 +45,7 @@ jobs:
         templateArgs: '-http false'
       NoSerilog:
         createdProjectName: UnoAppNoSerilog01
-        templateArgs: '--logging-serilog false'
+        templateArgs: '-log default'
       NoServer:
         createdProjectName: UnoAppNoServer01
         templateArgs: '-server false'

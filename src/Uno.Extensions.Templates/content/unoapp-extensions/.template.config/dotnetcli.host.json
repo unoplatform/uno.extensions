@@ -98,10 +98,6 @@
       "longName": "logging",
       "shortName": "log"
     },
-    "serilog": {
-      "longName": "logging-serilog",
-      "shortName": "serilog"
-    },
     "navigation": {
       "longName": "navigation",
       "shortName": "nav"

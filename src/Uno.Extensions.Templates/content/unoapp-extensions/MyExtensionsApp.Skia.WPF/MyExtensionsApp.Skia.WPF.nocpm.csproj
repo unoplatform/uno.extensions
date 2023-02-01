@@ -58,7 +58,7 @@
 		<!--#if (useLocalization)-->
 		<PackageReference Include="Uno.Extensions.Localization.WinUI" Version="255.255.255.255" />
 		<!--#endif-->
-		<!--#if (logging)-->
+		<!--#if (useLogging)-->
 		<PackageReference Include="Uno.Extensions.Logging.WinUI" Version="255.255.255.255" />
 		<!--#endif-->
 		<!--#if (useSerilog)-->

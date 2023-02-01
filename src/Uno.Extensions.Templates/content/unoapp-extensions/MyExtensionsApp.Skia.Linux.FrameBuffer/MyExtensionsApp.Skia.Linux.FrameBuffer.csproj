@@ -61,7 +61,7 @@
 		<!--#if (useLocalization)-->
 		<PackageReference Include="Uno.Extensions.Localization.WinUI" />
 		<!--#endif-->
-		<!--#if (logging)-->
+		<!--#if (useLogging)-->
 		<PackageReference Include="Uno.Extensions.Logging.WinUI" />
 		<!--#endif-->
 		<!--#if (useSerilog)-->

@@ -289,23 +289,28 @@
       "displayName": "Extensions - Logging",
       "description": "Includes Uno.Extensions.Logging",
       "type": "parameter",
-      "datatype": "bool",
-      "defaultValue": "true",
+      "datatype": "choice",
+      "defaultValue": "serilog",
+      "choices": [
+        {
+          "choice": "none",
+          "description": "Disables logging",
+          "displayName": "None"
+        },
+        {
+          "choice": "default",
+          "description": "Enables basic logging to the console",
+          "displayName": "Default"
+        },
+        {
+          "choice": "serilog",
+          "description": "Enables logging to the console and Serilog",
+          "displayName": "Serilog"
+        }
+      ],
       "onlyIf": {
         "preset": "recommended",
         "dependencyInjection": "true"
-      }
-    },
-    "serilog": {
-      "displayName": "Extensions - Serilog",
-      "description": "Includes Uno.Extensions.Logging.Serilog when logging is enabled",
-      "type": "parameter",
-      "datatype": "bool",
-      "defaultValue": "true",
-      "onlyIf": {
-        "preset": "recommended",
-        "dependencyInjection": "true",
-        "logging": "true"
       }
     },
     "navigation": {
@@ -381,6 +386,11 @@
       "datatype": "bool",
       "value": "preset == 'recommended'"
     },
+    "useTestSolutionFolder": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "preset == 'recommended' && (tests || unitTest)"
+    },
     "useCsharpMarkup": {
       "type": "computed",
       "datatype": "bool",
@@ -409,12 +419,22 @@
     "useLogging": {
       "type": "computed",
       "datatype": "bool",
-      "value": "(useDependencyInjection && logging)"
+      "value": "(useDependencyInjection && logging != 'none')"
     },
     "useSerilog": {
       "type": "computed",
       "datatype": "bool",
-      "value": "(serilog && useLogging)"
+      "value": "(useDependencyInjection && logging == 'serilog')"
+    },
+    "useOSLoggingPackage": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "(useBlankAppTemplate || useLogging)"
+    },
+    "useAspNetCoreSerilogPackage": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "(server && useSerilog)"
     },
     "useMvux": {
       "type": "computed",

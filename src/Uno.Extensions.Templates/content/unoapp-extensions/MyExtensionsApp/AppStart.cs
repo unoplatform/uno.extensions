@@ -36,9 +36,9 @@ public class AppStart
 							LogLevel.Information :
 							LogLevel.Warning);
 				}, enableUnoLogging: true)
+#endif
 #if useSerilog
 				.UseSerilog(consoleLoggingEnabled: true, fileLoggingEnabled: true)
-#endif
 #endif
 #if useConfiguration
 				.UseConfiguration(configure: configBuilder =>

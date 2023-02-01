@@ -67,7 +67,7 @@
 		<!--#if (useLocalization)-->
 		<PackageReference Include="Uno.Extensions.Localization.WinUI" />
 		<!--#endif-->
-		<!--#if (logging)-->
+		<!--#if (useLogging)-->
 		<PackageReference Include="Uno.Extensions.Logging.WinUI" />
 		<!--#endif-->
 		<!--#if (useSerilog)-->
@@ -111,7 +111,7 @@
 				<MtouchExtraArgs>$(MtouchExtraArgs) --marshal-objectivec-exceptions:disable</MtouchExtraArgs>
 				<MtouchExtraArgs>$(MtouchExtraArgs) --registrar:static</MtouchExtraArgs>
 			</PropertyGroup>
-			<!--#if (logging)-->
+			<!--#if (useOSLoggingPackage)-->
 			<ItemGroup>
 				<PackageReference Include="Uno.Extensions.Logging.OSLog" />
 			</ItemGroup>
@@ -130,7 +130,7 @@
 				<!-- Full globalization is required for Uno -->
 				<InvariantGlobalization>false</InvariantGlobalization>
 			</PropertyGroup>
-			<!--#if (logging)-->
+			<!--#if (useOSLoggingPackage)-->
 			<ItemGroup>
 				<PackageReference Include="Uno.Extensions.Logging.OSLog" />
 			</ItemGroup>
