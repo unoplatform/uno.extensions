@@ -1,4 +1,6 @@
-﻿namespace TestHarness.Ext.Navigation.Reactive;
+﻿using Uno.Extensions.Reactive;
+
+namespace TestHarness.Ext.Navigation.Reactive;
 
 public class ReactiveHostInit : BaseHostInitialization
 {
@@ -27,7 +29,19 @@ public class ReactiveHostInit : BaseHostInitialization
 		views.Register(
 			new ViewMap<ReactiveOnePage, ReactiveOneViewModel>(),
 			new DataViewMap<ReactiveTwoPage, ReactiveTwoViewModel, TwoModel>(),
-			new DataViewMap<ReactiveThreePage, ReactiveThreeViewModel, ThreeModel>(),
+			new ViewMap<ReactiveThreePage, ReactiveThreeViewModel>(Data: new ReactiveDataMap<ThreeModel>(
+				FromQuery: async (sp, dict) =>
+				{
+					var model = dict[""] as ThreeModel;
+					if(model is null)
+					{
+						var name = dict[""] as string;
+						model = new ThreeModel(new ReactiveWidget(name??"Invalid", 50.0));
+					}
+					return Feed<ThreeModel>.Async(async ct => {
+						await Task.Delay(2000);
+						return model!; });
+				})),
 			new DataViewMap<ReactiveFourPage, ReactiveFourViewModel, FourModel>(),
 			new DataViewMap<ReactiveFivePage, ReactiveFiveViewModel, FiveModel>(),
 			localizedDialog
@@ -49,4 +63,19 @@ public class ReactiveHostInit : BaseHostInitialization
 	}
 }
 
+
+public record ReactiveDataMap<TData>(
+	Func<TData, IDictionary<string, string>>? ToQuery = null,
+	Func<IServiceProvider, IDictionary<string, object>, Task<IFeed<TData>>>? FromQuery = null
+) : DataMap(
+	typeof(TData),
+	(object data) => (ToQuery is not null && data is TData tdata) ? ToQuery(tdata) : new Dictionary<string, string>(),
+	async (IServiceProvider sp, IDictionary<string, object> query) => await ((FromQuery is not null && query is not null) ? FromQuery(sp, query) : Task.FromResult<IFeed<TData>>(default!)))
+	where TData : class
+{
+	public override void RegisterTypes(IServiceCollection services)
+	{
+		services.AddViewModelData<IFeed<TData>>();
+	}
+}
 
