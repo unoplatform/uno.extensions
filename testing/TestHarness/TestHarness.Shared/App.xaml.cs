@@ -1,3 +1,5 @@
+using Uno.Extensions.Diagnostics;
+
 namespace TestHarness;
 
 public sealed partial class App : Application
@@ -7,6 +9,7 @@ public sealed partial class App : Application
 
 	public App()
 	{
+		PerformanceTimer.InitializeTimers();
 		this.InitializeComponent();
 
 		// TODO: Remove once https://github.com/unoplatform/uno/issues/10990 is resolved

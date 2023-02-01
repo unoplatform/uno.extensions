@@ -353,11 +353,19 @@
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Responsive\ResponsiveMainPage.xaml.cs">
       <DependentUpon>ResponsiveMainPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\TabBar\Sections\Blank1Page.xaml.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\TabBar\Sections\Blank1ViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\TabBar\Sections\Blank2Page.xaml.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\TabBar\Sections\Blank2ViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\TabBar\Sections\Blank3Page.xaml.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\TabBar\Sections\BlankViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\TabBar\TabBarHomePage.xaml.cs">
       <DependentUpon>TabBarHomePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\TabBar\TabBarHomeViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\TabBar\TabBarHostInit.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\TabBar\TabBarListPage.xaml.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\TabBar\TabBarListViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\TabBar\TabBarMainPage.xaml.cs">
       <DependentUpon>TabBarMainPage.xaml</DependentUpon>
     </Compile>

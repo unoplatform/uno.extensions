@@ -13,4 +13,8 @@ public sealed partial class TabBarMainPage : BaseTestSectionPage
 		await Navigator.NavigateViewModelAsync<TabBarHomeViewModel>(this);
 	}
 
+	public async void TabBarListClick(object sender, RoutedEventArgs e)
+	{
+		await Navigator.NavigateViewModelAsync<TabBarListViewModel>(this);
+	}
 }
