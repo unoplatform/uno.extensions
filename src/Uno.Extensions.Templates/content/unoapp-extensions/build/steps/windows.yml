@@ -1,8 +1,4 @@
 parameters:
-# Azure subscription
-- name: azure_subscription
-  type: string
-  default: ''
 - name: major
   type: string
   default: '0'  
@@ -36,12 +32,6 @@ parameters:
 - name: certificate
   type: string
   default: ''       
-- name: certificate_password
-  type: string
-  default: ''   
-- name: certificate_alias
-  type: string
-  default: ''   
 - name: sign_package
   type: string
   default: 'false'
@@ -53,6 +43,25 @@ parameters:
   default: 'true'      
 
 steps:
+    #Validate required parameters before executing any other script
+    - task: PowerShell@2
+      displayName: 'Verify required parameters'
+      inputs:
+        targetType: 'inline'
+        script: |
+            $errors = ''
+            if ('' -eq '${{ parameters.project_to_build }}') { $errors = $errors + '[project_to_build] is not valid.' + "`r`n"  }
+            if ('' -eq '${{ parameters.project_folder }}') { $errors = $errors + '[project_folder] is not valid' + "`r`n"  }
+            if ('true' -eq '${{ parameters.sign_package }}'){
+              if ('' -eq '${{ parameters.certificate }}') { $errors = $errors + '[certificate] is not valid. Please make sure the name of the .pfx certificate is correct and it exists in secure files' + "`r`n"  }
+            }
+
+            if (-not ([string]::IsNullOrEmpty($errors))){
+                $errors
+                throw "Some required parameters are missing"
+            }
+        azurePowerShellVersion: 'LatestVersion'
+
     - task: DownloadSecureFile@1
       name: keyStore
       displayName: "Download .pfx from secure files"
@@ -61,12 +70,12 @@ steps:
         secureFile: ${{ parameters.certificate }}
 
     # Compile Mobile
-    - task: AzurePowerShell@5
+    - task: PowerShell@2
       displayName: 'Build and Package'
       inputs:
-        azureSubscription: '${{ parameters.azure_subscription }}' 
-        ScriptType: 'inlineScript'
-        Inline: |
+        targetType: 'inline'
+        script: |
+            choco install vswhere
             $path = vswhere -latest -requires Microsoft.Component.MSBuild -find MSBuild\**\Bin\MSBuild.exe | select-object -first 1
 
             & $path /t:Restore ${{ parameters.project_to_build }} /p:Configuration=Release /p:Platform=${{ parameters.project_platform }}

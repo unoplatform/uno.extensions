@@ -3,151 +3,176 @@ trigger:
 - main
 - release
 
-pool:
-  vmImage: 'windows-latest'
+# trigger this pipeline if there's a PR to any of these branches
+pr:
+- master
+- main
+- staging
+- releases/*
+
+parameters:
+- name: Wasm
+  type: string
+  default: 'true'
+- name: Windows
+  type: string
+  default: 'true'
+- name: WPF
+  type: string
+  default: 'true'
+- name: Linux
+  type: string
+  default: 'true'
+- name: GTK
+  type: string
+  default: 'true'
+- name: Android
+  type: string
+  default: 'true'
+- name: iOS
+  type: string
+  default: 'true'
+- name: MacCatalyst
+  type: string
+  default: 'true'
 
 variables:
-  #[REQUIRED]
-  #For connecting your azureSubscription to the pipeline:
-  #1.- Go to your project settings (Bottom Left option)
-  #2.- Scroll down to 'Service Connections'
-  #3.- Click on 'Create new service connection' button
-  #4.- Click on 'Azure Resource Manager' and ckick on Next
-  #5.- Select ''Service Principal (automatic) and click on Next
-  #6.- Select the subscription you want to use and set a Name for your new service connection
-  #7.- Finally, use the name you defined in previous step as value for this variable
-- name: azureAccount
-  value: '$azureSubscription$' 
-
 - name: jobTimeout
   value: '40'
 
 stages:
   - stage: Build_UNO
-    pool:
-      vmImage: 'windows-latest'
 
     jobs:
     - job: Wasm
+      condition:  eq('${{ parameters.Wasm }}', 'true')
       timeoutInMinutes: '${{ variables.jobTimeout }}'
       steps:
         - template: /azure/steps/install-dependencies.yml  
           parameters:
-            azure_subscription: '${{ variables.azureAccount }}'
-            install_mobileWorkloads: 'true'
+            target_platform: 'wasm'
 
         - template: /azure/steps/wasm.yml
           parameters:
-            azure_subscription: '${{ variables.azureAccount }}'
             package_id: 'Wasm'
+            project_folder: 'MyExtensionsApp.Wasm'
             project_to_build: 'MyExtensionsApp.Wasm/MyExtensionsApp.Wasm.csproj'
-            
+      pool:
+        vmImage: macOS-latest   
+
     - job: Android
+      condition:  eq('${{ parameters.Android }}', 'true')
       timeoutInMinutes: '${{ variables.jobTimeout }}'
       steps:
         - template: /azure/steps/install-dependencies.yml  
           parameters:
-            azure_subscription: '${{ variables.azureAccount }}'
-            install_mobileWorkloads: 'true'
+            target_platform: 'android'
 
         - template: /azure/steps/android.yml
           parameters:
-            azure_subscription: '${{ variables.azureAccount }}'
             package_id: 'Android'
+            project_folder: 'MyExtensionsApp.Mobile'
             project_to_build: 'MyExtensionsApp.Mobile/MyExtensionsApp.Mobile.csproj'
+      pool:
+        vmImage: macOS-latest      
 
     - job: iOS
+      condition:  eq('${{ parameters.iOS }}', 'true')
       timeoutInMinutes: '${{ variables.jobTimeout }}'
       steps:
         - template: /azure/steps/install-dependencies.yml  
           parameters:
-            azure_subscription: '${{ variables.azureAccount }}'
-            install_mobileWorkloads: 'true'
+            target_platform: 'ios'
 
         - template: /azure/steps/mobile.yml
           parameters:
-            azure_subscription: '${{ variables.azureAccount }}'
-            package_id: 'Mobile_iOS'
+            package_id: 'iOS'
+            project_folder: 'MyExtensionsApp.Mobile'
             project_to_build: 'MyExtensionsApp.Mobile/MyExtensionsApp.Mobile.csproj'
             target_framework: 'net6.0-ios'
+      pool:
+        vmImage: windows-latest
 
     - job: MacCatalyst
+      condition:  eq('${{ parameters.MacCatalyst }}', 'true')
       timeoutInMinutes: '${{ variables.jobTimeout }}'
       steps:
         - template: /azure/steps/install-dependencies.yml  
           parameters:
-            azure_subscription: '${{ variables.azureAccount }}'
-            install_mobileWorkloads: 'true'
+            target_platform: 'macos'
 
         - template: /azure/steps/mobile.yml
           parameters:
-            azure_subscription: '${{ variables.azureAccount }}'
-            package_id: 'Mobile_MacCatalyst'
+            package_id: 'MacCatalyst'
+            project_folder: 'MyExtensionsApp.Mobile'
             project_to_build: 'MyExtensionsApp.Mobile/MyExtensionsApp.Mobile.csproj'
             target_framework: 'net6.0-maccatalyst'
+      pool:
+        vmImage: macos-latest
 
     - job: Windows
+      condition:  eq('${{ parameters.Windows }}', 'true')
       timeoutInMinutes: '${{ variables.jobTimeout }}'
       steps:
         - template: /azure/steps/install-dependencies.yml  
           parameters:
-            azure_subscription: '${{ variables.azureAccount }}'
-            install_windowsSDK: 'true'
-            install_mobileWorkloads: 'true'
-            install_vsBuildTools: 'true'
+            target_platform: 'uwp'
 
         - template: /azure/steps/windows.yml
           parameters:
-            azure_subscription: '${{ variables.azureAccount }}' 
             package_id: 'Windows'
             project_folder: 'MyExtensionsApp.Windows'
             project_to_build: 'MyExtensionsApp.Windows/MyExtensionsApp.Windows.csproj'
+      pool:
+        vmImage: windows-latest
 
     - job: WPF
+      condition:  eq('${{ parameters.WPF }}', 'true')
       timeoutInMinutes: '${{ variables.jobTimeout }}'
       steps:
         - template: /azure/steps/install-dependencies.yml  
           parameters:
-            azure_subscription: '${{ variables.azureAccount }}'
-            install_windowsSDK: 'true'
-            install_mobileWorkloads: 'true'
+            target_platform: 'skiawpf'
 
         - template: /azure/steps/desktop.yml
           parameters:
-            azure_subscription: '${{ variables.azureAccount }}'
             package_id: 'WPF'
+            project_folder: 'MyExtensionsApp.Skia.WPF'
             project_to_build: 'MyExtensionsApp.Skia.WPF/MyExtensionsApp.Skia.WPF.csproj'
-            
+      pool:
+        vmImage: windows-latest
+
     - job: GTK
+      condition:  eq('${{ parameters.GTK }}', 'true')
       timeoutInMinutes: '${{ variables.jobTimeout }}'
       steps:
         - template: /azure/steps/install-dependencies.yml  
           parameters:
-            azure_subscription: '${{ variables.azureAccount }}'
-            install_windowsSDK: 'true'
-            install_gtk: 'true'
-            install_mobileWorkloads: 'true'
+            target_platform: 'skiagtk_macos'
 
         - template: /azure/steps/desktop.yml
           parameters:
-            azure_subscription: '${{ variables.azureAccount }}'
             package_id: 'GTK'
+            project_folder: 'MyExtensionsApp.Skia.Gtk'
             project_to_build: 'MyExtensionsApp.Skia.Gtk/MyExtensionsApp.Skia.Gtk.csproj'
-            
+      pool:
+        vmImage: macos-latest        
+
     - job: Linux
+      condition:  eq('${{ parameters.Linux }}', 'true')
       timeoutInMinutes: '${{ variables.jobTimeout }}'
       steps:
         - template: /azure/steps/install-dependencies.yml
           parameters:
-            azure_subscription: '${{ variables.azureAccount }}'
-            install_windowsSDK: 'true'
-            install_mobileWorkloads: 'true'
+            target_platform: 'linux'
 
         - template: /azure/steps/desktop.yml
           parameters:
-            azure_subscription: '${{ variables.azureAccount }}'
             package_id: 'Linux'
+            project_folder: 'MyExtensionsApp.Skia.Linux.FrameBuffer'
             project_to_build: 'MyExtensionsApp.Skia.Linux.FrameBuffer/MyExtensionsApp.Skia.Linux.FrameBuffer.csproj'
+      pool:
+        vmImage: macos-latest            
 
     ###################################################
     #                    IMPORTANT                    #
@@ -158,17 +183,14 @@ stages:
     ###################################################
 
     # - job: iOS_Signed
+    #   condition:  eq('${{ parameters.iOS }}', 'true')
     #   timeoutInMinutes: '${{ variables.jobTimeout }}'
     #   steps:
     #     - template: /azure/steps/install-dependencies.yml  
     #       parameters:
-    #         azure_subscription: '${{ variables.azureAccount }}'
-    #         install_mobileWorkloads: 'true'
-    #         install_windowsSDK: 'false'
-
+    #         target_platform: 'ios'
     #     - template: /azure/steps/ios.yml
     #       parameters:
-    #         azure_subscription: '${{ variables.azureAccount }}'
     #         package_id: 'signed_ios'
     #         project_folder: 'MyExtensionsApp.Mobile'
     #         project_to_build: 'MyExtensionsApp.Mobile/MyExtensionsApp.Mobile.csproj'
@@ -181,37 +203,37 @@ stages:
     #     vmImage: macOS-latest
 
     # - job: Android_Signed
+    #   condition:  eq('${{ parameters.Android }}', 'true')    
     #   timeoutInMinutes: '${{ variables.jobTimeout }}'
     #   steps:
     #     - template: /azure/steps/install-dependencies.yml  
     #       parameters:
-    #         azure_subscription: '${{ variables.azureAccount }}'
-    #         install_mobileWorkloads: 'true'
-
+    #         target_platform: 'android'
     #     - template: /azure/steps/android.yml
     #       parameters:
     #         sign_package: 'true'
     #         certificate:  'cert.jks'
     #         certificate_password: 'contoso'
     #         certificate_alias: 'contoso'
-    #         azure_subscription: '${{ variables.azureAccount }}'
     #         package_id: 'signed_android'
+    #         project_folder: 'MyExtensionsApp.Mobile'
     #         project_to_build: 'MyExtensionsApp.Mobile/MyExtensionsApp.Mobile.csproj'
+    # pool:
+     #   vmImage: macOS-latest
 
     # - job: Windows_Signed
+    #   condition:  eq('${{ parameters.Windows }}', 'true')    
     #   timeoutInMinutes: '${{ variables.jobTimeout }}'
     #   steps:
     #     - template: /azure/steps/install-dependencies.yml  
     #       parameters:
-    #         azure_subscription: '${{ variables.azureAccount }}'
-    #         install_windowsSDK: 'true'
-    #         install_mobileWorkloads: 'true'
-    #         install_vsBuildTools: 'true'
+    #         target_platform: 'win32'
     #     - template: /azure/steps/windows.yml
     #       parameters:
     #         sign_package: 'true'
     #         certificate: 'cert.pfx' 
-    #         azure_subscription: '${{ variables.azureAccount }}'
     #         package_id: 'signed_windows'
     #         project_folder: 'MyExtensionsApp.Windows'
     #         project_to_build: 'MyExtensionsApp.Windows/MyExtensionsApp.Windows.csproj'
+    # pool:
+     #   vmImage: windows-latest    

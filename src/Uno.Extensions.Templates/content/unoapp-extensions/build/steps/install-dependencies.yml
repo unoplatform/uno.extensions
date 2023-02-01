@@ -1,123 +1,88 @@
 parameters:
-# Azure subscription
-- name: azure_subscription
+  #The platform to install dependencies for. #See available values at https://platform.uno/docs/articles/external/uno.check/doc/using-uno-check.html
+  # For GTK depending on which OS you are planning to use, supported values are skiagtk_macos and skiagtk_win 
+- name: target_platform
   type: string
-  default: ''
-- name: install_windowsSDK
+  default: ''  
+- name: unocheck_version
   type: string
-  default: 'false'  
-- name: install_gtk
+  default: '1.3.1'
+- name: unocheck_manifest
   type: string
-  default: 'false'
-- name: install_mobileWorkloads
-  type: string
-  default: 'false'
-- name: install_vsBuildTools
-  type: string
-  default: 'false'
+  default: 'https://raw.githubusercontent.com/unoplatform/uno.check/35bfc69ab412cc69f243cef4107bebee504ef60c/manifests/uno.ui-preview.manifest.json'
 
 steps:
     - task: UseDotNet@2
-      displayName: 'Install .NET 6.0'
+      displayName: 'Use DotNet 6.0.300'
       inputs:
-        version: '6.0.404'
+        version: '6.0.300'
 
-    - task: AzurePowerShell@5
-      displayName: 'Install VisualStudio2022 Build Tools'
-      condition:  eq('${{ parameters.install_vsBuildTools }}', 'true')
-      inputs:
-        azureSubscription: '${{ parameters.azure_subscription }}' 
-        ScriptType: 'inlineScript'
-        Inline: |
-            Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
-            choco install visualstudio2022buildtools
-            choco install vswhere
-          
-        azurePowerShellVersion: 'LatestVersion'
+    #Currently Uno Check fails when targetting GTK on macOS so we are adding the references manually
+    - ${{ if eq( parameters['target_platform'], 'skiagtk_macos') }}:
+      - task: Bash@3
+        displayName: 'Install GTK Workloads'
+        retryCountOnTaskFailure: 3
+        inputs:
+          targetType: 'inline'
+          script: |
+              /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+              echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> ~/.zprofile
+              brew install gtk+
+              dotnet tool install -g uno.check
+              ~/.dotnet/tools/uno-check --ci --non-interactive --fix --target ios --target android --target macos --manifest ${{ parameters.unocheck_manifest }}
+          azurePowerShellVersion: 'LatestVersion'
 
-    - task: AzurePowerShell@5
-      displayName: 'Install Windows SDK 1903'
-      condition:  eq('${{ parameters.install_windowsSDK }}', 'true')
-      inputs:
-        azureSubscription: '${{ parameters.azure_subscription }}' 
-        ScriptType: 'inlineScript'
-        Inline: |
-            $Folder = 'C:\Program Files (x86)\Windows Kits\10\'
-            Write-Host "Checking if Windows SDK is installed"
-            if (Test-Path -Path $Folder) {
-              Write-Host "SDK already installed"
-            } else {
-              Write-Host "Installing Windows SDK 1903 (10.0.18362.1)..." -ForegroundColor Cyan
+    #Currently Uno Check fails when targetting GTK on windows so we are adding the references manually
+    - ${{ elseif eq( parameters['target_platform'], 'skiagtk_win') }}:
+      - task: PowerShell@2
+        displayName: 'Install GTK Workloads'
+        retryCountOnTaskFailure: 3
+        inputs:
+          targetType: 'inline'
+          script: |
+              Write-Host "Installing GTK4"
+              Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+              choco install git
+              choco install msys2
+              choco install visualstudio2022-workload-vctools
+              
+              Write-Host "Installing Python"
+              choco install python
+              Write-Host "Python Installation Finished"
 
-              Write-Host "Downloading..."
-              $exePath = "$env:temp\wdksetup.exe"
-              (New-Object Net.WebClient).DownloadFile('https://go.microsoft.com/fwlink/?linkid=2083338', $exePath)
+              python -m pip install --user pipx
+              python -m pipx ensurepath
+              pipx install gvsbuild
+              #build GTK
+              gvsbuild build gtk4
 
-              Write-Host "Installing..."
-              cmd /c start /wait $exePath /features + /quiet
+              Write-Host "Adding GTK4 to Path"
+              $env:Path = "C:\gtk-build\gtk\x64\release\bin;" + $env:Path
+              Write-Host "GTK4 Installation Finished"
 
-              Remove-Item $exePath
-              Write-Host "Installed" -ForegroundColor Green
-            }
-          
-        azurePowerShellVersion: 'LatestVersion'
+              dotnet tool install -g uno.check
+              uno-check --ci --non-interactive --fix --target ios --target android --target macos --manifest ${{ parameters.unocheck_manifest }}
+          azurePowerShellVersion: 'LatestVersion'
 
-    #Install .net6.0 Mobile Workloads
-    - task: AzurePowerShell@5
-      displayName: 'Install Mobile Workloads'
-      condition:  eq('${{ parameters.install_mobileWorkloads }}', 'true')
-      inputs:
-        azureSubscription: '${{ parameters.azure_subscription }}' 
-        ScriptType: 'inlineScript'
-        Inline: |
-                $availableWorkloads = dotnet workload list| Format-Table -HideTableHeaders | Out-String
-                Write-Host "Installed Workloads: $availableWorkloads" 
-                $isAndroidInstalled = $availableWorkloads.Contains("android")
-                $isiOSInstalled = $availableWorkloads.Contains("ios")
-                $isMacCatalyst = $availableWorkloads.Contains("maccatalyst")
+    #Currently Uno Check fails when targetting linux on macOS/win so we are adding the references manually
+    - ${{ elseif eq( parameters['target_platform'], 'linux') }}:
+      - task: Bash@3
+        displayName: 'Install Linux Workloads'
+        retryCountOnTaskFailure: 3
+        inputs:
+          targetType: 'inline'
+          script: |
+              dotnet tool install -g uno.check
+              ~/.dotnet/tools/uno-check --ci --non-interactive --fix --target ios --target android --target macos --manifest ${{ parameters.unocheck_manifest }}
+          azurePowerShellVersion: 'LatestVersion'
 
-                if(-Not $isAndroidInstalled){
-                      Write-Host  "Installing Android Workload"
-                      dotnet workload install android
-                }
-
-                if(-Not $isiOSInstalled){
-                      Write-Host "Installing iOS workload"
-                      dotnet workload install ios
-                }
-
-                if(-Not $isMacCatalyst){
-                      Write-Host "Installing maccatalyst workload"
-                      dotnet workload install maccatalyst
-                }
-            
-        azurePowerShellVersion: 'LatestVersion'
-
-    - task: AzurePowerShell@5
-      displayName: 'Install GTK4'
-      condition:  eq('${{ parameters.install_gtk }}', 'true')
-      inputs:
-        azureSubscription: '${{ parameters.azure_subscription }}' 
-        ScriptType: 'inlineScript'
-        Inline: |
-                Write-Host "Installing GTK4"
-                Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
-                choco install git
-                choco install msys2
-                choco install visualstudio2022-workload-vctools
-
-                Write-Host "Installing Python"
-                choco install python
-                Write-Host "Python Installation Finished"
-
-                python -m pip install --user pipx
-                python -m pipx ensurepath
-                pipx install gvsbuild
-                #build GTK
-                gvsbuild build gtk4
-
-                Write-Host "Adding GTK4 to Path"
-                $env:Path = "C:\gtk-build\gtk\x64\release\bin;" + $env:Path
-                Write-Host "GTK4 Installation Finished"
-            
-        azurePowerShellVersion: 'LatestVersion'
+    - ${{ else }}:
+      - task: PowerShell@2
+        displayName: 'Install ${{ parameters.target_platform }} Workloads'
+        retryCountOnTaskFailure: 3
+        inputs:
+          targetType: 'inline'
+          script: |
+              dotnet tool install -g uno.check
+              uno-check --ci --non-interactive --fix --target ${{ parameters.target_platform }} --manifest ${{ parameters.unocheck_manifest }}
+          azurePowerShellVersion: 'LatestVersion'

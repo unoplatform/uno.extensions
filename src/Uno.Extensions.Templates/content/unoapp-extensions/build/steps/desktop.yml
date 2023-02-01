@@ -1,8 +1,4 @@
 parameters:
-# Azure subscription
-- name: azure_subscription
-  type: string
-  default: ''
 - name: major
   type: string
   default: '0'  
@@ -15,6 +11,9 @@ parameters:
 - name: project_to_build
   type: string
   default: ''  
+- name: project_folder
+  type: string
+  default: ''    
 - name: project_platform
   type: string
   default: 'x86'  
@@ -26,18 +25,33 @@ parameters:
   default: 'true' 
 
 steps:
-    # Compile Mobile
-    - task: AzurePowerShell@5
+    #Validate required parameters before executing any other script
+    - task: PowerShell@2
+      displayName: 'Verify required parameters'
+      inputs:
+        targetType: 'inline'
+        script: |
+            $errors = ''
+            if ('' -eq '${{ parameters.project_to_build }}') { $errors = $errors + '[project_to_build] is not valid.' + "`r`n"  }
+            if ('' -eq '${{ parameters.project_folder }}') { $errors = $errors + '[project_folder] is not valid' + "`r`n"  }
+            if ('' -eq '${{ parameters.project_platform }}') { $errors = $errors + '[project_platform] is not valid' + "`r`n"  }
+            
+            if (-not ([string]::IsNullOrEmpty($errors))){
+                $errors
+                throw "Some required parameters are missing"
+            }
+        azurePowerShellVersion: 'LatestVersion'
+
+    - task: PowerShell@2
       displayName: 'Build and Package'
       inputs:
-        azureSubscription: '${{ parameters.azure_subscription }}' 
-        ScriptType: 'inlineScript'
-        Inline: |
+        targetType: 'inline'
+        script: |
             Write-Host  ""
             Write-Host "Building ${{ parameters.package_id }}"
-            dotnet build  -c Release  -p:Platform=${{ parameters.project_platform }} -o .\bin\Release\ ${{ parameters.project_to_build }}
+            dotnet build  -c Release  -p:Platform=${{ parameters.project_platform }} -o ${{ parameters.project_folder }}\bin\Release ${{ parameters.project_to_build }}
 
-            $finalPackageFolder = ".\artifacts"
+            $finalPackageFolder = "artifacts"
             Write-Host "Creating package folder: $finalPackageFolder"
             New-Item -ItemType Directory -Force -Path $finalPackageFolder
 
@@ -45,9 +59,9 @@ steps:
               if ('true' -eq '${{ parameters.compress_artifacts }}') {
                 Write-Host "Compressing final package"
                 $finalPackageName = "$finalPackageFolder\${{ parameters.package_id }}(${{ parameters.project_platform }})_${{parameters.major}}.${{parameters.minor}}.$(Build.BuildNumber).zip"
-                Compress-Archive -Path '.\bin\Release\*' -DestinationPath $finalPackageName
+                Compress-Archive -Path '${{ parameters.project_folder }}\bin\Release\*' -DestinationPath $finalPackageName
               }else{
-                Copy-Item -Path '.\bin\Release\*' -Destination ".\artifacts" -recurse -Force  
+                Copy-Item -Path '${{ parameters.project_folder }}\bin\Release\*' -Destination "artifacts" -recurse -Force  
               }
             }
         azurePowerShellVersion: 'LatestVersion'
@@ -56,6 +70,6 @@ steps:
       displayName: 'Publish Artifact'
       condition:  eq('${{ parameters.publish_artifacts }}', 'true')
       inputs:
-        targetPath: .\artifacts
+        targetPath: artifacts
         artifactName: ${{ parameters.package_id }}(${{ parameters.project_platform }})_${{parameters.major}}.${{parameters.minor}}.$(Build.BuildNumber)
     

@@ -1,8 +1,4 @@
 parameters:
-# Azure subscription
-- name: azure_subscription
-  type: string
-  default: ''
 - name: major
   type: string
   default: '0'  
@@ -14,7 +10,10 @@ parameters:
   default: 'release_Wasm'
 - name: project_to_build
   type: string
-  default: ''   
+  default: ''
+- name: project_folder
+  type: string
+  default: ''       
   # *** [REQUIRED FOR GENERATING SIGNED .APK PACKAGE] ***
   # For creating a valid .jks certificate:
   # 1.- Go to C:\ and open a powershell terminal as administrator
@@ -42,6 +41,27 @@ parameters:
   default: 'true'       
 
 steps:
+    #Validate required parameters before executing any other script
+    - task: PowerShell@2
+      displayName: 'Verify required parameters'
+      inputs:
+        targetType: 'inline'
+        script: |
+            $errors = ''
+            if ('' -eq '${{ parameters.project_to_build }}') { $errors = $errors + '[project_to_build] is not valid.' + "`r`n"  }
+            if ('' -eq '${{ parameters.project_folder }}') { $errors = $errors + '[project_folder] is not valid' + "`r`n"  }
+            if ('true' -eq '${{ parameters.sign_package }}'){
+              if ('' -eq '${{ parameters.certificate }}') { $errors = $errors + '[certificate] is not valid. Please make sure the name of the .jks certificate is correct and it exists in secure files' + "`r`n"  }
+              if ('' -eq '${{ parameters.certificate_password }}') { $errors = $errors + '[certificate_password] is not valid.' + "`r`n"  }
+              if ('' -eq '${{ parameters.certificate_alias }}') { $errors = $errors + '[certificate_alias] is not valid' + "`r`n"  }
+            }
+
+            if (-not ([string]::IsNullOrEmpty($errors))){
+                $errors
+                throw "Some required parameters are missing"
+            }
+        azurePowerShellVersion: 'LatestVersion'
+
     - task: DownloadSecureFile@1
       name: keyStore
       displayName: "Download .jks from secure files"
@@ -50,21 +70,20 @@ steps:
         secureFile: ${{ parameters.certificate }}
       
     # Compile Mobile
-    - task: AzurePowerShell@5
+    - task: PowerShell@2
       displayName: 'Build and Package'
       inputs:
-        azureSubscription: '${{ parameters.azure_subscription }}' 
-        ScriptType: 'inlineScript'
-        Inline: |
+        targetType: 'inline'
+        script: |
             Write-Host "Building ${{ parameters.package_id }}"
 
             if ('true' -eq '${{ parameters.sign_package }}') {
-              dotnet publish  -c Release -p:TargetFramework=net6.0-android  -o .\bin\Release\ ${{ parameters.project_to_build }} /p:AndroidSigningKeyStore=$(keyStore.secureFilePath) /p:AndroidSigningStorePass=${{ parameters.certificate_password }} /p:AndroidSigningKeyAlias=${{ parameters.certificate_alias }} 
+              dotnet publish  -c Release -p:TargetFramework=net6.0-android  -o ${{ parameters.project_folder }}\bin\Release ${{ parameters.project_to_build }} /p:AndroidSigningKeyStore=$(keyStore.secureFilePath) /p:AndroidSigningStorePass=${{ parameters.certificate_password }} /p:AndroidSigningKeyAlias=${{ parameters.certificate_alias }} 
             }else{
-              dotnet publish  -c Release -p:TargetFramework=net6.0-android  -o .\bin\Release\ ${{ parameters.project_to_build }} 
+              dotnet publish  -c Release -p:TargetFramework=net6.0-android  -o ${{ parameters.project_folder }}\bin\Release ${{ parameters.project_to_build }} 
             }
 
-            $finalPackageFolder = ".\artifacts"
+            $finalPackageFolder = "artifacts"
             Write-Host "Creating package folder: $finalPackageFolder"
             New-Item -ItemType Directory -Force -Path $finalPackageFolder
 
@@ -72,9 +91,9 @@ steps:
               if ('true' -eq '${{ parameters.compress_artifacts }}') {
                 Write-Host "Compressing final package"
                 $finalPackageName = "$finalPackageFolder\${{ parameters.package_id }}_${{parameters.major}}.${{parameters.minor}}.$(Build.BuildNumber).zip"
-                Compress-Archive -Path '.\bin\Release\*' -DestinationPath $finalPackageName
+                Compress-Archive -Path '${{ parameters.project_folder }}\bin\Release\*' -DestinationPath $finalPackageName
               }else{
-                Copy-Item -Path '.\bin\Release\*' -Destination ".\artifacts" -recurse -Force  
+                Copy-Item -Path '${{ parameters.project_folder }}\bin\Release\*' -Destination "artifacts" -recurse -Force  
               }
             }
         azurePowerShellVersion: 'LatestVersion'
@@ -83,6 +102,6 @@ steps:
       displayName: 'Publish Artifact'
       condition:  eq('${{ parameters.publish_artifacts }}', 'true')
       inputs:
-        targetPath: .\artifacts
+        targetPath: artifacts
         artifactName: ${{ parameters.package_id }}_${{parameters.major}}.${{parameters.minor}}.$(Build.BuildNumber)
     

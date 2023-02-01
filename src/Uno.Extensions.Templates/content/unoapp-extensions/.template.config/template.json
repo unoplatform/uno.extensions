@@ -365,14 +365,6 @@
         }
       ]
     },
-    "azureSubscription": {
-      "displayName": "AzureDevOps Subscription",
-      "type": "parameter",
-      "datatype": "string",
-      "replaces": "$azureSubscription$",
-      "description": "The azure subscription to be used when running the CI pipeline",
-      "defaultValue": ""
-    },
     "skipRestore": {
       "type": "parameter",
       "datatype": "bool",
