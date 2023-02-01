@@ -11,12 +11,9 @@ public sealed partial class App : Application
 	{
 		PerformanceTimer.InitializeTimers();
 		this.InitializeComponent();
-
-		// TODO: Remove once https://github.com/unoplatform/uno/issues/10990 is resolved
-		var type = typeof(Uno.UI.FluentTheme.GlobalStaticResources);
 	}
 
-	protected override void OnLaunched(LaunchActivatedEventArgs args)
+	protected override async void OnLaunched(LaunchActivatedEventArgs args)
 	{
 #if WINDOWS
 		// This is only required because we don't run UnoHost.CreateDefaultHost until a
@@ -60,10 +57,10 @@ public sealed partial class App : Application
 
 			// Place the frame in the current Window
 			_window.Content = rootFrame;
+
+			//_window.GetThemeService();
+
 		}
 		_window.Activate();
-
-
-
 	}
 }
