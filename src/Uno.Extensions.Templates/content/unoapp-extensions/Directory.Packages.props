@@ -20,7 +20,7 @@
     <!--#if (server)-->
     <PackageVersion Include="Swashbuckle.AspNetCore" Version="6.5.0" />
     <!--#endif-->
-    <PackageVersion Include="Uno.Core.Extensions.Logging.Singleton" Version="4.1.0" />
+    <PackageVersion Include="Uno.Core.Extensions.Logging.Singleton" Version="4.0.1" />
     <PackageVersion Include="Uno.Extensions.Authentication" Version="255.255.255.255" />
     <PackageVersion Include="Uno.Extensions.Authentication.WinUI" Version="255.255.255.255" />
     <!--#if (useConfiguration)-->
