@@ -40,6 +40,9 @@ variables:
 - name: jobTimeout
   value: '40'
 
+- name: dotnet_version
+  value: '7.0.102'
+
 stages:
   - stage: Build_UNO
 
@@ -50,6 +53,7 @@ stages:
       steps:
         - template: /azure/steps/install-dependencies.yml  
           parameters:
+            dotnet_version: '${{ variables.dotnet_version }}'
             target_platform: 'wasm'
 
         - template: /azure/steps/wasm.yml
@@ -66,10 +70,12 @@ stages:
       steps:
         - template: /azure/steps/install-dependencies.yml  
           parameters:
+            dotnet_version: '${{ variables.dotnet_version }}'
             target_platform: 'android'
 
         - template: /azure/steps/android.yml
           parameters:
+            target_framework: 'net7.0-android'
             package_id: 'Android'
             project_folder: 'MyExtensionsApp.Mobile'
             project_to_build: 'MyExtensionsApp.Mobile/MyExtensionsApp.Mobile.csproj'
@@ -82,6 +88,7 @@ stages:
       steps:
         - template: /azure/steps/install-dependencies.yml  
           parameters:
+            dotnet_version: '${{ variables.dotnet_version }}'
             target_platform: 'ios'
 
         - template: /azure/steps/mobile.yml
@@ -89,7 +96,7 @@ stages:
             package_id: 'iOS'
             project_folder: 'MyExtensionsApp.Mobile'
             project_to_build: 'MyExtensionsApp.Mobile/MyExtensionsApp.Mobile.csproj'
-            target_framework: 'net6.0-ios'
+            target_framework: 'net7.0-ios'
       pool:
         vmImage: windows-latest
 
@@ -99,6 +106,7 @@ stages:
       steps:
         - template: /azure/steps/install-dependencies.yml  
           parameters:
+            dotnet_version: '${{ variables.dotnet_version }}'
             target_platform: 'macos'
 
         - template: /azure/steps/mobile.yml
@@ -106,7 +114,7 @@ stages:
             package_id: 'MacCatalyst'
             project_folder: 'MyExtensionsApp.Mobile'
             project_to_build: 'MyExtensionsApp.Mobile/MyExtensionsApp.Mobile.csproj'
-            target_framework: 'net6.0-maccatalyst'
+            target_framework: 'net7.0-maccatalyst'
       pool:
         vmImage: macos-latest
 
@@ -116,6 +124,7 @@ stages:
       steps:
         - template: /azure/steps/install-dependencies.yml  
           parameters:
+            dotnet_version: '${{ variables.dotnet_version }}'
             target_platform: 'uwp'
 
         - template: /azure/steps/windows.yml
@@ -132,6 +141,7 @@ stages:
       steps:
         - template: /azure/steps/install-dependencies.yml  
           parameters:
+            dotnet_version: '${{ variables.dotnet_version }}'
             target_platform: 'skiawpf'
 
         - template: /azure/steps/desktop.yml
@@ -148,6 +158,7 @@ stages:
       steps:
         - template: /azure/steps/install-dependencies.yml  
           parameters:
+            dotnet_version: '${{ variables.dotnet_version }}'
             target_platform: 'skiagtk_macos'
 
         - template: /azure/steps/desktop.yml
@@ -164,6 +175,7 @@ stages:
       steps:
         - template: /azure/steps/install-dependencies.yml
           parameters:
+            dotnet_version: '${{ variables.dotnet_version }}'
             target_platform: 'linux'
 
         - template: /azure/steps/desktop.yml
@@ -188,9 +200,11 @@ stages:
     #   steps:
     #     - template: /azure/steps/install-dependencies.yml  
     #       parameters:
+    #         dotnet_version: '${{ variables.dotnet_version }}'
     #         target_platform: 'ios'
     #     - template: /azure/steps/ios.yml
     #       parameters:
+    #         target_framework: 'net7.0-ios'
     #         package_id: 'signed_ios'
     #         project_folder: 'MyExtensionsApp.Mobile'
     #         project_to_build: 'MyExtensionsApp.Mobile/MyExtensionsApp.Mobile.csproj'
@@ -208,9 +222,11 @@ stages:
     #   steps:
     #     - template: /azure/steps/install-dependencies.yml  
     #       parameters:
+    #         dotnet_version: '${{ variables.dotnet_version }}'
     #         target_platform: 'android'
     #     - template: /azure/steps/android.yml
     #       parameters:
+    #         target_framework: 'net7.0-android'
     #         sign_package: 'true'
     #         certificate:  'cert.jks'
     #         certificate_password: 'contoso'
@@ -218,8 +234,8 @@ stages:
     #         package_id: 'signed_android'
     #         project_folder: 'MyExtensionsApp.Mobile'
     #         project_to_build: 'MyExtensionsApp.Mobile/MyExtensionsApp.Mobile.csproj'
-    # pool:
-     #   vmImage: macOS-latest
+    #   pool:
+    #     vmImage: macOS-latest
 
     # - job: Windows_Signed
     #   condition:  eq('${{ parameters.Windows }}', 'true')    
@@ -227,7 +243,8 @@ stages:
     #   steps:
     #     - template: /azure/steps/install-dependencies.yml  
     #       parameters:
-    #         target_platform: 'win32'
+    #         dotnet_version: '${{ variables.dotnet_version }}'
+    #         target_platform: 'uwp'
     #     - template: /azure/steps/windows.yml
     #       parameters:
     #         sign_package: 'true'
@@ -235,5 +252,5 @@ stages:
     #         package_id: 'signed_windows'
     #         project_folder: 'MyExtensionsApp.Windows'
     #         project_to_build: 'MyExtensionsApp.Windows/MyExtensionsApp.Windows.csproj'
-    # pool:
-     #   vmImage: windows-latest    
+    #   pool:
+    #     vmImage: windows-latest

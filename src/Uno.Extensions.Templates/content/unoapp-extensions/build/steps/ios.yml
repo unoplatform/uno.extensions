@@ -29,7 +29,7 @@ parameters:
 - name: certificate_password 
   type: string  
   default: ''
-  #[Required] The name of the distribution certificate . Ex Apple Development: Contoso Contoso (752234A22L)   
+  #[Required] The name of the distribution certificate . E.g. Apple Development: Contoso Contoso (752234A22L)   
 - name: codesign_key 
   type: string  
   default: ''
@@ -41,6 +41,9 @@ parameters:
 - name: provisioning_profile 
   type: string  
   default: ''
+- name: target_framework
+  type: string
+  default: 'net7.0-ios'  
       
 steps:
     #Validate required parameters before executing any other script
@@ -187,7 +190,7 @@ steps:
         script: |
             Write-Host  ""
             Write-Host "Building ${{ parameters.package_id }}"
-            dotnet publish  -c Release -p:CodesignProvision='${{ parameters.codesign_provision }}' -p:CodesignKey='${{ parameters.codesign_key }}' -p:TargetFramework=net6.0-ios /p:ArchiveOnBuild=true  -o ${{ parameters.project_folder }}\bin\Release ${{ parameters.project_to_build }} 
+            dotnet publish  -c Release -p:CodesignProvision='${{ parameters.codesign_provision }}' -p:CodesignKey='${{ parameters.codesign_key }}' -p:TargetFramework=${{ parameters.target_framework }}  /p:ArchiveOnBuild=true  -o ${{ parameters.project_folder }}\bin\Release ${{ parameters.project_to_build }} 
 
             $finalPackageFolder = "artifacts"
             Write-Host "Creating package folder: $finalPackageFolder"

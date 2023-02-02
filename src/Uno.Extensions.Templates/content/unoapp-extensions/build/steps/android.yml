@@ -39,6 +39,9 @@ parameters:
 - name: compress_artifacts
   type: string
   default: 'true'       
+- name: target_framework
+  type: string
+  default: 'net7.0-android'  
 
 steps:
     #Validate required parameters before executing any other script
@@ -78,9 +81,9 @@ steps:
             Write-Host "Building ${{ parameters.package_id }}"
 
             if ('true' -eq '${{ parameters.sign_package }}') {
-              dotnet publish  -c Release -p:TargetFramework=net6.0-android  -o ${{ parameters.project_folder }}\bin\Release ${{ parameters.project_to_build }} /p:AndroidSigningKeyStore=$(keyStore.secureFilePath) /p:AndroidSigningStorePass=${{ parameters.certificate_password }} /p:AndroidSigningKeyAlias=${{ parameters.certificate_alias }} 
+              dotnet publish  -c Release -p:TargetFramework=${{ parameters.target_framework }}  -o ${{ parameters.project_folder }}\bin\Release ${{ parameters.project_to_build }} /p:AndroidSigningKeyStore=$(keyStore.secureFilePath) /p:AndroidSigningStorePass=${{ parameters.certificate_password }} /p:AndroidSigningKeyAlias=${{ parameters.certificate_alias }} 
             }else{
-              dotnet publish  -c Release -p:TargetFramework=net6.0-android  -o ${{ parameters.project_folder }}\bin\Release ${{ parameters.project_to_build }} 
+              dotnet publish  -c Release -p:TargetFramework=${{ parameters.target_framework }}  -o ${{ parameters.project_folder }}\bin\Release ${{ parameters.project_to_build }} 
             }
 
             $finalPackageFolder = "artifacts"
