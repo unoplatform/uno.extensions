@@ -1,21 +1,19 @@
 namespace MyExtensionsApp;
 
-public class AppStart
+public class App : Application
 {
-	public static Window? Window { get; private set; }
+	private static Window? _window;
 	public static IHost? Host { get; private set; }
 
 //+:cnd:noEmit
 #if useFrameNav
-	public static void OnLaunched(Application app, LaunchActivatedEventArgs args)
+	protected override void OnLaunched(LaunchActivatedEventArgs args)
 #else
-	public static async Task OnLaunched(Application app, LaunchActivatedEventArgs args)
+	protected async override void OnLaunched(LaunchActivatedEventArgs args)
 #endif
 	{
-		var builder = app.CreateBuilder(args)
-#if useCsharpMarkup
-			.ConfigureResources()
-#endif
+		var builder = this.CreateBuilder(args)
+
 #if (useDefaultNav)
 			// Add navigation support for toolkit controls such as TabBar and NavigationView
 			.UseToolkitNavigation()
@@ -43,7 +41,7 @@ public class AppStart
 #if useConfiguration
 				.UseConfiguration(configure: configBuilder =>
 					configBuilder
-						.EmbeddedSource<AppStart>()
+						.EmbeddedSource<App>()
 						.Section<AppConfig>()
 				)
 #endif
@@ -75,7 +73,7 @@ public class AppStart
 				.UseNavigation(RegisterRoutes)
 #endif
 			);
-		Window = builder.Window;
+		_window = builder.Window;
 
 #if useFrameNav
 //-:cnd:noEmit
@@ -83,7 +81,7 @@ public class AppStart
 
 		// Do not repeat app initialization when the Window already has content,
 		// just ensure that the window is active
-		if (Window.Content is not Frame rootFrame)
+		if (_window.Content is not Frame rootFrame)
 		{
 			// Create a Frame to act as the navigation context and navigate to the first page
 			rootFrame = new Frame();
@@ -96,7 +94,7 @@ public class AppStart
 			}
 
 			// Place the frame in the current Window
-			Window.Content = rootFrame;
+			_window.Content = rootFrame;
 		}
 
 #if !(NETSTANDARD && WINDOWS)
@@ -111,7 +109,7 @@ public class AppStart
 				rootFrame.Navigate(typeof(MainPage), args.Arguments);
 			}
 			// Ensure the current window is active
-			Window.Activate();
+			_window.Activate();
 		}
 //+:cnd:noEmit
 #else

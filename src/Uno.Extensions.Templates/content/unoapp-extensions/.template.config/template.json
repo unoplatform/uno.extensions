@@ -672,7 +672,7 @@
     "useInfrastructureNamespace": {
       "type": "computed",
       "datatype": "bool",
-      "value": "preset == 'recommended' && ((http && dependencyInjection) || useCsharpMarkup)"
+      "value": "preset == 'recommended' && http && dependencyInjection)"
     },
     "useBusinessModelsNamespace": {
       "type": "computed",
@@ -841,24 +841,28 @@
         {
           "condition": "(useDependencyInjection)",
           "exclude": [
-            "MyExtensionsApp/AppStart.nodi.cs"
-          ]
+            "MyExtensionsApp/App.blank.cs"
+          ],
+          "rename": {
+            "MyExtensionsApp/App.recommended.cs": "MyExtensionsApp/App.cs"
+          }
         },
         {
           "condition": "(!useDependencyInjection)",
           "exclude": [
-            "MyExtensionsApp/AppStart.cs",
+            "MyExtensionsApp/App.recommended.cs",
             "MyExtensionsApp/Infrastructure/DebugHandler.cs",
             "MyExtensionsApp/Business/**",
             "MyExtensionsApp/Presentation/**"
           ],
           "rename": {
-            "MyExtensionsApp/AppStart.nodi.cs": "MyExtensionsApp/AppStart.cs"
+            "MyExtensionsApp/App.blank.cs": "MyExtensionsApp/App.cs"
           }
         },
         {
           "condition": "(useRecommendedAppTemplate)",
           "exclude": [
+            "MyExtensionsApp/App.blank.cs",
             "MyExtensionsApp.Server/WeatherForecast.cs"
           ]
         },
@@ -947,7 +951,7 @@
         {
           "condition": "(!useCsharpMarkup)",
           "exclude": [
-            "MyExtensionsApp/Infrastructure/ApplicationBuilderExtensions.cs",
+            "MyExtensionsApp/AppResources.cs",
             "MyExtensionsApp/Styles/*.cs"
           ]
         },
@@ -966,7 +970,7 @@
         {
           "condition": "(useBlankAppTemplate)",
           "rename": {
-            "MyExtensionsApp.Base/App.blank.cs": "MyExtensionsApp.Base/App.xaml.cs"
+            "MyExtensionsApp/App.blank.cs": "MyExtensionsApp/App.cs"
           },
           "exclude": [
             "MyExtensionsApp/Business/**",
@@ -974,20 +978,15 @@
             "MyExtensionsApp/Presentation/**",
             "MyExtensionsApp/Services/**",
             "MyExtensionsApp/Styles/**",
-            "MyExtensionsApp/AppStart.cs",
-            "MyExtensionsApp/AppStart.nodi.cs",
+            "MyExtensionsApp/App.recommended.cs",
             "MyExtensionsApp/appsettings.*",
-            "MyExtensionsApp.Base/App.default.cs",
             "MyExtensionsApp.Tests/AppInfoTests.cs"
           ]
         },
         {
           "condition": "(useRecommendedAppTemplate)",
-          "rename": {
-            "MyExtensionsApp.Base/App.default.cs": "MyExtensionsApp.Base/App.xaml.cs"
-          },
           "exclude": [
-            "MyExtensionsApp.Base/App.blank.cs"
+            "MyExtensionsApp/App.blank.cs"
           ]
         },
         {
