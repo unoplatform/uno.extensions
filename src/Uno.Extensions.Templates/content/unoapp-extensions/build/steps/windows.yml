@@ -7,7 +7,7 @@ parameters:
   default: '0'
 - name: package_id
   type: string
-  default: 'release_Desktop'
+  default: 'release_Windows'
 - name: project_to_build
   type: string
   default: '' 
@@ -17,18 +17,17 @@ parameters:
 - name: project_platform
   type: string
   default: 'x86'  
-
   # *** [REQUIRED FOR GENERATING SIGNED .MSIX PACKAGE] ***
-  #For Creating a valid PFX certificate:
-  # 1.- Open a new powershell terminal as administrator and use this command: New-SelfSignedCertificate -DnsName {YOURCERT.NAME.COM} -CertStoreLocation cert:\LocalMachine\My
-  # 2.-When Finished press Win + R and type  certlm.msc. Then go to Personal folder -> Certificates and you should be able to see your previously created certificate
-  # 3.-Double Click it then go to Details tab. Click on the bottom right button 'Copy to file'. A wizard will open
-  # 4.-On first page Click Next 
-  #   -> Second page click "Yes, Export the private key" 
-  #   -> Third page select third option "PKCS #12 (.PFX)" and click on Next 
-  #   -> In Fourth page (Security) set a password for the certificate and click on Next
-  #   -> In last page please set a Name for the certificate and select where to put it. Use a simple location like C:\
-  # 5.-Last part consists in uploading the new pfx certificate to your azuredevops secure storage. See more details here: https://learn.microsoft.com/en-us/azure/devops/pipelines/library/secure-files?view=azure-devops
+  #For Creating a valid PFX certificate for signing:
+  # 1.- Open VisualStudio and create a new empty Windows Universal project
+  # 2.- Open solution explorer and double click on Package.appxmanifest file 
+  # 3.- Now you should see a bunch of tabs. Select the last one (Packaging)
+  # 4.- Fill the editor field and click on "Select Certificate" and a new popup should open
+  # 5.- Click on "Create" and a second popup should open
+  # 6.- Make sure the "Editor Name" field is correct and DO NOT put any password
+  # 7.- Scroll down and click on "Ok" and second popup will close
+  # 8.- Click on "Ok" again. At this point you should see in solution explorer the new certificate: "TemporaryKey.pfx"
+  # 9.- Last part consists in uploading the new pfx certificate to your pipeline secure storage. See more details here: https://learn.microsoft.com/en-us/azure/devops/pipelines/library/secure-files?view=azure-devops
 - name: certificate
   type: string
   default: ''       
