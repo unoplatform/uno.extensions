@@ -862,7 +862,6 @@
         {
           "condition": "(useRecommendedAppTemplate)",
           "exclude": [
-            "MyExtensionsApp/App.blank.cs",
             "MyExtensionsApp.Server/WeatherForecast.cs"
           ]
         },
@@ -981,12 +980,6 @@
             "MyExtensionsApp/App.recommended.cs",
             "MyExtensionsApp/appsettings.*",
             "MyExtensionsApp.Tests/AppInfoTests.cs"
-          ]
-        },
-        {
-          "condition": "(useRecommendedAppTemplate)",
-          "exclude": [
-            "MyExtensionsApp/App.blank.cs"
           ]
         },
         {

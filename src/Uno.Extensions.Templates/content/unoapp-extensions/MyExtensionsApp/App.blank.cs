@@ -5,7 +5,7 @@ public class App : Application
 {
 	public static Window? _window;
 
-	public void OnLaunched(LaunchActivatedEventArgs args)
+	protected override void OnLaunched(LaunchActivatedEventArgs args)
 	{
 #if NET6_0_OR_GREATER && WINDOWS && !HAS_UNO
 		_window = new Window();
