@@ -11,6 +11,6 @@ public partial class MainWindow : Window
 	{
 		InitializeComponent();
 
-		root.Content =  new global::Uno.UI.Skia.Platform.WpfHost(Dispatcher, () => new MyExtensionsApp.App());
+		root.Content =  new global::Uno.UI.Skia.Platform.WpfHost(Dispatcher, () => new AppHead());
 	}
 }
