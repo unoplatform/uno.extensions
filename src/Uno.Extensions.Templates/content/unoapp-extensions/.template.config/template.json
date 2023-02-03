@@ -672,7 +672,7 @@
     "useInfrastructureNamespace": {
       "type": "computed",
       "datatype": "bool",
-      "value": "preset == 'recommended' && http && dependencyInjection)"
+      "value": "preset == 'recommended' && http && dependencyInjection"
     },
     "useBusinessModelsNamespace": {
       "type": "computed",
