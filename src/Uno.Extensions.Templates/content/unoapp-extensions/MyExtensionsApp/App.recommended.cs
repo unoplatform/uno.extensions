@@ -104,8 +104,8 @@ public class App : Application
 		Host = await builder.NavigateAsync<Shell>();
 #endif
 	}
+#if (useExtensionsNavigation)
 
-#if !useFrameNav
 	private static void RegisterRoutes(IViewRegistry views, IRouteRegistry routes)
 	{
 #if (useDefaultNavMvux)
