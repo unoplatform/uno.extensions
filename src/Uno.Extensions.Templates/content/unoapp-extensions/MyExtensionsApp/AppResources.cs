@@ -7,8 +7,8 @@ public sealed class AppResources : ResourceDictionary
 		// Load WinUI Resources
 		this.Build(r => r.Merged(
 			new XamlControlsResources()));
-
 #if useMaterial
+
 		// Load Material Resources
 		this.Build(r => r.Merged(
 			new MaterialResources()
@@ -19,7 +19,8 @@ public sealed class AppResources : ResourceDictionary
 		this.Build(r => r.Merged(
 			new ToolkitResources(),
 			new MaterialToolkitResources()));
-#else
+#elif (useRecommendedAppTemplate)
+
 		// Load Uno.UI.Toolkit Resources
 		this.Build(r => r.Merged(
 			new ToolkitResources()));
