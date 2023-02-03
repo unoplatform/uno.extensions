@@ -11,7 +11,7 @@ public sealed class AppResources : ResourceDictionary
 
 		// Load Material Resources
 		this.Build(r => r.Merged(
-			new MaterialResources()
+			new MaterialTheme()
 				.ColorOverrideDictionary(new Styles.ColorPaletteOverride())
 				.FontOverrideDictionary(new Styles.MaterialFontsOverride())));
 
