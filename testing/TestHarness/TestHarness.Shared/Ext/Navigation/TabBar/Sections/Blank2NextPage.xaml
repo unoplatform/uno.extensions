@@ -1,0 +1,64 @@
+﻿<Page x:Class="TestHarness.Ext.Navigation.TabBar.Blank2NextPage"
+	  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	  xmlns:local="using:SectionNavPerf.Views"
+	  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	  xmlns:uen="using:Uno.Extensions.Navigation.UI"
+	  xmlns:utu="using:Uno.Toolkit.UI"
+	  xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
+	  mc:Ignorable="d"
+	  Background="Blue">
+
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition />
+		</Grid.RowDefinitions>
+		<utu:NavigationBar Content="Blank 2 Next"
+						   AutomationProperties.AutomationId="Blank2NextNavigationBar" />
+		<Grid x:Name="TabsLayout" Grid.Row="1"
+			  uen:Region.Attached="True">
+			<Grid.RowDefinitions>
+				<RowDefinition Height="Auto" />
+				<RowDefinition />
+			</Grid.RowDefinitions>
+			<utu:TabBar uen:Region.Attached="True">
+				<utu:TabBarItem x:Name="IngredientsTabItem"
+								Content="Ingredients"
+								uen:Region.Name="IngredientsTab" />
+				<!--IsSelected="True" />-->
+				<utu:TabBarItem x:Name="DetailsTab"
+								Content="Details"
+								uen:Region.Name="DetailsTab" />
+				<utu:TabBarItem
+								Content="Reviews"
+								uen:Region.Name="ReviewsTab" />
+			</utu:TabBar>
+			<ScrollViewer x:Name="TabScrollViewer"
+						  HorizontalScrollMode="Disabled"
+						  VerticalScrollBarVisibility="Hidden" Grid.Row="1">
+				<Grid uen:Region.Attached="True"
+					  uen:Region.Navigator="Visibility">
+
+					<Grid uen:Region.Name="IngredientsTab"
+									Visibility="Visible">
+						<TextBlock Text="Ingredients"/>
+					</Grid>
+
+					<Grid uen:Region.Name="DetailsTab"
+						  Visibility="Collapsed">
+						<TextBlock Text="Details" />
+
+					</Grid>
+					<Grid uen:Region.Name="ReviewsTab"
+									Visibility="Collapsed">
+						<TextBlock Text="Reviews" />
+
+					</Grid>
+				</Grid>
+			</ScrollViewer>
+
+		</Grid>
+	</Grid>
+</Page>
