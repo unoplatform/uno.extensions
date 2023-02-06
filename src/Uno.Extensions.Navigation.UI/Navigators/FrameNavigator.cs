@@ -154,7 +154,7 @@ public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 		for (var i = 0; i < segments.Length - 1; i++)
 		{
 			var map = segments[i];
-			if(map.RenderView is null)
+			if (map.RenderView is null)
 			{
 				continue;
 			}
@@ -163,12 +163,16 @@ public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 			Control?.BackStack.Add(newEntry);
 		}
 
+
 		// Determine which segments in the initial route were consumed by this navigation
 		var navSegment = Route.Empty;
 		foreach(var stackEntry in Control!.BackStack)
 		{
 			var entryRoute = Resolver.FindByView(stackEntry.SourcePageType, this);
-			if (entryRoute != null && request.Route.Contains(entryRoute.Path))
+			if (entryRoute != null && (
+				request.Route.Contains(entryRoute.Path) ||
+				segments.Any(seg=>seg.Path==entryRoute.Path)
+				))
 			{
 				navSegment = navSegment.Append(entryRoute.Path);
 			}
