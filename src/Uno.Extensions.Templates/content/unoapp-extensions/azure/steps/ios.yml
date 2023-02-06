@@ -43,7 +43,7 @@ parameters:
   default: ''
 - name: target_framework
   type: string
-  default: 'net7.0-ios'  
+  default: 'net$ciTargetDotNetVersion$.0-ios'  
       
 steps:
     #Validate required parameters before executing any other script

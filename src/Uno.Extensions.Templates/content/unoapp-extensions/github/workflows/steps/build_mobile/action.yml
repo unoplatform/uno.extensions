@@ -19,9 +19,9 @@ inputs:
     required: false
     default: '90'
   target-framework: 
-    description: 'Target framework (net7.0-android, net7.0-ios, net7.0-maccatalyst)'
+    description: 'Target framework (net$ciTargetDotNetVersion$.0-android, net$ciTargetDotNetVersion$.0-ios, net$ciTargetDotNetVersion$.0-maccatalyst)'
     required: true
-    default: 'net7.0-android'
+    default: ''
   publish-artifacts: 
      description: "If true, compilation artifacts will be published and put under Job Summary section"
      required: false

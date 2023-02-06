@@ -9,7 +9,7 @@ inputs:
   dotnet-version:
     description: 'If true mobile workloads for iOS, Android, MacCatallyst will be installed'
     required: false
-    default: '7.0.102'
+    default: '$ciTargetDotNetVersion$.0.x'
   unocheck-manifest:
     description: 'If true WindowsSDK will be installed'
     required: false

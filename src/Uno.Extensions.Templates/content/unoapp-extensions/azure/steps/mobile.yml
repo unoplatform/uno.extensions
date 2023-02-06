@@ -13,10 +13,11 @@ parameters:
   default: ''
 - name: project_folder
   type: string
-  default: ''         
+  default: ''
+  #'net$ciTargetDotNetVersion$.0-android, net$ciTargetDotNetVersion$.0-ios, net$ciTargetDotNetVersion$.0-maccatalyst'
 - name: target_framework
   type: string
-  default: 'net7.0-android'
+  default: ''
 - name: publish_artifacts
   type: string
   default: 'true'      

@@ -42,7 +42,6 @@ stages:
 
         - template: /azure/steps/android.yml
           parameters:
-            target_framework: 'net7.0-android'
             package_id: 'Android'
             project_folder: 'MyExtensionsApp.Mobile'
             project_to_build: 'MyExtensionsApp.Mobile/MyExtensionsApp.Mobile.csproj'
@@ -61,7 +60,7 @@ stages:
             package_id: 'iOS'
             project_folder: 'MyExtensionsApp.Mobile'
             project_to_build: 'MyExtensionsApp.Mobile/MyExtensionsApp.Mobile.csproj'
-            target_framework: 'net7.0-ios'
+            target_framework: 'net$ciTargetDotNetVersion$.0-ios'
       pool:
         vmImage: windows-latest
 
@@ -77,7 +76,7 @@ stages:
             package_id: 'MacCatalyst'
             project_folder: 'MyExtensionsApp.Mobile'
             project_to_build: 'MyExtensionsApp.Mobile/MyExtensionsApp.Mobile.csproj'
-            target_framework: 'net7.0-maccatalyst'
+            target_framework: 'net$ciTargetDotNetVersion$.0-maccatalyst'
       pool:
         vmImage: macos-latest
 
@@ -157,7 +156,6 @@ stages:
             target_platform: 'ios'
         - template: /azure/steps/ios.yml
           parameters:
-            target_framework: 'net7.0-ios'
             package_id: 'signed_ios'
             project_folder: 'MyExtensionsApp.Mobile'
             project_to_build: 'MyExtensionsApp.Mobile/MyExtensionsApp.Mobile.csproj'
@@ -177,7 +175,6 @@ stages:
             target_platform: 'android'
         - template: /azure/steps/android.yml
           parameters:
-            target_framework: 'net7.0-android'
             sign_package: 'true'
             certificate:  'cert.jks'
             certificate_password: 'contoso'

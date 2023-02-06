@@ -28,12 +28,11 @@ jobs:
           target-platform: 'android'
       
       - name: Build Mobile (Android)
-        uses: "./.github/workflows/steps/build_mobile"
+        uses: "./.github/workflows/steps/build_android"
         with:
           package-id: "Android"
           project-folder: 'Demo.Mobile'
           project-to-build: "MyExtensionsApp.Mobile/MyExtensionsApp.Mobile.csproj" 
-          target-framework: "net7.0-android"
 
   build_ios:
     name: Build iOS
@@ -55,7 +54,7 @@ jobs:
           package-id: "Mobile_iOS"
           project-folder: 'Demo.Mobile'
           project-to-build: "MyExtensionsApp.Mobile/MyExtensionsApp.Mobile.csproj" 
-          target-framework: "net7.0-ios"
+          target-framework: "net$ciTargetDotNetVersion$.0-ios"
 
   build_maccatalyst:
     name: Build MacCatalyst
@@ -77,7 +76,7 @@ jobs:
           package-id: "Mobile_MacCatalyst"
           project-folder: 'Demo.Mobile'
           project-to-build: "MyExtensionsApp.Mobile/MyExtensionsApp.Mobile.csproj" 
-          target-framework: "net7.0-maccatalyst"
+          target-framework: "net$ciTargetDotNetVersion$.0-maccatalyst"
 
   build_wasm:
     name: Build Wasm

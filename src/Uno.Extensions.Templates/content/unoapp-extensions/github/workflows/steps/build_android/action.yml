@@ -46,7 +46,7 @@ inputs:
   target-framework:
      description: ''
      required: false
-     default: 'net7.0-android'                 
+     default: 'net$ciTargetDotNetVersion$.0-android'                 
 runs:
   using: "composite"
   steps:

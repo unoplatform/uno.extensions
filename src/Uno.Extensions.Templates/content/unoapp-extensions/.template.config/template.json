@@ -367,14 +367,9 @@
       "displayName": "CI Templates",
       "type": "parameter",
       "datatype": "choice",
-      "defaultValue": "default",
+      "defaultValue": "none",
       "description": "Selects which CI platform to support by default",
       "choices": [
-        {
-          "choice": "default",
-          "description": "CI templates disabled",
-          "displayName": "None"
-        },
         {
           "choice": "github",
           "description": "Adds Github Actions templates for CI",
@@ -558,6 +553,25 @@
         ]
       }
     },
+    "ciTargetDotNetVersion": {
+      "type": "generated",
+      "generator": "switch",
+      "replaces": "$ciTargetDotNetVersion$",
+      "parameters": {
+        "evaluator": "C++",
+        "datatype": "string",
+        "cases": [
+          {
+            "condition": "(tfm == 'net6.0')",
+            "value": "6"
+          },
+          {
+            "condition": "(tfm == 'net7.0')",
+            "value": "7"
+          }
+        ]
+      }
+    },
     "mobileTargetFrameworks": {
       "type": "generated",
       "generator": "switch",
@@ -707,12 +721,7 @@
       "type": "bind",
       "binding": "HostIdentifier"
     },
-    "notUseCI": {
-      "type": "computed",
-      "datatype": "bool",
-      "value": "continuousIntegration == 'default'"
-    },
-    "useGithubActions": {
+    "useGitHubActions": {
       "type": "computed",
       "datatype": "bool",
       "value": "continuousIntegration == 'github'"
@@ -1067,30 +1076,19 @@
           ]
         },
         {
-          "condition": "(useAzureDevOps)",
-          "rename": {
-            "build": "azure"
-          },
+          "condition": "(!useGitHubActions)",
           "exclude": [
             "github/**/*"
           ]
         },
         {
-          "condition": "(useGithubActions)",
+          "condition": "(useGitHubActions)",
           "rename": {
             "github": ".github"
           },
           "exclude": [
             "azure-pipelines.yml",
-            "build/**/*"
-          ]
-        },
-        {
-          "condition": "(notUseCI)",
-          "exclude": [
-            "github/**/*",
-            "azure-pipelines.yml",
-            "build/**/*"
+            "azure/**/*"
           ]
         }
       ]
