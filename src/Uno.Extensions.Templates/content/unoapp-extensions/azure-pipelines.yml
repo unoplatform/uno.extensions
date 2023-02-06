@@ -10,50 +10,19 @@ pr:
 - staging
 - releases/*
 
-parameters:
-- name: Wasm
-  type: string
-  default: 'true'
-- name: Windows
-  type: string
-  default: 'true'
-- name: WPF
-  type: string
-  default: 'true'
-- name: Linux
-  type: string
-  default: 'true'
-- name: GTK
-  type: string
-  default: 'true'
-- name: Android
-  type: string
-  default: 'true'
-- name: iOS
-  type: string
-  default: 'true'
-- name: MacCatalyst
-  type: string
-  default: 'true'
-
 variables:
 - name: jobTimeout
-  value: '40'
-
-- name: dotnet_version
-  value: '7.0.102'
+  value: '60'
 
 stages:
   - stage: Build_UNO
 
     jobs:
     - job: Wasm
-      condition:  eq('${{ parameters.Wasm }}', 'true')
       timeoutInMinutes: '${{ variables.jobTimeout }}'
       steps:
         - template: /azure/steps/install-dependencies.yml  
           parameters:
-            dotnet_version: '${{ variables.dotnet_version }}'
             target_platform: 'wasm'
 
         - template: /azure/steps/wasm.yml
@@ -65,12 +34,10 @@ stages:
         vmImage: macOS-latest   
 
     - job: Android
-      condition:  eq('${{ parameters.Android }}', 'true')
       timeoutInMinutes: '${{ variables.jobTimeout }}'
       steps:
         - template: /azure/steps/install-dependencies.yml  
           parameters:
-            dotnet_version: '${{ variables.dotnet_version }}'
             target_platform: 'android'
 
         - template: /azure/steps/android.yml
@@ -83,12 +50,10 @@ stages:
         vmImage: macOS-latest      
 
     - job: iOS
-      condition:  eq('${{ parameters.iOS }}', 'true')
       timeoutInMinutes: '${{ variables.jobTimeout }}'
       steps:
         - template: /azure/steps/install-dependencies.yml  
           parameters:
-            dotnet_version: '${{ variables.dotnet_version }}'
             target_platform: 'ios'
 
         - template: /azure/steps/mobile.yml
@@ -101,12 +66,10 @@ stages:
         vmImage: windows-latest
 
     - job: MacCatalyst
-      condition:  eq('${{ parameters.MacCatalyst }}', 'true')
       timeoutInMinutes: '${{ variables.jobTimeout }}'
       steps:
         - template: /azure/steps/install-dependencies.yml  
           parameters:
-            dotnet_version: '${{ variables.dotnet_version }}'
             target_platform: 'macos'
 
         - template: /azure/steps/mobile.yml
@@ -119,12 +82,10 @@ stages:
         vmImage: macos-latest
 
     - job: Windows
-      condition:  eq('${{ parameters.Windows }}', 'true')
       timeoutInMinutes: '${{ variables.jobTimeout }}'
       steps:
         - template: /azure/steps/install-dependencies.yml  
           parameters:
-            dotnet_version: '${{ variables.dotnet_version }}'
             target_platform: 'uwp'
 
         - template: /azure/steps/windows.yml
@@ -136,12 +97,10 @@ stages:
         vmImage: windows-latest
 
     - job: WPF
-      condition:  eq('${{ parameters.WPF }}', 'true')
       timeoutInMinutes: '${{ variables.jobTimeout }}'
       steps:
         - template: /azure/steps/install-dependencies.yml  
           parameters:
-            dotnet_version: '${{ variables.dotnet_version }}'
             target_platform: 'skiawpf'
 
         - template: /azure/steps/desktop.yml
@@ -153,12 +112,10 @@ stages:
         vmImage: windows-latest
 
     - job: GTK
-      condition:  eq('${{ parameters.GTK }}', 'true')
       timeoutInMinutes: '${{ variables.jobTimeout }}'
       steps:
         - template: /azure/steps/install-dependencies.yml  
           parameters:
-            dotnet_version: '${{ variables.dotnet_version }}'
             target_platform: 'skiagtk_macos'
 
         - template: /azure/steps/desktop.yml
@@ -170,12 +127,10 @@ stages:
         vmImage: macos-latest        
 
     - job: Linux
-      condition:  eq('${{ parameters.Linux }}', 'true')
       timeoutInMinutes: '${{ variables.jobTimeout }}'
       steps:
         - template: /azure/steps/install-dependencies.yml
           parameters:
-            dotnet_version: '${{ variables.dotnet_version }}'
             target_platform: 'linux'
 
         - template: /azure/steps/desktop.yml
@@ -194,63 +149,57 @@ stages:
     # with the appropiate filenames                   #
     ###################################################
 
-    # - job: iOS_Signed
-    #   condition:  eq('${{ parameters.iOS }}', 'true')
-    #   timeoutInMinutes: '${{ variables.jobTimeout }}'
-    #   steps:
-    #     - template: /azure/steps/install-dependencies.yml  
-    #       parameters:
-    #         dotnet_version: '${{ variables.dotnet_version }}'
-    #         target_platform: 'ios'
-    #     - template: /azure/steps/ios.yml
-    #       parameters:
-    #         target_framework: 'net7.0-ios'
-    #         package_id: 'signed_ios'
-    #         project_folder: 'MyExtensionsApp.Mobile'
-    #         project_to_build: 'MyExtensionsApp.Mobile/MyExtensionsApp.Mobile.csproj'
-    #         certificate: 'cert.p12'
-    #         certificate_password: 'contoso'
-    #         provisioning_profile: 'contoso.mobileprovision'
-    #         codesign_provision: 'MyExtensionsApp'
-    #         codesign_key: 'Apple Development: Contoso Contoso (572224A42L)'
-    #   pool:
-    #     vmImage: macOS-latest
+    - job: iOS_Signed
+      timeoutInMinutes: '${{ variables.jobTimeout }}'
+      steps:
+        - template: /azure/steps/install-dependencies.yml  
+          parameters:
+            target_platform: 'ios'
+        - template: /azure/steps/ios.yml
+          parameters:
+            target_framework: 'net7.0-ios'
+            package_id: 'signed_ios'
+            project_folder: 'MyExtensionsApp.Mobile'
+            project_to_build: 'MyExtensionsApp.Mobile/MyExtensionsApp.Mobile.csproj'
+            certificate: 'cert.p12'
+            certificate_password: 'contoso'
+            provisioning_profile: 'contoso.mobileprovision'
+            codesign_provision: 'MyExtensionsApp'
+            codesign_key: 'Apple Development: Contoso Contoso (572224A42L)'
+      pool:
+        vmImage: macOS-latest
 
-    # - job: Android_Signed
-    #   condition:  eq('${{ parameters.Android }}', 'true')    
-    #   timeoutInMinutes: '${{ variables.jobTimeout }}'
-    #   steps:
-    #     - template: /azure/steps/install-dependencies.yml  
-    #       parameters:
-    #         dotnet_version: '${{ variables.dotnet_version }}'
-    #         target_platform: 'android'
-    #     - template: /azure/steps/android.yml
-    #       parameters:
-    #         target_framework: 'net7.0-android'
-    #         sign_package: 'true'
-    #         certificate:  'cert.jks'
-    #         certificate_password: 'contoso'
-    #         certificate_alias: 'contoso'
-    #         package_id: 'signed_android'
-    #         project_folder: 'MyExtensionsApp.Mobile'
-    #         project_to_build: 'MyExtensionsApp.Mobile/MyExtensionsApp.Mobile.csproj'
-    #   pool:
-    #     vmImage: macOS-latest
+    - job: Android_Signed   
+      timeoutInMinutes: '${{ variables.jobTimeout }}'
+      steps:
+        - template: /azure/steps/install-dependencies.yml  
+          parameters:
+            target_platform: 'android'
+        - template: /azure/steps/android.yml
+          parameters:
+            target_framework: 'net7.0-android'
+            sign_package: 'true'
+            certificate:  'cert.jks'
+            certificate_password: 'contoso'
+            certificate_alias: 'contoso'
+            package_id: 'signed_android'
+            project_folder: 'MyExtensionsApp.Mobile'
+            project_to_build: 'MyExtensionsApp.Mobile/MyExtensionsApp.Mobile.csproj'
+      pool:
+        vmImage: macOS-latest
 
-    # - job: Windows_Signed
-    #   condition:  eq('${{ parameters.Windows }}', 'true')    
-    #   timeoutInMinutes: '${{ variables.jobTimeout }}'
-    #   steps:
-    #     - template: /azure/steps/install-dependencies.yml  
-    #       parameters:
-    #         dotnet_version: '${{ variables.dotnet_version }}'
-    #         target_platform: 'uwp'
-    #     - template: /azure/steps/windows.yml
-    #       parameters:
-    #         sign_package: 'true'
-    #         certificate: 'cert.pfx' 
-    #         package_id: 'signed_windows'
-    #         project_folder: 'MyExtensionsApp.Windows'
-    #         project_to_build: 'MyExtensionsApp.Windows/MyExtensionsApp.Windows.csproj'
-    #   pool:
-    #     vmImage: windows-latest
+    - job: Windows_Signed
+      timeoutInMinutes: '${{ variables.jobTimeout }}'
+      steps:
+        - template: /azure/steps/install-dependencies.yml  
+          parameters:
+            target_platform: 'uwp'
+        - template: /azure/steps/windows.yml
+          parameters:
+            sign_package: 'true'
+            certificate: 'cert.pfx' 
+            package_id: 'signed_windows'
+            project_folder: 'MyExtensionsApp.Windows'
+            project_to_build: 'MyExtensionsApp.Windows/MyExtensionsApp.Windows.csproj'
+      pool:
+        vmImage: windows-latest

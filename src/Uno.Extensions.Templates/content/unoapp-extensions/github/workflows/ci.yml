@@ -15,7 +15,7 @@ on:
 jobs:
   build_android:
     name: Build Android Unsigned
-    runs-on: windows-latest
+    runs-on: macos-latest
     timeout-minutes: 60
     steps:
       - name: Checkout
@@ -24,13 +24,16 @@ jobs:
          fetch-depth: 0 
       - name: Install Dependencies
         uses: "./.github/workflows/steps/install_dependencies"
+        with:
+          target-platform: 'android'
       
       - name: Build Mobile (Android)
         uses: "./.github/workflows/steps/build_mobile"
         with:
           package-id: "Android"
+          project-folder: 'Demo.Mobile'
           project-to-build: "MyExtensionsApp.Mobile/MyExtensionsApp.Mobile.csproj" 
-          target-framework: "net6.0-android"
+          target-framework: "net7.0-android"
 
   build_ios:
     name: Build iOS
@@ -43,17 +46,20 @@ jobs:
          fetch-depth: 0 
       - name: Install Dependencies
         uses: "./.github/workflows/steps/install_dependencies"
+        with:
+          target-platform: 'ios'
       
       - name: Build Mobile (iOS)
         uses: "./.github/workflows/steps/build_mobile"
         with:
           package-id: "Mobile_iOS"
+          project-folder: 'Demo.Mobile'
           project-to-build: "MyExtensionsApp.Mobile/MyExtensionsApp.Mobile.csproj" 
-          target-framework: "net6.0-ios"
+          target-framework: "net7.0-ios"
 
   build_maccatalyst:
     name: Build MacCatalyst
-    runs-on: windows-latest
+    runs-on: macos-latest
     timeout-minutes: 60
     steps:
       - name: Checkout
@@ -62,17 +68,20 @@ jobs:
          fetch-depth: 0 
       - name: Install Dependencies
         uses: "./.github/workflows/steps/install_dependencies"
+        with:
+          target-platform: 'macos'
       
       - name: Build Mobile (MacCatalyst)
         uses: "./.github/workflows/steps/build_mobile"
         with:
           package-id: "Mobile_MacCatalyst"
+          project-folder: 'Demo.Mobile'
           project-to-build: "MyExtensionsApp.Mobile/MyExtensionsApp.Mobile.csproj" 
-          target-framework: "net6.0-maccatalyst"
+          target-framework: "net7.0-maccatalyst"
 
   build_wasm:
     name: Build Wasm
-    runs-on: windows-latest
+    runs-on: macos-latest
     timeout-minutes: 60
     steps:
       - name: Checkout
@@ -81,11 +90,14 @@ jobs:
          fetch-depth: 0 
       - name: Install Dependencies
         uses: "./.github/workflows/steps/install_dependencies"
+        with:
+          target-platform: 'wasm'
       
       - name: Build Wasm
         uses: "./.github/workflows/steps/build_wasm"
         with:
           package-id: "Wasm"
+          project-folder: 'Demo.Wasm'
           project-to-build: "MyExtensionsApp.Wasm/MyExtensionsApp.Wasm.csproj" 
 
   build_windows_unsigned:
@@ -99,6 +111,8 @@ jobs:
          fetch-depth: 0 
       - name: Install Dependencies
         uses: "./.github/workflows/steps/install_dependencies"
+        with:
+          target-platform: 'uwp'
       
       - name: Build and Publish Windows(Unsigned)
         uses: "./.github/workflows/steps/build_windows"
@@ -109,7 +123,7 @@ jobs:
 
   build_linux:
     name: Build Linux
-    runs-on: windows-latest
+    runs-on: macos-latest
     timeout-minutes: 60
     steps:
       - name: Checkout
@@ -118,11 +132,14 @@ jobs:
          fetch-depth: 0 
       - name: Install Dependencies
         uses: "./.github/workflows/steps/install_dependencies"
+        with:
+          target-platform: 'linux'
       
       - name: Build Linux
         uses: "./.github/workflows/steps/build_desktop"
         with:
           package-id: "Linux"
+          project-folder: 'Demo.Skia.Linux.FrameBuffer'
           project-to-build: "MyExtensionsApp.Skia.Linux.FrameBuffer/MyExtensionsApp.Skia.Linux.FrameBuffer.csproj"  
 
   build_wpf:
@@ -136,16 +153,19 @@ jobs:
          fetch-depth: 0 
       - name: Install Dependencies
         uses: "./.github/workflows/steps/install_dependencies"
+        with:
+          target-platform: 'skiawpf'
       
       - name: Build WPF
         uses: "./.github/workflows/steps/build_desktop"
         with:
           package-id: "WPF"
+          project-folder: 'Demo.Skia.WPF'
           project-to-build: "MyExtensionsApp.Skia.WPF/MyExtensionsApp.Skia.WPF.csproj"  
 
   build_gtk:
     name: Build Gtk
-    runs-on: windows-latest
+    runs-on: macos-latest
     timeout-minutes: 60
     steps:
       - name: Checkout
@@ -155,12 +175,13 @@ jobs:
       - name: Install Dependencies
         uses: "./.github/workflows/steps/install_dependencies"
         with:
-          install-gtk: 'true'
+          target-platform: 'skiagtk_macos'
               
       - name: Build GTK
         uses: "./.github/workflows/steps/build_desktop"
         with:
           package-id: "GTK"
+          project-folder: 'Demo.Skia.Gtk'
           project-to-build: "MyExtensionsApp.Skia.Gtk/MyExtensionsApp.Skia.Gtk.csproj"
 
     ###################################################
@@ -170,68 +191,73 @@ jobs:
     # down below by your new secret variables         #
     ###################################################
 
-  # build_android_signed:
-  #   name: Build and Sign Android
-  #   runs-on: windows-latest
-  #   timeout-minutes: 60
-  #   steps:
-  #     - name: Checkout
-  #       uses: actions/checkout@v3
-  #       with:
-  #         fetch-depth: 0 
-  #     - name: Install Dependencies
-  #       uses: "./.github/workflows/steps/install_dependencies"
+  build_android_signed:
+    name: Build and Sign Android
+    runs-on: macos-latest
+    timeout-minutes: 60
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0 
+      - name: Install Dependencies
+        uses: "./.github/workflows/steps/install_dependencies"
+        with:
+          target-platform: 'android'
       
-  #     - name: Build and Sign Mobile (Android)
-  #       uses: "./.github/workflows/steps/build_android"
-  #       with:
-  #         sign-package: 'true'
-  #         package-id: "signed_android"
-  #         certificate:  "${{ secrets.ANDROID_BASE64_JKS_CERTIFICATE }}"
-  #         certificate-password:  "${{ secrets.ANDROID_JKS_CERTIFICATE_PASSWORD }}"
-  #         certificate-alias:  "${{ secrets.ANDROID_JKS_CERTIFICATE_ALIAS }}"
-  #         project-to-build: "MyExtensionsApp.Mobile/MyExtensionsApp.Mobile.csproj" 
+      - name: Build and Sign Mobile (Android)
+        uses: "./.github/workflows/steps/build_android"
+        with:
+          sign-package: 'true'
+          package-id: "signed_android"
+          certificate:  ""          #${{ secrets.ANDROID_BASE64_JKS_CERTIFICATE }}
+          certificate-password:  "" #${{ secrets.ANDROID_JKS_CERTIFICATE_PASSWORD }}
+          certificate-alias:  ""    #${{ secrets.ANDROID_JKS_CERTIFICATE_ALIAS }}
+          project-folder: 'Demo.Mobile'
+          project-to-build: "MyExtensionsApp.Mobile/MyExtensionsApp.Mobile.csproj" 
 
-  # build_windows_signed:
-  #   name: Build and Sign Windows
-  #   runs-on: windows-latest
-  #   timeout-minutes: 60
-  #   steps:
-  #     - name: Checkout
-  #       uses: actions/checkout@v3
-  #       with:
-  #         fetch-depth: 0 
-  #     - name: Install Dependencies
-  #       uses: "./.github/workflows/steps/install_dependencies"
+  build_windows_signed:
+    name: Build and Sign Windows
+    runs-on: windows-latest
+    timeout-minutes: 60
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0 
+      - name: Install Dependencies
+        uses: "./.github/workflows/steps/install_dependencies"
+        with:
+          target-platform: 'uwp'
             
-  #     - name: Build and Publish Windows(Signed)
-  #       uses: "./.github/workflows/steps/build_windows"
-  #       with:
-  #         package-id: "signed_windows"
-  #         certificate: "${{ secrets.WINDOWS_BASE64_PFX_CERTIFICATE }}"
-  #         project-to-build: "MyExtensionsApp.Windows/MyExtensionsApp.Windows.csproj"  
-  #         project-folder: "MyExtensionsApp.Windows"
+      - name: Build and Publish Windows(Signed)
+        uses: "./.github/workflows/steps/build_windows"
+        with:
+          package-id: "signed_windows"
+          certificate: ""       #${{ secrets.WINDOWS_BASE64_PFX_CERTIFICATE }}
+          project-to-build: "MyExtensionsApp.Windows/MyExtensionsApp.Windows.csproj"  
+          project-folder: "MyExtensionsApp.Windows"
 
-  # build_ios_signed:
-  #   name: Build and Sign iOS
-  #   runs-on: macos-latest
-  #   timeout-minutes: 60
-  #   steps:
-  #     - name: Checkout
-  #       uses: actions/checkout@v3
-  #       with:
-  #         fetch-depth: 0 
-  #     - name: Install Dependencies
-  #       uses: "./.github/workflows/steps/install_dependencies"     
-  #       with:
-  #         install-windowsSDK: 'false'
+  build_ios_signed:
+    name: Build and Sign iOS
+    runs-on: macos-latest
+    timeout-minutes: 60
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0 
+      - name: Install Dependencies
+        uses: "./.github/workflows/steps/install_dependencies"     
+        with:
+          target-platform: 'ios'
       
-  #     - name: Build Mobile (iOS)
-  #       uses: "./.github/workflows/steps/build_ios"
-  #       with:
-  #         package-id: "signed_ios"
-  #         certificate: "${{ secrets.BASE64_P12_CERTIFICATE }}"
-  #         certificate-password: "${{ secrets.BASE64_P12_PASSWORD }}"
-  #         provisioning-profile: "${{ secrets.BASE64_PROV_PROFILE }}"
-  #         project-folder: 'MyExtensionsApp.Mobile'
-  #         project-to-build: "MyExtensionsApp.Mobile/MyExtensionsApp.Mobile.csproj" 
+      - name: Build Mobile (iOS)
+        uses: "./.github/workflows/steps/build_ios"
+        with:
+          package-id: "signed_ios"
+          certificate: ""           #${{ secrets.BASE64_P12_CERTIFICATE }}
+          certificate-password: ""  #${{ secrets.BASE64_P12_PASSWORD }}
+          provisioning-profile: ""  #${{ secrets.BASE64_PROV_PROFILE }}
+          project-folder: 'MyExtensionsApp.Mobile'
+          project-to-build: "MyExtensionsApp.Mobile/MyExtensionsApp.Mobile.csproj" 

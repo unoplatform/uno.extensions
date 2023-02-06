@@ -18,6 +18,10 @@ inputs:
     description: 'Number of days to keep the build artifacts'
     required: false
     default: '90'
+  bundle-identifier: 
+     description: ""
+     required: false
+     default: ''   
   certificate: 
      description: "Apple .p12 Base64 Certificate for signing final .ipa package."
      required: true    
@@ -46,10 +50,29 @@ inputs:
      description: "If true, compilation artifacts will be published and put under Job Summary section"
      required: false
      default: 'true' 
-
+  target-framework:
+     description: ''
+     required: false
+     default: 'net7.0-ios'    
 runs:
   using: "composite"
   steps:
+    - name: Verify required parameters
+      shell: pwsh
+      run: |
+            $errors = ''
+            if ('' -eq '${{ inputs.project-to-build }}') { $errors = $errors + '[project-to-build] is not valid.' + "`r`n"  }
+            if ('' -eq '${{ inputs.certificate }}') { $errors = $errors +'[certificate] is not valid. Please make sure the name of the .p12 certificate is correct and it exists in secure files' + "`r`n"  }
+            if ('' -eq '${{ inputs.certificate-password }}') { $errors = $errors +'[certificate-password] is not valid. Please make sure you are using the correct .p12 certificate password' + "`r`n"  }
+            if ('' -eq '${{ inputs.codesign-key }}') { $errors = $errors +'[codesign-key] is not valid. Please make sure the name of the name of the distribution certificate is correct. E.g. Apple Development: Contoso Contoso (752234A22L)' + "`r`n"  }
+            if ('' -eq '${{ inputs.codesign-provision }}') { $errors = $errors +'[codesign-provision] is not valid. Please make sure the provisioning profile name is correct. This is the name you entered in the Apple Developer portal when creating your provisioning profile' + "`r`n"  }
+            if ('' -eq '${{ inputs.provisioning-profile }}') { $errors = $errors +'[provisioning-profile] is not valid. Please make sure the .mobileprovision file is correct and it exists in secure files' + "`r`n"  }
+            
+            if (-not ([string]::IsNullOrEmpty($errors))){
+                $errors
+                throw "Some required parameters are missing"
+            }
+
     - name: Setup GitVersion
       uses: gittools/actions/gitversion/setup@v0.9.9
       with:
@@ -65,7 +88,7 @@ runs:
     #############################################
     #                 IMPORTANT                 #
     #############################################
-    #Uncomment this step if you see an error indicating the build its expecting a different version of XCode, update the correct number in the lines 73 and 74 and try again
+    #Uncomment this step if you see an error indicating the build its expecting a different version of XCode, update the correct number in the lines 93 and 94 and try again
     # - name: Set XCode Version
     #   if: runner.os == 'macOS'
     #   shell: bash
@@ -102,24 +125,97 @@ runs:
           echo -n "apply provisioning profile"
           mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
           cp $PP_PATH ~/Library/MobileDevice/Provisioning\ Profiles
+
+    - name: Find the Info.plist file and validate BundleID
+      shell: pwsh
+      run: |
+          $bundleid = ${{ inputs.bundle-identifier }}
           
+          Write-Host "Finding Package Plist (ie Info.plist). Set ios_plist_filename parameter to override"
+          $manifest = (Get-ChildItem -Filter "Info.plist" -Path "$(System.DefaultWorkingDirectory)"  -Recurse | Select-Object -First 1 ).FullName
+          Write-Host "Found at $manifest"
+          Write-Host "$manifest"     
+          
+          if (-not ([string]::IsNullOrEmpty($manifest))){
+            if (([string]::IsNullOrEmpty('${{ inputs.bundle-identifier }}'))){
+              #Extract BundleID from the provided provisioning profile
+              Write-Host "Loading content"
+              $content = Get-Content $(provision_profile_file.secureFilePath) -Raw
+              Write-Host "Content loaded"
+              $pattern = '<key>.*<\/key>\s*<string>.*<\/string>'
+              Write-Host "Pattern: $pattern"
+              $valuepattern = '<string>(.*)<\/string>'
+              Write-Host "Value Pattern: $valuepattern"
+              $matches = $content | Select-String $pattern -AllMatches
+              Write-Host "Matches: $matches.Matches"
+              $idkvp = ($matches.Matches | Where-Object {$_.Value.contains('application-identifier')}).Value
+              Write-Host "ID key value pair: $idkvp"
+              $idmatch = $idkvp | Select-String $valuepattern
+              Write-Host "ID match: $idmatch"
+              $id = $idmatch.Matches[0].Groups[1].Value
+              Write-Host "ID: $id"
+              $teamkvp = ($matches.Matches | Where-Object {$_.Value.contains('com.apple.developer.team-identifier')}).Value
+              Write-Host "Team key value pair: $teamkvp"
+              $teammatch = $teamkvp | Select-String $valuepattern
+              Write-Host "Team match: $teammatch"
+              $teamid = $teammatch.Matches[0].Groups[1].Value
+              Write-Host "Team id: $teamid"
+              $bundleid = $id.Replace($teamid + ".","")
+              Write-Host "Bundle id : $bundleid"
+              Write-Host "Extracted BundleId: $bundleid"
+            }  
+          }else{
+            throw "Info.plist was not found. Please check this file is included in your iOS project and try again"
+          }
+          
+          #Add BundleId to Info.plist if it does not exist
+          $SEL = Select-String -Path $manifest -Pattern "<key>CFBundleIdentifier</key>"
+          if ($SEL -ne $null)
+          {
+              Write-Host "Bundle ID already found in Info.plist"
+          }
+          else
+          {
+            if (-not ([string]::IsNullOrEmpty($bundleid))){
+                Write-Host "Updating BundleID"
+                $filecontent = Get-Content -Path $manifest -Raw
+                $filecontent -replace "</dict>","
+                <key>CFBundleIdentifier</key>
+                <string>$bundleid</string>
+            </dict>"| Set-Content -Path $manifest
+                Get-Content $manifest -Raw
+            }
+          }
+          
+          #Replace .csproj default ApplicationId by valid BundleId if it is not in there yet
+          $SEL = Select-String -Path ${{ inputs.project-to-build }} -Pattern "<ApplicationId>com.companyname.demo</ApplicationId>"
+          if ($SEL -ne $null)
+          {
+            if (-not ([string]::IsNullOrEmpty($bundleid))){
+                Write-Host "Updating ApplicationId in ${{ inputs.project-to-build }}"
+                $filecontent = Get-Content -Path ${{ inputs.project-to-build }} -Raw
+                $filecontent -replace "<ApplicationId>com.companyname.demo</ApplicationId>","<ApplicationId>$bundleid</ApplicationId>"| Set-Content -Path ${{ inputs.project-to-build }}
+                Get-Content ${{ inputs.project-to-build }} -Raw
+            }
+          }
+
     # Create the app package by building and packaging the project
     - name: Build and create package
       shell: pwsh
       run: |
-        dotnet publish  -c Release -p:RuntimeIdentifier='ios-arm64' -p:CodesignProvision='${{ inputs.codesign-provision }}' -p:CodesignKey='${{ inputs.codesign-key }}' -p:TargetFramework=net6.0-ios /p:ArchiveOnBuild=true  -o ${{ inputs.project-folder }}\bin\Release${{ inputs.package-id }}\ ${{ inputs.project-to-build }} 
+        dotnet publish  -c Release -p:RuntimeIdentifier='ios-arm64' -p:CodesignProvision='${{ inputs.codesign-provision }}' -p:CodesignKey='${{ inputs.codesign-key }}' -p:TargetFramework=${{ inputs.target-framework }} /p:ArchiveOnBuild=true  -o ${{ inputs.project-folder }}\bin\Release ${{ inputs.project-to-build }} 
 
-        $finalPackageFolder = "artifacts${{ inputs.package-id }}"
+        $finalPackageFolder = "artifacts"
         Write-Host "Creating package folder: $finalPackageFolder"
         New-Item -ItemType Directory -Force -Path $finalPackageFolder
 
         if ('true' -eq '${{ inputs.publish-artifacts }}') {
-          Copy-Item -Path '${{ inputs.project-folder }}\bin\Release${{ inputs.package-id }}\*' -Destination "artifacts${{ inputs.package-id }}" -recurse -Force  
+          Copy-Item -Path '${{ inputs.project-folder }}\bin\Release\*' -Destination "artifacts" -recurse -Force  
         }
 
     - name: Upload Artifacts
       uses: actions/upload-artifact@v2
       with:
         name: "${{ inputs.package-id }}_${{ steps.gitversion.outputs.assemblySemVer }}" 
-        path: artifacts${{ inputs.package-id }}
+        path: artifacts
         retention-days: ${{ inputs.artifact-retention-policy }}

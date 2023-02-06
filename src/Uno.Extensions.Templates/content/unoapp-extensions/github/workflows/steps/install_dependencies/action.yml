@@ -2,114 +2,77 @@ name: Install Dependencies
 description: ""
 
 inputs:
-  install-windowsSDK:
-    description: 'If true WindowsSDK will be installed'
-    required: false
-    default: 'true'
-  install-mobileWorkloads:
+  target-platform:
+    description: 'The platform to install dependencies for. #See available values at https://platform.uno/docs/articles/external/uno.check/doc/using-uno-check.html'
+    required: true
+    default: ''
+  dotnet-version:
     description: 'If true mobile workloads for iOS, Android, MacCatallyst will be installed'
     required: false
-    default: 'true'
-  install-gtk:
+    default: '7.0.102'
+  unocheck-manifest:
     description: 'If true WindowsSDK will be installed'
     required: false
-    default: 'false'    
+    default: 'https://raw.githubusercontent.com/unoplatform/uno.check/main/manifests/uno.ui.manifest.json'    
 
 runs:
   using: "composite"
   steps:
-    - name: Setup .NET 6
+    - name: Setup DotNET ${{ inputs.dotnet-version }}
       uses: actions/setup-dotnet@v2
       with:
-        dotnet-version: '6.0.404'
+        dotnet-version: '${{ inputs.dotnet-version }}'
 
-    # Install Windows SDK
-    - name: Install Windows SDK 1903
+    # Install GTK MacOS
+    - name: Install GTK Workloads
+      if: ${{ inputs.target-platform == 'skiagtk_macos' }}
+      shell: bash
+      run: |
+          /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+          echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> ~/.zprofile
+          brew install gtk+
+          dotnet tool install -g uno.check
+          ~/.dotnet/tools/uno-check --ci --non-interactive --fix --target ios --target android --target macos --manifest ${{ inputs.unocheck-manifest }}
+
+    # Install GTK Windows
+    - name: Install GTK Workloads
+      if: ${{ inputs.target-platform == 'skiagtk_win' }}
       shell: pwsh
       run: |
-        if ('true' -eq '${{ inputs.install-windowsSDK }}') {
-          $Folder = 'C:\Program Files (x86)\Windows Kits\10\'
-          Write-Host "Checking if Windows SDK is installed"
-          if (Test-Path -Path $Folder) {
-              Write-Host "SDK already installed"
-          } else {
-              Write-Host "Installing Windows SDK 1903 (10.0.18362.1)..." -ForegroundColor Cyan
-
-              Write-Host "Downloading..."
-              $exePath = "$env:temp\wdksetup.exe"
-              (New-Object Net.WebClient).DownloadFile('https://go.microsoft.com/fwlink/?linkid=2083338', $exePath)
-
-              Write-Host "Installing..."
-              cmd /c start /wait $exePath /features + /quiet
-
-              Remove-Item $exePath
-              Write-Host "Installed" -ForegroundColor Green
-
-              Start-Sleep -s 15
-          }
-        }
-
-    # Install .net6.0 Mobile Workloads
-    - name: Install Mobile Workloads
-      shell: pwsh
-      run: |
-        if ('true' -eq '${{ inputs.install-mobileWorkloads }}') {
-          $availableWorkloads = dotnet workload list| Format-Table -HideTableHeaders | Out-String
-          Write-Host "Installed Workloads: $availableWorkloads" 
-          $isAndroidInstalled = $availableWorkloads.Contains("android")
-          $isiOSInstalled = $availableWorkloads.Contains("ios")
-          $isMacCatalyst = $availableWorkloads.Contains("maccatalyst")
-
-          if(-Not $isAndroidInstalled){
-            Write-Host  "Installing Android Workload"
-            dotnet workload install android
-          }
-
-          if(-Not $isiOSInstalled){
-            Write-Host "Installing iOS workload"
-            dotnet workload install ios
-          }
-
-          if(-Not $isMacCatalyst){
-            Write-Host "Installing maccatalyst workload"
-            dotnet workload install maccatalyst
-          } 
-
-          Start-Sleep -s 15    
-        }
-      
-    # Install GTK4
-    - name: Install GTK4
-      continue-on-error: true
-      shell: pwsh
-      run: |
-        if ('true' -eq '${{ inputs.install-gtk }}') {
-          $Folder = 'C:\gtk-build\gtk\x64\release\bin\'
-          Write-Host "Checking if GTK4 is installed"
-
-          if (Test-Path -Path $Folder) {
-              Write-Host "SDK already installed"
-          } else {
-              Write-Host "Installing GTK4"
-              Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
-              choco install git
-              choco install msys2
-              choco install visualstudio2022-workload-vctools
-
-              Write-Host "Installing Python"
-              choco install python
-              Write-Host "Python Installation Finished"
-
-              python -m pip install --user pipx
-              python -m pipx ensurepath
-              pipx install gvsbuild
+           Write-Host "Installing GTK4"
+           Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+           choco install git
+           choco install msys2
+           choco install visualstudio2022-workload-vctools
               
-              gvsbuild build gtk4
+           Write-Host "Installing Python"
+           choco install python
+           Write-Host "Python Installation Finished"
 
-              Write-Host "Adding GTK4 to Path"
-              $env:Path = "C:\gtk-build\gtk\x64\release\bin;" + $env:Path
-              Write-Host "GTK4 Installation Finished"
-              
-              Start-Sleep -s 15
-          }
-        }
+           python -m pip install --user pipx
+           python -m pipx ensurepath
+           pipx install gvsbuild
+           #build GTK
+           gvsbuild build gtk4
+
+           Write-Host "Adding GTK4 to Path"
+           $env:Path = "C:\gtk-build\gtk\x64\release\bin;" + $env:Path
+           Write-Host "GTK4 Installation Finished"
+
+           dotnet tool install -g uno.check
+           uno-check --ci --non-interactive --fix --target ios --target android --target macos --manifest ${{ inputs.unocheck-manifest }}
+
+    # Install Linux
+    - name: Install Linux Workloads
+      if: ${{ inputs.target-platform == 'linux' }}
+      shell: bash
+      run: |
+           dotnet tool install -g uno.check
+           ~/.dotnet/tools/uno-check --ci --non-interactive --fix --target ios --target android --target macos --manifest ${{ inputs.unocheck-manifest }}
+
+    - name: Install ${{ inputs.target-platform }} Workloads
+      if: ${{ inputs.target-platform != 'linux' && !contains( inputs.target-platform, 'skiagtk')}}
+      shell: pwsh
+      run: |
+           dotnet tool install -g uno.check
+           uno-check --ci --non-interactive --fix --target ${{ inputs.target-platform }} --manifest ${{ inputs.unocheck-manifest }}

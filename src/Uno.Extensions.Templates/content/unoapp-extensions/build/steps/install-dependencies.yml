@@ -6,7 +6,7 @@ parameters:
   default: ''  
 - name: dotnet_version
   type: string
-  default: '7.0.102'
+  default: '7.0.x'
 - name: unocheck_manifest
   type: string
   default: 'https://raw.githubusercontent.com/unoplatform/uno.check/main/manifests/uno.ui.manifest.json'

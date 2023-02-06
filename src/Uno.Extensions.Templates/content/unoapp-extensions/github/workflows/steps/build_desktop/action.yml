@@ -10,6 +10,10 @@ inputs:
     description: 'Relative path to .csproj file'
     required: true
     default: ''
+  project-folder:
+    description: 'Project folder name'
+    required: false
+    default: ''     
   project-platform:
     description: 'Platform to build'
     required: false
@@ -26,6 +30,18 @@ inputs:
 runs:
   using: "composite"
   steps:
+    - name: Verify required parameters
+      shell: pwsh
+      run: |
+            $errors = ''
+            if ('' -eq '${{ inputs.project-to-build }}') { $errors = $errors + '[project-to-build] is not valid.' + "`r`n"  }
+            if ('' -eq '${{ inputs.project-platform }}') { $errors = $errors + '[project-platform] is not valid' + "`r`n"  }
+            
+            if (-not ([string]::IsNullOrEmpty($errors))){
+                $errors
+                throw "Some required parameters are missing"
+            }
+
     - name: Setup GitVersion
       uses: gittools/actions/gitversion/setup@v0.9.9
       with:
@@ -44,19 +60,19 @@ runs:
       run: |
         Write-Host  ""
         Write-Host "Building ${{ inputs.package-id }}"
-        dotnet build  -c Release -p:Platform=${{ inputs.project-platform }}  -o .\bin\Release${{ inputs.package-id }}\ ${{ inputs.project-to-build }}
+        dotnet build  -c Release -p:Platform=${{ inputs.project-platform }}  -o ${{ inputs.project-folder }}\bin\Release ${{ inputs.project-to-build }}
 
-        $finalPackageFolder = ".\artifacts${{ inputs.package-id }}"
+        $finalPackageFolder = "artifacts"
         Write-Host "Creating package folder: $finalPackageFolder"
         New-Item -ItemType Directory -Force -Path $finalPackageFolder
 
         if ('true' -eq '${{ inputs.publish-artifacts }}') {
-          Copy-Item -Path '.\bin\Release${{ inputs.package-id }}\*' -Destination ".\artifacts${{ inputs.package-id }}" -recurse -Force  
+          Copy-Item -Path '${{ inputs.project-folder }}\bin\Release\*' -Destination "artifacts" -recurse -Force  
         }
 
     - name: Upload Artifacts
       uses: actions/upload-artifact@v2
       with:
         name: "${{ inputs.package-id }}(${{ inputs.project-platform }})_${{ steps.gitversion.outputs.assemblySemVer }}" 
-        path: .\artifacts${{ inputs.package-id }}
+        path: artifacts
         retention-days: ${{ inputs.artifact-retention-policy }}

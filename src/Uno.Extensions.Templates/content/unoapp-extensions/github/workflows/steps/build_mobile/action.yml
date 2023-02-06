@@ -10,14 +10,18 @@ inputs:
     description: 'Relative path to .csproj file'
     required: true
     default: ''
+  project-folder:
+    description: 'csproj folder'
+    required: true
+    default: ''  
   artifact-retention-policy: 
     description: 'Number of days to keep the build artifacts'
     required: false
     default: '90'
   target-framework: 
-    description: 'Target framework (net6.0-android, net6.0-ios, net6.0-maccatalyst)'
+    description: 'Target framework (net7.0-android, net7.0-ios, net7.0-maccatalyst)'
     required: true
-    default: 'net6.0-android'
+    default: 'net7.0-android'
   publish-artifacts: 
      description: "If true, compilation artifacts will be published and put under Job Summary section"
      required: false
@@ -26,6 +30,18 @@ inputs:
 runs:
   using: "composite"
   steps:
+    - name: Verify required parameters
+      shell: pwsh
+      run: |
+            $errors = ''
+            if ('' -eq '${{ inputs.project-to-build }}') { $errors = $errors + '[project-to-build] is not valid.' + "`r`n"  }
+            if ('' -eq '${{ inputs.target-framework }}') { $errors = $errors + '[target-framework] is not valid' + "`r`n"  }
+            
+            if (-not ([string]::IsNullOrEmpty($errors))){
+                $errors
+                throw "Some required parameters are missing"
+            }
+
     - name: Setup GitVersion
       uses: gittools/actions/gitversion/setup@v0.9.9
       with:
@@ -44,19 +60,19 @@ runs:
       run: |
         Write-Host  ""
         Write-Host "Building ${{ inputs.package-id }}"
-        dotnet build  -c Release -p:TargetFramework=${{ inputs.target-framework }}  -o .\bin\Release${{ inputs.package-id }}\ ${{ inputs.project-to-build }}
+        dotnet build  -c Release -p:TargetFramework=${{ inputs.target-framework }}  -o ${{ inputs.project-folder }}\bin\Release ${{ inputs.project-to-build }}
 
-        $finalPackageFolder = ".\artifacts${{ inputs.package-id }}"
+        $finalPackageFolder = "artifacts"
         Write-Host "Creating package folder: $finalPackageFolder"
         New-Item -ItemType Directory -Force -Path $finalPackageFolder
 
         if ('true' -eq '${{ inputs.publish-artifacts }}') {
-          Copy-Item -Path '.\bin\Release${{ inputs.package-id }}\*' -Destination ".\artifacts${{ inputs.package-id }}" -recurse -Force  
+          Copy-Item -Path '${{ inputs.project-folder }}\bin\Release\*' -Destination "artifacts" -recurse -Force  
         }
 
     - name: Upload Artifacts
       uses: actions/upload-artifact@v2
       with:
         name: "${{ inputs.package-id }}_${{ steps.gitversion.outputs.assemblySemVer }}" 
-        path: .\artifacts${{ inputs.package-id }}
+        path: artifacts
         retention-days: ${{ inputs.artifact-retention-policy }}
