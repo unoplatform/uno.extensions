@@ -1,0 +1,27 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+					xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+	<ResourceDictionary.MergedDictionaries>
+		<!-- Load WinUI resources -->
+		<XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls" />
+<!--#if (useMaterial)-->
+		<MaterialTheme xmlns="using:Uno.Material"
+			ColorOverrideSource="ms-appx:///MyExtensionsApp/Styles/ColorPaletteOverride.xaml"
+			FontOverrideSource="ms-appx:///MyExtensionsApp/Styles/MaterialFontsOverride.xaml" />
+<!--#elif (useCupertino)-->
+		<CupertinoColors xmlns="using:Uno.Cupertino" />
+		<CupertinoFonts xmlns="using:Uno.Cupertino" />
+		<CupertinoResources xmlns="using:Uno.Cupertino" />
+<!--#endif-->
+<!--#if (useRecommendedAppTemplate)-->
+
+		<!-- Load Uno.UI.Toolkit resources -->
+		<ToolkitResources xmlns="using:Uno.Toolkit.UI" />
+<!--#endif-->
+<!--#if (useMaterial)-->
+		<MaterialToolkitResources xmlns="using:Uno.Toolkit.UI.Material" />
+<!--#endif-->
+	</ResourceDictionary.MergedDictionaries>
+	<!-- Add resources here -->
+
+</ResourceDictionary>
