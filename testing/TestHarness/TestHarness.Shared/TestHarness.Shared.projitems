@@ -355,6 +355,8 @@
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\TabBar\Sections\Blank1Page.xaml.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\TabBar\Sections\Blank1ViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\TabBar\Sections\Blank2NextPage.xaml.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\TabBar\Sections\Blank2NextViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\TabBar\Sections\Blank2Page.xaml.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\TabBar\Sections\Blank2ViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\TabBar\Sections\Blank3Page.xaml.cs" />
