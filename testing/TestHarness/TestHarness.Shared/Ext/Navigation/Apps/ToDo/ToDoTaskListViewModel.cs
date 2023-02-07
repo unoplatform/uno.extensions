@@ -1,7 +1,16 @@
 ﻿namespace TestHarness.Ext.Navigation.Apps.ToDo;
 
-public record ToDoTaskListViewModel(INavigator Navigator)
+public class ToDoTaskListViewModel
 {
+	public INavigator Navigator { get; }
+	public ToDoTaskList TaskList { get; }
+
+	public ToDoTaskListViewModel(INavigator navigator, ToDoTaskList taskList)
+	{
+		Navigator = navigator;
+		TaskList = taskList;
+	}
+
 	public ToDoTask[] ActiveTasks { get; } = new ToDoTask[]
 			{
 				new ToDoTask("Grocerties "+ Guid.NewGuid().ToString()),
