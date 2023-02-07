@@ -1076,7 +1076,7 @@
           ]
         },
         {
-          "condition": "(!useGitHubActions)",
+          "condition": "(useAzureDevOps)",
           "exclude": [
             "github/**/*"
           ]
