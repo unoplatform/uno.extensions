@@ -97,6 +97,13 @@ runs:
     - name: Build and Create Package
       shell: pwsh
       run:  |
+        $projectFolder = '${{ inputs.project-folder }}'
+        if (('' -eq $projectFolder) -and ("${{ inputs.project-to-build }}".Contains('/') )){
+          Write-Host "Adjusting proj folder"
+          $projectFolder = "${{ inputs.project-to-build }}".SubString(0, "${{ inputs.project-to-build }}".LastIndexOf('/'))
+        }
+        Write-Host "Current proj folder is: $projectFolder"
+
         if ('true' -eq '${{ inputs.sign-package }}') {
           msbuild ${{ inputs.project-to-build }} /p:Configuration=$env:Configuration /p:Platform=$env:Platform /p:UapAppxPackageBuildMode=$env:Appx_Package_Build_Mode /p:AppxBundle=$env:Appx_Bundle /p:PackageCertificateKeyFile=${{ inputs.package-id }}_TemporaryKey.pfx /p:AppxPackageDir="$env:Appx_Package_Dir" /p:GenerateAppxPackageOnBuild=true
         }else{
@@ -108,7 +115,7 @@ runs:
         New-Item -ItemType Directory -Force -Path $finalPackageFolder
 
         if ('true' -eq '${{ inputs.publish-artifacts }}') {
-          Copy-Item -Path '${{ inputs.project-folder }}\bin\Release\*' -Destination ".\artifacts" -recurse -Force  
+          Copy-Item -Path "$projectFolder\bin\Release\*" -Destination ".\artifacts" -recurse -Force  
         } 
       
       env:

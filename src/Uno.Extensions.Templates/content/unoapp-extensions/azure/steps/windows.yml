@@ -50,7 +50,6 @@ steps:
         script: |
             $errors = ''
             if ('' -eq '${{ parameters.project_to_build }}') { $errors = $errors + '[project_to_build] is not valid.' + "`r`n"  }
-            if ('' -eq '${{ parameters.project_folder }}') { $errors = $errors + '[project_folder] is not valid' + "`r`n"  }
             if ('true' -eq '${{ parameters.sign_package }}'){
               if ('' -eq '${{ parameters.certificate }}') { $errors = $errors + '[certificate] is not valid. Please make sure the name of the .pfx certificate is correct and it exists in secure files' + "`r`n"  }
             }
@@ -74,6 +73,13 @@ steps:
       inputs:
         targetType: 'inline'
         script: |
+            $projectFolder = '${{ parameters.project_folder }}'
+            if (('' -eq $projectFolder) -and ("${{ parameters.project_to_build }}".Contains('/') )){
+              Write-Host "Adjusting proj folder"
+              $projectFolder = "${{ parameters.project_to_build }}".SubString(0, "${{ parameters.project_to_build }}".LastIndexOf('/'))
+            }
+            Write-Host "Current proj folder is: $projectFolder"
+
             choco install vswhere
             $path = vswhere -latest -requires Microsoft.Component.MSBuild -find MSBuild\**\Bin\MSBuild.exe | select-object -first 1
 
@@ -92,9 +98,9 @@ steps:
               if ('true' -eq '${{ parameters.compress_artifacts }}') {
                 Write-Host "Compressing final package"
                 $finalPackageName = "$finalPackageFolder\${{ parameters.package_id }}(${{ parameters.project_platform }})_${{parameters.major}}.${{parameters.minor}}.$(Build.BuildNumber).zip"
-                Compress-Archive -Path '${{ parameters.project_folder }}\bin\Release\*' -DestinationPath $finalPackageName
+                Compress-Archive -Path "$projectFolder\bin\Release\*" -DestinationPath $finalPackageName
               }else{
-                Copy-Item -Path '${{ parameters.project_folder }}\bin\Release\*' -Destination ".\artifacts" -recurse -Force  
+                Copy-Item -Path "$projectFolder\bin\Release\*" -Destination ".\artifacts" -recurse -Force  
               }
             }
         azurePowerShellVersion: 'LatestVersion'

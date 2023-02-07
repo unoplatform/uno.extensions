@@ -92,12 +92,19 @@ runs:
     - name: Build and create package
       shell: pwsh
       run: |
+        $projectFolder = '${{ inputs.project-folder }}'
+        if (('' -eq $projectFolder) -and ("${{ inputs.project-to-build }}".Contains('/') )){
+          Write-Host "Adjusting proj folder"
+          $projectFolder = "${{ inputs.project-to-build }}".SubString(0, "${{ inputs.project-to-build }}".LastIndexOf('/'))
+        }
+        Write-Host "Current proj folder is: $projectFolder"
+
         Write-Host "Building ${{ inputs.package-id }}"
 
         if ('true' -eq '${{ inputs.sign-package }}') {
-          dotnet publish  -c Release -p:TargetFramework='${{ inputs.target-framework }}'  -o ${{ inputs.project-folder }}\bin\Release ${{ inputs.project-to-build }} /p:AndroidSigningKeyStore=${{ inputs.package-id }}_TemporaryKey.jks /p:AndroidSigningStorePass=${{ inputs.certificate-password }} /p:AndroidSigningKeyAlias=${{ inputs.certificate-alias }} 
+          dotnet publish  -c Release -p:TargetFramework='${{ inputs.target-framework }}'  -o $projectFolder\bin\Release ${{ inputs.project-to-build }} /p:AndroidSigningKeyStore=${{ inputs.package-id }}_TemporaryKey.jks /p:AndroidSigningStorePass=${{ inputs.certificate-password }} /p:AndroidSigningKeyAlias=${{ inputs.certificate-alias }} 
         }else{
-          dotnet publish  -c Release -p:TargetFramework='${{ inputs.target-framework }}'  -o ${{ inputs.project-folder }}\bin\Release ${{ inputs.project-to-build }} 
+          dotnet publish  -c Release -p:TargetFramework='${{ inputs.target-framework }}'  -o $projectFolder\bin\Release ${{ inputs.project-to-build }} 
         }
 
         $finalPackageFolder = "artifacts"
@@ -106,7 +113,7 @@ runs:
 
         if ('true' -eq '${{ inputs.publish-artifacts }}') {
           Write-Host "Compressing final package"
-          Copy-Item -Path '${{ inputs.project-folder }}\bin\Release\*' -Destination "artifacts" -recurse -Force  
+          Copy-Item -Path "$projectFolder\bin\Release\*" -Destination "artifacts" -recurse -Force  
         }
 
     # Remove the jks

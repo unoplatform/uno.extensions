@@ -54,7 +54,6 @@ steps:
         script: |
             $errors = ''
             if ('' -eq '${{ parameters.project_to_build }}') { $errors = $errors + '[project_to_build] is not valid.' + "`r`n"  }
-            if ('' -eq '${{ parameters.project_folder }}') { $errors = $errors + '[project_folder] is not valid' + "`r`n"  }
             if ('' -eq '${{ parameters.certificate }}') { $errors = $errors +'[certificate] is not valid. Please make sure the name of the .p12 certificate is correct and it exists in secure files' + "`r`n"  }
             if ('' -eq '${{ parameters.certificate_password }}') { $errors = $errors +'[certificate_password] is not valid. Please make sure you are using the correct .p12 certificate password' + "`r`n"  }
             if ('' -eq '${{ parameters.codesign_key }}') { $errors = $errors +'[codesign_key] is not valid. Please make sure the name of the name of the distribution certificate is correct. E.g. Apple Development: Contoso Contoso (752234A22L)' + "`r`n"  }
@@ -188,9 +187,16 @@ steps:
       inputs:
         targetType: 'inline'
         script: |
+            $projectFolder = '${{ parameters.project_folder }}'
+            if (('' -eq $projectFolder) -and ("${{ parameters.project_to_build }}".Contains('/') )){
+              Write-Host "Adjusting proj folder"
+              $projectFolder = "${{ parameters.project_to_build }}".SubString(0, "${{ parameters.project_to_build }}".LastIndexOf('/'))
+            }
+            Write-Host "Current proj folder is: $projectFolder"
+
             Write-Host  ""
             Write-Host "Building ${{ parameters.package_id }}"
-            dotnet publish  -c Release -p:CodesignProvision='${{ parameters.codesign_provision }}' -p:CodesignKey='${{ parameters.codesign_key }}' -p:TargetFramework=${{ parameters.target_framework }}  /p:ArchiveOnBuild=true  -o ${{ parameters.project_folder }}\bin\Release ${{ parameters.project_to_build }} 
+            dotnet publish  -c Release -p:CodesignProvision='${{ parameters.codesign_provision }}' -p:CodesignKey='${{ parameters.codesign_key }}' -p:TargetFramework=${{ parameters.target_framework }}  /p:ArchiveOnBuild=true  -o $projectFolder\bin\Release ${{ parameters.project_to_build }} 
 
             $finalPackageFolder = "artifacts"
             Write-Host "Creating package folder: $finalPackageFolder"
@@ -198,7 +204,7 @@ steps:
 
             if ('true' -eq '${{ parameters.publish_artifacts }}') {
                 $finalPackageName = "$finalPackageFolder\${{ parameters.package_id }}_${{parameters.major}}.${{parameters.minor}}.$(Build.BuildNumber).zip"
-                Compress-Archive -Path '${{ parameters.project_folder }}\bin\Release\*' -DestinationPath $finalPackageName
+                Compress-Archive -Path "$projectFolder\bin\Release\*" -DestinationPath $finalPackageName
             }
         azurePowerShellVersion: 'LatestVersion'
 

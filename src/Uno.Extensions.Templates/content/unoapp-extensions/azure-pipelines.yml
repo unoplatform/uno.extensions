@@ -28,7 +28,6 @@ stages:
         - template: /azure/steps/wasm.yml
           parameters:
             package_id: 'Wasm'
-            project_folder: 'MyExtensionsApp.Wasm'
             project_to_build: 'MyExtensionsApp.Wasm/MyExtensionsApp.Wasm.csproj'
       pool:
         vmImage: macOS-latest   
@@ -43,7 +42,6 @@ stages:
         - template: /azure/steps/android.yml
           parameters:
             package_id: 'Android'
-            project_folder: 'MyExtensionsApp.Mobile'
             project_to_build: 'MyExtensionsApp.Mobile/MyExtensionsApp.Mobile.csproj'
       pool:
         vmImage: macOS-latest      
@@ -58,7 +56,6 @@ stages:
         - template: /azure/steps/mobile.yml
           parameters:
             package_id: 'iOS'
-            project_folder: 'MyExtensionsApp.Mobile'
             project_to_build: 'MyExtensionsApp.Mobile/MyExtensionsApp.Mobile.csproj'
             target_framework: 'net$ciTargetDotNetVersion$.0-ios'
       pool:
@@ -74,7 +71,6 @@ stages:
         - template: /azure/steps/mobile.yml
           parameters:
             package_id: 'MacCatalyst'
-            project_folder: 'MyExtensionsApp.Mobile'
             project_to_build: 'MyExtensionsApp.Mobile/MyExtensionsApp.Mobile.csproj'
             target_framework: 'net$ciTargetDotNetVersion$.0-maccatalyst'
       pool:
@@ -90,7 +86,6 @@ stages:
         - template: /azure/steps/windows.yml
           parameters:
             package_id: 'Windows'
-            project_folder: 'MyExtensionsApp.Windows'
             project_to_build: 'MyExtensionsApp.Windows/MyExtensionsApp.Windows.csproj'
       pool:
         vmImage: windows-latest
@@ -105,7 +100,6 @@ stages:
         - template: /azure/steps/desktop.yml
           parameters:
             package_id: 'WPF'
-            project_folder: 'MyExtensionsApp.Skia.WPF'
             project_to_build: 'MyExtensionsApp.Skia.WPF/MyExtensionsApp.Skia.WPF.csproj'
       pool:
         vmImage: windows-latest
@@ -120,7 +114,6 @@ stages:
         - template: /azure/steps/desktop.yml
           parameters:
             package_id: 'GTK'
-            project_folder: 'MyExtensionsApp.Skia.Gtk'
             project_to_build: 'MyExtensionsApp.Skia.Gtk/MyExtensionsApp.Skia.Gtk.csproj'
       pool:
         vmImage: macos-latest        
@@ -135,7 +128,6 @@ stages:
         - template: /azure/steps/desktop.yml
           parameters:
             package_id: 'Linux'
-            project_folder: 'MyExtensionsApp.Skia.Linux.FrameBuffer'
             project_to_build: 'MyExtensionsApp.Skia.Linux.FrameBuffer/MyExtensionsApp.Skia.Linux.FrameBuffer.csproj'
       pool:
         vmImage: macos-latest            
@@ -157,7 +149,6 @@ stages:
         - template: /azure/steps/ios.yml
           parameters:
             package_id: 'signed_ios'
-            project_folder: 'MyExtensionsApp.Mobile'
             project_to_build: 'MyExtensionsApp.Mobile/MyExtensionsApp.Mobile.csproj'
             certificate: 'cert.p12'
             certificate_password: 'contoso'
@@ -180,7 +171,6 @@ stages:
             certificate_password: 'contoso'
             certificate_alias: 'contoso'
             package_id: 'signed_android'
-            project_folder: 'MyExtensionsApp.Mobile'
             project_to_build: 'MyExtensionsApp.Mobile/MyExtensionsApp.Mobile.csproj'
       pool:
         vmImage: macOS-latest
@@ -196,7 +186,6 @@ stages:
             sign_package: 'true'
             certificate: 'cert.pfx' 
             package_id: 'signed_windows'
-            project_folder: 'MyExtensionsApp.Windows'
             project_to_build: 'MyExtensionsApp.Windows/MyExtensionsApp.Windows.csproj'
       pool:
         vmImage: windows-latest
