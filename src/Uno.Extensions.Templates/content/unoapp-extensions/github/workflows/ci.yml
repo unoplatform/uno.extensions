@@ -56,7 +56,6 @@ jobs:
         timeout-minutes: ${{ fromJSON(env.STEP_TIMEOUT) }}
         uses: "./.github/workflows/steps/build_mobile"
         with:
-          package-id: "Mobile_iOS"
           project-to-build: "MyExtensionsApp.Mobile/MyExtensionsApp.Mobile.csproj" 
           target-framework: "net$ciTargetDotNetVersion$.0-ios"
 
@@ -79,7 +78,6 @@ jobs:
         timeout-minutes: ${{ fromJSON(env.STEP_TIMEOUT) }}
         uses: "./.github/workflows/steps/build_mobile"
         with:
-          package-id: "Mobile_MacCatalyst"
           project-to-build: "MyExtensionsApp.Mobile/MyExtensionsApp.Mobile.csproj" 
           target-framework: "net$ciTargetDotNetVersion$.0-maccatalyst"
 

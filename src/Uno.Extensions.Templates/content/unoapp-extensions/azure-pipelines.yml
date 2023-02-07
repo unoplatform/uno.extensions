@@ -55,7 +55,6 @@ stages:
 
         - template: /azure/steps/mobile.yml
           parameters:
-            package_id: 'iOS'
             project_to_build: 'MyExtensionsApp.Mobile/MyExtensionsApp.Mobile.csproj'
             target_framework: 'net$ciTargetDotNetVersion$.0-ios'
       pool:
@@ -70,7 +69,6 @@ stages:
 
         - template: /azure/steps/mobile.yml
           parameters:
-            package_id: 'MacCatalyst'
             project_to_build: 'MyExtensionsApp.Mobile/MyExtensionsApp.Mobile.csproj'
             target_framework: 'net$ciTargetDotNetVersion$.0-maccatalyst'
       pool:
