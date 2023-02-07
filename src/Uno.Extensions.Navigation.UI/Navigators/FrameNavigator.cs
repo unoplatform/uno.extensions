@@ -97,7 +97,7 @@ public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 			{
 				var mapping = Resolver.FindByPath(this.Route!.Base);
 
-				await InitializeCurrentView(request, this.Route, mapping, true);
+				await InitializeCurrentView(request, this.Route with { Data = request.Route.Data}, mapping, true);
 			}
 			return request.Route;
 		}
