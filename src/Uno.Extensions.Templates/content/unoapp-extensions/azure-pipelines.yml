@@ -18,6 +18,7 @@ stages:
   - stage: Build_UNO
 
     jobs:
+#if (wasm)    
     - job: Wasm
       timeoutInMinutes: '${{ variables.jobTimeout }}'
       steps:
@@ -31,7 +32,9 @@ stages:
             project_to_build: 'MyExtensionsApp.Wasm/MyExtensionsApp.Wasm.csproj'
       pool:
         vmImage: macOS-latest   
+#endif
 
+#if (android) 
     - job: Android
       timeoutInMinutes: '${{ variables.jobTimeout }}'
       steps:
@@ -44,8 +47,35 @@ stages:
             package_id: 'Android'
             project_to_build: 'MyExtensionsApp.Mobile/MyExtensionsApp.Mobile.csproj'
       pool:
-        vmImage: macOS-latest      
+        vmImage: macOS-latest
 
+    ###################################################
+    #                    IMPORTANT                    #
+    # Store certificates and mobile provision files   #
+    # in secure files, then just replace the jks      #
+    # variable down below                             #
+    # with the appropiate filename                    #
+    ###################################################
+
+    - job: Android_Signed   
+      timeoutInMinutes: '${{ variables.jobTimeout }}'
+      steps:
+        - template: /azure/steps/install-dependencies.yml  
+          parameters:
+            target_platform: 'android'
+        - template: /azure/steps/android.yml
+          parameters:
+            sign_package: 'true'
+            certificate:  '' #YOUR_CERT.jks stored in secureFiles
+            certificate_password: 'contoso'
+            certificate_alias: 'contoso'
+            package_id: 'signed_android'
+            project_to_build: 'MyExtensionsApp.Mobile/MyExtensionsApp.Mobile.csproj'
+      pool:
+        vmImage: macOS-latest         
+#endif
+
+#if (ios) 
     - job: iOS
       timeoutInMinutes: '${{ variables.jobTimeout }}'
       steps:
@@ -60,80 +90,10 @@ stages:
       pool:
         vmImage: windows-latest
 
-    - job: MacCatalyst
-      timeoutInMinutes: '${{ variables.jobTimeout }}'
-      steps:
-        - template: /azure/steps/install-dependencies.yml  
-          parameters:
-            target_platform: 'macos'
-
-        - template: /azure/steps/mobile.yml
-          parameters:
-            project_to_build: 'MyExtensionsApp.Mobile/MyExtensionsApp.Mobile.csproj'
-            target_framework: 'net$ciTargetDotNetVersion$.0-maccatalyst'
-      pool:
-        vmImage: macos-latest
-
-    - job: Windows
-      timeoutInMinutes: '${{ variables.jobTimeout }}'
-      steps:
-        - template: /azure/steps/install-dependencies.yml  
-          parameters:
-            target_platform: 'uwp'
-
-        - template: /azure/steps/windows.yml
-          parameters:
-            package_id: 'Windows'
-            project_to_build: 'MyExtensionsApp.Windows/MyExtensionsApp.Windows.csproj'
-      pool:
-        vmImage: windows-latest
-
-    - job: WPF
-      timeoutInMinutes: '${{ variables.jobTimeout }}'
-      steps:
-        - template: /azure/steps/install-dependencies.yml  
-          parameters:
-            target_platform: 'skiawpf'
-
-        - template: /azure/steps/desktop.yml
-          parameters:
-            package_id: 'WPF'
-            project_to_build: 'MyExtensionsApp.Skia.WPF/MyExtensionsApp.Skia.WPF.csproj'
-      pool:
-        vmImage: windows-latest
-
-    - job: GTK
-      timeoutInMinutes: '${{ variables.jobTimeout }}'
-      steps:
-        - template: /azure/steps/install-dependencies.yml  
-          parameters:
-            target_platform: 'skiagtk_macos'
-
-        - template: /azure/steps/desktop.yml
-          parameters:
-            package_id: 'GTK'
-            project_to_build: 'MyExtensionsApp.Skia.Gtk/MyExtensionsApp.Skia.Gtk.csproj'
-      pool:
-        vmImage: macos-latest        
-
-    - job: Linux
-      timeoutInMinutes: '${{ variables.jobTimeout }}'
-      steps:
-        - template: /azure/steps/install-dependencies.yml
-          parameters:
-            target_platform: 'linux'
-
-        - template: /azure/steps/desktop.yml
-          parameters:
-            package_id: 'Linux'
-            project_to_build: 'MyExtensionsApp.Skia.Linux.FrameBuffer/MyExtensionsApp.Skia.Linux.FrameBuffer.csproj'
-      pool:
-        vmImage: macos-latest            
-
     ###################################################
     #                    IMPORTANT                    #
     # Store certificates and mobile provision files   #
-    # in secure files, then just replace the pfx,jks  #
+    # in secure files, then just replace the          #
     # p12 and mobileprovision variables down below    #
     # with the appropiate filenames                   #
     ###################################################
@@ -148,31 +108,53 @@ stages:
           parameters:
             package_id: 'signed_ios'
             project_to_build: 'MyExtensionsApp.Mobile/MyExtensionsApp.Mobile.csproj'
-            certificate: 'cert.p12'
+            certificate: '' #YOUR_CERT.p12 stored in secureFiles
             certificate_password: 'contoso'
-            provisioning_profile: 'contoso.mobileprovision'
+            provisioning_profile: ''  #YOUR_PROV_PROFILE.mobileprovision stored in secureFiles
             codesign_provision: 'MyExtensionsApp'
             codesign_key: 'Apple Development: Contoso Contoso (572224A42L)'
       pool:
-        vmImage: macOS-latest
+        vmImage: macOS-latest        
+#endif
 
-    - job: Android_Signed   
+#if (maccatalyst) 
+    - job: MacCatalyst
       timeoutInMinutes: '${{ variables.jobTimeout }}'
       steps:
         - template: /azure/steps/install-dependencies.yml  
           parameters:
-            target_platform: 'android'
-        - template: /azure/steps/android.yml
-          parameters:
-            sign_package: 'true'
-            certificate:  'cert.jks'
-            certificate_password: 'contoso'
-            certificate_alias: 'contoso'
-            package_id: 'signed_android'
-            project_to_build: 'MyExtensionsApp.Mobile/MyExtensionsApp.Mobile.csproj'
-      pool:
-        vmImage: macOS-latest
+            target_platform: 'macos'
 
+        - template: /azure/steps/mobile.yml
+          parameters:
+            project_to_build: 'MyExtensionsApp.Mobile/MyExtensionsApp.Mobile.csproj'
+            target_framework: 'net$ciTargetDotNetVersion$.0-maccatalyst'
+      pool:
+        vmImage: macos-latest
+#endif
+
+#if (winAppSdk) 
+    - job: Windows
+      timeoutInMinutes: '${{ variables.jobTimeout }}'
+      steps:
+        - template: /azure/steps/install-dependencies.yml  
+          parameters:
+            target_platform: 'uwp'
+
+        - template: /azure/steps/windows.yml
+          parameters:
+            package_id: 'Windows'
+            project_to_build: 'MyExtensionsApp.Windows/MyExtensionsApp.Windows.csproj'
+      pool:
+        vmImage: windows-latest
+
+    ###################################################
+    #                    IMPORTANT                    #
+    # Store certificates and mobile provision files   #
+    # in secure files, then just replace the pfx      #
+    # variable  down below                            #
+    # with the appropiate filename                    #
+    ###################################################
     - job: Windows_Signed
       timeoutInMinutes: '${{ variables.jobTimeout }}'
       steps:
@@ -182,8 +164,57 @@ stages:
         - template: /azure/steps/windows.yml
           parameters:
             sign_package: 'true'
-            certificate: 'cert.pfx' 
+            certificate: '' #YOUR_CERT.pfx stored in secureFiles
             package_id: 'signed_windows'
             project_to_build: 'MyExtensionsApp.Windows/MyExtensionsApp.Windows.csproj'
       pool:
+        vmImage: windows-latest        
+#endif
+
+#if (skiaWpf)
+    - job: WPF
+      timeoutInMinutes: '${{ variables.jobTimeout }}'
+      steps:
+        - template: /azure/steps/install-dependencies.yml  
+          parameters:
+            target_platform: 'skiawpf'
+
+        - template: /azure/steps/desktop.yml
+          parameters:
+            package_id: 'WPF'
+            project_to_build: 'MyExtensionsApp.Skia.WPF/MyExtensionsApp.Skia.WPF.csproj'
+      pool:
         vmImage: windows-latest
+#endif
+
+#if (skiaGtk)
+    - job: GTK
+      timeoutInMinutes: '${{ variables.jobTimeout }}'
+      steps:
+        - template: /azure/steps/install-dependencies.yml  
+          parameters:
+            target_platform: 'skiagtk_macos'
+
+        - template: /azure/steps/desktop.yml
+          parameters:
+            package_id: 'GTK'
+            project_to_build: 'MyExtensionsApp.Skia.Gtk/MyExtensionsApp.Skia.Gtk.csproj'
+      pool:
+        vmImage: macos-latest        
+#endif
+
+#if (skiaLinuxFb)
+    - job: Linux
+      timeoutInMinutes: '${{ variables.jobTimeout }}'
+      steps:
+        - template: /azure/steps/install-dependencies.yml
+          parameters:
+            target_platform: 'linux'
+
+        - template: /azure/steps/desktop.yml
+          parameters:
+            package_id: 'Linux'
+            project_to_build: 'MyExtensionsApp.Skia.Linux.FrameBuffer/MyExtensionsApp.Skia.Linux.FrameBuffer.csproj'
+      pool:
+        vmImage: macos-latest            
+#endif        

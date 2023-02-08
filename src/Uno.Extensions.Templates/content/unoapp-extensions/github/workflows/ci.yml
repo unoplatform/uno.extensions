@@ -15,6 +15,7 @@ env:
   STEP_TIMEOUT: 60
 
 jobs:
+#if (android)
   build_android:
     name: Build Android Unsigned
     runs-on: macos-latest
@@ -35,169 +36,14 @@ jobs:
         uses: "./.github/workflows/steps/build_android"
         with:
           package-id: "Android"
-          project-to-build: "MyExtensionsApp.Mobile/MyExtensionsApp.Mobile.csproj" 
-
-  build_ios:
-    name: Build iOS
-    runs-on: windows-latest
-    steps:
-      - name: Checkout
-        timeout-minutes: ${{ fromJSON(env.STEP_TIMEOUT) }}
-        uses: actions/checkout@v3
-        with:
-         fetch-depth: 0 
-      - name: Install Dependencies
-        timeout-minutes: ${{ fromJSON(env.STEP_TIMEOUT) }}
-        uses: "./.github/workflows/steps/install_dependencies"
-        with:
-          target-platform: 'ios'
-      
-      - name: Build Mobile (iOS)
-        timeout-minutes: ${{ fromJSON(env.STEP_TIMEOUT) }}
-        uses: "./.github/workflows/steps/build_mobile"
-        with:
-          project-to-build: "MyExtensionsApp.Mobile/MyExtensionsApp.Mobile.csproj" 
-          target-framework: "net$ciTargetDotNetVersion$.0-ios"
-
-  build_maccatalyst:
-    name: Build MacCatalyst
-    runs-on: macos-latest
-    steps:
-      - name: Checkout
-        timeout-minutes: ${{ fromJSON(env.STEP_TIMEOUT) }}
-        uses: actions/checkout@v3
-        with:
-         fetch-depth: 0 
-      - name: Install Dependencies
-        timeout-minutes: ${{ fromJSON(env.STEP_TIMEOUT) }}
-        uses: "./.github/workflows/steps/install_dependencies"
-        with:
-          target-platform: 'macos'
-      
-      - name: Build Mobile (MacCatalyst)
-        timeout-minutes: ${{ fromJSON(env.STEP_TIMEOUT) }}
-        uses: "./.github/workflows/steps/build_mobile"
-        with:
-          project-to-build: "MyExtensionsApp.Mobile/MyExtensionsApp.Mobile.csproj" 
-          target-framework: "net$ciTargetDotNetVersion$.0-maccatalyst"
-
-  build_wasm:
-    name: Build Wasm
-    runs-on: macos-latest
-    steps:
-      - name: Checkout
-        timeout-minutes: ${{ fromJSON(env.STEP_TIMEOUT) }}
-        uses: actions/checkout@v3
-        with:
-         fetch-depth: 0 
-      - name: Install Dependencies
-        timeout-minutes: ${{ fromJSON(env.STEP_TIMEOUT) }}
-        uses: "./.github/workflows/steps/install_dependencies"
-        with:
-          target-platform: 'wasm'
-      
-      - name: Build Wasm
-        timeout-minutes: ${{ fromJSON(env.STEP_TIMEOUT) }}
-        uses: "./.github/workflows/steps/build_wasm"
-        with:
-          package-id: "Wasm"
-          project-to-build: "MyExtensionsApp.Wasm/MyExtensionsApp.Wasm.csproj" 
-
-  build_windows_unsigned:
-    name: Build Windows Unsigned
-    runs-on: windows-latest
-    steps:
-      - name: Checkout
-        timeout-minutes: ${{ fromJSON(env.STEP_TIMEOUT) }}
-        uses: actions/checkout@v3
-        with:
-         fetch-depth: 0 
-      - name: Install Dependencies
-        timeout-minutes: ${{ fromJSON(env.STEP_TIMEOUT) }}
-        uses: "./.github/workflows/steps/install_dependencies"
-        with:
-          target-platform: 'uwp'
-      
-      - name: Build and Publish Windows(Unsigned)
-        timeout-minutes: ${{ fromJSON(env.STEP_TIMEOUT) }}
-        uses: "./.github/workflows/steps/build_windows"
-        with:
-          package-id: "WindowsUnsigned"
-          project-to-build: "MyExtensionsApp.Windows/MyExtensionsApp.Windows.csproj"          
-
-  build_linux:
-    name: Build Linux
-    runs-on: macos-latest
-    steps:
-      - name: Checkout
-        timeout-minutes: ${{ fromJSON(env.STEP_TIMEOUT) }}
-        uses: actions/checkout@v3
-        with:
-         fetch-depth: 0 
-      - name: Install Dependencies
-        timeout-minutes: ${{ fromJSON(env.STEP_TIMEOUT) }}
-        uses: "./.github/workflows/steps/install_dependencies"
-        with:
-          target-platform: 'linux'
-      
-      - name: Build Linux
-        timeout-minutes: ${{ fromJSON(env.STEP_TIMEOUT) }}
-        uses: "./.github/workflows/steps/build_desktop"
-        with:
-          package-id: "Linux"
-          project-to-build: "MyExtensionsApp.Skia.Linux.FrameBuffer/MyExtensionsApp.Skia.Linux.FrameBuffer.csproj"  
-
-  build_wpf:
-    name: Build WPF
-    runs-on: windows-latest
-    steps:
-      - name: Checkout
-        timeout-minutes: ${{ fromJSON(env.STEP_TIMEOUT) }}
-        uses: actions/checkout@v3
-        with:
-         fetch-depth: 0 
-      - name: Install Dependencies
-        timeout-minutes: ${{ fromJSON(env.STEP_TIMEOUT) }}
-        uses: "./.github/workflows/steps/install_dependencies"
-        with:
-          target-platform: 'skiawpf'
-      
-      - name: Build WPF
-        timeout-minutes: ${{ fromJSON(env.STEP_TIMEOUT) }}
-        uses: "./.github/workflows/steps/build_desktop"
-        with:
-          package-id: "WPF"
-          project-to-build: "MyExtensionsApp.Skia.WPF/MyExtensionsApp.Skia.WPF.csproj"  
-
-  build_gtk:
-    name: Build Gtk
-    runs-on: macos-latest
-    steps:
-      - name: Checkout
-        timeout-minutes: ${{ fromJSON(env.STEP_TIMEOUT) }}
-        uses: actions/checkout@v3
-        with:
-         fetch-depth: 0 
-      - name: Install Dependencies
-        timeout-minutes: ${{ fromJSON(env.STEP_TIMEOUT) }}
-        uses: "./.github/workflows/steps/install_dependencies"
-        with:
-          target-platform: 'skiagtk_macos'
-              
-      - name: Build GTK
-        timeout-minutes: ${{ fromJSON(env.STEP_TIMEOUT) }}
-        uses: "./.github/workflows/steps/build_desktop"
-        with:
-          package-id: "GTK"
-          project-to-build: "MyExtensionsApp.Skia.Gtk/MyExtensionsApp.Skia.Gtk.csproj"
+          project-to-build: "MyExtensionsApp.Mobile/MyExtensionsApp.Mobile.csproj"
 
     ###################################################
     #                 IMPORTANT                       #
     # Store base64 certificates in your repo secrets  #
     # then just replace the commented base64 variables#
-    # down below by your new secret variables         #
+    # down below with your new secret variables       #
     ###################################################
-
   build_android_signed:
     name: Build and Sign Android
     runs-on: macos-latest
@@ -222,31 +68,38 @@ jobs:
           certificate:  ""          #${{ secrets.ANDROID_BASE64_JKS_CERTIFICATE }}
           certificate-password:  "" #${{ secrets.ANDROID_JKS_CERTIFICATE_PASSWORD }}
           certificate-alias:  ""    #${{ secrets.ANDROID_JKS_CERTIFICATE_ALIAS }}
-          project-to-build: "MyExtensionsApp.Mobile/MyExtensionsApp.Mobile.csproj" 
+          project-to-build: "MyExtensionsApp.Mobile/MyExtensionsApp.Mobile.csproj"           
+#endif
 
-  build_windows_signed:
-    name: Build and Sign Windows
+#if (ios)
+  build_ios:
+    name: Build iOS
     runs-on: windows-latest
     steps:
       - name: Checkout
         timeout-minutes: ${{ fromJSON(env.STEP_TIMEOUT) }}
         uses: actions/checkout@v3
         with:
-          fetch-depth: 0 
+         fetch-depth: 0 
       - name: Install Dependencies
         timeout-minutes: ${{ fromJSON(env.STEP_TIMEOUT) }}
         uses: "./.github/workflows/steps/install_dependencies"
         with:
-          target-platform: 'uwp'
-            
-      - name: Build and Publish Windows(Signed)
+          target-platform: 'ios'
+      
+      - name: Build Mobile (iOS)
         timeout-minutes: ${{ fromJSON(env.STEP_TIMEOUT) }}
-        uses: "./.github/workflows/steps/build_windows"
+        uses: "./.github/workflows/steps/build_mobile"
         with:
-          package-id: "signed_windows"
-          certificate: ""       #${{ secrets.WINDOWS_BASE64_PFX_CERTIFICATE }}
-          project-to-build: "MyExtensionsApp.Windows/MyExtensionsApp.Windows.csproj"  
+          project-to-build: "MyExtensionsApp.Mobile/MyExtensionsApp.Mobile.csproj" 
+          target-framework: "net$ciTargetDotNetVersion$.0-ios"
 
+    ###################################################
+    #                 IMPORTANT                       #
+    # Store base64 certificates in your repo secrets  #
+    # then just replace the commented base64 variables#
+    # down below with your new secret variables       #
+    ###################################################
   build_ios_signed:
     name: Build and Sign iOS
     runs-on: macos-latest
@@ -270,4 +123,178 @@ jobs:
           certificate: ""           #${{ secrets.BASE64_P12_CERTIFICATE }}
           certificate-password: ""  #${{ secrets.BASE64_P12_PASSWORD }}
           provisioning-profile: ""  #${{ secrets.BASE64_PROV_PROFILE }}
+          project-to-build: "MyExtensionsApp.Mobile/MyExtensionsApp.Mobile.csproj"          
+#endif
+
+#if (maccatalyst)
+  build_maccatalyst:
+    name: Build MacCatalyst
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        timeout-minutes: ${{ fromJSON(env.STEP_TIMEOUT) }}
+        uses: actions/checkout@v3
+        with:
+         fetch-depth: 0 
+      - name: Install Dependencies
+        timeout-minutes: ${{ fromJSON(env.STEP_TIMEOUT) }}
+        uses: "./.github/workflows/steps/install_dependencies"
+        with:
+          target-platform: 'macos'
+      
+      - name: Build Mobile (MacCatalyst)
+        timeout-minutes: ${{ fromJSON(env.STEP_TIMEOUT) }}
+        uses: "./.github/workflows/steps/build_mobile"
+        with:
           project-to-build: "MyExtensionsApp.Mobile/MyExtensionsApp.Mobile.csproj" 
+          target-framework: "net$ciTargetDotNetVersion$.0-maccatalyst"
+#endif
+
+#if (wasm)
+  build_wasm:
+    name: Build Wasm
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        timeout-minutes: ${{ fromJSON(env.STEP_TIMEOUT) }}
+        uses: actions/checkout@v3
+        with:
+         fetch-depth: 0 
+      - name: Install Dependencies
+        timeout-minutes: ${{ fromJSON(env.STEP_TIMEOUT) }}
+        uses: "./.github/workflows/steps/install_dependencies"
+        with:
+          target-platform: 'wasm'
+      
+      - name: Build Wasm
+        timeout-minutes: ${{ fromJSON(env.STEP_TIMEOUT) }}
+        uses: "./.github/workflows/steps/build_wasm"
+        with:
+          package-id: "Wasm"
+          project-to-build: "MyExtensionsApp.Wasm/MyExtensionsApp.Wasm.csproj" 
+#endif
+
+#if (winAppSdk)
+  build_windows_unsigned:
+    name: Build Windows Unsigned
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        timeout-minutes: ${{ fromJSON(env.STEP_TIMEOUT) }}
+        uses: actions/checkout@v3
+        with:
+         fetch-depth: 0 
+      - name: Install Dependencies
+        timeout-minutes: ${{ fromJSON(env.STEP_TIMEOUT) }}
+        uses: "./.github/workflows/steps/install_dependencies"
+        with:
+          target-platform: 'uwp'
+      
+      - name: Build and Publish Windows(Unsigned)
+        timeout-minutes: ${{ fromJSON(env.STEP_TIMEOUT) }}
+        uses: "./.github/workflows/steps/build_windows"
+        with:
+          package-id: "WindowsUnsigned"
+          project-to-build: "MyExtensionsApp.Windows/MyExtensionsApp.Windows.csproj"
+
+    ###################################################
+    #                 IMPORTANT                       #
+    # Store base64 certificates in your repo secrets  #
+    # then just replace the commented base64 variables#
+    # down below with your new secret variables       #
+    ###################################################
+  build_windows_signed:
+    name: Build and Sign Windows
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        timeout-minutes: ${{ fromJSON(env.STEP_TIMEOUT) }}
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0 
+      - name: Install Dependencies
+        timeout-minutes: ${{ fromJSON(env.STEP_TIMEOUT) }}
+        uses: "./.github/workflows/steps/install_dependencies"
+        with:
+          target-platform: 'uwp'
+            
+      - name: Build and Publish Windows(Signed)
+        timeout-minutes: ${{ fromJSON(env.STEP_TIMEOUT) }}
+        uses: "./.github/workflows/steps/build_windows"
+        with:
+          package-id: "signed_windows"
+          certificate: ""       #${{ secrets.WINDOWS_BASE64_PFX_CERTIFICATE }}
+          project-to-build: "MyExtensionsApp.Windows/MyExtensionsApp.Windows.csproj"                  
+#endif
+
+#if (skiaLinuxFb)
+  build_linux:
+    name: Build Linux
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        timeout-minutes: ${{ fromJSON(env.STEP_TIMEOUT) }}
+        uses: actions/checkout@v3
+        with:
+         fetch-depth: 0 
+      - name: Install Dependencies
+        timeout-minutes: ${{ fromJSON(env.STEP_TIMEOUT) }}
+        uses: "./.github/workflows/steps/install_dependencies"
+        with:
+          target-platform: 'linux'
+      
+      - name: Build Linux
+        timeout-minutes: ${{ fromJSON(env.STEP_TIMEOUT) }}
+        uses: "./.github/workflows/steps/build_desktop"
+        with:
+          package-id: "Linux"
+          project-to-build: "MyExtensionsApp.Skia.Linux.FrameBuffer/MyExtensionsApp.Skia.Linux.FrameBuffer.csproj"  
+#endif
+
+#if (skiaWpf)
+  build_wpf:
+    name: Build WPF
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        timeout-minutes: ${{ fromJSON(env.STEP_TIMEOUT) }}
+        uses: actions/checkout@v3
+        with:
+         fetch-depth: 0 
+      - name: Install Dependencies
+        timeout-minutes: ${{ fromJSON(env.STEP_TIMEOUT) }}
+        uses: "./.github/workflows/steps/install_dependencies"
+        with:
+          target-platform: 'skiawpf'
+      
+      - name: Build WPF
+        timeout-minutes: ${{ fromJSON(env.STEP_TIMEOUT) }}
+        uses: "./.github/workflows/steps/build_desktop"
+        with:
+          package-id: "WPF"
+          project-to-build: "MyExtensionsApp.Skia.WPF/MyExtensionsApp.Skia.WPF.csproj"  
+#endif
+
+#if (skiaGtk)
+  build_gtk:
+    name: Build Gtk
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        timeout-minutes: ${{ fromJSON(env.STEP_TIMEOUT) }}
+        uses: actions/checkout@v3
+        with:
+         fetch-depth: 0 
+      - name: Install Dependencies
+        timeout-minutes: ${{ fromJSON(env.STEP_TIMEOUT) }}
+        uses: "./.github/workflows/steps/install_dependencies"
+        with:
+          target-platform: 'skiagtk_macos'
+              
+      - name: Build GTK
+        timeout-minutes: ${{ fromJSON(env.STEP_TIMEOUT) }}
+        uses: "./.github/workflows/steps/build_desktop"
+        with:
+          package-id: "GTK"
+          project-to-build: "MyExtensionsApp.Skia.Gtk/MyExtensionsApp.Skia.Gtk.csproj"
+#endif

@@ -51,7 +51,7 @@ steps:
 
             Write-Host  ""
             Write-Host "Building ${{ parameters.package_id }}"
-            dotnet build  -c Release -o ${{ parameters.project_folder }}\bin\Release ${{ parameters.project_to_build }}
+            dotnet build  -c Release -o $projectFolder\bin\Release ${{ parameters.project_to_build }}
 
             $finalPackageFolder = "artifacts"
             Write-Host "Creating package folder: $finalPackageFolder"
