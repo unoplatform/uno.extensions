@@ -12,6 +12,11 @@
 		<!-- Ensures the .xr.xml files are generated in a proper layout folder -->
 		<GenerateLibraryLayout>true</GenerateLibraryLayout>
 	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Uno.Resizetizer" Version="0.32.0-dev.97" />
+	</ItemGroup>
+
 	<!--#if (useBlankAppTemplate)-->
 	<ItemGroup>
 		<!--#if (useCsharpMarkup)-->
@@ -147,6 +152,10 @@
 		<ProjectReference Include="..\MyExtensionsApp.DataContracts\MyExtensionsApp.DataContracts.csproj" />
 	</ItemGroup>
 	<!--#endif-->
+
+	<ItemGroup>
+		<UnoImage Include="Assets\Icons\back.svg" />
+	</ItemGroup>
 
 	<ItemGroup>
 		<!--#if (useConfiguration)-->
