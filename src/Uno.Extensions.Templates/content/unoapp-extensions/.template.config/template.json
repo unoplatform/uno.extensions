@@ -221,19 +221,23 @@
       "defaultValue": "true",
       "description": "Enables the WebAssembly platform support project"
     },
-    "unitTest": {
-      "displayName": "Tests - Unit Tests",
-      "type": "parameter",
-      "datatype": "bool",
-      "defaultValue": "true",
-      "description": "Includes the Unit test project"
-    },
     "tests": {
-      "displayName": "Tests - UI Tests",
+      "displayName": "Tests",
       "type": "parameter",
-      "datatype": "bool",
-      "defaultValue": "true",
-      "description": "Includes the UI test project"
+      "datatype": "choice",
+      "allowMultipleValues": true,
+      "choices": [
+        {
+          "choice": "unit",
+          "description": "Includes the Unit test project",
+          "displayName": "Unit Tests"
+        },
+        {
+          "choice": "ui",
+          "description": "Includes the UI test project",
+          "displayName": "UI Tests"
+        }
+      ]
     },
     "server": {
       "displayName": "Server - API",
@@ -389,7 +393,7 @@
     "useTestSolutionFolder": {
       "type": "computed",
       "datatype": "bool",
-      "value": "preset == 'recommended' && (tests || unitTest)"
+      "value": "preset == 'recommended' && (tests == 'ui' || tests == 'unit')"
     },
     "useCsharpMarkup": {
       "type": "computed",
@@ -459,12 +463,12 @@
     "useUnitTests": {
       "type": "computed",
       "dataType": "bool",
-      "value": "(preset == 'recommended' && unitTests)"
+      "value": "(preset == 'recommended' &&  tests == 'unit)"
     },
     "useUITests": {
       "type": "computed",
       "dataType": "bool",
-      "value": "(preset == 'recommended' && tests)"
+      "value": "(preset == 'recommended' && tests == 'ui')"
     },
     "useDependencyInjection": {
       "type": "computed",
@@ -701,11 +705,11 @@
       "path": "MyExtensionsApp.DataContracts\\MyExtensionsApp.DataContracts.csproj"
     },
     {
-      "condition": "unitTest && useRecommendedAppTemplate",
+      "condition": "useUnitTests",
       "path": "MyExtensionsApp.Tests\\MyExtensionsApp.Tests.csproj"
     },
     {
-      "condition": "tests && useRecommendedAppTemplate",
+      "condition": "useUITests",
       "path": "MyExtensionsApp.UITests\\MyExtensionsApp.UITests.csproj"
     },
     {
@@ -894,13 +898,13 @@
           ]
         },
         {
-          "condition": "(!unitTest || useBlankAppTemplate)",
+          "condition": "(!useUnitTests)",
           "exclude": [
             "MyExtensionsApp.Tests/**/*"
           ]
         },
         {
-          "condition": "(!tests || useBlankAppTemplate)",
+          "condition": "(!useUITests)",
           "exclude": [
             "MyExtensionsApp.UITests/**/*"
           ]

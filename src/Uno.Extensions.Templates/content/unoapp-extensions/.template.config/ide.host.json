@@ -71,10 +71,6 @@
       "isVisible": true
     },
     {
-      "id": "unitTest",
-      "isVisible": true
-    },
-    {
       "id": "tests",
       "isVisible": true
     },

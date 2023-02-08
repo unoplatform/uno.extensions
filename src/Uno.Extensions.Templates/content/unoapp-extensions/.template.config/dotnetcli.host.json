@@ -70,13 +70,9 @@
       "longName": "wasm-pwa-manifest",
       "shortName": "pwa"
     },
-    "unitTest": {
-      "longName": "unit-tests",
-      "shortName": "unit-tests"
-    },
     "tests": {
-      "longName": "ui-tests",
-      "shortName": "ui-tests"
+      "longName": "tests",
+      "shortName": "tests"
     },
     "dependencyInjection": {
       "longName": "dependency-injection",
