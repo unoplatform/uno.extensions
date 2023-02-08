@@ -1076,27 +1076,19 @@
           ]
         },
         {
-          "condition": "(useAzureDevOps)",
+          "condition": "(!useGitHubActions)",
           "exclude": [
             "github/**/*"
           ]
         },
         {
-          "condition": "(useGitHubActions)",
+          "condition": "(!useAzureDevOps)",
           "rename": {
             "github": ".github"
           },
           "exclude": [
             "azure-pipelines.yml",
             "azure/**/*"
-          ]
-        },
-        {
-          "condition": "(!useGitHubActions && !useAzureDevOps)",
-          "exclude": [
-            "azure-pipelines.yml",
-            "azure/**/*",
-            "github/**/*"
           ]
         }
       ]
