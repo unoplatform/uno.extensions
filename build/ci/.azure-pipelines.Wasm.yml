@@ -23,10 +23,10 @@ jobs:
       configFilePath: build/ci/gitversion.yml
     displayName: Use GitVersion
 
-  - script: |
-      sudo apt-get update
-      sudo apt-get install -y ninja-build
-    displayName: Install Ninja build
+  # - script: |
+  #     sudo apt-get update
+  #     sudo apt-get install -y ninja-build
+  #   displayName: Install Ninja build
 
   - script: |
       dotnet build samples/Playground/Playground.Wasm/Playground.Wasm.csproj /p:Configuration=Release "/p:InformationalVersion=%GITVERSION_InformationalVersion%" /p:UnoExtensionsDisableNet6=true /p:GeneratePackageOnBuild=false /detailedsummary /bl:$(build.artifactstagingdirectory)/samples-wasm.binlog
