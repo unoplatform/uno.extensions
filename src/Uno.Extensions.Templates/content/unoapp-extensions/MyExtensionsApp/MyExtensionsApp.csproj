@@ -13,6 +13,10 @@
 		<GenerateLibraryLayout>true</GenerateLibraryLayout>
 	</PropertyGroup>
 
+	<ItemGroup>
+		<PackageReference Include="Uno.Resizetizer" />
+	</ItemGroup>
+
 	<!--#if (useBlankAppTemplate)-->
 	<ItemGroup>
 		<!--#if (useCsharpMarkup)-->
@@ -157,6 +161,10 @@
 		</Compile>
 	</ItemGroup>
 	<!--#endif-->
+
+	<ItemGroup>
+		<UnoImage Include="Assets\Icons\back.svg" />
+	</ItemGroup>
 
 	<ItemGroup>
 		<!--#if (useConfiguration)-->
