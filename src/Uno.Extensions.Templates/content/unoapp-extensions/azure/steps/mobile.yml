@@ -11,7 +11,7 @@ parameters:
 - name: project_folder
   type: string
   default: ''
-  #'net$ciTargetDotNetVersion$.0-android, net$ciTargetDotNetVersion$.0-ios, net$ciTargetDotNetVersion$.0-maccatalyst'
+  #'net$ciTargetDotNetVersion$-android, net$ciTargetDotNetVersion$-ios, net$ciTargetDotNetVersion$-maccatalyst'
 - name: target_framework
   type: string
   default: ''
@@ -37,7 +37,6 @@ steps:
                 $errors
                 throw "Some required parameters are missing"
             }
-        azurePowerShellVersion: 'LatestVersion'
 
     - task: PowerShell@2
       displayName: 'Build and Package'
@@ -68,7 +67,6 @@ steps:
                 Copy-Item -Path "$projectFolder\bin\Release\*" -Destination "artifacts" -recurse -Force  
               }
             }
-        azurePowerShellVersion: 'LatestVersion'
 
     - task: PublishPipelineArtifact@1
       displayName: 'Publish Artifact'

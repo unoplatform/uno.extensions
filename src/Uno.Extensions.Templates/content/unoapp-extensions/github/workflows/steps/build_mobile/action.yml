@@ -15,7 +15,7 @@ inputs:
     required: false
     default: '90'
   target-framework: 
-    description: 'Target framework (net$ciTargetDotNetVersion$.0-android, net$ciTargetDotNetVersion$.0-ios, net$ciTargetDotNetVersion$.0-maccatalyst)'
+    description: 'Target framework (net$ciTargetDotNetVersion$-android, net$ciTargetDotNetVersion$-ios, net$ciTargetDotNetVersion$-maccatalyst)'
     required: true
     default: ''
   publish-artifacts: 

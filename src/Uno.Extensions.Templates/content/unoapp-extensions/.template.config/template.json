@@ -563,11 +563,11 @@
         "cases": [
           {
             "condition": "(tfm == 'net6.0')",
-            "value": "6"
+            "value": "6.0"
           },
           {
             "condition": "(tfm == 'net7.0')",
-            "value": "7"
+            "value": "7.0"
           }
         ]
       }

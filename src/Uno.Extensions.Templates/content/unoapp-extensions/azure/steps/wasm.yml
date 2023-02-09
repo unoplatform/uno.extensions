@@ -35,7 +35,6 @@ steps:
                 $errors
                 throw "Some required parameters are missing"
             }
-        azurePowerShellVersion: 'LatestVersion'
 
     - task: PowerShell@2
       displayName: 'Build and Package'
@@ -66,7 +65,6 @@ steps:
                 Copy-Item -Path "$projectFolder\bin\Release\*" -Destination "artifacts" -recurse -Force  
               }
             }
-        azurePowerShellVersion: 'LatestVersion'
 
     - task: PublishPipelineArtifact@1
       displayName: 'Publish Artifact'

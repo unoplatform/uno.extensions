@@ -7,7 +7,7 @@ parameters:
   default: '0'
 - name: package_id
   type: string
-  default: 'release_Wasm'
+  default: 'release_Android'
 - name: project_to_build
   type: string
   default: ''
@@ -41,7 +41,7 @@ parameters:
   default: 'true'       
 - name: target_framework
   type: string
-  default: 'net$ciTargetDotNetVersion$.0-android'  
+  default: 'net$ciTargetDotNetVersion$-android'  
 
 steps:
     #Validate required parameters before executing any other script
@@ -62,7 +62,6 @@ steps:
                 $errors
                 throw "Some required parameters are missing"
             }
-        azurePowerShellVersion: 'LatestVersion'
 
     - task: DownloadSecureFile@1
       name: keyStore
@@ -105,7 +104,6 @@ steps:
                 Copy-Item -Path "$projectFolder\bin\Release\*" -Destination "artifacts" -recurse -Force  
               }
             }
-        azurePowerShellVersion: 'LatestVersion'
 
     - task: PublishPipelineArtifact@1
       displayName: 'Publish Artifact'

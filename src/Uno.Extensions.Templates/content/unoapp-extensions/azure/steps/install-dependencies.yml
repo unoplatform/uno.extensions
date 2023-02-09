@@ -6,7 +6,7 @@ parameters:
   default: ''  
 - name: dotnet_version
   type: string
-  default: '$ciTargetDotNetVersion$.0.x'
+  default: '$ciTargetDotNetVersion$.x'
 - name: unocheck_manifest
   type: string
   default: 'https://raw.githubusercontent.com/unoplatform/uno.check/main/manifests/uno.ui.manifest.json'
@@ -30,7 +30,6 @@ steps:
               brew install gtk+
               dotnet tool install -g uno.check
               ~/.dotnet/tools/uno-check --ci --non-interactive --fix --target ios --target android --target macos --manifest ${{ parameters.unocheck_manifest }}
-          azurePowerShellVersion: 'LatestVersion'
 
     #Currently Uno Check fails when targetting GTK on windows so we are adding the references manually
     - ${{ elseif eq( parameters['target_platform'], 'skiagtk_win') }}:
@@ -62,7 +61,6 @@ steps:
 
               dotnet tool install -g uno.check
               uno-check --ci --non-interactive --fix --target ios --target android --target macos --manifest ${{ parameters.unocheck_manifest }}
-          azurePowerShellVersion: 'LatestVersion'
 
     #Currently Uno Check fails when targetting linux on macOS/win so we are adding the references manually
     - ${{ elseif eq( parameters['target_platform'], 'linux') }}:
@@ -74,7 +72,6 @@ steps:
           script: |
               dotnet tool install -g uno.check
               ~/.dotnet/tools/uno-check --ci --non-interactive --fix --target ios --target android --target macos --manifest ${{ parameters.unocheck_manifest }}
-          azurePowerShellVersion: 'LatestVersion'
 
     - ${{ else }}:
       - task: PowerShell@2
@@ -85,4 +82,3 @@ steps:
           script: |
               dotnet tool install -g uno.check
               uno-check --ci --non-interactive --fix --target ${{ parameters.target_platform }} --manifest ${{ parameters.unocheck_manifest }}
-          azurePowerShellVersion: 'LatestVersion'

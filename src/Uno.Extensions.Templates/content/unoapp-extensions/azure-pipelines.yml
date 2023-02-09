@@ -45,6 +45,7 @@ stages:
         - template: /azure/steps/android.yml
           parameters:
             package_id: 'Android'
+            target_framework: "net$ciTargetDotNetVersion$-android"
             project_to_build: 'MyExtensionsApp.Mobile/MyExtensionsApp.Mobile.csproj'
       pool:
         vmImage: macOS-latest
@@ -66,6 +67,7 @@ stages:
         - template: /azure/steps/android.yml
           parameters:
             sign_package: 'true'
+            target_framework: "net$ciTargetDotNetVersion$-android"
             certificate:  '' #YOUR_CERT.jks stored in secureFiles
             certificate_password: 'contoso'
             certificate_alias: 'contoso'
@@ -86,7 +88,7 @@ stages:
         - template: /azure/steps/mobile.yml
           parameters:
             project_to_build: 'MyExtensionsApp.Mobile/MyExtensionsApp.Mobile.csproj'
-            target_framework: 'net$ciTargetDotNetVersion$.0-ios'
+            target_framework: 'net$ciTargetDotNetVersion$-ios'
       pool:
         vmImage: windows-latest
 
@@ -107,6 +109,7 @@ stages:
         - template: /azure/steps/ios.yml
           parameters:
             package_id: 'signed_ios'
+            target_framework: "net$ciTargetDotNetVersion$-ios"
             project_to_build: 'MyExtensionsApp.Mobile/MyExtensionsApp.Mobile.csproj'
             certificate: '' #YOUR_CERT.p12 stored in secureFiles
             certificate_password: 'contoso'
@@ -128,7 +131,7 @@ stages:
         - template: /azure/steps/mobile.yml
           parameters:
             project_to_build: 'MyExtensionsApp.Mobile/MyExtensionsApp.Mobile.csproj'
-            target_framework: 'net$ciTargetDotNetVersion$.0-maccatalyst'
+            target_framework: 'net$ciTargetDotNetVersion$-maccatalyst'
       pool:
         vmImage: macos-latest
 #endif

@@ -5,7 +5,7 @@ inputs:
   package-id:
     description: 'Compiled Package ID'
     required: true
-    default: 'release_Mobile'
+    default: 'release_Android'
   project-to-build:
     description: 'Relative path to .csproj file'
     required: true
@@ -46,7 +46,7 @@ inputs:
   target-framework:
      description: ''
      required: false
-     default: 'net$ciTargetDotNetVersion$.0-android'                 
+     default: 'net$ciTargetDotNetVersion$-android'                 
 runs:
   using: "composite"
   steps:
