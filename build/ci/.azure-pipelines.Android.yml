@@ -13,6 +13,14 @@ jobs:
     clean: all
 
   steps:
+  - task: UseDotNet@2
+    displayName: 'Use .NET 5.0.x'
+    inputs:
+        packageType: sdk
+        version: 5.0.x
+
+  - template: templates/dotnet6-install-mac.yml
+
   - task: gitversion/setup@0
     retryCountOnTaskFailure: 3
     inputs:
@@ -24,14 +32,6 @@ jobs:
       useConfigFile: true
       configFilePath: build/ci/gitversion.yml
     displayName: Use GitVersion
-
-  - task: UseDotNet@2
-    displayName: 'Use .NET 5.0.x'
-    inputs:
-        packageType: sdk
-        version: 5.0.x
-
-  - template: templates/dotnet6-install-mac.yml
 
   - script: |
       mono '$(VS_MSBUILD)' '$(build.sourcesdirectory)/samples/Playground/Playground.Droid/Playground.Droid.csproj' /r /p:Configuration=Release "/bl:$(build.artifactstagingdirectory)/samples-android-1.binlog" "/p:InformationalVersion=$GITVERSION_INFORMATIONALVERSION" /p:UnoExtensionsDisableNet6=true /p:AotAssemblies=false /p:AndroidBuildApplicationPackage=True

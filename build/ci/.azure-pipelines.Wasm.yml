@@ -6,14 +6,10 @@ jobs:
     vmImage: 'ubuntu-latest'
 
   steps:
-  - task: UseDotNet@2
-    displayName: 'Use .NET 5.0.x'
-    inputs:
-        packageType: runtime
-        version: 5.0.x
-
   - checkout: self
     clean: 'true'
+
+  - template: templates/dotnet-install.yml
 
   - task: gitversion/setup@0
     retryCountOnTaskFailure: 3
@@ -26,8 +22,6 @@ jobs:
       useConfigFile: true
       configFilePath: build/ci/gitversion.yml
     displayName: Use GitVersion
-
-  - template: templates/dotnet-install.yml
 
   - script: |
       sudo apt-get update

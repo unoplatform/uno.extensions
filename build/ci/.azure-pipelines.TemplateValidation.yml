@@ -67,6 +67,8 @@ jobs:
   - checkout: self
     clean: 'true'
 
+  - template: templates/dotnet7-install-windows.yml
+
   - task: gitversion/setup@0
     retryCountOnTaskFailure: 3
     inputs:
@@ -79,13 +81,6 @@ jobs:
       configFilePath: build/ci/gitversion.yml
     displayName: Use GitVersion
 
-#   - task: UseDotNet@2
-#     displayName: 'Use .NET 6.0.x'
-#     inputs:
-#       packageType: sdk
-#       version: 6.0.x
-
-  - template: templates/dotnet7-install-windows.yml
   - template: templates/install-windows-sdk.yml
     parameters:
       sdkVersion: 18362

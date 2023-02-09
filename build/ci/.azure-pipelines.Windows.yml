@@ -10,6 +10,8 @@ jobs:
   - checkout: self
     clean: 'true'
 
+  - template: templates/dotnet6-install-windows.yml
+
   - task: gitversion/setup@0
     retryCountOnTaskFailure: 3
     inputs:
@@ -29,7 +31,6 @@ jobs:
       echo MSBUILDPATH: $MSBUILDPATH
     displayName: Setup VS17 Path
 
-  - template: templates/dotnet6-install-windows.yml
   - template: templates/install-windows-sdk.yml
     parameters:
       sdkVersion: 18362

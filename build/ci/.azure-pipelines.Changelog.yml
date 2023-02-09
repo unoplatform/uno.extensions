@@ -6,10 +6,11 @@ jobs:
 
   steps:
   - task: UseDotNet@2
-    displayName: 'Use .NET 5.0.x'
+    displayName: 'Use .Net Core runtime 6.0.4'
+    retryCountOnTaskFailure: 3
     inputs:
-        packageType: runtime
-        version: 5.0.x
+      packageType: runtime
+      version: 6.0.4
 
   - checkout: self
     clean: 'true'
