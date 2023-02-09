@@ -15,13 +15,41 @@ pr:
 - master
 - release/**
 
+#if (android || ios || winAppSdk)
+#REQUIRED PARAMETERS
+parameters:
+- name: certificate
+  type: string
+  default: ''
+#endif  
+#if (android || ios)
+- name: certificate_password
+  type: string
+  default: ''
+#endif    
+#if (android)   
+- name: certificate_alias
+  type: string
+  default: ''  
+#endif
+#if (ios)
+- name: provisioning_profile
+  type: string
+  default: ''
+- name: codesign_provision
+  type: string
+  default: ''
+- name: codesign_key
+  type: string
+  default: ''    
+#endif
+
 variables:
 - name: jobTimeout
   value: '60'
 
 stages:
   - stage: Build_UNO
-
     jobs:
 #if (wasm)    
     - job: Wasm
@@ -55,6 +83,28 @@ stages:
       pool:
         vmImage: macOS-latest
 
+    - job: Android_Signed_PreValidation
+      dependsOn: Android
+      condition: succeeded()
+      timeoutInMinutes: '${{ variables.jobTimeout }}'
+      steps:
+        - task: PowerShell@2
+          inputs:
+            targetType: 'inline'
+            script: |
+                $errors = ''
+                if ('' -eq '${{ parameters.certificate }}') { $errors = $errors + '[certificate] is not valid. Please make sure the name of the .jks certificate is correct and it exists in secure files' + "`r`n"  }
+                if ('' -eq '${{ parameters.certificate_password }}') { $errors = $errors + '[certificate_password] is not valid.' + "`r`n"  }
+                if ('' -eq '${{ parameters.certificate_alias }}') { $errors = $errors + '[certificate_alias] is not valid' + "`r`n"  }
+
+                if (-not ([string]::IsNullOrEmpty($errors))){
+                    Write-Host "##[error] $errors"
+                    Write-Host "##[warning] Skipping Android_Signed job"
+                    throw
+                }
+      pool:
+        vmImage: macOS-latest
+
     ###################################################
     #                    IMPORTANT                    #
     # Store certificates and mobile provision files   #
@@ -62,8 +112,10 @@ stages:
     # variable down below                             #
     # with the appropiate filename                    #
     ###################################################
-
-    - job: Android_Signed   
+    
+    - job: Android_Signed
+      dependsOn: Android_Signed_PreValidation
+      condition: succeeded()
       timeoutInMinutes: '${{ variables.jobTimeout }}'
       steps:
         - template: /azure/steps/install-dependencies.yml  
@@ -73,9 +125,9 @@ stages:
           parameters:
             sign_package: 'true'
             target_framework: "net$ciTargetDotNetVersion$-android"
-            certificate:  '' #YOUR_CERT.jks stored in secureFiles
-            certificate_password: 'contoso'
-            certificate_alias: 'contoso'
+            certificate:  '${{ parameters.certificate }}' #YOUR_CERT.jks stored in secureFiles
+            certificate_password: '${{ parameters.certificate_password }}'
+            certificate_alias: '${{ parameters.certificate_alias }}'
             package_id: 'signed_android'
             project_to_build: 'MyExtensionsApp.Mobile/MyExtensionsApp.Mobile.csproj'
       pool:
@@ -97,6 +149,30 @@ stages:
       pool:
         vmImage: windows-latest
 
+    - job: iOS_Signed_PreValidation
+      dependsOn: iOS
+      condition: succeeded()
+      timeoutInMinutes: '${{ variables.jobTimeout }}'
+      steps:
+        - task: PowerShell@2
+          inputs:
+            targetType: 'inline'
+            script: |
+                $errors = ''
+                if ('' -eq '${{ parameters.certificate }}') { $errors = $errors +'[certificate] is not valid. Please make sure the name of the .p12 certificate is correct and it exists in secure files' + "`r`n"  }
+                if ('' -eq '${{ parameters.certificate_password }}') { $errors = $errors +'[certificate_password] is not valid. Please make sure you are using the correct .p12 certificate password' + "`r`n"  }
+                if ('' -eq '${{ parameters.codesign_key }}') { $errors = $errors +'[codesign_key] is not valid. Please make sure the name of the name of the distribution certificate is correct. E.g. Apple Development: Contoso Contoso (752234A22L)' + "`r`n"  }
+                if ('' -eq '${{ parameters.codesign_provision }}') { $errors = $errors +'[codesign_provision] is not valid. Please make sure the provisioning profile name is correct. This is the name you entered in the Apple Developer portal when creating your provisioning profile' + "`r`n"  }
+                if ('' -eq '${{ parameters.provisioning_profile }}') { $errors = $errors +'[provisioning_profile] is not valid. Please make sure the .mobileprovision file is correct and it exists in secure files' + "`r`n"  }
+
+                if (-not ([string]::IsNullOrEmpty($errors))){
+                    Write-Host "##[error] $errors"
+                    Write-Host "##[warning] Skipping iOS_Signed job"
+                    throw
+                }
+      pool:
+        vmImage: windows-latest
+
     ###################################################
     #                    IMPORTANT                    #
     # Store certificates and mobile provision files   #
@@ -106,6 +182,8 @@ stages:
     ###################################################
 
     - job: iOS_Signed
+      dependsOn: iOS_Signed_PreValidation
+      condition: succeeded()
       timeoutInMinutes: '${{ variables.jobTimeout }}'
       steps:
         - template: /azure/steps/install-dependencies.yml  
@@ -116,11 +194,11 @@ stages:
             package_id: 'signed_ios'
             target_framework: "net$ciTargetDotNetVersion$-ios"
             project_to_build: 'MyExtensionsApp.Mobile/MyExtensionsApp.Mobile.csproj'
-            certificate: '' #YOUR_CERT.p12 stored in secureFiles
-            certificate_password: 'contoso'
-            provisioning_profile: ''  #YOUR_PROV_PROFILE.mobileprovision stored in secureFiles
-            codesign_provision: 'MyExtensionsApp'
-            codesign_key: 'Apple Development: Contoso Contoso (572224A42L)'
+            certificate: '${{ parameters.certificate }}'
+            certificate_password: '${{ parameters.certificate_password }}'
+            provisioning_profile: '${{ parameters.provisioning_profile }}'  #YOUR_PROV_PROFILE.mobileprovision stored in secureFiles
+            codesign_provision: '${{ parameters.codesign_provision }}'
+            codesign_key: '${{ parameters.codesign_key }}' #e.g Apple Development: Contoso Contoso (572224A42L)
       pool:
         vmImage: macOS-latest        
 #endif
@@ -156,6 +234,26 @@ stages:
       pool:
         vmImage: windows-latest
 
+    - job: Windows_Signed_PreValidation
+      dependsOn: Windows
+      condition: succeeded()
+      timeoutInMinutes: '${{ variables.jobTimeout }}'
+      steps:
+        - task: PowerShell@2
+          inputs:
+            targetType: 'inline'
+            script: |
+                $errors = ''
+                if ('' -eq '${{ parameters.certificate }}') { $errors = $errors + '[certificate] is not valid. Please make sure the name of the .pfx certificate is correct and it exists in secure files' + "`r`n"  }
+
+                if (-not ([string]::IsNullOrEmpty($errors))){
+                    Write-Host "##[error] $errors"
+                    Write-Host "##[warning] Skipping Windows_Signed job"
+                    throw
+                }
+      pool:
+        vmImage: windows-latest
+
     ###################################################
     #                    IMPORTANT                    #
     # Store certificates and mobile provision files   #
@@ -164,6 +262,8 @@ stages:
     # with the appropiate filename                    #
     ###################################################
     - job: Windows_Signed
+      dependsOn: Windows_Signed_PreValidation
+      condition: succeeded()
       timeoutInMinutes: '${{ variables.jobTimeout }}'
       steps:
         - template: /azure/steps/install-dependencies.yml  
@@ -172,7 +272,7 @@ stages:
         - template: /azure/steps/windows.yml
           parameters:
             sign_package: 'true'
-            certificate: '' #YOUR_CERT.pfx stored in secureFiles
+            certificate: '${{ parameters.certificate }}' #YOUR_CERT.pfx stored in secureFiles
             package_id: 'signed_windows'
             project_to_build: 'MyExtensionsApp.Windows/MyExtensionsApp.Windows.csproj'
       pool:
