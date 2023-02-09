@@ -1,10 +1,4 @@
 parameters:
-- name: major
-  type: string
-  default: '0'  
-- name: minor
-  type: string
-  default: '0'
 - name: project_to_build
   type: string
   default: ''
@@ -38,6 +32,8 @@ steps:
                 throw "Some required parameters are missing"
             }
 
+    - template: gitversion.yml
+
     - task: PowerShell@2
       displayName: 'Build and Package'
       inputs: 
@@ -61,7 +57,7 @@ steps:
             if ('true' -eq '${{ parameters.publish_artifacts }}') {
               if ('true' -eq '${{ parameters.compress_artifacts }}') {
                 Write-Host "Compressing final package"
-                $finalPackageName = "$finalPackageFolder\${{parameters.target_framework}}_${{parameters.major}}.${{parameters.minor}}.$(Build.BuildNumber).zip"
+                $finalPackageName = "$finalPackageFolder\${{parameters.target_framework}}_$(GitVersion.AssemblySemVer).zip"
                 Compress-Archive -Path "$projectFolder\bin\Release\*" -DestinationPath $finalPackageName
               }else{
                 Copy-Item -Path "$projectFolder\bin\Release\*" -Destination "artifacts" -recurse -Force  
@@ -73,5 +69,5 @@ steps:
       condition:  eq('${{ parameters.publish_artifacts }}', 'true')
       inputs:
         targetPath: artifacts
-        artifactName: ${{parameters.target_framework}}_${{parameters.major}}.${{parameters.minor}}.$(Build.BuildNumber)
+        artifactName: ${{parameters.target_framework}}_$(GitVersion.AssemblySemVer)
     

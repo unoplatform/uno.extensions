@@ -12,6 +12,9 @@ parameters:
   default: 'https://raw.githubusercontent.com/unoplatform/uno.check/main/manifests/uno.ui.manifest.json'
 
 steps:
+    - checkout: self
+      fetchDepth: 0
+      
     - task: UseDotNet@2
       displayName: 'Use DotNet ${{ parameters.dotnet_version }}'
       inputs:

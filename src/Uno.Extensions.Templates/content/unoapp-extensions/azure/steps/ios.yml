@@ -1,10 +1,4 @@
 parameters:
-- name: major
-  type: string
-  default: '0'  
-- name: minor
-  type: string
-  default: '0'
 - name: package_id
   type: string
   default: 'release_ios'
@@ -64,7 +58,9 @@ steps:
                 $errors
                 throw "Some required parameters are missing"
             }
-        
+
+    - template: gitversion.yml
+
     #############################################
     #                 IMPORTANT                 #
     #############################################
@@ -202,7 +198,7 @@ steps:
             New-Item -ItemType Directory -Force -Path $finalPackageFolder
 
             if ('true' -eq '${{ parameters.publish_artifacts }}') {
-                $finalPackageName = "$finalPackageFolder\${{ parameters.package_id }}_${{parameters.major}}.${{parameters.minor}}.$(Build.BuildNumber).zip"
+                $finalPackageName = "$finalPackageFolder\${{ parameters.package_id }}_$(GitVersion.AssemblySemVer).zip"
                 Compress-Archive -Path "$projectFolder\bin\Release\*" -DestinationPath $finalPackageName
             }
 
@@ -211,6 +207,6 @@ steps:
       condition:  eq('${{ parameters.publish_artifacts }}', 'true')
       inputs:
         targetPath: artifacts
-        artifactName: ${{ parameters.package_id }}_${{parameters.major}}.${{parameters.minor}}.$(Build.BuildNumber)
+        artifactName: ${{ parameters.package_id }}_$(GitVersion.AssemblySemVer)
 
     

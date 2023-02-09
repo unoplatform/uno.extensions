@@ -1,14 +1,19 @@
+    ###################################################
+    #                    IMPORTANT                    #
+    # Please make sure  GitTools is installed in your #
+    # project. Otherwise all jobs will fail           #
+    # See how to install new extensions here:         #
+    # https://learn.microsoft.com/en-us/azure/devops  #
+    #/marketplace/install-extension                   #
+    ###################################################
 trigger:
 - master
-- main
 - release
 
 # trigger this pipeline if there's a PR to any of these branches
 pr:
 - master
-- main
-- staging
-- releases/*
+- release/**
 
 variables:
 - name: jobTimeout
