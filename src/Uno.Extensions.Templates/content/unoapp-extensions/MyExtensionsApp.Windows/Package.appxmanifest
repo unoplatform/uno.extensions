@@ -14,7 +14,6 @@
   <Properties>
 	<DisplayName>MyExtensionsApp</DisplayName>
 	<PublisherDisplayName>MyExtensionsApp</PublisherDisplayName>
-	<Logo>Images\StoreLogo.png</Logo>
   </Properties>
 
   <Dependencies>
