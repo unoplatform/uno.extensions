@@ -17,7 +17,7 @@
 	<!--#endif-->
 
 	<ItemGroup>
-		<PackageReference Include="Uno.Resizetizer" Version="0.32.0-dev.97" />
+		<PackageReference Include="Uno.Resizetizer" Version="0.34.0-dev.110" />
 	</ItemGroup>
 
 	<!--#if (useBlankAppTemplate)-->
