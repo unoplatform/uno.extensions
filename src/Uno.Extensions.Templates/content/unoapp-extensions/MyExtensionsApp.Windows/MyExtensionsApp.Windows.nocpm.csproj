@@ -23,6 +23,10 @@
 		<Manifest Include="$(ApplicationManifest)" />
 	</ItemGroup>
 
+	<ItemGroup>
+		<PackageReference Include="Uno.Resizetizer" Version="0.32.0-dev.97" />
+	</ItemGroup>
+
 	<!--#if (useBlankAppTemplate)-->
 	<ItemGroup>
 		<!--#if (useCsharpMarkup)-->

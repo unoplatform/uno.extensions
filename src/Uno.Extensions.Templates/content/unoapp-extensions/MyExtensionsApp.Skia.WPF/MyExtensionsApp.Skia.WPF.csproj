@@ -17,6 +17,11 @@
 			<_Parameter2_IsLiteral>true</_Parameter2_IsLiteral>
 		</AssemblyAttribute>
 	</ItemGroup>
+	
+	<ItemGroup>
+		<PackageReference Include="Uno.Resizetizer" />
+	</ItemGroup>
+
 	<!--#if (useBlankAppTemplate)-->
 	<ItemGroup>
 		<!--#if (useCsharpMarkup)-->
