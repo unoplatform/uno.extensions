@@ -14,7 +14,6 @@
   <Properties>
 	<DisplayName>MyExtensionsApp</DisplayName>
 	<PublisherDisplayName>MyExtensionsApp</PublisherDisplayName>
-	<Logo>Images\StoreLogo.png</Logo>
   </Properties>
 
   <Dependencies>
@@ -32,11 +31,7 @@
       EntryPoint="$targetentrypoint$">
       <uap:VisualElements
         DisplayName="MyExtensionsApp"
-        Description="MyExtensionsApp"
-        BackgroundColor="#086AD1"
-        Square150x150Logo="Images\Square150x150Logo.png"
-        Square44x44Logo="Images\Square44x44Logo.png">
-        <uap:DefaultTile Wide310x150Logo="Images\Wide310x150Logo.png" />
+        Description="MyExtensionsApp">
         <uap:SplashScreen Image="Images\SplashScreen.png"  BackgroundColor="#086AD1"/>
       </uap:VisualElements>
     </Application>

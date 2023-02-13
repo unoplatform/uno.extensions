@@ -22,6 +22,7 @@
 		<UseInterpreter Condition="'$(Configuration)' == 'Debug' and $([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) != 'maccatalyst'">True</UseInterpreter>
 		<IsUnoHead>true</IsUnoHead>
 	</PropertyGroup>
+
 	<!--#if (useBlankAppTemplate)-->
 	<ItemGroup>
 		<!--#if (useCsharpMarkup)-->

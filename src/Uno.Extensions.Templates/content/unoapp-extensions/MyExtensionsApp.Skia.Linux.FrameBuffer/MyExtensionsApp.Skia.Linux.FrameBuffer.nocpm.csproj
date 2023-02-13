@@ -7,14 +7,13 @@
 	<!--#if winAppSdk-->
 	<ItemGroup Condition="exists('Platforms\Windows')">
 		<EmbeddedResource Include="Platforms\Windows\Package.appxmanifest" LogicalName="Package.appxmanifest" />
-		<Content Include="Platforms\Windows\Images\StoreLogo.png" />
 	</ItemGroup>
 	<!--#else-->
 	<ItemGroup>
 		<EmbeddedResource Include="Package.appxmanifest" />
-		<Content Include="Images\StoreLogo.png" />
 	</ItemGroup>
 	<!--#endif-->
+
 	<!--#if (useBlankAppTemplate)-->
 	<ItemGroup>
 		<!--#if (useCsharpMarkup)-->
