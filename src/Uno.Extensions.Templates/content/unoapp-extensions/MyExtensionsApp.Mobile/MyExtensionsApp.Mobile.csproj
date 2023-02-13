@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<TargetFrameworks>$mobileTargetFrameworks$</TargetFrameworks>
-		<!--#if (macos)-->
+		<!--#if (useMacOS)-->
 		<!-- Disabled because of https://github.com/xamarin/xamarin-macios/issues/16401-->
 		<!-- <TargetFrameworks>$(TargetFrameworks);$baseTargetFramework$-macos</TargetFrameworks> -->
 		<!--#endif-->
@@ -93,7 +93,7 @@
 	</ItemGroup>
 	<!--#endif-->
 	<Choose>
-		<!--#if (android)-->
+		<!--#if (useAndroid)-->
 		<When Condition="$(IsAndroid)">
 			<ItemGroup>
 				<PackageReference Include="Xamarin.Google.Android.Material" />
@@ -104,7 +104,7 @@
 			</ItemGroup>
 		</When>
 		<!--#endif-->
-		<!--#if (ios)-->
+		<!--#if (useIOS)-->
 		<When Condition="$(IsIOS)">
 			<PropertyGroup>
 				<MtouchExtraArgs>$(MtouchExtraArgs) --setenv=MONO_GC_PARAMS=soft-heap-limit=512m,nursery-size=64m,evacuation-threshold=66,major=marksweep,concurrent-sweep</MtouchExtraArgs>
@@ -119,7 +119,7 @@
 			<!--#endif-->
 		</When>
 		<!--#endif-->
-		<!--#if (maccatalyst)-->
+		<!--#if (useMacCatalyst)-->
 		<When Condition="$(IsMacCatalyst)">
 			<PropertyGroup>
 				<!-- Configure the GC -->
@@ -138,7 +138,7 @@
 			<!--#endif-->
 		</When>
 		<!--#endif-->
-		<!--#if (macos)-->
+		<!--#if (useMacOS)-->
 		<When Condition="$(IsMac)">
 			<PropertyGroup>
 				<TrimMode Condition="'$(Configuration)'=='Release'">link</TrimMode>
@@ -152,5 +152,5 @@
 		<ProjectReference Include="..\MyExtensionsApp.DataContracts\MyExtensionsApp.DataContracts.csproj" />
 		<!--#endif-->
 	</ItemGroup>
-	<Import Project="../MyExtensionsApp.Base/base.props" />
+	<Import Project="..\MyExtensionsApp.Base\base.props" />
 </Project>

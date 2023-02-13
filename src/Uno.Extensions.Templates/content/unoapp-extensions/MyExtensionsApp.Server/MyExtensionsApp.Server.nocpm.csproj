@@ -7,7 +7,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<!--#if (wasm)-->
+		<!--#if (useWasm)-->
 		<ProjectReference Include="..\MyExtensionsApp.Wasm\MyExtensionsApp.Wasm.csproj" />
 		<!--#endif -->
 		<!--#if (useRecommendedAppTemplate)-->
@@ -20,7 +20,7 @@
 		<PackageReference Include="Serilog.AspNetCore" Version="6.1.0" />
 		<!--#endif-->
 		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
-		<!--#if (wasm)-->
+		<!--#if (useWasm)-->
 		<PackageReference Include="Uno.Wasm.Bootstrap.Server" Version="7.0.13" />
 		<!--#endif -->
 	</ItemGroup>
