@@ -3,7 +3,6 @@
 		<OutputType Condition="'$(Configuration)'=='Release'">WinExe</OutputType>
 		<OutputType Condition="'$(Configuration)'=='Debug'">Exe</OutputType>
 		<TargetFramework>$baseTargetFramework$</TargetFramework>
-		<ApplicationIcon>Images\logo.ico</ApplicationIcon>
 	</PropertyGroup>
 	<!--#if winAppSdk-->
 	<ItemGroup Condition="exists('Platforms\Windows')">

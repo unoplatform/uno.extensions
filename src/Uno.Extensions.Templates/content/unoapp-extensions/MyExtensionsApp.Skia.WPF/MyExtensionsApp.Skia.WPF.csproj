@@ -4,7 +4,6 @@
 		<OutputType Condition="'$(Configuration)'=='Debug'">Exe</OutputType>
 		<TargetFramework>$baseTargetFramework$-windows</TargetFramework>
 		<UseWPF>true</UseWPF>
-		<ApplicationIcon>Images\logo.ico</ApplicationIcon>
 	</PropertyGroup>
 	<ItemGroup Label="AssemblyInfo">
 		<AssemblyAttribute Include="System.Runtime.InteropServices.ComVisibleAttribute">
