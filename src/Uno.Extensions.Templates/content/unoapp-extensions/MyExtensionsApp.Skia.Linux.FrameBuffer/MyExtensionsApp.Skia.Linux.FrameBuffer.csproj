@@ -8,18 +8,12 @@
 	<!--#if winAppSdk-->
 	<ItemGroup Condition="exists('Platforms\Windows')">
 		<EmbeddedResource Include="Platforms\Windows\Package.appxmanifest" LogicalName="Package.appxmanifest" />
-		<Content Include="Platforms\Windows\Images\StoreLogo.png" />
 	</ItemGroup>
 	<!--#else-->
 	<ItemGroup>
 		<EmbeddedResource Include="Package.appxmanifest" />
-		<Content Include="Images\logo.ico" />
 	</ItemGroup>
 	<!--#endif-->
-
-	<ItemGroup>
-		<PackageReference Include="Uno.Resizetizer" />
-	</ItemGroup>
 
 	<!--#if (useBlankAppTemplate)-->
 	<ItemGroup>

@@ -13,12 +13,9 @@
 		<GenerateLibraryLayout>true</GenerateLibraryLayout>
 	</PropertyGroup>
 
-	<ItemGroup>
-		<PackageReference Include="Uno.Resizetizer" Version="0.34.0-dev.110" />
-	</ItemGroup>
-
 	<!--#if (useBlankAppTemplate)-->
 	<ItemGroup>
+		<PackageReference Include="Uno.Resizetizer" Version="0.34.0-dev.110" />
 		<!--#if (useCsharpMarkup)-->
 		<PackageReference Include="Uno.WinUI.Markup" Version="4.7.0-dev.17" />
 		<PackageReference Include="Uno.Themes.WinUI.Markup" Version="2.5.0-dev.15" />
@@ -28,6 +25,7 @@
 	<!--#endif-->
 	<!--#if (useRecommendedAppTemplate)-->
 	<ItemGroup>
+		<PackageReference Include="Uno.Resizetizer" Version="0.34.0-dev.110" />
 		<!--#if (useCsharpMarkup)-->
 		<PackageReference Include="Uno.WinUI.Markup" Version="4.7.0-dev.17" />
 		<!--#if (useMaterial)-->

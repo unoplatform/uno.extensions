@@ -46,10 +46,6 @@
 		<None Include="wwwroot\web.config" />
 	</ItemGroup>
 
-	<ItemGroup>
-		<PackageReference Include="Uno.Resizetizer" Version="0.34.0-dev.110" />
-	</ItemGroup>
-
 	<!--#if (useBlankAppTemplate)-->
 	<ItemGroup>
 		<PackageReference Include="Microsoft.Windows.Compatibility" Version="7.0.0" />

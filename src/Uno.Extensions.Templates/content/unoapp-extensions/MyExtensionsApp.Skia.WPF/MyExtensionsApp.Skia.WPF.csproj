@@ -17,10 +17,6 @@
 			<_Parameter2_IsLiteral>true</_Parameter2_IsLiteral>
 		</AssemblyAttribute>
 	</ItemGroup>
-	
-	<ItemGroup>
-		<PackageReference Include="Uno.Resizetizer" />
-	</ItemGroup>
 
 	<!--#if (useBlankAppTemplate)-->
 	<ItemGroup>
@@ -95,9 +91,6 @@
 
 	<ItemGroup>
 		<ApplicationDefinition Include="Wpf\App.xaml" XamlRuntime="Wpf" />
-	</ItemGroup>
-	<ItemGroup>
-	  <Content Include="Images\logo.ico" />
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\MyExtensionsApp\MyExtensionsApp.csproj" />

@@ -23,10 +23,6 @@
 		<IsUnoHead>true</IsUnoHead>
 	</PropertyGroup>
 
-	<ItemGroup>
-		<PackageReference Include="Uno.Resizetizer" Version="0.34.0-dev.110" />
-	</ItemGroup>
-
 	<!--#if (useBlankAppTemplate)-->
 	<ItemGroup>
 		<!--#if (useCsharpMarkup)-->

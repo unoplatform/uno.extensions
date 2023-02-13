@@ -380,6 +380,11 @@
       "defaultValue": "false",
       "description": "Supplied by Uno Studio"
     },
+    "useCPM": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "cpm"
+    },
     "useBlankAppTemplate": {
       "type": "computed",
       "datatype": "bool",
@@ -819,15 +824,13 @@
         {
           "condition": "(winAppSdk && skiaGtk)",
           "exclude": [
-            "MyExtensionsApp.Skia.Gtk/Package.appxmanifest",
-            "MyExtensionsApp.Skia.Gtk/Images/StoreLogo.png"
+            "MyExtensionsApp.Skia.Gtk/Package.appxmanifest"
           ]
         },
         {
           "condition": "(winAppSdk && skiaLinuxFb)",
           "exclude": [
-            "MyExtensionsApp.Skia.Linux.FrameBuffer/Package.appxmanifest",
-            "MyExtensionsApp.Skia.Linux.FrameBuffer/Images/StoreLogo.png"
+            "MyExtensionsApp.Skia.Linux.FrameBuffer/Package.appxmanifest"
           ]
         },
         {

@@ -1,5 +1,13 @@
 <Project>
 	<ItemGroup>
+	<!--#if (useCPM)-->
+		<PackageReference Include="Uno.Resizetizer" />
+	<!--#else-->
+		<PackageReference Include="Uno.Resizetizer" Version="0.34.0-dev.110" />
+	<!--#endif-->
+	</ItemGroup>
+
+	<ItemGroup>
 		<None Include="$(MSBuildThisFileDirectory)AppHead.xaml" />
 		<ApplicationDefinition Include="$(MSBuildThisFileDirectory)AppHead.xaml"
 								SubType="Designer"
