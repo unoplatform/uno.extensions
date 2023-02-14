@@ -11,10 +11,10 @@
 #//#if (useMobile)
       "MyExtensionsApp.Mobile\\MyExtensionsApp.Mobile.csproj",
 #//#endif
-#//#if (skiaGtk)
+#//#if (useGtk)
       "MyExtensionsApp.Skia.Gtk\\MyExtensionsApp.Skia.Gtk.csproj",
 #//#endif
-#//#if (wasm)
+#//#if (useWasm)
       "MyExtensionsApp.Wasm\\MyExtensionsApp.Wasm.csproj",
 #//#endif
 #//#if (server)

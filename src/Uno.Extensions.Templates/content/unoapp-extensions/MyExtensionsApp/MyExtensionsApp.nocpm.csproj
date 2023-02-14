@@ -1,10 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<TargetFrameworks>$libraryBaseTargetFramework$;$mobileTargetFrameworks$</TargetFrameworks>
-		<!--#if (winAppSdk) -->
+		<!--#if (useWinAppSdk) -->
 		<TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows')) or '$(EnableWindowsTargeting)' == 'true'">$(TargetFrameworks);$baseTargetFramework$-windows10.0.19041</TargetFrameworks>
 		<!--#endif -->
-		<!--#if (macos)-->
+		<!--#if (useMacOS)-->
 		<!-- Disabled because of https://github.com/xamarin/xamarin-macios/issues/16401-->
 		<!--<TargetFrameworks>$(TargetFrameworks);$baseTargetFramework$-macos</TargetFrameworks>-->
 		<!--#endif -->
@@ -95,7 +95,7 @@
 	</ItemGroup>
 	<!--#endif-->
 
-	<!--#if (winAppSdk) -->
+	<!--#if (useWinAppSdk) -->
 	<Choose>
 		<When Condition="$(IsWinAppSdk)">
 			<ItemGroup>
