@@ -84,8 +84,8 @@
 		<!--#if (useLocalization)-->
 		<PackageReference Include="Uno.Extensions.Localization.WinUI" />
 		<!--#endif-->
-		<!--#if (useLogging)-->
 		<PackageReference Include="Uno.Extensions.Logging.WebAssembly.Console" />
+		<!--#if (useLogging)-->
 		<PackageReference Include="Uno.Extensions.Logging.WinUI" />
 		<!--#endif-->
 		<!--#if (useSerilog)-->
