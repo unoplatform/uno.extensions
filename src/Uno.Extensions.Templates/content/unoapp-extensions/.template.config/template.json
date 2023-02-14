@@ -391,6 +391,11 @@
       "datatype": "bool",
       "value": "(appTheme == 'cupertino' && preset == 'recommended')"
     },
+    "useLoggingFallback": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "(logging == 'none' || preset == 'blank')"
+    },
     "useLogging": {
       "type": "computed",
       "datatype": "bool",
@@ -400,11 +405,6 @@
       "type": "computed",
       "datatype": "bool",
       "value": "(useDependencyInjection && logging == 'serilog')"
-    },
-    "useOSLoggingPackage": {
-      "type": "computed",
-      "datatype": "bool",
-      "value": "(useBlankAppTemplate || useLogging)"
     },
     "useAspNetCoreSerilogPackage": {
       "type": "computed",

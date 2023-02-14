@@ -1,5 +1,5 @@
 //+:cnd:noEmit
-#if (useBlankAppTemplate)
+#if (useLoggingFallback)
 using System;
 using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml;
@@ -12,7 +12,7 @@ namespace MyExtensionsApp;
 
 public sealed partial class AppHead : App
 {
-#if (useBlankAppTemplate)
+#if (useLoggingFallback)
 	static AppHead() =>
 		InitializeLogging();
 
@@ -40,7 +40,7 @@ public sealed partial class AppHead : App
 		base.OnLaunched(args);
 	}
 #endif
-#if (useBlankAppTemplate)
+#if (useLoggingFallback)
 
 	/// <summary>
 	/// Configures global Uno Platform logging
@@ -60,7 +60,7 @@ public sealed partial class AppHead : App
 		{
 #if __WASM__
 			builder.AddProvider(new global::Uno.Extensions.Logging.WebAssembly.WebAssemblyConsoleLoggerProvider());
-#elif __IOS__ && !__MACCATALYST__
+#elif __IOS__ || __MACCATALYST__
 			builder.AddProvider(new global::Uno.Extensions.Logging.OSLogLoggerProvider());
 #elif NETFX_CORE
 			builder.AddDebug();
