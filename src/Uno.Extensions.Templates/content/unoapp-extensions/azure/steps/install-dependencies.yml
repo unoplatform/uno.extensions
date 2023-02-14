@@ -20,53 +20,8 @@ steps:
       inputs:
         version: '${{ parameters.dotnet_version }}'
 
-    #Currently Uno Check fails when targetting GTK on macOS so we are adding the references manually
-    - ${{ if eq( parameters['target_platform'], 'skiagtk_macos') }}:
-      - task: Bash@3
-        displayName: 'Install GTK Workloads'
-        retryCountOnTaskFailure: 3
-        inputs:
-          targetType: 'inline'
-          script: |
-              /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-              echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> ~/.zprofile
-              brew install gtk+
-              dotnet tool install -g uno.check
-              ~/.dotnet/tools/uno-check --ci --non-interactive --fix --target ios --target android --target macos --manifest ${{ parameters.unocheck_manifest }}
-
-    #Currently Uno Check fails when targetting GTK on windows so we are adding the references manually
-    - ${{ elseif eq( parameters['target_platform'], 'skiagtk_win') }}:
-      - task: PowerShell@2
-        displayName: 'Install GTK Workloads'
-        retryCountOnTaskFailure: 3
-        inputs:
-          targetType: 'inline'
-          script: |
-              Write-Host "Installing GTK4"
-              Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
-              choco install git
-              choco install msys2
-              choco install visualstudio2022-workload-vctools
-              
-              Write-Host "Installing Python"
-              choco install python
-              Write-Host "Python Installation Finished"
-
-              python -m pip install --user pipx
-              python -m pipx ensurepath
-              pipx install gvsbuild
-              #build GTK
-              gvsbuild build gtk4
-
-              Write-Host "Adding GTK4 to Path"
-              $env:Path = "C:\gtk-build\gtk\x64\release\bin;" + $env:Path
-              Write-Host "GTK4 Installation Finished"
-
-              dotnet tool install -g uno.check
-              uno-check --ci --non-interactive --fix --target ios --target android --target macos --manifest ${{ parameters.unocheck_manifest }}
-
     #Currently Uno Check fails when targetting linux on macOS/win so we are adding the references manually
-    - ${{ elseif eq( parameters['target_platform'], 'linux') }}:
+    - ${{ if eq( parameters['target_platform'], 'linux') }}:
       - task: Bash@3
         displayName: 'Install Linux Workloads'
         retryCountOnTaskFailure: 3

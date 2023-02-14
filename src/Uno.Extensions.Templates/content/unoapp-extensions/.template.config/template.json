@@ -1077,6 +1077,9 @@
         },
         {
           "condition": "(!useGitHubActions)",
+          "rename": {
+            ".pss": ".ps1"
+          },
           "exclude": [
             "github/**/*"
           ]

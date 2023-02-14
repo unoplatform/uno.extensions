@@ -1,0 +1,9 @@
+param ([string]$certificate)
+
+$errors = ''
+if ('' -eq "$certificate") { $errors = $errors +'[certificate] is not valid. Please make sure the name of the .pfx certificate is correct and it exists in secure files' + "`r`n"  }
+            
+if (-not ([string]::IsNullOrEmpty($errors))){
+    $errors
+    throw "Some required parameters are missing"
+}

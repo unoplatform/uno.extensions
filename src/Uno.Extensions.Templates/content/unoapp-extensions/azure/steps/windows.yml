@@ -10,7 +10,7 @@ parameters:
   default: ''            
 - name: project_platform
   type: string
-  default: 'x86'  
+  default: 'x64'  
   # *** [REQUIRED FOR GENERATING SIGNED .MSIX PACKAGE] ***
   #For Creating a valid PFX certificate for signing:
   # 1.- Open VisualStudio and create a new empty Windows Universal project
@@ -74,17 +74,14 @@ steps:
               $projectFolder = "${{ parameters.project_to_build }}".SubString(0, "${{ parameters.project_to_build }}".LastIndexOf('/'))
             }
             Write-Host "Current proj folder is: $projectFolder"
-
             choco install vswhere
             $path = vswhere -latest -requires Microsoft.Component.MSBuild -find MSBuild\**\Bin\MSBuild.exe | select-object -first 1
-
             & $path /t:Restore ${{ parameters.project_to_build }} /p:Configuration=Release /p:Platform=${{ parameters.project_platform }}
             if ('true' -eq '${{ parameters.sign_package }}') {
               & $path ${{ parameters.project_to_build }} /p:Configuration=Release /p:Platform=${{ parameters.project_platform }} /p:UapAppxPackageBuildMode=SideloadOnly /p:AppxBundle=Never /p:PackageCertificateKeyFile=$(keyStore.secureFilePath) /p:AppxPackageDir=".\bin\Release\" /p:GenerateAppxPackageOnBuild=true
             }else{
               & $path ${{ parameters.project_to_build }} /p:AppxPackageSigningEnabled=false /p:Configuration=Release /p:Platform=${{ parameters.project_platform }}  /p:UapAppxPackageBuildMode=SideloadOnly /p:AppxBundle=Never /p:AppxPackageDir=".\bin\Release\" /p:GenerateAppxPackageOnBuild=true
             }
-
             $finalPackageFolder = ".\artifacts"
             Write-Host "Creating package folder: $finalPackageFolder"
             New-Item -ItemType Directory -Force -Path $finalPackageFolder

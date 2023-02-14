@@ -1,0 +1,13 @@
+param ([string]$certificate, 
+        [string]$certificate_password,
+        [string]$certificate_alias)
+
+$errors = ''
+if ('' -eq "$certificate") { $errors = $errors +'[certificate] is not valid. Please make sure the name of the .jks certificate is correct and it exists in secure files' + "`r`n"  }
+if ('' -eq "$certificate_password") { $errors = $errors +'[certificate_password] is not valid. Please make sure you are using the correct .jks certificate password' + "`r`n"  }
+if ('' -eq "$certificate_alias") { $errors = $errors + '[certificate_alias] is not valid' + "`r`n"  }
+            
+if (-not ([string]::IsNullOrEmpty($errors))){
+    $errors
+    throw "Some required parameters are missing"
+}

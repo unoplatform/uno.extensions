@@ -18,9 +18,21 @@ pr:
 #if (android || ios || winAppSdk)
 #REQUIRED PARAMETERS
 parameters:
-- name: certificate
+#if (android)
+- name: jks_certificate
   type: string
   default: ''
+#endif
+#if (ios)
+- name: p12_certificate
+  type: string
+  default: ''
+#endif
+#if (winAppSdk)
+- name: pfx_certificate
+  type: string
+  default: ''
+#endif
 #endif  
 #if (android || ios)
 - name: certificate_password
@@ -90,18 +102,12 @@ stages:
       steps:
         - task: PowerShell@2
           inputs:
-            targetType: 'inline'
-            script: |
-                $errors = ''
-                if ('' -eq '${{ parameters.certificate }}') { $errors = $errors + '[certificate] is not valid. Please make sure the name of the .jks certificate is correct and it exists in secure files' + "`r`n"  }
-                if ('' -eq '${{ parameters.certificate_password }}') { $errors = $errors + '[certificate_password] is not valid.' + "`r`n"  }
-                if ('' -eq '${{ parameters.certificate_alias }}') { $errors = $errors + '[certificate_alias] is not valid' + "`r`n"  }
-
-                if (-not ([string]::IsNullOrEmpty($errors))){
-                    Write-Host "##[error] $errors"
-                    Write-Host "##[warning] Skipping Android_Signed job"
-                    throw
-                }
+            targetType: 'filePath'
+            filePath: 'azure/scripts/validate_android_signing_job.ps1'
+            arguments: >
+                -certificate "${{ parameters.jks_certificate }}"
+                -certificate_password "${{ parameters.certificate_password }}"
+                -certificate_alias "${{ parameters.certificate_alias }}"
       pool:
         vmImage: macOS-latest
 
@@ -125,7 +131,7 @@ stages:
           parameters:
             sign_package: 'true'
             target_framework: "net$ciTargetDotNetVersion$-android"
-            certificate:  '${{ parameters.certificate }}' #YOUR_CERT.jks stored in secureFiles
+            certificate:  '${{ parameters.jks_certificate }}' #YOUR_CERT.jks stored in secureFiles
             certificate_password: '${{ parameters.certificate_password }}'
             certificate_alias: '${{ parameters.certificate_alias }}'
             package_id: 'signed_android'
@@ -156,22 +162,16 @@ stages:
       steps:
         - task: PowerShell@2
           inputs:
-            targetType: 'inline'
-            script: |
-                $errors = ''
-                if ('' -eq '${{ parameters.certificate }}') { $errors = $errors +'[certificate] is not valid. Please make sure the name of the .p12 certificate is correct and it exists in secure files' + "`r`n"  }
-                if ('' -eq '${{ parameters.certificate_password }}') { $errors = $errors +'[certificate_password] is not valid. Please make sure you are using the correct .p12 certificate password' + "`r`n"  }
-                if ('' -eq '${{ parameters.codesign_key }}') { $errors = $errors +'[codesign_key] is not valid. Please make sure the name of the name of the distribution certificate is correct. E.g. Apple Development: Contoso Contoso (752234A22L)' + "`r`n"  }
-                if ('' -eq '${{ parameters.codesign_provision }}') { $errors = $errors +'[codesign_provision] is not valid. Please make sure the provisioning profile name is correct. This is the name you entered in the Apple Developer portal when creating your provisioning profile' + "`r`n"  }
-                if ('' -eq '${{ parameters.provisioning_profile }}') { $errors = $errors +'[provisioning_profile] is not valid. Please make sure the .mobileprovision file is correct and it exists in secure files' + "`r`n"  }
-
-                if (-not ([string]::IsNullOrEmpty($errors))){
-                    Write-Host "##[error] $errors"
-                    Write-Host "##[warning] Skipping iOS_Signed job"
-                    throw
-                }
+            targetType: 'filePath'
+            filePath: 'azure/scripts/validate_ios_signing_job.ps1'
+            arguments: >
+                -certificate "${{ parameters.p12_certificate }}"
+                -certificate_password "${{ parameters.certificate_password }}"
+                -codesign_key: "${{ parameters.codesign_key }}"
+                -codesign_provision: "${{ parameters.codesign_provision }}"
+                -provisioning_profile: "${{ parameters.provisioning_profile }}
       pool:
-        vmImage: windows-latest
+        vmImage: macOS-latest
 
     ###################################################
     #                    IMPORTANT                    #
@@ -194,7 +194,7 @@ stages:
             package_id: 'signed_ios'
             target_framework: "net$ciTargetDotNetVersion$-ios"
             project_to_build: 'MyExtensionsApp.Mobile/MyExtensionsApp.Mobile.csproj'
-            certificate: '${{ parameters.certificate }}'
+            certificate: '${{ parameters.p12_certificate }}'
             certificate_password: '${{ parameters.certificate_password }}'
             provisioning_profile: '${{ parameters.provisioning_profile }}'  #YOUR_PROV_PROFILE.mobileprovision stored in secureFiles
             codesign_provision: '${{ parameters.codesign_provision }}'
@@ -241,18 +241,12 @@ stages:
       steps:
         - task: PowerShell@2
           inputs:
-            targetType: 'inline'
-            script: |
-                $errors = ''
-                if ('' -eq '${{ parameters.certificate }}') { $errors = $errors + '[certificate] is not valid. Please make sure the name of the .pfx certificate is correct and it exists in secure files' + "`r`n"  }
-
-                if (-not ([string]::IsNullOrEmpty($errors))){
-                    Write-Host "##[error] $errors"
-                    Write-Host "##[warning] Skipping Windows_Signed job"
-                    throw
-                }
+            targetType: 'filePath'
+            filePath: 'azure/scripts/validate_windows_signing_job.ps1'
+            arguments: >
+                -certificate "${{ parameters.pfx_certificate }}"
       pool:
-        vmImage: windows-latest
+        vmImage: macOS-latest
 
     ###################################################
     #                    IMPORTANT                    #
@@ -272,7 +266,7 @@ stages:
         - template: /azure/steps/windows.yml
           parameters:
             sign_package: 'true'
-            certificate: '${{ parameters.certificate }}' #YOUR_CERT.pfx stored in secureFiles
+            certificate: '${{ parameters.pfx_certificate }}' #YOUR_CERT.pfx stored in secureFiles
             package_id: 'signed_windows'
             project_to_build: 'MyExtensionsApp.Windows/MyExtensionsApp.Windows.csproj'
       pool:
@@ -293,22 +287,6 @@ stages:
             project_to_build: 'MyExtensionsApp.Skia.WPF/MyExtensionsApp.Skia.WPF.csproj'
       pool:
         vmImage: windows-latest
-#endif
-
-#if (skiaGtk)
-    - job: GTK
-      timeoutInMinutes: '${{ variables.jobTimeout }}'
-      steps:
-        - template: /azure/steps/install-dependencies.yml  
-          parameters:
-            target_platform: 'skiagtk_macos'
-
-        - template: /azure/steps/desktop.yml
-          parameters:
-            package_id: 'GTK'
-            project_to_build: 'MyExtensionsApp.Skia.Gtk/MyExtensionsApp.Skia.Gtk.csproj'
-      pool:
-        vmImage: macos-latest        
 #endif
 
 #if (skiaLinuxFb)
