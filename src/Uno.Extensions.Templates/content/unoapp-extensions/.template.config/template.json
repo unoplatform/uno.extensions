@@ -158,82 +158,81 @@
       ],
       "defaultValue": "material"
     },
-    "android": {
-      "displayName": "Mobile - Android",
+    "platforms": {
+      "displayName": "Platforms",
+      "description": "Selects the platforms to target.",
       "type": "parameter",
-      "dataType": "bool",
-      "defaultValue": "true",
-      "description": "Enables the Android platform in the Mobile support project"
-    },
-    "ios": {
-      "displayName": "Mobile - iOS",
-      "type": "parameter",
-      "dataType": "bool",
-      "defaultValue": "true",
-      "description": "Enables the iOS platform in the Mobile support project"
-    },
-    "maccatalyst": {
-      "displayName": "Desktop - macOS (Catalyst)",
-      "type": "parameter",
-      "dataType": "bool",
-      "defaultValue": "true",
-      "description": "Enables the macOS (Catalyst) platform in the Mobile support project"
-    },
-    "macos": {
-      "displayName": "Desktop - macOS (AppKit)",
-      "type": "parameter",
-      "dataType": "bool",
-      "defaultValue": "false",
-      "description": "Enables the macOS (AppKit) platform in the Mobile support project"
-    },
-    "skiaGtk": {
-      "displayName": "Desktop - Gtk (Linux, macOS, Windows 7 or later)",
-      "type": "parameter",
-      "dataType": "bool",
-      "defaultValue": "true",
-      "description": "Enables the Skia/GTK platform support project"
-    },
-    "skiaWpf": {
-      "displayName": "Desktop - WPF (Windows 7 or later)",
-      "type": "parameter",
-      "dataType": "bool",
-      "defaultValue": "true",
-      "description": "Enables the Skia/WPF platform support project"
-    },
-    "skiaLinuxFb": {
-      "displayName": "Desktop - Linux FrameBuffer",
-      "type": "parameter",
-      "dataType": "bool",
-      "defaultValue": "true",
-      "description": "Enables the Skia/Linux FrameBuffer platform support project"
-    },
-    "winAppSdk": {
-      "displayName": "Desktop - WinUI (Windows App SDK)",
-      "type": "parameter",
-      "dataType": "bool",
-      "defaultValue": "true",
-      "description": "Enables the Windows App Sdk platform support project"
-    },
-    "wasm": {
-      "displayName": "Web - WebAssembly",
-      "type": "parameter",
-      "dataType": "bool",
-      "defaultValue": "true",
-      "description": "Enables the WebAssembly platform support project"
-    },
-    "unitTest": {
-      "displayName": "Tests - Unit Tests",
-      "type": "parameter",
-      "datatype": "bool",
-      "defaultValue": "true",
-      "description": "Includes the Unit test project"
+      "datatype": "choice",
+      "enableQuotelessLiterals": true,
+      "allowMultipleValues": true,
+      "defaultValue": "android|ios|maccatalyst|wasm|windows|wpf|gtk|linux-fb",
+      "choices": [
+        {
+          "choice": "android",
+          "description": "Target Android",
+          "displayName": "Android"
+        },
+        {
+          "choice": "ios",
+          "description": "Target iOS",
+          "displayName": "iOS"
+        },
+        {
+          "choice": "maccatalyst",
+          "description": "Target macOS (Catalyst)",
+          "displayName": "macOS (Catalyst)"
+        },
+        {
+          "choice": "macos",
+          "description": "Target macOS (AppKit)",
+          "displayName": "macOS (AppKit)"
+        },
+        {
+          "choice": "windows",
+          "description": "Target Windows",
+          "displayName": "Windows"
+        },
+        {
+          "choice": "wasm",
+          "description": "Target WebAssembly",
+          "displayName": "WebAssembly"
+        },
+        {
+          "choice": "gtk",
+          "description": "Target GTK",
+          "displayName": "GTK"
+        },
+        {
+          "choice": "wpf",
+          "description": "Target WPF",
+          "displayName": "WPF"
+        },
+        {
+          "choice": "linux-fb",
+          "description": "Target Linux Framebuffer",
+          "displayName": "Linux Framebuffer"
+        }
+      ]
     },
     "tests": {
-      "displayName": "Tests - UI Tests",
+      "displayName": "Tests",
       "type": "parameter",
-      "datatype": "bool",
-      "defaultValue": "true",
-      "description": "Includes the UI test project"
+      "datatype": "choice",
+      "allowMultipleValues": true,
+      "enableQuotelessLiterals": true,
+      "choices": [
+        {
+          "choice": "unit",
+          "description": "Includes the Unit test project",
+          "displayName": "Unit Tests"
+        },
+        {
+          "choice": "ui",
+          "description": "Includes the UI test project",
+          "displayName": "UI Tests"
+        }
+      ],
+      "defaultValue": "unit|ui"
     },
     "server": {
       "displayName": "Server - API",
@@ -247,43 +246,28 @@
       "description": "Includes Uno.Extensions.DependencyInjection",
       "type": "parameter",
       "datatype": "bool",
-      "defaultValue": "true",
-      "onlyIf": {
-        "preset": "recommended"
-      }
+      "defaultValue": "true"
     },
     "configuration": {
       "displayName": "Extensions - Configuration",
       "description": "Includes Uno.Extensions.Configuration",
       "type": "parameter",
       "datatype": "bool",
-      "defaultValue": "true",
-      "onlyIf": {
-        "preset": "recommended",
-        "dependencyInjection": "true"
-      }
+      "defaultValue": "true"
     },
     "http": {
       "displayName": "Extensions - HTTP",
       "description": "Includes Uno.Extensions.Http",
       "type": "parameter",
       "datatype": "bool",
-      "defaultValue": "true",
-      "onlyIf": {
-        "preset": "recommended",
-        "dependencyInjection": "true"
-      }
+      "defaultValue": "true"
     },
     "localization": {
       "displayName": "Extensions - Localization",
       "description": "Includes Uno.Extensions.Localization",
       "type": "parameter",
       "datatype": "bool",
-      "defaultValue": "true",
-      "onlyIf": {
-        "preset": "recommended",
-        "dependencyInjection": "true"
-      }
+      "defaultValue": "true"
     },
     "logging": {
       "displayName": "Extensions - Logging",
@@ -307,11 +291,7 @@
           "description": "Enables logging to the console and Serilog",
           "displayName": "Serilog"
         }
-      ],
-      "onlyIf": {
-        "preset": "recommended",
-        "dependencyInjection": "true"
-      }
+      ]
     },
     "navigation": {
       "displayName": "Extensions - Navigation",
@@ -330,11 +310,7 @@
           "description": "Uses the Frame control for navigation."
         }
       ],
-      "defaultValue": "default",
-      "onlyIf": {
-        "preset": "recommended",
-        "dependencyInjection": "true"
-      }
+      "defaultValue": "default"
     },
     "cpm": {
       "displayName": "Central Package Management",
@@ -348,9 +324,6 @@
       "type": "parameter",
       "dataType": "bool",
       "defaultValue": "true",
-      "onlyIf": {
-        "wasm": "true"
-      },
       "description": "Adds the Visual Studio Code Debugging support files for WebAssembly"
     },
     "wasmPwaManifest": {
@@ -358,10 +331,7 @@
       "description": "Enables the generation of a PWA manifest for WebAssembly",
       "type": "parameter",
       "datatype": "bool",
-      "defaultValue": "true",
-      "onlyIf": {
-        "wasm": "true"
-      }
+      "defaultValue": "true"
     },
     "continuousIntegration": {
       "displayName": "CI Templates",
@@ -395,6 +365,11 @@
       "defaultValue": "false",
       "description": "Supplied by Uno Studio"
     },
+    "useCPM": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "cpm"
+    },
     "useBlankAppTemplate": {
       "type": "computed",
       "datatype": "bool",
@@ -408,7 +383,7 @@
     "useTestSolutionFolder": {
       "type": "computed",
       "datatype": "bool",
-      "value": "preset == 'recommended' && (tests || unitTest)"
+      "value": "preset == 'recommended' && (tests == 'ui' || tests == 'unit')"
     },
     "useCsharpMarkup": {
       "type": "computed",
@@ -435,6 +410,11 @@
       "datatype": "bool",
       "value": "(appTheme == 'cupertino' && preset == 'recommended')"
     },
+    "useLoggingFallback": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "(logging == 'none' || preset == 'blank')"
+    },
     "useLogging": {
       "type": "computed",
       "datatype": "bool",
@@ -444,11 +424,6 @@
       "type": "computed",
       "datatype": "bool",
       "value": "(useDependencyInjection && logging == 'serilog')"
-    },
-    "useOSLoggingPackage": {
-      "type": "computed",
-      "datatype": "bool",
-      "value": "(useBlankAppTemplate || useLogging)"
     },
     "useAspNetCoreSerilogPackage": {
       "type": "computed",
@@ -465,10 +440,55 @@
       "datatype": "bool",
       "value": "architecture == 'mvvm'"
     },
+    "useGtk": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "(platforms == gtk)"
+    },
+    "useLinuxFb": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "(platforms == linux-fb)"
+    },
+    "useAndroid": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "(platforms == android)"
+    },
+    "useIOS": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "(platforms == ios)"
+    },
+    "useMacOS": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "(platforms == macos)"
+    },
+    "useMacCatalyst": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "(platforms == maccatalyst)"
+    },
     "useMobile": {
       "type": "computed",
       "dataType": "bool",
-      "value": "(android || ios || macos || maccatalyst)"
+      "value": "(platforms == android || platforms == ios || platforms == macos || platforms == maccatalyst)"
+    },
+    "useWasm": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "(platforms == wasm)"
+    },
+    "useWinAppSdk": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "(platforms == windows)"
+    },
+    "useWpf": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "(platforms == wpf)"
     },
     "useDataContracts": {
       "type": "computed",
@@ -478,12 +498,12 @@
     "useUnitTests": {
       "type": "computed",
       "dataType": "bool",
-      "value": "(preset == 'recommended' && unitTests)"
+      "value": "(preset == 'recommended' &&  tests == unit)"
     },
     "useUITests": {
       "type": "computed",
       "dataType": "bool",
-      "value": "(preset == 'recommended' && tests)"
+      "value": "(preset == 'recommended' && tests == ui)"
     },
     "useDependencyInjection": {
       "type": "computed",
@@ -581,63 +601,63 @@
         "datatype": "string",
         "cases": [
           {
-            "condition": "(tfm == 'net6.0' && android && ios && maccatalyst)",
+            "condition": "(tfm == 'net6.0' && platforms == android && platforms == ios && platforms == maccatalyst)",
             "value": "net6.0-ios;net6.0-android;net6.0-maccatalyst"
           },
           {
-            "condition": "(tfm == 'net7.0' && android && ios && maccatalyst)",
+            "condition": "(tfm == 'net7.0' && platforms == android && platforms == ios && platforms == maccatalyst)",
             "value": "net7.0-ios;net7.0-android;net7.0-maccatalyst"
           },
           {
-            "condition": "(tfm == 'net6.0' && android && ios && !maccatalyst)",
+            "condition": "(tfm == 'net6.0' && platforms == android && platforms == ios && platforms != maccatalyst)",
             "value": "net6.0-ios;net6.0-android"
           },
           {
-            "condition": "(tfm == 'net7.0' && android && ios && !maccatalyst)",
+            "condition": "(tfm == 'net7.0' && platforms == android && platforms == ios && platforms != maccatalyst)",
             "value": "net7.0-ios;net7.0-android"
           },
           {
-            "condition": "(tfm == 'net6.0' && !android && ios && maccatalyst)",
+            "condition": "(tfm == 'net6.0' && platforms != android && platforms == ios && platforms == maccatalyst)",
             "value": "net6.0-ios;net6.0-maccatalyst"
           },
           {
-            "condition": "(tfm == 'net7.0' && !android && ios && maccatalyst)",
+            "condition": "(tfm == 'net7.0' && platforms != android && platforms == ios && platforms == maccatalyst)",
             "value": "net7.0-ios;net7.0-maccatalyst"
           },
           {
-            "condition": "(tfm == 'net6.0' && android && !ios && maccatalyst)",
+            "condition": "(tfm == 'net6.0' && platforms == android && platforms != ios && platforms == maccatalyst)",
             "value": "net6.0-android;net7.0-maccatalyst"
           },
           {
-            "condition": "(tfm == 'net7.0' && android && !ios && maccatalyst)",
+            "condition": "(tfm == 'net7.0' && platforms == android && platforms != ios && platforms == maccatalyst)",
             "value": "net7.0-android;net7.0-maccatalyst"
           },
           {
-            "condition": "(tfm == 'net6.0' && android && !ios && !maccatalyst)",
+            "condition": "(tfm == 'net6.0' && platforms == android && platforms != ios && platforms != maccatalyst)",
             "value": "net6.0-android"
           },
           {
-            "condition": "(tfm == 'net7.0' && android && !ios && !maccatalyst)",
+            "condition": "(tfm == 'net7.0' && platforms == android && platforms != ios && platforms != maccatalyst)",
             "value": "net7.0-android"
           },
           {
-            "condition": "(tfm == 'net6.0' && !android && ios && !maccatalyst)",
+            "condition": "(tfm == 'net6.0' && platforms != android && platforms == ios && platforms != maccatalyst)",
             "value": "net6.0-ios"
           },
           {
-            "condition": "(tfm == 'net7.0' && !android && ios && !maccatalyst)",
+            "condition": "(tfm == 'net7.0' && platforms != android && platforms == ios && platforms != maccatalyst)",
             "value": "net7.0-ios"
           },
           {
-            "condition": "(tfm == 'net6.0' && !android && !ios && maccatalyst)",
+            "condition": "(tfm == 'net6.0' && platforms != android && platforms != ios && platforms == maccatalyst)",
             "value": "net6.0-maccatalyst"
           },
           {
-            "condition": "(tfm == 'net7.0' && !android && !ios && maccatalyst)",
+            "condition": "(tfm == 'net7.0' && platforms != android && platforms != ios && platforms == maccatalyst)",
             "value": "net7.0-maccatalyst"
           },
           {
-            "condition": "(!android && !ios && !maccatalyst)",
+            "condition": "(platforms != android && platforms != ios && platforms != maccatalyst)",
             "value": ""
           }
         ]
@@ -710,7 +730,7 @@
     "useInfrastructureNamespace": {
       "type": "computed",
       "datatype": "bool",
-      "value": "preset == 'recommended' && ((http && dependencyInjection) || useCsharpMarkup)"
+      "value": "preset == 'recommended' && http && dependencyInjection"
     },
     "useBusinessModelsNamespace": {
       "type": "computed",
@@ -749,11 +769,11 @@
       "path": "MyExtensionsApp.DataContracts\\MyExtensionsApp.DataContracts.csproj"
     },
     {
-      "condition": "unitTest && useRecommendedAppTemplate",
+      "condition": "useUnitTests",
       "path": "MyExtensionsApp.Tests\\MyExtensionsApp.Tests.csproj"
     },
     {
-      "condition": "tests && useRecommendedAppTemplate",
+      "condition": "useUITests",
       "path": "MyExtensionsApp.UITests\\MyExtensionsApp.UITests.csproj"
     },
     {
@@ -765,23 +785,23 @@
       "path": "MyExtensionsApp.Mobile\\MyExtensionsApp.Mobile.csproj"
     },
     {
-      "condition": "winAppSdk",
+      "condition": "useWinAppSdk",
       "path": "MyExtensionsApp.Windows\\MyExtensionsApp.Windows.csproj"
     },
     {
-      "condition": "wasm",
+      "condition": "useWasm",
       "path": "MyExtensionsApp.Wasm\\MyExtensionsApp.Wasm.csproj"
     },
     {
-      "condition": "skiaGtk",
+      "condition": "useGtk",
       "path": "MyExtensionsApp.Skia.Gtk\\MyExtensionsApp.Skia.Gtk.csproj"
     },
     {
-      "condition": "skiaWpf",
+      "condition": "useWpf",
       "path": "MyExtensionsApp.Skia.WPF\\MyExtensionsApp.Skia.Wpf.csproj"
     },
     {
-      "condition": "skiaLinuxFb",
+      "condition": "useLinuxFb",
       "path": "MyExtensionsApp.Skia.Linux.FrameBuffer\\MyExtensionsApp.Skia.Linux.FrameBuffer.csproj"
     }
   ],
@@ -807,25 +827,25 @@
           ]
         },
         {
-          "condition": "(!android)",
+          "condition": "(platforms != android)",
           "exclude": [
             "MyExtensionsApp.Mobile/Android/**/*"
           ]
         },
         {
-          "condition": "(!ios)",
+          "condition": "(platforms != ios)",
           "exclude": [
             "MyExtensionsApp.Mobile/iOS/**/*"
           ]
         },
         {
-          "condition": "(!macos)",
+          "condition": "(platforms != macos)",
           "exclude": [
             "MyExtensionsApp.Mobile/macOS/**/*"
           ]
         },
         {
-          "condition": "(!maccatalyst)",
+          "condition": "(platforms != maccatalyst)",
           "exclude": [
             "MyExtensionsApp.Mobile/MacCatalyst/**/*"
           ]
@@ -837,45 +857,43 @@
           ]
         },
         {
-          "condition": "(!wasm)",
+          "condition": "(!useWasm)",
           "exclude": [
             "MyExtensionsApp.Wasm**/*"
           ]
         },
         {
-          "condition": "(!skiaGtk)",
+          "condition": "(!useGtk)",
           "exclude": [
             "MyExtensionsApp.Skia.Gtk/**/*"
           ]
         },
         {
-          "condition": "(!skiaWpf)",
+          "condition": "(!useWpf)",
           "exclude": [
             "MyExtensionsApp.Skia.WPF/**/*"
           ]
         },
         {
-          "condition": "(!skiaLinuxFb)",
+          "condition": "(!useLinuxFb)",
           "exclude": [
             "MyExtensionsApp.Skia.Linux.FrameBuffer/**/*"
           ]
         },
         {
-          "condition": "(winAppSdk && skiaGtk)",
+          "condition": "(useWinAppSdk && useGtk)",
           "exclude": [
-            "MyExtensionsApp.Skia.Gtk/Package.appxmanifest",
-            "MyExtensionsApp.Skia.Gtk/Images/StoreLogo.png"
+            "MyExtensionsApp.Skia.Gtk/Package.appxmanifest"
           ]
         },
         {
-          "condition": "(winAppSdk && skiaLinuxFb)",
+          "condition": "(useWinAppSdk && useLinuxFb)",
           "exclude": [
-            "MyExtensionsApp.Skia.Linux.FrameBuffer/Package.appxmanifest",
-            "MyExtensionsApp.Skia.Linux.FrameBuffer/Images/StoreLogo.png"
+            "MyExtensionsApp.Skia.Linux.FrameBuffer/Package.appxmanifest"
           ]
         },
         {
-          "condition": "(!winAppSdk)",
+          "condition": "(!useWinAppSdk)",
           "exclude": [
             "MyExtensionsApp.Windows/**/*"
           ]
@@ -889,19 +907,22 @@
         {
           "condition": "(useDependencyInjection)",
           "exclude": [
-            "MyExtensionsApp/AppStart.nodi.cs"
-          ]
+            "MyExtensionsApp/App.blank.cs"
+          ],
+          "rename": {
+            "MyExtensionsApp/App.recommended.cs": "MyExtensionsApp/App.cs"
+          }
         },
         {
           "condition": "(!useDependencyInjection)",
           "exclude": [
-            "MyExtensionsApp/AppStart.cs",
+            "MyExtensionsApp/App.recommended.cs",
             "MyExtensionsApp/Infrastructure/DebugHandler.cs",
             "MyExtensionsApp/Business/**",
             "MyExtensionsApp/Presentation/**"
           ],
           "rename": {
-            "MyExtensionsApp/AppStart.nodi.cs": "MyExtensionsApp/AppStart.cs"
+            "MyExtensionsApp/App.blank.cs": "MyExtensionsApp/App.cs"
           }
         },
         {
@@ -939,13 +960,13 @@
           ]
         },
         {
-          "condition": "(!unitTest || useBlankAppTemplate)",
+          "condition": "(!useUnitTests)",
           "exclude": [
             "MyExtensionsApp.Tests/**/*"
           ]
         },
         {
-          "condition": "(!tests || useBlankAppTemplate)",
+          "condition": "(!useUITests)",
           "exclude": [
             "MyExtensionsApp.UITests/**/*"
           ]
@@ -995,7 +1016,7 @@
         {
           "condition": "(!useCsharpMarkup)",
           "exclude": [
-            "MyExtensionsApp/Infrastructure/ApplicationBuilderExtensions.cs",
+            "MyExtensionsApp/AppResources.cs",
             "MyExtensionsApp/Styles/*.cs"
           ]
         },
@@ -1014,7 +1035,7 @@
         {
           "condition": "(useBlankAppTemplate)",
           "rename": {
-            "MyExtensionsApp.Base/App.blank.cs": "MyExtensionsApp.Base/App.xaml.cs"
+            "MyExtensionsApp/App.blank.cs": "MyExtensionsApp/App.cs"
           },
           "exclude": [
             "MyExtensionsApp/Business/**",
@@ -1022,20 +1043,9 @@
             "MyExtensionsApp/Presentation/**",
             "MyExtensionsApp/Services/**",
             "MyExtensionsApp/Styles/**",
-            "MyExtensionsApp/AppStart.cs",
-            "MyExtensionsApp/AppStart.nodi.cs",
+            "MyExtensionsApp/App.recommended.cs",
             "MyExtensionsApp/appsettings.*",
-            "MyExtensionsApp.Base/App.default.cs",
             "MyExtensionsApp.Tests/AppInfoTests.cs"
-          ]
-        },
-        {
-          "condition": "(useRecommendedAppTemplate)",
-          "rename": {
-            "MyExtensionsApp.Base/App.default.cs": "MyExtensionsApp.Base/App.xaml.cs"
-          },
-          "exclude": [
-            "MyExtensionsApp.Base/App.blank.cs"
           ]
         },
         {

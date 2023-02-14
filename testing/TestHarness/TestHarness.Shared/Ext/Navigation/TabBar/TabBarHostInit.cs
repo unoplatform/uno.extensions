@@ -11,6 +11,7 @@ public class TabBarHostInit : BaseHostInitialization
 			new ViewMap<TabBarSettingsPage, TabBarSettingsViewModel>(),
 			new ViewMap<Blank1Page, Blank1ViewModel>(),
 			new ViewMap<Blank2Page, Blank2ViewModel>(),
+			new ViewMap<Blank2NextPage, Blank2NextViewModel>(),
 			new ViewMap<Blank3Page, Blank3ViewModel>()
 			);
 
@@ -26,6 +27,7 @@ public class TabBarHostInit : BaseHostInitialization
 						{
 							new RouteMap("Section1", View: views.FindByViewModel<Blank1ViewModel>(), IsDefault:true),
 							new RouteMap("Section2", View: views.FindByViewModel<Blank2ViewModel>()),
+							new RouteMap("Blank2Next", View: views.FindByViewModel<Blank2NextViewModel>(), DependsOn:"Section2"),
 							new RouteMap("Section3", View: views.FindByViewModel<Blank3ViewModel>()),
 
 						}),

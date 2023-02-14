@@ -9,11 +9,15 @@ jobs:
   - checkout: self
     clean: 'true'
 
+  - template: templates/dotnet6-install-windows.yml
+
   - task: gitversion/setup@0
+    retryCountOnTaskFailure: 3
     inputs:
-      versionSpec: '5.6.8'
+      versionSpec: '5.10.3'
 
   - task: gitversion/execute@0
+    retryCountOnTaskFailure: 3
     inputs:
       useConfigFile: true
       configFilePath: build/ci/gitversion.yml
@@ -26,13 +30,6 @@ jobs:
       echo MSBUILDPATH: $MSBUILDPATH
     displayName: Setup VS17 Path
 
-  # - task: UseDotNet@2
-  #   displayName: 'Use .NET 5.0.x'
-  #   inputs:
-  #     packageType: sdk
-  #     version: 5.0.x
-
-  - template: templates/dotnet6-install-windows.yml
   - template: templates/install-windows-sdk.yml
     parameters:
       sdkVersion: 18362

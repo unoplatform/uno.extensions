@@ -4,11 +4,16 @@
 	  xmlns:local="using:SectionNavPerf.Views"
 	  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	  xmlns:uen="using:Uno.Extensions.Navigation.UI"
 	  mc:Ignorable="d"
 	  Background="Blue">
 
 	<Grid>
+		<StackPanel>
 		<TextBlock Text="Section 2"
 				   Foreground="White" />
+			<Button Content="Next"
+					uen:Navigation.Request="Blank2Next" />
+		</StackPanel>
 	</Grid>
 </Page>

@@ -2,7 +2,7 @@
 #if (useSerilog)
 using Serilog;
 #endif
-#if wasm
+#if (useWasm)
 using Uno.Wasm.Bootstrap.Server;
 #endif
 
@@ -51,7 +51,7 @@ try
 	app.UseHttpsRedirection();
 
 	app.UseAuthorization();
-#if wasm
+#if useWasm
 
 	app.UseUnoFrameworkFiles();
 	app.MapFallbackToFile("index.html");

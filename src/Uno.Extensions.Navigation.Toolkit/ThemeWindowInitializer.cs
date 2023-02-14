@@ -17,5 +17,7 @@ internal class ThemeWindowInitializer : IWindowInitializer
 		{
 			return;
 		}
+
+		await themeService.InitializeAsync();
 	}
 }

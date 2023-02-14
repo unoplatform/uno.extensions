@@ -25,42 +25,9 @@
       "longName": "app-theme",
       "shortName": "theme"
     },
-    "android": {
-      "longName": "android",
-      "shortName": "droid"
-    },
-    "ios": {
-      "longName": "ios",
-      "shortName": "ios"
-    },
-    "macos": {
-      "longName": "macos",
-      "shortName": "macos",
-      "isHidden": true
-    },
-    "maccatalyst": {
-      "longName": "maccatalyst",
-      "shortName": "catalyst"
-    },
-    "skiaWpf": {
-      "longName": "skia-wpf",
-      "shortName": "wpf"
-    },
-    "skiaGtk": {
-      "longName": "skia-gtk",
-      "shortName": "gtk"
-    },
-    "skiaLinuxFb": {
-      "longName": "skia-linux-fb",
-      "shortName": "linux"
-    },
-    "winAppSdk": {
-      "longName": "windows-app-sdk",
-      "shortName": "win"
-    },
-    "wasm": {
-      "longName": "webassembly",
-      "shortName": "wasm"
+    "platforms": {
+      "longName": "platforms",
+      "shortName": "platforms"
     },
     "server": {
       "longName": "server",
@@ -70,13 +37,9 @@
       "longName": "wasm-pwa-manifest",
       "shortName": "pwa"
     },
-    "unitTest": {
-      "longName": "unit-tests",
-      "shortName": "unit-tests"
-    },
     "tests": {
-      "longName": "ui-tests",
-      "shortName": "ui-tests"
+      "longName": "tests",
+      "shortName": "tests"
     },
     "dependencyInjection": {
       "longName": "dependency-injection",

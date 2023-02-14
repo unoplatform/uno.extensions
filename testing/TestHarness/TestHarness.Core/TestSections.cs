@@ -29,5 +29,6 @@ public enum TestSections
 	Localization,
 	Http_Endpoints,
 	Http_Refit,
+	Toolkit_ThemeService,
 	Validation
 }

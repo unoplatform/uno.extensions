@@ -9,7 +9,7 @@
 		<AssemblyName>TestHarnessApp</AssemblyName>
 		<PublishProfile>win10-$(Platform).pubxml</PublishProfile>
 		<UseWinUI>true</UseWinUI>
-		<DefineConstants>$(DefineConstants);WINUI</DefineConstants>
+		<DefineConstants>$(DefineConstants);WINUI;UNO_EXT_TIMERS</DefineConstants>
 		<DefaultLanguage>en</DefaultLanguage>
 	</PropertyGroup>
 

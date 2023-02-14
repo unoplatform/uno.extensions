@@ -35,43 +35,7 @@
       "isVisible": true
     },
     {
-      "id": "wasm",
-      "isVisible": true
-    },
-    {
-      "id": "ios",
-      "isVisible": true
-    },
-    {
-      "id": "android",
-      "isVisible": true
-    },
-    {
-      "id": "winAppSdk",
-      "isVisible": true
-    },
-    {
-      "id": "skiaGtk",
-      "isVisible": true
-    },
-    {
-      "id": "macos",
-      "isVisible": false
-    },
-    {
-      "id": "maccatalyst",
-      "isVisible": true
-    },
-    {
-      "id": "skiaWpf",
-      "isVisible": true
-    },
-    {
-      "id": "skiaLinuxFb",
-      "isVisible": true
-    },
-    {
-      "id": "unitTest",
+      "id": "platforms",
       "isVisible": true
     },
     {

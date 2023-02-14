@@ -3,17 +3,14 @@
 		<OutputType Condition="'$(Configuration)'=='Release'">WinExe</OutputType>
 		<OutputType Condition="'$(Configuration)'=='Debug'">Exe</OutputType>
 		<TargetFramework>$baseTargetFramework$</TargetFramework>
-		<ApplicationIcon>Images\logo.ico</ApplicationIcon>
 	</PropertyGroup>
-	<!--#if winAppSdk-->
+	<!--#if (useWinAppSdk)-->
 	<ItemGroup Condition="exists('Platforms\Windows')">
 		<EmbeddedResource Include="Platforms\Windows\Package.appxmanifest" LogicalName="Package.appxmanifest" />
-		<Content Include="Platforms\Windows\Images\StoreLogo.png" />
 	</ItemGroup>
 	<!--#else-->
 	<ItemGroup>
 		<EmbeddedResource Include="Package.appxmanifest" />
-		<Content Include="Images\logo.ico" />
 	</ItemGroup>
 	<!--#endif-->
 
@@ -93,5 +90,5 @@
 		<ProjectReference Include="..\MyExtensionsApp.DataContracts\MyExtensionsApp.DataContracts.csproj" />
 		<!--#endif-->
 	</ItemGroup>
-	<Import Project="../MyExtensionsApp.Base/base.props" />
+	<Import Project="..\MyExtensionsApp.Base\base.props" />
 </Project>

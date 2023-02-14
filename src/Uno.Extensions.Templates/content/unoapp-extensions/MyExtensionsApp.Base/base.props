@@ -1,14 +1,25 @@
 <Project>
 	<ItemGroup>
-		<None Include="$(MSBuildThisFileDirectory)App.xaml" />
-		<ApplicationDefinition Include="$(MSBuildThisFileDirectory)App.xaml"
+	<!--#if (useCPM)-->
+		<PackageReference Include="Uno.Resizetizer" />
+	<!--#else-->
+		<PackageReference Include="Uno.Resizetizer" Version="0.34.0-dev.110" />
+	<!--#endif-->
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Include="$(MSBuildThisFileDirectory)AppHead.xaml" />
+		<ApplicationDefinition Include="$(MSBuildThisFileDirectory)AppHead.xaml"
 								SubType="Designer"
 								XamlRuntime="WinUI"
 								Generator="MSBuild:Compile"
-								Link="App.xaml" />
-		<Compile Include="$(MSBuildThisFileDirectory)App.xaml.cs"
+								Link="AppHead.xaml" />
+		<Compile Include="$(MSBuildThisFileDirectory)AppHead.xaml.cs"
 				XamlRuntime="WinUI"
-				DependentUpon="App.xaml"
-				Link="App.xaml.cs" />
+				DependentUpon="AppHead.xaml"
+				Link="AppHead.xaml.cs" />
+		<UnoIcon Include="$(MSBuildThisFileDirectory)Icons\iconapp.svg"
+				ForegroundFile="$(MSBuildThisFileDirectory)Icons\appconfig.svg"
+				Color="#00000000" />
 	</ItemGroup>
 </Project>

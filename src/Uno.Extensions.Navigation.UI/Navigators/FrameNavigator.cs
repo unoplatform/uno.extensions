@@ -97,7 +97,7 @@ public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 			{
 				var mapping = Resolver.FindByPath(this.Route!.Base);
 
-				await InitializeCurrentView(request, this.Route, mapping, true);
+				await InitializeCurrentView(request, this.Route with { Data = request.Route.Data}, mapping, true);
 			}
 			return request.Route;
 		}
@@ -151,28 +151,40 @@ public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 		}
 
 
-		Route firstSegment = Route.Empty;
 		for (var i = 0; i < segments.Length - 1; i++)
 		{
 			var map = segments[i];
-			if(map.RenderView is null)
+			if (map.RenderView is null)
 			{
 				continue;
 			}
 
 			var newEntry = new PageStackEntry(map.RenderView, null, null);
 			Control?.BackStack.Add(newEntry);
-			firstSegment = firstSegment.Append(map.Path);
 		}
-		firstSegment = firstSegment.Append(lastMap.Path);
 
+
+		// Determine which segments in the initial route were consumed by this navigation
+		var navSegment = Route.Empty;
+		foreach(var stackEntry in Control!.BackStack)
+		{
+			var entryRoute = Resolver.FindByView(stackEntry.SourcePageType, this);
+			if (entryRoute != null && (
+				request.Route.Contains(entryRoute.Path) ||
+				segments.Any(seg=>seg.Path==entryRoute.Path)
+				))
+			{
+				navSegment = navSegment.Append(entryRoute.Path);
+			}
+		}
+		navSegment = navSegment.Append(lastMap.Path);
 
 		await InitializeCurrentView(request, lastMap.AsRoute() with { Data = request.Route.Data}, lastMap, refreshViewModel);
 
 		CurrentView?.SetNavigatorInstance(Region.Navigator()!);
 
 
-		var responseRequest = firstSegment with { Qualifier = route.Qualifier };
+		var responseRequest = navSegment with { Qualifier = route.Qualifier };
 		return responseRequest;
 	}
 

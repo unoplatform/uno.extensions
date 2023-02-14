@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<TargetFrameworks>$mobileTargetFrameworks$</TargetFrameworks>
-		<!--#if (macos)-->
+		<!--#if (useMacOS)-->
 		<!-- Disabled because of https://github.com/xamarin/xamarin-macios/issues/16401-->
 		<!-- <TargetFrameworks>$(TargetFrameworks);$baseTargetFramework$-macos</TargetFrameworks> -->
 		<!--#endif-->
@@ -25,6 +25,7 @@
 		<UseInterpreter Condition="'$(Configuration)' == 'Debug' and $([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) != 'maccatalyst'">True</UseInterpreter>
 		<IsUnoHead>true</IsUnoHead>
 	</PropertyGroup>
+
 	<!--#if (useBlankAppTemplate)-->
 	<ItemGroup>
 		<!--#if (useCsharpMarkup)-->
@@ -33,6 +34,7 @@
 		<PackageReference Include="Uno.WinUI" />
 		<PackageReference Include="Uno.WinUI.RemoteControl" Condition="'$(Configuration)'=='Debug'" />
 		<PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" />
+		<PackageReference Include="Uno.Extensions.Logging.OSLog" />
 	</ItemGroup>
 	<!--#endif-->
 	<!--#if (useRecommendedAppTemplate)-->
@@ -67,6 +69,7 @@
 		<!--#if (useLocalization)-->
 		<PackageReference Include="Uno.Extensions.Localization.WinUI" />
 		<!--#endif-->
+		<PackageReference Include="Uno.Extensions.Logging.OSLog" />
 		<!--#if (useLogging)-->
 		<PackageReference Include="Uno.Extensions.Logging.WinUI" />
 		<!--#endif-->
@@ -92,7 +95,7 @@
 	</ItemGroup>
 	<!--#endif-->
 	<Choose>
-		<!--#if (android)-->
+		<!--#if (useAndroid)-->
 		<When Condition="$(IsAndroid)">
 			<ItemGroup>
 				<PackageReference Include="Xamarin.Google.Android.Material" />
@@ -103,7 +106,7 @@
 			</ItemGroup>
 		</When>
 		<!--#endif-->
-		<!--#if (ios)-->
+		<!--#if (useIOS)-->
 		<When Condition="$(IsIOS)">
 			<PropertyGroup>
 				<MtouchExtraArgs>$(MtouchExtraArgs) --setenv=MONO_GC_PARAMS=soft-heap-limit=512m,nursery-size=64m,evacuation-threshold=66,major=marksweep,concurrent-sweep</MtouchExtraArgs>
@@ -111,14 +114,9 @@
 				<MtouchExtraArgs>$(MtouchExtraArgs) --marshal-objectivec-exceptions:disable</MtouchExtraArgs>
 				<MtouchExtraArgs>$(MtouchExtraArgs) --registrar:static</MtouchExtraArgs>
 			</PropertyGroup>
-			<!--#if (useOSLoggingPackage)-->
-			<ItemGroup>
-				<PackageReference Include="Uno.Extensions.Logging.OSLog" />
-			</ItemGroup>
-			<!--#endif-->
 		</When>
 		<!--#endif-->
-		<!--#if (maccatalyst)-->
+		<!--#if (useMacCatalyst)-->
 		<When Condition="$(IsMacCatalyst)">
 			<PropertyGroup>
 				<!-- Configure the GC -->
@@ -130,14 +128,9 @@
 				<!-- Full globalization is required for Uno -->
 				<InvariantGlobalization>false</InvariantGlobalization>
 			</PropertyGroup>
-			<!--#if (useOSLoggingPackage)-->
-			<ItemGroup>
-				<PackageReference Include="Uno.Extensions.Logging.OSLog" />
-			</ItemGroup>
-			<!--#endif-->
 		</When>
 		<!--#endif-->
-		<!--#if (macos)-->
+		<!--#if (useMacOS)-->
 		<When Condition="$(IsMac)">
 			<PropertyGroup>
 				<TrimMode Condition="'$(Configuration)'=='Release'">link</TrimMode>
@@ -151,5 +144,5 @@
 		<ProjectReference Include="..\MyExtensionsApp.DataContracts\MyExtensionsApp.DataContracts.csproj" />
 		<!--#endif-->
 	</ItemGroup>
-	<Import Project="../MyExtensionsApp.Base/base.props" />
+	<Import Project="..\MyExtensionsApp.Base\base.props" />
 </Project>

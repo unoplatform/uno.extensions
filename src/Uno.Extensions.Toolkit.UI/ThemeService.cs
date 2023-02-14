@@ -1,14 +1,15 @@
-﻿using Windows.Storage;
+﻿using System.Threading;
+using Windows.Storage;
 
 namespace Uno.Extensions.Toolkit;
 
-internal class ThemeService : IThemeService
+internal class ThemeService : IThemeService, IDisposable
 {
 	private const string CurrentThemeSettingsKey = "CurrentTheme";
 	private UIElement? _rootAccessorElement;
 	private readonly IDispatcher _dispatcher;
 	private readonly ILogger? _logger;
-	private readonly TaskCompletionSource<bool> _initialization = new TaskCompletionSource<bool>();
+	private TaskCompletionSource<bool>? _initialization;
 
 	/// <inheritdoc/>
 	public event EventHandler<AppTheme>? ThemeChanged;
@@ -21,11 +22,21 @@ internal class ThemeService : IThemeService
 		_dispatcher = dispatcher;
 		_logger = logger;
 
-		_ = _dispatcher.ExecuteAsync(async ct =>
+		if (!_dispatcher.HasThreadAccess && PlatformHelper.IsThreadingEnabled)
 		{
-			_rootAccessorElement = window.Content;
+			// Need to dispatch in order to access window.Content on UI thread
+			_ = _dispatcher.ExecuteAsync(InitWindow);
+		}
+		else
+		{
+			_ = InitWindow(CancellationToken.None);
+		}
+
+		async ValueTask InitWindow(CancellationToken ct)
+		{
+			RootElement = window.Content;
 			await InitializeAsync();
-		});
+		}
 	}
 
 	internal ThemeService(
@@ -33,7 +44,7 @@ internal class ThemeService : IThemeService
 		IDispatcher dispatcher,
 		ILogger? logger = default)
 	{
-		_rootAccessorElement = rootAccessorElement;
+		RootElement = rootAccessorElement;
 		_dispatcher = dispatcher;
 		_logger = logger;
 
@@ -41,15 +52,45 @@ internal class ThemeService : IThemeService
 	}
 
 	/// <inheritdoc/>
-	public bool IsDark => _rootAccessorElement?.XamlRoot is { } xamlRoot ? SystemThemeHelper.IsRootInDarkMode(xamlRoot) : false;
+	public bool IsDark => (RootElement as FrameworkElement)?.ActualTheme == ElementTheme.Dark;
 
 	/// <inheritdoc/>
 	public AppTheme Theme => GetSavedTheme();
 
+	private UIElement? RootElement
+	{
+		get => _rootAccessorElement;
+		set
+		{
+			if(_rootAccessorElement == value)
+			{
+				return;
+			}
+			if (_rootAccessorElement is FrameworkElement oldElement)
+			{
+				oldElement.ActualThemeChanged -= ElementThemeChanged;
+			}
+			_rootAccessorElement = value;
+			if(_rootAccessorElement is FrameworkElement element)
+			{
+				element.ActualThemeChanged += ElementThemeChanged;
+			}
+		}
+	}
+
+	private void ElementThemeChanged(FrameworkElement sender, object args)
+	{
+		ThemeChanged?.Invoke(this, GetSavedTheme());
+	}
 
 	/// <inheritdoc/>
 	public async Task<bool> SetThemeAsync(AppTheme theme)
 	{
+		if (_initialization is null)
+		{
+			throw new NullReferenceException($"Theme service not initialized, {nameof(InitializeAsync)} needs to complete before SetThemeAsync can be called");
+		}
+
 		// Make sure initialization completes before attempting to set new theme
 		await _initialization.Task;
 
@@ -58,36 +99,52 @@ internal class ThemeService : IThemeService
 
 	private async Task<bool> InternalSetThemeAsync(AppTheme theme)
 	{
-		return await _dispatcher.ExecuteAsync(async (ct) =>
+		if (_dispatcher.HasThreadAccess ||
+			(!PlatformHelper.IsThreadingEnabled && !(_initialization?.Task.IsCompleted??false)))
 		{
-			var existingIsDark = IsDark;
-			if (_rootAccessorElement?.XamlRoot is { } xamlRoot)
+			return InternalSetThemeOnUIThread(theme);
+		}
+		else
+		{
+			return await _dispatcher.ExecuteAsync(async (ct) =>
 			{
-				if (theme != AppTheme.System)
-				{
-					SystemThemeHelper.SetRootTheme(xamlRoot, theme == AppTheme.Dark);
-				}
-				else
-				{
-					//Set System theme
-					var systemTheme = SystemThemeHelper.GetCurrentOsTheme();
-					SystemThemeHelper.SetRootTheme(xamlRoot, systemTheme == ApplicationTheme.Dark);
-				}
-
-				await SaveDesiredTheme(theme);
-
-				if (existingIsDark != IsDark)
-				{
-					ThemeChanged?.Invoke(this, theme);
-				}
-				return true;
-			}
-			return false;
-		});
+				return InternalSetThemeOnUIThread(theme);
+			});
+		}
 
 	}
 
-	private async Task SaveDesiredTheme(AppTheme theme)
+	private bool InternalSetThemeOnUIThread(AppTheme theme)
+	{
+		var existingIsDark = IsDark;
+		var rootElement = RootElement?.XamlRoot?.Content as FrameworkElement;
+
+		if (rootElement is null)
+		{
+			return false;
+		}
+
+		var newTheme = theme;
+		if (theme == AppTheme.System)
+		{
+			//Set System theme
+			var systemTheme = SystemThemeHelper.GetCurrentOsTheme();
+			newTheme = systemTheme == ApplicationTheme.Dark ? AppTheme.Dark : AppTheme.Light;
+		}
+
+		rootElement.RequestedTheme = newTheme == AppTheme.Dark ? ElementTheme.Dark : ElementTheme.Light;
+
+		SaveDesiredTheme(theme);
+
+		if (existingIsDark != IsDark)
+		{
+			ThemeChanged?.Invoke(this, theme);
+		}
+		return true;
+
+	}
+
+	private void SaveDesiredTheme(AppTheme theme)
 	{
 		try
 		{
@@ -113,29 +170,61 @@ internal class ThemeService : IThemeService
 		return AppTheme.System;
 	}
 
-	private async Task InitializeAsync()
+	/// <inheritdoc/>
+	public async Task InitializeAsync()
 	{
+		// Allow InitializeAsync to be called multiple times but only
+		// do init once
+		if (_initialization is not null)
+		{
+			await _initialization.Task.ConfigureAwait(false);
+			return;
+		}
+
+		_initialization = new TaskCompletionSource<bool>();
+		
 		var theme = GetSavedTheme();
 		var success = await InternalSetThemeAsync(theme);
 		if (!success)
 		{
-			if (_rootAccessorElement is FrameworkElement fe)
+			if (RootElement is FrameworkElement fe)
 			{
 				async void OnLoaded(object sender, RoutedEventArgs args)
 				{
 					fe.Loaded -= OnLoaded;
-					await InternalSetThemeAsync(theme);
-					_initialization.TrySetResult(true);
+					var themeSet = await InternalSetThemeAsync(theme);
+					CompleteInitialization(themeSet);
 				}
 
 				fe.Loaded += OnLoaded;
+				await _initialization.Task;
 			}
 			else
 			{
 				if (_logger?.IsEnabled(LogLevel.Warning) ?? false) _logger.LogWarningMessage("Unable to attach to Loaded event. Use FrameworkElement instead of UIElement");
-				_initialization.TrySetResult(false);
+				CompleteInitialization(false);
 			}
 		}
-		_initialization.TrySetResult(true);
+		else
+		{
+			CompleteInitialization(true);
+		}
+	}
+
+	private void CompleteInitialization(bool success)
+	{
+		var init = _initialization;
+		if(init is null)
+		{
+			return;
+		}
+
+		init.TrySetResult(success);
+	}
+
+	public void Dispose()
+	{
+		// drop reference, including event handler
+		RootElement = null;
 	}
 }

@@ -1,10 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<TargetFrameworks>$libraryBaseTargetFramework$;$mobileTargetFrameworks$</TargetFrameworks>
-		<!--#if (winAppSdk) -->
+		<!--#if (useWinAppSdk) -->
 		<TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows')) or '$(EnableWindowsTargeting)' == 'true'">$(TargetFrameworks);$baseTargetFramework$-windows10.0.19041</TargetFrameworks>
 		<!--#endif -->
-		<!--#if (macos)-->
+		<!--#if (useMacOS)-->
 		<!-- Disabled because of https://github.com/xamarin/xamarin-macios/issues/16401-->
 		<!--<TargetFrameworks>$(TargetFrameworks);$baseTargetFramework$-macos</TargetFrameworks>-->
 		<!--#endif -->
@@ -15,6 +15,7 @@
 
 	<!--#if (useBlankAppTemplate)-->
 	<ItemGroup>
+		<PackageReference Include="Uno.Resizetizer" />
 		<!--#if (useCsharpMarkup)-->
 		<PackageReference Include="Uno.WinUI.Markup" />
 		<PackageReference Include="Uno.Themes.WinUI.Markup" />
@@ -24,6 +25,7 @@
 	<!--#endif-->
 	<!--#if (useRecommendedAppTemplate)-->
 	<ItemGroup>
+		<PackageReference Include="Uno.Resizetizer" />
 		<!--#if (useCsharpMarkup)-->
 		<PackageReference Include="Uno.WinUI.Markup" />
 		<!--#if (useMaterial)-->
@@ -108,7 +110,7 @@
 	</ItemGroup>
 	<!--#endif-->
 
-	<!--#if (winAppSdk) -->
+	<!--#if (useWinAppSdk) -->
 	<Choose>
 		<When Condition="$(IsWinAppSdk)">
 			<ItemGroup>
@@ -157,6 +159,10 @@
 		</Compile>
 	</ItemGroup>
 	<!--#endif-->
+
+	<ItemGroup>
+		<UnoImage Include="Assets\Icons\back.svg" />
+	</ItemGroup>
 
 	<ItemGroup>
 		<!--#if (useConfiguration)-->

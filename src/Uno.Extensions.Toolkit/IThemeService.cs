@@ -22,4 +22,13 @@ public interface IThemeService
 	/// Event that fires up whenever SetThemeAsync() is called.
 	/// </summary>
 	event EventHandler<AppTheme> ThemeChanged;
+
+	/// <summary>
+	/// Initializes the theme service - this is triggered
+	/// automatically when Theme Service is constructed but
+	/// can be invoked manually in order to await Initialise
+	/// completion
+	/// </summary>
+	/// <returns>Task that can be awaited for initialize complete</returns>
+	Task InitializeAsync();
 }

@@ -4,7 +4,6 @@
 		<OutputType Condition="'$(Configuration)'=='Debug'">Exe</OutputType>
 		<TargetFramework>$baseTargetFramework$-windows</TargetFramework>
 		<UseWPF>true</UseWPF>
-		<ApplicationIcon>Images\logo.ico</ApplicationIcon>
 	</PropertyGroup>
 	<ItemGroup Label="AssemblyInfo">
 		<AssemblyAttribute Include="System.Runtime.InteropServices.ComVisibleAttribute">
@@ -17,6 +16,7 @@
 			<_Parameter2_IsLiteral>true</_Parameter2_IsLiteral>
 		</AssemblyAttribute>
 	</ItemGroup>
+
 	<!--#if (useBlankAppTemplate)-->
 	<ItemGroup>
 		<!--#if (useCsharpMarkup)-->
@@ -92,13 +92,10 @@
 		<ApplicationDefinition Include="Wpf\App.xaml" XamlRuntime="Wpf" />
 	</ItemGroup>
 	<ItemGroup>
-	  <Content Include="Images\logo.ico" />
-	</ItemGroup>
-	<ItemGroup>
 		<ProjectReference Include="..\MyExtensionsApp\MyExtensionsApp.csproj" />
 		<!--#if (useHttp)-->
 		<ProjectReference Include="..\MyExtensionsApp.DataContracts\MyExtensionsApp.DataContracts.csproj" />
 		<!--#endif-->
 	</ItemGroup>
-	<Import Project="../MyExtensionsApp.Base/base.props" />
+	<Import Project="..\MyExtensionsApp.Base\base.props" />
 </Project>
