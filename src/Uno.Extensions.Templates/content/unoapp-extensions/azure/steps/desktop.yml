@@ -10,7 +10,7 @@ parameters:
   default: ''    
 - name: project_platform
   type: string
-  default: 'x86'  
+  default: 'x64'  
 - name: publish_artifacts
   type: string
   default: 'true'    

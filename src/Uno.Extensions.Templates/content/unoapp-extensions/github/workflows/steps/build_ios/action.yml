@@ -38,14 +38,18 @@ inputs:
      description: "The provisioning profile name. This is the name you entered in the Apple Developer portal when creating your provisioning profile."
      required: true      
      default: ''          
-  provisioning-profile: 
-     description: "Base64 provisioning profile"
-     required: true
+  issuer-id: 
+     description: "The AppStore Connect API Key Issuer Identifier"
+     required: true      
      default: ''
-  keychain-password: 
-     description: "New keychain password. This can be a random string value"
-     required: false
-     default: 'KEYCHAIN_PASSWORD'      
+  api-key-id: 
+     description: "The Key ID for AppStore Connect API"
+     required: true      
+     default: ''
+  api-private-key: 
+     description: "The PKCS8 format Private Key for AppStore Connect API"
+     required: true      
+     default: ''
   publish-artifacts: 
      description: "If true, compilation artifacts will be published and put under Job Summary section"
      required: false
@@ -66,8 +70,10 @@ runs:
             if ('' -eq '${{ inputs.certificate-password }}') { $errors = $errors +'[certificate-password] is not valid. Please make sure you are using the correct .p12 certificate password' + "`r`n"  }
             if ('' -eq '${{ inputs.codesign-key }}') { $errors = $errors +'[codesign-key] is not valid. Please make sure the name of the name of the distribution certificate is correct. E.g. Apple Development: Contoso Contoso (752234A22L)' + "`r`n"  }
             if ('' -eq '${{ inputs.codesign-provision }}') { $errors = $errors +'[codesign-provision] is not valid. Please make sure the provisioning profile name is correct. This is the name you entered in the Apple Developer portal when creating your provisioning profile' + "`r`n"  }
-            if ('' -eq '${{ inputs.provisioning-profile }}') { $errors = $errors +'[provisioning-profile] is not valid. Please make sure the .mobileprovision file is correct and it exists in secure files' + "`r`n"  }
-            
+            if ('' -eq '${{ inputs.issuer-id }}') { $errors = $errors +'[issuer-id] is not valid. This is the AppStore Connect API Key Issuer Identifier' + "`r`n"  }
+            if ('' -eq '${{ inputs.api-key-id }}') { $errors = $errors +'[api-key-id] is not valid. This is the Key ID for AppStore Connect API' + "`r`n"  }
+            if ('' -eq '${{ inputs.api-private-key }}') { $errors = $errors +'[api-private-key] is not valid. This is the PKCS8 format Private Key for AppStore Connect API' + "`r`n"  }                        
+
             if (-not ([string]::IsNullOrEmpty($errors))){
                 $errors
                 throw "Some required parameters are missing"
@@ -88,51 +94,37 @@ runs:
     #############################################
     #                 IMPORTANT                 #
     #############################################
-    #Uncomment this step if you see an error indicating the build its expecting a different version of XCode, update the correct number in the lines 93 and 94 and try again
+    #Uncomment this step if you see an error indicating the build its expecting a different version of XCode, update the correct number in the lines 100 and 101 and try again
     # - name: Set XCode Version
     #   if: runner.os == 'macOS'
     #   shell: bash
     #   run: |
     #     sudo xcode-select -s "/Applications/Xcode_14.1.app"
     #     echo "MD_APPLE_SDK_ROOT=/Applications/Xcode_14.1.app" >> $GITHUB_ENV
-        
+
+    - name: 'Download Provisioning Profiles'
+      id: provisioning
+      uses: apple-actions/download-provisioning-profiles@v1
+      with: 
+        bundle-id: "${{ inputs.bundle-identifier }}"
+        issuer-id: "${{ inputs.issuer-id }}"
+        api-key-id:  "${{ inputs.api-key-id }}"
+        api-private-key: "${{ inputs.api-private-key }}"
+
     - name: Install the Apple certificate and provisioning profile
-      shell: bash
-      env:
-        BUILD_CERTIFICATE_BASE64: ${{ inputs.certificate }}
-        P12_PASSWORD: ${{ inputs.certificate-password }}
-        BUILD_PROVISION_PROFILE_BASE64: ${{ inputs.provisioning-profile }}
-        KEYCHAIN_PASSWORD: ${{ inputs.keychain-password }}
-      run: |
-          echo -n "create variables"
-          CERTIFICATE_PATH=$RUNNER_TEMP/build_certificate.p12
-          PP_PATH=$RUNNER_TEMP/build_pp.mobileprovision
-          KEYCHAIN_PATH=$RUNNER_TEMP/app-signing.keychain-db
-
-          echo -n "import certificate and provisioning profile from secrets"
-          echo -n "$BUILD_CERTIFICATE_BASE64" | base64 --decode -o $CERTIFICATE_PATH
-          echo -n "$BUILD_PROVISION_PROFILE_BASE64" | base64 --decode -o $PP_PATH
-
-          echo -n "create temporary keychain"
-          security create-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
-          security set-keychain-settings -lut 21600 $KEYCHAIN_PATH
-          security unlock-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
-
-          echo -n "import certificate to keychain"
-          security import $CERTIFICATE_PATH -P "$P12_PASSWORD" -A -t cert -f pkcs12 -k $KEYCHAIN_PATH
-          security list-keychain -d user -s $KEYCHAIN_PATH
-
-          echo -n "apply provisioning profile"
-          mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
-          cp $PP_PATH ~/Library/MobileDevice/Provisioning\ Profiles
+      uses: apple-actions/import-codesign-certs@v1
+      with: 
+        p12-file-base64: ${{ inputs.certificate }}
+        p12-password: ${{ inputs.certificate-password }}  
 
     - name: Find the Info.plist file and validate BundleID
       shell: pwsh
       run: |
-          $bundleid = ${{ inputs.bundle-identifier }}
-          
+          $bundleid = "${{ inputs.bundle-identifier }}"
+          Write-Host "Checking BundleId: ${{ inputs.bundle-identifier }}"
+
           Write-Host "Finding Package Plist (ie Info.plist). Set ios_plist_filename parameter to override"
-          $manifest = (Get-ChildItem -Filter "Info.plist" -Path "$(System.DefaultWorkingDirectory)"  -Recurse | Select-Object -First 1 ).FullName
+          $manifest = (Get-ChildItem -Filter "Info.plist" -Path "."  -Recurse | Select-Object -First 1 ).FullName
           Write-Host "Found at $manifest"
           Write-Host "$manifest"     
           

@@ -17,7 +17,7 @@ inputs:
   project-platform:
     description: 'Platform to build'
     required: false
-    default: 'x86'
+    default: 'x64'
   artifact-retention-policy: 
     description: 'Number of days to keep the build artifacts'
     required: false

@@ -125,7 +125,12 @@ jobs:
           target-framework: "net$ciTargetDotNetVersion$-ios"
           certificate: ""           #${{ secrets.BASE64_P12_CERTIFICATE }}
           certificate-password: ""  #${{ secrets.BASE64_P12_PASSWORD }}
-          provisioning-profile: ""  #${{ secrets.BASE64_PROV_PROFILE }}
+          codesign-provision: ""    #${{ secrets.IOS_CODESIGN_PROVISION }}
+          bundle-identifier: ""     #${{ secrets.IOS_BUNDLE_ID }}
+          issuer-id: ""             #${{ secrets.IOS_ISSUER_ID }}
+          api-key-id: ""            #${{ secrets.IOS_API_KEY_ID }}
+          api-private-key: ""       #${{ secrets.IOS_API_PRIVATE_KEY }}
+          codesign-key: ""          #${{ secrets.IOS_CODESIGN_KEY }}
           project-to-build: "MyExtensionsApp.Mobile/MyExtensionsApp.Mobile.csproj"          
 #endif
 
