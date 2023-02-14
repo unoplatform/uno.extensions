@@ -95,7 +95,7 @@
 	</ItemGroup>
 	<!--#endif-->
 
-	<!--#if (winAppSdk) -->
+	<!--#if (useWinAppSdk) -->
 	<Choose>
 		<When Condition="$(IsWinAppSdk)">
 			<ItemGroup>

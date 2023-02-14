@@ -4,7 +4,7 @@
 		<OutputType Condition="'$(Configuration)'=='Debug'">Exe</OutputType>
 		<TargetFramework>$baseTargetFramework$</TargetFramework>
 	</PropertyGroup>
-	<!--#if winAppSdk-->
+	<!--#if (useWinAppSdk)-->
 	<ItemGroup Condition="exists('Platforms\Windows')">
 		<EmbeddedResource Include="Platforms\Windows\Package.appxmanifest" LogicalName="Package.appxmanifest" />
 	</ItemGroup>
