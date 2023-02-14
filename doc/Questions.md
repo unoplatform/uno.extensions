@@ -1,5 +1,5 @@
 ---
-uid: Questions
+uid: Overview.Questions
 ---
 # Frequently Asked Questions
 
@@ -23,7 +23,7 @@ Likewise, your organization can streamline developer resources by reusing tested
 A host environment is provided where you can easily register application features as additional dependencies. The registered dependencies are then available throughout the application.
 
 ## How can I get started with Uno Extensions?
-Instructions for creating an application from the template can be found [here](xref:GettingStarted)
+Instructions for creating an application from the template can be found [here](xref:Overview.Extensions)
 
 ## What are the NuGet packages included in Uno Extensions?
 The Uno Extensions collection includes the following NuGet packages:

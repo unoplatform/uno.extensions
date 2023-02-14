@@ -1,5 +1,5 @@
 ---
-uid: GettingStarted
+uid: Overview.Extensions
 ---
 # How-To: Creating an application with Uno.Extensions
 
