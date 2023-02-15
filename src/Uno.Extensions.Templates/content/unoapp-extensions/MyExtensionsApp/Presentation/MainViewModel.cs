@@ -14,7 +14,14 @@ public partial class MainViewModel : ObservableObject
 	public ICommand GoToSecond { get; }
 
 //+:cnd:noEmit
-#if useConfiguration
+#if useLocalization
+	public MainViewModel(
+		INavigator navigator,
+		IStringLocalizer localizer)
+	{
+		_navigator = navigator;
+		Title = $"Main - {localizer["ApplicationName"]}";
+#elif useConfiguration
 	public MainViewModel(
 		INavigator navigator,
 		IOptions<AppConfig> appInfo)
