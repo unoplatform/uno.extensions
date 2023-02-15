@@ -1119,109 +1119,109 @@
           ]
         },
         {
-          "condition": "(useArabic)",
+          "condition": "(!useArabic)",
           "exclude": [
             "MyExtensionsApp/Strings/ar/*"
           ]
         },
         {
-          "condition": "(useCzech)",
+          "condition": "(!useCzech)",
           "exclude": [
             "MyExtensionsApp/Strings/cs/*"
           ]
         },
         {
-          "condition": "(useDanish)",
+          "condition": "(!useDanish)",
           "exclude": [
             "MyExtensionsApp/Strings/da/*"
           ]
         },
         {
-          "condition": "(useGerman)",
+          "condition": "(!useGerman)",
           "exclude": [
             "MyExtensionsApp/Strings/de/*"
           ]
         },
         {
-          "condition": "(useSpanish)",
+          "condition": "(!useSpanish)",
           "exclude": [
             "MyExtensionsApp/Strings/es/*"
           ]
         },
         {
-          "condition": "(useFrench)",
+          "condition": "(!useFrench)",
           "exclude": [
             "MyExtensionsApp/Strings/fr/*"
           ]
         },
         {
-          "condition": "(useItalian)",
+          "condition": "(!useItalian)",
           "exclude": [
             "MyExtensionsApp/Strings/it/*"
           ]
         },
         {
-          "condition": "(useJapanese)",
+          "condition": "(!useJapanese)",
           "exclude": [
             "MyExtensionsApp/Strings/ja/*"
           ]
         },
         {
-          "condition": "(useKorean)",
+          "condition": "(!useKorean)",
           "exclude": [
             "MyExtensionsApp/Strings/ko/*"
           ]
         },
         {
-          "condition": "(useDutch)",
+          "condition": "(!useDutch)",
           "exclude": [
             "MyExtensionsApp/Strings/nl/*"
           ]
         },
         {
-          "condition": "(usePortuguese)",
+          "condition": "(!usePortuguese)",
           "exclude": [
             "MyExtensionsApp/Strings/pt-BR/*"
           ]
         },
         {
-          "condition": "(useRussian)",
+          "condition": "(!useRussian)",
           "exclude": [
             "MyExtensionsApp/Strings/ru/*"
           ]
         },
         {
-          "condition": "(useSwedish)",
+          "condition": "(!useSwedish)",
           "exclude": [
             "MyExtensionsApp/Strings/sv/*"
           ]
         },
         {
-          "condition": "(useTurkish)",
+          "condition": "(!useTurkish)",
           "exclude": [
             "MyExtensionsApp/Strings/tr/*"
           ]
         },
         {
-          "condition": "(useUkrainian)",
+          "condition": "(!useUkrainian)",
           "exclude": [
             "MyExtensionsApp/Strings/uk/*"
           ]
         },
         {
-          "condition": "(useVietnamese)",
+          "condition": "(!useVietnamese)",
           "exclude": [
             "MyExtensionsApp/Strings/vi/*"
           ]
         },
         {
-          "condition": "(useChineseSimplified)",
+          "condition": "(!useChineseSimplified)",
           "exclude": [
             "MyExtensionsApp/Strings/zh-Hans/*"
           ]
         },
         {
-          "condition": "(useChineseTraditional)",
+          "condition": "(!useChineseTraditional)",
           "exclude": [
             "MyExtensionsApp/Strings/zh-Hant/*"
           ]
