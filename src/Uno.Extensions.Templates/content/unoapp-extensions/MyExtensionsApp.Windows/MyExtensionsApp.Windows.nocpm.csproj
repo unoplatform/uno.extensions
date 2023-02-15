@@ -45,20 +45,20 @@
 		<!--#if (useCsharpMarkup)-->
 		<PackageReference Include="Uno.WinUI.Markup" Version="4.7.0-dev.17" />
 		<!--#if (useMaterial)-->
-		<PackageReference Include="Uno.Material.WinUI.Markup" Version="2.5.0-dev.15" />
+		<PackageReference Include="Uno.Material.WinUI.Markup" Version="2.5.0-dev.19" />
 		<!--#endif-->
-		<PackageReference Include="Uno.Themes.WinUI.Markup" Version="2.5.0-dev.15" />
+		<PackageReference Include="Uno.Themes.WinUI.Markup" Version="2.5.0-dev.19" />
 		<!--#endif-->
 		<!--#if (useMaterial)-->
-		<PackageReference Include="Uno.Material.WinUI" Version="2.5.0-dev.15" />
-		<PackageReference Include="Uno.Toolkit.WinUI.Material" Version="2.5.0-dev.18" />
+		<PackageReference Include="Uno.Material.WinUI" Version="2.5.0-dev.19" />
+		<PackageReference Include="Uno.Toolkit.WinUI.Material" Version="2.5.0-dev.23" />
 		<!--#elif (useCupertino)-->
-		<PackageReference Include="Uno.Cupertino.WinUI" Version="2.5.0-dev.15" />
+		<PackageReference Include="Uno.Cupertino.WinUI" Version="2.5.0-dev.19" />
 		<!--#endif-->
 		<!--#if (useCsharpMarkup)-->
-		<PackageReference Include="Uno.Toolkit.WinUI.Markup" Version="2.5.0-dev.18" />
+		<PackageReference Include="Uno.Toolkit.WinUI.Markup" Version="2.5.0-dev.23" />
 		<!--#else-->
-		<PackageReference Include="Uno.Toolkit.WinUI" Version="2.5.0-dev.18" />
+		<PackageReference Include="Uno.Toolkit.WinUI" Version="2.5.0-dev.23" />
 		<!--#endif-->
 		<PackageReference Include="Uno.Extensions.Authentication.WinUI" Version="255.255.255.255" />
 		<PackageReference Include="Uno.Extensions.Hosting.WinUI" Version="255.255.255.255" />
