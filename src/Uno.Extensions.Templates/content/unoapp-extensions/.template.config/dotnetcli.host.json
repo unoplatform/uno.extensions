@@ -57,6 +57,10 @@
       "longName": "localization",
       "shortName": "loc"
     },
+    "cultures": {
+      "longName": "cultures",
+      "shortName": "cultures"
+    },
     "logging": {
       "longName": "logging",
       "shortName": "log"

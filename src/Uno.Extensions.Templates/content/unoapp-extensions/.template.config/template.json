@@ -269,6 +269,106 @@
       "datatype": "bool",
       "defaultValue": "true"
     },
+    "cultures": {
+      "displayName": "Additional Languages",
+      "description": "Adds additional language resource files",
+      "type": "parameter",
+      "datatype": "choice",
+      "allowMultipleValues": true,
+      "defaultValue": "es|fr|pt-BR",
+      "choices": [
+        {
+          "choice": "ar",
+          "description": "Arabic",
+          "displayName": "Arabic"
+        },
+        {
+          "choice": "cs",
+          "description": "Czech",
+          "displayName": "Czech"
+        },
+        {
+          "choice": "da",
+          "description": "Danish",
+          "displayName": "Danish"
+        },
+        {
+          "choice": "nl",
+          "description": "Dutch",
+          "displayName": "Dutch"
+        },
+        {
+          "choice": "fr",
+          "description": "French",
+          "displayName": "French"
+        },
+        {
+          "choice": "de",
+          "description": "German",
+          "displayName": "German"
+        },
+        {
+          "choice": "es",
+          "description": "Spanish",
+          "displayName": "Spanish"
+        },
+        {
+          "choice": "it",
+          "description": "Italian",
+          "displayName": "Italian"
+        },
+        {
+          "choice": "ja",
+          "description": "Japanese",
+          "displayName": "Japanese"
+        },
+        {
+          "choice": "ko",
+          "description": "Korean",
+          "displayName": "Korean"
+        },
+        {
+          "choice": "pt-BR",
+          "description": "Portuguese (Brazil)",
+          "displayName": "Portuguese (Brazil)"
+        },
+        {
+          "choice": "ru",
+          "description": "Russian",
+          "displayName": "Russian"
+        },
+        {
+          "choice": "sv",
+          "description": "Swedish",
+          "displayName": "Swedish"
+        },
+        {
+          "choice": "tr",
+          "description": "Turkish",
+          "displayName": "Turkish"
+        },
+        {
+          "choice": "uk",
+          "description": "Ukrainian",
+          "displayName": "Ukrainian"
+        },
+        {
+          "choice": "vi",
+          "description": "Vietnamese",
+          "displayName": "Vietnamese"
+        },
+        {
+          "choice": "zh-Hans",
+          "description": "Chinese (Simplified)",
+          "displayName": "Chinese (Simplified)"
+        },
+        {
+          "choice": "zh-Hant",
+          "description": "Chinese (Traditional)",
+          "displayName": "Chinese (Traditional)"
+        }
+      ]
+    },
     "logging": {
       "displayName": "Extensions - Logging",
       "description": "Includes Uno.Extensions.Logging",
@@ -505,6 +605,96 @@
       "type": "computed",
       "dataType": "bool",
       "value": "(localization && useConfiguration)"
+    },
+    "useArabic": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "cultures == 'ar'"
+    },
+    "useCzech": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "cultures == 'cs'"
+    },
+    "useDanish": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "cultures == 'da'"
+    },
+    "useDutch": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "cultures == 'nl'"
+    },
+    "useFrench": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "cultures == 'fr'"
+    },
+    "useGerman": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "cultures == 'de'"
+    },
+    "useSpanish": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "cultures == 'es'"
+    },
+    "useItalian": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "cultures == 'it'"
+    },
+    "useJapanese": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "cultures == 'ja'"
+    },
+    "useKorean": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "cultures == 'ko'"
+    },
+    "usePortuguese": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "cultures == 'pt-BR'"
+    },
+    "useRussian": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "cultures == 'ru'"
+    },
+    "useSwedish": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "cultures == 'sv'"
+    },
+    "useTurkish": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "cultures == 'tr'"
+    },
+    "useUkrainian": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "cultures == 'uk'"
+    },
+    "useVietnamese": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "cultures == 'vi'"
+    },
+    "useChineseSimplified": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "cultures == 'zh-Hans'"
+    },
+    "useChineseTraditional": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "cultures == 'zh-Hant'"
     },
     "useNetSix": {
       "type": "computed",
@@ -903,6 +1093,137 @@
             "MyExtensionsApp/Presentation/MainViewModel.cs",
             "MyExtensionsApp/Presentation/SecondViewModel.cs",
             "MyExtensionsApp/Presentation/ShellViewModel.cs"
+          ]
+        },
+        {
+          "condition": "(!useLocalization)",
+          "exclude": [
+            "MyExtensionsApp/Strings/ar/*",
+            "MyExtensionsApp/Strings/cs/*",
+            "MyExtensionsApp/Strings/da/*",
+            "MyExtensionsApp/Strings/de/*",
+            "MyExtensionsApp/Strings/es/*",
+            "MyExtensionsApp/Strings/fr/*",
+            "MyExtensionsApp/Strings/it/*",
+            "MyExtensionsApp/Strings/ja/*",
+            "MyExtensionsApp/Strings/ko/*",
+            "MyExtensionsApp/Strings/nl/*",
+            "MyExtensionsApp/Strings/pt-BR/*",
+            "MyExtensionsApp/Strings/ru/*",
+            "MyExtensionsApp/Strings/sv/*",
+            "MyExtensionsApp/Strings/tr/*",
+            "MyExtensionsApp/Strings/uk/*",
+            "MyExtensionsApp/Strings/vi/*",
+            "MyExtensionsApp/Strings/zh-Hans/*",
+            "MyExtensionsApp/Strings/zh-Hant/*"
+          ]
+        },
+        {
+          "condition": "(useArabic)",
+          "exclude": [
+            "MyExtensionsApp/Strings/ar/*"
+          ]
+        },
+        {
+          "condition": "(useCzech)",
+          "exclude": [
+            "MyExtensionsApp/Strings/cs/*"
+          ]
+        },
+        {
+          "condition": "(useDanish)",
+          "exclude": [
+            "MyExtensionsApp/Strings/da/*"
+          ]
+        },
+        {
+          "condition": "(useGerman)",
+          "exclude": [
+            "MyExtensionsApp/Strings/de/*"
+          ]
+        },
+        {
+          "condition": "(useSpanish)",
+          "exclude": [
+            "MyExtensionsApp/Strings/es/*"
+          ]
+        },
+        {
+          "condition": "(useFrench)",
+          "exclude": [
+            "MyExtensionsApp/Strings/fr/*"
+          ]
+        },
+        {
+          "condition": "(useItalian)",
+          "exclude": [
+            "MyExtensionsApp/Strings/it/*"
+          ]
+        },
+        {
+          "condition": "(useJapanese)",
+          "exclude": [
+            "MyExtensionsApp/Strings/ja/*"
+          ]
+        },
+        {
+          "condition": "(useKorean)",
+          "exclude": [
+            "MyExtensionsApp/Strings/ko/*"
+          ]
+        },
+        {
+          "condition": "(useDutch)",
+          "exclude": [
+            "MyExtensionsApp/Strings/nl/*"
+          ]
+        },
+        {
+          "condition": "(usePortuguese)",
+          "exclude": [
+            "MyExtensionsApp/Strings/pt-BR/*"
+          ]
+        },
+        {
+          "condition": "(useRussian)",
+          "exclude": [
+            "MyExtensionsApp/Strings/ru/*"
+          ]
+        },
+        {
+          "condition": "(useSwedish)",
+          "exclude": [
+            "MyExtensionsApp/Strings/sv/*"
+          ]
+        },
+        {
+          "condition": "(useTurkish)",
+          "exclude": [
+            "MyExtensionsApp/Strings/tr/*"
+          ]
+        },
+        {
+          "condition": "(useUkrainian)",
+          "exclude": [
+            "MyExtensionsApp/Strings/uk/*"
+          ]
+        },
+        {
+          "condition": "(useVietnamese)",
+          "exclude": [
+            "MyExtensionsApp/Strings/vi/*"
+          ]
+        },
+        {
+          "condition": "(useChineseSimplified)",
+          "exclude": [
+            "MyExtensionsApp/Strings/zh-Hans/*"
+          ]
+        },
+        {
+          "condition": "(useChineseTraditional)",
+          "exclude": [
+            "MyExtensionsApp/Strings/zh-Hant/*"
           ]
         },
         {
