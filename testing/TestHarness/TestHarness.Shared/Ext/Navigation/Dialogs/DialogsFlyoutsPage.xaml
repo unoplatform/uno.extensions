@@ -26,6 +26,8 @@
 				<Button Content="Flyout from Background Thread requesting data"
 						Click="FlyoutFromBackgroundRequestingDataClick" />
 
+				<Button uen:Navigation.Request="!DialogsComplexFlyout"
+						Content="Complex Flyout from Xaml" />
 			</StackPanel>
 		</ScrollViewer>
 	</Grid>
