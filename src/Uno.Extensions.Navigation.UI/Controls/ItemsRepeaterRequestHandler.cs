@@ -51,7 +51,7 @@ public class ItemsRepeaterRequestHandler : ControlRequestHandlerBase<ItemsRepeat
 					if (parent == sender)
 					{
 						pointerElement = elt as FrameworkElement;
-						dataContext = (elt as ContentControl)?.Content ?? (elt as FrameworkElement)?.DataContext;
+						dataContext = (elt as FrameworkElement)?.DataContext;
 					}
 					elt = parent;
 				}

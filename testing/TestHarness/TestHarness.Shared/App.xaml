@@ -13,10 +13,10 @@
 				<ToolkitResources xmlns="using:Uno.Toolkit.UI" />
 
 				<!--<MaterialColors xmlns="using:Uno.Material"  />
-				<MaterialFonts xmlns="using:Uno.Material"  />
+				<MaterialFonts xmlns="using:Uno.Material"  />-->
 				<MaterialResources xmlns="using:Uno.Material" />
 
-				<MaterialToolkitResources xmlns="using:Uno.Toolkit.UI.Material" />-->
+				<MaterialToolkitResources xmlns="using:Uno.Toolkit.UI.Material" />
 
 			</ResourceDictionary.MergedDictionaries>
 

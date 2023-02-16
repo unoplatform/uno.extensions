@@ -38,24 +38,42 @@
 					Click="{x:Bind ViewModel.SettingsWriteTest}" />
 		</StackPanel>
 		<ScrollViewer Grid.Row="2">
-		<muxc:ItemsRepeater ItemsSource="{Binding Items}"
-							uen:Navigation.Request="PageNavigationTwo">
-			<muxc:ItemsRepeater.ItemTemplate>
-				<DataTemplate>
-					<Grid Height="200"
-						  Background="Red">
-						<Border Background="Pink"
-								VerticalAlignment="Top"
-								HorizontalAlignment="Center">
-							<TextBlock Text="{Binding}"/>
-						</Border>
-						<Button VerticalAlignment="Bottom"
-								Content="Go to Three"
-								uen:Navigation.Request="PageNavigationThree" />
-					</Grid>
-				</DataTemplate>
-			</muxc:ItemsRepeater.ItemTemplate>
-		</muxc:ItemsRepeater>
+			<muxc:ItemsRepeater ItemsSource="{Binding Items}"
+								uen:Navigation.Request="PageNavigationTwo">
+				<muxc:ItemsRepeater.ItemTemplate>
+					<DataTemplate>
+						<!--<UserControl>-->
+							<Grid Height="200"
+								  Background="Red">
+								<Border Background="Pink"
+										VerticalAlignment="Top"
+										HorizontalAlignment="Center">
+									<TextBlock Text="{Binding}" />
+								</Border>
+								<utu:CardContentControl Height="50"
+														Width="200"
+														Style="{StaticResource FilledCardContentControlStyle}"
+														HorizontalAlignment="Stretch"
+														HorizontalContentAlignment="Stretch"
+														VerticalContentAlignment="Stretch">
+									<utu:CardContentControl.ContentTemplate>
+										<DataTemplate>
+											<Border Background="Green"
+													Height="50"
+													Width="200">
+												<TextBlock Text="Inner card" />
+											</Border>
+										</DataTemplate>
+									</utu:CardContentControl.ContentTemplate>
+								</utu:CardContentControl>
+								<Button VerticalAlignment="Bottom"
+										Content="Go to Three"
+										uen:Navigation.Request="PageNavigationThree" />
+							</Grid>
+						<!--</UserControl>-->
+					</DataTemplate>
+				</muxc:ItemsRepeater.ItemTemplate>
+			</muxc:ItemsRepeater>
 		</ScrollViewer>
 	</Grid>
 </Page>
