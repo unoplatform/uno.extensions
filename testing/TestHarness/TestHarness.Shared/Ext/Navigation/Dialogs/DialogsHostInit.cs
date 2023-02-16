@@ -35,6 +35,9 @@ public class DialogsHostInit : BaseHostInitialization
 			new ViewMap<DialogsComplexDialog>(),
 			new ViewMap<DialogsComplexDialogFirstPage, DialogsComplexDialogFirstViewModel>(),
 			new ViewMap<DialogsComplexDialogSecondPage, DialogsComplexDialogSecondViewModel>(),
+			new ViewMap<DialogsComplexFlyout>(),
+			new ViewMap<DialogsComplexFlyoutOnePage, DialogsComplexFlyoutOneViewModel>(),
+			new ViewMap<DialogsComplexFlyoutTwoPage, DialogsComplexFlyoutTwoViewModel>(),
 			confirmDialog,
 			localizedDialog
 			);
@@ -49,6 +52,11 @@ public class DialogsHostInit : BaseHostInitialization
 				{
 					new RouteMap("DialogsComplexDialogFirst", View: views.FindByViewModel<DialogsComplexDialogFirstViewModel>(), IsDefault:true),
 					new RouteMap("DialogsComplexDialogSecond", View: views.FindByViewModel<DialogsComplexDialogSecondViewModel>())
+				}),
+				new RouteMap("DialogsComplexFlyout", View: views.FindByView<DialogsComplexFlyout>(), Nested: new[]
+				{
+					new RouteMap("DialogsComplexFlyoutFirst", View: views.FindByViewModel<DialogsComplexFlyoutOneViewModel>(), IsDefault:true),
+					new RouteMap("DialogsComplexFlyoutSecond", View: views.FindByViewModel<DialogsComplexFlyoutTwoViewModel>(), DependsOn: "DialogsComplexFlyoutFirst")
 				}),
 				new RouteMap("Confirm", View: confirmDialog),
 				new RouteMap("LocalizedConfirm", View: localizedDialog)
