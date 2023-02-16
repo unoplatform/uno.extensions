@@ -173,7 +173,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 			if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"Redirecting unhandled request to parent");
 			return Region.Parent.NavigateAsync(request);  // Required for Test: Given_NavigationView.When_NavigationView
 		}
-		else if(rm is not null)
+		else if (rm is not null)
 		{
 			return RedirectForFullRoute(request, rm);
 		}
@@ -274,7 +274,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 				}
 				else if (redirectNav is not null)
 				{
-					if(navAncestor.Navigator?.IsComposite()??false)
+					if (navAncestor.Navigator?.IsComposite() ?? false)
 					{
 						// navAncestor is a composite region but since
 						// it doesn't support navigating to the depRequest
@@ -625,7 +625,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 			{
 				// Update the request to include any default routes before attempting
 				// to navigate child routes
-				request = DefaultRouteRequest(request);  // Required for Test: Given_ListToDetails.When_ListToDetails
+				request = DefaultRouteRequest(request, navigators);  // Required for Test: Given_ListToDetails.When_ListToDetails
 
 				if (request.Route.IsEmpty())
 				{
@@ -661,14 +661,14 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 	protected virtual Task PostNavigateAsync() { return Task.CompletedTask; }
 
 
-	private NavigationRequest DefaultRouteRequest(NavigationRequest request)
+	private NavigationRequest DefaultRouteRequest(NavigationRequest request, (IRegion Region, INavigator Navigator)[] ChildRegions)
 	{
 		if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"Request is empty, so need to determine if there are default routes to navigate to");
 
 		// Check to see if there are any child regions, and if there are
 		// whether there are any that don't already have a route
 		if (!request.Route.Refresh &&
-			Region.Children.All(r => !(r.GetRoute()?.IsEmpty() ?? true)))
+			ChildRegions.All(rn => !(rn.Navigator.Route?.IsEmpty() ?? true)))
 		{
 			if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"All child regions already have a route, so don't process default routes");
 			return request;
@@ -695,13 +695,13 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 		return request;
 	}
 
-	private async Task<INavigator[]> NestedNavigatorsAsync()
+	private async Task<(IRegion Region, INavigator Navigator)[]> NestedNavigatorsAsync()
 		// Force navigators to be created on the UI thread before they're accessed
 		=> await Dispatcher.ExecuteAsync(async cancellation =>
 		{
 			return (from child in Region.Children
 					let nav = child.Navigator()
-					select nav).ToArray();
+					select (Region:child, Navigator: nav)).ToArray();
 		});
 
 
