@@ -10,6 +10,7 @@ jobs:
     clean: 'true'
 
   - template: templates/dotnet6-install-windows.yml
+  - template: templates/canary-updater.yml
 
   - task: gitversion/setup@0
     retryCountOnTaskFailure: 3

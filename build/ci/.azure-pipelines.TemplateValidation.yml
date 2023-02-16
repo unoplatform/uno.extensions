@@ -68,6 +68,7 @@ jobs:
     clean: 'true'
 
   - template: templates/dotnet7-install-windows.yml
+  - template: templates/canary-updater.yml
 
   - task: gitversion/setup@0
     retryCountOnTaskFailure: 3
@@ -91,7 +92,7 @@ jobs:
 
   - script: |
         md $(Build.SourcesDirectory)\src\PackageCache
-        copy $(System.ArtifactsDirectory)\$(Build.DefinitionName)\nuget\*.nupkg $(Build.SourcesDirectory)\src\PackageCache
+        copy "$(System.ArtifactsDirectory)\$(Build.DefinitionName)\nuget\*.nupkg" $(Build.SourcesDirectory)\src\PackageCache
     displayName: Copy Artifacts to PackageCache
 
   - script: dotnet new install $(System.ArtifactsDirectory)\$(Build.DefinitionName)\nuget\Uno.Extensions.Templates*.nupkg
