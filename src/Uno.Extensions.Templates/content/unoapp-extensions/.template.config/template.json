@@ -1247,24 +1247,7 @@
         {
           "condition": "(!cpm)",
           "exclude": [
-            "MyExtensionsApp/MyExtensionsApp.csproj",
-            "MyExtensionsApp.Mobile/MyExtensionsApp.Mobile.csproj",
-            "MyExtensionsApp.Skia.Gtk/MyExtensionsApp.Skia.Gtk.csproj",
-            "MyExtensionsApp.Skia.Linux.FrameBuffer/MyExtensionsApp.Skia.Linux.FrameBuffer.csproj",
-            "MyExtensionsApp.Skia.WPF/MyExtensionsApp.Skia.WPF.csproj",
-            "MyExtensionsApp.Wasm/MyExtensionsApp.Wasm.csproj",
-            "MyExtensionsApp.Windows/MyExtensionsApp.Windows.csproj",
-            "MyExtensionsApp.ServerApp/MyExtensionsApp.Server.csproj",
-            "MyExtensionsApp.Tests/MyExtensionsApp.Tests.csproj",
-            "MyExtensionsAppTests/MyExtensionsAppTests.csproj",
             "Directory.Packages.props"
-          ]
-        },
-        {
-          "condition": "(cpm)",
-          "exclude": [
-            "**/*.nocpm.props",
-            "**/*.nocpm.csproj"
           ]
         },
         {
@@ -1279,12 +1262,6 @@
             "MyExtensionsApp.Wasm/manifest.json",
             "MyExtensionsApp.Wasm/Assets/AppIcon-*"
           ]
-        },
-        {
-          "condition": "(!cpm)",
-          "rename": {
-            ".nocpm.csproj": ".csproj"
-          }
         },
         {
           "condition": "(!useCsharpMarkup)",
