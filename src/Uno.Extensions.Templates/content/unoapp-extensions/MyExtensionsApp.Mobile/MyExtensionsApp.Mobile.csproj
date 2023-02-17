@@ -37,9 +37,9 @@
 		<!--#if (useCsharpMarkup)-->
 		<PackageReference Include="Uno.WinUI.Markup" Version="4.7.0-dev.17" />
 		<!--#endif-->
-		<PackageReference Include="Uno.WinUI" Version="4.8.0-dev.432" />
-		<PackageReference Include="Uno.WinUI.RemoteControl" Version="4.8.0-dev.432" Condition="'$(Configuration)'=='Debug'" />
-		<PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="4.8.0-dev.432" />
+		<PackageReference Include="Uno.WinUI" Version="4.7.37" />
+		<PackageReference Include="Uno.WinUI.RemoteControl" Version="4.7.37" Condition="'$(Configuration)'=='Debug'" />
+		<PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="4.7.37" />
 		<PackageReference Include="Uno.Extensions.Logging.OSLog" Version="1.4.0" />
 		<!--#endif-->
 	</ItemGroup>
@@ -111,9 +111,9 @@
 		<!--#endif-->
 		<PackageReference Include="Uno.Themes.WinUI.Markup" Version="2.5.0-dev.31" />
 		<!--#endif-->
-		<PackageReference Include="Uno.WinUI" Version="4.8.0-dev.432" />
-		<PackageReference Include="Uno.WinUI.RemoteControl" Version="4.8.0-dev.432" Condition="'$(Configuration)'=='Debug'" />
-		<PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="4.8.0-dev.432" />
+		<PackageReference Include="Uno.WinUI" Version="4.7.37" />
+		<PackageReference Include="Uno.WinUI.RemoteControl" Version="4.7.37" Condition="'$(Configuration)'=='Debug'" />
+		<PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="4.7.37" />
 		<!--#if (useMaterial)-->
 		<PackageReference Include="Uno.Material.WinUI" Version="2.5.0-dev.31" />
 		<PackageReference Include="Uno.Toolkit.WinUI.Material" Version="2.5.0-dev.23" />
