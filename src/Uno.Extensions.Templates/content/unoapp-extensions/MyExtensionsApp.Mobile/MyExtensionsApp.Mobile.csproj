@@ -7,14 +7,11 @@
 		<!--#endif-->
 		<SingleProject>true</SingleProject>
 		<OutputType>Exe</OutputType>
-
 		<!-- Display name -->
 		<ApplicationTitle>MyExtensionsApp</ApplicationTitle>
-
 		<!-- App Identifier -->
 		<ApplicationId>com.companyname.myextensionsapp</ApplicationId>
 		<ApplicationIdGuid>F5EAE47C-F7DF-4D61-8A30-92251720AC4B</ApplicationIdGuid>
-
 		<!-- Versions -->
 		<ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
 		<ApplicationVersion>1</ApplicationVersion>
@@ -28,6 +25,7 @@
 
 	<!--#if (useBlankAppTemplate)-->
 	<ItemGroup>
+		<!--#if (useCPM)-->
 		<!--#if (useCsharpMarkup)-->
 		<PackageReference Include="Uno.WinUI.Markup" />
 		<!--#endif-->
@@ -35,9 +33,19 @@
 		<PackageReference Include="Uno.WinUI.RemoteControl" Condition="'$(Configuration)'=='Debug'" />
 		<PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" />
 		<PackageReference Include="Uno.Extensions.Logging.OSLog" />
+		<!--#else-->
+		<!--#if (useCsharpMarkup)-->
+		<PackageReference Include="Uno.WinUI.Markup" Version="4.7.0-dev.17" />
+		<!--#endif-->
+		<PackageReference Include="Uno.WinUI" Version="4.7.37" />
+		<PackageReference Include="Uno.WinUI.RemoteControl" Version="4.7.37" Condition="'$(Configuration)'=='Debug'" />
+		<PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="4.7.37" />
+		<PackageReference Include="Uno.Extensions.Logging.OSLog" Version="1.4.0" />
+		<!--#endif-->
 	</ItemGroup>
 	<!--#endif-->
 	<!--#if (useRecommendedAppTemplate)-->
+	<!--#if (useCPM)-->
 	<ItemGroup>
 		<!--#if (useCsharpMarkup)-->
 		<PackageReference Include="Uno.WinUI.Markup" />
@@ -61,12 +69,9 @@
 		<PackageReference Include="Uno.Toolkit.WinUI" />
 		<!--#endif-->
 		<PackageReference Include="Uno.Extensions.Authentication.WinUI" />
-		<!--#if (useConfiguration)-->
-		<PackageReference Include="Uno.Extensions.Configuration" />
-		<!--#endif-->
-		<PackageReference Include="Uno.Extensions.Core" />
 		<PackageReference Include="Uno.Extensions.Hosting.WinUI" />
 		<!--#if (useLocalization)-->
+		<PackageReference Include="Uno.Extensions.Localization" />
 		<PackageReference Include="Uno.Extensions.Localization.WinUI" />
 		<!--#endif-->
 		<PackageReference Include="Uno.Extensions.Logging.OSLog" />
@@ -80,6 +85,10 @@
 		<PackageReference Include="Uno.Extensions.Navigation.Toolkit.WinUI" />
 		<PackageReference Include="Uno.Extensions.Navigation.WinUI" />
 		<!--#endif-->
+		<!--#if (useConfiguration)-->
+		<PackageReference Include="Uno.Extensions.Configuration" />
+		<!--#endif-->
+		<PackageReference Include="Uno.Extensions.Core" />
 		<!--#if (useHttp)-->
 		<PackageReference Include="Uno.Extensions.Http" />
 		<PackageReference Include="Uno.Extensions.Http.Refit" />
@@ -93,13 +102,76 @@
 		<PackageReference Include="Uno.Extensions.Serialization.Refit" />
 		<!--#endif-->
 	</ItemGroup>
+	<!--#else-->
+	<ItemGroup>
+		<!--#if (useCsharpMarkup)-->
+		<PackageReference Include="Uno.WinUI.Markup" Version="4.7.0-dev.17" />
+		<!--#if (useMaterial)-->
+		<PackageReference Include="Uno.Material.WinUI.Markup" Version="2.5.0-dev.31" />
+		<!--#endif-->
+		<PackageReference Include="Uno.Themes.WinUI.Markup" Version="2.5.0-dev.31" />
+		<!--#endif-->
+		<PackageReference Include="Uno.WinUI" Version="4.7.37" />
+		<PackageReference Include="Uno.WinUI.RemoteControl" Version="4.7.37" Condition="'$(Configuration)'=='Debug'" />
+		<PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="4.7.37" />
+		<!--#if (useMaterial)-->
+		<PackageReference Include="Uno.Material.WinUI" Version="2.5.0-dev.31" />
+		<PackageReference Include="Uno.Toolkit.WinUI.Material" Version="2.5.0-dev.23" />
+		<!--#elif (useCupertino)-->
+		<PackageReference Include="Uno.Cupertino.WinUI" Version="2.5.0-dev.31" />
+		<!--#endif-->
+		<!--#if (useCsharpMarkup)-->
+		<PackageReference Include="Uno.Toolkit.WinUI.Markup" Version="2.5.0-dev.23" />
+		<!--#else-->
+		<PackageReference Include="Uno.Toolkit.WinUI" Version="2.5.0-dev.23" />
+		<!--#endif-->
+		<PackageReference Include="Uno.Extensions.Authentication.WinUI" Version="255.255.255.255" />
+		<PackageReference Include="Uno.Extensions.Hosting.WinUI" Version="255.255.255.255" />
+		<!--#if (useLocalization)-->
+		<PackageReference Include="Uno.Extensions.Localization" Version="255.255.255.255" />
+		<PackageReference Include="Uno.Extensions.Localization.WinUI" Version="255.255.255.255" />
+		<!--#endif-->
+		<PackageReference Include="Uno.Extensions.Logging.OSLog" Version="1.4.0" />
+		<!--#if (useLogging)-->
+		<PackageReference Include="Uno.Extensions.Logging.WinUI" Version="255.255.255.255" />
+		<!--#endif-->
+		<!--#if (useSerilog)-->
+		<PackageReference Include="Uno.Extensions.Logging.Serilog" Version="255.255.255.255" />
+		<!--#endif-->
+		<!--#if (useExtensionsNavigation)-->
+		<PackageReference Include="Uno.Extensions.Navigation.Toolkit.WinUI" Version="255.255.255.255" />
+		<PackageReference Include="Uno.Extensions.Navigation.WinUI" Version="255.255.255.255" />
+		<!--#endif-->
+		<!--#if (useConfiguration)-->
+		<PackageReference Include="Uno.Extensions.Configuration" Version="255.255.255.255" />
+		<!--#endif-->
+		<PackageReference Include="Uno.Extensions.Core" Version="255.255.255.255" />
+		<!--#if (useHttp)-->
+		<PackageReference Include="Uno.Extensions.Http" Version="255.255.255.255" />
+		<PackageReference Include="Uno.Extensions.Http.Refit" Version="255.255.255.255" />
+		<!--#endif-->
+		<!--#if (useMvux)-->
+		<PackageReference Include="Uno.Extensions.Reactive.WinUI" Version="255.255.255.255" />
+		<!--#endif-->
+		<PackageReference Include="Uno.Extensions.Serialization" Version="255.255.255.255" />
+		<!--#if (useHttp)-->
+		<PackageReference Include="Uno.Extensions.Serialization.Http" Version="255.255.255.255" />
+		<PackageReference Include="Uno.Extensions.Serialization.Refit" Version="255.255.255.255" />
+		<!--#endif-->
+	</ItemGroup>
+	<!--#endif-->
 	<!--#endif-->
 	<Choose>
 		<!--#if (useAndroid)-->
 		<When Condition="$(IsAndroid)">
 			<ItemGroup>
+				<!--#if (useCPM)-->
 				<PackageReference Include="Xamarin.Google.Android.Material" />
 				<PackageReference Include="Uno.UniversalImageLoader" />
+				<!--#else-->
+				<PackageReference Include="Xamarin.Google.Android.Material" Version="1.7.0.2" />
+				<PackageReference Include="Uno.UniversalImageLoader" Version="1.9.36" />
+				<!--#endif-->
 			</ItemGroup>
 			<ItemGroup>
 				<AndroidEnvironment Include="Android/environment.conf" />
@@ -110,9 +182,10 @@
 		<When Condition="$(IsIOS)">
 			<PropertyGroup>
 				<MtouchExtraArgs>$(MtouchExtraArgs) --setenv=MONO_GC_PARAMS=soft-heap-limit=512m,nursery-size=64m,evacuation-threshold=66,major=marksweep,concurrent-sweep</MtouchExtraArgs>
+				<!-- See https://github.com/unoplatform/uno/issues/9430 for more details. -->
+				<MtouchExtraArgs>$(MtouchExtraArgs) --registrar:static</MtouchExtraArgs>
 				<!-- https://github.com/xamarin/xamarin-macios/issues/14812 -->
 				<MtouchExtraArgs>$(MtouchExtraArgs) --marshal-objectivec-exceptions:disable</MtouchExtraArgs>
-				<MtouchExtraArgs>$(MtouchExtraArgs) --registrar:static</MtouchExtraArgs>
 			</PropertyGroup>
 		</When>
 		<!--#endif-->
