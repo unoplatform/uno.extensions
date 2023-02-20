@@ -1,0 +1,20 @@
+parameters:
+  SolutionToUpdate: ''
+
+steps:
+
+  - task: nventiveCanaryUpdater@5
+    displayName: 'Canary Update'
+    retryCountOnTaskFailure: 3
+    condition: startsWith(variables['Build.SourceBranch'], 'refs/heads/canaries')
+    inputs:
+      solution: '${{ parameters.SolutionToUpdate }}'
+      branchToMerge: main
+      summaryFile: '$(Build.ArtifactStagingDirectory)/Canary.md'
+      resultFile: '$(Build.ArtifactStagingDirectory)/result.json'
+      nugetUpdaterVersion: 2.3.0-alpha.35
+      packageAuthor: 'nventive,uno platform'
+
+  - powershell: |
+      dotnet tool uninstall nventive.nuget.updater.tool --tool-path $(Agent.TempDirectory)
+    condition: startsWith(variables['Build.SourceBranch'], 'refs/heads/canaries')

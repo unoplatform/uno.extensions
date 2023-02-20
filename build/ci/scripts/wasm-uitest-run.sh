@@ -20,7 +20,7 @@ export UNO_UITEST_WASM_PROJECT_BUILD_OPTIONS="/p:UnoExtensionsDisableNet6=true /
 cd $BUILD_SOURCESDIRECTORY
 
 msbuild /r /p:Configuration=Release $UNO_UITEST_PROJECT
-dotnet build /r /p:Configuration=Release $UNO_UITEST_WASM_PROJECT /p:IsUiAutomationMappingEnabled=True $UNO_UITEST_WASM_PROJECT_BUILD_OPTIONS
+dotnet build /r /p:Configuration=Release $UNO_UITEST_WASM_PROJECT /p:IsUiAutomationMappingEnabled=True /p:UseWebAssemblyAOT=false $UNO_UITEST_WASM_PROJECT_BUILD_OPTIONS
 
 # Start the server
 dotnet run --project $UNO_UITEST_WASM_PROJECT -c Release --no-build &

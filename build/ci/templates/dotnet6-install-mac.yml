@@ -42,7 +42,13 @@ steps:
   - template: jdk-setup.yml
 
   - bash: |
+      set -x
       dotnet tool update --global uno.check --version ${{ parameters.UnoCheck_Version }} --add-source https://api.nuget.org/v3/index.json
+    displayName: Install uno.check
+    retryCountOnTaskFailure: 3
+
+  - bash: |
+      set -x
       uno-check --ci --non-interactive --fix --skip androidsdk --skip gtk3 --skip xcode --skip vswin --skip vsmac --manifest ${{ parameters.UnoCheck_Manifest }}
     displayName: Install .NET Workloads
     retryCountOnTaskFailure: 3

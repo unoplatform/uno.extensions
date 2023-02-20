@@ -20,6 +20,7 @@ jobs:
         version: 5.0.x
 
   - template: templates/dotnet6-install-mac.yml
+  - template: templates/canary-updater.yml
 
   - task: gitversion/setup@0
     retryCountOnTaskFailure: 3
