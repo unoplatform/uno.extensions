@@ -12,20 +12,6 @@
           href: Overview/Authentication/AuthenticationOverview.md
         - name: Get Started with Authentication
           href: Learn/Tutorials/Authentication/HowTo-Authentication.md
-    - name: Hosting
-      items:
-        - name: Overview
-          href: Overview/Hosting/HostingOverview.md
-        - name: Get Started with Hosting
-          href: Learn/Tutorials/Hosting/HowTo-HostingSetup.md
-    - name: Dependency Injection
-      items:
-        - name: Overview
-          href: Overview/DependencyInjection/DependencyInjectionOverview.md
-        - name: Register and Use Services with Dependency Injection
-          href: Learn/Tutorials/DependencyInjection/HowTo-DependencyInjectionSetup.md
-        - name: Use the CommunityToolkit with Dependency Injection
-          href: Learn/Tutorials/DependencyInjection/HowTo-CommunityToolkit.md
     - name: Configuration
       items:
         - name: Overview
@@ -34,6 +20,32 @@
           href: Learn/Tutorials/Configuration/HowTo-Configuration.md
         - name: How to update settings from an embedded resource file
           href: Learn/Tutorials/Configuration/HowTo-WritableConfiguration.md
+    - name: Dependency Injection
+      items:
+        - name: Overview
+          href: Overview/DependencyInjection/DependencyInjectionOverview.md
+        - name: Register and Use Services with Dependency Injection
+          href: Learn/Tutorials/DependencyInjection/HowTo-DependencyInjectionSetup.md
+        - name: Use the CommunityToolkit with Dependency Injection
+          href: Learn/Tutorials/DependencyInjection/HowTo-CommunityToolkit.md
+    - name: Hosting
+      items:
+        - name: Overview
+          href: Overview/Hosting/HostingOverview.md
+        - name: Get Started with Hosting
+          href: Learn/Tutorials/Hosting/HowTo-HostingSetup.md
+    - name: Http
+      items:
+        - name: Overview
+          href: Overview/Http/HttpOverview.md
+        - name: Get Started with Http
+          href: Learn/Tutorials/Http/HowTo-Http.md
+    - name: Localization
+      items:
+        - name: Overview
+          href: Overview/Localization/LocalizationOverview.md
+        - name: Get Started with Localization
+          href: Learn/Tutorials/Localization/HowTo-Localization.md
     - name: Logging
       items:
         - name: Overview
@@ -74,12 +86,6 @@
               href: Learn/Tutorials/Navigation/Advanced/HowTo-ResponsiveShell.md
             - name: Use a Content Control
               href: Learn/Tutorials/Navigation/Advanced/HowTo-UseContentControl.md
-    - name: Localization
-      items:
-        - name: Overview
-          href: Overview/Localization/LocalizationOverview.md
-        - name: Get Started with Localization
-          href: Learn/Tutorials/Localization/HowTo-Localization.md
     - name: Reactive
       items:
         - name: Overview
@@ -104,12 +110,6 @@
           href: Overview/Serialization/SerializationOverview.md
         - name: Get Started with Serialization
           href: Learn/Tutorials/Serialization/HowTo-Serialization.md
-    - name: Http
-      items:
-        - name: Overview
-          href: Overview/Http/HttpOverview.md
-        - name: Get Started with Http
-          href: Learn/Tutorials/Http/HowTo-Http.md
     - name: Validation
       items:
         - name: Overview
