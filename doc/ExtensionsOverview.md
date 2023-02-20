@@ -13,15 +13,16 @@ Alongside Uno, the app template references a lineup of battle-tested packages pr
 
 |Feature|Description|
 |---|---|
-|[Dependency injection](xref:Learn.Tutorials.DependencyInjection.HowToDependencyInjection)|The Uno.Extensions.DependencyInjection package provides a simple and lightweight dependency injection system for .NET.|
+|[Authentication](xref:Learn.Tutorials.Authentication.HowToAuthentication)|The Uno.Extensions.Authentication package provides authentication services.|
 |[Configuration](xref:Learn.Tutorials.Configuration.HowToConfiguration)|The Uno.Extensions.Configuration package provides a way to configure an application based on a list of name-value pairs.|
+|[Dependency injection](xref:Learn.Tutorials.DependencyInjection.HowToDependencyInjection)|The Uno.Extensions.DependencyInjection package provides a simple and lightweight dependency injection system for .NET.|
+|[Http](xref:Overview.Http)|The Uno.Extensions.Http package provides configuration for native Http handlers and registration of endpoints.|
+|[Localization](xref:Learn.Tutorials.Localization.HowToUseLocalization)|The Uno.Extensions.Localization package provides access to localizable resources.|
 |[Logging](xref:Learn.Tutorials.Logging.UseLogging)|The Uno.Extensions.Logging package provides a way to log messages to a variety of output targets.|
 |[Navigation](xref:Learn.Tutorials.Navigation.HowToNavigateBetweenPages)|The Uno.Extensions.Navigation package provides a routing framework for navigation.|
 |[Reactive](xref:Overview.Reactive.General)|The Uno.Extensions.Reactive package provides a development framework for reactive applications.|
-|[Localization](xref:Learn.Tutorials.Localization.HowToUseLocalization)|The Uno.Extensions.Localization package provides access to localizable resources.|
 |[Serialization](xref:Learn.Tutorials.Serialization.HowToSerialization)|The Uno.Extensions.Serialization package provides helpers for JSON serialization.|
-|[HTTP](xref:Overview.Http)|The Uno.Extensions.Http package provides configuration for native HTTP handlers and registration of endpoints.|
-|[Authentication](xref:Learn.Tutorials.Authentication.HowToAuthentication)|The Uno.Extensions.Authentication package provides authentication services.|
+
 
 > [!TIP]
 > To view more detailed information about the specific APIs leveraged in each topic, expand the Reference section in the navigation pane.
