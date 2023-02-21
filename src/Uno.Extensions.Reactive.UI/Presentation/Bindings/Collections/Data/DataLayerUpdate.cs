@@ -68,7 +68,7 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Data
 
 		// This will be invoked only when this data layer is a child layer
 		void ICompositeCallback.Invoke(CallbackPhase phases, bool silently)
-			=> Invoke(phases, false, silently);
+			=> Invoke(phases, silently);
 
 		private void Invoke(CallbackPhase phases, bool silently)
 		{
