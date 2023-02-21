@@ -57,22 +57,22 @@
       "choices": [
         {
           "choice": "recommended",
-          "description": "A basic project using Uno.Extensions",
+          "description": "An extended template for creating a multi-platform application with the Uno Platform",
           "displayName": "Default"
         },
         {
           "choice": "blank",
-          "description": "A Blank app without Uno.Extensions",
+          "description": "A template for creating a multi-platform application with the Uno Platform",
           "displayName": "Blank"
         }
       ]
     },
     "appId": {
-      "displayName": "App ID",
+      "displayName": "Application ID",
       "type": "parameter",
       "datatype": "string",
       "replaces": "com.companyname.myextensionsapp",
-      "description": "The application identifier (e.g. com.mycompany.myapp).",
+      "description": "The application identifier (e.g. com.mycompany.myapp)",
       "defaultValue": "com.companyname.myextensionsapp"
     },
     "tfm": {
@@ -86,12 +86,12 @@
       "choices": [
         {
           "choice": "net6.0",
-          "displayName": ".NET 6.0 (Long Term Support)",
+          "displayName": ".NET 6.0",
           "description": "Target .NET 6.0 (Long Term Support)"
         },
         {
           "choice": "net7.0",
-          "displayName": ".NET 7.0 (Standard Term Support)",
+          "displayName": ".NET 7.0",
           "description": "Target .NET 7.0 (Standard Term Support)"
         }
       ]
@@ -105,13 +105,13 @@
       "choices": [
         {
           "choice": "mvvm",
-          "description": "Use the MVVM design pattern",
-          "displayName": "MVVM (Model-View-ViewModel)"
+          "description": "Use the Model-View-ViewModel (MVVM) design pattern",
+          "displayName": "MVVM"
         },
         {
           "choice": "mvux",
-          "description": "Use the MVU-X design pattern",
-          "displayName": "MVU-X (Model-View-Update XAML Friendly)"
+          "description": "Use the Model-View-Update eXtended (MVU-X) design pattern",
+          "displayName": "MVU-X"
         }
       ]
     },
@@ -142,17 +142,17 @@
       "choices": [
         {
           "choice": "material",
-          "description": "Uses the Material Design theme",
+          "description": "Use the Material design theme",
           "displayName": "Material"
         },
         {
           "choice": "fluent",
-          "description": "Uses the Fluent Design theme",
+          "description": "Use the Fluent design theme",
           "displayName": "Fluent"
         },
         {
           "choice": "cupertino",
-          "description": "Uses the Cupertino theme",
+          "description": "Use the Cupertino design theme",
           "displayName": "Cupertino"
         }
       ],
@@ -169,47 +169,38 @@
       "choices": [
         {
           "choice": "android",
-          "description": "Target Android",
           "displayName": "Android"
         },
         {
           "choice": "ios",
-          "description": "Target iOS",
           "displayName": "iOS"
         },
         {
           "choice": "maccatalyst",
-          "description": "Target macOS (Catalyst)",
           "displayName": "macOS (Catalyst)"
         },
         {
           "choice": "macos",
-          "description": "Target macOS (AppKit)",
           "displayName": "macOS (AppKit)"
         },
         {
           "choice": "windows",
-          "description": "Target Windows",
           "displayName": "Windows"
         },
         {
           "choice": "wasm",
-          "description": "Target WebAssembly",
           "displayName": "WebAssembly"
         },
         {
           "choice": "gtk",
-          "description": "Target GTK",
           "displayName": "GTK"
         },
         {
           "choice": "wpf",
-          "description": "Target WPF",
           "displayName": "WPF"
         },
         {
           "choice": "linux-fb",
-          "description": "Target Linux Framebuffer",
           "displayName": "Linux Framebuffer"
         }
       ]
@@ -223,12 +214,12 @@
       "choices": [
         {
           "choice": "unit",
-          "description": "Includes the Unit test project",
+          "description": "Include a Unit test project",
           "displayName": "Unit Tests"
         },
         {
           "choice": "ui",
-          "description": "Includes the UI test project",
+          "description": "Include a UI test project",
           "displayName": "UI Tests"
         }
       ],
@@ -242,36 +233,36 @@
       "description": "Includes a Server project for an API & host for the WebAssembly project"
     },
     "dependencyInjection": {
-      "displayName": "Extensions - Dependency Injection",
-      "description": "Includes Uno.Extensions.DependencyInjection",
+      "displayName": "Dependency Injection",
+      "description": "Use dependency injection for registering and accessing services",
       "type": "parameter",
       "datatype": "bool",
       "defaultValue": "true"
     },
     "configuration": {
-      "displayName": "Extensions - Configuration",
-      "description": "Includes Uno.Extensions.Configuration",
+      "displayName": "Configuration",
+      "description": "Load configuration information from appsettings.json",
       "type": "parameter",
       "datatype": "bool",
       "defaultValue": "true"
     },
     "http": {
-      "displayName": "Extensions - HTTP",
-      "description": "Includes Uno.Extensions.Http",
+      "displayName": "HTTP",
+      "description": "Register native handlers for http and setup Refit support",
       "type": "parameter",
       "datatype": "bool",
       "defaultValue": "true"
     },
     "localization": {
-      "displayName": "Extensions - Localization",
-      "description": "Includes Uno.Extensions.Localization",
+      "displayName": "Localization",
+      "description": "Configures support for localizing resources throughout the application",
       "type": "parameter",
       "datatype": "bool",
       "defaultValue": "true"
     },
     "cultures": {
-      "displayName": "Additional Languages",
-      "description": "Adds additional language resource files",
+      "displayName": "Locales",
+      "description": "Adds support for additional locales",
       "type": "parameter",
       "datatype": "choice",
       "allowMultipleValues": true,
@@ -370,44 +361,44 @@
       ]
     },
     "logging": {
-      "displayName": "Extensions - Logging",
-      "description": "Includes Uno.Extensions.Logging",
+      "displayName": "Logging",
+      "description": "Configures logging support in the application",
       "type": "parameter",
       "datatype": "choice",
       "defaultValue": "serilog",
       "choices": [
         {
           "choice": "none",
-          "description": "Disables logging",
-          "displayName": "None"
+          "description": "Logging is configured for the application",
+          "displayName": "Basic"
         },
         {
           "choice": "default",
-          "description": "Enables basic logging to the console",
-          "displayName": "Default"
+          "description": "Logging to the console is configured",
+          "displayName": "Console"
         },
         {
           "choice": "serilog",
-          "description": "Enables logging to the console and Serilog",
+          "description": "Configures logging to use Serilog",
           "displayName": "Serilog"
         }
       ]
     },
     "navigation": {
-      "displayName": "Extensions - Navigation",
-      "description": "Sets the base type of navigation used in the app.",
+      "displayName": "Navigation",
+      "description": "Configures navigation in the application",
       "type": "parameter",
       "datatype": "choice",
       "choices": [
         {
           "choice": "default",
           "displayName": "Default",
-          "description": "Provides a simple 2 page sample with a Splash Screen."
+          "description": "Provides a simple 2 page sample with a Splash Screen"
         },
         {
           "choice": "frame",
           "displayName": "Frame",
-          "description": "Uses the Frame control for navigation."
+          "description": "Uses the Frame control for navigation"
         }
       ],
       "defaultValue": "default"
@@ -417,18 +408,18 @@
       "type": "parameter",
       "dataType": "bool",
       "defaultValue": "false",
-      "description": "Whether or not to use Central Package Management - package versions are via central Directory.Packages.props file"
+      "description": "Use Central Package Management where package versions are via central Directory.Packages.props file"
     },
     "vscode": {
-      "displayName": "WebAssembly - Visual Studio Code Debugging",
+      "displayName": "Visual Studio Code Debugging",
       "type": "parameter",
       "dataType": "bool",
       "defaultValue": "true",
-      "description": "Adds the Visual Studio Code Debugging support files for WebAssembly"
+      "description": "Adds the Visual Studio Code Debugging support files for WebAssembly and Skia"
     },
     "wasmPwaManifest": {
-      "displayName": "WebAssembly - PWA Manifest",
-      "description": "Enables the generation of a PWA manifest for WebAssembly",
+      "displayName": "PWA Manifest",
+      "description": "Generates a PWA manifest for WebAssembly",
       "type": "parameter",
       "datatype": "bool",
       "defaultValue": "true"
