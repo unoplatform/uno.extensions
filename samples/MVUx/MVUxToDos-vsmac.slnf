@@ -1,0 +1,16 @@
+{
+  "solution": {
+    "path": "MVUxToDos.sln",
+    "projects": [
+		"MVUxToDos\\MVUxToDos.csproj",
+
+		"MVUxToDos.Mobile\\MVUxToDos.Mobile.csproj",
+
+		"MVUxToDos.Wasm\\MVUxToDos.Wasm.csproj",
+
+		"MVUxToDos.Skia.Gtk\\MVUxToDos.Skia.Gtk.csproj",
+
+		"MVUxToDos.Skia.Gtk\\MVUxToDos.Skia.Gtk.csproj",
+    ]
+  }
+}

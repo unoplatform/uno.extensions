@@ -1,0 +1,23 @@
+﻿<UserControl
+    x:Class="MVUxToDos.Views.ReadOnlyScalarLoadRefreshView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mvux="using:Uno.Extensions.Reactive.UI">
+
+    <!-- The ScalarValue in the line below refers to the Uno-generated VM that inherits BindableViewModel object -->
+    <mvux:FeedView Source="{Binding ScalarValue}">
+
+        <DataTemplate>
+            <StackPanel Spacing="10">
+
+                <!-- Data is a property on BindableViewModel -->
+                <TextBlock Text="{Binding Data}"/>
+
+                <!-- Refresh is a property on BindableViewModel -->
+                <Button Content="Refresh scalar value" Command="{Binding Refresh}" />
+                
+            </StackPanel>
+        </DataTemplate>
+
+    </mvux:FeedView>    
+</UserControl>
