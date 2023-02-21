@@ -47,15 +47,15 @@
 		<PackageVersion Include="Uno.Toolkit" Version="2.4.2" />
 		<PackageVersion Include="Uno.Toolkit.UI" Version="2.4.2" />
 		<PackageVersion Include="Uno.Toolkit.WinUI" Version="2.4.2" />
-		<PackageVersion Include="Uno.UI" Version="4.7.37" />
-		<PackageVersion Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="4.7.37"/>
-		<PackageVersion Include="Uno.UI.MSAL"  Version="4.7.37" />
-		<PackageVersion Include="Uno.UI.Runtime.WebAssembly" Version="4.7.37" />
+		<PackageVersion Include="Uno.UI" Version="4.7.44" />
+		<PackageVersion Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="4.7.44"/>
+		<PackageVersion Include="Uno.UI.MSAL"  Version="4.7.44" />
+		<PackageVersion Include="Uno.UI.Runtime.WebAssembly" Version="4.7.44" />
 		<PackageVersion Include="Uno.UI.RuntimeTests.Engine" Version="0.14.0-dev.54" />
-		<PackageVersion Include="Uno.WinUI" Version="4.7.37" />
+		<PackageVersion Include="Uno.WinUI" Version="4.7.44" />
 		<PackageVersion Include="Uno.WinUI.Markup" Version="4.6.0-dev.16" />
-		<PackageVersion Include="Uno.WinUI.MSAL" Version="4.7.37" />
-		<PackageVersion Include="Uno.WinUI.Runtime.WebAssembly" Version="4.7.37" />
+		<PackageVersion Include="Uno.WinUI.MSAL" Version="4.7.44" />
+		<PackageVersion Include="Uno.WinUI.Runtime.WebAssembly" Version="4.7.44" />
 		<PackageVersion Include="coverlet.collector" Version="3.1.2" />
 		<PackageVersion Include="xunit" Version="2.4.1" />
 		<PackageVersion Include="xunit.runner.visualstudio" Version="2.4.1" />
