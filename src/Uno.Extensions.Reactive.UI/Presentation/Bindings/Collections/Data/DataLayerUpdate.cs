@@ -58,16 +58,19 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Data
 		{
 			// This will be invoked only when this data layer is a root layer
 
-			// If '_from == null' (i.e. we are initializing the holder) we force the silently to avoid useless events 
-			// as nobody should be listening to the events yet.
-			
-			((ICompositeCallback)this).Invoke(CallbackPhase.All, silently: _context.Type == VisitorType.InitializeCollection);
+			// If this update has been created from a background thread (init),
+			// it might happen that we already have some event handlers, 
+			// so we must make sure to raise event properly (i.e. silently: false)
+			Invoke(CallbackPhase.All, silently: false);
 
 			_buffer.Start();
 		}
 
 		// This will be invoked only when this data layer is a child layer
 		void ICompositeCallback.Invoke(CallbackPhase phases, bool silently)
+			=> Invoke(phases, false, silently);
+
+		private void Invoke(CallbackPhase phases, bool silently)
 		{
 			if (phases.HasFlag(CallbackPhase.Before))
 			{
@@ -76,7 +79,7 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Data
 
 			if (phases.HasFlag(CallbackPhase.Main))
 			{
-				if (_from is null || silently)
+				if (silently)
 				{
 					_target.UpdateSilentlyTo(_changes, Result);
 				}
