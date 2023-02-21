@@ -24,7 +24,7 @@
 		<!--#endif-->
 		<PackageReference Include="Microsoft.Extensions.Logging.Console" />
 		<!--#else-->
-		<PackageReference Include="Uno.WinUI" Version="4.7.37" />
+		<PackageReference Include="Uno.WinUI" Version="4.7.44" />
 		<PackageReference Include="Uno.Resizetizer" Version="0.36.0-dev.129" />
 		<!--#if (useCsharpMarkup)-->
 		<PackageReference Include="Uno.WinUI.Markup" Version="4.7.0-dev.17" />
@@ -101,7 +101,7 @@
 	</ItemGroup>
 	<!--#else-->
 	<ItemGroup>
-		<PackageReference Include="Uno.WinUI" Version="4.7.37" />
+		<PackageReference Include="Uno.WinUI" Version="4.7.44" />
 		<PackageReference Include="Uno.Resizetizer" Version="0.36.0-dev.129" />
 		<!--#if (useCsharpMarkup)-->
 		<PackageReference Include="Uno.WinUI.Markup" Version="4.7.0-dev.17" />

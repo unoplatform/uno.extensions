@@ -66,9 +66,9 @@
 		<!--#endif-->
 		<PackageReference Include="Uno.Wasm.Bootstrap" Version="7.0.17" />
 		<PackageReference Include="Uno.Wasm.Bootstrap.DevServer" Version="7.0.17" />
-		<PackageReference Include="Uno.WinUI.WebAssembly" Version="4.7.37" />
-		<PackageReference Include="Uno.WinUI.RemoteControl" Version="4.7.37" Condition="'$(Configuration)'=='Debug'" />
-		<PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="4.7.37" />
+		<PackageReference Include="Uno.WinUI.WebAssembly" Version="4.7.44" />
+		<PackageReference Include="Uno.WinUI.RemoteControl" Version="4.7.44" Condition="'$(Configuration)'=='Debug'" />
+		<PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="4.7.44" />
 		<PackageReference Include="Uno.Extensions.Logging.WebAssembly.Console" Version="1.4.0" />
 		<!--#endif-->
 	</ItemGroup>
@@ -131,9 +131,9 @@
 		<PackageReference Include="Microsoft.Windows.Compatibility" Version="7.0.0" />
 		<PackageReference Include="Uno.Wasm.Bootstrap" Version="7.0.17" />
 		<PackageReference Include="Uno.Wasm.Bootstrap.DevServer" Version="7.0.17" />
-		<PackageReference Include="Uno.WinUI.WebAssembly" Version="4.7.37" />
-		<PackageReference Include="Uno.WinUI.RemoteControl" Version="4.7.37" Condition="'$(Configuration)'=='Debug'" />
-		<PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="4.7.37" />
+		<PackageReference Include="Uno.WinUI.WebAssembly" Version="4.7.44" />
+		<PackageReference Include="Uno.WinUI.RemoteControl" Version="4.7.44" Condition="'$(Configuration)'=='Debug'" />
+		<PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="4.7.44" />
 		<!--#if (useMaterial)-->
 		<PackageReference Include="Uno.Material.WinUI" Version="2.5.0-dev.31" />
 		<PackageReference Include="Uno.Toolkit.WinUI.Material" Version="2.5.0-dev.23" />
