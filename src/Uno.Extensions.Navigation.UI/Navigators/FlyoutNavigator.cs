@@ -66,11 +66,14 @@ public class FlyoutNavigator : ControlNavigator
 
 	private void CloseFlyout()
 	{
-		if (_flyout is not null)
+		if (_flyout is { } fly)
 		{
-			_flyout.Closed -= Flyout_Closed;
-			_flyout.Hide();
+			CleanupFlyout();
+
+			fly.Hide();
+
 		}
+
 	}
 
 	private async Task<Flyout?> DisplayFlyout(NavigationRequest request, Type? viewType, object? viewModel, bool injectedFlyout)
@@ -157,7 +160,7 @@ public class FlyoutNavigator : ControlNavigator
 			return;
 		}
 
-		_flyout.Closed -= Flyout_Closed;
+		CleanupFlyout();
 
 		var navigation = Region.Navigator();
 		if (navigation is null)
@@ -168,6 +171,19 @@ public class FlyoutNavigator : ControlNavigator
 		await navigation.NavigateBackAsync(this);
 	}
 
-	protected override Task CheckLoadedAsync() => _content is not null ? _content.EnsureLoaded() : Task.CompletedTask;
+	private void CleanupFlyout()
+	{
+		if (_flyout is null)
+		{
+			return;
+		}
+
+		_flyout.Closed -= Flyout_Closed;
+		_flyout = null;
+		_content = null;
+
+	}
+
+	protected override Task CheckLoadedAsync() => _flyout is not null && _content is not null ? _content.EnsureLoaded() : Task.CompletedTask;
 
 }

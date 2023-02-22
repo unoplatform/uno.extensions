@@ -7,8 +7,9 @@
 	  xmlns:ui="using:Uno.Toolkit.UI"
 	  xmlns:uen="using:Uno.Extensions.Navigation.UI"
 	  mc:Ignorable="d"
+	  xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
 	  Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-	<Grid>
+	<Grid Background="Pink">
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto" />
 			<RowDefinition />
@@ -16,13 +17,26 @@
 		<ui:NavigationBar Content="Complex Flyout First Page"
 						  AutomationProperties.AutomationId="ComplexFlyoutFirstPageNavigationBar" />
 
-		<StackPanel Grid.Row="1">
+		<StackPanel Grid.Row="1" Background="Blue">
 			<Button AutomationProperties.AutomationId="ComplexFlyoutFirstPageSecondButton"
 					uen:Navigation.Request="DialogsComplexFlyoutSecond"
 					Content="Second page" />
 			<Button AutomationProperties.AutomationId="ComplexFlyoutFirstPageCloseButton"
 					Content="Close dialog"
 					Command="{Binding CloseCommand}" />
+
+			<Border Background="Green">
+			<muxc:ItemsRepeater ItemsSource="{Binding Items}"
+								uen:Navigation.Request="-">
+				<muxc:ItemsRepeater.ItemTemplate>
+					<DataTemplate>
+						<Grid>
+							<TextBlock Text="{Binding Id}" />
+						</Grid>
+					</DataTemplate>
+				</muxc:ItemsRepeater.ItemTemplate>
+			</muxc:ItemsRepeater>
+			</Border>
 		</StackPanel>
 	</Grid>
 </Page>

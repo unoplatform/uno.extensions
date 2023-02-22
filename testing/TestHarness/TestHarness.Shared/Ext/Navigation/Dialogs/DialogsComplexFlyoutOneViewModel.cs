@@ -1,12 +1,20 @@
 ﻿namespace TestHarness.Ext.Navigation.Dialogs;
 
-public class DialogsComplexFlyoutOneViewModel
+public partial class DialogsComplexFlyoutOneViewModel
 {
 	private INavigator Navigator { get; }
 
 	public ICommand CloseCommand { get; }
 
 	public string? Name { get; set; }
+
+	public DialogsFlyoutsData[] Items => new[]
+	{
+		new DialogsFlyoutsData(),
+		new DialogsFlyoutsData(),
+		new DialogsFlyoutsData(),
+		new DialogsFlyoutsData()
+	};
 
 	public DialogsComplexFlyoutOneViewModel(
 		INavigator navigator)
@@ -16,6 +24,8 @@ public class DialogsComplexFlyoutOneViewModel
 
 		CloseCommand = new AsyncRelayCommand(Close);
 	}
+
+
 
 	public async Task Close()
 	{
