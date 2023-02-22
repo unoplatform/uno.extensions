@@ -236,6 +236,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Dialogs\DialogsSimpleDialog.xaml.cs">
       <DependentUpon>DialogsSimpleDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Dialogs\DialogsFlyoutsViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Dialogs\DialogsSimpleViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Dialogs\LocalizedDialogsPage.xaml.cs">
       <DependentUpon>LocalizedDialogsPage.xaml</DependentUpon>

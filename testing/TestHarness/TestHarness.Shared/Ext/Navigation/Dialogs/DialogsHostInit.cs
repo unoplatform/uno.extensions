@@ -4,6 +4,11 @@ namespace TestHarness.Ext.Navigation.Dialogs;
 
 public class DialogsHostInit : BaseHostInitialization
 {
+	protected override IHostBuilder Navigation(IHostBuilder builder)
+	{
+		return builder.UseNavigation(ReactiveViewModelMappings.ViewModelMappings, RegisterRoutes);
+	}
+
 	protected override void RegisterRoutes(IViewRegistry views, IRouteRegistry routes)
 	{
 
@@ -32,10 +37,11 @@ public class DialogsHostInit : BaseHostInitialization
 			);
 
 		views.Register(
+			new ViewMap<DialogsFlyoutsPage, DialogsFlyoutsViewModel>(),
 			new ViewMap<DialogsComplexDialog>(),
 			new ViewMap<DialogsComplexDialogFirstPage, DialogsComplexDialogFirstViewModel>(),
 			new ViewMap<DialogsComplexDialogSecondPage, DialogsComplexDialogSecondViewModel>(),
-			new ViewMap<DialogsComplexFlyout>(),
+			new ViewMap<DialogsComplexFlyout>( ResultData: typeof(DialogsFlyoutsData)),
 			new ViewMap<DialogsComplexFlyoutOnePage, DialogsComplexFlyoutOneViewModel>(),
 			new ViewMap<DialogsComplexFlyoutTwoPage, DialogsComplexFlyoutTwoViewModel>(),
 			confirmDialog,
@@ -48,6 +54,7 @@ public class DialogsHostInit : BaseHostInitialization
 			new RouteMap("",
 			Nested: new[]
 			{
+				new RouteMap("DialogsFlyouts", View: views.FindByViewModel<DialogsFlyoutsViewModel>()),
 				new RouteMap("DialogsComplex", View: views.FindByView<DialogsComplexDialog>(), Nested: new[]
 				{
 					new RouteMap("DialogsComplexDialogFirst", View: views.FindByViewModel<DialogsComplexDialogFirstViewModel>(), IsDefault:true),

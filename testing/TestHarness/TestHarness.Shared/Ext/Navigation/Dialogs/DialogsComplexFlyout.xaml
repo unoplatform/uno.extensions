@@ -10,7 +10,7 @@
 		Placement="Full"
 		FlyoutPresenterStyle="{StaticResource MaterialFlyoutPresenterStyle}">
 
-	<Grid Height="500"
+	<Grid Height="1000"
 		  Width="500">
 		<Frame uen:Region.Attached="True"
 			   HorizontalAlignment="Stretch"
