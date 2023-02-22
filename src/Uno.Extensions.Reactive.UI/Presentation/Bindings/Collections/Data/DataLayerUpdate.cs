@@ -60,7 +60,7 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Data
 
 			// If this update has been created from a background thread (init),
 			// it might happen that we already have some event handlers, 
-			// so we must make sure to raise event properly (i.e. silently: false)
+			// so we must make sure to raise the event properly (i.e. silently: false)
 			Invoke(CallbackPhase.All, silently: false);
 
 			_buffer.Start();
