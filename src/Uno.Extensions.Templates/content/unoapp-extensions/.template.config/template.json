@@ -369,17 +369,17 @@
       "choices": [
         {
           "choice": "none",
-          "description": "Logging is configured for the application",
-          "displayName": "Basic"
-        },
-        {
-          "choice": "default",
-          "description": "Logging to the console is configured",
+          "description": "Logging writes output to Console",
           "displayName": "Console"
         },
         {
+          "choice": "default",
+          "description": "Logging is accessible via dependency injection and writes output to Console",
+          "displayName": "Default"
+        },
+        {
           "choice": "serilog",
-          "description": "Configures logging to use Serilog",
+          "description": "Logging is accesible via dependency injection and configured to use Serilog",
           "displayName": "Serilog"
         }
       ]
@@ -419,7 +419,7 @@
     },
     "wasmPwaManifest": {
       "displayName": "PWA Manifest",
-      "description": "Generates a PWA manifest for WebAssembly",
+      "description": "Includes a PWA manifest for WebAssembly",
       "type": "parameter",
       "datatype": "bool",
       "defaultValue": "true"
