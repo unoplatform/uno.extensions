@@ -341,6 +341,11 @@
       "description": "Selects which CI platform to support by default",
       "choices": [
         {
+          "choice": "none",
+          "description": "Excludes any Continuous Integration templates from the generated project",
+          "displayName": "None"
+        },
+        {
           "choice": "github",
           "description": "Adds Github Actions templates for CI",
           "displayName": "Github"
@@ -1086,22 +1091,31 @@
           ]
         },
         {
-          "condition": "(!useGitHubActions)",
+          "condition": "(useAzureDevOps)",
           "rename": {
-            ".pss": ".ps1"
+            ".pss": ".ps1",
+            "azure": "build"
           },
           "exclude": [
             "github/**/*"
           ]
         },
         {
-          "condition": "(!useAzureDevOps)",
+          "condition": "(useGitHubActions)",
           "rename": {
             "github": ".github"
           },
           "exclude": [
             "azure-pipelines.yml",
             "azure/**/*"
+          ]
+        },
+        {
+          "condition": "(!useGitHubActions && !useAzureDevOps)",
+          "exclude": [
+            "azure-pipelines.yml",
+            "azure/**/*",
+            "github/**/*"
           ]
         }
       ]

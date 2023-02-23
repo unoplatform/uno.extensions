@@ -15,45 +15,42 @@ pr:
 - master
 - release/**
 
-#if (android || ios || winAppSdk)
-#REQUIRED PARAMETERS
+#if (useAndroid || useIOS || useWinAppSdk)
+#REQUIRED PARAMETERS FOR SIGNING
 parameters:
-#if (android)
-- name: jks_certificate
-  type: string
-  default: ''
 #endif
-#if (ios)
-- name: p12_certificate
-  type: string
-  default: ''
-#endif
-#if (winAppSdk)
+#if (useWinAppSdk)
 - name: pfx_certificate
   type: string
-  default: ''
-#endif
-#endif  
-#if (android || ios)
-- name: certificate_password
+  default: 'CERTIFICATE.pfx'      #.pfx certificate stored in secureFiles
+#endif 
+#if (useAndroid)
+- name: jks_certificate
   type: string
-  default: ''
-#endif    
-#if (android)   
+  default: 'CERTIFICATE.jks'      #.jks certificate stored in secureFiles
+- name: jks_certificate_password
+  type: string
+  default: 'contoso'              #your secure certificate password  
 - name: certificate_alias
   type: string
-  default: ''  
+  default: 'contoso'              #.jks certificate alias used when creating the certificate
 #endif
-#if (ios)
+#if (useIOS)
+- name: p12_certificate
+  type: string
+  default: 'CERTIFICATE.p12'      #.p12 certificate stored in secureFiles
+- name: p12_certificate_password
+  type: string
+  default: 'contoso'              #your secure certificate password  
 - name: provisioning_profile
   type: string
-  default: ''
+  default: 'MyExtensionsApp.mobileprovision'  #.mobileprovision file stored in secureFiles
 - name: codesign_provision
   type: string
-  default: ''
+  default: 'MyExtensionsApp'      #The provisioning profile name. This is the name you entered in the Apple Developer portal when creating your provisioning profile.  
 - name: codesign_key
   type: string
-  default: ''    
+  default: 'Apple Development: Contoso Contoso (752234A22L)'    #The name of the distribution/development certificate
 #endif
 
 variables:
@@ -63,15 +60,15 @@ variables:
 stages:
   - stage: Build_UNO
     jobs:
-#if (wasm)    
+#if (useWasm)    
     - job: Wasm
       timeoutInMinutes: '${{ variables.jobTimeout }}'
       steps:
-        - template: /azure/steps/install-dependencies.yml  
+        - template: /build/steps/install-dependencies.yml  
           parameters:
             target_platform: 'wasm'
 
-        - template: /azure/steps/wasm.yml
+        - template: /build/steps/wasm.yml
           parameters:
             package_id: 'Wasm'
             project_to_build: 'MyExtensionsApp.Wasm/MyExtensionsApp.Wasm.csproj'
@@ -79,15 +76,15 @@ stages:
         vmImage: macOS-latest   
 #endif
 
-#if (android) 
+#if (useAndroid) 
     - job: Android
       timeoutInMinutes: '${{ variables.jobTimeout }}'
       steps:
-        - template: /azure/steps/install-dependencies.yml  
+        - template: /build/steps/install-dependencies.yml  
           parameters:
             target_platform: 'android'
 
-        - template: /azure/steps/android.yml
+        - template: /build/steps/android.yml
           parameters:
             package_id: 'Android'
             target_framework: "net$ciTargetDotNetVersion$-android"
@@ -103,7 +100,7 @@ stages:
         - task: PowerShell@2
           inputs:
             targetType: 'filePath'
-            filePath: 'azure/scripts/validate_android_signing_job.ps1'
+            filePath: 'build/scripts/validate_android_signing_job.ps1'
             arguments: >
                 -certificate "${{ parameters.jks_certificate }}"
                 -certificate_password "${{ parameters.certificate_password }}"
@@ -124,15 +121,15 @@ stages:
       condition: succeeded()
       timeoutInMinutes: '${{ variables.jobTimeout }}'
       steps:
-        - template: /azure/steps/install-dependencies.yml  
+        - template: /build/steps/install-dependencies.yml  
           parameters:
             target_platform: 'android'
-        - template: /azure/steps/android.yml
+        - template: /build/steps/android.yml
           parameters:
             sign_package: 'true'
             target_framework: "net$ciTargetDotNetVersion$-android"
-            certificate:  '${{ parameters.jks_certificate }}' #YOUR_CERT.jks stored in secureFiles
-            certificate_password: '${{ parameters.certificate_password }}'
+            certificate:  '${{ parameters.jks_certificate }}'
+            certificate_password: '${{ parameters.jks_certificate_password }}'
             certificate_alias: '${{ parameters.certificate_alias }}'
             package_id: 'signed_android'
             project_to_build: 'MyExtensionsApp.Mobile/MyExtensionsApp.Mobile.csproj'
@@ -140,15 +137,15 @@ stages:
         vmImage: macOS-latest         
 #endif
 
-#if (ios) 
+#if (useIOS) 
     - job: iOS
       timeoutInMinutes: '${{ variables.jobTimeout }}'
       steps:
-        - template: /azure/steps/install-dependencies.yml  
+        - template: /build/steps/install-dependencies.yml  
           parameters:
             target_platform: 'ios'
 
-        - template: /azure/steps/mobile.yml
+        - template: /build/steps/mobile.yml
           parameters:
             project_to_build: 'MyExtensionsApp.Mobile/MyExtensionsApp.Mobile.csproj'
             target_framework: 'net$ciTargetDotNetVersion$-ios'
@@ -163,7 +160,7 @@ stages:
         - task: PowerShell@2
           inputs:
             targetType: 'filePath'
-            filePath: 'azure/scripts/validate_ios_signing_job.ps1'
+            filePath: 'build/scripts/validate_ios_signing_job.ps1'
             arguments: >
                 -certificate "${{ parameters.p12_certificate }}"
                 -certificate_password "${{ parameters.certificate_password }}"
@@ -186,32 +183,32 @@ stages:
       condition: succeeded()
       timeoutInMinutes: '${{ variables.jobTimeout }}'
       steps:
-        - template: /azure/steps/install-dependencies.yml  
+        - template: /build/steps/install-dependencies.yml  
           parameters:
             target_platform: 'ios'
-        - template: /azure/steps/ios.yml
+        - template: /build/steps/ios.yml
           parameters:
             package_id: 'signed_ios'
             target_framework: "net$ciTargetDotNetVersion$-ios"
             project_to_build: 'MyExtensionsApp.Mobile/MyExtensionsApp.Mobile.csproj'
             certificate: '${{ parameters.p12_certificate }}'
-            certificate_password: '${{ parameters.certificate_password }}'
-            provisioning_profile: '${{ parameters.provisioning_profile }}'  #YOUR_PROV_PROFILE.mobileprovision stored in secureFiles
+            certificate_password: '${{ parameters.p12_certificate_password }}'
+            provisioning_profile: '${{ parameters.provisioning_profile }}'
             codesign_provision: '${{ parameters.codesign_provision }}'
-            codesign_key: '${{ parameters.codesign_key }}' #e.g Apple Development: Contoso Contoso (572224A42L)
+            codesign_key: '${{ parameters.codesign_key }}'
       pool:
         vmImage: macOS-latest        
 #endif
 
-#if (maccatalyst) 
+#if (useMacCatalyst) 
     - job: MacCatalyst
       timeoutInMinutes: '${{ variables.jobTimeout }}'
       steps:
-        - template: /azure/steps/install-dependencies.yml  
+        - template: /build/steps/install-dependencies.yml  
           parameters:
             target_platform: 'macos'
 
-        - template: /azure/steps/mobile.yml
+        - template: /build/steps/mobile.yml
           parameters:
             project_to_build: 'MyExtensionsApp.Mobile/MyExtensionsApp.Mobile.csproj'
             target_framework: 'net$ciTargetDotNetVersion$-maccatalyst'
@@ -219,15 +216,15 @@ stages:
         vmImage: macos-latest
 #endif
 
-#if (winAppSdk) 
+#if (useWinAppSdk) 
     - job: Windows
       timeoutInMinutes: '${{ variables.jobTimeout }}'
       steps:
-        - template: /azure/steps/install-dependencies.yml  
+        - template: /build/steps/install-dependencies.yml  
           parameters:
             target_platform: 'uwp'
 
-        - template: /azure/steps/windows.yml
+        - template: /build/steps/windows.yml
           parameters:
             package_id: 'Windows'
             project_to_build: 'MyExtensionsApp.Windows/MyExtensionsApp.Windows.csproj'
@@ -242,7 +239,7 @@ stages:
         - task: PowerShell@2
           inputs:
             targetType: 'filePath'
-            filePath: 'azure/scripts/validate_windows_signing_job.ps1'
+            filePath: 'build/scripts/validate_windows_signing_job.ps1'
             arguments: >
                 -certificate "${{ parameters.pfx_certificate }}"
       pool:
@@ -260,28 +257,28 @@ stages:
       condition: succeeded()
       timeoutInMinutes: '${{ variables.jobTimeout }}'
       steps:
-        - template: /azure/steps/install-dependencies.yml  
+        - template: /build/steps/install-dependencies.yml  
           parameters:
             target_platform: 'uwp'
-        - template: /azure/steps/windows.yml
+        - template: /build/steps/windows.yml
           parameters:
             sign_package: 'true'
-            certificate: '${{ parameters.pfx_certificate }}' #YOUR_CERT.pfx stored in secureFiles
+            certificate: '${{ parameters.pfx_certificate }}'
             package_id: 'signed_windows'
             project_to_build: 'MyExtensionsApp.Windows/MyExtensionsApp.Windows.csproj'
       pool:
         vmImage: windows-latest        
 #endif
 
-#if (skiaWpf)
+#if (useWpf)
     - job: WPF
       timeoutInMinutes: '${{ variables.jobTimeout }}'
       steps:
-        - template: /azure/steps/install-dependencies.yml  
+        - template: /build/steps/install-dependencies.yml  
           parameters:
             target_platform: 'skiawpf'
 
-        - template: /azure/steps/desktop.yml
+        - template: /build/steps/desktop.yml
           parameters:
             package_id: 'WPF'
             project_to_build: 'MyExtensionsApp.Skia.WPF/MyExtensionsApp.Skia.WPF.csproj'
@@ -289,18 +286,18 @@ stages:
         vmImage: windows-latest
 #endif
 
-#if (skiaLinuxFb)
+#if (useLinuxFb)
     - job: Linux
       timeoutInMinutes: '${{ variables.jobTimeout }}'
       steps:
-        - template: /azure/steps/install-dependencies.yml
+        - template: /build/steps/install-dependencies.yml
           parameters:
             target_platform: 'linux'
 
-        - template: /azure/steps/desktop.yml
+        - template: /build/steps/desktop.yml
           parameters:
             package_id: 'Linux'
             project_to_build: 'MyExtensionsApp.Skia.Linux.FrameBuffer/MyExtensionsApp.Skia.Linux.FrameBuffer.csproj'
       pool:
         vmImage: macos-latest            
-#endif        
+#endif

@@ -5,9 +5,6 @@ parameters:
 - name: project_to_build
   type: string
   default: ''  
-- name: project_folder
-  type: string
-  default: ''    
 - name: project_platform
   type: string
   default: 'x64'  
@@ -41,8 +38,8 @@ steps:
       inputs:
         targetType: 'inline'
         script: |
-            $projectFolder = '${{ parameters.project_folder }}'
-            if (('' -eq $projectFolder) -and ("${{ parameters.project_to_build }}".Contains('/') )){
+            $projectFolder = ''
+            if ("${{ parameters.project_to_build }}".Contains('/') ){
               Write-Host "Adjusting proj folder"
               $projectFolder = "${{ parameters.project_to_build }}".SubString(0, "${{ parameters.project_to_build }}".LastIndexOf('/'))
             }

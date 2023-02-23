@@ -14,5 +14,5 @@ steps:
     inputs:
       updateAssemblyInfo: 'False'
       useConfigFile: true
-      configFilePath: azure/config/gitversion.yml
+      configFilePath: build/config/gitversion.yml
     displayName: Use GitVersion

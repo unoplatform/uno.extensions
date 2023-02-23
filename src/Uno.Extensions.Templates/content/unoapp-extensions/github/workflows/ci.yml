@@ -15,7 +15,7 @@ env:
   STEP_TIMEOUT: 60
 
 jobs:
-#if (android)
+#if (useAndroid)
   build_android:
     name: Build Android Unsigned
     runs-on: macos-latest
@@ -73,7 +73,7 @@ jobs:
           project-to-build: "MyExtensionsApp.Mobile/MyExtensionsApp.Mobile.csproj"           
 #endif
 
-#if (ios)
+#if (useIOS)
   build_ios:
     name: Build iOS
     runs-on: windows-latest
@@ -134,7 +134,7 @@ jobs:
           project-to-build: "MyExtensionsApp.Mobile/MyExtensionsApp.Mobile.csproj"          
 #endif
 
-#if (maccatalyst)
+#if (useMacCatalyst)
   build_maccatalyst:
     name: Build MacCatalyst
     runs-on: macos-latest
@@ -158,7 +158,7 @@ jobs:
           target-framework: "net$ciTargetDotNetVersion$-maccatalyst"
 #endif
 
-#if (wasm)
+#if (useWasm)
   build_wasm:
     name: Build Wasm
     runs-on: macos-latest
@@ -182,7 +182,7 @@ jobs:
           project-to-build: "MyExtensionsApp.Wasm/MyExtensionsApp.Wasm.csproj" 
 #endif
 
-#if (winAppSdk)
+#if (useWinAppSdk)
   build_windows_unsigned:
     name: Build Windows Unsigned
     runs-on: windows-latest
@@ -235,7 +235,7 @@ jobs:
           project-to-build: "MyExtensionsApp.Windows/MyExtensionsApp.Windows.csproj"                  
 #endif
 
-#if (skiaLinuxFb)
+#if (useLinuxFb)
   build_linux:
     name: Build Linux
     runs-on: macos-latest
@@ -259,7 +259,7 @@ jobs:
           project-to-build: "MyExtensionsApp.Skia.Linux.FrameBuffer/MyExtensionsApp.Skia.Linux.FrameBuffer.csproj"  
 #endif
 
-#if (skiaWpf)
+#if (useWpf)
   build_wpf:
     name: Build WPF
     runs-on: windows-latest
@@ -283,7 +283,7 @@ jobs:
           project-to-build: "MyExtensionsApp.Skia.WPF/MyExtensionsApp.Skia.WPF.csproj"  
 #endif
 
-#if (skiaGtk)
+#if (useGtk)
   build_gtk:
     name: Build Gtk
     runs-on: macos-latest
