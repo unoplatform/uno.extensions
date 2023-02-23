@@ -57,7 +57,7 @@ inputs:
   target-framework:
      description: ''
      required: false
-     default: 'net$ciTargetDotNetVersion$-ios'    
+     default: '$baseTargetFramework$-ios'    
 runs:
   using: "composite"
   steps:

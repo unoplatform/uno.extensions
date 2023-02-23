@@ -32,7 +32,7 @@ parameters:
   default: 'true'       
 - name: target_framework
   type: string
-  default: 'net$ciTargetDotNetVersion$-android'  
+  default: '$baseTargetFramework$-android'  
 
 steps:
     - template: gitversion.yml

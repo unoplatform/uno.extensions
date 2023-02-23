@@ -2,7 +2,7 @@ parameters:
 - name: project_to_build
   type: string
   default: ''
-  #'net$ciTargetDotNetVersion$-android, net$ciTargetDotNetVersion$-ios, net$ciTargetDotNetVersion$-maccatalyst'
+  #'$baseTargetFramework$-android, $baseTargetFramework$-ios, $baseTargetFramework$-maccatalyst'
 - name: target_framework
   type: string
   default: ''

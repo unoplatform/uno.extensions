@@ -87,7 +87,7 @@ stages:
         - template: /build/steps/android.yml
           parameters:
             package_id: 'Android'
-            target_framework: "net$ciTargetDotNetVersion$-android"
+            target_framework: "$baseTargetFramework$-android"
             project_to_build: 'MyExtensionsApp.Mobile/MyExtensionsApp.Mobile.csproj'
       pool:
         vmImage: macOS-latest
@@ -127,7 +127,7 @@ stages:
         - template: /build/steps/android.yml
           parameters:
             sign_package: 'true'
-            target_framework: "net$ciTargetDotNetVersion$-android"
+            target_framework: "$baseTargetFramework$-android"
             certificate:  '${{ parameters.jks_certificate }}'
             certificate_password: '${{ parameters.jks_certificate_password }}'
             certificate_alias: '${{ parameters.certificate_alias }}'
@@ -148,7 +148,7 @@ stages:
         - template: /build/steps/mobile.yml
           parameters:
             project_to_build: 'MyExtensionsApp.Mobile/MyExtensionsApp.Mobile.csproj'
-            target_framework: 'net$ciTargetDotNetVersion$-ios'
+            target_framework: '$baseTargetFramework$-ios'
       pool:
         vmImage: windows-latest
 
@@ -189,7 +189,7 @@ stages:
         - template: /build/steps/ios.yml
           parameters:
             package_id: 'signed_ios'
-            target_framework: "net$ciTargetDotNetVersion$-ios"
+            target_framework: "$baseTargetFramework$-ios"
             project_to_build: 'MyExtensionsApp.Mobile/MyExtensionsApp.Mobile.csproj'
             certificate: '${{ parameters.p12_certificate }}'
             certificate_password: '${{ parameters.p12_certificate_password }}'
@@ -211,7 +211,7 @@ stages:
         - template: /build/steps/mobile.yml
           parameters:
             project_to_build: 'MyExtensionsApp.Mobile/MyExtensionsApp.Mobile.csproj'
-            target_framework: 'net$ciTargetDotNetVersion$-maccatalyst'
+            target_framework: '$baseTargetFramework$-maccatalyst'
       pool:
         vmImage: macos-latest
 #endif

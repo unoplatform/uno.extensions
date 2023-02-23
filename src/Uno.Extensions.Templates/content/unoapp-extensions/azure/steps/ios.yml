@@ -34,7 +34,7 @@ parameters:
   default: ''
 - name: target_framework
   type: string
-  default: 'net$ciTargetDotNetVersion$-ios'  
+  default: '$baseTargetFramework$-ios'  
       
 steps:
     - template: gitversion.yml
