@@ -369,7 +369,7 @@
       "choices": [
         {
           "choice": "none",
-          "description": "Logging writes output to Console",
+          "description": "Debug Logging for the Application Framework to the Console",
           "displayName": "Console"
         },
         {
