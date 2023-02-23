@@ -55,8 +55,9 @@ The type of view to navigate to
     **XAML**
     ```xml
     <Page x:Class="Playground.Views.HomePage">
-        <Button Click="{x:Bind GoToSecondPageClick}"
-    	    Content="Go to Second Page - Code behind" />
+        <Button 
+            Click="{x:Bind GoToSecondPageClick}"
+            Content="Go to Second Page - Code behind" />
     </Page>
     ```
     
@@ -64,11 +65,11 @@ The type of view to navigate to
     ```csharp
     public sealed partial class HomePage : Page
     {
-    	public async void GoToSecondPageClick()
-    	{
-    		var nav = this.Navigator();
-    		await nav.NavigateRouteAsync(this, "Second");
-    	}
+        public async void GoToSecondPageClick()
+        {
+            var nav = this.Navigator();
+            await nav.NavigateRouteAsync(this, "Second");
+        }
     }
     ```
 * Navigate back to the previous page by calling `NavigateBackAsync`
@@ -76,8 +77,9 @@ The type of view to navigate to
     **XAML**
     ```xml
     <Page x:Class="Playground.Views.SecondPage">
-    	<Button Click="{x:Bind GoBackClick}"
-                    Content="Go Back" />
+        <Button 
+            Click="{x:Bind GoBackClick}"
+            Content="Go Back" />
     </Page>
     ```
     
@@ -85,11 +87,11 @@ The type of view to navigate to
     ```csharp
     public sealed partial class SecondPage : Page
     {
-    	public async void GoBackClick()
-    	{
-    		var nav = this.Navigator();
-    		await nav.NavigateBackAsync(this);
-    	}
+        public async void GoBackClick()
+        {
+            var nav = this.Navigator();
+            await nav.NavigateBackAsync(this);
+        }
     }
     ```
 ### 2. Navigating between view models
@@ -99,8 +101,9 @@ The type of view to navigate to
     **XAML**
     ```xml
     <Page x:Class="Playground.Views.HomePage">
-        <Button Click="{x:Bind ViewModel.GoToSecondPageClick}"
-                Content="Go to Second Page - View Model" />
+        <Button 
+            Click="{x:Bind ViewModel.GoToSecondPageClick}"
+            Content="Go to Second Page - View Model" />
     </Page>
     ```
     
@@ -109,16 +112,16 @@ The type of view to navigate to
     ```csharp
     public sealed partial class HomeViewModel
     {
-    	private readonly INavigator _navigator;
-    	public HomeViewModel(INavigator navigator)
-    	{
-    	    _navigator = navigator;
-    	}
-    	
-    	public async void GoToSecondPageClick()
-    	{
-    		await _navigator.NavigateViewModelAsync<SecondViewModel>(this);
-    	}
+        private readonly INavigator _navigator;
+        public HomeViewModel(INavigator navigator)
+        {
+            _navigator = navigator;
+        }
+        
+        public async void GoToSecondPageClick()
+        {
+            await _navigator.NavigateViewModelAsync<SecondViewModel>(this);
+        }
     }
     ```
 
@@ -128,8 +131,9 @@ The type of view to navigate to
     **XAML**
     ```xml
     <Page x:Class="Playground.Views.SecondPage">
-        <Button Click="{x:Bind ViewModel.GoBackClick}"
-                Content="Go Back" />
+        <Button 
+            Click="{x:Bind ViewModel.GoBackClick}"
+            Content="Go Back" />
     </Page>
     ```
     
@@ -137,16 +141,16 @@ The type of view to navigate to
     ```csharp
     public sealed partial class SecondViewModel
     {
-    	private readonly INavigator _navigator;
-    	public SecondViewModel(INavigator navigator)
-    	{
-    	    _navigator = navigator;
-    	}
-    	
-    	public async void GoBackClick()
-    	{
-    		await _navigator.NavigateBackAsync(this);
-    	}
+        private readonly INavigator _navigator;
+        public SecondViewModel(INavigator navigator)
+        {
+            _navigator = navigator;
+        }
+        
+        public async void GoBackClick()
+        {
+            await _navigator.NavigateBackAsync(this);
+        }
     }
     ```
 ### 3. Navigating between pages (XAML)
@@ -156,8 +160,9 @@ The type of view to navigate to
     **XAML**
     ```xml
     <Page x:Class="Playground.Views.HomePage">
-		<Button uen:Navigation.Request="Second"
-			Content="Go to Second Page - XAML" />
+        <Button 
+            uen:Navigation.Request="Second"
+            Content="Go to Second Page - XAML" />
     </Page>
     ```
 
@@ -165,8 +170,9 @@ The type of view to navigate to
     **XAML** 
     ```xml
     <Page x:Class="Playground.Views.SecondPage">
-		<Button uen:Navigation.Request="-"
-			Content="Go Back" />
+        <Button 
+            uen:Navigation.Request="-"
+            Content="Go Back" />
     </Page>
     ```
 
@@ -176,8 +182,9 @@ The type of view to navigate to
     **XAML**
     ```xml
     <Page x:Class="Playground.Views.HomePage">
-    		<Button uen:Navigation.Request="-/Second"
-    				Content="Go to Second Page - XAML" />
+        <Button 
+            uen:Navigation.Request="-/Second"
+            Content="Go to Second Page - XAML" />
     </Page>
     ```
 
@@ -188,11 +195,11 @@ The type of view to navigate to
     ```csharp
     public sealed partial class HomePage : Page
     {
-    	public async void PromptWithMessageDialogClick()
-    	{
-    		var nav = this.Navigator();
-    		var messageResult = await nav.ShowMessageDialogAsync(this,"Warning about something","Alert");
-    	}
+        public async void PromptWithMessageDialogClick()
+        {
+            var nav = this.Navigator();
+            var messageResult = await nav.ShowMessageDialogAsync(this,"Warning about something","Alert");
+        }
     }
     ```
 
@@ -204,32 +211,38 @@ The type of view to navigate to
     ```xml
     <Page x:Class="Playground.Views.NavigationViewPage">
     
-    	<Grid>
-    		<muxc:NavigationView uen:Region.Attached="true">
-    			<muxc:NavigationView.MenuItems>
-    				<muxc:NavigationViewItem Content="Products"
-    										 uen:Region.Name="Products" />
-    				<muxc:NavigationViewItem Content="Deals"
-    										 uen:Region.Name="Deals" />
-    				<muxc:NavigationViewItem Content="Profile"
-    										 uen:Region.Name="Profile" />
-    			</muxc:NavigationView.MenuItems>
-    			<Grid uen:Region.Attached="True">
-    				<StackPanel uen:Region.Name="Products"
-    					  Visibility="Collapsed">
-    					<TextBlock Text="Products" />
-    				</StackPanel>
-    				<StackPanel uen:Region.Name="Deals"
-    					  Visibility="Collapsed">
-    					<TextBlock Text="Deals" />
-    				</StackPanel>
-    				<StackPanel uen:Region.Name="Profile"
-    					  Visibility="Collapsed">
-    					<TextBlock Text="Profile" />
-    				</StackPanel>
-    			</Grid>
-    		</muxc:NavigationView>
-    	</Grid>
+        <Grid>
+            <muxc:NavigationView uen:Region.Attached="true">
+                <muxc:NavigationView.MenuItems>
+                    <muxc:NavigationViewItem 
+                        Content="Products"
+                        uen:Region.Name="Products" />
+                    <muxc:NavigationViewItem 
+                        Content="Deals"
+                        uen:Region.Name="Deals" />
+                    <muxc:NavigationViewItem 
+                        Content="Profile"
+                        uen:Region.Name="Profile" />
+                </muxc:NavigationView.MenuItems>
+                <Grid uen:Region.Attached="True">
+                    <StackPanel 
+                        uen:Region.Name="Products"
+                        Visibility="Collapsed">
+                        <TextBlock Text="Products" />
+                    </StackPanel>
+                    <StackPanel 
+                        uen:Region.Name="Deals"
+                        Visibility="Collapsed">
+                        <TextBlock Text="Deals" />
+                    </StackPanel>
+                    <StackPanel 
+                        uen:Region.Name="Profile"
+                        Visibility="Collapsed">
+                        <TextBlock Text="Profile" />
+                    </StackPanel>
+                </Grid>
+            </muxc:NavigationView>
+        </Grid>
     </Page>
     ```
 
@@ -240,24 +253,22 @@ The type of view to navigate to
     **XAML**
     ```xml
     <Page x:Class="Playground.Views.ContentControlPage">
-    	<Grid>
-    		<Grid.RowDefinitions>
-    			<RowDefinition />
-    			<RowDefinition Height="Auto" />
-    		</Grid.RowDefinitions>
-    			<Button Content="Show profile"
-    						uen:Navigation.Request="./Info/Profile" />
-    			<ContentControl uen:Region.Attached="True"
-    							uen:Region.Name="Info"
-    							Grid.Row="1" />
-    	</Grid>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+                <Button 
+                    Content="Show profile"
+                    uen:Navigation.Request="./Info/Profile" />
+                <ContentControl 
+                    uen:Region.Attached="True"
+                    uen:Region.Name="Info"
+                    Grid.Row="1" />
+        </Grid>
     </Page>
     
     <UserControl x:Class="Playground.Views.ProfileUserControl">
     …
     </UserControl>
     ```
-
-
-
-
