@@ -6,6 +6,7 @@ param ([string]$project_to_build,
         [string]$publish_artifacts,
         [string]$compress_artifacts,
         [string]$git_semVer,
+        [string]$secure_file,
         [string]$sign_package)
 
 $projectFolder = ''
@@ -17,7 +18,7 @@ Write-Host "Current proj folder is: $projectFolder"
 Write-Host "Building $package_id"
 
 if ('true' -eq "$sign_package") {
-  dotnet publish  -c Release -p:TargetFramework=$target_framework  -o $projectFolder\bin\Release $project_to_build /p:AndroidSigningKeyStore=$(keyStore.secureFilePath) /p:AndroidSigningStorePass=$certificate_password /p:AndroidSigningKeyAlias=$certificate_alias 
+  dotnet publish  -c Release -p:TargetFramework=$target_framework  -o $projectFolder\bin\Release $project_to_build /p:AndroidSigningKeyStore=$secure_file /p:AndroidSigningStorePass=$certificate_password /p:AndroidSigningKeyAlias=$certificate_alias 
 }else{
   dotnet publish  -c Release -p:TargetFramework=$target_framework  -o $projectFolder\bin\Release $project_to_build
 }

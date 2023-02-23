@@ -168,9 +168,11 @@
 				<!--#if (useCPM)-->
 				<PackageReference Include="Xamarin.Google.Android.Material" />
 				<PackageReference Include="Uno.UniversalImageLoader" />
+				<PackageReference Include="Microsoft.Build.Utilities.Core"/>
 				<!--#else-->
 				<PackageReference Include="Xamarin.Google.Android.Material" Version="1.7.0.2" />
 				<PackageReference Include="Uno.UniversalImageLoader" Version="1.9.36" />
+				<PackageReference Include="Microsoft.Build.Utilities.Core" Version="17.4.0" />
 				<!--#endif-->
 			</ItemGroup>
 			<ItemGroup>

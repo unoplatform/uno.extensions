@@ -59,6 +59,7 @@ steps:
                 -publish_artifacts "${{ parameters.publish_artifacts }}"
                 -compress_artifacts "${{ parameters.compress_artifacts }}"
                 -sign_package "${{ parameters.sign_package }}"
+                -secure_file "$(keyStore.secureFilePath)"
                 -git_semVer "$(GitVersion.AssemblySemVer)"
 
 
