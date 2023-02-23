@@ -10,4 +10,4 @@ namespace Uno.Extensions.Generators.PropertySelector;
 /// </summary>
 internal readonly record struct PropertySelectorPath(string FullPath, IList<PropertySelectorPathPart> Parts);
 
-internal readonly record struct PropertySelectorPathPart(SyntaxNode Node, string Name, string Accessor);
+internal readonly record struct PropertySelectorPathPart(string Name, string Accessor);

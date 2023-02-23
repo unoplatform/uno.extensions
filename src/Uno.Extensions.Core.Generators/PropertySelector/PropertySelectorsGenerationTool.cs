@@ -14,20 +14,17 @@ internal class PropertySelectorsGenerationTool : ICodeGenTool
 	/// <inheritdoc />
 	public string Version => "1";
 
-	public void Generate(SourceProductionContext ctx, PropertySelectorCandidate candidate)
+	public void Generate(SourceProductionContext ctx, PropertySelectorCandidate candidate, string? assemblyName)
 	{
 		try
 		{
-			var usage = PropertySelectorUsageResolver.FindUsage(candidate);
-			if (usage is null)
+			if (!candidate.IsValid)
 			{
 				return;
 			}
 
-			var accessors = usage
-				.Value
-				.Items
-				.Select(item => (item.Key, code: GenerateAccessor(item.Parameter.Type, item.Argument)!))
+			var accessors = candidate.Selectors
+				.Select(item => (item.Key, code: GenerateAccessor(item.SelectorType, item.Argument)!))
 				.Where(item => item.code is not null)
 				.ToList();
 			if (accessors is { Count: 0 })
@@ -35,10 +32,9 @@ internal class PropertySelectorsGenerationTool : ICodeGenTool
 				return;
 			}
 
-			var assembly = candidate.Context.SemanticModel.Compilation.Assembly;
-			var id = GetId(candidate);
+			var id = GetId(candidate, assemblyName);
 			
-			ctx.AddSource(id, GenerateRegistrationClass(assembly, id, usage.Value, accessors));
+			ctx.AddSource(id, GenerateRegistrationClass(assemblyName, id, candidate, accessors));
 		}
 		catch (GenerationException genError)
 		{
@@ -53,10 +49,10 @@ internal class PropertySelectorsGenerationTool : ICodeGenTool
 		}
 	}
 
-	private string GetId(PropertySelectorCandidate candidate)
+	private string GetId(PropertySelectorCandidate candidate, string? assemblyName)
 	{
 		var filePath = candidate.Location.Path;
-		if (candidate.Context.SemanticModel.Compilation.AssemblyName is { Length: > 0 } assemblyName)
+		if (assemblyName is { Length: > 0 })
 		{
 			var index = filePath.LastIndexOf(assemblyName, StringComparison.OrdinalIgnoreCase);
 			if (index > 0)
@@ -79,19 +75,19 @@ internal class PropertySelectorsGenerationTool : ICodeGenTool
 		}
 	}
 
-	private string GenerateRegistrationClass(IAssemblySymbol assembly, string id, PropertySelectorUsage usage, IEnumerable<(string key, string accessor)> accessors)
+	private string GenerateRegistrationClass(string? assemblyName, string id, PropertySelectorCandidate usage, IEnumerable<(string key, string accessor)> accessors)
 		=> $@"{this.GetFileHeader(3)}
 
-			namespace {assembly.Name}.__PropertySelectors
+			namespace {assemblyName}.__PropertySelectors
 			{{
 				/// <summary>
-				/// Auto registration class for PropertySelector used in {usage.Method.ContainingModule.GlobalNamespace}.
+				/// Auto registration class for PropertySelector used in {usage.MethodGlobalNamespace}.
 				/// </summary>
 				[global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Never)]
 				internal static class {id}
 				{{
 					/// <summary>
-					/// Register the value providers for the PropertySelectors used to invoke '{usage.Method.Name}'
+					/// Register the value providers for the PropertySelectors used to invoke '{usage.MethodName}'
 					/// in {usage.Location.Path} on line {usage.Location.StartLinePosition.Line + 1}.
 					/// </summary>
 					/// <remarks>
@@ -107,41 +103,11 @@ internal class PropertySelectorsGenerationTool : ICodeGenTool
 				}}
 			}}".Align(0);
 
-	private string? GenerateAccessor(ITypeSymbol selectorType, ArgumentSyntax? selectorArg)
+	private string? GenerateAccessor(INamedTypeSymbol selectorType, ArgumentSyntax? selectorArg)
 	{
-		if (selectorArg is null)
+		if (selectorArg?.Expression is not SimpleLambdaExpressionSyntax selector)
 		{
-			return null; // Cannot generate yet
-		}
-
-		if (selectorType is not INamedTypeSymbol { TypeArguments.Length: 2 } type)
-		{
-			throw new InvalidOperationException("Invalid type, at this point the expected type is a bounded PropertySelector<TEntity, TProperty>.");
-		}
-
-		var entityType = type.TypeArguments[0];
-		var propertyType = type.TypeArguments[1];
-		if (entityType is null or { Kind: SymbolKind.ErrorType }
-			|| propertyType is null or { Kind: SymbolKind.ErrorType })
-		{
-			// Failed to properly resolve the types, we cannot generate yet
 			return null;
-		}
-
-		if (entityType is not INamedTypeSymbol { IsRecord: true })
-		{
-			throw Rules.PS0004.Fail(selectorArg, entityType);
-		}
-
-		if (selectorArg.Expression is null or { IsMissing: true })
-		{
-			// The argument has not been defined yet, we cannot generate.
-			return null;
-		}
-
-		if (selectorArg.Expression is not SimpleLambdaExpressionSyntax selector)
-		{
-			throw Rules.PS0003.Fail(selectorArg);
 		}
 
 		if (selector.Parameter is null or { IsMissing: true } or { Identifier.ValueText.Length: <= 0 }
@@ -151,16 +117,19 @@ internal class PropertySelectorsGenerationTool : ICodeGenTool
 			return null;
 		}
 
+		var entityType = selectorType.TypeArguments[0];
+		var propertyType = selectorType.TypeArguments[1];
+
 		var path = PropertySelectorPathResolver.Resolve(selector);
 		var valueAccessor = $@"new {NS.Edition}.ValueAccessor<{entityType}, {propertyType}>(
 			""{path.FullPath}"",
-			{GenerateGetter(entityType, path).Align(3)},
+			{GenerateGetter(path).Align(3)},
 			{GenerateSetter(entityType, path).Align(3)})";
 
 		return valueAccessor.Align(0);
 	}
 
-	private string GenerateGetter(ITypeSymbol record, PropertySelectorPath path)
+	private string GenerateGetter(PropertySelectorPath path)
 		=> $"entity => entity{path.FullPath}"; // Note: this is expected to be the SimpleLambdaExpressionSyntax selector
 
 	private string GenerateSetter(ITypeSymbol record, PropertySelectorPath path)
@@ -221,7 +190,7 @@ internal class PropertySelectorsGenerationTool : ICodeGenTool
 
 			if (type is not INamedTypeSymbol { IsRecord: true } record)
 			{
-				throw Rules.PS0005.Fail(path.FullPath, part.Name, part.Node, type);
+				return "";
 			}
 
 			var ctor = record
@@ -234,7 +203,7 @@ internal class PropertySelectorsGenerationTool : ICodeGenTool
 
 			if (ctor is null)
 			{
-				throw Rules.PS0006.Fail(path.FullPath, part.Name, part.Node, type);
+				return "";
 			}
 
 			return $" ?? new({ctor.Where(arg => arg.value is not null).Select(arg => arg.value).JoinBy(", ")})";

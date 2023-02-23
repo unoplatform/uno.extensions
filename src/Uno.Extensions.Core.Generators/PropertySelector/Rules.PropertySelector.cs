@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
@@ -27,9 +26,6 @@ internal static partial class Rules
 				Location.Create(failingNode.SyntaxTree, failingNode.Span),
 				failingNode.ToString(),
 				selectorSyntax.ToString());
-
-		public static GenerationException Fail(SimpleLambdaExpressionSyntax selectorSyntax, SyntaxNode failingNode)
-			=> new(GetDiagnostic(selectorSyntax, failingNode));
 	}
 
 	public static class PS0002
@@ -52,9 +48,6 @@ internal static partial class Rules
 				Location.Create(failingNode.SyntaxTree, failingNode.Span),
 				failingNode.ToString(),
 				selectorSyntax.ToString());
-
-		public static GenerationException Fail(SimpleLambdaExpressionSyntax selectorSyntax, SyntaxNode failingNode)
-			=> new(GetDiagnostic(selectorSyntax, failingNode));
 	}
 
 	public static class PS0003
@@ -76,9 +69,6 @@ internal static partial class Rules
 				Descriptor,
 				Location.Create(selectorSyntax.SyntaxTree, selectorSyntax.Span),
 				selectorSyntax.ToString());
-
-		public static GenerationException Fail(SyntaxNode selectorSyntax)
-			=> new(GetDiagnostic(selectorSyntax));
 	}
 
 	public static class PS0004
@@ -99,9 +89,6 @@ internal static partial class Rules
 				Descriptor,
 				Location.Create(selectorSyntax.SyntaxTree, selectorSyntax.Span),
 				type.ToString());
-
-		public static GenerationException Fail(SyntaxNode selectorSyntax, ITypeSymbol type)
-			=> new(GetDiagnostic(selectorSyntax, type));
 	}
 
 	public static class PS0005
@@ -149,35 +136,6 @@ internal static partial class Rules
 				path,
 				part,
 				type.ToString());
-
-		public static GenerationException Fail(string path, string part, SyntaxNode node, ITypeSymbol type)
-			=> new(GetDiagnostic(path, part, node, type));
-	}
-
-	public static class PS0101
-	{
-		private const string message = "The method '{0}' accepts a PropertySelector but is missing either [CallerFilePath] or [CallerLineNumber] parameter. "
-			+ "PropertySelector should be used only on public API and converted to `IValueAccessor` before being forwarded to another method.";
-
-		public static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
-			nameof(PS0101),
-			"A method which accepts a PropertySelector must also have 2 parameters flagged with [CallerFilePath] and [CallerLineNumber]",
-			message,
-			Category.Usage,
-			DiagnosticSeverity.Warning,
-			helpLinkUri: "https://aka.platform.uno/PS0101",
-			isEnabledByDefault: true);
-
-		public static Diagnostic GetDiagnostic(IMethodSymbol method)
-			=> Diagnostic.Create(
-				Descriptor,
-				method.DeclaringSyntaxReferences.FirstOrDefault() is { } syntax
-					? Location.Create(syntax.SyntaxTree, syntax.Span)
-					: Location.None,
-				method.ToString());
-
-		public static GenerationException Fail(IMethodSymbol method)
-			=> new(GetDiagnostic(method));
 	}
 
 	public static class PS0102
@@ -193,18 +151,18 @@ internal static partial class Rules
 			helpLinkUri: "https://aka.platform.uno/PS0102",
 			isEnabledByDefault: true);
 
-		public static Diagnostic GetDiagnostic(IMethodSymbol method, string param, SyntaxNode argNode)
+		private static Diagnostic GetDiagnostic(string method, string param, SyntaxNode argNode)
 			=> Diagnostic.Create(
 				Descriptor,
 				Location.Create(argNode.SyntaxTree, argNode.Span),
 				param,
-				method.ToString());
+				method);
 
-		public static GenerationException FailFileArg(IMethodSymbol method, IParameterSymbol? param, SyntaxNode argNode)
-			=> new(GetDiagnostic(method, "[CallerFilePath] " + (param?.Name ?? ""), argNode));
+		public static Diagnostic FailFileArg(IMethodSymbol method, IParameterSymbol? param, SyntaxNode argNode)
+			=> GetDiagnostic(method.ToString(), "[CallerFilePath] " + (param?.Name ?? ""), argNode);
 
-		public static GenerationException FailLineArg(IMethodSymbol method, IParameterSymbol? param, SyntaxNode argNode)
-			=> new(GetDiagnostic(method, "[CallerLineNumber] " + (param?.Name ?? ""), argNode));
+		public static Diagnostic FailLineArg(IMethodSymbol method, IParameterSymbol? param, SyntaxNode argNode)
+			=> GetDiagnostic(method.ToString(), "[CallerLineNumber] " + (param?.Name ?? ""), argNode);
 	}
 
 	public static class PS9999
