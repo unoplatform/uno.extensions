@@ -92,22 +92,6 @@ stages:
       pool:
         vmImage: macOS-latest
 
-    - job: Android_Signed_PreValidation
-      dependsOn: Android
-      condition: succeeded()
-      timeoutInMinutes: '${{ variables.jobTimeout }}'
-      steps:
-        - task: PowerShell@2
-          inputs:
-            targetType: 'filePath'
-            filePath: 'build/scripts/validate_android_signing_job.ps1'
-            arguments: >
-                -certificate "${{ parameters.jks_certificate }}"
-                -certificate_password "${{ parameters.certificate_password }}"
-                -certificate_alias "${{ parameters.certificate_alias }}"
-      pool:
-        vmImage: macOS-latest
-
     ###################################################
     #                    IMPORTANT                    #
     # Store certificates and mobile provision files   #
@@ -117,7 +101,7 @@ stages:
     ###################################################
     
     - job: Android_Signed
-      dependsOn: Android_Signed_PreValidation
+      dependsOn: Android
       condition: succeeded()
       timeoutInMinutes: '${{ variables.jobTimeout }}'
       steps:
@@ -152,24 +136,6 @@ stages:
       pool:
         vmImage: windows-latest
 
-    - job: iOS_Signed_PreValidation
-      dependsOn: iOS
-      condition: succeeded()
-      timeoutInMinutes: '${{ variables.jobTimeout }}'
-      steps:
-        - task: PowerShell@2
-          inputs:
-            targetType: 'filePath'
-            filePath: 'build/scripts/validate_ios_signing_job.ps1'
-            arguments: >
-                -certificate "${{ parameters.p12_certificate }}"
-                -certificate_password "${{ parameters.certificate_password }}"
-                -codesign_key "${{ parameters.codesign_key }}"
-                -codesign_provision "${{ parameters.codesign_provision }}"
-                -provisioning_profile "${{ parameters.provisioning_profile }}"
-      pool:
-        vmImage: macOS-latest
-
     ###################################################
     #                    IMPORTANT                    #
     # Store certificates and mobile provision files   #
@@ -179,7 +145,7 @@ stages:
     ###################################################
 
     - job: iOS_Signed
-      dependsOn: iOS_Signed_PreValidation
+      dependsOn: iOS
       condition: succeeded()
       timeoutInMinutes: '${{ variables.jobTimeout }}'
       steps:
@@ -231,20 +197,6 @@ stages:
       pool:
         vmImage: windows-latest
 
-    - job: Windows_Signed_PreValidation
-      dependsOn: Windows
-      condition: succeeded()
-      timeoutInMinutes: '${{ variables.jobTimeout }}'
-      steps:
-        - task: PowerShell@2
-          inputs:
-            targetType: 'filePath'
-            filePath: 'build/scripts/validate_windows_signing_job.ps1'
-            arguments: >
-                -certificate "${{ parameters.pfx_certificate }}"
-      pool:
-        vmImage: macOS-latest
-
     ###################################################
     #                    IMPORTANT                    #
     # Store certificates and mobile provision files   #
@@ -253,7 +205,7 @@ stages:
     # with the appropiate filename                    #
     ###################################################
     - job: Windows_Signed
-      dependsOn: Windows_Signed_PreValidation
+      dependsOn: Windows
       condition: succeeded()
       timeoutInMinutes: '${{ variables.jobTimeout }}'
       steps:

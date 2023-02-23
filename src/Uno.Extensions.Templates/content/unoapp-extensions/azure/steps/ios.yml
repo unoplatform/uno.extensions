@@ -37,6 +37,25 @@ parameters:
   default: '$baseTargetFramework$-ios'  
       
 steps:
+    #Validate required parameters before executing any other script
+    - task: PowerShell@2
+      displayName: 'Verify required parameters'
+      inputs:
+        targetType: 'inline'
+        script: |
+            $errors = ''
+            if ('' -eq '${{ parameters.project_to_build }}') { $errors = $errors + '[project_to_build] is not valid.' + "`r`n"  }
+            if ('' -eq '${{ parameters.certificate }}') { $errors = $errors +'[certificate] is not valid. Please make sure the name of the .p12 certificate is correct and it exists in secure files' + "`r`n"  }
+            if ('' -eq '${{ parameters.certificate_password }}') { $errors = $errors +'[certificate_password] is not valid. Please make sure you are using the correct .p12 certificate password' + "`r`n"  }
+            if ('' -eq '${{ parameters.codesign_key }}') { $errors = $errors +'[codesign_key] is not valid. Please make sure the name of the name of the distribution certificate is correct. E.g. Apple Development: Contoso Contoso (752234A22L)' + "`r`n"  }
+            if ('' -eq '${{ parameters.codesign_provision }}') { $errors = $errors +'[codesign_provision] is not valid. Please make sure the provisioning profile name is correct. This is the name you entered in the Apple Developer portal when creating your provisioning profile' + "`r`n"  }
+            if ('' -eq '${{ parameters.provisioning_profile }}') { $errors = $errors +'[provisioning_profile] is not valid. Please make sure the .mobileprovision file is correct and it exists in secure files' + "`r`n"  }
+            
+            if (-not ([string]::IsNullOrEmpty($errors))){
+                $errors
+                throw "Some required parameters are missing"
+            }
+            
     - template: gitversion.yml
 
     #############################################

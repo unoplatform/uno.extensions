@@ -35,6 +35,25 @@ parameters:
   default: '$baseTargetFramework$-android'  
 
 steps:
+    #Validate required parameters before executing any other script
+    - task: PowerShell@2
+      displayName: 'Verify required parameters'
+      inputs:
+        targetType: 'inline'
+        script: |
+            $errors = ''
+            if ('' -eq '${{ parameters.project_to_build }}') { $errors = $errors + '[project_to_build] is not valid.' + "`r`n"  }
+            if ('true' -eq '${{ parameters.sign_package }}'){
+              if ('' -eq '${{ parameters.certificate }}') { $errors = $errors + '[certificate] is not valid. Please make sure the name of the .jks certificate is correct and it exists in secure files' + "`r`n"  }
+              if ('' -eq '${{ parameters.certificate_password }}') { $errors = $errors + '[certificate_password] is not valid.' + "`r`n"  }
+              if ('' -eq '${{ parameters.certificate_alias }}') { $errors = $errors + '[certificate_alias] is not valid' + "`r`n"  }
+            }
+
+            if (-not ([string]::IsNullOrEmpty($errors))){
+                $errors
+                throw "Some required parameters are missing"
+            }
+            
     - template: gitversion.yml
 
     - task: DownloadSecureFile@1
