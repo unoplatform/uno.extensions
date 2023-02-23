@@ -1,6 +1,5 @@
-﻿
-using System.Collections.ObjectModel;
-using static FluentValidation.DefaultValidatorExtensions;
+﻿using TestHarness.Models;
+using System.ComponentModel;
 
 namespace TestHarness.Ext.Navigation.Validation;
 
@@ -10,79 +9,85 @@ public partial class ValidationOneViewModel : ObservableObject
 	private readonly IValidator _validator;
 
 	[ObservableProperty]
-	private List<ValidationResult> validatableObjectErrors;
+	private SimpleEntity simpleEntity;
 
 	[ObservableProperty]
-	private List<ValidationResult> observableValidatorErrors;
+	private ValidationUser fluentUser;
 
 	[ObservableProperty]
-	private List<ValidationResult> fluentValidatorErrors;
+	private SimpleObservableUser observableUser;
+
 	public ValidationOneViewModel(IValidator validator)
 	{
 		_validator = validator;
-
 		_ = ValidateEntities();
 	}
 
 	private async Task ValidateEntities()
 	{
-		var entity = new SimpleEntity();
-		var errors = await _validator.ValidateAsync(entity);
-		ValidatableObjectErrors = new List<ValidationResult>(errors);
+		SimpleEntity = new SimpleEntity();
+		SimpleEntity.PropertyChanged += async (s, e) => { if (!e.PropertyName.Contains("Error")) await ValidateSimpleEntity(SimpleEntity, e.PropertyName); };
+		await ValidateSimpleEntity(SimpleEntity);
 
-		var user = new ValidationUser();
-		errors = await _validator.ValidateAsync(user);
-		FluentValidatorErrors = new List<ValidationResult>(errors);
+		FluentUser = new ValidationUser();
+		//Ignore binded Error properties and trigger validation when any other property is updated
+		//Individual binded error properties are updated in AbstractValidator definition using a custom rule definition
+		FluentUser.PropertyChanged += async (s, e) => { if (!e.PropertyName.Contains("Error")) await _validator.ValidateAsync(FluentUser); };
+		await _validator.ValidateAsync(FluentUser);
 
-		var observableUser = new SimpleObservableUser();
-		errors = await _validator.ValidateAsync(observableUser);
-		ObservableValidatorErrors = new List<ValidationResult>(errors);
+		ObservableUser = new SimpleObservableUser();
+		ObservableUser.PropertyChanged += async (s, e) => { if (e.PropertyName != nameof(ObservableUser.HasErrors)) await ValidateObservableUser(ObservableUser, e.PropertyName); };
+		await ValidateObservableUser(ObservableUser);
 	}
 
-
-	public class SimpleEntity : IValidatableObject
+	private async Task ValidateSimpleEntity(SimpleEntity entity, string propertyName = null)
 	{
-		public string Title { get; set; }
+		if (entity == null) return;
+		var errors = await _validator.ValidateAsync(entity);
 
-		public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+		//Once we have all the errors we need to set binded error properties individually
+		if (!string.IsNullOrEmpty(propertyName) && errors.Any())
 		{
-			return string.IsNullOrWhiteSpace(Title) ?
-				new ValidationResult[] {
-					new ValidationResult(
-						errorMessage: "Title should not be null",
-						memberNames: new[] {nameof(Title) }
-						)
-				} :
-				default;
+			//Display only the errors needed
+			if (propertyName == nameof(entity.Title)) entity.TitleErrors = string.Join(Environment.NewLine, from ValidationResult e in errors where e.MemberNames.Contains(propertyName) select e.ErrorMessage);
+		}
+		else if (!string.IsNullOrEmpty(propertyName) && !errors.Any())
+		{
+			//Clean last messages if not errors found
+			if (propertyName == nameof(entity.Title)) entity.TitleErrors = "";
+		}
+		else if (string.IsNullOrEmpty(propertyName) && errors.Any())
+		{
+			//All errors
+			entity.TitleErrors = string.Join(Environment.NewLine, from ValidationResult e in errors where e.MemberNames.Contains(nameof(entity.Title)) select e.ErrorMessage);}
+	}
+
+	private async Task ValidateObservableUser(SimpleObservableUser user, string propertyName = null)
+	{
+		if (user == null) return;
+		var errors = await _validator.ValidateAsync(user);
+
+		//Once we have all the errors we need to set binded error properties individually
+		if (!string.IsNullOrEmpty(propertyName) && errors.Any())
+		{
+			//Display only the errors needed
+			if (propertyName == nameof(user.FirstName)) user.FirstNameErrors = string.Join(Environment.NewLine, from ValidationResult e in errors where e.MemberNames.Contains(propertyName) select e.ErrorMessage);
+			if (propertyName == nameof(user.LastName)) user.LastNameErrors = string.Join(Environment.NewLine, from ValidationResult e in errors where e.MemberNames.Contains(propertyName) select e.ErrorMessage);
+		}
+		else if (!string.IsNullOrEmpty(propertyName) && !errors.Any())
+		{
+			//Clean last messages if not errors found
+			if (propertyName == nameof(user.FirstName)) user.FirstNameErrors = "";
+			if (propertyName == nameof(user.LastName)) user.LastNameErrors = "";
+		}
+		else if (string.IsNullOrEmpty(propertyName) && errors.Any())
+		{
+			//All errors
+			user.FirstNameErrors = string.Join(Environment.NewLine, from ValidationResult e in errors where e.MemberNames.Contains(nameof(user.FirstName)) select e.ErrorMessage);
+			user.LastNameErrors = string.Join(Environment.NewLine, from ValidationResult e in errors where e.MemberNames.Contains(nameof(user.LastName)) select e.ErrorMessage);
 		}
 	}
-
-
 }
 
-public class SimpleObservableUser : ObservableValidator
-{
-	private string firstName;
-	private string lastName;
 
-	[Required]
-	[MinLength(2)]
-	[MaxLength(100)]
-	public string First { get => firstName; set => SetProperty(ref firstName, value, true); }
-
-	[Required]
-	[MinLength(2)]
-	[MaxLength(100)]
-	public string Last { get => lastName; set => SetProperty(ref lastName, value, true); }
-}
-
-public record ValidationUser(string? Name = default);
-
-public class ValidationUserValidator : FluentValidation.AbstractValidator<ValidationUser>
-{
-	public ValidationUserValidator()
-	{
-		RuleFor(x => x.Name).NotNull();
-	}
-}
 

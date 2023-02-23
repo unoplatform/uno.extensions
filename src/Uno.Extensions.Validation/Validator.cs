@@ -27,9 +27,9 @@ internal class Validator : IValidator
 			try
 			{
 				context ??= new ValidationContext(instance);
-				System.ComponentModel.DataAnnotations.Validator.TryValidateObject(instance, context, results, true);
+				bool validates = System.ComponentModel.DataAnnotations.Validator.TryValidateObject(instance, context, results, true);
 
-				if (!results.Any() && instance is INotifyDataErrorInfo _instance)
+				if (!results.Any() && !validates && instance is INotifyDataErrorInfo _instance)
 				{
 					return _instance?.GetErrors(null).OfType<ValidationResult>()?.ToList()
 						?? new List<ValidationResult>();
