@@ -57,8 +57,8 @@
 		<PackageVersion Include="Uno.WinUI.MSAL" Version="4.7.44" />
 		<PackageVersion Include="Uno.WinUI.Runtime.WebAssembly" Version="4.7.44" />
 		<PackageVersion Include="coverlet.collector" Version="3.1.2" />
-		<PackageVersion Include="xunit" Version="2.4.1" />
-		<PackageVersion Include="xunit.runner.visualstudio" Version="2.4.1" />
+		<PackageVersion Include="xunit" Version="2.5.0-dev.37" />
+		<PackageVersion Include="xunit.runner.visualstudio" Version="2.5.0-dev.37" />
 		<PackageVersion Include="System.ComponentModel.Annotations" Version="5.0.0" />
 		<PackageVersion Include="FluentValidation " Version="11.4.0" />
 	</ItemGroup>

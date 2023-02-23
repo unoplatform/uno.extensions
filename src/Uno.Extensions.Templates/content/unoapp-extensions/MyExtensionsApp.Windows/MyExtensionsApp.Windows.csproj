@@ -118,15 +118,15 @@
 		<!--#if (useCsharpMarkup)-->
 		<PackageReference Include="Uno.WinUI.Markup" Version="4.7.0-dev.17" />
 		<!--#if (useMaterial)-->
-		<PackageReference Include="Uno.Material.WinUI.Markup" Version="2.5.0-dev.31" />
+		<PackageReference Include="Uno.Material.WinUI.Markup" Version="2.5.0-dev.37" />
 		<!--#endif-->
-		<PackageReference Include="Uno.Themes.WinUI.Markup" Version="2.5.0-dev.31" />
+		<PackageReference Include="Uno.Themes.WinUI.Markup" Version="2.5.0-dev.37" />
 		<!--#endif-->
 		<!--#if (useMaterial)-->
-		<PackageReference Include="Uno.Material.WinUI" Version="2.5.0-dev.31" />
+		<PackageReference Include="Uno.Material.WinUI" Version="2.5.0-dev.37" />
 		<PackageReference Include="Uno.Toolkit.WinUI.Material" Version="2.5.0-dev.23" />
 		<!--#elif (useCupertino)-->
-		<PackageReference Include="Uno.Cupertino.WinUI" Version="2.5.0-dev.31" />
+		<PackageReference Include="Uno.Cupertino.WinUI" Version="2.5.0-dev.37" />
 		<!--#endif-->
 		<!--#if (useCsharpMarkup)-->
 		<PackageReference Include="Uno.Toolkit.WinUI.Markup" Version="2.5.0-dev.23" />

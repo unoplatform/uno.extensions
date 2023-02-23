@@ -58,9 +58,9 @@
     <PackageVersion Include="Uno.Extensions.Serialization.Refit" Version="255.255.255.255" />
     <!--#endif-->
     <!--#if (useMaterial)-->
-    <PackageVersion Include="Uno.Material.WinUI" Version="2.5.0-dev.31" />
+    <PackageVersion Include="Uno.Material.WinUI" Version="2.5.0-dev.37" />
     <!--#elif (useCupertino)-->
-    <PackageVersion Include="Uno.Cupertino.WinUI" Version="2.5.0-dev.31" />
+    <PackageVersion Include="Uno.Cupertino.WinUI" Version="2.5.0-dev.37" />
     <!--#endif-->
     <PackageVersion Include="Uno.Toolkit.WinUI" Version="2.5.0-dev.23" />
     <!--#if (useMaterial)-->
@@ -82,9 +82,9 @@
     <PackageVersion Include="Uno.Extensions.Reactive.WinUI.Markup" Version="255.255.255.255" />
     <!--#endif-->
     <!--#if (useMaterial)-->
-    <PackageVersion Include="Uno.Material.WinUI.Markup" Version="2.5.0-dev.31" />
+    <PackageVersion Include="Uno.Material.WinUI.Markup" Version="2.5.0-dev.37" />
     <!--#endif-->
-    <PackageVersion Include="Uno.Themes.WinUI.Markup" Version="2.5.0-dev.31" />
+    <PackageVersion Include="Uno.Themes.WinUI.Markup" Version="2.5.0-dev.37" />
     <!--#endif-->
     <PackageVersion Include="Uno.WinUI.RemoteControl" Version="4.7.44" />
     <PackageVersion Include="Uno.WinUI.Skia.Gtk" Version="4.7.44" />
