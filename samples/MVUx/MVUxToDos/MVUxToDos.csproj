@@ -44,20 +44,26 @@
   </ItemGroup>
   <ItemGroup>
     <None Remove="Styles\FeedView.xaml" />
+    <None Remove="Views\ReadOnlyClassLoadRefreshView.xaml" />
     <None Remove="Views\ReadOnlyCollectionView.xaml" />
-    <None Remove="Views\ReadOnlyScalarLoadRefreshView.xaml" />
-    <None Remove="Views\ReadOnlyScalarView.xaml" />
-    <None Remove="Views\ReadWriteScalarView.xaml" />
+    <None Remove="Views\ReadOnlyPrimitiveView.xaml" />
+    <None Remove="Views\ReadOnlyPrimitiveWAttributeLoadRefreshView.xaml" />
+    <None Remove="Views\ReadOnlyRecordView.xaml" />
+    <None Remove="Views\ReadWriteCollectionView.xaml" />
+    <None Remove="Views\ReadWritePrimitiveView.xaml" />
   </ItemGroup>
   <ItemGroup>
     <UpToDateCheckInput Remove="Styles\FeedView.xaml" />
+    <UpToDateCheckInput Remove="Views\ReadOnlyClassLoadRefreshView.xaml" />
     <UpToDateCheckInput Remove="Views\ReadOnlyCollectionView.xaml" />
-    <UpToDateCheckInput Remove="Views\ReadOnlyScalarLoadRefreshView.xaml" />
-    <UpToDateCheckInput Remove="Views\ReadOnlyScalarView.xaml" />
-    <UpToDateCheckInput Remove="Views\ReadWriteScalarView.xaml" />
+    <UpToDateCheckInput Remove="Views\ReadOnlyPrimitiveView.xaml" />
+    <UpToDateCheckInput Remove="Views\ReadOnlyPrimitiveWAttributeLoadRefreshView.xaml" />
+    <UpToDateCheckInput Remove="Views\ReadOnlyRecordView.xaml" />
+    <UpToDateCheckInput Remove="Views\ReadWriteCollectionView.xaml" />
+    <UpToDateCheckInput Remove="Views\ReadWritePrimitiveView.xaml" />
   </ItemGroup>
   <ItemGroup>
-    <Page Update="Views\ReadOnlyScalarLoadRefreshView.xaml">
+    <Page Update="Views\ReadOnlyPrimitiveWAttributeLoadRefreshView.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>
     </Page>

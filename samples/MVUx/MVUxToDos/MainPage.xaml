@@ -4,25 +4,56 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:views="using:MVUxToDos.Views">
 
-    <TabView>
+	<TabView>
 
-        <!-- scalar -->
-        
-        <TabViewItem Header="Read-only scalar value using feed">
-            <views:ReadOnlyScalarView />
-        </TabViewItem>
+		<TabViewItem Header="Readonly feeds (I[List]Feed&lt;T&gt;)">
+			<TabView>
 
-        <TabViewItem Header="Read-only scalar value using feed with loading gesture and refresh button">
-            <views:ReadOnlyScalarLoadRefreshView />
-        </TabViewItem>
-        
 
-        
-        <!-- collection -->
-        
-        <TabViewItem Header="Read-only collection using feed">
-            <views:ReadOnlyCollectionView />
-        </TabViewItem>
+				<!-- primitive -->
 
-    </TabView>
+				<TabViewItem Header="Read-only primitive value (string) feed is generated as a simple primitive value (e.g. string)">
+					<views:ReadOnlyPrimitiveView />
+				</TabViewItem>
+
+				<TabViewItem Header="Read-only primitive value (string) with explicit feed-generation opt-in (using ReactiveBindable) with loading gesture and refresh button">
+					<views:ReadOnlyPrimitiveWAttributeLoadRefreshView />
+				</TabViewItem>
+
+
+				<!-- record -->
+				<TabViewItem Header="Read-only record value (PersonRecord)">
+					<views:ReadOnlyRecordView />
+				</TabViewItem>
+
+
+				<!-- class -->
+				<TabViewItem Header="Read-only class value (CompanyClass) with loading gesture and refresh button">
+					<views:ReadOnlyClassLoadRefreshView />
+				</TabViewItem>
+
+
+
+				<!-- collection -->
+
+				<TabViewItem Header="Read-only collection using feed">
+					<views:ReadOnlyCollectionView />
+				</TabViewItem>
+			</TabView>
+		</TabViewItem>
+
+		<TabViewItem Header="Read-write state (IState&lt;T&gt;)">
+			<TabView>
+
+
+				<!-- collection -->
+
+				<TabViewItem Header="Read-write collection state allowing add/remove/edit of items">
+					<views:ReadWriteCollectionView />
+				</TabViewItem>
+
+			</TabView>
+
+		</TabViewItem>
+	</TabView>
 </Page>

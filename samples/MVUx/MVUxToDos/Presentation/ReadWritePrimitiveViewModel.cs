@@ -6,6 +6,6 @@ using System.Threading.Tasks;
 
 namespace MVUxToDos.Presentation;
 
-public partial class ReadWriteScalarViewModel
+public partial class ReadWritePrimitiveViewModel
 {
 }

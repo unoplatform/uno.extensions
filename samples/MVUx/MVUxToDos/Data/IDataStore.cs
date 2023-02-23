@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -7,24 +8,40 @@ namespace MVUxToDos.Data;
 
 public interface IDataStore
 {
-    ValueTask<string> GetScalarValue(CancellationToken ct);
-    ValueTask UpdateScalarValue(string newScalarValue, CancellationToken ct);
+	ValueTask<int> GetIntValue(CancellationToken ct = default);
 
 
-    ValueTask<IImmutableList<Person>> GetPeople(CancellationToken ct);
-    ValueTask<IImmutableList<Person>> GetPeople(int pageSize, int pageNumber, CancellationToken ct);
-    ValueTask UpdatePerson(Person person, CancellationToken ct);
+	ValueTask<string> GetPrimitiveValue(CancellationToken ct);
+	ValueTask UpdatePrimitiveValue(string newPrimitiveValue, CancellationToken ct);
 
 
-    ValueTask<IImmutableList<Phone>> GetPhones(Person person, CancellationToken ct);
-    ValueTask AddPhone(Person person, Phone phone, CancellationToken ct);
-    ValueTask UpdatePhone(Phone phone, CancellationToken ct);
-    ValueTask DeletePhone(Phone phone, CancellationToken ct);
+	ValueTask<PersonRecord> GetSinglePerson(CancellationToken ct);
+	ValueTask<IImmutableList<PersonRecord>> GetPeople(CancellationToken ct);
+	ValueTask<IImmutableList<PersonRecord>> GetPeople(int pageSize, int pageNumber, CancellationToken ct);
+	ValueTask AddPerson(PersonRecord person, CancellationToken ct);
+	ValueTask UpdatePerson(PersonRecord person, CancellationToken ct);
+	ValueTask DeletePerson(PersonRecord person, CancellationToken ct);
+
+
+	ValueTask<IImmutableList<PhoneRecord>> GetPhones(PersonRecord person, CancellationToken ct);
+	ValueTask AddPhone(PersonRecord person, PhoneRecord phone, CancellationToken ct);
+	ValueTask UpdatePhone(PhoneRecord phone, CancellationToken ct);
+	ValueTask DeletePhone(PhoneRecord phone, CancellationToken ct);
+
+	ValueTask<CompanyClass> GetSingleCompany(CancellationToken ct);
+
 }
 
-public record Person(string FirstName, string LastName)
+public record PersonRecord(string FirstName, string LastName, IImmutableList<PhoneRecord> Phones)
 {
-    public IList<Phone> Phones { get; set; } = new List<Phone>();
+	public PersonRecord WithoutPhone() => new(FirstName, LastName, Enumerable.Empty<PhoneRecord>().ToImmutableList());
 }
 
-public record Phone(string Number);
+public record PhoneRecord(string Number)
+{	
+}
+
+public class CompanyClass
+{
+	public string CompanyName { get; set; }
+}

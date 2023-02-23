@@ -1,8 +1,8 @@
 ﻿<UserControl
-    x:Class="MVUxToDos.Views.ReadOnlyScalarView"
+    x:Class="MVUxToDos.Views.ReadOnlyPrimitiveView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
-    <TextBlock Text="{Binding ScalarValue}" />
+    <TextBlock Text="{Binding PrimitiveValue}" />
 
 </UserControl>

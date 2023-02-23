@@ -1,5 +1,5 @@
 ﻿<UserControl
-    x:Class="MVUxToDos.Views.ReadWriteScalarView"
+    x:Class="MVUxToDos.Views.ReadWritePrimitiveView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mvux="using:Uno.Extensions.Reactive.UI">

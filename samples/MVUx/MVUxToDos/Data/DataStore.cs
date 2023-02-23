@@ -9,196 +9,256 @@ namespace MVUxToDos.Data;
 
 public class DataStore : IDataStore
 {
-    private string ScalarValue { get; set; } = "This is the actual scalar value";
-
-    public async ValueTask<string> GetScalarValue(CancellationToken ct = default)
-    {
-        await Delay(ct);
-
-        return ScalarValue;
-    }
-
-    public async ValueTask UpdateScalarValue(string newScalarValue, CancellationToken ct = default)
-    {
-        await Delay(ct);
-
-        ScalarValue = newScalarValue;
-    }
+	private string PrimitiveValue { get; set; } = "This is the actual primitive value (string)";
 
 
+	public async ValueTask<int> GetIntValue(CancellationToken ct = default)
+	{
+		await Delay(ct);
 
+		return 987654321;
+	}
 
-    public async ValueTask<IImmutableList<Person>> GetPeople(CancellationToken ct = default)
-    {
-        await Delay(ct);
+	public async ValueTask<string> GetPrimitiveValue(CancellationToken ct = default)
+	{
+		await Delay(ct);
 
-        return PeopleOnly;
-    }
+		return PrimitiveValue;
+	}
 
-    public async ValueTask<IImmutableList<Person>> GetPeople(int pageSize = 3, int pageNumber = 0, CancellationToken ct = default)
-    {
-        await Delay(ct);
+	public async ValueTask UpdatePrimitiveValue(string newPrimitiveValue, CancellationToken ct = default)
+	{
+		await Delay(ct);
 
-        return PeopleOnly
-            .Skip(pageSize)
-            .Take(pageNumber)
-            .ToImmutableList();
-    }
-
-    public async ValueTask UpdatePerson(Person person, CancellationToken ct = default)
-    {
-        await Delay(ct);
-    }
+		PrimitiveValue = newPrimitiveValue;
+	}
 
 
 
 
+	public async ValueTask<PersonRecord> GetSinglePerson(CancellationToken ct = default)
+	{
+		await Delay(ct);
 
-    public async ValueTask<IImmutableList<Phone>> GetPhones(Person person, CancellationToken ct = default)
-    {
-        await Delay(ct);
+		return PeopleOnly.FirstOrDefault();
+	}
 
-        var index = IndexOf(person);
-        if (index > -1)
-        {
-            return People[index].Phones.ToImmutableList();
-        }
+	public async ValueTask<IImmutableList<PersonRecord>> GetPeople(CancellationToken ct = default)
+	{
+		await Delay(ct);
 
-        return null;
-    }
-    public async ValueTask AddPhone(Person person, Phone phone, CancellationToken ct = default)
-    {
-        await Delay(ct);
+		return PeopleOnly;
+	}
 
-        var index = IndexOf(person);
-        if (index > -1)
-        {
-            People[index].Phones.Add(phone);
-        }
-    }
-    public async ValueTask UpdatePhone(Phone phone, CancellationToken ct = default)
-    {
-        await Delay(ct);
+	public async ValueTask<IImmutableList<PersonRecord>> GetPeople(int pageSize = 3, int pageNumber = 0, CancellationToken ct = default)
+	{
+		await Delay(ct);
 
-        var person = People.FirstOrDefault(person => person.Phones.Contains(phone));
-        var phoneIndex = person?.Phones.IndexOf(phone);
-        if (phoneIndex > -1)
-        {
-            person.Phones[phoneIndex.Value] = phone;
-        }
-    }
-    public async ValueTask DeletePhone(Phone phone, CancellationToken ct = default)
-    {
-        await Delay(ct);
+		return PeopleOnly
+			.Skip(pageSize)
+			.Take(pageNumber)
+			.ToImmutableList();
+	}
 
-        var person = People.FirstOrDefault(person => person.Phones.Contains(phone));
-        var phoneIndex = person?.Phones.IndexOf(phone);
-        if (phoneIndex > -1)
-        {
-            person.Phones.RemoveAt(phoneIndex.Value);
-        }
-    }
+	public async ValueTask AddPerson(PersonRecord person, CancellationToken ct = default)
+	{
+		await Delay(ct);
+
+		var index = IndexOf(person);
+		if (index == -1)
+		{
+			People.Add(person);
+		}
+		else
+		{
+			throw new InvalidOperationException($"{person} already exists.");
+		}
+	}
+
+	public async ValueTask UpdatePerson(PersonRecord person, CancellationToken ct = default)
+	{
+		await Delay(ct);
+
+		// TODO avoid dupes
+		var index = IndexOf(person);
+		People[index] = person;
+	}
+
+	public async ValueTask DeletePerson(PersonRecord person, CancellationToken ct = default)
+	{
+		await Delay(ct);
+
+		var index = IndexOf(person);
+		if (index > -1)
+		{
+			People.RemoveAt(index);
+		}
+	}
 
 
 
 
 
+	public async ValueTask<IImmutableList<PhoneRecord>> GetPhones(PersonRecord person, CancellationToken ct = default)
+	{
+		await Delay(ct);
+
+		var index = IndexOf(person);
+		if (index > -1)
+		{
+			return People[index].Phones.ToImmutableList();
+		}
+
+		return null;
+	}
+	public async ValueTask AddPhone(PersonRecord person, PhoneRecord phone, CancellationToken ct = default)
+	{
+		await Delay(ct);
+
+		var index = IndexOf(person);
+		if (index > -1)
+		{
+			var newPerson =
+				person with
+				{
+					Phones = People[index].Phones.Add(phone)
+				};
+			People[index] = newPerson;
+		}
+	}
+	public async ValueTask UpdatePhone(PhoneRecord phone, CancellationToken ct = default)
+	{
+		await Delay(ct);
+
+		var person = People.FirstOrDefault(person => person.Phones.Contains(phone));
+		var personIndex = IndexOf(person);
+		var phoneIndex = person?.Phones.IndexOf(phone) ?? -1;
+		if (phoneIndex > -1)
+		{
+			var newPerson =
+				person with
+				{
+					Phones = person.Phones.RemoveAt(phoneIndex)
+				};
+			People[personIndex] = newPerson;
+		}
+	}
+
+	public async ValueTask DeletePhone(PhoneRecord phone, CancellationToken ct = default)
+	{
+		await Delay(ct);
+
+		var person = People.FirstOrDefault(person => person.Phones.Contains(phone));
+		var personIndex = IndexOf(person);
+		var phoneIndex = person?.Phones.IndexOf(phone);
+		if (phoneIndex > -1)
+		{
+			var newPerson =
+				person with
+				{
+					Phones = person.Phones.RemoveAt(phoneIndex.Value)
+				};
+			People[personIndex] = newPerson;
+		}
+	}
 
 
 
-    /// <summary>
-    /// Set how much time the various tasks here should be delayed as if processed.
-    /// </summary>
-    public TimeSpan TaskDelay { get; set; } = TimeSpan.FromSeconds(0.5);
+	public async ValueTask<CompanyClass> GetSingleCompany(CancellationToken ct)
+	{
+		await Delay(ct);
 
-    private async ValueTask Delay(CancellationToken ct = default) => await Task.Delay(TaskDelay, ct);
-
-    /// <summary>
-    /// Shave off phones.
-    /// </summary>
-    private IImmutableList<Person> PeopleOnly =>
-        People
-        .Select(person => new Person(person.FirstName, person.LastName))
-        .ToImmutableList();
+		return Companies.FirstOrDefault();
+	}
 
 
-    private IList<Person> People { get; } = new[]
-    {
-        new Person("Master", "Yoda")
-        {
-            Phones = new[]
-            {
-                new Phone("001"),
-                new Phone("002"),
-            }
-        },
-        new Person("John", "Doe")
-        {
-            Phones = new[]
-            {
-                new Phone("003"),
-                new Phone("004"),
-            }
-        },
-        new Person("Eliott", "Fitzgerald")
-        {
-            Phones = new[]
-            {
-                new Phone("005"),
-                new Phone("006"),
-            }
-        },
-        new Person("Oliver", "McMahon")
-        {
-            Phones = new[]
-            {
-                new Phone("007"),
-                new Phone("008"),
-            }
-        },
-        new Person("Charlie", "Atkinson")
-        {
-            Phones = new[]
-            {
-                new Phone("009"),
-                new Phone("010"),
-            }
-        },
-        new Person("Amy", "Peterson")
-        {
-            Phones = new[]
-            {
-                new Phone("011"),
-                new Phone("012"),
-            }
-        },
-        new Person("Richard", "Neumann")
-        {
-            Phones = new[]
-            {
-                new Phone("013"),
-                new Phone("014"),
-            }
-        },
-        new Person("Mandy", "White")
-        {
-            Phones = new[]
-            {
-                new Phone("015"),
-                new Phone("016"),
-            }
-        },
-        new Person("Xavier", "Chandler")
-        {
-            Phones = new[]
-            {
-                new Phone("017"),
-                new Phone("018"),
-            }
-        },
-    };
 
-    private int IndexOf(Person person) => PeopleOnly.IndexOf(person);
+
+
+	/// <summary>
+	/// Set how much time the various tasks here should be delayed as if processed.
+	/// </summary>
+	public TimeSpan TaskDelay { get; set; } = TimeSpan.FromSeconds(0.5);
+
+	private async ValueTask Delay(CancellationToken ct = default) => await Task.Delay(TaskDelay, ct);
+
+	/// <summary>
+	/// Shave off phones.
+	/// </summary>
+	private IImmutableList<PersonRecord> PeopleOnly =>
+		People
+		.Select(person => new PersonRecord(person.FirstName, person.LastName, EmptyPhones()))
+		.ToImmutableList();
+
+
+	private IList<PersonRecord> People { get; } = new List<PersonRecord>
+	{
+		new PersonRecord("Master", "Yoda", new[]
+			{
+				new PhoneRecord("001"),
+				new PhoneRecord("002"),
+			}.ToImmutableList()),
+
+		new PersonRecord("John", "Doe", new[]
+			{
+				new PhoneRecord("003"),
+				new PhoneRecord("004"),
+			}.ToImmutableList()),
+
+		new PersonRecord("Eliott", "Fitzgerald", new[]
+			{
+				new PhoneRecord("005"),
+				new PhoneRecord("006"),
+			}.ToImmutableList()),
+
+		new PersonRecord("Oliver", "McMahon", new[]
+			{
+				new PhoneRecord("007"),
+				new PhoneRecord("008"),
+			}.ToImmutableList()),
+
+		new PersonRecord("Charlie", "Atkinson", new[]
+			{
+				new PhoneRecord("009"),
+				new PhoneRecord("010"),
+			}.ToImmutableList()),
+
+		new PersonRecord("Amy", "Peterson", new[]
+			{
+				new PhoneRecord("011"),
+				new PhoneRecord("012"),
+			}.ToImmutableList()),
+
+		new PersonRecord("Richard", "Neumann", new[]
+			{
+				new PhoneRecord("013"),
+				new PhoneRecord("014"),
+			}.ToImmutableList()),
+
+		new PersonRecord("Mandy", "White", new[]
+			{
+				new PhoneRecord("015"),
+				new PhoneRecord("016"),
+			}.ToImmutableList()),
+
+		new PersonRecord("Xavier", "Chandler", new[]
+			{
+				new PhoneRecord("017"),
+				new PhoneRecord("018"),
+			}.ToImmutableList())
+	};
+
+
+
+	private IList<CompanyClass> Companies { get; } = new[]
+	{
+		new CompanyClass { CompanyName = "Uno Platform" },
+		new CompanyClass { CompanyName = "NVentive" }
+	};
+
+	private IImmutableList<PhoneRecord> EmptyPhones() => Enumerable.Empty<PhoneRecord>().ToImmutableList();
+
+	private int IndexOf(PersonRecord person) => PeopleOnly.IndexOf(person);
 
 
 }
