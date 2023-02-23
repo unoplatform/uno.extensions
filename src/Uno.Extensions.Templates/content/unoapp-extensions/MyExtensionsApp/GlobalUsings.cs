@@ -10,6 +10,9 @@ global using Microsoft.Extensions.DependencyInjection;
 #if (useDependencyInjection)
 global using Microsoft.Extensions.Hosting;
 #endif
+#if (useLocalization)
+global using Microsoft.Extensions.Localization;
+#endif
 global using Microsoft.Extensions.Logging;
 global using Microsoft.UI.Xaml;
 #if (useCsharpMarkup)

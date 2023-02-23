@@ -10,7 +10,14 @@ public partial record MainModel
 	public IState<string> Name { get; }
 
 //+:cnd:noEmit
-#if useConfiguration
+#if useLocalization
+	public MainModel(
+		INavigator navigator,
+		IStringLocalizer localizer)
+	{
+		_navigator = navigator;
+		Title = $"Main - {localizer["ApplicationName"]}";
+#elif useConfiguration
 	public MainModel(
 		INavigator navigator,
 		IOptions<AppConfig> appInfo)

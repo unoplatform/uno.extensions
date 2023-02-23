@@ -252,6 +252,7 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Facet
 				{
 					UpdateHead(arg);
 					_collectionChanged.CollectionChanged?.Invoke(arg);
+					_collectionChanged.PropertyChanged();
 				}
 			}
 #endif

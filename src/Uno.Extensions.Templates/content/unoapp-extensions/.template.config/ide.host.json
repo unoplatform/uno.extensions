@@ -63,6 +63,10 @@
       "isVisible": true
     },
     {
+      "id": "cultures",
+      "isVisible": true
+    },
+    {
       "id": "logging",
       "isVisible": true
     },

@@ -16,17 +16,29 @@
 
 	<!--#if (useBlankAppTemplate)-->
 	<ItemGroup>
+		<!--#if (useCPM)-->
 		<!--#if (useCsharpMarkup)-->
 		<PackageReference Include="Uno.WinUI.Markup" />
 		<!--#endif-->
-		<PackageReference Include="Uno.WinUI.Skia.Linux.FrameBuffer" />
 		<PackageReference Include="SkiaSharp.Views.Uno.WinUI" />
 		<PackageReference Include="SkiaSharp.Skottie" />
+		<PackageReference Include="Uno.WinUI.Skia.Linux.FrameBuffer" />
 		<PackageReference Include="Uno.WinUI.RemoteControl" Condition="'$(Configuration)'=='Debug'" />
 		<PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" />
+		<!--#else-->
+		<!--#if (useCsharpMarkup)-->
+		<PackageReference Include="Uno.WinUI.Markup" Version="4.7.0-dev.17" />
+		<!--#endif-->
+		<PackageReference Include="SkiaSharp.Views.Uno.WinUI" Version="2.88.3" />
+		<PackageReference Include="SkiaSharp.Skottie" Version="2.88.3" />
+		<PackageReference Include="Uno.WinUI.Skia.Linux.FrameBuffer" Version="4.7.44" />
+		<PackageReference Include="Uno.WinUI.RemoteControl" Version="4.7.44" Condition="'$(Configuration)'=='Debug'" />
+		<PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="4.7.44" />
+		<!--#endif-->
 	</ItemGroup>
 	<!--#endif-->
 	<!--#if (useRecommendedAppTemplate)-->
+	<!--#if (useCPM)-->
 	<ItemGroup>
 		<!--#if (useCsharpMarkup)-->
 		<PackageReference Include="Uno.WinUI.Markup" />
@@ -35,10 +47,10 @@
 		<!--#endif-->
 		<PackageReference Include="Uno.Themes.WinUI.Markup" />
 		<!--#endif-->
-		<PackageReference Include="Uno.WinUI.Skia.Linux.FrameBuffer" />
-		<PackageReference Include="Uno.WinUI.RemoteControl" Condition="'$(Configuration)'=='Debug'" />
 		<PackageReference Include="SkiaSharp.Views.Uno.WinUI" />
 		<PackageReference Include="SkiaSharp.Skottie" />
+		<PackageReference Include="Uno.WinUI.Skia.Linux.FrameBuffer" />
+		<PackageReference Include="Uno.WinUI.RemoteControl" />
 		<PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" />
 		<!--#if (useMaterial)-->
 		<PackageReference Include="Uno.Material.WinUI" />
@@ -53,9 +65,6 @@
 		<!--#endif-->
 		<PackageReference Include="Uno.Extensions.Authentication.WinUI" />
 		<PackageReference Include="Uno.Extensions.Hosting.WinUI" />
-		<!--#if (useConfiguration)-->
-		<PackageReference Include="Uno.Extensions.Configuration" />
-		<!--#endif-->
 		<!--#if (useLocalization)-->
 		<PackageReference Include="Uno.Extensions.Localization.WinUI" />
 		<!--#endif-->
@@ -68,6 +77,9 @@
 		<!--#if (useExtensionsNavigation)-->
 		<PackageReference Include="Uno.Extensions.Navigation.Toolkit.WinUI" />
 		<PackageReference Include="Uno.Extensions.Navigation.WinUI" />
+		<!--#endif-->
+		<!--#if (useConfiguration)-->
+		<PackageReference Include="Uno.Extensions.Configuration" />
 		<!--#endif-->
 		<PackageReference Include="Uno.Extensions.Core" />
 		<!--#if (useHttp)-->
@@ -83,6 +95,64 @@
 		<PackageReference Include="Uno.Extensions.Serialization.Refit" />
 		<!--#endif-->
 	</ItemGroup>
+	<!--#else-->
+	<ItemGroup>
+		<!--#if (useCsharpMarkup)-->
+		<PackageReference Include="Uno.WinUI.Markup" Version="4.7.0-dev.17" />
+		<!--#if (useMaterial)-->
+		<PackageReference Include="Uno.Material.WinUI.Markup" Version="2.5.0-dev.31" />
+		<!--#endif-->
+		<PackageReference Include="Uno.Themes.WinUI.Markup" Version="2.5.0-dev.31" />
+		<!--#endif-->
+		<PackageReference Include="SkiaSharp.Views.Uno.WinUI" Version="2.88.3" />
+		<PackageReference Include="SkiaSharp.Skottie" Version="2.88.3" />
+		<PackageReference Include="Uno.WinUI.Skia.Linux.FrameBuffer" Version="4.7.44" />
+		<PackageReference Include="Uno.WinUI.RemoteControl" Version="4.7.44" Condition="'$(Configuration)'=='Debug'" />
+		<PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="4.7.44" />
+		<!--#if (useMaterial)-->
+		<PackageReference Include="Uno.Material.WinUI" Version="2.5.0-dev.31" />
+		<PackageReference Include="Uno.Toolkit.WinUI.Material" Version="2.5.0-dev.23" />
+		<!--#elif (useCupertino)-->
+		<PackageReference Include="Uno.Cupertino.WinUI" Version="2.5.0-dev.31" />
+		<!--#endif-->
+		<!--#if (useCsharpMarkup)-->
+		<PackageReference Include="Uno.Toolkit.WinUI.Markup" Version="2.5.0-dev.23" />
+		<!--#else-->
+		<PackageReference Include="Uno.Toolkit.WinUI" Version="2.5.0-dev.23" />
+		<!--#endif-->
+		<PackageReference Include="Uno.Extensions.Authentication.WinUI" Version="255.255.255.255" />
+		<PackageReference Include="Uno.Extensions.Hosting.WinUI" Version="255.255.255.255" />
+		<!--#if (useLocalization)-->
+		<PackageReference Include="Uno.Extensions.Localization.WinUI" Version="255.255.255.255" />
+		<!--#endif-->
+		<!--#if (useLogging)-->
+		<PackageReference Include="Uno.Extensions.Logging.WinUI" Version="255.255.255.255" />
+		<!--#endif-->
+		<!--#if (useSerilog)-->
+		<PackageReference Include="Uno.Extensions.Logging.Serilog" Version="255.255.255.255" />
+		<!--#endif-->
+		<!--#if (useExtensionsNavigation)-->
+		<PackageReference Include="Uno.Extensions.Navigation.Toolkit.WinUI" Version="255.255.255.255" />
+		<PackageReference Include="Uno.Extensions.Navigation.WinUI" Version="255.255.255.255" />
+		<!--#endif-->
+		<!--#if (useConfiguration)-->
+		<PackageReference Include="Uno.Extensions.Configuration" Version="255.255.255.255" />
+		<!--#endif-->
+		<PackageReference Include="Uno.Extensions.Core" Version="255.255.255.255" />
+		<!--#if (useHttp)-->
+		<PackageReference Include="Uno.Extensions.Http" Version="255.255.255.255" />
+		<PackageReference Include="Uno.Extensions.Http.Refit" Version="255.255.255.255" />
+		<!--#endif-->
+		<!--#if (useMvux)-->
+		<PackageReference Include="Uno.Extensions.Reactive.WinUI" Version="255.255.255.255" />
+		<!--#endif-->
+		<PackageReference Include="Uno.Extensions.Serialization" Version="255.255.255.255" />
+		<!--#if (useHttp)-->
+		<PackageReference Include="Uno.Extensions.Serialization.Http" Version="255.255.255.255" />
+		<PackageReference Include="Uno.Extensions.Serialization.Refit" Version="255.255.255.255" />
+		<!--#endif-->
+	</ItemGroup>
+	<!--#endif-->
 	<!--#endif-->
 	<ItemGroup>
 		<ProjectReference Include="..\MyExtensionsApp\MyExtensionsApp.csproj" />

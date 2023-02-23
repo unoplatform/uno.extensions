@@ -10,4 +10,14 @@
   <PropertyGroup />
   <Import Project="TestHarness.Shared.projitems" Label="Shared" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\CodeSharing\Microsoft.CodeSharing.CSharp.targets" />
+  <ItemGroup>
+    <_Globbed_Compile Remove="Ext\Navigation\Dialogs\DialogsComplexFlyout.xaml.cs" />
+    <_Globbed_Compile Remove="Ext\Navigation\Dialogs\DialogsComplexFlyoutOnePage.xaml.cs" />
+    <_Globbed_Compile Remove="Ext\Navigation\Dialogs\DialogsComplexFlyoutTwoPage.xaml.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <_Globbled_Page Remove="Ext\Navigation\Dialogs\DialogsComplexFlyout.xaml" />
+    <_Globbled_Page Remove="Ext\Navigation\Dialogs\DialogsComplexFlyoutOnePage.xaml" />
+    <_Globbled_Page Remove="Ext\Navigation\Dialogs\DialogsComplexFlyoutTwoPage.xaml" />
+  </ItemGroup>
 </Project>

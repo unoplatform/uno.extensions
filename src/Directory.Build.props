@@ -35,6 +35,9 @@
 
 	<PropertyGroup Condition="'$(Configuration)'=='Debug'">
 		<WarningsNotAsErrors>$(WarningsNotAsErrors);CS1591</WarningsNotAsErrors>
+		<!-- This is required to prevent XamlParseException when using Debug packages for local
+			debugging (see https://github.com/microsoft/microsoft-ui-xaml/issues/6452) -->
+		<DisableEmbeddedXbf>false</DisableEmbeddedXbf>
 	</PropertyGroup>
 
 	<PropertyGroup>
