@@ -1,0 +1,30 @@
+param ([string]$project_to_build, 
+        [string]$target_framework,
+        [string]$publish_artifacts,
+        [string]$compress_artifacts,
+        [string]$git_semVer)
+
+$projectFolder = ''
+if ("$project_to_build".Contains('/') ){
+Write-Host "Adjusting proj folder"
+  $projectFolder = "$project_to_build".SubString(0, "$project_to_build".LastIndexOf('/'))
+}
+Write-Host "Current proj folder is: $projectFolder"
+
+Write-Host  ""
+Write-Host "Building"
+dotnet build  -c Release -p:TargetFramework="$target_framework"  -o $projectFolder\bin\Release $project_to_build
+
+$finalPackageFolder = "artifacts"
+Write-Host "Creating package folder: $finalPackageFolder"
+New-Item -ItemType Directory -Force -Path $finalPackageFolder
+
+if ('true' -eq "$publish_artifacts") {
+  if ('true' -eq "$compress_artifacts") {
+    Write-Host "Compressing final package"
+    $finalPackageName = "$finalPackageFolder\$target_framework_$git_semVer.zip"
+    Compress-Archive -Path "$projectFolder\bin\Release\*" -DestinationPath $finalPackageName
+  }else{
+    Copy-Item -Path "$projectFolder\bin\Release\*" -Destination "artifacts" -recurse -Force  
+  }
+}

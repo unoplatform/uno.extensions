@@ -81,104 +81,25 @@ steps:
     - task: PowerShell@2
       displayName: 'Find the Info.plist file and validate BundleID'
       inputs:
-        targetType: 'inline'                                                                                                 
-        script: |
-          $bundleid = ${{ parameters.bundle_identifier }}
-          
-          Write-Host "Finding Package Plist (ie Info.plist). Set ios_plist_filename parameter to override"
-          $manifest = (Get-ChildItem -Filter "Info.plist" -Path "$(System.DefaultWorkingDirectory)"  -Recurse | Select-Object -First 1 ).FullName
-          Write-Host "Found at $manifest"
-          Write-Host "$manifest"     
-          
-          if (-not ([string]::IsNullOrEmpty($manifest))){
-            if (([string]::IsNullOrEmpty('${{ parameters.bundle_identifier }}'))){
-              #Extract BundleID from the provided provisioning profile
-              Write-Host "Loading content"
-              $content = Get-Content $(provision_profile_file.secureFilePath) -Raw
-              Write-Host "Content loaded"
-              $pattern = '<key>.*<\/key>\s*<string>.*<\/string>'
-              Write-Host "Pattern: $pattern"
-              $valuepattern = '<string>(.*)<\/string>'
-              Write-Host "Value Pattern: $valuepattern"
-              $matches = $content | Select-String $pattern -AllMatches
-              Write-Host "Matches: $matches.Matches"
-              $idkvp = ($matches.Matches | Where-Object {$_.Value.contains('application-identifier')}).Value
-              Write-Host "ID key value pair: $idkvp"
-              $idmatch = $idkvp | Select-String $valuepattern
-              Write-Host "ID match: $idmatch"
-              $id = $idmatch.Matches[0].Groups[1].Value
-              Write-Host "ID: $id"
-              $teamkvp = ($matches.Matches | Where-Object {$_.Value.contains('com.apple.developer.team-identifier')}).Value
-              Write-Host "Team key value pair: $teamkvp"
-              $teammatch = $teamkvp | Select-String $valuepattern
-              Write-Host "Team match: $teammatch"
-              $teamid = $teammatch.Matches[0].Groups[1].Value
-              Write-Host "Team id: $teamid"
-              $bundleid = $id.Replace($teamid + ".","")
-              Write-Host "Bundle id : $bundleid"
-              Write-Host "Extracted BundleId: $bundleid"
-            }  
-          }else{
-            throw "Info.plist was not found. Please check this file is included in your iOS project and try again"
-          }
-          
-          #Add BundleId to Info.plist if it does not exist
-          $SEL = Select-String -Path $manifest -Pattern "<key>CFBundleIdentifier</key>"
-          if ($SEL -ne $null)
-          {
-              Write-Host "Bundle ID already found in Info.plist"
-          }
-          else
-          {
-            if (-not ([string]::IsNullOrEmpty($bundleid))){
-                Write-Host "Updating BundleID"
-                $filecontent = Get-Content -Path $manifest -Raw
-                $filecontent -replace "</dict>","
-                <key>CFBundleIdentifier</key>
-                <string>$bundleid</string>
-            </dict>"| Set-Content -Path $manifest
-                Get-Content $manifest -Raw
-            }
-          }
-          
-          #Replace .csproj default ApplicationId by valid BundleId if it is not in there yet
-          $SEL = Select-String -Path ${{ parameters.project_to_build }} -Pattern "<ApplicationId>com.companyname.demo</ApplicationId>"
-          if ($SEL -ne $null)
-          {
-            if (-not ([string]::IsNullOrEmpty($bundleid))){
-                Write-Host "Updating ApplicationId in ${{ parameters.project_to_build }}"
-                $filecontent = Get-Content -Path ${{ parameters.project_to_build }} -Raw
-                $filecontent -replace "<ApplicationId>com.companyname.demo</ApplicationId>","<ApplicationId>$bundleid</ApplicationId>"| Set-Content -Path ${{ parameters.project_to_build }}
-                Get-Content ${{ parameters.project_to_build }} -Raw
-            }
-          }
+        targetType: 'filePath'
+        filePath: 'build/scripts/ios_validate_bundleId.ps1'
+        arguments: >
+                -bundle_identifier "${{ parameters.bundle_identifier }}"
+                -project_to_build "${{ parameters.project_to_build }}"
            
-          
-    # Compile Mobile
     - task: PowerShell@2
       displayName: 'Build and Package'
       inputs:
-        targetType: 'inline'
-        script: |
-            $projectFolder = ''
-            if ("${{ parameters.project_to_build }}".Contains('/') ){
-              Write-Host "Adjusting proj folder"
-              $projectFolder = "${{ parameters.project_to_build }}".SubString(0, "${{ parameters.project_to_build }}".LastIndexOf('/'))
-            }
-            Write-Host "Current proj folder is: $projectFolder"
-
-            Write-Host  ""
-            Write-Host "Building ${{ parameters.package_id }}"
-            dotnet publish  -c Release -p:CodesignProvision='${{ parameters.codesign_provision }}' -p:CodesignKey='${{ parameters.codesign_key }}' -p:TargetFramework=${{ parameters.target_framework }}  /p:ArchiveOnBuild=true  -o $projectFolder\bin\Release ${{ parameters.project_to_build }} 
-
-            $finalPackageFolder = "artifacts"
-            Write-Host "Creating package folder: $finalPackageFolder"
-            New-Item -ItemType Directory -Force -Path $finalPackageFolder
-
-            if ('true' -eq '${{ parameters.publish_artifacts }}') {
-                $finalPackageName = "$finalPackageFolder\${{ parameters.package_id }}_$(GitVersion.AssemblySemVer).zip"
-                Compress-Archive -Path "$projectFolder\bin\Release\*" -DestinationPath $finalPackageName
-            }
+        targetType: 'filePath'
+        filePath: 'build/scripts/ios_build_and_sign.ps1'
+        arguments: >
+                -project_to_build "${{ parameters.project_to_build }}"
+                -package_id "${{ parameters.package_id }}"
+                -codesign_provision "${{ parameters.codesign_provision }}"
+                -codesign_key "${{ parameters.codesign_key }}"
+                -target_framework "${{ parameters.target_framework }}"
+                -publish_artifacts "${{ parameters.publish_artifacts }}"
+                -git_semVer "$(GitVersion.AssemblySemVer)"
 
     - task: PublishPipelineArtifact@1
       displayName: 'Publish Artifact'

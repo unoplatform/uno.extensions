@@ -1,0 +1,27 @@
+param ([string]$project_to_build, 
+        [string]$package_id,
+        [string]$codesign_provision,
+        [string]$codesign_key,
+        [string]$target_framework,
+        [string]$publish_artifacts,
+        [string]$git_semVer)
+
+$projectFolder = ''
+if ("$project_to_build".Contains('/') ){
+  Write-Host "Adjusting proj folder"
+  $projectFolder = "$project_to_build".SubString(0, "$project_to_build".LastIndexOf('/'))
+}
+Write-Host "Current proj folder is: $projectFolder"
+
+Write-Host  ""
+Write-Host "Building $package_id"
+dotnet publish  -c Release -p:CodesignProvision="$codesign_provision" -p:CodesignKey="$codesign_key" -p:TargetFramework="$target_framework"  /p:ArchiveOnBuild=true  -o $projectFolder\bin\Release $project_to_build 
+
+$finalPackageFolder = "artifacts"
+Write-Host "Creating package folder: $finalPackageFolder"
+New-Item -ItemType Directory -Force -Path $finalPackageFolder
+
+if ('true' -eq "$publish_artifacts") {
+    $finalPackageName = "$finalPackageFolder\$package_id_$git_semVer.zip"
+    Compress-Archive -Path "$projectFolder\bin\Release\*" -DestinationPath $finalPackageName
+}

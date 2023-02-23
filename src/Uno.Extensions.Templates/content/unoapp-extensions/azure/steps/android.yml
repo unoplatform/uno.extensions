@@ -43,25 +43,41 @@ steps:
       condition:  eq('${{ parameters.sign_package }}', 'true')
       inputs:
         secureFile: ${{ parameters.certificate }}
-      
-    # Compile Mobile
-    - task: PowerShell@2
-      displayName: 'Build and Package'
-      inputs:
-        targetType: 'filePath'
-        filePath: 'build/scripts/android_build.ps1'
-        arguments: >
-                -project_to_build "${{ parameters.project_to_build }}"
-                -package_id "${{ parameters.package_id }}"
-                -target_framework "${{ parameters.target_framework }}"
-                -certificate_password "${{ parameters.certificate_password }}"
-                -certificate_alias "${{ parameters.certificate_alias }}"
-                -publish_artifacts "${{ parameters.publish_artifacts }}"
-                -compress_artifacts "${{ parameters.compress_artifacts }}"
-                -sign_package "${{ parameters.sign_package }}"
-                -secure_file "$(keyStore.secureFilePath)"
-                -git_semVer "$(GitVersion.AssemblySemVer)"
-
+    
+    - ${{ if eq( parameters['sign_package'], 'true') }}:   
+      - task: PowerShell@2
+        displayName: 'Build and Package'
+        inputs:
+          targetType: 'filePath'
+          filePath: 'build/scripts/android_build.ps1'
+          arguments: >
+                  -project_to_build "${{ parameters.project_to_build }}"
+                  -package_id "${{ parameters.package_id }}"
+                  -target_framework "${{ parameters.target_framework }}"
+                  -certificate_password "${{ parameters.certificate_password }}"
+                  -certificate_alias "${{ parameters.certificate_alias }}"
+                  -publish_artifacts "${{ parameters.publish_artifacts }}"
+                  -compress_artifacts "${{ parameters.compress_artifacts }}"
+                  -sign_package "${{ parameters.sign_package }}"
+                  -secure_file "$(keyStore.secureFilePath)"
+                  -git_semVer "$(GitVersion.AssemblySemVer)"
+    - ${{ else }}:               
+      - task: PowerShell@2
+        displayName: 'Build and Package'
+        inputs:
+          targetType: 'filePath'
+          filePath: 'build/scripts/android_build.ps1'
+          arguments: >
+                  -project_to_build "${{ parameters.project_to_build }}"
+                  -package_id "${{ parameters.package_id }}"
+                  -target_framework "${{ parameters.target_framework }}"
+                  -certificate_password "${{ parameters.certificate_password }}"
+                  -certificate_alias "${{ parameters.certificate_alias }}"
+                  -publish_artifacts "${{ parameters.publish_artifacts }}"
+                  -compress_artifacts "${{ parameters.compress_artifacts }}"
+                  -sign_package "${{ parameters.sign_package }}"
+                  -secure_file ""
+                  -git_semVer "$(GitVersion.AssemblySemVer)"
 
     - task: PublishPipelineArtifact@1
       displayName: 'Publish Artifact'

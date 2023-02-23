@@ -164,9 +164,9 @@ stages:
             arguments: >
                 -certificate "${{ parameters.p12_certificate }}"
                 -certificate_password "${{ parameters.certificate_password }}"
-                -codesign_key: "${{ parameters.codesign_key }}"
-                -codesign_provision: "${{ parameters.codesign_provision }}"
-                -provisioning_profile: "${{ parameters.provisioning_profile }}
+                -codesign_key "${{ parameters.codesign_key }}"
+                -codesign_provision "${{ parameters.codesign_provision }}"
+                -provisioning_profile "${{ parameters.provisioning_profile }}"
       pool:
         vmImage: macOS-latest
 

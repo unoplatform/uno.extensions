@@ -1,0 +1,36 @@
+param ([string]$project_to_build, 
+        [string]$package_id,
+        [string]$project_platform,
+        [string]$publish_artifacts,
+        [string]$compress_artifacts,
+        [string]$git_semVer,
+        [string]$secure_file,
+        [string]$sign_package)
+
+$projectFolder = ''
+if ("$project_to_build".Contains('/') ){
+  Write-Host "Adjusting proj folder"
+  $projectFolder = "$project_to_build".SubString(0, "$project_to_build".LastIndexOf('/'))
+}
+Write-Host "Current proj folder is: $projectFolder"
+choco install vswhere
+$path = vswhere -latest -requires Microsoft.Component.MSBuild -find MSBuild\**\Bin\MSBuild.exe | select-object -first 1
+& $path /t:Restore $project_to_build /p:Configuration=Release /p:Platform="$project_platform"
+if ('true' -eq "$sign_package") {
+  & $path $project_to_build /p:Configuration=Release /p:Platform="$project_platform" /p:UapAppxPackageBuildMode=SideloadOnly /p:AppxBundle=Never /p:PackageCertificateKeyFile=$secure_file /p:AppxPackageDir=".\bin\Release\" /p:GenerateAppxPackageOnBuild=true
+}else{
+  & $path $project_to_build /p:AppxPackageSigningEnabled=false /p:Configuration=Release /p:Platform="$project_platform"  /p:UapAppxPackageBuildMode=SideloadOnly /p:AppxBundle=Never /p:AppxPackageDir=".\bin\Release\" /p:GenerateAppxPackageOnBuild=true
+}
+$finalPackageFolder = ".\artifacts"
+Write-Host "Creating package folder: $finalPackageFolder"
+New-Item -ItemType Directory -Force -Path $finalPackageFolder
+
+if ('true' -eq "$publish_artifacts") {
+  if ('true' -eq "$compress_artifacts") {
+    Write-Host "Compressing final package"
+    $finalPackageName = "$finalPackageFolder\$package_id($project_platform)_$git_semVer.zip"
+    Compress-Archive -Path "$projectFolder\bin\Release\*" -DestinationPath $finalPackageName
+  }else{
+    Copy-Item -Path "$projectFolder\bin\Release\*" -Destination ".\artifacts" -recurse -Force  
+  }
+}
