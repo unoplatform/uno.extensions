@@ -6,6 +6,7 @@ export UNO_UITEST_TARGETURI=http://localhost:5000
 export UNO_UITEST_DRIVERPATH_CHROME=$BUILD_SOURCESDIRECTORY/build/node_modules/chromedriver/lib/chromedriver
 export UNO_UITEST_CHROME_BINARY_PATH=$BUILD_SOURCESDIRECTORY/build/node_modules/puppeteer/.local-chromium/linux-800071/chrome-linux/chrome
 export UNO_UITEST_SCREENSHOT_PATH=$BUILD_ARTIFACTSTAGINGDIRECTORY/screenshots/wasm
+export BIN_LOG_PATH=$BUILD_ARTIFACTSTAGINGDIRECTORY/wasm-uitest.binlog
 export UNO_UITEST_PLATFORM=Browser
 export UNO_UITEST_CHROME_CONTAINER_MODE=true
 export UNO_UITEST_PROJECT=$BUILD_SOURCESDIRECTORY/testing/TestHarness/TestHarness.UITest/TestHarness.UITest.csproj
@@ -20,7 +21,7 @@ export UNO_UITEST_WASM_PROJECT_BUILD_OPTIONS="/p:UnoExtensionsDisableNet6=true /
 cd $BUILD_SOURCESDIRECTORY
 
 msbuild /r /p:Configuration=Release $UNO_UITEST_PROJECT
-dotnet build /r /p:Configuration=Release $UNO_UITEST_WASM_PROJECT /p:IsUiAutomationMappingEnabled=True /p:UseWebAssemblyAOT=false $UNO_UITEST_WASM_PROJECT_BUILD_OPTIONS
+dotnet build /r /p:Configuration=Release $UNO_UITEST_WASM_PROJECT /p:IsUiAutomationMappingEnabled=True /p:UseWebAssemblyAOT=false /bl:$BIN_LOG_PATH $UNO_UITEST_WASM_PROJECT_BUILD_OPTIONS
 
 # Start the server
 dotnet run --project $UNO_UITEST_WASM_PROJECT -c Release --no-build &
