@@ -11,7 +11,7 @@
 		<PropertyGroup>
 			<_TargetNugetPackageId Condition="'$(PackageId)'!=''">$(PackageId)</_TargetNugetPackageId>
 			<_TargetNugetPackageId Condition="'$(PackageId)'==''">$(AssemblyName)</_TargetNugetPackageId>
-			<_TargetNugetFolder Condition="'$(ToolOfPackage)'!=''">$(USERPROFILE)\.nuget\packages\$(ToolOfPackage)\$(UnoNugetOverrideVersion)\tools</_TargetNugetFolder>
+			<_TargetNugetFolder Condition="'$(ToolOfPackage)'!=''">$(USERPROFILE)\.nuget\packages\$(ToolOfPackage)\$(UnoNugetOverrideVersion)\analyzers\dotnet\cs</_TargetNugetFolder>
 			<_TargetNugetFolder Condition="'$(ToolOfPackage)'==''">$(USERPROFILE)\.nuget\packages\$(_TargetNugetPackageId)\$(UnoNugetOverrideVersion)\lib\$(TargetFramework)</_TargetNugetFolder>
 		</PropertyGroup>
 
@@ -21,7 +21,7 @@
 			<_OutputFiles Include="@(DocumentationProjectOutputGroupOutput)" />
 			<_OutputFiles Condition="'$(ToolOfPackage)'!=''" Include="@(ReferenceCopyLocalPaths)" />
 		</ItemGroup>
-		
+
 		<MakeDir Directories="$(_TargetNugetFolder)\" />
 
 		<Message Importance="high" Text="OVERRIDING NUGET PACKAGE CACHE: $(_TargetNugetFolder) [and $(TargetPlatformVersion)]" />
