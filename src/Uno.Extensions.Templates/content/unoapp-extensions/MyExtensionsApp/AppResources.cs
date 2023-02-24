@@ -9,16 +9,11 @@ public sealed class AppResources : ResourceDictionary
 			new XamlControlsResources()));
 #if useMaterial
 
-		// Load Material Resources
+		// Load Uno.UI.Toolkit and Material Resources
 		this.Build(r => r.Merged(
-			new MaterialTheme()
-				.ColorOverrideDictionary(new Styles.ColorPaletteOverride())
-				.FontOverrideDictionary(new Styles.MaterialFontsOverride())));
-
-		// Load Uno.UI.Toolkit Resources
-		this.Build(r => r.Merged(
-			new ToolkitResources(),
-			new MaterialToolkitResources()));
+			new  MaterialToolkitTheme(
+					new Styles.ColorPaletteOverride(), 
+					new Styles.MaterialFontsOverride())));
 #elif (useRecommendedAppTemplate)
 
 		// Load Uno.UI.Toolkit Resources
