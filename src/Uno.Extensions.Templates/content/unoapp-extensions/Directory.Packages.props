@@ -62,9 +62,9 @@
     <!--#elif (useCupertino)-->
     <PackageVersion Include="Uno.Cupertino.WinUI" Version="2.5.0-dev.37" />
     <!--#endif-->
-    <PackageVersion Include="Uno.Toolkit.WinUI" Version="2.5.0-dev.23" />
+    <PackageVersion Include="Uno.Toolkit.WinUI" Version="2.5.0-dev.35" />
     <!--#if (useMaterial)-->
-    <PackageVersion Include="Uno.Toolkit.WinUI.Material" Version="2.5.0-dev.23" />
+    <PackageVersion Include="Uno.Toolkit.WinUI.Material" Version="2.5.0-dev.35" />
     <!--#endif-->
     <PackageVersion Include="Uno.Resizetizer" Version="0.36.0-dev.129" />
     <PackageVersion Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="4.7.44" />
@@ -76,7 +76,7 @@
     <PackageVersion Include="Uno.WinUI" Version="4.7.44" />
     <!--#if (useCsharpMarkup)-->
     <PackageVersion Include="Uno.WinUI.Markup" Version="4.7.0-dev.17" />
-    <PackageVersion Include="Uno.Toolkit.WinUI.Markup" Version="2.5.0-dev.23" />
+    <PackageVersion Include="Uno.Toolkit.WinUI.Markup" Version="2.5.0-dev.35" />
     <PackageVersion Include="Uno.Extensions.Navigation.WinUI.Markup" Version="255.255.255.255" />
     <!--#if (useMvux)-->
     <PackageVersion Include="Uno.Extensions.Reactive.WinUI.Markup" Version="255.255.255.255" />

@@ -114,14 +114,14 @@
 		<PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="4.7.44" />
 		<!--#if (useMaterial)-->
 		<PackageReference Include="Uno.Material.WinUI" Version="2.5.0-dev.37" />
-		<PackageReference Include="Uno.Toolkit.WinUI.Material" Version="2.5.0-dev.23" />
+		<PackageReference Include="Uno.Toolkit.WinUI.Material" Version="2.5.0-dev.35" />
 		<!--#elif (useCupertino)-->
 		<PackageReference Include="Uno.Cupertino.WinUI" Version="2.5.0-dev.37" />
 		<!--#endif-->
 		<!--#if (useCsharpMarkup)-->
-		<PackageReference Include="Uno.Toolkit.WinUI.Markup" Version="2.5.0-dev.23" />
+		<PackageReference Include="Uno.Toolkit.WinUI.Markup" Version="2.5.0-dev.35" />
 		<!--#else-->
-		<PackageReference Include="Uno.Toolkit.WinUI" Version="2.5.0-dev.23" />
+		<PackageReference Include="Uno.Toolkit.WinUI" Version="2.5.0-dev.35" />
 		<!--#endif-->
 		<PackageReference Include="Uno.Extensions.Authentication.WinUI" Version="255.255.255.255" />
 		<PackageReference Include="Uno.Extensions.Hosting.WinUI" Version="255.255.255.255" />
