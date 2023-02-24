@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
@@ -136,6 +137,30 @@ internal static partial class Rules
 				path,
 				part,
 				type.ToString());
+	}
+
+	public static class PS0101
+	{
+		private const string message = "The method '{0}' accepts a PropertySelector but is missing either [CallerFilePath] or [CallerLineNumber] parameter. "
+			+ "PropertySelector should be used only on public API and converted to `IValueAccessor` before being forwarded to another method.";
+
+		public static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
+			nameof(PS0101),
+			"A method which accepts a PropertySelector must also have 2 parameters flagged with [CallerFilePath] and [CallerLineNumber]",
+			message,
+			Category.Usage,
+			DiagnosticSeverity.Warning,
+			helpLinkUri: "https://aka.platform.uno/PS0101",
+			isEnabledByDefault: true);
+
+		// TODO: Not yet implemented.
+		public static Diagnostic GetDiagnostic(IMethodSymbol method)
+			=> Diagnostic.Create(
+				Descriptor,
+				method.Locations.FirstOrDefault() is { } location
+					? location
+					: Location.None,
+				method.ToString());
 	}
 
 	public static class PS0102

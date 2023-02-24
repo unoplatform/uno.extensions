@@ -61,7 +61,6 @@ internal static class PropertySelectorPathResolver
 			visitor.Visit(node);
 		}
 
-		// TODO: PS0001 and PS0002
 		return new(string.Concat(parts.Select(part => part.Accessor)), parts);
 	}
 }
