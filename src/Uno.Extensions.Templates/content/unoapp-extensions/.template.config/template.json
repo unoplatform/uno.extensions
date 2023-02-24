@@ -480,17 +480,17 @@
     "useMaterial": {
       "type": "computed",
       "datatype": "bool",
-      "value": "(appTheme == 'material' && preset == 'recommended')"
+      "value": "(appTheme == 'material')"
     },
     "useFluent": {
       "type": "computed",
       "datatype": "bool",
-      "value": "(appTheme == 'fluent' && preset == 'recommended')"
+      "value": "(appTheme == 'fluent')"
     },
     "useCupertino": {
       "type": "computed",
       "datatype": "bool",
-      "value": "(appTheme == 'cupertino' && preset == 'recommended')"
+      "value": "(appTheme == 'cupertino')"
     },
     "useLoggingFallback": {
       "type": "computed",
