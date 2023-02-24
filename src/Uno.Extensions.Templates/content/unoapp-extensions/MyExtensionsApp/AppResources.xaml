@@ -4,22 +4,30 @@
 	<ResourceDictionary.MergedDictionaries>
 		<!-- Load WinUI resources -->
 		<XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls" />
-<!--#if (useMaterial)-->
-		<MaterialTheme xmlns="using:Uno.Material"
-			ColorOverrideSource="ms-appx:///MyExtensionsApp/Styles/ColorPaletteOverride.xaml"
-			FontOverrideSource="ms-appx:///MyExtensionsApp/Styles/MaterialFontsOverride.xaml" />
-<!--#elif (useCupertino)-->
+<!--#if (useCupertino)-->
 		<CupertinoColors xmlns="using:Uno.Cupertino" />
 		<CupertinoFonts xmlns="using:Uno.Cupertino" />
 		<CupertinoResources xmlns="using:Uno.Cupertino" />
 <!--#endif-->
-<!--#if (useRecommendedAppTemplate)-->
+
+
+<!--#if (useToolkit)-->
+<!--#if (useMaterial)-->
+
+		<!-- Load Uno.UI.Toolkit and Material resources -->
+		<MaterialToolkitTheme xmlns="using:Uno.Toolkit.UI.Material"
+			ColorOverrideSource="ms-appx:///MyExtensionsApp/Styles/ColorPaletteOverride.xaml"
+			FontOverrideSource="ms-appx:///MyExtensionsApp/Styles/MaterialFontsOverride.xaml" />
+<!--#else-->
 
 		<!-- Load Uno.UI.Toolkit resources -->
 		<ToolkitResources xmlns="using:Uno.Toolkit.UI" />
 <!--#endif-->
-<!--#if (useMaterial)-->
-		<MaterialToolkitResources xmlns="using:Uno.Toolkit.UI.Material" />
+
+<!--#elif (useMaterial)-->
+		<MaterialTheme xmlns="using:Uno.Material"
+			ColorOverrideSource="ms-appx:///MyExtensionsApp/Styles/ColorPaletteOverride.xaml"
+			FontOverrideSource="ms-appx:///MyExtensionsApp/Styles/MaterialFontsOverride.xaml" />
 <!--#endif-->
 	</ResourceDictionary.MergedDictionaries>
 	<!-- Add resources here -->

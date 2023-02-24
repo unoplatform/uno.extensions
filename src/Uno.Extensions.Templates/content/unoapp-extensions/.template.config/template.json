@@ -472,6 +472,11 @@
       "datatype": "bool",
       "value": "(markup == 'xaml')"
     },
+    "useToolkit": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "useRecommendedAppTemplate"
+    },
     "useMaterial": {
       "type": "computed",
       "datatype": "bool",
