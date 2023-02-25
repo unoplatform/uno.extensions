@@ -9,6 +9,7 @@
 		-->
 		<ToolOfPackage>Uno.Extensions.Core</ToolOfPackage>
 		<RootNamespace>Uno.Extensions.Generators</RootNamespace>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	</PropertyGroup>
 
 	<ItemGroup>

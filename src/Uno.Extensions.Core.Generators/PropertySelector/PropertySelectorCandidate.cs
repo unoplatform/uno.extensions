@@ -8,6 +8,7 @@ using System.Threading;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Uno.Extensions.Core.Generators.Helpers;
 using Uno.Extensions.Edition;
 
 namespace Uno.Extensions.Generators.PropertySelector;
@@ -77,7 +78,8 @@ internal readonly record struct PropertySelectorCandidate
 			})
 			.Select(param =>
 				(key: $"{param.Name}{callerPath}{callerLine}", accessor: GenerateAccessor((INamedTypeSymbol)param.Type, arguments.ElementAtOrDefault(param.Ordinal))))
-			.Where(a => a.accessor is not null)!;
+			.Where(a => a.accessor is not null)
+			.ToImmutableArray().AsEquatableArray()!;
 	}
 
 	[MemberNotNullWhen(true, nameof(Syntax), nameof(Accessors), nameof(MethodGlobalNamespace), nameof(MethodName))]
@@ -88,8 +90,7 @@ internal readonly record struct PropertySelectorCandidate
 	public string? MethodGlobalNamespace { get; }
 	public string? MethodName { get; }
 
-	// TODO: Proper equatable data structure.
-	public IEnumerable<(string key, string accessor)>? Accessors { get; }
+	public EquatableArray<(string key, string accessor)>? Accessors { get; }
 
 	private static string? GenerateAccessor(INamedTypeSymbol selectorType, ArgumentSyntax? selectorArg)
 	{
