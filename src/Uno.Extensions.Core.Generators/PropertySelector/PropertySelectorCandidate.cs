@@ -28,23 +28,14 @@ internal readonly record struct PropertySelectorCandidate
 				IsGenericType: true,
 				MetadataName: "PropertySelector`2",
 				ContainingNamespace: { Name: "Edition", ContainingNamespace: { Name: "Extensions", ContainingNamespace.Name: "Uno" } }
-			}))
+			}) ||
+			method.Parameters.FirstOrDefault(p => p.HasAttribute<CallerFilePathAttribute>()) is not { } callerPathParameter ||
+			method.Parameters.FirstOrDefault(p => p.HasAttribute<CallerLineNumberAttribute>()) is not { } callerLineParameter
+			)
 		{
 			Accessors = null;
 			MethodGlobalNamespace = null;
 			MethodName = null;
-			return;
-		}
-
-		MethodName = method.Name;
-		MethodGlobalNamespace = method.ContainingModule?.GlobalNamespace?.ToString() ?? "";
-
-		var callerPathParameter = method.Parameters.FirstOrDefault(p => p.HasAttribute<CallerFilePathAttribute>());
-		var callerLineParameter = method.Parameters.FirstOrDefault(p => p.HasAttribute<CallerLineNumberAttribute>());
-
-		if (callerPathParameter is null || callerLineParameter is null)
-		{
-			Accessors = null;
 			return;
 		}
 
@@ -65,6 +56,9 @@ internal readonly record struct PropertySelectorCandidate
 			// It might be something else, but in this case the analyzer will complain.
 			_ => (Location.StartLinePosition.Line + 1).ToString(CultureInfo.InvariantCulture),
 		};
+
+		MethodName = method.Name;
+		MethodGlobalNamespace = method.ContainingModule?.GlobalNamespace?.ToString() ?? "";
 
 		Accessors = method.Parameters
 			.Where(param => param.Type is INamedTypeSymbol
