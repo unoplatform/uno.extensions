@@ -17,7 +17,6 @@ internal readonly record struct PropertySelectorCandidate
 {
 	public PropertySelectorCandidate(GeneratorSyntaxContext context, CancellationToken ct)
 	{
-		IsValid = true;
 		Syntax = (InvocationExpressionSyntax)context.Node;
 		Location = Syntax.SyntaxTree.GetLineSpan(Syntax.Span);
 		
@@ -31,7 +30,6 @@ internal readonly record struct PropertySelectorCandidate
 				ContainingNamespace: { Name: "Edition", ContainingNamespace: { Name: "Extensions", ContainingNamespace.Name: "Uno" } }
 			}))
 		{
-			IsValid = false;
 			Accessors = null;
 			MethodGlobalNamespace = null;
 			MethodName = null;
@@ -46,7 +44,6 @@ internal readonly record struct PropertySelectorCandidate
 
 		if (callerPathParameter is null || callerLineParameter is null)
 		{
-			IsValid = false;
 			Accessors = null;
 			return;
 		}
@@ -83,7 +80,7 @@ internal readonly record struct PropertySelectorCandidate
 	}
 
 	[MemberNotNullWhen(true, nameof(Syntax), nameof(Accessors), nameof(MethodGlobalNamespace), nameof(MethodName))]
-	public bool IsValid { get; }
+	public bool IsValid => Accessors is not null;
 
 	public InvocationExpressionSyntax? Syntax { get; }
 	public FileLinePositionSpan Location { get; }
