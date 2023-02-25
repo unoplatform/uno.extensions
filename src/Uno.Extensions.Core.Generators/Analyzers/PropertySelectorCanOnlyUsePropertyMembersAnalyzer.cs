@@ -136,7 +136,7 @@ internal sealed class PropertySelectorAnalyzer : DiagnosticAnalyzer
 			if (entityTypeRecord.NullableAnnotation != NullableAnnotation.NotAnnotated &&
 				!entityTypeRecord.Constructors.Any(ctor => ctor.IsAccessible() && !ctor.IsCloneCtor(entityTypeRecord) && ctor.Parameters.All(HasDefault)))
 			{
-				context.ReportDiagnostic(Rules.PS0006.GetDiagnostic(path.FullPath, path.Parts[0].Name, simpleLambdaExpression, type));
+				context.ReportDiagnostic(Rules.PS0006.GetDiagnostic(path.FullPath, path.Parts[0].Name, path.Parts[0].Node, type));
 			}
 
 			if (simpleLambdaExpression.ExpressionBody is not null)
@@ -164,11 +164,11 @@ internal sealed class PropertySelectorAnalyzer : DiagnosticAnalyzer
 
 					if (type is not INamedTypeSymbol { IsRecord: true } record)
 					{
-						context.ReportDiagnostic(Rules.PS0005.GetDiagnostic(path.FullPath, part.Name, simpleLambdaExpression, type));
+						context.ReportDiagnostic(Rules.PS0005.GetDiagnostic(path.FullPath, part.Name, part.Node, type));
 					}
 					else if (!record.Constructors.Any(ctor => ctor.IsAccessible() && !ctor.IsCloneCtor(record) && ctor.Parameters.All(HasDefault)))
 					{
-						context.ReportDiagnostic(Rules.PS0006.GetDiagnostic(path.FullPath, part.Name, simpleLambdaExpression, type));
+						context.ReportDiagnostic(Rules.PS0006.GetDiagnostic(path.FullPath, part.Name, part.Node, type));
 					}
 				}
 			}

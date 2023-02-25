@@ -14,11 +14,11 @@ internal static class PropertySelectorPathResolver
 
 		public List<PropertySelectorPathPart> Parts { get; } = new();
 
-		private PropertySelectorPathPart CreatePathPart(string name)
+		private PropertySelectorPathPart CreatePathPart(SyntaxNode node, string name)
 		{
 			var prefix = _visitingWhenNotNull ? "?." : ".";
 			_visitingWhenNotNull = false;
-			return new(name, prefix + name);
+			return new(node, name, prefix + name);
 		}
 
 		public override void VisitConditionalAccessExpression(ConditionalAccessExpressionSyntax node)
@@ -32,13 +32,13 @@ internal static class PropertySelectorPathResolver
 		{
 			Visit(node.Expression);
 			var identifier = node.Name.Identifier.ValueText;
-			Parts.Add(CreatePathPart(identifier));
+			Parts.Add(CreatePathPart(node, identifier));
 		}
 
 		public override void VisitMemberBindingExpression(MemberBindingExpressionSyntax node)
 		{
 			var identifier = node.Name.Identifier.ValueText;
-			Parts.Add(CreatePathPart(identifier));
+			Parts.Add(CreatePathPart(node, identifier));
 		}
 
 		public override void VisitPostfixUnaryExpression(PostfixUnaryExpressionSyntax node)
