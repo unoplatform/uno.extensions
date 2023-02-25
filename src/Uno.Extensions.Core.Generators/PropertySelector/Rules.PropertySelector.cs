@@ -112,9 +112,6 @@ internal static partial class Rules
 				path,
 				part,
 				type.ToString());
-
-		public static GenerationException Fail(string path, string part, SyntaxNode node, ITypeSymbol type)
-			=> new(GetDiagnostic(path, part, node, type));
 	}
 
 	public static class PS0006

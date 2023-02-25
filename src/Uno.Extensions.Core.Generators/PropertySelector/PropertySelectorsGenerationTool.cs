@@ -21,8 +21,8 @@ internal class PropertySelectorsGenerationTool : ICodeGenTool
 				return;
 			}
 
-			var accessors = candidate.Accessors.ToList();
-			if (accessors.Count == 0)
+			var accessors = candidate.Accessors;
+			if (accessors.Value.IsEmpty)
 			{
 				return;
 			}
@@ -30,13 +30,6 @@ internal class PropertySelectorsGenerationTool : ICodeGenTool
 			var id = GetId(candidate, assemblyName);
 			
 			ctx.AddSource(id, GenerateRegistrationClass(assemblyName, id, candidate, accessors));
-		}
-		catch (GenerationException genError)
-		{
-			foreach (var diag in genError.Diagnostics)
-			{
-				ctx.ReportDiagnostic(diag);
-			}
 		}
 		catch (Exception error)
 		{
