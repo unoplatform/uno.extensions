@@ -58,7 +58,6 @@
 	<!--#if (useBlankAppTemplate)-->
 	<ItemGroup>
 	<!--#if (useCPM)-->
-		<PackageReference Include="Microsoft.Windows.Compatibility" />
 		<!--#if (useCsharpMarkup)-->
 		<PackageReference Include="Uno.WinUI.Markup" />
 		<!--#endif-->
@@ -69,7 +68,6 @@
 		<PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" />
 		<PackageReference Include="Uno.Extensions.Logging.WebAssembly.Console" />
 		<!--#else-->
-		<PackageReference Include="Microsoft.Windows.Compatibility" Version="7.0.0" />
 		<!--#if (useCsharpMarkup)-->
 		<PackageReference Include="Uno.WinUI.Markup" Version="4.7.0-dev.17" />
 		<!--#endif-->
