@@ -6,7 +6,7 @@
 		<!-- Disabled due to issue with Central Package Management with implicit using -->
 		<ImplicitUsings>disable</ImplicitUsings>
 		<!--#if (wasmPwaManifest)-->
-		<WasmPWAManifestFile>manifest.json</WasmPWAManifestFile>
+		<WasmPWAManifestFile>manifest.webmanifest</WasmPWAManifestFile>
 		<!--#endif -->
 		<AppDesignerFolder>Properties</AppDesignerFolder>
 	</PropertyGroup>
@@ -21,9 +21,18 @@
 		-->
 		<WasmShellILLinkerEnabled>false</WasmShellILLinkerEnabled>
 	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)'=='Release'">
+		<!-- XAML Resource trimming https://aka.platform.uno/xaml-trimming -->
+		<!--<UnoXamlResourcesTrimming>true</UnoXamlResourcesTrimming>-->
+		<!-- Improve performance with AOT builds https://aka.platform.uno/wasm-aot -->
+		<!-- <WasmShellMonoRuntimeExecutionMode>InterpreterAndAOT</WasmShellMonoRuntimeExecutionMode> -->
+		<!-- Temporarily uncomment to generate an AOT profile https://aka.platform.uno/wasm-aot-profile -->
+		<!-- <WasmShellGenerateAOTProfile>true</WasmShellGenerateAOTProfile> -->
+	</PropertyGroup>
 	<ItemGroup>
 		<Content Include="Assets\SplashScreen.png" />
 		<!--#if (wasmPwaManifest)-->
+		<Content Include="manifest.webmanifest" />
 		<Content Include="Assets\AppIcon-*.png" />
 		<!--#endif -->
 	</ItemGroup>
