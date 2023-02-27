@@ -53,16 +53,16 @@
       "type": "parameter",
       "datatype": "choice",
       "defaultValue": "recommended",
-      "description": "Selects whether to use the recommended Extensions Template or Blank App",
+      "description": "Selects setup type",
       "choices": [
         {
           "choice": "recommended",
-          "description": "An extended template for creating a multi-platform application with the Uno Platform",
+          "description": "Recommended set of options to create a production-ready app targeting multiple platforms",
           "displayName": "Default"
         },
         {
           "choice": "blank",
-          "description": "A template for creating a multi-platform application with the Uno Platform",
+          "description": "Smallest set of options, with no extra dependencies, to create an app targeting multiple platforms",
           "displayName": "Blank"
         }
       ]
@@ -76,13 +76,13 @@
       "defaultValue": "com.companyname.myextensionsapp"
     },
     "tfm": {
-      "displayName": "Framework",
+      "displayName": "Target Framework",
       "type": "parameter",
       "datatype": "choice",
       "enableQuotelessLiterals": true,
       "replaces": "$baseTargetFramework$",
       "defaultValue": "net7.0",
-      "description": "Target Framework",
+      "description": "Select the .NET version of your solution",
       "choices": [
         {
           "choice": "net6.0",
@@ -103,7 +103,7 @@
     },
     "architecture": {
       "displayName": "Presentation",
-      "description": "Selects either MVVM or MVU-X for the design architecture.",
+      "description": "Select the design pattern for your application",
       "type": "parameter",
       "datatype": "choice",
       "defaultValue": "mvux",
@@ -115,14 +115,14 @@
         },
         {
           "choice": "mvux",
-          "description": "Use the Model-View-Update eXtended (MVU-X) design pattern",
-          "displayName": "MVU-X"
+          "description": "Use the Model-View-Update eXtended (MVUX) design pattern",
+          "displayName": "MVUX"
         }
       ]
     },
     "markup": {
       "displayName": "UI Markup",
-      "description": "Selects either XAML or C# Markup for the UI.",
+      "description": "How would you like to code your UI",
       "type": "parameter",
       "datatype": "choice",
       "choices": [
@@ -165,7 +165,7 @@
     },
     "platforms": {
       "displayName": "Platforms",
-      "description": "Selects the platforms to target.",
+      "description": "What platforms would you like to target",
       "type": "parameter",
       "datatype": "choice",
       "enableQuotelessLiterals": true,
@@ -212,6 +212,7 @@
     },
     "tests": {
       "displayName": "Tests",
+      "description": "Decide on a testing strategy",
       "type": "parameter",
       "datatype": "choice",
       "allowMultipleValues": true,
@@ -219,19 +220,19 @@
       "choices": [
         {
           "choice": "unit",
-          "description": "Include a Unit test project",
+          "description": "Include a project for authoring traditional unit tests",
           "displayName": "Unit Tests"
         },
         {
           "choice": "ui",
-          "description": "Include a UI test project",
+          "description": "Include a project for authoring UI tests",
           "displayName": "UI Tests"
         }
       ],
       "defaultValue": "unit|ui"
     },
     "server": {
-      "displayName": "Server - API",
+      "displayName": "Server",
       "type": "parameter",
       "datatype": "bool",
       "defaultValue": "true",
@@ -398,12 +399,12 @@
         {
           "choice": "default",
           "displayName": "Default",
-          "description": "Provides a simple 2 page sample with a Splash Screen"
+          "description": "Uses Uno.Extensions.Navigation to navigate between pages"
         },
         {
           "choice": "frame",
           "displayName": "Frame",
-          "description": "Uses the Frame control for navigation"
+          "description": "Uses Frame to navigate between pages"
         }
       ],
       "defaultValue": "default"
@@ -420,11 +421,11 @@
       "type": "parameter",
       "dataType": "bool",
       "defaultValue": "true",
-      "description": "Adds the Visual Studio Code Debugging support files for WebAssembly and Skia Gtk"
+      "description": "Sets up Visual Studio Code Debugging for WebAssembly and Skia Gtk"
     },
     "wasmPwaManifest": {
       "displayName": "PWA Manifest",
-      "description": "Includes a PWA manifest for WebAssembly",
+      "description": "Includes a manifest in the WebAssembly project to make the application a PWA",
       "type": "parameter",
       "datatype": "bool",
       "defaultValue": "true"
