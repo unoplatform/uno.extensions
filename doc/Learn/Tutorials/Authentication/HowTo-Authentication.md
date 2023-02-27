@@ -93,11 +93,11 @@ uid: Learn.Tutorials.Authentication.HowToAuthentication
     routes
         .Register(
             new RouteMap("", View: views.FindByViewModel<ShellViewModel>() ,
-                    Nested: new RouteMap[]
-                    {
-                                    new RouteMap("Main", View: views.FindByViewModel<MainViewModel>()),
-                                    new RouteMap("Second", View: views.FindByViewModel<SecondViewModel>(), DependsOn:"Main"),
-                    }));
+                Nested: new RouteMap[]
+                {
+                    new RouteMap("Main", View: views.FindByViewModel<MainViewModel>()),
+                    new RouteMap("Second", View: views.FindByViewModel<SecondViewModel>(), DependsOn:"Main"),
+                }));
     ```
 
 - Update `SecondPage` XAML to include a Button for logging out of the application. This will invoke the `Logout` method on the `SecondViewModel`.
@@ -163,14 +163,14 @@ From this walk through you can see how the IAuthenticationService can be used to
     {
     
         return UnoHost
-                .CreateDefaultBuilder()
-                ...
-                .ConfigureServices((context, services) =>
-                {
-                    services
-                            .AddNativeHandler()
-                            .AddRefitClient<IDummyJsonEndpoint>(context);
-                })
+            .CreateDefaultBuilder()
+            ...
+            .ConfigureServices((context, services) =>
+            {
+                services
+                    .AddNativeHandler()
+                    .AddRefitClient<IDummyJsonEndpoint>(context);
+            })
     ```
 
 - Update `appsettings.json` to include a section that specifies the base Url for the Refit service. Note that the section name needs to match the interface (dropping the leading I) name. In this case the interface name is `IDummyJsonEndpoint`, so the configuration section is `DummyJsonEndpoint`
