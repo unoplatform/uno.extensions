@@ -1,9 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<TargetFrameworks>$libraryBaseTargetFramework$;$mobileTargetFrameworks$</TargetFrameworks>
 		<!--#if (useWinAppSdk) -->
 		<TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows')) or '$(EnableWindowsTargeting)' == 'true'">$(TargetFrameworks);$baseTargetFramework$-windows10.0.19041</TargetFrameworks>
 		<!--#endif -->
+		<TargetFrameworks>$(TargetFrameworks);$libraryBaseTargetFramework$;$mobileTargetFrameworks$</TargetFrameworks>
 		<!--#if (useMacOS)-->
 		<!-- Disabled because of https://github.com/xamarin/xamarin-macios/issues/16401-->
 		<!--<TargetFrameworks>$(TargetFrameworks);$baseTargetFramework$-macos</TargetFrameworks>-->
@@ -222,7 +222,6 @@
 		<EmbeddedResource Include="appsettings.*.json"
 											DependentUpon="appsettings.json" />
 		<!--#endif-->
-		<PRIResource Include="Strings\**\*.resw" />
 		<!--#if (useXaml)-->
 		<UpToDateCheckInput Include="**\*.xaml" Exclude="bin\**\*.xaml;obj\**\*.xaml" />
 		<!--#endif-->
