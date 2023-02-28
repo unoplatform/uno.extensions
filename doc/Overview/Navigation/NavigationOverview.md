@@ -55,9 +55,8 @@ The type of view to navigate to
     **XAML**
     ```xml
     <Page x:Class="Playground.Views.HomePage">
-        <Button 
-            Click="{x:Bind GoToSecondPageClick}"
-            Content="Go to Second Page - Code behind" />
+        <Button Click="{x:Bind GoToSecondPageClick}"
+                Content="Go to Second Page - Code behind" />
     </Page>
     ```
     
@@ -77,9 +76,8 @@ The type of view to navigate to
     **XAML**
     ```xml
     <Page x:Class="Playground.Views.SecondPage">
-        <Button 
-            Click="{x:Bind GoBackClick}"
-            Content="Go Back" />
+        <Button Click="{x:Bind GoBackClick}"
+                Content="Go Back" />
     </Page>
     ```
     
@@ -101,9 +99,8 @@ The type of view to navigate to
     **XAML**
     ```xml
     <Page x:Class="Playground.Views.HomePage">
-        <Button 
-            Click="{x:Bind ViewModel.GoToSecondPageClick}"
-            Content="Go to Second Page - View Model" />
+        <Button Click="{x:Bind ViewModel.GoToSecondPageClick}"
+                Content="Go to Second Page - View Model" />
     </Page>
     ```
     
@@ -131,9 +128,8 @@ The type of view to navigate to
     **XAML**
     ```xml
     <Page x:Class="Playground.Views.SecondPage">
-        <Button 
-            Click="{x:Bind ViewModel.GoBackClick}"
-            Content="Go Back" />
+        <Button Click="{x:Bind ViewModel.GoBackClick}"
+                Content="Go Back" />
     </Page>
     ```
     
@@ -160,9 +156,8 @@ The type of view to navigate to
     **XAML**
     ```xml
     <Page x:Class="Playground.Views.HomePage">
-        <Button 
-            uen:Navigation.Request="Second"
-            Content="Go to Second Page - XAML" />
+        <Button uen:Navigation.Request="Second"
+                Content="Go to Second Page - XAML" />
     </Page>
     ```
 
@@ -170,9 +165,8 @@ The type of view to navigate to
     **XAML** 
     ```xml
     <Page x:Class="Playground.Views.SecondPage">
-        <Button 
-            uen:Navigation.Request="-"
-            Content="Go Back" />
+        <Button uen:Navigation.Request="-"
+                Content="Go Back" />
     </Page>
     ```
 
@@ -182,9 +176,8 @@ The type of view to navigate to
     **XAML**
     ```xml
     <Page x:Class="Playground.Views.HomePage">
-        <Button 
-            uen:Navigation.Request="-/Second"
-            Content="Go to Second Page - XAML" />
+        <Button uen:Navigation.Request="-/Second"
+                Content="Go to Second Page - XAML" />
     </Page>
     ```
 
@@ -214,30 +207,24 @@ The type of view to navigate to
         <Grid>
             <muxc:NavigationView uen:Region.Attached="true">
                 <muxc:NavigationView.MenuItems>
-                    <muxc:NavigationViewItem 
-                        Content="Products"
-                        uen:Region.Name="Products" />
-                    <muxc:NavigationViewItem 
-                        Content="Deals"
-                        uen:Region.Name="Deals" />
-                    <muxc:NavigationViewItem 
-                        Content="Profile"
-                        uen:Region.Name="Profile" />
+                    <muxc:NavigationViewItem Content="Products"
+                                             uen:Region.Name="Products" />
+                    <muxc:NavigationViewItem Content="Deals"
+                                             uen:Region.Name="Deals" />
+                    <muxc:NavigationViewItem Content="Profile"
+                                             uen:Region.Name="Profile" />
                 </muxc:NavigationView.MenuItems>
                 <Grid uen:Region.Attached="True">
-                    <StackPanel 
-                        uen:Region.Name="Products"
-                        Visibility="Collapsed">
+                    <StackPanel uen:Region.Name="Products"
+                                Visibility="Collapsed">
                         <TextBlock Text="Products" />
                     </StackPanel>
-                    <StackPanel 
-                        uen:Region.Name="Deals"
-                        Visibility="Collapsed">
+                    <StackPanel uen:Region.Name="Deals"
+                                Visibility="Collapsed">
                         <TextBlock Text="Deals" />
                     </StackPanel>
-                    <StackPanel 
-                        uen:Region.Name="Profile"
-                        Visibility="Collapsed">
+                    <StackPanel uen:Region.Name="Profile"
+                                Visibility="Collapsed">
                         <TextBlock Text="Profile" />
                     </StackPanel>
                 </Grid>
@@ -258,13 +245,11 @@ The type of view to navigate to
                 <RowDefinition />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
-                <Button 
-                    Content="Show profile"
-                    uen:Navigation.Request="./Info/Profile" />
-                <ContentControl 
-                    uen:Region.Attached="True"
-                    uen:Region.Name="Info"
-                    Grid.Row="1" />
+                <Button Content="Show profile"
+                        uen:Navigation.Request="./Info/Profile" />
+                <ContentControl uen:Region.Attached="True"
+                                uen:Region.Name="Info"
+                                Grid.Row="1" />
         </Grid>
     </Page>
     

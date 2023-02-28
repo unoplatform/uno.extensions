@@ -13,52 +13,48 @@ uid: Learn.Tutorials.Navigation.Advanced.ContentControl
 - Add two new controls using the `UserControl` template, `LeftControl` and `RightControl` with the following XAML
 
     ```xml
-    <UserControl 
-        x:Class="UsingContentControlRegion.Views.LeftControl"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:local="using:UsingContentControlRegion.Views"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d">
+    <UserControl x:Class="UsingContentControlRegion.Views.LeftControl"
+                 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                 xmlns:local="using:UsingContentControlRegion.Views"
+                 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                 mc:Ignorable="d">
 
-        <TextBlock 
-            Text="Left"
-            FontSize="24"
-            HorizontalAlignment="Center"
-            VerticalAlignment="Center" />
+        <TextBlock Text="Left"
+                   FontSize="24"
+                   HorizontalAlignment="Center"
+                   VerticalAlignment="Center" />
     </UserControl>
 
-    <UserControl 
-        x:Class="UsingContentControlRegion.Views.RightControl"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:local="using:UsingContentControlRegion.Views"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d">
-        <TextBlock 
-            Text="Right"
-            FontSize="24"
-            HorizontalAlignment="Center"
-            VerticalAlignment="Center" />
+    <UserControl x:Class="UsingContentControlRegion.Views.RightControl"
+                 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                 xmlns:local="using:UsingContentControlRegion.Views"
+                 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                 mc:Ignorable="d">
+
+        <TextBlock Text="Right"
+                   FontSize="24"
+                   HorizontalAlignment="Center"
+                   VerticalAlignment="Center" />
     </UserControl>
     ```
 
 - Update `MainPage.xaml` with the following XAML
 
     ```xml
-    <Page 
-        x:Class="UsingContentControlRegion.Views.MainPage"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:local="using:UsingContentControlRegion.Views"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d"
-        xmlns:utu="using:Uno.Toolkit.UI"
-        xmlns:uen="using:Uno.Extensions.Navigation.UI"
-        Background="{ThemeResource MaterialBackgroundBrush}">
+    <Page x:Class="UsingContentControlRegion.Views.MainPage"
+          xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+          xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+          xmlns:local="using:UsingContentControlRegion.Views"
+          xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+          xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+          mc:Ignorable="d"
+          xmlns:utu="using:Uno.Toolkit.UI"
+          xmlns:uen="using:Uno.Extensions.Navigation.UI"
+          Background="{ThemeResource MaterialBackgroundBrush}">
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
@@ -66,28 +62,23 @@ uid: Learn.Tutorials.Navigation.Advanced.ContentControl
                 <RowDefinition />
             </Grid.RowDefinitions>
 
-            <utu:NavigationBar 
-                Content="Main Page"
-                Style="{StaticResource MaterialNavigationBarStyle}" />
+            <utu:NavigationBar Content="Main Page"
+                               Style="{StaticResource MaterialNavigationBarStyle}" />
 
-            <StackPanel 
-                Grid.Row="1"
-                HorizontalAlignment="Center"
-                Orientation="Horizontal">
+            <StackPanel Grid.Row="1"
+                        HorizontalAlignment="Center"
+                        Orientation="Horizontal">
 
-                <Button 
-                    Content="Left"
-                    uen:Navigation.Request="./Left" />
-                <Button 
-                    Content="Right"
-                    uen:Navigation.Request="./Right" />
+                <Button Content="Left"
+                        uen:Navigation.Request="./Left" />
+                <Button Content="Right"
+                        uen:Navigation.Request="./Right" />
             </StackPanel>
 
-            <ContentControl 
-                uen:Region.Attached="True"
-                Grid.Row="2"
-                HorizontalContentAlignment="Stretch"
-                VerticalContentAlignment="Stretch" />
+            <ContentControl uen:Region.Attached="True"
+                            Grid.Row="2"
+                            HorizontalContentAlignment="Stretch"
+                            VerticalContentAlignment="Stretch" />
         </Grid>
     </Page>
     ```
@@ -103,17 +94,16 @@ It is possible to use multiple `ContentControl` elements and load different cont
 - Update `MainPage.xaml` as follows:
 
     ```xml
-    <Page 
-        x:Class="UsingContentControlRegion.Views.MainPage"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:local="using:UsingContentControlRegion.Views"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d"
-        xmlns:utu="using:Uno.Toolkit.UI"
-        xmlns:uen="using:Uno.Extensions.Navigation.UI"
-        Background="{ThemeResource MaterialBackgroundBrush}">
+    <Page x:Class="UsingContentControlRegion.Views.MainPage"
+          xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+          xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+          xmlns:local="using:UsingContentControlRegion.Views"
+          xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+          xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+          mc:Ignorable="d"
+          xmlns:utu="using:Uno.Toolkit.UI"
+          xmlns:uen="using:Uno.Extensions.Navigation.UI"
+          Background="{ThemeResource MaterialBackgroundBrush}">
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
@@ -121,28 +111,23 @@ It is possible to use multiple `ContentControl` elements and load different cont
                 <RowDefinition />
             </Grid.RowDefinitions>
 
-            <utu:NavigationBar 
-                Content="Main Page"
-                Style="{StaticResource MaterialNavigationBarStyle}" />
+            <utu:NavigationBar Content="Main Page"
+                               Style="{StaticResource MaterialNavigationBarStyle}" />
                 
-            <StackPanel 
-                Grid.Row="1"
-                HorizontalAlignment="Center"
-                Orientation="Horizontal">
-                <Button 
-                    Content="Left"
-                    uen:Navigation.Request="./Details/Left" />
-                <Button 
-                    Content="Right"
-                    uen:Navigation.Request="./Details/Right" />
+            <StackPanel Grid.Row="1"
+                        HorizontalAlignment="Center"
+                        Orientation="Horizontal">
+                <Button Content="Left"
+                        uen:Navigation.Request="./Details/Left" />
+                <Button Content="Right"
+                        uen:Navigation.Request="./Details/Right" />
             </StackPanel>
 
-            <ContentControl 
-                uen:Region.Attached="True"
-                uen:Region.Name="Details"
-                Grid.Row="2"
-                HorizontalContentAlignment="Stretch"
-                VerticalContentAlignment="Stretch" />
+            <ContentControl uen:Region.Attached="True"
+                            uen:Region.Name="Details"
+                            Grid.Row="2"
+                            HorizontalContentAlignment="Stretch"
+                            VerticalContentAlignment="Stretch" />
         </Grid>
     </Page>
     ```

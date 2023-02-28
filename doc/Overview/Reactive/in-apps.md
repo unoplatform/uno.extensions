@@ -28,11 +28,10 @@ public IFeed<Product[]> Products = Feed.Async(_productService.GetProducts);
 
 Then in your page, you can add a `FeedView`:
 ```xml
-<Page 
-    x:Class="MyProject.MyPage"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:uer="using:Uno.Extensions.Reactive.UI">
+<Page x:Class="MyProject.MyPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:uer="using:Uno.Extensions.Reactive.UI">
 
     <uer:FeedView Source="{Binding Products}">
         <DataTemplate>
@@ -47,11 +46,10 @@ The `FeedView` exposes a `Refresh` command directly in the data context of its c
 You can use this command to trigger a refresh from the view, like a "pull to refresh".
 
 ```xml
-<Page 
-    x:Class="MyProject.MyPage"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:uer="using:Uno.Extensions.Reactive.UI">
+<Page x:Class="MyProject.MyPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:uer="using:Uno.Extensions.Reactive.UI">
 
     <uer:FeedView Source="{Binding Products}">
         <DataTemplate>
@@ -61,8 +59,11 @@ You can use this command to trigger a refresh from the view, like a "pull to ref
                     <RowDefinition />
                 <Grid.RowDefinitions>
 
-                <Button Grid.Row="0" Content="Refresh" Command="{Binding Refresh}" />
-                <ListView Grid.Row="1" ItemsSource="{Binding Data}" />
+                <Button Grid.Row="0" 
+                        Content="Refresh" 
+                        Command="{Binding Refresh}" />
+                <ListView Grid.Row="1" 
+                          ItemsSource="{Binding Data}" />
             </Grid>
         </DataTemplate>
     </uer:FeedView>
@@ -78,13 +79,13 @@ Uno.Extensions also defines a `RefreshContainerExtensions.Command` attached prop
 (or any generated feed command) to the `RefreshContainer`.
 
 ```xml
-<Page 
-    x:Class="MyProject.MyPage"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:uer="using:Uno.Extensions.Reactive.UI">
+<Page x:Class="MyProject.MyPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:uer="using:Uno.Extensions.Reactive.UI">
 
-    <uer:FeedView Source="{Binding Products}" RefreshingState="None">
+    <uer:FeedView Source="{Binding Products}" 
+                  RefreshingState="None">
         <DataTemplate>
             <RefreshContainer uer:RefreshContainerExtensions.Command="{Binding Refresh}">
                 <ListView ItemsSource="{Binding Data}" />
@@ -116,14 +117,12 @@ so you can enhance the UX of the pagination, like display a loading indicator wh
 ```xml
 <uer:FeedView Source="{Binding Items}">
     <DataTemplate>
-        <ListView
-            Grid.Row="1"
-            ItemsSource="{Binding Data}">
+        <ListView Grid.Row="1"
+                  ItemsSource="{Binding Data}">
             <ListView.Footer>
-                <ProgressBar
-                    Visibility="{Binding Data.ExtendedProperties.IsLoadingMoreItems}"
-                    IsIndeterminate="{Binding Data.ExtendedProperties.IsLoadingMoreItems}"
-                    HorizontalAlignment="Stretch" />
+                <ProgressBar Visibility="{Binding Data.ExtendedProperties.IsLoadingMoreItems}"
+                             IsIndeterminate="{Binding Data.ExtendedProperties.IsLoadingMoreItems}"
+                             HorizontalAlignment="Stretch" />
             </ListView.Footer>
         </ListView>
     </DataTemplate>
@@ -199,7 +198,8 @@ public async ValueTask Share()
 This will be exposed into an `ICommand` that can be data-bound to the `Command` property of a `Button`
 
 ```xml
-<Button Command="{Binding Share}" Content="Share" />
+<Button Command="{Binding Share}" 
+        Content="Share" />
 ```
 
 By default, if the method has a parameter `T myValue` and there is a property `Feed<T> MyValue` on the same class (matching type and name), that parameter will automatically be filled from that feed.
@@ -220,11 +220,14 @@ Can be used with or without any `CommandParameter` from the view:
 ```xml
 <!-- Without CommandParameter -->
 <!-- 'message' arg in the 'Share' method will be the current value of the Message _feed_ -->
-<Button Command="{Binding Share}" Content="Share" />
+<Button Command="{Binding Share}" 
+        Content="Share" />
 
 <!-- With CommandParameter -->
 <!-- 'message' arg in the 'Share' method will be "hello world" -->
-<Button Command="{Binding Share}" CommandParameter="hello world" Content="Share" />
+<Button Command="{Binding Share}" 
+        CommandParameter="hello world" 
+        Content="Share" />
 ```
 
 You can also use both "feed parameters" and "view parameter" (i.e. the value of the `CommandParameter`):
@@ -238,7 +241,9 @@ public async ValueTask Share(MyEntity entity, string origin)
 ```
 
 ```xml
-<Button Command="{Binding Share}" CommandParameter="command_bar" Content="Share" />
+<Button Command="{Binding Share}" 
+        CommandParameter="command_bar" 
+        Content="Share" />
 ```
 
 General rules for methods to be re-exposed as commands are:
