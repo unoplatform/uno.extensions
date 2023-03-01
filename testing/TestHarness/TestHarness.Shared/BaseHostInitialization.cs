@@ -84,7 +84,7 @@ public abstract class BaseHostInitialization : IHostInitialization
 				{
 					var host = context.HostingEnvironment;
 					// Configure log levels for different categories of logging
-					logBuilder.SetMinimumLevel(host.IsDevelopment() ? LogLevel.Trace : LogLevel.Warning);
+					logBuilder.SetMinimumLevel(host.IsDevelopment() ? LogLevel.Information : LogLevel.Warning);
 				});
 	}
 
