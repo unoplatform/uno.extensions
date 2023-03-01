@@ -41,15 +41,4 @@
 	</ItemGroup>
 	<Import Project="..\Uno.Extensions.RuntimeTests.Shared\Uno.Extensions.RuntimeTests.Shared.projitems" Label="Shared" />
 	<Import Project="..\Uno.Extensions.RuntimeTests.Shared\common.props" />
-
-	<Target Name="RemoveDuplicateAnalyzers" BeforeTargets="CoreCompile">
-		<!-- https://github.com/unoplatform/uno/discussions/9562 -->
-		<!-- Work around https://github.com/dotnet/wpf/issues/6792 -->
-
-		<ItemGroup>
-			<FilteredAnalyzer Include="@(Analyzer-&gt;Distinct())" />
-			<Analyzer Remove="@(Analyzer)" />
-			<Analyzer Include="@(FilteredAnalyzer)" />
-		</ItemGroup>
-	</Target>
 </Project>

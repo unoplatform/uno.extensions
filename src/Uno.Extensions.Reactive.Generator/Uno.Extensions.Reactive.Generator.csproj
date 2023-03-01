@@ -9,11 +9,9 @@
 			so nuget override will copy it in the 'tools' directory of that package instead of the 'lib' of the current package folder.
 		-->
 		<ToolOfPackage>Uno.Extensions.Reactive</ToolOfPackage>
-	</PropertyGroup>
 
-	<ItemGroup>
-		<Content Include="buildTransitive\Uno.Extensions.Reactive.props" />
-	</ItemGroup>
+		<NoWarn>$(NoWarn);RS2008</NoWarn> <!-- RS2008: Enable analyzer release tracking for the analyzer project -->
+	</PropertyGroup>
 
 	<ItemGroup>
 		<AdditionalFiles Include="AnalyzerReleases.Shipped.md" />

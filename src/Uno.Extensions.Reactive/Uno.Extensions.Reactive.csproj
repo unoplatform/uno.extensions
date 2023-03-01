@@ -17,7 +17,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="System.Collections.Immutable" /> 
+		<PackageReference Include="System.Collections.Immutable" />
 		<PackageReference Include="System.Linq.Async" />
 		<PackageReference Include="Uno.Toolkit" />
 	</ItemGroup>
@@ -25,27 +25,14 @@
 	<ItemGroup>
 		<ProjectReference Include="..\Uno.Extensions.Core\Uno.Extensions.Core.csproj" />
 	</ItemGroup>
-	
+
 	<ItemGroup>
-		<ProjectReference Include="..\Uno.Extensions.Reactive.Generator\Uno.Extensions.Reactive.Generator.csproj">
-			<ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-			<SkipGetTargetFrameworkProperties>true</SkipGetTargetFrameworkProperties>
-			<UndefineProperties>TargetFramework</UndefineProperties>
-		</ProjectReference>
+		<ProjectReference Include="..\Uno.Extensions.Reactive.Generator\Uno.Extensions.Reactive.Generator.csproj" ReferenceOutputAssembly="false" />
 	</ItemGroup>
 
-	<Target Name="_IncludeUnoExtensionsReactiveGenerator" BeforeTargets="Build;Pack">
-		<ItemGroup>
-			<Content Include="..\Uno.Extensions.Reactive.Generator\buildTransitive\**\*.*" Link="buildTransitive\%(RecursiveDir)%(Filename)%(Extension)">
-				<Pack>true</Pack>
-				<PackagePath>buildTransitive</PackagePath>
-			</Content>
-			<Content Include="..\Uno.Extensions.Reactive.Generator\bin\Uno.Extensions.Reactive.Generator\$(Configuration)\netstandard2.0\**\*.dll" Link="tools\%(RecursiveDir)%(Filename)%(Extension)">
-				<Pack>true</Pack>
-				<PackagePath>tools</PackagePath>
-			</Content>
-		</ItemGroup>
-	</Target>
+	<ItemGroup>
+		<None Include="..\Uno.Extensions.Reactive.Generator\bin\Uno.Extensions.Reactive.Generator\$(Configuration)\netstandard2.0\**\*.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+	</ItemGroup>
 
 	<ItemGroup>
 		<None Update="Operators\CombineFeed.tt">
