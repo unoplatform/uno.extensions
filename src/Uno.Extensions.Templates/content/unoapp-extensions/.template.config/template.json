@@ -1111,12 +1111,12 @@
     "useInfrastructureNamespace": {
       "type": "computed",
       "datatype": "bool",
-      "value": "preset == 'recommended' && http && dependencyInjection"
+      "value": "useHttp && useDependencyInjection"
     },
     "useBusinessModelsNamespace": {
       "type": "computed",
       "datatype": "bool",
-      "value": "preset == 'recommended' && dependencyInjection && (configuration || navigationEvaluator != 'frame')"
+      "value": "useDependencyInjection && (useConfiguration || navigationEvaluator != 'frame')"
     },
     "HostIdentifier": {
       "type": "bind",
