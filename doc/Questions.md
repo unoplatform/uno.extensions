@@ -3,8 +3,8 @@ uid: Overview.Questions
 ---
 # Frequently Asked Questions
 
-## What is Uno Extensions?
-Uno Extensions is our lineup of helpful NuGet packages designed to encapsulate common functions when building multi-platform mobile, desktop, and web applications with Uno Platform.
+## What is Uno Platform Extensions?
+Uno Platform Extensions is our lineup of helpful NuGet packages designed to encapsulate common functions when building multi-platform mobile, desktop, and web applications with Uno Platform.
 
 ## What functionality is part of the Uno Extensions collection?
 Key features like dependency injection, serialization, configuration, environments, HTTP, localization, logging, hosting, and authentication allow you to save time while also lowering your overall budget for the application. 
@@ -15,7 +15,7 @@ With Uno Extensions, you'll be bursting with productivity!
 From advancements in starting a new project with the app template to the ability to extend the functionality of your app, you'll be able to get to market faster and with less effort.
 
 ## How can Uno Extensions help me meet the moment?
-In a world of heightened macroeconomic volatility, you need to be able to respond quickly to changing market conditions. Uno Extensions allows you to do just that by saving up months of development time. You will be able to reduce the budget needed to develop the app and reap the benefits of arriving to market fast.
+Uno Extensions allows you to respond quickly to changing market conditions by saving up months of development time. You will be able to reduce the budget needed to develop the app and reap the benefits of arriving to market fast.
 
 Likewise, your organization can streamline developer resources by reusing tested code across both iOS and Android devices.
 
