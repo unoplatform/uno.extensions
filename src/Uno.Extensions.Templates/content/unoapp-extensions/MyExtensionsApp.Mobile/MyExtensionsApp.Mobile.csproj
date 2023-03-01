@@ -26,7 +26,6 @@
 	<!--#if (useCPM)-->
 	<ItemGroup>
 		<PackageReference Include="Uno.WinUI" />
-		<PackageReference Include="Uno.Resizetizer" />
 		<!--#if (useCsharpMarkup)-->
 		<PackageReference Include="Uno.WinUI.Markup" />
 		<!--#if (useMaterial)-->
@@ -95,7 +94,6 @@
 	<!--#else-->
 	<ItemGroup>
 		<PackageReference Include="Uno.WinUI" Version="4.7.44" />
-		<PackageReference Include="Uno.Resizetizer" Version="0.36.0-dev.129" />
 		<!--#if (useCsharpMarkup)-->
 		<PackageReference Include="Uno.WinUI.Markup" Version="4.7.0-dev.17" />
 		<!--#if (useMaterial)-->
