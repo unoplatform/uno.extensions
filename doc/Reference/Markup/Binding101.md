@@ -42,8 +42,8 @@ public partial class MainPage : Page
     {
         this.DataContext<MyViewModel>((page, vm) => page
             .Content(new TextBlock()
-                .Text(() => vm.Title)
-                .Mode(BindingMode.OneTime)
+                .Text(x => x.Bind(() => vm.Title)
+                    .Mode(BindingMode.OneTime))
             ));
     }
 }
@@ -58,8 +58,8 @@ public partial class MainPage : Page
     {
         this.DataContext<MyViewModel>((page, vm) => page
             .Content(new TextBlock()
-                .Text(() => vm.Title)
-                .OneTime()
+                .Text(x => x.Bind(() => vm.Title)
+                    .OneTime())
             ));
     }
 }
@@ -74,8 +74,23 @@ public partial class MainPage : Page
     {
         this.DataContext<MyViewModel>((page, vm) => page
             .Content(new TextBlock()
-                .Text(() => vm.Query)
-                .Convert(query => $"Search: {query}")
+                .Text(x => x.Bind(() => vm.Query)
+                    .Convert(query => $"Search: {query}"))
+            ));
+    }
+}
+```
+
+You can also use the shorthand version of this to simply provide the binding and a converter.
+
+```cs
+public partial class MainPage : Page
+{
+    public MainPage()
+    {
+        this.DataContext<MyViewModel>((page, vm) => page
+            .Content(new TextBlock()
+                .Text(() => vm.Query, query => $"Search: {query}")
             ));
     }
 }
@@ -90,9 +105,9 @@ public partial class MainPage : Page
     {
         this.DataContext<MyViewModel>((page, vm) => page
             .Content(new TextBox()
-                .Text(() => vm.Enabled)
-                .Convert(enabled => $"Enabled: {enabled}")
-                .ConvertBack(text => bool.TryParse(text.Replace("Search: ", ""), out var enabled) ? enabled : false)
+                .Text(x => x.Bind(() => vm.Enabled)
+                    .Convert(enabled => $"Enabled: {enabled}")
+                    .ConvertBack(text => bool.TryParse(text.Replace("Search: ", ""), out var enabled) ? enabled : false))
             ));
     }
 }
