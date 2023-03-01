@@ -37,11 +37,7 @@
 	<Choose>
 		<When Condition="'$(IsCoreProject)'== 'False' And '$(IsGeneratorProject)' == 'False'" >
 			<ItemGroup>
-				<ProjectReference Include="$(MSBuildThisFileDirectory)\Uno.Extensions.Core.Generators\Uno.Extensions.Core.Generators.csproj">
-					<ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-					<SkipGetTargetFrameworkProperties>true</SkipGetTargetFrameworkProperties>
-					<UndefineProperties>TargetFramework;RuntimeIdentifiers;RuntimeIdentifier</UndefineProperties>
-				</ProjectReference>
+				<ProjectReference Include="$(MSBuildThisFileDirectory)\Uno.Extensions.Core.Generators\Uno.Extensions.Core.Generators.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
 			</ItemGroup>
 		</When>
 	</Choose>

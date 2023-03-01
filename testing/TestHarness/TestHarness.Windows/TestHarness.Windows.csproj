@@ -17,7 +17,7 @@
 		<!-- <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained> -->
 		<!-- This bundles the .NET Core libraries (Uncomment for packaged builds)  -->
 		<!--<SelfContained>true</SelfContained>-->
-	
+
 	  <NeutralLanguage>en</NeutralLanguage>
 	</PropertyGroup>
 
@@ -86,6 +86,5 @@
 	</ItemGroup>
 
 	<Import Project="..\..\..\src\Uno.Extensions.Core.Generators\buildTransitive\Uno.Extensions.Core.props" />
-	<Import Project="..\..\..\src\Uno.Extensions.Reactive.Generator\buildTransitive\Uno.Extensions.Reactive.props" />
 	<Import Project="..\TestHarness.Shared\TestHarness.Shared.projitems" Label="Shared" />
 </Project>
