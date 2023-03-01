@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<TargetFramework>net6.0</TargetFramework>
@@ -23,7 +23,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\Uno.Extensions.Core\Uno.Extensions.Core.csproj" />
-		<ProjectReference Include="..\Uno.Extensions.Core.Generators\Uno.Extensions.Core.Generators.csproj" />
+		<ProjectReference Include="..\Uno.Extensions.Core.Generators\Uno.Extensions.Core.Generators.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="true" />
 	</ItemGroup>
 
 </Project>

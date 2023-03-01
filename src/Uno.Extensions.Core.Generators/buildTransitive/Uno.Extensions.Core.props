@@ -9,17 +9,4 @@
 		<CompilerVisibleProperty Include="UnoExtensionsGeneration_DisableIsExternalInit" />
 		<CompilerVisibleProperty Include="UnoExtensionsGeneration_DisableModuleInitializerAttribute" />
 	</ItemGroup>
-
-	<Target Name="_InjectUnoExtensionsCoreGenerators" BeforeTargets="BeforeCompile;MarkupCompilePass1">
-		<ItemGroup>
-			<Analyzer
-				Include="$(MSBuildThisFileDirectory)..\bin\Uno.Extensions.Core.Generators\$(Configuration)\netstandard2.0\Uno.Extensions.Core.Generators.dll"
-				Condition="Exists('$(MSBuildThisFileDirectory)..\bin')" />
-		</ItemGroup>
-	</Target>
-	<ItemGroup>
-		<Analyzer
-			Include="$(MSBuildThisFileDirectory)..\tools\Uno.Extensions.Core.Generators.dll"
-			Condition="Exists('$(MSBuildThisFileDirectory)..\tools')" />
-	</ItemGroup>
 </Project>
