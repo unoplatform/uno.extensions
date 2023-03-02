@@ -1288,7 +1288,6 @@
           "condition": "(!useDependencyInjection)",
           "exclude": [
             "MyExtensionsApp/App.recommended.cs",
-            "MyExtensionsApp/Infrastructure/DebugHandler.cs",
             "MyExtensionsApp/Business/**",
             "MyExtensionsApp/Presentation/**"
           ],
@@ -1303,7 +1302,7 @@
           ]
         },
         {
-          "condition": "(useBlankAppTemplate || (!useHttp && !server))",
+          "condition": "(!useHttp && !server)",
           "exclude": [
             "MyExtensionsApp.DataContracts/**/*"
           ]
@@ -1458,6 +1457,7 @@
         {
           "condition": "(!useHttp)",
           "exclude": [
+            "MyExtensionsApp/Infrastructure/DebugHandler.cs",
             "MyExtensionsApp/Services/IApiClient.cs"
           ]
         },
@@ -1524,9 +1524,16 @@
           ]
         },
         {
-          "condition": "(!useConfiguration)",
+          "condition": "(!useExtensionsNavigation || !useDependencyInjection)",
           "exclude": [
-            "MyExtensionsApp.Tests/AppInfoTests.cs"
+            "MyExtensionsApp/Presentation/**"
+          ]
+        },
+        {
+          "condition": "(useExtensionsNavigation && useDependencyInjection)",
+          "exclude": [
+            "MyExtensionsApp/MainPage.xaml",
+            "MyExtensionsApp/MainPage.xaml.cs"
           ]
         },
         {
@@ -1536,28 +1543,11 @@
           ]
         },
         {
-          "condition": "(useBlankAppTemplate || useFrameNav)",
-          "exclude": [
-            "MyExtensionsApp/Presentation/**"
-          ]
-        },
-        {
-          "condition": "(useRecommendedAppTemplate && useExtensionsNavigation && useDependencyInjection)",
-          "exclude": [
-            "MyExtensionsApp/MainPage.xaml",
-            "MyExtensionsApp/MainPage.xaml.cs"
-          ]
-        },
-        {
           "condition": "(!useConfiguration)",
           "exclude": [
-            "MyExtensionsApp/Business/Models/AppConfig.cs"
-          ]
-        },
-        {
-          "condition": "(!useConfiguration)",
-          "exclude": [
-            "MyExtensionsApp/appsettings.*"
+            "MyExtensionsApp/Business/Models/AppConfig.cs",
+            "MyExtensionsApp/appsettings.*",
+            "MyExtensionsApp.Tests/AppInfoTests.cs"
           ]
         }
       ]
