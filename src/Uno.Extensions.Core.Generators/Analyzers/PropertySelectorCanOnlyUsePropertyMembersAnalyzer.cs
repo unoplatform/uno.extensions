@@ -66,7 +66,6 @@ internal sealed class PropertySelectorAnalyzer : DiagnosticAnalyzer
 			Visit(node.Operand);
 			if (!node.IsKind(SyntaxKind.SuppressNullableWarningExpression))
 			{
-				Debugger.Launch();
 				_context.ReportDiagnostic(Rules.PS0001.GetDiagnostic(_selectorSyntax, node));
 			}
 		}
