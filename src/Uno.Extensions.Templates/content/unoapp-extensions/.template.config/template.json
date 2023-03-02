@@ -668,7 +668,7 @@
     "useDataContracts": {
       "type": "computed",
       "dataType": "bool",
-      "value": "((useDependencyInjection && http) || server)"
+      "value": "((useDependencyInjection && useHttp) || server)"
     },
     "useUnitTests": {
       "type": "computed",
@@ -1136,7 +1136,7 @@
       "path": "MyExtensionsApp.Server\\MyExtensionsApp.Server.csproj"
     },
     {
-      "condition": "server || useHttp",
+      "condition": "useDataContracts",
       "path": "MyExtensionsApp.DataContracts\\MyExtensionsApp.DataContracts.csproj"
     },
     {
@@ -1302,7 +1302,7 @@
           ]
         },
         {
-          "condition": "(!useHttp && !server)",
+          "condition": "(!useDataContracts)",
           "exclude": [
             "MyExtensionsApp.DataContracts/**/*"
           ]
