@@ -11,6 +11,9 @@
 		<UseWinUI>true</UseWinUI>
 		<DefineConstants>$(DefineConstants);WINUI;UNO_EXT_TIMERS</DefineConstants>
 		<DefaultLanguage>en</DefaultLanguage>
+		<WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
+		<WindowsPackageType>None</WindowsPackageType>
+		<EnableMsixTooling>true</EnableMsixTooling>
 	</PropertyGroup>
 
 	<PropertyGroup><!-- Bundles the WinAppSDK binaries (Uncomment for unpackaged builds) -->
@@ -55,7 +58,7 @@
 	<!-- Defining the "Msix" ProjectCapability here allows the Single-project MSIX Packaging
        Tools extension to be activated for this project even if the Windows App SDK Nuget
        package has not yet been restored -->
-	<ItemGroup Condition="'$(DisableMsixProjectCapabilityAddedByProject)'!='true' and '$(EnablePreviewMsixTooling)'=='true'">
+	<ItemGroup Condition="'$(DisableMsixProjectCapabilityAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
 		<ProjectCapability Include="Msix" />
 	</ItemGroup>
 	<ItemGroup>
@@ -66,6 +69,7 @@
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Configuration\Uno.Extensions.Configuration.csproj" />
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Localization.UI\Uno.Extensions.Localization.WinUI.csproj" />
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Core\Uno.Extensions.Core.csproj" />
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Core.Generators\Uno.Extensions.Core.Generators.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Hosting.UI\Uno.Extensions.Hosting.WinUI.csproj" />
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Hosting\Uno.Extensions.Hosting.csproj" />
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Logging.Serilog\Uno.Extensions.Logging.Serilog.csproj" />
@@ -75,6 +79,7 @@
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Navigation\Uno.Extensions.Navigation.csproj" />
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Reactive.UI\Uno.Extensions.Reactive.WinUI.csproj" />
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Reactive\Uno.Extensions.Reactive.csproj" />
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Reactive.Generator\Uno.Extensions.Reactive.Generator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Serialization.Http\Uno.Extensions.Serialization.Http.csproj" />
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Serialization.Refit\Uno.Extensions.Serialization.Refit.csproj" />
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Serialization\Uno.Extensions.Serialization.csproj" />

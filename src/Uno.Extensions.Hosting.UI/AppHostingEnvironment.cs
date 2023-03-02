@@ -4,7 +4,7 @@ using Uno.Foundation;
 
 namespace Uno.Extensions.Hosting;
 
-public class AppHostingEnvironment : HostingEnvironment, IAppHostEnvironment
+public class AppHostingEnvironment : HostingEnvironment, IAppHostEnvironment, IDataFolderProvider
 #if __WASM__
 	, IHasAddressBar
 #endif

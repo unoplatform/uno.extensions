@@ -27,7 +27,7 @@ public class LocalizationService : IServiceInitialize, ILocalizationService, IDi
 			var settingsCulture = _settings?.CurrentValue?.CurrentCulture?.AsCulture();
 			if (settingsCulture is null)
 			{
-				var defaultCulture = ApplicationLanguages.PrimaryLanguageOverride ??
+				var defaultCulture = PrimaryLanguageOverride ??
 							CultureInfo.DefaultThreadCurrentUICulture?.Name ??
 							CultureInfo.DefaultThreadCurrentCulture?.Name ??
 							_uiThread?.CurrentUICulture?.Name ??
@@ -40,6 +40,44 @@ public class LocalizationService : IServiceInitialize, ILocalizationService, IDi
 
 			}
 			return settingsCulture;
+		}
+	}
+
+	private static bool overrideSupported = true;
+	private string? PrimaryLanguageOverride
+	{
+		get
+		{
+			if (!overrideSupported)
+			{
+				return default;
+			}
+			try
+			{
+				return ApplicationLanguages.PrimaryLanguageOverride;
+			}
+			catch (InvalidOperationException)
+			{
+				// This exception is raised on WinUI when unpackaged
+				overrideSupported = false;
+				return default;
+			}
+		}
+		set
+		{
+			if (!overrideSupported)
+			{
+				return;
+			}
+			try
+			{
+				ApplicationLanguages.PrimaryLanguageOverride = value;
+			}
+			catch (InvalidOperationException)
+			{
+				// This exception is raised on WinUI when unpackaged
+				overrideSupported = false;
+			}
 		}
 	}
 
@@ -80,9 +118,9 @@ public class LocalizationService : IServiceInitialize, ILocalizationService, IDi
 				((CurrentCulture is not null) ?
 				PickSupportedCulture(CurrentCulture) :
 				PickSupportedCulture(CultureInfo.CurrentCulture)) ?? new CultureInfo(DefaultCulture);
-			if (ApplicationLanguages.PrimaryLanguageOverride != culture.Name)
+			if (PrimaryLanguageOverride != culture.Name)
 			{
-				ApplicationLanguages.PrimaryLanguageOverride = culture.Name;
+				PrimaryLanguageOverride = culture.Name;
 			}
 			CultureInfo.DefaultThreadCurrentCulture = culture;
 			CultureInfo.DefaultThreadCurrentUICulture = culture;
