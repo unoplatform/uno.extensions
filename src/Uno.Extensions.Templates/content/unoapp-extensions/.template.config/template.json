@@ -1512,15 +1512,9 @@
           }
         },
         {
-          "condition": "(useBlankAppTemplate)",
+          "condition": "(!useMaterial)",
           "exclude": [
-            "MyExtensionsApp/Business/**",
-            "MyExtensionsApp/Infrastructure/**",
-            "MyExtensionsApp/Presentation/**",
-            "MyExtensionsApp/Services/**",
-            "MyExtensionsApp/Styles/**",
-            "MyExtensionsApp/appsettings.*",
-            "MyExtensionsApp.Tests/AppInfoTests.cs"
+            "MyExtensionsApp/Styles/**"
           ]
         },
         {
