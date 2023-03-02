@@ -1136,7 +1136,7 @@
       "path": "MyExtensionsApp.Server\\MyExtensionsApp.Server.csproj"
     },
     {
-      "condition": "server || (http && useRecommendedAppTemplate)",
+      "condition": "server || useHttp",
       "path": "MyExtensionsApp.DataContracts\\MyExtensionsApp.DataContracts.csproj"
     },
     {
