@@ -1,0 +1,118 @@
+﻿<UserControl
+	x:Name="readWriteCollectionMasterDetailView"
+    x:Class="MVUxToDos.Views.ReadWriteCollectionMasterDetailView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mvux="using:Uno.Extensions.Reactive.UI">
+
+	<SplitView IsPaneOpen="True" DisplayMode="Inline">
+
+		<!-- master -->
+		<SplitView.Pane>
+
+			<Grid>
+				<Grid.RowDefinitions>
+					<RowDefinition/>
+					<RowDefinition/>
+				</Grid.RowDefinitions>
+
+				<TextBlock Text="Master"/>
+
+				<mvux:FeedView Source="{Binding People}" Grid.Row="1">
+					<DataTemplate>
+
+						<ListView ItemsSource="{Binding Data}">
+							<ListView.Header>
+								<StackPanel>
+
+									<Button Content="Refresh" Command="{Binding Refresh}"/>
+
+									<StackPanel DataContext="{Binding DataContext, ElementName=readWriteCollectionMasterDetailView}" Orientation="Horizontal">
+
+										<TextBox PlaceholderText="First name" DataContext="{Binding NewPersonPlaceholder}" Text="{Binding FirstName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+
+										<TextBox PlaceholderText="Last name" DataContext="{Binding NewPersonPlaceholder}" Text="{Binding LastName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+
+										<!-- NewPerson is a Bindable<T> -->
+										<Button Content="Add new" Command="{Binding CreatePerson}" CommandParameter="{Binding NewPersonPlaceholder.Value}" />
+									</StackPanel>
+
+								</StackPanel>
+							</ListView.Header>
+
+							<ListView.ItemTemplate>
+								<DataTemplate>
+
+									<StackPanel Orientation="Horizontal" Spacing="5">
+
+										<TextBlock>
+											<Run Text="#"/>
+											<Run Text="{Binding Id}" />
+										</TextBlock>
+
+										<TextBlock Text="{Binding FirstName}"/>
+										<TextBlock Text="{Binding LastName}"/>
+
+										<Button Content="Remove" Command="{Binding DataContext.RemovePerson, ElementName=readWriteCollectionMasterDetailView}" CommandParameter="{Binding}"/>
+
+									</StackPanel>
+
+								</DataTemplate>
+							</ListView.ItemTemplate>
+						</ListView>
+
+					</DataTemplate>
+				</mvux:FeedView>
+			</Grid>
+		</SplitView.Pane>
+
+		<!-- details -->
+		<StackPanel DataContext="{Binding DataContext, ElementName=readWriteCollectionMasterDetailView}" >
+
+			<TextBlock Text="Details"/>
+
+			<Grid DataContext="{Binding SelectedPerson.Value}">
+				<Grid.RowDefinitions>
+					<RowDefinition Height="Auto"/>
+					<RowDefinition Height="Auto"/>
+					<RowDefinition Height="*"/>
+				</Grid.RowDefinitions>
+
+				<StackPanel Orientation="Horizontal">
+
+					<TextBlock>
+					<Run Text="#"/>
+					<Run Text="{Binding Id}" />
+					</TextBlock>
+
+					<TextBox PlaceholderText="First name" Text="{Binding FirstName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+					<TextBox PlaceholderText="Last name" Text="{Binding LastName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+
+				</StackPanel>
+
+				<ListView ItemsSource="{Binding Phones}" Grid.Row="1">
+					<ListView.ItemTemplate>
+						<DataTemplate>
+							<StackPanel Orientation="Horizontal" Spacing="5">
+								<TextBlock>
+									<Run Text="#"/>
+									<Run Text="{Binding Id}" />
+								</TextBlock>
+
+								<TextBox Text="{Binding Number, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+							</StackPanel>
+						</DataTemplate>
+					</ListView.ItemTemplate>
+				</ListView>
+
+				<!-- NewPersonPlaceholder is a Bindable<T> -->
+			</Grid>
+
+			<Button Content="Save" Command="{Binding SavePerson}" CommandParameter="{Binding SelectedPerson.Value}" Grid.Row="2" />
+
+		</StackPanel>
+
+	</SplitView>
+
+
+</UserControl>

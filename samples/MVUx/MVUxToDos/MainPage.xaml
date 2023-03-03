@@ -45,11 +45,22 @@
 		<TabViewItem Header="Read-write state (IState&lt;T&gt;)">
 			<TabView>
 
+				<!-- class -->
+				<TabViewItem Header="Read-write class value">
+					<views:ReadWriteClassView />
+				</TabViewItem>
+
 
 				<!-- collection -->
 
 				<TabViewItem Header="Read-write collection state allowing add/remove/edit of items">
 					<views:ReadWriteCollectionView />
+				</TabViewItem>
+
+				<!-- collection master detail -->
+
+				<TabViewItem Header="Read-write collection state allowing add/remove/edit of items and their details">
+					<views:ReadWriteCollectionMasterDetailView />
 				</TabViewItem>
 
 			</TabView>

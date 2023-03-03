@@ -40,128 +40,172 @@ public class DataStore : IDataStore
 	{
 		await Delay(ct);
 
-		return PeopleOnly.FirstOrDefault();
+		return People.FirstOrDefault();
 	}
 
 	public async ValueTask<IImmutableList<PersonRecord>> GetPeople(CancellationToken ct = default)
 	{
 		await Delay(ct);
 
-		return PeopleOnly;
+		return People.ToImmutableList();
 	}
 
 	public async ValueTask<IImmutableList<PersonRecord>> GetPeople(int pageSize = 3, int pageNumber = 0, CancellationToken ct = default)
 	{
 		await Delay(ct);
 
-		return PeopleOnly
+		return People
 			.Skip(pageSize)
 			.Take(pageNumber)
 			.ToImmutableList();
 	}
 
-	public async ValueTask AddPerson(PersonRecord person, CancellationToken ct = default)
+	public async ValueTask<int> AddPerson(PersonRecord person, CancellationToken ct = default)
 	{
 		await Delay(ct);
 
-		var index = IndexOf(person);
-		if (index == -1)
-		{
-			People.Add(person);
-		}
-		else
-		{
-			throw new InvalidOperationException($"{person} already exists.");
-		}
+		var newId = People.Max(person => person.Id) + 1;
+
+		People.Add(person with { Id = newId });
+
+		return newId;
 	}
 
 	public async ValueTask UpdatePerson(PersonRecord person, CancellationToken ct = default)
 	{
 		await Delay(ct);
 
-		// TODO avoid dupes
-		var index = IndexOf(person);
-		People[index] = person;
+		var (personId, index) =
+			People
+			.Where(p => p.Id == person.Id)
+			.Select((p, index) => (PersonId: p.Id, Index: index))
+			.SingleOrDefault(defaultValue: (PersonId: 0, Index: -1));
+
+		if (index > -1)
+		{
+			People[index] = person;
+		}
 	}
 
-	public async ValueTask DeletePerson(PersonRecord person, CancellationToken ct = default)
+	public async ValueTask DeletePerson(int personId, CancellationToken ct = default)
 	{
 		await Delay(ct);
 
-		var index = IndexOf(person);
-		if (index > -1)
+		var person = People.SingleOrDefault(person => person.Id == personId);
+		if (person != null)
 		{
-			People.RemoveAt(index);
+			People.Remove(person);
 		}
 	}
 
 
-
-
-
+	/*
 	public async ValueTask<IImmutableList<PhoneRecord>> GetPhones(PersonRecord person, CancellationToken ct = default)
 	{
 		await Delay(ct);
 
-		var index = IndexOf(person);
+		var index = GetPersonIndex(person);
 		if (index > -1)
 		{
-			return People[index].Phones.ToImmutableList();
+			return People[index].Phones;
 		}
 
 		return null;
 	}
-	public async ValueTask AddPhone(PersonRecord person, PhoneRecord phone, CancellationToken ct = default)
+
+	public async ValueTask<int> AddPhone(PersonRecord person, PhoneRecord phone, CancellationToken ct = default)
 	{
 		await Delay(ct);
 
-		var index = IndexOf(person);
-		if (index > -1)
+		var index = GetPersonIndex(person);
+		if (index < 0)
 		{
-			var newPerson =
+			return -1;
+		}
+
+		var newId = People
+			.SelectMany(person => person.Phones)
+			.Select(phone => phone.Id)
+			.Max() + 1;
+
+		phone = phone with { Id = newId };
+
+		var newPerson =
 				person with
 				{
 					Phones = People[index].Phones.Add(phone)
 				};
-			People[index] = newPerson;
-		}
+
+		People[index] = newPerson;
+
+		return newId;
 	}
-	public async ValueTask UpdatePhone(PhoneRecord phone, CancellationToken ct = default)
+
+	public async ValueTask UpdatePhone(PhoneRecord oldPhone, PhoneRecord newPhone, CancellationToken ct = default)
 	{
 		await Delay(ct);
 
-		var person = People.FirstOrDefault(person => person.Phones.Contains(phone));
-		var personIndex = IndexOf(person);
-		var phoneIndex = person?.Phones.IndexOf(phone) ?? -1;
-		if (phoneIndex > -1)
+		(var person, var personIndex) =
+			People
+			.Where(person =>
+				person.Phones.Any(phone => phone.Id == oldPhone.Id))
+			.Select((person, index) => (person, index))
+			.SingleOrDefault(defaultValue: (default, -1));
+
+		(var phone, var phoneIndex) =
+			person.Phones
+			.Where(phone => phone.Id == oldPhone.Id)
+			.Select((phone, index) => (phone, index))
+			.SingleOrDefault(defaultValue: (default, -1));
+
+		if (phoneIndex < 0)
 		{
-			var newPerson =
+			return;
+		}
+
+		var newPerson =
+				person with
+				{
+					Phones =
+						person.Phones
+						.RemoveAt(phoneIndex)
+						.Insert(phoneIndex, newPhone)
+				};
+
+		People[personIndex] = newPerson;
+	}
+
+	public async ValueTask DeletePhone(int phoneId, CancellationToken ct = default)
+	{
+		await Delay(ct);
+
+		(var person, var personIndex) =
+			People
+			.Where(person =>
+				person.Phones.Any(phone => phone.Id == phoneId))
+			.Select((person, index) => (person, index))
+			.SingleOrDefault(defaultValue: (default, -1));
+
+		var phoneIndex =
+			person.Phones
+			.Where(phone => phone.Id == phoneId)
+			.Select((phone, index) => index)
+			.SingleOrDefault(defaultValue: -1);
+
+		if (phoneIndex < 0)
+		{
+			return;
+		}
+
+		var newPerson =
 				person with
 				{
 					Phones = person.Phones.RemoveAt(phoneIndex)
 				};
-			People[personIndex] = newPerson;
-		}
+
+		People[personIndex] = newPerson;
 	}
-
-	public async ValueTask DeletePhone(PhoneRecord phone, CancellationToken ct = default)
-	{
-		await Delay(ct);
-
-		var person = People.FirstOrDefault(person => person.Phones.Contains(phone));
-		var personIndex = IndexOf(person);
-		var phoneIndex = person?.Phones.IndexOf(phone);
-		if (phoneIndex > -1)
-		{
-			var newPerson =
-				person with
-				{
-					Phones = person.Phones.RemoveAt(phoneIndex.Value)
-				};
-			People[personIndex] = newPerson;
-		}
-	}
-
+	*/
 
 
 	public async ValueTask<CompanyClass> GetSingleCompany(CancellationToken ct)
@@ -182,73 +226,62 @@ public class DataStore : IDataStore
 
 	private async ValueTask Delay(CancellationToken ct = default) => await Task.Delay(TaskDelay, ct);
 
-	/// <summary>
-	/// Shave off phones.
-	/// </summary>
-	private IImmutableList<PersonRecord> PeopleOnly =>
-		People
-		.Select(person => new PersonRecord(person.FirstName, person.LastName, EmptyPhones()))
-		.ToImmutableList();
-
-
 	private IList<PersonRecord> People { get; } = new List<PersonRecord>
 	{
-		new PersonRecord("Master", "Yoda", new[]
+		new PersonRecord(1, "Master", "Yoda", new[]
 			{
-				new PhoneRecord("001"),
-				new PhoneRecord("002"),
+				new PhoneRecord(1, "001"),
+				new PhoneRecord(2, "002"),
 			}.ToImmutableList()),
 
-		new PersonRecord("John", "Doe", new[]
+		new PersonRecord(2, "John", "Doe", new[]
 			{
-				new PhoneRecord("003"),
-				new PhoneRecord("004"),
+				new PhoneRecord(3, "003"),
+				new PhoneRecord(4, "004"),
 			}.ToImmutableList()),
 
-		new PersonRecord("Eliott", "Fitzgerald", new[]
+		new PersonRecord(3, "Eliott", "Fitzgerald", new[]
 			{
-				new PhoneRecord("005"),
-				new PhoneRecord("006"),
+				new PhoneRecord(5, "005"),
+				new PhoneRecord(6, "006"),
 			}.ToImmutableList()),
 
-		new PersonRecord("Oliver", "McMahon", new[]
+		new PersonRecord(4, "Oliver", "McMahon", new[]
 			{
-				new PhoneRecord("007"),
-				new PhoneRecord("008"),
+				new PhoneRecord(7, "007"),
+				new PhoneRecord(8, "008"),
 			}.ToImmutableList()),
 
-		new PersonRecord("Charlie", "Atkinson", new[]
+		new PersonRecord(5, "Charlie", "Atkinson", new[]
 			{
-				new PhoneRecord("009"),
-				new PhoneRecord("010"),
+				new PhoneRecord(9, "009"),
+				new PhoneRecord(10, "010"),
 			}.ToImmutableList()),
 
-		new PersonRecord("Amy", "Peterson", new[]
+		new PersonRecord(6, "Amy", "Peterson", new[]
 			{
-				new PhoneRecord("011"),
-				new PhoneRecord("012"),
+				new PhoneRecord(11, "011"),
+				new PhoneRecord(12, "012"),
 			}.ToImmutableList()),
 
-		new PersonRecord("Richard", "Neumann", new[]
+		new PersonRecord(7, "Richard", "Neumann", new[]
 			{
-				new PhoneRecord("013"),
-				new PhoneRecord("014"),
+				new PhoneRecord(13, "013"),
+				new PhoneRecord(14, "014"),
 			}.ToImmutableList()),
 
-		new PersonRecord("Mandy", "White", new[]
+		new PersonRecord(8, "Mandy", "White", new[]
 			{
-				new PhoneRecord("015"),
-				new PhoneRecord("016"),
+				new PhoneRecord(15, "015"),
+				new PhoneRecord(16, "016"),
 			}.ToImmutableList()),
 
-		new PersonRecord("Xavier", "Chandler", new[]
+		new PersonRecord(9, "Xavier", "Chandler", new[]
 			{
-				new PhoneRecord("017"),
-				new PhoneRecord("018"),
+				new PhoneRecord(17, "017"),
+				new PhoneRecord(18, "018"),
 			}.ToImmutableList())
 	};
-
-
 
 	private IList<CompanyClass> Companies { get; } = new[]
 	{
@@ -256,9 +289,12 @@ public class DataStore : IDataStore
 		new CompanyClass { CompanyName = "NVentive" }
 	};
 
-	private IImmutableList<PhoneRecord> EmptyPhones() => Enumerable.Empty<PhoneRecord>().ToImmutableList();
 
-	private int IndexOf(PersonRecord person) => PeopleOnly.IndexOf(person);
+	private int GetPersonIndex(PersonRecord person) =>
+		People
+			.Where(existing => existing.Id == person.Id)
+			.Select((existing, index) => index)
+			.SingleOrDefault();
 
 
 }

@@ -1,19 +1,35 @@
 ﻿<UserControl
 	x:Name="readWriteCollectionView"
-    x:Class="MVUxToDos.Views.ReadWriteCollectionView"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:mvux="using:Uno.Extensions.Reactive.UI">
+	x:Class="MVUxToDos.Views.ReadWriteCollectionView"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:mvux="using:Uno.Extensions.Reactive.UI">
 
 	<mvux:FeedView Source="{Binding People}">
-
-
-		
 		<DataTemplate>
 
 			<ListView ItemsSource="{Binding Data}">
 				<ListView.Header>
-					<Button Content="Refresh" Command="{Binding Refresh}"/>
+					<StackPanel>
+
+						<Button Content="Refresh" Command="{Binding Refresh}" />
+
+						<StackPanel
+							DataContext="{Binding DataContext, ElementName=readWriteCollectionView}"
+							Orientation="Horizontal">
+
+							<TextBox PlaceholderText="First name" DataContext="{Binding NewPerson}"
+								Text="{Binding FirstName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+							<TextBox PlaceholderText="Last name" DataContext="{Binding NewPerson}"
+								Text="{Binding LastName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+							<!-- NewPerson is a Bindable<T> -->
+							<Button Content="Add" Command="{Binding Create}"
+								CommandParameter="{Binding NewPerson.Value}" />
+						</StackPanel>
+
+					</StackPanel>
 				</ListView.Header>
 
 				<ListView.ItemTemplate>
@@ -21,10 +37,18 @@
 
 						<StackPanel Orientation="Horizontal" Spacing="5">
 
-							<TextBlock Text="{Binding FirstName}"/>
-							<TextBlock Text="{Binding LastName}"/>
+							<TextBlock>
+								<Run Text="#" />
+								<Run Text="{Binding Id}" />
+							</TextBlock>
 
-							<Button Content="Remove" Command="{Binding DataContext.Remove, ElementName=readWriteCollectionView}" CommandParameter="{Binding}"/>
+
+							<TextBlock Text="{Binding FirstName}" />
+							<TextBlock Text="{Binding LastName}" />
+
+							<Button Content="Remove"
+								Command="{Binding DataContext.Remove, ElementName=readWriteCollectionView}"
+								CommandParameter="{Binding}" />
 
 						</StackPanel>
 

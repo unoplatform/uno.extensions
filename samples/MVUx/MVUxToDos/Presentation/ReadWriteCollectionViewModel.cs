@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using MVUxToDos.Data;
@@ -13,14 +12,22 @@ public partial class ReadWriteCollectionViewModel
 
 	public IListState<PersonRecord> People => ListState.Async(this, dataStore.GetPeople);
 
+	public IState<PersonRecord> NewPerson => State.Value(this, PersonRecord.Empty);
+
+	public async ValueTask Create(PersonRecord newPerson, CancellationToken ct)
+	{
+		var newId = await dataStore.AddPerson(newPerson, ct);
+
+		await People.AddAsync(newPerson with { Id = newId }, ct);
+
+		await NewPerson.Update(old => PersonRecord.Empty(), ct);
+	}
+
 
 	public async ValueTask Remove(PersonRecord person, CancellationToken ct)
 	{
-		await dataStore.DeletePerson(person, ct);
+		await dataStore.DeletePerson(person.Id, ct);
 
-		await People.UpdateData(
-			updater: old => old.SomeOrDefault().Remove(person, EqualityComparer<PersonRecord>.Default),
-		 	ct);
-
+		await People.RemoveAllAsync(p => p.Id == person.Id, ct);
 	}
 }
