@@ -77,8 +77,8 @@ public class DataStore : IDataStore
 
 		var (personId, index) =
 			People
-			.Where(p => p.Id == person.Id)
 			.Select((p, index) => (PersonId: p.Id, Index: index))
+			.Where(x => x.PersonId == person.Id)
 			.SingleOrDefault(defaultValue: (PersonId: 0, Index: -1));
 
 		if (index > -1)

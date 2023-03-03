@@ -47,7 +47,7 @@ public class BindableImmutableList<TItem, TBindableItem> : BindableEnumerable<II
 		// '_analyzer' might be null when the base.ctor subscribe to the 'property' and invokes the 'OnOwnerUpdated'
 		// That's should not happen since the `AutoInit` has been disable, but for safety we fallback on ListFeed<TItem>.DefaultAnalyzer.
 		// This is valid as in that case the 'previous' will be null/empty anyway.
-		=> (_analyzer ?? ListFeed<TItem>.DefaultAnalyzer).GetChanges(previous ?? ImmutableList<TItem>.Empty, current);
+		=> (_analyzer ?? ListFeed<TItem>.DefaultAnalyzer).GetChanges(previous ?? ImmutableList<TItem>.Empty, current ?? ImmutableList<TItem>.Empty);
 
 	private protected override IImmutableList<TItem> Replace(IImmutableList<TItem>? items, TItem oldItem, TItem newItem)
 	{
