@@ -1027,11 +1027,11 @@
         "evaluator": "C++",
         "cases": [
           {
-            "condition": "useMvux",
+            "condition": "(architectureEvaluator == 'mvux')",
             "value": "BindableMainModel"
           },
           {
-            "condition": "useMvvm",
+            "condition": "(architectureEvaluator == 'mvvm')",
             "value": "MainViewModel"
           }
         ]
@@ -1046,11 +1046,11 @@
         "evaluator": "C++",
         "cases": [
           {
-            "condition": "useMvux",
+            "condition": "(architectureEvaluator == 'mvux')",
             "value": "BindableSecondModel"
           },
           {
-            "condition": "useMvvm",
+            "condition": "(architectureEvaluator == 'mvvm')",
             "value": "SecondViewModel"
           }
         ]
