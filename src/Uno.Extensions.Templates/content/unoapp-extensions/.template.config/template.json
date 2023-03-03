@@ -1566,6 +1566,12 @@
           }
         },
         {
+          "condition": "(!useDefaultNav)",
+          "exclude": [
+            "MyExtensionsApp/Business/Models/Entity.cs",
+          ]
+        },
+        {
           "condition": "(!useMaterial)",
           "exclude": [
             "MyExtensionsApp/Styles/**"
