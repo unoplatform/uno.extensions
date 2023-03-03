@@ -108,35 +108,19 @@ public class App : Application
 
 	private static void RegisterRoutes(IViewRegistry views, IRouteRegistry routes)
 	{
-#if (useDefaultNavMvux)
+#if (useDefaultNav)
 		views.Register(
-			new ViewMap(ViewModel: typeof(ShellModel)),
-			new ViewMap<MainPage, MainModel>(),
-			new DataViewMap<SecondPage, SecondModel, Entity>()
+			new ViewMap(ViewModel: typeof($shellRouteViewModel$)),
+			new ViewMap<MainPage, $mainRouteViewModel$>(),
+			new DataViewMap<SecondPage, $secondRouteViewModel$, Entity>()
 		);
 
 		routes.Register(
-			new RouteMap("", View: views.FindByViewModel<ShellModel>(),
+			new RouteMap("", View: views.FindByViewModel<$shellRouteViewModel$>(),
 				Nested: new RouteMap[]
 				{
-					new RouteMap("Main", View: views.FindByViewModel<MainModel>()),
-					new RouteMap("Second", View: views.FindByViewModel<SecondModel>()),
-				}
-			)
-		);
-#elif (useDefaultNavMvvm)
-		views.Register(
-			new ViewMap(ViewModel: typeof(ShellViewModel)),
-			new ViewMap<MainPage, MainViewModel>(),
-			new DataViewMap<SecondPage, SecondViewModel, Entity>()
-		);
-
-		routes.Register(
-			new RouteMap("", View: views.FindByViewModel<ShellViewModel>(),
-				Nested: new RouteMap[]
-				{
-					new RouteMap("Main", View: views.FindByViewModel<MainViewModel>()),
-					new RouteMap("Second", View: views.FindByViewModel<SecondViewModel>()),
+					new RouteMap("Main", View: views.FindByViewModel<$mainRouteViewModel$>()),
+					new RouteMap("Second", View: views.FindByViewModel<$secondRouteViewModel$>()),
 				}
 			)
 		);

@@ -378,7 +378,7 @@
         },
         {
           "choice": "serilog",
-          "description": "Logging is accesible via dependency injection and configured to use Serilog",
+          "description": "Logging is accessible via dependency injection and configured to use Serilog",
           "displayName": "Serilog"
         }
       ]
@@ -1018,6 +1018,60 @@
         ]
       }
     },
+    "shellRouteViewModel":{
+      "type": "generated",
+      "generator": "switch",
+      "replaces": "$shellRouteViewModel$",
+      "parameters": {
+        "evaluator": "C++",
+        "cases": [
+          {
+            "condition": "(architectureEvaluator == 'mvux')",
+            "value": "ShellModel"
+          },
+          {
+            "condition": "(architectureEvaluator == 'mvvm')",
+            "value": "ShellViewModel"
+          }
+        ]
+      }
+    },
+    "mainRouteViewModel":{
+      "type": "generated",
+      "generator": "switch",
+      "replaces": "$mainRouteViewModel$",
+      "parameters": {
+        "evaluator": "C++",
+        "cases": [
+          {
+            "condition": "(architectureEvaluator == 'mvux')",
+            "value": "MainModel"
+          },
+          {
+            "condition": "(architectureEvaluator == 'mvvm')",
+            "value": "MainViewModel"
+          }
+        ]
+      }
+    },
+    "secondRouteViewModel":{
+      "type": "generated",
+      "generator": "switch",
+      "replaces": "$secondRouteViewModel$",
+      "parameters": {
+        "evaluator": "C++",
+        "cases": [
+          {
+            "condition": "(architectureEvaluator == 'mvux')",
+            "value": "SecondModel"
+          },
+          {
+            "condition": "(architectureEvaluator == 'mvvm')",
+            "value": "SecondViewModel"
+          }
+        ]
+      }
+    },
     "mainDataContext":{
       "type": "generated",
       "generator": "switch",
@@ -1096,16 +1150,6 @@
       "type": "computed",
       "datatype": "bool",
       "value": "useExtensionsNavigation && navigationEvaluator == 'default'"
-    },
-    "useDefaultNavMvux": {
-      "type": "computed",
-      "datatype": "bool",
-      "value": "useDefaultNav && useMvux"
-    },
-    "useDefaultNavMvvm": {
-      "type": "computed",
-      "datatype": "bool",
-      "value": "useDefaultNav && useMvvm"
     },
     "useFrameNav": {
       "type": "computed",
