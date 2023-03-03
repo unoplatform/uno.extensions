@@ -1,4 +1,6 @@
 ﻿using System.Linq;
+using Microsoft.Extensions.DependencyInjection;
+using Windows.Storage;
 
 namespace Uno.Extensions.Hosting;
 
@@ -10,7 +12,27 @@ public static class UnoHost
 			.ConfigureCustomDefaults(args)
 			.ConfigureAppConfiguration((ctx, appConfig) =>
 			{
-				var appHost = AppHostingEnvironment.FromHostEnvironment(ctx.HostingEnvironment, Windows.Storage.ApplicationData.Current.LocalFolder.Path);
+				string dataFolder = string.Empty;
+				try
+				{
+					dataFolder = Windows.Storage.ApplicationData.Current?.LocalFolder?.Path ?? string.Empty;
+				}
+				catch
+				{
+					// This will throw an exception on WinUI if unpackaged, so dataFolder will be null
+				}
+#if WINUI && WINDOWS
+				var appName = Assembly.GetEntryAssembly()?.GetName().Name ?? string.Empty;
+				if (string.IsNullOrWhiteSpace(dataFolder))
+				{
+					dataFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData, Environment.SpecialFolderOption.Create), appName);
+				}
+				if (!Directory.Exists(dataFolder))
+				{
+					Directory.CreateDirectory(dataFolder);
+				}
+#endif
+				var appHost = AppHostingEnvironment.FromHostEnvironment(ctx.HostingEnvironment, dataFolder);
 				ctx.HostingEnvironment = appHost;
 			})
 			.ConfigureServices((ctx, services) =>
@@ -18,6 +40,10 @@ public static class UnoHost
 				if (ctx.HostingEnvironment is IAppHostEnvironment appHost)
 				{
 					services.AddSingleton(appHost);
+				}
+				if (ctx.HostingEnvironment is IDataFolderProvider dataProvider)
+				{
+					services.AddSingleton(dataProvider);
 				}
 				if (ctx.HostingEnvironment is IHasAddressBar addressBarHost)
 				{
