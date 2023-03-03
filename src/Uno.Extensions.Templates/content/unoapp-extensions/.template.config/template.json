@@ -1296,6 +1296,12 @@
           }
         },
         {
+          "condition": "(useFrameNav)",
+          "exclude": [
+            "MyExtensionsApp/Presentation/**"
+          ]
+        },
+        {
           "condition": "(useRecommendedAppTemplate)",
           "exclude": [
             "MyExtensionsApp.Server/WeatherForecast.cs"
@@ -1515,12 +1521,6 @@
           "condition": "(!useMaterial)",
           "exclude": [
             "MyExtensionsApp/Styles/**"
-          ]
-        },
-        {
-          "condition": "(!useExtensionsNavigation || !useDependencyInjection)",
-          "exclude": [
-            "MyExtensionsApp/Presentation/**"
           ]
         },
         {
