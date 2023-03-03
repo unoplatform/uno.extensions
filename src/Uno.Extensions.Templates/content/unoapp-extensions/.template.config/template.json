@@ -1025,11 +1025,11 @@
       "parameters": {
         "cases": [
           {
-            "condition": "(architecture == 'mvux')",
+            "condition": "(useMvux)",
             "value": "BindableMainModel"
           },
           {
-            "condition": "(architecture == 'mvvm')",
+            "condition": "(useMvvm)",
             "value": "MainViewModel"
           }
         ]
@@ -1042,11 +1042,11 @@
       "parameters": {
         "cases": [
           {
-            "condition": "(architecture == 'mvux')",
+            "condition": "(useMvux)",
             "value": "BindableSecondModel"
           },
           {
-            "condition": "(architecture == 'mvvm')",
+            "condition": "(useMvvm)",
             "value": "SecondViewModel"
           }
         ]
