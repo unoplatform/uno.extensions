@@ -1021,15 +1021,17 @@
     "mainDataContext":{
       "type": "generated",
       "generator": "switch",
+      "datatype": "string",
       "replaces": "$mainDataContext$",
       "parameters": {
+        "evaluator": "C++",
         "cases": [
           {
-            "condition": "(useMvux)",
+            "condition": "useMvux",
             "value": "BindableMainModel"
           },
           {
-            "condition": "(useMvvm)",
+            "condition": "useMvvm",
             "value": "MainViewModel"
           }
         ]
@@ -1038,15 +1040,17 @@
     "secondDataContext":{
       "type": "generated",
       "generator": "switch",
+      "datatype": "string",
       "replaces": "$secondDataContext$",
       "parameters": {
+        "evaluator": "C++",
         "cases": [
           {
-            "condition": "(useMvux)",
+            "condition": "useMvux",
             "value": "BindableSecondModel"
           },
           {
-            "condition": "(useMvvm)",
+            "condition": "useMvvm",
             "value": "SecondViewModel"
           }
         ]
