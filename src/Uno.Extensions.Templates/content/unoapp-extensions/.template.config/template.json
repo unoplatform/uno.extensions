@@ -1512,7 +1512,7 @@
           "condition": "(!useHttp)",
           "exclude": [
             "MyExtensionsApp/Infrastructure/DebugHandler.cs",
-            "MyExtensionsApp/Services/IApiClient.cs"
+            "MyExtensionsApp/Services/**"
           ]
         },
         {

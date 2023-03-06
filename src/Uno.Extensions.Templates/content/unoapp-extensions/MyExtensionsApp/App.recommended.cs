@@ -49,8 +49,12 @@ public class App : Application
 				// Enable localization (see appsettings.json for supported languages)
 				.UseLocalization()
 #endif
+#if useHttp
 				// Register Json serializers (ISerializer and ISerializer)
-				.UseSerialization()
+				.UseSerialization((context, services) => services
+					.AddContentSerializer(context)
+					.AddJsonTypeInfo(WeatherForecastContext.Default.IImmutableListWeatherForecast))
+#endif
 				.ConfigureServices((context, services) => {
 #if useHttp
 					// Register HttpClient
@@ -61,6 +65,7 @@ public class App : Application
 						.AddTransient<DelegatingHandler, DebugHttpHandler>()
 #endif
 //+:cnd:noEmit
+						.AddSingleton<IWeatherCache, WeatherCache>()
 						.AddRefitClient<IApiClient>(context);
 
 #endif
