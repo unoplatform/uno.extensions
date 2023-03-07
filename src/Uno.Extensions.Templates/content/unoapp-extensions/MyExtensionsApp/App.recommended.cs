@@ -54,9 +54,7 @@ public class App : Application
 				.UseSerialization((context, services) => services
 					.AddContentSerializer(context)
 					.AddJsonTypeInfo(WeatherForecastContext.Default.IImmutableListWeatherForecast))
-#endif
-				.ConfigureServices((context, services) => {
-#if useHttp
+				.UseHttp((context, services) => services
 					// Register HttpClient
 					services
 //-:cnd:noEmit
@@ -66,9 +64,9 @@ public class App : Application
 #endif
 //+:cnd:noEmit
 						.AddSingleton<IWeatherCache, WeatherCache>()
-						.AddRefitClient<IApiClient>(context);
-
+						.AddRefitClient<IApiClient>(context))
 #endif
+				.ConfigureServices((context, services) => {
 					// TODO: Register your services
 					//services.AddSingleton<IMyService, MyService>();
 				})
