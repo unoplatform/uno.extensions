@@ -57,6 +57,7 @@
 		<!--#else-->
 		<PackageReference Include="Uno.Toolkit.WinUI" />
 		<!--#endif-->
+		<PackageReference Include="Uno.Extensions.Core" />
 		<!--#if (useAuthentication)-->
 		<PackageReference Include="Uno.Extensions.Authentication.WinUI" />
 		<!--#endif-->
@@ -123,6 +124,7 @@
 		<!--#else-->
 		<PackageReference Include="Uno.Toolkit.WinUI" Version="2.5.0-dev.35" />
 		<!--#endif-->
+		<PackageReference Include="Uno.Extensions.Core" Version="255.255.255.255" />
 		<!--#if (useAuthentication)-->
 		<PackageReference Include="Uno.Extensions.Authentication.WinUI" Version="255.255.255.255" />
 		<!--#endif-->
