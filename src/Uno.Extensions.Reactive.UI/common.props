@@ -3,6 +3,7 @@
 		<AssemblyName>Uno.Extensions.Reactive.UI</AssemblyName>
 		<!-- Ensures the .xr.xml files are generated in a proper layout folder -->
 		<GenerateLibraryLayout>true</GenerateLibraryLayout>
+		<UnoExtensionsGeneration_DisableModuleInitializerAttribute>False</UnoExtensionsGeneration_DisableModuleInitializerAttribute>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(_IsUWP)'=='true'">
