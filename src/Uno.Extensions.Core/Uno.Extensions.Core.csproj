@@ -45,12 +45,11 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\Uno.Extensions.Core.Generators\Uno.Extensions.Core.Generators.csproj" ReferenceOutputAssembly="false" />
+		<GeneratorProjectReference Include="..\Uno.Extensions.Core.Generators\Uno.Extensions.Core.Generators.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<None Include="..\Uno.Extensions.Core.Generators\buildTransitive\Uno.Extensions.Core.props" Pack="true" PackagePath="buildTransitive" />
-		<None Include="..\Uno.Extensions.Core.Generators\bin\Uno.Extensions.Core.Generators\$(Configuration)\netstandard2.0\**\*.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
 	</ItemGroup>
 
 	<ItemGroup>
