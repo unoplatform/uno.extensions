@@ -27,11 +27,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\Uno.Extensions.Reactive.Generator\Uno.Extensions.Reactive.Generator.csproj" ReferenceOutputAssembly="false" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<None Include="..\Uno.Extensions.Reactive.Generator\bin\Uno.Extensions.Reactive.Generator\$(Configuration)\netstandard2.0\**\*.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+		<GeneratorProjectReference Include="..\Uno.Extensions.Reactive.Generator\Uno.Extensions.Reactive.Generator.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
