@@ -106,7 +106,6 @@
       "description": "Select the design pattern for your application",
       "type": "parameter",
       "datatype": "choice",
-      "defaultValue": "mvux",
       "choices": [
         {
           "choice": "mvvm",
@@ -160,8 +159,7 @@
           "description": "Use the Cupertino design theme",
           "displayName": "Cupertino"
         }
-      ],
-      "defaultValue": "material"
+      ]
     },
     "platforms": {
       "displayName": "Platforms",
@@ -242,29 +240,25 @@
       "displayName": "Dependency Injection",
       "description": "Use dependency injection for registering and accessing services",
       "type": "parameter",
-      "datatype": "bool",
-      "defaultValue": "true"
+      "datatype": "bool"
     },
     "configuration": {
       "displayName": "Configuration",
       "description": "Load configuration information from appsettings.json",
       "type": "parameter",
-      "datatype": "bool",
-      "defaultValue": "true"
+      "datatype": "bool"
     },
     "http": {
       "displayName": "HTTP",
       "description": "Register native handlers for http and setup Refit support",
       "type": "parameter",
-      "datatype": "bool",
-      "defaultValue": "true"
+      "datatype": "bool"
     },
     "localization": {
       "displayName": "Localization",
       "description": "Configures support for localizing resources throughout the application",
       "type": "parameter",
-      "datatype": "bool",
-      "defaultValue": "true"
+      "datatype": "bool"
     },
     "cultures": {
       "displayName": "Locales",
@@ -371,7 +365,6 @@
       "description": "Configures logging support in the application",
       "type": "parameter",
       "datatype": "choice",
-      "defaultValue": "serilog",
       "choices": [
         {
           "choice": "none",
@@ -385,7 +378,7 @@
         },
         {
           "choice": "serilog",
-          "description": "Logging is accesible via dependency injection and configured to use Serilog",
+          "description": "Logging is accessible via dependency injection and configured to use Serilog",
           "displayName": "Serilog"
         }
       ]
@@ -473,50 +466,154 @@
       "datatype": "bool",
       "value": "(markup == 'xaml')"
     },
+    "presetAppThemeDefault": {
+      "type": "generated",
+      "generator": "switch",
+      "parameters": {
+        "evaluator": "C++",
+        "datatype": "string",
+        "cases": [
+          {
+            "condition": "(preset == 'recommended')",
+            "value": "material"
+          },
+          {
+            "condition": "(preset == 'blank')",
+            "value": "fluent"
+          }
+        ]
+      }
+    },
+    "appThemeEvaluator": {
+      "type": "generated",
+      "generator": "coalesce",
+      "parameters": {
+        "sourceVariableName": "appTheme",
+        "fallbackVariableName": "presetAppThemeDefault"
+      }
+    },
     "useMaterial": {
       "type": "computed",
       "datatype": "bool",
-      "value": "(appTheme == 'material' && preset == 'recommended')"
+      "value": "(appThemeEvaluator == 'material')"
     },
     "useFluent": {
       "type": "computed",
       "datatype": "bool",
-      "value": "(appTheme == 'fluent' && preset == 'recommended')"
+      "value": "(appThemeEvaluator == 'fluent')"
     },
     "useCupertino": {
       "type": "computed",
       "datatype": "bool",
-      "value": "(appTheme == 'cupertino' && preset == 'recommended')"
+      "value": "(appTheme == 'cupertino')"
+    },
+    "presetDependencyInjectionDefault": {
+      "type": "generated",
+      "generator": "switch",
+      "parameters": {
+        "evaluator": "C++",
+        "datatype": "bool",
+        "cases": [
+          {
+            "condition": "(preset == 'recommended')",
+            "value": "true"
+          },
+          {
+            "condition": "(preset == 'blank')",
+            "value": "false"
+          }
+        ]
+      }
+    },
+    "useDependencyInjection": {
+      "type": "generated",
+      "generator": "coalesce",
+      "parameters": {
+        "sourceVariableName": "dependencyInjection",
+        "fallbackVariableName": "presetDependencyInjectionDefault"
+      }
+    },
+    "presetLoggingDefault": {
+      "type": "generated",
+      "generator": "switch",
+      "parameters": {
+        "evaluator": "C++",
+        "datatype": "string",
+        "cases": [
+          {
+            "condition": "(preset == 'recommended')",
+            "value": "serilog"
+          },
+          {
+            "condition": "(preset == 'blank')",
+            "value": "none"
+          }
+        ]
+      }
+    },
+    "loggingEvaluator": {
+      "type": "generated",
+      "generator": "coalesce",
+      "parameters": {
+        "sourceVariableName": "logging",
+        "fallbackVariableName": "presetLoggingDefault"
+      }
     },
     "useLoggingFallback": {
       "type": "computed",
       "datatype": "bool",
-      "value": "(logging == 'none' || preset == 'blank')"
+      "value": "(loggingEvaluator == 'none')"
     },
     "useLogging": {
       "type": "computed",
       "datatype": "bool",
-      "value": "(useDependencyInjection && logging != 'none')"
+      "value": "(useDependencyInjection && loggingEvaluator != 'none')"
     },
     "useSerilog": {
       "type": "computed",
       "datatype": "bool",
-      "value": "(useDependencyInjection && logging == 'serilog')"
+      "value": "(useDependencyInjection && loggingEvaluator == 'serilog')"
     },
     "useAspNetCoreSerilogPackage": {
       "type": "computed",
       "datatype": "bool",
       "value": "(server && useSerilog)"
     },
+    "presetArchitectureDefault": {
+      "type": "generated",
+      "generator": "switch",
+      "parameters": {
+        "evaluator": "C++",
+        "datatype": "string",
+        "cases": [
+          {
+            "condition": "(preset == 'recommended')",
+            "value": "mvux"
+          },
+          {
+            "condition": "(preset == 'blank')",
+            "value": "none"
+          }
+        ]
+      }
+    },
+    "architectureEvaluator": {
+      "type": "generated",
+      "generator": "coalesce",
+      "parameters": {
+        "sourceVariableName": "architecture",
+        "fallbackVariableName": "presetArchitectureDefault"
+      }
+    },
     "useMvux": {
       "type": "computed",
       "datatype": "bool",
-      "value": "architecture == 'mvux'"
+      "value": "architectureEvaluator == 'mvux'"
     },
     "useMvvm": {
       "type": "computed",
       "datatype": "bool",
-      "value": "architecture == 'mvvm'"
+      "value": "architectureEvaluator == 'mvvm'"
     },
     "useGtk": {
       "type": "computed",
@@ -571,7 +668,7 @@
     "useDataContracts": {
       "type": "computed",
       "dataType": "bool",
-      "value": "(preset == 'recommended' && ((useDependencyInjection && http) || server))"
+      "value": "((useDependencyInjection && useHttp) || server)"
     },
     "useUnitTests": {
       "type": "computed",
@@ -583,25 +680,103 @@
       "dataType": "bool",
       "value": "(preset == 'recommended' && tests == ui)"
     },
-    "useDependencyInjection": {
+    "useAuthentication": {
       "type": "computed",
       "dataType": "bool",
-      "value": "(dependencyInjection && preset == 'recommended')"
+      "value": "(preset == 'recommended')"
+    },
+    "presetConfigurationDefault": {
+      "type": "generated",
+      "generator": "switch",
+      "datatype": "bool",
+      "parameters": {
+        "evaluator": "C++",
+        "cases": [
+          {
+            "condition": "(preset == 'recommended')",
+            "value": "true"
+          },
+          {
+            "condition": "(preset == 'blank')",
+            "value": "false"
+          }
+        ]
+      }
+    },
+    "configurationEvaluator": {
+      "type": "generated",
+      "generator": "coalesce",
+      "parameters": {
+        "sourceVariableName": "configuration",
+        "fallbackVariableName": "presetConfigurationDefault"
+      }
     },
     "useConfiguration": {
       "type": "computed",
       "dataType": "bool",
-      "value": "(useDependencyInjection && configuration)"
+      "value": "(useDependencyInjection && configurationEvaluator)"
+    },
+    "presetHttpDefault": {
+      "type": "generated",
+      "generator": "switch",
+      "datatype": "bool",
+      "parameters": {
+        "evaluator": "C++",
+        "cases": [
+          {
+            "condition": "(preset == 'recommended')",
+            "value": "true"
+          },
+          {
+            "condition": "(preset == 'blank')",
+            "value": "false"
+          }
+        ]
+      }
+    },
+    "httpEvaluator": {
+      "type": "generated",
+      "generator": "coalesce",
+      "parameters": {
+        "sourceVariableName": "http",
+        "fallbackVariableName": "presetHttpDefault"
+      }
     },
     "useHttp": {
       "type": "computed",
       "dataType": "bool",
-      "value": "(http && useConfiguration)"
+      "value": "(httpEvaluator && useConfiguration)"
+    },
+    "presetLocalizationDefault": {
+      "type": "generated",
+      "generator": "switch",
+      "datatype": "bool",
+      "parameters": {
+        "evaluator": "C++",
+        "cases": [
+          {
+            "condition": "(preset == 'recommended')",
+            "value": "true"
+          },
+          {
+            "condition": "(preset == 'blank')",
+            "value": "false"
+          }
+        ]
+      }
+    },
+    "localizationEvaluator": {
+      "type": "generated",
+      "generator": "coalesce",
+      "parameters": {
+        "sourceVariableName": "localization",
+        "fallbackVariableName": "presetLocalizationDefault"
+      }
     },
     "useLocalization": {
       "type": "computed",
       "dataType": "bool",
-      "value": "(localization && useConfiguration)"
+      "value": "(localizationEvaluator && useConfiguration)"
     },
     "useArabic": {
       "type": "computed",
@@ -843,18 +1018,74 @@
         ]
       }
     },
+    "shellRouteViewModel":{
+      "type": "generated",
+      "generator": "switch",
+      "replaces": "$shellRouteViewModel$",
+      "parameters": {
+        "evaluator": "C++",
+        "cases": [
+          {
+            "condition": "(architectureEvaluator == 'mvux')",
+            "value": "ShellModel"
+          },
+          {
+            "condition": "(architectureEvaluator == 'mvvm')",
+            "value": "ShellViewModel"
+          }
+        ]
+      }
+    },
+    "mainRouteViewModel":{
+      "type": "generated",
+      "generator": "switch",
+      "replaces": "$mainRouteViewModel$",
+      "parameters": {
+        "evaluator": "C++",
+        "cases": [
+          {
+            "condition": "(architectureEvaluator == 'mvux')",
+            "value": "MainModel"
+          },
+          {
+            "condition": "(architectureEvaluator == 'mvvm')",
+            "value": "MainViewModel"
+          }
+        ]
+      }
+    },
+    "secondRouteViewModel":{
+      "type": "generated",
+      "generator": "switch",
+      "replaces": "$secondRouteViewModel$",
+      "parameters": {
+        "evaluator": "C++",
+        "cases": [
+          {
+            "condition": "(architectureEvaluator == 'mvux')",
+            "value": "SecondModel"
+          },
+          {
+            "condition": "(architectureEvaluator == 'mvvm')",
+            "value": "SecondViewModel"
+          }
+        ]
+      }
+    },
     "mainDataContext":{
       "type": "generated",
       "generator": "switch",
+      "datatype": "string",
       "replaces": "$mainDataContext$",
       "parameters": {
+        "evaluator": "C++",
         "cases": [
           {
-            "condition": "(architecture == 'mvux')",
+            "condition": "(architectureEvaluator == 'mvux')",
             "value": "BindableMainModel"
           },
           {
-            "condition": "(architecture == 'mvvm')",
+            "condition": "(architectureEvaluator == 'mvvm')",
             "value": "MainViewModel"
           }
         ]
@@ -863,24 +1094,52 @@
     "secondDataContext":{
       "type": "generated",
       "generator": "switch",
+      "datatype": "string",
       "replaces": "$secondDataContext$",
       "parameters": {
+        "evaluator": "C++",
         "cases": [
           {
-            "condition": "(architecture == 'mvux')",
+            "condition": "(architectureEvaluator == 'mvux')",
             "value": "BindableSecondModel"
           },
           {
-            "condition": "(architecture == 'mvvm')",
+            "condition": "(architectureEvaluator == 'mvvm')",
             "value": "SecondViewModel"
           }
         ]
       }
     },
+    "presetNavigationDefault": {
+      "type": "generated",
+      "generator": "switch",
+      "datatype": "string",
+      "parameters": {
+        "evaluator": "C++",
+        "cases": [
+          {
+            "condition": "(preset == 'recommended')",
+            "value": "default"
+          },
+          {
+            "condition": "(preset == 'blank')",
+            "value": "frame"
+          }
+        ]
+      }
+    },
+    "navigationEvaluator": {
+      "type": "generated",
+      "generator": "coalesce",
+      "parameters": {
+        "sourceVariableName": "navigation",
+        "fallbackVariableName": "presetNavigationDefault"
+      }
+    },
     "useExtensionsNavigation": {
       "type": "computed",
       "datatype": "bool",
-      "value": "useDependencyInjection && navigation != 'frame'"
+      "value": "useDependencyInjection && navigationEvaluator != 'frame'"
     },
     "useReactiveExtensionsNavigation": {
       "type": "computed",
@@ -890,32 +1149,22 @@
     "useDefaultNav": {
       "type": "computed",
       "datatype": "bool",
-      "value": "useExtensionsNavigation && navigation == 'default'"
-    },
-    "useDefaultNavMvux": {
-      "type": "computed",
-      "datatype": "bool",
-      "value": "useDefaultNav && useMvux"
-    },
-    "useDefaultNavMvvm": {
-      "type": "computed",
-      "datatype": "bool",
-      "value": "useDefaultNav && useMvvm"
+      "value": "useExtensionsNavigation && navigationEvaluator == 'default'"
     },
     "useFrameNav": {
       "type": "computed",
       "datatype": "bool",
-      "value": "preset  == 'blank' || !useDependencyInjection || navigation == 'frame'"
+      "value": "preset  == 'blank' || !useDependencyInjection || navigationEvaluator == 'frame'"
     },
     "useInfrastructureNamespace": {
       "type": "computed",
       "datatype": "bool",
-      "value": "preset == 'recommended' && http && dependencyInjection"
+      "value": "useHttp && useDependencyInjection"
     },
     "useBusinessModelsNamespace": {
       "type": "computed",
       "datatype": "bool",
-      "value": "preset == 'recommended' && dependencyInjection && (configuration || navigation != 'frame')"
+      "value": "useDependencyInjection && (useConfiguration || navigationEvaluator != 'frame')"
     },
     "HostIdentifier": {
       "type": "bind",
@@ -935,7 +1184,7 @@
       "path": "MyExtensionsApp.Server\\MyExtensionsApp.Server.csproj"
     },
     {
-      "condition": "server || (http && useRecommendedAppTemplate)",
+      "condition": "useDataContracts",
       "path": "MyExtensionsApp.DataContracts\\MyExtensionsApp.DataContracts.csproj"
     },
     {
@@ -1087,7 +1336,6 @@
           "condition": "(!useDependencyInjection)",
           "exclude": [
             "MyExtensionsApp/App.recommended.cs",
-            "MyExtensionsApp/Infrastructure/DebugHandler.cs",
             "MyExtensionsApp/Business/**",
             "MyExtensionsApp/Presentation/**"
           ],
@@ -1096,13 +1344,19 @@
           }
         },
         {
+          "condition": "(useFrameNav)",
+          "exclude": [
+            "MyExtensionsApp/Presentation/**"
+          ]
+        },
+        {
           "condition": "(useRecommendedAppTemplate)",
           "exclude": [
             "MyExtensionsApp.Server/WeatherForecast.cs"
           ]
         },
         {
-          "condition": "(useBlankAppTemplate || (!useHttp && !server))",
+          "condition": "(!useDataContracts)",
           "exclude": [
             "MyExtensionsApp.DataContracts/**/*"
           ]
@@ -1257,6 +1511,7 @@
         {
           "condition": "(!useHttp)",
           "exclude": [
+            "MyExtensionsApp/Infrastructure/DebugHandler.cs",
             "MyExtensionsApp/Services/IApiClient.cs"
           ]
         },
@@ -1311,25 +1566,22 @@
           }
         },
         {
-          "condition": "(useBlankAppTemplate)",
-          "rename": {
-            "MyExtensionsApp/App.blank.cs": "MyExtensionsApp/App.cs"
-          },
+          "condition": "(!useDefaultNav)",
           "exclude": [
-            "MyExtensionsApp/Business/**",
-            "MyExtensionsApp/Infrastructure/**",
-            "MyExtensionsApp/Presentation/**",
-            "MyExtensionsApp/Services/**",
-            "MyExtensionsApp/Styles/**",
-            "MyExtensionsApp/App.recommended.cs",
-            "MyExtensionsApp/appsettings.*",
-            "MyExtensionsApp.Tests/AppInfoTests.cs"
+            "MyExtensionsApp/Business/Models/Entity.cs",
           ]
         },
         {
-          "condition": "(!useConfiguration)",
+          "condition": "(!useMaterial)",
           "exclude": [
-            "MyExtensionsApp.Tests/AppInfoTests.cs"
+            "MyExtensionsApp/Styles/**"
+          ]
+        },
+        {
+          "condition": "(useExtensionsNavigation && useDependencyInjection)",
+          "exclude": [
+            "MyExtensionsApp/MainPage.xaml",
+            "MyExtensionsApp/MainPage.xaml.cs"
           ]
         },
         {
@@ -1339,28 +1591,11 @@
           ]
         },
         {
-          "condition": "(useBlankAppTemplate || useFrameNav)",
-          "exclude": [
-            "MyExtensionsApp/Presentation/**"
-          ]
-        },
-        {
-          "condition": "(useRecommendedAppTemplate && useExtensionsNavigation && useDependencyInjection)",
-          "exclude": [
-            "MyExtensionsApp/MainPage.xaml",
-            "MyExtensionsApp/MainPage.xaml.cs"
-          ]
-        },
-        {
-          "condition": "(!configuration)",
-          "exclude": [
-            "MyExtensionsApp/Business/Models/AppConfig.cs"
-          ]
-        },
-        {
           "condition": "(!useConfiguration)",
           "exclude": [
-            "MyExtensionsApp/appsettings.*"
+            "MyExtensionsApp/Business/Models/AppConfig.cs",
+            "MyExtensionsApp/appsettings.*",
+            "MyExtensionsApp.Tests/AppInfoTests.cs"
           ]
         }
       ]
