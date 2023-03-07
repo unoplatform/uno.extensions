@@ -5,7 +5,9 @@ using Serilog;
 #if (useWasm)
 using Uno.Wasm.Bootstrap.Server;
 #endif
+#if (useHttp)
 using MyExtensionsApp.DataContracts.Serialization;
+#endif
 
 try
 {

@@ -27,11 +27,20 @@ public class WeatherForecastController : ControllerBase
 	[ProducesResponseType(typeof(IEnumerable<WeatherForecast>), 200)]
 	public IEnumerable<WeatherForecast> Get() =>
 		Enumerable.Range(1, 5).Select(index =>
+		#if (includeNet6DataContractReferences)
+			new WeatherForecast
+			{
+				Date = DateTime.Now.AddDays(index),
+				TemperatureC = Random.Shared.Next(-20, 55),
+				Summary = Summaries[Random.Shared.Next(Summaries.Length)]
+			}
+		#else
 			new WeatherForecast(
 				DateTime.Now.AddDays(index),
 				Random.Shared.Next(-20, 55),
 				Summaries[Random.Shared.Next(Summaries.Length)]
 			)
+		#endif
 		)
 		.Select(x => {
 			_logger.LogInformation("Weather forecast for {Date} is a {Summary} {TemperatureC}°C", x.Date, x.Summary, x.TemperatureC);
