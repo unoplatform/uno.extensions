@@ -93,5 +93,9 @@
     <PackageVersion Include="Uno.WinUI.WebAssembly" Version="4.7.44" />
     <PackageVersion Include="Xamarin.Google.Android.Material" Version="1.7.0.2" />
     <PackageVersion Include="Xamarin.UITest" Version="4.1.1" />
+    <!--#if (includeNet6DataContractReferences)-->
+    <PackageVersion Include="System.Collections.Immutable" Version="6.0.0" />
+    <PackageVersion Include="System.Text.Json" Version="6.0.0" />
+    <!--#endif-->
   </ItemGroup>
 </Project>

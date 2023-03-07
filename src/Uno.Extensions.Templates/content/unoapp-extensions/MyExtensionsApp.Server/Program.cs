@@ -21,12 +21,15 @@ try
 #endif
 
 	// Add services to the container.
-
+#if (useHttp)
 	builder.Services.AddControllers()
 		.AddJsonOptions(options =>
 		{
 			options.JsonSerializerOptions.AddContext<WeatherForecastContext>();
 		});
+#else
+	builder.Services.AddControllers();
+#endif
 	builder.Services.Configure<RouteOptions>(options =>
 		options.LowercaseUrls = true);
 

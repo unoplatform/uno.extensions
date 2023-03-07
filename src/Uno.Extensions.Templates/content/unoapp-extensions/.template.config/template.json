@@ -873,6 +873,11 @@
       "dataType": "bool",
       "value": "(tfm == 'net6.0')"
     },
+    "includeNet6DataContractReferences": {
+      "type": "computed",
+      "dataType": "bool",
+      "value": "(tfm == 'net6.0' && useHttp)"
+    },
     "langVersion": {
       "type": "generated",
       "generator": "switch",
