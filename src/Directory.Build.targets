@@ -85,6 +85,7 @@
 		<WriteLinesToFile File="$(_AndroidResourceDesignerFile)" Lines="// Empty Content from uno.ui Directory.Build.targets." />
 	</Target>
 
+	<!-- NOTE: This is due to a Race Condition with MSBuild where the dll may not yet exist on a clean build -->
 	<Target Name="PackageGeneratorBuild"
 			AfterTargets="Build">
 		<PropertyGroup>
