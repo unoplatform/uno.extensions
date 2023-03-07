@@ -27,6 +27,8 @@
 		<DebugType>portable</DebugType>
 		<DebugSymbols>True</DebugSymbols>
 		<ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+
+		<UnoExtensionsGeneration_DisableModuleInitializerAttribute>True</UnoExtensionsGeneration_DisableModuleInitializerAttribute>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)'=='Release'">
