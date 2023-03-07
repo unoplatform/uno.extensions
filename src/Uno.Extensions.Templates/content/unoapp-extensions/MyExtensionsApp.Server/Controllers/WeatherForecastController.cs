@@ -27,6 +27,7 @@ public class WeatherForecastController : ControllerBase
 	[ProducesResponseType(typeof(IEnumerable<WeatherForecast>), 200)]
 	public IEnumerable<WeatherForecast> Get() =>
 		Enumerable.Range(1, 5).Select(index =>
+//+:cnd:noEmit
 		#if (includeNet6DataContractReferences)
 			new WeatherForecast
 			{
@@ -41,6 +42,7 @@ public class WeatherForecastController : ControllerBase
 				Summaries[Random.Shared.Next(Summaries.Length)]
 			)
 		#endif
+//-:cnd:noEmit
 		)
 		.Select(x => {
 			_logger.LogInformation("Weather forecast for {Date} is a {Summary} {TemperatureC}°C", x.Date, x.Summary, x.TemperatureC);
