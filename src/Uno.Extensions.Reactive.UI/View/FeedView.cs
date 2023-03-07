@@ -217,6 +217,8 @@ public partial class FeedView : Control
 		{
 			ViewDebugger.SetIsEnabled(this, true);
 		}
+		
+		DefaultStyleKey = typeof(FeedView);
 
 		Refresh = new RefreshCommand(this);
 		State = new FeedViewState(this) { Parent = DataContext }; // Create a State instance specific for this FeedView
