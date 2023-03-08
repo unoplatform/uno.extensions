@@ -1,6 +1,7 @@
 ﻿//-:cnd:noEmit
 global using System;
 global using System.Collections.Generic;
+global using System.Collections.Immutable;
 global using System.Linq;
 global using System.Net.Http;
 global using System.Threading;
@@ -37,7 +38,10 @@ global using MyExtensionsApp.Infrastructure;
 global using MyExtensionsApp.Presentation;
 #endif
 #if (useHttp)
-global using MyExtensionsApp.Services;
+global using MyExtensionsApp.DataContracts;
+global using MyExtensionsApp.DataContracts.Serialization;
+global using MyExtensionsApp.Services.Caching;
+global using MyExtensionsApp.Services.Endpoints;
 global using Uno.Extensions.Http;
 #endif
 #if (useExtensionsNavigation)

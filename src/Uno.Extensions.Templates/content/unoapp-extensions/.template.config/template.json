@@ -873,6 +873,11 @@
       "dataType": "bool",
       "value": "(tfm == 'net6.0')"
     },
+    "includeNet6DataContractReferences": {
+      "type": "computed",
+      "dataType": "bool",
+      "value": "(tfm == 'net6.0' && useHttp)"
+    },
     "langVersion": {
       "type": "generated",
       "generator": "switch",
@@ -1512,7 +1517,7 @@
           "condition": "(!useHttp)",
           "exclude": [
             "MyExtensionsApp/Infrastructure/DebugHandler.cs",
-            "MyExtensionsApp/Services/IApiClient.cs"
+            "MyExtensionsApp/Services/**"
           ]
         },
         {

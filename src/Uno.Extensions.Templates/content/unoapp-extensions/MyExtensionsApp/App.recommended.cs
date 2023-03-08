@@ -49,21 +49,23 @@ public class App : Application
 				// Enable localization (see appsettings.json for supported languages)
 				.UseLocalization()
 #endif
-				// Register Json serializers (ISerializer and ISerializer)
-				.UseSerialization()
-				.ConfigureServices((context, services) => {
 #if useHttp
+				// Register Json serializers (ISerializer and ISerializer)
+				.UseSerialization((context, services) => services
+					.AddContentSerializer(context)
+					.AddJsonTypeInfo(WeatherForecastContext.Default.IImmutableListWeatherForecast))
+				.UseHttp((context, services) => services
 					// Register HttpClient
-					services
 //-:cnd:noEmit
 #if DEBUG
 						// DelegatingHandler will be automatically injected into Refit Client
 						.AddTransient<DelegatingHandler, DebugHttpHandler>()
 #endif
 //+:cnd:noEmit
-						.AddRefitClient<IApiClient>(context);
-
+						.AddSingleton<IWeatherCache, WeatherCache>()
+						.AddRefitClient<IApiClient>(context))
 #endif
+				.ConfigureServices((context, services) => {
 					// TODO: Register your services
 					//services.AddSingleton<IMyService, MyService>();
 				})
