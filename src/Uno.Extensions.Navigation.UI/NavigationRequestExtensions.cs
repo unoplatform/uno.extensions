@@ -26,6 +26,11 @@ public static class NavigationRequestExtensions
 
 	public static NavigationRequest IncludeDependentRoutes(this NavigationRequest request, IRouteResolver resolver)
 	{
+		if (request.Route.Base.IsNullOrWhiteSpace())
+		{
+			return request;
+		}
+
 		var rm = resolver.FindByPath(request.Route.Base);
 		while (rm?.DependsOnRoute is not null)
 		{

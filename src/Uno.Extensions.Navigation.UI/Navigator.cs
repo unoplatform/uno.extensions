@@ -108,6 +108,10 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 			return dataNavResponse;
 		}
 
+		// Make sure we always include dependencies - frame navigator will
+		// trim any route sections that are already in backstack
+		request = request.IncludeDependentRoutes(Resolver);
+
 		// If first section of Route matches the NAme of a nested region
 		// then route the request to the region
 		if (await RedirectForNamedNestedRegion(request) is { } namedNavResponse)
