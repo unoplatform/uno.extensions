@@ -11,8 +11,8 @@
 		<UseWinUI>true</UseWinUI>
 		<DefineConstants>$(DefineConstants);WINUI;UNO_EXT_TIMERS</DefineConstants>
 		<DefaultLanguage>en</DefaultLanguage>
-		<WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
-		<WindowsPackageType>None</WindowsPackageType>
+		<!--<WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>-->
+		<!--<WindowsPackageType>None</WindowsPackageType>-->
 		<EnableMsixTooling>true</EnableMsixTooling>
 	</PropertyGroup>
 

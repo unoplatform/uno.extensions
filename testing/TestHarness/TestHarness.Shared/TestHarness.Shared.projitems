@@ -263,6 +263,14 @@
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\NavigationView\NavigationViewDataBoundPage.xaml.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\NavigationView\NavigationViewDataBoundViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\NavigationView\NavigationViewDataCookbookDetailsPage.xaml.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\NavigationView\NavigationViewDataCookbooksPage.xaml.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\NavigationView\NavigationViewDataEntityPickerFlyout.xaml.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\NavigationView\NavigationViewDataPage.xaml.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\NavigationView\NavigationViewDataRecipeDetailsPage.xaml.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\NavigationView\NavigationViewDataRecipesPage.xaml.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\NavigationView\NavigationViewDataService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\NavigationView\NavigationViewDataViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\NavigationView\NavigationViewHomePage.xaml.cs">
       <DependentUpon>NavigationViewHomePage.xaml</DependentUpon>
     </Compile>
@@ -578,6 +586,30 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="$(MSBuildThisFileDirectory)Ext\Navigation\ListToDetails\ListToDetailsMainPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Ext\Navigation\NavigationView\NavigationViewDataCookbookDetailsPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Ext\Navigation\NavigationView\NavigationViewDataCookbooksPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Ext\Navigation\NavigationView\NavigationViewDataEntityPickerFlyout.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Ext\Navigation\NavigationView\NavigationViewDataPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Ext\Navigation\NavigationView\NavigationViewDataRecipeDetailsPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Ext\Navigation\NavigationView\NavigationViewDataRecipesPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
