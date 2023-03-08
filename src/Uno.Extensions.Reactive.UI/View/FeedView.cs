@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.CompilerServices;
 
 namespace Uno.Extensions.Reactive.UI;
 
@@ -18,7 +19,7 @@ public partial class FeedView : Control
 		"Source", typeof(object), typeof(FeedView), new PropertyMetadata(default(object), OnSourceChanged));
 
 	private static void OnSourceChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
-		=> (obj as FeedView)?.Subscribe(args.NewValue as ISignal<IMessage>);
+		=> (obj as FeedView)?.Subscribe();
 
 	/// <summary>
 	/// Gets or sets the <see cref="IFeed{T}"/> displayed by this control.
@@ -218,6 +219,8 @@ public partial class FeedView : Control
 			ViewDebugger.SetIsEnabled(this, true);
 		}
 
+		DefaultStyleKey = typeof(FeedView);
+
 		Refresh = new RefreshCommand(this);
 		State = new FeedViewState(this) { Parent = DataContext }; // Create a State instance specific for this FeedView
 
@@ -230,15 +233,17 @@ public partial class FeedView : Control
 	private static readonly DependencyProperty ReroutedDataContextProperty = DependencyProperty.Register(
 		"ReroutedDataContext", typeof(object), typeof(FeedView), new PropertyMetadata(default(object), (snd, e) => ((FeedView)snd).State.Parent = e.NewValue));
 
+	private static readonly DependencyProperty SourceFeedProperty = DependencyProperty.Register(
+		"SourceFeed", typeof(object), typeof(FeedView), new PropertyMetadata(default(object), OnSourceChanged));
+
+	private WeakReference<Binding>? _sourceBinding; // Keep a ref to the binding to the SourceProperty
+
 	private static void Enable(object snd, RoutedEventArgs _)
 	{
 		if (snd is FeedView that)
 		{
 			that._isReady = true;
-			if (that.Source is ISignal<IMessage> feed)
-			{
-				that.Subscribe(feed);
-			}
+			that.Subscribe();
 		}
 	}
 
@@ -251,8 +256,9 @@ public partial class FeedView : Control
 		}
 	}
 
-	private void Subscribe(ISignal<IMessage>? feed)
+	private void Subscribe()
 	{
+		var feed = GetSourceFeed();
 		if (feed is null || !_isReady)
 		{
 			SetIsLoading(!_isReady); // If we set the Source to null while we are already ready, we clear the loading flag.
@@ -268,5 +274,46 @@ public partial class FeedView : Control
 
 		_subscription?.Dispose();
 		_subscription = new Subscription(this, feed);
+	}
+
+	private ISignal<IMessage>? GetSourceFeed()
+	{
+		var src = Source;
+		if (src is ISignal<IMessage> feed)
+		{
+			return feed;
+		}
+		else if (GetBindingExpression(SourceProperty) is { ParentBinding: { Path.Path.Length: > 0 } srcBinding })
+		{
+			// The source is data-bound and is not a feed.
+			// Lets try to data-bind to the same path suffixed with a "_Feed" in order to get access to the underlying feed if any.
+			// This is a convention implemented by the generated VM to allow un-distinct usage of FeedView or direct binding to plain properties.
+
+			if ((_sourceBinding?.TryGetTarget(out var lastSourceBindingUsedForFeedSource) ?? true)
+				|| lastSourceBindingUsedForFeedSource != srcBinding)
+			{
+				// The binding to the SourceProperty has changed, we need to update binding to the internal SourceFeedProperty
+
+				_sourceBinding = new WeakReference<Binding>(srcBinding);
+
+				var sourceFeedBinding = new Binding
+				{
+					Path = new PropertyPath(srcBinding.Path.Path + "_Feed"),
+					Source = srcBinding.Source,
+					RelativeSource = srcBinding.RelativeSource,
+					ElementName = srcBinding.ElementName,
+					// We ignore Converter, Fallback and TargetNullValue properties as they do not make sense for such fallback binding
+					Mode = BindingMode.OneTime, // We also hard code the mode as anyway this property is read-only
+				};
+
+				SetBinding(SourceFeedProperty, sourceFeedBinding);
+			}
+
+			return GetValue(SourceFeedProperty) as ISignal<IMessage>;
+		}
+		else
+		{
+			return null;
+		}
 	}
 }
