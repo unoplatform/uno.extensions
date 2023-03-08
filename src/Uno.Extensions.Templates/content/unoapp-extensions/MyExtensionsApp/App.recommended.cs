@@ -56,7 +56,6 @@ public class App : Application
 					.AddJsonTypeInfo(WeatherForecastContext.Default.IImmutableListWeatherForecast))
 				.UseHttp((context, services) => services
 					// Register HttpClient
-					services
 //-:cnd:noEmit
 #if DEBUG
 						// DelegatingHandler will be automatically injected into Refit Client
