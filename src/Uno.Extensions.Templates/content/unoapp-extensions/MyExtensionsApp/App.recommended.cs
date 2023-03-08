@@ -49,21 +49,23 @@ public class App : Application
 				// Enable localization (see appsettings.json for supported languages)
 				.UseLocalization()
 #endif
-				// Register Json serializers (ISerializer and ISerializer)
-				.UseSerialization()
-				.ConfigureServices((context, services) => {
 #if useHttp
+				// Register Json serializers (ISerializer and ISerializer)
+				.UseSerialization((context, services) => services
+					.AddContentSerializer(context)
+					.AddJsonTypeInfo(WeatherForecastContext.Default.IImmutableListWeatherForecast))
+				.UseHttp((context, services) => services
 					// Register HttpClient
-					services
 //-:cnd:noEmit
 #if DEBUG
 						// DelegatingHandler will be automatically injected into Refit Client
 						.AddTransient<DelegatingHandler, DebugHttpHandler>()
 #endif
 //+:cnd:noEmit
-						.AddRefitClient<IApiClient>(context);
-
+						.AddSingleton<IWeatherCache, WeatherCache>()
+						.AddRefitClient<IApiClient>(context))
 #endif
+				.ConfigureServices((context, services) => {
 					// TODO: Register your services
 					//services.AddSingleton<IMyService, MyService>();
 				})
@@ -108,35 +110,19 @@ public class App : Application
 
 	private static void RegisterRoutes(IViewRegistry views, IRouteRegistry routes)
 	{
-#if (useDefaultNavMvux)
+#if (useDefaultNav)
 		views.Register(
-			new ViewMap(ViewModel: typeof(ShellModel)),
-			new ViewMap<MainPage, MainModel>(),
-			new DataViewMap<SecondPage, SecondModel, Entity>()
+			new ViewMap(ViewModel: typeof($shellRouteViewModel$)),
+			new ViewMap<MainPage, $mainRouteViewModel$>(),
+			new DataViewMap<SecondPage, $secondRouteViewModel$, Entity>()
 		);
 
 		routes.Register(
-			new RouteMap("", View: views.FindByViewModel<ShellModel>(),
+			new RouteMap("", View: views.FindByViewModel<$shellRouteViewModel$>(),
 				Nested: new RouteMap[]
 				{
-					new RouteMap("Main", View: views.FindByViewModel<MainModel>()),
-					new RouteMap("Second", View: views.FindByViewModel<SecondModel>()),
-				}
-			)
-		);
-#elif (useDefaultNavMvvm)
-		views.Register(
-			new ViewMap(ViewModel: typeof(ShellViewModel)),
-			new ViewMap<MainPage, MainViewModel>(),
-			new DataViewMap<SecondPage, SecondViewModel, Entity>()
-		);
-
-		routes.Register(
-			new RouteMap("", View: views.FindByViewModel<ShellViewModel>(),
-				Nested: new RouteMap[]
-				{
-					new RouteMap("Main", View: views.FindByViewModel<MainViewModel>()),
-					new RouteMap("Second", View: views.FindByViewModel<SecondViewModel>()),
+					new RouteMap("Main", View: views.FindByViewModel<$mainRouteViewModel$>()),
+					new RouteMap("Second", View: views.FindByViewModel<$secondRouteViewModel$>()),
 				}
 			)
 		);

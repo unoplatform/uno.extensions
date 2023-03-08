@@ -37,11 +37,7 @@
 	<Choose>
 		<When Condition="'$(IsCoreProject)'== 'False' And '$(IsGeneratorProject)' == 'False'" >
 			<ItemGroup>
-				<ProjectReference Include="$(MSBuildThisFileDirectory)\Uno.Extensions.Core.Generators\Uno.Extensions.Core.Generators.csproj">
-					<ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-					<SkipGetTargetFrameworkProperties>true</SkipGetTargetFrameworkProperties>
-					<UndefineProperties>TargetFramework;RuntimeIdentifiers;RuntimeIdentifier</UndefineProperties>
-				</ProjectReference>
+				<ProjectReference Include="$(MSBuildThisFileDirectory)\Uno.Extensions.Core.Generators\Uno.Extensions.Core.Generators.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
 			</ItemGroup>
 		</When>
 	</Choose>
@@ -54,9 +50,6 @@
 			<ItemGroup>
 				<PackageReference Include="Microsoft.WindowsAppSDK" />
 				<PackageReference Include="Microsoft.Windows.SDK.BuildTools" />
-
-				<FrameworkReference Update="Microsoft.Windows.SDK.NET.Ref" RuntimeFrameworkVersion="10.0.22000.25" />
-				<FrameworkReference Update="Microsoft.Windows.SDK.NET.Ref" TargetingPackVersion="10.0.22000.25" />
 			</ItemGroup>
 		</When>
 	</Choose>
@@ -90,6 +83,23 @@
 	<Target Name="AndroidResourceGenWorkaround_16_2" AfterTargets="_UpdateAndroidResgen" Condition="'$(AndroidUseIntermediateDesignerFile)'=='True' and !Exists($(_AndroidResourceDesignerFile))">
 		<Message Importance="high" Text="************************* Empyt designer file" />
 		<WriteLinesToFile File="$(_AndroidResourceDesignerFile)" Lines="// Empty Content from uno.ui Directory.Build.targets." />
+	</Target>
+
+	<!-- NOTE: This is due to a Race Condition with MSBuild where the dll may not yet exist on a clean build -->
+	<Target Name="PackageGeneratorBuild"
+			AfterTargets="Build">
+		<PropertyGroup>
+			<GeneratorOutputPath>$(MSBuildProjectDirectory)\$(IntermediateOutputPath)\PackGenerators\</GeneratorOutputPath>
+		</PropertyGroup>
+		<MSBuild Projects="@(GeneratorProjectReference)"
+				 Properties="Configuration=$(Configuration);OutputPath=$(GeneratorOutputPath)" />
+	</Target>
+
+	<Target Name="GeneratorPack"
+			AfterTargets="PackageGeneratorBuild">
+		<ItemGroup>
+			<None Include="$(GeneratorOutputPath)**\*.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+		</ItemGroup>
 	</Target>
 
 	<Import Project="winappsdk-workaround.targets" Condition="exists('winappsdk-workaround.targets')" />

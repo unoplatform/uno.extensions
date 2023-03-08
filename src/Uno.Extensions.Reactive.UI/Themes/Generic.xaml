@@ -4,7 +4,7 @@
 	xmlns:toolkit="using:Uno.UI.Toolkit">
 
 	<ResourceDictionary.MergedDictionaries>
-		<ResourceDictionary Source="ms-appx:///Uno.Extensions.Reactive.UI/View/FeedView.xaml" />
+		<ResourceDictionary Source="View/FeedView.xaml" />
 	</ResourceDictionary.MergedDictionaries>
 
 </ResourceDictionary>

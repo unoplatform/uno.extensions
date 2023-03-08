@@ -5,9 +5,12 @@
 	xmlns:local="using:TestHarness.Ext.Navigation.Validation"
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	xmlns:app="using:TestHarness.Converters"
 	mc:Ignorable="d"
 	Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-
+	<Page.Resources>
+		<app:StringToBoolConverter x:Key="stringToBoolConverter"/>
+	</Page.Resources>
 	<Grid>
 		<Grid.RowDefinitions>
 			<RowDefinition/>
@@ -18,23 +21,35 @@
 			<StackPanel
 				Orientation="Vertical">
 				<TextBlock
-					Text="ValidatableObject Validation Results:"
+					Text="SimpleValidator Demo:"
 					HorizontalAlignment="Left"
 					FontSize="25" />
-				<ListView
-					AutomationProperties.AutomationId="ValidatableObjectErrorsList"
-					HorizontalAlignment="Left"
-					ItemsSource="{Binding ValidatableObjectErrors}">
-					<ListView.ItemTemplate>
-						<DataTemplate>
+				<StackPanel
+					Orientation="Horizontal"
+					Spacing="10">
+					<TextBlock
+						Text="Name: "
+						HorizontalAlignment="Left"
+						VerticalAlignment="Center"
+						FontSize="15" />
+					<TextBox
+						Width="100"
+						Height="20"
+						VerticalAlignment="Center"
+						Text="{Binding SimpleEntity.Title, Mode=TwoWay}" />
+					<SymbolIcon
+						Symbol="ReportHacked"
+						Foreground="Red"
+						Visibility="{Binding SimpleEntity.TitleErrors, Mode=OneWay, Converter={StaticResource stringToBoolConverter}}"
+						HorizontalAlignment="Right"
+						Margin="0 8">
+						<ToolTipService.ToolTip>
 							<TextBlock
-								HorizontalAlignment="Left"
-								Text="{Binding ErrorMessage}"
-								FontSize="14" />
-						</DataTemplate>
-					</ListView.ItemTemplate>
-
-				</ListView>
+								Text="{Binding SimpleEntity.TitleErrors, Mode=OneWay}"
+								Foreground="Red" />
+						</ToolTipService.ToolTip>
+					</SymbolIcon>
+				</StackPanel>
 			</StackPanel>
 		</Grid>
 
@@ -43,23 +58,60 @@
 			<StackPanel
 				Orientation="Vertical">
 				<TextBlock
-					Text="ObservableValidator Validation Results:"
+					Text="ObservableValidator Demo:"
 					HorizontalAlignment="Left"
 					FontSize="25" />
-				<ListView
-					AutomationProperties.AutomationId="ObservableValidatorErrorsList"
-					HorizontalAlignment="Left"
-					ItemsSource="{Binding ObservableValidatorErrors}">
-					<ListView.ItemTemplate>
-						<DataTemplate>
+				<StackPanel
+					Orientation="Horizontal" Spacing="10">
+					<TextBlock
+						Text="First Name: "
+						HorizontalAlignment="Left"
+						VerticalAlignment="Center"
+						FontSize="15" />
+					<TextBox
+						Width="100"
+						Height="20"
+						VerticalAlignment="Center"
+						Text="{Binding ObservableUser.FirstName, Mode=TwoWay}" />
+					<SymbolIcon
+						Symbol="ReportHacked"
+						Foreground="Red"
+						Visibility="{Binding ObservableUser.FirstNameErrors, Mode=OneWay, Converter={StaticResource stringToBoolConverter}}"
+						HorizontalAlignment="Right"
+						Margin="0 8">
+						<ToolTipService.ToolTip>
 							<TextBlock
-								HorizontalAlignment="Left"
-								Text="{Binding ErrorMessage}"
-								FontSize="14" />
-						</DataTemplate>
-					</ListView.ItemTemplate>
-
-				</ListView>
+								Text="{Binding ObservableUser.FirstNameErrors, Mode=OneWay}"
+								Foreground="Red" />
+						</ToolTipService.ToolTip>
+					</SymbolIcon>
+				</StackPanel>
+				<StackPanel
+					Orientation="Horizontal"
+					Spacing="10">
+					<TextBlock
+						Text="Last Name: "
+						HorizontalAlignment="Left"
+						VerticalAlignment="Center"
+						FontSize="15" />
+					<TextBox
+						Width="100"
+						Height="20"
+						VerticalAlignment="Center"
+						Text="{Binding ObservableUser.LastName, Mode=TwoWay}" />
+					<SymbolIcon
+						Symbol="ReportHacked"
+						Foreground="Red"
+						Visibility="{Binding ObservableUser.LastNameErrors, Mode=OneWay, Converter={StaticResource stringToBoolConverter}}"
+						HorizontalAlignment="Right"
+						Margin="0 8">
+						<ToolTipService.ToolTip>
+							<TextBlock
+								Text="{Binding ObservableUser.LastNameErrors, Mode=OneWay}"
+								Foreground="Red" />
+						</ToolTipService.ToolTip>
+					</SymbolIcon>
+				</StackPanel>
 			</StackPanel>
 		</Grid>
 
@@ -68,23 +120,35 @@
 			<StackPanel
 				Orientation="Vertical">
 				<TextBlock
-					Text="FluentValidator Validation Results:"
+					Text="FluentValidator Demo:"
 					HorizontalAlignment="Left"
 					FontSize="25" />
-				<ListView
-					AutomationProperties.AutomationId="FluentValidatorErrorsList"
-					HorizontalAlignment="Left"
-					ItemsSource="{Binding FluentValidatorErrors}">
-					<ListView.ItemTemplate>
-						<DataTemplate>
+				<StackPanel
+					Orientation="Horizontal"
+					Spacing="10">
+					<TextBlock
+						Text="Name: "
+						HorizontalAlignment="Left"
+						VerticalAlignment="Center"
+						FontSize="15" />
+					<TextBox
+						Width="100"
+						Height="20"
+						VerticalAlignment="Center"
+						Text="{Binding FluentUser.Name, Mode=TwoWay}" />
+					<SymbolIcon
+						Symbol="ReportHacked"
+						Foreground="Red"
+						Visibility="{Binding FluentUser.NameErrors, Mode=OneWay, Converter={StaticResource stringToBoolConverter}}"
+						HorizontalAlignment="Right"
+						Margin="0 8">
+						<ToolTipService.ToolTip>
 							<TextBlock
-								HorizontalAlignment="Left"
-								Text="{Binding ErrorMessage}"
-								FontSize="14" />
-						</DataTemplate>
-					</ListView.ItemTemplate>
-
-				</ListView>
+								Text="{Binding FluentUser.NameErrors, Mode=OneWay}"
+								Foreground="Red" />
+						</ToolTipService.ToolTip>
+					</SymbolIcon>
+				</StackPanel>
 			</StackPanel>
 		</Grid>
 	</Grid>

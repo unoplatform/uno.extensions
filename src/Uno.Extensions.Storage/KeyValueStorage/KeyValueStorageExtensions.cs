@@ -13,7 +13,7 @@ public static class KeyValueStorageExtensions
 		string key,
 		CancellationToken ct)
 	{
-		if(await storage.ContainsKey(key,ct))
+		if (await storage.ContainsKey(key, ct))
 		{
 			return await storage.GetAsync<string>(key, ct);
 		}
@@ -21,17 +21,23 @@ public static class KeyValueStorageExtensions
 		return default;
 	}
 
-
-		public static async ValueTask<IDictionary<string,string>> GetAllValuesAsync(
+	public static ValueTask<IDictionary<string, string>> GetAllValuesAsync(
 		this IKeyValueStorage storage,
 		CancellationToken ct)
 	{
-		var dict=  new Dictionary<string, string>();
+		return GetAllValuesAsync(storage, _ => true, ct);
+	}
+	public static async ValueTask<IDictionary<string, string>> GetAllValuesAsync(
+	this IKeyValueStorage storage,
+	Func<string, bool> predicate,
+	CancellationToken ct)
+	{
+		var dict = new Dictionary<string, string>();
 		var keys = await storage.GetKeysAsync(ct);
-		foreach (var key in keys)
+		foreach (var key in keys.Where(predicate))
 		{
 			var value = await storage.GetAsync<string>(key, ct);
-			if(value is not null)
+			if (value is not null)
 			{
 				dict[key] = value;
 			}
@@ -39,12 +45,20 @@ public static class KeyValueStorageExtensions
 		return dict;
 	}
 
+	public static ValueTask ClearAllAsync(
+	this IKeyValueStorage storage,
+	CancellationToken ct)
+	{
+		return ClearAllAsync(storage, _ => true, ct);	
+	}
+
 	public static async ValueTask ClearAllAsync(
 		this IKeyValueStorage storage,
+		Func<string, bool> predicate,
 		CancellationToken ct)
 	{
 		var keys = await storage.GetKeysAsync(ct);
-		foreach (var key in keys)
+		foreach (var key in keys.Where(predicate))
 		{
 			await storage.ClearAsync(key, ct);
 		}

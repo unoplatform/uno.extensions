@@ -22,46 +22,37 @@
 		<Manifest Include="$(ApplicationManifest)" />
 	</ItemGroup>
 
-	<!--#if (useBlankAppTemplate)-->
-	<ItemGroup>
-		<!--#if (useCPM)-->
-		<PackageReference Include="Uno.WinUI" />
-		<!--#if (useCsharpMarkup)-->
-		<PackageReference Include="Uno.WinUI.Markup" />
-		<!--#endif-->
-		<PackageReference Include="Microsoft.WindowsAppSDK" />
-		<PackageReference Include="Microsoft.Windows.SDK.BuildTools" />
-		<PackageReference Include="Microsoft.Extensions.Logging.Console" />
-		<PackageReference Include="Uno.Core.Extensions.Logging.Singleton" />
-		<PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" />
-		<!--#else-->
-		<PackageReference Include="Uno.WinUI" Version="4.7.44" />
-		<!--#if (useCsharpMarkup)-->
-		<PackageReference Include="Uno.WinUI.Markup" Version="4.7.0-dev.17" />
-		<!--#endif-->
-		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.2.230118.102" />
-		<PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.755" />
-		<PackageReference Include="Microsoft.Extensions.Logging.Console" Version="7.0.0" />
-		<PackageReference Include="Uno.Core.Extensions.Logging.Singleton" Version="4.0.1" />
-		<PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="4.7.44" />
-		<!--#endif-->
-	</ItemGroup>
-	<!--#endif-->
-	<!--#if (useRecommendedAppTemplate)-->
 	<!--#if (useCPM)-->
 	<ItemGroup>
 		<PackageReference Include="Uno.WinUI" />
 		<PackageReference Include="Microsoft.WindowsAppSDK" />
 		<PackageReference Include="Microsoft.Windows.SDK.BuildTools" />
-		<PackageReference Include="Microsoft.Extensions.Logging.Console" />
-		<PackageReference Include="Uno.Core.Extensions.Logging.Singleton" />
-		<PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" />
 		<!--#if (useCsharpMarkup)-->
 		<PackageReference Include="Uno.WinUI.Markup" />
 		<!--#if (useMaterial)-->
 		<PackageReference Include="Uno.Material.WinUI.Markup" />
 		<!--#endif-->
 		<PackageReference Include="Uno.Themes.WinUI.Markup" />
+		<!--#endif-->
+		<!--#if (useMvvm) -->
+		<PackageReference Include="CommunityToolkit.Mvvm" />
+		<!--#endif -->
+		<!--#if (useConfiguration)-->
+		<PackageReference Include="Uno.Extensions.Configuration" />
+		<!--#endif-->
+		<!--#if (useHttp)-->
+		<PackageReference Include="Uno.Extensions.Http" />
+		<PackageReference Include="Uno.Extensions.Http.Refit" />
+		<!--#endif-->
+		<!--#if (useLogging)-->
+		<PackageReference Include="Uno.Extensions.Logging.WinUI" />
+		<!--#endif-->
+		<!--#if (useSerilog)-->
+		<PackageReference Include="Uno.Extensions.Logging.Serilog" />
+		<!--#endif-->
+		<!--#if (useHttp)-->
+		<PackageReference Include="Uno.Extensions.Serialization.Http" />
+		<PackageReference Include="Uno.Extensions.Serialization.Refit" />
 		<!--#endif-->
 		<!--#if (useMaterial)-->
 		<PackageReference Include="Uno.Material.WinUI" />
@@ -74,70 +65,53 @@
 		<!--#else-->
 		<PackageReference Include="Uno.Toolkit.WinUI" />
 		<!--#endif-->
+		<!--#if (useAuthentication)-->
 		<PackageReference Include="Uno.Extensions.Authentication.WinUI" />
+		<!--#endif-->
+		<!--#if (useDependencyInjection)-->
 		<PackageReference Include="Uno.Extensions.Hosting.WinUI" />
+		<!--#endif-->
 		<!--#if (useLocalization)-->
-		<PackageReference Include="Uno.Extensions.Localization" />
 		<PackageReference Include="Uno.Extensions.Localization.WinUI" />
-		<!--#endif-->
-		<!--#if (useLogging)-->
-		<PackageReference Include="Uno.Extensions.Logging.WinUI" />
-		<!--#endif-->
-		<!--#if (useSerilog)-->
-		<PackageReference Include="Uno.Extensions.Logging.Serilog" />
 		<!--#endif-->
 		<!--#if (useExtensionsNavigation)-->
 		<PackageReference Include="Uno.Extensions.Navigation.Toolkit.WinUI" />
 		<PackageReference Include="Uno.Extensions.Navigation.WinUI" />
+		<!--#if (useCsharpMarkup)-->
+		<PackageReference Include="Uno.Extensions.Navigation.WinUI.Markup" />
 		<!--#endif-->
-		<!--#if (useConfiguration)-->
-		<PackageReference Include="Uno.Extensions.Configuration" />
-		<!--#endif-->
-		<PackageReference Include="Uno.Extensions.Core" />
-		<!--#if (useHttp)-->
-		<PackageReference Include="Uno.Extensions.Http" />
-		<PackageReference Include="Uno.Extensions.Http.Refit" />
 		<!--#endif-->
 		<!--#if (useMvux)-->
 		<PackageReference Include="Uno.Extensions.Reactive.WinUI" />
+		<!--#if (useCsharpMarkup)-->
+		<PackageReference Include="Uno.Extensions.Reactive.WinUI.Markup" />
 		<!--#endif-->
-		<PackageReference Include="Uno.Extensions.Serialization" />
-		<!--#if (useHttp)-->
-		<PackageReference Include="Uno.Extensions.Serialization.Http" />
-		<PackageReference Include="Uno.Extensions.Serialization.Refit" />
 		<!--#endif-->
+		<PackageReference Include="Microsoft.Extensions.Logging.Console" />
+		<PackageReference Include="Uno.Core.Extensions.Logging.Singleton" />
+		<PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" />
 	</ItemGroup>
 	<!--#else-->
 	<ItemGroup>
 		<PackageReference Include="Uno.WinUI" Version="4.7.44" />
 		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.2.230118.102" />
 		<PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.755" />
-		<PackageReference Include="Microsoft.Extensions.Logging.Console" Version="7.0.0" />
-		<PackageReference Include="Uno.Core.Extensions.Logging.Singleton" Version="4.0.1" />
-		<PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="4.7.44" />
 		<!--#if (useCsharpMarkup)-->
 		<PackageReference Include="Uno.WinUI.Markup" Version="4.7.0-dev.17" />
 		<!--#if (useMaterial)-->
-		<PackageReference Include="Uno.Material.WinUI.Markup" Version="2.5.0-dev.31" />
+		<PackageReference Include="Uno.Material.WinUI.Markup" Version="2.5.0-dev.37" />
 		<!--#endif-->
-		<PackageReference Include="Uno.Themes.WinUI.Markup" Version="2.5.0-dev.31" />
+		<PackageReference Include="Uno.Themes.WinUI.Markup" Version="2.5.0-dev.37" />
 		<!--#endif-->
-		<!--#if (useMaterial)-->
-		<PackageReference Include="Uno.Material.WinUI" Version="2.5.0-dev.31" />
-		<PackageReference Include="Uno.Toolkit.WinUI.Material" Version="2.5.0-dev.23" />
-		<!--#elif (useCupertino)-->
-		<PackageReference Include="Uno.Cupertino.WinUI" Version="2.5.0-dev.31" />
+		<!--#if (useMvvm) -->
+		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.1.0" />
+		<!--#endif -->
+		<!--#if (useConfiguration)-->
+		<PackageReference Include="Uno.Extensions.Configuration" Version="255.255.255.255" />
 		<!--#endif-->
-		<!--#if (useCsharpMarkup)-->
-		<PackageReference Include="Uno.Toolkit.WinUI.Markup" Version="2.5.0-dev.23" />
-		<!--#else-->
-		<PackageReference Include="Uno.Toolkit.WinUI" Version="2.5.0-dev.23" />
-		<!--#endif-->
-		<PackageReference Include="Uno.Extensions.Authentication.WinUI" Version="255.255.255.255" />
-		<PackageReference Include="Uno.Extensions.Hosting.WinUI" Version="255.255.255.255" />
-		<!--#if (useLocalization)-->
-		<PackageReference Include="Uno.Extensions.Localization" Version="255.255.255.255" />
-		<PackageReference Include="Uno.Extensions.Localization.WinUI" Version="255.255.255.255" />
+		<!--#if (useHttp)-->
+		<PackageReference Include="Uno.Extensions.Http" Version="255.255.255.255" />
+		<PackageReference Include="Uno.Extensions.Http.Refit" Version="255.255.255.255" />
 		<!--#endif-->
 		<!--#if (useLogging)-->
 		<PackageReference Include="Uno.Extensions.Logging.WinUI" Version="255.255.255.255" />
@@ -145,28 +119,47 @@
 		<!--#if (useSerilog)-->
 		<PackageReference Include="Uno.Extensions.Logging.Serilog" Version="255.255.255.255" />
 		<!--#endif-->
-		<!--#if (useExtensionsNavigation)-->
-		<PackageReference Include="Uno.Extensions.Navigation.Toolkit.WinUI" Version="255.255.255.255" />
-		<PackageReference Include="Uno.Extensions.Navigation.WinUI" Version="255.255.255.255" />
-		<!--#endif-->
-		<!--#if (useConfiguration)-->
-		<PackageReference Include="Uno.Extensions.Configuration" Version="255.255.255.255" />
-		<!--#endif-->
-		<PackageReference Include="Uno.Extensions.Core" Version="255.255.255.255" />
-		<!--#if (useHttp)-->
-		<PackageReference Include="Uno.Extensions.Http" Version="255.255.255.255" />
-		<PackageReference Include="Uno.Extensions.Http.Refit" Version="255.255.255.255" />
-		<!--#endif-->
-		<!--#if (useMvux)-->
-		<PackageReference Include="Uno.Extensions.Reactive.WinUI" Version="255.255.255.255" />
-		<!--#endif-->
-		<PackageReference Include="Uno.Extensions.Serialization" Version="255.255.255.255" />
 		<!--#if (useHttp)-->
 		<PackageReference Include="Uno.Extensions.Serialization.Http" Version="255.255.255.255" />
 		<PackageReference Include="Uno.Extensions.Serialization.Refit" Version="255.255.255.255" />
 		<!--#endif-->
+		<!--#if (useMaterial)-->
+		<PackageReference Include="Uno.Material.WinUI" Version="2.5.0-dev.37" />
+		<PackageReference Include="Uno.Toolkit.WinUI.Material" Version="2.5.0-dev.35" />
+		<!--#elif (useCupertino)-->
+		<PackageReference Include="Uno.Cupertino.WinUI" Version="2.5.0-dev.37" />
+		<!--#endif-->
+		<!--#if (useCsharpMarkup)-->
+		<PackageReference Include="Uno.Toolkit.WinUI.Markup" Version="2.5.0-dev.35" />
+		<!--#else-->
+		<PackageReference Include="Uno.Toolkit.WinUI" Version="2.5.0-dev.35" />
+		<!--#endif-->
+		<!--#if (useAuthentication)-->
+		<PackageReference Include="Uno.Extensions.Authentication.WinUI" Version="255.255.255.255" />
+		<!--#endif-->
+		<!--#if (useDependencyInjection)-->
+		<PackageReference Include="Uno.Extensions.Hosting.WinUI" Version="255.255.255.255" />
+		<!--#endif-->
+		<!--#if (useLocalization)-->
+		<PackageReference Include="Uno.Extensions.Localization.WinUI" Version="255.255.255.255" />
+		<!--#endif-->
+		<!--#if (useExtensionsNavigation)-->
+		<PackageReference Include="Uno.Extensions.Navigation.Toolkit.WinUI" Version="255.255.255.255" />
+		<PackageReference Include="Uno.Extensions.Navigation.WinUI" Version="255.255.255.255" />
+		<!--#if (useCsharpMarkup)-->
+		<PackageReference Include="Uno.Extensions.Navigation.WinUI.Markup" Version="255.255.255.255" />
+		<!--#endif-->
+		<!--#endif-->
+		<!--#if (useMvux)-->
+		<PackageReference Include="Uno.Extensions.Reactive.WinUI" Version="255.255.255.255" />
+		<!--#if (useCsharpMarkup)-->
+		<PackageReference Include="Uno.Extensions.Reactive.WinUI.Markup" Version="255.255.255.255" />
+		<!--#endif-->
+		<!--#endif-->
+		<PackageReference Include="Microsoft.Extensions.Logging.Console" Version="7.0.0" />
+		<PackageReference Include="Uno.Core.Extensions.Logging.Singleton" Version="4.0.1" />
+		<PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="4.7.44" />
 	</ItemGroup>
-	<!--#endif-->
 	<!--#endif-->
 
 	<ItemGroup>
@@ -177,18 +170,4 @@
 	</ItemGroup>
 
 	<Import Project="..\MyExtensionsApp.Base\base.props" />
-
-	<ItemGroup>
-		<!--
-		If you encounter this error message:
-
-			error NETSDK1148: A referenced assembly was compiled using a newer version of Microsoft.Windows.SDK.NET.dll. Please update to a newer .NET SDK in order to reference this assembly.
-
-		This means that the two packages below must be aligned with the "build" version number of
-		the "Microsoft.Windows.SDK.BuildTools" package above, and the "revision" version number
-		must be the highest found in https://www.nuget.org/packages/Microsoft.Windows.SDK.NET.Ref.
-		-->
-		<FrameworkReference Update="Microsoft.Windows.SDK.NET.Ref" RuntimeFrameworkVersion="10.0.22621.28" />
-		<FrameworkReference Update="Microsoft.Windows.SDK.NET.Ref" TargetingPackVersion="10.0.22621.28" />
-	</ItemGroup>
 </Project>

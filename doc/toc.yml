@@ -1,19 +1,95 @@
 - name: Overview
-  href: Overview/ExtensionsOverviewAndGettingStarted.md
+  href: ExtensionsOverview.md
+- name: Frequently Asked Questions
+  href: Questions.md
+- name: Creating an Application
+  href: GettingStarted.md
+- name: Learn
   items:
-    - name: Hosting
-      href: Overview/Hosting/HostingOverview.md
-    - name: Dependency Injection
-      href: Overview/DependencyInjection/DependencyInjectionOverview.md
-    - name: Configuration
-      href: Overview/Configuration/ConfigurationOverview.md
-    - name: Logging
-      href: Overview/Logging/LoggingOverview.md
-    - name: Navigation
-      href: Overview/Navigation/NavigationOverview.md
-    - name: Reactive
-      topicHref: Overview/Reactive/concept.md
+    - name: Authentication
       items:
+        - name: Overview
+          href: Overview/Authentication/AuthenticationOverview.md
+        - name: Get Started with Authentication
+          href: Learn/Tutorials/Authentication/HowTo-Authentication.md
+    - name: Configuration
+      items:
+        - name: Overview
+          href: Overview/Configuration/ConfigurationOverview.md
+        - name: Get Started with Configuration
+          href: Learn/Tutorials/Configuration/HowTo-Configuration.md
+        - name: How to update settings from an embedded resource file
+          href: Learn/Tutorials/Configuration/HowTo-WritableConfiguration.md
+    - name: Dependency Injection
+      items:
+        - name: Overview
+          href: Overview/DependencyInjection/DependencyInjectionOverview.md
+        - name: Register and Use Services with Dependency Injection
+          href: Learn/Tutorials/DependencyInjection/HowTo-DependencyInjectionSetup.md
+        - name: Use the CommunityToolkit with Dependency Injection
+          href: Learn/Tutorials/DependencyInjection/HowTo-CommunityToolkit.md
+    - name: Hosting
+      items:
+        - name: Overview
+          href: Overview/Hosting/HostingOverview.md
+        - name: Get Started with Hosting
+          href: Learn/Tutorials/Hosting/HowTo-HostingSetup.md
+    - name: Http
+      items:
+        - name: Overview
+          href: Overview/Http/HttpOverview.md
+        - name: Get Started with Http
+          href: Learn/Tutorials/Http/HowTo-Http.md
+    - name: Localization
+      items:
+        - name: Overview
+          href: Overview/Localization/LocalizationOverview.md
+        - name: Get Started with Localization
+          href: Learn/Tutorials/Localization/HowTo-Localization.md
+    - name: Logging
+      items:
+        - name: Overview
+          href: Overview/Logging/LoggingOverview.md
+        - name: Enable and Use Logging
+          href: Learn/Tutorials/Logging/HowTo-Logging.md
+        - name: Enable internal Uno Platform logging
+          href: Learn/Tutorials/Logging/HowTo-InternalLogging.md
+    - name: Navigation
+      items:
+        - name: Overview
+          href: Overview/Navigation/NavigationOverview.md
+        - name: Navigate between pages
+          href: Learn/Tutorials/Navigation/HowTo-NavigateBetweenPages.md
+        - name: Navigate from code
+          href: Learn/Tutorials/Navigation/HowTo-NavigateInCode.md
+        - name: Navigate from XAML
+          href: Learn/Tutorials/Navigation/HowTo-NavigateInXAML.md
+        - name: Display a message dialog
+          href: Learn/Tutorials/Navigation/HowTo-DisplayMessageDialog.md
+        - name: Request a value
+          href: Learn/Tutorials/Navigation/HowTo-SelectValue.md
+        - name: Display a modal flyout
+          href: Learn/Tutorials/Navigation/HowTo-ShowFlyout.md
+        - name: Display an item
+          href: Learn/Tutorials/Navigation/HowTo-DisplayItem.md
+        - name: Advanced
+          items:
+            - name: Page Navigation
+              href: Learn/Tutorials/Navigation/Advanced/HowTo-AdvancedPageNavigation.md
+            - name: Use a Panel (Grid, StackPanel etc)
+              href: Learn/Tutorials/Navigation/Advanced/HowTo-UsePanel.md
+            - name: Use a TabBar
+              href: Learn/Tutorials/Navigation/Advanced/HowTo-UseTabBar.md
+            - name: Use a NavigationView
+              href: Learn/Tutorials/Navigation/Advanced/HowTo-UseNavigationView.md
+            - name: Build a Responsive Shell
+              href: Learn/Tutorials/Navigation/Advanced/HowTo-ResponsiveShell.md
+            - name: Use a Content Control
+              href: Learn/Tutorials/Navigation/Advanced/HowTo-UseContentControl.md
+    - name: Reactive
+      items:
+        - name: Overview
+          href: Overview/Reactive/concept.md
         - name: General guidelines
           href: Overview/Reactive/general.md
         - name: Feed
@@ -28,88 +104,16 @@
           href: Overview/Reactive/testing.md
         - name: Analysis rules
           href: Overview/Reactive/rules.md
-    - name: Authentication
-      href: Overview/Authentication/AuthenticationOverview.md
-    - name: Localization
-      href: Overview/Localization/LocalizationOverview.md
     - name: Serialization
-      href: Overview/Serialization/SerializationOverview.md
-    - name: Http
-      href: Overview/Http/HttpOverview.md
-    - name: Validation
-      href: Overview/Validation/ValidationOverview.md
-- name: Learn
-  items:
-    - name: Tutorials
       items:
-        - name: Authentication
-          items:
-            - name: Get Started with Authentication
-              href: Learn/Tutorials/Authentication/HowTo-Authentication.md
-        - name: Hosting
-          items:
-            - name: Get Started with Hosting
-              href: Learn/Tutorials/Hosting/HowTo-HostingSetup.md
-        - name: Dependency Injection
-          items:
-            - name: Register and Use Services with Dependency Injection
-              href: Learn/Tutorials/DependencyInjection/HowTo-DependencyInjectionSetup.md
-            - name: Use the CommunityToolkit with Dependency Injection
-              href: Learn/Tutorials/DependencyInjection/HowTo-CommunityToolkit.md
-        - name: Configuration
-          items:
-            - name: Get Started with Configuration
-              href: Learn/Tutorials/Configuration/HowTo-Configuration.md
-            - name: How to update settings from an embedded resource file
-              href: Learn/Tutorials/Configuration/HowTo-WritableConfiguration.md
-        - name: Logging
-          items:
-            - name: Enable and Use Logging
-              href: Learn/Tutorials/Logging/HowTo-Logging.md
-            - name: Enable internal Uno Platform logging
-              href: Learn/Tutorials/Logging/HowTo-InternalLogging.md
-        - name: Navigation
-          items:
-            - name: Navigate between pages
-              href: Learn/Tutorials/Navigation/HowTo-NavigateBetweenPages.md
-            - name: Navigate from code
-              href: Learn/Tutorials/Navigation/HowTo-NavigateInCode.md
-            - name: Navigate from XAML
-              href: Learn/Tutorials/Navigation/HowTo-NavigateInXAML.md
-            - name: Display a message dialog
-              href: Learn/Tutorials/Navigation/HowTo-DisplayMessageDialog.md
-            - name: Request a value
-              href: Learn/Tutorials/Navigation/HowTo-SelectValue.md
-            - name: Display a modal flyout
-              href: Learn/Tutorials/Navigation/HowTo-ShowFlyout.md
-            - name: Display an item
-              href: Learn/Tutorials/Navigation/HowTo-DisplayItem.md
-            - name: Advanced
-              items:
-                - name: Page Navigation
-                  href: Learn/Tutorials/Navigation/Advanced/HowTo-AdvancedPageNavigation.md
-                - name: Use a Panel (Grid, StackPanel etc)
-                  href: Learn/Tutorials/Navigation/Advanced/HowTo-UsePanel.md
-                - name: Use a TabBar
-                  href: Learn/Tutorials/Navigation/Advanced/HowTo-UseTabBar.md
-                - name: Use a NavigationView
-                  href: Learn/Tutorials/Navigation/Advanced/HowTo-UseNavigationView.md
-                - name: Build a Responsive Shell
-                  href: Learn/Tutorials/Navigation/Advanced/HowTo-ResponsiveShell.md
-                - name: Use a Content Control
-                  href: Learn/Tutorials/Navigation/Advanced/HowTo-UseContentControl.md
-        - name: Localization
-          items:
-            - name: Get Started with Localization
-              href: Learn/Tutorials/Localization/HowTo-Localization.md
-        - name: Serialization
-          items:
-            - name: Get Started with Serialization
-              href: Learn/Tutorials/Serialization/HowTo-Serialization.md
-        - name: Http
-          items:
-            - name: Get Started with Http
-              href: Learn/Tutorials/Http/HowTo-Http.md
+        - name: Overview
+          href: Overview/Serialization/SerializationOverview.md
+        - name: Get Started with Serialization
+          href: Learn/Tutorials/Serialization/HowTo-Serialization.md
+    - name: Validation
+      items:
+        - name: Overview
+          href: Overview/Validation/ValidationOverview.md
 - name: Reference
   items:
     - name: Navigation

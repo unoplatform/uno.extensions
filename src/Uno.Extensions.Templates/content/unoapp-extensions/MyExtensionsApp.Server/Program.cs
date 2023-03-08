@@ -5,6 +5,9 @@ using Serilog;
 #if (useWasm)
 using Uno.Wasm.Bootstrap.Server;
 #endif
+#if (useHttp)
+using MyExtensionsApp.DataContracts.Serialization;
+#endif
 
 try
 {
@@ -20,8 +23,15 @@ try
 #endif
 
 	// Add services to the container.
-
+#if (useHttp)
+	builder.Services.AddControllers()
+		.AddJsonOptions(options =>
+		{
+			options.JsonSerializerOptions.AddContext<WeatherForecastContext>();
+		});
+#else
 	builder.Services.AddControllers();
+#endif
 	builder.Services.Configure<RouteOptions>(options =>
 		options.LowercaseUrls = true);
 

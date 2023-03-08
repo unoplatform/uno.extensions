@@ -2,6 +2,7 @@
 
 internal record TokenCache : ITokenCache
 {
+	private const string TokenPrefix = "AuthToken_";
 	private readonly ILogger _logger;
 	private readonly SemaphoreSlim tokenLock = new SemaphoreSlim(1);
 	private readonly IKeyValueStorage _secureCache;
@@ -16,12 +17,16 @@ internal record TokenCache : ITokenCache
 
 	public event EventHandler? Cleared;
 
+	private string CurrentProviderKey { get; } = $"{TokenPrefix}{nameof(GetCurrentProviderAsync)}";
+
+	private bool TokenPrefixPredicate(string key) => key.StartsWith(TokenPrefix, StringComparison.InvariantCulture);
+
 	public async ValueTask<string?> GetCurrentProviderAsync(CancellationToken ct)
 	{
 		await tokenLock.WaitAsync();
 		try
 		{
-			return await _secureCache.GetStringAsync(nameof(GetCurrentProviderAsync), ct);
+			return await _secureCache.GetStringAsync(CurrentProviderKey, ct);
 		}
 		finally
 		{
@@ -58,12 +63,12 @@ internal record TokenCache : ITokenCache
 		await tokenLock.WaitAsync();
 		try
 		{
-			var all  = await _secureCache.GetAllValuesAsync(cancellation);
-			if (all.ContainsKey(nameof(GetCurrentProviderAsync)))
+			var all  = await _secureCache.GetAllValuesAsync(TokenPrefixPredicate, cancellation);
+			if (all.ContainsKey(CurrentProviderKey))
 			{
-				all.Remove(nameof(GetCurrentProviderAsync));
+				all.Remove(CurrentProviderKey);
 			}
-			return all;
+			return all.ToDictionary(x=>x.Key.Replace(TokenPrefix,string.Empty),x=>x.Value);
 		}
 		finally
 		{
@@ -77,7 +82,9 @@ internal record TokenCache : ITokenCache
 		try
 		{
 			var keys = await _secureCache.GetKeysAsync(cancellation);
-			keys = keys.Where(x => x != nameof(GetCurrentProviderAsync)).ToArray();
+			keys = keys.Where(x =>
+							TokenPrefixPredicate(x) &&
+							x != CurrentProviderKey).ToArray();
 			if (_logger.IsEnabled(LogLevel.Trace))
 			{
 				await LogKeyValues(keys, cancellation);
@@ -118,13 +125,13 @@ internal record TokenCache : ITokenCache
 		try
 		{
 			if (_logger.IsEnabled(LogLevel.Trace)) _logger.LogTraceMessage($"Save tokens ({tokens?.Count ?? 0}) for provider '{provider}' - start");
-			await _secureCache.ClearAllAsync(cancellation);
-			await _secureCache.SetAsync(nameof(GetCurrentProviderAsync), provider, cancellation);
+			await _secureCache.ClearAllAsync(TokenPrefixPredicate, cancellation);
+			await _secureCache.SetAsync(CurrentProviderKey, provider, cancellation);
 			if (tokens is not null)
 			{
 				foreach (var tk in tokens)
 				{
-					await _secureCache.SetAsync(tk.Key, tk.Value, cancellation);
+					await _secureCache.SetAsync($"{TokenPrefix}{tk.Key}", tk.Value, cancellation);
 				}
 			}
 			if (_logger.IsEnabled(LogLevel.Trace)) _logger.LogTraceMessage("Save tokens - complete");

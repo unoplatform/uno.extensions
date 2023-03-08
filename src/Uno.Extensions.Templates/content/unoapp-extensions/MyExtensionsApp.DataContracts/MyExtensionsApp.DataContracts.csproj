@@ -5,11 +5,23 @@
 		<!-- Suppress Compiler warnings for elements without XML Docs -->
 		<NoWarn>$(NoWarn);CS1591</NoWarn>
 	</PropertyGroup>
-	<!--#if (useNetSix)-->
+	<!--#if (includeIsExternalInit)-->
 
 	<ItemGroup>
 		<Compile Include="..\MyExtensionsApp.Base\IsExternalInit.cs"
 						 Visible="false" />
+	</ItemGroup>
+	<!--#endif-->
+	<!--#if (includeNet6DataContractReferences)-->
+
+	<ItemGroup>
+		<!--#if (useCPM)-->
+		<PackageReference Include="System.Collections.Immutable" />
+		<PackageReference Include="System.Text.Json" />
+		<!--#else-->
+		<PackageReference Include="System.Collections.Immutable" Version="6.0.0" />
+		<PackageReference Include="System.Text.Json" Version="6.0.0" />
+		<!--#endif-->
 	</ItemGroup>
 	<!--#endif-->
 </Project>
