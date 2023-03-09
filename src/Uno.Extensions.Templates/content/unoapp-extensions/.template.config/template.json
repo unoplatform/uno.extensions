@@ -396,9 +396,9 @@
           "description": "Uses Uno.Extensions.Navigation to navigate between pages"
         },
         {
-          "choice": "frame",
-          "displayName": "Frame",
-          "description": "Uses Frame to navigate between pages"
+          "choice": "blank",
+          "displayName": "Blank",
+          "description": "Provides Blank App experience with default WinUI Frame Navigation"
         }
       ],
       "defaultValue": "default"
@@ -1123,7 +1123,7 @@
           },
           {
             "condition": "(preset == 'blank')",
-            "value": "frame"
+            "value": "blank"
           }
         ]
       }
@@ -1139,7 +1139,7 @@
     "useExtensionsNavigation": {
       "type": "computed",
       "datatype": "bool",
-      "value": "useDependencyInjection && navigationEvaluator != 'frame'"
+      "value": "useDependencyInjection && navigationEvaluator != 'blank'"
     },
     "useReactiveExtensionsNavigation": {
       "type": "computed",
@@ -1154,7 +1154,7 @@
     "useFrameNav": {
       "type": "computed",
       "datatype": "bool",
-      "value": "preset  == 'blank' || !useDependencyInjection || navigationEvaluator == 'frame'"
+      "value": "!useDependencyInjection || navigationEvaluator == 'blank'"
     },
     "useInfrastructureNamespace": {
       "type": "computed",
@@ -1164,7 +1164,7 @@
     "useBusinessModelsNamespace": {
       "type": "computed",
       "datatype": "bool",
-      "value": "useDependencyInjection && (useConfiguration || navigationEvaluator != 'frame')"
+      "value": "useDependencyInjection && (useConfiguration || navigationEvaluator != 'blank')"
     },
     "HostIdentifier": {
       "type": "bind",
