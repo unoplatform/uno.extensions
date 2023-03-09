@@ -1,0 +1,45 @@
+﻿<Page x:Class="TestHarness.Ext.Navigation.NavigationView.NavigationViewDataPage"
+	  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	  xmlns:local="using:TestHarness.Ext.Navigation.NavigationView"
+	  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	  mc:Ignorable="d"
+	  xmlns:models="using:TestHarness.Models"
+	  xmlns:uen="using:Uno.Extensions.Navigation.UI"
+	  xmlns:utu="using:Uno.Toolkit.UI"
+	  xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
+	  Background="LightBlue">
+
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition />
+		</Grid.RowDefinitions>
+		<utu:NavigationBar Content="NavigationView Data"
+						   AutomationProperties.AutomationId="NavigationViewDataNavigationBar" />
+		<StackPanel Grid.Row="1"
+					Orientation="Horizontal">
+			<TextBlock Text="{Binding Entity.Name}" />
+			<Button Content="Pick Entity"
+					uen:Navigation.Request="!EntityPicker"
+					uen:Navigation.Data="{Binding Entity, Mode=TwoWay}"/>
+		</StackPanel>
+
+		<muxc:NavigationView uen:Region.Attached="true"
+							 Grid.Row="2"
+							 IsSettingsVisible="False">
+			<muxc:NavigationView.MenuItems>
+				<muxc:NavigationViewItem  AutomationProperties.AutomationId="RecipesNavigationViewItem"
+										  Content="Recipes"
+										  uen:Region.Name="Recipes" />
+				<muxc:NavigationViewItem AutomationProperties.AutomationId="CookbooksNavigationViewItem"
+										 Content="Cookbooks"
+										 uen:Region.Name="Cookbooks" />
+			</muxc:NavigationView.MenuItems>
+			<Grid uen:Region.Attached="True"
+				  uen:Region.Navigator="Visibility" />
+		</muxc:NavigationView>
+	</Grid>
+</Page>

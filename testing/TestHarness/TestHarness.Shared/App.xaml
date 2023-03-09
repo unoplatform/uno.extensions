@@ -18,6 +18,9 @@
 
 				<MaterialToolkitResources xmlns="using:Uno.Toolkit.UI.Material" />
 
+				<ResourceDictionary Source="ms-appx:///Uno.Extensions.Reactive.UI/View/FeedView.xaml" />
+
+
 			</ResourceDictionary.MergedDictionaries>
 
 			<!-- Add resources here -->
