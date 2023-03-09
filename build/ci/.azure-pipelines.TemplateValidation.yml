@@ -33,7 +33,7 @@ jobs:
         templateArgs: '-di false'
       HostingOnly:
         createdProjectName: UnoAppHostingOnly01
-        templateArgs: '-config false -loc false -http false -log none --navigation frame'
+        templateArgs: '-config false -loc false -http false -log none --navigation blank'
       NoConfiguration:
         createdProjectName: UnoAppNoConfiguration01
         templateArgs: '-config false'
@@ -54,7 +54,7 @@ jobs:
         templateArgs: '-server false -http false'
       FrameNavigation:
         createdProjectName: UnoAppFrameNavigation01
-        templateArgs: '--navigation frame'
+        templateArgs: '--navigation blank'
       Net6:
         createdProjectName: UnoAppNet6
         templateArgs: '-tfm net6.0'
