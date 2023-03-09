@@ -13,6 +13,12 @@
 	</PropertyGroup>
 	
 	<Import Project="common.props" />
+	
+	<ItemGroup>
+		<Page Update="Themes\Generic.UI.xaml" Link="Themes\Generic.xaml" />
+		<Page Remove="Themes\Generic.WinUI.xaml" />
+	  <None Include="Themes\Generic.WinUI.xaml" />
+	</ItemGroup>
 
 	<ItemGroup>
 		<PackageReference Include="Uno.UI" />
