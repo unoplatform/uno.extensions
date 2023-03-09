@@ -20,7 +20,8 @@
   "precedence": "6001",
   "tags": {
     "language": "C#",
-    "type": "solution"
+    "type": "solution",
+    "editorTreatAs": "solution"
   },
   "shortName": "unoapp",
   "sourceName": "MyExtensionsApp",
@@ -429,12 +430,6 @@
       "displayName": "Skip Restore",
       "description": "If specified, skips the automatic restore of the project on create.",
       "defaultValue": "false"
-    },
-    "isVsix": {
-      "type": "parameter",
-      "datatype": "bool",
-      "defaultValue": "false",
-      "description": "Supplied by Uno Studio"
     },
     "useCPM": {
       "type": "computed",
@@ -1178,7 +1173,6 @@
   },
   "primaryOutputs": [
     {
-      "condition": "!isVsix",
       "path": "MyExtensionsApp.sln"
     },
     {
