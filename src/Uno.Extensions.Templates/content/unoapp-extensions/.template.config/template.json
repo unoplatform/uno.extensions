@@ -1118,7 +1118,7 @@
         "cases": [
           {
             "condition": "(preset == 'recommended')",
-            "value": "default"
+            "value": "regions"
           },
           {
             "condition": "(preset == 'blank')",
