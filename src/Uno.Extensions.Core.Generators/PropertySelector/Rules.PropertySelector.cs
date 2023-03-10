@@ -180,10 +180,10 @@ internal static partial class Rules
 				param,
 				method);
 
-		public static Diagnostic FailFileArg(IMethodSymbol method, IParameterSymbol? param, SyntaxNode argNode)
+		public static Diagnostic GetFileArgDiagnostic(IMethodSymbol method, IParameterSymbol? param, SyntaxNode argNode)
 			=> GetDiagnostic(method.ToString(), "[CallerFilePath] " + (param?.Name ?? ""), argNode);
 
-		public static Diagnostic FailLineArg(IMethodSymbol method, IParameterSymbol? param, SyntaxNode argNode)
+		public static Diagnostic GetLineArgDiagnostic(IMethodSymbol method, IParameterSymbol? param, SyntaxNode argNode)
 			=> GetDiagnostic(method.ToString(), "[CallerLineNumber] " + (param?.Name ?? ""), argNode);
 	}
 

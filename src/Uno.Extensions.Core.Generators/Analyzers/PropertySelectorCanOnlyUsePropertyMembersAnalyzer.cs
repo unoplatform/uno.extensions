@@ -107,8 +107,8 @@ internal sealed class PropertySelectorAnalyzer : DiagnosticAnalyzer
 
 		var callerFileArgument = operation.Arguments.FirstOrDefault(arg => arg.Parameter?.Ordinal == callerFileParameter.Ordinal);
 		var callerLineArgument = operation.Arguments.FirstOrDefault(arg => arg.Parameter?.Ordinal == callerLineParameter.Ordinal);
-		ReportDiagnosticForCallerAttribute(context, callerFileArgument, method, Rules.PS0102.FailFileArg);
-		ReportDiagnosticForCallerAttribute(context, callerLineArgument, method, Rules.PS0102.FailLineArg);
+		ReportDiagnosticForCallerAttribute(context, callerFileArgument, method, Rules.PS0102.GetFileArgDiagnostic);
+		ReportDiagnosticForCallerAttribute(context, callerLineArgument, method, Rules.PS0102.GetLineArgDiagnostic);
 
 		var selectorParameterType = (INamedTypeSymbol)selectorParameter.Type;
 		var entityType = selectorParameterType.TypeArguments[0];
