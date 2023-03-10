@@ -662,7 +662,7 @@
     "useDataContracts": {
       "type": "computed",
       "dataType": "bool",
-      "value": "((useDependencyInjection && useHttp) || server)"
+      "value": "((useDependencyInjection && useHttp) || (server && useRecommendedAppTemplate))"
     },
     "useUnitTests": {
       "type": "computed",
