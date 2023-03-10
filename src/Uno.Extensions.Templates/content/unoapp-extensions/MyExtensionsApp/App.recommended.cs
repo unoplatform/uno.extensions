@@ -14,7 +14,7 @@ public class App : Application
 	{
 		var builder = this.CreateBuilder(args)
 
-#if (useRegionsNav)
+#if (useExtensionsNavigation)
 			// Add navigation support for toolkit controls such as TabBar and NavigationView
 			.UseToolkitNavigation()
 #endif
