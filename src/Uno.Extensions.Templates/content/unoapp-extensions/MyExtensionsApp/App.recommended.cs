@@ -14,7 +14,7 @@ public class App : Application
 	{
 		var builder = this.CreateBuilder(args)
 
-#if (useDefaultNav)
+#if (useRegionsNav)
 			// Add navigation support for toolkit controls such as TabBar and NavigationView
 			.UseToolkitNavigation()
 #endif
@@ -110,7 +110,7 @@ public class App : Application
 
 	private static void RegisterRoutes(IViewRegistry views, IRouteRegistry routes)
 	{
-#if (useDefaultNav)
+#if (useRegionsNav)
 		views.Register(
 			new ViewMap(ViewModel: typeof($shellRouteViewModel$)),
 			new ViewMap<MainPage, $mainRouteViewModel$>(),

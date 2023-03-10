@@ -391,17 +391,16 @@
       "datatype": "choice",
       "choices": [
         {
-          "choice": "default",
-          "displayName": "Default",
-          "description": "Uses Uno.Extensions.Navigation to navigate between pages"
+          "choice": "regions",
+          "displayName": "Regions",
+          "description": "Uses Uno.Extensions.Navigation to navigate using regions"
         },
         {
           "choice": "blank",
           "displayName": "Blank",
           "description": "Provides Blank App experience with default WinUI Frame Navigation"
         }
-      ],
-      "defaultValue": "default"
+      ]
     },
     "cpm": {
       "displayName": "Central Package Management",
@@ -1146,10 +1145,10 @@
       "datatype": "bool",
       "value": "useExtensionsNavigation && useMvux"
     },
-    "useDefaultNav": {
+    "useRegionsNav": {
       "type": "computed",
       "datatype": "bool",
-      "value": "useExtensionsNavigation && navigationEvaluator == 'default'"
+      "value": "useExtensionsNavigation && navigationEvaluator == 'regions'"
     },
     "useFrameNav": {
       "type": "computed",
@@ -1565,9 +1564,9 @@
           }
         },
         {
-          "condition": "(!useDefaultNav)",
+          "condition": "(!useRegionsNav)",
           "exclude": [
-            "MyExtensionsApp/Business/Models/Entity.cs",
+            "MyExtensionsApp/Business/Models/Entity.cs"
           ]
         },
         {
