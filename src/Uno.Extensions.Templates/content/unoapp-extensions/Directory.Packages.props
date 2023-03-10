@@ -7,13 +7,13 @@
     <PackageVersion Include="FluentAssertions" Version="6.10.0" />
     <PackageVersion Include="Microsoft.Extensions.Logging.Console" Version="7.0.0" />
     <PackageVersion Include="Microsoft.Net.Compilers.Toolset" Version="4.2.0" />
-    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.4.1" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.5.0" />
     <PackageVersion Include="Microsoft.Windows.Compatibility" Version="7.0.0" />
     <PackageVersion Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.755" />
-    <PackageVersion Include="Microsoft.WindowsAppSDK" Version="1.2.230118.102" />
-    <PackageVersion Include="Newtonsoft.Json" Version="13.0.2" />
+    <PackageVersion Include="Microsoft.WindowsAppSDK" Version="1.2.230217.4" />
+    <PackageVersion Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageVersion Include="NUnit" Version="3.13.3" />
-    <PackageVersion Include="NUnit3TestAdapter" Version="4.3.1" />
+    <PackageVersion Include="NUnit3TestAdapter" Version="4.4.2" />
     <!--#if (useAspNetCoreSerilogPackage)-->
     <PackageVersion Include="Serilog.AspNetCore" Version="6.1.0" />
     <!--#endif-->
@@ -58,40 +58,40 @@
     <PackageVersion Include="Uno.Extensions.Serialization.Refit" Version="255.255.255.255" />
     <!--#endif-->
     <!--#if (useMaterial)-->
-    <PackageVersion Include="Uno.Material.WinUI" Version="2.5.0-dev.37" />
+    <PackageVersion Include="Uno.Material.WinUI" Version="2.5.0-dev.43" />
     <!--#elif (useCupertino)-->
-    <PackageVersion Include="Uno.Cupertino.WinUI" Version="2.5.0-dev.37" />
+    <PackageVersion Include="Uno.Cupertino.WinUI" Version="2.5.0-dev.43" />
     <!--#endif-->
-    <PackageVersion Include="Uno.Toolkit.WinUI" Version="2.5.0-dev.35" />
+    <PackageVersion Include="Uno.Toolkit.WinUI" Version="2.5.0-dev.53" />
     <!--#if (useMaterial)-->
-    <PackageVersion Include="Uno.Toolkit.WinUI.Material" Version="2.5.0-dev.35" />
+    <PackageVersion Include="Uno.Toolkit.WinUI.Material" Version="2.5.0-dev.53" />
     <!--#endif-->
-    <PackageVersion Include="Uno.Resizetizer" Version="0.36.0-dev.129" />
+    <PackageVersion Include="Uno.Resizetizer" Version="0.42.0-dev.174" />
     <PackageVersion Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="4.7.44" />
     <PackageVersion Include="Uno.UITest.Helpers" Version="1.1.0-dev.32" />
     <PackageVersion Include="Uno.UniversalImageLoader" Version="1.9.36" />
-    <PackageVersion Include="Uno.Wasm.Bootstrap" Version="7.0.17" />
-    <PackageVersion Include="Uno.Wasm.Bootstrap.DevServer" Version="7.0.17" />
-    <PackageVersion Include="Uno.Wasm.Bootstrap.Server" Version="7.0.17" />
+    <PackageVersion Include="Uno.Wasm.Bootstrap" Version="7.0.19" />
+    <PackageVersion Include="Uno.Wasm.Bootstrap.DevServer" Version="7.0.19" />
+    <PackageVersion Include="Uno.Wasm.Bootstrap.Server" Version="7.0.19" />
     <PackageVersion Include="Uno.WinUI" Version="4.7.44" />
     <!--#if (useCsharpMarkup)-->
-    <PackageVersion Include="Uno.WinUI.Markup" Version="4.7.0-dev.17" />
-    <PackageVersion Include="Uno.Toolkit.WinUI.Markup" Version="2.5.0-dev.35" />
+    <PackageVersion Include="Uno.WinUI.Markup" Version="4.7.0-dev.20" />
+    <PackageVersion Include="Uno.Toolkit.WinUI.Markup" Version="2.5.0-dev.53" />
     <PackageVersion Include="Uno.Extensions.Navigation.WinUI.Markup" Version="255.255.255.255" />
     <!--#if (useMvux)-->
     <PackageVersion Include="Uno.Extensions.Reactive.WinUI.Markup" Version="255.255.255.255" />
     <!--#endif-->
     <!--#if (useMaterial)-->
-    <PackageVersion Include="Uno.Material.WinUI.Markup" Version="2.5.0-dev.37" />
+    <PackageVersion Include="Uno.Material.WinUI.Markup" Version="2.5.0-dev.43" />
     <!--#endif-->
-    <PackageVersion Include="Uno.Themes.WinUI.Markup" Version="2.5.0-dev.37" />
+    <PackageVersion Include="Uno.Themes.WinUI.Markup" Version="2.5.0-dev.43" />
     <!--#endif-->
     <PackageVersion Include="Uno.WinUI.RemoteControl" Version="4.7.44" />
     <PackageVersion Include="Uno.WinUI.Skia.Gtk" Version="4.7.44" />
     <PackageVersion Include="Uno.WinUI.Skia.Linux.FrameBuffer" Version="4.7.44" />
     <PackageVersion Include="Uno.WinUI.Skia.Wpf" Version="4.7.44" />
     <PackageVersion Include="Uno.WinUI.WebAssembly" Version="4.7.44" />
-    <PackageVersion Include="Xamarin.Google.Android.Material" Version="1.7.0.2" />
+    <PackageVersion Include="Xamarin.Google.Android.Material" Version="1.8.0" />
     <PackageVersion Include="Xamarin.UITest" Version="4.1.1" />
     <!--#if (includeNet6DataContractReferences)-->
     <PackageVersion Include="System.Collections.Immutable" Version="6.0.0" />

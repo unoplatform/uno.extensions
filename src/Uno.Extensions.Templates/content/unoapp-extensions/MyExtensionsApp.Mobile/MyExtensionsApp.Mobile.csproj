@@ -95,11 +95,11 @@
 	<ItemGroup>
 		<PackageReference Include="Uno.WinUI" Version="4.7.44" />
 		<!--#if (useCsharpMarkup)-->
-		<PackageReference Include="Uno.WinUI.Markup" Version="4.7.0-dev.17" />
+		<PackageReference Include="Uno.WinUI.Markup" Version="4.7.0-dev.20" />
 		<!--#if (useMaterial)-->
-		<PackageReference Include="Uno.Material.WinUI.Markup" Version="2.5.0-dev.37" />
+		<PackageReference Include="Uno.Material.WinUI.Markup" Version="2.5.0-dev.43" />
 		<!--#endif-->
-		<PackageReference Include="Uno.Themes.WinUI.Markup" Version="2.5.0-dev.37" />
+		<PackageReference Include="Uno.Themes.WinUI.Markup" Version="2.5.0-dev.43" />
 		<!--#endif-->
 		<!--#if (useMvvm) -->
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.1.0" />
@@ -122,15 +122,15 @@
 		<PackageReference Include="Uno.Extensions.Serialization.Refit" Version="255.255.255.255" />
 		<!--#endif-->
 		<!--#if (useMaterial)-->
-		<PackageReference Include="Uno.Material.WinUI" Version="2.5.0-dev.37" />
-		<PackageReference Include="Uno.Toolkit.WinUI.Material" Version="2.5.0-dev.35" />
+		<PackageReference Include="Uno.Material.WinUI" Version="2.5.0-dev.43" />
+		<PackageReference Include="Uno.Toolkit.WinUI.Material" Version="2.5.0-dev.53" />
 		<!--#elif (useCupertino)-->
-		<PackageReference Include="Uno.Cupertino.WinUI" Version="2.5.0-dev.37" />
+		<PackageReference Include="Uno.Cupertino.WinUI" Version="2.5.0-dev.43" />
 		<!--#endif-->
 		<!--#if (useCsharpMarkup)-->
-		<PackageReference Include="Uno.Toolkit.WinUI.Markup" Version="2.5.0-dev.35" />
+		<PackageReference Include="Uno.Toolkit.WinUI.Markup" Version="2.5.0-dev.53" />
 		<!--#else-->
-		<PackageReference Include="Uno.Toolkit.WinUI" Version="2.5.0-dev.35" />
+		<PackageReference Include="Uno.Toolkit.WinUI" Version="2.5.0-dev.53" />
 		<!--#endif-->
 		<!--#if (useAuthentication)-->
 		<PackageReference Include="Uno.Extensions.Authentication.WinUI" Version="255.255.255.255" />
@@ -168,7 +168,7 @@
 				<PackageReference Include="Xamarin.Google.Android.Material" />
 				<PackageReference Include="Uno.UniversalImageLoader" />
 				<!--#else-->
-				<PackageReference Include="Xamarin.Google.Android.Material" Version="1.7.0.2" />
+				<PackageReference Include="Xamarin.Google.Android.Material" Version="1.8.0" />
 				<PackageReference Include="Uno.UniversalImageLoader" Version="1.9.36" />
 				<!--#endif-->
 			</ItemGroup>

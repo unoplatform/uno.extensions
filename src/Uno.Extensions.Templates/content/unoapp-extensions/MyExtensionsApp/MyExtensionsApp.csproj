@@ -85,13 +85,13 @@
 	<!--#else-->
 	<ItemGroup>
 		<PackageReference Include="Uno.WinUI" Version="4.7.44" />
-		<PackageReference Include="Uno.Resizetizer" Version="0.36.0-dev.129" />
+		<PackageReference Include="Uno.Resizetizer" Version="0.42.0-dev.174" />
 		<!--#if (useCsharpMarkup)-->
-		<PackageReference Include="Uno.WinUI.Markup" Version="4.7.0-dev.17" />
+		<PackageReference Include="Uno.WinUI.Markup" Version="4.7.0-dev.20" />
 		<!--#if (useMaterial)-->
-		<PackageReference Include="Uno.Material.WinUI.Markup" Version="2.5.0-dev.37" />
+		<PackageReference Include="Uno.Material.WinUI.Markup" Version="2.5.0-dev.43" />
 		<!--#endif-->
-		<PackageReference Include="Uno.Themes.WinUI.Markup" Version="2.5.0-dev.37" />
+		<PackageReference Include="Uno.Themes.WinUI.Markup" Version="2.5.0-dev.43" />
 		<!--#endif-->
 		<!--#if (useMvvm) -->
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.1.0" />
@@ -114,15 +114,15 @@
 		<PackageReference Include="Uno.Extensions.Serialization.Refit" Version="255.255.255.255" />
 		<!--#endif-->
 		<!--#if (useMaterial)-->
-		<PackageReference Include="Uno.Material.WinUI" Version="2.5.0-dev.37" />
-		<PackageReference Include="Uno.Toolkit.WinUI.Material" Version="2.5.0-dev.35" />
+		<PackageReference Include="Uno.Material.WinUI" Version="2.5.0-dev.43" />
+		<PackageReference Include="Uno.Toolkit.WinUI.Material" Version="2.5.0-dev.53" />
 		<!--#elif (useCupertino)-->
-		<PackageReference Include="Uno.Cupertino.WinUI" Version="2.5.0-dev.37" />
+		<PackageReference Include="Uno.Cupertino.WinUI" Version="2.5.0-dev.43" />
 		<!--#endif-->
 		<!--#if (useCsharpMarkup)-->
-		<PackageReference Include="Uno.Toolkit.WinUI.Markup" Version="2.5.0-dev.35" />
+		<PackageReference Include="Uno.Toolkit.WinUI.Markup" Version="2.5.0-dev.53" />
 		<!--#else-->
-		<PackageReference Include="Uno.Toolkit.WinUI" Version="2.5.0-dev.35" />
+		<PackageReference Include="Uno.Toolkit.WinUI" Version="2.5.0-dev.53" />
 		<!--#endif-->
 		<PackageReference Include="Uno.Extensions.Core" Version="255.255.255.255" />
 		<!--#if (useAuthentication)-->
@@ -166,7 +166,7 @@
 				<PackageReference Include="Microsoft.WindowsAppSDK" />
 				<PackageReference Include="Microsoft.Windows.SDK.BuildTools" />
 				<!--#else-->
-				<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.2.230118.102" />
+				<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.2.230217.4" />
 				<PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.755" />
 				<!--#endif-->
 			</ItemGroup>

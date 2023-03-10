@@ -30,7 +30,7 @@
 		<!--#endif-->
 		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
 		<!--#if (useWasm)-->
-		<PackageReference Include="Uno.Wasm.Bootstrap.Server" Version="7.0.17" />
+		<PackageReference Include="Uno.Wasm.Bootstrap.Server" Version="7.0.19" />
 		<!--#endif -->
 		<!--#endif -->
 	</ItemGroup>
