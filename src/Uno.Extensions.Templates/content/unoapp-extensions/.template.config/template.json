@@ -391,17 +391,16 @@
       "datatype": "choice",
       "choices": [
         {
-          "choice": "default",
-          "displayName": "Default",
-          "description": "Uses Uno.Extensions.Navigation to navigate between pages"
+          "choice": "regions",
+          "displayName": "Regions",
+          "description": "Uses Uno.Extensions.Navigation to navigate using regions"
         },
         {
-          "choice": "frame",
-          "displayName": "Frame",
-          "description": "Uses Frame to navigate between pages"
+          "choice": "blank",
+          "displayName": "Blank",
+          "description": "Provides Blank App experience with default WinUI Frame Navigation"
         }
-      ],
-      "defaultValue": "default"
+      ]
     },
     "cpm": {
       "displayName": "Central Package Management",
@@ -1119,11 +1118,11 @@
         "cases": [
           {
             "condition": "(preset == 'recommended')",
-            "value": "default"
+            "value": "regions"
           },
           {
             "condition": "(preset == 'blank')",
-            "value": "frame"
+            "value": "blank"
           }
         ]
       }
@@ -1139,22 +1138,22 @@
     "useExtensionsNavigation": {
       "type": "computed",
       "datatype": "bool",
-      "value": "useDependencyInjection && navigationEvaluator != 'frame'"
+      "value": "useDependencyInjection && navigationEvaluator != 'blank'"
     },
     "useReactiveExtensionsNavigation": {
       "type": "computed",
       "datatype": "bool",
       "value": "useExtensionsNavigation && useMvux"
     },
-    "useDefaultNav": {
+    "useRegionsNav": {
       "type": "computed",
       "datatype": "bool",
-      "value": "useExtensionsNavigation && navigationEvaluator == 'default'"
+      "value": "useExtensionsNavigation && navigationEvaluator == 'regions'"
     },
     "useFrameNav": {
       "type": "computed",
       "datatype": "bool",
-      "value": "preset  == 'blank' || !useDependencyInjection || navigationEvaluator == 'frame'"
+      "value": "!useDependencyInjection || navigationEvaluator == 'blank'"
     },
     "useInfrastructureNamespace": {
       "type": "computed",
@@ -1164,7 +1163,7 @@
     "useBusinessModelsNamespace": {
       "type": "computed",
       "datatype": "bool",
-      "value": "useDependencyInjection && (useConfiguration || navigationEvaluator != 'frame')"
+      "value": "useDependencyInjection && (useConfiguration || navigationEvaluator != 'blank')"
     },
     "HostIdentifier": {
       "type": "bind",
@@ -1565,9 +1564,9 @@
           }
         },
         {
-          "condition": "(!useDefaultNav)",
+          "condition": "(!useRegionsNav)",
           "exclude": [
-            "MyExtensionsApp/Business/Models/Entity.cs",
+            "MyExtensionsApp/Business/Models/Entity.cs"
           ]
         },
         {
