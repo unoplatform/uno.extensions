@@ -41,6 +41,10 @@
       "longName": "tests",
       "shortName": "tests"
     },
+    "minimalApi": {
+      "longName": "minimal-api",
+      "shortName": "minimal"
+    },
     "dependencyInjection": {
       "longName": "dependency-injection",
       "shortName": "di"
