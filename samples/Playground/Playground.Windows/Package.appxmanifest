@@ -7,14 +7,13 @@
   IgnorableNamespaces="uap rescap">
 
   <Identity
-    Name="9fa2d727-dc19-4141-9cd0-7ef5366bac2a"
-    Publisher="CN=NickRandolph"
+    Name="C4FA22E6-5B33-44F9-B30C-F8949C2E9FD7"
+    Publisher="O=Playground"
     Version="1.0.0.0" />
 
   <Properties>
-    <DisplayName>Playground.Windows</DisplayName>
-    <PublisherDisplayName>NickRandolph</PublisherDisplayName>
-    <Logo>Assets\StoreLogo.png</Logo>
+	<DisplayName>Playground</DisplayName>
+	<PublisherDisplayName>Playground</PublisherDisplayName>
   </Properties>
 
   <Dependencies>
@@ -31,13 +30,9 @@
       Executable="$targetnametoken$.exe"
       EntryPoint="$targetentrypoint$">
       <uap:VisualElements
-        DisplayName="Playground.Windows"
-        Description="Playground.Windows"
-        BackgroundColor="transparent"
-        Square150x150Logo="Assets\Square150x150Logo.png"
-        Square44x44Logo="Assets\Square44x44Logo.png">
-        <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png" />
-        <uap:SplashScreen Image="Assets\SplashScreen.png"  BackgroundColor="lightBlue"/>
+        DisplayName="Playground"
+        Description="Playground">
+        <uap:SplashScreen Image="Images\SplashScreen.png"  BackgroundColor="#086AD1"/>
       </uap:VisualElements>
     </Application>
   </Applications>

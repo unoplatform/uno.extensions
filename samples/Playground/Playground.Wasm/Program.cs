@@ -1,17 +1,13 @@
-﻿using System;
-using Windows.UI.Xaml;
+namespace Playground.Wasm;
 
-namespace Playground.Wasm
+public class Program
 {
-    public class Program
-    {
-        private static App? _app;
+	private static App? _app;
 
-        static int Main(string[] args)
-        {
-            Windows.UI.Xaml.Application.Start(_ => _app = new App());
+	public static int Main(string[] args)
+	{
+		Microsoft.UI.Xaml.Application.Start(_ => _app = new AppHead());
 
-            return 0;
-        }
-    }
+		return 0;
+	}
 }

@@ -1,3 +1,0 @@
-﻿namespace Playground.Skia.Gtk
-{
-}
