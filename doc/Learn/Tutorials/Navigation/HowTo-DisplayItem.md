@@ -58,9 +58,10 @@ Often it is necessary to pass a data item from one page to another. This scenari
 - Add a `TextBlock` to `SecondPage.xaml`
 
     ```xml
-    <TextBlock  HorizontalAlignment="Center"
-                VerticalAlignment="Center">
-        <Run Text="Widget Name:" /><Run Text="{Binding Name}" />
+    <TextBlock HorizontalAlignment="Center"
+               VerticalAlignment="Center">
+        <Run Text="Widget Name:" />
+        <Run Text="{Binding Name}" />
     </TextBlock>
     ```
 
@@ -90,10 +91,10 @@ A common application scenario is to present a list of items, for example present
 
     ```xml
     <ListView ItemsSource="{Binding Widgets}"
-            uen:Navigation.Request="Second"
-            Grid.Row="1"
-            HorizontalAlignment="Center"
-            VerticalAlignment="Center">
+              uen:Navigation.Request="Second"
+              Grid.Row="1"
+              HorizontalAlignment="Center"
+              VerticalAlignment="Center">
         <ListView.ItemTemplate>
             <DataTemplate>
                 <StackPanel Orientation="Horizontal"

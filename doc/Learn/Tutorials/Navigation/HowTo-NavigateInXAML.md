@@ -107,8 +107,8 @@ In addition to specifying the route to navigate to, the Navigation.Data attached
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center">
         <ListView ItemsSource="{Binding Widgets}"
-                    x:Name="WidgetsList"
-                    SelectionMode="Single">
+                  x:Name="WidgetsList"
+                  SelectionMode="Single">
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <StackPanel Orientation="Horizontal"
@@ -151,8 +151,9 @@ In addition to specifying the route to navigate to, the Navigation.Data attached
 
     ```xml
     <TextBlock HorizontalAlignment="Center"
-                VerticalAlignment="Center">
-        <Run Text="Widget Name:" /><Run Text="{Binding Name}" />
+               VerticalAlignment="Center">
+        <Run Text="Widget Name:" />
+        <Run Text="{Binding Name}" />
     </TextBlock>
     ```
 
@@ -170,7 +171,7 @@ Instead of having to select an item in the `ListView` and then clicking on the `
 
     ```xml
     <ListView ItemsSource="{Binding Widgets}"
-                uen:Navigation.Request="Sample">
+              uen:Navigation.Request="Sample">
         <ListView.ItemTemplate>
             <DataTemplate>
                 <StackPanel Orientation="Horizontal"
