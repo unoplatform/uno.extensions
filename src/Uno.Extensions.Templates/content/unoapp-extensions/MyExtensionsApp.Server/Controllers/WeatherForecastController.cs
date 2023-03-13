@@ -37,7 +37,7 @@ public class WeatherForecastController : ControllerBase
 			}
 		#else
 			new WeatherForecast(
-				DateTime.Now.AddDays(index),
+				DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
 				Random.Shared.Next(-20, 55),
 				Summaries[Random.Shared.Next(Summaries.Length)]
 			)
