@@ -1,0 +1,118 @@
+﻿<Page x:Class="Playground.Views.NavigationViewPage"
+	  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	  xmlns:local="using:Playground.Views"
+	  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	  mc:Ignorable="d"
+	  xmlns:ui="using:Uno.Toolkit.UI"
+	  xmlns:uen="using:Uno.Extensions.Navigation.UI"
+	  xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
+	  Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition />
+		</Grid.RowDefinitions>
+		<ui:NavigationBar Content="Navigation View"
+						  Style="{StaticResource MaterialNavigationBarStyle}">
+			<ui:NavigationBar.MainCommand>
+				<AppBarButton Foreground="{ThemeResource PrimaryMediumBrush}">
+					<AppBarButton.Icon>
+						<BitmapIcon UriSource="ms-appx:///Assets/Icons/back.png" />
+					</AppBarButton.Icon>
+				</AppBarButton>
+			</ui:NavigationBar.MainCommand>
+		</ui:NavigationBar>
+		<Grid Grid.Row="1">
+			<Grid.RowDefinitions>
+				<RowDefinition />
+				<RowDefinition />
+				<RowDefinition />
+			</Grid.RowDefinitions>
+			<!-- Tests switching between predefined elements in the associated Grid -->
+			<muxc:NavigationView uen:Region.Attached="true">
+				<muxc:NavigationView.MenuItems>
+					<muxc:NavigationViewItem Content="Products"
+											 uen:Region.Name="Products" />
+					<muxc:NavigationViewItem Content="Deals"
+											 uen:Region.Name="Deals" />
+					<muxc:NavigationViewItem Content="Profile"
+											 uen:Region.Name="Profile" />
+				</muxc:NavigationView.MenuItems>
+				<Grid uen:Region.Attached="True"
+					  uen:Region.Navigator="Visibility">
+					<StackPanel uen:Region.Name="Products"
+								Visibility="Collapsed">
+						<TextBlock Text="Products" />
+						<Button Content="Deals"
+								uen:Navigation.Request="Deals" />
+						<Button Content="Profile"
+								uen:Navigation.Request="Profile" />
+					</StackPanel>
+					<StackPanel uen:Region.Name="Deals"
+								Visibility="Collapsed">
+						<TextBlock Text="Deals" />
+						<Button Content="Products"
+								uen:Navigation.Request="Products" />
+						<Button Content="Profile"
+								uen:Navigation.Request="Profile" />
+					</StackPanel>
+					<StackPanel uen:Region.Name="Profile"
+								Visibility="Collapsed">
+						<TextBlock Text="Profile" />
+						<Button Content="Products"
+								uen:Navigation.Request="Products" />
+						<Button Content="Deals"
+								uen:Navigation.Request="Deals" />
+					</StackPanel>
+				</Grid>
+			</muxc:NavigationView>
+
+			<!-- Tests switching between dynamic elements in the associated Grid -->
+			<muxc:NavigationView Grid.Row="1"
+								 uen:Region.Attached="true">
+				<muxc:NavigationView.MenuItems>
+					<muxc:NavigationViewItem Content="Third"
+											 SelectsOnInvoked="False"
+											 uen:Navigation.Request="./Third"
+											 uen:Navigation.Data="{Binding }">
+						<muxc:NavigationViewItem.DataContext>
+							<x:String>Third Page</x:String>
+						</muxc:NavigationViewItem.DataContext>
+					</muxc:NavigationViewItem>
+
+					<muxc:NavigationViewItem Content="Fourth"
+											 SelectsOnInvoked="False"
+											 uen:Navigation.Request="./Fourth"
+											 uen:Navigation.Data="{Binding }">
+						<muxc:NavigationViewItem.DataContext>
+							<x:String>Fourth Page</x:String>
+						</muxc:NavigationViewItem.DataContext>
+
+					</muxc:NavigationViewItem>
+				</muxc:NavigationView.MenuItems>
+				<Grid uen:Region.Attached="True"
+					  uen:Region.Navigator="Visibility" />
+			</muxc:NavigationView>
+			
+			<!-- Tests with databound pane items in the associated Grid -->
+			<muxc:NavigationView Grid.Row="2"
+								 MenuItemsSource="{Binding NavigationItems}"
+								 uen:Region.Attached="true">
+				<muxc:NavigationView.MenuItemTemplate>
+					<DataTemplate>
+						<muxc:NavigationViewItem Content="{Binding Name}"
+												 SelectsOnInvoked="False"
+												 uen:Navigation.Request="./NavContent"
+												 uen:Navigation.Data="{Binding }">
+						</muxc:NavigationViewItem>
+					</DataTemplate>
+				</muxc:NavigationView.MenuItemTemplate>
+				<Grid uen:Region.Attached="True"
+					  uen:Region.Navigator="Visibility" />
+			</muxc:NavigationView>
+		</Grid>
+	</Grid>
+</Page>

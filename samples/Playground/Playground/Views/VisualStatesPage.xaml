@@ -1,0 +1,45 @@
+﻿<Page x:Class="Playground.Views.VisualStatesPage"
+	  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	  xmlns:local="using:Playground.Views"
+	  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	  xmlns:ui="using:Uno.Toolkit.UI"
+	  xmlns:uen="using:Uno.Extensions.Navigation.UI"
+	  mc:Ignorable="d"
+	  Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+	<Grid>
+		<VisualStateManager.VisualStateGroups>
+			<VisualStateGroup>
+				<VisualState x:Name="Wide">
+					<VisualState.StateTriggers>
+						<AdaptiveTrigger MinWindowWidth="700" />
+					</VisualState.StateTriggers>
+					<VisualState.Setters>
+						<Setter Target="NextButton.(uen:Navigation.Request)"
+								Value="Fifth" />
+						<Setter Target="NextButton.Content"
+								Value="Next - Fifth" />
+					</VisualState.Setters>
+				</VisualState>
+				<VisualState x:Name="Narrow">
+					<VisualState.StateTriggers>
+						<AdaptiveTrigger MinWindowWidth="0" />
+					</VisualState.StateTriggers>
+					<VisualState.Setters>
+						<Setter Target="NextButton.Content"
+								Value="Next - Fourth" />
+					</VisualState.Setters>
+				</VisualState>
+			</VisualStateGroup>
+		</VisualStateManager.VisualStateGroups>
+		<StackPanel Grid.Row="1">
+			<Button uen:Navigation.Request="-"
+					Content="Back" />
+			<Button x:Name="NextButton"
+					uen:Navigation.Request="Fourth"
+					Content="Third page" />
+		</StackPanel>
+	</Grid>
+</Page>

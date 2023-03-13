@@ -1,0 +1,15 @@
+{
+  "solution": {
+    "path": "Playground.sln",
+    "projects": [
+      "Playground.Tests\\Playground.Tests.csproj",
+      "Playground.UITests\\Playground.UITests.csproj",
+      "Playground.Mobile\\Playground.Mobile.csproj",
+      "Playground.Skia.Gtk\\Playground.Skia.Gtk.csproj",
+      "Playground.Wasm\\Playground.Wasm.csproj",
+      "Playground.Server\\Playground.Server.csproj",
+      "Playground.DataContracts\\Playground.DataContracts.csproj",
+      "Playground\\Playground.csproj"
+    ]
+  }
+}
