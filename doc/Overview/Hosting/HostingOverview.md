@@ -9,16 +9,19 @@ Hosting is delivered as a NuGet package [Microsoft.Extensions.Hosting.WinUI](htt
 
 ## Building a Hosted Application
 
-Initialization of the `IHost` instance is done from the App.xaml.host.cs partial class definition. It should be created as soon as the application is instantiated. The following snippet uses the `UnoHost` static class to create an `IHost` implementation using the generic host builder. 
+Initialization of the `IHost` instance is done from the generated App.cs file of your solution. It should be created as soon as the application is launched. The following snippet uses the `CreateBuilder()` extension method to instantiate an `IApplicationBuilder` from your `Application`. It is then possible to configure the associated `IHostBuilder` to register services or use the numerous extensions offered by this library.
 
 ```csharp
 private IHost Host { get; }
 
-public App()
+protected override void OnLaunched(LaunchActivatedEventArgs e)
 {
-    Host = UnoHost
-        .CreateDefaultBuilder()
-        .Build();
+    var appBuilder = this.CreateBuilder(args)
+        .Configure(host => {
+            // Configure the host builder
+        });
+
+    Host = appBuilder.Build();
 ...
 ```
 
@@ -63,16 +66,22 @@ The implementation can be registered during the host initialization by calling t
 ```csharp
 private IHost Host { get; }
 
-public App()
+protected override void OnLaunched(LaunchActivatedEventArgs e)
 {
-    Host = UnoHost
-        .CreateDefaultBuilder()
-        .ConfigureServices(service => service.AddHostedService<SimpleHostService>())
-        .Build();
+    var appBuilder = this.CreateBuilder(args)
+        .Configure(host => {
+            host
+            .ConfigureServices((context, services) => 
+            { 
+                services.AddHostedService<SimpleHostService>()
+            })
+        });
+
+    Host = appBuilder.Build();
 ...
 ```
 
-In order for hosted services to be run, it is necessary to run the `IHost` implementation. It's recommended to do this in the OnLaunched method of the App.xaml.cs. This will ensure the application instance and associated window are accessible, should initialization of anything related to the UI be required.
+In order for hosted services to be run, it is necessary to run the `IHost` implementation. It's recommended to do this in the OnLaunched method of the App.cs. This will ensure the application instance and associated window are accessible, should initialization of anything related to the UI be required.
 
 ```csharp
 protected override void OnLaunched(LaunchActivatedEventArgs e)
@@ -115,34 +124,45 @@ var env = Host.Services.GetService<IHostEnvironment>();
 Debug.WriteLine($"Environment: {env.EnvironmentName}");
 ```
 
-The current hosting environment can be changed using the UseEnvironment static method on the `IHostBuilder`.
+The current hosting environment can be changed with the `UseEnvironment()` extension method.
 
 ```csharp
 private IHost Host { get; }
 
-public App()
+protected override void OnLaunched(LaunchActivatedEventArgs e)
 {
-    Host = UnoHost
-        .CreateDefaultBuilder()
-        .UseEnvironment("Staging")
-        .Build();
+    var appBuilder = this.CreateBuilder(args)
+        .Configure(host => {
+            host
+            .UseEnvironment("Staging")
+        });
+
+    Host = appBuilder.Build();
 ...
 ```
 
 The current hosting environment can also be used when configuring the host builder.
 
 ```csharp
-    UnoHost
-        ...
-        .ConfigureServices((context, services) => {
-            var isDevelopment = context.HostingEnvironment.IsDevelopment();
-            var isStaging = context.HostingEnvironment.IsStaging();
-            var isProduction = context.HostingEnvironment.IsProduction();
-            var environment = context.HostingEnvironment.EnvironmentName;
-            var isMyEnvironment = context.HostingEnvironment.IsEnvironment("MyEnvironment");
+private IHost Host { get; }
+
+protected override void OnLaunched(LaunchActivatedEventArgs e)
+{
+    var appBuilder = this.CreateBuilder(args)
+        .Configure(host => {
+            host
+            .ConfigureServices((context, services) => 
+            { 
+                var isDevelopment = context.HostingEnvironment.IsDevelopment();
+                var isStaging = context.HostingEnvironment.IsStaging();
+                var isProduction = context.HostingEnvironment.IsProduction();
+                var environment = context.HostingEnvironment.EnvironmentName;
+                var isMyEnvironment = context.HostingEnvironment.IsEnvironment("MyEnvironment");
             })
-        ...
-        .Build();
+        });
+
+    Host = appBuilder.Build();
+...
 ```
 
 > [!TIP]
