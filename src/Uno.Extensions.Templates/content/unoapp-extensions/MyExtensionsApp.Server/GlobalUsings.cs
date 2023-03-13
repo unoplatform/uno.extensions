@@ -4,3 +4,4 @@ global using MyExtensionsApp.DataContracts;
 #if (useMinimalApi)
 global using MyExtensionsApp.Server.Apis;
 #endif
+//-:cnd:noEmit
