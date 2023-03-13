@@ -430,6 +430,12 @@
       "description": "If specified, skips the automatic restore of the project on create.",
       "defaultValue": "false"
     },
+    "isVsix": {
+      "displayName": "isVsix",
+      "type": "parameter",
+      "datatype": "bool",
+      "defaultValue": "false"
+    },
     "useCPM": {
       "type": "computed",
       "datatype": "bool",
@@ -1172,6 +1178,7 @@
   },
   "primaryOutputs": [
     {
+      "condition": "!isVsix",
       "path": "MyExtensionsApp.sln"
     },
     {
@@ -1235,6 +1242,13 @@
           ],
           "exclude": [
             "MyExtensionsApp.Debugging.sln"
+          ]
+        },
+        {
+          "condition": "(isVsix)",
+          "exclude": [
+            "MyExtensionsApp.sln",
+            "MyExtensionsApp-vsmac.slnf"
           ]
         },
         {
@@ -1595,7 +1609,7 @@
             "MyExtensionsApp/appsettings.*",
             "MyExtensionsApp.Tests/AppInfoTests.cs"
           ]
-        }
+        } 
       ]
     }
   ],
