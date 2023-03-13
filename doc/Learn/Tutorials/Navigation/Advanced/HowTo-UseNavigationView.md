@@ -75,7 +75,6 @@ uid: Learn.Tutorials.Navigation.Advanced.NavigationView
         </muxc:NavigationView>
     </Grid>
 </Page>
-
 ```
 
 <!-- - Show how to use navigationview to switch between views -->

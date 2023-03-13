@@ -129,7 +129,7 @@ The `NavigateViewAsync` method uses the type of the view, i.e. `SamplePage`, to 
 
     ```xml
     <Button Content="Go Back (View Model)"
-        Click="{x:Bind ViewModel.GoBack}" />
+            Click="{x:Bind ViewModel.GoBack}" />
     ```
 
 > [!TIP]

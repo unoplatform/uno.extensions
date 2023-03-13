@@ -15,15 +15,14 @@ This topic walks through using Navigation to display a modal flyout
 - Add new `Page`, `SamplePage.xaml`, which will be used to display content inside the flyout.
 
     ```xml
-    <Page
-        x:Class="ShowFlyout.Views.SamplePage"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:local="using:ShowFlyout.Views"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d"
-        Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Page x:Class="ShowFlyout.Views.SamplePage"
+          xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+          xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+          xmlns:local="using:ShowFlyout.Views"
+          xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+          xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+          mc:Ignorable="d"
+          Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
     
         <Grid>
             <TextBlock Text="Flyout content"

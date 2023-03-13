@@ -76,14 +76,14 @@ uid: Learn.Tutorials.Authentication.HowToAuthentication
     ```csharp
     public async Task Start()
     {
-    	if (await _auth.RefreshAsync(CancellationToken.None))
-    	{
-    		await Navigator.NavigateViewModelAsync<SecondViewModel>(this);
-    	}
-    	else
-    	{
-    		await Navigator.NavigateViewModelAsync<MainViewModel>(this);
-    	}
+        if (await _auth.RefreshAsync(CancellationToken.None))
+        {
+            await Navigator.NavigateViewModelAsync<SecondViewModel>(this);
+        }
+        else
+        {
+            await Navigator.NavigateViewModelAsync<MainViewModel>(this);
+        }
     }
     ```
 
@@ -91,13 +91,13 @@ uid: Learn.Tutorials.Authentication.HowToAuthentication
 
     ```csharp
     routes
-    	.Register(
-    		new RouteMap("", View: views.FindByViewModel<ShellViewModel>() ,
-    				Nested: new RouteMap[]
-    				{
-    								new RouteMap("Main", View: views.FindByViewModel<MainViewModel>()),
-    								new RouteMap("Second", View: views.FindByViewModel<SecondViewModel>(), DependsOn:"Main"),
-    				}));
+        .Register(
+            new RouteMap("", View: views.FindByViewModel<ShellViewModel>() ,
+                Nested: new RouteMap[]
+                {
+                    new RouteMap("Main", View: views.FindByViewModel<MainViewModel>()),
+                    new RouteMap("Second", View: views.FindByViewModel<SecondViewModel>(), DependsOn:"Main"),
+                }));
     ```
 
 - Update `SecondPage` XAML to include a Button for logging out of the application. This will invoke the `Logout` method on the `SecondViewModel`.
@@ -162,15 +162,15 @@ From this walk through you can see how the IAuthenticationService can be used to
     public IHost InitializeHost()
     {
     
-    	return UnoHost
-    			.CreateDefaultBuilder()
-    			...
-    			.ConfigureServices((context, services) =>
-    			{
-    				services
-    						.AddNativeHandler()
-    						.AddRefitClient<IDummyJsonEndpoint>(context);
-    			})
+        return UnoHost
+            .CreateDefaultBuilder()
+            ...
+            .ConfigureServices((context, services) =>
+            {
+                services
+                    .AddNativeHandler()
+                    .AddRefitClient<IDummyJsonEndpoint>(context);
+            })
     ```
 
 - Update `appsettings.json` to include a section that specifies the base Url for the Refit service. Note that the section name needs to match the interface (dropping the leading I) name. In this case the interface name is `IDummyJsonEndpoint`, so the configuration section is `DummyJsonEndpoint`
@@ -210,8 +210,8 @@ From this walk through you can see how the IAuthenticationService can be used to
                                 var authResponse = await authService.Login(creds, cancellationToken);
                                 if (authResponse?.Token is not null)
                                 {
-                                	credentials["AccessToken"] = authResponse.Token;
-                                	return credentials;
+                                    credentials["AccessToken"] = authResponse.Token;
+                                    return credentials;
                                 }
                                 return default;
                             }))
