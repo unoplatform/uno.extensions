@@ -18,21 +18,19 @@ public App()
 {
     Host = UnoHost
         .CreateDefaultBuilder()
-        .ConfigureServices((context, services) =>
-			   {
-				   _ = services
-    				   .AddNativeHandler()
-    				   .AddClient<IShowService, ShowService>(context,
-						   new EndpointOptions
-							   {
-								   Url = "https://ch9-app.azurewebsites.net/"
-							   }
-							   .Enable(nameof(EndpointOptions.UseNativeHandler))
-					   );
-			   })
+        .UseHttp((context, services) =>
+               {
+                   _ = services
+                       .AddClient<IShowService, ShowService>(context,
+                           new EndpointOptions
+                               {
+                                   Url = "https://ch9-app.azurewebsites.net/"
+                               }
+                               .Enable(nameof(EndpointOptions.UseNativeHandler))
+                       );
+               })
         .Build();
-    // ........ //
-}
+...
 ```
 
 `EndpointOptions` can also be loaded from a specified configuration section name. Refer to the [Configuration](xref:Overview.Configuration) documentation for more information.
@@ -44,15 +42,13 @@ public App()
 {
     Host = UnoHost
         .CreateDefaultBuilder()
-        .ConfigureServices((context, services) =>
-			   {
-				   _ = services
-    				   .AddNativeHandler()
-    				   .AddClient<IShowService, ShowService>(context, "configsectionname");
-			   })
+        .UseHttp((context, services) =>
+               {
+                   _ = services
+                        .AddClient<IShowService, ShowService>(context, "configsectionname");
+               })
         .Build();
-    // ........ //
-}
+...
 ```
 
 ## Refit
@@ -66,14 +62,13 @@ public App()
 {
     Host = UnoHost
         .CreateDefaultBuilder()
-        .ConfigureServices((context, services) =>
-			   {
-				   _ = services
-    				    .AddNativeHandler()
-    			        .AddRefitClient<IChuckNorrisEndpoint>(context);
+        .UseHttp((context, services) =>
+               {
+                   _ = services
+                        .AddRefitClient<IChuckNorrisEndpoint>(context);
                 })
         .Build();
-    // ........ //
+...
 }
 ```
 
@@ -82,8 +77,8 @@ In this case, the `EndpointOptions` will be loaded from configuration section Ch
 ```json
 {
   "ChuckNorrisEndpoint": {
-	"Url": "https://api.chucknorris.io/",
-	"UseNativeHandler": true
+    "Url": "https://api.chucknorris.io/",
+    "UseNativeHandler": true
   }
 }
 ```
