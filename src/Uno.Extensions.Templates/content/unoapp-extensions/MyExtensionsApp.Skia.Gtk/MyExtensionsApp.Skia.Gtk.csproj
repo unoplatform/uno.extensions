@@ -5,8 +5,8 @@
 		<TargetFramework>$baseTargetFramework$</TargetFramework>
 	</PropertyGroup>
 	<!--#if (useWinAppSdk)-->
-	<ItemGroup Condition="exists('Platforms\Windows')">
-		<EmbeddedResource Include="Platforms\Windows\Package.appxmanifest" LogicalName="Package.appxmanifest" />
+	<ItemGroup Condition="exists('..\MyExtensionsApp.Windows\Package.appxmanifest')">
+		<EmbeddedResource Include="..\MyExtensionsApp.Windows\Package.appxmanifest" LogicalName="Package.appxmanifest" />
 	</ItemGroup>
 	<!--#else-->
 	<ItemGroup>
