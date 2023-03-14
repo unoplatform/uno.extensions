@@ -22,10 +22,6 @@ try
 	builder.Host.UseSerilog();
 #endif
 
-#if(!useMinimalApi)
-	// Add Controllers
-	builder.Services.AddControllers();
-#endif
 #if (useHttp)
 	// Configure the JsonOptions to use the generated WeatherForecastContext
 	builder.Services.Configure<JsonOptions>(options =>
@@ -65,11 +61,7 @@ try
 	app.MapFallbackToFile("index.html");
 #endif
 
-#if (useMinimalApi)
 	app.MapWeatherApi();
-#else
-	app.MapControllers();
-#endif
 	app.UseStaticFiles();
 
 	await app.RunAsync();
