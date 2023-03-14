@@ -14,22 +14,22 @@ Web resources exposed through an API are defined in the application as clients. 
 ```csharp
 private IHost Host { get; }
 
-public App()
+protected override void OnLaunched(LaunchActivatedEventArgs args)
 {
-    Host = UnoHost
-        .CreateDefaultBuilder()
-        .UseHttp((context, services) =>
-               {
-                   _ = services
-                       .AddClient<IShowService, ShowService>(context,
-                           new EndpointOptions
-                               {
-                                   Url = "https://ch9-app.azurewebsites.net/"
-                               }
-                               .Enable(nameof(EndpointOptions.UseNativeHandler))
-                       );
-               })
-        .Build();
+    var builder = this.CreateBuilder(args)
+        .Configure(host => {
+            host
+            .UseHttp((context, services) =>
+            {
+                services
+                .AddClient<IShowService, ShowService>(context,
+                    new EndpointOptions
+                    {
+                        Url = "https://ch9-app.azurewebsites.net/"
+                    }
+                    .Enable(nameof(EndpointOptions.UseNativeHandler)));
+            });
+        });
 ...
 ```
 
@@ -38,16 +38,17 @@ public App()
 ```csharp
 private IHost Host { get; }
 
-public App()
+protected override void OnLaunched(LaunchActivatedEventArgs args)
 {
-    Host = UnoHost
-        .CreateDefaultBuilder()
-        .UseHttp((context, services) =>
-               {
-                   _ = services
-                        .AddClient<IShowService, ShowService>(context, "configsectionname");
-               })
-        .Build();
+    var builder = this.CreateBuilder(args)
+        .Configure(host => {
+            host
+            .UseHttp((context, services) =>
+            {
+                services
+                .AddClient<IShowService, ShowService>(context, "configsectionname");
+            });
+        });
 ...
 ```
 
@@ -58,18 +59,18 @@ Refit endpoints can be configured as services in a similar way.
 ```csharp
 private IHost Host { get; }
 
-public App()
+protected override void OnLaunched(LaunchActivatedEventArgs args)
 {
-    Host = UnoHost
-        .CreateDefaultBuilder()
-        .UseHttp((context, services) =>
-               {
-                   _ = services
-                        .AddRefitClient<IChuckNorrisEndpoint>(context);
-                })
-        .Build();
+    var builder = this.CreateBuilder(args)
+        .Configure(host => {
+            host
+            .UseHttp((context, services) =>
+            {
+                services
+                .AddRefitClient<IChuckNorrisEndpoint>(context);
+            });
+        });
 ...
-}
 ```
 
 In this case, the `EndpointOptions` will be loaded from configuration section ChuckNorrisEndpoint. The configuration section could be defined as follows:

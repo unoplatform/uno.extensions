@@ -9,17 +9,18 @@ When working with a complex application, centralized registration of your API en
 
 ### 1. Enable HTTP
 
-* Call the `UseHttp()` method to register a HTTP client that implements `IHttpClient` with the service collection:
+* Call the `UseHttp()` method to register a HTTP client with the `IHostBuilder` which implements `IHttpClient`:
 
     ```csharp
     private IHost Host { get; }
-    
-    public App()
+
+    protected override void OnLaunched(LaunchActivatedEventArgs args)
     {
-        Host = UnoHost
-            .CreateDefaultBuilder()
-            .UseHttp()
-            .Build();
+        var builder = this.CreateBuilder(args)
+            .Configure(host => {
+                host
+                .UseHttp( /* ... */);
+            });
     ...
     ```
 
@@ -29,16 +30,17 @@ When working with a complex application, centralized registration of your API en
 
     ```csharp
     private IHost Host { get; }
-    
-    public App()
+
+    protected override void OnLaunched(LaunchActivatedEventArgs args)
     {
-        Host = UnoHost
-            .CreateDefaultBuilder()
-            .UseHttp((context, services) =>
-                   {
-                       // ...
-                   })
-            .Build();
+        var builder = this.CreateBuilder(args)
+            .Configure(host => {
+                host
+                .UseHttp((context, services) =>
+                    {
+                        // ...
+                    });
+            });
     ...
     ```
 
@@ -56,14 +58,15 @@ When working with a complex application, centralized registration of your API en
 
     ```csharp
     private IHost Host { get; }
-    
-    public App()
+
+    protected override void OnLaunched(LaunchActivatedEventArgs args)
     {
-        Host = UnoHost
-            .CreateDefaultBuilder()
-            .UseHttp((context, services) =>
-                   {
-                       _ = services
+        var builder = this.CreateBuilder(args)
+            .Configure(host => {
+                host
+                .UseHttp((context, services) =>
+                    {
+                        services
                            .AddClient<IShowService, ShowService>(context,
                                new EndpointOptions
                                    {
@@ -71,8 +74,8 @@ When working with a complex application, centralized registration of your API en
                                    }
                                    .Enable(nameof(EndpointOptions.UseNativeHandler))
                            );
-                   })
-            .Build();
+                    });
+            });
     ...
     ```
 
