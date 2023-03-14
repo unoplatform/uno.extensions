@@ -70,7 +70,7 @@ Once a user has been authenticated, the tokens are cached and are available for 
 The `HeaderHandler` is used to apply the access token to the http request using the `Authorization` header. The default scheme is `Bearer` but this can be override to use a different scheme, such as basic.
 
 ### Cookies
-The `CookieHandler` is used to apply the access token, and/or refresh token, to the http request as cookies. This requires the cookie name for access tokena and request token to be specified as part of configuring the application. Learn how to use [Cookies](xref:Learn.Tutorials.Authentication.HowToCookieAuthorization) to authorize
+The `CookieHandler` is used to apply the access token, and/or refresh token, to the http request as cookies. This requires the cookie name for access token and request token to be specified as part of configuring the application. Learn how to use [Cookies](xref:Learn.Tutorials.Authentication.HowToCookieAuthorization) to authorize
 
 
 
