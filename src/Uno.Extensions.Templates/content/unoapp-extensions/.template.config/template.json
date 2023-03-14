@@ -1370,6 +1370,12 @@
           ]
         },
         {
+          "condition": "(useWinAppSdk && useWpf)",
+          "exclude": [
+            "MyExtensionsApp.Skia.WPF/Package.appxmanifest"
+          ]
+        },
+        {
           "condition": "(!useWinAppSdk)",
           "exclude": [
             "MyExtensionsApp.Windows/**/*"

@@ -3,7 +3,7 @@
 	<!--#if (useCPM)-->
 		<PackageReference Include="Uno.Resizetizer" />
 	<!--#else-->
-		<PackageReference Include="Uno.Resizetizer" Version="0.42.0-dev.174" />
+		<PackageReference Include="Uno.Resizetizer" Version="0.50.0-dev.203" />
 	<!--#endif-->
 	</ItemGroup>
 
@@ -22,5 +22,9 @@
 				ForegroundFile="$(MSBuildThisFileDirectory)Icons\appconfig.svg"
 				ForegroundScale="0.65"
 				Color="#00000000" />
+		<UnoSplashScreen 
+			Include="$(MSBuildThisFileDirectory)Splash\splash_screen.svg"
+			BaseSize="128,128"
+			Color="#086AD1" />
 	</ItemGroup>
 </Project>

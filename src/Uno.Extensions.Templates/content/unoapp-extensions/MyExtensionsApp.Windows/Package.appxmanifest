@@ -32,7 +32,7 @@
       <uap:VisualElements
         DisplayName="MyExtensionsApp"
         Description="MyExtensionsApp">
-        <uap:SplashScreen Image="Images\SplashScreen.png"  BackgroundColor="#086AD1"/>
+        <uap:SplashScreen BackgroundColor="#086AD1"/>
       </uap:VisualElements>
     </Application>
   </Applications>
