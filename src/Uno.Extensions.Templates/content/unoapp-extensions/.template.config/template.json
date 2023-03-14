@@ -237,13 +237,6 @@
       "defaultValue": "true",
       "description": "Includes a Server project for an API & host for the WebAssembly project"
     },
-    "minimalApi": {
-      "displayName": "Minimal Api",
-      "type": "parameter",
-      "datatype": "bool",
-      "defaultValue": "true",
-      "description": "When enabled this provides a minimal API instead of a controller"
-    },
     "dependencyInjection": {
       "displayName": "Dependency Injection",
       "description": "Use dependency injection for registering and accessing services",
@@ -442,11 +435,6 @@
       "type": "parameter",
       "datatype": "bool",
       "defaultValue": "false"
-    },
-    "useMinimalApi": {
-      "type": "computed",
-      "datatype": "bool",
-      "value": "(minimalApi)"
     },
     "useCPM": {
       "type": "computed",
@@ -1666,18 +1654,6 @@
             "MyExtensionsApp/Business/Models/AppConfig.cs",
             "MyExtensionsApp/appsettings.*",
             "MyExtensionsApp.Tests/AppInfoTests.cs"
-          ]
-        },
-        {
-          "condition": "(useMinimalApi)",
-          "exclude": [
-            "MyExtensionsApp.Server/Controllers/*"
-          ]
-        },
-        {
-          "condition": "(!useMinimalApi)",
-          "exclude": [
-            "MyExtensionsApp.Server/Apis/*"
           ]
         }
       ]
