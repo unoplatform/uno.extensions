@@ -22,16 +22,16 @@ try
 	builder.Host.UseSerilog();
 #endif
 
-	// Add services to the container.
-#if (useHttp)
-	builder.Services.AddControllers()
-		.AddJsonOptions(options =>
-		{
-			options.JsonSerializerOptions.AddContext<WeatherForecastContext>();
-		});
-#else
+#if(!useMinimalApi)
+	// Add Controllers
 	builder.Services.AddControllers();
 #endif
+#if (useHttp)
+	// Configure the JsonOptions to use the generated WeatherForecastContext
+	builder.Services.Configure<JsonOptions>(options =>
+		options.JsonSerializerOptions.AddContext<WeatherForecastContext>());
+#endif
+	// Configure the RouteOptions to use lowercase URLs
 	builder.Services.Configure<RouteOptions>(options =>
 		options.LowercaseUrls = true);
 
@@ -59,15 +59,17 @@ try
 	}
 
 	app.UseHttpsRedirection();
-
-	app.UseAuthorization();
 #if useWasm
 
 	app.UseUnoFrameworkFiles();
 	app.MapFallbackToFile("index.html");
 #endif
 
+#if (useMinimalApi)
+	app.MapWeatherApi();
+#else
 	app.MapControllers();
+#endif
 	app.UseStaticFiles();
 
 	await app.RunAsync();
@@ -80,10 +82,14 @@ catch (Exception ex)
 	Console.Error.WriteLine("Application terminated unexpectedly");
 	Console.Error.WriteLine(ex);
 #endif
+//-:cnd:noEmit
+#if DEBUG
 	if (System.Diagnostics.Debugger.IsAttached)
 	{
 		System.Diagnostics.Debugger.Break();
 	}
+#endif
+//+:cnd:noEmit
 }
 #if (useSerilog)
 finally

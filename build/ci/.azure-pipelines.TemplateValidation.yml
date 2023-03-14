@@ -55,6 +55,12 @@ jobs:
       FrameNavigation:
         createdProjectName: UnoAppFrameNavigation01
         templateArgs: '--navigation blank'
+      ServerController:
+        createdProjectName: UnoAppServerController01
+        templateArgs: '-minimal false'
+      ServerControllerNet6:
+        createdProjectName: UnoAppServerController01
+        templateArgs: '-minimal false -tfm net6.0'
       Net6:
         createdProjectName: UnoAppNet6
         templateArgs: '-tfm net6.0'

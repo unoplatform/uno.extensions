@@ -237,6 +237,13 @@
       "defaultValue": "true",
       "description": "Includes a Server project for an API & host for the WebAssembly project"
     },
+    "minimalApi": {
+      "displayName": "Minimal Api",
+      "type": "parameter",
+      "datatype": "bool",
+      "defaultValue": "true",
+      "description": "When enabled this provides a minimal API instead of a controller"
+    },
     "dependencyInjection": {
       "displayName": "Dependency Injection",
       "description": "Use dependency injection for registering and accessing services",
@@ -435,6 +442,11 @@
       "type": "parameter",
       "datatype": "bool",
       "defaultValue": "false"
+    },
+    "useMinimalApi": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "(minimalApi)"
     },
     "useCPM": {
       "type": "computed",
@@ -1171,6 +1183,52 @@
       "datatype": "bool",
       "value": "useDependencyInjection && (useConfiguration || navigationEvaluator != 'blank')"
     },
+    "MsftExtensionsLoggingConsoleVersion": {
+      "type": "generated",
+      "generator": "switch",
+      "replaces": "$MsftExtensionsLoggingConsoleVersion$",
+      "parameters": {
+        "evaluator": "C++",
+        "datatype": "string",
+        "cases": [
+          {
+            "condition": "(tfm == 'net6.0')",
+            "value": "6.0.0"
+          },
+          {
+            "condition": "(tfm == 'net7.0')",
+            "value": "7.0.0"
+          },
+          {
+            "condition": "(tfm == 'net8.0')",
+            "value": "8.0.0-preview.1.23110.8"
+          }
+        ]
+      }
+    },
+    "MsftWindowsCompatibilityVersion": {
+      "type": "generated",
+      "generator": "switch",
+      "replaces": "$MsftWindowsCompatibilityVersion$",
+      "parameters": {
+        "evaluator": "C++",
+        "datatype": "string",
+        "cases": [
+          {
+            "condition": "(tfm == 'net6.0')",
+            "value": "6.0.3"
+          },
+          {
+            "condition": "(tfm == 'net7.0')",
+            "value": "7.0.0"
+          },
+          {
+            "condition": "(tfm == 'net8.0')",
+            "value": "8.0.0-preview.1.23110.8"
+          }
+        ]
+      }
+    },
     "HostIdentifier": {
       "type": "bind",
       "binding": "HostIdentifier"
@@ -1362,7 +1420,7 @@
           ]
         },
         {
-          "condition": "(useRecommendedAppTemplate)",
+          "condition": "(useDataContracts)",
           "exclude": [
             "MyExtensionsApp.Server/WeatherForecast.cs"
           ]
@@ -1609,7 +1667,19 @@
             "MyExtensionsApp/appsettings.*",
             "MyExtensionsApp.Tests/AppInfoTests.cs"
           ]
-        } 
+        },
+        {
+          "condition": "(useMinimalApi)",
+          "exclude": [
+            "MyExtensionsApp.Server/Controllers/*"
+          ]
+        },
+        {
+          "condition": "(!useMinimalApi)",
+          "exclude": [
+            "MyExtensionsApp.Server/Apis/*"
+          ]
+        }
       ]
     }
   ],

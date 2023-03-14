@@ -147,7 +147,7 @@
 		<PackageReference Include="Uno.Extensions.Reactive.WinUI.Markup" Version="255.255.255.255" />
 		<!--#endif-->
 		<!--#endif-->
-		<PackageReference Include="Microsoft.Extensions.Logging.Console" Version="7.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Console" Version="$MsftExtensionsLoggingConsoleVersion$" />
 	</ItemGroup>
 	<!--#endif-->
 	<!--#if (includeIsExternalInit)-->
