@@ -15,17 +15,10 @@
 			<_Parameter2>System.Windows.ResourceDictionaryLocation.SourceAssembly</_Parameter2>
 			<_Parameter2_IsLiteral>true</_Parameter2_IsLiteral>
 		</AssemblyAttribute>
-	</ItemGroup>	
-	<!--#if (useWinAppSdk)-->
-	<ItemGroup Condition="exists('..\MyExtensionsApp.Windows')">
-		<EmbeddedResource Include="..\MyExtensionsApp.Windows\Package.appxmanifest" LogicalName="Package.appxmanifest" />
 	</ItemGroup>
-	<!--#else-->
 	<ItemGroup>
 		<EmbeddedResource Include="Package.appxmanifest" />
 	</ItemGroup>
-	<!--#endif-->
-
 
 	<!--#if (useCPM)-->
 	<ItemGroup>
