@@ -79,6 +79,7 @@
 	</ItemGroup>
 	<!--#else-->
 	<ItemGroup>
+		<PackageReference Include="Uno.Resizetizer" Version="0.50.0-dev.203" />
 		<PackageReference Include="Uno.WinUI.Skia.Gtk" Version="4.7.44" />
 		<!--#if (useCsharpMarkup)-->
 		<PackageReference Include="Uno.WinUI.Markup" Version="4.7.0-dev.20" />
