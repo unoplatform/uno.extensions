@@ -66,7 +66,7 @@
     <!--#if (useMaterial)-->
     <PackageVersion Include="Uno.Toolkit.WinUI.Material" Version="2.5.0-dev.53" />
     <!--#endif-->
-    <PackageVersion Include="Uno.Resizetizer" Version="0.50.0-dev.203" />
+    <PackageVersion Include="Uno.Resizetizer" Version="1.0.0-dev.207" />
     <PackageVersion Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="4.7.44" />
     <PackageVersion Include="Uno.UITest.Helpers" Version="1.1.0-dev.32" />
     <PackageVersion Include="Uno.UniversalImageLoader" Version="1.9.36" />

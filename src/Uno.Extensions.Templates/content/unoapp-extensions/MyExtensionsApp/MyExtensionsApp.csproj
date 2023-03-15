@@ -85,7 +85,7 @@
 	<!--#else-->
 	<ItemGroup>
 		<PackageReference Include="Uno.WinUI" Version="4.7.44" />
-		<PackageReference Include="Uno.Resizetizer" Version="0.50.0-dev.203" />
+		<PackageReference Include="Uno.Resizetizer" Version="1.0.0-dev.207" />
 		<!--#if (useCsharpMarkup)-->
 		<PackageReference Include="Uno.WinUI.Markup" Version="4.7.0-dev.20" />
 		<!--#if (useMaterial)-->

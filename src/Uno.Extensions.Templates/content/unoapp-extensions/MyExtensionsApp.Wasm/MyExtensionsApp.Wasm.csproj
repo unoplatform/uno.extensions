@@ -128,7 +128,7 @@
 	</ItemGroup>
 	<!--#else-->
 	<ItemGroup>
-		<PackageReference Include="Uno.Resizetizer" Version="0.50.0-dev.203" />
+		<PackageReference Include="Uno.Resizetizer" Version="1.0.0-dev.207" />
 		<PackageReference Include="Microsoft.Windows.Compatibility" Version="$MsftWindowsCompatibilityVersion$" />
 		<PackageReference Include="Uno.Wasm.Bootstrap" Version="7.0.19" />
 		<PackageReference Include="Uno.Wasm.Bootstrap.DevServer" Version="7.0.19" />

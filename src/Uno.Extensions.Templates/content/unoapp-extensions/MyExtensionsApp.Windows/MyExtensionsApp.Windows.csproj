@@ -93,7 +93,7 @@
 	</ItemGroup>
 	<!--#else-->
 	<ItemGroup>
-		<PackageReference Include="Uno.Resizetizer" Version="0.50.0-dev.203" />
+		<PackageReference Include="Uno.Resizetizer" Version="1.0.0-dev.207" />
 		<PackageReference Include="Uno.WinUI" Version="4.7.44" />
 		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.2.230217.4" />
 		<PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.755" />
