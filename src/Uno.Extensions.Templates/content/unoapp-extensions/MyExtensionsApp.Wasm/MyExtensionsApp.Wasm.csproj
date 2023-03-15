@@ -30,10 +30,8 @@
 		<!-- <WasmShellGenerateAOTProfile>true</WasmShellGenerateAOTProfile> -->
 	</PropertyGroup>
 	<ItemGroup>
-		<Content Include="Assets\SplashScreen.png" />
 		<!--#if (wasmPwaManifest)-->
 		<Content Include="manifest.webmanifest" />
-		<Content Include="Assets\AppIcon-*.png" />
 		<!--#endif -->
 	</ItemGroup>
 	<ItemGroup>
