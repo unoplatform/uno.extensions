@@ -23,7 +23,7 @@
     "type": "solution",
     "editorTreatAs": "solution"
   },
-  "shortName": "unoapp.extensions",
+  "shortName": "unoapp",
   "sourceName": "MyExtensionsApp.1",
   "defaultName": "UnoExtApp",
   "placeholderFilename": "template-ignore",
