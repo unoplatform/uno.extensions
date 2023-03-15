@@ -466,6 +466,24 @@
       "datatype": "bool",
       "value": "(markup == 'xaml')"
     },
+    "DspGenerator": {
+      "type": "generated",
+      "generator": "switch",
+      "replaces": "$DspGenerator$",
+      "parameters": {
+        "evaluator": "C++",
+        "cases": [
+          {
+            "condition": "(markup == 'xaml')",
+            "value": "Xaml"
+          },
+          {
+            "condition": "(markup == 'csharp')",
+            "value": "CSharp"
+          }
+        ]
+      }
+    },
     "presetAppThemeDefault": {
       "type": "generated",
       "generator": "switch",
