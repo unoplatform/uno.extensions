@@ -34,20 +34,20 @@
 			DestinationFiles="$(IntermediateOutputPath)/content/%(RecursiveDir)%(Filename)%(Extension)"
 			SkipUnchangedFiles="false" />
 		<Copy
-			SourceFiles="content/unoapp-extensions/MyExtensionsApp.DataContracts/WeatherForecast.cs"
-			DestinationFiles="$(IntermediateOutputPath)/content/unoapp-extensions/MyExtensionsApp.Server/WeatherForecast.cs"
+			SourceFiles="content/unoapp-extensions/MyExtensionsApp.1.DataContracts/WeatherForecast.cs"
+			DestinationFiles="$(IntermediateOutputPath)/content/unoapp-extensions/MyExtensionsApp.1.Server/WeatherForecast.cs"
 			SkipUnchangedFiles="false" />
 		<Copy
-			SourceFiles="content/unoapp-extensions/MyExtensionsApp.Windows/Package.appxmanifest"
-			DestinationFiles="$(IntermediateOutputPath)/content/unoapp-extensions/MyExtensionsApp.Skia.Gtk/Package.appxmanifest"
+			SourceFiles="content/unoapp-extensions/MyExtensionsApp.1.Windows/Package.appxmanifest"
+			DestinationFiles="$(IntermediateOutputPath)/content/unoapp-extensions/MyExtensionsApp.1.Skia.Gtk/Package.appxmanifest"
 			SkipUnchangedFiles="false" />
 		<Copy
-			SourceFiles="content/unoapp-extensions/MyExtensionsApp.Windows/Package.appxmanifest"
-			DestinationFiles="$(IntermediateOutputPath)/content/unoapp-extensions/MyExtensionsApp.Skia.Linux.FrameBuffer/Package.appxmanifest"
+			SourceFiles="content/unoapp-extensions/MyExtensionsApp.1.Windows/Package.appxmanifest"
+			DestinationFiles="$(IntermediateOutputPath)/content/unoapp-extensions/MyExtensionsApp.1.Skia.Linux.FrameBuffer/Package.appxmanifest"
 			SkipUnchangedFiles="false" />
 		<Copy
-			SourceFiles="content/unoapp-extensions/MyExtensionsApp.Windows/Package.appxmanifest"
-			DestinationFiles="$(IntermediateOutputPath)/content/unoapp-extensions/MyExtensionsApp.Skia.WPF/Package.appxmanifest"
+			SourceFiles="content/unoapp-extensions/MyExtensionsApp.1.Windows/Package.appxmanifest"
+			DestinationFiles="$(IntermediateOutputPath)/content/unoapp-extensions/MyExtensionsApp.1.Skia.WPF/Package.appxmanifest"
 			SkipUnchangedFiles="false" />
 		<ItemGroup>
 			<_PackageFiles Include="$(IntermediateOutputPath)/content/**/*"
