@@ -1,0 +1,29 @@
+{
+  "solution": {
+    "path": "MyExtensionsApp.1.sln",
+    "projects": [
+#//#if (useUnitTests)
+      "MyExtensionsApp.1.Tests\\MyExtensionsApp.1.Tests.csproj",
+#//#endif
+#//#if (useUITests)
+      "MyExtensionsApp.1.UITests\\MyExtensionsApp.1.UITests.csproj",
+#//#endif
+#//#if (useMobile)
+      "MyExtensionsApp.1.Mobile\\MyExtensionsApp.1.Mobile.csproj",
+#//#endif
+#//#if (useGtk)
+      "MyExtensionsApp.1.Skia.Gtk\\MyExtensionsApp.1.Skia.Gtk.csproj",
+#//#endif
+#//#if (useWasm)
+      "MyExtensionsApp.1.Wasm\\MyExtensionsApp.1.Wasm.csproj",
+#//#endif
+#//#if (server)
+      "MyExtensionsApp.1.Server\\MyExtensionsApp.1.Server.csproj",
+#//#endif
+#//#if (useDataContracts)
+      "MyExtensionsApp.1.DataContracts\\MyExtensionsApp.1.DataContracts.csproj",
+#//#endif
+      "MyExtensionsApp.1\\MyExtensionsApp.1.csproj"
+    ]
+  }
+}
