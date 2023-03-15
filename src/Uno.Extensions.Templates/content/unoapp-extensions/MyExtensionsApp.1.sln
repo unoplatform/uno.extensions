@@ -16,46 +16,46 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{7EF70027
 EndProject
 #//#endif
 
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyExtensionsApp._1", "MyExtensionsApp._1\MyExtensionsApp._1.csproj", "{BACDD33A-304C-46C4-9B00-AC166978D7E0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyExtensionsApp.1", "MyExtensionsApp.1\MyExtensionsApp.1.csproj", "{BACDD33A-304C-46C4-9B00-AC166978D7E0}"
 EndProject
 #//#if (useMobile)
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyExtensionsApp._1.Mobile", "MyExtensionsApp._1.Mobile\MyExtensionsApp._1.Mobile.csproj", "{24D56E12-2373-4CBD-9AD4-5C931D15FB0D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyExtensionsApp.1.Mobile", "MyExtensionsApp.1.Mobile\MyExtensionsApp.1.Mobile.csproj", "{24D56E12-2373-4CBD-9AD4-5C931D15FB0D}"
 EndProject
 #//#endif
 #//#if (useWasm)
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyExtensionsApp._1.Wasm", "MyExtensionsApp._1.Wasm\MyExtensionsApp._1.Wasm.csproj", "{40EA03F7-8A22-4143-B251-79BAC3EB13D2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyExtensionsApp.1.Wasm", "MyExtensionsApp.1.Wasm\MyExtensionsApp.1.Wasm.csproj", "{40EA03F7-8A22-4143-B251-79BAC3EB13D2}"
 EndProject
 #//#endif
 #//#if (useGtk)
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyExtensionsApp._1.Skia.Gtk", "MyExtensionsApp._1.Skia.Gtk\MyExtensionsApp._1.Skia.Gtk.csproj", "{A5B8155A-118F-4794-B551-C6F3CF7E5411}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyExtensionsApp.1.Skia.Gtk", "MyExtensionsApp.1.Skia.Gtk\MyExtensionsApp.1.Skia.Gtk.csproj", "{A5B8155A-118F-4794-B551-C6F3CF7E5411}"
 EndProject
 #//#endif
 #//#if (useWpf)
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyExtensionsApp._1.Skia.WPF", "MyExtensionsApp._1.Skia.WPF\MyExtensionsApp._1.Skia.WPF.csproj", "{6C744695-DA38-44D9-B487-FE5804C5508D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyExtensionsApp.1.Skia.WPF", "MyExtensionsApp.1.Skia.WPF\MyExtensionsApp.1.Skia.WPF.csproj", "{6C744695-DA38-44D9-B487-FE5804C5508D}"
 EndProject
 #//#endif
 #//#if (useWinAppSdk)
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyExtensionsApp._1.Windows", "MyExtensionsApp._1.Windows\MyExtensionsApp._1.Windows.csproj", "{5A78EE9A-1922-468C-96E3-45817727511C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyExtensionsApp.1.Windows", "MyExtensionsApp.1.Windows\MyExtensionsApp.1.Windows.csproj", "{5A78EE9A-1922-468C-96E3-45817727511C}"
 EndProject
 #//#endif
 #//#if (useLinuxFb)
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyExtensionsApp._1.Skia.Linux.FrameBuffer", "MyExtensionsApp._1.Skia.Linux.FrameBuffer\MyExtensionsApp._1.Skia.Linux.FrameBuffer.csproj", "{925C7A3E-6532-4E27-8ABE-37A4F9B73C8B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyExtensionsApp.1.Skia.Linux.FrameBuffer", "MyExtensionsApp.1.Skia.Linux.FrameBuffer\MyExtensionsApp.1.Skia.Linux.FrameBuffer.csproj", "{925C7A3E-6532-4E27-8ABE-37A4F9B73C8B}"
 EndProject
 #//#endif
 #//#if (server)
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyExtensionsApp._1.Server", "MyExtensionsApp._1.Server\MyExtensionsApp._1.Server.csproj", "{1ADD4B1D-2758-4ED5-963A-FE3F4206BF20}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyExtensionsApp.1.Server", "MyExtensionsApp.1.Server\MyExtensionsApp.1.Server.csproj", "{1ADD4B1D-2758-4ED5-963A-FE3F4206BF20}"
 EndProject
 #//#endif
 #//#if (useDataContracts)
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyExtensionsApp._1.DataContracts", "MyExtensionsApp._1.DataContracts\MyExtensionsApp._1.DataContracts.csproj", "{5ED31500-DF01-462D-9436-EC2EDCAA1965}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyExtensionsApp.1.DataContracts", "MyExtensionsApp.1.DataContracts\MyExtensionsApp.1.DataContracts.csproj", "{5ED31500-DF01-462D-9436-EC2EDCAA1965}"
 EndProject
 #//#endif
 #//#if (useUnitTests)
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyExtensionsApp._1.Tests", "MyExtensionsApp._1.Tests\MyExtensionsApp._1.Tests.csproj", "{EB3EB846-D5CB-4140-834F-1CC40A0FD6D0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyExtensionsApp.1.Tests", "MyExtensionsApp.1.Tests\MyExtensionsApp.1.Tests.csproj", "{EB3EB846-D5CB-4140-834F-1CC40A0FD6D0}"
 EndProject
 #//#endif
 #//#if (useUITests)
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyExtensionsApp._1.UITests", "MyExtensionsApp._1.UITests\MyExtensionsApp._1.UITests.csproj", "{7229D034-7DBE-4FD7-B0E4-38D617571F93}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyExtensionsApp.1.UITests", "MyExtensionsApp.1.UITests\MyExtensionsApp.1.UITests.csproj", "{7229D034-7DBE-4FD7-B0E4-38D617571F93}"
 EndProject
 #//#endif
 

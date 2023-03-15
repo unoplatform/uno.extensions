@@ -8,7 +8,7 @@
 		<SingleProject>true</SingleProject>
 		<OutputType>Exe</OutputType>
 		<!-- Display name -->
-		<ApplicationTitle>MyExtensionsApp._1</ApplicationTitle>
+		<ApplicationTitle>MyExtensionsApp.1</ApplicationTitle>
 		<!-- App Identifier -->
 		<ApplicationId>com.companyname.myextensionsapp</ApplicationId>
 		<ApplicationIdGuid>F5EAE47C-F7DF-4D61-8A30-92251720AC4B</ApplicationIdGuid>
@@ -214,10 +214,10 @@
 		<!--#endif-->
 	</Choose>
 	<ItemGroup>
-		<ProjectReference Include="..\MyExtensionsApp._1\MyExtensionsApp._1.csproj" />
+		<ProjectReference Include="..\MyExtensionsApp.1\MyExtensionsApp.1.csproj" />
 		<!--#if (useHttp)-->
-		<ProjectReference Include="..\MyExtensionsApp._1.DataContracts\MyExtensionsApp._1.DataContracts.csproj" />
+		<ProjectReference Include="..\MyExtensionsApp.1.DataContracts\MyExtensionsApp.1.DataContracts.csproj" />
 		<!--#endif-->
 	</ItemGroup>
-	<Import Project="..\MyExtensionsApp._1.Base\base.props" />
+	<Import Project="..\MyExtensionsApp.1.Base\base.props" />
 </Project>

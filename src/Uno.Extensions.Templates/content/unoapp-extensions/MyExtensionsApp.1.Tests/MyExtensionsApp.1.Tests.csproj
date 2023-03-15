@@ -22,6 +22,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\MyExtensionsApp._1\MyExtensionsApp._1.csproj" />
+		<ProjectReference Include="..\MyExtensionsApp.1\MyExtensionsApp.1.csproj" />
 	</ItemGroup>
 </Project>
