@@ -8,7 +8,7 @@
 	<!--#if (includeIsExternalInit)-->
 
 	<ItemGroup>
-		<Compile Include="..\MyExtensionsApp._1.Base\IsExternalInit.cs"
+		<Compile Include="..\MyExtensionsApp.1.Base\IsExternalInit.cs"
 						 Visible="false" />
 	</ItemGroup>
 	<!--#endif-->
