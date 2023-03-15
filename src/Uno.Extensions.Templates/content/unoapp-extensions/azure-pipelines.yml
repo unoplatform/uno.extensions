@@ -44,10 +44,10 @@ parameters:
   default: 'contoso'              #your secure certificate password  
 - name: provisioning_profile
   type: string
-  default: 'MyExtensionsApp.mobileprovision'  #.mobileprovision file stored in secureFiles
+  default: 'MyExtensionsApp.1.mobileprovision'  #.mobileprovision file stored in secureFiles
 - name: codesign_provision
   type: string
-  default: 'MyExtensionsApp'      #The provisioning profile name. This is the name you entered in the Apple Developer portal when creating your provisioning profile.  
+  default: 'MyExtensionsApp.1'      #The provisioning profile name. This is the name you entered in the Apple Developer portal when creating your provisioning profile.  
 - name: codesign_key
   type: string
   default: 'Apple Development: Contoso Contoso (752234A22L)'    #The name of the distribution/development certificate
@@ -71,7 +71,7 @@ stages:
         - template: /build/steps/wasm.yml
           parameters:
             package_id: 'Wasm'
-            project_to_build: 'MyExtensionsApp.Wasm/MyExtensionsApp.Wasm.csproj'
+            project_to_build: 'MyExtensionsApp.1.Wasm/MyExtensionsApp.1.Wasm.csproj'
       pool:
         vmImage: macOS-latest   
 #endif
@@ -88,7 +88,7 @@ stages:
           parameters:
             package_id: 'Android'
             target_framework: "$baseTargetFramework$-android"
-            project_to_build: 'MyExtensionsApp.Mobile/MyExtensionsApp.Mobile.csproj'
+            project_to_build: 'MyExtensionsApp.1.Mobile/MyExtensionsApp.1.Mobile.csproj'
       pool:
         vmImage: macOS-latest
 
@@ -116,7 +116,7 @@ stages:
             certificate_password: '${{ parameters.jks_certificate_password }}'
             certificate_alias: '${{ parameters.certificate_alias }}'
             package_id: 'signed_android'
-            project_to_build: 'MyExtensionsApp.Mobile/MyExtensionsApp.Mobile.csproj'
+            project_to_build: 'MyExtensionsApp.1.Mobile/MyExtensionsApp.1.Mobile.csproj'
       pool:
         vmImage: macOS-latest         
 #endif
@@ -131,7 +131,7 @@ stages:
 
         - template: /build/steps/mobile.yml
           parameters:
-            project_to_build: 'MyExtensionsApp.Mobile/MyExtensionsApp.Mobile.csproj'
+            project_to_build: 'MyExtensionsApp.1.Mobile/MyExtensionsApp.1.Mobile.csproj'
             target_framework: '$baseTargetFramework$-ios'
       pool:
         vmImage: windows-latest
@@ -156,7 +156,7 @@ stages:
           parameters:
             package_id: 'signed_ios'
             target_framework: "$baseTargetFramework$-ios"
-            project_to_build: 'MyExtensionsApp.Mobile/MyExtensionsApp.Mobile.csproj'
+            project_to_build: 'MyExtensionsApp.1.Mobile/MyExtensionsApp.1.Mobile.csproj'
             certificate: '${{ parameters.p12_certificate }}'
             certificate_password: '${{ parameters.p12_certificate_password }}'
             provisioning_profile: '${{ parameters.provisioning_profile }}'
@@ -176,7 +176,7 @@ stages:
 
         - template: /build/steps/mobile.yml
           parameters:
-            project_to_build: 'MyExtensionsApp.Mobile/MyExtensionsApp.Mobile.csproj'
+            project_to_build: 'MyExtensionsApp.1.Mobile/MyExtensionsApp.1.Mobile.csproj'
             target_framework: '$baseTargetFramework$-maccatalyst'
       pool:
         vmImage: macos-latest
@@ -193,7 +193,7 @@ stages:
         - template: /build/steps/windows.yml
           parameters:
             package_id: 'Windows'
-            project_to_build: 'MyExtensionsApp.Windows/MyExtensionsApp.Windows.csproj'
+            project_to_build: 'MyExtensionsApp.1.Windows/MyExtensionsApp.1.Windows.csproj'
       pool:
         vmImage: windows-latest
 
@@ -217,7 +217,7 @@ stages:
             sign_package: 'true'
             certificate: '${{ parameters.pfx_certificate }}'
             package_id: 'signed_windows'
-            project_to_build: 'MyExtensionsApp.Windows/MyExtensionsApp.Windows.csproj'
+            project_to_build: 'MyExtensionsApp.1.Windows/MyExtensionsApp.1.Windows.csproj'
       pool:
         vmImage: windows-latest        
 #endif
@@ -233,7 +233,7 @@ stages:
         - template: /build/steps/desktop.yml
           parameters:
             package_id: 'WPF'
-            project_to_build: 'MyExtensionsApp.Skia.WPF/MyExtensionsApp.Skia.WPF.csproj'
+            project_to_build: 'MyExtensionsApp.1.Skia.WPF/MyExtensionsApp.1.Skia.WPF.csproj'
       pool:
         vmImage: windows-latest
 #endif
@@ -249,7 +249,7 @@ stages:
         - template: /build/steps/desktop.yml
           parameters:
             package_id: 'Linux'
-            project_to_build: 'MyExtensionsApp.Skia.Linux.FrameBuffer/MyExtensionsApp.Skia.Linux.FrameBuffer.csproj'
+            project_to_build: 'MyExtensionsApp.1.Skia.Linux.FrameBuffer/MyExtensionsApp.1.Skia.Linux.FrameBuffer.csproj'
       pool:
         vmImage: macos-latest            
 #endif

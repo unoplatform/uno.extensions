@@ -37,7 +37,7 @@ jobs:
         with:
           package-id: "Android"
           target-framework: "$baseTargetFramework$-android"
-          project-to-build: "MyExtensionsApp.Mobile/MyExtensionsApp.Mobile.csproj"
+          project-to-build: "MyExtensionsApp.1.Mobile/MyExtensionsApp.1.Mobile.csproj"
 
     ###################################################
     #                 IMPORTANT                       #
@@ -70,7 +70,7 @@ jobs:
           certificate:  ""          #${{ secrets.ANDROID_BASE64_JKS_CERTIFICATE }}
           certificate-password:  "" #${{ secrets.ANDROID_JKS_CERTIFICATE_PASSWORD }}
           certificate-alias:  ""    #${{ secrets.ANDROID_JKS_CERTIFICATE_ALIAS }}
-          project-to-build: "MyExtensionsApp.Mobile/MyExtensionsApp.Mobile.csproj"           
+          project-to-build: "MyExtensionsApp.1.Mobile/MyExtensionsApp.1.Mobile.csproj"           
 #endif
 
 #if (useIOS)
@@ -93,7 +93,7 @@ jobs:
         timeout-minutes: ${{ fromJSON(env.STEP_TIMEOUT) }}
         uses: "./.github/workflows/steps/build_mobile"
         with:
-          project-to-build: "MyExtensionsApp.Mobile/MyExtensionsApp.Mobile.csproj" 
+          project-to-build: "MyExtensionsApp.1.Mobile/MyExtensionsApp.1.Mobile.csproj" 
           target-framework: "$baseTargetFramework$-ios"
 
     ###################################################
@@ -131,7 +131,7 @@ jobs:
           api-key-id: ""            #${{ secrets.IOS_API_KEY_ID }}
           api-private-key: ""       #${{ secrets.IOS_API_PRIVATE_KEY }}
           codesign-key: ""          #${{ secrets.IOS_CODESIGN_KEY }}
-          project-to-build: "MyExtensionsApp.Mobile/MyExtensionsApp.Mobile.csproj"          
+          project-to-build: "MyExtensionsApp.1.Mobile/MyExtensionsApp.1.Mobile.csproj"          
 #endif
 
 #if (useMacCatalyst)
@@ -154,7 +154,7 @@ jobs:
         timeout-minutes: ${{ fromJSON(env.STEP_TIMEOUT) }}
         uses: "./.github/workflows/steps/build_mobile"
         with:
-          project-to-build: "MyExtensionsApp.Mobile/MyExtensionsApp.Mobile.csproj" 
+          project-to-build: "MyExtensionsApp.1.Mobile/MyExtensionsApp.1.Mobile.csproj" 
           target-framework: "$baseTargetFramework$-maccatalyst"
 #endif
 
@@ -179,7 +179,7 @@ jobs:
         uses: "./.github/workflows/steps/build_wasm"
         with:
           package-id: "Wasm"
-          project-to-build: "MyExtensionsApp.Wasm/MyExtensionsApp.Wasm.csproj" 
+          project-to-build: "MyExtensionsApp.1.Wasm/MyExtensionsApp.1.Wasm.csproj" 
 #endif
 
 #if (useWinAppSdk)
@@ -203,7 +203,7 @@ jobs:
         uses: "./.github/workflows/steps/build_windows"
         with:
           package-id: "WindowsUnsigned"
-          project-to-build: "MyExtensionsApp.Windows/MyExtensionsApp.Windows.csproj"
+          project-to-build: "MyExtensionsApp.1.Windows/MyExtensionsApp.1.Windows.csproj"
 
     ###################################################
     #                 IMPORTANT                       #
@@ -232,7 +232,7 @@ jobs:
         with:
           package-id: "signed_windows"
           certificate: ""       #${{ secrets.WINDOWS_BASE64_PFX_CERTIFICATE }}
-          project-to-build: "MyExtensionsApp.Windows/MyExtensionsApp.Windows.csproj"                  
+          project-to-build: "MyExtensionsApp.1.Windows/MyExtensionsApp.1.Windows.csproj"                  
 #endif
 
 #if (useLinuxFb)
@@ -256,7 +256,7 @@ jobs:
         uses: "./.github/workflows/steps/build_desktop"
         with:
           package-id: "Linux"
-          project-to-build: "MyExtensionsApp.Skia.Linux.FrameBuffer/MyExtensionsApp.Skia.Linux.FrameBuffer.csproj"  
+          project-to-build: "MyExtensionsApp.1.Skia.Linux.FrameBuffer/MyExtensionsApp.1.Skia.Linux.FrameBuffer.csproj"  
 #endif
 
 #if (useWpf)
@@ -280,7 +280,7 @@ jobs:
         uses: "./.github/workflows/steps/build_desktop"
         with:
           package-id: "WPF"
-          project-to-build: "MyExtensionsApp.Skia.WPF/MyExtensionsApp.Skia.WPF.csproj"  
+          project-to-build: "MyExtensionsApp.1.Skia.WPF/MyExtensionsApp.1.Skia.WPF.csproj"  
 #endif
 
 #if (useGtk)
@@ -304,5 +304,5 @@ jobs:
         uses: "./.github/workflows/steps/build_desktop"
         with:
           package-id: "GTK"
-          project-to-build: "MyExtensionsApp.Skia.Gtk/MyExtensionsApp.Skia.Gtk.csproj"
+          project-to-build: "MyExtensionsApp.1.Skia.Gtk/MyExtensionsApp.1.Skia.Gtk.csproj"
 #endif
