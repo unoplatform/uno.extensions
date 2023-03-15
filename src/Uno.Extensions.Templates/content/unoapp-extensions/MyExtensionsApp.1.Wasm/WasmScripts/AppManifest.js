@@ -1,3 +1,3 @@
 var UnoAppManifest = {
-    displayName: "MyExtensionsApp"
+    displayName: "MyExtensionsApp.1"
 }

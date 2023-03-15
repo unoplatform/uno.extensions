@@ -6,8 +6,8 @@
 		<XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls" />
 <!--#if (useMaterial)-->
 		<MaterialTheme xmlns="using:Uno.Material"
-			ColorOverrideSource="ms-appx:///MyExtensionsApp/Styles/ColorPaletteOverride.xaml"
-			FontOverrideSource="ms-appx:///MyExtensionsApp/Styles/MaterialFontsOverride.xaml" />
+			ColorOverrideSource="ms-appx:///MyExtensionsApp.1/Styles/ColorPaletteOverride.xaml"
+			FontOverrideSource="ms-appx:///MyExtensionsApp.1/Styles/MaterialFontsOverride.xaml" />
 <!--#elif (useCupertino)-->
 		<CupertinoColors xmlns="using:Uno.Cupertino" />
 		<CupertinoFonts xmlns="using:Uno.Cupertino" />

@@ -37,7 +37,7 @@ try
 	{
 		// Include XML comments for all included assemblies
 		Directory.EnumerateFiles(AppContext.BaseDirectory, "*.xml")
-			.Where(x => x.Contains("MyExtensionsApp")
+			.Where(x => x.Contains("MyExtensionsApp.1")
 				&& File.Exists(Path.Combine(
 					AppContext.BaseDirectory,
 					$"{Path.GetFileNameWithoutExtension(x)}.dll")))
