@@ -7,7 +7,7 @@
       "type": "process",
       "args": [
         "build",
-        "${workspaceFolder}/MyExtensionsApp.Wasm/MyExtensionsApp.Wasm.csproj",
+        "${workspaceFolder}/MyExtensionsApp.1.Wasm/MyExtensionsApp.1.Wasm.csproj",
         "/property:GenerateFullPaths=true",
         "/consoleloggerparameters:NoSummary"
       ],
@@ -19,7 +19,7 @@
       "type": "process",
       "args": [
         "publish",
-        "${workspaceFolder}/MyExtensionsApp.Wasm/MyExtensionsApp.Wasm.csproj",
+        "${workspaceFolder}/MyExtensionsApp.1.Wasm/MyExtensionsApp.1.Wasm.csproj",
         "/property:GenerateFullPaths=true",
         "/consoleloggerparameters:NoSummary"
       ],
@@ -31,7 +31,7 @@
       "type": "process",
       "args": [
         "build",
-        "${workspaceFolder}/MyExtensionsApp.Skia.Gtk/MyExtensionsApp.Skia.Gtk.csproj",
+        "${workspaceFolder}/MyExtensionsApp.1.Skia.Gtk/MyExtensionsApp.1.Skia.Gtk.csproj",
         "/property:GenerateFullPaths=true",
         "/consoleloggerparameters:NoSummary"
       ],
@@ -43,7 +43,7 @@
       "type": "process",
       "args": [
         "publish",
-        "${workspaceFolder}/MyExtensionsApp.Skia.Gtk/MyExtensionsApp.Skia.Gtk.csproj",
+        "${workspaceFolder}/MyExtensionsApp.1.Skia.Gtk/MyExtensionsApp.1.Skia.Gtk.csproj",
         "/property:GenerateFullPaths=true",
         "/consoleloggerparameters:NoSummary"
       ],

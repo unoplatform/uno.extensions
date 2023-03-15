@@ -13,6 +13,12 @@ jobs:
       BlankApp:
         createdProjectName: UnoAppBlank01
         templateArgs: '-preset blank'
+      SkiaOnlyHeads:
+        createdProjectName: UnoAppSkiaOnlyHeads01
+        templateArgs: '-platforms gtk wpf linux-fb'
+      MobileOnlyHeads:
+        createdProjectName: UnoAppMobileOnlyHeads01
+        templateArgs: '-platforms android ios maccatalyst'
     #   BlankMarkupApp:
     #     createdProjectName: UnoAppBlank01
     #     templateArgs: '-preset blank -markup csharp'
@@ -33,7 +39,7 @@ jobs:
         templateArgs: '-di false'
       HostingOnly:
         createdProjectName: UnoAppHostingOnly01
-        templateArgs: '-config false -loc false -http false -log none --navigation frame'
+        templateArgs: '-config false -loc false -http false -log none --navigation blank'
       NoConfiguration:
         createdProjectName: UnoAppNoConfiguration01
         templateArgs: '-config false'
@@ -54,7 +60,7 @@ jobs:
         templateArgs: '-server false -http false'
       FrameNavigation:
         createdProjectName: UnoAppFrameNavigation01
-        templateArgs: '--navigation frame'
+        templateArgs: '--navigation blank'
       Net6:
         createdProjectName: UnoAppNet6
         templateArgs: '-tfm net6.0'

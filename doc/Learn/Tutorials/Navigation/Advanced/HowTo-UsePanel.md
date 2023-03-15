@@ -21,25 +21,29 @@ uid: Learn.Tutorials.Navigation.Advanced.Panel
 
 ```xml
 <Page x:Class="UsingPanelRegion.Views.MainPage"
-   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-   xmlns:local="using:UsingPanelRegion.Views"
-   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-   mc:Ignorable="d"
-   xmlns:uen="using:Uno.Extensions.Navigation.UI"
-   xmlns:utu="using:Uno.Toolkit.UI"
-  Background="{ThemeResource MaterialBackgroundBrush}">
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:local="using:UsingPanelRegion.Views"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      mc:Ignorable="d"
+      xmlns:uen="using:Uno.Extensions.Navigation.UI"
+      xmlns:utu="using:Uno.Toolkit.UI"
+      Background="{ThemeResource MaterialBackgroundBrush}">
 
- <Grid>
-  <Grid.RowDefinitions>
-   <RowDefinition Height="Auto" />
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition />
-  </Grid.RowDefinitions>
-  <utu:NavigationBar Content="Main Page" 
-    Style="{StaticResource MaterialNavigationBarStyle}"/>
-        <StackPanel Grid.Row="1" HorizontalAlignment="Center" Orientation="Horizontal">
+        </Grid.RowDefinitions>
+
+        <utu:NavigationBar Content="Main Page" 
+                           Style="{StaticResource MaterialNavigationBarStyle}"/>
+
+        <StackPanel Grid.Row="1" 
+                    HorizontalAlignment="Center" 
+                    Orientation="Horizontal">
             <Button Content="One"
                     uen:Navigation.Request="./One" />
             <Button Content="Two"
@@ -47,12 +51,16 @@ uid: Learn.Tutorials.Navigation.Advanced.Panel
             <Button Content="Three"
                     uen:Navigation.Request="./Three" />
         </StackPanel>
-        <Grid uen:Region.Attached="True"
-              uen:Region.Navigator="Visibility"
+
+        <Grid uen:Region.Attached="True" 
+              uen:Region.Navigator="Visibility" 
               Grid.Row="2">
             <Grid uen:Region.Name="One"
                   Visibility="Collapsed">
-                <TextBlock Text="One" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                <TextBlock Text="One" 
+                           FontSize="24" 
+                           HorizontalAlignment="Center" 
+                           VerticalAlignment="Center"/>
             </Grid>
             <Grid uen:Region.Name="Two"
                   Visibility="Collapsed">
@@ -71,7 +79,6 @@ uid: Learn.Tutorials.Navigation.Advanced.Panel
         </Grid>
     </Grid>
 </Page>
-
 ```
 
 - Show how to use a Grid to switch between content

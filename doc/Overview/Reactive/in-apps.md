@@ -28,17 +28,16 @@ public IFeed<Product[]> Products = Feed.Async(_productService.GetProducts);
 
 Then in your page, you can add a `FeedView`:
 ```xml
-<Page 
-	x:Class="MyProject.MyPage"
-	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-	xmlns:uer="using:Uno.Extensions.Reactive.UI">
+<Page x:Class="MyProject.MyPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:uer="using:Uno.Extensions.Reactive.UI">
 
-<uer:FeedView Source="{Binding Products}">
-	<DataTemplate>
-		<ListView ItemsSource="{Binding Data}" />
-	</DataTemplate>
-</uer:FeedView>
+    <uer:FeedView Source="{Binding Products}">
+        <DataTemplate>
+            <ListView ItemsSource="{Binding Data}" />
+        </DataTemplate>
+    </uer:FeedView>
 ```
 
 ## Refreshing a data
@@ -47,25 +46,27 @@ The `FeedView` exposes a `Refresh` command directly in the data context of its c
 You can use this command to trigger a refresh from the view, like a "pull to refresh".
 
 ```xml
-<Page 
-	x:Class="MyProject.MyPage"
-	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-	xmlns:uer="using:Uno.Extensions.Reactive.UI">
+<Page x:Class="MyProject.MyPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:uer="using:Uno.Extensions.Reactive.UI">
 
-<uer:FeedView Source="{Binding Products}">
-	<DataTemplate>
-		<Grid>
-			<Grid.RowDefinitions>
-				<RowDefinition Height="Auto" />
-				<RowDefinition />
-			<Grid.RowDefinitions>
+    <uer:FeedView Source="{Binding Products}">
+        <DataTemplate>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition />
+                <Grid.RowDefinitions>
 
-			<Button Grid.Row="0" Content="Refresh" Command="{Binding Refresh}" />
-			<ListView Grid.Row="1" ItemsSource="{Binding Data}" />
-		</Grid>
-	</DataTemplate>
-</uer:FeedView>
+                <Button Grid.Row="0" 
+                        Content="Refresh" 
+                        Command="{Binding Refresh}" />
+                <ListView Grid.Row="1" 
+                          ItemsSource="{Binding Data}" />
+            </Grid>
+        </DataTemplate>
+    </uer:FeedView>
 ```
 
 ### Refreshing using a RefreshContainer (a.k.a. pull to refresh)
@@ -78,19 +79,19 @@ Uno.Extensions also defines a `RefreshContainerExtensions.Command` attached prop
 (or any generated feed command) to the `RefreshContainer`.
 
 ```xml
-<Page 
-	x:Class="MyProject.MyPage"
-	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-	xmlns:uer="using:Uno.Extensions.Reactive.UI">
+<Page x:Class="MyProject.MyPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:uer="using:Uno.Extensions.Reactive.UI">
 
-<uer:FeedView Source="{Binding Products}" RefreshingState="None">
-	<DataTemplate>
-		<RefreshContainer uer:RefreshContainerExtensions.Command="{Binding Refresh}">
-			<ListView ItemsSource="{Binding Data}" />
-		</RefreshContainer>
-	</DataTemplate>
-</uer:FeedView>
+    <uer:FeedView Source="{Binding Products}" 
+                  RefreshingState="None">
+        <DataTemplate>
+            <RefreshContainer uer:RefreshContainerExtensions.Command="{Binding Refresh}">
+                <ListView ItemsSource="{Binding Data}" />
+            </RefreshContainer>
+        </DataTemplate>
+    </uer:FeedView>
 ```
 
 > [!TIP]
@@ -104,9 +105,9 @@ When your source supports pagination (like `ListFeed.Paginated`), you can data-b
 
 ```xml
 <uer:FeedView Source="{Binding Items}">
-	<DataTemplate>
-		<ListView ItemsSource="{Binding Data}" />
-	</DataTemplate>
+    <DataTemplate>
+        <ListView ItemsSource="{Binding Data}" />
+    </DataTemplate>
 </uer:FeedView>
 ```
 
@@ -115,18 +116,16 @@ so you can enhance the UX of the pagination, like display a loading indicator wh
 
 ```xml
 <uer:FeedView Source="{Binding Items}">
-	<DataTemplate>
-		<ListView
-			Grid.Row="1"
-			ItemsSource="{Binding Data}">
-			<ListView.Footer>
-				<ProgressBar
-					Visibility="{Binding Data.ExtendedProperties.IsLoadingMoreItems}"
-					IsIndeterminate="{Binding Data.ExtendedProperties.IsLoadingMoreItems}"
-					HorizontalAlignment="Stretch" />
-			</ListView.Footer>
-		</ListView>
-	</DataTemplate>
+    <DataTemplate>
+        <ListView Grid.Row="1"
+                  ItemsSource="{Binding Data}">
+            <ListView.Footer>
+                <ProgressBar Visibility="{Binding Data.ExtendedProperties.IsLoadingMoreItems}"
+                             IsIndeterminate="{Binding Data.ExtendedProperties.IsLoadingMoreItems}"
+                             HorizontalAlignment="Stretch" />
+            </ListView.Footer>
+        </ListView>
+    </DataTemplate>
 </uer:FeedView>
 ```
 
@@ -137,9 +136,9 @@ It is not required to data-bind (and synchronize) the `ListView.SelectedItem`, i
 
 ```xml
 <uer:FeedView Source="{Binding Items}">
-	<DataTemplate>
-		<ListView ItemsSource="{Binding Data}" />
-	</DataTemplate>
+    <DataTemplate>
+        <ListView ItemsSource="{Binding Data}" />
+    </DataTemplate>
 </uer:FeedView>
 ```
 
@@ -147,8 +146,8 @@ And in the model:
 
 ```csharp
 public IListState<int> Items => ListView
-	.Value(this, () => ImmutableList.Create(1, 2, 3, 4, 5))
-	.Selection(SelectedItem);
+    .Value(this, () => ImmutableList.Create(1, 2, 3, 4, 5))
+    .Selection(SelectedItem);
 
 public IState<int> SelectedItem => State.Value(this, () => 3);
 ```
@@ -168,15 +167,15 @@ The selected item automatically stored into the `Profile.CountyId` by doing:
 public IState<Profile> Profile => State.Async(this, _svc.GetProfile);
 
 public IListState<Country> Countries => ListState
-	.Async(this, _svc.GetCountries)
-	.Selection(Profile, p => p.CountryId);
+    .Async(this, _svc.GetCountries)
+    .Selection(Profile, p => p.CountryId);
 ```
 
 ```xml
 <uer:FeedView Source="{Binding Countries}">
-	<DataTemplate>
-		<ComboBox ItemsSource="{Binding Data}" />
-	</DataTemplate>
+    <DataTemplate>
+        <ComboBox ItemsSource="{Binding Data}" />
+    </DataTemplate>
 </uer:FeedView>
 ```
 
@@ -199,7 +198,8 @@ public async ValueTask Share()
 This will be exposed into an `ICommand` that can be data-bound to the `Command` property of a `Button`
 
 ```xml
-<Button Command="{Binding Share}" Content="Share" />
+<Button Command="{Binding Share}" 
+        Content="Share" />
 ```
 
 By default, if the method has a parameter `T myValue` and there is a property `Feed<T> MyValue` on the same class (matching type and name), that parameter will automatically be filled from that feed.
@@ -220,11 +220,14 @@ Can be used with or without any `CommandParameter` from the view:
 ```xml
 <!-- Without CommandParameter -->
 <!-- 'message' arg in the 'Share' method will be the current value of the Message _feed_ -->
-<Button Command="{Binding Share}" Content="Share" />
+<Button Command="{Binding Share}" 
+        Content="Share" />
 
 <!-- With CommandParameter -->
 <!-- 'message' arg in the 'Share' method will be "hello world" -->
-<Button Command="{Binding Share}" CommandParameter="hello world" Content="Share" />
+<Button Command="{Binding Share}" 
+        CommandParameter="hello world" 
+        Content="Share" />
 ```
 
 You can also use both "feed parameters" and "view parameter" (i.e. the value of the `CommandParameter`):
@@ -238,7 +241,9 @@ public async ValueTask Share(MyEntity entity, string origin)
 ```
 
 ```xml
-<Button Command="{Binding Share}" CommandParameter="command_bar" Content="Share" />
+<Button Command="{Binding Share}" 
+        CommandParameter="command_bar" 
+        Content="Share" />
 ```
 
 General rules for methods to be re-exposed as commands are:

@@ -34,9 +34,9 @@ This scenario will use Navigation to navigate to a page in order for the user to
 
     ```xml
     <ListView ItemsSource="{Binding Widgets}"
-                uen:Navigation.Request="-"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center">
+              uen:Navigation.Request="-"
+              HorizontalAlignment="Center"
+              VerticalAlignment="Center">
         <ListView.ItemTemplate>
             <DataTemplate>
                 <StackPanel Orientation="Horizontal"

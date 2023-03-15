@@ -16,4 +16,8 @@ public sealed partial class NavigationViewMainPage : BaseTestSectionPage
 	{
 		await Navigator.NavigateViewModelAsync<NavigationViewDataBoundViewModel>(this);
 	}
+	public async void NavigationViewDataClick(object sender, RoutedEventArgs e)
+	{
+		await Navigator.NavigateViewModelAsync<NavigationViewDataViewModel>(this);
+	}
 }
