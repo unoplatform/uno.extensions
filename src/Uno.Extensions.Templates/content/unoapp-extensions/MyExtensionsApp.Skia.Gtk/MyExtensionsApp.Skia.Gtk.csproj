@@ -4,15 +4,9 @@
 		<OutputType Condition="'$(Configuration)'=='Debug'">Exe</OutputType>
 		<TargetFramework>$baseTargetFramework$</TargetFramework>
 	</PropertyGroup>
-	<!--#if (useWinAppSdk)-->
-	<ItemGroup Condition="exists('..\MyExtensionsApp.Windows\Package.appxmanifest')">
-		<EmbeddedResource Include="..\MyExtensionsApp.Windows\Package.appxmanifest" LogicalName="Package.appxmanifest" />
-	</ItemGroup>
-	<!--#else-->
 	<ItemGroup>
 		<EmbeddedResource Include="Package.appxmanifest" />
 	</ItemGroup>
-	<!--#endif-->
 
 	<!--#if (useCPM)-->
 	<ItemGroup>
@@ -85,6 +79,7 @@
 	</ItemGroup>
 	<!--#else-->
 	<ItemGroup>
+		<PackageReference Include="Uno.Resizetizer" Version="1.0.0-dev.207" />
 		<PackageReference Include="Uno.WinUI.Skia.Gtk" Version="4.7.44" />
 		<!--#if (useCsharpMarkup)-->
 		<PackageReference Include="Uno.WinUI.Markup" Version="4.7.0-dev.20" />

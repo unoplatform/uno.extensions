@@ -30,10 +30,8 @@
 		<!-- <WasmShellGenerateAOTProfile>true</WasmShellGenerateAOTProfile> -->
 	</PropertyGroup>
 	<ItemGroup>
-		<Content Include="Assets\SplashScreen.png" />
 		<!--#if (wasmPwaManifest)-->
 		<Content Include="manifest.webmanifest" />
-		<Content Include="Assets\AppIcon-*.png" />
 		<!--#endif -->
 	</ItemGroup>
 	<ItemGroup>
@@ -128,6 +126,7 @@
 	</ItemGroup>
 	<!--#else-->
 	<ItemGroup>
+		<PackageReference Include="Uno.Resizetizer" Version="1.0.0-dev.207" />
 		<PackageReference Include="Microsoft.Windows.Compatibility" Version="$MsftWindowsCompatibilityVersion$" />
 		<PackageReference Include="Uno.Wasm.Bootstrap" Version="7.0.19" />
 		<PackageReference Include="Uno.Wasm.Bootstrap.DevServer" Version="7.0.19" />

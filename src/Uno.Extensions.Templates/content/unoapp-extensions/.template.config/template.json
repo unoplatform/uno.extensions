@@ -1358,18 +1358,6 @@
           ]
         },
         {
-          "condition": "(useWinAppSdk && useGtk)",
-          "exclude": [
-            "MyExtensionsApp.Skia.Gtk/Package.appxmanifest"
-          ]
-        },
-        {
-          "condition": "(useWinAppSdk && useLinuxFb)",
-          "exclude": [
-            "MyExtensionsApp.Skia.Linux.FrameBuffer/Package.appxmanifest"
-          ]
-        },
-        {
           "condition": "(!useWinAppSdk)",
           "exclude": [
             "MyExtensionsApp.Windows/**/*"
