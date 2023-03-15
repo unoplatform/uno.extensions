@@ -224,7 +224,7 @@
         },
         {
           "choice": "ui",
-          "description": "Include a project for authoring UI tests",
+          "description": "Include a project for authoring UI tests using the Uno.UITest framework",
           "displayName": "UI Tests"
         }
       ],
