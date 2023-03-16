@@ -29,10 +29,12 @@
 		<!-- Temporarily uncomment to generate an AOT profile https://aka.platform.uno/wasm-aot-profile -->
 		<!-- <WasmShellGenerateAOTProfile>true</WasmShellGenerateAOTProfile> -->
 	</PropertyGroup>
+	<!--#if (useUITests)-->
 	<PropertyGroup Condition="'$(Configuration)'=='Debug' or '$(IsUiAutomationMappingEnabled)'=='True'">
 		<IsUiAutomationMappingEnabled>True</IsUiAutomationMappingEnabled>
 		<DefineConstants>$(DefineConstants);USE_UITESTS</DefineConstants>
 	</PropertyGroup>
+	<!--#endif-->
 	<ItemGroup>
 		<!--#if (wasmPwaManifest)-->
 		<Content Include="manifest.webmanifest" />
