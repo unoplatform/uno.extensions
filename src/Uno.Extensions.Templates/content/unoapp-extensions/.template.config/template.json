@@ -533,6 +533,11 @@
         "fallbackVariableName": "presetDependencyInjectionDefault"
       }
     },
+    "useToolkit": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "(useDependencyInjection)"
+    },
     "presetLoggingDefault": {
       "type": "generated",
       "generator": "switch",
