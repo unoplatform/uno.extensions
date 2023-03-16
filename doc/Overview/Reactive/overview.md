@@ -8,8 +8,13 @@ uid: Overview.Reactive.Overview
 
 MVUX stands for **M**odel-**V**iew-**U**pdate e**X**tended.
 
-In MVU the **model** represents the state of the application and is passed into the **view** function. Input from the user triggers an **update** to the model. This is also referred to as the [Elm Architecture](https://en.wikipedia.org/wiki/Elm_(programming_language)#The_Elm_Architecture).  
+In MVU the **model** represents the state of the application and is passed into the **view** function. Input from the user triggers an **update** to the model. MVU is also referred to as the [Elm Architecture](https://en.wikipedia.org/wiki/Elm_(programming_language)#The_Elm_Architecture).  
+
 MVUX **extend**s MVU with a powerful toolset that makes it possible to define the state of the application using immutable models (instead of mutable viewmodels used in an MVVM style application) whilst still leveraging the data binding capabilities of the Uno Platform.
+
+
+// TODO: Add an example showing M, V, U and X!!!
+
 
 It consists of four central components:
 
