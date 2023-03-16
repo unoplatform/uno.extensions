@@ -10,6 +10,7 @@ public class Given_MainPage : TestBase
 		// the port that is being used and update the Constants.cs file
 		// in the UITests project with the correct port number.
 
+//+:cnd:noEmit
 #if (useExtensionsNavigation)
 		// Query for the SecondPageButton and then tap it
 		Query xamlButton = q => q.All().Marked("SecondPageButton");
@@ -26,5 +27,6 @@ public class Given_MainPage : TestBase
 		// Take a screenshot and add it to the test results
 		TakeScreenshot("After launch");
 #endif
+//-:cnd:noEmit
 	}
 }
