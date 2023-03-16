@@ -2,16 +2,14 @@
 uid: Overview.Reactive.Overview
 ---
 
-# MVUx Overview
+# MVUX Overview
 
-## What is MVUx
+## What is MVUX
 
-MVUx stands for **M**odel-**V**iew-**U**pdate E**x**tended.
+MVUX stands for **M**odel-**V**iew-**U**pdate e**X**tended.
 
-It utilizes a flow where the **model** is rendered on the **view** side, and once changed by request from user, gets **update**d,
-also know as [Elm Architecture](https://en.wikipedia.org/wiki/Elm_(programming_language)#The_Elm_Architecture).  
-Uno Platform's MVUx **extend**s this further by providing a powerful toolset, a code-generation and binding engine.  
-MVUx enables the user to write the UI markup in an agnostic way, not necessarily XAML.
+In MVU the **model** represents the state of the application and is passed into the **view** function. Input from the user triggers an **update** to the model. This is also referred to as the [Elm Architecture](https://en.wikipedia.org/wiki/Elm_(programming_language)#The_Elm_Architecture).  
+MVUX **extend**s MVU with a powerful toolset that makes it possible to define the state of the application using immutable models (instead of mutable viewmodels used in an MVVM style application) whilst still leveraging the data binding capabilities of the Uno Platform.
 
 It consists of four central components:
 
