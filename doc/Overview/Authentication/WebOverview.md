@@ -33,20 +33,7 @@ protected override void OnLaunched(LaunchActivatedEventArgs args)
             host
             .UseAuthentication(builder => 
             {
-                builder
-                .AddWeb(web => 
-                {
-                    web
-                    .PrefersEphemeralWebBrowserSession(/* Ephemeral session */)
-                    .LoginStartUri(/* Login URI */)
-                    .LoginCallbackUri(/* Login callback */)
-                    .PostLogin(/* Post-login callback */)
-                    .LogoutStartUri(/* Logout URI */)
-                    .LogoutCallbackUri(/* Logout callback */)
-                    .Refresh(/* Refresh callback */)
-                    .AccessTokenKey(/* Access token key */)
-                    .RefreshTokenKey(/* Refresh token key */)
-                });
+                builder.AddWeb();
             });
         });
 ...
@@ -56,6 +43,6 @@ protected override void OnLaunched(LaunchActivatedEventArgs args)
 
 Before the `WebAuthenticationProvider` is automatically built, there are platform specific checks invoked internally which occasionally alter behavior during the authentication process:
 
-**Windows**: The `AddWeb()` extension method will initialize a `WebAuthenticator` from WinUIEx for a better-integrated sign in flow. This is done preemtively to support its usage within `WebAuthenticationProvider` during login and logout instead of the `WebAuthenticationBroker` used for other platforms.
+**Windows**: The `AddWeb()` extension method will initialize a `WebAuthenticator` to launch an out-of-process browser. This is done preemtively to support its usage within `WebAuthenticationProvider` during login and logout instead of the `WebAuthenticationBroker` used for other platforms.
 
-**iOS**: `WebAuthenticationBroker` will only respond to the `PrefersEphemeralWebBrowserSession` setting value in iOS 13+. Further, the other platforms will ignore this setting.
+**Other platforms**: For a description of various subtle differences when displaying a web login prompt on multiple platforms, see [Web Authentication Broker](https://platform.uno/docs/articles/features/web-authentication-broker.html). The broker will only respond to the `PrefersEphemeralWebBrowserSession` setting value in iOS (versions 13.0+), while the other platforms will ignore it.

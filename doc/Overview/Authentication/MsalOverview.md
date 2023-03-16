@@ -11,13 +11,13 @@ For this type of authentication, you first need to register your application wit
 
 ## Set up MSAL authentication
 
-To use MSAL authentication, you need to provide the following information:
+To use MSAL authentication, you can provide the following information:
 
 - Client id
 - Scopes
-- Storage (optional)
+- Storage
 
-The `MsalAuthenticationProvider` is added using the `AddMsal()` extension method which configures the `IAuthenticationBuilder` to use it. The following example shows how to configure the provider:
+The `MsalAuthenticationProvider` is added using the `AddMsal()` extension method which configures the `IAuthenticationBuilder` to use it.
 
 ```csharp
 private IHost Host { get; }
@@ -30,22 +30,24 @@ protected override void OnLaunched(LaunchActivatedEventArgs args)
             host
             .UseAuthentication(builder => 
             {
-                builder
-                .AddMsal(msal => 
-                {
-                    msal
-                    .Scopes(/* Scopes */)
-                    .Storage(new Microsoft.Identity.Client.Extensions.Msal.StorageCreationPropertiesBuilder()
-                        .WithMacKeyChain(/* ... */)
-                        .WithLinuxKeyring(/* ... */)
-                        .WithWindowsCredMan(/* ... */)
-                    )
-                    .Builder(Microsoft.Identity.Client.PublicClientApplicationBuilder.Create(/* Client Id */))
-                });
+                builder.AddMsal();
             });
         });
 ...
 ```
 
+The following example shows how to configure the provider using the default section name:
+
+```json
+{
+  "Msal": {
+    "ClientId": "161a9fb5-3b16-487a-81a2-ac45dcc0ad3b",
+    "Scopes": [ "Tasks.Read", "User.Read", "Tasks.ReadWrite" ],
+    "RedirectUri": "uno-extensions://auth",
+    "KeychainSecurityGroup": ""
+  }
+}
+```
+
 The `IAuthenticationBuilder` is responsible for managing the lifecycle of the associated provider that was built. 
-Because it is configured to use Msal, the user will be prompted to sign in to their Microsoft account when they launch the application. `MsalAuthenticationProvider` will then store the user's access token in the provided storage. The token will be automatically refreshed when it expires.
+Because it is configured to use Msal, the user will be prompted to sign in to their Microsoft account when they launch the application. `MsalAuthenticationProvider` will then store the user's access token in credential storage. The token will be automatically refreshed when it expires.

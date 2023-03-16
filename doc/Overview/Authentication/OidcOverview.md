@@ -12,16 +12,16 @@ For this type of authentication, the application must already be registered with
 
 ## Set up OpenID Connect authentication
 
-To use OpenID Connect authentication, you need to provide the following information:
+To use OpenID Connect authentication, you can provide the following information:
 
 - Client id
 - Client secret
 - Scopes
 - Authority
 - Redirect Uri
-- Post Logout Redirect Uri (optional)
+- Post Logout Redirect Uri
 
-The `OidcAuthenticationProvider` is added using the `AddOidc()` extension method which configures the `IAuthenticationBuilder` to use it. The following example shows how to configure the provider:
+The `OidcAuthenticationProvider` is added using the `AddOidc()` extension method which configures the `IAuthenticationBuilder` to use it.
 
 ```csharp
 private IHost Host { get; }
@@ -34,20 +34,24 @@ protected override void OnLaunched(LaunchActivatedEventArgs args)
             host
             .UseAuthentication(builder => 
             {
-                builder
-                .AddOidc(oidc => 
-                {
-                    oidc
-                    .Scopes(/* Scopes */)
-                    .ClientId(/* Client Id */)
-                    .ClientSecret(/* Client Secret */)
-                    .Authority(/* Authority */)
-                    .RedirectUri(/* Redirect Uri */)
-                    .PostLogoutRedirectUri(/* Post Logout Redirect Uri */)
-                });
+                builder.AddOidc();
             });
         });
 ...
+```
+
+The following example shows how to configure the provider using the default section name:
+
+```json
+{
+  "Oidc": {
+    "Authority": "https://demo.duendesoftware.com/",
+    "ClientId": "interactive.confidential",
+    "ClientSecret": "secret",
+    "Scope": "openid profile email api offline_access",
+    "RedirectUri": "oidc-auth://callback",
+  }
+}
 ```
 
 The `IAuthenticationBuilder` is responsible for managing the lifecycle of the associated provider that was built. Since it is configured to use Oidc, the user will be prompted to sign in to their identity provider when they launch the application. 
