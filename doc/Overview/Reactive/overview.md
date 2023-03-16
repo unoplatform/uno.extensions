@@ -13,10 +13,68 @@ In MVU the **model** represents the state of the application and is passed into 
 MVUX **extend**s MVU with a powerful toolset that makes it possible to define the state of the application using immutable models (instead of mutable viewmodels used in an MVVM style application) whilst still leveraging the data binding capabilities of the Uno Platform.
 
 
-// TODO: Add an example showing M, V, U and X!!!
+## Example
 
+In the following example we use an IFeed to display the current temperature
+loaded asynchronously from a weather service.
 
-It consists of four central components:
+The entity containing the current temperature is `WeatherInfo`:
+
+```c#
+public record WeatherInfo(double Temperature);
+```
+
+This is the weather service:
+
+```c#
+public class WeatherService
+{
+    public async ValueTask<WeatherInfo> GetCurrentWeather(CancellationToken ct)
+    {
+        await Task.Delay(TimeSpan.FromSeconds(1), ct);
+
+        return new WeatherInfo(new Random().Next(-40, 40));
+    }
+}
+```
+
+The `WeatherModel` is the **Model** part in MVUX.
+
+MVUX code-generation engine reads the Model and for each `IFeed` or `IState`,
+complementary code is generated to make it easier for the **View** to display this data,
+according to its current state.
+This code generation is part of the **Extended** in MVUX.
+
+```c#
+public partial record WeatherModel
+{
+    // MVUX code-generator reads this line and generates a 
+    public IFeed<WeatherInfo> Weather => Feed.Async(_weatherService.GetCurrentWeather);
+}
+
+```
+
+A special control, the `FeedView` is used to display `IFeed`s and `IState`s,
+and provides different styling templates for the various states of the feed:
+
+```xaml
+<mvux:FeedView Source="{Binding CurrentWeather}">
+    <DataTemplate>
+        <StackPanel>
+            <TextBlock DataContext="{Binding Data}" Text="{Binding Temperature}"/>
+            <Button Content="Refresh" Command="{Binding Refresh}" />
+        </StackPanel>
+    </DataTemplate>
+
+    <mvux:FeedView.ProgressTemplate>
+        <DataTemplate>
+            <TextBlock Text="Requesting temperature..."/>
+        </DataTemplate>
+    </mvux:FeedView.ProgressTemplate>
+</mvux:FeedView>
+```
+
+MVUX consists of four central components:
 
 - [Model](#Model)
 - [View](#View)
