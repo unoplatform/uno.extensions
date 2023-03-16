@@ -89,9 +89,9 @@
 		<!--#if (useCsharpMarkup)-->
 		<PackageReference Include="Uno.WinUI.Markup" Version="4.7.0-dev.20" />
 		<!--#if (useMaterial)-->
-		<PackageReference Include="Uno.Material.WinUI.Markup" Version="2.5.0-dev.43" />
+		<PackageReference Include="Uno.Material.WinUI.Markup" Version="2.5.2" />
 		<!--#endif-->
-		<PackageReference Include="Uno.Themes.WinUI.Markup" Version="2.5.0-dev.43" />
+		<PackageReference Include="Uno.Themes.WinUI.Markup" Version="2.5.2" />
 		<!--#endif-->
 		<!--#if (useMvvm) -->
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.1.0" />
@@ -114,10 +114,10 @@
 		<PackageReference Include="Uno.Extensions.Serialization.Refit" Version="255.255.255.255" />
 		<!--#endif-->
 		<!--#if (useMaterial)-->
-		<PackageReference Include="Uno.Material.WinUI" Version="2.5.0-dev.43" />
+		<PackageReference Include="Uno.Material.WinUI" Version="2.5.2" />
 		<PackageReference Include="Uno.Toolkit.WinUI.Material" Version="2.5.0-dev.53" />
 		<!--#elif (useCupertino)-->
-		<PackageReference Include="Uno.Cupertino.WinUI" Version="2.5.0-dev.43" />
+		<PackageReference Include="Uno.Cupertino.WinUI" Version="2.5.2" />
 		<!--#endif-->
 		<!--#if (useCsharpMarkup)-->
 		<PackageReference Include="Uno.Toolkit.WinUI.Markup" Version="2.5.0-dev.53" />
@@ -166,7 +166,7 @@
 				<PackageReference Include="Microsoft.WindowsAppSDK" />
 				<PackageReference Include="Microsoft.Windows.SDK.BuildTools" />
 				<!--#else-->
-				<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.2.230217.4" />
+				<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.2.230313.1" />
 				<PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.755" />
 				<!--#endif-->
 			</ItemGroup>

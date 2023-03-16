@@ -6,11 +6,10 @@
     <PackageVersion Include="coverlet.collector" Version="3.2.0" />
     <PackageVersion Include="FluentAssertions" Version="6.10.0" />
     <PackageVersion Include="Microsoft.Extensions.Logging.Console" Version="$MsftExtensionsLoggingConsoleVersion$" />
-    <PackageVersion Include="Microsoft.Net.Compilers.Toolset" Version="4.2.0" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.5.0" />
     <PackageVersion Include="Microsoft.Windows.Compatibility" Version="$MsftWindowsCompatibilityVersion$" />
     <PackageVersion Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.755" />
-    <PackageVersion Include="Microsoft.WindowsAppSDK" Version="1.2.230217.4" />
+    <PackageVersion Include="Microsoft.WindowsAppSDK" Version="1.2.230313.1" />
     <PackageVersion Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageVersion Include="NUnit" Version="3.13.3" />
     <PackageVersion Include="NUnit3TestAdapter" Version="4.4.2" />
@@ -58,9 +57,9 @@
     <PackageVersion Include="Uno.Extensions.Serialization.Refit" Version="255.255.255.255" />
     <!--#endif-->
     <!--#if (useMaterial)-->
-    <PackageVersion Include="Uno.Material.WinUI" Version="2.5.0-dev.43" />
+    <PackageVersion Include="Uno.Material.WinUI" Version="2.5.2" />
     <!--#elif (useCupertino)-->
-    <PackageVersion Include="Uno.Cupertino.WinUI" Version="2.5.0-dev.43" />
+    <PackageVersion Include="Uno.Cupertino.WinUI" Version="2.5.2" />
     <!--#endif-->
     <PackageVersion Include="Uno.Toolkit.WinUI" Version="2.5.0-dev.53" />
     <!--#if (useMaterial)-->
@@ -82,9 +81,9 @@
     <PackageVersion Include="Uno.Extensions.Reactive.WinUI.Markup" Version="255.255.255.255" />
     <!--#endif-->
     <!--#if (useMaterial)-->
-    <PackageVersion Include="Uno.Material.WinUI.Markup" Version="2.5.0-dev.43" />
+    <PackageVersion Include="Uno.Material.WinUI.Markup" Version="2.5.2" />
     <!--#endif-->
-    <PackageVersion Include="Uno.Themes.WinUI.Markup" Version="2.5.0-dev.43" />
+    <PackageVersion Include="Uno.Themes.WinUI.Markup" Version="2.5.2" />
     <!--#endif-->
     <PackageVersion Include="Uno.WinUI.RemoteControl" Version="4.7.44" />
     <PackageVersion Include="Uno.WinUI.Skia.Gtk" Version="4.7.44" />
@@ -92,7 +91,7 @@
     <PackageVersion Include="Uno.WinUI.Skia.Wpf" Version="4.7.44" />
     <PackageVersion Include="Uno.WinUI.WebAssembly" Version="4.7.44" />
     <PackageVersion Include="Xamarin.Google.Android.Material" Version="1.8.0" />
-    <PackageVersion Include="Xamarin.UITest" Version="4.1.1" />
+    <PackageVersion Include="Xamarin.UITest" Version="4.1.2" />
     <!--#if (includeNet6DataContractReferences)-->
     <PackageVersion Include="System.Collections.Immutable" Version="6.0.0" />
     <PackageVersion Include="System.Text.Json" Version="6.0.0" />
