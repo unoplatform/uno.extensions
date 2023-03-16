@@ -17,16 +17,17 @@ When working with a complex application, centralized registration of your API en
     protected override void OnLaunched(LaunchActivatedEventArgs args)
     {
         var builder = this.CreateBuilder(args)
-            .Configure(host => {
-                host
-                .UseHttp( /* ... */);
-            });
+            .Configure(host => 
+                host.UseHttp()
+            );
     ...
     ```
 
 ### 2. Register Endpoints
 
-* The `UseHttp()` method accepts a delegate that is used to configure the HTTP client. The delegate is passed the `IHostBuilderContext` and the `IServiceCollection`:
+* The `AddClient` extension method is used to register a client with the service collection. 
+
+* While the `AddClient()` extension method can take a delegate as its argument, the recommended way to configure the HTTP client is to specify a configuration section name. This allows you to configure the added HTTP client using the `appsettings.json` file. 
 
     ```csharp
     private IHost Host { get; }
@@ -34,13 +35,11 @@ When working with a complex application, centralized registration of your API en
     protected override void OnLaunched(LaunchActivatedEventArgs args)
     {
         var builder = this.CreateBuilder(args)
-            .Configure(host => {
+            .Configure(host => 
                 host
-                .UseHttp((context, services) =>
-                    {
-                        // ...
-                    });
-            });
+                .UseHttp((services) =>
+                    services.AddClient<IShowService, ShowService>("ShowService"))
+            );
     ...
     ```
 
@@ -48,40 +47,24 @@ When working with a complex application, centralized registration of your API en
     ```csharp
     public interface IShowService
     {
-        Task<Show> GetShowAsync(SourceFeed sourceFeed = null);
+        Task<Show> GetShowAsync();
     }
     ```
 
-* The `AddClient` method is used to register a client with the service collection. When you use the `AddClient` method, pass in the `IHostBuilderContext`, the type of the service, the type of the client, and the endpoint to use for the client. 
+* The endpoint is defined in the `appsettings.json` file. While the default behavior is to use the platform-native HTTP handler, this can be configured. 
 
-* The endpoint is defined in the `EndpointOptions` class. The `EndpointOptions` class can be configured to use the platform-native HTTP handler. 
-
-    ```csharp
-    private IHost Host { get; }
-
-    protected override void OnLaunched(LaunchActivatedEventArgs args)
+    ```json
     {
-        var builder = this.CreateBuilder(args)
-            .Configure(host => {
-                host
-                .UseHttp((context, services) =>
-                    {
-                        services
-                           .AddClient<IShowService, ShowService>(context,
-                               new EndpointOptions
-                                   {
-                                       Url = "https://ch9-app.azurewebsites.net/"
-                                   }
-                                   .Enable(nameof(EndpointOptions.UseNativeHandler))
-                           );
-                    });
-            });
-    ...
+        "ShowService": {
+            "Url": "https://ch9-app.azurewebsites.net/",
+            "UseNativeHandler": true
+        }
+    }
     ```
 
 ### 3. Use the Service to Request Data
 
-* Since you registered the service with the service collection, you can now inject the `IShowService` implementation into your view models and use it to request data from the endpoint:
+* Since you registered the service with the service collection, you can now inject the `IShowService` implementation into your view models and use it to request information about a show from the endpoint:
 
     ```csharp
     public class ShowViewModel : ObservableObject

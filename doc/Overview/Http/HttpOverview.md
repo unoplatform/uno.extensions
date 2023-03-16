@@ -9,7 +9,7 @@ For more documentation on HTTP requests, read the references listed at the botto
 
 ## Register Endpoints
 
-Web resources exposed through an API are defined in the application as clients. These client registrations include type arguments and endpoints to be used for the client. The endpoint is defined in the `EndpointOptions` class. The `EndpointOptions` class can be configured to use the platform-native HTTP handler. 
+Web resources exposed through an API are defined in the application as clients. These client registrations include type arguments and endpoints to be used for the client. The endpoint is defined in the `EndpointOptions` class. While it uses the platform-native HTTP handler by default, this value can be configured. 
 
 ```csharp
 private IHost Host { get; }
