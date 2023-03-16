@@ -85,9 +85,9 @@ MVUX consists of four central components:
 
 In this architecture the application state is represented by a model, which is updated by messages sent by the user in the view.
 The view is in charge of rendering the current state of the model, while any input from the user updates the model and recreates it.
-The Model in MVUx is what's known as 'View Model' in other architectures.
+The Model in MVUX is what's known as 'View Model' in other architectures.
 
-MVUx promotes immutability of data entities. Changes to the data are applied only via update messages sent across from the view to the model,
+MVUX promotes immutability of data entities. Changes to the data are applied only via update messages sent across from the view to the model,
 the model responds by performing the updates and the view reflects those changes.
 
 Immutable entities makes raising change notification redundant, enables easier object equality comparison as well as other advantages.
@@ -113,10 +113,10 @@ It's important to note that the view is not being re-created, it rather just upd
 
 ### Extended
 
-MVUx extends the MVU model by harnessing powerful features that make it easier to track asynchronous requests to a remote server
+MVUX extends the MVU model by harnessing powerful features that make it easier to track asynchronous requests to a remote server
 or other long running data-sources, and display the resulting data appropriately.  
 
-The key features Uno Platform provides in the MVUx toolbox are:
+The key features Uno Platform provides in the MVUX toolbox are:
 
 - [Metadata](#Metadata)
 - [Code generation](#Code-Generation)
@@ -125,17 +125,17 @@ The key features Uno Platform provides in the MVUx toolbox are:
 
 #### Metadata
 
-MVUx wraps the asynchronous data request with metadata that tells us if the request is still in progress, has failed, or succeeded,
+MVUX wraps the asynchronous data request with metadata that tells us if the request is still in progress, has failed, or succeeded,
 and if succeeded, whether the request contains any data entries.
 
 #### Code generation
 
-MVUx comes with a powerful code-generation engine that supplements the user with generated boilerplate code
+MVUX comes with a powerful code-generation engine that supplements the user with generated boilerplate code
 that consists of model and entity proxy classes containing important properties and asynchronous commands.
 The proxy-classes assist the UI with displaying the data according to its current state provided with the metadata.
 
 #### UI Controls
-MVUx also provides a set of UI tools that are specially tailored to automatically read and display that metadata,
+MVUX also provides a set of UI tools that are specially tailored to automatically read and display that metadata,
 providing templates for the various states, such as no data, error, progress tracking,
 as well interactions with the server to enable easy refreshing and saving of the data.
 
@@ -143,9 +143,9 @@ as well interactions with the server to enable easy refreshing and saving of the
 
 It also comes with a powerful binding engine that reads the re-created model and updates the view accordingly.
 
-## MVUx building blocks
+## MVUX building blocks
 
-The most important components in an MVUx app is either a feed (`IFeed<T>`), which is used for read-only scenarios,
+The most important components in an MVUX app is either a feed (`IFeed<T>`), which is used for read-only scenarios,
 or a state (`IState<T>`) which should be used when the user can apply changes to the data to be sent back to the model.
 
 There is also a list flavor of the above components (`IListFeed<T>`/`IListState<T>` respectively).
@@ -183,5 +183,5 @@ For the view side, a special `FeedView` control is used, it's especially designe
 </mvux:FeedView>
 ```
 
-MVUx also generates code which serves the `FeedView` with helper methods and commands to enable easy refreshing of data,
+MVUX also generates code which serves the `FeedView` with helper methods and commands to enable easy refreshing of data,
 as well as propagating data-update messages back to the model.
