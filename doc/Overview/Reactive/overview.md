@@ -55,7 +55,9 @@ public partial record WeatherModel
 ```
 
 A special control, the `FeedView` is used to display `IFeed`s and `IState`s,
-and provides different styling templates for the various states of the feed:
+and provides different styling templates for the various states of the feed.
+
+The Refresh command is also part of the MVUX **Extended** component.
 
 ```xaml
 <mvux:FeedView Source="{Binding CurrentWeather}">
@@ -73,6 +75,8 @@ and provides different styling templates for the various states of the feed:
     </mvux:FeedView.ProgressTemplate>
 </mvux:FeedView>
 ```
+
+## MVUX main components
 
 MVUX consists of four central components:
 
@@ -151,25 +155,26 @@ or a state (`IState<T>`) which should be used when the user can apply changes to
 There is also a list flavor of the above components (`IListFeed<T>`/`IListState<T>` respectively).
 The list version of feed and state offer additional operators for working with collections.
 
-Here's a sample model exposing a feed:
+Here's another example of a model exposing data coming from a service.
+This time we're using an `IListFeed`, as the data is a collection of entities.
 
 ```c#
-public IFeed<Product[]> Products = Feed.Async(_productService.GetProducts);
+public IListFeed<Product> Products = ListFeed.Async(_productService.GetProducts);
 ```
 
 For the view side, a special `FeedView` control is used, it's especially designed to interact with the feed and its metadata.  
 
 ```xaml
-<Page 
-	x:Class="MyProject.MyPage"
+<Page
+    x:Class="MyProject.MyPage"
 	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	xmlns:mvux="using:Uno.Extensions.Reactive.UI">
 
 <mvux:FeedView Source="{Binding Products}">
-	<DataTemplate>
-		<ListView ItemsSource="{Binding Data}" />
-	</DataTemplate>
+    <DataTemplate>
+        <ListView ItemsSource="{Binding Data}" />
+    </DataTemplate>
 
     <!-- optional -->
     <mvux:FeedView.ProgressTemplate>
