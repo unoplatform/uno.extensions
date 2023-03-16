@@ -685,6 +685,11 @@
       "dataType": "bool",
       "value": "(preset == 'recommended' && tests == ui)"
     },
+    "useSkia": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "(platforms == wpf || platforms == gtk || platforms == linux-fb)"
+    },
     "useAuthentication": {
       "type": "computed",
       "dataType": "bool",
