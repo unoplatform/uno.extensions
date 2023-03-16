@@ -44,7 +44,7 @@ protected override void OnLaunched(LaunchActivatedEventArgs args)
                 });
             });
         });
-}
+...
 ```
 
 The `IAuthenticationBuilder` is responsible for managing the lifecycle of the associated provider that was built. 

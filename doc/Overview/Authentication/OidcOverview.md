@@ -4,7 +4,7 @@ uid: Overview.Authentication.Oidc
 
 # Oidc
 
-The `OidcAuthenticationProvider` allows users to sign in using their identities from a participating provider. It can wrap support for any [OpenID Connect](https://openid.net/connect/) backend, such as [IdentityServer](https://duendesoftware.com/products/identityserver) into an implementation of `IAuthenticationProvider`, and is included with the Uno.Extensions.Authentication.Oidc.WinUI or Uno.Extensions.Authentication.Oidc.UI NuGet packages.
+The `OidcAuthenticationProvider` allows users to sign in using their identities from a participating identity provider. It can wrap support for any [OpenID Connect](https://openid.net/connect/) backend, such as [IdentityServer](https://duendesoftware.com/products/identityserver) into an implementation of `IAuthenticationProvider`, and is included with the Uno.Extensions.Authentication.Oidc.WinUI or Uno.Extensions.Authentication.Oidc.UI NuGet packages.
 
 ## Obtain an OpenID Connect client ID
 
@@ -47,7 +47,7 @@ protected override void OnLaunched(LaunchActivatedEventArgs args)
                 });
             });
         });
-}
+...
 ```
 
 The `IAuthenticationBuilder` is responsible for managing the lifecycle of the associated provider that was built. Since it is configured to use Oidc, the user will be prompted to sign in to their identity provider when they launch the application. 
