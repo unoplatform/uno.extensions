@@ -1630,7 +1630,8 @@
         {
           "condition": "(useCsharpMarkup)",
           "exclude": [
-            "MyExtensionsApp.1/**/*.xaml"
+            "MyExtensionsApp.1/**/*.xaml",
+            "MyExtensionsApp.1/Styles/.gitignore"
           ],
           "rename": {
             "MyExtensionsApp.1/MainPage.xaml.cs": "MyExtensionsApp.1/MainPage.cs",
