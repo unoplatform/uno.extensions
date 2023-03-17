@@ -5,19 +5,24 @@
 		<!-- Load WinUI resources -->
 		<XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls" />
 <!--#if (useMaterial)-->
+<!--#if (useToolkit)-->
 		<MaterialToolkitTheme xmlns="using:Uno.Toolkit.UI.Material"
 			ColorOverrideSource="ms-appx:///MyExtensionsApp.1/Styles/ColorPaletteOverride.xaml"
 			FontOverrideSource="ms-appx:///MyExtensionsApp.1/Styles/MaterialFontsOverride.xaml" />
 <!--#else-->
-<!--#if (useRecommendedAppTemplate)-->
-		<!-- Load Uno.UI.Toolkit resources -->
-		<ToolkitResources xmlns="using:Uno.Toolkit.UI" />
+		<MaterialTheme  xmlns="using:Uno.Material"
+			ColorOverrideSource="ms-appx:///MyExtensionsApp.1/Styles/ColorPaletteOverride.xaml"
+			FontOverrideSource="ms-appx:///MyExtensionsApp.1/Styles/MaterialFontsOverride.xaml" />
 <!--#endif-->
-
+<!--#else-->
 <!--#if (useCupertino)-->
 		<CupertinoColors xmlns="using:Uno.Cupertino" />
 		<CupertinoFonts xmlns="using:Uno.Cupertino" />
 		<CupertinoResources xmlns="using:Uno.Cupertino" />
+<!--#endif-->
+<!--#if (useToolkit)-->
+		<!-- Load Uno.UI.Toolkit resources -->
+		<ToolkitResources xmlns="using:Uno.Toolkit.UI" />
 <!--#endif-->
 <!--#endif-->
 

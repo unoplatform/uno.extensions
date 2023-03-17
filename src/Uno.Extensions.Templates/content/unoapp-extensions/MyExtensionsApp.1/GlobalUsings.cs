@@ -71,14 +71,12 @@ global using Uno.Extensions.Markup;
 global using Uno.Material;
 #endif
 global using Uno.Themes.Markup;
-#if (useRecommendedAppTemplate)
+#if (useToolkit)
 global using Uno.Toolkit.UI;
 #if (useMaterial)
 global using Uno.Toolkit.UI.Material;
 #endif
 #endif
-#elif (useRecommendedAppTemplate)
-global using Uno.Toolkit.UI;
 #endif
 global using Windows.ApplicationModel;
 global using Application = Microsoft.UI.Xaml.Application;

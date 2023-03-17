@@ -533,6 +533,11 @@
         "fallbackVariableName": "presetDependencyInjectionDefault"
       }
     },
+    "useToolkit": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "(useDependencyInjection)"
+    },
     "presetLoggingDefault": {
       "type": "generated",
       "generator": "switch",
@@ -679,6 +684,11 @@
       "type": "computed",
       "dataType": "bool",
       "value": "(preset == 'recommended' && tests == ui)"
+    },
+    "useSkia": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "(platforms == wpf || platforms == gtk || platforms == linux-fb)"
     },
     "useAuthentication": {
       "type": "computed",
