@@ -4,7 +4,7 @@ uid: Overview.Reactive.HowTos.CreateSimpleFeed
 
 # How to create a simple feed
 
-1. Create an MVUX project by following the steps in [this](CreateMvuxProject.md) tutorial, and name your project `WeatherApp`.
+1. Create an MVUX project by following the steps in [this](xref:Overview.Reactive.HowTos.CreateMvuxProject) tutorial, and name your project `WeatherApp`.
 1. Add a class named *DataStore.cs*, and replace its content with the following:
 
   ```c#
