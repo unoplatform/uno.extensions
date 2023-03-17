@@ -8,14 +8,17 @@ uid: Overview.Reactive.Overview
 
 MVUX stands for **M**odel-**V**iew-**U**pdate e**X**tended.
 
-In MVU the **model** represents the state of the application and is passed into the **view** function. Input from the user triggers an **update** to the model. MVU is also referred to as the [Elm Architecture](https://en.wikipedia.org/wiki/Elm_(programming_language)#The_Elm_Architecture).  
+In MVU the **model** represents the state of the application and is displayed by the **view**.  
+Input from the user triggers an **update** to the model.
+MVU is also referred to as the [Elm Architecture](https://en.wikipedia.org/wiki/Elm_(programming_language)#The_Elm_Architecture).
 
-MVUX **extend**s MVU with a powerful toolset that makes it possible to define the state of the application using immutable models (instead of mutable viewmodels used in an MVVM style application) whilst still leveraging the data binding capabilities of the Uno Platform.
-
+MVUX **extend**s MVU with a powerful toolset that makes it possible to define the state of the application using immutable models
+(instead of mutable ViewModels used in an MVVM style application)
+whilst still leveraging the data binding capabilities of the Uno Platform.
 
 ## Example
 
-In the following example we use an IFeed to display the current temperature
+In the following example we use an `IFeed<WeatherInfo>` to display the current temperature
 loaded asynchronously from a weather service.
 
 The entity containing the current temperature is `WeatherInfo`:
@@ -38,7 +41,7 @@ public class WeatherService
 }
 ```
 
-The `WeatherModel` is the **Model** part in MVUX.
+The `WeatherModel` is the **Model** part in MVUX (It's also what's known as ViewModel in MVVM).
 
 MVUX code-generation engine reads the Model and for each `IFeed` or `IState`,
 complementary code is generated to make it easier for the **View** to display this data,
@@ -57,7 +60,7 @@ public partial record WeatherModel
 A special control, the `FeedView` is used to display `IFeed`s and `IState`s,
 and provides different styling templates for the various states of the feed.
 
-The Refresh command is also part of the MVUX **Extended** component.
+The Refresh command is triggering an update of the model, hence the **update** part in MVUX.
 
 ```xaml
 <mvux:FeedView Source="{Binding CurrentWeather}">
@@ -67,14 +70,13 @@ The Refresh command is also part of the MVUX **Extended** component.
             <Button Content="Refresh" Command="{Binding Refresh}" />
         </StackPanel>
     </DataTemplate>
-
-    <mvux:FeedView.ProgressTemplate>
-        <DataTemplate>
-            <TextBlock Text="Requesting temperature..."/>
-        </DataTemplate>
-    </mvux:FeedView.ProgressTemplate>
 </mvux:FeedView>
 ```
+
+The Refresh command is what's triggering an update message being sent back to the model
+that in turn refreshes the data.
+
+<!-- TODO: explain the Data and Refresh properties with link in the detailed page / API ref docs -->
 
 ## MVUX main components
 
@@ -87,14 +89,18 @@ MVUX consists of four central components:
 
 ### Model
 
-In this architecture the application state is represented by a model, which is updated by messages sent by the user in the view.
-The view is in charge of rendering the current state of the model, while any input from the user updates the model and recreates it.
+In this architecture the application state is represented by a model,
+which is updated by messages sent by the user in the view.
+The view is in charge of rendering the current state of the model,
+while any input from the user updates the model and recreates it.
 The Model in MVUX is what's known as 'View Model' in other architectures.
 
-MVUX promotes immutability of data entities. Changes to the data are applied only via update messages sent across from the view to the model,
+MVUX promotes immutability of data entities. Changes to the data are applied only via update messages
+sent across from the view to the model,
 the model responds by performing the updates and the view reflects those changes.
 
-Immutable entities makes raising change notification redundant, enables easier object equality comparison as well as other advantages.
+Immutable entities makes raising change notification redundant, enables easier object equality
+comparison as well as other advantages.
 The ideal type for creating immutable data-objects is
 [record](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/builtin-types/record) types.
 They are immutable by nature and a perfect fit for working with feeds and MVU architecture.
