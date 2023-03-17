@@ -79,7 +79,7 @@
     <!--#endif-->
     <!--#if (useMaterial)-->
     <PackageVersion Include="Uno.Material.WinUI" Version="2.5.2" />
-    <PackageVersion Include="Uno.Dsp.Tasks" Version="0.1.0-dev.56" />
+    <PackageVersion Include="Uno.Dsp.Tasks" Version="1.0.1" />
     <!--#elif (useCupertino)-->
     <PackageVersion Include="Uno.Cupertino.WinUI" Version="2.5.2" />
     <!--#endif-->
