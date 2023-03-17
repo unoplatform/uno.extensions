@@ -94,7 +94,7 @@
 		<PackageReference Include="Uno.Dsp.Tasks" Version="1.0.1" />
 		<!--#endif-->
 		<PackageReference Include="Uno.WinUI" Version="4.8.15" />
-		<PackageReference Include="Uno.Resizetizer" Version="1.0.0-dev.207" />
+		<PackageReference Include="Uno.Resizetizer" Version="1.0.2" />
 		<!--#if (useCsharpMarkup)-->
 		<PackageReference Include="Uno.WinUI.Markup" Version="4.7.0-dev.20" />
 		<!--#if (useMaterial)-->
