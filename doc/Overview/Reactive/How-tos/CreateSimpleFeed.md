@@ -78,3 +78,5 @@ the `Refresh` command that explicitly triggers reloading the trip.
 1. The data is the available and the `FeedView` switches to its `ValueTemplate` (the first default `DataTemplate` in our example).
 
 ![](Assets/WeatherApp-2.jpg)
+
+*13* is the temperature that was obtained from the `WeatherInfo` service.
