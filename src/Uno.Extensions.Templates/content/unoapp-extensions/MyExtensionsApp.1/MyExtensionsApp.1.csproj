@@ -17,6 +17,9 @@
 
 	<!--#if (useCPM)-->
 	<ItemGroup>
+		<!--#if (useMaterial)-->
+		<PackageReference Include="Uno.Dsp.Tasks" />
+		<!--#endif-->
 		<PackageReference Include="Uno.WinUI" />
 		<PackageReference Include="Uno.Resizetizer" />
 		<!--#if (useCsharpMarkup)-->
@@ -87,6 +90,9 @@
 	</ItemGroup>
 	<!--#else-->
 	<ItemGroup>
+		<!--#if (useMaterial)-->
+		<PackageReference Include="Uno.Dsp.Tasks" Version="0.1.0-dev.56" />
+		<!--#endif-->
 		<PackageReference Include="Uno.WinUI" Version="4.7.44" />
 		<PackageReference Include="Uno.Resizetizer" Version="1.0.0-dev.207" />
 		<!--#if (useCsharpMarkup)-->
@@ -156,13 +162,6 @@
 		<PackageReference Include="Microsoft.Extensions.Logging.Console" Version="$MsftExtensionsLoggingConsoleVersion$" />
 	</ItemGroup>
 	<!--#endif-->
-	<!--#if (includeIsExternalInit)-->
-
-	<ItemGroup>
-		<Compile Include="..\MyExtensionsApp._1.Base\IsExternalInit.cs"
-						 Visible="false" />
-	</ItemGroup>
-	<!--#endif-->
 
 	<!--#if (useWinAppSdk) -->
 	<Choose>
@@ -219,10 +218,15 @@
 	<!--#endif-->
 
 	<ItemGroup>
+		<!--#if (useMaterial)-->
+		<UnoDspImportColors Include="Styles\*.zip"
+												Generator="$DspGenerator$" />
+		<!--#endif-->
 		<UnoImage Include="Assets\**\*.svg" />
-	</ItemGroup>
-
-	<ItemGroup>
+		<!--#if (includeIsExternalInit)-->
+		<Compile Include="..\MyExtensionsApp.1.Base\IsExternalInit.cs"
+						 Visible="false" />
+		<!--#endif-->
 		<!--#if (useConfiguration)-->
 		<EmbeddedResource Include="appsettings.json" />
 		<EmbeddedResource Include="appsettings.*.json"
