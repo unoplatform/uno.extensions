@@ -88,7 +88,7 @@
     <PackageVersion Include="Uno.Toolkit.WinUI.Material" Version="2.5.0-dev.53" />
     <!--#endif-->
     <!--#if (useMaterial)-->
-    <PackageVersion Include="Uno.Dsp.Tasks" Version="0.1.0-dev.55" />
+    <PackageVersion Include="Uno.Dsp.Tasks" Version="0.1.0-dev.56" />
     <!--#endif-->
     <PackageVersion Include="Uno.Resizetizer" Version="1.0.0-dev.207" />
     <PackageVersion Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="4.7.44" />
