@@ -51,7 +51,7 @@ This code generation is part of the **Extended** in MVUX.
 ```c#
 public partial record WeatherModel
 {
-    // MVUX code-generator reads this line and generates a 
+    // MVUX code-generator reads this line and generates a cached feed behind the scenes    
     public IFeed<WeatherInfo> Weather => Feed.Async(_weatherService.GetCurrentWeather);
 }
 
@@ -165,10 +165,14 @@ Here's another example of a model exposing data coming from a service.
 This time we're using an `IListFeed`, as the data is a collection of entities.
 
 ```c#
-public IListFeed<Product> Products = ListFeed.Async(_productService.GetProducts);
+public IListFeed<Product> Products => ListFeed.Async(_productService.GetProducts);
 ```
 
-For the view side, a special `FeedView` control is used, it's especially designed to interact with the feed and its metadata.  
+For the view side, a special `FeedView` control is used, it's especially designed to interact with the feed and its metadata.
+
+One of the things MVUX code-generation engine takes care of,
+is caching the `Products` property value.  
+You don't need to worry about the service getting invoked upon each get.
 
 ```xaml
 <Page

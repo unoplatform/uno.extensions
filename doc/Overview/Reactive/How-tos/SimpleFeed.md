@@ -14,7 +14,7 @@ uid: Overview.Reactive.HowTos.SimpleFeed
 
     public class WeatherService
     {       
-        public async ValueTask<WeatherInfo> GetCurrentWeather(CancellationToken ct)
+        public async ValueTask<WeatherInfo> GetCurrentWeatherAsync(CancellationToken ct)
         {
             // Fake delay to immitate requesting from a remote server
             await Task.Delay(TimeSpan.FromSeconds(2), ct);
@@ -37,11 +37,17 @@ as records are immutable and ensure purity of objects. Records also implements e
     {
         private readonly WeatherService _weatherService = new();
     
-        public IFeed<WeatherInfo> CurrentWeather => Feed.Async(_weatherService.GetCurrentWeather);
+        public IFeed<WeatherInfo> CurrentWeather => Feed.Async(_weatherService.GetCurrentWeatherAsync);
     }
     ```
 
-MVUX's analyzers will read the `WeatherModel` and will generate a special 
+MVUX's analyzers will read the `WeatherModel` and will generate a special mirrored `BindableWeatherModel`,
+which provides binding capabilities for the View, so that we can stick to sending update message in an MVU fashion.
+
+The `CurrentWeather` property value also gets cached, so no need to worry about its being created upon each `get`.
+
+<!-- TODO the generated code can be inspected via project->analyzers etc. -->
+
 
 1. Open the file `MainView.xaml` and add the following namespace to the XAML:
 

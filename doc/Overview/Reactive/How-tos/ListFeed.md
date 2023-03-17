@@ -17,7 +17,7 @@ uid: Overview.Reactive.HowTos.ListFeed
 
     public class PeopleService
     {
-        public async ValueTask<IImmutableList<Person>> GetPeople(CancellationToken ct)
+        public async ValueTask<IImmutableList<Person>> GetPeopleAsync(CancellationToken ct)
         {
             await Task.Delay(TimeSpan.FromSeconds(2), ct);
 
@@ -43,14 +43,19 @@ uid: Overview.Reactive.HowTos.ListFeed
 
 ```c#
 public partial record PeopleModel
-{
+{       
     private readonly PeopleService _peopleService = new();
     
-    public IListFeed<Person> People => ListFeed.Async(_peopleService.GetPeople);
+    public IListFeed<Person> People => ListFeed.Async(_peopleService.GetPeopleAsync);
 }
 ```
 
-MVUX's analyzers will read the `PeopleModel` and will generate a special 
+MVUX's analyzers will read the `PeopleModel` and will generate a special mirrored `BindablePeopleModel`,
+which provides binding capabilities for the View, so that we can stick to sending update message in an MVU fashion.
+
+The `People` property value also gets cached, so no need to worry about its being created upon each `get`.
+
+<!-- TODO the generated code can be inspected via project->analyzers etc. -->
 
 1. Open the file `MainView.xaml` and add the following namespace to the XAML:
 
