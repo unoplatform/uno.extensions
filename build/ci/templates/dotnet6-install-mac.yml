@@ -49,6 +49,6 @@ steps:
 
   - bash: |
       set -x
-      uno-check --ci --non-interactive --fix --skip androidsdk --skip gtk3 --skip xcode --skip vswin --skip vsmac --manifest ${{ parameters.UnoCheck_Manifest }}
+      uno-check --ci --non-interactive --fix --skip androidsdk --skip androidemulator --skip gtk3 --skip xcode --skip vswin --skip vsmac --manifest ${{ parameters.UnoCheck_Manifest }}
     displayName: Install .NET Workloads
     retryCountOnTaskFailure: 3
