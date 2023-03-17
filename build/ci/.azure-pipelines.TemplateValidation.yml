@@ -118,6 +118,7 @@ jobs:
         }
 
         cd $env:createdProjectName
+        cp src/NuGet.config .
         & $msbuild /r /m $env:createdProjectName.sln
         if ($LASTEXITCODE -ne 0)
         {
