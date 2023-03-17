@@ -29,7 +29,7 @@ In the newly created solution you'll find multiple projects each targeting a dif
 which is shared/referenced from all projects, this project (PeopleApp without any suffixes) is where most of the work is done. Let's call it the base project, and this is where all the files are to be added onwards.
  -->
 
-1. Right-click on `MyAppName` project (or the name you gave it) and select `Manage NuGet Packages for Solution` from the context menu.
+1. Right-click on `MyAppName` solution (or the name you gave it) and select `Manage NuGet Packages for Solution` from the context menu.
     - Make sure to select **nuget.org** or **NuGet official package source** as the package source
     - Click on the Updates tab. Update the following packages to the latest stable version,
     if they're not up to date: `Uno.WinUI`, `Uno.UI.WebAssembly` `Uno.Wasm.Bootstrap`, and `Uno.Wasm.Bootstrap.DevServer`.
