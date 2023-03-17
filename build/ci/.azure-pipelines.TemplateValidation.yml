@@ -106,6 +106,8 @@ jobs:
 
   - powershell: |
         dotnet nuget add source -n nuget_local $(Build.SourcesDirectory)\src\PackageCache
+        dotnet nuget add source -n uno_dev "https://pkgs.dev.azure.com/uno-platform/1dd81cbd-cb35-41de-a570-b0df3571a196/_packaging/unoplatformdev/nuget/v3/index.json"
+
         $msbuild = vswhere -prerelease -requires Microsoft.Component.MSBuild -find MSBuild\**\Bin\MSBuild.exe
         Set-PSDebug -Trace 1
         $ErrorActionPreference = 'Stop'
@@ -118,6 +120,7 @@ jobs:
         }
 
         cd $env:createdProjectName
+
         & $msbuild /r /m $env:createdProjectName.sln
         if ($LASTEXITCODE -ne 0)
         {

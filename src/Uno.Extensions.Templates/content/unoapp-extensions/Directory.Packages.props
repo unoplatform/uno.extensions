@@ -79,7 +79,7 @@
     <!--#endif-->
     <!--#if (useMaterial)-->
     <PackageVersion Include="Uno.Material.WinUI" Version="2.5.2" />
-    <PackageVersion Include="Uno.Dsp.Tasks" Version="0.1.0-dev.56" />
+    <PackageVersion Include="Uno.Dsp.Tasks" Version="1.0.1" />
     <!--#elif (useCupertino)-->
     <PackageVersion Include="Uno.Cupertino.WinUI" Version="2.5.2" />
     <!--#endif-->
@@ -90,14 +90,14 @@
     <!--#endif-->
     <!--#endif-->
     <PackageVersion Include="Uno.Resizetizer" Version="1.0.0-dev.207" />
-    <PackageVersion Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="4.7.44" />
+    <PackageVersion Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="4.8.15" />
     <PackageVersion Include="Uno.UniversalImageLoader" Version="1.9.36" />
     <!--#if (useWasm)-->
     <PackageVersion Include="Uno.Wasm.Bootstrap" Version="7.0.19" />
     <PackageVersion Include="Uno.Wasm.Bootstrap.DevServer" Version="7.0.19" />
     <PackageVersion Include="Uno.Wasm.Bootstrap.Server" Version="7.0.19" />
     <!--#endif-->
-    <PackageVersion Include="Uno.WinUI" Version="4.7.44" />
+    <PackageVersion Include="Uno.WinUI" Version="4.8.15" />
     <!--#if (useCsharpMarkup)-->
     <PackageVersion Include="Uno.WinUI.Markup" Version="4.7.0-dev.20" />
     <!--#if (useToolkit)-->
@@ -114,18 +114,18 @@
     <!--#endif-->
     <PackageVersion Include="Uno.Themes.WinUI.Markup" Version="2.5.2" />
     <!--#endif-->
-    <PackageVersion Include="Uno.WinUI.RemoteControl" Version="4.7.44" />
+    <PackageVersion Include="Uno.WinUI.RemoteControl" Version="4.8.15" />
     <!--#if (useGtk)-->
-    <PackageVersion Include="Uno.WinUI.Skia.Gtk" Version="4.7.44" />
+    <PackageVersion Include="Uno.WinUI.Skia.Gtk" Version="4.8.15" />
     <!--#endif-->
     <!--#if (useLinuxFb)-->
-    <PackageVersion Include="Uno.WinUI.Skia.Linux.FrameBuffer" Version="4.7.44" />
+    <PackageVersion Include="Uno.WinUI.Skia.Linux.FrameBuffer" Version="4.8.15" />
     <!--#endif-->
     <!--#if (useWpf)-->
-    <PackageVersion Include="Uno.WinUI.Skia.Wpf" Version="4.7.44" />
+    <PackageVersion Include="Uno.WinUI.Skia.Wpf" Version="4.8.15" />
     <!--#endif-->
     <!--#if (useWasm)-->
-    <PackageVersion Include="Uno.WinUI.WebAssembly" Version="4.7.44" />
+    <PackageVersion Include="Uno.WinUI.WebAssembly" Version="4.8.15" />
     <!--#endif-->
     <!--#if (useAndroid)-->
     <PackageVersion Include="Xamarin.Google.Android.Material" Version="1.8.0" />
