@@ -218,8 +218,10 @@
 	<!--#endif-->
 
 	<ItemGroup>
+		<!--#if (useMaterial)-->
 		<UnoDspImportColors Include="Styles\*.zip"
 												Generator="$DspGenerator$" />
+		<!--#endif-->
 		<UnoImage Include="Assets\**\*.svg" />
 		<!--#if (includeIsExternalInit)-->
 		<Compile Include="..\MyExtensionsApp.1.Base\IsExternalInit.cs"
