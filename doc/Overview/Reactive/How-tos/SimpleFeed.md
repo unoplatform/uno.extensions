@@ -1,6 +1,7 @@
 ---
 uid: Overview.Reactive.HowTos.SimpleFeed
 ---
+
 # How to create a simple feed
 
 In this tutorial you will learn how to create an MVUX project that displays asynchronous data (weather info) from a service,
@@ -8,6 +9,7 @@ on-demand (via a refresh button).
 
 1. Create an MVUX project by following the steps in [this](xref:Overview.Reactive.HowTos.CreateMvuxProject) tutorial,
 and name your project `WeatherApp`.
+
 1. Add a class named *DataStore.cs*, and replace its content with the following:
 
     ```c#
@@ -30,8 +32,8 @@ and name your project `WeatherApp`.
     }
     ```
 
-We're using [records](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/builtin-types/record) in purpose,
-as records are immutable and ensure purity of objects. Records also implements easy equality comparison and hashing.
+    We're using [records](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/builtin-types/record) in purpose,
+    as records are immutable and ensure purity of objects. Records also implements easy equality comparison and hashing.
 
 1. Create a file named *WeatherModel.cs* replacing its content with the following:
 
@@ -44,12 +46,12 @@ as records are immutable and ensure purity of objects. Records also implements e
     }
     ```
 
-MVUX's analyzers will read the `WeatherModel` and will generate a special mirrored `BindableWeatherModel`,
-which provides binding capabilities for the View, so that we can stick to sending update message in an MVU fashion.
-
-The `CurrentWeather` property value also gets cached, so no need to worry about its being created upon each `get`.
-
-<!-- TODO the generated code can be inspected via project->analyzers etc. -->
+    MVUX's analyzers will read the `WeatherModel` and will generate a special mirrored `BindableWeatherModel`,
+    which provides binding capabilities for the View, so that we can stick to sending update message in an MVU fashion.
+    
+    The `CurrentWeather` property value also gets cached, so no need to worry about its being created upon each `get`.
+    
+    <!-- TODO the generated code can be inspected via project->analyzers etc. -->
 
 
 1. Open the file `MainView.xaml` and add the following namespace to the XAML:
@@ -76,9 +78,9 @@ The `CurrentWeather` property value also gets cached, so no need to worry about 
     </mvux:FeedView>
     ```
 
-The `FeedView` wraps its source (in this case our `CurrentWeather` feed) in a `FeedViewState` object
-that provides the `Data` property to access the data currently available in the `CurrentWeather` feed,
-the `Refresh` command that explicitly triggers reloading the trip.
+    The `FeedView` wraps its source (in this case our `CurrentWeather` feed) in a `FeedViewState` object
+    that provides the `Data` property to access the data currently available in the `CurrentWeather` feed,
+    the `Refresh` command that explicitly triggers reloading the trip.
 
 1. Press <kbd>F7</kbd> to navigate to open code-view, and in the constructor, after the line that calls `InitializeComponent()`, add the following line:
 
@@ -86,10 +88,10 @@ the `Refresh` command that explicitly triggers reloading the trip.
     this.DataContext = new BindableWeatherModel();
     ```
 
-The `BindableWeatherModel` is a special MVUX-generated mirror class that represents a mirror of the `WeatherModel` adding binding capabilities,
-for MVUX to be able to recreate and renew the model when an update message is sent by the view.  
-
-1. Click F5 to run the project
+    The `BindableWeatherModel` is a special MVUX-generated mirror class that represents a mirror of the `WeatherModel` adding binding capabilities,
+    for MVUX to be able to recreate and renew the model when an update message is sent by the view.  
+    
+1. Click <kbd>F5</kbd> to run the project
 
 1. When the app loads you'll notice how the `ProgressTemplate` shows (if you've included one), till the data is received from the service (2 seconds).
 
@@ -99,4 +101,4 @@ for MVUX to be able to recreate and renew the model when an update message is se
 
     ![](Assets/SimpleFeed-2.jpg)
 
-*13* is the temperature that was obtained from the `WeatherInfo` service.
+    *13* is the temperature that was obtained from the `WeatherInfo` service.
