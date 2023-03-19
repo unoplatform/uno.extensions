@@ -4,6 +4,9 @@ uid: Overview.Reactive.HowTos.ListFeed
 
 # How to create a list feed
 
+In this tutorial you will learn how to create an MVUX project that asynchronously requests and displays a collection of items from a service,
+and enables refreshing the data.
+
 1. Create an MVUX project by following the steps in [this](xref:Overview.Reactive.HowTos.CreateMvuxProject) tutorial, and name your project `PeopleApp`.
 1. Add a class named *PeopleService.cs*, and replace its content with the following:
 
