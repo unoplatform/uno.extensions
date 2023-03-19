@@ -3,15 +3,15 @@ uid: Overview.Authentication.Msal
 ---
 # MSAL
 
-The `MsalAuthenticationProvider` allows users to sign in using their Microsoft identities. It wraps the [MSAL library](https://github.com/AzureAD/microsoft-authentication-library-for-dotnet) from Microsoft into an implementation of `IAuthenticationProvider`, and is included with the Uno.Extensions.Authentication.Msal.WinUI or Uno.Extensions.Authentication.Msal.UI NuGet packages. This implementation invokes the required web based authentication process.
+The `MsalAuthenticationProvider` allows users to sign in using their Microsoft identities. It wraps the [MSAL library](https://github.com/AzureAD/microsoft-authentication-library-for-dotnet) from Microsoft into an implementation of `IAuthenticationProvider`, and is included with the Uno.Extensions.Authentication.Msal.WinUI NuGet package. This implementation invokes the required web based authentication process.
 
 ## Register for MSAL authentication
 
-For this type of authentication, you first need to register your application with the Microsoft identity platform. For more information, see [Register an application with the Microsoft identity platform](https://docs.microsoft.com/azure/active-directory/develop/quickstart-register-app).
+For this type of authentication, the application must be registered with the Microsoft identity platform. For more information, see [Register an application with the Microsoft identity platform](https://docs.microsoft.com/azure/active-directory/develop/quickstart-register-app).
 
 ## Set up MSAL authentication
 
-To use MSAL authentication, you can provide the following information:
+MSAL authentication can involve the following information:
 
 - Client id
 - Scopes
@@ -42,9 +42,7 @@ The following example shows how to configure the provider using the default sect
 {
   "Msal": {
     "ClientId": "161a9fb5-3b16-487a-81a2-ac45dcc0ad3b",
-    "Scopes": [ "Tasks.Read", "User.Read", "Tasks.ReadWrite" ],
-    "RedirectUri": "uno-extensions://auth",
-    "KeychainSecurityGroup": ""
+    "Scopes": [ "Tasks.Read", "User.Read", "Tasks.ReadWrite" ]
   }
 }
 ```

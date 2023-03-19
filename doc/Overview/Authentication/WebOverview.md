@@ -4,11 +4,11 @@ uid: Overview.Authentication.Web
 
 # Web
 
-The `WebAuthenticationProvider` provides an implementation that displays a web view in order for the user to login. After login, the web view redirects back to the application, along with any tokens. The `WebAuthenticationProvider` is included with the Uno.Extensions.Authentication.WinUI and Uno.Extensions.Authentication.UI NuGet packages.
+The `WebAuthenticationProvider` provides an implementation that displays a web view in order for the user to login. After login, the web view redirects back to the application, along with any tokens. The `WebAuthenticationProvider` is included with the Uno.Extensions.Authentication.WinUI NuGet package.
 
 ## Set up web authentication
 
-When using web authentication, you can provide the following information:
+Web authentication can involve the following information:
 
 - Access token key
 - Refresh token key

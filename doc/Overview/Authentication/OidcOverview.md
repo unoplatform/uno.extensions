@@ -4,7 +4,7 @@ uid: Overview.Authentication.Oidc
 
 # Oidc
 
-The `OidcAuthenticationProvider` allows users to sign in using their identities from a participating identity provider. It can wrap support for any [OpenID Connect](https://openid.net/connect/) backend, such as [IdentityServer](https://duendesoftware.com/products/identityserver) into an implementation of `IAuthenticationProvider`, and is included with the Uno.Extensions.Authentication.Oidc.WinUI or Uno.Extensions.Authentication.Oidc.UI NuGet packages.
+The `OidcAuthenticationProvider` allows users to sign in using their identities from a participating identity provider. It can wrap support for any [OpenID Connect](https://openid.net/connect/) backend, such as [IdentityServer](https://duendesoftware.com/products/identityserver) into an implementation of `IAuthenticationProvider`, and is included with the Uno.Extensions.Authentication.Oidc.WinUI NuGet package.
 
 ## Obtain an OpenID Connect client ID
 
@@ -12,7 +12,7 @@ For this type of authentication, the application must already be registered with
 
 ## Set up OpenID Connect authentication
 
-To use OpenID Connect authentication, you can provide the following information:
+OpenID Connect authentication can involve the following information:
 
 - Client id
 - Client secret
