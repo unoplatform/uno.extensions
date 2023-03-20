@@ -16,7 +16,7 @@ uid: Learn.Tutorials.Authentication.HowToOidcAuthentication
 
 - A client id (and client secret) will be provided to you.
 
-- Make sure `Uno.Extensions.Authentication.Oidc` NuGet package is installed in your solution.
+- Make sure `Uno.Extensions.Authentication.Oidc.WinUI` NuGet package is installed in your solution.
 
 ### 2. Set up OIDC authentication
 
@@ -120,7 +120,7 @@ uid: Learn.Tutorials.Authentication.HowToOidcAuthentication
             _authenticationService = authenticationService;
         }
 
-        public ICommand Authenticate => GetOrCreateCommand(AuthenticateImpl);
+        public ICommand Authenticate => new AsyncRelayCommand(AuthenticateImpl);
 
         private async Task AuthenticateImpl()
         {
