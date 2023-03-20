@@ -5,8 +5,8 @@ uid: Learn.Tutorials.Authentication.HowToMsalAuthentication
 
 `MsalAuthenticationProvider` allows your users to sign in using their Microsoft identities. It wraps the [MSAL library](https://github.com/AzureAD/microsoft-authentication-library-for-dotnet) from Microsoft into an implementation of `IAuthenticationProvider` This tutorial will use MSAL authorization to validate user credentials.
 
-> [!WARNING]
-> The steps outlined here are unnecessary if you used the template to create your solution. Otherwise, it is recommended that you follow the [instructions](xref:Overview.Extensions) for creating an application from the template.
+> [!TIP]
+> This guide assumes you used the Uno.Extensions template to create the solution. Instructions for creating an application from the template can be found [here](xref:Overview.Extensions).
 
 ## Step-by-steps
 
@@ -58,7 +58,9 @@ uid: Learn.Tutorials.Authentication.HowToMsalAuthentication
     ...
     ```
 
-- The `IAuthenticationBuilder` is responsible for managing the lifecycle of the associated provider that was built. Because it is configured to use MSAL, the user will eventually be prompted to sign in to their Microsoft account when they launch the application. `MsalAuthenticationProvider` will then store the user's access token in credential storage. The token will be automatically refreshed when it expires.
+- The `IAuthenticationBuilder` is responsible for managing the lifecycle of the associated provider that was built. 
+
+- Because it is configured to use MSAL, the user will eventually be prompted to sign in to their Microsoft account when they use your application. `MsalAuthenticationProvider` will then store the user's access token in credential storage. The token will be automatically refreshed when it expires.
 
 ### 3. Configure the provider
 
@@ -112,9 +114,11 @@ uid: Learn.Tutorials.Authentication.HowToMsalAuthentication
 
         private async Task AuthenticateAsync()
         {
-            await _authenticationService.LoginAsync();
+            await _authenticationService.LoginAsync(/* ... */);
         }
     }
     ```
 
-- Finally, we can run the application and sign in with our Microsoft account. The user will be prompted to sign in to their Microsoft account when they tap the button in the application. `MsalAuthenticationProvider` will then store the user's access token in credential storage. The token will be automatically refreshed when it expires.
+- Finally, we can run the application and sign in with our Microsoft account. The user will be prompted to sign in to their Microsoft account when they tap the button in the application. 
+
+- `MsalAuthenticationProvider` will then store the user's access token in credential storage. The token will be automatically refreshed when it expires.
