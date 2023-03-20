@@ -4,24 +4,23 @@ uid: Overview.Reactive.HowTos.SimpleFeed
 
 # How to create a simple feed
 
-In this tutorial you will learn how to create an MVUX project that displays asynchronous data (weather info) from a service,
-on-demand (via a refresh button).
+In this tutorial you will learn how to create an MVUX project that displays asynchronous data, for example weather information coming from a service. You'll also learn how to connect a refresh button to retrieve the latest weather data on-demand.
 
-1. Create an MVUX project by following the steps in [this tutorial](xref:Overview.Reactive.HowTos.CreateMvuxProject),
-and name your project `WeatherApp`.
 
-1. Add a class named *DataStore.cs*, and replace its content with the following:
+## Create the Model
+
+1. Create an MVUX project by following the steps in [this tutorial](xref:Overview.Reactive.HowTos.CreateMvuxProject).
+
+1. Add a class named *WeatherService.cs*, and replace its content with the following:
 
     ```c#
-    namespace WeatherApp;
-
     public partial record WeatherInfo(int Temperature);
 
     public class WeatherService
     {       
         public async ValueTask<WeatherInfo> GetCurrentWeatherAsync(CancellationToken ct)
         {
-            // Fake delay to immitate requesting from a remote server
+            // Fake delay to simulate requesting data from a remote server
             await Task.Delay(TimeSpan.FromSeconds(2), ct);
 
             // assign a random number ranged -40 to 40.
@@ -32,8 +31,8 @@ and name your project `WeatherApp`.
     }
     ```
 
-    We're using [records](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/builtin-types/record) in purpose,
-    as records are immutable and ensure purity of objects. Records also implements easy equality comparison and hashing.
+    We're using a [record](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/builtin-types/record) for the WeatherInfo type on purpose,
+    as records are immutable and ensure purity of objects. 
 
 1. Create a file named *WeatherModel.cs* replacing its content with the following:
 
@@ -42,20 +41,19 @@ and name your project `WeatherApp`.
     {                                                             
         public IFeed<WeatherInfo> CurrentWeather => Feed.Async(WeatherService.GetCurrentWeatherAsync);
     }
-    ```
+    ```  
 
-    MVUX's analyzers will read the `WeatherModel` and will generate a special model proxy called `BindableWeatherModel`,
-    which provides binding capabilities for the View, so that we can stick to sending update message in an MVU fashion.
-    
-    The `CurrentWeather` feed property is regenerated in the model proxy
-    and is tunnelling down to the `CurrentWeather` feed property in your Model.  
 
-    The `CurrentWeather` property will only be called once and is being cached in the model-proxy,
-    so it's OK to use a lambda expression when assigning it (`=>`), this enables accessing the local `WeatherService` 
-    in `Feed.Async(WeatherService.GetCurrentWeatherModel)`,
-    which wouldn't have been available in a regular assignment context (`=`).
+## Data bind the View
 
-    <!--TODO link to how the generated code can be inspected.-->
+The WeatherModel exposes a CurrentWeather property which is an IFeed of type WeatherInfo. This is similar in concept to an IObservable<T>, where an IFeed represents a sequence of values. A IFeed is awaitable, meaning that to get the value of the IFeed you would do the following:  
+
+    ```c#
+    var weatherData = await CurrentWeather;
+    ```  
+
+To make it possible to data bind to an IFeed, the MVUX analyzers read the `WeatherModel` and will generate a proxy type called `BindableWeatherModel`, which exposes properties that the View can data bind to.
+
 
 1. Open the file `MainView.xaml` and replace the `Page` content with the following:
 
@@ -69,24 +67,33 @@ and name your project `WeatherApp`.
     this.DataContext = new BindableWeatherModel(new WeatherService());
     ```
 
-    The `BindableWeatherModel` is a special MVUX-generated model proxy class that represents a mirror of the `WeatherModel` adding binding capabilities,
-    for MVUX to be able to recreate and renew the model when an update message is sent by the view.  
-
 1. Press <kbd>F5</kbd> to run the app. The app will load with a default `WeatherInfo` value, with a `Temperature` of `0`:
 
-    ![](Assets/SimpleFeed-1.jpg)
+    ![](Assets/SimpleFeed-1.jpg)  
 
-    But then, after two seconds (the time we've delayed the task earlier), the value that came from the service will display:
+    But then, after two seconds (the GetCurrentWeatherAsync method on the WeatherService includes a 2 second delay before returning data), the value that came from the service will display:
 
-    ![](Assets/SimpleFeed-2.jpg)
+    ![](Assets/SimpleFeed-2.jpg)  
 
     Note that this is a random value and may be different on your machine.
 
-    To this point, this is a similar binding experience you have most likely been familiar with using MVVM.  
-    However thanks to the metadata accompanied with each request handled by the `IFeed`,
-    MVUX is capable of much more than that.      
-    It automatically adapts the view to when we're still awaiting data, as well as providing a Refresh command.  
-    Follow along to learn about the `FeedView` control, that is built to handle this metadata out-the-box.  
+
+
+> [!NOTE]
+> It's worth noting that the `CurrentWeather` IFeed will only be invoked once, and the value captured in the bindable proxy. The captured value will be returned to all binding expressions that use CurrentWeather. 
+> 
+> This means that it's OK to use a lambda expression when defining the IFeed (`=>`), so that it can accessing the local `WeatherService` in `Feed.Async(WeatherService.GetCurrentWeatherModel)`. The `WeatherService` property wouldn't have been available in a regular assignment context (`=`).
+
+// TODO link to how the generated code can be inspected.
+
+## Using a FeedView
+
+To this point, this is a similar binding experience you have most likely been familiar with using MVVM. With the MVVM approach you would have to add error handling around the call to GetCurrentWeatherAsync; you would need to expose properties on the ViewModel to indicate that data is loading, and you would have to expose a method, or command, that can be invoked in order to refresh the data.
+
+However thanks to the metadata accompanied with each request handled by the `IFeed`,
+MVUX is capable of much more than the simple example you've just seen. In the next section we'll use the FeedView to unlock the capabilities of an IFeed.  
+
+
 
 1. Now close the app and add the following namespace to the `MainView.xaml` file:
 
