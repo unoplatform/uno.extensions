@@ -46,9 +46,9 @@ uid: Learn.Tutorials.Logging.UseInternalLogging
     {
         Host = UnoHost
             .CreateDefaultBuilder()
-#if DEBUG
+    #if DEBUG
             .UseEnvironment(Environments.Development)
-#endif
+    #endif
             .UseLogging(configure:
                 (context, services) =>
                     services.SetMinimumLevel(

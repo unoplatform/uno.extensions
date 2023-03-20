@@ -1,7 +1,7 @@
 ---
 uid: Overview.Reactive.ListFeed
 ---
-#ListFeed
+# ListFeed
 
 The `IListFeed<T>` is _feed_ specialized for handling collections.
 It allows the declaration of an operator directly on items instead of dealing with the list itself.

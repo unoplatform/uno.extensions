@@ -1,7 +1,7 @@
 ---
 uid: Overview.Reactive.Feed
 ---
-#Feed
+# Feed
 
 ## Sources: How to create a feed
 You can build a _feed_ from different sources. The main entry point is the static class `Feed`:

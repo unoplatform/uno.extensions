@@ -6,7 +6,7 @@ uid: Overview.Authentication
 Uno.Extensions.Authentication is designed to make it simple to add authentication to an application. Authenticating a user may be used to restrict access to specific parts of the application, or in order to supply an access token when calling a back-end service. 
 
 There are two aspects to the Authentication extensions:
-- Authentication - the the process of authenticating the user and acquiring tokens
+- Authentication - the process of authenticating the user and acquiring tokens
 - Authorization - tokens (acquired via authentication) can be queried to control access to parts of the application or supplied to service call so the user can be authorized to access the back-end service
 
 ## IAuthenticationService

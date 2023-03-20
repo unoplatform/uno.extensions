@@ -1,0 +1,10 @@
+{
+  "background_color": "#ffffff",
+  "description": "MyExtensionsApp.1",
+  "display": "standalone",
+  "name": "MyExtensionsApp.1",
+  "short_name": "MyExtensionsApp.1",
+  "start_url": "/index.html",
+  "theme_color": "#ffffff",
+  "scope": "/"
+}
