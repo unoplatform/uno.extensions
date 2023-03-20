@@ -38,10 +38,10 @@
     <PackageVersion Include="Uno.Material" Version="2.5.3" />
     <PackageVersion Include="Uno.Material.WinUI" Version="2.5.3" />
     <PackageVersion Include="Uno.Microsoft.Toolkit.Uwp.UI" Version="7.1.11" />
-    <PackageVersion Include="Uno.Toolkit.UI" Version="2.5.4" />
-    <PackageVersion Include="Uno.Toolkit.UI.Material" Version="2.5.4" />
-    <PackageVersion Include="Uno.Toolkit.WinUI" Version="2.5.4" />
-    <PackageVersion Include="Uno.Toolkit.WinUI.Material" Version="2.5.4" />
+    <PackageVersion Include="Uno.Toolkit.UI" Version="2.5.5" />
+    <PackageVersion Include="Uno.Toolkit.UI.Material" Version="2.5.5" />
+    <PackageVersion Include="Uno.Toolkit.WinUI" Version="2.5.5" />
+    <PackageVersion Include="Uno.Toolkit.WinUI.Material" Version="2.5.5" />
     <PackageVersion Include="Uno.UI" Version="4.8.15" />
     <PackageVersion Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="4.8.15" />
     <PackageVersion Include="Uno.UI.MSAL" Version="4.8.15" />
