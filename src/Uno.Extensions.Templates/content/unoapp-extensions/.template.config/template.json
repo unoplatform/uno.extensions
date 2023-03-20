@@ -169,7 +169,7 @@
       "datatype": "choice",
       "enableQuotelessLiterals": true,
       "allowMultipleValues": true,
-      "defaultValue": "android|ios|maccatalyst|wasm|windows|wpf|gtk|linux-fb",
+      "defaultValue": "android|ios|maccatalyst|wasm|windows|gtk",
       "choices": [
         {
           "choice": "android",
