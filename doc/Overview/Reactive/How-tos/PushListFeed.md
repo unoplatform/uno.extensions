@@ -9,7 +9,7 @@ that is pushed in from a service using an
 [Async Enumerable](https://learn.microsoft.com/en-us/archive/msdn-magazine/2019/november/csharp-iterating-with-async-enumerables-in-csharp-8#a-tour-through-async-enumerables) method.
 
 1. Create an MVUX project by following the steps in
-[this](xref:Overview.Reactive.HowTos.CreateMvuxProject) tutorial, and name your project `StockMarketApp`.
+[this tutorial](xref:Overview.Reactive.HowTos.CreateMvuxProject), and name your project `StockMarketApp`.
 
 1. Add a class named *StockMarketService.cs*, and replace its content with the following:
 
@@ -73,11 +73,9 @@ that is pushed in from a service using an
 1. Create a file named *StockMarketModel.cs* replacing its content with the following:
 
     ```c#
-    public partial record StockMarketModel
+    public partial record StockMarketModel(StockMarketService StockMarketService)
     {
-        private readonly StockMarketService _stockMarketService = new();
-    
-        public IListFeed<Stock> Stocks => ListFeed.AsyncEnumerable(_stockMarketService.GetCurrentMarket);
+        public IListFeed<Stock> Stocks => ListFeed.AsyncEnumerable(StockMarketService.GetCurrentMarket);
     }
     ```
 
@@ -107,10 +105,10 @@ that is pushed in from a service using an
 after the line that calls `InitializeComponent()`, add the following line:
 
     ```c#
-    this.DataContext = new BindableStockMarketModel();
+    this.DataContext = new BindableStockMarketModel(new StockMarketService());
     ```
     
-    The `BindableStockMarketModel` is a special MVUX-generated mirror object that represents
+    The `BindableStockMarketModel` is a special MVUX-generated model proxy class that represents
     a mirror of the `StockMarketModel` adding binding capabilities.
 
 1. Press <kbd>F5</kbd> to run the app.

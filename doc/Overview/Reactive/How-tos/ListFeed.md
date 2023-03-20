@@ -1,4 +1,4 @@
----
+﻿---
 uid: Overview.Reactive.HowTos.ListFeed
 ---
 
@@ -7,7 +7,7 @@ uid: Overview.Reactive.HowTos.ListFeed
 In this tutorial you will learn how to create an MVUX project that asynchronously requests and displays a collection of items from a service,
 and enables refreshing the data.
 
-1. Create an MVUX project by following the steps in [this](xref:Overview.Reactive.HowTos.CreateMvuxProject) tutorial, and name your project `PeopleApp`.
+1. Create an MVUX project by following the steps in [this tutorial](xref:Overview.Reactive.HowTos.CreateMvuxProject), and name your project `PeopleApp`.
 1. Add a class named *PeopleService.cs*, and replace its content with the following:
 
     ```c#
@@ -45,11 +45,9 @@ and enables refreshing the data.
 1. Create a file named *PeopleModel.cs* replacing its content with the following:
 
     ```c#
-    public partial record PeopleModel
-    {       
-        private readonly PeopleService _peopleService = new();
-        
-        public IListFeed<Person> People => ListFeed.Async(_peopleService.GetPeopleAsync);
+    public partial record PeopleModel(PeopleService PeopleService)
+    {   
+        public IListFeed<Person> People => ListFeed.Async(PeopleService.GetPeopleAsync);
     }
     ```
     
@@ -58,7 +56,17 @@ and enables refreshing the data.
     
     The `People` property value also gets cached, so no need to worry about its being created upon each `get`.
     
-    <!-- TODO the generated code can be inspected via project->analyzers etc. -->
+
+    MVUX's analyzers will read the `PeopleModel` and will generate a special model proxy called `BindablePeopleModel`,
+    which provides binding capabilities for the View, so that we can stick to sending update message in an MVU fashion.
+    
+    The `People` feed property is regenerated in the model proxy
+    and is tunnelling down to the `People` feed property in your Model.  
+
+    The `People` property will only be called once and is being cached in the model-proxy,
+    so it's OK to use a lambda expression when assigning it (`=>`), this enables accessing the local `People` 
+    in `Feed.Async(PeopleService.GetPeople)`,
+    which wouldn't have been available in a regular assignment context (`=`).
 
 1. Open the file `MainView.xaml` and add the following namespace to the XAML:
 
@@ -100,10 +108,10 @@ and enables refreshing the data.
 1. Press <kbd>F7</kbd> to navigate to open code-view, and in the constructor, after the line that calls `InitializeComponent()`, add the following line:
 
     ```c#
-    this.DataContext = new BindablePeopleModel();
+    this.DataContext = new BindablePeopleModel(new PeopleService());
     ```
     
-    The `BindablePeopleModel` is a special MVUX-generated mirror object that represents a mirror of the `PeopleModel` adding binding capabilities,
+    The `BindablePeopleModel` is a special MVUX-generated model proxy class that represents a mirror of the `PeopleModel` adding binding capabilities,
     for MVUX to be able to recreate and renew the model when an update message is sent by the view.  
     MVUX also generates a bindable version of `Person`, named `BindablePerson`,
     which can be used by the binding engine to send update message to the model. <!--TODO link to relevant docs-->
@@ -118,3 +126,14 @@ and enables refreshing the data.
 and displays the people list.
 
     ![](Assets/ListFeed-2.jpg)
+
+1. If you're using Visual-Studio 2022, Right-click the `PeopleApp` project, and navigate to _Dependencies_.  
+Open up _net7.0-windows10..._ → _Analyzers_.  
+Under _Uno.Extensions.Reactive.Generator_, expand _Uno.Extensions.Reactive.FeedGenerator_.  
+Here you'll be able to inspect all files MVUX has generated for you, and learn more about how MVUX runs behind the scenes.
+
+    ![](Assets/InspectGeneratedCode.jpg)
+
+<!-- TODO link to page "Advanced: behind the scenes of MVUX -->
+
+

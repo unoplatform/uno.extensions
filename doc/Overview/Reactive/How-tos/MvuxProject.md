@@ -12,7 +12,7 @@ when using the [Visual Studio Uno templates](https://platform.uno/docs/articles/
 or by running the following command, using an appropriate name (`MyAppName` in this page).
 
     ```cmd
-    dotnet new unoapp-uwp -o MyAppName
+    dotnet new unoapp -preset blank
     ```
   
     Refer to [this](https://platform.uno/docs/articles/get-started-dotnet-new.html) article for more details

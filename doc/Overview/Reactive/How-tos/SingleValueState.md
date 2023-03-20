@@ -8,7 +8,7 @@ In this tutorial you will learn how to create an MVUX project that asynchronousl
 and enables storing the current state and saving the updated value to the service.
 
 1. Create an MVUX project by following the steps in
-[this](xref:Overview.Reactive.HowTos.CreateMvuxProject) tutorial, and name your project `TheFancyWeddingHall`.
+[this tutorial](xref:Overview.Reactive.HowTos.CreateMvuxProject), and name your project `TheFancyWeddingHall`.
 
 1. Add a class named *DataStore.cs*, and replace its content with the following:
 
@@ -46,17 +46,15 @@ and enables storing the current state and saving the updated value to the servic
 1. Create a file named *HallCrowdedness.cs* replacing its content with the following:
 
     ```c#
-    public partial record HallCrowdednessModel
-    {
-        private HallCrowdednessService _hallCrowdednessService = new();
-
-        public IState<HallCrowdedness> HallCrowdedness => State.Async(this, _hallCrowdednessService.GetHallCrowdednessAsync);
+    public partial record HallCrowdednessModel(HallCrowdednessService HallCrowdednessService)
+    {   
+        public IState<HallCrowdedness> HallCrowdedness => State.Async(this, HallCrowdednessService.GetHallCrowdednessAsync);
 
         public async ValueTask Save(CancellationToken ct)
         {
             var updatedCrowdedness = await HallCrowdedness;
 
-            await _hallCrowdednessService.SetHallCrowdednessAsync(updatedCrowdedness, ct);
+            await HallCrowdednessService.SetHallCrowdednessAsync(updatedCrowdedness, ct);
         }
     }
     ```
@@ -96,10 +94,10 @@ and enables storing the current state and saving the updated value to the servic
 1. Press <kbd>F7</kbd> to navigate to open code-view, and in the constructor, after the line that calls `InitializeComponent()`, add the following line:
 
     ```c#
-    this.DataContext = new BindableHallCrowdednessModel();
+    this.DataContext = new BindableHallCrowdednessModel(new HallCrowdednessService());
     ```
 
-    The `BindableHallCrowdednessModel` is a special MVUX-generated mirror class that represents a mirror of the `HallCrowdednessModel` adding binding capabilities,
+    The `BindableHallCrowdednessModel` is a special MVUX-generated model proxy class that represents a mirror of the `HallCrowdednessModel` adding binding capabilities,
     for MVUX to be able to recreate and renew the model when an update message is sent by the view.  
 
 1. Click <kbd>F5</kbd> to run the project

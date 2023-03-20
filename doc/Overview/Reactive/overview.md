@@ -200,3 +200,7 @@ You don't need to worry about the service getting invoked upon each get.
 
 MVUX also generates code which serves the `FeedView` with helper methods and commands to enable easy refreshing of data,
 as well as propagating data-update messages back to the model.
+
+> [!TIP]
+> The `FeedView` provides support for additional feed states, such as when the service returned no records, failed, and more.
+> Checkout its `Template`-suffixed properties.

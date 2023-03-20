@@ -7,7 +7,7 @@ uid: Overview.Reactive.HowTos.SimpleFeed
 In this tutorial you will learn how to create an MVUX project that displays asynchronous data (weather info) from a service,
 on-demand (via a refresh button).
 
-1. Create an MVUX project by following the steps in [this](xref:Overview.Reactive.HowTos.CreateMvuxProject) tutorial,
+1. Create an MVUX project by following the steps in [this tutorial](xref:Overview.Reactive.HowTos.CreateMvuxProject),
 and name your project `WeatherApp`.
 
 1. Add a class named *DataStore.cs*, and replace its content with the following:
@@ -24,7 +24,7 @@ and name your project `WeatherApp`.
             // Fake delay to immitate requesting from a remote server
             await Task.Delay(TimeSpan.FromSeconds(2), ct);
 
-            // assign a random number ranged -40-40.
+            // assign a random number ranged -40 to 40.
             var temperature = new Random().Next(-40, 40);
 
             return new WeatherInfo(temperature);
@@ -38,38 +38,137 @@ and name your project `WeatherApp`.
 1. Create a file named *WeatherModel.cs* replacing its content with the following:
 
     ```c#
-    public partial record WeatherModel
-    {
-        private readonly WeatherService _weatherService = new();
-    
-        public IFeed<WeatherInfo> CurrentWeather => Feed.Async(_weatherService.GetCurrentWeatherAsync);
+    public partial record WeatherModel(WeatherService WeatherService)
+    {                                                             
+        public IFeed<WeatherInfo> CurrentWeather => Feed.Async(WeatherService.GetCurrentWeatherAsync);
     }
     ```
 
-    MVUX's analyzers will read the `WeatherModel` and will generate a special mirrored `BindableWeatherModel`,
+    MVUX's analyzers will read the `WeatherModel` and will generate a special model proxy called `BindableWeatherModel`,
     which provides binding capabilities for the View, so that we can stick to sending update message in an MVU fashion.
     
-    The `CurrentWeather` property value also gets cached, so no need to worry about its being created upon each `get`.
-    
-    <!-- TODO the generated code can be inspected via project->analyzers etc. -->
+    The `CurrentWeather` feed property is regenerated in the model proxy
+    and is tunnelling down to the `CurrentWeather` feed property in your Model.  
 
+    The `CurrentWeather` property will only be called once and is being cached in the model-proxy,
+    so it's OK to use a lambda expression when assigning it (`=>`), this enables accessing the local `WeatherService` 
+    in `Feed.Async(WeatherService.GetCurrentWeatherModel)`,
+    which wouldn't have been available in a regular assignment context (`=`).
 
-1. Open the file `MainView.xaml` and add the following namespace to the XAML:
+    <!--TODO link to how the generated code can be inspected.-->
+
+1. Open the file `MainView.xaml` and replace the `Page` content with the following:
+
+    ```xaml
+    <TextBlock Text="{Binding CurrentWeather.Temperature}" />
+    ```
+
+1. Press <kbd>F7</kbd> to navigate to open code-view, and in the constructor, after the line that calls `InitializeComponent()`, add the following line:
+
+    ```c#
+    this.DataContext = new BindableWeatherModel(new WeatherService());
+    ```
+
+    The `BindableWeatherModel` is a special MVUX-generated model proxy class that represents a mirror of the `WeatherModel` adding binding capabilities,
+    for MVUX to be able to recreate and renew the model when an update message is sent by the view.  
+
+1. Press <kbd>F5</kbd> to run the app. The app will load with a default `WeatherInfo` value, with a `Temperature` of `0`:
+
+    ![](Assets/SimpleFeed-1.jpg)
+
+    But then, after two seconds (the time we've delayed the task earlier), the value that came from the service will display:
+
+    ![](Assets/SimpleFeed-2.jpg)
+
+    Note that this is a random value and may be different on your machine.
+
+    To this point, this is a similar binding experience you have most likely been familiar with using MVVM.  
+    However thanks to the metadata accompanied with each request handled by the `IFeed`,
+    MVUX is capable of much more than that.      
+    It automatically adapts the view to when we're still awaiting data, as well as providing a Refresh command.  
+    Follow along to learn about the `FeedView` control, that is built to handle this metadata out-the-box.  
+
+1. Now close the app and add the following namespace to the `MainView.xaml` file:
 
     `xmlns:mvux="using:Uno.Extensions.Reactive.UI"`
 
-1. Replace anything inside the `Page` element with the following code:
+1. Wrap the `TextBlock` inside the `FeedView` control like the following:
+
+    ```xaml
+    <mvux:FeedView Source="{Binding CurrentWeather}">
+        <DataTemplate>            
+            <TextBlock DataContext="{Binding Data}" Text="{Binding Temperature}" />
+        </DataTemplate>
+    </mvux:FeedView>
+    ```
+
+    Notice how we set the `DataContext` property to a `Data` property.  
+    You can also simply set the `Text` property binding to `Data.Temperature` instead, if you prefer.
+
+    The `FeedView` wraps its source (in this case our `CurrentWeather` feed) in a `FeedViewState` object,
+    and makes the actual feed accessible via its `Data` property.  
+    The `FeedViewState` also provides additional metadata properties as we'll soon see.
+    
+1. Click <kbd>F5</kbd> to run the project.  
+The temperature is requested from the service and is displayed on page:
+
+    ![](Assets/SimpleFeed-3.jpg)
+
+    While the data is requested from the service,
+    the `FeedView` automatically displays the _Loading..._ message shown on the last screenshot.  
+
+1. Once the data is the available, the `FeedView` will show the `DataTemplate` above,
+with the `TextBlock` displaying the value obtained from the service:
+
+    ![](Assets/SimpleFeed-4.jpg)
+
+1. Close the app again and let's continue by adding a `Refresh` button.  
+Change the `FeedView` content to the following:
 
     ```xaml
     <mvux:FeedView Source="{Binding CurrentWeather}">
         <DataTemplate>
             <StackPanel>
-                <TextBlock DataContext="{Binding Data}" Text="{Binding Temperature}"/>
+                <TextBlock DataContext="{Binding Data}" Text="{Binding Temperature}" />
                 <Button Content="Refresh" Command="{Binding Refresh}" />
-            </StackPanel>
+            <StackPanel/>
         </DataTemplate>
+    </mvux:FeedView>
+    ```
 
-        <!-- Optional: this will show up when loading, or when we click refresh and data is still loading -->    
+    Like the `Data` property, the `Refresh` property is a special `ICommand`
+    customized to work asynchronously and invokes the service for refreshed data without blocking the UI.  
+    It's also a property of the `FeedViewState` class mentioned earlier.
+
+    <!--TODO TIP: the DataTemplate is assigned to the ValueTemplate property as the FeedView's default property -->
+
+1. Hit <kbd>F5</kbd> again.
+
+    The _Loading..._ message shows up while awaiting the data.
+
+    ![](Assets/SimpleFeed-3.jpg)
+
+    After a couple of seconds, once the data has been asynchronously received from the service,
+    the above template takes places.  
+    The temperature is now displayed accompanied by the _Refresh_ button.
+
+    ![](Assets/SimpleFeed-5.jpg)
+
+1. Click the _Refresh_ button. You'll notice it disables instantly, and the _Loading..._ message is displayed thereafter.
+
+    ![](Assets/SimpleFeed-6.jpg)  
+    ![](Assets/SimpleFeed-3.jpg)
+
+    After a couple of seconds the View will display the refreshed value the feed asynchronously retrieved from the service.
+
+1. The `FeedView` also gives you the ability to customize the various templates that are to be used according to the current state of the feed.
+In the following step you'll learn how to customize the _Loading..._ message you saw before.
+
+1. Close the app and below the `DataTemplate` above, add the following content (within the `FeedView`):
+
+    ```xaml
+            ...
+        </DataTemplate>
         <mvux:FeedView.ProgressTemplate>
             <DataTemplate>            
                 <TextBlock Text="Requesting temperature..."/>
@@ -78,27 +177,9 @@ and name your project `WeatherApp`.
     </mvux:FeedView>
     ```
 
-    The `FeedView` wraps its source (in this case our `CurrentWeather` feed) in a `FeedViewState` object
-    that provides the `Data` property to access the data currently available in the `CurrentWeather` feed,
-    the `Refresh` command that explicitly triggers reloading the trip.
+1. When the app loads you'll notice how the custom `ProgressTemplate` we've just marked-up
+   shows until the data is received from the service.
 
-1. Press <kbd>F7</kbd> to navigate to open code-view, and in the constructor, after the line that calls `InitializeComponent()`, add the following line:
+    ![](Assets/SimpleFeed-7.jpg)
 
-    ```c#
-    this.DataContext = new BindableWeatherModel();
-    ```
-
-    The `BindableWeatherModel` is a special MVUX-generated mirror class that represents a mirror of the `WeatherModel` adding binding capabilities,
-    for MVUX to be able to recreate and renew the model when an update message is sent by the view.  
-    
-1. Click <kbd>F5</kbd> to run the project
-
-1. When the app loads you'll notice how the `ProgressTemplate` shows (if you've included one), till the data is received from the service (2 seconds).
-
-    ![](Assets/SimpleFeed-1.jpg)
-
-1. The data is the available and the `FeedView` switches to its `ValueTemplate` (the first default `DataTemplate` in our example).
-
-    ![](Assets/SimpleFeed-2.jpg)
-
-    *13* is the temperature that was obtained from the `WeatherInfo` service.
+1. Once the data is the available and the `FeedView` switches to its `ValueTemplate` (the first default `DataTemplate` in our example).
