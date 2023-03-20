@@ -3,21 +3,21 @@ uid: Overview.Extensions
 ---
 # How-To: Creating an application with Uno.Extensions
 
-This tutorial will walk through how to create an Uno application with the `dotnet new` tool, which is already configured to use the Uno Extensions.
+This tutorial will walk through how to create an Uno application with the `dotnet new` tool, which is already configured to use the Uno.Extensions.
 
 ## Step-by-steps
 
 ### 1. Installing extension templates
 
-The `dotnet` templates included in the `Uno.Extensions.Templates` package are used to easily create new projects that already reference the Uno.Extensions.
+The `dotnet` templates included in the `Uno.Templates` package are used to easily create new projects that already reference the Uno.Extensions.
 
 * Open a command prompt and run the following
 
-    `dotnet new install Uno.Extensions.Templates`
+    `dotnet new install Uno.Templates`
 
-* Navigate to the desired projects directory, and use the `unoapp-extensions` template to generate the starter solution discussed above
+* Navigate to the desired projects directory, and use the `unoapp` template to generate the starter solution discussed above
 
-    `dotnet new unoapp-extensions -o MyProjectName`
+    `dotnet new unoapp -o MyProjectName`
 
     The argument specified after the `-o` flag (i.e. MyProjectName) will act as the name for both a containing directory and the generated solution.
 
@@ -29,8 +29,9 @@ The `dotnet` templates included in the `Uno.Extensions.Templates` package are us
 
 The generated solution will contain:
 
-* *MyProjectName* - for application logic, and other constructs like view models and services that are independent of the UI of the application.
-* *MyProjectName.UI* - for controls, pages, and views comprising the app’s UI layer.
+* *MyProjectName* - for application logic, and other constructs like view models and services, as well as the pages, controls and other views that make up the UI of the application
+* *MyProjectName.DataContracts* - for entities that are shared with an API backend.
+* *MyProjectName.Server* - ASP.NET project that hosts a WebAPI and can be used to host the WASM application.
 * *Platforms/MyProjectName.** - platform-specific projects for each supported platform.
 * *MyProjectName.Tests* and *MyProjectName.UI.Tests* - for writing unit and UI tests respectively.
 
@@ -63,7 +64,7 @@ The generated solution will contain:
 
 * Press Ctrl + F5 to start the WASM project without debugging.
 
-* Once the application is compiled, it will launch inside your default browser. Take note of the URL which should look something like this: https://localhost:11111/
+* Once the application is compiled, it will launch inside your default browser. Take note of the URL which should look something like this: https://localhost:5000/Main
 
 * Find the project *Tests\\MyProjectName.UI.Tests* and locate the *Constants.cs* file
 
@@ -72,7 +73,7 @@ The generated solution will contain:
     It should appear similar to this:
 
     ```cs
-    public readonly static string WebAssemblyDefaultUri = "https://localhost:11111/";
+    public readonly static string WebAssemblyDefaultUri = "https://localhost:5000/";
     ```
 
 * Go back to the project *Tests\\MyProjectName.UI.Tests* and right click. Then, *Run Tests*
