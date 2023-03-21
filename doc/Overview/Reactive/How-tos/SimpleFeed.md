@@ -82,9 +82,9 @@ An `IFeed<T>` is awaitable, meaning that to get the value of the feed you would 
     ```  
 
 To make it possible to data bind to an `IFeed<T>`, the MVUX analyzers read the `WeatherModel`
-and will generate a proxy type called `BindableWeatherModel`, which exposes properties that the View can data bind to.
+and generate a proxy type called `BindableWeatherModel`, which exposes properties that the View can data bind to.
 
-1. Open the file `MainView.xaml` and replace the `Page` content with the following:
+1. Open the file `MainView.xaml` and replace the `Page` contents with the following:
 
     ```xaml
     <TextBlock Text="{Binding CurrentWeather.Temperature}" />
@@ -131,7 +131,7 @@ In the next section we'll use the `FeedView` control to unlock the capabilities 
 
     `xmlns:mvux="using:Uno.Extensions.Reactive.UI"`
 
-1. Wrap the `TextBlock` inside the `FeedView` control like the following:
+1. Wrap the `TextBlock` inside a `FeedView` control like the following:
 
     ```xaml
     <mvux:FeedView Source="{Binding CurrentWeather}">
@@ -144,9 +144,10 @@ In the next section we'll use the `FeedView` control to unlock the capabilities 
     Notice how we set the `DataContext` property to a `Data` property.  
     You can also simply set the `Text` property binding to `Data.Temperature` instead, if you prefer.
 
-    The `FeedView` wraps its source (in this case our `CurrentWeather` feed) in a `FeedViewState` object,
-    and makes the actual feed accessible via its `Data` property.  
-    The `FeedViewState` also provides additional metadata properties as we'll soon see.
+    > [!TIP]
+    > The `FeedView` wraps its source (in this case our `CurrentWeather` feed) in a `FeedViewState` object,
+    > and makes the actual feed accessible via its `Data` property.  
+    > The `FeedViewState` also provides additional metadata properties as we'll soon see.
     
 1. Click <kbd>F5</kbd> to run the project.  
 The temperature is requested from the service and is displayed on page:

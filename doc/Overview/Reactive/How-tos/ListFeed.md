@@ -81,7 +81,6 @@ of a list-feed (`IListFeed<T>`) and the `FeedView` control.
 
 ## Data-bind the view
 
-
 `PeopleModel` exposes a `People` property which is an `IListFeed` of type `Person`.  
 This is similar in concept to an `IObservable<IEnumerable<T>>`, where an `IListFeed<T>`
 represents a sequence of person-collections obtained from the service.
@@ -138,13 +137,13 @@ after the line that calls `InitializeComponent()`, add the following line:
 1. When the app loads you'll notice how the `ProgressTemplate` shows (if you've included one),
 till the data is received from the service (2 seconds).
 
-    ![](Assets/ListFeed-1.jpg)
+    ![](Assets/SimpleFeed-3.jpg)
 
 1. Once the data is the available, the `FeedView` switches to its `ValueTemplate`
 (the first default `DataTemplate` in our example),
 and displays the people list.
 
-    ![](Assets/ListFeed-2.jpg)
+    ![](Assets/ListFeed-1.jpg)
 
 1. If you're using Visual-Studio 2022, Right-click the `PeopleApp` project, and navigate to _Dependencies_.  
 Open up _net7.0-windows10..._ → _Analyzers_.  
