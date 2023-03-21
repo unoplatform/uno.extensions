@@ -34,7 +34,7 @@ In this tutorial you will learn how to create an MVUX project and basic usage of
     {       
         public async ValueTask<WeatherInfo> GetCurrentWeatherAsync(CancellationToken ct)
         {
-            // Fake delay to simulate requesting data from a remote server
+            // fake delay to simulate requesting data from a remote server
             await Task.Delay(TimeSpan.FromSeconds(2), ct);
 
             // assign a random number ranged -40 to 40.
@@ -46,7 +46,7 @@ In this tutorial you will learn how to create an MVUX project and basic usage of
     ```
 
     We're using a [record](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/builtin-types/record)
-    for the WeatherInfo type on purpose,
+    for the `WeatherInfo` type on purpose,
     as records are immutable and ensure purity of objects as well as other features.
 
 1. Create a class named *WeatherModel.cs* replacing its content with the following:
@@ -61,13 +61,13 @@ In this tutorial you will learn how to create an MVUX project and basic usage of
     > [!NOTE]
     >
     > Feeds (`IFeed<T>` and `IListFeed<T>` for collections) are used as a gateway
-    to asynchronously request data from a service and wrap the result/error in metadata
+    to asynchronously request data from a service and wrap the result or error (if any) in metadata
     to be displayed in the View in accordingly.  
-    > Feeds are stateless
-    and are there for when the data from the service is read-only and we're not planning to enable edits to it.  
     > Learn more about list-feeds [here](xref:Overview.Reactive.HowTos.ListFeed).
 
     > [!TIP]
+    > Feeds are stateless
+    and are there for when the data from the service is read-only and we're not planning to enable edits to it.  
     > MVUX also provides stateful feeds. For that purpose States (`IState<T>` and `<IListState<T>` for collections) come handy.
     > Refer to [this tutorial](xref:Overview.Reactive.HowTos.SingleValueState) to learn more about states.
 
@@ -75,13 +75,15 @@ In this tutorial you will learn how to create an MVUX project and basic usage of
 
 `WeatherModel` exposes a `CurrentWeather` property which is an `IFeed` of type `WeatherInfo`.
 This is similar in concept to an `IObservable<T>`, where an `IFeed<T>` represents a sequence of values.
-An `IFeed<T>` is awaitable, meaning that to get the value of the feed you would do the following:  
+
+> [!TIP]
+> An `IFeed<T>` is awaitable, meaning that to get the value of the feed you would do the following:  
 
     ```c#
     WeatherInfo currentWeather = await CurrentWeather;
     ```  
 
-To make it possible to data bind to an `IFeed<T>`, the MVUX analyzers read the `WeatherModel`
+To make it possible to data bind to a feeds, the MVUX analyzers read the `WeatherModel`
 and generate a proxy type called `BindableWeatherModel`, which exposes properties that the View can data bind to.
 
 1. Open the file `MainView.xaml` and replace the `Page` contents with the following:

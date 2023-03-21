@@ -15,7 +15,6 @@ of a list-feed (`IListFeed<T>`) and the `FeedView` control.
  - You'll learn how to use a feed to asynchronously request this data from the service.
  - How to display the data on the UI
  - How to use the `FeedView` control to display the data and automatically respond to the current feed status.
- - Customize the `FeedView` to use a different template when awaiting data from the service
  - Use a refresh button to retrieve the latest weather data on-demand.
 
 ## Create the Model
@@ -52,8 +51,8 @@ of a list-feed (`IListFeed<T>`) and the `FeedView` control.
     }
     ```
 
-    We're using [records](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/builtin-types/record) in purpose,
-    as records are immutable and ensure purity of objects as well as other features.
+    We're using a [record](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/builtin-types/record)
+    for the `Person` type on purpose, as records are immutable and ensure purity of objects as well as other features.
 
     The `IListFeed` is a feed type tailored for dealing with collections.
 
@@ -69,13 +68,13 @@ of a list-feed (`IListFeed<T>`) and the `FeedView` control.
     > [!NOTE]
     >
     > Feeds (`IFeed<T>` and `IListFeed<T>` for collections) are used as a gateway
-    to asynchronously request data from a service and wrap the result/error in metadata
+    to asynchronously request data from a service and wrap the result or an error if any in metadata
     to be displayed in the View in accordingly.  
-    > Feeds are stateless
-    and are there for when the data from the service is read-only and we're not planning to enable edits to it.  
     > Learn more about list-feeds [here](xref:Overview.Reactive.HowTos.ListFeed).
 
     > [!TIP]
+    > Feeds are stateless
+    and are there for when the data from the service is read-only and we're not planning to enable edits to it.  
     > MVUX also provides stateful feeds. For that purpose States (`IState<T>` and `<IListState<T>` for collections) come handy.
     > Refer to [this tutorial](xref:Overview.Reactive.HowTos.SingleValueState) to learn more about states.
 
@@ -84,7 +83,9 @@ of a list-feed (`IListFeed<T>`) and the `FeedView` control.
 `PeopleModel` exposes a `People` property which is an `IListFeed` of type `Person`.  
 This is similar in concept to an `IObservable<IEnumerable<T>>`, where an `IListFeed<T>`
 represents a sequence of person-collections obtained from the service.
-An `IListFeed<T>` is awaitable, meaning that to get the value of the feed you would do the following:  
+
+> [!TIP]
+> An `IListFeed<T>` is awaitable, meaning that to get the value of the feed you would do the following:  
 
     ```c#
     IImmutableList<Person> people = await People;
