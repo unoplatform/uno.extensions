@@ -18,7 +18,7 @@ internal class SequentialRequestManager<TRequest, TToken> : IAsyncEnumerable<Tok
 	where TRequest : IContextRequest<TToken>
 	where TToken : class, IToken<TToken>
 {
-	private readonly AsyncEnumerableSubject<TokenSet<TToken>> _tokens = new(ReplayMode.EnabledForFirstEnumeratorOnly);
+	private readonly AsyncEnumerableSubject<TokenSet<TToken>> _tokens = new(AsyncEnumerableReplayMode.EnabledForFirstEnumeratorOnly);
 	private readonly CancellationToken _ct;
 
 	private TToken _current;

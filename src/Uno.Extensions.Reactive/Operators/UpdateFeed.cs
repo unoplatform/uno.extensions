@@ -24,7 +24,7 @@ internal record FeedUpdate<T>(Func<bool, MessageBuilder<T, T>, bool> IsActive, A
 
 internal sealed class UpdateFeed<T> : IFeed<T>
 {
-	private readonly AsyncEnumerableSubject<(IFeedUpdate<T>[]? added, IFeedUpdate<T>[]? removed)> _updates = new(ReplayMode.Disabled);
+	private readonly AsyncEnumerableSubject<(IFeedUpdate<T>[]? added, IFeedUpdate<T>[]? removed)> _updates = new(AsyncEnumerableReplayMode.Disabled);
 	private readonly IFeed<T> _source;
 
 	public UpdateFeed(IFeed<T> source)
@@ -63,7 +63,7 @@ internal sealed class UpdateFeed<T> : IFeed<T>
 		public UpdateFeedSource(UpdateFeed<T> owner, SourceContext context, CancellationToken ct)
 		{
 			_ct = ct;
-			_subject = new AsyncEnumerableSubject<Message<T>>(ReplayMode.EnabledForFirstEnumeratorOnly);
+			_subject = new AsyncEnumerableSubject<Message<T>>(AsyncEnumerableReplayMode.EnabledForFirstEnumeratorOnly);
 			_message = new MessageManager<T, T>(_subject.SetNext);
 			_activeUpdates = ImmutableList<IFeedUpdate<T>>.Empty;
 
