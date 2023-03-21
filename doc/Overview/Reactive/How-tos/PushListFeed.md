@@ -42,36 +42,36 @@ to display data pushed in asynchronously from an `IAsyncEnumerable<T>`.
         public async IAsyncEnumerable<IImmutableList<Stock>> GetCurrentMarket(
             [EnumeratorCancellation] CancellationToken ct)
         {
+            var stocks = new List<Stock>
+            {
+                new Stock("MSFT", 279.35),
+                new Stock("GOOG", 102.11),
+            };
+        
             while (!ct.IsCancellationRequested)
             {
                 // return current stock-market info
-                yield return _stocks.ToImmutableList();
+                yield return stocks.ToImmutableList();
 
                 // this delays the next iteration by 5 seconds
                 await Task.Delay(TimeSpan.FromSeconds(5), ct);
 
                 // this updates the market prices
-                UpdateMarket();
+                UpdateMarket(stocks);
             }
         }
 
-        private readonly Random _rnd = new();
-        private void UpdateMarket()
+        private static readonly Random _rnd = new();
+        private static void UpdateMarket(List<Stock> stocks)
         {
-            for (int i = 0; i < _stocks.Count; i++)
+            for (int i = 0; i < stocks.Count; i++)
             {
-                var stock = _stocks[i];
+                var stock = stocks[i];
                 var increment = _rnd.NextDouble();
 
-                _stocks[i] = stock with { Value = stock.Value + increment };
+                stocks[i] = stock with { Value = stock.Value + increment };
             }
         }
-
-        private readonly List<Stock> _stocks = new List<Stock>
-        {
-            new Stock("MSFT", 279.35),
-            new Stock("GOOG", 102.11),
-        };
     }
     ```
 
