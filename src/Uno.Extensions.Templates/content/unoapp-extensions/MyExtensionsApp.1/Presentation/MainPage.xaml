@@ -9,7 +9,7 @@
 	  xmlns:utu="using:Uno.Toolkit.UI"
 	  xmlns:not_skia="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 	  NavigationCacheMode="Required"
-	  Background="{ThemeResource BackgroundBrush}">
+	  Background="{ThemeResource $themeBackgroundBrush$}">
 
 	<Grid>
 		<Grid.RowDefinitions>
