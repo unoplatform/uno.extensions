@@ -52,7 +52,7 @@ of a list-feed (`IListFeed<T>`) and the `FeedView` control.
     ```
 
     We're using a [record](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/builtin-types/record)
-    for the `Person` type on purpose, as records are immutable and ensure purity of objects as well as other features.
+    for the `Person` type on purpose, as records are designed to be immutable and ensure purity of objects as well as other features.
 
     The `IListFeed` is a feed type tailored for dealing with collections.
 
