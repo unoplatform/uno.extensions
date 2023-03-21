@@ -1109,7 +1109,7 @@
         "cases": [
           {
             "condition": "(useToolkit)",
-            "value": "xmlns:utu=\"using:Uno.Toolkit.UI\""
+            "value": "\n\txmlns:utu=\"using:Uno.Toolkit.UI\""
           },
           {
             "condition": "(!useToolkit)",
