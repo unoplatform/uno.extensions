@@ -525,6 +525,28 @@
       "datatype": "bool",
       "value": "(appTheme == 'cupertino')"
     },
+    "themeBackgroundBrush":{
+      "type": "generated",
+      "generator": "switch",
+      "replaces": "$themeBackgroundBrush$",
+      "parameters": {
+        "evaluator": "C++",
+        "cases": [
+          {
+            "condition": "(appThemeEvaluator == 'material')",
+            "value": "BackgroundBrush"
+          },
+          {
+            "condition": "(appThemeEvaluator == 'fluent')",
+            "value": "ApplicationPageBackgroundThemeBrush"
+          },
+          {
+            "condition": "(appTheme == 'cupertino')",
+            "value": "CupertinoSystemBackgroundBrush"
+          }
+        ]
+      }
+    },
     "presetDependencyInjectionDefault": {
       "type": "generated",
       "generator": "switch",

@@ -6,7 +6,7 @@
 	  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	  xmlns:uen="using:Uno.Extensions.Navigation.UI"
 	  xmlns:utu="using:Uno.Toolkit.UI"
-	  Background="{ThemeResource BackgroundBrush}">
+	  Background="{ThemeResource $themeBackgroundBrush$}">
 
 	<Grid>
 		<utu:NavigationBar Content="Second Page">
