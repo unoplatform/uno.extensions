@@ -79,7 +79,6 @@ to display data pushed in asynchronously from an `IAsyncEnumerable<T>`.
     for the `Stock` type on purpose, as records are immutable and ensure purity of objects as well as other features.
 
     The `GetCurrentMarket` emits a collection of stocks with updated values every 5 seconds.
-    The 
 
     The `IListFeed` is a feed tailored for dealing with collections.
 
