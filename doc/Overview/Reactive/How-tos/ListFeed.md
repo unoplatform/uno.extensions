@@ -123,7 +123,7 @@ which exposes properties that the View can data bind to.
 
     > [!TIP]
     > The `FeedView` wraps its source (in this case the `People` feed) in a `FeedViewState` object,
-    > and makes the actual feed accessible via its `Data` property as well as the
+    > and makes the current value of the feed accessible via its `Data` property as well as the
     > `Refresh` property, which is a command that explicitly triggers reloading the data.
 
 1. Press <kbd>F7</kbd> to navigate to open code-view, and in the constructor,
