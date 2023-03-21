@@ -3,7 +3,7 @@ uid: Overview.Hosting
 ---
 # Hosting
 
-`Uno.Extensions.Hosting` provides an implementation of the abstraction for building applications which support initialization of dependencies, establishing different environment types, and the full breadth of extensible features offered by Uno Extensions.
+`Uno.Extensions.Hosting` provides an implementation of the abstraction for building applications which support initialization of dependencies, establishing different environment types, and the full breadth of extensible features offered by Uno.Extensions.
 
 Hosting is delivered as a NuGet package [Microsoft.Extensions.Hosting.WinUI](https://www.nuget.org/packages/Uno.Extensions.Hosting.WinUI).
 
