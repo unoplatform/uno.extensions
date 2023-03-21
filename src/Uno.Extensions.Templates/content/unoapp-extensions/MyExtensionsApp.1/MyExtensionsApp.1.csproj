@@ -208,6 +208,7 @@
 		<Compile Update="**\*.xaml.cs">
 			<DependentUpon>%(Filename)</DependentUpon>
 		</Compile>
+		<PRIResource Include ="**\*.resw" />
 	</ItemGroup>
 	<!--#endif-->
 	<!--#if (useHttp)-->
