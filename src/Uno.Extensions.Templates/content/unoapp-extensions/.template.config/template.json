@@ -237,6 +237,12 @@
       "defaultValue": "true",
       "description": "Includes a Server project for an API & host for the WebAssembly project"
     },
+    "toolkit": {
+      "displayName": "Toolkit",
+      "description": "Includes Uno.Toolkit for additional controls and helper classes",
+      "type": "parameter",
+      "datatype": "bool"
+    },
     "dependencyInjection": {
       "displayName": "Dependency Injection",
       "description": "Use dependency injection for registering and accessing services",
@@ -379,7 +385,7 @@
         },
         {
           "choice": "serilog",
-          "description": "Logging is accessible via dependency injection and configured to use Serilog",
+          "description": "Logging is accessible via dependency injection and uses Serilog",
           "displayName": "Serilog"
         }
       ]
@@ -573,10 +579,31 @@
         "fallbackVariableName": "presetDependencyInjectionDefault"
       }
     },
+    "presetToolkitDefault": {
+      "type": "generated",
+      "generator": "switch",
+      "parameters": {
+        "evaluator": "C++",
+        "datatype": "bool",
+        "cases": [
+          {
+            "condition": "(preset == 'recommended')",
+            "value": "true"
+          },
+          {
+            "condition": "(preset == 'blank')",
+            "value": "false"
+          }
+        ]
+      }
+    },
     "useToolkit": {
-      "type": "computed",
-      "datatype": "bool",
-      "value": "(useDependencyInjection)"
+      "type": "generated",
+      "generator": "coalesce",
+      "parameters": {
+        "sourceVariableName": "toolkit",
+        "fallbackVariableName": "presetToolkitDefault"
+      }
     },
     "presetLoggingDefault": {
       "type": "generated",
