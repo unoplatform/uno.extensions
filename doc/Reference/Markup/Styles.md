@@ -34,8 +34,15 @@ new Style<TextBlock>()
 Sometimes you might want to use a Static or Theme resource on your style property. In these cases you can continue to use the Dependency Property Builder to set the value of the setter on a given property the same as you might when setting the value on a control instance.
 
 ```cs
-new Style<TextBlock>()
+new Style<Button>()
 	.Setters(s => s.Background(StaticResource.Get<Brush>("MyBrush")))
+```
+
+Alternatively if you are using a Theme Resource from Uno.Material you can use Uno.Themes.WinUI.Markup to use a Theme Resource like:
+
+```cs
+new Style<Button>()
+	.Setters(Theme.Brushes.Primary.Default)
 ```
 
 ## Templates
