@@ -6,7 +6,7 @@
 	  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	  mc:Ignorable="d"
 	  xmlns:uen="using:Uno.Extensions.Navigation.UI"
-	  xmlns:utu="using:Uno.Toolkit.UI"
+	  $toolkitNamespace$
 	  xmlns:not_skia="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 	  NavigationCacheMode="Required"
 	  Background="{ThemeResource $themeBackgroundBrush$}">
@@ -16,7 +16,11 @@
 			<RowDefinition Height="Auto" />
 			<RowDefinition />
 		</Grid.RowDefinitions>
+<!--#if (useToolkit)-->
 		<utu:NavigationBar Content="{Binding Title}" />
+<!--#else-->
+		<TextBlock Text="{Binding Title}" HorizontalAlignment="Center" />
+<!--#endif-->
 
 		<StackPanel Grid.Row="1"
 					HorizontalAlignment="Center"

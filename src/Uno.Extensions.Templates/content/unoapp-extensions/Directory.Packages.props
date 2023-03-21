@@ -65,8 +65,10 @@
     <!--#endif-->
     <!--#if (useExtensionsNavigation)-->
     <PackageVersion Include="Uno.Extensions.Navigation" Version="255.255.255.255" />
-    <PackageVersion Include="Uno.Extensions.Navigation.Toolkit.WinUI" Version="255.255.255.255" />
     <PackageVersion Include="Uno.Extensions.Navigation.WinUI" Version="255.255.255.255" />
+    <!--#endif-->
+    <!--#if (useNavigationToolkit)-->
+    <PackageVersion Include="Uno.Extensions.Navigation.Toolkit.WinUI" Version="255.255.255.255" />
     <!--#endif-->
     <!--#if (useMvux)-->
     <PackageVersion Include="Uno.Extensions.Reactive" Version="255.255.255.255" />

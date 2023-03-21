@@ -12,7 +12,13 @@ public sealed partial class MainPage : Page
 			.Content(new Grid()
 				.RowDefinitions<Grid>("Auto,*")
 				.Children(
+#if useToolkit					
 					new NavigationBar().Content(() => vm.Title),
+#else
+				new TextBlock()
+					.Text(() => vm.Title)
+					.HorizontalAlignment(HorizontalAlignment.Center)
+#endif
 					new StackPanel()
 						.Grid(row: 1)
 						.HorizontalAlignment(HorizontalAlignment.Center)

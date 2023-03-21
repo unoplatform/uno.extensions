@@ -1100,6 +1100,24 @@
         ]
       }
     },
+    "toolkitNamespace":{
+      "type": "generated",
+      "generator": "switch",
+      "replaces": "$toolkitNamespace$",
+      "parameters": {
+        "evaluator": "C++",
+        "cases": [
+          {
+            "condition": "(useToolkit)",
+            "value": "xmlns:utu=\"using:Uno.Toolkit.UI\""
+          },
+          {
+            "condition": "(!useToolkit)",
+            "value": ""
+          }
+        ]
+      }
+    },
     "shellRouteViewModel":{
       "type": "generated",
       "generator": "switch",
@@ -1222,6 +1240,11 @@
       "type": "computed",
       "datatype": "bool",
       "value": "useDependencyInjection && navigationEvaluator != 'blank'"
+    },
+    "useNavigationToolkit": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "useExtensionsNavigation && useToolkit"
     },
     "useReactiveExtensionsNavigation": {
       "type": "computed",

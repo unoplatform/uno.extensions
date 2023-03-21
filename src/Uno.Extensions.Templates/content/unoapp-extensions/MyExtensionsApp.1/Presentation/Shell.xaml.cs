@@ -1,6 +1,4 @@
-﻿using Uno.Toolkit.UI;
-
-namespace MyExtensionsApp._1.Presentation;
+﻿namespace MyExtensionsApp._1.Presentation;
 
 public sealed partial class Shell : UserControl, IContentControlProvider
 {
@@ -9,6 +7,8 @@ public sealed partial class Shell : UserControl, IContentControlProvider
 //+:cnd:noEmit
 #if useCsharpMarkup
 		this.Content(
+
+#if useToolkit
 			new ExtendedSplashScreen()
 				.Assign(out var splash)
 				.HorizontalAlignment(HorizontalAlignment.Stretch)
@@ -26,6 +26,14 @@ public sealed partial class Shell : UserControl, IContentControlProvider
 							.Width(100)
 					)
 				)
+#else
+			new ContentControl()
+				.Assign(out var splash)
+				.HorizontalAlignment(HorizontalAlignment.Stretch)
+				.VerticalAlignment(VerticalAlignment.Stretch)
+				.HorizontalContentAlignment(HorizontalAlignment.Stretch)
+				.VerticalContentAlignment(VerticalAlignment.Stretch)
+#endif
 			);
 		Splash = splash;
 #else
@@ -36,7 +44,11 @@ public sealed partial class Shell : UserControl, IContentControlProvider
 //+:cnd:noEmit
 #if useCsharpMarkup
 
+#if useToolkit
 	private ExtendedSplashScreen Splash { get; }
+#else
+	private ContentControl Splash { get; }
+#endif
 #endif
 //-:cnd:noEmit
 
