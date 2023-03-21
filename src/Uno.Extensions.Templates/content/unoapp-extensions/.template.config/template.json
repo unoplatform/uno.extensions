@@ -169,7 +169,7 @@
       "datatype": "choice",
       "enableQuotelessLiterals": true,
       "allowMultipleValues": true,
-      "defaultValue": "android|ios|maccatalyst|wasm|windows|wpf|gtk|linux-fb",
+      "defaultValue": "android|ios|maccatalyst|wasm|windows|gtk",
       "choices": [
         {
           "choice": "android",
@@ -524,6 +524,28 @@
       "type": "computed",
       "datatype": "bool",
       "value": "(appTheme == 'cupertino')"
+    },
+    "themeBackgroundBrush":{
+      "type": "generated",
+      "generator": "switch",
+      "replaces": "$themeBackgroundBrush$",
+      "parameters": {
+        "evaluator": "C++",
+        "cases": [
+          {
+            "condition": "(appThemeEvaluator == 'material')",
+            "value": "BackgroundBrush"
+          },
+          {
+            "condition": "(appThemeEvaluator == 'fluent')",
+            "value": "ApplicationPageBackgroundThemeBrush"
+          },
+          {
+            "condition": "(appTheme == 'cupertino')",
+            "value": "CupertinoSystemBackgroundBrush"
+          }
+        ]
+      }
     },
     "presetDependencyInjectionDefault": {
       "type": "generated",

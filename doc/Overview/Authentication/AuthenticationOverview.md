@@ -47,7 +47,7 @@ In this scenario the application doesn't require the user to be authenticated un
 
 ## Authentication Providers (IAuthenticationProvider)
 
-The process of authentication with a given authority is implemented by an authentication provider (i.e. implements IAuthenticationProvider). Multiple providers, and in fact, multiple instances of any provider, can be registered during application startup. For example, an application may want to provide support for authenticating using Facebook, Twitter and Apple - each of these has a different backend service that you need to connect with. In the application the user selects which registered provider to use by supplying the `provider` argument when invoking the `IAuthenticationService.LoginAsync` method. This argument is optional and is not required if only a single provider has been registered.
+The process of authentication with a given authority is implemented by an authentication provider (i.e. implements IAuthenticationProvider). Multiple providers, and in fact, multiple instances of any provider, can be registered during application startup. For example, an application may want to provide support for authenticating using Facebook, Twitter and Apple - each of these has a different backend service that needs to be connected with. In the application the user selects which registered provider to use by supplying the `provider` argument when invoking the `IAuthenticationService.LoginAsync` method. This argument is optional and is not required if only a single provider has been registered.
 
 Note: The `IAuthenticationProvider` implementations are all marked as internal as they should be configured via the extensions methods on the `IHostBuilder` and the builder interface for the corresponding implementation. 
 
@@ -60,8 +60,22 @@ The `MsalAuthenticationProvider` (in the Uno.Extensions.Authentication.Msal.UI o
 ### Oidc
 The `OidcAuthenticationProvider` (in the Uno.Extensions.Authentication.Oidc.UI or Uno.Extensions.Authentication.Oidc.WinUI packages) wraps support for any [OpenID Connect](https://openid.net/connect/) backend, including [IdentityServer](https://duendesoftware.com/products/identityserver). Learn [Oidc authentication](xref:Learn.Tutorials.Authentication.HowToOidcAuthentication)
 
+#### Platform specific behavior
+
+When the `OidcAuthenticationProvider` is automatically built, there are platform specific checks invoked internally which occasionally alter behavior during the authentication process:
+
+**WebAssembly**: The `OidcAuthenticationProvider` will automatically use the `WebAuthenticationBroker` to obtain redirect URIs during the authentication process. This is done to avoid the need for a redirect to a custom URI scheme, which is not supported in the browser.
+
 ### Web
-The `WebAuthenticationProvider` provides an implementation that displays a web view in order for the user to login. After login, the web view redirects back to the application, along with any tokens. Learn [Web authentication](xref:Learn.Tutorials.Authentication.HowToWebAuthentication)
+The `WebAuthenticationProvider` provides an implementation that displays a web view in order for the user to login. After login, the web view redirects back to the application, along with any tokens. Learn [Web Authentication](xref:Learn.Tutorials.Authentication.HowToWebAuthentication)
+
+#### Platform specific behavior
+
+Before the `WebAuthenticationProvider` is automatically built, there are platform specific checks invoked internally which occasionally alter behavior during the authentication process:
+
+**Windows**: The `AddWeb()` extension method will initialize a `WebAuthenticator` to launch an out-of-process browser. This is done preemtively to support its usage within `WebAuthenticationProvider` during login and logout instead of the `WebAuthenticationBroker` used for other platforms.
+
+**Other platforms**: For a description of various subtle differences when displaying a web login prompt on multiple platforms, see [Web Authentication Broker](https://platform.uno/docs/articles/features/web-authentication-broker.html). The broker will only respond to the `PrefersEphemeralWebBrowserSession` setting value in iOS (versions 13.0+), while the other platforms will ignore it.
 
 ## Http Handlers
 Once a user has been authenticated, the tokens are cached and are available for use when invoking service calls. Rather than developers having to access the tokens and manually appending the tokens to the http request, the Authentication extensions includes http handlers which will be inserted into the request pipeline in order to apply the tokens as required.
@@ -70,7 +84,7 @@ Once a user has been authenticated, the tokens are cached and are available for 
 The `HeaderHandler` is used to apply the access token to the http request using the `Authorization` header. The default scheme is `Bearer` but this can be override to use a different scheme, such as basic.
 
 ### Cookies
-The `CookieHandler` is used to apply the access token, and/or refresh token, to the http request as cookies. This requires the cookie name for access tokena and request token to be specified as part of configuring the application. Learn how to use [Cookies](xref:Learn.Tutorials.Authentication.HowToCookieAuthorization) to authorize
+The `CookieHandler` is used to apply the access token, and/or refresh token, to the http request as cookies. This requires the cookie name for access token and request token to be specified as part of configuring the application. Learn how to use [Cookies](xref:Learn.Tutorials.Authentication.HowToCookieAuthorization) to authorize
 
 
 
