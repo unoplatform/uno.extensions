@@ -10,8 +10,14 @@
       items:
         - name: Overview
           href: Overview/Authentication/AuthenticationOverview.md
-        - name: Get Started with Authentication
+        - name: How to Use Custom Authentication
           href: Learn/Tutorials/Authentication/HowTo-Authentication.md
+        - name: How to Use MSAL Authentication
+          href: Learn/Tutorials/Authentication/HowTo-MsalAuthentication.md
+        - name: How to Use OIDC Authentication
+          href: Learn/Tutorials/Authentication/HowTo-OidcAuthentication.md
+        - name: How to Use Web Authentication
+          href: Learn/Tutorials/Authentication/HowTo-WebAuthentication.md
     - name: Configuration
       items:
         - name: Overview
