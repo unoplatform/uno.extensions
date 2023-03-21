@@ -84,9 +84,9 @@
     <PackageVersion Include="Uno.Cupertino.WinUI" Version="2.5.3" />
     <!--#endif-->
     <!--#if (useToolkit)-->
-    <PackageVersion Include="Uno.Toolkit.WinUI" Version="2.5.4" />
+    <PackageVersion Include="Uno.Toolkit.WinUI" Version="2.5.5" />
     <!--#if (useMaterial)-->
-    <PackageVersion Include="Uno.Toolkit.WinUI.Material" Version="2.5.4" />
+    <PackageVersion Include="Uno.Toolkit.WinUI.Material" Version="2.5.5" />
     <!--#endif-->
     <!--#endif-->
     <PackageVersion Include="Uno.Resizetizer" Version="1.0.2" />
@@ -101,7 +101,7 @@
     <!--#if (useCsharpMarkup)-->
     <PackageVersion Include="Uno.WinUI.Markup" Version="4.7.0-dev.20" />
     <!--#if (useToolkit)-->
-    <PackageVersion Include="Uno.Toolkit.WinUI.Markup" Version="2.5.4" />
+    <PackageVersion Include="Uno.Toolkit.WinUI.Markup" Version="2.5.5" />
     <!--#endif-->
     <!--#if (useExtensionsNavigation)-->
     <PackageVersion Include="Uno.Extensions.Navigation.WinUI.Markup" Version="255.255.255.255" />

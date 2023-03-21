@@ -125,16 +125,16 @@
 		<!--#if (useMaterial)-->
 		<PackageReference Include="Uno.Material.WinUI" Version="2.5.3" />
 		<!--#if (useToolkit)-->
-		<PackageReference Include="Uno.Toolkit.WinUI.Material" Version="2.5.4" />
+		<PackageReference Include="Uno.Toolkit.WinUI.Material" Version="2.5.5" />
 		<!--#endif-->
 		<!--#elif (useCupertino)-->
 		<PackageReference Include="Uno.Cupertino.WinUI" Version="2.5.3" />
 		<!--#endif-->
 		<!--#if (useToolkit)-->
 		<!--#if (useCsharpMarkup)-->
-		<PackageReference Include="Uno.Toolkit.WinUI.Markup" Version="2.5.4" />
+		<PackageReference Include="Uno.Toolkit.WinUI.Markup" Version="2.5.5" />
 		<!--#else-->
-		<PackageReference Include="Uno.Toolkit.WinUI" Version="2.5.4" />
+		<PackageReference Include="Uno.Toolkit.WinUI" Version="2.5.5" />
 		<!--#endif-->
 		<!--#endif-->
 		<!--#if (useAuthentication)-->
