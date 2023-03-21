@@ -11,14 +11,17 @@ partial class CollectionAnalyzer
 {
 	private sealed class _Replace<T> : EntityChange<T>
 	{
+		private readonly bool _isReplaceOfSameEntities;
+
 		/// <inheritdoc />
-		public _Replace(int at, int indexOffset)
+		public _Replace(int at, int indexOffset, bool isReplaceOfSameEntities = true)
 			: base(at, indexOffset)
 		{
+			_isReplaceOfSameEntities = isReplaceOfSameEntities;
 		}
 
 		public override RichNotifyCollectionChangedEventArgs ToEvent()
-			=> RichNotifyCollectionChangedEventArgs.ReplaceSome<T>(_oldItems, _newItems, Starts + _indexOffset);
+			=> RichNotifyCollectionChangedEventArgs.ReplaceSome<T>(_oldItems, _newItems, Starts + _indexOffset, _isReplaceOfSameEntities);
 
 		/// <inheritdoc />
 		protected internal override void Visit(ICollectionChangeSetVisitor<T> visitor)
@@ -87,7 +90,8 @@ partial class CollectionAnalyzer
 			=> RichNotifyCollectionChangedEventArgs.ReplaceSome(
 				_oldItems.Slice(from, count),
 				_newItems.Slice(from, count),
-				Starts + _indexOffset + from);
+				Starts + _indexOffset + from,
+				_isReplaceOfSameEntities);
 
 		/// <inheritdoc />
 		public override string ToString()

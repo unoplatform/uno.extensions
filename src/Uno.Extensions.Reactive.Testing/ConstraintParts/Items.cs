@@ -35,11 +35,11 @@ public static class Items
 	public static ItemsChanged Remove<T>(int at, IEnumerable<T> items)
 		=> ItemsChanged.Remove(at, items);
 
-	public static ItemsChanged Replace<T>(int at, IEnumerable<T> oldItems, IEnumerable<T> newItems)
-		=> ItemsChanged.Replace(at, oldItems, newItems);
+	public static ItemsChanged Replace<T>(int at, IEnumerable<T> oldItems, IEnumerable<T> newItems, bool isReplaceOfSameEntities = true)
+		=> ItemsChanged.Replace(at, oldItems, newItems, isReplaceOfSameEntities);
 
-	public static ItemsChanged Replace<T>(int at, T oldItem, T newItem)
-		=> ItemsChanged.Replace(at, oldItem, newItem);
+	public static ItemsChanged Replace<T>(int at, T oldItem, T newItem, bool isReplaceOfSameEntity = true)
+		=> ItemsChanged.Replace(at, oldItem, newItem, isReplaceOfSameEntity);
 
 	public static ItemsChanged Move<T>(int from, int to, params T[] items)
 		=> ItemsChanged.Move(from, to, items);
