@@ -117,8 +117,6 @@ add the following line:
 > 
 > This means that it's OK to use a lambda expression when defining the IFeed (`=>`), so that it can accessing the local `WeatherService` in `Feed.Async(WeatherService.GetCurrentWeatherModel)`. The `WeatherService` property wouldn't have been available in a regular assignment context (`=`).
 
-<!-- TODO link to how the generated code can be inspected. -->
-
 ## Using a FeedView
 
 To this point, this is a similar binding experience you have most likely been familiar with using MVVM.
@@ -182,8 +180,6 @@ Change the `FeedView` content to the following:
     Like the `Data` property, the `Refresh` property is a special `ICommand`
     customized to work asynchronously and invokes the service for refreshed data without blocking the UI.  
     It's also a property of the `FeedViewState` class mentioned earlier.
-
-    <!--TODO TIP: the DataTemplate is assigned to the ValueTemplate property as the FeedView's default property -->
 
 1. Hit <kbd>F5</kbd> again.
 

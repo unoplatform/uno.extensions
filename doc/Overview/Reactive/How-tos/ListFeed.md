@@ -154,6 +154,3 @@ Under *Uno.Extensions.Reactive.Generator*, expand *Uno.Extensions.Reactive.FeedG
 Here you'll be able to inspect all files MVUX has generated for you, and learn more about how MVUX runs behind the scenes.
 
     ![](Assets/InspectGeneratedCode.jpg)
-
-<!-- TODO link to page "Advanced: behind the scenes of MVUX or move to there entirely -->
-
