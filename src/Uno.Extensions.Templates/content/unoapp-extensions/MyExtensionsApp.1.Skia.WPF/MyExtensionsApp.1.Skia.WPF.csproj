@@ -75,7 +75,9 @@
 		<PackageReference Include="Uno.Extensions.Localization.WinUI" />
 		<!--#endif-->
 		<!--#if (useExtensionsNavigation)-->
+		<!--#if (useNavigationToolkit)-->
 		<PackageReference Include="Uno.Extensions.Navigation.Toolkit.WinUI" />
+		<!--#endif-->
 		<PackageReference Include="Uno.Extensions.Navigation.WinUI" />
 		<!--#if (useCsharpMarkup)-->
 		<PackageReference Include="Uno.Extensions.Navigation.WinUI.Markup" />
@@ -149,7 +151,9 @@
 		<PackageReference Include="Uno.Extensions.Localization.WinUI" Version="255.255.255.255" />
 		<!--#endif-->
 		<!--#if (useExtensionsNavigation)-->
+		<!--#if (useNavigationToolkit)-->
 		<PackageReference Include="Uno.Extensions.Navigation.Toolkit.WinUI" Version="255.255.255.255" />
+		<!--#endif-->
 		<PackageReference Include="Uno.Extensions.Navigation.WinUI" Version="255.255.255.255" />
 		<!--#if (useCsharpMarkup)-->
 		<PackageReference Include="Uno.Extensions.Navigation.WinUI.Markup" Version="255.255.255.255" />

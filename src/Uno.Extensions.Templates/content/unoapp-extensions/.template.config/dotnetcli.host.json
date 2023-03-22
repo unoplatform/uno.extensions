@@ -41,6 +41,10 @@
       "longName": "tests",
       "shortName": "tests"
     },
+    "toolkit": {
+      "longName": "toolkit",
+      "shortName": "toolkit"
+    },
     "dependencyInjection": {
       "longName": "dependency-injection",
       "shortName": "di"
