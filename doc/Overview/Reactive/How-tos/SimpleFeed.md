@@ -21,11 +21,7 @@ In this tutorial you will learn how to create an MVUX project and basic usage of
 
 1. Add a class named *WeatherService.cs*, and replace its content with the following:
 
-    ```c#
-    using System;
-    using System.Threading;
-    using System.Threading.Tasks;
-
+    ```c#    
     namespace WeatherApp;
 
     public partial record WeatherInfo(int Temperature);
@@ -172,7 +168,7 @@ Change the `FeedView` content to the following:
             <StackPanel>
                 <TextBlock DataContext="{Binding Data}" Text="{Binding Temperature}" />
                 <Button Content="Refresh" Command="{Binding Refresh}" />
-            <StackPanel/>
+            </StackPanel>
         </DataTemplate>
     </mvux:FeedView>
     ```
