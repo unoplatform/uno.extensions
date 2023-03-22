@@ -52,7 +52,8 @@ of a list-feed (`IListFeed<T>`) and the `FeedView` control.
     ```
 
     We're using a [record](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/builtin-types/record)
-    for the `Person` type on purpose, as records are designed to be immutable and ensure purity of objects as well as other features.
+    for the `Person` type on purpose, as records are designed to be immutable
+    to ensure purity of objects as well as other features.
 
     The `IListFeed` is a feed type tailored for dealing with collections.
 
@@ -68,15 +69,15 @@ of a list-feed (`IListFeed<T>`) and the `FeedView` control.
     > [!NOTE]
     >
     > Feeds (`IFeed<T>` and `IListFeed<T>` for collections) are used as a gateway
-    to asynchronously request data from a service and wrap the result or an error if any in metadata
-    to be displayed in the View in accordingly.  
+    > to asynchronously request data from a service and wrap the result or an error if any in metadata
+    > to be displayed in the View in accordingly.  
     > Learn more about list-feeds [here](xref:Overview.Reactive.HowTos.ListFeed).
 
     > [!TIP]
     > Feeds are stateless
-    and are there for when the data from the service is read-only and we're not planning to enable edits to it.  
+    > and are there for when the data from the service is read-only and we're not planning to enable edits to it.  
     > MVUX also provides stateful feeds. For that purpose States (`IState<T>` and `<IListState<T>` for collections) come handy.
-    > Refer to [this tutorial](xref:Overview.Reactive.HowTos.SingleValueState) to learn more about states.
+    > Refer to [this tutorial](xref:Overview.Reactive.HowTos.SimpleState) to learn more about states.
 
 ## Data-bind the view
 
@@ -85,11 +86,12 @@ This is similar in concept to an `IObservable<IEnumerable<T>>`, where an `IListF
 represents a sequence of person-collections obtained from the service.
 
 > [!TIP]
-> An `IListFeed<T>` is awaitable, meaning that to get the value of the feed you would do the following:  
-
-    ```c#
-    IImmutableList<Person> people = await People;
-    ```  
+> An `IListFeed<T>` is awaitable,
+> meaning that to get the value of the feed you would do the following in the model:
+>
+> ```c#
+> IImmutableList<Person> people = await this.People;
+> ```  
 
 To make it possible to data bind to feeds, the MVUX analyzers read the `PeopleModel`
 and generate a proxy type called `BindableWeatherModel`,
@@ -146,9 +148,9 @@ and displays the people list.
 
     ![](Assets/ListFeed-1.jpg)
 
-1. If you're using Visual-Studio 2022, Right-click the `PeopleApp` project, and navigate to _Dependencies_.  
-Open up _net7.0-windows10..._ → _Analyzers_.  
-Under _Uno.Extensions.Reactive.Generator_, expand _Uno.Extensions.Reactive.FeedGenerator_.  
+1. If you're using Visual-Studio 2022, Right-click the `PeopleApp` project, and navigate to *Dependencies*.  
+Open up *net7.0-windows10...* → *Analyzers*.  
+Under *Uno.Extensions.Reactive.Generator*, expand *Uno.Extensions.Reactive.FeedGenerator*.  
 Here you'll be able to inspect all files MVUX has generated for you, and learn more about how MVUX runs behind the scenes.
 
     ![](Assets/InspectGeneratedCode.jpg)

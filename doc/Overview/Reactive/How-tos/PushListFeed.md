@@ -42,36 +42,36 @@ to display data pushed in asynchronously from an `IAsyncEnumerable<T>`.
         public async IAsyncEnumerable<IImmutableList<Stock>> GetCurrentMarket(
             [EnumeratorCancellation] CancellationToken ct)
         {
-            var stocks = new List<Stock>
-            {
-                new Stock("MSFT", 279.35),
-                new Stock("GOOG", 102.11),
-            };
-        
             while (!ct.IsCancellationRequested)
             {
                 // return current stock-market info
-                yield return stocks.ToImmutableList();
+                // in real life this should be a request
+                // to a data-access-layer / remote server
+                yield return _stocks.ToImmutableList();
 
                 // this delays the next iteration by 5 seconds
                 await Task.Delay(TimeSpan.FromSeconds(5), ct);
 
                 // this updates the market prices
-                UpdateMarket(stocks);
+                // in a more realistic program
+                // this would have taken place on the remote server
+                for (int i = 0; i < _stocks.Count; i++)
+                {
+                    var stock = _stocks[i];
+                    var increment = _rnd.NextDouble();
+    
+                    _stocks[i] = stock with { Value = stock.Value + increment };
+                }
             }
         }
 
-        private static readonly Random _rnd = new();
-        private static void UpdateMarket(List<Stock> stocks)
+        // this list is for the purpose of this demonstration
+        // a service should remain stateless
+        private readonly List<Stock> _stocks = new List<Stock>
         {
-            for (int i = 0; i < stocks.Count; i++)
-            {
-                var stock = stocks[i];
-                var increment = _rnd.NextDouble();
-
-                stocks[i] = stock with { Value = stock.Value + increment };
-            }
-        }
+            new Stock("MSFT", 279.35),
+            new Stock("GOOG", 102.11),
+        };
     }
     ```
 
@@ -91,18 +91,18 @@ to display data pushed in asynchronously from an `IAsyncEnumerable<T>`.
     }
     ```
 
-    > [!NOTE]
-    >
-    > Feeds (`IFeed<T>` and `IListFeed<T>` for collections) are used as a gateway
-    to asynchronously request data from a service and wrap the result or error if any in metadata
-    to be displayed in the View in accordingly.  
-    > Learn more about list-feeds [here](xref:Overview.Reactive.HowTos.ListFeed).
+> [!NOTE]
+>
+> Feeds (`IFeed<T>` and `IListFeed<T>` for collections) are used as a gateway
+> to asynchronously request data from a service and wrap the result or error if any in metadata
+> to be displayed in the View in accordingly.  
+> Learn more about list-feeds [here](xref:Overview.Reactive.HowTos.ListFeed).
 
-    > [!TIP]
-    > Feeds are stateless
-    and are there for when the data from the service is read-only and we're not planning to enable edits to it.  
-    > MVUX also provides stateful feeds. For that purpose States (`IState<T>` and `<IListState<T>` for collections) come handy.
-    > Refer to [this tutorial](xref:Overview.Reactive.HowTos.SingleValueState) to learn more about states.
+> [!TIP]
+> Feeds are stateless
+> and are there for when the data from the service is read-only and we're not planning to enable edits to it.  
+> MVUX also provides stateful feeds. For that purpose States (`IState<T>` and `<IListState<T>` for collections) come handy.
+> Refer to [this tutorial](xref:Overview.Reactive.HowTos.SimpleState) to learn more about states.
 
 ## Data bind the view
 
@@ -113,10 +113,10 @@ signaling the UI about the new data.
 
 > [!TIP]
 > An `IListFeed<T>` is awaitable, meaning that to get the value of the feed you would execute the following in the model:  
-
-    ```c#
-    StockMarket currentMarket = await Stocks;
-    ```  
+>
+> ```c#
+> StockMarket currentMarket = await this.Stocks;
+> ```  
 
 To make it possible to data bind to feeds, the MVUX analyzers read the `StockMarketModel`
 and generate a proxy type called `BindableStockMarketModel`, which exposes properties that the View can data bind to.

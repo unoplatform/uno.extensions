@@ -76,7 +76,8 @@ The Refresh command is triggering an update of the model, hence the **update** p
 The Refresh command is what's triggering an update message being sent back to the model
 that in turn refreshes the data.
 
-<!-- TODO: explain the Data and Refresh properties with link in the detailed page / API ref docs -->
+> [!TIP]
+> For the full example see [How to create a simple feed](xref:Overview.Reactive.HowTos.SimpleFeed)
 
 ## MVUX main components
 
@@ -181,18 +182,10 @@ You don't need to worry about the service getting invoked upon each get.
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	xmlns:mvux="using:Uno.Extensions.Reactive.UI">
 
-<mvux:FeedView Source="{Binding Products}">
-    <DataTemplate>
-        <ListView ItemsSource="{Binding Data}" />
-    </DataTemplate>
-
-    <!-- optional -->
-    <mvux:FeedView.ProgressTemplate>
+    <mvux:FeedView Source="{Binding Products}">
         <DataTemplate>
-          <TextBlock Text="Loading..." />
+            <ListView ItemsSource="{Binding Data}" />
         </DataTemplate>
-    </mvux:FeedView.ProgressTemplate>
-
     <mvux:FeedView.LoadingTemplate>
 
 </mvux:FeedView>
@@ -204,3 +197,5 @@ as well as propagating data-update messages back to the model.
 > [!TIP]
 > The `FeedView` provides support for additional feed states, such as when the service returned no records, failed, and more.
 > Checkout its `Template`-suffixed properties.
+
+<!-- TODO once ready link in references -->
