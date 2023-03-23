@@ -17,7 +17,7 @@ and the `FeedView` control to asynchronously load and display data coming from a
 ## Create the Model
 
 1. Create an MVUX project by following the steps in
-[this tutorial](xref:Overview.Reactive.CreateMvuxProject), and name the project *WeatherApp*
+[this tutorial](xref:Overview.Reactive.MvuxProject), and name the project *WeatherApp*
 
 1. Add a class named *WeatherService.cs*, and replace its content with the following:
 
