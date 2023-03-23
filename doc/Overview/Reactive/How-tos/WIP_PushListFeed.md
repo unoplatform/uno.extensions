@@ -21,7 +21,7 @@ to display data pushed in asynchronously from an `IAsyncEnumerable<T>`.
 ## Create the Model
 
 1. Create an MVUX project by following the steps in
-[this tutorial](xref:Overview.Reactive.CreateMvuxProject), and name the project *StockMarket*..
+[this tutorial](xref:Overview.Reactive.MvuxProject), and name the project *StockMarket*..
 
 1. Add a class named *StockMarketService.cs*, and replace its content with the following:
 

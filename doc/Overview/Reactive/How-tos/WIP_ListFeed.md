@@ -20,7 +20,7 @@ of a list-feed (`IListFeed<T>`) and the `FeedView` control.
 ## Create the Model
 
 1. Create an MVUX project by following the steps in
-[this tutorial](xref:Overview.Reactive.CreateMvuxProject), and name your project *PeopleApp*.
+[this tutorial](xref:Overview.Reactive.MvuxProject), and name your project *PeopleApp*.
 
 1. Add a class named *PeopleService.cs*, and replace its content with the following:
 

@@ -110,10 +110,10 @@ This is how MVUX **extends** MVU to work with data binding.
 
 MVUX consists of four central components:
 
-- [Model](#Model)
-- [View](#View)
-- [Update](#Update)
-- [Extended](#Extended)
+- [Model](#model)
+- [View](#view)
+- [Update](#update)
+- [Extended](#extended)
 
 ### Model
 
@@ -156,10 +156,10 @@ or other long running data-sources, and display the resulting data appropriately
 
 The key features Uno Platform provides in the MVUX toolbox are:
 
-- [Metadata](#Metadata)
-- [Code generation](#Code-Generation)
-- [UI Controls](#UI-Controls)
-- [Binding engine](#Binding-engine)
+- [Metadata](#metadata)
+- [Code generation](#code-generation)
+- [UI Controls](#ui-controls)
+- [Binding engine](#binding-engine)
 
 #### Metadata
 
