@@ -60,6 +60,15 @@
           href: Learn/Tutorials/Logging/HowTo-Logging.md
         - name: Enable internal Uno Platform logging
           href: Learn/Tutorials/Logging/HowTo-InternalLogging.md
+    - name: MVUX
+      href: Overview/Reactive/Overview.md
+      items:
+        - name: Overview
+          href: Overview/Reactive/Overview.md
+        - name: How to create an MVUX project
+          href: Overview/Reactive/How-tos/MvuxProject.md
+        - name: How to create a simple feed
+          href: Overview/Reactive/How-tos/SimpleFeed.md
     - name: Navigation
       items:
         - name: Overview
@@ -92,15 +101,6 @@
               href: Learn/Tutorials/Navigation/Advanced/HowTo-ResponsiveShell.md
             - name: Use a Content Control
               href: Learn/Tutorials/Navigation/Advanced/HowTo-UseContentControl.md
-    - name: MVUX
-      href: Overview/Reactive/Overview.md
-      items:
-        - name: Overview
-          href: Overview/Reactive/Overview.md
-        - name: How to create an MVUX project
-          href: Overview/Reactive/How-tos/MvuxProject.md
-        - name: How to create a simple feed
-          href: Overview/Reactive/How-tos/SimpleFeed.md
     - name: Serialization
       items:
         - name: Overview
@@ -113,23 +113,6 @@
           href: Overview/Validation/ValidationOverview.md
 - name: Reference
   items:
-    - name: Navigation
-      href: Reference/Navigation/Navigation.md
-      items:
-        - name: Design
-          href: Reference/Navigation/Design.md
-        - name: Navigation Region
-          href: Reference/Navigation/NavigationRegion.md
-        - name: Qualifiers
-          href: Reference/Navigation/Qualifiers.md
-        - name: View Map
-          href: Reference/Navigation/ViewMap.md
-        - name: Route Map
-          href: Reference/Navigation/RouteMap.md
-        - name: Implement INavigator
-          href: Reference/Navigation/Navigator.md
-        - name: Implement IRequestHandler
-          href: Reference/Navigation/NavigationRequestHandler.md
     - name: MVUX
       href: Reference/Reactive/concept.md
       items:
@@ -151,3 +134,20 @@
           href: Reference/Reactive/Architecture.md
         - name: Analysis rules
           href: Reference/Reactive/rules.md
+    - name: Navigation
+      href: Reference/Navigation/Navigation.md
+      items:
+        - name: Design
+          href: Reference/Navigation/Design.md
+        - name: Navigation Region
+          href: Reference/Navigation/NavigationRegion.md
+        - name: Qualifiers
+          href: Reference/Navigation/Qualifiers.md
+        - name: View Map
+          href: Reference/Navigation/ViewMap.md
+        - name: Route Map
+          href: Reference/Navigation/RouteMap.md
+        - name: Implement INavigator
+          href: Reference/Navigation/Navigator.md
+        - name: Implement IRequestHandler
+          href: Reference/Navigation/NavigationRequestHandler.md
