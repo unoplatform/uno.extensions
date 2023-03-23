@@ -16,21 +16,39 @@ MVUX **extend**s MVU with a powerful toolset that makes it possible to define th
 (instead of mutable ViewModels used in an MVVM style application)
 whilst still leveraging the data binding capabilities of the Uno Platform.
 
-## Example
+## MVUX in Action
 
-In the following example we use an `IFeed<WeatherInfo>` to display the current temperature
+Before digging into the features of MVUX let's see MVUX in action with a simple example. This example shows how weather data can be loaded asynchronously and displayed using data binding.
+
+One of the core concepts behind MVUX is that of an IFeed, which is similar in a number of ways to an IObservable (for those familiar with System.Reactive), and represents a sequence of data. This example creates an `IFeed<WeatherInfo>` that will return the weather, which includes the temperature,
 loaded asynchronously from a weather service.
 
-The entity containing the current temperature is `WeatherInfo`:
+The `WeatherModel` is the **Model** in MVUX (This would be refered to as a ViewModel in MVVM).
+
+```c#
+public partial record WeatherModel(IWeatherService WeatherService)
+{
+    // MVUX code-generator reads this line and generates a cached feed behind the scenes    
+    public IFeed<WeatherInfo> CurrentWeather => Feed.Async(WeatherService.GetCurrentWeather);
+}
+
+```
+
+The entity `WeatherInfo` wraps the temperature, and in a real application would be extended to hold other weather information such as humidity or rainfall:
 
 ```c#
 public record WeatherInfo(double Temperature);
 ```
 
-This is the weather service:
+This is the weather service, which includes a small delay to simulate calling a service api.
 
 ```c#
-public class WeatherService
+public interface IWeatherService
+{
+    ValueTask<WeatherInfo> GetCurrentWeather(CancellationToken ct);
+}
+
+public class WeatherService : IWeatherService
 {
     public async ValueTask<WeatherInfo> GetCurrentWeather(CancellationToken ct)
     {
@@ -41,45 +59,47 @@ public class WeatherService
 }
 ```
 
-The `WeatherModel` is the **Model** part in MVUX (It's also what's known as ViewModel in MVVM).
-
-MVUX code-generation engine reads the Model and for each `IFeed` or `IState`,
-complementary code is generated to make it easier for the **View** to display this data,
-according to its current state.
-This code generation is part of the **Extended** in MVUX.
-
-```c#
-public partial record WeatherModel
-{
-    // MVUX code-generator reads this line and generates a cached feed behind the scenes    
-    public IFeed<WeatherInfo> Weather => Feed.Async(_weatherService.GetCurrentWeather);
-}
-
-```
-
-A special control, the `FeedView` is used to display `IFeed`s and `IState`s,
-and provides different styling templates for the various states of the feed.
-
-The Refresh command is triggering an update of the model, hence the **update** part in MVUX.
+A special control, the `FeedView` is used to display data exposed as an `IFeed`,
+and provides different styling templates for the various states of the feed. The `FeedView` is data bound to the CurrentWeather property which aligns with the CurrentWeather property exposed on the WeatherModel. Within the DataTemplate, the Data property is used to access the current data exposed by the IFeed, which in this case is a proxy for the current WeatherInfo instance. The Data property is bound to the DataContext of the TextBlock, making it possible to bind the Text property of the TextBlock to the Temperature property.
 
 ```xaml
-<mvux:FeedView Source="{Binding CurrentWeather}">
-    <DataTemplate>
-        <StackPanel>
-            <TextBlock DataContext="{Binding Data}" Text="{Binding Temperature}"/>
-            <Button Content="Refresh" Command="{Binding Refresh}" />
-        </StackPanel>
-    </DataTemplate>
-</mvux:FeedView>
+<Page x:Class="WeatherApp.MainPage"
+	  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	  xmlns:mvux="using:Uno.Extensions.Reactive.UI">
+
+	<mvux:FeedView Source="{Binding CurrentWeather}">
+		<DataTemplate>
+			<StackPanel>
+				<TextBlock DataContext="{Binding Data}"
+						   Text="{Binding Temperature}" />
+				<Button Content="Refresh"
+						Command="{Binding Refresh}" />
+			</StackPanel>
+		</DataTemplate>
+	</mvux:FeedView>
+
+</Page>
+
+public sealed partial class MainPage : Page
+{
+    public MainPage()
+    {
+        this.InitializeComponent();
+
+        DataContext = new WeatherModel(new WeatherService());
+    }
+}
 ```
 
-The Refresh command is what's triggering an update message being sent back to the model
-that in turn refreshes the data.
+The Refresh command is exposed by the FeedView and will cause the IFeed to requery its source. This is an exmaple of how the model can be **updated** in MVUX.
+
+It's important to note that MVUX uses code-generation to create the proxy types that makes it easier for the **View** to display IFeed data. This is how MVUX **extends** MVU to work with data binding.
 
 > [!TIP]
 > For the full example see [How to create a simple feed](xref:Overview.Reactive.HowTos.SimpleFeed)
 
-## MVUX main components
+## MVUX components
 
 MVUX consists of four central components:
 
@@ -90,11 +110,11 @@ MVUX consists of four central components:
 
 ### Model
 
-In this architecture the application state is represented by a model,
+In MVUX the application state is represented by a model,
 which is updated by messages sent by the user in the view.
 The view is in charge of rendering the current state of the model,
-while any input from the user updates the model and recreates it.
-The Model in MVUX is what's known as 'View Model' in other architectures.
+while any input from the user updates and recreates the model.
+The Model in MVUX has some parallels with the 'View Model' in MVVM.
 
 MVUX promotes immutability of data entities. Changes to the data are applied only via update messages
 sent across from the view to the model,
@@ -113,7 +133,7 @@ which enables recreating the same model with a modified set of properties, while
 
 The view is the UI layer displaying the current state of the model.  
 When a user interacts with the view and request changes to the data,
-and update message is sent back to the model that updates the data, which is then reflected back on the view.
+an update message is sent back to the model that updates the data, which is then reflected back on the view.
 
 ### Update
 
@@ -124,7 +144,7 @@ It's important to note that the view is not being re-created, it rather just upd
 
 ### Extended
 
-MVUX extends the MVU model by harnessing powerful features that make it easier to track asynchronous requests to a remote server
+MVUX extends the MVU model by harnessing powerful features that make it easier to track asynchronous requests, for example to a remote server,
 or other long running data-sources, and display the resulting data appropriately.  
 
 The key features Uno Platform provides in the MVUX toolbox are:
