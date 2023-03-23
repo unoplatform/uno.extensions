@@ -25,11 +25,6 @@ of a list-feed (`IListFeed<T>`) and the `FeedView` control.
 1. Add a class named *PeopleService.cs*, and replace its content with the following:
 
     ```c#
-    using System;
-    using System.Collections.Immutable;
-    using System.Threading;
-    using System.Threading.Tasks;
-
     namespace PeopleApp;
 
     public partial record Person(string FirstName, string LastName);  
@@ -60,8 +55,12 @@ of a list-feed (`IListFeed<T>`) and the `FeedView` control.
 1. Create a class named *PeopleModel.cs* replacing its content with the following:
 
     ```c#
+    using Uno.Extensions.Reactive;
+    
+    namespace PeopleApp;
+    
     public partial record PeopleModel(PeopleService PeopleService)
-    {   
+    {
         public IListFeed<Person> People => ListFeed.Async(PeopleService.GetPeopleAsync);
     }
     ```
@@ -107,9 +106,11 @@ which exposes properties that the View can data bind to.
     <mvux:FeedView Source="{Binding People}">
         <DataTemplate>
             <ListView ItemsSource="{Binding Data}">
+
                 <ListView.Header>
                     <Button Content="Refresh" Command="{Binding Refresh}" />
                 </ListView.Header>
+
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Orientation="Horizontal" Spacing="5">
@@ -118,6 +119,7 @@ which exposes properties that the View can data bind to.
                         </StackPanel>
                     </DataTemplate>
                 </ListView.ItemTemplate>
+
             </ListView>
         </DataTemplate>
     </mvux:FeedView>
