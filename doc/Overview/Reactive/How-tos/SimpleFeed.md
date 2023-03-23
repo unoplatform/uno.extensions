@@ -4,15 +4,14 @@ uid: Overview.Reactive.HowTos.SimpleFeed
 
 # How to create a simple feed
 
-In this tutorial you will learn how to create an MVUX project and basic usage of a feed (`IFeed<T>`) and the `FeedView` control.
+In this tutorial you will learn how to create an MVUX project and use a combination of a feed (`IFeed<T>`) and the `FeedView` control to load and display data coming from a service.
 
- - For our data we're going to create a service that asynchronously provides
+ - The data will come from a service that asynchronously provides
  a single value of current weather information upon request.  
- - You'll learn how to use a feed to asynchronously request this data from the service.
- - How to display the data on the UI
- - How to use the `FeedView` control to display the data and automatically respond to the current feed status.
- - Customize the `FeedView` to use a different template when awaiting data from the service
- - Use a refresh button to retrieve the latest weather data on-demand.
+ - An IFeed will be created and used to asynchronously request data from the service.
+ - The `FeedView` control will be used to display the data and automatically respond to the current feed status.
+ - The `FeedView` will be styled to use a different template when awaiting data from the service
+ - A Refresh button will be added to retrieve the latest weather data on-demand.
 
 ## Create the Model
 
