@@ -66,17 +66,16 @@ of a list-feed (`IListFeed<T>`) and the `FeedView` control.
     ```
 
     > [!NOTE]
-    >
-    > Feeds (`IFeed<T>` and `IListFeed<T>` for collections) are used as a gateway
-    > to asynchronously request data from a service and wrap the result or an error if any in metadata
-    > to be displayed in the View in accordingly.  
-    > Learn more about list-feeds [here](xref:Overview.Reactive.HowTos.ListFeed).
+    Feeds (`IFeed<T>` and `IListFeed<T>` for collections) are used as a gateway
+    to asynchronously request data from a service and wrap the result or an error if any in metadata
+    to be displayed in the View in accordingly.  
+    Learn more about list-feeds [here](xref:Overview.Reactive.HowTos.ListFeed).
 
-    > [!TIP]
-    > Feeds are stateless
-    > and are there for when the data from the service is read-only and we're not planning to enable edits to it.  
-    > MVUX also provides stateful feeds. For that purpose States (`IState<T>` and `<IListState<T>` for collections) come handy.
-    > Refer to [this tutorial](xref:Overview.Reactive.HowTos.SimpleState) to learn more about states.
+    [!TIP]
+    Feeds are stateless
+    and are there for when the data from the service is read-only and we're not planning to enable edits to it.  
+    MVUX also provides stateful feeds. For that purpose States (`IState<T>` and `<IListState<T>` for collections) come handy.
+    Refer to [this tutorial](xref:Overview.Reactive.HowTos.SimpleState) to learn more about states.
 
 ## Data-bind the view
 

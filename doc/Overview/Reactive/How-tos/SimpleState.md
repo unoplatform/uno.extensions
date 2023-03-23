@@ -79,16 +79,16 @@ and the `FeedView` control, to asynchronously load, display and manipulate data 
     }
     ```
 
-    > [!NOTE]  
-    Feeds and States (`IState<T>` and `IListState<T>` for collections) are both used as a gateway
+    > [!NOTE]
+    > Feeds and States (`IState<T>` and `IListState<T>` for collections) are both used as a gateway
     to asynchronously request data from a service and wrap the result or error (if any) in metadata
     to be displayed in the View in accordingly.
     However, unlike a Feed, a State, as its name suggests, is stateful.  
     While a Feed is just a query of a stream of data, a State also implies an up-to-date value
     that represents the current state of the application that can be accessed and updated.    
 
-    > [!TIP]  
-    Unlike feeds, States require a reference to the owner type which is used to store and manage the state of the model.  
+    > [!TIP]
+    > Unlike feeds, States require a reference to the owner type which is used to store and manage the state of the model.  
     In addition, by having a reference to the owner, we link the lifetime of the model with its owner,
     and the State is ready to be collected by the Garbage Collector as soon as its owner is disposed.
 
@@ -100,13 +100,13 @@ represents a sequence of values, with access to the additional metadata.
 The difference of States is that they provide update operators
 and enable manipulating the data, as opposed to Feeds, which doesn't.
 
-> [!TIP]  
-An `IFeed<T>` as well as `IState<T>` are awaitable,
-meaning that to get the value of the feed you would do the following in the model:  
-
-```c#
-HallCrowdedness hallCrowdedness = await this.HallCrowdedness;
-```  
+> [!TIP]
+> An `IFeed<T>` as well as `IState<T>` are awaitable,
+> meaning that to get the value of the feed you would do the following in the model:  
+>
+> ```c#
+> HallCrowdedness hallCrowdedness = await this.HallCrowdedness;
+> ```  
 
 ## MVUX commands
 
@@ -140,7 +140,7 @@ HallCrowdedness hallCrowdedness = await this.HallCrowdedness;
     and the call is directed to the `Save` method in the Model.
 
     > [!TIP]
-    A `CancellationToken` is automatically provided by the View and can be used in advanced scenarios.
+    > A `CancellationToken` is automatically provided by the View and can be used in advanced scenarios.
     This parameter can however be removed.
 
 1. Press <kbd>F7</kbd> to navigate to open code-view, and in the constructor, after the line that calls `InitializeComponent()`,

@@ -60,11 +60,10 @@ and the `FeedView` control to asynchronously load and display data coming from a
     ```  
 
     > [!NOTE]
-    >
     > Feeds (`IFeed<T>` and `IListFeed<T>` for collections) are used as a gateway
-    > to asynchronously request data from a service and wrap the result or error (if any) in metadata
-    > to be displayed in the View in accordingly.  
-    > Learn more about list-feeds [here](xref:Overview.Reactive.HowTos.ListFeed).
+    to asynchronously request data from a service and wrap the result or error (if any) in metadata
+    to be displayed in the View in accordingly.  
+    Learn more about list-feeds [here](xref:Overview.Reactive.HowTos.ListFeed).
 
 
 ## Data bind the View
@@ -72,10 +71,10 @@ and the `FeedView` control to asynchronously load and display data coming from a
 `WeatherModel` exposes a `CurrentWeather` property which is an `IFeed` of type `WeatherInfo`.
 This is similar in concept to an `IObservable<T>`, where an `IFeed<T>` represents a sequence of values.
 
-> [!TIP]  
-An `IFeed<T>` is awaitable,
+> [!TIP]
+> An `IFeed<T>` is awaitable,
 meaning that to get the value of the feed you would do the following in the model:
-
+>
 > ```c#
 > WeatherInfo currentWeather = await this.CurrentWeather;
 > ```  
@@ -107,11 +106,11 @@ add the following line:
 
     Note that this is a random value and may be different on your machine.
 
-> [!NOTE]  
-It's worth noting that the `CurrentWeather` feed will only be invoked once, and the value captured in the bindable proxy.
-The captured value will be returned to all binding expressions that use CurrentWeather. 
-
-This means that it's OK to use a lambda expression when defining the IFeed (`=>`), so that it can accessing the local `WeatherService` in `Feed.Async(WeatherService.GetCurrentWeatherModel)`. The `WeatherService` property wouldn't have been available in a regular assignment context (`=`).
+> [!NOTE]
+> It's worth noting that the `CurrentWeather` feed will only be invoked once, and the value captured in the bindable proxy.
+> The captured value will be returned to all binding expressions that use CurrentWeather. 
+> This means that it's OK to use a lambda expression when defining the IFeed (`=>`), so that it can accessing the local `WeatherService` in `Feed.Async(WeatherService.GetCurrentWeatherModel)`.
+> The `WeatherService` property wouldn't have been available in a regular assignment context (`=`).
 
 ## Using a FeedView
 
@@ -142,8 +141,8 @@ In the next section we'll use the `FeedView` control to unlock the capabilities 
     Notice how we set the `DataContext` property to a `Data` property.  
     You can also simply set the `Text` property binding to `Data.Temperature` instead, if you prefer.
 
-    > [!TIP]  
-    The `FeedView` wraps its source (in this case our `CurrentWeather` feed) in a `FeedViewState` object,
+    > [!TIP]
+    > The `FeedView` wraps its source (in this case our `CurrentWeather` feed) in a `FeedViewState` object,
     and makes the actual feed accessible via its `Data` property.  
     The `FeedViewState` also provides additional metadata properties as we'll soon see.
     
@@ -192,8 +191,7 @@ Change the `FeedView` content to the following:
 
 1. Click the *Refresh* button. You'll notice it disables instantly, and the progress-ring message is displayed thereafter.
 
-    ![](Assets/SimpleFeed-6.jpg)  
-    ![](Assets/SimpleFeed-3.gif)
+    ![](Assets/SimpleFeed-3.gif) ![](Assets/SimpleFeed-6.jpg)  
 
     After a couple of seconds the View will display the refreshed value the feed asynchronously retrieved from the service.
 

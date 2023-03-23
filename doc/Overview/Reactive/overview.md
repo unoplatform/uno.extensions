@@ -103,7 +103,7 @@ The `Refresh` command is exposed by the `FeedView` and will cause the `IFeed` to
 It's important to note that MVUX uses code-generation to create the proxy types that makes it easier for the **View** to display `IFeed` data.  
 This is how MVUX **extends** MVU to work with data binding.
 
-> [!TIP]  
+> [!TIP]
 For the full example see [How to create a simple feed](xref:Overview.Reactive.HowTos.SimpleFeed)
 
 ## MVUX components
