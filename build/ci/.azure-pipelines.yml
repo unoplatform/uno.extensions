@@ -20,6 +20,15 @@ pr:
       - main
       - release/*
 
+  paths:
+    include:
+    - '/'
+    exclude:
+    # don't trigger the CI if only docs files are changed
+    - doc/*
+    - '**/*.md'
+    - '*.md'
+
 jobs:
 - template: .azure-pipelines.Packages.yml
 - template: .azure-pipelines.Windows.yml
