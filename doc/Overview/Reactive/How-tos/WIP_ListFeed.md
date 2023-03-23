@@ -142,7 +142,7 @@ after the line that calls `InitializeComponent()`, add the following line:
 1. When the app loads you'll notice how the `ProgressTemplate` shows (if you've included one),
 till the data is received from the service (2 seconds).
 
-    ![](Assets/SimpleFeed-3.jpg)
+    ![](Assets/SimpleFeed-3.gif)
 
 1. Once the data is the available, the `FeedView` switches to its `ValueTemplate`
 (the first default `DataTemplate` in our example),
