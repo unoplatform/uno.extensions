@@ -2,17 +2,16 @@
 uid: Overview.Reactive.HowTos.SimpleState
 ---
 
-# How to create a simple state
+# How to create a simple state with a command
 
-In this tutorial you will learn how to create an MVUX project and basic usage of a state (`IState<T>`) and the `FeedView` control.
+In this tutorial you will learn how to create an MVUX project and basic usage of a state (`IState<T>`)
+and the `FeedView` control, to asynchronously load, display and manipulate data from and to an service.
 
- - For our data we're going to create a service that retrieves and updates a single value
+ - The data is provided by a service that asynchronously retrieves and updates a single value.
  that determines the crowdedness of a wedding hall, via a 'remote' service.
- - In this how-to you'll use an `IState<HallCrowdedness>` to asynchronously request and update
- this data from and to the service.
- - How to display the data on the UI
- - How to use the `FeedView` control to display the data and automatically respond to the current feed status
- - See how the UI changes  
+ - A State to asynchronously request and update the data from and to the service.
+ - The `FeedView` control will be used to display the data and automatically respond to the current State status.
+ - See how MVUX generates commands and learn how to react to them in the Model.
 
 ## Create the Model
 
@@ -26,7 +25,13 @@ In this tutorial you will learn how to create an MVUX project and basic usage of
 
     public partial record HallCrowdedness(int NumberOfPeopleInHall);
 
-    public class HallCrowdednessService
+    public interface IHallCrowdednessService
+    {
+        ValueTask<HallCrowdedness> GetHallCrowdednessAsync(CancellationToken ct);
+        ValueTask SetHallCrowdednessAsync(HallCrowdedness crowdedness, CancellationToken ct);
+    }
+
+    public class HallCrowdednessService : IHallCrowdednessService
     {
         // a service is normally stateless
         // the local field is for the purpose of this demo 
@@ -43,7 +48,7 @@ In this tutorial you will learn how to create an MVUX project and basic usage of
         public ValueTask SetHallCrowdednessAsync(HallCrowdedness crowdedness, CancellationToken ct)
         {
             // fake "updating server"
-            _numberOfPeopleInHall = crowdedness.NumberOfPeopleInHall;
+            _numberOfPeopleInHall = crowdedness.NumberOfPeopleInHall;        
 
             return ValueTask.CompletedTask;
         }
@@ -61,59 +66,59 @@ In this tutorial you will learn how to create an MVUX project and basic usage of
 
     namespace TheFancyWeddingHall;
 
-    public partial record HallCrowdednessModel(HallCrowdednessService HallCrowdednessService)
+    public partial record HallCrowdednessModel(IHallCrowdednessService HallCrowdednessService)
     {   
-        public IState<HallCrowdedness> HallCrowdedness => State.Async(this, HallCrowdednessService.GetHallCrowdednessAsync);
+        public IState<HallCrowdedness> HallCrowdedness => State.Async(this, HallCrowdednessService.GetHallCrowdedness);
 
         public async ValueTask Save(CancellationToken ct)
         {
             var updatedCrowdedness = await HallCrowdedness;
 
-            await HallCrowdednessService.SetHallCrowdednessAsync(updatedCrowdedness!, ct);
+            await HallCrowdednessService.SetHallCrowdedness(updatedCrowdedness!, ct);
         }
     }
     ```
 
-    Unlike feeds, States require a reference to the owner type, the owner is used to hold and manage the state of the model.  
+    > [!NOTE]  
+    Feeds and States (`IState<T>` and `IListState<T>` for collections) are both used as a gateway
+    to asynchronously request data from a service and wrap the result or error (if any) in metadata
+    to be displayed in the View in accordingly.
+    However, unlike a Feed, a State, as its name suggests, is stateful.  
+    While a Feed is just a query of a stream of data, a State also implies an up-to-date value
+    that represents the current state of the application that can be accessed and updated.    
+
+    > [!TIP]  
+    Unlike feeds, States require a reference to the owner type which is used to store and manage the state of the model.  
     In addition, by having a reference to the owner, we link the lifetime of the model with its owner,
     and the State is ready to be collected by the Garbage Collector as soon as its owner is disposed.
-
-> [!NOTE]                                                                      
-> Feeds and states (`IState<T>` and `IListState<T>` for collections) are used as a gateway
-> to asynchronously request data from a service and wrap the result or error (if any) in metadata
-> to be displayed in the View in accordingly.
-> Learn more about list-feeds [here](xref:Overview.Reactive.HowTos.ListFeed).
-
-> [!TIP]
-> Feeds are stateless while States are stateful
-> Feeds and are there for when the data from the service is read-only and we're not planning to enable edits to it.
-> However States add an extra layer on top of feeds, that enables collecting changes and updating the UI with them,
-> and in addition enables easily changing of the state to be reflected on the UI.
-> This is part of the magic that automatically does the "Update" part in MVUX for you.
 
 ## Data bind the View
 
 The `HallCrowdedness` property in `HallCrowdednessModel`, is an `IState` of type `HallCrowdedness`.  
-This is similar in concept to an `IObservable<HallCrowdedness>`, where an `IFeed<HallCrowdedness>`
+This is similar in concept to an `IObservable<HallCrowdedness>`, where an `IState<HallCrowdedness>`
 represents a sequence of values, with access to the additional metadata.
+The difference of States is that they provide update operators
+and enable manipulating the data, as opposed to Feeds, which doesn't.
 
-> [!TIP]
-> An `IFeed<T>` as well as `IState<T>` are awaitable,
-> meaning that to get the value of the feed you would do the following in the model:  
-> 
-> ```c#
-> HallCrowdedness hallCrowdedness = await this.HallCrowdedness;
-> ```  
+> [!TIP]  
+An `IFeed<T>` as well as `IState<T>` are awaitable,
+meaning that to get the value of the feed you would do the following in the model:  
+
+```c#
+HallCrowdedness hallCrowdedness = await this.HallCrowdedness;
+```  
+
+## MVUX commands
 
 1. In the `Save` method above, place a breakpoint on the line `await _hallCrow...SetHallCrowd...`, for later use:
 
     ![](Assets/SimpleState-2.jpg)
 
-    MVUX's analyzers will read the `HallCrowdednessModel` and will generate a special mirrored `BindableHallCrowdednessModel`,
-    which provides binding capabilities for the View, so that we can stick to sending update message in an MVU fashion.
-    
-    The `HallCrowdedness` property value also gets cached, so no need to worry about its being created upon each `get`.
-    
+    MVUX's analyzers will read the `HallCrowdednessModel` and will generate a special
+    model-proxy called `BindableHallCrowdednessModel`,
+    which provides binding capabilities for the View and performs all Update message for us,
+    to keep the `IState` up to date.
+        
     In addition, MVUX reads the `Save` method, and generates in the bindable Model a command named `Save`
     that can be used from the View, which is invoked asynchronously.
 
@@ -130,7 +135,13 @@ represents a sequence of values, with access to the additional metadata.
     </StackPanel>
     ```
 
-    As you can see, we're now assigning the generated `Save` command to the button's command.
+    The generated `Save` command is used as the button's `Command` property,
+    so that when the user clicks the button, the command is executed
+    and the call is directed to the `Save` method in the Model.
+
+    > [!TIP]
+    A `CancellationToken` is automatically provided by the View and can be used in advanced scenarios.
+    This parameter can however be removed.
 
 1. Press <kbd>F7</kbd> to navigate to open code-view, and in the constructor, after the line that calls `InitializeComponent()`,
 add the following line:

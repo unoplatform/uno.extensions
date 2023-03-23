@@ -67,8 +67,10 @@
           href: Overview/Reactive/Overview.md
         - name: How to create an MVUX project
           href: Overview/Reactive/How-tos/MvuxProject.md
-        - name: How to create a simple feed
+        - name: How to create a simple Feed
           href: Overview/Reactive/How-tos/SimpleFeed.md
+        - name: How to create a simple State
+          href: Overview/Reactive/How-tos/SimpleState.md
     - name: Navigation
       items:
         - name: Overview

@@ -4,13 +4,14 @@ uid: Overview.Reactive.HowTos.SimpleFeed
 
 # How to create a simple feed
 
-In this tutorial you will learn how to create an MVUX project and use a combination of a feed (`IFeed<T>`) and the `FeedView` control to load and display data coming from a service.
+In this tutorial you will learn how to create an MVUX project and use a combination of a feed (`IFeed<T>`)
+and the `FeedView` control to asynchronously load and display data coming from a service.
 
- - The data will come from a service that asynchronously provides
+ - The data will come from a service that asynchronously provides.
  a single value of current weather information upon request.  
- - An IFeed will be created and used to asynchronously request data from the service.
+ - An `IFeed` will be created and used to asynchronously request data from the service.
  - The `FeedView` control will be used to display the data and automatically respond to the current feed status.
- - The `FeedView` will be styled to use a different template when awaiting data from the service
+ - The `FeedView` will be styled to use a different template when awaiting data from the service.
  - A Refresh button will be added to retrieve the latest weather data on-demand.
 
 ## Create the Model
@@ -24,7 +25,7 @@ In this tutorial you will learn how to create an MVUX project and use a combinat
     namespace WeatherApp;
 
     public partial record WeatherInfo(int Temperature);
-
+    
     public interface IWeatherService
     {
         ValueTask<WeatherInfo> GetCurrentWeather(CancellationToken ct);
@@ -71,9 +72,9 @@ In this tutorial you will learn how to create an MVUX project and use a combinat
 `WeatherModel` exposes a `CurrentWeather` property which is an `IFeed` of type `WeatherInfo`.
 This is similar in concept to an `IObservable<T>`, where an `IFeed<T>` represents a sequence of values.
 
-> [!TIP]
-> An `IFeed<T>` is awaitable,
-> meaning that to get the value of the feed you would do the following in the model:
+> [!TIP]  
+An `IFeed<T>` is awaitable,
+meaning that to get the value of the feed you would do the following in the model:
 
 > ```c#
 > WeatherInfo currentWeather = await this.CurrentWeather;
@@ -106,11 +107,11 @@ add the following line:
 
     Note that this is a random value and may be different on your machine.
 
-> [!NOTE]
-> It's worth noting that the `CurrentWeather` feed will only be invoked once, and the value captured in the bindable proxy.
-> The captured value will be returned to all binding expressions that use CurrentWeather. 
-> 
-> This means that it's OK to use a lambda expression when defining the IFeed (`=>`), so that it can accessing the local `WeatherService` in `Feed.Async(WeatherService.GetCurrentWeatherModel)`. The `WeatherService` property wouldn't have been available in a regular assignment context (`=`).
+> [!NOTE]  
+It's worth noting that the `CurrentWeather` feed will only be invoked once, and the value captured in the bindable proxy.
+The captured value will be returned to all binding expressions that use CurrentWeather. 
+
+This means that it's OK to use a lambda expression when defining the IFeed (`=>`), so that it can accessing the local `WeatherService` in `Feed.Async(WeatherService.GetCurrentWeatherModel)`. The `WeatherService` property wouldn't have been available in a regular assignment context (`=`).
 
 ## Using a FeedView
 
@@ -141,10 +142,10 @@ In the next section we'll use the `FeedView` control to unlock the capabilities 
     Notice how we set the `DataContext` property to a `Data` property.  
     You can also simply set the `Text` property binding to `Data.Temperature` instead, if you prefer.
 
-    > [!TIP]
-    > The `FeedView` wraps its source (in this case our `CurrentWeather` feed) in a `FeedViewState` object,
-    > and makes the actual feed accessible via its `Data` property.  
-    > The `FeedViewState` also provides additional metadata properties as we'll soon see.
+    > [!TIP]  
+    The `FeedView` wraps its source (in this case our `CurrentWeather` feed) in a `FeedViewState` object,
+    and makes the actual feed accessible via its `Data` property.  
+    The `FeedViewState` also provides additional metadata properties as we'll soon see.
     
 1. Click <kbd>F5</kbd> to run the project.  
 The temperature is requested from the service and is displayed on page:
