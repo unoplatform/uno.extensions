@@ -21,19 +21,14 @@ to display data pushed in asynchronously from an `IAsyncEnumerable<T>`.
 ## Create the Model
 
 1. Create an MVUX project by following the steps in
-[this tutorial](xref:Overview.Reactive.HowTos.CreateMvuxProject), and name the project *StockMarketApp*..
+[this tutorial](xref:Overview.Reactive.HowTos.CreateMvuxProject), and name the project *StockMarket*..
 
 1. Add a class named *StockMarketService.cs*, and replace its content with the following:
 
     ```c#
-    using System;
-    using System.Collections.Generic;
-    using System.Collections.Immutable;
     using System.Runtime.CompilerServices;
-    using System.Threading;
-    using System.Threading.Tasks;
 
-    namespace StockMarketApp;
+    namespace StockMarket;
 
     public partial record Stock(string Name, double Value);
 
@@ -42,11 +37,11 @@ to display data pushed in asynchronously from an `IAsyncEnumerable<T>`.
         public async IAsyncEnumerable<IImmutableList<Stock>> GetCurrentMarket(
             [EnumeratorCancellation] CancellationToken ct)
         {
+            var rnd = new Random();
+
             while (!ct.IsCancellationRequested)
             {
                 // return current stock-market info
-                // in real life this should be a request
-                // to a data-access-layer / remote server
                 yield return _stocks.ToImmutableList();
 
                 // this delays the next iteration by 5 seconds
@@ -58,15 +53,16 @@ to display data pushed in asynchronously from an `IAsyncEnumerable<T>`.
                 for (int i = 0; i < _stocks.Count; i++)
                 {
                     var stock = _stocks[i];
-                    var increment = _rnd.NextDouble();
-    
+                    var increment = rnd.NextDouble();
+
                     _stocks[i] = stock with { Value = stock.Value + increment };
                 }
             }
         }
 
         // this list is for the purpose of this demonstration
-        // a service should remain stateless
+        // we're treating this variable as our database
+        // ideally a service doesn't hold the data just requests it
         private readonly List<Stock> _stocks = new List<Stock>
         {
             new Stock("MSFT", 279.35),
@@ -124,7 +120,7 @@ and generate a proxy type called `BindableStockMarketModel`, which exposes prope
 1. Open the file `MainView.xaml` and replace anything inside the `Page` element with the following code:
 
     ```xaml
-    <ListView ItemsSource="{Binding Stocks}">
+    <ListView ItemsSource="{Binding Stocks}" SelectionMode="None">
         <ListView.ItemTemplate>
             <DataTemplate>
                 <StackPanel Orientation="Horizontal" Spacing="5">
