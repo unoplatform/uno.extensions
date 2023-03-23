@@ -25,7 +25,12 @@ In this tutorial you will learn how to create an MVUX project and use a combinat
 
     public partial record WeatherInfo(int Temperature);
 
-    public class WeatherService
+    public interface IWeatherService
+    {
+        ValueTask<WeatherInfo> GetCurrentWeather(CancellationToken ct);
+    }
+
+    public record WeatherService : IWeatherService
     {       
         public async ValueTask<WeatherInfo> GetCurrentWeatherAsync(CancellationToken ct)
         {
@@ -41,13 +46,13 @@ In this tutorial you will learn how to create an MVUX project and use a combinat
     ```
 
     We're using a [record](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/builtin-types/record)
-    for the `WeatherInfo` type on purpose,
-    as records are designed to be immutable to ensure purity of objects as well as other features.
+    for the `WeatherInfo` type,
+    as records are designed to be immutable, to ensure purity of objects, as well as other features.
 
 1. Create a class named *WeatherModel.cs* replacing its content with the following:
 
     ```c#
-    public partial record WeatherModel(WeatherService WeatherService)
+    public partial record WeatherModel(IWeatherService WeatherService)
     {                                                             
         public IFeed<WeatherInfo> CurrentWeather => Feed.Async(WeatherService.GetCurrentWeatherAsync);
     }
@@ -60,11 +65,6 @@ In this tutorial you will learn how to create an MVUX project and use a combinat
     > to be displayed in the View in accordingly.  
     > Learn more about list-feeds [here](xref:Overview.Reactive.HowTos.ListFeed).
 
-    > [!TIP]
-    > Feeds are stateless
-    > and are there for when the data from the service is read-only and we're not planning to enable edits to it.  
-    > MVUX also provides stateful feeds. For that purpose States (`IState<T>` and `<IListState<T>` for collections) come handy.
-    > Refer to [this tutorial](xref:Overview.Reactive.HowTos.SimpleState) to learn more about states.
 
 ## Data bind the View
 
@@ -115,12 +115,13 @@ add the following line:
 ## Using a FeedView
 
 To this point, this is a similar binding experience you have most likely been familiar with using MVVM.
-With the MVVM approach you would have to add error handling around the call to `GetCurrentWeatherAsync`;
+With the MVVM approach you would have to add error handling around the call to `GetCurrentWeatherAsync`,
 you would need to expose properties on the ViewModel to indicate that data is loading,
 and you would have to expose a method, or command, that can be invoked in order to refresh the data.
 
-However thanks to the metadata accompanied with each request handled by the `IFeed`,
-MVUX is capable of much more than the simple example you've just seen.  
+However, thanks to the metadata accompanied with each request handled by the `IFeed`,
+MVUX is capable of much more than the simple example you've just seen.
+
 In the next section we'll use the `FeedView` control to unlock the capabilities of the feed.  
 
 1. Now close the app and add the following namespace to the `MainView.xaml` file:
