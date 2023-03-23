@@ -17,4 +17,5 @@ or if you want to review docs you've been working on, use the latest commit on y
 - Browse to the URL at the listening URL with the _site folder (eg Navigate to http://localhost:54361/_site/) 
 
   >One thing to note is that if you click on the Docs link you'll get a 404 because the url includes "Docs" in the url
-  (eg http://localhost:63064/docs/articles/intro.html). Remove Docs from the url and you should be able to access docs (eg http://localhost:63064/articles/intro.html)
+  (eg `http://localhost:63064/`**`docs`**`/articles/intro.html`).
+  Replace `docs` in the url with `_site` and you should be able to access docs (eg `http://localhost:63064/`**`_site`**`/articles/intro.html`</pre>)

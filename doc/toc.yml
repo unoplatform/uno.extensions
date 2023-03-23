@@ -92,7 +92,8 @@
               href: Learn/Tutorials/Navigation/Advanced/HowTo-ResponsiveShell.md
             - name: Use a Content Control
               href: Learn/Tutorials/Navigation/Advanced/HowTo-UseContentControl.md
-    - name: Reactive
+    - name: MVUX
+      href: Overview/Reactive/Overview.md
       items:
         - name: Overview
           href: Overview/Reactive/Overview.md
@@ -129,12 +130,11 @@
           href: Reference/Navigation/Navigator.md
         - name: Implement IRequestHandler
           href: Reference/Navigation/NavigationRequestHandler.md
-    - name: Reactive
+    - name: MVUX
+      href: Reference/Reactive/concept.md
       items:
         - name: Overview
           href: Reference/Reactive/concept.md
-        - name: Feeds Architecture
-          href: Reference/Reactive/Architecture.md
         - name: General guidelines
           href: Reference/Reactive/general.md
         - name: Feed
@@ -147,5 +147,7 @@
           href: Reference/Reactive/in-apps.md
         - name: Testing
           href: Reference/Reactive/testing.md
+        - name: Feeds Architecture
+          href: Reference/Reactive/Architecture.md
         - name: Analysis rules
           href: Reference/Reactive/rules.md
