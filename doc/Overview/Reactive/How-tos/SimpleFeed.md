@@ -149,10 +149,10 @@ In the next section we'll use the `FeedView` control to unlock the capabilities 
 1. Click <kbd>F5</kbd> to run the project.  
 The temperature is requested from the service and is displayed on page:
 
-    ![](Assets/SimpleFeed-3.jpg)
+    ![](Assets/SimpleFeed-3.gif)
 
     While the data is requested from the service,
-    the `FeedView` automatically displays the *Loading...* message shown on the last screenshot.  
+    the `FeedView` automatically displays a progress-ring (`ProgressRing`), as shown on the last screenshot.  
 
 1. Once the data is the available, the `FeedView` will show the `DataTemplate` above,
 with the `TextBlock` displaying the value obtained from the service:
@@ -179,9 +179,9 @@ Change the `FeedView` content to the following:
 
 1. Hit <kbd>F5</kbd> again.
 
-    The *Loading...* message shows up while awaiting the data.
+    The progress-ring shows up while awaiting the data.
 
-    ![](Assets/SimpleFeed-3.jpg)
+    ![](Assets/SimpleFeed-3.gif)
 
     After a couple of seconds, once the data has been asynchronously received from the service,
     the above template takes places.  
@@ -189,16 +189,16 @@ Change the `FeedView` content to the following:
 
     ![](Assets/SimpleFeed-5.jpg)
 
-1. Click the *Refresh* button. You'll notice it disables instantly, and the *Loading...* message is displayed thereafter.
+1. Click the *Refresh* button. You'll notice it disables instantly, and the progress-ring message is displayed thereafter.
 
     ![](Assets/SimpleFeed-6.jpg)  
-    ![](Assets/SimpleFeed-3.jpg)
+    ![](Assets/SimpleFeed-3.gif)
 
     After a couple of seconds the View will display the refreshed value the feed asynchronously retrieved from the service.
 
 1. The `FeedView` also gives you the ability to customize the various templates that are to be used
 according to the current state of the feed.
-In the following step you'll learn how to customize the *Loading...* message you saw before.
+In the following step you'll learn how to customize the progress-ring you saw before.
 
 1. Close the app and below the `DataTemplate` above, add the following content (within the `FeedView`):
 
