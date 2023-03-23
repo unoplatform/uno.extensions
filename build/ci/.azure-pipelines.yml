@@ -4,11 +4,30 @@ trigger:
       - main
       - release/*
 
+  paths:
+    include:
+    - '/'
+    exclude:
+    # don't trigger the CI if only docs files are changed
+    - doc/*
+    - '**/*.md'
+    - '*.md'
+    
+
 pr: 
   branches:
     include:
       - main
       - release/*
+
+  paths:
+    include:
+    - '/'
+    exclude:
+    # don't trigger the CI if only docs files are changed
+    - doc/*
+    - '**/*.md'
+    - '*.md'
 
 jobs:
 - template: .azure-pipelines.Packages.yml

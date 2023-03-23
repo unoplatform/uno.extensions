@@ -60,6 +60,15 @@
           href: Learn/Tutorials/Logging/HowTo-Logging.md
         - name: Enable internal Uno Platform logging
           href: Learn/Tutorials/Logging/HowTo-InternalLogging.md
+    - name: MVUX
+      href: Overview/Reactive/Overview.md
+      items:
+        - name: Overview
+          href: Overview/Reactive/Overview.md
+        - name: How to create an MVUX project
+          href: Overview/Reactive/How-tos/MvuxProject.md
+        - name: How to create a simple feed
+          href: Overview/Reactive/How-tos/SimpleFeed.md
     - name: Navigation
       items:
         - name: Overview
@@ -92,24 +101,6 @@
               href: Learn/Tutorials/Navigation/Advanced/HowTo-ResponsiveShell.md
             - name: Use a Content Control
               href: Learn/Tutorials/Navigation/Advanced/HowTo-UseContentControl.md
-    - name: Reactive
-      items:
-        - name: Overview
-          href: Overview/Reactive/concept.md
-        - name: General guidelines
-          href: Overview/Reactive/general.md
-        - name: Feed
-          href: Overview/Reactive/feed.md
-        - name: ListFeed
-          href: Overview/Reactive/listfeed.md
-        - name: State
-          href: Overview/Reactive/state.md
-        - name: Usage in applications
-          href: Overview/Reactive/in-apps.md
-        - name: Testing
-          href: Overview/Reactive/testing.md
-        - name: Analysis rules
-          href: Overview/Reactive/rules.md
     - name: Serialization
       items:
         - name: Overview
@@ -122,6 +113,27 @@
           href: Overview/Validation/ValidationOverview.md
 - name: Reference
   items:
+    - name: MVUX
+      href: Reference/Reactive/concept.md
+      items:
+        - name: Overview
+          href: Reference/Reactive/concept.md
+        - name: General guidelines
+          href: Reference/Reactive/general.md
+        - name: Feed
+          href: Reference/Reactive/feed.md
+        - name: ListFeed
+          href: Reference/Reactive/listfeed.md
+        - name: State
+          href: Reference/Reactive/state.md
+        - name: Usage in applications
+          href: Reference/Reactive/in-apps.md
+        - name: Testing
+          href: Reference/Reactive/testing.md
+        - name: Feeds Architecture
+          href: Reference/Reactive/Architecture.md
+        - name: Analysis rules
+          href: Reference/Reactive/rules.md
     - name: Navigation
       href: Reference/Navigation/Navigation.md
       items:
@@ -139,7 +151,3 @@
           href: Reference/Navigation/Navigator.md
         - name: Implement IRequestHandler
           href: Reference/Navigation/NavigationRequestHandler.md
-    - name: Reactive
-      items:
-        - name: Feeds Architecture
-          href: Reference/Reactive/Architecture.md
