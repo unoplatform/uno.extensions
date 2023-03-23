@@ -87,7 +87,7 @@ public sealed partial class MainPage : Page
     {
         this.InitializeComponent();
 
-        DataContext = new WeatherModel(new WeatherService());
+        DataContext = new BindableWeatherModel(new WeatherService());
     }
 }
 ```
