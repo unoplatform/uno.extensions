@@ -60,7 +60,7 @@ public class WeatherService : IWeatherService
 ```
 
 A special control, the `FeedView` is used to display data exposed as an `IFeed`,
-and provides different styling templates for the various states of the feed. The `FeedView` is data bound to the CurrentWeather property which aligns with the CurrentWeather property exposed on the WeatherModel. Within the DataTemplate, the Data property is used to access the current data exposed by the IFeed, which in this case is a proxy for the current WeatherInfo instance. The Data property is bound to the DataContext of the TextBlock, making it possible to bind the Text property of the TextBlock to the Temperature property.
+and provides different styling templates for the various states of the feed. The `FeedView` is data bound to the `CurrentWeather` property which aligns with the `CurrentWeather` property exposed on the `WeatherModel`. Within the template, the `Data` property is used to access the current data exposed by the IFeed, which in this case is a proxy for the current WeatherInfo instance. The `Data` property is bound to the `DataContext` of the `TextBlock`, making it possible to bind the `Text` property of the TextBlock to the Temperature property.
 
 ```xaml
 <Page x:Class="WeatherApp.MainPage"
@@ -92,9 +92,9 @@ public sealed partial class MainPage : Page
 }
 ```
 
-The Refresh command is exposed by the FeedView and will cause the IFeed to requery its source. This is an exmaple of how the model can be **updated** in MVUX.
+The `Refresh` command is exposed by the `FeedView` and will cause the `IFeed` to requery its source. This is an example of how the model can be **updated** in MVUX.
 
-It's important to note that MVUX uses code-generation to create the proxy types that makes it easier for the **View** to display IFeed data. This is how MVUX **extends** MVU to work with data binding.
+It's important to note that MVUX uses code-generation to create the proxy types that makes it easier for the **View** to display `IFeed` data. This is how MVUX **extends** MVU to work with data binding.
 
 > [!TIP]
 > For the full example see [How to create a simple feed](xref:Overview.Reactive.HowTos.SimpleFeed)
