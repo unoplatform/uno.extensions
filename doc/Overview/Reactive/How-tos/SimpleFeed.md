@@ -1,5 +1,5 @@
 ---
-uid: Overview.Reactive.HowTos.SimpleFeed
+uid: Overview.Reactive.SimpleFeed
 ---
 
 # How to create a simple feed
@@ -17,7 +17,7 @@ and the `FeedView` control to asynchronously load and display data coming from a
 ## Create the Model
 
 1. Create an MVUX project by following the steps in
-[this tutorial](xref:Overview.Reactive.HowTos.CreateMvuxProject), and name the project *WeatherApp*
+[this tutorial](xref:Overview.Reactive.CreateMvuxProject), and name the project *WeatherApp*
 
 1. Add a class named *WeatherService.cs*, and replace its content with the following:
 
@@ -63,7 +63,7 @@ and the `FeedView` control to asynchronously load and display data coming from a
     > Feeds (`IFeed<T>` and `IListFeed<T>` for collections) are used as a gateway
     to asynchronously request data from a service and wrap the result or error (if any) in metadata
     to be displayed in the View in accordingly.  
-    Learn more about list-feeds [here](xref:Overview.Reactive.HowTos.ListFeed).
+    Learn more about list-feeds [here](xref:Overview.Reactive.ListFeed).
 
 
 ## Data bind the View

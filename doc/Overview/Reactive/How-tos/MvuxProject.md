@@ -1,12 +1,12 @@
 ---
-uid: Overview.Reactive.HowTos.MvuxProject
+uid: Overview.Reactive.MvuxProject
 ---
 
 # How to set up an MVUX project
 
 In this tutorial you'll learn how to set up an Uno Platform project to use MVUX. 
 
-1. Make sure your environment is set up properly by using [uno check](xref:UnoCheck.UsingUnoCheck).
+1. Make sure your environment is set up properly by using [uno check](/docs/articles/external/uno.check/doc/using-uno-check.html).
 1. You can create a Uno App by either using the Uno Platform Visual Studio extension or via the command line interface.
 
     # [**Visual Studio**](#tab/vs)
