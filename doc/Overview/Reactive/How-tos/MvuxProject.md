@@ -4,7 +4,7 @@ uid: Overview.Reactive.HowTos.MvuxProject
 
 # How to set up an MVUX project
 
-In this tutorial you'll learn how to set up an Uno Platform project ready to use with the MVUX architecture and its tools.
+In this tutorial you'll learn how to set up an Uno Platform project to use MVUX. 
 
 1. Make sure your environment is set up properly by using [uno check](external/uno.check/doc/using-uno-check.md).
 1. You can create a Uno App by either using the Uno Platform Visual Studio extension or via the command line interface.
@@ -35,25 +35,13 @@ In this tutorial you'll learn how to set up an Uno Platform project ready to use
     
     #### Using the command line interface
     
-    - Run the following command, using an appropriate name (`MyAppName` in this page).
+    - Run the following command, using an appropriate name (`MyApp` in this page).
     
         ```cmd
-        dotnet new unoapp -preset blank
+        dotnet new unoapp -preset blank -presentation mvux -o MyApp
         ```
       
         Refer to [this](https://platform.uno/docs/articles/get-started-dotnet-new.html) article for more details
         on using the CLI interface of creating projects.
-      
-        > [!NOTE] 
-        > Make sure .NET 7 or above is selected, as we'll be using some of the recent C# features in these tutorials,
-        such as [records](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/builtin-types/record).         
 
-    - Open the project and right-click on `MyAppName` solution (or the name you gave it) and select `Manage NuGet Packages for Solution` from the context menu.  
-      Make sure to select **nuget.org** or **NuGet official package source** as the package source
-
-    - Click on the Updates tab. Update the following packages to the latest stable version,
-        if they're not up to date: `Uno.WinUI`, `Uno.UI.WebAssembly` `Uno.Wasm.Bootstrap`, and `Uno.Wasm.Bootstrap.DevServer`.
-    
-    - Click back on the **Browse** tab and install the following NuGet Packages to the `MyAppName` project: `Uno.Extensions.Reactive.WinUI`.
-
-    ![](Assets/NuGetPackage.jpg)
+    - Launch the created solution, MyApp.sln, in  Visual Studio or Visual Studio Code.
