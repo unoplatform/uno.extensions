@@ -18,12 +18,15 @@ whilst still leveraging the data binding capabilities of the Uno Platform.
 
 ## MVUX in Action
 
-Before digging into the features of MVUX let's see MVUX in action with a simple example. This example shows how weather data can be loaded asynchronously and displayed using data binding.
+Before digging into the features of MVUX let's see MVUX in action with a simple example.
+This example shows how weather data can be loaded asynchronously and displayed using data binding.
 
-One of the core concepts behind MVUX is that of an IFeed, which is similar in a number of ways to an IObservable (for those familiar with System.Reactive), and represents a sequence of data. This example creates an `IFeed<WeatherInfo>` that will return the weather, which includes the temperature,
+One of the core concepts behind MVUX is that of an `IFeed`, which is similar in a number of ways to an `IObservable`
+(for those familiar with [`System.Reactive`]()), and represents a sequence of data.
+This example creates an `IFeed<WeatherInfo>` that will return the weather, which includes the temperature,
 loaded asynchronously from a weather service.
 
-The `WeatherModel` is the **Model** in MVUX (This would be refered to as a ViewModel in MVVM).
+The `WeatherModel` is the **Model** in MVUX (This would be referred to as a ViewModel in MVVM).
 
 ```c#
 public partial record WeatherModel(IWeatherService WeatherService)
@@ -40,7 +43,7 @@ The entity `WeatherInfo` wraps the temperature, and in a real application would 
 public record WeatherInfo(double Temperature);
 ```
 
-This is the weather service, which includes a small delay to simulate calling a service api.
+This is the weather service, which includes a small delay to simulate calling a service API.
 
 ```c#
 public interface IWeatherService
@@ -60,7 +63,10 @@ public class WeatherService : IWeatherService
 ```
 
 A special control, the `FeedView` is used to display data exposed as an `IFeed`,
-and provides different styling templates for the various states of the feed, for example loading data, error, no data etc. The `FeedView` is data bound to the `CurrentWeather` property which aligns with the `CurrentWeather` property exposed on the `WeatherModel`. Within the template, the `Data` property is used to access the current data exposed by the IFeed, which in this case is a proxy for the current WeatherInfo instance. The `Data` property is bound to the `DataContext` of the `TextBlock`, making it possible to bind the `Text` property of the TextBlock to the Temperature property.
+and provides different styling templates for the various states of the feed, for example loading data, error, no data etc.  
+The `FeedView` is data bound to the `CurrentWeather` property which aligns with the `CurrentWeather` property exposed on the `WeatherModel`.  
+Within the template, the `Data` property is used to access the current data exposed by the IFeed, which in this case is a proxy for the current `WeatherInfo` instance.  
+The `Data` property is bound to the `DataContext` of the `TextBlock`, making it possible to bind the `Text` property of the `TextBlock` to the `Temperature` property.
 
 ```xaml
 <Page x:Class="WeatherApp.MainPage"
@@ -94,7 +100,8 @@ public sealed partial class MainPage : Page
 
 The `Refresh` command is exposed by the `FeedView` and will cause the `IFeed` to requery its source. This is an example of how the model can be **updated** in MVUX.
 
-It's important to note that MVUX uses code-generation to create the proxy types that makes it easier for the **View** to display `IFeed` data. This is how MVUX **extends** MVU to work with data binding.
+It's important to note that MVUX uses code-generation to create the proxy types that makes it easier for the **View** to display `IFeed` data.  
+This is how MVUX **extends** MVU to work with data binding.
 
 > [!TIP]
 > For the full example see [How to create a simple feed](xref:Overview.Reactive.HowTos.SimpleFeed)
@@ -110,7 +117,7 @@ MVUX consists of four central components:
 
 ### Model
 
-In MVUX the application state is represented by a model,
+In MVUX, the application state is represented by a model,
 which is updated by messages sent by the user in the view.
 The view is in charge of rendering the current state of the model,
 while any input from the user updates and recreates the model.
