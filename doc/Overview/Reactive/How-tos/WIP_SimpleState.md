@@ -22,16 +22,13 @@ In this tutorial you will learn how to create an MVUX project and basic usage of
 1. Add a class named *HallCrowdednessService.cs*, and replace its content with the following:
 
     ```c#
-    using System.Threading;
-    using System.Threading.Tasks;
-
     namespace TheFancyWeddingHall;
 
     public partial record HallCrowdedness(int NumberOfPeopleInHall);
 
     public class HallCrowdednessService
     {
-        // in ideal a service is stateless
+        // a service is normally stateless
         // the local field is for the purpose of this demo 
         private int _numberOfPeopleInHall = 5;
 
@@ -60,6 +57,10 @@ In this tutorial you will learn how to create an MVUX project and basic usage of
 1. Create a class named *HallCrowdednessModel.cs* and replace its content with the following:
 
     ```c#
+    using Uno.Extensions.Reactive;
+
+    namespace TheFancyWeddingHall;
+
     public partial record HallCrowdednessModel(HallCrowdednessService HallCrowdednessService)
     {   
         public IState<HallCrowdedness> HallCrowdedness => State.Async(this, HallCrowdednessService.GetHallCrowdednessAsync);
@@ -68,7 +69,7 @@ In this tutorial you will learn how to create an MVUX project and basic usage of
         {
             var updatedCrowdedness = await HallCrowdedness;
 
-            await HallCrowdednessService.SetHallCrowdednessAsync(updatedCrowdedness, ct);
+            await HallCrowdednessService.SetHallCrowdednessAsync(updatedCrowdedness!, ct);
         }
     }
     ```
