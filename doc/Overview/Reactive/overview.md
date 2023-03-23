@@ -22,7 +22,7 @@ Before digging into the features of MVUX let's see MVUX in action with a simple 
 This example shows how weather data can be loaded asynchronously and displayed using data binding.
 
 One of the core concepts behind MVUX is that of an `IFeed`, which is similar in a number of ways to an `IObservable`
-(for those familiar with [`System.Reactive`]()), and represents a sequence of data.
+(for those familiar with [System.Reactive(Rx.NET)](https://github.com/dotnet/reactive)), and represents a sequence of data.
 This example creates an `IFeed<WeatherInfo>` that will return the weather, which includes the temperature,
 loaded asynchronously from a weather service.
 
