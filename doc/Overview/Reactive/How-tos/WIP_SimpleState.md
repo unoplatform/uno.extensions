@@ -74,7 +74,9 @@ In this tutorial you will learn how to create an MVUX project and basic usage of
     }
     ```
 
-    Unlike feeds, States require a reference to the owner type, so that the data binding can be handled by MVUX.
+    Unlike feeds, States require a reference to the owner type, the owner is used to hold and manage the state of the model.  
+    In addition, by having a reference to the owner, we link the lifetime of the model with its owner,
+    and the State is ready to be collected by the Garbage Collector as soon as its owner is disposed.
 
 > [!NOTE]                                                                      
 > Feeds and states (`IState<T>` and `IListState<T>` for collections) are used as a gateway
