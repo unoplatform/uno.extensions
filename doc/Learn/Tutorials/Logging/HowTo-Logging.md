@@ -9,7 +9,7 @@ uid: Learn.Tutorials.Logging.UseLogging
 
 ### 1. Opt into logging
 
-* Uno Extensions offers a simple way to wire up platform-specific log providers such as `Uno.Extensions.Logging.OSLogLoggerProvider` for iOS and `Uno.Extensions.Logging.WebAssembly.WebAssemblyConsoleLoggerProvider` for WASM as both debug and console logging. 
+* Uno.Extensions offers a simple way to wire up platform-specific log providers such as `Uno.Extensions.Logging.OSLogLoggerProvider` for iOS and `Uno.Extensions.Logging.WebAssembly.WebAssemblyConsoleLoggerProvider` for WASM as both debug and console logging. 
 
     Call the `UseLogging()` method to register the resultant implementation of `ILogger` with the DI container:
 

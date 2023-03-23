@@ -21,7 +21,8 @@ Alongside Uno, the app template references a lineup of battle-tested packages pr
 |[Logging](xref:Learn.Tutorials.Logging.UseLogging)|The Uno.Extensions.Logging package provides a way to log messages to a variety of output targets.|
 |[Navigation](xref:Learn.Tutorials.Navigation.HowToNavigateBetweenPages)|The Uno.Extensions.Navigation package provides a routing framework for navigation.|
 |[Reactive](xref:Overview.Reactive.General)|The Uno.Extensions.Reactive package provides a development framework for reactive applications.|
-|[Serialization](xref:Learn.Tutorials.Serialization.HowToSerialization)|The Uno.Extensions.Serialization package provides helpers for JSON serialization.|
+|[Serialization](xref:Overview.Serialization)|The Uno.Extensions.Serialization package provides helpers for JSON serialization.|
+|[Validation](xref:Overview.Validation)|The Uno.Extensions.Validation package provides support for data validation.|
 
 
 > [!TIP]

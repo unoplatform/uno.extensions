@@ -27,7 +27,7 @@ This topic walks through using Navigation to display a prompt using a `MessageDi
     ```csharp
     public async Task ShowSimpleDialog()
     {
-        _ = _navigator.ShowMessageDialogAsync(this, title: "This is Uno", content: "Hello Uno Extensions!");
+        _ = _navigator.ShowMessageDialogAsync(this, title: "This is Uno", content: "Hello Uno.Extensions!");
     }
     ```
 
@@ -42,7 +42,7 @@ This topic walks through using Navigation to display a prompt using a `MessageDi
     ```csharp
     public async Task ShowSimpleDialog()
     {
-        var result = await _navigator.ShowMessageDialogAsync<string>(this, title: "This is Uno", content: "Hello Uno Extensions!");
+        var result = await _navigator.ShowMessageDialogAsync<string>(this, title: "This is Uno", content: "Hello Uno.Extensions!");
     }
     ```
 
@@ -53,7 +53,7 @@ This topic walks through using Navigation to display a prompt using a `MessageDi
     {
      var result = await _navigator.ShowMessageDialogAsync<string>(this,
       title: "This is Uno",
-      content: "Hello Uno Extensions!",
+      content: "Hello Uno.Extensions!",
       buttons: new[]
             {
        new DialogAction("Ok"),
@@ -77,7 +77,7 @@ If you want to use the same `MessageDialog` in different places in your applicat
     {
         var messageDialog = new MessageDialogViewMap(
             title: "This is Uno",
-            Content: "Hello Uno Extensions",
+            Content: "Hello Uno.Extensions",
             Buttons: new[]
             {
                 new DialogAction(Label:"Yes"),
