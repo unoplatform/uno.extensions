@@ -39,6 +39,8 @@ var list2 = list1.Replace(john1, john2);
 When comparing the `list1` and the `list2` the `IKeyEquatable<T>` allows you to detect that the item is only a newer version of the same entity,
 so visually we only need to update the current item and not animate the removal and then the add of the item.
 
+The implementation of this concept is located in the `Uno.Extensions.Equality` namespace.
+
 # IKeyEquatable<T>
 
 This is like `IEquatable<T>` but specialized for the _key_ comparison.
@@ -99,11 +101,11 @@ public partial record MyItem(Guid EntityId, string SourceId, string Value);
 
 ## How to disable generation?
 
-You can disable the generation on a given type by adding `[ImplicitKeyEquality(IsEnabled = false)]` on it.
+You can disable the generation on a given type by adding `[ImplicitKeysEquality(IsEnabled = false)]` on it.
 
 To disable the generation for the whole project you set that attibute directly on the assembly:
 ```csharp
-[assembly:ImplicitKeyEquality(IsEnabled = false)]
+[assembly:ImplicitKeysEquality(IsEnabled = false)]
 ```
 
 > ![IMPORTANT]
