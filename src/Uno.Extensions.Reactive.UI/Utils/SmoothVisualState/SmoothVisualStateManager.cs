@@ -1,6 +1,4 @@
-﻿#pragma warning disable CS1591 // XML Doc, will be moved elsewhere
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -8,20 +6,32 @@ using Uno.Extensions.Reactive.Logging;
 
 namespace Uno.Extensions.Reactive.UI;
 
+/// <summary>
+/// A <see cref="VisualStateManager"/> which can delay visual states according to some rules.
+/// </summary>
 [ContentProperty(Name = nameof(Rules))]
 public class SmoothVisualStateManager : VisualStateManager
 {
 	private readonly Dictionary<VisualStateGroup, GroupManager> _managers = new();
 
+	/// <summary>
+	/// Backing property for <see cref="Rules"/>.
+	/// </summary>
 	public static readonly DependencyProperty RulesProperty = DependencyProperty.Register(
 		"Rules", typeof(SmoothVisualStateRuleCollection), typeof(SmoothVisualStateManager), new PropertyMetadata(default(SmoothVisualStateRuleCollection)));
 
+	/// <summary>
+	/// Set of rules to consider when applying visual states.
+	/// </summary>
 	public SmoothVisualStateRuleCollection Rules
 	{
 		get => (SmoothVisualStateRuleCollection)GetValue(RulesProperty);
 		set => SetValue(RulesProperty, value);
 	}
 
+	/// <summary>
+	/// Creates a new instance.
+	/// </summary>
 	public SmoothVisualStateManager()
 	{
 		Rules = new();
@@ -87,24 +97,35 @@ public class SmoothVisualStateManager : VisualStateManager
 
 			_next = stateName;
 
-			TimeSpan delay = TimeSpan.Zero, minDuration = TimeSpan.Zero;
-			foreach (var rule in _owner.Rules)
-			{
-				var result = rule.Get(@group, @group.CurrentState, state);
-				if (result.Delay is { Ticks: > 0 } d && d > delay)
-				{
-					delay = d;
-				}
-				if (result.MinDuration is { Ticks: > 0 } min && min > minDuration)
-				{
-					minDuration = min;
-				}
-			}
-
 			var now = DateTimeOffset.UtcNow;
-			var currentDuration = now - _currentTimestamp;
-			var currentRemainingDuration = _currentMinDuration - currentDuration;
-			var targetDelay = (int)Math.Max(currentRemainingDuration.TotalMilliseconds, delay.TotalMilliseconds);
+			int targetDelay;
+			var minDuration = TimeSpan.Zero;
+
+			if (control is ISmoothVisualStateAware { ShouldGoToStateSync: true })
+			{
+				targetDelay = 0;
+			}
+			else
+			{
+				var delay = TimeSpan.Zero;
+				foreach (var rule in _owner.Rules)
+				{
+					var result = rule.Get(@group, @group.CurrentState, state);
+					if (result.Delay is { Ticks: > 0 } d && d > delay)
+					{
+						delay = d;
+					}
+					if (result.MinDuration is { Ticks: > 0 } min && min > minDuration)
+					{
+						minDuration = min;
+					}
+				}
+
+				var currentDuration = now - _currentTimestamp;
+				var currentRemainingDuration = _currentMinDuration - currentDuration;
+
+				targetDelay = (int)Math.Max(currentRemainingDuration.TotalMilliseconds, delay.TotalMilliseconds);
+			}
 
 			if (targetDelay > 0)
 			{
@@ -113,6 +134,7 @@ public class SmoothVisualStateManager : VisualStateManager
 				timer.Interval = TimeSpan.FromMilliseconds(targetDelay);
 				timer.Tick += (_,_) =>
 				{
+					timer.Stop();
 					try
 					{
 						if (ct.IsCancellationRequested)
