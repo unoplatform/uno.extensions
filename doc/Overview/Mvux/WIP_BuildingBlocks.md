@@ -1,5 +1,5 @@
 ---
-uid: Overview.Reactive.BuildingBlocks
+uid: Overview.Mvux.BuildingBlocks
 ---
 
 ## MVUX building blocks

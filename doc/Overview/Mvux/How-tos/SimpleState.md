@@ -1,5 +1,5 @@
 ---
-uid: Overview.Reactive.SimpleState
+uid: Overview.Mvux.SimpleState
 ---
 
 # How to create a simple state with a command
@@ -16,7 +16,7 @@ and the `FeedView` control, to asynchronously load, display and manipulate data 
 ## Create the Model
 
 1. Create an MVUX project by following the steps in
-[this tutorial](xref:Overview.Reactive.MvuxProject), and name your project `TheFancyWeddingHall`.
+[this tutorial](xref:Overview.Mvux.MvuxProject), and name your project `TheFancyWeddingHall`.
 
 1. Add a class named *HallCrowdednessService.cs*, and replace its content with the following:
 
