@@ -1,5 +1,5 @@
 ---
-uid: Overview.Mvux.MvuxProject
+uid: Overview.Mvux.HowToMvuxProject
 ---
 
 # How to set up an MVUX project

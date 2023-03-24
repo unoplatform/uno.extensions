@@ -1,5 +1,5 @@
 ---
-uid: Overview.Mvux.PushListFeed
+uid: Overview.Mvux.HowToPushListFeed
 ---
 
 # How to create a list feed where values are pushed in
@@ -21,7 +21,7 @@ to display data pushed in asynchronously from an `IAsyncEnumerable<T>`.
 ## Create the Model
 
 1. Create an MVUX project by following the steps in
-[this tutorial](xref:Overview.Mvux.MvuxProject), and name the project *StockMarket*..
+[this tutorial](xref:Overview.Mvux.HowToMvuxProject), and name the project *StockMarket*..
 
 1. Add a class named *StockMarketService.cs*, and replace its content with the following:
 
@@ -92,13 +92,13 @@ to display data pushed in asynchronously from an `IAsyncEnumerable<T>`.
 > Feeds (`IFeed<T>` and `IListFeed<T>` for collections) are used as a gateway
 > to asynchronously request data from a service and wrap the result or error if any in metadata
 > to be displayed in the View in accordingly.  
-> Learn more about list-feeds [here](xref:Overview.Mvux.ListFeed).
+> Learn more about list-feeds [here](xref:Overview.Mvux.HowToListFeed).
 
 > [!TIP]
 > Feeds are stateless
 > and are there for when the data from the service is read-only and we're not planning to enable edits to it.  
 > MVUX also provides stateful feeds. For that purpose States (`IState<T>` and `<IListState<T>` for collections) come handy.
-> Refer to [this tutorial](xref:Overview.Mvux.SimpleState) to learn more about states.
+> Refer to [this tutorial](xref:Overview.Mvux.HowToSimpleState) to learn more about states.
 
 ## Data bind the view
 

@@ -1,5 +1,5 @@
 ﻿---
-uid: Overview.Mvux.ListFeed
+uid: Overview.Mvux.HowToListFeed
 ---
 
 # How to create a list feed
@@ -20,7 +20,7 @@ of a list-feed (`IListFeed<T>`) and the `FeedView` control.
 ## Create the Model
 
 1. Create an MVUX project by following the steps in
-[this tutorial](xref:Overview.Mvux.MvuxProject), and name your project *PeopleApp*.
+[this tutorial](xref:Overview.Mvux.HowToMvuxProject), and name your project *PeopleApp*.
 
 1. Add a class named *PeopleService.cs*, and replace its content with the following:
 
@@ -69,13 +69,13 @@ of a list-feed (`IListFeed<T>`) and the `FeedView` control.
     Feeds (`IFeed<T>` and `IListFeed<T>` for collections) are used as a gateway
     to asynchronously request data from a service and wrap the result or an error if any in metadata
     to be displayed in the View in accordingly.  
-    Learn more about list-feeds [here](xref:Overview.Mvux.ListFeed).
+    Learn more about list-feeds [here](xref:Overview.Mvux.HowToListFeed).
 
     [!TIP]
     Feeds are stateless
     and are there for when the data from the service is read-only and we're not planning to enable edits to it.  
     MVUX also provides stateful feeds. For that purpose States (`IState<T>` and `<IListState<T>` for collections) come handy.
-    Refer to [this tutorial](xref:Overview.Mvux.SimpleState) to learn more about states.
+    Refer to [this tutorial](xref:Overview.Mvux.HowToSimpleState) to learn more about states.
 
 ## Data-bind the view
 
