@@ -101,11 +101,11 @@ public partial record MyItem(Guid EntityId, string SourceId, string Value);
 
 ## How to disable generation?
 
-You can disable the generation on a given type by adding `[ImplicitKeysEquality(IsEnabled = false)]` on it.
+You can disable the generation on a given type by adding `[ImplicitKeys(IsEnabled = false)]` on it.
 
 To disable the generation for the whole project you set that attibute directly on the assembly:
 ```csharp
-[assembly:ImplicitKeysEquality(IsEnabled = false)]
+[assembly:ImplicitKeys(IsEnabled = false)]
 ```
 
 > ![IMPORTANT]
