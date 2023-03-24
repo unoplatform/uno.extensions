@@ -37,20 +37,20 @@ and the `FeedView` control, to asynchronously load, display and manipulate data 
         // the local field is for the purpose of this demo 
         private int _numberOfPeopleInHall = 5;
 
-        public ValueTask<HallCrowdedness> GetHallCrowdednessAsync(CancellationToken ct)
+        public async ValueTask<HallCrowdedness> GetHallCrowdedness(CancellationToken ct)
         {
             // fake "loading from server"
+            await Task.Delay(TimeSpan.FromSeconds(1));
             var result = new HallCrowdedness(_numberOfPeopleInHall);
 
-            return ValueTask.FromResult(result);
+            return result;
         }
 
-        public ValueTask SetHallCrowdednessAsync(HallCrowdedness crowdedness, CancellationToken ct)
+        public async ValueTask SetHallCrowdedness(HallCrowdedness crowdedness, CancellationToken ct)
         {
             // fake "updating server"
-            _numberOfPeopleInHall = crowdedness.NumberOfPeopleInHall;        
-
-            return ValueTask.CompletedTask;
+            await Task.Delay(TimeSpan.FromSeconds(1));
+            _numberOfPeopleInHall = crowdedness.NumberOfPeopleInHall;
         }
     }
     ```
