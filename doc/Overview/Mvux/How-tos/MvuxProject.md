@@ -1,5 +1,5 @@
 ---
-uid: Overview.Reactive.MvuxProject
+uid: Overview.Mvux.MvuxProject
 ---
 
 # How to set up an MVUX project
