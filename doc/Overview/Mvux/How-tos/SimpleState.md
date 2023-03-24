@@ -2,7 +2,7 @@
 uid: Overview.Mvux.HowToSimpleState
 ---
 
-# How to create a simple state with a command
+# How to create a state with a command
 
 In this tutorial you will learn how to create an MVUX project and basic usage of a state (`IState<T>`)
 and the `FeedView` control, to asynchronously load, display and manipulate data from and to an service.

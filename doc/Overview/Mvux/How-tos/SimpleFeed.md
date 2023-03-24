@@ -2,7 +2,7 @@
 uid: Overview.Mvux.HowToSimpleFeed
 ---
 
-# How to create a simple feed
+# How to create a feed
 
 In this tutorial you will learn how to create an MVUX project and use a combination of a feed (`IFeed<T>`)
 and the `FeedView` control to asynchronously load and display data coming from a service.

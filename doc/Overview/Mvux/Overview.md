@@ -104,7 +104,7 @@ It's important to note that MVUX uses code-generation to create the proxy types 
 This is how MVUX **extends** MVU to work with data binding.
 
 > [!TIP]
-> For the full example see [How to create a simple feed](xref:Overview.Mvux.HowToSimpleFeed)
+> For the full example see [How to create a feed](xref:Overview.Mvux.HowToSimpleFeed)
 
 ## MVUX components
 

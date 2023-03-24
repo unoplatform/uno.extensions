@@ -67,9 +67,9 @@
           href: Overview/Mvux/Overview.md
         - name: How to create an MVUX project
           href: Overview/Mvux/How-tos/MvuxProject.md
-        - name: How to create a simple Feed
+        - name: How to create a Feed
           href: Overview/Mvux/How-tos/SimpleFeed.md
-        - name: How to create a simple State
+        - name: How to create a State
           href: Overview/Mvux/How-tos/SimpleState.md
     - name: Navigation
       items:
