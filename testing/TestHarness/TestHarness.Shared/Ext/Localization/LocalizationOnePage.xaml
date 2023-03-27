@@ -21,6 +21,9 @@
 			<TextBlock HorizontalAlignment="Center"
 					   FontSize="24"
 					   x:Uid="Localization_Greeting" />
+			<TextBlock HorizontalAlignment="Center"
+					   FontSize="24"
+					   Text="{Binding ApplicationNameInCode}"/>
 			<utu:ChipGroup x:Name="LanguageChipGroup"
 						   SelectionMode="Single"
 						   SelectedItem="{Binding SelectedCulture, Mode=TwoWay}"

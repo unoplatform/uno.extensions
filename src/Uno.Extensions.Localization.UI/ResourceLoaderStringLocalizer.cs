@@ -1,59 +1,91 @@
 ﻿
 
+#if WINDOWS
+using Microsoft.Windows.ApplicationModel.Resources;
+#endif
+using Uno.Extensions.Hosting;
+
 namespace Uno.Extensions.Localization;
 
 /// <summary>
-/// This implementation of <see cref="IStringLocalizer"/> uses <see cref="ResourceLoader"/>
+/// This implementation of <see cref="IStringLocalizer"/> uses ResourceLoader on Uno and ResourceManager on WinAppSdk
 /// to get the string resources.
 /// </summary>
 public class ResourceLoaderStringLocalizer : IStringLocalizer
-    {
-        private const string SearchLocation = "Resources";
-        private readonly ResourceLoader _resourceLoader;
-        private readonly bool _treatEmptyAsNotFound;
+{
+	private const string SearchLocation = "Resources";
+#if WINDOWS
+	private readonly ResourceMap _defaultResourceMap;
+	private readonly ResourceMap _appResourceMap;
+#else
+	private readonly ResourceLoader _defaultResourceLoader;
+	private readonly ResourceLoader? _appResourceLoader;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ResourceLoaderStringLocalizer"/> class.
-        /// </summary>
-        /// <param name="treatEmptyAsNotFound">If empty strings should be treated as not found.</param>
-        public ResourceLoaderStringLocalizer(bool treatEmptyAsNotFound = true)
-        {
-            _treatEmptyAsNotFound = treatEmptyAsNotFound;
-            _resourceLoader = ResourceLoader.GetForViewIndependentUse();
-        }
+#endif
+	private readonly bool _treatEmptyAsNotFound;
 
-        /// <inheritdoc/>
-        public LocalizedString this[string name] => GetLocalizedString(name);
+	/// <summary>
+	/// Initializes a new instance of the <see cref="ResourceLoaderStringLocalizer"/> class.
+	/// </summary>
+	/// <param name="appHostEnvironment">Application host environment - used to retrieve assembly where resources defined</param>
+	/// <param name="treatEmptyAsNotFound">If empty strings should be treated as not found.</param>
+	public ResourceLoaderStringLocalizer(IAppHostEnvironment appHostEnvironment, bool treatEmptyAsNotFound = true)
+	{
+		_treatEmptyAsNotFound = treatEmptyAsNotFound;
+#if WINDOWS
+		var mainResourceMap = new ResourceManager().MainResourceMap;
+		// TryGetSubtree can return null if no resources found, so defalut to main resource map if not found
+		_defaultResourceMap = mainResourceMap.TryGetSubtree("Resources") ?? mainResourceMap;
+		_appResourceMap = mainResourceMap.TryGetSubtree(appHostEnvironment.HostAssembly?.GetName().Name).TryGetSubtree("Resources") ?? mainResourceMap;
+#else
+		_defaultResourceLoader = ResourceLoader.GetForViewIndependentUse();
+		try
+		{
+			_appResourceLoader = new ResourceLoader($"{appHostEnvironment.HostAssembly?.GetName().Name}/Resources");
+		}
+		catch { }
+#endif
+	}
 
-        /// <inheritdoc/>
-        public LocalizedString this[string name, params object[] arguments] => GetLocalizedString(name, arguments);
+	/// <inheritdoc/>
+	public LocalizedString this[string name] => GetLocalizedString(name);
 
-        /// <inheritdoc/>
-        public IEnumerable<LocalizedString> GetAllStrings(bool includeParentCultures)
-            => throw new NotSupportedException("ResourceLoader doesn't support listing all strings.");
+	/// <inheritdoc/>
+	public LocalizedString this[string name, params object[] arguments] => GetLocalizedString(name, arguments);
 
-        private LocalizedString GetLocalizedString(string name, params object[] arguments)
-        {
-            if (name is null)
-            {
-                throw new ArgumentNullException(nameof(name));
-            }
+	/// <inheritdoc/>
+	public IEnumerable<LocalizedString> GetAllStrings(bool includeParentCultures)
+		=> throw new NotSupportedException("ResourceLoader doesn't support listing all strings.");
 
-            var resource = _resourceLoader.GetString(name);
+	private LocalizedString GetLocalizedString(string name, params object[] arguments)
+	{
+		if (name is null)
+		{
+			throw new ArgumentNullException(nameof(name));
+		}
 
-            if (_treatEmptyAsNotFound && string.IsNullOrEmpty(resource))
-            {
-                resource = null;
-            }
+#if WINDOWS
+		var resource = _appResourceMap.GetValue(name)?.ValueAsString ??
+						_defaultResourceMap.GetValue(name)?.ValueAsString;
+#else
+		var resource = _appResourceLoader?.GetString(name) ??
+			_defaultResourceLoader.GetString(name);
+#endif
 
-            var notFound = resource == null;
+		if (_treatEmptyAsNotFound &&
+			string.IsNullOrEmpty(resource))
+		{
+			resource = null;
+		}
 
-            resource ??= name;
+		var notFound = resource == null;
 
-            var value = arguments.Any()
-                ? string.Format(CultureInfo.CurrentCulture, resource, arguments)
-                : resource;
+		resource ??= name;
 
-            return new LocalizedString(name, value, resourceNotFound: notFound, searchedLocation: SearchLocation);
-        }
-    }
+		var value = arguments.Any()
+			? string.Format(CultureInfo.CurrentCulture, resource, arguments)
+			: resource;
+
+		return new LocalizedString(name, value, resourceNotFound: notFound, searchedLocation: SearchLocation);
+	}
+}
