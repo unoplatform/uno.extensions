@@ -8,6 +8,10 @@ namespace TestHarness.Ext.Navigation.Localization;
 public partial class LocalizationOneViewModel : ObservableObject
 {
 	private readonly ILocalizationService _localizationService;
+	
+	[ObservableProperty]
+	private string _applicationNameInCode;
+
 	public LocalizationOneViewModel(
 		ILocalizationService localizationService,
 		IStringLocalizer localizer)
@@ -15,7 +19,7 @@ public partial class LocalizationOneViewModel : ObservableObject
 		_localizationService = localizationService;
 		SupportedCultures = _localizationService.SupportedCultures;
 
-		var language = localizer[_localizationService.CurrentCulture.Name ?? "en"];
+		ApplicationNameInCode = localizer.GetString("ApplicationName");
 	}
 
 	public CultureInfo[] SupportedCultures { get; }
