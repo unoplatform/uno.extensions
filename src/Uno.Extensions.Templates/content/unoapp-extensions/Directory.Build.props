@@ -13,7 +13,7 @@
 		<!--#endif-->
 
 		<TreatWarningsAsErrors>True</TreatWarningsAsErrors>
-		<NoWarn>$(NoWarn);Uno0001;CS1998;CA1416;NU1507</NoWarn>
+		<NoWarn>$(NoWarn);Uno0001;CA1416;NU1507</NoWarn>
 
 		<DefaultLanguage>en</DefaultLanguage>
 
