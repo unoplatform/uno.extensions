@@ -35,13 +35,13 @@ public class ResourceLoaderStringLocalizer : IStringLocalizer
 #if WINDOWS
 		var mainResourceMap = new ResourceManager().MainResourceMap;
 		// TryGetSubtree can return null if no resources found, so defalut to main resource map if not found
-		_defaultResourceMap = mainResourceMap.TryGetSubtree("Resources") ?? mainResourceMap;
-		_appResourceMap = mainResourceMap.TryGetSubtree(appHostEnvironment.HostAssembly?.GetName().Name).TryGetSubtree("Resources") ?? mainResourceMap;
+		_defaultResourceMap = mainResourceMap.TryGetSubtree(SearchLocation) ?? mainResourceMap;
+		_appResourceMap = mainResourceMap.TryGetSubtree(appHostEnvironment.HostAssembly?.GetName().Name).TryGetSubtree(SearchLocation) ?? mainResourceMap;
 #else
 		_defaultResourceLoader = ResourceLoader.GetForViewIndependentUse();
 		try
 		{
-			_appResourceLoader = new ResourceLoader($"{appHostEnvironment.HostAssembly?.GetName().Name}/Resources");
+			_appResourceLoader = new ResourceLoader($"{appHostEnvironment.HostAssembly?.GetName().Name}/{SearchLocation}");
 		}
 		catch { }
 #endif
