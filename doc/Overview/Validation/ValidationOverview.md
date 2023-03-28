@@ -63,14 +63,16 @@ public class PersonViewModel
     public PersonViewModel(IValidator validator)
     {
         _validator = validator;
-        Person.FirstName = "John";
-        // Leaving this out will cause validation to fail
-        // Person.LastName = "Doe";
-
-        Person.Age = 50;
+        Person = new Person()
+        {
+            FirstName = "John",
+            // Leaving this out will cause validation to fail
+            // LastName = "Doe",
+            Age = 50
+        };
     }
 
-    public Person Person { get; } = new Person();
+    public Person Person { get; private set; }
 
     public async Task ValidatePersonAsync()
     {
