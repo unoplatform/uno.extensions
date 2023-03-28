@@ -12,9 +12,9 @@ trigger:
     - doc/*
     - '**/*.md'
     - '*.md'
-    
 
-pr: 
+
+pr:
   branches:
     include:
       - main
@@ -34,7 +34,6 @@ jobs:
 - template: .azure-pipelines.Windows.yml
 - template: .azure-pipelines.Android.yml
 - template: .azure-pipelines.Wasm.yml
-- template: .azure-pipelines.TemplateValidation.yml
 - template: .azure-pipelines.UITests.Wasm.yml
 - template: .azure-pipelines.Changelog.yml
 

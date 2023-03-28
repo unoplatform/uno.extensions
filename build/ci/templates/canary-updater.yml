@@ -11,14 +11,3 @@ steps:
     parameters:
       SolutionToUpdate: 'samples/Playground/Playground/Playground.sln'
 
-  - template: canary-update-template.yml
-    parameters:
-      SolutionToUpdate: 'src/Uno.Extensions.Templates/content/unoapp-extensions/MyExtensionsApp.sln'
-
-  - template: canary-update-template.yml
-    parameters:
-      SolutionToUpdate: 'src/Uno.Extensions.Templates/content/unoapp-extensions-net6/MyExtensionsApp.sln'
-
-  - template: canary-update-template.yml
-    parameters:
-      SolutionToUpdate: 'src/Uno.Extensions.Templates/content/unoapp-samples-commerce/MyExtensionsApp.sln'

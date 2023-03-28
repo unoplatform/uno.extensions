@@ -41,7 +41,6 @@ copy .\src\Uno.Extensions.Reactive.UI\bin\Uno.Extensions.Reactive.UI\Debug\Uno.E
 copy .\src\Uno.Extensions.Reactive.UI\bin\Uno.Extensions.Reactive.WinUI\Debug\Uno.Extensions.Reactive.WinUI.255.255.255.255.nupkg .\unofeed\
 copy .\src\Uno.Extensions.Reactive.UI.Markup\bin\Uno.Extensions.Reactive.WinUI.Markup\Debug\Uno.Extensions.Reactive.WinUI.Markup.255.255.255.255.nupkg .\unofeed\
 copy .\src\Uno.Extensions.Reactive.Messaging\bin\Uno.Extensions.Reactive.Messaging\Debug\Uno.Extensions.Reactive.Messaging.255.255.255.255.nupkg .\unofeed\
-copy .\src\Uno.Extensions.Templates\bin\Uno.Extensions.Templates\Debug\Uno.Extensions.Templates.255.255.255.255.nupkg .\unofeed\
 
 
 
