@@ -16,7 +16,7 @@ public class SelectorRequestHandler : ControlRequestHandlerBase<Selector>
 			var navdata = sender.GetData() ?? data;
 			var path = sender.GetRequest();
 			var nav = sender.Navigator();
-			if (nav is null)
+			if (nav is null || navdata is null)
 			{
 				return;
 			}
