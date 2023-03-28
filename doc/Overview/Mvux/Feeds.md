@@ -2,9 +2,7 @@
 uid: Overview.Mvux.Feeds
 ---
 
-# Feeds and List-Feeds
-
-## What are Feeds?
+# What are Feeds?
 
 Feeds are there to manage asynchronous data requests from a service and provide their result to the View in an efficient manner.
 
@@ -12,7 +10,7 @@ It provides out of the box support for data coming from task-based methods as we
 
 They accompany the requests with additional metadata that tell whether the request is still in progress, ended in an error, and if it was successful, whether the data that was returned contains any entries or was empty.
 
-### Feeds are stateless
+## Feeds are stateless
 
 Feeds are used as a gateway to request data from services, but it does not hold the data. The data is rather sent over to the requesting party awaiting the feed itself (see [below](#directly-await-feeds)).
 
@@ -36,11 +34,11 @@ public record CounterValue(int Value);
 Feeds can be created directly from either `ValueTask` returning methods, or from `IAsyncEnumerable` methods,
 both with a `CancellationToken` parameter.
 
-#### From tasks
+#### Using Tasks
 
 Asynchronous data can be obtained in several ways.
 
-The most common is via a task that returns the data value(s) when ready:
+The most common is via a `ValueTask` that returns the data value(s) when ready:
 
 ```c#
 _currentCount = 0;
@@ -58,8 +56,8 @@ public async ValueTask<CounterValue> CountOne(CancellationToke ct)
 > `ValueTask` is interchangeable with `Task`, but `ValueTask` was chosen to be in unity with the `IAsyncEnumerable` interface.
 > A `Task` is easily convertible to `ValueTask` nonetheless.
 
-This is known as a 'pull' method, as we're repeatedly calling the task when we're looking for new data,
-and the task returns the value when it's ready, unless it was cancelled using the token (this will be discussed in another tutorial).
+This is known as a 'pull' method, as we're repeatedly calling the Task when we're looking for new data,
+and the Task returns the value when it's ready, unless it was cancelled using the token (this will be discussed in another tutorial).
 
 Using the `CountOne` method, creating a Feed is as easy as:
 
