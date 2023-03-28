@@ -65,6 +65,8 @@
       items:
         - name: Overview
           href: Overview/Mvux/Overview.md
+        - name: Feeds
+          href: Overview/Mvux/Feeds.md
         - name: How to create an MVUX project
           href: Overview/Mvux/How-tos/MvuxProject.md
         - name: How to create a Feed
