@@ -1,4 +1,6 @@
-﻿using System;
+﻿#define __SKIA__
+
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
@@ -7,7 +9,9 @@ using Windows.Devices.Input;
 using Windows.Foundation;
 using Microsoft.UI.Xaml.Automation.Peers;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Data;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Uno.Extensions.Equality;
 using Uno.Extensions.Reactive.Testing;
 using Uno.UI.RuntimeTests;
 
@@ -19,8 +23,10 @@ public partial class Given_BindableCollection_Selection : FeedTests
 {
 	public partial class Given_BindableCollection_Selection_Model
 	{
-		public IListState<int> Items => ListState.Value(this, () => ImmutableList.Create(41, 42, 43));
+		public IListState<MyItem> Items => ListState.Value(this, () => ImmutableList.Create<MyItem>(new(41), new(42), new(43)));
 	}
+
+	public partial record MyItem([property:Key] int Value, int Version = 1);
 
 	[TestMethod]
 	[InjectedPointer(PointerDeviceType.Mouse)]
@@ -33,7 +39,7 @@ public partial class Given_BindableCollection_Selection : FeedTests
 
 		InputInjectorHelper.Current.Tap(items[1]);
 
-		await UIHelper.WaitFor(async ct => await vm.Items.GetSelectedItem(ct) == 42, CT);
+		await UIHelper.WaitFor(async ct => (await vm.Items.GetSelectedItem(ct))?.Value == 42, CT);
 	}
 
 	[TestMethod]
@@ -50,7 +56,37 @@ public partial class Given_BindableCollection_Selection : FeedTests
 
 		await UIHelper.WaitFor(async ct =>
 		{
-			return (await vm.Items.GetSelectedItems(ct)).SequenceEqual(new[] { 41, 42 });
+			return (await vm.Items.GetSelectedItems(ct)).SequenceEqual(new MyItem[] { new(41), new(42) });
+		}, CT);
+	}
+
+	[TestMethod]
+	[InjectedPointer(PointerDeviceType.Mouse)]
+#if !__SKIA__
+	[Ignore("Pointer injection not supported yet on this platform")]
+#endif
+	public async Task When_EditSingleSelectedItem_Then_SelectionPreserved()
+	{
+		var (vm, lv, items) = await SetupListView(ListViewSelectionMode.Single);
+
+		InputInjectorHelper.Current.Tap(items[1]);
+
+		await UIHelper.WaitFor(async ct =>
+		{
+			// Selection is preserved on ...
+			return lv.SelectedItem is MyItem { Value: 42 } // ... the ListView ...
+				&& ((ISelectionInfo)lv.ItemsSource).IsSelected(1) // ... the BindableCollection ...
+				&& await vm.Items.GetSelectedItem(ct) is { Value: 42 }; // ... and the Feed!
+		}, CT);
+
+		await vm.Model.Items.Update(items => items.Replace(items[1], items[1] with { Version = 2 }), CT);
+
+		await UIHelper.WaitFor(async ct =>
+		{
+			// Selection is preserved on ...
+			return lv.SelectedItem is MyItem { Value: 42, Version: 2 } // ... the ListView ...
+				&& ((ISelectionInfo)lv.ItemsSource).IsSelected(1) // ... the BindableCollection ...
+				&& await vm.Items.GetSelectedItem(ct) is { Value: 42, Version: 2 }; // ... and the Feed!
 		}, CT);
 	}
 

@@ -107,7 +107,12 @@
 	</PropertyGroup>
 
 	<PropertyGroup Condition="$(_IsUWP)">
+		<DefineConstants>$(DefineConstants);__WINDOWS__</DefineConstants>
 		<TargetPlatformVersion>10.0.19041.0</TargetPlatformVersion>
+	</PropertyGroup>
+	
+	<PropertyGroup Condition="$(_IsWinUI)">
+		<DefineConstants>$(DefineConstants);__WINDOWS__</DefineConstants>
 	</PropertyGroup>
 
 	<PropertyGroup>

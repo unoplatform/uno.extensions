@@ -61,26 +61,40 @@ internal class RichNotifyCollectionChangedEventArgs : NotifyCollectionChangedEve
 	/// <summary>
 	/// Creates a <see cref="NotifyCollectionChangedAction.Replace"/> collection changed event args
 	/// </summary>
-	public static RichNotifyCollectionChangedEventArgs Replace(object? oldItem, object? newItem, int index)
+	public static RichNotifyCollectionChangedEventArgs Replace(object? oldItem, object? newItem, int index, bool isReplaceOfSameEntity = false)
 		=> new(NotifyCollectionChangedAction.Replace, new[] { newItem }, new[] { oldItem }, index);
 
 	/// <summary>
 	/// Creates a <see cref="NotifyCollectionChangedAction.Replace"/> collection changed event args
 	/// </summary>
-	public static RichNotifyCollectionChangedEventArgs Replace<T>(T oldItem, T newItem, int index)
-		=> new(NotifyCollectionChangedAction.Replace, new[] { newItem }, new[] { oldItem }, index);
+	public static RichNotifyCollectionChangedEventArgs Replace<T>(T oldItem, T newItem, int index, bool isReplaceOfSameEntity = false)
+		=> new(NotifyCollectionChangedAction.Replace, new[] { newItem }, new[] { oldItem }, index) { IsReplaceOfSameEntities = isReplaceOfSameEntity};
 
 	/// <summary>
 	/// Creates a <see cref="NotifyCollectionChangedAction.Replace"/> collection changed event args
 	/// </summary>
-	public static RichNotifyCollectionChangedEventArgs ReplaceSome(IList oldItems, IList newItems, int index)
-		=> new(NotifyCollectionChangedAction.Replace, newItems, oldItems, index);
+	public static RichNotifyCollectionChangedEventArgs ReplaceSome(IList oldItems, IList newItems, int index, bool isReplaceOfSameEntities = false)
+	{
+		if (isReplaceOfSameEntities && oldItems.Count != newItems.Count)
+		{
+			throw new InvalidOperationException("For a replace flagged with isReplaceOfSameEntities (a.k.a. update), the number of oldItems must be the same as newItems.");
+		}
+
+		return new(NotifyCollectionChangedAction.Replace, newItems, oldItems, index) { IsReplaceOfSameEntities = isReplaceOfSameEntities };
+	}
 
 	/// <summary>
 	/// Creates a <see cref="NotifyCollectionChangedAction.Replace"/> collection changed event args
 	/// </summary>
-	public static RichNotifyCollectionChangedEventArgs ReplaceSome<T>(IList<T> oldItems, IList<T> newItems, int index)
-		=> new(NotifyCollectionChangedAction.Replace, newItems.AsUntypedList(), oldItems.AsUntypedList(), index);
+	public static RichNotifyCollectionChangedEventArgs ReplaceSome<T>(IList<T> oldItems, IList<T> newItems, int index, bool isReplaceOfSameEntities = false)
+	{
+		if (isReplaceOfSameEntities && oldItems.Count != newItems.Count)
+		{
+			throw new InvalidOperationException("For a replace flagged with isReplaceOfSameEntities (a.k.a. update), the number of oldItems must be the same as newItems.");
+		}
+
+		return new(NotifyCollectionChangedAction.Replace, newItems.AsUntypedList(), oldItems.AsUntypedList(), index) { IsReplaceOfSameEntities = isReplaceOfSameEntities };
+	}
 
 	/// <summary>
 	/// Creates a <see cref="NotifyCollectionChangedAction.Move"/> collection changed event args
@@ -190,6 +204,13 @@ internal class RichNotifyCollectionChangedEventArgs : NotifyCollectionChangedEve
 		: base(action, changedItems, index, oldIndex)
 	{
 	}
+
+	/// <summary>
+	/// For a Replace change, indicates if entities are actually new versions of the same (same Id / Key, cf. KeyEquality) entities.
+	/// If true, this change should be considered as an "update" instead of a real "replace".
+	/// (I.e. entities have same IDs but have some fields that has been updated).
+	/// </summary>
+	public bool IsReplaceOfSameEntities { get; private set; }
 
 	/// <summary>
 	/// Gets the old items for a reset change

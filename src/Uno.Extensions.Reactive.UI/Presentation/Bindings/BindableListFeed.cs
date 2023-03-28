@@ -182,23 +182,24 @@ public sealed partial class BindableListFeed<T> : ISignal<IMessage>, IListState<
 			=> await state.UpdateMessage(msg => msg.Selected(info).Set(BindableViewModelBase.BindingSource, collection), ct);
 
 		async ValueTask Edit(Func<IDifferentialCollectionNode, IDifferentialCollectionNode> change, CancellationToken ct)
-			=> await state.UpdateMessage(msg =>
-			{
-				// Note: The change might have been computed on an older version of the collection
-				// We are NOT validating this. It means that we cou;d get an out-of-range for remove for instance.
-
-				var currentItems = msg.CurrentData.SomeOrDefault();
-				var currentHead = currentItems switch
+			=> await state.UpdateMessage(
+				msg =>
 				{
-					IDifferentialCollection diffCollection => diffCollection.Head,
-					null => new EmptyNode(),
-					_ => new ResetNode<T>(currentItems)
-				};
-				var newHead = change(currentHead);
-				var newItems = new DifferentialImmutableList<T>(newHead) as IImmutableList<T>;
+					// Note: The change might have been computed on an older version of the collection
+					// We are NOT validating this. It means that we cou;d get an out-of-range for remove for instance.
 
-				msg.Data(newItems).Set(BindableViewModelBase.BindingSource, collection);
-			},
+					var currentItems = msg.CurrentData.SomeOrDefault();
+					var currentHead = currentItems switch
+					{
+						IDifferentialCollection diffCollection => diffCollection.Head,
+						null => new EmptyNode(),
+						_ => new ResetNode<T>(currentItems)
+					};
+					var newHead = change(currentHead);
+					var newItems = new DifferentialImmutableList<T>(newHead) as IImmutableList<T>;
+
+					msg.Data(newItems).Set(BindableViewModelBase.BindingSource, collection);
+				},
 				ct);
 
 		return collection;

@@ -164,22 +164,23 @@ internal partial class CollectionAnalyzer
 		*  (we already determined that they have the same key using the 'itemComparer').
 		*
 		*	If the 'itemVersionComparer' is 'null' we assume that there is no
-		*	notion of version of an item and we rely only on the `itemComparer` to check equality.
+		*	notion of version of an item and we rely only on the `itemComparer` to check (true/full) equality.
 		*	Note: in this case we don't raise any 'Replace'.
 		*
-		*	If the 'itemVersionComparer' returns 'true' (or if it's 'null') that means that they are not only KeyEquals but also Equals.
+		*	If the 'itemVersionComparer' returns 'true' that means that they are not only KeyEquals but also Equals.
 		*	So as we are usually working with immutable objects, we can ignore that a new instance is available and
-		*  we don't raise any event ('changesBuffer.Update'). Note: We still have to notify the visitor!
+		*	we don't raise any event ('changesBuffer.Update'). Note: We still have to notify the visitor!
 		*
-		*  If the 'itemVersionComparer' returns 'false' that means items are only key equals, but not same version.
-		*  So we have to raise a 'Replace' event.
+		*	If the 'itemVersionComparer' returns 'false' that means items are only key equals, but not same version.
+		*	So we have to raise a 'Replace' event.
+		*	Note: The replace event is flagged as "SameEntity" so the view can raise some "INPC.Item[]" instead of real "INCC.Replace"
 		*/
 
 		void UpdateInstanceFromOld(T oldItem, int oldIndex, int newIndex)
 		{
 			if (versionComparer is null)
 			{
-				buffer.Update(oldItem, oldItem, oldIndex);
+				buffer.Keep(oldItem, oldItem, oldIndex);
 
 				return;
 			}
@@ -187,7 +188,7 @@ internal partial class CollectionAnalyzer
 			var newItem = newItems.ElementAt(newIndex);
 			if (versionComparer(oldItem, newItem))
 			{
-				buffer.Update(oldItem, newItem, oldIndex);
+				buffer.Keep(oldItem, newItem, oldIndex);
 			}
 			else
 			{
@@ -199,7 +200,7 @@ internal partial class CollectionAnalyzer
 		{
 			if (versionComparer is null)
 			{
-				buffer.Update(newItem, newItem, oldIndex);
+				buffer.Keep(newItem, newItem, oldIndex);
 
 				return;
 			}
@@ -207,7 +208,7 @@ internal partial class CollectionAnalyzer
 			var oldItem = oldItems.ElementAt(oldIndex);
 			if (versionComparer(oldItem, newItem))
 			{
-				buffer.Update(oldItem, newItem, oldIndex);
+				buffer.Keep(oldItem, newItem, oldIndex);
 			}
 			else
 			{
