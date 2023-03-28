@@ -42,7 +42,7 @@ The most common is via a `ValueTask` that returns the data value(s) when ready:
 
 ```c#
 _currentCount = 0;
-public async ValueTask<CounterValue> CountOne(CancellationToke ct)
+public async ValueTask<CounterValue> CountOne(CancellationToken ct)
 {
     await Task.Delay(TimeSpan.FromSeconds(1));
 
