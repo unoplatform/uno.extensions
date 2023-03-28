@@ -4,11 +4,9 @@ uid: Overview.Mvux.HowToSimpleFeed
 
 # How to create a feed
 
-In this tutorial you will learn how to create an MVUX project and use a combination of a feed (`IFeed<T>`)
-and the `FeedView` control to asynchronously load and display data coming from a service.
+In this tutorial you will learn how to create an MVUX project and use a combination of a feed (`IFeed<T>`) and the `FeedView` control to asynchronously load and display data coming from a service.
 
- - The data will come from a service that asynchronously provides.
- a single value of current weather information upon request.  
+ - The data will come from a service that asynchronously provides a single value of current weather information upon request.  
  - An `IFeed` will be created and used to asynchronously request data from the service.
  - The `FeedView` control will be used to display the data and automatically respond to the current feed status.
  - The `FeedView` will be styled to use a different template when awaiting data from the service.
@@ -16,8 +14,7 @@ and the `FeedView` control to asynchronously load and display data coming from a
 
 ## Create the Model
 
-1. Create an MVUX project by following the steps in
-[this tutorial](xref:Overview.Mvux.HowToMvuxProject), and name the project *WeatherApp*
+1. Create an MVUX project by following the steps in [this tutorial](xref:Overview.Mvux.HowToMvuxProject), and name the project *WeatherApp*.
 
 1. Add a class named *WeatherService.cs*, and replace its content with the following:
 
@@ -46,9 +43,7 @@ and the `FeedView` control to asynchronously load and display data coming from a
     }
     ```
 
-    We're using a [record](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/builtin-types/record)
-    for the `WeatherInfo` type,
-    as records are designed to be immutable, to ensure purity of objects, as well as other features.
+    We're using a [record](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/builtin-types/record) for the `WeatherInfo` type, as records are designed to be immutable, to ensure purity of objects, as well as other features.
 
 1. Create a class named *WeatherModel.cs* replacing its content with the following:
 
@@ -60,27 +55,22 @@ and the `FeedView` control to asynchronously load and display data coming from a
     ```  
 
     > [!NOTE]
-    > Feeds (`IFeed<T>` and `IListFeed<T>` for collections) are used as a gateway
-    to asynchronously request data from a service and wrap the result or error (if any) in metadata
-    to be displayed in the View in accordingly.  
+    > Feeds (`IFeed<T>` and `IListFeed<T>` for collections) are used as a gateway to asynchronously request data from a service and wrap the result or error (if any) in metadata to be displayed in the View in accordingly.  
     Learn more about list-feeds [here](xref:Overview.Mvux.HowToListFeed).
 
 
 ## Data bind the View
 
-`WeatherModel` exposes a `CurrentWeather` property which is an `IFeed` of type `WeatherInfo`.
-This is similar in concept to an `IObservable<T>`, where an `IFeed<T>` represents a sequence of values.
+`WeatherModel` exposes a `CurrentWeather` property which is an `IFeed` of type `WeatherInfo`. This is similar in concept to an `IObservable<T>`, where an `IFeed<T>` represents a sequence of values.
 
 > [!TIP]
-> An `IFeed<T>` is awaitable,
-meaning that to get the value of the feed you would do the following in the model:
+> An `IFeed<T>` is awaitable, meaning that to get the value of the feed you would do the following in the model:
 >
 > ```c#
 > WeatherInfo currentWeather = await this.CurrentWeather;
 > ```  
 > 
-> To make it possible to data bind to a feeds, the MVUX analyzers read the `WeatherModel`
-> and generate a proxy type called `BindableWeatherModel`, which exposes properties that the View can data bind to.
+> To make it possible to data bind to a feeds, the MVUX analyzers read the `WeatherModel` and generate a proxy type called `BindableWeatherModel`, which exposes properties that the View can data bind to.
 
 1. Open the file `MainView.xaml` and replace the `Page` contents with the following:
 
@@ -88,8 +78,7 @@ meaning that to get the value of the feed you would do the following in the mode
     <TextBlock Text="{Binding CurrentWeather.Temperature}" />
     ```
 
-1. Press <kbd>F7</kbd> to navigate to open code-view, and in the constructor, after the line that calls `InitializeComponent()`,
-add the following line:
+1. Press <kbd>F7</kbd> to navigate to open code-view, and in the constructor, after the line that calls `InitializeComponent()`, add the following line:
 
     ```c#
     this.DataContext = new BindableWeatherModel(new WeatherService());
@@ -99,8 +88,7 @@ add the following line:
 
     ![](../Assets/SimpleFeed-1.jpg)  
 
-    But then, after two seconds (the `GetCurrentWeatherAsync` method on the `WeatherService` includes a 2 second delay
-    before returning data), the value that came from the service will display:
+    But then, after two seconds (the `GetCurrentWeatherAsync` method on the `WeatherService` includes a 2 second delay before returning data), the value that came from the service will display:
 
     ![](../Assets/SimpleFeed-2.jpg)  
 
@@ -108,19 +96,15 @@ add the following line:
 
 > [!NOTE]
 > It's worth noting that the `CurrentWeather` feed will only be invoked once, and the value captured in the bindable proxy.
-> The captured value will be returned to all binding expressions that use CurrentWeather. 
+> The captured value will be returned to all binding expressions that use CurrentWeather.  
 > This means that it's OK to use a lambda expression when defining the IFeed (`=>`), so that it can accessing the local `WeatherService` in `Feed.Async(WeatherService.GetCurrentWeatherModel)`.
 > The `WeatherService` property wouldn't have been available in a regular assignment context (`=`).
 
 ## Using a FeedView
 
-To this point, this is a similar binding experience you have most likely been familiar with using MVVM.
-With the MVVM approach you would have to add error handling around the call to `GetCurrentWeatherAsync`,
-you would need to expose properties on the ViewModel to indicate that data is loading,
-and you would have to expose a method, or command, that can be invoked in order to refresh the data.
+To this point, this is a similar binding experience you have most likely been familiar with using MVVM. With the MVVM approach you would have to add error handling around the call to `GetCurrentWeatherAsync`, you would need to expose properties on the ViewModel to indicate that data is loading, and you would have to expose a method, or command, that can be invoked in order to refresh the data.
 
-However, thanks to the metadata accompanied with each request handled by the `IFeed`,
-MVUX is capable of much more than the simple example you've just seen.
+However, thanks to the metadata accompanied with each request handled by the `IFeed`, MVUX is capable of much more than the simple example you've just seen.
 
 In the next section we'll use the `FeedView` control to unlock the capabilities of the feed.  
 
@@ -142,8 +126,7 @@ In the next section we'll use the `FeedView` control to unlock the capabilities 
     You can also simply set the `Text` property binding to `Data.Temperature` instead, if you prefer.
 
     > [!TIP]
-    > The `FeedView` wraps its source (in this case our `CurrentWeather` feed) in a `FeedViewState` object,
-    and makes the actual feed accessible via its `Data` property.  
+    > The `FeedView` wraps its source (in this case our `CurrentWeather` feed) in a `FeedViewState` object, and makes the actual feed accessible via its `Data` property.  
     The `FeedViewState` also provides additional metadata properties as we'll soon see.
     
 1. Click <kbd>F5</kbd> to run the project.  
@@ -151,11 +134,9 @@ The temperature is requested from the service and is displayed on page:
 
     ![](../Assets/SimpleFeed-3.gif)
 
-    While the data is requested from the service,
-    the `FeedView` automatically displays a progress-ring (`ProgressRing`), as shown on the last screenshot.  
+    While the data is requested from the service, the `FeedView` automatically displays a progress-ring (`ProgressRing`), as shown on the last screenshot.  
 
-1. Once the data is the available, the `FeedView` will show the `DataTemplate` above,
-with the `TextBlock` displaying the value obtained from the service:
+1. Once the data is the available, the `FeedView` will show the `DataTemplate` above, with the `TextBlock` displaying the value obtained from the service:
 
     ![](../Assets/SimpleFeed-4.jpg)
 
@@ -173,8 +154,7 @@ Change the `FeedView` content to the following:
     </mvux:FeedView>
     ```
 
-    Like the `Data` property, the `Refresh` property is a special `ICommand`
-    customized to work asynchronously and invokes the service for refreshed data without blocking the UI.  
+    Like the `Data` property, the `Refresh` property is a special `ICommand` customized to work asynchronously and invokes the service for refreshed data without blocking the UI.  
     It's also a property of the `FeedViewState` class mentioned earlier.
 
 1. Hit <kbd>F5</kbd> again.
@@ -183,8 +163,7 @@ Change the `FeedView` content to the following:
 
     ![](../Assets/SimpleFeed-3.gif)
 
-    After a couple of seconds, once the data has been asynchronously received from the service,
-    the above template takes places.  
+    After a couple of seconds, once the data has been asynchronously received from the service, the above template takes places.  
     The temperature is now displayed accompanied by the *Refresh* button.
 
     ![](../Assets/SimpleFeed-5.jpg)
@@ -195,8 +174,7 @@ Change the `FeedView` content to the following:
 
     After a couple of seconds the View will display the refreshed value the feed asynchronously retrieved from the service.
 
-1. The `FeedView` also gives you the ability to customize the various templates that are to be used
-according to the current state of the feed.
+1. The `FeedView` also gives you the ability to customize the various templates that are to be used according to the current state of the feed.  
 In the following step you'll learn how to customize the progress-ring you saw before.
 
 1. Close the app and below the `DataTemplate` above, add the following content (within the `FeedView`):
@@ -212,8 +190,7 @@ In the following step you'll learn how to customize the progress-ring you saw be
     </mvux:FeedView>
     ```
 
-1. When the app loads you'll notice how the custom `ProgressTemplate` we've just marked-up
-   shows until the data is received from the service.
+1. When the app loads you'll notice how the custom `ProgressTemplate` we've just marked-up shows until the data is received from the service.
 
     ![](../Assets/SimpleFeed-7.jpg)
 
