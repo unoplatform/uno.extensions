@@ -139,7 +139,7 @@ The generated proxy and its properties ensure that data-binding is going to work
 For that matter it also generates entity-proxies wherever necessary.
 
 > [!Note]  
-> For the code generation to work, mark the Models and entities with the `partial` modifier, and Feed properties must be `public`.
+> For the code generation to work, mark the Models and entities with the `partial` modifier, and have the Feed properties' access modifier as `public`.  
 You can learn more about partial classes and methods in [this article](https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/classes-and-structs/partial-classes-and-methods).
 
 #### With regular data-binding

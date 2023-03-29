@@ -32,10 +32,14 @@ public partial record WeatherModel(IWeatherService WeatherService)
 
 ```
 
+> [!Note]  
+> For the code generation to work, mark the Models and entities with the `partial` modifier, and have the Feed properties' access modifier as `public`.  
+You can learn more about partial classes and methods in [this article](https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/classes-and-structs/partial-classes-and-methods).
+
 The entity `WeatherInfo` wraps the temperature, and in a real application would be extended to hold other weather information such as humidity or rainfall:
 
 ```c#
-public record WeatherInfo(double Temperature);
+public partial record WeatherInfo(double Temperature);
 ```
 
 This is the weather service, which includes a small delay to simulate calling a service API.
