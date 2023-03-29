@@ -29,7 +29,6 @@ public partial record WeatherModel(IWeatherService WeatherService)
     // MVUX code-generator reads this line and generates a cached feed behind the scenes    
     public IFeed<WeatherInfo> CurrentWeather => Feed.Async(WeatherService.GetCurrentWeather);
 }
-
 ```
 
 > [!Note]  
