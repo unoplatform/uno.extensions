@@ -56,7 +56,7 @@
       items:
         - name: Overview
           href: Overview/Logging/LoggingOverview.md
-        - name: Get started with Logging
+        - name: Get started with logging
           href: Learn/Tutorials/Logging/HowTo-Logging.md
         - name: Enable internal Uno Platform logging
           href: Learn/Tutorials/Logging/HowTo-InternalLogging.md
