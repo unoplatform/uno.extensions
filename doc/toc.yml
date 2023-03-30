@@ -10,53 +10,53 @@
       items:
         - name: Overview
           href: Overview/Authentication/AuthenticationOverview.md
-        - name: How to Use Custom Authentication
+        - name: Use custom authentication
           href: Learn/Tutorials/Authentication/HowTo-Authentication.md
-        - name: How to Use MSAL Authentication
+        - name: Use MSAL authentication
           href: Learn/Tutorials/Authentication/HowTo-MsalAuthentication.md
-        - name: How to Use OIDC Authentication
+        - name: Use OIDC authentication
           href: Learn/Tutorials/Authentication/HowTo-OidcAuthentication.md
-        - name: How to Use Web Authentication
+        - name: Use Web authentication
           href: Learn/Tutorials/Authentication/HowTo-WebAuthentication.md
     - name: Configuration
       items:
         - name: Overview
           href: Overview/Configuration/ConfigurationOverview.md
-        - name: Get Started with Configuration
+        - name: Get started with configuration
           href: Learn/Tutorials/Configuration/HowTo-Configuration.md
-        - name: How to update settings from an embedded resource file
+        - name: Write updated setting values to an embedded resource
           href: Learn/Tutorials/Configuration/HowTo-WritableConfiguration.md
     - name: Dependency Injection
       items:
         - name: Overview
           href: Overview/DependencyInjection/DependencyInjectionOverview.md
-        - name: Register and Use Services with Dependency Injection
+        - name: Register and use services with dependency injection
           href: Learn/Tutorials/DependencyInjection/HowTo-DependencyInjectionSetup.md
-        - name: Use the CommunityToolkit with Dependency Injection
+        - name: Use the Community Toolkit for inversion of control
           href: Learn/Tutorials/DependencyInjection/HowTo-CommunityToolkit.md
     - name: Hosting
       items:
         - name: Overview
           href: Overview/Hosting/HostingOverview.md
-        - name: Get Started with Hosting
+        - name: Get started with hosting
           href: Learn/Tutorials/Hosting/HowTo-HostingSetup.md
     - name: Http
       items:
         - name: Overview
           href: Overview/Http/HttpOverview.md
-        - name: Get Started with Http
+        - name: Get started with HTTP
           href: Learn/Tutorials/Http/HowTo-Http.md
     - name: Localization
       items:
         - name: Overview
           href: Overview/Localization/LocalizationOverview.md
-        - name: Get Started with Localization
+        - name: Get started with localization
           href: Learn/Tutorials/Localization/HowTo-Localization.md
     - name: Logging
       items:
         - name: Overview
           href: Overview/Logging/LoggingOverview.md
-        - name: Enable and Use Logging
+        - name: Get started with Logging
           href: Learn/Tutorials/Logging/HowTo-Logging.md
         - name: Enable internal Uno Platform logging
           href: Learn/Tutorials/Logging/HowTo-InternalLogging.md
@@ -99,13 +99,13 @@
               href: Learn/Tutorials/Navigation/Advanced/HowTo-UseNavigationView.md
             - name: Build a Responsive Shell
               href: Learn/Tutorials/Navigation/Advanced/HowTo-ResponsiveShell.md
-            - name: Use a Content Control
+            - name: Use a ContentControl
               href: Learn/Tutorials/Navigation/Advanced/HowTo-UseContentControl.md
     - name: Serialization
       items:
         - name: Overview
           href: Overview/Serialization/SerializationOverview.md
-        - name: Get Started with Serialization
+        - name: Get started with serialization
           href: Learn/Tutorials/Serialization/HowTo-Serialization.md
     - name: Validation
       items:
