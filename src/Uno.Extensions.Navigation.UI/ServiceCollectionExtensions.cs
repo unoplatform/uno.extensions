@@ -18,6 +18,9 @@ public static class ServiceCollectionExtensions
 		var routes = createRouteRegistry?.Invoke(services) ?? new RouteRegistry(services);
 		routeBuilder?.Invoke(views, routes);
 
+		// Only fall back to the navigation flyout if one hasn't already been registered
+		services.AddTransient<Flyout, NavigationFlyout>();
+
 		return services
 					.AddSingleton<NavigationConfig>(sp =>
 					{
@@ -41,7 +44,6 @@ public static class ServiceCollectionExtensions
 					.AddHostedService<BrowserAddressBarService>()
 					.AddScoped<Navigator>()
 
-					.AddTransient<Flyout, NavigationFlyout>()
 
 					// Register the region for each control type
 					.AddRegion<Frame, FrameNavigator>()
