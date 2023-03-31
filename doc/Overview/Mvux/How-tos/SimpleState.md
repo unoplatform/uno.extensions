@@ -7,8 +7,7 @@ uid: Overview.Mvux.HowToSimpleState
 In this tutorial you will learn how to create an MVUX project and basic usage of a state (`IState<T>`)
 and the `FeedView` control, to asynchronously load, display and manipulate data from and to an service.
 
- - The data is provided by a service that asynchronously retrieves and updates a single value.
- that determines the crowdedness of a wedding hall, via a 'remote' service.
+ - The data is provided by a service that asynchronously retrieves and updates a single value that determines the crowdedness of a wedding hall, via a 'remote' service.
  - A State to asynchronously request and update the data from and to the service.
  - The `FeedView` control will be used to display the data and automatically respond to the current State status.
  - See how MVUX generates commands and learn how to react to them in the Model.
