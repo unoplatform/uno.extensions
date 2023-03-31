@@ -120,7 +120,8 @@ public IFeed<CounterValue> CurrentCount => Feed.AsyncEnumerable(ct => StartCount
 
 #### Directly await Feeds
 
-Feeds are directly awaitable, so to get the data currently held in the feed, await it in the following manner:
+Feeds are directly awaitable, so to get the data currently held in the feed, this is useful when you want to use the current value in a command etc.  
+You can await it in the following manner:
 
 ```c#
 public IFeed<CurrentCount> CurrentCount => ...
@@ -130,6 +131,9 @@ private async ValueTask SomeAsyncMethod()
     int currentCount = await CurrentCount;
 }
 ```
+
+> [!TIP]
+> This is possible thanks to the `GetAwaiter` extension method of `IFeed<T>`. Read [this](https://devblogs.microsoft.com/pfxteam/await-anything) for more.
 
 #### Use Feeds in an MVUX Model
 
@@ -182,3 +186,71 @@ Here's how to utilize the `FeedView` to display the data:
 > [!TIP]  
 > The `FeedView` wraps the data coming from the Feed in a special `FeedViewState` class which includes the Feed metadata.  
 One of its properties is `Data`, which provides access to the actual data of the Feed's current state, in our example the most recent integer value from the `CountOne` or `StartCounting` method [above](#consumption-of-feeds).
+
+# Messages
+
+Messages are one of the core components of MVUX. They refer to the metadata that wrap around the entities streaming along as discussed earlier.
+
+The Feed encapsulates a stream of Messages for each packet of data received from the underlying request. For a Task it would be each execution of the Task and obtaining the refreshed/up-to-date value, and similarly with Async-Enumerable it would be each iteration and yielding of a refreshed value, until it's cancelled using the `CancellationToken`.
+
+Messages are extensible, but currently a Message provides several metadata types (called axis/axes).  
+The most common three are:
+
+- Data  
+This discloses information about the data that was allegedly returned by the request.  
+The data is encapsulated in an `Option<T>` (where `T` refers to the data entity type):
+    - None - indicates absence of data, i.e. the data-request resulted in no records.
+    - Some - indicates presence of a value / values.
+    - Undefined - we can't currently determine if there's data, e.g. we're still awaiting it or if an error occurred.
+- Progress  
+The underlying task/request is in progress, if there's data, it's regarded as transient till the request completes and a new result is available.
+- Error  
+An error has occurred. The `Exception` is attached.
+
+The following illustration show how the classes are built. Note that this diagram shows a stripped-down version of the actual types, for brevity:
+
+![](How-tos/Assets/FeedMessagesDiagram.jpg)
+
+> [!TIP]  
+> MVUX provides you with peripheral tools that read the metadata Messages for you so that you don't normally even have to know about the Message structure!
+
+# Feed Operators
+
+The Feed supports some LINQ operators that enable readjusting it into a new one.
+
+## Where
+
+The `Where` extension method enables filtering a Feed. It returns a new Feed where the values of the parent one match the specified criteria.  
+For example:
+
+```c#
+public IFeed<CounterValue> OmitEarlyCounts => CurrentCount.Where(currentCount => currentCount.Value > 10);
+```
+
+> [!Note]  
+> Be aware that unlike `IEnumerable<T>`, `IObservable<T>`, and `IAsyncEnumerable<T>`, if the predicate returns false, a result is still received but it contains a `Message<T>` with a data `Option<T>` of `None`.
+
+## Select or SelectAsync
+
+This one enables projecting one feed into another one by selecting one of its properties, or by passing it as a parameter to an external function.
+
+```c#
+public IFeed<int> OmitEarlyCounts => CurrentCount.Select(currentCount => currentCount.Value);
+```
+
+The selection can also be asynchronous, and even use an external method:
+
+```c#
+public IFeed<CountInfo> CountTrends => CurrentCount.SelectAsync(currentCount => myService.GetCountInfoAsync(currentCount));
+```
+
+
+> [!TIP]  
+> You can use the LINQ syntax if you prefer, or combine the operators:
+
+```c#
+public IFeed<int> OmitEearlyCounts =>
+    from currentCount in CurrentCount
+    where currentCount.Value > 10
+    select currentCount.Value;
+```
