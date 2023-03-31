@@ -110,6 +110,9 @@ However, if the API you're consuming does not have a `CancellationToken` paramet
 public IFeed<CounterValue> CurrentCount => Feed.AsyncEnumerable(ct => StartCounting());
 ```
 
+> [!NOTE]
+> `Feed` is a static class that provide factory methods that create `IFeed<T>`s, as well as extension methods for `IFeed<T>`.
+
 > [!NOTE]  
 > There are additional ways to load data (e.g. Observables), but most of them are easily convertible to one of the above two.
 
