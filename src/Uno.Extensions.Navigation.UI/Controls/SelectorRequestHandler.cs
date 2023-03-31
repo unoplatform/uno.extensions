@@ -31,7 +31,12 @@ public class SelectorRequestHandler : ControlRequestHandlerBase<Selector>
 			{
 				return;
 			}
-			var data = sender.GetData() ?? sender.SelectedItem;
+			var data = sender.GetData() ?? actionArgs?.AddedItems?.FirstOrDefault();
+
+			if(data is null)
+			{
+				return;
+			}
 
 			await action(sender, data);
 		};
