@@ -123,7 +123,7 @@ City currentCity = await this.CurrentCity;
     
     1. When you run the app, moving the `Slider` instantly affects the upper `TextBox`; the `Silder.Value` property has a two-way binding with the `SliderValue` State, so any change to the Slider immediately updates the State value, which in turn affects the data-bound `TextBlock` on top:
 
-    ![](How-tos/Assets/SliderApp.gif)
+    ![](Assets/SliderApp.gif)
 
 
 ### Change data of a State
