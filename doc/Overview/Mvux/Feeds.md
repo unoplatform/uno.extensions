@@ -212,7 +212,7 @@ An error has occurred. The `Exception` is attached.
 
 The following illustration show how the classes are built. Note that this diagram shows a stripped-down version of the actual types, for brevity:
 
-![](How-tos/Assets/FeedMessagesDiagram.jpg)
+![](../Assets/FeedMessagesDiagram.jpg)
 
 > [!TIP]  
 > MVUX provides you with peripheral tools that read the metadata Messages for you so that you don't normally even have to know about the Message structure!
