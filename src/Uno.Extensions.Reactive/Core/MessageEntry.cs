@@ -10,7 +10,7 @@ namespace Uno.Extensions.Reactive;
 /// </summary>
 /// <typeparam name="T">The type of the value of the entry.</typeparam>
 [DebuggerDisplay("Data: {Data} | Error: {Error} | Transient: {IsTransient}")]
-public sealed record MessageEntry<T> : IMessageEntry
+public sealed class MessageEntry<T> : IMessageEntry
 {
 	/// <summary>
 	/// The initial empty entry.

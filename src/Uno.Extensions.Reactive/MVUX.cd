@@ -1,0 +1,193 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1" MembersFormat="NameAndType">
+  <Class Name="Uno.Extensions.Reactive.Message&lt;T&gt;">
+    <Position X="12.5" Y="10.5" Width="2.25" />
+    <Members>
+      <Property Name="IMessage.Current" Hidden="true" />
+      <Property Name="IMessage.Previous" Hidden="true" />
+      <Property Name="Initial" Hidden="true" />
+      <Method Name="Message" Hidden="true" />
+      <Method Name="OverrideBy" Hidden="true" />
+      <Method Name="With" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAACAAggCAACAAAQAAAAAAAAAAABAAAAAACA=</HashCode>
+      <FileName>Core\Message.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Uno.Extensions.Reactive.Sources.AsyncEnumerableFeed&lt;T&gt;" Collapsed="true">
+    <Position X="19.5" Y="4" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAIA=</HashCode>
+      <FileName>Sources\AsyncEnumerableFeed.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Uno.Extensions.Reactive.Sources.AsyncFeed&lt;T&gt;" Collapsed="true">
+    <Position X="19.5" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAABAAAAAIA=</HashCode>
+      <FileName>Sources\AsyncFeed.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Uno.Extensions.Reactive.Sources.CustomFeed&lt;T&gt;" Collapsed="true">
+    <Position X="14.5" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAIA=</HashCode>
+      <FileName>Sources\CustomFeed.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Uno.Extensions.Reactive.MessageEntry&lt;T&gt;">
+    <Position X="15" Y="10.5" Width="2.25" />
+    <Members>
+      <Field Name="_cachedData" Hidden="true" />
+      <Field Name="_cachedError" Hidden="true" />
+      <Field Name="_cachedProgress" Hidden="true" />
+      <Field Name="_values" Hidden="true" />
+      <Property Name="Empty" Hidden="true" />
+      <Property Name="IMessageEntry.Data" Hidden="true" />
+      <Property Name="IMessageEntry.Error" Hidden="true" />
+      <Property Name="IMessageEntry.IsTransient" Hidden="true" />
+      <Property Name="IMessageEntry.this" Hidden="true" />
+      <Method Name="MessageEntry" Hidden="true" />
+      <Property Name="this" Hidden="true" />
+      <Property Name="Values" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>CAAAAAgAAAAAAQACCAIAAAAAAAABABAABAAgAAAKACE=</HashCode>
+      <FileName>Core\MessageEntry.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Struct Name="Uno.Extensions.Reactive.MessageBuilder&lt;T&gt;" Collapsed="true">
+    <Position X="15.5" Y="6" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAEAgAAEAQBABCAAAAABAASAAAgAAABAEAARAAAAE=</HashCode>
+      <FileName>Core\MessageBuilder.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Struct>
+  <Struct Name="Uno.Extensions.Reactive.MessageBuilder&lt;TParent, TResult&gt;" Collapsed="true">
+    <Position X="9" Y="5.5" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAEAgAAEAABABCAAAAQAAACAhAAAAABEEAABAAAAE=</HashCode>
+      <FileName>Core\MessageBuilder.TParent.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Struct>
+  <Struct Name="Uno.Extensions.Option&lt;T&gt;">
+    <Position X="17.5" Y="10.5" Width="3.5" />
+    <Members>
+      <Method Name="Equals" Hidden="true" />
+      <Method Name="explicit operator Option&lt;object&gt;" Hidden="true" />
+      <Method Name="explicit operator Option&lt;T&gt;" Hidden="true" />
+      <Method Name="explicit operator T" Hidden="true" />
+      <Method Name="GetHashCode" Hidden="true" />
+      <Method Name="implicit operator Option&lt;T&gt;" Hidden="true" />
+      <Method Name="IOption.IsSome" Hidden="true" />
+      <Method Name="IOption.SomeOrDefault" Hidden="true" />
+      <Method Name="None" Hidden="true" />
+      <Method Name="Option" Hidden="true" />
+      <Method Name="Some" Hidden="true" />
+      <Method Name="ToString" Hidden="true" />
+      <Method Name="Undefined" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AFAAACAIAAAQAAQMgAAAACAABgAEAIAAAQAgAAEAQCA=</HashCode>
+      <FileName>Utils\Option.T.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Struct>
+  <Interface Name="Uno.Extensions.Reactive.ISignal" Collapsed="true">
+    <Position X="5" Y="1" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Core\ISignal.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Uno.Extensions.Reactive.ISignal&lt;T&gt;" Collapsed="true">
+    <Position X="5" Y="2.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIA=</HashCode>
+      <FileName>Core\ISignal.T.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Uno.Extensions.Reactive.IFeed&lt;T&gt;" Collapsed="true">
+    <Position X="5" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Core\IFeed.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Uno.Extensions.Reactive.IListFeed&lt;T&gt;" Collapsed="true">
+    <Position X="1.75" Y="2.25" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Core\IListFeed.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Uno.Extensions.Reactive.IState" Collapsed="true">
+    <Position X="5" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Core\IState.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Uno.Extensions.Reactive.IState&lt;T&gt;" Collapsed="true">
+    <Position X="5" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Core\IState.T.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Uno.Extensions.Reactive.IListState&lt;T&gt;" Collapsed="true">
+    <Position X="2.25" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Core\IListState.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Uno.Extensions.Reactive.IMessage">
+    <Position X="11.25" Y="7" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAggAAACAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Core\IMessage.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Uno.Extensions.Reactive.IMessageBuilder" Collapsed="true">
+    <Position X="12.5" Y="2.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAABABAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Core\IMessageBuilder.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Uno.Extensions.Reactive.IMessageBuilder&lt;T&gt;" Collapsed="true">
+    <Position X="12.25" Y="3.25" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Core\IMessageBuilder.T.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Uno.Extensions.Reactive.IMessageEntry">
+    <Position X="14.75" Y="7.25" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAQAACAAAAAAAAAAAABAAAAAAAAAIAAA=</HashCode>
+      <FileName>Core\IMessageEntry.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Uno.Extensions.IOption">
+    <Position X="18.75" Y="6.75" Width="1.5" />
+    <TypeIdentifier />
+  </Interface>
+  <Enum Name="Uno.Extensions.OptionType">
+    <Position X="21.25" Y="10.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAEAACA=</HashCode>
+      <FileName>Utils\OptionType.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
