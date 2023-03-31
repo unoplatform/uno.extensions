@@ -140,4 +140,4 @@ public async ValueTask SetFavoritePerson(CancellationToken ct)
 ```
 
 > [!NOTE]  
-> There are additional methods to update the data of a State, explained [here](xref:Overview.Reactive.State#update-how-to-update-a-state).
+> There are additional methods that update the data of a State such as `Set` and `UpdateMessage`, explained [here](xref:Overview.Reactive.State#update-how-to-update-a-state).
