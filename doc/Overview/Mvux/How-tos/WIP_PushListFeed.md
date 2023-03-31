@@ -145,6 +145,6 @@ after the line that calls `InitializeComponent()`, add the following line:
 
     Here are 3 screenshots taken consecutively with some delay apart:
 
-    ![](Assets/PushListFeed-1.jpg)
-    ![](Assets/PushListFeed-1.jpg)
-    ![](Assets/PushListFeed-1.jpg)
+    ![](../Assets/PushListFeed-1.jpg)
+    ![](../Assets/PushListFeed-1.jpg)
+    ![](../Assets/PushListFeed-1.jpg)

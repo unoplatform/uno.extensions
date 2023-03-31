@@ -111,7 +111,7 @@ and enable manipulating the data, as opposed to Feeds, which doesn't.
 
 1. In the `Save` method above, place a breakpoint on the line `await _hallCrow...SetHallCrowd...`, for later use:
 
-    ![](Assets/SimpleState-2.jpg)
+    ![](../Assets/SimpleState-2.jpg)
 
     MVUX's analyzers will read the `HallCrowdednessModel` and will generate a special
     model-proxy called `BindableHallCrowdednessModel`,
@@ -156,13 +156,13 @@ add the following line:
 
 1. The app will load with its default value '5' as the number of people.
     
-    ![](Assets/SimpleState-1.jpg)
+    ![](../Assets/SimpleState-1.jpg)
 
 1. Change the number to 15 and click 'Save'.
 
     The debugger will stop at the breakpoint you placed earlier. <!--(See step No. x)-->
     
-    ![](Assets/SimpleState-3.jpg)
+    ![](../Assets/SimpleState-3.jpg)
     
     As you can see, the current value of the state has gotten the updated number '*15*'.
     This is now being saved to the service, in the following line execution once you hit <kbd>F5</kbd> again.
