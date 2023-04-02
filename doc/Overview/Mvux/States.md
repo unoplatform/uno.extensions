@@ -128,16 +128,43 @@ City currentCity = await this.CurrentCity;
 
 ### Change data of a State
 
-To update the current data in a State, use its `UpdateValue`.  
-For example:
+To update the current data in a State, use its `Update` method.  
+
+For example (using the _SliderApp_ sample above), we'll add the method `ResetSlider` that manually sets the current `SliderValue` to `0`.
 
 ```c#
-public async ValueTask SetFavoritePerson(CancellationToken ct)
+public async ValueTask ResetSlider(CancellationToken ct)
 {
-    var newPerson = new Person("Terry Fox");
-	await FavoritePerson.Update(updater: currentValue => newPerson, ct);
+	await SliderValue.Update(updater: currentValue => 0, ct);
 }
 ```
 
-> [!NOTE]  
+The `updater` parameter of the `Update` method accepts a `Func<T, T>`, where the input parameter provides the current value of the State when called, and the latter is the one to be returned and be applied as the new value of the State, in our case `0` is returned, while `currentValue` is disregarded.
+
+> [!TIP]  
 > There are additional methods that update the data of a State such as `Set` and `UpdateMessage`, explained [here](xref:Overview.Reactive.State#update-how-to-update-a-state).
+
+### Commands
+
+Part of the MVUX toolbox, is automatic generation of Commands.
+In the `ResetSlider` example [we've just used](#change-data-of-a-state), a special asynchronous Command will be generated that can be used in the View by a `Button` or other controls:
+
+Let's modify the XAML [above](#how-to-bind-the-view-to-a-state) with the following:
+
+```xaml
+        ...
+        <TextBlock Text="Set state value:"/>
+        <Slider Value="{Binding SliderValue, Mode=TwoWay}" />
+
+        <Button Content="Reset slider" Command="{Binding ResetSlider}" />
+
+    </StackPanel>
+</Page>
+```
+
+When pressing the button, the generated `ResetSlider` that was data-bound to the `Button` will execute, and the `ResetSlider` method in the Model will be called, calling the State's `Update` method, which will set the `SliderValue` State to `0`, and in turn will be reflected on the View.
+
+> [!TIP]  
+> Although it's important to use the `CancellationToken` to enable cancellation of Commands while they're being executed, this parameter is not mandatory, and Commands will work regardless.
+
+To learn more about Commands read the Commands section in [this article](xref:Overview.Reactive.InApps#commands).
