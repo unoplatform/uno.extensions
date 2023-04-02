@@ -67,6 +67,8 @@
           href: Overview/Mvux/Overview.md
         - name: Feeds
           href: Overview/Mvux/Feeds.md
+        - name: List-Feeds
+          href: Overview/Mvux/ListFeeds.md
         - name: States
           href: Overview/Mvux/States.md
         - name: How to create an MVUX project
