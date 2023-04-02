@@ -128,18 +128,37 @@ City currentCity = await this.CurrentCity;
 
 ### Change data of a State
 
-To update the current data in a State, use its `Update` method.  
+#### Set
 
-For example (using the _SliderApp_ sample above), we'll add the method `ResetSlider` that manually sets the current `SliderValue` to `0`.
+To set the value of a State, use its `Set` method.  
+For example:
 
 ```c#
 public async ValueTask ResetSlider(CancellationToken ct)
 {
-	await SliderValue.Update(updater: currentValue => 0, ct);
+	  await SliderValue.Set(0, ct);
 }
 ```
 
-The `updater` parameter of the `Update` method accepts a `Func<T, T>`, where the input parameter provides the current value of the State when called, and the latter is the one to be returned and be applied as the new value of the State, in our case `0` is returned, while `currentValue` is disregarded.
+#### Update
+
+To update the current value of a State, use its `UpdateValue`.  
+
+In this example we'll add the method `ResetSlider` that gets the current value and increases it by one (if it doesn't exceed 100):
+
+```c#
+public async ValueTask IncrementSlider(CancellationToken ct = default)
+{
+    static double incrementValue(double currentValue) =>
+        currentValue <= 99
+        ? currentValue + 1
+        : 1;
+
+    await SliderValue.Update(updater: incrementValue, ct);
+}
+```
+
+The `updater` parameter of the `Update` method accepts a `Func<T, T>`, where the input parameter provides the current value of the State when called, and the latter is the one to be returned and be applied as the new value of the State, in our case we use the `incrementValue` [local function](https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/classes-and-structs/local-functions) to increment `currentValue` by one (or return `1` if the value exceeds `100`).
 
 > [!TIP]  
 > There are additional methods that update the data of a State such as `Set` and `UpdateMessage`, explained [here](xref:Overview.Reactive.State#update-how-to-update-a-state).
@@ -147,7 +166,7 @@ The `updater` parameter of the `Update` method accepts a `Func<T, T>`, where the
 ### Commands
 
 Part of the MVUX toolbox, is automatic generation of Commands.
-In the `ResetSlider` example [we've just used](#change-data-of-a-state), a special asynchronous Command will be generated that can be used in the View by a `Button` or other controls:
+In the `ResetSlider` and `IncrementSlider` examples [we've just used](#change-data-of-a-state), a special asynchronous Command will be generated that can be used in the View by a `Button` or other controls:
 
 Let's modify the XAML [above](#how-to-bind-the-view-to-a-state) with the following:
 
@@ -157,12 +176,15 @@ Let's modify the XAML [above](#how-to-bind-the-view-to-a-state) with the followi
         <Slider Value="{Binding SliderValue, Mode=TwoWay}" />
 
         <Button Content="Reset slider" Command="{Binding ResetSlider}" />
+        <Button Content="Increment slider" Command="{Binding IncrementSlider}" />
 
     </StackPanel>
 </Page>
 ```
 
-When pressing the button, the generated `ResetSlider` that was data-bound to the `Button` will execute, and the `ResetSlider` method in the Model will be called, calling the State's `Update` method, which will set the `SliderValue` State to `0`, and in turn will be reflected on the View.
+When pressing the _Reset slider_ button, the generated `ResetSlider` that was data-bound to the `Button` will execute, and the `ResetSlider` method in the Model will be called, calling the State's `Update` method, which will set the `SliderValue` State to `0`, and in turn will be reflected on the View.
+
+On the other hand, pressing the _Increment slider_ button, the generated `IncrementSlider` command will be executed invoking the `IncrementSilder` method on the Model resulting on an incrementation of the value.
 
 This is what the result will look like:
 
