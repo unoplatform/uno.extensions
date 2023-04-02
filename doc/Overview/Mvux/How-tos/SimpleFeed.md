@@ -218,3 +218,6 @@ In the following step you'll learn how to customize the progress-ring you saw be
     ![](../Assets/SimpleFeed-7.jpg)
 
 1. Once the data is the available and the `FeedView` switches to its `ValueTemplate` (the first default `DataTemplate` in our example).
+
+> [!NOTE]  
+> The source-code for the sample app can be found [here](https://github.com/unoplatform/Uno.Samples/tree/master/UI/MvuxHowTos/WeatherApp).

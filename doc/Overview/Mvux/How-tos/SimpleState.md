@@ -166,3 +166,6 @@ add the following line:
     
     As you can see, the current value of the state has gotten the updated number '*15*'.
     This is now being saved to the service, in the following line execution once you hit <kbd>F5</kbd> again.
+
+> [!NOTE]  
+> The source-code for the sample app can be found [here](https://github.com/unoplatform/Uno.Samples/tree/master/UI/MvuxHowTos/TheFancyWeddingHall).
