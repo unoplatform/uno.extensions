@@ -121,9 +121,9 @@ City currentCity = await this.CurrentCity;
     > [!NOTE]
     > `BindableSliderModel` refers to the generated Bindable Proxy Model.
     
-    1. When you run the app, moving the `Slider` instantly affects the upper `TextBox`; the `Silder.Value` property has a two-way binding with the `SliderValue` State, so any change to the Slider immediately updates the State value, which in turn affects the data-bound `TextBlock` on top:
+1. When you run the app, moving the `Slider` instantly affects the upper `TextBox`; the `Silder.Value` property has a two-way binding with the `SliderValue` State, so any change to the Slider immediately updates the State value, which in turn affects the data-bound `TextBlock` on top:
 
-    ![](Assets/SliderApp.gif)
+    ![](Assets/SliderApp-1.gif)
 
 
 ### Change data of a State
@@ -163,6 +163,12 @@ Let's modify the XAML [above](#how-to-bind-the-view-to-a-state) with the followi
 ```
 
 When pressing the button, the generated `ResetSlider` that was data-bound to the `Button` will execute, and the `ResetSlider` method in the Model will be called, calling the State's `Update` method, which will set the `SliderValue` State to `0`, and in turn will be reflected on the View.
+
+This is what the result will look like:
+
+![](Assets/SliderApp-2.gif)
+
+The source-code for the sample app can be found [here](https://github.com/unoplatform/Uno.Samples/tree/master/UI/MvuxHowTos/SliderApp).
 
 > [!TIP]  
 > Although it's important to use the `CancellationToken` to enable cancellation of Commands while they're being executed, this parameter is not mandatory, and Commands will work regardless.
