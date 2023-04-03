@@ -69,6 +69,8 @@
           href: Overview/Mvux/Feeds.md
         - name: States
           href: Overview/Mvux/States.md
+        - name: The FeedView control
+          href: Overview/Mvux/FeedView.md
         - name: How to create an MVUX project
           href: Overview/Mvux/How-tos/MvuxProject.md
         - name: How to create a Feed
