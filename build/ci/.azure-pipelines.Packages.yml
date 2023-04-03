@@ -55,7 +55,7 @@ jobs:
     displayName: 'Visual Studio Test Platform Installer'
     inputs:
       versionSelector: specificVersion
-      testPlatformVersion: 17.1.0
+      testPlatformVersion: 17.5.0
 
   - task: VSTest@2
     inputs:
@@ -65,6 +65,7 @@ jobs:
       vsTestVersion: toolsInstaller
       testSelector: testAssemblies
       runSettingsFile: build/tests.runsettings
+      
 
   - task: PowerShell@2
     displayName: Authenticode Sign Packages
