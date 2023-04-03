@@ -5,6 +5,11 @@ public static class UnoHost
 	public static IHostBuilder CreateDefaultBuilder(string[]? args = null)
 	{
 		var callingAssembly = Assembly.GetCallingAssembly();
+		return CreateDefaultBuilder(callingAssembly, args);
+	}
+
+	internal static IHostBuilder CreateDefaultBuilder(Assembly applicationAssembly, string[]? args = null)
+	{
 		return new HostBuilder()
 			.ConfigureCustomDefaults(args)
 			.ConfigureAppConfiguration((ctx, appConfig) =>
@@ -29,7 +34,7 @@ public static class UnoHost
 					Directory.CreateDirectory(dataFolder);
 				}
 #endif
-				var appHost = AppHostingEnvironment.FromHostEnvironment(ctx.HostingEnvironment, dataFolder, callingAssembly);
+				var appHost = AppHostingEnvironment.FromHostEnvironment(ctx.HostingEnvironment, dataFolder, applicationAssembly);
 				ctx.HostingEnvironment = appHost;
 			})
 			.ConfigureServices((ctx, services) =>
