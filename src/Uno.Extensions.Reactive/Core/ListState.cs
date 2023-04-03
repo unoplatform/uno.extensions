@@ -87,7 +87,7 @@ public static partial class ListState
 	/// <param name="owner">The owner of the state.</param>
 	/// <param name="enumerableProvider">The async enumerable sequence of value of the resulting feed.</param>
 	/// <returns>A state that encapsulate the source.</returns>
-	public static IListState<TValue> AsyncEnumerable<TOwner, TValue>(TOwner owner, Func<IAsyncEnumerable<IImmutableList<TValue>>> enumerableProvider)
+	public static IListState<TValue> AsyncEnumerable<TOwner, TValue>(TOwner owner, Func<CancellationToken, IAsyncEnumerable<IImmutableList<TValue>>> enumerableProvider)
 		where TOwner : class
 		=> ListState<TValue>.AsyncEnumerable(owner, enumerableProvider);
 
