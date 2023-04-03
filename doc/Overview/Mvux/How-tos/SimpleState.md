@@ -69,17 +69,22 @@ In this tutorial you will learn how to create an MVUX project and basic usage of
         {
             var updatedCrowdedness = await HallCrowdedness;
 
-            await HallCrowdednessService.SetHallCrowdedness(updatedCrowdedness!, ct);
+            if(updatedCrowdedness is null)
+            {
+                return;
+            }
+
+            await HallCrowdednessService.SetHallCrowdedness(updatedCrowdedness, ct);
         }
     }
     ```
-
-    > [!NOTE]
-    > Feeds and States (`IState<T>` and `IListState<T>` for collections) are both used as a gateway to asynchronously request data from a service and wrap the result or error (if any) in metadata
-    to be displayed in the View in accordingly. However, unlike a Feed, a State, as its name suggests, is stateful.  
+    
+    > [!NOTE]  
+    > Feeds and States (`IState<T>` and `IListState<T>` for collections) are both used as a gateway to asynchronously request data from a service and wrap the result or error (if any) in metadata to be displayed in the View in accordingly.  
+    However, unlike a Feed, a State, as its name suggests, is stateful.  
     While a Feed is just a query of a stream of data, a State also implies an up-to-date value that represents the current state of the application that can be accessed and updated.    
 
-    > [!TIP]
+    > [!TIP]  
     > Unlike feeds, States require a reference to the owner type which is used to store and manage the state of the model.  
     In addition, by having a reference to the owner, we link the lifetime of the model with its owner, and the State is ready to be collected by the Garbage Collector as soon as its owner is disposed.
 
@@ -94,7 +99,21 @@ The difference of States is that they provide update operators and enable manipu
 >
 > ```c#
 > HallCrowdedness hallCrowdedness = await this.HallCrowdedness;
-> ```  
+> ```
+
+1. Replace anything inside the `Page` element with the following code:
+
+    ```xaml
+    <StackPanel>
+        <TextBlock Text="How many people are currently in the hall?" />
+        <TextBox 
+            DataContext="{Binding HallCrowdedness}"
+            Text="{Binding NumberOfPeopleInHall, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+    </StackPanel>
+    ```
+
+When the user edits the text in the `TextBox`, MVUXs data-binding adapters translate between the data-binding into updating the `HallCrowdedness` state, by recreating the whole `HallCrowdedness` entity (it's immutable) with the changed `NumberOfPeopleInHall` value that was received per the `TextBox` edit.
 
 ## MVUX commands
 
@@ -106,14 +125,10 @@ The difference of States is that they provide update operators and enable manipu
         
     In addition, MVUX reads the `Save` method, and generates in the bindable Model a command named `Save` that can be used from the View, which is invoked asynchronously.
 
-1. Replace anything inside the `Page` element with the following code:
+1. In the XAML file, after the `TextBox`, add the following `Button` code:
 
     ```xaml
-    <StackPanel>
-        <TextBlock Text="How many people are currently in the hall?" />
-        <TextBox 
-            DataContext="{Binding HallCrowdedness}"
-            Text="{Binding NumberOfPeopleInHall, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+        <TextBox ... />
 
         <Button Content="Save" Command="{Binding Save}" />
     </StackPanel>
@@ -145,3 +160,6 @@ The difference of States is that they provide update operators and enable manipu
     ![](../Assets/SimpleState-3.jpg)
     
     As you can see, the current value of the state has gotten the updated number '*15*'. This is now being saved to the service, in the following line execution once you hit <kbd>F5</kbd> again.
+
+> [!NOTE]  
+> The source-code for the sample app can be found [here](https://github.com/unoplatform/Uno.Samples/tree/master/UI/MvuxHowTos/TheFancyWeddingHall).
