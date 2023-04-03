@@ -7,7 +7,38 @@ uid: Overview.Configuration
 
 This feature uses [Microsoft.Extensions.Configuration](https://www.nuget.org/packages/Microsoft.Extensions.Configuration) for any configuration related work. For more documentation on configuration, read the references listed at the bottom.
 
-## AppSettings
+## Using Configuration
+
+The `IConfiguration` interface is registered as a service when the `UseConfiguration()` extension method is used.
+
+```csharp
+protected override void OnLaunched(LaunchActivatedEventArgs e)
+{
+    var appBuilder = this.CreateBuilder(e)
+    .Configure(
+        host => host
+            .UseConfiguration( /* ... */)
+    );
+
+    Host = appBuilder.Build();
+...
+```
+
+`IConfiguration` is then available to be accessed by any class instantiated by the dependency injection (DI) container:
+
+```csharp
+public class MyService : IMyService
+{
+    private readonly IConfiguration configuration;
+
+    public MyService(IConfiguration configuration)
+    {
+        this.configuration = configuration;
+    }
+...
+```
+
+## App settings file sources
 
 To use `appsettings.json` file packaged as **EmbeddedResource** in the application:  
 
@@ -17,17 +48,40 @@ private IHost Host { get; }
 protected override void OnLaunched(LaunchActivatedEventArgs e)
 {
     var appBuilder = this.CreateBuilder(e)
-    .Configure(
-        host => host
-            .UseConfiguration(configure: builder => 
-                builder.EmbeddedSource<App>( includeEnvironmentSettings: true ))
-    );
+        .Configure(
+            host => host
+                .UseConfiguration(
+                    builder => builder
+                        .EmbeddedSource<App>()
+                )
+        );
 
     Host = appBuilder.Build();
 ...
 ```
 
-To use `appsettings.json` file packaged as **Content** in the application:   
+The recommended approach to specifying a configuration file source, especially when targeting Web Assembly (WASM), is to register it as an **EmbeddedResource** as described above. Configuration data read from embedded resources has the benefit of being available to the application immediately upon startup. However, it is still possible to package the file source as **Content** instead:   
+
+```csharp
+private IHost Host { get; }
+
+protected override void OnLaunched(LaunchActivatedEventArgs e)
+{
+    // NOT RECOMMENDED FOR WEB ASSEMBLY
+    var appBuilder = this.CreateBuilder(e)
+        .Configure(
+            host => host
+                .UseConfiguration(
+                    builder => builder
+                        .ContentSource<App>()
+                )
+        );
+
+    Host = appBuilder.Build();
+...
+```
+
+Both `EmbeddedSource` and `ContentSource` methods will also create settings files that are specific to the current environment by default, `appsettings.<hostenvironment>.json` (eg `appsettings.development.json`). This can be disabled by setting the `includeEnvironmentSettings` argument to `false` (default value is `true`):
 
 ```csharp
 private IHost Host { get; }
@@ -35,22 +89,21 @@ private IHost Host { get; }
 protected override void OnLaunched(LaunchActivatedEventArgs e)
 {
     var appBuilder = this.CreateBuilder(e)
-    .Configure(
-        host => host
-            .UseConfiguration(configure: builder => 
-                builder.ContentSource<App>( includeEnvironmentSettings: true ))
-    );
+        .Configure(
+            host => host
+                .UseConfiguration(
+                    builder => builder
+                        .EmbeddedSource<App>(includeEnvironmentSettings: false)
+                )
+        );
 
     Host = appBuilder.Build();
-...
 ```
-
-By default, both `EmbeddedSource` and `ContentSource` methods will also create settings files that are specific to the current environment, `appsettings.<hostenvironment>.json` (eg `appsettings.development.json`). This can be disabled by setting the `includeEnvironmentSettings` argument to `false` (default value is `true`).
 
 > [!TIP]
 > It is recommended to ensure all configuration information is read before creation of the `IHost` instance by only using `EmbeddedSource`. This will allow configuration to determine which services are created.
 
-## App Configuration 
+## Sections
 
 Map configuration section to class and register with dependency injection (DI):
 
@@ -82,42 +135,11 @@ public class MainViewModel : ObservableObject
 }
 ```
 
-## Configuration Access
+## Updating configuration values at runtime
 
-The `IConfiguration` interface is registered as a service when the `UseConfiguration()` extension method is used.
+The **writable configuration** feature enables the ability to update configuration values at runtime. This pattern may also be referred to as the _settings pattern_ in certain documentation.  With the `UseConfiguration()` extension method, `IWritableOptions<T>` is registered as a service. The recommended approach when specifying a set of settings for this feature is to use **configuration sections**.
 
-```csharp
-protected override void OnLaunched(LaunchActivatedEventArgs e)
-{
-    var appBuilder = this.CreateBuilder(e)
-    .Configure(
-        host => host
-            .UseConfiguration( /* ... */)
-    );
-
-    Host = appBuilder.Build();
-...
-```
-
-The `IConfiguration` can then be accessed in any class created by the DI container:
-
-```csharp
-public class MyService : IMyService
-{
-    private readonly IConfiguration configuration;
-
-    public MyService(IConfiguration configuration)
-    {
-        this.configuration = configuration;
-    }
-...
-```
-
-## Writable Configuration
-
-Writable configuration allows for the ability to update configuration values at runtime. This is done by using the `IWritableOptions<T>` interface. This interface is registered as a service when the `UseConfiguration()` extension method is used. The recommended approach to using this feature is with configuration sections.
-
-Register a configuration section for writable configuration does not require it to exist in any source. The section will be created if it does not exist.
+Registering a configuration section for writable configuration does not require it to exist in any source. The section will be created if it does not exist.
 
 ```csharp
 protected override void OnLaunched(LaunchActivatedEventArgs e)
