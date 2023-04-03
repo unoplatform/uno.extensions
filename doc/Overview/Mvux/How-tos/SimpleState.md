@@ -73,7 +73,12 @@ and the `FeedView` control, to asynchronously load, display and manipulate data 
         {
             var updatedCrowdedness = await HallCrowdedness;
 
-            await HallCrowdednessService.SetHallCrowdedness(updatedCrowdedness!, ct);
+            if(updatedCrowdedness is null)
+            {
+                return;
+            }
+
+            await HallCrowdednessService.SetHallCrowdedness(updatedCrowdedness, ct);
         }
     }
     ```
