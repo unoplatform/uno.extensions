@@ -1,5 +1,5 @@
 ﻿---
-uid: Overview.Reactive.HowTos.ListFeed
+uid: Overview.Mvux.HowToListFeed
 ---
 
 # How to create a list feed
@@ -20,7 +20,7 @@ of a list-feed (`IListFeed<T>`) and the `FeedView` control.
 ## Create the Model
 
 1. Create an MVUX project by following the steps in
-[this tutorial](xref:Overview.Reactive.HowTos.CreateMvuxProject), and name your project *PeopleApp*.
+[this tutorial](xref:Overview.Mvux.HowToMvuxProject), and name your project *PeopleApp*.
 
 1. Add a class named *PeopleService.cs*, and replace its content with the following:
 
@@ -66,17 +66,16 @@ of a list-feed (`IListFeed<T>`) and the `FeedView` control.
     ```
 
     > [!NOTE]
-    >
-    > Feeds (`IFeed<T>` and `IListFeed<T>` for collections) are used as a gateway
-    > to asynchronously request data from a service and wrap the result or an error if any in metadata
-    > to be displayed in the View in accordingly.  
-    > Learn more about list-feeds [here](xref:Overview.Reactive.HowTos.ListFeed).
+    Feeds (`IFeed<T>` and `IListFeed<T>` for collections) are used as a gateway
+    to asynchronously request data from a service and wrap the result or an error if any in metadata
+    to be displayed in the View in accordingly.  
+    Learn more about list-feeds [here](xref:Overview.Mvux.HowToListFeed).
 
-    > [!TIP]
-    > Feeds are stateless
-    > and are there for when the data from the service is read-only and we're not planning to enable edits to it.  
-    > MVUX also provides stateful feeds. For that purpose States (`IState<T>` and `<IListState<T>` for collections) come handy.
-    > Refer to [this tutorial](xref:Overview.Reactive.HowTos.SimpleState) to learn more about states.
+    [!TIP]
+    Feeds are stateless
+    and are there for when the data from the service is read-only and we're not planning to enable edits to it.  
+    MVUX also provides stateful feeds. For that purpose States (`IState<T>` and `<IListState<T>` for collections) come handy.
+    Refer to [this tutorial](xref:Overview.Mvux.HowToSimpleState) to learn more about states.
 
 ## Data-bind the view
 
@@ -142,17 +141,17 @@ after the line that calls `InitializeComponent()`, add the following line:
 1. When the app loads you'll notice how the `ProgressTemplate` shows (if you've included one),
 till the data is received from the service (2 seconds).
 
-    ![](Assets/SimpleFeed-3.gif)
+    ![](../Assets/SimpleFeed-3.gif)
 
 1. Once the data is the available, the `FeedView` switches to its `ValueTemplate`
 (the first default `DataTemplate` in our example),
 and displays the people list.
 
-    ![](Assets/ListFeed-1.jpg)
+    ![](../Assets/ListFeed-1.jpg)
 
 1. If you're using Visual-Studio 2022, Right-click the `PeopleApp` project, and navigate to *Dependencies*.  
 Open up *net7.0-windows10...* → *Analyzers*.  
 Under *Uno.Extensions.Reactive.Generator*, expand *Uno.Extensions.Reactive.FeedGenerator*.  
 Here you'll be able to inspect all files MVUX has generated for you, and learn more about how MVUX runs behind the scenes.
 
-    ![](Assets/InspectGeneratedCode.jpg)
+    ![](../Assets/InspectGeneratedCode.jpg)

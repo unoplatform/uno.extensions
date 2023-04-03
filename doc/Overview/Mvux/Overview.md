@@ -1,5 +1,5 @@
 ﻿---
-uid: Overview.Reactive.Overview
+uid: Overview.Mvux.Overview
 ---
 
 # MVUX Overview
@@ -104,16 +104,16 @@ It's important to note that MVUX uses code-generation to create the proxy types 
 This is how MVUX **extends** MVU to work with data binding.
 
 > [!TIP]
-> For the full example see [How to create a simple feed](xref:Overview.Reactive.HowTos.SimpleFeed)
+> For the full example see [How to create a feed](xref:Overview.Mvux.HowToSimpleFeed)
 
 ## MVUX components
 
 MVUX consists of four central components:
 
-- [Model](#Model)
-- [View](#View)
-- [Update](#Update)
-- [Extended](#Extended)
+- [Model](#model)
+- [View](#view)
+- [Update](#update)
+- [Extended](#extended)
 
 ### Model
 
@@ -156,10 +156,10 @@ or other long running data-sources, and display the resulting data appropriately
 
 The key features Uno Platform provides in the MVUX toolbox are:
 
-- [Metadata](#Metadata)
-- [Code generation](#Code-Generation)
-- [UI Controls](#UI-Controls)
-- [Binding engine](#Binding-engine)
+- [Metadata](#metadata)
+- [Code generation](#code-generation)
+- [UI Controls](#ui-controls)
+- [Binding engine](#binding-engine)
 
 #### Metadata
 

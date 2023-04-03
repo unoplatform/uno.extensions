@@ -1,5 +1,5 @@
 ---
-uid: Overview.Reactive.FeedState
+uid: Overview.Mvux.FeedState
 ---
 
 # Feeds & States

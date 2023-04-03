@@ -1,5 +1,5 @@
 ---
-uid: Overview.Reactive.HowTos.MvuxProject
+uid: Overview.Mvux.HowToMvuxProject
 ---
 
 # How to set up an MVUX project
@@ -15,7 +15,7 @@ In this tutorial you'll learn how to set up an Uno Platform project to use MVUX.
 
     - Make sure you have the latest version of Uno Extension (v4.8) installed.
 
-        ![](Assets/MvuxProject-VsixVersion.jpg)
+        ![](../Assets/MvuxProject-VsixVersion.jpg)
 
     - Press <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>N</kbd> to create a new project and select "Uno Platform App".
 
@@ -23,11 +23,11 @@ In this tutorial you'll learn how to set up an Uno Platform project to use MVUX.
 
     - When prompted Select *Blank* and click *Customize*
 
-        ![](Assets/MvuxProject-StartupType.jpg)
+        ![](../Assets/MvuxProject-StartupType.jpg)
 
     - In the *Presentation* tab (3rd one), select MVUX.
 
-        ![](Assets/MvuxProject-Mvux.jpg)
+        ![](../Assets/MvuxProject-Mvux.jpg)
 
     - Click *Create* on the bottom right corner.    
     
