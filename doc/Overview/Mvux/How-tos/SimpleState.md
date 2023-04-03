@@ -78,7 +78,7 @@ and the `FeedView` control, to asynchronously load, display and manipulate data 
     }
     ```
 
-    > [!NOTE]
+    > [!NOTE]  
     > Feeds and States (`IState<T>` and `IListState<T>` for collections) are both used as a gateway
     to asynchronously request data from a service and wrap the result or error (if any) in metadata
     to be displayed in the View in accordingly.
@@ -86,7 +86,7 @@ and the `FeedView` control, to asynchronously load, display and manipulate data 
     While a Feed is just a query of a stream of data, a State also implies an up-to-date value
     that represents the current state of the application that can be accessed and updated.    
 
-    > [!TIP]
+    > [!TIP]  
     > Unlike feeds, States require a reference to the owner type which is used to store and manage the state of the model.  
     In addition, by having a reference to the owner, we link the lifetime of the model with its owner,
     and the State is ready to be collected by the Garbage Collector as soon as its owner is disposed.
@@ -99,13 +99,27 @@ represents a sequence of values, with access to the additional metadata.
 The difference of States is that they provide update operators
 and enable manipulating the data, as opposed to Feeds, which doesn't.
 
-> [!TIP]
+> [!TIP]  
 > An `IFeed<T>` as well as `IState<T>` are awaitable,
 > meaning that to get the value of the feed you would do the following in the model:  
 >
 > ```c#
 > HallCrowdedness hallCrowdedness = await this.HallCrowdedness;
-> ```  
+> ```
+
+1. Replace anything inside the `Page` element with the following code:
+
+    ```xaml
+    <StackPanel>
+        <TextBlock Text="How many people are currently in the hall?" />
+        <TextBox 
+            DataContext="{Binding HallCrowdedness}"
+            Text="{Binding NumberOfPeopleInHall, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+    </StackPanel>
+    ```
+
+When the user edits the text in the `TextBox`, MVUXs data-binding adapters translate between the data-binding into updating the `HallCrowdedness` state, by recreating the whole `HallCrowdedness` entity (it's immutable) with the changed `NumberOfPeopleInHall` value that was received per the `TextBox` edit.
 
 ## MVUX commands
 
@@ -121,14 +135,10 @@ and enable manipulating the data, as opposed to Feeds, which doesn't.
     In addition, MVUX reads the `Save` method, and generates in the bindable Model a command named `Save`
     that can be used from the View, which is invoked asynchronously.
 
-1. Replace anything inside the `Page` element with the following code:
+1. In the XAML file, after the `TextBox`, add the following `Button` code:
 
     ```xaml
-    <StackPanel>
-        <TextBlock Text="How many people are currently in the hall?" />
-        <TextBox 
-            DataContext="{Binding HallCrowdedness}"
-            Text="{Binding NumberOfPeopleInHall, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+        <TextBox ... />
 
         <Button Content="Save" Command="{Binding Save}" />
     </StackPanel>
