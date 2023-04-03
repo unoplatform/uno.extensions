@@ -4,7 +4,7 @@ uid: Overview.Mvux.HowToSimpleFeed
 
 # How to create a feed
 
-In this tutorial you will learn how to create an MVUX project and use a combination of a feed (`IFeed<T>`)
+In this tutorial you will learn how to create a project that uses MVUX with a combination of a feed (`IFeed<T>`)
 and the `FeedView` control to asynchronously load and display data coming from a service.
 
  - The data will come from a service that asynchronously provides.
@@ -80,7 +80,7 @@ meaning that to get the value of the feed you would do the following in the mode
 > ```  
 > 
 > To make it possible to data bind to a feeds, the MVUX analyzers read the `WeatherModel`
-> and generate a proxy type called `BindableWeatherModel`, which exposes properties that the View can data bind to.
+> and generate a proxy type called `BindableWeatherModel`, which exposes properties that the View can data bind to. In this case the `BindableWeatherModel` exposes a `CurrentWeather` property that can be uses in a data binding expression the same way you would with a regular property that returns a `WeatherInfo` entity.
 
 1. Open the file `MainView.xaml` and replace the `Page` contents with the following:
 
@@ -124,7 +124,7 @@ MVUX is capable of much more than the simple example you've just seen.
 
 In the next section we'll use the `FeedView` control to unlock the capabilities of the feed.  
 
-1. Now close the app and add the following namespace to the `MainView.xaml` file:
+1. Add the following namespace to the `MainView.xaml` file:
 
     `xmlns:mvux="using:Uno.Extensions.Reactive.UI"`
 
@@ -138,8 +138,7 @@ In the next section we'll use the `FeedView` control to unlock the capabilities 
     </mvux:FeedView>
     ```
 
-    Notice how we set the `DataContext` property to a `Data` property.  
-    You can also simply set the `Text` property binding to `Data.Temperature` instead, if you prefer.
+    Notice how the `DataContext` property on the `TextBlock` is data bound to a `Data` property. Alternatively, the `Text` property can be data bound to `Data.Temperature` instead, if you prefer.
 
     > [!TIP]
     > The `FeedView` wraps its source (in this case our `CurrentWeather` feed) in a `FeedViewState` object,
@@ -159,7 +158,7 @@ with the `TextBlock` displaying the value obtained from the service:
 
     ![](../Assets/SimpleFeed-4.jpg)
 
-1. Close the app again and let's continue by adding a `Refresh` button.  
+1. Let's add a `Refresh` button to allow the user to request an update to the data.  
 Change the `FeedView` content to the following:
 
     ```xaml
