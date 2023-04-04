@@ -13,7 +13,7 @@ internal static class SelectionHelper
 			return ranges;
 		}
 
-		using var enumerator = ranges.OrderBy(range => range.Length).GetEnumerator();
+		using var enumerator = ranges.OrderBy(range => range.FirstIndex).GetEnumerator();
 		if (!enumerator.MoveNext())
 		{
 			return Array.Empty<SelectionIndexRange>();

@@ -27,7 +27,6 @@ internal sealed class SelectionService : ISelectionService, IDisposable, ISelect
 		_setSelectionFromView = setSelectionFromView;
 	}
 
-
 	#region Change selection from source
 	public void SetFromSource(SelectionInfo selection)
 	{

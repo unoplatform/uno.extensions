@@ -27,11 +27,11 @@ public sealed class ItemsChanged : ChangesConstraint
 	public static ItemsChanged Remove<T>(int index, IEnumerable<T> items)
 		=> new(RichNotifyCollectionChangedEventArgs.RemoveSome<T>(items.ToList(), index));
 
-	public static ItemsChanged Replace<T>(int index, IEnumerable<T> oldItems, IEnumerable<T> newItems)
-		=> new(RichNotifyCollectionChangedEventArgs.ReplaceSome<T>(oldItems.ToList(), newItems.ToList(), index));
+	public static ItemsChanged Replace<T>(int index, IEnumerable<T> oldItems, IEnumerable<T> newItems, bool isReplaceOfSameEntities)
+		=> new(RichNotifyCollectionChangedEventArgs.ReplaceSome<T>(oldItems.ToList(), newItems.ToList(), index, isReplaceOfSameEntities));
 
-	public static ItemsChanged Replace<T>(int index, T oldItem, T newItem)
-		=> new(RichNotifyCollectionChangedEventArgs.Replace<T>(oldItem, newItem, index));
+	public static ItemsChanged Replace<T>(int index, T oldItem, T newItem, bool isReplaceOfSameEntity)
+		=> new(RichNotifyCollectionChangedEventArgs.Replace<T>(oldItem, newItem, index, isReplaceOfSameEntity));
 
 	public static ItemsChanged Move<T>(int oldIndex, int newIndex, params T[] items)
 		=> new(RichNotifyCollectionChangedEventArgs.MoveSome<T>(items.ToList(), oldIndex, newIndex));

@@ -36,8 +36,9 @@
 		<Setter Property="Template">
 			<Setter.Value>
 				<ControlTemplate TargetType="uer:FeedView">
-					<Grid VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-						  HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}">
+					<Grid
+						VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+						HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}">
 						<VisualStateManager.CustomVisualStateManager>
 							<uer:SmoothVisualStateManager>
 								<uer:SmoothVisualStateRule MinDuration="0:0:0.500" />
@@ -165,7 +166,7 @@
 
 						<Grid
 							x:Name="ProgressRoot"
-							Visibility="Visible">
+							Visibility="Collapsed">
 							<ContentPresenter
 								x:Name="ProgressPresenter"
 								Content="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=State.Progress}"

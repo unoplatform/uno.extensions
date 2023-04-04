@@ -95,19 +95,19 @@ partial class CollectionAnalyzer
 			}
 		}
 
-		public void Update(T oldItem, T newItem, int index)
+		public void Keep(T oldItem, T newItem, int index)
 		{
 			// As they don't impact the 'result' index, replace-instance are buffered separately and will be inserted at the top of the changes collection.
 			// Note: We use a single '_Same' node for all updates
 
-			UpdateOrReplace(ref _sameHead, oldItem, newItem, index, (i, o) => new _Same<T>(i, o)); ;
+			KeepOrReplace(ref _sameHead, oldItem, newItem, index, (i, o) => new _Same<T>(i, o)); ;
 		}
 
 		public void Replace(T oldItem, T newItem, int index)
 		{
 			// As they don't impact the 'result' index, replaces are buffered separately and will be inserted at the top of the changes collection.
 
-			UpdateOrReplace(ref _replaceHead, oldItem, newItem, index, (i, o) => new _Replace<T>(i, o));
+			KeepOrReplace(ref _replaceHead, oldItem, newItem, index, (i, o) => new _Replace<T>(i, o, isReplaceOfSameEntities: true));
 		}
 
 		public void Add(T item, int at, int max)
@@ -137,7 +137,7 @@ partial class CollectionAnalyzer
 			remove.Append(item);
 		}
 
-		private void UpdateOrReplace<TNode>(ref TNode? head, T oldItem, T newItem, int index, Func<int, int, TNode> factory)
+		private void KeepOrReplace<TNode>(ref TNode? head, T oldItem, T newItem, int index, Func<int, int, TNode> factory)
 			where TNode : EntityChange<T>
 		{
 			if (head is null)

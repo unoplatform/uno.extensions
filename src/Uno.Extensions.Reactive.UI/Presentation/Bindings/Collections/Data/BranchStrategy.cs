@@ -84,7 +84,7 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Data
 
 			// Init the flat tracking view (ie. the flatten view of the groups that can be consumed directly by the ICollectionView properties)
 			var flatCollectionChanged = new FlatCollectionChangedFacet(() => view ?? throw new InvalidOperationException("The owner provider must be resolved lazily!"));
-			var flatSelectionFacet = new SelectionFacet(source, () => view ?? throw new InvalidOperationException("The owner provider must be resolved lazily!"));
+			var flatSelectionFacet = new SelectionFacet(source, flatCollectionChanged, () => view ?? throw new InvalidOperationException("The owner provider must be resolved lazily!"));
 			var flatPaginationFacet = new PaginationFacet(source, flatCollectionChanged, extendedPropertiesFacet);
 
 			// Init the groups tracking
