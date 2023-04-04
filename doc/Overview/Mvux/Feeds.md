@@ -40,7 +40,8 @@ Asynchronous data can be obtained in several ways.
 The most common is via a `ValueTask` that returns the data value(s) when ready:
 
 ```c#
-_currentCount = 0;
+private int _currentCount = 0;
+
 public async ValueTask<CounterValue> CountOne(CancellationToken ct)
 {
     await Task.Delay(TimeSpan.FromSeconds(1));
@@ -62,7 +63,7 @@ and the Task returns the value when it's ready, unless it was cancelled using th
 Using the `CountOne` method, creating a Feed is as easy as:
 
 ```c#
-public IFeed Value => Feed.Async(_myService.CountOne);
+public IFeed<CounterValue> Value => Feed.Async(_myService.CountOne);
 ```
 
 `Feed` is a static class that provides Feed factory methods, as well as extension methods for Feeds.  
@@ -72,7 +73,7 @@ Should the signature of your method be different, for example if the method retu
 
 ```c#
 // Service method
-public async Task<CounterValue> CountOne();
+public async Task<CounterValue> CountOne() { ... }
 
 // Feed creation
 public IFeed<CounterValue> CurrentCount => Feed.Async(async ct => await _myService.CountOne());
@@ -90,7 +91,12 @@ public async IAsyncEnumerable<CounterValue> StartCounting([EnumeratorCancellatio
     {
         await Task.Delay(TimeSpan.FromSeconds(1));
                 
-        return new CounterValue(i);
+        if (ct.IsCancellationRequested)
+        {
+            yield break;
+        }
+
+        yield return new CounterValue(++_currentCount);
     }
 }
 ```
@@ -98,9 +104,9 @@ public async IAsyncEnumerable<CounterValue> StartCounting([EnumeratorCancellatio
 Referring to the Async Enumerable from the example a Feed can be created in the following way:
 
 ```c#
-public async IAsyncEnumerable<CounterValue> StartCounting(CancellationToken ct);
+public async IAsyncEnumerable<CounterValue> StartCounting(CancellationToken ct) { ... }
 
-public IFeed<CounterValue> CurrentCount => Feed.AsyncEnumerable(StartCounting);
+public IFeed<CounterValue> CurrentCount => Feed.AsyncEnumerable(_myService.StartCounting);
 ```
 
 `CancellationToken`s are essential to enable halting an ongoing async operation.  
