@@ -12,10 +12,9 @@ They accompany the requests with additional metadata that tell whether the reque
 
 ## Feeds are stateless
 
-Feeds are used as a gateway to request data from services, but it does not hold the data. The data is rather sent over to the requesting party awaiting the feed itself (see [below](#directly-await-feeds)).
-
-As such, feeds do not provide support for reacting upon changes the user makes to the data, and the data is preserved in its original state.  
-You can look at a Feed as a read-only representation of the requested data.
+Feeds are used as a gateway to request data from services and hold it in a stateless manner to be displayed by the View.  
+Feeds are stateless, and do not provide support for reacting upon changes the user makes to the data on the View, the data can only be reloaded and refreshed upon request which is when the underlying task or Async-Enumerable will be invoked and the data refreshed.
+In other words, a Feed is a read-only representation of the data received from the server.
 
 > [!TIP]
 > In contrast to Feeds, [States](xref:Overview.Mvux.States) are stateful and keep track of the up-to-date state as applied by changes from the View by the user.
@@ -55,6 +54,7 @@ public async ValueTask<CounterValue> CountOne(CancellationToken ct)
 > [!NOTE]
 > `ValueTask` is interchangeable with `Task`, but `ValueTask` was chosen to be in unity with the `IAsyncEnumerable` interface.
 > A `Task` is easily convertible to `ValueTask` nonetheless.
+> Learn more about [`Task`](https://learn.microsoft.com/en-us/dotnet/api/system.threading.tasks.task), [`ValueTask`](https://learn.microsoft.com/en-us/dotnet/api/system.threading.tasks.valuetask?view=net-6.0), or read [this article](https://devblogs.microsoft.com/dotnet/understanding-the-whys-whats-and-whens-of-valuetask/) discussing the differences between the two.
 
 This is known as a 'pull' method, as we're repeatedly calling the Task when we're looking for new data,
 and the Task returns the value when it's ready, unless it was cancelled using the token (this will be discussed in another tutorial).
