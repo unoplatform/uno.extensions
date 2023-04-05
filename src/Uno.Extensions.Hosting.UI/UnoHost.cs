@@ -1,13 +1,10 @@
-﻿using System.Linq;
-using Microsoft.Extensions.DependencyInjection;
-using Windows.Storage;
-
-namespace Uno.Extensions.Hosting;
+﻿namespace Uno.Extensions.Hosting;
 
 public static class UnoHost
 {
 	public static IHostBuilder CreateDefaultBuilder(string[]? args = null)
 	{
+		var callingAssembly = Assembly.GetCallingAssembly();
 		return new HostBuilder()
 			.ConfigureCustomDefaults(args)
 			.ConfigureAppConfiguration((ctx, appConfig) =>
@@ -32,7 +29,7 @@ public static class UnoHost
 					Directory.CreateDirectory(dataFolder);
 				}
 #endif
-				var appHost = AppHostingEnvironment.FromHostEnvironment(ctx.HostingEnvironment, dataFolder);
+				var appHost = AppHostingEnvironment.FromHostEnvironment(ctx.HostingEnvironment, dataFolder, callingAssembly);
 				ctx.HostingEnvironment = appHost;
 			})
 			.ConfigureServices((ctx, services) =>
