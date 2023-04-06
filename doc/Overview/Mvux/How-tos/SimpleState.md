@@ -4,8 +4,7 @@ uid: Overview.Mvux.HowToSimpleState
 
 # How to create a state with a command
 
-In this tutorial you will learn how to create an MVUX project and basic usage of a state (`IState<T>`)
-and the `FeedView` control, to asynchronously load, display and manipulate data from and to an service.
+In this tutorial you will learn how to create an MVUX project and basic usage of a state (`IState<T>`) and the `FeedView` control, to asynchronously load, display and manipulate data from and to an service.
 
  - The data is provided by a service that asynchronously retrieves and updates a single value that determines the crowdedness of a wedding hall, via a 'remote' service.
  - A State to asynchronously request and update the data from and to the service.
@@ -14,8 +13,7 @@ and the `FeedView` control, to asynchronously load, display and manipulate data 
 
 ## Create the Model
 
-1. Create an MVUX project by following the steps in
-[this tutorial](xref:Overview.Mvux.HowToMvuxProject), and name your project `TheFancyWeddingHall`.
+1. Create an MVUX project by following the steps in [this tutorial](xref:Overview.Mvux.HowToMvuxProject), and name your project `TheFancyWeddingHall`.
 
 1. Add a class named *HallCrowdednessService.cs*, and replace its content with the following:
 
@@ -54,9 +52,7 @@ and the `FeedView` control, to asynchronously load, display and manipulate data 
     }
     ```
 
-    We're using a [record](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/builtin-types/record)
-    for the `HallCrowdedness` entity type on purpose,
-    as records are designed to be immutable to ensure purity of objects as well as other features.
+    We're using a [record](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/builtin-types/record) for the `HallCrowdedness` entity type on purpose, as records are designed to be immutable to ensure purity of objects as well as other features.
 
 1. Create a class named *HallCrowdednessModel.cs* and replace its content with the following:
 
@@ -82,31 +78,24 @@ and the `FeedView` control, to asynchronously load, display and manipulate data 
         }
     }
     ```
-
+    
     > [!NOTE]  
-    > Feeds and States (`IState<T>` and `IListState<T>` for collections) are both used as a gateway
-    to asynchronously request data from a service and wrap the result or error (if any) in metadata
-    to be displayed in the View in accordingly.
+    > Feeds and States (`IState<T>` and `IListState<T>` for collections) are both used as a gateway to asynchronously request data from a service and wrap the result or error (if any) in metadata to be displayed in the View in accordingly.  
     However, unlike a Feed, a State, as its name suggests, is stateful.  
-    While a Feed is just a query of a stream of data, a State also implies an up-to-date value
-    that represents the current state of the application that can be accessed and updated.    
+    While a Feed is just a query of a stream of data, a State also implies an up-to-date value that represents the current state of the application that can be accessed and updated.    
 
     > [!TIP]  
     > Unlike feeds, States require a reference to the owner type which is used to store and manage the state of the model.  
-    In addition, by having a reference to the owner, we link the lifetime of the model with its owner,
-    and the State is ready to be collected by the Garbage Collector as soon as its owner is disposed.
+    In addition, by having a reference to the owner, we link the lifetime of the model with its owner, and the State is ready to be collected by the Garbage Collector as soon as its owner is disposed.
 
 ## Data bind the View
 
 The `HallCrowdedness` property in `HallCrowdednessModel`, is an `IState` of type `HallCrowdedness`.  
-This is similar in concept to an `IObservable<HallCrowdedness>`, where an `IState<HallCrowdedness>`
-represents a sequence of values, with access to the additional metadata.
-The difference of States is that they provide update operators
-and enable manipulating the data, as opposed to Feeds, which doesn't.
+This is similar in concept to an `IObservable<HallCrowdedness>`, where an `IState<HallCrowdedness>` represents a sequence of values, with access to the additional metadata.  
+The difference of States is that they provide update operators and enable manipulating the data, as opposed to Feeds, which doesn't.
 
-> [!TIP]  
-> An `IFeed<T>` as well as `IState<T>` are awaitable,
-> meaning that to get the value of the feed you would do the following in the model:  
+> [!TIP]
+> An `IFeed<T>` as well as `IState<T>` are awaitable, meaning that to get the value of the feed you would do the following in the model:  
 >
 > ```c#
 > HallCrowdedness hallCrowdedness = await this.HallCrowdedness;
@@ -132,13 +121,9 @@ When the user edits the text in the `TextBox`, MVUXs data-binding adapters trans
 
     ![](../Assets/SimpleState-2.jpg)
 
-    MVUX's analyzers will read the `HallCrowdednessModel` and will generate a special
-    model-proxy called `BindableHallCrowdednessModel`,
-    which provides binding capabilities for the View and performs all Update message for us,
-    to keep the `IState` up to date.
+    MVUX's analyzers will read the `HallCrowdednessModel` and will generate a special model-proxy called `BindableHallCrowdednessModel`, which provides binding capabilities for the View and performs all Update message for us, to keep the `IState` up to date.
         
-    In addition, MVUX reads the `Save` method, and generates in the bindable Model a command named `Save`
-    that can be used from the View, which is invoked asynchronously.
+    In addition, MVUX reads the `Save` method, and generates in the bindable Model a command named `Save` that can be used from the View, which is invoked asynchronously.
 
 1. In the XAML file, after the `TextBox`, add the following `Button` code:
 
@@ -149,23 +134,18 @@ When the user edits the text in the `TextBox`, MVUXs data-binding adapters trans
     </StackPanel>
     ```
 
-    The generated `Save` command is used as the button's `Command` property,
-    so that when the user clicks the button, the command is executed
-    and the call is directed to the `Save` method in the Model.
+    The generated `Save` command is used as the button's `Command` property, so that when the user clicks the button, the command is executed and the call is directed to the `Save` method in the Model.
 
     > [!TIP]
-    > A `CancellationToken` is automatically provided by the View and can be used in advanced scenarios.
-    This parameter can however be removed.
+    > A `CancellationToken` is automatically provided by the View and can be used in advanced scenarios, and is recommended to use although it's optional.
 
-1. Press <kbd>F7</kbd> to navigate to open code-view, and in the constructor, after the line that calls `InitializeComponent()`,
-add the following line:
+1. Press <kbd>F7</kbd> to navigate to open code-view, and in the constructor, after the line that calls `InitializeComponent()`, add the following line:
 
     ```c#
     this.DataContext = new BindableHallCrowdednessModel(new HallCrowdednessService());
     ```
 
-    The `BindableHallCrowdednessModel` is a special MVUX-generated model proxy class that represents a mirror of the `HallCrowdednessModel` adding binding capabilities,
-    for MVUX to be able to recreate and renew the model when an update message is sent by the view.  
+    The `BindableHallCrowdednessModel` is a special MVUX-generated model proxy class that represents a mirror of the `HallCrowdednessModel` adding binding capabilities, for MVUX to be able to recreate and renew the model when an update message is sent by the view.  
 
 1. Click <kbd>F5</kbd> to run the project
 
@@ -179,8 +159,7 @@ add the following line:
     
     ![](../Assets/SimpleState-3.jpg)
     
-    As you can see, the current value of the state has gotten the updated number '*15*'.
-    This is now being saved to the service, in the following line execution once you hit <kbd>F5</kbd> again.
+    As you can see, the current value of the state has gotten the updated number '*15*'. This is now being saved to the service, in the following line execution once you hit <kbd>F5</kbd> again.
 
 > [!NOTE]  
 > The source-code for the sample app can be found [here](https://github.com/unoplatform/Uno.Samples/tree/master/UI/MvuxHowTos/TheFancyWeddingHall).
