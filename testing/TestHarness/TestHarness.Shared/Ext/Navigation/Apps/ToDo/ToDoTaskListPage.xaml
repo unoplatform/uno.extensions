@@ -87,7 +87,6 @@
 						<ListView ItemsSource="{Binding CompletedTasks}"
 								  uen:Navigation.Request="Task"
 								  SelectionMode="None"
-								  IsItemClickEnabled="True"
 								  x:Name="CompletedTasks"
 								  ItemTemplate="{StaticResource TaskTemplate}" />
 					</Grid>
@@ -97,7 +96,6 @@
 						<ListView ItemsSource="{Binding ActiveTasks}"
 								  uen:Navigation.Request="Task"
 								  SelectionMode="None"
-								  IsItemClickEnabled="True"
 								  x:Name="ActiveTasks"
 								  ItemTemplate="{StaticResource TaskTemplate}" />
 					</Grid>
