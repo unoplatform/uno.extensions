@@ -146,10 +146,9 @@ private async ValueTask SomeAsyncMethod()
 
 #### Use Feeds in an MVUX Model
 
-MVUX analyzers generate a proxy-model for all models in your app (those with `Model` suffix), and for every Feed property (returning `IFeed<T>` or `IListFeed<T>`) found in the model, a special Feed (or List-Feed) property is being generated.  
-MVUX recommends using plain [POCO](https://en.wikipedia.org/wiki/Plain_old_CLR_object) (Plain Old CLR Object) `record` types as they're immutable, and does not require property change notifications to be raised.  
-The generated proxy and its properties ensure that data-binding is going to work flawlessly, even though property change notification is not implemented.
-For that matter it also generates entity-proxies wherever necessary.
+The MVUX analyzers generate a proxy entity for each of the models in your app (those with `Model` suffix). For every Feed property (returning `IFeed<T>` or `IListFeed<T>`) found in the model, a corresponding Feed (or List-Feed) property is being generated on the proxy entity.  
+MVUX recommends using plain [POCO](https://en.wikipedia.org/wiki/Plain_old_CLR_object) (Plain Old CLR Object) `record` types for the models in your app as they're immutable, and will not require any property change notifications to be raised.  
+The generated proxy and its properties ensure that data-binding will work, even though property change notifications aren't being raised by the models themselves.
 
 > [!Note]  
 > For the code generation to work, mark the Models and entities with the `partial` modifier, and have the Feed properties' access modifier as `public`.  
@@ -173,11 +172,11 @@ The Feed can be consumed directly from the View, it's as simple as binding a reg
 
 #### With the `FeedView` control
 
-The `FeedView` control is accustomed to work with Feeds and is tailored to the additional metadata mentioned [earlier](#what-are-feeds) that are disclosed by the Feed and respond to it automatically and efficiently.  
+The `FeedView` control has been designed to work with Feeds and is tailored to the additional metadata mentioned [earlier](#what-are-feeds) that are disclosed by the Feed and respond to it automatically and efficiently.  
 A `FeedView` has built-in templates that adapt the View according to the current state of the data, such as when the data request is still in progress, an error has occurred, or when the data contained no records.  
 Built-in templates are included with the `FeedView` for these states, but they can all be customized.
 
-Here's how to utilize the `FeedView` to display the data:
+Here's how to utilize the `FeedView` to display the same data as before:
 
 ```xaml
 <Page
