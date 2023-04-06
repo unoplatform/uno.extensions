@@ -31,6 +31,8 @@ public static class FrameworkElementExtensions
 		var nav = elementRegion.Navigator();
 		if (nav is not null)
 		{
+			var initialNavigation = () => nav.NavigateRouteAsync(root, initialRoute ?? string.Empty);
+
 			var start = () => Task.CompletedTask;
 			if (initialNavigate is not null)
 			{
@@ -48,7 +50,12 @@ public static class FrameworkElementExtensions
 			{
 				start = () => nav.NavigateRouteAsync(root, initialRoute ?? string.Empty);
 			}
-			var startupTask = elementRegion.Services!.Startup(start);
+			var fullstart = async () =>
+			{
+				await initialNavigation();
+				await start();
+			};
+			var startupTask = elementRegion.Services!.Startup(fullstart);
 			return startupTask;
 		}
 		return Task.CompletedTask;

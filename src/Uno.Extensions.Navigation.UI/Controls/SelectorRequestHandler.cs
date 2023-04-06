@@ -31,7 +31,9 @@ public class SelectorRequestHandler : ControlRequestHandlerBase<Selector>
 			{
 				return;
 			}
-			var data = sender.GetData() ?? actionArgs?.AddedItems?.FirstOrDefault();
+			var data = sender.GetData() ??
+							actionArgs?.AddedItems?.FirstOrDefault() ??
+							sender.SelectedItem; // In some cases, AddedItems is null, even though SelectedItem is not null
 
 			if(data is null)
 			{
@@ -59,8 +61,14 @@ public class SelectorRequestHandler : ControlRequestHandlerBase<Selector>
 		{
 			connect = () =>
 			{
-				lv.ItemClick += clickAction;
-				viewList.SelectionChanged += selectionAction;
+				if (lv.IsItemClickEnabled)
+				{
+					lv.ItemClick += clickAction;
+				}
+				else
+				{
+					viewList.SelectionChanged += selectionAction;
+				}
 			};
 
 			disconnect = () =>
