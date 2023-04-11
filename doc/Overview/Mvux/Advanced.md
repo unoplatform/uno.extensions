@@ -66,16 +66,96 @@ The data is then displayed on the View using a `ListView`:
 
 MVUX has two extension methods of `IListFeed<T>`, that enables single or multi selection.
 
+> [!NOTE]  
+> The source-code for the sample app demonstrated in this section can be found [here](https://github.com/unoplatform/Uno.Samples/tree/master/UI/MvuxHowTos/AdvancedPeopleApp).
+
 ### Single-item selection
 
-The 
+A Feed doesn't store any state, so the `People` property won't be able to hold any information, nor the currently selected item.  
+To enable storing the selected value in the model, we'll create an `IState<Person>` which will be updated by the `Selection` operator of the `IListFeed<T>` (it's an extension method).
+
+Let's change the `PeopleModel` as follows:
+
+```c#
+public partial record PeopleModel(IPeopleService PeopleService)
+{
+    public IListFeed<Person> People =>
+        ListFeed
+        .Async(PeopleService.GetPeopleAsync)
+        .Selection(SelectedPerson);
+
+    public IState<Person> SelectedPerson => State<Person>.Empty(this);
+}
+```
+
+The `SelectedPerson` State is initialized with an empty value using `State<Person>.Empty(this)` (we still need a reference to the current instance to enable caching).
+
+> [!NOTE]  
+> Read [this](xref:Overview.Mvux.States#other-ways-to-create-feeds) to learn more about States and the `Empty` factory method.
+
+The `Selection` operator was added to the existing `ListFeed.Async(...)` line, it will listen to the `People` List-Feed, and will affect its selection changes onto the `SelectedPerson` State property.
+
+In the View side, wrap the `ListView` element in a `StackPanel`, and insert additional elements to reflect the currently selected value via the `SelectedPerson` State.  
+We'll also add a separator (using `Border`) to be able to distinguish them.
+
+The View code shall look like the following:
+
+```xaml
+<Page ...>
+
+    <StackPanel>
+        <StackPanel DataContext="{Binding SelectedPerson}" Orientation="Horizontal" Spacing="5">
+            <TextBlock Text="Selected person:" />
+            <TextBlock Text="{Binding FirstName}"/>
+            <TextBlock Text="{Binding LastName}"/>
+        </StackPanel>
+
+        <Border Height="2" Background="Gray" />
+
+        <ListView ...>
+    </StackPanel>
+</Page>
+```
+
+When running the app, the top section will reflect the item the user selects in the `ListView`:
+
+![](../Assets/Selection.gif)
+
+> [!NOTE]  
+> The source-code for the sample app can be found [here](https://github.com/unoplatform/Uno.Samples/tree/master/UI/MvuxHowTos/AdvancedPeopleApp).
+
+#### Using a property selector
+
+*************
 
 ### Multi-item selection
 
+The `Selection` operator has another overload which enables selecting multiple items. An `IListState<Person>` is need for multi-selection instead of `IState<Person>` used above.
 
+In the `PeopleModel`, we'll modify the `SelectedPerson` property to look like the following:
+
+```c#
+public IState<IImmutableList<Person>> SelectedPeople => State<IImmutableList<Person>>.Empty(this);
+```
+
+Then change `.Selection(SelectedPerson)` to `.Selection(SelectedPeople)`.
+
+Head to the View and enable multi-selection in the `ListView` by changing its `SelectionMode` property to `Multiple`.
+
+
+
+> [!NOTE]  
+> The source-code for the sample app can be found [here](https://github.com/unoplatform/Uno.Samples/tree/master/UI/MvuxHowTos/AdvancedPeopleApp).
 
 ## Pagination
 
+> [!NOTE]  
+> The source-code for the sample app demonstrated in this section can be found [here](https://github.com/unoplatform/Uno.Samples/tree/master/UI/MvuxHowTos/AdvancedPeopleApp).
+
 ## Commands
 
+*************
+
 ## Observables
+
+*************
