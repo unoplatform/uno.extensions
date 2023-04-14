@@ -81,8 +81,10 @@ namespace Tests.__PropertySelectors
 		}
 	}
 }";
-		var (result1, result2) = GenerationTestHelper.RunGeneratorTwice(compilation.Compilation);
-		GenerationTestHelper.AssertGeneratorResult(result1, expectedCode, IncrementalStepRunReason.New);
-		GenerationTestHelper.AssertGeneratorResult(result2, expectedCode, IncrementalStepRunReason.Cached);
+		GenerationTestHelper.RunGeneratorTwice(
+			compilation.Compilation,
+			run1 => GenerationTestHelper.AssertRunReason(run1, IncrementalStepRunReason.New),
+			run2 => GenerationTestHelper.AssertRunReason(run2, IncrementalStepRunReason.Cached),
+			expectedCode);
 	}
 }

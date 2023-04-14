@@ -47,8 +47,10 @@ public class Given_PS0003
 		pathDiag.Location.GetLineSpan().StartLinePosition.Line.Should().Be(12);
 		pathDiag.Location.GetLineSpan().StartLinePosition.Character.Should().Be(15);
 
-		var (result1, result2) = GenerationTestHelper.RunGeneratorTwice(compilation.Compilation);
-		GenerationTestHelper.AssertGeneratorResult(result1, generatedCode: null, IncrementalStepRunReason.New);
-		GenerationTestHelper.AssertGeneratorResult(result2, generatedCode: null, IncrementalStepRunReason.Cached);
+		GenerationTestHelper.RunGeneratorTwice(
+			compilation.Compilation,
+			run1 => GenerationTestHelper.AssertRunReason(run1, IncrementalStepRunReason.New),
+			run2 => GenerationTestHelper.AssertRunReason(run2, IncrementalStepRunReason.Cached),
+			null);
 	}
 }
