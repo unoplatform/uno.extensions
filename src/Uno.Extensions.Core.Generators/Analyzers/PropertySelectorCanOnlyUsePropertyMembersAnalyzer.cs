@@ -200,16 +200,13 @@ internal sealed class PropertySelectorAnalyzer : DiagnosticAnalyzer
 		[NotNullWhen(true)] out IParameterSymbol? callerFileParameter,
 		[NotNullWhen(true)] out IParameterSymbol? callerLineParameter)
 	{
-		selectorParameter = method.Parameters.FirstOrDefault(p => p.Type.OriginalDefinition.Equals(propertySelectorSymbol, SymbolEqualityComparer.Default));
-		if (selectorParameter is null)
-		{
-			callerFileParameter = null;
-			callerLineParameter = null;
-			return false;
-		}
-
-		callerFileParameter = method.Parameters.FirstOrDefault(p => p.FindAttribute(callerFilePathSymbol) is not null);
-		callerLineParameter = method.Parameters.FirstOrDefault(p => p.FindAttribute(callerLineNumberSymbol) is not null);
-		return callerFileParameter is not null && callerLineParameter is not null;
+		return PropertySelectorCandidate.IsCandidate(
+			method,
+			isPropertySelectorParameter: p => p.Type.OriginalDefinition.Equals(propertySelectorSymbol, SymbolEqualityComparer.Default),
+			isCallerFilePathParameter: p => p.FindAttribute(callerFilePathSymbol) is not null,
+			isCallerLineNumberParameter: p => p.FindAttribute(callerLineNumberSymbol) is not null,
+			out selectorParameter,
+			out callerFileParameter,
+			out callerLineParameter);
 	}
 }
