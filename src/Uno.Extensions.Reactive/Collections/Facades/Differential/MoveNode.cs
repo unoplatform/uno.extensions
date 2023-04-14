@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Specialized;
 using System.Linq;
+using Uno.Extensions.Reactive.Utils;
 
 namespace Uno.Extensions.Collections.Facades.Differential;
 
@@ -25,6 +26,22 @@ internal sealed class MoveNode : IDifferentialCollectionNode
 		_oldFromIndex = arg.OldStartingIndex;
 		_oldToIndex = _oldFromIndex + _movedCount;
 		_newFromIndex = arg.NewStartingIndex;
+		_newToIndex = _newFromIndex + _movedCount;
+
+		_isBackward = _oldFromIndex > _newFromIndex;
+	}
+
+	public MoveNode(IDifferentialCollectionNode previous, int fromIndex, int toIndex, int count)
+	{
+		Previous = previous;
+		Count = previous.Count;
+
+		_moved = previous.AsList().Slice(fromIndex, count);
+		_movedCount = count;
+
+		_oldFromIndex = fromIndex;
+		_oldToIndex = _oldFromIndex + _movedCount;
+		_newFromIndex = toIndex;
 		_newToIndex = _newFromIndex + _movedCount;
 
 		_isBackward = _oldFromIndex > _newFromIndex;

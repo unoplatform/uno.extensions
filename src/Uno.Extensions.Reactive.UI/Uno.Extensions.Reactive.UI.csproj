@@ -13,7 +13,7 @@
 	</PropertyGroup>
 	
 	<Import Project="common.props" />
-
+	
 	<ItemGroup>
 		<PackageReference Include="Uno.UI" />
 		<PackageReference Include="Uno.Toolkit.UI" />

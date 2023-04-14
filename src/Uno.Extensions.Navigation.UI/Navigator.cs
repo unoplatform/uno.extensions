@@ -344,6 +344,11 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 		if (nested.Any() && !await ParentCanNavigate(request.Route))
 		{
 			request = request with { Route = request.Route.Next() };
+
+			// Make sure we always include dependencies - frame navigator will
+			// trim any route sections that are already in backstack
+			request = request.IncludeDependentRoutes(Resolver);
+
 			if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"Redirecting to children ({nested.Length}) New request: {request.Route}");
 			return NavigateChildRegions(nested, request);
 		}
@@ -365,6 +370,10 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 
 
 			request = request with { Route = request.Route.TrimQualifier(Qualifiers.Nested) };
+
+			// Make sure we always include dependencies - frame navigator will
+			// trim any route sections that are already in backstack
+			request = request.IncludeDependentRoutes(Resolver);
 
 			// Send request to both unnamed children and any that have the
 			// same name as the current route

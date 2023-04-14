@@ -19,7 +19,7 @@ public class TabBarNavigator : SelectorNavigator<TabBar>
 		{
 			if (Control is not null)
 			{
-				Control.SelectedItem = value;
+				Control.SelectedItem = value!;
 			}
 		}
 	}

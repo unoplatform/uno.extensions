@@ -6,7 +6,7 @@ uid: Learn.Tutorials.Authentication.HowToAuthentication
 `Uno.Extensions.Authentication` provides you with a consistent way to add authentication to your application. It is recommended to use one of the built in `IAuthenticationService` implementations. This tutorial will use the custom authorization to validate user credentials.
 
 > [!TIP]
-> This guide assumes you used the Uno.Extensions `dotnet new unoapp-extensions` template to create the solution. Instructions for creating an application from the template can be found [here](xref:Overview.Extensions)
+> This guide assumes you used the Uno.Extensions template to create the solution. Instructions for creating an application from the template can be found [here](xref:Overview.Extensions).
 
 ## Step-by-steps
 
@@ -14,14 +14,17 @@ uid: Learn.Tutorials.Authentication.HowToAuthentication
 
 - Install `Uno.Extensions.Authentication` into all projects
 
-- Add `UseAuthentication` to the `BuildAppHost` method. The `Login` callback is used to verify the credentials. If the user is authenticated, the callback needs to return a non-empty dictionary of key-value pairs (this would typically contain tokens such as an access token and/or refresh token).
+- Append `UseAuthentication` to the `IHostBuilder` instance. The `Login` callback is used to verify the credentials. If the user is authenticated, the callback needs to return a non-empty dictionary of key-value pairs (this would typically contain tokens such as an access token and/or refresh token).
 
     ```csharp
-    private static IHost BuildAppHost()
-    { 
-        return UnoHost
-                .CreateDefaultBuilder()
-                ...
+    private IHost Host { get; }
+
+    protected override void OnLaunched(LaunchActivatedEventArgs args)
+    {
+        var builder = this.CreateBuilder(args)
+            .Configure(host => 
+            {
+                host
                 .UseAuthentication(auth =>
                     auth.AddCustom(custom =>
                         custom.Login(
@@ -34,7 +37,9 @@ uid: Learn.Tutorials.Authentication.HowToAuthentication
                                 }
                                 return null;
                             })
-                )
+                ));
+            });
+    ...
     ```
 
 - Update `MainPage` to accept input via `TextBox` with a binding expression to connect to the `Username` property on the view model. The `Button` is also bound to the `Authenticate` method. 
@@ -76,14 +81,14 @@ uid: Learn.Tutorials.Authentication.HowToAuthentication
     ```csharp
     public async Task Start()
     {
-    	if (await _auth.RefreshAsync(CancellationToken.None))
-    	{
-    		await Navigator.NavigateViewModelAsync<SecondViewModel>(this);
-    	}
-    	else
-    	{
-    		await Navigator.NavigateViewModelAsync<MainViewModel>(this);
-    	}
+        if (await _auth.RefreshAsync(CancellationToken.None))
+        {
+            await Navigator.NavigateViewModelAsync<SecondViewModel>(this);
+        }
+        else
+        {
+            await Navigator.NavigateViewModelAsync<MainViewModel>(this);
+        }
     }
     ```
 
@@ -91,13 +96,13 @@ uid: Learn.Tutorials.Authentication.HowToAuthentication
 
     ```csharp
     routes
-    	.Register(
-    		new RouteMap("", View: views.FindByViewModel<ShellViewModel>() ,
-    				Nested: new RouteMap[]
-    				{
-    								new RouteMap("Main", View: views.FindByViewModel<MainViewModel>()),
-    								new RouteMap("Second", View: views.FindByViewModel<SecondViewModel>(), DependsOn:"Main"),
-    				}));
+        .Register(
+            new RouteMap("", View: views.FindByViewModel<ShellViewModel>() ,
+                Nested: new RouteMap[]
+                {
+                    new RouteMap("Main", View: views.FindByViewModel<MainViewModel>()),
+                    new RouteMap("Second", View: views.FindByViewModel<SecondViewModel>(), DependsOn:"Main"),
+                }));
     ```
 
 - Update `SecondPage` XAML to include a Button for logging out of the application. This will invoke the `Logout` method on the `SecondViewModel`.
@@ -159,18 +164,19 @@ From this walk through you can see how the IAuthenticationService can be used to
 - Add configuration for Refit endpoints
 
     ```csharp
-    public IHost InitializeHost()
+    private IHost Host { get; }
+
+    protected override void OnLaunched(LaunchActivatedEventArgs args)
     {
-    
-    	return UnoHost
-    			.CreateDefaultBuilder()
-    			...
-    			.ConfigureServices((context, services) =>
-    			{
-    				services
-    						.AddNativeHandler()
-    						.AddRefitClient<IDummyJsonEndpoint>(context);
-    			})
+        var builder = this.CreateBuilder(args)
+            .Configure(host => 
+            {
+                host
+                .UseHttp((context, services) =>
+                    http.AddRefitClient<IDummyJsonEndpoint>(context)
+                );
+            });
+    ...
     ```
 
 - Update `appsettings.json` to include a section that specifies the base Url for the Refit service. Note that the section name needs to match the interface (dropping the leading I) name. In this case the interface name is `IDummyJsonEndpoint`, so the configuration section is `DummyJsonEndpoint`
@@ -194,11 +200,14 @@ From this walk through you can see how the IAuthenticationService can be used to
 - Add the `UseAuthentication` method to the `InitializeHost` method, this time using the `AddCustom` overload that accepts a type parameter. Instead of an `IServiceProvider` being passed into the `Login` callback, and instance of the `IDummyJsonEndpoint` will be provided.
 
     ```csharp
-    public IHost InitializeHost()
+    private IHost Host { get; }
+
+    protected override void OnLaunched(LaunchActivatedEventArgs args)
     {
-        return UnoHost
-                .CreateDefaultBuilder()
-                ...
+        var builder = this.CreateBuilder(args)
+            .Configure(host => 
+            {
+                host
                 .UseAuthentication(auth =>
                     auth.AddCustom<IDummyJsonEndpoint>(custom =>
                         custom.Login(
@@ -210,11 +219,14 @@ From this walk through you can see how the IAuthenticationService can be used to
                                 var authResponse = await authService.Login(creds, cancellationToken);
                                 if (authResponse?.Token is not null)
                                 {
-                                	credentials["AccessToken"] = authResponse.Token;
-                                	return credentials;
+                                    credentials["AccessToken"] = authResponse.Token;
+                                    return credentials;
                                 }
                                 return default;
-                            }))
+                            })
+                ));
+            });
+    ...
     ```
 
 In this case the Username and Password are extracted out of the credentials dictionary and added to an instance of the Credentials class (which we added earlier, along with the IDummyJsonEndpoint interface), which is passed to the Login method.

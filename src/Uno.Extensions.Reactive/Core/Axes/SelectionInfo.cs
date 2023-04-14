@@ -136,7 +136,7 @@ public sealed record SelectionInfo
 		}
 
 		selectedItem = default!;
-		return true;
+		return false;
 	}
 
 	internal bool TryGetSelectedIndex<T>(IImmutableList<T> items, [NotNullWhen(true)] out uint? selectedIndex, bool failIfOutOfRange = true, bool failIfMultiple = false)

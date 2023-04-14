@@ -12,5 +12,5 @@ public static class ApplicationExtensions
 	/// <param name="args">The <see cref="LaunchActivatedEventArgs" /> passed to OnLaunched.</param>
 	/// <returns></returns>
 	public static IApplicationBuilder CreateBuilder(this Application app, LaunchActivatedEventArgs args) =>
-		new ApplicationBuilder(app, args);
+		new ApplicationBuilder(app, args, Assembly.GetCallingAssembly());
 }

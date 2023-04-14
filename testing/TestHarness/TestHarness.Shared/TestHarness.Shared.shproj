@@ -14,10 +14,21 @@
     <_Globbed_Compile Remove="Ext\Navigation\Dialogs\DialogsComplexFlyout.xaml.cs" />
     <_Globbed_Compile Remove="Ext\Navigation\Dialogs\DialogsComplexFlyoutOnePage.xaml.cs" />
     <_Globbed_Compile Remove="Ext\Navigation\Dialogs\DialogsComplexFlyoutTwoPage.xaml.cs" />
+    <_Globbed_Compile Remove="Ext\Navigation\NavigationView\NavigationViewDataCookbookDetailsPage.xaml.cs" />
+    <_Globbed_Compile Remove="Ext\Navigation\NavigationView\NavigationViewDataCookbooksPage.xaml.cs" />
+    <_Globbed_Compile Remove="Ext\Navigation\NavigationView\NavigationViewDataEntityPickerFlyout.xaml.cs" />
+    <_Globbed_Compile Remove="Ext\Navigation\NavigationView\NavigationViewDataRecipeDetailsPage.xaml.cs" />
+    <_Globbed_Compile Remove="Ext\Navigation\NavigationView\NavigationViewDataRecipesPage.xaml.cs" />
+    <_Globbed_Compile Remove="Ext\Navigation\NavigationView\NavigationViewDataService.cs" />
   </ItemGroup>
   <ItemGroup>
     <_Globbled_Page Remove="Ext\Navigation\Dialogs\DialogsComplexFlyout.xaml" />
     <_Globbled_Page Remove="Ext\Navigation\Dialogs\DialogsComplexFlyoutOnePage.xaml" />
     <_Globbled_Page Remove="Ext\Navigation\Dialogs\DialogsComplexFlyoutTwoPage.xaml" />
+    <_Globbled_Page Remove="Ext\Navigation\NavigationView\NavigationViewDataCookbookDetailsPage.xaml" />
+    <_Globbled_Page Remove="Ext\Navigation\NavigationView\NavigationViewDataCookbooksPage.xaml" />
+    <_Globbled_Page Remove="Ext\Navigation\NavigationView\NavigationViewDataEntityPickerFlyout.xaml" />
+    <_Globbled_Page Remove="Ext\Navigation\NavigationView\NavigationViewDataRecipeDetailsPage.xaml" />
+    <_Globbled_Page Remove="Ext\Navigation\NavigationView\NavigationViewDataRecipesPage.xaml" />
   </ItemGroup>
 </Project>

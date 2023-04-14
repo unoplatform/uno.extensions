@@ -124,15 +124,13 @@ internal class ThemeService : IThemeService, IDisposable
 			return false;
 		}
 
-		var newTheme = theme;
-		if (theme == AppTheme.System)
+		rootElement.RequestedTheme = theme switch
 		{
-			//Set System theme
-			var systemTheme = SystemThemeHelper.GetCurrentOsTheme();
-			newTheme = systemTheme == ApplicationTheme.Dark ? AppTheme.Dark : AppTheme.Light;
-		}
-
-		rootElement.RequestedTheme = newTheme == AppTheme.Dark ? ElementTheme.Dark : ElementTheme.Light;
+			AppTheme.System => ElementTheme.Default,
+			AppTheme.Dark => ElementTheme.Dark,
+			AppTheme.Light => ElementTheme.Light,
+			_ => ElementTheme.Default,
+		};
 
 		SaveDesiredTheme(theme);
 

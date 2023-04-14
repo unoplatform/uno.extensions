@@ -34,6 +34,9 @@
 			<Button AutomationProperties.AutomationId="ShowNavigationViewDataBoundButton"
 					Content="NavigationView DataBound"
 					Click="NavigationViewDataBoundClick" />
+			<Button AutomationProperties.AutomationId="ShowNavigationViewDataButton"
+					Content="NavigationView Chef Data"
+					Click="NavigationViewDataClick" />
 		</StackPanel>
 	</Grid>
 

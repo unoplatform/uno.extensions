@@ -1,0 +1,10 @@
+﻿{
+  "profiles": {
+    "TestHarness.Windows (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "TestHarness.Windows (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}

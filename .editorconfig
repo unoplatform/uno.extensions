@@ -239,3 +239,7 @@ dotnet_diagnostic.SA1101.severity = none
 
 # SA1309: Field names should not begin with underscore
 dotnet_diagnostic.SA1309.severity = none
+
+# sets grammar check language
+# https://devblogs.microsoft.com/visualstudio/visual-studio-spell-checker-preview-now-available/
+spelling_languages = en-us

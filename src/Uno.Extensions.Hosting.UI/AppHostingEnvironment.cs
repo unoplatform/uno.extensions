@@ -4,14 +4,16 @@ using Uno.Foundation;
 
 namespace Uno.Extensions.Hosting;
 
-public class AppHostingEnvironment : HostingEnvironment, IAppHostEnvironment
+public class AppHostingEnvironment : HostingEnvironment, IAppHostEnvironment, IDataFolderProvider
 #if __WASM__
 	, IHasAddressBar
 #endif
 {
-	public string? AppDataPath { get; set; }
+	public string? AppDataPath { get; init; }
 
-    public static AppHostingEnvironment FromHostEnvironment(IHostEnvironment host, string? appDataPath)
+	public Assembly? HostAssembly { get; init; }
+
+    public static AppHostingEnvironment FromHostEnvironment(IHostEnvironment host, string? appDataPath, Assembly hostAssembly)
     {
         return new AppHostingEnvironment
         {
@@ -19,8 +21,9 @@ public class AppHostingEnvironment : HostingEnvironment, IAppHostEnvironment
             ApplicationName = host.ApplicationName,
             ContentRootFileProvider = host.ContentRootFileProvider,
             ContentRootPath = host.ContentRootPath,
-            EnvironmentName = host.EnvironmentName
-        };
+            EnvironmentName = host.EnvironmentName,
+			HostAssembly = hostAssembly
+		};
     }
 
 #if __WASM__

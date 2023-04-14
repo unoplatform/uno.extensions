@@ -1,6 +1,6 @@
 ﻿namespace Uno.Extensions.Hosting;
 
-internal record ApplicationBuilder(Application App, LaunchActivatedEventArgs Arguments) : IApplicationBuilder
+internal record ApplicationBuilder(Application App, LaunchActivatedEventArgs Arguments, Assembly ApplicationAssembly) : IApplicationBuilder
 {
 	private readonly List<Action<IHostBuilder>> _delegates = new List<Action<IHostBuilder>>();
 
@@ -15,7 +15,7 @@ internal record ApplicationBuilder(Application App, LaunchActivatedEventArgs Arg
 
 	public IHost Build()
 	{
-		var builder = UnoHost.CreateDefaultBuilder();
+		var builder = UnoHost.CreateDefaultBuilder(ApplicationAssembly);
 		foreach (var del in _delegates)
 		{
 			del(builder);

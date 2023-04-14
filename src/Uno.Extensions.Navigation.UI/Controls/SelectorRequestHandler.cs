@@ -16,7 +16,7 @@ public class SelectorRequestHandler : ControlRequestHandlerBase<Selector>
 			var navdata = sender.GetData() ?? data;
 			var path = sender.GetRequest();
 			var nav = sender.Navigator();
-			if (nav is null)
+			if (nav is null || navdata is null)
 			{
 				return;
 			}
@@ -31,7 +31,14 @@ public class SelectorRequestHandler : ControlRequestHandlerBase<Selector>
 			{
 				return;
 			}
-			var data = sender.GetData() ?? sender.SelectedItem;
+			var data = sender.GetData() ??
+							actionArgs?.AddedItems?.FirstOrDefault() ??
+							sender.SelectedItem; // In some cases, AddedItems is null, even though SelectedItem is not null
+
+			if(data is null)
+			{
+				return;
+			}
 
 			await action(sender, data);
 		};
@@ -54,8 +61,14 @@ public class SelectorRequestHandler : ControlRequestHandlerBase<Selector>
 		{
 			connect = () =>
 			{
-				lv.ItemClick += clickAction;
-				viewList.SelectionChanged += selectionAction;
+				if (lv.IsItemClickEnabled)
+				{
+					lv.ItemClick += clickAction;
+				}
+				else
+				{
+					viewList.SelectionChanged += selectionAction;
+				}
 			};
 
 			disconnect = () =>

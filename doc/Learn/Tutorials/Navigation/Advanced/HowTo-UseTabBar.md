@@ -8,7 +8,7 @@ uid: Learn.Tutorials.Navigation.Advanced.TabBar
 
 ## Step-by-steps
 
-The Navigation capabilities offered by Uno Extensions include regions. Regions allow you to associate a specific sector of the view with an individual item on a navigation control from the same `Page`. Likewise, the Uno Extensions library has built-in support for responding to navigation gestures from the [Toolkit](https://github.com/unoplatform/uno.toolkit.ui) `TabBar`. Follow the steps below to define a user interface centered around navigating with this control.
+The Navigation capabilities offered by Uno.Extensions include regions. Regions allow you to associate a specific sector of the view with an individual item on a navigation control from the same `Page`. Likewise, the Uno.Extensions library has built-in support for responding to navigation gestures from the [Toolkit](https://github.com/unoplatform/uno.toolkit.ui) `TabBar`. Follow the steps below to define a user interface centered around navigating with this control.
 
 ### 1. Add necessary XAML namespaces
 
@@ -16,14 +16,14 @@ The Navigation capabilities offered by Uno Extensions include regions. Regions a
 
 ```xml
     <Page x:Class="UsingTabBar.Views.MainPage"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:local="using:UsingTabBar.Views"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d"
-        xmlns:uen="using:Uno.Extensions.Navigation.UI"
-        xmlns:utu="using:Uno.Toolkit.UI"
+          xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+          xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+          xmlns:local="using:UsingTabBar.Views"
+          xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+          xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+          mc:Ignorable="d"
+          xmlns:uen="using:Uno.Extensions.Navigation.UI"
+          xmlns:utu="using:Uno.Toolkit.UI"
     ...
 ```
 
@@ -41,7 +41,7 @@ The Navigation capabilities offered by Uno Extensions include regions. Regions a
     </Grid>
 ```
 
-* Define initial page and `TabBarItem` content. It's important to make each element that represents a sector of app content have it's `Visibility` explicitly set to `Collapsed`. Uno Extensions will handle toggling it back to `Visible` when necessary
+* Define initial page and `TabBarItem` content. It's important to make each element that represents a sector of app content have it's `Visibility` explicitly set to `Collapsed`. Uno.Extensions will handle toggling it back to `Visible` when necessary
 
 ```xml
     <Grid>
@@ -51,25 +51,25 @@ The Navigation capabilities offered by Uno Extensions include regions. Regions a
             <RowDefinition />
         </Grid.RowDefinitions>
         <utu:NavigationBar Content="Main Page"
-                        Style="{StaticResource MaterialNavigationBarStyle}" />
+                           Style="{StaticResource MaterialNavigationBarStyle}" />
         <Grid Grid.Row="1">
             <Grid Visibility="Collapsed">
                 <TextBlock Text="One"
-                        FontSize="24"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center" />
+                           FontSize="24"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center" />
             </Grid>
             <Grid Visibility="Collapsed">
                 <TextBlock Text="Two"
-                        FontSize="24"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center" />
+                           FontSize="24"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center" />
             </Grid>
             <Grid Visibility="Collapsed">
                 <TextBlock Text="Three"
-                        FontSize="24"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center" />
+                           FontSize="24"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center" />
             </Grid>
         </Grid>
     </Grid>
@@ -85,25 +85,25 @@ The Navigation capabilities offered by Uno Extensions include regions. Regions a
             <RowDefinition />
         </Grid.RowDefinitions>
         <utu:NavigationBar Content="Main Page"
-                            Style="{StaticResource MaterialNavigationBarStyle}" />
+                           Style="{StaticResource MaterialNavigationBarStyle}" />
         <Grid Grid.Row="1">
             <Grid Visibility="Collapsed">
                 <TextBlock Text="One"
-                        FontSize="24"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center" />
+                           FontSize="24"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center" />
             </Grid>
             <Grid Visibility="Collapsed">
                 <TextBlock Text="Two"
-                        FontSize="24"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center" />
+                           FontSize="24"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center" />
             </Grid>
             <Grid Visibility="Collapsed">
                 <TextBlock Text="Three"
-                        FontSize="24"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center" />
+                           FontSize="24"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center" />
             </Grid>
         </Grid>
         <utu:TabBar Grid.Row="2"
@@ -132,26 +132,26 @@ The Navigation capabilities offered by Uno Extensions include regions. Regions a
             <RowDefinition />
         </Grid.RowDefinitions>
         <utu:NavigationBar Content="Main Page"
-                            Style="{StaticResource MaterialNavigationBarStyle}" />
+                           Style="{StaticResource MaterialNavigationBarStyle}" />
         <Grid uen:Region.Attached="True"
               Grid.Row="1">
             <Grid Visibility="Collapsed">
                 <TextBlock Text="One"
-                        FontSize="24"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center" />
+                           FontSize="24"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center" />
             </Grid>
             <Grid Visibility="Collapsed">
                 <TextBlock Text="Two"
-                        FontSize="24"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center" />
+                           FontSize="24"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center" />
             </Grid>
             <Grid Visibility="Collapsed">
                 <TextBlock Text="Three"
-                        FontSize="24"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center" />
+                           FontSize="24"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center" />
             </Grid>
         </Grid>
         <utu:TabBar Grid.Row="2"
@@ -176,29 +176,29 @@ The Navigation capabilities offered by Uno Extensions include regions. Regions a
             <RowDefinition />
         </Grid.RowDefinitions>
         <utu:NavigationBar Content="Main Page"
-                            Style="{StaticResource MaterialNavigationBarStyle}" />
+                           Style="{StaticResource MaterialNavigationBarStyle}" />
         <Grid uen:Region.Attached="True"
               Grid.Row="1">
             <Grid uen:Region.Name="One" 
                   Visibility="Collapsed">
                 <TextBlock Text="One"
-                        FontSize="24"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center" />
+                           FontSize="24"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center" />
             </Grid>
             <Grid uen:Region.Name="Two" 
                   Visibility="Collapsed">
                 <TextBlock Text="Two"
-                        FontSize="24"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center" />
+                           FontSize="24"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center" />
             </Grid>
             <Grid uen:Region.Name="Three" 
                   Visibility="Collapsed">
                 <TextBlock Text="Three"
-                        FontSize="24"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center" />
+                           FontSize="24"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center" />
             </Grid>
         </Grid>
         <utu:TabBar Grid.Row="2"
