@@ -14,38 +14,6 @@ namespace Uno.Extensions.Generators.PropertySelector;
 
 internal readonly record struct PropertySelectorCandidate
 {
-	internal static bool IsCandidate(
-		IMethodSymbol method,
-		Func<IParameterSymbol, bool> isPropertySelectorParameter,
-		Func<IParameterSymbol, bool> isCallerFilePathParameter,
-		Func<IParameterSymbol, bool> isCallerLineNumberParameter,
-		[NotNullWhen(true)] out IParameterSymbol? selectorParameter,
-		[NotNullWhen(true)] out IParameterSymbol? callerFileParameter,
-		[NotNullWhen(true)] out IParameterSymbol? callerLineParameter)
-	{
-		selectorParameter = method.Parameters.FirstOrDefault(isPropertySelectorParameter);
-		if (selectorParameter is null)
-		{
-			callerFileParameter = null;
-			callerLineParameter = null;
-			return false;
-		}
-
-		callerFileParameter = method.Parameters.FirstOrDefault(isCallerFilePathParameter);
-		callerLineParameter = method.Parameters.FirstOrDefault(isCallerLineNumberParameter);
-		return callerFileParameter is not null && callerLineParameter is not null;
-	}
-
-	private static bool IsPropertySelectorParameter(IParameterSymbol parameter)
-	{
-		return parameter.Type is INamedTypeSymbol
-		{
-			IsGenericType: true,
-			MetadataName: "PropertySelector`2",
-			ContainingNamespace: { Name: "Edition", ContainingNamespace: { Name: "Extensions", ContainingNamespace.Name: "Uno" } }
-		};
-	}
-
 	public PropertySelectorCandidate(GeneratorSyntaxContext context, CancellationToken ct)
 	{
 		var syntax = (InvocationExpressionSyntax)context.Node;
@@ -103,4 +71,36 @@ internal readonly record struct PropertySelectorCandidate
 	public string? MethodGlobalNamespace { get; }
 	public string? MethodName { get; }
 	public EquatableArray<(string key, string accessor)>? Accessors { get; }
+
+	internal static bool IsCandidate(
+	IMethodSymbol method,
+	Func<IParameterSymbol, bool> isPropertySelectorParameter,
+	Func<IParameterSymbol, bool> isCallerFilePathParameter,
+	Func<IParameterSymbol, bool> isCallerLineNumberParameter,
+	[NotNullWhen(true)] out IParameterSymbol? selectorParameter,
+	[NotNullWhen(true)] out IParameterSymbol? callerFileParameter,
+	[NotNullWhen(true)] out IParameterSymbol? callerLineParameter)
+	{
+		selectorParameter = method.Parameters.FirstOrDefault(isPropertySelectorParameter);
+		if (selectorParameter is null)
+		{
+			callerFileParameter = null;
+			callerLineParameter = null;
+			return false;
+		}
+
+		callerFileParameter = method.Parameters.FirstOrDefault(isCallerFilePathParameter);
+		callerLineParameter = method.Parameters.FirstOrDefault(isCallerLineNumberParameter);
+		return callerFileParameter is not null && callerLineParameter is not null;
+	}
+
+	private static bool IsPropertySelectorParameter(IParameterSymbol parameter)
+	{
+		return parameter.Type is INamedTypeSymbol
+		{
+			IsGenericType: true,
+			MetadataName: "PropertySelector`2",
+			ContainingNamespace: { Name: "Edition", ContainingNamespace: { Name: "Extensions", ContainingNamespace.Name: "Uno" } }
+		};
+	}
 }

@@ -180,7 +180,7 @@ internal class PropertySelectorsGenerationTool : ICodeGenTool
 
 			if (type is not INamedTypeSymbol { IsRecord: true } record)
 			{
-				return "";
+				return "/* Rule PS005 failed. */";
 			}
 
 			var ctor = record
@@ -193,7 +193,7 @@ internal class PropertySelectorsGenerationTool : ICodeGenTool
 
 			if (ctor is null)
 			{
-				return "";
+				return "/* Rule PS006 failed. */";
 			}
 
 			return $" ?? new({ctor.Where(arg => arg.value is not null).Select(arg => arg.value).JoinBy(", ")})";

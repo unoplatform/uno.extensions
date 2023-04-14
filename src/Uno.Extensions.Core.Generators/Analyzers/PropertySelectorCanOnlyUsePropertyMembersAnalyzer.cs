@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Immutable;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Microsoft.CodeAnalysis;
@@ -12,14 +11,17 @@ using Uno.Extensions.Generators.PropertySelector;
 
 namespace Uno.Extensions.Generators.Analyzers;
 
+/// <summary>
+/// Analyzer for common mistakes when using PropertySelectorGenerator.
+/// </summary>
 [DiagnosticAnalyzer(LanguageNames.CSharp)]
-internal sealed class PropertySelectorAnalyzer : DiagnosticAnalyzer
+public sealed class PropertySelectorAnalyzer : DiagnosticAnalyzer
 {
 	private sealed class Visitor : CSharpSyntaxVisitor
 	{
 		private readonly OperationAnalysisContext _context;
 		private readonly SimpleLambdaExpressionSyntax _selectorSyntax;
-		private bool _isFirstIdentifier;
+		private bool _isFirstIdentifier = true;
 
 		public Visitor(OperationAnalysisContext context, SimpleLambdaExpressionSyntax selectorSyntax)
 		{
@@ -71,6 +73,7 @@ internal sealed class PropertySelectorAnalyzer : DiagnosticAnalyzer
 		}
 	}
 
+	/// <inheritdoc/>
 	public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
 		Rules.PS0001.Descriptor,
 		Rules.PS0002.Descriptor,
@@ -80,6 +83,7 @@ internal sealed class PropertySelectorAnalyzer : DiagnosticAnalyzer
 		Rules.PS0006.Descriptor,
 		Rules.PS0102.Descriptor);
 
+	/// <inheritdoc/>
 	public override void Initialize(AnalysisContext context)
 	{
 		context.EnableConcurrentExecution();
@@ -91,12 +95,12 @@ internal sealed class PropertySelectorAnalyzer : DiagnosticAnalyzer
 			var callerlineNumberSymbol = context.Compilation.GetTypeByMetadataName("System.Runtime.CompilerServices.CallerLineNumberAttribute");
 			if (propertySelectorSymbol is not null && callerFilePathSymbol is not null && callerlineNumberSymbol is not null)
 			{
-				context.RegisterOperationAction(context => AnalyzerInvocation(context, propertySelectorSymbol, callerFilePathSymbol, callerlineNumberSymbol), OperationKind.Invocation);
+				context.RegisterOperationAction(context => AnalyzeInvocation(context, propertySelectorSymbol, callerFilePathSymbol, callerlineNumberSymbol), OperationKind.Invocation);
 			}
 		});
 	}
 
-	private static void AnalyzerInvocation(OperationAnalysisContext context, INamedTypeSymbol propertySelectorSymbol, INamedTypeSymbol callerFilePathSymbol, INamedTypeSymbol callerLineNumberSymbol)
+	private static void AnalyzeInvocation(OperationAnalysisContext context, INamedTypeSymbol propertySelectorSymbol, INamedTypeSymbol callerFilePathSymbol, INamedTypeSymbol callerLineNumberSymbol)
 	{
 		var operation = (IInvocationOperation)context.Operation;
 		var method = operation.TargetMethod;
@@ -132,7 +136,8 @@ internal sealed class PropertySelectorAnalyzer : DiagnosticAnalyzer
 			var count = path.Parts.Count;
 			var type = entityType;
 
-			if (entityTypeRecord.NullableAnnotation != NullableAnnotation.NotAnnotated &&
+			if (count > 0 &&
+				entityTypeRecord.NullableAnnotation != NullableAnnotation.NotAnnotated &&
 				!entityTypeRecord.Constructors.Any(ctor => ctor.IsAccessible() && !ctor.IsCloneCtor(entityTypeRecord) && ctor.Parameters.All(HasDefault)))
 			{
 				context.ReportDiagnostic(Rules.PS0006.GetDiagnostic(path.FullPath, path.Parts[0].Name, path.Parts[0].Node, type));

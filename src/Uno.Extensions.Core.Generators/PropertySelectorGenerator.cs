@@ -37,9 +37,9 @@ public partial class PropertySelectorGenerator : IIncrementalGenerator
 			.CreateSyntaxProvider(
 				(node, ct) => node.IsKind(SyntaxKind.InvocationExpression),
 				(ctx, ct) => new PropertySelectorCandidate(ctx, ct))
-			.Where(candidate => candidate.IsValid);
+			.Where(candidate => candidate.IsValid).WithTrackingName("syntaxProvider_PropertySelectorGenerator");
 
-		var provider = syntaxProvider.Combine(assemblyNameProvider);
+		var provider = syntaxProvider.Combine(assemblyNameProvider).WithTrackingName("combinedProvider_PropertySelectorGenerator");
 
 		// We use the Implementation as the generated code does not alter the SemanticModel (only generates a registry).
 		context.RegisterImplementationSourceOutput(provider, (context, souce) => _tool.Generate(context, souce.Left, souce.Right));
