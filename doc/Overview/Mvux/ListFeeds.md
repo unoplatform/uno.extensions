@@ -51,7 +51,7 @@ Here are a couple of examples of creating a List-Feed:
 
     Pull and push are explained more in the [Feeds page](xref:Overview.Mvux.Feeds#creation-of-feeds).
 
-1. There are also two helper methods that allow you to convert from a Feed to a List-Feed and vice versa.
+3. There are also two helper methods that allow you to convert from a Feed to a List-Feed and vice versa.
 
      - On an `IFeed<TCollection>` where `TCollection` is an `IImmutableList<TItem>`, you can call `ToListFeed()` to convert it to an `IListFeed<TItem>`.
      - In contrast, you can call `AsFeed()` on an `IListFeed<T>` to convert it to an `IFeed<IImmutableList<T>>`.
