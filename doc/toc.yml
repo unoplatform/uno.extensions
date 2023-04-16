@@ -65,12 +65,12 @@
       items:
         - name: Overview
           href: Overview/Mvux/Overview.md
-        - name: Advanced
-          href: Overview/Mvux/Advanced.md
         - name: Feeds
           href: Overview/Mvux/Feeds.md
         - name: States
           href: Overview/Mvux/States.md
+        - name: Advanced
+          href: Overview/Mvux/Advanced.md
         - name: How to
           items:
             - name: How to create an MVUX project  
