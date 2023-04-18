@@ -46,7 +46,7 @@ internal sealed class AsyncFeed<T> : IFeed<T>, IRefreshableSource
 			},
 			ct);
 
-		localRefreshTask?.ContinueWith(TryComplete, TaskContinuationOptions.AttachedToParent | TaskContinuationOptions.ExecuteSynchronously);
+		localRefreshTask?.ContinueWith(TryComplete, TaskContinuationOptions.ExecuteSynchronously);
 
 		void Refresh(RefreshRequest request)
 		{

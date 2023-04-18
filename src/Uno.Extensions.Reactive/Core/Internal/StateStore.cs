@@ -104,10 +104,10 @@ internal class StateStore : IStateStore
 		TState state;
 		lock (states)
 		{
-			// Note: we use the **boxed** initialValue as key for the states cache,
-			//		 but it's only to have a key, it's not expected to be retrieved,
+			// Note: we use the 'state' as key for the states cache as it's not expected to be retrieved,
 			//		 we keep it only for dispose.
-			states[initialValue] = state = factory(_root, initialValue);
+			state = factory(_root, initialValue);
+			states[state] = state;
 		}
 
 		if (_states is null) // The context has been disposed while we where creating the State ...
