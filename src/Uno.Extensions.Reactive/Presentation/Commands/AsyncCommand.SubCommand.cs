@@ -112,31 +112,48 @@ partial class AsyncCommand
 			var executionId = Guid.NewGuid();
 			_command.ReportExecutionStarting(executionId, coercedParameter, viewParameter);
 
-			Task.Run(
+			var completed = 0;
+			var task = Task.Run(
 					async () =>
 					{
 						using var _ = context.AsCurrent();
-						await _config.Execute(coercedParameter, _command._ct.Token);
+						await _config.Execute(coercedParameter, ct);
 					},
-					_command._ct.Token)
-				.ContinueWith((task, state) =>
-				{
-					try
-					{
-						var (command, id, coercedArg, viewArg) = ((AsyncCommand, Guid, object?, object?))state!;
-						var error = task.Exception switch
-						{
-							null or { InnerExceptions.Count: 0 } => null,
-							{ InnerExceptions.Count: 1 } aggregated => aggregated.InnerExceptions[0],
-							{ } aggregated => aggregated,
-						};
+					ct);
 
-						command.ReportExecutionEnded(id, coercedArg, viewArg, error);
-					}
-					catch (Exception) { } // Almost impossible, but an error here would crash the app
+			// Note: As the CT is cancelled when the command is disposed, we have to use a registration instead of a continuation
+			// to make sure `ReportExecutionEnded` is run synchronously so before the EventManager is being disposed!
+			var ctReg = _command._ct.Token.Register(Complete);
+
+			task.ContinueWith(
+				(_, state) =>
+				{
+					((CancellationTokenRegistration)state).Dispose();
+					Complete();
 				},
-					(_command, executionId, coercedParameter, viewParameter),
-					TaskContinuationOptions.AttachedToParent | TaskContinuationOptions.ExecuteSynchronously);
+				ctReg,
+				TaskContinuationOptions.AttachedToParent | TaskContinuationOptions.ExecuteSynchronously);
+
+			void Complete()
+			{
+				try
+				{
+					if (Interlocked.CompareExchange(ref completed, 1, 0) is not 0)
+					{
+						return; // Already completed
+					}
+
+					var error = task.Exception switch
+					{
+						null or { InnerExceptions.Count: 0 } => null,
+						{ InnerExceptions.Count: 1 } aggregated => aggregated.InnerExceptions[0],
+						{ } aggregated => aggregated,
+					};
+
+					_command.ReportExecutionEnded(executionId, coercedParameter, viewParameter, error);
+				}
+				catch (Exception) { } // Almost impossible, but an error here could crash the app
+			}
 
 			return true;
 		}

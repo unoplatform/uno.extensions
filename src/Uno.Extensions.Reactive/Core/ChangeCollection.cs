@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 namespace Uno.Extensions.Reactive;
@@ -47,4 +48,8 @@ public record ChangeCollection : IReadOnlyCollection<MessageAxis>
 
 	internal void Set(MessageAxis axis, IChangeSet? changeSet = null)
 		=> _values[axis] = changeSet;
+
+	/// <inheritdoc />
+	public override string ToString()
+		=> "Changed[" + string.Join(", ", _values.Select(c => c.Value is not null ? $"{c.Key.Identifier} ({c.Value})" : c.Key.Identifier)) + "]";
 }

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Net.Http.Headers;
 using System.Runtime.ExceptionServices;
 using System.Text;
 using System.Threading;
@@ -46,7 +47,7 @@ public class Given_AsyncCommand : FeedUITests
 	}
 
 	[TestMethod]
-	public async Task When_ExecuteMultipleConcurrentWithSameParameter_Then_ExecuteConcurrentAndReportExecutionStartAndEndOnlyOnce()
+	public async Task When_ExecuteMultipleConcurrentWithSameParameter_Then_ExecuteConcurrentAndReportMultipleExecutionStartAndEnd()
 	{
 		var tasks = new List<TaskCompletionSource>();
 		var config = new CommandConfig { Execute = async (p, ct) =>
@@ -61,19 +62,18 @@ public class Given_AsyncCommand : FeedUITests
 		sut.Execute(parameter);
 		executions.Count.Should().Be(1); // Start should be reported synchronously
 
+		await WaitFor(() => tasks.Count > 0); // Wait for the executions to effectively run in order to have the 'tasks' ordered properly!
+
 		sut.Execute(parameter);
 		executions.Count.Should().Be(2); // Start should be reported synchronously
 
-		await WaitFor(() => tasks.Count > 0);
-		tasks[0].SetResult();
-		try
-		{
-			await executions[0].Wait(100);
-		} catch(TimeoutException) { }
+		await WaitFor(() => tasks.Count > 1); // Wait for the 2 executions to effectively run concurrently. 
 
-		await WaitFor(() => tasks.Count > 1);
+		tasks[0].SetResult();
+		await executions[0].Wait(100);
+
 		tasks[1].SetResult();
-		await executions[0].Wait();
+		await executions[1].Wait();
 	}
 
 	[TestMethod]
@@ -94,16 +94,18 @@ public class Given_AsyncCommand : FeedUITests
 		sut.Execute(new object());
 		executions.Count.Should().Be(1); // Start should be reported synchronously
 
+		await WaitFor(() => tasks.Count > 0); // Wait for the executions to effectively run in order to have the 'tasks' ordered properly!
+
 		sut.Execute(new object());
 		executions.Count.Should().Be(2); // Start should be reported synchronously
 
-		await WaitFor(() => tasks.Count > 0);
+		await WaitFor(() => tasks.Count > 1); // Wait for the 2 executions to effectively run concurrently. 
+
 		tasks[0].SetResult();
 		await executions[0].Wait(100);
 
-		await WaitFor(() => tasks.Count > 1);
 		tasks[1].SetResult();
-		await executions[0].Wait();
+		await executions[1].Wait();
 	}
 
 	[TestMethod]

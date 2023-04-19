@@ -20,9 +20,12 @@ public sealed class TestDispatcher : IDispatcher, IDisposable
 	/// <summary>
 	/// Creates a new instance.
 	/// </summary>
-	public TestDispatcher()
+	public TestDispatcher(string? testName = null)
 	{
-		_thread = new Thread(Run);
+		_thread = new Thread(Run)
+		{
+			Name =  testName is {Length: >0} ? $"TestDispatcher for '{testName}'" : "testDispacther"
+		};
 		_thread.Start();
 	}
 

@@ -46,7 +46,7 @@ internal sealed class TokenSetAwaiter<T> : IDisposable
 			return Task.CompletedTask;
 		}
 
-		var task = new TaskCompletionSource<Unit>(TaskCreationOptions.AttachedToParent);
+		var task = new TaskCompletionSource<Unit>();
 		var awaiter = new Awaiter(this, tokens, () => task.TrySetResult(default));
 		ct.Register(awaiter.Complete);
 

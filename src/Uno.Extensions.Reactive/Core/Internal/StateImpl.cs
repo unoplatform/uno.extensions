@@ -20,7 +20,7 @@ internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, ISta
 
 	private bool _hasCurrent;
 	private Message<T> _current = Message<T>.Initial;
-	private TaskCompletionSource<Node>? _next = new(TaskCreationOptions.AttachedToParent);
+	private TaskCompletionSource<Node>? _next = new(); // Do not use attached: we don't want to keep the creating context alive and leak this State
 
 	/// <summary>
 	/// Gets the context to which this state belongs.
@@ -226,7 +226,7 @@ internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, ISta
 		[NotNullWhen(true)] out TaskCompletionSource<Node>? next, 
 		CancellationToken ct)
 	{
-		next = new TaskCompletionSource<Node>(TaskCreationOptions.AttachedToParent);
+		next = new TaskCompletionSource<Node>();
 		while (true)
 		{
 			current = _next;
