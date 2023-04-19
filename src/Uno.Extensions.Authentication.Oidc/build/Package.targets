@@ -1,0 +1,7 @@
+<Project>
+  <ItemGroup Condition=" '$(ImplicitUsings)' == 'true' OR '$(ImplicitUsings)' == 'enable' ">
+    <Using Include="Uno.Extensions" />
+    <Using Include="Uno.Extensions.Authentication" />
+    <Using Include="Uno.Extensions.Authentication.Oidc" />
+  </ItemGroup>
+</Project>

@@ -1,8 +1,6 @@
 <Project>
 	<PropertyGroup>
 		<AssemblyName>Uno.Extensions.Reactive.UI</AssemblyName>
-		<!-- Ensures the .xr.xml files are generated in a proper layout folder -->
-		<GenerateLibraryLayout>true</GenerateLibraryLayout>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(_IsUWP)'=='true'">

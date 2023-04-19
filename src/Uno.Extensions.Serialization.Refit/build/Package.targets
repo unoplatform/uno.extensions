@@ -1,0 +1,7 @@
+<Project>
+  <ItemGroup Condition=" '$(ImplicitUsings)' == 'true' OR '$(ImplicitUsings)' == 'enable' ">
+    <Using Include="Uno.Extensions" />
+    <Using Include="Uno.Extensions.Serialization" />
+    <Using Include="Uno.Extensions.Serialization.Refit" />
+  </ItemGroup>
+</Project>

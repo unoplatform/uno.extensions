@@ -1,7 +1,7 @@
 <Project ToolsVersion="15.0">
 	<PropertyGroup>
 		<AssemblyName>Uno.Extensions.Toolkit.UI</AssemblyName>
-		<GenerateLibraryLayout>true</GenerateLibraryLayout>
+
 		<RootNamespace>Uno.Extensions.Toolkit</RootNamespace>
 		<!--Temporary disable missing XML doc until fixed in the whole package-->
 		<WarningsNotAsErrors>$(WarningsNotAsErrors);CS1591</WarningsNotAsErrors>

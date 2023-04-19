@@ -27,6 +27,10 @@
 		<DebugType>portable</DebugType>
 		<DebugSymbols>True</DebugSymbols>
 		<ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+
+		<!-- Ensures the .xr.xml files are generated in a proper layout folder -->
+		<GenerateLibraryLayout>true</GenerateLibraryLayout>
+		<ImplicitUsings>true</ImplicitUsings>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)'=='Release'">
@@ -89,6 +93,11 @@
 		<SupportedOSPlatformVersion>10.14</SupportedOSPlatformVersion>
 		<TargetPlatformMinVersion>10.14</TargetPlatformMinVersion>
 	</PropertyGroup>
+
+	<ItemGroup>
+		<None Include="build\Package.targets" Pack="true" PackagePath="buildTransitive\$(PackageId).targets" Condition="!$(PackageId.Contains('WinUI'))"/>
+		<None Include="build\Package.targets" Pack="true" PackagePath="buildTransitive\$(PackageId).targets" Condition="$(PackageId.Contains('WinUI'))"/>
+	</ItemGroup>
 
 	<ItemGroup Condition="'$(TargetFramework)'=='xamarinmac20'">
 		<!-- Note: We don't use the $(_IsMacOS) condition and this ref is not needed for net6.0-macos and will cause some MSB3243 -->
