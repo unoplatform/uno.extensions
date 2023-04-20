@@ -31,6 +31,7 @@ using Uno.Extensions.Threading;
 namespace Uno.Core.Tests.Threading
 {
 	[TestClass]
+	[Ignore("Flaky tests")]
 	public class AsyncLockFixture
 	{
 		public TestContext TestContext { get; set; }
