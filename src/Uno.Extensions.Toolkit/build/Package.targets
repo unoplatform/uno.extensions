@@ -1,6 +1,5 @@
 <Project>
   <ItemGroup Condition=" '$(ImplicitUsings)' == 'true' OR '$(ImplicitUsings)' == 'enable' ">
-    <Using Include="Uno.Extensions" />
     <Using Include="Uno.Extensions.Toolkit" />
   </ItemGroup>
 </Project>
