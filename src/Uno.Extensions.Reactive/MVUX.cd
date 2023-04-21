@@ -101,6 +101,13 @@
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Struct>
+  <Struct Name="Uno.Extensions.Reactive.PageRequest">
+    <Position X="5" Y="9.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAEAAAAgAAA=</HashCode>
+      <FileName>Sources\PageRequest.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
   <Interface Name="Uno.Extensions.Reactive.ISignal" Collapsed="true">
     <Position X="5" Y="1" Width="1.5" />
     <TypeIdentifier>
