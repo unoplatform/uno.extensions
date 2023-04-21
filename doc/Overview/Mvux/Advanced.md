@@ -142,15 +142,146 @@ Then change `.Selection(SelectedPerson)` to `.Selection(SelectedPeople)`.
 
 Head to the View and enable multi-selection in the `ListView` by changing its `SelectionMode` property to `Multiple`.
 
-
-
 > [!NOTE]  
-> The source-code for the sample app can be found [here](https://github.com/unoplatform/Uno.Samples/tree/master/UI/MvuxHowTos/AdvancedPeopleApp).
+> The source-code for the sample app can be found [here](https://github.com/unoplatform/Uno.Samples/tree/master/UI/MvuxHowTos/SelectionPeopleApp).
 
 ## Pagination
 
+There are several ways to paginate data.
+
+### Incremental loading
+
+The easiest and most straight-forward is use the built-in incremental loading functionality that some controls (e.g. `ListView`, `GridView`) offer via the [`ISupportIncrementalLoading`](https://learn.microsoft.com/en-us/uwp/api/windows.ui.xaml.data.isupportincrementalloading) interface the paginated Feed implements.
+
+For the Pagination example we'll also use the *PeopleApp* example used above in [Selection](#selection), but you can find the full code [here](https://github.com/unoplatform/Uno.Samples/tree/master/UI/MvuxHowTos/PaginationPeopleApp).
+
+#### Service
+
+Let's change the `GetPeopleAsync` method in the *PeopleService.cs* file to support pagination:
+
+```c#
+namespace PaginationPeopleApp;
+
+public partial record Person(string FirstName, string LastName);
+
+public interface IPeopleService
+{
+    ValueTask<IImmutableList<Person>> GetPeopleAsync(uint pageSize, uint pageIndex, CancellationToken ct);
+
+    ValueTask<int> GetPageCount(int pageSize, CancellationToken ct);
+}
+
+public class PeopleService : IPeopleService
+{
+    public async ValueTask<IImmutableList<Person>> GetPeopleAsync(uint pageSize, uint pageIndex, CancellationToken ct)
+    {
+        // convert to int for use with LINQ
+        var (size, index) = ((int)pageSize, (int)pageIndex);
+
+        // fake delay to simulate loading data
+        await Task.Delay(TimeSpan.FromSeconds(1), ct);
+
+        // this is where we would asynchronously load actual data from a remote data store
+        var people = GetPeople();
+
+        return people
+            .Skip(size * index)
+            .Take(size)
+            .ToImmutableList();
+    }
+
+    // Determines how many pages we'll need to display all the data.
+    public async ValueTask<int> GetPageCount(int pageSize, CancellationToken ct) =>
+        (int)Math.Ceiling(GetPeople().Length / (double)pageSize);
+
+    private Person[] GetPeople() =>
+        new Person[]
+        {
+            new("Liam", "Wilson"),
+            new("Emma", "Murphy"),
+            new("Noah", "Jones"),
+            new("Olivia", "Harris"),
+            new("William", "Jackson"),
+            /* ... another gazillion names ... */
+        }
+    }
+}
+```
+
+#### Model
+
+```c#
+using Uno.Extensions.Reactive;
+
+namespace PaginationPeopleApp;
+
+public partial record PeopleModel(IPeopleService PeopleService)
+{
+    const int PageSize = 20;
+
+    public IListFeed<Person> PeopleAuto =>
+        ListFeed.AsyncPaginated(async (PageRequest pageRequest, CancellationToken ct) =>
+            await PeopleService.GetPeopleAsync(pageSize: PageSize, pageIndex: pageRequest.Index, ct));
+}
+```
+
+The `AsyncPaginated` method generates a `ListFeed` that supports pagination.
+
+Whenever the user scrolls down to see additional data and is hitting the end of the collection displayed in a `ListView`, the pagination List-Feed is automatically triggered with a page request.  
+The parameter of `AsyncPaginated`, is a delegate taking in a [`PageRequest`](#the-pagerequest-struct) value and a `CancellationToken` and returning an `IListFeed<T>` where `T` is `Person` in our case. This delegate is invoked when a page request comes in.
+
+As you can see, we are sending the `Index` property of the incoming `pageRequest` argument to determine what page we're positioned.  
+`PageSize` refers to a constant value of `20`, but the `PageRequest` also has a `DesiredSize` property which the `ListView` can set according to its capacity. So essentially you can substitute `pageSize: PageSize` with `pageSize: pageRequest.DesiredSize` which is a nullable `uint`, and is populated by the `ListView`. We used a constant `PageSize` for the sake of this demonstration.
+
+#### View
+
+```xaml
+<Page 
+    x:Class="PaginationPeopleApp.MainPage"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:PaginationPeopleApp"
+    xmlns:mvux="using:Uno.Extensions.Reactive.UI">
+
+    <Page.Resources>
+        <DataTemplate x:Key="PersonDataTemplate" x:DataType="local:Person">
+            <StackPanel Orientation="Horizontal" Spacing="2">
+                <TextBlock Text="{x:Bind FirstName}"/>
+                <TextBlock Text="{x:Bind LastName}"/>
+            </StackPanel>
+        </DataTemplate>
+    </Page.Resources>
+
+    <ListView ItemsSource="{Binding PeopleAuto}" ItemTemplate="{StaticResource PersonDataTemplate}"
+        DataFetchSize="20" Header="Next page auto-loading when on available capacity or scrolled"/>
+
+</Page>
+```
+
+As you can see, there's nothing special in the XAML code as MVUX is taking advantage of the tools already implemented with the `ListView`.
+
+- When the page load, the first 20 items are loaded (after a delay of one second - as simulated in the service).
+- If there's available space in the `ListView`, the next batch of 20 items will be requested from the Feed and loaded from the service thereafter.
+- When the user scroll down and hits the bottom of the `ListView`, the next 20 items will be requested.
+- This behavior will follow as the user scrolls down and chases the service for more data until all items have been loaded.
+
+Here's what the app renders like:
+
+![](../Assets/PaginationIncrementalLoading.gif)
+
+> [!TIP]  
+> You can use these members of the `ListView` to control data loading: [`DataFetchSize`](https://learn.microsoft.com/en-us/uwp/api/windows.ui.xaml.controls.listviewbase.datafetchsize), [`IncrementalLoadingThreshold`](https://learn.microsoft.com/en-us/uwp/api/windows.ui.xaml.controls.listviewbase.incrementalloadingthreshold), and [`IncrementalLoadingTrigger`](https://learn.microsoft.com/en-us/uwp/api/windows.ui.xaml.controls.listviewbase.incrementalloadingthreshold).
+
 > [!NOTE]  
-> The source-code for the sample app demonstrated in this section can be found [here](https://github.com/unoplatform/Uno.Samples/tree/master/UI/MvuxHowTos/AdvancedPeopleApp).
+> The source-code for the sample app demonstrated in this section can be found [here](https://github.com/unoplatform/Uno.Samples/tree/master/UI/MvuxHowTos/PaginationPeopleApp).
+
+### Manual loading
+
+### Manual loading with cursor
+
+### The `PageRequest` struct
+
+![](../Assets/PageRequest.jpg)
 
 ## Commands
 
