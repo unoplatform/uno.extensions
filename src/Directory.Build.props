@@ -95,8 +95,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<None Include="build\Package.targets" Pack="true" PackagePath="buildTransitive\$(PackageId).targets" Condition="exists('build') and !$(PackageId.Contains('WinUI'))"/>
-		<None Include="build\Package.targets" Pack="true" PackagePath="buildTransitive\$(PackageId).targets" Condition="exists('build') and $(PackageId.Contains('WinUI'))"/>
+		<None Include="build\Package.targets" Pack="true" PackagePath="buildTransitive\$(PackageId).targets" Condition="exists('build')"/>
 	</ItemGroup>
 
 	<ItemGroup Condition="'$(TargetFramework)'=='xamarinmac20'">
