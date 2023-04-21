@@ -9,6 +9,7 @@ using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Uno.Extensions.Reactive.WinUI.Tests;
 using Uno.UI.RuntimeTests;
+using Application = Microsoft.UI.Xaml.Application;
 
 namespace Uno.Extensions.RuntimeTests
 {

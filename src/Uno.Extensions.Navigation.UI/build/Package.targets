@@ -1,0 +1,7 @@
+<Project>
+  <ItemGroup Condition=" '$(ImplicitUsings)' == 'true' OR '$(ImplicitUsings)' == 'enable' ">
+    <Using Include="Uno.Extensions.Navigation.UI" />
+    <Using Include="Uno.Extensions.Navigation.UI.Controls" />
+    <Using Include="Uno.Extensions.Navigation.Navigators" />
+  </ItemGroup>
+</Project>
