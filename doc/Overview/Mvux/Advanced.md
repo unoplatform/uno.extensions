@@ -131,9 +131,7 @@ When running the app, the top section will reflect the item the user selects in 
 
 #### Using a property selector
 
-Selection can also be propagated to a new feed using Select
-
-**************************************************************************
+Selection can also be propagated to a new feed using the `Select` operator.
 
 ### Multi-item selection
 
@@ -156,6 +154,9 @@ Head to the View and enable multi-selection in the `ListView` by changing its `S
 
 There are several ways to paginate data.
 
+> [!NOTE]  
+> The source-code for the sample app demonstrated in this section can be found [here](https://github.com/unoplatform/Uno.Samples/tree/master/UI/MvuxHowTos/|PaginationPeopleApp).
+
 ### Incremental loading
 
 The easiest and most straight-forward is use the built-in incremental loading functionality that some controls (e.g. `ListView`, `GridView`) offer via the [`ISupportIncrementalLoading`](https://learn.microsoft.com/en-us/uwp/api/windows.ui.xaml.data.isupportincrementalloading) interface the paginated Feed implements.
@@ -175,7 +176,7 @@ public interface IPeopleService
 {
     ValueTask<IImmutableList<Person>> GetPeopleAsync(uint pageSize, uint pageIndex, CancellationToken ct);
 
-    ValueTask<int> GetPageCount(int pageSize, CancellationToken ct);
+    ValueTask<uint> GetPageCount(uint pageSize, CancellationToken ct);
 }
 
 public class PeopleService : IPeopleService
@@ -198,7 +199,7 @@ public class PeopleService : IPeopleService
     }
 
     // Determines how many pages we'll need to display all the data.
-    public async ValueTask<int> GetPageCount(int pageSize, CancellationToken ct) =>
+    public async ValueTask<uint> GetPageCount(uint pageSize, CancellationToken ct) =>
         (int)Math.Ceiling(GetPeople().Length / (double)pageSize);
 
     private Person[] GetPeople() =>
@@ -224,7 +225,7 @@ namespace PaginationPeopleApp;
 
 public partial record PeopleModel(IPeopleService PeopleService)
 {
-    const int PageSize = 20;
+    const uint PageSize = 20;
 
     public IListFeed<Person> PeopleAuto =>
         ListFeed.AsyncPaginated(async (PageRequest pageRequest, CancellationToken ct) =>
@@ -308,14 +309,14 @@ Using the example started in [incremental loading above](#incremental-loading), 
 Here's the method added to the service (*PeopleService.cs*):
 
 ```c#
-public async ValueTask<int> GetPageCount(int pageSize, CancellationToken ct) =>
-    (int)Math.Ceiling(GetPeople().Length / (double)pageSize);
+public async ValueTask<int> GetPageCount(uint pageSize, CancellationToken ct) =>
+    (uint)Math.Ceiling(GetPeople().Length / (double)pageSize);
 ```
 
 The signature of `GetPageCount` should also be added to the `IPeopleService` interface:
 
 ```c#
-ValueTask<int> GetPageCount(int pageSize, CancellationToken ct);
+ValueTask<int> GetPageCount(uint pageSize, CancellationToken ct);
 ```
 
 #### Model
@@ -327,7 +328,7 @@ public partial record PeopleModel(IPeopleService PeopleService)
 {
     public IListFeed<Person> PeopleAuto ...// will not be used in this example
 
-    const int PageSize = 20;
+    const uint PageSize = 20;
         
     public IFeed<int> PageCount =>
         Feed.Async(async (ct) => await PeopleService.GetPageCount(PageSize, ct));
@@ -417,9 +418,127 @@ Its properties are:
 There are several caveats in using `Skip` and `Take` (Offset pagination) with an arbitrary page size multiplied by the page number.
 
 - When we skip data records, the database might still have to process some the skipped records on its way to the desired ones.
-- If any updates have been applied to the records preceding the currently displayed page, and then the user moves to the next or previous page, there might be inconsistencies in showing the consequent data, some of the entries might be skipped or shown twice.
+- If any updates have been applied to the records preceding the currently displayed page, and then the user moves to the next or previous page, there might be inconsistencies in showing the subsequent data, some of the entries might be skipped or shown twice.
 
-An alternative way to paginate data is by using a 
+An alternative way to paginate data is by using a cursor that points to a specific record and take then number of desired records in a page onwards.  
+This is referred to as 'keyset pagination' or 'seek-based pagination'.
+
+To utilize this pagination style, MVUX provides another `ListFeed` factory overload, the `AsyncPaginatedByCursor`.
+
+The signature oƒ this method is:
+
+```c#
+public static IListFeed<T> AsyncPaginatedByCursor<TCursor>(TCursor firstPage, GetPage<TCursor, T> getPage)
+```
+
+where the `GetPage` type is a delegate with the following pattern:
+
+```
+public delegate ValueTask<PageResult<TCursor, TItem>> GetPage<TCursor, TItem>(TCursor cursor, uint? desiredPageSize, CancellationToken ct);
+```
+
+The callback delegate takes two parameters and returns two.
+
+The two input parameters are:
+
+- A cursor to the first page, in other words the item this page starts with. The service then starts by ordering the data and searching for the first item, then uses the second parameter:
+- The desired page size, the number of entries following it, along with another entity that uses as the cursor of the next page, which is not displayed to the user.
+- A `CancallationToken` which can be used to abort the operation.
+
+The callback returns a `PageResult<TCursor, TItem>`, and it contains:
+
+- An `ImmutableList<T>` containing the items to be displayed in the resulted page.
+- A `TCursor` that can be of a different type that points to the beginning of the upcoming page.
+
+To demonstrate this we'll stick to the *PaginatedPeopleApp* we've started before.
+
+### Service
+
+To keep the service agnostic, we'll add the following method to the Service:
+
+*IPeopleService*:
+
+```c#
+ValueTask<(IImmutableList<Person> CurrentPage, Person NextCursor)> GetPeopleAsync(Person? cursor, uint pageSize, CancellationToken ct);
+```
+
+This method has 3 parameters:
+
+- The first is a `Person` which uses as a cursor to the first page, i.e. the first `Person` of the requested page.
+- The second is a `uint` representing the number of entities to follow the first one. The reason of using a `uint` is that negative values are not expected here.
+- The third one is a `CancellationToken` which can be used to signal the service to abort loading data.
+
+The method returns a tuple with two components (same as `PageResult`, only keeping the service agnostic of MVUX):
+
+- An `IImmutableList<Person>` which includes the entities of this page
+- A `Person` which uses as a cursor as the beginning of the next page.
+
+> [!TIP]  
+> The cursor does not necessarily have to be a `Person` or the data type the collection contains, it can also be an ID or another key of an entity for the service to lookup and return it along with its upcoming entries.
+
+In the example above we want to override the `ToString` method of `Person` so that we can later order the entities by their string representation:
+
+```c#
+public partial record Person(string FirstName, string LastName)
+{
+    public override string ToString() => $"{FirstName} {LastName}";
+}
+```
+
+The fully implemented method in the service is as follows:
+
+```c#
+public async ValueTask<(IImmutableList<Person> CurrentPage, Person NextCursor)> GetPeopleAsync(Person? cursor, uint pageSize, CancellationToken ct)
+{
+    // fake delay to simulate loading data
+    await Task.Delay(TimeSpan.FromSeconds(1), ct);
+
+    var people = GetPeople();
+
+    var collection = people
+        // order by full name
+        .OrderBy(person => person.ToString())
+        // select only subsequent items
+        .Where(person => StringComparer.CurrentCultureIgnoreCase.Compare(cursor?.ToString(), person.ToString()) <= 0)
+        // take only n number of rows, plus the first entity of the next page
+        .Take((int)pageSize + 1)        
+        .ToArray();
+
+    // this returns a tuple of two elements
+    // first element is the current page's entities except the last
+    // the second contains the last item in the collection, which is a cursor for next page
+    return (CurrentPage: collection[..^1].ToImmutableList(), NextCursor: collection[^1]);
+}
+```
+
+### Model
+
+```c#
+public IListFeed<Person> PeopleCursor =>
+    ListFeed<Person>.AsyncPaginatedByCursor(
+            // starting off with a blank Person, since the person list is to be ordered by name, any valid name will follow.
+            firstPage: new Person(string.Empty, string.Empty), 
+            // this will be automatically invoked by the ISupportIncrementalLoading the ListView supports
+            getPage: async (cursor, desiredPageSize, ct) =>
+                {
+                    // gets the tuple result from the service
+                    var result = await PeopleService.GetPeopleAsync(cursor, PageSize, ct);
+                    // converts tuple to PageResult
+                    return new PageResult<Person, Person>(result.CurrentPage, result.NextCursor);
+                });
+```
+
+### View
+
+There's not much needed in the View as this is magically working via the `ISupportIncrementalLoading` implemented with the `ListView`!
+
+```xaml
+<ListView ItemsSource="{Binding PeopleCursor}" ItemTemplate="{StaticResource PersonDataTemplate}" />
+```
+
+When the program runs, it works like it did in auto incremental loading, except the people list is sorted by full-name:
+
+![](../Assets/PaginationKeyset.gif)
 
 ## Commands
 
