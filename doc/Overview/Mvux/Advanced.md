@@ -7,9 +7,14 @@ uid: Overview.Mvux.Overview
 This page covers the following topics:
 
 - [Selection](#selection)
+  - [Single item selection](#single-item-selection)
+  - [Multi-item selection](#multi-item-selection)
 - [Pagination](#pagination)
+  - [Incremental loading](#incremental-loading)
+  - [Offset pagination](#offset-pagination)
+  - [Keyset pagination with a cursor](#keyset-pagination-with-a-cursor)
 - [Commands](#commands)
-- [Observables](#observables)
+- [Inspecting the generated code](#inspecting-the-generated-code)
 
 ## Selection
 
@@ -126,7 +131,9 @@ When running the app, the top section will reflect the item the user selects in 
 
 #### Using a property selector
 
-*************
+Selection can also be propagated to a new feed using Select
+
+**************************************************************************
 
 ### Multi-item selection
 
@@ -228,7 +235,7 @@ public partial record PeopleModel(IPeopleService PeopleService)
 The `AsyncPaginated` method generates a `ListFeed` that supports pagination.
 
 Whenever the user scrolls down to see additional data and is hitting the end of the collection displayed in a `ListView`, the pagination List-Feed is automatically triggered with a page request.  
-The parameter of `AsyncPaginated`, is a delegate taking in a [`PageRequest`](#the-pagerequest-struct) value and a `CancellationToken` and returning an `IListFeed<T>` where `T` is `Person` in our case. This delegate is invoked when a page request comes in.
+The parameter of `AsyncPaginated`, is a delegate taking in a [`PageRequest`](#the-pagerequest-type) value and a `CancellationToken` and returning an `IListFeed<T>` where `T` is `Person` in our case. This delegate is invoked when a page request comes in.
 
 As you can see, we are sending the `Index` property of the incoming `pageRequest` argument to determine what page we're positioned.  
 `PageSize` refers to a constant value of `20`, but the `PageRequest` also has a `DesiredSize` property which the `ListView` can set according to its capacity. So essentially you can substitute `pageSize: PageSize` with `pageSize: pageRequest.DesiredSize` which is a nullable `uint`, and is populated by the `ListView`. We used a constant `PageSize` for the sake of this demonstration.
@@ -258,6 +265,20 @@ As you can see, we are sending the `Index` property of the incoming `pageRequest
 </Page>
 ```
 
+In addition, make sure the `DataContext` of the `Page` is set to the generated bindable model called `BindablePeopleModel` (*MainPage.xaml.cs*):
+
+```c#
+public MainPage()
+{
+    this.InitializeComponent();
+
+    this.DataContext = new BindablePeopleModel(new PeopleService());
+}
+```
+
+> [!TIP]  
+> You can inspect the generated code by either placing the cursor on the word `BindablePeopleModel` and hitting <kbd>F12</kbd>, see other ways to inspect the generated code [here](#inspecting-the-generated-code).
+
 As you can see, there's nothing special in the XAML code as MVUX is taking advantage of the tools already implemented with the `ListView`.
 
 - When the page load, the first 20 items are loaded (after a delay of one second - as simulated in the service).
@@ -275,18 +296,150 @@ Here's what the app renders like:
 > [!NOTE]  
 > The source-code for the sample app demonstrated in this section can be found [here](https://github.com/unoplatform/Uno.Samples/tree/master/UI/MvuxHowTos/PaginationPeopleApp).
 
-### Manual loading
+### Offset pagination
 
-### Manual loading with cursor
+Offset pagination is controlled via a State that stores the current page index in the Model, and the List-Feed depending on it, using [the `Select` operator](xref:Overview.Mvux.Feeds#select-or-selectasync).  
+When the user requests a new page, the current page index state is updated, thereby updating the dependent collection List-Feed.
 
-### The `PageRequest` struct
+Using the example started in [incremental loading above](#incremental-loading), we'll add another method to the service, which will disclose to the View how many items are there in total. Getting a count of items is more efficient than enumerating all entries. This is necessary to identify the total number of pages we have.
+
+#### Service
+
+Here's the method added to the service (*PeopleService.cs*):
+
+```c#
+public async ValueTask<int> GetPageCount(int pageSize, CancellationToken ct) =>
+    (int)Math.Ceiling(GetPeople().Length / (double)pageSize);
+```
+
+The signature of `GetPageCount` should also be added to the `IPeopleService` interface:
+
+```c#
+ValueTask<int> GetPageCount(int pageSize, CancellationToken ct);
+```
+
+#### Model
+
+Let's expand the Model with the following:
+
+```c#
+public partial record PeopleModel(IPeopleService PeopleService)
+{
+    public IListFeed<Person> PeopleAuto ...// will not be used in this example
+
+    const int PageSize = 20;
+        
+    public IFeed<int> PageCount =>
+        Feed.Async(async (ct) => await PeopleService.GetPageCount(PageSize, ct));
+
+    public IState<uint> CurrentPage => State.Value(this, () => 1u);
+
+    public IListFeed<Person> PeopleManual =>
+        CurrentPage.SelectAsync(async (currentPage, ct) =>
+            // currentPage argument as index based
+            await PeopleService.GetPeopleAsync(pageSize: PageSize, pageIndex: currentPage - 1, ct))
+        .AsListFeed();
+
+    public async ValueTask Move(int directione, CancellationToken ct)
+    {
+        var currentPage = await CurrentPage;
+        var desiredPage = currentPage + direction;
+
+        if (desiredPage < 0 || desiredPage >= await PageCount)
+            return;
+
+        await CurrentPage.Set((uint)desiredPage, ct);
+    }
+}
+```
+
+In the code above, whenever `CurrentPage` changes, `PeopleManual` will update its data accordingly.  
+MVUX's code generator generates an async command that is bound to from the View, when the user clicks the designated button to move to either previous or next page, the `Move` method will be invoked with the `direction` argument set to either 1 or -1 added to the current page index.
+
+#### View
+
+Replace the `ListView` from the previous example with this one:
+
+```xaml
+<ListView Grid.Column="2" x:Name="manual" ItemsSource="{Binding PeopleManual}"
+          ItemTemplate="{StaticResource PersonDataTemplate}" Header="Load single page on demand">
+    
+    <ListView.Footer>
+        <StackPanel Orientation="Horizontal" Spacing="3">
+
+            <Button Content="Previous" Command="{Binding Move}" VerticalAlignment="Center">
+                <Button.CommandParameter>
+                    <x:Int32>-1</x:Int32>
+                </Button.CommandParameter>
+            </Button>
+
+            <TextBlock Text="{Binding CurrentPage}" VerticalAlignment="Center" />
+
+            <Button Content="Next" Command="{Binding Move}" VerticalAlignment="Center">
+                <Button.CommandParameter>
+                    <x:Int32>1</x:Int32>
+                </Button.CommandParameter>
+            </Button>
+
+        </StackPanel>
+    </ListView.Footer>
+</ListView>
+```
+
+Two buttons were added to the `ListView`'s footer which are bound to the `Move` command, and the `TextBlock` in-between them will display the current page via the `CurrentPage` State it's bound to.  
+A `CommandParameter` of either *1* or *-1* has been set to Next and Previous buttons respectively.
+
+![](../Assets/PaginationManual-1.jpg)
+
+> [!TIP]  
+> The generated `Move` command can be seen in the generated `BindablePeopleModel` as well, follow the instructions [here](#inspecting-the-generated-code).
+
+When running the app, the first page will be loaded and await the users input to navigate to other pages which will be loaded on-demand:
+
+![](../Assets/PaginationManual-2.gif)
+
+#### The `PageRequest` type
+
+The `PageRequest` type contains the following properties and is used by a paginated Feed to pass information about the desired page the user wants to navigate to. It's the first parameter passed into the `PaginatedAsync` method when invoked:
 
 ![](../Assets/PageRequest.jpg)
 
+Its properties are:
+
+|Property|Description|
+|---|---|
+|Index|The index of the page to be loaded.|
+|CurrentCount|This is the total number of items currently in the list.|
+|DesiredSize|The desired number of items for the current page, if any.<br/><br/>This is the desired number of items that the view requested to load.<br/>It's expected to be null only for the first page.<br/>Be aware that this might change between pages (especially is user resize the window), DO NOT use in `source.Skip(page.Index * page.DesiredSize).Take(page.DesiredSize)`.<br/>Prefer to use the `CurrentCount` property, e.g. `source.Skip(page.CurrentCount).Take(page.DesiredSize)`.|
+
+### Keyset pagination with a cursor
+
+There are several caveats in using `Skip` and `Take` (Offset pagination) with an arbitrary page size multiplied by the page number.
+
+- When we skip data records, the database might still have to process some the skipped records on its way to the desired ones.
+- If any updates have been applied to the records preceding the currently displayed page, and then the user moves to the next or previous page, there might be inconsistencies in showing the consequent data, some of the entries might be skipped or shown twice.
+
+An alternative way to paginate data is by using a 
+
 ## Commands
 
-*************
+## Inspecting the generated code
 
-## Observables
+Viewing the generated code can be achieved in several ways:
 
-*************
+1. Placing the cursor on the class name and hitting <kbd>F12</kbd>:
+
+    ![](../Assets/InspectingGeneratedCode-1.gif)
+
+1. Hitting <kbd>Ctrl</kbd>+<kbd>T</kbd> and typing in the Bindable type name:
+
+    ![](../Assets/InspectingGeneratedCode-2.gif)
+
+1. Another way which can also be used to inspect all code generated by MVUX and even other code generators, is by navigating to the project's analyzers.
+
+    1. Expand the shared project's *Dependencies* object
+    2. Expand the current target platform (e.g. *net7.0windows10.0...*)
+    3. Expand the *Analyzers* sub menu and then *Uno.Extensions.Reactive.Generator*
+    4. Under *Uno.Extensions.Reactive.Generator.FeedsGenerator* you'll find the code generated Bindable Models and proxy types.
+
+    ![](../Assets/InspectingGeneratedCode-3.jpg)
