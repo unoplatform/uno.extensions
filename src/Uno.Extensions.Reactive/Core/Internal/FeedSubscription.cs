@@ -36,7 +36,7 @@ internal class FeedSubscription<T> : IAsyncDisposable, ISourceContextOwner
 		_rootContext = rootContext;
 		_context = rootContext.CreateChild(this, _requests);
 		_source = new ReplayOneAsyncEnumerable<Message<T>>(
-			 feed.GetSource(_context),
+			feed.GetSource(_context),
 			isInitialSyncValuesSkippingAllowed: FeedSubscription.IsInitialSyncValuesSkippingAllowed);
 	}
 

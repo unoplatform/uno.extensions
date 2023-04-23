@@ -20,7 +20,7 @@ public static class ServiceCollectionExtensions
 		return services.AddClient<TInterface>(
 			context,
 			name: name,
-			httpClientFactory: (s, c) => HttpClientFactoryExtensions.AddRefitClient<TInterface>(s, settingsAction: serviceProvider =>
+			httpClientFactory: (s, c) => Refit.HttpClientFactoryExtensions.AddRefitClient<TInterface>(s, settingsAction: serviceProvider =>
 			{
 				var serializer = serviceProvider.GetService<IHttpContentSerializer>();
 				var settings = serializer is not null ? new RefitSettings() { ContentSerializer = serializer } : new RefitSettings();

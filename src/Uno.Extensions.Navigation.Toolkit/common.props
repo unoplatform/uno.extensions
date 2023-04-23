@@ -5,7 +5,6 @@
 
 	<PropertyGroup>
 		<AssemblyName>Uno.Extensions.Navigation.Toolkit.UI</AssemblyName>
-		<GenerateLibraryLayout>true</GenerateLibraryLayout>
 		<NoWarn>$(NoWarn);CA1416</NoWarn>
 
 		<!--Temporary disable missing XML doc until fixed in the whole package-->

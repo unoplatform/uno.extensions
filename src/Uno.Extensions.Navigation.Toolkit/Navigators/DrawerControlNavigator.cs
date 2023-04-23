@@ -1,7 +1,7 @@
 ﻿using Uno.Extensions.Logging;
 using Uno.Extensions.Navigation.Regions;
 
-namespace Uno.Extensions.Navigation.Navigators;
+namespace Uno.Extensions.Navigation.Toolkit.Navigators;
 
 public class DrawerControlNavigator : ControlNavigator<DrawerControl>
 {

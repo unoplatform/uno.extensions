@@ -21,8 +21,10 @@ global using Uno.Extensions.Navigation.Regions;
 global using Uno.Extensions.Navigation.UI;
 global using Uno.Extensions.Navigation.UI.Controls;
 
+global using UICommand = Windows.UI.Popups.UICommand;
+
 #if WINUI
-	global using Microsoft.UI.Dispatching;
+global using Microsoft.UI.Dispatching;
 	global using Microsoft.UI.Xaml;
 	global using Microsoft.UI.Xaml.Controls;
 	global using Microsoft.UI.Xaml.Controls.Primitives;
@@ -31,6 +33,7 @@ global using Uno.Extensions.Navigation.UI.Controls;
 	global using Microsoft.UI.Xaml.Markup;
 	global using Microsoft.UI.Xaml.Data;
 	global using Microsoft.UI.Xaml.Media;
+	global using Application = Microsoft.UI.Xaml.Application;
 #else
 	global using Windows.System;
 	global using Windows.UI.Core;
@@ -42,4 +45,5 @@ global using Uno.Extensions.Navigation.UI.Controls;
 	global using Windows.UI.Xaml.Markup;
 	global using Windows.UI.Xaml.Data;
 	global using Windows.UI.Xaml.Media;
+	global using Application = Windows.UI.Xaml.Application;
 #endif

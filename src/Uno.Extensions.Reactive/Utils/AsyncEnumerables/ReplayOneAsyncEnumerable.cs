@@ -133,10 +133,10 @@ internal class ReplayOneAsyncEnumerable<T> : IAsyncEnumerable<T>, IDisposable, I
 		private readonly T? _value;
 		private readonly TaskCompletionSource<Node>? _next;
 
-		public static Node Initial() => new(false, default, new TaskCompletionSource<Node>(TaskCreationOptions.AttachedToParent));
+		public static Node Initial() => new(false, default, new TaskCompletionSource<Node>(TaskCreationOptions.None)); // Do not use AttachToParent to avoid leak of the current context which creates the initial task 
 		public static Node Final() => new(false, default, null);
 
-		public static Node Next(T value) => new(true, value, new TaskCompletionSource<Node>(TaskCreationOptions.AttachedToParent));
+		public static Node Next(T value) => new(true, value, new TaskCompletionSource<Node>(TaskCreationOptions.None)); // Do not use AttachToParent to avoid leak of the current context which gives only the current value 
 
 		private Node(bool hasValue, T? value, TaskCompletionSource<Node>? next)
 		{
@@ -164,6 +164,8 @@ internal class ReplayOneAsyncEnumerable<T> : IAsyncEnumerable<T>, IDisposable, I
 		_state = State.Disposed;
 		_current.TrySetNext(Node.Final());
 		_ct.Cancel();
+
+		_enumeration = null; // Release ref
 	}
 
 	/// <inheritdoc />

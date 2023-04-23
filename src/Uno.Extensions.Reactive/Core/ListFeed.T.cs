@@ -59,11 +59,27 @@ public static partial class ListFeed<T>
 		=> Feed<IImmutableList<T>>.AsyncEnumerable(enumerableProvider).AsListFeed();
 
 	/// <summary>
+	/// Gets or create a custom feed from an async enumerable sequence of value.
+	/// </summary>
+	/// <param name="enumerableProvider">The async enumerable sequence of value of the resulting feed.</param>
+	/// <returns>A feed that encapsulate the source.</returns>
+	public static IListFeed<T> AsyncEnumerable(Func<CancellationToken, IAsyncEnumerable<Option<IImmutableList<T>>>> enumerableProvider)
+		=> Feed<IImmutableList<T>>.AsyncEnumerable(enumerableProvider).AsListFeed();
+
+	/// <summary>
 	/// Creates a custom feed from an async enumerable sequence of value.
 	/// </summary>
 	/// <param name="enumerableProvider">The async enumerable sequence of value of the resulting feed.</param>
 	/// <returns>A feed that encapsulate the source.</returns>
 	public static IListFeed<T> AsyncEnumerable(Func<IAsyncEnumerable<IImmutableList<T>>> enumerableProvider)
+		=> Feed<IImmutableList<T>>.AsyncEnumerable(enumerableProvider).AsListFeed();
+
+	/// <summary>
+	/// Creates a custom feed from an async enumerable sequence of value.
+	/// </summary>
+	/// <param name="enumerableProvider">The async enumerable sequence of value of the resulting feed.</param>
+	/// <returns>A feed that encapsulate the source.</returns>
+	public static IListFeed<T> AsyncEnumerable(Func<CancellationToken, IAsyncEnumerable<IImmutableList<T>>> enumerableProvider)
 		=> Feed<IImmutableList<T>>.AsyncEnumerable(enumerableProvider).AsListFeed();
 
 	/// <summary>

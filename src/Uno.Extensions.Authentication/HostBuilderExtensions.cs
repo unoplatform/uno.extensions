@@ -1,6 +1,4 @@
-﻿using Uno.Extensions.Storage.KeyValueStorage;
-
-namespace Uno.Extensions;
+﻿namespace Uno.Extensions;
 
 public static class HostBuilderExtensions
 {
