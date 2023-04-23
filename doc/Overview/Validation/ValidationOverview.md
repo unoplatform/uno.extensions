@@ -4,7 +4,7 @@ uid: Overview.Validation
 
 # Validation
 
-Uno.Extensions.Validation provides an `IValidator` service to enforce that properties on an object follow a set of characteristics or behaviors represented by [attributes](https://learn.microsoft.com/dotnet/api/system.componentmodel.dataannotations) declaratively applied to them. This is useful for ensuring that data entered by users is valid before it is saved to a database or sent to a web service.
+Uno.Extensions.Validation provides an `IValidator` service which enforces that properties of an object follow a set of characteristics or behaviors represented by [attributes](https://learn.microsoft.com/dotnet/api/system.componentmodel.dataannotations) declaratively applied to them. This is useful for ensuring that data entered by users is valid before it is saved to a database or sent to a web service.
 
 ## Service registration
 
@@ -24,7 +24,7 @@ By default, enabling validation will register the default `Validator` type with 
 
 ## Using the validation service
 
-The `IValidator` service is injected into the constructor of view models which specify the `IValidator` service as a dependency. View models that need to validate data can then use the `ValidateAsync` method to execute validation rules on an object. The `ValidateAsync` method returns a `ValueTask` that completes when validation is complete. The `ValueTask` result is a `IEnumerable<ValidationResult>` which contains elements which indicate whether the object is valid or not. 
+The `IValidator` service is injected into the constructor of view models which specify the `IValidator` service as a dependency. View models that need to validate data can then use the `ValidateAsync` method to execute validation rules on an object. The `ValidateAsync` method returns a `ValueTask<T>` that completes when validation is complete. The `ValueTask` result is an `IEnumerable<ValidationResult>` which contains elements that indicate whether the object is valid or not. 
 
 The following example shows how to use the service to validate a `Person` object:
 
@@ -58,7 +58,7 @@ public class PersonViewModel
 }
 ```
 
-The service checks whether the `Person` object is valid and handles calling the correct validator registered for the object type. It returns a `ValueTask` that completes when validation is complete. The `ValueTask` result is a `IEnumerable<ValidationResult>` which contains elements which indicate whether the object is valid or not. Uno Extensions enables fine-grained control over how validation is performed by allowing systematic use of a number of patterns from the .NET ecosystem. This is done by offering customization of both the validatable entity and within a validator service itself.
+The service checks whether the `Person` object is valid and handles calling the correct validator registered for the object type. It returns a `ValueTask<T>` that completes when validation is complete. The `ValueTask` result is an `IEnumerable<ValidationResult>` which contains elements that indicate whether the object is valid or not. Uno Extensions enables fine-grained control over how validation is performed by allowing systematic use of a number of patterns from the .NET ecosystem. This is done by offering customization of both the validatable entity and within a validator service itself.
 
 ## Validatable entities
 
@@ -90,7 +90,7 @@ It is also possible to define custom validation attributes by deriving from the 
 For more information, see the reference documentation about [INotifyDataErrorInfo](https://learn.microsoft.com/dotnet/api/system.componentmodel.inotifydataerrorinfo) and [ObservableValidator](https://docs.microsoft.com/windows/communitytoolkit/mvvm/observablevalidator).
 
 # [**IValidatableObject**](#tab/validatable-object)
-Another option that was developed more recently is the `IValidatableObject` interface. Like `INotifyDataErrorInfo`, it is implemented by a class to ensure properties can be validated based on the attributes they are decorated with. Validator support for this interface is provided internally with the `TryValidateObject` method used by the default validator to execute validation rules on the entity in question. This method returns an `IEnumerable<ValidationResult>` which contains elements which indicate whether the object is valid or not. 
+Another option is the `IValidatableObject` interface. Like `INotifyDataErrorInfo`, it is implemented by a class to ensure properties can be validated based on the attributes they are decorated with. Validator support for this interface is provided internally with the `TryValidateObject` method used by the default validator to execute validation rules on the entity in question. This method returns an `IEnumerable<ValidationResult>` which contains elements which indicate whether the object is valid or not. 
 
 Unlike other options, the validation behavior for `IValidatableObject` based types comes from the `Validate` method implementation where it is typical to invoke the `TryValidateProperty` method. The default validator is responsible for invoking this `Validate` method.
 
@@ -127,7 +127,7 @@ public class Person : IValidatableObject
 }
 ```
 
-For more information, see the reference documentation about [IValidatableObject](https://docs.microsoft.com/dotnet/api/system.componentmodel.dataannotations.ivalidatableobject).
+For more information, see the reference documentation about [`IValidatableObject`](https://docs.microsoft.com/dotnet/api/system.componentmodel.dataannotations.ivalidatableobject), [`CustomValidationAttribute`](https://learn.microsoft.com/en-us/dotnet/api/system.componentmodel.dataannotations.customvalidationattribute).
 
 # [**Fluent**](#tab/fluent-validation)
 [FluentValidation](https://www.nuget.org/packages/FluentValidation/) is a popular choice for entities needing to implement validation. It is a library that provides a fluent API for defining validation rules. This choice allows for chained validator calls and minimal modifications to the model definition. It is possible to use a [Fluent validator](https://docs.fluentvalidation.net/en/latest/start.html) by registering the implementation like below:
