@@ -120,14 +120,8 @@ The Model in MVUX has some parallels with the 'View Model' in MVVM.
 
 MVUX promotes immutability of data entities. Changes to the data are applied only via update messages sent across from the view to the model, the model responds by performing the updates and the view reflects those changes.
 
-Immutable entities makes raising change notification redundant, enables easier object equality
-comparison as well as other advantages.
-The ideal type for creating immutable data-objects is
-[record](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/builtin-types/record) types.
-They are immutable by nature and a perfect fit for working with feeds and MVU architecture.
-Record types also feature the special
-[`with` expression](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/operators/with-expression),
-which enables recreating the same model with a modified set of properties, while retaining immutability.
+Immutable entities makes raising change notification redundant, enables easier object equality comparison as well as other advantages. The ideal type for creating immutable data-objects is [record](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/builtin-types/record) types. They are immutable by nature and a perfect fit for working with feeds and MVU architecture.  
+Record types also feature the special [`with` expression](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/operators/with-expression), which enables recreating the same model with a modified set of properties, while retaining immutability.
 
 ### View
 
@@ -157,6 +151,9 @@ MVUX wraps the asynchronous data request with metadata that tells us if the requ
 #### Code generation
 
 MVUX comes with a powerful code-generation engine that supplements the user with generated boilerplate code that consists of model and entity proxy classes containing important properties and asynchronous commands. The proxy-classes assist the UI with displaying the data according to its current state provided with the metadata.
+
+To learn more about the power of MVUX Commands, refer to [the Commands topic](xref:Overview.Mvux.Overview#commands) in the Advanced page.  
+That page also explains how to [inspect the MVUX generated code](xref:Overview.Mvux.Overview#inspecting-the-generated-code).
 
 #### UI Controls
 MVUX also provides a set of UI tools that are specially tailored to automatically read and display that metadata, providing templates for the various states, such as no data, error, progress tracking, as well interactions with the server to enable easy refreshing and saving of the data.
