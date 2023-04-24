@@ -62,6 +62,13 @@
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
+  <Class Name="Uno.Extensions.Reactive.Command">
+    <Position X="5.5" Y="15" Width="3.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAIAAAAAAAAAAAAAAAAEAAAAAAAABAAAA=</HashCode>
+      <FileName>Presentation\Commands\Command.cs</FileName>
+    </TypeIdentifier>
+  </Class>
   <Struct Name="Uno.Extensions.Reactive.MessageBuilder&lt;T&gt;" Collapsed="true">
     <Position X="15.5" Y="6" Width="1.75" />
     <TypeIdentifier>
@@ -107,6 +114,14 @@
       <HashCode>AAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAEAAAAgAAA=</HashCode>
       <FileName>Sources\PageRequest.cs</FileName>
     </TypeIdentifier>
+  </Struct>
+  <Struct Name="Uno.Extensions.Reactive.Commands.CommandBuilder&lt;T&gt;">
+    <Position X="5" Y="19.75" Width="4.25" />
+    <TypeIdentifier>
+      <HashCode>AgAAIAAAAAAAAAAAAAAAgAAEAAAAgAQAAIAkBAAAQAA=</HashCode>
+      <FileName>Presentation\Commands\CommandBuilder.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
   </Struct>
   <Interface Name="Uno.Extensions.Reactive.ISignal" Collapsed="true">
     <Position X="5" Y="1" Width="1.5" />
@@ -188,6 +203,27 @@
   <Interface Name="Uno.Extensions.IOption">
     <Position X="18.75" Y="6.75" Width="1.5" />
     <TypeIdentifier />
+  </Interface>
+  <Interface Name="Uno.Extensions.Reactive.ICommandBuilder">
+    <Position X="3" Y="17.25" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAQAAQAAAAAAAAAAAAIAAAAAAAAAAAA=</HashCode>
+      <FileName>Presentation\Commands\ICommandBuilder.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Uno.Extensions.Reactive.ICommandBuilder&lt;T&gt;">
+    <Position X="5.75" Y="17.25" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAAAAQAAQAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Presentation\Commands\ICommandBuilder.T.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Uno.Extensions.Reactive.IConditionalCommandBuilder&lt;T&gt;">
+    <Position X="8.75" Y="17.25" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Presentation\Commands\IConditionalCommandBuilder.cs</FileName>
+    </TypeIdentifier>
   </Interface>
   <Enum Name="Uno.Extensions.OptionType">
     <Position X="21.25" Y="10.5" Width="1.5" />

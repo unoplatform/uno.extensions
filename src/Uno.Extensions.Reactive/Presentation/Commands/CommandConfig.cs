@@ -10,7 +10,7 @@ namespace Uno.Extensions.Reactive.Commands;
 /// The raw configuration of a command.
 /// </summary>
 [EditorBrowsable(EditorBrowsableState.Never)] // This should be used only by code gen
-public record struct CommandConfig
+public struct CommandConfig
 {
 	private CommandParametersCoercingStrategy? _parametersCoercer;
 
