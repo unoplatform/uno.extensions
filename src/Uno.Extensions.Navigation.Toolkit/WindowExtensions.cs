@@ -30,12 +30,38 @@ public static class WindowExtensions
 			buildHost,
 			navigationRoot,
 			initialRoute, initialView, initialViewModel,
-			(root, navInit) =>
+			async (root, navInit) =>
 				{
-					var loading = new LoadingTask(navInit, root);
+					var activate = true;
 					if (root is LoadingView lv)
 					{
+						var loadingTask = navInit;
+						if (lv is ExtendedSplashScreen splash)
+						{
+							if (!splash.SplashIsEnabled)
+							{
+								// Splash isn't enabled, so don't activate until loading completed
+								activate = false;
+
+								// TODO: Change this to use UseTransitions
+								splash.DisableAnimations = true;
+
+								loadingTask = new Func<Task>(async () =>
+								{
+									await navInit;
+									window.Activate();
+								})();
+
+
+							}
+						}
+						var loading = new LoadingTask(loadingTask, root);
 						lv.Source = loading;
+					}
+					if (activate)
+					{
+						// Activate immediately to show the splash screen
+						window.Activate();
 					}
 				},
 			initialNavigate

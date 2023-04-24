@@ -38,7 +38,6 @@ public static class ApplicationBuilderExtensions
 		};
 
 		appBuilder.Window.Content = appRoot;
-		appBuilder.Window.Activate();
 
 		return await appBuilder.Window.InternalInitializeNavigationAsync(
 			buildHost: () => Task.FromResult(appBuilder.Build()),

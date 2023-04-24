@@ -11,6 +11,6 @@ public class ShellViewModel
 
 		// Option 2: Only specify the ShellViewModel - this will inject a FrameView and so
 		// the INavigator corresponds to the Frame (ie no need to nest navigation)
-		navigator.NavigateViewAsync<HomePage>(this);
+		//navigator.NavigateViewAsync<HomePage>(this);
 	}
 }

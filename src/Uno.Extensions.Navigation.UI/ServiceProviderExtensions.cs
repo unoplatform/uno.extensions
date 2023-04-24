@@ -181,7 +181,6 @@ public static class ServiceProviderExtensions
 		if (window.Content is null)
 		{
 			window.Content = navigationRoot;
-			window.Activate();
 		}
 
 		var buildTask = window.BuildAndInitializeHostAsync(navigationRoot, buildHost, initialRoute, initialView, initialViewModel, initialNavigate);
