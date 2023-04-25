@@ -456,7 +456,7 @@ The callback returns a `PageResult<TCursor, TItem>`, and it contains:
 
 To demonstrate this we'll stick to the *PaginatedPeopleApp* we've started before.
 
-### Service
+#### Service
 
 To keep the service agnostic, we'll add the following method to the Service:
 
@@ -515,7 +515,7 @@ public async ValueTask<(IImmutableList<Person> CurrentPage, Person NextCursor)> 
 }
 ```
 
-### Model
+#### Model
 
 ```c#
 public IListFeed<Person> PeopleCursor =>
@@ -532,7 +532,7 @@ public IListFeed<Person> PeopleCursor =>
                 });
 ```
 
-### View
+#### View
 
 There's not much needed in the View as this is magically working via the `ISupportIncrementalLoading` implemented with the `ListView`!
 
