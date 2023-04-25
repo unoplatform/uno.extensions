@@ -59,7 +59,7 @@ Here are some examples of creating a List-Feed:
 
 ## Support for pagination
 
-There is built in support for pagination, which you can read about [here](xref:Overview.Reactive.ListFeed#paginatedasync) (Model) and [here](Overview.Reactive.InApps#pagination) (View).
+There is also built-in support for pagination. More information on this feature can be found [here](xref:Overview.Reactive.ListFeed#paginatedasync) (Model) and [here](Overview.Reactive.InApps#pagination) (View).
 
 ## Operators
 
