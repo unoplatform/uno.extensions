@@ -16,7 +16,6 @@ This page covers the following topics:
 - [Commands](#commands)
   - [Asynchronous commands](#asynchronous-commands)
   - [Creating commands](#creating-commands)
-  - [Commands configuration](#commands-configuration)
 - [Inspecting MVUX generated code](#inspecting-the-generated-code)
 
 ## Selection
