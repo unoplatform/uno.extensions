@@ -3,7 +3,7 @@ uid: Learn.Tutorials.Navigation.Advanced.NavigationView
 ---
 # How-To: Use a NavigationView to Switch Views
 
-Choosing the right control for your navigation needs is important, and one common choice is the WinUI `NavigationView`. This control adapts to different screen sizes and offers a uniform top-level navigation experience. `NavigationView` is a great option for adaptive, customizable, and mobile-friendly navigation. The Uno Platform extensions for navigation provide built-in support for using `NavigationView` and `NavigationViewItem` to switch between views. This tutorial will show you how to configure a `NavigationView` for use with the navigation extensions.
+Choosing the right control for your navigation needs is important, and one common choice is `NavigationView`. This control adapts to different screen sizes and offers a uniform top-level navigation experience. `NavigationView` is a great option for adaptive, customizable, and mobile-friendly navigation. The Uno Platform extensions for navigation provide built-in support for using `NavigationView` and `NavigationViewItem` to switch between views. This tutorial will show you how to configure a `NavigationView` for use with the navigation extensions.
 
 ## Step-by-steps
 
@@ -14,12 +14,6 @@ Choosing the right control for your navigation needs is important, and one commo
   ```xml
   xmlns:uen="using:Uno.Extensions.Navigation.UI"
   xmlns:utu="using:Uno.Toolkit.UI"
-  ```
-
-* Make sure that the project you're building depends on Uno.WinUI. Only if you're building a UWP app (Uno.UI), you will need to take an additional step. Add the following namespace mapping and prefix every reference to `NavigationView` or `NavigationViewItem` with _muxc_ for this tutorial:
-
-  ```xml
-  xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
   ```
 
 ### 2. Define the view's layout
@@ -41,13 +35,6 @@ Choosing the right control for your navigation needs is important, and one commo
   </Grid.RowDefinitions>
   ```
 
-* Add the `NavigationBar` control to the `Grid`. This will be the header for the app name.
-
-  ```xml
-  <utu:NavigationBar Content="Main Page"
-                    Style="{StaticResource MaterialNavigationBarStyle}" />
-  ```
-
 * Add a `NavigationView` control to the `Grid`. This will be the menu for the app.
 
   ```xml
@@ -56,7 +43,11 @@ Choosing the right control for your navigation needs is important, and one commo
   </NavigationView>
   ```
 
-* Add a `Grid` element to the `NavigationView`. This will be the container for the content area.
+* Add a `Grid` element to the control. `NavigationView` contains two sections for content: 
+  - A pane which contains a list of navigation `MenuItems`
+  - The content area intended to correspond with the selected `NavigationViewItem`.  
+  
+  For this tutorial, `Grid` should be placed in the `Content` area.
 
   ```xml
   <Grid Grid.Row="1">
@@ -122,7 +113,17 @@ Choosing the right control for your navigation needs is important, and one commo
 * Add the `uen:Region.Name` attached property to each of the `NavigationViewItem` elements. This will define the name of the view that the `NavigationViewItem` will navigate to.
 
   ```xml
-  uen:Region.Name="One|Two|Three"
+  uen:Region.Name="One"
+  ```
+
+  The full code for the `NavigationViewItem` elements should look like the code example below:
+
+  ```xml
+  <NavigationView.MenuItems>
+    <NavigationViewItem Content="One"
+                        uen:Region.Name="One" />
+    ...
+  </NavigationView.MenuItems>
   ```
 
 * Add the `uen:Region.Navigator` attached property to the `Grid` element that contains the content area. This will set the type of navigation to adjust the visibility of the content area's children.
@@ -134,7 +135,33 @@ Choosing the right control for your navigation needs is important, and one commo
 * Add the `uen:Region.Name` attached property to each of the `Grid` elements that contain the content area. This will define the name of the view that the `Grid` will represent.
 
   ```xml
-  uen:Region.Name="One|Two|Three"
+  uen:Region.Name="One"
+  ```
+
+  The full code for the `Grid` elements should look like the code example below:
+
+  ```xml
+  <Grid uen:Region.Name="One"
+        Visibility="Collapsed">
+      <TextBlock Text="One"
+                 FontSize="24"
+                 HorizontalAlignment="Center"
+                 VerticalAlignment="Center" />
+  </Grid>
+  <Grid uen:Region.Name="Two"
+        Visibility="Collapsed">
+      <TextBlock Text="Two"
+                 FontSize="24"
+                 HorizontalAlignment="Center"
+                 VerticalAlignment="Center" />
+  </Grid>
+  <Grid uen:Region.Name="Three"
+        Visibility="Collapsed">
+      <TextBlock Text="Three"
+                 FontSize="24"
+                 HorizontalAlignment="Center"
+                 VerticalAlignment="Center" />
+  </Grid>
   ```
 
 * Observe how the `NavigationView` and the content area are now connected. When you select a `NavigationViewItem`, the corresponding `Grid` will be shown.
