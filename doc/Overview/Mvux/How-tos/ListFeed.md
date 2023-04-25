@@ -48,7 +48,7 @@ In this tutorial, you will learn how to create an MVUX project and the basic usa
     }
     ```
 
-    We're using a [record](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/record) for the `Person` type on purpose, as records are designed to be immutable to ensure purity of objects as well as other features.
+    We're using a [record](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/record) for the `Person` type on purpose, as records are designed to be immutable to ensure the purity of objects as well as other features.
 
     The `IListFeed<T>` is a feed type tailored for dealing with collections.
 
