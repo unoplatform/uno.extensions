@@ -22,7 +22,7 @@ Read this if you would like to review the [Feed Messages section](xref:Overview.
 To create an `IListFeed<T>`, use the the static class `ListFeed` to call one of the same `Async`, `AsyncEnumerable` and `Create` methods as in Feed.  
 The only difference is that it expects the Task or Async Enumerable to return an `IImmutableList<T>` instead of `T`.
 
-Here are a couple of examples of creating a List-Feed:
+Here are some examples of creating a List-Feed:
 
 1. In this example the service returns a list of names on load/refresh - using a pull technique.
 
