@@ -225,6 +225,25 @@
       <FileName>Presentation\Commands\IConditionalCommandBuilder.cs</FileName>
     </TypeIdentifier>
   </Interface>
+  <Interface Name="Uno.Extensions.Reactive.IAsyncCommand">
+    <Position X="15.25" Y="19.75" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Presentation\Commands\IAsyncCommand.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="System.Windows.Input.ICommand">
+    <Position X="12" Y="17.25" Width="2.5" />
+    <TypeIdentifier />
+  </Interface>
+  <Interface Name="System.ComponentModel.INotifyPropertyChanged">
+    <Position X="17.75" Y="17.25" Width="3" />
+    <TypeIdentifier />
+  </Interface>
+  <Interface Name="Uno.Toolkit.ILoadable">
+    <Position X="14.75" Y="17.25" Width="2.75" />
+    <TypeIdentifier />
+  </Interface>
   <Enum Name="Uno.Extensions.OptionType">
     <Position X="21.25" Y="10.5" Width="1.5" />
     <TypeIdentifier>
