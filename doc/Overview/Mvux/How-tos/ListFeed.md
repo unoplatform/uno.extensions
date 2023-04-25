@@ -71,7 +71,7 @@ In this tutorial, you will learn how to create an MVUX project and the basic usa
 
     > [!TIP]  
     > Feeds are stateless and are there for when the data from the service is read-only and we're not planning to enable edits to it.  
-    MVUX also provides stateful feeds. For that purpose States (`IState<T>` and `<IListState<T>` for collections) come handy.  
+    MVUX also provides stateful feeds. For that purpose States (`IState<T>` and `<IListState<T>` for collections) come in handy.  
     Refer to [this tutorial](xref:Overview.Mvux.HowToSimpleState) to learn more about states.
 
 ## Data-bind the view
