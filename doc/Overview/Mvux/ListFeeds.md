@@ -9,7 +9,7 @@ The `IListFeed<T>` is like a [Feed](xref:Overview.Mvux.Feeds) which is stateless
 In Feeds, each data request from the service, returns one single item, whereas in List-Feed each request returns a collection of items.  
 Its distinctive feature is the ability to use its [Operators](xref:Overview.Mvux.ListFeeds#operators) directly on its items, rather than on the entire collection.
 
-Another important thing to remember is that when the service returns an empty collection, it's treated as an Empty message, and the data axis Option will be `None`, although the result was not `null`.
+Another notable characteristic of List-Feed is how it handles the absence of data. When an empty collection is returned by the service, it's treated as an Empty message. The returned data axis Option will be `None`, even though the result was not `null`.
 Read this if you would like to review the [Feed Messages section](xref:Overview.Mvux.Feeds#messages).
 
 
