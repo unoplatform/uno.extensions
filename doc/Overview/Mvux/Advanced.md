@@ -665,6 +665,5 @@ Viewing the generated code can be achieved in several ways:
     1. Expand the shared project's *Dependencies* object
     2. Expand the current target platform (e.g. *net7.0windows10.0...*)
     3. Expand the *Analyzers* sub menu and then *Uno.Extensions.Reactive.Generator*
-    4. Under *Uno.Extensions.Reactive.Generator.FeedsGenerator* you'll find the code generated Bindable Models and proxy types.
-
+    4. Under *Uno.Extensions.Reactive.Generator.FeedsGenerator* you'll find the code generated Bindable Models and proxy types.  
     ![](Assets/InspectingGeneratedCode-3.jpg)
