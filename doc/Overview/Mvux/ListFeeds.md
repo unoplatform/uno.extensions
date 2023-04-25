@@ -9,7 +9,8 @@ The `IListFeed<T>` is like a [Feed](xref:Overview.Mvux.Feeds) which is stateless
 In Feeds, each data request from the service, returns one single item, whereas in List-Feed each request returns a collection of items.  
 Its distinctive feature is the ability to use its [Operators](xref:Overview.Mvux.ListFeeds#operators) directly on its items, rather than on the entire collection.
 
-Another notable characteristic of List-Feed is how it handles the absence of data. When an empty collection is returned by the service, it's treated as an Empty message. The returned data axis Option will be `None`, even though the result was not `null`.
+Another notable characteristic of List-Feed is how it handles the absence of data. When an empty collection is returned by the service, it's treated as an Empty message. The returned data axis Option will be `None`, even though the result was not `null`.  
+The reasoning behind that is so that is that when we display a control of data items (for instance a `ListView`, and it has no items, there's no reason in displaying the `FeedView`'s `ValueTemplate` with an empty `ListView` but the "No data records" `NoneTemplate` which makes much more sense. Hence, a `null` result or an empty collection are both regarded as `None`.
 Read this if you would like to review the [Feed Messages section](xref:Overview.Mvux.Feeds#messages).
 
 
