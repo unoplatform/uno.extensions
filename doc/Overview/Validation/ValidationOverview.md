@@ -92,7 +92,7 @@ For more information, see the reference documentation about [INotifyDataErrorInf
 # [**IValidatableObject**](#tab/validatable-object)
 Another option is the `IValidatableObject` interface. Like `INotifyDataErrorInfo`, it is implemented by a class to ensure properties can be validated based on the attributes they are decorated with. Validator support for this interface is provided internally with the `TryValidateObject` method used by the default validator to execute validation rules on the entity in question. This method returns an `IEnumerable<ValidationResult>` which contains elements which indicate whether the object is valid or not. 
 
-Unlike other options, the validation behavior for `IValidatableObject` based types comes from the `Validate` method implementation where it is typical to invoke the `TryValidateProperty` method. The default validator is responsible for invoking this `Validate` method.
+Unlike other options, `IValidatableObject` based types can define more advanced validation behavior in the `Validate` method implementation. Here, it is typical to complement the behavior of attributes by invoking `TryValidateProperty` on multiple members, or to do any other kind of inter-property validation. The default validator is responsible for invoking this `Validate` method.
 
 ### Code example
 
@@ -108,18 +108,18 @@ public class Person : IValidatableObject
     [Range(0, 100)]
     public int Age { get; set; }
 
+    [Phone]
+    public string PhoneNumber { get; set; }
+
+    public bool IsDeceased { get; set; }
+
     public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
     {
         var results = new List<ValidationResult>();
 
-        if (!TryValidateProperty(FirstName, new ValidationContext(this, null, null) { MemberName = nameof(FirstName) }, results))
+        if (IsDeceased && !string.IsNullOrEmpty(PhoneNumber))
         {
-            results.Add(new ValidationResult("First name is invalid."));
-        }
-        
-        if (!TryValidateProperty(LastName, new ValidationContext(this, null, null) { MemberName = nameof(LastName) }, results))
-        {
-            results.Add(new ValidationResult("Last name is invalid."));
+            results.Add(new ValidationResult("A deceased person cannot have a phone number", new[] { nameof(PhoneNumber) }));
         }
 
         return results;
