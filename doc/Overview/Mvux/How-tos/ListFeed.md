@@ -9,7 +9,7 @@ and displays a collection of items from a service, and enables refreshing the da
 
 In this tutorial, you will learn how to create an MVUX project and the basic usage of a list-feed (`IListFeed<T>`) and the `FeedView` control.
 
- - For our data we're going to create a service that asynchronously provides a collection of `Person` entities upon request.  
+ - For our data, we're going to create a service that asynchronously provides a collection of `Person` entities upon request.  
  - You'll learn how to use a feed to asynchronously request this data from the service.
  - How to display the data on the UI
  - How to use the `FeedView` control to display the data and automatically respond to the current feed status.
