@@ -7,13 +7,12 @@ Choosing the right control for your navigation needs is important, and one commo
 
 ## Step-by-steps
 
-### 1. Add XAML namespace mappings
+### 1. Add XAML namespace mapping
 
-* Add the following namespace mappings to the root element of your XAML page:
+* Add the following namespace mapping to the root element of your XAML page:
 
   ```xml
   xmlns:uen="using:Uno.Extensions.Navigation.UI"
-  xmlns:utu="using:Uno.Toolkit.UI"
   ```
 
 ### 2. Define the view's layout
@@ -184,7 +183,6 @@ Choosing the right control for your navigation needs is important, and one commo
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       mc:Ignorable="d"
       xmlns:uen="using:Uno.Extensions.Navigation.UI"
-      xmlns:utu="using:Uno.Toolkit.UI"
       Background="{ThemeResource MaterialBackgroundBrush}">
 
     <Grid uen:Region.Attached="True">
@@ -192,8 +190,7 @@ Choosing the right control for your navigation needs is important, and one commo
             <RowDefinition Height="Auto" />
             <RowDefinition />
         </Grid.RowDefinitions>
-        <utu:NavigationBar Content="Main Page"
-                           Style="{StaticResource MaterialNavigationBarStyle}" />
+
         <NavigationView uen:Region.Attached="true"
                         Grid.Row="1">
             <NavigationView.MenuItems>
@@ -204,6 +201,7 @@ Choosing the right control for your navigation needs is important, and one commo
                 <NavigationViewItem Content="Three"
                                     uen:Region.Name="Three" />
             </NavigationView.MenuItems>
+
             <Grid uen:Region.Attached="True"
                   uen:Region.Navigator="Visibility"
                   Grid.Row="1">
