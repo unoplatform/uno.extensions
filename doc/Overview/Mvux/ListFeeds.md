@@ -55,7 +55,7 @@ Here are some examples of creating a List-Feed:
 3. There are also two helper methods that enable conversion from a Feed to a List-Feed and vice versa.
 
      - On an `IFeed<TCollection>` where `TCollection` is an `IImmutableList<TItem>`, call `ToListFeed()` to convert it to an `IListFeed<TItem>`.
-     - In contrast, you can call `AsFeed()` on an `IListFeed<T>` to convert it to an `IFeed<IImmutableList<T>>`.
+     - Otherwise, call `AsFeed()` on an `IListFeed<T>` to convert it to an `IFeed<IImmutableList<T>>`.
 
 ## Support for pagination
 
