@@ -19,7 +19,7 @@ Read this if you would like to review the [Feed Messages section](xref:Overview.
 
 ## How to create a list feed
 
-To create an `IListFeed<T>`, use the the static class `ListFeed` to call one of the same `Async`, `AsyncEnumerable` and `Create` methods as in Feed.  
+To create an `IListFeed<T>`, use the static class `ListFeed` to call one of the same `Async`, `AsyncEnumerable`, and `Create` methods as in Feed.  
 The only difference is that it expects the Task or Async Enumerable to return an `IImmutableList<T>` instead of `T`.
 
 Here are some examples of creating a List-Feed:
