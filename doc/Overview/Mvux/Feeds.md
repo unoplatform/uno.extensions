@@ -195,7 +195,7 @@ Here's how to utilize the `FeedView` to display the same data as before:
 > The `FeedView` wraps the data coming from the Feed in a special `FeedViewState` class which includes the Feed metadata.  
 One of its properties is `Data`, which provides access to the actual data of the Feed's current state, in our example the most recent integer value from the `CountOne` or `StartCounting` method [above](#consumption-of-feeds).
 
-# Messages
+## Messages
 
 Messages are one of the core components of MVUX. They refer to the metadata that wrap around the entities streaming along as discussed earlier.
 
@@ -222,11 +222,11 @@ The following illustration show how the classes are built. Note that this diagra
 > [!TIP]  
 > MVUX provides you with peripheral tools that read the metadata Messages for you so that you don't normally even have to know about the Message structure!
 
-# Feed Operators
+## Feed Operators
 
 The Feed supports some LINQ operators that enable readjusting it into a new one.
 
-## Where
+### Where
 
 The `Where` extension method enables filtering a Feed. It returns a new Feed where the values of the parent one match the specified criteria.  
 For example:
@@ -238,7 +238,7 @@ public IFeed<CounterValue> OmitEarlyCounts => CurrentCount.Where(currentCount =>
 > [!Note]  
 > Be aware that unlike `IEnumerable<T>`, `IObservable<T>`, and `IAsyncEnumerable<T>`, if the predicate returns false, a result is still received but it contains a `Message<T>` with a data `Option<T>` of `None`.
 
-## Select or SelectAsync
+### Select or SelectAsync
 
 This one enables projecting one feed into another one by selecting one of its properties, or by passing it as a parameter to an external function.
 
@@ -251,7 +251,6 @@ The selection can also be asynchronous, and even use an external method:
 ```c#
 public IFeed<CountInfo> CountTrends => CurrentCount.SelectAsync(currentCount => myService.GetCountInfoAsync(currentCount));
 ```
-
 
 > [!TIP]  
 > You can use the LINQ syntax if you prefer, or combine the operators:
