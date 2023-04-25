@@ -8,7 +8,7 @@ In this tutorial you will learn how to create an MVUX project that displays stoc
 
 In this tutorial you will learn how to create an MVUX project and utilization of a feed (`IFeed<T>`) and the `FeedView` control to display data pushed in asynchronously from an `IAsyncEnumerable<T>`.
 
- - For our data we're going to create a service that has an `IAsyncEnumerable<T>` method that returns periodic stock market updates.
+ - For our data, we're going to create a service that has an `IAsyncEnumerable<T>` method that returns periodic stock market updates.
  - You'll learn how to use a feed to asynchronously request this data from the service.
  - How to use the `FeedView` control to display the asynchronous data and automatically respond to the current feed status.
 
