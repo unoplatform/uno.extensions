@@ -9,13 +9,11 @@ Sometimes your application may need to switch between multiple views without the
 ## Step-by-steps
 
 ### 1. Add necessary XAML namespaces
-* We will be using the `NavigationBar` control from the Uno.Toolkit
 
 * Update the `Page` element in `MainPage.xaml` to include XAML namespace mappings for Navigation and Uno Toolkit:
 
   ```xml
   xmlns:uen="using:Uno.Extensions.Navigation.UI"
-  xmlns:utu="using:Uno.Toolkit.UI"
   ```
 
 * Your `Page` element should now look like this:
@@ -29,7 +27,6 @@ Sometimes your application may need to switch between multiple views without the
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
         xmlns:uen="using:Uno.Extensions.Navigation.UI"
-        xmlns:utu="using:Uno.Toolkit.UI"
   ...
   ```
 
@@ -43,13 +40,6 @@ Sometimes your application may need to switch between multiple views without the
       <RowDefinition Height="Auto" />
       <RowDefinition />
   </Grid.RowDefinitions>
-  ```
-
-* Add a `NavigationBar` control to the first row of the root `Grid`:
-
-  ```xml
-  <utu:NavigationBar Content="Main Page" 
-                    Style="{StaticResource MaterialNavigationBarStyle}"/>
   ```
 
 * Define the control responsible for switching between views. In this case, we will place multiple `Button` controls in a `StackPanel` to represent the possible views:
@@ -100,7 +90,6 @@ Sometimes your application may need to switch between multiple views without the
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
         xmlns:uen="using:Uno.Extensions.Navigation.UI"
-        xmlns:utu="using:Uno.Toolkit.UI"
         Background="{ThemeResource MaterialBackgroundBrush}">
 
       <Grid>
@@ -109,9 +98,6 @@ Sometimes your application may need to switch between multiple views without the
               <RowDefinition Height="Auto" />
               <RowDefinition />
           </Grid.RowDefinitions>
-
-          <utu:NavigationBar Content="Main Page" 
-                            Style="{StaticResource MaterialNavigationBarStyle}"/>
 
           <StackPanel Grid.Row="1" 
                       HorizontalAlignment="Center" 
@@ -147,24 +133,7 @@ Sometimes your application may need to switch between multiple views without the
 
 ### 3. Set up navigation
 
-* Set the `Navigation.Request` attached property on each `Button` control to what will be the route to a corresponding view:
-
-  ```xml
-  <StackPanel Grid.Row="1" 
-              HorizontalAlignment="Center" 
-              Orientation="Horizontal">
-      <Button Content="One"
-              uen:Navigation.Request="./One" />
-      <Button Content="Two"
-              uen:Navigation.Request="./Two" />
-      <Button Content="Three"
-              uen:Navigation.Request="./Three" />
-  </StackPanel>
-  ```
-
-* This will automatically set up navigation to the corresponding view when the `Button.Click` event is raised.
-
-* Next, we need to attach content regions for each view. The first step is to set the `Region.Attached` attached property to `True` on the parent `Grid` containing the views:
+* We need to attach content regions for each view. Regions represent a container to where navigation will take place. The first step is to set the `Region.Attached` attached property to `True` on the parent `Grid` containing the views:
   
   ```xml
   <Grid Grid.Row="2" 
@@ -190,25 +159,25 @@ Sometimes your application may need to switch between multiple views without the
   </Grid>
   ```
 
-* Since we want to toggle visibility of the views, we need to set the `Region.Navigator` attached property to `Visibility`:
+
+* Next, we need to set the `Region.Name` attached property on each child `Grid` to the corresponding view name:
 
   ```xml
   <Grid Grid.Row="2" 
-        uen:Region.Attached="True"
-        uen:Region.Navigator="Visibility">
-      <Grid>
+        uen:Region.Attached="True">
+      <Grid uen:Region.Name="One">
           <TextBlock Text="One" 
                     FontSize="24" 
                     HorizontalAlignment="Center" 
                     VerticalAlignment="Center"/>
       </Grid>
-      <Grid>
+      <Grid uen:Region.Name="Two">
           <TextBlock Text="Two"
                     FontSize="24"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center" />
       </Grid>
-      <Grid>
+      <Grid uen:Region.Name="Three">
           <TextBlock Text="Three"
                     FontSize="24"
                     HorizontalAlignment="Center"
@@ -216,8 +185,32 @@ Sometimes your application may need to switch between multiple views without the
       </Grid>
   </Grid>
   ```
+* While you have designated the Grids above as regions, it is important to keep in mind the visual tree structure:
+  - The parent Grid is the region container.
+  - The child Grids are the regions.
+  - The TextBlocks are the content of the regions.
 
-* Finally, we need to set the `Region.Name` attached property on each child `Grid` to the corresponding view name:
+> [!IMPORTANT] 
+> To specify one of these regions as a route, you must prefix the request name with "./" to indicate that the request involves a _nested_ region. For example, if you want to navigate to the "One" view, you would use the request "./One" which includes the nested qualifier.
+
+* Set the `Navigation.Request` attached property on each `Button` control to what will be the route to a corresponding region. In this case, we should use the name that was defined above as the property value:
+
+  ```xml
+  <StackPanel Grid.Row="1" 
+              HorizontalAlignment="Center" 
+              Orientation="Horizontal">
+      <Button Content="One"
+              uen:Navigation.Request="./One" />
+      <Button Content="Two"
+              uen:Navigation.Request="./Two" />
+      <Button Content="Three"
+              uen:Navigation.Request="./Three" />
+  </StackPanel>
+  ```
+
+* This will automatically set up navigation to the corresponding view when the `Button.Click` event is raised.
+
+* Since we want to toggle visibility of the views, we need to set the `Region.Navigator` attached property to `Visibility`:
 
   ```xml
   <Grid Grid.Row="2" 
@@ -244,7 +237,37 @@ Sometimes your application may need to switch between multiple views without the
   </Grid>
   ```
 
-* Now, you have written a UI layout capable of navigating to views with `Panel`. Your completed `MainPage.xaml` should look like the code example below.
+* Finally, set the `Visibility` of the regions to `Collapsed` by default:
+
+  ```xml
+  <Grid Grid.Row="2" 
+        uen:Region.Attached="True"
+        uen:Region.Navigator="Visibility">
+      <Grid uen:Region.Name="One"
+            Visibility="Collapsed">
+          <TextBlock Text="One" 
+                     FontSize="24" 
+                     HorizontalAlignment="Center" 
+                     VerticalAlignment="Center"/>
+      </Grid>
+      <Grid uen:Region.Name="Two"
+            Visibility="Collapsed">
+          <TextBlock Text="Two"
+                     FontSize="24"
+                     HorizontalAlignment="Center"
+                     VerticalAlignment="Center" />
+      </Grid>
+      <Grid uen:Region.Name="Three"
+            Visibility="Collapsed">
+          <TextBlock Text="Three"
+                     FontSize="24"
+                     HorizontalAlignment="Center"
+                     VerticalAlignment="Center" />
+      </Grid>
+  </Grid>
+  ```
+ 
+* By establishing sectors of `Page` content as regions and setting a few attached properties, you have written a UI layout capable of navigating to views with `Panel`. Your completed `MainPage.xaml` should look like the code example below.
 
 #### Code example
 
@@ -266,9 +289,6 @@ Sometimes your application may need to switch between multiple views without the
             <RowDefinition Height="Auto" />
             <RowDefinition />
         </Grid.RowDefinitions>
-
-        <utu:NavigationBar Content="Main Page" 
-                           Style="{StaticResource MaterialNavigationBarStyle}"/>
 
         <StackPanel Grid.Row="1" 
                     HorizontalAlignment="Center" 
@@ -312,4 +332,4 @@ Sometimes your application may need to switch between multiple views without the
 
 ### 4. Switching between views
 
-* Now, you can switch between views by clicking on the `Button` controls - no `Frame` required! The `Panel` region will automatically toggle the visibility of the corresponding views.
+* You can now switch between views by clicking on the `Button` controls - no `Frame` required! The `Panel` region will automatically toggle the visibility of the corresponding views.
