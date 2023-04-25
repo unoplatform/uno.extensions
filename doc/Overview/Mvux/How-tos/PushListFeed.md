@@ -79,7 +79,7 @@ In this tutorial you will learn how to create an MVUX project and utilization of
     ```
 
 > [!NOTE]  
-> Feeds (`IFeed<T>` and `IListFeed<T>` for collections) are used as a gateway to asynchronously request data from a service and wrap the result or error if any in metadata to be displayed in the View in accordingly.  
+> Feeds (`IFeed<T>` and `IListFeed<T>` for collections) are used as a gateway to asynchronously request data from a service and wrap the result or error if any in metadata to be displayed in the View accordingly.  
 > Learn more about list-feeds [here](xref:Overview.Mvux.HowToListFeed).
 
 > [!TIP]  
