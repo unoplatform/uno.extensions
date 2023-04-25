@@ -11,7 +11,7 @@ Its distinctive feature is the ability to use its [Operators](xref:Overview.Mvux
 
 Another notable characteristic of List-Feed is how it handles the absence of data. When an empty collection is returned by the service, it's treated as an Empty message. The returned data axis Option will be `None`, even though the result was not `null`.  
 This is because when a control of data items is displayed with an empty collection (for instance a `ListView`), there is no reason to display the `FeedView`'s `ValueTemplate` with an empty `ListView`. The "No data records" `NoneTemplate` makes much more sense in this case. For that reason, both a `null` result and empty collection are regarded as `None`.
-Read this if you would like to review the [Feed Messages section](xref:Overview.Mvux.Feeds#messages).
+For more information, review the [Feed Messages section](xref:Overview.Mvux.Feeds#messages).
 
 
 > [!NOTE]  
