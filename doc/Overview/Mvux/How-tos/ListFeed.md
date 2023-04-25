@@ -21,7 +21,7 @@ In this tutorial you will learn how to create an MVUX project and basic usage of
 
 1. Add a class named *PeopleService.cs*, and replace its content with the following:
 
-    ```c#
+    ```csharp
     namespace PeopleApp;
 
     public partial record Person(string FirstName, string LastName);
@@ -54,7 +54,7 @@ In this tutorial you will learn how to create an MVUX project and basic usage of
 
 1. Create a class named *PeopleModel.cs* replacing its content with the following:
 
-    ```c#
+    ```csharp
     using Uno.Extensions.Reactive;
     
     namespace PeopleApp;
@@ -82,7 +82,7 @@ This is similar in concept to an `IObservable<IEnumerable<T>>`, where an `IListF
 > [!TIP]  
 > An `IListFeed<T>` is awaitable, meaning that to get the value of the feed you would do the following in the model:
 >
-> ```c#
+> ```csharp
 > IImmutableList<Person> people = await this.People;
 > ```  
 
@@ -96,7 +96,7 @@ which exposes properties that the View can data bind to.
 
 1. Replace anything inside the `Page` contents with the following code:
 
-    ```xaml
+    ```xml
     <mvux:FeedView Source="{Binding People}">
         <DataTemplate>
             <ListView ItemsSource="{Binding Data}">
@@ -124,7 +124,7 @@ which exposes properties that the View can data bind to.
 
 1. Press <kbd>F7</kbd> to navigate to open code-view, and in the constructor, after the line that calls `InitializeComponent()`, add the following line:
 
-    ```c#
+    ```csharp
     this.DataContext = new BindablePeopleModel(new PeopleService());
     ```
 

@@ -18,7 +18,7 @@ In this tutorial you will learn how to create an MVUX project and utilization of
 
 1. Add a class named *StockMarketService.cs*, and replace its content with the following:
 
-    ```c#
+    ```csharp
     using System.Runtime.CompilerServices;
 
     namespace StockMarketApp;
@@ -71,7 +71,7 @@ In this tutorial you will learn how to create an MVUX project and utilization of
 
 1. Create a class named *StockMarketModel.cs* replacing its content with the following:
 
-    ```c#
+    ```csharp
     public partial record StockMarketModel(StockMarketService StockMarketService)
     {
         public IListFeed<Stock> Stocks => ListFeed.AsyncEnumerable(StockMarketService.GetCurrentMarket);
@@ -98,7 +98,7 @@ signaling the UI about the new data.
 > [!TIP]
 > An `IListFeed<T>` is awaitable, meaning that to get the value of the feed you would execute the following in the model:  
 >
-> ```c#
+> ```csharp
 > StockMarket currentMarket = await this.Stocks;
 > ```  
 
@@ -107,7 +107,7 @@ and generate a proxy type called `BindableStockMarketModel`, which exposes prope
 
 1. Open the file `MainView.xaml` and replace anything inside the `Page` element with the following code:
 
-    ```xaml
+    ```xml
     <ListView ItemsSource="{Binding Stocks}" SelectionMode="None">
         <ListView.ItemTemplate>
             <DataTemplate>
@@ -122,7 +122,7 @@ and generate a proxy type called `BindableStockMarketModel`, which exposes prope
 
 1. Press <kbd>F7</kbd> to navigate to open code-view, and in the constructor, after the line that calls `InitializeComponent()`, add the following line:
 
-    ```c#
+    ```csharp
     this.DataContext = new BindableStockMarketModel(new StockMarketService());
     ```   
 

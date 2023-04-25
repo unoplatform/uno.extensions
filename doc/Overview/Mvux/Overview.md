@@ -23,7 +23,7 @@ This example creates an `IFeed<WeatherInfo>` that will return the weather, which
 
 The `WeatherModel` is the **Model** in MVUX (This would be referred to as a ViewModel in MVVM).
 
-```c#
+```csharp
 public partial record WeatherModel(IWeatherService WeatherService)
 {
     // MVUX code-generator reads this line and generates a cached feed behind the scenes    
@@ -37,13 +37,13 @@ You can learn more about partial classes and methods in [this article](https://l
 
 The entity `WeatherInfo` wraps the temperature, and in a real application would be extended to hold other weather information such as humidity or rainfall:
 
-```c#
+```csharp
 public partial record WeatherInfo(double Temperature);
 ```
 
 This is the weather service, which includes a small delay to simulate calling a service API.
 
-```c#
+```csharp
 public interface IWeatherService
 {
     ValueTask<WeatherInfo> GetCurrentWeather(CancellationToken ct);
@@ -65,7 +65,7 @@ The `FeedView` is data bound to the `CurrentWeather` property which aligns with 
 Within the template, the `Data` property is used to access the current data exposed by the IFeed, which in this case is a proxy for the current `WeatherInfo` instance.  
 The `Data` property is bound to the `DataContext` of the `TextBlock`, making it possible to bind the `Text` property of the `TextBlock` to the `Temperature` property.
 
-```xaml
+```xml
 <Page x:Class="WeatherApp.MainPage"
 	  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 	  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"

@@ -36,7 +36,7 @@ Besides holding the state information, a reference to the bindable proxy is shar
 
 States are created slightly different, they require a reference to the Model for caching and GC as mentioned above.
 
-```c#
+```csharp
 public IState<Person> MainContact => State.Async(this, ContactsService.GetMainContact);
 ```
 
@@ -46,7 +46,7 @@ Where `GetMainContact` is a `ValueTask<Person>`, and takes a parameter of `Cance
 
 A State can also be created from an Async Enumerable as follows:
 
-```c#
+```csharp
 public IState<StockValue> MyStockCurrentValue => State.AsyncEnumerable(this, ContactsService.GetMyStockCurrentValue);
 ```
 
@@ -59,13 +59,13 @@ There are additional way to create States, so that you can update them at a late
 
 - With a synchronous initial value, and update it at a later stage:
 
-    ```c#
+    ```csharp
     public IState<City> CurrentCity => State.Value(this, () => new City("Montréal"));
     ```
 
 - Without any initial value:
 
-    ```c#
+    ```csharp
     public IState<City> CurrentCity => State<City>.Empty(this);
     ```
 
@@ -76,7 +76,7 @@ There are additional way to create States, so that you can update them at a late
 
 States are advanced Feeds. As such, they can also be awaited directly:
 
-```c#
+```csharp
 City currentCity = await this.CurrentCity;
 ```
 
@@ -84,7 +84,7 @@ City currentCity = await this.CurrentCity;
 
 1. In an MVUX app (read [How to set up an MVUX project](xref:Overview.Mvux.HowToMvuxProject)), add a Model class with a simple state as follows:
 
-    ```c#
+    ```csharp
     public partial record SliderModel
     {
         // create a state with an initial random double value between 0 and 1, multiplied by 100.
@@ -94,7 +94,7 @@ City currentCity = await this.CurrentCity;
 
 1. Replace all child elements in the _MainPage.xaml_ with the following:
 
-    ```xaml
+    ```xml
     <Page 
         x:Class="SliderApp.MainPage"
     	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -132,7 +132,7 @@ To update the current value of a State, use its `Update` method.
 
 In this example we'll add the method `IncrementSlider` that gets the current value and increases it by one (if it doesn't exceed 100):
 
-```c#
+```csharp
 public async ValueTask IncrementSlider(CancellationToken ct = default)
 {
     static double incrementValue(double currentValue) =>
@@ -156,7 +156,7 @@ In the `IncrementSlider` example [we've just used](#change-data-of-a-state), a s
 
 Let's modify the XAML [above](#how-to-bind-the-view-to-a-state) with the following:
 
-```xaml
+```xml
         ...
         <TextBlock Text="Set state value:"/>
         <Slider Value="{Binding SliderValue, Mode=TwoWay}" />

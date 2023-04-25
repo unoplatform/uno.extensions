@@ -18,7 +18,7 @@ In this tutorial you will learn how to create a project that uses MVUX with a co
 
 1. Add a class named *WeatherService.cs*, and replace its content with the following:
 
-    ```c#    
+    ```csharp    
     namespace WeatherApp;
 
     public partial record WeatherInfo(int Temperature);
@@ -47,7 +47,7 @@ In this tutorial you will learn how to create a project that uses MVUX with a co
 
 1. Create a class named *WeatherModel.cs* replacing its content with the following:
 
-    ```c#
+    ```csharp
     public partial record WeatherModel(IWeatherService WeatherService)
     {                                                             
         public IFeed<WeatherInfo> CurrentWeather => Feed.Async(WeatherService.GetCurrentWeatherAsync);
@@ -66,7 +66,7 @@ In this tutorial you will learn how to create a project that uses MVUX with a co
 > [!TIP]
 > An `IFeed<T>` is awaitable, meaning that to get the value of the feed you would do the following in the model:
 >
-> ```c#
+> ```csharp
 > WeatherInfo currentWeather = await this.CurrentWeather;
 > ```  
 > 
@@ -75,13 +75,13 @@ In this case the `BindableWeatherModel` exposes a `CurrentWeather` property that
 
 1. Open the file `MainView.xaml` and replace the `Page` contents with the following:
 
-    ```xaml
+    ```xml
     <TextBlock Text="{Binding CurrentWeather.Temperature}" />
     ```
 
 1. Press <kbd>F7</kbd> to navigate to open code-view, and in the constructor, after the line that calls `InitializeComponent()`, add the following line:
 
-    ```c#
+    ```csharp
     this.DataContext = new BindableWeatherModel(new WeatherService());
     ```
 
@@ -115,7 +115,7 @@ In the next section we'll use the `FeedView` control to unlock the capabilities 
 
 1. Wrap the `TextBlock` inside a `FeedView` control like the following:
 
-    ```xaml
+    ```xml
     <mvux:FeedView Source="{Binding CurrentWeather}">
         <DataTemplate>            
             <TextBlock DataContext="{Binding Data}" Text="{Binding Temperature}" />
@@ -143,7 +143,7 @@ The temperature is requested from the service and is displayed on page:
 1. Let's add a `Refresh` button to allow the user to request an update to the data.  
 Change the `FeedView` content to the following:
 
-    ```xaml
+    ```xml
     <mvux:FeedView Source="{Binding CurrentWeather}">
         <DataTemplate>
             <StackPanel>
@@ -179,7 +179,7 @@ In the following step you'll learn how to customize the progress-ring you saw be
 
 1. Close the app and below the `DataTemplate` above, add the following content (within the `FeedView`):
 
-    ```xaml
+    ```xml
             ...
         </DataTemplate>
         <mvux:FeedView.ProgressTemplate>

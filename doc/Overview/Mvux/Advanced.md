@@ -33,7 +33,7 @@ We'll be using the *PeopleApp* example which we've built step-by-step in [this t
 The *PeopleApp* uses an `IListFeed<T>` where `T` is a `Person` [record](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/record) with the properties `FirstName` and `LastName`.
 It has a service which has the following contract:
 
-```c#
+```csharp
 public interface IPeopleService
 {
     ValueTask<IImmutableList<Person>> GetPeopleAsync(CancellationToken ct);
@@ -42,7 +42,7 @@ public interface IPeopleService
 
 It is then used by the `PeopleModel` class which requests the service using a List-Feed.
 
-```c#
+```csharp
 public partial record PeopleModel(IPeopleService PeopleService)
 {
     public IListFeed<Person> People => ListFeed.Async(PeopleService.GetPeopleAsync);
@@ -51,7 +51,7 @@ public partial record PeopleModel(IPeopleService PeopleService)
 
 The data is then displayed on the View using a `ListView`:
 
-```xaml
+```xml
 <Page ...>
     <ListView ItemsSource="{Binding People}">
         <ListView.ItemTemplate>
@@ -83,7 +83,7 @@ To enable storing the selected value in the model, we'll create an `IState<Perso
 
 Let's change the `PeopleModel` as follows:
 
-```c#
+```csharp
 public partial record PeopleModel(IPeopleService PeopleService)
 {
     public IListFeed<Person> People =>
@@ -107,7 +107,7 @@ We'll also add a separator (using `Border`) to be able to distinguish them.
 
 The View code shall look like the following:
 
-```xaml
+```xml
 <Page ...>
 
     <StackPanel>
@@ -141,7 +141,7 @@ The `Selection` operator has another overload which enables selecting multiple i
 
 In the `PeopleModel`, we'll modify the `SelectedPerson` property to look like the following:
 
-```c#
+```csharp
 public IState<IImmutableList<Person>> SelectedPeople => State<IImmutableList<Person>>.Empty(this);
 ```
 
@@ -169,7 +169,7 @@ For the Pagination example we'll also use the *PeopleApp* example used above in 
 
 Let's change the `GetPeopleAsync` method in the *PeopleService.cs* file to support pagination:
 
-```c#
+```csharp
 namespace PaginationPeopleApp;
 
 public partial record Person(string FirstName, string LastName);
@@ -220,7 +220,7 @@ public class PeopleService : IPeopleService
 
 #### Model
 
-```c#
+```csharp
 using Uno.Extensions.Reactive;
 
 namespace PaginationPeopleApp;
@@ -245,7 +245,7 @@ As you can see, we are sending the `Index` property of the incoming `pageRequest
 
 #### View
 
-```xaml
+```xml
 <Page 
     x:Class="PaginationPeopleApp.MainPage"
 	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -270,7 +270,7 @@ As you can see, we are sending the `Index` property of the incoming `pageRequest
 
 In addition, make sure the `DataContext` of the `Page` is set to the generated bindable model called `BindablePeopleModel` (*MainPage.xaml.cs*):
 
-```c#
+```csharp
 public MainPage()
 {
     this.InitializeComponent();
@@ -310,14 +310,14 @@ Using the example started in [incremental loading above](#incremental-loading), 
 
 Here's the method added to the service (*PeopleService.cs*):
 
-```c#
+```csharp
 public async ValueTask<int> GetPageCount(uint pageSize, CancellationToken ct) =>
     (uint)Math.Ceiling(GetPeople().Length / (double)pageSize);
 ```
 
 The signature of `GetPageCount` should also be added to the `IPeopleService` interface:
 
-```c#
+```csharp
 ValueTask<int> GetPageCount(uint pageSize, CancellationToken ct);
 ```
 
@@ -325,7 +325,7 @@ ValueTask<int> GetPageCount(uint pageSize, CancellationToken ct);
 
 Let's expand the Model with the following:
 
-```c#
+```csharp
 public partial record PeopleModel(IPeopleService PeopleService)
 {
     public IListFeed<Person> PeopleAuto ...// will not be used in this example
@@ -365,7 +365,7 @@ Read onward on [Creating commands](#creating-commands) to learn more.
 
 Replace the `ListView` from the previous example with this one:
 
-```xaml
+```xml
 <ListView Grid.Column="2" x:Name="manual" ItemsSource="{Binding PeopleManual}"
           ItemTemplate="{StaticResource PersonDataTemplate}" Header="Load single page on demand">
     
@@ -431,7 +431,7 @@ To utilize this pagination style, MVUX provides another `ListFeed` factory overl
 
 The signature of this method is:
 
-```c#
+```csharp
 public static IListFeed<T> AsyncPaginatedByCursor<TCursor>(TCursor firstPage, GetPage<TCursor, T> getPage)
 ```
 
@@ -462,7 +462,7 @@ To keep the service agnostic, we'll add the following method to the Service:
 
 *IPeopleService*:
 
-```c#
+```csharp
 ValueTask<(IImmutableList<Person> CurrentPage, Person NextCursor)> GetPeopleAsync(Person? cursor, uint pageSize, CancellationToken ct);
 ```
 
@@ -482,7 +482,7 @@ The method returns a tuple with two components (same as `PageResult`, only keepi
 
 In the example above we want to override the `ToString` method of `Person` so that we can later order the entities by their string representation:
 
-```c#
+```csharp
 public partial record Person(string FirstName, string LastName)
 {
     public override string ToString() => $"{FirstName} {LastName}";
@@ -491,7 +491,7 @@ public partial record Person(string FirstName, string LastName)
 
 The fully implemented method in the service is as follows:
 
-```c#
+```csharp
 public async ValueTask<(IImmutableList<Person> CurrentPage, Person NextCursor)> GetPeopleAsync(Person? cursor, uint pageSize, CancellationToken ct)
 {
     // fake delay to simulate loading data
@@ -517,7 +517,7 @@ public async ValueTask<(IImmutableList<Person> CurrentPage, Person NextCursor)> 
 
 #### Model
 
-```c#
+```csharp
 public IListFeed<Person> PeopleCursor =>
     ListFeed<Person>.AsyncPaginatedByCursor(
             // starting off with a blank Person, since the person list is to be ordered by name, any valid name will follow.
@@ -536,7 +536,7 @@ public IListFeed<Person> PeopleCursor =>
 
 There's not much needed in the View as this is magically working via the `ISupportIncrementalLoading` implemented with the `ListView`!
 
-```xaml
+```xml
 <ListView ItemsSource="{Binding PeopleCursor}" ItemTemplate="{StaticResource PersonDataTemplate}" />
 ```
 
@@ -576,7 +576,7 @@ There are several methods of how to create an MVUX command.
      > [!TIP]  
      > You can explicitly match a parameter with a Feed even the names don't match by decorating the parameter with the `FeedParameter` attribute:  
      >
-     > ```c#
+     > ```csharp
      > public IFeed<string> Message { get; }
      > 
      > public async ValueTask Share([FeedParameter(nameof(Message))] string msg)
@@ -587,7 +587,7 @@ There are several methods of how to create an MVUX command.
      > [!TIP]  
      > You can also opt in or out of implicit matching of Feeds and command parameters by the decorating the current assembly or class with the `ImplicitFeedCommandParameters` attribute:  
      >
-     > ```c#
+     > ```csharp
      > [assembly:ImplicitFeedCommandParameter(false)]
      >
      > [ImplicitFeedCommandParameter(true)]
@@ -601,7 +601,7 @@ There are several methods of how to create an MVUX command.
 
     - Async
 
-    ```c#
+    ```csharp
     public ICommand MyCommand => Command.Async(async(ct) => await PingServer(ct));
     ```
 
@@ -615,7 +615,7 @@ There are several methods of how to create an MVUX command.
 
     - Given - This method takes a Feed (or a State!) and configures a command which will be triggered whenever a new value is available to the Feed.
 
-        ```c#
+        ```csharp
         public IFeed<int> PageCount => ...
 
         public IAsyncCommand MyCommand => Command.Create(builder => builder.Given(PageCount));
@@ -623,19 +623,19 @@ There are several methods of how to create an MVUX command.
 
     - When - Limits the command execution to a set prerequisite - in other words sets the 'can execute' of the command.
 
-        ```c#
+        ```csharp
         public IAsyncCommand MyCommand => Command.Create<int>(builder => builder.When(i => i > 10));
         ```
 
     - Then - Sets the actual asynchronous callback to be invoked when the Command is executed. This method will be genereric if there's a preceding parameter setting (via Given or When).
 
-        ```c#
+        ```csharp
         public IAsyncCommand MyCommand => Command.Create(builder => builder.Then(async ct => await ExecuteMyCommand(ct)));
         ```
 
     Here's a complete example:
 
-    ```c#
+    ```csharp
     public IAsyncCommand MyCommand => 
         Command.Create(builder => 
             builder

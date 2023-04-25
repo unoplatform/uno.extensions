@@ -17,7 +17,7 @@ In this tutorial you will learn how to create an MVUX project and basic usage of
 
 1. Add a class named *HallCrowdednessService.cs*, and replace its content with the following:
 
-    ```c#
+    ```csharp
     namespace TheFancyWeddingHall;
 
     public partial record HallCrowdedness(int NumberOfPeopleInHall);
@@ -56,7 +56,7 @@ In this tutorial you will learn how to create an MVUX project and basic usage of
 
 1. Create a class named *HallCrowdednessModel.cs* and replace its content with the following:
 
-    ```c#
+    ```csharp
     using Uno.Extensions.Reactive;
 
     namespace TheFancyWeddingHall;
@@ -97,13 +97,13 @@ The difference of States is that they provide update operators and enable manipu
 > [!TIP]
 > An `IFeed<T>` as well as `IState<T>` are awaitable, meaning that to get the value of the feed you would do the following in the model:  
 >
-> ```c#
+> ```csharp
 > HallCrowdedness hallCrowdedness = await this.HallCrowdedness;
 > ```
 
 1. Replace anything inside the `Page` element with the following code:
 
-    ```xaml
+    ```xml
     <StackPanel>
         <TextBlock Text="How many people are currently in the hall?" />
         <TextBox 
@@ -127,7 +127,7 @@ When the user edits the text in the `TextBox`, MVUXs data-binding adapters trans
 
 1. In the XAML file, after the `TextBox`, add the following `Button` code:
 
-    ```xaml
+    ```xml
         <TextBox ... />
 
         <Button Content="Save" Command="{Binding Save}" />
@@ -141,7 +141,7 @@ When the user edits the text in the `TextBox`, MVUXs data-binding adapters trans
 
 1. Press <kbd>F7</kbd> to navigate to open code-view, and in the constructor, after the line that calls `InitializeComponent()`, add the following line:
 
-    ```c#
+    ```csharp
     this.DataContext = new BindableHallCrowdednessModel(new HallCrowdednessService());
     ```
 
