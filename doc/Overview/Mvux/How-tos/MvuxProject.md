@@ -13,7 +13,7 @@ In this tutorial you'll learn how to set up an Uno Platform project to use MVUX.
 
     #### Using Visual Studio 2022 Uno Platform Extension
 
-    - Make sure you have the latest version of Uno Extension (v4.8) installed.
+    - Make sure you have the latest version of Uno Extension (v4.8 or higher) installed.
 
         ![](../Assets/MvuxProject-VsixVersion.jpg)
 
