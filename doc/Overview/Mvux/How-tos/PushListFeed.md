@@ -64,7 +64,7 @@ In this tutorial you will learn how to create an MVUX project and utilization of
     }
     ```
 
-    We're using a [record](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/record) for the `Stock` type on purpose, as records are immutable and ensure purity of objects as well as other features.
+    We're using a [record](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/record) for the `Stock` type on purpose, as records are immutable and ensure the purity of objects as well as other features.
 
     The `GetCurrentMarket` emits a collection of stocks with updated values every 5 seconds.  
     The `IListFeed<T>` is a feed tailored for dealing with collections.
