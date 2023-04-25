@@ -429,7 +429,7 @@ This is referred to as 'keyset pagination' or 'seek-based pagination'.
 
 To utilize this pagination style, MVUX provides another `ListFeed` factory overload, the `AsyncPaginatedByCursor`.
 
-The signature oƒ this method is:
+The signature of this method is:
 
 ```c#
 public static IListFeed<T> AsyncPaginatedByCursor<TCursor>(TCursor firstPage, GetPage<TCursor, T> getPage)
