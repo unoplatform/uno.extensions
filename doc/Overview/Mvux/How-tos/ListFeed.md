@@ -134,7 +134,7 @@ which exposes properties that the View can data bind to.
 
     ![](../Assets/SimpleFeed-3.gif)
 
-1. Once the data is the available, the `FeedView` switches to its `ValueTemplate` (the first default `DataTemplate` in our example), and displays the people list.
+1. Once the data is available, the `FeedView` switches to its `ValueTemplate` (the first default `DataTemplate` in our example), and displays the people list.
 
     ![](../Assets/ListFeed-1.jpg)
 
