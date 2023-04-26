@@ -8,42 +8,59 @@ namespace Uno.Extensions.Generators.PropertySelector;
 
 internal static class PropertySelectorPathResolver
 {
+	private sealed class Visitor : CSharpSyntaxVisitor
+	{
+		private bool _visitingWhenNotNull;
+
+		public List<PropertySelectorPathPart> Parts { get; } = new();
+
+		private PropertySelectorPathPart CreatePathPart(SyntaxNode node, string name)
+		{
+			var prefix = _visitingWhenNotNull ? "?." : ".";
+			_visitingWhenNotNull = false;
+			return new(node, name, prefix + name);
+		}
+
+		public override void VisitConditionalAccessExpression(ConditionalAccessExpressionSyntax node)
+		{
+			Visit(node.Expression);
+			_visitingWhenNotNull = true;
+			Visit(node.WhenNotNull);
+		}
+
+		public override void VisitMemberAccessExpression(MemberAccessExpressionSyntax node)
+		{
+			Visit(node.Expression);
+			var identifier = node.Name.Identifier.ValueText;
+			Parts.Add(CreatePathPart(node, identifier));
+		}
+
+		public override void VisitMemberBindingExpression(MemberBindingExpressionSyntax node)
+		{
+			var identifier = node.Name.Identifier.ValueText;
+			Parts.Add(CreatePathPart(node, identifier));
+		}
+
+		public override void VisitPostfixUnaryExpression(PostfixUnaryExpressionSyntax node)
+		{
+			Visit(node.Operand);
+			Parts[Parts.Count - 1] = Parts[Parts.Count - 1] with { Accessor = Parts[Parts.Count - 1].Accessor + "!" };
+		}
+	}
+
 	public static PropertySelectorPath Resolve(SimpleLambdaExpressionSyntax selector)
 	{
 		var paramName = selector.Parameter.Identifier.ValueText;
-		var parts = new List<PropertySelectorPathPart>();
+
+		var visitor = new Visitor();
+		var parts = visitor.Parts;
 
 		var node = selector.ExpressionBody;
-		while (node is not null)
+		if (node is not null)
 		{
-			(var part, node) = GetPart(node);
-			parts.Add(part);
+			visitor.Visit(node);
 		}
 
-		parts.Reverse();
-		parts.RemoveAt(0); // We remove the 'e' from 'e => e.A.B.C' to keep only 'A.B.C' which is what we call the path.
-
 		return new(string.Concat(parts.Select(part => part.Accessor)), parts);
-
-		(PropertySelectorPathPart part, ExpressionSyntax? parent) GetPart(ExpressionSyntax node)
-			=> node switch
-			{
-				PostfixUnaryExpressionSyntax { RawKind: (int)SyntaxKind.SuppressNullableWarningExpression } suppNull => Suffix(GetPart(suppNull.Operand), "!"),
-				ConditionalAccessExpressionSyntax nullProp => Prefix(GetPart(nullProp.WhenNotNull), "?") with { parent = nullProp.Expression },
-				MemberAccessExpressionSyntax member => Name(member, member.Name.Identifier.ValueText, member.Expression),
-				MemberBindingExpressionSyntax memberBinding => Name(memberBinding, memberBinding.Name.Identifier.ValueText), // The right part the ConditionalAccessExpressionSyntax
-				IdentifierNameSyntax identifier when identifier.Identifier.ValueText == paramName => default,
-				IdentifierNameSyntax => throw Rules.PS0002.Fail(selector, node),
-				_ => throw Rules.PS0001.Fail(selector, node),
-			};
-
-		static (PropertySelectorPathPart part, ExpressionSyntax? parent) Prefix((PropertySelectorPathPart part, ExpressionSyntax? parent) inner, string accessorPrefix)
-			=> (inner.part with { Accessor = accessorPrefix + inner.part.Accessor }, inner.parent);
-
-		static (PropertySelectorPathPart part, ExpressionSyntax? parent) Suffix((PropertySelectorPathPart part, ExpressionSyntax? parent) inner, string accessorSuffix)
-			=> (inner.part with { Accessor = inner.part.Accessor + accessorSuffix }, inner.parent);
-
-		static (PropertySelectorPathPart part, ExpressionSyntax? parent) Name(SyntaxNode node, string name, ExpressionSyntax? parent = null)
-			=> (new PropertySelectorPathPart(node, name, "." + name), parent);
 	}
 }
