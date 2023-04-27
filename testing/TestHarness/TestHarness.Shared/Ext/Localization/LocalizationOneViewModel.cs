@@ -12,6 +12,9 @@ public partial class LocalizationOneViewModel : ObservableObject
 	[ObservableProperty]
 	private string _applicationNameInCode;
 
+	[ObservableProperty]
+	private string _keyWithDots;
+
 	public LocalizationOneViewModel(
 		ILocalizationService localizationService,
 		IStringLocalizer localizer)
@@ -20,6 +23,7 @@ public partial class LocalizationOneViewModel : ObservableObject
 		SupportedCultures = _localizationService.SupportedCultures;
 
 		ApplicationNameInCode = localizer.GetString("ApplicationName");
+		KeyWithDots = localizer.GetString("Key.With.Dots");
 	}
 
 	public CultureInfo[] SupportedCultures { get; }
