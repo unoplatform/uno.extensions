@@ -24,6 +24,9 @@
 			<TextBlock HorizontalAlignment="Center"
 					   FontSize="24"
 					   Text="{Binding ApplicationNameInCode}"/>
+			<TextBlock HorizontalAlignment="Center"
+					   FontSize="24"
+					   Text="{Binding KeyWithDots}"/>
 			<utu:ChipGroup x:Name="LanguageChipGroup"
 						   SelectionMode="Single"
 						   SelectedItem="{Binding SelectedCulture, Mode=TwoWay}"

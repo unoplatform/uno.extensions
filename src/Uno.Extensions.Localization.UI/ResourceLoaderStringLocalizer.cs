@@ -1,5 +1,3 @@
-﻿
-
 #if WINDOWS
 using Microsoft.Windows.ApplicationModel.Resources;
 #endif
@@ -87,9 +85,15 @@ public class ResourceLoaderStringLocalizer : IStringLocalizer
 
 		var notFound = resource == null;
 
+		if (notFound &&
+			name.Contains("."))
+		{
+			return GetLocalizedString(name.Replace(".", "/"));
+		}
+
 		resource ??= name;
 
-		var value = arguments.Any()
+		var value = !notFound && arguments.Any()
 			? string.Format(CultureInfo.CurrentCulture, resource, arguments)
 			: resource;
 
