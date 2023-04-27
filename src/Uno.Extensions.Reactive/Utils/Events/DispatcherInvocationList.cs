@@ -15,7 +15,8 @@ internal abstract class DispatcherInvocationList<THandler, TArgs> : IInvocationL
 
 	private List<THandler>? _handlers = new();
 	private bool _isEnumeratingHandlers;
-	
+	private int _queueLength;
+	private bool _isDisposed;
 
 	public DispatcherInvocationList(object owner, Func<THandler, Action<object, TArgs>> raiseMethod, IDispatcher dispatcher)
 	{
@@ -50,36 +51,51 @@ internal abstract class DispatcherInvocationList<THandler, TArgs> : IInvocationL
 	/// <inheritdoc />
 	public void Invoke(TArgs args)
 	{
-		if (HasHandlers)
+		if (_isDisposed || !HasHandlers)
 		{
-			Enqueue(args);
+			return;
+		}
 
-			if (_dispatcher.HasThreadAccess)
-			{
-				Dequeue();
-			}
-			else
-			{
-				_dispatcher.TryEnqueue(Dequeue);
-			}
+		Enqueue(args);
+
+		if (_dispatcher.HasThreadAccess)
+		{
+			Dequeue();
+		}
+		else if (_dispatcher.TryEnqueue(InvokeAsync))
+		{
+			Interlocked.Increment(ref _queueLength);
 		}
 	}
 
 	/// <inheritdoc />
 	public void Invoke(Func<TArgs> args)
 	{
-		if (HasHandlers)
+		if (_isDisposed || !HasHandlers)
 		{
-			Enqueue(args());
+			return;
+		}
 
-			if (_dispatcher.HasThreadAccess)
-			{
-				Dequeue();
-			}
-			else
-			{
-				_dispatcher.TryEnqueue(Dequeue);
-			}
+		Enqueue(args());
+
+		if (_dispatcher.HasThreadAccess)
+		{
+			Dequeue();
+		}
+		else if (_dispatcher.TryEnqueue(InvokeAsync))
+		{
+			Interlocked.Increment(ref _queueLength);
+		}
+	}
+
+	private void InvokeAsync()
+	{
+		Interlocked.Decrement(ref _queueLength);
+		Dequeue();
+
+		if (_isDisposed && _queueLength is 0)
+		{
+			Dispose();
 		}
 	}
 
@@ -113,8 +129,17 @@ internal abstract class DispatcherInvocationList<THandler, TArgs> : IInvocationL
 	/// <inheritdoc />
 	public void Dispose()
 	{
-		_handlers = null;
-		HasHandlers = false;
+		// Flag as disposed. Doing this prevents queueing new events, but still allows to add/remove handlers.
+		// This is to allow the case where an handler un-register and re-register itself.
+		_isDisposed = true;
+
+		if (_queueLength is 0)
+		{
+			// If there are some pending events, we defer the actual dispose after the dispatcher dequeued them.
+			// We will clear the handlers list when the last event is dequeued (re-invoke this Dispose method).
+			_handlers = null;
+			HasHandlers = false;
+		}
 	}
 
 	private List<THandler>? GetHandlersForWrite()

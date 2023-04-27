@@ -1,7 +1,6 @@
 <Project ToolsVersion="15.0">
 	<PropertyGroup>
 		<AssemblyName>Uno.Extensions.Storage.UI</AssemblyName>
-		<GenerateLibraryLayout>true</GenerateLibraryLayout>
 
 		<!--Temporary disable missing XML doc until fixed in the whole package-->
 		<WarningsNotAsErrors>$(WarningsNotAsErrors);CS1591</WarningsNotAsErrors>

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -13,6 +14,20 @@ namespace Uno.Extensions.Reactive.Tests.Core;
 [TestClass]
 public class Given_StateImpl : FeedTests
 {
+	[TestMethod]
+	public async Task When_Create_Then_TaskDoNotLeak()
+	{
+		var sut = new StateImpl<string>(Context, Option<string>.None());
+
+		var next = sut.GetType().GetField("_next", BindingFlags.Instance | BindingFlags.NonPublic)!.GetValue(sut)!;
+		var task = (Task)next.GetType().GetProperty("Task")!.GetValue(next)!;
+
+		task.CreationOptions
+			.HasFlag(TaskCreationOptions.AttachedToParent)
+			.Should()
+			.BeFalse("Creating the task attached to parent will prevent the current async context to complete as it will wait for the Next task to complete before completing itself.");
+	}
+
 	[TestMethod]
 	public async Task When_Empty_Then_CanBeUpdatedByMessage()
 	{

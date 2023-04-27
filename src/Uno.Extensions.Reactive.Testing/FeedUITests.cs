@@ -16,7 +16,7 @@ namespace Uno.Extensions.Reactive.Testing;
 /// </summary>
 public class FeedUITests : FeedTests, ISourceContextOwner
 {
-	private TestDispatcher? _testDispatcher = new();
+	private (TestDispatcher Value, FindDispatcher Resolve)? _testDispatcher;
 	private IDispatcher? _realDispatcher;
 
 	string ISourceContextOwner.Name => ToString();
@@ -26,7 +26,7 @@ public class FeedUITests : FeedTests, ISourceContextOwner
 	/// The dispatcher associated to the thread which abstracts the UI thread in tests.
 	/// </summary>
 	public IDispatcher Dispatcher => (_realDispatcher ??= DispatcherHelper.GetForCurrentThread())
-		?? _testDispatcher
+		?? _testDispatcher?.Value
 		?? throw new InvalidOperationException("The dispatcher has not been initialized yet. Consider adding the [RunsOnUIThread] attribute on your test class.");
 
 	/// <inheritdoc />
@@ -37,8 +37,9 @@ public class FeedUITests : FeedTests, ISourceContextOwner
 
 		if (DispatcherHelper.GetForCurrentThread == DispatcherHelper.NotConfigured)
 		{
-			_testDispatcher = new();
-			DispatcherHelper.GetForCurrentThread  = () => _testDispatcher.HasThreadAccess ? _testDispatcher : null;
+			var dispatcher = new TestDispatcher(TestContext?.TestName);
+			_testDispatcher = new(dispatcher, () => dispatcher.HasThreadAccess ? dispatcher : null);
+			DispatcherHelper.GetForCurrentThread = _testDispatcher.Value.Resolve;
 		}
 		else
 		{
@@ -50,7 +51,15 @@ public class FeedUITests : FeedTests, ISourceContextOwner
 	[TestCleanup]
 	public override void Cleanup()
 	{
-		_testDispatcher?.Dispose();
+		if (_testDispatcher is {} testDispatcher)
+		{ 
+			_testDispatcher = null;
+			if (DispatcherHelper.GetForCurrentThread == testDispatcher.Resolve)
+			{
+				DispatcherHelper.GetForCurrentThread = DispatcherHelper.NotConfigured;
+			}
+			testDispatcher.Value.Dispose();
+		}
 
 		base.Cleanup();
 	}

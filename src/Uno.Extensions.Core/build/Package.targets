@@ -1,0 +1,10 @@
+<Project>
+  <ItemGroup Condition=" '$(ImplicitUsings)' == 'true' OR '$(ImplicitUsings)' == 'enable' ">
+    <Using Include="Uno.Extensions" />
+    <Using Include="Uno.Extensions.DependencyInjection" />
+    <Using Include="Uno.Extensions.Diagnostics" />
+    <Using Include="Uno.Extensions.Edition" />
+    <Using Include="Uno.Extensions.Equality" />
+    <Using Include="Uno.Extensions.Logging" />
+  </ItemGroup>
+</Project>

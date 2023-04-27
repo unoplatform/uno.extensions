@@ -8,6 +8,8 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Uno.Extensions.Reactive.Testing;
 using Uno.UI.RuntimeTests;
 using Microsoft.UI.Xaml.Data;
+using ListView = Microsoft.UI.Xaml.Controls.ListView;
+
 
 namespace Uno.Extensions.Reactive.WinUI.Tests;
 

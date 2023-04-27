@@ -27,9 +27,6 @@ internal static partial class Rules
 				Location.Create(failingNode.SyntaxTree, failingNode.Span),
 				failingNode.ToString(),
 				selectorSyntax.ToString());
-
-		public static GenerationException Fail(SimpleLambdaExpressionSyntax selectorSyntax, SyntaxNode failingNode)
-			=> new(GetDiagnostic(selectorSyntax, failingNode));
 	}
 
 	public static class PS0002
@@ -52,9 +49,6 @@ internal static partial class Rules
 				Location.Create(failingNode.SyntaxTree, failingNode.Span),
 				failingNode.ToString(),
 				selectorSyntax.ToString());
-
-		public static GenerationException Fail(SimpleLambdaExpressionSyntax selectorSyntax, SyntaxNode failingNode)
-			=> new(GetDiagnostic(selectorSyntax, failingNode));
 	}
 
 	public static class PS0003
@@ -76,9 +70,6 @@ internal static partial class Rules
 				Descriptor,
 				Location.Create(selectorSyntax.SyntaxTree, selectorSyntax.Span),
 				selectorSyntax.ToString());
-
-		public static GenerationException Fail(SyntaxNode selectorSyntax)
-			=> new(GetDiagnostic(selectorSyntax));
 	}
 
 	public static class PS0004
@@ -99,9 +90,6 @@ internal static partial class Rules
 				Descriptor,
 				Location.Create(selectorSyntax.SyntaxTree, selectorSyntax.Span),
 				type.ToString());
-
-		public static GenerationException Fail(SyntaxNode selectorSyntax, ITypeSymbol type)
-			=> new(GetDiagnostic(selectorSyntax, type));
 	}
 
 	public static class PS0005
@@ -124,9 +112,6 @@ internal static partial class Rules
 				path,
 				part,
 				type.ToString());
-
-		public static GenerationException Fail(string path, string part, SyntaxNode node, ITypeSymbol type)
-			=> new(GetDiagnostic(path, part, node, type));
 	}
 
 	public static class PS0006
@@ -149,9 +134,6 @@ internal static partial class Rules
 				path,
 				part,
 				type.ToString());
-
-		public static GenerationException Fail(string path, string part, SyntaxNode node, ITypeSymbol type)
-			=> new(GetDiagnostic(path, part, node, type));
 	}
 
 	public static class PS0101
@@ -168,16 +150,14 @@ internal static partial class Rules
 			helpLinkUri: "https://aka.platform.uno/PS0101",
 			isEnabledByDefault: true);
 
+		// TODO: Not yet implemented.
 		public static Diagnostic GetDiagnostic(IMethodSymbol method)
 			=> Diagnostic.Create(
 				Descriptor,
-				method.DeclaringSyntaxReferences.FirstOrDefault() is { } syntax
-					? Location.Create(syntax.SyntaxTree, syntax.Span)
+				method.Locations.FirstOrDefault() is { } location
+					? location
 					: Location.None,
 				method.ToString());
-
-		public static GenerationException Fail(IMethodSymbol method)
-			=> new(GetDiagnostic(method));
 	}
 
 	public static class PS0102
@@ -193,18 +173,18 @@ internal static partial class Rules
 			helpLinkUri: "https://aka.platform.uno/PS0102",
 			isEnabledByDefault: true);
 
-		public static Diagnostic GetDiagnostic(IMethodSymbol method, string param, SyntaxNode argNode)
+		private static Diagnostic GetDiagnostic(string method, string param, SyntaxNode argNode)
 			=> Diagnostic.Create(
 				Descriptor,
 				Location.Create(argNode.SyntaxTree, argNode.Span),
 				param,
-				method.ToString());
+				method);
 
-		public static GenerationException FailFileArg(IMethodSymbol method, IParameterSymbol? param, SyntaxNode argNode)
-			=> new(GetDiagnostic(method, "[CallerFilePath] " + (param?.Name ?? ""), argNode));
+		public static Diagnostic GetFileArgDiagnostic(IMethodSymbol method, IParameterSymbol? param, SyntaxNode argNode)
+			=> GetDiagnostic(method.ToString(), "[CallerFilePath] " + (param?.Name ?? ""), argNode);
 
-		public static GenerationException FailLineArg(IMethodSymbol method, IParameterSymbol? param, SyntaxNode argNode)
-			=> new(GetDiagnostic(method, "[CallerLineNumber] " + (param?.Name ?? ""), argNode));
+		public static Diagnostic GetLineArgDiagnostic(IMethodSymbol method, IParameterSymbol? param, SyntaxNode argNode)
+			=> GetDiagnostic(method.ToString(), "[CallerLineNumber] " + (param?.Name ?? ""), argNode);
 	}
 
 	public static class PS9999

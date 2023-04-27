@@ -60,7 +60,7 @@ internal class AsyncEnumerableSubject<T> : IAsyncEnumerable<T>
 	{
 		TaskCompletionSource<Node>? current;
 		var next = mightHaveNext
-			? new TaskCompletionSource<Node>(TaskCreationOptions.AttachedToParent) 
+			? new TaskCompletionSource<Node>() // Do not use AttachToParent to avoid leak of the current context which gives only the current value 
 			: default;
 		do
 		{
