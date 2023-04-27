@@ -62,7 +62,7 @@ The service checks whether the `Person` object is valid and handles calling the 
 
 ## Validatable entities
 
-Instances of a class which are passed into the `ValidateAsync` method of the default validator have three primary implementation options to allow for validation:
+Instances of a class that are passed into the `ValidateAsync` method of the default validator have three primary implementation options to allow for validation:
 
 # [**INotifyDataErrorInfo**](#tab/notify-data-error-info)
 A common choice for entities that need to implement validation is the `INotifyDataErrorInfo` interface. Internally, the `GetErrors` method exposed by these objects is called by the validator. The .NET Community Toolkit provides an `ObservableValidator` class that implements this interface and provides the base functionality to execute validation rules on properties that have been decorated with validation attributes. `ObservableValidator` is a good choice for objects that need to be observable because it also implements `ObservableObject`. 
