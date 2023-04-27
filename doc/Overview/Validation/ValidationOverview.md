@@ -24,7 +24,7 @@ By default, enabling validation will register the default `Validator` type with 
 
 ## Using the validation service
 
-The `IValidator` service is injected into the constructor of view models which specify the `IValidator` service as a dependency. View models that need to validate data can then use the `ValidateAsync` method to execute validation rules on an object. The `ValidateAsync` method returns a `ValueTask<T>` that completes when validation is complete. The `ValueTask` result is an `IEnumerable<ValidationResult>` which contains elements that indicate whether the object is valid or not. 
+The `IValidator` service is injected into the constructor of view models which specifies the `IValidator` service as a dependency. View models that need to validate data can then use the `ValidateAsync` method to execute validation rules on an object. The `ValidateAsync` method returns a `ValueTask<T>` that completes when validation is complete. The `ValueTask` result is an `IEnumerable<ValidationResult>` which contains elements that indicate whether the object is valid or not. 
 
 The following example shows how to use the service to validate a `Person` object:
 
