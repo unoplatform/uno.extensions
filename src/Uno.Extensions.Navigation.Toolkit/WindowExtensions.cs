@@ -30,7 +30,7 @@ public static class WindowExtensions
 			buildHost,
 			navigationRoot,
 			initialRoute, initialView, initialViewModel,
-			async (root, navInit) =>
+			(root, navInit) =>
 				{
 					var activate = true;
 					if (root is LoadingView lv)
