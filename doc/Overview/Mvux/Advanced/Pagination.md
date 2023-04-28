@@ -130,7 +130,7 @@ public MainPage()
 ```
 
 > [!TIP]  
-> You can inspect the generated code by either placing the cursor on the word `BindablePeopleModel` and hitting <kbd>F12</kbd>, see other ways to inspect the generated code [here](#inspecting-the-generated-code).
+> You can inspect the generated code by either placing the cursor on the word `BindablePeopleModel` and hitting <kbd>F12</kbd>, see other ways to inspect the generated code [here](xref:Overview.Mvux.Advanced.InspectGeneratedCode).
 
 As you can see, there's nothing special in the XAML code as MVUX is taking advantage of the tools already implemented with the `ListView`.
 
@@ -209,7 +209,7 @@ In the code above, whenever `CurrentPage` changes, `PeopleManual` will update it
 MVUX's code generator generates an async command that is bound to from the View, when the user clicks the designated button to move to either previous or next page, the `Move` method will be invoked with the `direction` argument set to either 1 or -1 added to the current page index.
 
 You may be wondering where the `currentPage` and `pageCount` arguments are populated from, this is another MVUX magic trick where when the parameters type and name matches a Feed or a State in the current Model, their latest value are provided as an argument to the executed Command.  
-Read onward on [Creating commands](#creating-commands) to learn more.
+Read onward on [Creating commands](xref:Overview.Mvux.Advanced.InspectGeneratedCode.Commands#creating-commands) to learn more.
 
 ### View
 
@@ -247,7 +247,7 @@ A `CommandParameter` of either *1* or *-1* has been set to Next and Previous but
 ![](../Assets/PaginationManual-1.jpg)
 
 > [!TIP]  
-> The generated `Move` command can be seen in the generated `BindablePeopleModel` as well, follow the instructions [here](#inspecting-the-generated-code).
+> The generated `Move` command can be seen in the generated `BindablePeopleModel` as well, follow the instructions [here](xref:Overview.Mvux.Advanced.InspectGeneratedCode).
 
 When running the app, the first page will be loaded and await the users input to navigate to other pages which will be loaded on-demand:
 

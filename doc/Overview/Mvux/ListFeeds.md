@@ -57,9 +57,10 @@ Here are some examples of creating a List-Feed:
      - On an `IFeed<TCollection>` where `TCollection` is an `IImmutableList<TItem>`, call `ToListFeed()` to convert it to an `IListFeed<TItem>`.
      - Otherwise, call `AsFeed()` on an `IListFeed<T>` to convert it to an `IFeed<IImmutableList<T>>`.
 
-## Support for pagination
+## Support for selection and pagination
 
-There is also built-in support for pagination. More information on this feature can be found [here](xref:Overview.Reactive.ListFeed#paginatedasync) (Model) and [here](Overview.Reactive.InApps#pagination) (View).
+MVUX also provides built-in support for selection and pagination.  
+See more information on [Selection](xref:Overview.Mvux.Advanced.Selection) or [Pagination](xref:Overview.Mvux.Advanced.Pagination).
 
 ## Operators
 
