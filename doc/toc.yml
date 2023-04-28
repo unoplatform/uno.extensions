@@ -71,18 +71,18 @@
           href: Overview/Mvux/States.md
         - name: Advanced topics
           href: Overview/Mvux/Advanced.md
-        - name: How to
+        - name: Tutorials
           items:
             - name: How to create an MVUX project  
-              href: Overview/Mvux/How-tos/MvuxProject.md
+              href: Overview/Mvux/Tutorials/HowTo-MvuxProject.md
             - name: How to create a Feed
-              href: Overview/Mvux/How-tos/SimpleFeed.md
+              href: Overview/Mvux/Tutorials/HowTo-SimpleFeed.md
             - name: How to create a push-style List-Feed with Async Enumerable
-              href: Overview/Mvux/How-tos/PushListFeed.md
+              href: Overview/Mvux/Tutorials/HowTo-PushListFeed.md
             - name: How to create a State
-              href: Overview/Mvux/How-tos/SimpleState.md
+              href: Overview/Mvux/Tutorials/HowTo-SimpleState.md
             - name: How to create a List-Feed
-              href: Overview/Mvux/How-tos/ListFeed.md
+              href: Overview/Mvux/Tutorials/HowTo-ListFeed.md
     - name: Navigation
       items:
         - name: Overview
