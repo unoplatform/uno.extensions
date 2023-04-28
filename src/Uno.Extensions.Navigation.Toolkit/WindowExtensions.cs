@@ -43,8 +43,7 @@ public static class WindowExtensions
 								// Splash isn't enabled, so don't activate until loading completed
 								activate = false;
 
-								// TODO: Change this to use UseTransitions
-								splash.DisableAnimations = true;
+								splash.UseTransitions = false;
 
 								loadingTask = new Func<Task>(async () =>
 								{
