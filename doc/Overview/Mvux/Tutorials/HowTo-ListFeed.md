@@ -7,9 +7,9 @@ uid: Overview.Mvux.HowToListFeed
 In this tutorial you will learn how to create an MVUX project that asynchronously requests
 and displays a collection of items from a service, and enables refreshing the data.
 
-In this tutorial you will learn how to create an MVUX project and basic usage of a list-feed (`IListFeed<T>`) and the `FeedView` control.
+In this tutorial, you will learn how to create an MVUX project and the basic usage of a list-feed (`IListFeed<T>`) and the `FeedView` control.
 
- - For our data we're going to create a service that asynchronously provides a collection of `Person` entities upon request.  
+ - For our data, we're going to create a service that asynchronously provides a collection of `Person` entities upon request.  
  - You'll learn how to use a feed to asynchronously request this data from the service.
  - How to display the data on the UI
  - How to use the `FeedView` control to display the data and automatically respond to the current feed status.
@@ -48,7 +48,7 @@ In this tutorial you will learn how to create an MVUX project and basic usage of
     }
     ```
 
-    We're using a [record](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/record) for the `Person` type on purpose, as records are designed to be immutable to ensure purity of objects as well as other features.
+    We're using a [record](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/record) for the `Person` type on purpose, as records are designed to be immutable to ensure the purity of objects as well as other features.
 
     The `IListFeed<T>` is a feed type tailored for dealing with collections.
 
@@ -71,7 +71,7 @@ In this tutorial you will learn how to create an MVUX project and basic usage of
 
     > [!TIP]  
     > Feeds are stateless and are there for when the data from the service is read-only and we're not planning to enable edits to it.  
-    MVUX also provides stateful feeds. For that purpose States (`IState<T>` and `<IListState<T>` for collections) come handy.  
+    MVUX also provides stateful feeds. For that purpose States (`IState<T>` and `<IListState<T>` for collections) come in handy.  
     Refer to [this tutorial](xref:Overview.Mvux.HowToSimpleState) to learn more about states.
 
 ## Data-bind the view
@@ -134,7 +134,7 @@ which exposes properties that the View can data bind to.
 
     ![](../Assets/SimpleFeed-3.gif)
 
-1. Once the data is the available, the `FeedView` switches to its `ValueTemplate` (the first default `DataTemplate` in our example), and displays the people list.
+1. Once the data is available, the `FeedView` switches to its `ValueTemplate` (the first default `DataTemplate` in our example), and displays the people list.
 
     ![](../Assets/ListFeed-1.jpg)
 

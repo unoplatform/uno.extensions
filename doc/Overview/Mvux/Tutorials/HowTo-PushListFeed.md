@@ -4,11 +4,11 @@ uid: Overview.Mvux.HowToPushListFeed
 
 # How to create a list feed where values are pushed in
 
-In this tutorial you will learn how to create an MVUX project that displays stock data that is pushed in from a service using an [Async Enumerable](https://learn.microsoft.com/archive/msdn-magazine/2019/november/csharp-iterating-with-async-enumerables-in-csharp-8#a-tour-through-async-enumerables) method.
+In this tutorial, you will learn how to create an MVUX project that displays stock data that is pushed in from a service using an [Async Enumerable](https://learn.microsoft.com/archive/msdn-magazine/2019/november/csharp-iterating-with-async-enumerables-in-csharp-8#a-tour-through-async-enumerables) method.
 
-In this tutorial you will learn how to create an MVUX project and utilization of a feed (`IFeed<T>`) and the `FeedView` control to display data pushed in asynchronously from an `IAsyncEnumerable<T>`.
+In this tutorial, you will also learn how to create an MVUX project and utilization of feed (`IFeed<T>`) and the `FeedView` control to display data pushed in asynchronously from an `IAsyncEnumerable<T>`.
 
- - For our data we're going to create a service that has an `IAsyncEnumerable<T>` method that returns periodic stock market updates.
+ - For our data, we're going to create a service that has an `IAsyncEnumerable<T>` method that returns periodic stock market updates.
  - You'll learn how to use a feed to asynchronously request this data from the service.
  - How to use the `FeedView` control to display the asynchronous data and automatically respond to the current feed status.
 
@@ -64,7 +64,7 @@ In this tutorial you will learn how to create an MVUX project and utilization of
     }
     ```
 
-    We're using a [record](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/record) for the `Stock` type on purpose, as records are immutable and ensure purity of objects as well as other features.
+    We're using a [record](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/record) for the `Stock` type on purpose, as records are immutable and ensure the purity of objects as well as other features.
 
     The `GetCurrentMarket` emits a collection of stocks with updated values every 5 seconds.  
     The `IListFeed<T>` is a feed tailored for dealing with collections.
@@ -79,7 +79,7 @@ In this tutorial you will learn how to create an MVUX project and utilization of
     ```
 
 > [!NOTE]  
-> Feeds (`IFeed<T>` and `IListFeed<T>` for collections) are used as a gateway to asynchronously request data from a service and wrap the result or error if any in metadata to be displayed in the View in accordingly.  
+> Feeds (`IFeed<T>` and `IListFeed<T>` for collections) are used as a gateway to asynchronously request data from a service and wrap the result or error if any in metadata to be displayed in the View accordingly.  
 > Learn more about list-feeds [here](xref:Overview.Mvux.HowToListFeed).
 
 > [!TIP]  
