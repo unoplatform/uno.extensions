@@ -9,7 +9,7 @@
 		-->
 		<ToolOfPackage>Uno.Extensions.Core</ToolOfPackage>
 		<RootNamespace>Uno.Extensions.Generators</RootNamespace>
-		<NoWarn>$(NoWarn);RS2008</NoWarn> <!-- RS2008: Enable analyzer release tracking for the analyzer project -->
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	</PropertyGroup>
 
 	<ItemGroup>

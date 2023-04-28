@@ -67,8 +67,14 @@
           href: Overview/Mvux/Overview.md
         - name: Feeds
           href: Overview/Mvux/Feeds.md
+        - name: List-Feeds
+          href: Overview/Mvux/ListFeeds.md
         - name: States
           href: Overview/Mvux/States.md
+        - name: List-States
+          href: Overview/Mvux/ListStates.md
+        - name: The FeedView control
+          href: Overview/Mvux/FeedView.md          
         - name: Advanced topics
           href: Overview/Mvux/Advanced.md
         - name: Tutorials
