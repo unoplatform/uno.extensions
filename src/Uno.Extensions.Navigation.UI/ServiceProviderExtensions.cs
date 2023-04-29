@@ -175,7 +175,7 @@ public static class ServiceProviderExtensions
 		string? initialRoute = "",
 		Type? initialView = null,
 		Type? initialViewModel = null,
-		Action<FrameworkElement, Task>? initializeViewHost = null,
+		Action<Window, FrameworkElement, Task>? initializeViewHost = null,
 		Func<IServiceProvider, INavigator, Task>? initialNavigate = null)
 	{
 		if (window.Content is null)
@@ -184,7 +184,7 @@ public static class ServiceProviderExtensions
 		}
 
 		var buildTask = window.BuildAndInitializeHostAsync(navigationRoot, buildHost, initialRoute, initialView, initialViewModel, initialNavigate);
-		initializeViewHost?.Invoke(navigationRoot, buildTask);
+		initializeViewHost?.Invoke(window, navigationRoot, buildTask);
 		return buildTask;
 	}
 
@@ -207,6 +207,9 @@ public static class ServiceProviderExtensions
 		await Task.Run(() => host.StartAsync());
 
 		await startup;
+
+		// Fallback to make sure the window is activated
+		window.Activate();
 
 		return host;
 	}
