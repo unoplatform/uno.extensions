@@ -21,7 +21,7 @@ public static class ApplicationBuilderExtensions
 			navRoot = contentProvider.ContentControl;
 		}
 
-		Action<FrameworkElement, Task> initializeViewHost = (_, _) => { };
+		Action<Window, FrameworkElement, Task> initializeViewHost = (_, _, _) => { };
 		if (appBuilder.Properties.TryGetValue(typeof(IRootViewInitializer), out var propValue) && propValue is IRootViewInitializer initializer)
 		{
 			navRoot ??= initializer.CreateDefaultView();
@@ -38,7 +38,6 @@ public static class ApplicationBuilderExtensions
 		};
 
 		appBuilder.Window.Content = appRoot;
-		appBuilder.Window.Activate();
 
 		return await appBuilder.Window.InternalInitializeNavigationAsync(
 			buildHost: () => Task.FromResult(appBuilder.Build()),

@@ -6,12 +6,9 @@ public static class ApplicationBuilderExtensions
 	{
 		public ContentControl CreateDefaultView() => new LoadingView();
 
-		public void InitializeViewHost(FrameworkElement element, Task loadingTask)
+		public void InitializeViewHost(Window window, FrameworkElement element, Task loadingTask)
 		{
-			if (element is LoadingView loadingView)
-			{
-				loadingView.Source = new LoadingTask(loadingTask, element);
-			}
+			window.ApplyLoadingTask(element, loadingTask);
 		}
 
 		public void PreInitialize(FrameworkElement element, IApplicationBuilder builder)

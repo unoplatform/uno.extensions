@@ -9,7 +9,7 @@ public partial class ThemeSwitchViewModel:ObservableObject
 	private readonly IThemeService _ts;
 
 	[ObservableProperty]
-	private string isDarkTheme;
+	private string isDarkTheme = string.Empty;
 
 	public ThemeSwitchViewModel(IThemeService themeService,IDispatcher dispatcher)
 	{

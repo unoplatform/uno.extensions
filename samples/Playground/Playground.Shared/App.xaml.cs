@@ -28,9 +28,6 @@ public sealed partial class App : Application
 			.ConfigureApp()
 			.UseToolkitNavigation();
 		_window = appBuilder.Window;
-#if NET5_0_OR_GREATER && WINDOWS
-		_window.Activate();
-#endif
 
 		var hostingOption = InitOption.Splash;
 
@@ -105,7 +102,6 @@ public sealed partial class App : Application
 				appRoot.SplashScreen.Initialize(_window, args);
 
 				_window.Content = appRoot;
-				_window.Activate();
 
 				_host = await _window.InitializeNavigationAsync(
 							async () =>
@@ -121,7 +117,7 @@ public sealed partial class App : Application
 							// Option 2: Specify route name
 							// initialRoute: "Shell"
 							// Option 3: Specify the view model. To avoid reflection, you can still define a routemap
-							initialViewModel: typeof(ShellViewModel)
+							initialViewModel: typeof(HomeViewModel)
 						);
 				break;
 

@@ -60,7 +60,6 @@
 		<PackageReference Include="Uno.WinUI" />
 		<PackageReference Include="Uno.Material.WinUI" />
 		<PackageReference Include="Uno.Toolkit.WinUI.Material" />
-		<PackageReference Include="Uno.Toolkit.WinUI" />
 	</ItemGroup>
 
 	<!-- 

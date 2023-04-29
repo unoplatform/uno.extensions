@@ -19,7 +19,8 @@ internal interface IRootViewInitializer
 	/// <summary>
 	/// Provide a startup delegate that can wait for the host startup
 	/// </summary>
+	/// <param name="window"></param>
 	/// <param name="element"></param>
 	/// <param name="loadingTask"></param>
-	void InitializeViewHost(FrameworkElement element, Task loadingTask);
+	void InitializeViewHost(Window window, FrameworkElement element, Task loadingTask);
 }

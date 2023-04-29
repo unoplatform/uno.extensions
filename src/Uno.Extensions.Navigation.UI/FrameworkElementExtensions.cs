@@ -46,10 +46,6 @@ public static class FrameworkElementExtensions
 			{
 				start = () => nav.NavigateViewModelAsync(root, initialViewModel);
 			}
-			else
-			{
-				start = () => nav.NavigateRouteAsync(root, initialRoute ?? string.Empty);
-			}
 			var fullstart = async () =>
 			{
 				await initialNavigation();
