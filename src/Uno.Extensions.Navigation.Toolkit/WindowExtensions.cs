@@ -30,39 +30,41 @@ public static class WindowExtensions
 			buildHost,
 			navigationRoot,
 			initialRoute, initialView, initialViewModel,
-			(window, root, navInit) =>
-				{
-					var activate = true;
-					if (root is LoadingView lv)
-					{
-						var loadingTask = navInit;
-						if (lv is ExtendedSplashScreen splash)
-						{
-							if (!splash.SplashIsEnabled)
-							{
-								// Splash isn't enabled, so don't activate until loading completed
-								activate = false;
-
-								splash.UseTransitions = false;
-
-								loadingTask = new Func<Task>(async () =>
-								{
-									await navInit;
-									window.Activate();
-								})();
-							}
-						}
-						var loading = new LoadingTask(loadingTask, root);
-						lv.Source = loading;
-					}
-
-					if (activate)
-					{
-						// Activate immediately to show the splash screen
-						window.Activate();
-					}
-				},
+			ApplyLoadingTask,
 			initialNavigate
 			);
+	}
+
+	internal static void ApplyLoadingTask(this Window window, FrameworkElement root, Task navInit)
+	{
+		var activate = true;
+		if (root is LoadingView lv)
+		{
+			var loadingTask = navInit;
+			if (lv is ExtendedSplashScreen splash)
+			{
+				if (!splash.SplashIsEnabled)
+				{
+					// Splash isn't enabled, so don't activate until loading completed
+					activate = false;
+
+					splash.UseTransitions = false;
+
+					loadingTask = new Func<Task>(async () =>
+					{
+						await navInit;
+						window.Activate();
+					})();
+				}
+			}
+			var loading = new LoadingTask(loadingTask, root);
+			lv.Source = loading;
+		}
+
+		if (activate)
+		{
+			// Activate immediately to show the splash screen
+			window.Activate();
+		}
 	}
 }
