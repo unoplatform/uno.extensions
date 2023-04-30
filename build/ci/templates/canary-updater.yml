@@ -5,10 +5,6 @@ steps:
 
   - template: canary-update-template.yml
     parameters:
-      SolutionToUpdate: 'samples/Commerce/Commerce.sln'
-
-  - template: canary-update-template.yml
-    parameters:
       SolutionToUpdate: 'samples/Playground/Playground.sln'
 
   - template: canary-update-template.yml
