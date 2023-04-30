@@ -3,8 +3,8 @@
 public class MsalAuthenticationMultiHostInit : BaseMsalHostInitialization
 {
 	protected override string[] ConfigurationFiles => new string[] { "TestHarness.Ext.Authentication.Custom.appsettings.dummyjson.json",
-																	 "TestHarness.Ext.Authentication.Msal.appsettings.msalauthentication.json",
-																	"TestHarness.Ext.Authentication.Msal.appsettings.multi.json"};
+																	 "TestHarness.Ext.Authentication.MSAL.appsettings.msalauthentication.json",
+																	"TestHarness.Ext.Authentication.MSAL.appsettings.multi.json"};
 	protected override IHostBuilder Custom(IHostBuilder builder)
 	{
 		return base.Custom(builder)
