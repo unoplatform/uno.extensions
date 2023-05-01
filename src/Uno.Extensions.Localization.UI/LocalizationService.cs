@@ -27,17 +27,29 @@ public class LocalizationService : IServiceInitialize, ILocalizationService, IDi
 			var settingsCulture = _settings?.CurrentValue?.CurrentCulture?.AsCulture();
 			if (settingsCulture is null)
 			{
-				var defaultCulture = PrimaryLanguageOverride ??
-							CultureInfo.DefaultThreadCurrentUICulture?.Name ??
-							CultureInfo.DefaultThreadCurrentCulture?.Name ??
-							_uiThread?.CurrentUICulture?.Name ??
-							_uiThread?.CurrentCulture?.Name;
-				settingsCulture = string.IsNullOrWhiteSpace(defaultCulture) ?
-									SupportedCultures.First() :
-									SupportedCultures.FirstOrDefault(x => x.Name == defaultCulture) ??      // Handles full culture match  eg en-AU == en-AU
-										SupportedCultures.FirstOrDefault(x => x.Name.StartsWith(defaultCulture)) ?? // Handles language only match eg en-AU.StartsWith(en)
-										SupportedCultures.First();
+				var defaultLanguage = PrimaryLanguageOverride ?? string.Empty;
 
+				var defaultCulture =
+							CultureInfo.DefaultThreadCurrentUICulture ??
+							CultureInfo.DefaultThreadCurrentCulture ??
+							_uiThread?.CurrentUICulture ??
+							_uiThread?.CurrentCulture;
+
+				if (!string.IsNullOrWhiteSpace(defaultLanguage))
+				{
+					settingsCulture =
+										SupportedCultures.FirstOrDefault(x => x.Name == defaultLanguage) ??      // Handles full culture match  eg en-AU == en-AU
+											SupportedCultures.FirstOrDefault(x => x.Name.StartsWith(defaultLanguage)); // Handles language only match eg en-AU.StartsWith(en)
+				}
+
+
+				settingsCulture ??=
+									defaultCulture is null ?
+									SupportedCultures.First() :
+									SupportedCultures.FirstOrDefault(x => x.Name == defaultCulture.Name) ??      // Handles full culture match  eg en-AU == en-AU
+										SupportedCultures.FirstOrDefault(x => x.Name.StartsWith(defaultCulture.Name)) ?? // Handles language only match eg en-AU.StartsWith(en)
+										SupportedCultures.FirstOrDefault(x => x.Name.StartsWith(defaultCulture.TwoLetterISOLanguageName)) ?? // Handles language only match eg en-AU.StartsWith(en) (where defaultCulture is en-AU)
+										SupportedCultures.First();
 			}
 			return settingsCulture;
 		}
