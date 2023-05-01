@@ -89,7 +89,7 @@
     <PackageVersion Include="Uno.Toolkit.WinUI.Material" Version="2.5.5" />
     <!--#endif-->
     <!--#endif-->
-    <PackageVersion Include="Uno.Resizetizer" Version="1.0.2" />
+    <PackageVersion Include="Uno.Resizetizer" Version="1.0.4" />
     <PackageVersion Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="4.8.33" />
     <PackageVersion Include="Uno.UniversalImageLoader" Version="1.9.36" />
     <!--#if (useWasm)-->
