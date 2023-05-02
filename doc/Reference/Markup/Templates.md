@@ -25,15 +25,15 @@ Sometimes it is needed to provide a different UI based on the state of an indivi
 new ListView()
 	.ItemTemplateSelector<IVehicle>((vehicle, selector) => selector
 		.Default(() => new TextBlock().Text("Some Vehicle"))
-		.Case(v => v.Year < 1960, () => new TextBlock().Text(() => vehicle.Model)))
+		.Case(v => v.Year < 1960, () => new TextBlock().Text(() => vehicle.Model))
 		.Case<Car>(car => car.Doors > 2, car => new StackPanel()
 			.Children(
-				new Image().Source(StaticResource.Get<ImageSource>("Sedan.png")),
+				new Image().Source(StaticResource.Get<ImageSource>("sedan.png")),
 				new TextBlock().Text(() => car.Model)))
 		.Case<Truck>(truck => new StackPanel().Children(
 			new Image().Source(StaticResource.Get<ImageSource>("truck.png")),
 			new TextBlock().Text(() => truck.TowingCapacity)
-		))
+		)))
 ```
 
 ## ContentTemplate
@@ -46,7 +46,7 @@ new Button()
 	.Template(button => new Border()
 		.RenderTransform(new RotateTransform().Angle(45))
 		.Child(new ContentPresenter()
-			.Content(x => x.TemplateBind(() => button.Content))
+			.Content(x => x.TemplateBind(() => button.Content))))
 ```
 
 ## All other Framework Templates

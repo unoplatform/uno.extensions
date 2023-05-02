@@ -52,6 +52,34 @@ new TextBox()
 		.Convert(query => new SolidColorBrush(!string.IsNullOrEmpty(query) && query.Length > 5 ? Colors.Green : Colors.Red)));
 ```
 
+In addition to the `Convert` you can provide a `ConvertBack` delegate.
+
+#### Using a Converter
+
+There may be times when you may want to simply use a converter instead of providing a delegate over and over. For these scenarios you may want to provide some sort of Static readonly context like:
+
+```cs
+public static class Converters
+{
+	public static readonly IValueConverter InverseBoolConverter = new InverseBoolConverter();
+}
+
+new Button()
+	.Enabled(x => x.Bind(() => vm.IsBusy)
+		.Converter(Converters.InverseBoolConverter));
+```
+
+
+#### Short Hand Syntax
+
+For the scenarios where you may only need a binding and a conversion delegate you can use the shorthand syntax like:
+
+```cs
+new TextBlock()
+	.Text(() => vm.Query)
+	.Foreground(() => vm.Query, query => new SolidColorBrush(!string.IsNullOrEmpty(query) && query.Length > 5 ? Colors.Green : Colors.Red))
+```
+
 ### Reference Sources
 
 Sometimes you aren't binding to the DataContext of element and instead you need to reference another source. With WinUI we have 2 ways of doing this. The first is that we could specify a source directly such as:
