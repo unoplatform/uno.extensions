@@ -4,7 +4,7 @@ public static class LocalizationSettingsExtensions
 {
 	public static CultureInfo[] AsCultures(this string[] cultures)
 	{
-		return (from c in cultures
+		return (from c in cultures.Distinct()
 				let cult = c.AsCulture()
 				where cult is not null
 				select cult).ToArray();
