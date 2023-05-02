@@ -73,7 +73,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Authenticati
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Authentication.WinUI", "..\..\src\Uno.Extensions.Authentication.UI\Uno.Extensions.Authentication.WinUI.csproj", "{C30D0D3B-5209-4FEC-8C52-698291E7275E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Authentication.Msal.WinUI", "..\..\src\Uno.Extensions.Authentication.Msal\Uno.Extensions.Authentication.Msal.WinUI.csproj", "{B9A75116-70A9-4535-8183-8B5710EFB9D8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Authentication.MSAL.WinUI", "..\..\src\Uno.Extensions.Authentication.MSAL\Uno.Extensions.Authentication.MSAL.WinUI.csproj", "{B9A75116-70A9-4535-8183-8B5710EFB9D8}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Http", "Http", "{5851B37C-ADC6-468D-8684-AC06476569AC}"
 EndProject
@@ -87,7 +87,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Serializatio
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Authentication.Oidc.WinUI", "..\..\src\Uno.Extensions.Authentication.Oidc\Uno.Extensions.Authentication.Oidc.WinUI.csproj", "{CA2D0BCD-14F4-4479-B0BA-B2EFAB483910}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Authentication.Msal.WinUI.Wasm", "..\..\src\Uno.Extensions.Authentication.Msal\Uno.Extensions.Authentication.Msal.WinUI.Wasm.csproj", "{56A06113-0BAB-4BCD-8A09-A9C584F4A457}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Authentication.MSAL.WinUI.Wasm", "..\..\src\Uno.Extensions.Authentication.MSAL\Uno.Extensions.Authentication.MSAL.WinUI.Wasm.csproj", "{56A06113-0BAB-4BCD-8A09-A9C584F4A457}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Legacy", "Legacy", "{21238E71-AF63-4120-A97E-63A7581A2C0F}"
 EndProject
@@ -95,9 +95,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestHarness.Legacy.Droid", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Authentication.UI", "..\..\src\Uno.Extensions.Authentication.UI\Uno.Extensions.Authentication.UI.csproj", "{54604CAD-5FA5-49E0-ACE7-44694198CAB7}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Authentication.Msal.UI", "..\..\src\Uno.Extensions.Authentication.MSAL\Uno.Extensions.Authentication.Msal.UI.csproj", "{8DD1E08F-3A25-4842-9859-CA972FFBF098}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Authentication.MSAL.UI", "..\..\src\Uno.Extensions.Authentication.MSAL\Uno.Extensions.Authentication.MSAL.UI.csproj", "{8DD1E08F-3A25-4842-9859-CA972FFBF098}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Authentication.Msal.UI.Wasm", "..\..\src\Uno.Extensions.Authentication.MSAL\Uno.Extensions.Authentication.Msal.UI.Wasm.csproj", "{D9972680-9570-481E-97B1-595CA6F70BB1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Authentication.MSAL.UI.Wasm", "..\..\src\Uno.Extensions.Authentication.MSAL\Uno.Extensions.Authentication.MSAL.UI.Wasm.csproj", "{D9972680-9570-481E-97B1-595CA6F70BB1}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Authentication.Oidc.UI", "..\..\src\Uno.Extensions.Authentication.Oidc\Uno.Extensions.Authentication.Oidc.UI.csproj", "{7C948DCB-9F35-4777-91DE-6CDCAF1A893B}"
 EndProject

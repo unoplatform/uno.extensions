@@ -2,8 +2,8 @@
   "solution": {
     "path": "TestHarness.sln",
     "projects": [
-      "..\\..\\src\\Uno.Extensions.Authentication.MSAL\\Uno.Extensions.Authentication.Msal.UI.Wasm.csproj",
-      "..\\..\\src\\Uno.Extensions.Authentication.MSAL\\Uno.Extensions.Authentication.Msal.UI.csproj",
+      "..\\..\\src\\Uno.Extensions.Authentication.MSAL\\Uno.Extensions.Authentication.MSAL.UI.Wasm.csproj",
+      "..\\..\\src\\Uno.Extensions.Authentication.MSAL\\Uno.Extensions.Authentication.MSAL.UI.csproj",
       "..\\..\\src\\Uno.Extensions.Authentication.Oidc\\Uno.Extensions.Authentication.Oidc.UI.csproj",
       "..\\..\\src\\Uno.Extensions.Authentication.UI\\Uno.Extensions.Authentication.UI.csproj",
       "..\\..\\src\\Uno.Extensions.Authentication\\Uno.Extensions.Authentication.csproj",
