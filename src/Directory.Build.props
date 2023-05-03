@@ -2,18 +2,9 @@
 	<Import Project="..\Directory.Build.props" />
 
 	<PropertyGroup>
-		<Authors>Uno Platform</Authors>
 		<PackageProjectUrl>https://github.com/unoplatform/uno.extensions</PackageProjectUrl>
-		<PackageIconUrl>https://nv-assets.azurewebsites.net/logos/uno.png</PackageIconUrl>
-		<RepositoryUrl>https://github.com/unoplatform/uno.extensions</RepositoryUrl>
-		<RepositoryUrl>$(BUILD_REPOSITORY_URI)</RepositoryUrl>
-		<Copyright>Copyright (C) 2015-$([System.DateTime]::Now.ToString(`yyyy`)) Uno Platform - all rights reserved</Copyright>
-		<Product>$(AssemblyName) ($(TargetFramework))</Product>
 		<Description>Extensions to accelerate your application development with Uno Platform, UWP and WinUI</Description>
 		<Version>255.255.255.255</Version><!-- Version management is now done through NuGet, this avoids issues related version mismatch -->
-		<DefaultLanguage>en-US</DefaultLanguage>
-		<PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
-		<PackageIcon>uno-logo.png</PackageIcon>
 		<GenerateDocumentationFile>True</GenerateDocumentationFile>
 
 		<AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
