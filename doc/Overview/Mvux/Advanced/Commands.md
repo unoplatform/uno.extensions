@@ -137,7 +137,8 @@ There are several methods of how to create an MVUX command.
 
 1. Using factory methods
 
-    Commands can also built manually using the static class [`Command`](https://github.com/unoplatform/uno.extensions/blob/main/src/Uno.Extensions.Reactive/Presentation/Commands/Command.cs).  
+    Adding Commands via code generation is sufficient enough to probably cover all scenarios. However sometimes you'd want to fine-grain your Commands and declare them in an explicit manner.  
+    Commands can be built manually using the static class [`Command`](https://github.com/unoplatform/uno.extensions/blob/main/src/Uno.Extensions.Reactive/Presentation/Commands/Command.cs).  
     This class provides factory methods for creating commands.
 
     - Async
