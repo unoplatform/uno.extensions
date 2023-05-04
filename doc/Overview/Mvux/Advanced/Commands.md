@@ -108,7 +108,7 @@ There are several methods of how to create an MVUX command.
      public void MyCommand();
      ```
 
-     These attributes can be used interchangeably to control command generation, for example you may choose to disable implicit feed command parameter altogether by using the attribute with the `assembly:` prefix. You can then opt-in specific classes or methods. You can also switch off a specific classes while opting-in certain methods by decorating them with this attribute as enabled. You can choose any combination to opt in or out implicit command generation.     
+     These attributes can be used interchangeably to control command generation, for example, you may choose to disable the implicit feed command parameter altogether by using the attribute with the `assembly:` prefix. You can then opt-in for specific classes or methods. You can also switch off specific classes while opting-in certain methods by decorating them with this attribute as enabled. You can choose any combination to opt-in or out of implicit command generation.
 
      #### FeedParameter attribute
 
