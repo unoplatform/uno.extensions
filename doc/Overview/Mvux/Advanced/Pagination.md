@@ -211,7 +211,7 @@ public partial record PeopleModel(IPeopleService PeopleService)
 In the code above, whenever `CurrentPage` changes, `PeopleManual` will update its data accordingly.  
 MVUX's code generator generates an async command that is bound to from the View, when the user clicks the designated button to move to either previous or next page, the `Move` method will be invoked with the `direction` argument set to either 1 or -1 added to the current page index.
 
-You may be wondering where the `currentPage` and `pageCount` arguments are populated from, this is another MVUX magic trick where when the parameters type and name matches a Feed or a State in the current Model, their latest value are provided as an argument to the executed Command.  
+You may be wondering where the `currentPage` and `pageCount` arguments to the `Move` method are populated from, this is another MVUX magic trick where when the parameters type and name matches a Feed or a State in the current Model, their latest value are provided as an argument to the executed Command.  
 Read onward on [Creating commands](xref:Overview.Mvux.Advanced.Commands#creating-commands) to learn more.
 
 ### View
