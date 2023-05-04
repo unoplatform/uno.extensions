@@ -62,11 +62,14 @@ public class PeopleService : IPeopleService
             new("Noah", "Jones"),
             new("Olivia", "Harris"),
             new("William", "Jackson"),
-            /* ... another gazillion names ... */
+            /* ... more names ... */
         }
     }
 }
 ```
+
+> [!NOTE]
+> You will find unsigned integers (`uint`) used in the context of Pagination as unsigned integeners do not allow negative values and prevent them in the first place.
 
 ### Model
 
