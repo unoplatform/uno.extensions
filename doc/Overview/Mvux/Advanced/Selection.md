@@ -127,7 +127,7 @@ Selection can also be propagated to a new feed using the `Select` operator.
 
 ## Multi-item selection
 
-The `Selection` operator has another overload which enables selecting multiple items. An `IListState<Person>` is need for multi-selection instead of `IState<Person>` used above.
+The `Selection` operator has another overload that enables selecting multiple items. An `IListState<Person>` is needed for multi-selection instead of the `IState<Person>` used above.
 
 In the `PeopleModel`, we'll modify the `SelectedPerson` property to look like the following:
 
