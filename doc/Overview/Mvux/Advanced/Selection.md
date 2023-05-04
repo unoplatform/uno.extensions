@@ -86,7 +86,7 @@ The `SelectedPerson` State is initialized with an empty value using `State<Perso
 
 The `Selection` operator was added to the existing `ListFeed.Async(...)` line, it will listen to the `People` List-Feed, and will affect its selection changes onto the `SelectedPerson` State property.
 
-In the View side, wrap the `ListView` element in a `StackPanel`, and insert additional elements to reflect the currently selected value via the `SelectedPerson` State.  
+In the View side, wrap the `ListView` element in a `Grid`, and insert additional elements to reflect the currently selected value via the `SelectedPerson` State.  
 We'll also add a separator (using `Border`) to be able to distinguish them.
 
 The View code shall look like the following:
@@ -94,17 +94,23 @@ The View code shall look like the following:
 ```xml
 <Page ...>
 
-    <StackPanel>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
         <StackPanel DataContext="{Binding SelectedPerson}" Orientation="Horizontal" Spacing="5">
             <TextBlock Text="Selected person:" />
             <TextBlock Text="{Binding FirstName}"/>
             <TextBlock Text="{Binding LastName}"/>
         </StackPanel>
 
-        <Border Height="2" Background="Gray" />
+        <Border Height="2" Background="Gray" Grid.Row="1" />
 
-        <ListView ...>
-    </StackPanel>
+        <ListView Grid.Row="2" ItemsSource="{Binding People}">
+    </Grid>
 </Page>
 ```
 
@@ -130,6 +136,20 @@ public IState<IImmutableList<Person>> SelectedPeople => State<IImmutableList<Per
 ```
 
 Then change `.Selection(SelectedPerson)` to `.Selection(SelectedPeople)`.
+
+This is what's changed in the PeopleModel class:
+
+```chsarp
+public partial record PeopleModel(IPeopleService PeopleService)
+{
+    public IListFeed<Person> People =>
+        ListFeed
+        .Async(PeopleService.GetPeopleAsync)
+        .Selection(SelectedPeople);
+
+    public IState<IImmutableList<Person>> SelectedPeople => State<IImmutableList<Person>>.Empty(this);
+}
+```
 
 Head to the View and enable multi-selection in the `ListView` by changing its `SelectionMode` property to `Multiple`.
 
