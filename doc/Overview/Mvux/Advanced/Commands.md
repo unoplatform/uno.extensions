@@ -6,7 +6,7 @@ uid: Overview.Mvux.Advanced.Commands
 
 ## Commands recap
 
-In the [overview](xref:Overview.Mvux.Overview) you've seen a brief introduction on how a method in the Model gets generated as a command in the Bindable Proxy Model.
+In the [overview](xref:Overview.Mvux.Overview) you've seen a brief introduction to how a method in the Model gets generated as a command in the Bindable Proxy Model.
 
 ## Asynchronous commands
 
