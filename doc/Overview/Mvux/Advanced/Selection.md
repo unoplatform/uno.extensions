@@ -55,7 +55,7 @@ The data is then displayed on the View using a `ListView`:
 
 ### Implement selection in the *PeopleApp*
 
-MVUX has two extension methods of `IListFeed<T>`, that enables single or multi selection.
+MVUX has two extension methods of `IListFeed<T>`, that enable single or multi-selection.
 
 > [!NOTE]  
 > The source-code for the sample app demonstrated in this section can be found [here](https://github.com/unoplatform/Uno.Samples/tree/master/UI/MvuxHowTos/AdvancedPeopleApp).
