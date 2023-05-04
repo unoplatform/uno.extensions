@@ -15,7 +15,7 @@ To synchronize to the selected value in the `Model` side, use the `Selection` op
 We'll be using the *PeopleApp* example which we've built step-by-step in [this tutorial](xref:Overview.Mvux.HowToListFeed).  
 
 The *PeopleApp* uses an `IListFeed<T>` where `T` is a `Person` [record](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/record) with the properties `FirstName` and `LastName`.
-It has a service which has the following contract:
+It has a service that has the following contract:
 
 ```csharp
 public interface IPeopleService
