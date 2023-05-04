@@ -258,7 +258,7 @@ When running the app, the first page will be loaded and await the users input to
 
 ### The `PageRequest` type
 
-The `PageRequest` type contains the following properties and is used by a paginated Feed to pass information about the desired page the user wants to navigate to. It's the first parameter passed into the `PaginatedAsync` method when invoked:
+The [`PageRequest`](https://github.com/unoplatform/uno.extensions/blob/main/src/Uno.Extensions.Reactive/Sources/PageRequest.cs) type contains the following properties and is used by a paginated Feed to pass information about the desired page the user wants to navigate to. It's the first parameter passed into the `PaginatedAsync` method when invoked:
 
 ![](../Assets/PageRequest.jpg)
 
