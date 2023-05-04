@@ -104,4 +104,5 @@
 
 	<Import Project="winappsdk-workaround.targets" Condition="exists('winappsdk-workaround.targets')" />
 	<Import Project="xamarinmac-workaround.targets" Condition="exists('xamarinmac-workaround.targets') and $(TargetFramework.ToLower().StartsWith('xamarin')) and $(TargetFramework.ToLower().Contains('mac'))" />
+	<Import Project="Directory.UnoMetadata.targets" />
 </Project>
