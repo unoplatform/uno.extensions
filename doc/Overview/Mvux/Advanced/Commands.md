@@ -69,9 +69,24 @@ There are several methods of how to create an MVUX command.
         
     ### Command generation rules:
     
+     - Can be either synchronous or asynchronous (i.e. `public void`, `public async ValueTask`, or `public async Task`)
      - Any parameter that has a type and name matching a Feed or a State in this Model will be evaluated when the Command is invoked and its current latest value will be passed in as an argument.  
-     You'll find this feature to be very powerful in invoking commands by combining data from various Feeds in addition to a command parameter received from the View.    
-     - Can be either synchronous or asynchronous
+        You'll find this feature to be very powerful in invoking commands by combining data from various Feeds in addition to a command parameter received from the View.
+
+        For example:
+
+        ```csharp
+        public IFeed<int> CounterValue => ...
+
+        public void ResetCounter(int counterValue)
+        {
+            ...
+        }
+        ```
+
+        When the command is executed, because the parameter name `counterValue` matches a feed name in the Model, this parameter will be materialized with the actual value from the Feed when this method is called on command execution.  
+        This behavior can be controlled and configured using the [`FeedParameter`](#feedparameter-attribute) and [`ImplicitFeedCommandParameter`](#implicitfeedcommandparameter-attribute) attributes.
+
      - Can have one `CancellationToken` as its last parameter, but it's not mandatory.
 
      ### Using attributes to control command generation
