@@ -44,7 +44,7 @@ There are several methods of how to create an MVUX command.
 
     ### Adding command parameters
 
-    An additional parameter can be added to the method, which is then assigned with the value of the `CommandParameter` received from the View. For instance when using a Button and clicking it, the method will be called with the [`Button.CommandParameter`](https://learn.microsoft.com/en-us/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.primitives.buttonbase.commandparameter) value, given that the type of the value matches the method parameter type. Otherwise the command's `CanExecute` will be false thereby disabling the button:
+    An additional parameter can be added to the method, which is then assigned with the value of the `CommandParameter` received from the View. For instance, when using a Button and clicking it, the method will be called with the [`Button.CommandParameter`](https://learn.microsoft.com/en-us/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.primitives.buttonbase.commandparameter) value, given that the type of the value matches the method parameter type. Otherwise the command's `CanExecute` will be false thereby disabling the button:
 
     ```csharp
     public void DoWork(int param)
@@ -94,7 +94,7 @@ There are several methods of how to create an MVUX command.
      #### ImplicitCommands attribute
 
      By default, implicit command generation is enabled by default. So that any method in the Model that matches the command criteria will be generated as a command.  
-     However, you may choose to switch this off for a specific method, class, or for the entire assembly.
+     However, you may choose to switch this off for a specific method, class, or the entire assembly.
 
      This can be achieved using the `ImplicitCommands` attribute. Here are some examples:
 
@@ -112,7 +112,7 @@ There are several methods of how to create an MVUX command.
 
      #### FeedParameter attribute
 
-     You can explicitly match a parameter with a Feed even the names don't match by decorating the parameter with the `FeedParameter` attribute:  
+     You can explicitly match a parameter with a Feed even if the names don't match by decorating the parameter with the `FeedParameter` attribute:  
      
      ```csharp
      public IFeed<string> Message { get; }
@@ -124,7 +124,7 @@ There are several methods of how to create an MVUX command.
 
      #### ImplicitFeedCommandParameter attribute
 
-     You can also opt in or out of implicit matching of Feeds and command parameters by the decorating the current assembly or class with the `ImplicitFeedCommandParameters` attribute:  
+     You can also opt-in or out of implicit matching of Feeds and command parameters by decorating the current assembly or class with the `ImplicitFeedCommandParameters` attribute:  
      
      ```csharp
      [assembly:ImplicitFeedCommandParameter(false)]
@@ -133,11 +133,11 @@ There are several methods of how to create an MVUX command.
      public partial record MyModel
      ```
 
-     Like `ImplicitCommands`, these can also be nested to opt in or out sections specific sections of the app.
+     Like `ImplicitCommands`, these can also be nested to opt-in or out sections specific sections of the app.
 
 1. Using factory methods
 
-    Adding Commands via code generation is sufficient enough to probably cover all scenarios. However sometimes you'd want to fine-grain your Commands and declare them in an explicit manner.  
+    Adding Commands via code generation is sufficient enough to probably cover all scenarios. However, sometimes you'd want to fine-grain your Commands and declare them in an explicit manner.  
     Commands can be built manually using the static class [`Command`](https://github.com/unoplatform/uno.extensions/blob/main/src/Uno.Extensions.Reactive/Presentation/Commands/Command.cs).  
     This class provides factory methods for creating commands.
 
@@ -149,7 +149,7 @@ There are several methods of how to create an MVUX command.
 
     > [!Note]  
     > You need not worry about the `=>` operator and that the `Command.Async` will be called over and over, this value is cached and will only be called once.  
-    The benefit of using `=>` in place of traditional `{ get; } = ...`, is that local methods are accessible (otherwise these would have been required to be intialized in the constructor).
+    The benefit of using `=>` in place of traditional `{ get; } = ...`, is that local methods are accessible (otherwise these would have been required to be initialized in the constructor).
 
     - `Create` & `Create<T>`;
 
@@ -163,13 +163,13 @@ There are several methods of how to create an MVUX command.
         public IAsyncCommand MyCommand => Command.Create(builder => builder.Given(PageCount));
         ```
 
-    - When - Limits the command execution to a set prerequisite - in other words sets the 'can execute' of the command.
+    - When - Limits the command execution to a set prerequisite - in other words, sets the 'can execute' of the command.
 
         ```csharp
         public IAsyncCommand MyCommand => Command.Create<int>(builder => builder.When(i => i > 10));
         ```
 
-    - Then - Sets the actual asynchronous callback to be invoked when the Command is executed. This method will be genereric if there's a preceding parameter setting (via Given or When).
+    - Then - Sets the actual asynchronous callback to be invoked when the Command is executed. This method will be generic if there's a preceding parameter setting (via Given or When).
 
         ```csharp
         public IAsyncCommand MyCommand => Command.Create(builder => builder.Then(async ct => await ExecuteMyCommand(ct)));
