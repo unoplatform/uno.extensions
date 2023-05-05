@@ -393,6 +393,6 @@ There's not much needed in the View as this is magically working via the `ISuppo
 <ListView ItemsSource="{Binding PeopleCursor}" ItemTemplate="{StaticResource PersonDataTemplate}" />
 ```
 
-When the program runs, it works like it did in auto incremental loading, except the people list is sorted by full-name:
+When the program runs, it works as it did in auto incremental loading, except the people list is sorted by full-name:
 
 ![](../Assets/PaginationKeyset.gif)
