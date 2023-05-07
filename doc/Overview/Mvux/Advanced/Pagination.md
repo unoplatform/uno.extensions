@@ -94,7 +94,7 @@ Whenever the user scrolls down to see additional data and is hitting the end of 
 The parameter of `AsyncPaginated`, is a delegate taking in a [`PageRequest`](#the-pagerequest-type) value and a `CancellationToken` and returning an `IListFeed<T>` where `T` is `Person` in our case. This delegate is invoked when a page request comes in.
 
 As you can see, we are sending the `Index` property of the incoming `pageRequest` argument to determine what page we're positioned.  
-`PageSize` refers to a constant value of `20`, but the `PageRequest` also has a `DesiredSize` property which the `ListView` can set according to its capacity. So essentially you can substitute `pageSize: PageSize` with `pageSize: pageRequest.DesiredSize` which is a nullable `uint`, and is populated by the `ListView`. We used a constant `PageSize` for the sake of this demonstration.
+`PageSize` refers to a constant value of `20`, but the `PageRequest` also has a `DesiredSize` property which the `ListView` can set according to its capacity. So essentially you can substitute `pageSize: PageSize` with `pageSize: pageRequest.DesiredSize` which is a nullable `uint`, and is populated by the `ListView`. It's expected to be `null` on the first page. We used a constant `PageSize` for the sake of this demonstration.
 
 ### View
 
@@ -281,6 +281,8 @@ An alternative way to paginate data is by using a cursor that points to a specif
 This is referred to as 'keyset pagination' or 'seek-based pagination'.
 
 To utilize this pagination style, MVUX provides another `ListFeed` factory overload, the `AsyncPaginatedByCursor`.
+
+[Jump to example](#service)
 
 The signature of this method is:
 
