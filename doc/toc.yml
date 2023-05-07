@@ -18,6 +18,8 @@
           href: Learn/Tutorials/Authentication/HowTo-OidcAuthentication.md
         - name: Use Web authentication
           href: Learn/Tutorials/Authentication/HowTo-WebAuthentication.md
+        - name: Authorize with cookies
+          href: Learn/Tutorials/Authentication/HowTo-Cookies.md
     - name: Configuration
       items:
         - name: Overview
