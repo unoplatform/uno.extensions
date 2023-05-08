@@ -3,7 +3,7 @@ uid: Learn.Tutorials.Authentication.HowToCookieAuthorization
 ---
 # How-To: Using Cookies to Authorize
 
-An authorization method conceptually similar to using the system credential store is to use **cookies**. Cookies are a common way to store tokens that can be used to authenticate a user. When a HTTP request is succesfully authenticated, the server will return a response that we can use to create a cookie. The cookie can then be used to authenticate future requests. Uno Extensions makes these cookie-related authorization steps less tedious by doing the work of extracting the token(s) from the authentication response, storing it in a cookie, and applying the cookie to future requests. This tutorial will teach you how to configure authentication to apply tokens from a cookie when they are available.
+An authorization method is conceptually similar to using the system credential store to use **cookies**. Cookies are a common way to store tokens that can be used to authenticate a user. When an HTTP request is successfully authenticated, the server will return a response that we can use to create a cookie. The cookie can then be used to authenticate future requests. Uno Extensions makes these cookie-related authorization steps less tedious by doing the work of extracting the token(s) from the authentication response, storing it in a cookie, and applying the cookie to future requests. This tutorial will teach you how to configure authentication to apply tokens from a cookie when they are available.
 
 > [!IMPORTANT]
 > To follow these steps, you first need to have an authentication system set up. We recommend choosing one of the `IAuthenticationProvider` implementations provided by Uno Extensions. Cookie authorization can complement any of the tutorials such as [Get Started with Authentication](xref:Learn.Tutorials.Authentication.HowToAuthentication).
@@ -75,7 +75,7 @@ An authorization method conceptually similar to using the system credential stor
 
 - Specifying a value for the latter is optional.
 
-### 3. Authorize with token value from cookie
+### 3. Authorize with a token value from a cookie
 
 - Now, when you attempt to authenticate with a provider, the `Cookies()` extension method will attempt to authorize from a cookie by including any token information in the request. If the cookie is not found, it will attempt to authenticate with the provider as normal.
 
