@@ -302,7 +302,7 @@ The method returns a tuple with two components (same as `PageResult`, only keepi
 - A `int?` which uses as a cursor as the beginning of the next page, if any.
 
 > [!TIP]  
-> The cursor does not necessarily have to be a `int?` or the data type the collection contains, it can also be another key of an entity for the service to lookup and return it along with its upcoming entries.
+> The cursor does not necessarily have to be a `int?` or the data type the collection contains, it can also be another key of an entity for the service to look up and return it along with its upcoming entries.
 
 The fully implemented method in the service is as follows:
 
