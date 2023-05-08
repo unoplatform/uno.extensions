@@ -58,7 +58,7 @@ The data is then displayed on the View using a `ListView`:
 MVUX has two extension methods of `IListFeed<T>`, that enable single or multi-selection.
 
 > [!NOTE]  
-> The source-code for the sample app demonstrated in this section can be found [here](https://github.com/unoplatform/Uno.Samples/tree/master/UI/MvuxHowTos/AdvancedPeopleApp).
+> The source code for the sample app demonstrated in this section can be found [here](https://github.com/unoplatform/Uno.Samples/tree/master/UI/MvuxHowTos/AdvancedPeopleApp).
 
 ## Single-item selection
 
@@ -119,11 +119,11 @@ When running the app, the top section will reflect the item the user selects in 
 ![](../Assets/Selection.gif)
 
 > [!NOTE]  
-> The source-code for the sample app can be found [here](https://github.com/unoplatform/Uno.Samples/tree/master/UI/MvuxHowTos/AdvancedPeopleApp).
+> The source code for the sample app can be found [here](https://github.com/unoplatform/Uno.Samples/tree/master/UI/MvuxHowTos/AdvancedPeopleApp).
 
 ### Listening to the selected value
 
-You can listen and detect selection changes by either creating a feed that projects the selection with the `Select` operator, or by subscribing to the selection feed using the `ForEach` operator.
+You can listen and detect selection changes by either creating a feed that projects the selection with the `Select` operator or by subscribing to the selection feed using the `ForEach` operator.
 
 #### Using the Select operator
 
@@ -147,7 +147,7 @@ First we need to create a State with a default value, which will be used to stor
 public IState<string> GreetingForEach => State.Value(this, () => string.Empty);
 ```
 
-In the constructor we can then subscribe to the value in the following manner:
+In the constructor, we can then subscribe to the value in the following manner:
 
 ```csharp
 public partial record PeopleModel
@@ -173,7 +173,7 @@ public partial record PeopleModel
 }
 ```
 
-The `ForEach` operator listens to an selection occurrence and invokes the `SelectionChanged` callback with the newly available data, in this case the recently selected `Person` entity.
+The `ForEach` operator listens to a selection occurrence and invokes the `SelectionChanged` callback with the newly available data, in this case, the recently selected `Person` entity.
 
 > [!TIP]  
 > MVUX takes care of the lifetime of the subscription, so it will be disposed of along with its declaring `Model` being garbage-collected.
@@ -193,7 +193,7 @@ In the above example, since `selectedPerson` has the same name as the `SelectedP
 
 > [!TIP]  
 > This behavior can also be controlled using attributes.
-> To learn more about commands and how they can be configured using attributes, refer the [Commands](xref:Overview.Mvux.Advanced.Commands) page.
+> To learn more about commands and how they can be configured using attributes, refer to the [Commands](xref:Overview.Mvux.Advanced.Commands) page.
 
 ## Multi-item selection
 
@@ -224,4 +224,4 @@ public partial record PeopleModel(IPeopleService PeopleService)
 Head to the View and enable multi-selection in the `ListView` by changing its `SelectionMode` property to `Multiple`.
 
 > [!NOTE]  
-> The source-code for the sample app can be found [here](https://github.com/unoplatform/Uno.Samples/tree/master/UI/MvuxHowTos/SelectionPeopleApp).
+> The source code for the sample app can be found [here](https://github.com/unoplatform/Uno.Samples/tree/master/UI/MvuxHowTos/SelectionPeopleApp).

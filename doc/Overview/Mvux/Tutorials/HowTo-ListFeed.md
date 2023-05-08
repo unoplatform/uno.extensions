@@ -4,7 +4,7 @@ uid: Overview.Mvux.HowToListFeed
 
 # How to create a list feed
 
-In this tutorial you will learn how to create an MVUX project that asynchronously requests
+In this tutorial, you will learn how to create an MVUX project that asynchronously requests
 and displays a collection of items from a service, and enables refreshing the data.
 
 In this tutorial, you will learn how to create an MVUX project and the basic usage of a list-feed (`IListFeed<T>`), and the `FeedView` control.

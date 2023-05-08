@@ -124,7 +124,7 @@ There are several methods of how to create an MVUX command.
 
      #### ImplicitFeedCommandParameter attribute
 
-     You can also opt-in or out of implicit matching of Feeds and command parameters by decorating the current assembly or class with the `ImplicitFeedCommandParameters` attribute:  
+     You can also opt in or out of implicit matching of Feeds and command parameters by decorating the current assembly or class with the `ImplicitFeedCommandParameters` attribute:  
      
      ```csharp
      [assembly:ImplicitFeedCommandParameter(false)]

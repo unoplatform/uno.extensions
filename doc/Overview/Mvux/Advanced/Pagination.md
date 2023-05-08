@@ -7,13 +7,13 @@ uid: Overview.Mvux.Advanced.Pagination
 There are several ways to paginate data.
 
 > [!NOTE]  
-> The source-code for the sample app demonstrated in this section can be found [here](https://github.com/unoplatform/Uno.Samples/tree/master/UI/MvuxHowTos/PaginationPeopleApp).
+> The source code for the sample app demonstrated in this section can be found [here](https://github.com/unoplatform/Uno.Samples/tree/master/UI/MvuxHowTos/PaginationPeopleApp).
 
 ## Incremental loading
 
-The easiest and most straight-forward is use the built-in incremental loading functionality that some controls (e.g. `ListView`, `GridView`) offer via the [`ISupportIncrementalLoading`](https://learn.microsoft.com/en-us/uwp/api/windows.ui.xaml.data.isupportincrementalloading) interface the paginated Feed implements.
+The easiest and most straight-forward is to use the built-in incremental loading functionality that some controls (e.g. `ListView`, `GridView`) offer via the [`ISupportIncrementalLoading`](https://learn.microsoft.com/en-us/uwp/api/windows.ui.xaml.data.isupportincrementalloading) interface the paginated Feed implements.
 
-For the Pagination example we'll also use the *PeopleApp* example used above in [Selection](xref:Overview.Mvux.Advanced.Selection), but you can find the full code [here](https://github.com/unoplatform/Uno.Samples/tree/master/UI/MvuxHowTos/PaginationPeopleApp).
+For the Pagination example, we'll also use the *PeopleApp* example used above in [Selection](xref:Overview.Mvux.Advanced.Selection), but you can find the full code [here](https://github.com/unoplatform/Uno.Samples/tree/master/UI/MvuxHowTos/PaginationPeopleApp).
 
 ### Service
 
@@ -130,7 +130,7 @@ As you can see, there's nothing special in the XAML code as MVUX is taking advan
 
 - When the page load, the first 20 items are loaded (after a delay of one second - as simulated in the service).
 - If there's available space in the `ListView`, the next batch of 20 items will be requested from the Feed and loaded from the service thereafter.
-- When the user scroll down and hits the bottom of the `ListView`, the next 20 items will be requested.
+- When the user scrolls down and hits the bottom of the `ListView`, the next 20 items will be requested.
 - This behavior will follow as the user scrolls down and chases the service for more data until all items have been loaded.
 
 Here's what the app renders like:
@@ -236,8 +236,8 @@ Its properties are:
 |Property|Description|
 |---|---|
 |Index|The index of the page to be loaded.|
-|CurrentCount|This is the total number of items currently in the list.|
-|DesiredSize|The desired number of items for the current page, if any.<br/><br/>This is the desired number of items that the view requested to load.<br/>It's expected to be null only for the first page.<br/>Be aware that this might change between pages (especially is user resize the window), DO NOT use in `source.Skip(page.Index * page.DesiredSize).Take(page.DesiredSize)`.<br/>Prefer to use the `CurrentCount` property, e.g. `source.Skip(page.CurrentCount).Take(page.DesiredSize)`.|
+|CurrentCount|This is the total number of items currently on the list.|
+|DesiredSize|The desired number of items for the current page, if any.<br/><br/>This is the desired number of items that the view requested to load.<br/>It's expected to be null only for the first page.<br/>Be aware that this might change between pages (especially if the user resizes the window), Do NOT use in `source.Skip(page.Index * page.DesiredSize).Take(page.DesiredSize)`.<br/>Prefer to use the `CurrentCount` property, e.g. `source.Skip(page.CurrentCount).Take(page.DesiredSize)`.|
 
 ## Keyset pagination with a cursor
 
@@ -245,10 +245,10 @@ Its properties are:
 
 There are several caveats in using `Skip` and `Take` (Offset pagination) with an arbitrary page size multiplied by the page number.
 
-- When we skip data records, the database might still have to process some the skipped records on its way to the desired ones.
+- When we skip data records, the database might still have to process some of the skipped records on its way to the desired ones.
 - If any updates have been applied to the records preceding the currently displayed page, and then the user moves to the next or previous page, there might be inconsistencies in showing the subsequent data, some of the entries might be skipped or shown twice.
 
-An alternative way to paginate data is by using a cursor that points to a specific record and take then number of desired records in a page onwards.  
+An alternative way to paginate data is by using a cursor that points to a specific record and takes the number of desired records in a page onwards.  
 This is referred to as 'keyset pagination' or 'seek-based pagination'.
 
 To utilize this pagination style, MVUX provides another `ListFeed` factory overload, the `AsyncPaginatedByCursor`.
@@ -269,13 +269,13 @@ The callback delegate takes two parameters and returns two.
 
 The two input parameters are:
 
-- A cursor to the first page, in other words the item this page starts with. The service then starts by ordering the data and searching for the first item, then uses the second parameter:
+- A cursor to the first page, in other words, the item this page starts with. The service then starts by ordering the data and searching for the first item, then uses the second parameter:
 - The desired page size, the number of entries following it, along with another entity that uses as the cursor of the next page, which is not displayed to the user.
 - A `CancallationToken` which can be used to abort the operation.
 
 The callback returns a `PageResult<TCursor, TItem>`, and it contains:
 
-- An `ImmutableList<T>` containing the items to be displayed in the resulted page.
+- An `ImmutableList<T>` containing the items to be displayed on the resulting page.
 - A `TCursor` that can be of a different type that points to the beginning of the upcoming page.
 
 To demonstrate this we'll stick to the *PaginatedPeopleApp* we've started before.
@@ -331,7 +331,7 @@ public async ValueTask<(IImmutableList<Person> CurrentPage, int? NextPersonIdCur
 
     // this returns a tuple of two elements
     // first element is the current page's entities except the last
-    // the second contains the last item in the collection, which is a cursor for next page
+    // the second contains the last item in the collection, which is a cursor for the next page
     return (CurrentPage: collection[..lastIndex].ToImmutableList(), NextPersonIdCursor: nextPersonIdCursor);
 }
 ```
