@@ -87,11 +87,11 @@ In this case the `BindableWeatherModel` exposes a `CurrentWeather` property that
 
 1. Press <kbd>F5</kbd> to run the app. The app will load with a default `WeatherInfo` value, with a `Temperature` of `0`:
 
-    ![](../Assets/SimpleFeed-1.jpg)  
+    ![Screenshot showing the current temperature as zero](../Assets/SimpleFeed-1.jpg)  
 
     But then, after two seconds (the `GetCurrentWeatherAsync` method on the `WeatherService` includes a 2 second delay before returning data), the value that came from the service will display:
 
-    ![](../Assets/SimpleFeed-2.jpg)  
+    ![Screenshot showing the current temperature as -17](../Assets/SimpleFeed-2.jpg)  
 
     Note that this is a random value and may be different on your machine.
 
@@ -132,13 +132,13 @@ In the next section we'll use the `FeedView` control to unlock the capabilities 
 1. Click <kbd>F5</kbd> to run the project.  
 The temperature is requested from the service and is displayed on page:
 
-    ![](../Assets/SimpleFeed-3.gif)
+    ![Video showing a progress-ring running in the app while waiting for data](../Assets/SimpleFeed-3.gif)
 
     While the data is requested from the service, the `FeedView` automatically displays a progress-ring (`ProgressRing`), as shown on the last screenshot.  
 
 1. Once the data is the available, the `FeedView` will show the `DataTemplate` above, with the `TextBlock` displaying the value obtained from the service:
 
-    ![](../Assets/SimpleFeed-4.jpg)
+    ![Screenshot showing the current temperature updated to -27](../Assets/SimpleFeed-4.jpg)
 
 1. Let's add a `Refresh` button to allow the user to request an update to the data.  
 Change the `FeedView` content to the following:
@@ -161,16 +161,17 @@ Change the `FeedView` content to the following:
 
     The progress-ring shows up while awaiting the data.
 
-    ![](../Assets/SimpleFeed-3.gif)
+    ![Video showing a progress-ring running in the app while waiting for data](../Assets/SimpleFeed-3.gif)
 
     After a couple of seconds, once the data has been asynchronously received from the service, the above template takes places.  
     The temperature is now displayed accompanied by the *Refresh* button.
 
-    ![](../Assets/SimpleFeed-5.jpg)
+    ![A screenshot of the app showing a refresh button](../Assets/SimpleFeed-5.jpg)
 
 1. Click the *Refresh* button. You'll notice it disables instantly, and the progress-ring message is displayed thereafter.
 
-    ![](../Assets/SimpleFeed-3.gif) ![](../Assets/SimpleFeed-6.jpg)  
+    ![Video showing a progress-ring running in the app while waiting for data](../Assets/SimpleFeed-3.gif)
+    ![A screenshot showing the refresh button disabled and temperature updated to 24](../Assets/SimpleFeed-6.jpg)  
 
     After a couple of seconds the View will display the refreshed value the feed asynchronously retrieved from the service.
 
@@ -192,7 +193,7 @@ In the following step you'll learn how to customize the progress-ring you saw be
 
 1. When the app loads you'll notice how the custom `ProgressTemplate` we've just marked-up shows until the data is received from the service.
 
-    ![](../Assets/SimpleFeed-7.jpg)
+    ![A screenshot of the app demonstrating how the FeedView displays "Requesting temperature..."](../Assets/SimpleFeed-7.jpg)
 
 1. Once the data is the available and the `FeedView` switches to its `ValueTemplate` (the first default `DataTemplate` in our example).
 

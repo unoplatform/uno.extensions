@@ -132,15 +132,17 @@ which exposes properties that the View can data bind to.
 
 1. When the app loads you'll notice how the `ProgressTemplate` shows (if you've included one), till the data is received from the service (2 seconds).
 
-    ![](../Assets/SimpleFeed-3.gif)
+    ![A video showing the FeedView displaying a running progress-ring while awaiting data](../Assets/SimpleFeed-3.gif)
 
 1. Once the data is available, the `FeedView` switches to its `ValueTemplate` (the first default `DataTemplate` in our example), and displays the people list.
 
-    ![](../Assets/ListFeed-1.jpg)
+    ![A screenshot of the loaded data](../Assets/ListFeed-1.jpg)
 
 1. If you're using Visual-Studio 2022, Right-click the `PeopleApp` project, and navigate to *Dependencies*.  
-Open up *net7.0-windows10...* → *Analyzers*.  
-Under *Uno.Extensions.Reactive.Generator*, expand *Uno.Extensions.Reactive.FeedGenerator*.  
-Here you'll be able to inspect all files MVUX has generated for you, and learn more about how MVUX runs behind the scenes.
+    Open up *net7.0-windows10...* → *Analyzers*.  
+    Under *Uno.Extensions.Reactive.Generator*, expand *Uno.Extensions.Reactive.FeedGenerator*.  
+    Here you'll be able to inspect all files MVUX has generated for you, and learn more about how MVUX runs behind the scenes.
 
-    ![](../Assets/InspectGeneratedCode.jpg)
+    ![Screenshot of navigating Visual Studio Solution Explorer to inspect generated code](../Assets/InspectGeneratedCode.jpg)
+
+    Read [inspecting the generated code](xref:Overview.Mvux.Advanced.InspectGeneratedCode) for more.

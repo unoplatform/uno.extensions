@@ -132,6 +132,6 @@ and generate a proxy type called `BindableStockMarketModel`, which exposes prope
 
     Here are 3 screenshots taken consecutively with some delay apart:
 
-    ![](../Assets/PushListFeed-1.jpg)
-    ![](../Assets/PushListFeed-1.jpg)
-    ![](../Assets/PushListFeed-1.jpg)
+    ![Screenshot showing first stock data](../Assets/PushListFeed-1.jpg)
+    ![Screenshot showing second stock data](../Assets/PushListFeed-1.jpg)
+    ![Screenshot showing third stock data](../Assets/PushListFeed-1.jpg)

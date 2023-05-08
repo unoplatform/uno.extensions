@@ -127,7 +127,7 @@ The `Parent` property gets the `DataContext` of the `FeedView` itself. It provid
 
 By default, the `FeedView` will display a progress ring while awaiting data on load or refresh:
 
-![](Assets/ProgressRing.gif)
+![A running progress-ring control](Assets/ProgressRing.gif)
 
 However, in some scenarios you need to disable the default visual state and refreshing template.
 
@@ -174,7 +174,7 @@ This template will display when the underlying Feed is currently awaiting the as
 
 It's default implementation will show a progress ring:
 
-![](Assets/ProgressRing.gif)
+![A running progress-ring control](Assets/ProgressRing.gif)
 
 But you can customize that by overriding the `ProgressTemplate`:
 

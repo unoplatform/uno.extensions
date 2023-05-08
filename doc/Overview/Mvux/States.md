@@ -123,7 +123,7 @@ City currentCity = await this.CurrentCity;
     
 1. When you run the app, moving the `Slider` instantly affects the upper `TextBox`; the `Silder.Value` property has a two-way binding with the `SliderValue` State, so any change to the Slider immediately updates the State value, which in turn affects the data-bound `TextBlock` on top:
 
-    ![](Assets/SliderApp-1.gif)
+    ![A video of the previous slider app in action](Assets/SliderApp-1.gif)
 
 
 ### Change data of a State
@@ -171,7 +171,7 @@ When pressing the _Increment slider_ button, the generated `IncrementSlider` com
 
 This is what the result will look like:
 
-![](Assets/SliderApp-2.gif)
+![A video that demonstrates the effect of the recent updates applied to the slider-app](Assets/SliderApp-2.gif)
 
 The source-code for the sample app can be found [here](https://github.com/unoplatform/Uno.Samples/tree/master/UI/MvuxHowTos/SliderApp).
 

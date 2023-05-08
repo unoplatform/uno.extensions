@@ -116,7 +116,7 @@ The View code shall look like the following:
 
 When running the app, the top section will reflect the item the user selects in the `ListView`:
 
-![](../Assets/Selection.gif)
+![A video demonstrating selection with MVUX](../Assets/Selection.gif)
 
 > [!NOTE]  
 > The source code for the sample app can be found [here](https://github.com/unoplatform/Uno.Samples/tree/master/UI/MvuxHowTos/AdvancedPeopleApp).

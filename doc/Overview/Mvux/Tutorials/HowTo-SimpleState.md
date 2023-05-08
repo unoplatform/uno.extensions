@@ -119,7 +119,7 @@ When the user edits the text in the `TextBox`, MVUXs data-binding adapters trans
 
 1. In the `Save` method above, place a breakpoint on the line `await _hallCrow...SetHallCrowd...`, for later use:
 
-    ![](../Assets/SimpleState-2.jpg)
+    ![A screenshot of a breakpoint added in Visual Studio](../Assets/SimpleState-2.jpg)
 
     MVUX's analyzers will read the `HallCrowdednessModel` and will generate a special model-proxy called `BindableHallCrowdednessModel`, which provides binding capabilities for the View and performs all Update message for us, to keep the `IState` up to date.
         
@@ -151,13 +151,13 @@ When the user edits the text in the `TextBox`, MVUXs data-binding adapters trans
 
 1. The app will load with its default value '5' as the number of people.
     
-    ![](../Assets/SimpleState-1.jpg)
+    ![A screenshot of the app running with the number 5](../Assets/SimpleState-1.jpg)
 
 1. Change the number to 15 and click 'Save'.
 
     The debugger will stop at the breakpoint you placed earlier. <!--(See step No. x)-->
     
-    ![](../Assets/SimpleState-3.jpg)
+    ![A screenshot showing Visual Studio stopped at the breakpoint](../Assets/SimpleState-3.jpg)
     
     As you can see, the current value of the state has gotten the updated number '*15*'. This is now being saved to the service, in the following line execution once you hit <kbd>F5</kbd> again.
 

@@ -135,7 +135,7 @@ As you can see, there's nothing special in the XAML code as MVUX is taking advan
 
 Here's what the app renders like:
 
-![](../Assets/PaginationIncrementalLoading.gif)
+![A video of an app that implements automatic incremental loading](../Assets/PaginationIncrementalLoading.gif)
 
 > [!NOTE]  
 > The source-code for the sample app demonstrated in this section can be found [here](https://github.com/unoplatform/Uno.Samples/tree/master/UI/MvuxHowTos/PaginationPeopleApp).
@@ -219,17 +219,17 @@ It's then propogated to the `PeopleManual` property as explained [above](#model)
 
 When running the app, the `NumberBox` will be displayed and set with the first page:
 
-![](../Assets/PaginationManual-1.jpg)
+![A screenshot of the navigation number-box in an app utilizing manual pagination](../Assets/PaginationManual-1.jpg)
 
 When running the app, the first page will be loaded and await the users input to navigate to other pages which will be loaded on-demand:
 
-![](../Assets/PaginationManual-2.gif)
+![A video of an app utilizing manual pagination](../Assets/PaginationManual-2.gif)
 
 ### The `PageRequest` type
 
 The [`PageRequest`](https://github.com/unoplatform/uno.extensions/blob/main/src/Uno.Extensions.Reactive/Sources/PageRequest.cs) type contains the following properties and is used by a paginated Feed to pass information about the desired page the user wants to navigate to. It's the first parameter passed into the `PaginatedAsync` method when invoked:
 
-![](../Assets/PageRequest.jpg)
+![A diagram detailing the PageRequest class](../Assets/PageRequest.jpg)
 
 Its properties are:
 
@@ -361,4 +361,4 @@ There's not much needed in the View as this is magically working via the `ISuppo
 
 When the program runs, it works as it did in auto incremental loading, it's just the underlying pagination technique that's different:
 
-![](../Assets/PaginationIncrementalLoading.gif)
+![A video of an app that implements automatic incremental loading](../Assets/PaginationIncrementalLoading.gif)

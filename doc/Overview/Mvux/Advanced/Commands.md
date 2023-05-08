@@ -14,7 +14,7 @@ The [`AsyncCommand`](https://github.com/unoplatform/uno.extensions/blob/main/src
 As it implements `ICommand`, it can be bound from the View as a regular Command (e.g. in a `Button.Command` property). The advantage is that it can be invoked asynchronously.  
 In addition, it also implements [`INotifyPropertyChanged`](https://learn.microsoft.com/en-us/dotnet/api/system.componentmodel.inotifypropertychanged), to enable tracking if its properties have changed, and `ILoadable` - an Uno interface that provides information of an objects state whether it's currently in execution mode or not.
 
-![](../Assets/Commands-2.jpg)
+![A class diagram of System.ComponentModel.ICommand inheritence structure](../Assets/Commands-2.jpg)
 
 ## Creating commands
 
@@ -65,7 +65,7 @@ There are several methods of how to create an MVUX command.
 
     Result:
 
-    ![](../Assets/DisabledButton.jpg)
+    ![A disabled refresh button](../Assets/DisabledButton.jpg)
         
     ### Command generation rules:
     
@@ -188,4 +188,4 @@ There are several methods of how to create an MVUX command.
 
     This is a diagram detailing the methods in the Command factory toolset:
 
-    ![](../Assets/Commands-1.jpg)
+    ![A class diagram of MVUX command builder inheritance structure](../Assets/Commands-1.jpg)
