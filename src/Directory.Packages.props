@@ -46,7 +46,7 @@
 		<PackageVersion Include="Uno.Toolkit.WinUI" Version="2.6.0-dev.40" />
 		<PackageVersion Include="Uno.UI" Version="4.9.0-dev.587" />
 		<PackageVersion Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="4.9.0-dev.587"/>
-		<PackageVersion Include="Uno.UI.MSAL"  Version="4.9.0-dev.587" />
+		<PackageVersion Include="Uno.UI.MSAL"  Version="4.9.0-dev.969" />
 		<PackageVersion Include="Uno.UI.Runtime.WebAssembly" Version="4.9.0-dev.587" />
 		<PackageVersion Include="Uno.UI.RuntimeTests.Engine" Version="0.14.0-dev.54" />
 		<PackageVersion Include="Uno.WinUI" Version="4.9.0-dev.587" />
