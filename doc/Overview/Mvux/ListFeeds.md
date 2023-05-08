@@ -28,19 +28,19 @@ Here are some examples of creating a List-Feed:
 1. In this example the service returns a list of names on load/refresh - using a pull technique.
 
     Service code:
-    ```c#
+    ```csharp
     public ValueTask<IImutableList<string>> GetNames(CancellationToken ct = default);
     ```
 
     Model code:
-    ```c#
+    ```csharp
     public IListFeed<string> Names => ListFeed.Async(service.GetNames);
     ```
    
 2. This one returns an immutable list of names when available - using push technique:
 
     Service code:  
-    ```c#   
+    ```csharp   
     public IAsyncEnumerable<IImutableList<string>> GetNames(
         [EnumeratorCancellation] CancellationToken ct = default);
     ```
