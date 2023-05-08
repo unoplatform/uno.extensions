@@ -22,21 +22,19 @@ Let's change the `GetPeopleAsync` method in the *PeopleService.cs* file to suppo
 ```csharp
 namespace PaginationPeopleApp;
 
-public partial record Person(string FirstName, string LastName);
+public partial record Person(int Id, string FirstName, string LastName);
 
 public interface IPeopleService
 {
-    ValueTask<IImmutableList<Person>> GetPeopleAsync(uint pageSize, uint pageIndex, CancellationToken ct);
-
-    ValueTask<uint> GetPageCount(uint pageSize, CancellationToken ct);
+    ValueTask<IImmutableList<Person>> GetPeopleAsync(uint pageSize, uint firstItemIndex, CancellationToken ct);
 }
 
 public class PeopleService : IPeopleService
 {
-    public async ValueTask<IImmutableList<Person>> GetPeopleAsync(uint pageSize, uint pageIndex, CancellationToken ct)
+    public async ValueTask<IImmutableList<Person>> GetPeopleAsync(uint pageSize, uint firstItemIndex, CancellationToken ct)
     {
         // convert to int for use with LINQ
-        var (size, index) = ((int)pageSize, (int)pageIndex);
+        var (size, count) = ((int)pageSize, (int)firstItemIndex);
 
         // fake delay to simulate loading data
         await Task.Delay(TimeSpan.FromSeconds(1), ct);
@@ -45,23 +43,19 @@ public class PeopleService : IPeopleService
         var people = GetPeople();
 
         return people
-            .Skip(size * index)
+            .Skip(count)
             .Take(size)
             .ToImmutableList();
     }
 
-    // Determines how many pages we'll need to display all the data.
-    public async ValueTask<uint> GetPageCount(uint pageSize, CancellationToken ct) =>
-        (int)Math.Ceiling(GetPeople().Length / (double)pageSize);
-
     private Person[] GetPeople() =>
         new Person[]
         {
-            new("Liam", "Wilson"),
-            new("Emma", "Murphy"),
-            new("Noah", "Jones"),
-            new("Olivia", "Harris"),
-            new("William", "Jackson"),
+            new(1, "Liam", "Wilson"),
+            new(2, "Emma", "Murphy"),
+            new(3, "Noah", "Jones"),
+            new(4, "Olivia", "Harris"),
+            new(5, "William", "Jackson"),
             /* ... more names ... */
         }
     }
@@ -69,22 +63,18 @@ public class PeopleService : IPeopleService
 ```
 
 > [!NOTE]
-> You will find unsigned integers (`uint`) used in the context of Pagination as unsigned integeners do not allow negative values and prevent them in the first place.
+> You will find unsigned integers (`uint`) used in the context of Pagination as unsigned integers do not allow negative values and prevent them in the first place.
 
 ### Model
 
 ```csharp
-using Uno.Extensions.Reactive;
-
-namespace PaginationPeopleApp;
-
 public partial record PeopleModel(IPeopleService PeopleService)
 {
-    const uint PageSize = 20;
+    const uint DefaultPageSize = 20;
 
     public IListFeed<Person> PeopleAuto =>
         ListFeed.AsyncPaginated(async (PageRequest pageRequest, CancellationToken ct) =>
-            await PeopleService.GetPeopleAsync(pageSize: PageSize, pageIndex: pageRequest.Index, ct));
+            await PeopleService.GetPeopleAsync(pageSize: pageRequest.DesiredSize ?? DefaultPageSize, firstItemIndex: pageRequest.CurrentCount, ct));
 }
 ```
 
@@ -93,8 +83,10 @@ The `AsyncPaginated` method generates a `ListFeed` that supports pagination.
 Whenever the user scrolls down to see additional data and is hitting the end of the collection displayed in a `ListView`, the pagination List-Feed is automatically triggered with a page request.  
 The parameter of `AsyncPaginated`, is a delegate taking in a [`PageRequest`](#the-pagerequest-type) value and a `CancellationToken` and returning an `IListFeed<T>` where `T` is `Person` in our case. This delegate is invoked when a page request comes in.
 
-As you can see, we are sending the `Index` property of the incoming `pageRequest` argument to determine what page we're positioned.  
-`PageSize` refers to a constant value of `20`, but the `PageRequest` also has a `DesiredSize` property which the `ListView` can set according to its capacity. So essentially you can substitute `pageSize: PageSize` with `pageSize: pageRequest.DesiredSize` which is a nullable `uint`, and is populated by the `ListView`. It's expected to be `null` on the first page. We used a constant `PageSize` for the sake of this demonstration.
+Inside this callback we call the service by providing it with the following parameters:
+
+- `pageSize`: the page-size the `ListView` expects being able to display on the first page, which is received via the `DesiredSize` property of the `PageRequest`. This property is a nullable uint, and is null on the first call, as by the time of first call the UI is initializing the data-binding and there's no data present yet to determine the amount of items the UI should place in the space. On first call we'll instead use the constant value `DefaultPageSize` which is set to `20`.  
+- `firstItemIndex:` The index of the first item in the requested page. We use the current count (which is one based) as the next one's index (which is zero-based).
 
 ### View
 
@@ -109,15 +101,14 @@ As you can see, we are sending the `Index` property of the incoming `pageRequest
     <Page.Resources>
         <DataTemplate x:Key="PersonDataTemplate" x:DataType="local:Person">
             <StackPanel Orientation="Horizontal" Spacing="2">
+                <TextBlock Text="{x:Bind Id}"/>
                 <TextBlock Text="{x:Bind FirstName}"/>
                 <TextBlock Text="{x:Bind LastName}"/>
             </StackPanel>
         </DataTemplate>
     </Page.Resources>
 
-    <ListView ItemsSource="{Binding PeopleAuto}" ItemTemplate="{StaticResource PersonDataTemplate}"
-        DataFetchSize="20" Header="Next page auto-loading when on available capacity or scrolled"/>
-
+    <ListView ItemsSource="{Binding PeopleAuto}" ItemTemplate="{StaticResource PersonDataTemplate}" />
 </Page>
 ```
 
@@ -146,9 +137,6 @@ Here's what the app renders like:
 
 ![](../Assets/PaginationIncrementalLoading.gif)
 
-> [!TIP]  
-> You can use these members of the `ListView` to control data loading: [`DataFetchSize`](https://learn.microsoft.com/en-us/uwp/api/windows.ui.xaml.controls.listviewbase.datafetchsize), [`IncrementalLoadingThreshold`](https://learn.microsoft.com/en-us/uwp/api/windows.ui.xaml.controls.listviewbase.incrementalloadingthreshold), and [`IncrementalLoadingTrigger`](https://learn.microsoft.com/en-us/uwp/api/windows.ui.xaml.controls.listviewbase.incrementalloadingthreshold).
-
 > [!NOTE]  
 > The source-code for the sample app demonstrated in this section can be found [here](https://github.com/unoplatform/Uno.Samples/tree/master/UI/MvuxHowTos/PaginationPeopleApp).
 
@@ -161,17 +149,17 @@ Using the example started in [incremental loading above](#incremental-loading), 
 
 ### Service
 
-Here's the method added to the service (*PeopleService.cs*):
+Here's the methods added to the service (*PeopleService.cs*):
 
 ```csharp
-public async ValueTask<int> GetPageCount(uint pageSize, CancellationToken ct) =>
-    (uint)Math.Ceiling(GetPeople().Length / (double)pageSize);
+public IFeed<uint> PageCount =>
+    Feed.Async(async (ct) => await PeopleService.GetPageCount(DefaultPageSize, ct));
 ```
 
 The signature of `GetPageCount` should also be added to the `IPeopleService` interface:
 
 ```csharp
-ValueTask<int> GetPageCount(uint pageSize, CancellationToken ct);
+ValueTask<uint> GetPageCount(uint pageSize, CancellationToken ct);
 ```
 
 ### Model
@@ -183,74 +171,54 @@ public partial record PeopleModel(IPeopleService PeopleService)
 {
     public IListFeed<Person> PeopleAuto ...// will not be used in this example
 
-    const uint PageSize = 20;
-        
-    public IFeed<int> PageCount =>
-        Feed.Async(async (ct) => await PeopleService.GetPageCount(PageSize, ct));
+    public IFeed<uint> PageCount =>
+        Feed.Async(async (ct) => await PeopleService.GetPageCount(DefaultPageSize, ct));
 
     public IState<uint> CurrentPage => State.Value(this, () => 1u);
 
     public IListFeed<Person> PeopleManual =>
         CurrentPage.SelectAsync(async (currentPage, ct) =>
-            // currentPage argument as index based
-            await PeopleService.GetPeopleAsync(pageSize: PageSize, pageIndex: currentPage - 1, ct))
+            await PeopleService.GetPeopleAsync(
+                pageSize: DefaultPageSize,
+                // currentPage argument as index based - subtracting 1
+                firstItemIndex: (currentPage - 1) * DefaultPageSize, ct))
         .AsListFeed();
-
-    public async ValueTask Move(uint currentPage, uint pageCount, int direction, CancellationToken ct)
-    {
-        var desiredPage = currentPage + direction;
-
-        if (desiredPage <= 0 || desiredPage > pageCount)
-            return;
-
-        await CurrentPage.Set((uint)desiredPage, ct);
-    }
 }
 ```
 
-In the code above, whenever `CurrentPage` changes, `PeopleManual` will update its data accordingly.  
-MVUX's code generator generates an async command that is bound to from the View, when the user clicks the designated button to move to either previous or next page, the `Move` method will be invoked with the `direction` argument set to either 1 or -1 added to the current page index.
+`PeopleManual` is a Feed that reacts to changes in the `CurrentPage` property and projects the current page data according to its number.  
+To accomplish this, the [`SelectAsync` operator](xref:Overview.Mvux.Feeds#select-or-selectasync) of Feeds is used.  
+The callback of this operator calls the service's `GetPeopleAsync` with the following arguments:
 
-You may be wondering where the `currentPage` and `pageCount` arguments to the `Move` method are populated from, this is another MVUX magic trick where when the parameters type and name matches a Feed or a State in the current Model, their latest value are provided as an argument to the executed Command.  
-Read onward on [Creating commands](xref:Overview.Mvux.Advanced.Commands#creating-commands) to learn more.
+- `pageSize`: As with the [automatic incremental loading](#incremental-loading) example above we're passing the size of each page, except this time we are manually setting the page size to an arbitrary number via the `DefaultPageSize` constant, which is set to `20`.
+- `firstItemIndex`: To get the first item of the next page, the currentPage argument of the `SelectAsync` callback is subtracted with one, to make it zero-based, then multiplied by the page size (20), for the service to return the 20 `Person` objects starting at the index provided with this parameter.
 
 ### View
 
 Replace the `ListView` from the previous example with this one:
 
 ```xml
-<ListView Grid.Column="2" x:Name="manual" ItemsSource="{Binding PeopleManual}"
-          ItemTemplate="{StaticResource PersonDataTemplate}" Header="Load single page on demand">
-    
+<ListView ItemsSource="{Binding PeopleManual}"
+          ItemTemplate="{StaticResource PersonDataTemplate}">
+
     <ListView.Footer>
-        <StackPanel Orientation="Horizontal" Spacing="3">
-
-            <Button Content="Previous" Command="{Binding Move}" VerticalAlignment="Center">
-                <Button.CommandParameter>
-                    <x:Int32>-1</x:Int32>
-                </Button.CommandParameter>
-            </Button>
-
-            <TextBlock Text="{Binding CurrentPage}" VerticalAlignment="Center" />
-
-            <Button Content="Next" Command="{Binding Move}" VerticalAlignment="Center">
-                <Button.CommandParameter>
-                    <x:Int32>1</x:Int32>
-                </Button.CommandParameter>
-            </Button>
-
-        </StackPanel>
+        <NumberBox 
+            HorizontalAlignment="Center"
+            Header="Current page:"
+            Minimum="1" 
+            Maximum="{Binding PageCount}"
+            SpinButtonPlacementMode="Inline"                     
+            Value="{Binding CurrentPage, Mode=TwoWay}"/>
     </ListView.Footer>
 </ListView>
 ```
 
-Two buttons were added to the `ListView`'s footer which are bound to the `Move` command, and the `TextBlock` in-between them will display the current page via the `CurrentPage` State it's bound to.  
-A `CommandParameter` of either *1* or *-1* has been set to Next and Previous buttons respectively.
+The `ListView`'s footer contains a `NumberBox` which increments/decrements the `CurrentPage` State it's bound to, via its `Value` property. The `Maximum` property is bound to `PageCount`, to disable navigating to a page that does not exist.  
+It's then propogated to the `PeopleManual` property as explained [above](#model).
+
+When running the app, the `NumberBox` will be displayed and set with the first page:
 
 ![](../Assets/PaginationManual-1.jpg)
-
-> [!TIP]  
-> The generated `Move` command can be seen in the generated `BindablePeopleModel` as well, follow the instructions [here](xref:Overview.Mvux.Advanced.InspectGeneratedCode).
 
 When running the app, the first page will be loaded and await the users input to navigate to other pages which will be loaded on-demand:
 
@@ -272,6 +240,8 @@ Its properties are:
 
 ## Keyset pagination with a cursor
 
+[Jump to example](#service)
+
 There are several caveats in using `Skip` and `Take` (Offset pagination) with an arbitrary page size multiplied by the page number.
 
 - When we skip data records, the database might still have to process some the skipped records on its way to the desired ones.
@@ -281,8 +251,6 @@ An alternative way to paginate data is by using a cursor that points to a specif
 This is referred to as 'keyset pagination' or 'seek-based pagination'.
 
 To utilize this pagination style, MVUX provides another `ListFeed` factory overload, the `AsyncPaginatedByCursor`.
-
-[Jump to example](#service)
 
 The signature of this method is:
 
@@ -318,36 +286,27 @@ To keep the service agnostic, we'll add the following method to the Service:
 *IPeopleService*:
 
 ```csharp
-ValueTask<(IImmutableList<Person> CurrentPage, Person NextCursor)> GetPeopleAsync(Person? cursor, uint pageSize, CancellationToken ct);
+ValueTask<(IImmutableList<Person> CurrentPage, int? NextPersonIdCursor)> GetPeopleAsync(int? personIdCursor, uint pageSize, CancellationToken ct);
 ```
 
 This method has 3 parameters:
 
-- The first is a `Person` which uses as a cursor to the first page, i.e. the first `Person` of the requested page.
+- The first is a `int?` which uses as a cursor to the first page, i.e. the first `Person.Id` to appear as first item of the requested page.
 - The second is a `uint` representing the number of entities to follow the first one. The reason of using a `uint` is that negative values are not expected here.
 - The third one is a `CancellationToken` which can be used to signal the service to abort loading data.
 
 The method returns a tuple with two components (same as `PageResult`, only keeping the service agnostic of MVUX):
 
 - An `IImmutableList<Person>` which includes the entities of this page
-- A `Person` which uses as a cursor as the beginning of the next page.
+- A `int?` which uses as a cursor as the beginning of the next page, if any.
 
 > [!TIP]  
-> The cursor does not necessarily have to be a `Person` or the data type the collection contains, it can also be an ID or another key of an entity for the service to lookup and return it along with its upcoming entries.
-
-In the example above we want to override the `ToString` method of `Person` so that we can later order the entities by their string representation:
-
-```csharp
-public partial record Person(string FirstName, string LastName)
-{
-    public override string ToString() => $"{FirstName} {LastName}";
-}
-```
+> The cursor does not necessarily have to be a `int?` or the data type the collection contains, it can also be another key of an entity for the service to lookup and return it along with its upcoming entries.
 
 The fully implemented method in the service is as follows:
 
 ```csharp
-public async ValueTask<(IImmutableList<Person> CurrentPage, Person NextCursor)> GetPeopleAsync(Person? cursor, uint pageSize, CancellationToken ct)
+public async ValueTask<(IImmutableList<Person> CurrentPage, int? NextPersonIdCursor)> GetPeopleAsync(int? personIdCursor, uint pageSize, CancellationToken ct)
 {
     // fake delay to simulate loading data
     await Task.Delay(TimeSpan.FromSeconds(1), ct);
@@ -355,18 +314,24 @@ public async ValueTask<(IImmutableList<Person> CurrentPage, Person NextCursor)> 
     var people = GetPeople();
 
     var collection = people
-        // order by full name
-        .OrderBy(person => person.ToString())
         // select only subsequent items
-        .Where(person => StringComparer.CurrentCultureIgnoreCase.Compare(cursor?.ToString(), person.ToString()) <= 0)
+        .Where(person => person.Id >= personIdCursor.GetValueOrDefault())
         // take only n number of rows, plus the first entity of the next page
-        .Take((int)pageSize + 1)        
+        .Take((int)pageSize + 1)
+        // using array to enable range access
         .ToArray();
+
+    // determine if there's another page ahead
+    var noMoreItems = collection.Length <= pageSize;
+
+    // use the last item as the cursor of next page, if it exceeds the page-size
+    var lastIndex = noMoreItems ? ^0 : ^1;
+    var nextPersonIdCursor = noMoreItems ? default(int?) : collection[^1].Id;
 
     // this returns a tuple of two elements
     // first element is the current page's entities except the last
     // the second contains the last item in the collection, which is a cursor for next page
-    return (CurrentPage: collection[..^1].ToImmutableList(), NextCursor: collection[^1]);
+    return (CurrentPage: collection[..lastIndex].ToImmutableList(), NextPersonIdCursor: nextPersonIdCursor);
 }
 ```
 
@@ -375,26 +340,24 @@ public async ValueTask<(IImmutableList<Person> CurrentPage, Person NextCursor)> 
 ```csharp
 public IListFeed<Person> PeopleCursor =>
     ListFeed<Person>.AsyncPaginatedByCursor(
-            // starting off with a blank Person, since the person list is to be ordered by name, any valid name will follow.
-            firstPage: new Person(string.Empty, string.Empty), 
-            // this will be automatically invoked by the ISupportIncrementalLoading the ListView supports
-            getPage: async (cursor, desiredPageSize, ct) =>
-                {
-                    // gets the tuple result from the service
-                    var result = await PeopleService.GetPeopleAsync(cursor, PageSize, ct);
-                    // converts tuple to PageResult
-                    return new PageResult<Person, Person>(result.CurrentPage, result.NextCursor);
-                });
+        // starting off with a blank Person, since the person list is to be ordered by name, any valid name will follow.
+        firstPage: default(int?),
+        // this will be automatically invoked by the ISupportIncrementalLoading the ListView supports
+        getPage: async (cursor, desiredPageSize, ct) =>
+        {
+            var result = await PeopleService.GetPeopleAsync(cursor, desiredPageSize ?? DefaultPageSize, ct);
+            return new PageResult<int?, Person>(result.CurrentPage, result.NextPersonIdCursor);
+        });
 ```
 
 ### View
 
-There's not much needed in the View as this is magically working via the `ISupportIncrementalLoading` implemented with the `ListView`!
+There's not much needed in the View as this is magically working via the `ISupportIncrementalLoading` interface implemented with the `ListView`!
 
 ```xml
 <ListView ItemsSource="{Binding PeopleCursor}" ItemTemplate="{StaticResource PersonDataTemplate}" />
 ```
 
-When the program runs, it works as it did in auto incremental loading, except the people list is sorted by full-name:
+When the program runs, it works as it did in auto incremental loading, it's just the underlying pagination technique that's different:
 
-![](../Assets/PaginationKeyset.gif)
+![](../Assets/PaginationIncrementalLoading.gif)
