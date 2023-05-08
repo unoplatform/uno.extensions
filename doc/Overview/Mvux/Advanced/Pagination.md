@@ -177,7 +177,8 @@ public partial record PeopleModel(IPeopleService PeopleService)
     public IState<uint> CurrentPage => State.Value(this, () => 1u);
 
     public IListFeed<Person> PeopleManual =>
-        CurrentPage.SelectAsync(async (currentPage, ct) =>
+        CurrentPage
+        .SelectAsync(async (currentPage, ct) =>
             await PeopleService.GetPeopleAsync(
                 pageSize: DefaultPageSize,
                 // currentPage argument as index based - subtracting 1
