@@ -37,7 +37,7 @@ The generated solution will contain:
 
     ![The structure of the generated solution](./Overview/images/ProjectStructure-min.png)
 
-#### 3. Running the Application
+### 3. Running the Application
 
 * Select a target from the drop-down as pictured below
 
