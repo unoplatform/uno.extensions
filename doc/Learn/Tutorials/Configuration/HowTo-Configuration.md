@@ -14,31 +14,33 @@ uid: Learn.Tutorials.Configuration.HowToConfiguration
 * Use the `EmbeddedSource<T>()` extension method on `IConfigBuilder` to load configuration information from an assembly type you specify:
 
     ```csharp
-    public App()
+    protected override void OnLaunched(LaunchActivatedEventArgs args)
     {
-        Host = UnoHost
-            .CreateDefaultBuilder()
-            .UseConfiguration(configure: configBuilder =>
-                configBuilder
-                    // Load configuration information from appsettings.json
-                    .EmbeddedSource<App>()
-            )
+        var appBuilder = this.CreateBuilder(args)
+            .Configure(host => {
+                host.UseConfiguration(configure: configBuilder =>
+                    configBuilder
+                        // Load configuration information from appsettings.json
+                        .EmbeddedSource<App>()
+                );
+            });
     ...
     ```
 
 * By default, this method will extract values from an embedded resource (using the [EmbeddedResource](https://docs.microsoft.com/en-us/dotnet/api/system.codedom.compiler.compilerparameters.embeddedresources?view=dotnet-plat-ext-6.0#remarks) file build action) called `appsettings.json`, unless you optionally denote a different file name. The string you pass into the extension method will be concatenated in-between `appsettings` and its file extension. For instance, the following will also retrieve values from the file `appsettings.platform.json` embedded inside the `App` assembly:
 
     ```csharp
-    public App()
+    protected override void OnLaunched(LaunchActivatedEventArgs args)
     {
-        Host = UnoHost
-            .CreateDefaultBuilder()
-            .UseConfiguration(configure: configBuilder =>
-                configBuilder
-                    .EmbeddedSource<App>()
-                    // Load configuration information from appsettings.platform.json
-                    .EmbeddedSource<App>("platform")
-            )
+        var appBuilder = this.CreateBuilder(args)
+            .Configure(host => {
+                host.UseConfiguration(configure: configBuilder =>
+                    configBuilder
+                        .EmbeddedSource<App>()
+                        // Load configuration information from appsettings.platform.json
+                        .EmbeddedSource<App>("platform")
+                );
+            });
     ...
     ```
 
@@ -63,19 +65,19 @@ uid: Learn.Tutorials.Configuration.HowToConfiguration
 * You can now use the `Section<T>()` extension method on `IConfigBuilder` to load configuration information for class or record of the type argument you specify:
 
     ```csharp
-    public App()
+    protected override void OnLaunched(LaunchActivatedEventArgs args)
     {
-        Host = UnoHost
-            .CreateDefaultBuilder()
-            .UseConfiguration(configure: configBuilder =>
-                configBuilder
-                    // Load configuration information from appsettings.json
-                    .EmbeddedSource<App>()
-                    // Load configuration information from appsettings.platform.json
-                    .EmbeddedSource<App>("platform")
-                    // Load Auth configuration section
-                    .Section<Auth>()
-            )
+        var appBuilder = this.CreateBuilder(args)
+            .Configure(host => {
+                host.UseConfiguration(configure: configBuilder =>
+                    configBuilder
+                        .EmbeddedSource<App>()
+                        // Load configuration information from appsettings.platform.json
+                        .EmbeddedSource<App>("platform")
+                        // Load configuration information for the Auth section
+                        .Section<Auth>()
+                );
+            });
     ...
     ```
 

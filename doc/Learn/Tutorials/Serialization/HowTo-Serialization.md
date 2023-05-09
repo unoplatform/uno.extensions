@@ -12,16 +12,14 @@ Accessing the serialized and deserialized representation of an object can be imp
 * Call the `UseSerialization()` method to register a serializer that implements `ISerializer` with the service collection:
 
     ```csharp
-    private IHost Host { get; }
-    
-    public App()
+    protected override void OnLaunched(LaunchActivatedEventArgs e)
     {
-        Host = UnoHost
-            .CreateDefaultBuilder()
-            .UseSerialization( /* ..type info.. */)
-            .Build();
-        // ........ //
-    }
+        var appBuilder = this.CreateBuilder(args)
+            .Configure(host => {
+                host
+                .UseSerialization();
+            });
+    ...
     ```
 
 ### 2. Preparing the class to be serialized efficiently
@@ -48,7 +46,7 @@ Accessing the serialized and deserialized representation of an object can be imp
     }
     ```
 
-* As of .NET 6, a code generation-enabled serializer is supported. To leverage this in your Uno.Extensions application, define a partial class which derives from a `JsonSerializerContext`, and specify which type is serializable with the `JsonSerializable` attribute:
+* From .NET 6+, a code generation-enabled serializer is supported. To leverage this in your Uno.Extensions application, define a partial class which derives from a `JsonSerializerContext`, and specify which type is serializable with the `JsonSerializable` attribute:
 
     ```csharp
     using System.Text.Json.Serialization;
@@ -61,18 +59,14 @@ Accessing the serialized and deserialized representation of an object can be imp
 * The `JsonSerializable` attribute will generate several new members on the `PersonContext` class, allowing you to access the `JsonTypeInfo` in a static context. Get the `JsonTypeInfo` for your class using `PersonContext.Default.Person` and add it within the serializer registration from above:
 
     ```csharp
-    private IHost Host { get; }
-    
-    public App()
+    protected override void OnLaunched(LaunchActivatedEventArgs e)
     {
-        Host = UnoHost
-            .CreateDefaultBuilder()
-            .UseSerialization(services => services
-                .AddJsonTypeInfo(PersonContext.Default.Person)
-            )
-            .Build();
-        // ........ //
-    }
+        var appBuilder = this.CreateBuilder(args)
+            .Configure(host => {
+                host
+                .UseSerialization(services => services.AddJsonTypeInfo(PersonContext.Default.Person));
+            });
+    ...
     ```
 
 ### 3. Configuring the serializer
@@ -80,23 +74,18 @@ Accessing the serialized and deserialized representation of an object can be imp
 * The default serializer implementation uses `System.Text.Json`. The serialization can be configured by registering an instance of `JsonSerializerOptions`:
 
     ```csharp
-    private IHost Host { get; }
-    
-    public App()
+    protected override void OnLaunched(LaunchActivatedEventArgs e)
     {
-        Host = UnoHost
-            .CreateDefaultBuilder()
-            .UseSerialization(services => services
-                .AddJsonTypeInfo(PersonContext.Default.Person)
-            )
-            .ConfigureServices(services =>
-            {
-                services
-                    .AddSingleton(new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-            })
-            .Build();
-        // ........ //
-    }
+        var appBuilder = this.CreateBuilder(args)
+            .Configure(host => {
+                host
+                .UseSerialization(services => 
+                {
+                    services.AddJsonTypeInfo(PersonContext.Default.Person);
+                    services.AddSingleton(new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                });
+            });
+    ...
     ```
 
 ### 4. Serialize and deserialize JSON data

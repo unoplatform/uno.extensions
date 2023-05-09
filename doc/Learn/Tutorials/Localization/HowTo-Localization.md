@@ -14,16 +14,14 @@ uid: Learn.Tutorials.Localization.HowToUseLocalization
 * Call the `UseLocalization()` method to register the implementation of `IStringLocalizer` with the DI container:
 
     ```csharp
-    private IHost Host { get; }
-
-    public App()
+    protected override void OnLaunched(LaunchActivatedEventArgs args)
     {
-        Host = UnoHost
-            .CreateDefaultBuilder()
-            .UseLocalization()
-            .Build();
-        // ........ //
-    }
+        var appBuilder = this.CreateBuilder(args)
+            .Configure(hostBuilder => 
+            {
+                hostBuilder.UseLocalization();
+            });
+    ...
     ```
 
 ### 2. Use the localization service to resolve localized text

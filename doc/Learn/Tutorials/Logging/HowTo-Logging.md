@@ -11,19 +11,16 @@ uid: Learn.Tutorials.Logging.UseLogging
 
 * Uno.Extensions offers a simple way to wire up platform-specific log providers such as `Uno.Extensions.Logging.OSLogLoggerProvider` for iOS and `Uno.Extensions.Logging.WebAssembly.WebAssemblyConsoleLoggerProvider` for WASM as both debug and console logging. 
 
-    Call the `UseLogging()` method to register the resultant implementation of `ILogger` with the DI container:
+* Call the `UseLogging()` method to register the resultant implementation of `ILogger` with the DI container:
 
     ```csharp
-    private IHost Host { get; }
-
-    public App()
+    protected override void OnLaunched(LaunchActivatedEventArgs e)
     {
-        Host = UnoHost
-            .CreateDefaultBuilder()
-            .UseLogging()
-            .Build();
-        // ........ //
-    }
+        var appBuilder = this.CreateBuilder(args)
+            .Configure(host => {
+                host.UseLogging();
+            });
+    ...
     ```
 
 ### 2. Use the injected service to log application events
@@ -31,7 +28,7 @@ uid: Learn.Tutorials.Logging.UseLogging
 * Add a constructor parameter of `ILogger` type to a view model you registered with the service collection:
 
     ```cs
-    public class MainViewModel
+    public class MainViewModel : ObservableObject
     {
         private readonly ILogger logger;
 
@@ -39,7 +36,7 @@ uid: Learn.Tutorials.Logging.UseLogging
         {
             this.logger = logger;
         }
-    }
+    ...
     ```
 
 * You can now record application events using the injected `ILogger` service implementation:
