@@ -4,7 +4,7 @@ uid: Overview.Serialization
 
 # Serialization
 
-Accessing the serialized and deserialized representation of an object can be important for dynamic, data-rich applications. `Uno.Extensions.Serialization` allows for simplified access to serializer objects as dependencies. This library supports the new serialization [technique](https://devblogs.microsoft.com/dotnet/try-the-new-system-text-json-source-generator) powered by code generation.
+**Serialization** involves converting an object into a format that can be easily stored or transmitted. On the receiving end, the object is reconstructed back into its original form through **deserialization**. These two operations complement each other and can be important for dynamic, data-rich applications. `Uno.Extensions.Serialization` allows for simplified access to serializer objects as dependencies. This library supports the new serialization [technique](https://devblogs.microsoft.com/dotnet/try-the-new-system-text-json-source-generator) powered by code generation.
 
 ## Using a Serializer
 
@@ -43,7 +43,9 @@ public class MyViewModel : ObservableObject
 
 ## Configuring ISerializer
 
-The default serializer implementation uses `System.Text.Json`. The serialization can be configured by registering an instance of `JsonSerializerOptions` with the host. The following example shows how to register an instance of `JsonSerializerOptions` with the host.
+### JSON
+
+The default serializer implementation only supports serializing to JSON. Because it uses `System.Text.Json`, the specifics of this behavior can be configured with `JsonSerializerOptions`. The following example shows how to register an instance of `JsonSerializerOptions` with the host.
 
 ```csharp
 protected override void OnLaunched(LaunchActivatedEventArgs e)
@@ -55,6 +57,25 @@ protected override void OnLaunched(LaunchActivatedEventArgs e)
             {
                 services
                     .AddSingleton(new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            });
+        });
+...
+```
+
+### Custom
+
+The `ISerializer` interface can be implemented to support custom serialization to formats like XML or binary. This example shows how to register a custom `ISerializer` based type named `XmlSerializerImpl` with the host.
+
+```csharp
+protected override void OnLaunched(LaunchActivatedEventArgs e)
+{
+    var appBuilder = this.CreateBuilder(args)
+        .Configure(host => {
+            host
+            .UseSerialization(services =>
+            {
+                services
+                    .AddSingleton<ISerializer, XmlSerializerImpl>();
             });
         });
 ...
