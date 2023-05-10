@@ -21,7 +21,7 @@ Commands can be bound to UI elements. To do this, the `Command` property of the 
 
 The MVUX [`IAsyncCommand`](https://github.com/unoplatform/uno.extensions/blob/main/src/Uno.Extensions.Reactive/Presentation/Commands/IAsyncCommand.cs) interface, is a Command that implements [`ICommand`](https://learn.microsoft.com/en-us/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.input.icommand?view=windows-app-sdk-1.3) and adds support for asynchronous operations.  
 As it implements `ICommand`, it can be bound from the View as a regular Command (e.g. in a `Button.Command` property). The advantage is that it can be invoked asynchronously.  
-In addition, it also implements [`INotifyPropertyChanged`](https://learn.microsoft.com/en-us/dotnet/api/system.componentmodel.inotifypropertychanged), to enable tracking if its properties have changed, and [`ILoadable`](https://github.com/unoplatform/uno.toolkit.ui/blob/main/src/Uno.Toolkit/ILoadable.cs) - an Uno interface that provides information of an object's state whether it's currently in execution mode or not, and notifies subscribers when this state changes.
+In addition, it also implements [`INotifyPropertyChanged`](https://learn.microsoft.com/en-us/dotnet/api/system.componentmodel.inotifypropertychanged), to enable tracking if its properties have changed, and [`ILoadable`](xref:Toolkit.Controls.LoadingView#iloadable) - an Uno interface that provides information of an object's state whether it's currently in execution mode or not, and notifies subscribers when this state changes.
 
 ![A class diagram of System.ComponentModel.ICommand inheritence structure](../Assets/Commands-2.jpg)
 
