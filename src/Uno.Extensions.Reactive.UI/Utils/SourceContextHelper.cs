@@ -8,6 +8,9 @@ using Uno.Extensions.Reactive.Utils.Debugging;
 
 namespace Uno.Extensions.Reactive.UI.Utils;
 
+/// <summary>
+/// Set of helpers to deal with <see cref="SourceContext"/> from the UI
+/// </summary>
 internal class SourceContextHelper
 {
 	public static SourceContext CreateChildContext(SourceContext context, FrameworkElement element, IRequestSource requests)
@@ -29,7 +32,7 @@ internal class SourceContextHelper
 		public IDispatcher Dispatcher { get; }
 	}
 
-	public static SourceContext CreateChildContext<T>(SourceContext context, BindableCollection bindableCollection, IListState<T> state, IRequestSource requests)
+	internal static SourceContext CreateChildContext<T>(SourceContext context, BindableCollection bindableCollection, IListState<T> state, IRequestSource requests)
 		=> context.CreateChild(new NamedOwner("BindableCollection for " + state.Context.Owner.Name), requests);
 
 	private record NamedOwner(string Name) : ISourceContextOwner
