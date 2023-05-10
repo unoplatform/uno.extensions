@@ -4,15 +4,24 @@ uid: Overview.Mvux.Advanced.Commands
 
 # Commands
 
-## Commands recap
+Commands are a way to decouple the UI from the code that performs an action. This makes it easier to maintain and test your code, and it also makes your UI more flexible and adaptable.
 
-In the [overview](xref:Overview.Mvux.Overview) you've seen a brief introduction to how a method in the Model gets generated as a command in the Bindable Proxy Model.
+A command is an object that implements the [`ICommand`](https://learn.microsoft.com/en-us/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.input.icommand) interface. This interface has two methods:
+
+- [`Execute`](https://learn.microsoft.com/en-us/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.input.icommand.execute): This method is called when the command is executed.
+- [`CanExecute`](https://learn.microsoft.com/en-us/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.input.icommand.canexecute): This method is invoked when the UI needs to determine if the command can be executed. It returns a boolean value indicating if the command can be executed.
+
+Commands can be bound to UI elements. To do this, the `Command` property of the UI element can be used. For example, the following code binds the `Click` event of a button to the `Save` command:
+
+```
+<Button Command="Save">Save</Button>
+```
 
 ## Asynchronous commands
 
-The [`AsyncCommand`](https://github.com/unoplatform/uno.extensions/blob/main/src/Uno.Extensions.Reactive/Presentation/Commands/AsyncCommand.cs) class, is a Command that implements [`ICommand`](https://learn.microsoft.com/en-us/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.input.icommand?view=windows-app-sdk-1.3) and adds support for asynchronous operations.  
+The MVUX [`IAsyncCommand`](https://github.com/unoplatform/uno.extensions/blob/main/src/Uno.Extensions.Reactive/Presentation/Commands/IAsyncCommand.cs) interface, is a Command that implements [`ICommand`](https://learn.microsoft.com/en-us/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.input.icommand?view=windows-app-sdk-1.3) and adds support for asynchronous operations.  
 As it implements `ICommand`, it can be bound from the View as a regular Command (e.g. in a `Button.Command` property). The advantage is that it can be invoked asynchronously.  
-In addition, it also implements [`INotifyPropertyChanged`](https://learn.microsoft.com/en-us/dotnet/api/system.componentmodel.inotifypropertychanged), to enable tracking if its properties have changed, and `ILoadable` - an Uno interface that provides information of an objects state whether it's currently in execution mode or not.
+In addition, it also implements [`INotifyPropertyChanged`](https://learn.microsoft.com/en-us/dotnet/api/system.componentmodel.inotifypropertychanged), to enable tracking if its properties have changed, and [`ILoadable`](https://github.com/unoplatform/uno.toolkit.ui/blob/main/src/Uno.Toolkit/ILoadable.cs) - an Uno interface that provides information of an object's state whether it's currently in execution mode or not, and notifies subscribers when this state changes.
 
 ![A class diagram of System.ComponentModel.ICommand inheritence structure](../Assets/Commands-2.jpg)
 
@@ -47,20 +56,23 @@ There are several methods of how to create an MVUX command.
     An additional parameter can be added to the method, which is then assigned with the value of the `CommandParameter` received from the View. For instance, when using a Button and clicking it, the method will be called with the [`Button.CommandParameter`](https://learn.microsoft.com/en-us/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.primitives.buttonbase.commandparameter) value, given that the type of the value matches the method parameter type. Otherwise the command's `CanExecute` will be false thereby disabling the button:
 
     ```csharp
-    public void DoWork(int param)
+    public void DoWork(double param)
     {
         ...
     }
     ```
 
+    Then:
+
     ```xml
-    <Button Command="{Binding DoWork}" CommandParameter="{Binding MyIntegerValue}" />
-    ```    
+    <Slider x:Name="slider" Minimum="1" Maximum="100"/>
+    <Button Command="{Binding DoWork}" CommandParameter="{Binding Value, ElementName=slider}"/>
+    ```
 
     Accordingly, if the `CommandParameter` type does not match the parameter type of the method, the button will remain disabled:
 
     ```xml
-    <Button Command="{Binding DoWork}" CommandParameter="A string, not an integer" />
+    <Button Command="{Binding DoWork}" CommandParameter="A string, not a double" />
     ```
 
     Result:
@@ -70,7 +82,7 @@ There are several methods of how to create an MVUX command.
     ### Command generation rules:
     
      - Can be either synchronous or asynchronous (i.e. `public void`, `public async ValueTask`, or `public async Task`)
-     - Any parameter that has a type and name matching a Feed or a State in this Model will be evaluated when the Command is invoked and its current latest value will be passed in as an argument.  
+     - Any parameter that has a type and name (case-insensitive) matching a Feed or a State in this Model will be evaluated when the Command is invoked and its current latest value will be passed in as an argument.  
         You'll find this feature to be very powerful in invoking commands by combining data from various Feeds in addition to a command parameter received from the View.
 
         For example:
@@ -88,6 +100,9 @@ There are several methods of how to create an MVUX command.
         This behavior can be controlled and configured using the [`FeedParameter`](#feedparameter-attribute) and [`ImplicitFeedCommandParameter`](#implicitfeedcommandparameter-attribute) attributes.
 
      - Can have one `CancellationToken` as its last parameter, but it's not mandatory.
+
+     > [!NOTE]  
+     > Name matching of command parameters to Feeds is case-insensitive.
 
      ### Using attributes to control command generation
 
