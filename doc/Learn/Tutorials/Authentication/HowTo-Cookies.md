@@ -3,7 +3,7 @@ uid: Learn.Tutorials.Authentication.HowToCookieAuthorization
 ---
 # How-To: Using Cookies to Authorize
 
-An authorization method is conceptually similar to using the system credential store to use **cookies**. Cookies are a common way to store tokens that can be used to authenticate a user. When an HTTP request is successfully authenticated, the server will return a response that we can use to create a cookie. The cookie can then be used to authenticate future requests. Uno Extensions makes these cookie-related authorization steps less tedious by doing the work of extracting the token(s) from the authentication response, storing it in a cookie, and applying the cookie to future requests. This tutorial will teach you how to configure authentication to apply tokens from a cookie when they are available.
+Using **cookies** is a common way to store tokens that are needed to authenticate a user. When an HTTP request is successfully authenticated, the server will return a response that creates a cookie containing a token value. Uno Extensions makes these cookie-related authorization steps less tedious by doing the work of extracting these values and applying them to future requests. This tutorial will teach you how to configure authentication to apply tokens from a cookie when they are available.
 
 > [!IMPORTANT]
 > To follow these steps, you first need to have an authentication system set up. We recommend choosing one of the `IAuthenticationProvider` implementations provided by Uno Extensions. Cookie authorization can complement any of the tutorials such as [Get Started with Authentication](xref:Learn.Tutorials.Authentication.HowToAuthentication).
@@ -34,7 +34,7 @@ An authorization method is conceptually similar to using the system credential s
     ...
     ```
 
-- Modify the app to add the `Cookies()` extension method. It configures the `IAuthenticationBuilder` to use cookies by registering a special HTTP request handler that will parse the response for tokens and store them in a cookie. It will apply them to future requests.
+- Modify the app to add the `Cookies()` extension method. Since the default HTTP request handler used does _not_ read tokens from cookies, this method will configure the `IAuthenticationBuilder` by registering a special handler that will parse the response for tokens and store them in a cookie. It will apply them to future requests.
 
     ```csharp
     protected override void OnLaunched(LaunchActivatedEventArgs args)
@@ -77,7 +77,7 @@ An authorization method is conceptually similar to using the system credential s
 
 ### 3. Authorize with a token value from a cookie
 
-- Now, when you attempt to authenticate with a provider, the `Cookies()` extension method will attempt to authorize from a cookie by including any token information in the request. If the cookie is not found, it will attempt to authenticate with the provider as normal.
+- With the appropriate handler enabled using the `Cookies()` extension method, attempts to authenticate with a provider will now try to authorize from a cookie. Access and refresh token information will be included in subsequent requests. If the cookie is not found, it will instead authenticate with the provider as normal.
 
 - For more information on how to call the authentication service from a view model, see [Get Started with Authentication](xref:Learn.Tutorials.Authentication.HowToAuthentication).
 
