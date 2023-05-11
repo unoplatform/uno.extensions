@@ -12,7 +12,7 @@ uid: Learn.Tutorials.Logging.UseInternalLogging
 
 ### 1. Enable Uno internal logging
 
-* To log Uno-internal messages, use `ConnectUnoLogging()` on the built `IHost` instance:
+* To log Uno-internal messages, you first need to call `UseLogging()` on the `IHost` instance:
 
     ```csharp
     private IHost Host { get; }
@@ -26,9 +26,6 @@ uid: Learn.Tutorials.Logging.UseInternalLogging
             });
 
         Host = appBuilder.Build();
-
-        // Connect Uno internal logging to the same logging provider
-        Host.ConnectUnoLogging();
     ...
     ```
 
@@ -47,7 +44,7 @@ uid: Learn.Tutorials.Logging.UseInternalLogging
 
 * To increase the verbosity of the events recorded when using the development hosting environment, you can adjust the minimum levels as well as those for the XAML layout.
 
-* Add a call for `UseLogging` to the `IHostBuilder` chain from above, and conditionally enable the recording of debug events depending on the hosting environment:
+* Conditionally enable the recording of debug events depending on the hosting environment:
 
     ```csharp
     private IHost Host { get; }
@@ -72,3 +69,49 @@ uid: Learn.Tutorials.Logging.UseInternalLogging
         Host = appBuilder.Build();
     ...
     ```
+
+### 3. Enable specific types of internal logging
+
+#### Setting the XAML Log Level
+
+* Filter out messages recorded for specific XAML types by setting the **XAML log level**. 
+
+* To adjust the verbosity of logged events raised by a set of XAML-related types, you should call the `XamlLogLevel()` extension method on the `ILoggingBuilder` instance. The following example shows how to set the XAML log level to `Information`:
+
+    ```csharp
+    protected override void OnLaunched(LaunchActivatedEventArgs e)
+    {
+        var appBuilder = this.CreateBuilder(args)
+            .Configure(host => {
+                host.UseLogging(
+                    builder => {
+                        builder.XamlLogLevel(LogLevel.Information);
+                    });
+            });
+    ...
+    ```
+
+#### Setting the Layout Log Level
+
+* The **layout log level** can be used to filter messages recorded from a set of layout-related types. 
+
+* To set this up, call the `XamlLayoutLogLevel()` extension method on the `ILoggingBuilder` instance. The following example shows how to set the XAML layout log level to `Information`:
+
+    ```csharp
+    protected override void OnLaunched(LaunchActivatedEventArgs e)
+    {
+        var appBuilder = this.CreateBuilder(args)
+            .Configure(host => {
+                host.UseLogging(
+                    builder => {
+                        builder.XamlLayoutLogLevel(LogLevel.Information);
+                    });
+            });
+    ...
+    ```
+
+### 4. Testing the logging configuration
+
+* Run the application in debug mode and open the **Output** window in Visual Studio.
+
+* Since you have configured Uno-internal logging, messages with a severity level of `Information` or higher will now be recorded for the specified categories.
