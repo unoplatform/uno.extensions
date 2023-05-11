@@ -28,7 +28,7 @@ uid: Learn.Tutorials.Logging.UseLogging
 * Add a constructor parameter of `ILogger` type to a view model you registered with the service collection:
 
     ```cs
-    public class MainViewModel : ObservableObject
+    public class MainViewModel
     {
         private readonly ILogger logger;
 

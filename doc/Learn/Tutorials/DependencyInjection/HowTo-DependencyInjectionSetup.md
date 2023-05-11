@@ -49,7 +49,7 @@ Dependency Injection (DI) is an important design pattern when building loosely-c
 ### 4. Use the service
 * Create a new view model class, `MainViewModel`, that will use the functionality offered by your service. Add a constructor with a parameter of the same type as the service interface you defined earlier:
     ```cs
-    public class MainViewModel : ObservableObject
+    public class MainViewModel
     {
         private readonly IProfilePictureService userPhotoService;
 
@@ -88,6 +88,8 @@ Dependency Injection (DI) is an important design pattern when building loosely-c
         public MainPage()
         {
             this.InitializeComponent();
-            DataContext = Ioc.Default.GetRequiredService<MainViewModel>();
+            DataContext = (Application.Current as App).Host.Services.GetRequiredService<MainViewModel>();
         }
     ```
+> [!TIP]
+> By default the `Host` property is marked as `private`, so you'll need to change it to `public` in order for the above code to work. Alternatively if you use [Navigation](xref:Overview.Navigation), view model classes are automatically connected with the corresponding page, avoiding having to access the `IServiceProvider` directly. 
