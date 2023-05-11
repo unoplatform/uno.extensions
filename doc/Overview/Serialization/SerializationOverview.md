@@ -37,7 +37,7 @@ public class MyViewModel : ObservableObject
 
     public void Serialize()
     {
-        var myObject = new MyObject();
+        var myObject = new Person();
         var json = _serializer.Serialize(myObject);
     }
 }
@@ -62,6 +62,49 @@ protected override void OnLaunched(LaunchActivatedEventArgs e)
             });
         });
 ...
+```
+
+#### Source Generation
+
+As of .NET 6, a code generation-enabled serializer is supported. The type to serialize is named `Person` in this example.
+
+```csharp
+public class Person
+{
+    public Person() { }
+
+    public Person(string name, int age, double height, double weight)
+    {
+        Name = name;
+        Age = age;
+        Height = height;
+        Weight = weight;
+    }
+    
+    public string? Name { get; set; }
+    public int Age { get; set; }
+    public double  Height { get; set; }
+    public double Weight { get; set; }
+}
+```
+
+To leverage the source generation feature for JSON serialization in an Uno.Extensions application, define a partial class which derives from a `JsonSerializerContext`, and specify which type is serializable with the `JsonSerializable` attribute:
+
+```csharp
+using System.Text.Json.Serialization;
+
+[JsonSerializable(typeof(Person))]
+public partial class PersonJsonContext : JsonSerializerContext
+{
+}
+```
+
+The `PersonJsonContext` class is then used to serialize and deserialize instances of `Person`:
+
+```csharp
+var person = new Person("Megan", 23, 1.8, 90.0);
+
+var json = JsonSerializer.Serialize(person!, PersonJsonContext.Default.Person);
 ```
 
 ### Custom
