@@ -36,6 +36,7 @@ uid: Learn.Tutorials.Configuration.HowToConfiguration
             .Configure(host => {
                 host.UseConfiguration(configure: configBuilder =>
                     configBuilder
+                        // Load configuration information from appsettings.json
                         .EmbeddedSource<App>()
                         // Load configuration information from appsettings.platform.json
                         .EmbeddedSource<App>("platform")
@@ -71,6 +72,7 @@ uid: Learn.Tutorials.Configuration.HowToConfiguration
             .Configure(host => {
                 host.UseConfiguration(configure: configBuilder =>
                     configBuilder
+                        // Load configuration information from appsettings.json
                         .EmbeddedSource<App>()
                         // Load configuration information from appsettings.platform.json
                         .EmbeddedSource<App>("platform")

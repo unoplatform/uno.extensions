@@ -57,6 +57,9 @@ uid: Learn.Tutorials.Logging.UseInternalLogging
         var appBuilder = this.CreateBuilder(args)
             .Configure(host => {
                 host
+    #if DEBUG
+                .UseEnvironment(Environments.Development)
+    #endif
                 .UseLogging(configure:
                     (context, services) =>
                         services.SetMinimumLevel(
@@ -67,11 +70,5 @@ uid: Learn.Tutorials.Logging.UseInternalLogging
             });
 
         Host = appBuilder.Build();
-
-    #if DEBUG
-        Host.UseEnvironment(Environments.Development);
-    #endif
-
-        Host.ConnectUnoLogging();
     ...
     ```
