@@ -112,7 +112,7 @@ For more information about Serilog, check out [Getting started with Serilog](htt
 
 ## Uno Internal Logging
 
-To use the same logging system for Uno internal messages use `ConnectUnoLogging()` on the built `IHost` instance:
+To use the same logging system for Uno internal messages call `UseLogging()` on the `IHost` instance:
 
 ```csharp
 private IHost Host { get; }
@@ -124,9 +124,8 @@ protected override void OnLaunched(LaunchActivatedEventArgs e)
             host
             .UseLogging()
         });
+        
     Host = appBuilder.Build();
-    // Connect Uno internal logging to the same logging provider
-    Host.ConnectUnoLogging();
 ...
 ```
 
