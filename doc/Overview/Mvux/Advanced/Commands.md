@@ -104,6 +104,9 @@ There are several methods of how to create an MVUX command.
      > [!NOTE]  
      > Name matching of command parameters to Feeds is case-insensitive.
 
+     > [!TIP]
+     > If you are using [Event Binding](https://learn.microsoft.com/en-us/windows/uwp/xaml-platform/x-bind-markup-extension#event-binding), you might need to opt out from command generation for those methods. See the next section on how to configure command generation.
+
      ### Using attributes to control command generation
 
      #### ImplicitCommands attribute
