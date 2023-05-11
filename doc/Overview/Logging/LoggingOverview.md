@@ -10,12 +10,7 @@ For more documentation about logging, read the references listed at the bottom.
 
 ## Platform Log Providers
 
-This library comes with two platform specific log providers:
-
-  - **Uno.Extensions.Logging.OSLogLoggerProvider** : Used for iOS
-  - **Uno.Extensions.Logging.WebAssembly.WebAssemblyConsoleLoggerProvider** : Used for WebAssembly (WASM)
-
-To wire up platform specific log providers for debug and console logging, use the extension method `UseLogging()` on the `IHostBuilder` instance:
+To wire-up the platform specific log providers for debug and console logging, use the extension method `UseLogging()` on the `IHostBuilder` instance:
 
 ```csharp
 protected override void OnLaunched(LaunchActivatedEventArgs e)
@@ -80,57 +75,17 @@ protected override void OnLaunched(LaunchActivatedEventArgs e)
 {
     var appBuilder = this.CreateBuilder(args)
         .Configure(host => {
-            host.UseLogging(
-                builder => {
-                    builder.SetMinimumLevel(LogLevel.Debug);
-                });
-        });
-...
-```
-
-### Setting the XAML Log Level
-
-Sometimes it's necessary to filter messages recorded for specific XAML types to reduce noise. When a preference is specified for the **XAML log level**, the logger will change the verbosity of events from a set of specific XAML-related namespaces and types:
-- Microsoft.UI.Xaml
-- Microsoft.UI.Xaml.VisualStateGroup
-- Microsoft.UI.Xaml.StateTriggerBase
-- Microsoft.UI.Xaml.UIElement
-- Microsoft.UI.Xaml.FrameworkElement
-
-It can be set by calling the `XamlLogLevel()` extension method on the `ILoggingBuilder` instance. The following example shows how to set the XAML log level to `Information`:
-
-```csharp
-protected override void OnLaunched(LaunchActivatedEventArgs e)
-{
-    var appBuilder = this.CreateBuilder(args)
-        .Configure(host => {
-            host.UseLogging(
-                builder => {
-                    builder.XamlLogLevel(LogLevel.Information);
-                });
-        });
-...
-```
-
-### Setting the Layout Log Level
-
-Similar to the _XAML Log Level_ described above, the **layout log level** can be used to filter messages recorded for specific types to reduce noise. When a preference is specified for the layout log level, the logger will change the verbosity of events from a set of specific layout-related XAML namespaces and types:
-
-- Microsoft.UI.Xaml.Controls
-- Microsoft.UI.Xaml.Controls.Layouter
-- Microsoft.UI.Xaml.Controls.Panel
-
-It can be set by calling the `XamlLayoutLogLevel()` extension method on the `ILoggingBuilder` instance. The following example shows how to set the XAML layout log level to `Information`:
-
-```csharp
-protected override void OnLaunched(LaunchActivatedEventArgs e)
-{
-    var appBuilder = this.CreateBuilder(args)
-        .Configure(host => {
-            host.UseLogging(
-                builder => {
-                    builder.XamlLayoutLogLevel(LogLevel.Information);
-                });
+            host    
+#if DEBUG
+            .UseEnvironment(Environments.Development)
+#endif
+            .UseLogging(configure:
+                (context, services) =>
+                    services.SetMinimumLevel(
+                    context.HostingEnvironment.IsDevelopment() ?
+                        LogLevel.Trace :
+                        LogLevel.Error)
+                    )
         });
 ...
 ```
@@ -172,6 +127,44 @@ protected override void OnLaunched(LaunchActivatedEventArgs e)
     Host = appBuilder.Build();
     // Connect Uno internal logging to the same logging provider
     Host.ConnectUnoLogging();
+...
+```
+
+### Setting the XAML Log Level
+
+Sometimes it's necessary to filter messages recorded for specific XAML types to reduce noise. When a preference is specified for the **XAML log level**, the logger will change the verbosity of events from a set of XAML-related types.
+
+It can be set by calling the `XamlLogLevel()` extension method on the `ILoggingBuilder` instance. The following example shows how to set the XAML log level to `Information`:
+
+```csharp
+protected override void OnLaunched(LaunchActivatedEventArgs e)
+{
+    var appBuilder = this.CreateBuilder(args)
+        .Configure(host => {
+            host.UseLogging(
+                builder => {
+                    builder.XamlLogLevel(LogLevel.Information);
+                });
+        });
+...
+```
+
+### Setting the Layout Log Level
+
+Similar to the _XAML Log Level_ described above, the **layout log level** can be used to filter messages recorded for specific types to reduce noise. When a preference is specified for the layout log level, the logger will change the verbosity of events from a set of layout-related types.
+
+It can be set by calling the `XamlLayoutLogLevel()` extension method on the `ILoggingBuilder` instance. The following example shows how to set the XAML layout log level to `Information`:
+
+```csharp
+protected override void OnLaunched(LaunchActivatedEventArgs e)
+{
+    var appBuilder = this.CreateBuilder(args)
+        .Configure(host => {
+            host.UseLogging(
+                builder => {
+                    builder.XamlLayoutLogLevel(LogLevel.Information);
+                });
+        });
 ...
 ```
 
