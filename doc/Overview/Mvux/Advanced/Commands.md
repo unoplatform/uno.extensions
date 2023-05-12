@@ -4,12 +4,28 @@ uid: Overview.Mvux.Advanced.Commands
 
 # Commands
 
+This page covers the following topics:
+
+- [**What are commands**](#what-are-commands) - a brief overview of Commanding
+- [**Asynchronous commands**](#asynchronous-commands) - an overview of `IAsyncCommand`, MVUX's command that supports asynchronous execution.
+- Implicit command generation
+  - [**Basic Commands**](#basic-commands) - explains how commands are implicitly generated for methods declared in the Model.
+  - [**Using the CommandParameter**](#using-the-commandparameter) - how to use `CommandParameter`s.
+  - [**Additional Feed parameters**](#additional-feed-parameters) - demonstrates how Feeds can be consumed as parameters of the command method.
+  - [**Command generation rules**](#command-generation-rules) - a recap of implicit command generation rules.
+  - [**Configuring command generation using attributes**](#configuring-command-generation-using-attributes) - discusses ways to enable or disable implicit command generation and Feed parameters using attributes.
+- [**Explicit command creation using factory methods**](#explicit-command-creation-using-factory-methods) - explains another approach of creating commands explicitly
+- [**Cancelling a command**](#cancelling-a-command) -
+
+## What are commands
+
 Commands are a way to decouple events in the UI from the code that performs an action. This makes it easier to maintain and test your code.
 
-A command is an object that implements the [`ICommand`](https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.input.icommand) interface. This interface has two methods:
+A command is an object that implements the [`ICommand`](https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.input.icommand) interface. This interface has two methods and one event:
 
 - [`Execute`](https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.input.icommand.execute): This method is called when the command is executed.
 - [`CanExecute`](https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.input.icommand.canexecute): This method is invoked when the UI needs to determine if the command can be executed. It returns a boolean value indicating if the command can be executed.
+- [`CanExecuteChanged`](https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.input.icommand.canexecutechanged): This event is raised when something that affects whether this command can execute happens, and the `CanExecute` property needs to be updated.
 
 Commands can be bound to UI elements. To do this, the `Command` property of the UI element can be used. For example, the following code binds the `Click` event of a button to the `Save` command:
 
@@ -17,191 +33,251 @@ Commands can be bound to UI elements. To do this, the `Command` property of the 
 <Button Command="{Binding Save}">Save</Button>
 ```
 
+When the UI is rendered, the command's `CanExecute` method is invoked.
+
+To learn more about Commands, read [this article](https://learn.microsoft.com/windows/apps/design/controls/commanding).
+
 ## Asynchronous commands
 
 The MVUX [`IAsyncCommand`](https://github.com/unoplatform/uno.extensions/blob/main/src/Uno.Extensions.Reactive/Presentation/Commands/IAsyncCommand.cs) interface, is a Command that implements [`ICommand`](https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.input.icommand) and adds support for asynchronous operations.  
 As it implements `ICommand`, it can be bound to anything in the View that accepts a Command (e.g. in a `Button.Command` property), with the advantage over `ICommand` that `IAsyncCommand` can be invoked asynchronously.  
-In addition, it also implements [`INotifyPropertyChanged`](https://learn.microsoft.com/dotnet/api/system.componentmodel.inotifypropertychanged), to enable tracking if its properties have changed, and [`ILoadable`](xref:Toolkit.Controls.LoadingView#iloadable) - an Uno interface that provides information of an object's state whether it's currently in execution mode or not, and notifies subscribers when this state changes.
+In addition, it also implements [`INotifyPropertyChanged`](https://learn.microsoft.com/dotnet/api/system.componentmodel.inotifypropertychanged), to enable notifications when any of its properties change, as well as [`ILoadable`](xref:Toolkit.Controls.LoadingView#iloadable) - an Uno interface that provides information about an object's state whether it's currently in execution mode (busy) or not, and notifies subscribers when this execution state changes.
 
-![A class diagram of System.ComponentModel.ICommand inheritence structure](../Assets/Commands-2.jpg)
+The following class diagram displays the hierarchy of the `IAsyncCommand` interface:
 
-## Creating commands
+![A class diagram of IAsyncCommand inheritance structure](../Assets/Commands-2.jpg)
 
-There are several methods that can be used to create an MVUX command.
+## Implicit command generation
 
-1. Using code generation
+When creating a method in the Model, a property of an `IAsyncCommand` wrapper will be implicitly generated in the Bindable Proxy Model. When that command is executed via a button-click etc., the method in the Model will be called.  
+Explicit command generation is when the commands are created by hand using [factory methods](#explicit-command-creation-using-factory-methods).
 
-    ### Basic commands
+### Basic commands
 
-    When creating a method in the Model, an `AsyncCommand` wrapper will be generated in the Bindable Model.
+The `IAsyncCommand` property will be generated in the Bindable Proxy Model if the method signature returns no value, or is an asynchronous method returning `ValueTask`/`Task`.  
+When the method is asynchronous, it may contain a single `CancellationToken` parameter. Although a `CancellationToken` parameter is not mandatory, it's a good practice to add one, as it enables cancellation of the asynchronous operation.
 
-    For example, when declaring methods with any of the following signatures:
+For example, if the Model contains a method in any of the following signatures:
 
+1. A method without a return value:
     ```csharp
     public void DoWork();
-    public ValueTask DoWork();
+    ```
+2. A method returning `ValueTask`, with `CancellationToken` parameter:
+    ```csharp
     public ValueTask DoWork(CancellationToken ct);    
     ```
-
-    A `DoWork` command will be generated in the Bindable Proxy Model. When that command is executed via a button-click etc., the method in the Model will be called:
-
-    ```xml
-    <Button Command="{Binding DoWork}" />
+3. A method returning `ValueTask`, without a `CancellationToken` parameter:
+    ```csharp
+    public ValueTask DoWork();
     ```
 
-    As you may have noticed, the method can be asynchronous and take a `CancellationToken`, but these are not mandatory and commands will be generated for synchronous methods as well.
+a `DoWork` command will be generated in the Bindable Proxy Model:
 
-    ### Commands that accept parameters
+```xml
+<Button Command="{Binding DoWork}" />
+```
 
-    An additional parameter can be added to the method, which is then assigned with the value of the `CommandParameter` received from the View. For instance, when using a Button and clicking it, the method will be called with the [`Button.CommandParameter`](https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.primitives.buttonbase.commandparameter) value, given that the type of the value matches the method parameter type. Otherwise the command's `CanExecute` will be false thereby disabling the button:
+In some scenarios, you may need to use the method only, without a command generated for it. You can use the [`ImplicitCommand` attribute](#implicit-commands-attribute) to switch off or back on certain classes or assemblies.  
+In those cases the methods will remain in the Model, and will not be generated as commands in the Bindable Proxy Model. The Bindable Proxy Model has a `Model` property which exposes the Model itself.
+
+### Using the CommandParameter
+
+An additional parameter can be added to the method, which is then assigned with the value of the `CommandParameter` received from the View. For instance, when using a Button and clicking it, the method will be called with the [`Button.CommandParameter`](https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.primitives.buttonbase.commandparameter) value, given that the type of the value matches the method parameter type. Otherwise the command's `CanExecute` will be false thereby disabling the button.
+
+Model:
+```csharp
+public void DoWork(double param)
+{
+    ...
+}
+```
+View:
+```xml
+<Slider x:Name="slider" Minimum="1" Maximum="100"/>
+<Button Command="{Binding DoWork}" CommandParameter="{Binding Value, ElementName=slider}"/>
+```
+
+If the `CommandParameter` is null, or if its type doesn't match the parameter type of the method, the button will remain disabled.  
+On the other hand, in case the `CommandParameter` is specified in the View but the method in the Model doesn't have a parameter, the View's `CommandParameter` value will just be disregarded.
+
+In the following example, the Model method has a `double` parameter, whereas a `string` is provided by the View:
+
+Model:
+```csharp
+public void DoWork(double param)
+{
+    ...
+}
+```
+View:
+```xml
+<Button Command="{Binding DoWork}" CommandParameter="A string, not a double" />
+```
+
+This will result in the command's `CanExecute` to return `false`, and in turn, the button to appear as disabled:
+
+![A disabled refresh button](../Assets/DisabledButton.jpg)
+
+A `CancellationToken` parameter can still be added after any other parameters. Although this parameter is recommended, it's not mandatory.
+        
+### Additional Feed parameters
+
+The current value of any Feed can be materialized in an asynchronous method by awaiting the Feed:
+
+```csharp
+public IFeed<int> MyFeed = ...;
+
+public async ValueTask DoWork()
+{
+    in myFeedValue = await MyFeed;
+}
+```
+
+However, MVUX commands also enables consuming the current value of Feed properties in the Model, using parameter names in the Model method, with a name and type matching the Feed property.  
+The name matching is NOT case-sensitive.
+
+For example:
+
+```csharp
+public IFeed<int> CounterValue => ...
+
+public void ResetCounter(int counterValue)
+{
+    ...
+}
+```
+
+When the command is executed and the `ResetCounter` method is invoked, because the parameter `counterValue` matches a feed property in the Model by type and name, this parameter will be materialized with the actual most-recent value from the Feed.
+
+A `CancellationToken` parameter can still be added as the method's last parameter. Although this parameter is recommended, it's not mandatory.
+
+This behavior can be configured using the [`FeedParameter`](#feedparameter-attribute) and [`ImplicitFeedCommandParameter`](#implicitfeedcommandparameter-attribute) attributes.
+
+### Command generation rules
+
+Here is a recap of the rules the Model method must comply for an `IAsyncCommand` wrapper to be generated for it:
+
+- The method may be synchronous (`void`) or asynchronous (`ValueTask`/`Task`)
+- Any return values of the method (if any) will be discarded.
+- The method may have one `CancellationToken` parameter, or none.
+- The method may have multiple parameters that can be resolved from feeds (see [Additional Feed parameters](#additional-feed-parameters) above).
+- The method may have one parameter other than parameters resolved from Feeds (to be provided from the View's `CommandParameter` property), or none.
+
+### Configuring command generation using attributes
+
+#### ImplicitCommands attribute
+
+By default, implicit command generation is enabled. Any method in the Model that matches the [command generation rules](#command-generation-rules) will have an accompanying command wrapper generated for it.  
+However, you may choose to switch implicit command generation on or off for a specific class, or the entire assembly. Conversly, when it has been switched off for the assembly, it can be switched back on for a specific class.
+
+Switching on or off commands can be achieved using the `ImplicitCommands` attribute. Here are some examples:
+
+Switching off implcicit command generation throughout the entire assembly:
+```csharp
+[assembly:ImplicitCommands(false)]
+```
+
+Switching on implicit command generation for a single class:
+```csharp
+[ImplicitCommands(true)]
+public partial record MyModel(...)
+```
+
+You can combine these attributes on various class or on the assembly to opt in or out of implicit command generation on certain scopes.
+
+#### FeedParameter attribute
+
+You can explicitly match a parameter with a Feed even if the names don't match. Decorate the parameter with the `FeedParameter` attribute to explicitly match a parameter with a Feed:
+     
+```csharp
+public IFeed<string> Message { get; }
+     
+public async ValueTask Share([FeedParameter(nameof(Message))] string msg)
+{
+}
+```
+
+#### ImplicitFeedCommandParameter attribute
+
+You can also turn opt in or out implicit matching of Feeds and command parameters by decorating the current assembly or class with the `ImplicitFeedCommandParameters` attribute:  
+     
+```csharp
+[assembly:ImplicitFeedCommandParameter(false)]
+     
+[ImplicitFeedCommandParameter(true)]
+public partial record MyModel
+```
+
+Like `ImplicitCommands`, `ImplicitFeedCommandParameter` attributes can also be nested to enable or disable specific scopes in the app.
+
+## Explicit command creation using factory methods
+
+Adding Commands via code generation is sufficient enough to probably cover all scenarios. However, sometimes you'd want to fine-grain your Commands and declare them in an explicit manner.  
+Commands can be built manually using the static class [`Command`](https://github.com/unoplatform/uno.extensions/blob/main/src/Uno.Extensions.Reactive/Presentation/Commands/Command.cs).  
+This class provides factory methods for creating commands.
+
+### Async
+
+```csharp
+public ICommand MyCommand => Command.Async(async(ct) => await PingServer(ct));
+```
+
+### Create & Create\<T>
+
+To create a command you can use the fluent API of `ICommandBuilder` provided in the `Command.Create` factory methods, which provides the following three methods:
+
+- #### Given
+
+    This method takes a Feed (or a State!) and configures a command which will be triggered whenever a new value is available to the Feed.
+    
+    ```csharp
+    public IFeed<int> PageCount => ...
+    
+    public IAsyncCommand MyCommand => Command.Create(builder => builder.Given(PageCount));
+    ```
+
+- #### When
+
+    Limits the command execution to a set prerequisite - in other words, sets the 'can execute' of the command.
+    
+    ```csharp
+    public IAsyncCommand MyCommand => Command.Create<int>(builder => builder.When(i => i > 10));
+    ```
+
+- #### Then
+
+    Sets the asynchronous callback to be invoked when the Command is executed. This method will be generic if there's a preceding parameter setting (via `Given` or `When`).
 
     ```csharp
-    public void DoWork(double param)
+    public IAsyncCommand MyCommand => Command.Create(builder => builder.Then(async ct => await ExecuteMyCommand(ct)));
+
+    public ValueTask ExecuteMyCommand(CancellationToken ct)
     {
         ...
     }
     ```
 
-    ```xml
-    <Slider x:Name="slider" Minimum="1" Maximum="100"/>
-    <Button Command="{Binding DoWork}" CommandParameter="{Binding Value, ElementName=slider}"/>
-    ```
+### Example
 
-    Accordingly, if the `CommandParameter` type does not match the parameter type of the method, the button will remain disabled:
+Here's a complete example:
 
-    ```xml
-    <Button Command="{Binding DoWork}" CommandParameter="A string, not a double" />
-    ```
+```csharp
+public IAsyncCommand MyCommand => 
+    Command.Create(builder => 
+        builder
+        .Given(CurrentPage)
+        .When(currentPage => currentPage > 0)
+        .Then(async (currentPage, ct) => await NavigateToPage(currentPage, ct)));
 
-    Result:
+public IFeed<int> CurentPage => ...
 
-    ![A disabled refresh button](../Assets/DisabledButton.jpg)
-        
-    ### Command generation rules:
-    
-     - Can be either synchronous or asynchronous (i.e. `public void`, `public async ValueTask`, or `public async Task`)
-     - Any parameter that has a type and name (case-insensitive) matching a Feed or a State in this Model will be evaluated when the Command is invoked and its current latest value will be passed in as an argument.  
-        You'll find this feature to be very powerful in invoking commands by combining data from various Feeds in addition to a command parameter received from the View.
+public ValueTask NavigateToPage(int currentPage, CancellationToken ct)
+{
+    ...
+}
+```
 
-        For example:
+This is a diagram detailing the methods in the Command factory toolset:
 
-        ```csharp
-        public IFeed<int> CounterValue => ...
-
-        public void ResetCounter(int counterValue)
-        {
-            ...
-        }
-        ```
-
-        When the command is executed, because the parameter name `counterValue` matches a feed name in the Model, this parameter will be materialized with the actual value from the Feed when this method is called on command execution.  
-        This behavior can be controlled and configured using the [`FeedParameter`](#feedparameter-attribute) and [`ImplicitFeedCommandParameter`](#implicitfeedcommandparameter-attribute) attributes.
-
-     - Can have one `CancellationToken` as its last parameter, but it's not mandatory.
-
-     > [!NOTE]  
-     > Name matching of command parameters to Feeds is case-insensitive.
-
-     > [!TIP]
-     > If you are using [Event Binding](https://learn.microsoft.com/windows/uwp/xaml-platform/x-bind-markup-extension#event-binding), you might need to opt out from command generation for those methods. See the next section on how to configure command generation.
-
-     ### Using attributes to control command generation
-
-     #### ImplicitCommands attribute
-
-     By default, implicit command generation is enabled by default. So that any method in the Model that matches the command criteria will be generated as a command.  
-     However, you may choose to switch this off for a specific method, class, or the entire assembly.
-
-     This can be achieved using the `ImplicitCommands` attribute. Here are some examples:
-
-     ```csharp
-     [assembly:ImplicitCommands(false)]
-     
-     [ImplicitCommands(true)]
-     public partial record MyModel();
-
-     [ImplicitCommands(true)]
-     public void MyCommand();
-     ```
-
-     These attributes can be used interchangeably to control command generation, for example, you may choose to disable the implicit feed command parameter altogether by using the attribute with the `assembly:` prefix. You can then opt-in for specific classes or methods. You can also switch off specific classes while opting-in certain methods by decorating them with this attribute as enabled. You can choose any combination to opt-in or out of implicit command generation.
-
-     #### FeedParameter attribute
-
-     You can explicitly match a parameter with a Feed even if the names don't match. This can be achieved by decorating the parameter with the `FeedParameter` attribute:  
-     
-     ```csharp
-     public IFeed<string> Message { get; }
-     
-     public async ValueTask Share([FeedParameter(nameof(Message))] string msg)
-     {
-     }
-     ```
-
-     #### ImplicitFeedCommandParameter attribute
-
-     You can also opt in or out of implicit matching of Feeds and command parameters by decorating the current assembly or class with the `ImplicitFeedCommandParameters` attribute:  
-     
-     ```csharp
-     [assembly:ImplicitFeedCommandParameter(false)]
-     
-     [ImplicitFeedCommandParameter(true)]
-     public partial record MyModel
-     ```
-
-     Like `ImplicitCommands`, `ImplicitFeedCommandParameter` attributes can also be nested to enable or disable specific scopes of the app.
-
-1. Using factory methods
-
-    Adding Commands via code generation is sufficient enough to probably cover all scenarios. However, sometimes you'd want to fine-grain your Commands and declare them in an explicit manner.  
-    Commands can be built manually using the static class [`Command`](https://github.com/unoplatform/uno.extensions/blob/main/src/Uno.Extensions.Reactive/Presentation/Commands/Command.cs).  
-    This class provides factory methods for creating commands.
-
-    - Async
-
-    ```csharp
-    public ICommand MyCommand => Command.Async(async(ct) => await PingServer(ct));
-    ```
-
-    > [!Note]  
-    > You need not worry about the `=>` operator and that the `Command.Async` will be called over and over, this value is cached and will only be called once.  
-    The benefit of using `=>` in place of traditional `{ get; } = ...`, is that local methods are accessible (otherwise these would have been required to be initialized in the constructor).
-
-    - `Create` & `Create<T>`;
-
-    To create a command you can use the fluent API of `ICommandBuilder` provided in the `Command.Create` factory methods, which provides the following three methods:
-
-    - Given - This method takes a Feed (or a State!) and configures a command which will be triggered whenever a new value is available to the Feed.
-
-        ```csharp
-        public IFeed<int> PageCount => ...
-
-        public IAsyncCommand MyCommand => Command.Create(builder => builder.Given(PageCount));
-        ```
-
-    - When - Limits the command execution to a set prerequisite - in other words, sets the 'can execute' of the command.
-
-        ```csharp
-        public IAsyncCommand MyCommand => Command.Create<int>(builder => builder.When(i => i > 10));
-        ```
-
-    - Then - Sets the asynchronous callback to be invoked when the Command is executed. This method will be generic if there's a preceding parameter setting (via `Given` or `When`).
-
-        ```csharp
-        public IAsyncCommand MyCommand => Command.Create(builder => builder.Then(async ct => await ExecuteMyCommand(ct)));
-        ```
-
-    Here's a complete example:
-
-    ```csharp
-    public IAsyncCommand MyCommand => 
-        Command.Create(builder => 
-            builder
-            .Given(CurrentPage)
-            .When(currentPage => currentPage > 0)
-            .Then(async (currentPage, ct) => await NavigateToPage(currentPage, ct)));
-    ```
-
-    This is a diagram detailing the methods in the Command factory toolset:
-
-    ![A class diagram of MVUX command builder inheritance structure](../Assets/Commands-1.jpg)
+![A class diagram of MVUX command builder inheritance structure](../Assets/Commands-1.jpg)
