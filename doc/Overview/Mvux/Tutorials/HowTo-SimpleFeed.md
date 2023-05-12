@@ -43,7 +43,7 @@ In this tutorial you will learn how to create a project that uses MVUX with a co
     }
     ```
 
-    We're using a [record](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/builtin-types/record) for the `WeatherInfo` type, as records are designed to be immutable, to ensure purity of objects, as well as other features.
+    We're using a [record](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/record) for the `WeatherInfo` type, as records are designed to be immutable, to ensure purity of objects, as well as other features.
 
 1. Create a class named *WeatherModel.cs* replacing its content with the following:
 

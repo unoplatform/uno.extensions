@@ -33,7 +33,7 @@ public partial record WeatherModel(IWeatherService WeatherService)
 
 > [!Note]  
 > For the code generation to work, mark the Models and entities with the `partial` modifier, and have the Feed properties' access modifier as `public`.  
-You can learn more about partial classes and methods in [this article](https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/classes-and-structs/partial-classes-and-methods).
+You can learn more about partial classes and methods in [this article](https://learn.microsoft.com/dotnet/csharp/programming-guide/classes-and-structs/partial-classes-and-methods).
 
 The entity `WeatherInfo` wraps the temperature, and in a real application would be extended to hold other weather information such as humidity or rainfall:
 
@@ -120,8 +120,8 @@ The Model in MVUX has some parallels with the 'View Model' in MVVM.
 
 MVUX promotes immutability of data entities. Changes to the data are applied only via update messages sent across from the view to the model, the model responds by performing the updates and the view reflects those changes.
 
-Immutable entities makes raising change notification redundant, enables easier object equality comparison as well as other advantages. The ideal type for creating immutable data-objects is [record](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/builtin-types/record) types. They are immutable by nature and a perfect fit for working with feeds and MVU architecture.  
-Record types also feature the special [`with` expression](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/operators/with-expression), which enables recreating the same model with a modified set of properties, while retaining immutability.
+Immutable entities makes raising change notification redundant, enables easier object equality comparison as well as other advantages. The ideal type for creating immutable data-objects is [record](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/record) types. They are immutable by nature and a perfect fit for working with feeds and MVU architecture.  
+Record types also feature the special [`with` expression](https://learn.microsoft.com/dotnet/csharp/language-reference/operators/with-expression), which enables recreating the same model with a modified set of properties, while retaining immutability.
 
 ### View
 

@@ -11,7 +11,7 @@ There are several ways to paginate data.
 
 ## Incremental loading
 
-The easiest and most straight-forward is to use the built-in incremental loading functionality that some controls (e.g. `ListView`, `GridView`) offer via the [`ISupportIncrementalLoading`](https://learn.microsoft.com/en-us/uwp/api/windows.ui.xaml.data.isupportincrementalloading) interface the paginated Feed implements.
+The easiest and most straight-forward is to use the built-in incremental loading functionality that some controls (e.g. `ListView`, `GridView`) offer via the [`ISupportIncrementalLoading`](https://learn.microsoft.com/uwp/api/windows.ui.xaml.data.isupportincrementalloading) interface the paginated Feed implements.
 
 For the Pagination example, we'll also use the *PeopleApp* example used above in [Selection](xref:Overview.Mvux.Advanced.Selection), but you can find the full code [here](https://github.com/unoplatform/Uno.Samples/tree/master/UI/MvuxHowTos/PaginationPeopleApp).
 

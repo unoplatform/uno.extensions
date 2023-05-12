@@ -55,7 +55,7 @@ public async ValueTask<CounterValue> CountOne(CancellationToken ct)
 > [!NOTE]
 > `ValueTask` is interchangeable with `Task`, but `ValueTask` was chosen to be in unity with the `IAsyncEnumerable` interface.
 > A `Task` is easily convertible to `ValueTask` nonetheless.
-> Learn more about [`Task`](https://learn.microsoft.com/en-us/dotnet/api/system.threading.tasks.task), [`ValueTask`](https://learn.microsoft.com/en-us/dotnet/api/system.threading.tasks.valuetask?view=net-6.0), or read [this article](https://devblogs.microsoft.com/dotnet/understanding-the-whys-whats-and-whens-of-valuetask/) discussing the differences between the two.
+> Learn more about [`Task`](https://learn.microsoft.com/dotnet/api/system.threading.tasks.task), [`ValueTask`](https://learn.microsoft.com/dotnet/api/system.threading.tasks.valuetask?view=net-6.0), or read [this article](https://devblogs.microsoft.com/dotnet/understanding-the-whys-whats-and-whens-of-valuetask/) discussing the differences between the two.
 
 This is known as a 'pull' method, as we're repeatedly calling the Task when we're looking for new data,
 and the Task returns the value when it's ready, unless it was cancelled using the token (this will be discussed in another tutorial).
@@ -152,7 +152,7 @@ The generated proxy and its properties ensure that data-binding will work, even 
 
 > [!Note]  
 > For the code generation to work, mark the Models and entities with the `partial` modifier, and have the Feed properties' access modifier as `public`.  
-You can learn more about partial classes and methods in [this article](https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/classes-and-structs/partial-classes-and-methods).
+You can learn more about partial classes and methods in [this article](https://learn.microsoft.com/dotnet/csharp/programming-guide/classes-and-structs/partial-classes-and-methods).
 
 #### With regular data-binding
 

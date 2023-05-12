@@ -51,7 +51,7 @@ public IState<StockValue> MyStockCurrentValue => State.AsyncEnumerable(this, Con
 ```
 
 Make sure the Async Enumerable methods has a `CancellationToken` parameter, and is decorated with the `EnumerationCancellation` attribute.  
-You can learn more about Async Enumerables in [this article](https://learn.microsoft.com/en-us/archive/msdn-magazine/2019/november/csharp-iterating-with-async-enumerables-in-csharp-8#a-tour-through-async-enumerables).
+You can learn more about Async Enumerables in [this article](https://learn.microsoft.com/archive/msdn-magazine/2019/november/csharp-iterating-with-async-enumerables-in-csharp-8#a-tour-through-async-enumerables).
 
 #### Other ways to create feeds
 
@@ -144,7 +144,7 @@ public async ValueTask IncrementSlider(CancellationToken ct = default)
 }
 ```
 
-The `updater` parameter of the `Update` method accepts a `Func<T, T>`, where the input parameter provides the current value of the State when called, and the latter is the one to be returned and be applied as the new value of the State, in our case we use the `incrementValue` [local function](https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/classes-and-structs/local-functions) to increment `currentValue` by one (or return `1` if the value exceeds `100`).
+The `updater` parameter of the `Update` method accepts a `Func<T, T>`, where the input parameter provides the current value of the State when called, and the latter is the one to be returned and be applied as the new value of the State, in our case we use the `incrementValue` [local function](https://learn.microsoft.com/dotnet/csharp/programming-guide/classes-and-structs/local-functions) to increment `currentValue` by one (or return `1` if the value exceeds `100`).
 
 > [!TIP]  
 > There are additional methods that update the data of a State such as `Set` and `UpdateMessage`, explained [here](xref:Overview.Reactive.State#update-how-to-update-a-state).
