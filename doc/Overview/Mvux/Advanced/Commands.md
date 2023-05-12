@@ -4,7 +4,7 @@ uid: Overview.Mvux.Advanced.Commands
 
 # Commands
 
-Commands are a way to decouple the UI from the code that performs an action. This makes it easier to maintain and test your code, and it also makes your UI more flexible and adaptable.
+Commands are a way to decouple events in the UI from the code that performs an action. This makes it easier to maintain and test your code.
 
 A command is an object that implements the [`ICommand`](https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.input.icommand) interface. This interface has two methods:
 
@@ -13,29 +13,29 @@ A command is an object that implements the [`ICommand`](https://learn.microsoft.
 
 Commands can be bound to UI elements. To do this, the `Command` property of the UI element can be used. For example, the following code binds the `Click` event of a button to the `Save` command:
 
-```
-<Button Command="Save">Save</Button>
+```xml
+<Button Command="{Binding Save}">Save</Button>
 ```
 
 ## Asynchronous commands
 
 The MVUX [`IAsyncCommand`](https://github.com/unoplatform/uno.extensions/blob/main/src/Uno.Extensions.Reactive/Presentation/Commands/IAsyncCommand.cs) interface, is a Command that implements [`ICommand`](https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.input.icommand) and adds support for asynchronous operations.  
-As it implements `ICommand`, it can be bound from the View as a regular Command (e.g. in a `Button.Command` property). The advantage is that it can be invoked asynchronously.  
+As it implements `ICommand`, it can be bound to anything in the View that accepts a Command (e.g. in a `Button.Command` property), with the advantage over `ICommand` that `IAsyncCommand` can be invoked asynchronously.  
 In addition, it also implements [`INotifyPropertyChanged`](https://learn.microsoft.com/dotnet/api/system.componentmodel.inotifypropertychanged), to enable tracking if its properties have changed, and [`ILoadable`](xref:Toolkit.Controls.LoadingView#iloadable) - an Uno interface that provides information of an object's state whether it's currently in execution mode or not, and notifies subscribers when this state changes.
 
 ![A class diagram of System.ComponentModel.ICommand inheritence structure](../Assets/Commands-2.jpg)
 
 ## Creating commands
 
-There are several methods of how to create an MVUX command.
+There are several methods that can be used to create an MVUX command.
 
 1. Using code generation
 
     ### Basic commands
 
-    When creating a method in the Model, it will be generated as an `AsyncCommand` in the Bindable Model.
+    When creating a method in the Model, an `AsyncCommand` wrapper will be generated in the Bindable Model.
 
-    For example, when declaring a method of the following signatures:
+    For example, when declaring methods with any of the following signatures:
 
     ```csharp
     public void DoWork();
@@ -51,7 +51,7 @@ There are several methods of how to create an MVUX command.
 
     As you may have noticed, the method can be asynchronous and take a `CancellationToken`, but these are not mandatory and commands will be generated for synchronous methods as well.
 
-    ### Adding command parameters
+    ### Commands that accept parameters
 
     An additional parameter can be added to the method, which is then assigned with the value of the `CommandParameter` received from the View. For instance, when using a Button and clicking it, the method will be called with the [`Button.CommandParameter`](https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.primitives.buttonbase.commandparameter) value, given that the type of the value matches the method parameter type. Otherwise the command's `CanExecute` will be false thereby disabling the button:
 
@@ -61,8 +61,6 @@ There are several methods of how to create an MVUX command.
         ...
     }
     ```
-
-    Then:
 
     ```xml
     <Slider x:Name="slider" Minimum="1" Maximum="100"/>
@@ -130,7 +128,7 @@ There are several methods of how to create an MVUX command.
 
      #### FeedParameter attribute
 
-     You can explicitly match a parameter with a Feed even if the names don't match by decorating the parameter with the `FeedParameter` attribute:  
+     You can explicitly match a parameter with a Feed even if the names don't match. This can be achieved by decorating the parameter with the `FeedParameter` attribute:  
      
      ```csharp
      public IFeed<string> Message { get; }
@@ -151,7 +149,7 @@ There are several methods of how to create an MVUX command.
      public partial record MyModel
      ```
 
-     Like `ImplicitCommands`, these can also be nested to opt-in or out sections specific sections of the app.
+     Like `ImplicitCommands`, `ImplicitFeedCommandParameter` attributes can also be nested to enable or disable specific scopes of the app.
 
 1. Using factory methods
 
@@ -187,7 +185,7 @@ There are several methods of how to create an MVUX command.
         public IAsyncCommand MyCommand => Command.Create<int>(builder => builder.When(i => i > 10));
         ```
 
-    - Then - Sets the actual asynchronous callback to be invoked when the Command is executed. This method will be generic if there's a preceding parameter setting (via Given or When).
+    - Then - Sets the asynchronous callback to be invoked when the Command is executed. This method will be generic if there's a preceding parameter setting (via `Given` or `When`).
 
         ```csharp
         public IAsyncCommand MyCommand => Command.Create(builder => builder.Then(async ct => await ExecuteMyCommand(ct)));
