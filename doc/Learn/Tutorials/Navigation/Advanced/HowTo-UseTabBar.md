@@ -11,24 +11,24 @@ The navigation capabilities offered by Uno.Extensions include regions. Regions a
 
 * Update the `Page` element in `MainPage.xaml` to include XAML namespace mappings for Navigation and Uno Toolkit:
 
-```xml
+    ```xml
     <Page x:Class="UsingTabBar.Views.MainPage"
-          xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-          xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-          xmlns:local="using:UsingTabBar.Views"
-          xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-          xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-          mc:Ignorable="d"
-          xmlns:uen="using:Uno.Extensions.Navigation.UI"
-          xmlns:utu="using:Uno.Toolkit.UI"
+            xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+            xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+            xmlns:local="using:UsingTabBar.Views"
+            xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+            xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+            mc:Ignorable="d"
+            xmlns:uen="using:Uno.Extensions.Navigation.UI"
+            xmlns:utu="using:Uno.Toolkit.UI"
     ...
-```
+    ```
 
 ### 2. Define the view's layout
 
 * Add `RowDefinition`s to the root `Grid` in `MainPage.xaml`:
 
-```xml
+    ```xml
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -36,11 +36,11 @@ The navigation capabilities offered by Uno.Extensions include regions. Regions a
             <RowDefinition />
         </Grid.RowDefinitions>
     </Grid>
-```
+    ```
 
 * Define initial page and `TabBarItem` content. It's important to make each element that represents a sector of app content have it's `Visibility` explicitly set to `Collapsed`. Uno.Extensions will handle toggling it back to `Visible` when necessary
 
-```xml
+    ```xml
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -48,33 +48,33 @@ The navigation capabilities offered by Uno.Extensions include regions. Regions a
             <RowDefinition />
         </Grid.RowDefinitions>
         <utu:NavigationBar Content="Main Page"
-                           Style="{StaticResource MaterialNavigationBarStyle}" />
+                            Style="{StaticResource MaterialNavigationBarStyle}" />
         <Grid Grid.Row="1">
             <Grid Visibility="Collapsed">
                 <TextBlock Text="One"
-                           FontSize="24"
-                           HorizontalAlignment="Center"
-                           VerticalAlignment="Center" />
+                            FontSize="24"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center" />
             </Grid>
             <Grid Visibility="Collapsed">
                 <TextBlock Text="Two"
-                           FontSize="24"
-                           HorizontalAlignment="Center"
-                           VerticalAlignment="Center" />
+                            FontSize="24"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center" />
             </Grid>
             <Grid Visibility="Collapsed">
                 <TextBlock Text="Three"
-                           FontSize="24"
-                           HorizontalAlignment="Center"
-                           VerticalAlignment="Center" />
+                            FontSize="24"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center" />
             </Grid>
         </Grid>
     </Grid>
-```
+    ```
 
-* Add TabBar to the view:
+* Add `TabBar` to the view:
 
-```xml
+    ```xml
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -82,25 +82,25 @@ The navigation capabilities offered by Uno.Extensions include regions. Regions a
             <RowDefinition />
         </Grid.RowDefinitions>
         <utu:NavigationBar Content="Main Page"
-                           Style="{StaticResource MaterialNavigationBarStyle}" />
+                            Style="{StaticResource MaterialNavigationBarStyle}" />
         <Grid Grid.Row="1">
             <Grid Visibility="Collapsed">
                 <TextBlock Text="One"
-                           FontSize="24"
-                           HorizontalAlignment="Center"
-                           VerticalAlignment="Center" />
+                            FontSize="24"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center" />
             </Grid>
             <Grid Visibility="Collapsed">
                 <TextBlock Text="Two"
-                           FontSize="24"
-                           HorizontalAlignment="Center"
-                           VerticalAlignment="Center" />
+                            FontSize="24"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center" />
             </Grid>
             <Grid Visibility="Collapsed">
                 <TextBlock Text="Three"
-                           FontSize="24"
-                           HorizontalAlignment="Center"
-                           VerticalAlignment="Center" />
+                            FontSize="24"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center" />
             </Grid>
         </Grid>
         <utu:TabBar Grid.Row="2"
@@ -112,7 +112,7 @@ The navigation capabilities offered by Uno.Extensions include regions. Regions a
             </utu:TabBar.Items>
         </utu:TabBar>
     </Grid>
-```
+    ```
 
 ### 3. Set up regions and specify navigator type
 
@@ -121,7 +121,7 @@ The navigation capabilities offered by Uno.Extensions include regions. Regions a
   * The containing element of the collapsed content `Grid` definitions
   * The parent element of both controls
 
-```xml
+    ```xml
     <Grid uen:Region.Attached="True">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -129,26 +129,26 @@ The navigation capabilities offered by Uno.Extensions include regions. Regions a
             <RowDefinition />
         </Grid.RowDefinitions>
         <utu:NavigationBar Content="Main Page"
-                           Style="{StaticResource MaterialNavigationBarStyle}" />
+                            Style="{StaticResource MaterialNavigationBarStyle}" />
         <Grid uen:Region.Attached="True"
-              Grid.Row="1">
+                Grid.Row="1">
             <Grid Visibility="Collapsed">
                 <TextBlock Text="One"
-                           FontSize="24"
-                           HorizontalAlignment="Center"
-                           VerticalAlignment="Center" />
+                            FontSize="24"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center" />
             </Grid>
             <Grid Visibility="Collapsed">
                 <TextBlock Text="Two"
-                           FontSize="24"
-                           HorizontalAlignment="Center"
-                           VerticalAlignment="Center" />
+                            FontSize="24"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center" />
             </Grid>
             <Grid Visibility="Collapsed">
                 <TextBlock Text="Three"
-                           FontSize="24"
-                           HorizontalAlignment="Center"
-                           VerticalAlignment="Center" />
+                            FontSize="24"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center" />
             </Grid>
         </Grid>
         <utu:TabBar Grid.Row="2"
@@ -161,11 +161,11 @@ The navigation capabilities offered by Uno.Extensions include regions. Regions a
             </utu:TabBar.Items>
         </utu:TabBar>
     </Grid>
-```
+    ```
 
 * Name the regions you defined by using the `Region.Name` attached property on both the content itself and associated navigation control item:
 
-```xml
+    ```xml
     <Grid uen:Region.Attached="True">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -173,29 +173,29 @@ The navigation capabilities offered by Uno.Extensions include regions. Regions a
             <RowDefinition />
         </Grid.RowDefinitions>
         <utu:NavigationBar Content="Main Page"
-                           Style="{StaticResource MaterialNavigationBarStyle}" />
+                            Style="{StaticResource MaterialNavigationBarStyle}" />
         <Grid uen:Region.Attached="True"
-              Grid.Row="1">
+                Grid.Row="1">
             <Grid uen:Region.Name="One" 
-                  Visibility="Collapsed">
+                    Visibility="Collapsed">
                 <TextBlock Text="One"
-                           FontSize="24"
-                           HorizontalAlignment="Center"
-                           VerticalAlignment="Center" />
+                            FontSize="24"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center" />
             </Grid>
             <Grid uen:Region.Name="Two" 
-                  Visibility="Collapsed">
+                    Visibility="Collapsed">
                 <TextBlock Text="Two"
-                           FontSize="24"
-                           HorizontalAlignment="Center"
-                           VerticalAlignment="Center" />
+                            FontSize="24"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center" />
             </Grid>
             <Grid uen:Region.Name="Three" 
-                  Visibility="Collapsed">
+                    Visibility="Collapsed">
                 <TextBlock Text="Three"
-                           FontSize="24"
-                           HorizontalAlignment="Center"
-                           VerticalAlignment="Center" />
+                            FontSize="24"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center" />
             </Grid>
         </Grid>
         <utu:TabBar Grid.Row="2"
@@ -211,14 +211,100 @@ The navigation capabilities offered by Uno.Extensions include regions. Regions a
             </utu:TabBar.Items>
         </utu:TabBar>
     </Grid>
-```
+    ```
 
 * Specify the navigator type as `Visibility` using the `Region.Navigator` attached property on the containing element of your collapsed content `Grid` definitions:
 
-```xml
+    ```xml
     <Grid uen:Region.Attached="True"
-          uen:Region.Navigator="Visibility"
-          Grid.Row="1">
-```
+        uen:Region.Navigator="Visibility"
+        Grid.Row="1">
+    ```
 
-* When a `TabBarItem` is selected, the associated content region will now have its `Visibility` toggled to `Visible`
+#### Navigating to Page elements
+
+* You may want to navigate to a `Page` view element represented by a route name. It is possible to do this without defining a view element alongside the other content regions. For instance, you may need to display a subscription sign up page `SignUpPage` which will be defined in a separate XAML file.
+
+* Add a new **Page** item to your app called `SignUpPage` with the following code:
+
+  ```xml
+  <Page
+      x:Class="UsingTabBar.Views.SignUpPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:local="using:Uno.Extensions.Navigation.UI.Samples"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      mc:Ignorable="d"
+      Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+  
+      <Grid>
+            <StackPanel Orientation="Vertical">
+                <TextBlock Text="Benefits of subscribing:"
+                            FontSize="24"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center" />
+                <Button Content="Sign Up"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center" />
+            </StackPanel>
+      </Grid>
+  </Page>
+  ```
+
+* For the purposes for this tutorial, `SignUpPage` will be associated with its own view model `SignUpViewModel`. Add a new **Class** item to your app called `SignUpViewModel` with the following code:
+
+  ```csharp 
+  namespace UsingTabBar.ViewModels;
+  
+  public class SignUpViewModel
+  {
+      public SignUpViewMode()
+      {
+
+      }
+  }
+  ```
+
+* Register `ViewMap` and `RouteMap` instances inside the `RegisterRoutes` method in `AppHead.xaml.cs`. This associates the `SignUpPage` described above with `SignUpViewModel`, as well as avoiding the use of reflection for route discovery.
+
+  ```csharp
+  private static void RegisterRoutes(IViewRegistry views, IRouteRegistry routes)
+  {
+      views.Register(
+          new ViewMap<ShellControl, ShellViewModel>(),
+          new ViewMap<SignUpPage, SignUpViewModel>(),
+          new ViewMap<MainPage, MainViewModel>()
+      );
+  
+      routes.Register(
+        new RouteMap("", View: views.FindByViewModel<ShellViewModel>(),
+            Nested: new RouteMap[]
+            {
+                new RouteMap("Main", View: views.FindByViewModel<MainViewModel>()),
+                new RouteMap("SignUp", View: views.FindByViewModel<SignUpViewModel>())
+            }));
+  }
+  ```
+  
+* Importantly, the snippet above establishes a route name `SignUp` for `SignUpPage`. We can use this route name to navigate to the `SignUpPage` view element.
+
+* Add a `TabBarItem` to the `TabBar` element with the `uen:Region.Name` attached property set to `SignUp`.
+
+    ```xml
+    <utu:TabBar.Items>
+        <utu:TabBarItem uen:Region.Name="One" 
+                        Style="{StaticResource MaterialBottomTabBarItemStyle}" />
+        <utu:TabBarItem uen:Region.Name="Two" 
+                        Style="{StaticResource MaterialBottomTabBarItemStyle}" />
+        <utu:TabBarItem uen:Region.Name="Three" 
+                        Style="{StaticResource MaterialBottomTabBarItemStyle}" />
+        <!-- Sign up item -->
+        <utu:TabBarItem uen:Region.Name="SignUp" 
+                        Style="{StaticResource MaterialBottomTabBarItemStyle}" />
+    </utu:TabBar.Items>
+    ```
+
+#### Putting it all together
+
+* When a `TabBarItem` is selected, the content which corresponds to the route name of the item will be displayed, with the `Visibility` property changed if needed.
