@@ -163,13 +163,94 @@ Choosing the right control for your navigation needs is important, and one commo
   </Grid>
   ```
 
-* Observe how the `NavigationView` and the content area are now connected. When you select a `NavigationViewItem`, the corresponding `Grid` will be shown.
-
 * Set the `Visibility` of the `Grid` elements to `Collapsed` to hide the content area's children beforehand:
 
   ```xml
   Visibility="Collapsed"
   ```
+
+#### Navigating to Page elements
+
+* You may want to navigate to a `Page` view element represented by a route name. It is possible to do this without defining the view element alongside the other content areas. For instance, you may need to display a login page `LoginPage` which will be defined in a separate XAML file.
+
+* Add a new **Page** item to your app called `LoginPage` with the following code:
+
+  ```xml
+  <Page
+      x:Class="UsingNavigationView.Views.LoginPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:local="using:Uno.Extensions.Navigation.UI.Samples"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      mc:Ignorable="d"
+      Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+  
+      <Grid>
+          <TextBlock Text="Login"
+                    FontSize="24"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center" />
+      </Grid>
+  </Page>
+  ```
+
+* For the purposes for this tutorial, `LoginPage` will be associated with its own view model `LoginViewModel`. Add a new **Class** item to your app called `LoginViewModel` with the following code:
+
+  ```csharp 
+  namespace UsingNavigationView.ViewModels;
+  
+  public class LoginViewModel
+  {
+      public LoginViewModel()
+      {
+
+      }
+  }
+  ```
+
+* Register `ViewMap` and `RouteMap` instances inside the `RegisterRoutes` method in `AppHead.xaml.cs`. This associates the `LoginPage` described above with `LoginViewModel`, as well as avoiding the use of reflection for route discovery.
+
+  ```csharp
+  private static void RegisterRoutes(IViewRegistry views, IRouteRegistry routes)
+  {
+      views.Register(
+          new ViewMap<ShellControl, ShellViewModel>(),
+          new ViewMap<LoginPage, LoginViewModel>(),
+          new ViewMap<MainPage, MainViewModel>()
+      );
+  
+      routes.Register(
+        new RouteMap("", View: views.FindByViewModel<ShellViewModel>(),
+            Nested: new RouteMap[]
+            {
+                new RouteMap("Main", View: views.FindByViewModel<MainViewModel>()),
+                new RouteMap("Login", View: views.FindByViewModel<LoginViewModel>())
+            }));
+  }
+  ```
+  
+* Importantly, the snippet above establishes a route name `Login` for `LoginPage`. We can use this route name to navigate to the `LoginPage` view element.
+
+* Add a `NavigationViewItem` to the `NavigationView` element with the `uen:Region.Name` attached property set to `Login`.
+
+  ```xml
+  <NavigationView.MenuItems>
+      <NavigationViewItem Content="One"
+                          uen:Region.Name="One" />
+      <NavigationViewItem Content="Two"
+                          uen:Region.Name="Two" />
+      <NavigationViewItem Content="Three"
+                          uen:Region.Name="Three" />
+      <!-- Adds a login item -->
+      <NavigationViewItem Content="Login"
+                          uen:Region.Name="Login" />
+  </NavigationView.MenuItems>
+  ```
+
+#### Putting it all together
+
+* Observe how the `NavigationView` and the content area are now connected. When you select a `NavigationViewItem`, the corresponding `Grid` or `Page` will be shown.
 
 * Now, you have written a UI layout capable of navigating to views with `NavigationView`. Your completed `MainPage.xaml` should look like the code example below.
 
@@ -200,6 +281,8 @@ Choosing the right control for your navigation needs is important, and one commo
                                     uen:Region.Name="Two" />
                 <NavigationViewItem Content="Three"
                                     uen:Region.Name="Three" />
+                <NavigationViewItem Content="Login"
+                                    uen:Region.Name="Login" />
             </NavigationView.MenuItems>
 
             <Grid uen:Region.Attached="True"
@@ -234,4 +317,4 @@ Choosing the right control for your navigation needs is important, and one commo
 
 ### 6. Switching between views
 
-* To switch between views, you can now use the `NavigationView`. When you select a `NavigationViewItem`, the corresponding `Grid` will be shown. The visibility of the corresponding views will be adjusted automatically.
+* To switch between views, you can now use the `NavigationView`. When you select a `NavigationViewItem`, the corresponding `Grid` or `Page` will be shown. The visibility of the corresponding views will be adjusted where needed.
