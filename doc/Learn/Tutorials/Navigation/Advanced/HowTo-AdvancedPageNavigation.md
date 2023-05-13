@@ -1,16 +1,15 @@
 ---
 uid: Learn.Tutorials.Navigation.Advanced.PageNavigation
 ---
-# How-To: Advanced Page Navigation
+# How-To: Employ Advanced Page Navigation Techniques
 
-Sometimes when you navigate you don't want to leave the current page in the back-stack. For example after signing into an application, you might want to navigate to the main page of the application; you don't want to have the login page still in the back-stack for a user to accidentally to go back to.
+When using navigation, you may not want to allow the current page to remain in the back-stack. If you want to navigate to the main page of the application after signing in, there should not be a login page still in the back-stack for a user to accidentally to go back to.
 
-> [!TIP]
-> This guide assumes you used the Uno.Extensions `dotnet new unoapp-extensions` template to create the solution. Instructions for creating an application from the template can be found [here](xref:Overview.Extensions)
+Using backward/forward navigation in your app requires a degree of extra consideration. Users always expect the back/forward button to take them to a page that is still relevant, yet logically related to the current page and direction. This page contains several concise tutorials about how to implement navigation techniques that address these more advanced problems.
 
-## Step-by-steps
+## Techniques
 
-### 1. Navigating to a Page and Clearing Back Stack
+### Navigating to a Page and Clearing Back Stack
 
 - Add an additional button to `MainPage.xaml` with the `Click` event bound to the `GoToSecondPageClearBackStack` method
 
@@ -37,7 +36,7 @@ Sometimes when you navigate you don't want to leave the current page in the back
 
 If you run the application and navigate to the `SecondPage` the back button in the `NavigationBar` isn't visible, since the frame back-stack is empty.
 
-### 2. Navigating to a Page and Removing a Page from Back Stack
+### Navigating to a Page and Removing a Page from Back Stack
 
 Another common scenario is to navigate to a page and then remove the current page from the back stack.
 
@@ -68,7 +67,7 @@ Another common scenario is to navigate to a page and then remove the current pag
 
 The use of `Qualifiers.NavigateBack` will result in the `SecondPage` being removed from the back stack, after navigating forward to the `SamplePage`.
 
-### 3. Navigating to Multiple Pages
+### Navigating to Multiple Pages
 
 In some cases you may want to navigate forward to a page and inject an additional page into the back stack. This can be done by specifying a multi-section route.
 
