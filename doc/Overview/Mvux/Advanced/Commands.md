@@ -225,43 +225,49 @@ public ICommand MyCommand => Command.Async(async(ct) => await PingServer(ct));
 
 ### Create & Create\<T>
 
-To create a command you can use the fluent API of `ICommandBuilder` provided in the `Command.Create` factory methods, which provides the following three methods:
+To create a command you can use the fluent API of `ICommandBuilder` provided in the `Command.Create` factory methods.  
+This API is intended for Uno Platform's internal use but can come handy if you need to create custom commands.
+
+`ICommandBuilder` provides the three methods below.
 
 - #### Given
 
-    This method takes a Feed (or a State!) and configures a command which will be triggered whenever a new value is available to the Feed.
-    
-    ```csharp
-    public IFeed<int> PageCount => ...
-    
-    public IAsyncCommand MyCommand => Command.Create(builder => builder.Given(PageCount));
-    ```
+  This method initializes a command from a Feed (or a State). The command will be triggered whenever a new value is available to the Feed.
+  
+  ```csharp
+  public IFeed<int> PageCount => ...
+  
+  public IAsyncCommand MyCommand => Command.Create(builder => builder.Given(PageCount));
+  ```
 
 - #### When
 
-    Limits the command execution to a set prerequisite - in other words, sets the 'can execute' of the command.
-    
-    ```csharp
-    public IAsyncCommand MyCommand => Command.Create<int>(builder => builder.When(i => i > 10));
-    ```
+  Defines the 'can execute' of the command.
+  
+  ```csharp
+  public IAsyncCommand MyCommand => Command.Create<int>(builder => builder.When(i => i > 10));
+  ```
+
+  In the above example, the predicate passed in to the `When` method will be executed when the UI wants to determine if the command can be executed, which will only be true if the command parameter will be greater than 10.
 
 - #### Then
 
-    Sets the asynchronous callback to be invoked when the Command is executed. This method will be generic if there's a preceding parameter setting (via `Given` or `When`).
+  Sets the asynchronous callback to be invoked when the Command is executed. This method will be generic if there's a preceding parameter setting (via `Given` or `When`).
 
-    ```csharp
-    public IAsyncCommand MyCommand => Command.Create(builder => builder.Then(async ct => await ExecuteMyCommand(ct)));
+  ```csharp
+  public IAsyncCommand MyCommand => Command.Create(builder => builder.Then(async ct => await ExecuteMyCommand(ct)));
 
-    public ValueTask ExecuteMyCommand(CancellationToken ct)
-    {
-        ...
-    }
-    ```
+  public ValueTask ExecuteMyCommand(CancellationToken ct)
+  {
+      ...
+  }
+  ```
 
 ### Example
 
 Here's a complete example:
 
+Model:
 ```csharp
 public IAsyncCommand MyCommand => 
     Command.Create(builder => 
@@ -278,6 +284,78 @@ public ValueTask NavigateToPage(int currentPage, CancellationToken ct)
 }
 ```
 
+View:
+```xml
+<Button Command="{Binding Model.MyCommand}" Content="Execute my command" />
+```
+
+In the above example (in the Model), when the button is clicked, the `Given` section will be materialized with the most-recent value of the `CurrentPage` Feed, it will be then evaluated with the predicate provided in the `When` call, and if its value is greater than 0, it will be passed on to `Then`, and `NavigateToPage` will be called with the `CurrentPage` Feed value passed on.
+
+> [!IMPORTANT]  
+> Commands created using the fluent API will not be generated in the Bindable Proxy Model. In order to bind to `MyCommand`, use the Bindable Proxy Model's `Model` property to access the original Model and then the command.
+> For example:
+>```xml
+><Button Command="{Binding Model.MyCommand}" />
+>```
+
+Here is another example of using the fluent-API with a `CommandParameter` received from the View:
+
+Model:
+```csharp
+public IAsyncCommand YourCommand => Command.Create<int>(builder => builder.When(i => i > 10).Then(YourMethod));
+
+private async ValueTask YourMethod(int arg, CancellationToken ct)
+{
+    ...
+}
+```
+
+View:
+```xml
+<Button Command="{Binding Model.YourCommand}" Content="My command">
+    <Button.CommandParameter>
+        <x:Int32>44</x:Int32>
+    </Button.CommandParameter>
+</Button>
+```
+
+In the last example, `YourCommand` gets invoked if the `CommandParameter` passes the condition passed in to `When`, and is then forwarded on to `Then` which takes an async action of `T`, and has the `YourMethod` passed in.
+
 This is a diagram detailing the methods in the Command factory toolset:
 
 ![A class diagram of MVUX command builder inheritance structure](../Assets/Commands-1.jpg)
+
+Below is a list of all methods and their signatures:
+
+Methods of Command class:
+
+Method name    | Signature
+---------------|-----------------------------------------------------------------------------------------------------------------
+**Async**      | public static IAsyncCommand Async(AsyncAction execute, [CallerMemberName] string? name = null)
+**Create**     | public static IAsyncCommand Create(Action<ICommandBuilder> build)
+**Create\<T>** | public static IAsyncCommand Create<T>(Action<ICommandBuilder<T>> build, [CallerMemberName] string? name = null)
+
+Methods of `ICommandBuilder`:
+
+Method name    | Signature
+---------------|-------------------------------------------------------
+**Given**      | public ICommandBuilder<T> Given<T>(IFeed<T> parameter)
+**Then**       | public void Then(AsyncAction execute)
+
+Methods of `ICommandBuilder<T>`:
+
+Method name    | Signature
+---------------|--------------------------------------------------------------------
+**When**       | public IConditionalCommandBuilder<T> When(Predicate<T> canExecute)
+**Then**       | public void Then(AsyncAction<T> execute)
+
+Methods of `IConditionalCommandBuilder<T>`:
+
+Method name    | Signature
+---------------|------------------------------------------
+**Then**       | public void Then(AsyncAction<T> execute);
+
+`AsyncAction` refers to an action with a variable number of parameters (up to 16), with its last parameter being a `CancellationToken`, and returns a `ValueTask`:
+```chsarp
+public delegate ValueTask AsyncAction<in T1, T2...>(T1 t1, T2 t2 ... , CancellationToken ct);
+```
