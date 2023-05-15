@@ -26,7 +26,7 @@ which will trigger the load of the next page using the delegate that you provide
 public IListFeed<City> Cities => ListFeed.AsyncPaginated(async (page, ct) => _service.GetCities(pageIndex: page.Index, perPage: 20));
 ```
 
-[!CAUTION]
+> [!CAUTION]
 > On the `Page` struct you have a `DesiredSize` property.
 > This is the number of items the view is requesting to properly fill its "viewport", 
 > **BUT** there is no garantee that this value remains the same between multi pages, espcially if the user resize the app.
