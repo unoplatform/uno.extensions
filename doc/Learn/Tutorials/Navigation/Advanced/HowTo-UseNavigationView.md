@@ -221,12 +221,15 @@ Choosing the right control for your navigation needs is important, and one commo
       );
   
       routes.Register(
-        new RouteMap("", View: views.FindByViewModel<ShellViewModel>(),
-            Nested: new RouteMap[]
-            {
-                new RouteMap("Main", View: views.FindByViewModel<MainViewModel>()),
-                new RouteMap("Login", View: views.FindByViewModel<LoginViewModel>())
-            }));
+          new RouteMap("", View: views.FindByViewModel<ShellViewModel>(),
+              Nested: new RouteMap[]
+              {
+                  new RouteMap("Main", View: views.FindByViewModel<MainViewModel>(),
+                  Nested: new RouteMap[]
+                  { 
+                      new RouteMap("Login", View: views.FindByViewModel<LoginViewModel>())
+                  })
+              }));
   }
   ```
   
@@ -248,9 +251,13 @@ Choosing the right control for your navigation needs is important, and one commo
   </NavigationView.MenuItems>
   ```
 
-#### Putting it all together
+### 6. Putting it all together
 
 * Observe how the `NavigationView` and the content area are now connected. When you select a `NavigationViewItem`, the corresponding `Grid` or `Page` will be shown.
+
+* If the route name specified represents a `Page` element, a `Frame` will be created upon navigation to host the `Page` element. This `Frame` will be added to the visual tree in order to support subsequent navigation to other `Page` elements.
+
+* Because the navigation service maintains an instance of the view, users can leave this new `LoginPage` and return to it _without_ losing any state such as an email address or password they have already entered.
 
 * Now, you have written a UI layout capable of navigating to views with `NavigationView`. Your completed `MainPage.xaml` should look like the code example below.
 
@@ -314,7 +321,3 @@ Choosing the right control for your navigation needs is important, and one commo
     </Grid>
 </Page>
 ```
-
-### 6. Switching between views
-
-* To switch between views, you can now use the `NavigationView`. When you select a `NavigationViewItem`, the corresponding `Grid` or `Page` will be shown. The visibility of the corresponding views will be adjusted where needed.

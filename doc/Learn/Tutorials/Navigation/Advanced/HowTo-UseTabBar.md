@@ -268,24 +268,27 @@ The navigation capabilities offered by Uno.Extensions include regions. Regions a
 
 * Register `ViewMap` and `RouteMap` instances inside the `RegisterRoutes` method in `AppHead.xaml.cs`. This associates the `SignUpPage` described above with `SignUpViewModel`, as well as avoiding the use of reflection for route discovery.
 
-  ```csharp
-  private static void RegisterRoutes(IViewRegistry views, IRouteRegistry routes)
-  {
-      views.Register(
-          new ViewMap<ShellControl, ShellViewModel>(),
-          new ViewMap<SignUpPage, SignUpViewModel>(),
-          new ViewMap<MainPage, MainViewModel>()
-      );
-  
-      routes.Register(
-        new RouteMap("", View: views.FindByViewModel<ShellViewModel>(),
-            Nested: new RouteMap[]
-            {
-                new RouteMap("Main", View: views.FindByViewModel<MainViewModel>()),
-                new RouteMap("SignUp", View: views.FindByViewModel<SignUpViewModel>())
-            }));
-  }
-  ```
+    ```csharp
+    private static void RegisterRoutes(IViewRegistry views, IRouteRegistry routes)
+    {
+        views.Register(
+            new ViewMap<ShellControl, ShellViewModel>(),
+            new ViewMap<LoginPage, LoginViewModel>(),
+            new ViewMap<MainPage, MainViewModel>()
+        );
+    
+        routes.Register(
+            new RouteMap("", View: views.FindByViewModel<ShellViewModel>(),
+                Nested: new RouteMap[]
+                {
+                    new RouteMap("Main", View: views.FindByViewModel<MainViewModel>(),
+                    Nested: new RouteMap[]
+                    { 
+                        new RouteMap("Login", View: views.FindByViewModel<LoginViewModel>())
+                    })
+                }));
+    }
+    ```
   
 * Importantly, the snippet above establishes a route name `SignUp` for `SignUpPage`. We can use this route name to navigate to the `SignUpPage` view element.
 
@@ -305,6 +308,76 @@ The navigation capabilities offered by Uno.Extensions include regions. Regions a
     </utu:TabBar.Items>
     ```
 
-#### Putting it all together
+### 6. Putting it all together
 
 * When a `TabBarItem` is selected, the content which corresponds to the route name of the item will be displayed, with the `Visibility` property changed if needed.
+
+* If that route name represents a `Page` element, a `Frame` will be created upon navigation to host the `Page` element. This `Frame` will be added to the visual tree in order to support subsequent navigation to other `Page` elements.
+
+* Because the navigation service maintains an instance of the view, users can leave this new `SignUpPage` and return to it _without_ losing any state such as form data.
+
+* Now that you have a functional tab bar navigation system, you can run it to see the results. Your completed `MainPage.xaml` should look like the code example below.
+
+#### Code example
+
+```xml    
+<Page x:Class="UsingTabBar.Views.MainPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:local="using:UsingTabBar.Views"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      mc:Ignorable="d"
+      xmlns:uen="using:Uno.Extensions.Navigation.UI"
+      xmlns:utu="using:Uno.Toolkit.UI">
+
+    <Grid uen:Region.Attached="True">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <utu:NavigationBar Content="Main Page"
+                            Style="{StaticResource MaterialNavigationBarStyle}" />
+        <Grid uen:Region.Attached="True"
+              uen:Region.Navigator="Visibility"
+              Grid.Row="1">
+            <Grid uen:Region.Name="One" 
+                  Visibility="Collapsed">
+                <TextBlock Text="One"
+                           FontSize="24"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center" />
+            </Grid>
+            <Grid uen:Region.Name="Two" 
+                  Visibility="Collapsed">
+                <TextBlock Text="Two"
+                           FontSize="24"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center" />
+            </Grid>
+            <Grid uen:Region.Name="Three" 
+                  Visibility="Collapsed">
+                <TextBlock Text="Three"
+                           FontSize="24"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center" />
+            </Grid>
+        </Grid>
+        <utu:TabBar Grid.Row="2"
+                    uen:Region.Attached="True"
+                    VerticalAlignment="Bottom">
+            <utu:TabBar.Items>
+                <utu:TabBarItem uen:Region.Name="One" 
+                                Style="{StaticResource MaterialBottomTabBarItemStyle}" />
+                <utu:TabBarItem uen:Region.Name="Two" 
+                                Style="{StaticResource MaterialBottomTabBarItemStyle}" />
+                <utu:TabBarItem uen:Region.Name="Three" 
+                                Style="{StaticResource MaterialBottomTabBarItemStyle}" />
+                <utu:TabBarItem uen:Region.Name="SignUp" 
+                                Style="{StaticResource MaterialBottomTabBarItemStyle}" />
+            </utu:TabBar.Items>
+        </utu:TabBar>
+    </Grid>
+</Page>
+```
