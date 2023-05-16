@@ -29,33 +29,53 @@ An implementation of `IStringLocalizer` (`ResourceLoaderStringLocalizer`) will b
 
 The `ResourceLoaderStringLocalizer` will look for `.resw` files in folders corresponding to the well-known language tag (eg en-US). For example, if the current culture is `en-US`, the `ResourceLoaderStringLocalizer` will look for `.resw` files in the `en-US` folder. If the current culture is `fr-FR`, the `ResourceLoaderStringLocalizer` will look for `.resw` files in the `fr-FR` folder.
 
-To add a new resource file, right click on the project and select **Add > New Item...**. Select **Resource File (.resw)** and name it according to the language tag (eg `en-US.resw`). Resource files have a key-value pair structure. The key is used to identify the resource and the value is the localized text. The key contains a name which corresponds to the `x:Uid` property of the element in XAML. The value contains the localized text.
+#### Planning to support different locales
 
-For example, if the `x:Uid` property of a `TextBlock` is `MyTextBlock`, the key in the resource file should be `MyTextBlock.Text`. The value of the key is the localized text.
+The cultures which the app will support are enumerated in a specific section of the `appsettings.json` configuration file. The `LocalizationConfiguration` section of the file should look like the code example below:
+
+```json
+{
+  "LocalizationConfiguration": {
+    "Cultures": [ "fr", "en" ]
+  },
+  ...
+}
+```
+
+#### Add resource files
+
+To add a new resource file, right click on the project and select **Add > New Item...**. Select **Resource File (.resw)** and name it `Resources.resw`. Resource files have a key-value pair structure. The key is used to identify the resource, and the value can represent any valid property value such as translated text, width of an item, or a color.
+
 
 ### Resolving localized strings
 
-Once locale specific resources are included, the localization feature can be used to resolve those localized texts.
+Once locale specific resources are included, the localization feature can be used to resolve those localized values.
 
-In XAML, assigning the `x:Uid` property a value looks like this:
+#### Using resources in XAML
+
+The key contains a name which corresponds to the `x:Uid` and intended property of the XAML element. The value contains the localized text.
+
+For example, if the `x:Uid` property of a `TextBlock` is `MyTextBlock`, the key in the resource file should be `MyTextBlock.Text`. In XAML, assigning a localized value to an element with a `x:Uid` property looks like this:
 
 ```xml
 <TextBlock x:Uid="MyTextBlock" />
 ```
 
-However, the `x:Uid` property is not required to resolve localized strings. The `IStringLocalizer` service can be resolved from the service provider.
+#### Using resources in code-behind
+
+Setting the `x:Uid` property in markup is not required to resolve localized resources like text. The `IStringLocalizer` service can be resolved from the service provider. This service can be used to resolve localized strings in code-behind.
 
 ```csharp
 var stringLocalizer = serviceProvider.GetService<IStringLocalizer>();
 ```
 
-Localized strings can be resolved using the indexer on the IStringLocalizer as a dictionary. This indexer takes a key and returns the localized string.
+Strings can be resolved using the indexer on the `IStringLocalizer` as a dictionary. This indexer takes a key and returns the localized string value.
 
 ```csharp
 string myString = stringLocalizer["MyKey"];
 ```
 
-LocalizedString objects can also be resolved from the IStringLocalizer. These objects contain the localized string and a boolean indicating whether the resource was found.
+`LocalizedString` objects are the primary type resolved from `IStringLocalizer`. While these objects can be implicitly converted to strings, they also contain additional information which may be desirable. For instance, `LocalizedString` includes a boolean indicating whether the resource was not found. This can be used to determine whether a fallback value should be used.
 
 ```csharp
 LocalizedString myString = stringLocalizer["MyKey"];
