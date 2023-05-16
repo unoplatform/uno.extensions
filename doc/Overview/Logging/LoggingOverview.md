@@ -24,9 +24,28 @@ protected override void OnLaunched(LaunchActivatedEventArgs e)
 
 ## Logging
 
-When the `UseLogging()` extension method is called, an `ILogger<T>` is registered in the service provider. This logger can be used to log messages to the console. It can then be injected into any class that needs to log messages. The `ILogger<T>` interface is generic, where `T` is the class that is logging the message. While the `ILogger<T>` interface is generic, it is not required to be used in this way. It can be used without the generic type parameter, but it is recommended to use the generic type parameter to scope the logger to a specific class.
+When the `UseLogging()` extension method is called, an `ILogger<T>` is registered in the service provider. This logger can be used to log messages to the console. It can then be injected into any class that needs to log messages. The `ILogger<T>` interface is generic, where `T` is the class that is logging the message. The `ILogger<T>` interface is generic, and it must be retrieved from the service provider this way. In order to scope the logger to a specific class, it cannot be used without the generic type parameter.
 
-The library offers a number of extension methods to simplify the logging of messages for a specific log level. The following example shows how to log a message using the `LogInformation()` extension method:
+The library offers a number of extension methods to simplify logging messages for a multitude of situations.
+
+## Log Levels
+
+Sometimes it is necessary to write information to the log that varies in its verbosity or severity. For this reason, there are six log levels available to delineate the severity of an entry.
+
+Use the following convention as a guide when logging messages:
+
+| Level | Description |
+|-------|-------------|
+| Trace | Used for parts of a method to capture a flow. |
+| Debug | Used for diagnostics information. |
+| Information | Used for general successful information. Generally the default minimum. |
+| Warning | Used for anything that can potentially cause application oddities. Automatically recoverable. |
+| Error | Used for anything that is fatal to the current operation but not to the whole process. Potentially recoverable. |
+| Critical | Used for anything that is forcing a shutdown to prevent data loss or corruption. Not recoverable. |
+
+_These descriptions are adapted from those documented for the `LogLevel` enum [here](https://learn.microsoft.com/dotnet/api/microsoft.extensions.logging.loglevel)._
+
+Because these extension methods are scoped to a specific log level, the standard `Log()` method on the `ILogger<T>` interface does not need to be used. This example shows how to log a message using the `LogInformation()` extension method:
 
 ```csharp
 public class MyClass
@@ -44,23 +63,6 @@ public class MyClass
     }
 }
 ```
-
-## Log Levels
-
-Sometimes it is necessary to write information to the log that varies in its verbosity or severity. For this reason, there are six log levels available to delineate the severity of an entry.
-
-Use the following convention as a guide when logging messages:
-
-| Level | Description |
-|-------|-------------|
-| Trace | Used for parts of a method to capture a flow. |
-| Debug | Used for diagnostics information. |
-| Information | Used for general successful information. Generally the default minimum. |
-| Warning | Used for anything that can potentially cause application oddities. Automatically recoverable. |
-| Error | Used for anything that is fatal to the current operation but not to the whole process. Potentially recoverable. |
-| Critical | Used for anything that is forcing a shutdown to prevent data loss or corruption. Not recoverable. |
-
-Because these extension methods are scoped to a specific log level, the standard `Log()` method on the `ILogger<T>` interface does not need to be used.
 
 ## Configuring Logging Output
 
@@ -90,6 +92,8 @@ protected override void OnLaunched(LaunchActivatedEventArgs e)
 ...
 ```
 
+This example configures the minimum log level to `Trace` when the app is running in the `Development` environment, and `Error` otherwise. This is useful for increasing the amount of logging that occurs in that environment, and only emitting `Error` or `Critical` messages when in production.
+
 ## Serilog
 
 Serilog is a third-party logging framework that is otherwise available as a [NuGet package](https://www.nuget.org/packages/Serilog). The benefit of using Serilog is that it provides a more robust logging framework that can be configured to log to a variety of different sinks, including the console and file. Examples of other sinks include Azure Application Insights, Seq, and many more.
@@ -102,7 +106,6 @@ protected override void OnLaunched(LaunchActivatedEventArgs e)
     var appBuilder = this.CreateBuilder(args)
         .Configure(host => {
             host
-            .UseLogging()
             .UseSerilog();
         });
 ...
@@ -112,60 +115,14 @@ For more information about Serilog, check out [Getting started with Serilog](htt
 
 ## Uno Internal Logging
 
-To use the same logging system for Uno internal messages call `UseLogging()` on the `IHost` instance:
+The same logging system is wired up for Uno internal messages when `UseLogging()`  is called on the `IHost` instance. This is useful for debugging Uno internals like XAML parsing and layout. While this system is enabled as part of the standard logger, it is set by default to filter out messages with a level lower than `Warning`. This is to reduce noise in the log output. 
 
-```csharp
-private IHost Host { get; }
+The following table describes the aspects of this Uno internal logging system which can be configured for a more suitable experience while diagnosing issues during the development process.
 
-protected override void OnLaunched(LaunchActivatedEventArgs e)
-{
-    var appBuilder = this.CreateBuilder(args)
-        .Configure(host => {
-            host
-            .UseLogging()
-        });
-        
-    Host = appBuilder.Build();
-...
-```
-
-### Setting the XAML Log Level
-
-Sometimes it's necessary to filter messages recorded for specific XAML types to reduce noise. When a preference is specified for the **XAML log level**, the logger will change the verbosity of events from a set of XAML-related types.
-
-It can be set by calling the `XamlLogLevel()` extension method on the `ILoggingBuilder` instance. The following example shows how to set the XAML log level to `Information`:
-
-```csharp
-protected override void OnLaunched(LaunchActivatedEventArgs e)
-{
-    var appBuilder = this.CreateBuilder(args)
-        .Configure(host => {
-            host.UseLogging(
-                builder => {
-                    builder.XamlLogLevel(LogLevel.Information);
-                });
-        });
-...
-```
-
-### Setting the Layout Log Level
-
-Similar to the _XAML Log Level_ described above, the **layout log level** can be used to filter messages recorded for specific types to reduce noise. When a preference is specified for the layout log level, the logger will change the verbosity of events from a set of layout-related types.
-
-It can be set by calling the `XamlLayoutLogLevel()` extension method on the `ILoggingBuilder` instance. The following example shows how to set the XAML layout log level to `Information`:
-
-```csharp
-protected override void OnLaunched(LaunchActivatedEventArgs e)
-{
-    var appBuilder = this.CreateBuilder(args)
-        .Configure(host => {
-            host.UseLogging(
-                builder => {
-                    builder.XamlLayoutLogLevel(LogLevel.Information);
-                });
-        });
-...
-```
+| ILoggingBuilder Extension method | Filtered Events  | Affected Namespace(s) |
+|------------------|-------------|---------------------|
+| `XamlLogLevel()` | Messages emitted by specific XAML types | `Microsoft.UI.Xaml`, `Microsoft.UI.Xaml.VisualStateGroup`, `Microsoft.UI.Xaml.StateTriggerBase`, `Microsoft.UI.Xaml.UIElement`, `Microsoft.UI.Xaml.FrameworkElement` |
+| `XamlLayoutLogLevel()` | Messages emitted by the layout system | `Microsoft.UI.Xaml.Controls`, `Microsoft.UI.Xaml.Controls.Layouter`, `Microsoft.UI.Xaml.Controls.Panel` |
 
 ## See also
 
