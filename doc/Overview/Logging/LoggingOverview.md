@@ -4,9 +4,9 @@ uid: Overview.Logging
 
 # Logging
 
-Apps that record events typically do so for informational or diagnostic purposes. **Logging** is the process of recording events to either a _persistent_ store such as a text file or database, or a _transient_ location like the standard output console. The `Uno.Extensions.Logging` library leverages logging capabilities tailored to the target platform to easily record events for XAML layout, Uno-internal messages, and custom events. It allows for control over specific severity or verbosity levels. This feature also allows for a simple way to wire up custom log providers. It uses [Microsoft.Extensions.Logging](https://www.nuget.org/packages/Microsoft.Extensions.Logging) for logging abstractions.
+Apps that record events typically do so for informational or diagnostic purposes, depending on the desired level of verbosity. **Logging** is the process of recording events to either a _persistent_ store such as a text file or database, or a _transient_ location like the standard output console. The `Uno.Extensions.Logging` library leverages logging capabilities tailored to the target platform to easily write entries for both app specific and Uno internal events to one or more locations. These locations where logs can be written are referred to as **providers**. This feature enables a simple way to wire up custom log providers for locations not included by the runtime libraries or extensions. 
 
-For more documentation about logging, read the references listed at the bottom.
+It uses [Microsoft.Extensions.Logging](https://www.nuget.org/packages/Microsoft.Extensions.Logging) for logging abstractions. For more documentation about logging, read the references listed at the bottom.
 
 ## Platform Log Providers
 
