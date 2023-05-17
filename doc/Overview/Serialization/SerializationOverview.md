@@ -69,23 +69,7 @@ protected override void OnLaunched(LaunchActivatedEventArgs e)
 As of .NET 6, a code generation-enabled serializer is supported. The type to serialize is named `Person` in this example.
 
 ```csharp
-public class Person
-{
-    public Person() { }
-
-    public Person(string name, int age, double height, double weight)
-    {
-        Name = name;
-        Age = age;
-        Height = height;
-        Weight = weight;
-    }
-    
-    public string? Name { get; set; }
-    public int Age { get; set; }
-    public double  Height { get; set; }
-    public double Weight { get; set; }
-}
+public record Person(string name, int age, double height, double weight);
 ```
 
 To leverage the source generation feature for JSON serialization in an Uno.Extensions application, define a partial class which derives from a `JsonSerializerContext`, and specify which type is serializable with the `JsonSerializable` attribute:
@@ -99,12 +83,29 @@ public partial class PersonJsonContext : JsonSerializerContext
 }
 ```
 
-The `PersonJsonContext` class is then used to serialize and deserialize instances of `Person`:
+This partial class can then be registered with the host using the `AddJsonTypeInfo` extension method:
 
 ```csharp
-var person = new Person("Megan", 23, 1.8, 90.0);
+protected override void OnLaunched(LaunchActivatedEventArgs e)
+{
+    var appBuilder = this.CreateBuilder(args)
+        .Configure(host => {
+            host
+            .UseSerialization(services =>
+            {
+                services
+                    .AddJsonTypeInfo(PersonJsonContext.Default.Person)
+            });
+        });
+...
+```
 
-var json = JsonSerializer.Serialize(person!, PersonJsonContext.Default.Person);
+It follows that the `PersonJsonContext` will be automatically used by the injected `ISerializer` to serialize and deserialize instances of `Person`:
+
+```csharp
+Person person = new("Megan", 23, 1.8, 90.0);
+
+var json = _serializer.ToString<Person>(person);
 ```
 
 ### Custom
