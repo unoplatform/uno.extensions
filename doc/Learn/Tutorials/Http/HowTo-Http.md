@@ -7,6 +7,9 @@ When working with a complex application, centralized registration of your API en
 
 ## Step-by-steps
 
+> [!IMPORTANT]
+> This guide assumes you used the template wizard or `dotnet new unoapp` to create your solution. If not, it is recommended that you follow the [instructions](xref:Overview.Extensions) for creating an application from the template.
+
 ### 1. Enable HTTP
 
 * Call the `UseHttp()` method to register a HTTP client with the `IHostBuilder` which implements `IHttpClient`:

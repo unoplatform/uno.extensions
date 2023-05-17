@@ -10,6 +10,9 @@ uid: Learn.Tutorials.Logging.UseInternalLogging
 
 ## Step-by-steps
 
+> [!IMPORTANT]
+> This guide assumes you used the template wizard or `dotnet new unoapp` to create your solution. If not, it is recommended that you follow the [instructions](xref:Overview.Extensions) for creating an application from the template.
+
 ### 1. Enable Uno internal logging
 
 * To log Uno-internal messages, you first need to call `UseLogging()` on the `IHost` instance:
