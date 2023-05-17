@@ -5,10 +5,10 @@ uid: Learn.Tutorials.Navigation.HowToDisplayItem
 
 This topic walks through how to use Navigation to display the details of an item selected from a list. This demonstrates an important aspect of Navigation which is the ability to pass data as part of a navigation request.
 
-> [!TIP]
-> This guide assumes you used the Uno.Extensions `dotnet new unoapp-extensions` template to create the solution. Instructions for creating an application from the template can be found [here](xref:Overview.Extensions)
-
 ## Step-by-steps
+
+> [!IMPORTANT]
+> This guide assumes you used the template wizard or `dotnet new unoapp` to create your solution. If not, it is recommended that you follow the [instructions](xref:Overview.Extensions) for creating an application from the template.
 
 Often it is necessary to pass a data item from one page to another. This scenario will start with passing a newly created object along with the navigation request, and how the specified object can be accessed by the destination ViewModel.
 

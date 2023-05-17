@@ -7,6 +7,9 @@ Accessing the serialized and deserialized representation of an object can be imp
 
 ## Step-by-steps
 
+> [!IMPORTANT]
+> This guide assumes you used the template wizard or `dotnet new unoapp` to create your solution. If not, it is recommended that you follow the [instructions](xref:Overview.Extensions) for creating an application from the template.
+
 ### 1. Opt into Serialization
 
 * Call the `UseSerialization()` method to register a serializer that implements `ISerializer` with the service collection:

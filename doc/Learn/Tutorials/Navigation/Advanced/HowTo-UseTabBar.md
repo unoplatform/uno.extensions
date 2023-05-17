@@ -3,10 +3,10 @@ uid: Learn.Tutorials.Navigation.Advanced.TabBar
 ---
 # How-To: Use a TabBar to Switch Views
 
-> [!TIP]
-> This guide assumes you used the Uno.Extensions `dotnet new unoapp-extensions` template to create the solution. Instructions for creating an application from the template can be found [here](xref:Overview.Extensions)
-
 ## Step-by-steps
+
+> [!IMPORTANT]
+> This guide assumes you used the template wizard or `dotnet new unoapp` to create your solution. If not, it is recommended that you follow the [instructions](xref:Overview.Extensions) for creating an application from the template.
 
 The Navigation capabilities offered by Uno.Extensions include regions. Regions allow you to associate a specific sector of the view with an individual item on a navigation control from the same `Page`. Likewise, the Uno.Extensions library has built-in support for responding to navigation gestures from the [Toolkit](https://github.com/unoplatform/uno.toolkit.ui) `TabBar`. Follow the steps below to define a user interface centered around navigating with this control.
 

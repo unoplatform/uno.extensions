@@ -7,6 +7,9 @@ Dependency Injection (DI) is an important design pattern when building loosely-c
 
 ## Step-by-steps
 
+> [!IMPORTANT]
+> This guide assumes you used the template wizard or `dotnet new unoapp` to create your solution. If not, it is recommended that you follow the [instructions](xref:Overview.Extensions) for creating an application from the template.
+
 ### 1. Plan the contract for your service  
 * Create a new interface which declares the method(s) your service offers: 
     ```cs

@@ -5,10 +5,10 @@ uid: Learn.Tutorials.Navigation.HowToShowFlyout
 
 This topic walks through using Navigation to display a modal flyout
 
-> [!TIP]
-> This guide assumes you used the Uno.Extensions `dotnet new unoapp-extensions` template to create the solution. Instructions for creating an application from the template can be found [here](xref:Overview.Extensions)
-
 ## Step-by-steps
+
+> [!IMPORTANT]
+> This guide assumes you used the template wizard or `dotnet new unoapp` to create your solution. If not, it is recommended that you follow the [instructions](xref:Overview.Extensions) for creating an application from the template.
 
 ### 1. Displaying flyout from code
 
