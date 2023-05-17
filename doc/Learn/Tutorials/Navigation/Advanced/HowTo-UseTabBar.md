@@ -266,7 +266,7 @@ The navigation capabilities offered by Uno.Extensions include regions. Regions a
   }
   ```
 
-* Register `ViewMap` and `RouteMap` instances inside the `RegisterRoutes` method in `AppHead.xaml.cs`. This associates the `SignUpPage` described above with `SignUpViewModel`, as well as avoiding the use of reflection for route discovery.
+* Register `ViewMap` and `RouteMap` instances inside the `RegisterRoutes` method in `App.cs`. This associates the `SignUpPage` described above with `SignUpViewModel`, as well as avoiding the use of reflection for route discovery.
 
     ```csharp
     private static void RegisterRoutes(IViewRegistry views, IRouteRegistry routes)
@@ -282,10 +282,10 @@ The navigation capabilities offered by Uno.Extensions include regions. Regions a
                 Nested: new RouteMap[]
                 {
                     new RouteMap("Main", View: views.FindByViewModel<MainViewModel>(),
-                    Nested: new RouteMap[]
-                    { 
-                        new RouteMap("Login", View: views.FindByViewModel<LoginViewModel>())
-                    })
+                        Nested: new RouteMap[]
+                        { 
+                            new RouteMap("Login", View: views.FindByViewModel<LoginViewModel>())
+                        })
                 }));
     }
     ```

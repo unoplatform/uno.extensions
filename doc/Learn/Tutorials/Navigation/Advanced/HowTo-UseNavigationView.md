@@ -171,13 +171,13 @@ Choosing the right control for your navigation needs is important, and one commo
 
 #### Navigating to Page elements
 
-* You may want to navigate to a `Page` view element represented by a route name. It is possible to do this without defining the view element alongside the other content areas. For instance, you may need to display a login page `LoginPage` which will be defined in a separate XAML file.
+* You may want to navigate to a `Page` view element represented by a route name. It is possible to do this without defining the view element alongside the other content areas. For instance, you may need to display a products page `ProductsPage` which will be defined in a separate XAML file.
 
-* Add a new **Page** item to your app called `LoginPage` with the following code:
+* Add a new **Page** item to your app called `ProductsPage` with the following code:
 
   ```xml
   <Page
-      x:Class="UsingNavigationView.Views.LoginPage"
+      x:Class="UsingNavigationView.Views.ProductsPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:local="using:Uno.Extensions.Navigation.UI.Samples"
@@ -187,7 +187,7 @@ Choosing the right control for your navigation needs is important, and one commo
       Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
   
       <Grid>
-          <TextBlock Text="Login"
+          <TextBlock Text="Products"
                     FontSize="24"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center" />
@@ -195,28 +195,28 @@ Choosing the right control for your navigation needs is important, and one commo
   </Page>
   ```
 
-* For the purposes for this tutorial, `LoginPage` will be associated with its own view model `LoginViewModel`. Add a new **Class** item to your app called `LoginViewModel` with the following code:
+* For the purposes for this tutorial, `ProductsPage` will be associated with its own view model `ProductsViewModel`. Add a new **Class** item to your app called `ProductsViewModel` with the following code:
 
   ```csharp 
   namespace UsingNavigationView.ViewModels;
   
-  public class LoginViewModel
+  public class ProductsViewModel
   {
-      public LoginViewModel()
+      public ProductsViewModel()
       {
 
       }
   }
   ```
 
-* Register `ViewMap` and `RouteMap` instances inside the `RegisterRoutes` method in `AppHead.xaml.cs`. This associates the `LoginPage` described above with `LoginViewModel`, as well as avoiding the use of reflection for route discovery.
+* Register `ViewMap` and `RouteMap` instances inside the `RegisterRoutes` method in `App.cs`. This associates the `ProductsPage` described above with `ProductsViewModel`, as well as avoiding the use of reflection for route discovery.
 
   ```csharp
   private static void RegisterRoutes(IViewRegistry views, IRouteRegistry routes)
   {
       views.Register(
           new ViewMap<ShellControl, ShellViewModel>(),
-          new ViewMap<LoginPage, LoginViewModel>(),
+          new ViewMap<ProductsPage, ProductsViewModel>(),
           new ViewMap<MainPage, MainViewModel>()
       );
   
@@ -227,15 +227,15 @@ Choosing the right control for your navigation needs is important, and one commo
                   new RouteMap("Main", View: views.FindByViewModel<MainViewModel>(),
                   Nested: new RouteMap[]
                   { 
-                      new RouteMap("Login", View: views.FindByViewModel<LoginViewModel>())
+                      new RouteMap("Products", View: views.FindByViewModel<ProductsViewModel>())
                   })
               }));
   }
   ```
   
-* Importantly, the snippet above establishes a route name `Login` for `LoginPage`. We can use this route name to navigate to the `LoginPage` view element.
+* Importantly, the snippet above establishes a route name `Products` for `ProductsPage`. We can use this route name to navigate to the `ProductsPage` view element.
 
-* Add a `NavigationViewItem` to the `NavigationView` element with the `uen:Region.Name` attached property set to `Login`.
+* Add a `NavigationViewItem` to the `NavigationView` element with the `uen:Region.Name` attached property set to `Products`.
 
   ```xml
   <NavigationView.MenuItems>
@@ -245,9 +245,9 @@ Choosing the right control for your navigation needs is important, and one commo
                           uen:Region.Name="Two" />
       <NavigationViewItem Content="Three"
                           uen:Region.Name="Three" />
-      <!-- Adds a login item -->
-      <NavigationViewItem Content="Login"
-                          uen:Region.Name="Login" />
+      <!-- Adds a products item -->
+      <NavigationViewItem Content="Products"
+                          uen:Region.Name="Products" />
   </NavigationView.MenuItems>
   ```
 
@@ -257,7 +257,7 @@ Choosing the right control for your navigation needs is important, and one commo
 
 * If the route name specified represents a `Page` element, a `Frame` will be created upon navigation to host the `Page` element. This `Frame` will be added to the visual tree in order to support subsequent navigation to other `Page` elements.
 
-* Because the navigation service maintains an instance of the view, users can leave this new `LoginPage` and return to it _without_ losing any state such as an email address or password they have already entered.
+* Because the navigation service maintains an instance of the view, users can leave this new `ProductsPage` to view item details and return to it _without_ losing any state such as a product filter they have already specified.
 
 * Now, you have written a UI layout capable of navigating to views with `NavigationView`. Your completed `MainPage.xaml` should look like the code example below.
 
@@ -288,8 +288,8 @@ Choosing the right control for your navigation needs is important, and one commo
                                     uen:Region.Name="Two" />
                 <NavigationViewItem Content="Three"
                                     uen:Region.Name="Three" />
-                <NavigationViewItem Content="Login"
-                                    uen:Region.Name="Login" />
+                <NavigationViewItem Content="Products"
+                                    uen:Region.Name="Products" />
             </NavigationView.MenuItems>
 
             <Grid uen:Region.Attached="True"
