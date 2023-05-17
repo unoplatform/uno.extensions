@@ -32,7 +32,7 @@
           href: Overview/DependencyInjection/DependencyInjectionOverview.md
         - name: Register and use services with dependency injection
           href: Learn/Tutorials/DependencyInjection/HowTo-DependencyInjectionSetup.md
-        - name: Use the Community Toolkit for inversion of control
+        - name: Manually Resolving Dependencies with CommunityToolkit.Mvvm
           href: Learn/Tutorials/DependencyInjection/HowTo-CommunityToolkit.md
     - name: Hosting
       items:
