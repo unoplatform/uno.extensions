@@ -11,9 +11,36 @@ Using backward/forward navigation in your app requires a degree of extra conside
 
 ### Navigating to a Page and Clearing Back Stack
 
+#### From XAML
+
+The `Navigation.Request` attribute paired with the qualifier syntax, provided by navigation Extensions, offers a powerful way to navigate to a page and then clear the back stack from XAML.
+
+- Add an additional button to `MainPage.xaml` _without_ a click event bound to codebehind
+
+    ```xml
+    <StackPanel Grid.Row="1"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center">
+        <Button AutomationProperties.AutomationId="SecondPageButton"
+                Content="Go to Second Page"
+                Click="{x:Bind ViewModel.GoToSecondPage}" />
+        <Button Content="Go to Second Page Clear Stack" />
+    </StackPanel>
+    ```
+- Add the `Navigation.Request` attached property to the button with the necessary qualifier prepended to the route
+
+    ```xml
+    <Button Content="Go to Second Page Clear Stack"
+            uen:Navigation.Request="-/Second" />
+    ```
+
+#### From Codebehind
+
+It is possible to navigate to a page and clear the back stack from codebehind using a more typical navigation service method such as `NavigateViewModelAsync<T>`. This can be done by specifying the `Qualifiers.ClearBackStack` qualifier.
+
 - Add an additional button to `MainPage.xaml` with the `Click` event bound to the `GoToSecondPageClearBackStack` method
 
-    ```csharp
+    ```xml
     <StackPanel Grid.Row="1"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center">
@@ -40,6 +67,29 @@ If you run the application and navigate to the `SecondPage` the back button in t
 
 Another common scenario is to navigate to a page and then remove the current page from the back stack.
 
+#### From XAML
+
+- Add a new `Page` to navigate to, `SamplePage.xaml`, in the UI (shared) project
+
+- In `SecondPage.xaml` add a `Button` with the following XAML, which does _not_ include a handler for the Click event
+
+    ```xml
+    <Button HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            Content="Go to Sample Page" />
+    ```
+
+- Add the `Navigation.Request` attached property to the button with the necessary qualifier prepended to the route
+
+    ```xml
+    <Button HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            Content="Go to Sample Page"
+            uen:Navigation.Request="-Sample" />
+    ```
+
+#### From codebehind
+
 - Add a new `Page` to navigate to, `SamplePage.xaml`, in the UI (shared) project
 - In `SecondPage.xaml` add a `Button` with the following XAML, which includes a handler for the Click event  
 
@@ -65,7 +115,7 @@ Another common scenario is to navigate to a page and then remove the current pag
     }
     ```
 
-The use of `Qualifiers.NavigateBack` will result in the `SecondPage` being removed from the back stack, after navigating forward to the `SamplePage`.
+The use of qualifiers, whether from XAML or codebehind, will result in the `SecondPage` being removed from the back stack, after navigating forward to the `SamplePage`.
 
 ### Navigating to Multiple Pages
 
