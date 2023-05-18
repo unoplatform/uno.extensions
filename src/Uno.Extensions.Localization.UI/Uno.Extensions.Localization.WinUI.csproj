@@ -14,4 +14,10 @@
 	<ItemGroup Condition="'$(_IsWinUI)'=='false'">
 		<PackageReference Include="Uno.WinUI" />
 	</ItemGroup>
+
+	<ItemGroup>
+	  <EmbeddedResource Include="LinkerDefinition.WinUI.xml">
+	    <LogicalName>$(AssemblyName).xml</LogicalName>
+	  </EmbeddedResource>
+	</ItemGroup>
 </Project>
