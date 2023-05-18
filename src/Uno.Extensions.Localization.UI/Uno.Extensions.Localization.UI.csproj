@@ -10,4 +10,10 @@
 	<ItemGroup>
 		<PackageReference Include="Uno.UI" />
 	</ItemGroup>
+
+	<ItemGroup>
+		<EmbeddedResource Include="LinkerDefinition.UI.xml">
+			<LogicalName>$(AssemblyName).xml</LogicalName>
+		</EmbeddedResource>
+	</ItemGroup>
 </Project>
