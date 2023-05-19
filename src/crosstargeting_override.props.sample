@@ -26,7 +26,18 @@
 
       The UnoTargetFrameworkMobileOverride property is use only in Mobile (i.e. the single-project used by net6-ios/android/mac/catalyst)
 		-->
-    <UnoTargetFrameworkMobileOverride>net6.0-ios</UnoTargetFrameworkMobileOverride>
-    <UnoTargetFrameworkOverride>$(UnoTargetFrameworkMobileOverride);netstandard2.0</UnoTargetFrameworkOverride>
+   <!-- <UnoTargetFrameworkMobileOverride>net6.0-ios</UnoTargetFrameworkMobileOverride>-->
+    <!-- <UnoTargetFrameworkOverride>$(UnoTargetFrameworkMobileOverride);netstandard2.0</UnoTargetFrameworkOverride>-->
+
+	<!--
+
+			### NugetOverrideVersion ###
+
+				Allows the override of the nuget local cache.
+				Set it to the version you want to override, used in another app.
+				You will see the override path in the build output.
+				The packages are located under this directory: "%USERPROFILE%\.nuget\packages". -->
+
+	<!-- <NugetOverrideVersion>2.3.0</NugetOverrideVersion> -->
   </PropertyGroup>
 </Project>

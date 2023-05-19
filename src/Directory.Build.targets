@@ -92,13 +92,13 @@
 			<GeneratorOutputPath>$(MSBuildProjectDirectory)\$(IntermediateOutputPath)\PackGenerators\</GeneratorOutputPath>
 		</PropertyGroup>
 		<MSBuild Projects="@(GeneratorProjectReference)"
-				 Properties="Configuration=$(Configuration);OutputPath=$(GeneratorOutputPath)" />
+				 Properties="Configuration=$(Configuration);OutputPath=$(GeneratorOutputPath);TargetFramework=netstandard2.0" />
 	</Target>
 
 	<Target Name="GeneratorPack"
 			AfterTargets="PackageGeneratorBuild">
 		<ItemGroup>
-			<None Include="$(GeneratorOutputPath)**\*.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+			<None Include="$(GeneratorOutputPath)**\*.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Exclude="@(None)" Visible="false" />
 		</ItemGroup>
 	</Target>
 
