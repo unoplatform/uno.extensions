@@ -23,14 +23,14 @@ public static class HostBuilderExtensions
 #if !__WASM__
 #if __IOS__
 #pragma warning disable CA1416 // Validate platform compatibility: The net6.0 version is not used on older versions of OS
-					builder.AddProvider(new global::Uno.Extensions.Logging.OSLogLoggerProvider());
+						builder.AddProvider(new global::Uno.Extensions.Logging.OSLogLoggerProvider());
 #pragma warning restore CA1416 // Validate platform compatibility
-#elif NET6_0_OR_GREATER // Console isn't supported on all Xamarin targets, so only adding for net6.0 and above
-					builder.AddConsole();
+#elif NET6_0_OR_GREATER || __SKIA__ // Console isn't supported on all Xamarin targets, so only adding for net6.0 and above
+						builder.AddConsole();
 #endif
 						builder.AddDebug();
 #elif __WASM__
-					builder.AddProvider(new global::Uno.Extensions.Logging.WebAssembly.WebAssemblyConsoleLoggerProvider());
+						builder.AddProvider(new global::Uno.Extensions.Logging.WebAssembly.WebAssemblyConsoleLoggerProvider());
 #endif
 					}
 
