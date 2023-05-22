@@ -24,6 +24,7 @@
       "..\\..\\src\\Uno.Extensions.Logging\\Uno.Extensions.Logging.WinUI.Wasm.csproj",
       "..\\..\\src\\Uno.Extensions.Logging\\Uno.Extensions.Logging.WinUI.csproj",
       "..\\..\\src\\Uno.Extensions.Navigation.Toolkit\\Uno.Extensions.Navigation.Toolkit.WinUI.csproj",
+      "..\\..\\src\\Uno.Extensions.Navigation.Generators\\Uno.Extensions.Navigation.Generators.csproj",
       "..\\..\\src\\Uno.Extensions.Navigation.UI\\Uno.Extensions.Navigation.WinUI.csproj",
       "..\\..\\src\\Uno.Extensions.Navigation\\Uno.Extensions.Navigation.csproj",
       "..\\..\\src\\Uno.Extensions.Reactive.Generator\\Uno.Extensions.Reactive.Generator.csproj",
@@ -47,7 +48,6 @@
       "TestHarness.Skia.WPF\\TestHarness.Skia.WPF.csproj",
       "TestHarness.UITest\\TestHarness.UITest.csproj",
       "TestHarness.Wasm\\TestHarness.Wasm.csproj",
-      "TestHarness.Windows.Package\\TestHarness.Windows.Package.wapproj",
       "TestHarness.Windows\\TestHarness.Windows.csproj"
     ]
   }

@@ -81,7 +81,7 @@ public static class FrameworkElementExtensions
 		Windows.ApplicationModel.Core.CoreApplication.MainView.DispatcherQueue;
 #endif
 
-	public static async Task<bool> EnsureLoaded(this FrameworkElement? element, int? timeoutInSeconds = default)
+	internal static async Task<bool> EnsureLoaded(this FrameworkElement? element, int? timeoutInSeconds = default)
 	{
 		if (element is null)
 		{
@@ -192,7 +192,7 @@ public static class FrameworkElementExtensions
 		return completion.Task;
 	}
 
-	public static void InjectServicesAndSetDataContext(
+	internal static async ValueTask InjectServicesAndSetDataContextAsync(
 		this FrameworkElement view,
 		IServiceProvider services,
 		INavigator navigation,
@@ -204,6 +204,10 @@ public static class FrameworkElementExtensions
 				view.DataContext != viewModel)
 			{
 				view.DataContext = viewModel;
+				if(view is IForceBindingsUpdate updatableView)
+				{
+					await updatableView.ForceBindingsUpdateAsync();
+				}
 			}
 		}
 

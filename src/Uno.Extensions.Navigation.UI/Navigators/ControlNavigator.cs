@@ -88,7 +88,7 @@ public abstract class ControlNavigator<TControl> : ControlNavigator
 			viewModel = await CreateViewModel(services, request, route, mapping);
 		}
 
-		view.InjectServicesAndSetDataContext(services, navigator, viewModel);
+		await view.InjectServicesAndSetDataContextAsync(services, navigator, viewModel);
 
 		return viewModel;
 	}
