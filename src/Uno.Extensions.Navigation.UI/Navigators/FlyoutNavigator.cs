@@ -116,7 +116,7 @@ public class FlyoutNavigator : ControlNavigator
 		{
 			if (!injectedFlyout)
 			{
-				flyoutElement.InjectServicesAndSetDataContext(services, navigation, viewModel);
+				await flyoutElement.InjectServicesAndSetDataContextAsync(services, navigation, viewModel);
 			}
 
 			flyoutElement.SetInstance(Region);

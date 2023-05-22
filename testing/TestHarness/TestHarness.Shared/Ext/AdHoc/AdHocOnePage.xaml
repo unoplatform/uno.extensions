@@ -17,7 +17,7 @@
 			<RowDefinition Height="Auto" />
 			<RowDefinition />
 		</Grid.RowDefinitions>
-		<utu:NavigationBar Content="AdHoc"
+		<utu:NavigationBar Content="{x:Bind ViewModel.Title}"
 						   AutomationProperties.AutomationId="AdHocOnePage" />
 		<StackPanel Grid.Row="1">
 			<Button Content="One"
