@@ -828,6 +828,13 @@ public partial class Given_Methods_Then_GenerateCommands : FeedUITests
 		public void WithExplicitAttribute() { }
 	}
 
+	public partial class When_ImplicitCommandEnabled_ViewModel
+	{
+
+		[Reactive.Commands.Command(false)]
+		public void WithExplicitAttribute() { }
+	}
+
 	[TestMethod]
 	public async Task When_ImplicitCommandDisabled_ViewModel_Then_CommandNotGenerated()
 	{
@@ -852,6 +859,15 @@ public partial class Given_Methods_Then_GenerateCommands : FeedUITests
 
 		MemberInfo GetMember(string name)
 			=> typeof(BindableWhen_ImplicitCommandDisabled_ViewModel).GetMember(name, BindingFlags.Instance | BindingFlags.Public).Single();
+	}
+
+	[TestMethod]
+	public async Task When_ImplicitCommandEnabledAndUseExplicitAttribute_ViewModel_Then_CommandNotGenerated()
+	{
+		GetMember(nameof(When_ImplicitCommandEnabled_ViewModel.WithExplicitAttribute)).Should().NotBeNull().And.BeAssignableTo<MethodInfo>();
+
+		MemberInfo GetMember(string name)
+			=> typeof(BindableWhen_ImplicitCommandEnabled_ViewModel).GetMember(name, BindingFlags.Instance | BindingFlags.Public).Single();
 	}
 
 	[ImplicitFeedCommandParameters(false)]
