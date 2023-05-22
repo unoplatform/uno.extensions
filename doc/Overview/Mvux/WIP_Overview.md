@@ -1,89 +1,179 @@
-﻿ 
+﻿---
+uid: Overview.Mvux.Overview
+---
 
-# MVUX
-
- 
+# MVUX Overview
 
 MVUX is a variation of the MVU design pattern that will also feel familiar to developers who have previously worked with MVVM.
 
- 
-
-Considering a simple application scenario helps to understand what it does and the benefits gained from using it. So let's do that.
+Considering a simple application scenario helps to understand what it does and the benefits gained from using it, so let's do that.
 
 Our application will show the current temperature based on an external source.
 
-That should seem simple enough. All it needs to do is put a number on the screen. What's the problem?
+That should seem simple enough. All it needs to do is put a number on the screen.
+Although this seems like an easy problem, as is often the case, there are more details to consider than may be immediately apparent.
 
-As is often the case, there are more details to consider than may be immediately apparent.
-
-What if the external data isn't immediately available when starting the app?
-How to show that data is being initially loaded? Or updated?
-What if no data is available?
-What if there's an error in obtaining or processing the data?
-How to keep the app responsive while requesting or updating the UI?
-Does the app need to periodically request new data or listen to the external source provide it?
-How do we avoid threading or concurrency issues when handling new data in the background?
-How do we make sure the code is testable?
+- What if the external data isn't immediately available when starting the app?
+- How to show that data is being initially loaded? Or updated?
+- What if no data is available?
+- What if there's an error in obtaining or processing the data?
+- How to keep the app responsive while requesting or updating the UI?
+- How to keep track of the selected item or items?
+- How to enable loading of partial data and paginate the result?
+- How to update data in the server and the UI in response to user actions?
+- Does the app need to periodically request new data or listen to the external source provide it?
+- How do we avoid threading or concurrency issues when handling new data in the background?
+- How do we make sure the code is testable?
 
 Individually, these questions and scenarios are simple to handle, but hopefully, they highlight that there is more to consider in even a very trivial application. Now imagine an application that you need to build, and with more complex data and UIs, the potential for complexity and the amount of required code can grow enormously.
 
-MVUX is a response to this situation and makes it easier to handle many of the above scenarios.
+MVUX is a response to such situations and makes it easier to handle the above scenarios.  
+We'll look at the pattern and how to use it to make this app. 
 
- 
+## What is MVUX?
 
-We'll look at the pattern and how to use it to make this app.
-
- 
-
-## So, what is MVUX?
-
-It stands for Model, View, Update, eXtended.
+It stands for **M**odel, **V**iew, **U**pdate, e**X**tended.
 
 Looking at each individual element, it's easiest to start with the View.
 
-The **View** is the UI. You can write this with XAML, C#, or a combination of the two, much as you would when using another design pattern. You can even use data binding to separate the View and the data provided by a ViewModel. Yes, MVUX uses a ViewModel, but in a different way than the MVVM pattern.
+### View
 
-When we have our View, the user will interact with it to provide input, or the app will receive input from an external source. Whatever the source of the input, it will trigger an Update.
+The **View** is the UI. You can write it with XAML, C#, or a combination of the two, much as you would when using another design pattern. You would use data binding to bind to the ViewModel and allow separating the View from ViewModel. MVUX does use a ViewModel, but in a different way than the MVVM pattern. For now let's refer to the ViewModel as just Model.
 
-An **Update** changes the Model, which is then passed to the View. In the standard MVU pattern, an updated model will create a new View from the Model. In MVUX, the existing View will be updated from a generated ViewModel that wraps the Model class. Updates are made to the View to reflect changes or differences with the new ViewModel. The change detection is similar to using the `INotifyPropertyChanged` interface, except MVUX automatically handles the comparison and change detection for you.
+### Update
 
-The **Model** that the Update creates (and wraps in a generated ViewModel) is typically a simple `class` or `record` that contains only data and no logic. For this reason, a `record` or `struct` is usually the most appropriate data structure for the Model. Having the Model be immutable (or read-only) is also encouraged.
+When the user interacts with the View and provides input or action, it will trigger an **Update** that changes the Model.
 
-Working with immutable data structures can be a challenging transition for developers who have only previously only worked with Object-Orientated data. The fundamental difference is the creation of a new "object" with different data instead of modifying data within an existing one. Beyond it being a different way of writing and thinking about code, the most common question about creating multiple copies of potentially similar objects is how this impacts memory usage and performance. Don't worry, the "X" part of the MVUX implementation takes care of this for you, and you should not see any negative impact.
+In the standard MVU pattern, an updated Model will create a new View for the Model. In MVUX however, the existing View will be updated via data-binding by a ViewModel generated by MVUX, that wraps around the Model class, and tracks changes and differences to the Model.
+The change detection is similar to using the `INotifyPropertyChanged` interface, except MVUX automatically handles the comparison and change detection for you, using the generated ViewModel.
 
-In addition to helping avoid possible memory issues, the **eXtended** part of the pattern provides functionality for working with and displaying data.
+### Model
 
- 
+The **Model** that the Update creates (and is wrapped in a generated ViewModel) is typically a simple class or record that contains only data and no logic. For this reason, a record is usually the most appropriate data structure for the Model. C# records are immutable (read-only) and the use of them are encouraged by MVUX. It will be explained further later.
 
-The big difference between MVUX and patterns like MVVM is the use of "feeds" rather than properties. While a property has a single value, a "feed" is similar to a stream of values. When an updated value is received, it replaces the old value, and the View reacts to the change. In this way, it is similar to reactive programming. However, MVUX additionally combines the "feed's" value with a "status." 
+Working with immutable data structures can be a challenging transition for developers who have only previously only worked with `INotifyPropertyChanged` implementing classes. The fundamental difference is that since a record is immutable, making a change to it means creating a new object with different data instead of modifying data within an existing one. Don't worry, the "X" part of the MVUX implementation takes care of this for you.
 
-Common "statuses" for a "feed" include 'loading', 'has value', 'refreshing', 'empty', and 'error'. MVUX includes controls that make using these different statuses in the View easy without creating additional properties to manipulate and control what to show.
+### Extended
 
- 
+The **eXtended** part of the pattern provides the toolset to adapt between the data-binding engine and immutable data objects, as well as the rest of the functionality that will be covered later on.
 
-A "feed" can be a single value or a collection of values, such as a `List<T>`. It can also keep track of its current value(s). Keeping track of values is necessary if they may need to be "updated" while providing performance optimizations if you only need to display the value in the View without changing it.
+One of the big differences between MVUX and patterns like MVVM is the use of 'Feeds' in place of some of the change-notification properties. While a property has a single value, a feed is similar to a stream of values.  
+When an updated value is received, it replaces the old value, and the View reacts to the change. In this way, it is similar to reactive programming. However, MVUX additionally combines the Feed's value with 'statuses'.  
+Common statuses for a feed include 'loading', 'has value', 'refreshing', 'empty', and 'error'. MVUX includes controls that make displaying these different statuses in the View easy without the need to create additional properties to manipulate and control what to show.
 
-Models are always created asynchronously and automatically handle any necessary transitions to the UI thread. 
+A feed can be a stream of a single value or a collection of values. It can also keep track of its current value(s). Keeping track of values is necessary if they may need to be 'updated' while providing performance optimizations if you only need to display the value in the View without changing it.
+Models are always created asynchronously and automatically handle any necessary transitions to the UI thread.  
 
- 
-
-In many ways, MVUX is closer to functional programming than the OO approach often taken by developers using the MVVM pattern. Writing code this way brings benefits in code reuse and can simplify testing.
-
- 
-
- 
+In many ways, MVUX is closer to functional programming than the imperative approach often taken by developers using the MVVM pattern. Writing code this way brings benefits in code reuse and can simplify testing.
 
 The MVUX pattern brings four key benefits over other design patterns used to build native applications.
 
-It's entirely `async` to ensure a responsive user interface.
-It is reactive rather than event-driven and so needs less "boilerplate" code.
-It encourages the immutability of Model classes which, in turn, can lead to simpler code and easier testing.
-It automatically tracks and reports the "status" (or "state") of values which also simplifies the code you need to write.
+- It's entirely `async` to ensure a responsive user interface.
+- It is reactive rather than event-driven and so needs less boilerplate code.
+- It encourages the immutability of Model classes, which in turn can lead to improved efficiency and performance, simpler code, and easier object comparison and testing.
+- It automatically tracks and reports the status (or 'state') of asynchronously requested data, which also simplifies the code you need to write. 
 
- 
-
-Now you know the fundamentals of the pattern, let's see how to use it to create the simple weather app mentioned above.
-
- 
+Now that you know the fundamentals of the pattern, let's see how to use it to create the simple weather app mentioned above. 
 
 ## Using MVUX to create an app
+
+This example creates an `IFeed<WeatherInfo>` that will return the weather, which includes the temperature, loaded asynchronously from a weather service.
+
+### Service
+
+The `WeatherInfo` entity wraps the temperature, and in a real application would be extended to hold other weather information such as humidity or rainfall:
+
+```c#
+public partial record WeatherInfo(double Temperature);
+```
+
+The service has a single method that returns the current temperature returned asynchronously, in the following signature:
+
+```c#
+public interface IWeatherService
+{
+    ValueTask<WeatherInfo> GetCurrentWeather(CancellationToken ct);
+}
+```
+
+This is the implementation of the `IWeatherServiec` interface.
+It returns a random value as the current weather, after a delay of one second, to simulate the asynchronous interaction with a remote server:
+
+```c#
+public class WeatherService : IWeatherService
+{
+    public async ValueTask<WeatherInfo> GetCurrentWeather(CancellationToken ct)
+    {
+        await Task.Delay(TimeSpan.FromSeconds(1), ct);
+
+        return new WeatherInfo(new Random().Next(-40, 40));
+    }
+}
+```
+
+### Model
+
+The `WeatherModel` is the **Model** in MVUX (this would be referred to as a ViewModel in MVVM):
+
+```c#
+public partial record WeatherModel(IWeatherService WeatherService)
+{
+    public IFeed<WeatherInfo> CurrentWeather => Feed.Async(WeatherService.GetCurrentWeather);
+}
+```
+
+> [!IMPORTANT]  
+> For the code generation to work, mark the Models and entities with the `partial` modifier, and have the Feed properties' access modifier as `public`.  
+You can learn more about partial classes and methods in [this article](https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/classes-and-structs/partial-classes-and-methods).
+
+The `CurrentWeather` property is an `IFeed<WeatherInfo>`. It uses as an asynchronous gateway to the service, and also holds information about the current status of the data.
+
+The MVUX code-generator (the X in MVUX) generates a data-binding-ready clone of the Model (prefixed `Bindable`), it re-generates its properties, and also introduces commands for all of its public methods that meet a certain criteria, which will be discussed later.
+
+### View
+
+A special control, the `FeedView` is used to display data exposed as an `IFeed<T>`, and provides different display templates for the various statuses of the Feed (e.g. loading, refreshing, error etc.).
+
+The `FeedView` is data-bound to the `CurrentWeather` property which aligns with the `CurrentWeather` property exposed on the `WeatherModel`:
+
+```xml
+<Page x:Class="WeatherApp.MainPage"
+	  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	  xmlns:mvux="using:Uno.Extensions.Reactive.UI">
+
+	<mvux:FeedView Source="{Binding CurrentWeather}">
+		<DataTemplate>
+			<StackPanel>
+				<TextBlock DataContext="{Binding Data}"
+						   Text="{Binding Temperature}" />
+				<Button Content="Refresh"
+						Command="{Binding Refresh}" />
+			</StackPanel>
+		</DataTemplate>
+	</mvux:FeedView>
+
+</Page>
+```
+
+In the View's code-behind, we're assigning the page's `DataContext` to the generated clone of the Model:
+
+```csharp
+public sealed partial class MainPage : Page
+{
+    public MainPage()
+    {
+        this.InitializeComponent();
+
+        DataContext = new BindableWeatherModel(new WeatherService());
+    }
+}
+```
+
+Within the template, the `Data` property is used to access the data that was obtained from the service, currently available by the IFeed. In this case it's the most recent `WeatherInfo` result from the service.
+The `Data` property is bound to the `DataContext` of the `TextBlock`, making it possible to bind the `Text` property of the `TextBlock` to the `Temperature` property.
+
+The `Refresh` command is exposed by the `FeedView` and will cause the Feed to requery its source (the service).
+
+> [!NOTE]
+> For the full example see [How to create a feed](xref:Overview.Mvux.HowToSimpleFeed)
