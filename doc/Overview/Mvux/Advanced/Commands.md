@@ -14,7 +14,7 @@ This page covers the following topics:
   - [**Additional Feed parameters**](#additional-feed-parameters) - demonstrates how Feeds can be consumed as parameters of the command method.
   - [**Command generation rules**](#command-generation-rules) - a recap of implicit command generation rules.
   - [**Configuring command generation using attributes**](#configuring-command-generation-using-attributes) - discusses ways to enable or disable implicit command generation and Feed parameters using attributes.
-- [**Explicit command creation using factory methods**](#explicit-command-creation-using-factory-methods) - explains another approach of creating commands explicitly
+- [**Manual command creation using factory methods**](#manual-command-creation-using-factory-methods) - explains another approach of creating commands explicitly
 - [**Cancelling a command**](#cancelling-a-command) -
 
 ## What are commands
@@ -168,10 +168,10 @@ Here is a recap of the rules the Model method must comply for an `IAsyncCommand`
 
 #### ImplicitCommands attribute
 
-By default, implicit command generation is enabled. Any method in the Model that matches the [command generation rules](#command-generation-rules) will have an accompanying command wrapper generated for it.  
+By default, implicit command generation is enabled when the MVUX package is installed. That means that any method in the Model that matches the [command generation rules](#command-generation-rules) will have an accompanying command wrapper generated for it.  
 However, you may choose to switch implicit command generation on or off for a specific class, or the entire assembly. Conversly, when it has been switched off for the assembly, it can be switched back on for a specific class.
 
-Switching on or off commands can be achieved using the `ImplicitCommands` attribute. Here are some examples:
+Switching on or off commands can be achieved using the [`ImplicitCommands`](https://github.com/unoplatform/uno.extensions/blob/main/src/Uno.Extensions.Reactive/Config/ImplicitCommandsAttribute.cs) attribute. Here are some examples:
 
 Switching off implcicit command generation throughout the entire assembly:
 ```csharp
@@ -186,9 +186,33 @@ public partial record MyModel(...)
 
 You can combine these attributes on various class or on the assembly to opt in or out of implicit command generation on certain scopes.
 
+#### Command attribute
+
+In addition to the [`ImplicitCommand`](https://github.com/unoplatform/uno.extensions/blob/main/src/Uno.Extensions.Reactive/Presentation/Commands/CommandAttribute.cs) attribute which controls implicit command generation of a class or assembly, you can explicitly switch on or off command generation for a specific method.
+
+This can be achieved using the `ImplicitCommand` attribute.
+
+To have a command generated for the method, decorate it with the `Command` attribute (with its default value `true`):
+
+```csharp
+[Command]
+public async ValueTask DoWork()
+{
+}
+```
+
+Or in contrary, if this method should remain without a command generated for it, specify `true` to its `isEnabled` parameter:
+
+```csharp
+[Command(false)]
+public async ValueTask DoWork()
+{
+}
+```
+
 #### FeedParameter attribute
 
-You can explicitly match a parameter with a Feed even if the names don't match. Decorate the parameter with the `FeedParameter` attribute to explicitly match a parameter with a Feed:
+You can explicitly match a parameter with a Feed even if the names don't match. Decorate the parameter with the [`FeedParameter`](https://github.com/unoplatform/uno.extensions/blob/main/src/Uno.Extensions.Reactive/Presentation/Commands/FeedParameterAttribute.cs) attribute to explicitly match a parameter with a Feed:
      
 ```csharp
 public IFeed<string> Message { get; }
@@ -200,7 +224,7 @@ public async ValueTask Share([FeedParameter(nameof(Message))] string msg)
 
 #### ImplicitFeedCommandParameter attribute
 
-You can also turn opt in or out implicit matching of Feeds and command parameters by decorating the current assembly or class with the `ImplicitFeedCommandParameters` attribute:  
+You can also turn opt in or out implicit matching of Feeds and command parameters by decorating the current assembly or class with the [`ImplicitFeedCommandParameters`](https://github.com/unoplatform/uno.extensions/blob/main/src/Uno.Extensions.Reactive/Config/ImplicitFeedCommandParametersAttribute.cs) attribute:  
      
 ```csharp
 [assembly:ImplicitFeedCommandParameter(false)]
@@ -211,7 +235,7 @@ public partial record MyModel
 
 Like `ImplicitCommands`, `ImplicitFeedCommandParameter` attributes can also be nested to enable or disable specific scopes in the app.
 
-## Explicit command creation using factory methods
+## Manual command creation using factory methods
 
 Adding Commands via code generation is sufficient enough to probably cover all scenarios. However, sometimes you'd want to fine-grain your Commands and declare them in an explicit manner.  
 Commands can be built manually using the static class [`Command`](https://github.com/unoplatform/uno.extensions/blob/main/src/Uno.Extensions.Reactive/Presentation/Commands/Command.cs).  
