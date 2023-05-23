@@ -32,7 +32,15 @@ public static class Navigation
 
         if (d is FrameworkElement element)
         {
-            _ = new NavigationRequestBinder(element);
+			if (element.GetRequestBinding() is { } binding)
+			{
+				binding.Unbind();
+			}
+
+			if (e.NewValue is not null)
+			{
+				_ = new NavigationRequestBinder(element);
+			}
         }
     }
 
@@ -67,12 +75,12 @@ public static class Navigation
 		return default;
 	}
 
-	public static void SetRequestBinding(this FrameworkElement element, IRequestBinding value)
+	internal static void SetRequestBinding(this FrameworkElement element, IRequestBinding value)
 	{
 		element.SetValue(RequestBindingProperty, value);
 	}
 
-	public static IRequestBinding GetRequestBinding(this FrameworkElement element)
+	internal static IRequestBinding GetRequestBinding(this FrameworkElement element)
 	{
 		return (IRequestBinding)element.GetValue(RequestBindingProperty);
 	}

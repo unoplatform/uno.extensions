@@ -1,40 +1,38 @@
 ﻿namespace Uno.Extensions.Navigation.UI;
 
-public abstract class ControlRequestHandlerBase<TControl> : IRequestHandler
+/// <summary>
+/// Base class for request handlers that bind to a specific control type.
+/// </summary>
+/// <typeparam name="TControl">The type of control to handle requests for</typeparam>
+/// <param name="Logger">Logger for logging</param>
+public abstract record ControlRequestHandlerBase<TControl>(ILogger Logger) : IRequestHandler
 {
+	/// <inheritdoc/>
 	public abstract IRequestBinding? Bind(FrameworkElement view);
 
+	/// <inheritdoc/>
 	public bool CanBind(FrameworkElement view)
 	{
+		var controlType = typeof(TControl);
+
 		var viewType = view.GetType();
-		if (viewType == typeof(TControl))
+		if (viewType == controlType)
 		{
+			if (Logger.IsEnabled(LogLevel.Trace))
+			{
+				Logger.LogTraceMessage($"CanBind: {viewType} is {controlType}");
+			}
+
 			return true;
 		}
 
 		var baseTypes = viewType.GetBaseTypes();
-		return baseTypes.Any(baseType => baseType == typeof(TControl));
-	}
-}
-
-public record RequestBinding (FrameworkElement View, RoutedEventHandler LoadedHandler, RoutedEventHandler UnloadedHandler) : IRequestBinding
-{
-	public void Unbind()
-	{
-		if (LoadedHandler is not null)
+		var baseMatch = baseTypes.FirstOrDefault(baseType => baseType == controlType);
+		if (baseMatch is not null &&
+			Logger.IsEnabled(LogLevel.Trace))
 		{
-			if (View is not null)
-			{
-				View.Loaded -= LoadedHandler;
-			}
+			Logger.LogTraceMessage($"CanBind: {viewType} inherits from {baseMatch} that is {controlType}");
 		}
-		if (UnloadedHandler is not null)
-		{
-			UnloadedHandler(View, null);
-			if (View is not null)
-			{
-				View.Unloaded -= UnloadedHandler;
-			}
-		}
+		return baseMatch is not null;
 	}
 }

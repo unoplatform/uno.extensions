@@ -5,18 +5,27 @@ using NavigationViewItemInvokedEventArgs = Microsoft.UI.Xaml.Controls.Navigation
 
 namespace Uno.Extensions.Navigation.UI;
 
-public class NavigationViewRequestHandler : ControlRequestHandlerBase<NavigationView>
+/// <summary>
+/// Navigation request handler for <see cref="NavigationView"/>.
+/// </summary>
+/// <param name="HandlerLogger">Logger for logging</param>
+public sealed record NavigationViewRequestHandler(ILogger<NavigationViewRequestHandler> HandlerLogger) : ControlRequestHandlerBase<NavigationView>(HandlerLogger)
 {
+	/// <inheritdoc/>
 	public override IRequestBinding? Bind(FrameworkElement view)
 	{
 		var viewToBind = view;
 		var viewList = view as NavigationView;
 		if (viewList is null)
 		{
+			if (Logger.IsEnabled(LogLevel.Warning))
+			{
+				Logger.LogWarningMessage($"Bind: {view?.GetType()} is not a NavigationView");
+			}
 			return default;
 		}
 
-		Func<FrameworkElement, object, Task> action = async (sender, data) =>
+		async Task action(FrameworkElement sender, object data)
 		{
 			var navdata = sender.GetData() ?? data;
 			var path = sender.GetRequest();
@@ -27,9 +36,9 @@ public class NavigationViewRequestHandler : ControlRequestHandlerBase<Navigation
 			}
 
 			await nav.NavigateRouteAsync(sender, path, Qualifiers.None, navdata);
-		};
+		}
 
-		TypedEventHandler<NavigationView, NavigationViewSelectionChangedEventArgs> selectionAction = async (actionSender, actionArgs) =>
+		async void selectionAction(NavigationView actionSender, NavigationViewSelectionChangedEventArgs actionArgs)
 		{
 			var sender = actionSender;
 			if (sender is null)
@@ -49,9 +58,9 @@ public class NavigationViewRequestHandler : ControlRequestHandlerBase<Navigation
 			}
 
 			await action(sender, data);
-		};
+		}
 
-		TypedEventHandler<NavigationView, NavigationViewItemInvokedEventArgs> clickAction = async (actionSender, actionArgs) =>
+		async void clickAction(NavigationView actionSender, NavigationViewItemInvokedEventArgs actionArgs)
 		{
 			var sender = actionSender;
 			if (sender is null)
@@ -59,7 +68,7 @@ public class NavigationViewRequestHandler : ControlRequestHandlerBase<Navigation
 				return;
 			}
 
-			if(actionArgs.InvokedItemContainer is NavigationViewItem navItem && navItem.SelectsOnInvoked)
+			if (actionArgs.InvokedItemContainer is NavigationViewItem navItem && navItem.SelectsOnInvoked)
 			{
 				return;
 			}
@@ -71,7 +80,7 @@ public class NavigationViewRequestHandler : ControlRequestHandlerBase<Navigation
 			}
 
 			await action(sender, data);
-		};
+		}
 
 		Action? connect = null;
 		Action? disconnect = null;
@@ -83,7 +92,7 @@ public class NavigationViewRequestHandler : ControlRequestHandlerBase<Navigation
 
 			if (viewList.SelectedItem is not null)
 			{
-				action(viewList, viewList.SelectedItem);
+				_ = action(viewList, viewList.SelectedItem);
 			}
 		};
 
@@ -99,15 +108,15 @@ public class NavigationViewRequestHandler : ControlRequestHandlerBase<Navigation
 			connect();
 		}
 
-		RoutedEventHandler loadedHandler = (s, e) =>
+		void loadedHandler(object s, RoutedEventArgs e)
 		{
 			connect();
-		};
+		}
 		viewList.Loaded += loadedHandler;
-		RoutedEventHandler unloadedHandler = (s, e) =>
+		void unloadedHandler(object s, RoutedEventArgs e)
 		{
 			disconnect();
-		};
+		}
 		viewList.Unloaded += unloadedHandler;
 		return new RequestBinding(viewToBind, loadedHandler, unloadedHandler);
 	}
