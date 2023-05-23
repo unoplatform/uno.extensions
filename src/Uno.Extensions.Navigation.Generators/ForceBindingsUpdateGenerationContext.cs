@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
 using Microsoft.CodeAnalysis;
 using Uno.Extensions.Generators;
@@ -33,8 +34,13 @@ internal record ForceBindingsUpdateGenerationContext(
 			? attribute.value ?? true
 			: null;
 
-	private static string? ExtractXBindClassName(AdditionalText file)
+	private string? ExtractXBindClassName(AdditionalText file)
 	{
+		if (Context.CancellationToken.IsCancellationRequested)
+		{
+			return default;
+		}
+
 		string? className = null;
 		var hasXBind = false;
 
@@ -45,6 +51,11 @@ internal record ForceBindingsUpdateGenerationContext(
 			(className is null ||
 			!hasXBind))
 		{
+			if (Context.CancellationToken.IsCancellationRequested)
+			{
+				return default;
+			}
+
 			var txt = reader.ReadLine();
 			if (className is null)
 			{
@@ -70,16 +81,12 @@ internal record ForceBindingsUpdateGenerationContext(
 	{
 		get
 		{
-			if (_XBindFiles is null)
-			{
-				_XBindFiles = Context
+			_XBindFiles ??= Context
 								.AdditionalFiles
 								.Select(ExtractXBindClassName)
 								.Where(className=> className is not null)
 								.Select(x=>x!) // Is there a better way to force not null here?
 								.ToImmutableHashSet();
-
-			}
 			return _XBindFiles;
 		}
 	}
