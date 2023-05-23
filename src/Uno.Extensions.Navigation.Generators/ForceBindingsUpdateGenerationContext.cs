@@ -21,6 +21,10 @@ internal record ForceBindingsUpdateGenerationContext(
 	// General stuff types
 	[ContextType("Microsoft.UI.Xaml.Controls.Page")] INamedTypeSymbol Page)
 {
+	private IImmutableSet<string>? _XBindFiles;
+	private static readonly Regex ClassRegEx = new Regex("x:Class=\"([\\w.]+)\"");
+	private const string xBind = "{x:Bind ";
+
 	public bool IsGenerationNotDisable(ISymbol symbol)
 		=> IsGenerationEnabled(symbol) ?? true;
 
@@ -29,9 +33,38 @@ internal record ForceBindingsUpdateGenerationContext(
 			? attribute.value ?? true
 			: null;
 
-	private IImmutableSet<string>? _XBindFiles;
-	private static Regex ClassRegEx = new Regex("x:Class=\"([\\w.]+)\"");
-	private static string xBind = "{x:Bind ";
+	private static string? ExtractXBindClassName(AdditionalText file)
+	{
+		string? className = null;
+		var hasXBind = false;
+
+		using var reader = new StreamReader(file.Path);
+
+		while (
+			!reader.EndOfStream &&
+			(className is null ||
+			!hasXBind))
+		{
+			var txt = reader.ReadLine();
+			if (className is null)
+			{
+				var classNameMatch = ClassRegEx.Match(txt);
+				if (classNameMatch.Success &&
+					classNameMatch.Groups.Count > 1)
+				{
+					className = classNameMatch.Groups[1].Value;
+				}
+			}
+
+			if (txt is not null &&
+				txt.Contains(xBind))
+			{
+				hasXBind = true;
+			}
+		}
+
+		return hasXBind ? className : default;
+	}
 
 	private IImmutableSet<string> XBindFiles
 	{
@@ -39,41 +72,13 @@ internal record ForceBindingsUpdateGenerationContext(
 		{
 			if (_XBindFiles is null)
 			{
-				var files = ImmutableHashSet.CreateBuilder<string>();
-				foreach (var file in Context.AdditionalFiles)
-				{
-					using (var reader = new StreamReader(file.Path))
-					{
-						string? className = null;
-						var hasXBind = false;
-						while (
-							!reader.EndOfStream &&
-							(className is null ||
-							!hasXBind))
-						{
-							var txt = reader.ReadLine();
-							if(className is null)
-							{
-								var classNameMatch = ClassRegEx.Match(txt);
-								if (classNameMatch.Success &&
-									classNameMatch.Groups.Count > 1)
-								{
-									className = classNameMatch.Groups[1].Value;
-								}
-							}
-							if (txt is not null &&
-								txt.Contains(xBind))
-							{
-								hasXBind = true;
-							}
-						}
-						if(className is not null && hasXBind)
-						{
-							files.Add(className);
-						}
-					}
-				}
-				_XBindFiles = files.ToImmutableHashSet();
+				_XBindFiles = Context
+								.AdditionalFiles
+								.Select(ExtractXBindClassName)
+								.Where(className=> className is not null)
+								.Select(x=>x!) // Is there a better way to force not null here?
+								.ToImmutableHashSet();
+
 			}
 			return _XBindFiles;
 		}
