@@ -34,12 +34,18 @@ internal class ForceBindingsUpdateGenTool_1 : ICodeGenTool
 		var pages = from module in _assembly.Modules
 					from type in module.GetNamespaceTypes()
 					where
+						!_ctx.Context.CancellationToken.IsCancellationRequested &&
 						type is not null &&
 						IsSupported(type)
 					select type;
 
 		foreach (var page in pages)
 		{
+			if (_ctx.Context.CancellationToken.IsCancellationRequested)
+			{
+				yield break;
+			}
+
 			yield return (page.ToDisplayString(), Generate(page));
 		}
 	}

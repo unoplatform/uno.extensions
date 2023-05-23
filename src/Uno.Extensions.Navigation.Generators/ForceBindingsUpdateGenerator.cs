@@ -25,6 +25,10 @@ public partial class ForceBindingsUpdateGenerator : ISourceGenerator
 			Debugger.Launch();
 		}
 #endif
+		if (context.IsDesignTime())
+		{
+			return;
+		}
 
 		if (GenerationContext.TryGet<ForceBindingsUpdateGenerationContext>(context, out var error) is { } bindableContext)
 		{
