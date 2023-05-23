@@ -4,7 +4,6 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:uen="using:Uno.Extensions.Navigation.UI"
         Placement="Full">
-
     <Grid>
         <Frame uen:Region.Attached="True"
                HorizontalAlignment="Stretch"

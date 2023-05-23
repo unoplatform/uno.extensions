@@ -1,6 +1,6 @@
 ﻿namespace Uno.Extensions.Navigation.UI;
 
-public class NavigationRequestBinder
+internal class NavigationRequestBinder
 {
 	public NavigationRequestBinder(FrameworkElement view)
 	{
