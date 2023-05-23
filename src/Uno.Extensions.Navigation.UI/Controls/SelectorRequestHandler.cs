@@ -27,7 +27,8 @@ public class SelectorRequestHandler : ControlRequestHandlerBase<Selector>
 		SelectionChangedEventHandler selectionAction = async (actionSender, actionArgs) =>
 		{
 			var sender = actionSender as Selector;
-			if (sender is null)
+			if (sender is null ||
+				(sender is ListViewBase lvb && lvb.IsItemClickEnabled))
 			{
 				return;
 			}
@@ -35,7 +36,7 @@ public class SelectorRequestHandler : ControlRequestHandlerBase<Selector>
 							actionArgs?.AddedItems?.FirstOrDefault() ??
 							sender.SelectedItem; // In some cases, AddedItems is null, even though SelectedItem is not null
 
-			if(data is null)
+			if (data is null)
 			{
 				return;
 			}
@@ -46,7 +47,7 @@ public class SelectorRequestHandler : ControlRequestHandlerBase<Selector>
 		ItemClickEventHandler clickAction = async (actionSender, actionArgs) =>
 		{
 			var sender = actionSender as ListViewBase;
-			if (sender is null)
+			if (!(sender?.IsItemClickEnabled ?? false))
 			{
 				return;
 			}
@@ -61,14 +62,8 @@ public class SelectorRequestHandler : ControlRequestHandlerBase<Selector>
 		{
 			connect = () =>
 			{
-				if (lv.IsItemClickEnabled)
-				{
-					lv.ItemClick += clickAction;
-				}
-				else
-				{
-					viewList.SelectionChanged += selectionAction;
-				}
+				lv.ItemClick += clickAction;
+				viewList.SelectionChanged += selectionAction;
 			};
 
 			disconnect = () =>
@@ -88,7 +83,7 @@ public class SelectorRequestHandler : ControlRequestHandlerBase<Selector>
 			connect();
 		}
 
-		RoutedEventHandler loadedHandler =  (s, e) =>
+		RoutedEventHandler loadedHandler = (s, e) =>
 		{
 			connect();
 		};

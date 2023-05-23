@@ -13,7 +13,7 @@ public class PageNavigationRegisterHostInit: PageNavigationHostInit
 			new ViewMap<PageNavigationFourPage, PageNavigationFourViewModel>(),
 			new ViewMap<PageNavigationFivePage, PageNavigationFiveViewModel>(),
 			new ViewMap<PageNavigationSixPage, PageNavigationSixViewModel>(),
-			new ViewMap<PageNavigationSevenPage, PageNavigationSevenViewModel>(),
+			new DataViewMap<PageNavigationSevenPage, PageNavigationSevenViewModel, Widget>(),
 			new ViewMap<PageNavigationEightPage, PageNavigationEightViewModel>(),
 			new ViewMap<PageNavigationNinePage, PageNavigationNineViewModel>(),
 			new ViewMap<PageNavigationTenPage, PageNavigationTenViewModel>(),
