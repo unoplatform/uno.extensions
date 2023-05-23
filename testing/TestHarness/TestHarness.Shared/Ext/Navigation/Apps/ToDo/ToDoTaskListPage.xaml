@@ -39,14 +39,6 @@
 								Value="Visible" />
 						<Setter Target="TaskDetails.(uen:Region.Attached)"
 								Value="true" />
-						<Setter Target="ActiveTasks.SelectionMode"
-								Value="Single" />
-						<Setter Target="CompletedTasks.SelectionMode"
-								Value="Single" />
-						<Setter Target="ActiveTasks.IsItemClickEnabled"
-								Value="false" />
-						<Setter Target="ActiveTasks.IsItemClickEnabled"
-								Value="false" />
 					</VisualState.Setters>
 				</VisualState>
 				<VisualState x:Name="Narrow">
@@ -94,8 +86,6 @@
 									  Visibility="Collapsed">
 						<ListView ItemsSource="{Binding CompletedTasks}"
 								  uen:Navigation.Request="Task"
-								  SelectionMode="None"
-								  IsItemClickEnabled="true"
 								  x:Name="CompletedTasks"
 								  ItemTemplate="{StaticResource TaskTemplate}" />
 					</Grid>
@@ -104,8 +94,6 @@
 									  Visibility="Collapsed">
 						<ListView ItemsSource="{Binding ActiveTasks}"
 								  uen:Navigation.Request="Task"
-								  SelectionMode="None"
-								  IsItemClickEnabled="true"
 								  x:Name="ActiveTasks"
 								  ItemTemplate="{StaticResource TaskTemplate}" />
 					</Grid>
