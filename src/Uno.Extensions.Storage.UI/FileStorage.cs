@@ -1,12 +1,18 @@
 ﻿namespace Uno.Extensions.Storage;
 
-public record FileStorage(IDataFolderProvider DataFolderProvider) : IStorage
+internal record FileStorage(IDataFolderProvider DataFolderProvider) : IStorage
 {
 	private Task<bool> FileExistsInPackage(string fileName) => Uno.UI.Toolkit.StorageFileHelper.ExistsInPackage(fileName);
 
-	public async Task<string> CreateFolderAsync(string foldername)
+	public async Task<string?> CreateFolderAsync(string foldername)
 	{
-		var localFolder = await StorageFolder.GetFolderFromPathAsync(DataFolderProvider.AppDataPath!);
+		var path = DataFolderProvider.AppDataPath;
+		if(path is null)
+		{
+			return default;
+		}
+
+		var localFolder = await StorageFolder.GetFolderFromPathAsync(path);
 		var folder = await localFolder.CreateFolderAsync(foldername, CreationCollisionOption.OpenIfExists);
 		return folder.Path;
 	}

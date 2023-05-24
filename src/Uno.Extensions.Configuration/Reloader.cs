@@ -1,6 +1,6 @@
 ﻿namespace Uno.Extensions.Configuration;
 
-public class Reloader
+internal class Reloader
 {
 	internal static SemaphoreSlim ReadWriteLock = new SemaphoreSlim(1);
 
