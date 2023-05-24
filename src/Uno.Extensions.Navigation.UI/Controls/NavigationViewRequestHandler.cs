@@ -15,8 +15,7 @@ public sealed record NavigationViewRequestHandler(ILogger<NavigationViewRequestH
 	public override IRequestBinding? Bind(FrameworkElement view)
 	{
 		var viewToBind = view;
-		var viewList = view as NavigationView;
-		if (viewList is null)
+		if (view is not NavigationView viewList)
 		{
 			if (Logger.IsEnabled(LogLevel.Warning))
 			{
@@ -25,7 +24,7 @@ public sealed record NavigationViewRequestHandler(ILogger<NavigationViewRequestH
 			return default;
 		}
 
-		async Task action(FrameworkElement sender, object data)
+		async Task Action(FrameworkElement sender, object data)
 		{
 			var navdata = sender.GetData() ?? data;
 			var path = sender.GetRequest();
@@ -38,7 +37,7 @@ public sealed record NavigationViewRequestHandler(ILogger<NavigationViewRequestH
 			await nav.NavigateRouteAsync(sender, path, Qualifiers.None, navdata);
 		}
 
-		async void selectionAction(NavigationView actionSender, NavigationViewSelectionChangedEventArgs actionArgs)
+		async void SelectionAction(NavigationView actionSender, NavigationViewSelectionChangedEventArgs actionArgs)
 		{
 			var sender = actionSender;
 			if (sender is null)
@@ -57,10 +56,10 @@ public sealed record NavigationViewRequestHandler(ILogger<NavigationViewRequestH
 				return;
 			}
 
-			await action(sender, data);
+			await Action(sender, data);
 		}
 
-		async void clickAction(NavigationView actionSender, NavigationViewItemInvokedEventArgs actionArgs)
+		async void ClickAction(NavigationView actionSender, NavigationViewItemInvokedEventArgs actionArgs)
 		{
 			var sender = actionSender;
 			if (sender is null)
@@ -79,45 +78,42 @@ public sealed record NavigationViewRequestHandler(ILogger<NavigationViewRequestH
 				return;
 			}
 
-			await action(sender, data);
+			await Action(sender, data);
 		}
 
-		Action? connect = null;
-		Action? disconnect = null;
-
-		connect = () =>
+		void Connect()
 		{
-			viewList.ItemInvoked += clickAction;
-			viewList.SelectionChanged += selectionAction;
+			viewList.ItemInvoked += ClickAction;
+			viewList.SelectionChanged += SelectionAction;
 
 			if (viewList.SelectedItem is not null)
 			{
-				_ = action(viewList, viewList.SelectedItem);
+				_ = Action(viewList, viewList.SelectedItem);
 			}
 		};
 
-		disconnect = () =>
+		void Disconnect()
 		{
-			viewList.ItemInvoked -= clickAction;
-			viewList.SelectionChanged -= selectionAction;
+			viewList.ItemInvoked -= ClickAction;
+			viewList.SelectionChanged -= SelectionAction;
 		};
 
 
 		if (viewList.IsLoaded)
 		{
-			connect();
+			Connect();
 		}
 
-		void loadedHandler(object s, RoutedEventArgs e)
+		void LoadedHandler(object s, RoutedEventArgs e)
 		{
-			connect();
+			Connect();
 		}
-		viewList.Loaded += loadedHandler;
-		void unloadedHandler(object s, RoutedEventArgs e)
+		viewList.Loaded += LoadedHandler;
+		void UnloadedHandler(object s, RoutedEventArgs e)
 		{
-			disconnect();
+			Disconnect();
 		}
-		viewList.Unloaded += unloadedHandler;
-		return new RequestBinding(viewToBind, loadedHandler, unloadedHandler);
+		viewList.Unloaded += UnloadedHandler;
+		return new RequestBinding(viewToBind, LoadedHandler, UnloadedHandler);
 	}
 }

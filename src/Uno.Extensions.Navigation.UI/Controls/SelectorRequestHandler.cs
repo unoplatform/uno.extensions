@@ -20,7 +20,7 @@ public record SelectorRequestHandler(ILogger<SelectorRequestHandler> HandlerLogg
 			return default;
 		}
 
-		async Task action(FrameworkElement sender, object data)
+		async Task Action(FrameworkElement sender, object data)
 		{
 			var navdata = sender.GetData() ?? data;
 			var path = sender.GetRequest();
@@ -33,7 +33,7 @@ public record SelectorRequestHandler(ILogger<SelectorRequestHandler> HandlerLogg
 			await nav.NavigateRouteAsync(sender, path, Qualifiers.None, navdata);
 		}
 
-		async void selectionAction(object actionSender, SelectionChangedEventArgs actionArgs)
+		async void SelectionAction(object actionSender, SelectionChangedEventArgs actionArgs)
 		{
 			var sender = actionSender as Selector;
 			if (sender is null ||
@@ -50,10 +50,10 @@ public record SelectorRequestHandler(ILogger<SelectorRequestHandler> HandlerLogg
 				return;
 			}
 
-			await action(sender, data);
+			await Action(sender, data);
 		}
 
-		async void clickAction(object actionSender, ItemClickEventArgs actionArgs)
+		async void ClickAction(object actionSender, ItemClickEventArgs actionArgs)
 		{
 			var sender = actionSender as ListViewBase;
 			if (!(sender?.IsItemClickEnabled ?? false))
@@ -62,7 +62,7 @@ public record SelectorRequestHandler(ILogger<SelectorRequestHandler> HandlerLogg
 			}
 			var data = sender.GetData() ?? actionArgs.ClickedItem;
 
-			await action(sender, data);
+			await Action(sender, data);
 		}
 
 		Action? connect = null;
@@ -71,20 +71,20 @@ public record SelectorRequestHandler(ILogger<SelectorRequestHandler> HandlerLogg
 		{
 			connect = () =>
 			{
-				lv.ItemClick += clickAction;
-				viewList.SelectionChanged += selectionAction;
+				lv.ItemClick += ClickAction;
+				viewList.SelectionChanged += SelectionAction;
 			};
 
 			disconnect = () =>
 			{
-				lv.ItemClick -= clickAction;
-				viewList.SelectionChanged -= selectionAction;
+				lv.ItemClick -= ClickAction;
+				viewList.SelectionChanged -= SelectionAction;
 			};
 		}
 		else
 		{
-			connect = () => viewList.SelectionChanged += selectionAction;
-			disconnect = () => viewList.SelectionChanged -= selectionAction;
+			connect = () => viewList.SelectionChanged += SelectionAction;
+			disconnect = () => viewList.SelectionChanged -= SelectionAction;
 		}
 
 		if (viewList.IsLoaded)
@@ -92,16 +92,16 @@ public record SelectorRequestHandler(ILogger<SelectorRequestHandler> HandlerLogg
 			connect();
 		}
 
-		void loadedHandler(object s, RoutedEventArgs e)
+		void LoadedHandler(object s, RoutedEventArgs e)
 		{
 			connect();
 		}
-		viewList.Loaded += loadedHandler;
-		void unloadedHandler(object s, RoutedEventArgs e)
+		viewList.Loaded += LoadedHandler;
+		void UnloadedHandler(object s, RoutedEventArgs e)
 		{
 			disconnect();
 		}
-		viewList.Unloaded += unloadedHandler;
-		return new RequestBinding(viewToBind, loadedHandler, unloadedHandler);
+		viewList.Unloaded += UnloadedHandler;
+		return new RequestBinding(viewToBind, LoadedHandler, UnloadedHandler);
 	}
 }

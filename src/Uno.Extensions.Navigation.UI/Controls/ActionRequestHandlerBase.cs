@@ -34,7 +34,8 @@ public abstract record ActionRequestHandlerBase<TView>(ILogger Logger, IRouteRes
 		where TElement : FrameworkElement
 	{
 		var viewToBind = view;
-		async void action(FrameworkElement element, RoutedEventArgs? eventArgs)
+
+		async void Action(FrameworkElement element, RoutedEventArgs? eventArgs)
 		{
 			var path = element.GetRequest();
 			var nav = element.Navigator();
@@ -132,7 +133,7 @@ public abstract record ActionRequestHandlerBase<TView>(ILogger Logger, IRouteRes
 			}
 		}
 
-		var handler = eventHandler(action);
+		var handler = eventHandler(Action);
 
 		var subscribed = false;
 		if (view.IsLoaded)
@@ -145,7 +146,7 @@ public abstract record ActionRequestHandlerBase<TView>(ILogger Logger, IRouteRes
 			subscribe(viewToBind, handler);
 		}
 
-		void loadedHandler(object s, RoutedEventArgs e)
+		void LoadedHandler(object s, RoutedEventArgs e)
 		{
 			if (!subscribed)
 			{
@@ -157,8 +158,8 @@ public abstract record ActionRequestHandlerBase<TView>(ILogger Logger, IRouteRes
 				subscribe(viewToBind, handler);
 			}
 		}
-		view.Loaded += loadedHandler;
-		void unloadedHandler(object s, RoutedEventArgs e)
+		view.Loaded += LoadedHandler;
+		void UnloadedHandler(object s, RoutedEventArgs e)
 		{
 			if (subscribed)
 			{
@@ -170,8 +171,8 @@ public abstract record ActionRequestHandlerBase<TView>(ILogger Logger, IRouteRes
 				unsubscribe(viewToBind, handler);
 			}
 		}
-		view.Unloaded += unloadedHandler;
+		view.Unloaded += UnloadedHandler;
 
-		return new RequestBinding(viewToBind, loadedHandler, unloadedHandler);
+		return new RequestBinding(viewToBind, LoadedHandler, UnloadedHandler);
 	}
 }

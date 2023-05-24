@@ -13,8 +13,7 @@ public sealed record NavigationViewItemRequestHandler(ILogger<NavigationViewItem
 	/// <inheritdoc/>
 	public override IRequestBinding? Bind(FrameworkElement view)
 	{
-		var viewButton = view as NavigationViewItem;
-		if (viewButton is null)
+		if (view is not NavigationViewItem viewButton)
 		{
 			if (Logger.IsEnabled(LogLevel.Warning))
 			{
