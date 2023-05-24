@@ -26,6 +26,8 @@
 						Click="FlyoutFromBackgroundClick" />
 				<Button Content="Flyout from Background Thread requesting data"
 						Click="FlyoutFromBackgroundRequestingDataClick" />
+				<Button Content="Flyout requesting data with cancellation (2s)"
+						Click="FlyoutRequestingDataWithCancelClick" />
 				<TextBlock Text="{Binding FlyoutData.Id}" />
 				<Button uen:Navigation.Request="!DialogsComplexFlyout"
 						uen:Navigation.Data="{Binding FlyoutData, Mode=TwoWay}"
