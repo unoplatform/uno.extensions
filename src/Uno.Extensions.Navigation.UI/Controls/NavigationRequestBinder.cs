@@ -44,6 +44,14 @@ internal class NavigationRequestBinder
 				if (handler is not null)
 				{
 					var binding = handler.Bind(element);
+
+
+					// Unbind existing binding if it doesn't match this binding
+					if (element.GetRequestBinding() is { } existing)
+					{
+						existing.Unbind();
+					}
+
 					if (binding is not null)
 					{
 						element.SetRequestBinding(binding);
