@@ -32,7 +32,7 @@ internal record MsalAuthenticationProvider(
 		Settings?.Build?.Invoke(builder);
 
 		_scopes = config.Scopes ?? new string[] { };
-		if(_scopes.Length == 0 &&
+		if (_scopes.Length == 0 &&
 			Settings?.Scopes is not null)
 		{
 			_scopes = Settings.Scopes;
@@ -140,6 +140,15 @@ internal record MsalAuthenticationProvider(
 			if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"Setting up storage location");
 
 			var folderPath = await Storage.CreateFolderAsync(Name.ToLower());
+			if (folderPath is null)
+			{
+				if (Logger.IsEnabled(LogLevel.Warning))
+				{
+					Logger.LogWarningMessage($"Folder should not be null, exiting Msal storage setup");
+				}
+				return;
+			}
+
 			Console.WriteLine($"Folder: {folderPath}");
 			var filePath = Path.Combine(folderPath, CacheFileName);
 			if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"MSAL cache {filePath}");

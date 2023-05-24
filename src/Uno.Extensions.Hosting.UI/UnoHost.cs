@@ -22,19 +22,22 @@ public static class UnoHost
 				catch
 				{
 					// This will throw an exception on WinUI if unpackaged, so dataFolder will be null
+					// Can also be null on Linux FrameBuffer
 				}
-#if WINUI && WINDOWS
-				var appName = Assembly.GetEntryAssembly()?.GetName().Name ?? string.Empty;
+
 				if (string.IsNullOrWhiteSpace(dataFolder))
 				{
+					var appName = Assembly.GetEntryAssembly()?.GetName().Name ?? string.Empty;
 					dataFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData, Environment.SpecialFolderOption.Create), appName);
 				}
-				if (!Directory.Exists(dataFolder))
+
+				if (!string.IsNullOrWhiteSpace(dataFolder) &&
+					!Directory.Exists(dataFolder))
 				{
 					Directory.CreateDirectory(dataFolder);
 				}
-#endif
-				var appHost = AppHostingEnvironment.FromHostEnvironment(ctx.HostingEnvironment, dataFolder, applicationAssembly);
+
+				var appHost = ctx.HostingEnvironment.FromHostEnvironment(dataFolder, applicationAssembly);
 				ctx.HostingEnvironment = appHost;
 			})
 			.ConfigureServices((ctx, services) =>

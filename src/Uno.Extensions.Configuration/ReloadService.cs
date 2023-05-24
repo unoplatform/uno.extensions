@@ -1,6 +1,6 @@
 ﻿namespace Uno.Extensions.Configuration;
 
-public class ReloadService : IHostedService, IStartupService
+internal class ReloadService : IHostedService, IStartupService
 {
 	public ReloadService(
 		ILogger<ReloadService> logger,
@@ -12,7 +12,10 @@ public class ReloadService : IHostedService, IStartupService
 		Reload = reload;
 		Config = configRoot;
 		Storage = storage;
-		if(Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Created");
+		if (Logger.IsEnabled(LogLevel.Debug))
+		{
+			Logger.LogDebugMessage($"Created");
+		}
 	}
 
 	private IStorage Storage { get; }
@@ -28,7 +31,10 @@ public class ReloadService : IHostedService, IStartupService
 	public async Task StartAsync(CancellationToken cancellationToken)
 	{
 		var folderPath = await Storage.CreateFolderAsync(ConfigBuilderExtensions.ConfigurationFolderName);
-		if(Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($@"Folder path should be '{folderPath}'");
+		if (Logger.IsEnabled(LogLevel.Debug))
+		{
+			Logger.LogDebugMessage($@"Application data path is '{folderPath}'");
+		}
 
 		var fileProviders = Config.Providers;
 		var reloadEnabled = false;
@@ -44,12 +50,23 @@ public class ReloadService : IHostedService, IStartupService
 
 		}
 
-		foreach (var configSource in configSourceFiles)
+		if (folderPath is not null)
 		{
-			await CopyApplicationFileToLocal(folderPath, configSource.ToLower());
+			if (Logger.IsEnabled(LogLevel.Warning))
+			{
+				Logger.LogWarningMessage($@"Application data path should not be null");
+			}
+
+			foreach (var configSource in configSourceFiles)
+			{
+				await CopyApplicationFileToLocal(folderPath, configSource.ToLower());
+			}
 		}
 
-		if(Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Started");
+		if (Logger.IsEnabled(LogLevel.Debug))
+		{
+			Logger.LogDebugMessage($"Started");
+		}
 
 		if (reloadEnabled)
 		{
@@ -67,7 +84,7 @@ public class ReloadService : IHostedService, IStartupService
 			if (settings is not null &&
 				!string.IsNullOrWhiteSpace(settings))
 			{
-				if(Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($@"Settings '{settings}'");
+				if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($@"Settings '{settings}'");
 				var fullPath = Path.Combine(localFolderPath, file);
 				await Storage.WriteFileAsync(fullPath, settings, false);
 			}
@@ -80,7 +97,7 @@ public class ReloadService : IHostedService, IStartupService
 
 	public Task StopAsync(CancellationToken cancellationToken)
 	{
-		if(Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Stopped");
+		if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Stopped");
 		return Task.CompletedTask;
 	}
 
