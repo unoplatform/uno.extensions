@@ -10,10 +10,9 @@ public sealed record ButtonBaseRequestHandler(ILogger<ButtonBaseRequestHandler> 
 	/// <inheritdoc/>
 	public override IRequestBinding? Bind(FrameworkElement view)
 	{
-		var viewButton = view as ButtonBase;
-		if (viewButton is null)
+		if (view is not ButtonBase viewButton)
 		{
-			if(Logger.IsEnabled(LogLevel.Warning))
+			if (Logger.IsEnabled(LogLevel.Warning))
 			{
 				Logger.LogWarningMessage($"Bind: {view?.GetType()} is not a ButtonBase");
 			}

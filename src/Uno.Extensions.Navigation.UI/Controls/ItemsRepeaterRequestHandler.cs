@@ -25,7 +25,7 @@ public sealed record ItemsRepeaterRequestHandler(ILogger<ItemsRepeaterRequestHan
 			return default;
 		}
 
-		async Task action(FrameworkElement sender, object? data)
+		async Task Action(FrameworkElement sender, object? data)
 		{
 			var navdata = data;
 			var path = sender.GetRequest();
@@ -41,7 +41,7 @@ public sealed record ItemsRepeaterRequestHandler(ILogger<ItemsRepeaterRequestHan
 		var isCaptured = false;
 		object? dataContext = default;
 		FrameworkElement? pointerElement = default;
-		void pointerPressed(object actionSender, PointerRoutedEventArgs actionArgs)
+		void PointerPressed(object actionSender, PointerRoutedEventArgs actionArgs)
 		{
 			var sender = actionSender as ItemsRepeater;
 			if (sender is null)
@@ -69,7 +69,7 @@ public sealed record ItemsRepeaterRequestHandler(ILogger<ItemsRepeaterRequestHan
 
 		}
 
-		async void pointerReleased(object actionSender, PointerRoutedEventArgs actionArgs)
+		async void PointerReleased(object actionSender, PointerRoutedEventArgs actionArgs)
 		{
 			var sender = actionSender as ItemsRepeater;
 			if (sender is null)
@@ -92,7 +92,7 @@ public sealed record ItemsRepeaterRequestHandler(ILogger<ItemsRepeaterRequestHan
 				if (pointerInControl)
 				{
 					actionArgs.Handled = true;
-					await action(sender, dataContext);
+					await Action(sender, dataContext);
 				}
 
 				isCaptured = false;
@@ -103,32 +103,32 @@ public sealed record ItemsRepeaterRequestHandler(ILogger<ItemsRepeaterRequestHan
 		}
 
 
-		void connect()
+		void Connect()
 		{
-			viewList.PointerPressed += pointerPressed;
-			viewList.PointerReleased += pointerReleased;
+			viewList.PointerPressed += PointerPressed;
+			viewList.PointerReleased += PointerReleased;
 		}
-		void disconnect()
+		void Disconnect()
 		{
-			viewList.PointerPressed -= pointerPressed;
-			viewList.PointerReleased -= pointerReleased;
+			viewList.PointerPressed -= PointerPressed;
+			viewList.PointerReleased -= PointerReleased;
 		}
 
 		if (viewList.IsLoaded)
 		{
-			connect();
+			Connect();
 		}
 
-		void loadedHandler(object s, RoutedEventArgs e)
+		void LoadedHandler(object s, RoutedEventArgs e)
 		{
-			connect();
+			Connect();
 		}
-		viewList.Loaded += loadedHandler;
-		void unloadedHandler(object s, RoutedEventArgs e)
+		viewList.Loaded += LoadedHandler;
+		void UnloadedHandler(object s, RoutedEventArgs e)
 		{
-			disconnect();
+			Disconnect();
 		}
-		viewList.Unloaded += unloadedHandler;
-		return new RequestBinding(viewToBind, loadedHandler, unloadedHandler);
+		viewList.Unloaded += UnloadedHandler;
+		return new RequestBinding(viewToBind, LoadedHandler, UnloadedHandler);
 	}
 }
