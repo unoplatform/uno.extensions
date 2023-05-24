@@ -91,14 +91,6 @@ public static class NavigationRequestExtensions
 		}
 
 		var route = new Route(qualifier, routeBase, path, paras);
-		if ((route.IsBackOrCloseNavigation() && !route.IsClearBackstack()) &&
-			data is not null &&
-			data is not IOption)
-		{
-			data = Option.Some<object>(data);
-			paras[string.Empty] = data;
-			route = route with { Data = paras };
-		}
 		return route;
 	}
 

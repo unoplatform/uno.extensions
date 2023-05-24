@@ -25,6 +25,9 @@
 			<Button AutomationProperties.AutomationId="SixPageBackButton"
 					Content="Back"
 					uen:Navigation.Request="-" />
+			<Button AutomationProperties.AutomationId="SixPageToSevenPageViewModelButton"
+					Content="Seven (ViewModel)"
+					Click="{x:Bind ViewModel.GoToSeven}" />
 
 		</StackPanel>
 	</Grid>
