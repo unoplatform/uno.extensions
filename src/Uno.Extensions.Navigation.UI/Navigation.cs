@@ -32,11 +32,6 @@ public static class Navigation
 
         if (d is FrameworkElement element)
         {
-			if (element.GetRequestBinding() is { } binding)
-			{
-				binding.Unbind();
-			}
-
 			if (e.NewValue is not null)
 			{
 				_ = new NavigationRequestBinder(element);
