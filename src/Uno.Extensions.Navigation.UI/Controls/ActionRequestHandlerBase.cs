@@ -101,8 +101,7 @@ public abstract record ActionRequestHandlerBase<TView>(ILogger Logger, IRouteRes
 
 			var response = await nav.NavigateRouteHintAsync(routeHint, element, data, CancellationToken.None);
 
-			if (binding is not null &&
-				binding.ParentBinding.Mode == BindingMode.TwoWay)
+			if (binding?.ParentBinding.Mode == BindingMode.TwoWay)
 			{
 				if (Logger.IsEnabled(LogLevel.Trace))
 				{
