@@ -4,11 +4,11 @@ uid: Overview.Localization
 
 # Localization
 
-It is often necessary to adapt an application to a specific subset of users within a market. **Localization** includes the type of actions developers take to modify both user interface elements and content to adhere to more languages or cultures. Specifically, text **translation** is done by applying alternate strings of text at runtime which accomodate a user's language preference.
+It is often necessary to adapt an application to a specific subset of users within a market. **Localization** includes the type of actions developers take to modify both user interface elements and content to adhere to more languages or cultures. Specifically, text **translation** is done by applying alternate strings of text at runtime which accommodate a user's language preference.
 
-Many apps store these pieces of text in dedicated resource files that the app parses and assigns as text throughout the application. `Uno.Extensions.Localization` provides a consistent way to resolve text of a specific culture or locale across platforms. This feature allows for modifying them to be applied upon app restart.
+Many apps store these pieces of text in dedicated resource files that the app parses and assigns as text throughout the application. `Uno.Extensions.Localization` provides a consistent way to resolve the text of a specific culture or locale across platforms. This feature allows for modifying them to be applied upon app restart.
 
-It uses [Microsoft.Extensions.Localization](https://www.nuget.org/packages/Microsoft.Extensions.Localization) for any localization related work. For documentation on the broader process of localization, read the references listed at the bottom.
+It uses [Microsoft.Extensions.Localization](https://www.nuget.org/packages/Microsoft.Extensions.Localization) for any localization-related work. For documentation on the broader process of localization, read the references listed at the bottom.
 
 ## Set up localization
 
@@ -25,7 +25,7 @@ protected override void OnLaunched(LaunchActivatedEventArgs e)
 
 An implementation of `IStringLocalizer` (`ResourceLoaderStringLocalizer`) will be registered as a service. This service offers a consistent way to resolve localized strings. Behind the scenes, it will automatically use `ResourceManager` on Windows and `ResourceLoader` on other platforms.
 
-### Adding language specific resources
+### Adding language-specific resources
 
 The `ResourceLoaderStringLocalizer` will look for `.resw` files in folders corresponding to the well-known language tag (eg en-US). For example, if the current culture is `en-US`, the `ResourceLoaderStringLocalizer` will look for `.resw` files in the `en-US` folder. If the current culture is `fr-FR`, the `ResourceLoaderStringLocalizer` will look for `.resw` files in the `fr-FR` folder.
 
@@ -44,18 +44,18 @@ The cultures which the app will support are enumerated in a specific section of 
 
 #### Add resource files
 
-To add a new resource file, right click on the project and select **Add > New Item...**. Select **Resource File (.resw)** and name it `Resources.resw`. Resource files have a key-value pair structure. The key is used to identify the resource, and the value can represent any valid property value such as translated text, width of an item, or a color.
+To add a new resource file, right-click on the project and select **Add > New Item...**. Select **Resource File (.resw)** and name it `Resources.resw`. Resource files have a key-value pair structure. The key is used to identify the resource, and the value can represent any valid property value such as translated text, the width of an item, or a color.
 
 
 ### Resolving localized strings
 
-Once locale specific resources are included, the localization feature can be used to resolve those localized values.
+Once local-specific resources are included, the localization feature can be used to resolve those localized values.
 
 #### Using resources in XAML
 
-The key contains a name which corresponds to the `x:Uid` and intended property of the XAML element. The value contains the localized text.
+The key contains a name that corresponds to the `x:Uid` and the intended property of the XAML element. The value contains the localized text.
 
-For example, if the `x:Uid` property of a `TextBlock` is `MyTextBlock`, the key in the resource file should be `MyTextBlock.Text`. In XAML, assigning a localized value to an element with a `x:Uid` property looks like this:
+For example, if the `x:Uid` property of a `TextBlock` is `MyTextBlock`, the key in the resource file should be `MyTextBlock.Text`. In XAML, assigning a localized value to an element with an `x:Uid` property looks like this:
 
 ```xml
 <TextBlock x:Uid="MyTextBlock" />
@@ -63,7 +63,7 @@ For example, if the `x:Uid` property of a `TextBlock` is `MyTextBlock`, the key 
 
 #### Using resources in code-behind
 
-Setting the `x:Uid` property in markup is not required to resolve localized resources like text. The `IStringLocalizer` service can be resolved from the service provider. This service can be used to resolve localized strings in code-behind.
+Setting the `x:Uid` property in markup is not required to resolve localized resources like text. The `IStringLocalizer` service can be resolved by the service provider. This service can be used to resolve localized strings in code behind.
 
 ```csharp
 var stringLocalizer = serviceProvider.GetService<IStringLocalizer>();
