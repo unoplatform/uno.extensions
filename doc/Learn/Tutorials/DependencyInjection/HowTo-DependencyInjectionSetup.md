@@ -60,7 +60,7 @@ Dependency Injection (DI) is an important design pattern for building loosely-co
         }
     }
     ```
-* For the dependency injection framework to handle instantiation of the service as a constructor argument, you must also register your view model with the `IServiceCollection` (or register the view model via routing):
+* If you are using not using [navigation](../../../Overview/Navigation/NavigationOverview.md), you have to register the view model to `IServiceCollection`, but we recommend using navigation and not manually register the view model as a service:
     ```cs
     private IHost Host { get; } = BuildAppHost();
 
