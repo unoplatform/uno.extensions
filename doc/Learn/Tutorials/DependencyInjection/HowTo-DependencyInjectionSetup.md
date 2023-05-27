@@ -60,21 +60,21 @@ Dependency Injection (DI) is an important design pattern for building loosely-co
         }
     }
     ```
-* For the dependency injection framework to handle instantiation of the service as a constructor argument, you must also register your view model with the `IServiceCollection`:
+* For the dependency injection framework to handle instantiation of the service as a constructor argument, you must also register your view model with the `IServiceCollection` (or register the view model via routing):
     ```cs
     private IHost Host { get; } = BuildAppHost();
 
     private static IHost BuildAppHost()
-	{ 
-		return UnoHost
+    { 
+        return UnoHost
             .CreateDefaultBuilder()
             .ConfigureServices(services =>
-			{
-				// Register your services
-				services.AddSingleton<IProfilePictureService, ProfilePictureService>();
+            {
+                // Register your services
+		services.AddSingleton<IProfilePictureService, ProfilePictureService>();
                 // Register view model
                 services.AddTransient<MainViewModel>();
-			})
+            })
             .Build();
     }        
     ```
