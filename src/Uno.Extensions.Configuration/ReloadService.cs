@@ -52,25 +52,28 @@ internal class ReloadService : IHostedService, IStartupService
 
 		if (folderPath is not null)
 		{
-			if (Logger.IsEnabled(LogLevel.Warning))
-			{
-				Logger.LogWarningMessage($@"Application data path should not be null");
-			}
-
 			foreach (var configSource in configSourceFiles)
 			{
 				await CopyApplicationFileToLocal(folderPath, configSource.ToLower());
 			}
 		}
-
-		if (Logger.IsEnabled(LogLevel.Debug))
+		else
 		{
-			Logger.LogDebugMessage($"Started");
+			if (Logger.IsEnabled(LogLevel.Warning))
+			{
+				Logger.LogWarningMessage($@"Application data path should not be null");
+			}
 		}
+
 
 		if (reloadEnabled)
 		{
 			await Reload.ReloadAllFileConfigurationProviders();
+		}
+
+		if (Logger.IsEnabled(LogLevel.Debug))
+		{
+			Logger.LogDebugMessage($"Startup completed");
 		}
 
 		StartupCompletion.TrySetResult(true);
@@ -84,20 +87,30 @@ internal class ReloadService : IHostedService, IStartupService
 			if (settings is not null &&
 				!string.IsNullOrWhiteSpace(settings))
 			{
-				if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($@"Settings '{settings}'");
+				if (Logger.IsEnabled(LogLevel.Debug))
+				{
+					Logger.LogDebugMessage($@"Settings '{settings}'");
+				}
+
 				var fullPath = Path.Combine(localFolderPath, file);
 				await Storage.WriteFileAsync(fullPath, settings, false);
 			}
 		}
 		catch
 		{
-			if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTrace($"{file} not included as content");
+			if (Logger.IsEnabled(LogLevel.Trace))
+			{
+				Logger.LogTrace($"{file} not included as content");
+			}
 		}
 	}
 
 	public Task StopAsync(CancellationToken cancellationToken)
 	{
-		if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Stopped");
+		if (Logger.IsEnabled(LogLevel.Debug))
+		{
+			Logger.LogDebugMessage($"Stopped");
+		}
 		return Task.CompletedTask;
 	}
 

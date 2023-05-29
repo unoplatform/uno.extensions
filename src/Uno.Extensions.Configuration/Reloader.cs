@@ -16,30 +16,44 @@ internal class Reloader
 
 	public async Task ReloadAllFileConfigurationProviders(string? configFile = default)
 	{
-		if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Reloading config");
-
+		if (Logger.IsEnabled(LogLevel.Debug))
+		{
+			Logger.LogDebugMessage($"Reloading configuration - started");
+		}
 
 		var fileProviders = Config.Providers;
 		foreach (var fp in fileProviders)
 		{
-			if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($@"Config provider of type '{fp.GetType().Name}'");
+			if (Logger.IsEnabled(LogLevel.Trace))
+			{
+				Logger.LogTraceMessage($@"Config provider of type '{fp.GetType().Name}'");
+			}
+
 			if (fp is FileConfigurationProvider fcp && (configFile is null || configFile.ToLower().Contains(fcp.Source.Path.Split('/', '\\').Last().ToLower())))
 			{
-				if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($@"Loading from file '{fcp.Source.Path}'");
+				if (Logger.IsEnabled(LogLevel.Trace))
+				{
+					Logger.LogTraceMessage($@"Loading from file '{fcp.Source.Path}'");
+				}
+
 				var provider = fcp.Source.FileProvider;
 				var info = provider.GetFileInfo(fcp.Source.Path);
 				if (!File.Exists(info.PhysicalPath))
 				{
-					if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($@"File doesn't exist '{info.PhysicalPath}'");
+					if (Logger.IsEnabled(LogLevel.Trace))
+					{
+						Logger.LogTraceMessage($@"File doesn't exist '{info.PhysicalPath}'");
+					}
 				}
 				else
 				{
-					if (Logger.IsEnabled(LogLevel.Debug))
+					if (Logger.IsEnabled(LogLevel.Trace))
 					{
 						var contents = File.ReadAllText(info.PhysicalPath);
-						Logger.LogDebugMessage($@"Contents '{contents}'");
-						Logger.LogDebugMessage($@"Loading from full path '{info.PhysicalPath}'");
+						Logger.LogTraceMessage($@"Contents '{contents}'");
+						Logger.LogTraceMessage($@"Loading from full path '{info.PhysicalPath}'");
 					}
+
 					await ReadWriteLock.WaitAsync();
 					try
 					{
@@ -52,6 +66,9 @@ internal class Reloader
 				}
 			}
 		}
-		if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Reloading configuration complete");
+		if (Logger.IsEnabled(LogLevel.Debug))
+		{
+			Logger.LogDebugMessage($"Reloading configuration complete");
+		}
 	}
 }

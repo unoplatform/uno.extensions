@@ -134,10 +134,17 @@ internal record MsalAuthenticationProvider(
 			_isCompleted = true;
 
 #if WINDOWS_UWP || !NET6_0_OR_GREATER
-			if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"No further action required for setting up storage");
+			if (Logger.IsEnabled(LogLevel.Trace))
+			{
+				Logger.LogTraceMessage($"No further action required for setting up storage");
+			}
+
 			return;
 #else
-			if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"Setting up storage location");
+			if (Logger.IsEnabled(LogLevel.Trace))
+			{
+				Logger.LogTraceMessage($"Setting up storage location");
+			}
 
 			var folderPath = await Storage.CreateFolderAsync(Name.ToLower());
 			if (folderPath is null)
@@ -149,9 +156,17 @@ internal record MsalAuthenticationProvider(
 				return;
 			}
 
-			Console.WriteLine($"Folder: {folderPath}");
+			if (Logger.IsEnabled(LogLevel.Trace))
+			{
+				Logger.LogTraceMessage($"Folder: {folderPath}");
+			}
+
 			var filePath = Path.Combine(folderPath, CacheFileName);
-			if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"MSAL cache {filePath}");
+			if (Logger.IsEnabled(LogLevel.Trace))
+			{
+				Logger.LogTraceMessage($"MSAL cache {filePath}");
+			}
+
 			var builder = new StorageCreationPropertiesBuilder(CacheFileName, folderPath);
 			Settings?.Store?.Invoke(builder);
 			var storage = builder.Build();
@@ -161,12 +176,18 @@ internal record MsalAuthenticationProvider(
 			var cacheHelper = await MsalCacheHelper.CreateAsync(storage);
 #endif
 			cacheHelper.RegisterCache(_pca!.UserTokenCache);
-			if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"MSAL storage setup completed");
+			if (Logger.IsEnabled(LogLevel.Trace))
+			{
+				Logger.LogTraceMessage($"MSAL storage setup completed");
+			}
 #endif
 		}
 		catch (Exception ex)
 		{
-			if (Logger.IsEnabled(LogLevel.Error)) Logger.LogErrorMessage($"Error setting up storage for MSAL - {ex.Message}");
+			if (Logger.IsEnabled(LogLevel.Error))
+			{
+				Logger.LogErrorMessage($"Error setting up storage for MSAL - {ex.Message}");
+			}
 		}
 	}
 

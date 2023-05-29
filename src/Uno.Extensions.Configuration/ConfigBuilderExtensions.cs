@@ -74,7 +74,7 @@ public static class ConfigBuilderExtensions
 		{
 			var file = $"{ConfigurationFolderName}/{string.Format(AppConfiguration.FileNameTemplate, typeof(TSettingsOptions).Name)}";
 			var appData = hctx.HostingEnvironment.GetAppDataPath();
-			if(appData is null)
+			if (appData is not { Length: > 0 })
 			{
 				return default;
 			}
@@ -91,7 +91,7 @@ public static class ConfigBuilderExtensions
 				.ConfigureServices((ctx, services) =>
 				{
 					var configPath = FilePath(ctx);
-					if (configPath is null)
+					if (configPath is not { Length: > 0 })
 					{
 						return;
 					}
