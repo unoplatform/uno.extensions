@@ -73,7 +73,7 @@ public static class ConfigBuilderExtensions
 		static string? FilePath(HostBuilderContext hctx)
 		{
 			var file = $"{ConfigurationFolderName}/{string.Format(AppConfiguration.FileNameTemplate, typeof(TSettingsOptions).Name)}";
-			var appData = (hctx.HostingEnvironment as IAppHostEnvironment)?.AppDataPath;
+			var appData = hctx.HostingEnvironment.GetAppDataPath();
 			if(appData is null)
 			{
 				return default;

@@ -5,7 +5,7 @@ public static class ConfigurationBuilderExtensions
 	private static IConfigurationBuilder AddConfigurationFile(this IConfigurationBuilder configurationBuilder, HostBuilderContext hostingContext, string configurationFileName)
 	{
 		var relativePath = $"{ConfigBuilderExtensions.ConfigurationFolderName}/{configurationFileName}";
-		var rootFolder = (hostingContext.HostingEnvironment as IAppHostEnvironment)?.AppDataPath;
+		var rootFolder = hostingContext.HostingEnvironment.GetAppDataPath();
 		if(rootFolder is null)
 		{
 			return configurationBuilder;

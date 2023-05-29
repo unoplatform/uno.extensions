@@ -89,7 +89,7 @@ public static class HostBuilderExtensions
 
         private static string? GetLogFilePath(HostBuilderContext hostBuilderContext)
         {
-            var logDirectory = (hostBuilderContext.HostingEnvironment as IAppHostEnvironment)?.AppDataPath ?? string.Empty;
+            var logDirectory = hostBuilderContext.HostingEnvironment.GetAppDataPath();
             if (string.IsNullOrWhiteSpace(logDirectory))
             {
                 return null;
