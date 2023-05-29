@@ -70,10 +70,14 @@ public static class ConfigBuilderExtensions
 			configSection = ctx => ctx.Configuration.GetSection(typeof(TSettingsOptions).Name);
 		}
 
-		static string FilePath(HostBuilderContext hctx)
+		static string? FilePath(HostBuilderContext hctx)
 		{
 			var file = $"{ConfigurationFolderName}/{string.Format(AppConfiguration.FileNameTemplate, typeof(TSettingsOptions).Name)}";
-			var appData = (hctx.HostingEnvironment as IAppHostEnvironment)?.AppDataPath ?? string.Empty;
+			var appData = hctx.HostingEnvironment.GetAppDataPath();
+			if (appData is not { Length: > 0 })
+			{
+				return default;
+			}
 			var path = Path.Combine(appData, file);
 			return path;
 		}
@@ -86,8 +90,14 @@ public static class ConfigBuilderExtensions
 			})
 				.ConfigureServices((ctx, services) =>
 				{
+					var configPath = FilePath(ctx);
+					if (configPath is not { Length: > 0 })
+					{
+						return;
+					}
+
 					var section = configSection(ctx);
-					services.ConfigureAsWritable<TSettingsOptions>(section, FilePath(ctx));
+					services.ConfigureAsWritable<TSettingsOptions>(section, configPath);
 				}
 
 			).AsConfigBuilder();

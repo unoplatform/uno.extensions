@@ -1,12 +1,22 @@
 ﻿namespace Uno.Extensions.Storage;
 
-public record FileStorage(IDataFolderProvider DataFolderProvider) : IStorage
+internal record FileStorage(ILogger Logger, IDataFolderProvider DataFolderProvider) : IStorage
 {
 	private Task<bool> FileExistsInPackage(string fileName) => Uno.UI.Toolkit.StorageFileHelper.ExistsInPackage(fileName);
 
-	public async Task<string> CreateFolderAsync(string foldername)
+	public async Task<string?> CreateFolderAsync(string foldername)
 	{
-		var localFolder = await StorageFolder.GetFolderFromPathAsync(DataFolderProvider.AppDataPath!);
+		var path = DataFolderProvider.AppDataPath;
+		if (path is null)
+		{
+			if (Logger.IsEnabled(LogLevel.Warning))
+			{
+				Logger.LogWarningMessage("No application data path, so unable to create folder");
+			}
+			return default;
+		}
+
+		var localFolder = await StorageFolder.GetFolderFromPathAsync(path);
 		var folder = await localFolder.CreateFolderAsync(foldername, CreationCollisionOption.OpenIfExists);
 		return folder.Path;
 	}
@@ -17,20 +27,41 @@ public record FileStorage(IDataFolderProvider DataFolderProvider) : IStorage
 		{
 			if (!await FileExistsInPackage(filename))
 			{
+				if (Logger.IsEnabled(LogLevel.Warning))
+				{
+					Logger.LogWarningMessage($"File '{filename}' does not exist in package");
+				}
 				return default;
 			}
 
-			var storageFile = await StorageFile.GetFileFromApplicationUriAsync(new Uri($"ms-appx:///{filename}"));
+			var fileUri = new Uri($"ms-appx:///{filename}");
+			if (Logger.IsEnabled(LogLevel.Trace))
+			{
+				Logger.LogTraceMessage($"Reading file '{fileUri}'");
+			}
+			var storageFile = await StorageFile.GetFileFromApplicationUriAsync(fileUri);
 			if (File.Exists(storageFile.Path))
 			{
+				if (Logger.IsEnabled(LogLevel.Trace))
+				{
+					Logger.LogTraceMessage($"Reading file with path '{storageFile.Path}' that does exist");
+				}
 				var settings = File.ReadAllText(storageFile.Path);
 				return settings;
 			}
 
+			if (Logger.IsEnabled(LogLevel.Warning))
+			{
+				Logger.LogWarningMessage($"File doesn't exist with path '{storageFile.Path}'");
+			}
 			return default;
 		}
-		catch
+		catch (Exception ex)
 		{
+			if (Logger.IsEnabled(LogLevel.Warning))
+			{
+				Logger.LogWarningMessage($"Unable to read file '{filename}' due to exception {ex.Message}");
+			}
 			return default;
 		}
 
@@ -42,6 +73,10 @@ public record FileStorage(IDataFolderProvider DataFolderProvider) : IStorage
 		{
 			if (!await FileExistsInPackage(filename))
 			{
+				if (Logger.IsEnabled(LogLevel.Warning))
+				{
+					Logger.LogWarningMessage($"File '{filename}' does not exist in package");
+				}
 				return default;
 			}
 
@@ -57,9 +92,20 @@ public record FileStorage(IDataFolderProvider DataFolderProvider) : IStorage
 
 	public async Task WriteFileAsync(string filename, string text, bool overwrite)
 	{
-		if (!File.Exists(filename) || overwrite)
+		try
 		{
-			File.WriteAllText(filename, text);
+			if (!File.Exists(filename) || overwrite)
+			{
+				File.WriteAllText(filename, text);
+			}
+		}
+		catch (Exception ex)
+		{
+			if (Logger.IsEnabled(LogLevel.Warning))
+			{
+				Logger.LogWarningMessage($"Unable to write file '{filename}' due to exception {ex.Message}");
+			}
+			throw;
 		}
 	}
 
