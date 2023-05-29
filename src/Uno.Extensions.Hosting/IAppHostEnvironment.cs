@@ -11,7 +11,7 @@ public interface IAppHostEnvironment : IHostEnvironment
 	/// <summary>
 	/// Gets a path where app data can be stored
 	/// </summary>
-    string? AppDataPath { get; }
+	string? AppDataPath { get; }
 
 	/// <summary>
 	/// Gets a reference to the host assembly
