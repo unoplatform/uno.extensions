@@ -2,6 +2,7 @@
 
 public static class UnoHost
 {
+	private const string DefaultUnoAppName = "unoapp";
 	public static IHostBuilder CreateDefaultBuilder(string[]? args = null)
 	{
 		var callingAssembly = Assembly.GetCallingAssembly();
@@ -27,7 +28,7 @@ public static class UnoHost
 
 				if (string.IsNullOrWhiteSpace(dataFolder))
 				{
-					var appName = Assembly.GetEntryAssembly()?.GetName().Name ?? string.Empty;
+					var appName = Assembly.GetEntryAssembly()?.GetName().Name ?? DefaultUnoAppName;
 					dataFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData, Environment.SpecialFolderOption.Create), appName);
 				}
 
