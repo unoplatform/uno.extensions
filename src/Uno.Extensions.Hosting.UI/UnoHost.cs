@@ -2,6 +2,7 @@
 
 public static class UnoHost
 {
+	private const string DefaultUnoAppName = "unoapp";
 	public static IHostBuilder CreateDefaultBuilder(string[]? args = null)
 	{
 		var callingAssembly = Assembly.GetCallingAssembly();
@@ -24,7 +25,7 @@ public static class UnoHost
 					// This will throw an exception on WinUI if unpackaged, so dataFolder will be null
 				}
 #if WINUI && WINDOWS
-				var appName = Assembly.GetEntryAssembly()?.GetName().Name ?? string.Empty;
+				var appName = Assembly.GetEntryAssembly()?.GetName().Name ?? DefaultUnoAppName;
 				if (string.IsNullOrWhiteSpace(dataFolder))
 				{
 					dataFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData, Environment.SpecialFolderOption.Create), appName);
