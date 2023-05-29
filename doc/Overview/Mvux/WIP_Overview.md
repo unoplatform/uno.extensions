@@ -6,21 +6,16 @@ uid: Overview.Mvux.Overview
 
 MVUX is a variation of the MVU design pattern that will also feel familiar to developers who have previously worked with MVVM.
 
-Considering a simple application scenario helps to understand what it does and the benefits gained from using it, so let's do that.
+Its main advantages are cutting down on boilerplate code, and easy maintenance of asynchronous data requests, and the ability to use immutable objects 
 
-Our application will show the current temperature based on an external source.
-
-That should seem simple enough. All it needs to do is put a number on the screen.
+To better understand the capabilities of MVUX and the benefits it can provide, let us consider a simple application scenario. The application will display the current temperature, obtained from an external service. That should seem simple enough. All it needs to do is put a number on the screen.  
 Although this seems like an easy problem, as is often the case, there are more details to consider than may be immediately apparent.
 
 - What if the external data isn't immediately available when starting the app?
 - How to show that data is being initially loaded? Or updated?
 - What if no data is available?
-- What if there's an error in obtaining or processing the data?
+- What if an error occurs while obtaining or processing the data?
 - How to keep the app responsive while requesting or updating the UI?
-- How to keep track of the selected item or items?
-- How to enable loading of partial data and paginate the result?
-- How to update data in the server and the UI in response to user actions?
 - Does the app need to periodically request new data or listen to the external source provide it?
 - How do we avoid threading or concurrency issues when handling new data in the background?
 - How do we make sure the code is testable?
