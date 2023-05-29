@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using Microsoft.Extensions.Logging;
 
 namespace Uno.Extensions.Hosting;
 
