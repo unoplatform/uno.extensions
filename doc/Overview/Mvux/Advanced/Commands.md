@@ -55,7 +55,7 @@ Explicit command generation is when the commands are created by hand using [fact
 ### Basic commands
 
 The `IAsyncCommand` property will be generated in the Bindable Proxy Model if the method signature returns no value, or is an asynchronous method returning `ValueTask`/`Task`.  
-When the method is asynchronous, it may contain a single `CancellationToken` parameter. Although a `CancellationToken` parameter is not mandatory, it's a good practice to add one, as it enables cancellation of the asynchronous operation.
+When the method is asynchronous, it may contain a single `CancellationToken` parameter. Although a `CancellationToken` parameter is not mandatory, it's a good practice to add one, as it enables the cancellation of the asynchronous operation.
 
 For example, if the Model contains a method in any of the following signatures:
 
@@ -79,7 +79,7 @@ a `DoWork` command will be generated in the Bindable Proxy Model:
 ```
 
 In some scenarios, you may need to use the method only, without a command generated for it. You can use the [`ImplicitCommand` attribute](#implicit-commands-attribute) to switch off or back on certain classes or assemblies.  
-In those cases the methods will remain in the Model, and will not be generated as commands in the Bindable Proxy Model. The Bindable Proxy Model has a `Model` property which exposes the Model itself.
+In those cases, the methods will remain in the Model, and will not be generated as commands in the Bindable Proxy Model. The Bindable Proxy Model has a `Model` property which exposes the Model itself.
 
 ### Using the CommandParameter
 
@@ -134,7 +134,7 @@ public async ValueTask DoWork()
 }
 ```
 
-However, MVUX commands also enables consuming the current value of Feed properties in the Model, using parameter names in the Model method, with a name and type matching the Feed property.  
+However, MVUX commands also enable consuming the current value of Feed properties in the Model, using parameter names in the Model method, with a name and type matching the Feed property.  
 The name matching is NOT case-sensitive.
 
 For example:
@@ -148,7 +148,7 @@ public void ResetCounter(int counterValue)
 }
 ```
 
-When the command is executed and the `ResetCounter` method is invoked, because the parameter `counterValue` matches a feed property in the Model by type and name, this parameter will be materialized with the actual most-recent value from the Feed.
+When the command is executed and the `ResetCounter` method is invoked, because the parameter `counterValue` matches a feed property in the Model by type and name, this parameter will be materialized with the actual most recent value from the Feed.
 
 A `CancellationToken` parameter can still be added as the method's last parameter. Although this parameter is recommended, it's not mandatory.
 
@@ -156,11 +156,11 @@ This behavior can be configured using the [`FeedParameter`](#feedparameter-attri
 
 ### Command generation rules
 
-Here is a recap of the rules the Model method must comply for an `IAsyncCommand` wrapper to be generated for it:
+Here is a recap of the rules the Model method must comply with for an `IAsyncCommand` wrapper to be generated for it:
 
 - The method may be synchronous (`void`) or asynchronous (`ValueTask`/`Task`)
 - Any return values of the method (if any) will be discarded.
-- The method may have one `CancellationToken` parameter, or none.
+- The method may have one `CancellationToken` parameter or none.
 - The method may have multiple parameters that can be resolved from feeds (see [Additional Feed parameters](#additional-feed-parameters) above).
 - The method may have one parameter other than parameters resolved from Feeds (to be provided from the View's `CommandParameter` property), or none.
 
@@ -169,11 +169,11 @@ Here is a recap of the rules the Model method must comply for an `IAsyncCommand`
 #### ImplicitCommands attribute
 
 By default, implicit command generation is enabled when the MVUX package is installed. That means that any method in the Model that matches the [command generation rules](#command-generation-rules) will have an accompanying command wrapper generated for it.  
-However, you may choose to switch implicit command generation on or off for a specific class, or the entire assembly. Conversly, when it has been switched off for the assembly, it can be switched back on for a specific class.
+However, you may choose to switch implicit command generation on or off for a specific class, or the entire assembly. Conversely, when it has been switched off for the assembly, it can be switched back on for a specific class.
 
 Switching on or off commands can be achieved using the [`ImplicitCommands`](https://github.com/unoplatform/uno.extensions/blob/main/src/Uno.Extensions.Reactive/Config/ImplicitCommandsAttribute.cs) attribute. Here are some examples:
 
-Switching off implcicit command generation throughout the entire assembly:
+Switching off implicit command generation throughout the entire assembly:
 ```csharp
 [assembly:ImplicitCommands(false)]
 ```
@@ -184,7 +184,7 @@ Switching on implicit command generation for a single class:
 public partial record MyModel(...)
 ```
 
-You can combine these attributes on various class or on the assembly to opt in or out of implicit command generation on certain scopes.
+You can combine these attributes on various classes or on the assembly to opt-in or opt-out of implicit command generation on certain scopes.
 
 #### Command attribute
 
@@ -201,7 +201,7 @@ public async ValueTask DoWork()
 }
 ```
 
-Or in contrary, if this method should remain without a command generated for it, specify `true` to its `isEnabled` parameter:
+Or on the contrary, if this method should remain without a command generated for it, specify `true` to its `isEnabled` parameter:
 
 ```csharp
 [Command(false)]
@@ -224,7 +224,7 @@ public async ValueTask Share([FeedParameter(nameof(Message))] string msg)
 
 #### ImplicitFeedCommandParameter attribute
 
-You can also turn opt in or out implicit matching of Feeds and command parameters by decorating the current assembly or class with the [`ImplicitFeedCommandParameters`](https://github.com/unoplatform/uno.extensions/blob/main/src/Uno.Extensions.Reactive/Config/ImplicitFeedCommandParametersAttribute.cs) attribute:  
+You can also turn opt-in or opt-out implicit matching of Feeds and command parameters by decorating the current assembly or class with the [`ImplicitFeedCommandParameters`](https://github.com/unoplatform/uno.extensions/blob/main/src/Uno.Extensions.Reactive/Config/ImplicitFeedCommandParametersAttribute.cs) attribute:  
      
 ```csharp
 [assembly:ImplicitFeedCommandParameter(false)]
@@ -250,7 +250,7 @@ public ICommand MyCommand => Command.Async(async(ct) => await PingServer(ct));
 ### Create & Create\<T>
 
 To create a command you can use the fluent API of `ICommandBuilder` provided in the `Command.Create` factory methods.  
-This API is intended for Uno Platform's internal use but can come handy if you need to create custom commands.
+This API is intended for Uno Platform's internal use but can come in handy if you need to create custom commands.
 
 `ICommandBuilder` provides the three methods below.
 
@@ -272,7 +272,7 @@ This API is intended for Uno Platform's internal use but can come handy if you n
   public IAsyncCommand MyCommand => Command.Create<int>(builder => builder.When(i => i > 10));
   ```
 
-  In the above example, the predicate passed in to the `When` method will be executed when the UI wants to determine if the command can be executed, which will only be true if the command parameter will be greater than 10.
+  In the above example, the predicate passed into the `When` method will be executed when the UI wants to determine if the command can be executed, which will only be true if the command parameter will be greater than 10.
 
 - #### Then
 
@@ -313,7 +313,7 @@ View:
 <Button Command="{Binding Model.MyCommand}" Content="Execute my command" />
 ```
 
-In the above example (in the Model), when the button is clicked, the `Given` section will be materialized with the most-recent value of the `CurrentPage` Feed, it will be then evaluated with the predicate provided in the `When` call, and if its value is greater than 0, it will be passed on to `Then`, and `NavigateToPage` will be called with the `CurrentPage` Feed value passed on.
+In the above example (in the Model), when the button is clicked, the `Given` section will be materialized with the most recent value of the `CurrentPage` Feed, it will be then evaluated with the predicate provided in the `When` call, and if its value is greater than 0, it will be passed on to `Then`, and `NavigateToPage` will be called with the `CurrentPage` Feed value passed on.
 
 > [!IMPORTANT]  
 > Commands created using the fluent API will not be generated in the Bindable Proxy Model. In order to bind to `MyCommand`, use the Bindable Proxy Model's `Model` property to access the original Model and then the command.
