@@ -1,6 +1,6 @@
 ﻿namespace Uno.Extensions.Storage;
 
-internal record FileStorage(ILogger Logger, IDataFolderProvider DataFolderProvider) : IStorage
+internal record FileStorage(ILogger<FileStorage> Logger, IDataFolderProvider DataFolderProvider) : IStorage
 {
 	private Task<bool> FileExistsInPackage(string fileName) => Uno.UI.Toolkit.StorageFileHelper.ExistsInPackage(fileName);
 
