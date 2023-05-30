@@ -84,7 +84,7 @@ The `SelectedPerson` State is initialized with an empty value using `State<Perso
 > [!NOTE]  
 > Read [this](xref:Overview.Mvux.States#other-ways-to-create-feeds) to learn more about States and the `Empty` factory method.
 
-The `Selection` operator was added to the existing `ListFeed.Async(...)` line, it will listen to the `People` List-Feed, and will affect its selection changes onto the `SelectedPerson` State property.
+The `Selection` operator was added to the existing `ListFeed.Async(...)` line, it will listen to the `People` List-Feed and will affect its selection changes onto the `SelectedPerson` State property.
 
 In the View side, wrap the `ListView` element in a `Grid`, and insert additional elements to reflect the currently selected value via the `SelectedPerson` State.  
 We'll also add a separator (using `Border`) to be able to distinguish them.
@@ -141,7 +141,7 @@ A `TextBlock` can then be added in the UI to display the selected value:
 
 #### Using the ForEach operator
 Selection can also be propagated manually to a State using the [`ForEach`](xref:Overview.Mvux.Feeds#foreach) operator.
-First we need to create a State with a default value, which will be used to store the processed value once a selection has occurred.
+First, we need to create a State with a default value, which will be used to store the processed value once a selection has occurred.
 
 ```csharp
 public IState<string> GreetingForEach => State.Value(this, () => string.Empty);
