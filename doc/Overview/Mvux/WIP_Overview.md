@@ -45,26 +45,26 @@ When the user provides input to the View, it triggers an **Update** that makes c
 
 The **Model** in MVUX is fairly similar to the ViewModel in MVVM in that it embodies the presentation layer code, though, in MVUX, the ViewModel is referred to as just Model.
 
-In MVUX, change detection is similar to using the `INotifyPropertyChanged` interface, except MVUX automatically handles the change detection for you, this is achieved by a Proxy Model MVUX generates for each Model (that has the suffix 'Model'), and wraps around its original Model providing direct access to all its properties and methods, as well as extending it with additional features.
+In MVUX, change detection is similar to using the `INotifyPropertyChanged` interface, except MVUX automatically handles the change detection for you. This is achieved by a Proxy Model MVUX generates for each Model (that has the suffix 'Model'), and wraps around the source Model providing direct access to all its properties and methods, as well as extending it with additional features.
 
 MVUX thus enables working with immutable data structures ([C# records](https://learn.microsoft.com/dotnet/csharp/whats-new/tutorials/records)). Working with C# records can be a challenging transition for developers who have previously only worked with `INotifyPropertyChanged` implementing classes.
 The fundamental difference is that since a record is immutable, making a change to a record means creating a new one with different data instead of modifying data within an existing one. Here's where the Proxy Model comes in handy and uses as a bridge between data-binding and change-notification, and immutable classes.
 
-In the standard MVU pattern, an update will cause a new View to be created upon each change.
-In MVUX the existing View will be updated via data-binding by the Proxy Model instead.
+In the standard MVU pattern, an update will cause a new View to be created upon each change. In MVUX the existing View will be updated via data-binding by the Proxy Model instead.
 
 ### eXtended
 
-The **eXtended** part of the pattern includes the toolset to adapt between the data-binding engine and immutable data objects, and additional advanced functionality that is outside the scope of this introduction.
+The **eXtended** part of the pattern includes the toolset to adapt between the data-binding engine and the Model which includes code generation and UI controls.
 
 One of the big differences between MVUX and patterns like MVVM is that change-notification properties are not required.  
-On the other hand MVUX introduces 'Feeds' when a value is to be loaded asynchronously and reloaded again. While a traditional property represents a single value, a Feed is similar to a stream of values.  
-When an updated value is received, the Proxy Model replaces the current object with a new one that has been created fresh with the new data. The View in turn reacts to the change by displaying the new data.  
-In this way, it is similar to reactive programming. However, MVUX adds to the value another layer of data combined with the Feed value. These are statuses that represent the current state of the Feed.  
-Common statuses for a feed include 'loading', 'has value', 'refreshing', 'empty', and 'error'.  
-MVUX also includes controls that make it easy to display these different statuses in the View without the need to create additional properties to manipulate and control what to show.
+On the other hand MVUX introduces 'Feeds'. Feeds are used when a value is to be loaded asynchronously and then maybe refreshed asynchronously as well. While a traditional property represents a single value, a Feed is similar to a stream of values. When an updated value is received, the Proxy Model replaces the current object with a new one that has been created fresh with the new data. The View in turn reacts to the change by displaying the new data.  
+In this way, it is similar to reactive programming.
 
-A Feed can be a stream of a single value or a stream of collection of values. It can also keep track of its current and previous value(s). Keeping track of values is necessary if they may need to be 'updated' while providing performance optimizations if you only need to display the value in the View without changing it.
+MVUX also adds to the value another layer of data combined with the Feed value. These are statuses that represent the current state of the Feed.  
+Common statuses for a feed include 'loading', 'has value', 'refreshing', 'empty', and 'error'.  
+MVUX includes controls that make it easy to display these different statuses in the View without the need to create additional properties to manipulate and control what to show.
+
+A Feed can be a stream of a single value or a stream of a collection. It can also keep track of its current and previous value(s). Keeping track of values is necessary, for example if a subsequent request to refresh the data fails - we still want to display the old value.
 
 Models are always created asynchronously and any necessary transitions to the UI thread are handled automatically.
 
@@ -87,16 +87,16 @@ It will utilize a Feed to manage the asynchronous request to the service.
 
 First let's create a record called `WeatherInfo` which will the current temperature.
 
-```c#
+```csharp
 public partial record WeatherInfo(double Temperature);
 ```
 
 Note how the `partial` keyword is added to the `WeatherInfo` entity declaration. This enables MVUX code generation engine to generate essential code for the data-binding to work with the `WeatherInfo` entity which is immutable.
 
 Next we'll define an interface that represents the weather service.  
-The service will have a single method that asynchronously returns the current temperature, with an additional `CancellationToken` which can enable cancelling the current request, and is not covered in this introduction):
+The service will have a single method that asynchronously returns the current temperature, with an additional `CancellationToken` which can enable cancelling the current request (cancellation is not covered in this introduction):
 
-```c#
+```csharp
 public interface IWeatherService
 {
     ValueTask<WeatherInfo> GetCurrentWeather(CancellationToken ct);
@@ -106,10 +106,10 @@ public interface IWeatherService
 The following code is the implementation of the actual weather service.  
 It implements the `IWeatherService` and its only method `GetCurrentWeather`.
 
-First it simulates a virtual delay of 1 second which may occur while 'interacting' with the remote server to obtain the weather info from a remote source.
-It then returns a random value as the current weather.
+First it simulates a virtual delay of 1 second which may occur while interacting with a remote server to obtain the weather info.
+It then returns a random value between -40 and 40 that represents the current temperature in degrees Fahrenheit, and is returned as a `WeatherInfo` entity.
 
-```c#
+```csharp
 public class WeatherService : IWeatherService
 {
     public async ValueTask<WeatherInfo> GetCurrentWeather(CancellationToken ct)
@@ -125,7 +125,7 @@ public class WeatherService : IWeatherService
 
 The `WeatherModel` is the **Model** in MVUX (this would be referred to as a ViewModel in MVVM):
 
-```c#
+```csharp
 public partial record WeatherModel(IWeatherService WeatherService)
 {
     public IFeed<WeatherInfo> CurrentWeather => Feed.Async(WeatherService.GetCurrentWeather);
@@ -182,4 +182,4 @@ In the XAML above, within the template scope of the `FeedView`, the `Data` prope
 
 The `Refresh` command is exposed by the `FeedView` as part of its Template object. As we are inside the `FeedView`'s Template, the `Data` and `Refresh` properties are exposed to the Template, and will cause the Feed to requery its source (the service).
 
-For the full example see [How to create a feed](xref:Overview.Mvux.HowToSimpleFeed).
+For the full tutorial see [How to create a feed](xref:Overview.Mvux.HowToSimpleFeed).
