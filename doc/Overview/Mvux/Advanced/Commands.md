@@ -210,9 +210,22 @@ public async ValueTask DoWork()
 }
 ```
 
+The `Command` attribute has precedence over the `ImplicitCommands` attribute, if a method is decorated with this attribute, whether it will be generated as a command or not will depend solely on this attribute value if set to true (default) or to false, as this has been explicitly configured, even an upper scope has command generation set differently.
+
+#### ImplicitFeedCommandParameter attribute
+
+You can opt-in or opt-out implicit matching of Feeds and command parameters by decorating the current assembly or class with the [`ImplicitFeedCommandParameters`](https://github.com/unoplatform/uno.extensions/blob/main/src/Uno.Extensions.Reactive/Config/ImplicitFeedCommandParametersAttribute.cs) attribute:  
+     
+```csharp
+[assembly:ImplicitFeedCommandParameter(false)]
+     
+[ImplicitFeedCommandParameter(true)]
+public partial record MyModel
+```
+
 #### FeedParameter attribute
 
-You can explicitly match a parameter with a Feed even if the names don't match. Decorate the parameter with the [`FeedParameter`](https://github.com/unoplatform/uno.extensions/blob/main/src/Uno.Extensions.Reactive/Presentation/Commands/FeedParameterAttribute.cs) attribute to explicitly match a parameter with a Feed:
+You can also explicitly match a parameter with a Feed even if the names don't match. Decorate the parameter with the [`FeedParameter`](https://github.com/unoplatform/uno.extensions/blob/main/src/Uno.Extensions.Reactive/Presentation/Commands/FeedParameterAttribute.cs) attribute to explicitly match a parameter with a Feed:
      
 ```csharp
 public IFeed<string> Message { get; }
@@ -222,18 +235,7 @@ public async ValueTask Share([FeedParameter(nameof(Message))] string msg)
 }
 ```
 
-#### ImplicitFeedCommandParameter attribute
-
-You can also turn opt-in or opt-out implicit matching of Feeds and command parameters by decorating the current assembly or class with the [`ImplicitFeedCommandParameters`](https://github.com/unoplatform/uno.extensions/blob/main/src/Uno.Extensions.Reactive/Config/ImplicitFeedCommandParametersAttribute.cs) attribute:  
-     
-```csharp
-[assembly:ImplicitFeedCommandParameter(false)]
-     
-[ImplicitFeedCommandParameter(true)]
-public partial record MyModel
-```
-
-Like `ImplicitCommands`, `ImplicitFeedCommandParameter` attributes can also be nested to enable or disable specific scopes in the app.
+`ImplicitFeedCommandParameter` and `FeedParameter` attributes can also be nested to enable or disable specific scopes in the app. The `FeedParameter` setting has priority over `ImplicitFeedCommandParameter`, so parameters decorated with `FeedParameter` will explicitly indicate that the parameter is to be fulfilled by a Feed.
 
 ## Manual command creation using factory methods
 

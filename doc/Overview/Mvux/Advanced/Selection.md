@@ -144,7 +144,7 @@ Selection can also be propagated manually to a State using the [`ForEach`](xref:
 First, we need to create a State with a default value, which will be used to store the processed value once a selection has occurred.
 
 ```csharp
-public IState<string> GreetingForEach => State.Value(this, () => string.Empty);
+public IState<string> GreetingForSelectedPerson => State.Value(this, () => string.Empty);
 ```
 
 In the constructor, we can then subscribe to the value in the following manner:
@@ -168,7 +168,7 @@ public partial record PeopleModel
         if (selectedPerson == null)
             return;
 
-        await GreetingForEach.Set($"Hello {selectedPerson.FirstName} {selectedPerson.LastName}!", ct);
+        await GreetingForSelectedPerson.Set($"Hello {selectedPerson.FirstName} {selectedPerson.LastName}!", ct);
     }
 }
 ```
