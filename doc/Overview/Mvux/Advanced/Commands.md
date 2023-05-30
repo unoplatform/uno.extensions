@@ -25,7 +25,7 @@ A command is an object that implements the [`ICommand`](https://learn.microsoft.
 
 - [`Execute`](https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.input.icommand.execute): This method is called when the command is executed.
 - [`CanExecute`](https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.input.icommand.canexecute): This method is invoked when the UI needs to determine if the command can be executed. It returns a boolean value indicating if the command can be executed.
-- [`CanExecuteChanged`](https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.input.icommand.canexecutechanged): This event is raised when something that affects whether this command can execute happens, and the `CanExecute` property needs to be updated.
+- [`CanExecuteChanged`](https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.input.icommand.canexecutechanged): This event is raised when something that affects whether this command can execute happens, and the `CanExecute` result needs to be updated.
 
 Commands can be bound to UI elements. To do this, the `Command` property of the UI element can be used. For example, the following code binds the `Click` event of a button to the `Save` command:
 
@@ -40,7 +40,7 @@ To learn more about Commands, read [this article](https://learn.microsoft.com/wi
 ## Asynchronous commands
 
 The MVUX [`IAsyncCommand`](https://github.com/unoplatform/uno.extensions/blob/main/src/Uno.Extensions.Reactive/Presentation/Commands/IAsyncCommand.cs) interface, is a Command that implements [`ICommand`](https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.input.icommand) and adds support for asynchronous operations.  
-As it implements `ICommand`, it can be bound to anything in the View that accepts a Command (e.g. in a `Button.Command` property), with the advantage over `ICommand` that `IAsyncCommand` can be invoked asynchronously.  
+As it implements `ICommand`, it can be bound to anything in the View that accepts a Command (e.g. in a `Button.Command` property), with the advantage over `ICommand` that `IAsyncCommand` is built to be invoked asynchronously and it reports its execution state.  
 In addition, it also implements [`INotifyPropertyChanged`](https://learn.microsoft.com/dotnet/api/system.componentmodel.inotifypropertychanged), to enable notifications when any of its properties change, as well as [`ILoadable`](xref:Toolkit.Controls.LoadingView#iloadable) - an Uno interface that provides information about an object's state whether it's currently in execution mode (busy) or not, and notifies subscribers when this execution state changes.
 
 The following class diagram displays the hierarchy of the `IAsyncCommand` interface:
@@ -49,12 +49,12 @@ The following class diagram displays the hierarchy of the `IAsyncCommand` interf
 
 ## Implicit command generation
 
-When creating a method in the Model, a property of an `IAsyncCommand` wrapper will be implicitly generated in the Bindable Proxy Model. When that command is executed via a button-click etc., the method in the Model will be called.  
+When creating a method in the Model, a property of an `IAsyncCommand` wrapper will be implicitly generated in the Proxy Model. When that command is executed via a button-click etc., the method in the Model will be called.  
 Explicit command generation is when the commands are created by hand using [factory methods](#explicit-command-creation-using-factory-methods).
 
 ### Basic commands
 
-The `IAsyncCommand` property will be generated in the Bindable Proxy Model if the method signature returns no value, or is an asynchronous method returning `ValueTask`/`Task`.  
+The `IAsyncCommand` property will be generated in the Proxy Model if the method signature returns no value, or is an asynchronous method (any awaitable method, e.g. `ValueTask`/`Task`).  
 When the method is asynchronous, it may contain a single `CancellationToken` parameter. Although a `CancellationToken` parameter is not mandatory, it's a good practice to add one, as it enables the cancellation of the asynchronous operation.
 
 For example, if the Model contains a method in any of the following signatures:
@@ -72,14 +72,14 @@ For example, if the Model contains a method in any of the following signatures:
     public ValueTask DoWork();
     ```
 
-a `DoWork` command will be generated in the Bindable Proxy Model:
+a `DoWork` command will be generated in the Proxy Model:
 
 ```xml
 <Button Command="{Binding DoWork}" />
 ```
 
-In some scenarios, you may need to use the method only, without a command generated for it. You can use the [`ImplicitCommand` attribute](#implicit-commands-attribute) to switch off or back on certain classes or assemblies.  
-In those cases, the methods will remain in the Model, and will not be generated as commands in the Bindable Proxy Model. The Bindable Proxy Model has a `Model` property which exposes the Model itself.
+In some scenarios, you may need to use the method only, without a command generated for it. You can use the [`ImplicitCommand` attribute](#implicit-commands-attribute) to switch off or back on command generation for certain methods, classes, or assemblies.  
+When command generation is switch off, the methods under the scope which has been switched off will be generated in the Proxy Model as regular methods rather than as commands.
 
 ### Using the CommandParameter
 
@@ -119,7 +119,7 @@ This will result in the command's `CanExecute` to return `false`, and in turn, t
 
 ![A disabled refresh button](../Assets/DisabledButton.jpg)
 
-A `CancellationToken` parameter can still be added after any other parameters. Although this parameter is recommended, it's not mandatory.
+A `CancellationToken` parameter can still be added. Although this parameter is recommended, it's not mandatory.
         
 ### Additional Feed parameters
 
@@ -243,20 +243,30 @@ This class provides factory methods for creating commands.
 
 ### Async
 
+The `Async` utility method takes an `AsyncAction` callback as its parameter. An `AsyncAction` refers to an asynchronous method that has a `CancellationToken` as its last parameter (preceed by any other parameters), and returns a `ValueTask`.
+
 ```csharp
 public ICommand MyCommand => Command.Async(async(ct) => await PingServer(ct));
 ```
 
+In the above example, `PingServer` is of the following signature:
+
+```csharp
+ValueTask PingServer(CancellationToken ct);
+```
+
+The `Command.Async` method will create a command that when executed will run the `PingServer` method asynchronously.
+
 ### Create & Create\<T>
 
-To create a command you can use the fluent API of `ICommandBuilder` provided in the `Command.Create` factory methods.  
+To create a command you can use the API provided in the `Command.Create` factory methods. The `Command.Create` provides an `ICommandBuilder` parameter which you can use to configure the command in a fluent-API fashion.  
 This API is intended for Uno Platform's internal use but can come in handy if you need to create custom commands.
 
 `ICommandBuilder` provides the three methods below.
 
 - #### Given
 
-  This method initializes a command from a Feed (or a State). The command will be triggered whenever a new value is available to the Feed.
+  This method initializes a command from a Feed (or a State). The command will be triggered whenever a new value is available to the Feed. It takes a single `IFeed<T>` parameter.
   
   ```csharp
   public IFeed<int> PageCount => ...
@@ -266,7 +276,7 @@ This API is intended for Uno Platform's internal use but can come in handy if yo
 
 - #### When
 
-  Defines the 'can execute' of the command.
+  Defines the 'can execute' of the command. It accepts a predicate of `T`, where `T` is the type the command has been created with. When this is configured, the command will be executed only if the condition is true.
   
   ```csharp
   public IAsyncCommand MyCommand => Command.Create<int>(builder => builder.When(i => i > 10));
@@ -286,6 +296,8 @@ This API is intended for Uno Platform's internal use but can come in handy if yo
       ...
   }
   ```
+
+  You can use the `Execute` instead of `Then`. These are just aliases of each other.
 
 ### Example
 
@@ -316,7 +328,7 @@ View:
 In the above example (in the Model), when the button is clicked, the `Given` section will be materialized with the most recent value of the `CurrentPage` Feed, it will be then evaluated with the predicate provided in the `When` call, and if its value is greater than 0, it will be passed on to `Then`, and `NavigateToPage` will be called with the `CurrentPage` Feed value passed on.
 
 > [!IMPORTANT]  
-> Commands created using the fluent API will not be generated in the Bindable Proxy Model. In order to bind to `MyCommand`, use the Bindable Proxy Model's `Model` property to access the original Model and then the command.
+> Commands created using the fluent API will not be generated in the Proxy Model. In order to bind to `MyCommand`, use the Proxy Model's `Model` property to access the original Model and then the command.
 > For example:
 >```xml
 ><Button Command="{Binding Model.MyCommand}" />
