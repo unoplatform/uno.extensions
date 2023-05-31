@@ -7,8 +7,8 @@
 		<!--Temporary disable missing XML doc until fixed in the whole package-->
 		<WarningsNotAsErrors>$(WarningsNotAsErrors);CS1591</WarningsNotAsErrors>
 	</PropertyGroup>
- 
-  <ItemGroup Condition="'$(_IsIOS)' == 'true' or '$(_IsAndroid)' == 'true' or '$(_IsMacOS)'=='true'">
+
+  <ItemGroup Condition="'$(_IsIOS)' == 'true' or '$(_IsAndroid)' == 'true' or '$(_IsMacOS)'=='true' or '$(_IsCatalyst)' == 'true'">
     <PackageReference Include="Serilog.Sinks.Xamarin" />
   </ItemGroup>
 
