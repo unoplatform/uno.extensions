@@ -109,7 +109,7 @@
 		<DefineConstants>$(DefineConstants);__WINDOWS__</DefineConstants>
 		<TargetPlatformVersion>10.0.19041.0</TargetPlatformVersion>
 	</PropertyGroup>
-	
+
 	<PropertyGroup Condition="$(_IsWinUI)">
 		<DefineConstants>$(DefineConstants);__WINDOWS__</DefineConstants>
 	</PropertyGroup>
@@ -127,10 +127,6 @@
 		<IsGeneratorProject>False</IsGeneratorProject>
 		<IsGeneratorProject Condition="$(MSBuildProjectName.Contains('Generator'))">True</IsGeneratorProject>
 	</PropertyGroup>
-
-	<ItemGroup>
-		<None Include="$(MSBuildThisFileDirectory)..\build\uno-logo.png" Pack="true" Visible="false" PackagePath="\"/>
-	</ItemGroup>
 
 	<Choose>
 		<When Condition="$(IsTestProject) Or $(IsSampleProject)">
