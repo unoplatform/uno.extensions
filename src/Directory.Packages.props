@@ -8,20 +8,20 @@
 		<PackageVersion Include="MSTest.TestFramework" Version="2.2.9" />
 		<PackageVersion Include="Microsoft.Bcl.AsyncInterfaces" Version="6.0.0" />
 		<PackageVersion Include="Microsoft.CodeAnalysis.CSharp" Version="4.1.0" />
-		<PackageVersion Include="Microsoft.Extensions.Configuration.Abstractions" Version="6.0.0" />
-		<PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0" />
-		<PackageVersion Include="Microsoft.Extensions.Hosting" Version="6.0.1" />
-		<PackageVersion Include="Microsoft.Extensions.Http" Version="6.0.0" />
-		<PackageVersion Include="Microsoft.Extensions.Localization.Abstractions" Version="6.0.4" />
-		<PackageVersion Include="Microsoft.Extensions.Logging" Version="6.0.0" />
+		<PackageVersion Include="Microsoft.Extensions.Configuration.Abstractions" Version="6.0.0" Condition="$(UseMaui) != 'true'" />
+		<PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0" Condition="$(UseMaui) != 'true'" />
+		<PackageVersion Include="Microsoft.Extensions.Hosting" Version="6.0.1" Condition="$(UseMaui) != 'true'" />
+		<PackageVersion Include="Microsoft.Extensions.Http" Version="6.0.0" Condition="$(UseMaui) != 'true'" />
+		<PackageVersion Include="Microsoft.Extensions.Localization.Abstractions" Version="6.0.4" Condition="$(UseMaui) != 'true'" />
+		<PackageVersion Include="Microsoft.Extensions.Logging" Version="6.0.0" Condition="$(UseMaui) != 'true'" />
 		<PackageVersion Include="Microsoft.Identity.Client" Version="4.47.0" />
 		<PackageVersion Include="Microsoft.Identity.Client.Extensions.Msal" Version="2.22.0" />
 		<PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.6.2" />
 		<PackageVersion Include="Microsoft.Net.Compilers.Toolset" Version="4.2.0" />
 		<PackageVersion Include="Microsoft.SourceLink.GitHub" Version="1.1.1" />
 		<PackageVersion Include="Microsoft.UI.Xaml" Version="2.7.1" />
-		<PackageVersion Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.756" />
-		<PackageVersion Include="Microsoft.WindowsAppSDK" Version="1.1.0" />
+		<PackageVersion Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.756" Condition="$(UseMaui) != 'true'" />
+		<PackageVersion Include="Microsoft.WindowsAppSDK" Version="1.1.0" Condition="$(UseMaui) != 'true'" />
 		<PackageVersion Include="Moq" Version="4.17.2" />
 		<PackageVersion Include="Refit" Version="6.3.2" />
 		<PackageVersion Include="Refit.HttpClientFactory" Version="6.3.2" />
