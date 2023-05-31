@@ -1,0 +1,59 @@
+<Project>
+
+	<PropertyGroup>
+		<UsingMicrosoftMauiResizetizerSdk>false</UsingMicrosoftMauiResizetizerSdk>
+	</PropertyGroup>
+	<ItemGroup>
+		<Using Remove="Microsoft.Maui.*" />
+		<Analyzer Remove="Microsoft.Maui.Controls.SourceGen" />
+		<MauiXaml Remove="**\*.xaml" />
+		<MauiAsset Remove="@(MauiAsset)" />
+		<MauiImage Remove="@(MauiImage)" />
+		<MauiIcon Remove="@(MauiIcon)" />
+		<MauiFont Remove="@(MauiFont)" />
+		<MauiSplashScreen Remove="@(MauiSplashScreen)" />
+		<_MauiImplicitPackageReference Remove="Microsoft.Maui.Resizetizer" />
+		<PackageReference Remove="Microsoft.Maui.Resizetizer" />
+		<Page Update="**\*.xaml" XamlRuntime="WinUI" Generator="MSBuild:Compile" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<AvailableItemName Remove="MauiAsset" />
+		<AvailableItemName Remove="MauiImage" />
+		<AvailableItemName Remove="MauiIcon" />
+		<AvailableItemName Remove="MauiFont" />
+		<AvailableItemName Remove="MauiSplashScreen" />
+	</ItemGroup>
+
+		<Target Name="MauiEmbeddingSanitizeXamlTypeInfo"
+					AfterTargets="CoreGenerateAssemblyInfo"
+					BeforeTargets="CoreCompile">
+		<ReplaceFileText Filename="$(IntermediateOutputPath)XamlTypeInfo.g.cs"
+										 MatchExpression="that.class"
+										 ReplacementText="that.@class"
+										 Condition="Exists('$(IntermediateOutputPath)XamlTypeInfo.g.cs')" />
+	</Target>
+
+	<!-- Using Regex Replace prevents XmlPoke from replacing Tabs with Spaces -->
+	<UsingTask TaskName="ReplaceFileText" TaskFactory="RoslynCodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll">
+		<ParameterGroup>
+			<Filename ParameterType="System.String" Required="true" />
+			<MatchExpression ParameterType="System.String" Required="true" />
+			<ReplacementText ParameterType="System.String" Required="true" />
+		</ParameterGroup>
+		<Task>
+			<Using Namespace="System" />
+			<Using Namespace="System.IO" />
+			<Using Namespace="System.Text.RegularExpressions" />
+			<Code Type="Fragment" Language="cs">
+				<![CDATA[
+					File.WriteAllText(
+						Filename,
+						File.ReadAllText(Filename).Replace(MatchExpression, ReplacementText)
+						);
+				]]>
+			</Code>
+		</Task>
+	</UsingTask>
+
+</Project>
