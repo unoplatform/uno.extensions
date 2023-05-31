@@ -86,7 +86,8 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<None Include="build\Package.targets" Pack="true" PackagePath="buildTransitive\$(PackageId).targets" Condition="exists('build')"/>
+		<None Include="build\Package.props" Pack="true" PackagePath="buildTransitive\$(PackageId).props" Condition="exists('build\Package.props')"/>
+		<None Include="build\Package.targets" Pack="true" PackagePath="buildTransitive\$(PackageId).targets" Condition="exists('build\Pacakge.targets')"/>
 	</ItemGroup>
 
 	<ItemGroup Condition="'$(TargetFramework)'=='xamarinmac20'">
