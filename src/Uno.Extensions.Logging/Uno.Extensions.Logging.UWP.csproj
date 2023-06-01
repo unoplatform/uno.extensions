@@ -21,7 +21,7 @@
 	</ItemGroup>
 
 
-	<ItemGroup Condition="'$(_IsIOS)' == 'true'">
+	<ItemGroup Condition="'$(_IsIOS)' == 'true' or '$(_IsCatalyst)' == 'true'">
 		<PackageReference Include="Uno.Extensions.Logging.OSLog" />
 	</ItemGroup>
 
