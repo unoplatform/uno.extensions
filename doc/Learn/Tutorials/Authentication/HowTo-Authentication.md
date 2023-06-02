@@ -31,11 +31,8 @@ uid: Learn.Tutorials.Authentication.HowToAuthentication
                             async (sp, dispatcher, tokenCache, credentials, cancellationToken) =>
                             {
                                 var isValid = credentials.TryGetValue("Username", out var username) && username == "Bob";
-                                if(isValid)
-                                {
-                                    credentials;
-                                }
-                                return null;
+                                return isValid ? 
+                                credentials : default;
                             })
                 ));
             });

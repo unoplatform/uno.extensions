@@ -1,5 +1,8 @@
 <Project>
-  <ItemGroup Condition=" '$(ImplicitUsings)' == 'true' OR '$(ImplicitUsings)' == 'enable' ">
-    <Using Include="Uno.Extensions.Navigation" />
-  </ItemGroup>
+	<ItemGroup>
+		<AdditionalFiles Include="@(Page)" />
+	</ItemGroup>
+	<ItemGroup Condition=" '$(ImplicitUsings)' == 'true' OR '$(ImplicitUsings)' == 'enable' ">
+		<Using Include="Uno.Extensions.Navigation" />
+	</ItemGroup>
 </Project>

@@ -56,7 +56,7 @@ public class ContentDialogNavigator : DialogNavigator
 
 		dialog.SetInstance(Region);
 
-		dialog.InjectServicesAndSetDataContext(services, navigation, viewModel);
+		await dialog.InjectServicesAndSetDataContextAsync(services, navigation, viewModel);
 
 		var showTask = dialog.ShowAsync();
 		_ = showTask.AsTask()

@@ -4,18 +4,28 @@ using Microsoft.UI.Xaml.Controls;
 
 namespace Uno.Extensions.Navigation.UI;
 
-public class ItemsRepeaterRequestHandler : ControlRequestHandlerBase<ItemsRepeater>
+/// <summary>
+/// Navigation handler for the ItemsRepeater control.
+/// </summary>
+/// <param name="HandlerLogger">Logger for Logging</param>
+public sealed record ItemsRepeaterRequestHandler(ILogger<ItemsRepeaterRequestHandler> HandlerLogger) : ControlRequestHandlerBase<ItemsRepeater>(HandlerLogger)
 {
+	/// <inheritdoc/>
 	public override IRequestBinding? Bind(FrameworkElement view)
 	{
 		var viewToBind = view;
 		var viewList = view as ItemsRepeater;
 		if (viewList is null)
 		{
+			if (Logger.IsEnabled(LogLevel.Warning))
+			{
+				Logger.LogWarningMessage($"Bind: {view?.GetType()} is not an ItemsRepeater");
+			}
+
 			return default;
 		}
 
-		Func<FrameworkElement, object?, Task> action = async (sender, data) =>
+		async Task Action(FrameworkElement sender, object? data)
 		{
 			var navdata = data;
 			var path = sender.GetRequest();
@@ -26,12 +36,12 @@ public class ItemsRepeaterRequestHandler : ControlRequestHandlerBase<ItemsRepeat
 			}
 
 			await nav.NavigateRouteAsync(sender, path, Qualifiers.None, navdata);
-		};
+		}
 
 		var isCaptured = false;
 		object? dataContext = default;
 		FrameworkElement? pointerElement = default;
-		PointerEventHandler pointerPressed = (actionSender, actionArgs) =>
+		void PointerPressed(object actionSender, PointerRoutedEventArgs actionArgs)
 		{
 			var sender = actionSender as ItemsRepeater;
 			if (sender is null)
@@ -57,9 +67,9 @@ public class ItemsRepeaterRequestHandler : ControlRequestHandlerBase<ItemsRepeat
 				}
 			}
 
-		};
+		}
 
-		PointerEventHandler pointerReleased = async (actionSender, actionArgs) =>
+		async void PointerReleased(object actionSender, PointerRoutedEventArgs actionArgs)
 		{
 			var sender = actionSender as ItemsRepeater;
 			if (sender is null)
@@ -82,43 +92,43 @@ public class ItemsRepeaterRequestHandler : ControlRequestHandlerBase<ItemsRepeat
 				if (pointerInControl)
 				{
 					actionArgs.Handled = true;
-					await action(sender, dataContext);
+					await Action(sender, dataContext);
 				}
-				
+
 				isCaptured = false;
 				dataContext = null;
 				pointerElement = null;
 			}
 
-		};
+		}
 
 
-		Action connect = () =>
+		void Connect()
 		{
-			viewList.PointerPressed += pointerPressed;
-			viewList.PointerReleased += pointerReleased;
-		};
-		Action disconnect = () =>
+			viewList.PointerPressed += PointerPressed;
+			viewList.PointerReleased += PointerReleased;
+		}
+		void Disconnect()
 		{
-			viewList.PointerPressed -= pointerPressed;
-			viewList.PointerReleased -= pointerReleased;
-		};
+			viewList.PointerPressed -= PointerPressed;
+			viewList.PointerReleased -= PointerReleased;
+		}
 
 		if (viewList.IsLoaded)
 		{
-			connect();
+			Connect();
 		}
 
-		RoutedEventHandler loadedHandler = (s, e) =>
+		void LoadedHandler(object s, RoutedEventArgs e)
 		{
-			connect();
-		};
-		viewList.Loaded += loadedHandler;
-		RoutedEventHandler unloadedHandler = (s, e) =>
+			Connect();
+		}
+		viewList.Loaded += LoadedHandler;
+		void UnloadedHandler(object s, RoutedEventArgs e)
 		{
-			disconnect();
-		};
-		viewList.Unloaded += unloadedHandler;
-		return new RequestBinding(viewToBind, loadedHandler, unloadedHandler);
+			Disconnect();
+		}
+		viewList.Unloaded += UnloadedHandler;
+		return new RequestBinding(viewToBind, LoadedHandler, UnloadedHandler);
 	}
 }

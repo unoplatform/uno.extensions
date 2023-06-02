@@ -6,13 +6,13 @@
 		<Message Text="Building target framework: $(TargetFramework)" Importance="high" Condition="'$(TargetFramework)'!=''" />
 	</Target>
 
-	<Target Name="_UnoOverrideNuget" AfterTargets="AfterBuild" DependsOnTargets="BuiltProjectOutputGroup" Condition="'$(UnoNugetOverrideVersion)'!=''">
+	<Target Name="_UnoOverrideNuget" AfterTargets="AfterBuild" DependsOnTargets="BuiltProjectOutputGroup" Condition="'$(NugetOverrideVersion)'!=''">
 
 		<PropertyGroup>
 			<_TargetNugetPackageId Condition="'$(PackageId)'!=''">$(PackageId)</_TargetNugetPackageId>
 			<_TargetNugetPackageId Condition="'$(PackageId)'==''">$(AssemblyName)</_TargetNugetPackageId>
-			<_TargetNugetFolder Condition="'$(ToolOfPackage)'!=''">$(USERPROFILE)\.nuget\packages\$(ToolOfPackage)\$(UnoNugetOverrideVersion)\analyzers\dotnet\cs</_TargetNugetFolder>
-			<_TargetNugetFolder Condition="'$(ToolOfPackage)'==''">$(USERPROFILE)\.nuget\packages\$(_TargetNugetPackageId)\$(UnoNugetOverrideVersion)\lib\$(TargetFramework)</_TargetNugetFolder>
+			<_TargetNugetFolder Condition="'$(ToolOfPackage)'!=''">$(USERPROFILE)\.nuget\packages\$(ToolOfPackage)\$(NugetOverrideVersion)\analyzers\dotnet\cs</_TargetNugetFolder>
+			<_TargetNugetFolder Condition="'$(ToolOfPackage)'==''">$(USERPROFILE)\.nuget\packages\$(_TargetNugetPackageId)\$(NugetOverrideVersion)\lib\$(TargetFramework)</_TargetNugetFolder>
 		</PropertyGroup>
 
 		<ItemGroup>

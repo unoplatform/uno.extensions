@@ -1,0 +1,29 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>netstandard2.0</TargetFramework>
+		<IsPackable>false</IsPackable>
+
+		<!--
+			Defines that this project output is a tool of the given package ID,
+			so nuget override will copy it in the 'analyzers' directory of that package instead of the 'lib' of the current package folder.
+		-->
+		<ToolOfPackage>Uno.Extensions.Navigation</ToolOfPackage>
+
+		<NoWarn>$(NoWarn);RS2008</NoWarn> <!-- RS2008: Enable analyzer release tracking for the analyzer project -->
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Uno.Roslyn" PrivateAssets="All" />
+		<PackageReference Include="Microsoft.CodeAnalysis.CSharp" PrivateAssets="All" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Compile Include="..\Uno.Extensions.Core\_Compat\**\*.cs" Link="_Compat\%(RecursiveDir)%(Filename)%(Extension)" />
+		<Compile Include="..\Uno.Extensions.Core.Generators\Common\**\*.cs" Link="Common\%(RecursiveDir)%(Filename)%(Extension)" />
+
+		<Compile Include="..\Uno.Extensions.Navigation\**\*Attribute.cs" Link="Attributes\%(RecursiveDir)%(Filename)%(Extension)" />
+		<Compile Include="..\Uno.Extensions.Navigation.UI\**\*Attribute.cs" Link="Attributes\%(RecursiveDir)%(Filename)%(Extension)" />
+	</ItemGroup>
+
+</Project>

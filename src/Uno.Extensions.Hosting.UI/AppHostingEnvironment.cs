@@ -4,7 +4,7 @@ using Uno.Foundation;
 
 namespace Uno.Extensions.Hosting;
 
-public class AppHostingEnvironment : HostingEnvironment, IAppHostEnvironment, IDataFolderProvider
+internal class AppHostingEnvironment : HostingEnvironment, IAppHostEnvironment, IDataFolderProvider
 #if __WASM__
 	, IHasAddressBar
 #endif
@@ -12,19 +12,6 @@ public class AppHostingEnvironment : HostingEnvironment, IAppHostEnvironment, ID
 	public string? AppDataPath { get; init; }
 
 	public Assembly? HostAssembly { get; init; }
-
-    public static AppHostingEnvironment FromHostEnvironment(IHostEnvironment host, string? appDataPath, Assembly hostAssembly)
-    {
-        return new AppHostingEnvironment
-        {
-            AppDataPath = appDataPath,
-            ApplicationName = host.ApplicationName,
-            ContentRootFileProvider = host.ContentRootFileProvider,
-            ContentRootPath = host.ContentRootPath,
-            EnvironmentName = host.EnvironmentName,
-			HostAssembly = hostAssembly
-		};
-    }
 
 #if __WASM__
 	public async Task UpdateAddressBar(Uri applicationUri)

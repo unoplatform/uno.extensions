@@ -9,6 +9,9 @@ namespace Uno.Extensions.Reactive.Core;
 /// </summary>
 internal interface IRequestSource : IDisposable
 {
+	/// <summary>
+	/// Notifies that a request has been raised.
+	/// </summary>
 	public event EventHandler<IContextRequest> RequestRaised;
 
 	/// <summary>

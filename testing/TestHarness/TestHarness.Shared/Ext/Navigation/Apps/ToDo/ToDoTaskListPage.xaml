@@ -86,7 +86,6 @@
 									  Visibility="Collapsed">
 						<ListView ItemsSource="{Binding CompletedTasks}"
 								  uen:Navigation.Request="Task"
-								  SelectionMode="None"
 								  x:Name="CompletedTasks"
 								  ItemTemplate="{StaticResource TaskTemplate}" />
 					</Grid>
@@ -95,7 +94,6 @@
 									  Visibility="Collapsed">
 						<ListView ItemsSource="{Binding ActiveTasks}"
 								  uen:Navigation.Request="Task"
-								  SelectionMode="None"
 								  x:Name="ActiveTasks"
 								  ItemTemplate="{StaticResource TaskTemplate}" />
 					</Grid>

@@ -7,6 +7,7 @@ namespace TestHarness.Ext.AdHoc;
 [ReactiveBindable(false)]
 public partial class AdHocOneViewModel : ObservableObject
 {
+	public string Title => "AdHocOneViewModel - From ViewModel";
 	private readonly IDispatcher _dispatcher;
 	private readonly INavigator _navigator;
 	private readonly ISerializer<AdHocWidget> _widgetSerializer;
@@ -38,6 +39,15 @@ public partial class AdHocOneViewModel : ObservableObject
 		ISerializer serializer,
 		AdHocNeedsADispatcherService needsADispatcher)
 	{
+#if DEBUG
+		// Uncomment this for an arbitrary delay when creating this constructor
+		// Used for testing that Bindings.Update is called when view model is
+		// set as DataContext -> x:Bind bindings should be updated
+		//for (int i = 0; i < 3000; i++)
+		//{
+		//	Debug.WriteLine(i);
+		//}
+#endif
 		_dispatcher = dispatcher;
 		_navigator = navigator;
 		_widgetSerializer = widgetSerializer;
@@ -47,6 +57,7 @@ public partial class AdHocOneViewModel : ObservableObject
 		_dataService = dataService;
 		_serializer = serializer;
 		_needsADispatcher = needsADispatcher;
+
 	}
 
 	public async Task LongRunning()

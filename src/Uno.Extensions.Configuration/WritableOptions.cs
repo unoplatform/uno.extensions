@@ -1,6 +1,6 @@
 ﻿namespace Uno.Extensions.Configuration;
 
-public class WritableOptions<T> : IWritableOptions<T>
+internal class WritableOptions<T> : IWritableOptions<T>
 	where T : class, new()
 {
 	private readonly IOptionsMonitor<T> _options;

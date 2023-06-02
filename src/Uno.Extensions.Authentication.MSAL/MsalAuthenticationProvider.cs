@@ -32,7 +32,7 @@ internal record MsalAuthenticationProvider(
 		Settings?.Build?.Invoke(builder);
 
 		_scopes = config.Scopes ?? new string[] { };
-		if(_scopes.Length == 0 &&
+		if (_scopes.Length == 0 &&
 			Settings?.Scopes is not null)
 		{
 			_scopes = Settings.Scopes;
@@ -134,15 +134,39 @@ internal record MsalAuthenticationProvider(
 			_isCompleted = true;
 
 #if WINDOWS_UWP || !NET6_0_OR_GREATER
-			if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"No further action required for setting up storage");
+			if (Logger.IsEnabled(LogLevel.Trace))
+			{
+				Logger.LogTraceMessage($"No further action required for setting up storage");
+			}
+
 			return;
 #else
-			if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"Setting up storage location");
+			if (Logger.IsEnabled(LogLevel.Trace))
+			{
+				Logger.LogTraceMessage($"Setting up storage location");
+			}
 
 			var folderPath = await Storage.CreateFolderAsync(Name.ToLower());
-			Console.WriteLine($"Folder: {folderPath}");
+			if (folderPath is null)
+			{
+				if (Logger.IsEnabled(LogLevel.Warning))
+				{
+					Logger.LogWarningMessage($"Folder should not be null, exiting Msal storage setup");
+				}
+				return;
+			}
+
+			if (Logger.IsEnabled(LogLevel.Trace))
+			{
+				Logger.LogTraceMessage($"Folder: {folderPath}");
+			}
+
 			var filePath = Path.Combine(folderPath, CacheFileName);
-			if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"MSAL cache {filePath}");
+			if (Logger.IsEnabled(LogLevel.Trace))
+			{
+				Logger.LogTraceMessage($"MSAL cache {filePath}");
+			}
+
 			var builder = new StorageCreationPropertiesBuilder(CacheFileName, folderPath);
 			Settings?.Store?.Invoke(builder);
 			var storage = builder.Build();
@@ -152,12 +176,18 @@ internal record MsalAuthenticationProvider(
 			var cacheHelper = await MsalCacheHelper.CreateAsync(storage);
 #endif
 			cacheHelper.RegisterCache(_pca!.UserTokenCache);
-			if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"MSAL storage setup completed");
+			if (Logger.IsEnabled(LogLevel.Trace))
+			{
+				Logger.LogTraceMessage($"MSAL storage setup completed");
+			}
 #endif
 		}
 		catch (Exception ex)
 		{
-			if (Logger.IsEnabled(LogLevel.Error)) Logger.LogErrorMessage($"Error setting up storage for MSAL - {ex.Message}");
+			if (Logger.IsEnabled(LogLevel.Error))
+			{
+				Logger.LogErrorMessage($"Error setting up storage for MSAL - {ex.Message}");
+			}
 		}
 	}
 

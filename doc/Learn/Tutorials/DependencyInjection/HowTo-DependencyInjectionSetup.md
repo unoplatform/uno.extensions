@@ -62,7 +62,7 @@ Dependency Injection (DI) is an important design pattern when building loosely-c
         }
     }
     ```
-* For the dependency injection framework to handle instantiation of the service as a constructor argument, you must also register your view model with the `IServiceCollection`:
+* If you are using not using [navigation](xref:Overview.Navigation), you have to register the view model to `IServiceCollection`, but we recommend using navigation and not manually register the view model as a service:
     ```cs
     protected override void OnLaunched(LaunchActivatedEventArgs args)
     {
@@ -74,6 +74,7 @@ Dependency Injection (DI) is an important design pattern when building loosely-c
                     {
                         // Register your services
                         services.AddSingleton<IProfilePictureService, ProfilePictureService>();
+                        // Register view model
                         services.AddTransient<MainViewModel>();
                     }
                 );
