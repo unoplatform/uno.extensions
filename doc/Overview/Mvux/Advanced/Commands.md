@@ -18,9 +18,9 @@ This page covers the following topics:
 
 ## What are commands
 
-Commands provide a way to expose code within an application that performs an action (typically a method) so that it can be inovked by UI element.  
+Commands provide a way to expose code within an application (typically a method) that performs an action, so that it can be invoked from the View.  
 
-For example the MainModel includes a Save method:
+For example the `MainModel` includes a `Save` method:
 
 ```csharp
 public partial record MainModel()
@@ -29,7 +29,7 @@ public partial record MainModel()
 }
 ```
 
-The Save method will be exposed as a command on the generated bindable proxy:
+The `Save` method will be exposed as a command on the generated bindable proxy, `BindableMainModel`:
 
 ```csharp
 public partial class BindableMainModel
@@ -38,7 +38,7 @@ public partial class BindableMainModel
 }  
 ```
 
-The Command property on a Button can be bound to the Save command. When the Button is clicked, the Save command will be executed, which will invoke the Save method on MainModel.
+The `Command` property on a `Button` can be bound to the `Save` command on the `BindableMainModel`. When the `Button` is clicked, the `Save` command will be executed, which will invoke the `Save` method on `MainModel`.
 
 ```xml
 <Button Command="{Binding Save}">Save</Button>
@@ -54,14 +54,14 @@ The [`ICommand`](https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/m
 - [`CanExecute`](https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.input.icommand.canexecute): This method is invoked when the UI needs to determine if the command can be executed. It returns a boolean value indicating if the command can be executed (i.e. false whilst the Save method is executing)
 - [`CanExecuteChanged`](https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.input.icommand.canexecutechanged): This event is raised when something that affects whether this command can execute happens, and the `CanExecute` result needs to be updated.
 
-In addition to the `ICommand` interface, `IAsyncCommand` also extends the  [`INotifyPropertyChanged`](https://learn.microsoft.com/dotnet/api/system.componentmodel.inotifypropertychanged) interface in order to raise the PropertyChanged event when any of its properties change.  
+The `IAsyncCommand` interface also extends the [`ILoadable`](xref:Toolkit.Controls.LoadingView#iloadable) interface to report the current execution state via the `IsExecuting` property.  
 
-The `IAsyncCommand` interface also extends the [`ILoadable`](xref:Toolkit.Controls.LoadingView#iloadable) interface to report the current execution state via the `IsExecuting` property.
+Lastly, the `IAsyncCommand` also extends the  [`INotifyPropertyChanged`](https://learn.microsoft.com/dotnet/api/system.componentmodel.inotifypropertychanged) interface in order to raise the `PropertyChanged` event when any of its properties change. For example the UI could bind to the `IsExecuting` property to disable a control whilst `IsExecuting` is true. When `IsExecuting` changes to false, a `PropertyChanged` event is raised and the binding will be re-evaluated, enabling the control.
 
-The implementation of `IAsyncCommand` uses the command parameter received from the View or via a [Feed Parameters](#additional-feed-parameters) to track the async execution status of the command with the current argument for the parameter.
-  
 <!-- 
 TODO: Find a home for this 
+The implementation of `IAsyncCommand` uses the command parameter received from the View or via a [Feed Parameters](#additional-feed-parameters) to track the async execution status of the command with the current argument for the parameter.
+
 For example, if '5' was passed in as a parameter and the command has started executing using (e.g. `command.Execute(5)`), calling `CanExecute(5)` will return `false` until this particular execution with the argument 5 completes. But checking `CanExecute` with a different argument (i.e. `CanExecute(6)`), will still return true.
 
 The following class diagram displays the hierarchy of the `IAsyncCommand` interface:
