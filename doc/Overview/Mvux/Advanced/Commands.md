@@ -6,16 +6,16 @@ uid: Overview.Mvux.Advanced.Commands
 
 This page covers the following topics:
 
-- [**What are commands**](#what-are-commands) - a brief overview of Commanding
-- [**Asynchronous commands**](#asynchronous-commands) - an overview of `IAsyncCommand`, MVUX's command that supports asynchronous execution.
-- Implicit command generation
-  - [**Basic Commands**](#basic-commands) - explains how commands are implicitly generated for methods declared in the Model.
-  - [**Using the CommandParameter**](#using-the-commandparameter) - how to use `CommandParameter`s.
-  - [**Additional Feed parameters**](#additional-feed-parameters) - demonstrates how Feeds can be consumed as parameters of the command method.
-  - [**Command generation rules**](#command-generation-rules) - a recap of implicit command generation rules.
-  - [**Configuring command generation using attributes**](#configuring-command-generation-using-attributes) - discusses ways to enable or disable implicit command generation and Feed parameters using attributes.
-- [**Manual command creation using factory methods**](#manual-command-creation-using-factory-methods) - explains another approach of creating commands explicitly
-- [**Cancelling a command**](#cancelling-a-command) -
+- [**What are commands**](#what-are-commands)
+- [**Asynchronous commands**](#asynchronous-commands)
+- [**Implicit command generation**](#implicit-command-generation)
+  - [**Basic Commands**](#basic-commands)
+  - [**Using the CommandParameter**](#using-the-commandparameter)
+  - [**Additional Feed parameters**](#additional-feed-parameters)
+  - [**Command generation rules**](#command-generation-rules)
+  - [**Configuring command generation using attributes**](#configuring-command-generation-using-attributes)
+- [**Manual command creation using factory methods**](#manual-command-creation-using-factory-methods)
+- [**Cancelling a command**](#cancelling-a-command)
 
 ## What are commands
 
