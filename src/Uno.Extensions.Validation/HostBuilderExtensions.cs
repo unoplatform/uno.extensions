@@ -5,8 +5,6 @@
 /// </summary>
 public static class HostBuilderExtensions
 {
-	private static bool _isRegistered;
-
 	/// <summary>
 	/// Registers the validation services.
 	/// </summary>
@@ -19,11 +17,11 @@ public static class HostBuilderExtensions
 		Action<HostBuilderContext, IServiceCollection>? configureDelegate = default,
 		Func<IValidationBuilder, IHostBuilder>? configure = default)
 	{
-		if (_isRegistered)
+		if (hostBuilder.IsRegistered(nameof(UseValidation)))
 		{
 			return hostBuilder;
 		}
-		_isRegistered = true;
+
 		hostBuilder
 		.ConfigureServices((ctx, services) =>
 		{
