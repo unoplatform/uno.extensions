@@ -21,4 +21,8 @@
 		<InternalsVisibleTo Include="$(AssemblyName).Fluent" />
 	</ItemGroup>
 
+	<ItemGroup>
+		<ProjectReference Include="..\Uno.Extensions.Core\Uno.Extensions.Core.csproj" />
+	</ItemGroup>
+
 </Project>
