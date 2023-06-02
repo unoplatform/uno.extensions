@@ -15,13 +15,12 @@ This page covers the following topics:
   - [**Command generation rules**](#command-generation-rules)
   - [**Configuring command generation using attributes**](#configuring-command-generation-using-attributes)
 - [**Manual command creation using factory methods**](#manual-command-creation-using-factory-methods)
-- [**Cancelling a command**](#cancelling-a-command)
 
 ## What are commands
 
 Commands provide a way to expose code within an application that performs an action (typically a method) so that it can be inovked by UI element.  
 
-For example a Model might include a Save method:
+For example the MainModel includes a Save method:
 
 ```csharp
 public partial record MainModel()
