@@ -1,6 +1,4 @@
-﻿using Microsoft.Extensions.Configuration;
-
-namespace Uno.Extensions.Validation;
+﻿namespace Uno.Extensions.Validation;
 
 internal record ValidationBuilder(IHostBuilder HostBuilder) : IValidationBuilder
 {

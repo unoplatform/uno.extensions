@@ -1,4 +1,4 @@
-﻿namespace Uno.Extensions.Validation;
+﻿namespace Uno.Extensions.Validation.Fluent;
 
 /// <summary>
 /// Class that can be used to validate objects, properties and methods based on the associated Fluent Validators. 
