@@ -41,7 +41,12 @@ To learn more about Commands, read [this article](https://learn.microsoft.com/wi
 
 The MVUX [`IAsyncCommand`](https://github.com/unoplatform/uno.extensions/blob/main/src/Uno.Extensions.Reactive/Presentation/Commands/IAsyncCommand.cs) interface, is a Command that implements [`ICommand`](https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.input.icommand) and adds support for asynchronous operations.  
 As it implements `ICommand`, it can be bound to anything in the View that accepts a Command (e.g. in a `Button.Command` property), with the advantage over `ICommand` that `IAsyncCommand` is built to be invoked asynchronously and it reports its execution state.  
-In addition, it also implements [`INotifyPropertyChanged`](https://learn.microsoft.com/dotnet/api/system.componentmodel.inotifypropertychanged), to enable notifications when any of its properties change, as well as [`ILoadable`](xref:Toolkit.Controls.LoadingView#iloadable) - an Uno interface that provides information about an object's state whether it's currently in execution mode (busy) or not, and notifies subscribers when this execution state changes.
+It also implements [`INotifyPropertyChanged`](https://learn.microsoft.com/dotnet/api/system.componentmodel.inotifypropertychanged), to enable notifications when any of its properties change, as well as [`ILoadable`](xref:Toolkit.Controls.LoadingView#iloadable) - an Uno interface that provides information about an object's state whether it's currently in execution mode (busy) or not, and notifies subscribers when this execution state changes.
+
+The `IsExecuting` property returns true if there is an active execution of this command.
+
+The implementation of `IAsyncCommand` uses the command parameter received from the View or via a [Feed Parameters](#additional-feed-parameters) to track the async execution status of the command with the current argument for the parameter.  
+For example, if '5' was passed in as a parameter and the command has started executing using (e.g. `command.Execute(5)`), calling `CanExecute(5)` will return `false` until this particular execution with the argument 5 completes. But checking `CanExecute` with a different argument (i.e. `CanExecute(6)`), will still return true.
 
 The following class diagram displays the hierarchy of the `IAsyncCommand` interface:
 
@@ -49,13 +54,13 @@ The following class diagram displays the hierarchy of the `IAsyncCommand` interf
 
 ## Implicit command generation
 
-When creating a method in the Model, a property of an `IAsyncCommand` wrapper will be implicitly generated in the Proxy Model. When that command is executed via a button-click etc., the method in the Model will be called.  
+When creating a method in the Model, a property of an `IAsyncCommand` wrapper will be implicitly generated in the Bindable Proxy . When that command is executed via a button-click etc., the method in the Model will be called.  
 Explicit command generation is when the commands are created by hand using [factory methods](#explicit-command-creation-using-factory-methods).
 
 ### Basic commands
 
-The `IAsyncCommand` property will be generated in the Proxy Model if the method signature returns no value, or is an asynchronous method (any awaitable method, e.g. `ValueTask`/`Task`).  
-When the method is asynchronous, it may contain a single `CancellationToken` parameter. Although a `CancellationToken` parameter is not mandatory, it's a good practice to add one, as it enables the cancellation of the asynchronous operation.
+The `IAsyncCommand` property will be generated in the Bindable Proxy if the method signature returns no value, or is an asynchronous method (any awaitable method, e.g. `ValueTask`/`Task`).  
+When the method is asynchronous, it may contain a single `CancellationToken` parameter. Although a `CancellationToken` parameter is not mandatory, it's a good practice to add one, as it enables the cancellation of the asynchronous operation. When the Model gets disposed, running commands' are requested to be cancelled.
 
 For example, if the Model contains a method in any of the following signatures:
 
@@ -72,14 +77,14 @@ For example, if the Model contains a method in any of the following signatures:
     public ValueTask DoWork();
     ```
 
-a `DoWork` command will be generated in the Proxy Model:
+a `DoWork` command will be generated in the Bindable Proxy :
 
 ```xml
 <Button Command="{Binding DoWork}" />
 ```
 
 In some scenarios, you may need to use the method only, without a command generated for it. You can use the [`ImplicitCommand` attribute](#implicit-commands-attribute) to switch off or back on command generation for certain methods, classes, or assemblies.  
-When command generation is switch off, the methods under the scope which has been switched off will be generated in the Proxy Model as regular methods rather than as commands.
+When command generation is switch off, the methods under the scope which has been switched off will be generated in the Bindable Proxy as regular methods rather than as commands.
 
 ### Using the CommandParameter
 
@@ -330,7 +335,7 @@ View:
 In the above example (in the Model), when the button is clicked, the `Given` section will be materialized with the most recent value of the `CurrentPage` Feed, it will be then evaluated with the predicate provided in the `When` call, and if its value is greater than 0, it will be passed on to `Then`, and `NavigateToPage` will be called with the `CurrentPage` Feed value passed on.
 
 > [!IMPORTANT]  
-> Commands created using the fluent API will not be generated in the Proxy Model. In order to bind to `MyCommand`, use the Proxy Model's `Model` property to access the original Model and then the command.
+> Commands created using the fluent API will not be generated in the Bindable Proxy . In order to bind to `MyCommand`, use the Bindable Proxy 's `Model` property to access the original Model and then the command.
 > For example:
 >```xml
 ><Button Command="{Binding Model.MyCommand}" />
