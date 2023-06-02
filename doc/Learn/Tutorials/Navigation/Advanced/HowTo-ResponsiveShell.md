@@ -3,6 +3,12 @@ uid: Learn.Tutorials.Navigation.Advanced.ResponsiveShell
 ---
 # How-To: Build a Responsive Layout using NavigationView and TabBar
 
+Apps that scale across multiple devices and form factors need to be able to adapt their layout to the available screen real estate. When your app is running on narrow devices, such as phones, you may want to hide the navigation pane and show a hamburger menu button instead. 
+
+It makes sense to allow `TabBar` to be the dominant navigation surface on these devices. On larger devices, such as tablets and desktops, you may want to show the navigation pane and hide the hamburger menu button. Using the `TabBar` would be a poor choice for navigation on these devices. The platform includes a `VisualStateManger` that allows you to define different visual states for different screen sizes in XAML, showing the navigation pane and hamburger menu button as appropriate.
+
+This tutorial will show you how to build a responsive layout with multiple navigation controls such as `NavigationView` and the [Uno Toolkit](https://github.com/unoplatform/uno.toolkit.ui) `TabBar` which use the _same_ navigation service behind the scenes.
+
 ## Step-by-steps
 
 > [!IMPORTANT]
@@ -360,7 +366,7 @@ While the WinUI `NavigationView` control by itself is a good choice for a respon
     ```
 
 ### 5. Toggle visibility for responsive design
-* Finally, specify groups for the VisualStateManager to adjust the Page layout based how close the window size is to a couple of defined breakpoints:
+* Finally, specify groups for the `VisualStateManager` to adjust the page layout based on how close the window size is to a couple of defined breakpoints:
 
     ```xml
     <Page x:Class="ResponsiveShell.Views.MainPage">

@@ -166,13 +166,101 @@ Choosing the right control for your navigation needs is important, and one commo
   </Grid>
   ```
 
-* Observe how the `NavigationView` and the content area are now connected. When you select a `NavigationViewItem`, the corresponding `Grid` will be shown.
-
 * Set the `Visibility` of the `Grid` elements to `Collapsed` to hide the content area's children beforehand:
 
   ```xml
   Visibility="Collapsed"
   ```
+
+#### Navigating to Page elements
+
+* You may want to navigate to a `Page` view element represented by a route name. It is possible to do this without defining the view element alongside the other content areas. For instance, you may need to display a products page `ProductsPage` which will be defined in a separate XAML file.
+
+* Add a new **Page** item to your app called `ProductsPage` with the following code:
+
+  ```xml
+  <Page
+      x:Class="UsingNavigationView.Views.ProductsPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:local="using:Uno.Extensions.Navigation.UI.Samples"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      mc:Ignorable="d"
+      Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+  
+      <Grid>
+          <TextBlock Text="Products"
+                    FontSize="24"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center" />
+      </Grid>
+  </Page>
+  ```
+
+* For the purposes for this tutorial, `ProductsPage` will be associated with its own view model `ProductsViewModel`. Add a new **Class** item to your app called `ProductsViewModel` with the following code:
+
+  ```csharp 
+  namespace UsingNavigationView.ViewModels;
+  
+  public class ProductsViewModel
+  {
+      public ProductsViewModel()
+      {
+
+      }
+  }
+  ```
+
+* Register `ViewMap` and `RouteMap` instances inside the `RegisterRoutes` method in `App.cs`. This associates the `ProductsPage` described above with `ProductsViewModel`, as well as avoiding the use of reflection for route discovery.
+
+  ```csharp
+  private static void RegisterRoutes(IViewRegistry views, IRouteRegistry routes)
+  {
+      views.Register(
+          new ViewMap<ShellControl, ShellViewModel>(),
+          new ViewMap<ProductsPage, ProductsViewModel>(),
+          new ViewMap<MainPage, MainViewModel>()
+      );
+  
+      routes.Register(
+          new RouteMap("", View: views.FindByViewModel<ShellViewModel>(),
+              Nested: new RouteMap[]
+              {
+                  new RouteMap("Main", View: views.FindByViewModel<MainViewModel>(),
+                  Nested: new RouteMap[]
+                  { 
+                      new RouteMap("Products", View: views.FindByViewModel<ProductsViewModel>())
+                  })
+              }));
+  }
+  ```
+  
+* Importantly, the snippet above establishes a route name `Products` for `ProductsPage`. We can use this route name to navigate to the `ProductsPage` view element.
+
+* Add a `NavigationViewItem` to the `NavigationView` element with the `uen:Region.Name` attached property set to `Products`.
+
+  ```xml
+  <NavigationView.MenuItems>
+      <NavigationViewItem Content="One"
+                          uen:Region.Name="One" />
+      <NavigationViewItem Content="Two"
+                          uen:Region.Name="Two" />
+      <NavigationViewItem Content="Three"
+                          uen:Region.Name="Three" />
+      <!-- Adds a products item -->
+      <NavigationViewItem Content="Products"
+                          uen:Region.Name="Products" />
+  </NavigationView.MenuItems>
+  ```
+
+### 6. Putting it all together
+
+* Observe how the `NavigationView` and the content area are now connected. When you select a `NavigationViewItem`, the corresponding `Grid` or `Page` will be shown.
+
+* If the route name specified represents a `Page` element, a `Frame` will be created upon navigation to host the `Page` element. This `Frame` will be added to the visual tree in order to support subsequent navigation to other `Page` elements.
+
+* Because the navigation service maintains an instance of the view, users can leave this new `ProductsPage` to view item details and return to it _without_ losing any state such as a product filter they have already specified.
 
 * Now, you have written a UI layout capable of navigating to views with `NavigationView`. Your completed `MainPage.xaml` should look like the code example below.
 
@@ -203,6 +291,8 @@ Choosing the right control for your navigation needs is important, and one commo
                                     uen:Region.Name="Two" />
                 <NavigationViewItem Content="Three"
                                     uen:Region.Name="Three" />
+                <NavigationViewItem Content="Products"
+                                    uen:Region.Name="Products" />
             </NavigationView.MenuItems>
 
             <Grid uen:Region.Attached="True"
@@ -234,7 +324,3 @@ Choosing the right control for your navigation needs is important, and one commo
     </Grid>
 </Page>
 ```
-
-### 6. Switching between views
-
-* To switch between views, you can now use the `NavigationView`. When you select a `NavigationViewItem`, the corresponding `Grid` will be shown. The visibility of the corresponding views will be adjusted automatically.
