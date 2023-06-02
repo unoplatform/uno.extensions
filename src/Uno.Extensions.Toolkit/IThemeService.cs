@@ -1,5 +1,8 @@
 ﻿namespace Uno.Extensions.Toolkit;
 
+/// <summary>
+/// Abstraction for controlling the theme of the application
+/// </summary>
 public interface IThemeService
 {
 	/// <summary>
