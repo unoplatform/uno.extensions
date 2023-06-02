@@ -1,7 +1,4 @@
-﻿using System.Threading;
-using Windows.Storage;
-
-namespace Uno.Extensions.Toolkit;
+﻿namespace Uno.Extensions.Toolkit;
 
 internal class ThemeService : IThemeService, IDisposable
 {
