@@ -7,6 +7,9 @@ uid: Learn.Tutorials.Localization.HowToUseLocalization
 
 ## Step-by-steps
 
+> [!IMPORTANT]
+> This guide assumes you used the template wizard or `dotnet new unoapp` to create your solution. If not, it is recommended that you follow the [instructions](xref:Overview.Extensions) for creating an application from the template.
+
 ### 1. Opt into localization
 
 * Organize your application's localized `resw` resources into folders corresponding to a language tag
@@ -14,16 +17,14 @@ uid: Learn.Tutorials.Localization.HowToUseLocalization
 * Call the `UseLocalization()` method to register the implementation of `IStringLocalizer` with the DI container:
 
     ```csharp
-    private IHost Host { get; }
-
-    public App()
+    protected override void OnLaunched(LaunchActivatedEventArgs args)
     {
-        Host = UnoHost
-            .CreateDefaultBuilder()
-            .UseLocalization()
-            .Build();
-        // ........ //
-    }
+        var appBuilder = this.CreateBuilder(args)
+            .Configure(hostBuilder => 
+            {
+                hostBuilder.UseLocalization();
+            });
+    ...
     ```
 
 ### 2. Use the localization service to resolve localized text

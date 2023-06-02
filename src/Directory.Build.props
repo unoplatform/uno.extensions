@@ -46,16 +46,16 @@
 		<IsXamarinMac Condition="$(TargetFramework.ToLower().StartsWith('xamarinmac'))">true</IsXamarinMac>
 
 		<_IsAndroid>false</_IsAndroid>
-		<_IsAndroid Condition="$(IsMonoAndroid) or '$(TargetFramework)'=='net6.0-android'">true</_IsAndroid>
+		<_IsAndroid Condition="$(IsMonoAndroid) or $([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">true</_IsAndroid>
 
 		<_IsCatalyst>false</_IsCatalyst>
-		<_IsCatalyst Condition="$(_IsCatalyst) or '$(TargetFramework)'=='net6.0-maccatalyst'">true</_IsCatalyst>
+		<_IsCatalyst Condition="$(_IsCatalyst) or $([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">true</_IsCatalyst>
 
 		<_IsIOS>false</_IsIOS>
-		<_IsIOS Condition="$(IsXamarinIOS) or '$(TargetFramework)'=='net6.0-ios' or '$(TargetFramework)'=='net6.0-maccatalyst'">true</_IsIOS>
+		<_IsIOS Condition="$(IsXamarinIOS) or $([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">true</_IsIOS>
 
 		<_IsMacOS>false</_IsMacOS>
-		<_IsMacOS Condition="$(IsXamarinMac) or '$(TargetFramework)'=='net6.0-macos'">true</_IsMacOS>
+		<_IsMacOS Condition="$(IsXamarinMac) or $([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'macos'">true</_IsMacOS>
 
 		<_IsNet>false</_IsNet>
 		<_IsNet Condition="'$(TargetFramework)'=='net461'">true</_IsNet>
@@ -86,7 +86,8 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<None Include="build\Package.targets" Pack="true" PackagePath="buildTransitive\$(PackageId).targets" Condition="exists('build')"/>
+		<None Include="build\Package.props" Pack="true" PackagePath="buildTransitive\$(PackageId).props" Condition="exists('build\Package.props')"/>
+		<None Include="build\Package.targets" Pack="true" PackagePath="buildTransitive\$(PackageId).targets" Condition="exists('build\Pacakge.targets')"/>
 	</ItemGroup>
 
 	<ItemGroup Condition="'$(TargetFramework)'=='xamarinmac20'">
@@ -95,6 +96,7 @@
 	</ItemGroup>
 
 	<PropertyGroup Condition="$(_IsCatalyst)">
+		<DefineConstants>$(DefineConstants);XAMARIN</DefineConstants>
 		<SupportedOSPlatformVersion>13.1</SupportedOSPlatformVersion>
 		<TargetPlatformMinVersion>13.1</TargetPlatformMinVersion>
 	</PropertyGroup>
@@ -109,7 +111,7 @@
 		<DefineConstants>$(DefineConstants);__WINDOWS__</DefineConstants>
 		<TargetPlatformVersion>10.0.19041.0</TargetPlatformVersion>
 	</PropertyGroup>
-	
+
 	<PropertyGroup Condition="$(_IsWinUI)">
 		<DefineConstants>$(DefineConstants);__WINDOWS__</DefineConstants>
 	</PropertyGroup>
@@ -127,10 +129,6 @@
 		<IsGeneratorProject>False</IsGeneratorProject>
 		<IsGeneratorProject Condition="$(MSBuildProjectName.Contains('Generator'))">True</IsGeneratorProject>
 	</PropertyGroup>
-
-	<ItemGroup>
-		<None Include="$(MSBuildThisFileDirectory)..\build\uno-logo.png" Pack="true" Visible="false" PackagePath="\"/>
-	</ItemGroup>
 
 	<Choose>
 		<When Condition="$(IsTestProject) Or $(IsSampleProject)">

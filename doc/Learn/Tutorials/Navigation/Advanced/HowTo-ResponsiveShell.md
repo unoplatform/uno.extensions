@@ -11,6 +11,9 @@ This tutorial will show you how to build a responsive layout with multiple navig
 
 ## Step-by-steps
 
+> [!IMPORTANT]
+> This guide assumes you used the template wizard or `dotnet new unoapp` to create your solution. If not, it is recommended that you follow the [instructions](xref:Overview.Extensions) for creating an application from the template.
+
 ### 1. Add necessary XAML namespaces
 
 * Update the `Page` element in `MainPage.xaml` to include XAML namespace mappings for Navigation, WinUI, and Uno Toolkit:

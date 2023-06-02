@@ -1,17 +1,26 @@
 ﻿namespace Uno.Extensions.Navigation.UI;
 
-public class SelectorRequestHandler : ControlRequestHandlerBase<Selector>
+/// <summary>
+/// Navigation request handler for <see cref="Selector"/> controls.
+/// </summary>
+/// <param name="HandlerLogger">Logger for logging</param>
+public record SelectorRequestHandler(ILogger<SelectorRequestHandler> HandlerLogger) : ControlRequestHandlerBase<Selector>(HandlerLogger)
 {
+	/// <inheritdoc/>
 	public override IRequestBinding? Bind(FrameworkElement view)
 	{
 		var viewToBind = view;
 		var viewList = view as Selector;
 		if (viewList is null)
 		{
+			if (Logger.IsEnabled(LogLevel.Warning))
+			{
+				Logger.LogWarningMessage($"Bind: {view?.GetType()} is not a Selector");
+			}
 			return default;
 		}
 
-		Func<FrameworkElement, object, Task> action = async (sender, data) =>
+		async Task Action(FrameworkElement sender, object data)
 		{
 			var navdata = sender.GetData() ?? data;
 			var path = sender.GetRequest();
@@ -22,12 +31,13 @@ public class SelectorRequestHandler : ControlRequestHandlerBase<Selector>
 			}
 
 			await nav.NavigateRouteAsync(sender, path, Qualifiers.None, navdata);
-		};
+		}
 
-		SelectionChangedEventHandler selectionAction = async (actionSender, actionArgs) =>
+		async void SelectionAction(object actionSender, SelectionChangedEventArgs actionArgs)
 		{
 			var sender = actionSender as Selector;
-			if (sender is null)
+			if (sender is null ||
+				(sender is ListViewBase lvb && lvb.IsItemClickEnabled))
 			{
 				return;
 			}
@@ -35,25 +45,25 @@ public class SelectorRequestHandler : ControlRequestHandlerBase<Selector>
 							actionArgs?.AddedItems?.FirstOrDefault() ??
 							sender.SelectedItem; // In some cases, AddedItems is null, even though SelectedItem is not null
 
-			if(data is null)
+			if (data is null)
 			{
 				return;
 			}
 
-			await action(sender, data);
-		};
+			await Action(sender, data);
+		}
 
-		ItemClickEventHandler clickAction = async (actionSender, actionArgs) =>
+		async void ClickAction(object actionSender, ItemClickEventArgs actionArgs)
 		{
 			var sender = actionSender as ListViewBase;
-			if (sender is null)
+			if (!(sender?.IsItemClickEnabled ?? false))
 			{
 				return;
 			}
 			var data = sender.GetData() ?? actionArgs.ClickedItem;
 
-			await action(sender, data);
-		};
+			await Action(sender, data);
+		}
 
 		Action? connect = null;
 		Action? disconnect = null;
@@ -61,26 +71,20 @@ public class SelectorRequestHandler : ControlRequestHandlerBase<Selector>
 		{
 			connect = () =>
 			{
-				if (lv.IsItemClickEnabled)
-				{
-					lv.ItemClick += clickAction;
-				}
-				else
-				{
-					viewList.SelectionChanged += selectionAction;
-				}
+				lv.ItemClick += ClickAction;
+				viewList.SelectionChanged += SelectionAction;
 			};
 
 			disconnect = () =>
 			{
-				lv.ItemClick -= clickAction;
-				viewList.SelectionChanged -= selectionAction;
+				lv.ItemClick -= ClickAction;
+				viewList.SelectionChanged -= SelectionAction;
 			};
 		}
 		else
 		{
-			connect = () => viewList.SelectionChanged += selectionAction;
-			disconnect = () => viewList.SelectionChanged -= selectionAction;
+			connect = () => viewList.SelectionChanged += SelectionAction;
+			disconnect = () => viewList.SelectionChanged -= SelectionAction;
 		}
 
 		if (viewList.IsLoaded)
@@ -88,16 +92,16 @@ public class SelectorRequestHandler : ControlRequestHandlerBase<Selector>
 			connect();
 		}
 
-		RoutedEventHandler loadedHandler =  (s, e) =>
+		void LoadedHandler(object s, RoutedEventArgs e)
 		{
 			connect();
-		};
-		viewList.Loaded += loadedHandler;
-		RoutedEventHandler unloadedHandler = (s, e) =>
+		}
+		viewList.Loaded += LoadedHandler;
+		void UnloadedHandler(object s, RoutedEventArgs e)
 		{
 			disconnect();
-		};
-		viewList.Unloaded += unloadedHandler;
-		return new RequestBinding(viewToBind, loadedHandler, unloadedHandler);
+		}
+		viewList.Unloaded += UnloadedHandler;
+		return new RequestBinding(viewToBind, LoadedHandler, UnloadedHandler);
 	}
 }

@@ -3,17 +3,22 @@ using NavigationView = Microsoft.UI.Xaml.Controls.NavigationView;
 
 namespace Uno.Extensions.Navigation.UI;
 
-public class NavigationViewItemRequestHandler : ActionRequestHandlerBase<NavigationViewItem>
+/// <summary>
+/// Navigation request handler for <see cref="NavigationViewItem"/>.
+/// </summary>
+/// <param name="HandlerLogger">Logger for logging</param>
+/// <param name="Resolver">Resolver for navigation</param>
+public sealed record NavigationViewItemRequestHandler(ILogger<NavigationViewItemRequestHandler> HandlerLogger, IRouteResolver Resolver) : ActionRequestHandlerBase<NavigationViewItem>(HandlerLogger, Resolver)
 {
-	public NavigationViewItemRequestHandler(IRouteResolver routes) : base(routes)
-	{
-	}
-
+	/// <inheritdoc/>
 	public override IRequestBinding? Bind(FrameworkElement view)
 	{
-		var viewButton = view as NavigationViewItem;
-		if (viewButton is null)
+		if (view is not NavigationViewItem viewButton)
 		{
+			if (Logger.IsEnabled(LogLevel.Warning))
+			{
+				Logger.LogWarningMessage($"Bind: {view?.GetType()} is not a NavigationViewItem");
+			}
 			return default;
 		}
 

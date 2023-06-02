@@ -5,10 +5,10 @@ uid: Learn.Tutorials.Authentication.HowToOidcAuthentication
 
 `OidcAuthenticationProvider` allows your users to sign in using their identities from a participating identity provider. It can wrap support for any [OpenID Connect](https://openid.net/connect/) backend, such as [IdentityServer](https://duendesoftware.com/products/identityserver) into an implementation of `IAuthenticationProvider`. This tutorial will use the OIDC authorization to validate user credentials.
 
-> [!TIP]
-> This guide assumes you used the Uno.Extensions template to create the solution. Instructions for creating an application from the template can be found [here](xref:Overview.Extensions).
-
 ## Step-by-steps
+
+> [!IMPORTANT]
+> This guide assumes you used the template wizard or `dotnet new unoapp` to create your solution. If not, it is recommended that you follow the [instructions](xref:Overview.Extensions) for creating an application from the template.
 
 ### 1. Prepare for OIDC authentication
 

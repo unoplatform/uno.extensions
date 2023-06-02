@@ -6,12 +6,12 @@ uid: Learn.Tutorials.Hosting.HowToHostingSetup
 `Uno.Extensions.Hosting` can be used to register services that will be accessible throughout the application via dependency injection (DI). This tutorial will walk you through the critical steps needed to leverage hosting in your application.
 
 > [!WARNING]
-> The steps outlined here are unnecessary if you used the `dotnet new unoapp` template to create your solution. Otherwise, it is recommended that you follow the [instructions](xref:Overview.Extensions) for creating an application from the template.
+> The steps outlined here are unnecessary if you used the new project wizard template to create your solution. Otherwise, it is recommended that you follow the [instructions](xref:Overview.Extensions) for creating an application from the template.
 
 ## Step-by-steps
 
 ### 1. Installation
-Install the Uno.Extensions.Hosting library from NuGet, making sure you reference the package that is appropriate for the flavor of Uno in use. Likewise, projects with Uno.WinUI require installation of [Microsoft.Extensions.Hosting.WinUI](https://www.nuget.org/packages/Uno.Extensions.Hosting.WinUI) while those with Uno.UI need [Microsoft.Extensions.Hosting.UWP](https://www.nuget.org/packages/Uno.Extensions.Hosting.UWP) instead.
+* Install the [Uno.Extensions.Hosting.WinUI](https://www.nuget.org/packages/Uno.Extensions.Hosting.WinUI) package from NuGet.
 
 ### 2. Create and Configure IApplicationBuilder
 

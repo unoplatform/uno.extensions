@@ -25,6 +25,7 @@
       "..\\..\\src\\Uno.Extensions.Logging\\Uno.Extensions.Logging.WinUI.Skia.csproj",
       "..\\..\\src\\Uno.Extensions.Logging\\Uno.Extensions.Logging.WinUI.Wasm.csproj",
       "..\\..\\src\\Uno.Extensions.Logging\\Uno.Extensions.Logging.WinUI.csproj",
+      "..\\..\\src\\Uno.Extensions.Navigation.Generators\\Uno.Extensions.Navigation.Generators.csproj",
       "..\\..\\src\\Uno.Extensions.Navigation.Toolkit\\Uno.Extensions.Navigation.Toolkit.UI.csproj",
       "..\\..\\src\\Uno.Extensions.Navigation.Toolkit\\Uno.Extensions.Navigation.Toolkit.WinUI.csproj",
       "..\\..\\src\\Uno.Extensions.Navigation.UI\\Uno.Extensions.Navigation.UI.csproj",

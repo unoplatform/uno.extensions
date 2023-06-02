@@ -1,16 +1,22 @@
 ﻿namespace Uno.Extensions.Navigation.Toolkit.Controls;
 
-public class TabBarItemRequestHandler : ActionRequestHandlerBase<TabBarItem>
+/// <summary>
+/// Navigation request handler for <see cref="TabBarItem"/> controls.
+/// </summary>
+/// <param name="HandlerLogger">Logger for logging</param>
+/// <param name="Resolver">Resolver for navigation</param>
+public sealed record TabBarItemRequestHandler(ILogger<TabBarItemRequestHandler> HandlerLogger, IRouteResolver Resolver) : ActionRequestHandlerBase<TabBarItem>(HandlerLogger, Resolver)
 {
-	public TabBarItemRequestHandler(IRouteResolver routes) : base(routes)
-	{
-	}
-
+	/// <inheritdoc/>
 	public override IRequestBinding? Bind(FrameworkElement view)
 	{
 		var viewButton = view as TabBarItem;
 		if (viewButton is null)
 		{
+			if (Logger.IsEnabled(LogLevel.Warning))
+			{
+				Logger.LogWarningMessage($"Bind: {view.GetType()} is not an instance, or is not a TabBarItem");
+			}
 			return default;
 		}
 

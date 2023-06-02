@@ -62,6 +62,14 @@
 			<Button AutomationProperties.AutomationId="FivePageRootThreeSevenClearPageButton"
 					Content="-/Three/Seven (will navigate to Seven with Six and Three in backstack)"
 					uen:Navigation.Request="-/PageNavigationThree/PageNavigationSeven" />
+
+
+			<Button AutomationProperties.AutomationId="FivePageToSixPageViewModelWithDataButton"
+					Content="Six (ViewModel - With Data)"
+					Click="{x:Bind ViewModel.GoToSixWithData}" />
+			<Button AutomationProperties.AutomationId="FivePageToSixPageViewModelWithDataAndBackButton"
+					Content="Six (ViewModel - With Data and Back)"
+					Click="{x:Bind ViewModel.GoToSixWithDataAndBack}" />
 		</StackPanel>
 	</Grid>
 </Page>

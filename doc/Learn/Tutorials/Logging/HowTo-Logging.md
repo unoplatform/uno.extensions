@@ -7,23 +7,23 @@ uid: Learn.Tutorials.Logging.UseLogging
 
 ## Step-by-steps
 
+> [!IMPORTANT]
+> This guide assumes you used the template wizard or `dotnet new unoapp` to create your solution. If not, it is recommended that you follow the [instructions](xref:Overview.Extensions) for creating an application from the template.
+
 ### 1. Opt into logging
 
 * Uno.Extensions offers a simple way to wire up platform-specific log providers such as `Uno.Extensions.Logging.OSLogLoggerProvider` for iOS and `Uno.Extensions.Logging.WebAssembly.WebAssemblyConsoleLoggerProvider` for WASM as both debug and console logging. 
 
-    Call the `UseLogging()` method to register the resultant implementation of `ILogger` with the DI container:
+* Call the `UseLogging()` method to register the resultant implementation of `ILogger` with the DI container:
 
     ```csharp
-    private IHost Host { get; }
-
-    public App()
+    protected override void OnLaunched(LaunchActivatedEventArgs e)
     {
-        Host = UnoHost
-            .CreateDefaultBuilder()
-            .UseLogging()
-            .Build();
-        // ........ //
-    }
+        var appBuilder = this.CreateBuilder(args)
+            .Configure(host => {
+                host.UseLogging();
+            });
+    ...
     ```
 
 ### 2. Use the injected service to log application events
@@ -39,7 +39,7 @@ uid: Learn.Tutorials.Logging.UseLogging
         {
             this.logger = logger;
         }
-    }
+    ...
     ```
 
 * You can now record application events using the injected `ILogger` service implementation:
