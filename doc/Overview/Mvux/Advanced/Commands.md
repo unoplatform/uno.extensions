@@ -15,7 +15,6 @@ This page covers the following topics:
   - [**Command generation rules**](#command-generation-rules)
   - [**Configuring command generation using attributes**](#configuring-command-generation-using-attributes)
 - [**Manual command creation using factory methods**](#manual-command-creation-using-factory-methods)
-- [**Cancelling a command**](#cancelling-a-command)
 
 ## What are commands
 
