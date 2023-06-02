@@ -7,19 +7,21 @@ When working with a complex application, centralized registration of your API en
 
 ## Step-by-steps
 
+> [!IMPORTANT]
+> This guide assumes you used the template wizard or `dotnet new unoapp` to create your solution. If not, it is recommended that you follow the [instructions](xref:Overview.Extensions) for creating an application from the template.
+
 ### 1. Enable HTTP
 
 * Call the `UseHttp()` method to register a HTTP client with the `IHostBuilder` which implements `IHttpClient`:
 
     ```csharp
-    private IHost Host { get; }
-
     protected override void OnLaunched(LaunchActivatedEventArgs args)
     {
-        var builder = this.CreateBuilder(args)
-            .Configure(host => 
-                host.UseHttp()
-            );
+        var appBuilder = this.CreateBuilder(args)
+            .Configure(hostBuilder =>
+            {
+                hostBuilder.UseHttp();
+            });
     ...
     ```
 
@@ -30,16 +32,15 @@ When working with a complex application, centralized registration of your API en
 * While the `AddClient()` extension method can take a delegate as its argument, the recommended way to configure the HTTP client is to specify a configuration section name. This allows you to configure the added HTTP client using the `appsettings.json` file. 
 
     ```csharp
-    private IHost Host { get; }
-
     protected override void OnLaunched(LaunchActivatedEventArgs args)
     {
-        var builder = this.CreateBuilder(args)
-            .Configure(host => 
-                host
-                .UseHttp((services) =>
-                    services.AddClient<IShowService, ShowService>("ShowService"))
-            );
+        var appBuilder = this.CreateBuilder(args)
+            .Configure(hostBuilder =>
+            {
+                hostBuilder.UseHttp(services =>
+                    services.AddClient<IShowService, ShowService>("ShowService")
+                );
+            });
     ...
     ```
 
@@ -79,6 +80,5 @@ When working with a complex application, centralized registration of your API en
         public async Task LoadShowAsync()
         {
             var show = await _showService.GetShowAsync();
-    
     ...
     ```
