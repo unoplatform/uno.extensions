@@ -14,6 +14,7 @@ This page covers the following topics:
   - [**Additional Feed parameters**](#additional-feed-parameters)
   - [**Command generation rules**](#command-generation-rules)
   - [**Configuring command generation using attributes**](#configuring-command-generation-using-attributes)
+  - [**Using XAML behaviors to execute a command when an event is raised**](#using-xaml-behaviors-to-execute-a-command-when-an-event-is-raised)
 - [**Manual command creation using factory methods**](#manual-command-creation-using-factory-methods)
 
 ## What are commands
@@ -252,9 +253,9 @@ public async ValueTask Share([FeedParameter(nameof(Message))] string msg)
 
 `ImplicitFeedCommandParameter` and `FeedParameter` attributes can also be nested to enable or disable specific scopes in the app. The `FeedParameter` setting has priority over `ImplicitFeedCommandParameter`, so parameters decorated with `FeedParameter` will explicitly indicate that the parameter is to be fulfilled by a Feed.
 
-### Using XAML behaviors to execute a command when an event fires
+### Using XAML behaviors to execute a command when an event is raised
 
-You can also utilize MVUX's generated command and invoke them when an event fires.
+You can also utilize MVUX's generated command and invoke them when an event is raised.
 This can be achieved with the [XamlBehaviors](https://github.com/unoplatform/Uno.XamlBehaviors) library.
 
 For example, if you want to capture a `TextBlock` being double-tapped, you can add in the Model a method to be invoked on that event:
