@@ -58,15 +58,7 @@ The `IAsyncCommand` interface also extends the [`ILoadable`](xref:Toolkit.Contro
 
 Lastly, the `IAsyncCommand` also extends the  [`INotifyPropertyChanged`](https://learn.microsoft.com/dotnet/api/system.componentmodel.inotifypropertychanged) interface in order to raise the `PropertyChanged` event when any of its properties change. For example the UI could bind to the `IsExecuting` property to disable a control whilst `IsExecuting` is true. When `IsExecuting` changes to false, a `PropertyChanged` event is raised and the binding will be re-evaluated, enabling the control.
 
-<!-- 
-TODO: Find a home for this 
-The implementation of `IAsyncCommand` uses the command parameter received from the View or via a [Feed Parameters](#additional-feed-parameters) to track the async execution status of the command with the current argument for the parameter.
-
-For example, if '5' was passed in as a parameter and the command has started executing using (e.g. `command.Execute(5)`), calling `CanExecute(5)` will return `false` until this particular execution with the argument 5 completes. But checking `CanExecute` with a different argument (i.e. `CanExecute(6)`), will still return true.
-
-The following class diagram displays the hierarchy of the `IAsyncCommand` interface:
-
-![A class diagram of IAsyncCommand inheritance structure](../Assets/Commands-2.jpg) -->
+Command parameters can also be used. These will be explained [below](#using-the-commandparameter).
 
 ## Implicit command generation
 
@@ -420,7 +412,7 @@ In the last example, `YourCommand` gets invoked if the `CommandParameter` passes
 
 This is a diagram detailing the methods in the Command factory toolset:
 
-![A class diagram of MVUX command builder inheritance structure](../Assets/Commands-1.jpg)
+![A class diagram of MVUX command builder inheritance structure](../Assets/CommandsDiagram.jpg)
 
 Below is a list of all methods and their signatures:
 
