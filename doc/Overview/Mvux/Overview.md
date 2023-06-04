@@ -16,7 +16,7 @@ Although this seems like an easy problem, as is often the case, there are more d
 - What if no data is available?
 - What if an error occurs while obtaining or processing the data?
 - How to keep the app responsive while requesting or updating the UI?
-- Does the app need to periodically request new data or listen to the external source provide it?
+- How do we refresh the current data?
 - How do we avoid threading or concurrency issues when handling new data in the background?
 - How do we make sure the code is testable?
 
@@ -103,7 +103,11 @@ When new data is available in the Feed, the `Data` property is updated with the 
 </Page>
 ```
 
-In the View's code-behind, we're assigning the page's `DataContext` to the generated Proxy Model, passing in a `WeatherService` instance to its constructor (the Proxy Model has the same constructors as the Model):
+In the XAML above, within the template scope of the `FeedView`, the `Data` property is used to access the data that was obtained from the service, currently available by the IFeed. In this case, it's the most recent `WeatherInfo` result from the service.
+
+The `Refresh` command is exposed by the `FeedView` as part of its Template object. As we are inside the `FeedView`'s Template, the `Data` and `Refresh` properties are exposed to the Template, and will cause the Feed to requery its source (the service).
+
+For the View to be bound with the Proxy Model, we need to assign the View's `DataContext`. This can be done in the page's code-behind file:
 
 ```csharp
 public sealed partial class MainPage : Page
@@ -117,9 +121,34 @@ public sealed partial class MainPage : Page
 }
 ```
 
-In the XAML above, within the template scope of the `FeedView`, the `Data` property is used to access the data that was obtained from the service, currently available by the IFeed. In this case, it's the most recent `WeatherInfo` result from the service.
+### Update
 
-The `Refresh` command is exposed by the `FeedView` as part of its Template object. As we are inside the `FeedView`'s Template, the `Data` and `Refresh` properties are exposed to the Template, and will cause the Feed to requery its source (the service).
+The MV**U**X Update is the part in the generated code where the data-binding actions are captured by the Proxy Model and are updating the data in the Model.  
+This includes ensuring that even if the objects are immutable (record types), they will be recreated anew and be set to their matching property in the Model.
+
+<!--TODO
+Update is also when states are updated with new values this is not used in this example
+The question is if we want to expose the use of IState in this introduction
+-->
+
+
+### Result
+
+When the app is lanuched, a waiting progress ring appears while the service loads the current temperature:
+
+![Video showing a progress-ring running in the app while waiting for data](Assets/SimpleFeed-3.gif)
+
+This message is displayed by the FeedView while awaiting the information from the service.
+
+It is thereafter replaced with the temperature as soon as it's received from the service:
+
+![A screenshot of the app showing a refresh button](Assets/SimpleFeed-5.jpg)
+
+When the 'Refresh' button is pressed, the progress ring shows again for a short time, until the new temperature is received from the server.
+
+Interestingly enough, the Refresh button is automatically disabled while a refresh request is in progress:
+
+![A screenshot showing the refresh button disabled and temperature updated to 24](Assets/SimpleFeed-6.jpg)
 
 For the full tutorial see [How to create a feed](xref:Overview.Mvux.HowToSimpleFeed).
 
@@ -133,7 +162,7 @@ MVUX also adds to the value another layer of data combined with the Feed value. 
 Common statuses for a feed include 'loading', 'has value', 'refreshing', 'empty', and 'error'.  
 MVUX includes controls that make it easy to display these different statuses in the View without the need to create additional properties to manipulate and control what to show.
 
-A Feed can be a stream of a single value or a stream of a collection. It can also keep track of its current and previous value(s). Keeping track of values is necessary, for example if a subsequent request to refresh the data fails - we still want to display the old value.
+A Feed can be a stream of a single value or a stream of a collection. A Feed can also keep track of its current and previous value(s). Keeping track of values is necessary, for example if a subsequent request to refresh the data fails, as we'd still want to display the old value.
 
 Models are always created asynchronously and any necessary transitions to the UI thread are handled automatically.
 
