@@ -209,8 +209,7 @@ You can combine these attributes on various classes or on the assembly to opt-in
 
 #### Command attribute
 
-In addition to the [`ImplicitCommand`](https://github.com/unoplatform/uno.extensions/blob/main/src/Uno.Extensions.Reactive/Presentation/Commands/CommandAttribute.cs) attribute which controls implicit command generation of a class or assembly, you can explicitly switch on or off command generation for a specific method.  
-For example, if you are using [Event Binding](https://learn.microsoft.com/en-us/windows/uwp/xaml-platform/x-bind-markup-extension#event-binding), you might need to opt out from command generation for a specific method.
+In addition to the [`ImplicitCommand`](https://github.com/unoplatform/uno.extensions/blob/main/src/Uno.Extensions.Reactive/Presentation/Commands/CommandAttribute.cs) attribute which controls implicit command generation of a class or assembly, you can explicitly switch on or off command generation for a specific method. When command generation is switched off for a specific  method, that method will be re-generated in the Proxy Model as it currently is (a method) rather than a command.
 
 This can be achieved using the `ImplicitCommand` attribute.
 
@@ -233,6 +232,8 @@ public async ValueTask DoWork()
 ```
 
 The `Command` attribute has precedence over the `ImplicitCommands` attribute, if a method is decorated with this attribute, whether it will be generated as a command or not will depend solely on this attribute value if set to true (default) or to false, as this has been explicitly configured, even an upper scope has command generation set differently.
+
+One example of when you'd want to switch off command generation is if you are using [Event Binding](https://learn.microsoft.com/en-us/windows/uwp/xaml-platform/x-bind-markup-extension#event-binding), you might need to opt out from command generation for a the bound method so that you can bind to it from the View.
 
 #### ImplicitFeedCommandParameter attribute
 
@@ -258,6 +259,42 @@ public async ValueTask Share([FeedParameter(nameof(Message))] string msg)
 ```
 
 `ImplicitFeedCommandParameter` and `FeedParameter` attributes can also be nested to enable or disable specific scopes in the app. The `FeedParameter` setting has priority over `ImplicitFeedCommandParameter`, so parameters decorated with `FeedParameter` will explicitly indicate that the parameter is to be fulfilled by a Feed.
+
+### Using XAML behaviors to execute a command when an event fires
+
+You can also utilize MVUX's generated command and invoke them when an event fires.
+This can be achieved with the [XamlBehaviors](https://github.com/unoplatform/Uno.XamlBehaviors) library.
+
+For example, if you want to capture a `TextBlock` being double-tapped, you can add in the Model a method to be invoked on that event:
+
+```csharp
+public void TextBlockDoubleTapped(string text)
+{
+    // perform action
+}
+```
+
+The `TextBlockDoubleTapped` method will be generated as a command, which you can then use XAML behaviors to invoke when the `TextBlock`'s `DoubleTapped` event occurs. You can also pass its command parameter to the method (although you can chose ot omit it):
+
+```xml
+<Page
+    ...
+    xmlns:interactivity="using:Microsoft.Xaml.Interactivity" 
+    xmlns:interactions="using:Microsoft.Xaml.Interactions.Core">
+
+    <TextBlock x:Name="textBlock" Text="Double tap me">
+        <interactivity:Interaction.Behaviors>
+            <interactions:EventTriggerBehavior EventName="DoubleTapped">
+                <interactions:InvokeCommandAction
+                    Command="{Binding TextBlockDoubleTapped}"
+                    CommandParameter="{Binding Text, ElementName=textBlock}"/>
+            </interactions:EventTriggerBehavior>
+        </interactivity:Interaction.Behaviors>
+    </TextBlock>
+</Page>
+```
+
+When the `TextBlock` is double tapped (or double clicked), the `TextBlockDoubleTapped` command which is generated in the Proxy Model will be executed, and in turn the `TextBlockDoubleTapped` method in the Model will be invoked. The text 'Double tap me' will be passed in as the command parameter.
 
 ## Manual command creation using factory methods
 
