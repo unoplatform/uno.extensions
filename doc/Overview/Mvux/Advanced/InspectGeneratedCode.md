@@ -4,7 +4,7 @@ uid: Overview.Mvux.Advanced.InspectGeneratedCode
 
 # Inspecting the generated code
 
-MVUX makes extensive use of code generation. It's used to generate Bindable Proxy Models, entities, and commands.  
+MVUX makes extensive use of code generation. It's used to generate bindable proxies for models, entities, and commands.  
 Inspecting the generated code can give you a lot of insight into how the Bindable Proxies work under the hood as well as how MVUX operates behind the scenes.
 
 Using Visual Studio, viewing the generated code can be achieved in several ways:

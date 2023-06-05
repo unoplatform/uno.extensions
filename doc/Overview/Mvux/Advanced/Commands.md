@@ -65,12 +65,12 @@ Command parameters can also be used. These will be explained [below](#using-the-
 
 ## Implicit command generation
 
-When creating a method in the Model, a property of an `IAsyncCommand` wrapper will be implicitly generated in the Bindable Proxy . When that command is executed via a button-click etc., the method in the Model will be called.  
+When creating a method in the Model, a property of an `IAsyncCommand` wrapper will be implicitly generated in the bindable proxy . When that command is executed via a button-click etc., the method in the Model will be called.  
 Explicit command generation is when the commands are created by hand using [factory methods](#explicit-command-creation-using-factory-methods).
 
 ### Basic commands
 
-The `IAsyncCommand` property will be generated in the Bindable Proxy if the method signature returns no value, or is an asynchronous method (any awaitable method, e.g. `ValueTask`/`Task`).  
+The `IAsyncCommand` property will be generated in the bindable proxy if the method signature returns no value, or is an asynchronous method (any awaitable method, e.g. `ValueTask`/`Task`).  
 When the method is asynchronous, it may contain a single `CancellationToken` parameter. Although a `CancellationToken` parameter is not mandatory, it's a good practice to add one, as it enables the cancellation of the asynchronous operation. When the Model gets disposed, running commands' are requested to be cancelled.
 
 For example, if the Model contains a method in any of the following signatures:
@@ -88,14 +88,14 @@ For example, if the Model contains a method in any of the following signatures:
     public ValueTask DoWork();
     ```
 
-a `DoWork` command will be generated in the Bindable Proxy :
+a `DoWork` command will be generated in the bindable proxy :
 
 ```xml
 <Button Command="{Binding DoWork}" />
 ```
 
 In some scenarios, you may need to use the method only, without a command generated for it. You can use the [`ImplicitCommand` attribute](#implicit-commands-attribute) to switch off or back on command generation for certain methods, classes, or assemblies.  
-When command generation is switch off, the methods under the scope which has been switched off will be generated in the Bindable Proxy as regular methods rather than as commands.
+When command generation is switch off, the methods under the scope which has been switched off will be generated in the bindable proxy as regular methods rather than as commands.
 
 ### Using the CommandParameter
 
@@ -204,7 +204,7 @@ You can combine these attributes on various classes or on the assembly to opt-in
 
 #### Command attribute
 
-In addition to the [`ImplicitCommand`](https://github.com/unoplatform/uno.extensions/blob/main/src/Uno.Extensions.Reactive/Presentation/Commands/CommandAttribute.cs) attribute which controls implicit command generation of a class or assembly, you can explicitly switch on or off command generation for a specific method. When command generation is switched off for a specific  method, that method will be re-generated in the Proxy Model as it currently is (a method) rather than a command.
+In addition to the [`ImplicitCommand`](https://github.com/unoplatform/uno.extensions/blob/main/src/Uno.Extensions.Reactive/Presentation/Commands/CommandAttribute.cs) attribute which controls implicit command generation of a class or assembly, you can explicitly switch on or off command generation for a specific method. When command generation is switched off for a specific  method, that method will be re-generated in the bindable proxy for the Model as it currently is (a method) rather than a command.
 
 This can be achieved using the `ImplicitCommand` attribute.
 
@@ -289,7 +289,7 @@ The `TextBlockDoubleTapped` method will be generated as a command, which you can
 </Page>
 ```
 
-When the `TextBlock` is double tapped (or double clicked), the `TextBlockDoubleTapped` command which is generated in the Proxy Model will be executed, and in turn the `TextBlockDoubleTapped` method in the Model will be invoked. The text 'Double tap me' will be passed in as the command parameter.
+When the `TextBlock` is double tapped (or double clicked), the `TextBlockDoubleTapped` command which is generated in the bindable proxy will be executed, and in turn the `TextBlockDoubleTapped` method in the Model will be invoked. The text 'Double tap me' will be passed in as the command parameter.
 
 ## Manual command creation using factory methods
 
@@ -384,7 +384,7 @@ View:
 In the above example (in the Model), when the button is clicked, the `Given` section will be materialized with the most recent value of the `CurrentPage` Feed, it will be then evaluated with the predicate provided in the `When` call, and if its value is greater than 0, it will be passed on to `Then`, and `NavigateToPage` will be called with the `CurrentPage` Feed value passed on.
 
 > [!IMPORTANT]  
-> Commands created using the fluent API will not be generated in the Bindable Proxy . In order to bind to `MyCommand`, use the Bindable Proxy 's `Model` property to access the original Model and then the command.
+> Commands created using the fluent API will not be generated in the bindable proxy . In order to bind to `MyCommand`, use the pindable proxy's `Model` property to access the original Model and then the command.
 > For example:
 >```xml
 ><Button Command="{Binding Model.MyCommand}" />

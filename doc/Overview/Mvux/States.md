@@ -10,7 +10,7 @@ Like [Feeds](xref:Overview.Mvux.Feeds), States are used as a gateway that manage
 
 Contrary to Feeds, States are stateful (hence the name!), and do keep track of the state of the Model and its entities.  
 
-MVUX utilizes its powerful code-generation engine to generate a Bindable Proxy Model for each Model, which holds the state information of the data, as well as Bindable Proxy Entities where needed, for instance if the entities are immutable (e.g. records - the recommended type).  
+MVUX utilizes its powerful code-generation engine to generate a bindable proxy for each Model, which holds the state information of the data, as well as Bindable Proxy Entities where needed, for instance if the entities are immutable (e.g. records - the recommended type).  
 These are required so that the immutable entities are recreated anew in response to updates the user makes in the View.
 
 > [!NOTE]
@@ -119,7 +119,7 @@ City currentCity = await this.CurrentCity;
     ```
 
     > [!NOTE]
-    > `BindableSliderModel` refers to the generated Bindable Proxy Model.
+    > `BindableSliderModel` refers to the generated bindable proxy for the `SliderModel`.
     
 1. When you run the app, moving the `Slider` instantly affects the upper `TextBox`; the `Silder.Value` property has a two-way binding with the `SliderValue` State, so any change to the Slider immediately updates the State value, which in turn affects the data-bound `TextBlock` on top:
 
