@@ -1,23 +1,32 @@
-﻿
+﻿namespace Uno.Extensions;
 
-using Uno.Extensions.Configuration;
-
-namespace Uno.Extensions;
-
+/// <summary>
+/// Extensions for working with <see cref="IHostBuilder"/>.
+/// </summary>
 public static class HostBuilderExtensions
 {
+	/// <summary>
+	/// Registers storage services.
+	/// </summary>
+	/// <param name="hostBuilder">The host builder instance to register with</param>
+	/// <param name="configure">Callback for configuring services</param>
+	/// <returns>The updated host builder instance</returns>
 	public static IHostBuilder UseStorage(
 		this IHostBuilder hostBuilder,
 		Action<IServiceCollection> configure)
-	{
-		return hostBuilder.UseStorage((context, builder) => configure.Invoke(builder));
-	}
+			=> hostBuilder.UseStorage((context, builder) => configure.Invoke(builder));
 
+	/// <summary>
+	/// Registers storage services
+	/// </summary>
+	/// <param name="hostBuilder">The host builder instance to register with</param>
+	/// <param name="configure">Callback for configuring services</param>
+	/// <returns></returns>
 	public static IHostBuilder UseStorage(
-		this IHostBuilder builder,
+		this IHostBuilder hostBuilder,
 		Action<HostBuilderContext, IServiceCollection>? configure = default)
 	{
-		return builder
+		return hostBuilder
 			.UseConfiguration(
 				configure: configBuilder =>
 				{

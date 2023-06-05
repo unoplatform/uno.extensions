@@ -2,6 +2,7 @@
 global using System.Collections.Generic;
 global using System.IO;
 global using System.Linq;
+global using System.Reflection;
 global using System.Threading;
 global using System.Threading.Tasks;
 global using Microsoft.Extensions.DependencyInjection;
@@ -9,6 +10,7 @@ global using Microsoft.Extensions.Hosting;
 global using Microsoft.Extensions.Logging;
 global using Microsoft.Extensions.Options;
 global using Uno.Extensions.Configuration;
+global using Uno.Extensions.DependencyInjection;
 global using Uno.Extensions.Logging;
 global using Uno.Extensions.Serialization;
 global using Uno.Extensions.Storage;
@@ -18,7 +20,7 @@ global using Windows.Security.Credentials;
 global using Windows.Storage;
 
 #if WINUI
-global using Microsoft.UI.Dispatching;
+	global using Microsoft.UI.Dispatching;
 	global using Microsoft.UI.Xaml;
 	global using Microsoft.UI.Xaml.Controls;
 	global using Microsoft.UI.Xaml.Controls.Primitives;
