@@ -26,7 +26,7 @@ In other words, a Feed is a read-only representation of the data received from t
 For the examples below let's use a counter service that returns the current count number, starting from 1. It will be run 3 consecutive times delayed by a second each.
 For the data type we'll create a record type called `CounterValue`:
 
-```c#
+```csharp
 public record CounterValue(int Value);
 ```
 
@@ -39,7 +39,7 @@ Asynchronous data can be obtained in several ways.
 
 The most common is via a `ValueTask` that returns the data value(s) when ready:
 
-```c#
+```csharp
 private int _currentCount = 0;
 
 public async ValueTask<CounterValue> CountOne(CancellationToken ct)
@@ -55,14 +55,14 @@ public async ValueTask<CounterValue> CountOne(CancellationToken ct)
 > [!NOTE]
 > `ValueTask` is interchangeable with `Task`, but `ValueTask` was chosen to be in unity with the `IAsyncEnumerable` interface.
 > A `Task` is easily convertible to `ValueTask` nonetheless.
-> Learn more about [`Task`](https://learn.microsoft.com/en-us/dotnet/api/system.threading.tasks.task), [`ValueTask`](https://learn.microsoft.com/en-us/dotnet/api/system.threading.tasks.valuetask?view=net-6.0), or read [this article](https://devblogs.microsoft.com/dotnet/understanding-the-whys-whats-and-whens-of-valuetask/) discussing the differences between the two.
+> Learn more about [`Task`](https://learn.microsoft.com/dotnet/api/system.threading.tasks.task), [`ValueTask`](https://learn.microsoft.com/dotnet/api/system.threading.tasks.valuetask?view=net-6.0), or read [this article](https://devblogs.microsoft.com/dotnet/understanding-the-whys-whats-and-whens-of-valuetask/) discussing the differences between the two.
 
 This is known as a 'pull' method, as we're repeatedly calling the Task when we're looking for new data,
 and the Task returns the value when it's ready, unless it was cancelled using the token (this will be discussed in another tutorial).
 
 Using the `CountOne` method, creating a Feed is as easy as:
 
-```c#
+```csharp
 public IFeed<CounterValue> Value => Feed.Async(_myService.CountOne);
 ```
 
@@ -71,7 +71,7 @@ As mentioned above, the `Async` method takes a delegate of the a signature retur
 
 Should the signature of your method be different, for example if the method returns `Task<T>` (instead of `ValueTask<T>`, or when it a `CancellationToken` parameter is not present, `Feed.Async` can be called as follows:
 
-```c#
+```csharp
 // Service method
 public async Task<CounterValue> CountOne() { ... }
 
@@ -84,7 +84,7 @@ public IFeed<CounterValue> CurrentCount => Feed.Async(async ct => await _myServi
 In contrast to Tasks which operate as 'pull' methods, the 'push' method is where we call a method and establish some sort of connection with it,
 while it sends new data packets as they become available:
 
-```c#
+```csharp
 public async IAsyncEnumerable<CounterValue> StartCounting([EnumeratorCancellation] CancellationToken ct)
 {
     while (!ct.IsCancellationRequested)
@@ -103,7 +103,7 @@ public async IAsyncEnumerable<CounterValue> StartCounting([EnumeratorCancellatio
 
 Referring to the Async Enumerable from the example a Feed can be created in the following way:
 
-```c#
+```csharp
 public async IAsyncEnumerable<CounterValue> StartCounting(CancellationToken ct) { ... }
 
 public IFeed<CounterValue> CurrentCount => Feed.AsyncEnumerable(_myService.StartCounting);
@@ -112,7 +112,7 @@ public IFeed<CounterValue> CurrentCount => Feed.AsyncEnumerable(_myService.Start
 `CancellationToken`s are essential to enable halting an ongoing async operation.  
 However, if the API you're consuming does not have a `CancellationToken` parameter, you can disregard that incoming `CancellationToken` parameter as following:
 
-```c#
+```csharp
 public IFeed<CounterValue> CurrentCount => Feed.AsyncEnumerable(ct => StartCounting());
 ```
 
@@ -132,7 +132,7 @@ public IFeed<CounterValue> CurrentCount => Feed.AsyncEnumerable(ct => StartCount
 Feeds are directly awaitable, so to get the data currently held in the feed, this is useful when you want to use the current value in a command etc.  
 You can await it in the following manner:
 
-```c#
+```csharp
 public IFeed<CurrentCount> CurrentCount => ...
 
 private async ValueTask SomeAsyncMethod()
@@ -152,7 +152,7 @@ The generated proxy and its properties ensure that data-binding will work, even 
 
 > [!Note]  
 > For the code generation to work, mark the Models and entities with the `partial` modifier, and have the Feed properties' access modifier as `public`.  
-You can learn more about partial classes and methods in [this article](https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/classes-and-structs/partial-classes-and-methods).
+You can learn more about partial classes and methods in [this article](https://learn.microsoft.com/dotnet/csharp/programming-guide/classes-and-structs/partial-classes-and-methods).
 
 #### With regular data-binding
 
@@ -161,7 +161,7 @@ MVUX code-generation engine ensures the Feeds and all entities they expose are g
 
 The Feed can be consumed directly from the View, it's as simple as binding a regular value property exposed on the Model:
 
-```xaml
+```xml
 <Page ...>
     <TextBlock Text="{Binding CurrentCount.Value}" />
 </Page>
@@ -178,7 +178,7 @@ Built-in templates are included with the `FeedView` for these states, but they c
 
 Here's how to utilize the `FeedView` to display the same data as before:
 
-```xaml
+```xml
 <Page
     ...
 	xmlns:mvux="using:Uno.Extensions.Reactive.UI">
@@ -195,7 +195,7 @@ Here's how to utilize the `FeedView` to display the same data as before:
 > The `FeedView` wraps the data coming from the Feed in a special `FeedViewState` class which includes the Feed metadata.  
 One of its properties is `Data`, which provides access to the actual data of the Feed's current state, in our example the most recent integer value from the `CountOne` or `StartCounting` method [above](#consumption-of-feeds).
 
-# Messages
+## Messages
 
 Messages are one of the core components of MVUX. They refer to the metadata that wrap around the entities streaming along as discussed earlier.
 
@@ -217,46 +217,45 @@ An error has occurred. The `Exception` is attached.
 
 The following illustration show how the classes are built. Note that this diagram shows a stripped-down version of the actual types, for brevity:
 
-![](../Assets/FeedMessagesDiagram.jpg)
+![A diagram showing Feed Message class hierarchy](Assets/FeedMessagesDiagram.jpg)
 
 > [!TIP]  
 > MVUX provides you with peripheral tools that read the metadata Messages for you so that you don't normally even have to know about the Message structure!
 
-# Feed Operators
+## Feed Operators
 
 The Feed supports some LINQ operators that enable readjusting it into a new one.
 
-## Where
+### Where
 
 The `Where` extension method enables filtering a Feed. It returns a new Feed where the values of the parent one match the specified criteria.  
 For example:
 
-```c#
+```csharp
 public IFeed<CounterValue> OmitEarlyCounts => CurrentCount.Where(currentCount => currentCount.Value > 10);
 ```
 
 > [!Note]  
 > Be aware that unlike `IEnumerable<T>`, `IObservable<T>`, and `IAsyncEnumerable<T>`, if the predicate returns false, a result is still received but it contains a `Message<T>` with a data `Option<T>` of `None`.
 
-## Select or SelectAsync
+### Select or SelectAsync
 
 This one enables projecting one feed into another one by selecting one of its properties, or by passing it as a parameter to an external function.
 
-```c#
+```csharp
 public IFeed<int> OmitEarlyCounts => CurrentCount.Select(currentCount => currentCount.Value);
 ```
 
 The selection can also be asynchronous, and even use an external method:
 
-```c#
+```csharp
 public IFeed<CountInfo> CountTrends => CurrentCount.SelectAsync(currentCount => myService.GetCountInfoAsync(currentCount));
 ```
-
 
 > [!TIP]  
 > You can use the LINQ syntax if you prefer, or combine the operators:
 
-```c#
+```csharp
 public IFeed<int> OmitEearlyCounts =>
     from currentCount in CurrentCount
     where currentCount.Value > 10

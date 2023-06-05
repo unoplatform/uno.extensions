@@ -19,7 +19,7 @@ The static `ListState` class provides factory methods for creating `IListState<T
 
 Creates an empty List-State:
 
-```c#
+```csharp
 IListState<string> MyStrings = ListState<string>.Empty(this);
 ```
 
@@ -27,7 +27,7 @@ IListState<string> MyStrings = ListState<string>.Empty(this);
 
 Creates a List-State with an initial synchronous value:
 
-```c#
+```csharp
 private readonly IImmutableList<string> _favorites =
     new string[]
     {
@@ -44,7 +44,7 @@ public IListState<string> Favorites => ListState.Value(this, () => _favorites);
 
 Creates a List-State from an async method:
 
-```c#
+```csharp
 public ValueTask<IImmutableList<string>> GetStrings(CancellationToken ct) => new(_favorites);
 
 
@@ -53,7 +53,7 @@ public IListState<string> Favorites => ListState.Async(this, GetStrings);
 
 ## AsyncEnumerable
 
-```c#
+```csharp
 public async IAsyncEnumerable<IImmutableList<string>> GetStrings([EnumeratorCancellation] CancellationToken ct)
 {
     yield return _favorites;
@@ -64,7 +64,7 @@ public IListState<string> Favorites => ListState.AsyncEnumerable(this, GetString
 
 ## FromFeed
 
-```c#
+```csharp
 public IListFeed<string> FavoritesFeed => ...
 public IListState<string> FavoritesState => ListState.FromFeed(this, FavoritesFeed);
 ```
@@ -82,7 +82,7 @@ In the following examples, we'll refer to `MyStrings` which is an `IListState<st
 
 The `AddAsync` method adds an item to the end of the List State:
 
-```c#
+```csharp
 await MyStrings.AddAsync("Gord Downie", cancellationToken);
 ```
 
@@ -90,7 +90,7 @@ await MyStrings.AddAsync("Gord Downie", cancellationToken);
 
 The `InsertAsync` method inserts an item to the beginning of the List State:
 
-```c#
+```csharp
 await MyStrings.InsertAsync("Margaret Atwood", cancellationToken);
 ```
 
@@ -103,7 +103,7 @@ This parameter is a `Func<IImmutableList<T>, IImmutableList<T>>`, which when cal
 
 For example:
 
-```c#
+```csharp
 public async ValueTask TrimAll(CancellationToken ct = default)
 {
     await MyStrings.Update(
@@ -118,7 +118,7 @@ public async ValueTask TrimAll(CancellationToken ct = default)
 
 Another overload is `UpdateAsync`, which allows you to to apply an update on a select item criteria, using a predicate which is checked before updating an individual update, and if item qualifies, uses the `updater` argument, which in this case is a `Func<T, T>` which applies to an individual item:
 
-```c#
+```csharp
 public async ValueTask TrimLongNames(CancellationToken ct = default)
 {
     await MyStrings.UpdateAsync(
@@ -135,7 +135,7 @@ public async ValueTask TrimLongNames(CancellationToken ct = default)
 
 The `RemoveAllAsync` method uses a predicate to determine which items are to be removed:
 
-```c#
+```csharp
     await MyStrings.RemoveAllAsync(
         match: item => item.Contains("Ő"),
         ct: cancellationToken);
@@ -153,7 +153,7 @@ The following couple of methods enable changing the Selection state of items in 
 
 The `TrySelectAsync` method attempts to find the first occurrence of the item passed in as argument and flag it as 'selected':
 
-```c#
+```csharp
 await MyStrings.TrySelectAsync(cancellationToken);
 ```
 
@@ -161,6 +161,6 @@ await MyStrings.TrySelectAsync(cancellationToken);
 
 The `ClearSelection` method clears the current selection and flags all items as 'not selected':
 
-```c#
+```csharp
 await MyStrings.ClearSelection(cancellationToken);
 ```

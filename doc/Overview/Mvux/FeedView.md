@@ -7,7 +7,7 @@ It seamlessly fulfills everything Feeds and States offer and displays all metada
 
 To use the `FeedView` you have to add the MVUX UI controls namespace to your XAML file as follows:
 
-```xaml
+```xml
 <Page x:Class="MyMvuxApp.MainPage"
 	  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 	  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -27,13 +27,13 @@ The `Source` property is the entry point of the `FeedView` and it's to be set wi
 
 Example:
 
-```c#
+```csharp
 public IFeed<Person> CurrentContact => ...
 ```
 
 Then in the XAML:
 
-```xaml
+```xml
 <Page
     ...
     xmlns:mvux="using:Uno.Extensions.Reactive.UI">
@@ -69,7 +69,7 @@ This is also the object that is passed on to the `FeedView`'s templates for bind
 The `Data` property provides access to the value reported by the last message received from the source Feed.  
 In other words, the current and most-recent value represented by the Feed.
 
-```xaml
+```xml
 <Page
     ...
     xmlns:mvux="using:Uno.Extensions.Reactive.UI">
@@ -90,7 +90,7 @@ This provides a refresh command accessible from within the template which trigge
 
 For example:
 
-```xaml
+```xml
 <Page
     ...
     xmlns:mvux="using:Uno.Extensions.Reactive.UI">
@@ -127,7 +127,7 @@ The `Parent` property gets the `DataContext` of the `FeedView` itself. It provid
 
 By default, the `FeedView` will display a progress ring while awaiting data on load or refresh:
 
-![](Assets/ProgressRing.gif)
+![A running progress-ring control](Assets/ProgressRing.gif)
 
 However, in some scenarios you need to disable the default visual state and refreshing template.
 
@@ -146,7 +146,7 @@ As mentioned previously, the object the `FeedView` provides the `FeedViewState` 
 The `FeedView`'s default content directs to this property, so anything directly added to the `FeedView` element's XAML, is like setting its `ValueTemplate`.  
 So
 
-```xaml
+```xml
 <FeedView ...>
     <DataTemplate ... />
 </FeedView>
@@ -154,7 +154,7 @@ So
 
 is the same as:
 
-```xaml
+```xml
 <FeedView ...>
     <FeedView.ValueTemplate>
         <DataTemplate ... />
@@ -164,7 +164,7 @@ is the same as:
 
 or even:
 
-```xaml
+```xml
 <FeedView Source="..." ValueTemplate="{StaticResource MyFeedViewTemplate}" />
 ```
 
@@ -174,11 +174,11 @@ This template will display when the underlying Feed is currently awaiting the as
 
 It's default implementation will show a progress ring:
 
-![](Assets/ProgressRing.gif)
+![A running progress-ring control](Assets/ProgressRing.gif)
 
 But you can customize that by overriding the `ProgressTemplate`:
 
-```xaml
+```xml
 <FeedView ...>
     <DataTemplate>
         ...
@@ -199,7 +199,7 @@ Similarly, when using `IListFeed<T>`, the `NoneTemplate` will also display if th
 
 Example:
 
-```xaml
+```xml
 <FeedView ...>
     <DataTemplate>
         ...
@@ -231,7 +231,7 @@ The `FeedView` provides an asynchronous Command you can bind to, which when exec
 
 Here's how to utilize it:
 
-```xaml
+```xml
 <FeedView
     x:Name="feedView"
     ...>
