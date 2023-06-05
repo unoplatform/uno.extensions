@@ -54,7 +54,7 @@ In the standard MVU pattern, an update will cause a new View to be created upon 
 
 ### eXtended
 
-The **eXtended** part of the pattern includes the toolset to adapt between the data-binding engine and the Model which includes code generation and UI controls.
+The **eXtended** part of the pattern includes the toolset to adapt between the data-binding engine and the Model, which consists of generated code and and UI controls.
 
 ## Using MVUX to create an app
 
@@ -130,7 +130,6 @@ This includes ensuring that even if the objects are immutable (record types), th
 Update is also when states are updated with new values this is not used in this example
 The question is if we want to expose the use of IState in this introduction
 -->
-
 
 ### Result
 
