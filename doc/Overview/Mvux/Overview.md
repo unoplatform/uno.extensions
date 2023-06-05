@@ -4,86 +4,137 @@ uid: Overview.Mvux.Overview
 
 # MVUX Overview
 
-## What is MVUX
+**M**odel, **V**iew, **U**pdate, e**X**tended (**MVUX**) is a variation of the MVU design pattern that encourages unidirectional flow of immutable data, whilst leveraging the data binding capabilities that makes the MVVM pattern so powerful.
 
-MVUX stands for **M**odel-**V**iew-**U**pdate e**X**tended.
+To better understand MVUX, let us consider a weather application that will display the current temperature, obtained from an external weather service. At face value, this seems simple enough: call service to retrieve latest temperature and display the returned value.  
+  
+Although this seems like an easy problem, as is often the case, there are more details to consider than may be immediately apparent.
 
-In MVU the **model** represents the state of the application and is displayed by the **view**.  
-Input from the user triggers an **update** to the model. MVU is also referred to as the [Elm Architecture](https://en.wikipedia.org/wiki/Elm_(programming_language)#The_Elm_Architecture).
+- What if the external service isn't immediately available when starting the app?
+- How does the app show that data is being loaded? Or being updated?
+- What if no data is returned from the external service?
+- What if an error occurs while obtaining or processing the data?
+- How to keep the app responsive while loading or updating the UI?
+- How do we refresh the current data?
+- How do we avoid threading or concurrency issues when handling new data in the background?
+- How do we make sure the code is testable?
 
-MVUX **extend**s MVU with a powerful toolset that makes it possible to define the state of the application using immutable models (instead of mutable ViewModels used in an MVVM style application)
-whilst still leveraging the data binding capabilities of the Uno Platform.
+Individually, these questions are simple enough to handle, but hopefully, they highlight that there is more to consider in even a very trivial application. Now imagine an application that has more complex data and user interface, the potential for complexity and the amount of required code can grow enormously.
 
-## MVUX in Action
+MVUX is a response to such situations and makes it easier to handle the above scenarios.  
 
-Before digging into the features of MVUX let's see MVUX in action with a simple example. This example shows how weather data can be loaded asynchronously and displayed using data binding.
+## What is MVUX?
 
-One of the core concepts behind MVUX is that of an `IFeed`, which is similar in a number of ways to an `IObservable` (for those familiar with [System.Reactive(Rx.NET)](https://github.com/dotnet/reactive)), and represents a sequence of data.  
-This example creates an `IFeed<WeatherInfo>` that will return the weather, which includes the temperature, loaded asynchronously from a weather service.
+MVUX is an extension to the MVU design pattern, and leverages code generation in order to take advantage of the uniuqe data-binding engine of WinUI and the Uno Platform.
 
-The `WeatherModel` is the **Model** in MVUX (This would be referred to as a ViewModel in MVVM).
+### Model
 
-```c#
+The **Model** in MVUX is similar in many ways to the ViewModel in MVVM in that it defines the properties that will be available for data binding and methods that include any business logic. In MVUX this is referred to as the Model, highlighting that it is immutable by design.
+
+For our weather app, `WeatherModel` is the **Model**, and defines a property named `CurrentWeather`.
+
+```csharp
 public partial record WeatherModel(IWeatherService WeatherService)
 {
-    // MVUX code-generator reads this line and generates a cached feed behind the scenes    
-    public IFeed<WeatherInfo> CurrentWeather => Feed.Async(WeatherService.GetCurrentWeather);
+    public IFeed<WeatherInfo> CurrentWeather => Feed.Async(this.WeatherService.GetCurrentWeather);
 }
 ```
 
-> [!Note]  
-> For the code generation to work, mark the Models and entities with the `partial` modifier, and have the Feed properties' access modifier as `public`.  
-You can learn more about partial classes and methods in [this article](https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/classes-and-structs/partial-classes-and-methods).
+The `CurrentWeather` property represents a feed (`IFeed`) of `WeatherInfo` entities (for those familiar with [Reactive](https://reactivex.io/) this is similar in many ways to an `IObservable`). When the `CurrentWeather` property is accessed an `IFeed` is created via the `Feed.Async` factory method, which will asynchronously call the `GetcurrentWeather` service.  
 
-The entity `WeatherInfo` wraps the temperature, and in a real application would be extended to hold other weather information such as humidity or rainfall:
+### View
 
-```c#
-public partial record WeatherInfo(double Temperature);
-```
+The **View** is the UI, which can be written in XAML, C#, or a combination of the two, much as you would when using another design pattern. For example, the following can be used to data bind to the `CurrentWeather.Temperature` property.
 
-This is the weather service, which includes a small delay to simulate calling a service API.
-
-```c#
-public interface IWeatherService
-{
-    ValueTask<WeatherInfo> GetCurrentWeather(CancellationToken ct);
-}
-
-public class WeatherService : IWeatherService
-{
-    public async ValueTask<WeatherInfo> GetCurrentWeather(CancellationToken ct)
-    {
-        await Task.Delay(TimeSpan.FromSeconds(1), ct);
-
-        return new WeatherInfo(new Random().Next(-40, 40));
-    }
-}
-```
-
-A special control, the `FeedView` is used to display data exposed as an `IFeed`, and provides different styling templates for the various states of the feed, for example loading data, error, no data etc.  
-The `FeedView` is data bound to the `CurrentWeather` property which aligns with the `CurrentWeather` property exposed on the `WeatherModel`.  
-Within the template, the `Data` property is used to access the current data exposed by the IFeed, which in this case is a proxy for the current `WeatherInfo` instance.  
-The `Data` property is bound to the `DataContext` of the `TextBlock`, making it possible to bind the `Text` property of the `TextBlock` to the `Temperature` property.
-
-```xaml
+```xml
 <Page x:Class="WeatherApp.MainPage"
-	  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-	  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-	  xmlns:mvux="using:Uno.Extensions.Reactive.UI">
-
-	<mvux:FeedView Source="{Binding CurrentWeather}">
-		<DataTemplate>
-			<StackPanel>
-				<TextBlock DataContext="{Binding Data}"
-						   Text="{Binding Temperature}" />
-				<Button Content="Refresh"
-						Command="{Binding Refresh}" />
-			</StackPanel>
-		</DataTemplate>
-	</mvux:FeedView>
-
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <StackPanel>
+        <TextBlock Text="{Binding CurrentWeather.Temperature}" />
+    </StackPanel>
 </Page>
+```  
 
+If you're familiar with MVVM, the above XAML would look familiar, as it's the same XAML you would write if you had a ViewModel that exposed a `CurrentWeather` property that returns a `WeatherInfo` entity with a `Temperature` property. What's unique to MVUX is the additional information that `IFeed` exposes, such as when data is being loaded. For this, we can leverage the `FeedView` control which is part of MVUX.
+
+```xml
+<Page x:Class="WeatherApp.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mvux="using:Uno.Extensions.Reactive.UI">
+    
+    <mvux:FeedView Source="{Binding CurrentWeather}">
+        <DataTemplate>
+            <StackPanel>
+                <TextBlock Text="{Binding Data.Temperature}" />
+            </StackPanel>
+        </DataTemplate>
+    </mvux:FeedView>
+    
+</Page>
+```
+
+The `FeedView` control is designed to work with an `IFeed`, and has different visual states that align with the different states that an `IFeed` can be in (e.g. loading, refreshing, error, etc.). The above XAML defines the `ValueTemplate`, which is required in order to display the `Data` from the `IFeed`. Other templates include `ProgressTemplate`, `ErrorTemplate` and `NoneTemplate`, which can be defined in order to control what's displayed depending on the state of the `IFeed`.
+
+### Update
+
+An **Update** is any action that will result in a change to the **Model**. Whilst an **Update** is often triggered via an interaction by the user with the **View**, such as editing text or clicking a button, an **Update** can also be triggered from background processes (for example a data sync operation, or perhaps a notification triggered by a hardware sensor, such as a GPS).
+
+In the weather example, if we wanted to refresh the current weather data, a `Refresh` method can be added to the `WeatherModel`.
+
+```csharp
+public partial record WeatherModel(IWeatherService WeatherService)
+{
+    public IFeed<WeatherInfo> CurrentWeather => Feed.Async(this.WeatherService.GetCurrentWeather);
+    public async ValueTask Refresh() { ... }
+}
+```  
+
+In the `View` this can be data bound to a `Command` property on a `Button`. Public methods in the Model are automatically exposed as commands to the View, though this behavior is completely configurable.
+
+```xml
+<Page x:Class="WeatherApp.MainPage"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <StackPanel>
+        <TextBlock Text="{Binding CurrentWeather.Temperature}" />
+        <Button Content="Refresh" Command="{Binding Refresh}" />
+    </StackPanel>
+</Page>
+```  
+
+As refreshing a feed is such a common scenario, the `FeedView` control exposes a `Refresh` command that removes the requirement to have a `Refresh` method on the `WeatherModel` and can be data bound, again to the Command property, of a Button, as follows:  
+
+```xml
+<Page x:Class="WeatherApp.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mvux="using:Uno.Extensions.Reactive.UI">
+    
+    <mvux:FeedView Source="{Binding CurrentWeather}">
+        <DataTemplate>
+            <StackPanel>
+                <TextBlock Text="{Binding Data.Temperature}" />
+                <Button Content="Refresh" Command="{Binding Refresh}" />
+            </StackPanel>
+        </DataTemplate>
+    </mvux:FeedView>
+    
+</Page>
+```
+
+Clicking the button will execute the `Refresh` command on the `FeedView` which will signal the `IFeed` to reload. In the case of the weather app it would invoke the `GetCurrentWeather` method of the service again.
+
+### eXtended
+
+At this point you might be wondering how we're able to data bind to `CurrentWeather.Temperature`, as if it were a property that returns a single value, and then also bind the `CurrentWeather` property to the `Source` property of the `FeedView` to access a much richer set of information about the `IFeed`.  This is possible because of the bindable proxies that are being generated by the MVUX source code generators.
+
+The **eXtended** part of MVUX includes the generation of these bindable proxies, that bridge the gap between the **Model** that exposes asynchronous feeds of immutable data and the synchronous data binding capability of WinUI and the Uno Platform. Instead of an instance of `WeatherModel`, the `DataContext` on the **View** is set to be an instance of the generated `BindableWeatherModel` which exposes a property, `CurrentWeather`, the same as the original `WeatherModel`.
+
+For the purpose of this example, the `DataContext` property can be set in the page's code-behind file:
+
+```csharp
 public sealed partial class MainPage : Page
 {
     public MainPage()
@@ -95,66 +146,56 @@ public sealed partial class MainPage : Page
 }
 ```
 
-The `Refresh` command is exposed by the `FeedView` and will cause the `IFeed` to requery its source. This is an example of how the model can be **updated** in MVUX.
+### Result
 
-It's important to note that MVUX uses code-generation to create the proxy types that makes it easier for the **View** to display `IFeed` data.  
-This is how MVUX **extends** MVU to work with data binding.
+When the app is lanuched, a waiting progress ring appears while the service loads the current temperature:
 
-> [!TIP]
-> For the full example see [How to create a feed](xref:Overview.Mvux.HowToSimpleFeed)
+![Video showing a progress-ring running in the app while waiting for data](Assets/SimpleFeed-3.gif)
 
-## MVUX components
+It is thereafter replaced with the temperature as soon as it's received from the service:
 
-MVUX consists of four central components:
+![A screenshot of the app showing a refresh button](Assets/SimpleFeed-5.jpg)
 
-- [Model](#model)
-- [View](#view)
-- [Update](#update)
-- [Extended](#extended)
+When the 'Refresh' button is pressed, the progress ring shows again for a short time, until the new temperature is received from the server. The Refresh button is automatically disabled while a refresh request is in progress:
 
-### Model
+![A screenshot showing the refresh button disabled and temperature updated to 24](Assets/SimpleFeed-6.jpg)
 
-In MVUX, the application state is represented by a model, which is updated by messages sent by the user in the view.  
-The view is in charge of rendering the current state of the model, while any input from the user updates and recreates the model.
-The Model in MVUX has some parallels with the 'View Model' in MVVM.
+For the full weather app tutorial see [How to create a feed](xref:Overview.Mvux.HowToSimpleFeed).
 
-MVUX promotes immutability of data entities. Changes to the data are applied only via update messages sent across from the view to the model, the model responds by performing the updates and the view reflects those changes.
+## Recap
 
-Immutable entities makes raising change notification redundant, enables easier object equality comparison as well as other advantages. The ideal type for creating immutable data-objects is [record](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/builtin-types/record) types. They are immutable by nature and a perfect fit for working with feeds and MVU architecture.  
-Record types also feature the special [`with` expression](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/operators/with-expression), which enables recreating the same model with a modified set of properties, while retaining immutability.
+In order to summarize what we've just seen, let's return to the list of challenges posed by our simple application.
 
-### View
+- What if the external service isn't immediately available when starting the app?  
+**The `FeedView` has an error template that can be used to control what's displayed when data can't be retrieved via the `ErrorTemplate`.**
 
-The view is the UI layer displaying the current state of the model.  
-When a user interacts with the view and request changes to the data, an update message is sent back to the model that updates the data, which is then reflected back on the view.
+- How does the app show that data is being loaded? Or being updated?  
+**The `FeedView` has a progress template that defaults to a `ProgressRing` but can be overwritten via the `ProgressTemplate` property.**  
 
-### Update
+- What if no data is returned from the external service?  
+**The `FeedView` has a no-data template that can be defined via the `NoneTemplate` property.**  
 
-Whenever a user makes any sort of input activity that affects the displayed model, instead of specifically notifying changes for those specific properties that were changed, a message is sent back to the model which responds by re-creating the model which the view then updates.  
-It's important to note that the view is not being re-created, it rather just updates with the fresh model.
+- What if an error occurs while obtaining or processing the data?  
+**The `FeedView` has both a error and undefined templates that can be used to control what's displayed when data can't be retrieved.**  
 
-### Extended
+- How to keep the app responsive while loading or updating the UI?  
+**MVUX is inherently asynchronous and all operations are dispatched to background threads to avoid congestion on the UI thread.**
 
-MVUX extends the MVU model by harnessing powerful features that make it easier to track asynchronous requests, for example to a remote server, or other long running data-sources, and display the resulting data appropriately.  
+- How do we refresh the current data?  
+**Feeds support re-querying the source data and the `FeedView` exposes a Refresh property that can be bound to Command properties on UI elements such as Button.**
 
-The key features Uno Platform provides in the MVUX toolbox are:
+- How do we avoid threading or concurrency issues when handling new data in the background?  
+**The `IFeed` handles dispatching actions to background threads and then marshalling responses back to the UI thread as required.**
 
-- [Metadata](#metadata)
-- [Code generation](#code-generation)
-- [UI Controls](#ui-controls)
-- [Binding engine](#binding-engine)
+- How do we make sure the code is testable?  
+**The **Model** doesn't depend on any UI elements, so can be unit tested, along with the generated bindable proxies.**
 
-#### Metadata
 
-MVUX wraps the asynchronous data request with metadata that tells us if the request is still in progress, has failed, or succeeded, and if succeeded, whether the request contains any data entries.
+## Key points to note  
 
-#### Code generation
-
-MVUX comes with a powerful code-generation engine that supplements the user with generated boilerplate code that consists of model and entity proxy classes containing important properties and asynchronous commands. The proxy-classes assist the UI with displaying the data according to its current state provided with the metadata.
-
-#### UI Controls
-MVUX also provides a set of UI tools that are specially tailored to automatically read and display that metadata, providing templates for the various states, such as no data, error, progress tracking, as well interactions with the server to enable easy refreshing and saving of the data.
-
-#### Binding engine
-
-It also comes with a powerful binding engine that reads the re-created model and updates the view accordingly.
+- Feeds are reactive in nature, similar in many ways to Observables.
+- Models and associated entities are immutable.
+- Operations are asynchronous by default.
+- Feeds include various dimensions such as loading, if there's data or if an error occurred.
+- Feeds borrow from Option concept in functional programming where no data is a valid state for the feed.
+- MVUX combines the unidirectional flow of data, and immutability of MVU, with the data binding capabilities of MVVM.
