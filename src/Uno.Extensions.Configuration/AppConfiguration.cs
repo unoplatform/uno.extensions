@@ -1,6 +1,6 @@
 ﻿namespace Uno.Extensions.Configuration;
 
-public class AppConfiguration
+internal static class AppConfiguration
 {
 	public const string Prefix = "appsettings";
 	public const string FileName = $"{Prefix}.json";

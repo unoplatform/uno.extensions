@@ -1,17 +1,10 @@
-﻿using System.Reflection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
-using Uno.Extensions.DependencyInjection;
+﻿namespace Uno.Extensions;
 
-namespace Uno.Extensions;
-
-public static class ServiceCollectionExtensions
+internal static class ServiceCollectionExtensions
 {
-
 	public static IServiceCollection AddFileStorage(this IServiceCollection services)
-	{
-		return services
+		=> services
 			.AddSingleton<IStorage, FileStorage>();
-	}
 
 	private static TKeyValueStorage CreateKeyValueStorage<TKeyValueStorage>(
 		this IServiceProvider sp,
