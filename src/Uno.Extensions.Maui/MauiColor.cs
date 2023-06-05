@@ -26,5 +26,3 @@ public class MauiColor : MauiExtensionBase
 		view.SetValue(property, color);
 	}
 }
-
-
