@@ -8,7 +8,7 @@ MVUX has embedded support for both [single item](#single-item-selection) and [mu
 Any control that inherits [`Selector`](https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.primitives.selector) (e.g. [`ListView`](https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.listview), [`GridView`](https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.gridview), [`ComboBox`](https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.combobox), [`FlipView`](https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.flipview)), has automatic support for updating a List-State with its current selection.  
 Binding to the `SelectedItem` property is not even required, as this works automatically.  
 
-To synchronize to the selected value in the `Model` side, use the `Selection` operator of the List-View.
+To synchronize to the selected value in the `Model` side, use the `Selection` operator of the `IListFeed`.
 
 ### Recap of the *PeopleApp* example
 
