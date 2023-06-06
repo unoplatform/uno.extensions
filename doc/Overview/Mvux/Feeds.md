@@ -8,43 +8,40 @@ Feeds are there to manage asynchronous data requests from a service and provide 
 
 It provides out of the box support for data coming from task-based methods as well Async-Enumerables ones.  
 
-They accompany the requests with additional metadata that tell whether the request is still in progress, ended in an error, and if it was successful, whether the data that was returned contains any entries or was empty.
+They accompany the requests with additional metadata that indicates whether the request is still in progress, ended in an error, or if it was successful, whether the data that was returned contains any entries or was empty.
 
 ## Feeds are stateless
 
-Feeds are used as a gateway to request data from services and hold it in a stateless manner to be displayed by the View.  
+Feeds are used as a gateway to request data from services and expose it in a stateless manner so that it can be displayed by the View.  
+
 Feeds are stateless, and do not provide support for reacting upon changes the user makes to the data on the View, the data can only be reloaded and refreshed upon request which is when the underlying task or Async-Enumerable will be invoked and the data refreshed.
 In other words, a Feed is a read-only representation of the data received from the server.
 
-> [!TIP]
-> In contrast to Feeds, [States](xref:Overview.Mvux.States) are stateful and keep track of the up-to-date state as applied by changes from the View by the user.
+In contrast to Feeds, [States](xref:Overview.Mvux.States), as the name suggests, are stateful and keep track of the latest value, as updates are applied.
 
 ## How to use Feeds?
 
 ### Creation of Feeds
 
-For the examples below let's use a counter service that returns the current count number, starting from 1. It will be run 3 consecutive times delayed by a second each.
+For the examples below, let's use a counter service that returns the current count number, starting from 1. It will be run 3 consecutive times delayed by a second each.
 For the data type we'll create a record type called `CounterValue`:
 
 ```csharp
 public record CounterValue(int Value);
 ```
 
-Feeds can be created directly from either `ValueTask` returning methods, or from `IAsyncEnumerable` methods,
-both with a `CancellationToken` parameter.
+Feeds can be created directly from methods that return a `ValueTask` or `Task`, or from methods that return an `IAsyncEnumerable`. In both cases, the methods can optionally take a `CancellationToken` parameter.
 
-#### Using Tasks
+#### Feed.Async factory
 
-Asynchronous data can be obtained in several ways.
-
-The most common is via a `ValueTask` that returns the data value(s) when ready:
+The `Feed.Async` factory method will create an IFeed by invoking a method that will return either a `ValueTask` or a `Task`. For example the `CountOne` method will wait for a second (unless cancelled via the `CancellationToken`) before returning the next counter value.
 
 ```csharp
 private int _currentCount = 0;
 
 public async ValueTask<CounterValue> CountOne(CancellationToken ct)
 {
-    await Task.Delay(TimeSpan.FromSeconds(1));
+    await Task.Delay(TimeSpan.FromSeconds(1), ct);
 
     // note that a service does not normally hold data
     // this example is for demonstration purposes
@@ -52,44 +49,34 @@ public async ValueTask<CounterValue> CountOne(CancellationToken ct)
 }
 ```
 
-> [!NOTE]
-> `ValueTask` is interchangeable with `Task`, but `ValueTask` was chosen to be in unity with the `IAsyncEnumerable` interface.
-> A `Task` is easily convertible to `ValueTask` nonetheless.
-> Learn more about [`Task`](https://learn.microsoft.com/dotnet/api/system.threading.tasks.task), [`ValueTask`](https://learn.microsoft.com/dotnet/api/system.threading.tasks.valuetask?view=net-6.0), or read [this article](https://devblogs.microsoft.com/dotnet/understanding-the-whys-whats-and-whens-of-valuetask/) discussing the differences between the two.
-
-This is known as a 'pull' method, as we're repeatedly calling the Task when we're looking for new data,
-and the Task returns the value when it's ready, unless it was cancelled using the token (this will be discussed in another tutorial).
-
-Using the `CountOne` method, creating a Feed is as easy as:
+The `Feed.Async` factory method can be used to create an `IFeed` by calling the `CountOne` method:
 
 ```csharp
 public IFeed<CounterValue> Value => Feed.Async(_myService.CountOne);
 ```
 
-`Feed` is a static class that provides Feed factory methods, as well as extension methods for Feeds.  
-As mentioned above, the `Async` method takes a delegate of the a signature returning `ValueTask<T>` where `T` is the returned type, and has a `CancellationToken` parameter.
+This is known as a 'pull' method, as the `CountOne` method is awaited in order to retrieve the data. In order to get the next counter value, the IFeed needs to be signaled to call the `CountOne` method again.
 
-Should the signature of your method be different, for example if the method returns `Task<T>` (instead of `ValueTask<T>`, or when it a `CancellationToken` parameter is not present, `Feed.Async` can be called as follows:
+For the most part `Task` and `ValueTask` are intechangeable. However, with MVUX if the method returns `Task<T>` the method needs to be awaited in the `Feed.Async` callback.
 
 ```csharp
 // Service method
 public async Task<CounterValue> CountOne() { ... }
 
-// Feed creation
+// Feed creation - needs to await the CountOne call
 public IFeed<CounterValue> CurrentCount => Feed.Async(async ct => await _myService.CountOne());
 ```
 
-#### From Async Enumerables
+#### Feed.AsyncEnumerable factory
 
-In contrast to Tasks which operate as 'pull' methods, the 'push' method is where we call a method and establish some sort of connection with it,
-while it sends new data packets as they become available:
+In contrast to Tasks which operate as 'pull' methods, the 'push' method is where we call a method and establish some sort of connection with it, while it sends new data as it becomes available:
 
 ```csharp
 public async IAsyncEnumerable<CounterValue> StartCounting([EnumeratorCancellation] CancellationToken ct)
 {
     while (!ct.IsCancellationRequested)
     {
-        await Task.Delay(TimeSpan.FromSeconds(1));
+        await Task.Delay(TimeSpan.FromSeconds(1), ct);
                 
         if (ct.IsCancellationRequested)
         {
