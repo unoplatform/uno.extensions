@@ -61,8 +61,11 @@ internal class ForceBindingsUpdateGenTool_1 : ICodeGenTool
 			bases: updateInterface,
 			code: $@"
 				ValueTask IForceBindingsUpdate.ForceBindingsUpdateAsync()
-				{{	
-					this.Bindings.Update();
+				{{
+					if(this.Bindings is not null)
+					{{
+						this.Bindings.Update();
+					}}
 					return ValueTask.CompletedTask;
 				}}
 			");
