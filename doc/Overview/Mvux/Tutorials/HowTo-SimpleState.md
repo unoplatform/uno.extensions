@@ -17,7 +17,7 @@ In this tutorial you will learn how to create an MVUX project and basic usage of
 
 1. Add a class named *HallCrowdednessService.cs*, and replace its content with the following:
 
-    ```c#
+    ```csharp
     namespace TheFancyWeddingHall;
 
     public partial record HallCrowdedness(int NumberOfPeopleInHall);
@@ -52,11 +52,11 @@ In this tutorial you will learn how to create an MVUX project and basic usage of
     }
     ```
 
-    We're using a [record](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/builtin-types/record) for the `HallCrowdedness` entity type on purpose, as records are designed to be immutable to ensure purity of objects as well as other features.
+    We're using a [record](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/record) for the `HallCrowdedness` entity type on purpose, as records are designed to be immutable to ensure purity of objects as well as other features.
 
 1. Create a class named *HallCrowdednessModel.cs* and replace its content with the following:
 
-    ```c#
+    ```csharp
     using Uno.Extensions.Reactive;
 
     namespace TheFancyWeddingHall;
@@ -97,13 +97,13 @@ The difference of States is that they provide update operators and enable manipu
 > [!TIP]
 > An `IFeed<T>` as well as `IState<T>` are awaitable, meaning that to get the value of the feed you would do the following in the model:  
 >
-> ```c#
+> ```csharp
 > HallCrowdedness hallCrowdedness = await this.HallCrowdedness;
 > ```
 
 1. Replace anything inside the `Page` element with the following code:
 
-    ```xaml
+    ```xml
     <StackPanel>
         <TextBlock Text="How many people are currently in the hall?" />
         <TextBox 
@@ -119,7 +119,7 @@ When the user edits the text in the `TextBox`, MVUXs data-binding adapters trans
 
 1. In the `Save` method above, place a breakpoint on the line `await _hallCrow...SetHallCrowd...`, for later use:
 
-    ![](../Assets/SimpleState-2.jpg)
+    ![A screenshot of a breakpoint added in Visual Studio](../Assets/SimpleState-2.jpg)
 
     MVUX's analyzers will read the `HallCrowdednessModel` and will generate a special model-proxy called `BindableHallCrowdednessModel`, which provides binding capabilities for the View and performs all Update message for us, to keep the `IState` up to date.
         
@@ -127,7 +127,7 @@ When the user edits the text in the `TextBox`, MVUXs data-binding adapters trans
 
 1. In the XAML file, after the `TextBox`, add the following `Button` code:
 
-    ```xaml
+    ```xml
         <TextBox ... />
 
         <Button Content="Save" Command="{Binding Save}" />
@@ -141,7 +141,7 @@ When the user edits the text in the `TextBox`, MVUXs data-binding adapters trans
 
 1. Press <kbd>F7</kbd> to navigate to open code-view, and in the constructor, after the line that calls `InitializeComponent()`, add the following line:
 
-    ```c#
+    ```csharp
     this.DataContext = new BindableHallCrowdednessModel(new HallCrowdednessService());
     ```
 
@@ -151,13 +151,13 @@ When the user edits the text in the `TextBox`, MVUXs data-binding adapters trans
 
 1. The app will load with its default value '5' as the number of people.
     
-    ![](../Assets/SimpleState-1.jpg)
+    ![A screenshot of the app running with the number 5](../Assets/SimpleState-1.jpg)
 
 1. Change the number to 15 and click 'Save'.
 
     The debugger will stop at the breakpoint you placed earlier. <!--(See step No. x)-->
     
-    ![](../Assets/SimpleState-3.jpg)
+    ![A screenshot showing Visual Studio stopped at the breakpoint](../Assets/SimpleState-3.jpg)
     
     As you can see, the current value of the state has gotten the updated number '*15*'. This is now being saved to the service, in the following line execution once you hit <kbd>F5</kbd> again.
 

@@ -77,12 +77,38 @@
           href: Overview/Mvux/ListStates.md
         - name: The FeedView control
           href: Overview/Mvux/FeedView.md
-        - name: How to create an MVUX project
-          href: Overview/Mvux/How-tos/MvuxProject.md
-        - name: How to create a Feed
-          href: Overview/Mvux/How-tos/SimpleFeed.md
-        - name: How to create a State
-          href: Overview/Mvux/How-tos/SimpleState.md
+        - name: Advanced topics
+          items:
+            - name: Selection
+              href: Overview/Mvux/Advanced/Selection.md
+            - name: Pagination
+              href: Overview/Mvux/Advanced/Pagination.md
+            - name: Commands
+              href: Overview/Mvux/Advanced/Commands.md
+            - name: Inspecting the generated code
+              href: Overview/Mvux/Advanced/InspectGeneratedCode.md
+        - name: Tutorials
+          items:
+            - name: How to create an MVUX project  
+              href: Overview/Mvux/Tutorials/HowTo-MvuxProject.md
+            - name: How to create a Feed
+              href: Overview/Mvux/Tutorials/HowTo-SimpleFeed.md
+            - name: How to create a push-style List-Feed with Async Enumerable
+              href: Overview/Mvux/Tutorials/HowTo-PushListFeed.md
+            - name: How to create a State
+              href: Overview/Mvux/Tutorials/HowTo-SimpleState.md
+            - name: How to create a List-Feed
+              href: Overview/Mvux/Tutorials/HowTo-ListFeed.md
+        - name: Advanced topics
+          items:
+            - name: Selection
+              href: Overview/Mvux/Advanced/Selection.md
+            - name: Pagination
+              href: Overview/Mvux/Advanced/Pagination.md
+            - name: Commands
+              href: Overview/Mvux/Advanced/Commands.md
+            - name: Inspecting the generated code
+              href: Overview/Mvux/Advanced/InspectGeneratedCode.md
     - name: Navigation
       items:
         - name: Overview

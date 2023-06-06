@@ -4,31 +4,24 @@ uid: Overview.Mvux.HowToPushListFeed
 
 # How to create a list feed where values are pushed in
 
-In this tutorial you will learn how to create an MVUX project that displays stock data
-that is pushed in from a service using an
-[Async Enumerable](https://learn.microsoft.com/en-us/archive/msdn-magazine/2019/november/csharp-iterating-with-async-enumerables-in-csharp-8#a-tour-through-async-enumerables) method.
+In this tutorial, you will learn how to create an MVUX project that displays stock data that is pushed in from a service using an [Async Enumerable](https://learn.microsoft.com/archive/msdn-magazine/2019/november/csharp-iterating-with-async-enumerables-in-csharp-8#a-tour-through-async-enumerables) method.
 
-In this tutorial you will learn how to create an MVUX project
-and utilization of a feed (`IFeed<T>`) and the `FeedView` control
-to display data pushed in asynchronously from an `IAsyncEnumerable<T>`.
+In this tutorial, you will also learn how to create an MVUX project and utilization of feed (`IFeed<T>`) and the `FeedView` control to display data pushed in asynchronously from an `IAsyncEnumerable<T>`.
 
- - For our data we're going to create a service that has an `IAsyncEnumerable<T>` method
- that returns periodic stock market updates.
+ - For our data, we're going to create a service that has an `IAsyncEnumerable<T>` method that returns periodic stock market updates.
  - You'll learn how to use a feed to asynchronously request this data from the service.
- - How to use the `FeedView` control to display the asynchronous data
- and automatically respond to the current feed status.
+ - How to use the `FeedView` control to display the asynchronous data and automatically respond to the current feed status.
 
 ## Create the Model
 
-1. Create an MVUX project by following the steps in
-[this tutorial](xref:Overview.Mvux.HowToMvuxProject), and name the project *StockMarket*..
+1. Create an MVUX project by following the steps in [this tutorial](xref:Overview.Mvux.HowToMvuxProject), and name the project *StockMarketApp*..
 
 1. Add a class named *StockMarketService.cs*, and replace its content with the following:
 
-    ```c#
+    ```csharp
     using System.Runtime.CompilerServices;
 
-    namespace StockMarket;
+    namespace StockMarketApp;
 
     public partial record Stock(string Name, double Value);
 
@@ -71,30 +64,25 @@ to display data pushed in asynchronously from an `IAsyncEnumerable<T>`.
     }
     ```
 
-    We're using a [record](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/builtin-types/record)
-    for the `Stock` type on purpose, as records are immutable and ensure purity of objects as well as other features.
+    We're using a [record](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/record) for the `Stock` type on purpose, as records are immutable and ensure the purity of objects as well as other features.
 
-    The `GetCurrentMarket` emits a collection of stocks with updated values every 5 seconds.
-
-    The `IListFeed` is a feed tailored for dealing with collections.
+    The `GetCurrentMarket` emits a collection of stocks with updated values every 5 seconds.  
+    The `IListFeed<T>` is a feed tailored for dealing with collections.
 
 1. Create a class named *StockMarketModel.cs* replacing its content with the following:
 
-    ```c#
+    ```csharp
     public partial record StockMarketModel(StockMarketService StockMarketService)
     {
         public IListFeed<Stock> Stocks => ListFeed.AsyncEnumerable(StockMarketService.GetCurrentMarket);
     }
     ```
 
-> [!NOTE]
->
-> Feeds (`IFeed<T>` and `IListFeed<T>` for collections) are used as a gateway
-> to asynchronously request data from a service and wrap the result or error if any in metadata
-> to be displayed in the View in accordingly.  
+> [!NOTE]  
+> Feeds (`IFeed<T>` and `IListFeed<T>` for collections) are used as a gateway to asynchronously request data from a service and wrap the result or error if any in metadata to be displayed in the View accordingly.  
 > Learn more about list-feeds [here](xref:Overview.Mvux.HowToListFeed).
 
-> [!TIP]
+> [!TIP]  
 > Feeds are stateless
 > and are there for when the data from the service is read-only and we're not planning to enable edits to it.  
 > MVUX also provides stateful feeds. For that purpose States (`IState<T>` and `<IListState<T>` for collections) come handy.
@@ -102,7 +90,7 @@ to display data pushed in asynchronously from an `IAsyncEnumerable<T>`.
 
 ## Data bind the view
 
-The `Stocks` property on `StockMarketModel` is an `IListFeed` of type `Stock`.  
+The `Stocks` property on `StockMarketModel` is an `IListFeed<T>` where `T` is `Stock`.  
 This is similar in concept to an `IObservable<IImmutableList<Stock>>`,
 where an `IListsFeed<T>>` represents a sequence of collections pushed in whenever they become available,
 signaling the UI about the new data.
@@ -110,7 +98,7 @@ signaling the UI about the new data.
 > [!TIP]
 > An `IListFeed<T>` is awaitable, meaning that to get the value of the feed you would execute the following in the model:  
 >
-> ```c#
+> ```csharp
 > StockMarket currentMarket = await this.Stocks;
 > ```  
 
@@ -119,7 +107,7 @@ and generate a proxy type called `BindableStockMarketModel`, which exposes prope
 
 1. Open the file `MainView.xaml` and replace anything inside the `Page` element with the following code:
 
-    ```xaml
+    ```xml
     <ListView ItemsSource="{Binding Stocks}" SelectionMode="None">
         <ListView.ItemTemplate>
             <DataTemplate>
@@ -132,10 +120,9 @@ and generate a proxy type called `BindableStockMarketModel`, which exposes prope
     </ListView>
     ```
 
-1. Press <kbd>F7</kbd> to navigate to open code-view, and in the constructor,
-after the line that calls `InitializeComponent()`, add the following line:
+1. Press <kbd>F7</kbd> to navigate to open code-view, and in the constructor, after the line that calls `InitializeComponent()`, add the following line:
 
-    ```c#
+    ```csharp
     this.DataContext = new BindableStockMarketModel(new StockMarketService());
     ```   
 
@@ -145,6 +132,6 @@ after the line that calls `InitializeComponent()`, add the following line:
 
     Here are 3 screenshots taken consecutively with some delay apart:
 
-    ![](../Assets/PushListFeed-1.jpg)
-    ![](../Assets/PushListFeed-1.jpg)
-    ![](../Assets/PushListFeed-1.jpg)
+    ![Screenshot showing first stock data](../Assets/PushListFeed-1.jpg)
+    ![Screenshot showing second stock data](../Assets/PushListFeed-1.jpg)
+    ![Screenshot showing third stock data](../Assets/PushListFeed-1.jpg)

@@ -28,19 +28,19 @@ Here are some examples of creating a List-Feed:
 1. In this example the service returns a list of names on load/refresh - using a pull technique.
 
     Service code:
-    ```c#
+    ```csharp
     public ValueTask<IImutableList<string>> GetNames(CancellationToken ct = default);
     ```
 
     Model code:
-    ```c#
+    ```csharp
     public IListFeed<string> Names => ListFeed.Async(service.GetNames);
     ```
    
 2. This one returns an immutable list of names when available - using push technique:
 
     Service code:  
-    ```c#   
+    ```csharp   
     public IAsyncEnumerable<IImutableList<string>> GetNames(
         [EnumeratorCancellation] CancellationToken ct = default);
     ```
@@ -57,9 +57,10 @@ Here are some examples of creating a List-Feed:
      - On an `IFeed<TCollection>` where `TCollection` is an `IImmutableList<TItem>`, call `ToListFeed()` to convert it to an `IListFeed<TItem>`.
      - Otherwise, call `AsFeed()` on an `IListFeed<T>` to convert it to an `IFeed<IImmutableList<T>>`.
 
-## Support for pagination
+## Support for selection and pagination
 
-There is also built-in support for pagination. More information on this feature can be found [here](xref:Overview.Reactive.ListFeed#paginatedasync) (Model) and [here](Overview.Reactive.InApps#pagination) (View).
+MVUX also provides built-in support for selection and pagination.  
+See more information on [Selection](xref:Overview.Mvux.Advanced.Selection) or [Pagination](xref:Overview.Mvux.Advanced.Pagination).
 
 ## Operators
 

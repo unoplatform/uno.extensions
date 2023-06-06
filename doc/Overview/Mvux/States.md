@@ -10,7 +10,7 @@ Like [Feeds](xref:Overview.Mvux.Feeds), States are used as a gateway that manage
 
 Contrary to Feeds, States are stateful (hence the name!), and do keep track of the state of the Model and its entities.  
 
-MVUX utilizes its powerful code-generation engine to generate a Bindable Proxy Model for each Model, which holds the state information of the data, as well as Bindable Proxy Entities where needed, for instance if the entities are immutable (e.g. records - the recommended type).  
+MVUX utilizes its powerful code-generation engine to generate a bindable proxy for each Model, which holds the state information of the data, as well as Bindable Proxy Entities where needed, for instance if the entities are immutable (e.g. records - the recommended type).  
 These are required so that the immutable entities are recreated anew in response to updates the user makes in the View.
 
 > [!NOTE]
@@ -36,7 +36,7 @@ Besides holding the state information, a reference to the bindable proxy is shar
 
 States are created slightly different, they require a reference to the Model for caching and GC as mentioned above.
 
-```c#
+```csharp
 public IState<Person> MainContact => State.Async(this, ContactsService.GetMainContact);
 ```
 
@@ -46,12 +46,12 @@ Where `GetMainContact` is a `ValueTask<Person>`, and takes a parameter of `Cance
 
 A State can also be created from an Async Enumerable as follows:
 
-```c#
+```csharp
 public IState<StockValue> MyStockCurrentValue => State.AsyncEnumerable(this, ContactsService.GetMyStockCurrentValue);
 ```
 
 Make sure the Async Enumerable methods has a `CancellationToken` parameter, and is decorated with the `EnumerationCancellation` attribute.  
-You can learn more about Async Enumerables in [this article](https://learn.microsoft.com/en-us/archive/msdn-magazine/2019/november/csharp-iterating-with-async-enumerables-in-csharp-8#a-tour-through-async-enumerables).
+You can learn more about Async Enumerables in [this article](https://learn.microsoft.com/archive/msdn-magazine/2019/november/csharp-iterating-with-async-enumerables-in-csharp-8#a-tour-through-async-enumerables).
 
 #### Other ways to create feeds
 
@@ -59,13 +59,13 @@ There are additional way to create States, so that you can update them at a late
 
 - With a synchronous initial value, and update it at a later stage:
 
-    ```c#
+    ```csharp
     public IState<City> CurrentCity => State.Value(this, () => new City("Montréal"));
     ```
 
 - Without any initial value:
 
-    ```c#
+    ```csharp
     public IState<City> CurrentCity => State<City>.Empty(this);
     ```
 
@@ -76,7 +76,7 @@ There are additional way to create States, so that you can update them at a late
 
 States are advanced Feeds. As such, they can also be awaited directly:
 
-```c#
+```csharp
 City currentCity = await this.CurrentCity;
 ```
 
@@ -84,7 +84,7 @@ City currentCity = await this.CurrentCity;
 
 1. In an MVUX app (read [How to set up an MVUX project](xref:Overview.Mvux.HowToMvuxProject)), add a Model class with a simple state as follows:
 
-    ```c#
+    ```csharp
     public partial record SliderModel
     {
         // create a state with an initial random double value between 0 and 1, multiplied by 100.
@@ -94,7 +94,7 @@ City currentCity = await this.CurrentCity;
 
 1. Replace all child elements in the _MainPage.xaml_ with the following:
 
-    ```xaml
+    ```xml
     <Page 
         x:Class="SliderApp.MainPage"
     	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -119,11 +119,11 @@ City currentCity = await this.CurrentCity;
     ```
 
     > [!NOTE]
-    > `BindableSliderModel` refers to the generated Bindable Proxy Model.
+    > `BindableSliderModel` refers to the generated bindable proxy for the `SliderModel`.
     
 1. When you run the app, moving the `Slider` instantly affects the upper `TextBox`; the `Silder.Value` property has a two-way binding with the `SliderValue` State, so any change to the Slider immediately updates the State value, which in turn affects the data-bound `TextBlock` on top:
 
-    ![](Assets/SliderApp-1.gif)
+    ![A video of the previous slider app in action](Assets/SliderApp-1.gif)
 
 
 ### Change data of a State
@@ -132,7 +132,7 @@ To update the current value of a State, use its `Update` method.
 
 In this example we'll add the method `IncrementSlider` that gets the current value and increases it by one (if it doesn't exceed 100):
 
-```c#
+```csharp
 public async ValueTask IncrementSlider(CancellationToken ct = default)
 {
     static double incrementValue(double currentValue) =>
@@ -144,7 +144,7 @@ public async ValueTask IncrementSlider(CancellationToken ct = default)
 }
 ```
 
-The `updater` parameter of the `Update` method accepts a `Func<T, T>`, where the input parameter provides the current value of the State when called, and the latter is the one to be returned and be applied as the new value of the State, in our case we use the `incrementValue` [local function](https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/classes-and-structs/local-functions) to increment `currentValue` by one (or return `1` if the value exceeds `100`).
+The `updater` parameter of the `Update` method accepts a `Func<T, T>`, where the input parameter provides the current value of the State when called, and the latter is the one to be returned and be applied as the new value of the State, in our case we use the `incrementValue` [local function](https://learn.microsoft.com/dotnet/csharp/programming-guide/classes-and-structs/local-functions) to increment `currentValue` by one (or return `1` if the value exceeds `100`).
 
 > [!TIP]  
 > There are additional methods that update the data of a State such as `Set` and `UpdateMessage`, explained [here](xref:Overview.Reactive.State#update-how-to-update-a-state).
@@ -156,7 +156,7 @@ In the `IncrementSlider` example [we've just used](#change-data-of-a-state), a s
 
 Let's modify the XAML [above](#how-to-bind-the-view-to-a-state) with the following:
 
-```xaml
+```xml
         ...
         <TextBlock Text="Set state value:"/>
         <Slider Value="{Binding SliderValue, Mode=TwoWay}" />
@@ -171,7 +171,7 @@ When pressing the _Increment slider_ button, the generated `IncrementSlider` com
 
 This is what the result will look like:
 
-![](Assets/SliderApp-2.gif)
+![A video that demonstrates the effect of the recent updates applied to the slider-app](Assets/SliderApp-2.gif)
 
 The source-code for the sample app can be found [here](https://github.com/unoplatform/Uno.Samples/tree/master/UI/MvuxHowTos/SliderApp).
 
