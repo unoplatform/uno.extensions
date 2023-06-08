@@ -1,0 +1,9 @@
+{
+  "solution": {
+    "path": "MauiEmbedding.sln",
+    "projects": [
+      "MauiEmbedding.Mobile\\MauiEmbedding.Mobile.csproj",
+      "MauiEmbedding\\MauiEmbedding.csproj"
+    ]
+  }
+}
