@@ -14,7 +14,7 @@ internal static class ConversionHelpers
 			int valueAsInt => valueAsInt,
 			double valueAsDouble => valueAsDouble,
 			float valueAsFloat => valueAsFloat,
-			WinUIConverter converter => new UnoHostConverter(converter),
+			IWinUIConverter converter => new UnoHostConverter(converter),
 			SolidColorBrush solidColorBrush => new Microsoft.Maui.Controls.SolidColorBrush(new NativeMauiColor(solidColorBrush.Color.R, solidColorBrush.Color.G, solidColorBrush.Color.B, solidColorBrush.Color.A)),
 			WinUIColor color => new NativeMauiColor(color.R, color.G, color.B, color.A),
 			Thickness thickness => new Microsoft.Maui.Thickness(thickness.Left, thickness.Top, thickness.Right, thickness.Bottom),
@@ -42,11 +42,11 @@ internal static class ConversionHelpers
 			_ => LayoutOptions.Fill
 		};
 
-	private class UnoHostConverter : MauiConverter
+	private class UnoHostConverter : IMauiConverter
 	{
-		private WinUIConverter _converter { get; }
+		private IWinUIConverter _converter { get; }
 
-		public UnoHostConverter(WinUIConverter converter) => _converter = converter;
+		public UnoHostConverter(IWinUIConverter converter) => _converter = converter;
 
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture) =>
 			_converter.Convert(value, targetType, parameter, culture.Name);

@@ -1,13 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFrameworks>net7.0;net7.0-android;net7.0-ios;net7.0-maccatalyst</TargetFrameworks>
-		<TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net7.0-windows10.0.19041</TargetFrameworks>
+		<TargetFrameworks>net6.0;net6.0-android;net6.0-ios;net6.0-maccatalyst</TargetFrameworks>
+		<TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net6.0-windows10.0.19041</TargetFrameworks>
 		<UseMaui>true</UseMaui>
 		<RootNamespace>Uno.Extensions.Maui</RootNamespace>
 		<NoWarn>$(NoWarn);CS1591;NU5104;NU5048;NU1009</NoWarn>
 		<Description>Extensions to embed .NET MAUI controls within your Uno app.</Description>
-		<DefineConstants Condition="$(TargetFramework) == 'net7.0'">$(DefineConstants);NO_PLATFORM</DefineConstants>
+		<DefineConstants Condition="$(TargetFramework) == 'net6.0'">$(DefineConstants);NO_PLATFORM</DefineConstants>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -31,9 +31,7 @@
 		</EmbeddedResource>
 	</ItemGroup>
 
-	<PropertyGroup Condition=" $(TargetFramework.Contains('-windows10')) ">
-		<TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
-		<SupportedOSPlatformVersion>$(TargetPlatformMinVersion)</SupportedOSPlatformVersion>
-		<RuntimeIdentifiers>win10-x86;win10-x64;win10-arm64</RuntimeIdentifiers>
-	</PropertyGroup>
+	<ItemGroup>
+		<Compile Remove="Interop\*.cs" />
+	</ItemGroup>
 </Project>

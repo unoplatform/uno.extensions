@@ -25,15 +25,15 @@ public class MauiBinding : MauiExtensionBase
 		}
 
 
-		MauiConverter? converter = null;
-		if (Converter is MauiConverter converterAsMauiConverter)
+		IMauiConverter? converter = null;
+		if (Converter is IMauiConverter converterAsMauiConverter)
 		{
 			converter = converterAsMauiConverter;
 		}
-		else if (Converter is WinUIConverter winUIConverter)
+		else if (Converter is IWinUIConverter winUIConverter)
 		{
 			var value = ConversionHelpers.ToMauiValue(winUIConverter);
-			if (value is MauiConverter mauiConverter)
+			if (value is IMauiConverter mauiConverter)
 			{
 				converter = mauiConverter;
 			}
