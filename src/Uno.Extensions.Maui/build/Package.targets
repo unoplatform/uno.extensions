@@ -3,6 +3,11 @@
 	<PropertyGroup>
 		<UsingMicrosoftMauiResizetizerSdk>false</UsingMicrosoftMauiResizetizerSdk>
 	</PropertyGroup>
+
+	<ItemGroup Condition=" '$(ImplicitUsings)' == 'true' OR '$(ImplicitUsings)' == 'enable' ">
+		<Using Include="Uno.Extensions.Maui" />
+	</ItemGroup>
+
 	<ItemGroup>
 		<Using Remove="Microsoft.Maui.*" />
 		<Analyzer Remove="Microsoft.Maui.Controls.SourceGen" />
@@ -14,7 +19,7 @@
 		<MauiSplashScreen Remove="@(MauiSplashScreen)" />
 		<_MauiImplicitPackageReference Remove="Microsoft.Maui.Resizetizer" />
 		<PackageReference Remove="Microsoft.Maui.Resizetizer" />
-		<Page Update="**\*.xaml" XamlRuntime="WinUI" Generator="MSBuild:Compile" />
+		<!-- <Page Update="**\*.xaml" XamlRuntime="WinUI" Generator="MSBuild:Compile" /> -->
 	</ItemGroup>
 
 	<ItemGroup>
@@ -25,13 +30,13 @@
 		<AvailableItemName Remove="MauiSplashScreen" />
 	</ItemGroup>
 
-		<Target Name="MauiEmbeddingSanitizeXamlTypeInfo"
-					AfterTargets="CoreGenerateAssemblyInfo"
-					BeforeTargets="CoreCompile">
+	<Target Name="MauiEmbeddingSanitizeXamlTypeInfo"
+			AfterTargets="CoreGenerateAssemblyInfo"
+			BeforeTargets="CoreCompile">
 		<ReplaceFileText Filename="$(IntermediateOutputPath)XamlTypeInfo.g.cs"
-										 MatchExpression="that.class"
-										 ReplacementText="that.@class"
-										 Condition="Exists('$(IntermediateOutputPath)XamlTypeInfo.g.cs')" />
+						MatchExpression="that.class"
+						ReplacementText="that.@class"
+						Condition="Exists('$(IntermediateOutputPath)XamlTypeInfo.g.cs')" />
 	</Target>
 
 	<!-- Using Regex Replace prevents XmlPoke from replacing Tabs with Spaces -->
