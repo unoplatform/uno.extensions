@@ -25,16 +25,18 @@ internal static class ConversionExtensions
 
 	private static void TryAddValue(ref Microsoft.Maui.Controls.ResourceDictionary resources, object sourceKey, object value)
 	{
-		if (value is Style winUIStyle)
-		{
-			// This needs to be nested to prevent further processing if we cannot generate a Maui Style
-			if(Interop.MauiInterop.TryGetStyle(winUIStyle, out var style) && style != null)
-			{
-				var key = sourceKey is string str ? str : style.TargetType.FullName;
-				resources[key] = style;
-			}
-		}
-		else if (sourceKey is string key && !string.IsNullOrEmpty(key) && !resources.ContainsKey(key))
+		// NOTE: Interop was part of the POC and is out of scope for the MVP
+		// if (value is Style winUIStyle)
+		// {
+		// 	// This needs to be nested to prevent further processing if we cannot generate a Maui Style
+		// 	if(Interop.MauiInterop.TryGetStyle(winUIStyle, out var style) && style != null)
+		// 	{
+		// 		var key = sourceKey is string str ? str : style.TargetType.FullName;
+		// 		resources[key] = style;
+		// 	}
+		// }
+		// else
+		if (sourceKey is string key && !string.IsNullOrEmpty(key) && !resources.ContainsKey(key))
 		{
 			var mauiValue = ConversionHelpers.ToMauiValue(value);
 			resources[key] = mauiValue ?? value;

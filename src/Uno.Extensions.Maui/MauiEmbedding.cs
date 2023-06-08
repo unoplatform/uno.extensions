@@ -51,6 +51,8 @@ public static class MauiEmbedding
 	}
 #endif
 
+	// NOTE: This was part of the POC and is out of scope for the MVP. Keeping it in case we want to add it back later.
+	/*
 	public static MauiAppBuilder MapControl<TWinUI, TMaui>(this MauiAppBuilder builder)
 		where TWinUI : FrameworkElement
 		where TMaui : Microsoft.Maui.Controls.View
@@ -65,4 +67,5 @@ public static class MauiEmbedding
 		Interop.MauiInterop.MapStyleHandler<THandler>();
 		return builder;
 	}
+	*/
 }
