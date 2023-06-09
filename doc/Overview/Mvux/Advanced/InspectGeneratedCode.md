@@ -24,5 +24,5 @@ Using Visual Studio, viewing the generated code can be achieved in several ways:
     1. Expand the main project's *Dependencies* object (the main project is the one without platform suffixes - e.g. *MyUnoApp*, not *MyUnoApp.Windows*.
     2. Expand the current target platform (e.g. *net7.0windows10.0...*).
     3. Expand the *Analyzers* sub menu and then *Uno.Extensions.Reactive.Generator*.
-    4. Under *Uno.Extensions.Reactive.Generator.FeedsGenerator* you'll find the code-generated Bindable Models and proxy types.
+    4. Under *Uno.Extensions.Reactive.Generator.FeedsGenerator* you'll find the generated bindable proxy types.
     ![Screenshot of navigating Visual Studio Solution Explorer to inspect generated code](../Assets/InspectingGeneratedCode-3.jpg)
