@@ -189,7 +189,7 @@ Messages are one of the core components of MVUX. They refer to the metadata that
 The Feed encapsulates a stream of Messages for each packet of data received from the underlying request. For a Task, it would be each execution of the Task and obtaining the refreshed/up-to-date value, and similarly with Async-Enumerable, it would be each iteration and yielding of a refreshed value, until it's cancelled using the `CancellationToken`.
 
 A Message provides several metadata types (called axis/axes).  
-The most common three are:
+The most common three metadata types are:
 
 - Data  
 This discloses information about the data that was allegedly returned by the request.  
