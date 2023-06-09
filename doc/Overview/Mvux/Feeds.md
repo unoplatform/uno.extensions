@@ -14,7 +14,7 @@ They accompany the requests with additional metadata that indicates whether the 
 
 Feeds are used as a gateway to request data from services and expose it in a stateless manner so that it can be displayed by the View.  
 
-Feeds are stateless, and do not provide support for reacting upon changes the user makes to the data on the View, the data can only be reloaded and refreshed upon request which is when the underlying task or Async-Enumerable will be invoked and the data refreshed.
+Feeds are stateless and do not provide support for reacting upon changes the user makes to the data on the View, the data can only be reloaded and refreshed upon request which is when the underlying task or Async-Enumerable will be invoked and the data refreshed.
 In other words, a Feed is a read-only representation of the data received from the server.
 
 In contrast to Feeds, [States](xref:Overview.Mvux.States), as the name suggests, are stateful and keep track of the latest value, as updates are applied.
@@ -24,7 +24,7 @@ In contrast to Feeds, [States](xref:Overview.Mvux.States), as the name suggests,
 ### Creation of Feeds
 
 For the examples below, let's use a counter service that returns the current count number, starting from 1. It will be run 3 consecutive times delayed by a second each.
-For the data type we'll create a record type called `CounterValue`:
+For the data type, we'll create a record type called `CounterValue`:
 
 ```csharp
 public record CounterValue(int Value);
@@ -34,7 +34,7 @@ Feeds can be created directly from methods that return a `ValueTask` or `Task`, 
 
 #### Feed.Async factory
 
-The `Feed.Async` factory method will create an IFeed by invoking a method that will return either a `ValueTask` or a `Task`. For example the `CountOne` method will wait for a second (unless cancelled via the `CancellationToken`) before returning the next counter value.
+The `Feed.Async` factory method will create an IFeed by invoking a method that will return either a `ValueTask` or a `Task`. For example, the `CountOne` method will wait for a second (unless cancelled via the `CancellationToken`) before returning the next counter value.
 
 ```csharp
 private int _currentCount = 0;
@@ -55,9 +55,9 @@ The `Feed.Async` factory method can be used to create an `IFeed` by calling the 
 public IFeed<CounterValue> Value => Feed.Async(_myService.CountOne);
 ```
 
-This is known as a 'pull' method, as the `CountOne` method is awaited in order to retrieve the data. In order to get the next counter value, the IFeed needs to be signaled to call the `CountOne` method again.
+This is known as a 'pull' method, as the `CountOne` method is awaited while retrieving the data. To get the next counter value, the IFeed needs to be signaled to call the `CountOne` method again.
 
-For the most part `Task` and `ValueTask` are intechangeable. However, with MVUX if the method returns `Task<T>` the method needs to be awaited in the `Feed.Async` callback.
+For the most part `Task` and `ValueTask` are interchangeable. However, with MVUX if the method returns `Task<T>` the method needs to be awaited in the `Feed.Async` callback.
 
 ```csharp
 // Service method
@@ -97,14 +97,14 @@ public IFeed<CounterValue> CurrentCount => Feed.AsyncEnumerable(_myService.Start
 ```
 
 `CancellationToken`s are essential to enable halting an ongoing async operation.  
-However, if the API you're consuming does not have a `CancellationToken` parameter, you can disregard that incoming `CancellationToken` parameter as following:
+However, if the API you're consuming does not have a `CancellationToken` parameter, you can disregard the incoming `CancellationToken` parameter as follows:
 
 ```csharp
 public IFeed<CounterValue> CurrentCount => Feed.AsyncEnumerable(ct => StartCounting());
 ```
 
 > [!NOTE]
-> `Feed` is a static class that provide factory methods that create `IFeed<T>`s, as well as extension methods for `IFeed<T>`.
+> `Feed` is a static class that provides factory methods that create `IFeed<T>`s, as well as extension methods for `IFeed<T>`.
 
 > [!NOTE]  
 > There are additional ways to load data (e.g. Observables), but most of them are easily convertible to one of the above two.
@@ -116,7 +116,7 @@ public IFeed<CounterValue> CurrentCount => Feed.AsyncEnumerable(ct => StartCount
 
 #### Directly await Feeds
 
-Feeds are directly awaitable, so to get the data currently held in the feed, this is useful when you want to use the current value in a command etc.  
+Feeds are directly awaitable, so to get the data currently held in the feed, this is useful when you want to use the current value in a command, etc.  
 You can await it in the following manner:
 
 ```csharp
@@ -133,7 +133,7 @@ private async ValueTask SomeAsyncMethod()
 
 #### Use Feeds in an MVUX Model
 
-The MVUX analyzers generate a proxy entity for each of the models in your app (those with `Model` suffix). For every Feed property (returning `IFeed<T>` or `IListFeed<T>`) found in the model, a corresponding Feed (or List-Feed) property is being generated on the proxy entity.  
+The MVUX analyzers generate a proxy entity for each of the models in your app (those with `Model` suffix). For every Feed property (returning `IFeed<T>` or `IListFeed<T>`) found in the model, a corresponding Feed (or List-Feed) property is generated on the proxy entity.  
 MVUX recommends using plain [POCO](https://en.wikipedia.org/wiki/Plain_old_CLR_object) (Plain Old CLR Object) `record` types for the models in your app as they're immutable, and will not require any property change notifications to be raised.  
 The generated proxy and its properties ensure that data-binding will work, even though property change notifications aren't being raised by the models themselves.
 
@@ -184,11 +184,11 @@ One of its properties is `Data`, which provides access to the actual data of the
 
 ## Messages
 
-Messages are one of the core components of MVUX. They refer to the metadata that wrap around the entities streaming along as discussed earlier.
+Messages are one of the core components of MVUX. They refer to the metadata that wraps around the entities streaming along as discussed earlier.
 
-The Feed encapsulates a stream of Messages for each packet of data received from the underlying request. For a Task it would be each execution of the Task and obtaining the refreshed/up-to-date value, and similarly with Async-Enumerable it would be each iteration and yielding of a refreshed value, until it's cancelled using the `CancellationToken`.
+The Feed encapsulates a stream of Messages for each packet of data received from the underlying request. For a Task, it would be each execution of the Task and obtaining the refreshed/up-to-date value, and similarly with Async-Enumerable, it would be each iteration and yielding of a refreshed value, until it's cancelled using the `CancellationToken`.
 
-Messages are extensible, but currently a Message provides several metadata types (called axis/axes).  
+A Message provides several metadata types (called axis/axes).  
 The most common three are:
 
 - Data  
