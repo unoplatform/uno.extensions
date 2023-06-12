@@ -8,6 +8,7 @@ public class App : Application
 	protected async override void OnLaunched(LaunchActivatedEventArgs args)
 	{
 		var builder = this.CreateBuilder(args)
+			.UseMauiEmbedding()
 			// Add navigation support for toolkit controls such as TabBar and NavigationView
 			.UseToolkitNavigation()
 			.Configure(host => host
