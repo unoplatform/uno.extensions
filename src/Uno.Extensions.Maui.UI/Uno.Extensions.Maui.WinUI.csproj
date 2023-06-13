@@ -5,7 +5,7 @@
 		<TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net6.0-windows10.0.19041</TargetFrameworks>
 		<UseMaui>true</UseMaui>
 		<RootNamespace>Uno.Extensions.Maui</RootNamespace>
-		<NoWarn>$(NoWarn);CS1591;NU5104;NU5048;NU1009</NoWarn>
+		<NoWarn>$(NoWarn);NU5104;NU5048;NU1009</NoWarn>
 		<Description>Extensions to embed .NET MAUI controls within your Uno app.</Description>
 		<DefineConstants Condition="$(TargetFramework) == 'net6.0'">$(DefineConstants);NO_PLATFORM</DefineConstants>
 	</PropertyGroup>
