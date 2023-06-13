@@ -24,7 +24,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libraries", "Libraries", "{9B9F35D5-E6DD-4FC7-9198-F8246D3CE366}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Maui.WinUI", "..\..\src\Uno.Extensions.Maui\Uno.Extensions.Maui.WinUI.csproj", "{E979B964-15B6-47A1-9ABC-7A2CAB2286E9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Maui.WinUI", "..\..\src\Uno.Extensions.Maui.UI\Uno.Extensions.Maui.WinUI.csproj", "{E979B964-15B6-47A1-9ABC-7A2CAB2286E9}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Hosting.WinUI", "..\..\src\Uno.Extensions.Hosting.UI\Uno.Extensions.Hosting.WinUI.csproj", "{73A0899C-7167-45A6-9A02-C258E731C63C}"
 EndProject

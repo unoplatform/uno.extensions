@@ -1,5 +1,5 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-	<Import Project="..\..\..\src\Uno.Extensions.Maui\build\Package.props" />
+	<Import Project="..\..\..\src\Uno.Extensions.Maui.UI\build\Package.props" />
 	<PropertyGroup>
 		<TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows')) or '$(EnableWindowsTargeting)' == 'true'">$(TargetFrameworks);net6.0-windows10.0.19041</TargetFrameworks>
 		<TargetFrameworks>$(TargetFrameworks);net6.0;net6.0-ios;net6.0-android;net6.0-maccatalyst</TargetFrameworks>
@@ -66,7 +66,7 @@
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Localization.UI\Uno.Extensions.Localization.WinUI.csproj" />
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Logging.Serilog\Uno.Extensions.Logging.Serilog.csproj" />
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Logging\Uno.Extensions.Logging.WinUI.csproj" />
-		<ProjectReference Include="..\..\..\src\Uno.Extensions.Maui\Uno.Extensions.Maui.WinUI.csproj" />
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Maui.UI\Uno.Extensions.Maui.WinUI.csproj" />
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Navigation.Toolkit\Uno.Extensions.Navigation.Toolkit.WinUI.csproj" />
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Navigation.UI\Uno.Extensions.Navigation.WinUI.csproj" />
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Navigation.Generators\Uno.Extensions.Navigation.Generators.csproj">
@@ -81,7 +81,7 @@
 	<Import Project="..\..\..\src\Uno.Extensions.Configuration\build\Package.targets" />
 	<Import Project="..\..\..\src\Uno.Extensions.Hosting\build\Package.targets" />
 	<Import Project="..\..\..\src\Uno.Extensions.Localization\build\Package.targets" />
-	<Import Project="..\..\..\src\Uno.Extensions.Maui\build\Package.targets" />
+	<Import Project="..\..\..\src\Uno.Extensions.Maui.UI\build\Package.targets" />
 	<Import Project="..\..\..\src\Uno.Extensions.Navigation\build\Package.targets" />
 	<Import Project="..\..\..\src\Uno.Extensions.Navigation.UI\build\Package.targets" />
 </Project>

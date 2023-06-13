@@ -1,5 +1,5 @@
 <Project Sdk="Microsoft.NET.Sdk">
-	<Import Project="..\..\..\src\Uno.Extensions.Maui\build\Package.props" />
+	<Import Project="..\..\..\src\Uno.Extensions.Maui.UI\build\Package.props" />
 	<PropertyGroup>
 		<OutputType>WinExe</OutputType>
 		<TargetFramework>net6.0-windows10.0.19041.0</TargetFramework>
@@ -77,5 +77,5 @@
 	</PropertyGroup>
 
 	<Import Project="..\MauiEmbedding.Base\base.props" />
-	<Import Project="..\..\..\src\Uno.Extensions.Maui\build\Package.targets" />
+	<Import Project="..\..\..\src\Uno.Extensions.Maui.UI\build\Package.targets" />
 </Project>
