@@ -1,14 +1,24 @@
-﻿using System.Reflection;
+﻿using System.Numerics;
+using System.Reflection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Maui.Controls;
+using Microsoft.UI.Xaml.Documents;
 
 namespace Uno.Extensions.Maui;
 
+/// <summary>
+/// Abstract class for extending <see cref="MarkupExtension"/> in the context of <see cref="Microsoft.Maui.Controls"/>.
+/// </summary>
 public abstract class MauiExtensionBase : MarkupExtension
 {
 	private ILogger? _logger;
+	
+	/// <summary>
+	/// Logger to log messages during runtime.
+	/// </summary>
 	protected ILogger Logger => _logger ??= GetLogger();
 
+	/// <inheritdoc/>
 	protected sealed override object? ProvideValue(IXamlServiceProvider serviceProvider)
 	{
 		var provideValueTarget = (IProvideValueTarget)serviceProvider.GetService(typeof(IProvideValueTarget));
@@ -58,16 +68,29 @@ public abstract class MauiExtensionBase : MarkupExtension
 
 		return base.ProvideValue(serviceProvider);
 	}
-
+	
 	private ILogger GetLogger()
 	{
 		var factory = MauiEmbedding.MauiContext.Services.GetRequiredService<ILoggerFactory>();
-		var implemenatingType = GetType();
-		return factory.CreateLogger(implemenatingType.Name);
+		var implementingType = GetType();
+		return factory.CreateLogger(implementingType.Name);
 	}
 
+	/// <summary>
+	/// Abstract method to set the value of a <see cref="BindableProperty"/>.
+	/// </summary>
+	/// <param name="view">The view to set the property value on.</param>
+	/// <param name="viewType">The type of view to set the property value on.</param>
+	/// <param name="propertyType">The type of the property to set.</param>
+	/// <param name="property">The <see cref="BindableProperty"/> to set.</param>
+	/// <param name="propertyName">The name of the property to set.</param>
 	protected abstract void SetValue(View view, Type viewType, Type propertyType, BindableProperty property, string propertyName);
 
+	/// <summary>
+	/// Returns a default value of <paramref name="type"/>.
+	/// </summary>
+	/// <param name="type">Type of the target.</param>
+	/// <returns>Default value of <paramref name="type"/>.</returns>
 	protected object? Default(Type type) =>
 		type.IsValueType ? Activator.CreateInstance(type) : null;
 }
