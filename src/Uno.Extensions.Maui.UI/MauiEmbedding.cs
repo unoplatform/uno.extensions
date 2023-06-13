@@ -5,6 +5,9 @@ using Uno.Extensions.Maui.Internals;
 
 namespace Uno.Extensions.Maui;
 
+/// <summary>
+/// Embedding support for Microsoft.Maui controls in Uno Platform app hosts.
+/// </summary>
 public static class MauiEmbedding
 {
 #if !NO_PLATFORM
@@ -21,6 +24,12 @@ public static class MauiEmbedding
 			: throw new MauiEmbeddingInitializationException();
 #endif
 
+	/// <summary>
+	/// Registers Maui embedding in the Uno Platform app builder.
+	/// </summary>
+	/// <returns>The updated app builder.</returns>
+	/// <param name="builder">The Uno app builder.</param>
+	/// <param name="configure">Optional lambda to configure the Maui app builder.</param>
 	public static IApplicationBuilder UseMauiEmbedding(this IApplicationBuilder builder, Action<MauiAppBuilder>? configure = null)
 	{
 		builder.App.UseMauiEmbedding(configure);
@@ -28,11 +37,21 @@ public static class MauiEmbedding
 	}
 
 #if NO_PLATFORM
+	/// <summary>
+	/// Not supported platform.
+	/// </summary>
+	/// <param name="app">The Uno app.</param>
+	/// <param name="configure">Optional lambda to configure the Maui app builder.</param>
 	public static void UseMauiEmbedding(this Microsoft.UI.Xaml.Application app, Action<MauiAppBuilder>? configure = null)
 	{
 		throw new PlatformNotSupportedException();
 	}
 #else
+	/// <summary>
+	/// Registers Maui embedding with WinUI3 and WPF application builder.
+	/// </summary>
+	/// <param name="app">The Uno app.</param>
+	/// <param name="configure">Optional lambda to configure the Maui app builder.</param>
 	public static void UseMauiEmbedding(this Microsoft.UI.Xaml.Application app, Action<MauiAppBuilder>? configure = null)
 	{
 		var mauiAppBuilder = MauiApp.CreateBuilder()
