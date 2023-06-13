@@ -1,5 +1,5 @@
 <Project Sdk="Microsoft.NET.Sdk">
-	<Import Project="..\..\..\src\Uno.Extensions.Maui\build\Package.props" />
+	<Import Project="..\..\..\src\Uno.Extensions.Maui.UI\build\Package.props" />
 	<PropertyGroup>
 		<TargetFrameworks>net6.0-ios;net6.0-android;net6.0-maccatalyst</TargetFrameworks>
 		<SingleProject>true</SingleProject>
@@ -74,5 +74,5 @@
 		<ProjectReference Include="..\MauiEmbedding\MauiEmbedding.csproj" />
 	</ItemGroup>
 	<Import Project="..\MauiEmbedding.Base\base.props" />
-	<Import Project="..\..\..\src\Uno.Extensions.Maui\build\Package.targets" />
+	<Import Project="..\..\..\src\Uno.Extensions.Maui.UI\build\Package.targets" />
 </Project>
