@@ -1,0 +1,7 @@
+{
+  "profiles": {
+    "MauiEmbedding.Windows (Package)": {
+      "commandName": "MsixPackage"
+    }
+  }
+}
