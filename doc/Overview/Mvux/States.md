@@ -6,27 +6,27 @@ uid: Overview.Mvux.States
 
 ## States are stateful Feeds
 
-Like [Feeds](xref:Overview.Mvux.Feeds), States are used as a gateway that manage asynchronous data requests from services, and wrap them in metadata that provides information about the current request state or data state - whether the request is still in progress, when an error occurs, or if the data contains no records.
+Like [Feeds](xref:Overview.Mvux.Feeds), States are used as a connection point to services to manage asynchronous data requests from services and wrap them in metadata that provides information about the current request state or data state - whether the request is still in progress, when an error occurs, or if the data contains no records.
 
 Contrary to Feeds, States are stateful (hence the name!), and do keep track of the state of the Model and its entities.  
 
-MVUX utilizes its powerful code-generation engine to generate a bindable proxy for each Model, which holds the state information of the data, as well as Bindable Proxy Entities where needed, for instance if the entities are immutable (e.g. records - the recommended type).  
-These are required so that the immutable entities are recreated anew in response to updates the user makes in the View.
+MVUX utilizes its powerful code-generation engine to generate a bindable proxy for each Model, which holds the state information of the data, as well as a bindable proxy for entities where needed, for instance, if the entities are immutable (e.g. records - the recommended type).  
+The bindable proxies use as a bridge that enables immutable entities to work with the WinUI data-binding engine. The States in the Model are monitored for data-binding changes, and in response to any change, the objects are recreated fresh, instead of their properties being changed.
 
 > [!NOTE]
-> States keep the state of the data, so every new subscription to them, (such as awaiting them or binding them to an additional control etc.), will use the data currently loaded in the State (if any).  
+> States keep the state of the data, so every new subscription to them, (such as awaiting them or binding them to an additional control, etc.), will use the data currently loaded in the State (if any).  
 To reload the data, a refresh is required.
 
-To summarize the differences from Feeds:
+States and Feeds are different in the following:
 
 1. When subscribing to a state, the currently loaded value is going to be replayed.
-2. State provides the `Update` method that allows changing its current value.
+2. A State provides the `Update` method that allows changing its current value.
 3. States are attached to an owner and share the same lifetime as that owner.
-4. The main usage of state is for two-way bindings.
+4. The main usage of a State is for two-way bindings.
 
 ## States are attached to their owner
 
-Besides holding the state information, a reference to the bindable proxy is shared with the States so that when the View is closed and disposed of, it tunnels down to the States and the Models and makes them available for Garbage-Collection. It shares the same lifetime as its owner.
+Besides holding the state information, a reference to the bindable proxy is shared with the States so that when the View is closed and disposed of, it tunnels down to the States and the Models and makes them available for garbage collection. It shares the same lifetime as its owner.
 
 ## How to use States
 
@@ -34,7 +34,7 @@ Besides holding the state information, a reference to the bindable proxy is shar
 
 #### From Tasks
 
-States are created slightly different, they require a reference to the Model for caching and GC as mentioned above.
+States are created slightly differently, they require a reference to the Model for caching and GC as mentioned above:
 
 ```csharp
 public IState<Person> MainContact => State.Async(this, ContactsService.GetMainContact);
@@ -50,12 +50,12 @@ A State can also be created from an Async Enumerable as follows:
 public IState<StockValue> MyStockCurrentValue => State.AsyncEnumerable(this, ContactsService.GetMyStockCurrentValue);
 ```
 
-Make sure the Async Enumerable methods has a `CancellationToken` parameter, and is decorated with the `EnumerationCancellation` attribute.  
+Make sure the Async Enumerable methods have a `CancellationToken` parameter and are decorated with the `EnumerationCancellation` attribute.  
 You can learn more about Async Enumerables in [this article](https://learn.microsoft.com/archive/msdn-magazine/2019/november/csharp-iterating-with-async-enumerables-in-csharp-8#a-tour-through-async-enumerables).
 
 #### Other ways to create feeds
 
-There are additional way to create States, so that you can update them at a later stage:
+There are additional ways to create States so that you can update them at a later stage:
 
 - With a synchronous initial value, and update it at a later stage:
 
@@ -69,7 +69,7 @@ There are additional way to create States, so that you can update them at a late
     public IState<City> CurrentCity => State<City>.Empty(this);
     ```
 
-- Construct your own custom State by directly creating its `Messages`.  
+- Construct a custom State by directly creating its `Messages`.  
   This is intended for advanced users and is demonstrated [here](xref:Overview.Reactive.State#create).
 
 ### Usage of States
@@ -82,7 +82,9 @@ City currentCity = await this.CurrentCity;
 
 #### How to bind the View to a State
 
-1. In an MVUX app (read [How to set up an MVUX project](xref:Overview.Mvux.HowToMvuxProject)), add a Model class with a simple state as follows:
+States are built to be cooperating with the data-binding engine. A State will automatically update its value when the user changes data in the View bound to this State.
+
+1. In an MVUX app (read [How to set up an MVUX project](xref:Overview.Mvux.HowToMvuxProject)), add a Model class with a State as follows:
 
     ```csharp
     public partial record SliderModel
@@ -106,8 +108,8 @@ City currentCity = await this.CurrentCity;
     
         <StackPanel>
             <StackPanel Orientation="Horizontal" Spacing="5">
-                <TextBlock Text="Current state value:"/>
-                <TextBlock Text="{Binding SliderValue}"/>
+                <TextBlock Text="Current state value:" />
+                <TextBlock Text="{Binding SliderValue}" />
             </StackPanel>
     
             <Border Height="1" Background="DarkGray" />
@@ -128,7 +130,7 @@ City currentCity = await this.CurrentCity;
 
 ### Change data of a State
 
-To update the current value of a State, use its `Update` method.  
+To manually update the current value of a State, use its `Update` method.  
 
 In this example we'll add the method `IncrementSlider` that gets the current value and increases it by one (if it doesn't exceed 100):
 
@@ -144,14 +146,14 @@ public async ValueTask IncrementSlider(CancellationToken ct = default)
 }
 ```
 
-The `updater` parameter of the `Update` method accepts a `Func<T, T>`, where the input parameter provides the current value of the State when called, and the latter is the one to be returned and be applied as the new value of the State, in our case we use the `incrementValue` [local function](https://learn.microsoft.com/dotnet/csharp/programming-guide/classes-and-structs/local-functions) to increment `currentValue` by one (or return `1` if the value exceeds `100`).
+The `updater` parameter of the `Update` method accepts a `Func<T, T>`, where the input parameter provides the current value of the State when called, and the return parameter is the one to be returned and applied as the new value of the State, in our case we use the `incrementValue` [local function](https://learn.microsoft.com/dotnet/csharp/programming-guide/classes-and-structs/local-functions) to increment `currentValue` by one (or return `1` if the value exceeds `100`).
 
 > [!TIP]  
 > There are additional methods that update the data of a State such as `Set` and `UpdateMessage`, explained [here](xref:Overview.Reactive.State#update-how-to-update-a-state).
 
 ### Commands
 
-Part of the MVUX toolbox, is automatic generation of Commands.
+Part of the MVUX toolbox is the automatic generation of Commands.
 In the `IncrementSlider` example [we've just used](#change-data-of-a-state), a special asynchronous Command will be generated that can be used in the View by a `Button` or other controls:
 
 Let's modify the XAML [above](#how-to-bind-the-view-to-a-state) with the following:
@@ -173,7 +175,7 @@ This is what the result will look like:
 
 ![A video that demonstrates the effect of the recent updates applied to the slider-app](Assets/SliderApp-2.gif)
 
-The source-code for the sample app can be found [here](https://github.com/unoplatform/Uno.Samples/tree/master/UI/MvuxHowTos/SliderApp).
+The source code for the sample app can be found [here](https://github.com/unoplatform/Uno.Samples/tree/master/UI/MvuxHowTos/SliderApp).
 
 > [!TIP]  
 > Although it's important to use the `CancellationToken` to enable cancellation of Commands while they're being executed, this parameter is not mandatory, and Commands will work regardless.

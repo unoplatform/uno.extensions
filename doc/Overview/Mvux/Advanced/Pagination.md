@@ -112,7 +112,7 @@ Inside this callback, we call the service by providing it with the following par
 </Page>
 ```
 
-In addition, make sure the `DataContext` of the `Page` is set to the generated bindable model called `BindablePeopleModel` (*MainPage.xaml.cs*):
+In addition, make sure the `DataContext` of the `Page` is set to the generated bindable proxy called `BindablePeopleModel` (*MainPage.xaml.cs*):
 
 ```csharp
 public MainPage()

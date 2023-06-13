@@ -10,12 +10,11 @@ In Feeds, each data request from the service, returns one single item, whereas i
 Its distinctive feature is the ability to use its [Operators](xref:Overview.Mvux.ListFeeds#operators) directly on its items, rather than on the entire collection.
 
 Another notable characteristic of List-Feed is how it handles the absence of data. When an empty collection is returned by the service, it's treated as an Empty message. The returned data axis Option will be `None`, even though the result was not `null`.  
-This is because when a control of data items is displayed with an empty collection (for instance a `ListView`), there is no reason to display the `FeedView`'s `ValueTemplate` with an empty `ListView`. The "No data records" `NoneTemplate` makes much more sense in this case. For that reason, both a `null` result and empty collection are regarded as `None`.
+This is because when a control of data items is displayed with an empty collection (for instance a `ListView`), there is no reason to display the `FeedView`'s `ValueTemplate` with an empty `ListView`. The "No data records" `NoneTemplate` makes much more sense in this case. For that reason, both a `null` result and an empty collection are regarded as `None`.
 For more information, review the [Feed Messages section](xref:Overview.Mvux.Feeds#messages).
 
-
 > [!NOTE]  
-> The List-Feed is using the _key equality_ to track multiple version of a same entity within different messages of the List-Feed.
+> The List-Feed is using the _key equality_ to track multiple versions of the same entity within different messages of the List-Feed.
 (Read more about _key equality_.)[xref:Overview.KeyEquality.Concept]
 
 ## How to create a list feed
@@ -71,9 +70,8 @@ As mentioned, unlike a `Feed<List<T>>` operators on a List-Feed are directly int
 This operator allows the filtering of the items.
 
 > [!IMPORTANT]
-> If all items of the collection are filtered out, the resulting Feed will go in `None` state.
+> If all items of the collection are filtered out, the resulting Feed will go into `None` state.
 
 ```csharp
 public IListFeed<string> LongNames => Names.Where(name => name.Length >= 10);
 ```
-

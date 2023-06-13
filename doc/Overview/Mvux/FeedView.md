@@ -1,6 +1,6 @@
 # The `FeedView` control
 
-The `FeedView` control is the heart of MVUX in the View side.  
+The `FeedView` control is the heart of MVUX on the View side.  
 It seamlessly fulfills everything Feeds and States offer and displays all metadata on the screen providing rich customizability for many modes, as detailed below.
 
 ## How to use the FeedView control
@@ -46,8 +46,7 @@ Then in the XAML:
 </Page>
 ```
 
-The `Source` property of the `FeedView` is set to the generated Bindable Model Proxy's `CurrentContact` property, which will asynchronously requests the `Contact` from the service.
-To learn more about bindable proxies, read [this]().
+The `Source` property of the `FeedView` is set to the generated bindable model's `CurrentContact` property, which asynchronously requests the `Contact` from the service.
 
 In the above example, `Data` is a property of the `FeedViewState` provided via the template, [read on](#data) for details.
 
@@ -66,8 +65,7 @@ This is also the object that is passed on to the `FeedView`'s templates for bind
 
 ##### Data
 
-The `Data` property provides access to the value reported by the last message received from the source Feed.  
-In other words, the current and most-recent value represented by the Feed.
+The `Data` property provides access to the value reported by the last message received from the source Feed, in other words, the current Feed value.
 
 ```xml
 <Page
@@ -82,7 +80,7 @@ In other words, the current and most-recent value represented by the Feed.
 </Page>
 ```
 
-In the `Text` property binding `Data.Name` of the above example, `Data` is a property of the `FeedViewState` accessible in the template, which gets the most-recent `Contact` from the server, and then we're binding to that `Contact`'s `Name` property.
+In the `Text` property binding `Data.Name` of the above example, `Data` is a property of the `FeedViewState` accessible in the template, which gets the most recent `Contact` from the server, and then we're binding to that `Contact`'s `Name` property.
 
 ##### Refresh
 
@@ -129,9 +127,9 @@ By default, the `FeedView` will display a progress ring while awaiting data on l
 
 ![A running progress-ring control](Assets/ProgressRing.gif)
 
-However, in some scenarios you need to disable the default visual state and refreshing template.
+However, in some scenarios, you need to disable the default visual state and progress template.
 
-This property accepts a value of the `FeedViewRefreshState` enumeration, which supports one the values below which you can set to change its behavior.
+This property accepts a value of the `FeedViewRefreshState` enumeration, which supports one of the values below which you can set to change its behavior.
 
 - `None` 
 - `Default` / `Loading`
@@ -141,9 +139,10 @@ This property accepts a value of the `FeedViewRefreshState` enumeration, which s
 ### ValueTemplate (default Template)
 
 The `ValueTemplate` defines how the `FeedView` would be rendered when its state has concrete data to display, as opposed to no data while loading.  
-As mentioned previously, the object the `FeedView` provides the `FeedViewState` as the data item for its `ValueTemplate`.
+As mentioned previously, the `FeedView` provides the `FeedViewState` as the data item for its `ValueTemplate`.
 
 The `FeedView`'s default content directs to this property, so anything directly added to the `FeedView` element's XAML, is like setting its `ValueTemplate`.  
+
 So
 
 ```xml
@@ -172,7 +171,7 @@ or even:
 
 This template will display when the underlying Feed is currently awaiting the asynchronous request to finish.
 
-It's default implementation will show a progress ring:
+Its default implementation will show a progress ring:
 
 ![A running progress-ring control](Assets/ProgressRing.gif)
 
@@ -194,8 +193,8 @@ But you can customize that by overriding the `ProgressTemplate`:
 ### NoneTemplate
 
 If you set a template to this property, it will show if the data that was returned from the service contained no entries.  
-For instance, if an `IFeed<T>` successfully completed its request which resulted in `null` result from the server, this is not considered an `Error`, it's considered a successful result with no data.  
-Similarly, when using `IListFeed<T>`, the `NoneTemplate` will also display if the collection is empty, as well as if the result `null`.
+For instance, if an `IFeed<T>` completed its request successfully with the server returning a `null` result, it is not considered an `Error`, it's considered a successful result with no data.  
+Similarly, when using `IListFeed<T>`, the `NoneTemplate` will also display if the collection is empty, as well as if the result is `null`.
 
 Example:
 
@@ -217,11 +216,11 @@ The `FeedView` will display this template if an Exception was thrown by the unde
 
 ### UndefinedTemplate
 
-This template is displayed when the control loads, before the underlying asynchronous service-request has even been called.  
+This template is displayed when the control loads, before the underlying asynchronous service request has even been called.  
 As soon as the asynchronous request is invoked and awaited, the `FeedView` will switch to its `ProgressTemplate`, until the request has resulted in data, which it will then switch to the `ValueTemplate`, or `NoneTemplate`, depending on the data result.  
 
 > [!TIP]  
-> Typically this template will only show for a a very short period - a split second or so, depending on how long it takes for the page and its Model to load.
+> Typically this template will only show for a very short period - a split second or so, depending on how long it takes for the page and its Model to load.
 
 ## Other notable features
 
