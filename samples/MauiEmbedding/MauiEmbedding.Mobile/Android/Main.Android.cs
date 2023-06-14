@@ -11,6 +11,8 @@ using Android.Widget;
 using Com.Nostra13.Universalimageloader.Core;
 using Microsoft.UI.Xaml.Media;
 
+
+[assembly: Android.App.UsesPermission(Android.Manifest.Permission.BatteryStats)]
 namespace MauiEmbedding.Droid;
 
 [global::Android.App.ApplicationAttribute(

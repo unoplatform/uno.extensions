@@ -13,6 +13,7 @@
 		Spacing="10">
 		<Button Click="{x:Bind Vm.GoToMauiControls}" Content="Maui simple controls" />
 		<Button Click="{x:Bind Vm.GoToCommunityToolkitMauiControls}" Content="CommunityToolkit.Maui controls" />
+		<Button Click="{x:Bind Vm.GoToMauiEssentialsApi}" Content="Maui.Essentials APIs" />
 	</StackPanel>
 
 </Page>

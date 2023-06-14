@@ -1,4 +1,5 @@
 using CommunityToolkit.Maui;
+using Microsoft.Maui.Platform;
 using Uno.Extensions.Navigation;
 
 namespace MauiEmbedding;
@@ -78,6 +79,7 @@ public class App : Application
 			new ViewMap(ViewModel: typeof(ShellViewModel)),
 			new ViewMap<MainPage, MainViewModel>(),
 			new ViewMap<MauiControlsPage, MauiControlsViewModel>(),
+			new ViewMap<MauiEssentialsPage, MauiEssentialsViewModel>(),
 			new ViewMap<MCTControlsPage, MCTControlsViewModel>()
 		);
 
@@ -88,6 +90,7 @@ public class App : Application
 					new RouteMap("Main", View: views.FindByViewModel<MainViewModel>()),
 					new RouteMap(nameof(MauiControlsViewModel), View: views.FindByViewModel<MauiControlsViewModel>()),
 					new RouteMap(nameof(MCTControlsViewModel), View: views.FindByViewModel<MCTControlsViewModel>()),
+					new RouteMap(nameof(MauiEssentialsViewModel), View: views.FindByViewModel<MauiEssentialsViewModel>()),
 				}
 			)
 		);

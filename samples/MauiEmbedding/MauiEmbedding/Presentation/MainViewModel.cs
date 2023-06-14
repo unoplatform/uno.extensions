@@ -25,9 +25,15 @@ public partial class MainViewModel : ObservableObject
 		await _navigator.NavigateViewModelAsync<MauiControlsViewModel>(this);
 	}
 
-	
+
 	public async Task GoToCommunityToolkitMauiControls()
 	{
 		await _navigator.NavigateViewModelAsync<MCTControlsViewModel>(this);
+	}
+
+
+	public async Task GoToMauiEssentialsApi()
+	{
+		await _navigator.NavigateViewModelAsync<MauiEssentialsViewModel>(this);
 	}
 }
