@@ -10,7 +10,7 @@ Unlike a feed, where each asynchronous operation, returns one single item (or a 
 
 A couple of points to note about list-feeds:
 
-- [Operators](xref:Overview.Mvux.ListFeeds#operators) are applied to the items within the returned collection, rather than on the entire collection.
+- [Operators](#operators) are applied to the items within the returned collection, rather than on the entire collection.
 
 - When an empty collection is returned by the service, it's treated as an Empty message. The returned data axis Option will be `None`, even though the result was not `null`.  
 This is because when a control of data items is displayed with an empty collection (for instance a `ListView`), there is no reason to display the `FeedView`'s `ValueTemplate` with an empty `ListView`. The "No data records" `NoneTemplate` makes much more sense in this case. For that reason, both a `null` result and an empty collection are regarded as `None`.
