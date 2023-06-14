@@ -2,26 +2,25 @@
 uid: Overview.Mvux.Feeds
 ---
 
-# What are Feeds?
+# What are feeds?
 
-Feeds are there to manage asynchronous data requests from a service and provide their result to the View in an efficient manner.
+Feeds are there to manage asynchronous operations (for example requesting data from a service) and expose the result to the View in an efficient manner.
 
-It provides out of the box support for data coming from task-based methods as well Async-Enumerables ones.  
+It provides out of the box support for task-based methods as well [Async-Enumerables](https://learn.microsoft.com/dotnet/api/system.collections.generic.iasyncenumerable-1) ones.  
 
-They accompany the requests with additional metadata that indicates whether the request is still in progress, ended in an error, or if it was successful, whether the data that was returned contains any entries or was empty.
+Feeds include additional metadata that indicates whether the operation is still in progress, ended in an error, or if it was successful, whether the data that was returned contains any entries or was empty.
 
 ## Feeds are stateless
 
-Feeds are used as a gateway to request data from services and expose it in a stateless manner so that it can be displayed by the View.  
+Feeds are typically used to request data from services and expose it in a stateless manner so that the resulting data can be displayed by the View.  
 
-Feeds are stateless and do not provide support for reacting upon changes the user makes to the data on the View, the data can only be reloaded and refreshed upon request which is when the underlying task or Async-Enumerable will be invoked and the data refreshed.
-In other words, a Feed is a read-only representation of the data received from the server.
+Feeds are stateless and do not provide support for reacting upon changes the user makes to the data on the View, the data can only be reloaded and refreshed upon request which is when the underlying task or Async-Enumerable will be invoked and the data refreshed. In other words, a feed is a read-only representation of the data received from the server.
 
-In contrast to Feeds, [States](xref:Overview.Mvux.States), as the name suggests, are stateful and keep track of the latest value, as updates are applied.
+In contrast to feeds, [states](xref:Overview.Mvux.States) (`IState` or `IListState`), as the name suggests, are stateful and keep track of the latest value, as updates are applied.
 
-## How to use Feeds?
+## How to use feeds?
 
-### Creation of Feeds
+### Creation of feeds
 
 For the examples below, let's use a counter service that returns the current count number, starting from 1. It will be run 3 consecutive times delayed by a second each.
 For the data type, we'll create a record type called `CounterValue`:
@@ -55,7 +54,7 @@ The `Feed.Async` factory method can be used to create an `IFeed` by calling the 
 public IFeed<CounterValue> Value => Feed.Async(_myService.CountOne);
 ```
 
-This is known as a 'pull' method, as the `CountOne` method is awaited while retrieving the data. To get the next counter value, the IFeed needs to be signaled to call the `CountOne` method again.
+This is known as a 'pull' method, as the `CountOne` method is awaited while retrieving the data. To get the next counter value, the `IFeed` needs to be signaled to call the `CountOne` method again.
 
 For the most part `Task` and `ValueTask` are interchangeable. However, with MVUX if the method returns `Task<T>` the method needs to be awaited in the `Feed.Async` callback.
 
@@ -69,7 +68,7 @@ public IFeed<CounterValue> CurrentCount => Feed.Async(async ct => await _myServi
 
 #### Feed.AsyncEnumerable factory
 
-In contrast to Tasks which operate as 'pull' methods, the 'push' method is where we call a method and establish some sort of connection with it, while it sends new data as it becomes available:
+In contrast to Tasks which operate as 'pull' methods, the 'push' method is where data is returned as it becomes available via an `IAsyncEnumerable` instance. For example, the `StartCounting` method will return a new counter value every second until the `CancellationToken` is cancelled.
 
 ```csharp
 public async IAsyncEnumerable<CounterValue> StartCounting([EnumeratorCancellation] CancellationToken ct)
@@ -88,36 +87,23 @@ public async IAsyncEnumerable<CounterValue> StartCounting([EnumeratorCancellatio
 }
 ```
 
-Referring to the Async Enumerable from the example a Feed can be created in the following way:
+Referring to the `StartCounting` method from this example, a feed can be created as follows:
 
 ```csharp
-public async IAsyncEnumerable<CounterValue> StartCounting(CancellationToken ct) { ... }
-
 public IFeed<CounterValue> CurrentCount => Feed.AsyncEnumerable(_myService.StartCounting);
 ```
 
-`CancellationToken`s are essential to enable halting an ongoing async operation.  
-However, if the API you're consuming does not have a `CancellationToken` parameter, you can disregard the incoming `CancellationToken` parameter as follows:
+`CancellationToken`s are essential to enable halting an ongoing async operation. However, if the API you're consuming does not have a `CancellationToken` parameter, you can disregard the incoming `CancellationToken` parameter as follows:
 
 ```csharp
 public IFeed<CounterValue> CurrentCount => Feed.AsyncEnumerable(ct => StartCounting());
 ```
 
-> [!NOTE]
-> `Feed` is a static class that provides factory methods that create `IFeed<T>`s, as well as extension methods for `IFeed<T>`.
+### Consumption of feeds
 
-> [!NOTE]  
-> There are additional ways to load data (e.g. Observables), but most of them are easily convertible to one of the above two.
+#### Directly await feeds
 
-> [!TIP]
-> Feeds can also be constructed manually using the `Feed.Create` method.
-
-### Consumption of Feeds
-
-#### Directly await Feeds
-
-Feeds are directly awaitable, so to get the data currently held in the feed, this is useful when you want to use the current value in a command, etc.  
-You can await it in the following manner:
+Feeds are directly awaitable, so to get the data currently held in the feed, this is useful when you want to use the current value in a command, etc. You can await it in the following manner:
 
 ```csharp
 public IFeed<CurrentCount> CurrentCount => ...
@@ -128,25 +114,19 @@ private async ValueTask SomeAsyncMethod()
 }
 ```
 
-> [!TIP]
-> This is possible thanks to the `GetAwaiter` extension method of `IFeed<T>`. Read [this](https://devblogs.microsoft.com/pfxteam/await-anything) for more.
+#### Use feeds in an MVUX Model
 
-#### Use Feeds in an MVUX Model
+The MVUX analyzers generate a bindable proxy for each of the models in your app (those with `Model` suffix). For the code generation to work, mark the Models and entities with the `partial` modifier.
 
-The MVUX analyzers generate a proxy entity for each of the models in your app (those with `Model` suffix). For every Feed property (returning `IFeed<T>` or `IListFeed<T>`) found in the model, a corresponding Feed (or List-Feed) property is generated on the proxy entity.  
-MVUX recommends using plain [POCO](https://en.wikipedia.org/wiki/Plain_old_CLR_object) (Plain Old CLR Object) `record` types for the models in your app as they're immutable, and will not require any property change notifications to be raised.  
-The generated proxy and its properties ensure that data-binding will work, even though property change notifications aren't being raised by the models themselves.
+For every `public` feed property (returning `IFeed<T>` or `IListFeed<T>`) found in the model, a corresponding property is generated on the bindable proxy.  
 
-> [!Note]  
-> For the code generation to work, mark the Models and entities with the `partial` modifier, and have the Feed properties' access modifier as `public`.  
-You can learn more about partial classes and methods in [this article](https://learn.microsoft.com/dotnet/csharp/programming-guide/classes-and-structs/partial-classes-and-methods).
+MVUX recommends using plain [POCO](https://en.wikipedia.org/wiki/Plain_old_CLR_object) (Plain Old CLR Object) `record` types for the models in your app as they're immutable, and will not require any property change notifications to be raised. The generated bindable proxy and its properties ensure that data-binding will work, even though property change notifications aren't being raised by the models themselves.
 
 #### With regular data-binding
 
-Feeds can be consumed directly by data-binding to the Feed property declared on the Model.  
-MVUX code-generation engine ensures the Feeds and all entities they expose are going to be seamlessly data-bound with the XAML data-binding engine.
+Feeds can be consumed directly by data-binding to the feed property declared on the Model. MVUX code-generation engine ensures the feeds and all entities they expose are going to be seamlessly data-bound with the XAML data-binding engine.
 
-The Feed can be consumed directly from the View, it's as simple as binding a regular value property exposed on the Model:
+The feed can be consumed directly from the View, by data binding to a property exposed on the Model:
 
 ```xml
 <Page ...>
@@ -154,13 +134,11 @@ The Feed can be consumed directly from the View, it's as simple as binding a reg
 </Page>
 ```
 
-> [!TIP]
-> The data-binding engine will await the feed under the hood and will display the awaited data once available.
-
 #### With the `FeedView` control
 
-The `FeedView` control has been designed to work with Feeds and is tailored to the additional metadata mentioned [earlier](#what-are-feeds) that are disclosed by the Feed and respond to it automatically and efficiently.  
-A `FeedView` has built-in templates that adapt the View according to the current state of the data, such as when the data request is still in progress, an error has occurred, or when the data contained no records.  
+The `FeedView` control has been designed to work with feeds and is tailored to the additional metadata mentioned [earlier](#what-are-feeds) that are disclosed by the feed and respond to it automatically and efficiently.  
+
+The `FeedView` has templates that change the visible contents based on the current state of the data, such as when the data request is still in progress, an error has occurred, or when the data contained no records.  
 Built-in templates are included with the `FeedView` for these states, but they can all be customized.
 
 Here's how to utilize the `FeedView` to display the same data as before:
@@ -168,50 +146,21 @@ Here's how to utilize the `FeedView` to display the same data as before:
 ```xml
 <Page
     ...
-	xmlns:mvux="using:Uno.Extensions.Reactive.UI">
-
-	<mvux:FeedView Source="{Binding CurrentCount}">
-		<DataTemplate>
-			<TextBlock DataContext="{Binding Data}" Text="{Binding Value}" />
+    xmlns:mvux="using:Uno.Extensions.Reactive.UI">
+    
+    <mvux:FeedView Source="{Binding CurrentCount}">
+        <DataTemplate>
+            <TextBlock DataContext="{Binding Data}" Text="{Binding Value}" />
         </DataTemplate>
     </mvux:FeedView>
 </Page>
 ```
 
-> [!TIP]  
-> The `FeedView` wraps the data coming from the Feed in a special `FeedViewState` class which includes the Feed metadata.  
-One of its properties is `Data`, which provides access to the actual data of the Feed's current state, in our example the most recent integer value from the `CountOne` or `StartCounting` method [above](#consumption-of-feeds).
-
-## Messages
-
-Messages are one of the core components of MVUX. They refer to the metadata that wraps around the entities streaming along as discussed earlier.
-
-The Feed encapsulates a stream of Messages for each packet of data received from the underlying request. For a Task, it would be each execution of the Task and obtaining the refreshed/up-to-date value, and similarly with Async-Enumerable, it would be each iteration and yielding of a refreshed value, until it's cancelled using the `CancellationToken`.
-
-A Message provides several metadata types (called axis/axes).  
-The most common three metadata types are:
-
-- Data  
-This discloses information about the data that was allegedly returned by the request.  
-The data is encapsulated in an `Option<T>` (where `T` refers to the data entity type):
-    - None - indicates absence of data, i.e. the data-request resulted in no records.
-    - Some - indicates presence of a value / values.
-    - Undefined - we can't currently determine if there's data, e.g. we're still awaiting it or if an error occurred.
-- Progress  
-The underlying task/request is in progress, if there's data, it's regarded as transient till the request completes and a new result is available.
-- Error  
-An error has occurred. The `Exception` is attached.
-
-The following illustration show how the classes are built. Note that this diagram shows a stripped-down version of the actual types, for brevity:
-
-![A diagram showing Feed Message class hierarchy](Assets/FeedMessagesDiagram.jpg)
-
-> [!TIP]  
-> MVUX provides you with peripheral tools that read the metadata Messages for you so that you don't normally even have to know about the Message structure!
+The `FeedView` wraps the data coming from the feed in a special `FeedViewState` class which includes the feed metadata.  One of its properties is `Data`, which provides access to the actual data of the feed's current state, in our example the most recent integer value from the `CountOne` or `StartCounting` method [above](#consumption-of-feeds).
 
 ## Feed Operators
 
-The Feed supports some LINQ operators that enable readjusting it into a new one.
+An `IFeed` supports some LINQ operators that can be used to apply a transform and return a new `IFeed`.
 
 ### Where
 
@@ -222,8 +171,7 @@ For example:
 public IFeed<CounterValue> OmitEarlyCounts => CurrentCount.Where(currentCount => currentCount.Value > 10);
 ```
 
-> [!Note]  
-> Be aware that unlike `IEnumerable<T>`, `IObservable<T>`, and `IAsyncEnumerable<T>`, if the predicate returns false, a result is still received but it contains a `Message<T>` with a data `Option<T>` of `None`.
+It's worth noting that unlike `IEnumerable<T>`, `IObservable<T>`, and `IAsyncEnumerable<T>`, if the predicate returns false, a result is still received but it contains a `Message<T>` with a data `Option<T>` of `None`.
 
 ### Select or SelectAsync
 
@@ -239,11 +187,12 @@ The selection can also be asynchronous, and even use an external method:
 public IFeed<CountInfo> CountTrends => CurrentCount.SelectAsync(currentCount => myService.GetCountInfoAsync(currentCount));
 ```
 
-> [!TIP]  
-> You can use the LINQ syntax if you prefer, or combine the operators:
+### LINQ syntax
+
+You can use the LINQ syntax if you prefer, which can improve the readability of your code, particularly if you combine multiple operators:
 
 ```csharp
-public IFeed<int> OmitEearlyCounts =>
+public IFeed<int> OmitEarlyCounts =>
     from currentCount in CurrentCount
     where currentCount.Value > 10
     select currentCount.Value;

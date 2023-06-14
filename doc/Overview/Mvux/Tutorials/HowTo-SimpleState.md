@@ -121,7 +121,7 @@ When the user edits the text in the `TextBox`, MVUXs data-binding adapters trans
 
     ![A screenshot of a breakpoint added in Visual Studio](../Assets/SimpleState-2.jpg)
 
-    MVUX's analyzers will read the `HallCrowdednessModel` and will generate a special model-proxy called `BindableHallCrowdednessModel`, which provides binding capabilities for the View and performs all Update message for us, to keep the `IState` up to date.
+    MVUX's analyzers will read the `HallCrowdednessModel` and will generate a special bindable proxy called `BindableHallCrowdednessModel`, which provides binding capabilities for the View and performs all Update message for us, to keep the `IState` up to date.
         
     In addition, MVUX reads the `Save` method, and generates in the bindable Model a command named `Save` that can be used from the View, which is invoked asynchronously.
 
@@ -145,7 +145,7 @@ When the user edits the text in the `TextBox`, MVUXs data-binding adapters trans
     this.DataContext = new BindableHallCrowdednessModel(new HallCrowdednessService());
     ```
 
-    The `BindableHallCrowdednessModel` is a special MVUX-generated model proxy class that represents a mirror of the `HallCrowdednessModel` adding binding capabilities, for MVUX to be able to recreate and renew the model when an update message is sent by the view.  
+    The `BindableHallCrowdednessModel` is a special MVUX-generated bindable proxy class that represents a mirror of the `HallCrowdednessModel` adding binding capabilities, for MVUX to be able to recreate and renew the model when an update message is sent by the view.  
 
 1. Click <kbd>F5</kbd> to run the project
 
