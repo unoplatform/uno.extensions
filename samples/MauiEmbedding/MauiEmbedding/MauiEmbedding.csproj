@@ -17,6 +17,7 @@
 		<PackageReference Include="Uno.Toolkit.WinUI.Material" />
 		<PackageReference Include="Uno.Toolkit.WinUI" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Console" />
+		<PackageReference Include="CommunityToolkit.Maui" />
 	</ItemGroup>
 
 	<Choose>
