@@ -78,3 +78,16 @@ public IListFeed<string> LongNames => Names.Where(name => name.Length >= 10);
 ```
 
 If all items of the collection are filtered out, the resulting feed will go into `None` state.
+
+### AsFeed
+
+This operator enables converting an `IListFeed<T>` to `IFeed<IImmutableList<T>>`:
+
+
+```csharp
+public void SetUp()
+{
+    IListFeed<string> stringsListFeed = ...;
+    IFeed<IImmutableCollection<string>> stringsFeed = stringsListFeed.AsFeed();
+}
+```
