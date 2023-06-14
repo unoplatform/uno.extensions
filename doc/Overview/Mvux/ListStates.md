@@ -7,7 +7,7 @@ uid: Overview.Mvux.ListStates
 List-State is the collection counterpart of [State](xref:Overview.Mvux.States).
 It's a State that adds extra operators which make it easier to apply updates on multiple items instead of just a single one, like what a State does.
 
-Let's recall that Feeds are stateless and are only read-only data output to the View, and is not responding to changes, whereas States are stateful, and update the Model and its entities upon changes made in the View using two-way data-binding, or on demand via Commands.
+Recall that Feeds are stateless and are only read-only data output to the View, and are not responding to changes, whereas States are stateful, and update the Model and its entities upon changes made in the View using two-way data-binding, or on demand via Commands.
 
 So an `IState<T>` is a stateful feed of a single item of `T`, whereas an `IListState<T>` is a stateful feed of multiple items of `T`.
 
@@ -74,11 +74,11 @@ public IListState<string> FavoritesState => ListState.FromFeed(this, FavoritesFe
 There's also the `ListState.Create` method which allows you to manually build the List-State with Messages.  
 You can learn about manual creation of Messages [here](xref:Overview.Reactive.State#create).
 
-# How to change the state of a List-State
+## Operators
 
 In the following examples, we'll refer to `MyStrings` which is an `IListState<string>`, to demonstrate how to use the various operators the List-State provides to update its state with modified data.
 
-## Add
+### Add
 
 The `AddAsync` method adds an item to the end of the List State:
 
@@ -86,7 +86,7 @@ The `AddAsync` method adds an item to the end of the List State:
 await MyStrings.AddAsync("Gord Downie", cancellationToken);
 ```
 
-## Insert
+### Insert
 
 The `InsertAsync` method inserts an item to the beginning of the List State:
 
@@ -94,12 +94,12 @@ The `InsertAsync` method inserts an item to the beginning of the List State:
 await MyStrings.InsertAsync("Margaret Atwood", cancellationToken);
 ```
 
-## Update
+### Update
 
-There are various way to update values in the List-State:
+There are various ways to update values in the List-State:
 
 The `Update` method has an `updater` parameter like the `State` does.  
-This parameter is a `Func<IImmutableList<T>, IImmutableList<T>>`, which when called passes in the existing collection, allows you to apply your modifications to it then returns it.
+This parameter is a `Func<IImmutableList<T>, IImmutableList<T>>`, which when called passes in the existing collection, allows you to apply your modifications to it, and then returns it.
 
 For example:
 
@@ -116,7 +116,7 @@ public async ValueTask TrimAll(CancellationToken ct = default)
 }
 ```
 
-Another overload is `UpdateAsync`, which allows you to to apply an update on a select item criteria, using a predicate which is checked before updating an individual update, and if item qualifies, uses the `updater` argument, which in this case is a `Func<T, T>` which applies to an individual item:
+Another overload is `UpdateAsync`, which allows you to apply an update on select item criteria, using a predicate that is checked before updating an individual update, and if an item qualifies, uses the `updater` argument, which in this case is a `Func<T, T>` which applies to an individual item:
 
 ```csharp
 public async ValueTask TrimLongNames(CancellationToken ct = default)
@@ -129,9 +129,9 @@ public async ValueTask TrimLongNames(CancellationToken ct = default)
 ```
 
 > [!Note]  
-> There is also `UpdateData` which allows for manual creation of a data-axis Message wrapped in an `Option<T>` that denotes whether the data has entities or is empty.
+> There is also the `UpdateData` method, which enables manual creation of a data-axis Message wrapped in an `Option<T>` that denotes whether the data has entities or is empty.
 
-## Remove
+### Remove
 
 The `RemoveAllAsync` method uses a predicate to determine which items are to be removed:
 
@@ -141,26 +141,70 @@ The `RemoveAllAsync` method uses a predicate to determine which items are to be 
         ct: cancellationToken);
 ```
 
-## Selection
+### ForEachAsync
 
-List-State provides out-the-box support for Selection.  
-This feature enables flagging a single or multiple items in the State as 'selected'.
-It even works seamlessly and automatically with the `ListView` and other collection controls.
-
-The following couple of methods enable changing the Selection state of items in the List-State:
-
-## TrySelectAsync
-
-The `TrySelectAsync` method attempts to find the first occurrence of the item passed in as argument and flag it as 'selected':
+This operator can be called from an `IListState<T>` to execute an asynchronous action on all items currently in the List-State each time its data is changed (values are either added or removed):
 
 ```csharp
-await MyStrings.TrySelectAsync(cancellationToken);
+await MyStrings.ForEachAsync(async(list, ct) => await PerformAction(items, ct));
+
+...
+
+private async ValueTask PerformAction(IImmutableList<string> items, CancellationToken ct)
+{
+    ...
+}
+
 ```
 
-## ClearSelection
+## Selection operators
+
+Like List-Feed, List-State provides out-the-box support for Selection.  
+This feature enables flagging single or multiple items in the State as 'selected'.
+
+Selection works seamlessly and automatically with the `ListView` and other selection controls.
+In case you need to select an item manually for example in response to a button pressed or when finding a searched item, you can use the following methods that enable manual changing of the Selection state of items in the List-State:
+
+### TrySelectAsync
+
+The `TrySelectAsync` method attempts to find the first occurrence of the item or items passed in as an argument and flag it as 'selected'.
+
+This method comes in two flavors, one that accepts a single item to be selected, while the other one takes multiple.
+
+It returns a boolean value indicating if the desired selection item was found and has been selected.
+
+#### Single item selection
+
+```csharp
+IListState<string> Names => ...
+
+private ValueTask SelectCharlie(CancellationToken ct)
+{
+    bool selected = await Names.TrySelectAsync("charlie", ct);
+}
+```
+
+#### Multi-item selection
+
+```csharp
+IListState<string> Names => ...
+
+private ValueTask SelectCharlieAndJoe(CancellationToken ct)
+{
+    ImmutableList<string> charlieAndJoe = ImmutableList.Create("charlie", "joe");
+    bool selected = await Names.TrySelectAsync(charlieAndJoe, ct);
+}
+```
+
+### ClearSelection
 
 The `ClearSelection` method clears the current selection and flags all items as 'not selected':
 
 ```csharp
 await MyStrings.ClearSelection(cancellationToken);
 ```
+
+## Subscribing to the selection
+
+You can create a Feed that reflects the currently selected item or items (when using multi-selection) of a Feed.  
+This is explained in detail in the [Selection page](xref:Overview.Mvux.Advanced.Selection).
