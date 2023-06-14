@@ -11,18 +11,15 @@ public class HomeViewModel
 
 	public string UseMock { get; }
 
-	private readonly IWritableOptions<LocalizationSettings> _localization;
+	private readonly ILocalizationService _localization;
 	public HomeViewModel(
 		IOptions<AppInfo> appInfo,
-		IOptions<LocalizationConfiguration> configuration,
-		IWritableOptions<LocalizationSettings> localization,
+		ILocalizationService localization,
 		IStringLocalizer localizer)
 	{
 		_localization = localization;
 		Platform = appInfo.Value.Platform;
-		SupportedCultures = configuration.Value?.Cultures?.AsCultures() ?? new[] { "en-US".AsCulture()! }; 
-
-		var language = localizer[_localization.Value?.CurrentCulture ?? "en"];
+		SupportedCultures = _localization.SupportedCultures;
 
 		UseMock = (appInfo.Value?.Mock ?? false) ? "Mock ENABLED" : "Mock DISABLED";
 	}
@@ -30,10 +27,10 @@ public class HomeViewModel
 	public CultureInfo[] SupportedCultures { get; }
 
 	public CultureInfo SelectedCulture {
-		get => SupportedCultures.FirstOrDefault(x=>x.Name == _localization.Value?.CurrentCulture)?? SupportedCultures.First();
+		get => SupportedCultures.FirstOrDefault(x=>x.Name == _localization.CurrentCulture.Name) ?? SupportedCultures.First();
 		set
 		{
-			_ = _localization.UpdateAsync(settings => settings with { CurrentCulture = value.Name });
+			_ = _localization.SetCurrentCultureAsync(value);
 		}
 	}
 

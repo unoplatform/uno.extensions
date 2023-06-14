@@ -96,6 +96,9 @@ public class LocalizationService : IServiceInitialize, ILocalizationService, IDi
 	/// <inheritdoc/>
 	public async Task SetCurrentCultureAsync(CultureInfo newCulture)
 	{
+		// Change the application language for resource loading
+		PrimaryLanguageOverride= newCulture.Name;
+
 		await _writeSettings.UpdateAsync(langSetting => langSetting with { CurrentCulture = newCulture.Name });
 	}
 
@@ -130,10 +133,6 @@ public class LocalizationService : IServiceInitialize, ILocalizationService, IDi
 				((CurrentCulture is not null) ?
 				PickSupportedCulture(CurrentCulture) :
 				PickSupportedCulture(CultureInfo.CurrentCulture)) ?? new CultureInfo(DefaultCulture);
-			if (PrimaryLanguageOverride != culture.Name)
-			{
-				PrimaryLanguageOverride = culture.Name;
-			}
 			CultureInfo.DefaultThreadCurrentCulture = culture;
 			CultureInfo.DefaultThreadCurrentUICulture = culture;
 			if (updateThreadCulture &&
