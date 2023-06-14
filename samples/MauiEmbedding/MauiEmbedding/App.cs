@@ -1,3 +1,6 @@
+using CommunityToolkit.Maui;
+using Uno.Extensions.Navigation;
+
 namespace MauiEmbedding;
 
 public class App : Application
@@ -5,10 +8,14 @@ public class App : Application
 	protected Window? MainWindow { get; private set; }
 	protected IHost? Host { get; private set; }
 
+
 	protected async override void OnLaunched(LaunchActivatedEventArgs args)
 	{
 		var builder = this.CreateBuilder(args)
-			.UseMauiEmbedding()
+			.UseMauiEmbedding(maui =>
+			{
+				maui.UseMauiCommunityToolkit();
+			})
 			// Add navigation support for toolkit controls such as TabBar and NavigationView
 			.UseToolkitNavigation()
 			.Configure(host => host
@@ -69,7 +76,9 @@ public class App : Application
 	{
 		views.Register(
 			new ViewMap(ViewModel: typeof(ShellViewModel)),
-			new ViewMap<MainPage, MainViewModel>()
+			new ViewMap<MainPage, MainViewModel>(),
+			new ViewMap<MauiControlsPage, MauiControlsViewModel>(),
+			new ViewMap<MCTControlsPage, MCTControlsViewModel>()
 		);
 
 		routes.Register(
@@ -77,6 +86,8 @@ public class App : Application
 				Nested: new RouteMap[]
 				{
 					new RouteMap("Main", View: views.FindByViewModel<MainViewModel>()),
+					new RouteMap(nameof(MauiControlsViewModel), View: views.FindByViewModel<MauiControlsViewModel>()),
+					new RouteMap(nameof(MCTControlsViewModel), View: views.FindByViewModel<MCTControlsViewModel>()),
 				}
 			)
 		);
