@@ -1,52 +1,18 @@
-<Page x:Class="MauiEmbedding.Presentation.MainPage"
+<Page
+	x:Class="MauiEmbedding.Presentation.MainPage"
 	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-	xmlns:local="using:MauiEmbedding.Presentation"
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-	mc:Ignorable="d"
-	xmlns:uen="using:Uno.Extensions.Navigation.UI"
-	xmlns:utu="using:Uno.Toolkit.UI"
-	xmlns:embed="using:Uno.Extensions.Maui"
-	xmlns:maui="using:Microsoft.Maui.Controls"
-	NavigationCacheMode="Required"
-	Background="{ThemeResource BackgroundBrush}">
+	Background="{ThemeResource BackgroundBrush}"
+	mc:Ignorable="d">
 
-	<Page.Resources>
-		<ResourceDictionary>
-			<x:String x:Key="HelloWorld">Hello from WinUI Resources</x:String>
-			<Color x:Key="DemoColor">#169420</Color>
-			<local:TitleConverter x:Key="TitleConverter" />
-		</ResourceDictionary>
-	</Page.Resources>
+	<StackPanel
+		HorizontalAlignment="Center"
+		VerticalAlignment="Center"
+		Spacing="10">
+		<Button Click="{x:Bind Vm.GoToMauiControls}" Content="Maui simple controls" />
+		<Button Click="{x:Bind Vm.GoToCommunityToolkitMauiControls}" Content="CommunityToolkit.Maui controls" />
+	</StackPanel>
 
-	<Grid utu:SafeArea.Insets="All">
-		<Grid.RowDefinitions>
-			<RowDefinition Height="Auto" />
-			<RowDefinition />
-		</Grid.RowDefinitions>
-		<utu:NavigationBar Content="{Binding Title}" />
-
-		<embed:MauiContent Grid.Row="1">
-			<maui:ScrollView>
-				<maui:ScrollView.Content>
-					<maui:VerticalStackLayout Spacing="16">
-						<maui:Label Text="{embed:MauiResource Key=HelloWorld}"
-							TextColor="{embed:MauiResource Key=DemoColor}" />
-						<maui:BoxView BackgroundColor="{embed:MauiColor Value='#696969'}"
-							HeightRequest="3"
-							Margin="{embed:MauiThickness Value='10,20,30,40'}"/>
-						<maui:Label Text="{embed:MauiBinding Path=Title, Converter={StaticResource TitleConverter}}" />
-					</maui:VerticalStackLayout>
-				</maui:ScrollView.Content>
-			</maui:ScrollView>
-		</embed:MauiContent>
-
-		<StackPanel Grid.Row="1"
-					HorizontalAlignment="Center"
-					VerticalAlignment="Center"
-					Spacing="16">
-			
-		</StackPanel>
-	</Grid>
 </Page>

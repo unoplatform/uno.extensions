@@ -16,15 +16,18 @@ public partial class MainViewModel : ObservableObject
 		Title = "Main";
 		Title += $" - {localizer["ApplicationName"]}";
 		Title += $" - {appInfo?.Value?.Environment}";
-		GoToSecond = new AsyncRelayCommand(GoToSecondView);
 	}
 	public string? Title { get; }
 
-	public ICommand GoToSecond { get; }
 
-
-	private async Task GoToSecondView()
+	public async Task GoToMauiControls()
 	{
+		await _navigator.NavigateViewModelAsync<MauiControlsViewModel>(this);
 	}
 
+	
+	public async Task GoToCommunityToolkitMauiControls()
+	{
+		await _navigator.NavigateViewModelAsync<MCTControlsViewModel>(this);
+	}
 }
