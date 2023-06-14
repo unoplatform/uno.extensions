@@ -77,7 +77,7 @@ You can learn about manual creation of Messages [here](xref:Overview.Reactive.St
 
 ## Operators
 
-In the following examples, we'll refer to `MyStrings` which is an `IListState<string>`, to demonstrate how to use the various operators the List-state provides to update its state with modified data.
+In the following examples, we'll refer to `MyStrings` which is an `IListState<string>`, to demonstrate how to use the various operators `IListState<T>` provides to update its state with modified data.
 
 ### Add
 

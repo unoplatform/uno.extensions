@@ -134,7 +134,7 @@ At this point you might be wondering how we're able to data bind to `CurrentWeat
 
 The **eXtended** part of MVUX includes the generation of these bindable proxies, that bridge the gap between the **Model** that exposes asynchronous feeds of immutable data and the synchronous data binding capability of WinUI and the Uno Platform.  
 
-Instead of an instance of `WeatherModel`, the `DataContext` on the **View** is set to be an instance of the generated bindable proxy,`BindableWeatherModel`, which exposes a property, `CurrentWeather`, the same as the original `WeatherModel`. The `BindableWeatherModel` also exposes a property, `Refresh`, that returns a command that wraps a call to the `Refresh` method on the `WeatherModel`.  
+Instead of an instance of `WeatherModel`, the `DataContext` on the **View** is set to be an instance of the generated bindable proxy, `BindableWeatherModel`, which exposes a property, `CurrentWeather`, the same as the original `WeatherModel`. The `BindableWeatherModel` also exposes a property, `Refresh`, that returns a command that wraps a call to the `Refresh` method on the `WeatherModel`.  
 
 For the purpose of this example, the `DataContext` property can be set in the page's code-behind file:
 

@@ -8,7 +8,7 @@ uid: Overview.Mvux.States
 
 Like [feeds](xref:Overview.Mvux.Feeds), states are used to manage asynchronous operations and wrap them in metadata that provides information about the current state of the operation, such as whether the operation is still in progress, when an error occurs, or if the result has no data.
 
-Contrary to Feeds, states are stateful (as the name suggests) in that they keep a record of the current data value. States also permit the current value to be modified, which is useful for two-way binding scenarios.
+Contrary to Feeds, states are stateful (as the name suggests) in that they keep a record of the current data value. States also allow the current value to be modified, which is useful for two-way binding scenarios.
 
 MVUX utilizes its powerful code-generation engine to generate a bindable proxy for each Model, which holds the state information of the data, as well as a bindable proxy for entities where needed, for instance, if the entities are immutable (e.g. records - the recommended type).  
 The bindable proxies use as a bridge that enables immutable entities to work with the WinUI data-binding engine. The states in the Model are monitored for data-binding changes, and in response to any change, the objects are recreated fresh, instead of their properties being changed.
@@ -26,7 +26,7 @@ States and Feeds are different in the following:
 
 ## States are attached to their owner
 
-Besides holding the state information, a reference to the Model is shared with the states so that when the View is closed and disposed of, it tunnels down to the states and the Models and makes them available for garbage collection. States share the same lifetime as its owner.
+Besides holding the state information, a reference to the Model is shared with the states so that when the View is closed and disposed of, it tunnels down to the states and the Models and makes them available for garbage collection. States share the same lifetime as their owner.
 
 ## How to use states
 
@@ -62,7 +62,7 @@ There are additional ways to create States so that you can update them at a late
 - With a synchronous initial value, and update it at a later stage:
 
     ```csharp
-    public IState<City> CurrentCity => State.Value(this, () => new City("Montr�al"));
+    public IState<City> CurrentCity => State.Value(this, () => new City("Montreal"));
     ```
 
 - Without any initial value:

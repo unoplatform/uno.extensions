@@ -6,7 +6,7 @@ uid: Overview.Mvux.Feeds
 
 Feeds are there to manage asynchronous operations (for example requesting data from a service) and expose the result to the View in an efficient manner.
 
-It provides out of the box support for task-based methods as well [Async-Enumerables](https://learn.microsoft.com/dotnet/api/system.collections.generic.iasyncenumerable-1) ones.  
+They provide out of the box support for task-based methods as well as [Async-Enumerables](https://learn.microsoft.com/dotnet/api/system.collections.generic.iasyncenumerable-1) ones.  
 
 Feeds include additional metadata that indicates whether the operation is still in progress, ended in an error, or if it was successful, whether the data that was returned contains any entries or was empty.
 
@@ -101,7 +101,7 @@ public IFeed<CounterValue> CurrentCount => Feed.AsyncEnumerable(ct => StartCount
 
 ### Consumption of feeds
 
-#### Directly await feeds
+#### Awaiting feeds
 
 Feeds are directly awaitable, so to get the data currently held in the feed, this is useful when you want to use the current value in a command, etc. You can await it in the following manner:
 
