@@ -187,6 +187,20 @@ The selection can also be asynchronous, and even use an external method:
 public IFeed<CountInfo> CountTrends => CurrentCount.SelectAsync(currentCount => myService.GetCountInfoAsync(currentCount));
 ```
 
+### AsListFeed
+
+When the current feed is of `IImmutableCollection<T>`, you might want to consider using a [list-feed](xref:Overview.Mvux.ListFeeds). This operator lets you easily convert an `IFeed<IImmutableCollection<T>>` to an `IListFeed<IImmutableCollection<T>>`.
+
+For example:
+
+```csharp
+public void SetUp()
+{
+    IFeed<IImmutableCollection<string>> stringsFeed = ...;
+    IListFeed<string> stringsListFeed = stringsFeed.AsListFeed();
+}
+```
+
 ### LINQ syntax
 
 You can use the LINQ syntax if you prefer, which can improve the readability of your code, particularly if you combine multiple operators:

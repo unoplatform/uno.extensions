@@ -130,7 +130,7 @@ In this scenario, the `DataContext` is set to an instance of the `BindableSlider
 
 ### Change data of a state
 
-To manually update the current value of a state, use its `Update` method.  
+To manually update the current value of a state, use its `Update` operator.  
 
 In this example we'll add the method `IncrementSlider` that gets the current value and increases it by one (if it doesn't exceed 100):
 
@@ -148,7 +148,32 @@ public async ValueTask IncrementSlider(CancellationToken ct = default)
 
 The `updater` parameter of the `Update` method accepts a `Func<T, T>`, where the input parameter provides the current value of the State when called, and the return parameter is the one to be returned and applied as the new value of the State, in our case we use the `incrementValue` [local function](https://learn.microsoft.com/dotnet/csharp/programming-guide/classes-and-structs/local-functions) to increment `currentValue` by one (or return `1` if the value exceeds `100`).
 
-There are additional methods that update the data of a State such as `Set` and `UpdateMessage`, explained [here](xref:Overview.Reactive.State#update-how-to-update-a-state).
+There are additional methods that update the data of a State such as `Set` and `UpdateMessage`, explained [here](xref:Overview.Reactive.State#update-how-to-update-a-state). The `Set` method is the same as the `Update`, except its callback doesn't provide the current value. In the last example, the `currentValue` parameter would have been removed if we were using `Set` instead of `Update`.
+
+### Subscribing to changes
+
+The `ForEachAsync` enables executing a callback each time the value of the `IState<T>` is updated.
+
+This extension-method takes a single parameter which is a async callback that takes two parameters, the first one is `T?` where `T` is what the `IState<T>` is of, and the second is a `CancellationToken`. It returns a `ValueTask`.
+
+For example:
+
+```csharp
+public partial record Model
+{
+    public IState<string> MyState => ...
+
+    public async ValueTask EnableChangeTracking()
+    {
+        MyState.ForEachAsync(PerformAction);
+    }
+
+    public async ValueTask PerformAction(string item, CancellationToken ct)
+    {
+        ...
+    }
+}
+```
 
 ### Commands
 
