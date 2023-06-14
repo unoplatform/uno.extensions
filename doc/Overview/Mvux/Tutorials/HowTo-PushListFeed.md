@@ -103,7 +103,7 @@ signaling the UI about the new data.
 > ```  
 
 To make it possible to data bind to feeds, the MVUX analyzers read the `StockMarketModel`
-and generate a proxy type called `BindableStockMarketModel`, which exposes properties that the View can data bind to.
+and generate a bindable proxy called `BindableStockMarketModel`, which exposes properties that the View can data bind to.
 
 1. Open the file `MainView.xaml` and replace anything inside the `Page` element with the following code:
 

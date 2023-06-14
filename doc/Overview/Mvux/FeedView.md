@@ -1,17 +1,17 @@
 # The `FeedView` control
 
-The `FeedView` control is the heart of MVUX on the View side.  
-It seamlessly fulfills everything Feeds and States offer and displays all metadata on the screen providing rich customizability for many modes, as detailed below.
+The `FeedView` control is the heart of MVUX on the View side and is one of the main way to consume Feeds and States within an application. The `FeedView` uses different visual states to control what is displayed on the screen depending on the state of the underlying feed, or state. 
 
-## How to use the FeedView control
+## How to use the `FeedView` control
 
-To use the `FeedView` you have to add the MVUX UI controls namespace to your XAML file as follows:
+To use the `FeedView` you have to add the Uno.Extensions.Reactive.UI namespace to your XAML file as follows:
 
 ```xml
-<Page x:Class="MyMvuxApp.MainPage"
-	  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-	  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-	  xmlns:mvux="using:Uno.Extensions.Reactive.UI">
+<Page 
+    x:Class="MyMvuxApp.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mvux="using:Uno.Extensions.Reactive.UI">
 ```
 
 ## Common properties
@@ -20,15 +20,14 @@ Here are some of the notable properties of the `FeedView`:
 
 ### Source
 
-The `Source` property is the entry point of the `FeedView` and it's to be set with a Feed or State object (or their List variant).
-
-> [!TIP]  
-> `IFeed<T>`, `IListFeed<T>`, `IState<T>`, and `IListState<T>` all share a common interface - `ISignal<T>`, this the core low-level interface that enables access to the asynchronous data.
+The `Source` property is the entry point of the `FeedView` and it's to be set with a `IFeed` or `IState` object (or their list variant).
 
 Example:
 
 ```csharp
-public IFeed<Person> CurrentContact => ...
+public partial record MainModel {
+    public IFeed<Person> CurrentContact => ...
+}
 ```
 
 Then in the XAML:
@@ -46,14 +45,15 @@ Then in the XAML:
 </Page>
 ```
 
-The `Source` property of the `FeedView` is set to the generated bindable model's `CurrentContact` property, which asynchronously requests the `Contact` from the service.
+The `Source` property of the `FeedView` is data bound to the `CurrentContact` property on the bindable proxy (which will correlate to the `IFeed` property with the same name on the Model).
 
-In the above example, `Data` is a property of the `FeedViewState` provided via the template, [read on](#data) for details.
+In the above example, [`Data`](#data) is a property of the `FeedViewState` instance that the `FeedView` creates from the `IFeed` and sets as the `DataContext` for the various templates.
 
 ### State
 
-You might not have to use the `State` property but it's important to know exists.
-This property provides a `FeedViewState` which exposes the current state of the `FeedView`'s underlying data Feed wrapped in its metadata in an accessible way for the View to represent easily using the built-in or the customized templates accordingly.
+The `State` property provides a `FeedViewState` which exposes the current state of the `FeedView`'s underlying data Feed wrapped in its metadata in an accessible way for the View to represent easily using the built-in or the customized templates accordingly.
+
+It's unlikely that you'll need to access the `State` property directly since the `FeedViewState` is automatically set as the `DataContext` of the various templates.  
 
 #### The `FeedViewState` object
 
@@ -104,10 +104,7 @@ For example:
 </Page>
 ```
 
-The `Button`'s `Command` property binds to the `FeedViewState`'s `Refresh` property which exposes a special asynchronous command that when called, triggers a refresh of the parent Feed (in our example `CurrentContact`, and the data is re-obtained from the server.
-
-> [!NOTE]
-> The `FeedViewState` uses its `FeedView`'s `Refresh` property to provide this Command. See [here](#refresh-command-property).
+The `Button`'s `Command` property binds to the `FeedViewState`'s `Refresh` property which exposes a special asynchronous command that when called, triggers a refresh of the parent feed (in our example `CurrentContact`, and the data is re-obtained from the server.
 
 ##### Progress
 
@@ -131,7 +128,7 @@ However, in some scenarios, you need to disable the default visual state and pro
 
 This property accepts a value of the `FeedViewRefreshState` enumeration, which supports one of the values below which you can set to change its behavior.
 
-- `None` 
+- `None`
 - `Default` / `Loading`
 
 ## Customizing the FeedView's templates
@@ -189,7 +186,6 @@ But you can customize that by overriding the `ProgressTemplate`:
 </FeedView>
 ```
 
-
 ### NoneTemplate
 
 If you set a template to this property, it will show if the data that was returned from the service contained no entries.  
@@ -212,15 +208,14 @@ Example:
 
 ### ErrorTemplate
 
-The `FeedView` will display this template if an Exception was thrown by the underlying service request.
+The `FeedView` will display this template if an Exception was thrown by the underlying asynchronous operation.
 
 ### UndefinedTemplate
 
-This template is displayed when the control loads, before the underlying asynchronous service request has even been called.  
-As soon as the asynchronous request is invoked and awaited, the `FeedView` will switch to its `ProgressTemplate`, until the request has resulted in data, which it will then switch to the `ValueTemplate`, or `NoneTemplate`, depending on the data result.  
+This template is displayed when the control loads, before the underlying asynchronous operation has even been called.  
+As soon as the asynchronous operation is invoked and awaited, the `FeedView` will switch to its `ProgressTemplate`, until the operation has resulted in data, which it will then switch to the `ValueTemplate`, or `NoneTemplate`, depending on the data result.  
 
-> [!TIP]  
-> Typically this template will only show for a very short period - a split second or so, depending on how long it takes for the page and its Model to load.
+Typically this template will only show for a very short period - a split second or so, depending on how long it takes for the page and its Model to load.
 
 ## Other notable features
 

@@ -87,7 +87,7 @@ This is similar in concept to an `IObservable<IEnumerable<T>>`, where an `IListF
 > ```  
 
 To make it possible to data bind to feeds, the MVUX analyzers read the `PeopleModel`
-and generate a proxy type called `BindableWeatherModel`,
+and generate a bindable proxy called `BindableWeatherModel`,
 which exposes properties that the View can data bind to.
                                             
 1. Open the file `MainView.xaml` and add the following namespace to the XAML:

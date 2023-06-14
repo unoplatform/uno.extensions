@@ -25,7 +25,7 @@ MVUX is a response to such situations and makes it easier to handle the above sc
 
 ## What is MVUX?
 
-MVUX is an extension to the MVU design pattern, and leverages code generation in order to take advantage of the uniuqe data-binding engine of WinUI and the Uno Platform.
+MVUX is an extension to the MVU design pattern, and leverages code generation in order to take advantage of the unique data-binding engine of WinUI and the Uno Platform.
 
 ### Model
 
@@ -40,11 +40,11 @@ public partial record WeatherModel(IWeatherService WeatherService)
 }
 ```
 
-The `CurrentWeather` property represents a feed (`IFeed`) of `WeatherInfo` entities (for those familiar with [Reactive](https://reactivex.io/) this is similar in many ways to an `IObservable`). When the `CurrentWeather` property is accessed, an `IFeed` is created via the `Feed.Async` factory method, which will asynchronously call the `GetcurrentWeather` service.  
+The `CurrentWeather` property returns a feed (`IFeed`) of `WeatherInfo` entities (for those familiar with [Reactive](https://reactivex.io/) this is similar in many ways to an `IObservable`). When the `CurrentWeather` property is accessed, an `IFeed` is created via the `Feed.Async` factory method, which will asynchronously call the `GetCurrentWeather` service.  
 
 ### View
 
-The **View** is the UI, which can be written in XAML, C#, or a combination of the two, much as you would if you were using another design pattern. For example, the following can be used to data bind the `Text` property of a `TextBlock` to the `CurrentWeather.Temperature` property.
+The **View** is the UI, which can be written in XAML, C#, or a combination of the two, in the same way that you would if you were using another design pattern. For example, the following can be used to data bind the `Text` property of a `TextBlock` to the `CurrentWeather.Temperature` property.
 
 ```xml
 <Page x:Class="WeatherApp.MainPage"
@@ -56,9 +56,9 @@ The **View** is the UI, which can be written in XAML, C#, or a combination of th
 </Page>
 ```  
 
-If you're familiar with MVVM, the above XAML would look familiar, as it's the same XAML you would write if you had a viewmodel that exposed a `CurrentWeather` property that returns a `WeatherInfo` entity, with a `Temperature` property.  
+If you're familiar with MVVM, the above XAML would look familiar, as it's the same XAML you would write if you had a viewmodel that exposed a `CurrentWeather` property that returns an entity that has a `Temperature` property.  
 
-What's unique to MVUX is the additional information that `IFeed` exposes, such as when data is being loaded and whether there was an error loading the data. For this, we can leverage the `FeedView` control which is part of MVUX.
+What's unique to MVUX is the additional information that `IFeed` exposes, such as when data is being loaded and whether there was an error loading the data. For this, we can leverage the MVUX `FeedView` control.
 
 ```xml
 <Page x:Class="WeatherApp.MainPage"
@@ -81,7 +81,7 @@ The `FeedView` control is designed to work with an `IFeed`, and has different vi
 
 ### Update
 
-An **Update** is any action that will result in a change to the **Model**. Whilst an **Update** is often triggered via an interaction by the user with the **View**, such as editing text or clicking a button, an **Update** can also be triggered from background processes (for example a data sync operation or perhaps a notification triggered by a hardware sensor, such as a GPS).
+An **Update** is any action that will result in a change to the **Model**. Whilst an **Update** is often triggered via an interaction by the user with the **View**, such as editing text or clicking a button, an **Update** can also be triggered from a background process (for example a data sync operation or perhaps a notification triggered by a hardware sensor, such as a GPS).
 
 In the weather example, if we wanted to refresh the current weather data, a `Refresh` method can be added to the `WeatherModel`.
 
@@ -106,7 +106,7 @@ In the `View` the `Refresh` method can be data bound to a `Command` property on 
 </Page>
 ```  
 
-As refreshing a feed is such a common scenario, the `FeedView` control exposes a `Refresh` command that removes the requirement to have a `Refresh` method on the `WeatherModel` and can be data bound, again to the `Command` property, of a `Button`, as follows:  
+As refreshing a feed is such a common scenario, the `FeedView` control exposes a `Refresh` command, that removes the requirement to have a `Refresh` method on the `WeatherModel` and can be data bound, again to the `Command` property, of a `Button`, as follows:  
 
 ```xml
 <Page x:Class="WeatherApp.MainPage"
@@ -132,9 +132,9 @@ Clicking the button will execute the `Refresh` command on the `FeedView` which w
 
 At this point you might be wondering how we're able to data bind to `CurrentWeather.Temperature`, as if it were a property that returns a single value, and then also bind the `CurrentWeather` property to the `Source` property of the `FeedView` to access a much richer set of information about the `IFeed`.  This is possible because of the bindable proxies that are being generated by the MVUX source code generators.
 
-The **eXtended** part of MVUX includes the generation of these bindable proxies, that bridge the gap between the **Model** that exposes asynchronous feeds of immutable data and the synchronous data binding capability of WinUI and the Uno Platform. 
+The **eXtended** part of MVUX includes the generation of these bindable proxies, that bridge the gap between the **Model** that exposes asynchronous feeds of immutable data and the synchronous data binding capability of WinUI and the Uno Platform.  
 
-Instead of an instance of `WeatherModel`, the `DataContext` on the **View** is set to be an instance of the generated `BindableWeatherModel` which exposes a property, `CurrentWeather`, the same as the original `WeatherModel`. The `BindableWeatherModel` also exposes a property, `Refresh`, that returns a command that wraps a call to the `Refresh` method on the `WeatherModel`.  
+Instead of an instance of `WeatherModel`, the `DataContext` on the **View** is set to be an instance of the generated bindable proxy, `BindableWeatherModel`, which exposes a property, `CurrentWeather`, the same as the original `WeatherModel`. The `BindableWeatherModel` also exposes a property, `Refresh`, that returns a command that wraps a call to the `Refresh` method on the `WeatherModel`.  
 
 For the purpose of this example, the `DataContext` property can be set in the page's code-behind file:
 
@@ -152,7 +152,7 @@ public sealed partial class MainPage : Page
 
 ### Result
 
-When the app is lanuched, a waiting progress ring appears while the service loads the current temperature:
+When the app is launched, a waiting progress ring appears while the service loads the current temperature:
 
 ![Video showing a progress-ring running in the app while waiting for data](Assets/SimpleFeed-3.gif)
 

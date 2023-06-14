@@ -70,7 +70,7 @@ In this tutorial you will learn how to create a project that uses MVUX with a co
 > WeatherInfo currentWeather = await this.CurrentWeather;
 > ```  
 > 
-> To make it possible to data bind to a feeds, the MVUX analyzers read the `WeatherModel` and generate a proxy type called `BindableWeatherModel`, which exposes properties that the View can data bind to.
+> To make it possible to data bind to a feeds, the MVUX analyzers read the `WeatherModel` and generate a bindable proxy called `BindableWeatherModel`, which exposes properties that the View can data bind to.
 In this case the `BindableWeatherModel` exposes a `CurrentWeather` property that can be uses in a data binding expression the same way you would with a regular property that returns a `WeatherInfo` entity.
 
 1. Open the file `MainView.xaml` and replace the `Page` contents with the following:

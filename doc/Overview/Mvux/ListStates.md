@@ -2,22 +2,23 @@
 uid: Overview.Mvux.ListStates
 ---
 
-# What are List-States
+# What are list-states
 
-List-State is the collection counterpart of [State](xref:Overview.Mvux.States).
-It's a State that adds extra operators which make it easier to apply updates on multiple items instead of just a single one, like what a State does.
+List-state is the collection counterpart of [state](xref:Overview.Mvux.States).
 
-Recall that Feeds are stateless and are only read-only data output to the View, and are not responding to changes, whereas States are stateful, and update the Model and its entities upon changes made in the View using two-way data-binding, or on demand via Commands.
+List-state adds extra operators which make it easier to apply updates on multiple items instead of just a single item.
+
+Recall that feeds are stateless and are only read-only data output to the View, and are not responding to changes, whereas states are stateful, and update the Model and its entities upon changes made in the View using two-way data-binding, or on demand via Commands.
 
 So an `IState<T>` is a stateful feed of a single item of `T`, whereas an `IListState<T>` is a stateful feed of multiple items of `T`.
 
-# How to create a List-State
+# How to create a list-state
 
 The static `ListState` class provides factory methods for creating `IListState<T>` objects, here they are:
 
 ## Empty
 
-Creates an empty List-State:
+Creates an empty list-state:
 
 ```csharp
 IListState<string> MyStrings = ListState<string>.Empty(this);
@@ -25,7 +26,7 @@ IListState<string> MyStrings = ListState<string>.Empty(this);
 
 ## Value
 
-Creates a List-State with an initial synchronous value:
+Creates a list-state with an initial synchronous value:
 
 ```csharp
 private readonly IImmutableList<string> _favorites =
@@ -42,7 +43,7 @@ public IListState<string> Favorites => ListState.Value(this, () => _favorites);
 
 ## Async
 
-Creates a List-State from an async method:
+Creates a list-state from an async method:
 
 ```csharp
 public ValueTask<IImmutableList<string>> GetStrings(CancellationToken ct) => new(_favorites);
@@ -71,12 +72,12 @@ public IListState<string> FavoritesState => ListState.FromFeed(this, FavoritesFe
 
 ## Others
 
-There's also the `ListState.Create` method which allows you to manually build the List-State with Messages.  
+There's also the `ListState.Create` method which allows you to manually build the list-state with Messages.  
 You can learn about manual creation of Messages [here](xref:Overview.Reactive.State#create).
 
 ## Operators
 
-In the following examples, we'll refer to `MyStrings` which is an `IListState<string>`, to demonstrate how to use the various operators the List-State provides to update its state with modified data.
+In the following examples, we'll refer to `MyStrings` which is an `IListState<string>`, to demonstrate how to use the various operators `IListState<T>` provides to update its state with modified data.
 
 ### Add
 
@@ -96,7 +97,7 @@ await MyStrings.InsertAsync("Margaret Atwood", cancellationToken);
 
 ### Update
 
-There are various ways to update values in the List-State:
+There are various ways to update values in the list-state:
 
 The `Update` method has an `updater` parameter like the `State` does.  
 This parameter is a `Func<IImmutableList<T>, IImmutableList<T>>`, which when called passes in the existing collection, allows you to apply your modifications to it, and then returns it.
@@ -128,9 +129,6 @@ public async ValueTask TrimLongNames(CancellationToken ct = default)
 }
 ```
 
-> [!Note]  
-> There is also the `UpdateData` method, which enables manual creation of a data-axis Message wrapped in an `Option<T>` that denotes whether the data has entities or is empty.
-
 ### Remove
 
 The `RemoveAllAsync` method uses a predicate to determine which items are to be removed:
@@ -143,7 +141,7 @@ The `RemoveAllAsync` method uses a predicate to determine which items are to be 
 
 ### ForEachAsync
 
-This operator can be called from an `IListState<T>` to execute an asynchronous action on all items currently in the List-State each time its data is changed (values are either added or removed):
+This operator can be called from an `IListState<T>` to execute an asynchronous action on all items currently in the list-state each time its data is changed (values are either added or removed):
 
 ```csharp
 await MyStrings.ForEachAsync(async(list, ct) => await PerformAction(items, ct));
@@ -159,11 +157,11 @@ private async ValueTask PerformAction(IImmutableList<string> items, Cancellation
 
 ## Selection operators
 
-Like List-Feed, List-State provides out-the-box support for Selection.  
+Like list-feed, list-state provides out-the-box support for Selection.  
 This feature enables flagging single or multiple items in the State as 'selected'.
 
 Selection works seamlessly and automatically with the `ListView` and other selection controls.
-In case you need to select an item manually for example in response to a button pressed or when finding a searched item, you can use the following methods that enable manual changing of the Selection state of items in the List-State:
+In case you need to select an item manually for example in response to a button pressed or when finding a searched item, you can use the following methods that enable manual changing of the Selection state of items in the list-state:
 
 ### TrySelectAsync
 
