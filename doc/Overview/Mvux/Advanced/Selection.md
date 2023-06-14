@@ -225,3 +225,10 @@ Head to the View and enable multi-selection in the `ListView` by changing its `S
 
 > [!NOTE]  
 > The source code for the sample app can be found [here](https://github.com/unoplatform/Uno.Samples/tree/master/UI/MvuxHowTos/SelectionPeopleApp).
+
+## Manual selection
+
+The options above explained how to subscribe to selection that has been requested in the View by a Selector control (i.e. `ListView`).  
+If you want to manually select an item or multiple items, rather use a [List-State](xref:Overview.Mvux.ListStates) instead of a List-Feed to load the items, so that you can update their selection state. You can then use the List-State's selection operators to manually select items.
+
+Refer to the [selection operators](#selection-operators) section in the List-State page for documentation on how to use manual selection.
