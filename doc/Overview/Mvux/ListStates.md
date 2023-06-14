@@ -141,6 +141,22 @@ The `RemoveAllAsync` method uses a predicate to determine which items are to be 
         ct: cancellationToken);
 ```
 
+### ForEachAsync
+
+This operator can be called from an `IListState<T>` to execute an asynchronous action on all items currently in the List-State each time its data is changed (values are either added or removed):
+
+```csharp
+await MyStrings.ForEachAsync(async(list, ct) => await PerformAction(items, ct));
+
+...
+
+private async ValueTask PerformAction(IImmutableList<string> items, CancellationToken ct)
+{
+    ...
+}
+
+```
+
 ## Selection operators
 
 Like List-Feed, List-State provides out-the-box support for Selection.  
@@ -162,7 +178,7 @@ It returns a boolean value indicating if the desired selection item was found an
 ```csharp
 IListState<string> Names => ...
 
-private Task SelectCharlie(CancellationToken ct)
+private ValueTask SelectCharlie(CancellationToken ct)
 {
     bool selected = await Names.TrySelectAsync("charlie", ct);
 }
@@ -173,7 +189,7 @@ private Task SelectCharlie(CancellationToken ct)
 ```csharp
 IListState<string> Names => ...
 
-private Task SelectCharlieAndJoe(CancellationToken ct)
+private ValueTask SelectCharlieAndJoe(CancellationToken ct)
 {
     ImmutableList<string> charlieAndJoe = ImmutableList.Create("charlie", "joe");
     bool selected = await Names.TrySelectAsync(charlieAndJoe, ct);
