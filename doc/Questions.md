@@ -11,8 +11,8 @@ Key features like dependency injection, serialization, configuration, environmen
 
 ## How productive will I be with Uno.Extesions?
 With Uno.Extesions, you'll be bursting with productivity! 
-[GettingStarted.md](GettingStarted.md)
-From advancements in starting a new project with the app template to the ability to extend the functionality of your app, you'll be able to get to market faster and with less effort.
+
+From advancements in [starting](Overview.Extensions) a new project with the app template to the ability to extend the functionality of your app, you'll be able to get to market faster and with less effort.
 
 ## How can Uno.Extesions help me meet the moment?
 Uno.Extesions allows you to respond quickly to changing market conditions by saving up months of development time. You will be able to reduce the budget needed to develop the app and reap the benefits of arriving to market fast.
