@@ -21,10 +21,11 @@ This is because when a control of data items is displayed with an empty collecti
 ## How to create a list feed
 
 To create an `IListFeed<T>`, use the static class `ListFeed` to call one of the same `Async`, `AsyncEnumerable`, and `Create` methods as in feed. The only difference is that it expects the Task or `IAsyncEnumerable` to return an `IImmutableList<T>` instead of `T`.
+A list-feed can be created in several ways.
 
-Here are some examples of creating a list-feed:
+### Async
 
-1. In this example the service returns a list of names on load/refresh - using a pull technique.
+Using the Async factory method, the service returns a list of names on load/refresh - using a pull technique. The list-feed is then created with the async call.
 
     Service code:
 
@@ -38,7 +39,9 @@ Here are some examples of creating a list-feed:
     public IListFeed<string> Names => ListFeed.Async(service.GetNames);
     ```
 
-2. This one returns an immutable list of names when available - using push technique:
+### AsyncEnumerable
+
+In this way, a list-feed is created with an Async Enumerable method that returns an immutable list of names when available - using push technique.
 
     Service code:  
 
@@ -55,9 +58,22 @@ Here are some examples of creating a list-feed:
 
     Pull and push are explained more in the [feeds page](xref:Overview.Mvux.Feeds#creation-of-feeds).
 
-3. There are also two helper methods that enable conversion from a feed to a list-feed and vice versa.
+### Convert from feed of an item-collection
 
-     - On an `IFeed<TCollection>` where `TCollection` is an `IImmutableList<TItem>`, call `ToListFeed()` to convert it to an `IListFeed<TItem>`.
+A list-feed can also be created from a feed when the feed exposes a collection (`IFeed<IImmutableCollection<T>>`):
+
+```csharp
+public void SetUp()
+{
+    IFeed<IImmutableCollection<string>> stringsFeed = ...;
+    IListFeed<string> stringsListFeed = stringsFeed.AsListFeed();
+}
+```
+
+
+There are also two helper methods that enable conversion from a feed to a list-feed and vice versa.
+
+     - On an `IFeed<TCollection>` where `TCollection` is an `IImmutableList<TItem>`, call `AsListFeed()` to convert it to an `IListFeed<TItem>`.
      - Otherwise, call `AsFeed()` on an `IListFeed<T>` to convert it to an `IFeed<IImmutableList<T>>`.
 
 ## Support for selection and pagination
@@ -82,7 +98,6 @@ If all items of the collection are filtered out, the resulting feed will go into
 ### AsFeed
 
 This operator enables converting an `IListFeed<T>` to `IFeed<IImmutableList<T>>`:
-
 
 ```csharp
 public void SetUp()
