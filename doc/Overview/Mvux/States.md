@@ -144,7 +144,7 @@ In this scenario, the `DataContext` is set to an instance of the `BindableSlider
 
 #### Update
 
-To manually update the current value of a state, use its `Update` operator.  
+To manually update the current value of a state, use its `Update` method.  
 
 In this example we'll add the method `IncrementSlider` that gets the current value and increases it by one (if it doesn't exceed 100):
 
