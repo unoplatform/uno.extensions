@@ -48,7 +48,8 @@
 	<Choose>
 		<When Condition="$(_IsWinUI)">
 			<ItemGroup>
-				<PackageReference Include="Microsoft.WindowsAppSDK" />
+				<PackageReference Include="Microsoft.WindowsAppSDK" Condition="$(WinAppSdkVersion)==''"/>
+				<PackageReference Include="Microsoft.WindowsAppSDK" Condition="$(WinAppSdkVersion)!=''" VersionOverride="$(WinAppSdkVersion)"/>
 				<PackageReference Include="Microsoft.Windows.SDK.BuildTools" />
 			</ItemGroup>
 		</When>

@@ -34,6 +34,9 @@
 						Click="MessageDialogCodebehindRouteOverrideClick" />
 				<Button Content="MessageDialog Codebehind (cancel after 2s)"
 						Click="MessageDialogCodebehindCancelClick" />
+				<Button Content="MessageDialog Codebehind (cancel after 2s from background thread)"
+						Click="MessageDialogCodebehindBackgroundCancelClick" />
+				
 				<ToggleButton AutomationProperties.AutomationId="CloseMessageDialogToggleButton" Checked="MessageDialogCloseChecked" Content="Force close (for UI tests)" />
 			</StackPanel>
 		</ScrollViewer>

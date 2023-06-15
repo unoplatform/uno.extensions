@@ -23,9 +23,22 @@ public sealed partial class MessageDialogsPage : Page
 		var messageDialogResult = await this.Navigator()!.ShowMessageDialogAsync<string>(this, route: "LocalizedConfirm", content: "Override content", title: "Override title");
 		MessageDialogResultText.Text = $"Message dialog result: {messageDialogResult}";
 	}
+
 	private async void MessageDialogCodebehindCancelClick(object sender, RoutedEventArgs args)
 	{
 		var cancelSource = new CancellationTokenSource(TimeSpan.FromSeconds(2));
+		var messageDialogResult = await this.Navigator()!.ShowMessageDialogAsync<string>(this, content: "This is Content", title: "This is title", cancellation: cancelSource.Token);
+		MessageDialogResultText.Text = $"Message dialog result: {messageDialogResult}";
+	}
+
+	private async void MessageDialogCodebehindBackgroundCancelClick(object sender, RoutedEventArgs args)
+	{
+		var cancelSource = new CancellationTokenSource();
+		_ = Task.Run(async () =>
+		{
+			await Task.Delay(TimeSpan.FromSeconds(2));
+			cancelSource.Cancel();
+		});
 		var messageDialogResult = await this.Navigator()!.ShowMessageDialogAsync<string>(this, content: "This is Content", title: "This is title", cancellation: cancelSource.Token);
 		MessageDialogResultText.Text = $"Message dialog result: {messageDialogResult}";
 	}

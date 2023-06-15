@@ -6,6 +6,7 @@
 		<!--Temporary disable missing XML doc until fixed in the whole package-->
 		<WarningsNotAsErrors>$(WarningsNotAsErrors);CS1591</WarningsNotAsErrors>
 		<DefineConstants>$(DefineConstants);WINUI</DefineConstants>
+		<WinAppSdkVersion>1.2.221109.1</WinAppSdkVersion>
 	</PropertyGroup>
 
 	<ItemGroup>
