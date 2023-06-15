@@ -4,7 +4,7 @@ uid: Learn.Tutorials.Maui.HowToUse3rdPartLibs
 
 # How-To: Install and use third part libraries on Uno apps with Maui Embedding
 
-When work in an application project, you may need to install a third party library. This guide will show you how to install and use a third party library in your Uno app with Maui Embedding.
+When working in an application project, you may need to install a third party library. This guide will show you how to install and use a third party library in your Uno app with Maui Embedding.
 
 For this sample we will use the `CommunityToolkit.Maui` library.
 
@@ -41,7 +41,7 @@ protected async override void OnLaunched(LaunchActivatedEventArgs args)
 ```
 
 > [!INFO]
-> If you are using other libraries that targets .NET MAUI and requires initialization, you can do it > inside the lambda function on `UseMauiEmbedding` call.
+> If you are using other libraries that targets .NET MAUI and requires initialization, you can do it inside the lambda function on `UseMauiEmbedding` call.
 
 Now let's use it on our Page. For that you have to open your XAML page and add the necessary namespaces and the controls you want to use. In this sample we will use the `DrawingView` control.
 
@@ -51,7 +51,7 @@ Now let's use it on our Page. For that you have to open your XAML page and add t
 	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-	xmlns:embed="using:Uno.Extensions.Maui"
+	xmlns:uem="using:Uno.Extensions.Maui"
 	xmlns:local="using:MauiEmbedding.Presentation"
 	xmlns:maui="using:Microsoft.Maui.Controls"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -83,10 +83,10 @@ Now let's use it on our Page. For that you have to open your XAML page and add t
 </Page>
 ```
 
-Let's take a moment and review this piece of code. First we added the `toolkit` namespace, this is the namespace that contains the controls from the `CommunityToolkit.Maui` library. In order to consume the `DrawingView` control. We need to use the `MauiContent` control, that lives on `embed` namespace, this control holds all the .NET MAUI types (layouts, controls, converters, etc), you can't use .NET MAUI types outside this control.
+Let's take a moment and review this piece of code. First we added the `toolkit` namespace, this is the namespace that contains the controls from the `CommunityToolkit.Maui` library. In order to consume the `DrawingView` control. We need to use the `MauiContent` control, that lives on `uem` namespace, this control holds all the .NET MAUI types (layouts, controls, converters, etc), you can't use .NET MAUI types outside this control.
 
-Also, Uno doesn't convert the Color type from .NET MAUI to the native platform, so we need to use the `MauiColor` markup extension to convert the color to the native platform, as you can see in the `LineColor` property.
+Also, Uno Platform does not convert the `Color` type from .NET MAUI to the WinUI `Color`, so we need to use the `MauiColor` markup extension for the conversion, as you can see in the `LineColor` property.
 
 ### 3. Conclusion
 
-With that you should be good to go and run your app, when it runs you should be able to see the `DrawingView` control and interact with it.
+At this point, running the app should show the `DrawingView` control and allow interactions with it.
