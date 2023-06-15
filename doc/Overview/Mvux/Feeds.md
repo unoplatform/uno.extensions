@@ -99,6 +99,18 @@ public IFeed<CounterValue> CurrentCount => Feed.AsyncEnumerable(_myService.Start
 public IFeed<CounterValue> CurrentCount => Feed.AsyncEnumerable(ct => StartCounting());
 ```
 
+#### From a ListFeed
+
+An `IListFeed<T>` can be converted down to an `IFeed<IImmutableCollection<T>>` using the `AsFeed` method:
+
+```csharp
+public void SetUp()
+{
+    IListFeed<string> stringsListFeed = ...;
+    IFeed<IImmutableCollection<string>> stringsFeed = stringsListFeed.AsFeed();
+}
+```
+
 ### Consumption of feeds
 
 #### Awaiting feeds

@@ -70,7 +70,6 @@ public void SetUp()
 }
 ```
 
-
 There are also two helper methods that enable conversion from a feed to a list-feed and vice versa.
 
      - On an `IFeed<TCollection>` where `TCollection` is an `IImmutableList<TItem>`, call `AsListFeed()` to convert it to an `IListFeed<TItem>`.
