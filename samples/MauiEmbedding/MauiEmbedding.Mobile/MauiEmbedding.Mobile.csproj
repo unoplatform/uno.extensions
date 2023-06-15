@@ -1,5 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
+	<!-- This is only required because this project references Uno.Extensions.Maui.WinUI as a package reference (ie by source) -->
 	<Import Project="..\..\..\src\Uno.Extensions.Maui.UI\build\Package.props" />
+
 	<PropertyGroup>
 		<TargetFrameworks>net6.0-ios;net6.0-android;net6.0-maccatalyst</TargetFrameworks>
 		<SingleProject>true</SingleProject>

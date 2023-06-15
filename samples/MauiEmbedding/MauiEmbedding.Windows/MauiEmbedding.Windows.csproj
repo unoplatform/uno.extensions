@@ -1,5 +1,7 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	<!-- This is only required because this project references Uno.Extensions.Maui.WinUI as a package reference (ie by source) -->
 	<Import Project="..\..\..\src\Uno.Extensions.Maui.UI\build\Package.props" />
+
 	<PropertyGroup>
 		<OutputType>WinExe</OutputType>
 		<TargetFramework>net6.0-windows10.0.19041.0</TargetFramework>
