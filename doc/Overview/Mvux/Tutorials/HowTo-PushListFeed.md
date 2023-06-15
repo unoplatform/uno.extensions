@@ -12,6 +12,10 @@ In this tutorial, you will also learn how to create an MVUX project and utilizat
  - You'll learn how to use a feed to asynchronously request this data from the service.
  - How to use the `FeedView` control to display the asynchronous data and automatically respond to the current feed status.
 
+## StockMarketApp Sample
+
+You can find the code of this tutorial here: https://github.com/unoplatform/Uno.Samples/tree/master/UI/MvuxHowTos/StockMarketApp
+
 ## Create the Model
 
 1. Create an MVUX project by following the steps in [this tutorial](xref:Overview.Mvux.HowToMvuxProject), and name the project *StockMarketApp*..

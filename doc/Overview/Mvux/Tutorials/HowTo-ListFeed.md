@@ -15,6 +15,10 @@ In this tutorial, you will learn how to create an MVUX project and the basic usa
  - How to use the `FeedView` control to display the data and automatically respond to the current feed status.
  - Use a refresh button to retrieve the latest weather data on-demand.
 
+## PeopleApp Sample
+
+You can find the code of this tutorial here: https://github.com/unoplatform/Uno.Samples/tree/master/UI/MvuxHowTos/PeopleApp
+
 ## Create the Model
 
 1. Create an MVUX project by following the steps in [this tutorial](xref:Overview.Mvux.HowToMvuxProject), and name your project *PeopleApp*.

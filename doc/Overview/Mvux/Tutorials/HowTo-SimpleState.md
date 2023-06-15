@@ -11,6 +11,10 @@ In this tutorial you will learn how to create an MVUX project and basic usage of
  - The `FeedView` control will be used to display the data and automatically respond to the current State status.
  - See how MVUX generates commands and learn how to react to them in the Model.
 
+## WeddingHallApp Sample
+
+You can find the code for our weather app here: https://github.com/unoplatform/Uno.Samples/tree/master/UI/MvuxHowTos/WeddingHallApp
+
 ## Create the Model
 
 1. Create an MVUX project by following the steps in [this tutorial](xref:Overview.Mvux.HowToMvuxProject), and name your project `TheFancyWeddingHall`.
@@ -161,5 +165,3 @@ When the user edits the text in the `TextBox`, MVUXs data-binding adapters trans
     
     As you can see, the current value of the state has gotten the updated number '*15*'. This is now being saved to the service, in the following line execution once you hit <kbd>F5</kbd> again.
 
-> [!NOTE]  
-> The source-code for the sample app can be found [here](https://github.com/unoplatform/Uno.Samples/tree/master/UI/MvuxHowTos/TheFancyWeddingHall).

@@ -12,6 +12,10 @@ In this tutorial you will learn how to create a project that uses MVUX with a co
  - The `FeedView` will be styled to use a different template when awaiting data from the service.
  - A Refresh button will be added to retrieve the latest weather data on-demand.
 
+## WeatherApp Sample
+
+You can find the code for our weather app here: https://github.com/unoplatform/Uno.Samples/tree/master/UI/MvuxHowTos/WeatherApp
+
 ## Create the Model
 
 1. Create an MVUX project by following the steps in [this tutorial](xref:Overview.Mvux.HowToMvuxProject), and name the project *WeatherApp*.
@@ -197,5 +201,3 @@ In the following step you'll learn how to customize the progress-ring you saw be
 
 1. Once the data is the available and the `FeedView` switches to its `ValueTemplate` (the first default `DataTemplate` in our example).
 
-> [!NOTE]  
-> The source-code for the sample app can be found [here](https://github.com/unoplatform/Uno.Samples/tree/master/UI/MvuxHowTos/WeatherApp).
