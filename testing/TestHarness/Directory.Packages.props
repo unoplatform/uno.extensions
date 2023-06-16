@@ -22,6 +22,7 @@
     <PackageVersion Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.756" />
     <PackageVersion Include="Refit" Version="6.3.2" />
     <PackageVersion Include="Refit.HttpClientFactory" Version="6.3.2" />
+    <PackageVersion Include="SkiaSharp" Version="2.88.3" />
     <PackageVersion Include="SkiaSharp.HarfBuzz" Version="2.88.3" />
     <PackageVersion Include="SkiaSharp.Skottie" Version="2.88.3" />
     <PackageVersion Include="SkiaSharp.Views" Version="2.88.3" />
