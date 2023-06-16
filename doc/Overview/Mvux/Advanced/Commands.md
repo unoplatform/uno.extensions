@@ -7,7 +7,6 @@ uid: Overview.Mvux.Advanced.Commands
 This page covers the following topics:
 
 - [**What are commands**](#what-are-commands)
-- [**Asynchronous commands**](#asynchronous-commands)
 - [**Implicit command generation**](#implicit-command-generation)
   - [**Basic Commands**](#basic-commands)
   - [**Using the CommandParameter**](#using-the-commandparameter)
@@ -85,7 +84,7 @@ a `DoWork` command will be generated in the bindable proxy:
 public IAsyncCommand DoWork { get; }
 ```
 
-In some scenarios, you may need to use the method only, without a command generated for it. You can use the [`ImplicitCommand` attribute](#implicit-commands-attribute) to switch off or back on command generation for certain methods, classes, or assemblies. For example, in this code, the `ImplicitCommand` attribute has been used to disable the creation of the command for the `DoWork` method.
+In some scenarios, you may need to use the method only, without a command generated for it. You can use the [`ImplicitCommands` attribute](#implicitcommands-attribute) to switch off or back on command generation for certain methods, classes, or assemblies. For example, in this code, the `ImplicitCommand` attribute has been used to disable the creation of the command for the `DoWork` method.
 
 ```csharp
 [ImplicitCommand(false)]
