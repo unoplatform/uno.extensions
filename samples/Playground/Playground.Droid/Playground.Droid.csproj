@@ -130,6 +130,10 @@
     </ProjectReference>
     <ProjectReference Include="..\..\..\src\Uno.Extensions.Localization.UI\Uno.Extensions.Localization.UI.csproj">
       <Project>{18bb4421-14a0-4402-8d78-d6c1f73d0202}</Project>
+      <Name>Uno.Extensions.Localization.UI</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\src\Uno.Extensions.Localization\Uno.Extensions.Localization.csproj">
+      <Project>{12750e72-31b8-4331-b3bb-850bb590b8f9}</Project>
       <Name>Uno.Extensions.Localization</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\src\Uno.Extensions.Logging.Serilog\Uno.Extensions.Logging.Serilog.csproj">

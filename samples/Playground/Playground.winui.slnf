@@ -32,7 +32,7 @@
       "..\\..\\src\\Uno.Extensions.Navigation.UI\\Uno.Extensions.Navigation.WinUI.csproj",
       "..\\..\\src\\Uno.Extensions.Navigation\\Uno.Extensions.Navigation.csproj",
       "..\\..\\src\\Uno.Extensions.Reactive.Generator\\Uno.Extensions.Reactive.Generator.csproj",
-      "..\\..\\src\\Uno.Extensions.Reactive.UI\\Uno.Extensions.Reactive.UI.csproj",
+      "..\\..\\src\\Uno.Extensions.Reactive.UI\\Uno.Extensions.Reactive.WinUI.csproj",
       "..\\..\\src\\Uno.Extensions.Reactive\\Uno.Extensions.Reactive.csproj",
       "..\\..\\src\\Uno.Extensions.Serialization.Http\\Uno.Extensions.Serialization.Http.csproj",
       "..\\..\\src\\Uno.Extensions.Serialization.Refit\\Uno.Extensions.Serialization.Refit.csproj",
@@ -43,6 +43,8 @@
       "..\\..\\src\\Uno.Extensions.Toolkit.UI\\Uno.Extensions.Toolkit.UI.csproj",
       "..\\..\\src\\Uno.Extensions.Toolkit.UI\\Uno.Extensions.Toolkit.WinUI.csproj",
       "..\\..\\src\\Uno.Extensions.Toolkit\\Uno.Extensions.Toolkit.csproj",
+      "..\\..\\src\\Uno.Extensions.Validation.Fluent\\Uno.Extensions.Validation.Fluent.csproj",
+      "..\\..\\src\\Uno.Extensions.Validation\\Uno.Extensions.Validation.csproj",
       "Playground.Shared\\Playground.Shared.shproj",
       "Playground.Windows\\Playground.Windows.csproj"
     ]
