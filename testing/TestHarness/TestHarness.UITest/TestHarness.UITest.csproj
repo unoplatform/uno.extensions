@@ -20,6 +20,7 @@
 		<PackageReference Include="Uno.UITest.Helpers" />
 		<PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" PrivateAssets="All" />
 		<PackageReference Include="NunitXml.TestLogger"/>
+		<PackageReference Include="SkiaSharp.NativeAssets.Linux" />
 	</ItemGroup>
 
 	<ItemGroup>
