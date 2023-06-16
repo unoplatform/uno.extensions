@@ -1,9 +1,7 @@
 <Project Sdk="MSBuild.Sdk.Extras" ToolsVersion="15.0">
 
-	<PropertyGroup>
-		<TargetFramework>net7.0</TargetFramework>
-	</PropertyGroup>
-	
+	<Import Project="..\tfms-ui-winui.props" />
+
 	<ItemGroup>
 		<UnoRuntimeProjectReference Include="Uno.Extensions.Logging.WinUI.Wasm.csproj" />
 		<UnoRuntimeProjectReference Include="Uno.Extensions.Logging.WinUI.Skia.csproj" />
