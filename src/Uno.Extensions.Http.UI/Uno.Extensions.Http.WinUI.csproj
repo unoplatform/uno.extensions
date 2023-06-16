@@ -1,0 +1,14 @@
+﻿<Project Sdk="MSBuild.Sdk.Extras" ToolsVersion="15.0">
+	<Import Project="..\tfms-ui-winui.props" />
+
+	<Import Project="common.props" />
+
+	<PropertyGroup>
+		<DefineConstants>$(DefineConstants);WINUI</DefineConstants>
+	</PropertyGroup>
+
+	<ItemGroup Condition="'$(_IsWinUI)'=='false'">
+		<PackageReference Include="Uno.WinUI" />
+	</ItemGroup>
+
+</Project>
