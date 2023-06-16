@@ -139,8 +139,9 @@ A `TextBlock` can then be added in the UI to display the selected value:
 <TextBlock Text="{Binding GreetingSelect}"/>
 ```
 
-#### Using the ForEach operator
-Selection can also be propagated manually to a State using the [`ForEach`](xref:Overview.Mvux.Feeds#foreach) operator.
+#### Using the ForEachAsync operator
+
+Selection can also be propagated manually to a State using the [`ForEachAsync`](xref:Overview.Mvux.States#foreachasync) operator.
 First, we need to create a State with a default value, which will be used to store the processed value once a selection has occurred.
 
 ```csharp
@@ -231,4 +232,4 @@ Head to the View and enable multi-selection in the `ListView` by changing its `S
 The options above explained how to subscribe to selection that has been requested in the View by a Selector control (i.e. `ListView`).  
 If you want to manually select an item or multiple items, rather use a [List-State](xref:Overview.Mvux.ListStates) instead of a List-Feed to load the items, so that you can update their selection state. You can then use the List-State's selection operators to manually select items.
 
-Refer to the [selection operators](#selection-operators) section in the List-State page for documentation on how to use manual selection.
+Refer to the [selection operators](xref:Overview.Mvux.ListStates#selection-operators) section in the List-State page for documentation on how to use manual selection.
