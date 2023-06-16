@@ -23,6 +23,9 @@
 		<!-- Forces Uno's XamlFileGenerator to write error when XAML is invalid-->
 		<ShouldWriteErrorOnInvalidXaml>True</ShouldWriteErrorOnInvalidXaml>
 	</PropertyGroup>
+	<PropertyGroup>
+		<EnableWindowsTargeting>true</EnableWindowsTargeting>
+	</PropertyGroup>
 
 	<PropertyGroup>
 		<Build_Android>true</Build_Android>
