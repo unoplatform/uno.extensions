@@ -1,4 +1,5 @@
 ﻿using Microsoft.Maui.Devices;
+using Uno.Extensions;
 
 namespace MauiEmbedding.Presentation;
 partial class MauiEssentialsViewModel : ObservableObject
@@ -15,13 +16,16 @@ partial class MauiEssentialsViewModel : ObservableObject
 
 	public string DisplayInfo => $"Display info: {DisplaySize.width}x{DisplaySize.height}";
 
-	public MauiEssentialsViewModel()
+	public MauiEssentialsViewModel(IDispatcher dispatcher)
 	{
 		BatteryLevel = Battery.ChargeLevel;
 		DisplaySize = (DeviceDisplay.MainDisplayInfo.Width, DeviceDisplay.MainDisplayInfo.Height);
 
-		Battery.BatteryInfoChanged += OnBatteryBatteryInfoChanged;
-		DeviceDisplay.MainDisplayInfoChanged += OnDeviceDisplayChanged;
+		_ = dispatcher.ExecuteAsync(() =>
+		{
+			Battery.BatteryInfoChanged += OnBatteryBatteryInfoChanged;
+			DeviceDisplay.MainDisplayInfoChanged += OnDeviceDisplayChanged;
+		});
 	}
 
 	private void OnDeviceDisplayChanged(object? sender, DisplayInfoChangedEventArgs e) =>
