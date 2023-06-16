@@ -10,15 +10,26 @@ internal static class ConversionExtensions
 			output.MergedDictionaries.Add(merged.ToMauiResources());
 		}
 
-		foreach (var key in input.Keys)
+		try
 		{
-			if (input.MergedDictionaries.Any(x => x.ContainsKey(key)))
+			foreach (var kvp in input)
 			{
-				continue;
-			}
+				try
+				{
+					if (input.MergedDictionaries.Any(x => x.ContainsKey(kvp.Key)))
+					{
+						continue;
+					}
 
-			TryAddValue(ref output, key, input[key]);
+					TryAddValue(ref output, kvp.Key, kvp.Value);
+				}
+				catch (Exception e)
+				{
+					Console.WriteLine($"Failed to convert resource {kvp.Key} with value {kvp.Value} to Maui: {e}");
+				}
+			}
 		}
+		catch { } // TODO: Work out how to handle exceptions being raised when accessing dictionary with themeresources
 
 		return output;
 	}
