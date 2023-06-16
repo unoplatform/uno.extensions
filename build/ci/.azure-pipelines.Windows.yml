@@ -10,7 +10,7 @@ jobs:
   - checkout: self
     clean: 'true'
 
-  - template: templates/dotnet6-install-windows.yml
+  - template: templates/dotnet-install-windows.yml
   - template: templates/canary-updater.yml
 
   - task: gitversion/setup@0

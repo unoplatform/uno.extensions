@@ -14,7 +14,7 @@
 	<ItemGroup>
 		<ProjectReference Include="..\Uno.Extensions.Core\Uno.Extensions.Core.csproj" />
 		<ProjectReference Include="..\Uno.Extensions.Storage\Uno.Extensions.Storage.csproj" />
-		<ProjectReference Include="..\Uno.Extensions.Http\Uno.Extensions.Http.csproj" />
+		<ProjectReference Include="..\Uno.Extensions.Http.Interfaces\Uno.Extensions.Http.Interfaces.csproj" />
 		<ProjectReference Include="..\Uno.Extensions.Configuration\Uno.Extensions.Configuration.csproj" />
 		<ProjectReference Include="..\Uno.Extensions.Hosting\Uno.Extensions.Hosting.csproj" />
 		<ProjectReference Include="..\Uno.Extensions.Navigation\Uno.Extensions.Navigation.csproj" />

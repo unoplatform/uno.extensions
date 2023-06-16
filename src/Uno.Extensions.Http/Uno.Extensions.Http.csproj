@@ -20,6 +20,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\Uno.Extensions.Core\Uno.Extensions.Core.csproj" />
+		<ProjectReference Include="..\Uno.Extensions.Http.Interfaces\Uno.Extensions.Http.Interfaces.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

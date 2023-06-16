@@ -14,7 +14,7 @@ on:
 jobs:
   build_and_deploy_job:
     env:
-      DIST_PATH: testing/TestHarness/TestHarness.Wasm/bin/Release/net6.0/dist
+      DIST_PATH: testing/TestHarness/TestHarness.Wasm/bin/Release/net7.0/dist
 
     if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
     runs-on: ubuntu-latest
@@ -38,19 +38,14 @@ jobs:
           useConfigFile: true
           configFilePath: build/ci/gitversion.yml
 
-      - name: Setup dotnet 5.0.x
+      - name: Setup dotnet 7.0.x
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: '5.0.x'
-
-      - name: Setup dotnet 6.0.x
-        uses: actions/setup-dotnet@v3
-        with:
-          dotnet-version: '6.0.x'
+          dotnet-version: '7.0.x'
 
       - run: |
           cd testing/TestHarness/TestHarness.Wasm
-          dotnet build -c Release "/p:Version=${{ steps.gitversion.outputs.fullSemVer }}" /p:UnoExtensionsDisableNet6=true /p:GeneratePackageOnBuild=false /detailedsummary
+          dotnet build -c Release "/p:Version=${{ steps.gitversion.outputs.fullSemVer }}" /p:UnoExtensionsDisableNet7=true /p:GeneratePackageOnBuild=false /detailedsummary
       - uses: actions/upload-artifact@v3
         with:
           name: wasm-site

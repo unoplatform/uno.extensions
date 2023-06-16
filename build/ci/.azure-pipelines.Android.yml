@@ -19,7 +19,7 @@ jobs:
         packageType: sdk
         version: 5.0.x
 
-  - template: templates/dotnet6-install-mac.yml
+  - template: templates/dotnet-install-mac.yml
   - template: templates/canary-updater.yml
 
   - task: gitversion/setup@0
@@ -35,7 +35,7 @@ jobs:
     displayName: Use GitVersion
 
   - script: |
-      mono '$(VS_MSBUILD)' '$(build.sourcesdirectory)/samples/Playground/Playground.Droid/Playground.Droid.csproj' /r /p:Configuration=Release "/bl:$(build.artifactstagingdirectory)/samples-android-1.binlog" "/p:InformationalVersion=$GITVERSION_INFORMATIONALVERSION" /p:UnoExtensionsDisableNet6=true /p:AotAssemblies=false /p:AndroidBuildApplicationPackage=True
+      mono '$(VS_MSBUILD)' '$(build.sourcesdirectory)/samples/Playground/Playground.Droid/Playground.Droid.csproj' /r /p:Configuration=Release "/bl:$(build.artifactstagingdirectory)/samples-android-1.binlog" "/p:InformationalVersion=$GITVERSION_INFORMATIONALVERSION" /p:UnoExtensionsDisableNet7=true /p:AotAssemblies=false /p:AndroidBuildApplicationPackage=True
 
     displayName: Build Android App
     
@@ -52,7 +52,7 @@ jobs:
       flattenFolders: false
 
   - script: |
-      mono '$(VS_MSBUILD)' '$(build.sourcesdirectory)/samples/Playground/Playground.Droid/Playground.Droid.csproj' /r /p:Configuration=Release "/bl:$(build.artifactstagingdirectory)/samples-android-2.binlog" "/p:InformationalVersion=$GITVERSION_INFORMATIONALVERSION" /p:UnoExtensionsDisableNet6=true /p:AotAssemblies=false /p:BuildForPlayStore=true /p:AndroidBuildApplicationPackage=True
+      mono '$(VS_MSBUILD)' '$(build.sourcesdirectory)/samples/Playground/Playground.Droid/Playground.Droid.csproj' /r /p:Configuration=Release "/bl:$(build.artifactstagingdirectory)/samples-android-2.binlog" "/p:InformationalVersion=$GITVERSION_INFORMATIONALVERSION" /p:UnoExtensionsDisableNet7=true /p:AotAssemblies=false /p:BuildForPlayStore=true /p:AndroidBuildApplicationPackage=True
 
     displayName: Build Android PlayStore App
     

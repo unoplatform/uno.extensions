@@ -12,7 +12,7 @@
 		<Reference Include="System.Xml.Linq" />
 	</ItemGroup>
 
-	<ItemGroup Condition="'$(TargetFramework)'!='net6.0-windows10.0.18362'">
+	<ItemGroup Condition="'$(TargetFramework)'!='net7.0-windows10.0.18362'">
 		<Content Include="Assets\**" />
 		<Page Include="**\*.xaml" Exclude="bin\**\*.xaml;obj\**\*.xaml" />
 		<Compile Update="**\*.xaml.cs">

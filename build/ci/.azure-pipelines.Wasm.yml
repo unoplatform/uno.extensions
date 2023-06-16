@@ -30,12 +30,12 @@ jobs:
   #   displayName: Install Ninja build
 
   - script: |
-      dotnet build samples/Playground/Playground.Wasm/Playground.Wasm.csproj /p:Configuration=Release "/p:InformationalVersion=%GITVERSION_InformationalVersion%" /p:UnoExtensionsDisableNet6=true /p:GeneratePackageOnBuild=false /detailedsummary /bl:$(build.artifactstagingdirectory)/samples-wasm.binlog
+      dotnet build samples/Playground/Playground.Wasm/Playground.Wasm.csproj /p:Configuration=Release "/p:InformationalVersion=%GITVERSION_InformationalVersion%" /p:UnoExtensionsDisableNet7=true /p:GeneratePackageOnBuild=false /detailedsummary /bl:$(build.artifactstagingdirectory)/samples-wasm.binlog
 
   - task: CopyFiles@2
     displayName: 'Publish Wasm Binaries'
     inputs:
-      SourceFolder: $(build.sourcesdirectory)/samples/Playground/Playground.Wasm/bin/Release/net6.0/dist
+      SourceFolder: $(build.sourcesdirectory)/samples/Playground/Playground.Wasm/bin/Release/net7.0/dist
       Contents: '**/*.*'
       TargetFolder: $(build.artifactstagingdirectory)/Wasm
       CleanTargetFolder: false

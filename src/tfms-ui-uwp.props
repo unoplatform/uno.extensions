@@ -4,13 +4,10 @@
 		<TargetFrameworks>$(UnoTargetFrameworkOverride)</TargetFrameworks>
 	</PropertyGroup>
 	<PropertyGroup  Condition="'$(UnoTargetFrameworkOverride)'==''">
-		<TargetFrameworks>$(TargetFrameworks);netstandard2.0;</TargetFrameworks>
-		<TargetFrameworks Condition="'$(Build_iOS)'=='true'">$(TargetFrameworks);xamarinios10</TargetFrameworks>
-		<TargetFrameworks Condition="'$(Build_MacOS)'=='true'">$(TargetFrameworks);xamarinmac20</TargetFrameworks>
-		<TargetFrameworks Condition="'$(Build_Android)'=='true'">$(TargetFrameworks);monoandroid12.0</TargetFrameworks>
+		<TargetFrameworks>$(TargetFrameworks);net7.0;</TargetFrameworks>
 		<TargetFrameworks Condition="'$(Build_Windows)'=='true'">$(TargetFrameworks);uap10.0.18362</TargetFrameworks>
-		<TargetFrameworks Condition="'$(Build_iOS)'=='true' and '$(UnoExtensionsDisableNet6)'==''">$(TargetFrameworks);net6.0-ios</TargetFrameworks>
-		<TargetFrameworks Condition="'$(Build_MacOS)'=='true' and '$(UnoExtensionsDisableNet6)'==''">$(TargetFrameworks);net6.0-macos;net6.0-maccatalyst</TargetFrameworks>
-		<TargetFrameworks Condition="'$(Build_Android)'=='true' and '$(UnoExtensionsDisableNet6)'==''">$(TargetFrameworks);net6.0-android</TargetFrameworks>
+		<TargetFrameworks Condition="'$(Build_iOS)'=='true' and '$(UnoExtensionsDisableNet7)'==''">$(TargetFrameworks);net7.0-ios</TargetFrameworks>
+		<TargetFrameworks Condition="'$(Build_MacOS)'=='true' and '$(UnoExtensionsDisableNet7)'==''">$(TargetFrameworks);net7.0-macos;net7.0-maccatalyst</TargetFrameworks>
+		<TargetFrameworks Condition="'$(Build_Android)'=='true' and '$(UnoExtensionsDisableNet7)'==''">$(TargetFrameworks);net7.0-android</TargetFrameworks>
 	</PropertyGroup>
 </Project>
