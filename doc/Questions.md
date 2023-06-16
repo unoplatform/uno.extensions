@@ -37,8 +37,8 @@ The Uno.Extesions collection includes the following NuGet packages:
 | Uno.Extensions.Localization  | Provides access to localizable resources                                             |
 | Uno.Extensions.Logging       | Configures application logging                                                       |
 | Uno.Extensions.Navigation    | Routing framework for navigation                                                     |
-| Uno.Extensions.Reactive      | Development framework for reactive applications                                      |
+| Uno.Extensions.Reactive      | Development framework for MVUX-based applications                                      |
 | Uno.Extensions.Serialization | Helpers for JSON serialization                                                       |
 | Uno.Extensions.Validation | Helpers for data validation                                                       |
 
-For a more specific description of the functionality included in each referenced package—such as configuration, logging, navigation, and Reactive—refer to the relevant documentation.
+For a more specific description of the functionality included in each referenced package—such as configuration, logging, navigation, and MVUX — refer to the relevant documentation.
