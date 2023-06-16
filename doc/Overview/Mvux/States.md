@@ -55,24 +55,36 @@ public IState<StockValue> MyStockCurrentValue => State.AsyncEnumerable(this, Con
 Make sure the Async Enumerable methods have a `CancellationToken` parameter and are decorated with the `EnumerationCancellation` attribute.  
 You can learn more about Async Enumerables in [this article](https://learn.microsoft.com/archive/msdn-magazine/2019/november/csharp-iterating-with-async-enumerables-in-csharp-8#a-tour-through-async-enumerables).
 
-#### Other ways to create feeds
+#### Start with an empty state
 
-There are additional ways to create States so that you can update them at a later stage:
-
-- With a synchronous initial value, and update it at a later stage:
-
-    ```csharp
-    public IState<City> CurrentCity => State.Value(this, () => new City("Montreal"));
-    ```
-
-- Without any initial value:
+You can setup a state without any values, values can always be set using the [`Set`](#set) or the [`Update`](#update) methods.
 
     ```csharp
     public IState<City> CurrentCity => State<City>.Empty(this);
     ```
 
-- Construct a custom State by directly creating its `Messages`.  
-  This is intended for advanced users and is demonstrated [here](xref:Overview.Reactive.State#create).
+#### Create a state with an initial value
+
+You can setup a state with a synchronous initial value. The state can be set later on using the [`Update`](#update) or the [`Set`](#set) methods.
+
+    ```csharp
+    public IState<City> CurrentCity => State.Value(this, () => new City("Montreal"));
+    ```
+
+#### From a feed
+
+A state can easily be converted from a feed as follows:
+
+```csharp
+public IFeed<int> MyFeed => ...
+public IState<int> MyState => State.FromFeed(this, MyFeed);
+```
+
+#### Other ways to create states
+
+> [!TIP]
+A state can also be constructed manually by building its underlying Messages or Options.  
+This is intended for advanced users and is explained [here](xref:Overview.Reactive.State#create).
 
 ### Usage of States
 
@@ -130,6 +142,8 @@ In this scenario, the `DataContext` is set to an instance of the `BindableSlider
 
 ### Change data of a state
 
+#### Update
+
 To manually update the current value of a state, use its `Update` method.  
 
 In this example we'll add the method `IncrementSlider` that gets the current value and increases it by one (if it doesn't exceed 100):
@@ -148,7 +162,41 @@ public async ValueTask IncrementSlider(CancellationToken ct = default)
 
 The `updater` parameter of the `Update` method accepts a `Func<T, T>`, where the input parameter provides the current value of the State when called, and the return parameter is the one to be returned and applied as the new value of the State, in our case we use the `incrementValue` [local function](https://learn.microsoft.com/dotnet/csharp/programming-guide/classes-and-structs/local-functions) to increment `currentValue` by one (or return `1` if the value exceeds `100`).
 
-There are additional methods that update the data of a State such as `Set` and `UpdateMessage`, explained [here](xref:Overview.Reactive.State#update-how-to-update-a-state).
+#### Set
+
+There are additional methods that update the data of a State such as `Set` and `UpdateMessage`, explained [here](xref:Overview.Reactive.State#update-how-to-update-a-state). The `Set` method is the same as the `Update`, except that in `Set` there is no callback that provides the current value, instead a new value is provided directly and the old value is discarded:
+
+```csharp
+public async ValueTask SetSliderMiddle(CancellationToken ct = default)
+{    
+    await SliderValue.Set(50, ct);
+}
+```
+
+### Subscribing to changes
+
+The `ForEachAsync` enables executing a callback each time the value of the `IState<T>` is updated.
+
+This extension-method takes a single parameter which is a async callback that takes two parameters, the first one is `T?` where `T` is what the `IState<T>` is of, and the second is a `CancellationToken`. It returns a `ValueTask`.
+
+For example:
+
+```csharp
+public partial record Model
+{
+    public IState<string> MyState => ...
+
+    public async ValueTask EnableChangeTracking()
+    {
+        MyState.ForEachAsync(PerformAction);
+    }
+
+    public async ValueTask PerformAction(string item, CancellationToken ct)
+    {
+        ...
+    }
+}
+```
 
 ### Commands
 

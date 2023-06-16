@@ -99,6 +99,18 @@ public IFeed<CounterValue> CurrentCount => Feed.AsyncEnumerable(_myService.Start
 public IFeed<CounterValue> CurrentCount => Feed.AsyncEnumerable(ct => StartCounting());
 ```
 
+#### From a ListFeed
+
+An `IListFeed<T>` can be converted down to an `IFeed<IImmutableCollection<T>>` using the `AsFeed` method:
+
+```csharp
+public void SetUp()
+{
+    IListFeed<string> stringsListFeed = ...;
+    IFeed<IImmutableCollection<string>> stringsFeed = stringsListFeed.AsFeed();
+}
+```
+
 ### Consumption of feeds
 
 #### Awaiting feeds
@@ -185,6 +197,20 @@ The selection can also be asynchronous, and even use an external method:
 
 ```csharp
 public IFeed<CountInfo> CountTrends => CurrentCount.SelectAsync(currentCount => myService.GetCountInfoAsync(currentCount));
+```
+
+### AsListFeed
+
+When the current feed is of `IImmutableCollection<T>`, you might want to consider using a [list-feed](xref:Overview.Mvux.ListFeeds). This operator lets you easily convert an `IFeed<IImmutableCollection<T>>` to an `IListFeed<IImmutableCollection<T>>`.
+
+For example:
+
+```csharp
+public void SetUp()
+{
+    IFeed<IImmutableCollection<string>> stringsFeed = ...;
+    IListFeed<string> stringsListFeed = stringsFeed.AsListFeed();
+}
 ```
 
 ### LINQ syntax
