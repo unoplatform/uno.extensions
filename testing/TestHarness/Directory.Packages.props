@@ -38,38 +38,38 @@
     <PackageVersion Include="Uno.Material" Version="2.6.1" />
     <PackageVersion Include="Uno.Material.WinUI" Version="2.6.1" />
     <PackageVersion Include="Uno.Microsoft.Toolkit.Uwp.UI" Version="7.1.11" />
-    <PackageVersion Include="Uno.Toolkit.UI" Version="3.0.4" />
-    <PackageVersion Include="Uno.Toolkit.UI.Material" Version="3.0.4" />
-    <PackageVersion Include="Uno.Toolkit.WinUI" Version="3.0.4" />
-    <PackageVersion Include="Uno.Toolkit.WinUI.Material" Version="3.0.4" />
-    <PackageVersion Include="Uno.UI" Version="4.9.20" />
-    <PackageVersion Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="4.9.20" />
-    <PackageVersion Include="Uno.UI.MSAL" Version="4.9.20" />
-    <PackageVersion Include="Uno.UI.RemoteControl" Version="4.9.20" />
-    <PackageVersion Include="Uno.UI.Skia.Gtk" Version="4.9.20" />
-    <PackageVersion Include="Uno.UI.Skia.Linux.FrameBuffer" Version="4.9.20" />
-    <PackageVersion Include="Uno.UI.Skia.Tizen" Version="4.9.20" />
-    <PackageVersion Include="Uno.UI.Skia.Wpf" Version="4.9.20" />
-    <PackageVersion Include="Uno.UI.WebAssembly" Version="4.9.20" />
-    <PackageVersion Include="Uno.UITest" Version="1.1.0-dev.32" />
-    <PackageVersion Include="Uno.UITest.Selenium" Version="1.1.0-dev.32" />
-    <PackageVersion Include="Uno.UITest.Xamarin" Version="1.1.0-dev.32" />
-    <PackageVersion Include="Uno.UITest.Helpers" Version="1.1.0-dev.32" />
+    <PackageVersion Include="Uno.Toolkit.UI" Version="3.10.0-feature.5x.25" />
+    <PackageVersion Include="Uno.Toolkit.UI.Material" Version="3.10.0-feature.5x.25" />
+    <PackageVersion Include="Uno.Toolkit.WinUI" Version="3.10.0-feature.5x.25" />
+    <PackageVersion Include="Uno.Toolkit.WinUI.Material" Version="3.10.0-feature.5x.25" />
+    <PackageVersion Include="Uno.UI" Version="5.0.0-feature.5x.655" />
+    <PackageVersion Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="5.0.0-feature.5x.655" />
+    <PackageVersion Include="Uno.UI.MSAL" Version="5.0.0-feature.5x.655" />
+    <PackageVersion Include="Uno.UI.RemoteControl" Version="5.0.0-feature.5x.655" />
+    <PackageVersion Include="Uno.UI.Skia.Gtk" Version="5.0.0-feature.5x.655" />
+    <PackageVersion Include="Uno.UI.Skia.Linux.FrameBuffer" Version="5.0.0-feature.5x.655" />
+    <PackageVersion Include="Uno.UI.Skia.Tizen" Version="5.0.0-feature.5x.655" />
+    <PackageVersion Include="Uno.UI.Skia.Wpf" Version="5.0.0-feature.5x.655" />
+    <PackageVersion Include="Uno.UI.WebAssembly" Version="5.0.0-feature.5x.655" />
+    <PackageVersion Include="Uno.UITest" Version="1.1.0-dev.59" />
+    <PackageVersion Include="Uno.UITest.Selenium" Version="1.1.0-dev.59" />
+    <PackageVersion Include="Uno.UITest.Xamarin" Version="1.1.0-dev.59" />
+    <PackageVersion Include="Uno.UITest.Helpers" Version="1.1.0-dev.59" />
     <PackageVersion Include="Uno.UniversalImageLoader" Version="1.9.36" />
     <PackageVersion Include="Uno.Wasm.Bootstrap" Version="7.0.12" />
     <PackageVersion Include="Uno.Wasm.Bootstrap.DevServer" Version="7.0.12" />
-    <PackageVersion Include="Uno.WinUI" Version="4.9.20" />
-    <PackageVersion Include="Uno.WinUI.Skia.Gtk" Version="4.9.20" />
-    <PackageVersion Include="Uno.WinUI.Skia.Linux.FrameBuffer" Version="4.9.20" />
-    <PackageVersion Include="Uno.WinUI.Skia.Wpf" Version="4.9.20" />
-    <PackageVersion Include="Uno.WinUI.MSAL" Version="4.9.20" />
-    <PackageVersion Include="Uno.WinUI.RemoteControl" Version="4.9.20" />
-    <PackageVersion Include="Uno.WinUI.WebAssembly" Version="4.9.20" />
+    <PackageVersion Include="Uno.WinUI" Version="5.0.0-feature.5x.655" />
+    <PackageVersion Include="Uno.WinUI.Skia.Gtk" Version="5.0.0-feature.5x.655" />
+    <PackageVersion Include="Uno.WinUI.Skia.Linux.FrameBuffer" Version="5.0.0-feature.5x.655" />
+    <PackageVersion Include="Uno.WinUI.Skia.Wpf" Version="5.0.0-feature.5x.655" />
+    <PackageVersion Include="Uno.WinUI.MSAL" Version="5.0.0-feature.5x.655" />
+    <PackageVersion Include="Uno.WinUI.RemoteControl" Version="5.0.0-feature.5x.655" />
+    <PackageVersion Include="Uno.WinUI.WebAssembly" Version="5.0.0-feature.5x.655" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.2.0" />
-    <PackageVersion Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageVersion Include="Newtonsoft.Json" Version="13.0.2" />
     <PackageVersion Include="NUnit" Version="3.13.3" />
     <PackageVersion Include="NUnit3TestAdapter" Version="4.3.0-alpha-net7.4" />
     <PackageVersion Include="Xamarin.Google.Android.Material" Version="1.4.0.4" />
-    <PackageVersion Include="Xamarin.UITest" Version="3.2.9" />
+    <PackageVersion Include="Xamarin.UITest" Version="4.1.2" />
   </ItemGroup>
 </Project>
