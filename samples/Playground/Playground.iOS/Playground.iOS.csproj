@@ -201,7 +201,12 @@
       <Project>{17a4c2dd-d7f3-4b5b-931d-16fa7920d2c0}</Project>
       <Name>Uno.Extensions.Http.Refit</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\src\Uno.Extensions.Http\Uno.Extensions.Http.csproj">
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Http.UI\Uno.Extensions.Http.UI.csproj">
+			<Project>{3b441d41-f441-4a0d-87a2-ec5d124c3d59}</Project>
+			<Name>Uno.Extensions.Http.UI</Name>
+		</ProjectReference>
+
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Http\Uno.Extensions.Http.csproj">
       <Project>{9f8db209-a0d3-439e-8624-0ddd3608e886}</Project>
       <Name>Uno.Extensions.Http</Name>
     </ProjectReference>
