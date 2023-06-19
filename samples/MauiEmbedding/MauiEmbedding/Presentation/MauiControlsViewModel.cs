@@ -12,5 +12,12 @@ partial class MauiControlsViewModel : ObservableObject
 		Title += $" - {localizer["ApplicationName"]}";
 		Title += $" - {appInfo?.Value?.Environment}";
 	}
+
+
+	public MauiControlsViewModel()
+	{
+		Title = "Main";
+	}
+
 	public string? Title { get; }
 }

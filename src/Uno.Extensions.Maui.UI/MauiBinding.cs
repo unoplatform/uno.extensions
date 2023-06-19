@@ -1,4 +1,5 @@
 ﻿using Uno.Extensions.Maui.Internals;
+using UnoMusicApp.Helpers;
 
 namespace Uno.Extensions.Maui;
 
@@ -46,6 +47,7 @@ public class MauiBinding : MauiExtensionBase
 			Path = ".";
 		}
 
+		ThreadHelpers.WhatThreadAmI();
 
 		IMauiConverter? converter = null;
 		if (Converter is IMauiConverter converterAsMauiConverter)

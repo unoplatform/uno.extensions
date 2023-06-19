@@ -9,6 +9,10 @@ public class App : Application
 	protected Window? MainWindow { get; private set; }
 	protected IHost? Host { get; private set; }
 
+	public App()
+	{
+		UnoMusicApp.Helpers.ThreadHelpers.Init(SynchronizationContext.Current!);
+	}
 
 	protected async override void OnLaunched(LaunchActivatedEventArgs args)
 	{
