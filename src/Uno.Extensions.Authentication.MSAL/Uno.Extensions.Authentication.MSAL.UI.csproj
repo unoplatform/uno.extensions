@@ -42,6 +42,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\Uno.Extensions.Http.UI\Uno.Extensions.Http.UI.csproj" />
 		<ProjectReference Include="Uno.Extensions.Authentication.MSAL.UI.Wasm.csproj" ReferenceOutputAssembly="false" LinkLibraryDependencies="false" CopyLocal="false" SkipGetTargetFrameworkProperties="true" GlobalPropertiesToRemove="TargetFramework" />
 		<!--<ProjectReference Include="Uno.Extensions.Authentication.MSAL.UI.Skia.csproj" ReferenceOutputAssembly="false" LinkLibraryDependencies="false" CopyLocal="false" SkipGetTargetFrameworkProperties="true" GlobalPropertiesToRemove="TargetFramework" />-->
 	</ItemGroup>
