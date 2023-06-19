@@ -1,8 +1,7 @@
-﻿using System.Numerics;
+﻿using System.Diagnostics;
 using System.Reflection;
-using Microsoft.Extensions.Logging;
 using Microsoft.Maui.Controls;
-using Microsoft.UI.Xaml.Documents;
+using UnoMusicApp.Helpers;
 
 namespace Uno.Extensions.Maui;
 
@@ -12,7 +11,7 @@ namespace Uno.Extensions.Maui;
 public abstract class MauiExtensionBase : MarkupExtension
 {
 	private ILogger? _logger;
-	
+
 	/// <summary>
 	/// Logger to log messages during runtime.
 	/// </summary>
@@ -22,7 +21,28 @@ public abstract class MauiExtensionBase : MarkupExtension
 	protected sealed override object? ProvideValue(IXamlServiceProvider serviceProvider)
 	{
 		var provideValueTarget = (IProvideValueTarget)serviceProvider.GetService(typeof(IProvideValueTarget));
+		ThreadHelpers.WhatThreadAmI();
 
+		DependencyObject targetObject = (DependencyObject)provideValueTarget!.TargetObject;
+
+
+		#region TypeTesting
+
+		Debug.WriteLine(provideValueTarget);
+		Debug.WriteLine(provideValueTarget?.TargetObject);
+		Debug.WriteLine(provideValueTarget?.TargetObject is View);
+		Debug.WriteLine(provideValueTarget?.TargetObject?.GetType());
+
+		var x = (object)provideValueTarget!.TargetObject!;
+
+		var lbl = x as Label;
+
+		var tp = provideValueTarget.TargetProperty as ProvideValueTargetProperty;
+
+		var dt = tp!.DeclaringType;
+		Debug.WriteLine(x);
+
+		#endregion
 		if (provideValueTarget?.TargetObject is View view && provideValueTarget.TargetProperty is ProvideValueTargetProperty targetProperty)
 		{
 			var declaringType = targetProperty.DeclaringType;
@@ -68,7 +88,7 @@ public abstract class MauiExtensionBase : MarkupExtension
 
 		return base.ProvideValue(serviceProvider);
 	}
-	
+
 	private ILogger GetLogger()
 	{
 		var factory = MauiEmbedding.MauiContext.Services.GetRequiredService<ILoggerFactory>();
