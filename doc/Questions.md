@@ -11,8 +11,8 @@ Key features like dependency injection, serialization, configuration, environmen
 
 ## How productive will I be with Uno.Extesions?
 With Uno.Extesions, you'll be bursting with productivity! 
-[GettingStarted.md](GettingStarted.md)
-From advancements in starting a new project with the app template to the ability to extend the functionality of your app, you'll be able to get to market faster and with less effort.
+
+From advancements in [starting](xref:Overview.Extensions) a new project with the app template to the ability to extend the functionality of your app, you'll be able to get to market faster and with less effort.
 
 ## How can Uno.Extesions help me meet the moment?
 Uno.Extesions allows you to respond quickly to changing market conditions by saving up months of development time. You will be able to reduce the budget needed to develop the app and reap the benefits of arriving to market fast.
@@ -37,8 +37,8 @@ The Uno.Extesions collection includes the following NuGet packages:
 | Uno.Extensions.Localization  | Provides access to localizable resources                                             |
 | Uno.Extensions.Logging       | Configures application logging                                                       |
 | Uno.Extensions.Navigation    | Routing framework for navigation                                                     |
-| Uno.Extensions.Reactive      | Development framework for reactive applications                                      |
+| Uno.Extensions.Reactive      | Development framework for MVUX-based applications                                      |
 | Uno.Extensions.Serialization | Helpers for JSON serialization                                                       |
 | Uno.Extensions.Validation | Helpers for data validation                                                       |
 
-For a more specific description of the functionality included in each referenced package—such as configuration, logging, navigation, and Reactive—refer to the relevant documentation.
+For a more specific description of the functionality included in each referenced package—such as configuration, logging, navigation, and MVUX — refer to the relevant documentation.
