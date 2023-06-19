@@ -1,5 +1,5 @@
 ﻿<Project Sdk="MSBuild.Sdk.Extras"  ToolsVersion="15.0">
-	<Import Project="..\tfms-ui-all.props" />
+	<Import Project="..\tfms-non-ui.props" />
 	
 	<PropertyGroup>
 		<Description>Serialization Extensions for working with ISerializer and Http for the Uno Platform, UWP and WinUI</Description>
