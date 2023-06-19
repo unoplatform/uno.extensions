@@ -21,5 +21,6 @@
 	
 	<ItemGroup>
 		<ProjectReference Include="..\Uno.Extensions.Authentication.UI\Uno.Extensions.Authentication.WinUI.csproj" />
+		<ProjectReference Include="..\Uno.Extensions.Http.UI\Uno.Extensions.Http.WinUI.csproj" />
 	</ItemGroup>
 </Project>

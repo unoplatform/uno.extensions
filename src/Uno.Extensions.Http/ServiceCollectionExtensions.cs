@@ -1,15 +1,13 @@
-﻿
+﻿namespace Uno.Extensions;
 
-using System.Net.Sockets;
-using Uno.Extensions.Logging;
-
-namespace Uno.Extensions;
-
+/// <summary>
+/// Extensions for <see cref="IServiceCollection"/>
+/// </summary>
 public static class ServiceCollectionExtensions
 {
 	private static char[] InterfaceNamePrefix = new[] { 'i', 'I' };
 
-	public static T Conditional<T>(
+	private static T Conditional<T>(
 		this T builder,
 		bool predicate,
 		Func<T, T> configureBuilder)
@@ -17,7 +15,17 @@ public static class ServiceCollectionExtensions
 		return (configureBuilder is not null && predicate) ? configureBuilder(builder) : builder;
 	}
 
-
+	/// <summary>
+	/// Adds a typed client to the service collection.
+	/// </summary>
+	/// <typeparam name="TClient">The type of client to add</typeparam>
+	/// <typeparam name="TImplementation">The type implementation</typeparam>
+	/// <param name="services">The service collection to register with</param>
+	/// <param name="context">The host builder context</param>
+	/// <param name="options">[optional] Endpoint information (loaded from appsettings if not specified)</param>
+	/// <param name="name">[optional] Name of the endpoint (used to load from appsettings)</param>
+	/// <param name="configure">[optional] Callback to configure the endpoint</param>
+	/// <returns>Updated service collection</returns>
 	public static IServiceCollection AddClient<TClient, TImplementation>(
 		 this IServiceCollection services,
 		 HostBuilderContext context,
@@ -36,6 +44,17 @@ public static class ServiceCollectionExtensions
 		return services.AddClient<TClient>(context, options, name, httpClientFactory, configure);
 	}
 
+	/// <summary>
+	/// Adds a typed client to the service collection.
+	/// </summary>
+	/// <typeparam name="TInterface">The type of client to add</typeparam>
+	/// <param name="services">The service collection to register with</param>
+	/// <param name="context">The host builder context</param>
+	/// <param name="options">[optional] Endpoint information (loaded from appsettings if not specified)</param>
+	/// <param name="name">[optional] Name of the endpoint (used to load from appsettings)</param>
+	/// <param name="httpClientFactory">[optional] Callback to configure the HttpClient</param>
+	/// <param name="configure">[optional] Callback to configure the endpoint</param>
+	/// <returns>Updated service collection</returns>
 	public static IServiceCollection AddClient<TInterface>(
 		  this IServiceCollection services,
 		  HostBuilderContext context,
@@ -58,7 +77,7 @@ public static class ServiceCollectionExtensions
 
 		_ = httpClientBuilder
 			.Conditional(
-				options?.UseNativeHandler ?? false,
+				options?.UseNativeHandler ?? true,
 				builder => builder.ConfigurePrimaryAndInnerHttpMessageHandler<HttpMessageHandler>())
 			.ConfigureDelegatingHandlers()
 			.ConfigureHttpClient((serviceProvider, client) =>
@@ -74,12 +93,18 @@ public static class ServiceCollectionExtensions
 		return services;
 	}
 
-
+	/// <summary>
+	/// Configures the primary and inner http message handler.
+	/// </summary>
+	/// <typeparam name="THandler">The type to register as the primary message handler</typeparam>
+	/// <param name="builder">The client builder to configure</param>
+	/// <returns>The configured client builder</returns>
+	/// <exception cref="ArgumentNullException">builder parameter can't be null</exception>
 	public static IHttpClientBuilder ConfigurePrimaryAndInnerHttpMessageHandler<THandler>(this IHttpClientBuilder builder) where THandler : HttpMessageHandler
 	{
 		if (builder == null)
 		{
-			throw new ArgumentNullException("builder");
+			throw new ArgumentNullException(nameof(builder));
 		}
 
 		builder.Services.Configure(builder.Name, delegate (HttpClientFactoryOptions options)
@@ -104,11 +129,17 @@ public static class ServiceCollectionExtensions
 		return builder;
 	}
 
+	/// <summary>
+	/// Configure the delegating handlers.
+	/// </summary>
+	/// <param name="builder">The client builder to configure</param>
+	/// <returns>Configured client builder</returns>
+	/// <exception cref="ArgumentNullException">builder parameter can't be null</exception>
 	public static IHttpClientBuilder ConfigureDelegatingHandlers(this IHttpClientBuilder builder)
 	{
 		if (builder == null)
 		{
-			throw new ArgumentNullException("builder");
+			throw new ArgumentNullException(nameof(builder));
 		}
 
 		builder.Services.Configure(builder.Name, delegate (HttpClientFactoryOptions options)
@@ -136,6 +167,13 @@ public static class ServiceCollectionExtensions
 		return builder;
 	}
 
+	/// <summary>
+	/// Registered a typed http client
+	/// </summary>
+	/// <typeparam name="TClient">The type to register</typeparam>
+	/// <param name="services">The service collection to register with</param>
+	/// <param name="factory">The factory to create the http client</param>
+	/// <returns>Configured client builder</returns>
 	public static IHttpClientBuilder AddTypedHttpClient<TClient>(
 		this IServiceCollection services,
 		Func<HttpClient, IServiceProvider, TClient> factory)
@@ -144,31 +182,5 @@ public static class ServiceCollectionExtensions
 		return services
 			.AddHttpClient(typeof(TClient).FullName ?? string.Empty)
 			.AddTypedClient(factory);
-	}
-
-	public static IServiceCollection AddNativeHandler(this IServiceCollection services, HostBuilderContext context)
-	{
-		if (context.IsRegistered(nameof(AddNativeHandler)))
-		{
-			return services;
-		}
-
-		return services
-			.AddSingleton<ICookieManager, CookieManager>()
-			.AddTransient<HttpMessageHandler>(s =>
-#if __IOS__
-				new NSUrlSessionHandler()
-#elif __ANDROID__
-#if NET6_0_OR_GREATER
-				new Xamarin.Android.Net.AndroidMessageHandler()
-#else
-			new Xamarin.Android.Net.AndroidClientHandler()
-#endif
-#elif WINDOWS || WINDOWS_UWP
-				new WinHttpHandler()
-#else
-			new HttpClientHandler()
-#endif
-	);
 	}
 }

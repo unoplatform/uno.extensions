@@ -14,5 +14,6 @@
 	<ItemGroup>
 		<PackageReference Include="Uno.UI" />
 		<ProjectReference Include="..\Uno.Extensions.Navigation.UI\Uno.Extensions.Navigation.UI.csproj" />
+		<ProjectReference Include="..\Uno.Extensions.Http.UI\Uno.Extensions.Http.UI.csproj" />
 	</ItemGroup>
 </Project>
