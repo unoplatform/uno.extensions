@@ -4,7 +4,15 @@ uid: Overview.Mvux.Overview
 
 # MVUX Overview
 
-**M**odel, **V**iew, **U**pdate, e**X**tended (**MVUX**) is a variation of the MVU design pattern that encourages unidirectional flow of immutable data, whilst adding support for the data binding capabilities that makes the MVVM pattern so powerful. In other words, MVUX brings together the best of the MVU and MVVM design patterns.
+**M**odel, **V**iew, **U**pdate, e**X**tended (**MVUX**) is a variation of the MVU design pattern that encourages unidirectional flow of immutable data, whilst adding support for the data binding capabilities. And that capabilitie makes the MVVM pattern so powerful. In other words, MVUX brings together the best of the MVU and MVVM design patterns.
+
+In summary MVUX utilizes its powerful code-generation engine to generate a bindable proxy for each Model, which holds the state information of the data, as well as a bindable proxy for entities where needed.
+The bindable proxies use as a bridge that enables immutable entities to work with the WinUI data-binding engine. 
+The states in the Model are monitored for data-binding changes, and in response to any change, **the objects are recreated fresh**, instead of their properties being changed.
+
+Thus, with less code typed, we can have a more efficient and practical result.
+
+## Learning MVUX by samples
 
 To better understand MVUX, let us consider a weather application that will display the current temperature, obtained from an external weather service. At face value, this seems simple enough: call service to retrieve latest temperature and display the returned value.  
   
@@ -206,3 +214,33 @@ In order to summarize what we've just seen, let's return to the list of challeng
 - Feeds include various dimensions such as loading, if there's data or if an error occurred.
 - Feeds borrow from Option concept in functional programming where no data is a valid state for the feed.
 - MVUX combines the unidirectional flow of data, and immutability of MVU, with the data binding capabilities of MVVM.
+
+## Learning MVUX by Creating your own
+
+To create a new project using MVUX on Uno Platform see [How to set up an MVUX project](https://github.com/unoplatform/uno.extensions/blob/main/doc/Overview/Mvux/Tutorials/HowTo-MvuxProject.md).
+
+Then you can use the example above as a reference to create your own solution.
+
+As summarized below.
+
+### In the Model
+
+- Create you own Models
+- MVUX recommends using plain POCO (Plain Old CLR Object) record types for the models in your app as they're immutable.
+- The MVUX analyzers generate a bindable proxy for each of the models in your app (those with Model suffix and mark with the partial modifier). 
+- For every public feed property (returning IFeed<T> or IListFeed<T>) found in the model, a corresponding property is generated on the bindable proxy.
+
+### In the View
+
+- Create your views and add the data binds
+- Create and customize your FeedView as you can see in [The FeedView control](https://github.com/unoplatform/uno.extensions/blob/main/doc/Overview/Mvux/FeedView.md)
+- Or you can use [States](https://github.com/unoplatform/uno.extensions/blob/main/doc/Overview/Mvux/States.md)
+
+### Update
+
+- Add your updates in the Model and in the views
+
+### eXtended
+
+- As the MVUX already generated the bindable proxies.
+- You just need to add an Bindable instance of the `YourModel`, the `DataContext` and it is done.  
