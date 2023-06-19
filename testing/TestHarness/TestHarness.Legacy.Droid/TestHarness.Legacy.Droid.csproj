@@ -139,6 +139,7 @@
     <ProjectReference Include="..\..\..\src\Uno.Extensions.Serialization.Http\Uno.Extensions.Serialization.Http.csproj" />
     <ProjectReference Include="..\..\..\src\Uno.Extensions.Serialization.Refit\Uno.Extensions.Serialization.Refit.csproj" />
     <ProjectReference Include="..\..\..\src\Uno.Extensions.Serialization\Uno.Extensions.Serialization.csproj" />
+    <ProjectReference Include="..\..\..\src\Uno.Extensions.Http.UI\Uno.Extensions.Http.UI.csproj" />
     <ProjectReference Include="..\..\..\src\Uno.Extensions.Http\Uno.Extensions.Http.csproj" />
     <ProjectReference Include="..\..\..\src\Uno.Extensions.Http.Refit\Uno.Extensions.Http.Refit.csproj" />
     <ProjectReference Include="..\..\..\src\Uno.Extensions.Storage.UI\Uno.Extensions.Storage.UI.csproj" />
