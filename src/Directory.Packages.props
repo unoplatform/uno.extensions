@@ -39,7 +39,7 @@
 		<PackageVersion Include="Uno.Core" Version="4.0.1" />
 		<PackageVersion Include="Uno.Extensions.Logging.OSLog" Version="1.3.0" />
 		<PackageVersion Include="Uno.Extensions.Logging.WebAssembly.Console" Version="1.3.0" />
-		<PackageVersion Include="Uno.Extensions.Markup.Generators" Version="1.0.0-dev.166" />
+		<PackageVersion Include="Uno.Extensions.Markup.Generators" Version="1.0.0-dev.247" />
 		<PackageVersion Include="Uno.Roslyn" Version="1.3.0-dev.12" />
 		<PackageVersion Include="Uno.Toolkit" Version="3.0.4" />
 		<PackageVersion Include="Uno.Toolkit.UI" Version="3.0.4" />
