@@ -1,16 +1,22 @@
-﻿using Uno.Extensions.Logging;
+﻿namespace Uno.Extensions.Http;
 
-namespace Uno.Extensions.Http;
-
+/// <summary>
+/// Handler for printing diagnostic information about requests
+/// </summary>
 public class DiagnosticHandler : DelegatingHandler
 {
 	private readonly ILogger _logger;
 
+	/// <summary>
+	/// Creates a new instance of <see cref="DiagnosticHandler"/>
+	/// </summary>
+	/// <param name="logger">ILogger for logging</param>
 	public DiagnosticHandler(ILogger<DiagnosticHandler> logger)
 	{
 		_logger = logger;
 	}
 
+	/// <inheritdoc/>
 	protected override async Task<HttpResponseMessage> SendAsync(
 		HttpRequestMessage request,
 		CancellationToken cancellationToken)

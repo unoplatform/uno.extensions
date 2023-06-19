@@ -1,5 +1,5 @@
 ﻿<Project Sdk="MSBuild.Sdk.Extras" ToolsVersion="15.0">
-	<Import Project="..\tfms-ui-all.props" />
+	<Import Project="..\tfms-non-ui.props" />
 
 	<PropertyGroup>
 		<Description>HTTP Refit Extensions for registering Refit endpoints for Uno Platform, UWP and WinUI</Description>
@@ -8,17 +8,17 @@
 		<WarningsNotAsErrors>$(WarningsNotAsErrors);CS1591</WarningsNotAsErrors>
 	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Refit" />
-	<PackageReference Include="Refit.HttpClientFactory" />
-</ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Refit" />
+		<PackageReference Include="Refit.HttpClientFactory" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Uno.Extensions.Configuration\Uno.Extensions.Configuration.csproj" />
-    <ProjectReference Include="..\Uno.Extensions.Http\Uno.Extensions.Http.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\Uno.Extensions.Configuration\Uno.Extensions.Configuration.csproj" />
+		<ProjectReference Include="..\Uno.Extensions.Http\Uno.Extensions.Http.csproj" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Microsoft.Extensions.Hosting" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Microsoft.Extensions.Hosting" />
+	</ItemGroup>
 </Project>
