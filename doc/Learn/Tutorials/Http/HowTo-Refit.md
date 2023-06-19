@@ -1,0 +1,219 @@
+---
+uid: Learn.Tutorials.Http.HowToRefit
+---
+# How-To: Quickly Create a Strongly-Typed REST Client for an API
+
+When accessing resources with a [REST-style](https://www.ics.uci.edu/~fielding/pubs/dissertation/rest_arch_style.htm) API is a significant part of your application, it is common to look for a SDK that provides a strongly-typed client for the API. This allows you to avoid writing boilerplate code to make requests and deserialize responses. There is sometimes no SDK available yet for the API you want to use, or it's not compatible with your target platform. With the design goal of avoiding boilerplate code in mind, we will walk through how to use [Refit](https://github.com/reactiveui/refit) to quickly create a strongly-typed client for a REST API and register it with the service collection as an endpoint.
+
+## Step-by-steps
+
+> [!IMPORTANT]
+> This guide assumes you used the template wizard or `dotnet new unoapp` to create your solution. If not, it is recommended that you follow the [instructions](xref:Overview.Extensions) for creating an application from the template.
+
+### 1. Enable HTTP
+
+* When working with a complex application, centralized registration of your API endpoints is a good practice. This allows you to easily change the endpoint for a given service, and to easily add new services.
+
+* The first step to centrally registering any API endpoint is to enable HTTP on the `IHostBuilder`:
+    ```csharp
+    protected override void OnLaunched(LaunchActivatedEventArgs args)
+    {
+        var appBuilder = this.CreateBuilder(args)
+            .Configure(hostBuilder =>
+            {
+                hostBuilder.UseHttp();
+            });
+    ...
+    ```
+
+* This feature requires the `Uno.Extensions.Http` package. It uses [Microsoft Extensions](https://www.nuget.org/packages/Microsoft.Extensions.Http) for any HTTP-related [work](https://learn.microsoft.com/dotnet/architecture/microservices/implement-resilient-applications/use-httpclientfactory-to-implement-resilient-http-requests#benefits-of-using-ihttpclientfactory) such as naming or configuring the `HttpClient` instance associated with your endpoints.
+
+### 2. Define the live interface
+
+* Unlike standard HTTP endpoints, Refit endpoints you define will be registered as a service with the `AddRefitClient<T>()` extension method, where the type argument `T` corresponds to an interface you define.
+
+* This interface will be used to generate the strongly-typed client. It will be used to make requests to the web service and deserialize responses.
+
+* For the purposes of this tutorial, we will create and register an interface for the Chuck Norris facts web API 
+
+* Start by defining an interface `IChuckNorrisEndpoint` with a method `Search()` that returns a `Task` of type `ApiResponse<ChuckNorrisData>`:
+    ```csharp
+    [Headers("Content-Type: application/json")]
+    public interface IChuckNorrisEndpoint
+    {
+        [Get("/jokes/search")]
+        Task<ApiResponse<ChuckNorrisData>> Search(CancellationToken ct, [AliasAs("query")] string searchTerm);
+    }
+    ```
+
+    > [!NOTE]
+    > A class named `ChuckNorrisData` will be defined in the subsequent sections of this guide. It will be used to deserialize the response from the API. 
+
+* The `Headers` attribute is used to specify the `Content-Type` header for the request. `Get` specifies the relative path for a `Search` request. Notice that the `searchTerm` parameter for the request is aliased as `query` using an `AliasAs` attribute.
+
+### 3. Register the endpoint
+
+* The `AddRefitClient<T>()` extension method is used to register the endpoint with the service collection.
+
+* This extension method can take a delegate as its argument, but the recommended way to configure a HTTP client is to specify a configuration section name. This allows you to configure the added HTTP client using the `appsettings.json` file. 
+
+* Add the Refit client to the service collection with the following code:
+
+    ```csharp
+    protected override void OnLaunched(LaunchActivatedEventArgs args)
+    {
+        var appBuilder = this.CreateBuilder(args)
+            .Configure(hostBuilder =>
+            {
+                hostBuilder.UseHttp((context, services) =>
+                    services.AddRefitClient<IChuckNorrisEndpoint>(context)
+                );
+            });
+    ...
+    ```
+
+* Define a configuration section in the `appsettings.json` file. While the default behavior is to use the platform-native HTTP handler, this can be configured. 
+
+    ```json
+    {
+        "ChuckNorrisEndpoint": {
+            "Url": "https://api.chucknorris.io/",
+            "UseNativeHandler": true
+        }
+    }
+    ```
+
+* The `Url` property specifies the base URL for the API.
+
+### 4. Generate a data model from the API response
+
+* `ApiResponse<T>` is used to deserialize the response from the API. It is defined in the `Refit` package.
+
+* The response from the API is a JSON object with a `total` property and `result` that contains an array of `ChuckNorrisData` objects. The `ChuckNorrisData` class will be defined in the `Models` namespace.
+
+* We will use [Hoppscotch](https://hoppscotch.io) to make a HTTP request and inspect the response. Open it, and make a `GET` request to the `/jokes/search` endpoint with the query parameter `query` set to `fight`.
+    
+    * The full request should appear like the following:
+        ```http
+        GET https://api.chucknorris.io/jokes/search?query=fight
+        ```
+
+    * The **response body** pane will populate with a JSON object that looks similar to this:
+
+        ```json
+        {
+            "total": 111,
+            "result": [
+                {
+                    "categories": [],
+                    "created_at": "2020-01-05 13:42:18.823766",
+                    "icon_url": "https://assets.chucknorris.host/img/avatar/chuck-norris.png",
+                    "id": "VvGL-lRHSsOL-jj9IEDWRA",
+                    "updated_at": "2020-01-05 13:42:18.823766",
+                    "url": "https://api.chucknorris.io/jokes/VvGL-lRHSsOL-jj9IEDWRA",
+                    "value": "Chuck Norris doesn't beat people up he looks at them they get scared and fight their self to the death"
+                },
+            ...
+            ]
+        }
+        ```
+    
+    * Since this response is needed for the next step, copy the entire JSON object from the **response body** pane
+
+* Next, we need to use a language-agnostic tool that infers a data model from the response we recieved. We will open [quicktype](https://app.quicktype.io/) and use it to generate a data model from the JSON we copied above
+
+    * Replace any demo text in the left **JSON** pane with our text by pasting the JSON object into editor
+    
+    * Within the properties box on the right side, make the following selections:
+
+        * **C#** as the _language_
+
+        * **System Text Json**  as the _serialization framework_
+
+        * **Complete** as the _output features_
+
+    * For the purposes of this tutorial, only select and copy the two model classes `Welcome` and `Result` from the right side containing the generated C# code.
+
+        * What you copied should appear like this:
+
+            ```csharp
+            public partial class Welcome
+            {
+                [JsonPropertyName("total")]
+                public long Total { get; set; }
+
+                [JsonPropertyName("result")]
+                public List<Result> Result { get; set; }
+            }
+
+            public partial class Result
+            {
+                [JsonPropertyName("categories")]
+                public List<Category> Categories { get; set; }
+
+                [JsonPropertyName("created_at")]
+                public DateTimeOffset CreatedAt { get; set; }
+
+                [JsonPropertyName("icon_url")]
+                public Uri IconUrl { get; set; }
+
+                [JsonPropertyName("id")]
+                public string Id { get; set; }
+
+                [JsonPropertyName("updated_at")]
+                public DateTimeOffset UpdatedAt { get; set; }
+
+                [JsonPropertyName("url")]
+                public Uri Url { get; set; }
+
+                [JsonPropertyName("value")]
+                public string Value { get; set; }
+            }
+            ```
+        
+    * Go back to Visual Studio and create a new folder named `Models` in the shared project. Create a new file named `ChuckNorrisData.cs` in the `Models` folder and paste the code you copied into it.
+
+    * Rename the partial classes `Welcome` to `ChuckNorrisData` and `Result` to `ChuckNorrisDataResult`
+
+### 5. Use the endpoint
+
+* `IChuckNorrisEndpoint` can now be used in a service implementation by injecting it into the constructor.  This interface will be used to make requests to the web service and deserialize responses.
+
+* For the purposes of this tutorial, we will create a view model for the page that triggers the request for a Chuck Norris fact named `FactViewModel`. It will have a method `SearchAsync()` that returns a `Task` of type `ChuckNorrisData`:
+
+    ```csharp
+    public class FactViewModel
+    {
+        private readonly IChuckNorrisEndpoint _endpoint;
+
+        public FactViewModel(IChuckNorrisEndpoint endpoint)
+        {
+            _endpoint = endpoint;
+        }
+
+        public async Task<ChuckNorrisData> SearchAsync(string searchTerm)
+        {
+            var response = await _endpoint.Search(CancellationToken.None, searchTerm);
+
+            if (response.IsSuccessStatusCode && response.Content is not null)
+            {
+                // Return first result
+                var content = response.Content;
+                return content.Result[0];
+            }
+
+            _logger.LogError(response.Error, "An error occurred while retrieving the latest fact.");
+            return Task.FromException<ChuckNorrisData>(response.Error);
+        }
+    }
+    ```
+
+* Now, any views that need to display a Chuck Norris fact can use the `FactViewModel` to retrieve one. Thanks to use of Refit, the details of HTTP requests and deserialization are abstracted away from the view and boilerplate code is avoided.
+
+## See also
+
+* [Use HttpClientFactory to implement resilient HTTP requests](https://learn.microsoft.com/dotnet/architecture/microservices/implement-resilient-applications/use-httpclientfactory-to-implement-resilient-http-requests#benefits-of-using-ihttpclientfactory)
+* [Microsoft.Extensions.Http](https://www.nuget.org/packages/Microsoft.Extensions.Http)
+* [Refit](https://github.com/reactiveui/refit)
+* [Hoppscotch](https://hoppscotch.io)
+* [quicktype](https://app.quicktype.io/)

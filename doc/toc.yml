@@ -48,6 +48,8 @@
           href: Overview/Http/HttpOverview.md
         - name: Get started with HTTP
           href: Learn/Tutorials/Http/HowTo-Http.md
+        - name: Use Refit to call a REST API
+          href: Learn/Tutorials/Http/HowTo-Refit.md
     - name: Localization
       items:
         - name: Overview
