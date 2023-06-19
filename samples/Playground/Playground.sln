@@ -3489,5 +3489,6 @@ Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		Playground.Shared\Playground.Shared.projitems*{1efb7b93-88d1-4f14-b335-bab42a49faf0}*SharedItemsImports = 5
 		Playground.Shared\Playground.Shared.projitems*{6279c845-92f8-4333-ab99-3d213163593c}*SharedItemsImports = 13
+		Playground.Shared\Playground.Shared.projitems*{abbf2cf7-0ddb-4968-a6d8-8f8205f4a8d5}*SharedItemsImports = 4
 	EndGlobalSection
 EndGlobal
