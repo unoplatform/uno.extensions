@@ -22,15 +22,13 @@
 		<!-- Forces Uno's XamlFileGenerator to write error when XAML is invalid-->
 		<ShouldWriteErrorOnInvalidXaml>True</ShouldWriteErrorOnInvalidXaml>
 	</PropertyGroup>
-	<PropertyGroup>
-		<EnableWindowsTargeting>true</EnableWindowsTargeting>
-	</PropertyGroup>
 
 	<PropertyGroup>
 		<Build_Android>true</Build_Android>
 		<Build_iOS>true</Build_iOS>
 		<Build_MacOS>true</Build_MacOS>
-		<Build_Windows>true</Build_Windows>
+		<Build_Windows  Condition="$([MSBuild]::IsOSPlatform('windows'))">true</Build_Windows>
+		<Build_Windows  Condition="!$([MSBuild]::IsOSPlatform('windows'))">false</Build_Windows>
 	</PropertyGroup>
 
 	<Import Project="DebugPlatforms.props" Condition="exists('DebugPlatforms.props')" />
