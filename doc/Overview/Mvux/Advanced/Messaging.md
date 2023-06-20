@@ -77,7 +77,11 @@ MVUX harnesses the power of the Community Toolkit messenger and adds extension m
 
 For instance, when there is a command in the model that when executed creates a new entity and stores it to the database using a service, the service can send a 'created' entity-change message with the messenger, which can then be intercepted in the model to have the state or list-state update itself and display the newly created entity received from the messenger.
 
+These extensions are shipped in the [`Uno.Extensions.Reactive.Messaging`](https://www.nuget.org/packages/Uno.Extensions.Reactive.Messaging) NuGet package.
+
 ### Observe
+
+The purpose of the `Observe` methods (it comes in several overloads, [see below](#additional-observe-overloads)), is to intercept entity-change messages (`EntityMessage<T>`) from the Community Toolkit messenger and apply them into the designated state or list-state.
 
 In the example below, there is a model that displays a state-list of `Person` entities received from a service, loaded using a state, with the [`Async`](xref:Overview.Mvux.ListStates#async) factory-method.
 
@@ -160,6 +164,68 @@ public class PeopleService : IPeopleService
 
 As you can see, the messenger's `Send` method is called in the `CreateAsync` call, specifying a 'created' `EntityMessage` along with the newly created person. The model observes this type of message `EntityMessage<Person>`, and as the `People` list-state has been subscribed to this, it will be updated with the newly created person added to it.
 
+<!--TODO link from IState IListState page -->
+
 #### Additional Observe overloads
 
+The `Observe` extension method comes in several flavors.
+They all share a common goal - to intercept entity-message messages from the messenger and apply them to a state or feed-state. They also share a `keySelector` parameter which uses to determine by which property the entity is identified. This is important so that the state can compare or look up an appropriate entity where needed, for example when an entity was updated, it will replace the old one with the new one received with the entity message.
+
+- `Observe<TEntity, TKey>(IState<TEntity> state, Func<TEntity, TKey> keySelector)`
+
+    This overload takes the state to apply the entity messages on and the key-selector that determines by which property this entity is identified with.
+    It is designated for single-value states (`IState<T>`), and will update the state if an entity message has been received about an update or a deletion of an entity that is equal to the one currently present in the state.
+
+    In the following example, if any of the details of the current user change and an update entity-message about has been sent with the messenger, the `CurrentUser` state will update the `User` entity to reflect those changes.    
+
+    ```csharp
+    public partial record MyModel
+    {
+        protected IUserService UserService { get; }
+
+        public MyModel(IUserService userService)
+        {
+            UserService = userService;
+            
+            messenger.Observe(CurrentUser, user => user.Id);            
+        }
+
+        public IState<User> CurrentUser => State.Async(this, UserService.GetCurrentUser);
+    }
+    ```
+
+    The same applies for a deleted entity - the state will clear the current value.
+
+- `Observe<TEntity, TKey>(IListState<TEntity> listState, Func<TEntity, TKey> keySelector)`
+
+    This overload is similar to the previous one, except it takes a list-state and applies the entity messages on it, using the key-selector parameter to determine by which property this entity is identified with, for comparison purposes.
+    As long as entity-messages are sent from the service, the list-state will remain in sync and reflect newly added, deleted, or updated entities.   
+
+    This method is also the one that was used in the sample code above:
+
+    ```csharp
+    public partial record PeopleModel
+    {
+        protected IPeopleService PeopleService { get; }
+
+        public PeopleModel(IPeopleService peopleService, IMessenger messenger)
+        {
+            PeopleService = peopleService;
+
+            messenger.Observe(state: People, keySelector: person => person.Name);
+        }
+
+        public IListState<Person> People => ListState.Async(this, PeopleService.GetAllAsync);
+    }
+    ```
+
+- `Observe<TOther, TEntity, TKey>(IState<TEntity> state, IFeed<TOther> other, Func<TOther, TEntity, bool> predicate, Func<TEntity, TKey> keySelector)`
+
+- `Observe<TOther, TEntity, TKey>(IListState<TEntity> listState, IFeed<TOther> other, Func<TOther, TEntity, bool> predicate, Func<TEntity, TKey> keySelector)`
+
 ### Update
+
+The MVUX messaging package also includes a pair of `Update` methods that enable updating an `IState<T>` or an `IListState<T>` from an `EntityMessage<T>`.
+The main purpose of these messages are to serve the aforementioned `Observe` extension methods, but they can be used otherwise, for example if you would like to create additional implementations of the `Observe` extension methods.
+
+These methods apply data from an `EntityMessage<T>` to an `IState<T>` or an `IListState<T>`. So for example if an entity-message contains a `created` `T` entity, applying this entity-message to a list-state will add that record to the list-state. Same with update or remove.
