@@ -203,7 +203,7 @@ public partial class Given_ListFeedSelection : FeedTests
 	}
 
 	[TestMethod]
-	public async Task When_Single_With_InvalidInitial_And_UpdateSutStateInvalid_Then_ListStateUpdated()
+	public async Task When_Single_With_InvalidInitial_And_UpdateSutStateInvalid_Then_ListStateNotUpdated()
 	{
 		var selection = State.Value(this, () => 15).Record();
 		var list = ListState.Async(this, async _ => Enumerable.Range(0, 10).ToImmutableList());
@@ -248,7 +248,7 @@ public partial class Given_ListFeedSelection : FeedTests
 	}
 
 	[TestMethod]
-	public async Task When_Single_With_ValidInitial_And_UpdateSutStateInvalid_Then_ListStateUpdated()
+	public async Task When_Single_With_ValidInitial_And_UpdateSutStateInvalid_Then_ListStateNotUpdated()
 	{
 		var selection = State.Value(this, () => 1).Record();
 		var list = ListState.Async(this, async _ => Enumerable.Range(0, 10).ToImmutableList());
@@ -458,7 +458,7 @@ public partial class Given_ListFeedSelection : FeedTests
 	}
 
 	[TestMethod]
-	public async Task When_Multiple_With_InvalidInitial_And_UpdateSutStateInvalid_Then_ListStateUpdated()
+	public async Task When_Multiple_With_InvalidInitial_And_UpdateSutStateInvalid_Then_ListStateNotUpdated()
 	{
 		var selection = State.Value(this, () => ImmutableList.Create(15) as IImmutableList<int>).Record();
 		var list = ListState.Async(this, async _ => Enumerable.Range(0, 10).ToImmutableList());
@@ -503,7 +503,7 @@ public partial class Given_ListFeedSelection : FeedTests
 	}
 
 	[TestMethod]
-	public async Task When_Multiple_With_ValidInitial_And_UpdateSutStateInvalid_Then_ListStateUpdated()
+	public async Task When_Multiple_With_ValidInitial_And_UpdateSutStateInvalid_Then_ListStateNotUpdated()
 	{
 		var selection = State.Value(this, () => ImmutableList.Create(1) as IImmutableList<int>).Record();
 		var list = ListState.Async(this, async _ => Enumerable.Range(0, 10).ToImmutableList());
@@ -722,7 +722,7 @@ public partial class Given_ListFeedSelection : FeedTests
 	}
 
 	[TestMethod]
-	public async Task When_ProjectedSingle_With_InvalidInitial_And_UpdateSutStateInvalid_Then_ListStateUpdated()
+	public async Task When_ProjectedSingle_With_InvalidInitial_And_UpdateSutStateInvalid_Then_ListStateNotUpdated()
 	{
 		var selection = State.Value(this, () => new MyAggregateRoot(15)).Record();
 		var items = Enumerable.Range(0, 10).Select(i => new MyEntity(i)).ToImmutableList();
@@ -769,7 +769,7 @@ public partial class Given_ListFeedSelection : FeedTests
 	}
 
 	[TestMethod]
-	public async Task When_ProjectedSingle_With_ValidInitial_And_UpdateSutStateInvalid_Then_ListStateUpdated()
+	public async Task When_ProjectedSingle_With_ValidInitial_And_UpdateSutStateInvalid_Then_ListStateNotUpdated()
 	{
 		var selection = State.Value(this, () => new MyAggregateRoot(1)).Record();
 		var items = Enumerable.Range(0, 10).Select(i => new MyEntity(i)).ToImmutableList();

@@ -43,6 +43,8 @@ public class Given_ListFeed : FeedTests
 	{
 		async IAsyncEnumerable<IImmutableList<int>> GetSource()
 		{
+			await Task.Yield(); // Make sure to run async, so listener will receive all messages.
+
 			yield return new[] { 40, 41, 42 }.ToImmutableList();
 			yield return new[] { 41, 42, 43 }.ToImmutableList();
 			yield return new[] { 42, 43, 44 }.ToImmutableList();
@@ -64,6 +66,8 @@ public class Given_ListFeed : FeedTests
 	{
 		async IAsyncEnumerable<Message<IImmutableList<int>>> GetSource([EnumeratorCancellation] CancellationToken ct)
 		{
+			await Task.Yield(); // Make sure to run async, so listener will receive all messages.
+
 			var msg = Message<IImmutableList<int>>.Initial;
 
 			yield return msg = msg.With().Data(new[] { 40, 41, 42 }.ToImmutableList());
