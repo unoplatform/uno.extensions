@@ -30,6 +30,7 @@ internal partial class MessageManager<TParent, TResult>
 
 	public Message<TResult> Current => _local.result;
 	// Locally, we only store a set of delegates that are upgrading the parent value into a local value.
+	// Compared to the 'defined' the 'applied' also contains transient updates of a _pendingUpdate transaction.
 	private (_ChangeSet defined, _ChangeSet applied, Message<TResult> result) _local;
 
 	private bool _isFirstUpdate = true;
@@ -61,21 +62,27 @@ internal partial class MessageManager<TParent, TResult>
 
 		lock (_gate)
 		{
-			var (parent, locallyDefinedChangeSet) = updater(new CurrentMessage(this), state).GetResult();
+			var (parent, hasUpdatedDefinedChangeSet, updatedDefinedChangeSet) = updater(new CurrentMessage(this), state).GetResult();
 
 			if (ct.IsCancellationRequested)
 			{
 				return false;
 			}
 
+			// If nothing has been changed, so we prefer to use the previous defined change-set in order to avoid to just remove 'IsTransient' axes.
+			if (!hasUpdatedDefinedChangeSet)
+			{
+				updatedDefinedChangeSet = _local.defined;
+			}
+
 			// If we have any pending update transaction, we make sure to append its change set to the locally defined
-			var changeSetToApply = _pendingUpdate?.TransientUpdates is { Count: > 0 } transientUpdates
-				? locallyDefinedChangeSet.ToDictionary().SetItems(transientUpdates)
-				: locallyDefinedChangeSet;
+			var updatedAppliedChangeSet = _pendingUpdate?.TransientUpdates is { Count: > 0 } transientUpdates
+				? updatedDefinedChangeSet.ToDictionary().SetItems(transientUpdates)
+				: updatedDefinedChangeSet;
 
 			// Finally apply the updates in order to get the new Local
 			// Note: We append the _local.applied.Keys as if a transaction was removed, it's possible that some changes was removed
-			var possiblyChangedAxes = changeSetToApply.Keys.Concat(_local.applied.Keys);
+			var possiblyChangedAxes = updatedAppliedChangeSet.Keys.Concat(_local.applied.Keys);
 			if (parent is not null && parent != _parent) // Note: parent should not be null if updated !!!
 			{
 				possiblyChangedAxes = possiblyChangedAxes.Concat(parent.Changes);
@@ -95,7 +102,7 @@ internal partial class MessageManager<TParent, TResult>
 				//		 either the change is coming from the parent.
 				//		 In all case we just need to propagate the value from the parent.
 				var updated = (value: parentValue, changes: default(IChangeSet?));
-				if (changeSetToApply.TryGetValue(axis, out var update))
+				if (updatedAppliedChangeSet.TryGetValue(axis, out var update))
 				{
 					updated = update.GetValue(parentValue, currentValue);
 				}
@@ -130,7 +137,7 @@ internal partial class MessageManager<TParent, TResult>
 			}
 
 			_isFirstUpdate = false;
-			_local = (locallyDefinedChangeSet, changeSetToApply, new Message<TResult>(Current.Current, new MessageEntry<TResult>(values), changes)); 
+			_local = (updatedDefinedChangeSet, updatedAppliedChangeSet, new Message<TResult>(Current.Current, new MessageEntry<TResult>(values), changes)); 
 			_send?.Invoke(Current);
 			return true;
 		}

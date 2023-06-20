@@ -34,12 +34,12 @@ public class Given_MessageBuilder : FeedTests
 		var original = manager.Current;
 
 		// Note: Even if we don't set any axis in Update, the Current message should be updated only by the fact that the transient axis has been automatically removed
-		MessageBuilder<object, object> builder = default;
+		MessageBuilder<object, object>? builder = default;
 		manager.Update(current => builder = current.With(), CT);
 		var updated = manager.Current;
 
 		original.Current[myAxis].IsSet.Should().BeTrue();
-		builder.Get(myAxis).value.IsSet.Should().BeFalse("transient axis should have been cleared at beginning to reflect resulting state");
+		builder!.Get(myAxis).value.IsSet.Should().BeFalse("transient axis should have been cleared at beginning to reflect resulting state");
 		updated.Current[myAxis].IsSet.Should().BeFalse("transient axis should have been cleared on update");
 	}
 
@@ -53,12 +53,12 @@ public class Given_MessageBuilder : FeedTests
 		var original = manager.Current;
 
 		// Note: Even if we don't set any axis in Update, the Current message should be updated only by the fact that the transient axis has been automatically removed
-		MessageBuilder<object, object> builder = default;
+		MessageBuilder<object, object>? builder = default;
 		manager.Update(current => builder = current.With(), CT);
 		var updated = manager.Current;
 
 		original.Current[myAxis].IsSet.Should().BeTrue();
-		builder.Get(myAxis).value.IsSet.Should().BeTrue("transient axis should have been kept as it was defined on parent");
+		builder!.Get(myAxis).value.IsSet.Should().BeTrue("transient axis should have been kept as it was defined on parent");
 		updated.Current[myAxis].IsSet.Should().BeTrue("transient axis should have been kept as it was defined on parent");
 	}
 
@@ -72,12 +72,12 @@ public class Given_MessageBuilder : FeedTests
 		var original = manager.Current;
 
 		// Note: Even if we don't set any axis in Update, the Current message should be updated only by the fact that the transient axis has been automatically removed
-		MessageBuilder<object, object> builder = default;
+		MessageBuilder<object, object>? builder = default;
 		manager.Update(current => builder = current.With(), CT);
 		var updated = manager.Current;
 
 		original.Current[myAxis].IsSet.Should().BeTrue();
-		builder.Get(myAxis).value.IsSet.Should().BeTrue("transient axis should have been kept as it was also defined on parent");
+		builder!.Get(myAxis).value.IsSet.Should().BeTrue("transient axis should have been kept as it was also defined on parent");
 		updated.Current[myAxis].IsSet.Should().BeTrue("transient axis should have been kept as it was also defined on parent");
 	}
 
