@@ -1,6 +1,6 @@
 using CommunityToolkit.Maui;
-using Microsoft.Maui.Platform;
-using Uno.Extensions.Navigation;
+using Microsoft.Maui;
+using MControls = Microsoft.Maui.Controls;
 
 namespace MauiEmbedding;
 
@@ -19,7 +19,20 @@ public class App : Application
 		var builder = this.CreateBuilder(args)
 			.UseMauiEmbedding(maui =>
 			{
-				maui.UseMauiCommunityToolkit();
+
+				maui
+				.UseMauiCommunityToolkit();
+
+
+				Microsoft.Maui.Handlers.ShapeViewHandler.Mapper.AppendToMapping("BackgroundColor", (h, v) =>
+				{
+					if (v is MControls.BoxView boxview)
+					{
+						boxview.Background = MControls.Brush.Fuchsia;
+						Microsoft.Maui.Handlers.ShapeViewHandler.MapBackground(h, boxview);
+					}
+
+				});
 			})
 			// Add navigation support for toolkit controls such as TabBar and NavigationView
 			.UseToolkitNavigation()
@@ -66,7 +79,8 @@ public class App : Application
 				)
 				// Enable localization (see appsettings.json for supported languages)
 				.UseLocalization()
-				.ConfigureServices((context, services) => {
+				.ConfigureServices((context, services) =>
+				{
 					// TODO: Register your services
 					//services.AddSingleton<IMyService, MyService>();
 				})

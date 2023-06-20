@@ -7,6 +7,5 @@ public sealed partial class MainPage : Page
 	public MainPage()
 	{
 		this.InitializeComponent();
-		//new StackPanel().Spacing
 	}
 }
