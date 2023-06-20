@@ -29,20 +29,25 @@
 		<utu:NavigationBar Content="{Binding Title}" />
 
 		<embed:MauiContent Grid.Row="1">
-			<maui:ScrollView>
-				<maui:ScrollView.Content>
-					<maui:VerticalStackLayout x:Name="stack" Spacing="16">
+			<maui:VerticalStackLayout x:Name="stack" Spacing="16">
 
-						<maui:Label Text="{embed:MauiResource Key=HelloWorld}" TextColor="{embed:MauiResource Key=DemoColor}" />
-						<!--<maui:BoxView HeightRequest="300" />-->
-						<!--<maui:Label Text="{embed:MauiResource Key=HelloWorld}" TextColor="{embed:MauiResource Key=DemoColor}" />
-		
-						
-		<maui:Label x:Name="lbl" Text="{embed:MauiBinding Path=Title, Converter={StaticResource TitleConverter}}" />-->
+				<maui:Label Text="Hello World">
+					<!--  This doesn't work here  -->
+					<!--  Probably related to https://github.com/microsoft/microsoft-ui-xaml/issues/2232  -->
+					<!--<maui:Label.HeightRequest>
+						<x:Double>600</x:Double>
+					</maui:Label.HeightRequest>-->
+				</maui:Label>
 
-					</maui:VerticalStackLayout>
-				</maui:ScrollView.Content>
-			</maui:ScrollView>
+				<maui:Button Text="Click me" />
+
+				<maui:Entry Placeholder="Some text" />
+
+				<maui:Picker x:Name="picker" Title="Some UI frameworks picker" />
+
+				<maui:ActivityIndicator IsRunning="true" />
+
+			</maui:VerticalStackLayout>
 		</embed:MauiContent>
 
 		<StackPanel
