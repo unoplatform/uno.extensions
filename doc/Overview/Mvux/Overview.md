@@ -217,7 +217,7 @@ In order to summarize what we've just seen, let's return to the list of challeng
 
 ## Learning MVUX by Creating your own
 
-To create a new project using MVUX on Uno Platform see [How to set up an MVUX project](https://github.com/unoplatform/uno.extensions/blob/main/doc/Overview/Mvux/Tutorials/HowTo-MvuxProject.md).
+To create a new project using MVUX on Uno Platform, see [How to set up an MVUX project](xref:Overview.Mvux.HowToMvuxProject).
 
 You can then use the example above as a reference to create your own solution.
 
