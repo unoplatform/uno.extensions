@@ -43,4 +43,13 @@ public readonly record struct MessageAxisValue
 		isSet = IsSet;
 		value = Value;
 	}
+
+	/// <inheritdoc />
+	public override string ToString()
+		=> (IsSet, Value) switch
+		{
+			(false, _) => "--unset--",
+			(true, null) => "--null--",
+			(_, var v) => v.ToString()
+		};
 }
