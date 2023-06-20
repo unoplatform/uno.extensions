@@ -228,7 +228,7 @@ As summarized below.
 - Create you own Models
 - MVUX recommends using plain POCO (Plain Old CLR Object) record types for the models in your app as they're immutable.
 - The MVUX analyzers generate a bindable proxy for each of the models in your app (those with Model suffix and mark with the partial modifier). 
-- For every public feed property (returning IFeed<T> or IListFeed<T>) found in the model, a corresponding property is generated on the bindable proxy.
+- For every public feed property (returning `IFeed<T>` or `IListFeed<T>`) found in the model, a corresponding property is generated on the bindable proxy.
 
 ### In the View
 
