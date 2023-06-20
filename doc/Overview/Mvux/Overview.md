@@ -242,5 +242,5 @@ As summarized below.
 
 ### eXtended
 
-- As the MVUX already generated the bindable proxies.
+- Bindable proxies have already been generated for you
 - You just need to add an Bindable instance of the `YourModel`, the `DataContext` and it is done.  
