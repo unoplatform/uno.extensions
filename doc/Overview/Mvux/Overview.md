@@ -234,7 +234,7 @@ As summarized below.
 
 - Create your views and add the data binds
 - Create and customize your FeedView as you can see in [The FeedView control](https://github.com/unoplatform/uno.extensions/blob/main/doc/Overview/Mvux/FeedView.md)
-- Or you can use [States](https://github.com/unoplatform/uno.extensions/blob/main/doc/Overview/Mvux/States.md)
+- Or you can use [States](xref:Overview.Mvux.States)
 
 ### Update
 
