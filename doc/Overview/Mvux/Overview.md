@@ -8,7 +8,7 @@ uid: Overview.Mvux.Overview
 
 In summary MVUX utilizes its powerful code-generation engine to generate a bindable proxy for each Model, which holds the state information of the data, as well as a bindable proxy for entities where needed.
 Bindable proxies are used as a bridge that enables immutable entities to work with the WinUI data-binding engine. 
-The states in the Model are monitored for data-binding changes, and in response to any change, **the objects are recreated fresh**, instead of their properties being changed.
+The states in the Model are monitored for data-binding changes, at which point the objects will be **recreated** fresh instead of simply changing their properties.
 
 Thus, with less code typed, we can have a more efficient and practical result.
 
