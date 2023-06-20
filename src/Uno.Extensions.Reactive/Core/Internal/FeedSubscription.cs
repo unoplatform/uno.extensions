@@ -26,6 +26,7 @@ internal class FeedSubscription
 
 internal class FeedSubscription<T> : IAsyncDisposable, ISourceContextOwner
 {
+	private readonly ISignal<Message<T>> _feed;
 	private readonly SourceContext _rootContext;
 	private readonly CompositeRequestSource _requests = new();
 	private readonly SourceContext _context;
@@ -33,6 +34,7 @@ internal class FeedSubscription<T> : IAsyncDisposable, ISourceContextOwner
 
 	public FeedSubscription(ISignal<Message<T>> feed, SourceContext rootContext)
 	{
+		_feed = feed;
 		_rootContext = rootContext;
 		_context = rootContext.CreateChild(this, _requests);
 		_source = new ReplayOneAsyncEnumerable<Message<T>>(
@@ -40,14 +42,21 @@ internal class FeedSubscription<T> : IAsyncDisposable, ISourceContextOwner
 			isInitialSyncValuesSkippingAllowed: FeedSubscription.IsInitialSyncValuesSkippingAllowed);
 	}
 
-	string ISourceContextOwner.Name => $"Sub on {_source} for ctx '{_context.Parent!.Owner.Name}'.";
+	string ISourceContextOwner.Name => $"Sub on '{_feed}' for ctx '{_context.Parent!.Owner.Name}'.";
 
 	IDispatcher? ISourceContextOwner.Dispatcher => null;
 
+	internal Message<T> Current => _source.TryGetCurrent(out var value) ? value : Message<T>.Initial;
+
+	public IDisposable UpdateMode(SubscriptionMode mode)
+	{
+		// Not supported yet.
+		// Here we should compute the stricter mode
+		return Disposable.Empty;
+	}
 
 	public async IAsyncEnumerable<Message<T>> GetMessages(SourceContext subscriberContext, [EnumeratorCancellation] CancellationToken ct)
 	{
-		Debug.Assert(subscriberContext.RootId == _context.RootId);
 		if (subscriberContext != _rootContext)
 		{
 			_requests.Add(subscriberContext.RequestSource, ct);
@@ -83,6 +92,6 @@ internal class FeedSubscription<T> : IAsyncDisposable, ISourceContextOwner
 	{
 		await _context.DisposeAsync();
 		_requests.Dispose();
-		_source.Dispose();
+		await _source.DisposeAsync();
 	}
 }

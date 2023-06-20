@@ -1,26 +1,19 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Threading;
-using System.Threading.Tasks;
 using Uno.Extensions.Reactive.Operators;
-using Uno.Extensions.Reactive.Utils;
+using Uno.Extensions.Reactive.Sources;
 
 namespace Uno.Extensions.Reactive.Core;
 
-internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, IStateImpl, ISourceContextOwner
+internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, IStateImpl
 {
-	private readonly object _updateGate = new();
-	private readonly UpdateFeed<T>? _updates;
-	private readonly IForEachRunner? _innerEnumeration;
-	private readonly CompositeRequestSource _requests = new();
+	private readonly SubscriptionMode _mode;
+	private readonly StateUpdateKind _updatesKind;
+	private readonly UpdateFeed<T> _inner;
 
-	private bool _hasCurrent;
-	private Message<T> _current = Message<T>.Initial;
-	private TaskCompletionSource<Node>? _next = new(); // Do not use attached: we don't want to keep the creating context alive and leak this State
+	private FeedSubscription<T>? _subscription;
+	private IDisposable? _subscriptionMode;
 
 	/// <summary>
 	/// Gets the context to which this state belongs.
@@ -28,230 +21,123 @@ internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, ISta
 	public SourceContext Context { get; }
 	SourceContext IStateImpl.Context => Context;
 
-	internal Message<T> Current => _current;
+	internal Message<T> Current => _subscription?.Current ?? Message<T>.Initial;
 
-	string ISourceContextOwner.Name => $"State<{typeof(T).Name}> for ctx '{Context.Parent!.Owner.Name}'.";
-
-	IDispatcher? ISourceContextOwner.Dispatcher => null;
-
-	private readonly struct Node
-	{
-		private readonly Message<T> _value;
-		private readonly TaskCompletionSource<Node> _next;
-
-		public Node(Message<T> value, TaskCompletionSource<Node> next)
-		{
-			_value = value;
-			_next = next;
-		}
-
-		public void Deconstruct(out Message<T> current, out TaskCompletionSource<Node> next)
-		{
-			current = _value;
-			next = _next;
-		}
-	}
-
-	public StateImpl(
-		SourceContext context,
-		IFeed<T> feed,
-		StateSubscriptionMode mode = StateSubscriptionMode.Default,
-		StateUpdateKind updatesKind = StateUpdateKind.Volatile)
-	{
-		Context = context.CreateChild(this, _requests);
-
-		if (updatesKind is StateUpdateKind.Persistent)
-		{
-			// Note: We expect to use the UpdateFeed for all kind of updates, but to avoid silent breaking changes,
-			//		 for now we use it only when using the new Persistent mode.
-			feed = _updates = new UpdateFeed<T>(feed);
-
-			// If updates has to be persistent, the subscription to the UpdateFeed must remain active.
-			mode &= ~StateSubscriptionMode.RefCounted;
-		}
-
-		_innerEnumeration = mode.HasFlag(StateSubscriptionMode.RefCounted)
-			? new RefCountedForEachRunner<Message<T>>(GetSource, UpdateState)
-			: new ForEachRunner<Message<T>>(GetSource, UpdateState);
-		if (mode.HasFlag(StateSubscriptionMode.Eager))
-		{
-			_innerEnumeration.Prefetch();
-		}
-
-		IAsyncEnumerable<Message<T>> GetSource()
-			=> feed.GetSource(Context);
-
-		ValueTask UpdateState(Message<T> newSrcMsg, CancellationToken ct)
-			// Note: When using the StateUpdateKind.Persistent, the newScrMsg is known to be the same as the currentStateMsg
-			//		 (as updates are made on the source 'feed' instead of locally), so this is equivalent to:
-			//=> UpdateCore(_ => newSrcMsg, ct); // Note2 : OverrideBy is optimized to handle that case!
-			=> UpdateCore(currentStateMsg => currentStateMsg.OverrideBy(newSrcMsg), ct);
-	}
-
-	public StateImpl(SourceContext context, Option<T> defaultValue)
-	{
-		Context = context?.CreateChild(this, _requests)!; // Null check override only for legacy IInput support
-
-		_hasCurrent = true; // Even if undefined, we consider that we do have a value in order to produce an initial state
-		if (!defaultValue.IsUndefined())
-		{
-			_current = _current.With().Data(defaultValue);
-		}
-	}
+	/// <summary>
+	/// Gets direct access to the underlying UpdateFeed so we can have full control of update operation made on it.
+	/// </summary>
+	internal UpdateFeed<T> Inner => _inner;
 
 	/// <summary>
 	/// Legacy - Used only be legacy IInput syntax
 	/// </summary>
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	public StateImpl(Option<T> defaultValue)
-		: this(null!, defaultValue)
+		: this(SourceContext.None, defaultValue)
 	{
 	}
 
-	internal IAsyncEnumerable<Message<T>> GetSource(CancellationToken ct)
-		=> GetSource(Context, ct);
-
-	public async IAsyncEnumerable<Message<T>> GetSource(SourceContext context, [EnumeratorCancellation] CancellationToken ct = default)
+	public StateImpl(SourceContext context, Option<T> defaultValue)
+		: this(context, new AsyncFeed<T>(async _ => defaultValue), SubscriptionMode.Eager, StateUpdateKind.Persistent)
 	{
-		using var _ = _innerEnumeration?.Enable();
+	}
 
-		if (Context is not null /*Legacy IInput support*/ && context != Context)
+	public StateImpl(
+		SourceContext context,
+		IFeed<T> feed,
+		SubscriptionMode mode = SubscriptionMode.Default,
+		StateUpdateKind updatesKind = StateUpdateKind.Volatile)
+	{
+		Context = context;
+
+		_mode = mode;
+		_updatesKind = updatesKind;
+		_inner = new UpdateFeed<T>(feed);
+
+		if (updatesKind is StateUpdateKind.Persistent)
 		{
-			_requests.Add(context.RequestSource, ct);
+			// If updates has to be persistent, the subscription to the UpdateFeed must remain active.
+			_mode &= ~SubscriptionMode.RefCounted;
 		}
 
-		var isFirstMessage = true;
-		TaskCompletionSource<Node>? next;
-		(bool hasMessage, Message<T> message) initial;
-		lock(_updateGate)
+		if (mode.HasFlag(SubscriptionMode.Eager))
 		{
-			// We access to the _current only in the _updateGate, so we make sure that we would never miss or replay a value
-			// by listening to the _next too late/early
-			initial = (_hasCurrent, _current);
-
-			next = _next;
+			// Note: Once the dynamic updates of the subscription mode in supported in FeedSubscription,
+			//		 we will be able to unconditionally create the _subscription and just push the mode on it instead!
+			Enable();
 		}
+	}
 
-		if (initial.hasMessage)
-		{
-			yield return Message<T>.Initial.OverrideBy(initial.message);
-			isFirstMessage = false;
-		}
+	public IAsyncEnumerable<Message<T>> GetSource(SourceContext context, CancellationToken ct = default)
+	{
+		Enable();
 
-		while (!ct.IsCancellationRequested && next is not null)
-		{
-			Message<T> current;
-			try
-			{
-				(current, next) = await next.Task.ConfigureAwait(false);
-			}
-			catch (TaskCanceledException)
-			{
-				yield break;
-			}
-
-			if (isFirstMessage)
-			{
-				current = Message<T>.Initial.OverrideBy(current);
-				isFirstMessage = false;
-			}
-
-			yield return current;
-		}
-
-		if (isFirstMessage)
-		{
-			yield return Message<T>.Initial;
-		}
+		// Note: The subscription has been created using our own Context, and we forward the subscriber context only for requests propagation.
+		return _subscription!.GetMessages(context, ct);
 	}
 
 	/// <inheritdoc />
-	public ValueTask UpdateMessage(Action<MessageBuilder<T>> updater, CancellationToken ct)
+	public async ValueTask UpdateMessage(Action<MessageBuilder<T>> updater, CancellationToken ct)
 	{
-		if (_updates is not null)
-		{
-			// WARNING: There is a MAJOR issue here: if updater fails, the error will be propagated into the output feed instead of the caller!
-			// This is acceptable for now as so far there is no way to reach this code from public API
+		// First we make sure that the UpdateFeed is active, so the update will be applied ^^
+		Enable();
 
-			// First we make sure that the UpdateFeed is active, so the update will be applied ^^
-			_innerEnumeration?.Enable();
-			return _updates.Update((_, _) => true, (_, msg) => updater(new(msg.Get, ((IMessageBuilder)msg).Set)), ct);
-		}
-		else
-		{
-			// Compatibility mode
-			return UpdateCore(msg => msg.With().Apply(updater).Build(), ct);
-		}
+		var update = new Update(updater, _updatesKind);
+		_inner.Add(update);
+		await update.HasBeenApplied; // Makes sure to forward (the first) error to the caller if any.
 	}
 
-	private async ValueTask UpdateCore(Func<Message<T>, Message<T>> updater, CancellationToken ct)
+	private void Enable()
 	{
-		if (_next is null)
+		if (_subscription is not null)
 		{
 			return;
 		}
 
-		Message<T> updated;
-		TaskCompletionSource<Node>? current, next;
-		lock (_updateGate)
+		// Note: The subscription has to be created using our own Context, not the one of our subscribers.
+		var subscription = Context.States.GetOrCreateSubscription<IFeed<T>, T>(_inner);
+		if (Interlocked.CompareExchange(ref _subscription, subscription, null) is null)
 		{
-			updated = updater(_current);
-
-			if (_current.Current != updated.Previous)
-			{
-				throw new InvalidOperationException(
-					"The updated message is not based on the current message. "
-					+ "You must use the Message.With() or Message.OverrideBy() to create a new version.");
-			}
-
-			if (_hasCurrent && updated is { Changes.Count: 0 })
-			{
-				return;
-			}
-
-			if (!MoveNext(out current, out next, ct))
-			{
-				return;
-			}
-
-			_current = updated;
-			_hasCurrent = true;
-		}
-
-		current.TrySetResult(new Node(updated, next));
-	}
-
-	private bool MoveNext(
-		[NotNullWhen(true)] out TaskCompletionSource<Node>? current, 
-		[NotNullWhen(true)] out TaskCompletionSource<Node>? next, 
-		CancellationToken ct)
-	{
-		next = new TaskCompletionSource<Node>();
-		while (true)
-		{
-			current = _next;
-			if (ct.IsCancellationRequested || current is null)
-			{
-				// Update has been aborted or State has been disposed
-				return false;
-			}
-
-			if (Interlocked.CompareExchange(ref _next, next, current) == current)
-			{
-				return true;
-			}
+			_subscriptionMode = _subscription.UpdateMode(_mode);
 		}
 	}
 
 	/// <inheritdoc />
-	public async ValueTask DisposeAsync()
+	public async ValueTask DisposeAsync() 
 	{
-		if (Context is not null)
+		// Note: As the _innerFeed as been created by us, we dispose the _subscription (even it belongs to the StateStore)
+		//		 in order to make sure to release the original underlying feed.
+		//		 This is a temporary patch until we support dynamic updates of the subscription mode in FeedSubscription (i.e. the _subscriptionMode).
+		if (_subscription is { } sub)
 		{
-			await Context.DisposeAsync();
+			await sub.DisposeAsync();
 		}
-		_requests.Dispose(); // Safety only, should have already been disposed by the Context
-		_innerEnumeration?.Dispose();
-		Interlocked.Exchange(ref _next, null)?.TrySetCanceled();
+		_subscriptionMode?.Dispose();
+	}
+
+	private record Update(Action<MessageBuilder<T>> Method, StateUpdateKind Kind) : IFeedUpdate<T>
+	{
+		private readonly TaskCompletionSource<object?> _firstResult = new();
+
+		public Task HasBeenApplied => _firstResult.Task;
+
+		/// <inheritdoc />
+		public bool IsActive(bool parentChanged, MessageBuilder<T, T> message)
+			=> !_firstResult.Task.IsFaulted
+				&& (Kind is StateUpdateKind.Persistent || !parentChanged || !_firstResult.Task.IsCompleted);
+
+		/// <inheritdoc />
+		public void Apply(bool parentChanged, MessageBuilder<T, T> message)
+		{
+			try
+			{
+				Method(new(message.Get, ((IMessageBuilder)message).Set));
+				_firstResult.TrySetResult(null);
+			}
+			catch (Exception error) when (!_firstResult.Task.IsCompleted) // Otherwise let the exception bubble up.
+			{
+				_firstResult.TrySetException(error);
+			}
+		}
 	}
 }
