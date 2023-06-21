@@ -9,7 +9,7 @@
 	  xmlns:toolkit="using:CommunityToolkit.Maui.Views"
 	  xmlns:uen="using:Uno.Extensions.Navigation.UI"
 	  xmlns:utu="using:Uno.Toolkit.UI"
-	  Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+	  Background="{ThemeResource BackgroundBrush}"
 	  NavigationCacheMode="Required"
 	  mc:Ignorable="d">
 
