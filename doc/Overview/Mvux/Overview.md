@@ -6,11 +6,10 @@ uid: Overview.Mvux.Overview
 
 **M**odel, **V**iew, **U**pdate, e**X**tended (**MVUX**) is an evolution of the MVU design pattern, that encourages unidirectional flow of immutable data. MVUX supports data binding, bringing together the best of the MVU and MVVM design patterns.
 
-In summary MVUX utilizes its powerful code-generation engine to generate a bindable proxy for each Model, which holds the state information of the data, as well as a bindable proxy for entities where needed.
+MVUX uses a source code generator to generate bindable proxies for each Model. Additional proxies may be generated for other entities where needed.
 Bindable proxies are used as a bridge that enables immutable entities to work with the WinUI data-binding engine. 
 The states in the Model are monitored for data-binding changes, at which point the objects will be **recreated** fresh instead of simply changing their properties.
 
-Thus, with less code typed, we can have a more efficient and practical result.
 
 ## Learning MVUX by samples
 
@@ -221,19 +220,26 @@ To create a new project using MVUX on Uno Platform, see [How to set up an MVUX p
 
 You can then use the example above as a reference to create your own solution.
 
-As summarized below.
 
 ### In the Model
 
-- Create you own Models
-- MVUX recommends using plain POCO (Plain Old CLR Object) record types for the models in your app as they're immutable.
-- The MVUX analyzers generate a bindable proxy for each of the models in your app (those with Model suffix and mark with the partial modifier). 
+- Define your own Models
+- MVUX recommends using record types for the Models in your app as they're immutable.
+- The MVUX analyzers auto-generate a bindable proxy for each `partial` `class` or `record` named with a _Model_ suffix 
+
+- The example below demonstrates this type of model definition:
+    
+    ```csharp
+    public partial record MainModel
+    {
+    ...
+    ```
 - For every public feed property (returning `IFeed<T>` or `IListFeed<T>`) found in the model, a corresponding property is generated on the bindable proxy.
 
 ### In the View
 
-- Create your views and add the data binds
-- Create and customize your FeedView as you can see in [The FeedView control](https://github.com/unoplatform/uno.extensions/blob/main/doc/Overview/Mvux/FeedView.md)
+- Create your views and add data binding to the XAML elements as required
+- Create and customize your FeedView as you can see in [The FeedView control](xref:Overview.Mvux.FeedView).
 - Or you can use [States](xref:Overview.Mvux.States)
 
 ### Update
@@ -243,4 +249,4 @@ As summarized below.
 ### eXtended
 
 - Bindable proxies have already been generated for you
-- You just need to add an Bindable instance of the `YourModel`, the `DataContext` and it is done.  
+- You just need to create an instance of the bindable proxy for your Model and assign it to the `DataContext` and it is done.  
