@@ -24,5 +24,16 @@ public sealed partial class MCTControlsPage : Page
 	public MCTControlsPage()
 	{
 		this.InitializeComponent();
+
+		var drawing = new CommunityToolkit.Maui.Views.DrawingView()
+		{
+			HeightRequest = 300,
+			WidthRequest = 300,
+			LineColor = Microsoft.Maui.Graphics.Colors.Fuchsia,
+			BackgroundColor = Microsoft.Maui.Graphics.Colors.Black
+		};
+
+		this.layout.Add(drawing);
+
 	}
 }
