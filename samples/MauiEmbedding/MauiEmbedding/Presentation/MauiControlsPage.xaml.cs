@@ -13,38 +13,38 @@ public sealed partial class MauiControlsPage : Page
 	{
 		this.InitializeComponent();
 
-		var lbl = new Label()
-		{
-			// If we don't specify the size , the label will not be visible
-			// when the binding changes it doesn't recalculate its size
-			HeightRequest = 20,
-		};
+		//var lbl = new Label()
+		//{
+		//	// If we don't specify the size , the label will not be visible
+		//	// when the binding changes it doesn't recalculate its size
+		//	HeightRequest = 20,
+		//};
 
-		var b = new BoxView
-		{
-			HeightRequest = 300,
-			WidthRequest = 300
-		};
+		//var b = new BoxView
+		//{
+		//	HeightRequest = 300,
+		//	WidthRequest = 300
+		//};
 
-		var source = new List<string> { "Uno", "Maui", "WinUI" };
+		//var source = new List<string> { "Uno", "Maui", "WinUI" };
 
-		this.picker.ItemsSource = source; 
+		//this.picker.ItemsSource = source; 
 
-		var mauiBinding = new Microsoft.Maui.Controls.Binding
-		{
-			Path = "Title",
-			Source = DataContext
-		};
+		//var mauiBinding = new Microsoft.Maui.Controls.Binding
+		//{
+		//	Path = "Title",
+		//	Source = DataContext
+		//};
 
-		lbl.SetBinding(Label.TextProperty, mauiBinding);
+		//lbl.SetBinding(Label.TextProperty, mauiBinding);
 
-		this.stack.BindingContextChanged +=(_,__) =>
-		{
-			_ = this.stack.BindingContext;
-			_ = lbl.BindingContext;
-		};
+		//this.stack.BindingContextChanged +=(_,__) =>
+		//{
+		//	_ = this.stack.BindingContext;
+		//	_ = lbl.BindingContext;
+		//};
 
-		this.stack.Add(lbl);
-		this.stack.Add(b);
+		//this.stack.Add(lbl);
+		//this.stack.Add(b);
 	}
 }
