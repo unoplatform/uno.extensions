@@ -23,9 +23,9 @@ public abstract class MauiExtensionBase : MarkupExtension
 		var provideValueTarget = (IProvideValueTarget)serviceProvider.GetService(typeof(IProvideValueTarget));
 		ThreadHelpers.WhatThreadAmI();
 
+#if WINDOWS
 		DependencyObject targetObject = (DependencyObject)provideValueTarget!.TargetObject;
-
-
+#endif
 		#region TypeTesting
 
 		Debug.WriteLine(provideValueTarget);
