@@ -4,7 +4,7 @@ uid: Overview.Mvux.Overview
 
 # MVUX Overview
 
-**M**odel, **V**iew, **U**pdate, e**X**tended (**MVUX**) is a variation of the MVU design pattern that encourages unidirectional flow of immutable data, whilst adding support for the data binding capabilities. And that capabilitie makes the MVVM pattern so powerful. In other words, MVUX brings together the best of the MVU and MVVM design patterns.
+**M**odel, **V**iew, **U**pdate, e**X**tended (**MVUX**) is an evolution of the MVU design pattern, that encourages unidirectional flow of immutable data. MVUX supports data binding, bringing together the best of the MVU and MVVM design patterns.
 
 In summary MVUX utilizes its powerful code-generation engine to generate a bindable proxy for each Model, which holds the state information of the data, as well as a bindable proxy for entities where needed.
 Bindable proxies are used as a bridge that enables immutable entities to work with the WinUI data-binding engine. 
