@@ -6,10 +6,11 @@ uid: Overview.Mvux.Overview
 
 **M**odel, **V**iew, **U**pdate, e**X**tended (**MVUX**) is an evolution of the MVU design pattern, that encourages unidirectional flow of immutable data. MVUX supports data binding, bringing together the best of the MVU and MVVM design patterns.
 
-MVUX uses a source code generator to generate bindable proxies for each Model. Additional proxies may be generated for other entities where needed.
-Bindable proxies are used as a bridge that enables immutable entities to work with the WinUI data-binding engine. 
-The states in the Model are monitored for data-binding changes, at which point the objects will be **recreated** fresh instead of simply changing their properties.
+MVUX uses a source code generator to generate bindable proxies for each Model. Additional bindable proxies are generated for other entities where needed.
 
+Bindable proxies are used as a bridge that enables immutable entities to work with the Uno Platform data-binding engine.  
+
+Changes in the bindable proxies result in parts of the Model being recreated, rather than changing properties. This ensures the Model is immutable, and thus eliminates a large set of potential exceptions and issues related to mutable entities.
 
 ## Learning MVUX by samples
 
@@ -220,31 +221,32 @@ To create a new project using MVUX on Uno Platform, see [How to set up an MVUX p
 
 You can then use the example above as a reference to create your own solution.
 
-
 ### In the Model
 
 - Define your own Models
-- MVUX recommends using record types for the Models in your app as they're immutable.
-- The MVUX analyzers auto-generate a bindable proxy for each `partial` `class` or `record` named with a _Model_ suffix 
+- MVUX recommends using record types for the Models in your app as they're immutable
+- The MVUX analyzers auto-generate a bindable proxy for each `partial` `class` or `record` named with a _Model_ suffix  
+- For every public feed property (returning `IFeed<T>` or `IListFeed<T>`) found in the model, a corresponding property is generated on the bindable proxy.
+- You can use [states](xref:Overview.Mvux.States) for accepting input from the user
+- For example:
 
-- The example below demonstrates this type of model definition:
-    
     ```csharp
-    public partial record MainModel
+    public partial record MainModel(IGreetingService GreetingService)
     {
+        public IFeed<string> WelcomeMessage => Feed.Async(this.GreetingService.Welcome);
     ...
     ```
-- For every public feed property (returning `IFeed<T>` or `IListFeed<T>`) found in the model, a corresponding property is generated on the bindable proxy.
 
 ### In the View
 
 - Create your views and add data binding to the XAML elements as required
 - Create and customize your FeedView as you can see in [The FeedView control](xref:Overview.Mvux.FeedView).
-- Or you can use [States](xref:Overview.Mvux.States)
+- Use two-way binding to a state to allow input from the user
 
 ### Update
 
-- Add your updates in the Model and in the views
+- Trigger feeds to be refreshed
+- Update states in the Model, or two-way data bind to states in the XAML
 
 ### eXtended
 
