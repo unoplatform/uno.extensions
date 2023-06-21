@@ -39,12 +39,15 @@
 					</maui:Label.HeightRequest>-->
 				</maui:Label>
 
+				<!-- Button requires the app style (Styles.xml) to be changed from Theme.AppCompat.Light to Theme.MaterialComponents.Light eg
+				<style name="AppTheme" parent="Theme.MaterialComponents.Light">
+				-->
 				<maui:Button Text="Click me" />
 
 				<maui:Entry Placeholder="Some text" />
 
 				<maui:Picker x:Name="picker" Title="Some UI frameworks picker" />
-
+				
 				<maui:ActivityIndicator IsRunning="true" />
 
 			</maui:VerticalStackLayout>
