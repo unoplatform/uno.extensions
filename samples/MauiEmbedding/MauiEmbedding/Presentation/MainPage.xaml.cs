@@ -2,7 +2,7 @@
 
 public sealed partial class MainPage : Page
 {
-	public MainViewModel Vm => (MainViewModel)DataContext;
+	public MainViewModel? Vm => DataContext as MainViewModel;
 
 	public MainPage()
 	{
