@@ -15,6 +15,7 @@
 		<Button Click="{x:Bind Vm.GoToMauiControls}" Content="Maui simple controls" />
 		<Button Click="{x:Bind Vm.GoToCommunityToolkitMauiControls}" Content="CommunityToolkit.Maui controls" />
 		<Button Click="{x:Bind Vm.GoToMauiEssentialsApi}" Content="Maui.Essentials APIs" />
+		<Button Click="{x:Bind Vm.GoToTelerikPage}" Content="Telerik controls, remember to reference the nuget server" />
 	</StackPanel>
 
 </Page>

@@ -18,7 +18,7 @@ public sealed partial class MauiControlsPage : Page
 		{
 			// If we don't specify the size , the label will not be visible
 			// when the binding changes it doesn't recalculate its size
-			// This control doesn't show up on iOS but it's on the visual tree
+			// This control doesn't show up on mobile targets but it's on the visual tree
 			HeightRequest = 20,
 			BackgroundColor = Colors.Pink
 		};

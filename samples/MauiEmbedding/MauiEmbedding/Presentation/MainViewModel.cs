@@ -36,4 +36,9 @@ public partial class MainViewModel : ObservableObject
 	{
 		await _navigator.NavigateViewModelAsync<MauiEssentialsViewModel>(this);
 	}
+
+	public async Task GoToTelerikPage()
+	{
+		await _navigator.NavigateViewModelAsync<TelerikControlsViewModel>(this);
+	}
 }
