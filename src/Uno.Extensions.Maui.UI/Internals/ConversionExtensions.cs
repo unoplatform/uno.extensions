@@ -12,6 +12,13 @@ internal static class ConversionExtensions
 
 		try
 		{
+			if (input.ThemeDictionaries.Any())
+			{
+				input = input.ThemeDictionaries.TryGetValue("Default", out var dict) ?
+							(dict as ResourceDictionary)! :
+							(input.ThemeDictionaries.First().Value as ResourceDictionary)!;
+			}
+
 			foreach (var kvp in input)
 			{
 				try
