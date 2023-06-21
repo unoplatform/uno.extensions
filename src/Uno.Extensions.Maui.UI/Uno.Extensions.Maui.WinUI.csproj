@@ -1,13 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFrameworks>net6.0;net6.0-android;net6.0-ios;net6.0-maccatalyst</TargetFrameworks>
+		<TargetFrameworks>net6.0-android;net6.0-ios;net6.0-maccatalyst</TargetFrameworks>
 		<TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net6.0-windows10.0.19041</TargetFrameworks>
 		<UseMaui>true</UseMaui>
 		<RootNamespace>Uno.Extensions.Maui</RootNamespace>
 		<NoWarn>$(NoWarn);NU5104;NU5048;NU1009</NoWarn>
 		<Description>Extensions to embed .NET MAUI controls within your Uno app.</Description>
-		<DefineConstants Condition="$(TargetFramework) == 'net6.0'">$(DefineConstants);NO_PLATFORM</DefineConstants>
 	</PropertyGroup>
 
 	<ItemGroup>

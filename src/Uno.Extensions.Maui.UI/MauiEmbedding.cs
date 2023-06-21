@@ -10,15 +10,11 @@ namespace Uno.Extensions.Maui;
 /// </summary>
 public static class MauiEmbedding
 {
-#if !NO_PLATFORM
 	private static MauiApp? _app;
-#endif
 	internal static IMauiContext MauiContext =>
 #if ANDROID
 		_app is not null ? new MauiContext(_app.Services, UI.ContextHelper.Current)
 			: throw new MauiEmbeddingInitializationException();
-#elif NO_PLATFORM
-		throw new PlatformNotSupportedException();
 #else
 	_app is not null ? new MauiContext(_app.Services)
 			: throw new MauiEmbeddingInitializationException();
@@ -36,17 +32,6 @@ public static class MauiEmbedding
 		return builder;
 	}
 
-#if NO_PLATFORM
-	/// <summary>
-	/// Not supported platform.
-	/// </summary>
-	/// <param name="app">The Uno app.</param>
-	/// <param name="configure">Optional lambda to configure the Maui app builder.</param>
-	public static void UseMauiEmbedding(this Microsoft.UI.Xaml.Application app, Action<MauiAppBuilder>? configure = null)
-	{
-		throw new PlatformNotSupportedException();
-	}
-#else
 	/// <summary>
 	/// Registers Maui embedding with WinUI3 and WPF application builder.
 	/// </summary>
@@ -68,7 +53,6 @@ public static class MauiEmbedding
 			.AddSingleton<IMauiInitializeService, UnoMauiEmbeddingInitializer>();
 		_app = mauiAppBuilder.Build();
 	}
-#endif
 
 	// NOTE: This was part of the POC and is out of scope for the MVP. Keeping it in case we want to add it back later.
 	/*
