@@ -28,12 +28,13 @@
 			<embed:MauiContent>
 				<maui:ScrollView>
 					<maui:ScrollView.Content>
-						<maui:VerticalStackLayout Spacing="16">
+						<maui:VerticalStackLayout Spacing="16" x:Name="layout">
 							<toolkit:DrawingView HeightRequest="300"
 												 IsMultiLineModeEnabled="true"
 												 LineColor="{embed:MauiColor Value='#FF0000'}"
 												 LineWidth="5"
-												 WidthRequest="300" />
+												 WidthRequest="300"
+												 />
 
 							<toolkit:Expander>
 								<toolkit:Expander.Header>
