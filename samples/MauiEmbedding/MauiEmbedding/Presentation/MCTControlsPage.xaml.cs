@@ -30,7 +30,8 @@ public sealed partial class MCTControlsPage : Page
 			HeightRequest = 300,
 			WidthRequest = 300,
 			LineColor = Microsoft.Maui.Graphics.Colors.Fuchsia,
-			BackgroundColor = Microsoft.Maui.Graphics.Colors.Black
+			BackgroundColor = Microsoft.Maui.Graphics.Colors.Black,
+			IsMultiLineModeEnabled = true
 		};
 
 		this.layout.Add(drawing);
