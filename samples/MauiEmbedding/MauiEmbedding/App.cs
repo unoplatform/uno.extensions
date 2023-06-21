@@ -1,5 +1,6 @@
 using CommunityToolkit.Maui;
 using Microsoft.Maui;
+using Telerik.Maui.Controls;
 using MControls = Microsoft.Maui.Controls;
 
 namespace MauiEmbedding;
@@ -21,8 +22,8 @@ public class App : Application
 			{
 
 				maui
-				.UseMauiCommunityToolkit();
-
+				.UseMauiCommunityToolkit()
+				.UseTelerikControls();
 
 				Microsoft.Maui.Handlers.ShapeViewHandler.Mapper.AppendToMapping("BackgroundColor", (h, v) =>
 				{
@@ -31,7 +32,6 @@ public class App : Application
 						boxview.Background = MControls.Brush.Fuchsia;
 						Microsoft.Maui.Handlers.ShapeViewHandler.MapBackground(h, boxview);
 					}
-
 				});
 			})
 			// Add navigation support for toolkit controls such as TabBar and NavigationView
@@ -98,6 +98,7 @@ public class App : Application
 			new ViewMap<MainPage, MainViewModel>(),
 			new ViewMap<MauiControlsPage, MauiControlsViewModel>(),
 			new ViewMap<MauiEssentialsPage, MauiEssentialsViewModel>(),
+			new ViewMap<TelerikControlsPage, TelerikControlsViewModel>(),
 			new ViewMap<MCTControlsPage, MCTControlsViewModel>()
 		);
 
@@ -109,6 +110,7 @@ public class App : Application
 					new RouteMap(nameof(MauiControlsViewModel), View: views.FindByViewModel<MauiControlsViewModel>()),
 					new RouteMap(nameof(MCTControlsViewModel), View: views.FindByViewModel<MCTControlsViewModel>()),
 					new RouteMap(nameof(MauiEssentialsViewModel), View: views.FindByViewModel<MauiEssentialsViewModel>()),
+					new RouteMap(nameof(TelerikControlsViewModel), View: views.FindByViewModel<TelerikControlsViewModel>()),
 				}
 			)
 		);
