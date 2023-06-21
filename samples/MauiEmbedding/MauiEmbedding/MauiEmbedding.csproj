@@ -18,6 +18,7 @@
 		<PackageReference Include="Uno.Toolkit.WinUI" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Console" />
 		<PackageReference Include="CommunityToolkit.Maui" />
+		<PackageReference Include="Telerik.UI.for.Maui" />
 	</ItemGroup>
 
 	<Choose>

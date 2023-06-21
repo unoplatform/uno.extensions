@@ -16,5 +16,6 @@
     <PackageVersion Include="Uno.WinUI" Version="4.9.20" />
     <PackageVersion Include="Uno.WinUI.RemoteControl" Version="4.9.20" />
     <PackageVersion Include="CommunityToolkit.Maui" Version="2.0.0" />
+    <PackageVersion Include="Telerik.UI.for.Maui" Version="5.1.0" />
   </ItemGroup>
 </Project>
