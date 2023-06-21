@@ -1,3 +1,7 @@
+---
+uid: Overview.Mvux.FeedView
+---
+
 # The `FeedView` control
 
 The `FeedView` control is the heart of MVUX on the View side and is one of the main way to consume Feeds and States within an application. The `FeedView` uses different visual states to control what is displayed on the screen depending on the state of the underlying feed, or state. 
