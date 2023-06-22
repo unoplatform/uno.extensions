@@ -11,7 +11,18 @@ public class HttpEndpointsHostInit : BaseHostInitialization
 		return builder
 				.UseHttp(
 			configure: (context, services) =>
-			 services.AddClient<HttpEndpointsOneViewModel>(context, name: "HttpDummyJsonEndpoint"));
+			 services.AddClientWithEndpoint<HttpEndpointsOneViewModel, CustomEndpointOptions>(
+				 context,
+				 name: "HttpDummyJsonEndpoint",
+				 configure: (builder, options) =>
+					 builder.ConfigureHttpClient(client =>
+					 {
+						 if (options?.ApiKey is not null)
+						 {
+							 client.DefaultRequestHeaders.Add("ApiKey", options.ApiKey);
+						 }
+					 })
+				));
 
 	}
 

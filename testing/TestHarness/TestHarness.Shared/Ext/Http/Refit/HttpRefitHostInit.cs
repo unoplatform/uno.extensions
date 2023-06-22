@@ -1,4 +1,5 @@
-﻿using TestHarness.Ext.Http.Refit;
+﻿using TestHarness.Ext.Http.Endpoints;
+using TestHarness.Ext.Http.Refit;
 
 namespace TestHarness;
 
@@ -11,7 +12,18 @@ public class HttpRefitHostInit : BaseHostInitialization
 		return builder
 				.UseHttp(
 			configure: (context, services) =>
-			 services.AddRefitClient<IHttpRefitDummyJsonEndpoint>(context, name: "HttpRefitDummyJsonEndpoint"));
+			 services.AddRefitClientWithEndpoint<IHttpRefitDummyJsonEndpoint, CustomEndpointOptions>(
+				 context,
+				 name: "HttpRefitDummyJsonEndpoint",
+				 configure: (builder, options)
+							 => builder.ConfigureHttpClient(client =>
+							 {
+								 if (options?.ApiKey is not null)
+								 {
+									 client.DefaultRequestHeaders.Add("ApiKey", options.ApiKey);
+								 }
+							 })
+					));
 
 	}
 
