@@ -12,7 +12,7 @@ When accessing resources with a [REST-style](https://www.ics.uci.edu/~fielding/p
 
 ### 1. Enable HTTP
 
-* When working with a complex application, centralized registration of your API endpoints is a good practice. This allows you to easily change the endpoint for a given service, and to easily add new services.
+* When working with a complex application, centralized registration of your API endpoints is a good practice. This allows you to easily change the endpoint for a given service. It also reduces the complexity to adding new services which can then have their `HttpClient` instance reused across multiple instances of view models or other services.
 
 * The first step to centrally registering any API endpoint is to enable HTTP on the `IHostBuilder`:
     ```csharp
@@ -30,7 +30,7 @@ When accessing resources with a [REST-style](https://www.ics.uci.edu/~fielding/p
 
 ### 2. Define the live interface
 
-* Unlike standard HTTP endpoints, Refit endpoints you define will be registered as a service with the `AddRefitClient<T>()` extension method, where the type argument `T` corresponds to an interface you define.
+
 
 * This interface will be used to generate the strongly-typed client. It will be used to make requests to the web service and deserialize responses.
 
@@ -47,54 +47,19 @@ When accessing resources with a [REST-style](https://www.ics.uci.edu/~fielding/p
     ```
 
     > [!NOTE]
-    > A class named `ChuckNorrisData` will be defined in the subsequent sections of this guide. It will be used to deserialize the response from the API. 
+    > A class named `ChuckNorrisData` will be defined in the next section of this guide. It will be used to deserialize the response from the API. 
 
 * The `Headers` attribute is used to specify the `Content-Type` header for the request. `Get` specifies the relative path for a `Search` request. Notice that the `searchTerm` parameter for the request is aliased as `query` using an `AliasAs` attribute.
 
-### 3. Register the endpoint
-
-* The `AddRefitClient<T>()` extension method is used to register the endpoint with the service collection.
-
-* This extension method can take a delegate as its argument, but the recommended way to configure an HTTP client is to specify a configuration section name. This allows you to configure the added HTTP client using the `appsettings.json` file. 
-
-* Add the Refit client to the service collection with the following code:
-
-    ```csharp
-    protected override void OnLaunched(LaunchActivatedEventArgs args)
-    {
-        var appBuilder = this.CreateBuilder(args)
-            .Configure(hostBuilder =>
-            {
-                hostBuilder.UseHttp((context, services) =>
-                    services.AddRefitClient<IChuckNorrisEndpoint>(context)
-                );
-            });
-    ...
-    ```
-
-* Look for a file named `appsettings.json` in the shared project. If it does not exist, create it. Open this file and add the following JSON:
-
-    ```json
-    {
-        "ChuckNorrisEndpoint": {
-            "Url": "https://api.chucknorris.io/"
-        }
-    }
-    ```
-
-* The `Url` property specifies the base URL for the API.
-
-* This block of JSON is called a configuration section. In this case, it's used to configure the HTTP client associated with the endpoint. For more information, see the [overview](xref:Overview.Configuration#sections) for configuration sections.
-
-* Observe that the name of the configuration section is similar to that of the endpoint interface we defined earlier. By default, the interface name without the leading `I` prefix is assumed to be the section name. This can be overridden by specifying a name while registering the service. The name you use should be the second argument to `AddRefitClient<T>()`.
-
-### 4. Generate a data model from the API response
-
 * `ApiResponse<T>` is used to deserialize the response from the API. It is defined in the `Refit` package.
 
-* The response from the API is a JSON object with a `total` property and `result` that contains an array of `ChuckNorrisData` objects. The `ChuckNorrisData` class will be defined in the `Models` namespace.
+### 3. Generate a data model from the API response
 
-* We will use [Hoppscotch](https://hoppscotch.io) to make a HTTP request and inspect the response. Open it, and make a `GET` request to the `/jokes/search` endpoint with the query parameter `query` set to `fight`.
+* The next step is to generate a data model from the response we will get from the API. This will be used to deserialize the response which we'll learn is a JSON object with a `total` property and `result` that contains an array of Chuck Norris data objects. 
+
+* By the end of this section, a `ChuckNorrisData` class will be defined in the `Models` namespace to represent each object in the array.
+
+* We will use [Hoppscotch](https://hoppscotch.io) to make an HTTP request and inspect the response. Open it, and make a `GET` request to the `/jokes/search` endpoint with the query parameter `query` set to `fight`.
     
     * The full request should appear like the following:
         ```http
@@ -177,6 +142,44 @@ When accessing resources with a [REST-style](https://www.ics.uci.edu/~fielding/p
     * Go back to Visual Studio and create a new folder named `Models` in the shared project. Create a new file named `ChuckNorrisData.cs` in the `Models` folder and paste the code you copied into it.
 
     * Rename the partial classes `Welcome` to `ChuckNorrisData` and `Result` to `ChuckNorrisDataResult`
+
+
+### 4. Register the endpoint
+
+* Unlike standard HTTP endpoints, Refit endpoints you define will be registered as a service with the `AddRefitClient<T>()` extension method, where the type argument `T` corresponds to an interface you define.
+
+* This extension method can take a delegate as its argument, but the recommended way to configure an HTTP client is to specify a configuration section name. This allows you to configure the added HTTP client using the `appsettings.json` file. 
+
+* Add the Refit client to the service collection with the following code:
+
+    ```csharp
+    protected override void OnLaunched(LaunchActivatedEventArgs args)
+    {
+        var appBuilder = this.CreateBuilder(args)
+            .Configure(hostBuilder =>
+            {
+                hostBuilder.UseHttp((context, services) =>
+                    services.AddRefitClient<IChuckNorrisEndpoint>(context)
+                );
+            });
+    ...
+    ```
+
+* Look for a file named `appsettings.json` in the shared project. If it does not exist, create it. Open this file and add the following JSON:
+
+    ```json
+    {
+        "ChuckNorrisEndpoint": {
+            "Url": "https://api.chucknorris.io/"
+        }
+    }
+    ```
+
+* The `Url` property specifies the base URL for the API.
+
+* This block of JSON is called a configuration section. In this case, it's used to configure the HTTP client associated with the endpoint. For more information, see the [overview](xref:Overview.Configuration#sections) for configuration sections.
+
+* Observe that the name of the configuration section is similar to that of the endpoint interface we defined earlier. By default, the interface name without the leading `I` prefix is assumed to be the section name. This can be overridden by specifying a name while registering the service. The name you use should be the second argument to `AddRefitClient<T>()`.
 
 ### 5. Use the endpoint
 
