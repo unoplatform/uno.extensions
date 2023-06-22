@@ -11,6 +11,5 @@ partial class TelerikControlsPage : Page
 	{
 		this.InitializeComponent();
 
-		this.indicator.HeightRequest = 100;
 	}
 }
