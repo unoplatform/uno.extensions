@@ -3,7 +3,7 @@ uid: Learn.Tutorials.Http.HowToRefit
 ---
 # How-To: Quickly Create a Strongly-Typed REST Client for an API
 
-When accessing resources with a [REST-style](https://www.ics.uci.edu/~fielding/pubs/dissertation/rest_arch_style.htm) API is a significant part of your application, it is common to look for a SDK that provides a strongly-typed client for the API. This allows you to avoid writing boilerplate code to make requests and deserialize responses. There is sometimes no SDK available yet for the API you want to use, or it's not compatible with your target platform. With the design goal of avoiding boilerplate code in mind, we will walk through how to use [Refit](https://github.com/reactiveui/refit) to quickly create a strongly-typed client for a REST API and register it with the service collection as an endpoint.
+When accessing resources with a [REST-style](https://www.ics.uci.edu/~fielding/pubs/dissertation/rest_arch_style.htm) API is a significant part of your application, it is common to look for an SDK that provides a strongly-typed client for the API. This allows you to avoid writing boilerplate code to make requests and deserialize responses. There is sometimes no SDK available yet for the API you want to use, or it's not compatible with your target platform. With the design goal of avoiding boilerplate code in mind, we will walk through how to use [Refit](https://github.com/reactiveui/refit) to quickly create a strongly-typed client for a REST API and register it with the service collection as an endpoint.
 
 ## Step-by-steps
 
@@ -55,7 +55,7 @@ When accessing resources with a [REST-style](https://www.ics.uci.edu/~fielding/p
 
 * The `AddRefitClient<T>()` extension method is used to register the endpoint with the service collection.
 
-* This extension method can take a delegate as its argument, but the recommended way to configure a HTTP client is to specify a configuration section name. This allows you to configure the added HTTP client using the `appsettings.json` file. 
+* This extension method can take a delegate as its argument, but the recommended way to configure an HTTP client is to specify a configuration section name. This allows you to configure the added HTTP client using the `appsettings.json` file. 
 
 * Add the Refit client to the service collection with the following code:
 
@@ -211,7 +211,7 @@ When accessing resources with a [REST-style](https://www.ics.uci.edu/~fielding/p
     }
     ```
 
-* Now, any views that need to display a Chuck Norris fact can use the `FactViewModel` to retrieve one. Thanks to use of Refit, the details of HTTP requests and deserialization are abstracted away from the view and boilerplate code is avoided.
+* Now, any views that need to display a Chuck Norris fact can use the `FactViewModel` to retrieve one. Thanks to the use of Refit, the details of HTTP requests and deserialization are abstracted away from the view, and boilerplate code is avoided.
 
 ## See also
 
