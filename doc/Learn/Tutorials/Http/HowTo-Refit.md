@@ -72,18 +72,21 @@ When accessing resources with a [REST-style](https://www.ics.uci.edu/~fielding/p
     ...
     ```
 
-* Define a configuration section in the `appsettings.json` file. While the default behavior is to use the platform-native HTTP handler, this can be configured. 
+* Look for a file named `appsettings.json` in the shared project. If it does not exist, create it. Open this file and add the following JSON:
 
     ```json
     {
         "ChuckNorrisEndpoint": {
-            "Url": "https://api.chucknorris.io/",
-            "UseNativeHandler": true
+            "Url": "https://api.chucknorris.io/"
         }
     }
     ```
 
 * The `Url` property specifies the base URL for the API.
+
+* This block of JSON is called a configuration section. In this case, it's used to configure the HTTP client associated with the endpoint. For more information, see the [overview](xref:Overview.Configuration#sections) for configuration sections.
+
+* Observe that the name of the configuration section is similar to that of the endpoint interface we defined earlier. By default, the interface name without the leading `I` prefix is assumed to be the section name. This can be overridden by specifying a name while registering the service. The name you use should be the second argument to `AddRefitClient<T>()`.
 
 ### 4. Generate a data model from the API response
 
@@ -98,7 +101,7 @@ When accessing resources with a [REST-style](https://www.ics.uci.edu/~fielding/p
         GET https://api.chucknorris.io/jokes/search?query=fight
         ```
 
-    * The **response body** pane will populate with a JSON object that looks similar to this:
+    * The **response body** pane will populate with a formatted JSON object that looks similar to this:
 
         ```json
         {

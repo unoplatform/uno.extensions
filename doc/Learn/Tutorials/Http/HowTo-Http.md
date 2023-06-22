@@ -85,8 +85,6 @@ When working with a complex application, centralized registration of your API en
 
 ## See also
 
-- [Making HTTP requests using IHttpClientFactory](https://learn.microsoft.com/aspnet/core/fundamentals/http-requests)
-- [Delegating handlers](https://learn.microsoft.com/aspnet/web-api/overview/advanced/http-message-handlers)
+- [How-To: Consume a web API with HttpClient](xref:Uno.Development.ConsumeWebApi)
 - [Polly and HttpClientFactory](https://github.com/App-vNext/Polly/wiki/Polly-and-HttpClientFactory)
-- [What is Refit?](https://github.com/reactiveui/refit)
-- [Tutorial: Using Refit](xref:Learn.Tutorials.Http.HowToRefit)
+- [How-To: Quickly Create a Strongly-Typed REST Client for an API](xref:Learn.Tutorials.Http.HowToRefit)
