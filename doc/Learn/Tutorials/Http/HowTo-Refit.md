@@ -148,9 +148,27 @@ When accessing resources with a [REST-style](https://www.ics.uci.edu/~fielding/p
 
 * Unlike standard HTTP endpoints, Refit endpoints you define will be registered as a service with the `AddRefitClient<T>()` extension method, where the type argument `T` corresponds to an interface you define.
 
-* This extension method can take a delegate as its argument, but the recommended way to configure an HTTP client is to specify a configuration section name. This allows you to configure the added HTTP client using the `appsettings.json` file. 
+* This extension method can take a delegate as its argument:
 
-* Add the Refit client to the service collection with the following code:
+    ```csharp
+    protected override void OnLaunched(LaunchActivatedEventArgs args)
+    {
+        var appBuilder = this.CreateBuilder(args)
+            .Configure(hostBuilder =>
+            {
+                hostBuilder.UseHttp((context, services) =>
+                    services.AddRefitClient<IChuckNorrisEndpoint>(context, httpClient =>
+                    {
+                        httpClient.BaseAddress = new Uri("https://api.chucknorris.io/");
+                    })
+                );
+            });
+    ...
+    ```
+
+* Another way to configure an HTTP client is to specify a configuration section name. This allows you to configure the added HTTP client using the `appsettings.json` file. This tutorial demonstrates use of the configuration section method.
+
+* Add the Refit client to the service collection with the following code instead:
 
     ```csharp
     protected override void OnLaunched(LaunchActivatedEventArgs args)
