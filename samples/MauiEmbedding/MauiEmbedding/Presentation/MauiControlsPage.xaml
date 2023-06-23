@@ -47,8 +47,13 @@
 				<maui:Entry Placeholder="Some text" />
 
 				<maui:Picker x:Name="picker" Title="Some UI frameworks picker" />
-				
+
 				<maui:ActivityIndicator IsRunning="true" />
+
+				<maui:Grid>
+					<maui:Label Text="Row0"/>
+					<maui:Label Text="Row1" maui:Grid.Row="1"/>
+				</maui:Grid>
 
 			</maui:VerticalStackLayout>
 		</embed:MauiContent>
