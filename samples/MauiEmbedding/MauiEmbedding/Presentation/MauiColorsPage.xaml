@@ -25,7 +25,8 @@
 			<maui:VerticalStackLayout Spacing="10">
 				<maui:Label Text="This text should be Red" TextColor="{embed:MauiColor Value='#FF0000'}" />
 				<maui:Label x:Name="lbl" Text="This text should be Fuchsia (set on code-behind)" />
-				<maui:Label Text="This background should be Pink" TextColor="{embed:MauiColor Value='#FFC0CB'}" />
+				<maui:Label Text="This background should be Pink" BackgroundColor="{embed:MauiColor Value='#FFC0CB'}" />
+				<maui:Label Text="This TextColor should be Purple, using named color" TextColor="{embed:MauiColor Value='Purple'}" />
 				<maui:Label Text="{embed:MauiResource Key=HelloWorld}" />
 			</maui:VerticalStackLayout>
 		</embed:MauiContent>
