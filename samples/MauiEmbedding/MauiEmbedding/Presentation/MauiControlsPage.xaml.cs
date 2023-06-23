@@ -23,9 +23,6 @@ public sealed partial class MauiControlsPage : Page
 			BackgroundColor = Colors.Pink
 		};
 
-		lbl.HandlerChanged += (_, __) => lbl.Layout(new Rect(0,0,lbl.WidthRequest,lbl.HeightRequest));
-
-
 		var b = new BoxView
 		{
 			HeightRequest = 300,
@@ -42,12 +39,6 @@ public sealed partial class MauiControlsPage : Page
 		};
 
 		lbl.SetBinding(Label.TextProperty, mauiBinding);
-
-		this.stack.BindingContextChanged +=(_,__) =>
-		{
-			_ = this.stack.BindingContext;
-			_ = lbl.BindingContext;
-		};
 
 		this.stack.Add(lbl);
 		this.stack.Add(b);
