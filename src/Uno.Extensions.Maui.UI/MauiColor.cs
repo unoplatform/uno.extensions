@@ -17,7 +17,7 @@ public class MauiColor : MauiExtensionBase
 	/// <inheritdoc/>
 	protected override void SetValue(View view, Type viewType, Type propertyType, BindableProperty property, string propertyName)
 	{
-		if (!string.IsNullOrEmpty(Value) || !NativeMauiColor.TryParse(Value, out var color))
+		if (string.IsNullOrEmpty(Value) || !NativeMauiColor.TryParse(Value, out var color))
 		{
 			var canLog = Logger.IsEnabled(LogLevel.Warning);
 			if (string.IsNullOrEmpty(Value) && canLog)
