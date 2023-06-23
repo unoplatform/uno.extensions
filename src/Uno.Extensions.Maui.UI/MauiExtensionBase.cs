@@ -23,26 +23,6 @@ public abstract class MauiExtensionBase : MarkupExtension
 		var provideValueTarget = (IProvideValueTarget)serviceProvider.GetService(typeof(IProvideValueTarget));
 		ThreadHelpers.WhatThreadAmI();
 
-#if WINDOWS
-		DependencyObject targetObject = (DependencyObject)provideValueTarget!.TargetObject;
-#endif
-		#region TypeTesting
-
-		Debug.WriteLine(provideValueTarget);
-		Debug.WriteLine(provideValueTarget?.TargetObject);
-		Debug.WriteLine(provideValueTarget?.TargetObject is View);
-		Debug.WriteLine(provideValueTarget?.TargetObject?.GetType());
-
-		var x = (object)provideValueTarget!.TargetObject!;
-
-		var lbl = x as Label;
-
-		var tp = provideValueTarget.TargetProperty as ProvideValueTargetProperty;
-
-		var dt = tp!.DeclaringType;
-		Debug.WriteLine(x);
-
-		#endregion
 		if (provideValueTarget?.TargetObject is View view && provideValueTarget.TargetProperty is ProvideValueTargetProperty targetProperty)
 		{
 			var declaringType = targetProperty.DeclaringType;
