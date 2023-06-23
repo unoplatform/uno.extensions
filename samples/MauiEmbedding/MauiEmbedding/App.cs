@@ -99,6 +99,7 @@ public class App : Application
 			new ViewMap<MauiControlsPage, MauiControlsViewModel>(),
 			new ViewMap<MauiEssentialsPage, MauiEssentialsViewModel>(),
 			new ViewMap<TelerikControlsPage, TelerikControlsViewModel>(),
+			new ViewMap<MauiColorsPage, MauiColorsViewModel>(),
 			new ViewMap<MCTControlsPage, MCTControlsViewModel>()
 		);
 
@@ -110,6 +111,7 @@ public class App : Application
 					new RouteMap(nameof(MauiControlsViewModel), View: views.FindByViewModel<MauiControlsViewModel>()),
 					new RouteMap(nameof(MCTControlsViewModel), View: views.FindByViewModel<MCTControlsViewModel>()),
 					new RouteMap(nameof(MauiEssentialsViewModel), View: views.FindByViewModel<MauiEssentialsViewModel>()),
+					new RouteMap(nameof(MauiColorsViewModel), View: views.FindByViewModel<MauiColorsViewModel>()),
 					new RouteMap(nameof(TelerikControlsViewModel), View: views.FindByViewModel<TelerikControlsViewModel>()),
 				}
 			)

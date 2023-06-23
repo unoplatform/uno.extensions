@@ -41,4 +41,8 @@ public partial class MainViewModel : ObservableObject
 	{
 		await _navigator.NavigateViewModelAsync<TelerikControlsViewModel>(this);
 	}
+	public async Task GoToColorsPage()
+	{
+		await _navigator.NavigateViewModelAsync<MauiColorsViewModel>(this);
+	}
 }
