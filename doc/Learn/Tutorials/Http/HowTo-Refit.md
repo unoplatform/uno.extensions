@@ -196,14 +196,21 @@ When accessing resources with a [REST-style](https://www.ics.uci.edu/~fielding/p
     ```json
     {
         "ChuckNorrisEndpoint": {
-            "Url": "https://api.chucknorris.io/"
+            "Url": "https://api.chucknorris.io/",
+            "UseNativeHandler": true
         }
     }
     ```
 
 * The `Url` property specifies the base URL for the API.
 
-* This block of JSON is called a configuration section. In this case, it's used to configure the HTTP client associated with the endpoint. For more information, see the [overview](xref:Overview.Configuration#sections) for configuration sections.
+* We set `UseNativeHandler` to `true` to use the native HTTP handler for the platform. This is recommended for production apps unless you have a specific reason to use the managed handler.
+
+    * On Windows, intercepting the network traffic of your app with tools like **Fiddler** is not possible when using the native handler. This is because it does not use a compatible network stack. 
+
+    * In these cases, you can set `UseNativeHandler` to `false` to use the managed handler instead
+
+* That block of JSON from the above file is called a configuration section. In this case, it's used to configure the HTTP client associated with the endpoint. For more information, see the [overview](xref:Overview.Configuration#sections) for configuration sections.
 
 * Observe that the name of the configuration section is similar to that of the endpoint interface we defined earlier. By default, the interface name without the leading `I` prefix is assumed to be the section name. This can be overridden by specifying a name while registering the service. The name you use should be the second argument to `AddRefitClient<T>()`.
 
