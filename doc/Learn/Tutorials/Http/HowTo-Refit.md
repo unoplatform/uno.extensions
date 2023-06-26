@@ -30,13 +30,12 @@ When accessing resources with a [REST-style](https://www.ics.uci.edu/~fielding/p
 
 ### 2. Define the live interface
 
-
+* For the purposes of this tutorial, we will create and register an interface for the Chuck Norris facts web API which is documented [here](https://api.chucknorris.io/)
 
 * This interface will be used to generate the strongly-typed client. It will be used to make requests to the web service and deserialize responses.
 
-* For the purposes of this tutorial, we will create and register an interface for the Chuck Norris facts web API 
-
 * Start by defining an interface `IChuckNorrisEndpoint` with a method `Search()` that returns a `Task` of type `ApiResponse<ChuckNorrisData>`:
+
     ```csharp
     [Headers("Content-Type: application/json")]
     public interface IChuckNorrisEndpoint
@@ -60,8 +59,13 @@ When accessing resources with a [REST-style](https://www.ics.uci.edu/~fielding/p
 * By the end of this section, a `ChuckNorrisData` class will be defined in the `Models` namespace to represent each object in the array.
 
 * We will use [Hoppscotch](https://hoppscotch.io) to make an HTTP request and inspect the response. Open it, and make a `GET` request to the `/jokes/search` endpoint with the query parameter `query` set to `fight`.
+
+    * Your screen should appear similar to this:
     
-    * The full request should appear like the following:
+        ![Hoppscotch](../images/http-refit-hoppscotch.png)
+    
+    * For informational purposes, this is the full HTTP request URL:
+
         ```http
         GET https://api.chucknorris.io/jokes/search?query=fight
         ```
@@ -99,6 +103,10 @@ When accessing resources with a [REST-style](https://www.ics.uci.edu/~fielding/p
         * **System Text Json**  as the _serialization framework_
 
         * **Complete** as the _output features_
+
+    * Your screen should appear similar to this:
+    
+        ![Hoppscotch](../images/http-refit-quicktype.png)
 
     * For the purposes of this tutorial, only select and copy the two model classes `Welcome` and `Result` from the right side containing the generated C# code.
 
