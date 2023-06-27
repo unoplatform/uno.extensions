@@ -531,6 +531,18 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 			}
 		}
 
+		if (!(Route?.IsEmpty()??true))
+		{
+			var currentRouteMap = Resolver.FindByPath(Route?.Base);
+			if (currentRouteMap != null || routeMap != null)
+			{
+				if (currentRouteMap?.Parent != routeMap?.Parent)
+				{
+					return false;
+				}
+			}
+		}
+
 		return true;
 	}
 
@@ -710,7 +722,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 		{
 			return (from child in Region.Children
 					let nav = child.Navigator()
-					select (Region:child, Navigator: nav)).ToArray();
+					select (Region: child, Navigator: nav)).ToArray();
 		});
 
 
