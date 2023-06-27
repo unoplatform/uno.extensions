@@ -60,7 +60,7 @@ internal class ForceBindingsUpdateGenTool_1 : ICodeGenTool
 			attributes: default,
 			bases: updateInterface,
 			code: $@"
-				ValueTask IForceBindingsUpdate.ForceBindingsUpdateAsync()
+				ValueTask global::Uno.Extensions.Navigation.IForceBindingsUpdate.ForceBindingsUpdateAsync()
 				{{
 					if(this.Bindings is not null)
 					{{
