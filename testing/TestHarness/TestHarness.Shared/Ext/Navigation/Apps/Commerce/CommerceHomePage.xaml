@@ -144,7 +144,7 @@
 						</utu:TabBarItem>
 						<utu:TabBarItem AutomationProperties.AutomationId="SettingsTabBarItem"
 										IsSelectable="False"
-										uen:Navigation.Request="Setting">
+										uen:Navigation.Request="Settings">
 							<utu:TabBarItem.Icon>
 								<PathIcon Data="{StaticResource Icon_person}" />
 							</utu:TabBarItem.Icon>
