@@ -26,7 +26,7 @@ When accessing resources with a [REST-style](https://www.ics.uci.edu/~fielding/p
     ...
     ```
 
-* This feature requires the `Uno.Extensions.Http` package. It uses [Microsoft Extensions](https://www.nuget.org/packages/Microsoft.Extensions.Http) for any HTTP-related [work](https://learn.microsoft.com/dotnet/architecture/microservices/implement-resilient-applications/use-httpclientfactory-to-implement-resilient-http-requests#benefits-of-using-ihttpclientfactory) such as naming or configuring the `HttpClient` instance associated with your endpoints.
+* This feature requires the [Uno.Extensions.Http.WinUI](https://www.nuget.org/packages/Uno.Extensions.Http.WinUI) package. It uses [Microsoft Extensions](https://www.nuget.org/packages/Microsoft.Extensions.Http) for any HTTP-related [work](https://learn.microsoft.com/dotnet/architecture/microservices/implement-resilient-applications/use-httpclientfactory-to-implement-resilient-http-requests#benefits-of-using-ihttpclientfactory) such as naming or configuring the `HttpClient` instance associated with your endpoints.
 
 ### 2. Define the live interface
 
