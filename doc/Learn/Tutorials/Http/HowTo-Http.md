@@ -82,3 +82,9 @@ When working with a complex application, centralized registration of your API en
             var show = await _showService.GetShowAsync();
     ...
     ```
+
+## See also
+
+- [How-To: Consume a web API with HttpClient](xref:Uno.Development.ConsumeWebApi)
+- [Polly and HttpClientFactory](https://github.com/App-vNext/Polly/wiki/Polly-and-HttpClientFactory)
+- [How-To: Quickly Create a Strongly-Typed REST Client for an API](xref:Learn.Tutorials.Http.HowToRefit)

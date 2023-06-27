@@ -84,9 +84,10 @@ In this case, the `EndpointOptions` will be loaded from configuration section Ch
 }
 ```
 
+See the [tutorial](xref:Learn.Tutorials.Http.HowToRefit) for more information on using Refit.
 
 ## References
-- [Making HTTP requests using IHttpClientFactory](https://docs.microsoft.com/en-us/aspnet/core/fundamentals/http-requests?view=aspnetcore-3.0)
-- [Delegating handlers](https://docs.microsoft.com/en-us/aspnet/web-api/overview/advanced/http-message-handlers)
+- [Making HTTP requests using IHttpClientFactory](https://learn.microsoft.com/aspnet/core/fundamentals/http-requests)
+- [Delegating handlers](https://learn.microsoft.com/aspnet/web-api/overview/advanced/http-message-handlers)
 - [Polly and HttpClientFactory](https://github.com/App-vNext/Polly/wiki/Polly-and-HttpClientFactory)
-- [What is Refit](https://github.com/reactiveui/refit)
+- [What is Refit?](https://github.com/reactiveui/refit)
