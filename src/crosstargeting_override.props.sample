@@ -11,8 +11,8 @@
 
 			Available build targets
 
-				uap10.0.18362 (Windows)
-				net5.0-windows10.0.18362 (WinAppSDK Windows)
+				uap10.0.19041 (Windows)
+				net5.0-windows10.0.19041 (WinAppSDK Windows)
 				net7.0 (WebAssembly, Skia)
 				net7.0-ios (.NET iOS)
 				net7.0-android (.NET Android)

@@ -34,7 +34,7 @@ jobs:
 
   - template: templates/install-windows-sdk.yml
     parameters:
-      sdkVersion: 18362
+      sdkVersion: 19041
 
   - template: templates/update-vs-components.yml
 
