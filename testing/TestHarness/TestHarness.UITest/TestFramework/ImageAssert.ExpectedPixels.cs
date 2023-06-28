@@ -63,7 +63,7 @@ public struct ExpectedPixels
 			? Color.Empty
 			: ColorCodeParser.Parse(colorCode);
 
-	public ExpectedPixels Pixels(Bitmap source, Rectangle rect)
+	public ExpectedPixels Pixels(PlatformBitmap source, Rectangle rect)
 	{
 		try
 		{
@@ -82,7 +82,7 @@ public struct ExpectedPixels
 		}
 	}
 
-	public ExpectedPixels Pixels(Bitmap source)
+	public ExpectedPixels Pixels(PlatformBitmap source)
 	{
 		var colors = new Color[source.Width, source.Height];
 		for (var py = 0; py < source.Height; py++)

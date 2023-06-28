@@ -16,7 +16,7 @@
 		</Content>
 	</ItemGroup>
 
-	<ItemGroup>
+	<ItemGroup Condition="!$(_IsUWP)">
 		<PackageReference Include="Uno.UI" />
 	</ItemGroup>
 

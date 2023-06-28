@@ -1,7 +1,9 @@
 <Project ToolsVersion="15.0">
 	<PropertyGroup>
 		<LangVersion>10.0</LangVersion>
-		<Nullable>enable</Nullable>
+
+		<!-- https://github.com/unoplatform/private/issues/332 -->
+		<Nullable>annotations</Nullable>
 		<NoWarn>$(NoWarn);NU5104;NU1504;NU1505;CS1591;MSB3277;XA0101;CS8785;CS8669;CA1416</NoWarn>
 		<ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
 		
@@ -23,25 +25,25 @@
 
 	<PropertyGroup>
 		<IsMonoAndroid>false</IsMonoAndroid>
-		<IsMonoAndroid Condition="'$(TargetFramework)'=='net6.0-android' or $(TargetFramework.ToLower().StartsWith('monoandroid'))">true</IsMonoAndroid>
+		<IsMonoAndroid Condition="'$(TargetFramework)'=='net7.0-android' or $(TargetFramework.ToLower().StartsWith('monoandroid'))">true</IsMonoAndroid>
 
 		<IsXamarinIOS>false</IsXamarinIOS>
-		<IsXamarinIOS Condition="'$(TargetFramework)'=='net6.0-ios' or '$(TargetFramework)'=='net6.0-maccatalyst' or $(TargetFramework.ToLower().StartsWith('xamarinios'))">true</IsXamarinIOS>
+		<IsXamarinIOS Condition="'$(TargetFramework)'=='net7.0-ios' or '$(TargetFramework)'=='net7.0-maccatalyst' or $(TargetFramework.ToLower().StartsWith('xamarinios'))">true</IsXamarinIOS>
 
 		<IsXamarinMac>false</IsXamarinMac>
-		<IsXamarinMac Condition="$(TargetFramework.ToLower().StartsWith('xamarinmac')) or '$(TargetFramework)'=='net6.0-macos'">true</IsXamarinMac>
+		<IsXamarinMac Condition="$(TargetFramework.ToLower().StartsWith('xamarinmac')) or '$(TargetFramework)'=='net7.0-macos'">true</IsXamarinMac>
 
 		<_IsAndroid>false</_IsAndroid>
-		<_IsAndroid Condition="$(IsMonoAndroid) or '$(TargetFramework)'=='net6.0-android'">true</_IsAndroid>
+		<_IsAndroid Condition="$(IsMonoAndroid) or '$(TargetFramework)'=='net7.0-android'">true</_IsAndroid>
 
 		<_IsCatalyst>false</_IsCatalyst>
-		<_IsCatalyst Condition="$(_IsCatalyst) or '$(TargetFramework)'=='net6.0-maccatalyst'">true</_IsCatalyst>
+		<_IsCatalyst Condition="$(_IsCatalyst) or '$(TargetFramework)'=='net7.0-maccatalyst'">true</_IsCatalyst>
 
 		<_IsIOS>false</_IsIOS>
-		<_IsIOS Condition="$(IsXamarinIOS) or '$(TargetFramework)'=='net6.0-ios' or '$(TargetFramework)'=='net6.0-maccatalyst'">true</_IsIOS>
+		<_IsIOS Condition="$(IsXamarinIOS) or '$(TargetFramework)'=='net7.0-ios' or '$(TargetFramework)'=='net7.0-maccatalyst'">true</_IsIOS>
 
 		<_IsMacOS>false</_IsMacOS>
-		<_IsMacOS Condition="'$(TargetFramework)'=='xamarinmac20' or '$(TargetFramework)'=='net6.0-macos'">true</_IsMacOS>
+		<_IsMacOS Condition="'$(TargetFramework)'=='net7.0-macos'">true</_IsMacOS>
 
 		<_IsNet>false</_IsNet>
 		<_IsNet Condition="'$(TargetFramework)'=='net461'">true</_IsNet>
@@ -50,7 +52,7 @@
 		<_IsNetCore Condition="'$(TargetFramework)'=='net5.0'">true</_IsNetCore>
 
 		<_IsNetStd>false</_IsNetStd>
-		<_IsNetStd Condition="'$(TargetFramework)'=='netstandard2.0' or $(_IsNetCore)">true</_IsNetStd>
+		<_IsNetStd Condition="'$(TargetFramework)'=='net7.0' or $(_IsNetCore)">true</_IsNetStd>
 
 		<_IsUWP>false</_IsUWP>
 		<_IsUWP Condition="$(TargetFramework.StartsWith('uap'))">true</_IsUWP>

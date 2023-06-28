@@ -1,10 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
-	<Import Project="..\tfms-non-ui.props" />
 
 	<PropertyGroup>
 		<IsPackable>false</IsPackable>
 		<RootNamespace>Uno.Extensions.Logging.WinUI</RootNamespace>
 		<AssemblyName>Uno.Extensions.Logging.WinUI</AssemblyName>
+		
+		<TargetFramework>net7.0</TargetFramework>
 	</PropertyGroup>
 
 	<ItemGroup>

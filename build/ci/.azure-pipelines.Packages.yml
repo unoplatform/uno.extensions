@@ -9,7 +9,7 @@ jobs:
   - checkout: self
     clean: 'true'
 
-  - template: templates/dotnet6-install-windows.yml
+  - template: templates/dotnet-install-windows.yml
   - template: templates/canary-updater.yml
 
   - task: gitversion/setup@0
@@ -33,7 +33,7 @@ jobs:
 
   - template: templates/install-windows-sdk.yml
     parameters:
-      sdkVersion: 18362
+      sdkVersion: 19041
 
   - template: templates/update-vs-components.yml
 
@@ -44,7 +44,7 @@ jobs:
       msbuildLocationMethod: location
       msbuildLocation: $(MSBUILDPATH)
       msbuildArchitecture: x86
-      msbuildArguments: /r /m /p:Configuration=Release "/p:PackageOutputPath=$(build.artifactstagingdirectory)\nuget" "/p:PackageVersion=%GITVERSION_FullSemVer%" "/p:InformationalVersion=%GITVERSION_InformationalVersion%" /detailedsummary /bl:$(build.artifactstagingdirectory)/uno-extensions.binlog
+      msbuildArguments: /r /m /v:m /p:Configuration=Release "/p:PackageOutputPath=$(build.artifactstagingdirectory)\nuget" "/p:PackageVersion=%GITVERSION_FullSemVer%" "/p:InformationalVersion=%GITVERSION_InformationalVersion%" /detailedsummary /bl:$(build.artifactstagingdirectory)/uno-extensions.binlog
       clean: false
       maximumCpuCount: true
       restoreNugetPackages: false

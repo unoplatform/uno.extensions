@@ -19,7 +19,7 @@ public class FeedUITests : FeedTests, ISourceContextOwner
 	private (TestDispatcher Value, FindDispatcher Resolve)? _testDispatcher;
 	private IDispatcher? _realDispatcher;
 
-	string ISourceContextOwner.Name => ToString();
+	string ISourceContextOwner.Name => ToString()!;
 	IDispatcher ISourceContextOwner.Dispatcher => Dispatcher;
 
 	/// <summary>

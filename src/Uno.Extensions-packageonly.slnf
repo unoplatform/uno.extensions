@@ -23,6 +23,7 @@
       "Uno.Extensions.Hosting.UI\\Uno.Extensions.Hosting.WinUI.Wasm.csproj",
       "Uno.Extensions.Hosting.UI\\Uno.Extensions.Hosting.WinUI.csproj",
       "Uno.Extensions.Hosting\\Uno.Extensions.Hosting.csproj",
+      "Uno.Extensions.Http.Interfaces\\Uno.Extensions.Http.Interfaces.csproj",
       "Uno.Extensions.Http.Refit\\Uno.Extensions.Http.Refit.csproj",
       "Uno.Extensions.Http.UI\\Uno.Extensions.Http.UI.csproj",
       "Uno.Extensions.Http.UI\\Uno.Extensions.Http.WinUI.csproj",

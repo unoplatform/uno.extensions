@@ -148,7 +148,7 @@ public class FeedRecorder<TFeed, TValue> : IFeedRecorder<TValue>, ICollection<Me
 			}
 		}
 
-		void OnMessageAdded(object sender, EventArgs e)
+		void OnMessageAdded(object? sender, EventArgs e)
 		{
 			if (_messages.Count >= count)
 			{
@@ -242,10 +242,10 @@ public class FeedRecorder<TFeed, TValue> : IFeedRecorder<TValue>, ICollection<Me
 			foreach (var change in message.Changes)
 			{
 				message.Changes.Contains(change, out var changes);
-				if (changes is not null)
+				if (changes is not null && changes.ToString() is { } changesString)
 				{
 					sb.AppendLine($"\t\t{change.Identifier} changes:");
-					foreach (var line in changes.ToString().Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries))
+					foreach (var line in changesString.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries))
 					{
 						sb.Append("\t\t\t");
 						sb.AppendLine(line);

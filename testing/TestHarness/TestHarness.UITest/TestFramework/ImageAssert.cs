@@ -1,4 +1,4 @@
-﻿
+﻿using SkiaSharp;
 
 namespace TestHarness.UITest.TestFramework;
 
@@ -54,7 +54,7 @@ public static class ImageAssert
 	public static void AreAlmostEqual(ScreenshotInfo expected, Rectangle expectedRect, ScreenshotInfo actual, Rectangle actualRect, double expectedToActualScale, PixelTolerance tolerance, [CallerLineNumber] int line = 0)
 		=> AreEqualImpl(expected, expectedRect, actual, actualRect, expectedToActualScale, tolerance, line);
 
-	public static void AreAlmostEqual(ScreenshotInfo expected, Rectangle expectedRect, Bitmap actual, Rectangle actualRect, double expectedToActualScale, PixelTolerance tolerance, [CallerLineNumber] int line = 0)
+	public static void AreAlmostEqual(ScreenshotInfo expected, Rectangle expectedRect, PlatformBitmap actual, Rectangle actualRect, double expectedToActualScale, PixelTolerance tolerance, [CallerLineNumber] int line = 0)
 		=> AreEqualImpl(expected, expectedRect, null, actual, actualRect, expectedToActualScale, tolerance, line);
 
 	private static void AreEqualImpl(
@@ -74,7 +74,7 @@ public static class ImageAssert
 		ScreenshotInfo expected,
 		Rectangle expectedRect,
 		ScreenshotInfo? actual,
-		Bitmap actualBitmap,
+		PlatformBitmap actualBitmap,
 		Rectangle actualRect,
 		double expectedToActualScale,
 		PixelTolerance tolerance,
@@ -101,7 +101,7 @@ public static class ImageAssert
 		ScreenshotInfo expected,
 		Rectangle expectedRect,
 		ScreenshotInfo? actual,
-		Bitmap actualBitmap,
+		PlatformBitmap actualBitmap,
 		Rectangle actualRect,
 		double expectedToActualScale,
 		PixelTolerance tolerance,
@@ -181,7 +181,7 @@ public static class ImageAssert
 				ScreenshotInfo expected,
 				Rectangle expectedRect,
 				ScreenshotInfo actual,
-				Bitmap actualBitmap,
+				PlatformBitmap actualBitmap,
 				Rectangle actualRect,
 				double expectedToActualScale,
 				PixelTolerance tolerance,
@@ -328,7 +328,7 @@ public static class ImageAssert
 	#endregion
 
 	#region Validation core (ExpectedPixels)
-	private static bool Validate(ExpectedPixels expectation, Bitmap actualBitmap, double expectedToActualScale, StringBuilder report)
+	private static bool Validate(ExpectedPixels expectation, PlatformBitmap actualBitmap, double expectedToActualScale, StringBuilder report)
 	{
 		report.AppendLine($"{expectation.Name}:");
 
@@ -394,7 +394,7 @@ public static class ImageAssert
 	}
 
 	private static bool ValidatePixel(
-		Bitmap actualBitmap,
+		PlatformBitmap actualBitmap,
 		ExpectedPixels expectation,
 		double expectedToActualScale,
 		Point pixel,

@@ -2,7 +2,7 @@
 
 public partial class ScreenshotInfo : IDisposable
 {
-	private Bitmap? _bitmap;
+	private PlatformBitmap? _bitmap;
 	public FileInfo File { get; }
 
 	public string StepName { get; }
@@ -17,7 +17,7 @@ public partial class ScreenshotInfo : IDisposable
 
 	public static implicit operator ScreenshotInfo(FileInfo fi) => new ScreenshotInfo(fi, fi.Name);
 
-	public Bitmap GetBitmap() => _bitmap ??= new Bitmap(File.FullName);
+	public PlatformBitmap GetBitmap() => _bitmap ??= new PlatformBitmap(File.FullName);
 	public void Dispose()
 	{
 		_bitmap?.Dispose();

@@ -1,4 +1,5 @@
 <Project Sdk="MSBuild.Sdk.Extras" ToolsVersion="15.0">
+
 	<Import Project="..\tfms-ui-winui.props" />
 
 	<ItemGroup>

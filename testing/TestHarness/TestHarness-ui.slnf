@@ -38,7 +38,6 @@
       "..\\..\\src\\Uno.Extensions.Toolkit\\Uno.Extensions.Toolkit.csproj",
       "TestBackend\\TestBackend.csproj",
       "TestHarness.Core\\TestHarness.Core.csproj",
-      "TestHarness.Legacy.Droid\\TestHarness.Legacy.Droid.csproj",
       "TestHarness.Legacy.Skia.Gtk\\TestHarness.Legacy.Skia.Gtk.csproj",
       "TestHarness.Legacy.Skia.Linux.FrameBuffer\\TestHarness.Legacy.Skia.Linux.FrameBuffer.csproj",
       "TestHarness.Legacy.Skia.Tizen\\TestHarness.Legacy.Skia.Tizen.csproj",
@@ -46,8 +45,6 @@
       "TestHarness.Legacy.Skia.WPF\\TestHarness.Legacy.Skia.WPF.csproj",
       "TestHarness.Legacy.UWP\\TestHarness.Legacy.Uwp.csproj",
       "TestHarness.Legacy.Wasm\\TestHarness.Legacy.Wasm.csproj",
-      "TestHarness.Legacy.iOS\\TestHarness.Legacy.iOS.csproj",
-      "TestHarness.Legacy.macOS\\TestHarness.Legacy.macOS.csproj",
       "TestHarness.Shared\\TestHarness.Shared.shproj",
       "TestHarness.UITest\\TestHarness.UITest.csproj"
     ]

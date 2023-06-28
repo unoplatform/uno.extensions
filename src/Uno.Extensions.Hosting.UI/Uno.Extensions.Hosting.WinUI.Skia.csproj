@@ -1,12 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
-	<Import Project="..\tfms-non-ui.props" />
-
 	<PropertyGroup>
 		<IsPackable>false</IsPackable>
 		<RootNamespace>Uno.Extensions.Hosting.WinUI</RootNamespace>
 		<UnoRuntimeIdentifier>skia</UnoRuntimeIdentifier>
 		<DefineConstants>$(DefineConstants);__SKIA__</DefineConstants>
 		<AssemblyName>Uno.Extensions.Hosting.WinUI</AssemblyName>
+		
+		<TargetFramework>net7.0</TargetFramework>
 	</PropertyGroup>
 
 	<PropertyGroup>
