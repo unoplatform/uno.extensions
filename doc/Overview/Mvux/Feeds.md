@@ -14,7 +14,7 @@ Feeds include additional metadata that indicates whether the operation is still 
 
 Feeds are typically used to request data from services and expose it in a stateless manner so that the resulting data can be displayed by the View.  
 
-Feeds are stateless and do not provide support for reacting upon changes the user makes to the data on the View, the data can only be reloaded and refreshed upon request which is when the underlying task or Async-Enumerable will be invoked and the data refreshed. In other words, a feed is a read-only representation of the data received from the server.
+Feeds are stateless and does not provide support for reacting to changes the user makes to the data on the View. The data can only be reloaded and refreshed upon request which is when the underlying task or Async-Enumerable will be invoked and the data refreshed. In other words, a feed is a read-only representation of the data received from the server.
 
 In contrast to feeds, [states](xref:Overview.Mvux.States) (`IState` or `IListState`), as the name suggests, are stateful and keep track of the latest value, as updates are applied.
 
@@ -115,7 +115,7 @@ public void SetUp()
 
 #### Awaiting feeds
 
-Feeds are directly awaitable, so to get the data currently held in the feed, this is useful when you want to use the current value in a command, etc. You can await it in the following manner:
+Feeds are directly awaitable, so to get the data currently held in the feed, the feed needs to be awaited. This is useful when you want to use the current value in a method, for example:
 
 ```csharp
 public IFeed<CurrentCount> CurrentCount => ...

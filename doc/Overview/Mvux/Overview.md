@@ -41,7 +41,7 @@ MVUX is an extension to the MVU design pattern, and leverages code generation in
 
 ### Model
 
-The **Model** in MVUX is similar in many ways to the viewmodel in MVVM in that it defines the properties that will be available for data binding and methods that include any business logic. In MVUX this is referred to as the Model, highlighting that it is immutable by design.
+The **Model** in MVUX is similar in many ways to the viewmodel in MVVM. The **Model** defines the properties that will be available for data binding and methods that include any business logic. In MVUX this is referred to as the **Model**, highlighting that it is immutable by design.
 
 For our weather app, `WeatherModel` is the **Model**, and defines a property named `CurrentWeather`.
 
@@ -68,7 +68,7 @@ The **View** is the UI, which can be written in XAML, C#, or a combination of th
 </Page>
 ```  
 
-If you're familiar with MVVM, the above XAML would look familiar, as it's the same XAML you would write if you had a viewmodel that exposed a `CurrentWeather` property that returns an entity that has a `Temperature` property.  
+This XAML data binds the `Text` property on the `TextBlock` to the `CurrentWeather.Temperature` property on the `DataContext` of the page. In other words, the `CurrentWeather` property is retrieved from the `DataContext`. If the resulting object is not null, the `Temperature` property is retrieved and used to set the `Text` property on the `TextBlock`.
 
 What's unique to MVUX is the additional information that `IFeed` exposes, such as when data is being loaded and whether there was an error loading the data. For this, we can leverage the MVUX `FeedView` control.
 
@@ -89,11 +89,11 @@ What's unique to MVUX is the additional information that `IFeed` exposes, such a
 </Page>
 ```
 
-The `FeedView` control is designed to work with an `IFeed`, and has different visual states that align with the different states that an `IFeed` can be in (e.g. loading, refreshing, error, etc.). The above XAML defines the `ValueTemplate`, which is required in order to display the `Data` from the `IFeed`. Other templates include `ProgressTemplate`, `ErrorTemplate` and `NoneTemplate`, which can be defined in order to control what's displayed depending on the state of the `IFeed`.
+The `FeedView` control is designed to work with an `IFeed`, and has visual states that align with the states that an `IFeed` can be in (e.g. loading, refreshing, error, etc.). The above XAML defines the `ValueTemplate`, which is required in order to display the `Data` from the `IFeed`. Other templates include `ProgressTemplate`, `ErrorTemplate` and `NoneTemplate`, which can be defined in order to control what's displayed depending on the state of the `IFeed`.
 
 ### Update
 
-An **Update** is any action that will result in a change to the **Model**. Whilst an **Update** is often triggered via an interaction by the user with the **View**, such as editing text or clicking a button, an **Update** can also be triggered from a background process (for example a data sync operation or perhaps a notification triggered by a hardware sensor, such as a GPS).
+An **Update** is any action that will result in a change to the **Model**. An **Update** is often triggered via an interaction by the user with the **View**, such as editing text or clicking a button. However, an **Update** can also be triggered from a background process (for example a data sync operation or perhaps a notification triggered by a hardware sensor, such as a GPS).
 
 In the weather example, if we wanted to refresh the current weather data, a `Refresh` method can be added to the `WeatherModel`.
 

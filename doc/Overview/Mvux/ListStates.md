@@ -70,11 +70,6 @@ public IListFeed<string> FavoritesFeed => ...
 public IListState<string> FavoritesState => ListState.FromFeed(this, FavoritesFeed);
 ```
 
-## Others
-
-There's also the `ListState.Create` method which allows you to manually build the list-state with Messages.  
-You can learn about manual creation of Messages [here](xref:Overview.Reactive.State#create).
-
 ## Operators
 
 In the following examples, we'll refer to `MyStrings` which is an `IListState<string>`, to demonstrate how to use the various operators `IListState<T>` provides to update its state with modified data.
@@ -117,7 +112,7 @@ public async ValueTask TrimAll(CancellationToken ct = default)
 }
 ```
 
-Another overload is `UpdateAsync`, which allows you to apply an update on select item criteria, using a predicate that is checked before updating an individual update, and if an item qualifies, uses the `updater` argument, which in this case is a `Func<T, T>` which applies to an individual item:
+Another overload is `UpdateAsync`, which allows you to apply an update on items that match a criteria. The `match` predicate is checked for each item.It the item matches the criteria, the updater is invoked which returns a new instance of the item with the update applied:
 
 ```csharp
 public async ValueTask TrimLongNames(CancellationToken ct = default)
@@ -141,7 +136,7 @@ The `RemoveAllAsync` method uses a predicate to determine which items are to be 
 
 ### ForEachAsync
 
-This operator can be called from an `IListState<T>` to execute an asynchronous action on all items currently in the list-state each time its data is changed (values are either added or removed):
+This operator can be called from an `IListState<T>` to execute an asynchronous action then the data changes. The action is invoked once for the entire set of data, rather than for individual items:
 
 ```csharp
 await MyStrings.ForEachAsync(async(list, ct) => await PerformAction(items, ct));

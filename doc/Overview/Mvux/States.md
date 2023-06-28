@@ -160,7 +160,7 @@ public async ValueTask IncrementSlider(CancellationToken ct = default)
 }
 ```
 
-The `updater` parameter of the `Update` method accepts a `Func<T, T>`, where the input parameter provides the current value of the State when called, and the return parameter is the one to be returned and applied as the new value of the State, in our case we use the `incrementValue` [local function](https://learn.microsoft.com/dotnet/csharp/programming-guide/classes-and-structs/local-functions) to increment `currentValue` by one (or return `1` if the value exceeds `100`).
+The `updater` parameter of the `Update` method accepts a `Func<T, T>`. The input parameter provides the current value of the State when called. The return value is the new value that will be applied as the new value of the State, in our case we use the `incrementValue` [local function](https://learn.microsoft.com/dotnet/csharp/programming-guide/classes-and-structs/local-functions) to increment `currentValue` by one (or return `1` if the value exceeds `100`).
 
 #### Set
 
@@ -177,7 +177,7 @@ public async ValueTask SetSliderMiddle(CancellationToken ct = default)
 
 The `ForEachAsync` enables executing a callback each time the value of the `IState<T>` is updated.
 
-This extension-method takes a single parameter which is a async callback that takes two parameters, the first one is `T?` where `T` is what the `IState<T>` is of, and the second is a `CancellationToken`. It returns a `ValueTask`.
+This extension-method takes a single parameter which is a async callback that takes two parameters. The first parameter is of type `T?`, where `T` is type of the `IState`, and represents the new value of the state. The second parameter is a `CancellationToken` which can be used to cancel a long running action.
 
 For example:
 
