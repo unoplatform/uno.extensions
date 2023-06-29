@@ -169,7 +169,7 @@ As you can see, the messenger's `Send` method is called in the `CreateAsync` cal
 #### Additional Observe overloads
 
 The `Observe` extension method comes in several flavors.
-They all share a common goal - to intercept entity-message messages from the messenger and apply them to a state or feed-state. They also share a `keySelector` parameter which uses to determine by which property the entity is identified. This is important so that the state can compare or look up an appropriate entity where needed, for example when an entity was updated, it will replace the old one with the new one received with the entity message.
+They all share a common goal - to send and intercept entity-message messages to and from the messenger, and apply them to a state or feed-state. They also share a `keySelector` parameter which uses to determine by which property the entity is identified. This is important so that the state can compare or look up an appropriate entity where needed, for example when an entity was updated, it will replace the old one with the new one received with the entity message.
 
 - `Observe<TEntity, TKey>(IState<TEntity> state, Func<TEntity, TKey> keySelector)`
 
@@ -219,9 +219,70 @@ They all share a common goal - to intercept entity-message messages from the mes
     }
     ```
 
+- `Observe<TOther, TEntity, TKey>(IListState<TEntity> listState, IFeed<TOther> other, Func<TOther, TEntity, bool> predicate, Func<TEntity, TKey> keySelector)`
+
+This overload intercepts entity-change messages from the messenger for a certain entity type, but only refreshes the state when the predicate returns true, based on related entities from another feed.
+
+Using the previous example, if each `Person` has a list of `Phone` with a `Phone.PersonId` property associating them to their owning `Person`, making changes to a `Phone` (e.g. removing one), will have the service send an entity-change message which will refresh the `SelectedPersonPhones` list-state, but only if the `Phone.PersonId` matches with the currently selected person `Id`:
+
+```csharp
+public partial record PeopleModel
+{
+    protected IPeopleService PeopleService { get; }
+    protected IPhoneService PhoneService { get; }
+
+    public PeopleModel(IPeopleService peopleService, IPhoneService phoneService, IMessenger messenger)
+    {
+        PeopleService = peopleService;
+        PhoneService = phoneService;
+
+        messenger.Observe(People, person => person.Id);
+        messenger.Observe(SelectedPersonPhones, SelectedPerson, (person, phones) => true, person => person.Id);
+    }
+
+    public IListState<Person> People =>
+        ListState
+        .Async(this, PeopleService.GetPeople)
+        .Selection(SelectedPerson);
+
+    public IState<Person> NewPerson => State<Person>.Value(this, Person.EmptyPerson);
+
+    public IState<Person> SelectedPerson => State<Person>.Empty(this);
+
+    public IListState<Phone> SelectedPersonPhones => ListState.FromFeed(this, SelectedPerson.SelectAsync(GetAllPhonesSafe).AsListFeed());
+
+    private async ValueTask<IImmutableList<Phone>> GetAllPhonesSafe(Person selectedPerson, CancellationToken ct)
+    {
+        if (selectedPerson == null)
+            return ImmutableList<Phone>.Empty;
+
+        return await PhoneService.GetAllPhones(selectedPerson, ct);
+    }
+
+    public async ValueTask AddPerson(CancellationToken ct = default)
+    {
+        var newPerson = (await NewPerson)!;
+
+        await PeopleService.AddPerson(newPerson, ct);
+
+        await NewPerson.Update(old => Person.EmptyPerson(), ct);
+    }
+
+    public async ValueTask RemovePhone(int phoneId, CancellationToken ct)
+    {
+        await PhoneService.DeletePhoneAsync(phoneId, ct);
+    }
+}
+```
+
+the `SelectedPersonPhone` state will be refreshed only if it's falling under
+
+> ![NOTE]
+> The `Selection` method above picks up UI selection changes and reflects them onto a state. This subject is covered [here](xref:Overview.Mvux.Advanced.Selection).
+
 - `Observe<TOther, TEntity, TKey>(IState<TEntity> state, IFeed<TOther> other, Func<TOther, TEntity, bool> predicate, Func<TEntity, TKey> keySelector)`
 
-- `Observe<TOther, TEntity, TKey>(IListState<TEntity> listState, IFeed<TOther> other, Func<TOther, TEntity, bool> predicate, Func<TEntity, TKey> keySelector)`
+This overload is the same as the previous one, except it watches a single-item state rather than a list-state as in the previous example.
 
 ### Update
 
