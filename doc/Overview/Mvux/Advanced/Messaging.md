@@ -4,11 +4,16 @@ uid: Overview.Mvux.Advanced.Messaging
 
 # Messaging
 
+Messaging is the ability to send in-app messages between its components in a way that enables them to remain decoupled from one another.
+
+In MVUX, we use feeds to pull entities from a service. When a command or an action is executed, we call methods on the service that apply changes to the data, for example, an entity creation, removal, or update.  
+But when the data is changed by the service, we need to ping back the feed and tell it that a change has taken place and that it should update the changed entities, but at the same time, we don't want the service to have a reference to the model or know about it; it's the model that uses the service, not the other way around.
+
+This is where messaging comes in handy. The service sends a message about this entity change to a central messenger that publishes messages to anyone willing to listen. The model then subscribes to the messages it wants to listen to (filtered by type of entity and entity key) and updates its feeds with the updated entities received from the service.
+
 ## Community Toolkit messenger
 
-The Community Toolkit messenger can be used as a central tool to send and receive global messages between objects in the app. The advantage of the messenger is that objects can remain decoupled from each other as the messenger enables sending the messages around without keeping a strong reference between the sender and the receiver. The messages can also be sent over specific channels uniquely identified by a token or within certain areas of the application.
-
-MVUX includes extension methods that enable the integration between the [Community Toolkit messenger](https://learn.microsoft.com/dotnet/communitytoolkit/mvvm/messenger) and [MVUX feeds](xref:Overview.Mvux.Feeds). But before discussing how MVUX integrates with the Community Toolkit messenger, let's have a quick look on how the messenger works.
+The Community Toolkit messenger is a common tool that can use to send and receive such messages between objects in the app. The messenger enables objects to remain decoupled from each other without keeping a strong reference between the sender and the receiver. The messages can also be sent over specific channels uniquely identified by a token or within certain areas of the application.
 
 The core component of the messenger is the `IMessenger` object. Its main methods are `Register` and `Send`. `Register` subscribes to an object to start listening to messages of a certain type, whereas `Send` sends out messages to all listening parties.  
 There are various ways to obtain the `IMessenger` object, but we'll use the most common one, which involves using [Dependency Injection](xref:Overview.DependencyInjection) (DI) to register the `IMessenger` service in the app so it can then be resolved at the construction of other dependent types (e.g., ViewModels).
@@ -16,6 +21,8 @@ There are various ways to obtain the `IMessenger` object, but we'll use the most
 In the model, we obtain a reference to the `IMessenger` on the constructor, which is resolved by the DI's service provider.
 The `Register` method has quite a few overloads, but for the sake of this example, let's use the one that takes the recipient and the message type as parameters. The first parameter is the recipient (`this` in this case), and the second one is a callback that is executed when a message has been received. Although `this` can be called within the callback, it's preferred that the callback doesn't make external references and that the `MyModel` is passed in as an argument.  
 `MessageReceived` is then called on the received recipient (which is the current `MyModel`), and the message is passed into it:
+
+MVUX includes extension methods that enable the integration between the [Community Toolkit messenger](https://learn.microsoft.com/dotnet/communitytoolkit/mvvm/messenger) and [MVUX feeds](xref:Overview.Mvux.Feeds). But before discussing how MVUX integrates with the Community Toolkit messenger, let's have a quick look at how the messenger works.
 
 ```csharp
 using CommunityToolkit.Mvvm.Messaging;
@@ -47,12 +54,12 @@ The `MyMessage` type is defined in a location accessible to both the sender and 
 public record MyMessage(string Message);
 ```
 
-Then, in another location or module in the app, a `MyMessage` is sent:
+Then, in a service or any other module in the app, a `MyMessage` is sent:
 
 ```csharp
 using CommunityToolkit.Mvvm.Messaging;
 
-public partial record AnotherModel
+public partial record AnotherModelOrService
 {
     public AnotherModel(IMessenger messenger)
     {
@@ -163,8 +170,6 @@ public class PeopleService : IPeopleService
 ```
 
 As you can see, the messenger's `Send` method is called in the `CreateAsync` call, specifying a 'created' `EntityMessage` along with the newly created person. The model observes this type of message `EntityMessage<Person>`, and as the `People` list-state has been subscribed to this, it will be updated with the newly created person added to it.
-
-<!--TODO link from IState IListState page -->
 
 #### Additional Observe overloads
 
