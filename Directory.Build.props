@@ -1,4 +1,5 @@
 ﻿<Project>
+	
 	<!-- Disabling for the moment as will cause too many breaks -->
 	<!--<ItemGroup>
 		<PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
