@@ -2,8 +2,14 @@
 
 namespace Uno.Extensions.Navigation.UI;
 
+/// <summary>
+/// Region attached properties
+/// </summary>
 public static class Region
 {
+	private static ILogger? _logger;
+	internal static ILogger Logger { get => _logger ?? throw new NullReferenceException("Logger needs to be set"); set => _logger = value; }
+
 	public static readonly DependencyProperty InstanceProperty =
 	   DependencyProperty.RegisterAttached(
 		   "Instance",
@@ -53,6 +59,11 @@ public static class Region
 			return;
 		}
 
+		if (Logger.IsEnabled(LogLevel.Trace))
+		{
+			Logger.LogTraceMessage($"{d?.GetType().Name} New: {e.NewValue} Old: {e.OldValue}");
+		}
+
 		if (d is FrameworkElement element)
 		{
 			RegisterElement(element, e.NewValue is bool active ? active : false);
@@ -61,20 +72,38 @@ public static class Region
 
 	private static void RegisterElement(FrameworkElement element, bool active)
 	{
+		if (Logger.IsEnabled(LogLevel.Trace))
+		{
+			Logger.LogTraceMessage($"Registering region for element {element.GetType().Name} IsActive ({active})");
+		}
+
+
 		var existingRegion = Region.GetInstance(element);
 		if (existingRegion is not null)
 		{
+			if (Logger.IsEnabled(LogLevel.Trace))
+			{
+				Logger.LogTraceMessage($"Region exists already");
+			}
 			if (active)
 			{
+				if (Logger.IsEnabled(LogLevel.Trace))
+				{
+					Logger.LogTraceMessage($"Region is already active, so reassigning parent");
+				}
 				existingRegion.ReassignParent();
 			}
 			else
 			{
+				if (Logger.IsEnabled(LogLevel.Trace))
+				{
+					Logger.LogTraceMessage($"Region is not active, so detaching");
+				}
 				existingRegion.Detach();
 			}
 		}
 
-		var region = existingRegion ?? (active ? new NavigationRegion(element) : default);
+		var region = existingRegion ?? (active ? new NavigationRegion(Logger, element) : default);
 	}
 
 	public static void SetInstance(this DependencyObject element, IRegion? value)

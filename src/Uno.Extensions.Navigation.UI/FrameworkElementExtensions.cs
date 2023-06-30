@@ -1,4 +1,6 @@
-﻿namespace Uno.Extensions.Navigation;
+﻿using Microsoft.Extensions.DependencyInjection;
+
+namespace Uno.Extensions.Navigation;
 
 public static class FrameworkElementExtensions
 {
@@ -26,7 +28,7 @@ public static class FrameworkElementExtensions
 		var services = sp.CreateNavigationScope();
 
 		// Create the Root region
-		var elementRegion = new NavigationRegion(root, services);
+		var elementRegion = new NavigationRegion(sp.GetRequiredService<ILogger<NavigationRegion>>(), root, services);
 
 		var nav = elementRegion.Navigator();
 		if (nav is not null)

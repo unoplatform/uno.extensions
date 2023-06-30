@@ -43,6 +43,11 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 		Logger = logger;
 		Resolver = resolver;
 		Dispatcher = dispatcher;
+
+		if (Logger.IsEnabled(LogLevel.Trace))
+		{
+			Logger.LogTraceMessage($"New navigator for region {region?.Name}");
+		}
 	}
 
 	/// <inheritdoc />

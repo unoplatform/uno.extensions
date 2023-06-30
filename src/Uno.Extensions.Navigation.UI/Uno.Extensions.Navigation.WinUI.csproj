@@ -21,4 +21,8 @@
 	  <ProjectReference Include="..\Uno.Extensions.Hosting.UI\Uno.Extensions.Hosting.WinUI.csproj" />
 		<ProjectReference Include="..\Uno.Extensions.Core.UI\Uno.Extensions.Core.WinUI.csproj" />
 	</ItemGroup>
+
+	<ItemGroup>
+	  <SourceGeneratorInput Remove="NavigationHostedService.cs" />
+	</ItemGroup>
 </Project>

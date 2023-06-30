@@ -1,6 +1,6 @@
 ﻿namespace Uno.Extensions.Navigation;
 
-public static class NavigatorFactoryExtensions
+internal static class NavigatorFactoryExtensions
 {
     public static Type? FindRequestServiceByType(this NavigatorFactory factory, Type viewType)
     {

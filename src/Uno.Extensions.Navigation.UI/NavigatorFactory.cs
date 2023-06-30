@@ -1,6 +1,6 @@
 ﻿namespace Uno.Extensions.Navigation;
 
-public class NavigatorFactory : INavigatorFactory
+internal class NavigatorFactory : INavigatorFactory
 {
 	public IDictionary<string, (Type, bool)> Navigators { get; } = new Dictionary<string, (Type, bool)>();
 
@@ -21,12 +21,24 @@ public class NavigatorFactory : INavigatorFactory
 	public void RegisterNavigator<TNavigator>(bool requestRegion, params string[] names)
 		where TNavigator : INavigator
 	{
-		names.ForEach(name => Navigators[name] = (typeof(TNavigator), requestRegion));
+		names.ForEach(name =>
+		{
+			if (Logger.IsEnabled(LogLevel.Trace))
+			{
+				Logger.LogTraceMessage($"Registering {typeof(TNavigator)} for region {name}");
+			}
+
+			Navigators[name] = (typeof(TNavigator), requestRegion);
+
+		});
 	}
 
 	public INavigator? CreateService(IRegion region)
 	{
-		if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Adding region");
+		if (Logger.IsEnabled(LogLevel.Debug))
+		{
+			Logger.LogDebugMessage($"Adding region");
+		}
 
 		var services = region.Services;
 		var control = region.View;
@@ -88,7 +100,10 @@ public class NavigatorFactory : INavigatorFactory
 
 	public INavigator? CreateService(IRegion region, NavigationRequest request)
 	{
-		if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Adding region");
+		if (Logger.IsEnabled(LogLevel.Debug))
+		{
+			Logger.LogDebugMessage($"Adding region");
+		}
 
 		if (region.Services is null)
 		{
@@ -97,7 +112,7 @@ public class NavigatorFactory : INavigatorFactory
 
 		var services = region.Services.CreateNavigationScope();
 
-		var dialogRegion = new NavigationRegion(services: services);
+		var dialogRegion = new NavigationRegion(region.Services.GetRequiredService<ILogger<NavigationRegion>>(), services: services);
 		services.AddScopedInstance<IRegion>(dialogRegion);
 
 		var mapping = Resolver.FindByPath(request.Route.Base);

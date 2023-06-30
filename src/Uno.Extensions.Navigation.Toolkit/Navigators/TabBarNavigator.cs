@@ -24,18 +24,39 @@ public class TabBarNavigator : SelectorNavigator<TabBar>
 		}
 	}
 
-	protected override IEnumerable<FrameworkElement> Items => Control?.Items.OfType<FrameworkElement>() ?? new FrameworkElement[] { };
+	protected override IEnumerable<FrameworkElement> Items
+	{
+		get
+		{
+			if (Logger.IsEnabled(LogLevel.Trace))
+			{
+				Logger.LogTraceMessage($"{nameof(Items)}: {Control?.Items.Count}");
+			}
+			return Control?.Items.OfType<FrameworkElement>() ?? new FrameworkElement[] { };
+		}
+	}
 
 	protected override Action? AttachSelectionChanged(Action<FrameworkElement, FrameworkElement?> selectionChanged)
 	{
 		var control = Control;
 		if (control is null)
 		{
+			if (Logger.IsEnabled(LogLevel.Warning))
+			{
+				Logger.LogWarningMessage($"Unable to attach selection changed handler as Control is null");
+			}
 			return default;
 		}
 
 		TypedEventHandler<TabBar, TabBarSelectionChangedEventArgs> handler =
-			(nv, args) => selectionChanged(nv, args.NewItem as FrameworkElement);
+			(nv, args) =>
+			{
+				if (Logger.IsEnabled(LogLevel.Trace))
+				{
+					Logger.LogTraceMessage($"Tab bar selection changed ({(args.NewItem is not null ? "NewItem not null" : "NewItem is null")})");
+				}
+				selectionChanged(nv, args.NewItem as FrameworkElement);
+			};
 
 		control.SelectionChanged += handler;
 		return () => control.SelectionChanged -= handler;
