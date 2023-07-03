@@ -212,8 +212,10 @@ It's often necessary to include an API key alongside requests to a web API. This
 * All the details of `IHttpClientFactory` are abstracted away from the view model. The view model can simply use this `HttpClient` instance to make requests to the endpoint. The instance can have a managed lifecycle, while a significant amount of ceremony and unintuitive workarounds are avoided.
 
 ## See also
+
 - [How-To: Register an Endpoint for HTTP Requests](xref:Learn.Tutorials.Http.HowToHttp)
 - [How-To: Consume a web API with HttpClient](xref:Uno.Development.ConsumeWebApi)
+- [How-To: Create a Strongly-Typed REST Client for an API](xref:Learn.Tutorials.Http.HowToRefit)
+- [Overview: HTTP](xref:Overview.Http)
 - [Overview: Polly and HttpClientFactory](https://github.com/App-vNext/Polly/wiki/Polly-and-HttpClientFactory)
-- [How-To: Quickly Create a Strongly-Typed REST Client for an API](xref:Learn.Tutorials.Http.HowToRefit)
-- [Sample Code: TestHarness HTTP Endpoints](https://github.com/unoplatform/uno.extensions/tree/main/testing/TestHarness/TestHarness.Shared/Ext/Http/Endpoints)
+- [Explore: TestHarness HTTP Endpoints](https://github.com/unoplatform/uno.extensions/tree/main/testing/TestHarness/TestHarness.Shared/Ext/Http/Endpoints)
