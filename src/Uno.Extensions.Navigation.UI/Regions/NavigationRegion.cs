@@ -200,7 +200,20 @@ public sealed class NavigationRegion : IRegion
         // Force the lookup (and creation) of the navigator
         // This is required to intercept control event such as
         // navigating forward/backward on frame, or switching tabs
-        _ = this.Navigator();
+		var navigator = this.Navigator();
+
+		if(navigator is not null)
+		{
+			foreach (var child in Children.OfType<NavigationRegion>())
+			{
+				if(child._isLoaded && child._services is null)
+				{
+					// This will force the setup of Services, which will
+					// in turn force the creation of the navigator
+					_ = child.Navigator();
+				}
+			}
+		}
     }
 
 	public async Task<string> GetStringAsync()
