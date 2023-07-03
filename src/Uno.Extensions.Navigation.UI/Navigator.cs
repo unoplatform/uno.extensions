@@ -531,7 +531,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 			}
 		}
 
-		if (!(Route?.IsEmpty()??true))
+		if (Route?.IsEmpty() == false)
 		{
 			var currentRouteMap = Resolver.FindByPath(Route?.Base);
 			if (currentRouteMap != null || routeMap != null)
