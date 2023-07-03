@@ -12,8 +12,6 @@ For more documentation on HTTP requests, read the references listed at the botto
 Web resources exposed through an API are defined in the application as clients. These client registrations include type arguments and endpoints to be used for the client. The endpoint is defined in the `EndpointOptions` class. While it uses the platform-native HTTP handler by default, this value can be configured. 
 
 ```csharp
-private IHost Host { get; }
-
 protected override void OnLaunched(LaunchActivatedEventArgs args)
 {
     var builder = this.CreateBuilder(args)
@@ -36,8 +34,6 @@ protected override void OnLaunched(LaunchActivatedEventArgs args)
 `EndpointOptions` can also be loaded from a specified configuration section name. Refer to the [Configuration](xref:Overview.Configuration) documentation for more information.
 
 ```csharp
-private IHost Host { get; }
-
 protected override void OnLaunched(LaunchActivatedEventArgs args)
 {
     var builder = this.CreateBuilder(args)
@@ -51,6 +47,23 @@ protected override void OnLaunched(LaunchActivatedEventArgs args)
         });
 ...
 ```
+
+The `EndpointOptions` class is a base class that provides a `Url` property. This property is used to specify the URL of the endpoint. Subclassing `EndpointOptions` allows for custom options beyond the `Url` such as a proxy, timeout, and adding headers. Using this method, the `HttpClient` associated with the endpoint is configured from a single section in `appsettings.json`.
+
+```csharp
+protected override void OnLaunched(LaunchActivatedEventArgs args)
+{
+    var appBuilder = this.CreateBuilder(args)
+        .Configure(hostBuilder =>
+        {
+            hostBuilder.UseHttp((ctx, services) => {
+                services.AddClientWithEndpoint<IShowService, ShowService, CustomEndpointOptions>();
+            });
+        });
+...
+```
+
+See the [tutorial](xref:Learn.Tutorials.Http.HowToEndpointOptions) for more information about configuring `HttpClient` with custom endpoint options.
 
 ## Refit
 
@@ -73,7 +86,7 @@ protected override void OnLaunched(LaunchActivatedEventArgs args)
 ...
 ```
 
-In this case, the `EndpointOptions` will be loaded from configuration section ChuckNorrisEndpoint. The configuration section could be defined as follows:
+In this case, the `EndpointOptions` will be loaded from configuration section _ChuckNorrisEndpoint_. The configuration section could be defined as follows:
 
 ```json
 {
