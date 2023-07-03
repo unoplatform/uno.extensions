@@ -54,6 +54,7 @@ public class Given_TabBar : NavigationTestBase
 
 	private void CheckProductsVisible()
 	{
+		App.WaitElement("ProductsDealsButton");
 		var text = App.Marked("CurrentTabBarItemTextBlock").GetText();
 		text.Should().Be("Products");
 		var isVisible = App.Marked("ProductsStackPanel").IsVisible();
@@ -66,6 +67,7 @@ public class Given_TabBar : NavigationTestBase
 
 	private void CheckDealsVisible()
 	{
+		App.WaitElement("DealsProductsButton");
 		var text = App.Marked("CurrentTabBarItemTextBlock").GetText();
 		text.Should().Be("Deals");
 		var isVisible = App.Marked("ProductsStackPanel").IsVisible();
@@ -80,6 +82,7 @@ public class Given_TabBar : NavigationTestBase
 
 	private void CheckProfileVisible()
 	{
+		App.WaitElement("ProfileProductsButton");
 		var text = App.Marked("CurrentTabBarItemTextBlock").GetText();
 		text.Should().Be("Profile");
 		var isVisible = App.Marked("ProductsStackPanel").IsVisible();
