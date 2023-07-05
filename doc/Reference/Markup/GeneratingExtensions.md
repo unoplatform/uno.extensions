@@ -18,3 +18,9 @@ using Microsoft.UI.Xaml.Generator;
 
 > [!TIP]
 > If you do not add the reference to the Generator NuGet this attribute will be ignored and no source will be generated.
+
+## Next Steps
+
+Learn more about:
+
+- [Generating C# Extensions for your libraries](xref:Reference.Markup.GeneratingExtensions)

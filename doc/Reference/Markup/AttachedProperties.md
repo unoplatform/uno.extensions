@@ -26,3 +26,12 @@ new TextBlock()
 	.SomeClass(x => x
 		.Property(() => vm.Property))
 ```
+
+## Next Steps
+
+Learn more about:
+
+- [Styles](xref:Reference.Markup.Styles)
+- [Templates](xref:Reference.Markup.Templates)
+- [VisualStateManagers](xref:Reference.Markup.VisualStateManager)
+- [Generating C# Extensions for your libraries](xref:Reference.Markup.GeneratingExtensions)

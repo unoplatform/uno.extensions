@@ -50,3 +50,13 @@ new Grid()
 ## Storyboards
 
 In version 1.0 of the Markup Extensions Storyboards are not fully supported and will be addressed in a future release.
+
+## Next Steps
+
+Set up an Markup project
+
+You can use this tutorial to learn how to set up an Uno Platform project to use Uno.Extensions.Markup..
+
+- [HowToMarkupProject](xref:Reference.Markup.HowToMarkupProject)
+
+Then start create your own projects.
