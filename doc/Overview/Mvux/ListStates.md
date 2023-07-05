@@ -136,7 +136,7 @@ The `RemoveAllAsync` method uses a predicate to determine which items are to be 
 
 ### ForEachAsync
 
-This operator can be called from an `IListState<T>` to execute an asynchronous action then the data changes. The action is invoked once for the entire set of data, rather than for individual items:
+This operator can be called from an `IListState<T>` to execute an asynchronous action when the data changes. The action is invoked once for the entire set of data, rather than for individual items:
 
 ```csharp
 await MyStrings.ForEachAsync(async(list, ct) => await PerformAction(items, ct));
