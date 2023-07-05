@@ -58,3 +58,10 @@ new ListView()
 	.ItemsPanel(() => new ItemsStackPanel()
 		.Orientation(Orientation.Vertical))
 ```
+
+## Next Steps
+
+Learn more about:
+
+- [VisualStateManagers](xref:Reference.Markup.VisualStateManager)
+- [Generating C# Extensions for your libraries](xref:Reference.Markup.GeneratingExtensions)

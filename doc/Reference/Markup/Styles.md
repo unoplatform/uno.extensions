@@ -65,3 +65,11 @@ new Style<Button>()
 		)
 	)
 ```
+
+## Next Steps
+
+Learn more about:
+
+- [Templates](xref:Reference.Markup.Templates)
+- [VisualStateManagers](xref:Reference.Markup.VisualStateManager)
+- [Generating C# Extensions for your libraries](xref:Reference.Markup.GeneratingExtensions)

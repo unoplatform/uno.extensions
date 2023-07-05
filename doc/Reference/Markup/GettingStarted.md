@@ -18,6 +18,14 @@ In addition to the core package and generator the Uno team is shipping a number 
 > [!TIP]
 > For more information on generating extensions on your own libraries see [Generating Extensions](xref:Reference.Markup.GeneratingExtensions).
 
+## Set up an Markup project
+
+You can use this tutorial to learn how to set up an Uno Platform project to use Uno.Extensions.Markup..
+
+- [HowToMarkupProject](xref:Reference.Markup.HowToMarkupProject)
+
+Then start practicing using the guidelines below.
+
 ## Using the Markup Extensions
 
 A fundamental premise of the Uno.Extensions.Markup library is that it should be easy to use with extensions that are generally discoverable. For this reason, the markup extensions exist within the namespace of the type they are generated for with the explicit exception of types in the `Microsoft.UI.Xaml.Controls.Primitives` namespace which instead are generated in the `Microsoft.UI.Xaml.Controls` namespace. Extensions are generated generically for all types that are not sealed in an effort to reduce the number of extensions that are required for each class. Getting started couldn't be easier!
@@ -106,3 +114,4 @@ Learn more about:
 - [Templates](xref:Reference.Markup.Templates)
 - [VisualStateManagers](xref:Reference.Markup.VisualStateManager)
 - [Generating C# Extensions for your libraries](xref:Reference.Markup.GeneratingExtensions)
+- [Create your own C# Markup](xref:Reference.Markup.HowToCreateMarkupProject)
