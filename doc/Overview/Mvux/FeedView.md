@@ -4,7 +4,7 @@ uid: Overview.Mvux.FeedView
 
 # The `FeedView` control
 
-The `FeedView` control is the heart of MVUX on the View side and is one of the main way to consume Feeds and States within an application. The `FeedView` uses different visual states to control what is displayed on the screen depending on the state of the underlying feed, or state. 
+The `FeedView` control is one of the main ways to consume Feeds and States within an application. The `FeedView` uses different visual states to control what is displayed on the screen depending on the state of the underlying feed, or state. 
 
 ## How to use the `FeedView` control
 
@@ -55,9 +55,7 @@ In the above example, [`Data`](#data) is a property of the `FeedViewState` insta
 
 ### State
 
-The `State` property provides a `FeedViewState` which exposes the current state of the `FeedView`'s underlying data Feed wrapped in its metadata in an accessible way for the View to represent easily using the built-in or the customized templates accordingly.
-
-It's unlikely that you'll need to access the `State` property directly since the `FeedViewState` is automatically set as the `DataContext` of the various templates.  
+The `State` property returns a `FeedViewState` which exposes the current state of the `FeedView`'s underlying data Feed. It's unlikely that you'll need to access the `State` property directly since the `FeedViewState` is automatically set as the `DataContext` of the various templates.  
 
 #### The `FeedViewState` object
 
