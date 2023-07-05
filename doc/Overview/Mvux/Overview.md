@@ -472,7 +472,7 @@ You can then use the MVUX example above as a reference to create your own `IFeed
 - MVUX recommends using record types for the Models in your app as they're immutable
 - The MVUX analyzers auto-generate a bindable proxy for each `partial` `class` or `record` named with a _Model_ suffix  
 - For every public [`IFeed`](xref:Overview.Mvux.Feeds) property found in the model, a corresponding property is generated on the bindable proxy.
-- You can use [`IState`](xref:Overview.Mvux.States) properties to accepting input from the user
+- You can use [`IState`](xref:Overview.Mvux.States) properties to accepting input from the user.
 
 ### In the View
 
