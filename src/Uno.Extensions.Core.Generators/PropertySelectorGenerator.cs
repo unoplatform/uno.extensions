@@ -1,6 +1,5 @@
-﻿using System.Linq;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
+﻿using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Uno.Extensions.Generators.PropertySelector;
 
 namespace Uno.Extensions.Core.Generators;
@@ -35,7 +34,7 @@ public partial class PropertySelectorGenerator : IIncrementalGenerator
 		var assemblyNameProvider = context.CompilationProvider.Select((compilation, _) => compilation.AssemblyName);
 		var syntaxProvider = context.SyntaxProvider
 			.CreateSyntaxProvider(
-				(node, ct) => node.IsKind(SyntaxKind.InvocationExpression),
+				(node, ct) => IsCandidate(node),
 				(ctx, ct) => new PropertySelectorCandidate(ctx, ct))
 			.Where(candidate => candidate.IsValid).WithTrackingName("syntaxProvider_PropertySelectorGenerator");
 
@@ -43,5 +42,27 @@ public partial class PropertySelectorGenerator : IIncrementalGenerator
 
 		// We use the Implementation as the generated code does not alter the SemanticModel (only generates a registry).
 		context.RegisterImplementationSourceOutput(provider, (context, souce) => _tool.Generate(context, souce.Left, souce.Right));
+	}
+
+	private static bool IsCandidate(SyntaxNode node)
+	{
+		if (node is InvocationExpressionSyntax invocationExpression)
+		{
+			foreach (var arg in invocationExpression.ArgumentList.Arguments)
+			{
+				if (arg.Expression is SimpleLambdaExpressionSyntax simpleLambda && IsValidLambda(simpleLambda))
+				{
+					return true;
+				}
+			}
+		}
+
+		return false;
+
+		static bool IsValidLambda(SimpleLambdaExpressionSyntax simpleLambda)
+		{
+			return !(simpleLambda.Parameter is null or { IsMissing: true } or { Identifier.ValueText.Length: <= 0 } ||
+				simpleLambda.Body is null or { IsMissing: true });
+		}
 	}
 }
