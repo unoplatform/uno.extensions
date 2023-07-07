@@ -61,8 +61,7 @@ public partial class PropertySelectorGenerator : IIncrementalGenerator
 
 		static bool IsValidLambda(SimpleLambdaExpressionSyntax simpleLambda)
 		{
-			return !(simpleLambda.Parameter is null or { IsMissing: true } or { Identifier.ValueText.Length: <= 0 } ||
-				simpleLambda.Body is null or { IsMissing: true });
+			return simpleLambda is { Parameter: { IsMissing: false, Identifier.ValueText.Length: > 0 }, Body.IsMissing: false };
 		}
 	}
 }
