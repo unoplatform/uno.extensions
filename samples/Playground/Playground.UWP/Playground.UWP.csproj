@@ -214,14 +214,6 @@
       <Project>{2397a664-9140-45e6-bec0-6e975fcc31d1}</Project>
       <Name>Uno.Extensions.Storage</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\src\Uno.Extensions.Toolkit.UI\Uno.Extensions.Toolkit.UI.csproj">
-      <Project>{7bdd06ab-9ad2-403e-94b4-c9e39354ebf8}</Project>
-      <Name>Uno.Extensions.Toolkit.UI</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\src\Uno.Extensions.Toolkit\Uno.Extensions.Toolkit.csproj">
-      <Project>{130528a4-9934-4dd4-9743-1c395e703fc4}</Project>
-      <Name>Uno.Extensions.Toolkit</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\..\src\Uno.Extensions.Validation.Fluent\Uno.Extensions.Validation.Fluent.csproj">
       <Project>{349e684d-bc28-4d6e-8ca6-6646de7fd478}</Project>
       <Name>Uno.Extensions.Validation.Fluent</Name>

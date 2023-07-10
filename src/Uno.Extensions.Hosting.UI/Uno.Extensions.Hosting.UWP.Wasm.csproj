@@ -10,7 +10,9 @@
 	<ItemGroup>
 		<PackageReference Include="Uno.UI.Runtime.WebAssembly" />
 	</ItemGroup>
+
 	<ItemGroup>
+		<ProjectReference Include="..\Uno.Extensions.Core.UI\Uno.Extensions.Core.UI.csproj" />
 		<ProjectReference Include="..\Uno.Extensions.Storage.UI\Uno.Extensions.Storage.UI.csproj" />
 	</ItemGroup>
 

@@ -6,5 +6,6 @@
     <Using Include="Uno.Extensions.Edition" />
     <Using Include="Uno.Extensions.Equality" />
     <Using Include="Uno.Extensions.Logging" />
+    <Using Include="Uno.Extensions.Toolkit" />
   </ItemGroup>
 </Project>

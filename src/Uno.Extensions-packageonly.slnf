@@ -57,9 +57,6 @@
       "Uno.Extensions.Storage.UI\\Uno.Extensions.Storage.UI.csproj",
       "Uno.Extensions.Storage.UI\\Uno.Extensions.Storage.WinUI.csproj",
       "Uno.Extensions.Storage\\Uno.Extensions.Storage.csproj",
-      "Uno.Extensions.Toolkit.UI\\Uno.Extensions.Toolkit.UI.csproj",
-      "Uno.Extensions.Toolkit.UI\\Uno.Extensions.Toolkit.WinUI.csproj",
-      "Uno.Extensions.Toolkit\\Uno.Extensions.Toolkit.csproj",
       "Uno.Extensions.Validation.Fluent\\Uno.Extensions.Validation.Fluent.csproj",
       "Uno.Extensions.Validation\\Uno.Extensions.Validation.csproj",
       "Uno.Extensions\\Uno.Extensions.csproj"
