@@ -67,9 +67,9 @@ public static class GenerationTestHelper
 		}
 	}
 
-	public static void AssertRunReason(GeneratorRunResult result, IncrementalStepRunReason expectedReason)
+	public static void AssertRunReason(GeneratorRunResult result, IncrementalStepRunReason expectedReason, int expectedTrackedStepsCount = 4)
 	{
-		result.TrackedSteps.Count.Should().Be(4);
+		result.TrackedSteps.Count.Should().Be(expectedTrackedStepsCount);
 		foreach (var trackedStep in result.TrackedSteps.Values)
 		{
 			foreach (var runStep in trackedStep)

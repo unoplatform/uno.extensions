@@ -49,8 +49,8 @@ public class Given_PS0003
 
 		GenerationTestHelper.RunGeneratorTwice(
 			compilation.Compilation,
-			run1 => GenerationTestHelper.AssertRunReason(run1, IncrementalStepRunReason.New),
-			run2 => GenerationTestHelper.AssertRunReason(run2, IncrementalStepRunReason.Cached),
+			run1 => GenerationTestHelper.AssertRunReason(run1, IncrementalStepRunReason.New, expectedTrackedStepsCount: 0),
+			run2 => GenerationTestHelper.AssertRunReason(run2, IncrementalStepRunReason.Cached, expectedTrackedStepsCount: 0),
 			null);
 	}
 }
