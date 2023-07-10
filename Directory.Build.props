@@ -30,6 +30,13 @@
 		<Build_Windows>true</Build_Windows>
 	</PropertyGroup>
 
+	<ItemGroup>
+        <PackageReference Include="Microsoft.Net.Compilers.Toolset" VersionOverride="4.7.0-2.final">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+        </PackageReference>
+	</ItemGroup>
+
 	<Import Project="DebugPlatforms.props" Condition="exists('DebugPlatforms.props')" />
 
 	 <Target Name="Log disabled platforms" BeforeTargets="BeforeBuild">

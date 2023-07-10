@@ -24,7 +24,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Update="Microsoft.Net.Compilers.Toolset" Version="4.2.0" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Console" Version="6.0.0" />
 		<PackageReference Include="Uno.WinUI.Skia.Wpf" Version="5.0.0-dev.1148" />
 		<PackageReference Include="Uno.WinUI.RemoteControl" Version="5.0.0-dev.1148" Condition="'$(Configuration)'=='Debug'" />
