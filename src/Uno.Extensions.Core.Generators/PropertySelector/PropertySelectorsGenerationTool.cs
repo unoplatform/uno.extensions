@@ -95,12 +95,13 @@ internal class PropertySelectorsGenerationTool : ICodeGenTool
 
 	internal static string? GenerateAccessor(INamedTypeSymbol selectorType, ArgumentSyntax? selectorArg)
 	{
-		if (selectorArg?.Expression is not SimpleLambdaExpressionSyntax selector)
+		if (selectorArg?.Expression is not ParenthesizedLambdaExpressionSyntax selector)
 		{
 			return null;
 		}
 
-		if (selector.Parameter is null or { IsMissing: true } or { Identifier.ValueText.Length: <= 0 }
+		if (selector.ParameterList.Parameters.Count != 1 ||
+			selector.ParameterList.Parameters[0] is { IsMissing: true } or { Identifier.ValueText.Length: <= 0 }
 			|| selector.Body is null or { IsMissing: true })
 		{
 			// Delegate is not defined properly yet, we cannot generate.
@@ -120,7 +121,7 @@ internal class PropertySelectorsGenerationTool : ICodeGenTool
 	}
 
 	private static string GenerateGetter(PropertySelectorPath path)
-		=> $"entity => entity{path.FullPath}"; // Note: this is expected to be the SimpleLambdaExpressionSyntax selector
+		=> $"entity => entity{path.FullPath}"; // Note: this is expected to be the ParenthesizedLambdaExpressionSyntax selector
 
 	private static string GenerateSetter(ITypeSymbol record, PropertySelectorPath path)
 	{

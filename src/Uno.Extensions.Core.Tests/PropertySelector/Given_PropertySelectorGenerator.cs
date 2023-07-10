@@ -12,57 +12,57 @@ public class Given_PropertySelectorGenerator
 {
 	[TestMethod]
 	public void When_Simple()
-		=> Test(new ValueRecord("hello"), "world", e => e.Value);
+		=> Test(new ValueRecord("hello"), "world", [PropertySelector] (e) => e.Value);
 
 	[TestMethod]
 	public void When_NestedValue()
-		=> Test(new RootRecord<ValueRecord>(new ("hello")), "world", e => e.Nested.Value);
+		=> Test(new RootRecord<ValueRecord>(new ("hello")), "world", [PropertySelector] (e) => e.Nested.Value);
 
 	[TestMethod]
 	public void When_NullableValue_Propagation()
-		=> Test(new NullableValueRecord("hello"), "world", e => e.Value);
+		=> Test(new NullableValueRecord("hello"), "world", [PropertySelector] (e) => e.Value);
 
 	[TestMethod]
 	public void When_NullableValue_PropagationWithNull()
-		=> Test(new NullableValueRecord(default), "hello world", e => e.Value);
+		=> Test(new NullableValueRecord(default), "hello world", [PropertySelector] (e) => e.Value);
 
 	[TestMethod]
 	public void When_NullableValue_Suppression()
-		=> Test(new NullableValueRecord("hello"), "world", e => e.Value!);
+		=> Test(new NullableValueRecord("hello"), "world", [PropertySelector] (e) => e.Value!);
 
 	[TestMethod]
 	public void When_NullableValue_SuppressionWithNull()
-		=> Test(new NullableValueRecord(default), "world", e => e.Value!);
+		=> Test(new NullableValueRecord(default), "world", [PropertySelector] (e) => e.Value!);
 
 	[TestMethod]
 	public void When_NullableNestedValue_Propagation()
-		=> Test(new RootNullableRecord<NullableValueRecord>(new("hello")), "world", e => e.Nested?.Value);
+		=> Test(new RootNullableRecord<NullableValueRecord>(new("hello")), "world", [PropertySelector] (e) => e.Nested?.Value);
 
 	[TestMethod]
 	public void When_NullableNestedValue_PropagationWithNull()
-		=> Test(new RootNullableRecord<NullableValueRecord>(default), "hello world", e => e.Nested?.Value);
+		=> Test(new RootNullableRecord<NullableValueRecord>(default), "hello world", [PropertySelector] (e) => e.Nested?.Value);
 
 	[TestMethod]
 	public void When_NullableNestedValue_Suppression()
-		=> Test(new RootNullableRecord<NullableValueRecord>(new("hello")), "world", e => e.Nested!.Value);
+		=> Test(new RootNullableRecord<NullableValueRecord>(new("hello")), "world", [PropertySelector] (e) => e.Nested!.Value);
 
 	[TestMethod]
 	[ExpectedException(typeof(NullReferenceException))]
 	public void When_NullableNestedValue_SuppressionWithNull()
-		=> GetAccessor<RootNullableRecord<NullableValueRecord>, string?>(e => e.Nested!.Value).Get(new (default));
+		=> GetAccessor<RootNullableRecord<NullableValueRecord>, string?>([PropertySelector] (e) => e.Nested!.Value).Get(new (default));
 
 	[TestMethod]
 	public void When_NullableNestedValue_DoubleSuppression()
-		=> Test(new RootNullableRecord<NullableValueRecord>(new("hello")), "world", e => e.Nested!.Value!);
+		=> Test(new RootNullableRecord<NullableValueRecord>(new("hello")), "world", [PropertySelector] (e) => e.Nested!.Value!);
 
 	[TestMethod]
 	[ExpectedException(typeof(NullReferenceException))]
 	public void When_NullableNestedValue_DoubleSuppressionWithIntermediateNull()
-		=> GetAccessor<RootNullableRecord<NullableValueRecord>, string>(e => e.Nested!.Value!).Get(new(default));
+		=> GetAccessor<RootNullableRecord<NullableValueRecord>, string>([PropertySelector] (e) => e.Nested!.Value!).Get(new(default));
 
 	[TestMethod]
 	public void When_NullableNestedValue_DoubleSuppressionWithFinalNull()
-		=> Test(new RootNullableRecord<NullableValueRecord>(new (default)), "hello world", e => e.Nested!.Value!);
+		=> Test(new RootNullableRecord<NullableValueRecord>(new (default)), "hello world", [PropertySelector] (e) => e.Nested!.Value!);
 
 	public record ValueRecord(string Value);
 	public record NullableValueRecord(string? Value);

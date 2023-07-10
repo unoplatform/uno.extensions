@@ -48,9 +48,9 @@ internal static class PropertySelectorPathResolver
 		}
 	}
 
-	public static PropertySelectorPath Resolve(SimpleLambdaExpressionSyntax selector)
+	public static PropertySelectorPath Resolve(ParenthesizedLambdaExpressionSyntax selector)
 	{
-		var paramName = selector.Parameter.Identifier.ValueText;
+		var paramName = selector.ParameterList.Parameters[0].Identifier.ValueText;
 
 		var visitor = new Visitor();
 		var parts = visitor.Parts;

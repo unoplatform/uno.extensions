@@ -20,10 +20,10 @@ public sealed class PropertySelectorAnalyzer : DiagnosticAnalyzer
 	private sealed class Visitor : CSharpSyntaxVisitor
 	{
 		private readonly OperationAnalysisContext _context;
-		private readonly SimpleLambdaExpressionSyntax _selectorSyntax;
+		private readonly ParenthesizedLambdaExpressionSyntax _selectorSyntax;
 		private bool _isFirstIdentifier = true;
 
-		public Visitor(OperationAnalysisContext context, SimpleLambdaExpressionSyntax selectorSyntax)
+		public Visitor(OperationAnalysisContext context, ParenthesizedLambdaExpressionSyntax selectorSyntax)
 		{
 			_context = context;
 			_selectorSyntax = selectorSyntax;
@@ -46,7 +46,7 @@ public sealed class PropertySelectorAnalyzer : DiagnosticAnalyzer
 		{
 			if (_isFirstIdentifier)
 			{
-				if (_selectorSyntax.Parameter.Identifier.ValueText != node.Identifier.ValueText)
+				if (_selectorSyntax.ParameterList.Parameters[0].Identifier.ValueText != node.Identifier.ValueText)
 				{
 					_context.ReportDiagnostic(Rules.PS0002.GetDiagnostic(_selectorSyntax, node));
 				}
@@ -81,6 +81,7 @@ public sealed class PropertySelectorAnalyzer : DiagnosticAnalyzer
 		Rules.PS0004.Descriptor,
 		Rules.PS0005.Descriptor,
 		Rules.PS0006.Descriptor,
+		Rules.PS0007.Descriptor,
 		Rules.PS0102.Descriptor);
 
 	/// <inheritdoc/>
@@ -91,22 +92,36 @@ public sealed class PropertySelectorAnalyzer : DiagnosticAnalyzer
 		context.RegisterCompilationStartAction(context =>
 		{
 			var propertySelectorSymbol = context.Compilation.GetTypeByMetadataName("Uno.Extensions.Edition.PropertySelector`2");
+			var propertySelectorAttributeType = context.Compilation.GetTypeByMetadataName("Uno.Extensions.Edition.PropertySelectorAttribute");
 			var callerFilePathSymbol = context.Compilation.GetTypeByMetadataName("System.Runtime.CompilerServices.CallerFilePathAttribute");
 			var callerlineNumberSymbol = context.Compilation.GetTypeByMetadataName("System.Runtime.CompilerServices.CallerLineNumberAttribute");
 			if (propertySelectorSymbol is not null && callerFilePathSymbol is not null && callerlineNumberSymbol is not null)
 			{
-				context.RegisterOperationAction(context => AnalyzeInvocation(context, propertySelectorSymbol, callerFilePathSymbol, callerlineNumberSymbol), OperationKind.Invocation);
+				context.RegisterOperationAction(context => AnalyzeInvocation(context, propertySelectorSymbol, callerFilePathSymbol, callerlineNumberSymbol, propertySelectorAttributeType), OperationKind.Invocation);
 			}
 		});
 	}
 
-	private static void AnalyzeInvocation(OperationAnalysisContext context, INamedTypeSymbol propertySelectorSymbol, INamedTypeSymbol callerFilePathSymbol, INamedTypeSymbol callerLineNumberSymbol)
+	private static void AnalyzeInvocation(
+		OperationAnalysisContext context, INamedTypeSymbol propertySelectorSymbol, INamedTypeSymbol callerFilePathSymbol, INamedTypeSymbol callerLineNumberSymbol, INamedTypeSymbol? propertySelectorAttributeType)
 	{
 		var operation = (IInvocationOperation)context.Operation;
 		var method = operation.TargetMethod;
 		if (!IsCandidate(method, propertySelectorSymbol, callerFilePathSymbol, callerLineNumberSymbol, out var selectorParameter, out var callerFileParameter, out var callerLineParameter))
 		{
 			return;
+		}
+
+		var argument = operation.Arguments.FirstOrDefault(arg => arg.Parameter?.Ordinal == selectorParameter.Ordinal);
+		if (argument?.Value is IDelegateCreationOperation delegateCreationOperation &&
+			delegateCreationOperation.Target is IAnonymousFunctionOperation anonymousFunctionOperation &&
+			anonymousFunctionOperation.Symbol is { } symbol)
+		{
+			if (!symbol.GetAttributes().Any(a => a.AttributeClass?.Equals(propertySelectorAttributeType, SymbolEqualityComparer.Default) == true))
+			{
+				context.ReportDiagnostic(Rules.PS0007.GetDiagnostic(argument.Syntax));
+				return;
+			}
 		}
 
 		var callerFileArgument = operation.Arguments.FirstOrDefault(arg => arg.Parameter?.Ordinal == callerFileParameter.Ordinal);
@@ -130,9 +145,10 @@ public sealed class PropertySelectorAnalyzer : DiagnosticAnalyzer
 			return;
 		}
 
-		if (selectorArg.Expression is SimpleLambdaExpressionSyntax simpleLambdaExpression)
+		if (selectorArg.Expression is ParenthesizedLambdaExpressionSyntax lambdaExpression &&
+			lambdaExpression.ParameterList.Parameters.Count == 1)
 		{
-			var path = PropertySelectorPathResolver.Resolve(simpleLambdaExpression);
+			var path = PropertySelectorPathResolver.Resolve(lambdaExpression);
 			var count = path.Parts.Count;
 			var type = entityType;
 
@@ -143,9 +159,9 @@ public sealed class PropertySelectorAnalyzer : DiagnosticAnalyzer
 				context.ReportDiagnostic(Rules.PS0006.GetDiagnostic(path.FullPath, path.Parts[0].Name, path.Parts[0].Node, type));
 			}
 
-			if (simpleLambdaExpression.ExpressionBody is not null)
+			if (lambdaExpression.ExpressionBody is not null)
 			{
-				new Visitor(context, simpleLambdaExpression).Visit(simpleLambdaExpression.ExpressionBody);
+				new Visitor(context, lambdaExpression).Visit(lambdaExpression.ExpressionBody);
 			}
 			
 

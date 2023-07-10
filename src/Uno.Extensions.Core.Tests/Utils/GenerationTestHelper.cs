@@ -67,7 +67,7 @@ public static class GenerationTestHelper
 		}
 	}
 
-	public static void AssertRunReason(GeneratorRunResult result, IncrementalStepRunReason expectedReason, int expectedTrackedStepsCount = 4)
+	public static void AssertRunReason(GeneratorRunResult result, IncrementalStepRunReason expectedReason, int expectedTrackedStepsCount = 17)
 	{
 		result.TrackedSteps.Count.Should().Be(expectedTrackedStepsCount);
 		foreach (var trackedStep in result.TrackedSteps.Values)
@@ -76,10 +76,21 @@ public static class GenerationTestHelper
 			{
 				foreach (var output in runStep.Outputs)
 				{
-					var adjustedExpectedReason = runStep.Name == "Compilation" && expectedReason == IncrementalStepRunReason.Cached
+					if (runStep.Name is "compilationUnit_ForAttribute" or "collectedGlobalAliases_ForAttribute" or "compilationAndGroupedNodes_ForAttributeWithMetadataName" or "compilationUnit_ForAttribute" or
+						"result_ForAttributeWithMetadataName" or "allUpGlobalAliases_ForAttribute" or "collectedNodes_ForAttributeWithMetadataName" or "individualFileGlobalAliases_ForAttribute")
+					{
+						continue;
+					}
+
+					var adjustedExpectedReason = runStep.Name is "Compilation" && expectedReason == IncrementalStepRunReason.Cached
 						? IncrementalStepRunReason.Modified
 						: expectedReason;
-					output.Reason.Should().Be(adjustedExpectedReason);
+
+					adjustedExpectedReason = runStep.Name == "syntaxProvider_PropertySelectorGenerator" && expectedReason == IncrementalStepRunReason.Cached
+						? IncrementalStepRunReason.Unchanged
+						: adjustedExpectedReason;
+
+					output.Reason.Should().Be(adjustedExpectedReason, $"Step name: {runStep.Name}");
 				}
 			}
 		}

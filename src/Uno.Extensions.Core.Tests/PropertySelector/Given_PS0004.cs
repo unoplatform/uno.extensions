@@ -27,7 +27,7 @@ public class Given_PS0004
 			{{
 				public void Test()
 				{{
-					SUTMethod(e => e.Value);
+					SUTMethod([PropertySelector] (e) => e.Value);
 				}}
 
 				public void SUTMethod(PropertySelector<Entity, string> selector, [CallerFilePath] string path = """", [CallerLineNumber] int line = -1)

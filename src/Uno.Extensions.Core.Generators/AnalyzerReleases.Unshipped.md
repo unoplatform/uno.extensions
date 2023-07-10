@@ -17,6 +17,7 @@ PS0003 | Usage | Error | A property selector must be a lambda.
 PS0004 | Usage | Error | The type of the entity of a PropertySelector must be a record.
 PS0005 | Usage | Error | All types involved in a PropertySelector must be records.
 PS0006 | Usage | Error | All types involved in a PropertySelector must be constructable without parameter.
+PS0007 | Usage | Error | PS0007, [Documentation](https://aka.platform.uno/PS0007)
 PS0101 | Usage | Warning | A method which accepts a PropertySelector must also have 2 parameters flagged with [CallerFilePath] and [CallerLineNumber].
 PS0102 | Usage | Error | [CallerFilePath] and [CallerLineNumber] arguments used among a PropertySelector argument must be constant values.
 PS9999 | Usage | Error | Code generation of PropertySelector failed for an unknown reason (see logs for more details).

@@ -21,7 +21,7 @@ internal static partial class Rules
 			helpLinkUri: "https://aka.platform.uno/PS0001",
 			isEnabledByDefault: true);
 
-		public static Diagnostic GetDiagnostic(SimpleLambdaExpressionSyntax selectorSyntax, SyntaxNode failingNode)
+		public static Diagnostic GetDiagnostic(ParenthesizedLambdaExpressionSyntax selectorSyntax, SyntaxNode failingNode)
 			=> Diagnostic.Create(
 				Descriptor,
 				Location.Create(failingNode.SyntaxTree, failingNode.Span),
@@ -43,7 +43,7 @@ internal static partial class Rules
 			helpLinkUri: "https://aka.platform.uno/PS0002",
 			isEnabledByDefault: true);
 
-		public static Diagnostic GetDiagnostic(SimpleLambdaExpressionSyntax selectorSyntax, SyntaxNode failingNode)
+		public static Diagnostic GetDiagnostic(ParenthesizedLambdaExpressionSyntax selectorSyntax, SyntaxNode failingNode)
 			=> Diagnostic.Create(
 				Descriptor,
 				Location.Create(failingNode.SyntaxTree, failingNode.Span),
@@ -134,6 +134,25 @@ internal static partial class Rules
 				path,
 				part,
 				type.ToString());
+	}
+
+	public static class PS0007
+	{
+		private const string message = "Missing '[PropertySelector]' attribute";
+
+		public static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
+			nameof(PS0007),
+			"Lambda arguments to PropertySelector must have the 'PropertySelectorAttribute'",
+			message,
+			Category.Usage,
+			DiagnosticSeverity.Error,
+			helpLinkUri: "https://aka.platform.uno/PS0007",
+			isEnabledByDefault: true);
+
+		public static Diagnostic GetDiagnostic(SyntaxNode node)
+			=> Diagnostic.Create(
+				Descriptor,
+				node.GetLocation());
 	}
 
 	public static class PS0101

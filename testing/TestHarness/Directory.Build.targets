@@ -1,42 +1,21 @@
 <Project ToolsVersion="15.0">
 
   <PropertyGroup>
-    <!--
-      macOS needs an explicit override of the current compiler when running under mono.
-      On other targets, .NET 6.0's compiler takes precedence.
-      -->
-    <MicrosoftNetCompilerVersionOverride Condition="'$(MSBuildRuntimeType)'!='Core' and ($([MSBuild]::IsOSPlatform('OSX')) or '$(MSBuildVersion)' &lt; '17.0')">4.0.1</MicrosoftNetCompilerVersionOverride>
+    <MicrosoftNetCompilerVersionOverride>4.7.0-2.final</MicrosoftNetCompilerVersionOverride>
   </PropertyGroup>
 
-  <!--
-  This file is imported from Directory.Build.props as the nuget tooling
-  in VS is skipping ItemGroup conditions for legacy projects (iOS, Android, ...).
-  -->
-  <Choose>
-    <When Condition="'$(MicrosoftNetCompilerVersionOverride)'!=''">
-      <PropertyGroup>
-        <!--
-          Disable shared compilation for the override to take place
-          https://github.com/dotnet/roslyn/blob/315c2e149ba7889b0937d872274c33fcbfe9af5f/src/NuGet/Microsoft.Net.Compilers/build/Microsoft.Net.Compilers.props#L36
-          -->
-        <UseSharedCompilation>false</UseSharedCompilation>
-      </PropertyGroup>
-      <ItemGroup>
-
-        <!--This override is used to validate the user of specific version of the C# Compiler-->
-        <PackageReference Include="Microsoft.Net.Compilers.Toolset" VersionOverride="$(MicrosoftNetCompilerVersionOverride)">
-          <PrivateAssets>all</PrivateAssets>
-          <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
-        </PackageReference>
-      </ItemGroup>
-
-    </When>
-  </Choose>
+  <ItemGroup>
+    <!-- This override is used to validate the user of specific version of the C# Compiler -->
+    <PackageReference Include="Microsoft.Net.Compilers.Toolset" VersionOverride="$(MicrosoftNetCompilerVersionOverride)">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
 
 	<Import Project="..\..\src\xamarinmac-workaround.targets" Condition="exists('..\..\src\xamarinmac-workaround.targets') and $(TargetFramework.ToLower().StartsWith('xamarin')) and $(TargetFramework.ToLower().Contains('mac'))" />
 
 	<!-- Uno.WinUI.MSAL references Uno.WinUI for windows10 tfm. This target
-		overrides the protection in uno.winui.targets that raises an error 
+		overrides the protection in uno.winui.targets that raises an error
 		that breaks build -->
 	<Target Name="_WinAppSDKNotSupported" BeforeTargets="BeforeBuild" />
 </Project>

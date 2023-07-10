@@ -32,36 +32,22 @@ public partial class PropertySelectorGenerator : IIncrementalGenerator
 		}
 #endif
 		var assemblyNameProvider = context.CompilationProvider.Select((compilation, _) => compilation.AssemblyName);
-		var syntaxProvider = context.SyntaxProvider
-			.CreateSyntaxProvider(
-				(node, ct) => IsCandidate(node),
-				(ctx, ct) => new PropertySelectorCandidate(ctx, ct))
-			.Where(candidate => candidate.IsValid).WithTrackingName("syntaxProvider_PropertySelectorGenerator");
+		var attributeProvider = context.SyntaxProvider.ForAttributeWithMetadataName(
+			"Uno.Extensions.Edition.PropertySelectorAttribute",
+			IsCandidate,
+			(context, ct) => new PropertySelectorCandidate(context, ct)).WithTrackingName("syntaxProvider_PropertySelectorGenerator").Where(candidate => candidate.IsValid).WithTrackingName("syntaxProvider_PropertySelectorGenerator_AfterWhere");
 
-		var provider = syntaxProvider.Combine(assemblyNameProvider).WithTrackingName("combinedProvider_PropertySelectorGenerator");
+		var provider = attributeProvider.Combine(assemblyNameProvider).WithTrackingName("combinedProvider_PropertySelectorGenerator");
 
 		// We use the Implementation as the generated code does not alter the SemanticModel (only generates a registry).
 		context.RegisterImplementationSourceOutput(provider, (context, souce) => _tool.Generate(context, souce.Left, souce.Right));
 	}
 
-	private static bool IsCandidate(SyntaxNode node)
+	private static bool IsCandidate(SyntaxNode node, CancellationToken _)
 	{
-		if (node is InvocationExpressionSyntax invocationExpression)
-		{
-			foreach (var arg in invocationExpression.ArgumentList.Arguments)
-			{
-				if (arg.Expression is SimpleLambdaExpressionSyntax simpleLambda && IsValidLambda(simpleLambda))
-				{
-					return true;
-				}
-			}
-		}
-
-		return false;
-
-		static bool IsValidLambda(SimpleLambdaExpressionSyntax simpleLambda)
-		{
-			return simpleLambda is { Parameter: { IsMissing: false, Identifier.ValueText.Length: > 0 }, ExpressionBody.IsMissing: false };
-		}
+		return node is ParenthesizedLambdaExpressionSyntax lambdaExpressionSyntax &&
+			lambdaExpressionSyntax.ParameterList.Parameters.Count == 1 && lambdaExpressionSyntax.Parent is ArgumentSyntax argumentSyntax &&
+			argumentSyntax.Parent is ArgumentListSyntax argumentList &&
+			argumentList.Parent is InvocationExpressionSyntax;
 	}
 }
