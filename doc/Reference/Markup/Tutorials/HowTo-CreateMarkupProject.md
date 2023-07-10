@@ -2,32 +2,36 @@
 uid: Reference.Markup.HowToCreateMarkupProject
 ---
 
-# How to set up your onw C# Markup project
+# How to set up your own C# Markup project
 
-In this tutorial you'll learn how to set up an new *basic project* using Uno Platform and C# Markup. 
+In this tutorial you will learn how to set up a new *basic project* using Uno Platform and C# Markup and using some basic resources and also make a comparison between C# Markup and XAML.
 
-## Set up an Markup project
+The purpose of this section of the tutorial is to show you how to create a basic project from scratch.
 
-You can use this tutorial to learn how to set up an Uno Platform project to use Uno.Extensions.Markup.
+## Set up a Markup project
 
-> For this sample project we will set the name of the project as MySampleProject.
+You can use this tutorial to learn how to set up a Uno Platform project.
+We will use the comparison between two projects, one being C# Markup and the second XAML.
 
-- [Setting up the environment and creating a Creating the Markup project](xref:Reference.Markup.HowToMarkupProject)
+> The tutorials below can teach you how to create both projects.
 
-## Start creating some basic Layout
+- [Setting up the environment and creating the Markup project](xref:Reference.Markup.HowToMarkupProject)
 
-The purpose of this tutorial is to show you how to create a basic project from scratch and make a comparison between C# Markup and XAML.
+- [Setting up the environment and creating the XAML project](xref:Reference.Markup.HowToXamlProject)
 
-Open the created project
-Take a look at the created structure.
+## Comparing the structures
 
-## Comparing the C# Markup with the XAML project
+Open the two projects created and compare the structure of the two.
+
+### Comparing the C# Markup with the XAML project
+
+- Comparing projects structure
 
     # [**C# Markup**](#tab/cs)
 
     #### C# Markup project structure
 
-	- The project is separated into Solution Items, where general settings and properties files are located, and Source, which contains information about the Backend, Platforms and Shared Project.
+    - The project is separated into Solution Items, where general settings and properties files are located, and Source, which contains information about the Backend, Platforms and Shared Project.
 
     - Check out how your first Start Up Markup project will look like.
 
@@ -43,7 +47,7 @@ Take a look at the created structure.
     
     #### XAML project structure
     
-	- The project is separated into Solution Items, where general settings and properties files are located, and Source, which contains information about the Backend, Platforms and Shared Project.
+    - The project is separated into Solution Items, where general settings and properties files are located, and Source, which contains information about the Backend, Platforms and Shared Project.
 
     - Check out how your first Start Up XAML project will look like.
 
@@ -55,160 +59,404 @@ Take a look at the created structure.
 
         ![Screenshot displaying MainPage using XAML in the generated project](../Assets/MarkupProject-GeneratedXAML.jpg)    
 
-## Build a UI with C# Markup
+## Start creating some basic UI with C# Markup
 
-Chage the *MainPage.cs* to have a different content as the sample bellow.
+Change the *MainPage.cs* to have a different content as the sample bellow.
 
+### Add elements and set attributes on the UI.
 
-```csharp
+- Customizing the UI
 
-using Microsoft.UI;
-using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Media.Imaging;
+    # [**C# Markup**](#tab/cs)
 
-namespace MySampleProject;
+    #### C# Markup.
 
-public sealed partial class MainPage : Page
-{
-	public MainPage()
-	{
-		this
-			//Set Background from Theme
-			.Background(ThemeResource.Get<Brush>("ApplicationPageBackgroundThemeBrush"))
-			.Content(
-					new Grid()
-						//Custom the Row and Column Definitions
-						.RowDefinitions<Grid>("Auto, *")
-						.ColumnDefinitions<Grid>("2*, Auto, 2*")
+    - The code below shows how to create simple elements like TextBlock in the UI.
+    Working as simple as that `new TextBlock()`.
 
-						//Set Background from Colors
-						.Background(new SolidColorBrush(Colors.Silver))
+    ```csharp
+    //Add Some TextBlock
+    new TextBlock()
+	    .Text("Hello Uno Platform!")
+	    .Padding(50)//Set some padding
+	    .Margin(50)//Set some Margin
+	    .HorizontalAlignment(HorizontalAlignment.Right)//Custom the Alignment
+    )
+    ```
 
-						//Set attributes
-						.Padding(50)
+    # [**XAML**](#tab/cli)
+    
+    #### XAML
 
+    ```xml
 
-						.Children(
+    <TextBlock 
+	    Text="Hello Uno Platform"
+	    Padding="50"
+	    Margin="50"
+	    HorizontalAlignment="Right" />
 
-							//Add Some TextBlock
-							new TextBlock()
-								.Text("Welcome!!")
-								.Padding(50)
+    ```
 
-								//Set and Attached Properties
-								.Grid(row: 0, column: 0),
+    # [**Full Code**](#tab/code)
+    
+    #### Full C# Markup code
+    
+    - Example of the complete code on the MainPage.cs, so you can follow along in your own project.
 
-							//Add a imagem from a external URL
-							new Image()
-								.Source(new BitmapImage(new Uri("https://picsum.photos/366/366")))
-								.Stretch(Stretch.UniformToFill)
-								.Width(70)
-								.Height(70)
-								.Grid(row: 0, column: 2)
+    ```csharp
+    namespace MySampleProject;
 
-								//Custom the Alignment
-								.HorizontalAlignment(HorizontalAlignment.Right),
+    public sealed partial class MainPage : Page
+    {
+	    public MainPage()
+	    {
+		    this
+		        .Background(ThemeResource.Get<Brush>("ApplicationPageBackgroundThemeBrush"))
+			    .Content(new StackPanel()
+			    .VerticalAlignment(VerticalAlignment.Center)
+			    .HorizontalAlignment(HorizontalAlignment.Center)
+			    .Children(
+				    new Grid()
+					    .Children(
+						    //Add Some TextBlock
+						    new TextBlock()
+							    .Text("Hello Uno Platform!")
+							    .Padding(50)//Set some padding
+							    .Margin(50)//Set some Margin
+							    .HorizontalAlignment(HorizontalAlignment.Right)//Custom the Alignment
+						    )
+		    ));
+	    }
+    }
+    ```
 
-							new Grid()
-								.ColumnDefinitions<Grid>("*, *, *")
-								.CornerRadius(50)
+### Set the background in different ways.
 
-								//Set Background from custom Brush
-								.Background(new SolidColorBrush(Color.FromArgb(255, 233, 233, 233)))
+- Changing Background
 
-								//Attached Properties using builder pattern
-								.Grid(grid => grid.Row(1).ColumnSpan(3))
-								.Children(
-									new TextBlock()
-										.Text("Content!!")
-										.HorizontalAlignment(HorizontalAlignment.Center)
-										.VerticalAlignment(VerticalAlignment.Center)
-								)
-						)
+    # [**C# Markup**](#tab/cs)
 
-			);
-	}
-}
+    #### C# Markup
 
+    - The code below shows how Set the backgroun in 3 different ways.
 
-```
+    - First - accessing the Application Theme
+    
+    ```csharp
+    new Grid()
+	    //Set Background from Theme
+	    .Background(ThemeResource.Get<Brush>("ApplicationSecondaryForegroundThemeBrush"))
+	    .Children(
 
-> This code creates a simple user interface, but it allows us to cover several concepts.
+		    new TextBlock()
+			    .Text("Hello Uno Platform!")
+			    .Padding(50)//Set some padding
+			    .Margin(50)//Set some Margin
+			    .HorizontalAlignment(HorizontalAlignment.Right)//Custom the Alignment
 
-## Important points.
+	    ),
+    ```
 
+    - Second - using the Colors Helper
 
-### Add elements on the UI, using C# Markup and set attributes.
+    ```csharp
 
-- The code below shows how to create simple elements like TextBlock in the UI.
-Working as simple as that `new TextBlock()`.
+    new Grid()
+	    //Set Background from Colors
+	    .Background(new SolidColorBrush(Colors.Silver))
+	    .Children(
 
-```csharp
-//Add Some TextBlock
-new TextBlock()
-	.Text("Welcome!!")
-	.Padding(50)					
-						
-```
+		    new TextBlock()
+			    .Text("Hello Uno Platform!")
+			    .Padding(50)//Set some padding
+			    .Margin(50)//Set some Margin
+			    .HorizontalAlignment(HorizontalAlignment.Right)//Custom the Alignment
 
-- And set attributes directly on the elements.
+	    )
+    ```
 
-```csharp
-//Set attributes
-.Padding(50)
+    - Third - creating a new Brush through a manual ARGB color.
 
-//Custom the Alignment
-.HorizontalAlignment(HorizontalAlignment.Right),						
-						
-```
+    ```csharp
+    new Grid()
+	    //Set Background from custom Brush
+	    .Background(new SolidColorBrush(Color.FromArgb(255, 233, 233, 233)))
+	    .Children(
 
-### Set the backgroun in different ways, as display in the lines below.
+		    new TextBlock()
+			    .Text("Hello Uno Platform!")
+			    .Padding(50)//Set some padding
+			    .Margin(50)//Set some Margin
+			    .HorizontalAlignment(HorizontalAlignment.Right)//Custom the Alignment
 
-- From the Page using access to the Application Theme
+	    )
+    ```
 
-```csharp
-//Set Background from Theme
-.Background(ThemeResource.Get<Brush>("ApplicationPageBackgroundThemeBrush"))
-```
+    # [**XAML**](#tab/cli)
+    
+    #### XAML
 
-- From the Grid using access to the Colors Helper
+    - First - accessing the Application Theme
 
-```csharp
-//Set Background from Colors
-.Background(new SolidColorBrush(Colors.Silver))
-```
+    ```xml
+    <Grid 
+	    Background="{ThemeResource ApplicationSecondaryForegroundThemeBrush}">
+	    <TextBlock 
+		    Text="Hello Uno Platform"
+		    Padding="50"
+		    Margin="50"
+		    HorizontalAlignment="Right" />
+    </Grid>
+    ```
 
-- From the second Grid using the creation of a Brush through a manual ARGB color.
+    - Second - using the Colors Helper
 
-```csharp
-//Set Background from custom Brush
-.Background(new SolidColorBrush(Color.FromArgb(255, 233, 233, 233)))
-```
+    ```xml
+    <Grid 
+	    Background="Silver">
+	    <TextBlock 
+		    Text="Hello Uno Platform"
+		    Padding="50"
+		    Margin="50"
+		    HorizontalAlignment="Right" />
+    </Grid>
+    ```
+
+    - Third - creating a new Brush through a manual ARGB color.
+
+    ```xml
+    <Grid 
+	    Background="#FFE9E9E9">
+	    <TextBlock 
+		    Text="Hello Uno Platform"
+		    Padding="50"
+		    Margin="50"
+		    HorizontalAlignment="Right" />
+    </Grid>
+    ```
+
+    # [**Full Code**](#tab/code)
+    
+    #### Full C# Markup code
+    
+    - Example of the complete code on the MainPage.cs, so you can follow along in your own project.
+
+    ```csharp
+    using Microsoft.UI;
+
+    namespace MySampleProject;
+
+    public sealed partial class MainPage : Page
+    {
+	    public MainPage()
+	    {
+		    this
+		        .Background(ThemeResource.Get<Brush>("ApplicationPageBackgroundThemeBrush"))
+			    .Content(
+				    new StackPanel()
+				    .VerticalAlignment(VerticalAlignment.Center)
+				    .HorizontalAlignment(HorizontalAlignment.Center)
+				    .Children(
+					    new Grid()
+						    //Set Background from Theme
+						    .Background(ThemeResource.Get<Brush>("ApplicationSecondaryForegroundThemeBrush"))
+						    .Children(
+
+							    new TextBlock()
+								    .Text("Hello Uno Platform!")
+								    .Padding(50)//Set some padding
+								    .Margin(50)//Set some Margin
+								    .HorizontalAlignment(HorizontalAlignment.Right)//Custom the Alignment
+
+						    ),
+					    new Grid()
+						    //Set Background from Colors
+						    .Background(new SolidColorBrush(Colors.Silver))
+						    .Children(
+
+							    new TextBlock()
+								    .Text("Hello Uno Platform!")
+								    .Padding(50)//Set some padding
+								    .Margin(50)//Set some Margin
+								    .HorizontalAlignment(HorizontalAlignment.Right)//Custom the Alignment
+
+						    ),
+					    new Grid()
+						    //Set Background from custom Brush
+						    .Background(new SolidColorBrush(Color.FromArgb(255, 233, 233, 233)))
+						    .Children(
+
+							    new TextBlock()
+								    .Text("Hello Uno Platform!")
+								    .Padding(50)//Set some padding
+								    .Margin(50)//Set some Margin
+								    .HorizontalAlignment(HorizontalAlignment.Right)//Custom the Alignment
+
+						    )
+		    ));
+	    }
+    }
+
+    ```
+
 
 ### Work with the Grid in order to customize the columns and their children.
 
-- We can see a simple and straightforward approach on how to configure the columns and rows using C# Markup.
+- Changing Grid, RowDefinitions and ColumnDefinitions
 
-```csharp
-//Custom the Row and Column Definitions
-.RowDefinitions<Grid>("Auto, *")
-.ColumnDefinitions<Grid>("2*, Auto, 2*")
-```
+    # [**C# Markup**](#tab/cs)
 
-Using Attached Properties 
+    #### C# Markup
 
-```csharp
-//Set and Attached Properties
-.Grid(row: 0, column: 0),
-```
+    ```csharp
+    new Grid()
+	    //Custom the Row and Column Definitions
+	    .RowDefinitions<Grid>("Auto, *")
+	    .ColumnDefinitions<Grid>("2*, Auto, 3*")
 
-Or using Attached Properties and builder pattern
+	    //Set Background from Theme
+	    .Children(
 
-```csharp
-//Attached Properties using builder pattern
-.Grid(grid => grid.Row(1).ColumnSpan(3))
+		    new TextBlock()
+			    .Padding(50)
+			    .Grid(row: 0, column: 0)//Set and Attached Properties
+			    .Text("Row 0"),
 
-```
+		    new TextBlock()
+			    .Margin(50)
+			    .Grid(grid => grid.Row(0).Column(1).ColumnSpan(2))//Attached Properties using builder pattern
+			    .Text("Row 0 with ColumnSpan and Attached Properties using builder pattern!"),
+
+		    new TextBlock()
+			    .Margin(50)
+			    .Grid(row: 1, column: 0)//Set and Attached Properties
+			    .Text("Row 1 and Column 0"),
+
+		    new TextBlock()
+			    .Margin(50)
+			    .Grid(row: 1, column: 1)//Set and Attached Properties
+			    .Text("Row 1 and Column 1"),
+
+		    new TextBlock()
+			    .Margin(50)
+			    .Grid(grid => grid.Row(1).Column(2))//Attached Properties using builder pattern
+			    .Text("Row 1 and Column 2")
+	    )
+    ```
+
+    # [**XAML**](#tab/cli)
+    
+    #### XAML
+
+    ```xml
+    <Grid>
+	    <Grid.RowDefinitions>
+		    <RowDefinition Height="Auto" />
+		    <RowDefinition Height="*" />
+	    </Grid.RowDefinitions>
+	    <Grid.ColumnDefinitions>
+		    <ColumnDefinition Width="2*" />
+		    <ColumnDefinition Width="Auto" />
+		    <ColumnDefinition Width="3*" />
+	    </Grid.ColumnDefinitions>
+
+	    <TextBlock 
+		    Text="Row 0"
+		    Padding="50"
+		    Margin="50"
+		    Grid.Row="0"
+		    Grid.Column="0"/>
+
+	    <TextBlock 
+		    Text="Row 0 with ColumnSpan and Attached Properties using builder pattern!"
+		    Padding="50"
+		    Margin="50"
+		    Grid.Row="0"
+		    Grid.Column="1"
+		    Grid.ColumnSpan="2"/>
+
+	    <TextBlock 
+		    Text="Row 1 and Column 0"
+		    Padding="50"
+		    Margin="50"
+		    Grid.Row="1"
+		    Grid.Column="0"/>
+
+	    <TextBlock 
+		    Text="Row 1 and Column 1"
+		    Padding="50"
+		    Margin="50"
+		    Grid.Row="1"
+		    Grid.Column="1"/>
+
+	    <TextBlock 
+		    Text="Row 1 and Column 2"
+		    Padding="50"
+		    Margin="50"
+		    Grid.Row="1"
+		    Grid.Column="2"/>
+    </Grid>
+    ```
+
+    # [**Full Code**](#tab/code)
+    #### Full C# Markup code
+    
+    - Example of the complete code on the MainPage.cs, so you can follow along in your own project.
+
+    ```csharp
+    namespace MySampleProject;
+
+    public sealed partial class MainPage : Page
+    {
+	    public MainPage()
+	    {
+		    this
+		        .Background(ThemeResource.Get<Brush>("ApplicationPageBackgroundThemeBrush"))
+			    .Content(
+				    new StackPanel()
+				    .VerticalAlignment(VerticalAlignment.Center)
+				    .HorizontalAlignment(HorizontalAlignment.Center)
+				    .Children(
+					    new Grid()
+						    //Custom the Row and Column Definitions
+						    .RowDefinitions<Grid>("Auto, *")
+						    .ColumnDefinitions<Grid>("2*, Auto, 3*")
+
+						    //Set Background from Theme
+						    .Children(
+
+							    new TextBlock()
+								    .Padding(50)
+								    .Grid(row: 0, column: 0)//Set and Attached Properties
+								    .Text("Row 0"),
+
+							    new TextBlock()
+								    .Margin(50)
+								    .Grid(grid => grid.Row(0).Column(1).ColumnSpan(2))//Attached Properties using builder pattern
+								    .Text("Row 0 with ColumnSpan and Attached Properties using builder pattern!"),
+
+							    new TextBlock()
+								    .Margin(50)
+								    .Grid(row: 1, column: 0)//Set and Attached Properties
+								    .Text("Row 1 and Column 0"),
+
+							    new TextBlock()
+								    .Margin(50)
+								    .Grid(row: 1, column: 1)//Set and Attached Properties
+								    .Text("Row 1 and Column 1"),
+
+							    new TextBlock()
+								    .Margin(50)
+								    .Grid(grid => grid.Row(1).Column(2))//Attached Properties using builder pattern
+								    .Text("Row 1 and Column 2")
+						    )
+				    )
+		    );
+	    }
+    }
+    ```
+
 
 ## Try it yourself
 
