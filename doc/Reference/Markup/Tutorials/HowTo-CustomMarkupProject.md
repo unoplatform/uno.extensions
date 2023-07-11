@@ -2,7 +2,7 @@
 uid: Reference.Markup.HowToCustomMarkupProject
 ---
 
-# How to custom an C# Markup project
+# How to custom a C# Markup project
 
 > If you haven't already set up your environment and create the new Markup project, please follow the steps to [Create your own C# Markup](xref:Reference.Markup.HowToCreateMarkupProject).
 
@@ -1997,10 +1997,9 @@ In the ViewModel, the Model's data is already loaded into the Instance of the cl
 
     ```
 
-
-
 ## Next Steps
 
-Now start to create your own project using C# Markup from Uno Platform.
-
-- [C# Markup documentation](xref:Reference.Markup.GettingStarted)
+- [Custom your own C# Markup - Learn how to change Visual States and User Controls](xref:Reference.Markup.HowToCustomMarkupProjectVisualStates)
+- [Custom your own C# Markup - Learn how to use Toolkit](xref:Reference.Markup.HowToCustomMarkupProjectToolkit)
+- [Custom your own C# Markup - Learn how to Change the Theme](xref:Reference.Markup.HowToCustomMarkupProjectTheme)
+- [Custom your own C# Markup - Learn how to use MVUX](xref:Reference.Markup.HowToCustomMarkupProjectMVUX)
