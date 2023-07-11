@@ -2,7 +2,7 @@
 partial class MauiControlsViewModel : ObservableObject
 {
 	[ObservableProperty]
-	private string? name;
+	private string? name = "This is from the ViewModel!";
 
 	public MauiControlsViewModel(
 		IStringLocalizer localizer,

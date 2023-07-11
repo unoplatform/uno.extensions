@@ -34,7 +34,9 @@ public sealed partial class MauiControlsPage : Page
 		this.picker.ItemsSource = source;
 		var mauiBinding = new Microsoft.Maui.Controls.Binding
 		{
-			Path = "Title",
+			Path = nameof(MauiControlsViewModel.Name),
+			// `this.DataContext` is null here
+			// Source = new MauiControlsViewModel()
 			Source = DataContext
 		};
 
@@ -42,6 +44,22 @@ public sealed partial class MauiControlsPage : Page
 
 		this.stack.Add(lbl);
 		this.stack.Add(b);
+
+		this.lblB.BindingContextChanged += (s, e) =>
+		{
+			_ = 1;
+		};
+
+		this.mauiContent.DataContextChanged += (s, e) =>
+		{
+			_ = 1;
+		};
+
+
+		this.DataContextChanged += (s, e) =>
+		{
+			_ = 1;
+		};
 
 	}
 }

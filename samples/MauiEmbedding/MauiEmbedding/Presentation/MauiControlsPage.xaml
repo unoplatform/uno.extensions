@@ -11,7 +11,8 @@
 	xmlns:utu="using:Uno.Toolkit.UI"
 	Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
 	NavigationCacheMode="Required"
-	mc:Ignorable="d">
+	mc:Ignorable="d"
+	x:Name="that">
 
 	<Page.Resources>
 		<ResourceDictionary>
@@ -28,7 +29,7 @@
 		</Grid.RowDefinitions>
 		<utu:NavigationBar Content="{Binding Title}" />
 
-		<embed:MauiContent Grid.Row="1">
+		<embed:MauiContent Grid.Row="1" x:Name="mauiContent">
 			<maui:VerticalStackLayout x:Name="stack" Spacing="16">
 
 				<maui:Label Text="Hello World">
@@ -49,6 +50,8 @@
 				<maui:Picker x:Name="picker" Title="Some UI frameworks picker" />
 
 				<maui:ActivityIndicator IsRunning="true" />
+
+				<maui:Label x:Name="lblB" Text="{embed:MauiBinding Path=Name}" HeightRequest="20" />
 
 				<maui:Grid>
 					<maui:Label Text="Row0"/>
