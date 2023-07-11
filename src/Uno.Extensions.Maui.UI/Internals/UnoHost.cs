@@ -5,5 +5,9 @@ internal class UnoHost : Microsoft.Maui.Controls.VisualElement
 	public UnoHost(ResourceDictionary resources)
 	{
 		Resources = resources.ToMauiResources();
+		BindingContextChanged += (s, e) =>
+		{
+			_ = 1;
+		};
 	}
 }
