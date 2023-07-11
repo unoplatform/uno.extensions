@@ -309,6 +309,18 @@ Change the *MainPage.cs* to have a different content as the sample bellow.
 
     #### C# Markup
 
+    
+    - The code below shows how to create simple Grid element and add the RowDefinitions and ColumnDefinitions.
+
+    ```csharp
+    new Grid()
+	    //Custom the Row and Column Definitions
+	    .RowDefinitions<Grid>("Auto, *")
+	    .ColumnDefinitions<Grid>("2*, Auto, 3*")
+    ```
+
+    - And how to set the [Attached Properties](xref:Reference.Markup.AttachedProperties).
+    
     ```csharp
     new Grid()
 	    //Custom the Row and Column Definitions
@@ -468,4 +480,8 @@ We continue in the next section to learn how to configure styles, work with Bind
 
 Learn more about:
 
-- [Learn how to change Style, Bindings, Templates and Template Selectors using C# Markup](xref:Reference.Markup.HowToCustomMarkupProject)
+- [Custom your own C# Markup - Learn how to change Style, Bindings, Templates and Template Selectors using C# Markup](xref:Reference.Markup.HowToCustomMarkupProject)
+- [Custom your own C# Markup - Learn how to change Visual States and User Controls](xref:Reference.Markup.HowToCustomMarkupProjectVisualStates)
+- [Custom your own C# Markup - Learn how to use Toolkit](xref:Reference.Markup.HowToCustomMarkupProjectToolkit)
+- [Custom your own C# Markup - Learn how to Change the Theme](xref:Reference.Markup.HowToCustomMarkupProjectTheme)
+- [Custom your own C# Markup - Learn how to use MVUX](xref:Reference.Markup.HowToCustomMarkupProjectMVUX)
