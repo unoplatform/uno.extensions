@@ -36,8 +36,6 @@
       "..\\..\\src\\Uno.Extensions.Serialization\\Uno.Extensions.Serialization.csproj",
       "..\\..\\src\\Uno.Extensions.Storage.UI\\Uno.Extensions.Storage.WinUI.csproj",
       "..\\..\\src\\Uno.Extensions.Storage\\Uno.Extensions.Storage.csproj",
-      "..\\..\\src\\Uno.Extensions.Toolkit.UI\\Uno.Extensions.Toolkit.WinUI.csproj",
-      "..\\..\\src\\Uno.Extensions.Toolkit\\Uno.Extensions.Toolkit.csproj",
       "..\\..\\src\\Uno.Extensions.Validation.Fluent\\Uno.Extensions.Validation.Fluent.csproj",
       "..\\..\\src\\Uno.Extensions.Validation\\Uno.Extensions.Validation.csproj",
       "TestBackend\\TestBackend.csproj",

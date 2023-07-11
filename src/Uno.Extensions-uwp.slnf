@@ -35,8 +35,6 @@
       "Uno.Extensions.Serialization.Refit\\Uno.Extensions.Serialization.Refit.csproj",
       "Uno.Extensions.Serialization.Tests\\Uno.Extensions.Serialization.Tests.csproj",
       "Uno.Extensions.Serialization\\Uno.Extensions.Serialization.csproj",
-      "Uno.Extensions.Toolkit.UI\\Uno.Extensions.Toolkit.UI.csproj",
-      "Uno.Extensions.Toolkit\\Uno.Extensions.Toolkit.csproj",
       "Uno.Extensions.Validation.Fluent\\Uno.Extensions.Validation.Fluent.csproj",
       "Uno.Extensions.Validation\\Uno.Extensions.Validation.csproj",
       "Uno.Extensions\\Uno.Extensions.csproj"

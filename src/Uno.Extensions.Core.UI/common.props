@@ -11,4 +11,9 @@
 	<ItemGroup>
 		<ProjectReference Include="..\Uno.Extensions.Core\Uno.Extensions.Core.csproj" />
 	</ItemGroup>
+
+	<ItemGroup>
+		<InternalsVisibleTo Include="Uno.Extensions.Hosting.UWP" />
+		<InternalsVisibleTo Include="Uno.Extensions.Hosting.WinUI" />
+	</ItemGroup>
 </Project>

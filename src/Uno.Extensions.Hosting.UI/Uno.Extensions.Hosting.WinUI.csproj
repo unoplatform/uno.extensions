@@ -22,6 +22,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\Uno.Extensions.Core.UI\Uno.Extensions.Core.WinUI.csproj" />
 		<ProjectReference Include="..\Uno.Extensions.Storage.UI\Uno.Extensions.Storage.WinUI.csproj" />
 	</ItemGroup>
 
