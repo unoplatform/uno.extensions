@@ -35,7 +35,7 @@
 					<maui:Label x:Name="lbl" Text="This text should be Fuchsia (set on code-behind)" />
 					<maui:Label BackgroundColor="{embed:MauiColor Value='#FFC0CB'}" Text="This background should be Pink" />
 					<maui:Label Text="This TextColor should be Purple, using named color" TextColor="{embed:MauiColor Value='Purple'}" />
-					<maui:Label Text="{embed:MauiResource Key=HelloWorld}" />
+					<maui:Label Text="{embed:MauiResource Key=HelloWorld}" TextColor="{embed:MauiResource Key=DemoColor}"/>
 				</maui:VerticalStackLayout>
 			</embed:MauiContent>
 		</StackPanel>
