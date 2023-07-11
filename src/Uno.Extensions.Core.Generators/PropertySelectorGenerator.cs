@@ -35,6 +35,50 @@ public partial class PropertySelectorGenerator : IIncrementalGenerator
 			Debugger.Launch();
 		}
 #endif
+
+		/*
+		    assemblyNameProvider: The output is the assembly name of the current compilation.
+
+			syntaxTreesProvider: The output is all syntax trees that contain invocations like Method(..., x => x..., ...)
+
+			interestingMethodNames: The output is method names from compilation references that have PropertySelector parameter
+			filteredSyntaxTreesProvider: The output is all matching InvocationExpressionSyntax nodes given interestingMethodNames.
+			finalProvider: The output is `PropertySelectorCandidate`s that are semantics-aware. This only includes calls to methods from metadata.
+
+			interestingMethodNamesFromSource: The output is method names from current compilation sources that have PropertySelector parameter
+			filteredSyntaxTreesFromSource: The output is all matching InvocationExpressionSyntax nodes given interestingMethodNamesFromSource.
+			finalProviderFromSource: The output is `PropertySelectorCandidate`s that are semantics-aware. This only includes calls to methods from source.
+
+
+			    ┌──────────────────────┐
+   Compilation  |                      |SyntaxTree[]
+  ─────────────►│ syntaxTreesProvider  │────────────┐
+			    |                      |            │         ┌───────────────────────────┐
+			    └──────────────────────┘            │Combine  |                           |InvocationExpressionSyntax[]
+		                                            │────────►│filteredSyntaxTreesProvider│──────────────────────────┐ 
+			    ┌──────────────────────┐            │		  |                           |	    		 		     │        ┌─────────────┐ 
+   Compilation  |                      |  string[]  │		  └───────────────────────────┘							 │Combine |             |Candidate[]
+  ─────────────►│interestingMethodNames│────────────┘																 │───────►│finalProvider│──────────► Then combine with assemblyNameProvider & Generate.
+			    |                      |                                                                   			 │		  |             |
+			    └──────────────────────┘                                                              Compilation    │		  └─────────────┘
+																                              ────────────►──────────┘
+																                              
+
+
+			    ┌───────────────────┐
+   Compilation  |                   | SyntaxTree[]
+  ─────────────►│syntaxTreesProvider│──────────────────────┐
+			    |                   |                      │        ┌─────────────────────────────┐
+			    └───────────────────┘                      │Combine |                             |InvocationExpressionSyntax[]
+		                                                   │───────►│filteredSyntaxTreesFromSource│───────────────────────────┐ 
+			    ┌────────────────────────────────┐         │  	    |                             |		   	       		      │       ┌───────────────────────┐
+   Compilation  |                                |string[] │		└─────────────────────────────┘							  │Combine|                       |Candidate[]
+  ─────────────►│interestingMethodNamesFromSource│─────────┘																  │──────►│finalProviderFromSource│──────────► Then combine with assemblyNameProvider & Generate.
+			    |                                |                                                                 		   	  │		  |                       |
+			    └────────────────────────────────┘                                                            Compilation     │		  └───────────────────────┘
+																                                      ────────────►───────────┘								                              
+		 														                              
+		*/
 		var assemblyNameProvider = context.CompilationProvider.Select((compilation, _) => compilation.AssemblyName);
 		var interestingMethodNames = context.CompilationProvider.SelectMany((compilation, _) =>
 		{
@@ -53,21 +97,54 @@ public partial class PropertySelectorGenerator : IIncrementalGenerator
 						s_assemblyToNamesMap.Add(assembly.Identity, interestingNames);
 					}
 
-					builder.AddRange((ImmutableArray<string>)interestingNames);
+					foreach (var name in (ImmutableArray<string>)interestingNames)
+					{
+						builder.Add(name);
+					}
 				}
 			}
 
 			return builder.ToImmutableArray();
 		});
 
-		// Create a provider over all the syntax trees in the compilation.  This is better than CreateSyntaxProvider as
-		// using SyntaxTrees is purely syntax and will not update the incremental node for a tree when another tree is
-		// changed. CreateSyntaxProvider will have to rerun all incremental nodes since it passes along the
-		// SemanticModel, and that model is updated whenever any tree changes (since it is tied to the compilation).
 		var syntaxTreesProvider = context.CompilationProvider
 			.SelectMany((compilation, cancellationToken) => GetInterestingTrees(compilation, cancellationToken));
 
-		var filteredSyntaxTreesProvider = syntaxTreesProvider.Combine(interestingMethodNames.Collect()).SelectMany((pair, ct) =>
+		// This step combines the method names that can have property selector parameters, with the syntax trees from the previous step.
+		// The output here is all matching InvocationExpressionSyntax nodes that might be interesting.
+		var filteredSyntaxTreesProvider = CreateFilteredSyntaxTreesProvider(syntaxTreesProvider, interestingMethodNames).WithTrackingName("filteredSyntaxTreesProvider_PropertySelectorGenerator");
+
+		var interestingMethodNamesFromSource = context.SyntaxProvider.CreateSyntaxProvider(
+			IsCandidateMethodDeclaration,
+			TransformMethodDeclarationToName);
+
+		var filteredSyntaxTreesFromSource = CreateFilteredSyntaxTreesProvider(syntaxTreesProvider, interestingMethodNamesFromSource).WithTrackingName("filteredSyntaxTreesFromSource_PropertySelectorGenerator");
+
+		var finalProvider = filteredSyntaxTreesProvider.Combine(context.CompilationProvider).Select((pair, ct) =>
+		{
+			var (node, compilation) = pair;
+			return new PropertySelectorCandidate(node, compilation.GetSemanticModel(node.SyntaxTree), fromSource: false, ct);
+		}).Where(candidate => candidate.IsValid);
+
+		var finalProviderFromSource = filteredSyntaxTreesFromSource.Combine(context.CompilationProvider).Select((pair, ct) =>
+		{
+			var (node, compilation) = pair;
+			return new PropertySelectorCandidate(node, compilation.GetSemanticModel(node.SyntaxTree), fromSource: true, ct);
+		}).Where(candidate => candidate.IsValid);
+
+		// We use the Implementation as the generated code does not alter the SemanticModel (only generates a registry).
+		context.RegisterImplementationSourceOutput(
+			finalProvider.Combine(assemblyNameProvider).WithTrackingName("outputFromMetadata_PropertySelectorGenerator"),
+			(context, souce) => _tool.Generate(context, souce.Left, souce.Right));
+
+		context.RegisterImplementationSourceOutput(
+			finalProviderFromSource.Combine(assemblyNameProvider).WithTrackingName("outputFromSource_PropertySelectorGenerator"),
+			(context, souce) => _tool.Generate(context, souce.Left, souce.Right));
+	}
+
+	private static IncrementalValuesProvider<InvocationExpressionSyntax> CreateFilteredSyntaxTreesProvider(IncrementalValuesProvider<SyntaxTree> syntaxTreesProvider, IncrementalValuesProvider<string> interestingMethodNames)
+	{
+		return syntaxTreesProvider.Combine(interestingMethodNames.Collect()).SelectMany((pair, ct) =>
 		{
 			var (tree, interestingNames) = pair;
 			var filteredNodes = ImmutableArray.CreateBuilder<InvocationExpressionSyntax>();
@@ -79,8 +156,7 @@ public partial class PropertySelectorGenerator : IIncrementalGenerator
 				}
 
 				var invocationSyntax = (InvocationExpressionSyntax)node;
-				if (invocationSyntax.Expression is MemberAccessExpressionSyntax { Name.Identifier.ValueText: string calledMethodName } &&
-					interestingNames.Contains(calledMethodName))
+				if (GetCalledMethodName(invocationSyntax) is string calledMethodName && interestingNames.Contains(calledMethodName))
 				{
 					filteredNodes.Add(invocationSyntax);
 				}
@@ -89,16 +165,87 @@ public partial class PropertySelectorGenerator : IIncrementalGenerator
 			return filteredNodes;
 		});
 
-		var finalProvider = filteredSyntaxTreesProvider.Combine(context.CompilationProvider).Select((pair, ct) =>
+		static string? GetCalledMethodName(InvocationExpressionSyntax node)
 		{
-			var (node, compilation) = pair;
-			return new PropertySelectorCandidate(node, compilation.GetSemanticModel(node.SyntaxTree), ct);
-		}).WithTrackingName("syntaxProvider_PropertySelectorGenerator").Where(candidate => candidate.IsValid);
+			if (node.Expression is MemberAccessExpressionSyntax memberAccessExpressionSyntax)
+			{
+				return memberAccessExpressionSyntax.Name.Identifier.ValueText;
+			}
+			else if (node.Expression is SimpleNameSyntax identifierNameSyntax)
+			{
+				return identifierNameSyntax.Identifier.ValueText;
+			}
 
-		// We use the Implementation as the generated code does not alter the SemanticModel (only generates a registry).
-		context.RegisterImplementationSourceOutput(
-			finalProvider.Combine(assemblyNameProvider).WithTrackingName("combinedProvider_PropertySelectorGenerator"),
-			(context, souce) => _tool.Generate(context, souce.Left, souce.Right));
+			return null;
+		}
+	}
+
+	private static string TransformMethodDeclarationToName(GeneratorSyntaxContext context, CancellationToken token)
+	{
+		return ((MethodDeclarationSyntax)context.Node).Identifier.ValueText;
+	}
+
+	private bool IsCandidateMethodDeclaration(SyntaxNode node, CancellationToken token)
+	{
+		if (node is not MethodDeclarationSyntax { ParameterList.Parameters.Count: >= 3 } methodDeclarationSyntax)
+		{
+			return false;
+		}
+
+		var hasPropertySelectorParameter = false;
+		var hasCallerLineNumberParameter = false;
+		var hasCallerFilePathParameter = false;
+		foreach (var parameter in methodDeclarationSyntax.ParameterList.Parameters)
+		{
+			var type = GetRightmostName(parameter.Type);
+
+			if (type is GenericNameSyntax genericName && genericName.Identifier.ValueText == "PropertySelector" && genericName.Arity == 2)
+			{
+				hasPropertySelectorParameter = true;
+				continue;
+			}
+
+			foreach (var attributeList in parameter.AttributeLists)
+			{
+				foreach (var attribute in attributeList.Attributes)
+				{
+					var attributeName = GetRightmostName(attribute.Name);
+					if (attributeName is IdentifierNameSyntax identifier)
+					{
+						if (identifier.Identifier.ValueText is "CallerFilePath" or "CallerFilePathAttribute")
+						{
+							hasCallerFilePathParameter = true;
+						}
+						else if (identifier.Identifier.ValueText is "CallerLineNumber" or "CallerLineNumberAttribute")
+						{
+							hasCallerLineNumberParameter = true;
+						}
+						
+					}
+				}
+			}
+		}
+
+		return hasPropertySelectorParameter && hasCallerLineNumberParameter && hasCallerFilePathParameter;
+	}
+
+	private static SimpleNameSyntax? GetRightmostName(TypeSyntax? type)
+	{
+		if (type is NullableTypeSyntax nullableTypeSyntax)
+		{
+			type = nullableTypeSyntax.ElementType;
+		}
+
+		if (type is AliasQualifiedNameSyntax alias)
+		{
+			return alias.Name;
+		}
+		else if (type is QualifiedNameSyntax qualified)
+		{
+			return qualified.Right;
+		}
+
+		return type as SimpleNameSyntax;
 	}
 
 	private static ImmutableArray<SyntaxTree> GetInterestingTrees(Compilation compilation, CancellationToken cancellationToken)

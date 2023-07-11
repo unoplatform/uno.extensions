@@ -37,7 +37,8 @@ public static class GenerationTestHelper
 
 	private static (WeakReference CompilationWeakReference, GeneratorDriver Driver) RunGeneratorTwiceCore(Compilation compilation, Action<GeneratorRunResult> assertFirst, Action<GeneratorRunResult> assertSecond, string? generatedCode)
 	{
-		var compilation1 = compilation.AddSyntaxTrees(SyntaxFactory.ParseSyntaxTree("class DummyClass { }"));
+		var dummyTree = SyntaxFactory.ParseSyntaxTree("class DummyClass { }");
+		var compilation1 = compilation.AddSyntaxTrees(dummyTree);
 		GeneratorDriver driver = CSharpGeneratorDriver.Create(
 			new[] { new PropertySelectorGenerator().AsSourceGenerator() },
 			driverOptions: new GeneratorDriverOptions(IncrementalGeneratorOutputKind.None, trackIncrementalGeneratorSteps: true));
@@ -48,7 +49,7 @@ public static class GenerationTestHelper
 		AssertNoDiagnosticsAndGeneratedCode(result1, generatedCode);
 		var oldCompilationWeakReference = new WeakReference(compilation1);
 
-		var compilation2 = compilation1.AddSyntaxTrees(SyntaxFactory.ParseSyntaxTree("class DummyClass2 { }"));
+		var compilation2 = compilation1.ReplaceSyntaxTree(dummyTree, SyntaxFactory.ParseSyntaxTree("class DummyClass2 { }"));
 		driver = driver.RunGenerators(compilation2);
 		var result2 = driver.GetRunResult().Results[0];
 		assertSecond(result2);

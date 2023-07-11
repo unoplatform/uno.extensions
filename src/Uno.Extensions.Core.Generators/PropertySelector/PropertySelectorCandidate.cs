@@ -14,13 +14,14 @@ namespace Uno.Extensions.Generators.PropertySelector;
 
 internal readonly record struct PropertySelectorCandidate
 {
-	public PropertySelectorCandidate(InvocationExpressionSyntax syntax, SemanticModel model, CancellationToken ct)
+	public PropertySelectorCandidate(InvocationExpressionSyntax syntax, SemanticModel model, bool fromSource, CancellationToken ct)
 	{
 		Location = syntax.SyntaxTree.GetLineSpan(syntax.Span);
 		
 		var method = model.GetSymbolInfo(syntax, ct).Symbol as IMethodSymbol;
-		
+
 		if (method is null ||
+			method.ContainingAssembly.Equals(model.Compilation.Assembly, SymbolEqualityComparer.Default) != fromSource ||
 			!IsCandidate(method, IsPropertySelectorParameter, p => p.HasAttribute<CallerFilePathAttribute>(), p => p.HasAttribute<CallerLineNumberAttribute>(), out _, out var callerPathParameter, out var callerLineParameter))
 		{
 			Accessors = null;
