@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 
 namespace Uno.Extensions.Reactive.Core;
@@ -22,25 +23,31 @@ internal partial class MessageManager<TParent, TResult>
 			public Message<TResult> Local => _transaction.Local;
 
 			public MessageBuilder With()
-				=> new(_transaction._transientUpdates, new MessageManager<TParent, TResult>.CurrentMessage(_transaction._owner).With());
+				=> new(_transaction, new MessageManager<TParent, TResult>.CurrentMessage(_transaction._owner).With());
 
 			public MessageBuilder With(Message<TParent>? updatedParent)
-				=> new(_transaction._transientUpdates, new MessageManager<TParent, TResult>.CurrentMessage(_transaction._owner).With(updatedParent));
+				=> new(_transaction, new MessageManager<TParent, TResult>.CurrentMessage(_transaction._owner).With(updatedParent));
+
+			// Internal dedicated to the DynamicFeed. Should not be used outside of it.
+			public MessageBuilder With(IMessage? updatedParent)
+				=> new(_transaction, new MessageManager<TParent, TResult>.CurrentMessage(_transaction._owner).With(updatedParent));
 		}
 
 		/// <summary>
 		/// A <see cref="MessageBuilder{TParent, TResult}"/> dedicated for <see cref="UpdateTransaction"/>
 		/// that allows to set transient value only for the lifetime of the transaction.
 		/// </summary>
-		internal readonly struct MessageBuilder : IMessageBuilder<TResult>
+		internal readonly struct MessageBuilder : IMessageBuilder<TResult> // TODO: This could now inherit from MessageBuilder<TParent, TResult> (we can then remove the access to the _currentLocal)
 		{
+			private readonly UpdateTransaction _transaction;
 			private readonly Dictionary<MessageAxis, MessageAxisUpdate> _transientUpdates;
 
 			public MessageBuilder(
-				Dictionary<MessageAxis, MessageAxisUpdate> transientUpdates,
+				UpdateTransaction transaction,
 				MessageBuilder<TParent, TResult> inner)
 			{
-				_transientUpdates = transientUpdates;
+				_transaction = transaction;
+				_transientUpdates = transaction._transientUpdates;
 				Inner = inner;
 			}
 
@@ -69,30 +76,27 @@ internal partial class MessageManager<TParent, TResult>
 			(MessageAxisValue value, IChangeSet? changes) IMessageBuilder.Get(MessageAxis axis)
 				=> Get(axis);
 
-			/// <inheritdoc />
-			public void Set(MessageAxis axis, MessageAxisValue value, IChangeSet? changes = null)
-				=> Inner.Set(axis, value, changes);
-
 			internal (MessageAxisValue value, IChangeSet? changes) Get(MessageAxis axis)
 			{
-				var parentValue = Inner.Parent?.Current[axis] ?? MessageAxisValue.Unset;
-				var localValue = Inner.Local.Current[axis];
-				if (_transientUpdates.TryGetValue(axis, out var updater)
-					|| Inner.GetResult().updates.TryGetValue(axis, out updater))
+				if (_transientUpdates.TryGetValue(axis, out var updater))
 				{
+					var parentValue = Inner.Parent?.Current[axis] ?? MessageAxisValue.Unset;
+					var localValue = _transaction.Local.Current[axis];
+
 					return updater.GetValue(parentValue, localValue);
 				}
 				else
 				{
-					return (parentValue, null);
+					return Inner.Get(axis);
 				}
 			}
 
-			public MessageBuilder Apply(Action<MessageBuilder<TParent, TResult>>? configure)
-			{
-				configure?.Invoke(Inner);
-				return this;
-			}
+			/// <inheritdoc />
+			void IMessageBuilder.Set(MessageAxis axis, MessageAxisValue value, IChangeSet? changes)
+				=> Inner.Set(axis, value, changes);
+
+			internal void Set(MessageAxis axis, MessageAxisValue value, IChangeSet? changes = null)
+				=> Inner.Set(axis, value, changes);
 		}
 	}
 }

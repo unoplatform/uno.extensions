@@ -315,4 +315,39 @@ public static class MessageAxisExtensions
 		configure?.Invoke(builder);
 		return builder;
 	}
+
+	/// <summary>
+	/// Fluently applies an additional configuration action on a message builder.
+	/// </summary>
+	/// <typeparam name="TBuilder">Type of the builder to configure.</typeparam>
+	/// <param name="builder">The builder to configure.</param>
+	/// <param name="configure">The addition configure operation to apply on the builder.</param>
+	/// <returns></returns>
+	internal static TBuilder Apply<TBuilder>(this TBuilder builder, Action<IMessageBuilder>? configure)
+		where TBuilder : IMessageBuilder
+	{
+		configure?.Invoke(builder);
+		return builder;
+	}
+
+	/// <summary>
+	/// Fluently applies a set of configuration action on a message builder.
+	/// </summary>
+	/// <typeparam name="TBuilder">Type of the builder to configure.</typeparam>
+	/// <param name="builder">The builder to configure.</param>
+	/// <param name="configure">The addition configure operation to apply on the builder.</param>
+	/// <returns></returns>
+	internal static TBuilder Apply<TBuilder>(this TBuilder builder, IEnumerable<Action<IMessageBuilder>>? configure)
+		where TBuilder : IMessageBuilder
+	{
+		if (configure is not null)
+		{
+			foreach (var config in configure)
+			{
+				config(builder);
+			}
+		}
+
+		return builder;
+	}
 }

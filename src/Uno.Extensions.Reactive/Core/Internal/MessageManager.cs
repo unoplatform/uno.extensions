@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Threading;
 using Uno.Extensions.Reactive.Utils;
@@ -20,20 +21,20 @@ internal partial class MessageManager<TParent, TResult>
 	public delegate MessageBuilder<TParent, TResult> Updater(CurrentMessage current);
 	public delegate MessageBuilder<TParent, TResult> Updater<in TState>(CurrentMessage current, TState state);
 
-	private static readonly Updater<Updater> _stateLessUpdater = (cm, u) => u(cm);
+	private static readonly Updater<Updater> _stateLessUpdater = static (cm, u) => u(cm);
 
 	private readonly object _gate = new();
 	private readonly Action<Message<TResult>>? _send;
-
-	private Message<TParent>? _parent;
-	private UpdateTransaction? _pendingUpdate;
-
-	public Message<TResult> Current => _local.result;
+	
+	private IMessage? _parent;
 	// Locally, we only store a set of delegates that are upgrading the parent value into a local value.
 	// Compared to the 'defined' the 'applied' also contains transient updates of a _pendingUpdate transaction.
 	private (_ChangeSet defined, _ChangeSet applied, Message<TResult> result) _local;
 
+	private UpdateTransaction? _pendingUpdate;
 	private bool _isFirstUpdate = true;
+
+	public Message<TResult> Current => _local.result;
 
 	public MessageManager(Action<Message<TResult>>? send = null)
 	{
@@ -48,6 +49,11 @@ internal partial class MessageManager<TParent, TResult>
 		};
 		_local = (initialUpdates, initialUpdates, initialMessage);
 	}
+
+	// Causes an empty update only to force the manager to re-evaluate its internal state and update its Current message if needed (and push it if '_send' defined).
+	// This is mainly used when we complete a transaction as it has "side effects" on the Current message with its TransientUpdates.
+	private void Update()
+		=> Update(static (m, _) => m.With(), default(object), CancellationToken.None);
 
 	public bool Update(Updater updater, CancellationToken ct = default)
 		=> Update(_stateLessUpdater, updater, ct);
@@ -143,9 +149,7 @@ internal partial class MessageManager<TParent, TResult>
 		}
 	}
 
-	private void Update()
-		=> Update((m, _) => m.With(), default(object), CancellationToken.None);
-
+	// WARNING: This will abort any previous pending update transaction
 	public UpdateTransaction BeginUpdate(CancellationToken ct)
 	{
 		lock (_gate)
@@ -167,6 +171,7 @@ internal partial class MessageManager<TParent, TResult>
 		}
 	}
 
+	// WARNING: This will abort any previous pending update transaction (last win!)
 	public UpdateTransaction BeginUpdate(CancellationToken ct, params MessageAxis[] preservePendingAxes)
 	{
 		lock (_gate)
@@ -195,9 +200,6 @@ internal partial class MessageManager<TParent, TResult>
 		}
 	}
 
-	private void EndUpdate(UpdateTransaction transaction, Updater result)
-		=> EndUpdate(transaction, _stateLessUpdater, result);
-
 	private void EndUpdate<TState>(UpdateTransaction transaction, Updater<TState> result, TState state)
 	{
 		lock (_gate)
@@ -205,7 +207,7 @@ internal partial class MessageManager<TParent, TResult>
 			if (_pendingUpdate == transaction)
 			{
 				_pendingUpdate = null;
-				Update((msg, @params) => @params.result(msg, @params.state), (result, state), CancellationToken.None);
+				Update(static (msg, @params) => @params.result(msg, @params.state), (result, state), CancellationToken.None);
 			}
 		}
 	}

@@ -42,7 +42,7 @@ internal sealed class WhereListFeed<T> : IListFeed<T>
 
 		if (parentMsg!.Changes.Contains(MessageAxis.Data))
 		{
-			var previousFilteredItems = current.Local.Current.Data.SomeOrDefault(ImmutableList<T>.Empty);
+			var previousFilteredItems = updated.CurrentData.SomeOrDefault(ImmutableList<T>.Empty);
 			var data = parentMsg.Current.Data;
 			var updatedItems = data.SomeOrDefault(ImmutableList<T>.Empty);
 

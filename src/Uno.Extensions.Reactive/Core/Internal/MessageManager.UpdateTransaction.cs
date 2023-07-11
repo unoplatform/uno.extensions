@@ -24,10 +24,23 @@ internal partial class MessageManager<TParent, TResult>
 			public const int Disposed = 255;
 		}
 
+		/// <summary>
+		/// List of transient updates that has to be applied on any message produced by the manager.
+		/// </summary>
 		internal IReadOnlyDictionary<MessageAxis, MessageAxisUpdate> TransientUpdates => _transientUpdates;
 
-		public Message<TParent>? Parent => _owner._parent;
+		/// <summary>
+		/// Gets the last message got from the parent feed, if any.
+		/// </summary>
+		public Message<TParent>? Parent => _owner._parent as Message<TParent>;
 
+		/// <summary>
+		/// Gets the last message that has been published by the manager.
+		/// </summary>
+		/// <remarks>
+		/// Axes values from this message may differ from the value obtained using the <see cref="IMessageBuilder.Get"/>,
+		/// even if nothing has been modified yet on the builder (due to multi-step message building).
+		/// </remarks>
 		public Message<TResult> Local => _owner.Current;
 
 		internal UpdateTransaction(MessageManager<TParent, TResult> owner, CancellationToken ct)
@@ -43,9 +56,19 @@ internal partial class MessageManager<TParent, TResult>
 			_ctSubscription = ct.Register(Dispose);
 		}
 
+		/// <summary>
+		/// Applies an update to the current message (and sent it).
+		/// </summary>
+		/// <param name="updater">The update to applied to the current message.</param>
 		public void Update(Func<CurrentMessage, MessageBuilder> updater)
-			=> Update((cm, u) => u(cm), updater);
+			=> Update(static (cm, u) => u(cm), updater);
 
+		/// <summary>
+		/// Applies an update to the current message (and sent it).
+		/// </summary>
+		/// <typeparam name="TState">Type of the state passed to the <paramref name="updater"/> to avoid needs of captures/closure.</typeparam>
+		/// <param name="updater">The update to applied to the current message.</param>
+		/// <param name="state">The state to pass to the <paramref name="updater"/> to avoid needs of captures/closure.</param>
 		public void Update<TState>(Func<CurrentMessage, TState, MessageBuilder> updater, TState state)
 		{
 			if (_state != State.Active)

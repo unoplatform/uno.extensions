@@ -11,14 +11,16 @@ namespace Uno.Extensions.Reactive.Operators;
 
 internal interface IFeedUpdate<T>
 {
-	bool IsActive(bool parentChanged, MessageBuilder<T, T> message);
+	// Should we pass only the 'updatedParent', null is not updated, and remove the 'parentChanged' flag?
+	bool IsActive(Message<T>? parent, bool parentChanged, IMessageEntry<T> message);
 
+	// TODO: Should remove the 'parentChanged' flag ?
 	void Apply(bool parentChanged, MessageBuilder<T, T> message);
 }
 
-internal record FeedUpdate<T>(Func<bool, MessageBuilder<T, T>, bool> IsActive, Action<bool, MessageBuilder<T, T>> Apply) : IFeedUpdate<T>
+internal record FeedUpdate<T>(Func<Message<T>?, bool, IMessageEntry<T>, bool> IsActive, Action<bool, MessageBuilder<T, T>> Apply) : IFeedUpdate<T>
 {
-	bool IFeedUpdate<T>.IsActive(bool parentChanged, MessageBuilder<T, T> message) => IsActive(parentChanged, message);
+	bool IFeedUpdate<T>.IsActive(Message<T>? parent, bool parentChanged, IMessageEntry<T> message) => IsActive(parent, parentChanged, message);
 	void IFeedUpdate<T>.Apply(bool parentChanged, MessageBuilder<T, T> message) => Apply(parentChanged, message);
 }
 
@@ -34,7 +36,7 @@ internal sealed class UpdateFeed<T> : IFeed<T>
 		_waitForParent = waitForParent;
 	}
 
-	public async ValueTask Update(Func<bool, MessageBuilder<T, T>, bool> predicate, Action<bool, MessageBuilder<T, T>> updater, CancellationToken ct)
+	public async ValueTask Update(Func<Message<T>?, bool, IMessageEntry<T>, bool> predicate, Action<bool, MessageBuilder<T, T>> updater, CancellationToken ct)
 	{
 		var update = new FeedUpdate<T>(predicate, updater);
 		_updates.SetNext((new[] { update }, null));
@@ -119,7 +121,7 @@ internal sealed class UpdateFeed<T> : IFeed<T>
 			{
 				if (!_isParentReady)
 				{
-					_isParentReady |= _owner._waitForParent!.Invoke(parentMsg);
+					_isParentReady = _owner._waitForParent!.Invoke(parentMsg);
 				}
 
 				RebuildMessage(parentMsg);
@@ -165,7 +167,7 @@ internal sealed class UpdateFeed<T> : IFeed<T>
 						var msg = current.WithParentOnly(parent);
 						foreach (var update in _activeUpdates)
 						{
-							if (update.IsActive(parentChanged, msg))
+							if (update.IsActive(msg.Parent, parentChanged, msg))
 							{
 								update.Apply(parentChanged, msg);
 							}
