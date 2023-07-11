@@ -114,6 +114,10 @@ public partial class PropertySelectorGenerator : IIncrementalGenerator
 		// The output here is all matching InvocationExpressionSyntax nodes that might be interesting.
 		var filteredSyntaxTreesProvider = CreateFilteredSyntaxTreesProvider(syntaxTreesProvider, interestingMethodNames).WithTrackingName("filteredSyntaxTreesProvider_PropertySelectorGenerator");
 
+		// This is NOT GOOD.
+		// This step runs both the predicate and transform on every edit.
+		// A better implementation would be a bit much more complex.
+		// So we try out this simple approach for now.
 		var interestingMethodNamesFromSource = context.SyntaxProvider.CreateSyntaxProvider(
 			IsCandidateMethodDeclaration,
 			TransformMethodDeclarationToName);
