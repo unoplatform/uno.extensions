@@ -16,7 +16,7 @@ public partial class MauiContent : ContentControl
 	/// </summary>
 	public static readonly DependencyProperty ViewProperty =
 		DependencyProperty.Register(nameof(View), typeof(View), typeof(MauiContent), new PropertyMetadata(null, OnViewChanged));
-	
+
 	private static void OnViewChanged(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs args)
 	{
 		if (args.NewValue is null || args.NewValue is not View view || dependencyObject is not MauiContent embeddedView)
@@ -47,7 +47,7 @@ public partial class MauiContent : ContentControl
 			throw new MauiEmbeddingException(Properties.Resources.UnexpectedErrorConvertingMauiViewToNativeView, ex);
 		}
 	}
-	
+
 	private static ILogger GetLogger() =>
 		MauiEmbedding.MauiContext.Services.GetRequiredService<ILogger<MauiContent>>();
 
@@ -96,12 +96,36 @@ public partial class MauiContent : ContentControl
 		}
 
 		_host = new UnoHost(resources);
-		var binding = new NativeMauiBinding(nameof(DataContext), BindingMode.OneWay, source: this);
-		_host.SetBinding(UnoHost.BindingContextProperty, binding);
+
+		if (DataContext is not null)
+		{
+			SetHostBinding();
+		}
+		else
+		{
+			DataContextChanged += OnDataContextChanged;
+		}
 
 		if (View.Parent is null)
 		{
 			View.Parent = _host;
 		}
+	}
+
+	void OnDataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
+	{
+		DataContextChanged -= OnDataContextChanged;
+		SetHostBinding();
+	}
+
+	void SetHostBinding()
+	{
+		if (_host is null)
+		{
+			return;
+		}
+
+		var binding = new NativeMauiBinding(nameof(DataContext), BindingMode.OneWay, source: this);
+		_host.SetBinding(UnoHost.BindingContextProperty, binding);
 	}
 }
