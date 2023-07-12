@@ -79,6 +79,7 @@
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Storage.UI\Uno.Extensions.Storage.WinUI.csproj" />
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Toolkit.UI\Uno.Extensions.Toolkit.WinUI.csproj" />
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Toolkit\Uno.Extensions.Toolkit.csproj" />
+		<ProjectReference Include="..\..\MauiProjects\MauiControlsExternal\MauiControlsExternal.csproj" />
 	</ItemGroup>
 	<Import Project="..\..\..\src\Uno.Extensions.Configuration\build\Package.targets" />
 	<Import Project="..\..\..\src\Uno.Extensions.Hosting\build\Package.targets" />
@@ -86,4 +87,5 @@
 	<Import Project="..\..\..\src\Uno.Extensions.Maui.UI\build\Package.targets" />
 	<Import Project="..\..\..\src\Uno.Extensions.Navigation\build\Package.targets" />
 	<Import Project="..\..\..\src\Uno.Extensions.Navigation.UI\build\Package.targets" />
+
 </Project>
