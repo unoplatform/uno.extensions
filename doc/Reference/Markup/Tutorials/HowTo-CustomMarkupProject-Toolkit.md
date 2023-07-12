@@ -238,8 +238,7 @@ Chips are often used to display short pieces of information such as tags, catego
 
     Chips can be displayed in lists, dropdown menus, action bars, or other areas of the user interface depending on the application's needs. They are highly flexible and adaptable, allowing you to use them according to your application's interaction flow.
 
-    For this case we will replace the Button and use the Chip for Navigation.
-
+    For this case we will add the Chip to show some information on the UI.
 
     ```csharp
     new ChipGroup()
@@ -256,66 +255,37 @@ Chips are often used to display short pieces of information such as tags, catego
     You can customize the appearance and behavior of Chips by setting properties such as Content, Icon, IsSelected, and handling associated events such as Click or Selected.
 
     So lets add more Chip to see they in action.
-    As the First Chip is for Navigation,
-    the Second is for show how to custom the style of the chip.
+    The Second is for show how to custom the style of the chip.
 
     ```csharp
     new ChipGroup()
 		.Assign(out var chipGroup)
 		.Items(
-			new Chip()
-				.Margin(5)
-				.Content("Go to Second Page")
-				.Background(new SolidColorBrush(Colors.LightBlue))
-			.Assign(out var navigationChip),
-
             new Chip()
 				.Margin(5)
 				.Content("Chip 2")
 				.Style(new Style<Chip>()
 							.Setters( s => s.Foreground(new SolidColorBrush(Colors.Red)))
 					),
-
-			new Chip()
-				.Margin(5)
-				.Content("Chip 3")
-				//.Icon(new PathIcon().Data(StaticResource.Get<Geometry>("Icon_Check")))
-				//.Icon(new SymbolIcon(Symbol.Favorite))
-				.Assign(out var chipElement)
 		)
     ```
 
-    And the third one is for shwo how to handle the Checked and the Unchecked events.
+    And the third one is for show how to handle the Checked and the Unchecked events.
 
     ```csharp
     new ChipGroup()
 		.Assign(out var chipGroup)
 		.Items(
-			new Chip()
-				.Margin(5)
-				.Content("Go to Second Page")
-				.Background(new SolidColorBrush(Colors.LightBlue))
-			.Assign(out var navigationChip),
-
-            new Chip()
-				.Margin(5)
-				.CanRemove(true)
-				.Content("Chip 2")
-				.Assign(out var chipRemoveElement)
-				.Style(new Style<Chip>()
-							.Setters( s => s.Foreground(new SolidColorBrush(Colors.Red)))
-					),
-
+			
 			new Chip()
 				.Margin(5)
 				.Content("Chip 3")
-				//.Icon(new PathIcon().Data(StaticResource.Get<Geometry>("Icon_Check")))
-				//.Icon(new SymbolIcon(Symbol.Favorite))
 				.Assign(out var chipElement)
 		)
     ```
 
-    And we need to add the event handles on our code.
+    And we need to add the event handlers  on our code.
+    Notice that we are using the Assign to have access to the chipElement in other places.
     
     ```csharp
     
@@ -335,12 +305,56 @@ Chips are often used to display short pieces of information such as tags, catego
 	};
     ```
 
+    > Notice that we are able to use Event handlers and use for many other propous.
+
     # [**XAML**](#tab/cli)
     
     #### XAML
+    
+    For this case we will add the Chip to show some information on the UI.
 
     ```xml
+    <utu:ChipGroup x:Name="chipGroup">
+		<utu:Chip Margin="5" Content="Chip 1" Background="LightBlue" />
+	</utu:ChipGroup>
+    ```
+
+    You can customize the appearance and behavior of Chips by setting properties such as Content, Icon, IsSelected, and handling associated events such as Click or Selected.
+
+    So lets add more Chip to see they in action.
+    The Second is for show how to custom the style of the chip.
+
+    ```xml
+    <utu:ChipGroup x:Name="chipGroup">
+		<utu:Chip Margin="5" Content="Chip 2">
+			<utu:Chip.Style>
+				<Style TargetType="utu:Chip">
+					<Setter Property="Foreground" Value="Red" />
+				</Style>
+			</utu:Chip.Style>
+		</utu:Chip>
+	</utu:ChipGroup>
+    ```
+
+    And the third one is for show how to handle the Checked and the Unchecked events.
+
+    ```xml
+    <utu:ChipGroup x:Name="chipGroup">
+		<utu:Chip Margin="5" Content="Chip 3" x:Name="chipElement" Checked="chip_Checked" Unchecked="chip_Unchecked"/>
+	</utu:ChipGroup>
+    ```
+
+    And we need to add the event handlers  on our code.
     
+    ```csharp
+	public void chip_Unchecked(object sender, RoutedEventArgs e)
+	{
+		chipElement.FontSize = 14;
+	}
+	public void chip_Checked(object sender, RoutedEventArgs e)
+	{
+		chipElement.FontSize = 18;
+	}
     ```
 
     # [**Full Code**](#tab/code)
@@ -365,32 +379,50 @@ Chips are often used to display short pieces of information such as tags, catego
 					    r => r
 						    .Add("Icon_Check", "F1 M 4.192500114440918 7.934999942779541 L 1.0649998784065247 4.807499885559082 L 0 5.864999771118164 L 4.192500114440918 10.057499885559082 L 13.192500114440918 1.057499885559082 L 12.135000228881836 0 L 4.192500114440918 7.934999942779541 Z")
 			    )
-			    .Content(new StackPanel()
-			    .VerticalAlignment(VerticalAlignment.Center)
-			    .HorizontalAlignment(HorizontalAlignment.Center)
-			    .Children(
-				    new NavigationBar().Content("Title Main Page"),
-
-					    new ChipGroup()
-					    .Assign(out var chipGroup)
-					    .Items(
-						    new Chip()
-							    .Margin(5)
-							    .Content("Go to Second Page")
-							    .Background(new SolidColorBrush(Colors.LightBlue))
-    						    .Assign(out var navigationChip),
-						    new Chip()
-							    .Margin(5)
-							    .Content("Chip 2")
-							    .Style(new Style<Chip>()
-										    .Setters( s => s.Foreground(new SolidColorBrush(Colors.Red)))
-								    ),
-						    new Chip()
-							    .Margin(5)
-							    .Content("Chip 3")
-							    .Assign(out var chipElement)
+			    .Content(
+				    new StackPanel()
+					    .Children(
+						    new NavigationBar().Content("Title Main Page")
+							    .VerticalAlignment(VerticalAlignment.Top)
+							    .HorizontalAlignment(HorizontalAlignment.Left),
+						    new StackPanel()
+							    .Margin(0,50,0,0)
+							    .VerticalAlignment(VerticalAlignment.Center)
+							    .HorizontalAlignment(HorizontalAlignment.Center)
+							    .Children(
+								    new Button()
+									    .Content("Go to Second Page")
+									    .Assign(out var navigationButton),
+								    new ChipGroup()
+									    .Assign(out var chipGroup)
+									    .Items(
+										    new Chip()
+											    .Margin(5)
+											    .Content("First Chip")
+											    .Background(new SolidColorBrush(Colors.LightBlue)),
+										    new Chip()
+											    .Margin(5)
+											    .CanRemove(true)
+											    .Content("Chip 2")
+											    .Assign(out var chipRemoveElement)
+											    .Style(new Style<Chip>()
+														    .Setters(s => s.Foreground(new SolidColorBrush(Colors.Red)))
+												    ),
+										    new Chip()
+											    .Margin(5)
+											    .Content("Chip 3")
+											    //.Icon(new PathIcon().Data(StaticResource.Get<Geometry>("Icon_Check")))
+											    //.Icon(new SymbolIcon(Symbol.Favorite))
+											    .Assign(out var chipElement)
+									    )
+							    )
 					    )
-			    ));
+			    );
+
+		    navigationButton.Click += (s, e) =>
+		    {
+			    Frame.Navigate(typeof(SecondPage));
+		    };
 
 
 		    chipElement.Checked += (sender, e) =>
@@ -407,11 +439,6 @@ Chips are often used to display short pieces of information such as tags, catego
 				    chip.FontSize(14);
 			    }
 		    };
-
-		    navigationChip.Click += (s, e) =>
-		    {
-			    Frame.Navigate(typeof(SecondPage));
-		    };
 	    }
     }
 
@@ -421,34 +448,39 @@ Chips are often used to display short pieces of information such as tags, catego
     - MainPage.xaml
 
     ```xml
-       <Page x:Class="MySampleToolkitProjectXAML.MainPage"
-	    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-	    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-	    xmlns:local="using:MySampleToolkitProjectXAML"
-	    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-	    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-	    mc:Ignorable="d"
-	    xmlns:utu="using:Uno.Toolkit.UI"
-	    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Page x:Class="MySampleToolkitProjectXAML.MainPage"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="using:MySampleToolkitProjectXAML"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        xmlns:utu="using:Uno.Toolkit.UI"
+        Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-	    <StackPanel HorizontalAlignment="Center"
-				    VerticalAlignment="Center">
-		    <utu:NavigationBar Content="Title Main Page"/>
+        <StackPanel>
+	        <utu:NavigationBar Content="Title Main Page"
+				        HorizontalAlignment="Left"
+				        VerticalAlignment="Top"/>
+	        <StackPanel HorizontalAlignment="Center"
+		        VerticalAlignment="Center">
+		        <Button Content="Go to Second Page" Click="navigationButton_Click"/>
+		
+		        <utu:ChipGroup x:Name="chipGroup">
+			        <utu:Chip Margin="5" Content="Chip 1" Background="LightBlue" />
+			        <utu:Chip Margin="5" Content="Chip 2">
+				        <utu:Chip.Style>
+					        <Style TargetType="utu:Chip">
+						        <Setter Property="Foreground" Value="Red" />
+					        </Style>
+				        </utu:Chip.Style>
+			        </utu:Chip>
+			        <utu:Chip Margin="5" Content="Chip 3" x:Name="chipElement" Checked="chip_Checked" Unchecked="chip_Unchecked"/>
 
-		    <utu:ChipGroup x:Name="chipGroup">
-			    <utu:Chip Margin="5" Content="Go to Second Page" Background="LightBlue" Click="navigationChip_Click" />
-			    <utu:Chip Margin="5" CanRemove="True" Content="Chip 2">
-				    <utu:Chip.Style>
-					    <Style TargetType="utu:Chip">
-						    <Setter Property="Foreground" Value="Red" />
-					    </Style>
-				    </utu:Chip.Style>
-			    </utu:Chip>
-			    <utu:Chip Margin="5" Content="Chip 3" x:Name="chipElement" Checked="chip_Checked" Unchecked="chip_Unchecked"/>
-		    </utu:ChipGroup>
-	    </StackPanel>
+		        </utu:ChipGroup>
+	        </StackPanel>
+        </StackPanel>
     </Page>
-    
     ```
 
     - MainPage.xaml.cs
@@ -462,7 +494,7 @@ Chips are often used to display short pieces of information such as tags, catego
 	    {
 		    this.InitializeComponent();
 	    }
-	    public void navigationChip_Click(object sender, RoutedEventArgs e)
+	    public void navigationButton_Click(object sender, RoutedEventArgs e)
 	    {
 		    Frame.Navigate(typeof(SecondPage));
 	    }
@@ -476,6 +508,7 @@ Chips are often used to display short pieces of information such as tags, catego
 	    }
 	
     }
+
 
     ```
 
@@ -503,6 +536,5 @@ But the Uno Toolkit has many other Controls as:
 ## Next Steps
 
 - [Custom your own C# Markup - Learn how to change Visual States and User Controls](xref:Reference.Markup.HowToCustomMarkupProjectVisualStates)
-- [Custom your own C# Markup - Learn how to use Toolkit](xref:Reference.Markup.HowToCustomMarkupProjectToolkit)
 - [Custom your own C# Markup - Learn how to Change the Theme](xref:Reference.Markup.HowToCustomMarkupProjectTheme)
 - [Custom your own C# Markup - Learn how to use MVUX](xref:Reference.Markup.HowToCustomMarkupProjectMVUX)
