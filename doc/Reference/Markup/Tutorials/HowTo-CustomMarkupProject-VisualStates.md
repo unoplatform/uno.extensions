@@ -2,192 +2,367 @@
 uid: Reference.Markup.HowToCustomMarkupProjectVisualStates
 ---
 
-# How to set up your own C# Markup project
+# Getting Started with UserControl and VisualStatesManager
 
-In this tutorial you will learn how to set up a new *basic project* using Uno Platform and C# Markup and using some basic resources and also make a comparison between C# Markup and XAML.
+In the previous session we learn how to [Custom your own C# Markup and Learn how to use Toolkit](xref:Reference.Markup.HowToCustomMarkupProjectToolkit).
 
-The purpose of this section of the tutorial is to show you how to create a basic project from scratch.
+Now we will learn how to use the [UserControl](https://platform.uno/docs/articles/implemented/windows-ui-xaml-controls-page.html) and the [VisualStateManagers](xref:Reference.Markup.VisualStateManager).
 
-## Set up a Markup project
+For this sample you can use same project we start on the how to [Create your own C# Markup with Toolkit](xref:Reference.Markup.HowTo-MarkupProjectToolkit)
 
-You can use this tutorial to learn how to set up a Uno Platform project.
-We will use the comparison between two projects, one being C# Markup and the second XAML.
+## UserControl
 
-> The tutorials below can teach you how to create both projects.
+A UserControl is a reusable user interface component that allows you to group related visual elements and behavior into a single building block.
+It provides a way to create custom components that can be used in multiple parts of the application.
 
-- [Setting up the environment and creating the Markup project](xref:Reference.Markup.HowToMarkupProject)
+### Changing UI to have the UserControl
 
-- [Setting up the environment and creating the XAML project](xref:Reference.Markup.HowToXamlProject)
-
-
-
-### Work with the Grid in order to customize the columns and their children.
-
-- Changing Grid, RowDefinitions and ColumnDefinitions
+- In the Shared Project open we need to add a UserControl.
+- The propous of the new UserControl will be to have the Chips on a single place, so we can use the same code on the MainPage and the SecondPage.
 
     # [**C# Markup**](#tab/cs)
 
     #### C# Markup
 
+    Create a new Uno Platform UserControl.
+    On the SharedProject Right click on the project name -> Add -> Class -> Informe the Name `SampleUserControl` and click Add.
+    
+    Now we can change the content of the SampleUserControl.cs to have the Chips, copy the ChipGroup from the MainPage.cs to this file..
+
     ```csharp
-    new Grid()
-	    //Custom the Row and Column Definitions
-	    .RowDefinitions<Grid>("Auto, *")
-	    .ColumnDefinitions<Grid>("2*, Auto, 3*")
+    this.Background(ThemeResource.Get<Brush>("ApplicationPageBackgroundThemeBrush"))
+		.Content(
+				new ChipGroup()
+				.Assign(out var chipGroup)
+				.Items(
+					new Chip()
+						.Margin(5)
+						.Content("First Chip")
+						.Background(new SolidColorBrush(Colors.LightBlue))
+						.Assign(out var navigationChip),
+					new Chip()
+						.Margin(5)
+						.Content("Chip 2")
+						.Style(new Style<Chip>()
+									.Setters(s => s.Foreground(new SolidColorBrush(Colors.Red)))
+							),
+					new Chip()
+						.Margin(5)
+						.Content("Chip 3")
+						.Assign(out var chipElement)
+				)
+			);
+    ```
 
-	    //Set Background from Theme
-	    .Children(
+    And move the EventHandler from the MainPage.cs to the SampleUserControl.cs.
 
-		    new TextBlock()
-			    .Padding(50)
-			    .Grid(row: 0, column: 0)//Set and Attached Properties
-			    .Text("Row 0"),
+    ```csharp
 
-		    new TextBlock()
-			    .Margin(50)
-			    .Grid(grid => grid.Row(0).Column(1).ColumnSpan(2))//Attached Properties using builder pattern
-			    .Text("Row 0 with ColumnSpan and Attached Properties using builder pattern!"),
+		chipElement.Checked += (sender, e) =>
+		{
+			if (sender is Chip chip)
+			{
+				chip.FontSize(18);
+			}
+		};
+		chipElement.Unchecked += (sender, e) =>
+		{
+			if (sender is Chip chip)
+			{
+				chip.FontSize(14);
+			}
+		};
+    ```
 
-		    new TextBlock()
-			    .Margin(50)
-			    .Grid(row: 1, column: 0)//Set and Attached Properties
-			    .Text("Row 1 and Column 0"),
+    And change the ChipGroup on the MainPage to the new UserControl.
 
-		    new TextBlock()
-			    .Margin(50)
-			    .Grid(row: 1, column: 1)//Set and Attached Properties
-			    .Text("Row 1 and Column 1"),
+    ```csharp
+    .Children(
+		new Button()
+			.Content("Go to Second Page")
+			.Assign(out var navigationButton),
+		new SampleUserControl()
+	)
+    ```
 
-		    new TextBlock()
-			    .Margin(50)
-			    .Grid(grid => grid.Row(1).Column(2))//Attached Properties using builder pattern
-			    .Text("Row 1 and Column 2")
-	    )
+    We can do the same on the SecondPage, check how will be the full code on the SecondPage
+
+    ```csharp
+    namespace MySampleToolkitProject;
+
+    public sealed partial class SecondPage : Page
+    {
+	    public SecondPage()
+	    {
+		    this
+			    .Background(ThemeResource.Get<Brush>("ApplicationPageBackgroundThemeBrush"))
+			    .Content(
+				    new StackPanel()
+					    .Children(
+						    new NavigationBar().Content("Title Second Page")
+							    .VerticalAlignment(VerticalAlignment.Top)
+							    .HorizontalAlignment(HorizontalAlignment.Left),
+						    new StackPanel()
+							    .Margin(0, 50, 0, 0)
+							    .VerticalAlignment(VerticalAlignment.Center)
+							    .HorizontalAlignment(HorizontalAlignment.Center)
+							    .Children(
+								    new Button()
+									    .Content("Go to Main Page")
+									    .Assign(out var navigationButton),
+								    new SampleUserControl()
+							    )
+					    )
+			    );
+		    navigationButton.Click += (s, e) =>
+		    {
+			    Frame.Navigate(typeof(MainPage));
+		    };
+	    }
+    }
     ```
 
     # [**XAML**](#tab/cli)
     
     #### XAML
+    
+    Create a new Uno Platform UserControl.
+    On the SharedProject Right click on the project name -> Add -> New Item... -> Than filter by User Control and select a User Control (Uno Platform) and informe the Name `SampleUserControl` and click Add.
+    
+    Now we can change the content of the SampleUserControl.xaml to have the Chips, copy the ChipGroup from the MainPage.xaml to this file..
 
     ```xml
-    <Grid>
-	    <Grid.RowDefinitions>
-		    <RowDefinition Height="Auto" />
-		    <RowDefinition Height="*" />
-	    </Grid.RowDefinitions>
-	    <Grid.ColumnDefinitions>
-		    <ColumnDefinition Width="2*" />
-		    <ColumnDefinition Width="Auto" />
-		    <ColumnDefinition Width="3*" />
-	    </Grid.ColumnDefinitions>
+    <UserControl
+        x:Class="MySampleToolkitProjectXAML.SampleUserControl"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="using:MySampleToolkitProjectXAML"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+	    xmlns:utu="using:Uno.Toolkit.UI"
+        d:DesignHeight="300"
+        d:DesignWidth="400">
 
-	    <TextBlock 
-		    Text="Row 0"
-		    Padding="50"
-		    Margin="50"
-		    Grid.Row="0"
-		    Grid.Column="0"/>
+        <Grid>
+		    <utu:ChipGroup x:Name="chipGroup">
+			    <utu:Chip Margin="5" Content="Chip 1" Background="LightBlue" />
+			    <utu:Chip Margin="5" Content="Chip 2">
+				    <utu:Chip.Style>
+					    <Style TargetType="utu:Chip">
+						    <Setter Property="Foreground" Value="Red" />
+					    </Style>
+				    </utu:Chip.Style>
+			    </utu:Chip>
+			    <utu:Chip Margin="5" Content="Chip 3" x:Name="chipElement" Checked="chip_Checked" Unchecked="chip_Unchecked"/>
 
-	    <TextBlock 
-		    Text="Row 0 with ColumnSpan and Attached Properties using builder pattern!"
-		    Padding="50"
-		    Margin="50"
-		    Grid.Row="0"
-		    Grid.Column="1"
-		    Grid.ColumnSpan="2"/>
+		    </utu:ChipGroup>
+	    </Grid>
+    </UserControl>
 
-	    <TextBlock 
-		    Text="Row 1 and Column 0"
-		    Padding="50"
-		    Margin="50"
-		    Grid.Row="1"
-		    Grid.Column="0"/>
-
-	    <TextBlock 
-		    Text="Row 1 and Column 1"
-		    Padding="50"
-		    Margin="50"
-		    Grid.Row="1"
-		    Grid.Column="1"/>
-
-	    <TextBlock 
-		    Text="Row 1 and Column 2"
-		    Padding="50"
-		    Margin="50"
-		    Grid.Row="1"
-		    Grid.Column="2"/>
-    </Grid>
     ```
 
+    And move the EventHandler from the MainPage.cs to the SampleUserControl.xaml.cs.
+
+    ```csharp
+    public sealed partial class SampleUserControl : UserControl
+	{
+		public SampleUserControl()
+		{
+			this.InitializeComponent();
+		}
+		public void chip_Unchecked(object sender, RoutedEventArgs e)
+		{
+			chipElement.FontSize = 14;
+		}
+		public void chip_Checked(object sender, RoutedEventArgs e)
+		{
+			chipElement.FontSize = 18;
+		}
+	}
+    ```
+
+    And change the ChipGroup on the MainPage to the new UserControl.
+
+    ```xml
+    <StackPanel HorizontalAlignment="Center"
+		VerticalAlignment="Center">
+		<Button Content="Go to Second Page" Click="navigationButton_Click"/>
+
+		<local:SampleUserControl/>
+
+	</StackPanel>
+    ```
+
+    We can do the same on the SecondPage, check how will be the full code on the SecondPage
+
+    ```csharp
+    <StackPanel>
+		<utu:NavigationBar Content="Title Second Page"
+					HorizontalAlignment="Left"
+					VerticalAlignment="Top"/>
+		<StackPanel HorizontalAlignment="Center"
+			VerticalAlignment="Center">
+			<Button Content="Go to Main Page" Click="navigationButton_Click"/>
+
+			<local:SampleUserControl/>
+		</StackPanel>
+	</StackPanel>
+    ```
     # [**Full Code**](#tab/code)
+
     #### Full C# Markup code
     
     - Example of the complete code on the MainPage.cs, so you can follow along in your own project.
 
     ```csharp
-    namespace MySampleProject;
+    using Microsoft.UI;
+    using Uno.Toolkit.UI;
+
+    namespace MySampleToolkitProject;
 
     public sealed partial class MainPage : Page
     {
 	    public MainPage()
 	    {
 		    this
-		        .Background(ThemeResource.Get<Brush>("ApplicationPageBackgroundThemeBrush"))
+			
+			    .Background(ThemeResource.Get<Brush>("ApplicationPageBackgroundThemeBrush"))
 			    .Content(
 				    new StackPanel()
-				    .VerticalAlignment(VerticalAlignment.Center)
-				    .HorizontalAlignment(HorizontalAlignment.Center)
-				    .Children(
-					    new Grid()
-						    //Custom the Row and Column Definitions
-						    .RowDefinitions<Grid>("Auto, *")
-						    .ColumnDefinitions<Grid>("2*, Auto, 3*")
+					    .Children(
+						    new Button()
+						    .Width(40)
+						    .Height(40)
+						    .Content("Test"),
+						    new NavigationBar().Content("Title Main Page")
+							    .VerticalAlignment(VerticalAlignment.Top)
+							    .HorizontalAlignment(HorizontalAlignment.Left),
+						    new StackPanel()
+							    .Margin(0,50,0,0)
+							    .VerticalAlignment(VerticalAlignment.Center)
+							    .HorizontalAlignment(HorizontalAlignment.Center)
+							    .Children(
+								    new Button()
+									    .Content("Go to Second Page")
+									    .Assign(out var navigationButton),
+								    new SampleUserControl()
+							    )
+					    )
+			    );
 
-						    //Set Background from Theme
-						    .Children(
-
-							    new TextBlock()
-								    .Padding(50)
-								    .Grid(row: 0, column: 0)//Set and Attached Properties
-								    .Text("Row 0"),
-
-							    new TextBlock()
-								    .Margin(50)
-								    .Grid(grid => grid.Row(0).Column(1).ColumnSpan(2))//Attached Properties using builder pattern
-								    .Text("Row 0 with ColumnSpan and Attached Properties using builder pattern!"),
-
-							    new TextBlock()
-								    .Margin(50)
-								    .Grid(row: 1, column: 0)//Set and Attached Properties
-								    .Text("Row 1 and Column 0"),
-
-							    new TextBlock()
-								    .Margin(50)
-								    .Grid(row: 1, column: 1)//Set and Attached Properties
-								    .Text("Row 1 and Column 1"),
-
-							    new TextBlock()
-								    .Margin(50)
-								    .Grid(grid => grid.Row(1).Column(2))//Attached Properties using builder pattern
-								    .Text("Row 1 and Column 2")
-						    )
-				    )
-		    );
+		    navigationButton.Click += (s, e) =>
+		    {
+			    Frame.Navigate(typeof(SecondPage));
+		    };
 	    }
     }
+
+    ```
+
+    #### Full XAML code
+
+    Look how the MainPage.xaml and the MainPage.xaml.cs will like like.
+    
+    ```csharp
+    namespace MySampleToolkitProjectXAML;
+
+    public sealed partial class MainPage : Page
+    {
+	    public MainPage()
+	    {
+		    this.InitializeComponent();
+	    }
+	    public void navigationButton_Click(object sender, RoutedEventArgs e)
+	    {
+		    Frame.Navigate(typeof(SecondPage));
+	    }
+    }
+    ```
+
+    ```xml
+    <Page x:Class="MySampleToolkitProjectXAML.MainPage"
+	    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	    xmlns:local="using:MySampleToolkitProjectXAML"
+	    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	    mc:Ignorable="d"
+	    xmlns:utu="using:Uno.Toolkit.UI"
+	    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+	    <StackPanel>
+		    <utu:NavigationBar Content="Title Main Page"
+					    HorizontalAlignment="Left"
+					    VerticalAlignment="Top"/>
+		    <StackPanel HorizontalAlignment="Center"
+			    VerticalAlignment="Center">
+			    <Button Content="Go to Second Page" Click="navigationButton_Click"/>
+
+			    <local:SampleUserControl/>
+		    </StackPanel>
+	    </StackPanel>
+    </Page>
+    ```
+
+## [VisualStateManagers](xref:Reference.Markup.VisualStateManager)
+
+The VisualStateManager is a class that allows you to define and manage visual states for controls or elements.
+
+With VisualStateManager, we can define states such as "Normal," "Pressed," "Focused," or any other custom states you want to handle.
+For each state, you can set various properties, such as background color, font size, visibility, or any other property relevant to the control's appearance or behavior.
+
+### Changing UI to have the VisualState
+
+- For this case we will use for change the Background color and the Width of some element.
+
+    # [**C# Markup**](#tab/cs)
+
+    #### C# Markup
+
+    In the Shared Project open the file *MainPage.cs* and change the content to have the VisualStateManager.
+    
+    ```csharp
+    
+    ```
+
+
+    # [**XAML**](#tab/cli)
+    
+    #### XAML
+
+    ```xml
+    
+    ```
+
+    # [**Full Code**](#tab/code)
+
+    #### Full C# Markup code
+    
+    - Example of the complete code on the MainPage.cs, so you can follow along in your own project.
+
+    ```csharp
+   
+    ```
+    #### Full XAML code
+    
+    - MainPage.xaml
+
+    ```
+    ```
+
+    - MainPage.xaml.cs
+
+    ```
+
     ```
 
 
 ## Try it yourself
 
-Now try to change your MainPage to have different layout and test other attributes and elements..
-
-We continue in the next section to learn how to configure styles, work with Bindings, Templates and Template Selectors.
-
+Now try to change your MainPage to have different layout and test other attributes and elements.
 
 ## Next Steps
 
-- [Custom your own C# Markup - Learn how to change Visual States and User Controls](xref:Reference.Markup.HowToCustomMarkupProjectVisualStates)
-- [Custom your own C# Markup - Learn how to use Toolkit](xref:Reference.Markup.HowToCustomMarkupProjectToolkit)
 - [Custom your own C# Markup - Learn how to Change the Theme](xref:Reference.Markup.HowToCustomMarkupProjectTheme)
 - [Custom your own C# Markup - Learn how to use MVUX](xref:Reference.Markup.HowToCustomMarkupProjectMVUX)
