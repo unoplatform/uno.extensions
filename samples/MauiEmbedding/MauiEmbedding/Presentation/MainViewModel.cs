@@ -48,6 +48,6 @@ public partial class MainViewModel : ObservableObject
 
 	public async Task GoToExternalLibPage()
 	{
-		//await _navigator.NavigateViewModelAsync<ExternalLibViewModel>(this);
+		await _navigator.NavigateViewModelAsync<ExternalLibViewModel>(this);
 	}
 }
