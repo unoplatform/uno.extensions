@@ -31,7 +31,6 @@ public partial class MainViewModel : ObservableObject
 		await _navigator.NavigateViewModelAsync<MCTControlsViewModel>(this);
 	}
 
-
 	public async Task GoToMauiEssentialsApi()
 	{
 		await _navigator.NavigateViewModelAsync<MauiEssentialsViewModel>(this);
@@ -41,8 +40,14 @@ public partial class MainViewModel : ObservableObject
 	{
 		await _navigator.NavigateViewModelAsync<TelerikControlsViewModel>(this);
 	}
+
 	public async Task GoToColorsPage()
 	{
 		await _navigator.NavigateViewModelAsync<MauiColorsViewModel>(this);
+	}
+
+	public async Task GoToExternalLibPage()
+	{
+		//await _navigator.NavigateViewModelAsync<ExternalLibViewModel>(this);
 	}
 }
