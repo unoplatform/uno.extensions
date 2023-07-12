@@ -21,7 +21,7 @@ In this tutorial you'll learn how to set up an Uno Platform project to use C# Ma
 
     - Press <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>N</kbd> to create a new project and select "Uno Platform App".
 
-    - Give your project an appropriate name.
+    - Give your project an appropriate name (`MySampleProject` in this page).
 
     - When prompted Select *Blank* and click *Customize*
 
@@ -37,13 +37,13 @@ In this tutorial you'll learn how to set up an Uno Platform project to use C# Ma
     
     #### Using the command line interface
     
-    - Run the following command, using an appropriate name (`MyApp` in this page).
+    - Run the following command, using an appropriate name (`MySampleProject` in this page).
     
         ```cmd
-        dotnet new unoapp -preset blank -markup csharp -o MyApp
+        dotnet new unoapp -preset blank -markup csharp -o MySampleProject
         ```
       
         Refer to [this](https://platform.uno/docs/articles/get-started-dotnet-new.html) article for more details
         on using the CLI interface of creating projects.
 
-    - Launch the created solution, MyApp.sln, in  Visual Studio or Visual Studio Code.
+    - Launch the created solution, MySampleProject.sln, in  Visual Studio or Visual Studio Code.
