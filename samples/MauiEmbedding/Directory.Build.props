@@ -7,8 +7,8 @@
 		<DebugSymbols>True</DebugSymbols>
 
 		<ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
-
-		<NoWarn>$(NoWarn);CA1416;NU1507</NoWarn>
+		<WarningsNotAsErrors>NU1009</WarningsNotAsErrors>
+		<NoWarn>$(NoWarn);CA1416;NU1507;NU1009</NoWarn>
 
 		<DefaultLanguage>en</DefaultLanguage>
 
