@@ -1,0 +1,6 @@
+<Project>
+      <Target Name="RemoveUnoExtensionsToolkit"  AfterTargets="AfterCompile">
+        <Warning
+            Text="Uno.Extensions.Toolkit has been deprecated, remove all references to this package" />
+    </Target>
+</Project>
