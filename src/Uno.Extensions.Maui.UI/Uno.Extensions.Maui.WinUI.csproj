@@ -1,8 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
+	<Import Project="..\tfms-ui-maui.props" />
+	
 	<PropertyGroup>
-		<TargetFrameworks>net6.0-android;net6.0-ios;net6.0-maccatalyst</TargetFrameworks>
-		<TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net6.0-windows10.0.19041</TargetFrameworks>
 		<UseMaui>true</UseMaui>
 		<RootNamespace>Uno.Extensions.Maui</RootNamespace>
 		<NoWarn>$(NoWarn);NU5104;NU5048;NU1009</NoWarn>
@@ -13,8 +12,11 @@
 		<Using Remove="Microsoft.Maui.*" />
 	</ItemGroup>
 
-	<ItemGroup>
+	<ItemGroup Condition="'$(_IsWinUI)'=='false'">
 		<PackageReference Include="Uno.WinUI" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<ProjectReference Include="..\Uno.Extensions.Hosting.UI\Uno.Extensions.Hosting.WinUI.csproj" />
 	</ItemGroup>
 
