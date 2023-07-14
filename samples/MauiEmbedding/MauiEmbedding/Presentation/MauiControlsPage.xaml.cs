@@ -55,6 +55,7 @@ public sealed partial class MauiControlsPage : Page
 			_ = 1;
 		};
 
+		this.lblB.HeightRequest = 20;
 
 		this.DataContextChanged += (s, e) =>
 		{
