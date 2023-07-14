@@ -20,7 +20,7 @@
 		<PackageReference Include="Uno.Toolkit.WinUI" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Console" />
 		<PackageReference Include="CommunityToolkit.Maui" />
-		<PackageReference Include="Telerik.UI.for.Maui" />
+		<!--<PackageReference Include="Telerik.UI.for.Maui" />-->
 	</ItemGroup>
 
 	<Choose>
@@ -61,6 +61,19 @@
 		<EmbeddedResource Include="appsettings.json" />
 		<EmbeddedResource Include="appsettings.*.json" DependentUpon="appsettings.json" />
 		<UpToDateCheckInput Include="**\*.xaml" Exclude="bin\**\*.xaml;obj\**\*.xaml" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Compile Remove="Presentation\TelerikControlsPage.xaml.cs" />
+	  <Compile Remove="Presentation\TelerikControlsViewModel.cs" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Remove="Presentation\TelerikControlsPage.xaml" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Page Remove="Presentation\TelerikControlsPage.xaml" />
 	</ItemGroup>
 
 	<ItemGroup>
