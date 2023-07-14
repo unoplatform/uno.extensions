@@ -109,9 +109,11 @@ Learn more about:
 
 - [Binding, Static & Theme Resources](xref:Reference.Markup.DependencyPropertyBuilder)
 - [Binding 101](xref:Reference.Markup.Binding101)
+- [Converters](xref:Reference.Markup.Converters)
 - [Attached Properties](xref:Reference.Markup.AttachedProperties)
 - [Styles](xref:Reference.Markup.Styles)
 - [Templates](xref:Reference.Markup.Templates)
 - [VisualStateManagers](xref:Reference.Markup.VisualStateManager)
 - [Generating C# Extensions for your libraries](xref:Reference.Markup.GeneratingExtensions)
 - [Create your own C# Markup](xref:Reference.Markup.HowToCreateMarkupProject)
+
