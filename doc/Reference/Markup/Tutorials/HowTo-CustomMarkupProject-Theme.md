@@ -176,7 +176,7 @@ public MainPage()
 You always can back on the Material documentation and learning how the [Baseline color scheme](https://m3.material.io/styles/color/the-color-system/tokens) works
 
 
-##  Cupertino
+## Cupertino
 
 We do not suport Cupertino at the moment.
 
