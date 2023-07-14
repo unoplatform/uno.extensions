@@ -92,7 +92,7 @@ public class App : Application
 
 		Host = await builder.NavigateAsync<Shell>();
 
-		MainWindow.Content = new MainPage();
+		//MainWindow.Content = new MainPage();
 	}
 
 	private static void RegisterRoutes(IViewRegistry views, IRouteRegistry routes)
@@ -102,7 +102,7 @@ public class App : Application
 			new ViewMap<MainPage, MainViewModel>(),
 			new ViewMap<MauiControlsPage, MauiControlsViewModel>(),
 			new ViewMap<MauiEssentialsPage, MauiEssentialsViewModel>(),
-			new ViewMap<TelerikControlsPage, TelerikControlsViewModel>(),
+			//new ViewMap<TelerikControlsPage, TelerikControlsViewModel>(),
 			new ViewMap<MauiColorsPage, MauiColorsViewModel>(),
 			new ViewMap<ExternalLibPage, ExternalLibViewModel>(),
 			new ViewMap<MCTControlsPage, MCTControlsViewModel>()
@@ -118,7 +118,7 @@ public class App : Application
 					new RouteMap(nameof(MauiEssentialsViewModel), View: views.FindByViewModel<MauiEssentialsViewModel>()),
 					new RouteMap(nameof(MauiColorsViewModel), View: views.FindByViewModel<MauiColorsViewModel>()),
 					new RouteMap(nameof(ExternalLibPage), View: views.FindByViewModel<ExternalLibViewModel>()),
-					new RouteMap(nameof(TelerikControlsViewModel), View: views.FindByViewModel<TelerikControlsViewModel>()),
+					//new RouteMap(nameof(TelerikControlsViewModel), View: views.FindByViewModel<TelerikControlsViewModel>()),
 				}
 			)
 		);
