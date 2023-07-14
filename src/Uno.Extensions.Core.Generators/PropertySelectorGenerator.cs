@@ -13,8 +13,8 @@ namespace Uno.Extensions.Core.Generators;
 public partial class PropertySelectorGenerator : IIncrementalGenerator
 {
 	private readonly PropertySelectorsGenerationTool _tool;
-	private static readonly ConditionalWeakTable<AssemblyIdentity, object> s_assemblyToNamesMap = new();
-	private static readonly ConditionalWeakTable<SyntaxTree, object> s_TreeToIsCandidate = new();
+	private static readonly ConditionalWeakTable<AssemblyIdentity, object> _assemblyToNamesMap = new();
+	private static readonly ConditionalWeakTable<SyntaxTree, object> _treeToIsCandidate = new();
 
 	/// <summary>
 	/// Creates a new instance of the PropertySelectorGenerator
@@ -80,7 +80,7 @@ public partial class PropertySelectorGenerator : IIncrementalGenerator
 		 														                              
 		*/
 		var assemblyNameProvider = context.CompilationProvider.Select((compilation, _) => compilation.AssemblyName);
-		var interestingMethodNames = context.CompilationProvider.SelectMany((compilation, _) =>
+		var interestingMethodNames = context.CompilationProvider.SelectMany((compilation, ct) =>
 		{
 			var propertySelectorSymbol = compilation.GetTypeByMetadataName("Uno.Extensions.Edition.PropertySelector`2");
 			var callerLineNumberSymbol = compilation.GetTypeByMetadataName("System.Runtime.CompilerServices.CallerLineNumberAttribute");
@@ -91,10 +91,10 @@ public partial class PropertySelectorGenerator : IIncrementalGenerator
 			{
 				if (compilation.GetAssemblyOrModuleSymbol(reference) is IAssemblySymbol assembly)
 				{
-					if (!s_assemblyToNamesMap.TryGetValue(assembly.Identity, out var interestingNames))
+					if (!_assemblyToNamesMap.TryGetValue(assembly.Identity, out var interestingNames))
 					{
-						interestingNames = GetFromNamespaceExpensive(assembly.GlobalNamespace, propertySelectorSymbol, callerFilePathSymbol, callerLineNumberSymbol).ToImmutableArray();
-						s_assemblyToNamesMap.Add(assembly.Identity, interestingNames);
+						interestingNames = GetFromNamespaceExpensive(assembly.GlobalNamespace, propertySelectorSymbol, callerFilePathSymbol, callerLineNumberSymbol, ct).ToImmutableArray();
+						_assemblyToNamesMap.Add(assembly.Identity, interestingNames);
 					}
 
 					foreach (var name in (ImmutableArray<string>)interestingNames)
@@ -254,6 +254,9 @@ public partial class PropertySelectorGenerator : IIncrementalGenerator
 
 	private static ImmutableArray<SyntaxTree> GetInterestingTrees(Compilation compilation, CancellationToken cancellationToken)
 	{
+		// Mostly a copy from:
+		// https://github.com/dotnet/roslyn/blob/2bd3c9891e0d52661f9a7bfba8a8caf2b6430070/src/Compilers/Core/Portable/SourceGeneration/Nodes/SyntaxValueProvider_ForAttributeWithSimpleName.cs#L126-L150
+
 		// Get the count up front so we can allocate without waste.
 		var count = 0;
 		foreach (var tree in compilation.SyntaxTrees)
@@ -268,6 +271,7 @@ public partial class PropertySelectorGenerator : IIncrementalGenerator
 		// Iterate again.  This will be free as the values from before will already be cached on the syntax tree.
 		foreach (var tree in compilation.SyntaxTrees)
 		{
+			cancellationToken.ThrowIfCancellationRequested();
 			if (IsCandidateTree(tree, cancellationToken))
 				builder.Add(tree);
 		}
@@ -277,7 +281,7 @@ public partial class PropertySelectorGenerator : IIncrementalGenerator
 
 	private static bool IsCandidateTree(SyntaxTree tree, CancellationToken ct)
 	{
-		if (s_TreeToIsCandidate.TryGetValue(tree, out var candidate))
+		if (_treeToIsCandidate.TryGetValue(tree, out var candidate))
 		{
 			return (bool)candidate;
 		}
@@ -287,15 +291,16 @@ public partial class PropertySelectorGenerator : IIncrementalGenerator
 		{
 			foreach (var node in member.DescendantNodesAndSelf())
 			{
+				ct.ThrowIfCancellationRequested();
 				if (IsCandidate(node))
 				{
-					s_TreeToIsCandidate.Add(tree, true);
+					_treeToIsCandidate.Add(tree, true);
 					return true;
 				}
 			}
 		}
 
-		s_TreeToIsCandidate.Add(tree, false);
+		_treeToIsCandidate.Add(tree, false);
 		return false;
 	}
 
@@ -323,13 +328,14 @@ public partial class PropertySelectorGenerator : IIncrementalGenerator
 		return foundPropertySelector && foundCallerFilePath && foundCallerLineNumber;
 	}
 
-	private static IEnumerable<string> GetFromNamespaceExpensive(INamespaceSymbol @namespace, INamedTypeSymbol? propertySelectorSymbol, INamedTypeSymbol? callerFilePathSymbol, INamedTypeSymbol? callerLineNumberSymbol)
+	private static IEnumerable<string> GetFromNamespaceExpensive(INamespaceSymbol @namespace, INamedTypeSymbol? propertySelectorSymbol, INamedTypeSymbol? callerFilePathSymbol, INamedTypeSymbol? callerLineNumberSymbol, CancellationToken ct)
 	{
 		foreach (var member in @namespace.GetMembers())
 		{
+			ct.ThrowIfCancellationRequested();
 			if (member is INamespaceSymbol innerNamespace)
 			{
-				foreach (var inner in GetFromNamespaceExpensive(innerNamespace, propertySelectorSymbol, callerFilePathSymbol, callerLineNumberSymbol))
+				foreach (var inner in GetFromNamespaceExpensive(innerNamespace, propertySelectorSymbol, callerFilePathSymbol, callerLineNumberSymbol, ct))
 				{
 					yield return inner;
 				}
@@ -338,6 +344,7 @@ public partial class PropertySelectorGenerator : IIncrementalGenerator
 			{
 				foreach (var method in member.GetMembers())
 				{
+					ct.ThrowIfCancellationRequested();
 					if (method is IMethodSymbol methodSymbol)
 					{
 						if (IsCandidate(methodSymbol, propertySelectorSymbol, callerFilePathSymbol, callerLineNumberSymbol))
