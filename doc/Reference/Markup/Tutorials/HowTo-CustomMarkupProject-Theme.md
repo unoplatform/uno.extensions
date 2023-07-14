@@ -180,6 +180,129 @@ You always can back on the Material documentation and learning how the [Baseline
 
 We do not suport Cupertino at the moment.
 
+## Quick Start
+
+We are able to change from Dark Mode and Light Mode direct on the application.
+So we can use the ColorPaletteOverride as both, Dark and Light Mode.
+
+To do this, we can create a simple control toggle button and switch between modes.
+
+- In the Shared Project open the file *MainPage.cs* and change the content to have the ToggleButton.
+
+```csharp
+new Grid().RowDefinitions<Grid>("*, *")
+	.Children(
+		new NavigationBar()
+			.Grid(column: 0)
+			.HorizontalAlignment(HorizontalAlignment.Left)
+			.Content("Title Main Page"),
+		new ToggleButton()
+			.Grid(column: 0)
+			.Content("Toggle Theme")
+			.HorizontalAlignment(HorizontalAlignment.Right)
+			.Assign(out var toggle)
+	),
+```
+
+- After that we need to add a Click EventHandler to Toggle the Theme. 
+
+```csharp
+toggle.Checked += (s, e) =>
+{
+	if (Application.Current is App app)
+	{
+		app.AppTheme?.SetTheme(true);
+	}
+};
+toggle.Unchecked += (s, e) =>
+{
+	if (Application.Current is App app)
+	{
+		app.AppTheme?.SetTheme(false);
+	}
+};
+```
+
+- But to change the theme, we need to have access to the Window.
+- So we will create a new Class Named AppTheme.cs and add this content.
+- And doing this, we can get benefit from the Toolkit helper [SystemThemeHelper](https://platform.uno/docs/articles/features/working-with-themes.html?tabs=windows).
+
+```csharp
+namespace MySampleToolkitProject;
+public class AppTheme
+{
+	private readonly Window _window;
+	public AppTheme(Window window)
+	{
+		_window = window;
+	}
+
+    public void SetTheme(bool darkMode)
+	{
+			SystemThemeHelper.SetRootTheme(_window.Content.XamlRoot, darkMode);
+	}
+}
+
+```
+And for this pedagogical purpose, we can update App.cs and include a public class AppTheme so that it can be used in our control, to update the theme.
+
+```csharp
+namespace MySampleToolkitProject;
+
+public class App : Application
+{
+	public AppTheme? AppTheme;
+	protected Window? MainWindow { get; private set; }
+
+	protected override void OnLaunched(LaunchActivatedEventArgs args)
+	{
+#if NET6_0_OR_GREATER && WINDOWS && !HAS_UNO
+		MainWindow = new Window();
+#else
+		MainWindow = Microsoft.UI.Xaml.Window.Current;
+#endif
+
+		// Do not repeat app initialization when the Window already has content,
+		// just ensure that the window is active
+		if (MainWindow.Content is not Frame rootFrame)
+		{
+			// Create a Frame to act as the navigation context and navigate to the first page
+			rootFrame = new Frame();
+
+			// Place the frame in the current Window
+			MainWindow.Content = rootFrame;
+
+			rootFrame.NavigationFailed += OnNavigationFailed;
+		}
+
+		if (rootFrame.Content == null)
+		{
+			// When the navigation stack isn't restored navigate to the first page,
+			// configuring the new page by passing required information as a navigation
+			// parameter
+			rootFrame.Navigate(typeof(MainPage), args.Arguments);
+		}
+
+		AppTheme = new AppTheme(MainWindow);
+
+		// Ensure the current window is active
+		MainWindow.Activate();
+	}
+
+	/// <summary>
+	/// Invoked when Navigation to a certain page fails
+	/// </summary>
+	/// <param name="sender">The Frame which failed navigation</param>
+	/// <param name="e">Details about the navigation failure</param>
+	void OnNavigationFailed(object sender, NavigationFailedEventArgs e)
+	{
+		throw new InvalidOperationException($"Failed to load {e.SourcePageType.FullName}: {e.Exception}");
+	}
+}
+```
+
+And it is that, now we can change the RequestedTheme and use the Dark and Light Mode.
+
 ## Try it yourself
 
 Now try to change your MainPage to have different layout and test other attributes and elements..
