@@ -9,10 +9,10 @@
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	xmlns:uen="using:Uno.Extensions.Navigation.UI"
 	xmlns:utu="using:Uno.Toolkit.UI"
+	x:Name="that"
 	Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
 	NavigationCacheMode="Required"
-	mc:Ignorable="d"
-	x:Name="that">
+	mc:Ignorable="d">
 
 	<Page.Resources>
 		<ResourceDictionary>
@@ -22,14 +22,14 @@
 		</ResourceDictionary>
 	</Page.Resources>
 
-	<Grid utu:SafeArea.Insets="All">
+	<Grid HorizontalAlignment="Center" utu:SafeArea.Insets="All">
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto" />
 			<RowDefinition />
 		</Grid.RowDefinitions>
 		<utu:NavigationBar Content="{Binding Title}" />
 
-		<embed:MauiContent Grid.Row="1" x:Name="mauiContent">
+		<embed:MauiContent x:Name="mauiContent" Grid.Row="1">
 			<maui:VerticalStackLayout x:Name="stack" Spacing="16">
 
 				<maui:Label Text="Hello World">
@@ -51,11 +51,11 @@
 
 				<maui:ActivityIndicator IsRunning="true" />
 
-				<maui:Label x:Name="lblB" Text="{embed:MauiBinding Path=Name}" HeightRequest="20" />
+				<maui:Label x:Name="lblB" Text="{embed:MauiBinding Path=Name}" />
 
 				<maui:Grid>
-					<maui:Label Text="Row0"/>
-					<maui:Label Text="Row1" maui:Grid.Row="1"/>
+					<maui:Label Text="Row0" />
+					<maui:Label maui:Grid.Row="1" Text="Row1" />
 				</maui:Grid>
 
 			</maui:VerticalStackLayout>

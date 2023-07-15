@@ -1,6 +1,6 @@
 using CommunityToolkit.Maui;
 using Microsoft.Maui;
-//using Telerik.Maui.Controls;
+using Telerik.Maui.Controls;
 using MControls = Microsoft.Maui.Controls;
 using MauiControlsExternal;
 
@@ -24,7 +24,7 @@ public class App : Application
 
 				maui
 				.UseMauiCommunityToolkit()
-				//.UseTelerikControls()
+				.UseTelerikControls()
 				.UseCustomLibrary();
 
 				Microsoft.Maui.Handlers.ShapeViewHandler.Mapper.AppendToMapping("BackgroundColor", (h, v) =>

@@ -11,6 +11,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<PackageReference Include="SkiaSharp.Views.Maui.Controls" />
 		<PackageReference Include="Uno.Dsp.Tasks" />
 		<PackageReference Include="Uno.WinUI" />
 		<PackageReference Include="Uno.Resizetizer" />
@@ -20,7 +21,7 @@
 		<PackageReference Include="Uno.Toolkit.WinUI" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Console" />
 		<PackageReference Include="CommunityToolkit.Maui" />
-		<!--<PackageReference Include="Telerik.UI.for.Maui" />-->
+		<PackageReference Include="Telerik.UI.for.Maui" />
 	</ItemGroup>
 
 	<Choose>
@@ -64,16 +65,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Compile Remove="Presentation\TelerikControlsPage.xaml.cs" />
-	  <Compile Remove="Presentation\TelerikControlsViewModel.cs" />
-	</ItemGroup>
-
-	<ItemGroup>
 	  <None Remove="Presentation\TelerikControlsPage.xaml" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Page Remove="Presentation\TelerikControlsPage.xaml" />
 	</ItemGroup>
 
 	<ItemGroup>
