@@ -11,7 +11,8 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="SkiaSharp.Views.Maui.Controls" />
+		<PackageReference Include="SkiaSharp.Views.Maui.Controls" Condition="$(_UseTelerik)"/>
+		<PackageReference Include="Telerik.UI.for.Maui" Condition="$(_UseTelerik)"/>
 		<PackageReference Include="Uno.Dsp.Tasks" />
 		<PackageReference Include="Uno.WinUI" />
 		<PackageReference Include="Uno.Resizetizer" />
@@ -21,7 +22,6 @@
 		<PackageReference Include="Uno.Toolkit.WinUI" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Console" />
 		<PackageReference Include="CommunityToolkit.Maui" />
-		<PackageReference Include="Telerik.UI.for.Maui" />
 	</ItemGroup>
 
 	<Choose>
@@ -64,9 +64,6 @@
 		<UpToDateCheckInput Include="**\*.xaml" Exclude="bin\**\*.xaml;obj\**\*.xaml" />
 	</ItemGroup>
 
-	<ItemGroup>
-	  <None Remove="Presentation\TelerikControlsPage.xaml" />
-	</ItemGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Configuration\Uno.Extensions.Configuration.csproj" />
