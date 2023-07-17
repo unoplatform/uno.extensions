@@ -3,6 +3,7 @@
 	<PropertyGroup>
 		<TargetFramework>netstandard2.0</TargetFramework>
 		<IsPackable>false</IsPackable>
+		<ImplicitUsings>false</ImplicitUsings>
 
 		<!--
 			Defines that this project output is a tool of the given package ID,
