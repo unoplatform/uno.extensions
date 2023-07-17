@@ -35,13 +35,37 @@ public static class ServiceCollectionExtensions
 	 )
 		where TClient : class
 		where TImplementation : class, TClient
+		=> services.AddClientWithEndpoint<TClient,TImplementation,EndpointOptions>(context, options, name, configure);
+
+	/// <summary>
+	/// Adds a typed client to the service collection.
+	/// </summary>
+	/// <typeparam name="TClient">The type of client to add</typeparam>
+	/// <typeparam name="TImplementation">The type implementation</typeparam>
+	/// <typeparam name="TEndpoint">The type of endpoint to register</typeparam>
+	/// <param name="services">The service collection to register with</param>
+	/// <param name="context">The host builder context</param>
+	/// <param name="options">[optional] Endpoint information (loaded from appsettings if not specified)</param>
+	/// <param name="name">[optional] Name of the endpoint (used to load from appsettings)</param>
+	/// <param name="configure">[optional] Callback to configure the endpoint</param>
+	/// <returns>Updated service collection</returns>
+	public static IServiceCollection AddClientWithEndpoint<TClient, TImplementation, TEndpoint>(
+		 this IServiceCollection services,
+		 HostBuilderContext context,
+		 TEndpoint? options = null,
+		 string? name = null,
+		 Func<IHttpClientBuilder, EndpointOptions?, IHttpClientBuilder>? configure = null
+	 )
+		where TClient : class
+		where TImplementation : class, TClient
+		where TEndpoint : EndpointOptions, new()
 	{
 		Func<IServiceCollection, HostBuilderContext, IHttpClientBuilder> httpClientFactory =
 			(s, c) => (name is null || string.IsNullOrWhiteSpace(name)) ?
 						s.AddHttpClient<TClient, TImplementation>() :
 						s.AddHttpClient<TClient, TImplementation>(name);
 
-		return services.AddClient<TClient>(context, options, name, httpClientFactory, configure);
+		return services.AddClientWithEndpoint<TClient, TEndpoint>(context, options, name, httpClientFactory, configure);
 	}
 
 	/// <summary>
@@ -64,9 +88,33 @@ public static class ServiceCollectionExtensions
 		  Func<IHttpClientBuilder, EndpointOptions?, IHttpClientBuilder>? configure = null
 	  )
 		  where TInterface : class
+		=> services.AddClientWithEndpoint<TInterface, EndpointOptions>(context, options, name, httpClientFactory, configure);
+
+	/// <summary>
+	/// Adds a typed client to the service collection.
+	/// </summary>
+	/// <typeparam name="TInterface">The type of client to add</typeparam>
+	/// <typeparam name="TEndpoint">The type of endpoint to register</typeparam>
+	/// <param name="services">The service collection to register with</param>
+	/// <param name="context">The host builder context</param>
+	/// <param name="options">[optional] Endpoint information (loaded from appsettings if not specified)</param>
+	/// <param name="name">[optional] Name of the endpoint (used to load from appsettings)</param>
+	/// <param name="httpClientFactory">[optional] Callback to configure the HttpClient</param>
+	/// <param name="configure">[optional] Callback to configure the endpoint</param>
+	/// <returns>Updated service collection</returns>
+	public static IServiceCollection AddClientWithEndpoint<TInterface, TEndpoint>(
+		  this IServiceCollection services,
+		  HostBuilderContext context,
+		  TEndpoint? options = null,
+		  string? name = null,
+		  Func<IServiceCollection, HostBuilderContext, IHttpClientBuilder>? httpClientFactory = null,
+		  Func<IHttpClientBuilder, TEndpoint?, IHttpClientBuilder>? configure = null
+	  )
+		  where TInterface : class
+		where TEndpoint : EndpointOptions, new()
 	{
 		var optionsName = name ?? (typeof(TInterface).IsInterface ? typeof(TInterface).Name.TrimStart(InterfaceNamePrefix) : typeof(TInterface).Name);
-		options ??= ConfigurationBinder.Get<EndpointOptions>(context.Configuration.GetSection(optionsName));
+		options ??= ConfigurationBinder.Get<TEndpoint>(context.Configuration.GetSection(optionsName));
 
 		httpClientFactory ??=
 			(s, c) => (name is null || string.IsNullOrWhiteSpace(name)) ?

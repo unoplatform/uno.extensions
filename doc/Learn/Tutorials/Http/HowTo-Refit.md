@@ -251,8 +251,11 @@ When accessing resources with a [REST-style](https://www.ics.uci.edu/~fielding/p
 
 ## See also
 
-* [Use HttpClientFactory to implement resilient HTTP requests](https://learn.microsoft.com/dotnet/architecture/microservices/implement-resilient-applications/use-httpclientfactory-to-implement-resilient-http-requests#benefits-of-using-ihttpclientfactory)
-* [Microsoft.Extensions.Http](https://www.nuget.org/packages/Microsoft.Extensions.Http)
-* [Refit](https://github.com/reactiveui/refit)
-* [Hoppscotch](https://hoppscotch.io)
-* [quicktype](https://app.quicktype.io/)
+- [How-To: Consume a web API with HttpClient](xref:Uno.Development.ConsumeWebApi)
+- [How-To: Register an Endpoint for HTTP Requests](xref:Learn.Tutorials.Http.HowToHttp)
+- [Overview: HTTP](xref:Overview.Http)
+- [Overview: Use HttpClientFactory to implement resilient HTTP requests](https://learn.microsoft.com/dotnet/architecture/microservices/implement-resilient-applications/use-httpclientfactory-to-implement-resilient-http-requests#benefits-of-using-ihttpclientfactory)
+- [Overview: What is Refit?](https://github.com/reactiveui/refit)
+- [Explore: Hoppscotch tool](https://hoppscotch.io)
+- [Explore: quicktype tool](https://app.quicktype.io/)
+- [Explore: TestHarness Refit Endpoints](https://github.com/unoplatform/uno.extensions/tree/main/testing/TestHarness/TestHarness.Shared/Ext/Http/Refit)
