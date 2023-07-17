@@ -27,6 +27,8 @@
       "..\\..\\src\\Uno.Extensions.Toolkit.UI\\Uno.Extensions.Toolkit.WinUI.csproj",
       "..\\..\\src\\Uno.Extensions.Toolkit\\Uno.Extensions.Toolkit.csproj",
       "..\\..\\src\\Uno.Extensions\\Uno.Extensions.csproj",
+      "..\\MauiProjects\\MauiApp1\\MauiApp1.csproj",
+      "..\\MauiProjects\\MauiControlsExternal\\MauiControlsExternal.csproj",
       "MauiEmbedding.Mobile\\MauiEmbedding.Mobile.csproj",
       "MauiEmbedding\\MauiEmbedding.csproj"
     ]
