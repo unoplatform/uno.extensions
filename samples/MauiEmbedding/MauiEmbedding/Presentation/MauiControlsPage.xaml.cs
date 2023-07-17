@@ -48,7 +48,20 @@ public sealed partial class MauiControlsPage : Page
 		this.lblB.BindingContextChanged += (s, e) =>
 		{
 			_ = 1;
+			_ = this.lblB.Text;
+			this.lblB.HeightRequest = 30;
+			_ = this.lblB.IsSet(Label.TextProperty);
 		};
+
+		this.lblB.PropertyChanged += (s, e) =>
+		{
+			if (e.PropertyName == "Text")
+			{
+				_ = 1;
+			}
+		};
+
+		//lblB.BackgroundColor = Microsoft.Maui.Graphics.Colors.Black;
 
 		this.mauiContent.DataContextChanged += (s, e) =>
 		{

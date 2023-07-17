@@ -1,7 +1,6 @@
-﻿using Microsoft.Extensions.Logging;
-using Microsoft.UI.Xaml.Media;
+﻿using Microsoft.UI.Xaml.Media;
 using Uno.Extensions.Maui.Internals;
-using Uno.Logging;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Uno.Extensions.Maui;
 
@@ -62,6 +61,20 @@ public partial class MauiContent : ContentControl
 	{
 		MauiContext = MauiEmbedding.MauiContext;
 		Loading += OnLoading;
+		DataContextChanged += OnDataContextChanged;
+		Unloaded += OnMauiContentUnloaded;
+	}
+
+	private void OnMauiContentUnloaded(object sender, RoutedEventArgs e)
+	{
+		Unloaded -= OnMauiContentUnloaded;
+		Loading -= OnLoading;
+		DataContextChanged -= OnDataContextChanged;
+		if (_host is not null)
+		{
+			_host.BindingContext = null;
+		}
+		_host = null;
 	}
 
 	/// <summary>
@@ -95,16 +108,10 @@ public partial class MauiContent : ContentControl
 			treeElement = VisualTreeHelper.GetParent(treeElement);
 		}
 
-		_host = new UnoHost(resources);
-
-		if (DataContext is not null)
+		_host = new UnoHost(resources)
 		{
-			SetHostBinding();
-		}
-		else
-		{
-			DataContextChanged += OnDataContextChanged;
-		}
+			BindingContext = DataContext
+		};
 
 		if (View.Parent is null)
 		{
@@ -114,18 +121,20 @@ public partial class MauiContent : ContentControl
 
 	void OnDataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
 	{
-		DataContextChanged -= OnDataContextChanged;
-		SetHostBinding();
-	}
-
-	void SetHostBinding()
-	{
-		if (_host is null)
+		if (DataContext is null)
 		{
-			return;
+			System.Console.WriteLine("MauiContent.DataContext is null");
+		}
+		else
+		{
+			System.Console.WriteLine($"MauiContent.DataContext is {DataContext.GetType().FullName}");
 		}
 
-		var binding = new NativeMauiBinding(nameof(DataContext), BindingMode.OneWay, source: this);
-		_host.SetBinding(UnoHost.BindingContextProperty, binding);
+
+		if (_host is not null && _host.BindingContext != DataContext)
+		{
+			_host.BindingContext = DataContext;
+		}
+		//DataContextChanged -= OnDataContextChanged;
 	}
 }
