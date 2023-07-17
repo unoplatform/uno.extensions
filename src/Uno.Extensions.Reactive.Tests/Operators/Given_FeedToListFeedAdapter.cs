@@ -49,6 +49,8 @@ public partial class Given_FeedToListFeedAdapter : FeedTests
 
 		async IAsyncEnumerable<IImmutableList<MyKeyedRecord>> GetSource([EnumeratorCancellation] CancellationToken ct = default)
 		{
+			await Task.Yield(); // Make sure to run async, so listener will receive all messages.
+
 			yield return original.ToImmutableList();
 			yield return updated.ToImmutableList();
 		}
@@ -77,6 +79,8 @@ public partial class Given_FeedToListFeedAdapter : FeedTests
 
 		async IAsyncEnumerable<IImmutableList<MyNotKeyedRecord>> GetSource([EnumeratorCancellation] CancellationToken ct = default)
 		{
+			await Task.Yield(); // Make sure to run async, so listener will receive all messages.
+
 			yield return original.ToImmutableList();
 			yield return updated.ToImmutableList();
 		}
@@ -105,6 +109,8 @@ public partial class Given_FeedToListFeedAdapter : FeedTests
 
 		async IAsyncEnumerable<IImmutableList<MyNotKeyedClass>> GetSource([EnumeratorCancellation] CancellationToken ct = default)
 		{
+			await Task.Yield(); // Make sure to run async, so listener will receive all messages.
+
 			yield return original.ToImmutableList();
 			yield return updated.ToImmutableList();
 		}

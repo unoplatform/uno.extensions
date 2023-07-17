@@ -12,20 +12,9 @@ using Uno.Extensions.Reactive.Utils;
 
 namespace Uno.Extensions.Reactive.Core;
 
-internal class FeedSubscription
-{
-	/// <summary>
-	/// Determines if we allow FeedSubscription to bypass multiple initial sync values (cf. remarks for more details).
-	/// </summary>
-	/// <remarks>
-	/// This is almost only a test case, but if a source feeds enumerates multiple values at startup (i.e. in the GetSource),
-	/// the <see cref="ReplayOneAsyncEnumerable{T}"/> which backs the <see cref="FeedSubscription{T}"/> might miss some of those values to replay only the last one.
-	/// </remarks>
-	public static bool IsInitialSyncValuesSkippingAllowed { get; set; } = true;
-}
-
 internal class FeedSubscription<T> : IAsyncDisposable, ISourceContextOwner
 {
+	private readonly ISignal<Message<T>> _feed;
 	private readonly SourceContext _rootContext;
 	private readonly CompositeRequestSource _requests = new();
 	private readonly SourceContext _context;
@@ -33,21 +22,29 @@ internal class FeedSubscription<T> : IAsyncDisposable, ISourceContextOwner
 
 	public FeedSubscription(ISignal<Message<T>> feed, SourceContext rootContext)
 	{
+		_feed = feed;
 		_rootContext = rootContext;
 		_context = rootContext.CreateChild(this, _requests);
 		_source = new ReplayOneAsyncEnumerable<Message<T>>(
 			feed.GetSource(_context),
-			isInitialSyncValuesSkippingAllowed: FeedSubscription.IsInitialSyncValuesSkippingAllowed);
+			isInitialSyncValuesSkippingAllowed: true);
 	}
 
-	string ISourceContextOwner.Name => $"Sub on {_source} for ctx '{_context.Parent!.Owner.Name}'.";
+	string ISourceContextOwner.Name => $"Sub on '{_feed}' for ctx '{_context.Parent!.Owner.Name}'.";
 
 	IDispatcher? ISourceContextOwner.Dispatcher => null;
 
+	internal Message<T> Current => _source.TryGetCurrent(out var value) ? value : Message<T>.Initial;
+
+	public IDisposable UpdateMode(SubscriptionMode mode)
+	{
+		// Not supported yet.
+		// Here we should compute the stricter mode
+		return Disposable.Empty;
+	}
 
 	public async IAsyncEnumerable<Message<T>> GetMessages(SourceContext subscriberContext, [EnumeratorCancellation] CancellationToken ct)
 	{
-		Debug.Assert(subscriberContext.RootId == _context.RootId);
 		if (subscriberContext != _rootContext)
 		{
 			_requests.Add(subscriberContext.RequestSource, ct);
@@ -83,6 +80,6 @@ internal class FeedSubscription<T> : IAsyncDisposable, ISourceContextOwner
 	{
 		await _context.DisposeAsync();
 		_requests.Dispose();
-		_source.Dispose();
+		await _source.DisposeAsync();
 	}
 }

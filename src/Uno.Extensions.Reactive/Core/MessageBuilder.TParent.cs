@@ -11,9 +11,10 @@ namespace Uno.Extensions.Reactive;
 /// </summary>
 /// <typeparam name="TParent">Type of the value of the parent message.</typeparam>
 /// <typeparam name="TResult">The type of the value of the message to build.</typeparam>
-public readonly struct MessageBuilder<TParent, TResult> : IMessageEntry, IMessageBuilder, IMessageBuilder<TResult>
+public sealed class MessageBuilder<TParent, TResult> : IMessageEntry, IMessageBuilder, IMessageBuilder<TResult>
 {
 	private readonly Dictionary<MessageAxis, MessageAxisUpdate> _updates;
+	private bool _hasUpdates; // This allows us to easily determine if we have changes no matter if we removed axis axises flagged has IsTransient.
 
 	/// <summary>
 	/// Creates a new message builder, including some changes (a.k.a. updates) that was previously made on the local message.
@@ -28,8 +29,9 @@ public readonly struct MessageBuilder<TParent, TResult> : IMessageEntry, IMessag
 		Local = local.value;
 
 		// We make sure to clear all transient axes when we update a message
-		// Note: We remove only "local" values, parent values are still propagated, it's there responsibility to remove them.
+		// Note: We remove only "local" values, parent values are still propagated, it's their responsibility to remove them.
 		_updates = local.updates.ToDictionaryWhereKey(k => !k.IsTransient);
+		// _hasUpdates = false => Removing only transient axes is not considered as a change!
 	}
 
 	/// <summary>
@@ -43,6 +45,7 @@ public readonly struct MessageBuilder<TParent, TResult> : IMessageEntry, IMessag
 		Local = local;
 
 		_updates = new();
+		_hasUpdates = true; // When we drop the local changes, we should consider that we have changes.
 	}
 
 	/// <summary>
@@ -58,8 +61,8 @@ public readonly struct MessageBuilder<TParent, TResult> : IMessageEntry, IMessag
 	/// <summary>
 	/// The new set of updates that has been defined on this builder
 	/// </summary>
-	internal (Message<TParent>? parent, IReadOnlyDictionary<MessageAxis, MessageAxisUpdate> updates) GetResult()
-		=> (Parent, _updates);
+	internal (Message<TParent>? parent, bool hasUpdates, IReadOnlyDictionary<MessageAxis, MessageAxisUpdate> updates) GetResult()
+		=> (Parent, _hasUpdates, _updates);
 
 	Option<object> IMessageEntry.Data => CurrentData;
 	Exception? IMessageEntry.Error => CurrentError;
@@ -77,14 +80,10 @@ public readonly struct MessageBuilder<TParent, TResult> : IMessageEntry, IMessag
 	{
 		var parentValue = Parent?.Current[axis] ?? MessageAxisValue.Unset;
 		var localValue = Local.Current[axis];
-		if (_updates.TryGetValue(axis, out var updater))
-		{
-			return updater.GetValue(parentValue, localValue);
-		}
-		else
-		{
-			return (parentValue, default);
-		}
+
+		return _updates.TryGetValue(axis, out var updater)
+			? updater.GetValue(parentValue, localValue)
+			: (parentValue, default);
 	}
 
 	/// <inheritdoc />
@@ -95,6 +94,7 @@ public readonly struct MessageBuilder<TParent, TResult> : IMessageEntry, IMessag
 	{
 		// Note: We are not validating the axis.AreEquals as changes are detected by the MessageManager itself.
 		_updates[axis] = new MessageAxisUpdate(axis, value, changes);
+		_hasUpdates = true;
 		return this;
 	}
 }

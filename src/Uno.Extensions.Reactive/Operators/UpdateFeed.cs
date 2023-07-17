@@ -20,16 +20,18 @@ internal record FeedUpdate<T>(Func<bool, MessageBuilder<T, T>, bool> IsActive, A
 {
 	bool IFeedUpdate<T>.IsActive(bool parentChanged, MessageBuilder<T, T> message) => IsActive(parentChanged, message);
 	void IFeedUpdate<T>.Apply(bool parentChanged, MessageBuilder<T, T> message) => Apply(parentChanged, message);
-};
+}
 
 internal sealed class UpdateFeed<T> : IFeed<T>
 {
 	private readonly AsyncEnumerableSubject<(IFeedUpdate<T>[]? added, IFeedUpdate<T>[]? removed)> _updates = new(ReplayMode.Disabled);
 	private readonly IFeed<T> _source;
+	private readonly Predicate<Message<T>>? _waitForParent;
 
-	public UpdateFeed(IFeed<T> source)
+	public UpdateFeed(IFeed<T> source, Predicate<Message<T>>? waitForParent = null)
 	{
 		_source = source;
+		_waitForParent = waitForParent;
 	}
 
 	public async ValueTask Update(Func<bool, MessageBuilder<T, T>, bool> predicate, Action<bool, MessageBuilder<T, T>> updater, CancellationToken ct)
@@ -53,19 +55,23 @@ internal sealed class UpdateFeed<T> : IFeed<T>
 
 	private class UpdateFeedSource : IAsyncEnumerable<Message<T>>
 	{
+		private readonly UpdateFeed<T> _owner;
 		private readonly CancellationToken _ct;
 		private readonly AsyncEnumerableSubject<Message<T>> _subject;
 		private readonly MessageManager<T, T> _message;
 
 		private ImmutableList<IFeedUpdate<T>> _activeUpdates;
 		private bool _isInError;
+		private bool _isParentReady;
 
 		public UpdateFeedSource(UpdateFeed<T> owner, SourceContext context, CancellationToken ct)
 		{
+			_owner = owner;
 			_ct = ct;
 			_subject = new AsyncEnumerableSubject<Message<T>>(ReplayMode.EnabledForFirstEnumeratorOnly);
 			_message = new MessageManager<T, T>(_subject.SetNext);
 			_activeUpdates = ImmutableList<IFeedUpdate<T>>.Empty;
+			_isParentReady = owner._waitForParent is null;
 
 			// mode=AbortPrevious => When we receive a new update, we can abort the update and start a new one
 			owner._updates.ForEachAsync(OnUpdateReceived, ct);
@@ -80,6 +86,11 @@ internal sealed class UpdateFeed<T> : IFeed<T>
 		{
 			lock (this)
 			{
+				if (!_isParentReady)
+				{
+					return;
+				}
+
 				var canDoIncrementalUpdate = !_isInError;
 				if (args.removed is { Length: > 0 } removed)
 				{
@@ -106,6 +117,11 @@ internal sealed class UpdateFeed<T> : IFeed<T>
 		{
 			lock (this)
 			{
+				if (!_isParentReady)
+				{
+					_isParentReady |= _owner._waitForParent!.Invoke(parentMsg);
+				}
+
 				RebuildMessage(parentMsg);
 			}
 		}
@@ -127,7 +143,8 @@ internal sealed class UpdateFeed<T> : IFeed<T>
 					catch (Exception error)
 					{
 						_isInError = true;
-						return current.WithParentOnly(null)
+						return current
+							.WithParentOnly(null)
 							.Data(Option<T>.Undefined())
 							.Error(error);
 					}

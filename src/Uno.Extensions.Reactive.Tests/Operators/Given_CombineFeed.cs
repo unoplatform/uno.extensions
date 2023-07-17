@@ -14,8 +14,8 @@ public class Given_CombineFeed : FeedTests
 	[TestMethod]
 	public async Task When_Combine2()
 	{
-		var feed1 = new StateImpl<int>(Option<int>.Undefined());
-		var feed2 = new StateImpl<int>(Option<int>.Undefined());
+		var feed1 = new StateImpl<int>(Context, Option<int>.Undefined());
+		var feed2 = new StateImpl<int>(Context, Option<int>.Undefined());
 
 		var sut = Feed.Combine(feed1, feed2).Record();
 

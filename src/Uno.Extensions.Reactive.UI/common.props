@@ -1,6 +1,7 @@
 <Project>
 	<PropertyGroup>
 		<AssemblyName>Uno.Extensions.Reactive.UI</AssemblyName>
+		<ImplicitUsings>false</ImplicitUsings>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(_IsUWP)'=='true'">

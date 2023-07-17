@@ -20,4 +20,8 @@ internal class MessageAxisUpdate
 
 	public (MessageAxisValue value, IChangeSet? changes) GetValue(MessageAxisValue parent, MessageAxisValue current)
 		=> Axis.GetLocalValue(parent, current, (Value, Changes));
+
+	/// <inheritdoc />
+	public override string ToString()
+		=> $"{Axis} = {Value} {(Changes is not null ? "(with details)" : "")}";
 }
