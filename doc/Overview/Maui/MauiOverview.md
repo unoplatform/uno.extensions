@@ -76,7 +76,7 @@ There are several XAML Extensions that you may decide to make use of while build
 
 ### Limitations and Known issues
 
-- Some controls like the ScrollView from .NET MAUI will not have the content property automatically recognized by the XAML compiler. As a result you will need to be more verbose with these controls like:
+- Some controls like the `ScrollView` from .NET MAUI will not have the `Content` property automatically recognized by the XAML compiler. As a result you will need to be more verbose with these controls like:
   ```xml
   <ScrollView>
     <ScrollView.Content>
