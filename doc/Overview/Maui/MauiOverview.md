@@ -64,7 +64,7 @@ When the MauiContent is created it will walk the Visual Tree and look for any pa
 There are several XAML Extensions that you may decide to make use of while building an app with .NET MAUI Embedding.
 
 - MauiBinding - As the name suggests this will allow you to create a binding to your DataContext. **NOTE** You can not use `x:Bind` or `Binding` on a MAUI Control.
-- MauiColor - If you want to be able to directly apply a Hex String or Color Name to a Color property on a MAUI Control you can use the `MauiColor` Extension to provide that value.
+- MauiColor: If you want to be able to directly apply a Hex string or `Color` name to a `Color` property on a MAUI Control you can use the `MauiColor` Extension to provide that value.
 - MauiThickness - If you want to be able to directly apply a Thickness, you can use the MauiThickness extension to provide a value like `10`, `10,20`, or `10,20,10,5`
 - MauiResource - As explained in the previous section, the MauiContent control will bring over the WinUI Resources automatically to make it easier to provide consistent styling even within the MauiContent of your View. This will allow you to provide a resource Key to apply to a given property.
 
