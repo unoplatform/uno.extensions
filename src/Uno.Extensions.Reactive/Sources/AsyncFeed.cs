@@ -9,7 +9,7 @@ using static Uno.Extensions.Reactive.Core.FeedHelper;
 
 namespace Uno.Extensions.Reactive.Sources;
 
-internal sealed class AsyncFeed<T> : IFeed<T>, IRefreshableSource
+internal sealed class AsyncFeed<T> : IFeed<T>
 {
 	private readonly ISignal? _refresh;
 	private readonly AsyncFunc<Option<T>> _dataProvider;

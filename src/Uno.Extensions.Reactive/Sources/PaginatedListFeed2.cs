@@ -13,7 +13,7 @@ using Uno.Extensions.Reactive.Utils;
 
 namespace Uno.Extensions.Reactive.Sources;
 
-internal class PaginatedListFeed<TCursor, TItem> : IListFeed<TItem>, IRefreshableSource
+internal class PaginatedListFeed<TCursor, TItem> : IListFeed<TItem>
 {
 	private readonly TCursor _firstPage;
 	private readonly GetPage<TCursor, TItem> _getPage;

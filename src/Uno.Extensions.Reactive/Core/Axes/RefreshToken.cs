@@ -16,7 +16,7 @@ namespace Uno.Extensions.Reactive.Sources;
 /// A sequential number indicating the version of the data produced by the source feed.
 /// This also correspond to the number of times that the source feed has been refreshed.
 /// </param>
-internal record RefreshToken(IRefreshableSource Source, uint RootContextId, uint SequenceId) : IToken, IToken<RefreshToken>
+internal record RefreshToken(ISignal<IMessage> Source, uint RootContextId, uint SequenceId) : IToken, IToken<RefreshToken>
 {
 	/// <inheritdoc />
 	object IToken.Source => Source;
@@ -28,7 +28,7 @@ internal record RefreshToken(IRefreshableSource Source, uint RootContextId, uint
 	/// <param name="context">The context used to <see cref="ISignal{T}.GetSource"/> on the <paramref name="source"/>.</param>
 	/// <returns>The initial refresh token where <see cref="SequenceId"/> is set to 0.</returns>
 	/// <remarks>This token represents the initial load of the <paramref name="source"/> and should not be propagated.</remarks>
-	public static RefreshToken Initial(IRefreshableSource source, SourceContext context) => new(source, context.RootId, 0);
+	public static RefreshToken Initial(ISignal<IMessage> source, SourceContext context) => new(source, context.RootId, 0);
 
 	/// <summary>
 	/// Atomatically increments a refresh token and returns it.

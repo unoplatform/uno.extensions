@@ -31,8 +31,8 @@ internal abstract class FeedDependency
 			{
 				_log.Info(
 					$"Feed dependency not found for entry '{entry}' while a {nameof(FeedExecution)} is active. "
-					+ $"This means that a feed is being used while loading '{exec.Session.Signal}' but without being registered as dependency, "
-					+ $"so if that feed is being updated, the '{exec.Session.Signal}' won't be refreshed/reloaded.");
+					+ $"This means that a feed is being used while loading '{exec.Session.Owner}' but without being registered as dependency, "
+					+ $"so if that feed is being updated, the '{exec.Session.Owner}' won't be refreshed/reloaded.");
 			}
 		}
 	}
@@ -44,7 +44,7 @@ internal abstract class FeedDependency
 
 	/// <summary>
 	/// The dependency feed.
-	/// (i.e. the feed on which the session depends, a new value pushed by this feed will cause update or a reload of the resulting <see cref="FeedSession.Signal"/>).
+	/// (i.e. the feed on which the session depends, a new value pushed by this feed will cause update or a reload of the resulting <see cref="FeedSession.Owner"/>).
 	/// </summary>
 	internal ISignal<IMessage> Feed { get; }
 
