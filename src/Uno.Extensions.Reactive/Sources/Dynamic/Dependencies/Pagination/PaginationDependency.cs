@@ -6,10 +6,13 @@ using Microsoft.Extensions.Logging;
 using Uno.Extensions.Collections.Facades.Differential;
 using Uno.Extensions.Reactive.Core;
 using Uno.Extensions.Reactive.Logging;
+using Uno.Extensions.Reactive.Sources.Pagination;
 using Uno.Extensions.Threading;
 
 namespace Uno.Extensions.Reactive.Sources;
 
+// Note: This is an initial naive implementation, we should split the "Cursor" and the "Collection" itself.
+//		 Doing this would allow us to implement custom pagination logic, but also let applications extract some meta-data (like total page count) and use it in their own strcuture.
 internal class PaginationDependency<TItem> : IDependency
 {
 	private readonly FastAsyncLock _gate = new();
@@ -31,10 +34,11 @@ internal class PaginationDependency<TItem> : IDependency
 		_identifier = identifier;
 
 		_ct = CancellationTokenSource.CreateLinkedTokenSource(session.Token);
-		_token = PageToken.Initial(_session.Signal, _session.Context);
+		_token = PageToken.Initial(_session.Owner, _session.Context);
 		_pageInfo = new() { HasMoreItems = true };
 
 		_session.Context.Requests<Uno.Extensions.Reactive.Core.PageRequest>(OnPageRequested, _ct.Token);
+		_session.Context.Requests<Uno.Extensions.Reactive.Core.EndRequest>(_ => _session.UnRegisterDependency(this), _ct.Token);
 		_session.RegisterDependency(this);
 	}
 
@@ -51,11 +55,11 @@ internal class PaginationDependency<TItem> : IDependency
 		// Finally we let know to the requester the token it has to listen for,
 		// then we request to the feed to re-invoke the factory so we will be able to load the next page.
 		req.Register(next);
-		_session.RequestLoad(new PaginationExecuteRequest(this, req.DesiredPageSize, next));
+		_session.Execute(new PaginationExecuteRequest(this, req.DesiredPageSize, next));
 	}
 
 	/// <inheritdoc />
-	async ValueTask IDependency.OnLoading(FeedExecution execution, CancellationToken ct)
+	async ValueTask IDependency.OnExecuting(FeedExecution execution, CancellationToken ct)
 	{
 		_gotItems = false;
 
@@ -72,7 +76,7 @@ internal class PaginationDependency<TItem> : IDependency
 	}
 
 	/// <inheritdoc />
-	async ValueTask IDependency.OnLoaded(FeedExecution execution, FeedAsyncExecutionResult result, CancellationToken ct)
+	async ValueTask IDependency.OnExecuted(FeedExecution execution, FeedExecutionResult result, CancellationToken ct)
 	{
 		// Push again the _pageInfo as it might have been updated by the GetItems / Request.SetAsync.
 		execution.Enqueue(m => m.Paginated(_pageInfo));
@@ -82,63 +86,6 @@ internal class PaginationDependency<TItem> : IDependency
 			this.Log().Warn($"A page has been requested for {_identifier} and a load has been triggered, but the items has not been fetched by the 'load method'.");
 		}
 	}
-
-	//private void OnPageRequested(Uno.Extensions.Reactive.Core.PageRequest req)
-	//{
-	//	// First we issue a new token
-	//	var next = _nextToken;
-	//	if (next is null)
-	//	{
-	//		next = _currentToken.Next();
-
-	//		var concurrentNext = Interlocked.CompareExchange(ref _nextToken, next, null);
-	//		if (concurrentNext is null)
-	//		{
-	//			// We successfully set the token that is going to be used for the next execution, we can now consider it as current.
-	//			_currentToken = next;
-	//		}
-	//		else
-	//		{
-	//			next = concurrentNext;
-	//		}
-	//	}
-
-	//	// We store the request so we can re-use it for the next execution methods.
-	//	_lastRequest = req;
-
-	//	// Finally we let know to the requester the token it has to listen for,
-	//	// then we request to the feed to re-invoke the factory so we will be able to load the next page.
-	//	req.Register(next);
-	//	_session.RequestLoad(new PaginationLoadRequest(this, req.DesiredPageSize, next));
-	//}
-
-	///// <inheritdoc />
-	//void IDependency.OnLoading(LoadRequest request, IMessageBuilder builder)
-	//{
-	//	_gotItems = false;
-
-	//	// Note: If the user does not invoke the GetItems during the loading process,
-	//	//		 we still push token token as we must ensure that the next page requester does not remain in loading state.
-	//	if (_nextToken is not null)
-	//	{
-	//		_pageInfo = _pageInfo with { Tokens = _nextToken };
-
-	//		// Push the _pageInfo in loading so the token will be propagated even in transient messages.
-	//		builder.Paginated(_pageInfo);
-	//	}
-	//}
-
-	///// <inheritdoc />
-	//void IDependency.OnLoaded(LoadRequest request, IMessageBuilder builder)
-	//{
-	//	// Push again the _pageInfo as it might have been updated by the GetItems.
-	//	builder.Paginated(_pageInfo);
-
-	//	if (!_gotItems)
-	//	{
-	//		this.Log().Warn($"A page has been requested for {_config} and a load has been triggered, but the items has not been fetched by the 'load method'.");
-	//	}
-	//}
 
 	public async ValueTask<IImmutableList<TItem>> GetItems<TArgs>(FeedExecution exec, Func<PaginationBuilder<TItem>, TArgs, PaginationConfiguration<TItem>> configure, TArgs args)
 	{

@@ -5,7 +5,7 @@ namespace Uno.Extensions.Reactive.Sources;
 
 internal interface IDependency
 {
-	ValueTask OnLoading(FeedExecution execution, CancellationToken ct);
+	ValueTask OnExecuting(FeedExecution execution, CancellationToken ct);
 
-	ValueTask OnLoaded(FeedExecution execution, FeedAsyncExecutionResult result, CancellationToken ct);
+	ValueTask OnExecuted(FeedExecution execution, FeedExecutionResult result, CancellationToken ct);
 }

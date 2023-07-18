@@ -1,39 +1,12 @@
 ﻿#nullable enable
 
 using System;
-using System.Collections.Immutable;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using Uno.Extensions.Reactive.Core;
 using Uno.Extensions.Reactive.Utils;
 
 namespace Uno.Extensions.Reactive.Sources;
-
-internal enum FeedAsyncExecutionResult
-{
-	Success,
-	Failed,
-	Cancelled,
-}
-
-internal record ExecuteRequest(object Issuer, string Reason)
-{
-	/// <summary>
-	/// Defined the axis used to flag the message as async (i.e. transient).
-	/// This can be customized by sub-classer, in conjunction with the <see cref="AsyncValue"/>.
-	/// </summary>
-	internal virtual MessageAxis AsyncAxis => MessageAxis.Progress;
-
-	/// <summary>
-	/// Flags the message as async (i.e. transient).
-	/// This can be customized by sub-classer, in conjunction with the <see cref="AsyncAxis"/>.
-	/// </summary>
-	internal virtual MessageAxisValue AsyncValue => MessageAxis.Progress.ToMessageValue(true);
-
-	internal virtual bool IsAsync(IMessageEntry entry)
-		=> entry.IsTransient;
-}
-
 
 //internal interface IFeedAsyncExtension
 //{
@@ -107,81 +80,6 @@ internal record ExecuteRequest(object Issuer, string Reason)
 
 
 //}
-
-
-internal static class AsyncFeedExtensions
-{
-	//public static void EnableRefresh(this FeedAsyncExecution execution, [CallerMemberName] string caller = "", [CallerLineNumber] int line = -1)
-	//{
-	//	execution.GetExtension<FeedRefreshExtension>(new NamedRefreshableSource(caller, line), static (man, src) => new FeedRefreshExtension(man, src)).Enable();
-	//}
-
-	//internal record struct NamedRefreshableSource(string Caller, int Line) : IRefreshableSource;
-
-	public static ValueTask<IImmutableList<TItem>> GetPaginated<TItem>(this FeedExecution execution, Func<PaginationBuilder<TItem>, PaginationConfiguration<TItem>> configure)
-	{
-		var dependency = execution.Session.GetShared(
-			nameof(PaginationDependency<TItem>),
-			static (session, key, _) => new PaginationDependency<TItem>(session, key),
-			Unit.Default);
-
-		return dependency.GetItems(execution, static (b, c) => c(b), configure);
-	}
-
-	public static ValueTask<IImmutableList<TItem>> GetPaginated<TItem>(this FeedExecution execution, string identifier, Func<PaginationBuilder<TItem>, PaginationConfiguration<TItem>> configure)
-	{
-		var dependency = execution.Session.GetShared(
-			(typeof(PaginationDependency<TItem>), identifier),
-			static (session, key, _) => new PaginationDependency<TItem>(session, key.identifier),
-			Unit.Default);
-
-		return dependency.GetItems(execution, static (b, c) => c(b), configure);
-	}
-
-	public static ValueTask<IImmutableList<TItem>> GetPaginated<TItem, TArgs>(this FeedExecution execution, Func<PaginationBuilder<TItem>, TArgs, PaginationConfiguration<TItem>> configure, TArgs args)
-	{
-		var dependency = execution.Session.GetShared(
-			nameof(PaginationDependency<TItem>),
-			static (session, key, _) => new PaginationDependency<TItem>(session, key),
-			Unit.Default);
-
-		return dependency.GetItems(execution, configure, args);
-	}
-
-	public static ValueTask<IImmutableList<TItem>> GetPaginated<TItem, TArgs>(this FeedExecution execution, string identifier, Func<PaginationBuilder<TItem>, TArgs, PaginationConfiguration<TItem>> configure, TArgs args)
-	{
-		var dependency = execution.Session.GetShared(
-			(typeof(PaginationDependency<TItem>), identifier),
-			static (session, key, state) => new PaginationDependency<TItem>(session, key.identifier),
-			Unit.Default);
-
-		return dependency.GetItems(execution, configure, args);
-	}
-
-	//public static async ValueTask<IImmutableList<TItem>> GetPaginatedByCursor<TItem>(this FeedAsyncExecution execution, AsyncFunc<PageRequest, IImmutableList<TItem>> getPage)
-	//{
-
-	//}
-
-	//public static TCursor GetCurrentPageCursor<TCursor>(this FeedAsyncExecution execution, TCursor firstPage)
-	//{
-
-	//}
-
-	//public static TCursor GetCurrentPageCursor<TCursor>(this FeedAsyncExecution execution, Func<TCursor> firstPage)
-	//{
-
-	//}
-
-	//public static AsyncPagination<TItem> Pagination<TItem>(AsyncFunc<PageRequest, IImmutableList<TItem>> getPage)
-	//	=> Pagination<TItem>(static b => b.ByIndex().GetPage(getPage));
-
-	//public static AsyncPagination<TItem> Pagination<TItem>(Func<PaginationBuilder<TItem>, PaginationConfiguration<TItem>> paginationConfigurator)
-	//{
-
-	//}
-}
-
 
 //internal sealed class RefreshContextRequestToTriggerAdapter<TParent, TResult> : ILoadTrigger<TResult>
 //{
@@ -277,11 +175,11 @@ internal static class AsyncFeedExtensions
 //		=> _inner.CreateState(initialValue, factory);
 //}
 
-internal sealed class DynamicFeed<T> : IFeed<T>, IRefreshableSource
+internal sealed class DynamicFeed<T> : IFeed<T>
 {
 	private readonly AsyncFunc<Option<T>> _dataProvider;
 
-	public DynamicFeed(AsyncFunc<T> dataProvider)
+	public DynamicFeed(AsyncFunc<T?> dataProvider)
 	{
 		_dataProvider = async ct => Option.SomeOrNone(await dataProvider(ct));
 	}

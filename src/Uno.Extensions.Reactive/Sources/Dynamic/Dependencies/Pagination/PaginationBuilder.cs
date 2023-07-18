@@ -3,7 +3,7 @@ using System.Collections.Immutable;
 using System.Linq;
 using Uno.Extensions.Reactive.Core;
 
-namespace Uno.Extensions.Reactive.Sources;
+namespace Uno.Extensions.Reactive.Sources.Pagination;
 
 internal struct PaginationBuilder<TItem>
 {
@@ -13,7 +13,6 @@ internal struct PaginationBuilder<TItem>
 	public ByCursorPaginationBuilder<TCursor, TItem> ByCursor<TCursor>(TCursor firstPage)
 		=> new(firstPage);
 }
-
 
 internal record struct ByIndexPaginationBuilder<TItem>(uint FirstPageIndex)
 {
@@ -32,39 +31,6 @@ internal record struct ByCursorPaginationBuilder<TCursor, TItem>(TCursor FirstPa
 		return new(ct => new PageEnumerator<TCursor, TItem>(firstPage, getPage, ct));
 	}
 }
-
-internal class PageEnumerator<TCursor, TItem> : IPageEnumerator<TItem>
-{
-	private TCursor? _nextPage;
-	private readonly GetPage<TCursor, TItem> _getPage;
-	private readonly CancellationToken _ct;
-
-	public PageEnumerator(TCursor firstPage, GetPage<TCursor, TItem> getPage, CancellationToken ct)
-	{
-		_nextPage = firstPage;
-		_getPage = getPage;
-		_ct = ct;
-	}
-
-	/// <inheritdoc />
-	public IImmutableList<TItem> Current { get; private set; } = ImmutableList<TItem>.Empty;
-
-	/// <inheritdoc />
-	public async ValueTask<bool> MoveNextAsync(uint? desiredPageSize)
-	{
-		var nextPage = _nextPage;
-		if (nextPage is null)
-		{
-			return false;
-		}
-
-		(Current, _nextPage) = await _getPage(nextPage, desiredPageSize, _ct).ConfigureAwait(false);
-
-		return true;
-	}
-}
-
-internal record struct PaginationConfiguration<TItem>(Func<CancellationToken, IPageEnumerator<TItem>> GetEnumerator);
 
 internal interface IPageEnumerator<TItem>
 {

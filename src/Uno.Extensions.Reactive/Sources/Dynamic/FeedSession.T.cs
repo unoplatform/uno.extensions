@@ -18,7 +18,7 @@ internal sealed partial class FeedSession<TResult> : FeedSession, IAsyncEnumerab
 
 		_message = new MessageManager<Unit, TResult>(_messages.TrySetNext);
 
-		RequestLoad(new ExecuteRequest(this, "Initial load")); // Initial load
+		Execute(new ExecuteRequest(this, "Initial load"));
 	}
 
 	#region Core executions chain managment (including Request support)
@@ -27,7 +27,7 @@ internal sealed partial class FeedSession<TResult> : FeedSession, IAsyncEnumerab
 	private ExecutionImpl? _currentExecution; // This the execution currently loading the data, 
 
 	/// <inheritdoc />
-	internal override void RequestLoad(ExecuteRequest request)
+	public override void Execute(ExecuteRequest request)
 	{
 		lock (_requestsGate)
 		{
@@ -68,7 +68,7 @@ internal sealed partial class FeedSession<TResult> : FeedSession, IAsyncEnumerab
 	}
 	#endregion
 
-	#region Parent message support (i.e. FeedDependency)
+	#region Parent message support (i.e. FeedDependency) (Should this be merged in the FeedDependenciesStore?)
 	private readonly Dictionary<ISignal<IMessage>, IMessage> _parentMessages = new();
 	private DynamicParentMessage _aggregatedParentMessage = DynamicParentMessage.Initial;
 	private bool _isAggregatedParentMessageValid = true;
@@ -121,154 +121,4 @@ internal sealed partial class FeedSession<TResult> : FeedSession, IAsyncEnumerab
 	/// <inheritdoc />
 	public IAsyncEnumerator<Message<TResult>> GetAsyncEnumerator(CancellationToken cancellationToken = default)
 		=> _messages.GetAsyncEnumerator(cancellationToken);
-
-	// ASYNC LOAD FOR PAGINATION!
-	//private async Task<(TCursor? nextPage, PaginationInfo paginationState)> LoadPage(
-	//	MessageManager<Unit, IImmutableList<TItem>>.UpdateTransaction message,
-	//	TCursor cursor,
-	//	TokenSet<RefreshToken>? refreshInfo,
-	//	PaginationInfo pageInfo,
-	//	uint? desiredPageSize,
-	//	bool isFirstPage,
-	//	CancellationToken ct)
-	//{
-	//	ValueTask<PageResult<TCursor, TItem>> pageTask = default;
-	//	Exception? error = default;
-	//	try
-	//	{
-	//		pageTask = _getPage(cursor, desiredPageSize, ct);
-	//	}
-	//	catch (OperationCanceledException) when (ct.IsCancellationRequested)
-	//	{
-	//		return (cursor, pageInfo);
-	//	}
-	//	catch (Exception e)
-	//	{
-	//		error = e;
-	//		if (isFirstPage)
-	//		{
-	//			pageInfo = pageInfo with { HasMoreItems = false };
-	//		}
-	//	}
-
-	//	if (error is not null)
-	//	{
-	//		message.Commit(msg => msg
-	//			.With()
-	//			.Error(error)
-	//			.Refreshed(refreshInfo)
-	//			.Paginated(pageInfo));
-
-	//		return (cursor, pageInfo);
-	//	}
-
-	//	// If we are not yet and the 'dataTask' is really async, we need to send a new message flagged as transient
-	//	// Note: This check is not "atomic", but it's valid as it only enables a fast path.
-	//	if (!message.Local.Current.IsTransient)
-	//	{
-	//		// As lot of async methods are actually not really async but only re-scheduled,
-	//		// we try to avoid the transient state by delaying a bit the message.
-	//		for (var i = 0; !pageTask.IsCompleted && !ct.IsCancellationRequested && i < 5; i++)
-	//		{
-	//			await Task.Yield();
-	//		}
-
-	//		if (ct.IsCancellationRequested)
-	//		{
-	//			return (cursor, pageInfo);
-	//		}
-
-	//		// The 'valueProvider' is not completed yet, so we need to flag the current value as transient.
-	//		// Note: We also provide the parentMsg which will be applied
-	//		if (!pageTask.IsCompleted)
-	//		{
-	//			message.Update(msg =>
-	//			{
-	//				var result = msg
-	//					.With()
-	//					.Refreshed(refreshInfo)
-	//					.Paginated(pageInfo);
-
-	//				if (isFirstPage)
-	//				{
-	//					result.SetTransient(MessageAxis.Progress, MessageAxis.Progress.ToMessageValue(true));
-	//				}
-	//				else
-	//				{
-	//					result.SetTransient(MessageAxis.Pagination, MessageAxis.Pagination.ToMessageValue(pageInfo with { IsLoadingMoreItems = true }));
-	//				}
-
-	//				return result;
-	//			});
-	//		}
-	//	}
-
-	//	var items = (DifferentialImmutableList<TItem>)message.Local.Current.Data.SomeOrDefault(DifferentialImmutableList<TItem>.Empty);
-	//	var changes = default(CollectionChangeSet?);
-	//	var nextPage = cursor;
-	//	try
-	//	{
-	//		var page = await pageTask.ConfigureAwait(false);
-	//		var hadItems = items is { Count: > 0 };
-	//		var hasItems = page.Items is { Count: > 0 };
-
-	//		(items, changes) = (hadItems, hasItems, isFirstPage) switch
-	//		{
-	//			(false, false, _) => (DifferentialImmutableList<TItem>.Empty, CollectionChangeSet<TItem>.Empty),
-	//			(false, true, _) => Reset(items, page.Items),
-	//			(true, false, true) => Clear(items),
-	//			(true, false, false) => (items, CollectionChangeSet<TItem>.Empty),
-	//			(true, true, true) => Reset(items, page.Items),
-	//			(true, true, false) => Add(items, page.Items),
-	//		};
-
-	//		nextPage = page.NextPage;
-	//		if (nextPage is null)
-	//		{
-	//			pageInfo = pageInfo with { HasMoreItems = false };
-	//		}
-	//	}
-	//	catch (OperationCanceledException) when (ct.IsCancellationRequested)
-	//	{
-	//		return (cursor, pageInfo);
-	//	}
-	//	catch (Exception e)
-	//	{
-	//		error = e;
-	//		if (isFirstPage)
-	//		{
-	//			pageInfo = pageInfo with { HasMoreItems = false };
-	//		}
-	//	}
-
-	//	message.Commit(
-	//		msg =>
-	//		{
-	//			var builder = msg
-	//				.With()
-	//				.Refreshed(refreshInfo)
-	//				.Paginated(pageInfo);
-
-	//			if (error is not null)
-	//			{
-	//				builder.Error(error);
-	//			}
-	//			else if (items.Count == 0)
-	//			{
-	//				builder.Data(Option<IImmutableList<TItem>>.None(), changes).Error(null);
-	//			}
-	//			else
-	//			{
-	//				builder.Data(items, changes).Error(null);
-	//			}
-
-	//			return builder;
-	//		});
-
-	//	return (nextPage, pageInfo);
-	//}
-
-	//internal record struct DynamicDependencies(ICollection<DynamicFeedDependency> Feeds);
-
-	//internal record struct DynamicFeedDependency(ISignal<IMessage> Feed, IMessage Message, ICollection<MessageAxis> TouchedAxes);
 }

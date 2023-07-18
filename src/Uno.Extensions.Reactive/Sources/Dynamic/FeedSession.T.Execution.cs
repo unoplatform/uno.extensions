@@ -37,7 +37,7 @@ internal sealed partial class FeedSession<TResult>
 		}
 
 		/// <inheritdoc />
-		public override void Enqueue(Action<IMessageBuilder> updater) // TODO: Should we move this to the session? This would allow a background dependency to update metadata without reloading the feed ?!
+		public override void Enqueue(Action<IMessageBuilder> updater)
 		{
 			lock (StateGate)
 			{
@@ -53,7 +53,8 @@ internal sealed partial class FeedSession<TResult>
 
 					default:
 					case States.Completed:
-						throw new InvalidOperationException("You can enqueue updates only while the execution is active.");
+						this.Log().Info("Update is being ignored as the execution is not longer active.");
+						break;
 				}
 			}
 		}
@@ -83,7 +84,7 @@ internal sealed partial class FeedSession<TResult>
 			}
 			catch (OperationCanceledException) when (Token.IsCancellationRequested)
 			{
-				await NotifyEnd(FeedAsyncExecutionResult.Cancelled);
+				await NotifyEnd(FeedExecutionResult.Cancelled);
 
 				lock (StateGate)
 				{
@@ -96,7 +97,7 @@ internal sealed partial class FeedSession<TResult>
 			}
 			catch (Exception error)
 			{
-				await NotifyEnd(FeedAsyncExecutionResult.Failed);
+				await NotifyEnd(FeedExecutionResult.Failed);
 
 				lock (StateGate)
 				{
@@ -138,7 +139,7 @@ internal sealed partial class FeedSession<TResult>
 
 				if (Token.IsCancellationRequested)
 				{
-					await NotifyEnd(FeedAsyncExecutionResult.Cancelled);
+					await NotifyEnd(FeedExecutionResult.Cancelled);
 					lock (StateGate)
 					{
 						State = States.Completed;
@@ -175,7 +176,7 @@ internal sealed partial class FeedSession<TResult>
 			{
 				var data = await task.ConfigureAwait(false);
 
-				await NotifyEnd(FeedAsyncExecutionResult.Success);
+				await NotifyEnd(FeedExecutionResult.Success);
 
 				lock (StateGate)
 				{
@@ -195,7 +196,7 @@ internal sealed partial class FeedSession<TResult>
 			}
 			catch (OperationCanceledException) when (Token.IsCancellationRequested)
 			{
-				await NotifyEnd(FeedAsyncExecutionResult.Cancelled);
+				await NotifyEnd(FeedExecutionResult.Cancelled);
 
 				lock (StateGate)
 				{
@@ -207,7 +208,7 @@ internal sealed partial class FeedSession<TResult>
 			}
 			catch (Exception error)
 			{
-				await NotifyEnd(FeedAsyncExecutionResult.Failed);
+				await NotifyEnd(FeedExecutionResult.Failed);
 
 				lock (StateGate)
 				{
@@ -243,7 +244,7 @@ internal sealed partial class FeedSession<TResult>
 			{
 				try
 				{
-					await dependency.OnLoading(this, Token);
+					await dependency.OnExecuting(this, Token);
 				}
 				catch (Exception e)
 				{
@@ -252,14 +253,14 @@ internal sealed partial class FeedSession<TResult>
 			}
 		}
 
-		private async ValueTask NotifyEnd(FeedAsyncExecutionResult result)
+		private async ValueTask NotifyEnd(FeedExecutionResult result)
 		{
 			foreach (var dependency in _session.Dependencies)
 			{
 				try
 				{
 					// Note: No CT for the end notification (the current Token might already be cancelled).
-					await dependency.OnLoaded(this, result, default);
+					await dependency.OnExecuted(this, result, default);
 				}
 				catch (Exception e)
 				{

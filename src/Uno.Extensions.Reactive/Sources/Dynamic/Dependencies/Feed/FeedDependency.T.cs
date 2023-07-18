@@ -55,7 +55,7 @@ internal sealed class FeedDependency<T> : FeedDependency, IDependency
 	}
 
 	/// <inheritdoc />
-	async ValueTask IDependency.OnLoading(FeedExecution execution, CancellationToken ct)
+	async ValueTask IDependency.OnExecuting(FeedExecution execution, CancellationToken ct)
 	{
 		Debug.Assert(_current is null);
 		_current?.updateLock.Dispose();
@@ -68,7 +68,7 @@ internal sealed class FeedDependency<T> : FeedDependency, IDependency
 	}
 
 	/// <inheritdoc />
-	async ValueTask IDependency.OnLoaded(FeedExecution execution, FeedAsyncExecutionResult result, CancellationToken ct)
+	async ValueTask IDependency.OnExecuted(FeedExecution execution, FeedExecutionResult result, CancellationToken ct)
 	{
 		if (_current is { } current) // If this dependency has been added while loading, we will not have set the _current value yet.
 		{
@@ -130,7 +130,7 @@ internal sealed class FeedDependency<T> : FeedDependency, IDependency
 					if (message.Changes.FirstOrDefault(axis => _touchedAxes.Contains(axis)) is { } axis)
 					{
 						// An axis used by the dependent feed has changed, we need to reload the dependent feed.
-						_session.RequestLoad(new Request(_feed, axis));
+						_session.Execute(new Request(_feed, axis));
 					}
 					else
 					{

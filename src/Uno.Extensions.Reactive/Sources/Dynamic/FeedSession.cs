@@ -16,7 +16,7 @@ internal abstract class FeedSession // Interface that is a concrete class as it 
 
 	private protected FeedSession(ISignal<IMessage> owningSignal, SourceContext context, CancellationToken ct)
 	{
-		Signal = owningSignal;
+		Owner = owningSignal;
 		Context = context;
 		Token = ct;
 	}
@@ -38,14 +38,14 @@ internal abstract class FeedSession // Interface that is a concrete class as it 
 	/// <summary>
 	/// The signal which created this session.
 	/// </summary>
-	public ISignal<IMessage> Signal { get; }
+	public ISignal<IMessage> Owner { get; }
 
 	/// <summary>
-	/// Requests to start a new load operation.
+	/// Requests to start a new execution.
 	/// </summary>
-	/// <param name="request"></param>
+	/// <param name="request">The execution request.</param>
 	/// <returns></returns>
-	internal abstract void RequestLoad(ExecuteRequest request);
+	public abstract void Execute(ExecuteRequest request);
 
 	/// <summary>
 	/// Allows a ****FeedDependency**** to add a parent message.
@@ -57,7 +57,7 @@ internal abstract class FeedSession // Interface that is a concrete class as it 
 	private FeedDependenciesStore? _feedDependencies;
 
 	/// <summary>
-	/// The feed on which the <see cref="Signal"/> is dependent upon.
+	/// The feed on which the <see cref="Owner"/> is dependent upon.
 	/// </summary>
 	internal FeedDependenciesStore Feeds
 	{
@@ -80,7 +80,7 @@ internal abstract class FeedSession // Interface that is a concrete class as it 
 	/// <summary>
 	/// Registers a dependency for the current session.
 	/// </summary>
-	/// <param name="dependency">A dependency that can trigger a <see cref="RequestLoad"/>.</param>
+	/// <param name="dependency">A dependency that can trigger a <see cref="Execute"/>.</param>
 	public void RegisterDependency(IDependency dependency)
 		=> ImmutableInterlocked.Update(ref _dependencies, static (list, item) => list.Add(item), dependency);
 

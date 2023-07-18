@@ -42,12 +42,22 @@ internal abstract class FeedExecution : IAsyncDisposable
 	/// A cancellation token used to cancel the current execution.
 	/// </summary>
 	/// <remarks>This token will be cancelled when a new execution is started for the same <see cref="Session"/>.</remarks>
-	public CancellationToken Token { get; }
+	public CancellationToken Token => _ct.Token;
 
 	/// <summary>
-	/// Allows a <see cref="IDependency"/> to append custom (meta)data to the message.
+	/// Allows a <see cref="IDependency"/> to append custom (meta)data to the message (cf. Remarks about execution of the update).
 	/// </summary>
 	/// <param name="updater"></param>
+	/// <remarks>
+	/// - If the execution is still loading the data (a.k.a. the main action), then updates will be queued and forwarded only when the main action publish a message
+	/// (i.e. optionally at the beginning if the message as the be flagged as transient + one at the end to commit either the updated data or the error).
+	/// - If the execution completed the load of the data, then the update will be forwarded immediately.
+	/// - If the execution has been cancelled (either a new execution has started, either the session has ended), then **the update will be ignored**.
+	/// <br />
+	/// **WARNING:**
+	/// The last case means that during a normal session an update might be dropped if a new execution is started before the data has been loaded/failed and a message has been published.
+	/// **Your dependency should be designed to handle this case.**
+	/// </remarks>
 	public abstract void Enqueue(Action<IMessageBuilder> updater);
 
 	internal record struct CurrentSubscription(FeedExecution? Previous) : IDisposable
