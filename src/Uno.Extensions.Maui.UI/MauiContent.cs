@@ -134,6 +134,7 @@ public partial class MauiContent : ContentControl
 		if (_host is not null && _host.BindingContext != DataContext)
 		{
 			_host.BindingContext = DataContext;
+			View.BindingContext = DataContext;
 		}
 		//DataContextChanged -= OnDataContextChanged;
 	}
