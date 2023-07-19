@@ -16,10 +16,6 @@ public sealed partial class MauiControlsPage : Page
 
 		var lbl = new Label()
 		{
-			// If we don't specify the size , the label will not be visible
-			// when the binding changes it doesn't recalculate its size
-			// This control doesn't show up on mobile targets but it's on the visual tree
-			HeightRequest = 20,
 			BackgroundColor = Colors.Pink
 		};
 
@@ -35,8 +31,6 @@ public sealed partial class MauiControlsPage : Page
 		var mauiBinding = new Microsoft.Maui.Controls.Binding
 		{
 			Path = nameof(MauiControlsViewModel.Name),
-			// `this.DataContext` is null here
-			// Source = new MauiControlsViewModel()
 			Source = DataContext
 		};
 
