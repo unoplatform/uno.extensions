@@ -181,7 +181,7 @@ public abstract class ControlNavigator : Navigator
 
 		UpdateRoute(executedRoute);
 
-		return new NavigationResponse(executedRoute ?? Route.Empty);
+		return new NavigationResponse(executedRoute ?? Route.Empty, Navigator: this);
 	}
 
 	protected virtual void UpdateRoute(Route? route)
