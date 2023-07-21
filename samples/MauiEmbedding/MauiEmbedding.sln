@@ -81,12 +81,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MauiApp1", "..\MauiProjects
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MauiControlsExternal", "..\MauiProjects\MauiControlsExternal\MauiControlsExternal.csproj", "{C4113069-EA09-48D5-B59E-A307AC18EDA1}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MauiExternalProjects", "MauiExternalProjects", "{E3F5546B-786A-4C9D-9497-2CE719205373}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MauiControlsExternal", "..\MauiProjects\MauiControlsExternal\MauiControlsExternal.csproj", "{6B14EED8-5AAF-418E-8C4E-00278FD941F8}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MauiApp1", "..\MauiProjects\MauiApp1\MauiApp1.csproj", "{7B821A13-5A9F-455F-9173-9241F7FBF68C}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
