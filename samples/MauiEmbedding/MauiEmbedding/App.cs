@@ -1,6 +1,7 @@
 using CommunityToolkit.Maui;
 using Microsoft.Maui;
 using Telerik.Maui.Controls;
+using Telerik.Maui.Controls.Compatibility;
 using MControls = Microsoft.Maui.Controls;
 using MauiControlsExternal;
 
@@ -24,6 +25,7 @@ public class App : Application
 
 				maui
 				.UseMauiCommunityToolkit()
+				.UseTelerik()
 				.UseTelerikControls()
 				.UseCustomLibrary();
 

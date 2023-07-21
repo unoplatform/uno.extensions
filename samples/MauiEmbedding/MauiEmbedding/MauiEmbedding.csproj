@@ -11,7 +11,6 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="SkiaSharp.Views.Maui.Controls" Condition="$(_UseTelerik)"/>
 		<PackageReference Include="Telerik.UI.for.Maui" Condition="$(_UseTelerik)"/>
 		<PackageReference Include="Uno.Dsp.Tasks" />
 		<PackageReference Include="Uno.WinUI" />
