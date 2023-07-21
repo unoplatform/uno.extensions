@@ -11,7 +11,8 @@
 	<Grid>
 		<TextBlock Text="Shown in Flyout" />
 		<StackPanel VerticalAlignment="Bottom">
-			<Button Content="Close from XAML"
+			<Button  AutomationProperties.AutomationId="DialogsFlyoutDialogCloseButton"
+					 Content="Close from XAML"
 					uen:Navigation.Request="-" />
 			<Button Content="Close from ViewModel"
 					Click="{x:Bind ViewModel.Close}" />
