@@ -57,6 +57,11 @@
 				<!-- https://github.com/xamarin/xamarin-macios/issues/14812 -->
 				<MtouchExtraArgs>$(MtouchExtraArgs) --marshal-objectivec-exceptions:disable</MtouchExtraArgs>
 			</PropertyGroup>
+			<ItemGroup>
+				<PackageReference Include="SkiaSharp" />
+				<PackageReference Include="SkiaSharp.Views.Uno.WinUI" />
+				<PackageReference Include="SkiaSharp.NativeAssets.iOS" />
+			</ItemGroup>
 		</When>
 		<When Condition="$(IsMacCatalyst)">
 			<PropertyGroup>
