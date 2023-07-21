@@ -1,43 +1,56 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-			 xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-			 xmlns:custom="clr-namespace:MauiControlsExternal;assembly=MauiControlsExternal"
-			 x:Class="MauiApp1.MainPage">
+<ContentPage
+	x:Class="MauiApp1.MainPage"
+	xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+	xmlns:custom="clr-namespace:MauiControlsExternal;assembly=MauiControlsExternal"
+	xmlns:telerik="http://schemas.telerik.com/2022/xaml/maui">
 
 	<ScrollView>
 		<VerticalStackLayout
-			Spacing="25"
 			Padding="30,0"
+			Spacing="25"
 			VerticalOptions="Center">
 
 			<Image
-				Source="dotnet_bot.png"
-				SemanticProperties.Description="Cute dot net bot waving hi to you!"
 				HeightRequest="200"
-				HorizontalOptions="Center" />
+				HorizontalOptions="Center"
+				SemanticProperties.Description="Cute dot net bot waving hi to you!"
+				Source="dotnet_bot.png" />
 
+			<telerik:RadSignaturePad HeightRequest="300" />
+			<telerik:RadBusyIndicator
+				x:Name="BusyIndicator"
+				AnimationContentColor="#674bb2"
+				AnimationContentHeightRequest="100"
+				AnimationContentWidthRequest="100"
+				AutomationId="busyIndicator"
+				IsBusy="True">
+				<telerik:RadBusyIndicator.Content>
+					<Label Text="This is the content of the RadBusyIndicator control displayed when the indicator is not busy." TextColor="Black" />
+				</telerik:RadBusyIndicator.Content>
+			</telerik:RadBusyIndicator>
 			<Label
-				Text="Hello, World!"
-				SemanticProperties.HeadingLevel="Level1"
 				FontSize="32"
-				HorizontalOptions="Center" />
+				HorizontalOptions="Center"
+				SemanticProperties.HeadingLevel="Level1"
+				Text="Hello, World!" />
 
 			<Label
-				Text="Welcome to .NET Multi-platform App UI"
-				SemanticProperties.HeadingLevel="Level2"
-				SemanticProperties.Description="Welcome to dot net Multi platform App U I"
 				FontSize="18"
-				HorizontalOptions="Center" />
+				HorizontalOptions="Center"
+				SemanticProperties.Description="Welcome to dot net Multi platform App U I"
+				SemanticProperties.HeadingLevel="Level2"
+				Text="Welcome to .NET Multi-platform App UI" />
 
 			<Button
 				x:Name="CounterBtn"
-				Text="Click me"
-				SemanticProperties.Hint="Counts the number of times you click"
 				Clicked="OnCounterClicked"
-				HorizontalOptions="Center" />
+				HorizontalOptions="Center"
+				SemanticProperties.Hint="Counts the number of times you click"
+				Text="Click me" />
 
-			<custom:CustomEntry Placeholder="Custom Entry With custom Border"
-							BorderColor="Fuchsia"/>
+			<custom:CustomEntry BorderColor="Fuchsia" Placeholder="Custom Entry With custom Border" />
 
 		</VerticalStackLayout>
 	</ScrollView>

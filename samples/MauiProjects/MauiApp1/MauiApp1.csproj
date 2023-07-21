@@ -50,6 +50,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" />
+		<PackageReference Include="Telerik.UI.for.Maui" Version="6.0.0" />
 	</ItemGroup>
 
 	<ItemGroup>
