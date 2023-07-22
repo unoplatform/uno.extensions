@@ -17,6 +17,7 @@
 		<Button Click="{x:Bind Vm.GoToTelerikPage}" Content="Telerik controls, remember to reference the nuget server" />
 		<Button Click="{x:Bind Vm.GoToColorsPage}" Content="Maui Colors and Resources" />
 		<Button Click="{x:Bind Vm.GoToExternalLibPage}" Content="Referenced External library controls" />
+		<Button Click="{x:Bind Vm.GoToMapsPage}" Content="ESRI maps page sample" />
 	</StackPanel>
 
 </Page>

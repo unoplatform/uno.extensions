@@ -11,7 +11,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Telerik.UI.for.Maui" Condition="$(_UseTelerik)"/>
+		<PackageReference Include="Telerik.UI.for.Maui" Condition="$(_UseTelerik)" />
 		<PackageReference Include="Uno.Dsp.Tasks" />
 		<PackageReference Include="Uno.WinUI" />
 		<PackageReference Include="Uno.Resizetizer" />
@@ -21,6 +21,7 @@
 		<PackageReference Include="Uno.Toolkit.WinUI" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Console" />
 		<PackageReference Include="CommunityToolkit.Maui" />
+		<PackageReference Include="Esri.ArcGISRuntime.Maui" />
 	</ItemGroup>
 
 	<Choose>
