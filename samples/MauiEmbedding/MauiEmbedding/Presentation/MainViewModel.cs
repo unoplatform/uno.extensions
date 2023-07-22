@@ -50,4 +50,9 @@ public partial class MainViewModel : ObservableObject
 	{
 		await _navigator.NavigateViewModelAsync<ExternalLibViewModel>(this);
 	}
+	
+	public async Task GoToMapsPage()
+	{
+		await _navigator.NavigateViewModelAsync<EsriMapsViewModel>(this);
+	}
 }

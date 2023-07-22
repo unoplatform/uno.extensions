@@ -2,6 +2,8 @@
 using MauiControlsExternal;
 using Telerik.Maui.Controls;
  using Telerik.Maui.Controls.Compatibility;
+using Esri.ArcGISRuntime.Maui;
+
 namespace MauiApp1;
 public static class MauiProgram
 {
@@ -17,7 +19,8 @@ public static class MauiProgram
 				fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
 			})
 			.UseCustomLibrary()
-			.UseTelerikControls();
+			.UseTelerikControls()
+			.UseArcGISRuntime();
 
 #if DEBUG
 		//builder.Logging.AddDebug();

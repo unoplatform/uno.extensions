@@ -1,9 +1,10 @@
 using CommunityToolkit.Maui;
 using Microsoft.Maui;
-using Telerik.Maui.Controls;
-using Telerik.Maui.Controls.Compatibility;
+//using Telerik.Maui.Controls;
+//using Telerik.Maui.Controls.Compatibility;
 using MControls = Microsoft.Maui.Controls;
 using MauiControlsExternal;
+using Esri.ArcGISRuntime.Maui;
 
 namespace MauiEmbedding;
 
@@ -25,8 +26,9 @@ public class App : Application
 
 				maui
 				.UseMauiCommunityToolkit()
-				.UseTelerik()
-				.UseTelerikControls()
+				.UseArcGISRuntime()
+				//.UseTelerik()
+				//.UseTelerikControls()
 				.UseCustomLibrary();
 
 				Microsoft.Maui.Handlers.ShapeViewHandler.Mapper.AppendToMapping("BackgroundColor", (h, v) =>
@@ -106,6 +108,7 @@ public class App : Application
 			new ViewMap<MauiEssentialsPage, MauiEssentialsViewModel>(),
 			//new ViewMap<TelerikControlsPage, TelerikControlsViewModel>(),
 			new ViewMap<MauiColorsPage, MauiColorsViewModel>(),
+			new ViewMap<EsriMapsPage, EsriMapsViewModel>(),
 			new ViewMap<ExternalLibPage, ExternalLibViewModel>(),
 			new ViewMap<MCTControlsPage, MCTControlsViewModel>()
 		);
@@ -119,6 +122,7 @@ public class App : Application
 					new RouteMap(nameof(MCTControlsViewModel), View: views.FindByViewModel<MCTControlsViewModel>()),
 					new RouteMap(nameof(MauiEssentialsViewModel), View: views.FindByViewModel<MauiEssentialsViewModel>()),
 					new RouteMap(nameof(MauiColorsViewModel), View: views.FindByViewModel<MauiColorsViewModel>()),
+					new RouteMap(nameof(EsriMapsViewModel), View: views.FindByViewModel<EsriMapsViewModel>()),
 					new RouteMap(nameof(ExternalLibPage), View: views.FindByViewModel<ExternalLibViewModel>()),
 					//new RouteMap(nameof(TelerikControlsViewModel), View: views.FindByViewModel<TelerikControlsViewModel>()),
 				}
