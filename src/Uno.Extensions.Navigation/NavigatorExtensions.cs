@@ -176,14 +176,14 @@ public static class NavigatorExtensions
 	public static Task<NavigationResponse?> NavigateBackWithResultAsync<TResult>(
 	this INavigator navigator, object sender, string qualifier = Qualifiers.None, Option<TResult>? data = null, CancellationToken cancellation = default)
 	{
-		var hint = new RouteHint { Route = Qualifiers.NavigateBack, Qualifier = qualifier };
+		var hint = new RouteHint { Route = Qualifiers.NavigateBack, Qualifier = qualifier, Result = typeof(TResult) };
 		return navigator.NavigateRouteHintAsync(hint, sender, data, cancellation);
 	}
 
 	public static Task<NavigationResponse?> NavigateBackWithResultAsync(
 	this INavigator navigator, object sender, string qualifier = Qualifiers.None, object? data = null, CancellationToken cancellation = default)
 	{
-		var hint = new RouteHint { Route = Qualifiers.NavigateBack, Qualifier = qualifier };
+		var hint = new RouteHint { Route = Qualifiers.NavigateBack, Qualifier = qualifier, Result = data?.GetType() };
 		return navigator.NavigateRouteHintAsync(hint, sender, data, cancellation);
 	}
 
@@ -246,7 +246,7 @@ public static class NavigatorExtensions
 		// as the RouteHint will use the data type to determine request route. However,
 		// if the NavigationRequest has been manually prepared with data, this logic will
 		// update the request based on the type of data.
-		if (string.IsNullOrWhiteSpace(request.Route.Base) &&
+		if (request.Route.IsEmpty() &&
 			request.Route.NavigationData() is { } navData)
 		{
 			var maps = resolver.FindByData(navData.GetType(), navigator);
