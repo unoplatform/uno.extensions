@@ -55,18 +55,26 @@ public static class NavigatorExtensions
 	public static Task<NavigationResultResponse<TResult>?> NavigateRouteForResultAsync<TResult>(
 		this INavigator navigator, object sender, string route, string qualifier = Qualifiers.None, object? data = null, CancellationToken cancellation = default)
 	{
-		var hint = new RouteHint { Route = route, Qualifier = qualifier,
+		var hint = new RouteHint
+		{
+			Route = route,
+			Qualifier = qualifier,
 			//Data = data?.GetType(),
-			Result = typeof(TResult) };
+			Result = typeof(TResult)
+		};
 		return navigator.NavigateRouteHintForResultAsync<TResult>(hint, sender, data, cancellation);
 	}
 
 	public static async Task<NavigationResultResponse?> NavigateRouteForResultAsync(
 		this INavigator navigator, object sender, string route, string qualifier = Qualifiers.None, object? data = null, CancellationToken cancellation = default, Type? resultType = null)
 	{
-		var hint = new RouteHint { Route = route, Qualifier = qualifier,
+		var hint = new RouteHint
+		{
+			Route = route,
+			Qualifier = qualifier,
 			//Data = data?.GetType(),
-			Result = resultType };
+			Result = resultType
+		};
 		var result = await navigator.NavigateRouteHintAsync(hint, sender, data, cancellation);
 		return result?.AsResultResponse();
 	}
@@ -92,9 +100,13 @@ public static class NavigatorExtensions
 	public static Task<NavigationResultResponse<TResult>?> NavigateViewForResultAsync<TResult>(
 	this INavigator navigator, object sender, Type viewType, string qualifier = Qualifiers.None, object? data = null, CancellationToken cancellation = default)
 	{
-		var hint = new RouteHint { View = viewType, Qualifier = qualifier,
+		var hint = new RouteHint
+		{
+			View = viewType,
+			Qualifier = qualifier,
 			//Data = data?.GetType(),
-			Result = typeof(TResult) };
+			Result = typeof(TResult)
+		};
 		return navigator.NavigateRouteHintForResultAsync<TResult>(hint, sender, data, cancellation);
 	}
 
@@ -119,9 +131,13 @@ public static class NavigatorExtensions
 	public static Task<NavigationResultResponse<TResult>?> NavigateViewModelForResultAsync<TResult>(
 		this INavigator navigator, object sender, Type viewModelType, string qualifier = Qualifiers.None, object? data = null, CancellationToken cancellation = default)
 	{
-		var hint = new RouteHint { ViewModel = viewModelType, Qualifier = qualifier,
+		var hint = new RouteHint
+		{
+			ViewModel = viewModelType,
+			Qualifier = qualifier,
 			//Data = data?.GetType(),
-			Result = typeof(TResult) };
+			Result = typeof(TResult)
+		};
 		return navigator.NavigateRouteHintForResultAsync<TResult>(hint, sender, data, cancellation);
 	}
 
@@ -135,9 +151,12 @@ public static class NavigatorExtensions
 	public static Task<NavigationResultResponse<TResult>?> NavigateDataForResultAsync<TData, TResult>(
 		this INavigator navigator, object sender, TData data, string qualifier = Qualifiers.None, CancellationToken cancellation = default)
 	{
-		var hint = new RouteHint { Qualifier = qualifier,
+		var hint = new RouteHint
+		{
+			Qualifier = qualifier,
 			//Data = typeof(TData),
-			Result = typeof(TResult) };
+			Result = typeof(TResult)
+		};
 		return navigator.NavigateRouteHintForResultAsync<TResult>(hint, sender, data, cancellation);
 	}
 
@@ -169,7 +188,7 @@ public static class NavigatorExtensions
 	public static Task<NavigationResponse?> NavigateBackAsync(
 		this INavigator navigator, object sender, string qualifier = Qualifiers.None, CancellationToken cancellation = default)
 	{
-		var hint = new RouteHint { Route = Qualifiers.NavigateBack, Qualifier = qualifier};
+		var hint = new RouteHint { Route = Qualifiers.NavigateBack, Qualifier = qualifier };
 		return navigator.NavigateRouteHintAsync(hint, sender, default, cancellation);
 	}
 
@@ -223,7 +242,7 @@ public static class NavigatorExtensions
 				{ RouteConstants.MessageDialogParameterCancelCommand, cancelButtonIndex! },
 				{ RouteConstants.MessageDialogParameterCommands, buttons! }
 			};
-		var hint = new RouteHint { Route = route ?? RouteConstants.MessageDialogUri, Qualifier = Qualifiers.Dialog, Result=typeof(TResult) };
+		var hint = new RouteHint { Route = route ?? RouteConstants.MessageDialogUri, Qualifier = Qualifiers.Dialog, Result = typeof(TResult) };
 
 		var response = await navigator.NavigateRouteHintForResultAsync<TResult>(hint, sender, data, cancellation);
 		if (response?.AsResultResponse<TResult>() is { } resultResponse &&
