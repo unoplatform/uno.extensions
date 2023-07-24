@@ -211,9 +211,9 @@ public class Given_DynamicFeed : FeedTests
 
 
 	[TestMethod]
-	public async Task When_Paginated_Then_ReloadWhenPageRequested()
+	public async Task When_Paginated_And_PageRequested_Then_Reload_And_ItemsAdded()
 	{
-		async ValueTask<IImmutableList<int>> Load(CancellationToken ct)
+		async ValueTask<IImmutableList<int>?> Load(CancellationToken ct)
 		{
 			var items = await FeedExecution.Current!.GetPaginated<int>(b => b.ByIndex().GetPage(LoadPage));
 
@@ -223,7 +223,7 @@ public class Given_DynamicFeed : FeedTests
 		async ValueTask<IImmutableList<int>> LoadPage(PageRequest page, CancellationToken ct)
 			=> Range((int)page.Index * 20, (int)(page.DesiredSize ?? 20)).ToImmutableList();
 
-		var sut = new DynamicFeed<IImmutableList<int>>(Load);
+		var sut = new DynamicFeed<IImmutableList<int>?>(Load);
 		var requests = new RequestSource();
 		var ctx = Context.SourceContext.CreateChild(requests);
 
@@ -250,9 +250,9 @@ public class Given_DynamicFeed : FeedTests
 	}
 
 	[TestMethod]
-	public async Task When_PaginatedAsListFeed_Then_ReloadWhenPageRequestedAndGetCollectionChanges()
+	public async Task When_PaginatedAsListFeed_And_PageRequested_Then_Reload_And_ItemsAddedWithCollectionChanges()
 	{
-		async ValueTask<IImmutableList<int>> Load(CancellationToken ct)
+		async ValueTask<IImmutableList<int>?> Load(CancellationToken ct)
 		{
 			var items = await FeedExecution.Current!.GetPaginated<int>(b => b.ByIndex().GetPage(LoadPage));
 
@@ -287,10 +287,10 @@ public class Given_DynamicFeed : FeedTests
 	}
 
 	[TestMethod]
-	public async Task When_PaginatedAsListFeedWithFeedParameter_Then_ReloadWhenPageRequestedOrParameterChangedAndGetCollectionChanges()
+	public async Task When_PaginatedWithFeedParameterAsListFeed_And_PageRequested_Then_Reload_And_ItemsAddedWithCollectionChanges()
 	{
 		var myFeed = State<uint>.Value(this, () => 42);
-		async ValueTask<IImmutableList<int>> Load(CancellationToken ct)
+		async ValueTask<IImmutableList<int>?> Load(CancellationToken ct)
 		{
 			var myValue = await myFeed;
 			var items = await FeedExecution.Current!.GetPaginated<int>(b => b.ByIndex(myValue).GetPage(LoadPage));
@@ -319,7 +319,7 @@ public class Given_DynamicFeed : FeedTests
 				.Changed(Changed.Data & Changed.Pagination, Items.Add(at: 20, Range(42 * 20 + 20, 42)))
 				.Current(Items.Some(Range(42 * 20, 20 + 42)), Error.No, Progress.Final, Pagination.HasMore))
 			.Message(m => m
-				.Changed(Changed.Data & Changed.Pagination, Items.Remove(at: 0, Range(42 * 20, 20)) & Items.Remove(at: 20, Range(43 * 20 + 20, 22)))
+				.Changed(Changed.Data, Items.Remove(at: 0, Range(42 * 20, 20)) & Items.Remove(at: 20, Range(43 * 20 + 20, 22)))
 				.Current(Items.Some(Range(43 * 20, 20)), Error.No, Progress.Final, Pagination.HasMore))
 			.Message(m => m
 				.Changed(Changed.Data & Changed.Pagination, Items.Add(at: 20, Range(43 * 20 + 20, 42)))
@@ -329,11 +329,11 @@ public class Given_DynamicFeed : FeedTests
 
 
 	[TestMethod]
-	public async Task When_PaginatedAsListFeedWithFeedParameter_And_AsyncPage_Then_ReloadWhenPageRequestedOrParameterChangedAndGetCollectionChanges()
+	public async Task When_PaginatedWithFeedParameterAsListFeed_And_PageIsAsync_And_PageRequest_Then_Reload_And_ItemsAddedWithCollectionChanges()
 	{
 		var myFeed = State<uint>.Value(this, () => 42);
 		var pageReady = new TaskCompletionSource();
-		async ValueTask<IImmutableList<int>> Load(CancellationToken ct)
+		async ValueTask<IImmutableList<int>?> Load(CancellationToken ct)
 		{
 			var myValue = await myFeed;
 			var items = await FeedExecution.Current!.GetPaginated<int>(b => b.ByIndex(myValue).GetPage(LoadPage));
@@ -399,6 +399,121 @@ public class Given_DynamicFeed : FeedTests
 				.Current(Items.Some(Range(42 * 20, 20 + 42)), Error.No, Progress.Transient, Pagination.HasMore))
 			.Message(m => m
 				.Changed(Changed.Data & Changed.Progress, Items.Remove(at: 0, Range(42 * 20, 20)) & Items.Remove(at: 20, Range(43 * 20 + 20, 22)))
+				.Current(Items.Some(Range(43 * 20, 20)), Error.No, Progress.Final, Pagination.HasMore))
+
+			// Load more (42)
+			.Message(m => m
+				.Changed(Changed.Pagination)
+				.Current(Items.Some(Range(43 * 20, 20)), Error.No, Progress.Final, Pagination.Loading))
+			.Message(m => m
+				.Changed(Changed.Data & Changed.Pagination, Items.Add(at: 20, Range(43 * 20 + 20, 42)))
+				.Current(Items.Some(Range(43 * 20, 20 + 42)), Error.No, Progress.Final, Pagination.HasMore))
+		);
+	}
+
+
+	[TestMethod]
+	[Ignore]
+	public async Task When_PaginatedWithFeedParameterAsListFeed_And_PageIsAsync_And_PageRequest_And_RefreshRequested_Then_Reload_And_ItemsAddedWithCollectionChanges()
+	{
+		var myFeed = State<uint>.Value(this, () => 42);
+		var pageReady = new TaskCompletionSource();
+		async ValueTask<IImmutableList<int>?> Load(CancellationToken ct)
+		{
+			FeedExecution.Current!.EnableRefresh();
+
+			var myValue = await myFeed;
+			var items = await FeedExecution.Current!.GetPaginated<int>(b => b.ByIndex(myValue).GetPage(LoadPage));
+
+			return items;
+		}
+
+		async ValueTask<IImmutableList<int>> LoadPage(PageRequest page, CancellationToken ct)
+		{
+			await pageReady.Task;
+			return Range((int)page.Index * 20, (int)(page.DesiredSize ?? 20)).ToImmutableList();
+		}
+
+		var sut = new DynamicFeed<IImmutableList<int>>(Load).AsListFeed();
+		var requests = new RequestSource();
+		var ctx = Context.SourceContext.CreateChild(requests);
+
+		var result = sut.Record(ctx);
+
+		await result.WaitForMessages(1);
+		Interlocked.Exchange(ref pageReady, new()).SetResult();
+
+		await result.WaitForMessages(2);
+		requests.RequestMoreItems(42);
+
+		await result.WaitForMessages(3);
+		Interlocked.Exchange(ref pageReady, new()).SetResult();
+
+		await result.WaitForMessages(4);
+		await myFeed.Set(43, CT);
+
+		await result.WaitForMessages(5);
+		Interlocked.Exchange(ref pageReady, new()).SetResult();
+
+		await result.WaitForMessages(6);
+		requests.RequestMoreItems(42);
+
+		await result.WaitForMessages(7);
+		Interlocked.Exchange(ref pageReady, new()).SetResult();
+
+		await result.WaitForMessages(8);
+		requests.RequestRefresh();
+
+		await result.WaitForMessages(9);
+		Interlocked.Exchange(ref pageReady, new()).SetResult();
+
+		await result.WaitForMessages(10);
+		requests.RequestMoreItems(42);
+
+		await result.WaitForMessages(11);
+		Interlocked.Exchange(ref pageReady, new()).SetResult();
+
+		await result.WaitForMessages(12);
+
+		await result.Should().BeAsync(b => b
+			// Initial load
+			.Message(m => m
+				.Changed(Changed.Progress)
+				.Current(Data.Undefined, Error.No, Progress.Transient))
+			.Message(m => m
+				.Changed(Changed.Data & Changed.Pagination & Changed.Progress, Items.Reset(Range(42 * 20, 20)))
+				.Current(Items.Some(Range(42 * 20, 20)), Error.No, Progress.Final, Pagination.HasMore))
+
+			// Load more (42)
+			.Message(m => m
+				.Changed(Changed.Pagination)
+				.Current(Items.Some(Range(42 * 20, 20)), Error.No, Progress.Final, Pagination.Loading))
+			.Message(m => m
+				.Changed(Changed.Data & Changed.Pagination, Items.Add(at: 20, Range(42 * 20 + 20, 42)))
+				.Current(Items.Some(Range(42 * 20, 20 + 42)), Error.No, Progress.Final, Pagination.HasMore))
+
+			// Parameter change (43)
+			.Message(m => m
+				.Changed(Changed.Progress)
+				.Current(Items.Some(Range(42 * 20, 20 + 42)), Error.No, Progress.Transient, Pagination.HasMore))
+			.Message(m => m
+				.Changed(Changed.Data & Changed.Progress, Items.Remove(at: 0, Range(42 * 20, 20)) & Items.Remove(at: 20, Range(43 * 20 + 20, 22)))
+				.Current(Items.Some(Range(43 * 20, 20)), Error.No, Progress.Final, Pagination.HasMore))
+
+			// Load more (42)
+			.Message(m => m
+				.Changed(Changed.Pagination)
+				.Current(Items.Some(Range(43 * 20, 20)), Error.No, Progress.Final, Pagination.Loading))
+			.Message(m => m
+				.Changed(Changed.Data & Changed.Pagination, Items.Add(at: 20, Range(43 * 20 + 20, 42)))
+				.Current(Items.Some(Range(43 * 20, 20 + 42)), Error.No, Progress.Final, Pagination.HasMore))
+
+			// Refresh
+			.Message(m => m
+				.Changed(Changed.Progress)
+				.Current(Items.Some(Range(43 * 20, 20 + 42)), Error.No, Progress.Transient, Pagination.HasMore))
+			.Message(m => m
+				.Changed(Changed.Data & Changed.Progress, Items.Remove(at: 20, Range(43 * 20 + 20, 42)))
 				.Current(Items.Some(Range(43 * 20, 20)), Error.No, Progress.Final, Pagination.HasMore))
 
 			// Load more (42)
