@@ -1,0 +1,40 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	<Import Project="..\tfms-ui-maui.props" />
+	
+	<PropertyGroup>
+		<UseMaui>true</UseMaui>
+		<RootNamespace>Uno.Extensions.Maui</RootNamespace>
+		<NoWarn>$(NoWarn);NU5104;NU5048;NU1009</NoWarn>
+		<Description>Extensions to embed .NET MAUI controls within your Uno app.</Description>
+		<!--Temporary disable missing XML doc until fixed in the whole package-->
+		<WarningsNotAsErrors>$(WarningsNotAsErrors);CS1591</WarningsNotAsErrors>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<Using Remove="Microsoft.Maui.*" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Uno.WinUI" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Uno.Extensions.Hosting.UI\Uno.Extensions.Hosting.WinUI.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Compile Update="Properties\Resources.Designer.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>Resources.resx</DependentUpon>
+		</Compile>
+		<EmbeddedResource Update="Properties\Resources.resx">
+			<Generator>ResXFileCodeGenerator</Generator>
+			<LastGenOutput>Resources.Designer.cs</LastGenOutput>
+		</EmbeddedResource>
+	</ItemGroup>
+
+	<ItemGroup>
+		<Compile Remove="Interop\*.cs" />
+	</ItemGroup>
+</Project>

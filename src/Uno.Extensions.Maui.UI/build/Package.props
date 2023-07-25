@@ -1,0 +1,9 @@
+<Project>
+	<PropertyGroup>
+		<UseMaui>true</UseMaui>
+		<UseMauiAssets>false</UseMauiAssets>
+		<_MauiSkipSdkAutoImport>true</_MauiSkipSdkAutoImport>
+		<EnableDefaultXamlItems>false</EnableDefaultXamlItems>
+		<EnableDefaultMauiItems>false</EnableDefaultMauiItems>
+	</PropertyGroup>
+</Project>

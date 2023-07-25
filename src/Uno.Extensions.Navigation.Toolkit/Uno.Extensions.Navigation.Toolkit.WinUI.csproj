@@ -17,7 +17,7 @@
 	  <None Remove="LinkerDefinition.xml" />
 	</ItemGroup>
 
-	<ItemGroup Condition="'$(_IsWinUI)'=='false'">
+	<ItemGroup>
 		<PackageReference Include="Uno.WinUI" />
 	</ItemGroup>
 	<ItemGroup>
