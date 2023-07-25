@@ -6,7 +6,7 @@ public abstract class WinUIToMauiStyleHandler : IWinUIToMauiStyleHandler
 {
 	public abstract Type TargetType { get; }
 
-	public abstract (Microsoft.Maui.Controls.BindableProperty Property, object? Value)? Process(DependencyProperty property, object value);
+	public abstract MauiToWinUIStyleMapping? Process(DependencyProperty property, object value);
 
 	protected virtual object? ConvertToMauiValue(object value)
 	{
