@@ -1,6 +1,6 @@
 ﻿namespace Uno.Extensions.Maui.Interop;
 
-public interface IWinUIToMauiStyleHandler
+internal interface IWinUIToMauiStyleHandler
 {
 	Type TargetType { get; }
 
