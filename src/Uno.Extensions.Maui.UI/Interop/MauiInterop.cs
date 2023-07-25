@@ -46,7 +46,7 @@ internal static class MauiInterop
 		}
 
 		var tempStyle = new Microsoft.Maui.Controls.Style(targetType);
-		foreach(var setter in  winUIStyle.Setters.OfType<Setter>())
+		foreach (var setter in winUIStyle.Setters.OfType<Setter>())
 		{
 			if (setter.Property is null || setter.Value is null)
 			{
@@ -55,16 +55,17 @@ internal static class MauiInterop
 
 			var handlers = GetHandlers(targetType);
 
-			handlers.ForEach(handler =>
+
+			foreach (var handler in handlers)
 			{
 				var processed = handler.Process(setter.Property, setter.Value);
 				if (processed is null)
 				{
-					return;
+					continue;
 				}
 
-				tempStyle.Setters.Add(new Microsoft.Maui.Controls.Setter { Property = processed.Value.Property, Value = processed.Value.Value });
-			});
+				tempStyle.Setters.Add(new Microsoft.Maui.Controls.Setter { Property = processed.Property, Value = processed.Value });
+			}
 		}
 
 		style = tempStyle;

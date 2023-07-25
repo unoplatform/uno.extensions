@@ -26,4 +26,4 @@ global using NativeMauiColor = Microsoft.Maui.Graphics.Color;
 global using MauiResourceDictionary = Microsoft.Maui.Controls.ResourceDictionary;
 global using IMauiConverter = Microsoft.Maui.Controls.IValueConverter;
 global using IWinUIConverter = Microsoft.UI.Xaml.Data.IValueConverter;
-
+global using Uno.Extensions.Maui.Models;

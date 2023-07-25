@@ -4,5 +4,5 @@ public interface IWinUIToMauiStyleHandler
 {
 	Type TargetType { get; }
 
-	(Microsoft.Maui.Controls.BindableProperty Property, object? Value)? Process(DependencyProperty property, object value);
+	MauiToWinUIStyleMapping? Process(DependencyProperty property, object value);
 }
