@@ -23,7 +23,7 @@
 				SemanticProperties.Description="Cute dot net bot waving hi to you!"
 				Source="dotnet_bot.png" />
 
-			<telerik:RadSignaturePad HeightRequest="300" />
+			<!--<telerik:RadSignaturePad HeightRequest="300" />
 			<telerik:RadBusyIndicator
 				x:Name="BusyIndicator"
 				AnimationContentColor="#674bb2"
@@ -34,7 +34,7 @@
 				<telerik:RadBusyIndicator.Content>
 					<Label Text="This is the content of the RadBusyIndicator control displayed when the indicator is not busy." TextColor="Black" />
 				</telerik:RadBusyIndicator.Content>
-			</telerik:RadBusyIndicator>
+			</telerik:RadBusyIndicator>-->
 			<Label
 				FontSize="32"
 				HorizontalOptions="Center"
