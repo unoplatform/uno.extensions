@@ -120,21 +120,10 @@ public partial class MauiContent : ContentControl
 
 	void OnDataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
 	{
-		if (DataContext is null)
-		{
-			System.Console.WriteLine("MauiContent.DataContext is null");
-		}
-		else
-		{
-			System.Console.WriteLine($"MauiContent.DataContext is {DataContext.GetType().FullName}");
-		}
-
-
 		if (_host is not null && _host.BindingContext != DataContext)
 		{
 			_host.BindingContext = DataContext;
 			View.BindingContext = DataContext;
 		}
-		//DataContextChanged -= OnDataContextChanged;
 	}
 }

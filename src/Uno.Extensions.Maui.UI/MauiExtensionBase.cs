@@ -1,7 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Reflection;
 using Microsoft.Maui.Controls;
-using UnoMusicApp.Helpers;
 
 namespace Uno.Extensions.Maui;
 
@@ -21,7 +20,6 @@ public abstract class MauiExtensionBase : MarkupExtension
 	protected sealed override object? ProvideValue(IXamlServiceProvider serviceProvider)
 	{
 		var provideValueTarget = (IProvideValueTarget)serviceProvider.GetService(typeof(IProvideValueTarget));
-		ThreadHelpers.WhatThreadAmI();
 
 		if (provideValueTarget?.TargetObject is View view && provideValueTarget.TargetProperty is ProvideValueTargetProperty targetProperty)
 		{
