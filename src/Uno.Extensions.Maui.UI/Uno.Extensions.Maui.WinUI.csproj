@@ -14,7 +14,7 @@
 		<Using Remove="Microsoft.Maui.*" />
 	</ItemGroup>
 
-	<ItemGroup Condition="'$(_IsWinUI)'=='false'">
+	<ItemGroup>
 		<PackageReference Include="Uno.WinUI" />
 	</ItemGroup>
 

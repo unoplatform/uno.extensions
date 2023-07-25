@@ -11,7 +11,7 @@
 		<DefineConstants>$(DefineConstants);WINUI</DefineConstants>
 	</PropertyGroup>
 
-	<ItemGroup Condition="'$(_IsWinUI)'=='false'">
+	<ItemGroup>
 		<PackageReference Include="Uno.WinUI" />
 	</ItemGroup>
 
