@@ -2,7 +2,7 @@
 
 namespace Uno.Extensions.Maui.Interop;
 
-public abstract class WinUIToMauiStyleHandler : IWinUIToMauiStyleHandler
+internal abstract class WinUIToMauiStyleHandler : IWinUIToMauiStyleHandler
 {
 	public abstract Type TargetType { get; }
 
