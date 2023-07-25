@@ -9,7 +9,7 @@
 		<AssemblyName>Uno.Extensions.Logging.WinUI</AssemblyName>
 	</PropertyGroup>
 
-	<ItemGroup Condition="'$(_IsWinUI)'=='false'">
+	<ItemGroup>
 		<PackageReference Include="Uno.WinUI" />
 	</ItemGroup>
 

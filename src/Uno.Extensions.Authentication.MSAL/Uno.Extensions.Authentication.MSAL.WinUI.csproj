@@ -48,7 +48,7 @@
 		<TargetPlatformVersion>15.4</TargetPlatformVersion>
 	</PropertyGroup>
 
-	<ItemGroup  Condition="'$(_IsWinUI)'=='false'">
+	<ItemGroup >
 		<PackageReference Include="Uno.WinUI" />
 	</ItemGroup>
 

@@ -21,7 +21,7 @@
 		<PackageReference Include="Uno.Extensions.Logging.OSLog" />
 	</ItemGroup>
 
-	<ItemGroup Condition="'$(_IsWinUI)'=='false'">
+	<ItemGroup>
 		<PackageReference Include="Uno.WinUI" />
 	</ItemGroup>
 
