@@ -37,6 +37,7 @@
       "Uno.Extensions.Logging\\Uno.Extensions.Logging.WinUI.Skia.csproj",
       "Uno.Extensions.Logging\\Uno.Extensions.Logging.WinUI.Wasm.csproj",
       "Uno.Extensions.Logging\\Uno.Extensions.Logging.WinUI.csproj",
+      "Uno.Extensions.Maui.UI\\Uno.Extensions.Maui.WinUI.csproj",
       "Uno.Extensions.Navigation.Generators\\Uno.Extensions.Navigation.Generators.csproj",
       "Uno.Extensions.Navigation.Toolkit\\Uno.Extensions.Navigation.Toolkit.UI.csproj",
       "Uno.Extensions.Navigation.Toolkit\\Uno.Extensions.Navigation.Toolkit.WinUI.csproj",
@@ -60,8 +61,7 @@
       "Uno.Extensions.Toolkit.UI\\Uno.Extensions.Toolkit.WinUI.csproj",
       "Uno.Extensions.Toolkit\\Uno.Extensions.Toolkit.csproj",
       "Uno.Extensions.Validation.Fluent\\Uno.Extensions.Validation.Fluent.csproj",
-      "Uno.Extensions.Validation\\Uno.Extensions.Validation.csproj",
-      "Uno.Extensions\\Uno.Extensions.csproj"
+      "Uno.Extensions.Validation\\Uno.Extensions.Validation.csproj"
     ]
   }
 }

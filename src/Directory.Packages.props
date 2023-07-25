@@ -59,16 +59,21 @@
 		<PackageVersion Include="Uno.Toolkit" Version="3.1.0-dev.24" />
 		<PackageVersion Include="Uno.Toolkit.UI" Version="3.1.0-dev.24" />
 		<PackageVersion Include="Uno.Toolkit.WinUI" Version="3.1.0-dev.24" />
-		<PackageVersion Include="Uno.UI" Version="5.0.0-dev.1380" />
-		<PackageVersion Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="5.0.0-dev.1380"/>
-		<PackageVersion Include="Uno.UI.MSAL"  Version="5.0.0-dev.1380" />
-		<PackageVersion Include="Uno.UI.Runtime.WebAssembly" Version="5.0.0-dev.1380" />
+		<PackageVersion Include="Uno.UI" Version="5.0.0-dev.1610" />
+		<PackageVersion Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="5.0.0-dev.1610"/>
+		<PackageVersion Include="Uno.UI.MSAL"  Version="5.0.0-dev.1610" />
+		<PackageVersion Include="Uno.UI.Runtime.WebAssembly" Version="5.0.0-dev.1610" />
 		<PackageVersion Include="Uno.UI.RuntimeTests.Engine" Version="0.14.0-dev.54" />
-		<PackageVersion Include="Uno.WinUI" Version="5.0.0-dev.1380" />
+		<PackageVersion Include="Uno.WinUI" Version="5.0.0-dev.1610" />
 		<PackageVersion Include="Uno.WinUI.Markup" Version="4.6.0-dev.16" />
+<<<<<<< HEAD
 		<PackageVersion Include="Uno.WinUI.MSAL" Version="5.0.0-dev.1380" />
 		<PackageVersion Include="Uno.WinUI.Runtime.WebAssembly" Version="5.0.0-dev.1380" />
 >>>>>>> e232b04b (fix: fixed runtime crash on mobile targets)
+=======
+		<PackageVersion Include="Uno.WinUI.MSAL" Version="5.0.0-dev.1610" />
+		<PackageVersion Include="Uno.WinUI.Runtime.WebAssembly" Version="5.0.0-dev.1610" />
+>>>>>>> 44da710f (chore(deps): updating uno)
 		<PackageVersion Include="coverlet.collector" Version="3.1.2" />
 		<PackageVersion Include="xunit" Version="2.4.1" />
 		<PackageVersion Include="xunit.runner.visualstudio" Version="2.4.1" />
