@@ -53,11 +53,6 @@ internal abstract class FeedSession : IAsyncDisposable
 	/// <returns></returns>
 	public abstract void Execute(ExecuteRequest request);
 
-	/// <summary>
-	/// Allows a ****FeedDependency**** to add a parent message.
-	/// </summary>
-	internal abstract void UpdateParent(ISignal<IMessage> feed, IMessage message);
-
 	#region Dependencies support (including parent feeds dependencies)
 	private ImmutableList<IDependency> _dependencies = ImmutableList<IDependency>.Empty;
 	private FeedDependenciesStore? _feedDependencies;
@@ -65,6 +60,7 @@ internal abstract class FeedSession : IAsyncDisposable
 	/// <summary>
 	/// The feed on which the <see cref="Owner"/> is dependent upon.
 	/// </summary>
+	/// <remarks>FeedDependency managed by that store are also present in the <see cref="Dependencies"/> collection.</remarks>
 	internal FeedDependenciesStore Feeds
 	{
 		get
@@ -82,6 +78,11 @@ internal abstract class FeedSession : IAsyncDisposable
 	/// Gets the list of the currently registered dependencies.
 	/// </summary>
 	public IImmutableList<IDependency> Dependencies => _dependencies;
+
+	/// <summary>
+	/// Allows the FeedDependenciesStore to notify that the parent message has been updated.
+	/// </summary>
+	internal abstract void OnParentUpdated();
 
 	/// <summary>
 	/// Registers a dependency for the current session.
@@ -182,6 +183,7 @@ internal abstract class FeedSession : IAsyncDisposable
 	{
 		_isDisposed = true;
 		_dependencies = ImmutableList<IDependency>.Empty;
+		Feeds.Dispose();
 		lock (_sharedInstances)
 		{
 			_sharedInstances.Clear(); // TODO: Dispose instances?

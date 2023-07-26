@@ -1,12 +1,8 @@
-﻿#nullable enable
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Threading;
 using Uno.Extensions.Reactive.Core;
-using Uno.Extensions.Reactive.Utils;
 
 namespace Uno.Extensions.Reactive.Sources;
 

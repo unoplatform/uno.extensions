@@ -77,7 +77,7 @@ internal sealed class FeedDependency<T> : FeedDependency, IDependency
 		{
 			Debug.Assert(_current.Value.execution == execution);
 
-			_session.Feeds.CleanupCache(this, current.message); // Avoids leak and implicitly disables the touched axis tracking
+			_session.Feeds.Cleanup(this, current.message); // Avoids leak and implicitly disables the touched axis tracking
 			_current = null; // Disable the touched axis tracking
 
 			current.updateLock.Dispose();
@@ -160,7 +160,7 @@ internal sealed class FeedDependency<T> : FeedDependency, IDependency
 			_hasLast.TrySetResult(default);
 
 			// Note: Even if unregistered, this FeedDependency might still be used to replay the last/final value which will remain as current!
-			_session.Feeds.Cleanup(this);
+			_session.Feeds.Remove(this);
 		}
 	}
 

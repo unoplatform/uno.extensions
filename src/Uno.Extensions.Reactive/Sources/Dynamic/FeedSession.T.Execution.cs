@@ -141,7 +141,7 @@ internal sealed partial class FeedSession<TResult>
 						return; // If a new execution has been started, there is no need to commit our transaction, it has been disposed.
 					}
 
-					var parentMsg = _session.GetParent();
+					var parentMsg = _session.Feeds.GetParent();
 					var updates = Interlocked.Exchange(ref _updatesQueue, null);
 
 					message.Commit(
@@ -201,7 +201,7 @@ internal sealed partial class FeedSession<TResult>
 				// Note: We also provide the parentMsg which will be applied
 				if (!task.IsCompleted)
 				{
-					var parentMsg = _session.GetParent();
+					var parentMsg = _session.Feeds.GetParent();
 					var updates = Interlocked.Exchange(ref _updatesQueue, null);
 
 					message.Update(
@@ -234,7 +234,7 @@ internal sealed partial class FeedSession<TResult>
 						return; // If a new execution has been started, there is no need to commit our transaction, it has been disposed.
 					}
 
-					var parentMsg = _session.GetParent();
+					var parentMsg = _session.Feeds.GetParent();
 					var updates = Interlocked.Exchange(ref _updatesQueue, null);
 
 					message.Commit(
@@ -266,7 +266,7 @@ internal sealed partial class FeedSession<TResult>
 						return;
 					}
 
-					var parentMsg = _session.GetParent();
+					var parentMsg = _session.Feeds.GetParent();
 					var updates = Interlocked.Exchange(ref _updatesQueue, null);
 
 					message.Commit(

@@ -77,27 +77,12 @@ internal sealed partial class FeedSession<TResult> : FeedSession, IAsyncEnumerab
 	}
 	#endregion
 
-	#region Parent message support (i.e. FeedDependency) (Should this be merged in the FeedDependenciesStore?)
-	private readonly Dictionary<ISignal<IMessage>, IMessage> _parentMessages = new();
-	private DynamicParentMessage _aggregatedParentMessage = DynamicParentMessage.Initial;
-	private bool _isAggregatedParentMessageValid = true;
-
-	internal override void UpdateParent(ISignal<IMessage> feed, IMessage message)
+	#region Parent message support (i.e. FeedDependency)
+	internal override void OnParentUpdated()
 	{
 		if (_isDisposed)
 		{
 			return;
-		}
-
-		if (_parentMessages.TryGetValue(feed, out var previous) && previous == message)
-		{
-			return;
-		}
-
-		lock (_parentMessages)
-		{
-			_isAggregatedParentMessageValid = false;
-			_parentMessages[feed] = message;
 		}
 
 		// Note: No needs to lock here to protect against _currentExecution being replaced,
@@ -109,32 +94,14 @@ internal sealed partial class FeedSession<TResult> : FeedSession, IAsyncEnumerab
 			{
 				if (current.State == Execution.States.Loading)
 				{
-					return; // Nothing to do, the update will be processed when the main load action pushes a messages.
+					return;
 				}
 			}
 		}
 
-		_message.Update(static (m, p) => m.With(p), GetParent(), default);
+		_message.Update(static (m, p) => m.With(p), Feeds.GetParent(), default);
 	}
 
-	private IMessage GetParent()
-	{
-		lock (_parentMessages)
-		{
-			if (_isDisposed)
-			{
-				throw new ObjectDisposedException(nameof(FeedSession), $"Cannot get parent message on a completed session.");
-			}
-
-			if (!_isAggregatedParentMessageValid)
-			{
-				_aggregatedParentMessage = _aggregatedParentMessage.With(_parentMessages.Values);
-				_isAggregatedParentMessageValid = true;
-			}
-
-			return _aggregatedParentMessage;
-		}
-	}
 	#endregion
 
 	/// <inheritdoc />
@@ -164,10 +131,5 @@ internal sealed partial class FeedSession<TResult> : FeedSession, IAsyncEnumerab
 		_messages.Complete(); // Prevent any new message to be published
 
 		await base.DisposeAsync().ConfigureAwait(false);
-
-		lock (_parentMessages)
-		{
-			_parentMessages.Clear();
-		}
 	}
 }
