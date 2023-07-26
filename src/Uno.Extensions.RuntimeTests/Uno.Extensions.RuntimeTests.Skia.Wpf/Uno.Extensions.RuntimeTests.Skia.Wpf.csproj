@@ -26,17 +26,10 @@
 	<ItemGroup>
 		<PackageReference Update="Microsoft.Net.Compilers.Toolset" Version="4.2.0" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Console" Version="6.0.0" />
-<<<<<<< HEAD
 		<PackageReference Include="Uno.WinUI.Skia.Wpf" Version="4.9.20" />
 		<PackageReference Include="Uno.WinUI.RemoteControl" Version="4.9.20" Condition="'$(Configuration)'=='Debug'" />
 		<PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="4.9.20" />
 		<PackageReference Include="Uno.WinUI.Lottie" Version="4.9.20" />
-=======
-		<PackageReference Include="Uno.WinUI.Skia.Wpf" Version="5.0.0-dev.1610" />
-		<PackageReference Include="Uno.WinUI.RemoteControl" Version="5.0.0-dev.1610" Condition="'$(Configuration)'=='Debug'" />
-		<PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="5.0.0-dev.1610" />
-		<PackageReference Include="Uno.WinUI.Lottie" Version="5.0.0-dev.1610" />
->>>>>>> 44da710f (chore(deps): updating uno)
 		<PackageReference Include="SkiaSharp.Skottie" Version="2.88.3" />
 		<PackageReference Include="SkiaSharp.Views.Uno.WinUI" Version="2.88.3" />
 	</ItemGroup>
