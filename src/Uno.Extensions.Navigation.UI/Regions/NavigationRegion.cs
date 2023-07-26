@@ -27,9 +27,7 @@ public sealed class NavigationRegion : IRegion
 		}
 	}
 
-#if DEBUG
 	private INavigator? Navigator => this.Navigator();
-#endif
 
 	public IServiceProvider? Services
 	{
