@@ -17,7 +17,7 @@ steps:
       packageAuthor: 'nventive,Uno Platform'
       nugetVersion: dev
       useVersionOverrides: true
-      versionOverridesFile: 'build/4x-overrides.json'
+      versionOverridesFile: 'build/uno-4x-overrides.json'
 
   - powershell: |
       dotnet tool uninstall nventive.nuget.updater.tool --tool-path $(Agent.TempDirectory)
