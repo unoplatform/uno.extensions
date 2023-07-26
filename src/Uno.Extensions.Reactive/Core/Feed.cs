@@ -105,6 +105,14 @@ public static partial class Feed
 		AsyncFunc<TSource, TResult> selector)
 		=> AttachedProperty.GetOrCreate(source, selector, static (src, s) => new SelectAsyncFeed<TSource, TResult>(src, s));
 
+	/// <summary>
+	/// Projects each value of a source feed into a paginated collection.
+	/// </summary>
+	/// <typeparam name="TSource">Type of the value of the feed.</typeparam>
+	/// <typeparam name="TResult">Type of the value of the items in resulting list feed.</typeparam>
+	/// <param name="source">The source feed to project.</param>
+	/// <param name="getPage">The async method to load a page of items.</param>
+	/// <returns>A paginated list feed.</returns>
 	public static IListFeed<TResult> SelectPaginatedAsync<TSource, TResult>(
 		this IFeed<TSource> source,
 		AsyncFunc<TSource, PageRequest, IImmutableList<TResult>> getPage)
