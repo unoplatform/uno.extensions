@@ -1,7 +1,4 @@
-﻿using Microsoft.Maui.Controls;
-using ContentPropertyAttribute = Microsoft.UI.Xaml.Markup.ContentPropertyAttribute;
-
-namespace Uno.Extensions.Maui;
+﻿namespace Uno.Extensions.Maui;
 
 /// <summary>
 /// A helper class used to set the value of a view's property by its key.
