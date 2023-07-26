@@ -1,24 +1,20 @@
-﻿using Microsoft.UI.Xaml.Media;
-using Uno.Extensions.Maui.Internals;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-
-namespace Uno.Extensions.Maui;
+﻿namespace Uno.Extensions.Maui;
 
 /// <summary>
 /// ContentControl implementation that hosts a Maui view.
 /// </summary>
 [ContentProperty(Name = nameof(View))]
-public partial class MauiContent : ContentControl
+public partial class UnoMauiHost : ContentControl
 {
 	/// <summary>
 	/// The View property represents the <see cref="View"/> that will be used as content.
 	/// </summary>
 	public static readonly DependencyProperty ViewProperty =
-		DependencyProperty.Register(nameof(View), typeof(View), typeof(MauiContent), new PropertyMetadata(null, OnViewChanged));
+		DependencyProperty.Register(nameof(View), typeof(View), typeof(UnoMauiHost), new PropertyMetadata(null, OnViewChanged));
 
 	private static void OnViewChanged(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs args)
 	{
-		if (args.NewValue is null || args.NewValue is not View view || dependencyObject is not MauiContent embeddedView)
+		if (args.NewValue is null || args.NewValue is not View view || dependencyObject is not UnoMauiHost embeddedView)
 		{
 			return;
 		}
@@ -48,16 +44,16 @@ public partial class MauiContent : ContentControl
 	}
 
 	private static ILogger GetLogger() =>
-		MauiEmbedding.MauiContext.Services.GetRequiredService<ILogger<MauiContent>>();
+		MauiEmbedding.MauiContext.Services.GetRequiredService<ILogger<UnoMauiHost>>();
 
-	private UnoHost? _host;
+	private MauiContentHost? _host;
 
 	private readonly IMauiContext MauiContext;
 
 	/// <summary>
 	/// Initializes a new instance of the MauiContent class.
 	/// </summary>
-	public MauiContent()
+	public UnoMauiHost()
 	{
 		MauiContext = MauiEmbedding.MauiContext;
 		Loading += OnLoading;
@@ -108,7 +104,7 @@ public partial class MauiContent : ContentControl
 			treeElement = VisualTreeHelper.GetParent(treeElement);
 		}
 
-		_host = new UnoHost(resources)
+		_host = new MauiContentHost(resources)
 		{
 			BindingContext = DataContext
 		};

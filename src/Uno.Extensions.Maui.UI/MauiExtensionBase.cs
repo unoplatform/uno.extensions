@@ -1,8 +1,4 @@
-﻿using System.Diagnostics;
-using System.Reflection;
-using Microsoft.Maui.Controls;
-
-namespace Uno.Extensions.Maui;
+﻿namespace Uno.Extensions.Maui;
 
 /// <summary>
 /// Abstract class for extending <see cref="MarkupExtension"/> in the context of <see cref="Microsoft.Maui.Controls"/>.

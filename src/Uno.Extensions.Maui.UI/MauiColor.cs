@@ -1,12 +1,10 @@
-﻿using Microsoft.Maui.Controls;
-
-namespace Uno.Extensions.Maui;
+﻿namespace Uno.Extensions.Maui;
 
 
 /// <summary>
-/// This class represents a markup extension that converts a string representation of a color into a NativeMauiColor object.
+/// This class represents a markup extension that converts a string representation of a color into a MauiGraphicsColor object.
 /// </summary>
-[MarkupExtensionReturnType(ReturnType = typeof(NativeMauiColor))]
+[MarkupExtensionReturnType(ReturnType = typeof(MauiGraphicsColor))]
 public class MauiColor : MauiExtensionBase
 {
 	/// <summary>
@@ -17,7 +15,7 @@ public class MauiColor : MauiExtensionBase
 	/// <inheritdoc/>
 	protected override void SetValue(View view, Type viewType, Type propertyType, BindableProperty property, string propertyName)
 	{
-		if (string.IsNullOrEmpty(Value) || !NativeMauiColor.TryParse(Value, out var color))
+		if (string.IsNullOrEmpty(Value) || !MauiGraphicsColor.TryParse(Value, out var color))
 		{
 			var canLog = Logger.IsEnabled(LogLevel.Warning);
 			if (string.IsNullOrEmpty(Value) && canLog)
