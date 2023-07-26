@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using Uno.Extensions.Reactive.Core;
 using Uno.Extensions.Reactive.Operators;
 
@@ -12,9 +14,11 @@ namespace Uno.Extensions.Reactive.Sources;
 /// Represents an enumeration session of a <see cref="DynamicFeed{T}"/> for a given <see cref="SourceContext"/>.
 /// This is created each time you <see cref="ISignal{T}.GetSource"/> of a DynamicFeed.
 /// </summary>
-internal abstract class FeedSession // Interface that is a concrete class as it must not be implemented by devs
+internal abstract class FeedSession : IAsyncDisposable
 {
 	// Debug: event EventHandler<FeedAsyncExecution>? ExecutionStarted;
+
+	private protected bool _isDisposed;
 
 	private protected FeedSession(ISignal<IMessage> owningSignal, SourceContext context, CancellationToken ct)
 	{
@@ -84,7 +88,14 @@ internal abstract class FeedSession // Interface that is a concrete class as it 
 	/// </summary>
 	/// <param name="dependency">A dependency that can trigger a <see cref="Execute"/>.</param>
 	public void RegisterDependency(IDependency dependency)
-		=> ImmutableInterlocked.Update(ref _dependencies, static (list, item) => list.Add(item), dependency);
+	{
+		if (_isDisposed)
+		{
+			return;
+		}
+
+		ImmutableInterlocked.Update(ref _dependencies, static (list, item) => list.Add(item), dependency);
+	}
 
 	/// <summary>
 	/// Un-registers a dependency from the current session.
@@ -92,7 +103,17 @@ internal abstract class FeedSession // Interface that is a concrete class as it 
 	/// <param name="dependency">The dependency to remove.</param>
 	/// <remarks>Removing the last dependency will cause teh session to complete (or at the end of the current execution).</remarks>
 	public void UnRegisterDependency(IDependency dependency)
-		=> ImmutableInterlocked.Update(ref _dependencies, static (list, item) => list.Remove(item), dependency);
+	{
+		if (_isDisposed)
+		{
+			return;
+		}
+
+		if (ImmutableInterlocked.Update(ref _dependencies, static (list, item) => list.Remove(item), dependency) && _dependencies is { Count: 0 })
+		{
+			TryComplete();
+		}
+	}
 	#endregion
 
 	#region Session lifetime objects (extensions helper, no behavior impact)
@@ -111,6 +132,11 @@ internal abstract class FeedSession // Interface that is a concrete class as it 
 	{
 		lock (_sharedInstances)
 		{
+			if (_isDisposed)
+			{
+				throw new ObjectDisposedException(nameof(FeedSession), $"Cannot set shared instance of {typeof(TValue)} on a completed session.");
+			}
+
 			_sharedInstances[key] = value;
 		}
 	}
@@ -130,6 +156,11 @@ internal abstract class FeedSession // Interface that is a concrete class as it 
 	{
 		lock (_sharedInstances)
 		{
+			if (_isDisposed)
+			{
+				throw new ObjectDisposedException(nameof(FeedSession), $"Cannot get shared instance of {typeof(TValue)} on a completed session.");
+			}
+
 			if (!_sharedInstances.TryGetValue(key, out var value))
 			{
 				_sharedInstances[key] = value = factory(this, key, args);
@@ -140,4 +171,20 @@ internal abstract class FeedSession // Interface that is a concrete class as it 
 	} 
 	#endregion
 
+	/// <summary>
+	/// Completes the current session (i.e. complete the underlying AsyncEnumerable).
+	/// </summary>
+	/// <remarks>This is invoked at the end of an execution if there is no pending request AND when we remove the last dependency.</remarks>
+	protected abstract void TryComplete();
+
+	/// <inheritdoc />
+	public virtual async ValueTask DisposeAsync()
+	{
+		_isDisposed = true;
+		_dependencies = ImmutableList<IDependency>.Empty;
+		lock (_sharedInstances)
+		{
+			_sharedInstances.Clear(); // TODO: Dispose instances?
+		}
+	}
 }

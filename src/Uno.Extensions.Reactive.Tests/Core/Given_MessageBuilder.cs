@@ -111,8 +111,8 @@ public class Given_MessageBuilder : FeedTests
 		// Note: Even if we don't set any axis in Update, the Current message should be updated only by the fact that the transient axis has been automatically removed
 		// Note 2: No needs to Commit the transaction, manager.Current should already reflect changes
 		MessageManager<object, object>.UpdateTransaction.MessageBuilder builder = default;
-		using var transaction = manager.BeginUpdate(CT);
-		transaction.Update(current => builder = current.With());
+		using var transaction = manager.BeginUpdate();
+		transaction.Update(current => builder = current.With(), CT);
 		var updated = manager.Current;
 
 		original.Current[myAxis].IsSet.Should().BeTrue();
@@ -132,8 +132,8 @@ public class Given_MessageBuilder : FeedTests
 		// Note: Even if we don't set any axis in Update, the Current message should be updated only by the fact that the transient axis has been automatically removed
 		// Note 2: No needs to Commit the transaction, manager.Current should already reflect changes
 		MessageManager<object, object>.UpdateTransaction.MessageBuilder builder = default;
-		using var transaction = manager.BeginUpdate(CT);
-		transaction.Update(current => builder = current.With().Set(myAxis2, new object()));
+		using var transaction = manager.BeginUpdate();
+		transaction.Update(current => builder = current.With().Set(myAxis2, new object()), CT);
 		var updated = manager.Current;
 
 		original.Current[myAxis].IsSet.Should().BeTrue();
@@ -153,8 +153,8 @@ public class Given_MessageBuilder : FeedTests
 		// Note: Even if we don't set any axis in Update, the Current message should be updated only by the fact that the transient axis has been automatically removed
 		// Note 2: No needs to Commit the transaction, manager.Current should already reflect changes
 		MessageManager<object, object>.UpdateTransaction.MessageBuilder builder = default;
-		using var transaction = manager.BeginUpdate(CT);
-		transaction.Update(current => builder = current.With());
+		using var transaction = manager.BeginUpdate();
+		transaction.Update(current => builder = current.With(), CT);
 		var updated = manager.Current;
 
 		original.Current[myAxis].IsSet.Should().BeTrue();
@@ -174,8 +174,8 @@ public class Given_MessageBuilder : FeedTests
 		// Note: Even if we don't set any axis in Update, the Current message should be updated only by the fact that the transient axis has been automatically removed
 		// Note 2: No needs to Commit the transaction, manager.Current should already reflect changes
 		MessageManager<object, object>.UpdateTransaction.MessageBuilder builder = default;
-		using var transaction = manager.BeginUpdate(CT);
-		transaction.Update(current => builder = current.With());
+		using var transaction = manager.BeginUpdate();
+		transaction.Update(current => builder = current.With(), CT);
 		var updated = manager.Current;
 
 		original.Current[myAxis].IsSet.Should().BeTrue();

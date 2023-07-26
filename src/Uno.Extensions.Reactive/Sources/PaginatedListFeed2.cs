@@ -49,8 +49,8 @@ internal class PaginatedListFeed<TCursor, TItem> : IListFeed<TItem>
 				// The Progress is set to indeterminate only for the first page as we don't want the
 				// FeedView to go in loading state when we are loading more items.
 				using var message = isFirstPage
-					? messages.BeginUpdate(ct, preservePendingAxes: MessageAxis.Progress)
-					: messages.BeginUpdate(ct, preservePendingAxes: MessageAxis.Pagination);
+					? messages.BeginUpdate(preservePendingAxes: MessageAxis.Progress)
+					: messages.BeginUpdate(preservePendingAxes: MessageAxis.Pagination);
 				using var _ = context.AsCurrent();
 
 				(cursor, pageInfo) = await LoadPage(
@@ -136,24 +136,26 @@ internal class PaginatedListFeed<TCursor, TItem> : IListFeed<TItem>
 			// Note: We also provide the parentMsg which will be applied
 			if (!pageTask.IsCompleted)
 			{
-				message.Update(msg =>
-				{
-					var result = msg
-						.With()
-						.Refreshed(refreshInfo)
-						.Paginated(pageInfo);
-
-					if (isFirstPage)
+				message.Update(
+					msg =>
 					{
-						result.SetTransient(MessageAxis.Progress, MessageAxis.Progress.ToMessageValue(true));
-					}
-					else
-					{
-						result.SetTransient(MessageAxis.Pagination, MessageAxis.Pagination.ToMessageValue(pageInfo with { IsLoadingMoreItems = true }));
-					}
+						var result = msg
+							.With()
+							.Refreshed(refreshInfo)
+							.Paginated(pageInfo);
 
-					return result;
-				});
+						if (isFirstPage)
+						{
+							result.SetTransient(MessageAxis.Progress, MessageAxis.Progress.ToMessageValue(true));
+						}
+						else
+						{
+							result.SetTransient(MessageAxis.Pagination, MessageAxis.Pagination.ToMessageValue(pageInfo with { IsLoadingMoreItems = true }));
+						}
+
+						return result;
+					},
+					ct);
 			}
 		}
 

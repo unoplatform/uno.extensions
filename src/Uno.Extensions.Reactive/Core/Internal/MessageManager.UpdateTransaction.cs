@@ -12,8 +12,6 @@ internal partial class MessageManager<TParent, TResult>
 	{
 		private readonly MessageManager<TParent, TResult> _owner;
 		private readonly Dictionary<MessageAxis, MessageAxisUpdate> _transientUpdates;
-		private readonly CancellationToken _ct;
-		private readonly CancellationTokenRegistration _ctSubscription;
 
 		private int _state = State.Active;
 
@@ -43,25 +41,24 @@ internal partial class MessageManager<TParent, TResult>
 		/// </remarks>
 		public Message<TResult> Local => _owner.Current;
 
-		internal UpdateTransaction(MessageManager<TParent, TResult> owner, CancellationToken ct)
-			: this(owner, new(), ct)
+		internal UpdateTransaction(MessageManager<TParent, TResult> owner)
+			: this(owner, new())
 		{
 		}
 
-		internal UpdateTransaction(MessageManager<TParent, TResult> owner, Dictionary<MessageAxis, MessageAxisUpdate> existingUpdates, CancellationToken ct)
+		internal UpdateTransaction(MessageManager<TParent, TResult> owner, Dictionary<MessageAxis, MessageAxisUpdate> existingUpdates)
 		{
 			_owner = owner;
 			_transientUpdates = existingUpdates;
-			_ct = ct;
-			_ctSubscription = ct.Register(Dispose);
 		}
 
 		/// <summary>
 		/// Applies an update to the current message (and sent it).
 		/// </summary>
 		/// <param name="updater">The update to applied to the current message.</param>
-		public void Update(Func<CurrentMessage, MessageBuilder> updater)
-			=> Update(static (cm, u) => u(cm), updater);
+		/// /// <param name="ct">A cancellation token that must not be IsCancellationRequested to allow the update.</param>
+		public void Update(Func<CurrentMessage, MessageBuilder> updater, CancellationToken ct)
+			=> Update(static (cm, u) => u(cm), updater, ct);
 
 		/// <summary>
 		/// Applies an update to the current message (and sent it).
@@ -69,7 +66,8 @@ internal partial class MessageManager<TParent, TResult>
 		/// <typeparam name="TState">Type of the state passed to the <paramref name="updater"/> to avoid needs of captures/closure.</typeparam>
 		/// <param name="updater">The update to applied to the current message.</param>
 		/// <param name="state">The state to pass to the <paramref name="updater"/> to avoid needs of captures/closure.</param>
-		public void Update<TState>(Func<CurrentMessage, TState, MessageBuilder> updater, TState state)
+		/// /// <param name="ct">A cancellation token that must not be IsCancellationRequested to allow the update.</param>
+		public void Update<TState>(Func<CurrentMessage, TState, MessageBuilder> updater, TState state, CancellationToken ct)
 		{
 			if (_state != State.Active)
 			{
@@ -81,7 +79,7 @@ internal partial class MessageManager<TParent, TResult>
 			_owner.Update(
 				(m, @params) => @params.updater(new CurrentMessage(@params.that), @params.state).Inner,
 				(that: this, updater, state),
-				_ct);
+				ct);
 		}
 
 		/// <summary>
@@ -137,7 +135,6 @@ internal partial class MessageManager<TParent, TResult>
 		/// <inheritdoc />
 		public void Dispose()
 		{
-			_ctSubscription.Dispose();
 			if (Interlocked.Exchange(ref _state, State.Disposed) == State.Active)
 			{
 				_owner.EndUpdate(this);

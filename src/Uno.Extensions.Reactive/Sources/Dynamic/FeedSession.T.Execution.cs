@@ -9,12 +9,12 @@ namespace Uno.Extensions.Reactive.Sources;
 
 internal sealed partial class FeedSession<TResult>
 {
-	internal sealed class ExecutionImpl : FeedExecution
+	internal sealed class Execution : FeedExecution
 	{
 		public readonly object StateGate = new();
+		private readonly TaskCompletionSource<Unit> _task = new();
 
 		private readonly FeedSession<TResult> _session;
-		private readonly Task _task;
 
 		public States State = States.Loading;
 		private Queue<Action<IMessageBuilder>>? _updatesQueue;
@@ -32,11 +32,11 @@ internal sealed partial class FeedSession<TResult>
 			Completed,
 		}
 
-		public ExecutionImpl(FeedSession<TResult> session, IReadOnlyCollection<ExecuteRequest> requests)
+		public Execution(FeedSession<TResult> session, IReadOnlyCollection<ExecuteRequest> requests)
 			: base(session, requests)
 		{
 			_session = session;
-			_task = Enable();
+			Enable();
 		}
 
 		/// <inheritdoc />
@@ -62,11 +62,31 @@ internal sealed partial class FeedSession<TResult>
 			}
 		}
 
-		private async Task Enable()
+		private async void Enable()
+		{
+			try
+			{
+				// Note: we DO NOT register to the Token for cancellation, as the _task is all about tracking the effective completion of the execution,
+				// including the "finalization" in case of cancellation.
+
+				await EnableCore().ConfigureAwait(false);
+			}
+			catch (Exception error)
+			{
+				// Impossible case ... the EnableCore should not throw in any way!
+				this.Log().Error(error, "Unexpected error while enabling the execution.");
+			}
+			finally
+			{
+				_task.SetResult(default);
+			}
+		}
+
+		private async Task EnableCore()
 		{
 			// Note: We DO NOT register the 'message' update transaction into ct.Register,
 			//		 so the next execution will be abel to preserve the pending progress axis (it's expected to be started before this is being disposed).
-			using var message = _session._message.BeginUpdate(Token, preservePendingAxes: Requests.Select(req => req.AsyncAxis).Distinct().ToArray());
+			using var message = _session._message.BeginUpdate(preservePendingAxes: Requests.Select(req => req.AsyncAxis).Distinct().ToArray());
 
 			// Once we have created our message update transaction (and we kept the transient axes), we make sure to set us as the current execution and wait for previous one to full complete.
 			if (Interlocked.Exchange(ref _session._currentExecution, this) is { } previous)
@@ -91,10 +111,21 @@ internal sealed partial class FeedSession<TResult>
 
 				lock (StateGate)
 				{
+					// Even if we have been cancelled (because a new execution request has been queued),
+					// it's still our responsibility, once we reached a state where we can allow it, to start the next execution.
+
 					State = States.Completed;
-					// Note: if we were cancelled it's either because the a new execution has started, either because the session is ending, so no need to TryStartNext() here.
+					if (_session.TryStartNext())
+					{
+						return;
+					}
 				}
-				Interlocked.CompareExchange(ref _session._currentExecution, null, this);
+				if (Interlocked.CompareExchange(ref _session._currentExecution, null, this) == this)
+				{
+					// Concurrency support: if a request has been queued since we checked, as the _currentExecution was not null,
+					// the RequestLoad won't have create a new execution.
+					_session.TryStartNext();
+				}
 
 				return; // No commit here! - TODO: _updatesQueue are dropped here
 			}
@@ -107,7 +138,7 @@ internal sealed partial class FeedSession<TResult>
 					State = States.Completed;
 					if (_session.TryStartNext())
 					{
-						return;
+						return; // If a new execution has been started, there is no need to commit our transaction, it has been disposed.
 					}
 
 					var parentMsg = _session.GetParent();
@@ -119,7 +150,7 @@ internal sealed partial class FeedSession<TResult>
 				}
 
 				// Finally we remove us from the current execution (if we are still the current ^^).
-				if (Interlocked.CompareExchange(ref _session._currentExecution, null, this) is null)
+				if (Interlocked.CompareExchange(ref _session._currentExecution, null, this) == this)
 				{
 					// Concurrency support: if a request has been queued since we checked, as the _currentExecution was not null,
 					// the RequestLoad won't have create a new execution.
@@ -145,10 +176,23 @@ internal sealed partial class FeedSession<TResult>
 					await NotifyEnd(FeedExecutionResult.Cancelled);
 					lock (StateGate)
 					{
+						// Even if we have been cancelled (because a new execution request has been queued),
+						// it's still our responsibility, once we reached a state where we can allow it, to start the next execution.
+
 						State = States.Completed;
-						// Note: if we were cancelled it's either because the a new execution has started, either because the session is ending, so no need to TryStartNext() here. 
+						if (_session.TryStartNext())
+						{
+							return;
+						}
 					}
-					Interlocked.CompareExchange(ref _session._currentExecution, null, this);
+
+					// Finally we remove us from the current execution (if we are still the current ^^).
+					if (Interlocked.CompareExchange(ref _session._currentExecution, null, this) == this)
+					{
+						// Concurrency support: if a request has been queued since we checked, as the _currentExecution was not null,
+						// the RequestLoad won't have create a new execution.
+						_session.TryStartNext();
+					}
 
 					return; // No commit here! - TODO: _updatesQueue are dropped here
 				}
@@ -171,7 +215,8 @@ internal sealed partial class FeedSession<TResult>
 							}
 							return builder;
 						},
-						(parentMsg, updates, Requests));
+						(parentMsg, updates, Requests),
+						Token);
 				}
 			}
 
@@ -186,7 +231,7 @@ internal sealed partial class FeedSession<TResult>
 					State = States.Loaded;
 					if (_session.TryStartNext())
 					{
-						return;
+						return; // If a new execution has been started, there is no need to commit our transaction, it has been disposed.
 					}
 
 					var parentMsg = _session.GetParent();
@@ -232,7 +277,7 @@ internal sealed partial class FeedSession<TResult>
 			finally
 			{
 				// Finally we remove us from the current execution (if we are still the current ^^).
-				if (Interlocked.CompareExchange(ref _session._currentExecution, null, this) is null)
+				if (Interlocked.CompareExchange(ref _session._currentExecution, null, this) == this)
 				{
 					// Concurrency support: if a request has been queued since we checked, as the _currentExecution was not null,
 					// the RequestLoad won't have create a new execution.
@@ -285,7 +330,7 @@ internal sealed partial class FeedSession<TResult>
 
 			// Then wait for the end of the execution (so we are sure that dependencies are notified of the end of the loading)
 			// Note: This execution won't commit anything if a new execution has been queued (cf. WillCommit).
-			await _task.ConfigureAwait(false);
+			await _task.Task.ConfigureAwait(false);
 		}
 	}
 }

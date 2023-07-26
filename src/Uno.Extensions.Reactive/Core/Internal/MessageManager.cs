@@ -150,12 +150,12 @@ internal partial class MessageManager<TParent, TResult>
 	}
 
 	// WARNING: This will abort any previous pending update transaction
-	public UpdateTransaction BeginUpdate(CancellationToken ct)
+	public UpdateTransaction BeginUpdate()
 	{
 		lock (_gate)
 		{
 			var previousTransaction = _pendingUpdate;
-			var transaction = new UpdateTransaction(this, ct);
+			var transaction = new UpdateTransaction(this);
 
 			_pendingUpdate = transaction;
 			if (previousTransaction is not null)
@@ -172,7 +172,7 @@ internal partial class MessageManager<TParent, TResult>
 	}
 
 	// WARNING: This will abort any previous pending update transaction (last win!)
-	public UpdateTransaction BeginUpdate(CancellationToken ct, params MessageAxis[] preservePendingAxes)
+	public UpdateTransaction BeginUpdate(params MessageAxis[] preservePendingAxes)
 	{
 		lock (_gate)
 		{
@@ -183,7 +183,7 @@ internal partial class MessageManager<TParent, TResult>
 					.Where(u => preservePendingAxes.Contains(u.Axis))
 					.ToDictionary(u => u.Axis)
 				?? new();
-			var transaction = new UpdateTransaction(this, existingTransientUpdates, ct);
+			var transaction = new UpdateTransaction(this, existingTransientUpdates);
 
 			_pendingUpdate = transaction;
 			if (previousTransaction is not null)

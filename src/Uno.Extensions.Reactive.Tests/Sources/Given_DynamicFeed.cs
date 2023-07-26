@@ -17,6 +17,31 @@ namespace Uno.Extensions.Reactive.Tests.Sources;
 public class Given_DynamicFeed : FeedTests
 {
 	[TestMethod]
+	public void When_DelegateSync_Then_LoadSync()
+	{
+		var sut = new DynamicFeed<int>(async _ => 42).Record();
+
+		sut.Should().Be(b => b
+			.Message(42, Error.No, Progress.Final));
+	}
+
+	[TestMethod]
+	public async Task When_DelegateSlightlyAsync_Then_NoProgress()
+	{
+		async ValueTask<int> Load(CancellationToken ct)
+		{
+			await Task.Yield();
+
+			return 42;
+		}
+
+		var sut = new DynamicFeed<int>(Load).Record();
+
+		await sut.Should().BeAsync(b => b
+			.Message(42, Error.No, Progress.Final));
+	}
+
+	[TestMethod]
 	public async Task When_AwaitFeed_And_FeedUpdated_Then_ReloadDependent()
 	{
 		var myFeed = State<int>.Value(this, () => 42);
@@ -85,18 +110,19 @@ public class Given_DynamicFeed : FeedTests
 	[TestMethod]
 	public async Task When_AwaitFeedMultipleTime_Then_GetSameInstance()
 	{
-		var myFeed = State<object>.Value(this, () => new object());
+		object initial = new(), updated = new();
+		var myFeed = State<object>.Value(this, () => initial);
 
 		async ValueTask<bool> Load(CancellationToken ct)
 		{
 			var myValue1 = await myFeed;
 
-			await myFeed.Update(_ => new object(), CT);
-			await Task.Delay(10, CT);
+			await myFeed.Update(_ => updated, ct);
+			await Task.Delay(10, ct);
 
 			var myValue2 = await myFeed;
 
-			return object.ReferenceEquals(myValue1, myValue2);
+			return object.ReferenceEquals(myValue1, myValue2) && object.ReferenceEquals(myValue1, updated);
 		}
 
 		var result = new DynamicFeed<bool>(Load).Record();
@@ -109,6 +135,42 @@ public class Given_DynamicFeed : FeedTests
 				.Changed(Changed.Data & Changed.Progress)
 				.Current(true, Error.No, Progress.Final))
 		);
+	}
+
+	[TestMethod]
+	public async Task When_UpdateAwaitedFeed_Then_CancelAndReExecute()
+	{
+		int before = 0, after = 0;
+		object initial = new(), updated = new();
+		var myFeed = State<object>.Value(this, () => initial);
+
+		async ValueTask<object?> Load(CancellationToken ct)
+		{
+			before++;
+			await myFeed;
+
+			await myFeed.Update(_ => updated, ct);
+			await Task.Delay(10, ct); // Here is the cancellable point
+
+			after++;
+			await myFeed;
+
+			return new object();
+		}
+
+		var result = new DynamicFeed<object>(Load).Record();
+
+		await result.Should().BeAsync(b => b
+			.Message(m => m
+				.Changed(Changed.Progress)
+				.Current(Data.Undefined, Error.No, Progress.Transient))
+			.Message(m => m
+				.Changed(Changed.Data & Changed.Progress)
+				.Current(Data.Some, Error.No, Progress.Final))
+		);
+
+		before.Should().Be(2);
+		after.Should().Be(1);
 	}
 
 	[TestMethod]
@@ -411,7 +473,6 @@ public class Given_DynamicFeed : FeedTests
 		);
 	}
 
-
 	[TestMethod]
 	[Ignore]
 	public async Task When_PaginatedWithFeedParameterAsListFeed_And_PageIsAsync_And_PageRequest_And_RefreshRequested_Then_Reload_And_ItemsAddedWithCollectionChanges()
@@ -567,4 +628,52 @@ public class Given_DynamicFeed : FeedTests
 	//}
 
 	//private record MyEntity(IImmutableList<int> Items, uint TotalItems);
+
+	[TestMethod]
+	public async Task When_NoDependency_Then_Complete()
+	{
+		var sut = new DynamicFeed<int>(async _ => 42).Record();
+
+		await sut.WaitForEnd();
+	}
+
+	[TestMethod]
+	public async Task When_RemoveLastDependency_Then_Complete()
+	{
+		FeedSession? session = default;
+		var dependency = new TestDependency();
+		var sut = new DynamicFeed<int>(async _ =>
+		{
+			session = FeedExecution.Current!.Session;
+			session.RegisterDependency(dependency);
+
+			return 42;
+		}).Record();
+
+		session!.Should().NotBeNull();
+		try
+		{
+			await sut.WaitForEnd(100);
+		}
+		catch (TimeoutException)
+		{
+		}
+
+		session!.UnRegisterDependency(dependency);
+
+		await sut.WaitForEnd();
+	}
+
+	private class TestDependency : IDependency
+	{
+		/// <inheritdoc />
+		public async ValueTask OnExecuting(FeedExecution execution, CancellationToken ct)
+		{
+		}
+
+		/// <inheritdoc />
+		public async ValueTask OnExecuted(FeedExecution execution, FeedExecutionResult result, CancellationToken ct)
+		{
+		}
+	}
 }

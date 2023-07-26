@@ -97,7 +97,7 @@ public sealed record MessageEntry<T> : IMessageEntry, IMessageEntry<T>
 	}
 	bool IMessageEntry.IsTransient => IsTransient;
 
-	public MessageAxisValue this[MessageAxis axis]
+	internal MessageAxisValue this[MessageAxis axis]
 	{
 		get
 		{

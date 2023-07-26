@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using Uno.Extensions.Reactive.Core;
 using Uno.Extensions.Reactive.Utils;
 
@@ -26,13 +27,18 @@ internal sealed partial class FeedSession<TResult> : FeedSession, IAsyncEnumerab
 	#region Core executions chain managment (including Request support)
 	private readonly object _requestsGate = new();
 	private List<ExecuteRequest>? _pendingRequests;
-	private ExecutionImpl? _currentExecution; // This the execution currently loading the data, 
+	private Execution? _currentExecution; // This the execution currently loading the data, 
 
 	/// <inheritdoc />
 	public override void Execute(ExecuteRequest request)
 	{
 		lock (_requestsGate)
 		{
+			if (_isDisposed)
+			{
+				return;
+			}
+
 			(_pendingRequests ??= new()).Add(request);
 
 			if (_currentExecution is { } current)
@@ -58,12 +64,13 @@ internal sealed partial class FeedSession<TResult> : FeedSession, IAsyncEnumerab
 			if (_pendingRequests is { Count: > 0 } requests)
 			{
 				_pendingRequests = null; // Clear requests first to avoid cycling on same request if teh execution completes sync!
-				_ = new ExecutionImpl(this, requests); // Note: we do NOT set this as _currentExecution. This is done by the new execution itself.
+				_ = new Execution(this, requests); // Note: we do NOT set this as _currentExecution. This is done by the new execution itself.
 
 				return true;
 			}
 			else
 			{
+				TryComplete();
 				return false;
 			}
 		}
@@ -77,6 +84,11 @@ internal sealed partial class FeedSession<TResult> : FeedSession, IAsyncEnumerab
 
 	internal override void UpdateParent(ISignal<IMessage> feed, IMessage message)
 	{
+		if (_isDisposed)
+		{
+			return;
+		}
+
 		if (_parentMessages.TryGetValue(feed, out var previous) && previous == message)
 		{
 			return;
@@ -95,7 +107,7 @@ internal sealed partial class FeedSession<TResult> : FeedSession, IAsyncEnumerab
 		{
 			lock (current.StateGate)
 			{
-				if (current.State == ExecutionImpl.States.Loading)
+				if (current.State == Execution.States.Loading)
 				{
 					return; // Nothing to do, the update will be processed when the main load action pushes a messages.
 				}
@@ -109,6 +121,11 @@ internal sealed partial class FeedSession<TResult> : FeedSession, IAsyncEnumerab
 	{
 		lock (_parentMessages)
 		{
+			if (_isDisposed)
+			{
+				throw new ObjectDisposedException(nameof(FeedSession), $"Cannot get parent message on a completed session.");
+			}
+
 			if (!_isAggregatedParentMessageValid)
 			{
 				_aggregatedParentMessage = _aggregatedParentMessage.With(_parentMessages.Values);
@@ -123,4 +140,34 @@ internal sealed partial class FeedSession<TResult> : FeedSession, IAsyncEnumerab
 	/// <inheritdoc />
 	public IAsyncEnumerator<Message<TResult>> GetAsyncEnumerator(CancellationToken cancellationToken = default)
 		=> _messages.GetAsyncEnumerator(cancellationToken);
+
+	/// <inheritdoc />
+	protected override void TryComplete()
+	{
+		lock (_requestsGate)
+		{
+			if (_currentExecution is null && _pendingRequests is null or { Count: 0 } && Dependencies is null or { Count: 0 })
+			{
+				_ = DisposeAsync();
+			}
+		}
+	}
+
+	/// <inheritdoc />
+	public override async ValueTask DisposeAsync()
+	{
+		if (_currentExecution is { } current)
+		{
+			await current.DisposeAsync().ConfigureAwait(false);
+		}
+
+		_messages.Complete(); // Prevent any new message to be published
+
+		await base.DisposeAsync().ConfigureAwait(false);
+
+		lock (_parentMessages)
+		{
+			_parentMessages.Clear();
+		}
+	}
 }
