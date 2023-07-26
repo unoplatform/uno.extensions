@@ -29,7 +29,7 @@
 		<utu:NavigationBar Content="{Binding Title}" />
 
 		<StackPanel Grid.Row="1">
-			<embed:UnoMauiHost>
+			<embed:MauiHost>
 				<maui:VerticalStackLayout Spacing="10">
 					<maui:Label Text="This text should be Red" TextColor="{embed:MauiColor Value='#FF0000'}" />
 					<maui:Label x:Name="lbl" Text="This text should be Fuchsia (set on code-behind)" />
@@ -37,7 +37,7 @@
 					<maui:Label Text="This TextColor should be Purple, using named color" TextColor="{embed:MauiColor Value='Purple'}" />
 					<maui:Label Text="{embed:MauiResource Key=HelloWorld}" TextColor="{embed:MauiResource Key=DemoColor}"/>
 				</maui:VerticalStackLayout>
-			</embed:UnoMauiHost>
+			</embed:MauiHost>
 		</StackPanel>
 	</Grid>
 </Page>

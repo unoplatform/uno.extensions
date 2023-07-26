@@ -4,19 +4,19 @@ namespace Uno.Extensions.Maui;
 /// ContentControl implementation that hosts a Maui view.
 /// </summary>
 [ContentProperty(Name = nameof(MauiContent))]
-public partial class UnoMauiHost : ContentControl
+public partial class MauiHost : ContentControl
 {
 	/// <summary>
 	/// The MauiContent property represents the <see cref="MauiContent"/> that will be used as content.
 	/// </summary>
 	public static readonly DependencyProperty MauiContentProperty =
-		DependencyProperty.Register(nameof(MauiContent), typeof(View), typeof(UnoMauiHost), new PropertyMetadata(null, OnMauiContentChanged));
+		DependencyProperty.Register(nameof(MauiContent), typeof(View), typeof(MauiHost), new PropertyMetadata(null, OnMauiContentChanged));
 
 	private static void OnMauiContentChanged(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs args)
 	{
 		if (args.NewValue is null ||
 			args.NewValue is not View view ||
-			dependencyObject is not UnoMauiHost mauiHost)
+			dependencyObject is not MauiHost mauiHost)
 		{
 			return;
 		}
@@ -25,7 +25,7 @@ public partial class UnoMauiHost : ContentControl
 	}
 
 	private static ILogger GetLogger() =>
-		MauiEmbedding.MauiContext.Services.GetRequiredService<ILogger<UnoMauiHost>>();
+		MauiEmbedding.MauiContext.Services.GetRequiredService<ILogger<MauiHost>>();
 
 	private MauiContentHost? _host;
 
@@ -34,7 +34,7 @@ public partial class UnoMauiHost : ContentControl
 	/// <summary>
 	/// Initializes a new instance of the MauiContent class.
 	/// </summary>
-	public UnoMauiHost()
+	public MauiHost()
 	{
 		this.HorizontalContentAlignment = HorizontalAlignment.Stretch;
 		this.VerticalContentAlignment = VerticalAlignment.Stretch;
