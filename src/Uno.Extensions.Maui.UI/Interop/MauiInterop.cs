@@ -5,18 +5,18 @@ internal static class MauiInterop
 	private static readonly List<ControlMapping> _mappings = new();
 	private static readonly List<IWinUIToMauiStyleHandler> _styleHandlers = new();
 
-	static MauiInterop()
-	{
-		MapControl<TextBlock, Microsoft.Maui.Controls.Label>();
-		MapControl<TextBox, Microsoft.Maui.Controls.Entry>();
-		MapControl<Grid, Microsoft.Maui.Controls.Grid>();
-		MapControl<StackPanel, Microsoft.Maui.Controls.StackLayout>();
-
-		MapStyleHandler<LabelStyleHandler>();
-		MapStyleHandler<VisualElementStyleHandler>();
-		MapStyleHandler<ViewStyleHandler>();
-		MapStyleHandler<LayoutStyleHandler>();
-	}
+	// static MauiInterop()
+	// {
+	// 	MapControl<TextBlock, Microsoft.Maui.Controls.Label>();
+	// 	MapControl<TextBox, Microsoft.Maui.Controls.Entry>();
+	// 	MapControl<Grid, Microsoft.Maui.Controls.Grid>();
+	// 	MapControl<StackPanel, Microsoft.Maui.Controls.StackLayout>();
+	//
+	// 	MapStyleHandler<LabelStyleHandler>();
+	// 	MapStyleHandler<VisualElementStyleHandler>();
+	// 	MapStyleHandler<ViewStyleHandler>();
+	// 	MapStyleHandler<LayoutStyleHandler>();
+	// }
 
 	public static void MapControl<TWinUI, TMaui>()
 		where TWinUI : FrameworkElement
