@@ -49,29 +49,31 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 	public async Task<NavigationResponse?> NavigateAsync(NavigationRequest request)
 	{
 		RouteUpdater.StartNavigation(this, Region, request);
-		try
+		NavigationResponse? response;
+
+		if (request.Source is null)
 		{
-			if (request.Source is null)
-			{
-				if (Logger.IsEnabled(LogLevel.Information)) Logger.LogInformationMessage($"Starting Navigation - Navigator: {this.GetType().Name} Request: {request.Route}");
-				request = request with { Source = this };
-			}
+			if (Logger.IsEnabled(LogLevel.Information)) Logger.LogInformationMessage($"Starting Navigation - Navigator: {this.GetType().Name} Request: {request.Route}");
+			request = request with { Source = this };
+		}
 
-			if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($" Navigator: {this.GetType().Name} Request: {request.Route}");
+		if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($" Navigator: {this.GetType().Name} Request: {request.Route}");
 
-			// Do any initialisation logic that may be
-			// defined for the route - allows for
-			// routes to be redirected
-			request = InitializeRequest(request);
+		// Do any initialisation logic that may be
+		// defined for the route - allows for
+		// routes to be redirected
+		request = InitializeRequest(request);
 
-			// Redirect navigation if required
-			// eg route that matches a child, should be routed to that child
-			// eg route that doesn't match a page for frame nav should be sent to parent
-			var redirection = await RedirectNavigateAsync(request);
-			if (redirection is not null)
-			{
-				return await redirection;
-			}
+		// Redirect navigation if required
+		// eg route that matches a child, should be routed to that child
+		// eg route that doesn't match a page for frame nav should be sent to parent
+		var redirection = await RedirectNavigateAsync(request);
+		if (redirection is not null)
+		{
+			response = await redirection;
+		}
+		else
+		{
 
 			// Append Internal qualifier to avoid requests being sent back to parent
 			request = request.AsInternal();
@@ -80,18 +82,16 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 			{
 				// Dialogs will load a separate navigation hierarchy
 				// so there's no need to route the request to child regions
-				return await DialogNavigateAsync(request);
+				response = await DialogNavigateAsync(request);
 			}
 			else
 			{
 				// Invoke the region specific navigation
-				return await RegionNavigateAsync(request);
+				response = await RegionNavigateAsync(request);
 			}
 		}
-		finally
-		{
-			RouteUpdater.EndNavigation(this, Region, request);
-		}
+		RouteUpdater.EndNavigation(this, Region, request, response);
+		return response;
 	}
 
 	private async Task<Task<NavigationResponse?>?> RedirectNavigateAsync(NavigationRequest request)
@@ -710,7 +710,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 		{
 			return (from child in Region.Children
 					let nav = child.Navigator()
-					select (Region:child, Navigator: nav)).ToArray();
+					select (Region: child, Navigator: nav)).ToArray();
 		});
 
 

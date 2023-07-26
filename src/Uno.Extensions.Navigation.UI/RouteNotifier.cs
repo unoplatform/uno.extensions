@@ -4,7 +4,7 @@ using Uno.Extensions.Logging;
 
 namespace Uno.Extensions.Navigation;
 
-public class RouteNotifier : IRouteNotifier, IRouteUpdater
+internal class RouteNotifier : IRouteNotifier, IRouteUpdater
 {
 	public event EventHandler<RouteChangedEventArgs>? RouteChanged;
 
@@ -35,11 +35,11 @@ public class RouteNotifier : IRouteNotifier, IRouteUpdater
 		}
 		if (Logger.IsEnabled(LogLevel.Trace))
 		{
-			navigationSegments[id].AppendLine($"[{id} - {PerformanceTimer.Split(id).TotalMilliseconds}] {navigator.GetType().Name} - {region.Name??"unnamed"} - {request.Route} {(request.Route.IsInternal?"(internal)":"")}");
+			navigationSegments[id].AppendLine($"[{id} - {PerformanceTimer.Split(id).TotalMilliseconds}] {navigator.GetType().Name} - {region.Name ?? "unnamed"} - {request.Route} {(request.Route.IsInternal ? "(internal)" : "")}");
 		}
 	}
 
-	public void EndNavigation(INavigator navigator, IRegion region, NavigationRequest request)
+	public void EndNavigation(INavigator navigator, IRegion region, NavigationRequest request, NavigationResponse? response)
 	{
 		var id = request.Id;
 		runningNavigations[id] = runningNavigations[id] - 1;
@@ -53,7 +53,7 @@ public class RouteNotifier : IRouteNotifier, IRouteUpdater
 				Logger.LogTraceMessage($"Post-navigation (summary):\n{navigationSegments[id]}");
 			}
 			navigationSegments.Remove(id);
-			RouteChanged?.Invoke(this, new RouteChangedEventArgs(region.Root()));
+			RouteChanged?.Invoke(this, new RouteChangedEventArgs(region.Root(), response?.Navigator));
 		}
 	}
 }

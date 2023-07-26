@@ -88,7 +88,7 @@ public class ResponseNavigator<TResult> : IResponseNavigator, IInstance<IService
 		{
 			navResponse.Result.ContinueWith(x => ApplyResult(x.Result));
 		}
-		return new NavigationResultResponse<TResult>(response?.Route ?? Route.Empty, ResultCompletion.Task, response?.Success ?? false);
+		return new NavigationResultResponse<TResult>(response?.Route ?? Route.Empty, ResultCompletion.Task, response?.Success ?? false, response?.Navigator ?? this);
 	}
 
 	public Task<bool> CanNavigate(Route route) => Navigation.CanNavigate(route);
