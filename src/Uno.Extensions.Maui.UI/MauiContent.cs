@@ -1,6 +1,5 @@
 ﻿using Microsoft.UI.Xaml.Media;
 using Uno.Extensions.Maui.Internals;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Uno.Extensions.Maui;
 
