@@ -6,7 +6,7 @@ public abstract class BaseHostInitialization : IHostInitialization
 
 	public virtual IHost InitializeHost()
 	{
-		return UnoHost
+		var host = UnoHost
 				.CreateDefaultBuilder()
 
 				.Use(builder => Environment(builder))
@@ -24,6 +24,14 @@ public abstract class BaseHostInitialization : IHostInitialization
 				.Use(builder => Localization(builder))
 
 				.Build(enableUnoLogging: true);
+
+		var notifier = host.Services.GetService<IRouteNotifier>();
+		notifier.RouteChanged += (s, e) =>
+		{
+			Debug.WriteLine($"Navigated to {e.Region?.Name}");
+		};
+
+		return host;
 	}
 
 	protected virtual IHostBuilder Localization(IHostBuilder builder)

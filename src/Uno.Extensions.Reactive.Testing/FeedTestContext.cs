@@ -34,9 +34,6 @@ public class FeedTestContext : ISourceContextAware, IDisposable
 		_subscription = SourceContext.AsCurrent();
 
 		testContext?.CancellationTokenSource.Token.Register(Dispose);
-
-		// For tests we prefer to replay all vales
-		FeedSubscription.IsInitialSyncValuesSkippingAllowed = false;
 	}
 
 	/// <summary>
@@ -49,9 +46,6 @@ public class FeedTestContext : ISourceContextAware, IDisposable
 		_name = name ?? throw new ArgumentNullException("Context must be named.");
 		SourceContext = SourceContext.GetOrCreate(this);
 		_subscription = SourceContext.AsCurrent();
-
-		// For tests we prefer to replay all vales
-		FeedSubscription.IsInitialSyncValuesSkippingAllowed = false;
 	}
 
 	/// <summary>

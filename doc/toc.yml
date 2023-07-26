@@ -50,6 +50,8 @@
           href: Learn/Tutorials/Http/HowTo-Http.md
         - name: Use Refit to call a REST API
           href: Learn/Tutorials/Http/HowTo-Refit.md
+        - name: Configure with Custom Endpoint Options
+          href: Learn/Tutorials/Http/HowTo-EndpointOptions.md
     - name: Localization
       items:
         - name: Overview

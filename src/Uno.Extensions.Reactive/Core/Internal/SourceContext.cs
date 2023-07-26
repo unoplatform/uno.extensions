@@ -34,6 +34,11 @@ public sealed class SourceContext : IAsyncDisposable
 	private static readonly ConditionalWeakTable<object, SourceContext> _contexts = new();
 
 	/// <summary>
+	/// Gets the none context.
+	/// </summary>
+	internal static SourceContext None => _none;
+
+	/// <summary>
 	/// Gets the current context.
 	/// </summary>
 	public static SourceContext Current => _current.Value ?? _none;
@@ -163,7 +168,7 @@ public sealed class SourceContext : IAsyncDisposable
 		RootId = parent.RootId;
 		Parent = parent;
 		Owner = owner;
-		States = states ?? parent.States;
+		States = states ?? parent.States; // Note: A child StateStore should forward request to its parent store!
 		RequestSource = requests ?? parent.RequestSource;
 	}
 

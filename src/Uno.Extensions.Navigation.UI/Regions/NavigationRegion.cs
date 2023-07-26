@@ -29,7 +29,9 @@ public sealed class NavigationRegion : IRegion
 		}
 	}
 
-	public IServiceProvider? Services
+	private INavigator? Navigator => this.Navigator();
+
+  public IServiceProvider? Services
 	{
 		get
 		{
@@ -137,7 +139,7 @@ public sealed class NavigationRegion : IRegion
 		{
 			_logger.LogTraceMessage($"(Name: {Name}) View is loaded");
 		}
-
+    
 		await HandleLoading();
 	}
 
@@ -215,7 +217,7 @@ public sealed class NavigationRegion : IRegion
 			{
 				_logger.LogTraceMessage($"(Name: {Name}) Parent region found ({parent is not null}) with name ({Name})");
 			}
-
+      
 			if (parent is not null)
 			{
 				Parent = parent;
@@ -281,11 +283,24 @@ public sealed class NavigationRegion : IRegion
 			_logger.LogTraceMessage($"(Name: {Name}) Forcing retrieval of navigator (will be created if not exists)");
 		}
 
-        // Force the lookup (and creation) of the navigator
-        // This is required to intercept control event such as
-        // navigating forward/backward on frame, or switching tabs
-        _ = this.Navigator();
-    }
+		// Force the lookup (and creation) of the navigator
+		// This is required to intercept control event such as
+		// navigating forward/backward on frame, or switching tabs
+		var navigator = this.Navigator();
+
+		if (navigator is not null)
+		{
+			foreach (var child in Children.OfType<NavigationRegion>())
+			{
+				if (child._isLoaded && child._services is null)
+				{
+					// This will force the setup of Services, which will
+					// in turn force the creation of the navigator
+					_ = child.Navigator();
+				}
+			}
+		}
+	}
 
 	public async Task<string> GetStringAsync()
 	{

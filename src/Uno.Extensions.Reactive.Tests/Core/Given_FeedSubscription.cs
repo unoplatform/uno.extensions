@@ -34,6 +34,9 @@ public class Given_FeedSubscription : FeedTests
 		async IAsyncEnumerable<int> Source([EnumeratorCancellation] CancellationToken ct = default)
 		{
 			yield return 1;
+
+			await Task.Yield(); // Make sure to run async, so listener will receive 1 message.
+
 			yield return 2;
 			yield return 3;
 		}
@@ -41,9 +44,12 @@ public class Given_FeedSubscription : FeedTests
 		var sut = new FeedSubscription<int>(src, Context.SourceContext);
 
 		var sub1Message = await sut.GetMessages(Context.SourceContext, CT).FirstAsync(CT);
+
+		await Task.Delay(10); // Make sure to run async, so listener will receive next messages.
+
 		var sub2Message = await sut.GetMessages(Context.SourceContext, CT).FirstAsync(CT);
 
-		sub1Message.Current.Data.SomeOrDefault().Should().Be(1, "We do not allow to ignore first values in test (cf. FeedSubscription.IsInitialSyncValuesSkippingAllowed)");
+		sub1Message.Current.Data.SomeOrDefault().Should().Be(1, "We added a delay before the second value");
 		sub2Message.Current.Data.SomeOrDefault().Should().Be(3, "the subscription should have stay active");
 	}
 

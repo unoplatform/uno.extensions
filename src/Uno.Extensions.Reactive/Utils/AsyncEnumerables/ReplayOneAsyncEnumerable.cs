@@ -25,12 +25,12 @@ internal class ReplayOneAsyncEnumerable<T> : IAsyncEnumerable<T>, IDisposable, I
 		public const int Disposed = int.MaxValue;
 	}
 
-	public ReplayOneAsyncEnumerable(IAsyncEnumerable<T> inner, StateSubscriptionMode mode = StateSubscriptionMode.Lazy, bool isInitialSyncValuesSkippingAllowed = true)
+	public ReplayOneAsyncEnumerable(IAsyncEnumerable<T> inner, SubscriptionMode mode = SubscriptionMode.Lazy, bool isInitialSyncValuesSkippingAllowed = true)
 	{
 		_inner = inner;
 		_isInitialSyncValuesSkippingAllowed = isInitialSyncValuesSkippingAllowed;
 
-		if (mode.HasFlag(StateSubscriptionMode.Eager))
+		if (mode.HasFlag(SubscriptionMode.Eager))
 		{
 			Enable();
 		}
@@ -43,6 +43,13 @@ internal class ReplayOneAsyncEnumerable<T> : IAsyncEnumerable<T>, IDisposable, I
 			_enumeration = Enumerate(_inner, _ct.Token);
 		}
 	}
+
+	/// <summary>
+	/// Gets the last value enumerated from the source.
+	/// This IS NOT the current value of an enumerator from <see cref="GetAsyncEnumerator"/>.
+	/// </summary>
+	public bool TryGetCurrent([NotNullWhen(true)] out T value)
+		=> _current.TryGetValue(out value);
 
 	public void Disable()
 	{
@@ -95,7 +102,6 @@ internal class ReplayOneAsyncEnumerable<T> : IAsyncEnumerable<T>, IDisposable, I
 			var needsToEnableEnumeration = true;
 			if (_isInitialSyncValuesSkippingAllowed)
 			{
-				
 				Enable();
 				needsToEnableEnumeration = false;
 			}

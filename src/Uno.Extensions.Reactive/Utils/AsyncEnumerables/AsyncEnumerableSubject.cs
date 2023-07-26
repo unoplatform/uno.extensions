@@ -41,7 +41,7 @@ internal class AsyncEnumerableSubject<T> : IAsyncEnumerable<T>
 		=> MoveNext(false, default, error: null, mightHaveNext: false);
 
 	public void Fail(Exception error)
-		=> MoveNext(false, default, error: null, mightHaveNext: false);
+		=> MoveNext(false, default, error: error, mightHaveNext: false);
 
 	public void TrySetNext(T item)
 		=> MoveNext(true, item, error: null, mightHaveNext: true, throwOnError: false);
@@ -53,7 +53,7 @@ internal class AsyncEnumerableSubject<T> : IAsyncEnumerable<T>
 		=> MoveNext(false, default, error: null, mightHaveNext: false, throwOnError: false);
 
 	public void TryFail(Exception error)
-		=> MoveNext(false, default, error: null, mightHaveNext: false, throwOnError: false);
+		=> MoveNext(false, default, error: error, mightHaveNext: false, throwOnError: false);
 
 
 	private void MoveNext(bool hasValue, T? value, Exception? error = null, bool mightHaveNext = true, bool throwOnError = true)

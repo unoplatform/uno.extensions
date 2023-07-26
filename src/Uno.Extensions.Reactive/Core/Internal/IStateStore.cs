@@ -4,8 +4,11 @@ using System.Linq;
 namespace Uno.Extensions.Reactive.Core;
 
 /// <summary>
-/// A cache of <see cref="IState{T}"/> used by a <see cref="SourceContext"/>.
+/// A cache of <see cref="IState{T}"/> and <see cref="FeedSubscription{T}"/> used by a <see cref="SourceContext"/>.
 /// </summary>
+/// <remarks>
+/// This is the class responsible to that hold the "state" (the generic term, i.e. a persistent value) of the subscriptions made by the owner on feeds.
+/// </remarks>
 internal interface IStateStore : IAsyncDisposable
 {
 	/// <summary>
@@ -37,6 +40,10 @@ internal interface IStateStore : IAsyncDisposable
 	/// <param name="factory">Factory to build the state is not present yet in the cache.</param>
 	/// <returns>The state wrapping the given feed</returns>
 	/// <exception cref="ObjectDisposedException">This store has been disposed.</exception>
+	/// <remarks>
+	/// If the the returned state makes any subscription to a feed,
+	/// it's expected that it will share that subscription with other subscribers of the current context (i.e. it uses the <see cref="GetOrCreateSubscription{TSource,TValue}"/>).
+	/// </remarks>
 	TState GetOrCreateState<TSource, TState>(TSource source, Func<SourceContext, TSource, TState> factory)
 		where TSource : class
 		where TState : IState;

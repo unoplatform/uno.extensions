@@ -1,12 +1,19 @@
 ﻿namespace Uno.Extensions.Navigation;
 
-#pragma warning disable SA1313 // Parameter names should begin with lower-case letter
-
-public record NavigationResultResponse(Route? Route, Task<IOption> UntypedResult, bool Success = true) : NavigationResponse(Route, Success)
+/// <summary>
+/// Navigation response with result
+/// </summary>
+/// <param name="Route">The Route that was navigated to</param>
+/// <param name="UntypedResult">The untyped result of navigation</param>
+/// <param name="Success">Whether or not navigation was successful </param>
+/// <param name="Navigator">The INavigator instance that processed the final segment of the Route</param>
+public record NavigationResultResponse(
+	Route? Route, Task<IOption> UntypedResult,
+	bool Success = true, INavigator? Navigator = default) : NavigationResponse(Route, Success, Navigator)
 {
 	internal NavigationResultResponse<TResult> AsResultResponse<TResult>()
 	{
-		if(this is NavigationResultResponse<TResult> typedResult)
+		if (this is NavigationResultResponse<TResult> typedResult)
 		{
 			return typedResult;
 		}
@@ -24,7 +31,7 @@ public record NavigationResultResponse(Route? Route, Task<IOption> UntypedResult
 			return optionResult;
 		}
 
-		if(resultData.SomeOrDefault() is TResult someResult)
+		if (resultData.SomeOrDefault() is TResult someResult)
 		{
 			return Option.Some(someResult);
 		}
@@ -33,11 +40,20 @@ public record NavigationResultResponse(Route? Route, Task<IOption> UntypedResult
 	}
 }
 
-public record NavigationResultResponse<TResult>(Route? Route, Task<Option<TResult>> Result, bool Success = true)
+/// <summary>
+/// Navigation response with Typed result
+/// </summary>
+/// <typeparam name="TResult"></typeparam>
+/// <param name="Route">The Route that was navigated to</param>
+/// <param name="Result">The result of navigation</param>
+/// <param name="Success">Whether or not navigation was successful </param>
+/// <param name="Navigator">The INavigator instance that processed the final segment of the Route</param>
+public record NavigationResultResponse<TResult>(Route? Route, Task<Option<TResult>> Result, bool Success = true, INavigator? Navigator = default)
 	: NavigationResultResponse(
 		Route,
 		AsOption(Result),
-		Success)
+		Success,
+		Navigator)
 {
 
 	private static async Task<IOption> AsOption(Task<Option<TResult>> result)
@@ -47,9 +63,11 @@ public record NavigationResultResponse<TResult>(Route? Route, Task<Option<TResul
 	}
 }
 
-public record NavigationResponse(Route? Route = null, bool Success = true)
-{
-}
-
-#pragma warning restore SA1313 // Parameter names should begin with lower-case letter
+/// <summary>
+/// Navigation response
+/// </summary>
+/// <param name="Route">The Route that was navigated to</param>
+/// <param name="Success">Whether or not navigation was successful </param>
+/// <param name="Navigator">The INavigator instance that processed the final segment of the Route</param>
+public record NavigationResponse(Route? Route = null, bool Success = true, INavigator? Navigator = default);
 

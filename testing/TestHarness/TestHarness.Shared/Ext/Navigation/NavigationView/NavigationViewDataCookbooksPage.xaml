@@ -23,14 +23,14 @@
 		<ui:FeedView Source="{Binding Cookbooks}"
 					 Grid.Row="1">
 			<DataTemplate>
-				<ItemsRepeater ItemsSource="{Binding Data}"
+				<muxc:ItemsRepeater ItemsSource="{Binding Data}"
 							   uen:Navigation.Request="CookbookDetails">
 					<DataTemplate>
 						<TextBlock Text="{Binding Name}"
 								   Foreground="Black"
 								   FontSize="24" />
 					</DataTemplate>
-				</ItemsRepeater>
+				</muxc:ItemsRepeater>
 			</DataTemplate>
 		</ui:FeedView>
 	</Grid>

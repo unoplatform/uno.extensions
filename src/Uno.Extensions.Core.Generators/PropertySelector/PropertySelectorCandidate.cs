@@ -14,14 +14,14 @@ namespace Uno.Extensions.Generators.PropertySelector;
 
 internal readonly record struct PropertySelectorCandidate
 {
-	public PropertySelectorCandidate(GeneratorSyntaxContext context, CancellationToken ct)
+	public PropertySelectorCandidate(InvocationExpressionSyntax syntax, SemanticModel model, bool fromSource, CancellationToken ct)
 	{
-		var syntax = (InvocationExpressionSyntax)context.Node;
 		Location = syntax.SyntaxTree.GetLineSpan(syntax.Span);
 		
-		var method = context.SemanticModel.GetSymbolInfo(syntax, ct).Symbol as IMethodSymbol;
-		
+		var method = model.GetSymbolInfo(syntax, ct).Symbol as IMethodSymbol;
+
 		if (method is null ||
+			method.ContainingAssembly.Equals(model.Compilation.Assembly, SymbolEqualityComparer.Default) != fromSource ||
 			!IsCandidate(method, IsPropertySelectorParameter, p => p.HasAttribute<CallerFilePathAttribute>(), p => p.HasAttribute<CallerLineNumberAttribute>(), out _, out var callerPathParameter, out var callerLineParameter))
 		{
 			Accessors = null;
@@ -73,13 +73,13 @@ internal readonly record struct PropertySelectorCandidate
 	public EquatableArray<(string key, string accessor)>? Accessors { get; }
 
 	internal static bool IsCandidate(
-	IMethodSymbol method,
-	Func<IParameterSymbol, bool> isPropertySelectorParameter,
-	Func<IParameterSymbol, bool> isCallerFilePathParameter,
-	Func<IParameterSymbol, bool> isCallerLineNumberParameter,
-	[NotNullWhen(true)] out IParameterSymbol? selectorParameter,
-	[NotNullWhen(true)] out IParameterSymbol? callerFileParameter,
-	[NotNullWhen(true)] out IParameterSymbol? callerLineParameter)
+		IMethodSymbol method,
+		Func<IParameterSymbol, bool> isPropertySelectorParameter,
+		Func<IParameterSymbol, bool> isCallerFilePathParameter,
+		Func<IParameterSymbol, bool> isCallerLineNumberParameter,
+		[NotNullWhen(true)] out IParameterSymbol? selectorParameter,
+		[NotNullWhen(true)] out IParameterSymbol? callerFileParameter,
+		[NotNullWhen(true)] out IParameterSymbol? callerLineParameter)
 	{
 		selectorParameter = method.Parameters.FirstOrDefault(isPropertySelectorParameter);
 		if (selectorParameter is null)

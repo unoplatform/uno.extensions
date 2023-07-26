@@ -10,7 +10,7 @@
 		<TargetFramework>net7.0</TargetFramework>
 	</PropertyGroup>
 
-	<ItemGroup Condition="'$(_IsWinUI)'=='false'">
+	<ItemGroup>
 		<PackageReference Include="Uno.WinUI" />
 	</ItemGroup>
 

@@ -143,4 +143,11 @@ public abstract class MessageAxis : IEquatable<MessageAxis>
 	[Pure]
 	public static bool operator !=(MessageAxis left, MessageAxis right)
 		=> !Equals(left, right);
+
+	/// <inheritdoc />
+	[Pure]
+	public override string ToString()
+		=> IsTransient
+			? Identifier + "~"
+			: Identifier;
 }

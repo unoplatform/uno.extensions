@@ -13,6 +13,7 @@
 		<PackageReference Include="Uno.UI" />
 	</ItemGroup>
 	<ItemGroup>
+		<ProjectReference Include="..\Uno.Extensions.Core.UI\Uno.Extensions.Core.UI.csproj" />
 		<ProjectReference Include="..\Uno.Extensions.Storage.UI\Uno.Extensions.Storage.UI.csproj" />
 	</ItemGroup>
 

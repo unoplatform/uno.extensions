@@ -101,6 +101,7 @@
       <DependentUpon>StorageOnePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Core\Storage\StorageOneViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Http\Endpoints\CustomEndpointOptions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Http\Endpoints\HttpEndpointsHostInit.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Http\Endpoints\HttpEndpointsMainPage.xaml.cs">
       <DependentUpon>HttpEndpointsMainPage.xaml</DependentUpon>
@@ -748,7 +749,6 @@
     <Content Include="@(_Globbed_Content)" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="$(MSBuildThisFileDirectory)Ext\Http\Endpoints\" />
     <Folder Include="$(MSBuildThisFileDirectory)Ext\Http\Refit\" />
   </ItemGroup>
 </Project>

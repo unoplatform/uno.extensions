@@ -21,11 +21,11 @@
 						   AutomationProperties.AutomationId="NavigationViewDataRecipesNavigationBar" />
 		<ui:FeedView Source="{Binding Recipes}" Grid.Row="1">
 			<DataTemplate>
-				<ItemsRepeater ItemsSource="{Binding Data}" uen:Navigation.Request="RecipeDetails">
+				<muxc:ItemsRepeater ItemsSource="{Binding Data}" uen:Navigation.Request="RecipeDetails">
 					<DataTemplate>
 						<TextBlock Text="{Binding Name}" Foreground="Black" FontSize="24" />
 					</DataTemplate>
-				</ItemsRepeater>
+				</muxc:ItemsRepeater>
 			</DataTemplate>
 		</ui:FeedView>
 	</Grid>

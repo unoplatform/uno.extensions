@@ -20,7 +20,7 @@ internal sealed class ListFeedSelection<TSource, TOther> : IListState<TSource>, 
 	private readonly Func<IImmutableList<TSource>, Option<TOther>, SelectionInfo> _otherToSelection;
 	private readonly CancellationTokenSource _ct;
 	private readonly string _name;
-	private readonly StateSubscriptionMode _mode;
+	private readonly SubscriptionMode _mode;
 
 	private int _state = State.New;
 	private IState<IImmutableList<TSource>>? _impl;
@@ -38,7 +38,7 @@ internal sealed class ListFeedSelection<TSource, TOther> : IListState<TSource>, 
 		Func<IImmutableList<TSource>, SelectionInfo, Option<TOther>, Option<TOther>> selectionToOther,
 		Func<IImmutableList<TSource>, Option<TOther>, SelectionInfo> otherToSelection,
 		string logTag,
-		StateSubscriptionMode mode = StateSubscriptionMode.Default)
+		SubscriptionMode mode = SubscriptionMode.Default)
 	{
 		_source = source;
 		_selectionState = selectionState;
@@ -52,7 +52,7 @@ internal sealed class ListFeedSelection<TSource, TOther> : IListState<TSource>, 
 		_ct = CancellationTokenSource.CreateLinkedTokenSource(ctx.Token); // We however allow early dispose of this state
 		Context = ctx;
 
-		if (mode is StateSubscriptionMode.Eager)
+		if (mode is SubscriptionMode.Eager)
 		{
 			Enable();
 		}
@@ -108,10 +108,9 @@ internal sealed class ListFeedSelection<TSource, TOther> : IListState<TSource>, 
 			case State.Enabled: return _impl!;
 		}
 
-		var feed = new UpdateFeed<IImmutableList<TSource>>(_source.AsFeed());
-		var impl = new StateImpl<IImmutableList<TSource>>(Context, feed, StateSubscriptionMode.Eager);
+		var impl = new StateImpl<IImmutableList<TSource>>(Context, _source.AsFeed(), SubscriptionMode.Eager);
 
-		SelectionFeedUpdate? selectionFromState = null;
+		SelectionFeedUpdate? currentSelectionFromState = null;
 
 		Context
 			.GetOrCreateSource(_selectionState)
@@ -129,18 +128,18 @@ internal sealed class ListFeedSelection<TSource, TOther> : IListState<TSource>, 
 		{
 			// Note: We sync only the SelectedItem. Error, Transient and any other axis are **not** expected to flow between the 2 sources.
 
-			var stateSelection = new SelectionFeedUpdate(this, otherMsg.Current.Data);
+			var updatedSelectionFromState = new SelectionFeedUpdate(this, otherMsg.Current.Data);
 
-			if (selectionFromState is not null)
+			if (currentSelectionFromState is not null)
 			{
-				feed.Replace(selectionFromState, stateSelection);
+				impl.Inner.Replace(currentSelectionFromState, updatedSelectionFromState);
 			}
 			else
 			{
-				feed.Add(stateSelection);
+				impl.Inner.Add(updatedSelectionFromState);
 			}
 
-			selectionFromState = stateSelection;
+			currentSelectionFromState = updatedSelectionFromState;
 		}
 
 		async ValueTask SyncFromListToState(Message<IImmutableList<TSource>> implMsg, CancellationToken ct)

@@ -8,6 +8,7 @@
 			As we are InternalsVisibleTo(Uno.Extensions.Reactive.Tests), we disable some compatibility types that are not used by Reactive package itself.
 		-->
 		<UnoExtensionsGeneration_DisableModuleInitializerAttribute>True</UnoExtensionsGeneration_DisableModuleInitializerAttribute>
+		<ImplicitUsings>false</ImplicitUsings>
 	</PropertyGroup>
 
 	<ItemGroup>
