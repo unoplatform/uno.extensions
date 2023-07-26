@@ -9,7 +9,7 @@ steps:
     condition: startsWith(variables['Build.SourceBranch'], 'refs/heads/canaries')
     inputs:
       solution: '${{ parameters.SolutionToUpdate }}'
-      branchToMerge: main
+      branchToMerge: legacy/2x
       summaryFile: '$(Build.ArtifactStagingDirectory)/Canary.md'
       resultFile: '$(Build.ArtifactStagingDirectory)/result.json'
       nugetUpdaterVersion: 2.3.0-alpha.42
