@@ -2,7 +2,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using Uno.Extensions.Reactive.Core;
 using Uno.Extensions.Reactive.Sources;
@@ -83,20 +85,48 @@ public static partial class ListFeed<T>
 		=> Feed<IImmutableList<T>>.AsyncEnumerable(enumerableProvider).AsListFeed();
 
 	/// <summary>
-	/// Creates a list feed for a paginated collection.
+	/// [OBSOLETE] Use PaginatedByCursorAsync instead.
 	/// </summary>
 	/// <typeparam name="TCursor">Type of the cursor that is used to identify a page to load.</typeparam>
 	/// <param name="firstPage">The cursor of the first page.</param>
 	/// <param name="getPage">The async method to load a page of items.</param>
 	/// <returns>A paginated list feed.</returns>
+	[EditorBrowsable(EditorBrowsableState.Never)]
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#if DEBUG
+	[Obsolete("Use PaginatedByCursorAsync instead")]
+#endif
 	public static IListFeed<T> AsyncPaginatedByCursor<TCursor>(TCursor firstPage, GetPage<TCursor, T> getPage)
 		=> AttachedProperty.GetOrCreate(getPage.Target ?? getPage.Method, (firstPage, getPage), static (_, args) => new PaginatedListFeed<TCursor,T>(args.firstPage, args.getPage));
 
 	/// <summary>
 	/// Creates a list feed for a paginated collection.
 	/// </summary>
+	/// <typeparam name="TCursor">Type of the cursor that is used to identify a page to load.</typeparam>
+	/// <param name="firstPage">The cursor of the first page.</param>
 	/// <param name="getPage">The async method to load a page of items.</param>
 	/// <returns>A paginated list feed.</returns>
+	public static IListFeed<T> PaginatedByCursorAsync<TCursor>(TCursor firstPage, GetPage<TCursor, T> getPage)
+		=> AttachedProperty.GetOrCreate(getPage.Target ?? getPage.Method, (firstPage, getPage), static (_, args) => new PaginatedListFeed<TCursor, T>(args.firstPage, args.getPage));
+
+	/// <summary>
+	/// [OBSOLETE] Use PaginatedAsync instead.
+	/// </summary>
+	/// <param name="getPage">The async method to load a page of items.</param>
+	/// <returns>A paginated list feed.</returns>
+	[EditorBrowsable(EditorBrowsableState.Never)]
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#if DEBUG
+	[Obsolete("Use PaginatedAsync instead")]
+#endif
 	public static IListFeed<T> AsyncPaginated(AsyncFunc<PageRequest, IImmutableList<T>> getPage)
+		=> PaginatedAsync(getPage);
+
+	/// <summary>
+	/// Creates a list feed for a paginated collection.
+	/// </summary>
+	/// <param name="getPage">The async method to load a page of items.</param>
+	/// <returns>A paginated list feed.</returns>
+	public static IListFeed<T> PaginatedAsync(AsyncFunc<PageRequest, IImmutableList<T>> getPage)
 		=> AttachedProperty.GetOrCreate(getPage, static gp => new PaginatedListFeed<ByIndexCursor<T>, T>(ByIndexCursor<T>.First, ByIndexCursor<T>.GetPage(gp)));
 }

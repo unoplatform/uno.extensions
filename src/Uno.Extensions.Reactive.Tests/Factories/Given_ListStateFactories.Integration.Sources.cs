@@ -38,7 +38,7 @@ public partial class Given_ListStateFactories
 	[TestMethod]
 	public async Task When_AsyncPaginated_Then_CurrentCountReflectsUpdates()
 	{
-		var sut = ListState<int>.AsyncPaginated(this, async (req, ct) => Range((int)req.CurrentCount, (int)(req.DesiredSize ?? 2)).ToImmutableList());
+		var sut = ListState<int>.PaginatedAsync(this, async (req, ct) => Range((int)req.CurrentCount, (int)(req.DesiredSize ?? 2)).ToImmutableList());
 		var requests = new RequestSource();
 		var ctx = Context.SourceContext.CreateChild(requests);
 

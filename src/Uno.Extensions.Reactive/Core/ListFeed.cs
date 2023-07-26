@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
@@ -56,13 +57,27 @@ public static partial class ListFeed
 		=> Feed.AsyncEnumerable(enumerableProvider).AsListFeed();
 
 	/// <summary>
+	/// [OBSOLETE] Use PaginatedAsync instead.
+	/// </summary>
+	/// <typeparam name="T">The type of the data of the resulting feed.</typeparam>
+	/// <param name="getPage">The async method to load a page of items.</param>
+	/// <returns>A paginated list feed.</returns>
+	[EditorBrowsable(EditorBrowsableState.Never)]
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#if DEBUG
+	[Obsolete("Use PaginatedAsync instead")]
+#endif
+	public static IListFeed<T> AsyncPaginated<T>(AsyncFunc<PageRequest, IImmutableList<T>> getPage)
+		=> PaginatedAsync(getPage);
+
+	/// <summary>
 	/// Creates a list feed for a paginated collection.
 	/// </summary>
 	/// <typeparam name="T">The type of the data of the resulting feed.</typeparam>
 	/// <param name="getPage">The async method to load a page of items.</param>
 	/// <returns>A paginated list feed.</returns>
-	public static IListFeed<T> AsyncPaginated<T>(AsyncFunc<PageRequest, IImmutableList<T>> getPage)
-		=> ListFeed<T>.AsyncPaginated(getPage);
+	public static IListFeed<T> PaginatedAsync<T>(AsyncFunc<PageRequest, IImmutableList<T>> getPage)
+		=> ListFeed<T>.PaginatedAsync(getPage);
 	#endregion
 
 	#region Operators
