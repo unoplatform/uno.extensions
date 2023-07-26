@@ -2,9 +2,9 @@ namespace Uno.Extensions.Maui.Internals;
 
 internal static class ConversionExtensions
 {
-	public static Microsoft.Maui.Controls.ResourceDictionary ToMauiResources(this ResourceDictionary input)
+	public static MauiResourceDictionary ToMauiResources(this ResourceDictionary input)
 	{
-		var output = new Microsoft.Maui.Controls.ResourceDictionary();
+		var output = new MauiResourceDictionary();
 		foreach (var merged in input.MergedDictionaries)
 		{
 			output.MergedDictionaries.Add(merged.ToMauiResources());
@@ -41,7 +41,7 @@ internal static class ConversionExtensions
 		return output;
 	}
 
-	private static void TryAddValue(ref Microsoft.Maui.Controls.ResourceDictionary resources, object sourceKey, object value)
+	private static void TryAddValue(ref MauiResourceDictionary resources, object sourceKey, object value)
 	{
 		// NOTE: Interop was part of the POC and is out of scope for the MVP
 		// if (value is Style winUIStyle)

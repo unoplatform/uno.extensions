@@ -20,10 +20,10 @@
 		</Grid.RowDefinitions>
 		<utu:NavigationBar Content="{Binding Title}" />
 
-		<embed:MauiContent x:Name="mauiContent" Grid.Row="1">
+		<embed:UnoMauiHost x:Name="mauiContent" Grid.Row="1">
 			<maui:Grid x:Name="grid">
 				<!--<map:MapView x:Name="mapView" />-->
 			</maui:Grid>
-		</embed:MauiContent>
+		</embed:UnoMauiHost>
 	</Grid>
 </Page>

@@ -29,7 +29,7 @@
 		</Grid.RowDefinitions>
 		<utu:NavigationBar Content="{Binding Title}" />
 
-		<embed:MauiContent x:Name="mauiContent" Grid.Row="1">
+		<embed:UnoMauiHost x:Name="mauiContent" Grid.Row="1">
 			<maui:VerticalStackLayout x:Name="stack" Spacing="16">
 
 				<maui:Label Text="Hello World">
@@ -59,7 +59,7 @@
 				</maui:Grid>
 
 			</maui:VerticalStackLayout>
-		</embed:MauiContent>
+		</embed:UnoMauiHost>
 
 		<StackPanel
 			Grid.Row="1"

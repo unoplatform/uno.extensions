@@ -1,12 +1,10 @@
-﻿using Microsoft.Maui.Hosting;
+﻿namespace Uno.Extensions.Maui.Internals;
 
-namespace Uno.Extensions.Maui.Internals;
-
-internal class UnoMauiEmbeddingInitializer : IMauiInitializeService
+internal class MauiEmbeddingInitializer : IMauiInitializeService
 {
 	private readonly Application _app;
 
-	public UnoMauiEmbeddingInitializer(Application app)
+	public MauiEmbeddingInitializer(Application app)
 	{
 		_app = app;
 	}
