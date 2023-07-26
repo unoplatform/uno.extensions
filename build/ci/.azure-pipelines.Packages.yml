@@ -9,8 +9,8 @@ jobs:
   - checkout: self
     clean: 'true'
 
-  - template: templates/dotnet6-install-windows.yml
   - template: templates/canary-updater.yml
+  - template: templates/dotnet6-install-windows.yml
 
   - task: gitversion/setup@0
     retryCountOnTaskFailure: 3
