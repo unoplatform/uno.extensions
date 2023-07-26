@@ -1,0 +1,70 @@
+﻿<Page
+	x:Class="MauiEmbedding.Presentation.MauiControlsPage"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:embed="using:Uno.Extensions.Maui"
+	xmlns:local="using:MauiEmbedding.Presentation"
+	xmlns:maui="using:Microsoft.Maui.Controls"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	xmlns:uen="using:Uno.Extensions.Navigation.UI"
+	xmlns:utu="using:Uno.Toolkit.UI"
+	x:Name="that"
+	Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+	NavigationCacheMode="Required"
+	mc:Ignorable="d">
+
+	<Page.Resources>
+		<ResourceDictionary>
+			<x:String x:Key="HelloWorld">Hello from WinUI Resources</x:String>
+			<Color x:Key="DemoColor">#169420</Color>
+			<local:TitleConverter x:Key="TitleConverter" />
+		</ResourceDictionary>
+	</Page.Resources>
+
+	<Grid HorizontalAlignment="Center" utu:SafeArea.Insets="All">
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition />
+		</Grid.RowDefinitions>
+		<utu:NavigationBar Content="{Binding Title}" />
+
+		<embed:MauiContent x:Name="mauiContent" Grid.Row="1">
+			<maui:VerticalStackLayout x:Name="stack" Spacing="16">
+
+				<maui:Label Text="Hello World">
+					<!--  This doesn't work here  -->
+					<!--  Probably related to https://github.com/microsoft/microsoft-ui-xaml/issues/2232  -->
+					<!--<maui:Label.HeightRequest>
+						<x:Double>600</x:Double>
+					</maui:Label.HeightRequest>-->
+				</maui:Label>
+
+				<!-- Button requires the app style (Styles.xml) to be changed from Theme.AppCompat.Light to Theme.MaterialComponents.Light eg
+				<style name="AppTheme" parent="Theme.MaterialComponents.Light">
+				-->
+				<maui:Button Text="Click me" />
+
+				<maui:Entry Placeholder="Some text" />
+
+				<maui:Picker x:Name="picker" Title="Some UI frameworks picker" />
+
+				<maui:ActivityIndicator IsRunning="true" />
+
+				<maui:Label x:Name="lblB" Text="{embed:MauiBinding Path=Name}" />
+
+				<maui:Grid>
+					<maui:Label Text="Row0" />
+					<maui:Label maui:Grid.Row="1" Text="Row1" />
+				</maui:Grid>
+
+			</maui:VerticalStackLayout>
+		</embed:MauiContent>
+
+		<StackPanel
+			Grid.Row="1"
+			HorizontalAlignment="Center"
+			VerticalAlignment="Center"
+			Spacing="16" />
+	</Grid>
+</Page>

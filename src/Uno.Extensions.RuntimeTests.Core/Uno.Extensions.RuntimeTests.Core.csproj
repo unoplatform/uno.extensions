@@ -10,7 +10,7 @@
 		<!--<ManagePackageVersionsCentrally>false</ManagePackageVersionsCentrally>-->
 	</PropertyGroup>
 
-	<ItemGroup Condition="'$(_IsWinUI)'=='false'">
+	<ItemGroup>
 		<PackageReference Include="Uno.WinUI" />
 		<PackageReference Include="System.Threading.Tasks.Extensions" />
 	</ItemGroup>
