@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 <<<<<<< HEAD:src/Uno.Extensions.Maui.UI/MauiContent.cs
 ﻿using Microsoft.UI.Xaml.Media;
 using Uno.Extensions.Maui.Internals;
@@ -12,20 +13,23 @@ namespace Uno.Extensions.Maui;
 
 namespace Uno.Extensions.Maui;
 >>>>>>> d981e312 (fix: Adjusting how maui is hosted)
+=======
+﻿namespace Uno.Extensions.Maui;
+>>>>>>> eb30ee72 (chore: Adjusting naming)
 
 /// <summary>
 /// ContentControl implementation that hosts a Maui view.
 /// </summary>
-[ContentProperty(Name = nameof(View))]
+[ContentProperty(Name = nameof(MauiContent))]
 public partial class UnoMauiHost : ContentControl
 {
 	/// <summary>
-	/// The View property represents the <see cref="View"/> that will be used as content.
+	/// The MauiContent property represents the <see cref="MauiContent"/> that will be used as content.
 	/// </summary>
-	public static readonly DependencyProperty ViewProperty =
-		DependencyProperty.Register(nameof(View), typeof(View), typeof(UnoMauiHost), new PropertyMetadata(null, OnViewChanged));
+	public static readonly DependencyProperty MauiContentProperty =
+		DependencyProperty.Register(nameof(MauiContent), typeof(View), typeof(UnoMauiHost), new PropertyMetadata(null, OnMauiContentChanged));
 
-	private static void OnViewChanged(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs args)
+	private static void OnMauiContentChanged(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs args)
 	{
 		if (args.NewValue is null ||
 			args.NewValue is not View view ||
@@ -71,12 +75,12 @@ public partial class UnoMauiHost : ContentControl
 	}
 
 	/// <summary>
-	/// Gets or sets the <see cref="View"/> that will be used as content.
+	/// Gets or sets the <see cref="MauiContent"/> that will be used as content.
 	/// </summary>
-	public View View
+	public View MauiContent
 	{
-		get => (View)GetValue(ViewProperty);
-		set => SetValue(ViewProperty, value);
+		get => (View)GetValue(MauiContentProperty);
+		set => SetValue(MauiContentProperty, value);
 	}
 
 	private void OnLoading(FrameworkElement sender, object args)
@@ -106,7 +110,7 @@ public partial class UnoMauiHost : ContentControl
 			_host = new MauiContentHost(resources)
 			{
 				BindingContext = DataContext,
-				Content = View
+				Content = MauiContent
 
 			};
 
