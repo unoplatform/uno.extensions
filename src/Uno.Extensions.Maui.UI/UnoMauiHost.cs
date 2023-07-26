@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <<<<<<< HEAD:src/Uno.Extensions.Maui.UI/MauiContent.cs
 ﻿using Microsoft.UI.Xaml.Media;
 using Uno.Extensions.Maui.Internals;
@@ -6,6 +7,11 @@ namespace Uno.Extensions.Maui;
 =======
 ﻿namespace Uno.Extensions.Maui;
 >>>>>>> 91939e18 (chore: Renaming classes):src/Uno.Extensions.Maui.UI/UnoMauiHost.cs
+=======
+﻿using Microsoft.Maui.Controls;
+
+namespace Uno.Extensions.Maui;
+>>>>>>> d981e312 (fix: Adjusting how maui is hosted)
 
 /// <summary>
 /// ContentControl implementation that hosts a Maui view.
@@ -21,33 +27,14 @@ public partial class UnoMauiHost : ContentControl
 
 	private static void OnViewChanged(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs args)
 	{
-		if (args.NewValue is null || args.NewValue is not View view || dependencyObject is not UnoMauiHost embeddedView)
+		if (args.NewValue is null ||
+			args.NewValue is not View view ||
+			dependencyObject is not UnoMauiHost mauiHost)
 		{
 			return;
 		}
 
-		if (embeddedView._host is not null)
-		{
-			view.Parent = embeddedView._host;
-		}
-
-		try
-		{
-			var native = view.ToPlatform(embeddedView.MauiContext);
-			embeddedView.Content = native;
-		}
-		catch (Exception ex)
-		{
-			var logger = GetLogger();
-			if (logger.IsEnabled(LogLevel.Error))
-			{
-				logger.LogError(ex, Properties.Resources.UnableToConvertMauiViewToNativeView);
-			}
-#if DEBUG
-			System.Diagnostics.Debugger.Break();
-#endif
-			throw new MauiEmbeddingException(Properties.Resources.UnexpectedErrorConvertingMauiViewToNativeView, ex);
-		}
+		mauiHost.Content = view;
 	}
 
 	private static ILogger GetLogger() =>
@@ -62,6 +49,9 @@ public partial class UnoMauiHost : ContentControl
 	/// </summary>
 	public UnoMauiHost()
 	{
+		this.HorizontalContentAlignment = HorizontalAlignment.Stretch;
+		this.VerticalContentAlignment = VerticalAlignment.Stretch;
+
 		MauiContext = MauiEmbedding.MauiContext;
 		Loading += OnLoading;
 		DataContextChanged += OnDataContextChanged;
@@ -111,23 +101,42 @@ public partial class UnoMauiHost : ContentControl
 			treeElement = VisualTreeHelper.GetParent(treeElement);
 		}
 
-		_host = new MauiContentHost(resources)
+		if (_host is null)
 		{
-			BindingContext = DataContext
-		};
+			_host = new MauiContentHost(resources)
+			{
+				BindingContext = DataContext,
+				Content = View
 
-		if (View.Parent is null)
-		{
-			View.Parent = _host;
+			};
+
+			try
+			{
+				var native = _host.ToPlatform(MauiContext);
+				Content = native;
+			}
+			catch (Exception ex)
+			{
+				var logger = GetLogger();
+				if (logger.IsEnabled(LogLevel.Error))
+				{
+					logger.LogError(ex, Properties.Resources.UnableToConvertMauiViewToNativeView);
+				}
+#if DEBUG
+				System.Diagnostics.Debugger.Break();
+#endif
+				throw new MauiEmbeddingException(Properties.Resources.UnexpectedErrorConvertingMauiViewToNativeView, ex);
+			}
+
 		}
 	}
 
 	void OnDataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
 	{
-		if (_host is not null && _host.BindingContext != DataContext)
+		if (_host is not null &&
+			_host.BindingContext != DataContext)
 		{
 			_host.BindingContext = DataContext;
-			View.BindingContext = DataContext;
 		}
 	}
 }
