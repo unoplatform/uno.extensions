@@ -19,11 +19,11 @@
 	</Grid.RowDefinitions>
 	<utu:NavigationBar Content="{Binding Title}" />
 
-	<embed:UnoMauiHost Grid.Row="1" x:Name="mauiContent">
+	<embed:MauiHost Grid.Row="1" x:Name="mauiContent">
 		<maui:VerticalStackLayout>
 			<external:CustomEntry Placeholder="This is a external control" BorderColor="{embed:MauiColor Value='Fuchsia'}"/>
 		</maui:VerticalStackLayout>
-	</embed:UnoMauiHost>
+	</embed:MauiHost>
 </Grid>
 
 </Page>
