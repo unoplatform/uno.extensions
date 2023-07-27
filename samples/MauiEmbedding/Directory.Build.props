@@ -18,6 +18,7 @@
 		<IsMacCatalyst>false</IsMacCatalyst>
 		<IsWinAppSdk>false</IsWinAppSdk>
 		<_UseTelerik>false</_UseTelerik>
+		<UnoDisableHotRestartHelperGeneration>false</UnoDisableHotRestartHelperGeneration>
 	</PropertyGroup>
 
 	<Choose>
