@@ -1,21 +1,4 @@
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD:src/Uno.Extensions.Maui.UI/MauiContent.cs
-﻿using Microsoft.UI.Xaml.Media;
-using Uno.Extensions.Maui.Internals;
-
 namespace Uno.Extensions.Maui;
-=======
-﻿namespace Uno.Extensions.Maui;
->>>>>>> 91939e18 (chore: Renaming classes):src/Uno.Extensions.Maui.UI/UnoMauiHost.cs
-=======
-﻿using Microsoft.Maui.Controls;
-
-namespace Uno.Extensions.Maui;
->>>>>>> d981e312 (fix: Adjusting how maui is hosted)
-=======
-﻿namespace Uno.Extensions.Maui;
->>>>>>> eb30ee72 (chore: Adjusting naming)
 
 /// <summary>
 /// ContentControl implementation that hosts a Maui view.
