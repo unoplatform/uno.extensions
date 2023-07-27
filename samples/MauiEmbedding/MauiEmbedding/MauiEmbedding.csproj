@@ -4,14 +4,14 @@
 
 	<PropertyGroup>
 		<TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows')) or '$(EnableWindowsTargeting)' == 'true'">$(TargetFrameworks);net7.0-windows10.0.19041</TargetFrameworks>
-		<TargetFrameworks>$(TargetFrameworks);net7.0-ios;net7.0-android;net7.0-maccatalyst</TargetFrameworks>
+		<TargetFrameworks>$(TargetFrameworks);net7.0;net7.0-ios;net7.0-android;net7.0-maccatalyst</TargetFrameworks>
 
 		<!-- Ensures the .xr.xml files are generated in a proper layout folder -->
 		<GenerateLibraryLayout>true</GenerateLibraryLayout>
+		<IsMauiEmbedding Condition="'$(IsMauiEmbedding)'==''">false</IsMauiEmbedding>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Telerik.UI.for.Maui" Condition="$(_UseTelerik)" />
 		<PackageReference Include="Uno.Dsp.Tasks" />
 		<PackageReference Include="Uno.WinUI" />
 		<PackageReference Include="Uno.Resizetizer" />
@@ -20,6 +20,9 @@
 		<PackageReference Include="Uno.Toolkit.WinUI.Material" />
 		<PackageReference Include="Uno.Toolkit.WinUI" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Console" />
+	</ItemGroup>
+	<ItemGroup Condition="$(IsMauiEmbedding)">
+		<PackageReference Include="Telerik.UI.for.Maui" Condition="$(_UseTelerik)" />
 		<PackageReference Include="CommunityToolkit.Maui" />
 		<PackageReference Include="Esri.ArcGISRuntime.Maui" />
 	</ItemGroup>
@@ -56,6 +59,11 @@
 		</Otherwise>
 	</Choose>
 
+	<ItemGroup Condition="!$(IsMauiEmbedding)">
+		<Compile Remove="Presentation\Maui\*.cs"/>
+		<Page Remove="Presentation\Maui\*.xaml"/>
+	</ItemGroup>
+
 	<ItemGroup>
 		<UnoDspImportColors Include="Styles\*.zip" Generator="Xaml" />
 		<UnoImage Include="Assets\**\*.svg" />
@@ -82,6 +90,11 @@
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Navigation\Uno.Extensions.Navigation.csproj" />
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Storage.UI\Uno.Extensions.Storage.WinUI.csproj" />
 		<ProjectReference Include="..\MauiProjects\MauiControlsExternal\MauiControlsExternal.csproj" />
+	</ItemGroup>
+
+
+	<ItemGroup>
+	  <Folder Include="Presentation\Maui\" />
 	</ItemGroup>
 	<Import Project="..\..\..\src\Uno.Extensions.Configuration\build\Package.targets" />
 	<Import Project="..\..\..\src\Uno.Extensions.Hosting\build\Package.targets" />

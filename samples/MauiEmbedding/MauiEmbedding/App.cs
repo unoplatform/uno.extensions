@@ -1,3 +1,4 @@
+#if MAUI_EMBEDDING
 using CommunityToolkit.Maui;
 using Microsoft.Maui;
 //using Telerik.Maui.Controls;
@@ -5,6 +6,7 @@ using Microsoft.Maui;
 using MControls = Microsoft.Maui.Controls;
 using MauiControlsExternal;
 using Esri.ArcGISRuntime.Maui;
+#endif
 
 namespace MauiEmbedding;
 
@@ -16,6 +18,7 @@ public class App : Application
 	protected async override void OnLaunched(LaunchActivatedEventArgs args)
 	{
 		var builder = this.CreateBuilder(args)
+#if MAUI_EMBEDDING
 			.UseMauiEmbedding(maui =>
 			{
 
@@ -35,6 +38,7 @@ public class App : Application
 					}
 				});
 			})
+#endif
 			// Add navigation support for toolkit controls such as TabBar and NavigationView
 			.UseToolkitNavigation()
 			.Configure(host => host
@@ -98,14 +102,16 @@ public class App : Application
 	{
 		views.Register(
 			new ViewMap(ViewModel: typeof(ShellViewModel)),
-			new ViewMap<MainPage, MainViewModel>(),
-			new ViewMap<MauiControlsPage, MauiControlsViewModel>(),
+			new ViewMap<MainPage, MainViewModel>()
+#if MAUI_EMBEDDING
+			,new ViewMap<MauiControlsPage, MauiControlsViewModel>(),
 			new ViewMap<MauiEssentialsPage, MauiEssentialsViewModel>(),
-			//new ViewMap<TelerikControlsPage, TelerikControlsViewModel>(),
+			new ViewMap<TelerikControlsPage, TelerikControlsViewModel>(),
 			new ViewMap<MauiColorsPage, MauiColorsViewModel>(),
 			new ViewMap<EsriMapsPage, EsriMapsViewModel>(),
 			new ViewMap<ExternalLibPage, ExternalLibViewModel>(),
 			new ViewMap<MCTControlsPage, MCTControlsViewModel>()
+#endif
 		);
 
 		routes.Register(
@@ -113,13 +119,15 @@ public class App : Application
 				Nested: new RouteMap[]
 				{
 					new RouteMap("Main", View: views.FindByViewModel<MainViewModel>()),
-					new RouteMap(nameof(MauiControlsViewModel), View: views.FindByViewModel<MauiControlsViewModel>()),
-					new RouteMap(nameof(MCTControlsViewModel), View: views.FindByViewModel<MCTControlsViewModel>()),
-					new RouteMap(nameof(MauiEssentialsViewModel), View: views.FindByViewModel<MauiEssentialsViewModel>()),
-					new RouteMap(nameof(MauiColorsViewModel), View: views.FindByViewModel<MauiColorsViewModel>()),
-					new RouteMap(nameof(EsriMapsViewModel), View: views.FindByViewModel<EsriMapsViewModel>()),
-					new RouteMap(nameof(ExternalLibPage), View: views.FindByViewModel<ExternalLibViewModel>()),
-					//new RouteMap(nameof(TelerikControlsViewModel), View: views.FindByViewModel<TelerikControlsViewModel>()),
+#if MAUI_EMBEDDING
+					new RouteMap("MauiControls", View: views.FindByViewModel<MauiControlsViewModel>()),
+					new RouteMap("MCTControls", View: views.FindByViewModel<MCTControlsViewModel>()),
+					new RouteMap("MauiEssentials", View: views.FindByViewModel<MauiEssentialsViewModel>()),
+					new RouteMap("MauiColors", View: views.FindByViewModel<MauiColorsViewModel>()),
+					new RouteMap("EsriMaps", View: views.FindByViewModel<EsriMapsViewModel>()),
+					new RouteMap("ExternalLib", View: views.FindByViewModel<ExternalLibViewModel>()),
+					new RouteMap("TelerikControls", View: views.FindByViewModel<TelerikControlsViewModel>()),
+#endif
 				}
 			)
 		);

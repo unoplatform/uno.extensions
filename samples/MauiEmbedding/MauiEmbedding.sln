@@ -73,6 +73,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Extensions Items", "Extensi
 		..\..\src\Directory.Build.props = ..\..\src\Directory.Build.props
 		..\..\src\Directory.Build.targets = ..\..\src\Directory.Build.targets
 		..\..\src\Directory.Packages.props = ..\..\src\Directory.Packages.props
+		..\..\src\tfms-ui-maui.props = ..\..\src\tfms-ui-maui.props
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MauiProjects", "MauiProjects", "{24511BF4-9869-4773-AF84-CC8F79AF5085}"
@@ -80,6 +81,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MauiControlsExternal", "MauiProjects\MauiControlsExternal\MauiControlsExternal.csproj", "{A158CC84-0219-4BE4-A3F2-7AB7F613855A}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MauiApp1", "MauiProjects\MauiApp1\MauiApp1.csproj", "{8577882E-DA52-4D27-A529-C70998034566}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MauiEmbedding.Skia.Gtk", "MauiEmbedding.Skia.Gtk\MauiEmbedding.Skia.Gtk.csproj", "{00BAAAC1-9BA0-4F35-B7B6-5B4D64E45FAB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -875,6 +878,34 @@ Global
 		{8577882E-DA52-4D27-A529-C70998034566}.Release|x64.Build.0 = Release|Any CPU
 		{8577882E-DA52-4D27-A529-C70998034566}.Release|x86.ActiveCfg = Release|Any CPU
 		{8577882E-DA52-4D27-A529-C70998034566}.Release|x86.Build.0 = Release|Any CPU
+		{00BAAAC1-9BA0-4F35-B7B6-5B4D64E45FAB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{00BAAAC1-9BA0-4F35-B7B6-5B4D64E45FAB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{00BAAAC1-9BA0-4F35-B7B6-5B4D64E45FAB}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{00BAAAC1-9BA0-4F35-B7B6-5B4D64E45FAB}.Debug|ARM.Build.0 = Debug|Any CPU
+		{00BAAAC1-9BA0-4F35-B7B6-5B4D64E45FAB}.Debug|ARM64.ActiveCfg = Debug|Any CPU
+		{00BAAAC1-9BA0-4F35-B7B6-5B4D64E45FAB}.Debug|ARM64.Build.0 = Debug|Any CPU
+		{00BAAAC1-9BA0-4F35-B7B6-5B4D64E45FAB}.Debug|iPhone.ActiveCfg = Debug|Any CPU
+		{00BAAAC1-9BA0-4F35-B7B6-5B4D64E45FAB}.Debug|iPhone.Build.0 = Debug|Any CPU
+		{00BAAAC1-9BA0-4F35-B7B6-5B4D64E45FAB}.Debug|iPhoneSimulator.ActiveCfg = Debug|Any CPU
+		{00BAAAC1-9BA0-4F35-B7B6-5B4D64E45FAB}.Debug|iPhoneSimulator.Build.0 = Debug|Any CPU
+		{00BAAAC1-9BA0-4F35-B7B6-5B4D64E45FAB}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{00BAAAC1-9BA0-4F35-B7B6-5B4D64E45FAB}.Debug|x64.Build.0 = Debug|Any CPU
+		{00BAAAC1-9BA0-4F35-B7B6-5B4D64E45FAB}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{00BAAAC1-9BA0-4F35-B7B6-5B4D64E45FAB}.Debug|x86.Build.0 = Debug|Any CPU
+		{00BAAAC1-9BA0-4F35-B7B6-5B4D64E45FAB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{00BAAAC1-9BA0-4F35-B7B6-5B4D64E45FAB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{00BAAAC1-9BA0-4F35-B7B6-5B4D64E45FAB}.Release|ARM.ActiveCfg = Release|Any CPU
+		{00BAAAC1-9BA0-4F35-B7B6-5B4D64E45FAB}.Release|ARM.Build.0 = Release|Any CPU
+		{00BAAAC1-9BA0-4F35-B7B6-5B4D64E45FAB}.Release|ARM64.ActiveCfg = Release|Any CPU
+		{00BAAAC1-9BA0-4F35-B7B6-5B4D64E45FAB}.Release|ARM64.Build.0 = Release|Any CPU
+		{00BAAAC1-9BA0-4F35-B7B6-5B4D64E45FAB}.Release|iPhone.ActiveCfg = Release|Any CPU
+		{00BAAAC1-9BA0-4F35-B7B6-5B4D64E45FAB}.Release|iPhone.Build.0 = Release|Any CPU
+		{00BAAAC1-9BA0-4F35-B7B6-5B4D64E45FAB}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU
+		{00BAAAC1-9BA0-4F35-B7B6-5B4D64E45FAB}.Release|iPhoneSimulator.Build.0 = Release|Any CPU
+		{00BAAAC1-9BA0-4F35-B7B6-5B4D64E45FAB}.Release|x64.ActiveCfg = Release|Any CPU
+		{00BAAAC1-9BA0-4F35-B7B6-5B4D64E45FAB}.Release|x64.Build.0 = Release|Any CPU
+		{00BAAAC1-9BA0-4F35-B7B6-5B4D64E45FAB}.Release|x86.ActiveCfg = Release|Any CPU
+		{00BAAAC1-9BA0-4F35-B7B6-5B4D64E45FAB}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -909,6 +940,7 @@ Global
 		{9F4A5914-3D10-4CDE-829C-BE53A9E441DB} = {9B9F35D5-E6DD-4FC7-9198-F8246D3CE366}
 		{A158CC84-0219-4BE4-A3F2-7AB7F613855A} = {24511BF4-9869-4773-AF84-CC8F79AF5085}
 		{8577882E-DA52-4D27-A529-C70998034566} = {24511BF4-9869-4773-AF84-CC8F79AF5085}
+		{00BAAAC1-9BA0-4F35-B7B6-5B4D64E45FAB} = {1C130CF4-EEF4-44D9-9DEF-C037FE1C221B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {584E156C-C094-4968-8A1F-3FB06081E34D}

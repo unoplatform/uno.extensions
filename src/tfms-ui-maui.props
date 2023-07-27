@@ -4,6 +4,7 @@
 		<TargetFrameworks>$(UnoTargetFrameworkOverride)</TargetFrameworks>
 	</PropertyGroup>
 	<PropertyGroup  Condition="'$(UnoTargetFrameworkOverride)'==''">
+		<TargetFrameworks>$(TargetFrameworks);net7.0;</TargetFrameworks>
 		<TargetFrameworks Condition="'$(Build_iOS)'=='true' and '$(UnoExtensionsDisableNet7)'==''">$(TargetFrameworks);net7.0-ios</TargetFrameworks>
 		<TargetFrameworks Condition="'$(Build_MacOS)'=='true' and '$(UnoExtensionsDisableNet7)'==''">$(TargetFrameworks);net7.0-maccatalyst</TargetFrameworks>
 		<TargetFrameworks Condition="'$(Build_Android)'=='true' and '$(UnoExtensionsDisableNet7)'==''">$(TargetFrameworks);net7.0-android</TargetFrameworks>
