@@ -36,5 +36,6 @@
 
 	<ItemGroup>
 		<Compile Remove="Interop\*.cs" />
+		<Compile Remove="Models\*.cs" />
 	</ItemGroup>
 </Project>

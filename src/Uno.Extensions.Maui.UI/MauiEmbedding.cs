@@ -1,7 +1,3 @@
-using Uno.Extensions.Hosting;
-using Microsoft.Maui.Controls.Hosting;
-using Microsoft.Maui.Hosting;
-using Uno.Extensions.Maui.Internals;
 
 namespace Uno.Extensions.Maui;
 
@@ -50,7 +46,7 @@ public static class MauiEmbedding
 #endif
 
 		mauiAppBuilder.Services.AddSingleton(app)
-			.AddSingleton<IMauiInitializeService, UnoMauiEmbeddingInitializer>();
+			.AddSingleton<IMauiInitializeService, MauiEmbeddingInitializer>();
 		_app = mauiAppBuilder.Build();
 	}
 

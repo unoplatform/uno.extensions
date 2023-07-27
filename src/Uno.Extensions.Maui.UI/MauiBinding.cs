@@ -1,6 +1,4 @@
-﻿using Uno.Extensions.Maui.Internals;
-
-namespace Uno.Extensions.Maui;
+﻿namespace Uno.Extensions.Maui;
 
 /// <summary>
 /// A binding extension for Maui apps.
@@ -16,7 +14,7 @@ public class MauiBinding : MauiExtensionBase
 	/// <summary>
 	/// The direction of the binding mode.
 	/// </summary>
-	public BindingMode BindingMode { get; set; } = BindingMode.Default;
+	public MauiBindingMode BindingMode { get; set; } = MauiBindingMode.Default;
 
 	/// <summary>
 	/// The string format of the bound property.
@@ -39,28 +37,28 @@ public class MauiBinding : MauiExtensionBase
 	public object? Source { get; set; }
 
 	/// <inheritdoc/>
-	protected override void SetValue(View view, Type viewType, Type propertyType, Microsoft.Maui.Controls.BindableProperty property, string propertyName)
+	protected override void SetValue(View view, Type viewType, Type propertyType, BindableProperty property, string propertyName)
 	{
 		if (string.IsNullOrEmpty(Path))
 		{
 			Path = ".";
 		}
 
-		IMauiConverter? converter = null;
-		if (Converter is IMauiConverter converterAsMauiConverter)
+		IMauiValueConverter? converter = null;
+		if (Converter is IMauiValueConverter converterAsMauiConverter)
 		{
 			converter = converterAsMauiConverter;
 		}
-		else if (Converter is IWinUIConverter winUIConverter)
+		else if (Converter is IValueConverter winUIConverter)
 		{
 			var value = ConversionHelpers.ToMauiValue(winUIConverter);
-			if (value is IMauiConverter mauiConverter)
+			if (value is IMauiValueConverter mauiConverter)
 			{
 				converter = mauiConverter;
 			}
 		}
 
-		var binding = new NativeMauiBinding(Path,
+		var binding = new MauiControlsBinding(Path,
 			mode: BindingMode,
 			converter: converter,
 			converterParameter: ConverterParameter,
