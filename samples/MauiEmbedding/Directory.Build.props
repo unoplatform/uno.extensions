@@ -18,6 +18,7 @@
 		<IsMacCatalyst>false</IsMacCatalyst>
 		<IsWinAppSdk>false</IsWinAppSdk>
 		<_UseTelerik>false</_UseTelerik>
+        <!-- Remove after https://github.com/unoplatform/uno/pull/13034 is merged -->
 		<UnoDisableHotRestartHelperGeneration>false</UnoDisableHotRestartHelperGeneration>
 	</PropertyGroup>
 
