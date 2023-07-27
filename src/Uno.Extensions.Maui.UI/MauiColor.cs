@@ -12,6 +12,7 @@ public class MauiColor : MauiExtensionBase
 	/// </summary>
 	public string Value { get; set; } = string.Empty;
 
+#if MAUI_EMBEDDING
 	/// <inheritdoc/>
 	protected override void SetValue(View view, Type viewType, Type propertyType, BindableProperty property, string propertyName)
 	{
@@ -31,4 +32,5 @@ public class MauiColor : MauiExtensionBase
 
 		view.SetValue(property, color);
 	}
+#endif
 }

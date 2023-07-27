@@ -5,7 +5,7 @@
 	</PropertyGroup>
 
 	<ItemGroup Condition=" '$(ImplicitUsings)' == 'true' OR '$(ImplicitUsings)' == 'enable' ">
-		<Using Include="Uno.Extensions.Maui"  Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android' OR $([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios' OR $([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst' OR $(TargetFramework.Contains('windows10'))" />
+		<Using Include="Uno.Extensions.Maui" />
 	</ItemGroup>
 
 	<ItemGroup>
