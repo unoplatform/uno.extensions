@@ -3,12 +3,12 @@ global using System.Globalization;
 global using System.Linq;
 global using System.Reflection;
 global using Microsoft.Extensions.DependencyInjection;
+global using Microsoft.Extensions.Hosting;
 global using Microsoft.Extensions.Logging;
 global using Microsoft.UI.Xaml;
 global using Microsoft.UI.Xaml.Controls;
 global using Microsoft.UI.Xaml.Markup;
 global using Microsoft.UI.Xaml.Media;
-global using Uno.Extensions.Hosting;
 
 global using Microsoft.Maui.Controls;
 global using Microsoft.Maui.Embedding;
