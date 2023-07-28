@@ -6,6 +6,7 @@ namespace Uno.Extensions.Maui;
 /// </summary>
 public static class MauiEmbedding
 {
+#if MAUI_EMBEDDING
 	private static MauiApp? _app;
 	internal static IMauiContext MauiContext =>
 #if ANDROID
@@ -14,6 +15,7 @@ public static class MauiEmbedding
 #else
 	_app is not null ? new MauiContext(_app.Services)
 			: throw new MauiEmbeddingInitializationException();
+#endif
 #endif
 
 	/// <summary>
@@ -33,8 +35,9 @@ public static class MauiEmbedding
 	/// </summary>
 	/// <param name="app">The Uno app.</param>
 	/// <param name="configure">Optional lambda to configure the Maui app builder.</param>
-	public static void UseMauiEmbedding(this Microsoft.UI.Xaml.Application app, Action<MauiAppBuilder>? configure = null)
+	public static Microsoft.UI.Xaml.Application UseMauiEmbedding(this Microsoft.UI.Xaml.Application app, Action<MauiAppBuilder>? configure = null)
 	{
+#if MAUI_EMBEDDING
 		var mauiAppBuilder = MauiApp.CreateBuilder()
 				.UseMauiEmbedding<MauiApplication>();
 
@@ -48,6 +51,8 @@ public static class MauiEmbedding
 		mauiAppBuilder.Services.AddSingleton(app)
 			.AddSingleton<IMauiInitializeService, MauiEmbeddingInitializer>();
 		_app = mauiAppBuilder.Build();
+#endif
+		return app;
 	}
 
 	// NOTE: This was part of the POC and is out of scope for the MVP. Keeping it in case we want to add it back later.
