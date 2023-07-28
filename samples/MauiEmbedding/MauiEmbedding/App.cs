@@ -1,9 +1,10 @@
-#if MAUI_EMBEDDING
-using CommunityToolkit.Maui;
 using Microsoft.Maui;
+using MControls = Microsoft.Maui.Controls;
+using CommunityToolkit.Maui;
+
+#if MAUI_EMBEDDING
 //using Telerik.Maui.Controls;
 //using Telerik.Maui.Controls.Compatibility;
-using MControls = Microsoft.Maui.Controls;
 using MauiControlsExternal;
 using Esri.ArcGISRuntime.Maui;
 #endif
@@ -18,16 +19,18 @@ public class App : Application
 	protected async override void OnLaunched(LaunchActivatedEventArgs args)
 	{
 		var builder = this.CreateBuilder(args)
-#if MAUI_EMBEDDING
 			.UseMauiEmbedding(maui =>
 			{
 
 				maui
 				.UseMauiCommunityToolkit()
+#if MAUI_EMBEDDING
 				.UseArcGISRuntime()
 				//.UseTelerik()
 				//.UseTelerikControls()
-				.UseCustomLibrary();
+				.UseCustomLibrary()
+#endif
+				;
 
 				Microsoft.Maui.Handlers.ShapeViewHandler.Mapper.AppendToMapping("BackgroundColor", (h, v) =>
 				{
@@ -38,7 +41,7 @@ public class App : Application
 					}
 				});
 			})
-#endif
+
 			// Add navigation support for toolkit controls such as TabBar and NavigationView
 			.UseToolkitNavigation()
 			.Configure(host => host
@@ -103,15 +106,15 @@ public class App : Application
 		views.Register(
 			new ViewMap(ViewModel: typeof(ShellViewModel)),
 			new ViewMap<MainPage, MainViewModel>()
-#if MAUI_EMBEDDING
 			,new ViewMap<MauiControlsPage, MauiControlsViewModel>(),
 			new ViewMap<MauiEssentialsPage, MauiEssentialsViewModel>(),
 			new ViewMap<TelerikControlsPage, TelerikControlsViewModel>(),
 			new ViewMap<MauiColorsPage, MauiColorsViewModel>(),
+#if MAUI_EMBEDDING
 			new ViewMap<EsriMapsPage, EsriMapsViewModel>(),
+#endif
 			new ViewMap<ExternalLibPage, ExternalLibViewModel>(),
 			new ViewMap<MCTControlsPage, MCTControlsViewModel>()
-#endif
 		);
 
 		routes.Register(
