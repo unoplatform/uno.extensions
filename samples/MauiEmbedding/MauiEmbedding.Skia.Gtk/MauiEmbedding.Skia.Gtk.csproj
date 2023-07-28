@@ -1,4 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
+	<!-- This is only required because this project references Uno.Extensions.Maui.WinUI as a package reference (ie by source) -->
+	<Import Project="..\..\..\src\Uno.Extensions.Maui.UI\build\Package.props" />
+
 	<PropertyGroup>
 		<OutputType Condition="'$(Configuration)'=='Release'">WinExe</OutputType>
 		<OutputType Condition="'$(Configuration)'=='Debug'">Exe</OutputType>
@@ -22,4 +25,5 @@
 		<ProjectReference Include="..\MauiEmbedding\MauiEmbedding.csproj" />
 	</ItemGroup>
 	<Import Project="..\MauiEmbedding.Base\base.props" />
+	<Import Project="..\..\..\src\Uno.Extensions.Maui.UI\build\Package.targets" />
 </Project>

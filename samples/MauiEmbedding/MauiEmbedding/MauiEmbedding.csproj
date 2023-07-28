@@ -60,8 +60,8 @@
 	</Choose>
 
 	<ItemGroup Condition="!$(IsMauiEmbedding)">
-		<Compile Remove="Presentation\Maui\EsriMapsPage.xaml.cs"/>
-		<Page Remove="Presentation\Maui\EsriMapsPage.xaml"/>
+		<Compile Remove="Presentation\EsriMapsPage.xaml.cs"/>
+		<Page Remove="Presentation\EsriMapsPage.xaml"/>
 	</ItemGroup>
 
 	<ItemGroup>
