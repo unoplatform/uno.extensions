@@ -90,6 +90,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Toolkit.WinU
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MauiEmbedding.Skia.Gtk", "MauiEmbedding.Skia.Gtk\MauiEmbedding.Skia.Gtk.csproj", "{00BAAAC1-9BA0-4F35-B7B6-5B4D64E45FAB}"
 >>>>>>> 38f9092f (fix: Adding net7.0 support for maui package)
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MauiEmbedding.Wasm", "MauiEmbedding.Wasm\MauiEmbedding.Wasm.csproj", "{8BD5BF69-6C93-44BE-B31E-625636BD6423}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -970,7 +972,38 @@ Global
 		{00BAAAC1-9BA0-4F35-B7B6-5B4D64E45FAB}.Release|x64.Build.0 = Release|Any CPU
 		{00BAAAC1-9BA0-4F35-B7B6-5B4D64E45FAB}.Release|x86.ActiveCfg = Release|Any CPU
 		{00BAAAC1-9BA0-4F35-B7B6-5B4D64E45FAB}.Release|x86.Build.0 = Release|Any CPU
+<<<<<<< HEAD
 >>>>>>> 38f9092f (fix: Adding net7.0 support for maui package)
+=======
+		{8BD5BF69-6C93-44BE-B31E-625636BD6423}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8BD5BF69-6C93-44BE-B31E-625636BD6423}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8BD5BF69-6C93-44BE-B31E-625636BD6423}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{8BD5BF69-6C93-44BE-B31E-625636BD6423}.Debug|ARM.Build.0 = Debug|Any CPU
+		{8BD5BF69-6C93-44BE-B31E-625636BD6423}.Debug|ARM64.ActiveCfg = Debug|Any CPU
+		{8BD5BF69-6C93-44BE-B31E-625636BD6423}.Debug|ARM64.Build.0 = Debug|Any CPU
+		{8BD5BF69-6C93-44BE-B31E-625636BD6423}.Debug|iPhone.ActiveCfg = Debug|Any CPU
+		{8BD5BF69-6C93-44BE-B31E-625636BD6423}.Debug|iPhone.Build.0 = Debug|Any CPU
+		{8BD5BF69-6C93-44BE-B31E-625636BD6423}.Debug|iPhoneSimulator.ActiveCfg = Debug|Any CPU
+		{8BD5BF69-6C93-44BE-B31E-625636BD6423}.Debug|iPhoneSimulator.Build.0 = Debug|Any CPU
+		{8BD5BF69-6C93-44BE-B31E-625636BD6423}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{8BD5BF69-6C93-44BE-B31E-625636BD6423}.Debug|x64.Build.0 = Debug|Any CPU
+		{8BD5BF69-6C93-44BE-B31E-625636BD6423}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{8BD5BF69-6C93-44BE-B31E-625636BD6423}.Debug|x86.Build.0 = Debug|Any CPU
+		{8BD5BF69-6C93-44BE-B31E-625636BD6423}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8BD5BF69-6C93-44BE-B31E-625636BD6423}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8BD5BF69-6C93-44BE-B31E-625636BD6423}.Release|ARM.ActiveCfg = Release|Any CPU
+		{8BD5BF69-6C93-44BE-B31E-625636BD6423}.Release|ARM.Build.0 = Release|Any CPU
+		{8BD5BF69-6C93-44BE-B31E-625636BD6423}.Release|ARM64.ActiveCfg = Release|Any CPU
+		{8BD5BF69-6C93-44BE-B31E-625636BD6423}.Release|ARM64.Build.0 = Release|Any CPU
+		{8BD5BF69-6C93-44BE-B31E-625636BD6423}.Release|iPhone.ActiveCfg = Release|Any CPU
+		{8BD5BF69-6C93-44BE-B31E-625636BD6423}.Release|iPhone.Build.0 = Release|Any CPU
+		{8BD5BF69-6C93-44BE-B31E-625636BD6423}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU
+		{8BD5BF69-6C93-44BE-B31E-625636BD6423}.Release|iPhoneSimulator.Build.0 = Release|Any CPU
+		{8BD5BF69-6C93-44BE-B31E-625636BD6423}.Release|x64.ActiveCfg = Release|Any CPU
+		{8BD5BF69-6C93-44BE-B31E-625636BD6423}.Release|x64.Build.0 = Release|Any CPU
+		{8BD5BF69-6C93-44BE-B31E-625636BD6423}.Release|x86.ActiveCfg = Release|Any CPU
+		{8BD5BF69-6C93-44BE-B31E-625636BD6423}.Release|x86.Build.0 = Release|Any CPU
+>>>>>>> 8ac4dab9 (chore: Adding wasm target)
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -1010,7 +1043,11 @@ Global
 		{8BD9E873-32EF-4AED-85DA-31B918909E14} = {9B9F35D5-E6DD-4FC7-9198-F8246D3CE366}
 =======
 		{00BAAAC1-9BA0-4F35-B7B6-5B4D64E45FAB} = {1C130CF4-EEF4-44D9-9DEF-C037FE1C221B}
+<<<<<<< HEAD
 >>>>>>> 38f9092f (fix: Adding net7.0 support for maui package)
+=======
+		{8BD5BF69-6C93-44BE-B31E-625636BD6423} = {1C130CF4-EEF4-44D9-9DEF-C037FE1C221B}
+>>>>>>> 8ac4dab9 (chore: Adding wasm target)
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {584E156C-C094-4968-8A1F-3FB06081E34D}

@@ -48,6 +48,11 @@
 		<PackageVersion Include="CommunityToolkit.Maui" Version="2.0.0" />
 		<PackageVersion Include="Telerik.UI.for.Maui" Version="5.1.0" Condition="$(_UseTelerik)" />
 		<PackageVersion Include="Esri.ArcGISRuntime.Maui" Version="200.1.0" />
+		<PackageVersion Include="Microsoft.Windows.Compatibility" Version="7.0.4" />
+		<PackageVersion Include="Uno.Extensions.Logging.WebAssembly.Console" Version="1.4.0" />
+		<PackageVersion Include="Uno.WinUI.WebAssembly" Version="5.0.0-dev.1610" />
+		<PackageVersion Include="Uno.Wasm.Bootstrap" Version="7.0.27" />
+		<PackageVersion Include="Uno.Wasm.Bootstrap.DevServer" Version="7.0.27" />
 	</ItemGroup>
 >>>>>>> 38f9092f (fix: Adding net7.0 support for maui package)
 </Project>
