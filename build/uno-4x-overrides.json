@@ -43,6 +43,10 @@
     "PackageId": "Uno.UI.Skia.Wpf",
     "UpdatedVersion": "(,4.99.0-dev.999]"
   },
+  {
+    "PackageId": "Uno.UI.Runtime.WebAssembly",
+    "UpdatedVersion": "(,4.99.0-dev.999]"
+  },
 
 
 
@@ -89,6 +93,10 @@
   },
   {
     "PackageId": "Uno.WinUI.Skia.Wpf",
+    "UpdatedVersion": "(,4.99.0-dev.999]"
+  },
+  {
+    "PackageId": "Uno.WinUI.Runtime.WebAssembly",
     "UpdatedVersion": "(,4.99.0-dev.999]"
   },
 
