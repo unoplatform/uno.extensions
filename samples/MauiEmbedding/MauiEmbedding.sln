@@ -82,13 +82,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MauiControlsExternal", "Mau
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MauiApp1", "MauiProjects\MauiApp1\MauiApp1.csproj", "{8577882E-DA52-4D27-A529-C70998034566}"
 EndProject
-<<<<<<< HEAD
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Toolkit", "..\..\src\Uno.Extensions.Toolkit\Uno.Extensions.Toolkit.csproj", "{D247D7A5-3630-4651-B26F-96640C334CD9}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Toolkit.WinUI", "..\..\src\Uno.Extensions.Toolkit.UI\Uno.Extensions.Toolkit.WinUI.csproj", "{8BD9E873-32EF-4AED-85DA-31B918909E14}"
-=======
+EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MauiEmbedding.Skia.Gtk", "MauiEmbedding.Skia.Gtk\MauiEmbedding.Skia.Gtk.csproj", "{00BAAAC1-9BA0-4F35-B7B6-5B4D64E45FAB}"
->>>>>>> 38f9092f (fix: Adding net7.0 support for maui package)
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MauiEmbedding.Wasm", "MauiEmbedding.Wasm\MauiEmbedding.Wasm.csproj", "{8BD5BF69-6C93-44BE-B31E-625636BD6423}"
 EndProject
@@ -886,7 +884,6 @@ Global
 		{8577882E-DA52-4D27-A529-C70998034566}.Release|x64.Build.0 = Release|Any CPU
 		{8577882E-DA52-4D27-A529-C70998034566}.Release|x86.ActiveCfg = Release|Any CPU
 		{8577882E-DA52-4D27-A529-C70998034566}.Release|x86.Build.0 = Release|Any CPU
-<<<<<<< HEAD
 		{D247D7A5-3630-4651-B26F-96640C334CD9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{D247D7A5-3630-4651-B26F-96640C334CD9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D247D7A5-3630-4651-B26F-96640C334CD9}.Debug|ARM.ActiveCfg = Debug|Any CPU
@@ -943,7 +940,6 @@ Global
 		{8BD9E873-32EF-4AED-85DA-31B918909E14}.Release|x64.Build.0 = Release|Any CPU
 		{8BD9E873-32EF-4AED-85DA-31B918909E14}.Release|x86.ActiveCfg = Release|Any CPU
 		{8BD9E873-32EF-4AED-85DA-31B918909E14}.Release|x86.Build.0 = Release|Any CPU
-=======
 		{00BAAAC1-9BA0-4F35-B7B6-5B4D64E45FAB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{00BAAAC1-9BA0-4F35-B7B6-5B4D64E45FAB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{00BAAAC1-9BA0-4F35-B7B6-5B4D64E45FAB}.Debug|ARM.ActiveCfg = Debug|Any CPU
@@ -972,9 +968,6 @@ Global
 		{00BAAAC1-9BA0-4F35-B7B6-5B4D64E45FAB}.Release|x64.Build.0 = Release|Any CPU
 		{00BAAAC1-9BA0-4F35-B7B6-5B4D64E45FAB}.Release|x86.ActiveCfg = Release|Any CPU
 		{00BAAAC1-9BA0-4F35-B7B6-5B4D64E45FAB}.Release|x86.Build.0 = Release|Any CPU
-<<<<<<< HEAD
->>>>>>> 38f9092f (fix: Adding net7.0 support for maui package)
-=======
 		{8BD5BF69-6C93-44BE-B31E-625636BD6423}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{8BD5BF69-6C93-44BE-B31E-625636BD6423}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8BD5BF69-6C93-44BE-B31E-625636BD6423}.Debug|ARM.ActiveCfg = Debug|Any CPU
@@ -1003,7 +996,6 @@ Global
 		{8BD5BF69-6C93-44BE-B31E-625636BD6423}.Release|x64.Build.0 = Release|Any CPU
 		{8BD5BF69-6C93-44BE-B31E-625636BD6423}.Release|x86.ActiveCfg = Release|Any CPU
 		{8BD5BF69-6C93-44BE-B31E-625636BD6423}.Release|x86.Build.0 = Release|Any CPU
->>>>>>> 8ac4dab9 (chore: Adding wasm target)
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -1038,16 +1030,10 @@ Global
 		{9F4A5914-3D10-4CDE-829C-BE53A9E441DB} = {9B9F35D5-E6DD-4FC7-9198-F8246D3CE366}
 		{A158CC84-0219-4BE4-A3F2-7AB7F613855A} = {24511BF4-9869-4773-AF84-CC8F79AF5085}
 		{8577882E-DA52-4D27-A529-C70998034566} = {24511BF4-9869-4773-AF84-CC8F79AF5085}
-<<<<<<< HEAD
 		{D247D7A5-3630-4651-B26F-96640C334CD9} = {9B9F35D5-E6DD-4FC7-9198-F8246D3CE366}
 		{8BD9E873-32EF-4AED-85DA-31B918909E14} = {9B9F35D5-E6DD-4FC7-9198-F8246D3CE366}
-=======
 		{00BAAAC1-9BA0-4F35-B7B6-5B4D64E45FAB} = {1C130CF4-EEF4-44D9-9DEF-C037FE1C221B}
-<<<<<<< HEAD
->>>>>>> 38f9092f (fix: Adding net7.0 support for maui package)
-=======
 		{8BD5BF69-6C93-44BE-B31E-625636BD6423} = {1C130CF4-EEF4-44D9-9DEF-C037FE1C221B}
->>>>>>> 8ac4dab9 (chore: Adding wasm target)
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {584E156C-C094-4968-8A1F-3FB06081E34D}
