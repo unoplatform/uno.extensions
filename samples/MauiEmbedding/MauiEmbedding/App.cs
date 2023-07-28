@@ -19,29 +19,6 @@ public class App : Application
 	protected async override void OnLaunched(LaunchActivatedEventArgs args)
 	{
 		var builder = this.CreateBuilder(args)
-			.UseMauiEmbedding(maui =>
-			{
-
-				maui
-				.UseMauiCommunityToolkit()
-#if MAUI_EMBEDDING
-				.UseArcGISRuntime()
-				//.UseTelerik()
-				//.UseTelerikControls()
-				.UseCustomLibrary()
-#endif
-				;
-
-				Microsoft.Maui.Handlers.ShapeViewHandler.Mapper.AppendToMapping("BackgroundColor", (h, v) =>
-				{
-					if (v is MControls.BoxView boxview)
-					{
-						boxview.Background = MControls.Brush.Fuchsia;
-						Microsoft.Maui.Handlers.ShapeViewHandler.MapBackground(h, boxview);
-					}
-				});
-			})
-
 			// Add navigation support for toolkit controls such as TabBar and NavigationView
 			.UseToolkitNavigation()
 			.Configure(host => host
@@ -91,6 +68,28 @@ public class App : Application
 				{
 					// TODO: Register your services
 					//services.AddSingleton<IMyService, MyService>();
+				})
+				.UseMauiEmbedding(this, maui =>
+				{
+
+					maui
+					.UseMauiCommunityToolkit()
+#if MAUI_EMBEDDING
+				.UseArcGISRuntime()
+				//.UseTelerik()
+				//.UseTelerikControls()
+				.UseCustomLibrary()
+#endif
+					;
+
+					Microsoft.Maui.Handlers.ShapeViewHandler.Mapper.AppendToMapping("BackgroundColor", (h, v) =>
+					{
+						if (v is MControls.BoxView boxview)
+						{
+							boxview.Background = MControls.Brush.Fuchsia;
+							Microsoft.Maui.Handlers.ShapeViewHandler.MapBackground(h, boxview);
+						}
+					});
 				})
 				.UseNavigation(RegisterRoutes)
 			);
