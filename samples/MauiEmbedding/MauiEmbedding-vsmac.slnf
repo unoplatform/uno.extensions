@@ -30,7 +30,9 @@
       "..\\MauiProjects\\MauiApp1\\MauiApp1.csproj",
       "..\\MauiProjects\\MauiControlsExternal\\MauiControlsExternal.csproj",
       "MauiEmbedding.Mobile\\MauiEmbedding.Mobile.csproj",
-      "MauiEmbedding\\MauiEmbedding.csproj"
+      "MauiEmbedding\\MauiEmbedding.csproj",
+      "MauiProjects\\MauiApp1\\MauiApp1.csproj",
+      "MauiProjects\\MauiControlsExternal\\MauiControlsExternal.csproj"
     ]
   }
 }
