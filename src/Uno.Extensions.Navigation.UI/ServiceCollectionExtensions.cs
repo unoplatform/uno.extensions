@@ -22,6 +22,7 @@ public static class ServiceCollectionExtensions
 		services.AddTransient<Flyout, NavigationFlyout>();
 
 		return services
+					.AddHostedService<NavigationHostedService>()
 					.AddSingleton<NavigationConfig>(sp =>
 					{
 						var config = new NavigationConfig(RouteResolver: typeof(RouteResolverDefault), AddressBarUpdateEnabled: true);
@@ -92,7 +93,7 @@ public static class ServiceCollectionExtensions
 					.AddScopedInstance<INavigator>();
 	}
 
-	public static IServiceCollection ConfigureNavigatorFactory(this IServiceCollection services, Action<INavigatorFactory> register)
+	internal static IServiceCollection ConfigureNavigatorFactory(this IServiceCollection services, Action<INavigatorFactory> register)
 	{
 		return services.AddSingleton(new NavigatorFactoryBuilder() { Configure = register });
 	}

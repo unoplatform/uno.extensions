@@ -1,6 +1,6 @@
 ﻿namespace Uno.Extensions.Navigation;
 
-public class NavigatorFactoryBuilder
+internal class NavigatorFactoryBuilder
 {
     public Action<INavigatorFactory>? Configure { get; set; }
 }

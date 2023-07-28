@@ -11,6 +11,13 @@ public abstract class SelectorNavigator<TControl> : ControlNavigator<TControl>
 		{
 			_detachSelectionChanged = AttachSelectionChanged((sender, selected) => _ = SelectionChanged(sender, selected));
 		}
+		else
+		{
+			if (Logger.IsEnabled(LogLevel.Warning))
+			{
+				Logger.LogWarningMessage($"Control is null, so unable to attach selection changed handler");
+			}
+		}
 	}
 
 	protected abstract FrameworkElement? SelectedItem { get; set; }
@@ -59,6 +66,11 @@ public abstract class SelectorNavigator<TControl> : ControlNavigator<TControl>
 		{
 			var item = FindByPath(path);
 
+			if (Logger.IsEnabled(LogLevel.Trace))
+			{
+				Logger.LogTraceMessage($"Item to select found ({item is not null})");
+			}
+
 			// Only set the selected item if it's changed (and not null)
 			// to prevent any visual artefacts that may result from setting
 			// the same item multiple times
@@ -81,16 +93,33 @@ public abstract class SelectorNavigator<TControl> : ControlNavigator<TControl>
 	{
 		if (selectedItem is null)
 		{
+			if (Logger.IsEnabled(LogLevel.Trace))
+			{
+				Logger.LogTraceMessage($"Selected Item is null");
+			}
+
 			return;
 		}
 
 		var path = selectedItem.GetRegionOrElementName();
+
+		if (Logger.IsEnabled(LogLevel.Trace))
+		{
+			Logger.LogTraceMessage($"Selected region name is {path}");
+		}
+
+
 		var nav = Region.Navigator();
 
 		if (path is null ||
 			string.IsNullOrEmpty(path) ||
 			nav is null)
 		{
+			if (Logger.IsEnabled(LogLevel.Trace))
+			{
+				Logger.LogTraceMessage($"Path is {path} and Navigator is {(nav is null ? "null" : "not null")}");
+			}
+
 			return;
 		}
 
@@ -102,6 +131,11 @@ public abstract class SelectorNavigator<TControl> : ControlNavigator<TControl>
 	{
 		if (string.IsNullOrWhiteSpace(path) || Control is null)
 		{
+			if (Logger.IsEnabled(LogLevel.Trace))
+			{
+				Logger.LogTraceMessage($"Attempting to find empty path ({path}) or Control is null ({Control is null})");
+			}
+
 			return default;
 		}
 

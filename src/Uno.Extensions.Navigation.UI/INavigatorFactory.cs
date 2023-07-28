@@ -2,7 +2,7 @@
 
 namespace Uno.Extensions.Navigation;
 
-public interface INavigatorFactory
+internal interface INavigatorFactory
 {
     void RegisterNavigator<TNavigator>(bool isRequestRegion, params string[] names)
         where TNavigator : INavigator;
