@@ -20,10 +20,10 @@
 		<PackageReference Include="Uno.Toolkit.WinUI.Material" />
 		<PackageReference Include="Uno.Toolkit.WinUI" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Console" />
+		<PackageReference Include="CommunityToolkit.Maui" />
 	</ItemGroup>
 	<ItemGroup Condition="$(IsMauiEmbedding)">
 		<PackageReference Include="Telerik.UI.for.Maui" Condition="$(_UseTelerik)" />
-		<PackageReference Include="CommunityToolkit.Maui" />
 		<PackageReference Include="Esri.ArcGISRuntime.Maui" />
 	</ItemGroup>
 
@@ -60,8 +60,8 @@
 	</Choose>
 
 	<ItemGroup Condition="!$(IsMauiEmbedding)">
-		<Compile Remove="Presentation\Maui\*.cs"/>
-		<Page Remove="Presentation\Maui\*.xaml"/>
+		<Compile Remove="Presentation\Maui\EsriMapsPage.xaml.cs"/>
+		<Page Remove="Presentation\Maui\EsriMapsPage.xaml"/>
 	</ItemGroup>
 
 	<ItemGroup>
@@ -90,11 +90,6 @@
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Navigation\Uno.Extensions.Navigation.csproj" />
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Storage.UI\Uno.Extensions.Storage.WinUI.csproj" />
 		<ProjectReference Include="..\MauiProjects\MauiControlsExternal\MauiControlsExternal.csproj" />
-	</ItemGroup>
-
-
-	<ItemGroup>
-	  <Folder Include="Presentation\Maui\" />
 	</ItemGroup>
 	<Import Project="..\..\..\src\Uno.Extensions.Configuration\build\Package.targets" />
 	<Import Project="..\..\..\src\Uno.Extensions.Hosting\build\Package.targets" />
