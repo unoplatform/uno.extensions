@@ -1,4 +1,3 @@
-
 namespace Uno.Extensions.Maui;
 
 /// <summary>
@@ -22,11 +21,12 @@ public static class MauiEmbedding
 	/// Registers Maui embedding in the Uno Platform app builder.
 	/// </summary>
 	/// <returns>The updated app builder.</returns>
-	/// <param name="builder">The Uno app builder.</param>
+	/// <param name="builder">The IHost builder.</param>
+	/// <param name="app">The Uno app.</param>
 	/// <param name="configure">Optional lambda to configure the Maui app builder.</param>
-	public static IApplicationBuilder UseMauiEmbedding(this IApplicationBuilder builder, Action<MauiAppBuilder>? configure = null)
+	public static IHostBuilder UseMauiEmbedding(this IHostBuilder builder, Microsoft.UI.Xaml.Application app, Action<MauiAppBuilder>? configure = null)
 	{
-		builder.App.UseMauiEmbedding(configure);
+		app.UseMauiEmbedding(configure);
 		return builder;
 	}
 
