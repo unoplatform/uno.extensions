@@ -10,19 +10,23 @@ public partial class MauiHost : ContentControl
 	/// The MauiContent property represents the <see cref="MauiContent"/> that will be used as content.
 	/// </summary>
 	public static readonly DependencyProperty MauiContentProperty =
-		DependencyProperty.Register(nameof(MauiContent), typeof(View), typeof(MauiHost), new PropertyMetadata(null, OnMauiContentChanged));
+		DependencyProperty.Register(nameof(MauiContent), typeof(MauiView), typeof(MauiHost), new PropertyMetadata(null, OnMauiContentChanged));
 
 	private static void OnMauiContentChanged(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs args)
 	{
+#if MAUI_EMBEDDING
 		if (args.NewValue is null ||
-			args.NewValue is not View view ||
+			args.NewValue is not MauiView view ||
 			dependencyObject is not MauiHost mauiHost)
 		{
 			return;
 		}
 
 		mauiHost.Content = view;
+#endif
 	}
+
+#if MAUI_EMBEDDING
 
 	private static ILogger GetLogger() =>
 		MauiEmbedding.MauiContext.Services.GetRequiredService<ILogger<MauiHost>>();
@@ -56,15 +60,18 @@ public partial class MauiHost : ContentControl
 		}
 		_host = null;
 	}
+#endif
 
 	/// <summary>
 	/// Gets or sets the <see cref="MauiContent"/> that will be used as content.
 	/// </summary>
-	public View MauiContent
+	public MauiView MauiContent
 	{
-		get => (View)GetValue(MauiContentProperty);
+		get => (MauiView)GetValue(MauiContentProperty);
 		set => SetValue(MauiContentProperty, value);
 	}
+
+#if MAUI_EMBEDDING
 
 	private void OnLoading(FrameworkElement sender, object args)
 	{
@@ -126,4 +133,5 @@ public partial class MauiHost : ContentControl
 			_host.BindingContext = DataContext;
 		}
 	}
+#endif
 }

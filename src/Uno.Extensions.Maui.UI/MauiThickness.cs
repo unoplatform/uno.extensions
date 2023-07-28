@@ -11,6 +11,8 @@ public class MauiThickness : MarkupExtension
 	/// </summary>
 	public string Value { get; set; } = string.Empty;
 
+
+#if MAUI_EMBEDDING
 	/// <inheritdoc />
 	protected override object ProvideValue()
 	{
@@ -37,4 +39,5 @@ public class MauiThickness : MarkupExtension
 			_ => throw new MauiEmbeddingException($"The Thickness string '{Value}' has an invalid number of arguments")
 		};
 	}
+#endif
 }

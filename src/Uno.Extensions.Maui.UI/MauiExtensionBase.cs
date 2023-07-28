@@ -5,12 +5,15 @@
 /// </summary>
 public abstract class MauiExtensionBase : MarkupExtension
 {
+#if MAUI_EMBEDDING
+
 	private ILogger? _logger;
 
 	/// <summary>
 	/// Logger to log messages during runtime.
 	/// </summary>
 	protected ILogger Logger => _logger ??= GetLogger();
+
 
 	/// <inheritdoc/>
 	protected sealed override object? ProvideValue(IXamlServiceProvider serviceProvider)
@@ -79,6 +82,7 @@ public abstract class MauiExtensionBase : MarkupExtension
 	/// <param name="property">The <see cref="BindableProperty"/> to set.</param>
 	/// <param name="propertyName">The name of the property to set.</param>
 	protected abstract void SetValue(View view, Type viewType, Type propertyType, BindableProperty property, string propertyName);
+#endif
 
 	/// <summary>
 	/// Returns a default value of <paramref name="type"/>.

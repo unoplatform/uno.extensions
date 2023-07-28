@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<Import Project="..\tfms-ui-maui.props" />
-	
+
 	<PropertyGroup>
 		<UseMaui>true</UseMaui>
 		<RootNamespace>Uno.Extensions.Maui</RootNamespace>
@@ -8,6 +8,10 @@
 		<Description>Extensions to embed .NET MAUI controls within your Uno app.</Description>
 		<!--Temporary disable missing XML doc until fixed in the whole package-->
 		<WarningsNotAsErrors>$(WarningsNotAsErrors);CS1591</WarningsNotAsErrors>
+
+		<IsMauiEmbedding>false</IsMauiEmbedding>
+		<IsMauiEmbedding Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android' OR $([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios' OR $([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst' OR $(TargetFramework.Contains('windows10'))" >true</IsMauiEmbedding>
+		<DefineConstants Condition="$(IsMauiEmbedding)">$(DefineConstants);MAUI_EMBEDDING</DefineConstants>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -34,8 +38,24 @@
 		</EmbeddedResource>
 	</ItemGroup>
 
+
+	<!-- These files are not currently used but kept in case we need them-->
 	<ItemGroup>
 		<Compile Remove="Interop\*.cs" />
 		<Compile Remove="Models\*.cs" />
 	</ItemGroup>
+
+	<Choose>
+		<When Condition="$(IsMauiEmbedding)">
+			<PropertyGroup>
+				<DefineConstants>$(DefineConstants);MAUI_EMBEDDING</DefineConstants>
+			</PropertyGroup>
+		</When>
+		<Otherwise>
+			<ItemGroup>
+				<Compile Remove="Internals\*.cs" />
+			</ItemGroup>
+		</Otherwise>
+	</Choose>
+
 </Project>

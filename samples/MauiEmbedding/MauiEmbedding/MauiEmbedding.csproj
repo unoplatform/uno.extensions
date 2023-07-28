@@ -4,14 +4,14 @@
 
 	<PropertyGroup>
 		<TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows')) or '$(EnableWindowsTargeting)' == 'true'">$(TargetFrameworks);net6.0-windows10.0.19041</TargetFrameworks>
-		<TargetFrameworks>$(TargetFrameworks);net6.0-ios;net6.0-android;net6.0-maccatalyst</TargetFrameworks>
+		<TargetFrameworks>$(TargetFrameworks);net6.0;net6.0-ios;net6.0-android;net6.0-maccatalyst</TargetFrameworks>
 
 		<!-- Ensures the .xr.xml files are generated in a proper layout folder -->
 		<GenerateLibraryLayout>true</GenerateLibraryLayout>
+		<IsMauiEmbedding Condition="'$(IsMauiEmbedding)'==''">false</IsMauiEmbedding>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Telerik.UI.for.Maui" Condition="$(_UseTelerik)" />
 		<PackageReference Include="Uno.Dsp.Tasks" />
 		<PackageReference Include="Uno.WinUI" />
 		<PackageReference Include="Uno.Resizetizer" />
@@ -21,6 +21,9 @@
 		<PackageReference Include="Uno.Toolkit.WinUI" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Console" />
 		<PackageReference Include="CommunityToolkit.Maui" />
+	</ItemGroup>
+	<ItemGroup Condition="$(IsMauiEmbedding)">
+		<PackageReference Include="Telerik.UI.for.Maui" Condition="$(_UseTelerik)" />
 		<PackageReference Include="Esri.ArcGISRuntime.Maui" />
 	</ItemGroup>
 
@@ -55,6 +58,11 @@
 			</ItemGroup>
 		</Otherwise>
 	</Choose>
+
+	<ItemGroup Condition="!$(IsMauiEmbedding)">
+		<Compile Remove="Presentation\EsriMapsPage.xaml.cs"/>
+		<Page Remove="Presentation\EsriMapsPage.xaml"/>
+	</ItemGroup>
 
 	<ItemGroup>
 		<UnoDspImportColors Include="Styles\*.zip" Generator="Xaml" />
