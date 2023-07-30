@@ -2,8 +2,26 @@
 
 namespace Uno.Extensions;
 
+/// <summary>
+/// Extensions for <see cref="IHostBuilder"/> to configure logging.
+/// </summary>
 public static class HostBuilderExtensions
 {
+	/// <summary>
+	/// Configures logging with the default configuration.
+	/// </summary>
+	/// <param name="hostBuilder">
+	/// The <see cref="IHostBuilder"/> to configure.
+	/// </param>
+	/// <param name="configure">
+	/// Used to provide additional configuration for the logger.
+	/// </param>
+	/// <param name="enableUnoLogging">
+	/// Whether to enable Uno logging. Optional.
+	/// </param>
+	/// <returns>
+	/// The <see cref="IHostBuilder"/> that was passed in.
+	/// </returns>
 	public static IHostBuilder UseLogging(
 		this IHostBuilder hostBuilder,
 		Action<ILoggingBuilder> configure, bool enableUnoLogging = false)
@@ -11,6 +29,21 @@ public static class HostBuilderExtensions
 		return hostBuilder.UseLogging((context, builder) => configure.Invoke(builder), enableUnoLogging);
 	}
 
+	/// <summary>
+	/// Configures logging with the default configuration.
+	/// </summary>
+	/// <param name="hostBuilder">
+	/// The <see cref="IHostBuilder"/> to configure.
+	/// </param>
+	/// <param name="configure">
+	/// Used to provide additional configuration for the logger. Optional.
+	/// </param>
+	/// <param name="enableUnoLogging">
+	/// Whether to enable Uno logging. Optional.
+	/// </param>
+	/// <returns>
+	/// The <see cref="IHostBuilder"/> that was passed in.
+	/// </returns>
 	public static IHostBuilder UseLogging(
 		this IHostBuilder hostBuilder,
 		Action<HostBuilderContext, ILoggingBuilder>? configure = default, bool enableUnoLogging = false)
@@ -50,6 +83,16 @@ public static class HostBuilderExtensions
 				});
 	}
 
+	/// <summary>
+	/// Builds the host and configures logging with the default configuration.
+	/// </summary>
+	/// <param name="hostBuilder">
+	/// The <see cref="IHostBuilder"/> to configure.
+	/// </param>
+	/// <param name="enableUnoLogging">
+	/// Whether to enable Uno internal logging.
+	/// </param>
+	/// <returns></returns>
 	public static IHost Build(
 		this IHostBuilder hostBuilder,
 		bool enableUnoLogging)
