@@ -1,6 +1,9 @@
 ﻿namespace Uno.Extensions.Configuration;
 
-/// <inheritdoc cref="IHostBuilder"/>
+/// <summary>
+/// This implementation of <see cref="IHostBuilder"/> is used to
+/// delineate a builder which has been set up to use configuration.
+/// </summary>
 public interface IConfigBuilder : IHostBuilder
 {
 }

@@ -5,6 +5,9 @@ using System.ComponentModel;
 
 namespace Uno.Extensions.Configuration.Internal;
 
+/// <summary>
+/// Static helper class that allows binding strongly typed objects to configuration values.
+/// </summary>
 public static class ConfigurationBinder
 {
 	private const BindingFlags DeclaredOnlyLookup = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static | BindingFlags.DeclaredOnly;

@@ -18,9 +18,11 @@ public static class HostBuilderExtensions
 	/// Used to configure the <see cref="IConfigurationBuilder"/> for the application.
 	/// </param>
 	/// <param name="configure">
-	/// 
+	/// Allows for adding additional configuration sources to the <see cref="IConfigBuilder"/>.
 	/// </param>
-	/// <returns></returns>
+	/// <returns>
+	/// The same instance of the <see cref="IHostBuilder"/> for chaining.
+	/// </returns>
 	public static IHostBuilder UseConfiguration(
 		this IHostBuilder hostBuilder,
 		Action<IConfigurationBuilder>? configureHostConfiguration = default,
