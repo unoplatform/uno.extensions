@@ -1,7 +1,22 @@
 ﻿namespace Uno.Extensions;
 
+/// <summary>
+/// Extension methods to adjust the scope of collected logs. (log level)
+/// </summary>
 public static class LoggingBuilderExtensions
 {
+	/// <summary>
+	/// Sets the log level for the Uno Platform core namespaces.
+	/// </summary>
+	/// <param name="builder">
+	/// The <see cref="ILoggingBuilder"/> to configure.
+	/// </param>
+	/// <param name="logLevel">
+	/// The desired <see cref="LogLevel"/> to filter which events are collected.
+	/// </param>
+	/// <returns>
+	/// The <see cref="ILoggingBuilder"/> to allow chaining.
+	/// </returns>
 	public static ILoggingBuilder CoreLogLevel(this ILoggingBuilder builder, LogLevel logLevel)
 	{
 		// Default filters for Uno Platform namespaces
@@ -11,6 +26,18 @@ public static class LoggingBuilderExtensions
 		return builder;
 	}
 
+	/// <summary>
+	/// Sets the log level for namespaces related to the XAML parser.
+	/// </summary>
+	/// <param name="builder">
+	/// The <see cref="ILoggingBuilder"/> to configure.
+	/// </param>
+	/// <param name="logLevel">
+	/// The desired <see cref="LogLevel"/> to filter which events are collected.
+	/// </param>
+	/// <returns>
+	/// The <see cref="ILoggingBuilder"/> to allow chaining.
+	/// </returns>
 	public static ILoggingBuilder XamlLogLevel(this ILoggingBuilder builder, LogLevel logLevel)
 	{
 		// Generic Xaml events
@@ -27,6 +54,18 @@ public static class LoggingBuilderExtensions
 		return builder;
 	}
 
+	/// <summary>
+	/// Sets the log level for namespaces related to XAML controls and layout.
+	/// </summary>
+	/// <param name="builder">
+	/// The <see cref="ILoggingBuilder"/> to configure.
+	/// </param>
+	/// <param name="logLevel">
+	/// The desired <see cref="LogLevel"/> to filter which events are collected.
+	/// </param>
+	/// <returns>
+	/// The <see cref="ILoggingBuilder"/> to allow chaining.
+	/// </returns>
 	public static ILoggingBuilder XamlLayoutLogLevel(this ILoggingBuilder builder, LogLevel logLevel)
 	{
 		// Layouter specific messages
@@ -39,12 +78,36 @@ public static class LoggingBuilderExtensions
 		return builder;
 	}
 
+	/// <summary>
+	/// Sets the log level for namespaces related to the WinRT Storage APIs.
+	/// </summary>
+	/// <param name="builder">
+	/// The <see cref="ILoggingBuilder"/> to configure.
+	/// </param>
+	/// <param name="logLevel">
+	/// The desired <see cref="LogLevel"/> to filter which events are collected.
+	/// </param>
+	/// <returns>
+	/// The <see cref="ILoggingBuilder"/> to allow chaining.
+	/// </returns>
 	public static ILoggingBuilder StorageLogLevel(this ILoggingBuilder builder, LogLevel logLevel)
 	{
 		builder.AddFilter("Windows.Storage", logLevel);
 		return builder;
 	}
 
+	/// <summary>
+	/// Sets the log level for namespaces related to XAML data binding.
+	/// </summary>
+	/// <param name="builder">
+	/// The <see cref="ILoggingBuilder"/> to configure.
+	/// </param>
+	/// <param name="logLevel">
+	/// The desired <see cref="LogLevel"/> to filter which events are collected.
+	/// </param>
+	/// <returns>
+	/// The <see cref="ILoggingBuilder"/> to allow chaining.
+	/// </returns>
 	public static ILoggingBuilder XamlBindingLogLevel(this ILoggingBuilder builder, LogLevel logLevel)
 	{
 		// Binding related messages
@@ -53,6 +116,19 @@ public static class LoggingBuilderExtensions
 		return builder;
 	}
 
+	/// <summary>
+	/// Sets the log level for Uno namespaces related to memory references from data binding.
+	/// Adjusting this log level is useful when tracking memory leaks from data binding.
+	/// </summary>
+	/// <param name="builder">
+	/// The <see cref="ILoggingBuilder"/> to configure.
+	/// </param>
+	/// <param name="logLevel">
+	/// The desired <see cref="LogLevel"/> to filter which events are collected.
+	/// </param>
+	/// <returns>
+	/// The <see cref="ILoggingBuilder"/> to allow chaining.
+	/// </returns>
 	public static ILoggingBuilder BinderMemoryReferenceLogLevel(this ILoggingBuilder builder, LogLevel logLevel)
 	{
 		// Binder memory references tracking
@@ -60,6 +136,18 @@ public static class LoggingBuilderExtensions
 		return builder;
 	}
 
+	/// <summary>
+	/// Sets the log level for Uno namespaces related to the hot reload and remote control feature.
+	/// </summary>
+	/// <param name="builder">
+	/// The <see cref="ILoggingBuilder"/> to configure.
+	/// </param>
+	/// <param name="logLevel">
+	/// The desired <see cref="LogLevel"/> to filter which events are collected.
+	/// </param>
+	/// <returns>
+	/// The <see cref="ILoggingBuilder"/> to allow chaining.
+	/// </returns>
 	public static ILoggingBuilder HotReloadCoreLogLevel(this ILoggingBuilder builder, LogLevel logLevel)
 	{
 		// RemoteControl and HotReload related
@@ -67,6 +155,18 @@ public static class LoggingBuilderExtensions
 		return builder;
 	}
 
+	/// <summary>
+	/// Sets the log level for Uno namespaces related to the Web Assembly runtime.
+	/// </summary>
+	/// <param name="builder">
+	/// The <see cref="ILoggingBuilder"/> to configure.
+	/// </param>
+	/// <param name="logLevel">
+	/// The desired <see cref="LogLevel"/> to filter which events are collected.
+	/// </param>
+	/// <returns>
+	/// The <see cref="ILoggingBuilder"/> to allow chaining.
+	/// </returns>
 	public static ILoggingBuilder WebAssemblyLogLevel(this ILoggingBuilder builder, LogLevel logLevel)
 	{
 		// Debug JS interop
