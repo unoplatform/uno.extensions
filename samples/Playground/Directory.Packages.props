@@ -29,16 +29,16 @@
 		<PackageVersion Include="Uno.Toolkit.UI.Material" Version="3.1.0-dev.24" />
 		<PackageVersion Include="Uno.Toolkit.WinUI" Version="3.1.0-dev.24" />
 		<PackageVersion Include="Uno.Toolkit.WinUI.Material" Version="3.1.0-dev.24" />
-		<PackageVersion Include="Uno.UI" Version="5.0.0-dev.1610" />
-		<PackageVersion Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="5.0.0-dev.1610" />
-		<PackageVersion Include="Uno.UI.RemoteControl" Version="5.0.0-dev.1610" />
-		<PackageVersion Include="Uno.UI.Skia.Gtk" Version="5.0.0-dev.1610" />
-		<PackageVersion Include="Uno.UI.Skia.Tizen" Version="5.0.0-dev.1610" />
-		<PackageVersion Include="Uno.UI.Skia.Wpf" Version="5.0.0-dev.1610" />
-		<PackageVersion Include="Uno.UI.WebAssembly" Version="5.0.0-dev.1610" />
+		<PackageVersion Include="Uno.UI" Version="5.0.0-dev.1728" />
+		<PackageVersion Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="5.0.0-dev.1728" />
+		<PackageVersion Include="Uno.UI.RemoteControl" Version="5.0.0-dev.1728" />
+		<PackageVersion Include="Uno.UI.Skia.Gtk" Version="5.0.0-dev.1728" />
+		<PackageVersion Include="Uno.UI.Skia.Tizen" Version="5.0.0-dev.1728" />
+		<PackageVersion Include="Uno.UI.Skia.Wpf" Version="5.0.0-dev.1728" />
+		<PackageVersion Include="Uno.UI.WebAssembly" Version="5.0.0-dev.1728" />
 		<PackageVersion Include="Uno.UniversalImageLoader" Version="1.9.36" />
 		<PackageVersion Include="Uno.Wasm.Bootstrap" Version="7.0.20" />
 		<PackageVersion Include="Uno.Wasm.Bootstrap.DevServer" Version="7.0.20" />
-		<PackageVersion Include="Uno.WinUI" Version="5.0.0-dev.1610" />
+		<PackageVersion Include="Uno.WinUI" Version="5.0.0-dev.1728" />
 	</ItemGroup>
 </Project>
