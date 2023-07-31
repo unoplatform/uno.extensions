@@ -19,7 +19,7 @@
 		<PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.6.2" />
 		<PackageVersion Include="Microsoft.Net.Compilers.Toolset" Version="4.2.0" />
 		<PackageVersion Include="Microsoft.SourceLink.GitHub" Version="1.1.1" />
-		<PackageVersion Include="Microsoft.UI.Xaml" Version="2.7.1" />
+		<PackageVersion Include="Microsoft.UI.Xaml" Version="2.8.5" />
 		<PackageVersion Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.756" />
 		<PackageVersion Include="Microsoft.WindowsAppSDK" Version="1.1.0" Condition="$(UseMaui) != 'true'" />
 		<PackageVersion Include="Microsoft.WindowsAppSDK" Version="1.2.221209.1" Condition="$(UseMaui) == 'true'" />
