@@ -9,4 +9,8 @@ steps:
 
   - template: canary-update-template.yml
     parameters:
+      SolutionToUpdate: 'samples/MauiEmbedding/MauiEmbedding.sln'
+
+  - template: canary-update-template.yml
+    parameters:
       SolutionToUpdate: 'testing/TestHarness/TestHarness.sln'
