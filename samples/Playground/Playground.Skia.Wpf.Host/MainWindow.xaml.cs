@@ -24,7 +24,7 @@ namespace Playground.WPF.Host
         {
             InitializeComponent();
 
-            root.Content = new global::Uno.UI.Skia.Platform.WpfHost(Dispatcher, () => new Playground.App());
+            root.Content = new global::Uno.UI.Runtime.Skia.Wpf.WpfHost(Dispatcher, () => new Playground.App());
         }
     }
 }
