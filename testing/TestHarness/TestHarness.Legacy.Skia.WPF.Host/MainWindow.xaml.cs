@@ -24,7 +24,7 @@ namespace TestHarness.Legacy.WPF.Host
 		{
 			InitializeComponent();
 	
-			root.Content = new global::Uno.UI.Skia.Platform.WpfHost(Dispatcher, () => new TestHarness.App());
+			root.Content = new global::Uno.UI.Runtime.Skia.Wpf.WpfHost(Dispatcher, () => new TestHarness.App());
 		}
 	}
 }
