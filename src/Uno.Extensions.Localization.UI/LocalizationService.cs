@@ -3,6 +3,10 @@ using Uno.Extensions.Hosting;
 
 namespace Uno.Extensions.Localization;
 
+/// <summary>
+/// An implementation of <see cref="ILocalizationService"/> that uses the <see cref="LocalizationConfiguration"/>
+/// to determine the supported cultures and allow for changing the current culture.
+/// </summary>
 public class LocalizationService : IServiceInitialize, ILocalizationService, IDisposable
 {
 	private static string DefaultCulture = "en-US";
@@ -97,11 +101,26 @@ public class LocalizationService : IServiceInitialize, ILocalizationService, IDi
 	public async Task SetCurrentCultureAsync(CultureInfo newCulture)
 	{
 		// Change the application language for resource loading
-		PrimaryLanguageOverride= newCulture.Name;
+		PrimaryLanguageOverride = newCulture.Name;
 
 		await _writeSettings.UpdateAsync(langSetting => langSetting with { CurrentCulture = newCulture.Name });
 	}
 
+	/// <summary>
+	/// Initializes a new instance of the <see cref="LocalizationService"/> class.
+	/// </summary>
+	/// <param name="logger">
+	/// The logger to use.
+	/// </param>
+	/// <param name="configuration">
+	/// A configuration object that contains the supported cultures.
+	/// </param>
+	/// <param name="settings">
+	/// An object used to receive notifications when settings related to localization change.
+	/// </param>
+	/// <param name="writeSettings">
+	/// An object used to update the settings related to localization.
+	/// </param>
 	public LocalizationService(
 		ILogger<LocalizationService> logger,
 		IOptions<LocalizationConfiguration> configuration,
@@ -115,6 +134,9 @@ public class LocalizationService : IServiceInitialize, ILocalizationService, IDi
 		SupportedCultures = configuration.Value?.Cultures?.AsCultures() ?? new[] { DefaultCulture.AsCulture()! };
 	}
 
+	/// <summary>
+	/// Initializes the service to listen for changes to the current culture.
+	/// </summary>
 	public void Initialize()
 	{
 		_uiThread = Thread.CurrentThread;
@@ -155,6 +177,9 @@ public class LocalizationService : IServiceInitialize, ILocalizationService, IDi
 			SupportedCultures.FirstOrDefault(supported => supported.TwoLetterISOLanguageName == culture.TwoLetterISOLanguageName);
 	}
 
+	/// <summary>
+	/// Disposes the service.
+	/// </summary>
 	public void Dispose()
 	{
 		_settingsListener?.Dispose();

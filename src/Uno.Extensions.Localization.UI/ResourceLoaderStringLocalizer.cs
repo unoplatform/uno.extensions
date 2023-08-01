@@ -68,8 +68,8 @@ public class ResourceLoaderStringLocalizer : IStringLocalizer
 			resource = _appResourceMap.GetValue(name)?.ValueAsString ??
 							_defaultResourceMap.GetValue(name)?.ValueAsString;
 #else
-		resource = _appResourceLoader?.GetString(name) ??
-			_defaultResourceLoader.GetString(name);
+			resource = _appResourceLoader?.GetString(name) ??
+				_defaultResourceLoader.GetString(name);
 #endif
 
 			if (_treatEmptyAsNotFound &&
