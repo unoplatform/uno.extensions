@@ -2,7 +2,7 @@
 {
 	public class SimpleStartupService:IHostedService, IStartupService
 	{
-		private TaskCompletionSource<object> _completion = new TaskCompletionSource<object>();
+		private TaskCompletionSource<bool> _completion = new TaskCompletionSource<bool>();
 		public Task StartAsync(CancellationToken cancellationToken)
 		{
 			_completion.SetResult(true);
