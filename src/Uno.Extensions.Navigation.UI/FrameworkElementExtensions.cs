@@ -137,7 +137,7 @@ public static class FrameworkElementExtensions
 			return Task.CompletedTask;
 		}
 
-		var completion = new TaskCompletionSource<object>();
+		var completion = new TaskCompletionSource<bool>();
 
 		// Note: We're attaching to three different events to
 		// a) always detect when element is loaded (sometimes Loaded is never fired)
@@ -165,7 +165,7 @@ public static class FrameworkElementExtensions
 				rego?.Dispose();
 
 #pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
-				completion.TrySetResult(null);
+				completion.TrySetResult(true);
 #pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
 
 				element.Loaded -= loaded;
