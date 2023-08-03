@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Uno.Extensions.Reactive.Utils;
@@ -9,7 +10,7 @@ namespace Uno.Extensions.Reactive;
 /// A builder of <see cref="Message{T}"/>.
 /// </summary>
 /// <typeparam name="T">The type of the value of the message to build.</typeparam>
-public readonly struct MessageBuilder<T> : IMessageEntry, IMessageBuilder, IMessageBuilder<T>
+public readonly struct MessageBuilder<T> : IMessageEntry, IMessageEntry<T>, IMessageBuilder, IMessageBuilder<T>
 {
 	// We prefer to use this class over the interface for public API in order to hide the Get and Set of the interface,
 	// as they should be used only for extensibility, but not in application code.
@@ -73,9 +74,14 @@ public readonly struct MessageBuilder<T> : IMessageEntry, IMessageBuilder, IMess
 
 	#region IMessageEntry
 	Option<object> IMessageEntry.Data => CurrentData;
+	Option<T> IMessageEntry<T>.Data => CurrentData;
 	Exception? IMessageEntry.Error => CurrentError;
 	bool IMessageEntry.IsTransient => CurrentIsTransient;
 	MessageAxisValue IMessageEntry.this[MessageAxis axis] => Get(axis).value;
+	IEnumerator IEnumerable.GetEnumerator()
+		=> ((IEnumerable)Build().Current).GetEnumerator();
+	IEnumerator<KeyValuePair<MessageAxis, MessageAxisValue>> IEnumerable<KeyValuePair<MessageAxis, MessageAxisValue>>.GetEnumerator()
+		=> ((IEnumerable<KeyValuePair<MessageAxis, MessageAxisValue>>)Build().Current).GetEnumerator();
 	#endregion
 
 	/// <summary>

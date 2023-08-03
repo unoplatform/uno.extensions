@@ -14,6 +14,14 @@ namespace Uno.Extensions.Reactive;
 public static class Feed<T> // We set the T on the class to it greatly helps type inference of factory delegates
 {
 	/// <summary>
+	/// Gets or create a custom feed from an async method.
+	/// </summary>
+	/// <param name="valueProvider">The async method to use to load the value of the resulting feed.</param>
+	/// <returns>A feed that encapsulate the source.</returns>
+	internal static IFeed<T> Dynamic(AsyncFunc<Option<T>> valueProvider)
+		=> AttachedProperty.GetOrCreate(valueProvider, static vp => new DynamicFeed<T>(vp));
+
+	/// <summary>
 	/// Gets or create a custom feed from a raw <see cref="IAsyncEnumerable{T}"/> sequence of <see cref="Message{T}"/>.
 	/// </summary>
 	/// <param name="sourceProvider">The provider of the message enumerable sequence.</param>

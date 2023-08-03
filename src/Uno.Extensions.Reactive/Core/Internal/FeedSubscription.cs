@@ -12,6 +12,9 @@ using Uno.Extensions.Reactive.Utils;
 
 namespace Uno.Extensions.Reactive.Core;
 
+// This class is responsible to hold the subscription made on a feed for a given context.
+// It makes sure to replay the last messages to the subscriber, so we create only one subscription to the source feed,
+// and we ensure that all dependent feeds that are using the same context will receive the same message instance.
 internal class FeedSubscription<T> : IAsyncDisposable, ISourceContextOwner
 {
 	private readonly ISignal<Message<T>> _feed;
@@ -69,7 +72,7 @@ internal class FeedSubscription<T> : IAsyncDisposable, ISourceContextOwner
 		{
 			this.Log().LogWarning(
 				"The source feed completed the enumeration but didn't produced any message. "
-				+ "All must send at least one initial message!");
+				+ "All feeds must send at least one initial message!");
 
 			yield return Message<T>.Initial;
 		}

@@ -13,7 +13,7 @@ using Uno.Extensions.Reactive.Utils;
 
 namespace Uno.Extensions.Reactive.Sources;
 
-internal class PaginatedListFeed<TCursor, TItem> : IListFeed<TItem>, IRefreshableSource, IPaginatedSource
+internal class PaginatedListFeed<TCursor, TItem> : IListFeed<TItem>
 {
 	private readonly TCursor _firstPage;
 	private readonly GetPage<TCursor, TItem> _getPage;
@@ -49,8 +49,8 @@ internal class PaginatedListFeed<TCursor, TItem> : IListFeed<TItem>, IRefreshabl
 				// The Progress is set to indeterminate only for the first page as we don't want the
 				// FeedView to go in loading state when we are loading more items.
 				using var message = isFirstPage
-					? messages.BeginUpdate(ct, preservePendingAxes: MessageAxis.Progress)
-					: messages.BeginUpdate(ct, preservePendingAxes: MessageAxis.Pagination);
+					? messages.BeginUpdate(preservePendingAxes: MessageAxis.Progress)
+					: messages.BeginUpdate(preservePendingAxes: MessageAxis.Pagination);
 				using var _ = context.AsCurrent();
 
 				(cursor, pageInfo) = await LoadPage(
@@ -136,24 +136,26 @@ internal class PaginatedListFeed<TCursor, TItem> : IListFeed<TItem>, IRefreshabl
 			// Note: We also provide the parentMsg which will be applied
 			if (!pageTask.IsCompleted)
 			{
-				message.Update(msg =>
-				{
-					var result = msg
-						.With()
-						.Refreshed(refreshInfo)
-						.Paginated(pageInfo);
-
-					if (isFirstPage)
+				message.Update(
+					msg =>
 					{
-						result.SetTransient(MessageAxis.Progress, MessageAxis.Progress.ToMessageValue(true));
-					}
-					else
-					{
-						result.SetTransient(MessageAxis.Pagination, MessageAxis.Pagination.ToMessageValue(pageInfo with { IsLoadingMoreItems = true }));
-					}
+						var result = msg
+							.With()
+							.Refreshed(refreshInfo)
+							.Paginated(pageInfo);
 
-					return result;
-				});
+						if (isFirstPage)
+						{
+							result.SetTransient(MessageAxis.Progress, MessageAxis.Progress.ToMessageValue(true));
+						}
+						else
+						{
+							result.SetTransient(MessageAxis.Pagination, MessageAxis.Pagination.ToMessageValue(pageInfo with { IsLoadingMoreItems = true }));
+						}
+
+						return result;
+					},
+					ct);
 			}
 		}
 

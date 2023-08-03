@@ -9,6 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Uno.Extensions.Reactive.Core;
 using Uno.Extensions.Reactive.Operators;
+using Uno.Extensions.Reactive.Sources;
 using Uno.Extensions.Reactive.Utils;
 
 namespace Uno.Extensions.Reactive;
@@ -34,8 +35,12 @@ public static partial class ListFeed
 	/// <param name="listFeed">The feed to get data from.</param>
 	/// <param name="ct">A cancellation to cancel the async operation.</param>
 	/// <returns>A ValueTask to asynchronously get the next data produced by the feed.</returns>
-	public static ValueTask<IImmutableList<T>> Value<T>(this IListFeed<T> listFeed, CancellationToken ct)
-		=> listFeed.Values(AsyncFeedValue.Default, ct).FirstOrDefaultAsync(ImmutableList<T>.Empty, ct);
+	public static async ValueTask<IImmutableList<T>> Value<T>(this IListFeed<T> listFeed, CancellationToken ct)
+		=> await FeedDependency.TryGetCurrentMessage(listFeed).ConfigureAwait(false) switch
+		{
+			{ } message => message.Current.EnsureNoError().Data.SomeOrDefault(ImmutableList<T>.Empty),
+			null => await listFeed.Values(AsyncFeedValue.Default, ct).FirstOrDefaultAsync(ImmutableList<T>.Empty, ct).ConfigureAwait(false)
+		};
 
 	/// <summary>
 	/// Asynchronously get the next collection of items produced by a list feed.
@@ -45,8 +50,13 @@ public static partial class ListFeed
 	/// <param name="kind">Specify which data can be returned or not.</param>
 	/// <param name="ct">A cancellation to cancel the async operation.</param>
 	/// <returns>A ValueTask to asynchronously get the next acceptable data produced by the feed.</returns>
-	public static ValueTask<IImmutableList<T>> Value<T>(this IListFeed<T> listFeed, AsyncFeedValue kind, CancellationToken ct)
-		=> listFeed.Values(kind, ct).FirstOrDefaultAsync(ImmutableList<T>.Empty, ct);
+	public static async ValueTask<IImmutableList<T>> Value<T>(this IListFeed<T> listFeed, AsyncFeedValue kind, CancellationToken ct)
+		=> await FeedDependency.TryGetCurrentMessage(listFeed).ConfigureAwait(false) switch
+		{
+			not null when kind is not AsyncFeedValue.Default => throw new NotSupportedException($"Only kind AsyncFeedValue.Default is currently supported by the dynamic feed (requested: {kind})."),
+			{ } message => message.Current.EnsureNoError().Data.SomeOrDefault(ImmutableList<T>.Empty),
+			null => await listFeed.Values(kind, ct).FirstOrDefaultAsync(ImmutableList<T>.Empty, ct).ConfigureAwait(false)
+		};
 
 	/// <summary>
 	/// Gets an asynchronous enumerable sequence of all collection of items produced by a list feed.
@@ -66,8 +76,12 @@ public static partial class ListFeed
 	/// <param name="listFeed">The feed to get data from.</param>
 	/// <param name="ct">A cancellation to cancel the async operation.</param>
 	/// <returns>A ValueTask to asynchronously get the next data produced by the feed.</returns>
-	public static ValueTask<Option<IImmutableList<T>>> Option<T>(this IListFeed<T> listFeed, CancellationToken ct)
-		=> listFeed.Options(AsyncFeedValue.Default, ct).FirstOrDefaultAsync(Extensions.Option<IImmutableList<T>>.Undefined(), ct);
+	public static async ValueTask<Option<IImmutableList<T>>> Option<T>(this IListFeed<T> listFeed, CancellationToken ct)
+		=> await FeedDependency.TryGetCurrentMessage(listFeed).ConfigureAwait(false) switch
+		{
+			{ } message => message.Current.EnsureNoError().Data,
+			null => await listFeed.Options(AsyncFeedValue.Default, ct).FirstOrDefaultAsync(Extensions.Option<IImmutableList<T>>.Undefined(), ct)
+		};
 
 	/// <summary>
 	/// Asynchronously get the next collection of items produced by a feed.
@@ -77,8 +91,13 @@ public static partial class ListFeed
 	/// <param name="kind">Specify which data can be returned or not.</param>
 	/// <param name="ct">A cancellation to cancel the async operation.</param>
 	/// <returns>A ValueTask to asynchronously get the next acceptable data produced by the feed.</returns>
-	public static ValueTask<Option<IImmutableList<T>>> Option<T>(this IListFeed<T> listFeed, AsyncFeedValue kind, CancellationToken ct)
-		=> listFeed.Options(kind, ct).FirstOrDefaultAsync(Extensions.Option<IImmutableList<T>>.Undefined(), ct);
+	public static async ValueTask<Option<IImmutableList<T>>> Option<T>(this IListFeed<T> listFeed, AsyncFeedValue kind, CancellationToken ct)
+		=> await FeedDependency.TryGetCurrentMessage(listFeed).ConfigureAwait(false) switch
+		{
+			not null when kind is not AsyncFeedValue.Default => throw new NotSupportedException($"Only kind AsyncFeedValue.Default is currently supported by the dynamic feed (requested: {kind})."),
+			{ } message => message.Current.EnsureNoError().Data,
+			null => await listFeed.Options(kind, ct).FirstOrDefaultAsync(Extensions.Option<IImmutableList<T>>.Undefined(), ct)
+		};
 
 	/// <summary>
 	/// Gets an asynchronous enumerable sequence of all collection of items produced by a feed.
@@ -96,12 +115,14 @@ public static partial class ListFeed
 			var current = message.Current;
 			dataHasChanged |= message.Changes.Contains(MessageAxis.Data);
 
-			if (current.IsTransient && !kind.HasFlag(AsyncFeedValue.AllowTransient))
+			// Note: We check flags first to make sure to not touch values that are not needed for FeedDependency.
+
+			if (!kind.HasFlag(AsyncFeedValue.AllowTransient) && current.IsTransient)
 			{
 				continue;
 			}
 
-			if (current.Error is { } error && !kind.HasFlag(AsyncFeedValue.AllowError))
+			if (!kind.HasFlag(AsyncFeedValue.AllowError) && current.Error is { } error)
 			{
 				ExceptionDispatchInfo.Capture(error).Throw();
 			}
@@ -120,8 +141,9 @@ public static partial class ListFeed
 	/// <typeparam name="T">The type of the value of the feed.</typeparam>
 	/// <param name="listFeed">The list feed to get message from.</param>
 	/// <returns>A ValueTask to asynchronously get the next message produced by the feed.</returns>
-	public static ValueTask<Message<IImmutableList<T>>> Message<T>(this IListFeed<T> listFeed)
-		=> listFeed.Messages().FirstAsync(SourceContext.Current.Token);
+	public static async ValueTask<Message<IImmutableList<T>>> Message<T>(this IListFeed<T> listFeed)
+		=> await FeedDependency.TryGetCurrentMessage(listFeed).ConfigureAwait(false)
+			?? await listFeed.Messages().FirstAsync(SourceContext.Current.Token).ConfigureAwait(false);
 
 	/// <summary>
 	/// Asynchronously get the next message produced by a feed.
@@ -130,8 +152,9 @@ public static partial class ListFeed
 	/// <param name="listFeed">The list feed to get message from.</param>
 	/// <param name="ct">A cancellation to cancel the async operation.</param>
 	/// <returns>A ValueTask to asynchronously get the next message produced by the feed.</returns>
-	public static ValueTask<Message<IImmutableList<T>>> Message<T>(this IListFeed<T> listFeed, CancellationToken ct)
-		=> listFeed.Messages().FirstAsync(ct);
+	public static async ValueTask<Message<IImmutableList<T>>> Message<T>(this IListFeed<T> listFeed, CancellationToken ct)
+		=> await FeedDependency.TryGetCurrentMessage(listFeed).ConfigureAwait(false)
+			?? await listFeed.Messages().FirstAsync(ct).ConfigureAwait(false);
 
 	/// <summary>
 	/// Gets an asynchronous enumerable sequence of all messages produced by a feed.

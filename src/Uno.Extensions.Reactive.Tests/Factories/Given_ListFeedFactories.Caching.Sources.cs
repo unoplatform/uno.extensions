@@ -198,21 +198,21 @@ public partial class Given_ListFeedFactories : FeedTests
 	}
 
 	[TestMethod]
-	public void When_AsyncPaginatedByCursor_Then_Cached()
+	public void When_PaginatedByCursorAsync_Then_Cached()
 	{
 		object firstPage1 = new();
 		object firstPage2 = new();
 		GetPage<object, object> getPage1 = async (_, __, ct) => default!;
 		GetPage<object, object> getPage2 = async (_, __, ct) => default!;
 
-		var inst1_1 = ListFeed<object>.AsyncPaginatedByCursor(firstPage1, getPage1);
-		var inst1_2 = ListFeed<object>.AsyncPaginatedByCursor(firstPage1, getPage2);
-		var inst2_1 = ListFeed<object>.AsyncPaginatedByCursor(firstPage2, getPage1);
-		var inst2_2 = ListFeed<object>.AsyncPaginatedByCursor(firstPage2, getPage2);
-		var inst1_1_prime = ListFeed<object>.AsyncPaginatedByCursor(firstPage1, getPage1);
-		var inst1_2_prime = ListFeed<object>.AsyncPaginatedByCursor(firstPage1, getPage2);
-		var inst2_1_prime = ListFeed<object>.AsyncPaginatedByCursor(firstPage2, getPage1);
-		var inst2_2_prime = ListFeed<object>.AsyncPaginatedByCursor(firstPage2, getPage2);
+		var inst1_1 = ListFeed<object>.PaginatedByCursorAsync(firstPage1, getPage1);
+		var inst1_2 = ListFeed<object>.PaginatedByCursorAsync(firstPage1, getPage2);
+		var inst2_1 = ListFeed<object>.PaginatedByCursorAsync(firstPage2, getPage1);
+		var inst2_2 = ListFeed<object>.PaginatedByCursorAsync(firstPage2, getPage2);
+		var inst1_1_prime = ListFeed<object>.PaginatedByCursorAsync(firstPage1, getPage1);
+		var inst1_2_prime = ListFeed<object>.PaginatedByCursorAsync(firstPage1, getPage2);
+		var inst2_1_prime = ListFeed<object>.PaginatedByCursorAsync(firstPage2, getPage1);
+		var inst2_2_prime = ListFeed<object>.PaginatedByCursorAsync(firstPage2, getPage2);
 
 		inst1_1_prime.Should().BeSameAs(inst1_1, "instance should have been cached using firstPage and getPage");
 		inst1_1_prime.Should().NotBeSameAs(inst1_2, "instance should have been cached as not the exact same combination of firstPage and getPage");
@@ -236,15 +236,15 @@ public partial class Given_ListFeedFactories : FeedTests
 	}
 
 	[TestMethod]
-	public void When_AsyncPaginated_Then_Cached()
+	public void When_PaginatedAsync_Then_Cached()
 	{
 		AsyncFunc<PageRequest, IImmutableList<object>> getPage1 = async (_, ct) => default!;
 		AsyncFunc<PageRequest, IImmutableList<object>> getPage2 = async (_, ct) => default!;
 
-		var inst1 = ListFeed<object>.AsyncPaginated(getPage1);
-		var inst2 = ListFeed<object>.AsyncPaginated(getPage2);
-		var inst1_prime = ListFeed<object>.AsyncPaginated(getPage1);
-		var inst2_prime = ListFeed<object>.AsyncPaginated(getPage2);
+		var inst1 = ListFeed<object>.PaginatedAsync(getPage1);
+		var inst2 = ListFeed<object>.PaginatedAsync(getPage2);
+		var inst1_prime = ListFeed<object>.PaginatedAsync(getPage1);
+		var inst2_prime = ListFeed<object>.PaginatedAsync(getPage2);
 
 		inst1_prime.Should().BeSameAs(inst1, "instance should have been cached using getPage");
 		inst1_prime.Should().NotBeSameAs(inst2, "instance should have been cached as not the exact same getPage");

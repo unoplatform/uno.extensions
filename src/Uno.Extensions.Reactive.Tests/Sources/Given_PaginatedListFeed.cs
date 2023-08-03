@@ -20,7 +20,7 @@ public class Given_PaginatedListFeed : FeedTests
 	[TestMethod]
 	public async Task When_RequestPage_Then_ItemsAdded()
 	{
-		var sut = ListFeed.AsyncPaginated<int>(async (page, ct) => Range((int)page.Index * 20, (int)(page.DesiredSize ?? 20)).ToImmutableList());
+		var sut = ListFeed.PaginatedAsync<int>(async (page, ct) => Range((int)page.Index * 20, (int)(page.DesiredSize ?? 20)).ToImmutableList());
 		var requests = new RequestSource();
 		var ctx = Context.SourceContext.CreateChild(requests);
 
@@ -59,7 +59,7 @@ public class Given_PaginatedListFeed : FeedTests
 
 		var requests = new RequestSource();
 		var ctx = Context.SourceContext.CreateChild(requests);
-		var result = ListFeed.AsyncPaginated(GetPage).Record(ctx);
+		var result = ListFeed.PaginatedAsync(GetPage).Record(ctx);
 
 		requests.RequestMoreItems(42);
 		await result.WaitForMessages(2, CT);
@@ -92,7 +92,7 @@ public class Given_PaginatedListFeed : FeedTests
 
 		var requests = new RequestSource();
 		var ctx = Context.SourceContext.CreateChild(requests);
-		var result = ListFeed.AsyncPaginated(GetPage).Record(ctx);
+		var result = ListFeed.PaginatedAsync(GetPage).Record(ctx);
 
 		await result.WaitForMessages(1, CT);
 
@@ -108,7 +108,7 @@ public class Given_PaginatedListFeed : FeedTests
 	{
 		var requests = new RequestSource();
 		var ctx = Context.SourceContext.CreateChild(requests);
-		var result = ListFeed<int>.AsyncPaginatedByCursor(new TestCursor(2), TestCursor.GetPage).Record(ctx);
+		var result = ListFeed<int>.PaginatedByCursorAsync(new TestCursor(2), TestCursor.GetPage).Record(ctx);
 
 		await result.WaitForMessages(1, CT);
 		requests.RequestMoreItems(42);
@@ -134,7 +134,7 @@ public class Given_PaginatedListFeed : FeedTests
 	{
 		var requests = new RequestSource();
 		var ctx = Context.SourceContext.CreateChild(requests);
-		var result = ListFeed<int>.AsyncPaginatedByCursor(new TestCursor(0), TestCursor.GetPage).Record(ctx);
+		var result = ListFeed<int>.PaginatedByCursorAsync(new TestCursor(0), TestCursor.GetPage).Record(ctx);
 
 		await result.WaitForMessages(1, CT);
 
@@ -150,7 +150,7 @@ public class Given_PaginatedListFeed : FeedTests
 	{
 		var requests = new RequestSource();
 		var ctx = Context.SourceContext.CreateChild(requests);
-		var result = ListFeed<int>.AsyncPaginatedByCursor(new TestCursor(0), TestCursor.GetPage).Record(ctx);
+		var result = ListFeed<int>.PaginatedByCursorAsync(new TestCursor(0), TestCursor.GetPage).Record(ctx);
 
 		await result.WaitForMessages(1, CT);
 
@@ -166,7 +166,7 @@ public class Given_PaginatedListFeed : FeedTests
 	{
 		var requests = new RequestSource();
 		var ctx = Context.SourceContext.CreateChild(requests);
-		var result = ListFeed<int>.AsyncPaginatedByCursor(new TestCursor(0, PageSize: 0), TestCursor.GetPage).Record(ctx);
+		var result = ListFeed<int>.PaginatedByCursorAsync(new TestCursor(0, PageSize: 0), TestCursor.GetPage).Record(ctx);
 
 		await result.WaitForMessages(1, CT);
 
@@ -182,7 +182,7 @@ public class Given_PaginatedListFeed : FeedTests
 	{
 		var requests = new RequestSource();
 		var ctx = Context.SourceContext.CreateChild(requests);
-		var result = ListFeed<int>.AsyncPaginatedByCursor(new TestCursor(1, PageSize: 0), TestCursor.GetPage).Record(ctx);
+		var result = ListFeed<int>.PaginatedByCursorAsync(new TestCursor(1, PageSize: 0), TestCursor.GetPage).Record(ctx);
 
 		await result.WaitForMessages(1, CT);
 		requests.RequestMoreItems(42);
@@ -210,7 +210,7 @@ public class Given_PaginatedListFeed : FeedTests
 
 		var requests = new RequestSource();
 		var ctx = Context.SourceContext.CreateChild(requests);
-		var result = ListFeed.AsyncPaginated(GetPage).Record(ctx);
+		var result = ListFeed.PaginatedAsync(GetPage).Record(ctx);
 
 		await result.WaitForMessages(1);
 		try
@@ -241,7 +241,7 @@ public class Given_PaginatedListFeed : FeedTests
 
 		var requests = new RequestSource();
 		var ctx = Context.SourceContext.CreateChild(requests);
-		var result = ListFeed.AsyncPaginated(GetPage).Record(ctx);
+		var result = ListFeed.PaginatedAsync(GetPage).Record(ctx);
 
 		await result.WaitForMessages(1, CT);
 		requests.RequestMoreItems(42);
@@ -275,7 +275,7 @@ public class Given_PaginatedListFeed : FeedTests
 
 		var requests = new RequestSource();
 		var ctx = Context.SourceContext.CreateChild(requests);
-		var result = ListFeed.AsyncPaginated(GetPage).Record(ctx);
+		var result = ListFeed.PaginatedAsync(GetPage).Record(ctx);
 
 		await result.WaitForMessages(1, CT);
 		requests.RequestMoreItems(42);
@@ -322,7 +322,7 @@ public class Given_PaginatedListFeed : FeedTests
 
 		var requests = new RequestSource();
 		var ctx = Context.SourceContext.CreateChild(requests);
-		var result = ListFeed.AsyncPaginated(GetPage).Record(ctx);
+		var result = ListFeed.PaginatedAsync(GetPage).Record(ctx);
 
 		await result.WaitForMessages(1, CT);
 		GetNext();

@@ -243,6 +243,30 @@ public static class ListState<T>
 	//	=> AttachedProperty.GetOrCreate(owner, (getPage, firstPage), (o, args) => S(o, new PaginatedListFeed<TCursor, T>(args.firstPage, args.getPage).AsFeed()));
 
 	/// <summary>
+	/// [OBSOLETE] Use PaginatedAsync instead.
+	/// </summary>
+	/// <typeparam name="TOwner">Type of the owner of the state.</typeparam>
+	/// <param name="owner">The owner of the state.</param>
+	/// <param name="getPage">The async method to load a page of items.</param>
+	/// <returns>A paginated list feed.</returns>
+	/// <remarks>
+	/// This is only a weak implementation which provides the current count of items in the ListState when a new page is requested,
+	/// instead of the number of items that has been loaded so far by pagination.
+	/// ** It does not ensure any tracking of entities. **
+	/// This means that the only operations that this state (weakly) supports is Insert.
+	/// For instance if you load a first page of 20 items, then insert one **on top**, next page request will be with CurrentCount = 21,
+	/// so item which was at index 19 and now is at index 20 won't be loaded twice from the server.
+	/// </remarks>
+	[EditorBrowsable(EditorBrowsableState.Never)]
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#if DEBUG
+	[Obsolete("Use PaginatedAsync instead")]
+#endif
+	public static IListState<T> AsyncPaginated<TOwner>(TOwner owner, AsyncFunc<PageRequest, IImmutableList<T>> getPage)
+		where TOwner : class
+		=> PaginatedAsync(owner, getPage);
+
+	/// <summary>
 	/// Creates a list state for a paginated collection.
 	/// WARNING, be aware of restriction described in remarks.
 	/// </summary>
@@ -258,7 +282,7 @@ public static class ListState<T>
 	/// For instance if you load a first page of 20 items, then insert one **on top**, next page request will be with CurrentCount = 21,
 	/// so item which was at index 19 and now is at index 20 won't be loaded twice from the server.
 	/// </remarks>
-	public static IListState<T> AsyncPaginated<TOwner>(TOwner owner, AsyncFunc<PageRequest, IImmutableList<T>> getPage)
+	public static IListState<T> PaginatedAsync<TOwner>(TOwner owner, AsyncFunc<PageRequest, IImmutableList<T>> getPage)
 		where TOwner : class
 		=> AttachedProperty.GetOrCreate(owner, getPage, static (o, gp) =>
 		{

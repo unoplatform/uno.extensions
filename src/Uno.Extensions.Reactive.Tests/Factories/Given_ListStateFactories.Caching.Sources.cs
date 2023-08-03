@@ -211,7 +211,7 @@ public partial class Given_ListStateFactories : FeedTests
 	}
 
 	//[TestMethod]
-	//public void When_AsyncPaginatedByCursor_Then_Cached()
+	//public void When_PaginatedAsyncByCursor_Then_Cached()
 	//{
 	//	object owner1 = new();
 	//	object owner2 = new();
@@ -220,14 +220,14 @@ public partial class Given_ListStateFactories : FeedTests
 	//	GetPage<object, object> getPage1 = async (_, __, ct) => default!;
 	//	GetPage<object, object> getPage2 = async (_, __, ct) => default!;
 
-	//	var inst1_1 = ListState<object>.AsyncPaginatedByCursor(owner1, firstPage1, getPage1);
-	//	var inst1_2 = ListState<object>.AsyncPaginatedByCursor(owner1, firstPage1, getPage2);
-	//	var inst2_1 = ListState<object>.AsyncPaginatedByCursor(owner1, firstPage2, getPage1);
-	//	var inst2_2 = ListState<object>.AsyncPaginatedByCursor(owner1, firstPage2, getPage2);
-	//	var inst1_1_prime = ListState<object>.AsyncPaginatedByCursor(owner1, firstPage1, getPage1);
-	//	var inst1_2_prime = ListState<object>.AsyncPaginatedByCursor(owner1, firstPage1, getPage2);
-	//	var inst2_1_prime = ListState<object>.AsyncPaginatedByCursor(owner1, firstPage2, getPage1);
-	//	var inst2_2_prime = ListState<object>.AsyncPaginatedByCursor(owner1, firstPage2, getPage2);
+	//	var inst1_1 = ListState<object>.PaginatedAsyncByCursor(owner1, firstPage1, getPage1);
+	//	var inst1_2 = ListState<object>.PaginatedAsyncByCursor(owner1, firstPage1, getPage2);
+	//	var inst2_1 = ListState<object>.PaginatedAsyncByCursor(owner1, firstPage2, getPage1);
+	//	var inst2_2 = ListState<object>.PaginatedAsyncByCursor(owner1, firstPage2, getPage2);
+	//	var inst1_1_prime = ListState<object>.PaginatedAsyncByCursor(owner1, firstPage1, getPage1);
+	//	var inst1_2_prime = ListState<object>.PaginatedAsyncByCursor(owner1, firstPage1, getPage2);
+	//	var inst2_1_prime = ListState<object>.PaginatedAsyncByCursor(owner1, firstPage2, getPage1);
+	//	var inst2_2_prime = ListState<object>.PaginatedAsyncByCursor(owner1, firstPage2, getPage2);
 
 	//	inst1_1_prime.Should().BeSameAs(inst1_1, "instance should have been cached using firstPage and getPage");
 	//	inst1_1_prime.Should().NotBeSameAs(inst1_2, "instance should have been cached as not the exact same combination of firstPage and getPage");
@@ -251,18 +251,18 @@ public partial class Given_ListStateFactories : FeedTests
 	//}
 
 	[TestMethod]
-	public void When_AsyncPaginated_Then_Cached()
+	public void When_PaginatedAsync_Then_Cached()
 	{
 		object owner1 = new();
 		object owner2 = new();
 		AsyncFunc<PageRequest, IImmutableList<object>> getPage1 = async (_, ct) => default!;
 		AsyncFunc<PageRequest, IImmutableList<object>> getPage2 = async (_, ct) => default!;
 
-		var sut = ListState<object>.AsyncPaginated(owner1, getPage1);
+		var sut = ListState<object>.PaginatedAsync(owner1, getPage1);
 
-		var inst1_1 = ListState<object>.AsyncPaginated(owner1, getPage1);
-		var inst1_2 = ListState<object>.AsyncPaginated(owner1, getPage2);
-		var inst2_1 = ListState<object>.AsyncPaginated(owner2, getPage1);
+		var inst1_1 = ListState<object>.PaginatedAsync(owner1, getPage1);
+		var inst1_2 = ListState<object>.PaginatedAsync(owner1, getPage2);
+		var inst2_1 = ListState<object>.PaginatedAsync(owner2, getPage1);
 
 		inst1_1.Should().BeSameAs(sut, "instance should have been cached on owner using getPage");
 		inst1_2.Should().NotBeSameAs(sut, "instance should not have been cached as not the same getPage");

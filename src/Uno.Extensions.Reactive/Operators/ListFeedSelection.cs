@@ -178,8 +178,8 @@ internal sealed class ListFeedSelection<TSource, TOther> : IListState<TSource>, 
 			_other = other;
 		}
 
-		public bool IsActive(bool parentChanged, MessageBuilder<IImmutableList<TSource>, IImmutableList<TSource>> msg)
-			=> !parentChanged || !(msg.Parent?.Changes.Contains(MessageAxis.Selection) ?? false);
+		public bool IsActive(Message<IImmutableList<TSource>>? parent, bool parentChanged, IMessageEntry<IImmutableList<TSource>> msg)
+			=> !parentChanged || !(parent?.Changes.Contains(MessageAxis.Selection) ?? false);
 
 		public void Apply(bool _, MessageBuilder<IImmutableList<TSource>, IImmutableList<TSource>> msg)
 		{

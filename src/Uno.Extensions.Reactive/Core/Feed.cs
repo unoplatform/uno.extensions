@@ -2,9 +2,11 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Threading;
 using Uno.Extensions.Reactive.Operators;
+using Uno.Extensions.Reactive.Sources;
 using Uno.Extensions.Reactive.Utils;
 
 namespace Uno.Extensions.Reactive;
@@ -17,6 +19,16 @@ public static partial class Feed
 	#region Sources
 	// Note: Those are helpers for which the T is set by type inference on provider.
 	//		 We must have only one overload per method.
+
+	/// <summary>
+	/// Gets or create a custom feed from an async method.
+	/// </summary>
+	/// <param name="valueProvider">The async method to use to load the value of the resulting feed.</param>
+	/// <returns>A feed that encapsulate the source.</returns>
+	internal static IFeed<T> Dynamic<T>(AsyncFunc<T?> valueProvider)
+		where T : notnull
+		=> AttachedProperty.GetOrCreate(valueProvider, static vp => new DynamicFeed<T>(vp));
+
 
 	/// <summary>
 	/// Gets or create a custom feed from a raw <see cref="IAsyncEnumerable{T}"/> sequence of <see cref="Uno.Extensions.Reactive.Message{T}"/>.
@@ -92,5 +104,40 @@ public static partial class Feed
 		this IFeed<TSource> source,
 		AsyncFunc<TSource, TResult> selector)
 		=> AttachedProperty.GetOrCreate(source, selector, static (src, s) => new SelectAsyncFeed<TSource, TResult>(src, s));
+
+	/// <summary>
+	/// Projects each value of a source feed into a paginated collection.
+	/// </summary>
+	/// <typeparam name="TSource">Type of the value of the feed.</typeparam>
+	/// <typeparam name="TResult">Type of the value of the items in resulting list feed.</typeparam>
+	/// <param name="source">The source feed to project.</param>
+	/// <param name="getPage">The async method to load a page of items.</param>
+	/// <returns>A paginated list feed.</returns>
+	public static IListFeed<TResult> SelectPaginatedAsync<TSource, TResult>(
+		this IFeed<TSource> source,
+		AsyncFunc<TSource, PageRequest, IImmutableList<TResult>> getPage)
+		where TSource : notnull
+	{
+		return AttachedProperty.GetOrCreate(source, getPage, Create).AsListFeed();
+
+		static IFeed<IImmutableList<TResult>> Create(IFeed<TSource> parameter, AsyncFunc<TSource, PageRequest, IImmutableList<TResult>> gp)
+			=> new DynamicFeed<IImmutableList<TResult>>(async _ =>
+			{
+				FeedExecution.Current!.EnableRefresh();
+
+				var value = await parameter;
+				if (value is null)
+				{
+					return ImmutableList<TResult>.Empty;
+				}
+
+				var items = await FeedExecution.Current!.GetPaginated<TResult>(
+					b => b
+						.ByIndex()
+						.GetPage(async (req, ct) => await gp(value, req, ct)));
+
+				return items;
+			});
+	}
 	#endregion
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Uno.Extensions.Reactive.Core;
@@ -11,10 +12,12 @@ namespace Uno.Extensions.Reactive;
 /// </summary>
 /// <typeparam name="TParent">Type of the value of the parent message.</typeparam>
 /// <typeparam name="TResult">The type of the value of the message to build.</typeparam>
-public sealed class MessageBuilder<TParent, TResult> : IMessageEntry, IMessageBuilder, IMessageBuilder<TResult>
+public class MessageBuilder<TParent, TResult> : IMessageEntry, IMessageEntry<TResult>, IMessageBuilder, IMessageBuilder<TResult>
 {
 	private readonly Dictionary<MessageAxis, MessageAxisUpdate> _updates;
 	private bool _hasUpdates; // This allows us to easily determine if we have changes no matter if we removed axis axises flagged has IsTransient.
+	private readonly IMessage? _parent;
+	private readonly Message<TResult> _currentLocal; // This is the last message published by the manager. Unlike the 'Parent' is does not reflect the updates made on this builder.
 
 	/// <summary>
 	/// Creates a new message builder, including some changes (a.k.a. updates) that was previously made on the local message.
@@ -22,11 +25,11 @@ public sealed class MessageBuilder<TParent, TResult> : IMessageEntry, IMessageBu
 	/// <param name="parent">The last message received from the parent, if any.</param>
 	/// <param name="local">The last message produced by the local Feed.</param>
 	internal MessageBuilder(
-		Message<TParent>? parent,
+		IMessage? parent,
 		(IReadOnlyDictionary<MessageAxis, MessageAxisUpdate> updates, Message<TResult> value) local)
 	{
-		Parent = parent;
-		Local = local.value;
+		_parent = parent;
+		_currentLocal = local.value;
 
 		// We make sure to clear all transient axes when we update a message
 		// Note: We remove only "local" values, parent values are still propagated, it's their responsibility to remove them.
@@ -39,10 +42,10 @@ public sealed class MessageBuilder<TParent, TResult> : IMessageEntry, IMessageBu
 	/// </summary>
 	/// <param name="parent">The last message received from the parent, if any.</param>
 	/// <param name="local">The last message produced by the local Feed.</param>
-	internal MessageBuilder(Message<TParent>? parent, Message<TResult> local)
+	internal MessageBuilder(IMessage? parent, Message<TResult> local)
 	{
-		Parent = parent;
-		Local = local;
+		_parent = parent;
+		_currentLocal = local;
 
 		_updates = new();
 		_hasUpdates = true; // When we drop the local changes, we should consider that we have changes.
@@ -51,23 +54,26 @@ public sealed class MessageBuilder<TParent, TResult> : IMessageEntry, IMessageBu
 	/// <summary>
 	/// The last message received from the parent, if any.
 	/// </summary>
-	internal Message<TParent>? Parent { get; }
-
-	/// <summary>
-	/// The last message produced by the local Feed.
-	/// </summary>
-	internal Message<TResult> Local { get; }
+	/// <remarks>This is the "updated" parent defined on this builder!</remarks>
+	internal Message<TParent>? Parent => _parent as Message<TParent>;
 
 	/// <summary>
 	/// The new set of updates that has been defined on this builder
 	/// </summary>
-	internal (Message<TParent>? parent, bool hasUpdates, IReadOnlyDictionary<MessageAxis, MessageAxisUpdate> updates) GetResult()
-		=> (Parent, _hasUpdates, _updates);
+	internal (IMessage? parent, bool hasUpdates, IReadOnlyDictionary<MessageAxis, MessageAxisUpdate> updates) GetResult()
+		=> (_parent, _hasUpdates, _updates);
 
+	#region IMessageEntry
 	Option<object> IMessageEntry.Data => CurrentData;
+	Option<TResult> IMessageEntry<TResult>.Data => CurrentData;
 	Exception? IMessageEntry.Error => CurrentError;
 	bool IMessageEntry.IsTransient => CurrentIsTransient;
 	MessageAxisValue IMessageEntry.this[MessageAxis axis] => Get(axis).value;
+	IEnumerator<KeyValuePair<MessageAxis, MessageAxisValue>> IEnumerable<KeyValuePair<MessageAxis, MessageAxisValue>>.GetEnumerator()
+		=> throw new NotSupportedException("Axes enumeration is not supported on message builder.");
+	IEnumerator IEnumerable.GetEnumerator()
+		=> throw new NotSupportedException("Axes enumeration is not supported on message builder.");
+	#endregion
 
 	internal Option<TResult> CurrentData => MessageAxis.Data.FromMessageValue<TResult>(Get(MessageAxis.Data).value);
 	internal Exception? CurrentError => MessageAxis.Error.FromMessageValue(Get(MessageAxis.Error).value);
@@ -78,8 +84,8 @@ public sealed class MessageBuilder<TParent, TResult> : IMessageEntry, IMessageBu
 		=> Get(axis);
 	internal (MessageAxisValue value, IChangeSet? changes) Get(MessageAxis axis)
 	{
-		var parentValue = Parent?.Current[axis] ?? MessageAxisValue.Unset;
-		var localValue = Local.Current[axis];
+		var parentValue = _parent?.Current[axis] ?? MessageAxisValue.Unset;
+		var localValue = _currentLocal.Current[axis];
 
 		return _updates.TryGetValue(axis, out var updater)
 			? updater.GetValue(parentValue, localValue)

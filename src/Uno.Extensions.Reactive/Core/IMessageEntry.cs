@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 
@@ -8,7 +9,7 @@ namespace Uno.Extensions.Reactive;
 /// Untyped interface of <see cref="MessageEntry{T}"/>.
 /// </summary>
 [EditorBrowsable(EditorBrowsableState.Advanced)] // Used only for bindings
-public interface IMessageEntry
+public interface IMessageEntry : IEnumerable<KeyValuePair<MessageAxis, MessageAxisValue>>
 {
 	/// <summary>
 	/// The data of this entry.
@@ -40,4 +41,15 @@ public interface IMessageEntry
 	/// </remarks>
 	[EditorBrowsable(EditorBrowsableState.Never)] // Use dedicated extensions methods
 	MessageAxisValue this[MessageAxis axis] { get; }
+}
+
+internal interface IMessageEntry<T> : IMessageEntry
+{
+	/// <summary>
+	/// The data of this entry.
+	/// </summary>
+	public new Option<T> Data { get; }
+
+	// TODO: Provide default interface implementation once updated to .net 7!
+	//Option<object> IMessageEntry.Data => Data;
 }

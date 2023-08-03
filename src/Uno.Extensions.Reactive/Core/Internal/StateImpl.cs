@@ -125,12 +125,12 @@ internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, ISta
 		public Task HasBeenApplied => _firstResult.Task;
 
 		/// <inheritdoc />
-		public bool IsActive(bool parentChanged, MessageBuilder<T, T> message)
+		public bool IsActive(Message<T>? parent, bool parentChanged, IMessageEntry<T> entry)
 			=> !_firstResult.Task.IsFaulted
 				&& (Kind is StateUpdateKind.Persistent || !parentChanged || !_firstResult.Task.IsCompleted);
 
 		/// <inheritdoc />
-		public void Apply(bool parentChanged, MessageBuilder<T, T> message)
+		public void Apply(bool _, MessageBuilder<T, T> message)
 		{
 			try
 			{
