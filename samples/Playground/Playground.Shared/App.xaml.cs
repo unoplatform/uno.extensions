@@ -204,4 +204,11 @@ public sealed partial class App : Application
 		}
 	}
 
+
+}
+
+public class LongStartHostedService : IHostedService
+{
+	public Task StartAsync(CancellationToken cancellationToken) => Task.Delay(10000, cancellationToken);
+	public Task StopAsync(CancellationToken cancellationToken) => Task.CompletedTask;
 }
