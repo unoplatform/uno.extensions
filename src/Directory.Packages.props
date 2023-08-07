@@ -24,7 +24,7 @@
 		<PackageVersion Include="Microsoft.WindowsAppSDK" Version="1.1.0" Condition="$(UseMaui) != 'true'" />
 		<PackageVersion Include="Microsoft.WindowsAppSDK" Version="1.2.221209.1" Condition="$(UseMaui) == 'true'" />
 		<PackageVersion Include="Moq" Version="4.17.2" />
-		<PackageVersion Include="Refit" Version="6.3.2" />
+		<PackageVersion Include="Refit" Version="7.0.0" />
 		<PackageVersion Include="Refit.HttpClientFactory" Version="6.3.2" />
 		<PackageVersion Include="Serilog.Extensions.Hosting" Version="4.2.0" />
 		<PackageVersion Include="Serilog.Settings.Configuration" Version="3.3.0" />
