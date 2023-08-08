@@ -1,8 +1,22 @@
 ﻿namespace Uno.Extensions.Hosting;
 
+/// <summary>
+/// Contains helpers to create a HostBuilder that is tailored to multiple target platforms.
+/// </summary>
 public static class UnoHost
 {
 	private const string DefaultUnoAppName = "unoapp";
+
+	/// <summary>
+	/// Initializes a new instance of the HostBuilder class that is pre-configured 
+	/// for multi-platform Uno applications.
+	/// </summary>
+	/// <param name="args">
+	/// The command line arguments.
+	/// </param>
+	/// <returns>
+	/// The initialized IHostBuilder.
+	/// </returns>
 	public static IHostBuilder CreateDefaultBuilder(string[]? args = null)
 	{
 		var callingAssembly = Assembly.GetCallingAssembly();
