@@ -1,4 +1,7 @@
 ﻿namespace Uno.Extensions.Authentication;
 
-public interface IAuthenticationBuilder 
+/// <summary>
+/// Implemented by classes that are builders for the authentication feature.
+/// </summary>
+public interface IAuthenticationBuilder
 { }

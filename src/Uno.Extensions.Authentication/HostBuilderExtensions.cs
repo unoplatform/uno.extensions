@@ -1,7 +1,25 @@
 ﻿namespace Uno.Extensions;
 
+/// <summary>
+/// Extension methods for <see cref="IHostBuilder"/> to configure authentication.
+/// </summary>
 public static class HostBuilderExtensions
 {
+	/// <summary>
+	/// Configures the authentication builder to use a custom authentication provider.
+	/// </summary>
+	/// <param name="builder">
+	/// The <see cref="IAuthenticationBuilder"/> to use.
+	/// </param>
+	/// <param name="configure">
+	/// An action to configure the custom authentication provider. Optional
+	/// </param>
+	/// <param name="name">
+	/// The name of the custom authentication provider. This optional parameter defaults to "Custom".
+	/// </param>
+	/// <returns>
+	/// The <see cref="IAuthenticationBuilder"/> for further configuration.
+	/// </returns>
 	public static IAuthenticationBuilder AddCustom(
 		this IAuthenticationBuilder builder,
 		Action<ICustomAuthenticationBuilder>? configure = default,
@@ -18,6 +36,25 @@ public static class HostBuilderExtensions
 				(provider, settings) => provider with { Name = name, Settings = settings });
 	}
 
+	/// <summary>
+	/// Configures the authentication builder to use a custom authentication provider.
+	/// </summary>
+	/// <typeparam name="TService">
+	/// A type of service that will be used by the custom authentication provider.
+	/// </typeparam>
+	/// <param name="builder">
+	/// The <see cref="IAuthenticationBuilder"/> to use.
+	/// </param>
+	/// <param name="configure">
+	/// An action to configure how the custom authentication provider will be built. This often uses a 
+	/// previously-specified service of type TService. Optional
+	/// </param>
+	/// <param name="name">
+	/// The name of the custom authentication provider. This optional parameter defaults to "Custom".
+	/// </param>
+	/// <returns>
+	/// The <see cref="IAuthenticationBuilder"/> for further configuration.
+	/// </returns>
 	public static IAuthenticationBuilder AddCustom<TService>(
 		this IAuthenticationBuilder builder,
 		Action<ICustomAuthenticationBuilder<TService>>? configure = default,
@@ -68,6 +105,21 @@ public static class HostBuilderExtensions
 		return builder;
 	}
 
+	/// <summary>
+	/// Configures the host builder to use a specified Action to configure how the authentication provider will be built.
+	/// </summary>
+	/// <param name="builder">
+	/// The <see cref="IHostBuilder"/> to use.
+	/// </param>
+	/// <param name="build">
+	/// An action to configure the authentication provider. Optional
+	/// </param>
+	/// <param name="configureAuthorization">
+	/// An action to configure the handlers registered for authorization. Optional
+	/// </param>
+	/// <returns>
+	/// The <see cref="IHostBuilder"/> for further configuration.
+	/// </returns>
 	public static IHostBuilder UseAuthentication(
 	this IHostBuilder builder,
 	Action<IAuthenticationBuilder> build,
@@ -78,7 +130,7 @@ public static class HostBuilderExtensions
 		build?.Invoke(authBuilder);
 
 		return builder
-			.ConfigureServices((ctx,services) =>
+			.ConfigureServices((ctx, services) =>
 			{
 				if (ctx.IsRegistered(nameof(UseAuthentication)))
 				{
