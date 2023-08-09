@@ -18,13 +18,13 @@ public static class ConfigBuilderExtensions
 	/// The <see cref="IConfigBuilder"/> to configure.
 	/// </param>
 	/// <param name="config">
-	/// A name to identify the added configuration source. Optional
+	/// The name of the configuration file to register. Optional
 	/// </param>
 	/// <param name="includeEnvironmentSettings">
 	/// Whether or not environment specific settings should be included. Optional
 	/// </param>
 	/// <returns>
-	/// The same instance of the <see cref="IConfigBuilder"/> for chaining.
+	/// An instance of the <see cref="IConfigBuilder"/> for chaining.
 	/// </returns>
 	public static IConfigBuilder ContentSource(this IConfigBuilder hostBuilder, string? config = null, bool includeEnvironmentSettings = true)
 	{
@@ -67,7 +67,7 @@ public static class ConfigBuilderExtensions
 	/// Whether or not environment specific settings should be included. Optional
 	/// </param>
 	/// <returns>
-	/// The same instance of the <see cref="IConfigBuilder"/> for chaining.
+	/// An instance of the <see cref="IConfigBuilder"/> for chaining.
 	/// </returns>
 	public static IConfigBuilder EmbeddedSource<TApplicationRoot>(this IConfigBuilder hostBuilder, string? config = null, bool includeEnvironmentSettings = true)
 		where TApplicationRoot : class
@@ -107,7 +107,7 @@ public static class ConfigBuilderExtensions
 	/// The configuration section to retrieve.
 	/// </param>
 	/// <returns>
-	/// The same instance of the <see cref="IConfigBuilder"/> for chaining.
+	/// An instance of the <see cref="IConfigBuilder"/> for chaining.
 	/// </returns>
 	public static IConfigBuilder Section<TSettingsOptions>(
 		this IConfigBuilder hostBuilder,
@@ -130,7 +130,7 @@ public static class ConfigBuilderExtensions
 	/// A delegate that returns the configuration section to retrieve.
 	/// </param>
 	/// <returns>
-	/// The same instance of the <see cref="IConfigBuilder"/> for chaining.
+	/// An instance of the <see cref="IConfigBuilder"/> for chaining.
 	/// </returns>
 	public static IConfigBuilder Section<TSettingsOptions>(
 		this IConfigBuilder hostBuilder,
@@ -191,7 +191,7 @@ public static class ConfigBuilderExtensions
 	/// The configuration section name to retrieve. Optional
 	/// </param>
 	/// <returns>
-	/// The same instance of the <see cref="IConfigBuilder"/> for chaining.
+	/// An instance of the <see cref="IConfigBuilder"/> for chaining.
 	/// </returns>
 	public static IConfigBuilder WithConfigurationSectionFromEntity<TEntity>(
 		this IConfigBuilder hostBuilder,
