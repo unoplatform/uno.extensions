@@ -1,7 +1,7 @@
 ﻿namespace Uno.Extensions;
 
 /// <summary>
-/// Extension methods for <see cref="IHostBuilder"/> to configure authentication.
+/// Provides extension methods for custom authentication to use with <see cref="IAuthenticationBuilder"/>.
 /// </summary>
 public static class HostBuilderExtensions
 {

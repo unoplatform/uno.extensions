@@ -1,7 +1,25 @@
 ﻿namespace Uno.Extensions;
 
+/// <summary>
+/// Provides extension methods for web authentication to use with <see cref="IAuthenticationBuilder"/>.
+/// </summary>
 public static class HostBuilderExtensions
 {
+	/// <summary>
+	/// Adds web authentication to the specified <see cref="IAuthenticationBuilder"/>.
+	/// </summary>
+	/// <param name="builder">
+	/// The <see cref="IAuthenticationBuilder"/> to add web authentication to.
+	/// </param>
+	/// <param name="configure">
+	/// A delegate which can be used to configure the web authentication provider that will be built. Optional.
+	/// </param>
+	/// <param name="name">
+	/// The name of the authentication provider. This optional parameter defaults to "Web".
+	/// </param>
+	/// <returns>
+	/// The <see cref="IAuthenticationBuilder"/> that was passed in.
+	/// </returns>
 	public static IAuthenticationBuilder AddWeb(
 		this IAuthenticationBuilder builder,
 		Action<IWebAuthenticationBuilder>? configure = default,
@@ -34,6 +52,24 @@ public static class HostBuilderExtensions
 				(provider, settings) => provider with { Name = name, Settings = settings });
 	}
 
+	/// <summary>
+	/// Adds web authentication to the specified <see cref="IAuthenticationBuilder"/>.
+	/// </summary>
+	/// <typeparam name="TService">
+	/// A type of service that will be used by the web authentication provider.
+	/// </typeparam>
+	/// <param name="builder">
+	/// The <see cref="IAuthenticationBuilder"/> to add web authentication to.
+	/// </param>
+	/// <param name="configure">
+	/// A delegate which can be used to configure the web authentication provider that will be built. Optional.
+	/// </param>
+	/// <param name="name">
+	/// The name of the authentication provider. This optional parameter defaults to "Web".
+	/// </param>
+	/// <returns>
+	/// The <see cref="IAuthenticationBuilder"/> that was passed in.
+	/// </returns>
 	public static IAuthenticationBuilder AddWeb<TService>(
 		this IAuthenticationBuilder builder,
 		Action<IWebAuthenticationBuilder<TService>>? configure = default,
