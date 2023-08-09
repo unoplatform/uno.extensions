@@ -5,7 +5,7 @@
 /// </summary>
 public static class HostExtensions
 {
-	internal static IHost ConnectUnoLogging(this IHost host, bool enableUnoLogging = true)
+	public static IHost ConnectUnoLogging(this IHost host, bool enableUnoLogging = true)
 	{
 		if (!enableUnoLogging)
 		{
