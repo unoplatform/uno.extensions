@@ -139,5 +139,43 @@ public static partial class Feed
 				return items;
 			});
 	}
+
+	/// <summary>
+	/// Projects each value of a source feed into a paginated collection.
+	/// </summary>
+	/// <typeparam name="TSource">Type of the value of the feed.</typeparam>
+	/// <typeparam name="TCursor">Type of the cursor that is used to identify a page to load.</typeparam>
+	/// <typeparam name="TResult">Type of the value of the items in resulting list feed.</typeparam>
+	/// <param name="source">The source feed to project.</param>
+	/// <param name="firstPage">The cursor of the first page.</param>
+	/// <param name="getPage">The async method to load a page of items.</param>
+	/// <returns>A paginated list feed.</returns>
+	public static IListFeed<TResult> SelectPaginatedByCursorAsync<TSource, TCursor, TResult>(
+		this IFeed<TSource> source,
+		TCursor firstPage,
+		GetPage<TCursor, TResult> getPage)
+		where TSource : notnull
+	{
+		return AttachedProperty.GetOrCreate(source, (firstPage, getPage), Create).AsListFeed();
+
+		static IFeed<IImmutableList<TResult>> Create(IFeed<TSource> parameter, (TCursor firstPage, GetPage< TCursor, TResult> getPage) args)
+			=> new DynamicFeed<IImmutableList<TResult>>(async _ =>
+			{
+				FeedExecution.Current!.EnableRefresh();
+
+				var value = await parameter;
+				if (value is null)
+				{
+					return ImmutableList<TResult>.Empty;
+				}
+
+				var items = await FeedExecution.Current!.GetPaginated<TResult>(
+					b => b
+						.ByCursor(args.firstPage)
+						.GetPage(args.getPage));
+
+				return items;
+			});
+	}
 	#endregion
 }
