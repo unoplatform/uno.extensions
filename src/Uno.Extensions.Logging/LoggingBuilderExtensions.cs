@@ -6,7 +6,9 @@
 public static class LoggingBuilderExtensions
 {
 	/// <summary>
-	/// Sets the log level for the Uno Platform core namespaces.
+	/// Sets the log level for the Uno Platform core namespaces.<br/><br/>
+	/// This method will configure the log level for the following namespaces:
+	/// <br/>Uno.*<br/>Windows.*<br/>Microsoft.*
 	/// </summary>
 	/// <param name="builder">
 	/// The <see cref="ILoggingBuilder"/> to configure.
@@ -27,7 +29,15 @@ public static class LoggingBuilderExtensions
 	}
 
 	/// <summary>
-	/// Sets the log level for namespaces related to the XAML parser.
+	/// Sets the log level for namespaces related to the XAML parser.<br/><br/>
+	/// This method will configure the log level for the following namespaces:
+	/// <br/>Microsoft.UI.Xaml<br/>Windows.UI.Xaml
+	/// <br/><br/>
+	/// Specific types are also configured:
+	/// <br/>Microsoft.UI.Xaml.VisualStateGroup<br/>Microsoft.UI.Xaml.StateTriggerBase
+	/// <br/>Microsoft.UI.Xaml.UIElement<br/>Microsoft.UI.Xaml.FrameworkElement
+	/// <br/>Windows.UI.Xaml.VisualStateGroup<br/>Windows.UI.Xaml.StateTriggerBase
+	/// <br/>Windows.UI.Xaml.UIElement<br/>Windows.UI.Xaml.FrameworkElement
 	/// </summary>
 	/// <param name="builder">
 	/// The <see cref="ILoggingBuilder"/> to configure.
@@ -56,6 +66,13 @@ public static class LoggingBuilderExtensions
 
 	/// <summary>
 	/// Sets the log level for namespaces related to XAML controls and layout.
+	/// <br/><br/>
+	/// This method will configure the log level for the following namespaces:
+	/// <br/>Microsoft.UI.Xaml.Controls<br/>Windows.UI.Xaml.Controls
+	/// <br/><br/>
+	/// Specific types are also configured:
+	/// <br/>Microsoft.UI.Xaml.Controls.Layouter<br/>Microsoft.UI.Xaml.Controls.Panel
+	/// <br/>Windows.UI.Xaml.Controls.Layouter<br/>Windows.UI.Xaml.Controls.Panel
 	/// </summary>
 	/// <param name="builder">
 	/// The <see cref="ILoggingBuilder"/> to configure.
@@ -80,6 +97,9 @@ public static class LoggingBuilderExtensions
 
 	/// <summary>
 	/// Sets the log level for namespaces related to the WinRT Storage APIs.
+	/// <br/><br/>
+	/// This method will configure the log level for the following namespaces:
+	/// <br/>Windows.Storage
 	/// </summary>
 	/// <param name="builder">
 	/// The <see cref="ILoggingBuilder"/> to configure.
@@ -98,6 +118,9 @@ public static class LoggingBuilderExtensions
 
 	/// <summary>
 	/// Sets the log level for namespaces related to XAML data binding.
+	/// <br/><br/>
+	/// This method will configure the log level for the following namespaces:
+	/// <br/>Microsoft.UI.Xaml.Data<br/>Windows.UI.Xaml.Data
 	/// </summary>
 	/// <param name="builder">
 	/// The <see cref="ILoggingBuilder"/> to configure.
@@ -117,8 +140,11 @@ public static class LoggingBuilderExtensions
 	}
 
 	/// <summary>
-	/// Sets the log level for Uno namespaces related to memory references from data binding.
+	/// Sets the log level for Uno types related to memory references from data binding.
 	/// Adjusting this log level is useful when tracking memory leaks from data binding.
+	/// <br/><br/>
+	/// This method will configure the log level for the following types:
+	/// <br/>Uno.UI.DataBinding.BinderReferenceHolder
 	/// </summary>
 	/// <param name="builder">
 	/// The <see cref="ILoggingBuilder"/> to configure.
@@ -138,6 +164,9 @@ public static class LoggingBuilderExtensions
 
 	/// <summary>
 	/// Sets the log level for Uno namespaces related to the hot reload and remote control feature.
+	/// <br/><br/>
+	/// This method will configure the log level for the following namespaces:
+	/// <br/>Uno.UI.RemoteControl
 	/// </summary>
 	/// <param name="builder">
 	/// The <see cref="ILoggingBuilder"/> to configure.
@@ -156,7 +185,10 @@ public static class LoggingBuilderExtensions
 	}
 
 	/// <summary>
-	/// Sets the log level for Uno namespaces related to the Web Assembly runtime.
+	/// Sets the log level for Uno types related to the Web Assembly runtime.
+	/// <br/><br/>
+	/// This method will configure the log level for the following types:
+	/// <br/>Uno.Foundation.WebAssemblyRuntime
 	/// </summary>
 	/// <param name="builder">
 	/// The <see cref="ILoggingBuilder"/> to configure.
