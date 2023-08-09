@@ -134,7 +134,7 @@ public static partial class Feed
 				var items = await FeedExecution.Current!.GetPaginated<TResult>(
 					b => b
 						.ByIndex()
-						.GetPage(async (req, ct) => await gp(value, req, ct)));
+						.GetPage((req, ct) => gp(value, req, ct)));
 
 				return items;
 			});
@@ -153,12 +153,12 @@ public static partial class Feed
 	public static IListFeed<TResult> SelectPaginatedByCursorAsync<TSource, TCursor, TResult>(
 		this IFeed<TSource> source,
 		TCursor firstPage,
-		GetPage<TCursor, TResult> getPage)
+		GetPage<TSource, TCursor, TResult> getPage)
 		where TSource : notnull
 	{
 		return AttachedProperty.GetOrCreate(source, (firstPage, getPage), Create).AsListFeed();
 
-		static IFeed<IImmutableList<TResult>> Create(IFeed<TSource> parameter, (TCursor firstPage, GetPage< TCursor, TResult> getPage) args)
+		static IFeed<IImmutableList<TResult>> Create(IFeed<TSource> parameter, (TCursor firstPage, GetPage<TSource, TCursor, TResult> getPage) args)
 			=> new DynamicFeed<IImmutableList<TResult>>(async _ =>
 			{
 				FeedExecution.Current!.EnableRefresh();
@@ -172,7 +172,7 @@ public static partial class Feed
 				var items = await FeedExecution.Current!.GetPaginated<TResult>(
 					b => b
 						.ByCursor(args.firstPage)
-						.GetPage(args.getPage));
+						.GetPage((token, count, ct) => args.getPage(value, token, count, ct)));
 
 				return items;
 			});
