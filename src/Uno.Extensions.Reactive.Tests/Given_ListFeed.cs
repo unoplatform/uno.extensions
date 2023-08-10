@@ -39,7 +39,7 @@ public class Given_ListFeed : FeedTests
 	}
 
 	[TestMethod]
-	[Ignore("Failing build - https://github.com/unoplatform/uno.extensions/issues/1753")]  
+	[Ignore("Failing build - https://github.com/unoplatform/uno.extensions/issues/1753")]
 	public async Task When_AsyncEnumerable()
 	{
 		async IAsyncEnumerable<IImmutableList<int>> GetSource()
