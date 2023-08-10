@@ -2,6 +2,11 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+<<<<<<< HEAD
+=======
+using System.Text;
+using Uno.Extensions.Reactive.Sources;
+>>>>>>> 3d7cd0bd (fix(reg): Fix possible stack-overflow when loging is enabled)
 
 namespace Uno.Extensions.Reactive;
 
@@ -52,4 +57,54 @@ public sealed record MessageEntry<T> : IMessageEntry
 
 	internal MessageAxisValue this[MessageAxis axis] => _values.TryGetValue(axis, out var value) ? value : default;
 	MessageAxisValue IMessageEntry.this[MessageAxis axis] => this[axis];
+<<<<<<< HEAD
+=======
+
+	/// <inheritdoc />
+	IEnumerator IEnumerable.GetEnumerator()
+		=> ((IEnumerable)_values).GetEnumerator();
+
+	/// <inheritdoc />
+	IEnumerator<KeyValuePair<MessageAxis, MessageAxisValue>> IEnumerable<KeyValuePair<MessageAxis, MessageAxisValue>>.GetEnumerator()
+		=> _values.GetEnumerator();
+
+	/// <inheritdoc />
+	public override string ToString()
+	{
+		// ToString, used for debug, MUST NOT NotifyTouched
+
+		var data = _cachedData;
+		if (data is null && _values.TryGetValue(MessageAxis.Data, out var dataValue))
+		{
+			data = MessageAxis.Data.FromMessageValue<T>(dataValue);
+		}
+
+		var error = _cachedError;
+		if (error is null && _values.TryGetValue(MessageAxis.Error, out var errorValue))
+		{
+			error = MessageAxis.Error.FromMessageValue(errorValue);
+		}
+
+		var progress = _cachedProgress;
+		if (progress is null && _values.TryGetValue(MessageAxis.Progress, out var progressValue))
+		{
+			progress = MessageAxis.Progress.FromMessageValue(progressValue);
+		}
+
+		var str = new StringBuilder($"Data={data} | Error={error?.GetType().Name ?? "--null--"} | IsTransient={progress ?? false}");
+		foreach (var value in _values)
+		{
+			if (value.Key == MessageAxis.Data
+				|| value.Key == MessageAxis.Error
+				|| value.Key == MessageAxis.Progress)
+			{
+				continue;
+			}
+
+			str.Append($" | {value.Key.Identifier}={value.Value}");
+		}
+
+		return str.ToString();
+	}
+>>>>>>> 3d7cd0bd (fix(reg): Fix possible stack-overflow when loging is enabled)
 }
