@@ -200,8 +200,17 @@ public partial class FeedView : Control
 	} 
 	#endregion
 
-	private bool _isReady;
+	private ControlState _state;
 	private Subscription? _subscription;
+
+	[Flags]
+	private enum ControlState
+	{
+		IsLoaded = 1 << 0,
+		HasTemplate = 1 << 1,
+
+		IsReady = IsLoaded | HasTemplate,
+	}
 
 	/// <summary>
 	/// Gets a command which request to refresh the source when executed.
@@ -236,7 +245,7 @@ public partial class FeedView : Control
 	{
 		if (snd is FeedView that)
 		{
-			that._isReady = true;
+			that._state |= ControlState.IsLoaded;
 			if (that.Source is ISignal<IMessage> feed)
 			{
 				that.Subscribe(feed);
@@ -248,16 +257,28 @@ public partial class FeedView : Control
 	{
 		if (snd is FeedView that)
 		{
-			that._isReady = false;
+			that._state &= ~ControlState.IsLoaded;
 			that._subscription?.Dispose();
+		}
+	}
+
+	/// <inheritdoc />
+	protected override void OnApplyTemplate()
+	{
+		base.OnApplyTemplate();
+
+		_state |= ControlState.HasTemplate;
+		if (Source is ISignal<IMessage> feed)
+		{
+			Subscribe(feed);
 		}
 	}
 
 	private void Subscribe(ISignal<IMessage>? feed)
 	{
-		if (feed is null || !_isReady)
+		if (feed is null || _state is not ControlState.IsReady)
 		{
-			SetIsLoading(!_isReady); // If we set the Source to null while we are already ready, we clear the loading flag.
+			SetIsLoading(_state is not ControlState.IsReady); // If we set the Source to null while we are already ready, we clear the loading flag.
 			_subscription?.Dispose();
 
 			return;

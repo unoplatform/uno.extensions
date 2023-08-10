@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Uno.Extensions.Reactive.Core;
 using Uno.Extensions.Reactive.Testing;
@@ -40,6 +41,28 @@ public class Given_FeedView : FeedTests
 
 		await UIHelper.WaitFor(() => isLoadingValues.Count > 0, CT);
 	}
+
+	[TestMethod]
+	public async Task When_NotVisible_Then_DoesNotSubscribeToSource()
+	{
+		// This tests will also ensure that is the FeedView will not try to GoToState while it does not have any template yet.
+
+		var isLoaded = false;
+		var src = Feed.Async(async ct => isLoaded = true);
+		var sut = new FeedView { Source = src };
+		var root = new Grid { Visibility = Visibility.Collapsed, Children = { sut } };
+
+		await UIHelper.Load(root, CT);
+
+		isLoaded.Should().BeFalse("The FeedView should not have subscribed to the source while it is not visible.");
+
+		root.Visibility = Visibility.Visible;
+
+		await UIHelper.WaitFor(() => isLoaded, CT);
+
+		isLoaded.Should().BeTrue("The FeedView should have subscribed to the source when it became visible.");
+	}
+
 
 	[TestMethod]
 	public async Task When_GetSource_Then_ContextContainsDispatcher()
