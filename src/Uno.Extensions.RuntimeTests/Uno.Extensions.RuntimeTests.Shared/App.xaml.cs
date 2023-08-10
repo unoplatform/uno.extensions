@@ -45,13 +45,13 @@ namespace Uno.Extensions.RuntimeTests
 		{
 #if NET6_0_OR_GREATER && WINDOWS && !HAS_UNO
 			_window = new Window();
-			_window.Activate();
 #else
 			_window = Microsoft.UI.Xaml.Window.Current;
 #endif
 
 			ForceAssemblyLoading();
 			_window.Content ??= new Uno.UI.RuntimeTests.UnitTestsControl();
+			_window.Activate();
 		}
 
 		/// <summary>
