@@ -1,0 +1,10 @@
+{
+  "profiles": {
+	"RuntimeTests.Windows (Package)": {
+	  "commandName": "MsixPackage"
+	},
+	"RuntimeTests.Windows (Unpackaged)": {
+	  "commandName": "Project"
+	}
+  }
+}
