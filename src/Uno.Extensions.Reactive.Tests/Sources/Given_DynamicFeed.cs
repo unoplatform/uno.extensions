@@ -108,7 +108,7 @@ public class Given_DynamicFeed : FeedTests
 	}
 
 	[TestMethod]
-	[Ignore("Failing build - https://github.com/unoplatform/uno.extensions/issues/1753")]  
+	[Ignore("Failing build - https://github.com/unoplatform/uno.extensions/issues/1753")]
 	public async Task When_AwaitFeedMultipleTime_Then_GetSameInstance()
 	{
 		object initial = new(), updated = new();
