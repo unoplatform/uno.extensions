@@ -1,3 +1,5 @@
+using Microsoft.Extensions.DependencyInjection.Extensions;
+
 namespace Uno.Extensions.Maui;
 
 /// <summary>
@@ -41,6 +43,17 @@ public static class MauiEmbedding
 		var mauiAppBuilder = MauiApp.CreateBuilder()
 				.UseMauiEmbedding<MauiApplication>();
 
+
+#if WINDOWS
+		_ = mauiAppBuilder.Services.RemoveWhere(sd =>
+					sd.ServiceType == typeof(IMauiInitializeService) &&
+										(
+											// Match using Name since the types are internal to Maui
+											sd.ImplementationType is { Name: "MauiControlsInitializer" } ||
+											sd.ImplementationType is { Name: "MauiCoreInitializer" }
+										));
+#endif
+
 		configure?.Invoke(mauiAppBuilder);
 
 #if IOS || MACCATALYST
@@ -73,3 +86,28 @@ public static class MauiEmbedding
 	}
 	*/
 }
+<<<<<<< HEAD
+=======
+
+internal record MauiResourceProvider(MauiResourceDictionary Resources);
+
+internal record MauiResourceManager(IEnumerable<MauiResourceProvider> ResourceProviders)
+{
+	public MauiResourceDictionary CreateMauiResources(ResourceDictionary resources)
+	{
+#if MAUI_EMBEDDING
+		var mauiResources = resources.ToMauiResources();
+		if (ResourceProviders.Any())
+		{
+			ResourceProviders.Select(x => x.Resources)
+				.ToList()
+				.ForEach(x => mauiResources.MergedDictionaries.Add(x));
+		}
+
+		return mauiResources;
+#else
+		return new MauiResourceDictionary();
+#endif
+	}
+}
+>>>>>>> c63db824 (fix: Disable maui initializers on windows)
