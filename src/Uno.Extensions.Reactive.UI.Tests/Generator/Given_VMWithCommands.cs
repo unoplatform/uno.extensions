@@ -7,6 +7,7 @@ using Microsoft.UI.Xaml.Data;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Uno.Extensions.Reactive.UI;
 using Uno.UI.RuntimeTests;
+using Button = Microsoft.UI.Xaml.Controls.Button;
 
 namespace Uno.Extensions.Reactive.WinUI.Tests.Generator;
 
