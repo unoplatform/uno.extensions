@@ -91,11 +91,9 @@ public partial class PropertySelectorGenerator : IIncrementalGenerator
 			{
 				if (compilation.GetAssemblyOrModuleSymbol(reference) is IAssemblySymbol assembly)
 				{
-					if (!_assemblyToNamesMap.TryGetValue(assembly.Identity, out var interestingNames))
-					{
-						interestingNames = GetFromNamespaceExpensive(assembly.GlobalNamespace, propertySelectorSymbol, callerFilePathSymbol, callerLineNumberSymbol, ct).ToImmutableArray();
-						_assemblyToNamesMap.Add(assembly.Identity, interestingNames);
-					}
+					var interestingNames = _assemblyToNamesMap.GetValue(
+						assembly.Identity,
+						_ => GetFromNamespaceExpensive(assembly.GlobalNamespace, propertySelectorSymbol, callerFilePathSymbol, callerLineNumberSymbol, ct).ToImmutableArray());
 
 					foreach (var name in (ImmutableArray<string>)interestingNames)
 					{
@@ -281,27 +279,25 @@ public partial class PropertySelectorGenerator : IIncrementalGenerator
 
 	private static bool IsCandidateTree(SyntaxTree tree, CancellationToken ct)
 	{
-		if (_treeToIsCandidate.TryGetValue(tree, out var candidate))
-		{
-			return (bool)candidate;
-		}
+		return (bool)_treeToIsCandidate.GetValue(tree, tree => IsCandidateTreeCore(tree, ct));
 
-		var root =  (CompilationUnitSyntax)tree.GetRoot(ct);
-		foreach (var member in root.Members)
+		static bool IsCandidateTreeCore(SyntaxTree tree, CancellationToken ct)
 		{
-			foreach (var node in member.DescendantNodesAndSelf())
+			var root = (CompilationUnitSyntax)tree.GetRoot(ct);
+			foreach (var member in root.Members)
 			{
-				ct.ThrowIfCancellationRequested();
-				if (IsCandidate(node))
+				foreach (var node in member.DescendantNodesAndSelf())
 				{
-					_treeToIsCandidate.Add(tree, true);
-					return true;
+					ct.ThrowIfCancellationRequested();
+					if (IsCandidate(node))
+					{
+						return true;
+					}
 				}
 			}
-		}
 
-		_treeToIsCandidate.Add(tree, false);
-		return false;
+			return false;
+		}
 	}
 
 	internal static bool IsCandidate(IMethodSymbol method, INamedTypeSymbol? propertySelectorSymbol, INamedTypeSymbol? callerFilePathSymbol, INamedTypeSymbol? callerLineNumberSymbol)
