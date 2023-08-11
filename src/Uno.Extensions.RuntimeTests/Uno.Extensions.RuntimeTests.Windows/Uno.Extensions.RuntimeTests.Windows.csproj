@@ -13,11 +13,10 @@
 		<ManagePackageVersionsCentrally>false</ManagePackageVersionsCentrally>
 		<DefineConstants>$(DefineConstants);WINDOWS_WINUI;WINUI</DefineConstants>
 
-		<!-- Uncomment for Unpackaged builds -->
-		<!-- For Unpackaged builds, change version of SDK to previous stable release https://github.com/microsoft/WindowsAppSDK/issues/3591 -->
-		<!--<WindowsPackageType>None</WindowsPackageType>
+		<!-- Comment this out if you want to handle distributing the WinAppSdk -->
 		<WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
-		<SelfContained>true</SelfContained>-->
+		<!-- Uncomment for to package dotnet in addition to WinAppSdk -->
+		<!-- <SelfContained>true</SelfContained>-->
 	</PropertyGroup>
 
 	<ItemGroup>
