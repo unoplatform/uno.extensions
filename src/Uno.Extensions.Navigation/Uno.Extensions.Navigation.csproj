@@ -18,7 +18,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\Uno.Extensions.Navigation.Generators\Uno.Extensions.Navigation.Generators.csproj" ReferenceOutputAssembly="false" />
-		<None Include="..\Uno.Extensions.Core.Generators\bin\Uno.Extensions.Core.Generators\$(Configuration)\netstandard2.0\Uno.Extensions.Core.Generators.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+		<None Include="..\Uno.Extensions.Navigation.Generators\bin\Uno.Extensions.Navigation.Generators\$(Configuration)\netstandard2.0\Uno.Extensions.Navigation.Generators.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
 	</ItemGroup>
 
 	<ItemGroup>
