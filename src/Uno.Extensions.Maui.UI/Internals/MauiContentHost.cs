@@ -2,9 +2,9 @@
 
 internal class MauiContentHost : Microsoft.Maui.Controls.ContentView
 {
-	public MauiContentHost(ResourceDictionary resources)
+	public MauiContentHost(MauiResourceDictionary resources)
 	{
-		Resources = resources.ToMauiResources();
+		Resources = resources;
 		HorizontalOptions = LayoutOptions.Fill;
 		VerticalOptions = LayoutOptions.Fill;
 	}

@@ -62,10 +62,25 @@ public static class MauiEmbedding
 #endif
 
 		mauiAppBuilder.Services.AddSingleton(app)
-			.AddSingleton<IMauiInitializeService, MauiEmbeddingInitializer>();
+			.AddSingleton<IMauiInitializeService, MauiEmbeddingInitializer>()
+			.AddSingleton<MauiResourceManager>();
 		_app = mauiAppBuilder.Build();
 #endif
 		return app;
+	}
+
+	/// <summary>
+	/// When providing a <see cref="MauiResourceDictionary"/> with this method, the resources will be provided by default
+	/// for all Maui controls.
+	/// </summary>
+	/// <typeparam name="TResources"></typeparam>
+	/// <param name="maui"></param>
+	/// <returns></returns>
+	public static MauiAppBuilder UseMauiEmbeddingResources<TResources>(this MauiAppBuilder maui)
+		where TResources : MauiResourceDictionary, new()
+	{
+		maui.Services.AddSingleton(new MauiResourceProvider(new TResources()));
+		return maui;
 	}
 
 	// NOTE: This was part of the POC and is out of scope for the MVP. Keeping it in case we want to add it back later.
