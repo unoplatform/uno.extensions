@@ -86,8 +86,6 @@ public static class MauiEmbedding
 	}
 	*/
 }
-<<<<<<< HEAD
-=======
 
 internal record MauiResourceProvider(MauiResourceDictionary Resources);
 
@@ -110,4 +108,3 @@ internal record MauiResourceManager(IEnumerable<MauiResourceProvider> ResourcePr
 #endif
 	}
 }
->>>>>>> c63db824 (fix: Disable maui initializers on windows)
