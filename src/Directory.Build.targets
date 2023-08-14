@@ -86,23 +86,6 @@
 		<WriteLinesToFile File="$(_AndroidResourceDesignerFile)" Lines="// Empty Content from uno.ui Directory.Build.targets." />
 	</Target>
 
-	<!-- NOTE: This is due to a Race Condition with MSBuild where the dll may not yet exist on a clean build -->
-	<Target Name="PackageGeneratorBuild"
-			AfterTargets="Build">
-		<PropertyGroup>
-			<GeneratorOutputPath>$(MSBuildProjectDirectory)\$(IntermediateOutputPath)\PackGenerators\</GeneratorOutputPath>
-		</PropertyGroup>
-		<MSBuild Projects="@(GeneratorProjectReference)"
-				 Properties="Configuration=$(Configuration);OutputPath=$(GeneratorOutputPath);TargetFramework=netstandard2.0" />
-	</Target>
-
-	<Target Name="GeneratorPack"
-			AfterTargets="PackageGeneratorBuild">
-		<ItemGroup>
-			<None Include="$(GeneratorOutputPath)**\*.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Exclude="@(None)" Visible="false" />
-		</ItemGroup>
-	</Target>
-
 	<Import Project="winappsdk-workaround.targets" Condition="exists('winappsdk-workaround.targets')" />
 	<Import Project="xamarinmac-workaround.targets" Condition="exists('xamarinmac-workaround.targets') and $(TargetFramework.ToLower().StartsWith('xamarin')) and $(TargetFramework.ToLower().Contains('mac'))" />
 	<Import Project="Directory.UnoMetadata.targets" />
