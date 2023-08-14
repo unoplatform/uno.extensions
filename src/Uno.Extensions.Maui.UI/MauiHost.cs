@@ -97,11 +97,11 @@ public partial class MauiHost : ContentControl
 
 		if (_host is null)
 		{
-			_host = new MauiContentHost(resources)
+			var resourceManager = MauiContext.Services.GetRequiredService<MauiResourceManager>();
+			_host = new MauiContentHost(resourceManager.CreateMauiResources(resources))
 			{
 				BindingContext = DataContext,
 				Content = MauiContent
-
 			};
 
 			try
