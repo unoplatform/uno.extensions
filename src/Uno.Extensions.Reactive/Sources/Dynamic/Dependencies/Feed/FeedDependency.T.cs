@@ -85,19 +85,7 @@ internal sealed class FeedDependency<T> : FeedDependency, IDependency
 	}
 
 	private bool IsActive(FeedExecution execution)
-	{
-		if (_current is { } current)
-		{
-			Debug.Assert(execution == current.execution);
-
-			if (current.execution == execution)
-			{
-				return true;
-			}
-		}
-
-		return false;
-	}
+		=> _current is { } current && current.execution == execution;
 
 	private void Init(FeedExecution execution, IDisposable @lock)
 	{

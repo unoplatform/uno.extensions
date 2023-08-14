@@ -72,7 +72,7 @@ internal class PaginationDependency<TItem> : IDependency
 
 			Update(_pageInfo with { Tokens = req.Token });
 
-			// Push the _pageInfo in loading so the token will be propagated even in transient messages.
+			// Configure the _pageInfo in OnExecuting so the token will be propagated even in transient messages.
 			execution.Enqueue(m => m.Paginated(_pageInfo));
 		}
 	}
