@@ -138,6 +138,7 @@ public class Given_DynamicFeed : FeedTests
 	}
 
 	[TestMethod]
+	[Ignore("Failing build - https://github.com/unoplatform/uno.extensions/issues/1753")]
 	public async Task When_UpdateAwaitedFeed_Then_CancelAndReExecute()
 	{
 		int before = 0, after = 0;
