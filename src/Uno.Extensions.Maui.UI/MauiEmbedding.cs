@@ -1,3 +1,5 @@
+using Microsoft.Extensions.DependencyInjection.Extensions;
+
 namespace Uno.Extensions.Maui;
 
 /// <summary>
@@ -40,6 +42,17 @@ public static class MauiEmbedding
 #if MAUI_EMBEDDING
 		var mauiAppBuilder = MauiApp.CreateBuilder()
 				.UseMauiEmbedding<MauiApplication>();
+
+
+#if WINDOWS
+		_ = mauiAppBuilder.Services.RemoveWhere(sd =>
+					sd.ServiceType == typeof(IMauiInitializeService) &&
+										(
+											// Match using Name since the types are internal to Maui
+											sd.ImplementationType is { Name: "MauiControlsInitializer" } ||
+											sd.ImplementationType is { Name: "MauiCoreInitializer" }
+										));
+#endif
 
 		configure?.Invoke(mauiAppBuilder);
 
@@ -97,7 +110,7 @@ internal record MauiResourceManager(IEnumerable<MauiResourceProvider> ResourcePr
 	{
 #if MAUI_EMBEDDING
 		var mauiResources = resources.ToMauiResources();
-		if(ResourceProviders.Any())
+		if (ResourceProviders.Any())
 		{
 			ResourceProviders.Select(x => x.Resources)
 				.ToList()
