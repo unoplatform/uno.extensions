@@ -48,7 +48,17 @@ public static class FeedUIHelper
 		}
 	}
 
-	private static async ValueTask<IAsyncEnumerator<T>> GetSourceEnumerator<T>(ISignal<T> signal, SourceContext context)
+	private static async ValueTask<IAsyncEnumerator<Message<T>>> GetSourceEnumerator<T>(IFeed<T> signal, SourceContext context)
+	{
+		var ct = context.Token;
+		var src = DispatcherHelper.HasThreadAccess
+			? await Task.Run(() => context.GetOrCreateSource(signal), ct).ConfigureAwait(false)
+			: context.GetOrCreateSource(signal);
+
+		return src.GetAsyncEnumerator(ct);
+	}
+
+	private static async ValueTask<IAsyncEnumerator<TMessage>> GetSourceEnumerator<TMessage>(ISignal<TMessage> signal, SourceContext context)
 	{
 		var ct = context.Token;
 		var src = DispatcherHelper.HasThreadAccess
