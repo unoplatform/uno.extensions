@@ -1,9 +1,9 @@
 ---
 uid: Overview.Maui
 ---
-# .NET Maui Embedding
+# .NET MAUI Embedding
 
-.NET Maui Embedding provides limited support for Uno Applications to make use of 3rd party control libraries when the required app platforms match one of those available from .NET MAUI.
+.NET MAUI Embedding provides limited support for Uno Applications to make use of 3rd party control libraries when the required app platforms match one of those available from .NET MAUI.
 
 ## Initialization
 

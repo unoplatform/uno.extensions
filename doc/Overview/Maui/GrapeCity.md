@@ -15,7 +15,9 @@ Create a new application using the `unoapp` template, enabling .NET MAUI Embeddi
 
 `dotnet new unoapp -preset blank -maui -o GrapeCityApp`
 
-Next, add a reference to the C1 .NET MAUI nuget packages to the GrapeCity.MauiControls library. If you want to use the FlexGrid, add a reference to C1.Maui.Grid; if you want to use the Calendar, add a reference to C1.Maui.Calendar.  
+Remove the .net7.0 (or .net8.0) target framework from both the GrapeCityApp and GrapeCityApp.MauiControls projects.
+
+Next, add a reference to the C1 .NET MAUI nuget packages to the GrapeCityApp.MauiControls library. If you want to use the FlexGrid, add a reference to C1.Maui.Grid; if you want to use the Calendar, add a reference to C1.Maui.Calendar.  
 
 In the `AppBuilderExtensions` class, update the `UseMauiControls` extension method to call either, or both, the `RegisterFlexGridControls` or `RegisterCalendarControls` methods.
 
