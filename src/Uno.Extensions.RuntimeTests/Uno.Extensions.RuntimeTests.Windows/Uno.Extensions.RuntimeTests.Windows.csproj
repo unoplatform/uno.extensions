@@ -12,6 +12,11 @@
 		<EnableMsixTooling>true</EnableMsixTooling>
 		<ManagePackageVersionsCentrally>false</ManagePackageVersionsCentrally>
 		<DefineConstants>$(DefineConstants);WINDOWS_WINUI;WINUI</DefineConstants>
+
+		<!-- Comment this out if you want to handle distributing the WinAppSdk -->
+		<WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
+		<!-- Uncomment for to package dotnet in addition to WinAppSdk -->
+		<!-- <SelfContained>true</SelfContained>-->
 	</PropertyGroup>
 
 	<ItemGroup>
