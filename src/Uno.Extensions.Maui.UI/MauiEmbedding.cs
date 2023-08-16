@@ -65,6 +65,14 @@ public static class MauiEmbedding
 			.AddSingleton<IMauiInitializeService, MauiEmbeddingInitializer>()
 			.AddSingleton<MauiResourceManager>();
 		_app = mauiAppBuilder.Build();
+
+		// Initialize the MauiApplication to ensure there is a Window and MainPage to ensure references to these will work.
+		var iApp = _app.Services.GetRequiredService<IApplication>();
+		if(iApp is MauiApplication mauiApplication)
+		{
+			mauiApplication.MainPage = new Microsoft.Maui.Controls.Page();
+			iApp.CreateWindow(new ActivationState(MauiContext));
+		}
 #endif
 		return app;
 	}
