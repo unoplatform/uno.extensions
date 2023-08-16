@@ -79,7 +79,7 @@ internal sealed class ListFeedSelection<TSource, TOther> : IListState<TSource>, 
 					var updatedData = u.CurrentData;
 					var updatedSelection = u.Get(MessageAxis.Selection);
 
-					var dataHasChanged = !OptionEqualityComparer<IImmutableList<TSource>>.RefEquals.Equals(updatedData, currentData);
+					var dataHasChanged = !OptionEqualityComparer<IImmutableList<TSource>>.Default.Equals(updatedData, currentData);
 					var selectionHasChanged = currentSelection != updatedSelection;
 
 					if (dataHasChanged && !selectionHasChanged)

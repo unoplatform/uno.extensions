@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -76,18 +77,24 @@ public sealed class SourceContext : IAsyncDisposable
 			return ctx;
 		}
 
-		lock (_contexts)
+		if (_preConfiguration?.AppliesTo(owner, out ctx) ?? false)
 		{
-			ctx = new SourceContext(RootOwner.Create(owner));
-			if (owner is not ISourceContextAware)
-			{
-				ConditionalDisposable.Link(owner, ctx);
-			}
-
 			_contexts.Add(owner, ctx);
+			return ctx;
 		}
 
-		return ctx;
+		return _contexts.GetValue(owner, Create);
+
+		static SourceContext Create(object o)
+		{
+			var newCtx = new SourceContext(RootOwner.Create(o));
+			if (o is not ISourceContextAware)
+			{
+				ConditionalDisposable.Link(o, newCtx);
+			}
+
+			return newCtx;
+		}
 	}
 
 	/// <summary>
@@ -110,6 +117,59 @@ public sealed class SourceContext : IAsyncDisposable
 		}
 
 		_contexts.Add(owner, ctx);
+	}
+
+	/// <summary>
+	/// Explicitly preconfigure the context to use for the given type.
+	/// </summary>
+	/// <param name="ownerType">Type of the owner to configure.</param>
+	/// <param name="ctx">The context to use for the next instance of <paramref name="ownerType"/>.</param>
+	/// <remarks>This method allow </remarks>
+	[EditorBrowsable(EditorBrowsableState.Advanced)]
+	internal static PreConfiguration PreConfigure(Type ownerType, SourceContext ctx)
+		=> _preConfiguration = new PreConfiguration(ownerType, ctx, _preConfiguration);
+
+	[ThreadStatic]
+	private static PreConfiguration? _preConfiguration = default;
+
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <param name="TargetType"></param>
+	/// <param name="Context"></param>
+	/// <param name="Previous"></param>
+	internal record PreConfiguration(Type TargetType, SourceContext Context, PreConfiguration? Previous) : IDisposable
+	{
+		internal bool AppliesTo(object target, [NotNullWhen(true)] out SourceContext? context)
+		{
+			if (target.GetType() == TargetType)
+			{
+				context = Context;
+				Dispose(); // Configuration applies only to the first instance!
+				return true;
+			}
+			else
+			{
+				context = default;
+				return false;
+			}
+		}
+
+		/// <summary>
+		/// Makes sure that the pre-configuration is applied to the given owner.
+		/// </summary>
+		/// <param name="target"></param>
+		public void EnsureApplied(object target)
+			=> Set(target, Context);
+
+		/// <inheritdoc />
+		public void Dispose()
+		{
+			if (_preConfiguration == this)
+			{
+				_preConfiguration = Previous;
+			}
+		}
 	}
 
 	/// <summary>
@@ -236,7 +296,7 @@ public sealed class SourceContext : IAsyncDisposable
 	/// <param name="feed">The feed to get source from.</param>
 	/// <returns>The cached with replay async enumeration of messages produced by the given feed</returns>
 	[EditorBrowsable(EditorBrowsableState.Advanced)]
-	public IAsyncEnumerable<Message<T>> GetOrCreateSource<T>(IFeed<T> feed)
+	public IAsyncEnumerable<Message<T>> GetOrCreateSource<T>(ISignal<Message<T>> feed)
 	{
 		if (_isNone)
 		{
@@ -249,31 +309,7 @@ public sealed class SourceContext : IAsyncDisposable
 		}
 		else
 		{
-			return States.GetOrCreateSubscription<IFeed<T>, T>(feed).GetMessages(this, Token);
-		}
-	}
-
-	/// <summary>
-	/// Get or create a cached with replay async enumeration of messages produced by the given feed.
-	/// </summary>
-	/// <typeparam name="T">Type of the value of feed.</typeparam>
-	/// <param name="feed">The feed to get source from.</param>
-	/// <returns>The cached with replay async enumeration of messages produced by the given feed</returns>
-	[EditorBrowsable(EditorBrowsableState.Advanced)]
-	public IAsyncEnumerable<Message<IImmutableList<T>>> GetOrCreateSource<T>(IListFeed<T> feed)
-	{
-		if (_isNone)
-		{
-			this.Log().Warn(
-				$"[PERFORMANCE HIT] Awaiting a feed '{feed}' outside of a valid SourceContext (None). "
-				+ "This creates a new **detached** subscription to the feed, which has a negative performance impact, "
-				+ "and which might even re-execute some HTTP requests.");
-
-			return feed.AsFeed().GetSource(this, Token);
-		}
-		else
-		{
-			return States.GetOrCreateSubscription<IListFeed<T>, IImmutableList<T>>(feed).GetMessages(this, Token);
+			return States.GetOrCreateSubscription(feed).GetMessages(this, Token);
 		}
 	}
 
