@@ -3,7 +3,12 @@ using System.Linq;
 
 namespace Uno.Extensions.Reactive.Sources;
 
-internal record ExecuteRequest(object Issuer, string Reason)
+/// <summary>
+/// A request to re-execute the delegate of a <see cref="DynamicFeed{T}"/>.
+/// </summary>
+/// <param name="Issuer">The issuer of that request.</param>
+/// <param name="Reason">The issuer of that request, for debug purposes.</param>
+public record ExecuteRequest(object Issuer, string Reason)
 {
 	/// <summary>
 	/// Defined the axis used to flag the message as async (i.e. transient).

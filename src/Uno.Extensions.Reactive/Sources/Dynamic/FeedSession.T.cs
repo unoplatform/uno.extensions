@@ -8,10 +8,11 @@ using Uno.Extensions.Reactive.Utils;
 
 namespace Uno.Extensions.Reactive.Sources;
 
-internal sealed partial class FeedSession<TResult> : FeedSession, IAsyncEnumerable<Message<TResult>>
+internal sealed partial class FeedSession<TResult> : FeedSession, IAsyncEnumerator<Message<TResult>>
 {
 	private readonly AsyncFunc<Option<TResult>> _mainAsyncAction;
-	private readonly AsyncEnumerableSubject<Message<TResult>> _messages = new(ReplayMode.EnabledForFirstEnumeratorOnly);
+	private readonly AsyncEnumerableSubject<Message<TResult>> _messages;
+	private readonly IAsyncEnumerator<Message<TResult>> _inner;
 	private readonly MessageManager<Unit, TResult> _message;
 
 	public FeedSession(DynamicFeed<TResult> feed, SourceContext context, AsyncFunc<Option<TResult>> mainAsyncAction, CancellationToken ct)
@@ -19,7 +20,9 @@ internal sealed partial class FeedSession<TResult> : FeedSession, IAsyncEnumerab
 	{
 		_mainAsyncAction = mainAsyncAction;
 
-		_message = new MessageManager<Unit, TResult>(_messages.TrySetNext);
+		_messages = new(ReplayMode.EnabledForFirstEnumeratorOnly);
+		_inner = _messages.GetAsyncEnumerator(ct);
+		_message = new(_messages.TrySetNext);
 
 		Execute(new ExecuteRequest(this, "Initial load"));
 	}
@@ -34,7 +37,7 @@ internal sealed partial class FeedSession<TResult> : FeedSession, IAsyncEnumerab
 	{
 		lock (_requestsGate)
 		{
-			if (_isDisposed)
+			if (IsDisposed)
 			{
 				return;
 			}
@@ -80,7 +83,7 @@ internal sealed partial class FeedSession<TResult> : FeedSession, IAsyncEnumerab
 	#region Parent message support (i.e. FeedDependency)
 	internal override void OnParentUpdated()
 	{
-		if (_isDisposed)
+		if (IsDisposed)
 		{
 			return;
 		}
@@ -104,9 +107,14 @@ internal sealed partial class FeedSession<TResult> : FeedSession, IAsyncEnumerab
 
 	#endregion
 
+	#region IAsyncEnumerator<Message<TResult>>
 	/// <inheritdoc />
-	public IAsyncEnumerator<Message<TResult>> GetAsyncEnumerator(CancellationToken cancellationToken = default)
-		=> _messages.GetAsyncEnumerator(cancellationToken);
+	public Message<TResult> Current => _inner.Current;
+
+	/// <inheritdoc />
+	public ValueTask<bool> MoveNextAsync()
+		=> _inner.MoveNextAsync(); 
+	#endregion
 
 	/// <inheritdoc />
 	protected override void TryComplete()
@@ -123,12 +131,13 @@ internal sealed partial class FeedSession<TResult> : FeedSession, IAsyncEnumerab
 	/// <inheritdoc />
 	public override async ValueTask DisposeAsync()
 	{
+		// Note: Even is IsDisposed, we want the caller to be able to wait for the _currentExecution to complete.
 		if (_currentExecution is { } current)
 		{
 			await current.DisposeAsync().ConfigureAwait(false);
 		}
 
-		_messages.Complete(); // Prevent any new message to be published
+		_messages.TryComplete(); // Prevent any new message to be published
 
 		await base.DisposeAsync().ConfigureAwait(false);
 	}

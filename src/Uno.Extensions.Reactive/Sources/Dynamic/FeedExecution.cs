@@ -9,7 +9,7 @@ namespace Uno.Extensions.Reactive.Sources;
 /// <summary>
 /// Represents an invocation of the main loading operation of a <see cref="DynamicFeed{T}"/> for a given <see cref="FeedSession"/>.
 /// </summary>
-internal abstract class FeedExecution : IAsyncDisposable
+public abstract class FeedExecution : IAsyncDisposable
 {
 	private static readonly AsyncLocal<FeedExecution?> _current = new();
 	public static FeedExecution? Current => _current.Value;

@@ -112,7 +112,7 @@ internal sealed class FeedDependency<T> : FeedDependency, IDependency
 		try
 		{
 			var isFirst = true;
-			var messages = _session.Context.States.GetOrCreateSubscription<ISignal<Message<T>>, T>(_feed).GetMessages(_session.Context, _session.Token);
+			var messages = _session.Context.States.GetOrCreateSubscription(_feed).GetMessages(_session.Context, _session.Token);
 			await foreach (var message in messages.WithCancellation(_session.Token).ConfigureAwait(false))
 			{
 				// We wait for the loading to complete before updating the value (and continue the enumeration of the dependency feed).
