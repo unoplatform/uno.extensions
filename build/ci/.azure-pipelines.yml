@@ -39,9 +39,11 @@ jobs:
 =======
   parameters:
     solution: samples/Playground/Playground.winui.slnf
+    solutionName: Playground
 - template: .azure-pipelines.Windows.yml
   parameters:
     solution: samples/MauiEmbedding/MauiEmbedding.sln
+    solutionName: MauiEmbedding
       # - template: .azure-pipelines.Android.yml
 >>>>>>> e9ad8c42 (chore: Tweaking build)
 - template: .azure-pipelines.Wasm.yml
