@@ -18,12 +18,14 @@ public partial class MauiHost : ContentControl
 		if (args.NewValue is null ||
 			args.NewValue is not Type type ||
 			!type.IsAssignableTo(typeof(MauiView)) ||
-			dependencyObject is not MauiHost mauiHost)
+			dependencyObject is not MauiHost mauiHost ||
+			IPlatformApplication.Current is null)
 		{
 			return;
 		}
 
-		mauiHost.MauiContent = Activator.CreateInstance(type) as MauiView;
+		// Allow the use of Dependency Injection for the View
+		mauiHost.MauiContent = (MauiView)ActivatorUtilities.CreateInstance(IPlatformApplication.Current.Services, type);
 #endif
 	}
 
@@ -53,11 +55,9 @@ public partial class MauiHost : ContentControl
 #if MAUI_EMBEDDING
 
 	private static ILogger GetLogger() =>
-		MauiEmbedding.MauiContext.Services.GetRequiredService<ILogger<MauiHost>>();
+		IPlatformApplication.Current?.Services.GetRequiredService<ILogger<MauiHost>>() ?? throw new NullReferenceException("MauiEmbedding has not been properly initialized");
 
 	private MauiContentHost? _host;
-
-	private readonly IMauiContext MauiContext;
 
 	/// <summary>
 	/// Initializes a new instance of the MauiContent class.
@@ -67,7 +67,6 @@ public partial class MauiHost : ContentControl
 		this.HorizontalContentAlignment = HorizontalAlignment.Stretch;
 		this.VerticalContentAlignment = VerticalAlignment.Stretch;
 
-		MauiContext = MauiEmbedding.MauiContext;
 		Loading += OnLoading;
 		DataContextChanged += OnDataContextChanged;
 		Unloaded += OnMauiContentUnloaded;
@@ -138,7 +137,8 @@ public partial class MauiHost : ContentControl
 
 			try
 			{
-				var native = _host.ToPlatform(MauiContext);
+				var mauiContext = IPlatformApplication.Current!.Application.Handler!.MauiContext!;
+				var native = _host.ToPlatform(mauiContext);
 				Content = native;
 			}
 			catch (Exception ex)
