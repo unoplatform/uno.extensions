@@ -1,6 +1,10 @@
+parameters:
+  solution: ''
+  solutionName: ''
+
 jobs:
-- job: Samples_Windows
-  displayName: 'Samples - Windows'
+- job: Samples_Windows_${{parameters.solutionName}}
+  displayName: 'Samples - Windows (${{parameters.solutionName}})'
   timeoutInMinutes: 90
 
   pool:
@@ -41,7 +45,7 @@ jobs:
   - task: MSBuild@1
     displayName: Build Samples
     inputs:
-      solution: samples/**/*.sln
+      solution: ${{parameters.solution}}
       msbuildLocationMethod: location
       msbuildLocation: $(MSBUILDPATH)
       msbuildArchitecture: x86

@@ -3,13 +3,34 @@
 /// <summary>
 /// ContentControl implementation that hosts a Maui view.
 /// </summary>
-[ContentProperty(Name = nameof(MauiContent))]
+//[ContentProperty(Name = nameof(MauiContent))]
 public partial class MauiHost : ContentControl
 {
 	/// <summary>
+	/// The Maui Source property represents the type of the Maui View to create
+	/// </summary>
+	public static readonly DependencyProperty SourceProperty =
+		DependencyProperty.Register(nameof(Source), typeof(Type), typeof(MauiHost), new PropertyMetadata(null, OnSourceChanged));
+
+	private static void OnSourceChanged(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs args)
+	{
+#if MAUI_EMBEDDING
+		if (args.NewValue is null ||
+			args.NewValue is not Type type ||
+			!type.IsAssignableTo(typeof(MauiView)) ||
+			dependencyObject is not MauiHost mauiHost)
+		{
+			return;
+		}
+
+		mauiHost.MauiContent = Activator.CreateInstance(type) as MauiView;
+#endif
+	}
+
+	/// <summary>
 	/// The MauiContent property represents the <see cref="MauiContent"/> that will be used as content.
 	/// </summary>
-	public static readonly DependencyProperty MauiContentProperty =
+	private static readonly DependencyProperty MauiContentProperty =
 		DependencyProperty.Register(nameof(MauiContent), typeof(MauiView), typeof(MauiHost), new PropertyMetadata(null, OnMauiContentChanged));
 
 	private static void OnMauiContentChanged(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs args)
@@ -22,7 +43,10 @@ public partial class MauiHost : ContentControl
 			return;
 		}
 
-		mauiHost.Content = view;
+		if (mauiHost._host is not null)
+		{
+			mauiHost._host.Content = view;
+		}
 #endif
 	}
 
@@ -65,10 +89,19 @@ public partial class MauiHost : ContentControl
 	/// <summary>
 	/// Gets or sets the <see cref="MauiContent"/> that will be used as content.
 	/// </summary>
-	public MauiView MauiContent
+	private MauiView? MauiContent
 	{
 		get => (MauiView)GetValue(MauiContentProperty);
 		set => SetValue(MauiContentProperty, value);
+	}
+
+	/// <summary>
+	/// Gets or sets the <see cref="Type"/> of the Maui Content Source
+	/// </summary>
+	public Type? Source
+	{
+		get => (Type?)GetValue(SourceProperty);
+		set => SetValue(SourceProperty, value);
 	}
 
 #if MAUI_EMBEDDING
@@ -97,8 +130,7 @@ public partial class MauiHost : ContentControl
 
 		if (_host is null)
 		{
-			var resourceManager = MauiContext.Services.GetRequiredService<MauiResourceManager>();
-			_host = new MauiContentHost(resourceManager.CreateMauiResources(resources))
+			_host = new MauiContentHost(resources.ToMauiResources())
 			{
 				BindingContext = DataContext,
 				Content = MauiContent

@@ -34,7 +34,14 @@ pr:
 jobs:
 - template: .azure-pipelines.Packages.yml
 - template: .azure-pipelines.Windows.yml
-# - template: .azure-pipelines.Android.yml
+  parameters:
+    solution: samples/Playground/Playground.winui.slnf
+    solutionName: Playground
+- template: .azure-pipelines.Windows.yml
+  parameters:
+    solution: samples/MauiEmbedding/MauiEmbedding.sln
+    solutionName: MauiEmbedding
+      # - template: .azure-pipelines.Android.yml
 - template: .azure-pipelines.Wasm.yml
 - template: .azure-pipelines.UITests.Wasm.yml
 - template: .azure-pipelines.Changelog.yml
