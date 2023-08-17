@@ -2,8 +2,8 @@ parameters:
   solution: ''
 
 jobs:
-- job: Samples_Windows
-  displayName: 'Samples - Windows'
+- job: Samples_Windows (${{parameters.solution}})
+  displayName: 'Samples - Windows (${{parameters.solution}})'
   timeoutInMinutes: 90
 
   pool:
