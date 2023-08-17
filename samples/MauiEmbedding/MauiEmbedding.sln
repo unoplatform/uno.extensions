@@ -83,6 +83,7 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MauiApp1", "MauiProjects\MauiApp1\MauiApp1.csproj", "{8577882E-DA52-4D27-A529-C70998034566}"
 EndProject
 <<<<<<< HEAD
+<<<<<<< HEAD
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Toolkit", "..\..\src\Uno.Extensions.Toolkit\Uno.Extensions.Toolkit.csproj", "{D247D7A5-3630-4651-B26F-96640C334CD9}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Toolkit.WinUI", "..\..\src\Uno.Extensions.Toolkit.UI\Uno.Extensions.Toolkit.WinUI.csproj", "{8BD9E873-32EF-4AED-85DA-31B918909E14}"
@@ -94,6 +95,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MauiEmbedding.Wasm", "MauiE
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Maui.Core", "..\..\src\Uno.Extensions.Maui.Core\Uno.Extensions.Maui.Core.csproj", "{4669F81E-74F5-42EB-958B-E631093E5728}"
 >>>>>>> 701473ad (chore: update Embeddign Sample)
 EndProject
+=======
+>>>>>>> 392d293c (feat: prefer adding embedding App)
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -889,6 +892,7 @@ Global
 		{8577882E-DA52-4D27-A529-C70998034566}.Release|x86.ActiveCfg = Release|Any CPU
 		{8577882E-DA52-4D27-A529-C70998034566}.Release|x86.Build.0 = Release|Any CPU
 <<<<<<< HEAD
+<<<<<<< HEAD
 		{D247D7A5-3630-4651-B26F-96640C334CD9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{D247D7A5-3630-4651-B26F-96640C334CD9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D247D7A5-3630-4651-B26F-96640C334CD9}.Debug|ARM.ActiveCfg = Debug|Any CPU
@@ -1031,6 +1035,8 @@ Global
 		{4669F81E-74F5-42EB-958B-E631093E5728}.Release|x86.ActiveCfg = Release|Any CPU
 		{4669F81E-74F5-42EB-958B-E631093E5728}.Release|x86.Build.0 = Release|Any CPU
 >>>>>>> 701473ad (chore: update Embeddign Sample)
+=======
+>>>>>>> 392d293c (feat: prefer adding embedding App)
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -1066,6 +1072,7 @@ Global
 		{A158CC84-0219-4BE4-A3F2-7AB7F613855A} = {24511BF4-9869-4773-AF84-CC8F79AF5085}
 		{8577882E-DA52-4D27-A529-C70998034566} = {24511BF4-9869-4773-AF84-CC8F79AF5085}
 <<<<<<< HEAD
+<<<<<<< HEAD
 		{D247D7A5-3630-4651-B26F-96640C334CD9} = {9B9F35D5-E6DD-4FC7-9198-F8246D3CE366}
 		{8BD9E873-32EF-4AED-85DA-31B918909E14} = {9B9F35D5-E6DD-4FC7-9198-F8246D3CE366}
 		{00BAAAC1-9BA0-4F35-B7B6-5B4D64E45FAB} = {1C130CF4-EEF4-44D9-9DEF-C037FE1C221B}
@@ -1073,6 +1080,8 @@ Global
 =======
 		{4669F81E-74F5-42EB-958B-E631093E5728} = {9B9F35D5-E6DD-4FC7-9198-F8246D3CE366}
 >>>>>>> 701473ad (chore: update Embeddign Sample)
+=======
+>>>>>>> 392d293c (feat: prefer adding embedding App)
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {584E156C-C094-4968-8A1F-3FB06081E34D}

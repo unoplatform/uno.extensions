@@ -43,6 +43,10 @@
 		<Compile Remove="Models\*.cs" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <ProjectReference Include="..\Uno.Extensions.Maui.Core\Uno.Extensions.Maui.Core.csproj" />
+	</ItemGroup>
+
 	<Choose>
 		<When Condition="$(IsMauiEmbedding)">
 			<PropertyGroup>
