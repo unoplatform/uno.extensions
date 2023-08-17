@@ -1,3 +1,6 @@
+parameters:
+  solution: ''
+
 jobs:
 - job: Samples_Windows
   displayName: 'Samples - Windows'
@@ -41,7 +44,7 @@ jobs:
   - task: MSBuild@1
     displayName: Build Samples
     inputs:
-      solution: samples/**/*.sln
+      solution: ${{parameters.solution}}
       msbuildLocationMethod: location
       msbuildLocation: $(MSBUILDPATH)
       msbuildArchitecture: x86

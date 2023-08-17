@@ -13,6 +13,7 @@
       "Uno.Extensions.Authentication\\Uno.Extensions.Authentication.csproj",
       "Uno.Extensions.Configuration\\Uno.Extensions.Configuration.csproj",
       "Uno.Extensions.Core.Generators\\Uno.Extensions.Core.Generators.csproj",
+      "Uno.Extensions.Core.Tests\\Uno.Extensions.Core.Tests.csproj",
       "Uno.Extensions.Core.UI\\Uno.Extensions.Core.UI.csproj",
       "Uno.Extensions.Core.UI\\Uno.Extensions.Core.WinUI.csproj",
       "Uno.Extensions.Core\\Uno.Extensions.Core.csproj",
@@ -46,11 +47,19 @@
       "Uno.Extensions.Navigation\\Uno.Extensions.Navigation.csproj",
       "Uno.Extensions.Reactive.Generator\\Uno.Extensions.Reactive.Generator.csproj",
       "Uno.Extensions.Reactive.Messaging\\Uno.Extensions.Reactive.Messaging.csproj",
+<<<<<<< HEAD
+=======
+      "Uno.Extensions.Reactive.Testing\\Uno.Extensions.Reactive.Testing.csproj",
+      "Uno.Extensions.Reactive.Tests\\Uno.Extensions.Reactive.Tests.csproj",
+      "Uno.Extensions.Reactive.UI.Markup\\Uno.Extensions.Reactive.WinUI.Markup.csproj",
+      "Uno.Extensions.Reactive.UI.Tests\\Uno.Extensions.Reactive.WinUI.Tests.csproj",
+>>>>>>> e9ad8c42 (chore: Tweaking build)
       "Uno.Extensions.Reactive.UI\\Uno.Extensions.Reactive.UI.csproj",
       "Uno.Extensions.Reactive.UI\\Uno.Extensions.Reactive.WinUI.csproj",
       "Uno.Extensions.Reactive\\Uno.Extensions.Reactive.csproj",
       "Uno.Extensions.Serialization.Http\\Uno.Extensions.Serialization.Http.csproj",
       "Uno.Extensions.Serialization.Refit\\Uno.Extensions.Serialization.Refit.csproj",
+      "Uno.Extensions.Serialization.Tests\\Uno.Extensions.Serialization.Tests.csproj",
       "Uno.Extensions.Serialization\\Uno.Extensions.Serialization.csproj",
       "Uno.Extensions.Storage.UI\\Uno.Extensions.Storage.UI.csproj",
       "Uno.Extensions.Storage.UI\\Uno.Extensions.Storage.WinUI.csproj",
