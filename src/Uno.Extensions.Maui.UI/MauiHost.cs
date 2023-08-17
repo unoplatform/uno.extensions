@@ -3,7 +3,7 @@
 /// <summary>
 /// ContentControl implementation that hosts a Maui view.
 /// </summary>
-[ContentProperty(Name = nameof(MauiContent))]
+//[ContentProperty(Name = nameof(MauiContent))]
 public partial class MauiHost : ContentControl
 {
 	/// <summary>
@@ -14,15 +14,17 @@ public partial class MauiHost : ContentControl
 
 	private static void OnSourceChanged(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs args)
 	{
+#if MAUI_EMBEDDING
 		if (args.NewValue is null ||
 			args.NewValue is not Type type ||
-			type.IsAssignableTo(typeof(MauiView)) ||
+			!type.IsAssignableTo(typeof(MauiView)) ||
 			dependencyObject is not MauiHost mauiHost)
 		{
 			return;
 		}
 
-		mauiHost.Content = Activator.CreateInstance(type) as MauiView;
+		mauiHost.MauiContent = Activator.CreateInstance(type) as MauiView;
+#endif
 	}
 
 	/// <summary>
@@ -41,7 +43,10 @@ public partial class MauiHost : ContentControl
 			return;
 		}
 
-		mauiHost.Content = view;
+		if (mauiHost._host is not null)
+		{
+			mauiHost._host.Content = view;
+		}
 #endif
 	}
 
@@ -84,7 +89,7 @@ public partial class MauiHost : ContentControl
 	/// <summary>
 	/// Gets or sets the <see cref="MauiContent"/> that will be used as content.
 	/// </summary>
-	private MauiView MauiContent
+	private MauiView? MauiContent
 	{
 		get => (MauiView)GetValue(MauiContentProperty);
 		set => SetValue(MauiContentProperty, value);

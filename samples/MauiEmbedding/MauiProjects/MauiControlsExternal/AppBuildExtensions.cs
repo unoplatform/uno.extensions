@@ -1,5 +1,5 @@
 ﻿namespace MauiControlsExternal;
-public static class AppBuildExtensions
+public static class MauiAppBuilderExtensions
 {
 	public static MauiAppBuilder UseCustomLibrary(this MauiAppBuilder builder)
 	{
