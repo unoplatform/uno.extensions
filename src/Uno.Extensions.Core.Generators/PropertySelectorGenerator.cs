@@ -15,6 +15,7 @@ public partial class PropertySelectorGenerator : IIncrementalGenerator
 	private readonly PropertySelectorsGenerationTool _tool;
 	private static readonly ConditionalWeakTable<AssemblyIdentity, object> _assemblyToNamesMap = new();
 	private static readonly ConditionalWeakTable<SyntaxTree, object> _treeToIsCandidate = new();
+	private static readonly object _lock = new();
 
 	/// <summary>
 	/// Creates a new instance of the PropertySelectorGenerator
@@ -91,11 +92,8 @@ public partial class PropertySelectorGenerator : IIncrementalGenerator
 			{
 				if (compilation.GetAssemblyOrModuleSymbol(reference) is IAssemblySymbol assembly)
 				{
-					if (!_assemblyToNamesMap.TryGetValue(assembly.Identity, out var interestingNames))
-					{
-						interestingNames = GetFromNamespaceExpensive(assembly.GlobalNamespace, propertySelectorSymbol, callerFilePathSymbol, callerLineNumberSymbol, ct).ToImmutableArray();
-						_assemblyToNamesMap.Add(assembly.Identity, interestingNames);
-					}
+					var interestingNames = GetOrAdd(_assemblyToNamesMap, assembly.Identity, () =>
+					   GetFromNamespaceExpensive(assembly.GlobalNamespace, propertySelectorSymbol, callerFilePathSymbol, callerLineNumberSymbol, ct).ToImmutableArray());
 
 					foreach (var name in (ImmutableArray<string>)interestingNames)
 					{
@@ -224,7 +222,7 @@ public partial class PropertySelectorGenerator : IIncrementalGenerator
 						{
 							hasCallerLineNumberParameter = true;
 						}
-						
+
 					}
 				}
 			}
@@ -279,30 +277,26 @@ public partial class PropertySelectorGenerator : IIncrementalGenerator
 		return builder.MoveToImmutable();
 	}
 
-	private static bool IsCandidateTree(SyntaxTree tree, CancellationToken ct)
-	{
-		if (_treeToIsCandidate.TryGetValue(tree, out var candidate))
+	private static bool IsCandidateTree(SyntaxTree tree, CancellationToken ct) =>
+		(bool)GetOrAdd(_treeToIsCandidate, tree, () =>
 		{
-			return (bool)candidate;
-		}
-
-		var root =  (CompilationUnitSyntax)tree.GetRoot(ct);
-		foreach (var member in root.Members)
-		{
-			foreach (var node in member.DescendantNodesAndSelf())
+			var root = (CompilationUnitSyntax)tree.GetRoot(ct);
+			foreach (var member in root.Members)
 			{
-				ct.ThrowIfCancellationRequested();
-				if (IsCandidate(node))
+				foreach (var node in member.DescendantNodesAndSelf())
 				{
-					_treeToIsCandidate.Add(tree, true);
-					return true;
+					ct.ThrowIfCancellationRequested();
+					if (IsCandidate(node))
+					{
+						_treeToIsCandidate.Add(tree, true);
+						return true;
+					}
 				}
 			}
-		}
 
-		_treeToIsCandidate.Add(tree, false);
-		return false;
-	}
+			_treeToIsCandidate.Add(tree, false);
+			return false;
+		});
 
 	internal static bool IsCandidate(IMethodSymbol method, INamedTypeSymbol? propertySelectorSymbol, INamedTypeSymbol? callerFilePathSymbol, INamedTypeSymbol? callerLineNumberSymbol)
 	{
@@ -375,6 +369,22 @@ public partial class PropertySelectorGenerator : IIncrementalGenerator
 		static bool IsValidLambda(SimpleLambdaExpressionSyntax simpleLambda)
 		{
 			return simpleLambda is { Parameter: { IsMissing: false, Identifier.ValueText.Length: > 0 }, ExpressionBody.IsMissing: false };
+		}
+	}
+
+	private static TValue GetOrAdd<TKey, TValue>(ConditionalWeakTable<TKey, TValue> table, TKey key, Func<TValue> valueCallback)
+		where TKey : class
+		where TValue : class
+	{
+		lock (_lock)
+		{
+			if (!table.TryGetValue(key, out var value))
+			{
+				value = valueCallback();
+				table.Add(key, value);
+			}
+
+			return value;
 		}
 	}
 }
