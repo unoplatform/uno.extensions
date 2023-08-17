@@ -13,7 +13,9 @@ In order to use the ComponentOne controls, you first need to install the Compone
 
 Create a new application using the `unoapp` template, enabling .NET MAUI Embedding. In this case we're going to use the Blank preset to keep things simple.
 
-`dotnet new unoapp -preset blank -maui -o GrapeCityApp`
+```
+dotnet new unoapp -preset blank -maui -o GrapeCityApp
+```
 
 Remove the .net7.0 (or .net8.0) target framework from both the GrapeCityApp and GrapeCityApp.MauiControls projects.
 
