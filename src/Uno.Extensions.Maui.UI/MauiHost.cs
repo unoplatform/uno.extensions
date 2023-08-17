@@ -1,4 +1,4 @@
-namespace Uno.Extensions.Maui;
+﻿namespace Uno.Extensions.Maui;
 
 /// <summary>
 /// ContentControl implementation that hosts a Maui view.
@@ -7,9 +7,28 @@ namespace Uno.Extensions.Maui;
 public partial class MauiHost : ContentControl
 {
 	/// <summary>
+	/// The Maui Source property represents the type of the Maui View to create
+	/// </summary>
+	public static readonly DependencyProperty SourceProperty =
+		DependencyProperty.Register(nameof(Source), typeof(Type), typeof(MauiHost), new PropertyMetadata(null, OnSourceChanged));
+
+	private static void OnSourceChanged(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs args)
+	{
+		if (args.NewValue is null ||
+			args.NewValue is not Type type ||
+			type.IsAssignableTo(typeof(MauiView)) ||
+			dependencyObject is not MauiHost mauiHost)
+		{
+			return;
+		}
+
+		mauiHost.Content = Activator.CreateInstance(type) as MauiView;
+	}
+
+	/// <summary>
 	/// The MauiContent property represents the <see cref="MauiContent"/> that will be used as content.
 	/// </summary>
-	public static readonly DependencyProperty MauiContentProperty =
+	private static readonly DependencyProperty MauiContentProperty =
 		DependencyProperty.Register(nameof(MauiContent), typeof(MauiView), typeof(MauiHost), new PropertyMetadata(null, OnMauiContentChanged));
 
 	private static void OnMauiContentChanged(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs args)
@@ -65,10 +84,19 @@ public partial class MauiHost : ContentControl
 	/// <summary>
 	/// Gets or sets the <see cref="MauiContent"/> that will be used as content.
 	/// </summary>
-	public MauiView MauiContent
+	private MauiView MauiContent
 	{
 		get => (MauiView)GetValue(MauiContentProperty);
 		set => SetValue(MauiContentProperty, value);
+	}
+
+	/// <summary>
+	/// Gets or sets the <see cref="Type"/> of the Maui Content Source
+	/// </summary>
+	public Type? Source
+	{
+		get => (Type?)GetValue(SourceProperty);
+		set => SetValue(SourceProperty, value);
 	}
 
 #if MAUI_EMBEDDING
