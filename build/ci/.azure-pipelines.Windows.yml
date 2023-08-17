@@ -2,7 +2,7 @@ parameters:
   solution: ''
 
 jobs:
-- job: Samples_Windows (${{parameters.solution}})
+- job: Samples_Windows_${{parameters.solution}}
   displayName: 'Samples - Windows (${{parameters.solution}})'
   timeoutInMinutes: 90
 
