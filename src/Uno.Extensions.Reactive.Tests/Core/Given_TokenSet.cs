@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Uno.Extensions.Reactive.Sources;
@@ -84,7 +81,7 @@ public class Given_TokenSet
 	}
 
 	[TestMethod]
-	public void When_IsGreaterThan()
+	public void When_IsGreaterOrEqualsThan()
 	{
 		var sut = Get((0, 42), (1, 42));
 
@@ -116,6 +113,17 @@ public class Given_TokenSet
 		sut.IsGreaterOrEquals(Get((0, 41), (1, 43), (2, 1))).Should().BeFalse(because: "token for ctx 1 is lower than 44");
 		sut.IsGreaterOrEquals(Get((0, 42), (1, 43), (2, 1))).Should().BeFalse(because: "token for ctx 1 is lower than 44");
 		sut.IsGreaterOrEquals(Get((0, 43), (1, 43), (2, 1))).Should().BeFalse(because: "token for ctx 0 is lower than 43 and token for ctx 1 is lower than 44");
+	}
+
+	[TestMethod]
+	public void When_Empty_Then_IsGreaterOrEqualsThan()
+	{
+		var sut = Get();
+
+		sut.IsEmpty.Should().BeTrue();
+
+		sut.IsGreaterOrEquals(Get((0, 42))).Should().BeFalse();
+		sut.IsGreaterOrEquals(Get()).Should().BeTrue();
 	}
 
 	[TestMethod]
@@ -154,6 +162,17 @@ public class Given_TokenSet
 	}
 
 	[TestMethod]
+	public void When_Empty_Then_IsLowerThan()
+	{
+		var sut = Get();
+
+		sut.IsEmpty.Should().BeTrue();
+
+		sut.IsLower(Get((0, 42))).Should().BeTrue();
+		sut.IsLower(Get()).Should().BeFalse();
+	}
+
+	[TestMethod]
 	public void When_IsLowerOrEqualsThan()
 	{
 		var sut = Get((0, 42), (1, 42));
@@ -186,6 +205,17 @@ public class Given_TokenSet
 		sut.IsLowerOrEquals(Get((0, 41), (1, 43), (2, 1))).Should().BeFalse(because: "token for ctx 0 is lower than 42");
 		sut.IsLowerOrEquals(Get((0, 42), (1, 43), (2, 1))).Should().BeTrue();
 		sut.IsLowerOrEquals(Get((0, 43), (1, 43), (2, 1))).Should().BeTrue();
+	}
+
+	[TestMethod]
+	public void When_Empty_Then_IsLowerOrEqualsThan()
+	{
+		var sut = Get();
+
+		sut.IsEmpty.Should().BeTrue();
+
+		sut.IsLowerOrEquals(Get((0,42))).Should().BeTrue();
+		sut.IsLowerOrEquals(Get()).Should().BeTrue();
 	}
 
 	private TokenSet<TestToken> Get(params (uint ctx, uint seq)[] seqs) => new(seqs.Select(v => new TestToken(this, v.ctx, v.seq)).ToImmutableList());

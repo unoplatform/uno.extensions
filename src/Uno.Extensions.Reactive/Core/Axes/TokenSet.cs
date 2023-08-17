@@ -51,6 +51,11 @@ internal record TokenSet<TToken>(IImmutableList<TToken> Tokens)
 	/// <returns>'true' if given collection contains a version greater or equals to the version contained by this collection, 'false' otherwise.</returns>
 	public bool IsLower(TokenSet<TToken> other)
 	{
+		if (IsEmpty)
+		{
+			return !other.IsEmpty;
+		}
+
 		var joined = Tokens
 			.Join(
 				other.Tokens,
@@ -78,6 +83,11 @@ internal record TokenSet<TToken>(IImmutableList<TToken> Tokens)
 	/// <returns>'true' if given collection contains a version greater or equals to the version contained by this collection, 'false' otherwise.</returns>
 	public bool IsLowerOrEquals(TokenSet<TToken> other)
 	{
+		if (IsEmpty)
+		{
+			return true;
+		}
+
 		var joined = Tokens
 			.Join(
 				other.Tokens,
@@ -96,7 +106,7 @@ internal record TokenSet<TToken>(IImmutableList<TToken> Tokens)
 	/// <param name="axis">The axis of the token collection.</param>
 	/// <returns>'true' if message contains a lower version to the version contained by this collection, 'false' otherwise.</returns>
 	public bool IsGreaterOrEquals(IMessage message, MessageAxis<TokenSet<TToken>> axis)
-	=> IsGreaterOrEquals(message.Current.Get(axis) ?? Empty);
+		=> IsGreaterOrEquals(message.Current.Get(axis) ?? Empty);
 
 	/// <summary>
 	/// Check if the version defined in this collection are all greater or equals than versions defined in the given set
@@ -105,6 +115,11 @@ internal record TokenSet<TToken>(IImmutableList<TToken> Tokens)
 	/// <returns>'true' if given collection contains a lower version to the version contained by this collection, 'false' otherwise.</returns>
 	public bool IsGreaterOrEquals(TokenSet<TToken> other)
 	{
+		if (IsEmpty)
+		{
+			return other.IsEmpty;
+		}
+
 		var joined = Tokens
 			.Join(
 				other.Tokens,
