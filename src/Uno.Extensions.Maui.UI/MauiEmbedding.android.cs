@@ -1,8 +1,10 @@
-﻿#if ANDROID
+#if ANDROID
 namespace Uno.Extensions.Maui;
 
 partial class MauiEmbedding
 {
+	// NOTE: This is meant to help initialize MauiEmbedding similar to what MauiApplication
+	// https://github.com/dotnet/maui/blob/ace9fe5e7d8d9bd16a2ae0b2fe2b888ad681433e/src/Core/src/Platform/Android/MauiApplication.cs#L32-L53
 	private static MauiAppBuilder RegisterPlatformServices(this MauiAppBuilder builder, Application app)
 	{
 		if (Android.App.Application.Context is not Android.App.Application androidApp)
