@@ -12,6 +12,7 @@ partial class MauiEmbedding
 			throw new MauiEmbeddingException($"Expected 'Android.App.Application.Context' to be 'Android.App.Application', but got '{Android.App.Application.Context.GetType().FullName}'.");
 		}
 		builder.Services.AddSingleton<Android.App.Application>(androidApp)
+			.AddTransient<Android.Content.Context>(_ => UI.ContextHelper.Current)
 			.AddTransient<Android.App.Activity>(_ =>
 			{
 				if (UI.ContextHelper.Current is Android.App.Activity currentActivity)
