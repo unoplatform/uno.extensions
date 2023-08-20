@@ -10,7 +10,7 @@ partial class MauiEmbedding
 	{
 		if (Android.App.Application.Context is not Android.App.Application androidApp)
 		{
-			throw new MauiEmbeddingException($"Expected 'Android.App.Application.Context' to be 'Android.App.Application', but got '{Android.App.Application.Context.GetType().FullName}'.");
+			throw new MauiEmbeddingException(string.Format(Properties.Resources.UnexpectedAndroidApplicationContextType, Android.App.Application.Context.GetType().FullName));
 		}
 
 		builder.Services.AddSingleton<Android.App.Application>(androidApp)
@@ -20,7 +20,7 @@ partial class MauiEmbedding
 				if (UI.ContextHelper.Current is Android.App.Activity currentActivity)
 					return currentActivity;
 
-				throw new MauiEmbeddingException("Could not find a current Activity.");
+				throw new MauiEmbeddingException(Properties.Resources.CouldNotFindCurrentActivity);
 			});
 		return builder;
 	}
@@ -35,7 +35,7 @@ partial class MauiEmbedding
 		var iApp = mauiApp.Services.GetRequiredService<IApplication>();
 		if(app is not EmbeddingApplication embeddingApp)
 		{
-			throw new MauiEmbeddingException("The provided application must inherit from EmbeddingApplication");
+			throw new MauiEmbeddingException(Properties.Resources.TheApplicationMustInheritFromEmbeddingApplication);
 		}
 
 		embeddingApp.InitializeApplication(scope.ServiceProvider, iApp);
