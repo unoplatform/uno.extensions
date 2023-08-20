@@ -28,7 +28,7 @@ partial class MauiEmbedding
 		var iApp = mauiApp.Services.GetRequiredService<IApplication>();
 		if (app is not EmbeddingApplication embeddingApp)
 		{
-			throw new MauiEmbeddingException("The provided application must inherit from EmbeddingApplication");
+			throw new MauiEmbeddingException(Properties.Resources.TheApplicationMustInheritFromEmbeddingApplication);
 		}
 
 		//if (_clone is not null)

@@ -117,17 +117,29 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="CouldNotFindCurrentActivity" xml:space="preserve">
+    <value>Could not find a current Activity.</value>
+  </data>
   <data name="MauiEmbeddingInitializationExceptionMessage" xml:space="preserve">
     <value>You must call UseMauiEmbedding from the Application</value>
   </data>
   <data name="NoColorValueProvided" xml:space="preserve">
     <value>No value provided for the Maui Color.</value>
   </data>
+  <data name="TheApplicationMustInheritFromEmbeddingApplication" xml:space="preserve">
+    <value>The provided application must inherit from EmbeddingApplication.</value>
+  </data>
+  <data name="TypeMustInheritFromPageOrView" xml:space="preserve">
+    <value>The View '{0}' must be a View or Page.</value>
+  </data>
   <data name="UnableToConvertMauiViewToNativeView" xml:space="preserve">
     <value>There was an unexpected error converting the Maui View to a native Platform view.</value>
   </data>
   <data name="UnableToConvertValueToColor" xml:space="preserve">
     <value>Unable to convert '{Value}' to a Maui Color.</value>
+  </data>
+  <data name="UnexpectedAndroidApplicationContextType" xml:space="preserve">
+    <value>Expected 'Android.App.Application.Context' to be 'Android.App.Application', but got '{0}'.</value>
   </data>
   <data name="UnexpectedErrorConvertingMauiViewToNativeView" xml:space="preserve">
     <value>An unexpected error occurred while converting the Maui View to a native View.</value>

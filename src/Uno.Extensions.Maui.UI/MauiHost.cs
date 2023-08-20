@@ -1,4 +1,4 @@
-﻿using Microsoft.Maui.ApplicationModel;
+using Microsoft.Maui.ApplicationModel;
 using Uno.Extensions.Maui.Platform;
 
 namespace Uno.Extensions.Maui;
@@ -62,7 +62,7 @@ public partial class MauiHost : ContentControl
 			}
 			else
 			{
-				throw new MauiEmbeddingException($"The View '{instance.GetType().FullName}' must be a View or Page.");
+				throw new MauiEmbeddingException(string.Format(Properties.Resources.TypeMustInheritFromPageOrView, instance.GetType().FullName));
 			}
 
 			
@@ -87,7 +87,7 @@ public partial class MauiHost : ContentControl
 #if MAUI_EMBEDDING
 
 	private static ILogger GetLogger() =>
-		IPlatformApplication.Current?.Services.GetRequiredService<ILogger<MauiHost>>() ?? throw new NullReferenceException("MauiEmbedding has not been properly initialized");
+		IPlatformApplication.Current?.Services.GetRequiredService<ILogger<MauiHost>>() ?? throw new MauiEmbeddingInitializationException();
 
 	//private MauiContentHost? _host;
 	private VisualElement? _host;
