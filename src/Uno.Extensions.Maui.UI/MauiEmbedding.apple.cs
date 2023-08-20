@@ -1,5 +1,5 @@
-﻿#if IOS || MACCATALYST
-using UIKit;
+﻿using UIKit;
+using Uno.Extensions.Maui.Platform;
 
 namespace Uno.Extensions.Maui;
 
@@ -15,15 +15,19 @@ partial class MauiEmbedding
 		return builder;
 	}
 
-	private static void InitializeMauiEmbeddingApp(this MauiApp mauiApp)
+	private static void InitializeMauiEmbeddingApp(this MauiApp mauiApp, Application app)
 	{
 		var rootContext = new MauiContext(mauiApp.Services);
 		rootContext.InitializeScopedServices();
 
 		var iApp = mauiApp.Services.GetRequiredService<IApplication>();
-		IPlatformApplication.Current = new EmbeddingApp(mauiApp.Services, iApp);
-		var appDelegate = mauiApp.Services.GetRequiredService<IUIApplicationDelegate>();
-		appDelegate.SetApplicationHandler(iApp, rootContext);
+		if (app is not EmbeddingApplication embeddingApp)
+		{
+			throw new MauiEmbeddingException("The provided application must inherit from EmbeddingApplication");
+		}
+
+		// TODO: Evaluate getting the Root View Controller for a Platform.Init for Maui
+		embeddingApp.InitializeApplication(mauiApp.Services, iApp);
+		app.SetApplicationHandler(iApp, rootContext);
 	}
 }
-#endif

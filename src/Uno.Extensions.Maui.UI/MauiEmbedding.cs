@@ -32,6 +32,18 @@ public static partial class MauiEmbedding
 		return builder;
 	}
 
+	private class MauiHostProviderFactory : IServiceProviderFactory<IServiceProvider>
+	{
+		public IServiceProvider CreateBuilder(IServiceCollection services) => services.BuildServiceProvider();
+		public IServiceProvider CreateServiceProvider(IServiceProvider containerBuilder) => containerBuilder;
+	}
+
+	private class UnoHostProviderFactory : IServiceProviderFactory<IServiceCollection>
+	{
+		public IServiceCollection CreateBuilder(IServiceCollection services) => throw new NotImplementedException();
+		public IServiceProvider CreateServiceProvider(IServiceCollection containerBuilder) => containerBuilder.BuildServiceProvider();
+	}
+
 	/// <summary>
 	/// Registers Maui embedding with WinUI3 and WPF application builder.
 	/// </summary>
@@ -63,7 +75,7 @@ public static partial class MauiEmbedding
 		configure?.Invoke(mauiAppBuilder);
 
 		var mauiApp = mauiAppBuilder.Build();
-		mauiApp.InitializeMauiEmbeddingApp();
+		mauiApp.InitializeMauiEmbeddingApp(app);
 #endif
 		return app;
 	}

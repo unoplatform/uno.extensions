@@ -1,4 +1,5 @@
-#if ANDROID
+using Uno.Extensions.Maui.Platform;
+
 namespace Uno.Extensions.Maui;
 
 partial class MauiEmbedding
@@ -11,6 +12,7 @@ partial class MauiEmbedding
 		{
 			throw new MauiEmbeddingException($"Expected 'Android.App.Application.Context' to be 'Android.App.Application', but got '{Android.App.Application.Context.GetType().FullName}'.");
 		}
+
 		builder.Services.AddSingleton<Android.App.Application>(androidApp)
 			.AddTransient<Android.Content.Context>(_ => UI.ContextHelper.Current)
 			.AddTransient<Android.App.Activity>(_ =>
@@ -23,7 +25,7 @@ partial class MauiEmbedding
 		return builder;
 	}
 
-	private static void InitializeMauiEmbeddingApp(this MauiApp mauiApp)
+	private static void InitializeMauiEmbeddingApp(this MauiApp mauiApp, Application app)
 	{
 		var androidApp = mauiApp.Services.GetRequiredService<Android.App.Application>();
 		var scope = mauiApp.Services.CreateScope();
@@ -31,9 +33,14 @@ partial class MauiEmbedding
 		rootContext.InitializeScopedServices();
 
 		var iApp = mauiApp.Services.GetRequiredService<IApplication>();
-		IPlatformApplication.Current = new EmbeddingApp(scope.ServiceProvider, iApp);
+		if(app is not EmbeddingApplication embeddingApp)
+		{
+			throw new MauiEmbeddingException("The provided application must inherit from EmbeddingApplication");
+		}
+
+		embeddingApp.InitializeApplication(scope.ServiceProvider, iApp);
+		Microsoft.Maui.ApplicationModel.Platform.Init(androidApp);
 
 		androidApp.SetApplicationHandler(iApp, rootContext);
 	}
 }
-#endif
