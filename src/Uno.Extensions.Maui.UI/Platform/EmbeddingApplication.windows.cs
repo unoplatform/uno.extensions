@@ -15,5 +15,6 @@ public class EmbeddingApplication : MauiWinUIApplication
 	{
 		Services = services;
 		Application = application;
+		IPlatformApplication.Current = this;
 	}
 }
