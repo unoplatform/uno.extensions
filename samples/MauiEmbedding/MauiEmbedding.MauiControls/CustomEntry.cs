@@ -1,7 +1,7 @@
 ﻿using Microsoft.Maui.Handlers;
 using Microsoft.Maui.Platform;
 
-namespace MauiControlsExternal;
+namespace MauiEmbedding.MauiControls;
 
 // All the code in this file is included in all platforms.
 public class CustomEntry : Entry

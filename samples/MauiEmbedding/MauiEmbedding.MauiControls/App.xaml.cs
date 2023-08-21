@@ -1,11 +1,9 @@
-﻿namespace MauiApp1;
+﻿namespace MauiEmbedding.MauiControls;
 
 public partial class App : Application
 {
 	public App()
 	{
 		InitializeComponent();
-
-		MainPage = new AppShell();
 	}
 }

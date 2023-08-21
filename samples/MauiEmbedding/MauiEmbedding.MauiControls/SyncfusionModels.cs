@@ -13,7 +13,7 @@ using Microsoft.Maui.Graphics.Platform;
 using Microsoft.Maui.Graphics.Win2D;
 #endif
 
-namespace MauiControlsExternal;
+namespace MauiEmbedding.MauiControls;
 
 public class ChartDataModel
 {
@@ -687,7 +687,7 @@ public class TeamViewModel : INotifyPropertyChanged
 	#region Constructor
 
 	/// <summary>
-	/// Initializes a new instance of the GettingStartedViewModel class. 
+	/// Initializes a new instance of the GettingStartedViewModel class.
 	/// </summary>
 	public TeamViewModel()
 	{
@@ -1199,7 +1199,7 @@ public class OrderInfoViewModel : INotifyPropertyChanged
 	internal delegate void FilterChanged();
 
 	/// <summary>
-	/// Gets or sets the value of FilterText and notifies user when value gets changed 
+	/// Gets or sets the value of FilterText and notifies user when value gets changed
 	/// </summary>
 	public string? FilterText
 	{
@@ -1821,7 +1821,7 @@ public class OrderInfo : INotifyPropertyChanged
 	}
 
 	/// <summary>
-	/// 
+	///
 	/// </summary>
 	public double Price
 	{
