@@ -6,7 +6,7 @@
 	  xmlns:uen="using:Uno.Extensions.Navigation.UI"
 	  xmlns:embed="using:Uno.Extensions.Maui"
 	  xmlns:utu="using:Uno.Toolkit.UI"
-	  xmlns:external="using:MauiControlsExternal"
+	  xmlns:external="using:MauiEmbedding.MauiControls"
 	  xmlns:maui="using:Microsoft.Maui.Controls"
 	  NavigationCacheMode="Required"
 	  mc:Ignorable="d">
@@ -20,7 +20,7 @@
 
 		<embed:MauiHost Grid.Row="1"
 						x:Name="mauiContent"
-						Source="external:EmbeddedControl" />
+						Source="external:SyncfusionDemoPage" />
 
 	</Grid>
 

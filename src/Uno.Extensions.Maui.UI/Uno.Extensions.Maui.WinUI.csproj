@@ -72,4 +72,31 @@
 		</Otherwise>
 	</Choose>
 
+	<Choose>
+		<When Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">
+			<ItemGroup>
+				<Compile Remove="**\*.apple.cs;**\*.windows.cs;**\*.standard.cs" />
+				<None Include="**\*.apple.cs;**\*.windows.cs;**\*.standard.cs" />
+			</ItemGroup>
+		</When>
+		<When Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios' OR $([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">
+			<ItemGroup>
+				<Compile Remove="**\*.android.cs;**\*.windows.cs;**\*.standard.cs" />
+				<None Include="**\*.android.cs;**\*.windows.cs;**\*.standard.cs" />
+			</ItemGroup>
+		</When>
+		<When Condition="$(TargetFramework.Contains('windows10'))">
+			<ItemGroup>
+				<Compile Remove="**\*.android.cs;**\*.apple.cs;**\*.standard.cs" />
+				<None Include="**\*.android.cs;**\*.apple.cs;**\*.standard.cs" />
+			</ItemGroup>
+		</When>
+		<Otherwise>
+			<ItemGroup>
+				<Compile Remove="**\*.android.cs;**\*.apple.cs;**\*.windows.cs" />
+				<None Include="**\*.android.cs;**\*.apple.cs;**\*.windows.cs" />
+			</ItemGroup>
+		</Otherwise>
+	</Choose>
+
 </Project>

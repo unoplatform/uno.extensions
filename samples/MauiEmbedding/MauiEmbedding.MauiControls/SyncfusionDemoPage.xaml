@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+						 xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+						 xmlns:local="clr-namespace:MauiEmbedding.MauiControls"
+						 xmlns:syncfusion="http://schemas.syncfusion.com/maui"
+						 x:Class="MauiEmbedding.MauiControls.SyncfusionDemoPage"
+						 Title="SyncfusionDemoPage">
+	<ContentPage.Resources>
+		<OnPlatform x:Key="minimumWidth"
+										x:TypeArguments="x:Double">
+			<On Platform="Android,iOS"
+								Value="120"></On>
+		</OnPlatform>
+		<OnPlatform x:Key="margin"
+										x:TypeArguments="Thickness">
+			<On Platform="WinUI,MacCatalyst"
+								Value="-5.6,-5,-5,-7" />
+		</OnPlatform>
+		<local:LineDrawable x:Key="lineDrawable" />
+		<local:EllipseDrawable x:Key="ellipseDrawable" />
+		<local:FilledEllipseDrawable x:Key="filledEllipseDrawable" />
+		<local:CircleDrawable x:Key="circleDrawable" />
+		<local:RectangleDrawable x:Key="rectangleDrawable" />
+		<local:SquareDrawable x:Key="squareDrawable" />
+		<local:FilledRectangleDrawable x:Key="filledRectangleDrawable" />
+		<local:RoundedRectangleDrawable x:Key="roundedRectangleDrawable" />
+		<local:FilledRoundedRectangleDrawable x:Key="filledRoundedRectangleDrawable" />
+		<local:ArcDrawable x:Key="arcDrawable" />
+		<local:FilledArcDrawable x:Key="filledArcDrawable" />
+		<local:PathDrawable x:Key="pathDrawable" />
+		<local:FilledPathDrawable x:Key="filledPathDrawable" />
+		<local:ImageDrawable x:Key="imageDrawable" />
+		<local:StringDrawable x:Key="stringDrawable" />
+		<local:AttributedTextDrawable x:Key="attributedTextDrawable" />
+		<local:FillAndStrokeDrawable x:Key="fillAndStrokeDrawable" />
+		<local:ShadowDrawable x:Key="shadowDrawable" />
+		<local:RegularDashedObjectDrawable x:Key="regularDashedObjectDrawable" />
+		<local:IrregularDashedObjectDrawable x:Key="irregularDashedObjectDrawable" />
+		<local:LineEndsDrawable x:Key="lineEndsDrawable" />
+		<local:LineJoinsDrawable x:Key="lineJoinsDrawable" />
+		<local:ClippingDrawable x:Key="clippingDrawable" />
+		<local:SubtractClippingDrawable x:Key="subtractClippingDrawable" />
+	</ContentPage.Resources>
+
+	<VerticalStackLayout>
+		<!--<toolkit:AvatarView HeightRequest="100"
+														WidthRequest="100">
+						<toolkit:AvatarView.ImageSource>
+								<toolkit:GravatarImageSource x:Name="Source"
+																						 CacheValidity="1"
+																						 CachingEnabled="True"
+																						 Email="info@platform.uno"
+																						 Image="MonsterId" />
+						</toolkit:AvatarView.ImageSource>
+				</toolkit:AvatarView>
+				<Label Text="Embedded MAUI Content"
+							 VerticalOptions="Center"
+							 HorizontalOptions="Center" />-->
+		<!--<GraphicsView Drawable="{StaticResource lineDrawable}"
+											HeightRequest="120"
+											WidthRequest="400" />
+				<Label Text="Ellipse" />
+				<GraphicsView Drawable="{StaticResource ellipseDrawable}"
+											HeightRequest="120"
+											WidthRequest="400" />
+				<Label Text="Filled ellipse" />
+				<GraphicsView Drawable="{StaticResource filledEllipseDrawable}"
+											HeightRequest="120"
+											WidthRequest="400" />
+				<Label Text="Circle" />
+				<GraphicsView Drawable="{StaticResource circleDrawable}"
+											HeightRequest="120"
+											WidthRequest="400" />
+				<Label Text="Rectangle" />
+				<GraphicsView Drawable="{StaticResource rectangleDrawable}"
+											HeightRequest="120"
+											WidthRequest="400" />
+				<Label Text="Square" />-->
+		<syncfusion:SfCircularChart x:Name="Chart"
+															 HorizontalOptions="Fill"
+															 VerticalOptions="Fill"
+															 HeightRequest="400" WidthRequest="400">
+			<syncfusion:SfCircularChart.BindingContext>
+				<local:PieSeriesViewModel />
+			</syncfusion:SfCircularChart.BindingContext>
+			<syncfusion:SfCircularChart.Title>
+				<Label Text="Sales by a Salesperson"
+											 Margin="0,0,6,10"
+											 HorizontalOptions="Fill"
+											 HorizontalTextAlignment="Center"
+											 VerticalOptions="Center"
+											 FontSize="16"
+											 TextColor="Black" />
+			</syncfusion:SfCircularChart.Title>
+			<syncfusion:SfCircularChart.Legend>
+				<syncfusion:ChartLegend />
+			</syncfusion:SfCircularChart.Legend>
+			<syncfusion:SfCircularChart.Series>
+				<syncfusion:PieSeries ShowDataLabels="True"
+																 x:Name="pieSeries1"
+																 PaletteBrushes="{Binding PaletteBrushes}"
+																 StrokeWidth="2"
+																 Stroke="White"
+																 EnableAnimation="{Binding EnableAnimation}"
+																 ItemsSource="{Binding PieSeriesData}"
+																 XBindingPath="Name"
+																 YBindingPath="Value"
+																 LegendIcon="SeriesType">
+					<syncfusion:PieSeries.DataLabelSettings>
+						<syncfusion:CircularDataLabelSettings LabelPlacement="Outer">
+							<syncfusion:CircularDataLabelSettings.LabelStyle>
+								<syncfusion:ChartDataLabelStyle LabelFormat="#.##'%" />
+							</syncfusion:CircularDataLabelSettings.LabelStyle>
+						</syncfusion:CircularDataLabelSettings>
+					</syncfusion:PieSeries.DataLabelSettings>
+				</syncfusion:PieSeries>
+			</syncfusion:SfCircularChart.Series>
+		</syncfusion:SfCircularChart>
+		<!--<syncfusion:SfDataGrid x:Name="dataGrid"
+													 Margin="{StaticResource margin}"
+													 AutoGenerateColumnsMode="None"
+													 RowHeight="48"
+													 HorizontalScrollBarVisibility="Always"
+													 VerticalScrollBarVisibility="Always"
+													 ItemsSource="{Binding Data}"
+													 ColumnWidthMode="Fill">
+						<syncfusion:SfDataGrid.BindingContext>
+								<local:TeamViewModel />
+						</syncfusion:SfDataGrid.BindingContext>
+						<syncfusion:SfDataGrid.DefaultStyle>
+								<syncfusion:DataGridStyle HeaderRowFontFamily="Roboto-Medium"
+																			HeaderRowFontSize="14"
+																			RowFontSize="14"
+																			HeaderRowTextColor="#212121"
+																			RowTextColor="#212121"></syncfusion:DataGridStyle>
+						</syncfusion:SfDataGrid.DefaultStyle>
+						<syncfusion:SfDataGrid.Columns>
+								<syncfusion:DataGridTemplateColumn HeaderTextAlignment="Start"
+																							 ColumnWidthMode="Auto"
+																							 MappingName="TeamName"
+																							 MinimumWidth="150"
+																							 HeaderText="Team">
+										<syncfusion:DataGridTemplateColumn.CellTemplate>
+												<DataTemplate>
+														<HorizontalStackLayout Spacing="8"
+																									 Padding="8">
+																-->
+		<!--<Image Source="{Binding Logo,Converter={StaticResource imageConverter}}"
+																			 WidthRequest="32"
+																			 HeightRequest="32" />-->
+		<!--
+																<Label Text="{Binding TeamName}"
+																			 TextColor="#212121"
+																			 BackgroundColor="White"
+																			 VerticalTextAlignment="Center"
+																			 HorizontalTextAlignment="Center" />
+														</HorizontalStackLayout>
+												</DataTemplate>
+										</syncfusion:DataGridTemplateColumn.CellTemplate>
+								</syncfusion:DataGridTemplateColumn>
+
+								<syncfusion:DataGridTextColumn MappingName="Wins"
+																					 HeaderTextAlignment="Center"
+																					 CellTextAlignment="Center"
+																					 HeaderText="W">
+								</syncfusion:DataGridTextColumn>
+								<syncfusion:DataGridTextColumn MappingName="Losses"
+																					 HeaderTextAlignment="Center"
+																					 CellTextAlignment="Center"
+																					 HeaderText="L">
+
+								</syncfusion:DataGridTextColumn>
+
+								<syncfusion:DataGridTextColumn MappingName="PCT"
+																					 HeaderTextAlignment="Center"
+																					 CellTextAlignment="Center"
+																					 HeaderText="WPCT">
+
+								</syncfusion:DataGridTextColumn>
+
+								<syncfusion:DataGridTextColumn MappingName="GB"
+																					 HeaderTextAlignment="Center"
+																					 CellTextAlignment="Center"
+																					 HeaderText="GB">
+								</syncfusion:DataGridTextColumn>
+
+						</syncfusion:SfDataGrid.Columns>
+				</syncfusion:SfDataGrid>-->
+
+		<!--<syncfusion:SfDataGrid IndentColumnWidth="40"
+													 Margin="{StaticResource margin}"
+													 x:Name="dataGrid"
+													 GroupCaptionTextFormat="{}{ColumnName} : {Key} - {ItemsCount} Item(s)"
+													 HeaderRowHeight="52"
+													 RowHeight="48"
+													 ItemsSource="{Binding OrdersInfo}"
+													 HorizontalScrollBarVisibility="Always"
+													 VerticalScrollBarVisibility="Always"
+													 SortingMode="Single"
+													 GroupingMode="Multiple"
+													 AllowGroupExpandCollapse="True"
+													 AutoGenerateColumnsMode="None"
+													 ColumnWidthMode="Fill">
+						<syncfusion:SfDataGrid.BindingContext>
+								<local:OrderInfoViewModel />
+						</syncfusion:SfDataGrid.BindingContext>
+						<syncfusion:SfDataGrid.DefaultStyle>
+								<syncfusion:DataGridStyle HeaderRowFontFamily="Roboto-Medium"
+																			CaptionSummaryRowFontFamily="Roboto-Medium" />
+						</syncfusion:SfDataGrid.DefaultStyle>
+
+						<syncfusion:SfDataGrid.Columns>
+								<syncfusion:DataGridNumericColumn Format="d"
+																							MinimumWidth="{StaticResource minimumWidth}"
+																							HeaderText="Order ID"
+																							MappingName="OrderID"></syncfusion:DataGridNumericColumn>
+								<syncfusion:DataGridNumericColumn MinimumWidth="{StaticResource minimumWidth}"
+																							HeaderText="Customer ID"
+																							MappingName="EmployeeID"
+																							Format="d"></syncfusion:DataGridNumericColumn>
+								<syncfusion:DataGridTextColumn MinimumWidth="{StaticResource minimumWidth}"
+																					 HeaderText="Name"
+																					 MappingName="FirstName"></syncfusion:DataGridTextColumn>
+								<syncfusion:DataGridTextColumn MinimumWidth="{StaticResource minimumWidth}"
+																					 HeaderText="Ship City"
+																					 MappingName="ShipCity"></syncfusion:DataGridTextColumn>
+								<syncfusion:DataGridTextColumn MinimumWidth="{StaticResource minimumWidth}"
+																					 HeaderText="Country"
+																					 MappingName="ShipCountry"></syncfusion:DataGridTextColumn>
+								<syncfusion:DataGridDateColumn MinimumWidth="{StaticResource minimumWidth}"
+																					 HeaderText="Shipped Date"
+																					 MappingName="ShippingDate"></syncfusion:DataGridDateColumn>
+						</syncfusion:SfDataGrid.Columns>
+
+						<syncfusion:SfDataGrid.GroupColumnDescriptions>
+								<syncfusion:GroupColumnDescription ColumnName="ShipCountry" />
+								<syncfusion:GroupColumnDescription ColumnName="ShipCity" />
+						</syncfusion:SfDataGrid.GroupColumnDescriptions>
+				</syncfusion:SfDataGrid>-->
+	</VerticalStackLayout>
+</ContentPage>

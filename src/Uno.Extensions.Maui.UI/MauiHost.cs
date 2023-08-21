@@ -1,11 +1,15 @@
-﻿namespace Uno.Extensions.Maui;
+using Microsoft.Maui.ApplicationModel;
+using Uno.Extensions.Maui.Platform;
+
+namespace Uno.Extensions.Maui;
 
 /// <summary>
 /// ContentControl implementation that hosts a Maui view.
 /// </summary>
-//[ContentProperty(Name = nameof(MauiContent))]
 public partial class MauiHost : ContentControl
 {
+	private static object locker = new object();
+
 	/// <summary>
 	/// The Maui Source property represents the type of the Maui View to create
 	/// </summary>
@@ -15,39 +19,58 @@ public partial class MauiHost : ContentControl
 	private static void OnSourceChanged(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs args)
 	{
 #if MAUI_EMBEDDING
+		// Sanity Check
+		if (IPlatformApplication.Current?.Application is null
+			&& MauiApplication.Current?.Handler.MauiContext is not null)
+		{
+			if (Application.Current is not EmbeddingApplication embeddingApp)
+			{
+				throw new MauiEmbeddingInitializationException();
+			}
+			embeddingApp.InitializeApplication(MauiApplication.Current.Handler.MauiContext.Services, MauiApplication.Current);
+		}
+
 		if (args.NewValue is null ||
 			args.NewValue is not Type type ||
-			!type.IsAssignableTo(typeof(MauiView)) ||
+			!type.IsAssignableTo(typeof(VisualElement)) ||
 			dependencyObject is not MauiHost mauiHost ||
-			IPlatformApplication.Current is null)
+			MauiApplication.Current?.Handler?.MauiContext is null)
 		{
 			return;
 		}
 
-		// Allow the use of Dependency Injection for the View
-		mauiHost.MauiContent = (MauiView)ActivatorUtilities.CreateInstance(IPlatformApplication.Current.Services, type);
+		try
+		{
+			var app = MauiApplication.Current;
+			var mauiContext = MauiApplication.Current.Handler.MauiContext;
+
+			// Allow the use of Dependency Injection for the View
+			var instance = ActivatorUtilities.CreateInstance(mauiContext.Services, type);
+			if(instance is VisualElement page)
+			{
+				mauiHost.EmbeddedView = page;
+				page.Parent = app;
+				page.BindingContext = mauiHost.DataContext;
+			}
+			else
+			{
+				throw new MauiEmbeddingException(string.Format(Properties.Resources.TypeMustInheritFromPageOrView, instance.GetType().FullName));
+			}
+
+			var native = page.ToPlatform(mauiContext);
+			mauiHost.Content = native;
+		}
+		catch (Exception ex)
+		{
+			var logger = GetLogger();
+			if (logger.IsEnabled(LogLevel.Error))
+			{
+				logger.LogError(ex, Properties.Resources.UnableToConvertMauiViewToNativeView);
+			}
+#if DEBUG
+			System.Diagnostics.Debugger.Break();
 #endif
-	}
-
-	/// <summary>
-	/// The MauiContent property represents the <see cref="MauiContent"/> that will be used as content.
-	/// </summary>
-	private static readonly DependencyProperty MauiContentProperty =
-		DependencyProperty.Register(nameof(MauiContent), typeof(MauiView), typeof(MauiHost), new PropertyMetadata(null, OnMauiContentChanged));
-
-	private static void OnMauiContentChanged(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs args)
-	{
-#if MAUI_EMBEDDING
-		if (args.NewValue is null ||
-			args.NewValue is not MauiView view ||
-			dependencyObject is not MauiHost mauiHost)
-		{
-			return;
-		}
-
-		if (mauiHost._host is not null)
-		{
-			mauiHost._host.Content = view;
+			throw new MauiEmbeddingException(Properties.Resources.UnexpectedErrorConvertingMauiViewToNativeView, ex);
 		}
 #endif
 	}
@@ -55,44 +78,67 @@ public partial class MauiHost : ContentControl
 #if MAUI_EMBEDDING
 
 	private static ILogger GetLogger() =>
-		IPlatformApplication.Current?.Services.GetRequiredService<ILogger<MauiHost>>() ?? throw new NullReferenceException("MauiEmbedding has not been properly initialized");
+		IPlatformApplication.Current?.Services.GetRequiredService<ILogger<MauiHost>>() ?? throw new MauiEmbeddingInitializationException();
 
-	private MauiContentHost? _host;
+	private VisualElement? EmbeddedView;
 
 	/// <summary>
 	/// Initializes a new instance of the MauiContent class.
 	/// </summary>
 	public MauiHost()
 	{
-		this.HorizontalContentAlignment = HorizontalAlignment.Stretch;
-		this.VerticalContentAlignment = VerticalAlignment.Stretch;
+		HorizontalContentAlignment = HorizontalAlignment.Stretch;
+		VerticalContentAlignment = VerticalAlignment.Stretch;
 
 		Loading += OnLoading;
+		Loaded += OnMauiContentLoaded;
 		DataContextChanged += OnDataContextChanged;
 		Unloaded += OnMauiContentUnloaded;
+		ActualThemeChanged += OnActualThemeChanged;
+	}
+
+	private void OnActualThemeChanged(FrameworkElement sender, object args)
+	{
+		if (IPlatformApplication.Current is null || IPlatformApplication.Current.Application is not MauiApplication app)
+			return;
+
+		lock(locker)
+		{
+			// Try to prevent multiple updates if there are multiple Hosts within an App
+			var theme = sender.ActualTheme switch
+			{
+				ElementTheme.Dark => AppTheme.Dark,
+				ElementTheme.Light => AppTheme.Light,
+				_ => AppTheme.Unspecified
+			};
+
+			if (app.UserAppTheme != theme)
+			{
+				app.UserAppTheme = theme;
+			}
+		}
+	}
+
+	private void OnMauiContentLoaded(object sender, RoutedEventArgs e)
+	{
+		var page = GetPage(EmbeddedView);
+		page?.SendAppearing();
 	}
 
 	private void OnMauiContentUnloaded(object sender, RoutedEventArgs e)
 	{
-		Unloaded -= OnMauiContentUnloaded;
-		Loading -= OnLoading;
-		DataContextChanged -= OnDataContextChanged;
-		if (_host is not null)
-		{
-			_host.BindingContext = null;
-		}
-		_host = null;
+		var page = GetPage(EmbeddedView);
+		page?.SendDisappearing();
 	}
-#endif
 
-	/// <summary>
-	/// Gets or sets the <see cref="MauiContent"/> that will be used as content.
-	/// </summary>
-	private MauiView? MauiContent
-	{
-		get => (MauiView)GetValue(MauiContentProperty);
-		set => SetValue(MauiContentProperty, value);
-	}
+	private Microsoft.Maui.Controls.Page? GetPage(Element? element) =>
+		element switch
+		{
+			Microsoft.Maui.Controls.Page page => page,
+			null => null,
+			_ => GetPage(element.Parent)
+		};
+#endif
 
 	/// <summary>
 	/// Gets or sets the <see cref="Type"/> of the Maui Content Source
@@ -105,6 +151,7 @@ public partial class MauiHost : ContentControl
 
 #if MAUI_EMBEDDING
 
+	private bool _initializedResources;
 	private void OnLoading(FrameworkElement sender, object args)
 	{
 		Loading -= OnLoading;
@@ -127,42 +174,19 @@ public partial class MauiHost : ContentControl
 			treeElement = VisualTreeHelper.GetParent(treeElement);
 		}
 
-		if (_host is null)
+		if (!_initializedResources && EmbeddedView is not null)
 		{
-			_host = new MauiContentHost(resources.ToMauiResources())
-			{
-				BindingContext = DataContext,
-				Content = MauiContent
-			};
-
-			try
-			{
-				var mauiContext = IPlatformApplication.Current!.Application.Handler!.MauiContext!;
-				var native = _host.ToPlatform(mauiContext);
-				Content = native;
-			}
-			catch (Exception ex)
-			{
-				var logger = GetLogger();
-				if (logger.IsEnabled(LogLevel.Error))
-				{
-					logger.LogError(ex, Properties.Resources.UnableToConvertMauiViewToNativeView);
-				}
-#if DEBUG
-				System.Diagnostics.Debugger.Break();
-#endif
-				throw new MauiEmbeddingException(Properties.Resources.UnexpectedErrorConvertingMauiViewToNativeView, ex);
-			}
-
+			EmbeddedView.Resources.MergedDictionaries.Add(resources.ToMauiResources());
+			_initializedResources = true;
 		}
 	}
 
 	void OnDataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
 	{
-		if (_host is not null &&
-			_host.BindingContext != DataContext)
+		if (EmbeddedView is not null &&
+			EmbeddedView.BindingContext != DataContext)
 		{
-			_host.BindingContext = DataContext;
+			EmbeddedView.BindingContext = DataContext;
 		}
 	}
 #endif

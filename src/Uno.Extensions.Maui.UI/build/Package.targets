@@ -6,6 +6,7 @@
 
 	<ItemGroup Condition=" '$(ImplicitUsings)' == 'true' OR '$(ImplicitUsings)' == 'enable' ">
 		<Using Include="Uno.Extensions.Maui" />
+		<Using Include="Uno.Extensions.Maui.Platform" />
 	</ItemGroup>
 
 	<ItemGroup>

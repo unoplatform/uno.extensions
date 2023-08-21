@@ -1,10 +1,12 @@
-﻿#if IOS || MACCATALYST
-using UIKit;
+﻿using UIKit;
+using Uno.Extensions.Maui.Platform;
 
 namespace Uno.Extensions.Maui;
 
 partial class MauiEmbedding
 {
+	// NOTE: This is meant to help initialize MauiEmbedding similar to MauiUIApplicationDelegate
+	// https://github.com/dotnet/maui/blob/ace9fe5e7d8d9bd16a2ae0b2fe2b888ad681433e/src/Core/src/Platform/iOS/MauiUIApplicationDelegate.cs#L36-L70
 	private static MauiAppBuilder RegisterPlatformServices(this MauiAppBuilder builder, Application app)
 	{
 		builder.Services.AddTransient<UIWindow>(sp => sp.GetRequiredService<Application>().Window!)
@@ -13,15 +15,19 @@ partial class MauiEmbedding
 		return builder;
 	}
 
-	private static void InitializeMauiEmbeddingApp(this MauiApp mauiApp)
+	private static void InitializeMauiEmbeddingApp(this MauiApp mauiApp, Application app)
 	{
 		var rootContext = new MauiContext(mauiApp.Services);
 		rootContext.InitializeScopedServices();
 
 		var iApp = mauiApp.Services.GetRequiredService<IApplication>();
-		IPlatformApplication.Current = new EmbeddingApp(mauiApp.Services, iApp);
-		var appDelegate = mauiApp.Services.GetRequiredService<IUIApplicationDelegate>();
-		appDelegate.SetApplicationHandler(iApp, rootContext);
+		if (app is not EmbeddingApplication embeddingApp)
+		{
+			throw new MauiEmbeddingException(Properties.Resources.TheApplicationMustInheritFromEmbeddingApplication);
+		}
+
+		// TODO: Evaluate getting the Root View Controller for a Platform.Init for Maui
+		embeddingApp.InitializeApplication(mauiApp.Services, iApp);
+		app.SetApplicationHandler(iApp, rootContext);
 	}
 }
-#endif
