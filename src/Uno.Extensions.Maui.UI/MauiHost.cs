@@ -52,23 +52,6 @@ public partial class MauiHost : ContentControl
 				page.Parent = app;
 				page.BindingContext = mauiHost.DataContext;
 			}
-			// Injecting a ContentPage breaks when height of view is indeterminent (eg in stackpanel)
-			//if (instance is Microsoft.Maui.Controls.Page page)
-			//{
-			//	mauiHost.EmbeddedView = page;
-			//	page.Parent = app;
-			//	page.BindingContext = mauiHost.DataContext;
-			//}
-			//else if (instance is View view)
-			//{
-			//	mauiHost.EmbeddedView = view;
-			//	page = new ContentPage
-			//	{
-			//		Parent = app,
-			//		BindingContext = mauiHost.DataContext,
-			//		Content = view
-			//	};
-			//}
 			else
 			{
 				throw new MauiEmbeddingException(string.Format(Properties.Resources.TypeMustInheritFromPageOrView, instance.GetType().FullName));
