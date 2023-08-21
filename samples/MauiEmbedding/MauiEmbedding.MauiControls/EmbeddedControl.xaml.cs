@@ -1,4 +1,4 @@
-namespace MauiControlsExternal;
+namespace MauiEmbedding.MauiControls;
 
 public partial class EmbeddedControl : ContentView
 {

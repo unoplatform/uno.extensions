@@ -1,6 +1,6 @@
 ﻿using Syncfusion.Maui.Core.Hosting;
 
-namespace MauiControlsExternal;
+namespace MauiEmbedding.MauiControls;
 
 public static class MauiAppBuilderExtensions
 {
