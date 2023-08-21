@@ -1,4 +1,4 @@
-using MauiControlsExternal;
+using MauiEmbedding.MauiControls;
 using Uno.Extensions.Maui.Platform;
 
 namespace MauiEmbedding;
@@ -61,7 +61,7 @@ public class App : EmbeddingApplication
 					// TODO: Register your services
 					//services.AddSingleton<IMyService, MyService>();
 				})
-				.UseMauiEmbedding< MauiControlsExternal.App>(this, maui => maui.UseCustomLibrary())
+				.UseMauiEmbedding<MauiControls.App>(this, maui => maui.UseCustomLibrary())
 				.UseNavigation(RegisterRoutes)
 			);
 		MainWindow = builder.Window;
