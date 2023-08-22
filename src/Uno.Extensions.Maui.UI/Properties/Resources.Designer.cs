@@ -61,6 +61,15 @@ namespace Uno.Extensions.Maui.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Could not find a current Activity..
+        /// </summary>
+        internal static string CouldNotFindCurrentActivity {
+            get {
+                return ResourceManager.GetString("CouldNotFindCurrentActivity", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to You must call UseMauiEmbedding from the Application.
         /// </summary>
         internal static string MauiEmbeddingInitializationExceptionMessage {
@@ -79,6 +88,24 @@ namespace Uno.Extensions.Maui.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The provided application must inherit from EmbeddingApplication..
+        /// </summary>
+        internal static string TheApplicationMustInheritFromEmbeddingApplication {
+            get {
+                return ResourceManager.GetString("TheApplicationMustInheritFromEmbeddingApplication", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The View &apos;{0}&apos; must be a View or Page..
+        /// </summary>
+        internal static string TypeMustInheritFromPageOrView {
+            get {
+                return ResourceManager.GetString("TypeMustInheritFromPageOrView", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to There was an unexpected error converting the Maui View to a native Platform view..
         /// </summary>
         internal static string UnableToConvertMauiViewToNativeView {
@@ -93,6 +120,15 @@ namespace Uno.Extensions.Maui.Properties {
         internal static string UnableToConvertValueToColor {
             get {
                 return ResourceManager.GetString("UnableToConvertValueToColor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Expected &apos;Android.App.Application.Context&apos; to be &apos;Android.App.Application&apos;, but got &apos;{0}&apos;..
+        /// </summary>
+        internal static string UnexpectedAndroidApplicationContextType {
+            get {
+                return ResourceManager.GetString("UnexpectedAndroidApplicationContextType", resourceCulture);
             }
         }
         

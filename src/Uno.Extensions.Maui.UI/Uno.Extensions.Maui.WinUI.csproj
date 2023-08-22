@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 	<Import Project="..\tfms-ui-maui.props" />
 
 	<PropertyGroup>
@@ -36,11 +36,26 @@
 		</EmbeddedResource>
 	</ItemGroup>
 
-
 	<!-- These files are not currently used but kept in case we need them-->
 	<ItemGroup>
 		<Compile Remove="Interop\*.cs" />
 		<Compile Remove="Models\*.cs" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Compile Remove="MauiBinding.cs" />
+		<Compile Remove="MauiColor.cs" />
+		<Compile Remove="MauiExtensionBase.cs" />
+		<Compile Remove="MauiResource.cs" />
+		<Compile Remove="MauiThickness.cs" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Include="MauiBinding.cs" />
+		<None Include="MauiColor.cs" />
+		<None Include="MauiExtensionBase.cs" />
+		<None Include="MauiResource.cs" />
+		<None Include="MauiThickness.cs" />
 	</ItemGroup>
 
 	<Choose>
@@ -53,6 +68,33 @@
 			<ItemGroup>
 				<Compile Remove="Internals\*.cs" />
 				<None Include="Internals\*.cs" />
+			</ItemGroup>
+		</Otherwise>
+	</Choose>
+
+	<Choose>
+		<When Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">
+			<ItemGroup>
+				<Compile Remove="**\*.apple.cs;**\*.windows.cs;**\*.standard.cs" />
+				<None Include="**\*.apple.cs;**\*.windows.cs;**\*.standard.cs" />
+			</ItemGroup>
+		</When>
+		<When Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios' OR $([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">
+			<ItemGroup>
+				<Compile Remove="**\*.android.cs;**\*.windows.cs;**\*.standard.cs" />
+				<None Include="**\*.android.cs;**\*.windows.cs;**\*.standard.cs" />
+			</ItemGroup>
+		</When>
+		<When Condition="$(TargetFramework.Contains('windows10'))">
+			<ItemGroup>
+				<Compile Remove="**\*.android.cs;**\*.apple.cs;**\*.standard.cs" />
+				<None Include="**\*.android.cs;**\*.apple.cs;**\*.standard.cs" />
+			</ItemGroup>
+		</When>
+		<Otherwise>
+			<ItemGroup>
+				<Compile Remove="**\*.android.cs;**\*.apple.cs;**\*.windows.cs" />
+				<None Include="**\*.android.cs;**\*.apple.cs;**\*.windows.cs" />
 			</ItemGroup>
 		</Otherwise>
 	</Choose>

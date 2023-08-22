@@ -1,23 +1,22 @@
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Maui;
 
 namespace Uno.Extensions.Maui;
 
 /// <summary>
 /// Embedding support for Microsoft.Maui controls in Uno Platform app hosts.
 /// </summary>
-public static class MauiEmbedding
+public static partial class MauiEmbedding
 {
-#if MAUI_EMBEDDING
-	private static MauiApp? _app;
-	internal static IMauiContext MauiContext =>
-#if ANDROID
-		_app is not null ? new MauiContext(_app.Services, UI.ContextHelper.Current)
-			: throw new MauiEmbeddingInitializationException();
-#else
-	_app is not null ? new MauiContext(_app.Services)
-			: throw new MauiEmbeddingInitializationException();
-#endif
-#endif
+	/// <summary>
+	/// Registers Maui embedding in the Uno Platform app builder.
+	/// </summary>
+	/// <returns>The updated app builder.</returns>
+	/// <param name="builder">The IHost builder.</param>
+	/// <param name="app">The Uno app.</param>
+	/// <param name="configure">Optional lambda to configure the Maui app builder.</param>
+	public static IHostBuilder UseMauiEmbedding(this IHostBuilder builder, Microsoft.UI.Xaml.Application app, Action<MauiAppBuilder>? configure = null) =>
+		builder.UseMauiEmbedding<MauiApplication>(app, configure);
 
 	/// <summary>
 	/// Registers Maui embedding in the Uno Platform app builder.
@@ -26,10 +25,23 @@ public static class MauiEmbedding
 	/// <param name="builder">The IHost builder.</param>
 	/// <param name="app">The Uno app.</param>
 	/// <param name="configure">Optional lambda to configure the Maui app builder.</param>
-	public static IHostBuilder UseMauiEmbedding(this IHostBuilder builder, Microsoft.UI.Xaml.Application app, Action<MauiAppBuilder>? configure = null)
+	public static IHostBuilder UseMauiEmbedding<TApp>(this IHostBuilder builder, Microsoft.UI.Xaml.Application app, Action<MauiAppBuilder>? configure = null)
+		where TApp : MauiApplication
 	{
-		app.UseMauiEmbedding(configure);
+		app.UseMauiEmbedding<TApp>(configure);
 		return builder;
+	}
+
+	private class MauiHostProviderFactory : IServiceProviderFactory<IServiceProvider>
+	{
+		public IServiceProvider CreateBuilder(IServiceCollection services) => services.BuildServiceProvider();
+		public IServiceProvider CreateServiceProvider(IServiceProvider containerBuilder) => containerBuilder;
+	}
+
+	private class UnoHostProviderFactory : IServiceProviderFactory<IServiceCollection>
+	{
+		public IServiceCollection CreateBuilder(IServiceCollection services) => throw new NotImplementedException();
+		public IServiceProvider CreateServiceProvider(IServiceCollection containerBuilder) => containerBuilder.BuildServiceProvider();
 	}
 
 	/// <summary>
@@ -37,50 +49,45 @@ public static class MauiEmbedding
 	/// </summary>
 	/// <param name="app">The Uno app.</param>
 	/// <param name="configure">Optional lambda to configure the Maui app builder.</param>
-	public static Microsoft.UI.Xaml.Application UseMauiEmbedding(this Microsoft.UI.Xaml.Application app, Action<MauiAppBuilder>? configure = null)
+	public static Microsoft.UI.Xaml.Application UseMauiEmbedding(this Microsoft.UI.Xaml.Application app, Action<MauiAppBuilder>? configure = null) =>
+		app.UseMauiEmbedding<MauiApplication>(configure);
+
+	/// <summary>
+	/// Registers Maui embedding with WinUI3 and WPF application builder.
+	/// </summary>
+	/// <param name="app">The Uno app.</param>
+	/// <param name="configure">Optional lambda to configure the Maui app builder.</param>
+	public static Microsoft.UI.Xaml.Application UseMauiEmbedding<TApp>(this Microsoft.UI.Xaml.Application app, Action<MauiAppBuilder>? configure = null)
+		where TApp : MauiApplication
 	{
 #if MAUI_EMBEDDING
 		var mauiAppBuilder = MauiApp.CreateBuilder()
-				.UseMauiEmbedding<MauiApplication>();
+			.UseMauiEmbedding<TApp>()
+			.RegisterPlatformServices(app);
 
+		mauiAppBuilder.Services.AddSingleton<Microsoft.UI.Xaml.Application>(_ => app)
+			.AddSingleton<IMauiInitializeService, MauiEmbeddingInitializer>();
 
-#if WINDOWS
-		_ = mauiAppBuilder.Services.RemoveWhere(sd =>
-					sd.ServiceType == typeof(IMauiInitializeService) &&
-										(
-											// Match using Name since the types are internal to Maui
-											sd.ImplementationType is { Name: "MauiControlsInitializer" } ||
-											sd.ImplementationType is { Name: "MauiCoreInitializer" }
-										));
-#endif
+		// HACK: https://github.com/dotnet/maui/pull/16758
+		mauiAppBuilder.Services.RemoveAll<IApplication>()
+			.AddSingleton<IApplication, TApp>();
 
 		configure?.Invoke(mauiAppBuilder);
 
-#if IOS || MACCATALYST
-		mauiAppBuilder.Services.AddTransient<UIKit.UIWindow>(_ =>
-			app.Window!);
-#endif
-
-		mauiAppBuilder.Services.AddSingleton(app)
-			.AddSingleton<IMauiInitializeService, MauiEmbeddingInitializer>()
-			.AddSingleton<MauiResourceManager>();
-		_app = mauiAppBuilder.Build();
+		var mauiApp = mauiAppBuilder.Build();
+		mauiApp.InitializeMauiEmbeddingApp(app);
 #endif
 		return app;
 	}
 
-	/// <summary>
-	/// When providing a <see cref="MauiResourceDictionary"/> with this method, the resources will be provided by default
-	/// for all Maui controls.
-	/// </summary>
-	/// <typeparam name="TResources"></typeparam>
-	/// <param name="maui"></param>
-	/// <returns></returns>
-	public static MauiAppBuilder UseMauiEmbeddingResources<TResources>(this MauiAppBuilder maui)
-		where TResources : MauiResourceDictionary, new()
+	private static void InitializeScopedServices(this IMauiContext scopedContext)
 	{
-		maui.Services.AddSingleton(new MauiResourceProvider(new TResources()));
-		return maui;
+		var scopedServices = scopedContext.Services.GetServices<IMauiInitializeScopedService>();
+
+		foreach (var service in scopedServices)
+		{
+			service.Initialize(scopedContext.Services);
+		}
 	}
 
 	// NOTE: This was part of the POC and is out of scope for the MVP. Keeping it in case we want to add it back later.
@@ -100,26 +107,4 @@ public static class MauiEmbedding
 		return builder;
 	}
 	*/
-}
-
-internal record MauiResourceProvider(MauiResourceDictionary Resources);
-
-internal record MauiResourceManager(IEnumerable<MauiResourceProvider> ResourceProviders)
-{
-	public MauiResourceDictionary CreateMauiResources(ResourceDictionary resources)
-	{
-#if MAUI_EMBEDDING
-		var mauiResources = resources.ToMauiResources();
-		if (ResourceProviders.Any())
-		{
-			ResourceProviders.Select(x => x.Resources)
-				.ToList()
-				.ForEach(x => mauiResources.MergedDictionaries.Add(x));
-		}
-
-		return mauiResources;
-#else
-		return new MauiResourceDictionary();
-#endif
-	}
 }
