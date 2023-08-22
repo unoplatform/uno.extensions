@@ -98,7 +98,7 @@ internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, ISta
 		}
 
 		// Note: The subscription has to be created using our own Context, not the one of our subscribers.
-		var subscription = Context.States.GetOrCreateSubscription<IFeed<T>, T>(_inner);
+		var subscription = Context.States.GetOrCreateSubscription(_inner);
 		if (Interlocked.CompareExchange(ref _subscription, subscription, null) is null)
 		{
 			_subscriptionMode = _subscription.UpdateMode(_mode);
