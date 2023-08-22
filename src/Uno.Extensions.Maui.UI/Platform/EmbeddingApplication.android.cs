@@ -24,7 +24,7 @@ public class EmbeddingApplication : Application, IPlatformApplication
 	private class HackMauiApplication : Microsoft.Maui.MauiApplication
 	{
 		private HackMauiApplication(IServiceProvider services, IApplication application)
-			: base(0, default)
+			: base(IntPtr.Zero, default)
 		{
 			Services = services;
 			Application = application;
