@@ -49,7 +49,11 @@ jobs:
       msbuildLocationMethod: location
       msbuildLocation: $(MSBUILDPATH)
       msbuildArchitecture: x86
+<<<<<<< HEAD
       msbuildArguments: /m /r /p:Configuration=Release "/p:InformationalVersion=%GITVERSION_InformationalVersion%" /p:GeneratePackageOnBuild=false /p:AotAssemblies=false /p:UseWebAssemblyAOT=false /detailedsummary /bl:$(build.artifactstagingdirectory)/samples-windows.binlog
+=======
+      msbuildArguments: /m /v:m /r /p:Configuration=Release "/p:InformationalVersion=%GITVERSION_InformationalVersion%" /p:GeneratePackageOnBuild=false /p:AotAssemblies=false /p:UseWebAssemblyAOT=false /detailedsummary /bl:$(build.artifactstagingdirectory)/samples-windows-${{parameters.solutionName}}.binlog
+>>>>>>> 625745c5 (ci: Log samples independently)
       clean: false
       maximumCpuCount: true
       restoreNugetPackages: false
