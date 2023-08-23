@@ -14,7 +14,7 @@ jobs:
   - checkout: self
     clean: 'true'
 
-  - template: templates/dotnet6-install-windows.yml
+  - template: templates/dotnet7-install-windows.yml
   - template: templates/canary-updater.yml
 
   - task: gitversion/setup@0
@@ -49,7 +49,7 @@ jobs:
       msbuildLocationMethod: location
       msbuildLocation: $(MSBUILDPATH)
       msbuildArchitecture: x86
-      msbuildArguments: /m /r /p:Configuration=Release "/p:InformationalVersion=%GITVERSION_InformationalVersion%" /p:GeneratePackageOnBuild=false /p:AotAssemblies=false /p:UseWebAssemblyAOT=false /detailedsummary /bl:$(build.artifactstagingdirectory)/samples-windows.binlog
+      msbuildArguments: /m /v:m /r /p:Configuration=Release "/p:InformationalVersion=%GITVERSION_InformationalVersion%" /p:GeneratePackageOnBuild=false /p:AotAssemblies=false /p:UseWebAssemblyAOT=false /detailedsummary /bl:$(build.artifactstagingdirectory)/samples-windows-${{parameters.solutionName}}.binlog
       clean: false
       maximumCpuCount: true
       restoreNugetPackages: false
