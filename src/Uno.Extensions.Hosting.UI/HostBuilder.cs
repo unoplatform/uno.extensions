@@ -3,6 +3,7 @@
 
 namespace Uno.Extensions.Hosting;
 
+/// <inheritdoc cref="IHostBuilder" />
 public class HostBuilder : IHostBuilder
 {
 	private List<Action<IConfigurationBuilder>> _configureHostConfigActions = new List<Action<IConfigurationBuilder>>();
@@ -130,7 +131,7 @@ public class HostBuilder : IHostBuilder
 	private void InitializeBuildServices()
 	{
 		var services = _appServices?.GetServices<IServiceInitialize>();
-		if(services is null)
+		if (services is null)
 		{
 			return;
 		}
