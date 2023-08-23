@@ -25,7 +25,7 @@ public static class ServiceCollectionExtensions
 			.AddSingleton(sp => new JsonSerializerOptions
 			{
 				NumberHandling = System.Text.Json.Serialization.JsonNumberHandling.AllowReadingFromString,
-				DefaultIgnoreCondition= System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault,
+				DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault,
 				AllowTrailingCommas = true
 			})
 			.AddSingleton<SystemTextJsonSerializer>()
@@ -33,6 +33,21 @@ public static class ServiceCollectionExtensions
 			.AddSingleton(typeof(ISerializer<>), typeof(SystemTextJsonGeneratedSerializer<>));
 	}
 
+	/// <summary>
+	/// Adds serialization-related metadata for type <typeparamref name="TEntity"/> to the <see cref="IServiceCollection"/>.
+	/// </summary>
+	/// <typeparam name="TEntity">
+	/// The type to add serialization-related metadata for.
+	/// </typeparam>
+	/// <param name="services">
+	/// The <see cref="IServiceCollection"/> to add serialization-related metadata to.
+	/// </param>
+	/// <param name="instance">
+	/// An object which contains serialization-related metadata for type <typeparamref name="TEntity"/>.
+	/// </param>
+	/// <returns>
+	/// The <see cref="IServiceCollection"/> with serialization-related metadata for type <typeparamref name="TEntity"/> added.
+	/// </returns>
 	public static IServiceCollection AddJsonTypeInfo<TEntity>(
 		this IServiceCollection services,
 		JsonTypeInfo<TEntity> instance
