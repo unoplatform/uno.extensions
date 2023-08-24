@@ -38,5 +38,6 @@ partial class MauiEmbedding
 
 		embeddingApp.InitializeApplication(mauiApp.Services, iApp);
 		app.SetApplicationHandler(iApp, rootContext);
+		InitializeApplicationMainPage(iApp);
 	}
 }
