@@ -48,7 +48,7 @@ public partial class MauiHost : ContentControl
 			var instance = ActivatorUtilities.CreateInstance(mauiContext.Services, type);
 			if(instance is VisualElement visualElement)
 			{
-				mauiHost.Content = visualElement;
+				mauiHost.VisualElement = visualElement;
 				visualElement.Parent = app;
 				visualElement.BindingContext = mauiHost.DataContext;
 			}
@@ -58,9 +58,9 @@ public partial class MauiHost : ContentControl
 			}
 
 			var native = visualElement.ToPlatform(mauiContext);
-			mauiHost.NativeView = native;
+			mauiHost.Content = native;
 
-			mauiHost.MauiContentCreated.Invoke(mauiHost, new MauiContentCreatedEventArgs(visualElement));
+			mauiHost.VisualElementChanged.Invoke(mauiHost, new VisualElementChangedEventArgs(visualElement));
 		}
 		catch (Exception ex)
 		{
@@ -82,12 +82,6 @@ public partial class MauiHost : ContentControl
 	private static ILogger GetLogger() =>
 		IPlatformApplication.Current?.Services.GetRequiredService<ILogger<MauiHost>>() ?? throw new MauiEmbeddingInitializationException();
 
-	private object NativeView
-	{
-		get => base.Content;
-		set => base.Content = value;
-	}
-
 	/// <summary>
 	/// Initializes a new instance of the MauiContent class.
 	/// </summary>
@@ -103,7 +97,7 @@ public partial class MauiHost : ContentControl
 		ActualThemeChanged += OnActualThemeChanged;
 	}
 
-	public event EventHandler<MauiContentCreatedEventArgs> MauiContentCreated = delegate { };
+	public event EventHandler<VisualElementChangedEventArgs> VisualElementChanged = delegate { };
 
 	private void OnActualThemeChanged(FrameworkElement sender, object args)
 	{
@@ -129,13 +123,13 @@ public partial class MauiHost : ContentControl
 
 	private void OnMauiContentLoaded(object sender, RoutedEventArgs e)
 	{
-		var page = GetPage(Content);
+		var page = GetPage(VisualElement);
 		page?.SendAppearing();
 	}
 
 	private void OnMauiContentUnloaded(object sender, RoutedEventArgs e)
 	{
-		var page = GetPage(Content);
+		var page = GetPage(VisualElement);
 		page?.SendDisappearing();
 	}
 
@@ -148,10 +142,13 @@ public partial class MauiHost : ContentControl
 		};
 #endif
 
-	public new VisualElement? Content { get; private set; }
+	/// <summary>
+	/// Gets the Maui <see cref="VisualElement"/> created by the Source.
+	/// </summary>
+	public VisualElement? VisualElement { get; private set; }
 
 	/// <summary>
-	/// Gets or sets the <see cref="Type"/> of the Maui Content Source
+	/// Gets or sets the <see cref="Type"/> of the Maui Content Source.
 	/// </summary>
 	public Type? Source
 	{
@@ -184,19 +181,19 @@ public partial class MauiHost : ContentControl
 			treeElement = VisualTreeHelper.GetParent(treeElement);
 		}
 
-		if (!_initializedResources && Content is not null)
+		if (!_initializedResources && VisualElement is not null)
 		{
-			Content.Resources.MergedDictionaries.Add(resources.ToMauiResources());
+			VisualElement.Resources.MergedDictionaries.Add(resources.ToMauiResources());
 			_initializedResources = true;
 		}
 	}
 
 	void OnDataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
 	{
-		if (Content is not null &&
-			Content.BindingContext != DataContext)
+		if (VisualElement is not null &&
+			VisualElement.BindingContext != DataContext)
 		{
-			Content.BindingContext = DataContext;
+			VisualElement.BindingContext = DataContext;
 		}
 	}
 #endif
