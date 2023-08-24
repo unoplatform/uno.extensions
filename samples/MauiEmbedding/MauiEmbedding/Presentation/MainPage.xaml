@@ -20,6 +20,7 @@
 
 		<embed:MauiHost Grid.Row="1"
 						x:Name="mauiContent"
+						VisualElementChanged="OnVisualElementChanged"
 						Source="external:SyncfusionDemoPage" />
 
 	</Grid>
