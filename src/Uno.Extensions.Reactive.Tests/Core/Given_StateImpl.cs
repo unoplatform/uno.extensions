@@ -20,7 +20,7 @@ public class Given_StateImpl : FeedTests
 		var sut = new StateImpl<string>(Context, Option<string>.None());
 
 		var sub = sut.GetType().GetField("_subscription", BindingFlags.Instance | BindingFlags.NonPublic)!.GetValue(sut)!;
-		var src = sub.GetType().GetField("_source", BindingFlags.Instance | BindingFlags.NonPublic)!.GetValue(sub)!;
+		var src = sub.GetType().GetField("_messages", BindingFlags.Instance | BindingFlags.NonPublic)!.GetValue(sub)!;
 		var node = src.GetType().GetField("_current", BindingFlags.Instance | BindingFlags.NonPublic)!.GetValue(src)!;
 		var next = node.GetType().GetField("_next", BindingFlags.Instance | BindingFlags.NonPublic)!.GetValue(node)!;
 		var task = (Task)next.GetType().GetProperty("Task")!.GetValue(next)!;
