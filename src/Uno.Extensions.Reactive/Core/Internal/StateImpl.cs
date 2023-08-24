@@ -4,16 +4,20 @@ using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
+using Uno.Extensions.Reactive.Config;
+using Uno.Extensions.Reactive.Logging;
 using Uno.Extensions.Reactive.Operators;
 using Uno.Extensions.Reactive.Sources;
 
 namespace Uno.Extensions.Reactive.Core;
 
-internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, IStateImpl
+internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, IStateImpl, IHotSwapState<T>
 {
 	private readonly SubscriptionMode _mode;
 	private readonly StateUpdateKind _updatesKind;
-	private readonly UpdateFeed<T> _inner;
+	private /*readonly - but hot-reload*/ UpdateFeed<T> _inner;
+	private readonly HotSwapFeed<T>? _hotSwap;
 
 	private FeedSubscription<T>? _subscription;
 	private IDisposable? _subscriptionMode;
@@ -41,7 +45,7 @@ internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, ISta
 	}
 
 	public StateImpl(SourceContext context, Option<T> defaultValue)
-		: this(context, new AsyncFeed<T>(async _ => defaultValue), SubscriptionMode.Eager, StateUpdateKind.Persistent)
+		: this(context, new AsyncFeed<T>(async _ => defaultValue), SubscriptionMode.Eager)
 	{
 	}
 
@@ -55,6 +59,12 @@ internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, ISta
 
 		_mode = mode;
 		_updatesKind = updatesKind;
+
+		if (FeedConfiguration.EffectiveHotReload.HasFlag(HotReloadSupport.State))
+		{
+			// It's valid to use the HotSwap feed here, as we are caching it internally and the subscription is managed by the State itself on its own Context.
+			feed = _hotSwap = new HotSwapFeed<T>(feed);
+		}
 		_inner = new UpdateFeed<T>(feed);
 
 		if (updatesKind is StateUpdateKind.Persistent)
@@ -69,6 +79,27 @@ internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, ISta
 			//		 we will be able to unconditionally create the _subscription and just push the mode on it instead!
 			Enable();
 		}
+	}
+
+	void IHotSwapState<T>.HotSwap(IFeed<T>? source)
+	{
+		if (source is IState<T>)
+		{
+			if (source is StateImpl<T> state)
+			{
+				// Switch the _inner so when push a new update, it will actually be pushed to the new state.
+				// TODO: Should we also transfer the current updates? 
+				_inner = state._inner;
+			}
+			else if (this.Log().IsEnabled(LogLevel.Information))
+			{
+				this.Log().Info("Cannot hot swap a State that is not a StateImpl. Changes made on the current implementation won't be propagated to the new instance (but changes made on new instance will be visible in previous instance.)");
+			}
+		}
+
+		// If source is a state, we will still use it as source/parent.
+		// Changes made on it will be treated as parent feed update and will erase our local changes (unless persistent and compatible) which is fine.
+		_hotSwap?.Set(source);
 	}
 
 	public IAsyncEnumerable<Message<T>> GetSource(SourceContext context, CancellationToken ct = default)
