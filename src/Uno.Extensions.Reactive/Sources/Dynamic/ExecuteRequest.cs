@@ -8,7 +8,7 @@ namespace Uno.Extensions.Reactive.Sources;
 /// </summary>
 /// <param name="Issuer">The issuer of that request.</param>
 /// <param name="Reason">The issuer of that request, for debug purposes.</param>
-public record ExecuteRequest(object Issuer, string Reason)
+internal record ExecuteRequest(object Issuer, string Reason)
 {
 	/// <summary>
 	/// Defined the axis used to flag the message as async (i.e. transient).

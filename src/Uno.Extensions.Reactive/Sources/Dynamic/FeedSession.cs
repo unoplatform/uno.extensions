@@ -14,7 +14,7 @@ namespace Uno.Extensions.Reactive.Sources;
 /// Represents an enumeration session of a <see cref="DynamicFeed{T}"/> for a given <see cref="SourceContext"/>.
 /// This is created each time you <see cref="ISignal{T}.GetSource"/> of a DynamicFeed.
 /// </summary>
-public abstract class FeedSession : IAsyncDisposable
+internal abstract class FeedSession : IAsyncDisposable
 {
 	// Debug: event EventHandler<FeedAsyncExecution>? ExecutionStarted;
 

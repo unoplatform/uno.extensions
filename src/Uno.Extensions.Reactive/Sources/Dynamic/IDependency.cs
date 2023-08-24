@@ -8,7 +8,7 @@ namespace Uno.Extensions.Reactive.Sources;
 /// <summary>
 /// A dependency of a <see cref="DynamicFeed{T}"/> that is able to request a feed execution
 /// </summary>
-public interface IDependency
+internal interface IDependency
 {
 	/// <summary>
 	/// Callback invoked when an execution is starting.

@@ -6,7 +6,7 @@ namespace Uno.Extensions.Reactive.Sources;
 /// <summary>
 /// The result of an execution of a <see cref="DynamicFeed{T}"/>.
 /// </summary>
-public enum FeedExecutionResult
+internal enum FeedExecutionResult
 {
 	/// <summary>
 	/// The data has been loaded successfully.
