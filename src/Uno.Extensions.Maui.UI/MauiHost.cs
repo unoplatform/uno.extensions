@@ -100,7 +100,7 @@ public partial class MauiHost : ContentControl
 
 	private void OnSizeChanged(object sender, SizeChangedEventArgs e)
 	{
-		EmbeddedView?.PlatformSizeChanged();
+		VisualElement?.PlatformSizeChanged();
 	}
 
 	private void OnActualThemeChanged(FrameworkElement sender, object args)
