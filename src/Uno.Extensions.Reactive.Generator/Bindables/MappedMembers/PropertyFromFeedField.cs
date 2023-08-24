@@ -28,5 +28,5 @@ internal record PropertyFromFeedField(IFieldSymbol _field, ITypeSymbol _valueTyp
 
 	/// <inheritdoc />
 	public string GetInitialization()
-		=> $"_{_field.Name} = new {NS.Bindings}.Bindable<{_valueType.ToFullString()}>(base.Property<{_valueType.ToFullString()}>(nameof({_field.Name}), {N.Ctor.Model}.{_field.Name} ?? throw new NullReferenceException(\"The feed field '{_field.Name}' is null. Public feeds fields must be initialized in the constructor.\")));";
+		=> $"_{_field.Name} ??= new {NS.Bindings}.Bindable<{_valueType.ToFullString()}>(base.Property<{_valueType.ToFullString()}>(nameof({_field.Name}), {N.Ctor.Model}.{_field.Name} ?? throw new NullReferenceException(\"The feed field '{_field.Name}' is null. Public feeds fields must be initialized in the constructor.\")));";
 }

@@ -93,7 +93,7 @@ internal class ViewModelGenTool_2 : ICodeGenTool
 			model,
 			$@"
 				{this.GetCodeGenAttribute()}
-				[{NS.Bindings}.ViewModel(typeof({model.ToFullString()}))]
+				[{NS.Bindings}.Bindable(typeof({model.ToFullString()}))]
 				{model.DeclaredAccessibility.ToCSharpCodeString()} partial class {vmName} : {baseType} 
 				{{
 					{members.Select(member => member.GetBackingField()).Align(5)}
@@ -108,6 +108,10 @@ internal class ViewModelGenTool_2 : ICodeGenTool
 							{GetCtorAccessibility(ctor)} {vmName}({ctor.Parameters.Select(p => p.ToFullString()).JoinBy(", ")})
 								: this(new {model.ToFullString()}({ctor.Parameters.Select(p => p.Name).JoinBy(", ")}))
 							{{
+								if ({NS.Config}.FeedConfiguration.EffectiveHotReload.HasFlag({NS.Config}.HotReloadSupport.State))
+								{{
+									__reactiveModelArgs = new (Type, string, object?)[] {{ {ctor.Parameters.Select(p => $"({p.ToFullString()}, \"{p.Name}\", {p.Name} as object)").JoinBy(", ")} }};
+								}}
 							}}")
 						.Align(5)}
 
@@ -120,12 +124,50 @@ internal class ViewModelGenTool_2 : ICodeGenTool
 							base.RegisterDisposable({N.Ctor.Model});
 							{N.Model} = {N.Ctor.Model};").Align(6)}
 
+						__Reactive_BindableInitialize({N.Ctor.Model}, {N.Ctor.Ctx});
+					}}
+
+					#region Hot-reload support
+					private (Type type, string name, object? value)[]? __reactiveModelArgs;
+
+					protected override (Type type, string name, object? value)[] __Reactive_GetModelArguments()
+						=> __reactiveModelArgs ?? base.__Reactive_GetModelArguments();
+
+					protected override void __Reactive_UpdateModel(object updatedModel)
+					{{
+						if ({N.Model} is global::System.ComponentModel.INotifyPropertyChanged npc)
+						{{
+							npc.PropertyChanged -= __Reactive_OnModelPropertyChanged;
+						}}
+
+						var previousModel = (object){N.Model};
+						var model = ({model.ToFullString()})updatedModel;
+
+						{N.Model} = model;
+						__Reactive_BindableInitialize(model, {NS.Core}.SourceContext.GetOrCreate(model));
+
+						__Reactive_TryPatchBindableProperties(previousModel, updatedModel);
+
+						base.RaisePropertyChanged(""""); // 'Model' and any other mapped property.
+					}}
+					#endregion
+
+					private void __Reactive_BindableInitialize({model.ToFullString()} {N.Ctor.Model}, {NS.Core}.SourceContext {N.Ctor.Ctx})
+					{{
 						{N.Ctor.Model}.__reactiveBindableViewModel = this;
+
+						if ({N.Ctor.Model} is global::System.ComponentModel.INotifyPropertyChanged npc)
+						{{
+							npc.PropertyChanged += __Reactive_OnModelPropertyChanged;
+						}}
 
 						{members.Select(member => member.GetInitialization()).Align(6)}
 					}}
 
-					public {(hasBaseType ? $"new {model.ToFullString()} {N.Model} => ({model.ToFullString()}) base.{N.Model};" : $"{model} {N.Model} {{ get; }}")}
+					private void __Reactive_OnModelPropertyChanged(object? sender, global::System.ComponentModel.PropertyChangedEventArgs args)
+						=> base.RaisePropertyChanged(args.PropertyName);
+
+					public {(hasBaseType ? $"new {model.ToFullString()} {N.Model} => ({model.ToFullString()}) base.{N.Model};" : $"{model} {N.Model} {{ get; private set; }}")}
 
 					{members.Select(member => member.GetDeclaration()).Align(5)}
 				}}");
