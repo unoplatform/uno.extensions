@@ -97,8 +97,6 @@ public partial class MauiHost : ContentControl
 		ActualThemeChanged += OnActualThemeChanged;
 	}
 
-	public event EventHandler<VisualElementChangedEventArgs> VisualElementChanged = delegate { };
-
 	private void OnActualThemeChanged(FrameworkElement sender, object args)
 	{
 		if (IPlatformApplication.Current is null || IPlatformApplication.Current.Application is not MauiApplication app)
@@ -141,6 +139,11 @@ public partial class MauiHost : ContentControl
 			_ => GetPage(element.Parent)
 		};
 #endif
+
+	/// <summary>
+	/// Fires when the VisualElement has changed.
+	/// </summary>
+	public event EventHandler<VisualElementChangedEventArgs> VisualElementChanged = delegate { };
 
 	/// <summary>
 	/// Gets the Maui <see cref="VisualElement"/> created by the Source.
