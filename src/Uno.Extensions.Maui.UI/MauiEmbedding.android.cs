@@ -42,5 +42,6 @@ partial class MauiEmbedding
 		Microsoft.Maui.ApplicationModel.Platform.Init(androidApp);
 
 		androidApp.SetApplicationHandler(iApp, rootContext);
+		InitializeApplicationMainPage(iApp);
 	}
 }

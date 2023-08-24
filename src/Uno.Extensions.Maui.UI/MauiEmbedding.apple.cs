@@ -1,4 +1,4 @@
-﻿using UIKit;
+using UIKit;
 using Uno.Extensions.Maui.Platform;
 
 namespace Uno.Extensions.Maui;
@@ -26,8 +26,9 @@ partial class MauiEmbedding
 			throw new MauiEmbeddingException(Properties.Resources.TheApplicationMustInheritFromEmbeddingApplication);
 		}
 
-		// TODO: Evaluate getting the Root View Controller for a Platform.Init for Maui
+		Microsoft.Maui.ApplicationModel.Platform.Init(() => app.Window!.RootViewController!);
 		embeddingApp.InitializeApplication(mauiApp.Services, iApp);
 		app.SetApplicationHandler(iApp, rootContext);
+		InitializeApplicationMainPage(iApp);
 	}
 }
