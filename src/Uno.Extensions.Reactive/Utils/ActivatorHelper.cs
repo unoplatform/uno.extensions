@@ -12,7 +12,7 @@ internal static class ActivatorHelper
 	internal static object CreateInstance(Type type, (Type type, string name, object? value)[] arguments, Func<Type, string, object?>? tryGetMissingArgument = null)
 	{
 		var ctors = type
-			.GetConstructors(BindingFlags.CreateInstance | BindingFlags.Public)
+			.GetConstructors(BindingFlags.Instance | BindingFlags.Public)
 			.Select(GetArguments)
 			.OrderByDescending(ctor => ctor.rank);
 		foreach (var ctor in ctors)

@@ -141,10 +141,18 @@ internal class ViewModelGenTool_2 : ICodeGenTool
 						}}
 
 						var previousModel = (object){N.Model};
-						var model = ({model.ToFullString()})updatedModel;
-
-						{N.Model} = model;
-						__Reactive_BindableInitialize(model, {NS.Core}.SourceContext.GetOrCreate(model));
+						if (updatedModel is {model.ToFullString()} model)
+						{{
+							{N.Model} = model;
+							__Reactive_BindableInitialize(model, {NS.Core}.SourceContext.GetOrCreate(model));
+						}}
+						else if (__Reactive_Log().IsEnabled(global::Microsoft.Extensions.Logging.LogLevel.Warning))
+						{{
+							global::Microsoft.Extensions.Logging.LoggerExtensions.Log(
+								__Reactive_Log(),
+								global::Microsoft.Extensions.Logging.LogLevel.Warning,
+								$""The updated model ({{updatedModel.GetType().Name}}) is not of the expected type {model.ToFullString()}."");
+						}}
 
 						__Reactive_TryPatchBindableProperties(previousModel, updatedModel);
 

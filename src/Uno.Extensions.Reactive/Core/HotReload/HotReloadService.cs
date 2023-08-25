@@ -30,12 +30,26 @@ internal static class HotReloadService
 		{
 			// Search for updated model types
 			if (type.GetCustomAttribute<ModelAttribute>() is { Bindable: not null } model
-				&& type.GetCustomAttribute<MetadataUpdateOriginalTypeAttribute>() is { OriginalType : not null } typeUpdate)
+				&& GetOriginalType(type) is { } originalType)
 			{
-				if (_log.IsEnabled(LogLevel.Information)) _log.Info($"Hot-patching bindable {typeUpdate.OriginalType} with {type}.");
+				if (_log.IsEnabled(LogLevel.Information)) _log.Info($"Hot-patching bindable {originalType} with {type}.");
 
-				BindableViewModelBase.HotPatch(model.Bindable, typeUpdate.OriginalType, type);
+				BindableViewModelBase.HotPatch(model.Bindable, originalType, type);
 			}
 		}
 	}
+
+	// As the MetadataUpdateOriginalTypeAttribute might have been generated in the project, we have to use reflection instead of cannot use this:
+	//&& type.GetCustomAttribute<MetadataUpdateOriginalTypeAttribute>() is { OriginalType : not null } typeUpdate)
+	private static Type? GetOriginalType(Type type)
+		=> type
+			.GetCustomAttributes()
+			.Select(attr =>
+			{
+				var attrType = attr.GetType();
+				return attrType is { FullName: "System.Runtime.CompilerServices.MetadataUpdateOriginalTypeAttribute"}
+					? attrType.GetProperty(nameof(MetadataUpdateOriginalTypeAttribute.OriginalType))?.GetValue(attr) as Type
+					: null;
+			})
+			.FirstOrDefault();
 }

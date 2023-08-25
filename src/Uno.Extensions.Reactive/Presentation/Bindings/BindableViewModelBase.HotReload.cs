@@ -298,71 +298,29 @@ partial class BindableViewModelBase
 		}
 	}
 
-	//private static bool IsFeed(object? instance, [NotNullWhen(true)] out Type? valueType)
-	//{
-	//	if (instance is null)
-	//	{
-	//		valueType = null;
-	//		return false;
-	//	}
-
-	//	if (!typeof(IFeed<>).IsInstanceOfType(instance))
-	//	{
-	//		valueType = null;
-	//		return false;
-	//	}
-
-	//	valueType = instance.GetType().GetGenericArguments()[0];
-	//}
-
-
 	private static bool IsFeed(object model, PropertyInfo property, [NotNullWhen(true)] out object? instance, [NotNullWhen(true)] out Type? valueType)
 	{
-		if (!typeof(IFeed<>).IsAssignableFrom(property.PropertyType))
+		var type = property.PropertyType;
+		var feed = IsIFeed(type)
+			? type
+			: property.PropertyType.GetInterfaces().FirstOrDefault(IsIFeed);
+
+		if (feed is not null)
+		{
+			valueType = feed.GetGenericArguments()[0];
+			instance = property.GetValue(model);
+		}
+		else 
 		{
 			valueType = null;
 			instance = null;
-			return false;
 		}
 
-		valueType = property.PropertyType.GetGenericArguments()[0];
-		instance = property.GetValue(model);
-
 		return instance is not null;
+
+		static bool IsIFeed(Type intf)
+			=> intf is { GenericTypeArguments.Length: 1 } && intf.GetGenericTypeDefinition() == typeof(IFeed<>);
 	}
-
-	//private static void TryPatchBindableProperty(
-	//	PropertyInfo previousProperty, object previousModel,
-	//	PropertyInfo updatedProperty, object updatedModel)
-	//{
-	//	if (!typeof(IFeed<>).IsAssignableFrom(previousProperty.PropertyType) // We support current state transfer only on feeds for now.
-	//		|| !typeof(IFeed<>).IsAssignableFrom(updatedProperty.PropertyType)
-	//		|| previousProperty.GetValue(previousModel) is not { } previousInstance
-	//		|| updatedProperty.GetValue(previousModel) is not { } updatedInstance)
-	//	{
-	//		if (updatedModel.Log().IsEnabled(LogLevel.Information)) updatedModel.Log().Info($"Cannot transfer state of property '{previousProperty.Name}', type is not supported or value is null.");
-
-	//		return;
-	//	}
-
-	//	if (previousInstance == updatedInstance)
-	//	{
-	//		return; // Nothing to do
-	//	}
-
-	//	var previousValueType = previousProperty.PropertyType.GetGenericArguments()[0];
-	//	var updatedValueType = updatedProperty.PropertyType.GetGenericArguments()[0];
-
-	//	if (previousValueType != updatedValueType)
-	//	{
-	//		// The type of the value has changed we cannot transfer state
-	//		if (updatedModel.Log().IsEnabled(LogLevel.Information)) updatedModel.Log().Info($"Cannot transfer state of property '{previousProperty.Name}', the type of feed is not the same (was: IFeed<{previousValueType.Name}> | is: IFeed<{updatedValueType.Name}>).");
-
-	//		return;
-	//	}
-
-	//	TryPatchBindableProperty(updatedModel, updatedProperty.Name, updatedValueType, previousInstance, updatedInstance);
-	//}
 
 	private static void TryPatchBindableProperty(object model, string property, Type valueType, object previousFeed, object updatedFeed)
 	{

@@ -1,11 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 using Microsoft.CodeAnalysis;
 using Uno.Extensions.Generators;
 
 namespace Uno.Extensions.Reactive.Generator;
 
+/// <summary>
+/// A generator that generates hot-reload module initialization for the reactive framework.
+/// </summary>
 [Generator]
 internal sealed class HotReloadModuleInitializerGenerator : IIncrementalGenerator, ICodeGenTool
 {
@@ -25,7 +29,7 @@ internal sealed class HotReloadModuleInitializerGenerator : IIncrementalGenerato
 #endif
 
 		var assemblyNameProvider = context.CompilationProvider.Select((compilation, _) => compilation.Assembly.Name);
-		var hasFeedConfiguration = context.CompilationProvider.Select((compilation, _) => compilation.GetTypeByMetadataName($"{NS.Config}.FeedConfiguration") is not null);
+		var hasFeedConfiguration = context.CompilationProvider.Select((compilation, _) => compilation.GetTypeByMetadataName($"Uno.Extensions.Reactive.Config.ModuleFeedConfiguration") is not null);
 
 		context.RegisterSourceOutput(
 			assemblyNameProvider.Combine(hasFeedConfiguration),
@@ -66,7 +70,7 @@ namespace {assembly}
 #else
 			var isEnabled = false;
 #endif
-			global::{NS.Config}.ModuleConfiguration.ConfigureHotReload(""{assembly}"", isEnabled);
+			{NS.Config}.ModuleFeedConfiguration.ConfigureHotReload(""{assembly}"", isEnabled);
 		}}
 	}}
 }}

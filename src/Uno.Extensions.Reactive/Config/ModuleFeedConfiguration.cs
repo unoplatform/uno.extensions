@@ -12,7 +12,7 @@ namespace Uno.Extensions.Reactive.Config;
 /// Those method are expected to be invoked only by generated code (using module initializer attribute), you should not have to use any of them.
 /// </summary>
 [EditorBrowsable(EditorBrowsableState.Never)]
-public static class ModuleConfiguration
+public static class ModuleFeedConfiguration
 {
 	private static readonly ILogger _log = LogExtensions.Log<FeedConfiguration>();
 	private static int _isHotReloadConfigured;

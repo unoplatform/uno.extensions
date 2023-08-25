@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Uno.Extensions.Reactive.Config;
 using Uno.Extensions.Reactive.Core;
 using Uno.Extensions.Reactive.Dispatching;
@@ -193,6 +194,14 @@ public abstract partial class BindableViewModelBase : IBindable, INotifyProperty
 
 	private static T GetDefaultValueForBindings<T>()
 		=> default!; // For now we default to null as we cannot enforce non-null through bindings
+
+	/// <summary>
+	/// Gets a logger for reactive generated code.
+	/// </summary>
+	/// <returns>An ILogger than can be used by generated code to log some messages.</returns>
+	[EditorBrowsable(EditorBrowsableState.Never)]
+	protected ILogger __Reactive_Log()
+		=> this.Log();
 
 	/// <inheritdoc />
 	public async ValueTask DisposeAsync()
