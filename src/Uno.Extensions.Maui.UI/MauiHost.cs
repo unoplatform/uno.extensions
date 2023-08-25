@@ -8,8 +8,10 @@ namespace Uno.Extensions.Maui;
 /// </summary>
 public partial class MauiHost : ContentControl
 {
+#if MAUI_EMBEDDING
 	private static object locker = new object();
-
+	private bool CanUpdateBindingContext;
+#endif
 	/// <summary>
 	/// The Maui Source property represents the type of the Maui View to create
 	/// </summary>
@@ -41,6 +43,7 @@ public partial class MauiHost : ContentControl
 
 		try
 		{
+			mauiHost.CanUpdateBindingContext = false;
 			var app = MauiApplication.Current;
 			var mauiContext = MauiApplication.Current.Handler.MauiContext;
 
@@ -49,8 +52,15 @@ public partial class MauiHost : ContentControl
 			if(instance is VisualElement visualElement)
 			{
 				mauiHost.VisualElement = visualElement;
+
+				// Validate that there isn't some sort of logic that is populating the control's Binding Context
+				if (CanSetBindingContext(visualElement))
+				{
+					mauiHost.CanUpdateBindingContext = true;
+					mauiHost.UpdateVisualElementBindingContext();
+				}
+
 				visualElement.Parent = app;
-				visualElement.BindingContext = mauiHost.DataContext;
 			}
 			else
 			{
@@ -144,6 +154,31 @@ public partial class MauiHost : ContentControl
 			null => null,
 			_ => GetPage(element.Parent)
 		};
+
+	private static bool CanSetBindingContext(VisualElement element)
+	{
+		if (element is ContentView contentView &&
+			(contentView.Content.BindingContext != null || contentView.Content.IsSet(BindableObject.BindingContextProperty)))
+		{
+			return false;
+		}
+
+		return element.BindingContext is null && !element.IsSet(BindableObject.BindingContextProperty);
+	}
+
+	private void UpdateVisualElementBindingContext()
+	{
+		if (VisualElement is null || !CanUpdateBindingContext)
+		{
+			return;
+		}
+
+		VisualElement.BindingContext = DataContext;
+		if (VisualElement is ContentView contentView)
+		{
+			contentView.Content.BindingContext = DataContext;
+		}
+	}
 #endif
 
 	/// <summary>
@@ -199,11 +234,7 @@ public partial class MauiHost : ContentControl
 
 	void OnDataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
 	{
-		if (VisualElement is not null &&
-			VisualElement.BindingContext != DataContext)
-		{
-			VisualElement.BindingContext = DataContext;
-		}
+		UpdateVisualElementBindingContext();
 	}
 #endif
 }
