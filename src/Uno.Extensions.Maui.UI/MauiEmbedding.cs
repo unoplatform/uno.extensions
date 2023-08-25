@@ -124,7 +124,7 @@ public static partial class MauiEmbedding
 		_ = page.ToPlatform(context);
 
 		// Create a Maui Window and initialize a Handler shim. This will expose the actual Application Window
-		var virtualWindow = new Microsoft.Maui.Controls.Window(page);
+		var virtualWindow = new Microsoft.Maui.Controls.Window();
 		virtualWindow.Handler = new EmbeddedWindowHandler
 		{
 #if IOS || MACCATALYST
@@ -137,6 +137,7 @@ public static partial class MauiEmbedding
 			VirtualView = virtualWindow,
 			MauiContext = context
 		};
+		virtualWindow.Page = page;
 
 		app.SetCoreWindow(virtualWindow);
 	}
