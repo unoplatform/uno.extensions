@@ -58,6 +58,10 @@
 		<None Include="MauiThickness.cs" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <ProjectReference Include="..\Uno.Extensions.Hosting.UI\Uno.Extensions.Hosting.WinUI.csproj" />
+	</ItemGroup>
+
 	<Choose>
 		<When Condition="$(IsMauiEmbedding)">
 			<PropertyGroup>

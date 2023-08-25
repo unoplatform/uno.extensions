@@ -95,6 +95,12 @@ public partial class MauiHost : ContentControl
 		DataContextChanged += OnDataContextChanged;
 		Unloaded += OnMauiContentUnloaded;
 		ActualThemeChanged += OnActualThemeChanged;
+		SizeChanged += OnSizeChanged;
+	}
+
+	private void OnSizeChanged(object sender, SizeChangedEventArgs e)
+	{
+		VisualElement?.PlatformSizeChanged();
 	}
 
 	private void OnActualThemeChanged(FrameworkElement sender, object args)

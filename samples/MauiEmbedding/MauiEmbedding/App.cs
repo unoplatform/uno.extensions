@@ -13,6 +13,7 @@ public class App : EmbeddingApplication
 		var builder = this.CreateBuilder(args)
 			// Add navigation support for toolkit controls such as TabBar and NavigationView
 			.UseToolkitNavigation()
+			.UseMauiEmbedding<MauiControls.App>(maui => maui.UseCustomLibrary())
 			.Configure(host => host
 #if DEBUG
 				// Switch to Development environment when running in DEBUG
@@ -61,7 +62,6 @@ public class App : EmbeddingApplication
 					// TODO: Register your services
 					//services.AddSingleton<IMyService, MyService>();
 				})
-				.UseMauiEmbedding<MauiControls.App>(this, maui => maui.UseCustomLibrary())
 				.UseNavigation(RegisterRoutes)
 			);
 		MainWindow = builder.Window;
