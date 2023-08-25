@@ -15,4 +15,9 @@ public sealed partial class MainPage : Page
 	{
 
 	}
+
+	private void OnVisualElementChanged(object sender, VisualElementChangedEventArgs args)
+	{
+
+	}
 }
