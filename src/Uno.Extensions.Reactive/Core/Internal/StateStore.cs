@@ -35,8 +35,7 @@ internal class StateStore : IStateStore
 	}
 
 	/// <inheritdoc />
-	public FeedSubscription<T> GetOrCreateSubscription<TSource, T>(TSource source)
-		where TSource : class, ISignal<Message<T>>
+	public FeedSubscription<T> GetOrCreateSubscription<T>(ISignal<Message<T>> source)
 	{
 		var subscriptions = _subscriptions;
 		if (subscriptions is null)

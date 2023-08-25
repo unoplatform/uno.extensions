@@ -76,5 +76,5 @@ public sealed class DataAxis : MessageAxis
 	/// <inheritdoc />
 	[Pure]
 	protected internal override bool AreEquals(MessageAxisValue left, MessageAxisValue right)
-		=> OptionEqualityComparer<object>.RefEquals.Equals((Option<object>)left.Value!, (Option<object>)right.Value!);
+		=> OptionEqualityComparer<object>.Default.Equals((Option<object>)left.Value!, (Option<object>)right.Value!);
 }

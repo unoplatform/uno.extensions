@@ -3,6 +3,11 @@ using System.Linq;
 
 namespace Uno.Extensions.Reactive.Sources;
 
+/// <summary>
+/// A request to re-execute the delegate of a <see cref="DynamicFeed{T}"/>.
+/// </summary>
+/// <param name="Issuer">The issuer of that request.</param>
+/// <param name="Reason">The issuer of that request, for debug purposes.</param>
 internal record ExecuteRequest(object Issuer, string Reason)
 {
 	/// <summary>

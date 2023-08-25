@@ -18,13 +18,17 @@ internal abstract class FeedSession : IAsyncDisposable
 {
 	// Debug: event EventHandler<FeedAsyncExecution>? ExecutionStarted;
 
-	private protected bool _isDisposed;
+	private readonly CancellationTokenSource _ct;
+	private readonly CancellationTokenRegistration _ctSub; // Subscription to the parent token
+	private int _isDisposed;
 
 	private protected FeedSession(ISignal<IMessage> owningSignal, SourceContext context, CancellationToken ct)
 	{
 		Owner = owningSignal;
 		Context = context;
-		Token = ct;
+
+		_ct = CancellationTokenSource.CreateLinkedTokenSource(ct);
+		_ctSub = ct.Register(static session => _ = ((FeedSession)session).DisposeAsync(), this, useSynchronizationContext: false);
 	}
 
 	/// <summary>
@@ -39,12 +43,17 @@ internal abstract class FeedSession : IAsyncDisposable
 	/// This token will be cancelled at the end of the current session while the <see cref="SourceContext.Token"/>
 	/// is linked to the lifetime of the owning source context and will remain active across sessions!
 	/// </remarks>
-	public CancellationToken Token { get; }
+	public CancellationToken Token => _ct.Token;
 
 	/// <summary>
 	/// The signal which created this session.
 	/// </summary>
 	public ISignal<IMessage> Owner { get; }
+
+	/// <summary>
+	/// Indicates if the session has been disposed.
+	/// </summary>
+	protected bool IsDisposed => _isDisposed is not 0;
 
 	/// <summary>
 	/// Requests to start a new execution.
@@ -90,7 +99,7 @@ internal abstract class FeedSession : IAsyncDisposable
 	/// <param name="dependency">A dependency that can trigger a <see cref="Execute"/>.</param>
 	public void RegisterDependency(IDependency dependency)
 	{
-		if (_isDisposed)
+		if (IsDisposed)
 		{
 			return;
 		}
@@ -105,7 +114,7 @@ internal abstract class FeedSession : IAsyncDisposable
 	/// <remarks>Removing the last dependency will cause teh session to complete (or at the end of the current execution).</remarks>
 	public void UnRegisterDependency(IDependency dependency)
 	{
-		if (_isDisposed)
+		if (IsDisposed)
 		{
 			return;
 		}
@@ -133,7 +142,7 @@ internal abstract class FeedSession : IAsyncDisposable
 	{
 		lock (_sharedInstances)
 		{
-			if (_isDisposed)
+			if (IsDisposed)
 			{
 				throw new ObjectDisposedException(nameof(FeedSession), $"Cannot set shared instance of {typeof(TValue)} on a completed session.");
 			}
@@ -157,7 +166,7 @@ internal abstract class FeedSession : IAsyncDisposable
 	{
 		lock (_sharedInstances)
 		{
-			if (_isDisposed)
+			if (IsDisposed)
 			{
 				throw new ObjectDisposedException(nameof(FeedSession), $"Cannot get shared instance of {typeof(TValue)} on a completed session.");
 			}
@@ -181,12 +190,23 @@ internal abstract class FeedSession : IAsyncDisposable
 	/// <inheritdoc />
 	public virtual async ValueTask DisposeAsync()
 	{
-		_isDisposed = true;
-		_dependencies = ImmutableList<IDependency>.Empty;
-		Feeds.Dispose();
-		lock (_sharedInstances)
+		if (Interlocked.CompareExchange(ref _isDisposed, 1, 0) is 0) // Id double dispose, _ct.Cancel() would crash as it has been disposed.
 		{
-			_sharedInstances.Clear(); // TODO: Dispose instances?
+			_ctSub.Dispose();
+			_ct.Cancel();
+			_dependencies = ImmutableList<IDependency>.Empty;
+			Feeds.Dispose();
+			lock (_sharedInstances)
+			{
+				_sharedInstances.Clear(); // TODO: Dispose instances?
+			}
+
+			_ct.Dispose();
 		}
+	}
+
+	~FeedSession()
+	{
+		_ = DisposeAsync();
 	}
 }

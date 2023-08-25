@@ -23,13 +23,11 @@ internal interface IStateStore : IAsyncDisposable
 	/// <summary>
 	/// Get or create a <see cref="FeedSubscription{T}"/> for a given feed.
 	/// </summary>
-	/// <typeparam name="TSource">Type of the source feed.</typeparam>
 	/// <typeparam name="TValue">Type of the values of the <paramref name="source"/>.</typeparam>
 	/// <param name="source">The source feed.</param>
 	/// <returns>The subscription of the given feed</returns>
 	/// <exception cref="ObjectDisposedException">This store has been disposed.</exception>
-	FeedSubscription<TValue> GetOrCreateSubscription<TSource, TValue>(TSource source)
-		where TSource : class, ISignal<Message<TValue>>;
+	FeedSubscription<TValue> GetOrCreateSubscription<TValue>(ISignal<Message<TValue>> source);
 
 	/// <summary>
 	/// Get or create a <see cref="IState{T}"/> for a given feed.
@@ -42,7 +40,7 @@ internal interface IStateStore : IAsyncDisposable
 	/// <exception cref="ObjectDisposedException">This store has been disposed.</exception>
 	/// <remarks>
 	/// If the the returned state makes any subscription to a feed,
-	/// it's expected that it will share that subscription with other subscribers of the current context (i.e. it uses the <see cref="GetOrCreateSubscription{TSource,TValue}"/>).
+	/// it's expected that it will share that subscription with other subscribers of the current context (i.e. it uses the <see cref="GetOrCreateSubscription{TValue}"/>).
 	/// </remarks>
 	TState GetOrCreateState<TSource, TState>(TSource source, Func<SourceContext, TSource, TState> factory)
 		where TSource : class

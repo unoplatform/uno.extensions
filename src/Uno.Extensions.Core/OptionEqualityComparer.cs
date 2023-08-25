@@ -10,8 +10,6 @@ public sealed class OptionEqualityComparer<T> : IEqualityComparer<Option<T>>
 {
 	public static IEqualityComparer<Option<T>> Default { get; } = new OptionEqualityComparer<T>(EqualityComparer<T>.Default);
 
-	public static IEqualityComparer<Option<T>> RefEquals { get; } = new OptionEqualityComparer<T>(EqualityComparer<T>.Default);
-
 	private readonly IEqualityComparer<T> _valueComparer;
 
 	public OptionEqualityComparer(IEqualityComparer<T> valueComparer)

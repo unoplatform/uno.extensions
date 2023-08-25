@@ -8,6 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Uno.Extensions.Reactive.Logging;
+using Uno.Extensions.Reactive.Operators;
 using Uno.Extensions.Reactive.Utils;
 
 namespace Uno.Extensions.Reactive.Core;
@@ -17,18 +18,19 @@ namespace Uno.Extensions.Reactive.Core;
 // and we ensure that all dependent feeds that are using the same context will receive the same message instance.
 internal class FeedSubscription<T> : IAsyncDisposable, ISourceContextOwner
 {
+	private readonly CompositeRequestSource _requests = new();
+
 	private readonly ISignal<Message<T>> _feed;
 	private readonly SourceContext _rootContext;
-	private readonly CompositeRequestSource _requests = new();
 	private readonly SourceContext _context;
-	private readonly ReplayOneAsyncEnumerable<Message<T>> _source;
+	private readonly ReplayOneAsyncEnumerable<Message<T>> _messages;
 
 	public FeedSubscription(ISignal<Message<T>> feed, SourceContext rootContext)
 	{
 		_feed = feed;
 		_rootContext = rootContext;
 		_context = rootContext.CreateChild(this, _requests);
-		_source = new ReplayOneAsyncEnumerable<Message<T>>(
+		_messages = new ReplayOneAsyncEnumerable<Message<T>>(
 			feed.GetSource(_context),
 			isInitialSyncValuesSkippingAllowed: true);
 	}
@@ -37,7 +39,7 @@ internal class FeedSubscription<T> : IAsyncDisposable, ISourceContextOwner
 
 	IDispatcher? ISourceContextOwner.Dispatcher => null;
 
-	internal Message<T> Current => _source.TryGetCurrent(out var value) ? value : Message<T>.Initial;
+	internal Message<T> Current => _messages.TryGetCurrent(out var value) ? value : Message<T>.Initial;
 
 	public IDisposable UpdateMode(SubscriptionMode mode)
 	{
@@ -54,11 +56,11 @@ internal class FeedSubscription<T> : IAsyncDisposable, ISourceContextOwner
 		}
 
 		var isFirstMessage = true;
-		await foreach (var msg in _source.WithCancellation(ct).ConfigureAwait(false))
+		await foreach (var msg in _messages.WithCancellation(ct).ConfigureAwait(false))
 		{
 			if (isFirstMessage)
 			{
-				// We make sure that even if we replaying a previous message, the changes collection contains all keys.
+				// We make sure that even if we are replaying a previous message, the changes collection contains all keys.
 				isFirstMessage = false;
 				yield return Message<T>.Initial.OverrideBy(msg);
 			}
@@ -71,7 +73,7 @@ internal class FeedSubscription<T> : IAsyncDisposable, ISourceContextOwner
 		if (isFirstMessage)
 		{
 			this.Log().LogWarning(
-				"The source feed completed the enumeration but didn't produced any message. "
+				$"The source feed ({_feed}) completed the enumeration but didn't produced any message. "
 				+ "All feeds must send at least one initial message!");
 
 			yield return Message<T>.Initial;
@@ -83,6 +85,6 @@ internal class FeedSubscription<T> : IAsyncDisposable, ISourceContextOwner
 	{
 		await _context.DisposeAsync();
 		_requests.Dispose();
-		await _source.DisposeAsync();
+		await _messages.DisposeAsync();
 	}
 }

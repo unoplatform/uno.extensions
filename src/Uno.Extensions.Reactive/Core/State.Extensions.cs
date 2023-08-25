@@ -62,7 +62,7 @@ partial class State
 	/// <returns>A ValueTask to track the async update.</returns>
 	public static ValueTask Set<T>(this IState<T> state, T? value, CancellationToken ct)
 		where T : struct
-		=> state.UpdateMessage(m => m.Data(value is null ? Option<T>.None() : Option.Some(value.Value)), ct);
+		=> state.UpdateMessage(m => m.Data(Option.SomeOrNone(value)), ct);
 
 	/// <summary>
 	/// Sets the value of a state

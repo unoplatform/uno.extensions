@@ -21,7 +21,7 @@ public interface ISignal<out T>
 	/// <returns>The async enumeration of items produced by this signal.</returns>
 	/// <remarks>
 	/// This gives access to raw source for implementers and extensibility but it should not be used directly.
-	/// Prefer to use extension methods like <see cref="Feed.Messages{T}"/> or <see cref="SourceContext.GetOrCreateSource{T}(Uno.Extensions.Reactive.IFeed{T})"/>.
+	/// Prefer to use extension methods like <see cref="Feed.Messages{T}"/> or <see cref="SourceContext.GetOrCreateSource{T}"/>.
 	/// </remarks>
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	IAsyncEnumerable<T> GetSource(SourceContext context, CancellationToken ct = default);

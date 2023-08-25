@@ -12,8 +12,7 @@ internal class NoneStateStore : IStateStore
 		=> false;
 
 	/// <inheritdoc />
-	public FeedSubscription<T> GetOrCreateSubscription<TSource, T>(TSource source)
-		where TSource : class, ISignal<Message<T>>
+	public FeedSubscription<T> GetOrCreateSubscription<T>(ISignal<Message<T>> source)
 		=> throw new InvalidOperationException("Cannot create a subscription on SourceContext.None. " + SourceContext.NoneContextErrorDesc);
 
 	/// <inheritdoc />
