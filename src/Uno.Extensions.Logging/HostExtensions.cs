@@ -1,5 +1,8 @@
 ﻿namespace Uno.Extensions.Logging;
 
+/// <summary>
+/// Extensions for <see cref="IHost"/> to customize logging behavior.
+/// </summary>
 public static class HostExtensions
 {
 	public static IHost ConnectUnoLogging(this IHost host, bool enableUnoLogging = true)
