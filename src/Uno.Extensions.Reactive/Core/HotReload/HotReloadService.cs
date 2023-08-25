@@ -48,8 +48,8 @@ internal static class HotReloadService
 			{
 				var attrType = attr.GetType();
 				return attrType is { FullName: "System.Runtime.CompilerServices.MetadataUpdateOriginalTypeAttribute"}
-					? attrType.GetProperty(nameof(MetadataUpdateOriginalTypeAttribute.OriginalType))?.GetValue(attr) as Type
+					? attrType.GetProperty("OriginalType")?.GetValue(attr) as Type
 					: null;
 			})
-			.FirstOrDefault();
+			.FirstOrDefault(original => original is not null);
 }

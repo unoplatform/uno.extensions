@@ -10,6 +10,7 @@
 		-->
 		<UnoExtensionsGeneration_DisableModuleInitializerAttribute>True</UnoExtensionsGeneration_DisableModuleInitializerAttribute>
 		<UnoExtensionsGeneration_DisableCreateNewOnMetadataUpdateAttribute>True</UnoExtensionsGeneration_DisableCreateNewOnMetadataUpdateAttribute>
+		<UnoExtensionsGeneration_DisableMetadataUpdateOriginalTypeAttribute>True</UnoExtensionsGeneration_DisableMetadataUpdateOriginalTypeAttribute>
 	</PropertyGroup>
 
 	<ItemGroup>
