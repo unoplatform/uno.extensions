@@ -30,7 +30,7 @@ public static class Navigation
 			return;
 		}
 
-		if (d is FrameworkElement element && e.NewValue is not null)
+		if (d is FrameworkElement element)
 		{
 			_ = new NavigationRequestBinder(element);
 		}
