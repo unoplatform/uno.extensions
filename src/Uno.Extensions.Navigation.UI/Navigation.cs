@@ -36,7 +36,7 @@ public static class Navigation
 		}
 	}
 
-	public static void SetRequest(this FrameworkElement element, string value)
+	public static void SetRequest(this FrameworkElement element, string? value = "")
 	{
 		element.SetValue(RequestProperty, value);
 	}
