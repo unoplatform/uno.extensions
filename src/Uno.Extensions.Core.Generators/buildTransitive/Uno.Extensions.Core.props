@@ -1,12 +1,20 @@
 <Project>
 	<ItemGroup>
-		<CompilerVisibleProperty Include="UnoExtensionsGeneration_DisableKeyEqualityGenerator" />
-
-		<CompilerVisibleProperty Include="UnoExtensionsGeneration_DisableCompatibilityTypesGenerator" />
+		<!--System.Diagnostics.CodeAnalysis-->
+		<CompilerVisibleProperty Include="UnoExtensionsGeneration_DisableDynamicallyAccessedMembersAttribute" />
+		<CompilerVisibleProperty Include="UnoExtensionsGeneration_DisableMaybeNullAttribute" />
+		<CompilerVisibleProperty Include="UnoExtensionsGeneration_DisableMaybeNullWhenAttribute" />
+		<CompilerVisibleProperty Include="UnoExtensionsGeneration_DisableMemberNotNullWhenAttribute" />
 		<CompilerVisibleProperty Include="UnoExtensionsGeneration_DisableNotNullIfNotNullAttribute" />
 		<CompilerVisibleProperty Include="UnoExtensionsGeneration_DisableNotNullWhenAttribute" />
-		<CompilerVisibleProperty Include="UnoExtensionsGeneration_DisableMemberNotNullWhenAttribute" />
+
+		<!--System.Reflection.Metadata-->
+		<CompilerVisibleProperty Include="UnoExtensionsGeneration_DisableMetadataUpdateHandlerAttribute" />
+
+		<!--System.Runtime.CompilerServices-->
+		<CompilerVisibleProperty Include="UnoExtensionsGeneration_DisableCreateNewOnMetadataUpdateAttribute" />
 		<CompilerVisibleProperty Include="UnoExtensionsGeneration_DisableIsExternalInit" />
+		<CompilerVisibleProperty Include="UnoExtensionsGeneration_DisableMetadataUpdateOriginalTypeAttribute" />
 		<CompilerVisibleProperty Include="UnoExtensionsGeneration_DisableModuleInitializerAttribute" />
 	</ItemGroup>
 </Project>
