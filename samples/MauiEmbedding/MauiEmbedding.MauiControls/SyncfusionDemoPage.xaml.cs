@@ -14,5 +14,6 @@ public partial class SyncfusionDemoPage : ContentPage
 		var pv = Window?.Handler?.PlatformView;
 		var hpv = Handler?.PlatformView;
 
+		var current = DeviceDisplay.Current;
 	}
 }

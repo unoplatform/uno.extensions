@@ -31,11 +31,6 @@ partial class MauiEmbedding
 			throw new MauiEmbeddingException(Properties.Resources.TheApplicationMustInheritFromEmbeddingApplication);
 		}
 
-		//if (_clone is not null)
-		//{
-		//	app.Resources.Merge(_clone);
-		//}
-
 		embeddingApp.InitializeApplication(mauiApp.Services, iApp);
 		app.SetApplicationHandler(iApp, rootContext);
 		InitializeApplicationMainPage(iApp);
