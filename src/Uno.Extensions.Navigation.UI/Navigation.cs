@@ -30,13 +30,13 @@ public static class Navigation
 			return;
 		}
 
-		if (d is FrameworkElement element)
+		if (d is FrameworkElement element && e.NewValue is not null)
 		{
 			_ = new NavigationRequestBinder(element);
 		}
 	}
 
-	public static void SetRequest(this FrameworkElement element, string value)
+	public static void SetRequest(this FrameworkElement element, string? value = "")
 	{
 		element.SetValue(RequestProperty, value);
 	}
