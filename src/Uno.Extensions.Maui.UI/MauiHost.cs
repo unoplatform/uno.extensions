@@ -42,8 +42,12 @@ public partial class MauiHost : ContentControl
 		try
 		{
 			var app = MauiApplication.Current;
+#if ANDROID
+			var services = app.Handler.MauiContext.Services;
+			var mauiContext = new MauiContext(services, services.GetRequiredService<Android.App.Activity>());
+#else
 			var mauiContext = MauiApplication.Current.Handler.MauiContext;
-
+#endif
 			// Allow the use of Dependency Injection for the View
 			var instance = ActivatorUtilities.CreateInstance(mauiContext.Services, type);
 			if(instance is VisualElement visualElement)
