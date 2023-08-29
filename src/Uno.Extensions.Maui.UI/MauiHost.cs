@@ -49,7 +49,7 @@ public partial class MauiHost : ContentControl
 			if(instance is VisualElement visualElement)
 			{
 				mauiHost.VisualElement = visualElement;
-				visualElement.Parent = app;
+				visualElement.Parent = app.Windows[0];
 				visualElement.BindingContext = mauiHost.DataContext;
 			}
 			else
