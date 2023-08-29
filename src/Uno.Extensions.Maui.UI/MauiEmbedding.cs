@@ -126,7 +126,12 @@ public static partial class MauiEmbedding
 			return;
 		}
 
+#if ANDROID
+		var services = app.Handler.MauiContext.Services;
+		var context = new MauiContext(services, services.GetRequiredService<Android.App.Activity>());
+#else
 		var context = app.Handler.MauiContext;
+#endif
 
 		// Create an Application Main Page and initialize a Handler with the Maui Context
 		var page = new ContentPage();
@@ -171,7 +176,6 @@ public static partial class MauiEmbedding
 		Interop.MauiInterop.MapControl<TWinUI, TMaui>();
 		return builder;
 	}
-
 	public static MauiAppBuilder MapStyleHandler<THandler>(this MauiAppBuilder builder)
 		where THandler : Interop.IWinUIToMauiStyleHandler, new()
 	{
