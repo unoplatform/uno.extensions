@@ -123,6 +123,9 @@
   <data name="MauiEmbeddingInitializationExceptionMessage" xml:space="preserve">
     <value>You must call UseMauiEmbedding from the Application</value>
   </data>
+  <data name="MissingWindowPrivateField" xml:space="preserve">
+    <value>CoreWindow is missing _window internal field required to access UIWindow, you may need an updated version of the Uno.Extension.Maui.WinUI package.</value>
+  </data>
   <data name="NoColorValueProvided" xml:space="preserve">
     <value>No value provided for the Maui Color.</value>
   </data>
