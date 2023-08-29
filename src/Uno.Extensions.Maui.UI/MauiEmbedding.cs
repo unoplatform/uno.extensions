@@ -1,4 +1,5 @@
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Maui.ApplicationModel;
 using Uno.Extensions.Hosting;
 
 namespace Uno.Extensions.Maui;
@@ -91,6 +92,15 @@ public static partial class MauiEmbedding
 
 		var mauiApp = mauiAppBuilder.Build();
 		mauiApp.InitializeMauiEmbeddingApp(app);
+
+#if WINDOWS
+		window.Activated += (s, args) =>
+		{
+			WindowStateManager.Default.OnActivated(window, args);
+		};
+#endif
+
+
 #endif
 		return app;
 	}
@@ -144,7 +154,7 @@ public static partial class MauiEmbedding
 
 	private static void SetCoreWindow(this IApplication app, Microsoft.Maui.Controls.Window window)
 	{
-		if(app.Windows is List<Microsoft.Maui.Controls.Window> windows)
+		if (app.Windows is List<Microsoft.Maui.Controls.Window> windows)
 		{
 			windows.Add(window);
 		}
