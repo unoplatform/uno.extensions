@@ -143,7 +143,7 @@ public static partial class MauiEmbedding
 		virtualWindow.Handler = new EmbeddedWindowHandler
 		{
 #if IOS || MACCATALYST
-			PlatformView = context.Services.GetRequiredService<Microsoft.UI.Xaml.Application>().Window,
+			PlatformView = context.Services.GetRequiredService<UIKit.UIWindow>(),
 #elif ANDROID
 			PlatformView = context.Services.GetRequiredService<Android.App.Activity>(),
 #elif WINDOWS
