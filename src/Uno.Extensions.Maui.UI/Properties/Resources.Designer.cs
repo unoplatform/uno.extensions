@@ -79,6 +79,15 @@ namespace Uno.Extensions.Maui.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to CoreWindow is missing _window internal field required to access UIWindow, you may need an updated version of the Uno.Extension.Maui.WinUI package..
+        /// </summary>
+        internal static string MissingWindowPrivateField {
+            get {
+                return ResourceManager.GetString("MissingWindowPrivateField", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to No value provided for the Maui Color..
         /// </summary>
         internal static string NoColorValueProvided {
