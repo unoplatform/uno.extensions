@@ -39,7 +39,7 @@
 		<PackageReference Include="Telerik.UI.for.Maui" Condition="$(_UseTelerik)"/>
 		<PackageReference Include="CommunityToolkit.Maui" />
 		<PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" />
-		<PackageReference Include="Uno.WinUI.RemoteControl" Condition="'$(Configuration)'=='Debug'" />
+		<!--<PackageReference Include="Uno.WinUI.RemoteControl" Condition="'$(Configuration)'=='Debug'" />-->
 	</ItemGroup>
 	<Choose>
 		<When Condition="$(IsAndroid)">
