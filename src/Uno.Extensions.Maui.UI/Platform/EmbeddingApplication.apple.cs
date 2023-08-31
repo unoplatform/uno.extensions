@@ -6,7 +6,7 @@ namespace Uno.Extensions.Maui.Platform;
 /// <summary>
 /// Provides a base Application class for Maui Embedding
 /// </summary>
-public class EmbeddingApplication : Application, IPlatformApplication
+public partial class EmbeddingApplication : Application, IPlatformApplication
 {
 	private IServiceProvider _serviceProvider = default!;
 	private IApplication _application = default!;
