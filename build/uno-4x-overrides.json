@@ -129,6 +129,10 @@
     "UpdatedVersion": "(,4.99.0-dev.999]"
   },
   {
+    "PackageId": "Uno.Toolkit",
+    "UpdatedVersion": "(,4.99.0-dev.999]"
+  },
+  {
     "PackageId": "Uno.Toolkit.UI.Cupertino",
     "UpdatedVersion": "(,4.99.0-dev.999]"
   },
