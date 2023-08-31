@@ -15,32 +15,9 @@ public static partial class MauiEmbedding
 	/// <returns>The updated app builder.</returns>
 	/// <param name="builder">The IHost builder.</param>
 	/// <param name="configure">Optional lambda to configure the Maui app builder.</param>
-	public static IApplicationBuilder UseMauiEmbedding(this IApplicationBuilder builder, Action<MauiAppBuilder>? configure = null) =>
-		builder.UseMauiEmbedding<MauiApplication>(configure);
-
-	/// <summary>
-	/// Registers Maui embedding in the Uno Platform app builder.
-	/// </summary>
-	/// <returns>The updated app builder.</returns>
-	/// <param name="builder">The IHost builder.</param>
-	/// <param name="configure">Optional lambda to configure the Maui app builder.</param>
 	public static IApplicationBuilder UseMauiEmbedding<TApp>(this IApplicationBuilder builder, Action<MauiAppBuilder>? configure = null)
 		where TApp : MauiApplication
-	{
-		builder.App.UseMauiEmbedding<TApp>(builder.Window, configure);
-		return builder;
-	}
-
-	/// <summary>
-	/// Registers Maui embedding in the Uno Platform app builder.
-	/// </summary>
-	/// <returns>The updated app builder.</returns>
-	/// <param name="builder">The IHost builder.</param>
-	/// <param name="app">The Uno app.</param>
-	/// <param name="window">The Main Application Window.</param>
-	/// <param name="configure">Optional lambda to configure the Maui app builder.</param>
-	public static IHostBuilder UseMauiEmbedding(this IHostBuilder builder, Microsoft.UI.Xaml.Application app, Microsoft.UI.Xaml.Window window, Action<MauiAppBuilder>? configure = null) =>
-		builder.UseMauiEmbedding<MauiApplication>(app, window, configure);
+		=> builder.Configure(hostBuilder => hostBuilder.UseMauiEmbedding<TApp>(builder.App, builder.Window, configure));
 
 	/// <summary>
 	/// Registers Maui embedding in the Uno Platform app builder.
@@ -63,16 +40,7 @@ public static partial class MauiEmbedding
 	/// <param name="app">The Uno app.</param>
 	/// <param name="window">The Main Application Window.</param>
 	/// <param name="configure">Optional lambda to configure the Maui app builder.</param>
-	public static Microsoft.UI.Xaml.Application UseMauiEmbedding(this Microsoft.UI.Xaml.Application app, Microsoft.UI.Xaml.Window window, Action<MauiAppBuilder>? configure = null) =>
-		app.UseMauiEmbedding<MauiApplication>(window, configure);
-
-	/// <summary>
-	/// Registers Maui embedding with WinUI3 and WPF application builder.
-	/// </summary>
-	/// <param name="app">The Uno app.</param>
-	/// <param name="window">The Main Application Window.</param>
-	/// <param name="configure">Optional lambda to configure the Maui app builder.</param>
-	public static Microsoft.UI.Xaml.Application UseMauiEmbedding<TApp>(this Microsoft.UI.Xaml.Application app, Microsoft.UI.Xaml.Window window, Action<MauiAppBuilder>? configure = null)
+	public static MauiApp UseMauiEmbedding<TApp>(this Microsoft.UI.Xaml.Application app, Microsoft.UI.Xaml.Window window, Action<MauiAppBuilder>? configure = null)
 		where TApp : MauiApplication
 	{
 #if MAUI_EMBEDDING
@@ -99,10 +67,10 @@ public static partial class MauiEmbedding
 			WindowStateManager.Default.OnActivated(window, args);
 		};
 #endif
-
-
+		return mauiApp;
+#else
+		return default!;
 #endif
-		return app;
 	}
 
 #if MAUI_EMBEDDING
