@@ -3,6 +3,6 @@
 /// <summary>
 /// Provides a base Application class for Maui Embedding
 /// </summary>
-public class EmbeddingApplication : Application
+public partial class EmbeddingApplication : Application
 {
 }
