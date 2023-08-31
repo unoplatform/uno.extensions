@@ -1,4 +1,6 @@
-﻿namespace Uno.Extensions.Maui.Internals;
+﻿using Microsoft.Maui;
+
+namespace Uno.Extensions.Maui.Internals;
 
 internal class EmbeddedWindowHandler : IElementHandler
 {
@@ -7,7 +9,14 @@ internal class EmbeddedWindowHandler : IElementHandler
 	public IMauiContext? MauiContext { get; set; }
 
 	public void DisconnectHandler() { }
-	public void Invoke(string command, object? args = null) { }
+	public void Invoke(string command, object? args = null)
+	{
+		// Required to prevent exception when hot reload is invoked
+		if(args is RetrievePlatformValueRequest<float> request)
+		{
+			request.TrySetResult(1f);
+		}
+	}
 	public void SetMauiContext(IMauiContext mauiContext) => MauiContext = mauiContext;
 	public void SetVirtualView(IElement view) => VirtualView = view;
 	public void UpdateValue(string property) { }
