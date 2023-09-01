@@ -3,7 +3,7 @@
 /// <summary>
 /// Provides a base Application class for Maui Embedding
 /// </summary>
-public class EmbeddingApplication : MauiWinUIApplication
+public partial class EmbeddingApplication : MauiWinUIApplication
 {
 	/// <inheritdoc />
 	protected sealed override MauiApp CreateMauiApp() => throw new NotImplementedException();
