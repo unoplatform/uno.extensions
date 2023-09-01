@@ -1,3 +1,5 @@
+using Microsoft.Maui.Devices;
+
 namespace MauiEmbedding.Presentation;
 
 public partial class MainViewModel : ObservableObject
@@ -10,14 +12,15 @@ public partial class MainViewModel : ObservableObject
 	public MainViewModel(
 		IStringLocalizer localizer,
 		IOptions<AppConfig> appInfo,
-		INavigator navigator)
+		INavigator navigator,
+		IVibration vibrate)
 	{
 		_navigator = navigator;
 		Title = "Main";
 		Title += $" - {localizer["ApplicationName"]}";
 		Title += $" - {appInfo?.Value?.Environment}";
+		vibrate.Vibrate(3000);
 	}
-	public string? Title { get; }
 
-	
+	public string? Title { get; }
 }

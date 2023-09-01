@@ -1,5 +1,6 @@
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Maui.ApplicationModel;
+using Microsoft.Maui.Hosting;
 using Uno.Extensions.Hosting;
 
 namespace Uno.Extensions.Maui;
@@ -30,8 +31,24 @@ public static partial class MauiEmbedding
 	public static IHostBuilder UseMauiEmbedding<TApp>(this IHostBuilder builder, Microsoft.UI.Xaml.Application app, Microsoft.UI.Xaml.Window window, Action<MauiAppBuilder>? configure = null)
 		where TApp : MauiApplication
 	{
-		app.UseMauiEmbedding<TApp>(window, configure);
+#if MAUI_EMBEDDING
+		MauiApp? mauiApp = default;
+		return builder
+			.UseServiceProviderFactory(ctx => new LinkedServiceProviderFactory(mauiApp!.Services))
+			//.UseServiceProviderFactory(ctx => new LinkedScopedServiceProviderFactory(mauiApp!.Services))
+			.ConfigureServices(services =>
+			{
+				// Expose the MauiApp to the Uno app via the IHost.Services
+				mauiApp = app.UseMauiEmbedding<TApp>(window, configure);
+				services.AddSingleton(mauiApp);
+				//services
+				//	.AddSingleton(()=> app.UseMauiEmbedding<TApp>(window, configure))
+				//	.AddHostedService< MauiLoaderService>();
+
+			});
+#else
 		return builder;
+#endif
 	}
 
 	/// <summary>

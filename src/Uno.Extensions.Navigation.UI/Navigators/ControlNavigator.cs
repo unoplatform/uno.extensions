@@ -227,7 +227,15 @@ public abstract class ControlNavigator : Navigator
 
 					services.AddScopedInstance(request);
 
-					var created = services.GetService(mapping!.ViewModel);
+					object? created = default;
+					try
+					{
+						created = services.GetService(mapping!.ViewModel);
+					}
+					catch
+					{
+						if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebug("Unable to create viewmodel directly via service provider, will fall back to trying the constructor");
+					}
 
 					if (created is not null)
 					{

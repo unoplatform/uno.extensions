@@ -11,7 +11,7 @@ using Android.Widget;
 using Com.Nostra13.Universalimageloader.Core;
 using Microsoft.UI.Xaml.Media;
 
-
+[assembly: UsesPermission(Android.Manifest.Permission.Vibrate)]
 [assembly: Android.App.UsesPermission(Android.Manifest.Permission.BatteryStats)]
 namespace MauiEmbedding.Droid;
 
