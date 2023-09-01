@@ -11,58 +11,52 @@ In order to use the ComponentOne controls, you first need to install the Compone
 
 ## Getting Started
 
-Create a new application using the `unoapp` template, enabling .NET MAUI Embedding. In this case we're going to use the Blank preset to keep things simple.
-
+1. Create a new application using the `unoapp` template, enabling .NET MAUI Embedding. In this case we're going to use the Blank template (`-preset blank`) and include .NET MAUI Embedding support (`-maui`).  
 ```
 dotnet new unoapp -preset blank -maui -o GrapeCityApp
-```
+```  
+2. Remove the .net7.0 (or .net8.0) target framework from both the GrapeCityApp and GrapeCityApp.MauiControls projects.  
 
-Remove the .net7.0 (or .net8.0) target framework from both the GrapeCityApp and GrapeCityApp.MauiControls projects.
+2. Next, add a reference to the C1 .NET MAUI NuGet packages to the GrapeCityApp.MauiControls library. If you want to use the FlexGrid, add a reference to [`C1.Maui.Grid`](https://www.nuget.org/packages/C1.Maui.Grid); if you want to use the Calendar, add a reference to [`C1.Maui.Calendar`](https://www.nuget.org/packages/C1.Maui.Calendar).  
 
-Next, add a reference to the C1 .NET MAUI NuGet packages to the GrapeCityApp.MauiControls library. If you want to use the FlexGrid, add a reference to [`C1.Maui.Grid`](https://www.nuget.org/packages/C1.Maui.Grid); if you want to use the Calendar, add a reference to [`C1.Maui.Calendar`](https://www.nuget.org/packages/C1.Maui.Calendar).
-
-In the `AppBuilderExtensions` class, update the `UseMauiControls` extension method to call either, or both, the `RegisterFlexGridControls` or `RegisterCalendarControls` methods.
+2. In the `AppBuilderExtensions` class, update the `UseMauiControls` extension method to call either, or both, the `RegisterFlexGridControls` or `RegisterCalendarControls` methods.  
 
 ```cs
 using C1.Maui.Grid;
 using C1.Maui.Calendar;
-using CommunityToolkit.Maui;
 
 namespace GrapeCityApp;
 
 public static class AppBuilderExtensions
 {
-	public static MauiAppBuilder UseMauiControls(this MauiAppBuilder builder) =>
-		builder.UseMauiCommunityToolkit()
+	public static MauiAppBuilder UseMauiControls(this MauiAppBuilder builder) 
+		=> builder
 			.RegisterFlexGridControls()
-      .RegisterCalendarControls();
-}
-```
-
-The last thing required in order for the ComponentOne controls to work is to make sure there is a MainPage value set for the current application. This is to prevent an exception being raised when ComponentOne attempts a license check.
-
-```cs
-public EmbeddedControl()
-{
-  // Required to prevent application crashing during license check
-	Application.Current.MainPage = new Page();
-
-	InitializeComponent();
+			.RegisterCalendarControls()
+			.ConfigureFonts(fonts =>
+			{
+				fonts.AddFont("GrapeCityApp/Assets/Fonts/OpenSansRegular.ttf", "OpenSansRegular");
+				fonts.AddFont("GrapeCityApp/Assets/Fonts/OpenSansSemibold.ttf", "OpenSansSemibold");
+			});
 }
 ```
 
 ## Adding FlexGrid
 
-Follow the [FlexGrid Quick Start](https://www.grapecity.com/componentone/docs/maui/online-maui/flexgrid-quickstart.html) by applying XAML to the EmbeddedControl.xaml and c# to the EmbeddedControl.Xaml.cs (in constructor)
+1. Follow the [FlexGrid Quick Start](https://www.grapecity.com/componentone/docs/maui/online-maui/flexgrid-quickstart.html) by applying XAML to the EmbeddedControl.xaml and c# to the EmbeddedControl.Xaml.cs (in constructor)  
 
-Add [Customer class](https://www.grapecity.com/componentone/docs/maui/online-maui/customerclass.html)
+1. Add Customer class (see https://www.grapecity.com/componentone/docs/maui/online-maui/customerclass.html)  
 
-Wrap content in ScrollViewer on MainPage of the Uno Platform application to make sure the full FlexGrid and other controls can be scrolled into view.
+1. Wrap content in ScrollViewer on MainPage of the Uno Platform application to make sure the full FlexGrid and other controls can be scrolled into view.  
 
 
 ## Adding Calendar
 
-Follow the [Calendar Quick Start](https://www.grapecity.com/componentone/docs/maui/online-maui/calendarquickstart.html) by applying XAML to the EmbeddedControl.xaml
+1. Follow the [Calendar Quick Start](https://www.grapecity.com/componentone/docs/maui/online-maui/calendarquickstart.html) by applying XAML to the EmbeddedControl.xaml.  
 
-In order for the Calendar control to render correctly on all platforms you should set both `HeightRequest` and `WidthRequest` attributes on the Calendar control.
+1. In order for the Calendar control to render correctly on all platforms you should set both `HeightRequest` and `WidthRequest` attributes on the Calendar control.  
 
+
+## Sample
+
+A sample application that features GrapeCity controls is available [here](https://github.com/unoplatform/Uno.Samples/tree/dev/master/UI/MauiEmbedding/GrapeCityApp). The samples requires the ComponentOne ControlPanel to be installed.
