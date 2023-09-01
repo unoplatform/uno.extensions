@@ -3,7 +3,38 @@ uid: Overview.Maui
 ---
 # .NET MAUI Embedding
 
-.NET MAUI Embedding provides limited support for Uno Applications to make use of 3rd party control libraries when the required app platforms match one of those available from .NET MAUI.
+With .NET MAUI Embedding 3rd party control libraries for .NET MAUI can bed used within an Uno Platform application.
+
+## Overview
+
+HostControl
+MAui Class Library
+
+## Get Started - New Uno Application
+
+unoapp -preset blank -maui -o UnoMauiEmbeddingSampleApp
+Add community toolkit
+UseCommunityToolkit in appbuilderextensions
+Add avatar control
+
+## Get Started - Existing Uno Application
+
+Add reference to Uno.Extensions.Maui to Uno class library
+Change base class for App to EmbeddingApplication
+Call UseMauiEmbedding in App
+ - either app.UseMauiEmbedding(MainWindow) or
+ - appBuilder.UseMauiEmbedding()
+Add Maui class library
+Add reference to Maui Class library to the Uno class library
+Add Control to Maui Class Library (eg EmbeddedControl)
+Add MauiHost control to MainPage in Uno library
+ set Source to EmbeddedControl
+
+Add Community toolkit
+UseCommunityToolkit in appbuilderextensions
+Add Avatar control
+
+
 
 ## Initialization
 
