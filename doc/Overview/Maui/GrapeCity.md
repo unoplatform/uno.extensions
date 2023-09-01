@@ -55,7 +55,7 @@ public EmbeddedControl()
 
 Follow the [FlexGrid Quick Start](https://www.grapecity.com/componentone/docs/maui/online-maui/flexgrid-quickstart.html) by applying XAML to the EmbeddedControl.xaml and c# to the EmbeddedControl.Xaml.cs (in constructor)
 
-Add Customer class (see https://www.grapecity.com/componentone/docs/maui/online-maui/customerclass.html)
+Add [Customer class](https://www.grapecity.com/componentone/docs/maui/online-maui/customerclass.html)
 
 Wrap content in ScrollViewer on MainPage of the Uno Platform application to make sure the full FlexGrid and other controls can be scrolled into view.
 
