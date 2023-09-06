@@ -11,35 +11,37 @@ In order to use the ComponentOne controls, you first need to install the Compone
 
 ## Getting Started
 
-1. Create a new application using the `unoapp` template, enabling .NET MAUI Embedding. In this case we're going to use the Blank template (`-preset blank`) and include .NET MAUI Embedding support (`-maui`).  
-```
-dotnet new unoapp -preset blank -maui -o GrapeCityApp
-```  
-2. Remove the .net7.0 (or .net8.0) target framework from both the GrapeCityApp and GrapeCityApp.MauiControls projects.  
+1. Create a new application using the `unoapp` template, enabling .NET MAUI Embedding. In this case we're going to use the Blank template (`-preset blank`) and include .NET MAUI Embedding support (`-maui`).
 
-2. Next, add a reference to the C1 .NET MAUI NuGet packages to the GrapeCityApp.MauiControls library. If you want to use the FlexGrid, add a reference to [`C1.Maui.Grid`](https://www.nuget.org/packages/C1.Maui.Grid); if you want to use the Calendar, add a reference to [`C1.Maui.Calendar`](https://www.nuget.org/packages/C1.Maui.Calendar).  
+    ```
+    dotnet new unoapp -preset blank -maui -o GrapeCityApp
+    ```
 
-2. In the `AppBuilderExtensions` class, update the `UseMauiControls` extension method to call either, or both, the `RegisterFlexGridControls` or `RegisterCalendarControls` methods.  
+1. Remove the `net7.0` (or `net8.0`) target framework from both the GrapeCityApp and GrapeCityApp.MauiControls projects.  
 
-```cs
-using C1.Maui.Grid;
-using C1.Maui.Calendar;
+1. Next, add a reference to the C1 .NET MAUI NuGet packages to the GrapeCityApp.MauiControls library. If you want to use the FlexGrid, add a reference to [`C1.Maui.Grid`](https://www.nuget.org/packages/C1.Maui.Grid); if you want to use the Calendar, add a reference to [`C1.Maui.Calendar`](https://www.nuget.org/packages/C1.Maui.Calendar).  
 
-namespace GrapeCityApp;
+1. In the `AppBuilderExtensions` class, update the `UseMauiControls` extension method to call either, or both, the `RegisterFlexGridControls` or `RegisterCalendarControls` methods.  
 
-public static class AppBuilderExtensions
-{
-	public static MauiAppBuilder UseMauiControls(this MauiAppBuilder builder) 
-		=> builder
-			.RegisterFlexGridControls()
-			.RegisterCalendarControls()
-			.ConfigureFonts(fonts =>
-			{
-				fonts.AddFont("GrapeCityApp/Assets/Fonts/OpenSansRegular.ttf", "OpenSansRegular");
-				fonts.AddFont("GrapeCityApp/Assets/Fonts/OpenSansSemibold.ttf", "OpenSansSemibold");
-			});
-}
-```
+    ```cs
+    using C1.Maui.Grid;
+    using C1.Maui.Calendar;
+
+    namespace GrapeCityApp;
+
+    public static class AppBuilderExtensions
+    {
+	    public static MauiAppBuilder UseMauiControls(this MauiAppBuilder builder) 
+		    => builder
+			    .RegisterFlexGridControls()
+    			.RegisterCalendarControls()
+    			.ConfigureFonts(fonts =>
+    			{
+    				fonts.AddFont("GrapeCityApp/Assets/Fonts/OpenSansRegular.ttf", "OpenSansRegular");
+    				fonts.AddFont("GrapeCityApp/Assets/Fonts/OpenSansSemibold.ttf", "OpenSansSemibold");
+    			});
+    }
+    ```
 
 ## Adding FlexGrid
 
