@@ -7,8 +7,12 @@ With .NET MAUI Embedding 3rd party control libraries for .NET MAUI can bed used 
 
 ## Overview
 
-HostControl
-MAui Class Library
+The integration of .NET MAUI controls into an Uno application consist of two parts, the .NET MAUI class library and the MauiHost control. 
+
+The `MauiHost` control (that's part of the Uno.Extensions.Maui.WinUI package) is added to any Uno page or control to embed a .NET MAUI control. The `Source` property on the `MauiHost` is the type of .NET MAUI control that will be added as a child of the `MauiHost` control. As the .NET MAUI control will be added as a child, it will inherit the data context of the `MauiHost` control. The DataContext on the `MauiHost` is mapped to the `BindingContext` of the .NET MAUI control.
+
+It's recommended that instead of hosting individual .NET MAUI controls in a `MauiHost` element, that a `ContentView` is created inside a .NET MAUI class library and set as the `Source` on a `MauiHost` element. This makes it easy to add multiple .NET MAUI controls, as well as setting properties, including data binding, in XAML.
+
 
 ## Get Started - New Uno Application
 
