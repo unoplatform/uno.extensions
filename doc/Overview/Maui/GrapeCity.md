@@ -23,25 +23,25 @@ In order to use the ComponentOne controls, you first need to install the Compone
 
 1. In the `AppBuilderExtensions` class, update the `UseMauiControls` extension method to call either, or both, the `RegisterFlexGridControls` or `RegisterCalendarControls` methods.  
 
-```cs
-using C1.Maui.Grid;
-using C1.Maui.Calendar;
+    ```cs
+    using C1.Maui.Grid;
+    using C1.Maui.Calendar;
 
-namespace GrapeCityApp;
+    namespace GrapeCityApp;
 
-public static class AppBuilderExtensions
-{
-	public static MauiAppBuilder UseMauiControls(this MauiAppBuilder builder) 
-		=> builder
-			.RegisterFlexGridControls()
-			.RegisterCalendarControls()
-			.ConfigureFonts(fonts =>
-			{
-				fonts.AddFont("GrapeCityApp/Assets/Fonts/OpenSansRegular.ttf", "OpenSansRegular");
-				fonts.AddFont("GrapeCityApp/Assets/Fonts/OpenSansSemibold.ttf", "OpenSansSemibold");
-			});
-}
-```
+    public static class AppBuilderExtensions
+    {
+	    public static MauiAppBuilder UseMauiControls(this MauiAppBuilder builder) 
+		    => builder
+			    .RegisterFlexGridControls()
+    			.RegisterCalendarControls()
+    			.ConfigureFonts(fonts =>
+    			{
+    				fonts.AddFont("GrapeCityApp/Assets/Fonts/OpenSansRegular.ttf", "OpenSansRegular");
+    				fonts.AddFont("GrapeCityApp/Assets/Fonts/OpenSansSemibold.ttf", "OpenSansSemibold");
+    			});
+    }
+    ```
 
 ## Adding FlexGrid
 
