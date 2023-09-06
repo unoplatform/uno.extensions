@@ -4,6 +4,21 @@ namespace Uno.Extensions.Navigation;
 
 #pragma warning disable SA1313 // Parameter names should begin with lower-case letter
 
+/// <summary>
+/// Registers a data type for injection during navigation and optionally maps the
+/// data to/from a query string.
+/// </summary>
+/// <param name="Data">
+/// The data type to register. If null, the data type will not be registered.
+/// </param>
+/// <param name="UntypedToQuery">
+/// A function that maps the data to a query string. If null, the data will not be
+/// mapped to a query string.
+/// </param>
+/// <param name="UntypedFromQuery">
+/// A function that maps a query string to the data. If null, no relationship will be 
+/// established between the query string and data.
+/// </param>
 public record DataMap(
 	Type? Data = null,
 	Func<object, IDictionary<string, string>>? UntypedToQuery = null,
@@ -19,6 +34,21 @@ public record DataMap(
 	}
 }
 
+/// <summary>
+/// A strongly-typed version of <see cref="DataMap"/> that registers a data type 
+/// for injection during navigation and optionally maps the data to/from a query string.
+/// </summary>
+/// <typeparam name="TData">
+/// The data type to register.
+/// </typeparam>
+/// <param name="ToQuery">
+/// A function that maps the data of type <typeparamref name="TData"/> to a query string.
+/// If null, the data will not be mapped to a query string.
+/// </param>
+/// <param name="FromQuery">
+/// A function that maps a query string to the data of type <typeparamref name="TData"/>.
+/// If null, no relationship will be established between the query string and data.
+/// </param>
 public record DataMap<TData>(
 	Func<TData, IDictionary<string, string>>? ToQuery = null,
 	Func<IServiceProvider, IDictionary<string, object>, Task<TData?>>? FromQuery = null
