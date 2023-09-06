@@ -179,7 +179,7 @@ Add a reference in the existing class library to [Uno.Extensions.Maui.WinUI](htt
     }
     ```
 
-    1.  **ProjectReference - MauiControls**
+1.  **ProjectReference - MauiControls**
 
     In the project file (csproj) for the Uno class library, add a reference to the .NET MAUI class library
 
