@@ -12,108 +12,246 @@ MAui Class Library
 
 ## Get Started - New Uno Application
 
-unoapp -preset blank -maui -o UnoMauiEmbeddingSampleApp
-Add community toolkit
-UseCommunityToolkit in appbuilderextensions
-Add avatar control
+For new applications created using the Uno Platform Template Wizard for Visual Studio, .NET MAUI Embedding can be selected as a feature when creating the application.  
+
+Start by selecting either the Blank or Default template, and clicking the Customize button (since neither of the predefined configurations include the .NET MAUI Embedding by default).  
+
+![Select startup type](Assets/GettingStarted01-StartupType.png)
+
+.NET MAUI Embedding is only supported on iOS, Android, MacCatalyst and Windows. If you have any other platforms selected, the .NET MAUI Embedding feature will be disabled. Select the Platforms section and make sure only iOS, Android, MacCatalyst and Windows is selected.  
+
+![Select platforms](Assets/GettingStarted02-Platforms.png)
+
+Select the Features section and include the MAUI Embedding feature, before clicking the Create button to complete the creation of the application.  
+
+![Select feature - .NET MAUI Embedding](Assets/GettingStarted03-MAUIEmbedding.png)
+
+In addition to the typical Uno Platform application structure, there is a .NET MAUI class library (eg SimpleMauiApp.MauiControls). The MauiControls class library is where you add references to third party .NET MAUI control libraries, add any services or call registration/initialization methods on the third party libraries, and of course define the .NET MAUI controls that you want to display with the application. 
+
+![Project structure](Assets/GettingStarted04-ProjectStructure.png)
+
+The application can be run by setting the desired platform project (Mobile or Windows) to be the startup project and then pressing F5 or clicking the Run button. The default layout shows a text, "Hello Uno Platform", which is an Uno TextBlock, followed by an Image, two TextBlock and a Button, which are all .NET MAUI controls.
+
+![Running on Windows](Assets/GettingStarted05-RunningOnWindows.png)
+
+These steps can also be achieved via the command lines by invoking the following commands 
+
+```
+dotnet new install uno.templates
+dotnet new unoapp -preset blank -maui -o SimpleMauiApp
+```
 
 ## Get Started - Existing Uno Application
 
-Add reference to Uno.Extensions.Maui to Uno class library
-Change base class for App to EmbeddingApplication
-Call UseMauiEmbedding in App
- - either app.UseMauiEmbedding(MainWindow) or
- - appBuilder.UseMauiEmbedding()
-Add Maui class library
-Add reference to Maui Class library to the Uno class library
-Add Control to Maui Class Library (eg EmbeddedControl)
-Add MauiHost control to MainPage in Uno library
- set Source to EmbeddedControl
+.NET MAUI Embedding can be added to any existing Uno application via the following steps. The .NET MAUi Embedding feature is only supported in Uno applications that target iOS, Android, MacCatalyst and Windows, as shown in the Platforms folder in the following solution structure. These instructions are appropriate for an Uno application targeting .NET 7.
 
-Add Community toolkit
-UseCommunityToolkit in appbuilderextensions
-Add Avatar control
+![Starting solution structure](Assets/GettingStartedExisting01-StartProjectStructure.png)
 
+1.  **Uno.Extensions.Maui.WinUI**  
+Add a reference in the existing class library to [Uno.Extensions.Maui.WinUI](https://www.nuget.org/packages/Uno.Extensions.Maui.WinUI). It's not necessary to add this package to other projects.  
 
+![Adding reference to Uno.Extensions.Maui.WinUI](Assets/GettingStartedExisting02-AddingReference.png)  
 
-## Initialization
+1.  **Package References**
 
-After installing the `Uno.Extensions.Maui.WinUI` NuGet package you will need to update your App.cs in the core/shared project of your Uno Platform Project.
-
-```cs
-protected override void OnLaunched(LaunchActivatedEventArgs args)
-{
-    this.UseMauiEmbedding();
-}
-```
-
-Similarly if you are using Uno.Extensions.Hosting for Dependency Injection you can call the `UseMauiEmbedding()` extension off of the `IApplicationBuilder` like:
-
-```cs
-protected override void OnLaunched(LaunchActivatedEventArgs args)
-{
-    var builder = this.CreateBuilder(args)
-        .UseMauiEmbedding();
-}
-```
-
-In the event that your 3rd party control library requires initialization on the `MauiAppBuilder` you can initialize those libraries by simply providing a delegate for the `MauiAppBuilder` in the `UseMauiEmbedding()` extension method:
-
-```cs
-protected override void OnLaunched(LaunchActivatedEventArgs args)
-{
-    var builder = this.CreateBuilder(args)
-        .UseMauiEmbedding(maui => maui
-            .UseTelerikControls())
-}
-```
-
-## Getting Started
-
-With Maui Initialized we are now able to make use of the MauiContent control provided by Uno.Extensions.Maui.WinUI.
+If the application is using Central Package Management, remove PackageVersion elements for the following packages
 
 ```xml
-<Page x:Class="DemoTelerikApp.Presentation.MainPage"
-      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-      xmlns:embed="using:Uno.Extensions.Maui"
-      xmlns:maui="using:Microsoft.Maui.Controls"
-      Background="{ThemeResource BackgroundBrush}">
+<Project ToolsVersion="15.0">
+  <ItemGroup>
+    ...
+    <!--<PackageVersion Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.756" /> -->
+    <!-- <PackageVersion Include="Microsoft.WindowsAppSDK" Version="1.3.230724000" />-->
+    ...
+    <!--<PackageVersion Include="Xamarin.Google.Android.Material" Version="1.9.0.2" />-->
+    ...
+  </ItemGroup>
+</Project>
+```
 
-  <embed:MauiContent>
-    <maui:Label Text="Hello From .NET MAUI &amp; Uno Platform" />
-  </embed:MauiContent>
+In the project file for the existing Class Library, add the following ItemGroup, and remove the specified PackageReferences
+
+```xml
+<Project Sdk="Microsoft.NET.Sdk">
+  ...
+  <!-- Add this ItemGroup to add reference to Android packages -->
+	<ItemGroup Condition="$(IsAndroid)">
+		<PackageReference Include="Xamarin.Google.Android.Material" VersionOverride="1.9.0.2" />
+		<PackageReference Include="Xamarin.AndroidX.Navigation.UI" VersionOverride="2.6.0.1" />
+		<PackageReference Include="Xamarin.AndroidX.Navigation.Fragment" VersionOverride="2.6.0.1" />
+		<PackageReference Include="Xamarin.AndroidX.Navigation.Runtime" VersionOverride="2.6.0.1" />
+		<PackageReference Include="Xamarin.AndroidX.Navigation.Common" VersionOverride="2.6.0.1" />
+	</ItemGroup>
+  ...
+  <Choose>
+		<When Condition="$(IsWinAppSdk)">
+      ...
+      <!-- Remove these package references and default to those specified by .NET Maui -->
+			<!--<ItemGroup>
+				<PackageReference Include="Microsoft.WindowsAppSDK" />
+				<PackageReference Include="Microsoft.Windows.SDK.BuildTools" />
+			</ItemGroup>-->
+		</When>
+</Project>
+```
+
+Update the project file (csproj) for the Mobile target with the following PackageReferences
+```xml
+<Project Sdk="Microsoft.NET.Sdk">
+  ...
+	<Choose>
+		<When Condition="$(IsAndroid)">
+			<ItemGroup>
+        <!-- Add, or amend, the reference to Xamarin.Google.Android.Material with the VersionOverride -->
+				<PackageReference Include="Xamarin.Google.Android.Material" VersionOverride="1.9.0.2" />
+
+				<!-- Add reference to additional Android wrapper libraries -->
+        <PackageReference Include="Xamarin.AndroidX.Navigation.UI" VersionOverride="2.6.0.1" />
+				<PackageReference Include="Xamarin.AndroidX.Navigation.Fragment" VersionOverride="2.6.0.1" />
+				<PackageReference Include="Xamarin.AndroidX.Navigation.Runtime" VersionOverride="2.6.0.1" />
+				<PackageReference Include="Xamarin.AndroidX.Navigation.Common" VersionOverride="2.6.0.1" />
+        ...
+			</ItemGroup>
+      ...
+</Project>
+```
+
+Update the project file (csproj) for the Windows target to remove the following PackageReferences
+
+```xml
+<Project Sdk="Microsoft.NET.Sdk">
+	...
+  <ItemGroup>
+		<PackageReference Include="Uno.WinUI" />
+
+    <!-- Remove the following PackageReferences and use the packages included by .NET MAUI -->
+		<!-- <PackageReference Include="Microsoft.WindowsAppSDK" /> -->
+		<!-- <PackageReference Include="Microsoft.Windows.SDK.BuildTools" />-->
+	</ItemGroup>
+</Project>
+```
+
+1.  **Maui class library**  
+Add a new .NET MAUI Class Library to the application, `ExistingUnoApp.MauiControls`.
+
+![.NET MAUI Class Library](Assets/GettingStartedExisting03-MauiClassLibrary.png)  
+
+1.  **MauiControls - EmbeddedControl**  
+
+Remove the Class1.cs file that was created by the .NET MAUI Class Library template and add a .NET MAUI ContentView, `EmbeddedControl`  
+
+![.NET MAUI ContentView](Assets/GettingStartedExisting04-ContentView.png)  
+
+1.  **MauiControls - App**  
+
+
+Add a new .NET MAUI Resource Dictionary called App.
+
+![.NET MAUI ResourceDictionary](Assets/GettingStartedExisting05-ResourceDictionary.png)  
+
+This will generate App.xaml and App.xaml.cs, which we'll update to inherit from the `Application` base class instead of being a ResourceDictionary
+
+```xml
+<?xml version = "1.0" encoding = "UTF-8" ?>
+<Application xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+			 x:Class="ExistingUnoApp.MauiControls.App">
+	<Application.Resources>
+		<ResourceDictionary>
+			<ResourceDictionary.MergedDictionaries>
+			</ResourceDictionary.MergedDictionaries>
+		</ResourceDictionary>
+	</Application.Resources>
+</Application>
+```
+
+```csharp
+public partial class App : Application
+{
+    public App()
+    {
+        InitializeComponent();
+    }
+}
+```
+
+1.  **ProjectReference - MauiControls**
+
+In the project file (csproj) for the Uno class library, add a reference to the .NET MAUI class library
+
+```xml
+<Project Sdk="Microsoft.NET.Sdk">
+  ...
+	<ItemGroup>
+    <!-- Add the reference to the .NET MAUI class library as a ProjectReference -->
+		<ProjectReference Include="..\..\ExistingUnoApp.MauiControls\ExistingUnoApp.MauiControls.csproj" />
+	</ItemGroup>
+  ...
+</Project>
+
+```
+
+
+1.  **EmbeddingApplication**  
+
+Back in the Uno class library, change the base class in `App.cs` from `Application` to `EmbeddingApplication`   
+
+```csharp
+public class App : EmbeddingApplication
+{
+    protected Window? MainWindow { get; private set; }
+    protected IHost? Host { get; private set; }
+```
+
+
+
+1.  **UseMauiEmbedding**  
+If using Uno.Extensions, add UseMauiEmbedding to the IHost builder, before the Customize method. Alternatively, add a call to the UseMauiEmbedding extension method for the application instance.  
+
+**With** Uno.Extensions
+
+```csharp
+public class App : EmbeddingApplication
+{
+    protected async override void OnLaunched(LaunchActivatedEventArgs args)
+    {
+        var builder = this.CreateBuilder(args)
+            ...
+            .UseMauiEmbedding<MauiControls.App>()
+            ...
+            .Configure(host => host
+            ...
+```
+
+**Without** Uno.Extensions
+
+```csharp
+public class App : EmbeddingApplication
+{
+    protected async override void OnLaunched(LaunchActivatedEventArgs args)
+    {
+      ...
+      this.UseMauiEmbedding<MauiControls.App>(MainWindow);
+      ...
+```
+
+1.  **MauiHost**  
+
+Add a MauiHost element to the MainPage and set the Source property to match the EmbeddedControl  
+
+```xml
+<Page x:Class="ExistingUnoApp.Presentation.MainPage"
+  ... >
+
+	<Grid>
+    ...
+    <embed:MauiHost x:Name="MauiHostElement"
+            xmlns:embed="using:Uno.Extensions.Maui"
+            xmlns:controls="using:ExistingUnoApp.MauiControls"
+            Source="controls:EmbeddedControl" />
+    ...
+	</Grid>
 </Page>
 ```
 
-### Resources & Styles
-
-When the MauiContent is created it will walk the Visual Tree and look for any parents including `Application.Current` which have a ResourceDictionary which has Resources and/or Styles. It will then do it's best to bring these over to the available MAUI Resources. This includes being able to reuse Colors, Brushes, Thickness, and Converters as well as some limited support for Styles.
-
-### XAML Extensions
-
-There are several XAML Extensions that you may decide to make use of while building an app with .NET MAUI Embedding.
-
-- MauiBinding - As the name suggests this will allow you to create a binding to your DataContext. **NOTE** You can not use `x:Bind` or `Binding` on a MAUI Control.
-- MauiColor: If you want to be able to directly apply a Hex string or `Color` name to a `Color` property on a MAUI Control you can use the `MauiColor` Extension to provide that value.
-- MauiThickness: If you want to be able to directly apply a `Thickness`, you can use the `MauiThickness` extension to provide a value like `10`, `10,20`, or `10,20,10,5`
-- MauiResource: As explained in the previous section, the `MauiContent` control will bring over the WinUI Resources automatically to make it easier to provide consistent styling even within the `MauiContent` of your View. This will allow you to provide a resource Key to apply to a given property.
-
-```xml
-<maui:VerticalStackLayout BackgroundColor="{embed:MauiColor Value='#ABABAB'}">
-  <maui:Label Text="{embed:MauiBinding Path='Message'}" />
-</maui:VerticalStackLayout>
-```
-
-### Limitations and Known issues
-
-- Some controls like the `ScrollView` from .NET MAUI will not have the `Content` property automatically recognized by the XAML compiler. As a result you will need to be more verbose with these controls like:
-  ```xml
-  <ScrollView>
-    <ScrollView.Content>
-      <!-- My Content -->
-    </ScrollView.Content>
-  </ScrollView>
-  ```
-- Common type conversions such as hex string or color name to Maui Graphics Color will not work with the XAML Compiler. Similarly types like Thickness `10` or `10,20` will not be picked up and converted by the XAML Compiler. For these primitive types especially it is recommended to simply provide a WinUI Thickness or Color in your Resource Dictionary. These native types will be automatically converted to MAUI types and available to use with the `MauiResource` XAML Extension.
-- .NET MAUI Hot Reload will throw an exception and cause the app the crash. You will need to disable this in Visual Studio for now.
+Build and run on each target platform to see the .NET MAUI control embedded within the Uno application
