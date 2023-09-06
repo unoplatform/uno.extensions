@@ -67,7 +67,7 @@ public static class ConfigurationBuilderExtensions
 		return configurationBuilder.AddEnvironmentConfiguration(hostingContext, default);
 	}
 
-	private static IConfigurationBuilder AddEmbeddedConfigurationFile<TApplicationRoot>(this IConfigurationBuilder configurationBuilder, string configurationFileName)
+	public static IConfigurationBuilder AddEmbeddedConfigurationFile<TApplicationRoot>(this IConfigurationBuilder configurationBuilder, string configurationFileName)
 		where TApplicationRoot : class
 	{
 		var generalAppConfiguration =
