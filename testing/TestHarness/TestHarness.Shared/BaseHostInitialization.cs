@@ -67,11 +67,11 @@ public abstract class BaseHostInitialization : IHostInitialization
 			// Only use this syntax for UI tests - use UseConfiguration in apps
 			builder = builder.ConfigureAppConfiguration((ctx, b) =>
 			{
-				b.AddEmbeddedConfiguration<App>(ctx, file);
+				b.AddEmbeddedConfigurationFile<App>(file);
 			});
 
 		}
-		return builder;
+		return builder; ;
 	}
 
 	protected virtual IHostBuilder Logging(IHostBuilder builder)
