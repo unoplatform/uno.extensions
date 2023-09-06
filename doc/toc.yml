@@ -145,6 +145,12 @@
       items:
         - name: Overview
           href: Overview/Validation/ValidationOverview.md
+    - name: .NET MAUI Embedding
+      items:
+        - name: Overview
+          href: Overview/Maui/MauiOverview.md
+        - name: Controls - GrapeCity
+          href: Overview/Maui/GrapeCity.md
 - name: Reference
   items:
     - name: MVUX
