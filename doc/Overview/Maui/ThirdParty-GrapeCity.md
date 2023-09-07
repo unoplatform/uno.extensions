@@ -1,9 +1,13 @@
 ---
-uid: Overview.Maui.GrapeCity
+uid: Overview.Maui.ThirdParty.GrapeCity
 ---
 # .NET MAUI Embedding - GrapeCity
 
 The ComponentOne FlexGrid and Calendar controls from GrapeCity can be used in an Uno Platform application via .NET MAUI Embedding. 
+
+## Sample App
+
+An existing sample app that showcases the controls is available [here](https://github.com/unoplatform/Uno.Samples/tree/master/UI/MauiEmbedding/MauiEmbeddingApp)
 
 ## Installation
 
@@ -14,12 +18,12 @@ In order to use the ComponentOne controls, you first need to install the Compone
 1. Create a new application using the `unoapp` template, enabling .NET MAUI Embedding. In this case we're going to use the Blank template (`-preset blank`) and include .NET MAUI Embedding support (`-maui`).
 
     ```
-    dotnet new unoapp -preset blank -maui -o GrapeCityApp
+    dotnet new unoapp -preset blank -maui -o MauiEmbeddingApp
     ```
 
-1. Remove the `net7.0` (or `net8.0`) target framework from both the GrapeCityApp and GrapeCityApp.MauiControls projects.  
+1. Remove the `net7.0` target framework from both the MauiEmbeddingApp and MauiEmbeddingApp.MauiControls projects.  
 
-1. Next, add a reference to the C1 .NET MAUI NuGet packages to the GrapeCityApp.MauiControls library. If you want to use the FlexGrid, add a reference to [`C1.Maui.Grid`](https://www.nuget.org/packages/C1.Maui.Grid); if you want to use the Calendar, add a reference to [`C1.Maui.Calendar`](https://www.nuget.org/packages/C1.Maui.Calendar).  
+1. Next, add a reference to the C1 .NET MAUI NuGet packages to the MauiEmbeddingApp.MauiControls project. If you want to use the FlexGrid, add a reference to [`C1.Maui.Grid`](https://www.nuget.org/packages/C1.Maui.Grid); if you want to use the Calendar, add a reference to [`C1.Maui.Calendar`](https://www.nuget.org/packages/C1.Maui.Calendar).  
 
 1. In the `AppBuilderExtensions` class, update the `UseMauiControls` extension method to call either, or both, the `RegisterFlexGridControls` or `RegisterCalendarControls` methods.  
 
@@ -27,7 +31,7 @@ In order to use the ComponentOne controls, you first need to install the Compone
     using C1.Maui.Grid;
     using C1.Maui.Calendar;
 
-    namespace GrapeCityApp;
+    namespace MauiEmbeddingApp;
 
     public static class AppBuilderExtensions
     {
@@ -37,8 +41,8 @@ In order to use the ComponentOne controls, you first need to install the Compone
     			.RegisterCalendarControls()
     			.ConfigureFonts(fonts =>
     			{
-    				fonts.AddFont("GrapeCityApp/Assets/Fonts/OpenSansRegular.ttf", "OpenSansRegular");
-    				fonts.AddFont("GrapeCityApp/Assets/Fonts/OpenSansSemibold.ttf", "OpenSansSemibold");
+    				fonts.AddFont("MauiEmbeddingApp/Assets/Fonts/OpenSansRegular.ttf", "OpenSansRegular");
+    				fonts.AddFont("MauiEmbeddingApp/Assets/Fonts/OpenSansSemibold.ttf", "OpenSansSemibold");
     			});
     }
     ```
@@ -57,8 +61,3 @@ In order to use the ComponentOne controls, you first need to install the Compone
 1. Follow the [Calendar Quick Start](https://www.grapecity.com/componentone/docs/maui/online-maui/calendarquickstart.html) by applying XAML to the EmbeddedControl.xaml.  
 
 1. In order for the Calendar control to render correctly on all platforms you should set both `HeightRequest` and `WidthRequest` attributes on the Calendar control.  
-
-
-## Sample
-
-A sample application that features GrapeCity controls is available [here](https://github.com/unoplatform/Uno.Samples/tree/dev/master/UI/MauiEmbedding/GrapeCityApp). The samples requires the ComponentOne ControlPanel to be installed.
