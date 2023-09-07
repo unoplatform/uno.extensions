@@ -1,9 +1,9 @@
 ---
-uid: Overview.Maui.ThirdParty.XXXX
+uid: Overview.Maui.ThirdParty.EsriMaps
 ---
-# .NET MAUI Embedding - XXXX
+# .NET MAUI Embedding - EsriMaps
 
-The YYYY controls from XXXX can be used in an Uno Platform application via .NET MAUI Embedding. 
+The YYYY controls from EsriMaps can be used in an Uno Platform application via .NET MAUI Embedding. 
 
 ## Installation
 
@@ -11,7 +11,7 @@ In order to use the YYYY controls, you first need to [instructions and link].
 
 ## Sample App
 
-An existing sample app that showcases the controls is available [here](LINK)
+An existing sample app that showcases the controls is available [here](https://github.com/unoplatform/Uno.Samples/tree/master/UI/MauiEmbedding/ArcGisApp)
 
 ## Getting Started
 
