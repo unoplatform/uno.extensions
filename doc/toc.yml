@@ -149,8 +149,20 @@
       items:
         - name: Overview
           href: Overview/Maui/MauiOverview.md
-        - name: Controls - GrapeCity
-          href: Overview/Maui/GrapeCity.md
+        - name: Third Party Controls - GrapeCity
+          href: Overview/Maui/ThirdParty-GrapeCity.md
+        # - name: Third Party Controls - DevExpress
+        #   href: Overview/Maui/ThirdParty-DevExpress.md
+        # - name: Third Party Controls - ArcGIS
+        #   href: Overview/Maui/ThirdParty-EsriMaps.md
+        - name: Third Party Controls - GrialKit
+          href: Overview/Maui/ThirdParty-GrialKit.md
+        - name: Third Party Controls - .NET MAUI Community Toolkit
+          href: Overview/Maui/ThirdParty-MauiCommunityToolkit.md
+        # - name: Third Party Controls - Syncfusion
+        #   href: Overview/Maui/ThirdParty-Synfusion.md
+        # - name: Third Party Controls - Telerik
+        #   href: Overview/Maui/ThirdParty-Telerik.md
 - name: Reference
   items:
     - name: MVUX
