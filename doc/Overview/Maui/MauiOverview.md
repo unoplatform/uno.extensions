@@ -3,7 +3,7 @@ uid: Overview.Maui
 ---
 # .NET MAUI Embedding
 
-With .NET MAUI Embedding 3rd party control libraries for .NET MAUI can bed used within an Uno Platform application.
+With .NET MAUI Embedding 3rd party control libraries for .NET MAUI can bed used within an Uno Platform application. Note that these controls work only for target platforms .NET MAUI reaches – iOS, Android, MacOS, and Windows.
 
 ## Overview
 
