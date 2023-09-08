@@ -27,7 +27,7 @@ The last thing we'll need from the zip file is the nuget.config file. This file 
 
 
 ## Getting Started
- 
+
 1. Create a new application using the `unoapp` template, enabling .NET MAUI Embedding. In this case we're going to use the Blank template (`-preset blank`) and include .NET MAUI Embedding support (`-maui`).
 
     ```
@@ -83,7 +83,8 @@ public class Application : Microsoft.UI.Xaml.NativeApplication
 ```cs
 using UXDivers.Grial;
 
-namespace GrialSampleApp;
+namespace MauiEmbeddingApp;
+
 public static class AppBuilderExtensions
 {
     public static MauiAppBuilder UseMauiControls(this MauiAppBuilder builder)
@@ -113,7 +114,7 @@ public static class AppBuilderExtensions
 
 The PieChart is one of many controls that's available in the Grial UI Kit. More information about the PieChart and other controls is available in the [Grial UI Kit Documentation](https://docs.grialkit.com/charts/pie-chart)
 
-1. Update the EmbeddedControl.xaml with the following XAML that includes the PieChart
+1. Update the EmbeddedControl.xaml in the `MauiEmbedding.MauiControls` project with the following XAML that includes the PieChart
 
 ```xml
 <?xml version="1.0" encoding="utf-8" ?>
@@ -121,7 +122,7 @@ The PieChart is one of many controls that's available in the Grial UI Kit. More 
 			 xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
 			 xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
 			 xmlns:grial="http://uxdivers.com/grial"
-			 x:Class="GrialSampleApp.MauiControls.EmbeddedControl"
+			 x:Class="MauiEmbeddingApp.MauiControls.EmbeddedControl"
 			 HorizontalOptions="Fill"
 			 VerticalOptions="Fill">
 	<ContentPage.Resources>
@@ -163,7 +164,7 @@ The PieChart is one of many controls that's available in the Grial UI Kit. More 
 1. Update the EmbeddedControl.xaml.cs with the following code that sets the `BindingContext` for the chart (the PieChart) to be a basic set of data. 
 
 ```cs
-namespace GrialSampleApp.MauiControls;
+namespace MauiEmbeddingApp.MauiControls;
 
 public partial class EmbeddedControl : ContentView
 {
