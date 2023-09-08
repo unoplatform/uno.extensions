@@ -15,7 +15,7 @@ In order to use the ComponentOne controls, you first need to install the Compone
 
 ## Getting Started
 
-1. Create a new application using the `unoapp` template, enabling .NET MAUI Embedding. In this case we're going to use the Blank template (`-preset blank`) and include .NET MAUI Embedding support (`-maui`).
+1. Create a new application using the `unoapp` template, enabling .NET MAUI Embedding. In this case, we're going to use the Blank template (`-preset blank`) and include .NET MAUI Embedding support (`-maui`).
 
     ```
     dotnet new unoapp -preset blank -maui -o MauiEmbeddingApp
@@ -49,11 +49,11 @@ In order to use the ComponentOne controls, you first need to install the Compone
 
 ## Adding FlexGrid
 
-1. Follow the [FlexGrid Quick Start](https://www.grapecity.com/componentone/docs/maui/online-maui/flexgrid-quickstart.html) by applying XAML to the EmbeddedControl.xaml and c# to the EmbeddedControl.Xaml.cs (in constructor)  
+1. Follow the [FlexGrid Quick Start](https://www.grapecity.com/componentone/docs/maui/online-maui/flexgrid-quickstart.html) by applying XAML to the EmbeddedControl.xaml and C# to the EmbeddedControl.Xaml.cs (in the constructor)  
 
 1. Add Customer class (see https://www.grapecity.com/componentone/docs/maui/online-maui/customerclass.html)  
 
-1. Wrap content in ScrollViewer on MainPage of the Uno Platform application to make sure the full FlexGrid and other controls can be scrolled into view.  
+1. Wrap content in ScrollViewer on the MainPage of the Uno Platform application to make sure the full FlexGrid and other controls can be scrolled into view.  
 
 
 ## Adding Calendar

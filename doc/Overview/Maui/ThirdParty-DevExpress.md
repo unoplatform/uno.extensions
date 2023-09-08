@@ -13,26 +13,26 @@ An existing sample app that showcases the controls is available [here](https://g
 
 The DevExpress .NET MAUI Controls are currently available [free of charge](https://www.devexpress.com/maui/). However, in order to access the NuGet packages you do need to create an account at [DevExpress website](https://www.devexpress.com/MyAccount/Register/?returnUrl=https%3a%2f%2fnuget.devexpress.com%2f%23feed-url).
 
-Once you have an account with DevExpress, you need to visit the [Your DevExpress NuGet Feed URL](https://nuget.devexpress.com/#feed-url) page to retrieve a NuGet feed that's associated with your account. You can either add this as a NuGet feed in Visual Studio, or using a nuget.config file.
+Once you have an account with DevExpress, you need to visit the [Your DevExpress NuGet Feed URL](https://nuget.devexpress.com/#feed-url) page to retrieve a NuGet feed that's associated with your account. You can either add this as a NuGet feed in Visual Studio or use a nuget.config file.
 
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
 <configuration>
   <packageSources>
-    <add key="DevExpress Private Feed" value="[your nuget feed goes here]" />
+    <add key="DevExpress Private Feed" value="[your NuGet feed goes here]" />
   </packageSources>
 </configuration>
 ```
 
 ## Getting Started
 
-1. Create a new application using the `unoapp` template, enabling .NET MAUI Embedding. In this case we're going to use the Blank template (`-preset blank`) and include .NET MAUI Embedding support (`-maui`).
+1. Create a new application using the `unoapp` template, enabling .NET MAUI Embedding. In this case, we're going to use the Blank template (`-preset blank`) and include .NET MAUI Embedding support (`-maui`).
 
     ```
     dotnet new unoapp -preset blank -maui -o MauiEmbeddingApp
     ```
 
-1. Remove the `net7.0`, `net7.0-maccatalyst` and `net7.0-windows10.0.19041.0` target frameworks from both the MauiEmbeddingApp and MauiEmbeddingApp.MauiControls projects. Also remove `net7.0-maccatalyst` from the MauiEmbeddingApp.Mobile project, and remove the MauiEmbeddingApp.Windows project. The DevExpress .NET MAUI Controls only supports iOS and Android.
+1. Remove the `net7.0`, `net7.0-maccatalyst` and, `net7.0-windows10.0.19041.0` target frameworks from both the MauiEmbeddingApp and MauiEmbeddingApp.MauiControls projects. Also, remove `net7.0-maccatalyst` from the MauiEmbeddingApp.Mobile project, and remove the MauiEmbeddingApp.Windows project. The DevExpress .NET MAUI Controls only supports iOS and Android.
 
 1. Next, add a reference to `DevExpress.Maui.DataGrid` to the MauiEmbeddingApp.MauiControls project.
 
@@ -77,7 +77,7 @@ Once you have an account with DevExpress, you need to visit the [Your DevExpress
     ```
 
     > [!NOTE]
-    > You may noticed that the `Binding` markup extension is used on some properties. The `MauiEmbedding` can handle bindings between Maui Controls and UnoPlatform, just make sure the property in the `Binding` expression matches the property on your ViewModel.
+    > You may notice that the `Binding` markup extension is used on some properties. The `MauiEmbedding` can handle bindings between Maui Controls and UnoPlatform, just make sure the property in the `Binding` expression matches the property on your ViewModel.
 
 1. Update the EmbeddedControl.xaml.cs with the following code. 
 

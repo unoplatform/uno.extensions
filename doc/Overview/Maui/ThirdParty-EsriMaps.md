@@ -10,15 +10,15 @@ The MapView control that's part of the ArcGIS Maps SDK for .NET can be used in a
 An existing sample app that showcases the controls is available [here](https://github.com/unoplatform/Uno.Samples/tree/master/UI/MauiEmbedding/ArcGisApp).
 
 > [!NOTE] 
-> For this sample you can don't need to have a license, because it's just a demo and for development purposes.
+> For this sample you don't need to have a license, because it's just a demo and for development purposes.
 
 ## Installation
 
-In order to use the MapView control, you first need to create an account via the [ArcGIS Developers portal](https://developers.arcgis.com/sign-up/) and depending on the use of location services, you may also need an API kwy. This walkthrough does not require a license or an API key to run.
+In order to use the MapView control, you first need to create an account via the [ArcGIS Developers portal](https://developers.arcgis.com/sign-up/), and depending on the use of location services, you may also need an API key. This walkthrough does not require a license or an API key to run.
 
 ## Getting Started
 
-1. Create a new application using the `unoapp` template, enabling .NET MAUI Embedding. In this case we're going to use the Blank template (`-preset blank`) and include .NET MAUI Embedding support (`-maui`).
+1. Create a new application using the `unoapp` template, enabling .NET MAUI Embedding. In this case, we're going to use the Blank template (`-preset blank`) and include .NET MAUI Embedding support (`-maui`).
 
     ```
     dotnet new unoapp -preset blank -maui -o MauiEmbeddingApp

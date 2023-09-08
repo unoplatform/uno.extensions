@@ -13,9 +13,9 @@ An existing sample app that showcases the controls is available [here](https://g
 
 In order to use the Grial UI Kit controls, you first need to [sign up](https://admin.grialkit.com/secure/grial/front/signup). 
 
-After signing up, when you login to the [admin portal](https://admin.grialkit.com), you'll be prompted to create a Grial app by entering the name of the application. Once you've created the Grial app, go to the Download tab and select `Download Kickoff Solution` - at this point you'll be prompted to purchase a license, which you'll need in order to proceed with using Grial.
+After signing up, when you log in to the [admin portal](https://admin.grialkit.com), you'll be prompted to create a Grial app by entering the name of the application. Once you've created the Grial app, go to the Download tab and select `Download Kickoff Solution` - at this point, you'll be prompted to purchase a license, which you'll need in order to proceed with using Grial.
 
-Extract the downloaded zip file and locate the GrialLicense file. We'll add this file into the Uno application. Also in the zip file, open the csproj file and retrieve the ApplicationTitle and ApplicationId property values.
+Extract the downloaded zip file and locate the GrialLicense file. We'll add this file to the Uno application. Also in the zip file, open the csproj file and retrieve the ApplicationTitle and ApplicationId property values.
 
 ```xml
 <!-- Display name -->
@@ -28,13 +28,13 @@ The last thing we'll need from the zip file is the nuget.config file. This file 
 
 ## Getting Started
 
-1. Create a new application using the `unoapp` template, enabling .NET MAUI Embedding. In this case we're going to use the Blank template (`-preset blank`) and include .NET MAUI Embedding support (`-maui`).
+1. Create a new application using the `unoapp` template, enabling .NET MAUI Embedding. In this case, we're going to use the Blank template (`-preset blank`) and include .NET MAUI Embedding support (`-maui`).
 
     ```
     dotnet new unoapp -preset blank -maui -o MauiEmbeddingApp
     ```
 
-1. Remove the `net7.0`, `net7.0-maccatalyst` and `net7.0-windows10.0.19041.0` target frameworks from both the MauiEmbeddingApp and MauiEmbeddingApp.MauiControls projects.  
+1. Remove the `net7.0`, `net7.0-maccatalyst` and, `net7.0-windows10.0.19041.0` target frameworks from both the MauiEmbeddingApp and MauiEmbeddingApp.MauiControls projects.  
 
 1. Remove the `net7.0-windows10.0.19041.0` target framework from the MauiEmbeddingApp.Mobile project.  
 
