@@ -1,9 +1,9 @@
 ---
 uid: Overview.Maui.ThirdParty.GrapeCity
 ---
-# .NET MAUI Embedding - GrapeCity
+# .NET MAUI Embedding - GrapeCity ComponentOne .NET MAUI Controls
 
-The ComponentOne FlexGrid and Calendar controls from GrapeCity can be used in an Uno Platform application via .NET MAUI Embedding. 
+The FlexGrid and Calendar in the ComponentOne .NET MAUI Controls can be used in an Uno Platform application via .NET MAUI Embedding. 
 
 ## Sample App
 
