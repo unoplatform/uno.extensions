@@ -7,7 +7,7 @@ The controls in the Telerik UI for .NET MAUI can be used in an Uno Platform appl
 
 ## Sample App
 
-An existing sample app that showcases the controls is available [here](https://github.com/unoplatform/Uno.Samples/tree/master/UI/MauiEmbedding/TelerikApp)
+An existing sample app that showcases the controls is available [here](https://github.com/unoplatform/Uno.Samples/tree/master/UI/MauiEmbedding/TelerikApp).
 
 ## Installation
 
@@ -23,7 +23,7 @@ In order to use the Telerik controls, you first need to create an account and or
 
 1. Next, add a reference to the `Telerik.UI.for.Maui` NuGet package to the `MauiEmbeddingApp.MauiControls` project.
 
-1. In the `AppBuilderExtensions` class, on `MauiEmbeddingApp.MauiControls` project, update the `UseMauiControls` extension method to call the `UseMauiCommunityToolkit` method.
+1. In the `AppBuilderExtensions` class, on `MauiEmbeddingApp.MauiControls` project, update the `UseMauiControls` extension method to call the `UseTelerik` method.
 
     ```cs
     using Telerik.Maui.Controls;

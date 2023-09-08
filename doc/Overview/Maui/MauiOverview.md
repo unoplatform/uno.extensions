@@ -3,7 +3,7 @@ uid: Overview.Maui
 ---
 # .NET MAUI Embedding
 
-With .NET MAUI Embedding 3rd party control libraries for .NET MAUI can bed used within an Uno Platform application.
+With .NET MAUI Embedding 3rd party control libraries for .NET MAUI can be used within an Uno Platform application.
 
 ## Overview
 
@@ -11,7 +11,7 @@ The integration of .NET MAUI controls into an Uno application consist of two par
 
 The `MauiHost` control (that's part of the Uno.Extensions.Maui.WinUI package) is added to any Uno page or control to embed a .NET MAUI control. The `Source` property on the `MauiHost` is the type of .NET MAUI control that will be added as a child of the `MauiHost` control. As the .NET MAUI control will be added as a child, it will inherit the data context of the `MauiHost` control. The DataContext on the `MauiHost` is mapped to the `BindingContext` of the .NET MAUI control.
 
-It's recommended that instead of hosting individual .NET MAUI controls in a `MauiHost` element, that a `ContentView` is created inside a .NET MAUI class library and set as the `Source` on a `MauiHost` element. This makes it easy to add multiple .NET MAUI controls, as well as setting properties, including data binding, in XAML.
+It's recommended that instead of hosting individual .NET MAUI controls in a `MauiHost` element, a `ContentView` should be created inside a .NET MAUI class library and set as the `Source` on a `MauiHost` element. This makes it easier to add multiple .NET MAUI controls, as well as setting properties, including data binding, in XAML.
 
 
 ## Get Started - New Uno Application
@@ -30,7 +30,7 @@ For new applications created using the Uno Platform Template Wizard for Visual S
 
     ![Select feature - .NET MAUI Embedding](Assets/GettingStarted03-MAUIEmbedding.png)
 
-1.  In addition to the typical Uno Platform application structure, there is a .NET MAUI class library (eg SimpleMauiApp.MauiControls). The MauiControls class library is where you add references to third party .NET MAUI control libraries, add any services or call registration/initialization methods on the third party libraries, and of course define the .NET MAUI controls that you want to display with the application. 
+1.  In addition to the typical Uno Platform application structure, there is a .NET MAUI class library (eg SimpleMauiApp.MauiControls). The MauiControls class library is where you add references to third party .NET MAUI control libraries, add any services or call registration/initialization methods on the third party libraries, and of course define the .NET MAUI controls that you want to display within the application. 
 
     ![Project structure](Assets/GettingStarted04-ProjectStructure.png)
 
@@ -47,7 +47,7 @@ dotnet new unoapp -preset blank -maui -o SimpleMauiApp
 
 ## Get Started - Existing Uno Application
 
-.NET MAUI Embedding can be added to any existing Uno application via the following steps. The .NET MAUi Embedding feature is only supported in Uno applications that target iOS, Android, MacCatalyst and Windows, as shown in the Platforms folder in the following solution structure. These instructions are appropriate for an Uno application targeting .NET 7.
+.NET MAUI Embedding can be added to any existing Uno application via the following steps. The .NET MAUI Embedding feature is only supported in Uno applications that target iOS, Android, MacCatalyst and Windows, as shown in the Platforms folder in the following solution structure. These instructions are appropriate for an Uno application targeting .NET 7.
 
 ![Starting solution structure](Assets/GettingStartedExisting01-StartProjectStructure.png)
 
@@ -240,7 +240,7 @@ Add a reference in the existing class library to [Uno.Extensions.Maui.WinUI](htt
 
 1.  **MauiHost**  
 
-    Add a MauiHost element to the MainPage and set the Source property to match the EmbeddedControl  
+    Add a `MauiHost` element to the MainPage and set the Source property to match the EmbeddedControl  
 
     ```xml
     <Page x:Class="ExistingUnoApp.Presentation.MainPage"
