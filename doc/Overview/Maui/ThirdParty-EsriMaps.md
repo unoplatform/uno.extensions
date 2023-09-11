@@ -3,7 +3,7 @@ uid: Overview.Maui.ThirdParty.EsriMaps
 ---
 # .NET MAUI Embedding - Esri ArcGIS Maps SDK for .NET
 
-The MapView control that's part of the ArcGIS Maps SDK for .NET can be used in an Uno Platform application via .NET MAUI Embedding. 
+The MapView control, that's part of the ArcGIS Maps SDK for .NET, can be used in an Uno Platform application via .NET MAUI Embedding. 
 
 ## Sample App
 
@@ -58,7 +58,7 @@ In order to use the MapView control, you first need to create an account via the
     > [!NOTE]
     > If you have a license key and/or a location service API key, uncomment the `delegate` provided on `UseArcGISRuntime` method. This isn't required to run this sample.
 
-## Adding MayView
+## Adding MapView
 
 1. Update the EmbeddedControl.xaml in the `MauiEmbedding.MauiControls` project with the following XAML that includes the `MapView` control.
 

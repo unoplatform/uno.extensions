@@ -7,7 +7,7 @@ The controls from MauiCommunityToolkit can be used in an Uno Platform applicatio
 
 ## Sample App
 
-An existing sample app that showcases the controls is available [here](https://github.com/unoplatform/Uno.Samples/tree/master/UI/MauiEmbedding/MauiCommunityToolkitApp)
+An existing sample app that showcases the controls is available [here](https://github.com/unoplatform/Uno.Samples/tree/master/UI/MauiEmbedding/MauiCommunityToolkitApp).
 
 ## Getting Started
 
@@ -122,6 +122,7 @@ partial class MainViewModel : ObservableObject
 }
 ```
 
+<!-- Should we let the user know in which projects this package should be installed? -->
 > [!IMPORTANT]
 > This sample is using the CommunityToolkit.MVVM NuGet package, which significantly reduces the amount of boilerplate code required. You can find the package [here](https://www.nuget.org/packages/CommunityToolkit.Mvvm).
 

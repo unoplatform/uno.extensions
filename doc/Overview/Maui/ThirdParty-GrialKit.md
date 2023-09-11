@@ -7,7 +7,7 @@ The controls from Grial UI Kit can be used in an Uno Platform application via .N
 
 ## Sample App
 
-An existing sample app that showcases the controls is available [here](https://github.com/unoplatform/Uno.Samples/tree/master/UI/MauiEmbedding/GrialKitApp)
+An existing sample app that showcases the controls is available [here](https://github.com/unoplatform/Uno.Samples/tree/master/UI/MauiEmbedding/GrialKitApp).
 
 ## Installation
 
@@ -119,44 +119,44 @@ The PieChart is one of many controls that's available in the Grial UI Kit. More 
 ```xml
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-			 xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-			 xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
-			 xmlns:grial="http://uxdivers.com/grial"
-			 x:Class="MauiEmbeddingApp.MauiControls.EmbeddedControl"
-			 HorizontalOptions="Fill"
-			 VerticalOptions="Fill">
-	<ContentPage.Resources>
-		<grial:ChartTheme x:Key="PieTheme">
-			<SolidColorBrush Color="#F9B300" />
-			<SolidColorBrush Color="#FF602E" />
-			<SolidColorBrush Color="#B146C2" />
-			<SolidColorBrush Color="#5AC8FA" />
-			<SolidColorBrush Color="#46C771" />
-			<SolidColorBrush Color="#3F75FF" />
-		</grial:ChartTheme>
-	</ContentPage.Resources>
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:grial="http://uxdivers.com/grial"
+             x:Class="MauiEmbeddingApp.MauiControls.EmbeddedControl"
+             HorizontalOptions="Fill"
+             VerticalOptions="Fill">
+  <ContentPage.Resources>
+    <grial:ChartTheme x:Key="PieTheme">
+      <SolidColorBrush Color="#F9B300" />
+      <SolidColorBrush Color="#FF602E" />
+      <SolidColorBrush Color="#B146C2" />
+      <SolidColorBrush Color="#5AC8FA" />
+      <SolidColorBrush Color="#46C771" />
+      <SolidColorBrush Color="#3F75FF" />
+    </grial:ChartTheme>
+  </ContentPage.Resources>
 
-	<VerticalStackLayout Padding="30">
-		<grial:PieChart x:Name="chart"
-						HeightRequest="400"
-						BackgroundColor="Transparent"
-						IsAnimated="False"
-						LabelFontColor="DimGray"
-						LabelFontSize="12"
-						StrokeSize="0"
-						Theme="{ StaticResource PieTheme }">
-			<grial:PieSeries InnerRadius="{ Binding Value, Source={x:Reference radius} }"
-							 ItemsSource="{ Binding . }"
-							 Radius="120"
-							 ValuePath="Value" />
-		</grial:PieChart>
+  <VerticalStackLayout Padding="30">
+    <grial:PieChart x:Name="chart"
+                    HeightRequest="400"
+                    BackgroundColor="Transparent"
+                    IsAnimated="False"
+                    LabelFontColor="DimGray"
+                    LabelFontSize="12"
+                    StrokeSize="0"
+                    Theme="{ StaticResource PieTheme }">
+      <grial:PieSeries InnerRadius="{ Binding Value, Source={x:Reference radius} }"
+                       ItemsSource="{ Binding . }"
+                       Radius="120"
+                       ValuePath="Value" />
+      </grial:PieChart>
 
-		<Label Text="{Binding Value, Source={x:Reference radius}, StringFormat='InnerRadius: {0:F2}'}" />
+    <Label Text="{Binding Value, Source={x:Reference radius}, StringFormat='InnerRadius: {0:F2}'}" />
 
-		<Slider Maximum=".9"
-				Minimum="0"
-				Value="0.8"
-				x:Name="radius" />
+    <Slider Maximum=".9"
+            Minimum="0"
+            Value="0.8"
+            x:Name="radius" />
 	</VerticalStackLayout>
 </ContentView>
 ```

@@ -7,7 +7,7 @@ The controls from [DevExpress .NET MAUI Controls](https://www.devexpress.com/mau
 
 ## Sample App
 
-An existing sample app that showcases the controls is available [here](https://github.com/unoplatform/Uno.Samples/tree/master/UI/MauiEmbedding/DevExpressApp)
+An existing sample app that showcases the controls is available [here](https://github.com/unoplatform/Uno.Samples/tree/master/UI/MauiEmbedding/DevExpressApp).  
 
 ## Installation
 
@@ -67,8 +67,8 @@ Once you have an account with DevExpress, you need to visit the [Your DevExpress
         xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
         xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
         xmlns:dxg="clr-namespace:DevExpress.Maui.DataGrid;assembly=DevExpress.Maui.DataGrid">
-    <dxg:DataGridView ItemsSource="{Binding Employees}">
-        <dxg:DataGridView.Columns>
+        <dxg:DataGridView ItemsSource="{Binding Employees}">
+            <dxg:DataGridView.Columns>
                 <dxg:TextColumn FieldName="Name" Caption="Name" />
                 <dxg:TextColumn FieldName="Position" Caption="Job"/>
             </dxg:DataGridView.Columns>
@@ -247,13 +247,13 @@ Once you have an account with DevExpress, you need to visit the [Your DevExpress
 
     ```xml
     <Page x:Class="MauiEmbeddingApp.MainPage"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:local="using:MauiEmbeddingApp.ViewModels"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d"
-        Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+          xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+          xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+          xmlns:local="using:MauiEmbeddingApp.ViewModels"
+          xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+          xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+          mc:Ignorable="d"
+          Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Page.DataContext>
             <local:MainViewModel />
         </Page.DataContext>

@@ -7,7 +7,7 @@ The FlexGrid and Calendar in the ComponentOne .NET MAUI Controls can be used in 
 
 ## Sample App
 
-An existing sample app that showcases the controls is available [here](https://github.com/unoplatform/Uno.Samples/tree/master/UI/MauiEmbedding/MauiEmbeddingApp)
+An existing sample app that showcases the controls is available [here](https://github.com/unoplatform/Uno.Samples/tree/master/UI/MauiEmbedding/MauiEmbeddingApp).
 
 ## Installation
 
@@ -21,9 +21,9 @@ In order to use the ComponentOne controls, you first need to install the Compone
     dotnet new unoapp -preset blank -maui -o MauiEmbeddingApp
     ```
 
-1. Remove the `net7.0` target framework from both the MauiEmbeddingApp and MauiEmbeddingApp.MauiControls projects.  
+1. Remove the `net7.0` target framework from both the MauiEmbeddingApp and MauiEmbeddingApp.MauiControls projects.  <!-- Should we explain why? -->
 
-1. Next, add a reference to the C1 .NET MAUI NuGet packages to the MauiEmbeddingApp.MauiControls project. If you want to use the FlexGrid, add a reference to [`C1.Maui.Grid`](https://www.nuget.org/packages/C1.Maui.Grid); if you want to use the Calendar, add a reference to [`C1.Maui.Calendar`](https://www.nuget.org/packages/C1.Maui.Calendar).  
+1. Next, add a reference to the C1 .NET MAUI NuGet packages to the MauiEmbeddingApp.MauiControls project. If you want to use the FlexGrid control, add a reference to [`C1.Maui.Grid`](https://www.nuget.org/packages/C1.Maui.Grid). If you want to use the Calendar control, add a reference to [`C1.Maui.Calendar`](https://www.nuget.org/packages/C1.Maui.Calendar).  
 
 1. In the `AppBuilderExtensions` class, update the `UseMauiControls` extension method to call either, or both, the `RegisterFlexGridControls` or `RegisterCalendarControls` methods.  
 
@@ -37,27 +37,27 @@ In order to use the ComponentOne controls, you first need to install the Compone
     {
 	    public static MauiAppBuilder UseMauiControls(this MauiAppBuilder builder) 
 		    => builder
-			    .RegisterFlexGridControls()
-    			.RegisterCalendarControls()
-    			.ConfigureFonts(fonts =>
-    			{
-    				fonts.AddFont("MauiEmbeddingApp/Assets/Fonts/OpenSansRegular.ttf", "OpenSansRegular");
-    				fonts.AddFont("MauiEmbeddingApp/Assets/Fonts/OpenSansSemibold.ttf", "OpenSansSemibold");
-    			});
+                .RegisterFlexGridControls()
+                .RegisterCalendarControls()
+                .ConfigureFonts(fonts =>
+                {
+                    fonts.AddFont("MauiEmbeddingApp/Assets/Fonts/OpenSansRegular.ttf", "OpenSansRegular");
+                    fonts.AddFont("MauiEmbeddingApp/Assets/Fonts/OpenSansSemibold.ttf", "OpenSansSemibold");
+                });
     }
     ```
 
 ## Adding FlexGrid
 
-1. Follow the [FlexGrid Quick Start](https://www.grapecity.com/componentone/docs/maui/online-maui/flexgrid-quickstart.html) by applying XAML to the EmbeddedControl.xaml and C# to the EmbeddedControl.Xaml.cs (in the constructor)  
+1. Follow the [FlexGrid Quick Start](https://www.grapecity.com/componentone/docs/maui/online-maui/flexgrid-quickstart.html) to apply XAML to the EmbeddedControl.xaml and C# code to the EmbeddedControl.xaml.cs (in the constructor).
 
-1. Add Customer class (see https://www.grapecity.com/componentone/docs/maui/online-maui/customerclass.html)  
+1. Add Customer class (see https://www.grapecity.com/componentone/docs/maui/online-maui/customerclass.html).
 
-1. Wrap content in ScrollViewer on the MainPage of the Uno Platform application to make sure the full FlexGrid and other controls can be scrolled into view.  
+1. Wrap content in `ScrollViewer` on the `MainPage` of the Uno Platform application to make sure the full `FlexGrid` and other controls can be scrolled into the view.
 
 
 ## Adding Calendar
 
-1. Follow the [Calendar Quick Start](https://www.grapecity.com/componentone/docs/maui/online-maui/calendarquickstart.html) by applying XAML to the EmbeddedControl.xaml.  
+1. Follow the [Calendar Quick Start](https://www.grapecity.com/componentone/docs/maui/online-maui/calendarquickstart.html) to apply XAML to the EmbeddedControl.xaml.
 
-1. In order for the Calendar control to render correctly on all platforms you should set both `HeightRequest` and `WidthRequest` attributes on the Calendar control.  
+1. In order for the Calendar control to render correctly on all platforms you should set both `HeightRequest` and `WidthRequest` attributes on the Calendar control.
