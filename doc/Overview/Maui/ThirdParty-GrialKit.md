@@ -196,3 +196,11 @@ public partial class EmbeddedControl : ContentView
     }
 }
 ```
+
+**App Render Output**
+
+- **Android:**
+  - ![Android GrialKit](Assets/Screenshots/Android/GrialKit.png)
+
+- **iOS:**
+  - ![iOS GrialKit](Assets/Screenshots/iOS/GrialKit.png)

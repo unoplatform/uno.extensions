@@ -105,3 +105,11 @@ In order to use the MapView control, you first need to create an account via the
     ```
 
 1. Now the project is good to go! Press F5 and should see the MapView control running on your application.
+
+**App Render Output**
+
+- **Android:**
+  - ![Android EsriMaps](Assets/Screenshots/Android/EsriMaps.png)
+
+- **Windows:**
+  - ![Windows EsriMaps](Assets/Screenshots/Windows/EsriMaps.png)

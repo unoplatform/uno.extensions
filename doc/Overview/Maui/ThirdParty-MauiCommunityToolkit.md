@@ -164,3 +164,11 @@ partial class MainViewModel : ObservableObject
 
 
 1. Now the project is good to go! Press F5 and you should see the `DrawingView` control working as expected. And tweaking the `ToggleSwitch` controls should change the `DrawingView` behavior.
+
+**App Render Output**
+
+- **Android:**
+  - ![Android CommunityToolkit](Assets/Screenshots/Android/CommunityToolkit.png)
+
+- **Windows:**
+  - ![Windows CommunityToolkit](Assets/Screenshots/Windows/CommunityToolkit.png)

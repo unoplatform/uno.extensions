@@ -79,3 +79,11 @@ In order to use the Telerik controls, you first need to create an account and or
     ```
 
 1. Now the project is good to go! Press F5 and you should see the `RadSignaturePad` control working as expected.
+
+**App Render Output**
+
+- **Android:**
+  - ![Android Telerik](Assets/Screenshots/Android/Telerik.png)
+
+- **Windows:**
+  - ![Windows Telerik](Assets/Screenshots/Windows/Telerik.png)

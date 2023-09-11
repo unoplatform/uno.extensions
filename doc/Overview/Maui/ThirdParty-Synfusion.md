@@ -511,3 +511,10 @@ using Syncfusion.Maui.Core.Hosting;
         }
     }
     ```
+**App Render Output**
+
+- **Android:**
+  - ![Android Syncfusion](Assets/Screenshots/Android/Syncfusion.png)
+
+- **Windows:**
+  - ![Windows Syncfusion](Assets/Screenshots/Windows/Syncfusion.png)

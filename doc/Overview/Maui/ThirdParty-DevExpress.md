@@ -267,3 +267,11 @@ Once you have an account with DevExpress, you need to visit the [Your DevExpress
     ```
 
 1. Now the project is good to go! Press F5 and you should see the `DataGridView` control working as expected.
+
+**App Render Output**
+
+- **Android:**
+  - ![Android DevExpress](Assets/Screenshots/Android/DevExpress.png)
+
+- **iOS:**
+  - ![iOS DevExpress](Assets/Screenshots/iOS/DevExpress.png)
