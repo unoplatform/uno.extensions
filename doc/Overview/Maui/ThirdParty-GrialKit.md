@@ -34,7 +34,7 @@ The last thing we'll need from the zip file is the nuget.config file. This file 
     dotnet new unoapp -preset blank -maui -o MauiEmbeddingApp
     ```
 
-1. Remove the `net7.0`, `net7.0-maccatalyst` and, `net7.0-windows10.0.19041.0` target frameworks from both the MauiEmbeddingApp and MauiEmbeddingApp.MauiControls projects.  
+1. Remove the `net7.0`, `net7.0-maccatalyst`, and `net7.0-windows10.0.19041.0` target frameworks from both the MauiEmbeddingApp and MauiEmbeddingApp.MauiControls projects.  
 
 1. Remove the `net7.0-maccatalyst` target framework from the MauiEmbeddingApp.Mobile project.  
 

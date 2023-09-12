@@ -12,7 +12,7 @@ For this sample, we will use the `CommunityToolkit.Maui` library.
 
 ### 1. Installing the NuGet package
 
-On Visual Studio, you can use the `Nuget Package Manager` to install the `CommunityToolkit.Maui` package. Install it on your class library project and mobile and Windows project (because this package support those platforms).
+On Visual Studio, you can use the `Nuget Package Manager` to install the `CommunityToolkit.Maui` package. Install it on your class library project and mobile and Windows projects (because this package supports those platforms).
 
 To verify if the package is installed you can look on your csproj file and check if the package is there. It should be something like this:
 

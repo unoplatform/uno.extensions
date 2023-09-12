@@ -11,7 +11,7 @@ An existing sample app that showcases the controls is available [here](https://g
 
 ## Installation
 
-In order to use the Syncfusion controls, you will need to create an account and purchase a Syncfusion license [here](https://help.syncfusion.com/maui/licensing/overview). This sample can be run in development without a license key
+In order to use the Syncfusion controls, you will need to create an account and purchase a Syncfusion license [here](https://help.syncfusion.com/maui/licensing/overview). This sample can be run in development without a license key.
 
 ## Getting Started
 

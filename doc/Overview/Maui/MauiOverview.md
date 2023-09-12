@@ -3,7 +3,7 @@ uid: Overview.Maui
 ---
 # .NET MAUI Embedding
 
-With .NET MAUI Embedding 3rd party control libraries for .NET MAUI can be used within an Uno Platform application.
+With .NET MAUI Embedding 3rd party control libraries for .NET MAUI can be used within an Uno Platform application. Note that these controls work only for target platforms .NET MAUI reaches – iOS, Android, MacOS, and Windows.
 
 ## Overview
 
@@ -22,7 +22,7 @@ For new applications created using the Uno Platform Template Wizard for Visual S
 
     ![Select startup type](Assets/GettingStarted01-StartupType.png)
 
-1.  .NET MAUI Embedding is only supported on iOS, Android, MacCatalyst and, Windows. If you have any other platforms selected, the .NET MAUI Embedding feature will be disabled. Select the Platforms section and make sure only iOS, Android, MacCatalyst and, Windows are selected.  
+1.  .NET MAUI Embedding is only supported on iOS, Android, MacCatalyst, and Windows. If you have any other platforms selected, the .NET MAUI Embedding feature will be disabled. Select the Platforms section and make sure only iOS, Android, MacCatalyst, and Windows are selected.
 
     ![Select platforms](Assets/GettingStarted02-Platforms.png)
 
@@ -47,7 +47,7 @@ dotnet new unoapp -preset blank -maui -o SimpleMauiApp
 
 ## Get Started - Existing Uno Application
 
-.NET MAUI Embedding can be added to any existing Uno application via the following steps. The .NET MAUI Embedding feature is only supported in Uno applications that target iOS, Android, MacCatalyst and, Windows, as shown in the Platforms folder in the following solution structure. These instructions are appropriate for an Uno application targeting .NET 7.
+.NET MAUI Embedding can be added to any existing Uno application via the following steps. The .NET MAUI Embedding feature is only supported in Uno applications that target iOS, Android, MacCatalyst, and Windows, as shown in the Platforms folder in the following solution structure. These instructions are appropriate for an Uno application targeting .NET 7.
 
 ![Starting solution structure](Assets/GettingStartedExisting01-StartProjectStructure.png)
 
