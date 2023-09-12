@@ -28,6 +28,7 @@ partial class MauiEmbedding
 	private static void InitializeMauiEmbeddingApp(this MauiApp mauiApp, Application app)
 	{
 		var androidApp = mauiApp.Services.GetRequiredService<Android.App.Application>();
+		var activity = mauiApp.Services.GetRequiredService<Android.App.Activity>();
 		var scope = mauiApp.Services.CreateScope();
 		var rootContext = new MauiContext(scope.ServiceProvider, androidApp);
 		rootContext.InitializeScopedServices();
@@ -39,7 +40,10 @@ partial class MauiEmbedding
 		}
 
 		embeddingApp.InitializeApplication(scope.ServiceProvider, iApp);
-		Microsoft.Maui.ApplicationModel.Platform.Init(androidApp);
+
+		// Initializing with the Activity to set the current activity.
+		// The Bundle is not actually used by Maui
+		Microsoft.Maui.ApplicationModel.Platform.Init(activity, null);
 
 		androidApp.SetApplicationHandler(iApp, rootContext);
 		InitializeApplicationMainPage(iApp);
