@@ -122,9 +122,7 @@ partial class MainViewModel : ObservableObject
 }
 ```
 
-<!-- Should we let the user know in which projects this package should be installed? -->
-> [!IMPORTANT]
-> This sample is using the CommunityToolkit.MVVM NuGet package, which significantly reduces the amount of boilerplate code required. You can find the package [here](https://www.nuget.org/packages/CommunityToolkit.Mvvm).
+1. The `MainViewModel` uses the `ObservableObject` base class that comes from the `CommunityToolkit.MVVM` NuGet package. This significantly reduces the amount of boilerplate code required. Add a reference to the [CommunityToolkit.Mvvm NuGet package](https://www.nuget.org/packages/CommunityToolkit.Mvvm) to the MauiEmbeddingApp project.  
 
 1. The final step is to add the `MainViewModel` as the `DataContext` of the `Page` in the `MainPage.xaml` file. Here's how the final xaml should look.
  
