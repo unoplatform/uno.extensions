@@ -3,22 +3,22 @@ uid: Overview.Maui.ThirdParty.EsriMaps
 ---
 # .NET MAUI Embedding - Esri ArcGIS Maps SDK for .NET
 
-The MapView control that's part of the ArcGIS Maps SDK for .NET can be used in an Uno Platform application via .NET MAUI Embedding. 
+The MapView control, that's part of the ArcGIS Maps SDK for .NET, can be used in an Uno Platform application via .NET MAUI Embedding. 
 
 ## Sample App
 
 An existing sample app that showcases the controls is available [here](https://github.com/unoplatform/Uno.Samples/tree/master/UI/MauiEmbedding/ArcGisApp).
 
 > [!NOTE] 
-> For this sample you can don't need to have a license, because it's just a demo and for development purposes.
+> For this sample you don't need to have a license, because it's just a demo and for development purposes.
 
 ## Installation
 
-In order to use the MapView control, you first need to create an account via the [ArcGIS Developers portal](https://developers.arcgis.com/sign-up/) and depending on the use of location services, you may also need an API kwy. This walkthrough does not require a license or an API key to run.
+In order to use the MapView control, you first need to create an account via the [ArcGIS Developers portal](https://developers.arcgis.com/sign-up/), and depending on the use of location services, you may also need an API key. This walkthrough does not require a license or an API key to run.
 
 ## Getting Started
 
-1. Create a new application using the `unoapp` template, enabling .NET MAUI Embedding. In this case we're going to use the Blank template (`-preset blank`) and include .NET MAUI Embedding support (`-maui`).
+1. Create a new application using the `unoapp` template, enabling .NET MAUI Embedding. In this case, we're going to use the Blank template (`-preset blank`) and include .NET MAUI Embedding support (`-maui`).
 
     ```
     dotnet new unoapp -preset blank -maui -o MauiEmbeddingApp
@@ -58,7 +58,7 @@ In order to use the MapView control, you first need to create an account via the
     > [!NOTE]
     > If you have a license key and/or a location service API key, uncomment the `delegate` provided on `UseArcGISRuntime` method. This isn't required to run this sample.
 
-## Adding MayView
+## Adding MapView
 
 1. Update the EmbeddedControl.xaml in the `MauiEmbedding.MauiControls` project with the following XAML that includes the `MapView` control.
 
@@ -105,3 +105,11 @@ In order to use the MapView control, you first need to create an account via the
     ```
 
 1. Now the project is good to go! Press F5 and should see the MapView control running on your application.
+
+**App Render Output**
+
+- **Android:**
+  - ![Android EsriMaps](Assets/Screenshots/Android/EsriMaps.png)
+
+- **Windows:**
+  - ![Windows EsriMaps](Assets/Screenshots/Windows/EsriMaps.png)

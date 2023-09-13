@@ -7,15 +7,15 @@ The controls in the Telerik UI for .NET MAUI can be used in an Uno Platform appl
 
 ## Sample App
 
-An existing sample app that showcases the controls is available [here](https://github.com/unoplatform/Uno.Samples/tree/master/UI/MauiEmbedding/TelerikApp)
+An existing sample app that showcases the controls is available [here](https://github.com/unoplatform/Uno.Samples/tree/master/UI/MauiEmbedding/TelerikApp).
 
 ## Installation
 
-In order to use the Telerik controls, you first need to create an account and order a license to use the controls. You can find more instructions [here](https://www.telerik.com/). Then follow the instructions to have access to the private nuget feed.
+In order to use the Telerik controls, you first need to create an account and order a license to use the controls. You can find more instructions [here](https://www.telerik.com/). Then follow the instructions to have access to the private NuGet feed.
 
 ## Getting Started
 
-1. Create a new application using the `unoapp` template, enabling .NET MAUI Embedding. In this case we're going to use the Blank template (`-preset blank`) and include .NET MAUI Embedding support (`-maui`).
+1. Create a new application using the `unoapp` template, enabling .NET MAUI Embedding. In this case, we're going to use the Blank template (`-preset blank`) and include .NET MAUI Embedding support (`-maui`).
 
     ```
     dotnet new unoapp -preset blank -maui -o MauiEmbeddingApp
@@ -23,7 +23,7 @@ In order to use the Telerik controls, you first need to create an account and or
 
 1. Next, add a reference to the `Telerik.UI.for.Maui` NuGet package to the `MauiEmbeddingApp.MauiControls` project.
 
-1. In the `AppBuilderExtensions` class, on `MauiEmbeddingApp.MauiControls` project, update the `UseMauiControls` extension method to call the `UseMauiCommunityToolkit` method.
+1. In the `AppBuilderExtensions` class, on `MauiEmbeddingApp.MauiControls` project, update the `UseMauiControls` extension method to call the `UseTelerik` method.
 
     ```cs
     using Telerik.Maui.Controls;
@@ -79,3 +79,11 @@ In order to use the Telerik controls, you first need to create an account and or
     ```
 
 1. Now the project is good to go! Press F5 and you should see the `RadSignaturePad` control working as expected.
+
+**App Render Output**
+
+- **Android:**
+  - ![Android Telerik](Assets/Screenshots/Android/Telerik.png)
+
+- **Windows:**
+  - ![Windows Telerik](Assets/Screenshots/Windows/Telerik.png)

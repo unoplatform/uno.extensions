@@ -7,11 +7,11 @@ The controls from MauiCommunityToolkit can be used in an Uno Platform applicatio
 
 ## Sample App
 
-An existing sample app that showcases the controls is available [here](https://github.com/unoplatform/Uno.Samples/tree/master/UI/MauiEmbedding/MauiCommunityToolkitApp)
+An existing sample app that showcases the controls is available [here](https://github.com/unoplatform/Uno.Samples/tree/master/UI/MauiEmbedding/MauiCommunityToolkitApp).
 
 ## Getting Started
 
-1. Create a new application using the `unoapp` template, enabling .NET MAUI Embedding. In this case we're going to use the Blank template (`-preset blank`) and include .NET MAUI Embedding support (`-maui`).
+1. Create a new application using the `unoapp` template, enabling .NET MAUI Embedding. In this case, we're going to use the Blank template (`-preset blank`) and include .NET MAUI Embedding support (`-maui`).
 
     ```
     dotnet new unoapp -preset blank -maui -o MauiEmbeddingApp
@@ -58,7 +58,7 @@ An existing sample app that showcases the controls is available [here](https://g
     ```
 
     > [!NOTE]
-    > You may noticed that the `Binding` markup extension is used on some properties. The `MauiEmbedding` can handle bindings between Maui Controls and UnoPlatform, just make sure the property in the `Binding` expression matches the property on your ViewModel.
+    > You may notice that the `Binding` markup extension is used on some properties. The `MauiEmbedding` can handle bindings between Maui Controls and UnoPlatform, just make sure the property in the `Binding` expression matches the property on your ViewModel.
 
 1. Update the EmbeddedControl.xaml.cs with the following code. 
 
@@ -122,8 +122,7 @@ partial class MainViewModel : ObservableObject
 }
 ```
 
-> [!IMPORTANT]
-> This sample is using the CommunityToolkit.MVVM NuGet package, which significantly reduces the amount of boiler plate code required. You can find the package [here](https://www.nuget.org/packages/CommunityToolkit.Mvvm).
+1. The `MainViewModel` uses the `ObservableObject` base class that comes from the `CommunityToolkit.MVVM` NuGet package. This significantly reduces the amount of boilerplate code required. Add a reference to the [CommunityToolkit.Mvvm NuGet package](https://www.nuget.org/packages/CommunityToolkit.Mvvm) to the MauiEmbeddingApp project.  
 
 1. The final step is to add the `MainViewModel` as the `DataContext` of the `Page` in the `MainPage.xaml` file. Here's how the final xaml should look.
  
@@ -163,3 +162,11 @@ partial class MainViewModel : ObservableObject
 
 
 1. Now the project is good to go! Press F5 and you should see the `DrawingView` control working as expected. And tweaking the `ToggleSwitch` controls should change the `DrawingView` behavior.
+
+**App Render Output**
+
+- **Android:**
+  - ![Android CommunityToolkit](Assets/Screenshots/Android/CommunityToolkit.png)
+
+- **Windows:**
+  - ![Windows CommunityToolkit](Assets/Screenshots/Windows/CommunityToolkit.png)
