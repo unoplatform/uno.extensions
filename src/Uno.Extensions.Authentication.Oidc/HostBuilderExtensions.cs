@@ -1,4 +1,6 @@
-﻿namespace Uno.Extensions;
+﻿using Microsoft.Extensions.Configuration;
+
+namespace Uno.Extensions;
 
 public static class HostBuilderExtensions
 {
@@ -17,14 +19,14 @@ public static class HostBuilderExtensions
 			return builder;
 		}
 
-		hostBuilder
-			.UseConfiguration(configure: configBuilder =>
-					configBuilder
-						.Section<OidcClientOptions>(name)
-				);
-
-
 		var authBuilder = builder.AsBuilder<OidcAuthenticationBuilder>();
+		if (authBuilder.Settings.Options == null)
+		{
+			authBuilder.Settings = new OidcAuthenticationSettings() { Options = new OidcClientOptions() };
+		}
+		hostBuilder.ConfigureServices((ctx, _) =>
+			ctx.Configuration.GetSection(name).Bind(authBuilder.Settings.Options)
+		);
 		configure?.Invoke(authBuilder);
 
 
