@@ -3,7 +3,7 @@
 
 namespace Uno.Extensions.Authentication.Oidc;
 
-internal record OidcAuthenticationSettings
+public record OidcAuthenticationSettings
 {
 	public OidcClientOptions? Options { get; init; }
 }

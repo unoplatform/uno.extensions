@@ -4,7 +4,7 @@ using System.Diagnostics;
 
 namespace Uno.Extensions.Authentication.Oidc;
 
-internal record OidcAuthenticationProvider(
+public record OidcAuthenticationProvider(
 		ILogger<OidcAuthenticationProvider> ProviderLogger,
 		IOptions<OidcClientOptions> Configuration,
 		ITokenCache Tokens,
@@ -91,7 +91,7 @@ internal record OidcAuthenticationProvider(
 
 
 
-	internal class WebAuthenticatorBrowser : IBrowser
+	public class WebAuthenticatorBrowser : IBrowser
 	{
 		public async Task<BrowserResult> InvokeAsync(BrowserOptions options, CancellationToken cancellationToken = default)
 		{
