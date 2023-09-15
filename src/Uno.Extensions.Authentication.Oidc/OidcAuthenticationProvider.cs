@@ -6,7 +6,7 @@ namespace Uno.Extensions.Authentication.Oidc;
 
 internal record OidcAuthenticationProvider(
 		ILogger<OidcAuthenticationProvider> ProviderLogger,
-		IOptions<OidcClientOptions> Configuration,
+		IOptionsSnapshot<OidcClientOptions> Configuration,
 		ITokenCache Tokens,
 		OidcAuthenticationSettings? Settings = null) : BaseAuthenticationProvider(ProviderLogger, DefaultName, Tokens)
 {
@@ -16,7 +16,7 @@ internal record OidcAuthenticationProvider(
 
 	public void Build()
 	{
-		var config = Settings?.Options ?? Configuration.Value ?? new OidcClientOptions();
+		var config = Settings?.Options ?? Configuration.Get(Name) ?? new OidcClientOptions();
 
 		if (PlatformHelper.IsWebAssembly)
 		{

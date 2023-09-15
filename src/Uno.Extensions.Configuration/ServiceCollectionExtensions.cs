@@ -18,11 +18,13 @@ public static class ServiceCollectionExtensions
 	/// <param name="services">The Microsoft.Extensions.DependencyInjection.IServiceCollection to add the services to.</param>
 	/// <param name="section">The Microsoft.Extensions.Configuration.IConfigurationSection to retrieve.</param>
 	/// <param name="file">The full path to the file where updated section data will be written.</param>
+	/// <param name="name">The named options value to register</param>
 	/// <returns>The Microsoft.Extensions.DependencyInjection.IServiceCollection so that additional calls can be chained.</returns>
 	public static IServiceCollection ConfigureAsWritable<T>(
 		this IServiceCollection services,
 		IConfigurationSection section,
-		string file)
+		string file,
+		string? name = "")
 			where T : class, new()
 	{
 		return services
@@ -30,8 +32,8 @@ public static class ServiceCollectionExtensions
 			// we can use a local copy of ConfigurationBinder that handles ImmutableList
 			//.Configure<T>(section)
 			.AddOptions()
-			.AddSingleton<IOptionsChangeTokenSource<T>>(new ConfigurationChangeTokenSource<T>(Options.DefaultName, section))
-			.AddSingleton<IConfigureOptions<T>>(new Uno.Extensions.Configuration.Internal.NamedConfigureFromConfigurationOptions<T>(Options.DefaultName, section, _ => { }))
+			.AddSingleton<IOptionsChangeTokenSource<T>>(new ConfigurationChangeTokenSource<T>(name ?? Options.DefaultName, section))
+			.AddSingleton<IConfigureOptions<T>>(new Uno.Extensions.Configuration.Internal.NamedConfigureFromConfigurationOptions<T>(name ?? Options.DefaultName, section, _ => { }))
 
 			.AddTransient<IWritableOptions<T>>(provider =>
 			{
