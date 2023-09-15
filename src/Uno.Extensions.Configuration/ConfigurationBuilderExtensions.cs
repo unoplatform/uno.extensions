@@ -67,6 +67,21 @@ public static class ConfigurationBuilderExtensions
 		return configurationBuilder.AddEnvironmentConfiguration(hostingContext, default);
 	}
 
+	/// <summary>
+	/// Adds an embedded JSON configuration source using an exact file name.
+	/// </summary>
+	/// <typeparam name="TApplicationRoot">
+	/// The type of an assembly which should contain the embedded configuration file.
+	/// </typeparam>
+	/// <param name="configurationBuilder">
+	/// The builder instance used to create an <see cref="IConfiguration"/> with keys and values from a set of sources.
+	/// </param>
+	/// <param name="configurationFileName">
+	/// The exact file name of an embedded file to be included as a configuration source.
+	/// </param>
+	/// <returns>
+	/// The <see cref="IConfigurationBuilder"/>.
+	/// </returns>
 	public static IConfigurationBuilder AddEmbeddedConfigurationFile<TApplicationRoot>(this IConfigurationBuilder configurationBuilder, string configurationFileName)
 		where TApplicationRoot : class
 	{
