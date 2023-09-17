@@ -3,7 +3,7 @@
 /// <summary>
 /// Contains settings for the localization feature.
 /// </summary>
-public record LocalizationSettings
+internal record LocalizationSettings
 {
 	/// <summary>
 	/// The desired culture to use for localization.

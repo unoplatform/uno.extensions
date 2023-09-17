@@ -7,7 +7,7 @@ namespace Uno.Extensions.Localization;
 /// An implementation of <see cref="ILocalizationService"/> that uses the <see cref="LocalizationConfiguration"/>
 /// to determine the supported cultures and allow for changing the current culture.
 /// </summary>
-public class LocalizationService : IServiceInitialize, ILocalizationService, IDisposable
+internal class LocalizationService : IServiceInitialize, ILocalizationService, IDisposable
 {
 	private static string DefaultCulture = "en-US";
 

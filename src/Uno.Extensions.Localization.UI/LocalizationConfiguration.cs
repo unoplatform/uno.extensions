@@ -3,7 +3,7 @@
 /// <summary>
 /// Contains configuration for the localization feature.
 /// </summary>
-public record LocalizationConfiguration
+internal record LocalizationConfiguration
 {
 	/// <summary>
 	/// An array of valid CultureInfo names which represent cultures supported 
