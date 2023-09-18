@@ -1,4 +1,7 @@
-﻿namespace Uno.Extensions;
+﻿using IdentityModel.OidcClient.Browser;
+using Microsoft.Extensions.DependencyInjection;
+
+namespace Uno.Extensions;
 
 /// <summary>
 /// Provides extension methods for OIDC authentication to use with <see cref="IAuthenticationBuilder"/>.
@@ -26,7 +29,7 @@ public static class HostBuilderExtensions
 		string name = OidcAuthenticationProvider.DefaultName)
 	{
 #if WINDOWS
-		WinUIEx.WebAuthenticator.Init();
+		WinUIEx.WebAuthenticator.CheckOAuthRedirectionActivation();
 #endif
 
 		var hostBuilder = (builder as IBuilder)?.HostBuilder;
@@ -34,6 +37,19 @@ public static class HostBuilderExtensions
 		{
 			return builder;
 		}
+
+		hostBuilder = hostBuilder
+			.ConfigureServices((ctx, services) =>
+			{
+				if (ctx.IsRegistered(nameof(AddOidc)))
+				{
+					return;
+				}
+
+				services
+					.AddTransient<IBrowser, WebAuthenticatorBrowser>();
+			});
+
 
 		hostBuilder
 			.UseConfiguration(configure: configBuilder =>

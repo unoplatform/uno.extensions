@@ -26,7 +26,7 @@ public static class HostBuilderExtensions
 		string name = WebAuthenticationProvider.DefaultName)
 	{
 #if WINDOWS
-		WinUIEx.WebAuthenticator.Init();
+		WinUIEx.WebAuthenticator.CheckOAuthRedirectionActivation();
 #endif
 		var hostBuilder = (builder as IBuilder)?.HostBuilder;
 		if (hostBuilder is null)
@@ -78,7 +78,7 @@ public static class HostBuilderExtensions
 
 	{
 #if WINDOWS
-		WinUIEx.WebAuthenticator.Init();
+		WinUIEx.WebAuthenticator.CheckOAuthRedirectionActivation();
 #endif
 		var hostBuilder = (builder as IBuilder)?.HostBuilder;
 		if (hostBuilder is null)

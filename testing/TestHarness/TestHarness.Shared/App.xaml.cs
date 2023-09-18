@@ -20,7 +20,7 @@ public sealed partial class App : Application
 		// test scenario is selected. This line is included to ensure web auth test cases
 		// work, without having to navigate to a test scenario in the new app instance
 		// that is launched to handle the web auth redirect
-		WinUIEx.WebAuthenticator.Init();
+		WinUIEx.WebAuthenticator.CheckOAuthRedirectionActivation();
 #endif
 
 
