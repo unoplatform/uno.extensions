@@ -2,8 +2,23 @@
 
 namespace Uno.Extensions.Localization;
 
+/// <summary>
+/// Extensions for configuring localization.
+/// </summary>
 public static class HostBuilderExtensions
 {
+	/// <summary>
+	/// Configures the localization service.
+	/// </summary>
+	/// <param name="hostBuilder">
+	/// The host builder to configure.
+	/// </param>
+	/// <param name="configure">
+	/// An action that configures the localization service.
+	/// </param>
+	/// <returns>
+	/// The host builder for chaining.
+	/// </returns>
 	public static IHostBuilder UseLocalization(
 		this IHostBuilder hostBuilder,
 		Action<IServiceCollection> configure)
@@ -11,6 +26,18 @@ public static class HostBuilderExtensions
 		return hostBuilder.UseLocalization((context, builder) => configure.Invoke(builder));
 	}
 
+	/// <summary>
+	/// Configures the localization service.
+	/// </summary>
+	/// <param name="hostBuilder">
+	/// The host builder to configure.
+	/// </param>
+	/// <param name="configure">
+	/// An action that configures the localization service. Optional.
+	/// </param>
+	/// <returns>
+	/// The host builder for chaining.
+	/// </returns>
 	public static IHostBuilder UseLocalization(
 		this IHostBuilder hostBuilder,
 		Action<HostBuilderContext, IServiceCollection>? configure = default)

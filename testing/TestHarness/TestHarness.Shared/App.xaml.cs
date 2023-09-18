@@ -36,7 +36,7 @@ public sealed partial class App : Application
 		var host = UnoHost
 					.CreateDefaultBuilder()
 					.UseConfiguration(
-						configureHostConfiguration: builder => builder.AddSectionFromEntity(new LocalizationConfiguration { Cultures = new[] {"es", "en", "en-AU", "fr" } }))
+						configureHostConfiguration: builder => builder.AddSectionFromEntity(new LocalizationConfiguration { Cultures = new[] { "es", "en", "en-AU", "fr" } }))
 					.UseLocalization()
 					.Build();
 		var locals = host.Services.GetServices<IServiceInitialize>();
