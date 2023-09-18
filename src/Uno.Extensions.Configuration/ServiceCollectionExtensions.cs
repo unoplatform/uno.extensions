@@ -3,6 +3,9 @@ using System.ComponentModel;
 
 namespace Uno.Extensions.Configuration;
 
+/// <summary>
+/// Extension methods for <see cref="IServiceCollection"/>.
+/// </summary>
 public static class ServiceCollectionExtensions
 {
 	/// <summary>

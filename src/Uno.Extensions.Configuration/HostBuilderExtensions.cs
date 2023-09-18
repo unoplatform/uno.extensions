@@ -1,7 +1,28 @@
 ﻿namespace Uno.Extensions;
 
+/// <summary>
+/// Extension methods for setting up <see cref="IHostBuilder"/> to use configuration.
+/// </summary>
 public static class HostBuilderExtensions
 {
+	/// <summary>
+	/// Enables configuration to be set up for both the builder and application.
+	/// </summary>
+	/// <param name="hostBuilder">
+	/// The <see cref="IHostBuilder"/> to configure.
+	/// </param>
+	/// <param name="configureHostConfiguration">
+	/// Used to configure the <see cref="IConfigurationBuilder"/> for the builder itself.
+	/// </param>
+	/// <param name="configureAppConfiguration">
+	/// Used to configure the <see cref="IConfigurationBuilder"/> for the application.
+	/// </param>
+	/// <param name="configure">
+	/// Allows for adding additional configuration sources to the <see cref="IConfigBuilder"/>.
+	/// </param>
+	/// <returns>
+	/// The same instance of the <see cref="IHostBuilder"/> for chaining.
+	/// </returns>
 	public static IHostBuilder UseConfiguration(
 		this IHostBuilder hostBuilder,
 		Action<IConfigurationBuilder>? configureHostConfiguration = default,

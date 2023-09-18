@@ -1,8 +1,31 @@
 ﻿namespace Uno.Extensions.Configuration;
 
+/// <summary>
+/// Extension methods for registering a configuration source with an instance
+/// of <see cref="IConfigBuilder"/>.
+/// </summary>
 public static class ConfigBuilderExtensions
 {
+	/// <summary>
+	/// Defines a default name for the folder containing configuration files.
+	/// </summary>
 	public const string ConfigurationFolderName = "config";
+
+	/// <summary>
+	/// Sets up the host builder to register content files by name as a configuration source
+	/// </summary>
+	/// <param name="hostBuilder">
+	/// The <see cref="IConfigBuilder"/> to configure.
+	/// </param>
+	/// <param name="config">
+	/// The name of the configuration file to register. Optional
+	/// </param>
+	/// <param name="includeEnvironmentSettings">
+	/// Whether or not environment specific settings should be included. Optional
+	/// </param>
+	/// <returns>
+	/// An instance of the <see cref="IConfigBuilder"/> for chaining.
+	/// </returns>
 	public static IConfigBuilder ContentSource(this IConfigBuilder hostBuilder, string? config = null, bool includeEnvironmentSettings = true)
 	{
 		return hostBuilder
@@ -27,6 +50,25 @@ public static class ConfigBuilderExtensions
 				}).AsConfigBuilder();
 	}
 
+	/// <summary>
+	/// Sets up the host builder to register embedded resource files from 
+	/// the specified assembly as a configuration source
+	/// </summary>
+	/// <typeparam name="TApplicationRoot">
+	/// The type that will be used to locate an assembly that contains the embedded resource files.
+	/// </typeparam>
+	/// <param name="hostBuilder">
+	/// The <see cref="IConfigBuilder"/> to configure.
+	/// </param>
+	/// <param name="config">
+	/// A name to identify the added configuration source. Optional
+	/// </param>
+	/// <param name="includeEnvironmentSettings">
+	/// Whether or not environment specific settings should be included. Optional
+	/// </param>
+	/// <returns>
+	/// An instance of the <see cref="IConfigBuilder"/> for chaining.
+	/// </returns>
 	public static IConfigBuilder EmbeddedSource<TApplicationRoot>(this IConfigBuilder hostBuilder, string? config = null, bool includeEnvironmentSettings = true)
 		where TApplicationRoot : class
 	{
@@ -52,6 +94,21 @@ public static class ConfigBuilderExtensions
 				}).AsConfigBuilder();
 	}
 
+	/// <summary>
+	/// Sets up the host builder to register a specific configuration section
+	/// </summary>
+	/// <typeparam name="TSettingsOptions">
+	/// The type that the configuration section will be deserialized to.
+	/// </typeparam>
+	/// <param name="hostBuilder">
+	/// The <see cref="IConfigBuilder"/> to configure.
+	/// </param>
+	/// <param name="configurationSection">
+	/// The configuration section to retrieve.
+	/// </param>
+	/// <returns>
+	/// An instance of the <see cref="IConfigBuilder"/> for chaining.
+	/// </returns>
 	public static IConfigBuilder Section<TSettingsOptions>(
 		this IConfigBuilder hostBuilder,
 		string configurationSection)
@@ -60,6 +117,21 @@ public static class ConfigBuilderExtensions
 		return hostBuilder.Section<TSettingsOptions>(ctx => ctx.Configuration.GetSection(configurationSection));
 	}
 
+	/// <summary>
+	/// Sets up the host builder to register a specific configuration section
+	/// </summary>
+	/// <typeparam name="TSettingsOptions">
+	/// The type that the configuration section will be deserialized to.
+	/// </typeparam>
+	/// <param name="hostBuilder">
+	/// The <see cref="IConfigBuilder"/> to configure.
+	/// </param>
+	/// <param name="configSection">
+	/// A delegate that returns the configuration section to retrieve.
+	/// </param>
+	/// <returns>
+	/// An instance of the <see cref="IConfigBuilder"/> for chaining.
+	/// </returns>
 	public static IConfigBuilder Section<TSettingsOptions>(
 		this IConfigBuilder hostBuilder,
 		Func<HostBuilderContext, IConfigurationSection>? configSection = null)
@@ -103,6 +175,24 @@ public static class ConfigBuilderExtensions
 			).AsConfigBuilder();
 	}
 
+	/// <summary>
+	/// Sets up the host builder to register a configuration section from an entity
+	/// </summary>
+	/// <typeparam name="TEntity">
+	/// Represents the type of the entity specified in the <paramref name="entity"/> parameter.
+	/// </typeparam>
+	/// <param name="hostBuilder">
+	/// The <see cref="IConfigBuilder"/> to configure.
+	/// </param>
+	/// <param name="entity">
+	/// The entity of type <typeparamref name="TEntity"/> to retrieve the configuration section from.
+	/// </param>
+	/// <param name="sectionName">
+	/// The configuration section name to retrieve. Optional
+	/// </param>
+	/// <returns>
+	/// An instance of the <see cref="IConfigBuilder"/> for chaining.
+	/// </returns>
 	public static IConfigBuilder WithConfigurationSectionFromEntity<TEntity>(
 		this IConfigBuilder hostBuilder,
 		TEntity entity,
