@@ -18,6 +18,7 @@ namespace Uno.Extensions.Reactive.Tests.IntegrationTests;
 public partial class Given_HotReload : FeedUITests
 {
 	/// <inheritdoc />
+	[TestInitialize]
 	public override void Initialize()
 	{
 		FeedConfiguration.HotReload = HotReloadSupport.Enabled;
@@ -27,6 +28,7 @@ public partial class Given_HotReload : FeedUITests
 	}
 
 	/// <inheritdoc />
+	[TestCleanup]
 	public override void Cleanup()
 	{
 		FeedConfiguration.HotReload = null;
