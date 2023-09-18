@@ -1,9 +1,11 @@
-﻿namespace Uno.Extensions.Authentication.Web;
+﻿using Microsoft.Extensions.Options;
+
+namespace Uno.Extensions.Authentication.Web;
 
 internal record WebAuthenticationProvider
 (
 	ILogger<WebAuthenticationProvider> ProviderLogger,
-	Microsoft.Extensions.Options.IOptions<WebConfiguration> Configuration,
+	IOptionsSnapshot<WebConfiguration> Configuration,
 	IServiceProvider Services,
 	ITokenCache Tokens
 ) : BaseAuthenticationProvider(ProviderLogger, DefaultName, Tokens)
@@ -22,7 +24,7 @@ internal record WebAuthenticationProvider
 			if (_internalSettings is null)
 			{
 				_internalSettings = Settings ?? new WebAuthenticationSettings();
-				var config = Configuration.Value;
+				var config = Configuration.Get(Name);
 				if (config is not null)
 				{
 					_internalSettings = _internalSettings with
@@ -213,7 +215,7 @@ internal record WebAuthenticationProvider
 internal record WebAuthenticationProvider<TService>
 (
 	ILogger<WebAuthenticationProvider<TService>> ServiceLogger,
-	Microsoft.Extensions.Options.IOptions<WebConfiguration> Configuration,
+	IOptionsSnapshot<WebConfiguration> Configuration,
 	IServiceProvider Services,
 	ITokenCache Tokens
 ) : WebAuthenticationProvider(ServiceLogger, Configuration, Services, Tokens)
