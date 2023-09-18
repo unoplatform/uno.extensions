@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
+using Uno.Extensions.Reactive.Config;
 using Uno.Extensions.Reactive.Core;
 
 namespace Uno.Extensions.Reactive.Sources;
@@ -25,6 +26,12 @@ internal sealed class DynamicFeed<T> : IFeed<T>
 	public async IAsyncEnumerable<Message<T>> GetSource(SourceContext context, [EnumeratorCancellation] CancellationToken ct = default)
 	{
 		await using var session = new FeedSession<T>(this, context, _dataProvider, ct);
+
+		if (FeedConfiguration.EffectiveHotReload.HasFlag(HotReloadSupport.DynamicFeed))
+		{
+			session.EnableHotReload();
+		}
+
 		while (await session.MoveNextAsync())
 		{
 			yield return session.Current;

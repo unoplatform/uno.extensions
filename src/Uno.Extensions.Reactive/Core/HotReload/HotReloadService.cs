@@ -11,9 +11,14 @@ using Uno.Extensions.Reactive.Logging;
 
 namespace Uno.Extensions.Reactive.Core.HotReload;
 
+/// <summary>
+/// Service responsible to handle hot reload events for the MVUX framework.
+/// </summary>
 internal static class HotReloadService
 {
 	private static ILogger _log = typeof(HotReloadService).Log();
+
+	public static event Action<Type[]>? ApplicationUpdated;
 
 	internal static void ClearCache(Type[]? types)
 	{
@@ -37,6 +42,8 @@ internal static class HotReloadService
 				BindableViewModelBase.HotPatch(model.Bindable, originalType, type);
 			}
 		}
+
+		ApplicationUpdated?.Invoke(types);
 	}
 
 	// As the MetadataUpdateOriginalTypeAttribute might have been generated in the project, we have to use reflection instead of cannot use this:
