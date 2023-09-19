@@ -3,14 +3,24 @@
 		<IsMauiEmbedding>false</IsMauiEmbedding>
 		<IsMauiEmbedding Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android' OR $([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios' OR $([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst' OR $(TargetFramework.Contains('windows10'))" >true</IsMauiEmbedding>
 		<DefineConstants Condition="$(IsMauiEmbedding)">$(DefineConstants);MAUI_EMBEDDING</DefineConstants>
-	</PropertyGroup>
-	<PropertyGroup>
+
 		<UseMaui>true</UseMaui>
 		<UseMauiAssets>false</UseMauiAssets>
 		<_MauiSkipSdkAutoImport>true</_MauiSkipSdkAutoImport>
 		<EnableDefaultXamlItems>false</EnableDefaultXamlItems>
 		<EnableDefaultMauiItems>false</EnableDefaultMauiItems>
 	</PropertyGroup>
+
+	<ItemGroup Condition="'$(IsMauiEmbedding)'=='True'">
+		<IncludeXamlNamespaces Include="maui" />
+		<ExcludeXamlNamespaces Include="not_maui" />
+	</ItemGroup>
+
+	<ItemGroup Condition="'$(IsMauiEmbedding)'!='True'">
+		<IncludeXamlNamespaces Include="not_maui" />
+		<ExcludeXamlNamespaces Include="maui" />
+	</ItemGroup>
+
 	<Choose>
 		<When Condition="$(TargetFramework.Contains('windows10'))">
 			<PropertyGroup Condition=" '$(OutputType)' != 'WinExe' AND '$(OutputType)' != 'Exe' ">
