@@ -24,6 +24,8 @@ public partial class Given_HotReload : FeedUITests
 		FeedConfiguration.HotReload = HotReloadSupport.Enabled;
 		typeof(FeedConfiguration).GetField("_effectiveHotReload", BindingFlags.Static | BindingFlags.NonPublic)!.SetValue(null, null);
 
+		Console.WriteLine("Hot reload configuration is now : " + FeedConfiguration.EffectiveHotReload);
+
 		base.Initialize();
 	}
 
@@ -33,6 +35,8 @@ public partial class Given_HotReload : FeedUITests
 	{
 		FeedConfiguration.HotReload = null;
 		typeof(FeedConfiguration).GetField("_effectiveHotReload", BindingFlags.Static | BindingFlags.NonPublic)!.SetValue(null, null);
+
+		Console.WriteLine("Hot reload configuration has been restored to : " + FeedConfiguration.EffectiveHotReload);
 
 		base.Cleanup();
 	}
@@ -46,10 +50,12 @@ public partial class Given_HotReload : FeedUITests
 		var tcs = new TaskCompletionSource();
 		Dispatcher.TryEnqueue(() => bindable.PropertyChanged += (s, e) => tcs.TrySetResult());
 
+		await WaitFor(() => bindable.MyFeed, "Feed value from original model");
+
 		HotReloadService.UpdateApplication(new[] { typeof(When_UpdateValueTypeFeedInModel_Then_BindableUpdated_MyModel_v1) });
 
 		await tcs.Task;
-		await WaitFor(() => bindable.MyFeed == "Feed value from model v1");
+		await WaitFor(() => bindable.MyFeed, "Feed value from model v1");
 	}
 
 	[ReactiveBindable(true)]
@@ -64,7 +70,7 @@ public partial class Given_HotReload : FeedUITests
 	public partial class When_UpdateValueTypeFeedInModel_Then_BindableUpdated_MyModel_v1
 	{
 		public IFeed<string> MyFeed => Feed.Async(async ct => "Feed value from model v1");
-	} 
+	}
 	#endregion
 
 	#region When_UpdateRecordFeedInModel_Then_BindableUpdated
@@ -76,10 +82,12 @@ public partial class Given_HotReload : FeedUITests
 		var tcs = new TaskCompletionSource();
 		Dispatcher.TryEnqueue(() => bindable.PropertyChanged += (s, e) => tcs.TrySetResult());
 
+		await WaitFor(() => bindable.MyFeed.Value, "Feed value from original model");
+
 		HotReloadService.UpdateApplication(new[] { typeof(When_UpdateRecordFeedInModel_Then_BindableUpdated_MyModel_v1) });
 
 		await tcs.Task;
-		await WaitFor(() => bindable.MyFeed.Value == "Feed value from model v1");
+		await WaitFor(() => bindable.MyFeed.Value, "Feed value from model v1");
 	}
 
 	public record When_UpdateRecordFeedInModel_Then_BindableUpdated_Record(string Value);
@@ -112,7 +120,7 @@ public partial class Given_HotReload : FeedUITests
 		HotReloadService.UpdateApplication(new[] { typeof(When_ChangeKindOfValueTypeFeedInModel_Then_BindableUpdated_MyModel_v1) });
 
 		//await tcs.Task;
-		await WaitFor(() => bindable.MyFeed == "Feed value from model v1");
+		await WaitFor(() => bindable.MyFeed, "Feed value from model v1");
 	}
 
 	[ReactiveBindable(true)]
@@ -143,7 +151,7 @@ public partial class Given_HotReload : FeedUITests
 		HotReloadService.UpdateApplication(new[] { typeof(When_ChangeKindOfRecordFeedInModel_Then_BindableUpdated_MyModel_v1) });
 
 		//await tcs.Task;
-		await WaitFor(() => bindable.MyFeed.Value == "Feed value from model v1");
+		await WaitFor(() => bindable.MyFeed.Value, "Feed value from model v1");
 	}
 
 	public record When_ChangeKindOfRecordFeedInModel_Then_BindableUpdated_Record(string Value);
@@ -176,5 +184,22 @@ public partial class Given_HotReload : FeedUITests
 		}
 
 		throw new TimeoutException();
+	}
+
+	private async Task WaitFor<T>(Func<T> actual, T expected)
+		where T : class
+	{
+		const int attempts = 100;
+		for (var i = 0; i < attempts; i++)
+		{
+			if (actual() == expected)
+			{
+				return;
+			}
+
+			await Task.Delay(1);
+		}
+
+		throw new TimeoutException($"Expected '{expected}' but get '{actual()}' after {attempts}ms.");
 	}
 }
