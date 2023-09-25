@@ -12,7 +12,6 @@
 
 	<ItemGroup>
 		<PackageReference Include="Uno.WinUI.Markup" />
-		<PackageReference Include="Uno.Extensions.Markup.WinUI" PrivateAssets="All" />
 		<PackageReference Include="Uno.Extensions.Markup.Generators" PrivateAssets="All" />
 	</ItemGroup>
 
