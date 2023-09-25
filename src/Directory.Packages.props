@@ -53,7 +53,7 @@
 		<PackageVersion Include="Uno.UI.RuntimeTests.Engine" Version="0.14.0-dev.54" />
 		<PackageVersion Include="Uno.WinUI" Version="5.0.0-dev.1728" />
 		<PackageVersion Include="Uno.WinUI.Markup" Version="5.0.0-dev.407" />
-		<PackageVersion Include="Uno.WinUI.MSAL" Version="5.0.0-dev.1728" />
+		<PackageVersion Include="Uno.WinUI.MSAL" Version="5.0.0-dev.3200" />
 		<PackageVersion Include="Uno.WinUI.Runtime.WebAssembly" Version="5.0.0-dev.1728" />
 		<PackageVersion Include="coverlet.collector" Version="3.1.2" />
 		<PackageVersion Include="xunit" Version="2.4.1" />
