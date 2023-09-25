@@ -51,7 +51,7 @@
 		<PackageVersion Include="Uno.UI.MSAL"  Version="5.0.0-dev.1728" />
 		<PackageVersion Include="Uno.UI.Runtime.WebAssembly" Version="5.0.0-dev.1728" />
 		<PackageVersion Include="Uno.UI.RuntimeTests.Engine" Version="0.14.0-dev.54" />
-		<PackageVersion Include="Uno.WinUI" Version="5.0.0-dev.1728" />
+		<PackageVersion Include="Uno.WinUI" Version="5.0.0-dev.3200" />
 		<PackageVersion Include="Uno.WinUI.Markup" Version="5.0.0-dev.407" />
 		<PackageVersion Include="Uno.WinUI.MSAL" Version="5.0.0-dev.1728" />
 		<PackageVersion Include="Uno.WinUI.Runtime.WebAssembly" Version="5.0.0-dev.1728" />
