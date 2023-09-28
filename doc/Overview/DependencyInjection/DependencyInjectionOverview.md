@@ -4,7 +4,7 @@ uid: Overview.DependencyInjection
 
 # Dependency Injection
 
-Apps built using hosting can leverage dependency injection (DI) to register services and make them available to app dependencies. This pattern enables apps to follow sound design principles, such as [SOLID](https://en.wikipedia.org/wiki/SOLID) and [Inversion of Control](https://en.wikipedia.org/wiki/Inversion_of_control). While the host builder implements standard functionality from the [Microsoft.Extensions.DependencyInjection](https://www.nuget.org/packages/Microsoft.Extensions.DependencyInjection) library, it also provides additional features to improve the developer experience.
+Apps built using [hosting](https://platform.uno/docs/articles/external/uno.extensions/doc/Overview/Hosting/HostingOverview.html) can leverage dependency injection (DI) to register services and make them available to app dependencies. This pattern enables apps to follow sound design principles, such as [SOLID](https://en.wikipedia.org/wiki/SOLID) and [Inversion of Control](https://en.wikipedia.org/wiki/Inversion_of_control). While the host builder implements standard functionality from the [Microsoft.Extensions.DependencyInjection](https://www.nuget.org/packages/Microsoft.Extensions.DependencyInjection) library, it also provides additional features to improve the developer experience.
 
 ## Registering Services
 
