@@ -102,12 +102,4 @@
 			</ItemGroup>
 		</Otherwise>
 	</Choose>
-
-	<ItemGroup>
-	  <Compile Include="Internals\LinkedServiceProvider.cs" />
-	  <Compile Include="Internals\LinkedServiceProviderFactory.cs" />
-	  <Compile Include="Internals\LinkedServiceScope.cs" />
-	  <Compile Include="Internals\LinkedServiceScopeFactory.cs" />
-	</ItemGroup>
-
 </Project>

@@ -486,7 +486,7 @@ internal class ImageDrawable : IDrawable
 	{
 		IImage? image = default;
 		Assembly assembly = GetType().GetTypeInfo().Assembly;
-		using (Stream stream = assembly.GetManifestResourceStream("GraphicsViewDemos.Resources.Images.dotnet_bot.png"))
+		using (Stream stream = assembly.GetManifestResourceStream("GraphicsViewDemos.Resources.Images.dotnet_bot.png")!)
 		{
 #if IOS || ANDROID || MACCATALYST
                 // PlatformImage isn't currently supported on Windows.
@@ -942,7 +942,7 @@ public class OrderInfoViewModel : INotifyPropertyChanged
 	private List<DateTime>? orderedDates;
 	private Random random = new Random();
 	private ObservableCollection<OrderInfo>? ordersInfo;
-	internal FilterChanged? Filtertextchanged;
+	public FilterChanged? Filtertextchanged;
 
 	#endregion
 
@@ -1196,7 +1196,7 @@ public class OrderInfoViewModel : INotifyPropertyChanged
 	/// <summary>
 	/// Used to send a Notification while Filter Changed
 	/// </summary>
-	internal delegate void FilterChanged();
+	public delegate void FilterChanged();
 
 	/// <summary>
 	/// Gets or sets the value of FilterText and notifies user when value gets changed
