@@ -30,7 +30,10 @@ public static partial class MauiEmbedding
 	public static IHostBuilder UseMauiEmbedding<TApp>(this IHostBuilder builder, Microsoft.UI.Xaml.Application app, Microsoft.UI.Xaml.Window window, Action<MauiAppBuilder>? configure = null)
 		where TApp : MauiApplication
 	{
-		app.UseMauiEmbedding<TApp>(window, configure);
+#if MAUI_EMBEDDING
+		var mauiAppBuilder = ConfigureMauiEmbeddingInternal<TApp>(app, window, configure);
+		builder.UseServiceProviderFactory(new UnoHostBuilderServiceProviderFactory(mauiAppBuilder, () => InitializeMauiEmbeddingInternal(mauiAppBuilder, app, window)));
+#endif
 		return builder;
 	}
 
@@ -44,6 +47,18 @@ public static partial class MauiEmbedding
 		where TApp : MauiApplication
 	{
 #if MAUI_EMBEDDING
+		var mauiAppBuilder = ConfigureMauiEmbeddingInternal<TApp>(app, window, configure);
+		return InitializeMauiEmbeddingInternal(mauiAppBuilder, app, window);
+#else
+		return default!;
+#endif
+	}
+
+#if MAUI_EMBEDDING
+
+	private static MauiAppBuilder ConfigureMauiEmbeddingInternal<TApp>(Application app, Microsoft.UI.Xaml.Window window, Action<MauiAppBuilder>? configure)
+		where TApp : MauiApplication
+	{
 		var mauiAppBuilder = MauiApp.CreateBuilder()
 			.UseMauiEmbedding<TApp>()
 			.RegisterPlatformServices(app);
@@ -58,7 +73,12 @@ public static partial class MauiEmbedding
 
 		configure?.Invoke(mauiAppBuilder);
 
-		var mauiApp = mauiAppBuilder.Build();
+		return mauiAppBuilder;
+	}
+
+	private static MauiApp InitializeMauiEmbeddingInternal(MauiAppBuilder builder, Application app, Microsoft.UI.Xaml.Window window)
+	{
+		var mauiApp = builder.Build();
 		mauiApp.InitializeMauiEmbeddingApp(app);
 
 #if WINDOWS
@@ -68,12 +88,7 @@ public static partial class MauiEmbedding
 		};
 #endif
 		return mauiApp;
-#else
-		return default!;
-#endif
 	}
-
-#if MAUI_EMBEDDING
 
 	private static void InitializeScopedServices(this IMauiContext scopedContext)
 	{
