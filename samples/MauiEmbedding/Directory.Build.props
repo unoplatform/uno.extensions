@@ -8,7 +8,7 @@
 
 		<ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
 		<WarningsNotAsErrors>NU1009</WarningsNotAsErrors>
-		<NoWarn>$(NoWarn);CA1416;NU1507;NU1009</NoWarn>
+		<NoWarn>$(NoWarn);CA1416;NU1507;NU1009;NETSDK1023</NoWarn>
 
 		<DefaultLanguage>en</DefaultLanguage>
 

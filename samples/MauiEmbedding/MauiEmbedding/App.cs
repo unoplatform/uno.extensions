@@ -1,3 +1,4 @@
+using MauiEmbedding.Business;
 using MauiEmbedding.MauiControls;
 using Uno.Extensions.Maui.Platform;
 
@@ -59,8 +60,7 @@ public class App : EmbeddingApplication
 				.UseLocalization()
 				.ConfigureServices((context, services) =>
 				{
-					// TODO: Register your services
-					//services.AddSingleton<IMyService, MyService>();
+					services.AddSingleton<IVibrationService, VibrationService>();
 				})
 				.UseNavigation(RegisterRoutes)
 			);

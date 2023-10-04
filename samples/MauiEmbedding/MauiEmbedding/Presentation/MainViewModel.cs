@@ -1,4 +1,5 @@
 using Microsoft.Maui.Devices;
+using MauiEmbedding.Business;
 
 namespace MauiEmbedding.Presentation;
 
@@ -13,7 +14,8 @@ public partial class MainViewModel : ObservableObject
 		IStringLocalizer localizer,
 		IOptions<AppConfig> appInfo,
 		INavigator navigator,
-		IVibration vibrate)
+		IVibration vibrate,
+		IVibrationService vibrateService)
 	{
 		_navigator = navigator;
 		Title = "Main";
