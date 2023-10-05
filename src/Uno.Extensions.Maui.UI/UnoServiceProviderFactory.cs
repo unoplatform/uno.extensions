@@ -2,12 +2,12 @@
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Uno.Extensions.Maui;
-internal class UnoHostBuilderServiceProviderFactory : IServiceProviderFactory<IServiceProvider>
+internal class UnoServiceProviderFactory : IServiceProviderFactory<IServiceProvider>
 {
 	private readonly MauiAppBuilder _mauiAppBuilder;
 	private readonly Action _buildAppBuilderCallback;
 
-	public UnoHostBuilderServiceProviderFactory(MauiAppBuilder builder, Action buildAppBuilderCallback)
+	public UnoServiceProviderFactory(MauiAppBuilder builder, Action buildAppBuilderCallback)
 	{
 		_mauiAppBuilder = builder;
 		_buildAppBuilderCallback = buildAppBuilderCallback;
@@ -20,7 +20,7 @@ internal class UnoHostBuilderServiceProviderFactory : IServiceProviderFactory<IS
 		_mauiAppBuilder.Services.ForEach(x => services.TryAdd(x));
 
 		var serviceProvider = services.BuildServiceProvider();
-		_mauiAppBuilder.ConfigureContainer(new MauiHostBuilderServiceProviderFactory(serviceProvider));
+		_mauiAppBuilder.ConfigureContainer(new MauiServiceProviderFactory(serviceProvider));
 		_buildAppBuilderCallback();
 		return serviceProvider;
 	}

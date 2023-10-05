@@ -1,10 +1,10 @@
 ﻿#if MAUI_EMBEDDING
 namespace Uno.Extensions.Maui;
-internal class MauiHostBuilderServiceProviderFactory : IServiceProviderFactory<IServiceProvider>
+internal class MauiServiceProviderFactory : IServiceProviderFactory<IServiceProvider>
 {
 	private readonly IServiceProvider _serviceProvider;
 
-	public MauiHostBuilderServiceProviderFactory(IServiceProvider serviceProvider) => _serviceProvider = serviceProvider;
+	public MauiServiceProviderFactory(IServiceProvider serviceProvider) => _serviceProvider = serviceProvider;
 
 	public IServiceProvider CreateBuilder(IServiceCollection services) => _serviceProvider;
 	public IServiceProvider CreateServiceProvider(IServiceProvider containerBuilder) => _serviceProvider;
