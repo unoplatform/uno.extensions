@@ -8,6 +8,7 @@ public static class MauiAppBuilderExtensions
 	{
 		CustomEntry.Init();
 		builder.ConfigureSyncfusionCore();
+		builder.Services.AddSingleton<IAppInfo>(AppInfo.Current);
 		return builder;
 	}
 }

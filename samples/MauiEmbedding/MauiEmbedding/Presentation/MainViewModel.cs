@@ -1,3 +1,5 @@
+using Microsoft.Maui.ApplicationModel;
+
 namespace MauiEmbedding.Presentation;
 
 public partial class MainViewModel : ObservableObject
@@ -9,13 +11,14 @@ public partial class MainViewModel : ObservableObject
 
 	public MainViewModel(
 		IStringLocalizer localizer,
-		IOptions<AppConfig> appInfo,
+		IOptions<AppConfig> appConfig,
+		IAppInfo appInfo,
 		INavigator navigator)
 	{
 		_navigator = navigator;
 		Title = "Main";
 		Title += $" - {localizer["ApplicationName"]}";
-		Title += $" - {appInfo?.Value?.Environment}";
+		Title += $" - {appConfig?.Value?.Environment}";
 	}
 	public string? Title { get; }
 
