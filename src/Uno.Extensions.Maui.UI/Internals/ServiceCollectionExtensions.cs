@@ -25,4 +25,23 @@ internal static class ServiceCollectionExtensions
 
 		return collection;
 	}
+
+	public static bool TryAddService(
+		this IServiceCollection collection,
+		ServiceDescriptor descriptor)
+	{
+
+		int count = collection.Count;
+		for (int i = 0; i < count; i++)
+		{
+			if (collection[i].ServiceType == descriptor.ServiceType)
+			{
+				// Already added
+				return false;
+			}
+		}
+
+		collection.Add(descriptor);
+		return true;
+	}
 }

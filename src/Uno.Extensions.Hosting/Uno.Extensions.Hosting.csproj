@@ -16,4 +16,10 @@
 	<ItemGroup>
 		<ProjectReference Include="..\Uno.Extensions.Core\Uno.Extensions.Core.csproj" />
 	</ItemGroup>
+
+	<ItemGroup>
+		<InternalsVisibleTo Include="Uno.Extensions.Navigation.UI" />
+		<InternalsVisibleTo Include="Uno.Extensions.Navigation.WinUI" />
+		<InternalsVisibleTo Include="Uno.Extensions.Maui.WinUI" />
+	</ItemGroup>
 </Project>
