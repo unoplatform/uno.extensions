@@ -1,5 +1,6 @@
 #if MAUI_EMBEDDING
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Maui.Animations;
 
 namespace Uno.Extensions.Maui;
 internal class UnoServiceProviderFactory : IServiceProviderFactory<IServiceProvider>
@@ -16,10 +17,34 @@ internal class UnoServiceProviderFactory : IServiceProviderFactory<IServiceProvi
 	// We delay calling build on the MauiHostBuilder until the Uno Host is built
 	public IServiceProvider CreateBuilder(IServiceCollection services)
 	{
-		// NOTE: TryAdd prevents duplicates from overriding what was registered with Uno's Host Builder such as IConfiguration
-		_mauiAppBuilder.Services.ForEach(x => services.TryAdd(x));
+		var singletons = new List<(Type ServiceType, object Implementation)>();
 
-		var serviceProvider = services.BuildServiceProvider();
+		// Copy all Uno registrations into the Maui ServiceCollection
+		services.ForEach(x =>
+		{
+			if (!_mauiAppBuilder.Services.TryAddService(x))
+			{
+				// Pick up any cases where Uno is registering a transient for a service type where Maui is registering a singleton
+				// These are most likely cases where Uno is using the mutable instance container, so need to register
+				// the singleton instances once the service provider is created
+				var reg = _mauiAppBuilder.Services.FirstOrDefault(s => s.ServiceType == x.ServiceType);
+				if (reg is not null &&
+					reg.Lifetime is ServiceLifetime.Singleton &&
+					reg.ImplementationInstance is not null && 
+					x.Lifetime is ServiceLifetime.Transient)
+				{
+					singletons.Add((reg.ServiceType, reg.ImplementationInstance));
+				}
+				_mauiAppBuilder.Services.Add(x);
+			}
+		});
+
+		// Create the service provider that's shared by Maui and Uno
+		var serviceProvider = _mauiAppBuilder.Services.BuildServiceProvider();
+
+		// Register the singleton instances captured earlier with the mutable instance container
+		singletons.ForEach(sreg => serviceProvider.AddSingletonInstance(sreg.ServiceType, sreg.Implementation));
+
 		_mauiAppBuilder.ConfigureContainer(new MauiServiceProviderFactory(serviceProvider));
 		_buildAppBuilderCallback();
 		return serviceProvider;
