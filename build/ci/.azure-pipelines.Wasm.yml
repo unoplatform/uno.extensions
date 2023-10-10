@@ -24,18 +24,13 @@ jobs:
       configFilePath: build/ci/gitversion.yml
     displayName: Use GitVersion
 
-  # - script: |
-  #     sudo apt-get update
-  #     sudo apt-get install -y ninja-build
-  #   displayName: Install Ninja build
-
   - script: |
-      dotnet build samples/Playground/Playground.Wasm/Playground.Wasm.csproj /p:Configuration=Release "/p:InformationalVersion=%GITVERSION_InformationalVersion%" /p:UnoExtensionsDisableNet7=true /p:GeneratePackageOnBuild=false /detailedsummary /bl:$(build.artifactstagingdirectory)/samples-wasm.binlog
+      dotnet build testing/TestHarness/TestHarness.Wasm/TestHarness.Wasm.csproj /p:Configuration=Release "/p:InformationalVersion=%GITVERSION_InformationalVersion%" /p:UnoExtensionsDisableNet7=true /p:GeneratePackageOnBuild=false /detailedsummary /bl:$(build.artifactstagingdirectory)/testharness-wasm.binlog
 
   - task: CopyFiles@2
     displayName: 'Publish Wasm Binaries'
     inputs:
-      SourceFolder: $(build.sourcesdirectory)/samples/Playground/Playground.Wasm/bin/Release/net7.0/dist
+      SourceFolder: $(build.sourcesdirectory)/testing/TestHarness/TestHarness.Wasm/bin/Release/net7.0/dist
       Contents: '**/*.*'
       TargetFolder: $(build.artifactstagingdirectory)/Wasm
       CleanTargetFolder: false
