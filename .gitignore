@@ -335,3 +335,4 @@ ASALocalRun/
 .vscode/**/*.*
 DebugPlatforms.props
 .DS_Store
+**/.icons

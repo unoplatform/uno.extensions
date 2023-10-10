@@ -13,7 +13,7 @@
 			<IconUrl>https://uno-assets.platform.uno/logos/uno.png</IconUrl>
 		</PropertyGroup>
 
-		<DownloadFile SourceUrl="$(IconUrl)" DestinationFolder="$(IntermediateOutputPath)">
+		<DownloadFile SourceUrl="$(IconUrl)" DestinationFolder="$(MSBuildThisFileDirectory)\.icons">
 			<Output TaskParameter="DownloadedFile" PropertyName="UnoPackageDownloadedIcon" />
 		</DownloadFile>
 
