@@ -37,12 +37,12 @@ jobs:
 - template: .azure-pipelines.Windows.yml
   parameters:
     solution: testing/TestHarness/TestHarness-winui.slnf
-    solutionName: TestHarness-WinUI
+    solutionName: TestHarness_WinUI
 
 - template: .azure-pipelines.Windows.yml
   parameters:
     solution: testing/TestHarness/TestHarness-ui.slnf
-    solutionName: TestHarness-UI
+    solutionName: TestHarness_UI
 
 - template: .azure-pipelines.Windows.yml
   parameters:
