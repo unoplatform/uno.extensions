@@ -7,9 +7,8 @@ public class OidcAuthenticationHostInit : BaseHostInitialization
 	protected override IHostBuilder Custom(IHostBuilder builder)
 	{
 		return builder
-							.UseAuthentication(auth =>
-					auth
-					.AddOidc(oidc =>
+				.UseAuthentication(auth =>
+					auth.AddOidc(oidc =>
 						oidc
 							.Authority("https://demo.duendesoftware.com/")
 							.ClientId("interactive.confidential")
@@ -17,7 +16,11 @@ public class OidcAuthenticationHostInit : BaseHostInitialization
 							.Scope("openid profile email api offline_access")
 							.RedirectUri("oidc-auth://callback")
 							.PostLogoutRedirectUri("oidc-auth://callback")
-						))
+						)
+						.AddOidc(name: "OpenIdConnectEndpoint")
+						.AddOidc(name: "DifferentOpenIdConnectEndpoint")
+						.AddOidc(name: "AnotherOpenIdConnectEndpoint")
+					)
 
 				.ConfigureServices(services =>
 					services

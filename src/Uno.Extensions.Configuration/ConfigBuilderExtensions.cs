@@ -106,26 +106,6 @@ public static class ConfigBuilderExtensions
 	/// <param name="configurationSection">
 	/// The configuration section to retrieve.
 	/// </param>
-	/// <returns>
-	/// An instance of the <see cref="IConfigBuilder"/> for chaining.
-	/// </returns>
-	public static IConfigBuilder Section<TSettingsOptions>(
-		this IConfigBuilder hostBuilder,
-		string configurationSection)
-			where TSettingsOptions : class, new()
-	{
-		return hostBuilder.Section<TSettingsOptions>(ctx => ctx.Configuration.GetSection(configurationSection));
-	}
-
-	/// <summary>
-	/// Sets up the host builder to register a specific configuration section
-	/// </summary>
-	/// <typeparam name="TSettingsOptions">
-	/// The type that the configuration section will be deserialized to.
-	/// </typeparam>
-	/// <param name="hostBuilder">
-	/// The <see cref="IConfigBuilder"/> to configure.
-	/// </param>
 	/// <param name="configSection">
 	/// A delegate that returns the configuration section to retrieve.
 	/// </param>
@@ -134,12 +114,20 @@ public static class ConfigBuilderExtensions
 	/// </returns>
 	public static IConfigBuilder Section<TSettingsOptions>(
 		this IConfigBuilder hostBuilder,
+		string? configurationSection = "",
 		Func<HostBuilderContext, IConfigurationSection>? configSection = null)
 			where TSettingsOptions : class, new()
 	{
 		if (configSection is null)
 		{
-			configSection = ctx => ctx.Configuration.GetSection(typeof(TSettingsOptions).Name);
+			if (configurationSection is { Length: > 0 })
+			{
+				configSection = ctx => ctx.Configuration.GetSection(configurationSection);
+			}
+			else
+			{
+				configSection = ctx => ctx.Configuration.GetSection(typeof(TSettingsOptions).Name);
+			}
 		}
 
 		static string? FilePath(HostBuilderContext hctx)
@@ -169,7 +157,7 @@ public static class ConfigBuilderExtensions
 					}
 
 					var section = configSection(ctx);
-					services.ConfigureAsWritable<TSettingsOptions>(section, configPath);
+					services.ConfigureAsWritable<TSettingsOptions>(section, configPath, configurationSection);
 				}
 
 			).AsConfigBuilder();

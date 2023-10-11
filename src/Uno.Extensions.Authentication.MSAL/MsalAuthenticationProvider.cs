@@ -11,7 +11,7 @@ namespace Uno.Extensions.Authentication.MSAL;
 
 internal record MsalAuthenticationProvider(
 		ILogger<MsalAuthenticationProvider> ProviderLogger,
-		IOptions<MsalConfiguration> Configuration,
+		IOptionsSnapshot<MsalConfiguration> Configuration,
 		ITokenCache Tokens,
 		IStorage Storage,
 		MsalAuthenticationSettings? Settings = null) : BaseAuthenticationProvider(ProviderLogger, DefaultName, Tokens)
@@ -25,7 +25,7 @@ internal record MsalAuthenticationProvider(
 	public void Build()
 	{
 		if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"Building MSAL Provider");
-		var config = Configuration.Value ?? new MsalConfiguration();
+		var config = Configuration.Get(Name) ?? new MsalConfiguration();
 		var builder = PublicClientApplicationBuilder.CreateWithApplicationOptions(config);
 
 		if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"Invoking settings Build callback");
