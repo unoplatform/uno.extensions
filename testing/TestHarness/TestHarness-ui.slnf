@@ -16,6 +16,7 @@
       "..\\..\\src\\Uno.Extensions.Hosting.UI\\Uno.Extensions.Hosting.UWP.csproj",
       "..\\..\\src\\Uno.Extensions.Hosting\\Uno.Extensions.Hosting.csproj",
       "..\\..\\src\\Uno.Extensions.Http.Refit\\Uno.Extensions.Http.Refit.csproj",
+      "..\\..\\src\\Uno.Extensions.Http.UI\\Uno.Extensions.Http.UI.csproj",
       "..\\..\\src\\Uno.Extensions.Http\\Uno.Extensions.Http.csproj",
       "..\\..\\src\\Uno.Extensions.Localization.UI\\Uno.Extensions.Localization.UI.csproj",
       "..\\..\\src\\Uno.Extensions.Localization\\Uno.Extensions.Localization.csproj",
@@ -23,6 +24,7 @@
       "..\\..\\src\\Uno.Extensions.Logging\\Uno.Extensions.Logging.UWP.Skia.csproj",
       "..\\..\\src\\Uno.Extensions.Logging\\Uno.Extensions.Logging.UWP.Wasm.csproj",
       "..\\..\\src\\Uno.Extensions.Logging\\Uno.Extensions.Logging.UWP.csproj",
+      "..\\..\\src\\Uno.Extensions.Navigation.Generators\\Uno.Extensions.Navigation.Generators.csproj",
       "..\\..\\src\\Uno.Extensions.Navigation.Toolkit\\Uno.Extensions.Navigation.Toolkit.UI.csproj",
       "..\\..\\src\\Uno.Extensions.Navigation.UI\\Uno.Extensions.Navigation.UI.csproj",
       "..\\..\\src\\Uno.Extensions.Navigation\\Uno.Extensions.Navigation.csproj",
@@ -34,17 +36,15 @@
       "..\\..\\src\\Uno.Extensions.Serialization\\Uno.Extensions.Serialization.csproj",
       "..\\..\\src\\Uno.Extensions.Storage.UI\\Uno.Extensions.Storage.UI.csproj",
       "..\\..\\src\\Uno.Extensions.Storage\\Uno.Extensions.Storage.csproj",
+      "..\\..\\src\\Uno.Extensions.Validation.Fluent\\Uno.Extensions.Validation.Fluent.csproj",
+      "..\\..\\src\\Uno.Extensions.Validation\\Uno.Extensions.Validation.csproj",
       "TestBackend\\TestBackend.csproj",
       "TestHarness.Core\\TestHarness.Core.csproj",
       "TestHarness.Legacy.Skia.Gtk\\TestHarness.Legacy.Skia.Gtk.csproj",
       "TestHarness.Legacy.Skia.Linux.FrameBuffer\\TestHarness.Legacy.Skia.Linux.FrameBuffer.csproj",
-      "TestHarness.Legacy.Skia.Tizen\\TestHarness.Legacy.Skia.Tizen.csproj",
-      "TestHarness.Legacy.Skia.WPF.Host\\TestHarness.Legacy.Skia.Wpf.Host.csproj",
-      "TestHarness.Legacy.Skia.WPF\\TestHarness.Legacy.Skia.WPF.csproj",
       "TestHarness.Legacy.UWP\\TestHarness.Legacy.Uwp.csproj",
       "TestHarness.Legacy.Wasm\\TestHarness.Legacy.Wasm.csproj",
-      "TestHarness.Shared\\TestHarness.Shared.shproj",
-      "TestHarness.UITest\\TestHarness.UITest.csproj"
+      "TestHarness.Shared\\TestHarness.Shared.shproj"
     ]
   }
 }

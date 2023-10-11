@@ -43,8 +43,6 @@
       "TestHarness.Mobile\\TestHarness.Mobile.csproj",
       "TestHarness.Shared\\TestHarness.Shared.shproj",
       "TestHarness.Skia.Gtk\\TestHarness.Skia.Gtk.csproj",
-      "TestHarness.Skia.WPF.Host\\TestHarness.Skia.Wpf.Host.csproj",
-      "TestHarness.Skia.WPF\\TestHarness.Skia.WPF.csproj",
       "TestHarness.UITest\\TestHarness.UITest.csproj",
       "TestHarness.Wasm\\TestHarness.Wasm.csproj",
       "TestHarness.Windows\\TestHarness.Windows.csproj"
