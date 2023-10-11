@@ -106,6 +106,9 @@ public static class ConfigBuilderExtensions
 	/// <param name="configurationSection">
 	/// The configuration section to retrieve.
 	/// </param>
+	/// <param name="configSection">
+	/// A delegate that returns the configuration section to retrieve.
+	/// </param>
 	/// <returns>
 	/// An instance of the <see cref="IConfigBuilder"/> for chaining.
 	/// </returns>
