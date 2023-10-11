@@ -51,7 +51,6 @@
       "Uno.Extensions.Reactive.Testing\\Uno.Extensions.Reactive.Testing.csproj",
       "Uno.Extensions.Reactive.Tests\\Uno.Extensions.Reactive.Tests.csproj",
       "Uno.Extensions.Reactive.UI.Markup\\Uno.Extensions.Reactive.WinUI.Markup.csproj",
-      "Uno.Extensions.Reactive.UI.Tests\\Uno.Extensions.Reactive.WinUI.Tests.csproj",
       "Uno.Extensions.Reactive.UI\\Uno.Extensions.Reactive.UI.csproj",
       "Uno.Extensions.Reactive.UI\\Uno.Extensions.Reactive.WinUI.csproj",
       "Uno.Extensions.Reactive\\Uno.Extensions.Reactive.csproj",
