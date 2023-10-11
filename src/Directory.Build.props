@@ -28,6 +28,14 @@
 		<ImplicitUsings>true</ImplicitUsings>
 
 		<UnoExtensionsGeneration_DisableCreateNewOnMetadataUpdateAttribute>True</UnoExtensionsGeneration_DisableCreateNewOnMetadataUpdateAttribute>
+
+
+		<!-- Enables hard links for obj -> bin files (symlinks generally don't work there -->
+		<CreateHardLinksForCopyFilesToOutputDirectoryIfPossible>true</CreateHardLinksForCopyFilesToOutputDirectoryIfPossible>
+
+		<CreateHardLinksForCopyLocalIfPossible>true</CreateHardLinksForCopyLocalIfPossible>
+		<CreateHardLinksForAdditionalFilesIfPossible>true</CreateHardLinksForAdditionalFilesIfPossible>
+		<CreateHardLinksForPublishFilesIfPossible>true</CreateHardLinksForPublishFilesIfPossible>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)'=='Release'">
