@@ -2,8 +2,11 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
+using Uno.Extensions.Reactive.Config;
 using Uno.Extensions.Reactive.Core;
 using Uno.Extensions.Reactive.Dispatching;
 using Uno.Extensions.Reactive.Events;
@@ -40,6 +43,8 @@ public abstract partial class BindableViewModelBase : IBindable, INotifyProperty
 		_propertyChanged = new(this, h => h.Invoke, isCoalescable: false, schedulersProvider: _dispatcher.FindDispatcher);
 
 		_dispatcher.TryResolve();
+
+		InitializeHotReload();
 	}
 
 	/// <summary>
@@ -48,6 +53,13 @@ public abstract partial class BindableViewModelBase : IBindable, INotifyProperty
 	/// <param name="disposable">The disposable.</param>
 	protected void RegisterDisposable(IAsyncDisposable disposable)
 		=> _disposables.Add(disposable);
+
+	/// <summary>
+	/// Raise the property changed event for the given property name.
+	/// </summary>
+	/// <param name="propertyName">Name of teh property, or nothing to let compiler full-fil it.</param>
+	protected void RaisePropertyChanged([CallerMemberName] string propertyName = "")
+		=> _propertyChanged.Raise(new PropertyChangedEventArgs(propertyName));
 
 	/// <summary>
 	/// Get info for a bindable property given a backing feed.
@@ -182,6 +194,14 @@ public abstract partial class BindableViewModelBase : IBindable, INotifyProperty
 
 	private static T GetDefaultValueForBindings<T>()
 		=> default!; // For now we default to null as we cannot enforce non-null through bindings
+
+	/// <summary>
+	/// Gets a logger for reactive generated code.
+	/// </summary>
+	/// <returns>An ILogger than can be used by generated code to log some messages.</returns>
+	[EditorBrowsable(EditorBrowsableState.Never)]
+	protected ILogger __Reactive_Log()
+		=> this.Log();
 
 	/// <inheritdoc />
 	public async ValueTask DisposeAsync()

@@ -56,6 +56,13 @@ internal abstract class FeedSession : IAsyncDisposable
 	protected bool IsDisposed => _isDisposed is not 0;
 
 	/// <summary>
+	/// Gets application's delegate executed by this session.
+	/// WARNING This should used only for debugging and hot-reload purposes!
+	/// </summary>
+	[EditorBrowsable(EditorBrowsableState.Never)]
+	internal abstract Delegate CoreExecutionAction { get; }
+
+	/// <summary>
 	/// Requests to start a new execution.
 	/// </summary>
 	/// <param name="request">The execution request.</param>

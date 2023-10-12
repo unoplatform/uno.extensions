@@ -1,13 +1,17 @@
-﻿using Microsoft.CodeAnalysis;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Text;
+using Microsoft.CodeAnalysis;
 using Uno.Extensions.Generators;
 
 namespace Uno.Extensions.Reactive.Generator;
 
 /// <summary>
-/// A generator that generates UI module initialization for the reactive framework.
+/// A generator that generates hot-reload module initialization for the reactive framework.
 /// </summary>
 [Generator]
-public sealed class UIModuleInitializerGenerator : IIncrementalGenerator, ICodeGenTool
+internal sealed class HotReloadModuleInitializerGenerator : IIncrementalGenerator, ICodeGenTool
 {
 	/// <inheritdoc />
 	public string Version => "1";
@@ -25,17 +29,17 @@ public sealed class UIModuleInitializerGenerator : IIncrementalGenerator, ICodeG
 #endif
 
 		var assemblyNameProvider = context.CompilationProvider.Select((compilation, _) => compilation.Assembly.Name);
-		var hasReactiveUIModuleInitializer = context.CompilationProvider.Select((compilation, _) => compilation.GetTypeByMetadataName("Uno.Extensions.Reactive.UI.ModuleInitializer") is not null);
+		var hasFeedConfiguration = context.CompilationProvider.Select((compilation, _) => compilation.GetTypeByMetadataName($"Uno.Extensions.Reactive.Config.ModuleFeedConfiguration") is not null);
 
 		context.RegisterSourceOutput(
-			assemblyNameProvider.Combine(hasReactiveUIModuleInitializer),
+			assemblyNameProvider.Combine(hasFeedConfiguration),
 			(ctx, source) =>
 			{
 				if (source.Right)
 				{
 					var assembly = source.Left;
 					ctx.AddSource(
-						PathHelper.SanitizeFileName($"{assembly}.ReactiveUIModuleInitializer.g.cs"),
+						PathHelper.SanitizeFileName($"{assembly}.ReactiveHotReloadModuleInitializer.g.cs"),
 						GetSource(assembly));
 				}
 			});
@@ -47,21 +51,26 @@ public sealed class UIModuleInitializerGenerator : IIncrementalGenerator, ICodeG
 namespace {assembly}
 {{
 	/// <summary>
-	/// Initialize provider of dispatcher.
+	/// Initialize hot-reload support.
 	/// </summary>
-	/// <remarks>This class ensures that dispatcher has been initialized even if the Reactive.UI package has not been loaded yet.</remarks>
+	/// <remarks>This class ensures that the hot-reload support is enabled only when needed (i.e. !IS_HOT_RELOAD_DISABLED && (DEBUG || IS_HOT_RELOAD_ENABLED).</remarks>
 	[global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Never)]
 	{this.GetCodeGenAttribute()}
-	internal static class __ReactiveUIModuleInitializer
+	internal static class __ReactiveHotReloadModuleInitializer
 	{{
 		/// <summary>
-		/// Register the <seealso cref=""DispatcherQueueProvider""/> as provider of <see cref=""IDispatcher""/> for the reactive platform.
+		/// Configures hot-reload for MVUX.
 		/// </summary>
 		/// <remarks>This method is flagged with ModuleInitializer attribute and should not be used by application.</remarks>
 		[global::System.Runtime.CompilerServices.ModuleInitializer]
 		public static void Initialize()
 		{{
-			global::Uno.Extensions.Reactive.UI.ModuleInitializer.Initialize();
+#if !IS_HOT_RELOAD_DISABLED && (DEBUG || IS_HOT_RELOAD_ENABLED)
+			var isEnabled = true;
+#else
+			var isEnabled = false;
+#endif
+			{NS.Config}.ModuleFeedConfiguration.ConfigureHotReload(""{assembly}"", isEnabled);
 		}}
 	}}
 }}

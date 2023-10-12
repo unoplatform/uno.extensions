@@ -3,19 +3,15 @@
 
 	<PropertyGroup>
 		<Description>Reactive Extensions for the Uno Platform, UWP and WinUI</Description>
+		<ImplicitUsings>false</ImplicitUsings>
 
 		<!--
 			As we are InternalsVisibleTo(Uno.Extensions.Reactive.Tests), we disable some compatibility types that are not used by Reactive package itself.
 		-->
 		<UnoExtensionsGeneration_DisableModuleInitializerAttribute>True</UnoExtensionsGeneration_DisableModuleInitializerAttribute>
-		<ImplicitUsings>false</ImplicitUsings>
+		<UnoExtensionsGeneration_DisableCreateNewOnMetadataUpdateAttribute>True</UnoExtensionsGeneration_DisableCreateNewOnMetadataUpdateAttribute>
+		<UnoExtensionsGeneration_DisableMetadataUpdateOriginalTypeAttribute>True</UnoExtensionsGeneration_DisableMetadataUpdateOriginalTypeAttribute>
 	</PropertyGroup>
-
-	<ItemGroup>
-	  <Compile Remove="..\Uno.Extensions.Core\_Compat\IsExternalInit.cs" />
-	  <Compile Remove="..\Uno.Extensions.Core\_Compat\NotNullIfNotNullAttribute.cs" />
-	  <Compile Remove="..\Uno.Extensions.Core\_Compat\NotNullWhenAttribute.cs" />
-	</ItemGroup>
 
 	<ItemGroup>
 		<PackageReference Include="System.Collections.Immutable" />

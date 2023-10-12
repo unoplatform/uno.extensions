@@ -107,29 +107,37 @@ partial class Feed
 	/// <returns>An async enumeration sequence of all acceptable data produced by a feed.</returns>
 	public static async IAsyncEnumerable<Option<T>> Options<T>(this IFeed<T> feed, AsyncFeedValue kind = AsyncFeedValue.AllowError, [EnumeratorCancellation] CancellationToken ct = default)
 	{
-		var dataHasChanged = true;
-		await foreach (var message in SourceContext.Current.GetOrCreateSource(feed).WithCancellation(ct).ConfigureAwait(false))
+		using var enumCt = CancellationTokenSource.CreateLinkedTokenSource(ct);
+		try
 		{
-			var current = message.Current;
-			dataHasChanged |= message.Changes.Contains(MessageAxis.Data);
-
-			// Note: We check flags first to make sure to not touch values that are not needed for FeedDependency.
-
-			if (!kind.HasFlag(AsyncFeedValue.AllowTransient) && current.IsTransient)
+			var dataHasChanged = true;
+			await foreach (var message in SourceContext.Current.GetOrCreateSource(feed).WithCancellation(enumCt.Token).ConfigureAwait(false))
 			{
-				continue;
-			}
+				var current = message.Current;
+				dataHasChanged |= message.Changes.Contains(MessageAxis.Data);
 
-			if (!kind.HasFlag(AsyncFeedValue.AllowError) && current.Error is { } error)
-			{
-				ExceptionDispatchInfo.Capture(error).Throw();
-			}
+				// Note: We check flags first to make sure to not touch values that are not needed for FeedDependency.
 
-			if (dataHasChanged)
-			{
-				yield return current.Data;
-				dataHasChanged = false;
+				if (!kind.HasFlag(AsyncFeedValue.AllowTransient) && current.IsTransient)
+				{
+					continue;
+				}
+
+				if (!kind.HasFlag(AsyncFeedValue.AllowError) && current.Error is { } error)
+				{
+					ExceptionDispatchInfo.Capture(error).Throw();
+				}
+
+				if (dataHasChanged)
+				{
+					yield return current.Data;
+					dataHasChanged = false;
+				}
 			}
+		}
+		finally
+		{
+			enumCt.Cancel();
 		}
 	}
 

@@ -93,25 +93,38 @@ internal sealed class UpdateFeed<T> : IFeed<T>
 					return;
 				}
 
-				var canDoIncrementalUpdate = !_isInError;
+				bool needsUpdate = false, canDoIncrementalUpdate = !_isInError;
 				if (args.removed is { Length: > 0 } removed)
 				{
-					canDoIncrementalUpdate = false;
-					_activeUpdates = _activeUpdates.RemoveRange(removed);
+					var updates = _activeUpdates.RemoveRange(removed);
+					if (_activeUpdates != updates)
+					{
+						needsUpdate = true;
+						canDoIncrementalUpdate = false;
+						_activeUpdates = updates;
+					}
 				}
 
 				if (args.added is { Length: > 0 } added)
 				{
-					_activeUpdates = _activeUpdates.AddRange(added);
-
-					if (canDoIncrementalUpdate)
+					var updates = _activeUpdates.AddRange(added);
+					if (_activeUpdates != updates)
 					{
-						IncrementalUpdate(added);
-						return;
+						needsUpdate = true;
+						_activeUpdates = updates;
+
+						if (canDoIncrementalUpdate)
+						{
+							IncrementalUpdate(added);
+							return;
+						}
 					}
 				}
 
-				RebuildMessage(parentMsg: default);
+				if (needsUpdate)
+				{
+					RebuildMessage(parentMsg: default);
+				}
 			}
 		}
 

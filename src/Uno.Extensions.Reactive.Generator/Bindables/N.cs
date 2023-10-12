@@ -11,7 +11,7 @@ internal static class N
 	public static class Ctor
 	{
 		public const string Ctx = "ctx";
-		public const string Model = "vm";
+		public const string Model = "model";
 	}
 
 	/// <summary>

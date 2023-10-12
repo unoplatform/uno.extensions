@@ -33,6 +33,9 @@ internal sealed partial class FeedSession<TResult> : FeedSession, IAsyncEnumerat
 	private Execution? _currentExecution; // This the execution currently loading the data, 
 
 	/// <inheritdoc />
+	internal override Delegate CoreExecutionAction => _mainAsyncAction;
+
+	/// <inheritdoc />
 	public override void Execute(ExecuteRequest request)
 	{
 		lock (_requestsGate)
