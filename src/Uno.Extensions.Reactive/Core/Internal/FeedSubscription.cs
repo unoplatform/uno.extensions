@@ -26,6 +26,7 @@ internal class FeedSubscription
 
 internal class FeedSubscription<T> : IAsyncDisposable, ISourceContextOwner
 {
+	private readonly ISignal<Message<T>> _feed;
 	private readonly SourceContext _rootContext;
 	private readonly CompositeRequestSource _requests = new();
 	private readonly SourceContext _context;
@@ -33,6 +34,7 @@ internal class FeedSubscription<T> : IAsyncDisposable, ISourceContextOwner
 
 	public FeedSubscription(ISignal<Message<T>> feed, SourceContext rootContext)
 	{
+		_feed = feed;
 		_rootContext = rootContext;
 		_context = rootContext.CreateChild(this, _requests);
 		_source = new ReplayOneAsyncEnumerable<Message<T>>(
@@ -48,7 +50,8 @@ internal class FeedSubscription<T> : IAsyncDisposable, ISourceContextOwner
 	public async IAsyncEnumerable<Message<T>> GetMessages(SourceContext subscriberContext, [EnumeratorCancellation] CancellationToken ct)
 	{
 		Debug.Assert(subscriberContext.RootId == _context.RootId);
-		if (subscriberContext != _rootContext)
+		if (subscriberContext != _rootContext
+			&& _feed is not IStateImpl) // Currently state has it's own subscription logic and already propagates the requests. Doing it here again would cause cycling request (and stack-overflow!).
 		{
 			_requests.Add(subscriberContext.RequestSource, ct);
 		}
