@@ -24,7 +24,7 @@
 					Foreground="{ThemeResource PrimaryMediumBrush}">
 					<AppBarButton.Icon>
 						<BitmapIcon
-							UriSource="ms-appx:///Assets/Icons/back.png" />
+							UriSource="ms-appx:///Playground/Assets/Icons/back.png" />
 					</AppBarButton.Icon>
 				</AppBarButton>
 			</ui:NavigationBar.MainCommand>
