@@ -1,5 +1,10 @@
 <Project ToolsVersion="15.0">
-  
+  <ItemGroup>
+    <!-- Removes native usings to avoid Ambiguous reference -->
+    <Using Remove="@(Using->HasMetadata('Platform'))" />
+  </ItemGroup>
+
+
   <PropertyGroup>
     <!--
       macOS needs an explicit override of the current compiler when running under mono.
@@ -7,7 +12,7 @@
       -->
     <MicrosoftNetCompilerVersionOverride Condition="'$(MSBuildRuntimeType)'!='Core' and ($([MSBuild]::IsOSPlatform('OSX')) or '$(MSBuildVersion)' &lt; '17.0')">4.0.1</MicrosoftNetCompilerVersionOverride>
   </PropertyGroup>
-  
+
   <!--
   This file is imported from Directory.Build.props as the nuget tooling
   in VS is skipping ItemGroup conditions for legacy projects (iOS, Android, ...).
@@ -33,10 +38,24 @@
     </When>
   </Choose>
 
-	<Import Project="..\..\src\xamarinmac-workaround.targets" Condition="exists('..\..\src\xamarinmac-workaround.targets') and $(TargetFramework.ToLower().StartsWith('xamarin')) and $(TargetFramework.ToLower().Contains('mac'))" />
+  <Import Project="..\..\src\xamarinmac-workaround.targets" Condition="exists('..\..\src\xamarinmac-workaround.targets') and $(TargetFramework.ToLower().StartsWith('xamarin')) and $(TargetFramework.ToLower().Contains('mac'))" />
 
-	<!-- Uno.WinUI.MSAL references Uno.WinUI for windows10 tfm. This target
-		overrides the protection in uno.winui.targets that raises an error 
-		that breaks build -->
-	<Target Name="_WinAppSDKNotSupported" BeforeTargets="BeforeBuild" />
+  <!-- Workaround to avoid including Uno.Toolkit.UI XBFs in the PRI file -->
+  <Target Name="AdjustGetPackagingOutput1" AfterTargets="GetMrtPackagingOutputs">
+    <Message Importance="high" Text="Applying NuGet packaging workaround for dependent PRI files exclusion" />
+    <ItemGroup>
+      <_OtherPriFiles Include="@(PackagingOutputs)" Condition="'%(Extension)' == '.pri' and ('%(PackagingOutputs.ReferenceSourceTarget)' == 'ProjectReference' or '%(PackagingOutputs.NugetSourceType)'=='Package')" />
+      <PackagingOutputs Remove="@(_OtherPriFiles)" />
+    </ItemGroup>
+  </Target>
+
+  <Target Name="AdjustGetPackagingOutput2" BeforeTargets="AddPriPayloadFilesToCopyToOutputDirectoryItems">
+    <Message Importance="high" Text="Applying NuGet packaging workaround for dependent PRI files exclusion" />
+    <ItemGroup>
+      <_OtherPriFiles1 Include="@(_ReferenceRelatedPaths)" Condition="'%(Extension)' == '.pri' and ('%(_ReferenceRelatedPaths.ReferenceSourceTarget)' == 'ProjectReference' or '%(_ReferenceRelatedPaths.NugetSourceType)'=='Package')" />
+      <_ReferenceRelatedPaths Remove="@(_OtherPriFiles1)" />
+      <_OtherPriFiles2 Include="@(ReferenceCopyLocalPaths)" Condition="'%(Extension)' == '.pri' and ('%(ReferenceCopyLocalPaths.ReferenceSourceTarget)' == 'ProjectReference' or '%(ReferenceCopyLocalPaths.NugetSourceType)'=='Package')" />
+      <ReferenceCopyLocalPaths Remove="@(_OtherPriFiles2)" />
+    </ItemGroup>
+  </Target>
 </Project>

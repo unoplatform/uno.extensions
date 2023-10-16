@@ -1,0 +1,59 @@
+﻿<Page x:Class="Playground.Views.DialogsPage"
+	  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	  xmlns:local="using:Playground.Views"
+	  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	  mc:Ignorable="d"
+	  xmlns:ui="using:Uno.Toolkit.UI"
+	  xmlns:uen="using:Uno.Extensions.Navigation.UI"
+	  Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition />
+		</Grid.RowDefinitions>
+		<ui:NavigationBar Content="Dialogs"
+						  Style="{StaticResource MaterialNavigationBarStyle}">
+			<ui:NavigationBar.MainCommand>
+				<AppBarButton Foreground="{ThemeResource PrimaryMediumBrush}">
+					<AppBarButton.Icon>
+						<BitmapIcon UriSource="ms-appx:///Assets/Icons/back.png" />
+					</AppBarButton.Icon>
+				</AppBarButton>
+			</ui:NavigationBar.MainCommand>
+		</ui:NavigationBar>
+		<StackPanel Grid.Row="1">
+			<Button Content="MessageDialog XAML"
+					uen:Navigation.Request="Confirm" />
+			<Button Content="Localized MessageDialog XAML"
+					uen:Navigation.Request="!LocalizedConfirm" />
+			<Button Content="MessageDialog Codebehind"
+					Click="MessageDialogCodebehindClick" />
+			<Button Content="MessageDialog Codebehind (route)"
+					Click="MessageDialogCodebehindRouteClick" />
+			<Button Content="MessageDialog Codebehind (route override)"
+					Click="MessageDialogCodebehindRouteOverrideClick" />
+			<TextBlock x:Name="MessageDialogResultText" />
+			<Button Content="MessageDialog Codebehind (cancel after 2s)"
+					Click="MessageDialogCodebehindCancelClick" />
+			<TextBlock x:Name="MessageDialogCancelResultText" />
+			<Button uen:Navigation.Request="Simple"
+					Content="SimpleDialog Nav Request" />
+			<Button Content="SimpleDialog Codebehind"
+					Click="SimpleDialogCodebehindClick" />
+			<Button Content="SimpleDialog Codebehind (cancel after 2s)"
+					Click="SimpleDialogCodebehindCancelClick" />
+			<TextBlock x:Name="SimpleDialogResultText" />
+			<Button uen:Navigation.Request="!Complex/ComplexDialogFirst"
+					Content="Complex Dialog Nav Request" />
+			<Button uen:Navigation.Request="!Basic"
+					Content="Flyout from Xaml" />
+			<Button Content="Flyout from Background Thread"
+					Click="FlyoutFromBackgroundClick" />
+			<Button Content="Flyout from Background Thread requesting data"
+					Click="FlyoutFromBackgroundRequestingDataClick" />
+		</StackPanel>
+	</Grid>
+</Page>
