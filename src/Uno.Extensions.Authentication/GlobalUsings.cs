@@ -15,3 +15,5 @@ global using Uno.Extensions.Authentication.Handlers;
 global using Uno.Extensions.Hosting;
 global using Uno.Extensions.Logging;
 global using Uno.Extensions.Storage.KeyValueStorage;
+global using System.Security.Claims;
+global using System.IdentityModel.Tokens.Jwt;
