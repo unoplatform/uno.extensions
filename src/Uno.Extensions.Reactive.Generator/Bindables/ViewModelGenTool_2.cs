@@ -124,7 +124,15 @@ internal class ViewModelGenTool_2 : ICodeGenTool
 							base.RegisterDisposable({N.Ctor.Model});
 							{N.Model} = {N.Ctor.Model};").Align(6)}
 
-						__Reactive_BindableInitialize({N.Ctor.Model}, {N.Ctor.Ctx});
+						{N.Ctor.Model}.__reactiveBindableViewModel = this;
+
+						{members.Select(member => member.GetInitialization()).Align(6)}
+
+						{(hasBaseType ? "" : $@"
+							if ({N.Ctor.Model} is global::System.ComponentModel.INotifyPropertyChanged npc)
+							{{
+								npc.PropertyChanged += __Reactive_OnModelPropertyChanged;
+							}}").Align(6)}
 					}}
 
 					#region Hot-reload support
@@ -154,44 +162,44 @@ internal class ViewModelGenTool_2 : ICodeGenTool
 					{{
 						#if {hasBaseType}
 						base.__Reactive_BindableInitializeForUpdatedModel(updatedModel, {N.Ctor.Ctx});
+						#else
+						//{N.Model} = model;
 						#endif
 
-						if (updatedModel is {model.ToFullString()} model)
-						{{
-							#if {!hasBaseType}
-							{N.Model} = model;
-							#endif
+						dynamic {N.Ctor.Model} = updatedModel;
 
-							__Reactive_BindableInitialize(model, {N.Ctor.Ctx});
-						}}
-						else if (__Reactive_Log().IsEnabled(global::Microsoft.Extensions.Logging.LogLevel.Warning))
-						{{
-							global::Microsoft.Extensions.Logging.LoggerExtensions.Log(
-								__Reactive_Log(),
-								global::Microsoft.Extensions.Logging.LogLevel.Warning,
-								$""The updated model ({{updatedModel.GetType().Name}}) is not of the expected type {model.ToFullString()}."");
-						}}
-					}}
-					#endregion
-
-					private void __Reactive_BindableInitialize({model.ToFullString()} {N.Ctor.Model}, {NS.Core}.SourceContext {N.Ctor.Ctx})
-					{{
 						{N.Ctor.Model}.__reactiveBindableViewModel = this;
 
-						#if {!hasBaseType}
-						if ({N.Ctor.Model} is global::System.ComponentModel.INotifyPropertyChanged npc)
-						{{
-							npc.PropertyChanged += __Reactive_OnModelPropertyChanged;
-						}}
-						#endif
+						{members.Select(member => $@"try
+							{{
+								{member.GetInitialization()}
+							}}
+							catch (Exception)
+							{{
+								if (__Reactive_Log().IsEnabled(global::Microsoft.Extensions.Logging.LogLevel.Warning))
+								{{
+									global::Microsoft.Extensions.Logging.LoggerExtensions.Log(
+										__Reactive_Log(),
+										global::Microsoft.Extensions.Logging.LogLevel.Warning,
+										$""Failed to initialize '{member.Name}' from the updated model, this member is unlikely to work properly."");
+								}}
+							}}").Align(6)}
 
-						{members.Select(member => member.GetInitialization()).Align(6)}
+						{(hasBaseType ? "" : @$"
+							if ({N.Ctor.Model} is global::System.ComponentModel.INotifyPropertyChanged npc)
+							{{
+								npc.PropertyChanged += __Reactive_OnModelPropertyChanged;
+							}}").Align(6)}
 					}}
+					#endregion
 
 					private void __Reactive_OnModelPropertyChanged(object? sender, global::System.ComponentModel.PropertyChangedEventArgs args)
 						=> base.RaisePropertyChanged(args.PropertyName);
 
-					public {(hasBaseType ? $"new {model.ToFullString()} {N.Model} => ({model.ToFullString()}) base.{N.Model};" : $"{model} {N.Model} {{ get; private set; }}")}
+					{hasBaseType switch {
+						false => $"public {model.ToFullString()} {N.Model} {{ get; private set; }}",
+						true => $"public new {model.ToFullString()} {N.Model} => ({model.ToFullString()}) base.{N.Model};",
+					}}
 
 					{members.Select(member => member.GetDeclaration()).Align(5)}
 				}}");
@@ -218,7 +226,7 @@ internal class ViewModelGenTool_2 : ICodeGenTool
 		var vm = GetViewModelFullName(model);
 		return this.AsPartialOf(
 			model,
-			attributes: $"[{NS.Bindings}.Model(typeof({vm}))]",
+			attributes: $"[{NS.Bindings}.Model(typeof({vm}))]\r\n[global::System.Runtime.CompilerServices.CreateNewOnMetadataUpdate]",
 			bases: $"global::System.IAsyncDisposable, {NS.Core}.ISourceContextAware, {NS.Bindings}.IModel<{vm}>",
 			code: $@"
 				[global::System.ComponentModel.EditorBrowsable(global::System.ComponentModel.EditorBrowsableState.Never)]

@@ -24,12 +24,17 @@ partial class BindableViewModelBase
 {
 	private static List<WeakReference<BindableViewModelBase>>? _instances;
 
+	private static readonly ILogger _untypedLog = LogExtensions.Log<BindableViewModelBase>();
+
 	internal static void HotPatch(Type bindable, Type originalModel, Type updatedModel)
 	{
 		try
 		{
 			if (_instances is null)
 			{
+				if (_untypedLog.IsEnabled(LogLevel.Information))
+					_untypedLog.Info("Hot reload has been disabled.");
+
 				return;
 			}
 
@@ -43,21 +48,29 @@ partial class BindableViewModelBase
 					.ToArray()!;
 			}
 
+			if (_untypedLog.IsEnabled(LogLevel.Information))
+				_untypedLog.Info($"Found {instances.Length} instances of {bindable.Name} to hot-patch.");
+
 			foreach (var instance in instances)
 			{
 				try
 				{
+					if (instance.Log().IsEnabled(LogLevel.Information))
+						instance.Log().Info($"Hot-patch bindable {bindable.Name}:{instance.GetHashCode():X8}.");
+
 					instance.HotPatch(originalModel, updatedModel);
 				}
 				catch (Exception e)
 				{
-					instance.Log().Error(e, "Failed to hot-patch bindable instance.");
+					if (instance.Log().IsEnabled(LogLevel.Error))
+						instance.Log().Error(e, "Failed to hot-patch bindable instance.");
 				}
 			}
 		}
 		catch (Exception e)
 		{
-			bindable.Log().Error(e, "Failed to hot-patch bindable type.");
+			if (_untypedLog.IsEnabled(LogLevel.Error))
+				_untypedLog.Error(e, "Failed to hot-patch bindable type.");
 		}
 	}
 
@@ -217,13 +230,22 @@ partial class BindableViewModelBase
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	protected static void __Reactive_TryPatchBindableProperties(object? previousModel, object? updatedModel)
 	{
+		var log = (previousModel ?? updatedModel)?.Log() ?? _untypedLog;
+		var trace = log.IsEnabled(LogLevel.Trace);
+
+		if (trace) log.Trace("Trying to transfer state from previous model to the updated one.");
+
 		if (previousModel is null || updatedModel is null)
 		{
+			if (trace) log.Trace($"Cannot transfer state from previous model to the updated one as {(previousModel, updatedModel) switch { (null, null) => "previous and updated are", (null, _) => "previous is", _ => "updated is" }} null.");
+
 			return;
 		}
 
 		var previousModelType = previousModel.GetType();
 		var updatedModelType = updatedModel.GetType();
+
+		if (trace) log.Trace($"Transferring state from '{previousModelType}:{previousModel.GetHashCode():X8}' to '{updatedModelType}:{updatedModel.GetHashCode():X8}'.");
 
 		foreach (var previousProperty in previousModelType.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic))
 		{
@@ -231,6 +253,8 @@ partial class BindableViewModelBase
 			{
 				if (!IsFeed(previousModel, previousProperty, out var previousFeed, out var previousValueType))
 				{
+					if (trace) log.Trace($"Property {previousProperty.Name} was not a feed in the previous model, cannot transfer state.");
+
 					continue;
 				}
 
@@ -238,30 +262,43 @@ partial class BindableViewModelBase
 				{
 					if (!IsFeed(updatedModel, updatedProperty, out var updatedFeed, out var updatedValueType))
 					{
+						if (trace) log.Trace($"Property {updatedProperty.Name} is no longer a feed in updated model, cannot transfer state.");
+
 						continue;
 					}
 
 					if (previousValueType != updatedValueType)
 					{
-						if (updatedModel.Log().IsEnabled(LogLevel.Information)) updatedModel.Log().Info($"Cannot transfer state of property '{previousProperty.Name}', the type of feed is not the same (was: IFeed<{previousValueType.Name}> | is: IFeed<{updatedValueType.Name}>).");
+						if (log.IsEnabled(LogLevel.Information)) log.Info($"Cannot transfer state of property '{previousProperty.Name}', the type of feed is not the same (was: IFeed<{previousValueType.Name}> | is: IFeed<{updatedValueType.Name}>).");
 
 						continue;
 					}
+
+					if (trace) log.Trace($"Property {updatedProperty.Name} has been updated, replace the source feed of backing state by the new instance.");
 
 					TryPatchBindableProperty(previousModel, previousProperty.Name, previousValueType, previousFeed, updatedFeed);
 				}
 				else if (FeedConfiguration.HotReloadRemovalBehavior is HotReloadRemovalBehavior.Error)
 				{
+					if (trace) log.Trace($"Property {previousProperty.Name} has been removed, make backing state to go in error state.");
+
 					TryPatchBindableProperty(updatedModel, previousProperty.Name, previousValueType, previousFeed, CreateErrorFeed(previousValueType, $"Property '{previousProperty.Name}' has been removed."));
 				}
 				else if (FeedConfiguration.HotReloadRemovalBehavior is HotReloadRemovalBehavior.Clear)
 				{
+					if (trace) log.Trace($"Property {previousProperty.Name} has been removed, make backing state to go in undefined state.");
+
 					TryPatchBindableProperty(updatedModel, previousProperty.Name, previousValueType, previousFeed, CreateUndefinedFeed(previousValueType));
 				}
+				else if (trace)
+				{
+					log.Trace($"Property {previousProperty.Name} has been removed, keep backing state untouched.");
+				}
+
 			}
 			catch (Exception error)
 			{
-				if (updatedModel.Log().IsEnabled(LogLevel.Warning)) updatedModel.Log().Warn(error, $"Failed to transfer the state of '{previousProperty.Name}'.");
+				if (log.IsEnabled(LogLevel.Warning)) log.Warn(error, $"Failed to transfer the state of '{previousProperty.Name}'.");
 			}
 		}
 	}

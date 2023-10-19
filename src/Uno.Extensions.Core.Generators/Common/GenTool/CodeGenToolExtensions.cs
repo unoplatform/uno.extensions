@@ -7,7 +7,7 @@ namespace Uno.Extensions.Generators;
 
 internal static class CodeGenToolExtensions
 {
-	private static SymbolDisplayFormat _symbolDeclaration = SymbolDisplayFormat
+	private static readonly SymbolDisplayFormat _symbolDeclaration = SymbolDisplayFormat
 		.MinimallyQualifiedFormat
 		.AddKindOptions(SymbolDisplayKindOptions.IncludeTypeKeyword); // Add `class`, `record` or `record struct`
 

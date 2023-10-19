@@ -16,7 +16,8 @@ namespace Uno.Extensions.Reactive.Core.HotReload;
 /// </summary>
 internal static class HotReloadService
 {
-	private static ILogger _log = typeof(HotReloadService).Log();
+	private static readonly ILogger _log = typeof(HotReloadService).CreateLog();
+	private static readonly bool _trace = _log.IsEnabled(LogLevel.Trace);
 
 	public static event Action<Type[]>? ApplicationUpdated;
 
@@ -26,6 +27,8 @@ internal static class HotReloadService
 
 	internal static void UpdateApplication(Type[]? types)
 	{
+		if (_trace) _log.Trace($"Received metadata updates for {types?.Length} types to be processed by MVUX hot-patch engine.");
+
 		if (types is null or { Length: 0 })
 		{
 			return;
@@ -34,13 +37,21 @@ internal static class HotReloadService
 		foreach (var type in types)
 		{
 			// Search for updated model types
-			if (type.GetCustomAttribute<ModelAttribute>() is { Bindable: not null } model
-				&& GetOriginalType(type) is { } originalType)
+			if (type.GetCustomAttribute<ModelAttribute>() is not { Bindable: not null } model)
 			{
-				if (_log.IsEnabled(LogLevel.Information)) _log.Info($"Hot-patching bindable {originalType} with {type}.");
-
-				BindableViewModelBase.HotPatch(model.Bindable, originalType, type);
+				if (_trace) _log.Trace($"Type {type.Name} is not a model (or has no bindable).");
+				continue;
 			}
+
+			if (GetOriginalType(type) is not { } originalType)
+			{
+				if (_trace) _log.Trace($"Type {type.Name} doesn't have it original type defined, cannot process hot-patch.");
+				continue;
+			}
+
+			if (_log.IsEnabled(LogLevel.Information)) _log.Info($"Hot-patching bindables of {originalType} to use the updated {type}.");
+
+			BindableViewModelBase.HotPatch(model.Bindable, originalType, type);
 		}
 
 		ApplicationUpdated?.Invoke(types);
