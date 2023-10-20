@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Uno.Extensions.Reactive.Config;
 using Uno.Extensions.Reactive.Core;
 using Uno.Extensions.Reactive.Utils;
+using static System.Collections.Specialized.BitVector32;
 
 namespace Uno.Extensions.Reactive.Sources;
 
@@ -23,6 +25,11 @@ internal sealed partial class FeedSession<TResult> : FeedSession, IAsyncEnumerat
 		_messages = new(ReplayMode.EnabledForFirstEnumeratorOnly);
 		_inner = _messages.GetAsyncEnumerator(ct);
 		_message = new(_messages.TrySetNext);
+
+		if (FeedConfiguration.EffectiveHotReload.HasFlag(HotReloadSupport.DynamicFeed))
+		{
+			this.EnableHotReload();
+		}
 
 		Execute(new ExecuteRequest(this, "Initial load"));
 	}
