@@ -43,6 +43,7 @@
       "TestHarness.Mobile\\TestHarness.Mobile.csproj",
       "TestHarness.Shared\\TestHarness.Shared.shproj",
       "TestHarness.Skia.Gtk\\TestHarness.Skia.Gtk.csproj",
+      "TestHarness.Skia.Linux.FrameBuffer\\TestHarness.Skia.Linux.FrameBuffer.csproj",
       "TestHarness.UITest\\TestHarness.UITest.csproj",
       "TestHarness.Wasm\\TestHarness.Wasm.csproj",
       "TestHarness.Windows\\TestHarness.Windows.csproj"
