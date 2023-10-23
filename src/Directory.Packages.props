@@ -15,7 +15,7 @@
 		<PackageVersion Include="Microsoft.Extensions.Localization.Abstractions" Version="6.0.4" Condition="$(UseMaui) != 'true'" />
 		<PackageVersion Include="Microsoft.Extensions.Logging" Version="6.0.0" />
 		<PackageVersion Include="Microsoft.Identity.Client" Version="4.55.0" />
-		<PackageVersion Include="Microsoft.Identity.Client.Extensions.Msal" Version="2.22.0" />
+		<PackageVersion Include="Microsoft.Identity.Client.Extensions.Msal" Version="4.57.0" />
 		<PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.6.2" />
 		<PackageVersion Include="Microsoft.Net.Compilers.Toolset" Version="4.2.0" />
 		<PackageVersion Include="Microsoft.SourceLink.GitHub" Version="1.1.1" />
