@@ -121,6 +121,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Extension Items", "Extensio
 		..\..\src\Directory.Build.targets = ..\..\src\Directory.Build.targets
 		..\..\src\Directory.Packages.props = ..\..\src\Directory.Packages.props
 		..\..\src\global.json = ..\..\src\global.json
+		..\..\src\winappsdk-workaround.targets = ..\..\src\winappsdk-workaround.targets
+		..\..\src\xamarinmac-workaround.targets = ..\..\src\xamarinmac-workaround.targets
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Validation", "Validation", "{235663AE-4E7D-4FA4-964E-012C2F143FE5}"
