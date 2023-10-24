@@ -8,7 +8,7 @@ namespace Uno.Extensions.Reactive.Sources;
 
 internal abstract class FeedDependency
 {
-	private static readonly ILogger _log = typeof(FeedDependency).Log();
+	private static readonly ILogger _log = typeof(FeedDependency).CreateLog();
 
 	public static async ValueTask<Message<T>?> TryGetCurrentMessage<T>(IFeed<T> feed)
 		=> FeedExecution.Current is { } exec

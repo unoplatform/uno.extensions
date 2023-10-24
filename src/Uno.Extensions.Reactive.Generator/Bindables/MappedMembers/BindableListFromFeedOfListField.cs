@@ -23,7 +23,7 @@ internal record BindableListFromFeedOfListField(IFieldSymbol Field, ITypeSymbol 
 		=> @$"
 			if ({Field.Name} is null)
 			{{
-				var {Field.GetCamelCaseName()}Source = {N.Ctor.Model}.{Field.Name} ?? throw new NullReferenceException(""The list feed field '{Field.Name}' is null. Public feeds properties must be initialized in the constructor."");
+				var {Field.GetCamelCaseName()}Source = ({NS.Reactive}.IFeed<{CollectionType.ToFullString()}>) {N.Ctor.Model}.{Field.Name} ?? throw new NullReferenceException(""The list feed field '{Field.Name}' is null. Public feeds properties must be initialized in the constructor."");
 				var {Field.GetCamelCaseName()}SourceListFeed = {N.ListFeed.Extensions.ToListFeed}<{CollectionType.ToFullString()}, {ItemType.ToFullString()}>({Field.GetCamelCaseName()}Source);
 				var {Field.GetCamelCaseName()}SourceListState = {N.Ctor.Ctx}.GetOrCreateListState({Field.GetCamelCaseName()}SourceListFeed);
 				{Field.Name} = {NS.Bindings}.BindableHelper.CreateBindableList(nameof({Field.Name}), {Field.GetCamelCaseName()}SourceListState);

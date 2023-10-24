@@ -76,7 +76,7 @@ public abstract partial class BindableViewModelBase : IBindable, INotifyProperty
 
 		var state = ctx.GetOrCreateState(feed);
 
-		return CreateProperty(propertyName, (StateImpl<TProperty>)state, isReadOnly: true);
+		return CreateProperty(propertyName, (StateImpl<TProperty>)state, isReadOnly: feed != state);
 	}
 
 	/// <summary>

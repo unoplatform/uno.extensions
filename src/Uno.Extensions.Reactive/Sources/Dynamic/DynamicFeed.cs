@@ -27,11 +27,6 @@ internal sealed class DynamicFeed<T> : IFeed<T>
 	{
 		await using var session = new FeedSession<T>(this, context, _dataProvider, ct);
 
-		if (FeedConfiguration.EffectiveHotReload.HasFlag(HotReloadSupport.DynamicFeed))
-		{
-			session.EnableHotReload();
-		}
-
 		while (await session.MoveNextAsync())
 		{
 			yield return session.Current;

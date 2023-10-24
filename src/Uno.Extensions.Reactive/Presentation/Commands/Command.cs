@@ -20,7 +20,7 @@ public static class Command
 	/// <remarks>By default, this will log the error.</remarks>
 	/// <remarks>This is designed to be a "last chance" handler, you should handle exceptions in each command.</remarks>
 	[EditorBrowsable(EditorBrowsableState.Advanced)]
-	public static Action<Exception> DefaultErrorHandler { get; set; } = e => typeof(AsyncCommand).Log().Error(e, "Failed to execute command.");
+	public static Action<Exception> DefaultErrorHandler { get; set; } = e => LogExtensions.Log<AsyncCommand>().Error(e, "Failed to execute command.");
 
 	/// <summary>
 	/// Creates a command from an async method

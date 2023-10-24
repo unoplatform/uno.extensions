@@ -1,4 +1,6 @@
-﻿using System;
+﻿#nullable enable
+
+using System;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using Microsoft.Extensions.Logging;
@@ -36,6 +38,14 @@ internal static class LogExtensions
 	public static void SetProvider(ILoggerProvider provider)
 		=> _provider = provider;
 
+	public static ILogger CreateLog(string categoryName)
+		=> _provider?.CreateLogger(categoryName)
+			?? FindUnoAmbientLogger()?.CreateLogger(categoryName)
+			?? NullLogger.Instance;
+
+	public static ILogger CreateLog(this Type type)
+		=> CreateLog(type.FullName ?? type.ToString());
+
 	public static ILogger Log<T>()
 		=> Holder<T>.Logger;
 
@@ -68,6 +78,6 @@ internal static class LogExtensions
 
 	private static class Holder<T>
 	{
-		public static ILogger Logger { get; } = _provider?.CreateLogger(typeof(T).FullName) ?? FindUnoAmbientLogger()?.CreateLogger(typeof(T).FullName) ?? NullLogger.Instance;
+		public static ILogger Logger { get; } = CreateLog(typeof(T).FullName);
 	}
 }

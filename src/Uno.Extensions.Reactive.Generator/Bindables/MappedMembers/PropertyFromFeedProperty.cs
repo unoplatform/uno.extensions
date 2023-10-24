@@ -16,7 +16,7 @@ internal record PropertyFromFeedProperty(IPropertySymbol _property, ITypeSymbol 
 
 	/// <inheritdoc />
 	public string GetBackingField()
-		=> $"private {NS.Bindings}.Bindable<{_valueType.ToFullString()}> _{_property.GetCamelCaseName()};";
+		=> $"private {NS.Bindings}.Bindable<{_valueType.ToFullString()}> _{_property.GetCamelCaseName()} {{ get; set; }}"; // Property for hot-reload
 
 	/// <inheritdoc />
 	public string GetDeclaration()
@@ -28,5 +28,5 @@ internal record PropertyFromFeedProperty(IPropertySymbol _property, ITypeSymbol 
 
 	/// <inheritdoc />
 	public string? GetInitialization()
-		=> $"_{_property.GetCamelCaseName()} ??= new {NS.Bindings}.Bindable<{_valueType.ToFullString()}>(base.Property<{_valueType.ToFullString()}>(nameof({_property.Name}), {N.Ctor.Model}.{_property.Name} ?? throw new NullReferenceException(\"The feed property '{_property.Name}' is null. Public feeds fields must be initialized in the constructor.\")));";
+		=> $"_{_property.GetCamelCaseName()} ??= new {NS.Bindings}.Bindable<{_valueType.ToFullString()}>(base.Property<{_valueType.ToFullString()}>(nameof({_property.Name}), ({NS.Reactive}.IFeed<{_valueType.ToFullString()}>) {N.Ctor.Model}.{_property.Name} ?? throw new NullReferenceException(\"The feed property '{_property.Name}' is null. Public feeds fields must be initialized in the constructor.\")));";
 }

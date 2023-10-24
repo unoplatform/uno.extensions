@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Net;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -112,7 +113,8 @@ public sealed class HotSwapFeed<T> : IFeed<T>
 			if (_currentEnumerator.GetEnumerator(_context) is { } enumerator)
 			{
 				var moveNext = enumerator.MoveNextAsync().AsTask();
-				if (await Task.WhenAny(moveNext, next.Task).ConfigureAwait(false) == moveNext)
+				if (await Task.WhenAny(moveNext, next.Task).ConfigureAwait(false) == moveNext
+					&& await moveNext)
 				{
 					var canSkip = !_isFirstMessage && _isFirstMessageOfCurrentEnumerator;
 
