@@ -18,8 +18,15 @@
     <!--<PackageReference Include="Uno.WinUI.DevServer" Condition="'$(Configuration)'=='Debug'" />-->
     <PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" />
   </ItemGroup>
-  <ItemGroup>
+
+	<ItemGroup>
     <ProjectReference Include="..\Playground\Playground.csproj" />
-  </ItemGroup>
+
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Hosting.UI\Uno.Extensions.Hosting.WinUI.Skia.csproj" />
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Logging\Uno.Extensions.Logging.WinUI.Skia.csproj" />
+	</ItemGroup>
+	
   <Import Project="..\Playground.Base\base.props" />
+
+	<Import Project="..\FixExtensionLibs.targets" />
 </Project>

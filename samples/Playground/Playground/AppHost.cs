@@ -9,7 +9,9 @@ internal static class AppHost
 			.UseEnvironment(Environments.Development)
 #endif
 
-			// Add platform specific log providers
+			// Note: Logging disabled as it breaks Wasm for Playground because it loads the
+			// non-wasm version of Uno.Ext.Logging.WinUI which registers the console logger
+			// instead of the wasm console logger
 			.UseLogging(configure: (context, logBuilder) =>
 			{
 				var host = context.HostingEnvironment;

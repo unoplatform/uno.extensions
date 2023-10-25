@@ -1,0 +1,17 @@
+<Project ToolsVersion="15.0">
+	<Target Name="FixPlaygroundReferences" BeforeTargets="BuildDist">
+		<ItemGroup>
+			<PlaygroundPaths Include="@(ReferenceCopyLocalPaths)" Condition="'%(FileName)%(Extension)'=='Playground.dll'" />
+		</ItemGroup>
+		<PropertyGroup>
+			<PlaygroundLibs>%(PlaygroundPaths.RootDir)%(PlaygroundPaths.Directory)*.WinUI.dll</PlaygroundLibs>
+		</PropertyGroup>
+		<ItemGroup>
+			<FilesToDelete Include="$(PlaygroundLibs)"/>
+		</ItemGroup>
+		<Delete Files="@(FilesToDelete)" >
+			<Output TaskParameter="DeletedFiles" ItemName="DeletedList"/>
+		</Delete>
+		<Message Text="Deleted files: '@(DeletedList)'"/>
+	</Target>
+</Project>
