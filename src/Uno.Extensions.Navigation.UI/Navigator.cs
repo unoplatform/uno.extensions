@@ -536,6 +536,18 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 			}
 		}
 
+		if (Route?.IsEmpty() == false)
+		{
+			var currentRouteMap = Resolver.FindByPath(Route.Base);
+			if (currentRouteMap != null || routeMap != null)
+			{
+				if (currentRouteMap?.Parent != routeMap?.Parent)
+				{
+					return false;
+				}
+			}
+		}
+
 		return true;
 	}
 

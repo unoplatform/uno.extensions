@@ -11,6 +11,8 @@
   <Import Project="TestHarness.Shared.projitems" Label="Shared" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\CodeSharing\Microsoft.CodeSharing.CSharp.targets" />
   <ItemGroup>
+    <_Globbed_Compile Remove="Ext\Navigation\Apps\Commerce\CommerceSettingsPage.xaml.cs" />
+    <_Globbed_Compile Remove="Ext\Navigation\Apps\Commerce\CommerceSettingsViewModel.cs" />
     <_Globbed_Compile Remove="Ext\Navigation\Dialogs\DialogsComplexFlyout.xaml.cs" />
     <_Globbed_Compile Remove="Ext\Navigation\Dialogs\DialogsComplexFlyoutOnePage.xaml.cs" />
     <_Globbed_Compile Remove="Ext\Navigation\Dialogs\DialogsComplexFlyoutTwoPage.xaml.cs" />
@@ -22,6 +24,7 @@
     <_Globbed_Compile Remove="Ext\Navigation\NavigationView\NavigationViewDataService.cs" />
   </ItemGroup>
   <ItemGroup>
+    <_Globbled_Page Remove="Ext\Navigation\Apps\Commerce\CommerceSettingsPage.xaml" />
     <_Globbled_Page Remove="Ext\Navigation\Dialogs\DialogsComplexFlyout.xaml" />
     <_Globbled_Page Remove="Ext\Navigation\Dialogs\DialogsComplexFlyoutOnePage.xaml" />
     <_Globbled_Page Remove="Ext\Navigation\Dialogs\DialogsComplexFlyoutTwoPage.xaml" />

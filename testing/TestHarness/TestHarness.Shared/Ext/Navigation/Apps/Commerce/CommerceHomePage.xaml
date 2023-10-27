@@ -96,6 +96,13 @@
 							<PathIcon Data="{StaticResource Icon_person}" />
 						</muxc:NavigationViewItem.Icon>
 					</muxc:NavigationViewItem>
+					<muxc:NavigationViewItem AutomationProperties.AutomationId="SettingsNavigationViewItem"
+											 Content="Settings"
+											 uen:Navigation.Request="Settings">
+						<muxc:NavigationViewItem.Icon>
+							<PathIcon Data="{StaticResource Icon_person}" />
+						</muxc:NavigationViewItem.Icon>
+					</muxc:NavigationViewItem>
 				</muxc:NavigationView.MenuItems>
 				<Grid>
 					<Grid.RowDefinitions>
@@ -131,6 +138,13 @@
 						<utu:TabBarItem AutomationProperties.AutomationId="ProfileTabBarItem"
 										IsSelectable="True"
 										uen:Region.Name="Profile">
+							<utu:TabBarItem.Icon>
+								<PathIcon Data="{StaticResource Icon_person}" />
+							</utu:TabBarItem.Icon>
+						</utu:TabBarItem>
+						<utu:TabBarItem AutomationProperties.AutomationId="SettingsTabBarItem"
+										IsSelectable="False"
+										uen:Navigation.Request="Settings">
 							<utu:TabBarItem.Icon>
 								<PathIcon Data="{StaticResource Icon_person}" />
 							</utu:TabBarItem.Icon>

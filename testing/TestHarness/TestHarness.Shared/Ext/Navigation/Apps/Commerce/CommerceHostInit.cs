@@ -27,7 +27,8 @@ public class CommerceHostInit : BaseHostInitialization
 				new ViewMap<CommerceProductsPage, CommerceProductsViewModel>(),
 				new DataViewMap<CommerceProductDetailsPage, CommerceProductDetailsViewModel, CommerceProduct>(),
 				new ViewMap<CommerceDealsPage, CommerceDealsViewModel>(),
-				new ViewMap<CommerceProfilePage, CommerceProfileViewModel>()
+				new ViewMap<CommerceProfilePage, CommerceProfileViewModel>(),
+				new ViewMap<CommerceSettingsPage, CommerceSettingsViewModel>()
 				);
 
 
@@ -56,7 +57,8 @@ public class CommerceHostInit : BaseHostInitialization
 												DependsOn:"Products"),
 
 										new RouteMap("Profile", View: views.FindByViewModel<CommerceProfileViewModel>())
-									})
+									}),
+							new RouteMap("Settings", View: views.FindByViewModel<CommerceSettingsViewModel>())
 						}));
 	}
 }

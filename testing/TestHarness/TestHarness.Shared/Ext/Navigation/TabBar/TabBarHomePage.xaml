@@ -47,6 +47,9 @@
 					<Button AutomationProperties.AutomationId="ProductsProfileButton"
 							Content="Profile"
 							uen:Navigation.Request="Profile" />
+					<Button AutomationProperties.AutomationId="ProductsSettingsButton"
+							Content="Settings"
+							uen:Navigation.Request="Settings" />
 				</StackPanel>
 				<StackPanel uen:Region.Name="Deals"
 							AutomationProperties.AutomationId="DealsStackPanel"
