@@ -13,7 +13,7 @@ In this tutorial you'll learn how to set up an Uno Platform project to use C# Ma
 
     #### Using Visual Studio 2022 Uno Platform Extension
 
-	- Open the Visual Studio and select Extensions => Manage Extensions and Search (<kbd>Ctrl</kbd> + <kbd>E</kbd>) for unoplatform.
+    - Open the Visual Studio and select Extensions => Manage Extensions and Search (<kbd>Ctrl</kbd> + <kbd>E</kbd>) for unoplatform.
 
     - Make sure you have the latest version of Uno Extension (v5.0 or higher) installed.
 
@@ -32,17 +32,17 @@ In this tutorial you'll learn how to set up an Uno Platform project to use C# Ma
         ![Screenshot displaying how to pre-install C# Markup in the generated project](../Assets/MarkupProject-VsixMarkup.jpg)
 
     - Click *Create* on the bottom right corner.    
-    
+
     # [**CLI**](#tab/cli)
-    
+
     #### Using the command line interface
-    
+
     - Run the following command, using an appropriate name (`MySampleProject` in this page).
     
         ```cmd
         dotnet new unoapp -preset blank -markup csharp -o MySampleProject
         ```
-      
+
         Refer to [this](https://platform.uno/docs/articles/get-started-dotnet-new.html) article for more details
         on using the CLI interface of creating projects.
 
