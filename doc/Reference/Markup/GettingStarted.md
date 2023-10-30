@@ -19,17 +19,9 @@ In addition to the core package and generator the Uno team is shipping a number 
 > [!TIP]
 > For more information on generating extensions on your own libraries see [Generating Extensions](xref:Reference.Markup.GeneratingExtensions).
 
-## Set up an Markup project
-
-You can use this tutorial to learn how to set up an Uno Platform project to use Uno.Extensions.Markup..
-
-- [HowToMarkupProject](xref:Learn.Tutorials.HowToMarkupProject)
-
-Then start practicing using the guidelines below.
-
 ## Using the Markup Extensions
 
-A fundamental premise of the Uno.Extensions.Markup library is that it should be easy to use with extensions that are generally discoverable. For this reason, the markup extensions exist within the namespace of the type they are generated for with the explicit exception of types in the `Microsoft.UI.Xaml.Controls.Primitives` namespace which instead are generated in the `Microsoft.UI.Xaml.Controls` namespace. Extensions are generated generically for all types that are not sealed in an effort to reduce the number of extensions that are required for each class. Getting started couldn't be easier!
+A fundamental premise of the Uno.Extensions.Markup.WinUI library is that it should be easy to use with extensions that are generally discoverable. For this reason, the markup extensions exist within the namespace of the type they are generated for. Extensions are generated generically for all types that are not sealed in an effort to reduce the number of extensions that are required for each class. Getting started couldn't be easier!
 
 ```cs
 new TextBlock()
@@ -41,10 +33,13 @@ new TextBlock()
 
 When setting values for certain types on either the element or through a setter you, helpers have been added to make this easier and more closely aligned with how you might set these automatically in XAML. Currently helper extensions are available for:
 
-- Thickness
-- CornerRadius
 - Brush
 - Color
+- CornerRadius
+- FontFamily
+- Geometry
+- ImageSource
+- Thickness
 
 ```cs
 new Button()
@@ -103,6 +98,19 @@ public partial class MyPage : Page
 	}
 }
 ```
+
+> [!TIP]
+> Whether you are using a Binding or providing an instance of the ViewModel, the value passed into your configuration delegate for the ViewModel will **ALWAYS** be null even with nullability enabled. This is done intentionally as you should never evaluate the state of your ViewModel or it's properties as part of the configuration delegate.
+
+## Set up a Markup project
+
+You can use this tutorial to learn how to set up an Uno Platform project to use Uno.Extensions.Markup.
+
+- [How to set up an C# Markup project](xref:Learn.Tutorials.HowToMarkupProject)
+
+<!--
+TODO: Review this tutorial... compare with Create your own C# Markup... seems like a duplicate
+-->
 
 ## Next Steps
 
