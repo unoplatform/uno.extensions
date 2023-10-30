@@ -14,6 +14,7 @@ In addition to the core package and generator the Uno team is shipping a number 
 - [Uno.Material.WinUI.Markup](https://www.nuget.org/packages/Uno.Material.WinUI.Markup)
 - [Uno.Extensions.Navigation.WinUI.Markup](https://www.nuget.org/packages/Uno.Extensions.Navigation.WinUI.Markup)
 - [Uno.Extensions.Reactive.WinUI.Markup](https://www.nuget.org/packages/Uno.Extensions.Reactive.WinUI.Markup)
+- [Uno.Themes.WinUI.Markup](https://www.nuget.org/packages/Uno.Themes.WinUI.Markup)
 
 > [!TIP]
 > For more information on generating extensions on your own libraries see [Generating Extensions](xref:Reference.Markup.GeneratingExtensions).
