@@ -21,10 +21,24 @@ public sealed partial MainPage : Page
             .Background(ThemeResource.Get<Brush>("ApplicationPageBackgroundThemeBrush"))
             .Content
             (
-                new TextBlox().Margin(5).Placeholder("Search...").Text(() => vm.SearchText),
-                new ListView().ItemsSource(() => vm.SearchResults)
-                .ItemTemplate<string>(str =>  new TextBlock().Text(() => str)),
-                new Button().Content("Search").Command(() => vm.SearchCommand)
+               new Grid()
+                    .RowDefinitions("Auto, *, Auto")
+                    .Children
+                    (
+                        new TextBlox()
+                            .Margin(5)
+                            .Placeholder("Search...")
+                            .Text(() => vm.SearchText)
+                            .Grid(row: 0),
+                        new ListView()
+                            .ItemsSource(() => vm.SearchResults)
+                            .ItemTemplate<string>(str => new TextBlock().Text(() => str))
+                            .Grid(row: 1),
+                        new Button()
+                            .Content("Search")
+                            .Command(() => vm.SearchCommand)
+                            .Grid(row: 2)
+                    )
             )
             .Padding(58);
         });
@@ -37,10 +51,12 @@ Let's take a look at the `ItemTemplate` usage, and other ways to use it. On the 
 For a simple scenario like that you can use an overload that doesn't require a generic type, here's a version of the code that will not use the generic.
 
 ```cs
-new ListView().ItemsSource(() => vm.SearchResults).ItemTemplate(() => new TextBlock().Text(x => x.Bind()))
+new ListView()
+    .ItemsSource(() => vm.SearchResults)
+    .ItemTemplate(() => new TextBlock().Text(x => x.Bind()))
 ```
 
-As you can see, just the `.Bind()` method is used to bind the current item to the `TextBlock` control.
+As you can see, just the `.Bind()` method is used to bind the current item to the `Text` property of the `TextBlock` control.
 
 ## Creating the ViewModel
 
