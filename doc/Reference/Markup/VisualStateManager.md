@@ -57,6 +57,6 @@ Set up an Markup project
 
 You can use this tutorial to learn how to set up an Uno Platform project to use Uno.Extensions.Markup..
 
-- [HowToMarkupProject](xref:Reference.Markup.HowToMarkupProject)
+- [HowToMarkupProject](xref:Learn.Tutorials.HowToMarkupProject)
 
 Then start create your own projects.

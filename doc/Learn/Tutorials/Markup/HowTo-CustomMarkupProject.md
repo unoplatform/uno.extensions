@@ -1,15 +1,15 @@
 ---
-uid: Reference.Markup.HowToCustomMarkupProject
+uid: Learn.Tutorials.HowToCustomMarkupProject
 ---
 
 # How to custom a C# Markup project
 
-> If you haven't already set up your environment and create the new Markup project, please follow the steps to [Create your own C# Markup](xref:Reference.Markup.HowToCreateMarkupProject).
+> If you haven't already set up your environment and create the new Markup project, please follow the steps to [Create your own C# Markup](xref:Learn.Tutorials.HowToCreateMarkupProject).
 
 In this tutorial you'll learn how to custom your project using Uno Platform and C# Markup.
 And have a comparison between C# Markup and XAML.
 
-In the previous session we learn how to [Create your own C# Markup](xref:Reference.Markup.HowToCreateMarkupProject) and now we will change some styles and working with Bindings and Templates. 
+In the previous session we learn how to [Create your own C# Markup](xref:Learn.Tutorials.HowToCreateMarkupProject) and now we will change some styles and working with Bindings and Templates. 
 
 And for this we will create a project that list some Attributes of a Sample ViewModel and Customizing the style.
 
@@ -1999,7 +1999,7 @@ In the ViewModel, the Model's data is already loaded into the Instance of the cl
 
 ## Next Steps
 
-- [Custom your own C# Markup - Learn how to change Visual States and User Controls](xref:Reference.Markup.HowToCustomMarkupProjectVisualStates)
-- [Custom your own C# Markup - Learn how to use Toolkit](xref:Reference.Markup.HowToCustomMarkupProjectToolkit)
-- [Custom your own C# Markup - Learn how to Change the Theme](xref:Reference.Markup.HowToCustomMarkupProjectTheme)
-- [Custom your own C# Markup - Learn how to use MVUX](xref:Reference.Markup.HowToCustomMarkupProjectMVUX)
+- [Custom your own C# Markup - Learn how to change Visual States and User Controls](xref:Learn.Tutorials.HowToCustomMarkupProjectVisualStates)
+- [Custom your own C# Markup - Learn how to use Toolkit](xref:Learn.Tutorials.HowToCustomMarkupProjectToolkit)
+- [Custom your own C# Markup - Learn how to Change the Theme](xref:Learn.Tutorials.HowToCustomMarkupProjectTheme)
+- [Custom your own C# Markup - Learn how to use MVUX](xref:Learn.Tutorials.HowToCustomMarkupProjectMVUX)
