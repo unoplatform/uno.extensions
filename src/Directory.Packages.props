@@ -1,6 +1,6 @@
 <Project ToolsVersion="15.0">
 	<ItemGroup>
-		<PackageVersion Include="CommunityToolkit.Mvvm" Version="7.0.1" />
+		<PackageVersion Include="CommunityToolkit.Mvvm" Version="8.2.2" />
 		<PackageVersion Include="DotNet.ReproducibleBuilds" Version="1.1.1" />
 		<PackageVersion Include="FluentAssertions" Version="6.7.0" />
 		<PackageVersion Include="IdentityModel.OidcClient" Version="5.0.0" />
