@@ -1,5 +1,5 @@
 ---
-uid: Reference.Markup.HowToMarkupRecommendedProject
+uid: Learn.Tutorials.HowToMarkupRecommendedProject
 ---
 
 # How to set up an C# Markup project for Toolkit

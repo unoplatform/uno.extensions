@@ -22,7 +22,7 @@ In addition to the core package and generator the Uno team is shipping a number 
 
 You can use this tutorial to learn how to set up an Uno Platform project to use Uno.Extensions.Markup..
 
-- [HowToMarkupProject](xref:Reference.Markup.HowToMarkupProject)
+- [HowToMarkupProject](xref:Learn.Tutorials.HowToMarkupProject)
 
 Then start practicing using the guidelines below.
 
@@ -115,5 +115,5 @@ Learn more about:
 - [Templates](xref:Reference.Markup.Templates)
 - [VisualStateManagers](xref:Reference.Markup.VisualStateManager)
 - [Generating C# Extensions for your libraries](xref:Reference.Markup.GeneratingExtensions)
-- [Create your own C# Markup](xref:Reference.Markup.HowToCreateMarkupProject)
+- [Create your own C# Markup](xref:Learn.Tutorials.HowToCreateMarkupProject)
 

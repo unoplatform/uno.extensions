@@ -1,5 +1,5 @@
 ---
-uid: Reference.Markup.HowToXamlProject
+uid: Learn.Tutorials.HowToXamlProject
 ---
 
 # How to set up a XAML project

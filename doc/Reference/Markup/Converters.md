@@ -87,4 +87,4 @@ public partial class MainPage : Page
 - [Templates](xref:Reference.Markup.Templates)
 - [VisualStateManagers](xref:Reference.Markup.VisualStateManager)
 - [Generating C# Extensions for your libraries](xref:Reference.Markup.GeneratingExtensions)
-- [Create your own C# Markup](xref:Reference.Markup.HowToCreateMarkupProject)
+- [Create your own C# Markup](xref:Learn.Tutorials.HowToCreateMarkupProject)

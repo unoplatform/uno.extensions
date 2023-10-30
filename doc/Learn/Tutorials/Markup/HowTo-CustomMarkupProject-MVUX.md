@@ -1,5 +1,5 @@
 ---
-uid: Reference.Markup.HowToCustomMarkupProjectMVUX
+uid: Learn.Tutorials.HowToCustomMarkupProjectMVUX
 ---
 
 # How to set up your own C# Markup project using MVUX
@@ -8,7 +8,7 @@ You can use this tutorial to learn how to set up a Uno Platform project using MV
 
 Create a new project using MVUX
 
-- In this tutorial you will [setting up the environment and creating the Markup project and MVUX](xref:Reference.Markup.HowToMarkupMVUX)
+- In this tutorial you will [setting up the environment and creating the Markup project and MVUX](xref:Learn.Tutorials.HowToMarkupMVUX)
 
 ## Start With MVUX.
 
@@ -214,7 +214,7 @@ Change the *MainPage* to have a different content as the sample bellow.
 
 ## Next Steps
 
-- [Custom your own C# Markup - Learn how to change Visual States and User Controls](xref:Reference.Markup.HowToCustomMarkupProjectVisualStates)
-- [Custom your own C# Markup - Learn how to use Toolkit](xref:Reference.Markup.HowToCustomMarkupProjectToolkit)
-- [Custom your own C# Markup - Learn how to Change the Theme](xref:Reference.Markup.HowToCustomMarkupProjectTheme)
-- [Custom your own C# Markup - Learn how to use MVUX](xref:Reference.Markup.HowToCustomMarkupProjectMVUX)
+- [Custom your own C# Markup - Learn how to change Visual States and User Controls](xref:Learn.Tutorials.HowToCustomMarkupProjectVisualStates)
+- [Custom your own C# Markup - Learn how to use Toolkit](xref:Learn.Tutorials.HowToCustomMarkupProjectToolkit)
+- [Custom your own C# Markup - Learn how to Change the Theme](xref:Learn.Tutorials.HowToCustomMarkupProjectTheme)
+- [Custom your own C# Markup - Learn how to use MVUX](xref:Learn.Tutorials.HowToCustomMarkupProjectMVUX)
