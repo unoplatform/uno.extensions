@@ -72,9 +72,9 @@ public sealed partial MainPage : Page
 }
 ```
 
-Let's take a look at the `ItemTemplate` usage, and other ways to use it. On the snippet above, we are using the generic to strongly type our model and be able to use it in a safe way, in this case is just a `string` that will be used on the `TextBlock` control. This the right overload when you're using a complex model on your `DataTemplate`.
+Let's take a look at the `ItemTemplate` usage, and other ways to use it. On the snippet above, we are using the generic to strongly type our model and be able to use it in a safe way, in this case is just a `string` that will be used on the `TextBlock` control.
 
-For a simple scenario like that you can use an overload that doesn't require a generic type, here's a version of the code that will not use the generic.
+On the snippet below you can see other ways that you can use the `ItemTemplate` extension method.
 
 ```cs
 new ListView()
@@ -84,5 +84,4 @@ new ListView()
 
 As you can see, just the `.Bind()` method is used to bind the current item to the `Text` property of the `TextBlock` control.
 
-
-With that we have a simple page that will search for results and display them on a `ListView`, using MVVM.
+And with that we have a simple page that will search for results and display them on a `ListView`, using MVVM.
