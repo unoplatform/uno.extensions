@@ -170,13 +170,20 @@
       items:
         - name: Generating Extensions
           href: Reference/Markup/GeneratingExtensions.md
-        - name: Binding 101
-          href: Reference/Markup/Binding101.md
         - name: Dependency Property Builder
           href: Reference/Markup/DependencyPropertyBuilder.md
+          items:
+            - name: Binding 101
+              href: Reference/Markup/Binding101.md
+            - name: Converters
+              href: Reference/Markup/Converters.md
+            - name: Using Static & Theme Resources
+              href: Reference/Markup/StaticAndThemeResources.md
+            - name: Using Uno.Themes.WinUI.Markup
+              href: Reference/Markup/UnoThemes.md
         - name: Attached Properties
           href: Reference/Markup/AttachedProperties.md
-        - name: Resources
+        - name: Resource Dictionaries
           href: Reference/Markup/Resources.md
         - name: Styles
           href: Reference/Markup/Styles.md

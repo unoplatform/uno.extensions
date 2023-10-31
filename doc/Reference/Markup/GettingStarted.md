@@ -102,27 +102,17 @@ public partial class MyPage : Page
 > [!TIP]
 > Whether you are using a Binding or providing an instance of the ViewModel, the value passed into your configuration delegate for the ViewModel will **ALWAYS** be null even with nullability enabled. This is done intentionally as you should never evaluate the state of your ViewModel or it's properties as part of the configuration delegate.
 
-## Set up a Markup project
-
-You can use this tutorial to learn how to set up an Uno Platform project to use Uno.Extensions.Markup.
-
-- [How to set up an C# Markup project](xref:Learn.Tutorials.HowToMarkupProject)
-
-<!--
-TODO: Review this tutorial... compare with Create your own C# Markup... seems like a duplicate
--->
-
 ## Next Steps
 
 Learn more about:
 
 - [Binding, Static & Theme Resources](xref:Reference.Markup.DependencyPropertyBuilder)
-- [Binding 101](xref:Reference.Markup.Binding101)
-- [Converters](xref:Reference.Markup.Converters)
+	- [Binding 101](xref:Reference.Markup.Binding101)
+	- [Converters](xref:Reference.Markup.Converters)
+	- [Using Static & Theme Resources](xref:Reference.Markup.StaticAndThemeResources)
+	- [Using Uno.Themes.WinUI.Markup](xref:Reference.Markup.UnoThemes)
 - [Attached Properties](xref:Reference.Markup.AttachedProperties)
 - [Styles](xref:Reference.Markup.Styles)
 - [Templates](xref:Reference.Markup.Templates)
 - [VisualStateManagers](xref:Reference.Markup.VisualStateManager)
 - [Generating C# Extensions for your libraries](xref:Reference.Markup.GeneratingExtensions)
-- [Create your own C# Markup](xref:Learn.Tutorials.HowToCreateMarkupProject)
-

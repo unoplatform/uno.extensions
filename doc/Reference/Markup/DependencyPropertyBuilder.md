@@ -39,46 +39,7 @@ The Binding Expression is a lambda expression that provides the path to the prop
 
 While the Markup Extensions expose a delegate method for you to provide a path and strong typing for the property, it is easiest to think of the delegate as a string. If you think of the string value of `() => vm.Client.Contact.FirstName`, this will get evaluated by taking the substring following the first period leaving you with the path `Client.Contact.FirstName`. This is the path that will be used to create the binding.
 
-If you wish to perform tasks such as manipulate the value of the binding or format the text displayed see the [Converters](#converters) section below.
-
-### Converters
-
-The `DependencyPropertyBuilder`'s Bind method will return a strongly typed `BindingFactory`. This can help you as you tackle more advanced scenarios for Bindings such as by providing strongly typed converters that are picked up by the combination of the expected property type and the property type of the bound property. For instance you might have something like:
-
-```cs
-new TextBox()
-	.Text(() => vm.Query)
-	.Foreground(x => x.Bind(() => vm.Query)
-		.Convert(query => new SolidColorBrush(!string.IsNullOrEmpty(query) && query.Length > 5 ? Colors.Green : Colors.Red)));
-```
-
-In addition to the `Convert` you can provide a `ConvertBack` delegate.
-
-#### Using a Converter
-
-There may be times when you may want to simply use a converter instead of providing a delegate over and over. For these scenarios you may want to provide some sort of Static readonly context like:
-
-```cs
-public static class Converters
-{
-	public static readonly IValueConverter InverseBoolConverter = new InverseBoolConverter();
-}
-
-new Button()
-	.Enabled(x => x.Bind(() => vm.IsBusy)
-		.Converter(Converters.InverseBoolConverter));
-```
-
-
-#### Short Hand Syntax
-
-For the scenarios where you may only need a binding and a conversion delegate you can use the shorthand syntax like:
-
-```cs
-new TextBlock()
-	.Text(() => vm.Query)
-	.Foreground(() => vm.Query, query => new SolidColorBrush(!string.IsNullOrEmpty(query) && query.Length > 5 ? Colors.Green : Colors.Red))
-```
+If you wish to perform tasks such as manipulate the value of the binding or format the text displayed see the [Converters](xref:Reference.Markup.Converters) documentation.
 
 ### Reference Sources
 
@@ -100,6 +61,8 @@ new TextBlock()
 new Slider().Name("slider")
 ```
 
-## Next Steps
+## Additional Reading
 
 - [Binding 101](xref:Reference.Markup.Binding101)
+- [Using Converters](xref:Reference.Markup.Converters)
+- [Using Static &amp; Theme Resources](xref:Reference.Markup.StaticAndThemeResources)
