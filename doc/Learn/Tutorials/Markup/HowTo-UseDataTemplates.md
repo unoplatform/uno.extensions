@@ -6,6 +6,32 @@ uid: Reference.Markup.HowToUseDataTemplates
 
 In this tutorial you will learn how to use Data Templates on C# Markup.
 
+## Creating the ViewModel
+
+Let's create the ViewModel for this page, it will have a `SearchText` property that will be used to filter the results, and a `SearchResults` property that will be used to display the results on the `ObservableCollection<string>`. 
+
+> In this sample the CommunityToolkit.MVVM is used.
+
+```cs
+public partial class MainViewModel : ObservableObject
+{
+    [ObservableProperty]
+    string SearchText = string.Empty;
+
+    public ObservableCollection<string> SearchResults { get; } = new();
+
+    [RelayCommand]
+    public async Task Search()
+    {
+        SearchResults.Clear();
+        var results = await FilterService.Current.GetResults(SearchText);
+
+        foreach(var result in results)
+            SearchResults.Add(result);
+    }
+}
+```
+
 ## Creating the Page
 
 The Page for this tutorial will be very simple, we will have a `TextBox` at the top that will behave like a search bar, and a `ListView` below that will display the results of the search.
@@ -58,30 +84,5 @@ new ListView()
 
 As you can see, just the `.Bind()` method is used to bind the current item to the `Text` property of the `TextBlock` control.
 
-## Creating the ViewModel
-
-Let's create the ViewModel for this page, it will have a `SearchText` property that will be used to filter the results, and a `SearchResults` property that will be used to display the results on the `ObservableCollection<string>`. 
-
-> In this sample the CommunityToolkit.MVVM is used.
-
-```cs
-public partial class MainViewModel : ObservableObject
-{
-    [ObservableProperty]
-    string SearchText = string.Empty;
-
-    public ObservableCollection<string> SearchResults { get; } = new();
-
-    [RelayCommand]
-    public async Task Search()
-    {
-        SearchResults.Clear();
-        var results = await FilterService.Current.GetResults(SearchText);
-
-        foreach(var result in results)
-            SearchResults.Add(result);
-    }
-}
-```
 
 With that we have a simple page that will search for results and display them on a `ListView`, using MVVM.
