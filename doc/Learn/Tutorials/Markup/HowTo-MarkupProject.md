@@ -15,7 +15,7 @@ In this tutorial you'll learn how to set up an Uno Platform project to use C# Ma
 
     - Open the Visual Studio and select Extensions => Manage Extensions and Search (<kbd>Ctrl</kbd> + <kbd>E</kbd>) for unoplatform.
 
-    - Make sure you have the latest version of Uno Extension (v5.0 or higher) installed.
+    - Make sure you have the latest version of Uno Platform extension (v5.0 or higher) installed.
 
         ![Screenshot displaying how to check the version of the Uno Extension wizard version in Visual Studio extension manager](../Assets/MarkupProject-VsixVersion.jpg)
 
