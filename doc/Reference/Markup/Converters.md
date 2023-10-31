@@ -6,6 +6,21 @@ uid: Reference.Markup.Converters
 Converters are components that allow for the conversion of values from one type to another during C# markup processing.
 Converters are particularly useful when you want to display data from a domain model or data source in a customized way, applying formatting, calculations, or transformations before displaying it.
 
+## Using a Converter
+
+There may be times when you may want to simply use a converter instead of providing a delegate over and over. For these scenarios you may want to provide some sort of Static readonly context like:
+
+```cs
+public static class Converters
+{
+	public static readonly IValueConverter InverseBoolConverter = new InverseBoolConverter();
+}
+
+new Button()
+	.Enabled(x => x.Bind(() => vm.IsBusy)
+		.Converter(Converters.InverseBoolConverter));
+```
+
 ## Convert
 
 ### Custom text
@@ -19,12 +34,27 @@ public partial class MainPage : Page
 	public MainPage()
 	{
 		this.DataContext<MyViewModel>((page, vm) => page
-			.Content(new TextBlock()
-				.Text(x => x.Bind(() => vm.Query)
-					.Convert(query => $"Search: {query}"))
+			.Content(
+				new StackPanel()
+					.Children(
+						new TextBox()
+							.Text(() => vm.Query)
+						new TextBlock()
+							.Text(x => x.Bind(() => vm.Query)
+								.Convert(query => $"Search: {query}"))
+					)
 			));
 	}
 }
+```
+
+##### Shorthand Syntax
+
+Instead of using the full IDependencyPropertyBuilder to provide our Binding and Converter we can additionally use the short hand syntax thanks to an additional extension that is provided by the generator. To do this we simply need to provide our Binding and Convert delegates as follows:
+
+```csharp
+new TextBox()
+	.Text(() => vm.Query, query => $"Search: {query}")
 ```
 
 ### Query and Conditionals
@@ -87,4 +117,3 @@ public partial class MainPage : Page
 - [Templates](xref:Reference.Markup.Templates)
 - [VisualStateManagers](xref:Reference.Markup.VisualStateManager)
 - [Generating C# Extensions for your libraries](xref:Reference.Markup.GeneratingExtensions)
-- [Create your own C# Markup](xref:Learn.Tutorials.HowToCreateMarkupProject)
