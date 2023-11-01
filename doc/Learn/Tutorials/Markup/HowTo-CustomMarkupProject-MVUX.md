@@ -41,7 +41,7 @@ Change the *MainPage* to have a different content as the sample bellow.
     - The code below shows how to use the FeedView to list information on MVUX.
     But first for have the information we will create the WeatherModel and the WeatherService.
 
-    First the Service.
+    First, let's create the Weather Service.
     Create a class file named `WeatherService.cs` and add the content below to the file.
     In this File we will create a record WeatherInfo with contains the attribute Temperature.
     After that we create a IWeatherService, (With define the GetCurrentWeather) and a implementation of it on the WeatherService.
