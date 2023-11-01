@@ -8,7 +8,7 @@ Converters are particularly useful when you want to display data from a domain m
 
 ## Using a Converter
 
-There may be times when you may want to simply use a converter instead of providing a delegate over and over. For these scenarios you may want to provide some sort of Static readonly context like:
+There may be times when you may want to simply use a converter instead of providing a delegate over and over. For these scenarios, you may want to provide some sort of `static readonly` context like:
 
 ```cs
 public static class Converters
@@ -26,7 +26,7 @@ new Button()
 ### Custom text
 
 Converters allow the combination or some change on the value before it is displayed.
-In this case you can use the `Convert` method to provide a converter to the binding.
+In this case, you can use the `Convert` method to provide a converter to the binding.
 
 ```csharp
 public partial class MainPage : Page
@@ -50,7 +50,7 @@ public partial class MainPage : Page
 
 ##### Shorthand Syntax
 
-Instead of using the full IDependencyPropertyBuilder to provide our Binding and Converter we can additionally use the short hand syntax thanks to an additional extension that is provided by the generator. To do this we simply need to provide our Binding and Convert delegates as follows:
+Instead of using the full `IDependencyPropertyBuilder` to provide our Binding and Converter, we can additionally use the shorthand syntax provided by an additional extension that is provided by the generator. To do this we simply need to provide our `Binding` and `Convert` delegates as follows:
 
 ```csharp
 new TextBox()
@@ -59,7 +59,7 @@ new TextBox()
 
 ### Query and Conditionals
 
-Sometimes we may want to make conditionals or apply specific rules to values or attributes, for that we can simply use the convert to that treatment.
+Sometimes, we may want to make conditionals or apply specific rules to values or attributes, for that we can simply use the convert to that treatment.
 
 ```csharp
 new TextBox()
@@ -70,7 +70,7 @@ new TextBox()
 
 ### Static Class Converters
 
-Or if we need to implement this same rule in different places or to maintain the structure, we can work with static classes for this purpose.
+If we need to implement this same rule in different places or to maintain the structure, we can work with static classes for this purpose.
 
 ```csharp
 public static class Converters
@@ -90,8 +90,8 @@ new Button()
 
 ##  ConvertBack
 
-Similarly you may need to convert the value back to the original type when the value is updated.
-In this case you can use the `ConvertBack` method to provide a converter to the binding.
+Similarly, you may need to convert the value back to the original type when the value is updated.
+In this case, you can use the `ConvertBack` method to provide a converter to the binding.
 
 ```csharp
 public partial class MainPage : Page

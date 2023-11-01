@@ -4,9 +4,9 @@ uid: Learn.Tutorials.HowToCustomMarkupProjectToolkit
 
 # Getting Started with Uno Toolkit
 
-In the previous session we learn how to [Create your own C# Markup](xref:Learn.Tutorials.HowToCreateMarkupProject) and how [Custom your own C# Markup - Learn how to change Style, Bindings, Templates and Template Selectors using C# Markup](xref:Learn.Tutorials.HowToCustomMarkupProject).
+In the previous session we learned how to [Create your own C# Markup](xref:Learn.Tutorials.HowToCreateMarkupProject) and how [Custom your own C# Markup - Learn how to change Style, Bindings, Templates and Template Selectors using C# Markup](xref:Learn.Tutorials.HowToCustomMarkupProject).
 
-Now we will check [Uno Toolkit](https://platform.uno/docs/articles/external/uno.toolkit.ui/doc/getting-started.html) with is a library that can be added to any new or existing Uno solution.
+Now we will check [Uno Toolkit](https://platform.uno/docs/articles/external/uno.toolkit.ui/doc/getting-started.html) which is a library that can be added to any new or existing Uno solution.
 
 For this sample you can use the how to [Create your own C# Markup with Toolkit](xref:Reference.Markup.HowTo-MarkupProjectToolkit)
 

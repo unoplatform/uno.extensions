@@ -3,7 +3,7 @@ uid: Reference.Markup.Templates
 ---
 # Templates
 
-WinUI has a number of different templates. All templates are generated based on a given delegate that returns some sort of UIElement.
+WinUI has a number of different templates. All templates are generated based on a given delegate that returns some sort of `UIElement`.
 
 ## DataTemplates
 
@@ -15,7 +15,7 @@ new ListView()
 ```
 
 > [!WARNING]
-> The delegate property `item` will be null and cannot be used to access the state of the model. Attempting to access property values directly will result in a NullReferenceException. You must use Bindings to set values from your Model. If you need to dynamically update the view based on the state of the model, you should consider using a `DataTemplateSelector` instead.
+> The delegate property `item` will be null and cannot be used to access the state of the model. Attempting to access property values directly will result in a `NullReferenceException`. You must use Bindings to set values from your Model. If you need to dynamically update the view based on the state of the model, you should consider using a `DataTemplateSelector` instead.
 
 ### DataTemplateSelector
 

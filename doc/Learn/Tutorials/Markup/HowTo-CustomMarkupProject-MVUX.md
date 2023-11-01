@@ -69,9 +69,9 @@ Change the *MainPage* to have a different content as the sample bellow.
     }
     ```
 
-    Second the Model.
+    Next, let's create the Model.
     Create a class file named `WeatherModel.cs` and add the content below to the file.
-    In this case we are creating a WeatherModel with contains a IFeed of the WeatherInfo.
+    In this case we are creating a `WeatherModel` which contains an `IFeed` of the `WeatherInfo`.
 
     ```csharp
     namespace MySampleProjectMVUX;
@@ -154,7 +154,7 @@ Change the *MainPage* to have a different content as the sample bellow.
     - Example of the complete code on the MainPage.cs, so you can follow along in your own project.
 
     ```csharp
-   namespace MySampleProjectMVUX;
+    namespace MySampleProjectMVUX;
     using Uno.Extensions.Reactive.UI;
 
     public sealed partial class MainPage : Page

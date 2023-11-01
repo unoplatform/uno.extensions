@@ -3,11 +3,11 @@ uid: Reference.Markup.GettingStarted
 ---
 # Getting Started
 
-Uno.Extensions.Markup is a collection of packages to make it easier for developers to build UI for their Uno and WinUI applications using a fluent and entirely C# based approach. You may want to add one or more packages based on your needs for your application.
+Uno.Extensions.Markup is a collection of packages to make it easier for developers to build UI for their Uno Platform and WinUI applications using a fluent and entirely C# based approach. You may want to add one or more packages based on your needs for your application.
 
 ## Pre-Generated Markup Extensions
 
-In addition to the core package and generator the Uno team is shipping a number of pre-generated extension libraries for building your apps with C# Markup. You can find the package with the naming convention `{package name}.Markup`. Some common ones you may want to use are:
+In addition to the core package and generator, the Uno Platform team is shipping a number of pre-generated extension libraries for building your apps with C# Markup. You can find the package with the naming convention `{package name}.Markup`. Some common ones you may want to use are:
 
 - [Uno.WinUI.Markup](https://www.nuget.org/packages/Uno.WinUI.Markup)
 - [Uno.Toolkit.WinUI.Markup](https://www.nuget.org/packages/Uno.Toolkit.WinUI.Markup)
@@ -21,7 +21,7 @@ In addition to the core package and generator the Uno team is shipping a number 
 
 ## Using the Markup Extensions
 
-A fundamental premise of the Uno.Extensions.Markup.WinUI library is that it should be easy to use with extensions that are generally discoverable. For this reason, the markup extensions exist within the namespace of the type they are generated for. Extensions are generated generically for all types that are not sealed in an effort to reduce the number of extensions that are required for each class. Getting started couldn't be easier!
+A fundamental premise of the [Uno.Extensions.Markup.WinUI(https://www.nuget.org/packages/Uno.Extensions.Markup.WinUI) library is that it should be easy to use with extensions that are generally discoverable. For this reason, the markup extensions exist within the namespace of the type they are generated for. C# Markup Extensions are generated generically for all types that are not sealed in an effort to reduce the number of extensions that are required for each class. Getting started couldn't be easier!
 
 ```cs
 new TextBlock()
@@ -31,7 +31,7 @@ new TextBlock()
 
 ### Type Helpers
 
-When setting values for certain types on either the element or through a setter you, helpers have been added to make this easier and more closely aligned with how you might set these automatically in XAML. Currently helper extensions are available for:
+When setting values for certain types on either the element or through a setter, helpers have been added to make this operation easier and more closely aligned with how you might set these automatically in XAML. Currently helper extensions are available for:
 
 - Brush
 - Color
@@ -52,7 +52,7 @@ new Button()
 
 ## Strongly Typed DataContext
 
-When building the content of a given control you can make use of the DataContext extension to provide a strongly typed context for bindings. It is important to note that these extensions will not create or resolve your DataContext. These extensions are meant to help you create [strongly typed bindings](xref:Reference.Markup.DependencyPropertyBuilder).
+When building the content of a given control, you can make use of the `DataContext` extension to provide a strongly typed context for bindings. It is important to note that these extensions will not create or resolve your DataContext. These extensions are meant to help you create [strongly typed bindings](xref:Reference.Markup.DependencyPropertyBuilder).
 
 **Strongly Typed DataContext**
 ```cs
