@@ -3,7 +3,7 @@ uid: Reference.Markup.Resources
 ---
 # Resource Dictionaries
 
-All `FrameworkElement`-inheriting type and `Application` have a couple of special extensions to help you manage your resources.
+All `FrameworkElement`-inheriting types and `Application` have a couple of special extensions to help you manage your resources.
 
 ## Merging Resource Dictionaries
 

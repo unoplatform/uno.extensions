@@ -7,7 +7,7 @@ WinUI has a number of different templates. All templates are generated based on 
 
 ## DataTemplates
 
-`DataTemplate` is a specialized template which typically has its own `DataContext`. As a result `DataTemplate` properties are built using a strongly typed generic extension that helps the creation of bindings for the given data type of the model the `DataTemplate` will be used for.
+`DataTemplate` is a specialized template that typically has its own `DataContext`. As a result `DataTemplate` properties are built using a strongly typed generic extension that helps the creation of bindings for the given data type of the model the `DataTemplate` will be used for.
 
 ```cs
 new ListView()
@@ -19,7 +19,7 @@ new ListView()
 
 ### DataTemplateSelector
 
-Sometimes it is needed to provide a different UI based on the state of an individual item. It is important to consider that the actual instance of the model type will always be null for your delegate as a `DataTemplate` cannot have any state. In these cases you must instead make use of the `DataTemplateSelector`. The `DataTemplateSelector` property will give you access to the `DataTemplateSelectorBuilder` which again will give you the opportunity create your DataTemplates plus specify a delegate that can evaluate the state of the model.
+Sometimes it is needed to provide a different UI based on the state of an individual item. It is important to consider that the actual instance of the model type will always be null for your delegate as a `DataTemplate` cannot have any state. In these cases, you must instead make use of the `DataTemplateSelector`. The `DataTemplateSelector` property will give you access to the `DataTemplateSelectorBuilder` which again will give you the opportunity to create your DataTemplates plus specify a delegate that can evaluate the state of the model.
 
 ```cs
 new ListView()
@@ -38,7 +38,7 @@ new ListView()
 
 ## ContentTemplate
 
-Similar to `DataTemplate`, `ContentTemplate` is a special case which must take into consideration the target type of the parent control it is being applied to. This has handled automatically for you by the generated extensions. Similar to the `DataTemplate`, the method will be strongly typed, only the type will be that of the parent control.
+Similar to `DataTemplate`, `ContentTemplate` is a special case that must take into consideration the target type of the parent control to which it is being applied. This has been handled automatically for you by the generated extensions. Similar to the `DataTemplate`, the method will be strongly typed, only the type will be that of the parent control.
 
 ```cs
 new Button()
