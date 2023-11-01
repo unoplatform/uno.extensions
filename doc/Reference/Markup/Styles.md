@@ -31,7 +31,7 @@ new Style<TextBlock>()
 
 ## Using Resources for Style Setters
 
-Sometimes you might want to use a Static or Theme resource on your style property. In these cases you can continue to use the Dependency Property Builder to set the value of the setter on a given property the same as you might when setting the value on a control instance.
+Sometimes you might want to use a Static or Theme resource on your style property. In these cases, you can continue to use the Dependency Property Builder to set the value of the setter on a given property the same as you might when setting the value on a control instance.
 
 ```cs
 // Static Resource
@@ -43,7 +43,7 @@ new Style<Button>()
 	.Setters(s => s.Background(ThemeResource.Get<Brush>("MyBrush")))
 ```
 
-Alternatively if you are using a Theme Resource from [Uno.Material](xref:uno.themes.material.getstarted), you can use [Uno.Themes.WinUI.Markup](https://www.nuget.org/packages/Uno.Themes.WinUI.Markup) for a strongly typed API making it easier to both discover and make use of the various theme Styles, Colors and Brushes. Instead of calling `StaticResource.Get` or `ThemeResource.Get` you will simply use the Theme call to access the Color, Brush or Style.
+Alternatively, if you are using a Theme Resource from [Uno.Material](xref:uno.themes.material.getstarted), you can use [Uno.Themes.WinUI.Markup](https://www.nuget.org/packages/Uno.Themes.WinUI.Markup) for a strongly typed API making it easier to both discover and make use of the various theme Styles, Colors, and Brushes. Instead of calling `StaticResource.Get` or `ThemeResource.Get` you will simply use the Theme call to access the Color, Brush, or Style.
 
 ```cs
 new Style<Button>()

@@ -8,16 +8,16 @@ You can use this tutorial to learn how to set up a Uno Platform project using MV
 
 Create a new project using MVUX
 
-- In this tutorial you will [setting up the environment and creating the Markup project and MVUX](xref:Learn.Tutorials.HowToMarkupMVUX)
+- In this tutorial, you will [set up the environment and create the Markup project and MVUX](xref:Learn.Tutorials.HowToMarkupMVUX)
 
 ## Start With MVUX.
 
-The MVUX provides a structured approach to managing application state and updating the user interface within the Uno Platform, following the principles of MVU architecture. 
+The MVUX provides a structured approach to managing the application state and updating the user interface within the Uno Platform, following the principles of MVU architecture. 
 It aims to simplify state management and UI development by providing abstractions and conventions for working with feeds, states, and views.
 
-In this tutorial you can learning about the [MVUX](xref:Overview.Mvux.Overview) using XAML.
+In this tutorial, you can learn about the [MVUX](xref:Overview.Mvux.Overview) using XAML.
 
-The same concept can be apply on C# Markup.
+The same concept can be applied to C# Markup.
 
 By the way, let's use the same existing example in XAML to make the conversation in C# Markup.
 Let's try to simplify the use to be able to explain the features.
@@ -39,15 +39,15 @@ Change the *MainPage* to have a different content as the sample bellow.
     #### C# Markup.
 
     - The code below shows how to use the FeedView to list information on MVUX.
-    But first for have the information we will create the WeatherModel and the WeatherService.
+    But first to have the information we will create the WeatherModel and the WeatherService.
 
     First, let's create the Weather Service.
     Create a class file named `WeatherService.cs` and add the content below to the file.
     In this File we will create a record WeatherInfo with contains the attribute Temperature.
-    After that we create a IWeatherService, (With define the GetCurrentWeather) and a implementation of it on the WeatherService.
-    For this case, just have a new WeatherInfo with a randon temperature.
+    After that, we create an IWeatherService, (With defining the GetCurrentWeather) and an implementation of it on the WeatherService.
+    For this case, just have a new WeatherInfo with a random temperature.
 
-    > Notice that the WeatherInfo is been created every new request, following the MVU standard. 
+    > Notice that the WeatherInfo is been created for every new request, following the MVU standard. 
 
     ```csharp
     namespace MySampleProjectMVUX;
@@ -71,7 +71,7 @@ Change the *MainPage* to have a different content as the sample bellow.
 
     Next, let's create the Model.
     Create a class file named `WeatherModel.cs` and add the content below to the file.
-    In this case we are creating a `WeatherModel` which contains an `IFeed` of the `WeatherInfo`.
+    In this case, we are creating a `WeatherModel` which contains an `IFeed` of the `WeatherInfo`.
 
     ```csharp
     namespace MySampleProjectMVUX;

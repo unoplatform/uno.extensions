@@ -3,7 +3,7 @@ uid: Reference.Markup.DependencyPropertyBuilder
 ---
 # Dependency Property Builder
 
-While many properties may make sense to use a fluent API to simply set a hard coded value, it is often the case that you need to provide a `Binding` or use a Static Resource or a Theme Resource. For these more complex scenarios you will find the `DependencyPropertyBuilder` to be useful to set these values.
+While many properties may make sense to use a fluent API to simply set a hard-coded value, it is often the case that you need to provide a `Binding` or use a Static Resource or a Theme Resource. For these more complex scenarios, you will find the `DependencyPropertyBuilder` to be useful to set these values.
 
 ## Binding
 

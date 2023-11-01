@@ -4,9 +4,9 @@ uid: Learn.Tutorials.HowToCustomMarkupProjectTheme
 
 # C# Markup project setup
 
-In this tutorial you'll learn how to set up an Uno Platform project to use C# Markup to change the Theme. 
+In this tutorial, you'll learn how to set up an Uno Platform project to use C# Markup to change the Theme. 
 
-1. For this tutorial we will continue to use the Sample created on the [Custom your own C# Markup - Learn how to use Toolkit](xref:Learn.Tutorials.HowToCustomMarkupProjectToolkit) tutorial and changed on the [Custom your own C# Markup - Learn how to change Visual States and User Controls](xref:Learn.Tutorials.HowToCustomMarkupProjectVisualStates).
+1. For this tutorial we will continue to use the Sample created on the [Custom your own C# Markup - Learn how to use Toolkit](xref:Learn.Tutorials.HowToCustomMarkupProjectToolkit) tutorial and change on the [Custom your own C# Markup - Learn how to change Visual States and User Controls](xref:Learn.Tutorials.HowToCustomMarkupProjectVisualStates).
 
 # Themes Overview
 
@@ -25,7 +25,7 @@ It contains two libraries
 
 To help you style your application with a few lines of code to include and change:
 
-- Color system for both Light and Dark theme
+- Color system for both Light and Dark themes
 - Styles for existing WinUI controls like Buttons, TextBox, etc.
 - Change the Font of the Application
 
@@ -33,7 +33,7 @@ To help you style your application with a few lines of code to include and chang
 
 In the two links above, you have a Getting Started for Material and Cupertino. 
 
-But the difference between they are the references that can be included on the Solution.
+But the difference between they are the references that can be included in the Solution.
 
 You may notice that there are only minor differences in the XAML configuration in the link above and in this current tutorial.
 
@@ -49,7 +49,7 @@ Assuming that we are on the Fluent Theme and we want to change to the Material T
 
 #### In the File Directory.Packages.props
 
-In the `Directory.Packages.props`, we need to add the `PackageReference` below or using the Manage NuGet Packages Manager and update the versions for the project.
+In the `Directory.Packages.props`, we need to add the `PackageReference` below or use the Manage NuGet Packages Manager and update the versions for the project.
 
 ```xml
     <PackageVersion Include="Uno.Material.WinUI.Markup" Version="0.0.0" />	
@@ -113,7 +113,7 @@ public sealed partial class ColorPaletteOverride : ResourceDictionary
 }
 ```
 
-Then, create a new class file to override the Fonts, we named as `MaterialFontsOverride.cs`.
+Then, create a new class file to override the Fonts, which we named as `MaterialFontsOverride.cs`.
 
 ```csharp
 namespace MySampleToolkitProject.Styles;
@@ -155,7 +155,7 @@ We change the `Theme.Colors.Background.Default.Key` and we will be able to check
 .Add<Color>(Theme.Colors.Background.Default.Key, "#A1B2C3", "#000000")
 ```
 
-For use the color from the theme open the MainPage.cs and change the background of the page.
+To use the color from the theme open the MainPage.cs and change the background of the page.
 
 ```csharp
 public MainPage()
@@ -171,7 +171,7 @@ public MainPage()
             .Background(ThemeResource.Get<Brush>("BackgroundBrush"))
 ```
 
-You can always read the Material documentation and learning how the [Baseline color scheme](https://m3.material.io/styles/color/the-color-system/tokens) works.
+You can always read the Material documentation and learn how the [Baseline color scheme](https://m3.material.io/styles/color/the-color-system/tokens) works.
 
 
 ## Cupertino
@@ -202,7 +202,7 @@ new Grid().RowDefinitions<Grid>("*, *")
 	),
 ```
 
-- After that we need to add a Click EventHandler to Toggle the Theme. 
+- After that, we need to add a Click EventHandler to Toggle the Theme. 
 
 ```csharp
 toggle.Checked += (s, e) =>
@@ -276,7 +276,7 @@ public class App : Application
 		if (rootFrame.Content == null)
 		{
 			// When the navigation stack isn't restored navigate to the first page,
-			// configuring the new page by passing required information as a navigation
+			// configuring the new page by passing the required information as a navigation
 			// parameter
 			rootFrame.Navigate(typeof(MainPage), args.Arguments);
 		}

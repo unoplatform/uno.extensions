@@ -6,7 +6,7 @@ uid: Reference.Markup.StaticAndThemeResources
 
 Using Static or Theme Resources is built on top of the `IDependencyPropertyBuilder<T>`. This allows the greatest degree of flexibility and extensibility.
 
-To get started let's assume that we have a string resource called `AppTitle` in our `ResourceDictionary`. This could be either on the element itself, somewhere within the Visual Tree or even within the `Application.Resources`. In this case we might provide the value like:
+To get started let's assume that we have a string resource called `AppTitle` in our `ResourceDictionary`. This could be either on the element itself, somewhere within the Visual Tree, or even within the `Application.Resources`. In this case, we might provide the value like:
 
 ```csharp
 new TextBlock()
@@ -27,7 +27,7 @@ public partial class MyPage : Page
 
 ## Using Strongly Typed Resources
 
-One of the great benefits of using C# Markup of course is the strong typing. There may be many times where we might simply be able to provide a class like:
+One of the great benefits of using C# Markup of course is the strong typing. There may be many times when we might simply be able to provide a class like:
 
 ```csharp
 public static class MyResources
@@ -95,7 +95,7 @@ public partial class MyPage : Page
 
 ### Getting an Existing Resource
 
-Similarly, we may not want to use the lambda directly. In this case we can again use the `StaticResource` type to get our resource. This can also be helpful for resources that you may not get as often and which may be added for you already to the Resources of a 3rd Party `ResourceDictionary` you have brought in.
+Similarly, we may not want to use the lambda directly. In this case, we can again use the `StaticResource` type to get our resource. This can also be helpful for resources that you may not get as often and which may be added for you already to the Resources of a 3rd Party `ResourceDictionary` you have brought in.
 
 ```csharp
 new PathIcon()
