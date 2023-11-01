@@ -23,7 +23,7 @@ It contains two libraries
 
 - [Cupertino Overview](https://platform.uno/docs/articles/external/uno.themes/doc/cupertino-getting-started.html)
 
-That help you style your application with a few lines of code include and change:
+To help you style your application with a few lines of code to include and change:
 
 - Color system for both Light and Dark theme
 - Styles for existing WinUI controls like Buttons, TextBox, etc.
@@ -31,9 +31,9 @@ That help you style your application with a few lines of code include and change
 
 ## Quick Start
 
-In the two link above you have a Getting Started for Material and Cupertino. 
+In the two links above, you have a Getting Started for Material and Cupertino. 
 
-But the difference between they are the references that can be included on the Soliction.
+But the difference between they are the references that can be included on the Solution.
 
 You may notice that there are only minor differences in the XAML configuration in the link above and in this current tutorial.
 
@@ -49,7 +49,7 @@ Assuming that we are on the Fluent Theme and we want to change to the Material T
 
 #### In the File Directory.Packages.props
 
-In the Directory.Packages.props, we need to add the PackageReference bellow or using the Manage NuGet Packages and update the Versions for the Current version of the project or last version.
+In the `Directory.Packages.props`, we need to add the `PackageReference` below or using the Manage NuGet Packages Manager and update the versions for the project.
 
 ```xml
     <PackageVersion Include="Uno.Material.WinUI.Markup" Version="0.0.0" />	
@@ -57,9 +57,8 @@ In the Directory.Packages.props, we need to add the PackageReference bellow or u
     <PackageVersion Include="Uno.Dsp.Tasks" Version="0.0.0" />
 ```
 --------------------------------------------------------------
-If you prefere you can use the Manage NuGet Packages:
-In the Solution Explorer panel,
-right-click on your app's App Code Library project (PROJECT_NAME.csproj)
+If you prefer you can use the Manage NuGet Packages:
+In the Solution Explorer panel, right-click on your app's App Code Library project (PROJECT_NAME.csproj)
 and select Manage NuGet Packages...
 
 **Install the following Packages**
@@ -84,14 +83,13 @@ Add PackageReference to the PROJECT_NAME.csproj and the PROJECT_NAME.[Platform].
 global using Uno.Material;
 ```
 
-**And it is that, we now have the Material Style on ours application.**
+**And it is that, we now have the Material Style in your application.**
 
 #### In the File AppResources.cs
 
-But in case we want some customization, we need to Overrides the Colors and the Fonts.
+But in case we want some customization, we need to override the Colors and the Fonts.
 
-First we need to create a Folder named Styles in the Shared Project.
-Than Create a new class file to Override the ColorPallete, we named as ColorPaletteOverride.cs and add the content.
+First we need to create a folder named `Styles` in the shared class library. Then Create a new class file to override the ColorPalette, we named `ColorPaletteOverride.cs` and add the content below.
 
 ```csharp
 namespace MySampleToolkitProject.Styles;
@@ -115,7 +113,7 @@ public sealed partial class ColorPaletteOverride : ResourceDictionary
 }
 ```
 
-Than Create a new class file to Override the Fonts, we named as MaterialFontsOverride.cs.
+Then, create a new class file to override the Fonts, we named as `MaterialFontsOverride.cs`.
 
 ```csharp
 namespace MySampleToolkitProject.Styles;
@@ -134,9 +132,9 @@ public sealed class MaterialFontsOverride : ResourceDictionary
 ```
 
 And we can use this tutorial if we want to [Use the DSP Tooling in Uno.Material](https://platform.uno/docs/articles/external/uno.themes/doc/material-dsp.html).
-In this tutorial, we can get exported file, and rename as the file ColorPaletteOverride.zip and add to the Style folder.
+In this tutorial, we can get exported file, and rename as the file `ColorPaletteOverride.zip` and add to the `Style` folder.
 
-And than add the references to the AppResources.cs
+And then add the references to the `AppResources.cs`
 
 ```csharp
 // Load Uno.UI.Toolkit and Material Resources
@@ -148,7 +146,7 @@ this.Build(r => r.Merged(
 
 ##### For a test, change the ColorPaletteOverride and run the project.
 
-We change the Theme.Colors.Background.Default.Key and will be able to check the change if we customize the Background on the Page.
+We change the `Theme.Colors.Background.Default.Key` and we will be able to check the change if we customize the `Background` on the `Page`.
 
 ```csharp
 //From
@@ -173,21 +171,21 @@ public MainPage()
             .Background(ThemeResource.Get<Brush>("BackgroundBrush"))
 ```
 
-You always can back on the Material documentation and learning how the [Baseline color scheme](https://m3.material.io/styles/color/the-color-system/tokens) works
+You can always read the Material documentation and learning how the [Baseline color scheme](https://m3.material.io/styles/color/the-color-system/tokens) works.
 
 
 ## Cupertino
 
-We do not suport Cupertino at the moment.
+C# Markup does not support Cupertino at the moment.
 
 ## Quick Start
 
-We are able to change from Dark Mode and Light Mode direct on the application.
-So we can use the ColorPaletteOverride as both, Dark and Light Mode.
+We are able to change from Dark Mode and Light Mode directly in the application.
+We can use the `ColorPaletteOverride` for both Dark and Light Mode.
 
 To do this, we can create a simple control toggle button and switch between modes.
 
-- In the Shared Project open the file *MainPage.cs* and change the content to have the ToggleButton.
+- In the Shared Project open the file *MainPage.cs* and change the content to show a `ToggleButton`.
 
 ```csharp
 new Grid().RowDefinitions<Grid>("*, *")
@@ -223,8 +221,8 @@ toggle.Unchecked += (s, e) =>
 };
 ```
 
-- But to change the theme, we need to have access to the Window.
-- So we will create a new Class Named AppTheme.cs and add this content.
+- To change the theme, we need to have access to the `Window`.
+- We will create a new Class Named `AppTheme.cs` and add the content below.
 - And doing this, we can get benefit from the Toolkit helper [SystemThemeHelper](https://platform.uno/docs/articles/features/working-with-themes.html?tabs=windows).
 
 ```csharp
@@ -244,7 +242,7 @@ public class AppTheme
 }
 
 ```
-And for this pedagogical purpose, we can update App.cs and include a public class AppTheme so that it can be used in our control, to update the theme.
+And for this educational purpose, we can update `App.cs` and include a public class `AppTheme` so that it can be used in our control, to update the theme.
 
 ```csharp
 namespace MySampleToolkitProject;
@@ -301,12 +299,11 @@ public class App : Application
 }
 ```
 
-And it is that, now we can change the RequestedTheme and use the Dark and Light Mode.
+And it is that, now we can change the `RequestedTheme` and use the Dark and Light Mode.
 
 ## Try it yourself
 
-Now try to change your MainPage to have different layout and test other attributes and elements..
-
+Now try to change your `MainPage` to have different layout and test other attributes and elements.
 
 ## Next Steps
 

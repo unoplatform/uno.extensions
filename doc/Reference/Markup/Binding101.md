@@ -3,7 +3,7 @@ uid: Reference.Markup.Binding101
 ---
 # Binding 101
 
-Whether you've been around frameworks that use bindings for a while or you're brand new to the concept, this guide will help you understand the basics Bindings.
+Whether you've been around frameworks that use bindings for a while or you're brand new to the concept, this guide will help you understand the basics of Bindings.
 
 ```cs
 public partial class MainPage : Page
@@ -33,7 +33,7 @@ public partial class MainPage : Page
 }
 ```
 
-Alternatively we may want to reduce the overhead on the binding by only having this fire once to set the Text Property and not be watched for changes for example if we're setting a title or something that doesn't change. In this case we can use the `Mode` method to set the binding mode to `OneTime`.
+Alternatively, we may want to reduce the overhead on the binding by only having it apply once to set the `Text` property and not be watched for changes. For example, if we're setting a title or something that doesn't change,  we can use the `Mode` method to set the binding mode to `OneTime`.
 
 ```cs
 public partial class MainPage : Page
@@ -65,7 +65,7 @@ public partial class MainPage : Page
 }
 ```
 
-Sometimes you may want to update the format of the value before it is displayed. In this case you can use the `Convert` method to provide a converter to the binding.
+Sometimes, you may want to update the format of the value before it is displayed. In this case, you can use the `Convert` method to provide a converter to the binding.
 
 ```cs
 public partial class MainPage : Page
@@ -96,7 +96,7 @@ public partial class MainPage : Page
 }
 ```
 
-Similarly you may need to convert the value back to the original type when the value is updated. In this case you can use the `ConvertBack` method to provide a converter to the binding.
+Similarly, you may need to convert the value back to the original type when the value is updated. In this case you can use the `ConvertBack` method to provide a converter to the binding.
 
 ```cs
 public partial class MainPage : Page
@@ -115,7 +115,7 @@ public partial class MainPage : Page
 
 ## Binding to other sources
 
-Sometimes you may want or need to bind to your ViewModel. The first case we'll take a look at is one in which we want to bind to a property of another element. In this case we will use the ElementName method on the BindingFactory to update our binding so that it will bind to a named element in the Visual Tree.
+Sometimes you may want or need to bind to your ViewModel. The first case we'll take a look at is one in which we want to bind to a property of another element. In this case we will use the `ElementName` method on the `BindingFactory` to update our binding so that it will bind to a named element in the Visual Tree.
 
 ```cs
 public partial class MainPage : Page
@@ -137,7 +137,9 @@ public partial class MainPage : Page
 }
 ```
 
-Sometimes you may want to have a custom control that uses it's own ViewModel to help keep your ViewModel's clean and simple. In the event that you need to grab some context to create the ViewModel for the Child control's DataContext you may put these various concepts together to create a DataContext for the custom control using a binding on the parent's DataContext while updating the Binding to use the current Page as the source.
+Sometimes you may want to have a custom control that uses it's own ViewModel to help keep your ViewModel's clean and simple.
+
+In the event that you need to grab some context to create the ViewModel for the Child control's `DataContext` you may put these various concepts together to create a `DataContext` for the custom control using a binding on the parent's `DataContext` while updating the Binding to use the current `Page` as the source.
 
 ```cs
 public partial class MainPage : Page

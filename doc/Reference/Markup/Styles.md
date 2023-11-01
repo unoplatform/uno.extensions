@@ -43,7 +43,7 @@ new Style<Button>()
 	.Setters(s => s.Background(ThemeResource.Get<Brush>("MyBrush")))
 ```
 
-Alternatively if you are using a Theme Resource from Uno.Material you can use Uno.Themes.WinUI.Markup for a strongly typed API making it easier to both discover and make use of the various theme Styles, Colors and Brushes. Instead of calling `StaticResource.Get` or `ThemeResource.Get` you will simply use the Theme call to access the Color, Brush or Style.
+Alternatively if you are using a Theme Resource from [Uno.Material](xref:uno.themes.material.getstarted), you can use [Uno.Themes.WinUI.Markup](https://www.nuget.org/packages/Uno.Themes.WinUI.Markup) for a strongly typed API making it easier to both discover and make use of the various theme Styles, Colors and Brushes. Instead of calling `StaticResource.Get` or `ThemeResource.Get` you will simply use the Theme call to access the Color, Brush or Style.
 
 ```cs
 new Style<Button>()
@@ -52,7 +52,7 @@ new Style<Button>()
 
 ## Templates
 
-You can similarly provide a template on a Style similar to how might
+You can similarly provide a template on a `Style` similar to how might
 
 ```cs
 new Style<Button>()

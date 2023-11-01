@@ -6,14 +6,14 @@ uid: Reference.Markup.StaticAndThemeResources
 
 Using Static or Theme Resources is built on top of the `IDependencyPropertyBuilder<T>`. This allows the greatest degree of flexibility and extensibility.
 
-To get started let's assume that we have a string resource called `AppTitle` in our ResourceDictionary. This could be either on the element itself, somewhere within the Visual Tree or even within the Application Resources. In this case we might provide the value like:
+To get started let's assume that we have a string resource called `AppTitle` in our `ResourceDictionary`. This could be either on the element itself, somewhere within the Visual Tree or even within the `Application.Resources`. In this case we might provide the value like:
 
 ```csharp
 new TextBlock()
     .Text(x => x.StaticResource("AppTitle"))
 ```
 
-Similarly to this we might want to use a Theme Resource such as `ApplicationPageBackgroundThemeBrush` to set the Background of our Page. In this case we will see we can use nearly identical syntax like:
+Similarly to this we might want to use a `ThemeResource` such as `ApplicationPageBackgroundThemeBrush` to set the Background of our `Page`. In this case we will see we can use nearly identical syntax like:
 
 ```csharp
 public partial class MyPage : Page
@@ -36,14 +36,14 @@ public static class MyResources
 }
 ```
 
-This of course works great becuase we can bypass the overhead of looking up and applying a Resource that could be located anywhere in the Visual Tree from the element we are working on up to the Window Content or within the Application Resources. It simplifies our code to simply set the value like:
+This of course works great because we can bypass the overhead of looking up and applying a Resource that could be located anywhere in the Visual Tree from the element we are working on up to the `Window.Content` or within the `Application.Resources`. It simplifies our code to simply set the value like:
 
 ```csharp
 new TextBlock()
     .Text(MyResources.MyString)
 ```
 
-Unfortunately app development is often not that simple. As a result it is helpful to find ways that we can make use of resources from our markup code. C# Markup provides us a few useful API's to achieve our goals.
+Unfortunately, app development is often not that simple. As a result it is helpful to find ways that we can make use of resources from our markup code. C# Markup provides us a few useful API's to achieve our goals.
 
 ### Creating a new Resource
 
@@ -57,9 +57,11 @@ public static class MyResources
 }
 ```
 
-Looking at this sample we actually are achieving multiple things. One is that we are able to more easily make use of our path string as we can provide it the generic argument for a Geometry object which is what will be expected when we use it. We also are able to avoid trying to figure out how to convert it. Lastly in the case of WinUI we get the advantage that this will be created as a Geometry object each time we need it, this will keep it from being parented and prevent it from being reused later. 
+Looking at this sample we actually are achieving multiple things. One is that we are able to more easily make use of our path string as we can provide it the generic argument for a `Geometry` object which is what will be expected when we use it. We also are able to avoid trying to figure out how to convert it. 
 
-Now to use our `Resource<Geometry>` we can simply reference it similar to our constant string except of course we need to also add it to a Resource Dictionary somewhere in the Visual Tree.
+Lastly, in the case of WinUI we get the advantage that this will be created as a `Geometry` object each time we need it, this will keep it from being parented and prevent it from being reused later. 
+
+Now to use our `Resource<Geometry>`, we can simply reference it similar to our constant string, except that we need to also add it to a `ResourceDictionary` somewhere in the Visual Tree.
 
 ```csharp
 public partial class MyPage : Page
@@ -93,7 +95,7 @@ public partial class MyPage : Page
 
 ### Getting an Existing Resource
 
-Similarly we may not want to use the Lambda directly. In this case we can again use the StaticResource type to get our resource. This can also be helpful for resources that you may not get as often and which may be added for you already to the Resources of a 3rd Party Resource Dictionary you have brought in.
+Similarly, we may not want to use the lambda directly. In this case we can again use the `StaticResource` type to get our resource. This can also be helpful for resources that you may not get as often and which may be added for you already to the Resources of a 3rd Party `ResourceDictionary` you have brought in.
 
 ```csharp
 new PathIcon()

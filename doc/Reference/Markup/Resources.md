@@ -3,11 +3,11 @@ uid: Reference.Markup.Resources
 ---
 # Resource Dictionaries
 
-All Framework Elements and the Application have a couple of special extensions to help you manage your resources.
+All `FrameworkElement`-inheriting type and `Application` have a couple of special extensions to help you manage your resources.
 
 ## Merging Resource Dictionaries
 
-To merge resource dictionaries you simply need to add a Resource Dictionary to the Application or Framework Element like:
+To merge resource dictionaries, you simply need to add a `ResourceDictionary` to the `Application` or `FrameworkElement` like:
 
 ```cs
 new Page()
@@ -19,7 +19,7 @@ new Page()
 
 ## Adding Resources
 
-To add a resource to the Resource Dictionary you can use the fluent builder like:
+To add a resource to the `ResourceDictionary` you can use the fluent builder like:
 
 ```cs
 new Page()
@@ -31,7 +31,7 @@ new Page()
 
 ### Resource Conversions
 
-There may be times when it may be difficult to provide a resource as the correct type. For example, you may want to provide a HEX string for a given color, but not want to convert the HEX values to bytes to create the color. The Markup library will use the built in converters to attempt to convert the supplied value to the correct type. For these sorts of resources it is recommended that you use the generic overload of the Add method which will convert the resource at the time it is created in the Resource Dictionary rather than each time it is used.
+There may be times when it may be difficult to provide a resource using the correct type. For example, you may want to provide a HEX string for a given color, but not want to convert the HEX values to bytes to create the color. The Markup library will use the built in converters to attempt to convert the supplied value to the correct type. For these sorts of resources it is recommended that you use the generic overload of the `Add` method which will convert the resource at the time it is created in the `ResourceDictionary` rather than each time it is used.
 
 ```cs
 new Page()
@@ -45,12 +45,12 @@ new Page()
 ```
 
 > [!TIP]
-> Existing XAML based projects may be using string resources for the path of an Icon. When using Markup be sure to convert this to a Geometry resource rather than leaving it a string. For example: `resources.Add<Geometry>("MyIcon", "M 0 0 L 10 10");`
+> Existing XAML based projects may be using string resources for the path of an `Icon`. When using Markup be sure to convert this to a Geometry resource rather than leaving it a string. For example: `resources.Add<Geometry>("MyIcon", "M 0 0 L 10 10");`
 > While it will work either way, this will help your app's performance by ensuring the icons are only converted once and not each time they are used.
 
 ### Implicit Styles
 
-To add an implicit style be sure to use the [`Style<T>`](Styles.md). You can simply pass in the `Style<T>` and do not need to specify a key.
+To add an implicit style be sure to use the [`Style<T>`](xref:Reference.Markup.Styles). You can simply pass in the `Style<T>` and do not need to specify a key.
 
 ```cs
 new Page()
@@ -99,7 +99,7 @@ new Page()
 
 ## Creating Resources
 
-One of the benefits of C# Markup is a strongly typed context. For this reason we have added a few helpers to make it easier to create and reference Resources eliminating the need to use magic strings and while maintaining type safety.
+One of the benefits of C# Markup is a strongly typed context. For this reason we have added a few helpers to make it easier to create and reference Resources eliminating, the need to use magic strings and while maintaining type safety.
 
 ```cs
 public static class MyResources
@@ -119,7 +119,7 @@ public static class MyResources
 }
 ```
 
-Whether we have a StaticResource or ThemeResource, once we have it defined we can use it in our markup like:
+Whether we have a `StaticResource` or `ThemeResource`, once we have it defined we can use it in our markup like:
 
 ```cs
 public class MyPage : Page
@@ -133,7 +133,9 @@ public class MyPage : Page
 }
 ```
 
-It's important to note that this is not simply returning the value that was defined when we created the resource. Instead when being added to the ResourceDictionaryBuilder it will extract the key and value(s) to be added. Then when referenced in the Data property in the above example it is implicitly converted to an `Action<IDepenendencyPropertyBuilder<Geometry>>` giving you the equivalent of:
+It's important to note that this is not simply returning the value that was defined when we created the resource.
+
+Instead when being added to the `ResourceDictionaryBuilder` it will extract the key and value(s) to be added. Subsequently, when referenced in the `Data` property in the above example it is implicitly converted to an `Action<IDepenendencyPropertyBuilder<Geometry>>` giving you the equivalent of:
 
 ```cs
 new PathIcon()

@@ -3,7 +3,7 @@ uid: Reference.Markup.GeneratingExtensions
 ---
 # Generating Extensions
 
-Uno.Extensions.Markup.Generator is a source generator that will scan one or more assemblies for you to create the C# Markup Extensions for you to use. Once you have added the Source Generator to a given project it will scan that project and automatically generate extensions for the types that are found.
+[**Uno.Extensions.Markup.Generator**](https://www.nuget.org/packages/Uno.Extensions.Markup.Generators) is a source generator that will scan one or more assemblies for you to create the C# Markup Extensions for you to use. Once you have added the Source Generator to a given project it will scan that project and automatically generate extensions for the types that are found.
 
 ## Using the Generator for 3rd Party Libraries
 

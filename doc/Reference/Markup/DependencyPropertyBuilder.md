@@ -3,7 +3,7 @@ uid: Reference.Markup.DependencyPropertyBuilder
 ---
 # Dependency Property Builder
 
-While many properties may make sense to use a fluent API to simply set a hard coded value, it is often the case that you need to provide a Binding or use a Static Resource or a Theme Resource. For these more complex scenarios you will find the `DependencyPropertyBuilder` to be useful to set these values.
+While many properties may make sense to use a fluent API to simply set a hard coded value, it is often the case that you need to provide a `Binding` or use a Static Resource or a Theme Resource. For these more complex scenarios you will find the `DependencyPropertyBuilder` to be useful to set these values.
 
 ## Binding
 
@@ -30,7 +30,9 @@ new TextBlock()
 
 #### Understanding the Binding Expression
 
-The Binding Expression is a lambda expression that provides the path to the property you are binding to. The lambda expression is parsed to determine the path to the property. The lambda expression can be a simple property access such as `() => vm.Message` or it can be a more complex expression such as `() => vm.Client.Contact.FirstName`. It is important to remember that this is equivalent to the following XAML:
+The **Binding Expression** is a lambda expression that provides the path to the property you are binding to.
+
+The lambda expression is parsed to determine the path to the property. It can be a simple property access such as `() => vm.Message` or it can be a more complex expression such as `() => vm.Client.Contact.FirstName`. It is important to remember that this is equivalent to the following XAML:
 
 ```xml
 <TextBlock Text="{Binding Message}" />
@@ -43,7 +45,7 @@ If you wish to perform tasks such as manipulate the value of the binding or form
 
 ### Reference Sources
 
-Sometimes you aren't binding to the DataContext of element and instead you need to reference another source. With WinUI we have 2 ways of doing this. The first is that we could specify a source directly such as:
+Sometimes you aren't binding to the `DataContext` of element and instead you need to reference another source. With WinUI we have 2 ways of doing this. The first is that we could specify a source directly such as:
 
 ```cs
 new Slider().Assign(out var slider),
