@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Linq;
+using System.Reflection;
 using System.Threading;
 using Microsoft.Extensions.Logging;
 using Uno.Extensions.Reactive.Logging;
@@ -15,7 +16,7 @@ namespace Uno.Extensions.Reactive.Config;
 public static class ModuleFeedConfiguration
 {
 	private static readonly ILogger _log = LogExtensions.Log<FeedConfiguration>();
-	private static int _isHotReloadConfigured;
+	private static readonly string? _entryAssembly = Assembly.GetEntryAssembly()?.GetName().Name;
 
 	/// <summary>
 	/// Configures hot-reload for MVUX framework.
@@ -27,7 +28,7 @@ public static class ModuleFeedConfiguration
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	public static void ConfigureHotReload(string module, bool isEnabled)
 	{
-		if (Interlocked.Increment(ref _isHotReloadConfigured) is 1)
+		if (_entryAssembly?.Equals(module, StringComparison.OrdinalIgnoreCase) ?? false)
 		{
 			// Note: it's fine to directly use FeedConfiguration.HotReload as it's internal for now.
 			// We should consider to have a dedicated flag otherwise (to not wipe the config of the user).
