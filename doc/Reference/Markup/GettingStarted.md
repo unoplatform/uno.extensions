@@ -21,7 +21,7 @@ In addition to the core package and generator, the Uno Platform team is shipping
 
 ## Using the Markup Extensions
 
-A fundamental premise of the [Uno.Extensions.Markup.WinUI(https://www.nuget.org/packages/Uno.Extensions.Markup.WinUI) library is that it should be easy to use with extensions that are generally discoverable. For this reason, the markup extensions exist within the namespace of the type they are generated for. C# Markup Extensions are generated generically for all types that are not sealed in an effort to reduce the number of extensions that are required for each class. Getting started couldn't be easier!
+A fundamental premise of the [Uno.Extensions.Markup.WinUI](https://www.nuget.org/packages/Uno.Extensions.Markup.WinUI) library is that it should be easy to use with extensions that are generally discoverable. For this reason, the markup extensions exist within the namespace of the type they are generated for. C# Markup Extensions are generated generically for all types that are not sealed in an effort to reduce the number of extensions that are required for each class. Getting started couldn't be easier!
 
 ```cs
 new TextBlock()
