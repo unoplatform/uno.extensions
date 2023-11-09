@@ -5,17 +5,17 @@ uid: Learn.Tutorials.Logging.UseInternalLogging
 
 `Uno.Extensions.Logging` provides logging capabilities tailored to your target platform. It allows the recording of events for XAML layout, Uno-internal messages, and custom events with severity and verbosity levels of your choice.
 
-> [!IMPORTANT] 
-> This guide assumes your application has already opted into logging. To find out how to do this, refer to the tutorial [here](xref:Learn.Tutorials.Logging.UseLogging)
+> [!NOTE]
+> When adding logging support to an application, add the [Uno.Extensions.Logging.WinUI](https://www.nuget.org/packages/Uno.Extensions.Logging.WinUI) NuGet package (instead of `Uno.Extensions.Logging`) which includes platform specific loggers. 
 
 ## Step-by-steps
 
-> [!IMPORTANT]
-> This guide assumes you used the template wizard or `dotnet new unoapp` to create your solution. If not, it is recommended that you follow the [instructions](xref:Overview.Extensions) for creating an application from the template.
+> [!IMPORTANT] 
+> This guide assumes your application has already opted into logging. To find out how to do this, refer to the tutorial [here](xref:Learn.Tutorials.Logging.UseLogging)
 
 ### 1. Enable Uno internal logging
 
-* To log Uno-internal messages, you first need to call `UseLogging()` on the `IHost` instance:
+* To log Uno-internal messages, you first need to call `UseLogging()` on the `IHost` instance, passing `true` in for the enableUnoLogging parameter:
 
     ```csharp
     private IHost Host { get; }
@@ -25,11 +25,10 @@ uid: Learn.Tutorials.Logging.UseInternalLogging
         var appBuilder = this.CreateBuilder(args)
             .Configure(host => {
                 host
-                .UseLogging()
+                .UseLogging(enableUnoLogging: true)
             });
 
         Host = appBuilder.Build();
-    ...
     ```
 
 ### 2. Set verbosity level of XAML logging
