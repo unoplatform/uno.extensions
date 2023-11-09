@@ -5,6 +5,9 @@ uid: Learn.Tutorials.Logging.UseLogging
 
 `Uno.Extensions.Logging` allows you to leverage logging capabilities tailored to your target platform to easily record events for XAML layout, Uno-internal messages, and custom events with severity and verbosity levels of your choice.
 
+> [!NOTE]
+> When adding logging support to an application, add the [Uno.Extensions.Logging.WinUI](https://www.nuget.org/packages/Uno.Extensions.Logging.WinUI) NuGet package (instead of `Uno.Extensions.Logging`) which includes platform specific loggers. 
+
 ## Step-by-steps
 
 > [!IMPORTANT]
