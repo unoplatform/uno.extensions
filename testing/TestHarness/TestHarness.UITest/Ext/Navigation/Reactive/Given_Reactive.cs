@@ -15,6 +15,8 @@ public class Given_Reactive : NavigationTestBase
 		App.WaitThenTap("TwoPageToThreePageButton");
 		App.WaitThenTap("ThreePageToFourPageButton");
 		App.WaitThenTap("FourPageToFivePageButton");
+		App.WaitThenTap("FivePageToSixPageButton");
+		App.WaitThenTap("SixPageBackButton");
 		App.WaitThenTap("FivePageBackButton");
 		App.WaitThenTap("FourPageBackButton");
 		App.WaitThenTap("ThreePageBackButton");
@@ -40,6 +42,8 @@ public class Given_Reactive : NavigationTestBase
 		App.WaitThenTap("TwoPageToThreePageCodebehindButton");
 		App.WaitThenTap("ThreePageToFourPageCodebehindButton");
 		App.WaitThenTap("FourPageToFivePageCodebehindButton");
+		App.WaitThenTap("FivePageToSixPageCodebehindButton");
+		App.WaitThenTap("SixPageBackCodebehindButton");
 		App.WaitThenTap("FivePageBackCodebehindButton");
 		App.WaitThenTap("FourPageBackCodebehindButton");
 		App.WaitThenTap("ThreePageBackCodebehindButton");
@@ -64,6 +68,8 @@ public class Given_Reactive : NavigationTestBase
 		App.WaitThenTap("TwoPageToThreePageViewModelButton");
 		App.WaitThenTap("ThreePageToFourPageViewModelButton");
 		App.WaitThenTap("FourPageToFivePageViewModelButton");
+		App.WaitThenTap("FivePageToSixPageViewModelButton");
+		App.WaitThenTap("SixPageBackViewModelButton");
 		App.WaitThenTap("FivePageBackViewModelButton");
 		App.WaitThenTap("FourPageBackViewModelButton");
 		App.WaitThenTap("ThreePageBackViewModelButton");
