@@ -44,4 +44,32 @@ public class MappedRouteResolver : RouteResolverDefault
 		}
 		return base.InternalFindByViewModel(viewModelType);
 	}
+
+	protected override RouteInfo? InternalDefaultMapping(string? path = null, Type? view = null, Type? viewModel = null)
+	{
+		var routeInfo = base.InternalDefaultMapping(path, view, viewModel);
+		if (routeInfo != null)
+		{
+			return FromRouteMap(new RouteMap(
+				Path: routeInfo.Path,
+				View: new MappedViewMap(
+						View: null,
+						ViewSelector: routeInfo.View,
+						ViewModel: routeInfo.ViewModel,
+						Data: new DataMap(
+							Data: routeInfo.Data,
+							UntypedToQuery: routeInfo.ToQuery,
+							UntypedFromQuery: routeInfo.FromQuery),
+						ResultData: routeInfo.ResultData,
+						MappedViewModel: routeInfo.ViewModel is not null ?
+											_viewModelMappings.TryGetValue(routeInfo.ViewModel, out var bindableViewModel) ?
+												bindableViewModel : default
+											: default),
+				IsDefault: routeInfo.IsDefault,
+				DependsOn: routeInfo.DependsOn,
+				Init: routeInfo.Init
+				));
+		}
+		return default;
+	}
 }
