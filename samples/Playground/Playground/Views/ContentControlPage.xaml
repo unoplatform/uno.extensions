@@ -1,0 +1,60 @@
+﻿<Page x:Class="Playground.Views.ContentControlPage"
+	  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	  xmlns:local="using:Playground.Views"
+	  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	  mc:Ignorable="d"
+	  xmlns:ui="using:Uno.Toolkit.UI"
+	  xmlns:uen="using:Uno.Extensions.Navigation.UI"
+	  xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
+	  Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition />
+		</Grid.RowDefinitions>
+		<ui:NavigationBar Content="Content Control Page"
+						  x:Uid="Page_NavigationBar"
+						  Style="{StaticResource MaterialNavigationBarStyle}">
+			<ui:NavigationBar.MainCommand>
+				<AppBarButton Foreground="{ThemeResource PrimaryMediumBrush}">
+					<AppBarButton.Icon>
+						<BitmapIcon UriSource="ms-appx:///Playground/Assets/Icons/back.png" />
+					</AppBarButton.Icon>
+				</AppBarButton>
+			</ui:NavigationBar.MainCommand>
+		</ui:NavigationBar>
+		<Grid Grid.Row="1">
+			<Grid.RowDefinitions>
+				<RowDefinition Height="Auto" />
+				<RowDefinition />
+			</Grid.RowDefinitions>
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition />
+				<ColumnDefinition />
+			</Grid.ColumnDefinitions>
+			<StackPanel Orientation="Horizontal"
+						>
+				<Button Content="Third (Name:Info)"
+						uen:Navigation.Request="./Info/Third" />
+				<Button Content="Fourth (Name:Info)"
+						uen:Navigation.Request="./Info/Fourth" />
+			</StackPanel>
+			<ContentControl uen:Region.Attached="True"
+							uen:Region.Name="Info"
+							Grid.Row="1" />
+
+			<StackPanel Orientation="Horizontal" Grid.Column="1">
+				<Button Content="Third"
+						uen:Navigation.Request="./Third" />
+				<Button Content="Fourth"
+						uen:Navigation.Request="./Fourth" />
+			</StackPanel>
+			<ContentControl uen:Region.Attached="True"
+							Grid.Column="1"
+							Grid.Row="1" />
+		</Grid>
+	</Grid>
+</Page>

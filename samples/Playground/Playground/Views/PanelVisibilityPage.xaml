@@ -1,0 +1,81 @@
+﻿<Page x:Class="Playground.Views.PanelVisibilityPage"
+	  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	  xmlns:local="using:Playground.Views"
+	  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	  mc:Ignorable="d"
+	  xmlns:ui="using:Uno.Toolkit.UI"
+	  xmlns:uen="using:Uno.Extensions.Navigation.UI"
+	  Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition />
+			<RowDefinition Height="Auto" />
+			<RowDefinition />
+		</Grid.RowDefinitions>
+		<ui:NavigationBar Content="Visibility Page"
+						  x:Uid="Page_NavigationBar"
+						  Style="{StaticResource MaterialNavigationBarStyle}">
+			<ui:NavigationBar.MainCommand>
+				<AppBarButton Foreground="{ThemeResource PrimaryMediumBrush}">
+					<AppBarButton.Icon>
+						<BitmapIcon UriSource="ms-appx:///Playground/Assets/Icons/back.png" />
+					</AppBarButton.Icon>
+				</AppBarButton>
+			</ui:NavigationBar.MainCommand>
+		</ui:NavigationBar>
+		<StackPanel Grid.Row="1">
+			<Button Content="One"
+					uen:Navigation.Request="./One" />
+			<Button Content="Two"
+					uen:Navigation.Request="./Two" />
+			<Button Content="Three"
+					uen:Navigation.Request="./Three" />
+		</StackPanel>
+		<Grid uen:Region.Attached="True"
+			  uen:Region.Navigator="Visibility"
+			  Grid.Row="2">
+			<Grid uen:Region.Name="One"
+				  Visibility="Collapsed">
+				<TextBlock Text="One" />
+			</Grid>
+			<Grid uen:Region.Name="Two"
+				  Visibility="Collapsed">
+				<TextBlock Text="Two" />
+			</Grid>
+			<Grid uen:Region.Name="Three"
+				  Visibility="Collapsed">
+				<TextBlock Text="Three" />
+			</Grid>
+		</Grid>
+		<StackPanel Grid.Row="3">
+			<Button Content="One"
+					uen:Navigation.Request="./Nested/One" />
+			<Button Content="Two"
+					uen:Navigation.Request="./Nested/Two" />
+			<Button Content="Three"
+					uen:Navigation.Request="./Nested/Three" />
+		</StackPanel>
+		<Grid uen:Region.Attached="True"
+			  uen:Region.Name="Nested"
+			  uen:Region.Navigator="Visibility"
+			  Grid.Row="4">
+			<Grid uen:Region.Name="One"
+				  Visibility="Collapsed">
+				<TextBlock Text="One" />
+			</Grid>
+			<Grid uen:Region.Name="Two"
+				  Visibility="Collapsed">
+				<TextBlock Text="Two" />
+			</Grid>
+			<Grid uen:Region.Name="Three"
+				  Visibility="Collapsed">
+				<TextBlock Text="Three" />
+			</Grid>
+		</Grid>
+	</Grid>
+</Page>

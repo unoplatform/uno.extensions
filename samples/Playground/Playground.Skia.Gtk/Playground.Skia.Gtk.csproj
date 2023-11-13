@@ -1,54 +1,32 @@
 <Project Sdk="Microsoft.NET.Sdk">
-	<PropertyGroup>
-		<OutputType Condition="'$(Configuration)'=='Release'">WinExe</OutputType>
-		<OutputType Condition="'$(Configuration)'=='Debug'">Exe</OutputType>
-		<TargetFramework>net5.0</TargetFramework>
-		<AssemblyName>PlaygroundApp</AssemblyName>
-		<RootNamespace>Playground</RootNamespace>
-	</PropertyGroup>
-	<ItemGroup Condition="exists('..\Playground.UWP')">
-		<EmbeddedResource Include="..\Playground.UWP\Package.appxmanifest" LogicalName="Package.appxmanifest" />
-		<Content Include="..\Playground.UWP\Assets\StoreLogo.png" Link="Assets\StoreLogo.png" />
-		<Content Include="Assets\Fonts\uno-fluentui-assets.ttf" />
-	</ItemGroup>
-	<ItemGroup>
-		<UpToDateCheckInput Include="..\Playground.Shared\**\*.xaml" />
-	</ItemGroup>
-	<ItemGroup>
-		<PackageReference Include="CommunityToolkit.Mvvm" />
-		<PackageReference Include="Microsoft.Extensions.Logging" />
-		<PackageReference Include="Microsoft.Extensions.Logging.Console" />
-		<PackageReference Include="System.Text.Json" />
-		<PackageReference Include="Refit" />
-		<PackageReference Include="Refit.HttpClientFactory" />
-		<PackageReference Include="Uno.UI.Skia.Gtk" />
-		<PackageReference Include="Uno.UI.RemoteControl" Condition="'$(Configuration)'=='Debug'" />
-		<PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" />
-	</ItemGroup>
-	<ItemGroup>
-		<ProjectReference Include="..\..\..\src\Uno.Extensions.Configuration\Uno.Extensions.Configuration.csproj" />
-		<ProjectReference Include="..\..\..\src\Uno.Extensions.Core\Uno.Extensions.Core.csproj" />
-		<ProjectReference Include="..\..\..\src\Uno.Extensions.Hosting.UI\Uno.Extensions.Hosting.UWP.Skia.csproj" />
-		<ProjectReference Include="..\..\..\src\Uno.Extensions.Hosting\Uno.Extensions.Hosting.csproj" />
-		<ProjectReference Include="..\..\..\src\Uno.Extensions.Http.Refit\Uno.Extensions.Http.Refit.csproj" />
-		<ProjectReference Include="..\..\..\src\Uno.Extensions.Http.UI\Uno.Extensions.Http.UI.csproj" />
-		<ProjectReference Include="..\..\..\src\Uno.Extensions.Http\Uno.Extensions.Http.csproj" />
-		<ProjectReference Include="..\..\..\src\Uno.Extensions.Localization.UI\Uno.Extensions.Localization.UI.csproj" />
-		<ProjectReference Include="..\..\..\src\Uno.Extensions.Logging.Serilog\Uno.Extensions.Logging.Serilog.csproj" />
-		<ProjectReference Include="..\..\..\src\Uno.Extensions.Logging\Uno.Extensions.Logging.UWP.Skia.csproj" />
-		<ProjectReference Include="..\..\..\src\Uno.Extensions.Navigation.Toolkit\Uno.Extensions.Navigation.Toolkit.UI.csproj" />
-		<ProjectReference Include="..\..\..\src\Uno.Extensions.Navigation.UI\Uno.Extensions.Navigation.UI.csproj" />
-		<ProjectReference Include="..\..\..\src\Uno.Extensions.Navigation\Uno.Extensions.Navigation.csproj" />
-		<ProjectReference Include="..\..\..\src\Uno.Extensions.Reactive.UI\Uno.Extensions.Reactive.UI.csproj" />
-		<ProjectReference Include="..\..\..\src\Uno.Extensions.Reactive\Uno.Extensions.Reactive.csproj" />
-		<ProjectReference Include="..\..\..\src\Uno.Extensions.Serialization.Http\Uno.Extensions.Serialization.Http.csproj" />
-		<ProjectReference Include="..\..\..\src\Uno.Extensions.Serialization.Refit\Uno.Extensions.Serialization.Refit.csproj" />
-		<ProjectReference Include="..\..\..\src\Uno.Extensions.Serialization\Uno.Extensions.Serialization.csproj" />
-		<ProjectReference Include="..\..\..\src\Uno.Extensions.Storage.UI\Uno.Extensions.Storage.UI.csproj" />
-		<ProjectReference Include="..\..\..\src\Uno.Extensions.Storage\Uno.Extensions.Storage.csproj" />
-		<ProjectReference Include="..\..\..\src\Uno.Extensions.Validation.Fluent\Uno.Extensions.Validation.Fluent.csproj" />
-		<ProjectReference Include="..\..\..\src\Uno.Extensions.Validation\Uno.Extensions.Validation.csproj" />
-	</ItemGroup>
+  <PropertyGroup>
+    <OutputType Condition="'$(Configuration)'=='Release'">WinExe</OutputType>
+    <OutputType Condition="'$(Configuration)'=='Debug'">Exe</OutputType>
+    <TargetFramework>net7.0</TargetFramework>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+  </PropertyGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Package.appxmanifest" />
+    <Manifest Include="$(ApplicationManifest)" />
+  </ItemGroup>
 
-	<Import Project="..\Playground.Shared\Playground.Shared.projitems" Label="Shared" />
+  <ItemGroup>
+    <PackageReference Include="Uno.WinUI.Skia.Gtk" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Console" />
+    <PackageReference Include="SkiaSharp.Views.Uno.WinUI" />
+    <PackageReference Include="SkiaSharp.Skottie" />
+    <!--<PackageReference Include="Uno.WinUI.DevServer" Condition="'$(Configuration)'=='Debug'" />-->
+    <PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" />
+  </ItemGroup>
+
+	<ItemGroup>
+    <ProjectReference Include="..\Playground\Playground.csproj" />
+
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Hosting.UI\Uno.Extensions.Hosting.WinUI.Skia.csproj" />
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Logging\Uno.Extensions.Logging.WinUI.Skia.csproj" />
+	</ItemGroup>
+	
+  <Import Project="..\Playground.Base\base.props" />
+
+	<Import Project="..\FixExtensionLibs.targets" />
 </Project>

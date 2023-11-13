@@ -46,7 +46,7 @@ jobs:
 
 - template: .azure-pipelines.Windows.yml
   parameters:
-    solution: samples/Playground/Playground.winui.slnf
+    solution: samples/Playground/Playground.sln
     solutionName: Playground
 
 - template: .azure-pipelines.Windows.yml

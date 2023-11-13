@@ -3,8 +3,15 @@
 		<OutputType>Exe</OutputType>
 		<TargetFramework>net7.0</TargetFramework>
 		<NoWarn>$(NoWarn);NU1504;NU1505;NU1701</NoWarn>
-		<AssemblyName>PlaygroundApp</AssemblyName>
-		<RootNamespace>Playground</RootNamespace>
+		<!-- Disabled due to issue with Central Package Management with implicit using -->
+		<ImplicitUsings>disable</ImplicitUsings>
+		<WasmPWAManifestFile>manifest.webmanifest</WasmPWAManifestFile>
+		<AppDesignerFolder>Properties</AppDesignerFolder>
+		<!--
+      Supports Deep Linking Routes
+      https://aka.platform.uno/wasm-deeplink
+    -->
+		<WasmShellWebAppBasePath>/</WasmShellWebAppBasePath>
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)'=='Debug'">
 		<MonoRuntimeDebuggerEnabled>true</MonoRuntimeDebuggerEnabled>
@@ -12,16 +19,21 @@
 		<DebugType>portable</DebugType>
 		<DebugSymbols>true</DebugSymbols>
 		<!--
-		IL Linking is disabled in Debug configuration.
-		When building in Release, see https://platform.uno/docs/articles/features/using-il-linker-webassembly.html
-		-->
+      IL Linking is disabled in Debug configuration.
+      When building in Release, see https://platform.uno/docs/articles/features/using-il-linker-WebAssembly.html
+    -->
 		<WasmShellILLinkerEnabled>false</WasmShellILLinkerEnabled>
 	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)'=='Release'">
+		<!-- XAML Resource trimming https://aka.platform.uno/xaml-trimming -->
+		<!--<UnoXamlResourcesTrimming>true</UnoXamlResourcesTrimming>-->
+		<!-- Improve performance with AOT builds https://aka.platform.uno/wasm-aot -->
+		<!-- <WasmShellMonoRuntimeExecutionMode>InterpreterAndAOT</WasmShellMonoRuntimeExecutionMode> -->
+		<!-- Temporarily uncomment to generate an AOT profile https://aka.platform.uno/wasm-aot-profile -->
+		<!-- <WasmShellGenerateAOTProfile>true</WasmShellGenerateAOTProfile> -->
+	</PropertyGroup>
 	<ItemGroup>
-		<Content Include="Assets\SplashScreen.png" />
-	</ItemGroup>
-	<ItemGroup>
-		<UpToDateCheckInput Include="..\Playground.Shared\**\*.xaml" />
+		<Content Include="manifest.webmanifest" />
 	</ItemGroup>
 	<ItemGroup>
 		<EmbeddedResource Include="WasmCSS\Fonts.css" />
@@ -32,53 +44,33 @@
 	</ItemGroup>
 	<ItemGroup>
 		<!--
-		This item group is required by the project template because of the
-		new SDK-Style project, otherwise some files are not added automatically.
+    This item group is required by the project template because of the
+    new SDK-Style project, otherwise some files are not added automatically.
 
-		You can safely remove this ItemGroup completely.
-		-->
+    You can safely remove this ItemGroup completely.
+    -->
 		<None Include="Program.cs" />
 		<None Include="LinkerConfig.xml" />
 		<None Include="wwwroot\web.config" />
 	</ItemGroup>
+
 	<ItemGroup>
-		<PackageReference Include="CommunityToolkit.Mvvm" />
 		<PackageReference Include="Microsoft.Windows.Compatibility" />
-		<PackageReference Include="Microsoft.Extensions.Logging" />
-		<PackageReference Include="System.Text.Json" />
-		<PackageReference Include="Refit" />
-		<PackageReference Include="Refit.HttpClientFactory" />
-		<PackageReference Include="Uno.Extensions.Logging.WebAssembly.Console" />
-		<PackageReference Include="Uno.UI.WebAssembly" />
-		<PackageReference Include="Uno.UI.RemoteControl" Condition="'$(Configuration)'=='Debug'" />
-		<PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" />
 		<PackageReference Include="Uno.Wasm.Bootstrap" />
 		<PackageReference Include="Uno.Wasm.Bootstrap.DevServer" />
-	</ItemGroup>
-	<ItemGroup>
-		<ProjectReference Include="..\..\..\src\Uno.Extensions.Configuration\Uno.Extensions.Configuration.csproj" />
-		<ProjectReference Include="..\..\..\src\Uno.Extensions.Core\Uno.Extensions.Core.csproj" />
-		<ProjectReference Include="..\..\..\src\Uno.Extensions.Hosting.UI\Uno.Extensions.Hosting.UWP.Wasm.csproj" />
-		<ProjectReference Include="..\..\..\src\Uno.Extensions.Hosting\Uno.Extensions.Hosting.csproj" />
-		<ProjectReference Include="..\..\..\src\Uno.Extensions.Http.Refit\Uno.Extensions.Http.Refit.csproj" />
-		<ProjectReference Include="..\..\..\src\Uno.Extensions.Http.UI\Uno.Extensions.Http.UI.csproj" />
-		<ProjectReference Include="..\..\..\src\Uno.Extensions.Http\Uno.Extensions.Http.csproj" />
-		<ProjectReference Include="..\..\..\src\Uno.Extensions.Localization.UI\Uno.Extensions.Localization.UI.csproj" />
-		<ProjectReference Include="..\..\..\src\Uno.Extensions.Logging.Serilog\Uno.Extensions.Logging.Serilog.csproj" />
-		<ProjectReference Include="..\..\..\src\Uno.Extensions.Logging\Uno.Extensions.Logging.UWP.Wasm.csproj" />
-		<ProjectReference Include="..\..\..\src\Uno.Extensions.Navigation.Toolkit\Uno.Extensions.Navigation.Toolkit.UI.csproj" />
-		<ProjectReference Include="..\..\..\src\Uno.Extensions.Navigation.UI\Uno.Extensions.Navigation.UI.csproj" />
-		<ProjectReference Include="..\..\..\src\Uno.Extensions.Navigation\Uno.Extensions.Navigation.csproj" />
-		<ProjectReference Include="..\..\..\src\Uno.Extensions.Reactive.UI\Uno.Extensions.Reactive.UI.csproj" />
-		<ProjectReference Include="..\..\..\src\Uno.Extensions.Reactive\Uno.Extensions.Reactive.csproj" />
-		<ProjectReference Include="..\..\..\src\Uno.Extensions.Serialization.Http\Uno.Extensions.Serialization.Http.csproj" />
-		<ProjectReference Include="..\..\..\src\Uno.Extensions.Serialization.Refit\Uno.Extensions.Serialization.Refit.csproj" />
-		<ProjectReference Include="..\..\..\src\Uno.Extensions.Serialization\Uno.Extensions.Serialization.csproj" />
-		<ProjectReference Include="..\..\..\src\Uno.Extensions.Storage.UI\Uno.Extensions.Storage.UI.csproj" />
-		<ProjectReference Include="..\..\..\src\Uno.Extensions.Storage\Uno.Extensions.Storage.csproj" />
-		<ProjectReference Include="..\..\..\src\Uno.Extensions.Validation.Fluent\Uno.Extensions.Validation.Fluent.csproj" />
-		<ProjectReference Include="..\..\..\src\Uno.Extensions.Validation\Uno.Extensions.Validation.csproj" />
+		<PackageReference Include="Uno.WinUI.WebAssembly" />
+		<PackageReference Include="Uno.WinUI.DevServer" Condition="'$(Configuration)'=='Debug'" />
+		<PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" />
+		<PackageReference Include="Uno.Extensions.Logging.WebAssembly.Console" />
 	</ItemGroup>
 
-	<Import Project="..\Playground.Shared\Playground.Shared.projitems" Label="Shared" Condition="Exists('..\Playground.Shared\Playground.Shared.projitems')" />
+	<ItemGroup>
+		<ProjectReference Include="..\Playground\Playground.csproj" />
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Hosting.UI\Uno.Extensions.Hosting.WinUI.Wasm.csproj" />
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Logging\Uno.Extensions.Logging.WinUI.Wasm.csproj" />
+	</ItemGroup>
+
+	<Import Project="..\Playground.Base\base.props" />
+
+	<Import Project="..\FixExtensionLibs.targets" />
 </Project>
