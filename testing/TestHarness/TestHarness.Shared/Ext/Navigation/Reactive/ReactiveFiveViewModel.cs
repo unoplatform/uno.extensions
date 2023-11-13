@@ -9,6 +9,16 @@ public partial class ReactiveFiveViewModel : BaseViewModel
 
 	public IState<FiveModel?> DataModel { get; }
 
+	public async Task GoToSix()
+	{
+		await Navigator.NavigateViewModelAsync<ReactiveSixViewModel>(this);
+	}
+
+	public async Task GoToSixData()
+	{
+		await Navigator.NavigateDataAsync(this, data: new SixModel(new ReactiveWidget("From Five", 59)));
+	}
+
 	public async Task GoBack()
 	{
 		await Navigator.GoBack(this);

@@ -41,17 +41,28 @@ public class RouteResolverDefault : RouteResolver
 
 	private RouteInfo[] DefaultMapping(string? path = null, Type? view = null, Type? viewModel = null)
 	{
-		if(path is null &&
+		var routeMap = InternalDefaultMapping(path,view, viewModel);
+		if(routeMap is not null)
+		{
+			Mappings.Add(routeMap);
+			return new[] { routeMap };
+		}
+		return Array.Empty<RouteInfo>();
+	}
+
+	protected virtual RouteInfo? InternalDefaultMapping(string? path = null, Type? view = null, Type? viewModel = null)
+	{
+		if (path is null &&
 			view is null &&
 			viewModel is null)
 		{
-			return Array.Empty<RouteInfo>();
+			return default;
 		}
 
 		if (!ReturnImplicitMapping)
 		{
 			if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage("Implicit mapping disabled");
-			return Array.Empty<RouteInfo>();
+			return default;
 		}
 
 		// Trim any qualifiers
@@ -68,7 +79,7 @@ public class RouteResolverDefault : RouteResolver
 		if (path is null ||
 			string.IsNullOrWhiteSpace(path))
 		{
-			return Array.Empty<RouteInfo>();
+			return default;
 		}
 
 		// Attempt to find a viewmap to build the routeinfo from
@@ -122,13 +133,12 @@ public class RouteResolverDefault : RouteResolver
 			{
 				return IsDialogViewType(view);
 			});
-			Mappings.Add( defaultMap);
 			if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Created default mapping - Path '{defaultMap.Path}'");
-			return new RouteInfo[] { defaultMap };
+			return defaultMap;
 		}
 
 		if (Logger.IsEnabled(LogLevel.Warning)) Logger.LogWarningMessage($"Unable to create default mapping");
-		return Array.Empty<RouteInfo>();
+		return default;
 	}
 
 	private Type? TypeFromPath(string path, bool allowMatchExact, IEnumerable<string> suffixes, Func<Type, bool>? condition = null)

@@ -24,5 +24,6 @@ public record TwoModel(ReactiveWidget Widget);
 public record ThreeModel(ReactiveWidget Widget);
 public record FourModel(ReactiveWidget Widget);
 public record FiveModel(ReactiveWidget Widget);
+public record SixModel(ReactiveWidget Widget);
 
 public record ReactiveWidget(string Name, double Weight);
