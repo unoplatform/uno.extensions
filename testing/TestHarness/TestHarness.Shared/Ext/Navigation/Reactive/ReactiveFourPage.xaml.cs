@@ -1,5 +1,4 @@
-﻿
-namespace TestHarness.Ext.Navigation.Reactive;
+﻿namespace TestHarness.Ext.Navigation.Reactive;
 public sealed partial class ReactiveFourPage : Page
 {
 	public ReactiveFourPage()
@@ -15,6 +14,4 @@ public sealed partial class ReactiveFourPage : Page
 	{
 		await this.Navigator()!.NavigateBackAsync(this);
 	}
-
-
 }

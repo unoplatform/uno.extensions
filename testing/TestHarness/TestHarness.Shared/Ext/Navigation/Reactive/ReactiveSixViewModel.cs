@@ -12,7 +12,6 @@ public partial class ReactiveSixViewModel : BaseViewModel
 
 	public IState<SixModel?> DataModel { get; }
 
-
 	public async Task GoBack()
 	{
 		await Navigator.GoBack(this);

@@ -1,6 +1,4 @@
-﻿
-
-namespace TestHarness.Ext.Navigation.Reactive;
+﻿namespace TestHarness.Ext.Navigation.Reactive;
 
 public sealed partial class ReactiveFivePage : Page
 {
@@ -18,5 +16,4 @@ public sealed partial class ReactiveFivePage : Page
 	{
 		await this.Navigator()!.NavigateBackAsync(this);
 	}
-
 }

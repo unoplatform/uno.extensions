@@ -541,7 +541,8 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 			var currentRouteMap = Resolver.FindByPath(Route.Base);
 			if (currentRouteMap != null || routeMap != null)
 			{
-				if (currentRouteMap?.Parent != routeMap?.Parent)
+				if (routeMap?.Parent is not null &&
+					currentRouteMap?.Parent != routeMap?.Parent)
 				{
 					return false;
 				}

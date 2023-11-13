@@ -12,5 +12,4 @@ public sealed partial class ReactiveMainPage : BaseTestSectionPage
 	{
 		await Navigator.NavigateViewModelAsync<ReactiveOneViewModel>(this);
 	}
-
 }
