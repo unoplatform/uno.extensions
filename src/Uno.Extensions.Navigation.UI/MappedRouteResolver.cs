@@ -47,6 +47,14 @@ public class MappedRouteResolver : RouteResolverDefault
 
 	protected override RouteInfo? InternalDefaultMapping(string? path = null, Type? view = null, Type? viewModel = null)
 	{
+		// Check to see if the viewmodel type specified is actually a mapped viewmodel (eg a bindableviewmodel in case of mvux)
+		// If it is, set viewModel to be the un-mapped viewmodel type so that the routemap can be correctly created.
+		if(viewModel is not null &&
+			_viewModelMappings.FirstOrDefault(x=>x.Value==viewModel) is { } mapping)
+		{
+			viewModel = mapping.Key;
+		}
+
 		var routeInfo = base.InternalDefaultMapping(path, view, viewModel);
 		if (routeInfo != null)
 		{
