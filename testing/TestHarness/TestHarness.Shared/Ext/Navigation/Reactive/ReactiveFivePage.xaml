@@ -10,6 +10,8 @@
 	mc:Ignorable="d">
 	<Grid>
 		<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+			<TextBlock AutomationProperties.AutomationId="FivePageWidgetNameTextBlock" Text="{Binding DataModel.Widget.Name}" />
+
 			<Button
 				uen:Navigation.Request="ReactiveSix"
 				AutomationProperties.AutomationId="FivePageToSixPageButton"

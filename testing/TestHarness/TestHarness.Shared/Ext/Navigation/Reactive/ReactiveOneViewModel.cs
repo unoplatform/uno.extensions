@@ -13,6 +13,17 @@ public partial record ReactiveOneViewModel (INavigator Navigator)
 	{
 		await Navigator.NavigateDataAsync(this, data:new TwoModel(new ReactiveWidget("From Two",56)));
 	}
+
+	public async Task GoToThree()
+	{
+		await Navigator.NavigateViewModelAsync<ReactiveThreeViewModel>(this);
+	}
+
+	public async Task GoToThreeData()
+	{
+		await Navigator.NavigateDataAsync(this, data: new ThreeModel(new ReactiveWidget("From Three", 56)));
+	}
+
 	public async Task ShowDialog()
 	{
 		var result = await Navigator.ShowMessageDialogAsync<object>(this, "LocalizedConfirm");

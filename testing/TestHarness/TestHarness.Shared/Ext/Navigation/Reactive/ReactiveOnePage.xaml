@@ -1,32 +1,44 @@
-﻿<Page x:Class="TestHarness.Ext.Navigation.Reactive.ReactiveOnePage"
-	  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-	  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-	  xmlns:local="using:TestHarness.Ext.Navigation.Reactive"
-	  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-	  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-	  mc:Ignorable="d"
-	  xmlns:uen="using:Uno.Extensions.Navigation.UI"
-	  Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+﻿<Page
+	x:Class="TestHarness.Ext.Navigation.Reactive.ReactiveOnePage"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:local="using:TestHarness.Ext.Navigation.Reactive"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	xmlns:uen="using:Uno.Extensions.Navigation.UI"
+	Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+	mc:Ignorable="d">
 
 	<Grid>
-		<StackPanel HorizontalAlignment="Center"
-					VerticalAlignment="Center">
-			<Button AutomationProperties.AutomationId="OnePageToTwoPageButton"
-					Content="Two"
-					uen:Navigation.Request="Two" />
-			<Button AutomationProperties.AutomationId="OnePageToTwoPageCodebehindButton"
-					Content="Two (Codebehind)"
-					Click="OnePageToTwoPageCodebehindClick"
-					/>
-			<Button AutomationProperties.AutomationId="OnePageToTwoPageViewModelButton"
-					Content="Two (ViewModel)"
-					Command="{Binding GoToTwo}"/>
-			<Button AutomationProperties.AutomationId="OnePageToTwoPageDataButton"
-					Content="Two (Data)"
-					Command="{Binding GoToTwoData}" />
-			<Button AutomationProperties.AutomationId="OnePageDialogButton"
-					Content="Dialog"
-					Command="{Binding ShowDialog}" />
+		<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+			<Button
+				uen:Navigation.Request="Two"
+				AutomationProperties.AutomationId="OnePageToTwoPageButton"
+				Content="Two" />
+			<Button
+				AutomationProperties.AutomationId="OnePageToTwoPageCodebehindButton"
+				Click="OnePageToTwoPageCodebehindClick"
+				Content="Two (Codebehind)" />
+			<Button
+				AutomationProperties.AutomationId="OnePageToTwoPageViewModelButton"
+				Command="{Binding GoToTwo}"
+				Content="Two (ViewModel)" />
+			<Button
+				AutomationProperties.AutomationId="OnePageToTwoPageDataButton"
+				Command="{Binding GoToTwoData}"
+				Content="Two (Data)" />
+			<Button
+				AutomationProperties.AutomationId="OnePageDialogButton"
+				Command="{Binding ShowDialog}"
+				Content="Dialog" />
+
+			<Button
+				AutomationProperties.AutomationId="OnePageToThreePageViewModelButton"
+				Command="{Binding GoToThree}"
+				Content="Three (ViewModel)" />
+			<Button AutomationProperties.AutomationId="OnePageToThreePageDataButton"
+					Command="{Binding GoToThreeData}"
+					Content="Three (Data)" />
 		</StackPanel>
 	</Grid>
 </Page>
