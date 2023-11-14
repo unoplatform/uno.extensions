@@ -81,4 +81,32 @@ public class Given_Reactive : NavigationTestBase
 		ImageAssert.AreEqual(screenBefore, screenAfter, tolerance: PixelTolerance.Exclusive(Constants.DefaultPixelTolerance));
 
 	}
+
+	[Test]
+	public void When_ReactiveDependsOnWithData()
+	{
+		InitTestSection(TestSections.Navigation_Reactive);
+
+		App.WaitThenTap("ShowOnePageButton");
+
+		App.WaitElement("OnePageToTwoPageViewModelButton");
+		var screenBefore = TakeScreenshot("When_PageNavigationViewModel_Before");
+		App.WaitThenTap("OnePageToThreePageDataButton");
+		App.WaitElement("ThreePageWidgetNameTextBlock");
+		var text = App.GetText("ThreePageWidgetNameTextBlock");
+		Assert.AreEqual("From Three", text);
+
+		App.WaitThenTap("ThreePageBackViewModelButton");
+		text = App.GetText("TwoPageWidgetNameTextBlock");
+		Assert.AreEqual("Adapted model", text);
+
+
+		App.WaitThenTap("TwoPageBackViewModelButton");
+
+
+		App.WaitElement("OnePageToTwoPageViewModelButton");
+		var screenAfter = TakeScreenshot("When_PageNavigationViewModel_After");
+		ImageAssert.AreEqual(screenBefore, screenAfter, tolerance: PixelTolerance.Exclusive(Constants.DefaultPixelTolerance));
+
+	}
 }

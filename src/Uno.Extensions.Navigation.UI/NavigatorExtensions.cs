@@ -51,6 +51,16 @@ public static class NavigatorExtensions
 	public static async Task<NavigationResponse?> GoBack(this INavigator navigator, object sender)
 	{
 		var dispatcher = navigator.Get<IServiceProvider>()!.GetRequiredService<IDispatcher>();
+
+		// Default to navigating back on the current navigator
+		if (await navigator.CanNavigate(new Route(Qualifiers.NavigateBack)))
+			//is ControlNavigator ctrlNav &&
+			//await dispatcher.ExecuteAsync(async ct => ctrlNav.CanGoBack))
+		{
+			return await navigator.NavigateBackAsync(sender);
+		}
+
+		// Otherwise, search the hierarchy for the deepest back navigator
 		var region = navigator.Get<IServiceProvider>()?.GetService<IRegion>();
 		region = region?.Root();
 		var gobackNavigator = await dispatcher.ExecuteAsync(async ct => region?.FindChildren(

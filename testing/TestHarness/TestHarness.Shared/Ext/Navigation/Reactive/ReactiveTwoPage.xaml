@@ -1,42 +1,49 @@
 ﻿<Page
-    x:Class="TestHarness.Ext.Navigation.Reactive.ReactiveTwoPage"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:TestHarness.Ext.Navigation.Reactive"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d"
-	  xmlns:uen="using:Uno.Extensions.Navigation.UI"
-	  Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+	x:Class="TestHarness.Ext.Navigation.Reactive.ReactiveTwoPage"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:local="using:TestHarness.Ext.Navigation.Reactive"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	xmlns:uen="using:Uno.Extensions.Navigation.UI"
+	Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+	mc:Ignorable="d">
 	<Grid>
-		<StackPanel HorizontalAlignment="Center"
-					VerticalAlignment="Center">
-			<TextBlock Text="{Binding DataModel.Widget.Name}" />
-			<Button AutomationProperties.AutomationId="TwoPageToThreePageButton"
-					Content="Three"
-					uen:Navigation.Request="Three" />
-			<Button AutomationProperties.AutomationId="TwoPageBackButton"
-					Content="Back"
-					uen:Navigation.Request="-" />
-			<Button AutomationProperties.AutomationId="TwoPageToThreePageCodebehindButton"
-					Content="Three (Codebehind)"
-					Click="TwoPageToThreePageCodebehindClick"/>
-			<Button AutomationProperties.AutomationId="TwoPageBackCodebehindButton"
-					Content="Back (Codebehind)"
-					Click="TwoPageBackCodebehindClick"/>
-			<Button AutomationProperties.AutomationId="TwoPageToThreePageViewModelButton"
-					Content="Three (ViewModel)"
-					Command="{Binding GoToThree}" />
-			<Button AutomationProperties.AutomationId="TwoPageBackViewModelButton"
-					Content="Back (ViewModel)"
-					Command="{Binding GoBack}"/>
-			<Button AutomationProperties.AutomationId="TwoPageToThreePageDataButton"
-					Content="Three (Data)"
-					Command="{Binding GoToThreeData}" />
-			<Button AutomationProperties.AutomationId="TwoPageToThreePageDataButton"
-					Content="Three (XAML Data)"
-					uen:Navigation.Request="Three"
-					uen:Navigation.Data="{Binding NextModel.Value}"/>
+		<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+			<TextBlock AutomationProperties.AutomationId="TwoPageWidgetNameTextBlock" Text="{Binding DataModel.Widget.Name}" />
+			<Button
+				uen:Navigation.Request="Three"
+				AutomationProperties.AutomationId="TwoPageToThreePageButton"
+				Content="Three" />
+			<Button
+				uen:Navigation.Request="-"
+				AutomationProperties.AutomationId="TwoPageBackButton"
+				Content="Back" />
+			<Button
+				AutomationProperties.AutomationId="TwoPageToThreePageCodebehindButton"
+				Click="TwoPageToThreePageCodebehindClick"
+				Content="Three (Codebehind)" />
+			<Button
+				AutomationProperties.AutomationId="TwoPageBackCodebehindButton"
+				Click="TwoPageBackCodebehindClick"
+				Content="Back (Codebehind)" />
+			<Button
+				AutomationProperties.AutomationId="TwoPageToThreePageViewModelButton"
+				Command="{Binding GoToThree}"
+				Content="Three (ViewModel)" />
+			<Button
+				AutomationProperties.AutomationId="TwoPageBackViewModelButton"
+				Command="{Binding GoBack}"
+				Content="Back (ViewModel)" />
+			<Button
+				AutomationProperties.AutomationId="TwoPageToThreePageDataButton"
+				Command="{Binding GoToThreeData}"
+				Content="Three (Data)" />
+			<Button
+				uen:Navigation.Data="{Binding NextModel.Value}"
+				uen:Navigation.Request="Three"
+				AutomationProperties.AutomationId="TwoPageToThreePageDataButton"
+				Content="Three (XAML Data)" />
 
 		</StackPanel>
 	</Grid>

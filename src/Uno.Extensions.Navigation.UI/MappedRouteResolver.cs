@@ -56,7 +56,8 @@ public class MappedRouteResolver : RouteResolverDefault
 		}
 
 		var routeInfo = base.InternalDefaultMapping(path, view, viewModel);
-		if (routeInfo != null)
+		if (routeInfo?.ViewModel != null &&
+			_viewModelMappings.TryGetValue(routeInfo.ViewModel, out var bindableViewModel))
 		{
 			return FromRouteMap(new RouteMap(
 				Path: routeInfo.Path,
@@ -69,15 +70,12 @@ public class MappedRouteResolver : RouteResolverDefault
 							UntypedToQuery: routeInfo.ToQuery,
 							UntypedFromQuery: routeInfo.FromQuery),
 						ResultData: routeInfo.ResultData,
-						MappedViewModel: routeInfo.ViewModel is not null ?
-											_viewModelMappings.TryGetValue(routeInfo.ViewModel, out var bindableViewModel) ?
-												bindableViewModel : default
-											: default),
+						MappedViewModel: bindableViewModel),
 				IsDefault: routeInfo.IsDefault,
 				DependsOn: routeInfo.DependsOn,
 				Init: routeInfo.Init
 				));
 		}
-		return default;
+		return routeInfo;
 	}
 }
