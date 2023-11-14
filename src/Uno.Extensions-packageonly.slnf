@@ -39,6 +39,7 @@
       "Uno.Extensions.Logging\\Uno.Extensions.Logging.WinUI.Wasm.csproj",
       "Uno.Extensions.Logging\\Uno.Extensions.Logging.WinUI.csproj",
       "Uno.Extensions.Maui.UI\\Uno.Extensions.Maui.WinUI.csproj",
+      "Uno.Extensions.Maui.WinUI.Markup\\Uno.Extensions.Maui.WinUI.Markup.csproj",
       "Uno.Extensions.Navigation.Generators\\Uno.Extensions.Navigation.Generators.csproj",
       "Uno.Extensions.Navigation.Toolkit\\Uno.Extensions.Navigation.Toolkit.UI.csproj",
       "Uno.Extensions.Navigation.Toolkit\\Uno.Extensions.Navigation.Toolkit.WinUI.csproj",
