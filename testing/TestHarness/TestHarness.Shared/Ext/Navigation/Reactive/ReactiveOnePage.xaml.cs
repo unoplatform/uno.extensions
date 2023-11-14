@@ -1,5 +1,4 @@
-﻿
-namespace TestHarness.Ext.Navigation.Reactive;
+﻿namespace TestHarness.Ext.Navigation.Reactive;
 
 public sealed partial class ReactiveOnePage : Page
 {
@@ -12,5 +11,4 @@ public sealed partial class ReactiveOnePage : Page
 	{
 		await this.Navigator()!.NavigateViewAsync<ReactiveTwoPage>(this);
 	}
-
 }

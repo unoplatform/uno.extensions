@@ -346,6 +346,10 @@
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Reactive\ReactiveOnePage.xaml.cs">
       <DependentUpon>ReactiveOnePage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Reactive\ReactiveSixPage.xaml.cs">
+      <DependentUpon>ReactiveSixPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Reactive\ReactiveSixViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Reactive\ReactiveOneViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Reactive\ReactiveThreePage.xaml.cs">
       <DependentUpon>ReactiveThreePage.xaml</DependentUpon>
@@ -742,7 +746,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </_Globbled_Page>
-    <Page Include="@(_Globbled_Page)">
+<Page Include="@(_Globbled_Page)">
       <SubType>Designer</SubType>
     </Page>
     <_Globbed_Compile Include="$(MSBuildThisFileDirectory)**/*.xaml.cs" Exclude="@(Compile)">

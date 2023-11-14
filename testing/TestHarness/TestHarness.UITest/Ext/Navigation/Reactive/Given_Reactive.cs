@@ -15,6 +15,8 @@ public class Given_Reactive : NavigationTestBase
 		App.WaitThenTap("TwoPageToThreePageButton");
 		App.WaitThenTap("ThreePageToFourPageButton");
 		App.WaitThenTap("FourPageToFivePageButton");
+		App.WaitThenTap("FivePageToSixPageButton");
+		App.WaitThenTap("SixPageBackButton");
 		App.WaitThenTap("FivePageBackButton");
 		App.WaitThenTap("FourPageBackButton");
 		App.WaitThenTap("ThreePageBackButton");
@@ -40,6 +42,8 @@ public class Given_Reactive : NavigationTestBase
 		App.WaitThenTap("TwoPageToThreePageCodebehindButton");
 		App.WaitThenTap("ThreePageToFourPageCodebehindButton");
 		App.WaitThenTap("FourPageToFivePageCodebehindButton");
+		App.WaitThenTap("FivePageToSixPageCodebehindButton");
+		App.WaitThenTap("SixPageBackCodebehindButton");
 		App.WaitThenTap("FivePageBackCodebehindButton");
 		App.WaitThenTap("FourPageBackCodebehindButton");
 		App.WaitThenTap("ThreePageBackCodebehindButton");
@@ -64,9 +68,39 @@ public class Given_Reactive : NavigationTestBase
 		App.WaitThenTap("TwoPageToThreePageViewModelButton");
 		App.WaitThenTap("ThreePageToFourPageViewModelButton");
 		App.WaitThenTap("FourPageToFivePageViewModelButton");
+		App.WaitThenTap("FivePageToSixPageViewModelButton");
+		App.WaitThenTap("SixPageBackViewModelButton");
 		App.WaitThenTap("FivePageBackViewModelButton");
 		App.WaitThenTap("FourPageBackViewModelButton");
 		App.WaitThenTap("ThreePageBackViewModelButton");
+		App.WaitThenTap("TwoPageBackViewModelButton");
+
+
+		App.WaitElement("OnePageToTwoPageViewModelButton");
+		var screenAfter = TakeScreenshot("When_PageNavigationViewModel_After");
+		ImageAssert.AreEqual(screenBefore, screenAfter, tolerance: PixelTolerance.Exclusive(Constants.DefaultPixelTolerance));
+
+	}
+
+	[Test]
+	public void When_ReactiveDependsOnWithData()
+	{
+		InitTestSection(TestSections.Navigation_Reactive);
+
+		App.WaitThenTap("ShowOnePageButton");
+
+		App.WaitElement("OnePageToTwoPageViewModelButton");
+		var screenBefore = TakeScreenshot("When_PageNavigationViewModel_Before");
+		App.WaitThenTap("OnePageToThreePageDataButton");
+		App.WaitElement("ThreePageWidgetNameTextBlock");
+		var text = App.GetText("ThreePageWidgetNameTextBlock");
+		Assert.AreEqual("From Three", text);
+
+		App.WaitThenTap("ThreePageBackViewModelButton");
+		text = App.GetText("TwoPageWidgetNameTextBlock");
+		Assert.AreEqual("Adapted model", text);
+
+
 		App.WaitThenTap("TwoPageBackViewModelButton");
 
 

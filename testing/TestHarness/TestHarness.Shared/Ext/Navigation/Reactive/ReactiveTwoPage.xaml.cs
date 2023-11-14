@@ -16,5 +16,4 @@ public sealed partial class ReactiveTwoPage : Page
 	{
 		await this.Navigator()!.NavigateBackAsync(this);
 	}
-
 }

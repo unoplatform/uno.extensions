@@ -26,7 +26,16 @@ public class ReactiveHostInit : BaseHostInitialization
 
 		views.Register(
 			new ViewMap<ReactiveOnePage, ReactiveOneViewModel>(),
-			new DataViewMap<ReactiveTwoPage, ReactiveTwoViewModel, TwoModel>(),
+			new DataViewMap<ReactiveTwoPage, ReactiveTwoViewModel, TwoModel>(FromQuery: async (IServiceProvider sp, IDictionary<string, object> args) =>
+			{
+				if (args.TryGetValue(string.Empty, out var data) &&
+					data is ThreeModel threeData)
+				{
+					return new TwoModel(threeData.Widget with { Name = "Adapted model" });
+				}
+
+				return default;
+			}),
 			new DataViewMap<ReactiveThreePage, ReactiveThreeViewModel, ThreeModel>(),
 			new DataViewMap<ReactiveFourPage, ReactiveFourViewModel, FourModel>(),
 			new DataViewMap<ReactiveFivePage, ReactiveFiveViewModel, FiveModel>(),
@@ -41,9 +50,10 @@ public class ReactiveHostInit : BaseHostInitialization
 			{
 					new RouteMap("One", View: views.FindByViewModel<ReactiveOneViewModel>()),
 					new RouteMap("Two", View: views.FindByViewModel<ReactiveTwoViewModel>()),
-					new RouteMap("Three", View: views.FindByViewModel<ReactiveThreeViewModel>()),
+					new RouteMap("Three", View: views.FindByViewModel<ReactiveThreeViewModel>(), DependsOn: "Two"),
 					new RouteMap("Four", View: views.FindByViewModel<ReactiveFourViewModel>()),
 					new RouteMap("Five", View: views.FindByViewModel<ReactiveFiveViewModel>()),
+					// Do NOT add "Six" as this has been intentionally omitted from the routemap to test implicit navigation
 					new RouteMap("LocalizedConfirm", View: localizedDialog)
 			}));
 	}

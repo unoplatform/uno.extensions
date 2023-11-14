@@ -223,7 +223,7 @@ public abstract class ControlNavigator : Navigator
 
 					// Attempt to create view model using the DI container
 					var dataFactor = services.GetRequiredService<NavigationDataProvider>();
-					dataFactor.Parameters = route.Data ?? new Dictionary<string, object>();
+					dataFactor.Parameters = parameters;
 
 					services.AddScopedInstance(request);
 
