@@ -83,8 +83,8 @@ public IState<int> MyState => State.FromFeed(this, MyFeed);
 #### Other ways to create states
 
 > [!TIP]
-A state can also be constructed manually by building its underlying Messages or Options.  
-This is intended for advanced users and is explained [here](xref:Overview.Reactive.State#create).
+> A state can also be constructed manually by building its underlying Messages or Options.  
+> This is intended for advanced users and is explained [here](xref:Overview.Reactive.State#create).
 
 ### Usage of States
 
