@@ -9,7 +9,16 @@
 
 	<PropertyGroup>
 		<DefineConstants>$(DefineConstants);WINUI</DefineConstants>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	</PropertyGroup>
+
+	<ItemGroup>
+	  <None Remove="WasmScripts\helpers.js" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <EmbeddedResource Include="WasmScripts\helpers.js" />
+	</ItemGroup>
 
 
 	<ItemGroup>

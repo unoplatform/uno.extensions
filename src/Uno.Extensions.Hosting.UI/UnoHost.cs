@@ -75,7 +75,7 @@ public static class UnoHost
 				{
 					if (Foundation.WebAssemblyRuntime.IsWebAssembly)
 					{
-						var href = Foundation.WebAssemblyRuntime.InvokeJS("window.location.href");
+						var href = Imports.GetLocation();
 						var appsettingsPrefix = new Dictionary<string, string>
 							{
 								{ HostingConstants.AppConfigPrefixKey, "local" },

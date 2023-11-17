@@ -1,5 +1,10 @@
 ﻿<Project Sdk="MSBuild.Sdk.Extras" ToolsVersion="15.0">
 	<Import Project="..\tfms-ui-winui.props" />
+	<ItemGroup>
+	  <Compile Remove="WasmScripts\**" />
+	  <EmbeddedResource Remove="WasmScripts\**" />
+	  <None Remove="WasmScripts\**" />
+	</ItemGroup>
 
 	<ItemGroup>
 		<UnoRuntimeProjectReference Include="Uno.Extensions.Hosting.WinUI.Wasm.csproj" />

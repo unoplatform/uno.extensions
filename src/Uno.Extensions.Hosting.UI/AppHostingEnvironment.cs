@@ -16,20 +16,30 @@ internal class AppHostingEnvironment : HostingEnvironment, IAppHostEnvironment, 
 #if __WASM__
 	public async Task UpdateAddressBar(Uri applicationUri)
 	{
-		// Note: This is a hack to avoid error being thrown when loading products async
-		await Task.Delay(1000).ConfigureAwait(false);
 		CoreApplication.MainView?.DispatcherQueue.TryEnqueue(() =>
 					{
-						var href = WebAssemblyRuntime.InvokeJS("window.location.href");
+						var href = Imports.GetLocation();
 						var appUriBuilder = new UriBuilder(applicationUri);
 						var url = new UriBuilder(href);
 						url.Query = appUriBuilder.Query;
 						url.Path = appUriBuilder.Path;
 						var webUri = url.Uri.OriginalString;
-						var js = $"window.history.pushState(\"{webUri}\",\"\", \"{webUri}\");";
-						Console.WriteLine($"JS:{js}");
-						var result = WebAssemblyRuntime.InvokeJS(js);
+						var result = Imports.PushState($"{webUri}", "", $"{webUri}");
 					});
 	}
+
+
 #endif
 }
+
+#if __WASM__
+internal static partial class Imports
+{
+	[System.Runtime.InteropServices.JavaScript.JSImport("globalThis.Uno.Extensions.Hosting.getLocation")]
+	public static partial string GetLocation();
+
+
+	[System.Runtime.InteropServices.JavaScript.JSImport("globalThis.window.history.pushState")]
+	public static partial string PushState(string state, string title, string url);
+}
+#endif
