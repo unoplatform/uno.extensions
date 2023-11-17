@@ -36,7 +36,14 @@ public static class FrameworkElementExtensions
 			var initialNavigation = () => nav.NavigateRouteAsync(root, initialRoute ?? string.Empty);
 
 			var start = () => Task.CompletedTask;
-			if (initialNavigate is not null)
+			var hostConfigOptions = sp.GetService<IOptions<HostConfiguration>>();
+			if (hostConfigOptions?.Value is { } hostConfig &&
+				hostConfig.LaunchRoute() is { } launchRoute &&
+				launchRoute.IsEmpty() == false)
+			{
+				start = () => nav.NavigateRouteAsync(root, launchRoute.FullPath());
+			}
+			else if (initialNavigate is not null)
 			{
 				start = () => initialNavigate(services, nav);
 			}
