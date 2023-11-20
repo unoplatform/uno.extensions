@@ -29,7 +29,7 @@ You can find the code for our weather app here: https://github.com/unoplatform/U
     
     public interface IWeatherService
     {
-        ValueTask<WeatherInfo> GetCurrentWeather(CancellationToken ct);
+        ValueTask<WeatherInfo> GetCurrentWeatherAsync(CancellationToken ct);
     }
 
     public record WeatherService : IWeatherService
