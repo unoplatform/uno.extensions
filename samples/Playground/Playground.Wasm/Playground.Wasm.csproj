@@ -12,6 +12,7 @@
       https://aka.platform.uno/wasm-deeplink
     -->
 		<WasmShellWebAppBasePath>/</WasmShellWebAppBasePath>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)'=='Debug'">
 		<MonoRuntimeDebuggerEnabled>true</MonoRuntimeDebuggerEnabled>
