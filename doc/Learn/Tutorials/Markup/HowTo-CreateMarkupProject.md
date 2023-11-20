@@ -319,7 +319,7 @@ Change the *MainPage.cs* to have a different content as the sample bellow.
 	    .ColumnDefinitions<Grid>("2*, Auto, 3*")
     ```
 
-    - And how to set the [Attached Properties](xref:Reference.Markup.AttachedProperties).
+    - And how to set the [Attached Properties](xref:Overview.Markup.AttachedProperties).
     
     ```csharp
     new Grid()

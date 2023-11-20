@@ -66,6 +66,39 @@
           href: Learn/Tutorials/Logging/HowTo-Logging.md
         - name: Enable internal Uno Platform logging
           href: Learn/Tutorials/Logging/HowTo-InternalLogging.md
+    - name: Markup
+      href: Overview/Markup/GettingStarted.md
+      items:
+        - name: Generating Extensions
+          href: Overview/Markup/GeneratingExtensions.md
+        - name: Dependency Property Builder
+          href: Overview/Markup/DependencyPropertyBuilder.md
+          items:
+            - name: Binding 101
+              href: Overview/Markup/Binding101.md
+            - name: Converters
+              href: Overview/Markup/Converters.md
+            - name: Using Static & Theme Resources
+              href: Overview/Markup/StaticAndThemeResources.md
+            - name: Using Uno.Themes.WinUI.Markup
+              href: Overview/Markup/UnoThemes.md
+        - name: Attached Properties
+          href: Overview/Markup/AttachedProperties.md
+        - name: Resource Dictionaries
+          href: Overview/Markup/Resources.md
+        - name: Styles
+          href: Overview/Markup/Styles.md
+        - name: Templates
+          href: Overview/Markup/Templates.md
+        - name: VisualStateManager
+          href: Overview/Markup/VisualStateManager.md
+          items:
+            - name: Storyboards
+              href: Overview/Markup/Storyboards.md
+        - name: Appendix
+          items:
+            - name: TextBlock Run
+              href: Overview/Markup/Appendix/TextBlockRun.md
     - name: MVUX
       href: Overview/Mvux/Overview.md
       items:
@@ -83,7 +116,7 @@
           href: Overview/Mvux/FeedView.md
         - name: Tutorials
           items:
-            - name: How to create an MVUX project  
+            - name: How to create an MVUX project
               href: Overview/Mvux/Tutorials/HowTo-MvuxProject.md
             - name: How to create a Feed
               href: Overview/Mvux/Tutorials/HowTo-SimpleFeed.md
@@ -165,32 +198,6 @@
           href: Overview/Maui/ThirdParty-Telerik.md
 - name: Reference
   items:
-    - name: Markup
-      href: Reference/Markup/GettingStarted.md
-      items:
-        - name: Generating Extensions
-          href: Reference/Markup/GeneratingExtensions.md
-        - name: Dependency Property Builder
-          href: Reference/Markup/DependencyPropertyBuilder.md
-          items:
-            - name: Binding 101
-              href: Reference/Markup/Binding101.md
-            - name: Converters
-              href: Reference/Markup/Converters.md
-            - name: Using Static & Theme Resources
-              href: Reference/Markup/StaticAndThemeResources.md
-            - name: Using Uno.Themes.WinUI.Markup
-              href: Reference/Markup/UnoThemes.md
-        - name: Attached Properties
-          href: Reference/Markup/AttachedProperties.md
-        - name: Resource Dictionaries
-          href: Reference/Markup/Resources.md
-        - name: Styles
-          href: Reference/Markup/Styles.md
-        - name: Templates
-          href: Reference/Markup/Templates.md
-        - name: VisualStateManager
-          href: Reference/Markup/VisualStateManager.md
     - name: MVUX
       href: Reference/Reactive/concept.md
       items:

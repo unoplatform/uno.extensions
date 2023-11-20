@@ -1,5 +1,5 @@
 ---
-uid: Reference.Markup.Templates
+uid: Overview.Markup.Templates
 ---
 # Templates
 
@@ -11,7 +11,7 @@ WinUI has a number of different templates. All templates are generated based on 
 
 ```cs
 new ListView()
-	.ItemTemplate<TodoItem>(item => new TextBlock().Text(() => item.Title))
+    .ItemTemplate<TodoItem>(item => new TextBlock().Text(() => item.Title))
 ```
 
 > [!WARNING]
@@ -23,17 +23,17 @@ Sometimes it is needed to provide a different UI based on the state of an indivi
 
 ```cs
 new ListView()
-	.ItemTemplateSelector<IVehicle>((vehicle, selector) => selector
-		.Default(() => new TextBlock().Text("Some Vehicle"))
-		.Case(v => v.Year < 1960, () => new TextBlock().Text(() => vehicle.Model))
-		.Case<Car>(car => car.Doors > 2, car => new StackPanel()
-			.Children(
-				new Image().Source(StaticResource.Get<ImageSource>("sedan.png")),
-				new TextBlock().Text(() => car.Model)))
-		.Case<Truck>(truck => new StackPanel().Children(
-			new Image().Source(StaticResource.Get<ImageSource>("truck.png")),
-			new TextBlock().Text(() => truck.TowingCapacity)
-		)))
+    .ItemTemplateSelector<IVehicle>((vehicle, selector) => selector
+        .Default(() => new TextBlock().Text("Some Vehicle"))
+        .Case(v => v.Year < 1960, () => new TextBlock().Text(() => vehicle.Model))
+        .Case<Car>(car => car.Doors > 2, car => new StackPanel()
+            .Children(
+                new Image().Source(StaticResource.Get<ImageSource>("sedan.png")),
+                new TextBlock().Text(() => car.Model)))
+        .Case<Truck>(truck => new StackPanel().Children(
+            new Image().Source(StaticResource.Get<ImageSource>("truck.png")),
+            new TextBlock().Text(() => truck.TowingCapacity)
+        )))
 ```
 
 ## ContentTemplate
@@ -42,11 +42,11 @@ Similar to `DataTemplate`, `ContentTemplate` is a special case that must take in
 
 ```cs
 new Button()
-	.Content("Click Me")
-	.Template(button => new Border()
-		.RenderTransform(new RotateTransform().Angle(45))
-		.Child(new ContentPresenter()
-			.Content(x => x.TemplateBind(() => button.Content))))
+    .Content("Click Me")
+    .Template(button => new Border()
+        .RenderTransform(new RotateTransform().Angle(45))
+        .Child(new ContentPresenter()
+            .Content(x => x.TemplateBind(() => button.Content))))
 ```
 
 ## All other Framework Templates
@@ -55,13 +55,13 @@ In all other cases, `Template` properties are treated the same with a simple del
 
 ```cs
 new ListView()
-	.ItemsPanel(() => new ItemsStackPanel()
-		.Orientation(Orientation.Vertical))
+    .ItemsPanel(() => new ItemsStackPanel()
+        .Orientation(Orientation.Vertical))
 ```
 
 ## Next Steps
 
 Learn more about:
 
-- [VisualStateManagers](xref:Reference.Markup.VisualStateManager)
-- [Generating C# Extensions for your libraries](xref:Reference.Markup.GeneratingExtensions)
+- [VisualStateManagers](xref:Overview.Markup.VisualStateManager)
+- [Generating C# Extensions for your libraries](xref:Overview.Markup.GeneratingExtensions)

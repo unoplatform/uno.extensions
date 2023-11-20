@@ -1,5 +1,5 @@
 ---
-uid: Reference.Markup.DependencyPropertyBuilder
+uid: Overview.Markup.DependencyPropertyBuilder
 ---
 # Dependency Property Builder
 
@@ -11,21 +11,21 @@ The `DependencyPropertyBuilder` provides a fluent API to help you create a bindi
 
 ```cs
 new TextBlock()
-	.Text(x => x.Bind(() => vm.Message))
+    .Text(x => x.Bind(() => vm.Message))
 ```
 
 When creating a simplified binding such as the one above you may alternatively simply provide the binding expression like:
 
 ```cs
 new TextBlock()
-	.Text(() => vm.Message);
+    .Text(() => vm.Message);
 ```
 
 It is also possible to provide more complex binding paths using either of the above Binding expressions like this:
 
 ```cs
 new TextBlock()
-	.Text(() => vm.Client.Contact.FirstName)
+    .Text(() => vm.Client.Contact.FirstName)
 ```
 
 #### Understanding the Binding Expression
@@ -41,7 +41,7 @@ The lambda expression is parsed to determine the path to the property. It can be
 
 While the Markup Extensions expose a delegate method for you to provide a path and strong typing for the property, it is easiest to think of the delegate as a string. If you think of the string value of `() => vm.Client.Contact.FirstName`, this will get evaluated by taking the substring following the first period leaving you with the path `Client.Contact.FirstName`. This is the path that will be used to create the binding.
 
-If you wish to perform tasks such as manipulate the value of the binding or format the text displayed see the [Converters](xref:Reference.Markup.Converters) documentation.
+If you wish to perform tasks such as manipulate the value of the binding or format the text displayed see the [Converters](xref:Overview.Markup.Converters) documentation.
 
 ### Reference Sources
 
@@ -50,21 +50,21 @@ Sometimes you aren't binding to the `DataContext` of element and instead you nee
 ```cs
 new Slider().Assign(out var slider),
 new TextBlock()
-	.Text(x => x.Bind(() => slider.Value)
-		.Source(slider))
+    .Text(x => x.Bind(() => slider.Value)
+        .Source(slider))
 ```
 
 The second is that we can leverage the element name for our binding such as the following:
 
 ```cs
 new TextBlock()
-	.Text(x => x.Bind(() => slider.Value)
-		.ElementName("slider")),
+    .Text(x => x.Bind(() => slider.Value)
+        .ElementName("slider")),
 new Slider().Name("slider")
 ```
 
 ## Additional Reading
 
-- [Binding 101](xref:Reference.Markup.Binding101)
-- [Using Converters](xref:Reference.Markup.Converters)
-- [Using Static &amp; Theme Resources](xref:Reference.Markup.StaticAndThemeResources)
+- [Binding 101](xref:Overview.Markup.Binding101)
+- [Using Converters](xref:Overview.Markup.Converters)
+- [Using Static &amp; Theme Resources](xref:Overview.Markup.StaticAndThemeResources)

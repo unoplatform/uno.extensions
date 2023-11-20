@@ -1,5 +1,5 @@
 ---
-uid: Reference.Markup.Converters
+uid: Overview.Markup.Converters
 ---
 # Converters
 
@@ -13,12 +13,12 @@ There may be times when you may want to simply use a converter instead of provid
 ```cs
 public static class Converters
 {
-	public static readonly IValueConverter InverseBoolConverter = new InverseBoolConverter();
+    public static readonly IValueConverter InverseBoolConverter = new InverseBoolConverter();
 }
 
 new Button()
-	.Enabled(x => x.Bind(() => vm.IsBusy)
-		.Converter(Converters.InverseBoolConverter));
+    .Enabled(x => x.Bind(() => vm.IsBusy)
+        .Converter(Converters.InverseBoolConverter));
 ```
 
 ## Convert
@@ -31,20 +31,20 @@ In this case, you can use the `Convert` method to provide a converter to the bin
 ```csharp
 public partial class MainPage : Page
 {
-	public MainPage()
-	{
-		this.DataContext<MyViewModel>((page, vm) => page
-			.Content(
-				new StackPanel()
-					.Children(
-						new TextBox()
-							.Text(() => vm.Query)
-						new TextBlock()
-							.Text(x => x.Bind(() => vm.Query)
-								.Convert(query => $"Search: {query}"))
-					)
-			));
-	}
+    public MainPage()
+    {
+        this.DataContext<MyViewModel>((page, vm) => page
+            .Content(
+                new StackPanel()
+                    .Children(
+                        new TextBox()
+                            .Text(() => vm.Query)
+                        new TextBlock()
+                            .Text(x => x.Bind(() => vm.Query)
+                                .Convert(query => $"Search: {query}"))
+                    )
+            ));
+    }
 }
 ```
 
@@ -54,7 +54,7 @@ Instead of using the full `IDependencyPropertyBuilder` to provide our Binding an
 
 ```csharp
 new TextBox()
-	.Text(() => vm.Query, query => $"Search: {query}")
+    .Text(() => vm.Query, query => $"Search: {query}")
 ```
 
 ### Query and Conditionals
@@ -63,9 +63,9 @@ Sometimes, we may want to make conditionals or apply specific rules to values or
 
 ```csharp
 new TextBox()
-	.Text(() => vm.Query)
-	.Foreground(x => x.Bind(() => vm.Query)
-		.Convert(query => new SolidColorBrush(!string.IsNullOrEmpty(query) && query.Length > 5 ? Colors.Green : Colors.Red)));
+    .Text(() => vm.Query)
+    .Foreground(x => x.Bind(() => vm.Query)
+        .Convert(query => new SolidColorBrush(!string.IsNullOrEmpty(query) && query.Length > 5 ? Colors.Green : Colors.Red)));
 ```
 
 ### Static Class Converters
@@ -75,7 +75,7 @@ If we need to implement this same rule in different places or to maintain the st
 ```csharp
 public static class Converters
 {
-	public static readonly IValueConverter InverseBoolConverter = new InverseBoolConverter();
+    public static readonly IValueConverter InverseBoolConverter = new InverseBoolConverter();
 }
 ```
 
@@ -84,8 +84,8 @@ And use like this:
 ```csharp
 
 new Button()
-	.Enabled(x => x.Bind(() => vm.IsBusy)
-		.Converter(Converters.InverseBoolConverter));
+    .Enabled(x => x.Bind(() => vm.IsBusy)
+        .Converter(Converters.InverseBoolConverter));
 ```
 
 ##  ConvertBack
@@ -96,24 +96,24 @@ In this case, you can use the `ConvertBack` method to provide a converter to the
 ```csharp
 public partial class MainPage : Page
 {
-	public MainPage()
-	{
-		this.DataContext<MyViewModel>((page, vm) => page
-			.Content(new TextBox()
-				.Text(x => x.Bind(() => vm.Enabled)
-					.Convert(enabled => $"Enabled: {enabled}")
-					.ConvertBack(text => bool.TryParse(text.Replace("Search: ", ""), out var enabled) ? enabled : false))
-			));
-	}
+    public MainPage()
+    {
+        this.DataContext<MyViewModel>((page, vm) => page
+            .Content(new TextBox()
+                .Text(x => x.Bind(() => vm.Enabled)
+                    .Convert(enabled => $"Enabled: {enabled}")
+                    .ConvertBack(text => bool.TryParse(text.Replace("Search: ", ""), out var enabled) ? enabled : false))
+            ));
+    }
 }
 ```
 
 ## Next Steps
 
-- [Binding, Static & Theme Resources](xref:Reference.Markup.DependencyPropertyBuilder)
-- [Binding 101](xref:Reference.Markup.Binding101)
-- [Attached Properties](xref:Reference.Markup.AttachedProperties)
-- [Styles](xref:Reference.Markup.Styles)
-- [Templates](xref:Reference.Markup.Templates)
-- [VisualStateManagers](xref:Reference.Markup.VisualStateManager)
-- [Generating C# Extensions for your libraries](xref:Reference.Markup.GeneratingExtensions)
+- [Binding, Static & Theme Resources](xref:Overview.Markup.DependencyPropertyBuilder)
+- [Binding 101](xref:Overview.Markup.Binding101)
+- [Attached Properties](xref:Overview.Markup.AttachedProperties)
+- [Styles](xref:Overview.Markup.Styles)
+- [Templates](xref:Overview.Markup.Templates)
+- [VisualStateManagers](xref:Overview.Markup.VisualStateManager)
+- [Generating C# Extensions for your libraries](xref:Overview.Markup.GeneratingExtensions)

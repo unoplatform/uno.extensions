@@ -1,5 +1,5 @@
 ---
-uid: Reference.Markup.AttachedProperties
+uid: Overview.Markup.AttachedProperties
 ---
 # Attached Properties
 
@@ -7,7 +7,7 @@ Attached Properties are often something that you simply need a quick way to acce
 
 ```cs
 new TextBlock()
-	.Grid(row: 3, column: 2)
+    .Grid(row: 3, column: 2)
 ```
 
 > [!TIP]
@@ -19,26 +19,26 @@ When simply providing a value for an optional parameter isn't enough, you may al
 
 ```cs
 new TextBlock()
-	.Grid(grid => grid
-		.Row(3)
-		.Column(2))
+    .Grid(grid => grid
+        .Row(3)
+        .Column(2))
 ```
 
 ### Binding to Attached Properties
 
-Using the builder still gives you the ability to provide an explicit value while also taking advantage of other extensions that you see on normal Dependency Properties such as using the [DependencyPropertyBuilder](xref:Reference.Markup.DependencyPropertyBuilder) to create a binding, or provide a Static or Theme resource.
+Using the builder still gives you the ability to provide an explicit value while also taking advantage of other extensions that you see on normal Dependency Properties such as using the [DependencyPropertyBuilder](xref:Overview.Markup.DependencyPropertyBuilder) to create a binding, or provide a Static or Theme resource.
 
 ```cs
 new TextBlock()
-	.AutomationProperties(x => x
-		.Name(() => vm.Property))
+    .AutomationProperties(x => x
+        .Name(() => vm.Property))
 ```
 
 ## Next Steps
 
 Learn more about:
 
-- [Styles](xref:Reference.Markup.Styles)
-- [Templates](xref:Reference.Markup.Templates)
-- [VisualStateManagers](xref:Reference.Markup.VisualStateManager)
-- [Generating C# Extensions for your libraries](xref:Reference.Markup.GeneratingExtensions)
+- [Styles](xref:Overview.Markup.Styles)
+- [Templates](xref:Overview.Markup.Templates)
+- [VisualStateManagers](xref:Overview.Markup.VisualStateManager)
+- [Generating C# Extensions for your libraries](xref:Overview.Markup.GeneratingExtensions)
