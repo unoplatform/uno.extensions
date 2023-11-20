@@ -6,6 +6,7 @@
 		<DefineConstants>$(DefineConstants);WINUI</DefineConstants>
 		<AssemblyName>TestHarnessApp</AssemblyName>
 		<ImplicitUsings>disable</ImplicitUsings>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)'=='Debug'">
 		<MonoRuntimeDebuggerEnabled>true</MonoRuntimeDebuggerEnabled>
