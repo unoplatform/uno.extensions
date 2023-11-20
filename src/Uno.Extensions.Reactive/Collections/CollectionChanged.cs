@@ -16,7 +16,7 @@ internal static class CollectionChanged
 	/// <summary>
 	/// Creates a <see cref="NotifyCollectionChangedAction.Add"/> collection changed event args
 	/// </summary>
-	public static NotifyCollectionChangedEventArgs Add(object item, int index)
+	public static NotifyCollectionChangedEventArgs Add(object? item, int index)
 		=> new(NotifyCollectionChangedAction.Add, new[] { item }, index);
 
 	/// <summary>
@@ -28,7 +28,7 @@ internal static class CollectionChanged
 	/// <summary>
 	/// Creates a <see cref="NotifyCollectionChangedAction.Remove"/> collection changed event args
 	/// </summary>
-	public static NotifyCollectionChangedEventArgs Remove(object item, int index)
+	public static NotifyCollectionChangedEventArgs Remove(object? item, int index)
 		=> new(NotifyCollectionChangedAction.Remove, new[] { item }, index);
 
 	/// <summary>
@@ -40,7 +40,7 @@ internal static class CollectionChanged
 	/// <summary>
 	/// Creates a <see cref="NotifyCollectionChangedAction.Replace"/> collection changed event args
 	/// </summary>
-	public static NotifyCollectionChangedEventArgs Replace(object oldItem, object newItem, int index)
+	public static NotifyCollectionChangedEventArgs Replace(object? oldItem, object? newItem, int index)
 		=> new(NotifyCollectionChangedAction.Replace, new[] { newItem }, new[] { oldItem }, index);
 
 	/// <summary>
@@ -52,7 +52,7 @@ internal static class CollectionChanged
 	/// <summary>
 	/// Creates a <see cref="NotifyCollectionChangedAction.Move"/> collection changed event args
 	/// </summary>
-	public static NotifyCollectionChangedEventArgs Move(object item, int oldIndex, int newIndex)
+	public static NotifyCollectionChangedEventArgs Move(object? item, int oldIndex, int newIndex)
 		=> new(NotifyCollectionChangedAction.Move, new[] { item }, newIndex, oldIndex);
 
 	/// <summary>
@@ -82,27 +82,27 @@ internal static class CollectionChanged
 			case NotifyCollectionChangedAction.Add:
 				return new NotifyCollectionChangedEventArgs(
 					NotifyCollectionChangedAction.Add,
-					new MapReadOnlyList<TFrom, TTo>(converter, args.NewItems),
+					new MapReadOnlyList<TFrom, TTo>(converter, args.NewItems!),
 					args.NewStartingIndex);
 
 			case NotifyCollectionChangedAction.Move:
 				return new NotifyCollectionChangedEventArgs(
 					NotifyCollectionChangedAction.Move,
-					new MapReadOnlyList<TFrom, TTo>(converter, args.NewItems),
+					new MapReadOnlyList<TFrom, TTo>(converter, args.NewItems!),
 					args.NewStartingIndex,
 					args.OldStartingIndex);
 
 			case NotifyCollectionChangedAction.Replace:
 				return new NotifyCollectionChangedEventArgs(
 					NotifyCollectionChangedAction.Replace,
-					new MapReadOnlyList<TFrom, TTo>(converter, args.NewItems),
-					new MapReadOnlyList<TFrom, TTo>(converter, args.OldItems),
+					new MapReadOnlyList<TFrom, TTo>(converter, args.NewItems!),
+					new MapReadOnlyList<TFrom, TTo>(converter, args.OldItems!),
 					args.NewStartingIndex);
 
 			case NotifyCollectionChangedAction.Remove:
 				return new NotifyCollectionChangedEventArgs(
 					NotifyCollectionChangedAction.Remove,
-					new MapReadOnlyList<TFrom, TTo>(converter, args.OldItems),
+					new MapReadOnlyList<TFrom, TTo>(converter, args.OldItems!),
 					args.OldStartingIndex);
 
 			case NotifyCollectionChangedAction.Reset:
@@ -138,8 +138,8 @@ internal static class CollectionChanged
 			case NotifyCollectionChangedAction.Replace:
 				return new NotifyCollectionChangedEventArgs(
 					NotifyCollectionChangedAction.Replace,
-					args.NewItems,
-					args.OldItems,
+					args.NewItems!,
+					args.OldItems!,
 					args.NewStartingIndex + offset);
 
 			case NotifyCollectionChangedAction.Remove:
@@ -165,14 +165,14 @@ internal static class CollectionChanged
 	{
 		switch (arg.Action)
 		{
-			case NotifyCollectionChangedAction.Add when arg.NewItems.Count > 1:
+			case NotifyCollectionChangedAction.Add when arg.NewItems!.Count > 1:
 				for (var i = 0; i < arg.NewItems.Count; i++)
 				{
 					yield return Add(arg.NewItems[i], arg.NewStartingIndex + i);
 				}
 				break;
 
-			case NotifyCollectionChangedAction.Move when arg.NewItems.Count > 1:
+			case NotifyCollectionChangedAction.Move when arg.NewItems!.Count > 1:
 				if (arg.NewStartingIndex > arg.OldStartingIndex)
 				{
 					for (var i = 0; i < arg.NewItems.Count; i++)
@@ -189,8 +189,8 @@ internal static class CollectionChanged
 				}
 				break;
 
-			case NotifyCollectionChangedAction.Replace when arg.OldItems.Count > 1 || arg.NewItems.Count > 1:
-				for (var i = 0; i < Math.Min(arg.NewItems.Count, arg.OldItems.Count); i++)
+			case NotifyCollectionChangedAction.Replace when arg.OldItems!.Count > 1 || arg.NewItems!.Count > 1:
+				for (var i = 0; i < Math.Min(arg.NewItems!.Count, arg.OldItems.Count); i++)
 				{
 					yield return Replace(arg.OldItems[i], arg.NewItems[i], arg.OldStartingIndex + i);
 				}
@@ -204,7 +204,7 @@ internal static class CollectionChanged
 				}
 				break;
 
-			case NotifyCollectionChangedAction.Remove when arg.OldItems.Count > 1:
+			case NotifyCollectionChangedAction.Remove when arg.OldItems!.Count > 1:
 				for (var i = 0; i < arg.OldItems.Count; i++)
 				{
 					yield return Remove(arg.OldItems[i], arg.OldStartingIndex);
@@ -222,7 +222,7 @@ internal static class CollectionChanged
 	{
 		switch (arg.Action)
 		{
-			case NotifyCollectionChangedAction.Add when arg.NewItems.Count > 1:
+			case NotifyCollectionChangedAction.Add when arg.NewItems!.Count > 1:
 				for (var i = 0; i < arg.NewItems.Count; i++)
 				{
 					countCorrection += 1;
@@ -230,7 +230,7 @@ internal static class CollectionChanged
 				}
 				break;
 
-			case NotifyCollectionChangedAction.Move when arg.NewItems.Count > 1:
+			case NotifyCollectionChangedAction.Move when arg.NewItems!.Count > 1:
 				if (arg.NewStartingIndex > arg.OldStartingIndex)
 				{
 					for (var i = 0; i < arg.NewItems.Count; i++)
@@ -247,8 +247,8 @@ internal static class CollectionChanged
 				}
 				break;
 
-			case NotifyCollectionChangedAction.Replace when arg.OldItems.Count > 1 || arg.NewItems.Count > 1:
-				for (var i = 0; i < Math.Min(arg.NewItems.Count, arg.OldItems.Count); i++)
+			case NotifyCollectionChangedAction.Replace when arg.OldItems!.Count > 1 || arg.NewItems!.Count > 1:
+				for (var i = 0; i < Math.Min(arg.NewItems!.Count, arg.OldItems.Count); i++)
 				{
 					raise(Replace(arg.OldItems[i], arg.NewItems[i], arg.OldStartingIndex + i));
 				}
@@ -269,7 +269,7 @@ internal static class CollectionChanged
 				}
 				break;
 
-			case NotifyCollectionChangedAction.Remove when arg.OldItems.Count > 1:
+			case NotifyCollectionChangedAction.Remove when arg.OldItems!.Count > 1:
 				for (var i = 0; i < arg.OldItems.Count; i++)
 				{
 					countCorrection -= 1;
@@ -296,13 +296,13 @@ internal static class CollectionChanged
 		switch (args.Action)
 		{
 			case NotifyCollectionChangedAction.Add:
-				return args.NewItems.Count;
+				return args.NewItems!.Count;
 
 			case NotifyCollectionChangedAction.Remove:
-				return -args.OldItems.Count;
+				return -args.OldItems!.Count;
 
 			case NotifyCollectionChangedAction.Replace:
-				return args.NewItems.Count - args.OldItems.Count;
+				return args.NewItems!.Count - args.OldItems!.Count;
 
 			case NotifyCollectionChangedAction.Reset when !ignoreReset:
 				throw new ArgumentOutOfRangeException(nameof(args.Action));

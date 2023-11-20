@@ -25,7 +25,7 @@ internal sealed class EmptyObservableCollection<T> : IReadOnlyObservableCollecti
 	}
 
 	/// <inheritdoc />
-	public event NotifyCollectionChangedEventHandler CollectionChanged
+	public event NotifyCollectionChangedEventHandler? CollectionChanged
 	{
 		add { }
 		remove { }
@@ -70,12 +70,12 @@ internal sealed class EmptyObservableCollection<T> : IReadOnlyObservableCollecti
 	public object SyncRoot { get; } = new object();
 
 	/// <inheritdoc />
-	public bool Contains(object value) => false;
+	public bool Contains(object? value) => false;
 	/// <inheritdoc />
 	public bool Contains(T item) => false;
 
 	/// <inheritdoc />
-	public int IndexOf(object value) => -1;
+	public int IndexOf(object? value) => -1;
 	/// <inheritdoc />
 	public int IndexOf(T item) => -1;
 
@@ -89,7 +89,7 @@ internal sealed class EmptyObservableCollection<T> : IReadOnlyObservableCollecti
 	public void CopyTo(Array array, int index) { }
 
 	/// <inheritdoc />
-	object IList.this[int index]
+	object? IList.this[int index]
 	{
 		get => throw OutOfRange();
 		set => throw NotSupported();
@@ -106,7 +106,7 @@ internal sealed class EmptyObservableCollection<T> : IReadOnlyObservableCollecti
 	#region Write (Not Supported / explicit implementations)
 	/// <summary>Not supported on read only collection</summary>
 	/// <exception cref="NotSupportedException">This method is not supported on this collection, a <see cref="NotSupportedException"/> will be thrown.</exception>
-	int IList.Add(object value) => throw NotSupported();
+	int IList.Add(object? value) => throw NotSupported();
 	/// <summary>Not supported on read only collection</summary>
 	/// <exception cref="NotSupportedException">This method is not supported on this collection, a <see cref="NotSupportedException"/> will be thrown.</exception>
 	void ICollection<T>.Add(T item) => throw NotSupported();
@@ -121,7 +121,7 @@ internal sealed class EmptyObservableCollection<T> : IReadOnlyObservableCollecti
 
 	/// <summary>Not supported on read only collection</summary>
 	/// <exception cref="NotSupportedException">This method is not supported on this collection, a <see cref="NotSupportedException"/> will be thrown.</exception>
-	void IList.Insert(int index, object value) => throw NotSupported();
+	void IList.Insert(int index, object? value) => throw NotSupported();
 
 	/// <summary>Not supported on read only collection</summary>
 	/// <exception cref="NotSupportedException">This method is not supported on this collection, a <see cref="NotSupportedException"/> will be thrown.</exception>
@@ -129,11 +129,11 @@ internal sealed class EmptyObservableCollection<T> : IReadOnlyObservableCollecti
 
 	/// <summary>Not supported on read only collection</summary>
 	/// <exception cref="NotSupportedException">This method is not supported on this collection, a <see cref="NotSupportedException"/> will be thrown.</exception>
-	void IList.Remove(object value) => throw NotSupported();
+	void IList.Remove(object? value) => throw NotSupported();
 
 	/// <summary>Not supported on read only collection</summary>
 	/// <exception cref="NotSupportedException">This method is not supported on this collection, a <see cref="NotSupportedException"/> will be thrown.</exception>
-	bool IObservableCollection.Remove(object value) => throw NotSupported();
+	bool IObservableCollection.Remove(object? value) => throw NotSupported();
 
 	/// <summary>Not supported on read only collection</summary>
 	/// <exception cref="NotSupportedException">This method is not supported on this collection, a <see cref="NotSupportedException"/> will be thrown.</exception>

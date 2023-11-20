@@ -12,7 +12,7 @@ internal sealed class DifferentialReadOnlyList : IList
 	public DifferentialReadOnlyList(IDifferentialCollectionNode head) => _head = head;
 
 	/// <inheritdoc />
-	public object this[int index]
+	public object? this[int index]
 	{
 		get => index >= 0 && index < Count ? ElementAt(index)! : throw new IndexOutOfRangeException();
 		set => throw new NotSupportedException("'__setItem[]' not supported on read only collection.");
@@ -23,9 +23,9 @@ internal sealed class DifferentialReadOnlyList : IList
 
 	private object? ElementAt(int index) => _head.ElementAt(index);
 	/// <inheritdoc />
-	public int IndexOf(object value) => _head.IndexOf(value, 0);
+	public int IndexOf(object? value) => _head.IndexOf(value, 0);
 	/// <inheritdoc />
-	public bool Contains(object value) => _head.IndexOf(value, 0) >= 0;
+	public bool Contains(object? value) => _head.IndexOf(value, 0) >= 0;
 
 	/// <inheritdoc />
 	public IEnumerator GetEnumerator() => _head.GetEnumerator();
@@ -51,16 +51,16 @@ internal sealed class DifferentialReadOnlyList : IList
 
 	/// <summary>Not supported on this collection</summary>
 	/// <exception cref="NotSupportedException">In any cases, this method is not supported on this collection.</exception>
-	public int Add(object value) => throw new NotSupportedException("'Add' not supported on read only collection.");
+	public int Add(object? value) => throw new NotSupportedException("'Add' not supported on read only collection.");
 	/// <summary>Not supported on this collection</summary>
 	/// <exception cref="NotSupportedException">In any cases, this method is not supported on this collection.</exception>
-	public void Insert(int index, object value) => throw new NotSupportedException("'Insert' not supported on read only collection.");
+	public void Insert(int index, object? value) => throw new NotSupportedException("'Insert' not supported on read only collection.");
 	/// <summary>Not supported on this collection</summary>
 	/// <exception cref="NotSupportedException">In any cases, this method is not supported on this collection.</exception>
 	public void RemoveAt(int index) => throw new NotSupportedException("'RemoveAt' not supported on read only collection.");
 	/// <summary>Not supported on this collection</summary>
 	/// <exception cref="NotSupportedException">In any cases, this method is not supported on this collection.</exception>
-	public void Remove(object value) => throw new NotSupportedException("'Remove' not supported on read only collection.");
+	public void Remove(object? value) => throw new NotSupportedException("'Remove' not supported on read only collection.");
 	/// <summary>Not supported on this collection</summary>
 	/// <exception cref="NotSupportedException">In any cases, this method is not supported on this collection.</exception>
 	public void Clear() => throw new NotSupportedException("'Clear' not supported on read only collection.");

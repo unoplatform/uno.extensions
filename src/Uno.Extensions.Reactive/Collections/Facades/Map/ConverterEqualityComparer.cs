@@ -22,10 +22,16 @@ internal class ConverterEqualityComparer<TFrom, TTo> : IEqualityComparer<TTo>
 	}
 
 	/// <inheritdoc />
-	public bool Equals(TTo left, TTo right) 
-		=> _comparer.Equals(_converter.ConvertBack(left), _converter.ConvertBack(right));
+	public bool Equals(TTo? left, TTo? right)
+		=> (left, right) switch
+		{
+			(null, null) => true,
+			(null, _) => false,
+			(_, null) => false,
+			_ => _comparer.Equals(_converter.ConvertBack(left), _converter.ConvertBack(right))
+		};
 
 	/// <inheritdoc />
 	public int GetHashCode(TTo obj)
-		=> _comparer.GetHashCode(_converter.ConvertBack(obj));
+		=> _converter.ConvertBack(obj) is { } back ? _comparer.GetHashCode(back) : -1;
 }

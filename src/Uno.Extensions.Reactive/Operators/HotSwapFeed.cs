@@ -22,7 +22,7 @@ namespace Uno.Extensions.Reactive.Operators;
 /// It will instead listen for a new source to enumerate.
 /// </remarks>
 [EditorBrowsable(EditorBrowsableState.Never)]
-public sealed class HotSwapFeed<T> : IFeed<T>
+internal sealed class HotSwapFeed<T> : IFeed<T>
 {
 	private readonly object _gate = new();
 	private ISignal<Message<T>>? _current;
@@ -50,11 +50,6 @@ public sealed class HotSwapFeed<T> : IFeed<T>
 	{
 		lock (_gate)
 		{
-			//if (_parent is IHotSwapAwareFeed aware)
-			//{
-			//	aware.HotSwap(this, updatedParent);
-			//}
-
 			if (_current == feed)
 			{
 				return;
@@ -150,7 +145,7 @@ public sealed class HotSwapFeed<T> : IFeed<T>
 			return await MoveNextAsync().ConfigureAwait(false);
 		}
 
-		private void OnFeedChanged(object sender, ISignal<Message<T>>? parent)
+		private void OnFeedChanged(object? sender, ISignal<Message<T>>? parent)
 		{
 			var next = _next;
 			if (next is not null && Interlocked.CompareExchange(ref _next, new TaskCompletionSource<SessionCurrentEnumerator>(), next) == next)

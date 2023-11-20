@@ -7,6 +7,7 @@ namespace Uno.Extensions.Reactive.Utils;
 internal static class DictionaryExtensions
 {
 	public static Dictionary<TKey, TValue> ToDictionaryWhereKey<TKey, TValue>(this IReadOnlyDictionary<TKey, TValue> readOnly, Predicate<TKey> predicate)
+		where TKey : notnull
 	{
 		var result = new Dictionary<TKey, TValue>(readOnly.Count);
 		foreach (var kvp in readOnly)
@@ -21,6 +22,7 @@ internal static class DictionaryExtensions
 	}
 
 	public static Dictionary<TKey, TValue> ToDictionary<TKey, TValue>(this IReadOnlyDictionary<TKey, TValue> readOnly)
+		where TKey : notnull
 	{
 		if (readOnly is IDictionary<TKey, TValue> dic)
 		{
@@ -33,6 +35,7 @@ internal static class DictionaryExtensions
 	}
 
 	public static Dictionary<TKey, TValue> SetItems<TKey, TValue>(this Dictionary<TKey, TValue> target, IReadOnlyDictionary<TKey, TValue> source)
+		where TKey : notnull
 	{
 		foreach (var item in source)
 		{

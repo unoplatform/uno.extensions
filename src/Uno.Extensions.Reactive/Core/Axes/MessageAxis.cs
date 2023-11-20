@@ -112,12 +112,12 @@ public abstract class MessageAxis : IEquatable<MessageAxis>
 
 	/// <inheritdoc />
 	[Pure]
-	public bool Equals(MessageAxis other)
-		=> Equals(this, other);
+	public bool Equals(MessageAxis? other)
+		=> other is not null && Equals(this, other);
 
 	/// <inheritdoc />
 	[Pure]
-	public override bool Equals(object obj)
+	public override bool Equals(object? obj)
 		=> obj is MessageAxis other && Equals(this, other);
 
 	[Pure]

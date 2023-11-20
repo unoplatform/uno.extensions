@@ -78,6 +78,6 @@ internal static class LogExtensions
 
 	private static class Holder<T>
 	{
-		public static ILogger Logger { get; } = CreateLog(typeof(T).FullName);
+		public static ILogger Logger { get; } = CreateLog(typeof(T).FullName!);
 	}
 }

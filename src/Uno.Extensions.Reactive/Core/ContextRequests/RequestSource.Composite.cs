@@ -21,7 +21,7 @@ internal sealed class CompositeRequestSource : IRequestSource
 		other.RequestRaised += OnRequestReceived;
 		ct.Register(() => other.RequestRaised -= OnRequestReceived);
 
-		void OnRequestReceived(object _, IContextRequest request)
+		void OnRequestReceived(object? _, IContextRequest request)
 		{
 			if (request is not EndRequest)
 			{

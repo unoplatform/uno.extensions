@@ -114,7 +114,7 @@ internal class FeedToListFeedAdapter<TCollection, TItem> : IListFeed<TItem>
 			^ _itemComparer.GetHashCode();
 
 	/// <inheritdoc />
-	public override bool Equals(object obj)
+	public override bool Equals(object? obj)
 		=> obj is FeedToListFeedAdapter<TCollection, TItem> other && Equals(this, other);
 
 	public static bool operator ==(FeedToListFeedAdapter<TCollection, TItem> left, FeedToListFeedAdapter<TCollection, TItem> right)

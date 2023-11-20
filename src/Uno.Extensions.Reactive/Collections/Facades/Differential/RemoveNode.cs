@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Specialized;
+using System.Diagnostics;
 using System.Linq;
 
 namespace Uno.Extensions.Collections.Facades.Differential;
@@ -12,14 +13,16 @@ internal sealed class RemoveNode : IDifferentialCollectionNode
 {
 	private readonly int _totalCount, _removedCount, _fromIndex, _toIndex;
 
-	public RemoveNode(IDifferentialCollectionNode previous, NotifyCollectionChangedEventArgs addArg)
+	public RemoveNode(IDifferentialCollectionNode previous, NotifyCollectionChangedEventArgs arg)
 	{
+		Debug.Assert(arg.Action is NotifyCollectionChangedAction.Remove);
+
 		Previous = previous;
-		_removedCount = addArg.OldItems.Count;
+		_removedCount = arg.OldItems!.Count;
 
 		_totalCount = previous.Count - _removedCount;
-		_fromIndex = addArg.OldStartingIndex;
-		_toIndex = addArg.OldStartingIndex + _removedCount;
+		_fromIndex = arg.OldStartingIndex;
+		_toIndex = arg.OldStartingIndex + _removedCount;
 	}
 
 	public RemoveNode(IDifferentialCollectionNode previous, int index, int count)

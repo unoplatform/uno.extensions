@@ -30,7 +30,7 @@ internal class CollectionAnalyzer<T>
 	}
 
 	private ListRef<T> GetRef(IList list)
-		=> new(list, list.Count, i => (T)list[i], list.GetIndexOf(_comparer));
+		=> new(list, list.Count, i => (T)list[i]!, list.GetIndexOf(_comparer));
 
 	private ListRef<T> GetRef(IList<T> list)
 		=> new(list, list.Count, i => list[i], list.GetIndexOf(_comparer));

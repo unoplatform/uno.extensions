@@ -105,7 +105,11 @@ internal static class ListExtensions
 					{
 						for (var i = index; i < index + count; i++)
 						{
+#if NET8_0_OR_GREATER
+							if (comparer.Equals((T?)list[i], value))
+#else
 							if (comparer.Equals((T)list[i], value))
+#endif
 							{
 								return i;
 							}

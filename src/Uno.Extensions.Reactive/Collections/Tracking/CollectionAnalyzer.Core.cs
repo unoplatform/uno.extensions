@@ -39,7 +39,7 @@ internal partial class CollectionAnalyzer
 
 			// For the replace, we are digging in the collection to determine if we could simplify the change considering the given comparers
 			case NotifyCollectionChangedAction.Replace:
-				return GetChangesCore(getRef(arg.OldItems), getRef(arg.NewItems), versionComparer, arg.OldStartingIndex);
+				return GetChangesCore(getRef(arg.OldItems!), getRef(arg.NewItems!), versionComparer, arg.OldStartingIndex);
 
 			default:
 				throw new ArgumentOutOfRangeException(nameof(arg), arg.Action, $"Action '{arg.Action}' not supported.");

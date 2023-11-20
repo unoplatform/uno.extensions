@@ -42,7 +42,7 @@ partial class CollectionAnalyzer
 		internal static CollectionUpdater.Update Visit(RichNotifyCollectionChangedEventArgs args, ICollectionUpdaterVisitor visitor)
 		{
 			var callback = new CollectionUpdater.Update(args);
-			var items = args.OldItems;
+			var items = args.OldItems!;
 
 			for (var i = 0; i < items.Count; i++)
 			{

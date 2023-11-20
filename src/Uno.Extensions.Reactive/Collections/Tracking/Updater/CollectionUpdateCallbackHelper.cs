@@ -14,7 +14,7 @@ internal static class CollectionUpdateCallbackHelper
 			case 1:
 				return uiCallbacks[0];
 			default:
-				return (BeforeCallback)Delegate.Combine(uiCallbacks.ToArray());
+				return (BeforeCallback?)Delegate.Combine(uiCallbacks.ToArray())!;
 		}
 	}
 
@@ -27,7 +27,7 @@ internal static class CollectionUpdateCallbackHelper
 			case 1:
 				return uiCallbacks[0];
 			default:
-				return (BeforeCallback)Delegate.Combine(uiCallbacks);
+				return (BeforeCallback?)Delegate.Combine(uiCallbacks)!;
 		}
 	}
 
@@ -48,7 +48,7 @@ internal static class CollectionUpdateCallbackHelper
 			case 1:
 				return uiCallbacks[0];
 			default:
-				return (AfterCallback)Delegate.Combine(uiCallbacks.ToArray());
+				return (AfterCallback?)Delegate.Combine(uiCallbacks.ToArray());
 		}
 	}
 
@@ -61,7 +61,7 @@ internal static class CollectionUpdateCallbackHelper
 			case 1:
 				return uiCallbacks[0];
 			default:
-				return (AfterCallback)Delegate.Combine(uiCallbacks);
+				return (AfterCallback?)Delegate.Combine(uiCallbacks);
 		}
 	}
 

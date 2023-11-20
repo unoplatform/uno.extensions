@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Diagnostics;
 using System.Linq;
 using Uno.Extensions;
 using Uno.Extensions.Reactive.Utils;
@@ -18,12 +19,14 @@ internal sealed class ReplaceNode : IDifferentialCollectionNode
 
 	public ReplaceNode(IDifferentialCollectionNode previous, NotifyCollectionChangedEventArgs arg)
 	{
+		Debug.Assert(arg.Action is NotifyCollectionChangedAction.Replace);
+
 		Previous = previous;
 
-		_added = arg.NewItems;
-		_addedCount = arg.NewItems.Count;
+		_added = arg.NewItems!;
+		_addedCount = arg.NewItems!.Count;
 		//_removed = arg.OldItems; // Useless and prevent reference on removed items (TODO: Deref items in _previous)
-		_removedCount = arg.OldItems.Count;
+		_removedCount = arg.OldItems!.Count;
 
 		_changeCount = _addedCount - _removedCount;
 		_totalCount = previous.Count + _changeCount;

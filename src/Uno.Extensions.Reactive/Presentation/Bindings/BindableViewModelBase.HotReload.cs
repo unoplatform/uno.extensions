@@ -305,10 +305,10 @@ partial class BindableViewModelBase
 
 
 	private static object CreateErrorFeed(Type valueType, string message)
-		=> Activator.CreateInstance(typeof(ErrorFeed<>).MakeGenericType(valueType), new InvalidOperationException(message));
+		=> Activator.CreateInstance(typeof(ErrorFeed<>).MakeGenericType(valueType), new InvalidOperationException(message))!;
 
 	private static object CreateUndefinedFeed(Type valueType)
-		=> Activator.CreateInstance(typeof(UndefinedFeed<>).MakeGenericType(valueType));
+		=> Activator.CreateInstance(typeof(UndefinedFeed<>).MakeGenericType(valueType))!;
 
 	private class ErrorFeed<T> : IFeed<T>
 	{
@@ -369,7 +369,7 @@ partial class BindableViewModelBase
 		var hotSwapType = typeof(IHotSwapState<>).MakeGenericType(valueType);
 		if (!hotSwapType.IsInstanceOfType(previousState))
 		{
-			if (model.Log().IsEnabled(LogLevel.Information)) model.Log().Info($"The state '{previousState.GetType()}' used for '{property}' does not support hot-swap.");
+			if (model.Log().IsEnabled(LogLevel.Information)) model.Log().Info($"The state '{previousState?.GetType()}' used for '{property}' does not support hot-swap.");
 
 			return;
 		}

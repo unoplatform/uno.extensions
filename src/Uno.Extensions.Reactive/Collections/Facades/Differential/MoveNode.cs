@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Specialized;
+using System.Diagnostics;
 using System.Linq;
 using Uno.Extensions.Reactive.Utils;
 
@@ -17,10 +18,12 @@ internal sealed class MoveNode : IDifferentialCollectionNode
 
 	public MoveNode(IDifferentialCollectionNode previous, NotifyCollectionChangedEventArgs arg)
 	{
+		Debug.Assert(arg.Action is NotifyCollectionChangedAction.Move);
+
 		Previous = previous;
 		Count = previous.Count;
 
-		_moved = arg.OldItems;
+		_moved = arg.OldItems!;
 		_movedCount = _moved.Count;
 
 		_oldFromIndex = arg.OldStartingIndex;
