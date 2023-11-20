@@ -1,5 +1,5 @@
 ---
-uid: Reference.Markup.Resources
+uid: Overview.Markup.Resources
 ---
 # Resource Dictionaries
 
@@ -11,10 +11,10 @@ To merge resource dictionaries, you simply need to add a `ResourceDictionary` to
 
 ```cs
 new Page()
-	// Where MyColorResources & MyFontResources are both a ResourceDictionary
-	.Resources(r => r.Merged(
-		new MyColorResources(),
-		new MyFontResources()))
+    // Where MyColorResources & MyFontResources are both a ResourceDictionary
+    .Resources(r => r.Merged(
+        new MyColorResources(),
+        new MyFontResources()))
 ```
 
 ## Adding Resources
@@ -23,9 +23,9 @@ To add a resource to the `ResourceDictionary` you can use the fluent builder lik
 
 ```cs
 new Page()
-	.Resources(resources => resources
-		.Add("MyColor", Colors.Red)
-		.Add("MyBrush", new SolidColorBrush(Colors.Red))
+    .Resources(resources => resources
+        .Add("MyColor", Colors.Red)
+        .Add("MyBrush", new SolidColorBrush(Colors.Red))
 )
 ```
 
@@ -35,13 +35,13 @@ There may be times when it may be difficult to provide a resource using the corr
 
 ```cs
 new Page()
-	.Resources(resources => resources
-		.Add<Color>("MyColor", "#FF0000") // Converted on Add ONLY
-		.Add("MyOtherColor", "#676767") // Converted EVERY time it is used
-	)
-	.Content(new TextBlock()
-		.Foreground(new SolidColorBrush()
-			.Color(StaticResource.Get<Color>("MyColor"))))
+    .Resources(resources => resources
+        .Add<Color>("MyColor", "#FF0000") // Converted on Add ONLY
+        .Add("MyOtherColor", "#676767") // Converted EVERY time it is used
+    )
+    .Content(new TextBlock()
+        .Foreground(new SolidColorBrush()
+            .Color(StaticResource.Get<Color>("MyColor"))))
 ```
 
 > [!TIP]
@@ -50,15 +50,15 @@ new Page()
 
 ### Implicit Styles
 
-To add an implicit style be sure to use the [`Style<T>`](xref:Reference.Markup.Styles). You can simply pass in the `Style<T>` and do not need to specify a key.
+To add an implicit style be sure to use the [`Style<T>`](xref:Overview.Markup.Styles). You can simply pass in the `Style<T>` and do not need to specify a key.
 
 ```cs
 new Page()
-	.Resources(resources => resources
-		.Add(new Style<TextBlock>()
-			.Setters(s => s.FontSize(14))
-		)
-	)
+    .Resources(resources => resources
+        .Add(new Style<TextBlock>()
+            .Setters(s => s.FontSize(14))
+        )
+    )
 ```
 
 ### Theme Resources
@@ -67,24 +67,24 @@ Theme Resources build off of what you have already seen, except they give you th
 
 ```cs
 new Page()
-	.Resources(resources => resources
-		.Add("MyColor", Colors.Red, Colors.White))
+    .Resources(resources => resources
+        .Add("MyColor", Colors.Red, Colors.White))
 ```
 
 Similarly with Implicit Styles you can simply pass in a Light and Dark theme version of your style and it will be added to the Resource Dictionary ThemeDictionaries.
 
 ```cs
 new Page()
-	.Resources(resources => resources
-		.Add(
-			// Light Theme Style
-			new Style<TextBlock>()
-				.Setters(s => s.Foreground(Colors.Black)),
-			// Dark Theme Style
-			new Style<TextBlock>()
-				.Setters(s => s.Foreground(Colors.White))
-		)
-	)
+    .Resources(resources => resources
+        .Add(
+            // Light Theme Style
+            new Style<TextBlock>()
+                .Setters(s => s.Foreground(Colors.Black)),
+            // Dark Theme Style
+            new Style<TextBlock>()
+                .Setters(s => s.Foreground(Colors.White))
+        )
+    )
 ```
 
 ### Adding Theme Dictionaries
@@ -93,8 +93,8 @@ To add a Theme Dictionary you can use the fluent builder like:
 
 ```cs
 new Page()
-	.Resources(resources => resources
-		.Theme("MyKey", new MyThemeDictionary()))
+    .Resources(resources => resources
+        .Theme("MyKey", new MyThemeDictionary()))
 ```
 
 ## Creating Resources
@@ -104,8 +104,8 @@ One of the benefits of C# Markup is a strongly typed context. For this reason we
 ```cs
 public static class MyResources
 {
-	public static readonly Resource<Geometry> MyIcon =
-		StaticResource.Create<Geometry>(nameof(MyIcon), "M 0 0 L 10 10");
+    public static readonly Resource<Geometry> MyIcon =
+        StaticResource.Create<Geometry>(nameof(MyIcon), "M 0 0 L 10 10");
 }
 ```
 
@@ -124,12 +124,12 @@ Whether we have a `StaticResource` or `ThemeResource`, once we have it defined w
 ```cs
 public class MyPage : Page
 {
-	public MyPage()
-	{
-		this.Resources(r => r.Add(MyResources.MyIcon))
-			.Content(new PathIcon()
-				.Data(MyResources.MyIcon));
-	}
+    public MyPage()
+    {
+        this.Resources(r => r.Add(MyResources.MyIcon))
+            .Content(new PathIcon()
+                .Data(MyResources.MyIcon));
+    }
 }
 ```
 
@@ -139,5 +139,5 @@ Instead when being added to the `ResourceDictionaryBuilder` it will extract the 
 
 ```cs
 new PathIcon()
-	.Data(x => x.StaticResource("MyIcon"))
+    .Data(x => x.StaticResource("MyIcon"))
 ```

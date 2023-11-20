@@ -1,5 +1,5 @@
 ---
-uid: Reference.Markup.GeneratingExtensions
+uid: Overview.Markup.GeneratingExtensions
 ---
 # Generating Extensions
 
@@ -23,4 +23,4 @@ using Microsoft.UI.Xaml.Generator;
 
 Learn more about:
 
-- [Generating C# Extensions for your libraries](xref:Reference.Markup.GeneratingExtensions)
+- [Generating C# Extensions for your libraries](xref:Overview.Markup.GeneratingExtensions)
