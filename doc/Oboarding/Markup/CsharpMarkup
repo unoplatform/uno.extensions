@@ -1,0 +1,82 @@
+---
+uid: Onboarding.Markup.CSharpMarkup
+---
+
+# Uno C# Markup Overview
+
+Uno's C# Markup aims to make the process of building UIs easier by providing a Fluent API that is robust and easy to use. C# Markup maps to many of the concepts you may already be familiar with including Bindings, Static and Theme Resources. C# Markup is architected with a base layer of helpers with the addition of Markup Extensions that are provided by a Roslyn Source Generator. This enables us to ship precompiled extensions for Uno Platform libraries including Uno.WinUI, Uno.Extensions, and Uno.Toolkit, but also lets you easily take advantage of the benefits of C# Markup for any custom control within your project, or even from a 3rd party library you may be using.
+
+You will quickly discover why C# Markup is a developer favorite with:
+
+- Declarative syntax
+- Strong Typing giving you compile time checks on your bindings
+- Better Intellisense
+- Support for Custom Controls and 3rd party libraries
+
+To have sense about how it would like, here's a simple Hello World sample:
+
+```cs
+public sealed partial class MainPage : Page
+{
+    public MainPage()
+    {
+        this
+            .Background(ThemeResource.Get<Brush>("ApplicationPageBackgroundThemeBrush"))
+            .Content
+            (
+                new StackPanel()
+                    .VerticalAlignment(VerticalAlignment.Center)
+                    .HorizontalAlignment(HorizontalAlignment.Center)
+                    .Children
+                    (
+                        new TextBlock()
+                            .Text("Hello Uno Platform!")
+                    )
+            );
+    }
+}
+
+```
+
+## C# Markup APIs
+
+Let's take a look into some APIs and how it's used. For that the UI for the Counter App sample will be used. Here you will have an idea how to use MVVM with C# markup and, also, have an idea how to construct UIs.
+
+You can use the C# markup with MVVM and MVUX, in this sample the MVVM pattern will be used.
+
+```csharp
+public sealed partial class MainPage : Page
+{
+    public MainPage()
+    {
+        this
+            .DataContext(new MainViewModel(),(page, vm) =>
+            page
+            .Background(ThemeResource.Get<Brush>("ApplicationPageBackgroundThemeBrush"))
+            .Content(new StackPanel()
+            .VerticalAlignment(VerticalAlignment.Center)
+            .HorizontalAlignment(HorizontalAlignment.Center)
+            .Children(
+                new Image()
+                    .Width(150)
+                    .Height(150)
+                    .Source("ms-appx:///Counter/Assets/logo.png"),
+                new TextBox()
+                    .Margin(12)
+                    //.HorizontalTextAlignment(Microsoft.UI.Xaml.TextAlignment.Center),
+                    .PlaceholderText("Step Size")
+                    .Text(x=>x.Bind(()=>vm.StepSize).Mode(BindingMode.TwoWay)),
+                new TextBlock()
+                    .Margin(12)
+                    .HorizontalTextAlignment(Microsoft.UI.Xaml.TextAlignment.Center)
+                    .Text(()=>vm.CounterValue,txt=>$"Counter: {txt}"),
+                new Button()
+                    .Margin(12)
+                    .HorizontalAlignment(HorizontalAlignment.Center)
+                    .Command(()=>vm.IncrementCommand)
+                    .Content("Click me to increment Counter by Step Size")
+
+            )));
+    }
+}
+```
