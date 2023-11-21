@@ -4,6 +4,8 @@ uid: Onboarding.Markup.CSharpMarkup
 
 # Uno C# Markup Overview
 
+## Overview
+
 Uno's C# Markup aims to make the process of building UIs easier by providing a Fluent API that is robust and easy to use. C# Markup maps to many of the concepts you may already be familiar with including Bindings, Static and Theme Resources. C# Markup is architected with a base layer of helpers with the addition of Markup Extensions that are provided by a Roslyn Source Generator. This enables us to ship precompiled extensions for Uno Platform libraries including Uno.WinUI, Uno.Extensions, and Uno.Toolkit, but also lets you easily take advantage of the benefits of C# Markup for any custom control within your project, or even from a 3rd party library you may be using.
 
 You will quickly discover why C# Markup is a developer favorite with:
@@ -63,7 +65,6 @@ public sealed partial class MainPage : Page
                     .Source("ms-appx:///Counter/Assets/logo.png"),
                 new TextBox()
                     .Margin(12)
-                    //.HorizontalTextAlignment(Microsoft.UI.Xaml.TextAlignment.Center),
                     .PlaceholderText("Step Size")
                     .Text(x=>x.Bind(()=>vm.StepSize).Mode(BindingMode.TwoWay)),
                 new TextBlock()
@@ -78,5 +79,85 @@ public sealed partial class MainPage : Page
 
             )));
     }
+}
+```
+
+The C# Markup provides a way to set the `DataContext` and use it while you build your UI in a strongly type manner, as you can see in this snippet:
+
+```csharp
+    this.DataContext(new MainViewModel(),(page, vm) =>
+    {
+            // Your UI code here
+    });
+
+```
+
+> This overload accepts the instace of your `DataContext` and an `Action<Page, TViewMode>`, where it will provide your `Page` instance and your `ViewModel` "instance", be aware that instance has no value, that means it will always be `null` it's there to help you access the public members of your `ViewModel`, the way you should use it will be shown in the next steps.
+
+There's another overload for the `DataContext` that can be used when you don't need to pass, manually, an instance of your `DataContext`, let's say if you're creating a `DataTemplate` control for example, with this overload the code would like:
+
+```cs
+    this.DataContext<MainViewModel>((page, vm) =>
+    {
+            // Your UI code here
+    });
+```
+
+This way, you've the same strongly type advantages. So let's move forward.
+
+You can access your `ThemeResources` from helper methods, as you can see here:
+
+```csharp
+    page.Background(ThemeResource.Get<Brush>("ApplicationPageBackgroundThemeBrush"))
+```
+
+> Here, the app is looking for the `Brush` resource value for the `ApplicationPageBackgroundThemeBrush` key, that value will change deppending on the Theme (Dark or Light) that the app is running. You can change the generic type to be the type that you expect your Resource to be (`Color`, `Geomtry`, etc).
+
+For many custom types we make it easy with automatically generated converters:
+
+```cs
+new Image().Source("ms-appx:///Counter/Assets/logo.png")
+```
+
+> As you can see you can pass a `string` and it will be converted to `ImageSource`.
+
+In addition to this you get `Binding Expressions` that can be as simple as you need them to be:
+
+```cs
+new Button().Command(() => vm.IncrementCommand)
+```
+
+> Do you remember about the mention of the `vm` instance be `null`? So because of that you need to use `Expressions` to reference it without issues, if you use it directly you will hit a `NullReferenceException` (NRE). The snippet below show the **wrong** way to use this API:
+
+```csharp
+new Button().Command(vm.IncrementCommand) // Will throw a NRE, because vm is null.
+```
+
+While still giving you the flexibility to perform simple type conversions in an easy to understand way:
+
+```cs
+new TextBlock().Text(() => vm.CounterValue,txt=>$"Counter: {txt}")
+```
+
+> As you can see, the first argument asks for the `Binding Expression` and second one allows you to pass how you would like to present the value, which has the same concept of the `StringFormat` on Binding XAML.
+
+However we also understand sometimes you need more flexibility to control how the Binding is configured and for these scenarios we have you covered with a more robust builder that let's you configure individual properties you need to for setting up your bindings:
+
+```cs
+new TextBox().Text(x=>x.Bind(() => vm.StepSize).Mode(BindingMode.TwoWay)),
+```
+
+> This overload asks for the `Binding Expression` and the `BindingMode`, which is configured to be `TwoWay`, that means the value can be set from the UI's input and from the code inside the `ViewModel`.
+
+
+Another way to use the `DataContext` is rControl with a special DataContext delegate that gives you the strong typing you'd expect.
+
+```cs
+public MainPage()
+{
+    this.DataContext<MainViewModel>((page, vm) => page
+        .Content(
+            new TextBlock().Text(() => vm.Title)
+        ));
 }
 ```
