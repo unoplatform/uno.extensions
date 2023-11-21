@@ -6,11 +6,11 @@ uid: Overview.Markup.Appendix.TextBlockRun
 While we make every effort to keep the API as close as possible to what you might expect from the equivalent XAML one area we have had to introduce an entirely new API is with the Run often used by TextBlocks.
 
 ```xml
-<TextBlock IsTextSelectionEnabled="True" SelectionHighlightColor="Green" FontFamily="Arial">
-  <Run Foreground="Blue" FontWeight="Light" Text="This text demonstrates "></Run>
+<TextBlock>
+  <Run Text="This text demonstrates " />
   <Span FontWeight="SemiBold">
     <Run FontStyle="Italic">the use of inlines </Run>
-    <Run Foreground="Red">with formatting.</Run>
+    <Run>with formatting.</Run>
   </Span>
 </TextBlock>
 ```
@@ -18,9 +18,19 @@ While we make every effort to keep the API as close as possible to what you migh
 In general for the sample XAML above the C# Markup would be exactly what you expect:
 
 ```cs
-new Run()
-    .FontStyle(FontStyle.Italic)
-    .Text("Hello World")
+new TextBlock()
+    .Inlines(
+        new Run().Text("This text demonstrates "),
+        new Span()
+            .FontWeight(FontWeights.SemiBold)
+            .Inlines(
+                new Run()
+                    .FontStyle(FontStyle.Italic)
+                    .Text("the use of inlines "),
+                new Run()
+                    .Text("with formatting.")
+            )
+    )
 ```
 
 Where we run into issues is that while Binding's are supported in XAML, there is no public `DependencyProperty` on the managed Run class in C# for the Text property. As a result the C# Markup generators are not able provide an extension with the `Action<IDependencyPropertyBuilder<string>>` which will as a result, prevent you from binding values to the Run's Text property. In order to solve this issue you must instead use the `MarkupRun`. This exposes a proper `DependencyProperty` that allows us to create the binding and update the Run's displayed text.
