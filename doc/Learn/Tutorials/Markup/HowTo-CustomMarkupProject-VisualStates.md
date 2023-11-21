@@ -6,7 +6,7 @@ uid: Learn.Tutorials.HowToCustomMarkupProjectVisualStates
 
 In the previous session we learn how to [Custom your own C# Markup and Learn how to use Toolkit](xref:Learn.Tutorials.HowToCustomMarkupProjectToolkit).
 
-Now we will learn how to use the [UserControl](https://platform.uno/docs/articles/implemented/windows-ui-xaml-controls-page.html) and the [VisualStateManagers](xref:Reference.Markup.VisualStateManager).
+Now we will learn how to use the [UserControl](https://platform.uno/docs/articles/implemented/windows-ui-xaml-controls-page.html) and the [VisualStateManagers](xref:Overview.Markup.VisualStateManager).
 
 For this sample you can use same project we start on the how to [Create your own C# Markup with Toolkit](xref:Reference.Markup.HowTo-MarkupProjectToolkit)
 
@@ -305,7 +305,7 @@ It provides a way to create custom components that can be used in multiple parts
     </Page>
     ```
 
-## [VisualStateManagers](xref:Reference.Markup.VisualStateManager)
+## [VisualStateManagers](xref:Overview.Markup.VisualStateManager)
 
 The VisualStateManager is a class that allows you to define and manage visual states for controls or elements.
 

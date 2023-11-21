@@ -1,5 +1,5 @@
 ---
-uid: Reference.Markup.StaticAndThemeResources
+uid: Overview.Markup.StaticAndThemeResources
 ---
 
 # Using Static and Theme Resources
@@ -57,9 +57,9 @@ public static class MyResources
 }
 ```
 
-Looking at this sample we actually are achieving multiple things. One is that we are able to more easily make use of our path string as we can provide it the generic argument for a `Geometry` object which is what will be expected when we use it. We also are able to avoid trying to figure out how to convert it. 
+Looking at this sample we actually are achieving multiple things. One is that we are able to more easily make use of our path string as we can provide it the generic argument for a `Geometry` object which is what will be expected when we use it. We also are able to avoid trying to figure out how to convert it.
 
-Lastly, in the case of WinUI we get the advantage that this will be created as a `Geometry` object each time we need it, this will keep it from being parented and prevent it from being reused later. 
+Lastly, in the case of WinUI we get the advantage that this will be created as a `Geometry` object each time we need it, this will keep it from being parented and prevent it from being reused later.
 
 Now to use our `Resource<Geometry>`, we can simply reference it similar to our constant string, except that we need to also add it to a `ResourceDictionary` somewhere in the Visual Tree.
 
@@ -138,7 +138,7 @@ public static class MyResources
     public static Action<IDependencyPropertyBuilder<Color>> MyThemeColor =>
         ThemeResource.Get<Color>("MyThemeColor");
 
-    public static readonly ThemeResourceKey<Color> MyOtherColor = 
+    public static readonly ThemeResourceKey<Color> MyOtherColor =
         new ThemeResourceKey<Color>("MyOtherColor");
 }
 ```
@@ -148,11 +148,11 @@ You may notice in the above example, we don't use `ThemeResource.Create`. This i
 ```csharp
 public static class MyResources
 {
-    public static readonly Resource<Color> MyColor = 
+    public static readonly Resource<Color> MyColor =
         ThemeResource.Create<Color>(nameof(MyColor), "#F6F6F6");
 }
 ```
 
 ## Additional Reading
 
-- [Uno.Themes.WinUI.Markup](xref:Reference.Markup.UnoThemes)
+- [Uno.Themes.WinUI.Markup](xref:Overview.Markup.UnoThemes)

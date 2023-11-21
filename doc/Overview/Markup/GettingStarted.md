@@ -1,5 +1,5 @@
 ---
-uid: Reference.Markup.GettingStarted
+uid: Overview.Markup.GettingStarted
 ---
 # Getting Started
 
@@ -17,7 +17,7 @@ In addition to the core package and generator, the Uno Platform team is shipping
 - [Uno.Themes.WinUI.Markup](https://www.nuget.org/packages/Uno.Themes.WinUI.Markup)
 
 > [!TIP]
-> For more information on generating extensions on your own libraries see [Generating Extensions](xref:Reference.Markup.GeneratingExtensions).
+> For more information on generating extensions on your own libraries see [Generating Extensions](xref:Overview.Markup.GeneratingExtensions).
 
 ## Using the Markup Extensions
 
@@ -25,8 +25,8 @@ A fundamental premise of the [Uno.Extensions.Markup.WinUI](https://www.nuget.org
 
 ```cs
 new TextBlock()
-	.Text("Hello World")
-	.FontSize(20)
+    .Text("Hello World")
+    .FontSize(20)
 ```
 
 ### Type Helpers
@@ -43,26 +43,26 @@ When setting values for certain types on either the element or through a setter,
 
 ```cs
 new Button()
-	.Foreground(Colors.Red)
-	.Background(new SolidColorBrush().Color("#676767"))
-	.Margin(10, 20)
-	.Padding(10, 20, 30, 40)
-	.CornerRadius(15)
+    .Foreground(Colors.Red)
+    .Background(new SolidColorBrush().Color("#676767"))
+    .Margin(10, 20)
+    .Padding(10, 20, 30, 40)
+    .CornerRadius(15)
 ```
 
 ## Strongly Typed DataContext
 
-When building the content of a given control, you can make use of the `DataContext` extension to provide a strongly typed context for bindings. It is important to note that these extensions will not create or resolve your DataContext. These extensions are meant to help you create [strongly typed bindings](xref:Reference.Markup.DependencyPropertyBuilder).
+When building the content of a given control, you can make use of the `DataContext` extension to provide a strongly typed context for bindings. It is important to note that these extensions will not create or resolve your DataContext. These extensions are meant to help you create [strongly typed bindings](xref:Overview.Markup.DependencyPropertyBuilder).
 
 **Strongly Typed DataContext**
 ```cs
 public partial class MyPage : Page
 {
-	public MyPage()
-	{
-		this.DataContext<MyPageViewModel>((page, vm) => page
-			.Content(new Grid()));
-	}
+    public MyPage()
+    {
+        this.DataContext<MyPageViewModel>((page, vm) => page
+            .Content(new Grid()));
+    }
 }
 ```
 
@@ -70,11 +70,11 @@ public partial class MyPage : Page
 ```cs
 public partial class MyPage : Page
 {
-	public MyPage()
-	{
-		this.DataContext(new MyPageViewModel(), (page, vm) => page
-			.Content(new Grid()));
-	}
+    public MyPage()
+    {
+        this.DataContext(new MyPageViewModel(), (page, vm) => page
+            .Content(new Grid()));
+    }
 }
 ```
 
@@ -82,20 +82,20 @@ public partial class MyPage : Page
 ```cs
 public partial class MyPage : Page
 {
-	public MyPage()
-	{
-		this.DataContext<MyPageViewModel>((page, vm) => page
-			.Content(new Grid().Children(
-				new StackPanel()
-					// Binding to a property of the parent's DataContext
-					.DataContext(() => vm.MyModel, (panel, myModel) => panel
-					.Children(
-							new TextBlock().Text(() => myModel.Name),
-							new TextBlock().Text(() => myModel.Description)
-						)
-					)
-			)));
-	}
+    public MyPage()
+    {
+        this.DataContext<MyPageViewModel>((page, vm) => page
+            .Content(new Grid().Children(
+                new StackPanel()
+                    // Binding to a property of the parent's DataContext
+                    .DataContext(() => vm.MyModel, (panel, myModel) => panel
+                    .Children(
+                            new TextBlock().Text(() => myModel.Name),
+                            new TextBlock().Text(() => myModel.Description)
+                        )
+                    )
+            )));
+    }
 }
 ```
 
@@ -106,13 +106,14 @@ public partial class MyPage : Page
 
 Learn more about:
 
-- [Binding, Static & Theme Resources](xref:Reference.Markup.DependencyPropertyBuilder)
-	- [Binding 101](xref:Reference.Markup.Binding101)
-	- [Converters](xref:Reference.Markup.Converters)
-	- [Using Static & Theme Resources](xref:Reference.Markup.StaticAndThemeResources)
-	- [Using Uno.Themes.WinUI.Markup](xref:Reference.Markup.UnoThemes)
-- [Attached Properties](xref:Reference.Markup.AttachedProperties)
-- [Styles](xref:Reference.Markup.Styles)
-- [Templates](xref:Reference.Markup.Templates)
-- [VisualStateManagers](xref:Reference.Markup.VisualStateManager)
-- [Generating C# Extensions for your libraries](xref:Reference.Markup.GeneratingExtensions)
+- [Binding, Static & Theme Resources](xref:Overview.Markup.DependencyPropertyBuilder)
+    - [Binding 101](xref:Overview.Markup.Binding101)
+    - [Converters](xref:Overview.Markup.Converters)
+    - [Using Static & Theme Resources](xref:Overview.Markup.StaticAndThemeResources)
+    - [Using Uno.Themes.WinUI.Markup](xref:Overview.Markup.UnoThemes)
+- [Attached Properties](xref:Overview.Markup.AttachedProperties)
+- [Styles](xref:Overview.Markup.Styles)
+- [Templates](xref:Overview.Markup.Templates)
+- [VisualStateManagers](xref:Overview.Markup.VisualStateManager)
+  - [Storyboards](xref:Overview.Markup.Storyboards)
+- [Generating C# Extensions for your libraries](xref:Overview.Markup.GeneratingExtensions)

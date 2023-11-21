@@ -1,5 +1,5 @@
 ---
-uid: Reference.Markup.Styles
+uid: Overview.Markup.Styles
 ---
 # Styles
 
@@ -7,7 +7,7 @@ Creating Styles with C# Markup is easy and intuitive using the `Style<T>` with e
 
 ```cs
 new Style<TextBlock>()
-	.Setters(s => s.FontSize(14))
+    .Setters(s => s.FontSize(14))
 ```
 
 ## Basing a Style on another Style
@@ -16,17 +16,17 @@ Sometimes you may want to base a style on another style. This can be done one of
 
 ```cs
 new Style<TextBlock>()
-	.BasedOn("GlobalStyleResourceName")
+    .BasedOn("GlobalStyleResourceName")
 ```
 
 The second way is to provide a `Style` instance.
 
 ```cs
 new Style<TextBlock>()
-	.Assign(out var baseStyle);
+    .Assign(out var baseStyle);
 
 new Style<TextBlock>()
-	.BasedOn(baseStyle)
+    .BasedOn(baseStyle)
 ```
 
 ## Using Resources for Style Setters
@@ -36,18 +36,18 @@ Sometimes you might want to use a Static or Theme resource on your style propert
 ```cs
 // Static Resource
 new Style<Button>()
-	.Setters(s => s.Background(StaticResource.Get<Brush>("MyBrush")))
+    .Setters(s => s.Background(StaticResource.Get<Brush>("MyBrush")))
 
 // Theme Resource
 new Style<Button>()
-	.Setters(s => s.Background(ThemeResource.Get<Brush>("MyBrush")))
+    .Setters(s => s.Background(ThemeResource.Get<Brush>("MyBrush")))
 ```
 
 Alternatively, if you are using a Theme Resource from [Uno.Material](xref:uno.themes.material.getstarted), you can use [Uno.Themes.WinUI.Markup](https://www.nuget.org/packages/Uno.Themes.WinUI.Markup) for a strongly typed API making it easier to both discover and make use of the various theme Styles, Colors, and Brushes. Instead of calling `StaticResource.Get` or `ThemeResource.Get` you will simply use the Theme call to access the Color, Brush, or Style.
 
 ```cs
 new Style<Button>()
-	.Setters(s => s.Background(Theme.Brushes.Primary.Default))
+    .Setters(s => s.Background(Theme.Brushes.Primary.Default))
 ```
 
 ## Templates
@@ -56,20 +56,20 @@ You can similarly provide a template on a `Style` similar to how might
 
 ```cs
 new Style<Button>()
-	.Setters(setters => setters
-		.Template(b => new Border()
-			.Child(
-				new ContentPresenter()
-					.Content(x => x.TemplateBind(() => b.Content))
-			)
-		)
-	)
+    .Setters(setters => setters
+        .Template(b => new Border()
+            .Child(
+                new ContentPresenter()
+                    .Content(x => x.TemplateBind(() => b.Content))
+            )
+        )
+    )
 ```
 
 ## Next Steps
 
 Learn more about:
 
-- [Templates](xref:Reference.Markup.Templates)
-- [VisualStateManagers](xref:Reference.Markup.VisualStateManager)
-- [Generating C# Extensions for your libraries](xref:Reference.Markup.GeneratingExtensions)
+- [Templates](xref:Overview.Markup.Templates)
+- [VisualStateManagers](xref:Overview.Markup.VisualStateManager)
+- [Generating C# Extensions for your libraries](xref:Overview.Markup.GeneratingExtensions)
