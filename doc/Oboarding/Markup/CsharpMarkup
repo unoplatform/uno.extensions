@@ -149,15 +149,8 @@ new TextBox().Text(x=>x.Bind(() => vm.StepSize).Mode(BindingMode.TwoWay)),
 
 > This overload asks for the `Binding Expression` and the `BindingMode`, which is configured to be `TwoWay`, that means the value can be set from the UI's input and from the code inside the `ViewModel`.
 
+## Conclusion
 
-Another way to use the `DataContext` is rControl with a special DataContext delegate that gives you the strong typing you'd expect.
+With this overview you're ready to go and try out the C# markup for creating UIs.
 
-```cs
-public MainPage()
-{
-    this.DataContext<MainViewModel>((page, vm) => page
-        .Content(
-            new TextBlock().Text(() => vm.Title)
-        ));
-}
-```
+// Suggest the next steps.
