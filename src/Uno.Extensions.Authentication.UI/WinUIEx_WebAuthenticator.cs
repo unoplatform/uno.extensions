@@ -2,7 +2,11 @@
 
 #if WINDOWS
 using System.Diagnostics;
+using System.Text.Json.Nodes;
+using Microsoft.Windows.AppLifecycle;
+using Uno.Extensions.Authentication;
 using Windows.ApplicationModel.Activation;
+using Windows.Security.Authentication.Web;
 
 namespace WinUIEx;
 
@@ -31,7 +35,20 @@ public sealed class WebAuthenticator
 	/// <param name="authorizeUri">Url to navigate to, beginning the authentication flow.</param>
 	/// <param name="callbackUri">Expected callback url that the navigation flow will eventually redirect to.</param>
 	/// <returns>Returns a result parsed out from the callback url.</returns>
-	public static Task<WebAuthenticatorResult> AuthenticateAsync(Uri authorizeUri, Uri callbackUri) => Instance.Authenticate(authorizeUri, callbackUri);
+	/// <remarks>Prior to calling this, a call to <see cref="CheckOAuthRedirectionActivation(bool)"/> must be made during application startup.</remarks>
+	/// <seealso cref="CheckOAuthRedirectionActivation(bool)"/>
+	public static Task<WebAuthenticatorResult> AuthenticateAsync(Uri authorizeUri, Uri callbackUri) => Instance.Authenticate(authorizeUri, callbackUri, CancellationToken.None);
+
+	/// <summary>
+	/// Begin an authentication flow by navigating to the specified url and waiting for a callback/redirect to the callbackUrl scheme.
+	/// </summary>
+	/// <param name="authorizeUri">Url to navigate to, beginning the authentication flow.</param>
+	/// <param name="callbackUri">Expected callback url that the navigation flow will eventually redirect to.</param>
+	/// <param name="cancellationToken">Cancellation token.</param>
+	/// <returns>Returns a result parsed out from the callback url.</returns>
+	/// <remarks>Prior to calling this, a call to <see cref="CheckOAuthRedirectionActivation(bool)"/> must be made during application startup.</remarks>
+	/// <seealso cref="CheckOAuthRedirectionActivation(bool)"/>
+	public static Task<WebAuthenticatorResult> AuthenticateAsync(Uri authorizeUri, Uri callbackUri, CancellationToken cancellationToken) => Instance.Authenticate(authorizeUri, callbackUri, cancellationToken);
 
 	private static readonly WebAuthenticator Instance = new WebAuthenticator();
 
@@ -40,28 +57,6 @@ public sealed class WebAuthenticator
 	private WebAuthenticator()
 	{
 		Microsoft.Windows.AppLifecycle.AppInstance.GetCurrent().Activated += CurrentAppInstance_Activated;
-	}
-
-	private static bool _init;
-
-#pragma warning disable CA2255 // The ModuleInitializer attribute should not be used in libraries
-	[System.Runtime.CompilerServices.ModuleInitializer]
-#pragma warning restore
-	public static void Init()
-	{
-		if (_init)
-		{
-			return;
-		}
-		_init = true;
-		try
-		{
-			OnAppCreation();
-		}
-		catch (Exception ex)
-		{
-			System.Diagnostics.Trace.WriteLine("WinUIEx: Failed to initialize the WebAuthenticator: " + ex.Message, "WinUIEx");
-		}
 	}
 
 	private static bool IsUriProtocolDeclared(string scheme)
@@ -93,27 +88,82 @@ public sealed class WebAuthenticator
 
 	private static NameValueCollection? GetState(IProtocolActivatedEventArgs protocolArgs)
 	{
-		Debug.WriteLine($"args: {protocolArgs.Uri.Query}");
-		var vals = System.Web.HttpUtility.ParseQueryString(protocolArgs.Uri.Query);
-		if (vals["state"] is string state)
+		NameValueCollection? vals = null;
+		try
 		{
-			var vals2 = System.Web.HttpUtility.ParseQueryString(state);
-			// Some services doesn't like & encoded state parameters, and breaks them out separately.
-			// In that case copy over the important values
-			if (vals.AllKeys.Contains("appInstanceId") && !vals2.AllKeys.Contains("appInstanceId"))
-				vals2.Add("appInstanceId", vals["appInstanceId"]);
-			if (vals.AllKeys.Contains("signinId") && !vals2.AllKeys.Contains("signinId"))
-				vals2.Add("signinId", vals["signinId"]);
-			return vals2;
+			vals = System.Web.HttpUtility.ParseQueryString(protocolArgs.Uri.Query);
+		}
+		catch { }
+		try
+		{
+			if (vals is null || !(vals["state"] is string))
+			{
+				var fragment = protocolArgs.Uri.Fragment;
+				if (fragment.StartsWith("#"))
+				{
+					fragment = fragment.Substring(1);
+				}
+				vals = System.Web.HttpUtility.ParseQueryString(fragment);
+			}
+		}
+		catch { }
+		if (vals != null && vals["state"] is string state)
+		{
+			try
+			{
+				var jsonObject = System.Text.Json.Nodes.JsonObject.Parse(state) as JsonObject;
+				if (jsonObject is not null)
+				{
+					NameValueCollection vals2 = new NameValueCollection(jsonObject.Count);
+					if (jsonObject.ContainsKey("appInstanceId") && jsonObject["appInstanceId"] is JsonValue jvalue && jvalue.TryGetValue<string>(out string? value))
+						vals2.Add("appInstanceId", value);
+					if (jsonObject.ContainsKey("signinId") && jsonObject["signinId"] is JsonValue jvalue2 && jvalue2.TryGetValue<string>(out string? value2))
+						vals2.Add("signinId", value2);
+					return vals2;
+				}
+			}
+			catch { }
 		}
 		return null;
 	}
+	private static bool _oauthCheckWasPerformed;
 
-	private static void OnAppCreation()
+	/// <summary>
+	/// Performs an OAuth protocol activation check and redirects activation to the correct application instance.
+	/// </summary>
+	/// <param name="skipShutDownOnActivation">If <c>true</c>, this application instance will not automatically be shut down. If set to
+	/// <c>true</c> ensure you handle instance exit, or you'll end up with multiple instances running.</param>
+	/// <returns><c>true</c> if the activation was redirected and this instance should be shut down, otherwise <c>false</c>.</returns>
+	/// <remarks>
+	/// The call to this method should be done preferably in the Program.Main method, or the application constructor. It must be called
+	/// prior to using <see cref="AuthenticateAsync(Uri, Uri, CancellationToken)"/>
+	/// </remarks>
+	/// <seealso cref="AuthenticateAsync(Uri, Uri, CancellationToken)"/>
+	public static bool CheckOAuthRedirectionActivation(bool skipShutDownOnActivation = false)
 	{
 		var activatedEventArgs = Microsoft.Windows.AppLifecycle.AppInstance.GetCurrent()?.GetActivatedEventArgs();
+		return CheckOAuthRedirectionActivation(activatedEventArgs, skipShutDownOnActivation);
+	}
+
+	/// <summary>
+	/// Performs an OAuth protocol activation check and redirects activation to the correct application instance.
+	/// </summary>
+	/// <param name="activatedEventArgs">The activation arguments</param>
+	/// <param name="skipShutDownOnActivation">If <c>true</c>, this application instance will not automatically be shut down. If set to
+	/// <c>true</c> ensure you handle instance exit, or you'll end up with multiple instances running.</param>
+	/// <returns><c>true</c> if the activation was redirected and this instance should be shut down, otherwise <c>false</c>.</returns>
+	/// <remarks>
+	/// The call to this method should be done preferably in the Program.Main method, or the application constructor. It must be called
+	/// prior to using <see cref="AuthenticateAsync(Uri, Uri, CancellationToken)"/>
+	/// </remarks>
+	/// <seealso cref="AuthenticateAsync(Uri, Uri, CancellationToken)"/>
+	public static bool CheckOAuthRedirectionActivation(AppActivationArguments? activatedEventArgs, bool skipShutDownOnActivation = false)
+	{
+		_oauthCheckWasPerformed = true;
 		if (activatedEventArgs is null)
-			return;
+			return false;
+		if (activatedEventArgs.Kind != Microsoft.Windows.AppLifecycle.ExtendedActivationKind.Protocol)
+			return false;
 		var state = GetState(activatedEventArgs);
 		if (state is not null && state["appInstanceId"] is string id && state["signinId"] is string signinId && !string.IsNullOrEmpty(signinId))
 		{
@@ -123,7 +173,9 @@ public sealed class WebAuthenticator
 			{
 				// Redirect to correct instance and close this one
 				instance.RedirectActivationToAsync(activatedEventArgs).AsTask().Wait();
-				System.Diagnostics.Process.GetCurrentProcess().Kill();
+				if (!skipShutDownOnActivation)
+					System.Diagnostics.Process.GetCurrentProcess().Kill();
+				return true;
 			}
 		}
 		else
@@ -134,6 +186,7 @@ public sealed class WebAuthenticator
 				Microsoft.Windows.AppLifecycle.AppInstance.FindOrRegisterForKey(Guid.NewGuid().ToString());
 			}
 		}
+		return false;
 	}
 
 	private void CurrentAppInstance_Activated(object? sender, Microsoft.Windows.AppLifecycle.AppActivationArguments e)
@@ -161,9 +214,13 @@ public sealed class WebAuthenticator
 		}
 	}
 
-	private async Task<WebAuthenticatorResult> Authenticate(Uri authorizeUri, Uri callbackUri)
+	private async Task<WebAuthenticatorResult> Authenticate(Uri authorizeUri, Uri callbackUri, CancellationToken cancellationToken)
 	{
-		if (global::Windows.ApplicationModel.Package.Current is null)
+		if (!_oauthCheckWasPerformed)
+		{
+			throw new InvalidOperationException("OAuth redirection check on app activation was not detected. Please make sure a call to WebAuthenticator.CheckOAuthRedirectionActivation was made during App creation.");
+		}
+		if (!PlatformHelper.IsAppPackaged)  // Original code uses:  !Helpers.IsAppPackaged
 		{
 			throw new InvalidOperationException("The WebAuthenticator requires a packaged app with an AppxManifest");
 		}
@@ -172,76 +229,82 @@ public sealed class WebAuthenticator
 			throw new InvalidOperationException($"The URI Scheme {callbackUri.Scheme} is not declared in AppxManifest.xml");
 		}
 		var g = Guid.NewGuid();
+		var taskId = g.ToString();
 		UriBuilder b = new UriBuilder(authorizeUri);
 
 		var query = System.Web.HttpUtility.ParseQueryString(authorizeUri.Query);
-		var state = $"appInstanceId={Microsoft.Windows.AppLifecycle.AppInstance.GetCurrent().Key}&signinId={g}";
+		var stateJson = new JsonObject
+			{
+				{ "appInstanceId", Microsoft.Windows.AppLifecycle.AppInstance.GetCurrent().Key },
+				{ "signinId", taskId }
+			};
 		if (query["state"] is string oldstate && !string.IsNullOrEmpty(oldstate))
 		{
-			// Encode the state parameter
-			state += "&state=" + System.Web.HttpUtility.UrlEncode(oldstate);
+			stateJson["state"] = oldstate;
 		}
-		query["state"] = state;
+
+		query["state"] = stateJson.ToJsonString();
 		b.Query = query.ToString();
 		authorizeUri = b.Uri;
 
 		var tcs = new TaskCompletionSource<Uri>();
+		if (cancellationToken.CanBeCanceled)
+		{
+			cancellationToken.Register(() =>
+			{
+				tcs.TrySetCanceled();
+				if (tasks.ContainsKey(taskId))
+					tasks.Remove(taskId);
+			});
+			if (cancellationToken.IsCancellationRequested)
+			{
+				cancellationToken.ThrowIfCancellationRequested();
+			}
+		}
+
 		var process = new System.Diagnostics.Process();
 		process.StartInfo.FileName = "rundll32.exe";
 		process.StartInfo.Arguments = "url.dll,FileProtocolHandler " + authorizeUri.ToString();
 		process.StartInfo.UseShellExecute = true;
 		process.Start();
-		tasks.Add(g.ToString(), tcs);
+		tasks.Add(taskId, tcs);
 		var uri = await tcs.Task.ConfigureAwait(false);
 		return new WebAuthenticatorResult(uri);
 	}
 }
-
 /// <summary>
 /// Web Authenticator result parsed from the callback Url.
 /// </summary>
 /// <seealso cref="WebAuthenticator"/>
 public class WebAuthenticatorResult
 {
-	public Uri? RawCallbackUrl { get; }
 	/// <summary>
 	/// Initializes a new instance of the <see cref="WebAuthenticatorResult"/> class.
 	/// </summary>
 	/// <param name="callbackUrl">Callback url</param>
 	public WebAuthenticatorResult(Uri callbackUrl)
 	{
-		RawCallbackUrl = callbackUrl;
-
-		var query = new NameValueCollection();
-
-		// Retrieve from fragment
-		if (!string.IsNullOrEmpty(callbackUrl.Fragment) && callbackUrl.Fragment.Length>1)
-		{
-			var frag = callbackUrl.Fragment.Substring(1);
-			query = System.Web.HttpUtility.ParseQueryString(frag);
-		}
-
-		// Retrieve from query
-		if (!string.IsNullOrEmpty(callbackUrl.Query))
-		{
-			var str = callbackUrl.Query;
-			var q = System.Web.HttpUtility.ParseQueryString(str);
-			foreach (string key in q.Keys)
-			{
-				query[key] = q[key];
-			}
-		}
-
+		var str = string.Empty;
+		if (!string.IsNullOrEmpty(callbackUrl.Fragment))
+			str = callbackUrl.Fragment.Substring(1);
+		else if (!string.IsNullOrEmpty(callbackUrl.Query))
+			str = callbackUrl.Query;
+		var query = System.Web.HttpUtility.ParseQueryString(str);
 		foreach (string key in query.Keys)
 		{
 			if (key == "state")
 			{
-				var values = System.Web.HttpUtility.ParseQueryString(query[key] ?? string.Empty);
-				if (values["state"] is string state)
+				try
 				{
-					Properties[key] = state;
+					var jsonObject = System.Text.Json.Nodes.JsonObject.Parse(query[key] ?? "{}") as JsonObject;
+
+					if (jsonObject is not null && jsonObject.ContainsKey("state") && jsonObject["state"] is JsonValue jvalue && jvalue.TryGetValue<string>(out string? value))
+					{
+						Properties[key] = value;
+						continue;
+					}
 				}
-				continue;
+				catch { }
 			}
 			Properties[key] = query[key] ?? String.Empty;
 		}
