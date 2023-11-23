@@ -40,7 +40,7 @@ public sealed partial class MainPage : Page
 
 The first thing you will notice with C# Markup is that there is nothing special to learn. You can simply create a new instance of the controls you want to work with (eg `new TextBlock()`) and set properties using the generated extension method with the same name (eg `.Text("Hello Uno Platform!')`). 
 
-Unlike XAML which is littered with string constants, C# Markup provides a strongly typed API for setting properties. For example, in XAML you would set HorizontalAlignment with `HorizontalAlignment="Center"`, but in C# Markup you would use the `HorizontalAlignment` enum with `HorizontalAlignment.Center`, ensuring that you get compile time validation and intellisense for all the available values.
+Unlike XAML which is littered with string constants, C# Markup provides a strongly typed API for setting properties. For example, in XAML you would set `HorizontalAlignment` with `HorizontalAlignment="Center"`, but in C# Markup you would use the `HorizontalAlignment` enum with `HorizontalAlignment.Center`, ensuring that you get compile time validation and intellisense for all the available values.
 
 ## Getting Started
 
