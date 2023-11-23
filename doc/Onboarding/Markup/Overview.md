@@ -44,7 +44,7 @@ Unlike XAML which is littered with string constants, C# Markup provides a strong
 
 ## Getting Started
 
-Let's take a look at how to get started with C# Markup. We'll start with a simple sample that displays a counter and a button that increments the counter by a step size. We'll start with a simple ViewModel that has a `CounterValue` and a `StepSize` property, as well as a `IncrementCommand` that increments the `CounterValue` by the `StepSize` when executed. 
+Let's take a look at how to get started with C# Markup. We'll start with a simple sample that displays a counter and a button that increments the counter by a step size. The sample will have a ViewModel that has a `Count` and a `Step` property, as well as a `IncrementCommand` that increments the `Count` by the `Step` when executed. 
 
 ### Constructor and Properties
 
@@ -73,10 +73,10 @@ new TextBlock().Margin(12)
 
 ### Data Binding
 
-Since our counter example requires the value of the `TextBlock` to be updated each time the counter changes, we'll need to use data binding. C# Markup provides a strongly typed API for data binding, as shown in the following example that binds the `Text` property to the `CounterValue` property of the ViewModel.
+Since our counter example requires the value of the `TextBlock` to be updated each time the counter changes, we'll need to use data binding. C# Markup provides a strongly typed API for data binding, as shown in the following example that binds the `Text` property to the `Count` property of the ViewModel.
 
 ```cs
-new TextBlock().Text(() => vm.CounterValue)
+new TextBlock().Text(() => vm.Count)
 ```
 
 At this point you might be wondering what the `vm` is. C# Markup provides a strongly typed API for setting the `DataContext` of a control, as shown in the following example that sets the `DataContext` to the ViewModel. The `vm` is a placeholder reference for the ViewModel type that you provide to the `DataContext` extension.
@@ -84,33 +84,33 @@ At this point you might be wondering what the `vm` is. C# Markup provides a stro
 ```cs
 .DataContext(new MainViewModel(), (page, vm) => page
     .Content(
-        new TextBlock().Text(() => vm.CounterValue)
+        new TextBlock().Text(() => vm.Count)
     )
 );
 ```
 
-We refer to `vm` as a placeholder because at this point it is not actually a reference to the ViewModel. It is simply a placeholder that allows us to provide a strongly typed API for data binding. Rather than invoking the code `vm.CounterValue` when the `TextBlock` is created, the expression tree, `() => vm.CounterValue` is used to create a binding expression that will be evaluated when the `DataContext` for the `TextBlock` is set.
+We refer to `vm` as a placeholder because at this point it is not actually a reference to the ViewModel. It is simply a placeholder that allows us to provide a strongly typed API for data binding. Rather than invoking the code `vm.Count` when the `TextBlock` is created, the expression tree, `() => vm.Count` is used to create a binding expression that will be evaluated when the `DataContext` for the `TextBlock` is set.
 
 In the above example, an instance of `MainViewModel` is provided to the `DataContext` extension method. If an instance of the ViewModel isn't available at the time the `DataContext` is set, you can provide the type of the ViewModel instead, as shown in the following example.
 
 ```cs
 .DataContext<MainViewModel>((page, vm) => page
     .Content(
-        new TextBlock().Text(() => vm.CounterValue)
+        new TextBlock().Text(() => vm.Count)
     )
 );
 ```
 
-Currently the data binding is directly on the `CounterValue` property meaning that the text shown in the `TextBlock` will just be the value of the `CounterValue` property. However, we want to display the text "Counter: {value}" where {value} is the value of the `CounterValue` property. To do this we can provide a delegate that will be invoked each time the value of the `CounterValue` property changes, as shown in the following example.
+Currently the data binding is directly on the `Count` property meaning that the text shown in the `TextBlock` will just be the value of the `Count` property. However, we want to display the text "Counter: {value}" where {value} is the value of the `Count` property. To do this we can provide a delegate that will be invoked each time the value of the `Count` property changes, as shown in the following example.
 
 ```cs
-new TextBlock().Text(() => vm.CounterValue, count => $"Counter: {count}")
+new TextBlock().Text(() => vm.Count, count => $"Counter: {count}")
 ```
 
-In some case you need more control over the binding, such as when you need to change the binding mode or provide a converter. In these cases you can use the `Bind` extension method, as shown in the following example that two-way data binds the `StepSize` property to the `Text` property of a `TextBox`. 
+In some case you need more control over the binding, such as when you need to change the binding mode or provide a converter. In these cases you can use the `Bind` extension method, as shown in the following example that two-way data binds the `Step` property to the `Text` property of a `TextBox`. 
 
 ```cs
-new TextBox().Text(x => x.Bind(() => vm.StepSize).TwoWay()),
+new TextBox().Text(x => x.Bind(() => vm.Step).TwoWay()),
 ```
 
 ### Resources
@@ -123,7 +123,7 @@ this.Background(ThemeResource.Get<Brush>("ApplicationPageBackgroundThemeBrush"))
 
 ## Counter Sample
 
-Putting all the pieces we've just covered together, we have the layout of a counter application that will increment the `CounterValue` by the `StepSize`.
+Putting all the pieces we've just covered together, we have the layout of a counter application that will increment the `Count` by the `Step`.
 
 ```csharp
 public sealed partial class MainPage : Page
@@ -145,12 +145,12 @@ public sealed partial class MainPage : Page
                         .Margin(12)
                         .HorizontalAlignment(HorizontalAlignment.Center)
                         .PlaceholderText("Step Size")
-                        .Text(x => x.Bind(() => vm.StepSize).TwoWay()),
+                        .Text(x => x.Bind(() => vm.Step).TwoWay()),
                     new TextBlock()
                         .Margin(12)
                         .HorizontalAlignment(HorizontalAlignment.Center)
                         .TextAlignment(TextAlignment.Center)
-                        .Text(() => vm.CounterValue, txt => $"Counter: {txt}"),
+                        .Text(() => vm.Count, txt => $"Counter: {txt}"),
                     new Button()
                         .Margin(12)
                         .HorizontalAlignment(HorizontalAlignment.Center)
