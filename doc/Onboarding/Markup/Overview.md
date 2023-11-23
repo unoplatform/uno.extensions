@@ -64,7 +64,7 @@ In XAML you would can set the `Margin` property using a single number (for examp
 ```cs
 new TextBlock().Margin(new Thickness(12))
 ```
-However, C# Markup provides automatic type conversion for common types such as `Thickness`, as well as a number of other types such as `Brush`, `Color`, `CornerRadius`, `FontFamily`, `Geometry`, `ImageSource`, and `GridLength`. This means that you can set the `Margin` property using a single number, as shown in the following example.
+However, C# Markup provides automatic type conversion for common types such as `Thickness`, as well as a number of other types such as `Brush`, `Color`, `CornerRadius`, `FontFamily`, `Geometry` and `ImageSource`. This means that you can set the `Margin` property using a single number, as shown in the following example.
 
 ```cs
 new TextBlock().Margin(12)
