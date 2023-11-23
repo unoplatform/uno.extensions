@@ -2,7 +2,7 @@
 uid: Onboarding.Markup.CSharpMarkup
 ---
 
-# Uno C# Markup Overview
+# C# Markup
 
 ## Overview
 
@@ -11,11 +11,12 @@ C# Markup is a declarative, fluent-style syntax for defining the layout of an ap
 You will quickly discover why C# Markup is a developer favorite with:
 
 - A Declarative syntax
-- Strong Typing giving you compile time checks on your Bindings and Resources
-- Better Intellisense
-- Support for Custom Controls and 3rd party libraries
+- Strongly typed data binding
+- Intellisense and compile time validation
+- Refactoring support
+- Custom Controls and 3rd party libraries
 
-To have sense about how it would like, here's a simple Hello World sample:
+Let's jump in and take a look at a simple sample that displays 'Hello Uno Platform!' in the center of the screen:
 
 ```cs
 public sealed partial class MainPage : Page
@@ -37,134 +38,91 @@ public sealed partial class MainPage : Page
 }
 ```
 
-The first thing you will notice with C# Markup is that there is nothing special to learn. You can simply create a new instance of the controls you want to work with and access the generated extensions matching the names of the properties that you want to work with. Because we are in C# we can additionally benefit even when we are not Data Binding or using Resources with properties like our Vertical and Horizontal Alignment. Where we might have the magic string `Center` in XAML we get the full intellisense for the values on the associated enum with compile time validation that we do not have typos.
+The first thing you will notice with C# Markup is that there is nothing special to learn. You can simply create a new instance of the controls you want to work with (eg `new TextBlock()`) and set properties using the generated extension method with the same name (eg `.Text("Hello Uno Platform!')`). 
 
-## C# Markup APIs
+Unlike XAML which is littered with string constants, C# Markup provides a strongly typed API for setting properties. For example, in XAML you would set HorizontalAlignment with `HorizontalAlignment="Center"`, but in C# Markup you would use the `HorizontalAlignment` enum with `HorizontalAlignment.Center`, ensuring that you get compile time validation and intellisense for all the available values.
 
-Let's take a look into some APIs and how it's used. Strong typing is important to developers and C# Markup delivers on this by providing extensions on your UserControls to provide a delegate action with a value for your DataContext Type.
+## Getting Started
+
+Let's take a look at how to get started with C# Markup. We'll start with a simple sample that displays a counter and a button that increments the counter by a step size. We'll start with a simple ViewModel that has a `CounterValue` and a `StepSize` property, as well as a `IncrementCommand` that increments the `CounterValue` by the `StepSize` when executed. 
+
+### Constructor and Properties
+
+We'll start with creating a control and setting properties, as shown in the following example that creates a `TextBlock`. The fluent API allows you to chain together multiple properties, as shown in the following example that sets the `Margin`, `HorzontalTextAlignment` and `Text` properties.
 
 ```cs
-public sealed partial class MainPage : Page
-{
-    public MainPage()
-    {
-        this
-            .DataContext(new MainViewModel(), (page, vm) => page
-            .Content(
-                // Your Controls here...
-            ));
-    }
-}
+new TextBlock()
+    .Margin(12)
+    .HorizontalTextAlignment(TextAlignment.Center)
+    .Text("Counter: 0")
 ```
 
-An important consideration to remember is that within the delegate of the `DataContext` the `page` parameter will be the actual instance of the `MainPage` in this sample, or whatever the type is that you called the `DataContext` extension on. However, the `vm` parameter will be null, even if you have C# nullability enabled, and it will not give you warnings about it being null. This is by design. This parameter is meant specifically to provide you the strong typing you need for Binding Expressions without being obtrusive. It is not meant for you to set or update the values of the properties, only to use in Binding Expressions.
+Similar to the `HorizontalAlignment` property mentioned earlier, the `HorizontalTextAlignment` property is set using an enum rather than a string constant. This ensures that you get compile time validation and intellisense for all the available values.
 
-> [!NOTE]
-> While we have shown here the ability to provide an instance of your ViewModel to set the DataContext, you may optionally provide the generic overload that allows you provide the type with the understanding that the DataContext may be set automatically like it might be with Uno.Extensions.Navigation or Prism.
+The `Margin` property has the same name as the property in XAML, but the value is set using a different type. In XAML you would set the `Margin` property with `Margin="12"`, but `Margin` property in C# requires a `Thickness` type. Setting the `Margin` with `Margin(12)` is supported because C# Markup provides automatic type conversion for common types such as `Thickness`, as well as a number of other types such as `Brush`, `Color`, `CornerRadius`, `FontFamily`, `Geometry`, `ImageSource`, and `GridLength`. 
 
-### Bindings
+### Data Binding
 
-Now that we have the DataContext extension with a reference to our ViewModel type we can set up our binding with the strong typing we would expect. In it's most basic form we can simply provide a delegate using our `vm` property from the DataContext extension to access the property that we want to bind to.
+Since our counter example requires the value of the `TextBlock` to be updated each time the counter changes, we'll need to use data binding. C# Markup provides a strongly typed API for data binding, as shown in the following example that binds the `Text` property to the `CounterValue` property of the ViewModel.
 
 ```cs
-new TextBlock().Text(() => vm.Title)
+new TextBlock().Text(() => vm.CounterValue)
 ```
 
-Not all bindings are this simple though. Sometimes we actually have the wrong type or we need to do some sort of conversion. C# Markup makes this easy by providing the ability to provide a simple convert delegate with your binding like this:
+At this point you might be wondering what the `vm` is. C# Markup provides a strongly typed API for setting the `DataContext` of a control, as shown in the following example that sets the `DataContext` to the ViewModel. The `vm` is a placeholder reference for the ViewModel type that you provide to the `DataContext` extension.
 
 ```cs
-new TextBlock().Text(() => vm.CountValue, count => $"Counter: {count}")
+.DataContext(
+    new MainViewModel(), 
+    (page, vm) => page
+        .Content(
+            new TextBlock().Text(() => vm.CounterValue)
+        )
+);
 ```
 
-Sometimes though, we need more control over our bindings. We might need to change the binding mode, we may want to provide an instance of a ValueConverter we already have, we might need to also provide a delegate to ConvertBack, or maybe we want to set the source of the Binding. In these scenarios we can leverage the full `IDependencyPropertyBuilder` API to take more control over the specific properties that are available to us with our Binding.
+We refer to `vm` as a placeholder because at this point it is not actually a reference to the ViewModel. It is simply a placeholder that allows us to provide a strongly typed API for data binding. Rather than invoking the code `vm.CounterValue` when the `TextBlock` is created, the expression tree, `() => vm.CounterValue` is used to create a binding expression that will be evaluated when the `DataContext` for the `TextBlock` is set.
+
+In the above example, an instance of `MainViewModel` is provided to the `DataContext` extension method. If an instance of the ViewModel isn't available at the time the `DataContext` is set, you can provide the type of the ViewModel instead, as shown in the following example.
 
 ```cs
-new TextBox()
-    .Text(x => x.Bind(() => vm.SearchQuery)
-                .Convert(s => s.ToLower())
-                .ConvertBack(s => s.ToLower())
-                .TwoWay())
+.DataContext<MainViewModel>(
+    (page, vm) => page
+        .Content(
+            new TextBlock().Text(() => vm.CounterValue)
+        )
+);
 ```
 
-### Automatic Type Converters
-
-In addition to the strong typing that you would expect from C# Markup, we additionally provide overloads for certain common types that provide the automatic type conversion you might expect to make your development process easier.
-
-- Brush / SolidColorBrush
-  ```cs
-  new TextBlock()
-      .Foreground("#696969")
-      .Background(Colors.Red)
-  ```
-- Color
-  ```cs
-  new SolidColorBrush().Color("#696969")
-  ```
-- CornerRadius
-  ```cs
-  new Button().CornerRadius(15)
-  ```
-- FontFamily
-  ```cs
-  new TextBlock().FontFamily("Arial")
-  ```
-- Geometry
-  ```cs
-  new PathIcon().Data("{path string}")
-  ```
-- ImageSource
-  ```cs
-  new Image().Source("ms-appx:///Counter/Assets/logo.png")
-  ```
-- Thickness
-  ```cs
-  new TextBlock().Margin(5, 20)
-  ```
-
-In addition to these automatic overloads for these primitive types in C# Markup, there is additionally a helper to provide the same succinct syntax that you would expect in XAML rather than needing to provide the much more verbose Column or Row Definition types with appropriate GridLength instance for each Row or Column.
+Currently the data binding is directly on the `CounterValue` property meaning that the text shown in the `TextBlock` will just be the value of the `CounterValue` property. However, we want to display the text "Counter: {value}" where {value} is the value of the `CounterValue` property. To do this we can provide a delegate that will be invoked each time the value of the `CounterValue` property changes, as shown in the following example.
 
 ```cs
-new Grid()
-    .RowDefinitions("*, Auto, 30, 2*")
+new TextBlock().Text(() => vm.CounterValue, count => $"Counter: {count}")
+```
+
+In some case you need more control over the binding, such as when you need to change the binding mode or provide a converter. In these cases you can use the `Bind` extension method, as shown in the following example that two-way data binds the `StepSize` property to the `Text` property of a `TextBox`. 
+
+```cs
+new TextBox().Text(x => x.Bind(() => vm.StepSize).TwoWay()),
 ```
 
 ### Resources
 
-C# Markup provides a number of helpers to provide a strongly typed API to Get, Create and Add both Static and Theme Resources. To start let's look at how we might get the `ApplicationPageBackgroundThemeBrush` from the default WinUI Fluent Theme:
+C# Markup provides a strongly typed API to get, create and add both static and theme resources. For example, to set the `Background` to theme resource get the `ApplicationPageBackgroundThemeBrush` from the default WinUI Fluent theme:
 
 ```cs
-public sealed partial class MainPage : Page
-{
-    public MainPage()
-    {
-        this.Background(ThemeResource.Get<Brush>("ApplicationPageBackgroundThemeBrush"));
-    }
-}
+this.Background(ThemeResource.Get<Brush>("ApplicationPageBackgroundThemeBrush"));
 ```
 
-This declarative syntax for both `StaticResource` and `ThemeResource` provides you with self documenting code that is strongly typed ensuring that we know that we expect a Brush from our Resource and that we are getting it from the available Resources in the Visual Tree.
-
-We can however create custom Resources like:
+There are also predefined resources for theme brushes, as shown in the following example:
 
 ```cs
-public sealed partial class MainPage : Page
-{
-    private static readonly Resource<string> HelloWorld =
-        StaticResource.Create<string>(nameof(HelloWorld), "Hello Uno Platform");
-
-    public MainPage()
-    {
-        this.Resources(r => r.Add(HelloWorld))
-            .Content(
-                new TextBlock().Text(HelloWorld)
-            );
-    }
-}
+this.Background(Theme.Brushes.Background.Default);
 ```
 
-### Putting it Together
+## Counter Sample
 
-We've learned about using the `DataContext` for helping us provide strongly typed Bindings, using Resources, and even some of the helpers that we can use for common primitive types.
+Putting all the pieces we've just covered together, we have the layout of a counter application that will increment the `CounterValue` by the `StepSize`.
 
 ```csharp
 public sealed partial class MainPage : Page
@@ -172,37 +130,93 @@ public sealed partial class MainPage : Page
     public MainPage()
     {
         this
-            .DataContext(new MainViewModel(),(page, vm) => page
-            .Background(ThemeResource.Get<Brush>("ApplicationPageBackgroundThemeBrush"))
-            .Content(new StackPanel()
-                .VerticalAlignment(VerticalAlignment.Center)
-                .HorizontalAlignment(HorizontalAlignment.Center)
-                .Children(
-                    new Image()
-                        .Width(150)
-                        .Height(150)
-                        .Source("ms-appx:///Counter/Assets/logo.png"),
-                    new TextBox()
-                        .Margin(12)
-                        .PlaceholderText("Step Size")
-                        .Text(x => x.Bind(() => vm.StepSize).TwoWay()),
-                    new TextBlock()
-                        .Margin(12)
-                        .HorizontalTextAlignment(Microsoft.UI.Xaml.TextAlignment.Center)
-                        .Text(() => vm.CounterValue, txt => $"Counter: {txt}"),
-                    new Button()
-                        .Margin(12)
-                        .HorizontalAlignment(HorizontalAlignment.Center)
-                        .Command(() => vm.IncrementCommand)
-                        .Content("Click me to increment Counter by Step Size")
+            .DataContext(
+                new MainViewModel(),
+                (page, vm) => page
+                    .Background(Theme.Brushes.Background.Default)
+                    .Content(new StackPanel()
+                        .VerticalAlignment(VerticalAlignment.Center)
+                        .Children(
+                            new Image()
+                                .Width(150)
+                                .Height(150)
+                                .Margin(12)
+                                .HorizontalAlignment(HorizontalAlignment.Center)
+                                .Source("ms-appx:///Counter/Assets/logo.png"),
+                            new TextBox()
+                                .Margin(12)
+                                .HorizontalAlignment(HorizontalAlignment.Center)
+                                .PlaceholderText("Step Size")
+                                .Text(x => x.Bind(() => vm.StepSize).TwoWay()),
+                            new TextBlock()
+                                .Margin(12)
+                                .HorizontalAlignment(HorizontalAlignment.Center)
+                                .HorizontalTextAlignment(Microsoft.UI.Xaml.TextAlignment.Center)
+                                .Text(() => vm.CounterValue, txt => $"Counter: {txt}"),
+                            new Button()
+                                .Margin(12)
+                                .HorizontalAlignment(HorizontalAlignment.Center)
+                                .Command(() => vm.IncrementCommand)
+                                .Content("Click me to increment Counter by Step Size")
+                        )
+                    )
+            );
+    }
+}
+```
 
-                )));
+Looking at this full example, it's easy to see how C# Markup provides a succinct, self-documenting syntax for defining the layout of an application. However, setting the `Margin` and `HorizontalAlignment` for each control is a bit repetitive. The above code could be simplified by creating a helper extension method that sets the `Margin` and `HorizontalAlignment` for each control, as shown in the following example.
+
+```csharp
+public static class MainPageHelpers
+{
+    public static T CenterAndSpace<T>(this T element) where T : FrameworkElement
+        => element
+            .HorizontalAlignment(HorizontalAlignment.Center)
+            .Margin(12);
+    
+}
+```
+Using the `CenterAndSpace` extension method, the code can be simplified to the following:
+
+```csharp
+public sealed partial class MainPage : Page
+{
+    public MainPage()
+    {
+        this
+            .DataContext(
+                new MainViewModel(),
+                (page, vm) => page
+                    .Background(Theme.Brushes.Background.Default)
+                    .Content(new StackPanel()
+                        .VerticalAlignment(VerticalAlignment.Center)
+                        .Children(
+                            new Image()
+                                .Width(150)
+                                .Height(150)
+                                .CenterAndSpace()
+                                .Source("ms-appx:///Counter/Assets/logo.png"),
+                            new TextBox()
+                                .CenterAndSpace()
+                                .PlaceholderText("Step Size")
+                                .Text(x => x.Bind(() => vm.StepSize).TwoWay()),
+                            new TextBlock()
+                                .CenterAndSpace()
+                                .HorizontalTextAlignment(Microsoft.UI.Xaml.TextAlignment.Center)
+                                .Text(() => vm.CounterValue, txt => $"Counter: {txt}"),
+                            new Button()
+                                .CenterAndSpace()
+                                .Command(() => vm.IncrementCommand)
+                                .Content("Click me to increment Counter by Step Size")
+                        )
+                    )
+            );
     }
 }
 ```
 
 ## Conclusion
 
-With this overview you're ready to go and try out the C# markup for creating UIs.
+This overview has provided a brief introduction to C# Markup with the introduction on how to create controls and set properties, as well as how to use data binding and resources. Check out the full [Counter sample](TBD) to see how to use C# Markup to create a complete application. Check out the [C# Markup reference](TBD) for more information on available extension methods.
 
-// Suggest the next steps.
