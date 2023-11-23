@@ -48,18 +48,28 @@ Let's take a look at how to get started with C# Markup. We'll start with a simpl
 
 ### Constructor and Properties
 
-We'll start with creating a control and setting properties, as shown in the following example that creates a `TextBlock`. The fluent API allows you to chain together multiple properties, as shown in the following example that sets the `Margin`, `HorzontalTextAlignment` and `Text` properties.
+We'll start with creating a control and setting properties, as shown in the following example that creates a `TextBlock`. The fluent API allows you to chain together multiple properties, as shown in the following example that sets the `Margin`, `TextAlignment` and `Text` properties.
 
 ```cs
 new TextBlock()
     .Margin(12)
-    .HorizontalTextAlignment(TextAlignment.Center)
+    .TextAlignment(TextAlignment.Center)
     .Text("Counter: 0")
 ```
 
-Similar to the `HorizontalAlignment` property mentioned earlier, the `HorizontalTextAlignment` property is set using an enum rather than a string constant. This ensures that you get compile time validation and intellisense for all the available values.
+Similar to the `HorizontalAlignment` property mentioned earlier, the `TextAlignment` property is set using an enum rather than a string constant. This ensures that you get compile time validation and intellisense for all the available values.
 
-The `Margin` property has the same name as the property in XAML, but the value is set using a different type. In XAML you would set the `Margin` property with `Margin="12"`, but `Margin` property in C# requires a `Thickness` type. Setting the `Margin` with `Margin(12)` is supported because C# Markup provides automatic type conversion for common types such as `Thickness`, as well as a number of other types such as `Brush`, `Color`, `CornerRadius`, `FontFamily`, `Geometry`, `ImageSource`, and `GridLength`. 
+In XAML you would can set the `Margin` property using a single number (for example `<TextBlock Margin="12" />`), but the actual `Margin` property on the `TextBlock` class requires a `Thickness` type, resulting in the following C# Markup:
+
+```cs
+new TextBlock().Margin(new Thickness(12))
+```
+However, C# Markup provides automatic type conversion for common types such as `Thickness`, as well as a number of other types such as `Brush`, `Color`, `CornerRadius`, `FontFamily`, `Geometry`, `ImageSource`, and `GridLength`. This means that you can set the `Margin` property using a single number, as shown in the following example.
+
+```cs
+new TextBlock().Margin(12)
+```
+
 
 ### Data Binding
 
@@ -72,12 +82,10 @@ new TextBlock().Text(() => vm.CounterValue)
 At this point you might be wondering what the `vm` is. C# Markup provides a strongly typed API for setting the `DataContext` of a control, as shown in the following example that sets the `DataContext` to the ViewModel. The `vm` is a placeholder reference for the ViewModel type that you provide to the `DataContext` extension.
 
 ```cs
-.DataContext(
-    new MainViewModel(), 
-    (page, vm) => page
-        .Content(
-            new TextBlock().Text(() => vm.CounterValue)
-        )
+.DataContext(new MainViewModel(), (page, vm) => page
+    .Content(
+        new TextBlock().Text(() => vm.CounterValue)
+    )
 );
 ```
 
@@ -86,11 +94,10 @@ We refer to `vm` as a placeholder because at this point it is not actually a ref
 In the above example, an instance of `MainViewModel` is provided to the `DataContext` extension method. If an instance of the ViewModel isn't available at the time the `DataContext` is set, you can provide the type of the ViewModel instead, as shown in the following example.
 
 ```cs
-.DataContext<MainViewModel>(
-    (page, vm) => page
-        .Content(
-            new TextBlock().Text(() => vm.CounterValue)
-        )
+.DataContext<MainViewModel>((page, vm) => page
+    .Content(
+        new TextBlock().Text(() => vm.CounterValue)
+    )
 );
 ```
 
@@ -123,38 +130,35 @@ public sealed partial class MainPage : Page
 {
     public MainPage()
     {
-        this
-            .DataContext(
-                new MainViewModel(),
-                (page, vm) => page
-                    .Background(Theme.Brushes.Background.Default)
-                    .Content(new StackPanel()
-                        .VerticalAlignment(VerticalAlignment.Center)
-                        .Children(
-                            new Image()
-                                .Width(150)
-                                .Height(150)
-                                .Margin(12)
-                                .HorizontalAlignment(HorizontalAlignment.Center)
-                                .Source("ms-appx:///Counter/Assets/logo.png"),
-                            new TextBox()
-                                .Margin(12)
-                                .HorizontalAlignment(HorizontalAlignment.Center)
-                                .PlaceholderText("Step Size")
-                                .Text(x => x.Bind(() => vm.StepSize).TwoWay()),
-                            new TextBlock()
-                                .Margin(12)
-                                .HorizontalAlignment(HorizontalAlignment.Center)
-                                .HorizontalTextAlignment(Microsoft.UI.Xaml.TextAlignment.Center)
-                                .Text(() => vm.CounterValue, txt => $"Counter: {txt}"),
-                            new Button()
-                                .Margin(12)
-                                .HorizontalAlignment(HorizontalAlignment.Center)
-                                .Command(() => vm.IncrementCommand)
-                                .Content("Click me to increment Counter by Step Size")
-                        )
-                    )
-            );
+        this.DataContext(new MainViewModel(),(page, vm) => page
+            .Background(ThemeResource.Get<Brush>("ApplicationPageBackgroundThemeBrush"))
+            .Content(new StackPanel()
+                .VerticalAlignment(VerticalAlignment.Center)
+                .Children(
+                    new Image()
+                        .Width(150)
+                        .Height(150)
+                        .Margin(12)
+                        .HorizontalAlignment(HorizontalAlignment.Center)
+                        .Source("ms-appx:///Counter/Assets/logo.png"),
+                    new TextBox()
+                        .Margin(12)
+                        .HorizontalAlignment(HorizontalAlignment.Center)
+                        .PlaceholderText("Step Size")
+                        .Text(x => x.Bind(() => vm.StepSize).TwoWay()),
+                    new TextBlock()
+                        .Margin(12)
+                        .HorizontalAlignment(HorizontalAlignment.Center)
+                        .TextAlignment(TextAlignment.Center)
+                        .Text(() => vm.CounterValue, txt => $"Counter: {txt}"),
+                    new Button()
+                        .Margin(12)
+                        .HorizontalAlignment(HorizontalAlignment.Center)
+                        .Command(() => vm.IncrementCommand)
+                        .Content("Click me to increment Counter by Step Size")
+                )
+            )
+        );
     }
 }
 ```
