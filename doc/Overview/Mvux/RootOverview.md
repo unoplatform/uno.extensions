@@ -51,4 +51,4 @@ Key Features in the Code:
 
 * **Parameter Flexibility**: The method accepts a step parameter, which can be provided by the view using the command parameter. If not provided, it defaults to the `Step` state, offering flexibility and consistency.
 
-MVUX empowers developers to implement the presentation layer quickly and efficiently, allowing a primary focus on business logic. For a more in-depth exploration, consult the comprehensive [MVUX documentation](https://platform.uno/docs/articles/external/uno.extensions/doc/Overview/Mvux/Overview.html).
+MVUX empowers developers to implement the presentation layer quickly and efficiently, allowing a primary focus on business logic. For a more in-depth exploration, consult the comprehensive [MVUX documentation](xref:Overview.Mvux.Overview).
