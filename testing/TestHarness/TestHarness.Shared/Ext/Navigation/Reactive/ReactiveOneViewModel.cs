@@ -13,6 +13,17 @@ public partial record ReactiveOneViewModel (INavigator Navigator)
 	{
 		await Navigator.NavigateDataAsync(this, data:new TwoModel(new ReactiveWidget("From Two",56)));
 	}
+
+	public async Task GoToThree()
+	{
+		await Navigator.NavigateViewModelAsync<ReactiveThreeViewModel>(this);
+	}
+
+	public async Task GoToThreeData()
+	{
+		await Navigator.NavigateDataAsync(this, data: new ThreeModel(new ReactiveWidget("From Three", 56)));
+	}
+
 	public async Task ShowDialog()
 	{
 		var result = await Navigator.ShowMessageDialogAsync<object>(this, "LocalizedConfirm");
@@ -24,5 +35,6 @@ public record TwoModel(ReactiveWidget Widget);
 public record ThreeModel(ReactiveWidget Widget);
 public record FourModel(ReactiveWidget Widget);
 public record FiveModel(ReactiveWidget Widget);
+public record SixModel(ReactiveWidget Widget);
 
 public record ReactiveWidget(string Name, double Weight);

@@ -44,4 +44,38 @@ public class MappedRouteResolver : RouteResolverDefault
 		}
 		return base.InternalFindByViewModel(viewModelType);
 	}
+
+	protected override RouteInfo? InternalDefaultMapping(string? path = null, Type? view = null, Type? viewModel = null)
+	{
+		// Check to see if the viewmodel type specified is actually a mapped viewmodel (eg a bindableviewmodel in case of mvux)
+		// If it is, set viewModel to be the un-mapped viewmodel type so that the routemap can be correctly created.
+		if(viewModel is not null &&
+			_viewModelMappings.FirstOrDefault(x=>x.Value==viewModel) is { } mapping)
+		{
+			viewModel = mapping.Key;
+		}
+
+		var routeInfo = base.InternalDefaultMapping(path, view, viewModel);
+		if (routeInfo?.ViewModel != null &&
+			_viewModelMappings.TryGetValue(routeInfo.ViewModel, out var bindableViewModel))
+		{
+			return FromRouteMap(new RouteMap(
+				Path: routeInfo.Path,
+				View: new MappedViewMap(
+						View: null,
+						ViewSelector: routeInfo.View,
+						ViewModel: routeInfo.ViewModel,
+						Data: new DataMap(
+							Data: routeInfo.Data,
+							UntypedToQuery: routeInfo.ToQuery,
+							UntypedFromQuery: routeInfo.FromQuery),
+						ResultData: routeInfo.ResultData,
+						MappedViewModel: bindableViewModel),
+				IsDefault: routeInfo.IsDefault,
+				DependsOn: routeInfo.DependsOn,
+				Init: routeInfo.Init
+				));
+		}
+		return routeInfo;
+	}
 }

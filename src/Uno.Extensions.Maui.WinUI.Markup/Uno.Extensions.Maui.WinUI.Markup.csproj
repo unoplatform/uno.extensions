@@ -4,7 +4,7 @@
 	<PropertyGroup>
 		<UseMaui>true</UseMaui>
 		<RootNamespace>Uno.Extensions.Maui</RootNamespace>
-		<NoWarn>$(NoWarn);NU5104;NU5048;NU1009</NoWarn>
+		<NoWarn>$(NoWarn);NU5104;NU5048;NU1009;NU1504;CS0436</NoWarn>
 		<Description>Extensions to embed .NET MAUI controls within your Uno app using C# Markup.</Description>
 		<!--Temporary disable missing XML doc until fixed in the whole package-->
 		<WarningsNotAsErrors>$(WarningsNotAsErrors);CS1591</WarningsNotAsErrors>
@@ -12,9 +12,11 @@
 		<IsMauiEmbedding>false</IsMauiEmbedding>
 		<IsMauiEmbedding Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android' OR $([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios' OR $([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst' OR $(TargetFramework.Contains('windows10'))">true</IsMauiEmbedding>
 		<DefineConstants Condition="$(IsMauiEmbedding)">$(DefineConstants);MAUI_EMBEDDING</DefineConstants>
+		<WinAppSdkVersion>1.3.230724000</WinAppSdkVersion>
 	</PropertyGroup>
 
 	<ItemGroup>
+		<PackageReference Include="Microsoft.Extensions.Logging" />
 		<PackageReference Include="Uno.WinUI.Markup" />
 		<PackageReference Include="Uno.Extensions.Markup.Generators" PrivateAssets="All" />
 	</ItemGroup>

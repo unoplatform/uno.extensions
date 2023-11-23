@@ -22,6 +22,7 @@ public partial class ReactiveThreeViewModel : BaseViewModel
 
 	public async Task GoBack()
 	{
-		await Navigator.GoBack(this);
+		var dataModel = await DataModel;
+		await Navigator.NavigateBackWithResultAsync(this, data: dataModel);
 	}
 }
