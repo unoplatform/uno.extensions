@@ -165,57 +165,6 @@ public sealed partial class MainPage : Page
 }
 ```
 
-Looking at this full example, it's easy to see how C# Markup provides a succinct, self-documenting syntax for defining the layout of an application. However, setting the `Margin` and `HorizontalAlignment` for each control is a bit repetitive. The above code could be simplified by creating a helper extension method that sets the `Margin` and `HorizontalAlignment` for each control, as shown in the following example.
-
-```csharp
-public static class MainPageHelpers
-{
-    public static T CenterAndSpace<T>(this T element) where T : FrameworkElement
-        => element
-            .HorizontalAlignment(HorizontalAlignment.Center)
-            .Margin(12);
-    
-}
-```
-Using the `CenterAndSpace` extension method, the code can be simplified to the following:
-
-```csharp
-public sealed partial class MainPage : Page
-{
-    public MainPage()
-    {
-        this
-            .DataContext(
-                new MainViewModel(),
-                (page, vm) => page
-                    .Background(Theme.Brushes.Background.Default)
-                    .Content(new StackPanel()
-                        .VerticalAlignment(VerticalAlignment.Center)
-                        .Children(
-                            new Image()
-                                .Width(150)
-                                .Height(150)
-                                .CenterAndSpace()
-                                .Source("ms-appx:///Counter/Assets/logo.png"),
-                            new TextBox()
-                                .CenterAndSpace()
-                                .PlaceholderText("Step Size")
-                                .Text(x => x.Bind(() => vm.StepSize).TwoWay()),
-                            new TextBlock()
-                                .CenterAndSpace()
-                                .HorizontalTextAlignment(Microsoft.UI.Xaml.TextAlignment.Center)
-                                .Text(() => vm.CounterValue, txt => $"Counter: {txt}"),
-                            new Button()
-                                .CenterAndSpace()
-                                .Command(() => vm.IncrementCommand)
-                                .Content("Click me to increment Counter by Step Size")
-                        )
-                    )
-            );
-    }
-}
-```
-
 ## Conclusion
 
 This overview has provided a brief introduction to C# Markup with the introduction on how to create controls and set properties, as well as how to use data binding and resources. Check out the full [Counter sample](TBD) to see how to use C# Markup to create a complete application. Check out the [C# Markup reference](TBD) for more information on available extension methods.
