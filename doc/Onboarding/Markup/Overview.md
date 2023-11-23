@@ -114,12 +114,6 @@ C# Markup provides a strongly typed API to get, create and add both static and t
 this.Background(ThemeResource.Get<Brush>("ApplicationPageBackgroundThemeBrush"));
 ```
 
-There are also predefined resources for theme brushes, as shown in the following example:
-
-```cs
-this.Background(Theme.Brushes.Background.Default);
-```
-
 ## Counter Sample
 
 Putting all the pieces we've just covered together, we have the layout of a counter application that will increment the `CounterValue` by the `StepSize`.
