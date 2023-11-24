@@ -34,7 +34,7 @@ internal sealed class DifferentialImmutableList<T> : IImmutableList<T>, IDiffere
 	public bool IsSynchronized => true;
 
 	/// <inheritdoc />
-	public object? SyncRoot => this;
+	public object SyncRoot => this;
 
 	/// <inheritdoc />
 	public bool IsReadOnly => true;
@@ -43,18 +43,18 @@ internal sealed class DifferentialImmutableList<T> : IImmutableList<T>, IDiffere
 	public T this[int index] => (T)Head.ElementAt(index)!;
 
 	/// <inheritdoc />
-	object IList.this[int index]
+	object? IList.this[int index]
 	{
 		get => (T)Head.ElementAt(index)!;
 		set => throw NotSupported();
 	}
 
 	/// <inheritdoc />
-	[Pure] public int IndexOf(T item, int index, int count, IEqualityComparer<T> equalityComparer)
+	[Pure] public int IndexOf(T item, int index, int count, IEqualityComparer<T>? equalityComparer)
 		=> Head.IndexOf(item, index, equalityComparer?.ToEqualityComparer());
 
 	/// <inheritdoc />
-	[Pure] public int LastIndexOf(T item, int index, int count, IEqualityComparer<T> equalityComparer)
+	[Pure] public int LastIndexOf(T item, int index, int count, IEqualityComparer<T>? equalityComparer)
 		=> throw new NotSupportedException();
 
 	/// <inheritdoc cref="IImmutableList{T}" />
@@ -74,12 +74,12 @@ internal sealed class DifferentialImmutableList<T> : IImmutableList<T>, IDiffere
 	[Pure] IImmutableList<T> IImmutableList<T>.InsertRange(int index, IEnumerable<T> items) => InsertRange(index, items.ToImmutableList());
 
 	/// <inheritdoc cref="IImmutableList{T}" />
-	[Pure] public DifferentialImmutableList<T> Remove(T value, IEqualityComparer<T> equalityComparer)
+	[Pure] public DifferentialImmutableList<T> Remove(T value, IEqualityComparer<T>? equalityComparer)
 	{
 		var index = Head.IndexOf(value, 0, equalityComparer?.ToEqualityComparer());
 		return new(new RemoveNode(Head, value, index));
 	}
-	[Pure] IImmutableList<T> IImmutableList<T>.Remove(T value, IEqualityComparer<T> equalityComparer) => Remove(value, equalityComparer);
+	[Pure] IImmutableList<T> IImmutableList<T>.Remove(T value, IEqualityComparer<T>? equalityComparer) => Remove(value, equalityComparer);
 
 	/// <inheritdoc cref="IImmutableList{T}" />
 	[Pure] public DifferentialImmutableList<T> RemoveAll(Predicate<T> match)
@@ -100,7 +100,7 @@ internal sealed class DifferentialImmutableList<T> : IImmutableList<T>, IDiffere
 
 	/// <inheritdoc cref="IImmutableList{T}" />
 	//public DifferentialImmutableList<T> RemoveRange(IEnumerable<T> items, IEqualityComparer<T> equalityComparer)
-	[Pure] IImmutableList<T> IImmutableList<T>.RemoveRange(IEnumerable<T> items, IEqualityComparer<T> equalityComparer) => throw new NotSupportedException();
+	[Pure] IImmutableList<T> IImmutableList<T>.RemoveRange(IEnumerable<T> items, IEqualityComparer<T>? equalityComparer) => throw new NotSupportedException();
 
 	/// <inheritdoc cref="IImmutableList{T}" />
 	[Pure] public DifferentialImmutableList<T> RemoveRange(int index, int count) => new(new RemoveNode(Head, index, count));
@@ -121,7 +121,7 @@ internal sealed class DifferentialImmutableList<T> : IImmutableList<T>, IDiffere
 
 	/// <inheritdoc cref="IImmutableList{T}" />
 	//public DifferentialImmutableList<T> Replace(T oldValue, T newValue, IEqualityComparer<T> equalityComparer) => throw new NotSupportedException();
-	[Pure] IImmutableList<T> IImmutableList<T>.Replace(T oldValue, T newValue, IEqualityComparer<T> equalityComparer) => throw new NotSupportedException();
+	[Pure] IImmutableList<T> IImmutableList<T>.Replace(T oldValue, T newValue, IEqualityComparer<T>? equalityComparer) => throw new NotSupportedException();
 
 	/// <summary>
 	/// Moves a range of items within the collection
@@ -141,19 +141,19 @@ internal sealed class DifferentialImmutableList<T> : IImmutableList<T>, IDiffere
 	[Pure] public DifferentialImmutableList<T> ReplaceAt(int index, T newValue) => new(new ReplaceNode(Head, Head.ElementAt(index), newValue, index));
 
 	/// <inheritdoc />
-	bool IList.Contains(object value) => ((IList)this).IndexOf(value) >= 0;
+	bool IList.Contains(object? value) => ((IList)this).IndexOf(value) >= 0;
 
 	/// <inheritdoc />
-	int IList.IndexOf(object value) => Head.IndexOf(value, 0);
+	int IList.IndexOf(object? value) => Head.IndexOf(value, 0);
 
 	/// <inheritdoc />
-	int IList.Add(object value) => throw NotSupported();
+	int IList.Add(object? value) => throw NotSupported();
 
 	/// <inheritdoc />
-	void IList.Insert(int index, object value) => throw NotSupported();
+	void IList.Insert(int index, object? value) => throw NotSupported();
 
 	/// <inheritdoc />
-	void IList.Remove(object value) => throw NotSupported();
+	void IList.Remove(object? value) => throw NotSupported();
 
 	/// <inheritdoc />
 	void IList.RemoveAt(int index) => throw NotSupported();

@@ -47,16 +47,16 @@ internal class ListToUntypedList<T> : IList, IList<T>, IReadOnlyList<T>, ICollec
 	}
 
 	/// <inheritdoc />
-	public bool Contains(object value)
-		=> _inner.Contains((T)value);
+	public bool Contains(object? value)
+		=> _inner.Contains((T)value!); // Ignore null check as the T might be a value type or a nullable type
 
 	/// <inheritdoc />
 	public bool Contains(T item)
 		=> _inner.Contains(item);
 
 	/// <inheritdoc />
-	public int IndexOf(object value)
-		=> _inner.IndexOf((T)value);
+	public int IndexOf(object? value)
+		=> _inner.IndexOf((T)value!); // Ignore null check as the T might be a value type or a nullable type
 
 	/// <inheritdoc />
 	public int IndexOf(T item)
@@ -79,9 +79,9 @@ internal class ListToUntypedList<T> : IList, IList<T>, IReadOnlyList<T>, ICollec
 		=> _inner.CopyTo(array, arrayIndex);
 
 	/// <inheritdoc />
-	public int Add(object value)
+	public int Add(object? value)
 	{
-		_inner.Add((T)value);
+		_inner.Add((T)value!); // Ignore null check as the T might be a value type or a nullable type
 		return _inner.Count - 1;
 	}
 
@@ -89,9 +89,21 @@ internal class ListToUntypedList<T> : IList, IList<T>, IReadOnlyList<T>, ICollec
 	public void Add(T item)
 		=> _inner.Add(item);
 
+	
 	/// <inheritdoc />
-	public void Insert(int index, object value)
-		=> _inner.Insert(index, (T)value);
+	public void Insert(int index, object? value)
+	{
+		switch (value)
+		{
+			case null:
+				throw new ArgumentNullException(nameof(value));
+			case T t:
+				_inner.Insert(index, t);
+				break;
+			default:
+				throw new ArgumentOutOfRangeException(nameof(value), $"Value must be of type {typeof(T)}");
+		}
+	}
 
 	/// <inheritdoc />
 	public void Insert(int index, T item)
@@ -102,8 +114,13 @@ internal class ListToUntypedList<T> : IList, IList<T>, IReadOnlyList<T>, ICollec
 		=> _inner.RemoveAt(index);
 
 	/// <inheritdoc />
-	public void Remove(object value)
-		=> _inner.Remove((T)value);
+	public void Remove(object? value)
+	{
+		if (value is T t)
+		{
+			_inner.Remove(t);
+		}
+	}
 
 	/// <inheritdoc />
 	public bool Remove(T item)

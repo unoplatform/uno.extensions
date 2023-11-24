@@ -45,7 +45,7 @@ internal class ListStateImpl<T> : FeedToListFeedAdapter<T>, IListState<T>, IStat
 		=> base.GetHashCode() ^ _implementation.GetHashCode();
 
 	/// <inheritdoc />
-	public override bool Equals(object obj)
+	public override bool Equals(object? obj)
 		=> obj is ListStateImpl<T> other && Equals(this, other);
 
 	public static bool operator ==(ListStateImpl<T> left, ListStateImpl<T> right)

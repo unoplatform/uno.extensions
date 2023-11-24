@@ -45,7 +45,7 @@ public readonly record struct MessageAxisValue
 	}
 
 	/// <inheritdoc />
-	public override string ToString()
+	public override string? ToString()
 		=> (IsSet, Value) switch
 		{
 			(false, _) => "--unset--",

@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Diagnostics;
 using System.Linq;
 using Uno.Extensions;
 using Uno.Extensions.Reactive.Utils;
@@ -19,9 +20,11 @@ internal sealed class AddNode : IDifferentialCollectionNode
 
 	public AddNode(IDifferentialCollectionNode previous, NotifyCollectionChangedEventArgs addArg)
 	{
+		Debug.Assert(addArg.Action is NotifyCollectionChangedAction.Add);
+
 		_previous = previous;
-		_added = addArg.NewItems;
-		_addedCount = addArg.NewItems.Count;
+		_added = addArg.NewItems!;
+		_addedCount = addArg.NewItems!.Count;
 
 		_totalCount = previous.Count + _addedCount;
 		_fromIndex = addArg.NewStartingIndex;

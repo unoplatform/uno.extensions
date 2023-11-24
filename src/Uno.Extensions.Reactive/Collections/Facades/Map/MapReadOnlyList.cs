@@ -50,13 +50,13 @@ internal class MapReadOnlyList<TFrom, TTo> : IList, IList<TTo>, IReadOnlyList<TT
 
 	object? IList.this[int index]
 	{
-		get => _converter.Convert(_source[index]);
+		get => _converter.Convert((TFrom)_source[index]!);
 		set => throw NotSupported();
 	}
 	/// <inheritdoc />
 	public TTo this[int index]
 	{
-		get => _converter.Convert(_source[index]);
+		get => _converter.Convert((TFrom)_source[index]!);
 		set => throw NotSupported();
 	}
 
@@ -66,7 +66,7 @@ internal class MapReadOnlyList<TFrom, TTo> : IList, IList<TTo>, IReadOnlyList<TT
 	public IEnumerator<TTo> GetEnumerator() => new MapEnumerator<TFrom, TTo>(_converter, _source.GetEnumerator());
 
 	/// <inheritdoc />
-	public bool Contains(object value) => Contains((TTo)value);
+	public bool Contains(object? value) => value is TTo t && Contains(t);
 
 	/// <inheritdoc />
 	public bool Contains(TTo item)
@@ -76,7 +76,7 @@ internal class MapReadOnlyList<TFrom, TTo> : IList, IList<TTo>, IReadOnlyList<TT
 	}
 
 	/// <inheritdoc />
-	public int IndexOf(object value) => _source.IndexOf(_converter.ConvertBack(value));
+	public int IndexOf(object? value) => value is TTo t ? _source.IndexOf(_converter.ConvertBack(t)) : -1;
 	/// <inheritdoc />
 	public int IndexOf(TTo item) => _source.IndexOf(_converter.ConvertBack(item));
 
@@ -91,10 +91,10 @@ internal class MapReadOnlyList<TFrom, TTo> : IList, IList<TTo>, IReadOnlyList<TT
 	public void Add(TTo item) => throw NotSupported();
 
 	/// <inheritdoc />
-	public int Add(object value) => throw NotSupported();
+	public int Add(object? value) => throw NotSupported();
 
 	/// <inheritdoc />
-	public void Insert(int index, object value) => throw NotSupported();
+	public void Insert(int index, object? value) => throw NotSupported();
 
 	/// <inheritdoc />
 	public void Insert(int index, TTo item) => throw NotSupported();
@@ -103,7 +103,7 @@ internal class MapReadOnlyList<TFrom, TTo> : IList, IList<TTo>, IReadOnlyList<TT
 	public void RemoveAt(int index) => throw NotSupported();
 
 	/// <inheritdoc />
-	public void Remove(object value) => throw NotSupported();
+	public void Remove(object? value) => throw NotSupported();
 	/// <inheritdoc />
 	public bool Remove(TTo item) => throw NotSupported();
 

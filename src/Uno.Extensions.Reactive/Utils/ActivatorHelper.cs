@@ -78,7 +78,7 @@ internal static class ActivatorHelper
 				else
 				{
 					// Not found, try for get it from DI, or use null.
-					newArguments.Add((false, tryGetMissingArgument?.Invoke(param.ParameterType, param.Name)));
+					newArguments.Add((false, tryGetMissingArgument?.Invoke(param.ParameterType, param.Name!)));
 				}
 			}
 

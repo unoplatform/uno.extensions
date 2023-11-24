@@ -382,7 +382,7 @@ public sealed class SourceContext : IAsyncDisposable
 		RequestSource.RequestRaised += OnRequest;
 		ct.Register(() => RequestSource.RequestRaised -= OnRequest);
 
-		void OnRequest(object _, IContextRequest request)
+		void OnRequest(object? _, IContextRequest request)
 		{
 			if (request is EndRequest)
 			{
@@ -436,7 +436,7 @@ public sealed class SourceContext : IAsyncDisposable
 		{
 			_ctx = ctx;
 
-			_previous = _current.Value;
+			_previous = _current.Value ?? SourceContext.None;
 			_current.Value = ctx;
 		}
 

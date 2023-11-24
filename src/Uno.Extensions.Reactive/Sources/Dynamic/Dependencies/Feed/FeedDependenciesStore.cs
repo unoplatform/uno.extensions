@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 namespace Uno.Extensions.Reactive.Sources;
@@ -60,7 +61,7 @@ internal sealed class FeedDependenciesStore : IDisposable
 		}
 	}
 
-	public bool TryGet(IMessageEntry entry, out FeedDependency dependency)
+	public bool TryGet(IMessageEntry entry, [NotNullWhen(true)] out FeedDependency? dependency)
 	{
 		lock (_dependenciesPerCurrentEntry)
 		{

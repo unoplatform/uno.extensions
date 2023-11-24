@@ -155,12 +155,12 @@ internal class RichNotifyCollectionChangedEventArgs : NotifyCollectionChangedEve
 	{
 	}
 
-	private RichNotifyCollectionChangedEventArgs(NotifyCollectionChangedAction action, object changedItem)
+	private RichNotifyCollectionChangedEventArgs(NotifyCollectionChangedAction action, object? changedItem)
 		: base(action, changedItem)
 	{
 	}
 
-	private RichNotifyCollectionChangedEventArgs(NotifyCollectionChangedAction action, object changedItem, int index)
+	private RichNotifyCollectionChangedEventArgs(NotifyCollectionChangedAction action, object? changedItem, int index)
 		: base(action, changedItem, index)
 	{
 	}
@@ -175,12 +175,12 @@ internal class RichNotifyCollectionChangedEventArgs : NotifyCollectionChangedEve
 	{
 	}
 
-	private RichNotifyCollectionChangedEventArgs(NotifyCollectionChangedAction action, object newItem, object oldItem)
+	private RichNotifyCollectionChangedEventArgs(NotifyCollectionChangedAction action, object? newItem, object? oldItem)
 		: base(action, newItem, oldItem)
 	{
 	}
 
-	private RichNotifyCollectionChangedEventArgs(NotifyCollectionChangedAction action, object newItem, object oldItem, int index)
+	private RichNotifyCollectionChangedEventArgs(NotifyCollectionChangedAction action, object? newItem, object? oldItem, int index)
 		: base(action, newItem, oldItem, index)
 	{
 	}
@@ -195,7 +195,7 @@ internal class RichNotifyCollectionChangedEventArgs : NotifyCollectionChangedEve
 	{
 	}
 
-	private RichNotifyCollectionChangedEventArgs(NotifyCollectionChangedAction action, object changedItem, int index, int oldIndex)
+	private RichNotifyCollectionChangedEventArgs(NotifyCollectionChangedAction action, object? changedItem, int index, int oldIndex)
 		: base(action, changedItem, index, oldIndex)
 	{
 	}
@@ -239,27 +239,27 @@ internal class RichNotifyCollectionChangedEventArgs : NotifyCollectionChangedEve
 			case NotifyCollectionChangedAction.Add:
 				return new RichNotifyCollectionChangedEventArgs(
 					NotifyCollectionChangedAction.Add,
-					NewItems,
+					NewItems!,
 					NewStartingIndex + offset);
 
 			case NotifyCollectionChangedAction.Move:
 				return new RichNotifyCollectionChangedEventArgs(
 					NotifyCollectionChangedAction.Move,
-					NewItems,
+					NewItems!,
 					NewStartingIndex + offset,
 					OldStartingIndex + offset);
 
 			case NotifyCollectionChangedAction.Replace:
 				return new RichNotifyCollectionChangedEventArgs(
 					NotifyCollectionChangedAction.Replace,
-					NewItems,
-					OldItems,
+					NewItems!,
+					OldItems!,
 					NewStartingIndex + offset);
 
 			case NotifyCollectionChangedAction.Remove:
 				return new RichNotifyCollectionChangedEventArgs(
 					NotifyCollectionChangedAction.Remove,
-					OldItems,
+					OldItems!,
 					OldStartingIndex + offset);
 
 			case NotifyCollectionChangedAction.Reset:
@@ -325,16 +325,16 @@ internal class RichNotifyCollectionChangedEventArgs : NotifyCollectionChangedEve
 		switch (Action)
 		{
 			case NotifyCollectionChangedAction.Add:
-				return $"Add {NewItems.Count} items at {NewStartingIndex}";
+				return $"Add {NewItems!.Count} items at {NewStartingIndex}";
 
 			case NotifyCollectionChangedAction.Move:
-				return $"Move {NewItems.Count} items from {OldStartingIndex} to {NewStartingIndex}";
+				return $"Move {NewItems!.Count} items from {OldStartingIndex} to {NewStartingIndex}";
 
 			case NotifyCollectionChangedAction.Remove:
-				return $"Remove {OldItems.Count} items at {OldStartingIndex}";
+				return $"Remove {OldItems!.Count} items at {OldStartingIndex}";
 
 			case NotifyCollectionChangedAction.Replace:
-				return $"Replace {OldItems.Count} items at {OldStartingIndex} by {NewItems.Count} items";
+				return $"Replace {OldItems!.Count} items at {OldStartingIndex} by {NewItems!.Count} items";
 
 			case NotifyCollectionChangedAction.Reset:
 				return $"Reset from {ResetOldItems!.Count} items to {ResetNewItems!.Count} items";

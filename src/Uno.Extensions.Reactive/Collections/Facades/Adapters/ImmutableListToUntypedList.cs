@@ -51,7 +51,7 @@ internal class ImmutableListToUntypedList<T> : IList, IList<T>, IImmutableList<T
 	}
 
 	/// <inheritdoc />
-	public bool Contains(object value)
+	public bool Contains(object? value)
 		=> IndexOf(value) >= 0;
 
 	/// <inheritdoc />
@@ -59,7 +59,7 @@ internal class ImmutableListToUntypedList<T> : IList, IList<T>, IImmutableList<T
 		=> IndexOf(item) >= 0;
 
 	/// <inheritdoc />
-	public int IndexOf(object value)
+	public int IndexOf(object? value)
 		=> value is T t ? _inner.IndexOf(t) : -1;
 
 	/// <inheritdoc />
@@ -67,11 +67,11 @@ internal class ImmutableListToUntypedList<T> : IList, IList<T>, IImmutableList<T
 		=> _inner.IndexOf(item);
 
 	/// <inheritdoc />
-	public int IndexOf(T item, int index, int count, IEqualityComparer<T> equalityComparer)
+	public int IndexOf(T item, int index, int count, IEqualityComparer<T>? equalityComparer)
 		=> _inner.IndexOf(item, index, count, equalityComparer);
 
 	/// <inheritdoc />
-	public int LastIndexOf(T item, int index, int count, IEqualityComparer<T> equalityComparer)
+	public int LastIndexOf(T item, int index, int count, IEqualityComparer<T>? equalityComparer)
 		=> _inner.LastIndexOf(item, index, count, equalityComparer);
 
 	/// <inheritdoc />
@@ -91,7 +91,7 @@ internal class ImmutableListToUntypedList<T> : IList, IList<T>, IImmutableList<T
 		=> ((ICollection<T>)_inner).CopyTo(array, arrayIndex);
 
 	/// <inheritdoc />
-	int IList.Add(object value)
+	int IList.Add(object? value)
 		=> throw NotSupported();
 
 	/// <inheritdoc />
@@ -107,7 +107,7 @@ internal class ImmutableListToUntypedList<T> : IList, IList<T>, IImmutableList<T
 		=> _inner.AddRange(items);
 
 	/// <inheritdoc />
-	void IList.Insert(int index, object value)
+	void IList.Insert(int index, object? value)
 		=> throw NotSupported();
 
 	/// <inheritdoc />
@@ -127,11 +127,11 @@ internal class ImmutableListToUntypedList<T> : IList, IList<T>, IImmutableList<T
 		=> _inner.SetItem(index, value);
 
 	/// <inheritdoc />
-	public IImmutableList<T> Replace(T oldValue, T newValue, IEqualityComparer<T> equalityComparer)
+	public IImmutableList<T> Replace(T oldValue, T newValue, IEqualityComparer<T>? equalityComparer)
 		=> _inner.Replace(oldValue, newValue, equalityComparer);
 
 	/// <inheritdoc />
-	void IList.Remove(object value)
+	void IList.Remove(object? value)
 		=> throw NotSupported();
 
 	/// <inheritdoc />
@@ -139,7 +139,7 @@ internal class ImmutableListToUntypedList<T> : IList, IList<T>, IImmutableList<T
 		=> throw NotSupported();
 
 	/// <inheritdoc />
-	public IImmutableList<T> Remove(T value, IEqualityComparer<T> equalityComparer)
+	public IImmutableList<T> Remove(T value, IEqualityComparer<T>? equalityComparer)
 		=> _inner.Remove(value, equalityComparer);
 
 	/// <inheritdoc />
@@ -147,7 +147,7 @@ internal class ImmutableListToUntypedList<T> : IList, IList<T>, IImmutableList<T
 		=> _inner.RemoveAll(match);
 
 	/// <inheritdoc />
-	public IImmutableList<T> RemoveRange(IEnumerable<T> items, IEqualityComparer<T> equalityComparer)
+	public IImmutableList<T> RemoveRange(IEnumerable<T> items, IEqualityComparer<T>? equalityComparer)
 		=> _inner.RemoveRange(items, equalityComparer);
 
 	/// <inheritdoc />

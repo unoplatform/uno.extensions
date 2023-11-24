@@ -34,14 +34,14 @@ internal class SliceList : IList
 	public bool IsReadOnly => true;
 
 	/// <inheritdoc />
-	public object this[int index]
+	public object? this[int index]
 	{
 		get => _source[index];
 		set => throw NotSupported();
 	}
 
 	/// <inheritdoc />
-	public int Add(object value)
+	public int Add(object? value)
 		=> throw NotSupported();
 
 	/// <inheritdoc />
@@ -49,19 +49,19 @@ internal class SliceList : IList
 		=> throw NotSupported();
 
 	/// <inheritdoc />
-	public bool Contains(object value)
+	public bool Contains(object? value)
 		=> IndexOf(value) >= 0;
 
 	/// <inheritdoc />
-	public int IndexOf(object value)
+	public int IndexOf(object? value)
 		=> _source.IndexOf(value, _startIndex, Count, null);
 
 	/// <inheritdoc />
-	public void Insert(int index, object value)
+	public void Insert(int index, object? value)
 		=> throw NotSupported();
 
 	/// <inheritdoc />
-	public void Remove(object value)
+	public void Remove(object? value)
 		=> throw NotSupported();
 
 	/// <inheritdoc />

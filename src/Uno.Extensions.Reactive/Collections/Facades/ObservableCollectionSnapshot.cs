@@ -27,19 +27,19 @@ internal sealed class ObservableCollectionSnapshot<T> : IObservableCollectionSna
 
 	/// <inheritdoc />
 	public T this[int index] => _items[index];
-	object IList.this[int index]
+	object? IList.this[int index]
 	{
 		get => _items[index]!;
 		set => throw NotSupported();
 	}
 
-	bool IList.Contains(object value) => ((IList) _items).Contains(value);
+	bool IList.Contains(object? value) => ((IList) _items).Contains(value);
 
 	/// <inheritdoc />
 	public int IndexOf(T item, int startIndex, IEqualityComparer<T>? comparer = null) => comparer == null 
 		? _items.IndexOf(item, startIndex) 
 		: _items.IndexOf(item, startIndex, _items.Count - startIndex, comparer);
-	int IList.IndexOf(object value) => ((IList)_items).IndexOf(value);
+	int IList.IndexOf(object? value) => ((IList)_items).IndexOf(value);
 	int IObservableCollectionSnapshot.IndexOf(object item, int startIndex, IEqualityComparer? comparer) => comparer is null
 		? _items.IndexOf((T)item, startIndex)
 		: _items.IndexOf((T)item, startIndex, _items.Count - startIndex, comparer.ToEqualityComparer<T>());
@@ -56,10 +56,10 @@ internal sealed class ObservableCollectionSnapshot<T> : IObservableCollectionSna
 
 	void ICollection.CopyTo(Array array, int index) => ((ICollection)_items).CopyTo(array, index);
 
-	int IList.Add(object value) => throw NotSupported();
-	void IList.Insert(int index, object value) => throw NotSupported();
+	int IList.Add(object? value) => throw NotSupported();
+	void IList.Insert(int index, object? value) => throw NotSupported();
 	void IList.RemoveAt(int index) => throw NotSupported();
-	void IList.Remove(object value) => throw NotSupported();
+	void IList.Remove(object? value) => throw NotSupported();
 	void IList.Clear() => throw NotSupported();
 
 	private NotSupportedException NotSupported([CallerMemberName] string? method = null)

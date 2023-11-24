@@ -87,9 +87,13 @@ partial class CollectionAnalyzer
 		}
 
 		private RichNotifyCollectionChangedEventArgs CreateEvent(int from, int count)
+#if NET8_0_OR_GREATER
+			=> RichNotifyCollectionChangedEventArgs.ReplaceSome<T>(
+#else
 			=> RichNotifyCollectionChangedEventArgs.ReplaceSome(
-				_oldItems.Slice(from, count),
-				_newItems.Slice(from, count),
+#endif
+				_oldItems!.Slice(from, count),
+				_newItems!.Slice(from, count),
 				Starts + _indexOffset + from,
 				_isReplaceOfSameEntities);
 

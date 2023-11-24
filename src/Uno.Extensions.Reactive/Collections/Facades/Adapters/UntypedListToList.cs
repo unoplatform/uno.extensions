@@ -35,19 +35,19 @@ internal class UntypedListToList<T> : IList, IList<T>, IReadOnlyList<T>, ICollec
 	/// <inheritdoc cref="IList{T}" />
 	public T this[int index]
 	{
-		get => (T)_inner[index];
+		get => (T)_inner[index]!;
 		set => _inner[index] = value;
 	}
 
 	/// <inheritdoc />
-	object IList.this[int index]
+	object? IList.this[int index]
 	{
 		get => _inner[index];
 		set => _inner[index] = value;
 	}
 
 	/// <inheritdoc />
-	public bool Contains(object value)
+	public bool Contains(object? value)
 		=> _inner.Contains(value);
 
 	/// <inheritdoc />
@@ -55,7 +55,7 @@ internal class UntypedListToList<T> : IList, IList<T>, IReadOnlyList<T>, ICollec
 		=> _inner.Contains(item);
 
 	/// <inheritdoc />
-	public int IndexOf(object value)
+	public int IndexOf(object? value)
 		=> _inner.IndexOf(value);
 
 	/// <inheritdoc />
@@ -83,11 +83,11 @@ internal class UntypedListToList<T> : IList, IList<T>, IReadOnlyList<T>, ICollec
 		=> _inner.Add(item);
 
 	/// <inheritdoc />
-	public int Add(object value)
+	public int Add(object? value)
 		=> _inner.Add(value);
 
 	/// <inheritdoc />
-	public void Insert(int index, object value)
+	public void Insert(int index, object? value)
 		=> _inner.Insert(index, value);
 
 	/// <inheritdoc />
@@ -99,7 +99,7 @@ internal class UntypedListToList<T> : IList, IList<T>, IReadOnlyList<T>, ICollec
 		=> _inner.RemoveAt(index);
 
 	/// <inheritdoc />
-	public void Remove(object value)
+	public void Remove(object? value)
 		=> _inner.Remove(value);
 
 	/// <inheritdoc />

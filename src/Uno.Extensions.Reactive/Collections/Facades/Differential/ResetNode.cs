@@ -25,7 +25,7 @@ internal sealed class ResetNode : IDifferentialCollectionNode
 	public int Count => _items.Count;
 
 	/// <inheritdoc />
-	public object ElementAt(int index)
+	public object? ElementAt(int index)
 		=> _items[index];
 
 	/// <inheritdoc />

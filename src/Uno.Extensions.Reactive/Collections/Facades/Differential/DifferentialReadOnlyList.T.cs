@@ -30,11 +30,11 @@ internal class DifferentialReadOnlyList<T> : IList, IList<T>, IReadOnlyList<T>
 	/// <inheritdoc />
 	public int IndexOf(T value) => _head.IndexOf(value!, 0);
 	/// <inheritdoc />
-	public int IndexOf(object value) => _head.IndexOf(value, 0);
+	public int IndexOf(object? value) => _head.IndexOf(value, 0);
 	/// <inheritdoc />
 	public bool Contains(T value) => _head.IndexOf(value!, 0) >= 0;
 	/// <inheritdoc />
-	public bool Contains(object value) => _head.IndexOf(value, 0) >= 0;
+	public bool Contains(object? value) => _head.IndexOf(value, 0) >= 0;
 
 	/// <inheritdoc />
 	public IEnumerator<T> GetEnumerator() => new Enumerator<T>(_head);
@@ -71,13 +71,13 @@ internal class DifferentialReadOnlyList<T> : IList, IList<T>, IReadOnlyList<T>
 
 	/// <summary>Not supported on this collection</summary>
 	/// <exception cref="NotSupportedException">In any cases, this method is not supported on this collection.</exception>
-	public int Add(object value) => throw new NotSupportedException("'Add' not supported on read only collection.");
+	public int Add(object? value) => throw new NotSupportedException("'Add' not supported on read only collection.");
 	/// <summary>Not supported on this collection</summary>
 	/// <exception cref="NotSupportedException">In any cases, this method is not supported on this collection.</exception>
 	public void Add(T value) => throw new NotSupportedException("'Add' not supported on read only collection.");
 	/// <summary>Not supported on this collection</summary>
 	/// <exception cref="NotSupportedException">In any cases, this method is not supported on this collection.</exception>
-	public void Insert(int index, object value) => throw new NotSupportedException("'Insert' not supported on read only collection.");
+	public void Insert(int index, object? value) => throw new NotSupportedException("'Insert' not supported on read only collection.");
 	/// <summary>Not supported on this collection</summary>
 	/// <exception cref="NotSupportedException">In any cases, this method is not supported on this collection.</exception>
 	public void Insert(int index, T value) => throw new NotSupportedException("'Insert' not supported on read only collection.");
@@ -86,7 +86,7 @@ internal class DifferentialReadOnlyList<T> : IList, IList<T>, IReadOnlyList<T>
 	public void RemoveAt(int index) => throw new NotSupportedException("'RemoveAt' not supported on read only collection.");
 	/// <summary>Not supported on this collection</summary>
 	/// <exception cref="NotSupportedException">In any cases, this method is not supported on this collection.</exception>
-	public void Remove(object value) => throw new NotSupportedException("'Remove' not supported on read only collection.");
+	public void Remove(object? value) => throw new NotSupportedException("'Remove' not supported on read only collection.");
 	/// <summary>Not supported on this collection</summary>
 	/// <exception cref="NotSupportedException">In any cases, this method is not supported on this collection.</exception>
 	public bool Remove(T value) => throw new NotSupportedException("'Remove' not supported on read only collection.");

@@ -28,7 +28,7 @@ internal abstract class FeedSession : IAsyncDisposable
 		Context = context;
 
 		_ct = CancellationTokenSource.CreateLinkedTokenSource(ct);
-		_ctSub = ct.Register(static session => _ = ((FeedSession)session).DisposeAsync(), this, useSynchronizationContext: false);
+		_ctSub = ct.Register(static session => _ = ((FeedSession)session!).DisposeAsync(), this, useSynchronizationContext: false);
 	}
 
 	/// <summary>

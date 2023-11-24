@@ -128,7 +128,7 @@ partial class AsyncCommand
 			task.ContinueWith(
 				(_, state) =>
 				{
-					((CancellationTokenRegistration)state).Dispose();
+					((CancellationTokenRegistration)state!).Dispose();
 					Complete();
 				},
 				ctReg,
