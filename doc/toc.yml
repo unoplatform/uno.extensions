@@ -67,7 +67,7 @@
         - name: Enable internal Uno Platform logging
           href: Learn/Tutorials/Logging/HowTo-InternalLogging.md
     - name: Markup
-      href: Overview/Markup/GettingStarted.md
+      href: xref:Overview.Markup.Overview
       items:
         - name: Generating Extensions
           href: Overview/Markup/GeneratingExtensions.md
