@@ -79,7 +79,7 @@ Since our counter example requires the value of the `TextBlock` to be updated ea
 new TextBlock().Text(() => vm.Count)
 ```
 
-At this point you might be wondering what the `vm` is. C# Markup provides a strongly typed API for setting the `DataContext` of a control, as shown in the following example that sets the `DataContext` to the ViewModel. The `vm` is a placeholder reference for the ViewModel type that you provide to the `DataContext` extension.
+At this point you might be wondering what the `vm` is. The `vm` is a placeholder reference for the ViewModel type that you provide to the `DataContext` extension.
 
 ```cs
 .DataContext(new MainViewModel(), (page, vm) => page
