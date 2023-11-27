@@ -33,8 +33,8 @@ internal class ListStateImpl<T> : FeedToListFeedAdapter<T>, IListState<T>, IStat
 	public SourceContext Context => _implementation.Context;
 
 	/// <inheritdoc />
-	public ValueTask UpdateMessage(Action<MessageBuilder<IImmutableList<T>>> updater, CancellationToken ct)
-		=> _implementation.UpdateMessage(updater, ct);
+	public ValueTask UpdateMessageAsync(Action<MessageBuilder<IImmutableList<T>>> updater, CancellationToken ct)
+		=> _implementation.UpdateMessageAsync(updater, ct);
 
 	/// <inheritdoc />
 	public ValueTask DisposeAsync()

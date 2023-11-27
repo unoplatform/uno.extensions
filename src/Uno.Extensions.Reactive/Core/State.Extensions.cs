@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -12,6 +10,16 @@ namespace Uno.Extensions.Reactive;
 partial class State
 {
 	/// <summary>
+	/// [DEPRECATED] Use UpdateMessageAsync instead
+	/// </summary>
+	[EditorBrowsable(EditorBrowsableState.Never)]
+#if DEBUG // To avoid usage in internal reactive code, but without forcing apps to update right away
+	[Obsolete("Use UpdateMessageAsync")]
+#endif
+	public static ValueTask UpdateMessage<T>(this IState<T> state, Action<MessageBuilder<T>> updater, CancellationToken ct)
+		=> state.UpdateMessageAsync(updater, ct);
+
+	/// <summary>
 	/// Updates the value of a state
 	/// </summary>
 	/// <typeparam name="T">Type of the value of the state.</typeparam>
@@ -19,9 +27,9 @@ partial class State
 	/// <param name="updater">The update method to apply to the current value.</param>
 	/// <param name="ct">A cancellation to cancel the async operation.</param>
 	/// <returns>A ValueTask to track the async update.</returns>
-	public static ValueTask Update<T>(this IState<T> state, Func<T?, T?> updater, CancellationToken ct)
+	public static ValueTask UpdateAsync<T>(this IState<T> state, Func<T?, T?> updater, CancellationToken ct = default)
 		where T : notnull
-		=> state.UpdateMessage(
+		=> state.UpdateMessageAsync(
 			m =>
 			{
 				var updatedValue = updater(m.CurrentData.SomeOrDefault());
@@ -32,6 +40,17 @@ partial class State
 			ct);
 
 	/// <summary>
+	/// [DEPRECATED] Use UpdateAsync instead
+	/// </summary>
+	[EditorBrowsable(EditorBrowsableState.Never)]
+#if DEBUG // To avoid usage in internal reactive code, but without forcing apps to update right away
+	[Obsolete("Use UpdateAsync")]
+#endif
+	public static ValueTask Update<T>(this IState<T> state, Func<T?, T?> updater, CancellationToken ct)
+		where T : notnull
+		=> UpdateAsync(state, updater, ct);
+
+	/// <summary>
 	/// Updates the value of a state
 	/// </summary>
 	/// <typeparam name="T">Type of the value of the state.</typeparam>
@@ -39,18 +58,28 @@ partial class State
 	/// <param name="updater">The update method to apply to the current value.</param>
 	/// <param name="ct">A cancellation to cancel the async operation.</param>
 	/// <returns>A ValueTask to track the async update.</returns>
-	public static ValueTask UpdateData<T>(this IState<T> state, Func<Option<T>, Option<T>> updater, CancellationToken ct)
-		=> state.UpdateMessage(m => m.Data(updater(m.CurrentData)), ct);
+	public static ValueTask UpdateDataAsync<T>(this IState<T> state, Func<Option<T>, Option<T>> updater, CancellationToken ct = default)
+		=> state.UpdateMessageAsync(m => m.Data(updater(m.CurrentData)), ct);
 
 	/// <summary>
-	/// [DEPRECATED] Use UpdateData instead
+	/// [DEPRECATED] Use UpdateAsync instead
 	/// </summary>
 	[EditorBrowsable(EditorBrowsableState.Never)]
 #if DEBUG // To avoid usage in internal reactive code, but without forcing apps to update right away
-	[Obsolete("Use UpdateData")]
+	[Obsolete("Use UpdateDataAsync")]
+#endif
+	public static ValueTask UpdateData<T>(this IState<T> state, Func<Option<T>, Option<T>> updater, CancellationToken ct)
+		=> UpdateDataAsync(state, updater, ct);
+
+	/// <summary>
+	/// [DEPRECATED] Use UpdateDataAsync instead
+	/// </summary>
+	[EditorBrowsable(EditorBrowsableState.Never)]
+#if DEBUG // To avoid usage in internal reactive code, but without forcing apps to update right away
+	[Obsolete("Use UpdateDataAsync")]
 #endif
 	public static ValueTask UpdateValue<T>(this IState<T> state, Func<Option<T>, Option<T>> updater, CancellationToken ct)
-		=> UpdateData(state, updater, ct);
+		=> UpdateDataAsync(state, updater, ct);
 
 	/// <summary>
 	/// Sets the value of a state
@@ -60,9 +89,9 @@ partial class State
 	/// <param name="value">The value to set.</param>
 	/// <param name="ct">A cancellation to cancel the async operation.</param>
 	/// <returns>A ValueTask to track the async update.</returns>
-	public static ValueTask Set<T>(this IState<T> state, T? value, CancellationToken ct)
+	public static ValueTask SetAsync<T>(this IState<T> state, T? value, CancellationToken ct = default)
 		where T : struct
-		=> state.UpdateMessage(m => m.Data(Option.SomeOrNone(value)), ct);
+		=> state.UpdateMessageAsync(m => m.Data(Option.SomeOrNone(value)), ct);
 
 	/// <summary>
 	/// Sets the value of a state
@@ -71,19 +100,29 @@ partial class State
 	/// <param name="value">The value to set.</param>
 	/// <param name="ct">A cancellation to cancel the async operation.</param>
 	/// <returns>A ValueTask to track the async update.</returns>
-	public static ValueTask Set(this IState<string> state, string? value, CancellationToken ct)
-		=> state.UpdateMessage(m => m.Data(value is { Length: > 0 } ? value : Option<string>.None()), ct);
+	public static ValueTask SetAsync(this IState<string> state, string? value, CancellationToken ct = default)
+		=> state.UpdateMessageAsync(m => m.Data(value is { Length: > 0 } ? value : Option<string>.None()), ct);
 
 	/// <summary>
-	/// [DEPRECATED] Use .ForEachAsync instead
+	/// [DEPRECATED] Use SetAsync instead
 	/// </summary>
 	[EditorBrowsable(EditorBrowsableState.Never)]
 #if DEBUG // To avoid usage in internal reactive code, but without forcing apps to update right away
-	[Obsolete("Use ForEachAsync")]
+	[Obsolete("Use SetAsync")]
 #endif
-	public static IDisposable Execute<T>(this IState<T> state, AsyncAction<T?> action, [CallerMemberName] string? caller = null, [CallerLineNumber] int line = -1)
-		where T : notnull
-		=> ForEachAsync(state, action, caller, line);
+	public static ValueTask Set<T>(this IState<T> state, T? value, CancellationToken ct)
+		where T : struct
+		=> SetAsync(state, value, ct);
+
+	/// <summary>
+	/// [DEPRECATED] Use SetAsync instead
+	/// </summary>
+	[EditorBrowsable(EditorBrowsableState.Never)]
+#if DEBUG // To avoid usage in internal reactive code, but without forcing apps to update right away
+	[Obsolete("Use SetAsync")]
+#endif
+	public static ValueTask Set(this IState<string> state, string? value, CancellationToken ct)
+		=> SetAsync(state, value, ct);
 
 	/// <summary>
 	/// Execute an async callback each time the state is being updated.
@@ -97,4 +136,15 @@ partial class State
 	public static IDisposable ForEachAsync<T>(this IState<T> state, AsyncAction<T?> action, [CallerMemberName] string? caller = null, [CallerLineNumber] int line = -1)
 		where T : notnull
 		=> new StateForEach<T>(state, action, $"ForEachAsync defined in {caller} at line {line}.");
+
+	/// <summary>
+	/// [DEPRECATED] Use .ForEachAsync instead
+	/// </summary>
+	[EditorBrowsable(EditorBrowsableState.Never)]
+#if DEBUG // To avoid usage in internal reactive code, but without forcing apps to update right away
+	[Obsolete("Use ForEachAsync")]
+#endif
+	public static IDisposable Execute<T>(this IState<T> state, AsyncAction<T?> action, [CallerMemberName] string? caller = null, [CallerLineNumber] int line = -1)
+		where T : notnull
+		=> ForEachAsync(state, action, caller, line);
 }

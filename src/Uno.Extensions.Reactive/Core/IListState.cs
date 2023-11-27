@@ -20,6 +20,6 @@ public interface IListState<T> : IListFeed<T>, IState
 	/// <param name="updater">The update method to apply to the current message.</param>
 	/// <param name="ct">A cancellation to cancel the async operation.</param>
 	/// <returns>A ValueTask to track the async update.</returns>
-	/// <remarks>This is the raw way to update a state, you should consider using the <see cref="ListState.Update{T}"/> method instead.</remarks>
-	ValueTask UpdateMessage(Action<MessageBuilder<IImmutableList<T>>> updater, CancellationToken ct);
+	/// <remarks>This is the raw way to update a state, you should consider using the <see cref="ListState.UpdateAsync{T}(Uno.Extensions.Reactive.IListState{T},System.Func{System.Collections.Immutable.IImmutableList{T},System.Collections.Immutable.IImmutableList{T}},System.Threading.CancellationToken)"/> method instead.</remarks>
+	ValueTask UpdateMessageAsync(Action<MessageBuilder<IImmutableList<T>>> updater, CancellationToken ct = default);
 }

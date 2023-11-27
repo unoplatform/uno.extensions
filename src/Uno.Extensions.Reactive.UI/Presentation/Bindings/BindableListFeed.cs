@@ -91,12 +91,12 @@ public sealed partial class BindableListFeed<T> : ISignal<IMessage>, IListState<
 	}
 
 	/// <inheritdoc />
-	ValueTask IListState<T>.UpdateMessage(Action<MessageBuilder<IImmutableList<T>>> updater, CancellationToken ct)
-		=> _state.UpdateMessage(updater, ct);
+	ValueTask IListState<T>.UpdateMessageAsync(Action<MessageBuilder<IImmutableList<T>>> updater, CancellationToken ct)
+		=> _state.UpdateMessageAsync(updater, ct);
 
 	/// <inheritdoc />
-	ValueTask IState<IImmutableList<T>>.UpdateMessage(Action<MessageBuilder<IImmutableList<T>>> updater, CancellationToken ct)
-		=> _state.UpdateMessage(updater, ct);
+	ValueTask IState<IImmutableList<T>>.UpdateMessageAsync(Action<MessageBuilder<IImmutableList<T>>> updater, CancellationToken ct)
+		=> _state.UpdateMessageAsync(updater, ct);
 
 
 	private static BindableCollection CreateBindableCollection(IListState<T> state)
@@ -179,10 +179,10 @@ public sealed partial class BindableListFeed<T> : ISignal<IMessage>, IListState<
 		}
 
 		async ValueTask SetSelected(SelectionInfo info, CancellationToken ct)
-			=> await state.UpdateMessage(msg => msg.Selected(info).Set(BindableViewModelBase.BindingSource, collection), ct);
+			=> await state.UpdateMessageAsync(msg => msg.Selected(info).Set(BindableViewModelBase.BindingSource, collection), ct);
 
 		async ValueTask Edit(Func<IDifferentialCollectionNode, IDifferentialCollectionNode> change, CancellationToken ct)
-			=> await state.UpdateMessage(
+			=> await state.UpdateMessageAsync(
 				msg =>
 				{
 					// Note: The change might have been computed on an older version of the collection
