@@ -47,7 +47,21 @@ public static partial class Feed
 	/// <param name="refresh">A refresh trigger to reload the <paramref name="valueProvider"/>.</param>
 	/// <returns>A feed that encapsulate the source.</returns>
 	public static IFeed<T> Async<T>(AsyncFunc<T> valueProvider, Signal? refresh = null)
+		where T : notnull
 		=> Feed<T>.Async(valueProvider, refresh);
+
+	/// <summary>
+	/// Gets or create a custom feed from an async method.
+	/// </summary>
+	/// <typeparam name="T">The type of the value of the resulting feed.</typeparam>
+	/// <param name="valueProvider">The async method to use to load the value of the resulting feed.</param>
+	/// <param name="refresh">A refresh trigger to reload the <paramref name="valueProvider"/>.</param>
+	/// <returns>A feed that encapsulate the source.</returns>
+	public static IFeed<T> Async<T>(AsyncFunc<T?> valueProvider, Signal? refresh = null)
+		where T : struct
+		=> refresh is null
+			? AttachedProperty.GetOrCreate(valueProvider, static vp => new AsyncFeed<T>(vp.SomeOrNone()))
+			: AttachedProperty.GetOrCreate(refresh, valueProvider, static (r, vp) => new AsyncFeed<T>(vp.SomeOrNone(), r));
 
 	/// <summary>
 	/// Gets or create a custom feed from an async enumerable sequence of value.
@@ -56,7 +70,18 @@ public static partial class Feed
 	/// <param name="enumerableProvider">The async enumerable sequence of value of the resulting feed.</param>
 	/// <returns>A feed that encapsulate the source.</returns>
 	public static IFeed<T> AsyncEnumerable<T>(Func<CancellationToken, IAsyncEnumerable<T>> enumerableProvider)
+		where T : notnull
 		=> Feed<T>.AsyncEnumerable(enumerableProvider);
+
+	/// <summary>
+	/// Gets or create a custom feed from an async enumerable sequence of value.
+	/// </summary>
+	/// <typeparam name="T">The type of the data of the resulting feed.</typeparam>
+	/// <param name="enumerableProvider">The async enumerable sequence of value of the resulting feed.</param>
+	/// <returns>A feed that encapsulate the source.</returns>
+	public static IFeed<T> AsyncEnumerable<T>(Func<CancellationToken, IAsyncEnumerable<T?>> enumerableProvider)
+		where T : struct
+		=> AttachedProperty.GetOrCreate(enumerableProvider, static ep => new AsyncEnumerableFeed<T>(ep.SomeOrNone()));
 	#endregion
 
 	#region Operators

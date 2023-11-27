@@ -14,9 +14,9 @@ internal sealed class AsyncFeed<T> : IFeed<T>
 	private readonly ISignal? _refresh;
 	private readonly AsyncFunc<Option<T>> _dataProvider;
 
-	public AsyncFeed(AsyncFunc<T> dataProvider, ISignal? refresh = null)
+	public AsyncFeed(AsyncFunc<T?> dataProvider, ISignal? refresh = null)
 	{
-		_dataProvider = async ct => Option.SomeOrNone(await dataProvider(ct));
+		_dataProvider = dataProvider.SomeOrNone();
 		_refresh = refresh;
 	}
 
