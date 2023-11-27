@@ -111,7 +111,7 @@ internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, ISta
 	}
 
 	/// <inheritdoc />
-	public async ValueTask UpdateMessage(Action<MessageBuilder<T>> updater, CancellationToken ct)
+	public async ValueTask UpdateMessageAsync(Action<MessageBuilder<T>> updater, CancellationToken ct)
 	{
 		// First we make sure that the UpdateFeed is active, so the update will be applied ^^
 		Enable();

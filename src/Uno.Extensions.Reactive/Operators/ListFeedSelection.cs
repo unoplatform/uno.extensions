@@ -66,9 +66,9 @@ internal sealed class ListFeedSelection<TSource, TOther> : IListState<TSource>, 
 		=> Enable().GetSource(context, ct);
 
 	/// <inheritdoc />
-	public async ValueTask UpdateMessage(Action<MessageBuilder<IImmutableList<TSource>>> updater, CancellationToken ct)
+	public async ValueTask UpdateMessageAsync(Action<MessageBuilder<IImmutableList<TSource>>> updater, CancellationToken ct)
 		=> await Enable()
-			.UpdateMessage(
+			.UpdateMessageAsync(
 				u =>
 				{
 					var currentData = u.CurrentData;
@@ -148,7 +148,7 @@ internal sealed class ListFeedSelection<TSource, TOther> : IListState<TSource>, 
 			var items = implMsg.Current.Data.SomeOrDefault(ImmutableList<TSource>.Empty);
 
 			await _selectionState
-				.UpdateMessage(
+				.UpdateMessageAsync(
 					otherMsg =>
 					{
 						try

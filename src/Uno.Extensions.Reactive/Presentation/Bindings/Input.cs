@@ -27,8 +27,8 @@ internal sealed class Input<T> : IInput<T>
 		=> _state.GetSource(context, ct);
 
 	/// <inheritdoc />
-	public ValueTask UpdateMessage(Action<MessageBuilder<T>> updater, CancellationToken ct)
-		=> _state.UpdateMessage(
+	public ValueTask UpdateMessageAsync(Action<MessageBuilder<T>> updater, CancellationToken ct)
+		=> _state.UpdateMessageAsync(
 			msg =>
 			{
 				updater(msg);
