@@ -32,22 +32,21 @@ Express your code's intentions more clearly with MVUX's declarative approach. Th
 To illustrate the simplicity and power of MVUX, let's explore building a basic counter application. Below is a minimal model for a counter:
 
 ```csharp
-public partial record CounterModel
+internal partial record MainModel
 {
-    public IState<int> Counter => State.Value(this, () => 0);
+    public IState<int> Count => State.Value(this, () => 0);
 
-    public IState<int> Step => State.Value(this, () => 42);
+    public IState<int> Step => State.Value(this, () => 1);
 
-    public async ValueTask Increment(int step, CancellationToken ct) 
-        => await Counter.Update(i => i + step, ct);
+    public ValueTask IncrementCommand(int Step, CancellationToken ct)
+            => Count.Update(c => c + Step, ct);
 }
-```
 
 Key Features in the Code:
 
 * **Reactive Properties**: `Counter` and `Step` are exposed as plain binding-friendly integer properties to the view, supporting two-way data binding. Updates are reported on the UI thread for the view and on the background thread for the model.
 
-* **Command Handling**: The `Increment` method is automatically exposed as an `ICommand`  that can be data bound to any element in the view that has a `Command` property, such as `Button`. Additionally, `ICommand.CanExecute` is updated during the execution of the method, so that the state of the data bound element is correct.
+* **Command Handling**: The `IncrementCommand` method is automatically exposed as an `ICommand`  that can be data bound to any element in the view that has a `Command` property, such as `Button`. Additionally, `ICommand.CanExecute` is updated during the execution of the method, so that the state of the data bound element is correct.
 
 * **Parameter Flexibility**: The method accepts a step parameter, which can be provided by the view using the command parameter. If not provided, it defaults to the `Step` state, offering flexibility and consistency.
 
