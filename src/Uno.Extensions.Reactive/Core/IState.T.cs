@@ -19,6 +19,6 @@ public interface IState<T> : IFeed<T>, IState
 	/// <param name="updater">The update method to apply to the current message.</param>
 	/// <param name="ct">A cancellation to cancel the async operation.</param>
 	/// <returns>A ValueTask to track the async update.</returns>
-	/// <remarks>This is the raw way to update a state, you should consider using the <see cref="State.UpdateAsync{T}(Uno.Extensions.Reactive.IState{T},System.Func{T?,T?},System.Threading.CancellationToken)"/> method instead.</remarks>
+	/// <remarks>This is the raw way to update a state, you should consider using the <see cref="State.UpdateAsync{T}"/> method instead.</remarks>
 	ValueTask UpdateMessageAsync(Action<MessageBuilder<T>> updater, CancellationToken ct = default);
 }
