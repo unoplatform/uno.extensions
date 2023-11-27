@@ -45,7 +45,7 @@
 		<PackageVersion Include="Uno.Toolkit" Version="5.0.15" />
 		<PackageVersion Include="Uno.Toolkit.UI" Version="5.0.15" />
 		<PackageVersion Include="Uno.Toolkit.WinUI" Version="5.0.15" />
-		<PackageVersion Include="Uno.UI" Version="5.0.19" />
+		<PackageVersion Include="Uno.UI" Version="5.0.48" />
 		<PackageVersion Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="5.0.19"/>
 		<PackageVersion Include="Uno.UI.MSAL"  Version="5.0.19" />
 		<PackageVersion Include="Uno.UI.Runtime.WebAssembly" Version="5.0.19" />
