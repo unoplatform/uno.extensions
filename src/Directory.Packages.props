@@ -9,7 +9,7 @@
 		<PackageVersion Include="Microsoft.Bcl.AsyncInterfaces" Version="6.0.0" />
 		<PackageVersion Include="Microsoft.CodeAnalysis.CSharp" Version="4.1.0" />
 		<PackageVersion Include="Microsoft.Extensions.Configuration.Abstractions" Version="6.0.0"  />
-		<PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0" Condition="$(UseMaui) != 'true'" />
+		<PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" Condition="$(UseMaui) != 'true'" />
 		<PackageVersion Include="Microsoft.Extensions.Hosting" Version="6.0.1" />
 		<PackageVersion Include="Microsoft.Extensions.Http" Version="6.0.0" Condition="$(UseMaui) != 'true'" />
 		<PackageVersion Include="Microsoft.Extensions.Localization.Abstractions" Version="6.0.4" Condition="$(UseMaui) != 'true'" />
