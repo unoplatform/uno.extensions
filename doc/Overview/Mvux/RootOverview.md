@@ -41,6 +41,33 @@ internal partial record MainModel
     public ValueTask IncrementCommand(int Step, CancellationToken ct)
             => Count.Update(c => c + Step, ct);
 }
+```
+
+and here the corresponding view:
+
+```xml
+<StackPanel VerticalAlignment="Center">
+	<TextBox
+		Margin="12"
+		HorizontalAlignment="Center"
+		PlaceholderText="Step Size"
+		Text="{Binding Step, Mode=TwoWay}"
+		TextAlignment="Center" />
+
+	<TextBlock
+		Margin="12"
+		HorizontalAlignment="Center"
+		TextAlignment="Center">
+		<Run Text="Counter: " /><Run Text="{Binding Count}" />
+	</TextBlock>
+
+	<Button
+		Margin="12"
+		HorizontalAlignment="Center"
+		Command="{Binding IncrementCommand}"
+		Content="Increment Counter by Step Size" />
+</StackPanel>
+```
 
 Key Features in the Code:
 
