@@ -12,7 +12,7 @@ You will quickly discover why C# Markup is a developer favorite with:
 
 - A Declarative syntax
 - Strongly typed data binding
-- Intellisense and compile time validation
+- Intellisense and compile-time validation
 - Refactoring support
 - Custom Controls and 3rd party libraries
 
@@ -44,11 +44,11 @@ Unlike XAML which is littered with string constants, C# Markup provides a strong
 
 ## Getting Started
 
-Let's take a look at how to get started with C# Markup. We'll start with a simple sample that displays a counter and a button that increments the counter by a step size. The sample will have a ViewModel that has a `Count` and a `Step` property, as well as a `IncrementCommand` that increments the `Count` by the `Step` when executed. 
+Let's take a look at how to get started with C# Markup. We'll start with a simple sample that displays a counter and a button that increments the counter by a step size. The sample will have a ViewModel that has a `Count` and a `Step` property, as well as an `IncrementCommand` that increments the `Count` by the `Step` when executed. 
 
 ### Constructor and Properties
 
-We'll start with creating a control and setting properties, as shown in the following example that creates a `TextBlock`. The fluent API allows you to chain together multiple properties, as shown in the following example that sets the `Margin`, `TextAlignment` and `Text` properties.
+We'll start with creating a control and setting some properties, as shown in the following example that creates a `TextBlock`. The fluent API allows you to chain together multiple properties, as shown in the following example that sets the `Margin`, `TextAlignment`, and `Text` properties.
 
 ```cs
 new TextBlock()
@@ -59,7 +59,7 @@ new TextBlock()
 
 Similar to the `HorizontalAlignment` property mentioned earlier, the `TextAlignment` property is set using an enum rather than a string constant. This ensures that you get compile time validation and intellisense for all the available values.
 
-In XAML you would can set the `Margin` property using a single number (for example `<TextBlock Margin="12" />`), but the actual `Margin` property on the `TextBlock` class requires a `Thickness` type, resulting in the following C# Markup:
+In XAML you would set the `Margin` property using a single number (for example `<TextBlock Margin="12" />`), but the actual `Margin` property on the `TextBlock` class requires a `Thickness` type, resulting in the following C# Markup:
 
 ```cs
 new TextBlock().Margin(new Thickness(12))
@@ -79,7 +79,7 @@ Since our counter example requires the value of the `TextBlock` to be updated ea
 new TextBlock().Text(() => vm.Count)
 ```
 
-At this point you might be wondering what the `vm` is. The `vm` is a placeholder reference for the ViewModel type that you provide to the `DataContext` extension.
+At this point, you might be wondering what the `vm` is. The `vm` is a placeholder reference for the ViewModel type that you provide to the `DataContext` extension.
 
 ```cs
 .DataContext(new MainViewModel(), (page, vm) => page
@@ -101,13 +101,13 @@ In the above example, an instance of `MainViewModel` is provided to the `DataCon
 );
 ```
 
-Currently the data binding is directly on the `Count` property meaning that the text shown in the `TextBlock` will just be the value of the `Count` property. However, we want to display the text "Counter: {value}" where {value} is the value of the `Count` property. To do this we can provide a delegate that will be invoked each time the value of the `Count` property changes, as shown in the following example.
+Currently, the data binding is directly on the `Count` property meaning that the text shown in the `TextBlock` will just be the value of the `Count` property. However, we want to display the text "Counter: {value}" where {value} is the value of the `Count` property. To do this we can provide a delegate that will be invoked each time the value of the `Count` property changes, as shown in the following example.
 
 ```cs
 new TextBlock().Text(() => vm.Count, count => $"Counter: {count}")
 ```
 
-In some case you need more control over the binding, such as when you need to change the binding mode or provide a converter. In these cases you can use the `Bind` extension method, as shown in the following example that two-way data binds the `Step` property to the `Text` property of a `TextBox`. 
+In some cases, you need more control over the binding, such as when you need to change the binding mode or provide a converter. In these cases, you can use the `Bind` extension method, as shown in the following example that two-way data binds the `Step` property to the `Text` property of a `TextBox`. 
 
 ```cs
 new TextBox().Text(x => x.Bind(() => vm.Step).TwoWay()),
@@ -115,7 +115,7 @@ new TextBox().Text(x => x.Bind(() => vm.Step).TwoWay()),
 
 ### Resources
 
-C# Markup provides a strongly typed API to get, create and add both static and theme resources. For example, to set the `Background` to theme resource get the `ApplicationPageBackgroundThemeBrush` from the default WinUI Fluent theme:
+C# Markup provides a strongly typed API to get, create, and add both static and theme resources. For example, to set the `Background` to the theme resource, get the `ApplicationPageBackgroundThemeBrush` from the default WinUI Fluent theme:
 
 ```cs
 this.Background(ThemeResource.Get<Brush>("ApplicationPageBackgroundThemeBrush"));
@@ -165,5 +165,5 @@ public sealed partial class MainPage : Page
 
 ## Conclusion
 
-This overview has provided a brief introduction to C# Markup with the introduction on how to create controls and set properties, as well as how to use data binding and resources. Check out the full [Counter sample](TBD) to see how to use C# Markup to create a complete application. Check out the [C# Markup reference](TBD) for more information on available extension methods.
+This overview has provided a brief introduction to C# Markup with an introduction to how to create controls and set properties, as well as how to use data binding and resources. Check out the full [Counter sample](TBD) to see how to use C# Markup to create a complete application. Check out the [C# Markup reference](TBD) for more information on available extension methods.
 
