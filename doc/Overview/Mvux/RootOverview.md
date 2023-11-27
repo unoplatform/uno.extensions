@@ -4,7 +4,7 @@ uid: Uno.Extensions.Reactive.Overview.Short
 
 # MVUX Framework Overview
 
-MVUX, a powerful state management system, seamlessly combines the strengths of both MVU (Model-View-Update) and MVVM (Model-View-ViewModel) architectures. This document presents a brief yet comprehensive overview of the key advantages MVUX offers, along with a simplified example demonstrating its efficiency in building applications.
+Model-View-Update-eXtended (MVUX) combines the strengths of both Model-View-Update (MVU) and Model-View-ViewModel (MVVM) architectures. This document presents an overview of the key advantages MVUX offers, along with an example demonstrating its efficiency for building applications.
 
 ## Key Advantages of MVUX
 ### 1. Reactive Application Development
@@ -13,11 +13,11 @@ MVUX empowers developers to create highly responsive applications that automatic
 
 ### 2. Immutable Models for Stability
 
-Building on the concept of immutability, MVUX simplifies the creation of models that maintain coherent states in multi-threaded environments. This approach enhances stability and predictability in complex application scenarios.
+MVUX simplifies the creation of immutable models that maintain coherent states in multi-threaded environments. This approach enhances stability and predictability in complex application scenarios.
 
 ### 3. Asynchronous Everywhere
 
-MVUX takes care of executing all non-UI-related operations on a background thread without requiring developers to write boilerplate code, such as `INotifyPropertyChanged`. With native support for common data states, users are informed of background data fetching or error occurrences, contributing to a seamless user experience.
+MVUX takes care of executing all non-UI-related operations on a background thread without requiring developers to write boilerplate code, such as implementing `INotifyPropertyChanged`. With native support for common data states, users are informed of background data fetching or error occurrences, contributing to a seamless user experience.
 
 ### 4. Code Testability
 
@@ -47,7 +47,7 @@ Key Features in the Code:
 
 * **Reactive Properties**: `Counter` and `Step` are exposed as plain binding-friendly integer properties to the view, supporting two-way data binding. Updates are reported on the UI thread for the view and on the background thread for the model.
 
-* **Command Handling**: The `Increment` method is automatically exposed as an `ICommand` to the view, enabling seamless integration with `ButtonBase` elements. Additionally, `ICommand.CanExecute` allows intelligent button state management during execution.
+* **Command Handling**: The `Increment` method is automatically exposed as an `ICommand`  that can be data bound to any element in the view that has a `Command` property, such as `Button`. Additionally, `ICommand.CanExecute` is updated during execution of the method, so that state of the data bound element is correct.
 
 * **Parameter Flexibility**: The method accepts a step parameter, which can be provided by the view using the command parameter. If not provided, it defaults to the `Step` state, offering flexibility and consistency.
 
