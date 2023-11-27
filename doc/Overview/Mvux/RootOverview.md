@@ -47,7 +47,7 @@ Key Features in the Code:
 
 * **Reactive Properties**: `Counter` and `Step` are exposed as plain binding-friendly integer properties to the view, supporting two-way data binding. Updates are reported on the UI thread for the view and on the background thread for the model.
 
-* **Command Handling**: The `Increment` method is automatically exposed as an `ICommand`  that can be data bound to any element in the view that has a `Command` property, such as `Button`. Additionally, `ICommand.CanExecute` is updated during execution of the method, so that state of the data bound element is correct.
+* **Command Handling**: The `Increment` method is automatically exposed as an `ICommand`  that can be data bound to any element in the view that has a `Command` property, such as `Button`. Additionally, `ICommand.CanExecute` is updated during the execution of the method, so that the state of the data bound element is correct.
 
 * **Parameter Flexibility**: The method accepts a step parameter, which can be provided by the view using the command parameter. If not provided, it defaults to the `Step` state, offering flexibility and consistency.
 
