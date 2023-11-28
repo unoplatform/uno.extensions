@@ -62,7 +62,7 @@ This component, constructed in XAML or C# markup, is a single-instance mutable o
 ```
 
 ### The model
-The model, a single-instance immutable object, it holds the business state utilizing IState<T> properties, where T is also immutable. The model seamlessly interacts with user inputs through 2-way bindings or commands, ensuring a clear separation between business logic and UI concerns.
+The model, a single-instance immutable object, it holds the business state utilizing `IState<T>` properties, where `T` is also immutable but multi-instances. The model seamlessly interacts with user inputs through 2-way bindings or commands, ensuring a clear separation between business logic and UI concerns.
 
 ```csharp
 internal partial record MainModel
