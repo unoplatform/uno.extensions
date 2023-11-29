@@ -115,6 +115,34 @@ public static partial class Feed
 	public static IFeed<TResult> Select<TSource, TResult>(
 		this IFeed<TSource> source,
 		Func<TSource, TResult> selector)
+		where TResult : notnull
+		=> AttachedProperty.GetOrCreate(source, selector, static (src, s) => new SelectFeed<TSource, TResult>(src, s));
+
+	/// <summary>
+	/// Gets or create a feed that projects each value of a source feed.
+	/// </summary>
+	/// <typeparam name="TSource">Type of the value of the source feed.</typeparam>
+	/// <typeparam name="TResult">Type of the value of the resulting feed.</typeparam>
+	/// <param name="source">The source feed to project.</param>
+	/// <param name="selector">The projection method.</param>
+	/// <returns>A feed that projects each value of the source feed.</returns>
+	public static IFeed<TResult> Select<TSource, TResult>(
+		this IFeed<TSource> source,
+		Func<TSource, TResult?> selector)
+		where TResult : struct
+		=> AttachedProperty.GetOrCreate(source, selector, static (src, s) => new SelectFeed<TSource, TResult>(src, s.SomeOrNone()));
+
+	/// <summary>
+	/// Gets or create a feed that projects each value of a source feed.
+	/// </summary>
+	/// <typeparam name="TSource">Type of the value of the source feed.</typeparam>
+	/// <typeparam name="TResult">Type of the value of the resulting feed.</typeparam>
+	/// <param name="source">The source feed to project.</param>
+	/// <param name="selector">The projection method.</param>
+	/// <returns>A feed that projects each value of the source feed.</returns>
+	public static IFeed<TResult> SelectData<TSource, TResult>(
+		this IFeed<TSource> source,
+		Func<TSource, Option<TResult>> selector)
 		=> AttachedProperty.GetOrCreate(source, selector, static (src, s) => new SelectFeed<TSource, TResult>(src, s));
 
 	/// <summary>
@@ -128,6 +156,34 @@ public static partial class Feed
 	public static IFeed<TResult> SelectAsync<TSource, TResult>(
 		this IFeed<TSource> source,
 		AsyncFunc<TSource, TResult> selector)
+		where TResult : notnull
+		=> AttachedProperty.GetOrCreate(source, selector, static (src, s) => new SelectAsyncFeed<TSource, TResult>(src, s));
+
+	/// <summary>
+	/// Gets or create a feed that asynchronously projects each value of a source feed.
+	/// </summary>
+	/// <typeparam name="TSource">Type of the value of the source feed.</typeparam>
+	/// <typeparam name="TResult">Type of the value of the resulting feed.</typeparam>
+	/// <param name="source">The source feed to project.</param>
+	/// <param name="selector">The asynchronous projection method.</param>
+	/// <returns>A feed that projects each value of the source feed.</returns>
+	public static IFeed<TResult> SelectAsync<TSource, TResult>(
+		this IFeed<TSource> source,
+		AsyncFunc<TSource, TResult?> selector)
+		where TResult : struct
+		=> AttachedProperty.GetOrCreate(source, selector, static (src, s) => new SelectAsyncFeed<TSource, TResult>(src, s.SomeOrNone()));
+
+	/// <summary>
+	/// Gets or create a feed that asynchronously projects each value of a source feed.
+	/// </summary>
+	/// <typeparam name="TSource">Type of the value of the source feed.</typeparam>
+	/// <typeparam name="TResult">Type of the value of the resulting feed.</typeparam>
+	/// <param name="source">The source feed to project.</param>
+	/// <param name="selector">The asynchronous projection method.</param>
+	/// <returns>A feed that projects each value of the source feed.</returns>
+	public static IFeed<TResult> SelectDataAsync<TSource, TResult>(
+		this IFeed<TSource> source,
+		AsyncFunc<TSource, Option<TResult>> selector)
 		=> AttachedProperty.GetOrCreate(source, selector, static (src, s) => new SelectAsyncFeed<TSource, TResult>(src, s));
 
 	/// <summary>
