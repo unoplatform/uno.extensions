@@ -22,7 +22,7 @@ public partial class Given_ListFeedSelection : FeedTests
 
 		await sut.WaitForMessages(1);
 
-		await selection.Set(5, CT);
+		await selection.SetAsync(5, CT);
 
 		await sut.Should().BeAsync(r => r
 			.Message(Items.Range(10), Error.No, Progress.Final, Selection.Empty)
@@ -41,7 +41,7 @@ public partial class Given_ListFeedSelection : FeedTests
 
 		await sut.WaitForMessages(1);
 
-		await selection.Set(20, CT);
+		await selection.SetAsync(20, CT);
 
 		await sut.Should().BeAsync(r => r
 			.Message(Items.Range(10), Error.No, Progress.Final, Selection.Empty)
@@ -57,7 +57,7 @@ public partial class Given_ListFeedSelection : FeedTests
 
 		await sut.WaitForMessages(1);
 
-		await selection.Set(5, CT);
+		await selection.SetAsync(5, CT);
 
 		await sut.Should().BeAsync(r => r
 			.Message(m => m
@@ -77,7 +77,7 @@ public partial class Given_ListFeedSelection : FeedTests
 
 		await sut.WaitForMessages(1);
 
-		await selection.Set(15, CT);
+		await selection.SetAsync(15, CT);
 
 		await sut.Should().BeAsync(r => r
 			.Message(m => m
@@ -277,7 +277,7 @@ public partial class Given_ListFeedSelection : FeedTests
 
 		await sut.WaitForMessages(1);
 
-		await selection.Update(_ => ImmutableList.Create(5), CT);
+		await selection.UpdateAsync(_ => ImmutableList.Create(5), CT);
 
 		await sut.Should().BeAsync(r => r
 			.Message(Items.Range(10), Error.No, Progress.Final, Selection.Empty)
@@ -296,7 +296,7 @@ public partial class Given_ListFeedSelection : FeedTests
 
 		await sut.WaitForMessages(1);
 
-		await selection.Update(_ => ImmutableList.Create(20), CT);
+		await selection.UpdateAsync(_ => ImmutableList.Create(20), CT);
 
 		await sut.Should().BeAsync(r => r
 			.Message(Items.Range(10), Error.No, Progress.Final, Selection.Empty)
@@ -312,7 +312,7 @@ public partial class Given_ListFeedSelection : FeedTests
 
 		await sut.WaitForMessages(1);
 
-		await selection.Feed.Update(_ => ImmutableList.Create(5), CT);
+		await selection.Feed.UpdateAsync(_ => ImmutableList.Create(5), CT);
 
 		await sut.Should().BeAsync(r => r
 			.Message(m => m
@@ -332,7 +332,7 @@ public partial class Given_ListFeedSelection : FeedTests
 
 		await sut.WaitForMessages(1);
 
-		await selection.Feed.Update(_ => ImmutableList.Create(15), CT);
+		await selection.Feed.UpdateAsync(_ => ImmutableList.Create(15), CT);
 
 		await sut.Should().BeAsync(r => r
 			.Message(m => m
@@ -533,7 +533,7 @@ public partial class Given_ListFeedSelection : FeedTests
 
 		await sut.WaitForMessages(1);
 
-		await selection.Update(_ => new MyAggregateRoot(5), CT);
+		await selection.UpdateAsync(_ => new MyAggregateRoot(5), CT);
 
 		await sut.Should().BeAsync(r => r
 			.Message(items, Error.No, Progress.Final, Selection.Empty)
@@ -553,7 +553,7 @@ public partial class Given_ListFeedSelection : FeedTests
 
 		await sut.WaitForMessages(1);
 
-		await selection.Update(_ => new MyAggregateRoot(20), CT);
+		await selection.UpdateAsync(_ => new MyAggregateRoot(20), CT);
 
 		await sut.Should().BeAsync(r => r
 			.Message(items, Error.No, Progress.Final, Selection.Empty)
@@ -570,7 +570,7 @@ public partial class Given_ListFeedSelection : FeedTests
 
 		await sut.WaitForMessages(1);
 
-		await selection.Update(_ => new MyAggregateRoot(5), CT);
+		await selection.UpdateAsync(_ => new MyAggregateRoot(5), CT);
 
 		await sut.Should().BeAsync(r => r
 			.Message(m => m
@@ -591,7 +591,7 @@ public partial class Given_ListFeedSelection : FeedTests
 
 		await sut.WaitForMessages(1);
 
-		await selection.Update(_ => new MyAggregateRoot(15), CT);
+		await selection.UpdateAsync(_ => new MyAggregateRoot(15), CT);
 
 		await sut.Should().BeAsync(r => r
 			.Message(m => m

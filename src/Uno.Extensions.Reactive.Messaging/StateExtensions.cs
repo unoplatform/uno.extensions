@@ -25,12 +25,12 @@ public static class StateExtensions
 		{
 			case EntityChange.Updated:
 				var updatedEntityKey = keySelector(message.Value);
-				await state.UpdateData(current => current.IsSome(out var entity) && AreKeyEquals(updatedEntityKey, keySelector(entity)) ? message.Value : current, ct);
+				await state.UpdateDataAsync(current => current.IsSome(out var entity) && AreKeyEquals(updatedEntityKey, keySelector(entity)) ? message.Value : current, ct);
 				break;
 
 			case EntityChange.Deleted:
 				var removedEntityKey = keySelector(message.Value);
-				await state.UpdateData(current => current.IsSome(out var entity) && AreKeyEquals(removedEntityKey, keySelector(entity)) ? Option<TEntity>.None() : current, ct);
+				await state.UpdateDataAsync(current => current.IsSome(out var entity) && AreKeyEquals(removedEntityKey, keySelector(entity)) ? Option<TEntity>.None() : current, ct);
 				break;
 		}
 
@@ -63,7 +63,7 @@ public static class StateExtensions
 
 			case EntityChange.Updated:
 				var updatedItemKey = keySelector(message.Value);
-				await listState.UpdateAsync(item => AreKeyEquals(updatedItemKey, keySelector(item)), _ => message.Value, ct);
+				await listState.UpdateAllAsync(item => AreKeyEquals(updatedItemKey, keySelector(item)), _ => message.Value, ct);
 				break;
 		}
 

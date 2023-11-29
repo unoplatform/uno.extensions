@@ -22,9 +22,9 @@ public class Given_StateForEach : FeedTests
 
 		state.ForEachAsync(async (i, ct) => result.Add(i));
 
-		await state.Set(2, CT);
-		await state.Set(3, CT);
-		await state.Set(4, CT);
+		await state.SetAsync(2, CT);
+		await state.SetAsync(3, CT);
+		await state.SetAsync(4, CT);
 
 		result.Should().BeEquivalentTo(new[] { 2, 3, 4 });
 	}
@@ -48,8 +48,8 @@ public class Given_StateForEach : FeedTests
 			result.Add(i);
 		});
 
-		await state.Set(2, CT);
-		await state.Set(3, CT);
+		await state.SetAsync(2, CT);
+		await state.SetAsync(3, CT);
 
 		tcs1.SetResult();
 		result.Should().BeEquivalentTo(new[] { 2 });
@@ -73,9 +73,9 @@ public class Given_StateForEach : FeedTests
 			result.Add(i);
 		});
 
-		await state.Set(2, CT);
-		await state.Set(42, CT);
-		await state.Set(3, CT);
+		await state.SetAsync(2, CT);
+		await state.SetAsync(42, CT);
+		await state.SetAsync(3, CT);
 
 		result.Should().BeEquivalentTo(new[] { 2, 3 });
 	}
@@ -104,7 +104,7 @@ public class Given_StateForEach : FeedTests
 		var sut = state.ForEachAsync(async (i, ct) => this.ToString());
 
 		sut.Dispose();
-		await state.Set(42, CT);
+		await state.SetAsync(42, CT);
 
 		var enumerationTask = sut.GetType().GetField("_task", BindingFlags.Instance | BindingFlags.NonPublic)?.GetValue(sut) as Task;
 		if (enumerationTask is null)
@@ -123,7 +123,7 @@ public class Given_StateForEach : FeedTests
 
 		state.ForEachAsync(async (list, ct) => result.Add(list));
 
-		await state.UpdateData(_ => Option.None<IImmutableList<int>>(), CT);
+		await state.UpdateDataAsync(_ => Option.None<IImmutableList<int>>(), CT);
 
 		result.Single().Should().NotBeNull().And.BeEquivalentTo(ImmutableList<int>.Empty);
 	}
