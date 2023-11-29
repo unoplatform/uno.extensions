@@ -61,7 +61,7 @@ public class Given_DynamicFeed : FeedTests
 				.Current(4200, Error.No, Progress.Final))
 		);
 
-		await myFeed.Set(43, CT);
+		await myFeed.SetAsync(43, CT);
 
 		await result.Should().BeAsync(b => b
 			.Message(m => m
@@ -87,9 +87,9 @@ public class Given_DynamicFeed : FeedTests
 
 		var result = new DynamicFeed<int>(Load).Record();
 
-		await myFeed.Set(43, CT);
-		await myFeed.Set(44, CT);
-		await myFeed.Set(45, CT);
+		await myFeed.SetAsync(43, CT);
+		await myFeed.SetAsync(44, CT);
+		await myFeed.SetAsync(45, CT);
 
 		await result.Should().BeAsync(b => b
 			.Message(m => m
@@ -118,7 +118,7 @@ public class Given_DynamicFeed : FeedTests
 		{
 			var myValue1 = await myFeed;
 
-			await myFeed.Update(_ => updated, ct);
+			await myFeed.UpdateAsync(_ => updated, ct);
 			await Task.Delay(10, ct);
 
 			var myValue2 = await myFeed;
@@ -151,7 +151,7 @@ public class Given_DynamicFeed : FeedTests
 			before++;
 			await myFeed;
 
-			await myFeed.Update(_ => updated, ct);
+			await myFeed.UpdateAsync(_ => updated, ct);
 			await Task.Delay(10, ct); // Here is the cancellable point
 
 			after++;
@@ -191,8 +191,8 @@ public class Given_DynamicFeed : FeedTests
 
 		var result = new DynamicFeed<int>(Load).Record();
 
-		await myFeed1.Set(43, CT);
-		await myFeed2.Set(43, CT);
+		await myFeed1.SetAsync(43, CT);
+		await myFeed2.SetAsync(43, CT);
 
 		await result.Should().BeAsync(b => b
 			.Message(m => m
@@ -225,7 +225,7 @@ public class Given_DynamicFeed : FeedTests
 
 		var result = new DynamicFeed<int>(Load).Record();
 
-		await myFeed.UpdateMessage(msg => msg.Set(myAxis, "hello world"), CT);
+		await myFeed.UpdateMessageAsync(msg => msg.Set(myAxis, "hello world"), CT);
 
 		await result.Should().BeAsync(b => b
 			.Message(m => m
@@ -257,8 +257,8 @@ public class Given_DynamicFeed : FeedTests
 
 		var result = new DynamicFeed<int>(Load).Record();
 
-		await myFeed.UpdateMessage(msg => msg.Error(new TestException()), CT);
-		await myFeed.UpdateMessage(msg => msg.Error(null).Data(43), CT);
+		await myFeed.UpdateMessageAsync(msg => msg.Error(new TestException()), CT);
+		await myFeed.UpdateMessageAsync(msg => msg.Error(null).Data(43), CT);
 
 		await result.Should().BeAsync(b => b
 			.Message(m => m
@@ -372,7 +372,7 @@ public class Given_DynamicFeed : FeedTests
 		var result = sut.Record(ctx);
 
 		requests.RequestMoreItems(42);
-		await myFeed.Set(43, CT);
+		await myFeed.SetAsync(43, CT);
 		requests.RequestMoreItems(42);
 
 		await result.Should().BeAsync(b => b
@@ -427,7 +427,7 @@ public class Given_DynamicFeed : FeedTests
 		Interlocked.Exchange(ref pageReady, new()).SetResult();
 
 		await result.WaitForMessages(4);
-		await myFeed.Set(43, CT);
+		await myFeed.SetAsync(43, CT);
 
 		await result.WaitForMessages(5);
 		Interlocked.Exchange(ref pageReady, new()).SetResult();
@@ -513,7 +513,7 @@ public class Given_DynamicFeed : FeedTests
 		Interlocked.Exchange(ref pageReady, new()).SetResult();
 
 		await result.WaitForMessages(4);
-		await myFeed.Set(43, CT);
+		await myFeed.SetAsync(43, CT);
 
 		await result.WaitForMessages(5);
 		Interlocked.Exchange(ref pageReady, new()).SetResult();
