@@ -75,7 +75,8 @@ public sealed partial class BindableListFeed<T> : ISignal<IMessage>, IListState<
 					(current, @params) => current
 						.With(@params.parentMsg)
 						.Data(@params.parentMsg.Current.Data.Map(_ => @params.collectionView)),
-					(parentMsg, collectionView)))
+					(parentMsg, collectionView),
+					ct))
 			{
 				yield return localMsg.Current;
 			}

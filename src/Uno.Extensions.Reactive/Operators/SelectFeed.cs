@@ -32,7 +32,7 @@ internal sealed class SelectFeed<TArg, TResult> : IFeed<TResult>
 		var localMsg = new MessageManager<TArg, TResult>();
 		await foreach (var parentMsg in context.GetOrCreateSource(_parent).WithCancellation(ct).ConfigureAwait(false))
 		{
-			if (localMsg.Update(DoUpdate, parentMsg))
+			if (localMsg.Update(DoUpdate, parentMsg, ct))
 			{
 				yield return localMsg.Current;
 			}

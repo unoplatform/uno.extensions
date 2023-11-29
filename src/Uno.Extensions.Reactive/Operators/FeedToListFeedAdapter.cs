@@ -47,7 +47,7 @@ internal class FeedToListFeedAdapter<TCollection, TItem> : IListFeed<TItem>
 		var localMsg = new MessageManager<TCollection, IImmutableList<TItem>>();
 		await foreach (var parentMsg in context.GetOrCreateSource(_source).WithCancellation(ct).ConfigureAwait(false))
 		{
-			if (localMsg.Update(DoUpdate, parentMsg))
+			if (localMsg.Update(DoUpdate, parentMsg, ct))
 			{
 				yield return localMsg.Current;
 			}
