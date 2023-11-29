@@ -12,7 +12,7 @@ namespace Uno.Extensions.Reactive.Operators;
 internal sealed class SelectFeed<TArg, TResult> : IFeed<TResult>
 {
 	private readonly IFeed<TArg> _parent;
-	private readonly Func<TArg, Option<TResult>> _projection;
+	private readonly Func<Option<TArg>, Option<TResult>> _projection;
 
 	public SelectFeed(IFeed<TArg> parent, Func<TArg, TResult> projection)
 	{
@@ -20,7 +20,7 @@ internal sealed class SelectFeed<TArg, TResult> : IFeed<TResult>
 		_projection = projection.SomeOrNoneWhenNotNull();
 	}
 
-	public SelectFeed(IFeed<TArg> parent, Func<TArg, Option<TResult>> projection)
+	public SelectFeed(IFeed<TArg> parent, Func<Option<TArg>, Option<TResult>> projection)
 	{
 		_parent = parent;
 		_projection = projection;
@@ -45,36 +45,17 @@ internal sealed class SelectFeed<TArg, TResult> : IFeed<TResult>
 
 		if (parentMsg!.Changes.Contains(MessageAxis.Data))
 		{
-			var data = parentMsg.Current.Data;
-			switch (data.Type)
+			try
 			{
-				case OptionType.Undefined:
-					updated
-						.Data(Option.Undefined<TResult>())
-						.Error(null);
-					break;
-
-				case OptionType.None:
-					updated
-						.Data(Option.None<TResult>())
-						.Error(null);
-					break;
-
-				case OptionType.Some:
-					try
-					{
-						updated
-							.Data(_projection((TArg)data))
-							.Error(null);
-					}
-					catch (Exception error)
-					{
-						updated
-							.Data(Option.Undefined<TResult>())
-							.Error(error);
-					}
-
-					break;
+				updated
+					.Data(_projection(parentMsg.Current.Data))
+					.Error(null);
+			}
+			catch (Exception error)
+			{
+				updated
+					.Data(Option.Undefined<TResult>())
+					.Error(error);
 			}
 		}
 
