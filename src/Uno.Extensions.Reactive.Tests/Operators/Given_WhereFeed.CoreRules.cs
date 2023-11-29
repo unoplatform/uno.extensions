@@ -14,7 +14,7 @@ public partial class Given_WhereFeed : FeedTests
 	public async Task When_WhereFeed_Then_CompilesToCoreRules()
 		=> await FeedCoreRules
 			.Using(Feed.Async(async _ => new MyRecord(42)))
-			.WhenFeed(src => new WhereFeed<MyRecord>(src, _ => true))
+			.WhenFeed(src => new WhereFeed<MyRecord>(src, (MyRecord _) => true))
 			.Then_CompilesToCoreRules(CT);
 
 	private record MyRecord(int Value);
