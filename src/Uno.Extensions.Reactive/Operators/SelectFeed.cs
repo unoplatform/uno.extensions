@@ -12,9 +12,15 @@ namespace Uno.Extensions.Reactive.Operators;
 internal sealed class SelectFeed<TArg, TResult> : IFeed<TResult>
 {
 	private readonly IFeed<TArg> _parent;
-	private readonly Func<TArg, TResult> _projection;
+	private readonly Func<TArg, Option<TResult>> _projection;
 
 	public SelectFeed(IFeed<TArg> parent, Func<TArg, TResult> projection)
+	{
+		_parent = parent;
+		_projection = projection.SomeOrNoneWhenNotNull();
+	}
+
+	public SelectFeed(IFeed<TArg> parent, Func<TArg, Option<TResult>> projection)
 	{
 		_parent = parent;
 		_projection = projection;
@@ -58,7 +64,7 @@ internal sealed class SelectFeed<TArg, TResult> : IFeed<TResult>
 					try
 					{
 						updated
-							.Data(Option.Some(_projection((TArg)data)))
+							.Data(_projection((TArg)data))
 							.Error(null);
 					}
 					catch (Exception error)
