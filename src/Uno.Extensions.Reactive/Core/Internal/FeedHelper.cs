@@ -46,7 +46,6 @@ internal static class FeedHelper
 		using var _ = context.AsCurrent();
 
 		ValueTask<Option<TResult>> dataTask = default;
-		Exception? error = default;
 		try
 		{
 			dataTask = dataProvider(ct);
@@ -55,16 +54,12 @@ internal static class FeedHelper
 		{
 			return;
 		}
-		catch (Exception e)
-		{
-			error = e;
-		}
-
-		if (error is not null)
+		catch (Exception error)
 		{
 			message.Commit(
-				(m, @params) => m.With(@params.parentMsg).Apply(@params.extraConfig).Error(@params.error),
+				static (m, @params) => m.With(@params.parentMsg).Apply(@params.extraConfig).Error(@params.error),
 				(parentMsg, error, extraConfig));
+
 			return;
 		}
 
@@ -89,7 +84,7 @@ internal static class FeedHelper
 			if (!dataTask.IsCompleted)
 			{
 				message.Update(
-					(msg, @params) =>
+					static (msg, @params) =>
 					{
 						var builder = msg.With(@params.parentMsg);
 						@params.extraConfig?.Invoke(builder.Inner);
@@ -101,38 +96,25 @@ internal static class FeedHelper
 			}
 		}
 
-		Option<TResult> data = default;
 		try
 		{
-			data = await dataTask.ConfigureAwait(false);
+			var data = await dataTask.ConfigureAwait(false);
+
+			// Clear the local error if any.
+			// Note: Thanks to the MessageManager, this will NOT erase the parent's error!
+			message.Commit(
+				static (msg, @params) => msg.With(@params.parentMsg).Apply(@params.extraConfig).Data(@params.data).Error(null),
+				(parentMsg, data, extraConfig));
 		}
 		catch (OperationCanceledException) when (ct.IsCancellationRequested)
 		{
-			return;
 		}
-		catch (Exception e)
+		catch (Exception error)
 		{
-			error = e;
+			message.Commit(
+				static (msg, @params) => msg.With(@params.parentMsg).Apply(@params.extraConfig).Error(@params.error),
+				(parentMsg, error, extraConfig));
 		}
-
-		message.Commit(
-			(msg, @params) =>
-			{
-				var builder = msg.With(@params.parentMsg).Apply(@params.extraConfig);
-				if (@params.error is null)
-				{
-					// Clear the local error if any.
-					// Note: Thanks to the MessageManager, this will NOT erase the parent's error!
-					builder.Data(@params.data).Error(null);
-				}
-				else
-				{
-					builder.Error(@params.error);
-				}
-
-				return builder;
-			},
-			(parentMsg, data, error, extraConfig));
 	}
 
 	public static Exception? AggregateErrors(Exception? error1, Exception? error2)

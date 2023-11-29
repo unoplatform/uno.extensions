@@ -90,12 +90,4 @@ public static class Feed<T> // We set the T on the class to it greatly helps typ
 	/// <returns>A feed that encapsulate the source.</returns>
 	public static IFeed<T> AsyncEnumerable(Func<CancellationToken, IAsyncEnumerable<T>> enumerableProvider)
 		=> AttachedProperty.GetOrCreate(enumerableProvider, static ep => new AsyncEnumerableFeed<T>(ep));
-
-	/// <summary>
-	/// Gets or create a custom feed from an async enumerable sequence of value.
-	/// </summary>
-	/// <param name="enumerable">The async enumerable sequence of value of the resulting feed.</param>
-	/// <returns>A feed that encapsulate the source.</returns>
-	public static IFeed<T> AsyncEnumerable(IAsyncEnumerable<T> enumerable)
-		=> AttachedProperty.GetOrCreate(enumerable, typeof(AsyncEnumerableFeed<T>), static (en, _) => new AsyncEnumerableFeed<T>(en));
 }

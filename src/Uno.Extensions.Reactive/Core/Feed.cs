@@ -105,6 +105,36 @@ public static partial class Feed
 		=> AttachedProperty.GetOrCreate(source, predicate, static (src, p) => new WhereFeed<TSource>(src, p));
 
 	/// <summary>
+	/// Gets or create a feed that filters out Some(null) values.
+	/// </summary>
+	/// <typeparam name="TSource">Type of the value of the feed.</typeparam>
+	/// <param name="source">The source feed to filter.</param>
+	/// <returns>A feed that filters out Some(null) values.</returns>
+	/// <remarks>
+	/// Unlike <see cref="IEnumerable{T}"/>, <see cref="IAsyncEnumerable{T}"/> or <see cref="IObservable{T}"/>,
+	/// a filtered out value from source feed **will produce a message** with its data set to None.
+	/// </remarks>
+	public static IFeed<TSource> WhereNotNull<TSource>(
+		this IFeed<TSource?> source)
+		where TSource : notnull
+		=> source.SelectData(Utils.OptionExtensions.SomeOrNone);
+
+	/// <summary>
+	/// Gets or create a feed that filters out Some(null) values.
+	/// </summary>
+	/// <typeparam name="TSource">Type of the value of the feed.</typeparam>
+	/// <param name="source">The source feed to filter.</param>
+	/// <returns>A feed that filters out Some(null) values.</returns>
+	/// <remarks>
+	/// Unlike <see cref="IEnumerable{T}"/>, <see cref="IAsyncEnumerable{T}"/> or <see cref="IObservable{T}"/>,
+	/// a filtered out value from source feed **will produce a message** with its data set to None.
+	/// </remarks>
+	public static IFeed<TSource> WhereNotNull<TSource>(
+		this IFeed<TSource?> source)
+		where TSource : struct
+		=> source.SelectData(Utils.OptionExtensions.SomeOrNone);
+
+	/// <summary>
 	/// Gets or create a feed that projects each value of a source feed.
 	/// </summary>
 	/// <typeparam name="TSource">Type of the value of the source feed.</typeparam>
@@ -116,7 +146,7 @@ public static partial class Feed
 		this IFeed<TSource> source,
 		Func<TSource, TResult> selector)
 		where TResult : notnull
-		=> AttachedProperty.GetOrCreate(source, selector, static (src, s) => new SelectFeed<TSource, TResult>(src, s));
+		=> AttachedProperty.GetOrCreate(source, selector, static (src, s) => new SelectFeed<TSource, TResult>(src, s.SomeOrNoneWhenNotNull()));
 
 	/// <summary>
 	/// Gets or create a feed that projects each value of a source feed.
@@ -142,7 +172,7 @@ public static partial class Feed
 	/// <returns>A feed that projects each value of the source feed.</returns>
 	public static IFeed<TResult> SelectData<TSource, TResult>(
 		this IFeed<TSource> source,
-		Func<TSource, Option<TResult>> selector)
+		Func<Option<TSource>, Option<TResult>> selector)
 		=> AttachedProperty.GetOrCreate(source, selector, static (src, s) => new SelectFeed<TSource, TResult>(src, s));
 
 	/// <summary>
@@ -157,7 +187,7 @@ public static partial class Feed
 		this IFeed<TSource> source,
 		AsyncFunc<TSource, TResult> selector)
 		where TResult : notnull
-		=> AttachedProperty.GetOrCreate(source, selector, static (src, s) => new SelectAsyncFeed<TSource, TResult>(src, s));
+		=> AttachedProperty.GetOrCreate(source, selector, static (src, s) => new SelectAsyncFeed<TSource, TResult>(src, s.SomeOrNoneWhenNotNull()));
 
 	/// <summary>
 	/// Gets or create a feed that asynchronously projects each value of a source feed.
@@ -183,7 +213,7 @@ public static partial class Feed
 	/// <returns>A feed that projects each value of the source feed.</returns>
 	public static IFeed<TResult> SelectDataAsync<TSource, TResult>(
 		this IFeed<TSource> source,
-		AsyncFunc<TSource, Option<TResult>> selector)
+		AsyncFunc<Option<TSource>, Option<TResult>> selector)
 		=> AttachedProperty.GetOrCreate(source, selector, static (src, s) => new SelectAsyncFeed<TSource, TResult>(src, s));
 
 	/// <summary>
