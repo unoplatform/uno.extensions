@@ -23,7 +23,7 @@ public partial class Given_ListStateFactories
 				.Current(Items.Range(20), Error.No, Progress.Final))
 		);
 
-		await sut.Update(_ => ImmutableList<int>.Empty, CT);
+		await sut.UpdateAsync(_ => ImmutableList<int>.Empty, CT);
 
 		result.Should().Be(b => b
 			.Message(m => m
