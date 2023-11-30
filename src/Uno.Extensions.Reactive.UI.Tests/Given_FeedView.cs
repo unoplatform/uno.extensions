@@ -39,7 +39,7 @@ public class Given_FeedView : FeedTests
 
 		tcs.SetResult(42);
 
-		await UIHelper.WaitFor(() => isLoadingValues.Count > 0, CT);
+		await TestHelper.WaitFor(() => isLoadingValues.Count > 0, CT);
 	}
 
 	[TestMethod]
@@ -58,7 +58,7 @@ public class Given_FeedView : FeedTests
 
 		root.Visibility = Visibility.Visible;
 
-		await UIHelper.WaitFor(() => isLoaded, CT);
+		await TestHelper.WaitFor(() => isLoaded, CT);
 
 		isLoaded.Should().BeTrue("The FeedView should have subscribed to the source when it became visible.");
 	}

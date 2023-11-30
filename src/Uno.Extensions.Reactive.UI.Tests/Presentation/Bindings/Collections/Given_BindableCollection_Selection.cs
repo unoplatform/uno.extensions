@@ -40,7 +40,7 @@ public partial class Given_BindableCollection_Selection : FeedTests
 
 		InputInjectorHelper.Current.Tap(items[1]);
 
-		await UIHelper.WaitFor(async ct => (await vm.Items.GetSelectedItem(ct))?.Value == 42, CT);
+		await TestHelper.WaitFor(async ct => (await vm.Items.GetSelectedItem(ct))?.Value == 42, CT);
 	}
 
 	[TestMethod]
@@ -55,7 +55,7 @@ public partial class Given_BindableCollection_Selection : FeedTests
 		InputInjectorHelper.Current.Tap(items[0]);
 		InputInjectorHelper.Current.Tap(items[1]);
 
-		await UIHelper.WaitFor(async ct =>
+		await TestHelper.WaitFor(async ct =>
 		{
 			return (await vm.Items.GetSelectedItems(ct)).SequenceEqual(new MyItem[] { new(41), new(42) });
 		}, CT);
@@ -72,7 +72,7 @@ public partial class Given_BindableCollection_Selection : FeedTests
 
 		InputInjectorHelper.Current.Tap(items[1]);
 
-		await UIHelper.WaitFor(async ct =>
+		await TestHelper.WaitFor(async ct =>
 		{
 			// Selection is preserved on ...
 			return lv.SelectedItem is MyItem { Value: 42 } // ... the ListView ...
@@ -80,9 +80,9 @@ public partial class Given_BindableCollection_Selection : FeedTests
 				&& await vm.Items.GetSelectedItem(ct) is { Value: 42 }; // ... and the Feed!
 		}, CT);
 
-		await vm.Model.Items.Update(items => items.Replace(items[1], items[1] with { Version = 2 }), CT);
+		await vm.Model.Items.UpdateAsync(items => items.Replace(items[1], items[1] with { Version = 2 }), CT);
 
-		await UIHelper.WaitFor(async ct =>
+		await TestHelper.WaitFor(async ct =>
 		{
 			// Selection is preserved on ...
 			return lv.SelectedItem is MyItem { Value: 42, Version: 2 } // ... the ListView ...
@@ -99,9 +99,9 @@ public partial class Given_BindableCollection_Selection : FeedTests
 		await UIHelper.Load(lv, CT);
 
 		var lvItems = Array.Empty<ListViewItem>();
-		await UIHelper.WaitFor(async ct =>
+		await TestHelper.WaitFor(async ct =>
 		{
-			lvItems = UIHelper.FindChildren<ListViewItem>(lv).ToArray();
+			lvItems = UIHelper.GetChildren<ListViewItem>(lv).ToArray();
 			return lvItems.Length > 0;
 		}, CT);
 
