@@ -65,7 +65,7 @@ internal sealed class SelectAsyncFeed<TArg, TResult> : IFeed<TResult>
 				if (projection is not null)
 				{
 					// Make sure to await the end of the last projection before completing the subject!
-					await projection;
+					await projection.ConfigureAwait(false);
 				}
 				subject.Complete();
 			}

@@ -12,12 +12,12 @@ internal abstract class FeedDependency
 
 	public static async ValueTask<Message<T>?> TryGetCurrentMessage<T>(IFeed<T> feed)
 		=> FeedExecution.Current is { } exec
-			? await exec.Session.Feeds.Get(feed, exec).GetCurrentMessage(exec)
+			? await exec.Session.Feeds.Get(feed, exec).GetCurrentMessage(exec).ConfigureAwait(false)
 			: null;
 
 	public static async ValueTask<Message<IImmutableList<T>>?> TryGetCurrentMessage<T>(IListFeed<T> feed)
 		=> FeedExecution.Current is { } exec
-			? await exec.Session.Feeds.Get(feed, exec).GetCurrentMessage(exec)
+			? await exec.Session.Feeds.Get(feed, exec).GetCurrentMessage(exec).ConfigureAwait(false)
 			: null;
 
 	public static void NotifyTouched(IMessageEntry entry, MessageAxis axis)

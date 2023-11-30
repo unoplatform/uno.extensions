@@ -12,6 +12,11 @@ namespace Uno.Extensions.Reactive.Sources;
 internal abstract class FeedExecution : IAsyncDisposable
 {
 	private static readonly AsyncLocal<FeedExecution?> _current = new();
+
+	/// <summary>
+	/// Gets the current execution if any.
+	/// This is not null when used within a <see cref="DynamicFeed{T}"/> method, and null otherwise.
+	/// </summary>
 	public static FeedExecution? Current => _current.Value;
 
 	internal static CurrentSubscription SetCurrent(FeedExecution execution)

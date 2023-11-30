@@ -172,7 +172,7 @@ public abstract class BindableEnumerable<TCollection, TItem, TBindableItem> : Bi
 					_owner.RaisePropertyChanged($"Item[{CurrentIndex}]");
 				}
 
-				await _owner._listProperty.Update(list => _owner.Replace(list, previous, updated), false, ct);
+				await _owner._listProperty.Update(list => _owner.Replace(list, previous, updated), false, ct).ConfigureAwait(false);
 			}
 		}
 
