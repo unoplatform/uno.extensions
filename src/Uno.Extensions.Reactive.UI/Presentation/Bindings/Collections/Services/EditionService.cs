@@ -37,8 +37,8 @@ internal class EditionService : IEditionService, IDisposable
 					var tcs = new TaskCompletionSource<object?>();
 					using var _ = _ct.Token.Register(() => tcs.TrySetCanceled());
 					dispatcher.TryEnqueue(() => tcs.TrySetResult(default));
-					await tcs.Task;
-					await Dequeue();
+					await tcs.Task.ConfigureAwait(false);
+					await Dequeue().ConfigureAwait(false);
 				},
 				_ct.Token);
 		}
@@ -51,12 +51,12 @@ internal class EditionService : IEditionService, IDisposable
 	private async Task Dequeue()
 	{
 		// Make sure we are not running multiple dequeue in //
-		using var _ = await _gate.LockAsync(_ct.Token);
+		using var _ = await _gate.LockAsync(_ct.Token).ConfigureAwait(false);
 
 		var editions = Interlocked.Exchange(ref _editions, ImmutableQueue<Func<IDifferentialCollectionNode, IDifferentialCollectionNode>>.Empty);
 		foreach (var edition in editions)
 		{
-			await _editFromView(edition, _ct.Token);
+			await _editFromView(edition, _ct.Token).ConfigureAwait(false);
 		}
 	}
 

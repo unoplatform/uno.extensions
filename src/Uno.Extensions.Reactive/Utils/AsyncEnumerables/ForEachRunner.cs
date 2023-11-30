@@ -42,7 +42,7 @@ internal sealed class ForEachRunner<T> : IForEachRunner
 
 		try
 		{
-			await _enumeratorProvider().ForEachAwaitAsync(async item => await _asyncAction(item, _enumerationToken.Token), _enumerationToken.Token);
+			await _enumeratorProvider().ForEachAwaitAsync(async item => await _asyncAction(item, _enumerationToken.Token).ConfigureAwait(false), _enumerationToken.Token).ConfigureAwait(false);
 		}
 		catch (OperationCanceledException)
 		{

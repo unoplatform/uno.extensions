@@ -199,7 +199,7 @@ internal sealed class ListFeedSelection<TSource, TOther> : IListState<TSource>, 
 		_ct.Cancel();
 		if (_impl is not null)
 		{
-			await _impl.DisposeAsync();
+			await _impl.DisposeAsync().ConfigureAwait(false);
 		}
 	}
 }

@@ -56,7 +56,7 @@ public readonly struct BindablePropertyInfo<T>
 	{
 		if (CanWrite)
 		{
-			await _update!(updater, isLeafPropertyChanged, ct);
+			await _update!(updater, isLeafPropertyChanged, ct).ConfigureAwait(false);
 		}
 	}
 }
