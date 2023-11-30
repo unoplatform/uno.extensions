@@ -63,7 +63,7 @@ public readonly struct Option<T> : IOption, IEquatable<Option<T>>
 	/// Gets a boolean that indicates if the <see cref="Type"/> of this optional is <see cref="OptionType.Some"/>.
 	/// </summary>
 	/// <param name="value">The value is any.</param>
-	public bool IsSome([NotNullWhen(true)] out T value)
+	public bool IsSome(out T value)
 	{
 		value = _value!;
 		return _type is OptionType.Some;

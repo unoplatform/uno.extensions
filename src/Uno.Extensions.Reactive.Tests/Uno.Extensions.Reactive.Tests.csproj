@@ -5,6 +5,7 @@
 		<IsPackable>false</IsPackable>
 		<EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
 		<CompilerGeneratedFilesOutputPath>obj/g</CompilerGeneratedFilesOutputPath>
+		<InterceptorsPreviewNamespaces>$(InterceptorsPreviewNamespaces);Uno.Extensions.Reactive.Tests</InterceptorsPreviewNamespaces>
 	</PropertyGroup>
 
 	<ItemGroup>

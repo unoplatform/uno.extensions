@@ -55,6 +55,72 @@ internal class ViewModelGenTool_2 : ICodeGenTool
 
 	public IEnumerable<(string fileName, string code)> Generate()
 	{
+		var asyncMethods = from module in _assembly.Modules
+			from type in module.GetNamespaceTypes()
+			from method in type.GetMethods()
+			where method.Name == "When_CustomAsyncMethodBuilder"
+			//where method.IsAsync && method.ReturnType.Name.StartsWith("Fed")
+			//where method.FindAttribute<System.Runtime.CompilerServices.AsyncStateMachineAttribute>() is not null
+			select (type, method);
+
+		
+		yield return ("Interceptors",
+			$$"""
+			{{this.GetFileHeader()}}
+
+			namespace System.Runtime.CompilerServices
+			{
+				[AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
+				file sealed class InterceptsLocationAttribute : Attribute
+				{
+					public InterceptsLocationAttribute(string filePath, int line, int column)
+					{
+					}
+				}
+			}
+
+			namespace {{_ctx.Context.Compilation.Assembly.Name}}
+			{
+				/// <summary>
+				/// Imperative feed factory interceptors.
+				/// </summary>
+				/// <remarks>Contains the interceptors for the imperative feed syntax</remarks>
+				[global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Never)]
+				{{this.GetCodeGenAttribute()}}
+				file static class __ReactiveAsyncBuilderInterceptor
+				{
+					{{asyncMethods.Select(x =>
+					$$"""
+					{{GetInterceptLocationAttributes(x.method).Align(0)}}
+					public static global::Uno.Extensions.Reactive.IFeed<int> /*{{x.method.ReturnType}}*/ Intercept_{{x.type.Name}}_{{x.method.Name}}(this global::{{x.type}} that)//, {{x.method.Parameters.Select(p => p.ToDisplayString()).JoinBy(", ")}})
+					{
+						global::System.Console.WriteLine("Intercepted {{x.method.Name}}");
+
+						return global::Uno.Extensions.Reactive.Feed<int>.Dynamic(async ct => await ((global::Uno.Extensions.Reactive.DummyFeed<int>)that.GetMyValue()).GetResult(ct).ConfigureAwait(false));
+
+						//return that.GetMyValue();
+					}
+					""").Align(3)}}
+				}
+			}
+			""");
+
+		static IEnumerable<string> GetInterceptLocationAttributes(IMethodSymbol method)
+		{
+			var root = method.DeclaringSyntaxReferences.First().GetSyntax();
+			var invoke = root.DescendantNodesAndSelf().OfType<InvocationExpressionSyntax>().Where(invoke => invoke.ToString().Contains("GetMyValue")).ToArray();
+
+
+
+			//foreach (var syntax in method.DeclaringSyntaxReferences)
+			foreach (var syntax in invoke)
+			{
+				var startPosition = syntax.SyntaxTree.GetLineSpan(syntax.Span).Span.Start;
+				yield return $"[global::System.Runtime.CompilerServices.InterceptsLocationAttribute(@\"{syntax.SyntaxTree.FilePath}\", {startPosition.Line + 1}, {startPosition.Character + 1})]";
+			}
+		}
+
+
 		var models = from module in _assembly.Modules
 			from type in module.GetNamespaceTypes()
 			where IsSupported(type)

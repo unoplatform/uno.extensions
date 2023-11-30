@@ -1,9 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
-	<Import Project="..\tfms-non-ui.props" />
+	<!--<Import Project="..\tfms-non-ui.props" />-->
 
 	<PropertyGroup>
+		<TargetFrameworks>netstandard2.0;net8.0</TargetFrameworks>
 		<Description>Reactive Extensions for the Uno Platform, UWP and WinUI</Description>
 		<ImplicitUsings>false</ImplicitUsings>
+		<Warn>$(Warn);CA2016</Warn>
 
 		<!--
 			As we are InternalsVisibleTo(Uno.Extensions.Reactive.Tests), we disable some compatibility types that are not used by Reactive package itself.

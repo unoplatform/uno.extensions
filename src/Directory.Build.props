@@ -10,7 +10,7 @@
 		<AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
 		<GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
 
-		<LangVersion>10.0</LangVersion>
+		<LangVersion>latest</LangVersion>
 
 		<!-- https://github.com/unoplatform/private/issues/332 -->
 		<!-- <Nullable>annotations</Nullable> -->
