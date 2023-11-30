@@ -8,13 +8,15 @@ Whether you've been around frameworks that use bindings for a while or you're br
 ```cs
 public partial class MainPage : Page
 {
-    public MainPage()
-    {
-        this.DataContext<MyViewModel>((page, vm) => page
-            .Content(new TextBlock()
-                .Text(vm.Message)
-            ));
-    }
+	public MainPage()
+	{
+		this.DataContext<MyViewModel>((page, vm) => page
+			.Content(
+				new TextBlock()
+					.Text(vm.Message) // This will throw a Null Reference Exception
+			)
+		);
+	}
 }
 ```
 
@@ -23,13 +25,15 @@ At first glance the code sample above may look correct and it will compile. Howe
 ```cs
 public partial class MainPage : Page
 {
-    public MainPage()
-    {
-        this.DataContext<MyViewModel>((page, vm) => page
-            .Content(new TextBlock()
-                .Text(() => vm.Message)
-            );
-    }
+	public MainPage()
+	{
+		this.DataContext<MyViewModel>((page, vm) => page
+			.Content(
+				new TextBlock()
+					.Text(() => vm.Message)
+			)
+		);
+	}
 }
 ```
 
@@ -38,14 +42,18 @@ Alternatively, we may want to reduce the overhead on the binding by only having 
 ```cs
 public partial class MainPage : Page
 {
-    public MainPage()
-    {
-        this.DataContext<MyViewModel>((page, vm) => page
-            .Content(new TextBlock()
-                .Text(x => x.Bind(() => vm.Title)
-                    .Mode(BindingMode.OneTime))
-            ));
-    }
+	public MainPage()
+	{
+		this.DataContext<MyViewModel>((page, vm) => page
+			.Content(
+				new TextBlock()
+					.Text(x => x
+						.Bind(() => vm.Title)
+						.Mode(BindingMode.OneTime)
+					)
+			)
+		);
+	}
 }
 ```
 
@@ -54,14 +62,18 @@ The BindingMode additionally provides you with some shorthand methods to set the
 ```cs
 public partial class MainPage : Page
 {
-    public MainPage()
-    {
-        this.DataContext<MyViewModel>((page, vm) => page
-            .Content(new TextBlock()
-                .Text(x => x.Bind(() => vm.Title)
-                    .OneTime())
-            ));
-    }
+	public MainPage()
+	{
+		this.DataContext<MyViewModel>((page, vm) => page
+			.Content(
+				new TextBlock()
+					.Text(x => x
+						.Bind(() => vm.Title)
+						.OneTime()
+					)
+			)
+		);
+	}
 }
 ```
 
@@ -70,14 +82,18 @@ Sometimes, you may want to update the format of the value before it is displayed
 ```cs
 public partial class MainPage : Page
 {
-    public MainPage()
-    {
-        this.DataContext<MyViewModel>((page, vm) => page
-            .Content(new TextBlock()
-                .Text(x => x.Bind(() => vm.Query)
-                    .Convert(query => $"Search: {query}"))
-            ));
-    }
+	public MainPage()
+	{
+		this.DataContext<MyViewModel>((page, vm) => page
+			.Content(
+				new TextBlock()
+					.Text(x => x
+						.Bind(() => vm.Query)
+						.Convert(query => $"Search: {query}")
+					)
+			)
+		);
+	}
 }
 ```
 
@@ -86,13 +102,15 @@ You can also use the shorthand version of this to simply provide the binding and
 ```cs
 public partial class MainPage : Page
 {
-    public MainPage()
-    {
-        this.DataContext<MyViewModel>((page, vm) => page
-            .Content(new TextBlock()
-                .Text(() => vm.Query, query => $"Search: {query}")
-            ));
-    }
+	public MainPage()
+	{
+		this.DataContext<MyViewModel>((page, vm) => page
+			.Content(
+				new TextBlock()
+					.Text(() => vm.Query, query => $"Search: {query}")
+			)
+		);
+	}
 }
 ```
 
@@ -101,15 +119,19 @@ Similarly, you may need to convert the value back to the original type when the 
 ```cs
 public partial class MainPage : Page
 {
-    public MainPage()
-    {
-        this.DataContext<MyViewModel>((page, vm) => page
-            .Content(new TextBox()
-                .Text(x => x.Bind(() => vm.Enabled)
-                    .Convert(enabled => $"Enabled: {enabled}")
-                    .ConvertBack(text => bool.TryParse(text.Replace("Search: ", ""), out var enabled) ? enabled : false))
-            ));
-    }
+	public MainPage()
+	{
+		this.DataContext<MyViewModel>((page, vm) => page
+			.Content(
+				new TextBox()
+					.Text(x => x
+						.Bind(() => vm.Enabled)
+						.Convert(enabled => $"Enabled: {enabled}")
+						.ConvertBack(text => bool.TryParse(text.Replace("Search: ", ""), out var enabled) ? enabled : false)
+					)
+			)
+		);
+	}
 }
 ```
 
@@ -120,20 +142,21 @@ Sometimes you may want or need to bind to your ViewModel. The first case we'll t
 ```cs
 public partial class MainPage : Page
 {
-    public MainPage()
-    {
-        this.DataContext<MyViewModel>((page, vm) => page
-            .Content(
-                new TextBox()
-                    .Assign(out var searchBox)
-                    .Text(() => vm.Query)
-                    .Name("SearchBox"),
-                new TextBox()
-                    .Text(x => x
-                        .Bind(() => searchBox.Text)
-                        .ElementName("SearchBox"))
-            ));
-    }
+	public MainPage()
+	{
+		this.DataContext<MyViewModel>((page, vm) => page
+			.Content(
+				new TextBox()
+					.Assign(out var searchBox)
+					.Text(() => vm.Query)
+					.Name("SearchBox"),
+				new TextBox()
+					.Text(x => x
+						.Bind(() => searchBox.Text)
+						.ElementName("SearchBox"))
+			)
+		);
+	}
 }
 ```
 
@@ -144,24 +167,26 @@ In the event that you need to grab some context to create the ViewModel for the 
 ```cs
 public partial class MainPage : Page
 {
-    public MainPage()
-    {
-        this.DataContext<MyViewModel>((page, vm) => page
-            .Content(
-                new MyCustomControl()
-                    .DataContext(x => x
-                        .Bind(() => this.DataContext)
-                        .Convert(dataContext => {
-                            if (dataContext is MyViewModel myViewModel)
-                            {
-                                return new MyCustomControlViewModel(myViewModel.SomeContext);
-                            }
-                            return null;
-                        })
-                        .OneTime()
-                        .Source(this))
-            ));
-    }
+	public MainPage()
+	{
+		this.DataContext<MyViewModel>((page, vm) => page
+			.Content(
+				new MyCustomControl()
+					.DataContext(x => x
+						.Bind(() => this.DataContext)
+						.Convert(dataContext => {
+							if (dataContext is MyViewModel myViewModel)
+							{
+								return new MyCustomControlViewModel(myViewModel.SomeContext);
+							}
+							return null;
+						})
+						.OneTime()
+						.Source(this)
+					)
+			)
+		);
+	}
 }
 ```
 
