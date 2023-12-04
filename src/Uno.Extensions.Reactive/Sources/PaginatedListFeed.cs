@@ -40,6 +40,8 @@ internal class PaginatedListFeed<TCursor, TItem> : IListFeed<TItem>
 
 		async ValueTask Load(TokenSet<RefreshToken>? refresh, CancellationToken ct)
 		{
+			refreshRequests.MoveNext();
+
 			var cursor = _firstPage;
 			var pageInfo = new PaginationInfo { HasMoreItems = true };
 			var isFirstPage = true;
@@ -71,7 +73,6 @@ internal class PaginatedListFeed<TCursor, TItem> : IListFeed<TItem>
 
 				// Prepare the next token we will process
 				pageRequests.MoveNext();
-				refreshRequests.MoveNext();
 				isFirstPage = false;
 			}
 		}
