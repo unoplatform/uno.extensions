@@ -44,15 +44,17 @@ public static class EqualityComparerExtensions
 		}
 
 		/// <inheritdoc />
-		public bool Equals(T x, T y)
-			=> _comparer.Equals(x, y);
+		public bool Equals(T? x, T? y)
+			=> x is { } xt && y is { } yt
+				? _comparer.Equals(xt, yt)
+				: x is null && y is null;
 
 		/// <inheritdoc />
 		public int GetHashCode(T obj)
-			=> _comparer.GetHashCode(obj);
+			=> obj is { } objT ? _comparer.GetHashCode(objT) : 0;
 
 		/// <inheritdoc />
-		bool IEqualityComparer.Equals(object x, object y)
+		bool IEqualityComparer.Equals(object? x, object? y)
 			=> x is T xt && y is T yt
 				? _comparer.Equals(xt, yt)
 				: x is null && y is null;
@@ -72,19 +74,19 @@ public static class EqualityComparerExtensions
 		}
 
 		/// <inheritdoc />
-		public bool Equals(T x, T y)
+		public bool Equals(T? x, T? y)
 			=> _comparer.Equals(x, y);
 
 		/// <inheritdoc />
 		public int GetHashCode(T obj)
-			=> _comparer.GetHashCode(obj);
+			=> obj is { } objT ? _comparer.GetHashCode(objT) : 0;
 
 		/// <inheritdoc />
-		bool IEqualityComparer.Equals(object x, object y)
+		bool IEqualityComparer.Equals(object? x, object? y)
 			=> _comparer.Equals(x, y);
 
 		/// <inheritdoc />
-		int IEqualityComparer.GetHashCode(object obj)
-			=> _comparer.GetHashCode(obj);
+		int IEqualityComparer.GetHashCode(object? obj)
+			=> obj is { } objT ? _comparer.GetHashCode(objT) : 0;
 	}
 }
