@@ -56,5 +56,6 @@ jobs:
 
 - template: .azure-pipelines.Wasm.yml
 - template: .azure-pipelines.UITests.Wasm.yml
+- template: .azure-pipelines.RuntimeTests.Skia.yml
 - template: .azure-pipelines.Changelog.yml
 
