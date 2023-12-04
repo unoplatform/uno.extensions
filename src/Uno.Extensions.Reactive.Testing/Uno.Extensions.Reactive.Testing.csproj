@@ -19,7 +19,7 @@
 		<PackageReference Include="MSTest.TestAdapter" />
 		<PackageReference Include="MSTest.TestFramework" />
 		<PackageReference Include="coverlet.collector" />
-		<PackageReference Include="System.Collections.Immutable" VersionOverride="6.0.0" /> <!-- can this be the lower version in Directory.Build.props -->
+		<PackageReference Include="System.Collections.Immutable" VersionOverride="8.0.0" /> <!-- can this be the lower version in Directory.Build.props -->
 	</ItemGroup>
 
 	<ItemGroup>
