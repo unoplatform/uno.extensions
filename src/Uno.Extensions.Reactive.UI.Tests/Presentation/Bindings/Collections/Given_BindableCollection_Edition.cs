@@ -53,7 +53,7 @@ public partial class Given_BindableCollection_Edition : FeedTests
 		var lvItems = Array.Empty<ListViewItem>();
 		await UIHelper.WaitFor(async ct =>
 		{
-			lvItems = UIHelper.FindChildren<ListViewItem>(lv).ToArray();
+			lvItems = UIHelper.GetChildren<ListViewItem>(lv).ToArray();
 			return lvItems.Length > 0;
 		}, CT);
 

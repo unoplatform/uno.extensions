@@ -32,12 +32,12 @@ public partial class Given_VMWithCommands
 	{
 		var vm = new BindableWhen_ParameterFeed_Then_SubscribedWithSameContext_ViewModel();
 
-		await UIHelper.WaitFor(() => vm.MyFeed != 0, default);
+		await TestHelper.WaitFor(() => vm.MyFeed != 0, default);
 
 		var current = vm.MyFeed;
 		vm.DoSomething.Execute(null);
 
-		await UIHelper.WaitFor(() => vm.Model.CommandLastParameter != -1, default);
+		await TestHelper.WaitFor(() => vm.Model.CommandLastParameter != -1, default);
 
 		Assert.AreEqual(1, vm.FeedInvokeCount);
 		Assert.AreEqual(current, vm.Model.CommandLastParameter);
@@ -64,12 +64,12 @@ public partial class Given_VMWithCommands
 
 		await UIHelper.Load(ui, default);
 
-		await UIHelper.WaitFor(() => vm.MyFeed is not 0, default);
+		await TestHelper.WaitFor(() => vm.MyFeed is not 0, default);
 
 		var current = vm.MyFeed;
 		doSomething.Command.Execute(null);
 
-		await UIHelper.WaitFor(() => vm.Model.CommandLastParameter != -1, default);
+		await TestHelper.WaitFor(() => vm.Model.CommandLastParameter != -1, default);
 
 		Assert.AreEqual(1, vm.FeedInvokeCount);
 		Assert.AreEqual(current, vm.Model.CommandLastParameter);

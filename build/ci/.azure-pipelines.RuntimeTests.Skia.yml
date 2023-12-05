@@ -1,0 +1,56 @@
+﻿jobs:
+- job: Skia_Tests
+  displayName: 'Runtime Tests - Skia GTK'
+  timeoutInMinutes: 60
+  
+  pool:
+    vmImage: 'ubuntu-20.04'
+
+  variables:
+    NUGET_PACKAGES: $(build.sourcesdirectory)/.nuget
+
+  steps:
+  - checkout: self
+    clean: true
+    
+  - task: UseDotNet@2
+    displayName: 'Use .NET'
+    inputs:
+      packageType: 'sdk'
+      version: '7.x'
+      
+  - script: |
+        dotnet tool install -g uno.check
+        uno-check --target skiagtk --fix --non-interactive --ci
+    
+    displayName: 'Run uno-check'    
+
+  - script: dotnet build Uno.Extensions.RuntimeTests.Skia.Gtk.csproj -c Debug -p:UnoTargetFrameworkOverride=net7.0 -p:GeneratePackageOnBuild=false -bl:$(Build.ArtifactStagingDirectory)/skia-gtk-runtime-test-build.binlog
+    displayName: 'Build Runtime Tests app (GTK)'
+    workingDirectory: $(Build.SourcesDirectory)/src/Uno.Extensions.RuntimeTests/Uno.Extensions.RuntimeTests.Skia.Gtk
+
+  - task: PublishBuildArtifacts@1
+    displayName: Publish Build Logs
+    retryCountOnTaskFailure: 3
+    condition: always()
+    inputs:
+      PathtoPublish: $(build.artifactstagingdirectory)/skia-gtk-runtime-test-build.binlog
+      ArtifactName: skia-runtime-test-build
+      ArtifactType: Container
+
+  - script: xvfb-run --auto-servernum --server-args='-screen 0 1280x1024x24' dotnet Uno.Extensions.RuntimeTests.Skia.Gtk.dll
+    displayName: 'Run Runtime Tests (GTK)'
+    workingDirectory: $(Build.SourcesDirectory)/src/Uno.Extensions.RuntimeTests/Uno.Extensions.RuntimeTests.Skia.Gtk/bin/Debug/net7.0
+    env:
+      UNO_RUNTIME_TESTS_RUN_TESTS: '{}'
+      UNO_RUNTIME_TESTS_OUTPUT_PATH: '$(Common.TestResultsDirectory)/skia-gtk-runtime-tests-results.xml'
+
+  - task: PublishTestResults@2
+    displayName: 'Publish GTK Runtime Tests Results'
+    condition: always()
+    retryCountOnTaskFailure: 3
+    inputs:
+      testRunTitle: 'GTK Runtime Tests Run'
+      testResultsFormat: 'NUnit'
+      testResultsFiles: '$(Common.TestResultsDirectory)/skia-gtk-runtime-tests-results.xml'
+      failTaskOnFailedTests: true 
