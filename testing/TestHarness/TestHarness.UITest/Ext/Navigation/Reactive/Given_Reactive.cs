@@ -91,10 +91,21 @@ public class Given_Reactive : NavigationTestBase
 
 		App.WaitElement("OnePageToTwoPageViewModelButton");
 		var screenBefore = TakeScreenshot("When_PageNavigationViewModel_Before");
+
+		// Iterate through pages 1 to 3 - this caused an issue
+		// where NavigationCacheMode is set to required
+		// see https://github.com/unoplatform/uno.extensions/issues/2097
+		App.WaitThenTap("OnePageToTwoPageViewModelButton");
+		App.WaitThenTap("TwoPageToThreePageViewModelButton");
+		App.WaitThenTap("ThreePageBackViewModelButton");
+		App.WaitThenTap("TwoPageBackViewModelButton");
+		App.WaitElement("OnePageToTwoPageViewModelButton");
+
+
 		App.WaitThenTap("OnePageToThreePageDataButton");
 		App.WaitElement("ThreePageWidgetNameTextBlock");
 		var text = App.GetText("ThreePageWidgetNameTextBlock");
-		Assert.AreEqual("From Three", text);
+		Assert.AreEqual("From One", text);
 
 		App.WaitThenTap("ThreePageBackViewModelButton");
 		text = App.GetText("TwoPageWidgetNameTextBlock");
