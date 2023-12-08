@@ -98,7 +98,7 @@ public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 			{
 				var mapping = Resolver.FindByPath(this.Route!.Base);
 
-				await InitializeCurrentView(request, this.Route with { Data = request.Route.Data}, mapping, true);
+				await InitializeCurrentView(request, this.Route with { Data = request.Route.Data }, mapping, true);
 			}
 			return request.Route;
 		}
@@ -160,19 +160,22 @@ public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 				continue;
 			}
 
-			var newEntry = new PageStackEntry(map.RenderView, null, null);
+			var newEntry = new PageStackEntry(
+				map.RenderView,
+				request.Route.NavigationData(),
+				null);
 			Control?.BackStack.Add(newEntry);
 		}
 
 
 		// Determine which segments in the initial route were consumed by this navigation
 		var navSegment = Route.Empty;
-		foreach(var stackEntry in Control!.BackStack)
+		foreach (var stackEntry in Control!.BackStack)
 		{
 			var entryRoute = Resolver.FindByView(stackEntry.SourcePageType, this);
 			if (entryRoute != null && (
 				request.Route.Contains(entryRoute.Path) ||
-				segments.Any(seg=>seg.Path==entryRoute.Path)
+				segments.Any(seg => seg.Path == entryRoute.Path)
 				))
 			{
 				navSegment = navSegment.Append(entryRoute.Path);
@@ -180,7 +183,7 @@ public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 		}
 		navSegment = navSegment.Append(lastMap.Path);
 
-		await InitializeCurrentView(request, lastMap.AsRoute() with { Data = request.Route.Data}, lastMap, refreshViewModel);
+		await InitializeCurrentView(request, lastMap.AsRoute() with { Data = request.Route.Data }, lastMap, refreshViewModel);
 
 		CurrentView?.SetNavigatorInstance(Region.Navigator()!);
 
@@ -220,7 +223,10 @@ public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 			{
 				var previousMapping = Resolver.FindByView(Control.BackStack.Last().SourcePageType, this);
 				// Invoke the navigation (which will be a back navigation)
-				FrameGoBack(route.NavigationData(), previousMapping);
+				if (await FrameGoBack(route.NavigationData(), previousMapping) is { } parameter)
+				{
+					request = request.WithData(parameter);
+				}
 			}
 			else
 			{
@@ -252,7 +258,7 @@ public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 
 	private void Frame_Navigating(object sender, NavigatingCancelEventArgs e)
 	{
-		if( e.NavigationMode==NavigationMode.Back &&
+		if (e.NavigationMode == NavigationMode.Back &&
 			!e.Cancel &&
 			Control?.Content is Page currentPage)
 		{
@@ -275,25 +281,35 @@ public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 			var viewType = Control?.Content.GetType();
 			if (viewType is not null)
 			{
-				Region.Navigator()?.NavigateViewAsync(this, viewType);
+				Region.Navigator()?.NavigateViewAsync(this, viewType, data: e.Parameter);
 			}
 		}
 		else
 		{
-			Region.Navigator()?.NavigateBackAsync(this);
+			if (e.Parameter is null)
+			{
+				Region.Navigator()?.NavigateBackAsync(this);
+			}
+			else
+			{
+				Region.Navigator()?.NavigateBackWithResultAsync(this, data: e.Parameter);
+			}
 		}
 	}
 
-	private async void FrameGoBack(object? parameter, RouteInfo? previousMapping)
+	private async Task<object?> FrameGoBack(object? parameter, RouteInfo? previousMapping)
 	{
 		if (Control is null)
 		{
-			return;
+			return default;
 		}
 
 		try
 		{
 			Control.Navigated -= Frame_Navigated;
+
+			parameter ??= Control.BackStack.LastOrDefault()?.Parameter;
+
 			if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Invoking Frame.GoBack");
 			Control.GoBack();
 
@@ -307,6 +323,8 @@ public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 		{
 			if (Logger.IsEnabled(LogLevel.Error)) Logger.LogErrorMessage($"Unable to go back to page - {ex.Message}");
 		}
+
+		return parameter;
 	}
 
 	protected override async Task<string?> Show(string? path, Type? viewType, object? data)

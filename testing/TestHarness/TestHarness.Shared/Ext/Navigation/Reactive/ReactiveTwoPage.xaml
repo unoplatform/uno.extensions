@@ -29,6 +29,10 @@
 				Click="TwoPageBackCodebehindClick"
 				Content="Back (Codebehind)" />
 			<Button
+				AutomationProperties.AutomationId="TwoPageBackCodebehindUsingFrameButton"
+				Click="TwoPageBackCodebehindUsingFrameClick"
+				Content="Back (Codebehind - Frame)" />
+			<Button
 				AutomationProperties.AutomationId="TwoPageToThreePageViewModelButton"
 				Command="{Binding GoToThree}"
 				Content="Three (ViewModel)" />

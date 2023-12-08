@@ -16,4 +16,9 @@ public sealed partial class ReactiveTwoPage : Page
 	{
 		await this.Navigator()!.NavigateBackAsync(this);
 	}
+
+	public async void TwoPageBackCodebehindUsingFrameClick(object sender, RoutedEventArgs e)
+	{
+		this.Frame.GoBack();
+	}
 }

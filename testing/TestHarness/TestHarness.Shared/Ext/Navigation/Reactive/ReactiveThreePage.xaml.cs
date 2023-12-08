@@ -14,4 +14,9 @@ public sealed partial class ReactiveThreePage : Page
 	{
 		await this.Navigator()!.NavigateBackAsync(this);
 	}
+
+	public async void ThreePageBackCodebehindUsingFrameClick(object sender, RoutedEventArgs e)
+	{
+		this.Frame.GoBack();
+	}
 }
