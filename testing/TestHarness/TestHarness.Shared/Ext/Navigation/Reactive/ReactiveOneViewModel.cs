@@ -11,7 +11,7 @@ public partial record ReactiveOneViewModel (INavigator Navigator)
 
 	public async Task GoToTwoData()
 	{
-		await Navigator.NavigateDataAsync(this, data:new TwoModel(new ReactiveWidget("From Two",56)));
+		await Navigator.NavigateDataAsync(this, data:new TwoModel(new ReactiveWidget("From One",56)));
 	}
 
 	public async Task GoToThree()
@@ -21,7 +21,7 @@ public partial record ReactiveOneViewModel (INavigator Navigator)
 
 	public async Task GoToThreeData()
 	{
-		await Navigator.NavigateDataAsync(this, data: new ThreeModel(new ReactiveWidget("From Three", 56)));
+		await Navigator.NavigateDataAsync(this, data: new ThreeModel(new ReactiveWidget("From One", 56)));
 	}
 
 	public async Task ShowDialog()

@@ -28,6 +28,7 @@ public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 
 		if (Control is not null)
 		{
+			Control.Navigating += Frame_Navigating;
 			Control.Navigated += Frame_Navigated;
 		}
 	}
@@ -248,6 +249,22 @@ public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 
 		return responseRoute;
 	}
+
+	private void Frame_Navigating(object sender, NavigatingCancelEventArgs e)
+	{
+		if( e.NavigationMode==NavigationMode.Back &&
+			!e.Cancel &&
+			Control?.Content is Page currentPage)
+		{
+			if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Frame has navigating to previous page");
+
+			// Force ViewModel to be unset
+			currentPage.DataContext = null;
+			// Force page to be disposed
+			currentPage.NavigationCacheMode = NavigationCacheMode.Disabled;
+		}
+	}
+
 
 	private void Frame_Navigated(object sender, NavigationEventArgs e)
 	{
