@@ -16,12 +16,14 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Facet
 
 		private readonly CancellationTokenSource _ct = new();
 		private readonly IPaginationService? _service;
+		private readonly IBindableCollectionViewSource _source;
 		private readonly CollectionChangedFacet _changed;
 		private readonly BindableCollectionExtendedProperties _properties;
 
 		public PaginationFacet(IBindableCollectionViewSource source, CollectionChangedFacet changed, BindableCollectionExtendedProperties properties)
 		{
 			_service = source.GetService(typeof(IPaginationService)) as IPaginationService;
+			_source = source;
 			_changed = changed;
 			_properties = properties;
 
@@ -59,7 +61,7 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Facet
 			{
 				_properties.HasMoreItems = HasMoreItems = svc.HasMoreItems;
 				_properties.IsLoadingMoreItems = svc.IsLoadingMoreItems;
-				_changed.PropertyChanged(nameof(HasMoreItems));
+				_source.Dispatcher?.TryEnqueue(() => _changed.PropertyChanged(nameof(HasMoreItems)));
 			}
 			else
 			{

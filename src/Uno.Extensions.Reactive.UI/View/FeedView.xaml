@@ -74,7 +74,7 @@
 							</VisualStateGroup>
 							<VisualStateGroup x:Name="ProgressGroup">
 								<VisualStateGroup.Transitions>
-									<VisualTransition To="Indeterminate">
+									<VisualTransition From="NoProgress" To="Indeterminate">
 										<Storyboard>
 											<ObjectAnimationUsingKeyFrames
 												Storyboard.TargetName="ProgressRoot"
@@ -99,12 +99,17 @@
 												Duration="0:0:0.100" />
 										</Storyboard>
 									</VisualTransition>
-									<VisualTransition From="Indeterminate">
+									<VisualTransition From="Indeterminate" To="NoProgress">
 										<Storyboard>
+											<ObjectAnimationUsingKeyFrames
+												Storyboard.TargetName="ProgressRoot"
+												Storyboard.TargetProperty="Visibility">
+												<DiscreteObjectKeyFrame KeyTime="0:0:0" Value="Visible" />
+												<DiscreteObjectKeyFrame KeyTime="0:0:0.100" Value="Collapsed" />
+											</ObjectAnimationUsingKeyFrames>
 											<DoubleAnimation
 												Storyboard.TargetName="ProgressPresenter"
 												Storyboard.TargetProperty="Opacity"
-												From="1"
 												To="0"
 												Duration="0:0:0.100" />
 										</Storyboard>
@@ -113,8 +118,8 @@
 								<VisualState x:Name="NoProgress" />
 								<VisualState x:Name="Indeterminate">
 									<VisualState.Setters>
-										<Setter Target="DataRoot.Visibility" Value="Collapsed" />
-										<Setter Target="ErrorRoot.Visibility" Value="Collapsed" />
+										<Setter Target="DataRoot.Opacity" Value="0" />
+										<Setter Target="ErrorRoot.Opacity" Value="0" />
 										<Setter Target="ProgressRoot.Visibility" Value="Visible" />
 									</VisualState.Setters>
 								</VisualState>
