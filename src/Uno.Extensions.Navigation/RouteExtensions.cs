@@ -120,19 +120,12 @@ public static class RouteExtensions
 		}
 
 		var paras = ParseQueryParameters(query);
-		if (data is not null)
+
+		if(data is { } routeData)
 		{
-			if (data is IDictionary<string, object> paraDict)
-			{
-				foreach (var p in paraDict)
-				{
-					paras.Add(p);
-				}
-			}
-			else
-			{
-				paras[string.Empty] = data;
-			}
+			var routeDataDictionary = data as IDictionary<string, object>;
+			routeDataDictionary ??= new Dictionary<string, object> { { string.Empty, data } };
+			paras = Combine(paras, routeDataDictionary);
 		}
 
 		var routeBase = ExtractBase(path, out var qualifier, out path);

@@ -102,17 +102,38 @@ public class Given_Reactive : NavigationTestBase
 		App.WaitElement("OnePageToTwoPageViewModelButton");
 
 
+		// Scenario 1 - Go direct to page 3 (injects page 2) then nav back to page 2 passing data as part of goback
 		App.WaitThenTap("OnePageToThreePageDataButton");
 		App.WaitElement("ThreePageWidgetNameTextBlock");
 		var text = App.GetText("ThreePageWidgetNameTextBlock");
 		Assert.AreEqual("From One", text);
-
 		App.WaitThenTap("ThreePageBackViewModelButton");
 		text = App.GetText("TwoPageWidgetNameTextBlock");
 		Assert.AreEqual("Adapted model", text);
-
-
 		App.WaitThenTap("TwoPageBackViewModelButton");
+
+		// Scenario 2 - Go direct to page 3 (injects page 2) then nav back to page 2 with no parameter
+		App.WaitThenTap("OnePageToThreePageDataButton");
+		App.WaitElement("ThreePageWidgetNameTextBlock");
+		text = App.GetText("ThreePageWidgetNameTextBlock");
+		Assert.AreEqual("From One", text);
+		App.WaitThenTap("ThreePageBackButton");
+		text = App.GetText("TwoPageWidgetNameTextBlock");
+		Assert.AreEqual("Adapted model", text);
+		App.WaitThenTap("TwoPageBackButton");
+
+		// Scenario 3 - Go direct to page 3 (injects page 2) then nav back using frame
+		App.WaitThenTap("OnePageToThreePageDataButton");
+		App.WaitElement("ThreePageWidgetNameTextBlock");
+		text = App.GetText("ThreePageWidgetNameTextBlock");
+		Assert.AreEqual("From One", text);
+		App.WaitThenTap("ThreePageBackCodebehindUsingFrameButton");
+		text = App.GetText("TwoPageWidgetNameTextBlock");
+		Assert.AreEqual("Adapted model", text);
+		App.WaitThenTap("TwoPageBackCodebehindUsingFrameButton");
+
+
+
 
 
 		App.WaitElement("OnePageToTwoPageViewModelButton");

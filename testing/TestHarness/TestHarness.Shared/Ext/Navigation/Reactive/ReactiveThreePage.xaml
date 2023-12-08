@@ -30,6 +30,10 @@
 				AutomationProperties.AutomationId="ThreePageBackCodebehindButton"
 				Click="ThreePageBackCodebehindClick"
 				Content="Back (Codebehind)" />
+				<Button
+					AutomationProperties.AutomationId="ThreePageBackCodebehindUsingFrameButton"
+					Click="ThreePageBackCodebehindUsingFrameClick"
+					Content="Back (Codebehind - Frame)" />
 			<Button
 				AutomationProperties.AutomationId="ThreePageToFourPageViewModelButton"
 				Command="{Binding GoToFour}"
