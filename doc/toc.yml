@@ -70,8 +70,6 @@
       items:
         - name: Overview
           href: Overview/Markup/Overview.md
-        - name: Generating Extensions
-          href: Overview/Markup/GeneratingExtensions.md
         - name: Dependency Property Builder
           href: Overview/Markup/DependencyPropertyBuilder.md
           items:
@@ -96,6 +94,8 @@
           items:
             - name: Storyboards
               href: Overview/Markup/Storyboards.md
+        - name: Using and Generating Extensions
+          href: Overview/Markup/GeneratingExtensions.md
         - name: Appendix
           items:
             - name: TextBlock Run
