@@ -70,7 +70,7 @@
       items:
         - name: Overview
           href: Overview/Markup/Overview.md
-        - name: Dependency Property Builder
+        - name: Binding, Static & Theme Resources
           href: Overview/Markup/DependencyPropertyBuilder.md
           items:
             - name: Binding 101
