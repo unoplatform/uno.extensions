@@ -102,7 +102,12 @@
           items:
             - name: TextBlock Run
               href: Overview/Markup/Appendix/TextBlockRun.md
+<<<<<<< HEAD
 >>>>>>> fd6dc217 (docs: normalize Overview as option in the toc)
+=======
+            - name: Accessing a Control Instance
+              href: Overview/Markup/Appendix/AccessingControlInstance.md
+>>>>>>> 673a0d48 (docs: add docs for Assign method)
     - name: MVUX
       href: Overview/Mvux/Overview.md
       items:
