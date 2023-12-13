@@ -66,6 +66,43 @@
           href: Learn/Tutorials/Logging/HowTo-Logging.md
         - name: Enable internal Uno Platform logging
           href: Learn/Tutorials/Logging/HowTo-InternalLogging.md
+<<<<<<< HEAD
+=======
+    - name: Markup
+      items:
+        - name: Overview
+          href: Overview/Markup/Overview.md
+        - name: Generating Extensions
+          href: Overview/Markup/GeneratingExtensions.md
+        - name: Dependency Property Builder
+          href: Overview/Markup/DependencyPropertyBuilder.md
+          items:
+            - name: Binding 101
+              href: Overview/Markup/Binding101.md
+            - name: Converters
+              href: Overview/Markup/Converters.md
+            - name: Using Static & Theme Resources
+              href: Overview/Markup/StaticAndThemeResources.md
+            - name: Using Uno.Themes.WinUI.Markup
+              href: Overview/Markup/UnoThemes.md
+        - name: Attached Properties
+          href: Overview/Markup/AttachedProperties.md
+        - name: Resource Dictionaries
+          href: Overview/Markup/Resources.md
+        - name: Styles
+          href: Overview/Markup/Styles.md
+        - name: Templates
+          href: Overview/Markup/Templates.md
+        - name: VisualStateManager
+          href: Overview/Markup/VisualStateManager.md
+          items:
+            - name: Storyboards
+              href: Overview/Markup/Storyboards.md
+        - name: Appendix
+          items:
+            - name: TextBlock Run
+              href: Overview/Markup/Appendix/TextBlockRun.md
+>>>>>>> fd6dc217 (docs: normalize Overview as option in the toc)
     - name: MVUX
       href: Overview/Mvux/Overview.md
       items:
