@@ -1,5 +1,5 @@
 ---
-uid: Overview.Maui.ThirdParty.DevExpress
+uid: Uno.Extensions.Maui.ThirdParty.DevExpress
 ---
 # .NET MAUI Embedding - DevExpress .NET MAUI Controls
 

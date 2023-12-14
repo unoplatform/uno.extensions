@@ -1,5 +1,5 @@
 ---
-uid: Overview.Mvux.ListFeeds
+uid: Uno.Extensions.Mvux.ListFeeds
 ---
 
 # What are list-feeds?

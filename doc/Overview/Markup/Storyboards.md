@@ -1,5 +1,5 @@
 ---
-uid: Overview.Markup.Storyboards
+uid: Uno.Extensions.Markup.Storyboards
 ---
 # Getting Started with Storyboards
 

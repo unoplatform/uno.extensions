@@ -1,5 +1,5 @@
 ---
-uid: Overview.Markup.Resources
+uid: Uno.Extensions.Markup.Resources
 ---
 # Resource Dictionaries
 

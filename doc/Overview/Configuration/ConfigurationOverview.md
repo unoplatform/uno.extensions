@@ -1,5 +1,5 @@
 ---
-uid: Overview.Configuration
+uid: Uno.Extensions.Configuration
 ---
 # Configuration
 

@@ -1,5 +1,5 @@
 ---
-uid: Overview.Markup.StaticAndThemeResources
+uid: Uno.Extensions.Markup.StaticAndThemeResources
 ---
 
 # Using Static and Theme Resources

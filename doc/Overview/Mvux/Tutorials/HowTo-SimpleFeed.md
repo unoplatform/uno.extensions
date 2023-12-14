@@ -1,5 +1,5 @@
 ---
-uid: Overview.Mvux.HowToSimpleFeed
+uid: Uno.Extensions.Mvux.HowToSimpleFeed
 ---
 
 # How to create a feed

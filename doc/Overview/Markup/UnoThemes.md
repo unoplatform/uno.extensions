@@ -1,5 +1,5 @@
 ---
-uid: Overview.Markup.UnoThemes
+uid: Uno.Extensions.Markup.UnoThemes
 ---
 
 # Using Uno.Themes.WinUI.Markup

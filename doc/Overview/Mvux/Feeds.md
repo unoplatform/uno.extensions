@@ -1,5 +1,5 @@
 ---
-uid: Overview.Mvux.Feeds
+uid: Uno.Extensions.Mvux.Feeds
 ---
 
 # What are feeds?

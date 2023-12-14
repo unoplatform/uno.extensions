@@ -1,5 +1,5 @@
 ---
-uid: Overview.Markup.Binding101
+uid: Uno.Extensions.Markup.Binding101
 ---
 # Binding 101
 

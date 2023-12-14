@@ -1,5 +1,5 @@
 ---
-uid: Overview.Mvux.Advanced.Commands
+uid: Uno.Extensions.Mvux.Advanced.Commands
 ---
 
 # Commands

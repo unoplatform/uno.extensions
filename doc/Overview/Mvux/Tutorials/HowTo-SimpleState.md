@@ -1,5 +1,5 @@
 ---
-uid: Overview.Mvux.HowToSimpleState
+uid: Uno.Extensions.Mvux.HowToSimpleState
 ---
 
 # How to create a state with a command

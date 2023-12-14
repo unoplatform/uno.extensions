@@ -1,5 +1,5 @@
 ---
-uid: Overview.Mvux.Advanced.Selection
+uid: Uno.Extensions.Mvux.Advanced.Selection
 ---
 
 # Selection

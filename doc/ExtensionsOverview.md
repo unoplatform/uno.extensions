@@ -1,5 +1,5 @@
 ---
-uid: Overview.Features
+uid: Uno.Extensions.Features
 ---
 # Get to a fully functional project in minutes
 

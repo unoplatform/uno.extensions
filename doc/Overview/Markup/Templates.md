@@ -1,5 +1,5 @@
 ---
-uid: Overview.Markup.Templates
+uid: Uno.Extensions.Markup.Templates
 ---
 # Templates
 

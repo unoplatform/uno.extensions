@@ -1,5 +1,5 @@
 ---
-uid: Overview.Maui.ThirdParty.GrialKit
+uid: Uno.Extensions.Maui.ThirdParty.GrialKit
 ---
 # .NET MAUI Embedding - Grial UI Kit
 

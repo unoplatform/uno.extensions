@@ -1,5 +1,5 @@
 ---
-uid: Overview.Maui.ThirdParty.EsriMaps
+uid: Uno.Extensions.Maui.ThirdParty.EsriMaps
 ---
 # .NET MAUI Embedding - Esri ArcGIS Maps SDK for .NET
 

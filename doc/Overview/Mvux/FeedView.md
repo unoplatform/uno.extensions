@@ -1,5 +1,5 @@
 ---
-uid: Overview.Mvux.FeedView
+uid: Uno.Extensions.Mvux.FeedView
 ---
 
 # The `FeedView` control
