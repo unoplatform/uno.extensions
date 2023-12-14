@@ -38,13 +38,13 @@ public sealed partial class MainPage : Page
 }
 ```
 
-The first thing you will notice with C# Markup is that there is nothing special to learn. You can simply create a new instance of the controls you want to work with (eg `new TextBlock()`) and set properties using the generated extension method with the same name (eg `.Text("Hello Uno Platform!')`). 
+The first thing you will notice with C# Markup is that there is nothing special to learn. You can simply create a new instance of the controls you want to work with (eg `new TextBlock()`) and set properties using the generated extension method with the same name (eg `.Text("Hello Uno Platform!')`).
 
 Unlike XAML which is littered with string constants, C# Markup provides a strongly typed API for setting properties. For example, in XAML you would set `HorizontalAlignment` with `HorizontalAlignment="Center"`, but in C# Markup you would use the `HorizontalAlignment` enum with `HorizontalAlignment.Center`, ensuring that you get compile time validation and intellisense for all the available values.
 
 ## Getting Started
 
-Let's take a look at how to get started with C# Markup. We'll start with a simple sample that displays a counter and a button that increments the counter by a step size. The sample will have a ViewModel that has a `Count` and a `Step` property, as well as an `IncrementCommand` that increments the `Count` by the `Step` when executed. 
+Let's take a look at how to get started with C# Markup. We'll start with a simple sample that displays a counter and a button that increments the counter by a step size. The sample will have a ViewModel that has a `Count` and a `Step` property, as well as an `IncrementCommand` that increments the `Count` by the `Step` when executed.
 
 ### Constructor and Properties
 
@@ -69,7 +69,6 @@ However, C# Markup provides automatic type conversion for common types such as `
 ```cs
 new TextBlock().Margin(12)
 ```
-
 
 ### Data Binding
 
@@ -107,7 +106,7 @@ Currently, the data binding is directly on the `Count` property meaning that the
 new TextBlock().Text(() => vm.Count, count => $"Counter: {count}")
 ```
 
-In some cases, you need more control over the binding, such as when you need to change the binding mode or provide a converter. In these cases, you can use the `Bind` extension method, as shown in the following example that two-way data binds the `Step` property to the `Text` property of a `TextBox`. 
+In some cases, you need more control over the binding, such as when you need to change the binding mode or provide a converter. In these cases, you can use the `Bind` extension method, as shown in the following example that two-way data binds the `Step` property to the `Text` property of a `TextBox`.
 
 ```cs
 new TextBox().Text(x => x.Bind(() => vm.Step).TwoWay()),
@@ -167,3 +166,18 @@ public sealed partial class MainPage : Page
 
 This overview has provided a brief introduction to C# Markup with an introduction to how to create controls and set properties, as well as how to use data binding and resources. Check out the full [Counter sample](TBD) to see how to use C# Markup to create a complete application. Check out the [C# Markup reference](TBD) for more information on available extension methods.
 
+## Next Steps
+
+Learn more about:
+
+- [Binding, Static & Theme Resources](xref:Overview.Markup.DependencyPropertyBuilder)
+  - [Binding 101](xref:Overview.Markup.Binding101)
+  - [Converters](xref:Overview.Markup.Converters)
+  - [Using Static & Theme Resources](xref:Overview.Markup.StaticAndThemeResources)
+  - [Using Uno.Themes.WinUI.Markup](xref:Overview.Markup.UnoThemes)
+- [Attached Properties](xref:Overview.Markup.AttachedProperties)
+- [Styles](xref:Overview.Markup.Styles)
+- [Templates](xref:Overview.Markup.Templates)
+- [VisualStateManagers](xref:Overview.Markup.VisualStateManager)
+  - [Storyboards](xref:Overview.Markup.Storyboards)
+- [Generating C# Extensions for your libraries](xref:Overview.Markup.GeneratingExtensions)
