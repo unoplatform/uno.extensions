@@ -5,41 +5,108 @@
 - name: Learn
   items:
     - name: Hosting
+      href: xref:Uno.Extensions.Hosting.Overview
       items:
         - name: Overview
-          href: Overview/Hosting/HostingOverview.md
-        - name: Get started with hosting
-          href: Learn/Tutorials/Hosting/HowTo-HostingSetup.md
+          href: xref:Uno.Extensions.Hosting.Overview
+        - name: "How-To: Get started with hosting"
+          href: xref:Uno.Extensions.Hosting.HowToHostingSetup
     - name: Dependency Injection
+      href: xref:Uno.Extensions.DependencyInjection.Overview
       items:
         - name: Overview
-          href: Overview/DependencyInjection/DependencyInjectionOverview.md
-        - name: Register and use services with dependency injection
-          href: Learn/Tutorials/DependencyInjection/HowTo-DependencyInjectionSetup.md
-        - name: Manually Resolving Dependencies with CommunityToolkit.Mvvm
-          href: Learn/Tutorials/DependencyInjection/HowTo-CommunityToolkit.md
+          href: xref:Uno.Extensions.DependencyInjection.Overview
+        - name: "How-To: Get started with dependency injection"
+          href: xref:Uno.Extensions.DependencyInjection.HowToDependencyInjection
+        - name: "How-To: Resolve Dependencies with CommunityToolkit.Mvvm"
+          href: xref:Uno.Extensions.DependencyInjection.HowToCommunityToolkit
     - name: Configuration
+      href: xref:Uno.Extensions.Configuration.Overview
       items:
         - name: Overview
-          href: Overview/Configuration/ConfigurationOverview.md
-        - name: Get started with configuration
-          href: Learn/Tutorials/Configuration/HowTo-Configuration.md
-        - name: Write updated setting values to an embedded resource
-          href: Learn/Tutorials/Configuration/HowTo-WritableConfiguration.md
+          href: xref:Uno.Extensions.Configuration.Overview
+        - name: "How-To: Get started with configuration"
+          href: xref:Uno.Extensions.Configuration.HowToConfiguration
+        - name: "How-To: Save settings using IWritableOptions"
+          href: xref:Uno.Extensions.Configuration.HowToWritableConfiguration
     - name: Logging
+      href: xref:Uno.Extensions.Logging.Overview
       items:
         - name: Overview
-          href: Overview/Logging/LoggingOverview.md
-        - name: Get started with logging
-          href: Learn/Tutorials/Logging/HowTo-Logging.md
-        - name: Enable internal Uno Platform logging
-          href: Learn/Tutorials/Logging/HowTo-InternalLogging.md
+          href: xref:Uno.Extensions.Logging.Overview
+        - name: "How-To: Get started with logging"
+          href: xref:Uno.Extensions.Logging.UseLogging
+        - name: "How-To: Enable internal Uno Platform logging"
+          href: xref:Uno.Extensions.Logging.UseInternalLogging
+    - name: Localization
+      href: xref:Uno.Extensions.Localization.Overview
+      items:
+        - name: Overview
+          href: xref:Uno.Extensions.Localization.Overview
+        - name: "How-To: Get started with localization"
+          href: xref:Uno.Extensions.Localization.HowToUseLocalization
+    - name: Serialization
+      href: xref:Uno.Extensions.Serialization.Overview
+      items:
+        - name: Overview
+          href: xref:Uno.Extensions.Serialization.Overview
+        - name: "How-To: Get started with serialization"
+          href: xref:Uno.Extensions.Serialization.HowToSerialization
+    - name: Validation
+      href: xref:Uno.Extensions.Validation.Overview
+      items:
+        - name: Overview
+          href: xref:Uno.Extensions.Validation.Overview
+    - name: Http
+      href: xref:Uno.Extensions.Http.Overview
+      items:
+        - name: Overview
+          href: xref:Uno.Extensions.Http.Overview
+        - name: "How-To: Get started with Http"
+          href: xref:Uno.Extensions.Http.HowToHttp
+        - name: "How-To: Use Refit to call a REST API"
+          href: xref:Uno.Extensions.Http.HowToRefit
+        - name: "How-To: Configure with endpoint options"
+          href: xref:Uno.Extensions.Http.HowToEndpointOptions
+    - name: Navigation
+      href: xref:Uno.Extensions.Navigation.Overview
+      items:
+        - name: Overview
+          href: xref:Uno.Extensions.Navigation.Overview
+        - name: "How-To: Get started with navigation"
+          href: xref:Uno.Extensions.Navigation.HowToNavigateBetweenPages
+        - name: "How-To: Navigate via code behind"
+          href: xref:Uno.Extensions.Navigation.HowToNavigateInCode
+        - name: "How-To: Navigate via XAML"
+          href: xref:Uno.Extensions.Navigation.HowToNavigateInXAML
+        - name: "How-To: Display a message dialog"
+          href: xref:Uno.Extensions.Navigation.HowToDisplayMessageDialog
+        - name: "How-To: Request a value"
+          href: xref:Uno.Extensions.Navigation.HowToSelectValue
+        - name: "How-To: Display a modal flyout"
+          href: xref:Uno.Extensions.Navigation.HowToShowFlyout
+        - name: "How-To: Display an item"
+          href: xref:Uno.Extensions.Navigation.HowToDisplayItem
+        - name: Advanced
+          items:
+            - name: "How-To: Modify the back-stack"
+              href: xref:Uno.Extensions.Navigation.Advanced.PageNavigation
+            - name: "How-To: Navigate using a TabBar"
+              href: xref:Uno.Extensions.Navigation.Advanced.TabBar
+            - name: "How-To: Navigate using a NavigationView"
+              href: xref:Uno.Extensions.Navigation.Advanced.NavigationView
+            - name: "How-To: Navigate using a responsive shell"
+              href: xref:Uno.Extensions.Navigation.Advanced.ResponsiveShell
+            - name: "How-To: Navigate inside Panel (Grid, StackPanel etc)"
+              href: xref:Uno.Extensions.Navigation.Advanced.Panel
+            - name: "How-To: Navigate using a ContentControl"
+              href: xref:Uno.Extensions.Navigation.Advanced.ContentControl
     - name: Authentication
       href: xref:Uno.Extensions.Authentication.Overview
       items:
         - name: Overview
           href: xref:Uno.Extensions.Authentication.Overview
-        - name: "How-To: Use custom authentication"
+        - name: "How-To: Get started with authentication"
           href: xref:Uno.Extensions.Authentication.HowToAuthentication
         - name: "How-To: Use MSAL authentication"
           href: xref:Uno.Extensions.Authentication.HowToMsalAuthentication
@@ -49,104 +116,12 @@
           href: xref:Uno.Extensions.Authentication.HowToWebAuthentication
         - name: "How-To: Authorize with cookies"
           href: xref:Uno.Extensions.Authentication.HowToCookieAuthorization
-    - name: Http
-      items:
-        - name: Overview
-          href: Overview/Http/HttpOverview.md
-        - name: Get started with HTTP
-          href: Learn/Tutorials/Http/HowTo-Http.md
-        - name: Use Refit to call a REST API
-          href: Learn/Tutorials/Http/HowTo-Refit.md
-        - name: Configure with Custom Endpoint Options
-          href: Learn/Tutorials/Http/HowTo-EndpointOptions.md
-    - name: Localization
-      items:
-        - name: Overview
-          href: Overview/Localization/LocalizationOverview.md
-        - name: Get started with localization
-          href: Learn/Tutorials/Localization/HowTo-Localization.md
     - name: C# Markup
       href: Learn/Markup/toc.yml
       topicHref: xref:Uno.Extensions.Markup.Overview
     - name: MVUX
-      href: Overview/Mvux/Overview.md
-      items:
-        - name: Overview
-          href: Overview/Mvux/Overview.md
-        - name: Feeds
-          href: Overview/Mvux/Feeds.md
-        - name: List-Feeds
-          href: Overview/Mvux/ListFeeds.md
-        - name: States
-          href: Overview/Mvux/States.md
-        - name: List-States
-          href: Overview/Mvux/ListStates.md
-        - name: The FeedView control
-          href: Overview/Mvux/FeedView.md
-        - name: Tutorials
-          items:
-            - name: How to create an MVUX project
-              href: Overview/Mvux/Tutorials/HowTo-MvuxProject.md
-            - name: How to create a Feed
-              href: Overview/Mvux/Tutorials/HowTo-SimpleFeed.md
-            - name: How to create a push-style List-Feed with Async Enumerable
-              href: Overview/Mvux/Tutorials/HowTo-PushListFeed.md
-            - name: How to create a State
-              href: Overview/Mvux/Tutorials/HowTo-SimpleState.md
-            - name: How to create a List-Feed
-              href: Overview/Mvux/Tutorials/HowTo-ListFeed.md
-        - name: Advanced topics
-          items:
-            - name: Selection
-              href: Overview/Mvux/Advanced/Selection.md
-            - name: Pagination
-              href: Overview/Mvux/Advanced/Pagination.md
-            - name: Commands
-              href: Overview/Mvux/Advanced/Commands.md
-            - name: Inspecting the generated code
-              href: Overview/Mvux/Advanced/InspectGeneratedCode.md
-    - name: Navigation
-      items:
-        - name: Overview
-          href: Overview/Navigation/NavigationOverview.md
-        - name: Navigate between pages
-          href: Learn/Tutorials/Navigation/HowTo-NavigateBetweenPages.md
-        - name: Navigate from code
-          href: Learn/Tutorials/Navigation/HowTo-NavigateInCode.md
-        - name: Navigate from XAML
-          href: Learn/Tutorials/Navigation/HowTo-NavigateInXAML.md
-        - name: Display a message dialog
-          href: Learn/Tutorials/Navigation/HowTo-DisplayMessageDialog.md
-        - name: Request a value
-          href: Learn/Tutorials/Navigation/HowTo-SelectValue.md
-        - name: Display a modal flyout
-          href: Learn/Tutorials/Navigation/HowTo-ShowFlyout.md
-        - name: Display an item
-          href: Learn/Tutorials/Navigation/HowTo-DisplayItem.md
-        - name: Advanced
-          items:
-            - name: Page Navigation
-              href: Learn/Tutorials/Navigation/Advanced/HowTo-AdvancedPageNavigation.md
-            - name: Use a Panel (Grid, StackPanel etc)
-              href: Learn/Tutorials/Navigation/Advanced/HowTo-UsePanel.md
-            - name: Use a TabBar
-              href: Learn/Tutorials/Navigation/Advanced/HowTo-UseTabBar.md
-            - name: Use a NavigationView
-              href: Learn/Tutorials/Navigation/Advanced/HowTo-UseNavigationView.md
-            - name: Build a Responsive Shell
-              href: Learn/Tutorials/Navigation/Advanced/HowTo-ResponsiveShell.md
-            - name: Use a ContentControl
-              href: Learn/Tutorials/Navigation/Advanced/HowTo-UseContentControl.md
-    - name: Serialization
-      items:
-        - name: Overview
-          href: Overview/Serialization/SerializationOverview.md
-        - name: Get started with serialization
-          href: Learn/Tutorials/Serialization/HowTo-Serialization.md
-    - name: Validation
-      items:
-        - name: Overview
-          href: Overview/Validation/ValidationOverview.md
+      href: Learn/Mvux/toc.yml
+      topicHref: xref:Uno.Extensions.Mvux.Overview
     - name: .NET MAUI Embedding
       href: Learn/Maui/toc.yml
       topicHref: xref:Uno.Extensions.Maui.Overview

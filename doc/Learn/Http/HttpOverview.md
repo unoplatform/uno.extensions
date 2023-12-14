@@ -1,5 +1,5 @@
 ---
-uid: Uno.Extensions.Http
+uid: Uno.Extensions.Http.Overview
 ---
 # HTTP
 

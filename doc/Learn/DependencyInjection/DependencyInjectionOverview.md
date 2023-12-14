@@ -1,5 +1,5 @@
 ---
-uid: Uno.Extensions.DependencyInjection
+uid: Uno.Extensions.DependencyInjection.Overview
 ---
 
 # Dependency Injection

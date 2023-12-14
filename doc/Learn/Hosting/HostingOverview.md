@@ -1,5 +1,5 @@
 ---
-uid: Uno.Extensions.Hosting
+uid: Uno.Extensions.Hosting.Overview
 ---
 # Hosting
 
