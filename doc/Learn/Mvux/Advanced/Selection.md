@@ -12,7 +12,7 @@ To synchronize to the selected value in the `Model` side, use the `Selection` op
 
 ### Recap of the *PeopleApp* example
 
-We'll be using the *PeopleApp* example which we've built step-by-step in [this tutorial](xref:Overview.Mvux.HowToListFeed).  
+We'll be using the *PeopleApp* example which we've built step-by-step in [this tutorial](xref:Uno.Extensions.Mvux.HowToListFeed).  
 
 The *PeopleApp* uses an `IListFeed<T>` where `T` is a `Person` [record](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/record) with the properties `FirstName` and `LastName`.
 It has a service that has the following contract:
@@ -82,7 +82,7 @@ public partial record PeopleModel(IPeopleService PeopleService)
 The `SelectedPerson` State is initialized with an empty value using `State<Person>.Empty(this)` (we still need a reference to the current instance to enable caching).
 
 > [!NOTE]  
-> Read [this](xref:Overview.Mvux.States#other-ways-to-create-feeds) to learn more about States and the `Empty` factory method.
+> Read [this](xref:Uno.Extensions.Mvux.States#other-ways-to-create-feeds) to learn more about States and the `Empty` factory method.
 
 The `Selection` operator was added to the existing `ListFeed.Async(...)` line, it will listen to the `People` List-Feed and will affect its selection changes onto the `SelectedPerson` State property.
 
@@ -127,7 +127,7 @@ You can listen and detect selection changes by either creating a feed that proje
 
 #### Using the Select operator
 
-Using the example above, we can project the `SelectedPerson` property to project or transform the current `Person`, using the `SelectedPerson``s [`Where`](xref:Overview.Mvux.Feeds#where) and [`Select`](xref:Overview.Mvux.Feeds#select) operators.
+Using the example above, we can project the `SelectedPerson` property to project or transform the current `Person`, using the `SelectedPerson``s [`Where`](xref:Uno.Extensions.Mvux.Feeds#where) and [`Select`](xref:Uno.Extensions.Mvux.Feeds#select) operators.
 
 ```csharp
 public IFeed<string> GreetingSelect => SelectedPerson.Select(person => person == null ? string.Empty : $"Hello {person.FirstName} {person.LastName}!");
@@ -141,7 +141,7 @@ A `TextBlock` can then be added in the UI to display the selected value:
 
 #### Using the ForEachAsync operator
 
-Selection can also be propagated manually to a State using the [`ForEachAsync`](xref:Overview.Mvux.States#foreachasync) operator.
+Selection can also be propagated manually to a State using the [`ForEachAsync`](xref:Uno.Extensions.Mvux.States#foreachasync) operator.
 First, we need to create a State with a default value, which will be used to store the processed value once a selection has occurred.
 
 ```csharp
@@ -194,7 +194,7 @@ In the above example, since `selectedPerson` has the same name as the `SelectedP
 
 > [!TIP]  
 > This behavior can also be controlled using attributes.
-> To learn more about commands and how they can be configured using attributes, refer to the [Commands](xref:Overview.Mvux.Advanced.Commands) page.
+> To learn more about commands and how they can be configured using attributes, refer to the [Commands](xref:Uno.Extensions.Mvux.Advanced.Commands) page.
 
 ## Multi-item selection
 
@@ -230,6 +230,6 @@ Head to the View and enable multi-selection in the `ListView` by changing its `S
 ## Manual selection
 
 The options above explained how to subscribe to selection that has been requested in the View by a Selector control (i.e. `ListView`).  
-If you want to manually select an item or multiple items, rather use a [List-State](xref:Overview.Mvux.ListStates) instead of a List-Feed to load the items, so that you can update their selection state. You can then use the List-State's selection operators to manually select items.
+If you want to manually select an item or multiple items, rather use a [List-State](xref:Uno.Extensions.Mvux.ListStates) instead of a List-Feed to load the items, so that you can update their selection state. You can then use the List-State's selection operators to manually select items.
 
-Refer to the [selection operators](xref:Overview.Mvux.ListStates#selection-operators) section in the List-State page for documentation on how to use manual selection.
+Refer to the [selection operators](xref:Uno.Extensions.Mvux.ListStates#selection-operators) section in the List-State page for documentation on how to use manual selection.

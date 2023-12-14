@@ -26,7 +26,7 @@ new TextBlock()
 
 ### Binding to Attached Properties
 
-Using the builder still gives you the ability to provide an explicit value while also taking advantage of other extensions that you see on normal Dependency Properties such as using the [DependencyPropertyBuilder](xref:Overview.Markup.DependencyPropertyBuilder) to create a binding, or provide a Static or Theme resource.
+Using the builder still gives you the ability to provide an explicit value while also taking advantage of other extensions that you see on normal Dependency Properties such as using the [DependencyPropertyBuilder](xref:Uno.Extensions.Markup.DependencyPropertyBuilder) to create a binding, or provide a Static or Theme resource.
 
 ```cs
 new TextBlock()
@@ -38,7 +38,7 @@ new TextBlock()
 
 Learn more about:
 
-- [Styles](xref:Overview.Markup.Styles)
-- [Templates](xref:Overview.Markup.Templates)
-- [VisualStateManagers](xref:Overview.Markup.VisualStateManager)
-- [Generating C# Extensions for your libraries](xref:Overview.Markup.GeneratingExtensions)
+- [Styles](xref:Uno.Extensions.Markup.Styles)
+- [Templates](xref:Uno.Extensions.Markup.Templates)
+- [VisualStateManagers](xref:Uno.Extensions.Markup.VisualStateManager)
+- [Generating C# Extensions for your libraries](xref:Uno.Extensions.Markup.GeneratingExtensions)

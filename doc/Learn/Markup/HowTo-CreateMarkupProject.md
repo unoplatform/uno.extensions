@@ -15,9 +15,9 @@ We will use the comparison between two projects, one being C# Markup and the sec
 
 > The tutorials below can teach you how to create both projects.
 
-- [Setting up the environment and creating the Markup project](xref:Learn.HowToMarkupProject)
+- [Setting up the environment and creating the Markup project](xref:Uno.Extensions.HowToMarkupProject)
 
-- [Setting up the environment and creating the XAML project](xref:Learn.HowToXamlProject)
+- [Setting up the environment and creating the XAML project](xref:Uno.Extensions.HowToXamlProject)
 
 ## Comparing the structures
 
@@ -319,7 +319,7 @@ Change the *MainPage.cs* to have a different content as the sample bellow.
 	    .ColumnDefinitions<Grid>("2*, Auto, 3*")
     ```
 
-    - And how to set the [Attached Properties](xref:Overview.Markup.AttachedProperties).
+    - And how to set the [Attached Properties](xref:Uno.Extensions.Markup.AttachedProperties).
     
     ```csharp
     new Grid()
@@ -480,8 +480,8 @@ We continue in the next section to learn how to configure styles, work with Bind
 
 Learn more about:
 
-- [Custom your own C# Markup - Learn how to change Style, Bindings, Templates and Template Selectors using C# Markup](xref:Learn.HowToCustomMarkupProject)
-- [Custom your own C# Markup - Learn how to change Visual States and User Controls](xref:Learn.HowToCustomMarkupProjectVisualStates)
-- [Custom your own C# Markup - Learn how to use Toolkit](xref:Learn.HowToCustomMarkupProjectToolkit)
-- [Custom your own C# Markup - Learn how to Change the Theme](xref:Learn.HowToCustomMarkupProjectTheme)
-- [Custom your own C# Markup - Learn how to use MVUX](xref:Learn.HowToCustomMarkupProjectMVUX)
+- [Custom your own C# Markup - Learn how to change Style, Bindings, Templates and Template Selectors using C# Markup](xref:Uno.Extensions.HowToCustomMarkupProject)
+- [Custom your own C# Markup - Learn how to change Visual States and User Controls](xref:Uno.Extensions.HowToCustomMarkupProjectVisualStates)
+- [Custom your own C# Markup - Learn how to use Toolkit](xref:Uno.Extensions.HowToCustomMarkupProjectToolkit)
+- [Custom your own C# Markup - Learn how to Change the Theme](xref:Uno.Extensions.HowToCustomMarkupProjectTheme)
+- [Custom your own C# Markup - Learn how to use MVUX](xref:Uno.Extensions.HowToCustomMarkupProjectMVUX)

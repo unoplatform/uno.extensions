@@ -2,7 +2,7 @@
 uid: Reference.Reactive.Dev
 ---
 # Feeds architecture
-This document gives information about the architecture and the implementation of _feeds_. To get information about the usage if the _feeds_ framework, you should look [to this doc](xref:Overview.Reactive.Concept).
+This document gives information about the architecture and the implementation of _feeds_. To get information about the usage if the _feeds_ framework, you should look [to this doc](xref:Uno.Extensions.Reactive.Concept).
 
 ## Dev general guidelines
 * All instances of _feeds_ should be cached using the `AttachedProperty` helper.

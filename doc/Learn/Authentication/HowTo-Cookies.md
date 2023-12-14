@@ -6,7 +6,7 @@ uid: Uno.Extensions.Authentication.HowToCookieAuthorization
 Using **cookies** is a common way to store tokens that are needed to authenticate a user. When an HTTP request is successfully authenticated, the server will return a response that creates a cookie containing a token value. Uno Extensions makes these cookie-related authorization steps less tedious by doing the work of extracting these values and applying them to future requests. This tutorial will teach you how to configure authentication to apply tokens from a cookie when they are available.
 
 > [!IMPORTANT]
-> To follow these steps, you first need to have an authentication system set up. We recommend choosing one of the `IAuthenticationProvider` implementations provided by Uno Extensions. Cookie authorization can complement any of the tutorials such as [Get Started with Authentication](xref:Learn.Authentication.HowToAuthentication).
+> To follow these steps, you first need to have an authentication system set up. We recommend choosing one of the `IAuthenticationProvider` implementations provided by Uno Extensions. Cookie authorization can complement any of the tutorials such as [Get Started with Authentication](xref:Uno.Extensions.Authentication.HowToAuthentication).
 
 ## Step-by-steps
 
@@ -79,12 +79,12 @@ Using **cookies** is a common way to store tokens that are needed to authenticat
 
 - With the appropriate handler enabled using the `Cookies()` extension method, attempts to authenticate with a provider will now try to authorize from a cookie. Access and refresh token information will be included in subsequent requests. If the cookie is not found, it will instead authenticate with the provider as normal.
 
-- For more information on how to call the authentication service from a view model, see [Get Started with Authentication](xref:Learn.Authentication.HowToAuthentication).
+- For more information on how to call the authentication service from a view model, see [Get Started with Authentication](xref:Uno.Extensions.Authentication.HowToAuthentication).
 
 ## See also
 
-- [Authentication](xref:Overview.Authentication)
-- [Get Started with Authentication](xref:Learn.Authentication.HowToAuthentication)
+- [Authentication](xref:Uno.Extensions.Authentication)
+- [Get Started with Authentication](xref:Uno.Extensions.Authentication.HowToAuthentication)
 - [What is a cookie?](https://developer.mozilla.org/en-US/docs/Web/HTTP/Cookies)
 - [Access tokens](https://oauth.net/2/access-tokens/)
 - [Refresh tokens](https://oauth.net/2/refresh-tokens/)

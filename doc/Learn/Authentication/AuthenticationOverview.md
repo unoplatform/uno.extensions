@@ -52,13 +52,13 @@ The process of authentication with a given authority is implemented by an authen
 Note: The `IAuthenticationProvider` implementations are all marked as internal as they should be configured via the extensions methods on the `IHostBuilder` and the builder interface for the corresponding implementation. 
 
 ### Custom
-The `CustomAuthenticationProvider` provides a basic implementation of the `IAuthenticationProvider` that requires callback methods to be defined for performing login, refresh and logout actions. Learn [Custom authentication](xref:Learn.Authentication.HowToAuthentication)
+The `CustomAuthenticationProvider` provides a basic implementation of the `IAuthenticationProvider` that requires callback methods to be defined for performing login, refresh and logout actions. Learn [Custom authentication](xref:Uno.Extensions.Authentication.HowToAuthentication)
 
 ### MSAL
-The `MsalAuthenticationProvider` (in the Uno.Extensions.Authentication.MSAL.UI or Uno.Extensions.Authentication.MSAL.WinUI packages) wraps the [MSAL library](https://github.com/AzureAD/microsoft-authentication-library-for-dotnet) from Microsoft into an implementation of `IAuthenticationProvider`. This implementation ignores any credentials passed into the `LoginAsync` method, instead invoking the web based authentication process required to authentication with Microsoft. Learn [Msal authentication](xref:Learn.Authentication.HowToMsalAuthentication)
+The `MsalAuthenticationProvider` (in the Uno.Extensions.Authentication.MSAL.UI or Uno.Extensions.Authentication.MSAL.WinUI packages) wraps the [MSAL library](https://github.com/AzureAD/microsoft-authentication-library-for-dotnet) from Microsoft into an implementation of `IAuthenticationProvider`. This implementation ignores any credentials passed into the `LoginAsync` method, instead invoking the web based authentication process required to authentication with Microsoft. Learn [Msal authentication](xref:Uno.Extensions.Authentication.HowToMsalAuthentication)
 
 ### Oidc
-The `OidcAuthenticationProvider` (in the Uno.Extensions.Authentication.Oidc.UI or Uno.Extensions.Authentication.Oidc.WinUI packages) wraps support for any [OpenID Connect](https://openid.net/connect/) backend, including [IdentityServer](https://duendesoftware.com/products/identityserver). Learn [Oidc authentication](xref:Learn.Authentication.HowToOidcAuthentication)
+The `OidcAuthenticationProvider` (in the Uno.Extensions.Authentication.Oidc.UI or Uno.Extensions.Authentication.Oidc.WinUI packages) wraps support for any [OpenID Connect](https://openid.net/connect/) backend, including [IdentityServer](https://duendesoftware.com/products/identityserver). Learn [Oidc authentication](xref:Uno.Extensions.Authentication.HowToOidcAuthentication)
 
 #### Platform specific behavior
 
@@ -67,7 +67,7 @@ When the `OidcAuthenticationProvider` is automatically built, there are platform
 **WebAssembly**: The `OidcAuthenticationProvider` will automatically use the `WebAuthenticationBroker` to obtain redirect URIs during the authentication process. This is done to avoid the need for a redirect to a custom URI scheme, which is not supported in the browser.
 
 ### Web
-The `WebAuthenticationProvider` provides an implementation that displays a web view in order for the user to login. After login, the web view redirects back to the application, along with any tokens. Learn [Web Authentication](xref:Learn.Authentication.HowToWebAuthentication)
+The `WebAuthenticationProvider` provides an implementation that displays a web view in order for the user to login. After login, the web view redirects back to the application, along with any tokens. Learn [Web Authentication](xref:Uno.Extensions.Authentication.HowToWebAuthentication)
 
 #### Platform specific behavior
 
@@ -84,7 +84,7 @@ Once a user has been authenticated, the tokens are cached and are available for 
 The `HeaderHandler` is used to apply the access token to the http request using the `Authorization` header. The default scheme is `Bearer` but this can be override to use a different scheme, such as basic.
 
 ### Cookies
-The `CookieHandler` is used to apply the access token, and/or refresh token, to the http request as cookies. This requires the cookie name for access token and request token to be specified as part of configuring the application. Learn how to use [Cookies](xref:Learn.Authentication.HowToCookieAuthorization) to authorize
+The `CookieHandler` is used to apply the access token, and/or refresh token, to the http request as cookies. This requires the cookie name for access token and request token to be specified as part of configuring the application. Learn how to use [Cookies](xref:Uno.Extensions.Authentication.HowToCookieAuthorization) to authorize
 
 
 

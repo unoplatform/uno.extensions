@@ -8,14 +8,14 @@ You can use this tutorial to learn how to set up a Uno Platform project using MV
 
 Create a new project using MVUX
 
-- In this tutorial, you will [set up the environment and create the Markup project and MVUX](xref:Learn.HowToMarkupMVUX)
+- In this tutorial, you will [set up the environment and create the Markup project and MVUX](xref:Uno.Extensions.HowToMarkupMVUX)
 
 ## Start With MVUX.
 
 The MVUX provides a structured approach to managing the application state and updating the user interface within the Uno Platform, following the principles of MVU architecture. 
 It aims to simplify state management and UI development by providing abstractions and conventions for working with feeds, states, and views.
 
-In this tutorial, you can learn about the [MVUX](xref:Overview.Mvux.Overview) using XAML.
+In this tutorial, you can learn about the [MVUX](xref:Uno.Extensions.Mvux.Overview) using XAML.
 
 The same concept can be applied to C# Markup.
 
@@ -214,7 +214,7 @@ Change the *MainPage* to have a different content as the sample bellow.
 
 ## Next Steps
 
-- [Custom your own C# Markup - Learn how to change Visual States and User Controls](xref:Learn.HowToCustomMarkupProjectVisualStates)
-- [Custom your own C# Markup - Learn how to use Toolkit](xref:Learn.HowToCustomMarkupProjectToolkit)
-- [Custom your own C# Markup - Learn how to Change the Theme](xref:Learn.HowToCustomMarkupProjectTheme)
-- [Custom your own C# Markup - Learn how to use MVUX](xref:Learn.HowToCustomMarkupProjectMVUX)
+- [Custom your own C# Markup - Learn how to change Visual States and User Controls](xref:Uno.Extensions.HowToCustomMarkupProjectVisualStates)
+- [Custom your own C# Markup - Learn how to use Toolkit](xref:Uno.Extensions.HowToCustomMarkupProjectToolkit)
+- [Custom your own C# Markup - Learn how to Change the Theme](xref:Uno.Extensions.HowToCustomMarkupProjectTheme)
+- [Custom your own C# Markup - Learn how to use MVUX](xref:Uno.Extensions.HowToCustomMarkupProjectMVUX)

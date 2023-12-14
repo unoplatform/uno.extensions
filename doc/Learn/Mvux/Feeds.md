@@ -16,7 +16,7 @@ Feeds are typically used to request data from services and expose it in a statel
 
 Feeds are stateless and do not provide support for reacting to changes the user makes to the data on the View. The data can only be reloaded and refreshed upon request which is when the underlying task or Async-Enumerable will be invoked and the data refreshed. In other words, a feed is a read-only representation of the data received from the server.
 
-In contrast to feeds, [states](xref:Overview.Mvux.States) (`IState` or `IListState`), as the name suggests, are stateful and keep track of the latest value, as updates are applied.
+In contrast to feeds, [states](xref:Uno.Extensions.Mvux.States) (`IState` or `IListState`), as the name suggests, are stateful and keep track of the latest value, as updates are applied.
 
 ## How to use feeds?
 
@@ -201,7 +201,7 @@ public IFeed<CountInfo> CountTrends => CurrentCount.SelectAsync(currentCount => 
 
 ### AsListFeed
 
-When the current feed is of `IImmutableCollection<T>`, you might want to consider using a [list-feed](xref:Overview.Mvux.ListFeeds). This operator lets you easily convert an `IFeed<IImmutableCollection<T>>` to an `IListFeed<IImmutableCollection<T>>`.
+When the current feed is of `IImmutableCollection<T>`, you might want to consider using a [list-feed](xref:Uno.Extensions.Mvux.ListFeeds). This operator lets you easily convert an `IFeed<IImmutableCollection<T>>` to an `IListFeed<IImmutableCollection<T>>`.
 
 For example:
 

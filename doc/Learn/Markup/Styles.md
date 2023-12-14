@@ -70,6 +70,6 @@ new Style<Button>()
 
 Learn more about:
 
-- [Templates](xref:Overview.Markup.Templates)
-- [VisualStateManagers](xref:Overview.Markup.VisualStateManager)
-- [Generating C# Extensions for your libraries](xref:Overview.Markup.GeneratingExtensions)
+- [Templates](xref:Uno.Extensions.Markup.Templates)
+- [VisualStateManagers](xref:Uno.Extensions.Markup.VisualStateManager)
+- [Generating C# Extensions for your libraries](xref:Uno.Extensions.Markup.GeneratingExtensions)

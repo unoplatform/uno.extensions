@@ -4,9 +4,9 @@ uid: Uno.Extensions.HowToCustomMarkupProjectVisualStates
 
 # Getting Started with UserControl and VisualStatesManager
 
-In the previous session we learn how to [Custom your own C# Markup and Learn how to use Toolkit](xref:Learn.HowToCustomMarkupProjectToolkit).
+In the previous session we learn how to [Custom your own C# Markup and Learn how to use Toolkit](xref:Uno.Extensions.HowToCustomMarkupProjectToolkit).
 
-Now we will learn how to use the [UserControl](https://platform.uno/docs/articles/implemented/windows-ui-xaml-controls-page.html) and the [VisualStateManagers](xref:Overview.Markup.VisualStateManager).
+Now we will learn how to use the [UserControl](https://platform.uno/docs/articles/implemented/windows-ui-xaml-controls-page.html) and the [VisualStateManagers](xref:Uno.Extensions.Markup.VisualStateManager).
 
 For this sample you can use same project we start on the how to [Create your own C# Markup with Toolkit](xref:Reference.Markup.HowTo-MarkupProjectToolkit)
 
@@ -305,7 +305,7 @@ It provides a way to create custom components that can be used in multiple parts
     </Page>
     ```
 
-## [VisualStateManagers](xref:Overview.Markup.VisualStateManager)
+## [VisualStateManagers](xref:Uno.Extensions.Markup.VisualStateManager)
 
 The VisualStateManager is a class that allows you to define and manage visual states for controls or elements.
 
@@ -844,5 +844,5 @@ Now try to change your MainPage to have different layout and test other attribut
 
 ## Next Steps
 
-- [Custom your own C# Markup - Learn how to Change the Theme](xref:Learn.HowToCustomMarkupProjectTheme)
-- [Custom your own C# Markup - Learn how to use MVUX](xref:Learn.HowToCustomMarkupProjectMVUX)
+- [Custom your own C# Markup - Learn how to Change the Theme](xref:Uno.Extensions.HowToCustomMarkupProjectTheme)
+- [Custom your own C# Markup - Learn how to use MVUX](xref:Uno.Extensions.HowToCustomMarkupProjectMVUX)

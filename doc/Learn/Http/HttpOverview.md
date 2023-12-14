@@ -68,7 +68,7 @@ protected override void OnLaunched(LaunchActivatedEventArgs args)
 ...
 ```
 
-See the [tutorial](xref:Learn.Http.HowToEndpointOptions) for more information about configuring `HttpClient` with custom endpoint options.
+See the [tutorial](xref:Uno.Extensions.Http.HowToEndpointOptions) for more information about configuring `HttpClient` with custom endpoint options.
 
 ## Refit
 
@@ -102,14 +102,14 @@ In this case, the endpoint options will be loaded from configuration section _Ch
 }
 ```
 
-See the [tutorial](xref:Learn.Http.HowToRefit) for more information on using Refit.
+See the [tutorial](xref:Uno.Extensions.Http.HowToRefit) for more information on using Refit.
 
 ## References
 
 - [How-To: Consume a web API with HttpClient](xref:Uno.Development.ConsumeWebApi)
-- [How-To: Register an Endpoint for HTTP Requests](xref:Learn.Http.HowToHttp)
-- [How-To: Configure with Custom Endpoint Options](xref:Learn.Http.HowToEndpointOptions)
-- [How-To: Create a Strongly-Typed REST Client for an API](xref:Learn.Http.HowToRefit)
+- [How-To: Register an Endpoint for HTTP Requests](xref:Uno.Extensions.Http.HowToHttp)
+- [How-To: Configure with Custom Endpoint Options](xref:Uno.Extensions.Http.HowToEndpointOptions)
+- [How-To: Create a Strongly-Typed REST Client for an API](xref:Uno.Extensions.Http.HowToRefit)
 - [Overview: Use HttpClientFactory to implement resilient HTTP requests](https://learn.microsoft.com/dotnet/architecture/microservices/implement-resilient-applications/use-httpclientfactory-to-implement-resilient-http-requests#benefits-of-using-ihttpclientfactory)
 - [Overview: Delegating handlers](https://learn.microsoft.com/aspnet/web-api/overview/advanced/http-message-handlers)
 - [Overview: Polly and HttpClientFactory](https://github.com/App-vNext/Polly/wiki/Polly-and-HttpClientFactory)

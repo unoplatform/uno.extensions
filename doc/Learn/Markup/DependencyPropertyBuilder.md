@@ -41,7 +41,7 @@ The lambda expression is parsed to determine the path to the property. It can be
 
 While the Markup Extensions expose a delegate method for you to provide a path and strong typing for the property, it is easiest to think of the delegate as a string. If you think of the string value of `() => vm.Client.Contact.FirstName`, this will get evaluated by taking the substring following the first period leaving you with the path `Client.Contact.FirstName`. This is the path that will be used to create the binding.
 
-If you wish to perform tasks such as manipulate the value of the binding or format the text displayed see the [Converters](xref:Overview.Markup.Converters) documentation.
+If you wish to perform tasks such as manipulate the value of the binding or format the text displayed see the [Converters](xref:Uno.Extensions.Markup.Converters) documentation.
 
 ### Reference Sources
 
@@ -65,6 +65,6 @@ new Slider().Name("slider")
 
 ## Additional Reading
 
-- [Binding 101](xref:Overview.Markup.Binding101)
-- [Using Converters](xref:Overview.Markup.Converters)
-- [Using Static &amp; Theme Resources](xref:Overview.Markup.StaticAndThemeResources)
+- [Binding 101](xref:Uno.Extensions.Markup.Binding101)
+- [Using Converters](xref:Uno.Extensions.Markup.Converters)
+- [Using Static &amp; Theme Resources](xref:Uno.Extensions.Markup.StaticAndThemeResources)

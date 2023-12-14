@@ -4,9 +4,9 @@ uid: Uno.Extensions.Configuration.HowToWritableConfiguration
 
 # How-To: Writable Configuration
 
-**Writable Configuration** extends the standard, [read-only](xref:Learn.Configuration.HowToConfiguration) pattern by allowing for programmatic writing of configuration values at runtime. This is useful for scenarios where you want to persist user preferences or other trivial information that may be changed over time. `Uno.Extensions.Configuration` extends the `IOptionsSnapshot<T>` interface from [Microsoft.Extensions.Options](https://docs.microsoft.com/dotnet/api/microsoft.extensions.options) to support this. 
+**Writable Configuration** extends the standard, [read-only](xref:Uno.Extensions.Configuration.HowToConfiguration) pattern by allowing for programmatic writing of configuration values at runtime. This is useful for scenarios where you want to persist user preferences or other trivial information that may be changed over time. `Uno.Extensions.Configuration` extends the `IOptionsSnapshot<T>` interface from [Microsoft.Extensions.Options](https://docs.microsoft.com/dotnet/api/microsoft.extensions.options) to support this. 
 
-A special interface called `IWritableOptions<T>` is registered as a service when you use the `UseConfiguration()` extension method. In this tutorial, we will walk through how to use the `UpdateAsync()` method on this interface to modify values of a specific configuration section. For a refresher on configuration sections, see [Sections](xref:Overview.Configuration#sections).
+A special interface called `IWritableOptions<T>` is registered as a service when you use the `UseConfiguration()` extension method. In this tutorial, we will walk through how to use the `UpdateAsync()` method on this interface to modify values of a specific configuration section. For a refresher on configuration sections, see [Sections](xref:Uno.Extensions.Configuration#sections).
 
 > [!NOTE]
 > It is common to see this referred to as the _settings_ pattern in certain documentation. This is because the `IOptions<T>` interface is often used to represent settings that can be changed by the user.
@@ -132,6 +132,6 @@ A special interface called `IWritableOptions<T>` is registered as a service when
 
 ## See also
 
-* [Configuration](xref:Overview.Configuration)
+* [Configuration](xref:Uno.Extensions.Configuration)
 * [Microsoft.Extensions.Configuration](https://docs.microsoft.com/dotnet/api/microsoft.extensions.configuration)
 * [`IOptionsSnapshot<T>`](https://docs.microsoft.com/dotnet/api/microsoft.extensions.options.ioptionssnapshot-1)

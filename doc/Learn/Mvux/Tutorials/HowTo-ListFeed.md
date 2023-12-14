@@ -21,7 +21,7 @@ You can find the code of this tutorial here: https://github.com/unoplatform/Uno.
 
 ## Create the Model
 
-1. Create an MVUX project by following the steps in [this tutorial](xref:Overview.Mvux.HowToMvuxProject), and name your project *PeopleApp*.
+1. Create an MVUX project by following the steps in [this tutorial](xref:Uno.Extensions.Mvux.HowToMvuxProject), and name your project *PeopleApp*.
 
 1. Add a class named *PeopleService.cs*, and replace its content with the following:
 
@@ -71,12 +71,12 @@ You can find the code of this tutorial here: https://github.com/unoplatform/Uno.
 
     > [!NOTE]  
     > Feeds (`IFeed<T>` and `IListFeed<T>` for collections) are used as a gateway to asynchronously request data from a service and wrap the result or an error if any in metadata to be displayed in the View in accordingly.  
-    Learn more about list-feeds [here](xref:Overview.Mvux.HowToListFeed).
+    Learn more about list-feeds [here](xref:Uno.Extensions.Mvux.HowToListFeed).
 
     > [!TIP]  
     > Feeds are stateless and are there for when the data from the service is read-only and we're not planning to enable edits to it.  
     MVUX also provides stateful feeds. For that purpose States (`IState<T>` and `<IListState<T>` for collections) come in handy.  
-    Refer to [this tutorial](xref:Overview.Mvux.HowToSimpleState) to learn more about states.
+    Refer to [this tutorial](xref:Uno.Extensions.Mvux.HowToSimpleState) to learn more about states.
 
 ## Data-bind the view
 
@@ -149,4 +149,4 @@ which exposes properties that the View can data bind to.
 
     ![Screenshot of navigating Visual Studio Solution Explorer to inspect generated code](../Assets/InspectGeneratedCode.jpg)
 
-    Read [inspecting the generated code](xref:Overview.Mvux.Advanced.InspectGeneratedCode) for more.
+    Read [inspecting the generated code](xref:Uno.Extensions.Mvux.Advanced.InspectGeneratedCode) for more.
