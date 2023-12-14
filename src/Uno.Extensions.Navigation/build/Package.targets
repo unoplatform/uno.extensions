@@ -1,5 +1,5 @@
 <Project>
-	<ItemGroup>
+	<ItemGroup Condition="$(TargetFramework.Contains('windows10'))">
 		<AdditionalFiles Include="@(Page)" SourceItemGroup="Page" />
 	</ItemGroup>
 	<ItemGroup Condition=" '$(ImplicitUsings)' == 'true' OR '$(ImplicitUsings)' == 'enable' ">
