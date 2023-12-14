@@ -289,7 +289,7 @@ In MVUX the entities that make up the **Model** are assumed to be immutable, mea
 For the weather application example, `MainModel` is the **Model** for the `MainPage`, and defines a property named `CurrentWeather`.
 
 ```csharp
-public partial record WeatherModel(IWeatherService WeatherService)
+public partial record MainModel(IWeatherService WeatherService)
 {
     public IFeed<WeatherInfo> CurrentWeather => Feed.Async(this.WeatherService.GetCurrentWeather);
 }
