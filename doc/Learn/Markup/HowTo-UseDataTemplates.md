@@ -1,5 +1,5 @@
 ---
-uid: Reference.Markup.HowToUseDataTemplates
+uid: Uno.Extensions.Markup.HowToUseDataTemplates
 ---
 
 # How to use Data Templates on Markup

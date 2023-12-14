@@ -83,7 +83,7 @@ Using **cookies** is a common way to store tokens that are needed to authenticat
 
 ## See also
 
-- [Authentication](xref:Uno.Extensions.Authentication)
+- [Authentication](xref:Uno.Extensions.Authentication.Overview)
 - [Get Started with Authentication](xref:Uno.Extensions.Authentication.HowToAuthentication)
 - [What is a cookie?](https://developer.mozilla.org/en-US/docs/Web/HTTP/Cookies)
 - [Access tokens](https://oauth.net/2/access-tokens/)

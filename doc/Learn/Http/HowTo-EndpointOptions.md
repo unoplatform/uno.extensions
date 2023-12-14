@@ -216,6 +216,6 @@ It's often necessary to include an API key alongside requests to a web API. This
 - [How-To: Register an Endpoint for HTTP Requests](xref:Uno.Extensions.Http.HowToHttp)
 - [How-To: Consume a web API with HttpClient](xref:Uno.Development.ConsumeWebApi)
 - [How-To: Create a Strongly-Typed REST Client for an API](xref:Uno.Extensions.Http.HowToRefit)
-- [Overview: HTTP](xref:Uno.Extensions.Http)
+- [Overview: HTTP](xref:Uno.Extensions.Http.Overview)
 - [Overview: Polly and HttpClientFactory](https://github.com/App-vNext/Polly/wiki/Polly-and-HttpClientFactory)
 - [Explore: TestHarness HTTP Endpoints](https://github.com/unoplatform/uno.extensions/tree/main/testing/TestHarness/TestHarness.Shared/Ext/Http/Endpoints)

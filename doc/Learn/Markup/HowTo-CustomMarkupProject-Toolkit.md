@@ -1,5 +1,5 @@
 ---
-uid: Uno.Extensions.HowToCustomMarkupProjectToolkit
+uid: Uno.Extensions.Markup.HowToCustomMarkupProjectToolkit
 ---
 
 # Getting Started with Uno Toolkit
@@ -8,7 +8,7 @@ In the previous session we learned how to [Create your own C# Markup](xref:Uno.E
 
 Now we will check [Uno Toolkit](https://platform.uno/docs/articles/external/uno.toolkit.ui/doc/getting-started.html) which is a library that can be added to any new or existing Uno solution.
 
-For this sample you can use the how to [Create your own C# Markup with Toolkit](xref:Reference.Markup.HowTo-MarkupProjectToolkit)
+For this sample you can use the how to [Create your own C# Markup with Toolkit](xref:Uno.Extensions.Markup.HowTo-MarkupProjectToolkit)
 
 For this sample we will cover this controls:
 

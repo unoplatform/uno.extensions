@@ -1,5 +1,5 @@
 ---
-uid: Uno.Extensions.HowToMarkupMVUX
+uid: Uno.Extensions.Markup.HowToMarkupMVUX
 ---
 
 # How to set up an C# Markup project for MVUX

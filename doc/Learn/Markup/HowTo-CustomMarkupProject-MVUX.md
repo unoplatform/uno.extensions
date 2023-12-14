@@ -1,5 +1,5 @@
 ---
-uid: Uno.Extensions.HowToCustomMarkupProjectMVUX
+uid: Uno.Extensions.Markup.HowToCustomMarkupProjectMVUX
 ---
 
 # How to set up your own C# Markup project using MVUX

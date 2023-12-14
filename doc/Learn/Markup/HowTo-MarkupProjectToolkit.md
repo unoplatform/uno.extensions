@@ -1,5 +1,5 @@
 ---
-uid: Uno.Extensions.HowToMarkupRecommendedProject
+uid: Uno.Extensions.Markup.HowToMarkupProjectToolkit
 ---
 
 # How to set up an C# Markup project for Toolkit
