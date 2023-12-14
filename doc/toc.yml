@@ -1,32 +1,15 @@
 - name: Overview
   href: xref:Uno.Extensions.Overview
-- name: "How-to: Getting Started"
+- name: "How-To: Getting Started"
   href: xref:Uno.Extensions.HowToGettingStarted
 - name: Learn
   items:
-    - name: Authentication
-      href: xref:Uno.Extensions.Authentication.Overview
+    - name: Hosting
       items:
         - name: Overview
-          href: xref:Uno.Extensions.Authentication.Overview
-        - name: "How-to: Use custom authentication"
-          href: xref:Uno.Extensions.Authentication.HowToAuthentication
-        - name: Use MSAL authentication
-          href: Learn/Tutorials/Authentication/HowTo-MsalAuthentication.md
-        - name: Use OIDC authentication
-          href: Learn/Tutorials/Authentication/HowTo-OidcAuthentication.md
-        - name: Use Web authentication
-          href: Learn/Tutorials/Authentication/HowTo-WebAuthentication.md
-        - name: Authorize with cookies
-          href: Learn/Tutorials/Authentication/HowTo-Cookies.md
-    - name: Configuration
-      items:
-        - name: Overview
-          href: Overview/Configuration/ConfigurationOverview.md
-        - name: Get started with configuration
-          href: Learn/Tutorials/Configuration/HowTo-Configuration.md
-        - name: Write updated setting values to an embedded resource
-          href: Learn/Tutorials/Configuration/HowTo-WritableConfiguration.md
+          href: Overview/Hosting/HostingOverview.md
+        - name: Get started with hosting
+          href: Learn/Tutorials/Hosting/HowTo-HostingSetup.md
     - name: Dependency Injection
       items:
         - name: Overview
@@ -35,12 +18,37 @@
           href: Learn/Tutorials/DependencyInjection/HowTo-DependencyInjectionSetup.md
         - name: Manually Resolving Dependencies with CommunityToolkit.Mvvm
           href: Learn/Tutorials/DependencyInjection/HowTo-CommunityToolkit.md
-    - name: Hosting
+    - name: Configuration
       items:
         - name: Overview
-          href: Overview/Hosting/HostingOverview.md
-        - name: Get started with hosting
-          href: Learn/Tutorials/Hosting/HowTo-HostingSetup.md
+          href: Overview/Configuration/ConfigurationOverview.md
+        - name: Get started with configuration
+          href: Learn/Tutorials/Configuration/HowTo-Configuration.md
+        - name: Write updated setting values to an embedded resource
+          href: Learn/Tutorials/Configuration/HowTo-WritableConfiguration.md
+    - name: Logging
+      items:
+        - name: Overview
+          href: Overview/Logging/LoggingOverview.md
+        - name: Get started with logging
+          href: Learn/Tutorials/Logging/HowTo-Logging.md
+        - name: Enable internal Uno Platform logging
+          href: Learn/Tutorials/Logging/HowTo-InternalLogging.md
+    - name: Authentication
+      href: xref:Uno.Extensions.Authentication.Overview
+      items:
+        - name: Overview
+          href: xref:Uno.Extensions.Authentication.Overview
+        - name: "How-To: Use custom authentication"
+          href: xref:Uno.Extensions.Authentication.HowToAuthentication
+        - name: "How-To: Use MSAL authentication"
+          href: xref:Uno.Extensions.Authentication.HowToMsalAuthentication
+        - name: "How-To: Use OIDC authentication"
+          href: xref:Uno.Extensions.Authentication.HowToOidcAuthentication
+        - name: "How-To: Use web authentication"
+          href: xref:Uno.Extensions.Authentication.HowToWebAuthentication
+        - name: "How-To: Authorize with cookies"
+          href: xref:Uno.Extensions.Authentication.HowToCookieAuthorization
     - name: Http
       items:
         - name: Overview
@@ -57,51 +65,9 @@
           href: Overview/Localization/LocalizationOverview.md
         - name: Get started with localization
           href: Learn/Tutorials/Localization/HowTo-Localization.md
-    - name: Logging
-      items:
-        - name: Overview
-          href: Overview/Logging/LoggingOverview.md
-        - name: Get started with logging
-          href: Learn/Tutorials/Logging/HowTo-Logging.md
-        - name: Enable internal Uno Platform logging
-          href: Learn/Tutorials/Logging/HowTo-InternalLogging.md
-    - name: Markup
-      href: xref:Overview.Markup.Overview
-      items:
-        - name: Overview
-          href: xref:Overview.Markup.Overview
-        - name: Binding, Static & Theme Resources
-          href: xref:Overview.Markup.DependencyPropertyBuilder
-          items:
-            - name: Binding 101
-              href: xref:Overview.Markup.Binding101
-            - name: Converters
-              href: xref:Overview.Markup.Converters
-            - name: Using Static & Theme Resources
-              href: xref:Overview.Markup.StaticAndThemeResources
-            - name: Using Uno.Themes.WinUI.Markup
-              href: xref:Overview.Markup.UnoThemes
-        - name: Attached Properties
-          href: xref:Overview.Markup.AttachedProperties
-        - name: Resource Dictionaries
-          href: xref:Overview.Markup.Resources
-        - name: Styles
-          href: xref:Overview.Markup.Styles
-        - name: Templates
-          href: xref:Overview.Markup.Templates
-        - name: VisualStateManager
-          href: xref:Overview.Markup.VisualStateManager
-          items:
-            - name: Storyboards
-              href: xref:Overview.Markup.Storyboards
-        - name: Using and Generating Extensions
-          href: xref:Overview.Markup.GeneratingExtensions
-        - name: Appendix
-          items:
-            - name: TextBlock Run
-              href: xref:Overview.Markup.Appendix.TextBlockRun
-            - name: Accessing a Control Instance
-              href: xref:Overview.Markup.Appendix.AccessingControlInstance
+    - name: C# Markup
+      href: Learn/Markup/toc.yml
+      topicHref: xref:Overview.Markup.Overview
     - name: MVUX
       href: Overview/Mvux/Overview.md
       items:
