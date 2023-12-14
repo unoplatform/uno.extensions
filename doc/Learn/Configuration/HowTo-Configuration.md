@@ -3,12 +3,12 @@ uid: Uno.Extensions.Configuration.HowToConfiguration
 ---
 # How-To: Get Started with Configuration
 
-`Uno.Extensions.Configuration` provides you with a consistent way to view configuration data from a number of distinct sources. It leverages the `IOptions<T>` interface from [Microsoft.Extensions.Options](https://docs.microsoft.com/dotnet/api/microsoft.extensions.options) to offer [read-only](https://docs.microsoft.com/dotnet/core/extensions/configuration#concepts-and-abstractions) access to values organized into sections. Unlike the [Writable Configuration](xref:Learn.Configuration.HowToWritableConfiguration) (aka Settings) pattern, this does not allow for programmatic writing by itself.
+`Uno.Extensions.Configuration` provides you with a consistent way to view configuration data from a number of distinct sources. It leverages the `IOptions<T>` interface from [Microsoft.Extensions.Options](https://docs.microsoft.com/dotnet/api/microsoft.extensions.options) to offer [read-only](https://docs.microsoft.com/dotnet/core/extensions/configuration#concepts-and-abstractions) access to values organized into sections. Unlike the [Writable Configuration](xref:Uno.Extensions.Configuration.HowToWritableConfiguration) (aka Settings) pattern, this does not allow for programmatic writing by itself.
 
 ## Step-by-steps
 
 > [!IMPORTANT]
-> This guide assumes you used the template wizard or `dotnet new unoapp` to create your solution. If not, it is recommended that you follow the [instructions](xref:Overview.Extensions) for creating an application from the template.
+> This guide assumes you used the template wizard or `dotnet new unoapp` to create your solution. If not, it is recommended that you follow the [instructions](xref:Uno.Extensions.HowToGettingStarted) for creating an application from the template.
 
 ### 1. Specify configuration information to load on `IConfigBuilder`
 

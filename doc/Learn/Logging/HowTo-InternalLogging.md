@@ -11,7 +11,7 @@ uid: Uno.Extensions.Logging.UseInternalLogging
 ## Step-by-steps
 
 > [!IMPORTANT] 
-> This guide assumes your application has already opted into logging. To find out how to do this, refer to the tutorial [here](xref:Learn.Logging.UseLogging)
+> This guide assumes your application has already opted into logging. To find out how to do this, refer to the tutorial [here](xref:Uno.Extensions.Logging.UseLogging)
 
 ### 1. Enable Uno internal logging
 

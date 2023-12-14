@@ -18,7 +18,7 @@ You can find the code for our weather app here: https://github.com/unoplatform/U
 
 ## Create the Model
 
-1. Create an MVUX project by following the steps in [this tutorial](xref:Overview.Mvux.HowToMvuxProject), and name the project *WeatherApp*.
+1. Create an MVUX project by following the steps in [this tutorial](xref:Uno.Extensions.Mvux.HowToMvuxProject), and name the project *WeatherApp*.
 
 1. Add a class named *WeatherService.cs*, and replace its content with the following:
 
@@ -60,7 +60,7 @@ You can find the code for our weather app here: https://github.com/unoplatform/U
 
     > [!NOTE]
     > Feeds (`IFeed<T>` and `IListFeed<T>` for collections) are used as a gateway to asynchronously request data from a service and wrap the result or error (if any) in metadata to be displayed in the View in accordingly.  
-    Learn more about list-feeds [here](xref:Overview.Mvux.HowToListFeed).
+    Learn more about list-feeds [here](xref:Uno.Extensions.Mvux.HowToListFeed).
 
 
 ## Data bind the View

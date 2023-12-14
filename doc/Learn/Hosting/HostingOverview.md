@@ -25,7 +25,7 @@ protected override void OnLaunched(LaunchActivatedEventArgs e)
 ...
 ```
 
-For a more specific tutorial about getting started with building hosted applications, see [Get Started with Hosting](xref:Learn.Hosting.HowToHostingSetup).
+For a more specific tutorial about getting started with building hosted applications, see [Get Started with Hosting](xref:Uno.Extensions.Hosting.HowToHostingSetup).
 
 ## Service Initialization
 
@@ -91,7 +91,7 @@ protected override void OnLaunched(LaunchActivatedEventArgs e)
 }
 ```
 
-If a hosted service is required to complete startup prior to the first navigation (if using [Navigation](xref:Overview.Navigation)), implement the `IStartupService` interface. A task will be returned that can be awaited in the `StartupComplete` method. This technique might be useful for pre-loading data in order to work out which view to navigate to.
+If a hosted service is required to complete startup prior to the first navigation (if using [Navigation](xref:Uno.Extensions.Navigation)), implement the `IStartupService` interface. A task will be returned that can be awaited in the `StartupComplete` method. This technique might be useful for pre-loading data in order to work out which view to navigate to.
 
 ```csharp
 public class SimpleStartupService : IHostedService, IStartupService
@@ -168,4 +168,4 @@ protected override void OnLaunched(LaunchActivatedEventArgs e)
 > [!TIP]
 > Avoid writing code that contains logic specific to any environment. All environments should behave as close as possible to each other to minimize any environment specific bugs that may be introduced by environment specific code.
 >
-> Any environment specific secure variables (such as service URLs, application keys, account information) should be set as part of a multi-environment CI/CD pipeline. Non-secure per-environment variables can be included using a settings file which is covered in [Configuration](xref:Overview.Configuration).  
+> Any environment specific secure variables (such as service URLs, application keys, account information) should be set as part of a multi-environment CI/CD pipeline. Non-secure per-environment variables can be included using a settings file which is covered in [Configuration](xref:Uno.Extensions.Configuration).  

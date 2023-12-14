@@ -4,7 +4,7 @@ uid: Uno.Extensions.Mvux.ListStates
 
 # What are list-states
 
-List-state is the collection counterpart of [state](xref:Overview.Mvux.States).
+List-state is the collection counterpart of [state](xref:Uno.Extensions.Mvux.States).
 
 List-state adds extra operators which make it easier to apply updates on multiple items instead of just a single item.
 
@@ -200,4 +200,4 @@ await MyStrings.ClearSelection(cancellationToken);
 ## Subscribing to the selection
 
 You can create a Feed that reflects the currently selected item or items (when using multi-selection) of a Feed.  
-This is explained in detail in the [Selection page](xref:Overview.Mvux.Advanced.Selection).
+This is explained in detail in the [Selection page](xref:Uno.Extensions.Mvux.Advanced.Selection).

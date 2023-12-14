@@ -11,7 +11,7 @@ uid: Uno.Extensions.Logging.UseLogging
 ## Step-by-steps
 
 > [!IMPORTANT]
-> This guide assumes you used the template wizard or `dotnet new unoapp` to create your solution. If not, it is recommended that you follow the [instructions](xref:Overview.Extensions) for creating an application from the template.
+> This guide assumes you used the template wizard or `dotnet new unoapp` to create your solution. If not, it is recommended that you follow the [instructions](xref:Uno.Extensions.HowToGettingStarted) for creating an application from the template.
 
 ### 1. Opt into logging
 

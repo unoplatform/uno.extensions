@@ -6,7 +6,7 @@ uid: Uno.Extensions.Hosting.HowToHostingSetup
 `Uno.Extensions.Hosting` can be used to register services that will be accessible throughout the application via dependency injection (DI). This tutorial will walk you through the critical steps needed to leverage hosting in your application.
 
 > [!WARNING]
-> The steps outlined here are unnecessary if you used the new project wizard template to create your solution. Otherwise, it is recommended that you follow the [instructions](xref:Overview.Extensions) for creating an application from the template.
+> The steps outlined here are unnecessary if you used the new project wizard template to create your solution. Otherwise, it is recommended that you follow the [instructions](xref:Uno.Extensions.HowToGettingStarted) for creating an application from the template.
 
 ## Step-by-steps
 

@@ -110,10 +110,10 @@ public partial class MainPage : Page
 
 ## Next Steps
 
-- [Binding, Static & Theme Resources](xref:Overview.Markup.DependencyPropertyBuilder)
-- [Binding 101](xref:Overview.Markup.Binding101)
-- [Attached Properties](xref:Overview.Markup.AttachedProperties)
-- [Styles](xref:Overview.Markup.Styles)
-- [Templates](xref:Overview.Markup.Templates)
-- [VisualStateManagers](xref:Overview.Markup.VisualStateManager)
-- [Generating C# Extensions for your libraries](xref:Overview.Markup.GeneratingExtensions)
+- [Binding, Static & Theme Resources](xref:Uno.Extensions.Markup.DependencyPropertyBuilder)
+- [Binding 101](xref:Uno.Extensions.Markup.Binding101)
+- [Attached Properties](xref:Uno.Extensions.Markup.AttachedProperties)
+- [Styles](xref:Uno.Extensions.Markup.Styles)
+- [Templates](xref:Uno.Extensions.Markup.Templates)
+- [VisualStateManagers](xref:Uno.Extensions.Markup.VisualStateManager)
+- [Generating C# Extensions for your libraries](xref:Uno.Extensions.Markup.GeneratingExtensions)

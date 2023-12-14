@@ -4,7 +4,7 @@ uid: Uno.Extensions.HowToCustomMarkupProjectToolkit
 
 # Getting Started with Uno Toolkit
 
-In the previous session we learned how to [Create your own C# Markup](xref:Learn.HowToCreateMarkupProject) and how [Custom your own C# Markup - Learn how to change Style, Bindings, Templates and Template Selectors using C# Markup](xref:Learn.HowToCustomMarkupProject).
+In the previous session we learned how to [Create your own C# Markup](xref:Uno.Extensions.HowToCreateMarkupProject) and how [Custom your own C# Markup - Learn how to change Style, Bindings, Templates and Template Selectors using C# Markup](xref:Uno.Extensions.HowToCustomMarkupProject).
 
 Now we will check [Uno Toolkit](https://platform.uno/docs/articles/external/uno.toolkit.ui/doc/getting-started.html) which is a library that can be added to any new or existing Uno solution.
 
@@ -535,6 +535,6 @@ But the Uno Toolkit has many other Controls as:
 
 ## Next Steps
 
-- [Custom your own C# Markup - Learn how to change Visual States and User Controls](xref:Learn.HowToCustomMarkupProjectVisualStates)
-- [Custom your own C# Markup - Learn how to Change the Theme](xref:Learn.HowToCustomMarkupProjectTheme)
-- [Custom your own C# Markup - Learn how to use MVUX](xref:Learn.HowToCustomMarkupProjectMVUX)
+- [Custom your own C# Markup - Learn how to change Visual States and User Controls](xref:Uno.Extensions.HowToCustomMarkupProjectVisualStates)
+- [Custom your own C# Markup - Learn how to Change the Theme](xref:Uno.Extensions.HowToCustomMarkupProjectTheme)
+- [Custom your own C# Markup - Learn how to use MVUX](xref:Uno.Extensions.HowToCustomMarkupProjectMVUX)

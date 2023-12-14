@@ -17,7 +17,7 @@ In addition to the core package and generator, the Uno Platform team is shipping
 - [Uno.Themes.WinUI.Markup](https://www.nuget.org/packages/Uno.Themes.WinUI.Markup)
 
 > [!TIP]
-> For more information on generating extensions on your own libraries see [Generating Extensions](xref:Overview.Markup.GeneratingExtensions).
+> For more information on generating extensions on your own libraries see [Generating Extensions](xref:Uno.Extensions.Markup.GeneratingExtensions).
 
 ## Using the Markup Extensions
 
@@ -52,7 +52,7 @@ new Button()
 
 ## Strongly Typed DataContext
 
-When building the content of a given control, you can make use of the `DataContext` extension to provide a strongly typed context for bindings. It is important to note that these extensions will not create or resolve your DataContext. These extensions are meant to help you create [strongly typed bindings](xref:Overview.Markup.DependencyPropertyBuilder).
+When building the content of a given control, you can make use of the `DataContext` extension to provide a strongly typed context for bindings. It is important to note that these extensions will not create or resolve your DataContext. These extensions are meant to help you create [strongly typed bindings](xref:Uno.Extensions.Markup.DependencyPropertyBuilder).
 
 **Strongly Typed DataContext**
 ```cs
@@ -106,14 +106,14 @@ public partial class MyPage : Page
 
 Learn more about:
 
-- [Binding, Static & Theme Resources](xref:Overview.Markup.DependencyPropertyBuilder)
-    - [Binding 101](xref:Overview.Markup.Binding101)
-    - [Converters](xref:Overview.Markup.Converters)
-    - [Using Static & Theme Resources](xref:Overview.Markup.StaticAndThemeResources)
-    - [Using Uno.Themes.WinUI.Markup](xref:Overview.Markup.UnoThemes)
-- [Attached Properties](xref:Overview.Markup.AttachedProperties)
-- [Styles](xref:Overview.Markup.Styles)
-- [Templates](xref:Overview.Markup.Templates)
-- [VisualStateManagers](xref:Overview.Markup.VisualStateManager)
-  - [Storyboards](xref:Overview.Markup.Storyboards)
-- [Generating C# Extensions for your libraries](xref:Overview.Markup.GeneratingExtensions)
+- [Binding, Static & Theme Resources](xref:Uno.Extensions.Markup.DependencyPropertyBuilder)
+    - [Binding 101](xref:Uno.Extensions.Markup.Binding101)
+    - [Converters](xref:Uno.Extensions.Markup.Converters)
+    - [Using Static & Theme Resources](xref:Uno.Extensions.Markup.StaticAndThemeResources)
+    - [Using Uno.Themes.WinUI.Markup](xref:Uno.Extensions.Markup.UnoThemes)
+- [Attached Properties](xref:Uno.Extensions.Markup.AttachedProperties)
+- [Styles](xref:Uno.Extensions.Markup.Styles)
+- [Templates](xref:Uno.Extensions.Markup.Templates)
+- [VisualStateManagers](xref:Uno.Extensions.Markup.VisualStateManager)
+  - [Storyboards](xref:Uno.Extensions.Markup.Storyboards)
+- [Generating C# Extensions for your libraries](xref:Uno.Extensions.Markup.GeneratingExtensions)

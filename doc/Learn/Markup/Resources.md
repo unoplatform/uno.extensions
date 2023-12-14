@@ -50,7 +50,7 @@ new Page()
 
 ### Implicit Styles
 
-To add an implicit style be sure to use the [`Style<T>`](xref:Overview.Markup.Styles). You can simply pass in the `Style<T>` and do not need to specify a key.
+To add an implicit style be sure to use the [`Style<T>`](xref:Uno.Extensions.Markup.Styles). You can simply pass in the `Style<T>` and do not need to specify a key.
 
 ```cs
 new Page()

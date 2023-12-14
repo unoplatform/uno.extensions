@@ -4,12 +4,12 @@ uid: Uno.Extensions.HowToCustomMarkupProject
 
 # How to custom a C# Markup project
 
-> If you haven't already set up your environment and create the new Markup project, please follow the steps to [Create your own C# Markup](xref:Learn.HowToCreateMarkupProject).
+> If you haven't already set up your environment and create the new Markup project, please follow the steps to [Create your own C# Markup](xref:Uno.Extensions.HowToCreateMarkupProject).
 
 In this tutorial you'll learn how to custom your project using Uno Platform and C# Markup.
 And have a comparison between C# Markup and XAML.
 
-In the previous session we learn how to [Create your own C# Markup](xref:Learn.HowToCreateMarkupProject) and now we will change some styles and working with Bindings and Templates. 
+In the previous session we learn how to [Create your own C# Markup](xref:Uno.Extensions.HowToCreateMarkupProject) and now we will change some styles and working with Bindings and Templates. 
 
 And for this we will create a project that list some Attributes of a Sample ViewModel and Customizing the style.
 
@@ -1999,7 +1999,7 @@ In the ViewModel, the Model's data is already loaded into the Instance of the cl
 
 ## Next Steps
 
-- [Custom your own C# Markup - Learn how to change Visual States and User Controls](xref:Learn.HowToCustomMarkupProjectVisualStates)
-- [Custom your own C# Markup - Learn how to use Toolkit](xref:Learn.HowToCustomMarkupProjectToolkit)
-- [Custom your own C# Markup - Learn how to Change the Theme](xref:Learn.HowToCustomMarkupProjectTheme)
-- [Custom your own C# Markup - Learn how to use MVUX](xref:Learn.HowToCustomMarkupProjectMVUX)
+- [Custom your own C# Markup - Learn how to change Visual States and User Controls](xref:Uno.Extensions.HowToCustomMarkupProjectVisualStates)
+- [Custom your own C# Markup - Learn how to use Toolkit](xref:Uno.Extensions.HowToCustomMarkupProjectToolkit)
+- [Custom your own C# Markup - Learn how to Change the Theme](xref:Uno.Extensions.HowToCustomMarkupProjectTheme)
+- [Custom your own C# Markup - Learn how to use MVUX](xref:Uno.Extensions.HowToCustomMarkupProjectMVUX)

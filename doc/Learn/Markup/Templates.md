@@ -63,5 +63,5 @@ new ListView()
 
 Learn more about:
 
-- [VisualStateManagers](xref:Overview.Markup.VisualStateManager)
-- [Generating C# Extensions for your libraries](xref:Overview.Markup.GeneratingExtensions)
+- [VisualStateManagers](xref:Uno.Extensions.Markup.VisualStateManager)
+- [Generating C# Extensions for your libraries](xref:Uno.Extensions.Markup.GeneratingExtensions)

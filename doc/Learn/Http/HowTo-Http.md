@@ -8,7 +8,7 @@ When working with a complex application, centralized registration of your API en
 ## Step-by-steps
 
 > [!IMPORTANT]
-> This guide assumes you used the template wizard or `dotnet new unoapp` to create your solution. If not, it is recommended that you follow the [instructions](xref:Overview.Extensions) for creating an application from the template.
+> This guide assumes you used the template wizard or `dotnet new unoapp` to create your solution. If not, it is recommended that you follow the [instructions](xref:Uno.Extensions.HowToGettingStarted) for creating an application from the template.
 
 ### 1. Enable HTTP
 
@@ -86,8 +86,8 @@ When working with a complex application, centralized registration of your API en
 ## See also
 
 - [How-To: Consume a web API with HttpClient](xref:Uno.Development.ConsumeWebApi)
-- [How-To: Create a Strongly-Typed REST Client for an API](xref:Learn.Http.HowToRefit)
-- [How-To: Configure with Custom Endpoint Options](xref:Learn.Http.HowToEndpointOptions) 
-- [Overview: HTTP](xref:Overview.Http)
+- [How-To: Create a Strongly-Typed REST Client for an API](xref:Uno.Extensions.Http.HowToRefit)
+- [How-To: Configure with Custom Endpoint Options](xref:Uno.Extensions.Http.HowToEndpointOptions) 
+- [Overview: HTTP](xref:Uno.Extensions.Http)
 - [Overview: Polly and HttpClientFactory](https://github.com/App-vNext/Polly/wiki/Polly-and-HttpClientFactory)
 - [Explore: TestHarness HTTP Endpoints](https://github.com/unoplatform/uno.extensions/tree/main/testing/TestHarness/TestHarness.Shared/Ext/Http/Endpoints)

@@ -194,8 +194,8 @@ public partial class MainPage : Page
 
 Learn more about:
 
-- [Attached Properties](xref:Overview.Markup.AttachedProperties)
-- [Styles](xref:Overview.Markup.Styles)
-- [Templates](xref:Overview.Markup.Templates)
-- [VisualStateManagers](xref:Overview.Markup.VisualStateManager)
-- [Generating C# Extensions for your libraries](xref:Overview.Markup.GeneratingExtensions)
+- [Attached Properties](xref:Uno.Extensions.Markup.AttachedProperties)
+- [Styles](xref:Uno.Extensions.Markup.Styles)
+- [Templates](xref:Uno.Extensions.Markup.Templates)
+- [VisualStateManagers](xref:Uno.Extensions.Markup.VisualStateManager)
+- [Generating C# Extensions for your libraries](xref:Uno.Extensions.Markup.GeneratingExtensions)

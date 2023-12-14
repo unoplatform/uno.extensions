@@ -14,7 +14,7 @@ This tutorial will walk you through how to set up this feature and use it to man
 ## Step-by-steps
 
 > [!IMPORTANT]
-> This guide assumes you used the template wizard or `dotnet new unoapp` to create your solution. If not, it is recommended that you follow the [instructions](xref:Overview.Extensions) for creating an application from the template.
+> This guide assumes you used the template wizard or `dotnet new unoapp` to create your solution. If not, it is recommended that you follow the [instructions](xref:Uno.Extensions.HowToGettingStarted) for creating an application from the template.
 
 ### 1. Add the CommunityToolkit.Mvvm package to your project
 
@@ -88,7 +88,7 @@ This tutorial will walk you through how to set up this feature and use it to man
 
 ## See also
 
-* [Dependency injection in Uno Extensions tutorial](xref:Learn.DependencyInjection.HowToDependencyInjection)
+* [Dependency injection in Uno Extensions tutorial](xref:Uno.Extensions.DependencyInjection.HowToDependencyInjection)
 * [CommunityToolkit.Mvvm NuGet package](https://www.nuget.org/packages/CommunityToolkit.Mvvm)
 * [Ioc class](https://learn.microsoft.com/dotnet/api/communitytoolkit.mvvm.dependencyinjection.ioc)
 * [Inversion of control](https://learn.microsoft.com/dotnet/communitytoolkit/mvvm/ioc)

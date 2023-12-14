@@ -299,7 +299,7 @@ The `CurrentWeather` property returns an `IFeed` of `WeatherInfo` entities. An `
 
 When the `CurrentWeather` property is accessed, an `IFeed` is created via the `Feed.Async` factory method, which will asynchronously call the `GetCurrentWeather` service, and return the result as a `WeatherInfo` entity.  
 
-Feeds are covered in more detail in the [Feeds](xref:Overview.Mvux.Feeds) documentation.
+Feeds are covered in more detail in the [Feeds](xref:Uno.Extensions.Mvux.Feeds) documentation.
 
 ### View
 
@@ -462,7 +462,7 @@ The Model-View-Update-eXtended (MVUX) pattern still leverages data binding to pr
 
 ## Creating your own
 
-You can get started with MVUX by creating a new project. Follow the [How to set up an MVUX project](xref:Overview.Mvux.HowToMvuxProject) tutorial to get started.
+You can get started with MVUX by creating a new project. Follow the [How to set up an MVUX project](xref:Uno.Extensions.Mvux.HowToMvuxProject) tutorial to get started.
 
 You can then use the MVUX example above as a reference to create your own `IFeed` and `IState` properties, and use the `FeedView` to display data.
 
@@ -471,13 +471,13 @@ You can then use the MVUX example above as a reference to create your own `IFeed
 - Define your own Models
 - MVUX recommends using record types for the Models in your app as they're immutable.
 - The MVUX analyzers auto-generate a bindable proxy for each `partial` `class` or `record` named with a _Model_ suffix.
-- For every public [`IFeed`](xref:Overview.Mvux.Feeds) property found in the model, a corresponding property is generated on the bindable proxy.
-- You can use [`IState`](xref:Overview.Mvux.States) properties to accepting input from the user.
+- For every public [`IFeed`](xref:Uno.Extensions.Mvux.Feeds) property found in the model, a corresponding property is generated on the bindable proxy.
+- You can use [`IState`](xref:Uno.Extensions.Mvux.States) properties to accepting input from the user.
 
 ### In the View
 
 - Create your views and add data binding to the XAML elements as required
-- Customize the layout of your application using the [FeedView](xref:Overview.Mvux.FeedView) control.
+- Customize the layout of your application using the [FeedView](xref:Uno.Extensions.Mvux.FeedView) control.
 - Use two-way binding to a state to allow input from the user
 
 ## WeatherApp Sample

@@ -17,7 +17,7 @@ You can find the code for our weather app here: https://github.com/unoplatform/U
 
 ## Create the Model
 
-1. Create an MVUX project by following the steps in [this tutorial](xref:Overview.Mvux.HowToMvuxProject), and name your project `TheFancyWeddingHall`.
+1. Create an MVUX project by following the steps in [this tutorial](xref:Uno.Extensions.Mvux.HowToMvuxProject), and name your project `TheFancyWeddingHall`.
 
 1. Add a class named *HallCrowdednessService.cs*, and replace its content with the following:
 

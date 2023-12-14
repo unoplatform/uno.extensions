@@ -6,7 +6,7 @@ uid: Uno.Extensions.HowToCustomMarkupProjectTheme
 
 In this tutorial, you'll learn how to set up an Uno Platform project to use C# Markup to change the Theme. 
 
-1. For this tutorial we will continue to use the Sample created on the [Custom your own C# Markup - Learn how to use Toolkit](xref:Learn.HowToCustomMarkupProjectToolkit) tutorial and change on the [Custom your own C# Markup - Learn how to change Visual States and User Controls](xref:Learn.HowToCustomMarkupProjectVisualStates).
+1. For this tutorial we will continue to use the Sample created on the [Custom your own C# Markup - Learn how to use Toolkit](xref:Uno.Extensions.HowToCustomMarkupProjectToolkit) tutorial and change on the [Custom your own C# Markup - Learn how to change Visual States and User Controls](xref:Uno.Extensions.HowToCustomMarkupProjectVisualStates).
 
 # Themes Overview
 
@@ -307,6 +307,6 @@ Now try to change your `MainPage` to have different layout and test other attrib
 
 ## Next Steps
 
-- [Custom your own C# Markup - Learn how to change Visual States and User Controls](xref:Learn.HowToCustomMarkupProjectVisualStates)
-- [Custom your own C# Markup - Learn how to use Toolkit](xref:Learn.HowToCustomMarkupProjectToolkit)
-- [Custom your own C# Markup - Learn how to use MVUX](xref:Learn.HowToCustomMarkupProjectMVUX)
+- [Custom your own C# Markup - Learn how to change Visual States and User Controls](xref:Uno.Extensions.HowToCustomMarkupProjectVisualStates)
+- [Custom your own C# Markup - Learn how to use Toolkit](xref:Uno.Extensions.HowToCustomMarkupProjectToolkit)
+- [Custom your own C# Markup - Learn how to use MVUX](xref:Uno.Extensions.HowToCustomMarkupProjectMVUX)

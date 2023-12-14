@@ -6,7 +6,7 @@ uid: Uno.Extensions.Mvux.States
 
 ## States are stateful feeds
 
-Like [feeds](xref:Overview.Mvux.Feeds), states are used to manage asynchronous operations and wrap them in metadata that provides information about the current state of the operation, such as whether the operation is still in progress, when an error occurs, or if the result has no data.
+Like [feeds](xref:Uno.Extensions.Mvux.Feeds), states are used to manage asynchronous operations and wrap them in metadata that provides information about the current state of the operation, such as whether the operation is still in progress, when an error occurs, or if the result has no data.
 
 Contrary to Feeds, states are stateful (as the name suggests) in that they keep a record of the current data value. States also allow the current value to be modified, which is useful for two-way binding scenarios.
 
@@ -84,7 +84,7 @@ public IState<int> MyState => State.FromFeed(this, MyFeed);
 
 > [!TIP]
 > A state can also be constructed manually by building its underlying Messages or Options.  
-> This is intended for advanced users and is explained [here](xref:Overview.Reactive.State#create).
+> This is intended for advanced users and is explained [here](xref:Uno.Extensions.Reactive.State#create).
 
 ### Usage of States
 
@@ -98,7 +98,7 @@ City currentCity = await this.CurrentCity;
 
 States are built to be cooperating with the data-binding engine. A State will automatically update its value when the user changes data in the View bound to this State.
 
-1. In an MVUX app (read [How to set up an MVUX project](xref:Overview.Mvux.HowToMvuxProject)), add a Model class with a State as follows:
+1. In an MVUX app (read [How to set up an MVUX project](xref:Uno.Extensions.Mvux.HowToMvuxProject)), add a Model class with a State as follows:
 
     ```csharp
     public partial record SliderModel
@@ -164,7 +164,7 @@ The `updater` parameter of the `Update` method accepts a `Func<T, T>`. The input
 
 #### Set
 
-There are additional methods that update the data of a State such as `Set` and `UpdateMessage`, explained [here](xref:Overview.Reactive.State#update-how-to-update-a-state). The `Set` method is the same as the `Update`, except that in `Set` there is no callback that provides the current value, instead a new value is provided directly and the old value is discarded:
+There are additional methods that update the data of a State such as `Set` and `UpdateMessage`, explained [here](xref:Uno.Extensions.Reactive.State#update-how-to-update-a-state). The `Set` method is the same as the `Update`, except that in `Set` there is no callback that provides the current value, instead a new value is provided directly and the old value is discarded:
 
 ```csharp
 public async ValueTask SetSliderMiddle(CancellationToken ct = default)
@@ -225,4 +225,4 @@ This is what the result will look like:
 The source code for the sample app can be found [here](https://github.com/unoplatform/Uno.Samples/tree/master/UI/MvuxHowTos/SliderApp).
 
 
-To learn more about Commands read the Commands section in [this article](xref:Overview.Reactive.InApps#commands).
+To learn more about Commands read the Commands section in [this article](xref:Uno.Extensions.Reactive.InApps#commands).

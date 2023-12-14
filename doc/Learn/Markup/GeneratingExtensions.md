@@ -17,7 +17,7 @@ The Uno Platform team is shipping a number of pre-generated extension libraries 
 - [Uno.Themes.WinUI.Markup](https://www.nuget.org/packages/Uno.Themes.WinUI.Markup)
 
 > [!TIP]
-> For more information on generating extensions on your own libraries see [Generating Extensions](xref:Overview.Markup.GeneratingExtensions).
+> For more information on generating extensions on your own libraries see [Generating Extensions](xref:Uno.Extensions.Markup.GeneratingExtensions).
 
 ## Using the Generator for 3rd Party Libraries
 
@@ -37,4 +37,4 @@ using Microsoft.UI.Xaml.Generator;
 
 Learn more about:
 
-- [Generating C# Extensions for your libraries](xref:Overview.Markup.GeneratingExtensions)
+- [Generating C# Extensions for your libraries](xref:Uno.Extensions.Markup.GeneratingExtensions)

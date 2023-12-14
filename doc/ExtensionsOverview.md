@@ -13,16 +13,16 @@ Alongside Uno, the app template references a lineup of battle-tested packages pr
 
 |Feature|Description|
 |---|---|
-|[Authentication](xref:Learn.Authentication.HowToAuthentication)|The Uno.Extensions.Authentication package provides authentication services.|
-|[Configuration](xref:Learn.Configuration.HowToConfiguration)|The Uno.Extensions.Configuration package provides a way to configure an application based on a list of name-value pairs.|
-|[Dependency injection](xref:Learn.DependencyInjection.HowToDependencyInjection)|The Uno.Extensions.DependencyInjection package provides a simple and lightweight dependency injection system for .NET.|
-|[Http](xref:Overview.Http)|The Uno.Extensions.Http package provides configuration for native Http handlers and registration of endpoints.|
-|[Localization](xref:Learn.Localization.HowToUseLocalization)|The Uno.Extensions.Localization package provides access to localizable resources.|
-|[Logging](xref:Learn.Logging.UseLogging)|The Uno.Extensions.Logging package provides a way to log messages to a variety of output targets.|
-|[Navigation](xref:Learn.Navigation.HowToNavigateBetweenPages)|The Uno.Extensions.Navigation package provides a routing framework for navigation.|
-|[Reactive](xref:Overview.Reactive.General)|The Uno.Extensions.Reactive package provides a development framework for reactive applications.|
-|[Serialization](xref:Overview.Serialization)|The Uno.Extensions.Serialization package provides helpers for JSON serialization.|
-|[Validation](xref:Overview.Validation)|The Uno.Extensions.Validation package provides support for data validation.|
+|[Authentication](xref:Uno.Extensions.Authentication.HowToAuthentication)|The Uno.Extensions.Authentication package provides authentication services.|
+|[Configuration](xref:Uno.Extensions.Configuration.HowToConfiguration)|The Uno.Extensions.Configuration package provides a way to configure an application based on a list of name-value pairs.|
+|[Dependency injection](xref:Uno.Extensions.DependencyInjection.HowToDependencyInjection)|The Uno.Extensions.DependencyInjection package provides a simple and lightweight dependency injection system for .NET.|
+|[Http](xref:Uno.Extensions.Http)|The Uno.Extensions.Http package provides configuration for native Http handlers and registration of endpoints.|
+|[Localization](xref:Uno.Extensions.Localization.HowToUseLocalization)|The Uno.Extensions.Localization package provides access to localizable resources.|
+|[Logging](xref:Uno.Extensions.Logging.UseLogging)|The Uno.Extensions.Logging package provides a way to log messages to a variety of output targets.|
+|[Navigation](xref:Uno.Extensions.Navigation.HowToNavigateBetweenPages)|The Uno.Extensions.Navigation package provides a routing framework for navigation.|
+|[Reactive](xref:Uno.Extensions.Reactive.General)|The Uno.Extensions.Reactive package provides a development framework for reactive applications.|
+|[Serialization](xref:Uno.Extensions.Serialization)|The Uno.Extensions.Serialization package provides helpers for JSON serialization.|
+|[Validation](xref:Uno.Extensions.Validation)|The Uno.Extensions.Validation package provides support for data validation.|
 
 
 > [!TIP]

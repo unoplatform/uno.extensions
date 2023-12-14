@@ -16,13 +16,13 @@ This is where messaging comes in handy. The service sends a message about this e
 The Community Toolkit messenger is a common tool that can use to send and receive such messages between objects in the app. The messenger enables objects to remain decoupled from each other without keeping a strong reference between the sender and the receiver. The messages can also be sent over specific channels uniquely identified by a token or within certain areas of the application.
 
 The core component of the messenger is the `IMessenger` object. Its main methods are `Register` and `Send`. `Register` subscribes to an object to start listening to messages of a certain type, whereas `Send` sends out messages to all listening parties.  
-There are various ways to obtain the `IMessenger` object, but we'll use the most common one, which involves using [Dependency Injection](xref:Overview.DependencyInjection) (DI) to register the `IMessenger` service in the app so it can then be resolved at the construction of other dependent types (e.g., ViewModels).
+There are various ways to obtain the `IMessenger` object, but we'll use the most common one, which involves using [Dependency Injection](xref:Uno.Extensions.DependencyInjection) (DI) to register the `IMessenger` service in the app so it can then be resolved at the construction of other dependent types (e.g., ViewModels).
 
 In the model, we obtain a reference to the `IMessenger` on the constructor, which is resolved by the DI's service provider.
 The `Register` method has quite a few overloads, but for the sake of this example, let's use the one that takes the recipient and the message type as parameters. The first parameter is the recipient (`this` in this case), and the second one is a callback that is executed when a message has been received. Although `this` can be called within the callback, it's preferred that the callback doesn't make external references and that the `MyModel` is passed in as an argument.  
 `MessageReceived` is then called on the received recipient (which is the current `MyModel`), and the message is passed into it:
 
-MVUX includes extension methods that enable the integration between the [Community Toolkit messenger](https://learn.microsoft.com/dotnet/communitytoolkit/mvvm/messenger) and [MVUX feeds](xref:Overview.Mvux.Feeds). But before discussing how MVUX integrates with the Community Toolkit messenger, let's have a quick look at how the messenger works.
+MVUX includes extension methods that enable the integration between the [Community Toolkit messenger](https://learn.microsoft.com/dotnet/communitytoolkit/mvvm/messenger) and [MVUX feeds](xref:Uno.Extensions.Mvux.Feeds). But before discussing how MVUX integrates with the Community Toolkit messenger, let's have a quick look at how the messenger works.
 
 ```csharp
 using CommunityToolkit.Mvvm.Messaging;
@@ -90,11 +90,11 @@ These extensions are shipped in the [`Uno.Extensions.Reactive.Messaging`](https:
 
 The purpose of the `Observe` methods (it comes in several overloads, [see below](#additional-observe-overloads)), is to intercept entity-change messages (`EntityMessage<T>`) from the Community Toolkit messenger and apply them to the designated state or list-state.
 
-In the example below, there is a model that displays a state-list of `Person` entities received from a service, loaded using a state, with the [`Async`](xref:Overview.Mvux.ListStates#async) factory method.
+In the example below, there is a model that displays a state-list of `Person` entities received from a service, loaded using a state, with the [`Async`](xref:Uno.Extensions.Mvux.ListStates#async) factory method.
 
 As you can gather from the code, the service interacts with an external source to load and save `Person` data. In the example below, we can see the use of two of its methods: `GetAllAsync` and `CreateNameAsync`.
 
-There's also the `CreateNewPerson` method, which gets generated as a command in the bindable proxy, to be invoked from the View (refer to [commands](xref:Overview.Mvux.Advanced.Commands) to learn about how MVUX generates commands). This method uses `CreateRandomName`, which generates a random name. Its implementation has been removed for brevity.
+There's also the `CreateNewPerson` method, which gets generated as a command in the bindable proxy, to be invoked from the View (refer to [commands](xref:Uno.Extensions.Mvux.Advanced.Commands) to learn about how MVUX generates commands). This method uses `CreateRandomName`, which generates a random name. Its implementation has been removed for brevity.
 
 The line using the MVUX messaging extension method is the one calling `messenger.Observe`. Read the code, and this line will be explained thereafter.
 
@@ -283,7 +283,7 @@ public partial record PeopleModel
 The `SelectedPersonPhone` state will only be refreshed if it falls under the predicate criteria, which is limited to the currently selected `Person`.
 
 > ![NOTE]
-> The `Selection` method above picks up UI selection changes and reflects them onto a state. This subject is covered [here](xref:Overview.Mvux.Advanced.Selection).
+> The `Selection` method above picks up UI selection changes and reflects them onto a state. This subject is covered [here](xref:Uno.Extensions.Mvux.Advanced.Selection).
 
 - `Observe<TOther, TEntity, TKey>(IState<TEntity> state, IFeed<TOther> other, Func<TOther, TEntity, bool> predicate, Func<TEntity, TKey> keySelector)`
 

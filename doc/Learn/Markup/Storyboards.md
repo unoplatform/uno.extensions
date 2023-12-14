@@ -26,7 +26,7 @@ new Rectangle().Name("MyAnimatedRectangle");
 
 ## Creating the Storyboard
 
-Now that we understand how to reference our UserControls within the UI, it's time to create a Storyboard. To create the storyboard we would work with it like any other class in C# Markup using [Attached Properties](xref:Overview.Markup.AttachedProperties):
+Now that we understand how to reference our UserControls within the UI, it's time to create a Storyboard. To create the storyboard we would work with it like any other class in C# Markup using [Attached Properties](xref:Uno.Extensions.Markup.AttachedProperties):
 
 ```cs
 new Storyboard().Children(

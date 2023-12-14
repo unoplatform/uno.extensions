@@ -4,7 +4,7 @@ uid: Uno.Extensions.Mvux.ListFeeds
 
 # What are list-feeds?
 
-A list-feed (`IListFeed`) is like a [feed](xref:Overview.Mvux.Feeds) which is stateless and keeps no track of changes, but is specialized for handling collections.
+A list-feed (`IListFeed`) is like a [feed](xref:Uno.Extensions.Mvux.Feeds) which is stateless and keeps no track of changes, but is specialized for handling collections.
 
 Unlike a feed, where each asynchronous operation, returns one single item (or a series of single items in the case of an `IAsyncEnumerable`), a list-feed returns a collection of items.  
 
@@ -16,7 +16,7 @@ A couple of points to note about list-feeds:
 This is because when a control of data items is displayed with an empty collection (for instance a `ListView`), there is no reason to display the `FeedView`'s `ValueTemplate` with an empty `ListView`. The "No data records" `NoneTemplate` makes much more sense in this case. For that reason, both a `null` result and an empty collection are regarded as `None`.
 
 - The list-feed is uses the _key equality_ to track multiple versions of the same entity within different messages of the list-feed.
-[Read more about _key equality_](xref:Overview.KeyEquality.Concept).
+[Read more about _key equality_](xref:Uno.Extensions.KeyEquality.Concept).
 
 ## How to create a list feed
 
@@ -56,7 +56,7 @@ In this way, a list-feed is created with an Async Enumerable method that returns
     public IListFeed<string> Names => ListFeed.AsyncEnumerable(service.GetNames);
     ```
 
-    Pull and push are explained more in the [feeds page](xref:Overview.Mvux.Feeds#creation-of-feeds).
+    Pull and push are explained more in the [feeds page](xref:Uno.Extensions.Mvux.Feeds#creation-of-feeds).
 
 ### Convert from feed of an item-collection
 
@@ -73,7 +73,7 @@ public void SetUp()
 ## Support for selection and pagination
 
 MVUX also provides built-in support for selection and pagination.  
-See more information on [Selection](xref:Overview.Mvux.Advanced.Selection) or [Pagination](xref:Overview.Mvux.Advanced.Pagination).
+See more information on [Selection](xref:Uno.Extensions.Mvux.Advanced.Selection) or [Pagination](xref:Uno.Extensions.Mvux.Advanced.Pagination).
 
 ## Operators
 

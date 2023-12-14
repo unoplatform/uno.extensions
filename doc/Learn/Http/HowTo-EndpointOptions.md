@@ -10,16 +10,16 @@ It's often necessary to include an API key alongside requests to a web API. This
 
 * An [environment](xref:Uno.GetStarted) set up for developing Uno Platform applications
 
-* The solution was created using the template wizard or `dotnet new unoapp`. See [Overview](xref:Overview.Extensions)
+* The solution was created using the template wizard or `dotnet new unoapp`. See [Overview](xref:Uno.Extensions.HowToGettingStarted)
 
 * Basic conceptual understanding of accessing web resources using HTTP requests
 
-* Knowledge of how to [register an endpoint for HTTP requests](xref:Learn.Http.HowToHttp)
+* Knowledge of how to [register an endpoint for HTTP requests](xref:Uno.Extensions.Http.HowToHttp)
 
 ## Step-by-steps
 
 > [!IMPORTANT]
-> This guide assumes you used the template wizard or `dotnet new unoapp` to create your solution. If not, it is recommended that you follow the [instructions](xref:Overview.Extensions) for creating an application from the template.
+> This guide assumes you used the template wizard or `dotnet new unoapp` to create your solution. If not, it is recommended that you follow the [instructions](xref:Uno.Extensions.HowToGettingStarted) for creating an application from the template.
 
 ### 1. Preparing for custom endpoint options
 
@@ -213,9 +213,9 @@ It's often necessary to include an API key alongside requests to a web API. This
 
 ## See also
 
-- [How-To: Register an Endpoint for HTTP Requests](xref:Learn.Http.HowToHttp)
+- [How-To: Register an Endpoint for HTTP Requests](xref:Uno.Extensions.Http.HowToHttp)
 - [How-To: Consume a web API with HttpClient](xref:Uno.Development.ConsumeWebApi)
-- [How-To: Create a Strongly-Typed REST Client for an API](xref:Learn.Http.HowToRefit)
-- [Overview: HTTP](xref:Overview.Http)
+- [How-To: Create a Strongly-Typed REST Client for an API](xref:Uno.Extensions.Http.HowToRefit)
+- [Overview: HTTP](xref:Uno.Extensions.Http)
 - [Overview: Polly and HttpClientFactory](https://github.com/App-vNext/Polly/wiki/Polly-and-HttpClientFactory)
 - [Explore: TestHarness HTTP Endpoints](https://github.com/unoplatform/uno.extensions/tree/main/testing/TestHarness/TestHarness.Shared/Ext/Http/Endpoints)
