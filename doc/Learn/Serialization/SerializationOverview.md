@@ -1,5 +1,5 @@
 ---
-uid: Uno.Extensions.Serialization
+uid: Uno.Extensions.Serialization.Overview
 ---
 
 # Serialization

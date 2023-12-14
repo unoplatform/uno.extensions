@@ -1,5 +1,5 @@
 ---
-uid: Uno.Extensions.Localization
+uid: Uno.Extensions.Localization.Overview
 ---
 
 # Localization

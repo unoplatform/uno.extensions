@@ -1,5 +1,5 @@
 ---
-uid: Uno.Extensions.Logging
+uid: Uno.Extensions.Logging.Overview
 ---
 
 # Logging

@@ -12,6 +12,6 @@
 - name: "How-To: Use .NET MAUI Community Toolkit"
   href: xref:Uno.Extensions.Maui.ThirdParty.MauiCommunityToolkit
 - name: "How-To: Use Syncfusion Controls"
-  href: xref:Uno.Extensions.Maui.ThirdParty.Synfusion
+  href: xref:Uno.Extensions.Maui.ThirdParty.Syncfusion
 - name: "How-To: Use Telerik Controls"
   href: xref:Uno.Extensions.Maui.ThirdParty.Telerik

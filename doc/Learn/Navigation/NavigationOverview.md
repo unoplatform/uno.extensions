@@ -1,5 +1,5 @@
 ---
-uid: Uno.Extensions.Navigation
+uid: Uno.Extensions.Navigation.Overview
 ---
 
 # Introduction

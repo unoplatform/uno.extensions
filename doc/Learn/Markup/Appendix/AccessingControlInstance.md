@@ -1,5 +1,5 @@
 ---
-uid: Overview.Markup.Appendix.AccessingControlInstance
+uid: Uno.Extensions.Markup.Appendix.AccessingControlInstance
 ---
 
 # Accessing a Control Instance
