@@ -67,41 +67,42 @@
         - name: Enable internal Uno Platform logging
           href: Learn/Tutorials/Logging/HowTo-InternalLogging.md
     - name: Markup
+      href: xref:Overview.Markup.Overview
       items:
         - name: Overview
-          href: Overview/Markup/Overview.md
+          href: xref:Overview.Markup.Overview
         - name: Binding, Static & Theme Resources
-          href: Overview/Markup/DependencyPropertyBuilder.md
+          href: xref:Overview.Markup.DependencyPropertyBuilder
           items:
             - name: Binding 101
-              href: Overview/Markup/Binding101.md
+              href: xref:Overview.Markup.Binding101
             - name: Converters
-              href: Overview/Markup/Converters.md
+              href: xref:Overview.Markup.Converters
             - name: Using Static & Theme Resources
-              href: Overview/Markup/StaticAndThemeResources.md
+              href: xref:Overview.Markup.StaticAndThemeResources
             - name: Using Uno.Themes.WinUI.Markup
-              href: Overview/Markup/UnoThemes.md
+              href: xref:Overview.Markup.UnoThemes
         - name: Attached Properties
-          href: Overview/Markup/AttachedProperties.md
+          href: xref:Overview.Markup.AttachedProperties
         - name: Resource Dictionaries
-          href: Overview/Markup/Resources.md
+          href: xref:Overview.Markup.Resources
         - name: Styles
-          href: Overview/Markup/Styles.md
+          href: xref:Overview.Markup.Styles
         - name: Templates
-          href: Overview/Markup/Templates.md
+          href: xref:Overview.Markup.Templates
         - name: VisualStateManager
-          href: Overview/Markup/VisualStateManager.md
+          href: xref:Overview.Markup.VisualStateManager
           items:
             - name: Storyboards
-              href: Overview/Markup/Storyboards.md
+              href: xref:Overview.Markup.Storyboards
         - name: Using and Generating Extensions
-          href: Overview/Markup/GeneratingExtensions.md
+          href: xref:Overview.Markup.GeneratingExtensions
         - name: Appendix
           items:
             - name: TextBlock Run
-              href: Overview/Markup/Appendix/TextBlockRun.md
+              href: xref:Overview.Markup.Appendix.TextBlockRun
             - name: Accessing a Control Instance
-              href: Overview/Markup/Appendix/AccessingControlInstance.md
+              href: xref:Overview.Markup.Appendix.AccessingControlInstance
     - name: MVUX
       href: Overview/Mvux/Overview.md
       items:
