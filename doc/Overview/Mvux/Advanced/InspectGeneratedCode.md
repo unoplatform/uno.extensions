@@ -1,5 +1,5 @@
 ---
-uid: Overview.Mvux.Advanced.InspectGeneratedCode
+uid: Uno.Extensions.Mvux.Advanced.InspectGeneratedCode
 ---
 
 # Inspecting the generated code

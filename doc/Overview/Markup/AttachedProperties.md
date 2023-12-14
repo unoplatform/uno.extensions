@@ -1,5 +1,5 @@
 ---
-uid: Overview.Markup.AttachedProperties
+uid: Uno.Extensions.Markup.AttachedProperties
 ---
 # Attached Properties
 

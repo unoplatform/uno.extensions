@@ -1,5 +1,5 @@
 ---
-uid: Overview.PropertySelector.Concept
+uid: Uno.Extensions.PropertySelector.Concept
 ---
 # Concept
 

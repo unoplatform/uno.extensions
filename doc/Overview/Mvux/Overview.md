@@ -1,5 +1,5 @@
 ﻿---
-uid: Overview.Mvux.Overview
+uid: Uno.Extensions.Mvux.Overview
 ---
 
 # MVUX Overview

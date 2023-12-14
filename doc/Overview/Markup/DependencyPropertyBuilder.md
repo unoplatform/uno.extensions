@@ -1,5 +1,5 @@
 ---
-uid: Overview.Markup.DependencyPropertyBuilder
+uid: Uno.Extensions.Markup.DependencyPropertyBuilder
 ---
 # Dependency Property Builder
 

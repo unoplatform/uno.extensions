@@ -1,5 +1,5 @@
 ﻿---
-uid: Overview.Mvux.HowToListFeed
+uid: Uno.Extensions.Mvux.HowToListFeed
 ---
 
 # How to create a list feed

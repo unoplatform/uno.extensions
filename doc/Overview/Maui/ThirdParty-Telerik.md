@@ -1,5 +1,5 @@
 ---
-uid: Overview.Maui.ThirdParty.Telerik
+uid: Uno.Extensions.Maui.ThirdParty.Telerik
 ---
 # .NET MAUI Embedding - Telerik UI for .NET MAUI
 

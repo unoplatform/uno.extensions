@@ -1,5 +1,5 @@
 ---
-uid: Overview.Reactive.General
+uid: Uno.Extensions.Reactive.General
 ---
 # General guidelines
 

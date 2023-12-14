@@ -1,5 +1,5 @@
 ---
-uid: Overview.Maui
+uid: Uno.Extensions.Maui
 ---
 # .NET MAUI Embedding
 

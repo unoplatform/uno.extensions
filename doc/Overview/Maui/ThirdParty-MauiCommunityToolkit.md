@@ -1,5 +1,5 @@
 ---
-uid: Overview.Maui.ThirdParty.MauiCommunityToolkit
+uid: Uno.Extensions.Maui.ThirdParty.MauiCommunityToolkit
 ---
 # .NET MAUI Embedding - MauiCommunityToolkit
 

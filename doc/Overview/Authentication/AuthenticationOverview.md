@@ -1,5 +1,5 @@
 ---
-uid: Overview.Authentication
+uid: Uno.Extensions.Authentication
 ---
 # Authentication
 

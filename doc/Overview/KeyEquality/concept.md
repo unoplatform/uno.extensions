@@ -1,5 +1,5 @@
 ---
-uid: Overview.KeyEquality.Concept
+uid: Uno.Extensions.KeyEquality.Concept
 ---
 # Concept
 

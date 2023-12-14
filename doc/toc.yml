@@ -1,8 +1,6 @@
 - name: Overview
   href: ExtensionsOverview.md
-- name: Frequently Asked Questions
-  href: Questions.md
-- name: Creating an Application
+- name: Getting Started with Uno.Extensions
   href: GettingStarted.md
 - name: Learn
   items:

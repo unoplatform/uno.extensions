@@ -1,5 +1,5 @@
 ---
-uid: Overview.Mvux.Advanced.Pagination
+uid: Uno.Extensions.Mvux.Advanced.Pagination
 ---
 
 # Pagination

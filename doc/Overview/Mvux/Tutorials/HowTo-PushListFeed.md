@@ -1,5 +1,5 @@
 ---
-uid: Overview.Mvux.HowToPushListFeed
+uid: Uno.Extensions.Mvux.HowToPushListFeed
 ---
 
 # How to create a list feed where values are pushed in

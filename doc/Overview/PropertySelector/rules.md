@@ -1,5 +1,5 @@
 ---
-uid: Overview.Reactive.Rules
+uid: Uno.Extensions.Reactive.Rules
 ---
 # Feeds code analyzers
 

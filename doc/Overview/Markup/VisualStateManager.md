@@ -1,5 +1,5 @@
 ---
-uid: Overview.Markup.VisualStateManager
+uid: Uno.Extensions.Markup.VisualStateManager
 ---
 # Visual State Manager
 

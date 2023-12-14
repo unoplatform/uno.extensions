@@ -1,5 +1,5 @@
 ---
-uid: Overview.Mvux.Advanced.Messaging
+uid: Uno.Extensions.Mvux.Advanced.Messaging
 ---
 
 # Messaging

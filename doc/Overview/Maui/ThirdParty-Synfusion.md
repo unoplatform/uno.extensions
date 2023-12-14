@@ -1,5 +1,5 @@
 ---
-uid: Overview.Maui.ThirdParty.Syncfusion
+uid: Uno.Extensions.Maui.ThirdParty.Syncfusion
 ---
 # .NET MAUI Embedding - Syncfusion .NET MAUI Controls
 

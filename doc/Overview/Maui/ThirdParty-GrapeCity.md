@@ -1,5 +1,5 @@
 ---
-uid: Overview.Maui.ThirdParty.GrapeCity
+uid: Uno.Extensions.Maui.ThirdParty.GrapeCity
 ---
 # .NET MAUI Embedding - GrapeCity ComponentOne .NET MAUI Controls
 

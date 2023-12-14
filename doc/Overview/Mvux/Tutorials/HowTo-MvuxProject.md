@@ -1,5 +1,5 @@
 ---
-uid: Overview.Mvux.HowToMvuxProject
+uid: Uno.Extensions.Mvux.HowToMvuxProject
 ---
 
 # How to set up an MVUX project
