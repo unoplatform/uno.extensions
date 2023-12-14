@@ -1,5 +1,5 @@
 ---
-uid: Uno.Extensions.HowToCreateMarkupProject
+uid: Uno.Extensions.Markup.HowToCreateMarkupProject
 ---
 
 # How to set up your own C# Markup project

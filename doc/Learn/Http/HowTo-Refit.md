@@ -210,7 +210,7 @@ When accessing resources with a [REST-style](https://www.ics.uci.edu/~fielding/p
 
     * In these cases, you can set `UseNativeHandler` to `false` to use the managed handler instead
 
-* That block of JSON from the above file is called a configuration section. In this case, it's used to configure the HTTP client associated with the endpoint. For more information, see the [overview](xref:Uno.Extensions.Configuration#sections) for configuration sections.
+* That block of JSON from the above file is called a configuration section. In this case, it's used to configure the HTTP client associated with the endpoint. For more information, see the [overview](xref:Uno.Extensions.Configuration.Overview#sections) for configuration sections.
 
 * Observe that the name of the configuration section is similar to that of the endpoint interface we defined earlier. By default, the interface name without the leading `I` prefix is assumed to be the section name. This can be overridden by specifying a name while registering the service. The name you use should be the second argument to `AddRefitClient<T>()`.
 
@@ -253,7 +253,7 @@ When accessing resources with a [REST-style](https://www.ics.uci.edu/~fielding/p
 
 - [How-To: Consume a web API with HttpClient](xref:Uno.Development.ConsumeWebApi)
 - [How-To: Register an Endpoint for HTTP Requests](xref:Uno.Extensions.Http.HowToHttp)
-- [Overview: HTTP](xref:Uno.Extensions.Http)
+- [Overview: HTTP](xref:Uno.Extensions.Http.Overview)
 - [Overview: Use HttpClientFactory to implement resilient HTTP requests](https://learn.microsoft.com/dotnet/architecture/microservices/implement-resilient-applications/use-httpclientfactory-to-implement-resilient-http-requests#benefits-of-using-ihttpclientfactory)
 - [Overview: What is Refit?](https://github.com/reactiveui/refit)
 - [Explore: Hoppscotch tool](https://hoppscotch.io)

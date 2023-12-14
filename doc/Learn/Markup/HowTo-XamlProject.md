@@ -1,5 +1,5 @@
 ---
-uid: Uno.Extensions.HowToXamlProject
+uid: Uno.Extensions.Markup.HowToXamlProject
 ---
 
 # How to set up a XAML project

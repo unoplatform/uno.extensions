@@ -62,7 +62,7 @@ Dependency Injection (DI) is an important design pattern when building loosely-c
         }
     }
     ```
-* If you are using not using [navigation](xref:Uno.Extensions.Navigation), you have to register the view model to `IServiceCollection`, but we recommend using navigation and not manually register the view model as a service:
+* If you are using not using [navigation](xref:Uno.Extensions.Navigation.Overview), you have to register the view model to `IServiceCollection`, but we recommend using navigation and not manually register the view model as a service:
     ```cs
     protected override void OnLaunched(LaunchActivatedEventArgs args)
     {
@@ -96,4 +96,4 @@ Dependency Injection (DI) is an important design pattern when building loosely-c
         }
     ```
 > [!TIP]
-> By default the `Host` property is marked as `private`, so you'll need to change it to `public` in order for the above code to work. Alternatively, if you use [Navigation](xref:Uno.Extensions.Navigation), view model classes are automatically connected with the corresponding page, avoiding having to access the `IServiceProvider` directly. 
+> By default the `Host` property is marked as `private`, so you'll need to change it to `public` in order for the above code to work. Alternatively, if you use [Navigation](xref:Uno.Extensions.Navigation.Overview), view model classes are automatically connected with the corresponding page, avoiding having to access the `IServiceProvider` directly. 

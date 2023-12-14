@@ -1,5 +1,5 @@
 ---
-uid: Uno.Extensions.HowToCustomMarkupProjectTheme
+uid: Uno.Extensions.Markup.HowToCustomMarkupProjectTheme
 ---
 
 # C# Markup project setup
