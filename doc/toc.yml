@@ -1,9 +1,10 @@
 - name: Overview
   href: xref:Uno.Extensions.Overview
-- name: "How-To: Getting Started"
-  href: xref:Uno.Extensions.HowToGettingStarted
-- name: Learn
   items:
+    - name: Uno.Extensions Overview
+      href: xref:Uno.Extensions.Overview
+    - name: "How-To: Getting Started"
+      href: xref:Uno.Extensions.HowToGettingStarted
     - name: Hosting
       href: xref:Uno.Extensions.Hosting.Overview
       items:
