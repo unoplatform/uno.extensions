@@ -1,15 +1,16 @@
 - name: Overview
-  href: ExtensionsOverview.md
-- name: Getting Started with Uno.Extensions
-  href: GettingStarted.md
+  href: xref:Uno.Extensions.Overview
+- name: "How-to: Getting Started"
+  href: xref:Uno.Extensions.HowToGettingStarted
 - name: Learn
   items:
     - name: Authentication
+      href: xref:Uno.Extensions.Authentication.Overview
       items:
         - name: Overview
-          href: Overview/Authentication/AuthenticationOverview.md
-        - name: Use custom authentication
-          href: Learn/Tutorials/Authentication/HowTo-Authentication.md
+          href: xref:Uno.Extensions.Authentication.Overview
+        - name: "How-to: Use custom authentication"
+          href: xref:Uno.Extensions.Authentication.HowToAuthentication
         - name: Use MSAL authentication
           href: Learn/Tutorials/Authentication/HowTo-MsalAuthentication.md
         - name: Use OIDC authentication

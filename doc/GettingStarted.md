@@ -1,5 +1,5 @@
 ---
-uid: Uno.Extensions.Extensions
+uid: Uno.Extensions.HowToGettingStarted
 ---
 # How-To: Creating an application with Uno.Extensions
 
