@@ -1,6 +1,6 @@
 <Project>
 	<ItemGroup>
-		<AdditionalFiles Include="@(Page)" />
+		<AdditionalFiles Include="@(Page)" SourceItemGroup="Page" />
 	</ItemGroup>
 	<ItemGroup Condition=" '$(ImplicitUsings)' == 'true' OR '$(ImplicitUsings)' == 'enable' ">
 		<Using Include="Uno.Extensions.Navigation" />
