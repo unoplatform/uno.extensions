@@ -25,24 +25,30 @@ If the matter is security related, please disclose it privately via https://gith
 
 <!-- For bug reports Check one or more of the following options with "x" -->
 
-Nuget Package:
+Nuget Package (s):
 
 Package Version(s):
 
 Affected platform(s):
 
 - [ ] iOS
+- [ ] macOS (AppKit)
+- [ ] Mac Catalyst
 - [ ] Android
 - [ ] WebAssembly
-- [ ] WebAssembly renders for Xamarin.Forms
 - [ ] Windows
+- [ ] Skia (WPF)
+- [ ] Skia (GTK on Linux/macOS/Windows)
+- [ ] Skia (Linux Framebuffer)
 - [ ] Build tasks
 
 Visual Studio:
 
-- [ ] 2017 (version: )
 - [ ] 2019 (version: )
-- [ ] for Mac (version: )
+- [ ] 2022 (version: )
+- [ ] Visual Studio Code (version: )
+- [ ] Rider Windows (version: )
+- [ ] Rider macOS (version: )
 
 Relevant plugins:
 

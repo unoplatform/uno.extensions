@@ -6,7 +6,7 @@ labels: kind/consumer-experience, kind/documentation, triage/untriaged
 
 <!-- Please only use this template for submitting documentation requests -->
 
-## What would you like clarification on:
+## What would you like clarification on
 
 ## Concern?
 
@@ -19,14 +19,19 @@ labels: kind/consumer-experience, kind/documentation, triage/untriaged
 - [ ] Support
 - [ ] Other (please specify):
 
-## For which Platform:
+## For which Platform
 
 - [ ] iOS
+- [ ] macOS (AppKit)
+- [ ] Mac Catalyst
 - [ ] Android
 - [ ] WebAssembly
 - [ ] Windows
+- [ ] Skia (WPF)
+- [ ] Skia (GTK on Linux/macOS/Windows)
+- [ ] Skia (Linux Framebuffer)
+- [ ] Build tasks
 
 ## Anything else we need to know?
 
 <!-- We would love to know of any friction, apart from knowledge, that prevented you from sending in a pull-request -->
-

@@ -11,7 +11,3 @@ labels: kind/consumer-experience, kind/documentation, triage/untriaged
 ## What's wrong?
 
 ## Any feedback?
-
-
-
-
