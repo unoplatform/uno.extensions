@@ -149,20 +149,20 @@
           href: Reference/Reactive/Architecture.md
         - name: Analysis rules
           href: Reference/Reactive/rules.md
-    - name: Navigation
-      href: Reference/Navigation/Navigation.md
-      items:
-        - name: Design
-          href: Reference/Navigation/Design.md
-        - name: Navigation Region
-          href: Reference/Navigation/NavigationRegion.md
-        - name: Qualifiers
-          href: Reference/Navigation/Qualifiers.md
-        - name: View Map
-          href: Reference/Navigation/ViewMap.md
-        - name: Route Map
-          href: Reference/Navigation/RouteMap.md
-        - name: Implement INavigator
-          href: Reference/Navigation/Navigator.md
-        - name: Implement IRequestHandler
-          href: Reference/Navigation/NavigationRequestHandler.md
+    # - name: Navigation
+    #   href: Reference/Navigation/Navigation.md
+    #   items:
+    #     - name: Design
+    #       href: Reference/Navigation/Design.md
+    #     - name: Navigation Region
+    #       href: Reference/Navigation/NavigationRegion.md
+    #     - name: Qualifiers
+    #       href: Reference/Navigation/Qualifiers.md
+    #     - name: View Map
+    #       href: Reference/Navigation/ViewMap.md
+    #     - name: Route Map
+    #       href: Reference/Navigation/RouteMap.md
+    #     - name: Implement INavigator
+    #       href: Reference/Navigation/Navigator.md
+    #     - name: Implement IRequestHandler
+    #       href: Reference/Navigation/NavigationRequestHandler.md
