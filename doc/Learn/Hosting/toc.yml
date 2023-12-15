@@ -1,0 +1,4 @@
+- name: Overview
+  href: xref:Uno.Extensions.Hosting.Overview
+- name: "How-To: Get started with hosting"
+  href: xref:Uno.Extensions.Hosting.HowToHostingSetup
