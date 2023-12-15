@@ -1,0 +1,8 @@
+- name: Overview
+  href: xref:Uno.Extensions.Http.Overview
+- name: "How-To: Get started with Http"
+  href: xref:Uno.Extensions.Http.HowToHttp
+- name: "How-To: Use Refit to call a REST API"
+  href: xref:Uno.Extensions.Http.HowToRefit
+- name: "How-To: Configure with endpoint options"
+  href: xref:Uno.Extensions.Http.HowToEndpointOptions

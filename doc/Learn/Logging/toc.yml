@@ -1,0 +1,6 @@
+- name: Overview
+  href: xref:Uno.Extensions.Logging.Overview
+- name: "How-To: Get started with logging"
+  href: xref:Uno.Extensions.Logging.UseLogging
+- name: "How-To: Enable internal Uno Platform logging"
+  href: xref:Uno.Extensions.Logging.UseInternalLogging

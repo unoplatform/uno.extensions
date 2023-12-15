@@ -6,117 +6,35 @@
     - name: "How-To: Getting Started"
       href: xref:Uno.Extensions.HowToGettingStarted
     - name: Hosting
-      href: xref:Uno.Extensions.Hosting.Overview
-      items:
-        - name: Overview
-          href: xref:Uno.Extensions.Hosting.Overview
-        - name: "How-To: Get started with hosting"
-          href: xref:Uno.Extensions.Hosting.HowToHostingSetup
+      href: Learn/Hosting/toc.yml
+      topicHref: xref:Uno.Extensions.Hosting.Overview
     - name: Dependency Injection
-      href: xref:Uno.Extensions.DependencyInjection.Overview
-      items:
-        - name: Overview
-          href: xref:Uno.Extensions.DependencyInjection.Overview
-        - name: "How-To: Get started with dependency injection"
-          href: xref:Uno.Extensions.DependencyInjection.HowToDependencyInjection
-        - name: "How-To: Resolve Dependencies with CommunityToolkit.Mvvm"
-          href: xref:Uno.Extensions.DependencyInjection.HowToCommunityToolkit
+      href: Learn/DependencyInjection/toc.yml
+      topicHref: xref:Uno.Extensions.DependencyInjection.Overview
     - name: Configuration
-      href: xref:Uno.Extensions.Configuration.Overview
-      items:
-        - name: Overview
-          href: xref:Uno.Extensions.Configuration.Overview
-        - name: "How-To: Get started with configuration"
-          href: xref:Uno.Extensions.Configuration.HowToConfiguration
-        - name: "How-To: Save settings using IWritableOptions"
-          href: xref:Uno.Extensions.Configuration.HowToWritableConfiguration
+      href: Learn/Configuration/toc.yml
+      topicHref: xref:Uno.Extensions.Configuration.Overview
     - name: Logging
-      href: xref:Uno.Extensions.Logging.Overview
-      items:
-        - name: Overview
-          href: xref:Uno.Extensions.Logging.Overview
-        - name: "How-To: Get started with logging"
-          href: xref:Uno.Extensions.Logging.UseLogging
-        - name: "How-To: Enable internal Uno Platform logging"
-          href: xref:Uno.Extensions.Logging.UseInternalLogging
+      href: Learn/Logging/toc.yml
+      topicHref: xref:Uno.Extensions.Logging.Overview
     - name: Localization
-      href: xref:Uno.Extensions.Localization.Overview
-      items:
-        - name: Overview
-          href: xref:Uno.Extensions.Localization.Overview
-        - name: "How-To: Get started with localization"
-          href: xref:Uno.Extensions.Localization.HowToUseLocalization
+      href: Learn/Localization/toc.yml
+      topicHref: xref:Uno.Extensions.Localization.Overview
     - name: Serialization
-      href: xref:Uno.Extensions.Serialization.Overview
-      items:
-        - name: Overview
-          href: xref:Uno.Extensions.Serialization.Overview
-        - name: "How-To: Get started with serialization"
-          href: xref:Uno.Extensions.Serialization.HowToSerialization
+      href: Learn/Serialization/toc.yml
+      topicHref: xref:Uno.Extensions.Serialization.Overview
     - name: Validation
-      href: xref:Uno.Extensions.Validation.Overview
-      items:
-        - name: Overview
-          href: xref:Uno.Extensions.Validation.Overview
+      href: Learn/Validation/toc.yml
+      topicHref: xref:Uno.Extensions.Validation.Overview
     - name: Http
-      href: xref:Uno.Extensions.Http.Overview
-      items:
-        - name: Overview
-          href: xref:Uno.Extensions.Http.Overview
-        - name: "How-To: Get started with Http"
-          href: xref:Uno.Extensions.Http.HowToHttp
-        - name: "How-To: Use Refit to call a REST API"
-          href: xref:Uno.Extensions.Http.HowToRefit
-        - name: "How-To: Configure with endpoint options"
-          href: xref:Uno.Extensions.Http.HowToEndpointOptions
+      href: Learn/Http/toc.yml
+      topicHref: xref:Uno.Extensions.Http.Overview
     - name: Navigation
-      href: xref:Uno.Extensions.Navigation.Overview
-      items:
-        - name: Overview
-          href: xref:Uno.Extensions.Navigation.Overview
-        - name: "How-To: Get started with navigation"
-          href: xref:Uno.Extensions.Navigation.HowToNavigateBetweenPages
-        - name: "How-To: Navigate via code behind"
-          href: xref:Uno.Extensions.Navigation.HowToNavigateInCode
-        - name: "How-To: Navigate via XAML"
-          href: xref:Uno.Extensions.Navigation.HowToNavigateInXAML
-        - name: "How-To: Display a message dialog"
-          href: xref:Uno.Extensions.Navigation.HowToDisplayMessageDialog
-        - name: "How-To: Request a value"
-          href: xref:Uno.Extensions.Navigation.HowToSelectValue
-        - name: "How-To: Display a modal flyout"
-          href: xref:Uno.Extensions.Navigation.HowToShowFlyout
-        - name: "How-To: Display an item"
-          href: xref:Uno.Extensions.Navigation.HowToDisplayItem
-        - name: Advanced
-          items:
-            - name: "How-To: Modify the back-stack"
-              href: xref:Uno.Extensions.Navigation.Advanced.PageNavigation
-            - name: "How-To: Navigate using a TabBar"
-              href: xref:Uno.Extensions.Navigation.Advanced.TabBar
-            - name: "How-To: Navigate using a NavigationView"
-              href: xref:Uno.Extensions.Navigation.Advanced.NavigationView
-            - name: "How-To: Navigate using a responsive shell"
-              href: xref:Uno.Extensions.Navigation.Advanced.ResponsiveShell
-            - name: "How-To: Navigate inside Panel (Grid, StackPanel etc)"
-              href: xref:Uno.Extensions.Navigation.Advanced.Panel
-            - name: "How-To: Navigate using a ContentControl"
-              href: xref:Uno.Extensions.Navigation.Advanced.ContentControl
+      href: Learn/Navigation/toc.yml
+      topicHref: xref:Uno.Extensions.Navigation.Overview
     - name: Authentication
-      href: xref:Uno.Extensions.Authentication.Overview
-      items:
-        - name: Overview
-          href: xref:Uno.Extensions.Authentication.Overview
-        - name: "How-To: Get started with authentication"
-          href: xref:Uno.Extensions.Authentication.HowToAuthentication
-        - name: "How-To: Use MSAL authentication"
-          href: xref:Uno.Extensions.Authentication.HowToMsalAuthentication
-        - name: "How-To: Use OIDC authentication"
-          href: xref:Uno.Extensions.Authentication.HowToOidcAuthentication
-        - name: "How-To: Use web authentication"
-          href: xref:Uno.Extensions.Authentication.HowToWebAuthentication
-        - name: "How-To: Authorize with cookies"
-          href: xref:Uno.Extensions.Authentication.HowToCookieAuthorization
+      href: Learn/Authentication/toc.yml
+      topicHref: xref:Uno.Extensions.Authentication.Overview
     - name: C# Markup
       href: Learn/Markup/toc.yml
       topicHref: xref:Uno.Extensions.Markup.Overview
