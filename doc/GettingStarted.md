@@ -35,13 +35,13 @@ The generated solution will contain:
 * *Platforms/MyProjectName.** - platform-specific projects for each supported platform.
 * *MyProjectName.Tests* and *MyProjectName.UI.Tests* - for writing unit and UI tests respectively.
 
-    ![The structure of the generated solution](./Overview/images/ProjectStructure-min.png)
+    ![The structure of the generated solution](./Learn/images/ProjectStructure-min.png)
 
 ### 3. Running the Application
 
 * Select a target from the drop-down as pictured below
 
-    ![A screenshot of the generated targets](./Overview/images/GeneratedTargets-min.png)
+    ![A screenshot of the generated targets](./Learn/images/GeneratedTargets-min.png)
 
 * Click the “play” button, or press F5 to start debugging. The necessary projects in the solution will be compiled and deployed based on the target platform.
 
@@ -78,4 +78,4 @@ The generated solution will contain:
 
 * Go back to the project *Tests\\MyProjectName.UI.Tests* and right click. Then, *Run Tests*
 
-    ![Test Explorer in VS](./Overview/images/TestExplorer-min.png)
+    ![Test Explorer in VS](./Learn/images/TestExplorer-min.png)
