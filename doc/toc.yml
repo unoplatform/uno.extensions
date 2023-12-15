@@ -5,45 +5,45 @@
       href: xref:Uno.Extensions.Overview
     - name: "How-To: Getting Started"
       href: xref:Uno.Extensions.HowToGettingStarted
-    - name: Hosting
-      href: Learn/Hosting/toc.yml
-      topicHref: xref:Uno.Extensions.Hosting.Overview
-    - name: Dependency Injection
-      href: Learn/DependencyInjection/toc.yml
-      topicHref: xref:Uno.Extensions.DependencyInjection.Overview
+    - name: Authentication
+      href: Learn/Authentication/toc.yml
+      topicHref: xref:Uno.Extensions.Authentication.Overview
     - name: Configuration
       href: Learn/Configuration/toc.yml
       topicHref: xref:Uno.Extensions.Configuration.Overview
-    - name: Logging
-      href: Learn/Logging/toc.yml
-      topicHref: xref:Uno.Extensions.Logging.Overview
+    - name: Dependency Injection
+      href: Learn/DependencyInjection/toc.yml
+      topicHref: xref:Uno.Extensions.DependencyInjection.Overview
+    - name: Hosting
+      href: Learn/Hosting/toc.yml
+      topicHref: xref:Uno.Extensions.Hosting.Overview
+    - name: Http
+      href: Learn/Http/toc.yml
+      topicHref: xref:Uno.Extensions.Http.Overview
     - name: Localization
       href: Learn/Localization/toc.yml
       topicHref: xref:Uno.Extensions.Localization.Overview
+    - name: Logging
+      href: Learn/Logging/toc.yml
+      topicHref: xref:Uno.Extensions.Logging.Overview
+    - name: Navigation
+      href: Learn/Navigation/toc.yml
+      topicHref: xref:Uno.Extensions.Navigation.Overview
     - name: Serialization
       href: Learn/Serialization/toc.yml
       topicHref: xref:Uno.Extensions.Serialization.Overview
     - name: Validation
       href: Learn/Validation/toc.yml
       topicHref: xref:Uno.Extensions.Validation.Overview
-    - name: Http
-      href: Learn/Http/toc.yml
-      topicHref: xref:Uno.Extensions.Http.Overview
-    - name: Navigation
-      href: Learn/Navigation/toc.yml
-      topicHref: xref:Uno.Extensions.Navigation.Overview
-    - name: Authentication
-      href: Learn/Authentication/toc.yml
-      topicHref: xref:Uno.Extensions.Authentication.Overview
-    - name: C# Markup
-      href: Learn/Markup/toc.yml
-      topicHref: xref:Uno.Extensions.Markup.Overview
-    - name: MVUX
-      href: Learn/Mvux/toc.yml
-      topicHref: xref:Uno.Extensions.Mvux.Overview
-    - name: .NET MAUI Embedding
-      href: Learn/Maui/toc.yml
-      topicHref: xref:Uno.Extensions.Maui.Overview
+- name: C# Markup
+  href: Learn/Markup/toc.yml
+  topicHref: xref:Uno.Extensions.Markup.Overview
+- name: MVUX
+  href: Learn/Mvux/toc.yml
+  topicHref: xref:Uno.Extensions.Mvux.Overview
+- name: .NET MAUI Embedding
+  href: Learn/Maui/toc.yml
+  topicHref: xref:Uno.Extensions.Maui.Overview
 - name: Reference
   items:
     - name: MVUX
