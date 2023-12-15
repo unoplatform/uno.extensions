@@ -66,6 +66,43 @@
           href: Learn/Tutorials/Logging/HowTo-Logging.md
         - name: Enable internal Uno Platform logging
           href: Learn/Tutorials/Logging/HowTo-InternalLogging.md
+    - name: Markup
+      href: xref:Overview.Markup.Overview
+      items:
+        - name: Overview
+          href: xref:Overview.Markup.Overview
+        - name: Binding, Static & Theme Resources
+          href: xref:Overview.Markup.DependencyPropertyBuilder
+          items:
+            - name: Binding 101
+              href: xref:Overview.Markup.Binding101
+            - name: Converters
+              href: xref:Overview.Markup.Converters
+            - name: Using Static & Theme Resources
+              href: xref:Overview.Markup.StaticAndThemeResources
+            - name: Using Uno.Themes.WinUI.Markup
+              href: xref:Overview.Markup.UnoThemes
+        - name: Attached Properties
+          href: xref:Overview.Markup.AttachedProperties
+        - name: Resource Dictionaries
+          href: xref:Overview.Markup.Resources
+        - name: Styles
+          href: xref:Overview.Markup.Styles
+        - name: Templates
+          href: xref:Overview.Markup.Templates
+        - name: VisualStateManager
+          href: xref:Overview.Markup.VisualStateManager
+          items:
+            - name: Storyboards
+              href: xref:Overview.Markup.Storyboards
+        - name: Using and Generating Extensions
+          href: xref:Overview.Markup.GeneratingExtensions
+        - name: Appendix
+          items:
+            - name: TextBlock Run
+              href: xref:Overview.Markup.Appendix.TextBlockRun
+            - name: Accessing a Control Instance
+              href: xref:Overview.Markup.Appendix.AccessingControlInstance
     - name: MVUX
       href: Overview/Mvux/Overview.md
       items:
@@ -83,7 +120,7 @@
           href: Overview/Mvux/FeedView.md
         - name: Tutorials
           items:
-            - name: How to create an MVUX project  
+            - name: How to create an MVUX project
               href: Overview/Mvux/Tutorials/HowTo-MvuxProject.md
             - name: How to create a Feed
               href: Overview/Mvux/Tutorials/HowTo-SimpleFeed.md
