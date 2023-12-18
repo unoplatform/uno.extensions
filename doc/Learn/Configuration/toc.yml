@@ -1,0 +1,6 @@
+- name: Overview
+  href: xref:Uno.Extensions.Configuration.Overview
+- name: "How-To: Get started with configuration"
+  href: xref:Uno.Extensions.Configuration.HowToConfiguration
+- name: "How-To: Save settings using IWritableOptions"
+  href: xref:Uno.Extensions.Configuration.HowToWritableConfiguration

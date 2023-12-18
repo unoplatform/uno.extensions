@@ -1,5 +1,5 @@
 ---
-uid: Overview.Reactive.InApps
+uid: Uno.Extensions.Reactive.InApps
 ---
 # Usage in applications of feeds
 

@@ -1,5 +1,5 @@
 ---
-uid: Overview.Reactive.Feed
+uid: Uno.Extensions.Reactive.Feed
 ---
 # Feed
 

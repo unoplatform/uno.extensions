@@ -1,0 +1,4 @@
+- name: Overview
+  href: xref:Uno.Extensions.Localization.Overview
+- name: "How-To: Get started with localization"
+  href: xref:Uno.Extensions.Localization.HowToUseLocalization
