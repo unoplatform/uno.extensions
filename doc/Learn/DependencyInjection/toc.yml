@@ -1,0 +1,6 @@
+- name: Overview
+  href: xref:Uno.Extensions.DependencyInjection.Overview
+- name: "How-To: Get started with dependency injection"
+  href: xref:Uno.Extensions.DependencyInjection.HowToDependencyInjection
+- name: "How-To: Resolve Dependencies with CommunityToolkit.Mvvm"
+  href: xref:Uno.Extensions.DependencyInjection.HowToCommunityToolkit

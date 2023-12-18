@@ -4,11 +4,11 @@ Uno.Extensions is a series of NuGet packages designed to encapsulate common deve
 
 ## Getting Started
 
-See the complete [documentation](xref:Overview.Features) for getting started with Uno.Extensions.
+See the complete [documentation](xref:Uno.Extensions.Overview) for getting started with Uno.Extensions.
 
 ## Documentation
 
-All the documentation for getting you started with [Uno Platform](https://platform.uno/) can be found on our [website](xref:Overview.Features).
+All the documentation for getting you started with [Uno Platform](https://platform.uno/) can be found on our [website](xref:Uno.Extensions.Overview).
 
 ## License
 

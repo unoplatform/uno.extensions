@@ -1,0 +1,13 @@
+- name: Overview
+  href: xref:Uno.Extensions.Authentication.Overview
+- name: "How-To: Get started with authentication"
+  href: xref:Uno.Extensions.Authentication.HowToAuthentication
+- name: "How-To: Use MSAL authentication"
+  href: xref:Uno.Extensions.Authentication.HowToMsalAuthentication
+- name: "How-To: Use OIDC authentication"
+  href: xref:Uno.Extensions.Authentication.HowToOidcAuthentication
+- name: "How-To: Use web authentication"
+  href: xref:Uno.Extensions.Authentication.HowToWebAuthentication
+- name: "How-To: Authorize with cookies"
+  href: xref:Uno.Extensions.Authentication.HowToCookieAuthorization
+

@@ -1,205 +1,49 @@
 - name: Overview
-  href: ExtensionsOverview.md
-- name: Frequently Asked Questions
-  href: Questions.md
-- name: Creating an Application
-  href: GettingStarted.md
-- name: Learn
+  href: xref:Uno.Extensions.Overview
   items:
+    - name: Uno.Extensions Overview
+      href: xref:Uno.Extensions.Overview
+    - name: "How-To: Getting Started"
+      href: xref:Uno.Extensions.HowToGettingStarted
     - name: Authentication
-      items:
-        - name: Overview
-          href: Overview/Authentication/AuthenticationOverview.md
-        - name: Use custom authentication
-          href: Learn/Tutorials/Authentication/HowTo-Authentication.md
-        - name: Use MSAL authentication
-          href: Learn/Tutorials/Authentication/HowTo-MsalAuthentication.md
-        - name: Use OIDC authentication
-          href: Learn/Tutorials/Authentication/HowTo-OidcAuthentication.md
-        - name: Use Web authentication
-          href: Learn/Tutorials/Authentication/HowTo-WebAuthentication.md
-        - name: Authorize with cookies
-          href: Learn/Tutorials/Authentication/HowTo-Cookies.md
+      href: Learn/Authentication/toc.yml
+      topicHref: xref:Uno.Extensions.Authentication.Overview
     - name: Configuration
-      items:
-        - name: Overview
-          href: Overview/Configuration/ConfigurationOverview.md
-        - name: Get started with configuration
-          href: Learn/Tutorials/Configuration/HowTo-Configuration.md
-        - name: Write updated setting values to an embedded resource
-          href: Learn/Tutorials/Configuration/HowTo-WritableConfiguration.md
+      href: Learn/Configuration/toc.yml
+      topicHref: xref:Uno.Extensions.Configuration.Overview
     - name: Dependency Injection
-      items:
-        - name: Overview
-          href: Overview/DependencyInjection/DependencyInjectionOverview.md
-        - name: Register and use services with dependency injection
-          href: Learn/Tutorials/DependencyInjection/HowTo-DependencyInjectionSetup.md
-        - name: Manually Resolving Dependencies with CommunityToolkit.Mvvm
-          href: Learn/Tutorials/DependencyInjection/HowTo-CommunityToolkit.md
+      href: Learn/DependencyInjection/toc.yml
+      topicHref: xref:Uno.Extensions.DependencyInjection.Overview
     - name: Hosting
-      items:
-        - name: Overview
-          href: Overview/Hosting/HostingOverview.md
-        - name: Get started with hosting
-          href: Learn/Tutorials/Hosting/HowTo-HostingSetup.md
+      href: Learn/Hosting/toc.yml
+      topicHref: xref:Uno.Extensions.Hosting.Overview
     - name: Http
-      items:
-        - name: Overview
-          href: Overview/Http/HttpOverview.md
-        - name: Get started with HTTP
-          href: Learn/Tutorials/Http/HowTo-Http.md
-        - name: Use Refit to call a REST API
-          href: Learn/Tutorials/Http/HowTo-Refit.md
-        - name: Configure with Custom Endpoint Options
-          href: Learn/Tutorials/Http/HowTo-EndpointOptions.md
+      href: Learn/Http/toc.yml
+      topicHref: xref:Uno.Extensions.Http.Overview
     - name: Localization
-      items:
-        - name: Overview
-          href: Overview/Localization/LocalizationOverview.md
-        - name: Get started with localization
-          href: Learn/Tutorials/Localization/HowTo-Localization.md
+      href: Learn/Localization/toc.yml
+      topicHref: xref:Uno.Extensions.Localization.Overview
     - name: Logging
-      items:
-        - name: Overview
-          href: Overview/Logging/LoggingOverview.md
-        - name: Get started with logging
-          href: Learn/Tutorials/Logging/HowTo-Logging.md
-        - name: Enable internal Uno Platform logging
-          href: Learn/Tutorials/Logging/HowTo-InternalLogging.md
-    - name: Markup
-      href: xref:Overview.Markup.Overview
-      items:
-        - name: Overview
-          href: xref:Overview.Markup.Overview
-        - name: Binding, Static & Theme Resources
-          href: xref:Overview.Markup.DependencyPropertyBuilder
-          items:
-            - name: Binding 101
-              href: xref:Overview.Markup.Binding101
-            - name: Converters
-              href: xref:Overview.Markup.Converters
-            - name: Using Static & Theme Resources
-              href: xref:Overview.Markup.StaticAndThemeResources
-            - name: Using Uno.Themes.WinUI.Markup
-              href: xref:Overview.Markup.UnoThemes
-        - name: Attached Properties
-          href: xref:Overview.Markup.AttachedProperties
-        - name: Resource Dictionaries
-          href: xref:Overview.Markup.Resources
-        - name: Styles
-          href: xref:Overview.Markup.Styles
-        - name: Templates
-          href: xref:Overview.Markup.Templates
-        - name: VisualStateManager
-          href: xref:Overview.Markup.VisualStateManager
-          items:
-            - name: Storyboards
-              href: xref:Overview.Markup.Storyboards
-        - name: Using and Generating Extensions
-          href: xref:Overview.Markup.GeneratingExtensions
-        - name: Appendix
-          items:
-            - name: TextBlock Run
-              href: xref:Overview.Markup.Appendix.TextBlockRun
-            - name: Accessing a Control Instance
-              href: xref:Overview.Markup.Appendix.AccessingControlInstance
-    - name: MVUX
-      href: Overview/Mvux/Overview.md
-      items:
-        - name: Overview
-          href: Overview/Mvux/Overview.md
-        - name: Feeds
-          href: Overview/Mvux/Feeds.md
-        - name: List-Feeds
-          href: Overview/Mvux/ListFeeds.md
-        - name: States
-          href: Overview/Mvux/States.md
-        - name: List-States
-          href: Overview/Mvux/ListStates.md
-        - name: The FeedView control
-          href: Overview/Mvux/FeedView.md
-        - name: Tutorials
-          items:
-            - name: How to create an MVUX project
-              href: Overview/Mvux/Tutorials/HowTo-MvuxProject.md
-            - name: How to create a Feed
-              href: Overview/Mvux/Tutorials/HowTo-SimpleFeed.md
-            - name: How to create a push-style List-Feed with Async Enumerable
-              href: Overview/Mvux/Tutorials/HowTo-PushListFeed.md
-            - name: How to create a State
-              href: Overview/Mvux/Tutorials/HowTo-SimpleState.md
-            - name: How to create a List-Feed
-              href: Overview/Mvux/Tutorials/HowTo-ListFeed.md
-        - name: Advanced topics
-          items:
-            - name: Selection
-              href: Overview/Mvux/Advanced/Selection.md
-            - name: Pagination
-              href: Overview/Mvux/Advanced/Pagination.md
-            - name: Commands
-              href: Overview/Mvux/Advanced/Commands.md
-            - name: Inspecting the generated code
-              href: Overview/Mvux/Advanced/InspectGeneratedCode.md
+      href: Learn/Logging/toc.yml
+      topicHref: xref:Uno.Extensions.Logging.Overview
     - name: Navigation
-      items:
-        - name: Overview
-          href: Overview/Navigation/NavigationOverview.md
-        - name: Navigate between pages
-          href: Learn/Tutorials/Navigation/HowTo-NavigateBetweenPages.md
-        - name: Navigate from code
-          href: Learn/Tutorials/Navigation/HowTo-NavigateInCode.md
-        - name: Navigate from XAML
-          href: Learn/Tutorials/Navigation/HowTo-NavigateInXAML.md
-        - name: Display a message dialog
-          href: Learn/Tutorials/Navigation/HowTo-DisplayMessageDialog.md
-        - name: Request a value
-          href: Learn/Tutorials/Navigation/HowTo-SelectValue.md
-        - name: Display a modal flyout
-          href: Learn/Tutorials/Navigation/HowTo-ShowFlyout.md
-        - name: Display an item
-          href: Learn/Tutorials/Navigation/HowTo-DisplayItem.md
-        - name: Advanced
-          items:
-            - name: Page Navigation
-              href: Learn/Tutorials/Navigation/Advanced/HowTo-AdvancedPageNavigation.md
-            - name: Use a Panel (Grid, StackPanel etc)
-              href: Learn/Tutorials/Navigation/Advanced/HowTo-UsePanel.md
-            - name: Use a TabBar
-              href: Learn/Tutorials/Navigation/Advanced/HowTo-UseTabBar.md
-            - name: Use a NavigationView
-              href: Learn/Tutorials/Navigation/Advanced/HowTo-UseNavigationView.md
-            - name: Build a Responsive Shell
-              href: Learn/Tutorials/Navigation/Advanced/HowTo-ResponsiveShell.md
-            - name: Use a ContentControl
-              href: Learn/Tutorials/Navigation/Advanced/HowTo-UseContentControl.md
+      href: Learn/Navigation/toc.yml
+      topicHref: xref:Uno.Extensions.Navigation.Overview
     - name: Serialization
-      items:
-        - name: Overview
-          href: Overview/Serialization/SerializationOverview.md
-        - name: Get started with serialization
-          href: Learn/Tutorials/Serialization/HowTo-Serialization.md
+      href: Learn/Serialization/toc.yml
+      topicHref: xref:Uno.Extensions.Serialization.Overview
     - name: Validation
-      items:
-        - name: Overview
-          href: Overview/Validation/ValidationOverview.md
-    - name: .NET MAUI Embedding
-      items:
-        - name: Overview
-          href: Overview/Maui/MauiOverview.md
-        - name: Third Party Controls - ArcGIS
-          href: Overview/Maui/ThirdParty-EsriMaps.md
-        - name: Third Party Controls - DevExpress
-          href: Overview/Maui/ThirdParty-DevExpress.md
-        - name: Third Party Controls - GrapeCity
-          href: Overview/Maui/ThirdParty-GrapeCity.md
-        - name: Third Party Controls - GrialKit
-          href: Overview/Maui/ThirdParty-GrialKit.md
-        - name: Third Party Controls - .NET MAUI Community Toolkit
-          href: Overview/Maui/ThirdParty-MauiCommunityToolkit.md
-        - name: Third Party Controls - Syncfusion
-          href: Overview/Maui/ThirdParty-Synfusion.md
-        - name: Third Party Controls - Telerik
-          href: Overview/Maui/ThirdParty-Telerik.md
+      href: Learn/Validation/toc.yml
+      topicHref: xref:Uno.Extensions.Validation.Overview
+- name: C# Markup
+  href: Learn/Markup/toc.yml
+  topicHref: xref:Uno.Extensions.Markup.Overview
+- name: MVUX
+  href: Learn/Mvux/toc.yml
+  topicHref: xref:Uno.Extensions.Mvux.Overview
+- name: .NET MAUI Embedding
+  href: Learn/Maui/toc.yml
+  topicHref: xref:Uno.Extensions.Maui.Overview
 - name: Reference
   items:
     - name: MVUX
@@ -223,20 +67,20 @@
           href: Reference/Reactive/Architecture.md
         - name: Analysis rules
           href: Reference/Reactive/rules.md
-    - name: Navigation
-      href: Reference/Navigation/Navigation.md
-      items:
-        - name: Design
-          href: Reference/Navigation/Design.md
-        - name: Navigation Region
-          href: Reference/Navigation/NavigationRegion.md
-        - name: Qualifiers
-          href: Reference/Navigation/Qualifiers.md
-        - name: View Map
-          href: Reference/Navigation/ViewMap.md
-        - name: Route Map
-          href: Reference/Navigation/RouteMap.md
-        - name: Implement INavigator
-          href: Reference/Navigation/Navigator.md
-        - name: Implement IRequestHandler
-          href: Reference/Navigation/NavigationRequestHandler.md
+    # - name: Navigation
+    #   href: Reference/Navigation/Navigation.md
+    #   items:
+    #     - name: Design
+    #       href: Reference/Navigation/Design.md
+    #     - name: Navigation Region
+    #       href: Reference/Navigation/NavigationRegion.md
+    #     - name: Qualifiers
+    #       href: Reference/Navigation/Qualifiers.md
+    #     - name: View Map
+    #       href: Reference/Navigation/ViewMap.md
+    #     - name: Route Map
+    #       href: Reference/Navigation/RouteMap.md
+    #     - name: Implement INavigator
+    #       href: Reference/Navigation/Navigator.md
+    #     - name: Implement IRequestHandler
+    #       href: Reference/Navigation/NavigationRequestHandler.md
