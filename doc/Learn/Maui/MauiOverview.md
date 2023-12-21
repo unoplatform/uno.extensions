@@ -198,13 +198,29 @@ Add a reference in the existing class library to [Uno.Extensions.Maui.WinUI](htt
 
 1.  **EmbeddingApplication**  
 
-    Back in the Uno class library, change the base class in `App.cs` from `Application` to `EmbeddingApplication`   
+    Back in the Uno class library, change the base class in `App.xaml.cs` / `App.cs` from `Application` to `EmbeddingApplication`   
 
     ```csharp
     public class App : EmbeddingApplication
     {
         protected Window? MainWindow { get; private set; }
         protected IHost? Host { get; private set; }
+    }    
+    ```
+    Also, in the `App.xaml` file, change the type of the root element to `EmbeddingApplication`
+
+    ```xml
+    <unoxt:EmbeddingApplication xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                                xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                                xmlns:unoxt="using:Uno.Extensions.Maui.Platform"
+                                x:Class="ExistingUnoApp.MauiControls.App">
+        <Application.Resources>
+            <ResourceDictionary>
+                <ResourceDictionary.MergedDictionaries>
+                </ResourceDictionary.MergedDictionaries>
+            </ResourceDictionary>
+        </Application.Resources>
+    </unoxt:EmbeddingApplication>
     ```
 
 1.  **UseMauiEmbedding**  
