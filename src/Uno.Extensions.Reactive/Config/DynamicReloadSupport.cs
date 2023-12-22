@@ -10,12 +10,12 @@ namespace Uno.Extensions.Reactive.Config;
 internal enum DynamicReloadSupport
 {
 	/// <summary>
-	/// Enables dynamic reload for the <see cref="Feed.Async{T}"/> source feed.
+	/// Enables dynamic reload for the Feed.Async source feed.
 	/// </summary>
 	Async = 1 << 1,
 
 	/// <summary>
-	/// Enables dynamic reload for feeds created using the <see cref="Feed.SelectAsync{T, TResult}"/> operator.
+	/// Enables dynamic reload for feeds created using the Feed.SelectAsync operator.
 	/// </summary>
 	SelectAsync = 1 << 2,
 

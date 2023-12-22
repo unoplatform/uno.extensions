@@ -84,7 +84,7 @@ public static partial class State<T>
 	public static IState<T> Value<TOwner>(TOwner owner, Func<T> valueProvider)
 		where TOwner : class
 		// Note: We force the usage of delegate so 2 properties which are doing State.Value(this, () => 42) will effectively have 2 distinct states.
-		=> AttachedProperty.GetOrCreate(owner, valueProvider, static (o, v) => SourceContext.GetOrCreate(o).CreateState(Option<T>.Some(v())));
+		=> AttachedProperty.GetOrCreate(owner, valueProvider, static (o, v) => SourceContext.GetOrCreate(o).CreateState(Option.SomeOrNone(v())));
 
 	/// <summary>
 	/// Gets or creates a state from a static initial value.
@@ -132,7 +132,7 @@ public static partial class State<T>
 	/// <returns>A feed that encapsulate the source.</returns>
 	public static IState<T> Async<TOwner>(TOwner owner, AsyncFunc<T> valueProvider, Signal? refresh = null)
 		where TOwner : class
-		=> AttachedProperty.GetOrCreate(owner, (valueProvider, refresh), static (o, args) => S(o, new AsyncFeed<T>(args.valueProvider, args.refresh)));
+		=> AttachedProperty.GetOrCreate(owner, (valueProvider, refresh), static (o, args) => S(o, new AsyncFeed<T>(args.valueProvider.SomeOrNoneWhenNotNull(), args.refresh)));
 
 	/// <summary>
 	/// Gets or creates a state from an async method.
@@ -143,8 +143,8 @@ public static partial class State<T>
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	internal static IState<T> Async(AsyncFunc<T> valueProvider, Signal? refresh = null)
 		=> refresh is null
-			? AttachedProperty.GetOrCreate(Validate(valueProvider), static vp => S(vp, new AsyncFeed<T>(vp)))
-			: AttachedProperty.GetOrCreate(refresh, Validate(valueProvider), static (r, vp) => S(vp, new AsyncFeed<T>(vp, r)));
+			? AttachedProperty.GetOrCreate(Validate(valueProvider), static vp => S(vp, new AsyncFeed<T>(vp.SomeOrNoneWhenNotNull())))
+			: AttachedProperty.GetOrCreate(refresh, Validate(valueProvider), static (r, vp) => S(vp, new AsyncFeed<T>(vp.SomeOrNoneWhenNotNull(), r)));
 
 	/// <summary>
 	/// Gets or creates a state from an async enumerable sequence of value.
@@ -233,7 +233,7 @@ public static partial class State<T>
 		return key;
 	}
 
-	private static IState<T> S<TOwner>(TOwner owner, IFeed<T> feed)
+	internal static IState<T> S<TOwner>(TOwner owner, IFeed<T> feed)
 		where TOwner : class
 		// We make sure to use the SourceContext to create the State, so it will be disposed with the context.
 		=> SourceContext.GetOrCreate(owner).GetOrCreateState(feed);

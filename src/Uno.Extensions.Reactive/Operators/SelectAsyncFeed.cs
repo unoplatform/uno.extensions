@@ -12,9 +12,15 @@ namespace Uno.Extensions.Reactive.Operators;
 internal sealed class SelectAsyncFeed<TArg, TResult> : IFeed<TResult>
 {
 	private readonly IFeed<TArg> _parent;
-	private readonly AsyncFunc<TArg, TResult> _projection;
+	private readonly AsyncFunc<Option<TArg>, Option<TResult>> _projection;
 
 	public SelectAsyncFeed(IFeed<TArg> parent, AsyncFunc<TArg, TResult> projection)
+	{
+		_parent = parent;
+		_projection = projection.SomeOrNoneWhenNotNull();
+	}
+
+	public SelectAsyncFeed(IFeed<TArg> parent, AsyncFunc<Option<TArg>, Option<TResult>> projection)
 	{
 		_parent = parent;
 		_projection = projection;
@@ -42,32 +48,13 @@ internal sealed class SelectAsyncFeed<TArg, TResult> : IFeed<TResult>
 					var parentMsg = parentEnumerator.Current;
 					if (parentMsg.Changes.Contains(MessageAxis.Data))
 					{
-						var data = parentMsg.Current.Data;
-						switch (data.Type)
-						{
-							case OptionType.Undefined:
-								projectionToken?.Cancel();
-								message.Update((local, parent) => local.With(parent).Data(Option<TResult>.Undefined()).Error(null), parentMsg, ct);
-								break;
+						var previousProjection = projectionToken;
+						projectionToken = CancellationTokenSource.CreateLinkedTokenSource(ct);
+						projection = InvokeAsync(message, parentMsg, ct2 =>  _projection(parentMsg.Current.Data, ct2), null, context, projectionToken.Token);
 
-							case OptionType.None:
-								projectionToken?.Cancel();
-								message.Update((local, parent) => local.With(parent).Data(Option<TResult>.None()).Error(null), parentMsg, ct);
-								break;
-
-							case OptionType.Some:
-								var previousProjection = projectionToken;
-								projectionToken = CancellationTokenSource.CreateLinkedTokenSource(ct);
-								projection = InvokeAsync(message, parentMsg, async ct2 => await _projection((TArg)data, ct2), null, context, projectionToken.Token);
-
-								// We prefer to cancel the previous projection only AFTER so we are able to keep existing transient axes (cf. message.BeginTransaction)
-								// This will not cause any concurrency issue since a transaction cannot push message updates as soon it's not the current.
-								previousProjection?.Cancel(); 
-								break;
-
-							default:
-								throw new NotSupportedException($"Data type '{data.Type}' is not supported.");
-						}
+						// We prefer to cancel the previous projection only AFTER so we are able to keep existing transient axes (cf. message.BeginTransaction)
+						// This will not cause any concurrency issue since a transaction cannot push message updates as soon it's not the current.
+						previousProjection?.Cancel(); 
 					}
 					else
 					{

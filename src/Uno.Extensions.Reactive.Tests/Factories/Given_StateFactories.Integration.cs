@@ -18,7 +18,7 @@ partial class Given_StateFactories
 		var feedResult = feed.Record();
 		var stateResult = state.Record();
 
-		await state.Set(43, CT);
+		await state.SetAsync(43, CT);
 
 		// We assert the state first to wait for the second message
 		await stateResult.Should().BeAsync(r => r

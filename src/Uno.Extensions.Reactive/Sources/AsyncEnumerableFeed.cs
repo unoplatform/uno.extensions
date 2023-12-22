@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Threading;
-using System.Threading.Tasks;
 using Uno.Extensions.Reactive.Core;
+using Uno.Extensions.Reactive.Utils;
 
 namespace Uno.Extensions.Reactive.Sources;
 
@@ -12,35 +11,24 @@ internal sealed class AsyncEnumerableFeed<T> : IFeed<T>
 {
 	private readonly Func<CancellationToken, IAsyncEnumerable<Option<T>>> _factory;
 
-	public AsyncEnumerableFeed(Func<IAsyncEnumerable<T>> factoryWithoutOptions)
+	public AsyncEnumerableFeed(IAsyncEnumerable<T?> enumerable)
 	{
-		_factory = Factory;
-
-		async IAsyncEnumerable<Option<T>> Factory([EnumeratorCancellation] CancellationToken ct)
-		{
-			await foreach (var item in factoryWithoutOptions().WithCancellation(ct).ConfigureAwait(false))
-			{
-				yield return Option.SomeOrNone(item);
-			}
-		}
+		_factory = _ => enumerable.SomeOrNone();
 	}
 
-	public AsyncEnumerableFeed(Func<CancellationToken, IAsyncEnumerable<T>> factoryWithoutOptions)
+	public AsyncEnumerableFeed(Func<IAsyncEnumerable<T?>> factoryWithoutOptions)
 	{
-		_factory = Factory;
+		_factory = factoryWithoutOptions.SomeOrNone();
+	}
 
-		async IAsyncEnumerable<Option<T>> Factory([EnumeratorCancellation] CancellationToken ct)
-		{
-			await foreach (var item in factoryWithoutOptions(ct).WithCancellation(ct).ConfigureAwait(false))
-			{
-				yield return Option.SomeOrNone(item);
-			}
-		}
+	public AsyncEnumerableFeed(Func<CancellationToken, IAsyncEnumerable<T?>> factoryWithoutOptions)
+	{
+		_factory = factoryWithoutOptions.SomeOrNone();
 	}
 
 	public AsyncEnumerableFeed(Func<IAsyncEnumerable<Option<T>>> factory)
 	{
-		_factory = ct => factory();
+		_factory = _ => factory();
 	}
 
 	public AsyncEnumerableFeed(Func<CancellationToken, IAsyncEnumerable<Option<T>>> factory)

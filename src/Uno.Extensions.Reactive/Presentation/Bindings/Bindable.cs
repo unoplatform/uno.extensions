@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Uno.Extensions.Reactive.Core;
 using Uno.Extensions.Reactive.Logging;
+using Uno.Extensions.Reactive.Utils;
 
 namespace Uno.Extensions.Reactive.Bindings;
 
@@ -115,7 +116,7 @@ public class Bindable<T> : IBindable, INotifyPropertyChanged, IFeed<T>
 			this,
 			propertyName,
 			(
-				_property.Feed.Select(get),
+				_property.Feed.SelectData(get.SomeOrNone()),
 				updated =>
 				{
 					(_onUpdated ??= new()).Add(value => updated(get(value)));

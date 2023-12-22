@@ -12,9 +12,15 @@ namespace Uno.Extensions.Reactive.Operators;
 internal sealed class WhereFeed<T> : IFeed<T>
 {
 	private readonly IFeed<T> _parent;
-	private readonly Predicate<T> _predicate;
+	private readonly Predicate<Option<T>> _predicate;
 
 	public WhereFeed(IFeed<T> parent, Predicate<T> predicate)
+	{
+		_parent = parent;
+		_predicate = data => data.IsSome(out var value) && predicate(value);
+	}
+
+	public WhereFeed(IFeed<T> parent, Predicate<Option<T>> predicate)
 	{
 		_parent = parent;
 		_predicate = predicate;
@@ -36,12 +42,11 @@ internal sealed class WhereFeed<T> : IFeed<T>
 	private MessageBuilder<T, T> DoUpdate(MessageManager<T, T>.CurrentMessage message, Message<T> parentMsg)
 	{
 		var updated = message.With(updatedParent: parentMsg);
-		if (parentMsg.Changes.Contains(MessageAxis.Data)
-			&& parentMsg.Current.Data.IsSome(out var value))
+		if (parentMsg.Changes.Contains(MessageAxis.Data))
 		{
 			try
 			{
-				if (_predicate(value))
+				if (_predicate(parentMsg.Current.Data))
 				{
 					updated
 						.Data(parentMsg.Current.Data)

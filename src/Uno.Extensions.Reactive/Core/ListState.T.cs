@@ -128,7 +128,7 @@ public static class ListState<T>
 	/// <returns>A feed that encapsulate the source.</returns>
 	public static IListState<T> Async<TOwner>(TOwner owner, AsyncFunc<Option<ImmutableList<T>>> valueProvider, Signal? refresh = null)
 		where TOwner : class
-		=> AttachedProperty.GetOrCreate(owner, (valueProvider, refresh), static (o, args) => S(o, new AsyncFeed<IImmutableList<T>>(async ct => (await args.valueProvider(ct)).Map(l => l as IImmutableList<T>), args.refresh)));
+		=> AttachedProperty.GetOrCreate(owner, (valueProvider, refresh), static (o, args) => S(o, new AsyncFeed<IImmutableList<T>>(async ct => (await args.valueProvider(ct).ConfigureAwait(false)).Map(l => l as IImmutableList<T>), args.refresh)));
 
 	/// <summary>
 	/// Creates a custom feed from an async method.
@@ -140,7 +140,7 @@ public static class ListState<T>
 	/// <returns>A feed that encapsulate the source.</returns>
 	public static IListState<T> Async<TOwner>(TOwner owner, AsyncFunc<IImmutableList<T>> valueProvider, Signal? refresh = null)
 		where TOwner : class
-		=> AttachedProperty.GetOrCreate(owner, (valueProvider, refresh), static (o, args) => S(o, new AsyncFeed<IImmutableList<T>>(args.valueProvider, args.refresh)));
+		=> AttachedProperty.GetOrCreate(owner, (valueProvider, refresh), static (o, args) => S(o, new AsyncFeed<IImmutableList<T>>(async ct => await args.valueProvider(ct).ConfigureAwait(false), args.refresh)));
 
 	/// <summary>
 	/// Creates a custom feed from an async method.
@@ -152,7 +152,7 @@ public static class ListState<T>
 	/// <returns>A feed that encapsulate the source.</returns>
 	public static IListState<T> Async<TOwner>(TOwner owner, AsyncFunc<ImmutableList<T>> valueProvider, Signal? refresh = null)
 		where TOwner : class
-		=> AttachedProperty.GetOrCreate(owner, (valueProvider, refresh), static (o, args) => S(o, new AsyncFeed<IImmutableList<T>>(async ct => await args.valueProvider(ct) as IImmutableList<T>, args.refresh)));
+		=> AttachedProperty.GetOrCreate(owner, (valueProvider, refresh), static (o, args) => S(o, new AsyncFeed<IImmutableList<T>>(async ct => await args.valueProvider(ct).ConfigureAwait(false) as IImmutableList<T>, args.refresh)));
 
 	/// <summary>
 	/// Creates a custom feed from an async enumerable sequence of value.
