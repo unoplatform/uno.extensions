@@ -198,7 +198,7 @@ Add a reference in the existing class library to [Uno.Extensions.Maui.WinUI](htt
 
 1.  **EmbeddingApplication**  
 
-    Back in the Uno class library, change the base class in `App.xaml.cs` / `App.cs` from `Application` to `EmbeddingApplication`   
+    Back in the Uno class library, change the base class in `App.xaml.cs` (XAML) or `App.cs` (C# Markup) from `Application` to `EmbeddingApplication`
 
     ```csharp
     public class App : EmbeddingApplication
