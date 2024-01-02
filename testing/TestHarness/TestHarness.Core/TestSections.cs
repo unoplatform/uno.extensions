@@ -15,6 +15,7 @@ public enum TestSections
 	Apps_Commerce,
 	Apps_Commerce_ShellControl,
 	Apps_ToDo,
+	Authentication_Custom_NoService,
 	Authentication_Custom,
 	Authentication_Custom_Service,
 	Authentication_Custom_TestBackend,
