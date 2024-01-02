@@ -69,11 +69,6 @@
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Validation.Fluent\Uno.Extensions.Validation.Fluent.csproj" />
 		<ProjectReference Include="..\TestHarness.Core\TestHarness.Core.csproj" />
 	</ItemGroup>
-	<ItemGroup>
-	  <None Update="iOS\Entitlements.plist">
-	    <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-	  </None>
-	</ItemGroup>
 	<Choose>
 		<When Condition="'$(TargetFramework)'=='net8.0-android'">
 			<ItemGroup>
@@ -105,6 +100,7 @@
 				<MtouchExtraArgs>$(MtouchExtraArgs) --marshal-objectivec-exceptions:disable</MtouchExtraArgs>
 				<!-- Full globalization is required for Uno -->
 				<InvariantGlobalization>false</InvariantGlobalization>
+				<CodesignEntitlements>MacCatalyst\Entitlements.plist</CodesignEntitlements>
 			</PropertyGroup>
 			<ItemGroup>
 				<PackageReference Include="Uno.Extensions.Logging.OSLog" />
