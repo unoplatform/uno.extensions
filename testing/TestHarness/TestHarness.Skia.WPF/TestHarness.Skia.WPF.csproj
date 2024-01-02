@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<TargetFramework>net7.0</TargetFramework>
+		<TargetFramework>net8.0</TargetFramework>
 		<DefineConstants>$(DefineConstants);WINUI;UNO_EXT_TIMERS</DefineConstants>
 		<AssemblyName>TestHarnessApp</AssemblyName>
 		<UnoExtensionsGeneration_DisableNotNullIfNotNullAttribute>true</UnoExtensionsGeneration_DisableNotNullIfNotNullAttribute>
