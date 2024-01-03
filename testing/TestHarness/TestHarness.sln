@@ -8,6 +8,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestHarness.Mobile", "TestH
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestHarness.Wasm", "TestHarness.Wasm\TestHarness.Wasm.csproj", "{40EA03F7-8A22-4143-B251-79BAC3EB13D2}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestHarness.Skia.Linux.FrameBuffer", "TestHarness.Skia.Linux.FrameBuffer\TestHarness.Skia.Linux.FrameBuffer.csproj", "{CEC2FDFB-D30F-472C-B595-795EEE489189}"
+EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestHarness.Skia.Gtk", "TestHarness.Skia.Gtk\TestHarness.Skia.Gtk.csproj", "{A5B8155A-118F-4794-B551-C6F3CF7E5411}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestHarness.Skia.WPF", "TestHarness.Skia.WPF\TestHarness.Skia.WPF.csproj", "{1692D283-AAA3-410B-ABAD-EAFCC46574B4}"
@@ -195,8 +197,6 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Http.UI", "..\..\src\Uno.Extensions.Http.UI\Uno.Extensions.Http.UI.csproj", "{72EAF7F2-A7CF-429B-9139-D7B435EFCFAA}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Http.WinUI", "..\..\src\Uno.Extensions.Http.UI\Uno.Extensions.Http.WinUI.csproj", "{FE6C5BE3-3712-446C-BE40-CA9BE0D70EEC}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestHarness.Skia.Linux.FrameBuffer", "TestHarness.Skia.Linux.FrameBuffer\TestHarness.Skia.Linux.FrameBuffer.csproj", "{CEC2FDFB-D30F-472C-B595-795EEE489189}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -4156,6 +4156,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{46549ECE-8A4F-479D-A9D0-131B064412D8} = {A761FC47-1B28-49D5-A598-8C9F7126E2D4}
 		{40EA03F7-8A22-4143-B251-79BAC3EB13D2} = {A761FC47-1B28-49D5-A598-8C9F7126E2D4}
+        {CEC2FDFB-D30F-472C-B595-795EEE489189} = {A761FC47-1B28-49D5-A598-8C9F7126E2D4}
 		{A5B8155A-118F-4794-B551-C6F3CF7E5411} = {A761FC47-1B28-49D5-A598-8C9F7126E2D4}
 		{1692D283-AAA3-410B-ABAD-EAFCC46574B4} = {A761FC47-1B28-49D5-A598-8C9F7126E2D4}
 		{6CF284A4-22B1-4F05-97F4-F095C07A598E} = {A761FC47-1B28-49D5-A598-8C9F7126E2D4}
@@ -4247,6 +4248,7 @@ Global
 		TestHarness.Shared\TestHarness.Shared.projitems*{81629a0b-4b5e-45dd-8651-62327dd540c3}*SharedItemsImports = 5
 		TestHarness.Shared\TestHarness.Shared.projitems*{a5b8155a-118f-4794-b551-c6f3cf7e5411}*SharedItemsImports = 5
 		TestHarness.Shared\TestHarness.Shared.projitems*{cdc520c4-fe6b-4784-832d-95d62fcf444d}*SharedItemsImports = 5
+		TestHarness.Shared\TestHarness.Shared.projitems*{cec2fdfb-d30f-472c-b595-795eee489189}*SharedItemsImports = 5
 		TestHarness.Shared\TestHarness.Shared.projitems*{ed9670aa-305f-4536-81e2-86e26275f265}*SharedItemsImports = 5
 		TestHarness.Shared\TestHarness.Shared.projitems*{f0a30d68-8b63-4b6d-98c1-0426de76d781}*SharedItemsImports = 4
 	EndGlobalSection
