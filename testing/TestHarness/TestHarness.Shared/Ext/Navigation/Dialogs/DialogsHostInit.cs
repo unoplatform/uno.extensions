@@ -1,6 +1,4 @@
-﻿
-
-namespace TestHarness.Ext.Navigation.Dialogs;
+﻿namespace TestHarness.Ext.Navigation.Dialogs;
 
 public class DialogsHostInit : BaseHostInitialization
 {
