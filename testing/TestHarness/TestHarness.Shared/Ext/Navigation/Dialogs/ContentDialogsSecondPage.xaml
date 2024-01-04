@@ -15,9 +15,9 @@
 			<RowDefinition />
 		</Grid.RowDefinitions>
 		<utu:NavigationBar Content="Content Dialogs - Second Page"
-						   AutomationProperties.AutomationId="DialogsContentDialogsSecondPage" >
+						   AutomationProperties.AutomationId="DialogsContentDialogsSecondPageNavigationBar" >
 			<utu:NavigationBar.MainCommand>
-				<AppBarButton>
+				<AppBarButton AutomationProperties.AutomationId="DialogsContentDialogsSecondPageBackButton">
 					<AppBarButton.Icon>
 						<BitmapIcon UriSource="ms-appx:///Assets/Icons/back.png" />
 					</AppBarButton.Icon>
