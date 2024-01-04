@@ -1,6 +1,4 @@
-﻿
-
-namespace TestHarness.Ext.Navigation.Dialogs;
+﻿namespace TestHarness.Ext.Navigation.Dialogs;
 
 public class DialogsHostInit : BaseHostInitialization
 {
@@ -37,6 +35,8 @@ public class DialogsHostInit : BaseHostInitialization
 			);
 
 		views.Register(
+			new ViewMap<ContentDialogsPage>(),
+			new ViewMap<ContentDialogsSecondPage>(),
 			new ViewMap<DialogsFlyoutsPage, DialogsFlyoutsViewModel>(),
 			new ViewMap<DialogsComplexDialog>(),
 			new ViewMap<DialogsComplexDialogFirstPage, DialogsComplexDialogFirstViewModel>(),
@@ -54,11 +54,13 @@ public class DialogsHostInit : BaseHostInitialization
 			new RouteMap("",
 			Nested: new[]
 			{
+				new RouteMap("ContentDialogs", View: views.FindByView<ContentDialogsPage>()),
+				new RouteMap("ContentDialogsSecond", View: views.FindByView<ContentDialogsSecondPage>(), DependsOn:"ContentDialogs"),
 				new RouteMap("DialogsFlyouts", View: views.FindByViewModel<DialogsFlyoutsViewModel>()),
 				new RouteMap("DialogsComplex", View: views.FindByView<DialogsComplexDialog>(), Nested: new[]
 				{
 					new RouteMap("DialogsComplexDialogFirst", View: views.FindByViewModel<DialogsComplexDialogFirstViewModel>(), IsDefault:true),
-					new RouteMap("DialogsComplexDialogSecond", View: views.FindByViewModel<DialogsComplexDialogSecondViewModel>())
+					new RouteMap("DialogsComplexDialogSecond", View: views.FindByViewModel<DialogsComplexDialogSecondViewModel>(), DependsOn: "DialogsComplexDialogFirst")
 				}),
 				new RouteMap("DialogsComplexFlyout", View: views.FindByView<DialogsComplexFlyout>(), Nested: new[]
 				{

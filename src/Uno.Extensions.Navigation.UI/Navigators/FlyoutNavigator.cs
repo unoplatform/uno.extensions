@@ -1,6 +1,6 @@
 ﻿namespace Uno.Extensions.Navigation.Navigators;
 
-public class FlyoutNavigator : ControlNavigator
+public class FlyoutNavigator : ClosableNavigator
 {
 	public override bool CanGoBack => _flyout is not null;
 
@@ -35,6 +35,9 @@ public class FlyoutNavigator : ControlNavigator
 
 	protected override async Task<Route?> ExecuteRequestAsync(NavigationRequest request)
 	{
+		// Capture the Source - return value can be ignored
+		_ = await base.ExecuteRequestAsync(request);
+
 		if (Region.Services is null)
 		{
 			return default;
@@ -194,5 +197,7 @@ public class FlyoutNavigator : ControlNavigator
 	}
 
 	protected override Task CheckLoadedAsync() => _flyout is not null && _content is not null ? _content.EnsureLoaded() : Task.CompletedTask;
+
+	protected override async Task CloseNavigator() => CloseFlyout();
 
 }

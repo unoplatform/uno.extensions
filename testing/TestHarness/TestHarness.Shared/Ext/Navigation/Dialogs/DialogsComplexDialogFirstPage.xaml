@@ -24,6 +24,10 @@
 			<Button AutomationProperties.AutomationId="ComplexDialogFirstPageCloseButton"
 					Content="Close dialog"
 					Command="{Binding CloseCommand}" />
+			<Button AutomationProperties.AutomationId="ComplexDialogFirstPageCloseAndSecondButton"
+				uen:Navigation.Request="ContentDialogsSecond"
+				Content="Close dialog and then Second page" />
+			
 		</StackPanel>
 	</Grid>
 </Page>

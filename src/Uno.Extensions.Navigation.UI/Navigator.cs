@@ -201,6 +201,13 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 		request = request with { Route = route };
 
 		if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"Building fully qualified route for unhandled request. New request: {request.Route}");
+
+		if(Region.Navigator() is ClosableNavigator closable)
+		{
+			if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"Closing navigator and redirecting request");
+			return closable.CloseAndNavigateAsync(request);
+		}
+
 		return Region.NavigateAsync(request);
 
 	}

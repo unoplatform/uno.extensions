@@ -1,6 +1,6 @@
 ﻿namespace Uno.Extensions.Navigation.Navigators;
 
-public abstract class DialogNavigator : ControlNavigator
+public abstract class DialogNavigator : ClosableNavigator
 {
 	public override bool CanGoBack => ShowTask is not null;
 
@@ -21,6 +21,9 @@ public abstract class DialogNavigator : ControlNavigator
 
 	protected override async Task<Route?> ExecuteRequestAsync(NavigationRequest request)
 	{
+		// Capture the Source - return value can be ignored
+		_ = await base.ExecuteRequestAsync(request);
+
 		var route = request.Route;
 
 		// Make sure any existing dialogs are closed
@@ -59,4 +62,6 @@ public abstract class DialogNavigator : ControlNavigator
 	}
 
 	protected abstract Task<IAsyncInfo?> DisplayDialog(NavigationRequest request, Type? viewType, object? viewModel);
+	protected override async Task CloseNavigator() => CloseDialog();
+
 }

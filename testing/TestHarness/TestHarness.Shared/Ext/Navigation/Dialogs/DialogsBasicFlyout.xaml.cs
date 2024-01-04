@@ -1,5 +1,4 @@
-﻿
-namespace TestHarness.Ext.Navigation.Dialogs;
+﻿namespace TestHarness.Ext.Navigation.Dialogs;
 
 public sealed partial class DialogsBasicFlyout : Page
 {
