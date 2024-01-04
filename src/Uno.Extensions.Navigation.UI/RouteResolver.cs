@@ -213,7 +213,7 @@ public class RouteResolver : IRouteResolver
 	}
 
 	protected virtual RouteInfo[] InternalFindByView(Type? viewType)
-		=>FindRouteByType(viewType, map => map.RenderView);
+		=> FindRouteByType(viewType, map => map.RenderView);
 
 	public RouteInfo? FindByData(Type? dataType, INavigator? navigator)
 	{
