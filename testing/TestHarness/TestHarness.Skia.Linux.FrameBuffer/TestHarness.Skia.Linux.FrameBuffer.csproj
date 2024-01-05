@@ -3,6 +3,7 @@
     <OutputType Condition="'$(Configuration)'=='Release'">WinExe</OutputType>
     <OutputType Condition="'$(Configuration)'=='Debug'">Exe</OutputType>
     <TargetFramework>net7.0</TargetFramework>
+    <DefineConstants>$(DefineConstants);WINUI</DefineConstants>
   </PropertyGroup>
   <ItemGroup Condition="exists('..\TestHarness.UWP')">
     <EmbeddedResource Include="..\TestHarness.UWP\Package.appxmanifest" LogicalName="Package.appxmanifest" />
@@ -49,5 +50,6 @@
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Validation.Fluent\Uno.Extensions.Validation.Fluent.csproj" />
 		<ProjectReference Include="..\TestHarness.Core\TestHarness.Core.csproj" />
 	</ItemGroup>
+  <Import Project="..\..\..\src\Uno.Extensions.Core.Generators\buildTransitive\Uno.Extensions.Core.props" />
   <Import Project="..\TestHarness.Shared\TestHarness.Shared.projitems" Label="Shared" />
 </Project>
