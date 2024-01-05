@@ -4,6 +4,7 @@
     <OutputType Condition="'$(Configuration)'=='Debug'">Exe</OutputType>
     <TargetFramework>net7.0</TargetFramework>
     <DefineConstants>$(DefineConstants);WINUI</DefineConstants>
+    <AssemblyName>TestHarnessApp</AssemblyName>
   </PropertyGroup>
   <ItemGroup Condition="exists('..\TestHarness.UWP')">
     <EmbeddedResource Include="..\TestHarness.UWP\Package.appxmanifest" LogicalName="Package.appxmanifest" />
