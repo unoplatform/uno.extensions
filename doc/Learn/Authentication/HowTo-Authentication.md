@@ -39,7 +39,10 @@ uid: Uno.Extensions.Authentication.HowToAuthentication
     }
     ```
 
-- Update `MainPage` to accept input via `TextBox` with a binding expression to connect to the `Username` property on the view model. The `Button` is also bound to the `Authenticate` method.
+> [!TIP]
+> On Apple platforms (iOS, Mac Catalyst) the Uno storage extension, used by the authentication extension, use the OS Key Chain service to store secrets. This requires your application to have the [proper entitlements](xref:Uno.Extensions.Storage.HowToRequiredEntitlements) to work properly.
+
+- Update `MainPage` to accept input via `TextBox` with a binding expression to connect to the `Username` property on the view model. The `Button` is also bound to the `Authenticate` method. 
 
     ```xml
     <TextBox Text="{Binding Username, Mode=TwoWay}" />
