@@ -6,6 +6,7 @@
 		<UseWPF>true</UseWPF>
 		<ManagePackageVersionsCentrally>false</ManagePackageVersionsCentrally>
 		<DefineConstants>$(DefineConstants);WINDOWS_WINUI</DefineConstants>
+		<EnableWindowsTargeting>true</EnableWindowsTargeting>
 
 		<!--Avoids conflicts with Uno namespace-->
 		<RootNamespace>RuntimeTests</RootNamespace>
