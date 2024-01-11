@@ -21,7 +21,7 @@ In order to use the ComponentOne controls, you first need to install the Compone
     dotnet new unoapp -preset blank -maui -o MauiEmbeddingApp
     ```
 
-1. Remove the `net7.0` target framework from both the MauiEmbeddingApp and MauiEmbeddingApp.MauiControls projects.  GrapeCity doesn't provide reference assemblies for `net7.0`, so the `net7.0` target framework needs to be removed to avoid build errors.
+1. Remove the `net8.0` target framework from both the MauiEmbeddingApp and MauiEmbeddingApp.MauiControls projects.  GrapeCity doesn't provide reference assemblies for `net8.0`, so the `net8.0` target framework needs to be removed to avoid build errors.
 
 1. Next, add a reference to the C1 .NET MAUI NuGet packages to the MauiEmbeddingApp.MauiControls project. If you want to use the FlexGrid control, add a reference to [`C1.Maui.Grid`](https://www.nuget.org/packages/C1.Maui.Grid). If you want to use the Calendar control, add a reference to [`C1.Maui.Calendar`](https://www.nuget.org/packages/C1.Maui.Calendar).  
 

@@ -78,7 +78,7 @@
 		<_IsNetCore Condition="'$(TargetFramework)'=='net5.0'">true</_IsNetCore>
 
 		<_IsNetStd>false</_IsNetStd>
-		<_IsNetStd Condition="'$(TargetFramework)'=='net7.0' or $(_IsNetCore)">true</_IsNetStd>
+		<_IsNetStd Condition="'$(TargetFramework)'=='net8.0' or $(_IsNetCore)">true</_IsNetStd>
 
 		<_IsUWP>false</_IsUWP>
 		<_IsUWP Condition="$(TargetFramework.StartsWith('uap'))">true</_IsUWP>

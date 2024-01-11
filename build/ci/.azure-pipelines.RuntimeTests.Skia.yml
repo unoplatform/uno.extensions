@@ -25,7 +25,7 @@
     
     displayName: 'Run uno-check'    
 
-  - script: dotnet build Uno.Extensions.RuntimeTests.Skia.Gtk.csproj -c Debug -p:UnoTargetFrameworkOverride=net7.0 -p:GeneratePackageOnBuild=false -bl:$(Build.ArtifactStagingDirectory)/skia-gtk-runtime-test-build.binlog
+  - script: dotnet build Uno.Extensions.RuntimeTests.Skia.Gtk.csproj -c Debug -p:UnoTargetFrameworkOverride=net8.0 -p:GeneratePackageOnBuild=false -bl:$(Build.ArtifactStagingDirectory)/skia-gtk-runtime-test-build.binlog
     displayName: 'Build Runtime Tests app (GTK)'
     workingDirectory: $(Build.SourcesDirectory)/src/Uno.Extensions.RuntimeTests/Uno.Extensions.RuntimeTests.Skia.Gtk
 
@@ -40,7 +40,7 @@
 
   - script: xvfb-run --auto-servernum --server-args='-screen 0 1280x1024x24' dotnet Uno.Extensions.RuntimeTests.Skia.Gtk.dll
     displayName: 'Run Runtime Tests (GTK)'
-    workingDirectory: $(Build.SourcesDirectory)/src/Uno.Extensions.RuntimeTests/Uno.Extensions.RuntimeTests.Skia.Gtk/bin/Debug/net7.0
+    workingDirectory: $(Build.SourcesDirectory)/src/Uno.Extensions.RuntimeTests/Uno.Extensions.RuntimeTests.Skia.Gtk/bin/Debug/net8.0
     env:
       UNO_RUNTIME_TESTS_RUN_TESTS: '{}'
       UNO_RUNTIME_TESTS_OUTPUT_PATH: '$(Common.TestResultsDirectory)/skia-gtk-runtime-tests-results.xml'

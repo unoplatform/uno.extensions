@@ -30,7 +30,7 @@ jobs:
   - task: CopyFiles@2
     displayName: 'Publish Wasm Binaries'
     inputs:
-      SourceFolder: $(build.sourcesdirectory)/testing/TestHarness/TestHarness.Wasm/bin/Release/net7.0/dist
+      SourceFolder: $(build.sourcesdirectory)/testing/TestHarness/TestHarness.Wasm/bin/Release/net8.0/dist
       Contents: '**/*.*'
       TargetFolder: $(build.artifactstagingdirectory)/Wasm
       CleanTargetFolder: false

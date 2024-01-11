@@ -39,7 +39,7 @@
 	</ItemGroup>
 
 	<Choose>
-		<When Condition="'$(TargetFramework)'=='net7.0-ios' or '$(TargetFramework)'=='net7.0-android'">
+		<When Condition="'$(TargetFramework)'=='net8.0-ios' or '$(TargetFramework)'=='net8.0-android'">
 			<ItemGroup>
 				<IncludeXamlNamespaces Include="mobile" />
 				<ExcludeXamlNamespaces Include="not_mobile" />

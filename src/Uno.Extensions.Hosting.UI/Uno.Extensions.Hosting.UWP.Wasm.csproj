@@ -4,7 +4,7 @@
 		<RootNamespace>Uno.Extensions.Hosting.UWP</RootNamespace>
 		<AssemblyName>Uno.Extensions.Hosting.UWP</AssemblyName>
 		
-		<TargetFramework>net7.0</TargetFramework>
+		<TargetFramework>net8.0</TargetFramework>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	</PropertyGroup>
 

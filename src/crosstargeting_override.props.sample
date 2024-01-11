@@ -13,18 +13,18 @@
 
 				uap10.0.19041 (Windows)
 				net5.0-windows10.0.19041 (WinAppSDK Windows)
-				net7.0 (WebAssembly, Skia)
-				net7.0-ios (.NET iOS)
-				net7.0-android (.NET Android)
-				net7.0-maccatalyst (.NET macOS Catalyst)
-				net7.0-macos (.NET macOS AppKit)
+				net8.0 (WebAssembly, Skia)
+				net8.0-ios (.NET iOS)
+				net8.0-android (.NET Android)
+				net8.0-maccatalyst (.NET macOS Catalyst)
+				net8.0-macos (.NET macOS AppKit)
 
-			Include net7.0 to make sure all projects build
+			Include net8.0 to make sure all projects build
 
       The UnoTargetFrameworkMobileOverride property is use only in Mobile (i.e. the single-project used by net6-ios/android/mac/catalyst)
 		-->
-   <!-- <UnoTargetFrameworkMobileOverride>net7.0-ios</UnoTargetFrameworkMobileOverride>-->
-    <!-- <UnoTargetFrameworkOverride>$(UnoTargetFrameworkMobileOverride);net7.0</UnoTargetFrameworkOverride>-->
+   <!-- <UnoTargetFrameworkMobileOverride>net8.0-ios</UnoTargetFrameworkMobileOverride>-->
+    <!-- <UnoTargetFrameworkOverride>$(UnoTargetFrameworkMobileOverride);net8.0</UnoTargetFrameworkOverride>-->
 
 	<!--
 
