@@ -9,8 +9,8 @@
 		<PackageVersion Include="Microsoft.AspNetCore.Authentication.Facebook" Version="6.0.7" />
 		<PackageVersion Include="Microsoft.AspNetCore.Authentication.Google" Version="6.0.7" />
 		<PackageVersion Include="Microsoft.AspNetCore.Authentication.MicrosoftAccount" Version="6.0.7" />
-		<PackageVersion Include="Microsoft.Extensions.Logging" Version="6.0.0" />
-		<PackageVersion Include="Microsoft.Extensions.Logging.Console" Version="6.0.0" />
+		<PackageVersion Include="Microsoft.Extensions.Logging" Version="8.0.0" />
+		<PackageVersion Include="Microsoft.Extensions.Logging.Console" Version="8.0.0" />
 		<PackageVersion Include="Microsoft.Identity.Client" Version="4.55.0" />
 		<PackageVersion Include="Microsoft.Net.Compilers.Toolset" Version="4.2.0" />
 		<PackageVersion Include="Microsoft.NETCore.UniversalWindowsPlatform" Version="6.2.11" />
@@ -32,7 +32,7 @@
 		<PackageVersion Include="SkiaSharp.Views.WPF" Version="2.88.3" />
 		<PackageVersion Include="Swashbuckle.AspNetCore" Version="6.2.3" />
 		<PackageVersion Include="System.ComponentModel.Annotations" Version="5.0.0" />
-		<PackageVersion Include="System.Text.Json" Version="6.0.3" />
+		<PackageVersion Include="System.Text.Json" Version="8.0.1" />
 		<PackageVersion Include="Uno.CommunityToolkit.WinUI.UI" Version="7.1.100" />
 		<PackageVersion Include="Uno.Core.Extensions.Logging.Singleton" Version="4.0.1" />
 		<PackageVersion Include="Uno.Extensions.Logging.OSLog " Version="1.7.0" />

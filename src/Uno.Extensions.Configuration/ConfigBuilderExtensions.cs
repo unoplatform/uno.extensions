@@ -146,7 +146,10 @@ public static class ConfigBuilderExtensions
 			.ConfigureAppConfiguration((ctx, b) =>
 			{
 				var path = FilePath(ctx);
-				b.AddJsonFile(path, optional: true, reloadOnChange: false); // In .NET6 we can enable this again because we can use polling
+				if (path is { Length: > 0 })
+				{
+					b.AddJsonFile(path, optional: true, reloadOnChange: false); // In .NET6 we can enable this again because we can use polling
+				}
 			})
 				.ConfigureServices((ctx, services) =>
 				{

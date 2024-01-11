@@ -76,7 +76,7 @@ public static class UnoHost
 					if (Foundation.WebAssemblyRuntime.IsWebAssembly)
 					{
 						var href = Imports.GetLocation();
-						var appsettingsPrefix = new Dictionary<string, string>
+						var appsettingsPrefix = new Dictionary<string, string?>
 							{
 								{ HostingConstants.AppConfigPrefixKey, "local" },
 								{ HostingConstants.LaunchUrlKey, href }
@@ -86,7 +86,7 @@ public static class UnoHost
 						var query = new Uri(href).Query;
 						var queriesValues = System.Web.HttpUtility.ParseQueryString(query);
 						var queryDict = (from k in queriesValues.AllKeys
-										 select new { Key = k, Value = queriesValues[k] }).ToDictionary(x => x.Key, x => x.Value);
+										 select new { Key = k, Value = queriesValues[k] }).ToDictionary(x => x.Key, x => (string?)x.Value);
 						config.AddInMemoryCollection(queryDict);
 					}
 				})

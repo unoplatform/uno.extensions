@@ -1,9 +1,9 @@
 <Project ToolsVersion="15.0">
 	<ItemGroup>
 		<PackageVersion Include="CommunityToolkit.Mvvm" Version="8.2.1" />
-		<PackageVersion Include="Microsoft.Extensions.Logging" Version="6.0.0" />
-		<PackageVersion Include="Microsoft.Extensions.Logging.Console" Version="6.0.0" />
-		<PackageVersion Include="Microsoft.Extensions.Logging.Debug" Version="6.0.0" />
+		<PackageVersion Include="Microsoft.Extensions.Logging" Version="8.0.0" />
+		<PackageVersion Include="Microsoft.Extensions.Logging.Console" Version="8.0.0" />
+		<PackageVersion Include="Microsoft.Extensions.Logging.Debug" Version="8.0.0" />
 		<PackageVersion Include="Microsoft.Net.Compilers.Toolset" Version="4.2.0" />
 		<!--
 		If, in the same solution, you are referencing a project that uses https://github.com/onovotny/MSBuildSdkExtras,
@@ -20,7 +20,7 @@
 		<PackageVersion Include="SkiaSharp.Views" Version="2.88.6" />
 		<PackageVersion Include="SkiaSharp.Views.Uno.WinUI" Version="2.88.6" />
 		<PackageVersion Include="SkiaSharp.Skottie" Version="2.88.6" />
-		<PackageVersion Include="System.Text.Json" Version="6.0.6" />
+		<PackageVersion Include="System.Text.Json" Version="8.0.1" />
 		<PackageVersion Include="Uno.Core" Version="4.0.1" />
 		<PackageVersion Include="Uno.Core.Extensions.Logging.Singleton" Version="4.0.1" />
 		<PackageVersion Include="Uno.Extensions.Logging.OSLog " Version="1.7.0" />
