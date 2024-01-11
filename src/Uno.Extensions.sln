@@ -119,7 +119,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		global.json = global.json
 		tfms-non-ui.props = tfms-non-ui.props
 		tfms-ui-all.props = tfms-ui-all.props
-		tfms-ui-net6-only.props = tfms-ui-net6-only.props
+		tfms-ui-maui.props = tfms-ui-maui.props
 		tfms-ui-uwp.props = tfms-ui-uwp.props
 		tfms-ui-winui.props = tfms-ui-winui.props
 		Uno.CrossTargeting.props = Uno.CrossTargeting.props
@@ -194,7 +194,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Maui.WinUI",
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Maui", "Maui", "{2197ADCE-59C4-465A-B380-0B06BF68BBBC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Uno.Extensions.Maui.WinUI.Markup", "Uno.Extensions.Maui.WinUI.Markup\Uno.Extensions.Maui.WinUI.Markup.csproj", "{B72698C5-6706-4275-8A2B-A1D39FE9B13E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Maui.WinUI.Markup", "Uno.Extensions.Maui.WinUI.Markup\Uno.Extensions.Maui.WinUI.Markup.csproj", "{B72698C5-6706-4275-8A2B-A1D39FE9B13E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

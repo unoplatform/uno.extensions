@@ -1,5 +1,5 @@
 ﻿<Project Sdk="MSBuild.Sdk.Extras" ToolsVersion="15.0">
-	<Import Project="..\tfms-ui-net6-only.props" />
+	<Import Project="..\tfms-ui-winui.props" />
 
 	<PropertyGroup>
 		<PackageId>Uno.Extensions.Reactive.WinUI.Markup</PackageId>
