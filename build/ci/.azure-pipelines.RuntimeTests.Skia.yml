@@ -8,6 +8,9 @@
 
   variables:
     NUGET_PACKAGES: $(build.sourcesdirectory)/.nuget
+    DotNetVersion: '8.0.100'
+    UnoCheck_Version: '1.17.0-dev.20'
+    UnoCheck_Manifest: 'https://raw.githubusercontent.com/unoplatform/uno.check/3b250f49b719d1cf5ab205f997c3959b5e9fed1d/manifests/uno.ui.manifest.json'
 
   steps:
   - checkout: self
@@ -17,11 +20,11 @@
     displayName: 'Use .NET'
     inputs:
       packageType: 'sdk'
-      version: '7.x'
+      version: $(DotNetVersion)
       
   - script: |
-        dotnet tool install -g uno.check
-        uno-check --target skiagtk --fix --non-interactive --ci
+        dotnet tool install -g uno.check --version $(UnoCheck_Version) --add-source https://api.nuget.org/v3/index.json
+        uno-check --target skiagtk --fix --non-interactive --ci --manifest $(UnoCheck_Manifest)
     
     displayName: 'Run uno-check'    
 

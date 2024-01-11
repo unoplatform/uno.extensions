@@ -26,7 +26,7 @@
 		<PackageVersion Include="Microsoft.Windows.Compatibility" Version="7.0.4" />
 		<PackageVersion Include="Uno.Extensions.Logging.WebAssembly.Console" Version="1.7.0" />
 		<PackageVersion Include="Uno.WinUI.WebAssembly" Version="5.0.19" />
-		<PackageVersion Include="Uno.Wasm.Bootstrap" Version="7.0.27" />
-		<PackageVersion Include="Uno.Wasm.Bootstrap.DevServer" Version="7.0.27" />
+		<PackageVersion Include="Uno.Wasm.Bootstrap" Version="8.0.7" />
+		<PackageVersion Include="Uno.Wasm.Bootstrap.DevServer" Version="8.0.7" />
 	</ItemGroup>
 </Project>

@@ -123,6 +123,7 @@
 
 	<PropertyGroup Condition="$(_IsWinUI)">
 		<DefineConstants>$(DefineConstants);__WINDOWS__</DefineConstants>
+		<UseRidGraph>true</UseRidGraph>
 	</PropertyGroup>
 
 	<PropertyGroup>
