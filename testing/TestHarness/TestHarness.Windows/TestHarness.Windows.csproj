@@ -9,7 +9,6 @@
 		<AssemblyName>TestHarnessApp</AssemblyName>
 		<PublishProfile>win-$(Platform).pubxml</PublishProfile>
 		<UseWinUI>true</UseWinUI>
-		<UseRidGraph>true</UseRidGraph>
 		<DefineConstants>$(DefineConstants);WINUI;UNO_EXT_TIMERS</DefineConstants>
 		<DefaultLanguage>en</DefaultLanguage>
 		<!--<WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>-->
