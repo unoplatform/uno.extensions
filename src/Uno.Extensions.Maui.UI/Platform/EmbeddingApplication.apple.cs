@@ -28,8 +28,12 @@ public partial class EmbeddingApplication : Application, IPlatformApplication
 	{
 		private HackMauiUIApplicationDelegate(IServiceProvider services, IApplication application)
 		{
+			// TODO: Adjust code to remove this warning (https://github.com/unoplatform/uno.extensions/issues/2142)
+#pragma warning disable CS0618 // Type or member is obsolete 
 			Services = services;
 			Application = application;
+#pragma warning restore CS0618 // Type or member is obsolete
+
 		}
 
 		public static HackMauiUIApplicationDelegate Initialize(IServiceProvider services, IApplication application) =>
