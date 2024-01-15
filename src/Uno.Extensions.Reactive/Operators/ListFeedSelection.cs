@@ -112,7 +112,7 @@ internal sealed class ListFeedSelection<TSource, TOther> : IListState<TSource>, 
 			case State.Enabled when _impl is not null: return _impl;
 			case State.Enabled:
 			{
-				SpinWait.SpinUntil(() => _impl is not null || _state != State.Enabled);
+				SpinWait.SpinUntil(() => _impl is not null || _state != State.Enabled, 100); // Timeout to avoid dead-lock, indicates a deeper issue, like error while instantiating the StateImpl.
 
 				return _impl ?? throw new ObjectDisposedException(_name);
 			}
