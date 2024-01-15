@@ -12,6 +12,7 @@
 		<EnableMsixTooling>true</EnableMsixTooling>
 		<ManagePackageVersionsCentrally>false</ManagePackageVersionsCentrally>
 		<DefineConstants>$(DefineConstants);WINDOWS_WINUI;WINUI</DefineConstants>
+		<EnableWindowsTargeting>true</EnableWindowsTargeting>
 
 		<!-- Comment this out if you want to handle distributing the WinAppSdk -->
 		<WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
