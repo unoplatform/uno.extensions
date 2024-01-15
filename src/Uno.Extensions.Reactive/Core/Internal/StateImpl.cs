@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -27,6 +28,16 @@ internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, ISta
 	/// </summary>
 	public SourceContext Context { get; }
 	SourceContext IStateImpl.Context => Context;
+
+	/// <inheritdoc cref="IState{T}"/>
+	public IRequestSource Requests
+	{
+		get
+		{
+			Enable();
+			return _subscription.Requests;
+		}
+	}
 
 	internal Message<T> Current => _subscription?.Current ?? Message<T>.Initial;
 
@@ -107,7 +118,7 @@ internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, ISta
 		Enable();
 
 		// Note: The subscription has been created using our own Context, and we forward the subscriber context only for requests propagation.
-		return _subscription!.GetMessages(context, ct);
+		return _subscription.GetMessages(context, ct);
 	}
 
 	/// <inheritdoc />
@@ -121,6 +132,7 @@ internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, ISta
 		await update.HasBeenApplied.ConfigureAwait(false); // Makes sure to forward (the first) error to the caller if any.
 	}
 
+	[MemberNotNull(nameof(_subscription))]
 	private void Enable()
 	{
 		if (_subscription is not null)
