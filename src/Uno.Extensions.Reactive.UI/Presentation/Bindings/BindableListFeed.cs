@@ -55,6 +55,9 @@ public sealed partial class BindableListFeed<T> : ISignal<IMessage>, IListState<
 	SourceContext IState.Context => _state.Context;
 
 	/// <inheritdoc />
+	IRequestSource IState.Requests => _state.Requests;
+
+	/// <inheritdoc />
 	public string PropertyName { get; }
 
 	/// <inheritdoc />
