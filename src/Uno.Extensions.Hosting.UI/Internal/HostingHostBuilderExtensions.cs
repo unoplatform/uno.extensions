@@ -15,7 +15,7 @@ public static class HostingHostBuilderExtensions
 		{
 			configBuilder.AddInMemoryCollection(new[]
 			{
-					new KeyValuePair<string, string>(HostDefaults.ContentRootKey,
+					new KeyValuePair<string, string?>(HostDefaults.ContentRootKey,
 						contentRoot ?? throw new ArgumentNullException(nameof(contentRoot)))
 			});
 		});

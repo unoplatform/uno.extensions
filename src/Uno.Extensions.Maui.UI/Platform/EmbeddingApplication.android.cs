@@ -26,8 +26,11 @@ public partial class EmbeddingApplication : Application, IPlatformApplication
 		private HackMauiApplication(IServiceProvider services, IApplication application)
 			: base(0, default)
 		{
+			// TODO: Adjust code to remove this warning (https://github.com/unoplatform/uno.extensions/issues/2142)
+#pragma warning disable CS0618 // Type or member is obsolete 
 			Services = services;
 			Application = application;
+#pragma warning restore CS0618 // Type or member is obsolete
 		}
 
 		protected override MauiApp CreateMauiApp() => throw new NotImplementedException();

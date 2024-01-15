@@ -32,7 +32,7 @@ Once you have an account with DevExpress, you need to visit the [Your DevExpress
     dotnet new unoapp -preset blank -maui -o MauiEmbeddingApp
     ```
 
-1. Remove the `net7.0`, `net7.0-maccatalyst` and, `net7.0-windows10.0.19041.0` target frameworks from both the MauiEmbeddingApp and MauiEmbeddingApp.MauiControls projects. Also, remove `net7.0-maccatalyst` from the MauiEmbeddingApp.Mobile project, and remove the MauiEmbeddingApp.Windows project. The DevExpress .NET MAUI Controls only supports iOS and Android.
+1. Remove the `net8.0`, `net8.0-maccatalyst` and, `net8.0-windows10.0.19041.0` target frameworks from both the MauiEmbeddingApp and MauiEmbeddingApp.MauiControls projects. Also, remove `net8.0-maccatalyst` from the MauiEmbeddingApp.Mobile project, and remove the MauiEmbeddingApp.Windows project. The DevExpress .NET MAUI Controls only supports iOS and Android.
 
 1. Next, add a reference to `DevExpress.Maui.DataGrid` to the MauiEmbeddingApp.MauiControls project.
 

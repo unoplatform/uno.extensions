@@ -5,7 +5,7 @@
 		<RootNamespace>Uno.Extensions.Logging.WinUI</RootNamespace>
 		<AssemblyName>Uno.Extensions.Logging.WinUI</AssemblyName>
 		
-		<TargetFramework>net7.0</TargetFramework>
+		<TargetFramework>net8.0</TargetFramework>
 	</PropertyGroup>
 
 	<ItemGroup>

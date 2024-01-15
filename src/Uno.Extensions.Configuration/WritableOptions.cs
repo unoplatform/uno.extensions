@@ -36,7 +36,7 @@ internal class WritableOptions<T> : IWritableOptions<T>
 		}
 	}
 
-	public T Get(string name)
+	public T Get(string? name)
 	{
 		if (_logger.IsEnabled(LogLevel.Debug)) _logger.LogDebugMessage($@"Get options with name '{name}'");
 		return _options.Get(name);

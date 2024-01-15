@@ -1,7 +1,7 @@
 parameters:
-  DotNetVersion: '7.0.102'
-  UnoCheck_Version: '1.11.0-dev.2'
-  UnoCheck_Manifest: 'https://raw.githubusercontent.com/unoplatform/uno.check/146b0b4b23d866bef455494a12ad7ffd2f6f2d20/manifests/uno.ui.manifest.json'
+  DotNetVersion: '8.0.100'
+  UnoCheck_Version: '1.17.0-dev.20'
+  UnoCheck_Manifest: 'https://raw.githubusercontent.com/unoplatform/uno.check/3b250f49b719d1cf5ab205f997c3959b5e9fed1d/manifests/uno.ui.manifest.json'
   Dotnet_Root: '/usr/local/share/dotnet/'
   Dotnet_Tools: '~/.dotnet/tools'
 

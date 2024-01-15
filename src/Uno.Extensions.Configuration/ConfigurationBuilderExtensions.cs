@@ -89,9 +89,10 @@ public static class ConfigurationBuilderExtensions
 			EmbeddedAppConfigurationFile.AllFiles<TApplicationRoot>()
 			.FirstOrDefault(s => s.FileName.EndsWith(configurationFileName, StringComparison.OrdinalIgnoreCase));
 
-		if (generalAppConfiguration != null)
+		if (generalAppConfiguration != null &&
+			generalAppConfiguration.GetContent() is { } stream)
 		{
-			configurationBuilder.AddJsonStream(generalAppConfiguration.GetContent());
+			configurationBuilder.AddJsonStream(stream);
 		}
 
 		return configurationBuilder;

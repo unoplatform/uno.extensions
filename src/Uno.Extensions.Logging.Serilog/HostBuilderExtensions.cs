@@ -92,7 +92,7 @@ public static class HostBuilderExtensions
 
     private static LoggerConfiguration AddConsoleLogging(LoggerConfiguration configuration)
     {
-#pragma warning disable CA1416 // Validate platform compatibility: The net7.0 version is not used on older versions of OS
+#pragma warning disable CA1416 // Validate platform compatibility: The net8.0 version is not used on older versions of OS
         return configuration
                 //-:cnd:noEmit
 #if __ANDROID__

@@ -1,12 +1,12 @@
 ﻿<Project Sdk="MSBuild.Sdk.Extras" ToolsVersion="15.0">
-	<Import Project="..\tfms-ui-net6-only.props" />
+	<Import Project="..\tfms-ui-winui.props" />
 
 	<PropertyGroup>
 		<PackageId>Uno.Extensions.Reactive.WinUI.Markup</PackageId>
 		<!--Temporary disable missing XML doc until fixed in the whole package-->
 		<WarningsNotAsErrors>$(WarningsNotAsErrors);CS1591</WarningsNotAsErrors>
 		<DefineConstants>$(DefineConstants);WINUI</DefineConstants>
-		<WinAppSdkVersion>1.3.230724000</WinAppSdkVersion>
+		<WinAppSdkVersion>1.4.231219000</WinAppSdkVersion>
 	</PropertyGroup>
 
 	<ItemGroup>

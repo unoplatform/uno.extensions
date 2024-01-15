@@ -189,11 +189,11 @@ public static class ConfigurationBinder
 			Type type, string key,
 		object defaultValue)
 	{
-		IConfigurationSection section = configuration.GetSection(key);
-		string value = section.Value;
+		var section = configuration.GetSection(key);
+		var value = section?.Value;
 		if (value != null)
 		{
-			return ConvertValue(type, value, section.Path);
+			return ConvertValue(type, value, section?.Path ?? string.Empty);
 		}
 		return defaultValue;
 	}

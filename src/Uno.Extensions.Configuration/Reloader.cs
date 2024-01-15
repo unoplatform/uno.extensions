@@ -29,7 +29,7 @@ internal class Reloader
 				Logger.LogTraceMessage($@"Config provider of type '{fp.GetType().Name}'");
 			}
 
-			if (fp is FileConfigurationProvider fcp && (configFile is null || configFile.ToLower().Contains(fcp.Source.Path.Split('/', '\\').Last().ToLower())))
+			if (fp is FileConfigurationProvider fcp && (configFile is null || configFile.ToLower().Contains(fcp.Source.Path?.Split('/', '\\').Last().ToLower())))
 			{
 				if (Logger.IsEnabled(LogLevel.Trace))
 				{
@@ -37,31 +37,34 @@ internal class Reloader
 				}
 
 				var provider = fcp.Source.FileProvider;
-				var info = provider.GetFileInfo(fcp.Source.Path);
-				if (!File.Exists(info.PhysicalPath))
+				var info = provider?.GetFileInfo(fcp.Source.Path ?? string.Empty);
+				if (info is not null)
 				{
-					if (Logger.IsEnabled(LogLevel.Trace))
+					if (!File.Exists(info.PhysicalPath))
 					{
-						Logger.LogTraceMessage($@"File doesn't exist '{info.PhysicalPath}'");
+						if (Logger.IsEnabled(LogLevel.Trace))
+						{
+							Logger.LogTraceMessage($@"File doesn't exist '{info.PhysicalPath}'");
+						}
 					}
-				}
-				else
-				{
-					if (Logger.IsEnabled(LogLevel.Trace))
+					else
 					{
-						var contents = File.ReadAllText(info.PhysicalPath);
-						Logger.LogTraceMessage($@"Contents '{contents}'");
-						Logger.LogTraceMessage($@"Loading from full path '{info.PhysicalPath}'");
-					}
+						if (Logger.IsEnabled(LogLevel.Trace))
+						{
+							var contents = File.ReadAllText(info.PhysicalPath);
+							Logger.LogTraceMessage($@"Contents '{contents}'");
+							Logger.LogTraceMessage($@"Loading from full path '{info.PhysicalPath}'");
+						}
 
-					await ReadWriteLock.WaitAsync();
-					try
-					{
-						fp.Load();
-					}
-					finally
-					{
-						ReadWriteLock.Release();
+						await ReadWriteLock.WaitAsync();
+						try
+						{
+							fp.Load();
+						}
+						finally
+						{
+							ReadWriteLock.Release();
+						}
 					}
 				}
 			}

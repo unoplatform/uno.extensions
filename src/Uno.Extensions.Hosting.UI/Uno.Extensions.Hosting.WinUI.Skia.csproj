@@ -6,7 +6,7 @@
 		<DefineConstants>$(DefineConstants);__SKIA__</DefineConstants>
 		<AssemblyName>Uno.Extensions.Hosting.WinUI</AssemblyName>
 		
-		<TargetFramework>net7.0</TargetFramework>
+		<TargetFramework>net8.0</TargetFramework>
 	</PropertyGroup>
 
 	<PropertyGroup>

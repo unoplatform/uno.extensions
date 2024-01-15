@@ -43,10 +43,10 @@ internal static class ConversionHelpers
 
 		public UnoHostConverter(IValueConverter converter) => _converter = converter;
 
-		public object Convert(object value, Type targetType, object parameter, CultureInfo culture) =>
+		public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture) =>
 			_converter.Convert(value, targetType, parameter, culture.Name);
 
-		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) =>
+		public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) =>
 			_converter.ConvertBack(value, targetType, parameter, culture.Name);
 	}
 }

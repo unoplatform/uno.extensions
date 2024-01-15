@@ -12,7 +12,7 @@ export UNO_UITEST_CHROME_CONTAINER_MODE=true
 export UNO_UITEST_PROJECT=$BUILD_SOURCESDIRECTORY/testing/TestHarness/TestHarness.UITest
 export UNO_UITEST_LOGFILE=$BUILD_ARTIFACTSTAGINGDIRECTORY/screenshots/wasm/nunit-log.txt
 export UNO_UITEST_WASM_PROJECT=$BUILD_SOURCESDIRECTORY/testing/TestHarness/TestHarness.Wasm/TestHarness.Wasm.csproj
-export UNO_UITEST_WASM_OUTPUT_PATH=$BUILD_SOURCESDIRECTORY/testing/TestHarness/TestHarness.Wasm/bin/Release/net7.0/dist/
+export UNO_UITEST_WASM_OUTPUT_PATH=$BUILD_SOURCESDIRECTORY/testing/TestHarness/TestHarness.Wasm/bin/Release/net8.0/dist/
 export UNO_UITEST_WASM_PROJECT_BUILD_OPTIONS="/p:UnoExtensionsDisableNet7=true /p:GeneratePackageOnBuild=false"
 
 cd $BUILD_SOURCESDIRECTORY

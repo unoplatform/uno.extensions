@@ -49,7 +49,6 @@ public class App : EmbeddingApplication
 					//logBuilder.WebAssemblyLogLevel(LogLevel.Debug);
 
 				}, enableUnoLogging: true)
-				.UseSerilog(consoleLoggingEnabled: true, fileLoggingEnabled: true)
 				.UseConfiguration(configure: configBuilder =>
 					configBuilder
 						.EmbeddedSource<App>()

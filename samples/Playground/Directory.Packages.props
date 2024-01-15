@@ -1,9 +1,9 @@
 <Project ToolsVersion="15.0">
 	<ItemGroup>
 		<PackageVersion Include="CommunityToolkit.Mvvm" Version="8.2.1" />
-		<PackageVersion Include="Microsoft.Extensions.Logging" Version="6.0.0" />
-		<PackageVersion Include="Microsoft.Extensions.Logging.Console" Version="6.0.0" />
-		<PackageVersion Include="Microsoft.Extensions.Logging.Debug" Version="6.0.0" />
+		<PackageVersion Include="Microsoft.Extensions.Logging" Version="8.0.0" />
+		<PackageVersion Include="Microsoft.Extensions.Logging.Console" Version="8.0.0" />
+		<PackageVersion Include="Microsoft.Extensions.Logging.Debug" Version="8.0.0" />
 		<PackageVersion Include="Microsoft.Net.Compilers.Toolset" Version="4.2.0" />
 		<!--
 		If, in the same solution, you are referencing a project that uses https://github.com/onovotny/MSBuildSdkExtras,
@@ -14,13 +14,13 @@
 		<PackageVersion Include="Microsoft.UI.Xaml" Version="2.7.1" />
 		<PackageVersion Include="Microsoft.Windows.Compatibility" Version="7.0.3" />
 		<PackageVersion Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.756" />
-		<PackageVersion Include="Microsoft.WindowsAppSDK" Version="1.4.231008000" />
+		<PackageVersion Include="Microsoft.WindowsAppSDK" Version="1.4.231219000" />
 		<PackageVersion Include="Refit" Version="6.3.2" />
 		<PackageVersion Include="Refit.HttpClientFactory" Version="6.3.2" />
 		<PackageVersion Include="SkiaSharp.Views" Version="2.88.6" />
 		<PackageVersion Include="SkiaSharp.Views.Uno.WinUI" Version="2.88.6" />
 		<PackageVersion Include="SkiaSharp.Skottie" Version="2.88.6" />
-		<PackageVersion Include="System.Text.Json" Version="6.0.6" />
+		<PackageVersion Include="System.Text.Json" Version="8.0.1" />
 		<PackageVersion Include="Uno.Core" Version="4.0.1" />
 		<PackageVersion Include="Uno.Core.Extensions.Logging.Singleton" Version="4.0.1" />
 		<PackageVersion Include="Uno.Extensions.Logging.OSLog " Version="1.7.0" />
@@ -31,8 +31,8 @@
 		<PackageVersion Include="Uno.Toolkit.WinUI.Material" Version="5.0.15" />
 		<PackageVersion Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="5.0.19" />
 		<PackageVersion Include="Uno.UniversalImageLoader" Version="1.9.36" />
-		<PackageVersion Include="Uno.Wasm.Bootstrap" Version="7.0.20" />
-		<PackageVersion Include="Uno.Wasm.Bootstrap.DevServer" Version="7.0.20" />
+		<PackageVersion Include="Uno.Wasm.Bootstrap" Version="8.0.7" />
+		<PackageVersion Include="Uno.Wasm.Bootstrap.DevServer" Version="8.0.7" />
 		<PackageVersion Include="Uno.WinUI" Version="5.0.19" />
 		<PackageVersion Include="Uno.WinUI.WebAssembly" Version="5.0.19" />
 		<PackageVersion Include="Uno.WinUI.Skia.Gtk" Version="5.0.19" />

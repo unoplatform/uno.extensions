@@ -36,8 +36,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Hosting", ".
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Logging.WinUI", "..\..\src\Uno.Extensions.Logging\Uno.Extensions.Logging.WinUI.csproj", "{5A155E10-0360-41F9-8DEF-E4F94509B61A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Logging.Serilog", "..\..\src\Uno.Extensions.Logging.Serilog\Uno.Extensions.Logging.Serilog.csproj", "{F5906AA3-237C-4B44-8C74-D6417DD33850}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Navigation", "..\..\src\Uno.Extensions.Navigation\Uno.Extensions.Navigation.csproj", "{AB41FC9C-859B-47F5-8FFC-741938F3C099}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Navigation.Toolkit.WinUI", "..\..\src\Uno.Extensions.Navigation.Toolkit\Uno.Extensions.Navigation.Toolkit.WinUI.csproj", "{9AB773B0-3B62-42B2-9DB9-AD8297765374}"
@@ -76,7 +74,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Extensions Items", "Extensi
 		..\..\src\tfms-ui-maui.props = ..\..\src\tfms-ui-maui.props
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MauiEmbedding.MauiControls", "MauiEmbedding.MauiControls\MauiEmbedding.MauiControls.csproj", "{2608CAF0-E84A-4C35-9206-59906AE4E079}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MauiEmbedding.MauiControls", "MauiEmbedding.MauiControls\MauiEmbedding.MauiControls.csproj", "{2608CAF0-E84A-4C35-9206-59906AE4E079}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -368,34 +366,6 @@ Global
 		{5A155E10-0360-41F9-8DEF-E4F94509B61A}.Release|x64.Build.0 = Release|Any CPU
 		{5A155E10-0360-41F9-8DEF-E4F94509B61A}.Release|x86.ActiveCfg = Release|Any CPU
 		{5A155E10-0360-41F9-8DEF-E4F94509B61A}.Release|x86.Build.0 = Release|Any CPU
-		{F5906AA3-237C-4B44-8C74-D6417DD33850}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F5906AA3-237C-4B44-8C74-D6417DD33850}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F5906AA3-237C-4B44-8C74-D6417DD33850}.Debug|ARM.ActiveCfg = Debug|Any CPU
-		{F5906AA3-237C-4B44-8C74-D6417DD33850}.Debug|ARM.Build.0 = Debug|Any CPU
-		{F5906AA3-237C-4B44-8C74-D6417DD33850}.Debug|ARM64.ActiveCfg = Debug|Any CPU
-		{F5906AA3-237C-4B44-8C74-D6417DD33850}.Debug|ARM64.Build.0 = Debug|Any CPU
-		{F5906AA3-237C-4B44-8C74-D6417DD33850}.Debug|iPhone.ActiveCfg = Debug|Any CPU
-		{F5906AA3-237C-4B44-8C74-D6417DD33850}.Debug|iPhone.Build.0 = Debug|Any CPU
-		{F5906AA3-237C-4B44-8C74-D6417DD33850}.Debug|iPhoneSimulator.ActiveCfg = Debug|Any CPU
-		{F5906AA3-237C-4B44-8C74-D6417DD33850}.Debug|iPhoneSimulator.Build.0 = Debug|Any CPU
-		{F5906AA3-237C-4B44-8C74-D6417DD33850}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{F5906AA3-237C-4B44-8C74-D6417DD33850}.Debug|x64.Build.0 = Debug|Any CPU
-		{F5906AA3-237C-4B44-8C74-D6417DD33850}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{F5906AA3-237C-4B44-8C74-D6417DD33850}.Debug|x86.Build.0 = Debug|Any CPU
-		{F5906AA3-237C-4B44-8C74-D6417DD33850}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F5906AA3-237C-4B44-8C74-D6417DD33850}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F5906AA3-237C-4B44-8C74-D6417DD33850}.Release|ARM.ActiveCfg = Release|Any CPU
-		{F5906AA3-237C-4B44-8C74-D6417DD33850}.Release|ARM.Build.0 = Release|Any CPU
-		{F5906AA3-237C-4B44-8C74-D6417DD33850}.Release|ARM64.ActiveCfg = Release|Any CPU
-		{F5906AA3-237C-4B44-8C74-D6417DD33850}.Release|ARM64.Build.0 = Release|Any CPU
-		{F5906AA3-237C-4B44-8C74-D6417DD33850}.Release|iPhone.ActiveCfg = Release|Any CPU
-		{F5906AA3-237C-4B44-8C74-D6417DD33850}.Release|iPhone.Build.0 = Release|Any CPU
-		{F5906AA3-237C-4B44-8C74-D6417DD33850}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU
-		{F5906AA3-237C-4B44-8C74-D6417DD33850}.Release|iPhoneSimulator.Build.0 = Release|Any CPU
-		{F5906AA3-237C-4B44-8C74-D6417DD33850}.Release|x64.ActiveCfg = Release|Any CPU
-		{F5906AA3-237C-4B44-8C74-D6417DD33850}.Release|x64.Build.0 = Release|Any CPU
-		{F5906AA3-237C-4B44-8C74-D6417DD33850}.Release|x86.ActiveCfg = Release|Any CPU
-		{F5906AA3-237C-4B44-8C74-D6417DD33850}.Release|x86.Build.0 = Release|Any CPU
 		{AB41FC9C-859B-47F5-8FFC-741938F3C099}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{AB41FC9C-859B-47F5-8FFC-741938F3C099}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AB41FC9C-859B-47F5-8FFC-741938F3C099}.Debug|ARM.ActiveCfg = Debug|Any CPU
@@ -859,7 +829,6 @@ Global
 		{5983C05B-B8E4-4E52-A618-2F361162D29A} = {9B9F35D5-E6DD-4FC7-9198-F8246D3CE366}
 		{7C62EA57-BBDF-4ED2-85DD-A6F5D9BA9E9D} = {9B9F35D5-E6DD-4FC7-9198-F8246D3CE366}
 		{5A155E10-0360-41F9-8DEF-E4F94509B61A} = {9B9F35D5-E6DD-4FC7-9198-F8246D3CE366}
-		{F5906AA3-237C-4B44-8C74-D6417DD33850} = {9B9F35D5-E6DD-4FC7-9198-F8246D3CE366}
 		{AB41FC9C-859B-47F5-8FFC-741938F3C099} = {9B9F35D5-E6DD-4FC7-9198-F8246D3CE366}
 		{9AB773B0-3B62-42B2-9DB9-AD8297765374} = {9B9F35D5-E6DD-4FC7-9198-F8246D3CE366}
 		{53C1726A-8DD8-44C8-8A0B-FD21FFC03A6E} = {9B9F35D5-E6DD-4FC7-9198-F8246D3CE366}
