@@ -116,7 +116,10 @@ public static class StateExtensions
 
 		var awaiter = new TokenSetAwaiter<RefreshToken>();
 		var refreshed = awaiter.WaitFor(req, ct);
-		var messageListener = state.GetSource(state.Context, ct).ForEachAsync(msg => awaiter.Received(msg.Current.Get(MessageAxis.Refresh)), ct);
+		var messageListener = state
+			.GetSource(state.Context, ct)
+			.Where(msg => !msg.Current.IsTransient)
+			.ForEachAsync(msg => awaiter.Received(msg.Current.Get(MessageAxis.Refresh)), ct);
 
 		return await Task.WhenAny(refreshed, messageListener) == refreshed;
 	}
@@ -143,7 +146,10 @@ public static class StateExtensions
 
 		var awaiter = new TokenSetAwaiter<RefreshToken>();
 		var refreshed = awaiter.WaitFor(req, ct);
-		var messageListener = listState.GetSource(listState.Context, ct).ForEachAsync(msg => awaiter.Received(msg.Current.Get(MessageAxis.Refresh)), ct);
+		var messageListener = listState
+			.GetSource(listState.Context, ct)
+			.Where(msg => !msg.Current.IsTransient)
+			.ForEachAsync(msg => awaiter.Received(msg.Current.Get(MessageAxis.Refresh)), ct);
 
 		return await Task.WhenAny(refreshed, messageListener) == refreshed;
 	}
