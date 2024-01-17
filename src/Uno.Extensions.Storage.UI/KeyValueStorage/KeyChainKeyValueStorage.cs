@@ -216,11 +216,11 @@ internal record KeyChainKeyValueStorage(
 		}
 	}
 
-	static internal void LogEntitlementsError()
+	internal void LogEntitlementsError()
 	{
-		if (typeof(KeyChainKeyValueStorage).Log().IsEnabled(LogLevel.Error))
+		if (Logger.IsEnabled(LogLevel.Error))
 		{
-			typeof(KeyChainKeyValueStorage).Log().Error(
+			Logger.LogErrorMessage(
 				"Failed to save to the KeyChain. " +
 				"See https://aka.platform.uno/missing-keychain-entitlement for more details."
 			);
@@ -429,7 +429,7 @@ internal record KeyChainKeyValueStorage(
 				// -34018 -> A required entitlement isn't present.
 				if (status == (SecStatusCode)(-34018))
 				{
-					KeyChainKeyValueStorage.LogEntitlementsError();
+					_parent.LogEntitlementsError();
 				}
 
 				throw new SecurityException(status);
