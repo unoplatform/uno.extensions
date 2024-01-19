@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
+using Uno.Extensions.Equality;
 
 namespace Uno.Extensions.Reactive;
 
@@ -180,6 +181,24 @@ static partial class ListState
 #endif
 	public static ValueTask UpdateAsync<T>(this IListState<T> state, Predicate<T> match, Func<T, T> updater, CancellationToken ct)
 		=> UpdateAllAsync(state, match, updater, ct);
+
+	/// <summary>
+	/// Updates matching item from a list state using KeyEquality comparison.
+	/// </summary>
+	/// <typeparam name="T">The type of the items in the list.</typeparam>
+	/// <param name="listState">The list state onto which the item should be updated.</param>
+	/// <param name="item">The updated version of the item.</param>
+	/// <param name="ct">A token to abort the async add operation.</param>
+	/// <returns></returns>
+	public static ValueTask UpdateAsync<T>(this IListState<T> listState, T item, CancellationToken ct = default)
+		where T : IKeyEquatable<T>
+		=> listState.UpdateAsync(items =>
+		{
+			var index = items.IndexOf(item, KeyEqualityComparer.Find<T>());
+			return index >= 0
+				? items.RemoveAt(index).Insert(index, item)
+				: items; // Item is missing, nothing to do.
+		}, ct);
 
 	/// <summary>
 	/// [DEPRECATED] Use .ForEachAsync instead
