@@ -11,4 +11,6 @@ public interface IRouteResolver
 	RouteInfo? FindByData(Type? dataType, INavigator? navigator);
 
 	RouteInfo? FindByResultData(Type? resultDataType, INavigator? navigator);
+
+	void InsertRoute(RouteInfo routeInfo);
 }

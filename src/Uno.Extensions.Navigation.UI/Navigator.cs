@@ -549,6 +549,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 			if (currentRouteMap != null || routeMap != null)
 			{
 				if (routeMap?.Parent is not null &&
+					currentRouteMap?.Parent is not null &&
 					currentRouteMap?.Parent != routeMap.Parent)
 				{
 					return false;

@@ -14,6 +14,22 @@ public class PanelVisiblityNavigator : ControlNavigator<Panel>
 		RegionControlProvider controlProvider)
 		: base(logger, dispatcher, region, resolver, controlProvider.RegionControl as Grid)
 	{
+		if (region.View is not null)
+		{
+			region.View.Loaded += PanelLoaded;
+		}
+	}
+
+	private void PanelLoaded(object sender, RoutedEventArgs e) {
+		if (Control is null)
+		{
+			return;
+		}
+		Control.Loaded -= PanelLoaded;
+
+		var existingRoutes =
+			Control.Children.OfType<FrameworkElement>().Select(x => x.GetName()).Where(x => x is { Length: > 0 });
+		existingRoutes.ForEach(r => Resolver.InsertRoute(new RouteInfo(r))).ToArray();
 	}
 
 	protected override async Task<bool> RegionCanNavigate(Route route, RouteInfo? routeMap)
@@ -23,7 +39,7 @@ public class PanelVisiblityNavigator : ControlNavigator<Panel>
 			return false;
 		}
 
-		if(routeMap?.RenderView?.IsSubclassOf(typeof(FrameworkElement)) ?? false)
+		if (routeMap?.RenderView?.IsSubclassOf(typeof(FrameworkElement)) ?? false)
 		{
 			return true;
 		}

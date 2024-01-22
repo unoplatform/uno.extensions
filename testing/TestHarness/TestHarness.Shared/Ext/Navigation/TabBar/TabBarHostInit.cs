@@ -21,7 +21,12 @@ public class TabBarHostInit : BaseHostInitialization
 			new RouteMap("",
 				Nested: new[]
 				{
-						new RouteMap("Home", View: views.FindByViewModel<TabBarHomeViewModel>()),
+						new RouteMap("Home", View: views.FindByViewModel<TabBarHomeViewModel>(), Nested:
+						new RouteMap[]
+						{
+							new RouteMap("Products"),
+
+						}),
 						new RouteMap("List", View: views.FindByViewModel<TabBarListViewModel>(), Nested:
 						new RouteMap[]
 						{
