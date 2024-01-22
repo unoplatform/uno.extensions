@@ -173,10 +173,8 @@ public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 		foreach (var stackEntry in Control!.BackStack)
 		{
 			var entryRoute = Resolver.FindByView(stackEntry.SourcePageType, this);
-			if (entryRoute != null && (
-				request.Route.Contains(entryRoute.Path) ||
-				segments.Any(seg => seg.Path == entryRoute.Path)
-				))
+			if (entryRoute != null &&
+				request.Route.Contains(entryRoute.Path))
 			{
 				navSegment = navSegment.Append(entryRoute.Path);
 			}

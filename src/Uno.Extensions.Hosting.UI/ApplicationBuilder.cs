@@ -15,7 +15,7 @@ internal record ApplicationBuilder(Application App, LaunchActivatedEventArgs Arg
 
 	public IHost Build()
 	{
-		var builder = UnoHost.CreateDefaultBuilder(ApplicationAssembly);
+		var builder = UnoHost.CreateDefaultBuilder(ApplicationAssembly, Environment.GetCommandLineArgs());
 		foreach (var del in _delegates)
 		{
 			del(builder);
