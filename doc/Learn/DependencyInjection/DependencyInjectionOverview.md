@@ -16,17 +16,18 @@ private IHost Host { get; }
 protected override void OnLaunched(LaunchActivatedEventArgs e)
 {
     var appBuilder = this.CreateBuilder(args)
-        .Configure(host => 
+        .Configure(host =>
         {
             host
-            .ConfigureServices((context, services) => 
+            .ConfigureServices((context, services) =>
             {
                 services.AddSingleton<SimpleService>();
-            })        
+            })
         });
 
     Host = appBuilder.Build();
-...
+    ...
+}
 ```
 
 Before the `IHost` instance is created, the `ConfigureServices` method is called to register services with the host. The `ConfigureServices` method is called from the lambda expression passed into the `Configure` method. `ConfigureServices` itself takes two parameters: a `HostBuilderContext` and an `IServiceCollection`. The `HostBuilderContext` provides access to the host's configuration and environment. The `IServiceCollection` is used to register services with the host.
@@ -75,18 +76,19 @@ private IHost Host { get; }
 protected override void OnLaunched(LaunchActivatedEventArgs e)
 {
     var appBuilder = this.CreateBuilder(args)
-        .Configure(host => 
+        .Configure(host =>
         {
             host
-            .ConfigureServices((context, services) => 
+            .ConfigureServices((context, services) =>
             {
                 services.AddNamedSingleton<ISimpleService, SimpleService>("SimpleNamedServiceOne");
                 services.AddNamedSingleton<ISimpleService, SimpleService>("SimpleNamedServiceTwo");
-            })        
+            })
         });
 
     Host = appBuilder.Build();
-...
+    ...
+}
 ```
 
 Services can be resolved by name using the `GetNamedService` extension method:
@@ -105,21 +107,22 @@ private IHost Host { get; }
 protected override void OnLaunched(LaunchActivatedEventArgs e)
 {
     var appBuilder = this.CreateBuilder(args)
-        .Configure(host => 
+        .Configure(host =>
         {
             host
-            .ConfigureServices((context, services) => 
+            .ConfigureServices((context, services) =>
             {
-                services.AddSingleton<ISimpleService>(serviceProvider => 
+                services.AddSingleton<ISimpleService>(serviceProvider =>
                 {
                     var configuration = serviceProvider.GetRequiredService<IConfiguration>();
                     var simpleService = new SimpleService();
                     simpleService.Configure(configuration);
                     return simpleService;
                 });
-            })        
+            })
         });
 
     Host = appBuilder.Build();
-...
+    ...
+}
 ```

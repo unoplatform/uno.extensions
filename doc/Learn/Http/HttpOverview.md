@@ -9,7 +9,7 @@ For additional documentation on HTTP requests, read the references listed at the
 
 ## Register Endpoints
 
-Web resources exposed through an API are defined in the application as clients. These client registrations include type arguments and endpoints to be used for the client. The endpoint is defined in the `EndpointOptions` class. While it uses the platform-native HTTP handler by default, this value can be configured. 
+Web resources exposed through an API are defined in the application as clients. These client registrations include type arguments and endpoints to be used for the client. The endpoint is defined in the `EndpointOptions` class. While it uses the platform-native HTTP handler by default, this value can be configured.
 
 ```csharp
 protected override void OnLaunched(LaunchActivatedEventArgs args)
@@ -23,13 +23,14 @@ protected override void OnLaunched(LaunchActivatedEventArgs args)
                 .AddClient<IShowService, ShowService>(context, "configsectionname");
             });
         });
-...
+    ...
+}
 ```
 
 > [!TIP]
 > If configuration sections are already used elsewhere, continuing to use that approach offers uniformity and broader accessibility of endpoint options. Consider whether this type of access is needed before using the alternate method below.
 
-`EndpointOptions` can also be loaded from a specific instance. 
+`EndpointOptions` can also be loaded from a specific instance.
 
 ```csharp
 protected override void OnLaunched(LaunchActivatedEventArgs args)
@@ -48,7 +49,8 @@ protected override void OnLaunched(LaunchActivatedEventArgs args)
                     .Enable(nameof(EndpointOptions.UseNativeHandler)));
             });
         });
-...
+    ...
+}
 ```
 
 ### Custom Endpoint Options
@@ -65,10 +67,11 @@ protected override void OnLaunched(LaunchActivatedEventArgs args)
                 services.AddClientWithEndpoint<IShowService, ShowService, CustomEndpointOptions>();
             });
         });
-...
+    ...
+}
 ```
 
-See the [tutorial](xref:Uno.Extensions.Http.HowToEndpointOptions) for more information about configuring `HttpClient` with custom endpoint options.
+For more information about configuring `HttpClient` with custom endpoint options, see the [Configure `HttpClient` with Custom Endpoint Options tutorial](xref:Uno.Extensions.Http.HowToEndpointOptions).
 
 ## Refit
 
@@ -88,7 +91,8 @@ protected override void OnLaunched(LaunchActivatedEventArgs args)
                 .AddRefitClient<IChuckNorrisEndpoint>(context);
             });
         });
-...
+    ...
+}
 ```
 
 In this case, the endpoint options will be loaded from configuration section _ChuckNorrisEndpoint_ which can be defined as the following JSON:
@@ -102,7 +106,7 @@ In this case, the endpoint options will be loaded from configuration section _Ch
 }
 ```
 
-See the [tutorial](xref:Uno.Extensions.Http.HowToRefit) for more information on using Refit.
+For more information on using Refit, see the [Quickly Create a Strongly-Typed REST Client for an API tutorial](xref:Uno.Extensions.Http.HowToRefit).
 
 ## References
 

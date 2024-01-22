@@ -8,14 +8,14 @@ This topic walks through controlling Navigation from code, either in the code-be
 ## Step-by-steps
 
 > [!IMPORTANT]
-> This guide assumes you used the template wizard or `dotnet new unoapp` to create your solution. If not, it is recommended that you follow the [instructions](xref:Uno.Extensions.HowToGettingStarted) for creating an application from the template.
+> This guide assumes you used the template wizard or `dotnet new unoapp` to create your solution. If not, it is recommended that you follow the [Creating an application with Uno.Extensions article](xref:Uno.Extensions.HowToGettingStarted) for creating an application from the template.
 
 ### 1. Navigating to a New Page
 
 Navigation can be invoked in the code-behind file of a `Page` by using the `Navigator` extension method to get an `INavigator` instance.
 
 - Add a new `Page` to navigate to, `SamplePage.xaml`, in the UI (shared) project
-- In `MainPage.xaml` update the `Button` to the following XAML, which includes a handler for the `Click` event  
+- In `MainPage.xaml` update the `Button` to the following XAML, which includes a handler for the `Click` event
 
     ```xml
     <Button Content="Go to SamplePage"
@@ -75,7 +75,7 @@ The `NavigateViewAsync` method uses the type of the view, i.e. `SamplePage`, to 
             new ViewMap<SecondPage, SecondViewModel>(),
             new ViewMap<SamplePage, SampleViewModel>()
             );
-    
+
         routes.Register(
          new RouteMap("", View: views.FindByViewModel<ShellViewModel>() ,
                 Nested: new RouteMap[]
@@ -110,7 +110,7 @@ The `NavigateViewAsync` method uses the type of the view, i.e. `SamplePage`, to 
     {
         return _navigator.NavigateBackAsync(this);
     }
-    
+
     private readonly INavigator _navigator;
     ```
 
@@ -118,7 +118,7 @@ The `NavigateViewAsync` method uses the type of the view, i.e. `SamplePage`, to 
 
     ```csharp
     public SampleViewModel? ViewModel => DataContext as SampleViewModel;
-    
+
     public SamplePage()
     {
         this.InitializeComponent();
@@ -135,9 +135,9 @@ The `NavigateViewAsync` method uses the type of the view, i.e. `SamplePage`, to 
 > [!TIP]
 > The logic to navigate from `MainPage` to `SamplePage` can also be refactored into the `MainViewModel`. Irrespective of whether the logic is in the code-behind or in the view model, it would use the same `NavigateViewModelAsync<SampleViewModel>` method call.
 
-There are many other extension methods on the `INavigator` interface that can be used from either the code-behind or view model. Here are a few of the key navigation methods:  
-**NavigateRouteAsync** - Navigates to a route specified as a string  
-**NavigateViewAsync** - Navigates to a route that matches the view type specified  
-**NavigateViewModelAsync** - Navigates to a route that matches the view model type specified  
-**NavigateDataAsync** - Navigates to a route that is registered for the data type specified  
+There are many other extension methods on the `INavigator` interface that can be used from either the code-behind or view model. Here are a few of the key navigation methods:
+**NavigateRouteAsync** - Navigates to a route specified as a string
+**NavigateViewAsync** - Navigates to a route that matches the view type specified
+**NavigateViewModelAsync** - Navigates to a route that matches the view model type specified
+**NavigateDataAsync** - Navigates to a route that is registered for the data type specified
 **NavigateForResultAsync** - Navigates to a route that is registered to return the result data type specified

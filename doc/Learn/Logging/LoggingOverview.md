@@ -4,7 +4,7 @@ uid: Uno.Extensions.Logging.Overview
 
 # Logging
 
-Apps that record events typically do so for informational or diagnostic purposes, depending on the desired level of verbosity. **Logging** is the process of recording events to either a _persistent_ store such as a text file or database, or a _transient_ location like the standard output console. The `Uno.Extensions.Logging` library leverages logging capabilities tailored to the target platform to easily write entries for both app-specific and Uno internal events to one or more locations. These locations where logs can be written are referred to as **providers**. This feature enables a simple way to wire up custom log providers for locations not included by the runtime libraries or extensions. 
+Apps that record events typically do so for informational or diagnostic purposes, depending on the desired level of verbosity. **Logging** is the process of recording events to either a _persistent_ store such as a text file or database, or a _transient_ location like the standard output console. The `Uno.Extensions.Logging` library leverages logging capabilities tailored to the target platform to easily write entries for both app-specific and Uno internal events to one or more locations. These locations where logs can be written are referred to as **providers**. This feature enables a simple way to wire up custom log providers for locations not included by the runtime libraries or extensions.
 
 It uses [Microsoft.Extensions.Logging](https://www.nuget.org/packages/Microsoft.Extensions.Logging) for logging abstractions. For more documentation about logging, read the references listed at the bottom.
 
@@ -19,7 +19,8 @@ protected override void OnLaunched(LaunchActivatedEventArgs e)
         .Configure(host => {
             host.UseLogging();
         });
-...
+    ...
+}
 ```
 
 ## Logging
@@ -77,7 +78,7 @@ protected override void OnLaunched(LaunchActivatedEventArgs e)
 {
     var appBuilder = this.CreateBuilder(args)
         .Configure(host => {
-            host    
+            host
 #if DEBUG
             .UseEnvironment(Environments.Development)
 #endif
@@ -89,7 +90,8 @@ protected override void OnLaunched(LaunchActivatedEventArgs e)
                         LogLevel.Error)
                     )
         });
-...
+    ...
+}
 ```
 
 This example configures the minimum log level to `Trace` when the app is running in the `Development` environment, and `Error` otherwise. This is useful for increasing the amount of logging that occurs in that environment, and only emitting `Error` or `Critical` messages when in production.
@@ -108,14 +110,15 @@ protected override void OnLaunched(LaunchActivatedEventArgs e)
             host
             .UseSerilog();
         });
-...
+    ...
+}
 ```
 
 For more information about Serilog, check out [Getting Started with Serilog](https://github.com/serilog/serilog/wiki/Getting-Started).
 
 ## Uno Internal Logging
 
-The same logging system is wired up for Uno internal messages when `UseLogging()`  is called on the `IHost` instance. This is useful for debugging Uno internals like XAML parsing and layout. While this system is enabled as part of the standard logger, it is set by default to filter out messages with a level lower than `Warning`. This is to reduce noise in the log output. 
+The same logging system is wired up for Uno internal messages when `UseLogging()`  is called on the `IHost` instance. This is useful for debugging Uno internals like XAML parsing and layout. While this system is enabled as part of the standard logger, it is set by default to filter out messages with a level lower than `Warning`. This is to reduce noise in the log output.
 
 The following table describes the aspects of this Uno internal logging system which can be configured for a more suitable experience while diagnosing issues during the development process.
 

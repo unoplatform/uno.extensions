@@ -8,11 +8,11 @@ uid: Uno.Extensions.Authentication.HowToOidcAuthentication
 ## Step-by-steps
 
 > [!IMPORTANT]
-> This guide assumes you used the template wizard or `dotnet new unoapp` to create your solution. If not, it is recommended that you follow the [instructions](xref:Uno.Extensions.HowToGettingStarted) for creating an application from the template.
+> This guide assumes you used the template wizard or `dotnet new unoapp` to create your solution. If not, it is recommended that you follow the [Creating an application with Uno.Extensions article](xref:Uno.Extensions.HowToGettingStarted) for creating an application from the template.
 
 ### 1. Prepare for OIDC authentication
 
-- For this type of authentication, the application must already be registered with the desired identity provider. 
+- For this type of authentication, the application must already be registered with the desired identity provider.
 
 - A client id (and client secret) will be provided to you.
 
@@ -28,15 +28,16 @@ uid: Uno.Extensions.Authentication.HowToOidcAuthentication
     protected override void OnLaunched(LaunchActivatedEventArgs args)
     {
         var builder = this.CreateBuilder(args)
-            .Configure(host => 
+            .Configure(host =>
             {
                 host
-                .UseAuthentication(builder => 
+                .UseAuthentication(builder =>
                 {
                     // Add the authentication provider here
                 });
             });
-    ...
+        ...
+    }
     ```
 
 - Add the `OidcAuthenticationProvider` using the `AddOidc()` extension method which configures the `IAuthenticationBuilder` to use it.
@@ -47,15 +48,16 @@ uid: Uno.Extensions.Authentication.HowToOidcAuthentication
     protected override void OnLaunched(LaunchActivatedEventArgs args)
     {
         var builder = this.CreateBuilder(args)
-            .Configure(host => 
+            .Configure(host =>
             {
                 host
-                .UseAuthentication(builder => 
+                .UseAuthentication(builder =>
                 {
                     builder.AddOidc();
                 });
             });
-    ...
+        ...
+    }
     ```
 
 - The `IAuthenticationBuilder` is responsible for managing the lifecycle of the associated provider that was built.
@@ -64,7 +66,7 @@ uid: Uno.Extensions.Authentication.HowToOidcAuthentication
 
 ### 3. Configure the OidcAuthenticationProvider
 
-- While the `AddOidc()` extension method will configure the `IAuthenticationBuilder` to use the `OidcAuthenticationProvider`, it will not configure the provider itself. The `OidcAuthenticationProvider` can be configured using a configuration section. 
+- While the `AddOidc()` extension method will configure the `IAuthenticationBuilder` to use the `OidcAuthenticationProvider`, it will not configure the provider itself. The `OidcAuthenticationProvider` can be configured using a configuration section.
 
 - We will use the default section name `Oidc` in this example:
 
@@ -80,11 +82,11 @@ uid: Uno.Extensions.Authentication.HowToOidcAuthentication
     }
     ```
 
-- `Authority`: The URL of the identity provider. 
+- `Authority`: The URL of the identity provider.
 
-- `ClientId` and `ClientSecret`: The client ID and client secret that were provided to you. 
+- `ClientId` and `ClientSecret`: The client ID and client secret that were provided to you.
 
-- `Scope`: The scope of the access token. 
+- `Scope`: The scope of the access token.
 
 - `RedirectUri`: The URL that the identity provider will redirect to after the user has authenticated.
 
@@ -129,6 +131,6 @@ uid: Uno.Extensions.Authentication.HowToOidcAuthentication
     }
     ```
 
-- Finally, we can pass the login credentials to the `LoginAsync()` method and authenticate with the identity provider. The user will be prompted to sign in to their account when they tap the button in the application. 
+- Finally, we can pass the login credentials to the `LoginAsync()` method and authenticate with the identity provider. The user will be prompted to sign in to their account when they tap the button in the application.
 
 - `OidcAuthenticationProvider` will then store the user's access token in credential storage. The token will be automatically refreshed when it expires.

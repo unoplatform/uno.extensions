@@ -2,8 +2,7 @@
 uid: Reference.Navigation.Qualifiers
 ---
 
-
-## Qualifiers
+# Navigation Qualifiers
 
 | Qualifier |                                                              | Example          |                                                              |
 |-----------|--------------------------------------------------------------|------------------|--------------------------------------------------------------|
@@ -12,5 +11,3 @@ uid: Reference.Navigation.Qualifiers
 | ./        | Forward request to child region                              | "./Info/Profile" | Navigates to the Profile view in the child region named Info |
 | !         | Open a dialog or flyout                                      | "!Cart"          | Shows the Cart flyout                                        |
 | -         | Back (Frame), Close (Dialog/Flyout) or respond to navigation | "-"<br>"--Profile"<br>"-/Login" | Navigate back one page (in a frame)<br>Navigate to Profile page and remove two pages from backstack<br>Navigate to Login page and clear backstack |
-
-

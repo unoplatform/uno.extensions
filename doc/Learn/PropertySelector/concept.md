@@ -9,11 +9,13 @@ Using this _path_, an helper _IValueAccessor_ is being generated at compile time
 This is a helper to avoid the usage of 2 delegates (one for read, and one for write) to edit a _value_ on a given _entity_.
 
 For instance, given a `Movie` record:
+
 ```csharp
 public partial record Movie(int Likes);
 ```
 
 And a helper class:
+
 ```csharp
 public static class Math
 {
@@ -25,7 +27,8 @@ public static class Math
 ```
 
 You can allow the following usage:
-```
+
+```csharp
 var current = new Movie(0);
 var updated = Math.Increment(current, m => m.Likes);
 ```
@@ -49,7 +52,7 @@ Considering this, the generation tooling needs to match an instance of a `Proper
 To avoid requiring from the end user to provide a unique identifier, the generation tooling relies on the `[CallerFilePath]` and `[CallerLineNumber]` attributes.
 When method parameters are flagged with those attributes, values are automatically populated by the compiler.
 
-We are then using the `path` and `line` parameters along with the `PropertySelector` argument to uniquely identify it, 
+We are then using the `path` and `line` parameters along with the `PropertySelector` argument to uniquely identify it,
 so it becomes possible to resolve the `IValueAccessor` using the `PropertySelectors.Get`:
 
 ```csharp
@@ -58,8 +61,9 @@ public T Increment(T entity, PropertySelector<T, int> selector, [CallerFilePath]
 	var accessor = PropertySelectors.Get(selector, nameof(selector), path, line);
 	var currentValue = accessor.Get(entity);
 	var updatedEntity = accessor.Set(entity, currentValue + 1);
-	
+
 	return updatedEntity;
+}
 ```
 
 > [!IMPORTANT]

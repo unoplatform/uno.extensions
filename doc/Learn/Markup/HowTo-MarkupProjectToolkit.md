@@ -4,7 +4,7 @@ uid: Uno.Extensions.Markup.HowToMarkupProjectToolkit
 
 # How to set up an C# Markup project for Toolkit
 
-In this tutorial you'll learn how to set up an Uno Platform project to use C# Markup. 
+In this tutorial, you'll learn how to set up an Uno Platform project to use C# Markup.
 
 1. Make sure your environment is set up properly by using [uno check](xref:UnoCheck.UsingUnoCheck).
 1. You can create a Uno App by either using the Uno Platform Visual Studio extension or via the command line interface.
@@ -35,18 +35,18 @@ In this tutorial you'll learn how to set up an Uno Platform project to use C# Ma
 
         ![Screenshot displaying how to pre-install Toolkit in the generated project](../Assets/MarkupProject-VsixMarkupToolkit.jpg)
 
-    - Click *Create* on the bottom right corner.    
-    
+    - Click *Create* on the bottom right corner.
+
     # [**CLI**](#tab/cli)
-    
+
     #### Using the command line interface
-    
+
     - Run the following command, using an appropriate name (`MySampleToolkitProject` in this page).
-    
+
         ```cmd
         dotnet new unoapp -preset blank -toolkit true -markup csharp -o MySampleToolkitProject
         ```
-      
+
         Refer to [this](https://platform.uno/docs/articles/get-started-dotnet-new.html) article for more details
         on using the CLI interface of creating projects.
 

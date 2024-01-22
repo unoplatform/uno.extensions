@@ -22,7 +22,8 @@ protected override void OnLaunched(LaunchActivatedEventArgs e)
         });
 
     Host = appBuilder.Build();
-...
+    ...
+}
 ```
 
 For a more specific tutorial about getting started with building hosted applications, see [Get Started with Hosting](xref:Uno.Extensions.Hosting.HowToHostingSetup).
@@ -31,7 +32,7 @@ For a more specific tutorial about getting started with building hosted applicat
 
 Services are the primary way to access application functionality. Services are registered with the host using the `ConfigureServices` method on the `IHostBuilder`. Some services need to be created and initialized as soon as possible after the `IHost` has been built. The `IServiceInitialize` interface identifies services that need to be created and initialize immediately after the `IHost` instance is created.
 
-```csharp 
+```csharp
 public interface IServiceInitialize
 {
 	void Initialize();
@@ -40,7 +41,6 @@ public interface IServiceInitialize
 
 > [!TIP]
 > Avoid using the `IServiceInitialize` interface unless absolutely required as it will add to the startup time for the application. It's recommended to implement the `IHostedService` interface for services that can be created and started asynchronously (see next section).
-
 
 ## Async Initialization with IHostedService
 
@@ -71,8 +71,8 @@ protected override void OnLaunched(LaunchActivatedEventArgs e)
     var appBuilder = this.CreateBuilder(args)
         .Configure(host => {
             host
-            .ConfigureServices((context, services) => 
-            { 
+            .ConfigureServices((context, services) =>
+            {
                 services.AddHostedService<SimpleHostService>()
             })
         });
@@ -151,8 +151,8 @@ protected override void OnLaunched(LaunchActivatedEventArgs e)
     var appBuilder = this.CreateBuilder(args)
         .Configure(host => {
             host
-            .ConfigureServices((context, services) => 
-            { 
+            .ConfigureServices((context, services) =>
+            {
                 var isDevelopment = context.HostingEnvironment.IsDevelopment();
                 var isStaging = context.HostingEnvironment.IsStaging();
                 var isProduction = context.HostingEnvironment.IsProduction();
@@ -168,4 +168,4 @@ protected override void OnLaunched(LaunchActivatedEventArgs e)
 > [!TIP]
 > Avoid writing code that contains logic specific to any environment. All environments should behave as close as possible to each other to minimize any environment specific bugs that may be introduced by environment specific code.
 >
-> Any environment specific secure variables (such as service URLs, application keys, account information) should be set as part of a multi-environment CI/CD pipeline. Non-secure per-environment variables can be included using a settings file which is covered in [Configuration](xref:Uno.Extensions.Configuration.Overview).  
+> Any environment specific secure variables (such as service URLs, application keys, account information) should be set as part of a multi-environment CI/CD pipeline. Non-secure per-environment variables can be included using a settings file which is covered in [Configuration](xref:Uno.Extensions.Configuration.Overview).

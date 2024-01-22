@@ -8,13 +8,14 @@ When accessing resources with a [REST-style](https://www.ics.uci.edu/~fielding/p
 ## Step-by-steps
 
 > [!IMPORTANT]
-> This guide assumes you used the template wizard or `dotnet new unoapp` to create your solution. If not, it is recommended that you follow the [instructions](xref:Uno.Extensions.HowToGettingStarted) for creating an application from the template.
+> This guide assumes you used the template wizard or `dotnet new unoapp` to create your solution. If not, it is recommended that you follow the [Creating an application with Uno.Extensions article](xref:Uno.Extensions.HowToGettingStarted) for creating an application from the template.
 
 ### 1. Enable HTTP
 
 * When working with a complex application, centralized registration of your API endpoints is a good practice. This allows you to easily change the endpoint for a given service. It also reduces the complexity to adding new services which can then have their `HttpClient` instance reused across multiple instances of view models or other services.
 
 * The first step to centrally registering any API endpoint is to enable HTTP on the `IHostBuilder`:
+
     ```csharp
     protected override void OnLaunched(LaunchActivatedEventArgs args)
     {
@@ -23,7 +24,8 @@ When accessing resources with a [REST-style](https://www.ics.uci.edu/~fielding/p
             {
                 hostBuilder.UseHttp();
             });
-    ...
+        ...
+    }
     ```
 
 * This feature requires the [Uno.Extensions.Http.WinUI](https://www.nuget.org/packages/Uno.Extensions.Http.WinUI) package. It uses [Microsoft Extensions](https://www.nuget.org/packages/Microsoft.Extensions.Http) for any HTTP-related [work](https://learn.microsoft.com/dotnet/architecture/microservices/implement-resilient-applications/use-httpclientfactory-to-implement-resilient-http-requests#benefits-of-using-ihttpclientfactory) such as naming or configuring the `HttpClient` instance associated with your endpoints.
@@ -46,7 +48,7 @@ When accessing resources with a [REST-style](https://www.ics.uci.edu/~fielding/p
     ```
 
     > [!NOTE]
-    > A class named `ChuckNorrisData` will be defined in the next section of this guide. It will be used to deserialize the response from the API. 
+    > A class named `ChuckNorrisData` will be defined in the next section of this guide. It will be used to deserialize the response from the API.
 
 * The `Headers` attribute is used to specify the `Content-Type` header for the request. `Get` specifies the relative path for a `Search` request. Notice that the `searchTerm` parameter for the request is aliased as `query` using an `AliasAs` attribute.
 
@@ -54,16 +56,16 @@ When accessing resources with a [REST-style](https://www.ics.uci.edu/~fielding/p
 
 ### 3. Generate a data model from the API response
 
-* The next step is to generate a data model from the response we will get from the API. This will be used to deserialize the response which we'll learn is a JSON object with a `total` property and `result` that contains an array of Chuck Norris data objects. 
+* The next step is to generate a data model from the response we will get from the API. This will be used to deserialize the response which we'll learn is a JSON object with a `total` property and `result` that contains an array of Chuck Norris data objects.
 
 * By the end of this section, a `ChuckNorrisData` class will be defined in the `Models` namespace to represent each object in the array.
 
 * We will use [Hoppscotch](https://hoppscotch.io) to make an HTTP request and inspect the response. Open it, and make a `GET` request to the `/jokes/search` endpoint with the query parameter `query` set to `fight`.
 
     * Your screen should appear similar to this:
-    
+
         ![Hoppscotch](../images/http-refit-hoppscotch.png)
-    
+
     * For informational purposes, this is the full HTTP request URL:
 
         ```http
@@ -89,13 +91,13 @@ When accessing resources with a [REST-style](https://www.ics.uci.edu/~fielding/p
             ]
         }
         ```
-    
+
     * Since this response is needed for the next step, copy the entire JSON object from the **response body** pane
 
 * Next, we need to use a language-agnostic tool that infers a data model from the response we recieved. We will open [quicktype](https://app.quicktype.io/) and use it to generate a data model from the JSON we copied above
 
     * Replace any demo text in the left **JSON** pane with our text by pasting the JSON object into editor
-    
+
     * Within the properties box on the right side, make the following selections:
 
         * **C#** as the _language_
@@ -105,7 +107,7 @@ When accessing resources with a [REST-style](https://www.ics.uci.edu/~fielding/p
         * **Complete** as the _output features_
 
     * Your screen should appear similar to this:
-    
+
         ![Hoppscotch](../images/http-refit-quicktype.png)
 
     * For the purposes of this tutorial, only select and copy the two model classes `Welcome` and `Result` from the right side containing the generated C# code.
@@ -146,11 +148,10 @@ When accessing resources with a [REST-style](https://www.ics.uci.edu/~fielding/p
                 public string Value { get; set; }
             }
             ```
-        
+
     * Go back to Visual Studio and create a new folder named `Models` in the shared project. Create a new file named `ChuckNorrisData.cs` in the `Models` folder and paste the code you copied into it.
 
     * Rename the partial classes `Welcome` to `ChuckNorrisData` and `Result` to `ChuckNorrisDataResult`
-
 
 ### 4. Register the endpoint
 
@@ -171,7 +172,8 @@ When accessing resources with a [REST-style](https://www.ics.uci.edu/~fielding/p
                     })
                 );
             });
-    ...
+        ...
+    }
     ```
 
 * Another way to configure an HTTP client is to specify a configuration section name. This allows you to configure the added HTTP client using the `appsettings.json` file. This tutorial demonstrates use of the configuration section method.
@@ -188,7 +190,8 @@ When accessing resources with a [REST-style](https://www.ics.uci.edu/~fielding/p
                     services.AddRefitClient<IChuckNorrisEndpoint>(context)
                 );
             });
-    ...
+        ...
+    }
     ```
 
 * Look for a file named `appsettings.json` in the shared project. If it does not exist, create it. Open this file and add the following JSON:
@@ -206,7 +209,7 @@ When accessing resources with a [REST-style](https://www.ics.uci.edu/~fielding/p
 
 * We set `UseNativeHandler` to `true` to use the native HTTP handler for the platform. This is recommended for production apps unless you have a specific reason to use the managed handler.
 
-    * On Windows, intercepting the network traffic of your app with tools like **Fiddler** is not possible when using the native handler. This is because it does not use a compatible network stack. 
+    * On Windows, intercepting the network traffic of your app with tools like **Fiddler** is not possible when using the native handler. This is because it does not use a compatible network stack.
 
     * In these cases, you can set `UseNativeHandler` to `false` to use the managed handler instead
 

@@ -4,7 +4,7 @@ uid: Uno.Extensions.Markup.HowToCreateMarkupProject
 
 # How to set up your own C# Markup project
 
-In this tutorial you will learn how to set up a new *basic project* using Uno Platform and C# Markup and using some basic resources and also make a comparison between C# Markup and XAML.
+In this tutorial, you will learn how to set up a new *basic project* using Uno Platform and C# Markup and using some basic resources and also make a comparison between C# Markup and XAML.
 
 The purpose of this section of the tutorial is to show you how to create a basic project from scratch.
 
@@ -41,12 +41,12 @@ Open the two projects created and compare the structure of the two.
 
     - In the Shared Project open the file *MainPage.cs* and analyze the code that will look like this.
 
-        ![Screenshot displaying MainPage using C# Markup in the generated project](../Assets/MarkupProject-GeneratedMarkup.jpg)    
-    
+        ![Screenshot displaying MainPage using C# Markup in the generated project](../Assets/MarkupProject-GeneratedMarkup.jpg)
+
     # [**XAML**](#tab/cli)
-    
+
     #### XAML project structure
-    
+
     - The project is separated into Solution Items, where general settings and properties files are located, and Source, which contains information about the Backend, Platforms and Shared Project.
 
     - Check out how your first Start Up XAML project will look like.
@@ -57,7 +57,7 @@ Open the two projects created and compare the structure of the two.
 
     - In the Shared Project open the file *MainPage.xaml* and analyze the code that will look like this.
 
-        ![Screenshot displaying MainPage using XAML in the generated project](../Assets/MarkupProject-GeneratedXAML.jpg)    
+        ![Screenshot displaying MainPage using XAML in the generated project](../Assets/MarkupProject-GeneratedXAML.jpg)
 
 ## Start creating some basic UI with C# Markup
 
@@ -85,12 +85,12 @@ Change the *MainPage.cs* to have a different content as the sample bellow.
     ```
 
     # [**XAML**](#tab/cli)
-    
+
     #### XAML
 
     ```xml
 
-    <TextBlock 
+    <TextBlock
 	    Text="Hello Uno Platform"
 	    Padding="50"
 	    Margin="50"
@@ -99,9 +99,9 @@ Change the *MainPage.cs* to have a different content as the sample bellow.
     ```
 
     # [**Full Code**](#tab/code)
-    
+
     #### Full C# Markup code
-    
+
     - Example of the complete code on the MainPage.cs, so you can follow along in your own project.
 
     ```csharp
@@ -142,7 +142,7 @@ Change the *MainPage.cs* to have a different content as the sample bellow.
     - The code below shows how Set the backgroun in 3 different ways.
 
     - First - accessing the Application Theme
-    
+
     ```csharp
     new Grid()
 	    //Set Background from Theme
@@ -194,15 +194,15 @@ Change the *MainPage.cs* to have a different content as the sample bellow.
     ```
 
     # [**XAML**](#tab/cli)
-    
+
     #### XAML
 
     - First - accessing the Application Theme
 
     ```xml
-    <Grid 
+    <Grid
 	    Background="{ThemeResource ApplicationSecondaryForegroundThemeBrush}">
-	    <TextBlock 
+	    <TextBlock
 		    Text="Hello Uno Platform"
 		    Padding="50"
 		    Margin="50"
@@ -213,9 +213,9 @@ Change the *MainPage.cs* to have a different content as the sample bellow.
     - Second - using the Colors Helper
 
     ```xml
-    <Grid 
+    <Grid
 	    Background="Silver">
-	    <TextBlock 
+	    <TextBlock
 		    Text="Hello Uno Platform"
 		    Padding="50"
 		    Margin="50"
@@ -226,9 +226,9 @@ Change the *MainPage.cs* to have a different content as the sample bellow.
     - Third - creating a new Brush through a manual ARGB color.
 
     ```xml
-    <Grid 
+    <Grid
 	    Background="#FFE9E9E9">
-	    <TextBlock 
+	    <TextBlock
 		    Text="Hello Uno Platform"
 		    Padding="50"
 		    Margin="50"
@@ -237,9 +237,9 @@ Change the *MainPage.cs* to have a different content as the sample bellow.
     ```
 
     # [**Full Code**](#tab/code)
-    
+
     #### Full C# Markup code
-    
+
     - Example of the complete code on the MainPage.cs, so you can follow along in your own project.
 
     ```csharp
@@ -309,7 +309,7 @@ Change the *MainPage.cs* to have a different content as the sample bellow.
 
     #### C# Markup
 
-    
+
     - The code below shows how to create simple Grid element and add the RowDefinitions and ColumnDefinitions.
 
     ```csharp
@@ -320,7 +320,7 @@ Change the *MainPage.cs* to have a different content as the sample bellow.
     ```
 
     - And how to set the [Attached Properties](xref:Uno.Extensions.Markup.AttachedProperties).
-    
+
     ```csharp
     new Grid()
 	    //Custom the Row and Column Definitions
@@ -358,7 +358,7 @@ Change the *MainPage.cs* to have a different content as the sample bellow.
     ```
 
     # [**XAML**](#tab/cli)
-    
+
     #### XAML
 
     ```xml
@@ -373,14 +373,14 @@ Change the *MainPage.cs* to have a different content as the sample bellow.
 		    <ColumnDefinition Width="3*" />
 	    </Grid.ColumnDefinitions>
 
-	    <TextBlock 
+	    <TextBlock
 		    Text="Row 0"
 		    Padding="50"
 		    Margin="50"
 		    Grid.Row="0"
 		    Grid.Column="0"/>
 
-	    <TextBlock 
+	    <TextBlock
 		    Text="Row 0 with ColumnSpan and Attached Properties using builder pattern!"
 		    Padding="50"
 		    Margin="50"
@@ -388,21 +388,21 @@ Change the *MainPage.cs* to have a different content as the sample bellow.
 		    Grid.Column="1"
 		    Grid.ColumnSpan="2"/>
 
-	    <TextBlock 
+	    <TextBlock
 		    Text="Row 1 and Column 0"
 		    Padding="50"
 		    Margin="50"
 		    Grid.Row="1"
 		    Grid.Column="0"/>
 
-	    <TextBlock 
+	    <TextBlock
 		    Text="Row 1 and Column 1"
 		    Padding="50"
 		    Margin="50"
 		    Grid.Row="1"
 		    Grid.Column="1"/>
 
-	    <TextBlock 
+	    <TextBlock
 		    Text="Row 1 and Column 2"
 		    Padding="50"
 		    Margin="50"
@@ -413,7 +413,7 @@ Change the *MainPage.cs* to have a different content as the sample bellow.
 
     # [**Full Code**](#tab/code)
     #### Full C# Markup code
-    
+
     - Example of the complete code on the MainPage.cs, so you can follow along in your own project.
 
     ```csharp

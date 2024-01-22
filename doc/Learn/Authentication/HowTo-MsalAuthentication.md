@@ -3,16 +3,16 @@ uid: Uno.Extensions.Authentication.HowToMsalAuthentication
 ---
 # How-To: Get Started with MSAL Authentication
 
-`MsalAuthenticationProvider` allows your users to sign in using their Microsoft identities. It wraps the [MSAL library](https://github.com/AzureAD/microsoft-authentication-library-for-dotnet) from Microsoft into an implementation of `IAuthenticationProvider` This tutorial will use MSAL authorization to validate user credentials.
+`MsalAuthenticationProvider` allows your users to sign in using their Microsoft identities. It wraps the [MSAL library](https://github.com/AzureAD/microsoft-authentication-library-for-dotnet) from Microsoft into an implementation of `IAuthenticationProvider`. This tutorial will use MSAL authorization to validate user credentials.
 
 ## Step-by-steps
 
 > [!IMPORTANT]
-> This guide assumes you used the template wizard or `dotnet new unoapp` to create your solution. If not, it is recommended that you follow the [instructions](xref:Uno.Extensions.HowToGettingStarted) for creating an application from the template.
+> This guide assumes you used the template wizard or `dotnet new unoapp` to create your solution. If not, it is recommended that you follow the [Creating an application with Uno.Extensions article](xref:Uno.Extensions.HowToGettingStarted) for creating an application from the template.
 
 ### 1. Prepare for MSAL authentication
 
-- For this type of authentication, the application must be registered with the Microsoft identity platform. For more information, see [Register an application with the Microsoft identity platform](https://docs.microsoft.com/azure/active-directory/develop/quickstart-register-app).
+- For this type of authentication, the application must be registered with the Microsoft identity platform. For more information, see [Register an application with the Microsoft identity platform](https://learn.microsoft.com/azure/active-directory/develop/quickstart-register-app).
 
 - The identity provider will provider you with a client ID and guidance on scopes to use.
 
@@ -28,15 +28,16 @@ uid: Uno.Extensions.Authentication.HowToMsalAuthentication
     protected override void OnLaunched(LaunchActivatedEventArgs args)
     {
         var builder = this.CreateBuilder(args)
-            .Configure(host => 
+            .Configure(host =>
             {
                 host
-                .UseAuthentication(builder => 
+                .UseAuthentication(builder =>
                 {
                     // Add the authentication provider here
                 });
             });
-    ...
+        ...
+    }
     ```
 
 - Add the `MsalAuthenticationProvider` using the `AddMsal()` extension method which configures the `IAuthenticationBuilder` to use it.
@@ -47,18 +48,19 @@ uid: Uno.Extensions.Authentication.HowToMsalAuthentication
     protected override void OnLaunched(LaunchActivatedEventArgs args)
     {
         var builder = this.CreateBuilder(args)
-            .Configure(host => 
+            .Configure(host =>
             {
                 host
-                .UseAuthentication(builder => 
+                .UseAuthentication(builder =>
                 {
                     builder.AddMsal();
                 });
             });
-    ...
+        ...
+    }
     ```
 
-- The `IAuthenticationBuilder` is responsible for managing the lifecycle of the associated provider that was built. 
+- The `IAuthenticationBuilder` is responsible for managing the lifecycle of the associated provider that was built.
 
 - Because it is configured to use MSAL, the user will eventually be prompted to sign in to their Microsoft account when they use your application. `MsalAuthenticationProvider` will then store the user's access token in credential storage. The token will be automatically refreshed when it expires.
 
@@ -119,6 +121,6 @@ uid: Uno.Extensions.Authentication.HowToMsalAuthentication
     }
     ```
 
-- Finally, we can run the application and sign in with our Microsoft account. The user will be prompted to sign in to their Microsoft account when they tap the button in the application. 
+- Finally, we can run the application and sign in with our Microsoft account. The user will be prompted to sign in to their Microsoft account when they tap the button in the application.
 
 - `MsalAuthenticationProvider` will then store the user's access token in credential storage. The token will be automatically refreshed when it expires.

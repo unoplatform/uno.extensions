@@ -4,7 +4,7 @@ uid: Uno.Extensions.Markup.HowToXamlProject
 
 # How to set up a XAML project
 
-In this tutorial you'll learn how to set up an Uno Platform project to use XAML. 
+In this tutorial, you'll learn how to set up an Uno Platform project to use XAML.
 
 1. Make sure your environment is set up properly by using [uno check](xref:UnoCheck.UsingUnoCheck).
 1. You can create a Uno App by either using the Uno Platform Visual Studio extension or via the command line interface.
@@ -31,18 +31,18 @@ In this tutorial you'll learn how to set up an Uno Platform project to use XAML.
 
         ![Screenshot displaying how to pre-install C# Markup in the generated project](../Assets/MarkupProject-VsixXAML.jpg)
 
-    - Click *Create* on the bottom right corner.    
-    
+    - Click *Create* on the bottom right corner.
+
     # [**CLI**](#tab/cli)
-    
+
     #### Using the command line interface
-    
+
     - Run the following command, using an appropriate name (`MySampleProjectXaml` in this page).
-    
+
         ```cmd
         dotnet new unoapp -preset blank -markup xaml -o MySampleProjectXaml
         ```
-      
+
         Refer to [this](https://platform.uno/docs/articles/get-started-dotnet-new.html) article for more details
         on using the CLI interface of creating projects.
 

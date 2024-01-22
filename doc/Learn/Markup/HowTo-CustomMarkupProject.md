@@ -6,16 +6,16 @@ uid: Uno.Extensions.Markup.HowToCustomMarkupProject
 
 > If you haven't already set up your environment and create the new Markup project, please follow the steps to [Create your own C# Markup](xref:Uno.Extensions.HowToCreateMarkupProject).
 
-In this tutorial you'll learn how to custom your project using Uno Platform and C# Markup.
+In this tutorial, you'll learn how to custom your project using Uno Platform and C# Markup.
 And have a comparison between C# Markup and XAML.
 
-In the previous session we learn how to [Create your own C# Markup](xref:Uno.Extensions.HowToCreateMarkupProject) and now we will change some styles and working with Bindings and Templates. 
+In the previous session we learn how to [Create your own C# Markup](xref:Uno.Extensions.HowToCreateMarkupProject) and now we will change some styles and working with Bindings and Templates.
 
 And for this we will create a project that list some Attributes of a Sample ViewModel and Customizing the style.
 
 ## Lets start with Model and ViewModel of the Sample.
 
-Start creating two folders in the shared project, to keep the organization. 
+Start creating two folders in the shared project, to keep the organization.
 The first One is *Model* and the second *ViewModel*.
 
 On the *Model* Folder create a new Class file named *ModelSample* and change the content as bellow.
@@ -164,15 +164,15 @@ In the ViewModel, the Model's data is already loaded into the Instance of the cl
 
 
     # [**XAML**](#tab/xaml)
-    
+
     #### XAML
 
     That same code in XAML would be written this way.
     Compare and see the similarities and differences.
 
     ```xml
-    <Grid 
-	    Background="Silver" 
+    <Grid
+	    Background="Silver"
 	    Margin="50"
 	    Style="{StaticResource GetGridStyle}">
 	    <Grid.RowDefinitions>
@@ -185,7 +185,7 @@ In the ViewModel, the Model's data is already loaded into the Instance of the cl
 		    <ColumnDefinition Width="3*" />
 	    </Grid.ColumnDefinitions>
 
-		    <TextBlock 
+		    <TextBlock
 				    Text="Welcome!!"
 				    Grid.Row="0"
 				    Grid.Column="0">
@@ -196,7 +196,7 @@ In the ViewModel, the Model's data is already loaded into the Instance of the cl
 			    </TextBlock.Style>
 		    </TextBlock>
 
-		    <Image 
+		    <Image
 			    Source="https://picsum.photos/366/366"
 			    Stretch="UniformToFill"
 			    Width="70"
@@ -207,9 +207,9 @@ In the ViewModel, the Model's data is already loaded into the Instance of the cl
 			    Grid.ColumnSpan="2"
 			    HorizontalAlignment="Right"/>
 
-		    <Grid 
-			    Background="#FFE9E9E9" 
-			    Grid.Row="1" 
+		    <Grid
+			    Background="#FFE9E9E9"
+			    Grid.Row="1"
 			    Grid.ColumnSpan="3"
 			    Style="{StaticResource GetGridStyle}"
 			    >
@@ -218,7 +218,7 @@ In the ViewModel, the Model's data is already loaded into the Instance of the cl
 				    <ColumnDefinition Width="*" />
 				    <ColumnDefinition Width="*" />
 			    </Grid.ColumnDefinitions>
-			    <TextBlock 
+			    <TextBlock
 				    Text="Content"
 				    Margin="0,20,0,0"
 				    FontSize="14"
@@ -229,9 +229,9 @@ In the ViewModel, the Model's data is already loaded into the Instance of the cl
     ```
 
     # [**Full Code**](#tab/code)
-    
+
     #### Full C# Markup code
-    
+
     - Example of the complete code on the MainPage.cs, so you can follow along in your own project.
 
     ```csharp
@@ -318,7 +318,7 @@ In the ViewModel, the Model's data is already loaded into the Instance of the cl
 
     #### C# Markup
 
-		
+
 	- In this code we create an ViewModel that load a list of samples and add this ViewModel to the Page.
 
     ```csharp
@@ -333,10 +333,10 @@ In the ViewModel, the Model's data is already loaded into the Instance of the cl
 
     ```
 
-		
+
 
     # [**XAML**](#tab/xaml)
-    
+
     #### XAML
 
 	- In the XAML case, we need to edit the MainPage.xaml.cs and create the new ViewModel and add to the DataContext of the page.
@@ -350,9 +350,9 @@ In the ViewModel, the Model's data is already loaded into the Instance of the cl
     ```
 
     # [**Full Code**](#tab/code)
-    
+
     #### Full C# Markup code
-    
+
     - Example of the complete code on the MainPage.cs, so you can follow along in your own project.
 
     ```csharp
@@ -440,16 +440,16 @@ In the ViewModel, the Model's data is already loaded into the Instance of the cl
     # [**C# Markup**](#tab/cs)
 
     #### C# Markup
-		
+
 	The code below shows 3 different ways to use it using C# Markup.
 
 	The regular Binding. Using *x => x.Bind(() =>*.
 	```csharp
-													
-	//Setting some Binding 
+
+	//Setting some Binding
 	new TextBlock().Text(x => x.Bind(() => vm.DirectAttribute)),
 
-	```	
+	```
 
 	The reduced Binding. Using *() =>*.
 
@@ -457,7 +457,7 @@ In the ViewModel, the Model's data is already loaded into the Instance of the cl
 	//Setting some Binding using the shorthand version
 	new TextBlock().Text(() => vm.DirectAttribute),
 
-	```	
+	```
 
 	And the Binding passing the Path to the attribute. Using *x => x.Bind("AttibuteName")*.
 
@@ -466,46 +466,46 @@ In the ViewModel, the Model's data is already loaded into the Instance of the cl
 	//Setting some Binding using a Path string
 	new TextBlock().Text(x => x.Bind("DirectAttribute"))
 
-	```	
+	```
 
     # [**XAML**](#tab/xaml)
-    
+
     #### XAML
 
     The code below shows 3 different ways to use it using XAML.
 
 	The regular Binding.
 	```xml
-													
-	//Setting some Binding 
-	<TextBlock 
-			Text="{Binding DirectAttribute}"/>
-	```	
 
-	The reduced Bind. 
+	//Setting some Binding
+	<TextBlock
+			Text="{Binding DirectAttribute}"/>
+	```
+
+	The reduced Bind.
 
 	```xml
 	//Setting some Binding using the x:Bind version
-	<TextBlock 
+	<TextBlock
 			Text="{x:Bind vm.DirectAttribute}"/>
 
-	```	
+	```
 
 	And the Binding passing the Path to the attribute..
 
 	```xml
 
 	//Setting some Binding using a Path string
-	<TextBlock 
+	<TextBlock
 			Text="{Binding Path=DirectAttribute}"/>
 
-	```	
+	```
 
 
     # [**Full Code**](#tab/code)
-    
+
     #### Full C# Markup code
-    
+
     - Example of the complete code on the MainPage.cs, so you can follow along in your own project.
 
     ```csharp
@@ -582,7 +582,7 @@ In the ViewModel, the Model's data is already loaded into the Instance of the cl
 												    .FontSize(14)
 												    .FontWeight(FontWeights.Bold),
 
-											    //Setting some Binding 
+											    //Setting some Binding
 											    new TextBlock()
 												    .Text(x => x.Bind(() => vm.DirectAttribute)),
 
@@ -632,7 +632,7 @@ In the ViewModel, the Model's data is already loaded into the Instance of the cl
     # [**C# Markup**](#tab/cs)
 
     ### C# Markup
-		
+
 	#### Using *GridView* and *ItemTemplate*.
 
     In the case of the GridView.ItemTemplate we pass the Model and create a GetDataTemplate function to return the information of the columns that will be listed in the GridView.
@@ -650,7 +650,7 @@ In the ViewModel, the Model's data is already loaded into the Instance of the cl
 
 	#### Using ListView and ItemTemplateSelector.
 
-	For the ListView.ItemTemplateSelector, we created a simple conditional just to show how a TemplateSelector works in practice. 
+	For the ListView.ItemTemplateSelector, we created a simple conditional just to show how a TemplateSelector works in practice.
 	And the conditional calls two different functions so the cases are handled differently.
 
 	```csharp
@@ -663,14 +663,14 @@ In the ViewModel, the Model's data is already loaded into the Instance of the cl
 			.Case(v => !v.Active, () => GetDataTemplateInative())
 			.Default(() => new TextBlock().Text("Some Sample"))
 		)
-	```	
+	```
 
 	#### Creating the Templates
 
 	Set up a basic Template function, similar to the DataTemplate using ResourceDictionary in XAML.
 
 	```csharp
-		
+
 	//Using Template
 	public StackPanel GetDataTemplate()
 	{
@@ -707,27 +707,27 @@ In the ViewModel, the Model's data is already loaded into the Instance of the cl
 
 	```
 
-	Naturally, you can unify the functions and handle the conditional internally, or even create completely different layouts for each case. 
+	Naturally, you can unify the functions and handle the conditional internally, or even create completely different layouts for each case.
 
 	> Try to do this as a learning exercise.
 
 
     # [**XAML**](#tab/xaml)
-    
+
     ### XAML
 
 	#### Using *GridView* and *ItemTemplate*.
 
     In the case of the GridView.ItemTemplate we pass the Model and create a new DataTemplate.
-		
+
 	```xml
 		<GridView ItemsSource="{Binding SampleList}" ItemTemplate="{StaticResource GetDataTemplate}"/>
 	```
 
 	#### Using ListView and ItemTemplateSelector.
 
-	For the ListView.ItemTemplateSelector, we pass the Model and create a new ItemTemplateSelector. 
-		
+	For the ListView.ItemTemplateSelector, we pass the Model and create a new ItemTemplateSelector.
+
 	```xml
 		<ListView ItemsSource="{Binding SampleList}" ItemTemplateSelector="{StaticResource ItemTemplateSelector}"/>
 	```
@@ -750,7 +750,7 @@ In the ViewModel, the Model's data is already loaded into the Instance of the cl
 
 			</ResourceDictionary>
 		</Page.Resources>
-	```	
+	```
 
 	And for the ItemTemplateSelector we need to create a new Class and add ItemTemplateSelector into the ResourceDictionary.
 
@@ -781,9 +781,9 @@ In the ViewModel, the Model's data is already loaded into the Instance of the cl
 	}
 
 	```
-		
+
 	Add Resources on the Page.
-		
+
 	```xml
 		<Page.Resources>
 			<ResourceDictionary>
@@ -808,18 +808,18 @@ In the ViewModel, the Model's data is already loaded into the Instance of the cl
 						</DataTemplate>
 					</model:MyItemTemplateSelector.GetDataTemplateInative>
 				</model:MyItemTemplateSelector>
-					
+
 			</ResourceDictionary>
 		</Page.Resources>
-	```	
-		
-		
+	```
+
+
 
 
     # [**Full Code**](#tab/code)
-    
+
     #### Full C# Markup code
-    
+
     - Example of the complete code on the MainPage.cs, so you can follow along in your own project.
 
     ```csharp
@@ -896,7 +896,7 @@ In the ViewModel, the Model's data is already loaded into the Instance of the cl
 												    .FontSize(14)
 												    .FontWeight(FontWeights.Bold),
 
-											    //Setting some Binding 
+											    //Setting some Binding
 											    new TextBlock()
 												    .Text(x => x.Bind(() => vm.DirectAttribute)),
 
@@ -1027,12 +1027,12 @@ In the ViewModel, the Model's data is already loaded into the Instance of the cl
     # [**C# Markup**](#tab/cs)
 
     #### C# Markup
-		
+
 	Notice that there are parts of the code that are repeated with few changes.
 	For example the codes below.
-		
+
 	```csharp
-		
+
 	new TextBlock()
 		.Text("Basics Bindings")
 		.FontSize(18)
@@ -1045,11 +1045,11 @@ In the ViewModel, the Model's data is already loaded into the Instance of the cl
 	```
 
 	Thus, we can unify these codes in a single function and reuse them in different parts of the code.
-			
+
 	Set up a basic, reusable function.
 
 	```csharp
-		
+
 	public StackPanel GetReusedCodeForTitle(string Title, string SubTitle)
 	{
 		return new StackPanel().Children(
@@ -1065,14 +1065,14 @@ In the ViewModel, the Model's data is already loaded into the Instance of the cl
 			);
 	}
 	```
-		
+
 	Than just call the function in several places.
 
     ```csharp
 		    //C# Markup easily allows code reuse, as shown below.
 		    GetReusedCodeForTitle("Basics Bindings", "Direct Attribute"),
     ```
-		
+
 	> Note that the Function can be used 3 times in the code.
 
 
@@ -1081,7 +1081,7 @@ In the ViewModel, the Model's data is already loaded into the Instance of the cl
 
 	To have a similar result in XAML, we can use a UserControl to allow us to include reusable code on the main page.
 	For this we need to create a new UserControl, named UserControlSample in this sample.
-		
+
 	With the following XAML code
 	```xml
 		<UserControl
@@ -1096,11 +1096,11 @@ In the ViewModel, the Model's data is already loaded into the Instance of the cl
 			d:DesignWidth="400">
 
 			<StackPanel>
-				<TextBlock 
+				<TextBlock
 							Text="{Binding Title}"
 							FontSize="18"
 							FontWeight="Bold"/>
-				<TextBlock 
+				<TextBlock
 							Text="{Binding SubTitle}"
 							FontSize="16"
 							FontWeight="Bold"/>
@@ -1145,12 +1145,12 @@ In the ViewModel, the Model's data is already loaded into the Instance of the cl
 	```xml
 	<local:UserControlSample Title="Basics Bindings" SubTitle="Direct Attribute"/>
 	```
-				
+
 	> Note that the XAML UserContol can be used 3 times in the code as we just do on C# Markup.
-		
+
     # [**Full Code**](#tab/code)
     #### Full C# Markup code
-    
+
     - Example of the complete code on the MainPage.cs, so you can follow along in your own project.
 
     ```csharp
@@ -1221,7 +1221,7 @@ In the ViewModel, the Model's data is already loaded into the Instance of the cl
 												    .FontSize(14)
 												    .FontWeight(FontWeights.Bold),
 
-											    //Setting some Binding 
+											    //Setting some Binding
 											    new TextBlock()
 												    .Text(x => x.Bind(() => vm.DirectAttribute)),
 
@@ -1362,7 +1362,7 @@ In the ViewModel, the Model's data is already loaded into the Instance of the cl
     #### C# Markup
 
     Note that we load the resource on the Page, as show below.
-		
+
 	### Set the reference.
 
 	```csharp
@@ -1382,15 +1382,15 @@ In the ViewModel, the Model's data is already loaded into the Instance of the cl
 	//sample of the usage of some StaticResource
 	new Button()
 		.Content(new PathIcon().Data(StaticResource.Get<Geometry>("Icon_Create")))
-	```	
+	```
 
     # [**XAML**](#tab/xaml)
-    
+
     #### XAML
 
 	To have a similar result in XAML, we can use a UserControl to allow us to include reusable code on the main page.
 	For this we need to create a new UserControl, named UserControlSample in this sample.
-		
+
 	#### With the following XAML code to set the reference
 
     ```xml
@@ -1413,9 +1413,9 @@ In the ViewModel, the Model's data is already loaded into the Instance of the cl
 	```
 
     # [**Full Code**](#tab/code)
-    
+
     #### Full C# Markup code
-    
+
     - Example of the complete code on the MainPage.cs, so you can follow along in your own project.
 
     ```csharp
@@ -1493,7 +1493,7 @@ In the ViewModel, the Model's data is already loaded into the Instance of the cl
 												    .FontSize(14)
 												    .FontWeight(FontWeights.Bold),
 
-											    //Setting some Binding 
+											    //Setting some Binding
 											    new TextBlock()
 												    .Text(x => x.Bind(() => vm.DirectAttribute)),
 
@@ -1622,9 +1622,9 @@ In the ViewModel, the Model's data is already loaded into the Instance of the cl
 - Now you can check the full code using C# Markup and XAML.
 
     # [**Full XAML Code**](#tab/cli)
-    
+
 	#### Full XAML code
-    
+
     - Example of the complete code on the MainPage.xaml, so you can follow along in your own project.
 
 	```xml
@@ -1684,11 +1684,11 @@ In the ViewModel, the Model's data is already loaded into the Instance of the cl
 						</DataTemplate>
 					</model:MyItemTemplateSelector.GetDataTemplateInative>
 				</model:MyItemTemplateSelector>
-				
+
 			</ResourceDictionary>
 		</Page.Resources>
-		<Grid 
-			Background="Silver" 
+		<Grid
+			Background="Silver"
 			Margin="50"
 			Style="{StaticResource GetGridStyle}">
 			<Grid.RowDefinitions>
@@ -1701,7 +1701,7 @@ In the ViewModel, the Model's data is already loaded into the Instance of the cl
 				<ColumnDefinition Width="3*" />
 			</Grid.ColumnDefinitions>
 
-				<TextBlock 
+				<TextBlock
 						Text="Welcome!!"
 						Grid.Row="0"
 						Grid.Column="0">
@@ -1712,7 +1712,7 @@ In the ViewModel, the Model's data is already loaded into the Instance of the cl
 					</TextBlock.Style>
 				</TextBlock>
 
-				<Image 
+				<Image
 					Source="https://picsum.photos/366/366"
 					Stretch="UniformToFill"
 					Width="70"
@@ -1723,9 +1723,9 @@ In the ViewModel, the Model's data is already loaded into the Instance of the cl
 					Grid.ColumnSpan="2"
 					HorizontalAlignment="Right"/>
 
-				<Grid 
-					Background="#FFE9E9E9" 
-					Grid.Row="1" 
+				<Grid
+					Background="#FFE9E9E9"
+					Grid.Row="1"
 					Grid.ColumnSpan="3"
 					Style="{StaticResource GetGridStyle}"
 					>
@@ -1737,32 +1737,32 @@ In the ViewModel, the Model's data is already loaded into the Instance of the cl
 				<StackPanel
 					Orientation="Vertical"
 					Grid.Column="0">
-					
+
 					<local:UserControlSample Title="Basics Bindings" SubTitle="Direct Attribute"/>
 
-					<TextBlock 
+					<TextBlock
 						Text="Bind"
 						FontSize="14"
 						FontWeight="Bold"
 						Margin="0,20,0,0"/>
-					<TextBlock 
+					<TextBlock
 						Text="{Binding DirectAttribute}"/>
 
-					<TextBlock 
+					<TextBlock
 						Text="Short Bind"
 						FontSize="14"
 						FontWeight="Bold"
 						Margin="0,20,0,0"/>
-					<TextBlock 
+					<TextBlock
 						Text="{x:Bind vm.DirectAttribute}"/>
 
 
-					<TextBlock 
+					<TextBlock
 						Text="Named Bind"
 						FontSize="14"
 						FontWeight="Bold"
 						Margin="0,20,0,0"/>
-					<TextBlock 
+					<TextBlock
 						Text="{Binding Path=DirectAttribute}"/>
 
 				</StackPanel>
@@ -1773,16 +1773,16 @@ In the ViewModel, the Model's data is already loaded into the Instance of the cl
 					Grid.Column="1">
 
 					<local:UserControlSample Title="GridView" SubTitle="Using Binding"/>
-					
+
 					<GridView ItemsSource="{Binding SampleList}" ItemTemplate="{StaticResource GetDataTemplate}"/>
 
 				</StackPanel>
-				
+
 				<StackPanel
 					Orientation="Vertical"
 					Grid.Column="2">
 					<local:UserControlSample Title="ListView" SubTitle="Using ItemTemplateSelector"/>
-					
+
 					<ListView ItemsSource="{Binding SampleList}" ItemTemplateSelector="{StaticResource ItemTemplateSelector}"/>
 
 				</StackPanel>
@@ -1791,11 +1791,11 @@ In the ViewModel, the Model's data is already loaded into the Instance of the cl
 	</Page>
 
 	```
-		
+
     # [**Full C# Markp Code**](#tab/code)
-    
+
     #### Full C# Markup code
-    
+
     - Example of the complete code on the MainPage.cs, so you can follow along in your own project.
 
     ```csharp
@@ -1873,7 +1873,7 @@ In the ViewModel, the Model's data is already loaded into the Instance of the cl
 												    .FontSize(14)
 												    .FontWeight(FontWeights.Bold),
 
-											    //Setting some Binding 
+											    //Setting some Binding
 											    new TextBlock()
 												    .Text(x => x.Bind(() => vm.DirectAttribute)),
 

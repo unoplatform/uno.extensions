@@ -3,7 +3,7 @@ uid: Uno.Extensions.Navigation.Advanced.ResponsiveShell
 ---
 # How-To: Build a Responsive Layout using NavigationView and TabBar
 
-Apps that scale across multiple devices and form factors need to be able to adapt their layout to the available screen real estate. When your app is running on narrow devices, such as phones, you may want to hide the navigation pane and show a hamburger menu button instead. 
+Apps that scale across multiple devices and form factors need to be able to adapt their layout to the available screen real estate. When your app is running on narrow devices, such as phones, you may want to hide the navigation pane and show a hamburger menu button instead.
 
 It makes sense to allow `TabBar` to be the dominant navigation surface on these devices. On larger devices, such as tablets and desktops, you may want to show the navigation pane and hide the hamburger menu button. Using the `TabBar` would be a poor choice for navigation on these devices. The platform includes a `VisualStateManger` that allows you to define different visual states for different screen sizes in XAML, showing the navigation pane and hamburger menu button as appropriate.
 
@@ -12,7 +12,7 @@ This tutorial will show you how to build a responsive layout with multiple navig
 ## Step-by-steps
 
 > [!IMPORTANT]
-> This guide assumes you used the template wizard or `dotnet new unoapp` to create your solution. If not, it is recommended that you follow the [instructions](xref:Uno.Extensions.HowToGettingStarted) for creating an application from the template.
+> This guide assumes you used the template wizard or `dotnet new unoapp` to create your solution. If not, it is recommended that you follow the [Creating an application with Uno.Extensions article](xref:Uno.Extensions.HowToGettingStarted) for creating an application from the template.
 
 ### 1. Add necessary XAML namespaces
 
@@ -106,7 +106,7 @@ This tutorial will show you how to build a responsive layout with multiple navig
                 </Grid>
             </muxc:NavigationView.Content>
         </muxc:NavigationView>
-    </Grid>    
+    </Grid>
     ```
     It's important to make each element that represents a sector of app content have it's `Visibility` explicitly set to `Collapsed`. Uno.Extensions will handle toggling it back to `Visible` when necessary.
 
@@ -186,7 +186,7 @@ While the WinUI `NavigationView` control by itself is a good choice for a respon
                 </Grid>
             </muxc:NavigationView.Content>
         </muxc:NavigationView>
-    </Grid>    
+    </Grid>
     ```
 
 ### 4. Set up regions and specify navigator type
@@ -268,7 +268,7 @@ While the WinUI `NavigationView` control by itself is a good choice for a respon
                 </Grid>
             </muxc:NavigationView.Content>
         </muxc:NavigationView>
-    </Grid>    
+    </Grid>
     ```
 
 * Name both the content itself and associated navigation control items using the `Region.Name` attached property:
@@ -354,7 +354,7 @@ While the WinUI `NavigationView` control by itself is a good choice for a respon
                 </Grid>
             </muxc:NavigationView.Content>
         </muxc:NavigationView>
-    </Grid>    
+    </Grid>
     ```
 
 * Specify the navigator type as `Visibility` using the `Region.Navigator` attached property on the parent element of your collapsed content `Grid` definitions:

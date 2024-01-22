@@ -3,7 +3,7 @@ uid: Uno.Extensions.Configuration.Overview
 ---
 # Configuration
 
-`Uno.Extensions.Configuration` provides a uniform way to read or write configuration data from a number of distinct sources. The implmentation of `IOptions<T>` from [Microsoft.Extensions.Options](https://docs.microsoft.com/dotnet/api/microsoft.extensions.options) allows for [read-only](https://docs.microsoft.com/dotnet/core/extensions/configuration#concepts-and-abstractions) access to values organized into **configuration sections**. The [writable configuration](xref:Uno.Extensions.Configuration.HowToWritableConfiguration) pattern supports the ability to update configuration values at runtime.
+`Uno.Extensions.Configuration` provides a uniform way to read or write configuration data from a number of distinct sources. The implementation of `IOptions<T>` from [Microsoft.Extensions.Options](https://learn.microsoft.com/dotnet/api/microsoft.extensions.options) allows for [read-only](https://learn.microsoft.com/dotnet/core/extensions/configuration#concepts-and-abstractions) access to values organized into **configuration sections**. The [writable configuration](xref:Uno.Extensions.Configuration.HowToWritableConfiguration) pattern supports the ability to update configuration values at runtime.
 
 This feature uses [Microsoft.Extensions.Configuration](https://www.nuget.org/packages/Microsoft.Extensions.Configuration) for any configuration related work. For more documentation on configuration, read the references listed at the bottom.
 
@@ -21,7 +21,8 @@ protected override void OnLaunched(LaunchActivatedEventArgs e)
     );
 
     Host = appBuilder.Build();
-...
+    ...
+}
 ```
 
 `IConfiguration` is then available to be accessed by any class instantiated by the dependency injection (DI) container:
@@ -35,12 +36,13 @@ public class MyService : IMyService
     {
         this.configuration = configuration;
     }
-...
+    ...
+}
 ```
 
 ## App settings file sources
 
-To use `appsettings.json` file packaged as **EmbeddedResource** in the application:  
+To use `appsettings.json` file packaged as **EmbeddedResource** in the application:
 
 ```csharp
 private IHost Host { get; }
@@ -57,10 +59,11 @@ protected override void OnLaunched(LaunchActivatedEventArgs e)
         );
 
     Host = appBuilder.Build();
-...
+    ...
+}
 ```
 
-The recommended approach to specifying a configuration file source, especially when targeting Web Assembly (WASM), is to register it as an **EmbeddedResource** as described above. Configuration data read from embedded resources has the benefit of being available to the application immediately upon startup. However, it is still possible to package the file source as **Content** instead:   
+The recommended approach to specifying a configuration file source, especially when targeting Web Assembly (WASM), is to register it as an **EmbeddedResource** as described above. Configuration data read from embedded resources has the benefit of being available to the application immediately upon startup. However, it is still possible to package the file source as **Content** instead:
 
 ```csharp
 private IHost Host { get; }
@@ -78,7 +81,8 @@ protected override void OnLaunched(LaunchActivatedEventArgs e)
         );
 
     Host = appBuilder.Build();
-...
+    ...
+}
 ```
 
 Both `EmbeddedSource` and `ContentSource` methods will also create settings files that are specific to the current environment by default, `appsettings.<hostenvironment>.json` (eg `appsettings.development.json`). This can be disabled by setting the `includeEnvironmentSettings` argument to `false` (default value is `true`):
@@ -98,6 +102,7 @@ protected override void OnLaunched(LaunchActivatedEventArgs e)
         );
 
     Host = appBuilder.Build();
+}
 ```
 
 > [!TIP]
@@ -118,7 +123,8 @@ protected override void OnLaunched(LaunchActivatedEventArgs e)
                         .Section<CustomIntroduction>()
                 )
         );
-...
+    ...
+}
 ```
 
 This can be accessed from any class created by the DI container:
@@ -147,13 +153,14 @@ protected override void OnLaunched(LaunchActivatedEventArgs e)
     var appBuilder = this.CreateBuilder(e)
         .Configure(
             host => host
-                .UseConfiguration(builder => 
+                .UseConfiguration(builder =>
                     builder
                         .EmbeddedSource<App>()
                         .Section<DiagnosticSettings>()
                 )
         );
-...
+    ...
+}
 ```
 
 `DiagnosticSettings` can be defined as a record:
@@ -175,6 +182,6 @@ public MainViewModel(IWritableOptions<DiagnosticSettings> debug)
 
 ## References
 
-- [Using IConfiguration](https://docs.microsoft.com/en-us/aspnet/core/fundamentals/configuration/?view=aspnetcore-3.1)
-- [Microsoft.Extensions.Options](https://docs.microsoft.com/dotnet/api/microsoft.extensions.options)
+- [Using IConfiguration](https://learn.microsoft.com/aspnet/core/fundamentals/configuration)
+- [Microsoft.Extensions.Options](https://learn.microsoft.com/dotnet/api/microsoft.extensions.options)
 - [Microsoft.Extensions.Configuration](https://www.nuget.org/packages/Microsoft.Extensions.Configuration)

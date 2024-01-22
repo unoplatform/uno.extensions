@@ -3,10 +3,11 @@ uid: Uno.Extensions.Reactive.State
 ---
 # State
 
-Unlike a _feed_ an `IState<T>`, as its name suggests, is state-full. 
+Unlike a _feed_ an `IState<T>`, as its name suggests, is state-full.
 While a _feed_ is just a query of a stream of _data_, a _state_ also implies a current value (a.k.a. the state of the application) that can be accessed and updated.
 
 There are some noticeable differences with a _feed_:
+
 * When subscribing to a state, the currently loaded value is going to be replayed.
 * There is a [`Update`](#update) method that allows you to change the current value.
 * _States_ are attached to an owner and share the same lifetime as that owner.
@@ -17,6 +18,7 @@ There are some noticeable differences with a _feed_:
 You can create a _state_ using one of the following:
 
 ### Empty
+
 Creates a state without any initial value.
 
 ```csharp
@@ -24,6 +26,7 @@ public IState<string> City => State<string>.Empty(this);
 ```
 
 ### Value
+
 Creates a state with a synchronous initial value.
 
 ```csharp
@@ -31,6 +34,7 @@ public IState<string> City => State.Value(this, () => "Montréal");
 ```
 
 ### Async
+
 Creates a state with an asynchronous initial value.
 
 ```csharp
@@ -38,6 +42,7 @@ public IState<string> City => State.Async(this, async ct => await _locationServi
 ```
 
 ### AsyncEnumerable
+
 Like for `Feed.AsyncEnumerable`, this allows you to adapt an `IAsyncEnumerable<T>` into a _state_.
 
 ```csharp
@@ -54,6 +59,7 @@ public async IAsyncEnumerable<string> GetCurrentCity([EnumeratorCancellation] Ca
 ```
 
 ### Create
+
 This gives you the ability to create your own _state_ by dealing directly with _messages_.
 
 > This is designed for advanced usage and should probably not be used directly in apps.
@@ -85,6 +91,7 @@ public async IAsyncEnumerable<Message<string>> GetCurrentCity([EnumeratorCancell
 ```
 
 ## Update: How to update a state
+
 The _state_ is designed to allow to respect the [ACID properties](https://en.wikipedia.org/wiki/ACID).
 This means that all update methods are requesting a delegate that accepts the current value to update.
 This makes sure that you are working with the latest version of the data.
@@ -94,6 +101,7 @@ This makes sure that you are working with the latest version of the data.
 > It must be a [pure function](https://en.wikipedia.org/wiki/Pure_function) (i.e. it must not alter anything else than the provided data).
 
 ### UpdateValue
+
 This allows you to update the value only of the state.
 
 ```csharp
@@ -107,6 +115,7 @@ public async ValueTask SetCurrent(CancellationToken ct)
 ```
 
 ### Set
+
 For value types and strings, you also have a `Set` **which does not ensure the respect of the ACID properties**.
 
 ```csharp
@@ -119,7 +128,7 @@ public async ValueTask Share(CancellationToken ct)
 		../..
 		await Error.Set(string.Empty, ct);
 	}
-	catch (Exception error) 
+	catch (Exception error)
 	{
 		await Error.Set("Share failed.", ct);
 	}
@@ -132,7 +141,7 @@ public async ValueTask Share(CancellationToken ct)
 >
 > ```csharp
 > public IState<int> Counter => State<int>.Value(this, () => 0);
-> 
+>
 > public async ValueTask Up(CancellationToken ct)
 > {
 > 	var current = await Counter;
@@ -150,6 +159,7 @@ public async ValueTask Share(CancellationToken ct)
 > ```
 
 ### UpdateMessage
+
 This gives you the ability to update a _state_, including the metadata.
 
 > [!NOTE]

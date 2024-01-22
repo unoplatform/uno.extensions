@@ -8,7 +8,7 @@ uid: Uno.Extensions.Authentication.HowToWebAuthentication
 ## Step-by-steps
 
 > [!IMPORTANT]
-> This guide assumes you used the template wizard or `dotnet new unoapp` to create your solution. If not, it is recommended that you follow the [instructions](xref:Uno.Extensions.HowToGettingStarted) for creating an application from the template.
+> This guide assumes you used the template wizard or `dotnet new unoapp` to create your solution. If not, it is recommended that you follow the [Creating an application with Uno.Extensions article](xref:Uno.Extensions.HowToGettingStarted) for creating an application from the template.
 
 ### 1. Prepare for web authentication
 
@@ -28,15 +28,16 @@ uid: Uno.Extensions.Authentication.HowToWebAuthentication
     protected override void OnLaunched(LaunchActivatedEventArgs args)
     {
         var builder = this.CreateBuilder(args)
-            .Configure(host => 
+            .Configure(host =>
             {
                 host
-                .UseAuthentication(builder => 
+                .UseAuthentication(builder =>
                 {
                     // Add the authentication provider here
                 });
             });
-    ...
+        ...
+    }
     ```
 
 - Add the `WebAuthenticationProvider` using the `AddWeb()` extension method which configures the `IAuthenticationBuilder` to use it.
@@ -47,15 +48,16 @@ uid: Uno.Extensions.Authentication.HowToWebAuthentication
     protected override void OnLaunched(LaunchActivatedEventArgs args)
     {
         var builder = this.CreateBuilder(args)
-            .Configure(host => 
+            .Configure(host =>
             {
                 host
-                .UseAuthentication(builder => 
+                .UseAuthentication(builder =>
                 {
                     builder.AddWeb();
                 });
             });
-    ...
+        ...
+    }
     ```
 
 - The `IAuthenticationBuilder` is responsible for managing the lifecycle of the associated provider that was built.
@@ -64,7 +66,7 @@ uid: Uno.Extensions.Authentication.HowToWebAuthentication
 
 ### 3. Configure the provider
 
-- While the `WebAuthenticationProvider` is added using the `AddWeb()` extension method, you will need to add a configuration section for basic settings to appsettings.json. 
+- While the `WebAuthenticationProvider` is added using the `AddWeb()` extension method, you will need to add a configuration section for basic settings to appsettings.json.
 
 - We will be using the default name of `Web` for the configuration section.
 
@@ -87,29 +89,30 @@ uid: Uno.Extensions.Authentication.HowToWebAuthentication
 
 - You can process the user's returned response for tokens by registering a delegate with the `WebAuthenticationProvider`.
 
-```csharp
-private IHost Host { get; }
+    ```csharp
+    private IHost Host { get; }
 
-protected override void OnLaunched(LaunchActivatedEventArgs args)
-{
-    var builder = this.CreateBuilder(args)
-        .Configure(host => 
-        {
-            host
-            .UseAuthentication(builder => 
+    protected override void OnLaunched(LaunchActivatedEventArgs args)
+    {
+        var builder = this.CreateBuilder(args)
+            .Configure(host =>
             {
-                builder.AddWeb(options =>
+                host
+                .UseAuthentication(builder =>
                 {
-                    options.PostLogin(async (authService, tokens, ct) =>
+                    builder.AddWeb(options =>
                     {
-                        // Process the response here
-                        return tokens;
+                        options.PostLogin(async (authService, tokens, ct) =>
+                        {
+                            // Process the response here
+                            return tokens;
+                        });
                     });
                 });
             });
-        });
-...
-```
+        ...
+    }
+    ```
 
 - The `PostLogin` delegate will be invoked after the user has successfully logged in. The delegate will be passed the `WebAuthenticationProvider` instance, the user's tokens, and a cancellation token.
 
@@ -154,6 +157,6 @@ protected override void OnLaunched(LaunchActivatedEventArgs args)
     }
     ```
 
-- Finally, we can pass the login credentials to the `LoginAsync()` method and authenticate with the identity provider. The user will be prompted to sign in to their account when they tap the button in the application. 
+- Finally, we can pass the login credentials to the `LoginAsync()` method and authenticate with the identity provider. The user will be prompted to sign in to their account when they tap the button in the application.
 
 - `WebAuthenticationProvider` will then store the user's access token in credential storage. The token will be automatically refreshed when it expires.

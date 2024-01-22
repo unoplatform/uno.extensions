@@ -3,7 +3,7 @@ uid: Uno.Extensions.Maui.ThirdParty.Syncfusion
 ---
 # .NET MAUI Embedding - Syncfusion .NET MAUI Controls
 
-The controls from Syncfusion .NET MAUI Controls can be used in an Uno Platform application via .NET MAUI Embedding. 
+The controls from Syncfusion .NET MAUI Controls can be used in an Uno Platform application via .NET MAUI Embedding.
 
 ## Sample App
 
@@ -17,13 +17,13 @@ In order to use the Syncfusion controls, you will need to create an account and 
 
 1. Create a new application using the `unoapp` template, enabling .NET MAUI Embedding. In this case, we're going to use the Blank template (`-preset blank`) and include .NET MAUI Embedding support (`-maui`).
 
-    ```
+    ```dotnetcli
     dotnet new unoapp -preset blank -maui -o MauiEmbeddingApp
     ```
 
 1. Next, add a reference to the [Syncfusion.Maui.Charts package](https://www.nuget.org/packages/Syncfusion.Maui.Charts) to the `MauiEmbeddingApp.MauiControls` project.
 
-3. In the `AppBuilderExtensions` class, on `MauiEmbeddingApp.MauiControls` project, update the `UseMauiControls` extension method to call the `ConfigureSyncfusionCore` method.
+1. In the `AppBuilderExtensions` class, on `MauiEmbeddingApp.MauiControls` project, update the `UseMauiControls` extension method to call the `ConfigureSyncfusionCore` method.
 
 ```cs
 using Syncfusion.Maui.Core.Hosting;
@@ -32,9 +32,9 @@ using Syncfusion.Maui.Core.Hosting;
 
     public static class AppBuilderExtensions
     {
-        public static MauiAppBuilder UseMauiControls(this MauiAppBuilder builder) 
+        public static MauiAppBuilder UseMauiControls(this MauiAppBuilder builder)
             => builder
-                .ConfigureSyncfusionCore() 
+                .ConfigureSyncfusionCore()
                 .ConfigureFonts(fonts =>
                 {
                     fonts.AddFont("MauiEmbeddingApp/Assets/Fonts/OpenSansRegular.ttf", "OpenSansRegular");
@@ -115,7 +115,7 @@ using Syncfusion.Maui.Core.Hosting;
 </ContentView>
 ```
 
-1. Update the EmbeddedControl.xaml.cs with the following code. 
+1. Update the EmbeddedControl.xaml.cs with the following code.
 
     ```cs
     namespace MauiEmbeddingApp.MauiControls;
@@ -173,7 +173,7 @@ using Syncfusion.Maui.Core.Hosting;
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
 
-    
+
         public ObservableCollection<ChartDataModel> DoughnutSeriesData { get; set; }
         public ObservableCollection<ChartDataModel> SemiCircularData { get; set; }
         public ObservableCollection<ChartDataModel> CenterElevationData { get; set; }
@@ -335,6 +335,7 @@ using Syncfusion.Maui.Core.Hosting;
         }
     }
     ```
+
 1. The `EmbeddedViewModel` class is dependent on a `ChartDataModel` class which needs to be created. In `MauiEmbeddingApp.MauiControls` project, create a new folder called `Models` and add a new class called `ChartDataModel`. This class will have the following code:
 
     ```cs
@@ -357,7 +358,7 @@ using Syncfusion.Maui.Core.Hosting;
         public List<double>? EmployeeAges { get; set; }
         public Brush? Color { get; set; }
         public double Percentage { get; set; }
-        
+
         public ChartDataModel(string department, List<double> employeeAges)
         {
             Department = department;
@@ -511,6 +512,7 @@ using Syncfusion.Maui.Core.Hosting;
         }
     }
     ```
+
 **App Render Output**
 
 - **Android:**

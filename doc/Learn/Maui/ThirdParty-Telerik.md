@@ -3,7 +3,7 @@ uid: Uno.Extensions.Maui.ThirdParty.Telerik
 ---
 # .NET MAUI Embedding - Telerik UI for .NET MAUI
 
-The controls in the Telerik UI for .NET MAUI can be used in an Uno Platform application via .NET MAUI Embedding. 
+The controls in the Telerik UI for .NET MAUI can be used in an Uno Platform application via .NET MAUI Embedding.
 
 ## Sample App
 
@@ -17,7 +17,7 @@ In order to use the Telerik controls, you first need to create an account and or
 
 1. Create a new application using the `unoapp` template, enabling .NET MAUI Embedding. In this case, we're going to use the Blank template (`-preset blank`) and include .NET MAUI Embedding support (`-maui`).
 
-    ```
+    ```dotnetcli
     dotnet new unoapp -preset blank -maui -o MauiEmbeddingApp
     ```
 
@@ -33,7 +33,7 @@ In order to use the Telerik controls, you first need to create an account and or
 
     public static class AppBuilderExtensions
     {
-        public static MauiAppBuilder UseMauiControls(this MauiAppBuilder builder) 
+        public static MauiAppBuilder UseMauiControls(this MauiAppBuilder builder)
             => builder
                 .UseTelerik()
                 .ConfigureFonts(fonts =>
@@ -64,7 +64,7 @@ In order to use the Telerik controls, you first need to create an account and or
     </ContentView>
     ```
 
-1. Update the EmbeddedControl.xaml.cs with the following code. 
+1. Update the EmbeddedControl.xaml.cs with the following code.
 
     ```cs
     namespace MauiEmbeddingApp.MauiControls;

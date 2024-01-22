@@ -8,10 +8,12 @@ Dependency Injection (DI) is an important design pattern when building loosely-c
 ## Step-by-steps
 
 > [!IMPORTANT]
-> This guide assumes you used the template wizard or `dotnet new unoapp` to create your solution. If not, it is recommended that you follow the [instructions](xref:Uno.Extensions.HowToGettingStarted) for creating an application from the template.
+> This guide assumes you used the template wizard or `dotnet new unoapp` to create your solution. If not, it is recommended that you follow the [Creating an application with Uno.Extensions article](xref:Uno.Extensions.HowToGettingStarted) for creating an application from the template.
 
-### 1. Plan the contract for your service  
-* Create a new interface which declares the method(s) your service offers: 
+### 1. Plan the contract for your service
+
+* Create a new interface which declares the method(s) your service offers:
+
     ```cs
     public interface IProfilePictureService
     {
@@ -19,8 +21,10 @@ Dependency Injection (DI) is an important design pattern when building loosely-c
     }
     ```
 
-### 2. Create the service implementation that encapsulates app functionality 
+### 2. Create the service implementation that encapsulates app functionality
+
 * Write a new service class which implements the interface you created above, defining its member(s):
+
     ```cs
     public class ProfilePictureService : IProfilePictureService
     {
@@ -30,7 +34,9 @@ Dependency Injection (DI) is an important design pattern when building loosely-c
         }
     }
     ```
+
 ### 3. Register your service
+
 * Register this service implementation with the `IServiceCollection` instance provided by your application's `IHostBuilder`:
 
     ```csharp
@@ -47,10 +53,14 @@ Dependency Injection (DI) is an important design pattern when building loosely-c
                     }
                 );
             });
-    ...
+        ...
+    }
     ```
+
 ### 4. Use the service
+
 * Create a new view model class, `MainViewModel`, that will use the functionality offered by your service. Add a constructor with a parameter of the same type as the service interface you defined earlier:
+
     ```cs
     public class MainViewModel
     {
@@ -62,7 +72,9 @@ Dependency Injection (DI) is an important design pattern when building loosely-c
         }
     }
     ```
+
 * If you are using not using [navigation](xref:Uno.Extensions.Navigation.Overview), you have to register the view model to `IServiceCollection`, but we recommend using navigation and not manually register the view model as a service:
+
     ```cs
     protected override void OnLaunched(LaunchActivatedEventArgs args)
     {
@@ -79,15 +91,20 @@ Dependency Injection (DI) is an important design pattern when building loosely-c
                     }
                 );
             });
-    ...     
+        ...
+    }
     ```
+
 * Now, `MainViewModel` has access to the functionality provided by the implementation of your service resolved by `IServiceProvider`:
+
     ```cs
     byte[] profilePhotoBytes = await userPhotoService.GetAsync(cancellationToken);
     ```
 
 ### 5. Set DataContext to view model
+
 * From the code behind of a view, get an instance of the desired view model. Set this as the `DataContext`:
+
     ```cs
         public MainPage()
         {
@@ -95,5 +112,6 @@ Dependency Injection (DI) is an important design pattern when building loosely-c
             DataContext = (Application.Current as App).Host.Services.GetRequiredService<MainViewModel>();
         }
     ```
+
 > [!TIP]
-> By default the `Host` property is marked as `private`, so you'll need to change it to `public` in order for the above code to work. Alternatively, if you use [Navigation](xref:Uno.Extensions.Navigation.Overview), view model classes are automatically connected with the corresponding page, avoiding having to access the `IServiceProvider` directly. 
+> By default the `Host` property is marked as `private`, so you'll need to change it to `public` in order for the above code to work. Alternatively, if you use [Navigation](xref:Uno.Extensions.Navigation.Overview), view model classes are automatically connected with the corresponding page, avoiding having to access the `IServiceProvider` directly.

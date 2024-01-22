@@ -3,11 +3,11 @@ uid: Uno.Extensions.Maui.ThirdParty.DevExpress
 ---
 # .NET MAUI Embedding - DevExpress .NET MAUI Controls
 
-The controls from [DevExpress .NET MAUI Controls](https://www.devexpress.com/maui/) can be used in an Uno Platform application via .NET MAUI Embedding. 
+The controls from [DevExpress .NET MAUI Controls](https://www.devexpress.com/maui/) can be used in an Uno Platform application via .NET MAUI Embedding.
 
 ## Sample App
 
-An existing sample app that showcases the controls is available [here](https://github.com/unoplatform/Uno.Samples/tree/master/UI/MauiEmbedding/DevExpressApp).  
+An existing sample app that showcases the controls is available [here](https://github.com/unoplatform/Uno.Samples/tree/master/UI/MauiEmbedding/DevExpressApp).
 
 ## Installation
 
@@ -28,7 +28,7 @@ Once you have an account with DevExpress, you need to visit the [Your DevExpress
 
 1. Create a new application using the `unoapp` template, enabling .NET MAUI Embedding. In this case, we're going to use the Blank template (`-preset blank`) and include .NET MAUI Embedding support (`-maui`).
 
-    ```
+    ```dotnetcli
     dotnet new unoapp -preset blank -maui -o MauiEmbeddingApp
     ```
 
@@ -45,7 +45,7 @@ Once you have an account with DevExpress, you need to visit the [Your DevExpress
 
     public static class AppBuilderExtensions
     {
-        public static MauiAppBuilder UseMauiControls(this MauiAppBuilder builder) 
+        public static MauiAppBuilder UseMauiControls(this MauiAppBuilder builder)
             => builder
                 .UseDevExpress()
                 .ConfigureFonts(fonts =>
@@ -79,7 +79,7 @@ Once you have an account with DevExpress, you need to visit the [Your DevExpress
     > [!NOTE]
     > You may notice that the `Binding` markup extension is used on some properties. The `MauiEmbedding` can handle bindings between Maui Controls and UnoPlatform, just make sure the property in the `Binding` expression matches the property on your ViewModel.
 
-1. Update the EmbeddedControl.xaml.cs with the following code. 
+1. Update the EmbeddedControl.xaml.cs with the following code.
 
     ```cs
     namespace MauiEmbeddingApp.MauiControls;

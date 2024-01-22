@@ -3,12 +3,12 @@ uid: Uno.Extensions.Configuration.HowToConfiguration
 ---
 # How-To: Get Started with Configuration
 
-`Uno.Extensions.Configuration` provides you with a consistent way to view configuration data from a number of distinct sources. It leverages the `IOptions<T>` interface from [Microsoft.Extensions.Options](https://docs.microsoft.com/dotnet/api/microsoft.extensions.options) to offer [read-only](https://docs.microsoft.com/dotnet/core/extensions/configuration#concepts-and-abstractions) access to values organized into sections. Unlike the [Writable Configuration](xref:Uno.Extensions.Configuration.HowToWritableConfiguration) (aka Settings) pattern, this does not allow for programmatic writing by itself.
+`Uno.Extensions.Configuration` provides you with a consistent way to view configuration data from a number of distinct sources. It leverages the `IOptions<T>` interface from [Microsoft.Extensions.Options](https://learn.microsoft.com/dotnet/api/microsoft.extensions.options) to offer [read-only](https://learn.microsoft.com/dotnet/core/extensions/configuration#concepts-and-abstractions) access to values organized into sections. Unlike the [Writable Configuration](xref:Uno.Extensions.Configuration.HowToWritableConfiguration) (aka Settings) pattern, this does not allow for programmatic writing by itself.
 
 ## Step-by-steps
 
 > [!IMPORTANT]
-> This guide assumes you used the template wizard or `dotnet new unoapp` to create your solution. If not, it is recommended that you follow the [instructions](xref:Uno.Extensions.HowToGettingStarted) for creating an application from the template.
+> This guide assumes you used the template wizard or `dotnet new unoapp` to create your solution. If not, it is recommended that you follow the [Creating an application with Uno.Extensions article](xref:Uno.Extensions.HowToGettingStarted) for creating an application from the template.
 
 ### 1. Specify configuration information to load on `IConfigBuilder`
 
@@ -27,10 +27,11 @@ uid: Uno.Extensions.Configuration.HowToConfiguration
                         .EmbeddedSource<App>()
                 );
             });
-    ...
+        ...
+    }
     ```
 
-* By default, this method will extract values from an embedded resource (using the [EmbeddedResource](https://docs.microsoft.com/en-us/dotnet/api/system.codedom.compiler.compilerparameters.embeddedresources?view=dotnet-plat-ext-6.0#remarks) file build action) called `appsettings.json`, unless you optionally denote a different file name. The string you pass into the extension method will be concatenated in-between `appsettings` and its file extension. For instance, the following will also retrieve values from the file `appsettings.platform.json` embedded inside the `App` assembly:
+* By default, this method will extract values from an embedded resource (using the [EmbeddedResource](https://learn.microsoft.com/dotnet/api/system.codedom.compiler.compilerparameters.embeddedresources#remarks) file build action) called `appsettings.json`, unless you optionally denote a different file name. The string you pass into the extension method will be concatenated in-between `appsettings` and its file extension. For instance, the following will also retrieve values from the file `appsettings.platform.json` embedded inside the `App` assembly:
 
     ```csharp
     protected override void OnLaunched(LaunchActivatedEventArgs args)
@@ -45,7 +46,8 @@ uid: Uno.Extensions.Configuration.HowToConfiguration
                         .EmbeddedSource<App>("platform")
                 );
             });
-    ...
+        ...
+    }
     ```
 
 ### 2. Define a class to model the configuration section
@@ -83,7 +85,8 @@ uid: Uno.Extensions.Configuration.HowToConfiguration
                         .Section<Auth>()
                 );
             });
-    ...
+        ...
+    }
     ```
 
 ### 4. Read configuration section values from a registered service
@@ -94,9 +97,12 @@ uid: Uno.Extensions.Configuration.HowToConfiguration
 
     ```csharp
     public class AuthenticationService : IAuthenticationService
-    {        
+    {
         public AuthenticationService(IOptions<Auth> settings)
         {
             var authSettings = settings.Value;
-    ...
+            ...
+        }
+        ...
+    }
     ```

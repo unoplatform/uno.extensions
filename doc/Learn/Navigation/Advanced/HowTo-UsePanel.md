@@ -8,7 +8,7 @@ Sometimes your application may need to switch between multiple views without the
 ## Step-by-steps
 
 > [!IMPORTANT]
-> This guide assumes you used the template wizard or `dotnet new unoapp` to create your solution. If not, it is recommended that you follow the [instructions](xref:Uno.Extensions.HowToGettingStarted) for creating an application from the template.
+> This guide assumes you used the template wizard or `dotnet new unoapp` to create your solution. If not, it is recommended that you follow the [Creating an application with Uno.Extensions article](xref:Uno.Extensions.HowToGettingStarted) for creating an application from the template.
 
 ### 1. Add necessary XAML namespaces
 
@@ -47,8 +47,8 @@ Sometimes your application may need to switch between multiple views without the
 * Define the control responsible for switching between views. In this case, we will place multiple `Button` controls in a `StackPanel` to represent the possible views:
 
   ```xml
-  <StackPanel Grid.Row="1" 
-              HorizontalAlignment="Center" 
+  <StackPanel Grid.Row="1"
+              HorizontalAlignment="Center"
               Orientation="Horizontal">
       <Button Content="One" />
       <Button Content="Two" />
@@ -61,9 +61,9 @@ Sometimes your application may need to switch between multiple views without the
   ```xml
   <Grid Grid.Row="2">
       <Grid>
-          <TextBlock Text="One" 
-                    FontSize="24" 
-                    HorizontalAlignment="Center" 
+          <TextBlock Text="One"
+                    FontSize="24"
+                    HorizontalAlignment="Center"
                     VerticalAlignment="Center"/>
       </Grid>
       <Grid>
@@ -101,8 +101,8 @@ Sometimes your application may need to switch between multiple views without the
               <RowDefinition />
           </Grid.RowDefinitions>
 
-          <StackPanel Grid.Row="1" 
-                      HorizontalAlignment="Center" 
+          <StackPanel Grid.Row="1"
+                      HorizontalAlignment="Center"
                       Orientation="Horizontal">
               <Button Content="One" />
               <Button Content="Two" />
@@ -111,9 +111,9 @@ Sometimes your application may need to switch between multiple views without the
 
           <Grid Grid.Row="2">
               <Grid>
-                  <TextBlock Text="One" 
-                            FontSize="24" 
-                            HorizontalAlignment="Center" 
+                  <TextBlock Text="One"
+                            FontSize="24"
+                            HorizontalAlignment="Center"
                             VerticalAlignment="Center"/>
               </Grid>
               <Grid>
@@ -136,14 +136,14 @@ Sometimes your application may need to switch between multiple views without the
 ### 3. Set up navigation
 
 * We need to attach content regions for each view. Regions represent a container to where navigation will take place. The first step is to set the `Region.Attached` attached property to `True` on the parent `Grid` containing the views:
-  
+
   ```xml
-  <Grid Grid.Row="2" 
+  <Grid Grid.Row="2"
         uen:Region.Attached="True">
       <Grid>
-          <TextBlock Text="One" 
-                    FontSize="24" 
-                    HorizontalAlignment="Center" 
+          <TextBlock Text="One"
+                    FontSize="24"
+                    HorizontalAlignment="Center"
                     VerticalAlignment="Center"/>
       </Grid>
       <Grid>
@@ -165,12 +165,12 @@ Sometimes your application may need to switch between multiple views without the
 * Next, we need to set the `Region.Name` attached property on each child `Grid` to the corresponding view name:
 
   ```xml
-  <Grid Grid.Row="2" 
+  <Grid Grid.Row="2"
         uen:Region.Attached="True">
       <Grid uen:Region.Name="One">
-          <TextBlock Text="One" 
-                    FontSize="24" 
-                    HorizontalAlignment="Center" 
+          <TextBlock Text="One"
+                    FontSize="24"
+                    HorizontalAlignment="Center"
                     VerticalAlignment="Center"/>
       </Grid>
       <Grid uen:Region.Name="Two">
@@ -192,14 +192,14 @@ Sometimes your application may need to switch between multiple views without the
   - The child Grids are the regions.
   - The TextBlocks are the content of the regions.
 
-> [!IMPORTANT] 
+> [!IMPORTANT]
 > To specify one of these regions as a route, you must prefix the request name with "./" to indicate that the request involves a _nested_ region. For example, if you want to navigate to the "One" view, you would use the request "./One" which includes the nested qualifier.
 
 * Set the `Navigation.Request` attached property on each `Button` control to what will be the route to a corresponding region. In this case, we should use the name that was defined above as the property value:
 
   ```xml
-  <StackPanel Grid.Row="1" 
-              HorizontalAlignment="Center" 
+  <StackPanel Grid.Row="1"
+              HorizontalAlignment="Center"
               Orientation="Horizontal">
       <Button Content="One"
               uen:Navigation.Request="./One" />
@@ -215,13 +215,13 @@ Sometimes your application may need to switch between multiple views without the
 * Since we want to toggle visibility of the views, we need to set the `Region.Navigator` attached property to `Visibility`:
 
   ```xml
-  <Grid Grid.Row="2" 
+  <Grid Grid.Row="2"
         uen:Region.Attached="True"
         uen:Region.Navigator="Visibility">
       <Grid uen:Region.Name="One">
-          <TextBlock Text="One" 
-                    FontSize="24" 
-                    HorizontalAlignment="Center" 
+          <TextBlock Text="One"
+                    FontSize="24"
+                    HorizontalAlignment="Center"
                     VerticalAlignment="Center"/>
       </Grid>
       <Grid uen:Region.Name="Two">
@@ -242,14 +242,14 @@ Sometimes your application may need to switch between multiple views without the
 * Finally, set the `Visibility` of the regions to `Collapsed` by default:
 
   ```xml
-  <Grid Grid.Row="2" 
+  <Grid Grid.Row="2"
         uen:Region.Attached="True"
         uen:Region.Navigator="Visibility">
       <Grid uen:Region.Name="One"
             Visibility="Collapsed">
-          <TextBlock Text="One" 
-                     FontSize="24" 
-                     HorizontalAlignment="Center" 
+          <TextBlock Text="One"
+                     FontSize="24"
+                     HorizontalAlignment="Center"
                      VerticalAlignment="Center"/>
       </Grid>
       <Grid uen:Region.Name="Two"
@@ -268,7 +268,7 @@ Sometimes your application may need to switch between multiple views without the
       </Grid>
   </Grid>
   ```
- 
+
 * By establishing sectors of `Page` content as regions and setting a few attached properties, you have written a UI layout capable of navigating to views with `Panel`. Your completed `MainPage.xaml` should look like the code example below.
 
 #### Code example
@@ -292,8 +292,8 @@ Sometimes your application may need to switch between multiple views without the
             <RowDefinition />
         </Grid.RowDefinitions>
 
-        <StackPanel Grid.Row="1" 
-                    HorizontalAlignment="Center" 
+        <StackPanel Grid.Row="1"
+                    HorizontalAlignment="Center"
                     Orientation="Horizontal">
             <Button Content="One"
                     uen:Navigation.Request="./One" />
@@ -303,14 +303,14 @@ Sometimes your application may need to switch between multiple views without the
                     uen:Navigation.Request="./Three" />
         </StackPanel>
 
-        <Grid uen:Region.Attached="True" 
-              uen:Region.Navigator="Visibility" 
+        <Grid uen:Region.Attached="True"
+              uen:Region.Navigator="Visibility"
               Grid.Row="2">
             <Grid uen:Region.Name="One"
                   Visibility="Collapsed">
-                <TextBlock Text="One" 
-                           FontSize="24" 
-                           HorizontalAlignment="Center" 
+                <TextBlock Text="One"
+                           FontSize="24"
+                           HorizontalAlignment="Center"
                            VerticalAlignment="Center"/>
             </Grid>
             <Grid uen:Region.Name="Two"

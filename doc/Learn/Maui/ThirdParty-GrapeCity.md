@@ -3,7 +3,7 @@ uid: Uno.Extensions.Maui.ThirdParty.GrapeCity
 ---
 # .NET MAUI Embedding - GrapeCity ComponentOne .NET MAUI Controls
 
-The FlexGrid and Calendar in the ComponentOne .NET MAUI Controls can be used in an Uno Platform application via .NET MAUI Embedding. 
+The FlexGrid and Calendar in the ComponentOne .NET MAUI Controls can be used in an Uno Platform application via .NET MAUI Embedding.
 
 ## Sample App
 
@@ -17,15 +17,15 @@ In order to use the ComponentOne controls, you first need to install the Compone
 
 1. Create a new application using the `unoapp` template, enabling .NET MAUI Embedding. In this case, we're going to use the Blank template (`-preset blank`) and include .NET MAUI Embedding support (`-maui`).
 
-    ```
+    ```dotnetcli
     dotnet new unoapp -preset blank -maui -o MauiEmbeddingApp
     ```
 
 1. Remove the `net8.0` target framework from both the MauiEmbeddingApp and MauiEmbeddingApp.MauiControls projects.  GrapeCity doesn't provide reference assemblies for `net8.0`, so the `net8.0` target framework needs to be removed to avoid build errors.
 
-1. Next, add a reference to the C1 .NET MAUI NuGet packages to the MauiEmbeddingApp.MauiControls project. If you want to use the FlexGrid control, add a reference to [`C1.Maui.Grid`](https://www.nuget.org/packages/C1.Maui.Grid). If you want to use the Calendar control, add a reference to [`C1.Maui.Calendar`](https://www.nuget.org/packages/C1.Maui.Calendar).  
+1. Next, add a reference to the C1 .NET MAUI NuGet packages to the MauiEmbeddingApp.MauiControls project. If you want to use the FlexGrid control, add a reference to [`C1.Maui.Grid`](https://www.nuget.org/packages/C1.Maui.Grid). If you want to use the Calendar control, add a reference to [`C1.Maui.Calendar`](https://www.nuget.org/packages/C1.Maui.Calendar).
 
-1. In the `AppBuilderExtensions` class, update the `UseMauiControls` extension method to call either, or both, the `RegisterFlexGridControls` or `RegisterCalendarControls` methods.  
+1. In the `AppBuilderExtensions` class, update the `UseMauiControls` extension method to call either, or both, the `RegisterFlexGridControls` or `RegisterCalendarControls` methods.
 
     ```cs
     using C1.Maui.Grid;
@@ -35,7 +35,7 @@ In order to use the ComponentOne controls, you first need to install the Compone
 
     public static class AppBuilderExtensions
     {
-	    public static MauiAppBuilder UseMauiControls(this MauiAppBuilder builder) 
+	    public static MauiAppBuilder UseMauiControls(this MauiAppBuilder builder)
 		    => builder
                 .RegisterFlexGridControls()
                 .RegisterCalendarControls()

@@ -4,11 +4,11 @@ uid: Uno.Extensions.Markup.HowToUseDataTemplates
 
 # How to use Data Templates on Markup
 
-In this tutorial you will learn how to use Data Templates on C# Markup.
+In this tutorial, you will learn how to use Data Templates on C# Markup.
 
 ## Creating the ViewModel
 
-Let's create the ViewModel for this page, it will have a `SearchText` property that will be used to filter the results, and a `SearchResults` property that will be used to display the results on the `ObservableCollection<string>`. 
+Let's create the ViewModel for this page, it will have a `SearchText` property that will be used to filter the results, and a `SearchResults` property that will be used to display the results on the `ObservableCollection<string>`.
 
 > In this sample the CommunityToolkit.MVVM is used.
 

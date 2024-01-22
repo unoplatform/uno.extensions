@@ -24,6 +24,5 @@ Alongside Uno, the app template references a lineup of battle-tested packages pr
 |[Serialization](xref:Uno.Extensions.Serialization.Overview)|The Uno.Extensions.Serialization package provides helpers for JSON serialization.|
 |[Validation](xref:Uno.Extensions.Validation.Overview)|The Uno.Extensions.Validation package provides support for data validation.|
 
-
 > [!TIP]
 > To view more detailed information about the specific APIs leveraged in each topic, expand the Reference section in the navigation pane.

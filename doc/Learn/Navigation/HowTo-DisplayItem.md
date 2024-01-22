@@ -8,7 +8,7 @@ This topic walks through how to use Navigation to display the details of an item
 ## Step-by-steps
 
 > [!IMPORTANT]
-> This guide assumes you used the template wizard or `dotnet new unoapp` to create your solution. If not, it is recommended that you follow the [instructions](xref:Uno.Extensions.HowToGettingStarted) for creating an application from the template.
+> This guide assumes you used the template wizard or `dotnet new unoapp` to create your solution. If not, it is recommended that you follow the [Creating an application with Uno.Extensions article](xref:Uno.Extensions.HowToGettingStarted) for creating an application from the template.
 
 Often it is necessary to pass a data item from one page to another. This scenario will start with passing a newly created object along with the navigation request, and how the specified object can be accessed by the destination ViewModel.
 
@@ -34,7 +34,7 @@ Often it is necessary to pass a data item from one page to another. This scenari
     public async Task GoToSecondPage()
     {
      var widget = new Widget("CrazySpinner", 34.0);
-    
+
      await _navigator.NavigateViewModelAsync<SecondViewModel>(this, data: widget);
     }
     ```
@@ -47,10 +47,10 @@ Often it is necessary to pass a data item from one page to another. This scenari
     public class SecondViewModel
     {
         public string Name { get; }
-        
+
         public SecondViewModel(Widget widget)
         {
-            Name = widget.Name; 
+            Name = widget.Name;
         }
     }
     ```
@@ -117,9 +117,9 @@ If you have a `ListView` that has items of different types, the navigation route
 
     ```csharp
     public record Widget(string Name, double Weight);
-    
+
     public record BasicWidget(string Name, double Weight) : Widget(Name, Weight);
-    
+
     public record AdvancedWidget(string Name, double Weight) : Widget(Name, Weight);
     ```
 
@@ -141,20 +141,20 @@ If you have a `ListView` that has items of different types, the navigation route
     public class SecondViewModel
     {
         public string Name { get; }
-        
+
         public SecondViewModel(BasicWidget widget)
         {
-            Name = widget.Name; 
+            Name = widget.Name;
         }
     }
-    
+
     public class ThirdViewModel
     {
         public string Name { get; }
-        
+
         public ThirdViewModel(AdvancedWidget widget)
         {
-            Name = widget.Name; 
+            Name = widget.Name;
         }
     }
     ```
@@ -170,7 +170,7 @@ If you have a `ListView` that has items of different types, the navigation route
             new ViewMap<SecondPage, SecondViewModel>(Data: new DataMap<BasicWidget>()),
             new ViewMap<ThirdPage, ThirdViewModel>(Data: new DataMap<AdvancedWidget>())
             );
-    
+
         routes
             .Register(
                 new RouteMap("", View: views.FindByViewModel<ShellViewModel>(),

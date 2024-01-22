@@ -4,6 +4,7 @@ uid: Uno.Extensions.Reactive.Rules
 # Feeds code analyzers
 
 ## Feed2001
+
 **Unable to resolve the feed that is configured to be used as command parameter.**
 
 You have a public method that should be converted into an `ICommand` with a parameter marked with the attribute `[FeedParameter("<property_name>")]`,
@@ -16,6 +17,7 @@ You have to ensure that the provided _property_name_ matches the name of a prope
 > This ensure better discoverability and increase maintenability as refactoring tools will automatically update the name.
 
 ## Feed2002
+
 **The property configured to be used as command parameter is not a Feed of the right type.**
 
 You have a public method that should be converted into an `ICommand` with a parameter of type `T` marked with the attribute `[FeedParameter("<property_name>")]`,

@@ -18,7 +18,7 @@ Using **cookies** is a common way to store tokens that are needed to authenticat
     protected override void OnLaunched(LaunchActivatedEventArgs args)
     {
         var builder = this.CreateBuilder(args)
-            .Configure(host => 
+            .Configure(host =>
             {
                 host.UseAuthentication(auth =>
                     auth.AddCustom(custom =>
@@ -26,12 +26,13 @@ Using **cookies** is a common way to store tokens that are needed to authenticat
                             async (sp, dispatcher, tokenCache, credentials, cancellationToken) =>
                             {
                                 var isValid = credentials.TryGetValue("Username", out var username) && username == "Bob";
-                                return isValid ? 
+                                return isValid ?
                                 credentials : default;
                             })
                 ));
             });
-    ...
+        ...
+    }
     ```
 
 - Modify the app to add the `Cookies()` extension method. Since the default HTTP request handler used does _not_ read tokens from cookies, this method will configure the `IAuthenticationBuilder` by registering a special handler that will parse the response for tokens and store them in a cookie. It will apply them to future requests.
@@ -40,7 +41,7 @@ Using **cookies** is a common way to store tokens that are needed to authenticat
     protected override void OnLaunched(LaunchActivatedEventArgs args)
     {
         var builder = this.CreateBuilder(args)
-            .Configure(host => 
+            .Configure(host =>
             {
                 host.UseAuthentication(auth =>
                     auth.AddCustom(custom =>
@@ -48,17 +49,18 @@ Using **cookies** is a common way to store tokens that are needed to authenticat
                             async (sp, dispatcher, tokenCache, credentials, cancellationToken) =>
                             {
                                 var isValid = credentials.TryGetValue("Username", out var username) && username == "Bob";
-                                return isValid ? 
+                                return isValid ?
                                 credentials : default;
                             })
-                ), 
+                ),
                 configureAuthorization: builder =>
                 {
                     builder
                         .Cookies(/* options */);
                 });
             });
-    ...
+        ...
+    }
     ```
 
 ### 2. Configure cookie options
@@ -70,7 +72,8 @@ Using **cookies** is a common way to store tokens that are needed to authenticat
     {
         builder
             .Cookies("AccessToken", "RefreshToken");
-    ...
+        ...
+    }
     ```
 
 - Specifying a value for the latter is optional.

@@ -4,6 +4,7 @@ uid: Uno.Extensions.Reactive.General
 # General guidelines
 
 ## API
+
 The main API provided by this package is [`IFeed<T>`](https://github.com/unoplatform/uno.extensions/blob/main/src/Uno.Extensions.Reactive/Core/IFeed.cs) which represents a stream of _data_.
 
 Unlike `IObservable<T>` or `IAsyncEnumerable<T>`, _feed_ streams are specialized to handle business data objects which are expected to be rendered by the UI.

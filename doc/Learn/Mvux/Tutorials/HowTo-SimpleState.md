@@ -4,7 +4,7 @@ uid: Uno.Extensions.Mvux.HowToSimpleState
 
 # How to create a state with a command
 
-In this tutorial you will learn how to create an MVUX project and basic usage of a state (`IState<T>`) and the `FeedView` control, to asynchronously load, display and manipulate data from and to an service.
+In this tutorial, you will learn how to create an MVUX project and basic usage of a state (`IState<T>`) and the `FeedView` control, to asynchronously load, display and manipulate data from and to an service.
 
  - The data is provided by a service that asynchronously retrieves and updates a single value that determines the crowdedness of a wedding hall, via a 'remote' service.
  - A State to asynchronously request and update the data from and to the service.
@@ -35,7 +35,7 @@ You can find the code for our weather app here: https://github.com/unoplatform/U
     public class HallCrowdednessService : IHallCrowdednessService
     {
         // a service is normally stateless
-        // the local field is for the purpose of this demo 
+        // the local field is for the purpose of this demo
         private int _numberOfPeopleInHall = 5;
 
         public async ValueTask<HallCrowdedness> GetHallCrowdedness(CancellationToken ct)
@@ -66,7 +66,7 @@ You can find the code for our weather app here: https://github.com/unoplatform/U
     namespace TheFancyWeddingHall;
 
     public partial record HallCrowdednessModel(IHallCrowdednessService HallCrowdednessService)
-    {   
+    {
         public IState<HallCrowdedness> HallCrowdedness => State.Async(this, HallCrowdednessService.GetHallCrowdedness);
 
         public async ValueTask Save(CancellationToken ct)
@@ -82,24 +82,24 @@ You can find the code for our weather app here: https://github.com/unoplatform/U
         }
     }
     ```
-    
-    > [!NOTE]  
-    > Feeds and States (`IState<T>` and `IListState<T>` for collections) are both used as a gateway to asynchronously request data from a service and wrap the result or error (if any) in metadata to be displayed in the View in accordingly.  
-    However, unlike a Feed, a State, as its name suggests, is stateful.  
-    While a Feed is just a query of a stream of data, a State also implies an up-to-date value that represents the current state of the application that can be accessed and updated.    
 
-    > [!TIP]  
-    > Unlike feeds, States require a reference to the owner type which is used to store and manage the state of the model.  
+    > [!NOTE]
+    > Feeds and States (`IState<T>` and `IListState<T>` for collections) are both used as a gateway to asynchronously request data from a service and wrap the result or error (if any) in metadata to be displayed in the View in accordingly.
+    However, unlike a Feed, a State, as its name suggests, is stateful.
+    While a Feed is just a query of a stream of data, a State also implies an up-to-date value that represents the current state of the application that can be accessed and updated.
+
+    > [!TIP]
+    > Unlike feeds, States require a reference to the owner type which is used to store and manage the state of the model.
     In addition, by having a reference to the owner, we link the lifetime of the model with its owner, and the State is ready to be collected by the Garbage Collector as soon as its owner is disposed.
 
 ## Data bind the View
 
-The `HallCrowdedness` property in `HallCrowdednessModel`, is an `IState` of type `HallCrowdedness`.  
-This is similar in concept to an `IObservable<HallCrowdedness>`, where an `IState<HallCrowdedness>` represents a sequence of values, with access to the additional metadata.  
+The `HallCrowdedness` property in `HallCrowdednessModel`, is an `IState` of type `HallCrowdedness`.
+This is similar in concept to an `IObservable<HallCrowdedness>`, where an `IState<HallCrowdedness>` represents a sequence of values, with access to the additional metadata.
 The difference of States is that they provide update operators and enable manipulating the data, as opposed to Feeds, which doesn't.
 
 > [!TIP]
-> An `IFeed<T>` as well as `IState<T>` are awaitable, meaning that to get the value of the feed you would do the following in the model:  
+> An `IFeed<T>` as well as `IState<T>` are awaitable, meaning that to get the value of the feed you would do the following in the model:
 >
 > ```csharp
 > HallCrowdedness hallCrowdedness = await this.HallCrowdedness;
@@ -110,7 +110,7 @@ The difference of States is that they provide update operators and enable manipu
     ```xml
     <StackPanel>
         <TextBlock Text="How many people are currently in the hall?" />
-        <TextBox 
+        <TextBox
             DataContext="{Binding HallCrowdedness}"
             Text="{Binding NumberOfPeopleInHall, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
@@ -126,7 +126,7 @@ When the user edits the text in the `TextBox`, MVUXs data-binding adapters trans
     ![A screenshot of a breakpoint added in Visual Studio](../Assets/SimpleState-2.jpg)
 
     MVUX's analyzers will read the `HallCrowdednessModel` and will generate a special bindable proxy called `BindableHallCrowdednessModel`, which provides binding capabilities for the View and performs all Update message for us, to keep the `IState` up to date.
-        
+
     In addition, MVUX reads the `Save` method, and generates in the bindable Model a command named `Save` that can be used from the View, which is invoked asynchronously.
 
 1. In the XAML file, after the `TextBox`, add the following `Button` code:
@@ -149,19 +149,19 @@ When the user edits the text in the `TextBox`, MVUXs data-binding adapters trans
     this.DataContext = new BindableHallCrowdednessModel(new HallCrowdednessService());
     ```
 
-    The `BindableHallCrowdednessModel` is a special MVUX-generated bindable proxy class that represents a mirror of the `HallCrowdednessModel` adding binding capabilities, for MVUX to be able to recreate and renew the model when an update message is sent by the view.  
+    The `BindableHallCrowdednessModel` is a special MVUX-generated bindable proxy class that represents a mirror of the `HallCrowdednessModel` adding binding capabilities, for MVUX to be able to recreate and renew the model when an update message is sent by the view.
 
 1. Click <kbd>F5</kbd> to run the project
 
 1. The app will load with its default value '5' as the number of people.
-    
+
     ![A screenshot of the app running with the number 5](../Assets/SimpleState-1.jpg)
 
 1. Change the number to 15 and click 'Save'.
 
     The debugger will stop at the breakpoint you placed earlier. <!--(See step No. x)-->
-    
+
     ![A screenshot showing Visual Studio stopped at the breakpoint](../Assets/SimpleState-3.jpg)
-    
+
     As you can see, the current value of the state has gotten the updated number '*15*'. This is now being saved to the service, in the following line execution once you hit <kbd>F5</kbd> again.
 

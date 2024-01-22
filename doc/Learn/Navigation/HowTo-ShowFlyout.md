@@ -8,7 +8,7 @@ This topic walks through using Navigation to display a modal flyout
 ## Step-by-steps
 
 > [!IMPORTANT]
-> This guide assumes you used the template wizard or `dotnet new unoapp` to create your solution. If not, it is recommended that you follow the [instructions](xref:Uno.Extensions.HowToGettingStarted) for creating an application from the template.
+> This guide assumes you used the template wizard or `dotnet new unoapp` to create your solution. If not, it is recommended that you follow the [Creating an application with Uno.Extensions article](xref:Uno.Extensions.HowToGettingStarted) for creating an application from the template.
 
 ### 1. Displaying flyout from code
 
@@ -23,7 +23,7 @@ This topic walks through using Navigation to display a modal flyout
           xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
           mc:Ignorable="d"
           Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-    
+
         <Grid>
             <TextBlock Text="Flyout content"
                        FontSize="32"
@@ -33,11 +33,11 @@ This topic walks through using Navigation to display a modal flyout
     </Page>
     ```
 
-- Update the `Button` in `MainPage.xaml` as follows, which wires up the `Click` event to the `ShowFlyoutClick` method  
+- Update the `Button` in `MainPage.xaml` as follows, which wires up the `Click` event to the `ShowFlyoutClick` method
 
     ```xml
     <Button Content="Show flyout"
-            Click="ShowFlyoutClick" 
+            Click="ShowFlyoutClick"
             Grid.Row="1"
             HorizontalAlignment="Center"
             VerticalAlignment="Center"/>
@@ -54,7 +54,7 @@ This topic walks through using Navigation to display a modal flyout
 
 ### 2. Displaying flyout from XAML
 
-- Add another `Button` with the content `Show flyout from XAML` to `MainPage.xaml`. Set the `Navigation.Request` property to `!Sample` which indicates the `Sample` route should be opened as a Flyout.  
+- Add another `Button` with the content `Show flyout from XAML` to `MainPage.xaml`. Set the `Navigation.Request` property to `!Sample` which indicates the `Sample` route should be opened as a Flyout.
 
     ```xml
     <StackPanel Grid.Row="1"
