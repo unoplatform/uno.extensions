@@ -232,6 +232,16 @@ public class RouteResolver : IRouteResolver
 		return BestNavigatorRouteInfo(maps, navigator);
 	}
 
+	/// <inheritdoc />
+	public void InsertRoute(RouteInfo route)
+	{
+		var path = route.Path;
+		if (Mappings.FirstOrDefault(x => x.Path == path) is not { })
+		{
+			Mappings.Add(route);
+		}
+	}
+
 	private RouteInfo[] FindRouteByType(Type? typeToFind, Func<RouteInfo, Type?> mapType)
 	{
 		return FindByInheritedTypes(Mappings, typeToFind, mapType);
