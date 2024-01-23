@@ -16,11 +16,12 @@ It uses [Microsoft.Extensions.Localization](https://www.nuget.org/packages/Micro
 protected override void OnLaunched(LaunchActivatedEventArgs e)
 {
     var appBuilder = this.CreateBuilder(args)
-        .Configure(host => 
+        .Configure(host =>
         {
             host.UseLocalization()
         });
-...
+    ...
+}
 ```
 
 An implementation of `IStringLocalizer` (`ResourceLoaderStringLocalizer`) will be registered as a service. This service offers a consistent way to resolve localized strings. Behind the scenes, it will automatically use `ResourceManager` on Windows and `ResourceLoader` on other platforms.
@@ -84,8 +85,7 @@ var isResourceNotFound = myString.ResourceNotFound;
 
 ## UI Culture
 
-Current culture or locale can be changed using `ILocalizationService`. This action requires an app restart. 
-
+Current culture or locale can be changed using `ILocalizationService`. This action requires an app restart.
 
 ```csharp
 public class MainViewModel
@@ -95,8 +95,8 @@ public class MainViewModel
     public MainViewModel(ILocalizationService localizationService)
     {
         this.localizationService = localizationService;
-    } 
-    
+    }
+
     public Task ToggleLocalizationAsync()
     {
         var currentCulture = localizationService.CurrentCulture;

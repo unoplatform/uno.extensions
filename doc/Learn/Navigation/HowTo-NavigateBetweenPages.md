@@ -8,12 +8,12 @@ This topic covers using Navigation to navigate between two pages using frame-bas
 ## Step-by-steps
 
 > [!IMPORTANT]
-> This guide assumes you used the template wizard or `dotnet new unoapp` to create your solution. If not, it is recommended that you follow the [instructions](xref:Uno.Extensions.HowToGettingStarted) for creating an application from the template.
+> This guide assumes you used the template wizard or `dotnet new unoapp` to create your solution. If not, it is recommended that you follow the [Creating an application with Uno.Extensions article](xref:Uno.Extensions.HowToGettingStarted) for creating an application from the template.
 
 ### 1. Navigating to a New Page
 
 - Add a new `Page` to navigate to, `SamplePage.xaml`, in the UI (shared) project
-- In `MainPage.xaml` replace the existing `Button` with the following XAML, which includes a handler for the Click event  
+- In `MainPage.xaml` replace the existing `Button` with the following XAML, which includes a handler for the Click event
 
     ```xml
     <Button Content="Go to SamplePage"
@@ -49,7 +49,7 @@ This topic covers using Navigation to navigate between two pages using frame-bas
 
 ### 3. Defining ViewMap and RouteMap
 
-At this point, if you inspect the Output window you'll see a line that says something similar to:  
+At this point, if you inspect the Output window you'll see a line that says something similar to:
 `For better performance (avoid reflection), create mapping for for path 'Sample', view 'SamplePage', view model`
 This warning exists because Navigation uses reflection as a fallback mechanism to associate types and the corresponding navigation route. This can be resolved by specifying a `ViewMap` and a `RouteMap` for the `SamplePage` to eliminate the need for reflection
 
@@ -64,7 +64,7 @@ This warning exists because Navigation uses reflection as a fallback mechanism t
             new ViewMap<SecondPage, SecondViewModel>(),
             new ViewMap<SamplePage>()
             );
-    
+
         routes.Register(
             new RouteMap("", View: views.FindByViewModel<ShellViewModel>() ,
                     Nested: new RouteMap[] {
@@ -115,7 +115,7 @@ The Navigation code can be moved from the `SamplePage.cs` code-behind file to th
     {
         _navigator = navigator;
     }
-    
+
     public Task GoBack()
     {
         return _navigator.NavigateBackAsync(this);
@@ -126,7 +126,7 @@ The Navigation code can be moved from the `SamplePage.cs` code-behind file to th
 
     ```csharp
     public SampleViewModel? ViewModel  => DataContext as SampleViewModel;
-    
+
     public SamplePage()
     {
         this.InitializeComponent();

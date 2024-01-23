@@ -3,12 +3,11 @@ uid: Reference.Navigation.RouteMap
 ---
 # What is a RouteMap
 
-
 ## RouteMap
 
 In order for navigation to support both view and viewmodel based navigation it is necessary to have some way to define a mapping, or association, between a view and viewmodel (for example MainPage is mapped to MainViewModel, and vice versa).  However, given the different intents and behaviours we needed to support, navigation supports a more complex mapping that is referred to as a RouteMap.
 
-A RouteMap is made up of the following components:  
+A RouteMap is made up of the following components:
 
 | Component  | Description                                                                                                                      |
 |------------|----------------------------------------------------------------------------------------------------------------------------------|
@@ -22,7 +21,5 @@ A RouteMap is made up of the following components:
 | ToQuery    | Callback function to convert a data object into query parameters (eg Product -> [{"ProductId", "1234"}] )                        |
 | FromQuery  | Callback function to convert query parameters into a data object (eg [{"ProductId", "1234"}] -> Product )                        |
 | Nested     | Child routes - currently only used to specify default views for nested regions                                                   |
-
-
 
 - Explain what a RouteMap is and how it's used to define the route hierarchy in the app

@@ -8,7 +8,7 @@ uid: Uno.Extensions.Localization.HowToUseLocalization
 ## Step-by-steps
 
 > [!IMPORTANT]
-> This guide assumes you used the template wizard or `dotnet new unoapp` to create your solution. If not, it is recommended that you follow the [instructions](xref:Uno.Extensions.HowToGettingStarted) for creating an application from the template.
+> This guide assumes you used the template wizard or `dotnet new unoapp` to create your solution. If not, it is recommended that you follow the [Creating an application with Uno.Extensions article](xref:Uno.Extensions.HowToGettingStarted) for creating an application from the template.
 
 ### 1. Opt into localization
 
@@ -20,11 +20,12 @@ uid: Uno.Extensions.Localization.HowToUseLocalization
     protected override void OnLaunched(LaunchActivatedEventArgs args)
     {
         var appBuilder = this.CreateBuilder(args)
-            .Configure(hostBuilder => 
+            .Configure(hostBuilder =>
             {
                 hostBuilder.UseLocalization();
             });
-    ...
+        ...
+    }
     ```
 
 ### 2. Use the localization service to resolve localized text
@@ -71,11 +72,12 @@ uid: Uno.Extensions.Localization.HowToUseLocalization
     ```
 
 * Toggle the UI culture using the injected service:
+
     ```cs
     public async Task ToggleLocalization()
     {
         var currentCulture = localizationService.CurrentCulture;
-        
+
         var culture = localizationService.SupportedCultures.First(culture => culture.Name != currentCulture.Name);
         await localizationService.SetCurrentCultureAsync(culture);
     }

@@ -10,8 +10,6 @@ It's often necessary to include an API key alongside requests to a web API. This
 
 * An [environment](xref:Uno.GetStarted) set up for developing Uno Platform applications
 
-* The solution was created using the template wizard or `dotnet new unoapp`. See [Overview](xref:Uno.Extensions.HowToGettingStarted)
-
 * Basic conceptual understanding of accessing web resources using HTTP requests
 
 * Knowledge of how to [register an endpoint for HTTP requests](xref:Uno.Extensions.Http.HowToHttp)
@@ -19,7 +17,7 @@ It's often necessary to include an API key alongside requests to a web API. This
 ## Step-by-steps
 
 > [!IMPORTANT]
-> This guide assumes you used the template wizard or `dotnet new unoapp` to create your solution. If not, it is recommended that you follow the [instructions](xref:Uno.Extensions.HowToGettingStarted) for creating an application from the template.
+> This guide assumes you used the template wizard or `dotnet new unoapp` to create your solution. If not, it is recommended that you follow the [Creating an application with Uno.Extensions article](xref:Uno.Extensions.HowToGettingStarted) for creating an application from the template.
 
 ### 1. Preparing for custom endpoint options
 
@@ -32,11 +30,11 @@ It's often necessary to include an API key alongside requests to a web API. This
     }
     ```
 
-    * In this example, we intend to add an access token to the request header. The `ApiKey` property will be used to store the token.
+* In this example, we intend to add an access token to the request header. The `ApiKey` property will be used to store the token.
 
-    * The `EndpointOptions` class is a base class that provides a `Url` property. This property is used to specify the URL of the endpoint.
+* The `EndpointOptions` class is a base class that provides a `Url` property. This property is used to specify the URL of the endpoint.
 
-    * Subclassing `EndpointOptions` will allow you to configure the `HttpClient` associated with the endpoint — all from a single configuration section.
+* Subclassing `EndpointOptions` will allow you to configure the `HttpClient` associated with the endpoint — all from a single configuration section.
 
 ### 2. Defining the endpoint
 
@@ -50,10 +48,11 @@ It's often necessary to include an API key alongside requests to a web API. This
             {
                 hostBuilder.UseHttp();
             });
-    ...
+        ...
+    }
     ```
 
-* The `UseHttp()` extension method accepts a callback for configuring the HTTP services as its argument. We will use this callback to register endpoints with the service collection. 
+* The `UseHttp()` extension method accepts a callback for configuring the HTTP services as its argument. We will use this callback to register endpoints with the service collection.
 
     ```csharp
     protected override void OnLaunched(LaunchActivatedEventArgs args)
@@ -65,7 +64,8 @@ It's often necessary to include an API key alongside requests to a web API. This
                     // Register endpoints here
                 });
             });
-    ...
+        ...
+    }
     ```
 
     * `ctx` represents the `HostBuilderContext`. This can be used to access the configuration of the host.
@@ -86,7 +86,8 @@ It's often necessary to include an API key alongside requests to a web API. This
                         services.AddClientWithEndpoint<HttpEndpointsOneViewModel, CustomEndpointOptions>();
                     });
                 });
-        ...
+            ...
+        }
         ```
 
     * Type parameter `TInterface` is the service or view model interface that will be used to access the endpoint.
@@ -107,9 +108,9 @@ It's often necessary to include an API key alongside requests to a web API. This
                         services.AddClientWithEndpoint<HttpEndpointsOneViewModel, CustomEndpointOptions>(
                             ctx,
                             name: "HttpDummyJsonEndpoint",
-                            configure: (builder, options) => 
+                            configure: (builder, options) =>
                             {
-                                builder.ConfigureHttpClient(client => 
+                                builder.ConfigureHttpClient(client =>
                                 {
                                     // Configure the HttpClient here
                                 });
@@ -117,12 +118,13 @@ It's often necessary to include an API key alongside requests to a web API. This
                         );
                     });
                 });
-        ...
-        ``` 
+            ...
+        }
+        ```
 
     * We assigned the endpoint a name of `HttpDummyJsonEndpoint`. This name corresponds to a configuration section in the `appsettings.json` file. We will add this section in the next section.
 
-    * The `configure` callback is used to configure the `HttpClient` associated with the endpoint. 
+    * The `configure` callback is used to configure the `HttpClient` associated with the endpoint.
 
         > [!TIP]
         > This callback is optional. If you do not need to configure the `HttpClient`, you can omit this callback.
@@ -141,9 +143,9 @@ It's often necessary to include an API key alongside requests to a web API. This
                             services.AddClientWithEndpoint<HttpEndpointsOneViewModel, CustomEndpointOptions>(
                                 ctx,
                                 name: "HttpDummyJsonEndpoint",
-                                configure: (builder, options) => 
+                                configure: (builder, options) =>
                                 {
-                                    builder.ConfigureHttpClient(client => 
+                                    builder.ConfigureHttpClient(client =>
                                     {
                                         if (options?.ApiKey is not null)
                                         {
@@ -154,8 +156,9 @@ It's often necessary to include an API key alongside requests to a web API. This
                             );
                         });
                     });
-            ...
-            ``` 
+                ...
+            }
+            ```
 
             * The `ApiKey` header is added to the `HttpClient` using the `DefaultRequestHeaders` property.
 
@@ -207,6 +210,7 @@ It's often necessary to include an API key alongside requests to a web API. This
         }
     }
     ```
+
     * The `HttpClient` instance is injected into the view model. This instance is configured with the options we specified in the previous sections.
 
 * All the details of `IHttpClientFactory` are abstracted away from the view model. The view model can simply use this `HttpClient` instance to make requests to the endpoint. The instance can have a managed lifecycle, while a significant amount of ceremony and unintuitive workarounds are avoided.

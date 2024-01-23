@@ -8,7 +8,7 @@ This topic walks through controlling Navigation from XAML. This includes specify
 ## Step-by-steps
 
 > [!IMPORTANT]
-> This guide assumes you used the template wizard or `dotnet new unoapp` to create your solution. If not, it is recommended that you follow the [instructions](xref:Uno.Extensions.HowToGettingStarted) for creating an application from the template.
+> This guide assumes you used the template wizard or `dotnet new unoapp` to create your solution. If not, it is recommended that you follow the [Creating an application with Uno.Extensions article](xref:Uno.Extensions.HowToGettingStarted) for creating an application from the template.
 
 ### 1. Navigation.Request
 
@@ -26,7 +26,7 @@ Depending on the type of the XAML element, the `Navigation.Request` property wil
         {
             _navigator = navigator;
         }
-    
+
         private readonly INavigator _navigator;
     }
     ```
@@ -42,7 +42,7 @@ Depending on the type of the XAML element, the `Navigation.Request` property wil
 > As Navigation.Request attached property exists in the `Uno.Extensions.Navigation.UI` namespace you will need to import this namespace on the `Page` element with
 
 ```csharp
-<Page x:Class="NavigateInXAML.Views.SamplePage" 
+<Page x:Class="NavigateInXAML.Views.SamplePage"
     ...
     xmlns:uen="using:Uno.Extensions.Navigation.UI">
 ```
@@ -68,7 +68,7 @@ Depending on the type of the XAML element, the `Navigation.Request` property wil
             new ViewMap<SecondPage, SecondViewModel>(),
             new ViewMap<SamplePage, SampleViewModel>()
         );
-        
+
         routes.Register(
             new RouteMap("", View: views.FindByViewModel<ShellViewModel>() ,
                 Nested: new RouteMap[]
@@ -82,7 +82,7 @@ Depending on the type of the XAML element, the `Navigation.Request` property wil
 
 ### 2. Navigation.Data
 
-In addition to specifying the route to navigate to, the Navigation.Data attached property can be used to define the data to be attached to the navigation request. The data can be accessed by the view model associated with the route using constructor injection.  
+In addition to specifying the route to navigate to, the Navigation.Data attached property can be used to define the data to be attached to the navigation request. The data can be accessed by the view model associated with the route using constructor injection.
 
 - Define a record (or class), `Widget`, that is the type of data that will be attached to the navigation request.
 
@@ -126,7 +126,7 @@ In addition to specifying the route to navigate to, the Navigation.Data attached
 
     ```xml
     <Button Content="Go to Sample Page"
-            uen:Navigation.Request="Sample" 
+            uen:Navigation.Request="Sample"
             uen:Navigation.Data="{Binding SelectedItem, ElementName=WidgetsList}"/>
     ```
 
@@ -138,13 +138,13 @@ In addition to specifying the route to navigate to, the Navigation.Data attached
         public string Title => "Sample Page";
 
         public string Name { get; }
-    
+
         public SampleViewModel(Widget widget)
         {
             Name = widget.Name;
         }
     }
-    
+
     ```
 
 - Add a `TextBlock` to `SecondPage.xaml` that shows the name of the `Widget` supplied during navigation.

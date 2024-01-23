@@ -28,5 +28,5 @@ public async Task When_ProviderReturnsValueSync_Then_GetSome()
 
 You define each axis (`Data` / `Error` / `Progress`) in the `Message` you want to validate. You can also define which axes are expected to have changed (`Changed`).
 
-> Note: When developing a new _feed_, we recommend that you systematically validate all axes.
-
+> [!NOTE]
+> When developing a new _feed_, we recommend that you systematically validate all axes.

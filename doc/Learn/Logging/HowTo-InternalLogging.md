@@ -6,11 +6,11 @@ uid: Uno.Extensions.Logging.UseInternalLogging
 `Uno.Extensions.Logging` provides logging capabilities tailored to your target platform. It allows the recording of events for XAML layout, Uno-internal messages, and custom events with severity and verbosity levels of your choice.
 
 > [!NOTE]
-> When adding logging support to an application, add the [Uno.Extensions.Logging.WinUI](https://www.nuget.org/packages/Uno.Extensions.Logging.WinUI) NuGet package (instead of `Uno.Extensions.Logging`) which includes platform specific loggers. 
+> When adding logging support to an application, add the [Uno.Extensions.Logging.WinUI](https://www.nuget.org/packages/Uno.Extensions.Logging.WinUI) NuGet package (instead of `Uno.Extensions.Logging`) which includes platform specific loggers.
 
 ## Step-by-steps
 
-> [!IMPORTANT] 
+> [!IMPORTANT]
 > This guide assumes your application has already opted into logging. To find out how to do this, refer to the tutorial [here](xref:Uno.Extensions.Logging.UseLogging)
 
 ### 1. Enable Uno internal logging
@@ -76,7 +76,7 @@ uid: Uno.Extensions.Logging.UseInternalLogging
 
 #### Setting the XAML Log Level
 
-* Filter out messages recorded for specific XAML types by setting the **XAML log level**. 
+* Filter out messages recorded for specific XAML types by setting the **XAML log level**.
 
 * To adjust the verbosity of logged events raised by a set of XAML-related types, you should call the `XamlLogLevel()` extension method on the `ILoggingBuilder` instance. The following example shows how to set the XAML log level to `Information`:
 
@@ -95,7 +95,7 @@ uid: Uno.Extensions.Logging.UseInternalLogging
 
 #### Setting the Layout Log Level
 
-* The **layout log level** can be used to filter messages recorded from a set of layout-related types. 
+* The **layout log level** can be used to filter messages recorded from a set of layout-related types.
 
 * To set this up, call the `XamlLayoutLogLevel()` extension method on the `ILoggingBuilder` instance. The following example shows how to set the XAML layout log level to `Information`:
 
@@ -109,7 +109,8 @@ uid: Uno.Extensions.Logging.UseInternalLogging
                         builder.XamlLayoutLogLevel(LogLevel.Information);
                     });
             });
-    ...
+        ...
+    }
     ```
 
 ### 4. Testing the logging configuration

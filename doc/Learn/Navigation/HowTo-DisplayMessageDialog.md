@@ -8,7 +8,7 @@ This topic walks through using Navigation to display a prompt using a `MessageDi
 ## Step-by-steps
 
 > [!IMPORTANT]
-> This guide assumes you used the template wizard or `dotnet new unoapp` to create your solution. If not, it is recommended that you follow the [instructions](xref:Uno.Extensions.HowToGettingStarted) for creating an application from the template.
+> This guide assumes you used the template wizard or `dotnet new unoapp` to create your solution. If not, it is recommended that you follow the [Creating an application with Uno.Extensions article](xref:Uno.Extensions.HowToGettingStarted) for creating an application from the template.
 
 ### 1. Show an ad-hoc `MessageDialog`
 
@@ -60,7 +60,7 @@ This topic walks through using Navigation to display a prompt using a `MessageDi
        new DialogAction("Cancel")
             });
     }
-    ```  
+    ```
 
     The `result` variable will be set to the label of the selected button.
 
@@ -84,15 +84,15 @@ If you want to use the same `MessageDialog` in different places in your applicat
                 new DialogAction(Label:"No")
             }
         );
-    
-    
+
+
      views.Register(
       new ViewMap<ShellControl,ShellViewModel>(),
       new ViewMap<MainPage, MainViewModel>(),
       new ViewMap<SecondPage, SecondViewModel>(),
             messageDialog
       );
-    
+
      routes
       .Register(
        new RouteMap("", View: views.FindByViewModel<ShellViewModel>() ,
@@ -105,7 +105,7 @@ If you want to use the same `MessageDialog` in different places in your applicat
     }
     ```
 
-- In `MainViewModel` change the `ShowMessageDialogAsync` method to specify the `route` argument, which should be the route specified in the the `RouteMap`
+- In `MainViewModel` change the `ShowMessageDialogAsync` method to specify the `route` argument, which should be the route specified in the `RouteMap`
 
     ```csharp
     var result = await _navigator.ShowMessageDialogAsync<string>(this, route: "MyMessage");
@@ -133,13 +133,13 @@ If you want to use the same `MessageDialog` in different places in your applicat
 
     ```csharp
     private static IHost BuildAppHost()
-    { 
+    {
      return UnoHost
        .CreateDefaultBuilder()
        // ... omitted for brevity
        .UseLocalization()
        .Build(enableUnoLogging: true);
-    
+
     }
     ```
 

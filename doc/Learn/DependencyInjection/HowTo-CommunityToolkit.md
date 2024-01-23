@@ -4,17 +4,17 @@ uid: Uno.Extensions.DependencyInjection.HowToCommunityToolkit
 
 # How-To: Manually Resolving Dependencies with CommunityToolkit.Mvvm
 
-While making gradual changes to an existing app's codebase, you may find it necessary to access the DI container to manually resolve dependencies. For instance, if you are overhauling a view model to separate its logic into services, you may need to resolve the service without using constructor injection. The [CommunityToolkit.Mvvm](https://www.nuget.org/packages/CommunityToolkit.Mvvm) package provides a static `Ioc.Default` property that exposes the DI container used by the application. 
+While making gradual changes to an existing app's codebase, you may find it necessary to access the DI container to manually resolve dependencies. For instance, if you are overhauling a view model to separate its logic into services, you may need to resolve the service without using constructor injection. The [CommunityToolkit.Mvvm](https://www.nuget.org/packages/CommunityToolkit.Mvvm) package provides a static `Ioc.Default` property that exposes the DI container used by the application.
 
 This tutorial will walk you through how to set up this feature and use it to manually resolve dependencies.
 
 > [!WARNING]
-> This approach to resolving dependencies is _not_ recommended, and should serve primarily as a stopgap measure while you refactor your codebase to use constructor injection. 
+> This approach to resolving dependencies is _not_ recommended, and should serve primarily as a stopgap measure while you refactor your codebase to use constructor injection.
 
 ## Step-by-steps
 
 > [!IMPORTANT]
-> This guide assumes you used the template wizard or `dotnet new unoapp` to create your solution. If not, it is recommended that you follow the [instructions](xref:Uno.Extensions.HowToGettingStarted) for creating an application from the template.
+> This guide assumes you used the template wizard or `dotnet new unoapp` to create your solution. If not, it is recommended that you follow the [Creating an application with Uno.Extensions article](xref:Uno.Extensions.HowToGettingStarted) for creating an application from the template.
 
 ### 1. Add the CommunityToolkit.Mvvm package to your project
 
@@ -45,7 +45,7 @@ This tutorial will walk you through how to set up this feature and use it to man
 ### 3. Configure the DI container to use the CommunityToolkit.Mvvm service provider
 
 * Observe that the built `IHost` instance is available to the `App.cs` file. It is stored in a property on the `App` class:
-    
+
     ```csharp
     private IHost host { get; set; }
     ```

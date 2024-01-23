@@ -5,7 +5,7 @@ uid: Reference.Navigation.Regions
 
 ## Region Name
 
-Regions can be named by specifying the Region.Name="XXX" property. 
+Regions can be named by specifying the Region.Name="XXX" property.
 
 For selection-based regions, the selectable items (NavigationViewItem, TabBarItem, …) are identified using the Region.Name property
 
@@ -19,11 +19,7 @@ For selection-based regions, the selectable items (NavigationViewItem, TabBarIte
 </muxc:NavigationView>
 ```
 
-Switching selected item:  
+Switching selected item:
 	`naviator.NavigateRouteAsync(this,"Deals");`
-
-
-
-
 
 - Define what a navigation region is and how the hierarchy of regions is created with the Region.Attached property

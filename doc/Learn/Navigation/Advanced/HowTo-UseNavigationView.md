@@ -8,7 +8,7 @@ Choosing the right control for your navigation needs is important, and one commo
 ## Step-by-steps
 
 > [!IMPORTANT]
-> This guide assumes you used the template wizard or `dotnet new unoapp` to create your solution. If not, it is recommended that you follow the [instructions](xref:Uno.Extensions.HowToGettingStarted) for creating an application from the template.
+> This guide assumes you used the template wizard or `dotnet new unoapp` to create your solution. If not, it is recommended that you follow the [Creating an application with Uno.Extensions article](xref:Uno.Extensions.HowToGettingStarted) for creating an application from the template.
 
 ### 1. Add XAML namespace mapping
 
@@ -45,10 +45,10 @@ Choosing the right control for your navigation needs is important, and one commo
   </NavigationView>
   ```
 
-* Add a `Grid` element to the control. `NavigationView` contains two sections for content: 
+* Add a `Grid` element to the control. `NavigationView` contains two sections for content:
   - A pane which contains a list of navigation `MenuItems`
-  - The content area intended to correspond with the selected `NavigationViewItem`.  
-  
+  - The content area intended to correspond with the selected `NavigationViewItem`.
+
   For this tutorial, `Grid` should be placed in the `Content` area.
 
   ```xml
@@ -188,7 +188,7 @@ Choosing the right control for your navigation needs is important, and one commo
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       mc:Ignorable="d"
       Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-  
+
       <Grid>
           <TextBlock Text="Products"
                     FontSize="24"
@@ -200,9 +200,9 @@ Choosing the right control for your navigation needs is important, and one commo
 
 * For the purposes for this tutorial, `ProductsPage` will be associated with its own view model `ProductsViewModel`. Add a new **Class** item to your app called `ProductsViewModel` with the following code:
 
-  ```csharp 
+  ```csharp
   namespace UsingNavigationView.ViewModels;
-  
+
   public class ProductsViewModel
   {
       public ProductsViewModel()
@@ -222,20 +222,20 @@ Choosing the right control for your navigation needs is important, and one commo
           new ViewMap<ProductsPage, ProductsViewModel>(),
           new ViewMap<MainPage, MainViewModel>()
       );
-  
+
       routes.Register(
           new RouteMap("", View: views.FindByViewModel<ShellViewModel>(),
               Nested: new RouteMap[]
               {
                   new RouteMap("Main", View: views.FindByViewModel<MainViewModel>(),
                   Nested: new RouteMap[]
-                  { 
+                  {
                       new RouteMap("Products", View: views.FindByViewModel<ProductsViewModel>())
                   })
               }));
   }
   ```
-  
+
 * Importantly, the snippet above establishes a route name `Products` for `ProductsPage`. We can use this route name to navigate to the `ProductsPage` view element.
 
 * Add a `NavigationViewItem` to the `NavigationView` element with the `uen:Region.Name` attached property set to `Products`.

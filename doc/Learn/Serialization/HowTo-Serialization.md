@@ -8,7 +8,7 @@ Accessing the serialized and deserialized representation of an object can be imp
 ## Step-by-steps
 
 > [!IMPORTANT]
-> This guide assumes you used the template wizard or `dotnet new unoapp` to create your solution. If not, it is recommended that you follow the [instructions](xref:Uno.Extensions.HowToGettingStarted) for creating an application from the template.
+> This guide assumes you used the template wizard or `dotnet new unoapp` to create your solution. If not, it is recommended that you follow the [Creating an application with Uno.Extensions article](xref:Uno.Extensions.HowToGettingStarted) for creating an application from the template.
 
 ### 1. Opt into Serialization
 
@@ -41,7 +41,7 @@ Accessing the serialized and deserialized representation of an object can be imp
             Height = height;
             Weight = weight;
         }
-        
+
         public string? Name { get; set; }
         public int Age { get; set; }
         public double  Height { get; set; }
@@ -53,7 +53,7 @@ Accessing the serialized and deserialized representation of an object can be imp
 
     ```csharp
     using System.Text.Json.Serialization;
-    
+
     [JsonSerializable(typeof(Person))]
     internal partial class PersonContext : JsonSerializerContext
     { }
@@ -82,7 +82,7 @@ Accessing the serialized and deserialized representation of an object can be imp
         var appBuilder = this.CreateBuilder(args)
             .Configure(host => {
                 host
-                .UseSerialization(services => 
+                .UseSerialization(services =>
                 {
                     services.AddJsonTypeInfo(PersonContext.Default.Person);
                     services.AddSingleton(new JsonSerializerOptions { PropertyNameCaseInsensitive = true });

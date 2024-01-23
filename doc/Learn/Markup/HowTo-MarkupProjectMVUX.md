@@ -6,7 +6,7 @@ uid: Uno.Extensions.Markup.HowToMarkupMVUX
 
 https://github.com/unoplatform/uno.extensions/blob/main/doc/Overview/Mvux/Overview.md
 
-In this tutorial you'll learn how to set up an Uno Platform project to use C# Markup and MVUX. 
+In this tutorial, you'll learn how to set up an Uno Platform project to use C# Markup and MVUX.
 
 1. Make sure your environment is set up properly by using [uno check](xref:UnoCheck.UsingUnoCheck).
 1. You can create a Uno App by either using the Uno Platform Visual Studio extension or via the command line interface.
@@ -28,7 +28,7 @@ In this tutorial you'll learn how to set up an Uno Platform project to use C# Ma
     - When prompted Select *Blank* and click *Customize*
 
         ![Screenshot displaying the intro screen of the Uno Extension wizard in Visual Studio](../Assets/MarkupProject-StartupType.jpg)
-        
+
     - In the *Presentation* tab (3rd one), select MVUX.
 
         ![Screenshot displaying how to pre-install MVUX in the generated project](../Assets/MarkupProject-VsixMVUX.jpg)
@@ -37,12 +37,12 @@ In this tutorial you'll learn how to set up an Uno Platform project to use C# Ma
 
         ![Screenshot displaying how to pre-install C# Markup in the generated project](../Assets/MarkupProject-VsixMarkup.jpg)
 
-    - Click *Create* on the bottom right corner.    
-    
+    - Click *Create* on the bottom right corner.
+
     # [**CLI**](#tab/cli)
 
     #### Using the command line interface
-    
+
     - Run the following command, using an appropriate name (`MySampleProjectMVUX` in this page).
 
         ```cmd

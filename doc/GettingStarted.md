@@ -11,13 +11,17 @@ This tutorial will walk through how to create an Uno application with the `dotne
 
 The `dotnet` templates included in the `Uno.Templates` package are used to easily create new projects that already reference the Uno.Extensions.
 
-* Open a command prompt and run the following
+* Open a command prompt and run the following:
 
-    `dotnet new install Uno.Templates`
+    ```dotnetcli
+    dotnet new install Uno.Templates
+    ```
 
 * Navigate to the desired projects directory, and use the `unoapp` template to generate the starter solution discussed above
 
-    `dotnet new unoapp -o MyProjectName`
+    ```dotnetcli
+    dotnet new unoapp -o MyProjectName
+    ```
 
     The argument specified after the `-o` flag (i.e. MyProjectName) will act as the name for both a containing directory and the generated solution.
 
@@ -43,7 +47,7 @@ The generated solution will contain:
 
     ![A screenshot of the generated targets](./Learn/images/GeneratedTargets-min.png)
 
-* Click the “play” button, or press F5 to start debugging. The necessary projects in the solution will be compiled and deployed based on the target platform.
+* Click the "play" button, or press F5 to start debugging. The necessary projects in the solution will be compiled and deployed based on the target platform.
 
 ### 4. Running the Unit Tests
 
