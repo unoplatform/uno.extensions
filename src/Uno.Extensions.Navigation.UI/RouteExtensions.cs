@@ -119,42 +119,34 @@ public static class RouteExtensions
 	internal static Route? ApplyFrameRoute(this Route? currentRoute, IRouteResolver resolver, Route frameRoute, INavigator navigator)
 	{
 		var qualifier = frameRoute.Qualifier;
-		if (currentRoute is null)
+		var segments = currentRoute?.Segments(resolver).ToList() ?? new();
+		foreach (var qualifierChar in qualifier)
 		{
-			return frameRoute with { Qualifier = Qualifiers.None };
+			if (qualifierChar + "" == Qualifiers.NavigateBack)
+			{
+				segments.RemoveAt(segments.Count - 1);
+			}
+			else if (qualifierChar + "" == Qualifiers.Root)
+			{
+				segments.Clear();
+			}
 		}
-		else
+
+		var newSegments = frameRoute.ForwardSegments(resolver);
+		if (newSegments is not null)
 		{
-			var segments = currentRoute.Segments(resolver).ToList();
-			foreach (var qualifierChar in qualifier)
-			{
-				if (qualifierChar + "" == Qualifiers.NavigateBack)
-				{
-					segments.RemoveAt(segments.Count - 1);
-				}
-				else if (qualifierChar + "" == Qualifiers.Root)
-				{
-					segments.Clear();
-				}
-			}
-
-			var newSegments = frameRoute.ForwardSegments(resolver);
-			if (newSegments is not null)
-			{
-				var newOnly = newSegments.Where(x => !segments.Contains(x)).ToArray();
-				segments.AddRange(newOnly);
-			}
-
-			var routeBase = segments.FirstOrDefault()?.Path;
-			if (segments.Count > 0)
-			{
-				segments.RemoveAt(0);
-			}
-
-			var routePath = segments.Count > 0 ? string.Join(Qualifiers.Separator, segments.Select(x => $"{x.Path}")) : string.Empty;
-
-			return new Route(Qualifiers.None, routeBase, routePath, frameRoute.Data);
+			var newOnly = newSegments.Where(x => !segments.Contains(x)).ToArray();
+			segments.AddRange(newOnly);
 		}
+
+		var routeBase = segments.FirstOrDefault()?.Path;
+		if (segments.Count > 0)
+		{
+			segments.RemoveAt(0);
+		}
+
+		var routePath = segments.Count > 0 ? string.Join(Qualifiers.Separator, segments.Select(x => $"{x.Path}")) : string.Empty;
+
+		return new Route(Qualifiers.None, routeBase, routePath, frameRoute.Data);
 	}
-
 }
