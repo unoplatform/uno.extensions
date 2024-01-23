@@ -23,11 +23,7 @@ public partial class MauiHost : ContentControl
 		if (IPlatformApplication.Current?.Application is null
 			&& MauiApplication.Current?.Handler.MauiContext is not null)
 		{
-			if (Application.Current is not EmbeddingApplication embeddingApp)
-			{
-				throw new MauiEmbeddingInitializationException();
-			}
-			embeddingApp.InitializeApplication(MauiApplication.Current.Handler.MauiContext.Services, MauiApplication.Current);
+			_ = new MauiEmbedding.EmbeddedApplication(MauiApplication.Current.Handler.MauiContext.Services, MauiApplication.Current);
 		}
 
 		if (args.NewValue is null ||

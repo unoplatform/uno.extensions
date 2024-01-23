@@ -34,13 +34,9 @@ partial class MauiEmbedding
 		rootContext.InitializeScopedServices();
 
 		var iApp = mauiApp.Services.GetRequiredService<IApplication>();
-		if (app is not EmbeddingApplication embeddingApp)
-		{
-			throw new MauiEmbeddingException(Properties.Resources.TheApplicationMustInheritFromEmbeddingApplication);
-		}
 
 		Microsoft.Maui.ApplicationModel.Platform.Init(() => mauiApp.Services.GetRequiredService<UIWindow>().RootViewController!);
-		embeddingApp.InitializeApplication(mauiApp.Services, iApp);
+		_ = new EmbeddedApplication(mauiApp.Services, iApp);
 		app.SetApplicationHandler(iApp, rootContext);
 		InitializeApplicationMainPage(iApp);
 	}
