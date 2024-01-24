@@ -21,6 +21,7 @@
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto" />
 			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
 			<RowDefinition />
 		</Grid.RowDefinitions>
 		<utu:NavigationBar Content="TabBar Home"
@@ -29,8 +30,9 @@
 				   Grid.Row="1"
 				   x:Name="CurrentTabBarItemText"
 				   AutomationProperties.AutomationId="CurrentTabBarItemTextBlock" />
+		<ToggleButton Grid.Row="2" Content="ImplicitMapping" IsChecked="{Binding ImplicitMappingEnabled}" Command="{Binding ToggleIsCheckedCommand}" />
 		<Grid uen:Region.Attached="true"
-							 Grid.Row="2" >
+							 Grid.Row="3" >
 			<Grid.RowDefinitions>
 				<RowDefinition />
 				<RowDefinition Height="Auto" />

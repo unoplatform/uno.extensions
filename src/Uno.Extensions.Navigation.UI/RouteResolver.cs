@@ -136,7 +136,7 @@ public class RouteResolver : IRouteResolver
 	{
 		if (viewType is null)
 		{
-			return false; ;
+			return false;
 		}
 
 		return viewType == typeof(MessageDialog) ||
@@ -147,9 +147,7 @@ public class RouteResolver : IRouteResolver
 	}
 
 	public RouteInfo? FindByPath(string? path)
-	{
-		return InternalFindByPath(path);
-	}
+		=> InternalFindByPath(path);
 
 	protected virtual RouteInfo? InternalFindByPath(string? path)
 	{
@@ -175,7 +173,8 @@ public class RouteResolver : IRouteResolver
 		{
 			return default;
 		}
-		else if (maps.Length == 1 ||
+
+		if (maps.Length == 1 ||
 			navigator is null)
 		{
 			return maps[0];
@@ -205,9 +204,7 @@ public class RouteResolver : IRouteResolver
 	}
 
 	protected virtual RouteInfo[] InternalFindByViewModel(Type? viewModelType)
-	{
-		return FindRouteByType(viewModelType, map => map.ViewModel);
-	}
+		=> FindRouteByType(viewModelType, map => map.ViewModel);
 
 	public RouteInfo? FindByView(Type? viewType, INavigator? navigator)
 	{
@@ -216,9 +213,7 @@ public class RouteResolver : IRouteResolver
 	}
 
 	protected virtual RouteInfo[] InternalFindByView(Type? viewType)
-	{
-		return FindRouteByType(viewType, map => map.RenderView);
-	}
+		=> FindRouteByType(viewType, map => map.RenderView);
 
 	public RouteInfo? FindByData(Type? dataType, INavigator? navigator)
 	{
@@ -243,65 +238,8 @@ public class RouteResolver : IRouteResolver
 	}
 
 	private RouteInfo[] FindRouteByType(Type? typeToFind, Func<RouteInfo, Type?> mapType)
-	{
-		return FindByInheritedTypes(Mappings, typeToFind, mapType);
-	}
+		=> FindByInheritedTypes(Mappings, typeToFind, mapType);
 
 	private TMap[] FindByInheritedTypes<TMap>(IList<TMap> mappings, Type? typeToFind, Func<TMap, Type?> mapType)
-	{
-		return mappings.FindByInheritedTypes(typeToFind, mapType);
-	}
-}
-
-public static class TempHelpers
-{
-	internal static RouteInfo[] Ancestors(this RouteInfo routeInfo, IRouteResolver resolver)
-	{
-		var routes = new List<RouteInfo>();
-		routeInfo.NavigatorAncestors(resolver, routes);
-		return routes.ToArray();
-	}
-
-	private static void NavigatorAncestors(this RouteInfo routeInfo, IRouteResolver resolver, IList<RouteInfo> routes)
-	{
-		routes.Insert(0, routeInfo);
-
-		while (routeInfo?.DependsOnRoute is { } dependee)
-		{
-			routes.Insert(0, dependee);
-			routeInfo = dependee;
-		}
-
-		if (routeInfo?.Parent is { } parent)
-		{
-			parent.NavigatorAncestors(resolver, routes);
-		}
-	}
-
-
-	internal static RouteInfo[] Ancestors(this INavigator navigator, IRouteResolver resolver)
-	{
-		var routes = new List<RouteInfo>();
-		navigator.NavigatorAncestors(resolver, routes);
-		return routes.ToArray();
-	}
-
-	private static void NavigatorAncestors(this INavigator navigator, IRouteResolver resolver, IList<RouteInfo> routes)
-	{
-		var route = (navigator is IStackNavigator deepNav) ? deepNav.FullRoute : navigator?.Route;
-		while (!(route?.IsEmpty() ?? true))
-		{
-			var info = resolver.FindByPath(route.Base);
-			if (info is not null)
-			{
-				routes.Insert(0, info);
-			}
-			route = route.Next();
-		}
-
-		if (navigator?.GetParent() is { } parent)
-		{
-			parent.NavigatorAncestors(resolver, routes);
-		}
-	}
+		=> mappings.FindByInheritedTypes(typeToFind, mapType);
 }

@@ -110,6 +110,7 @@ public class RouteResolverDefault : RouteResolver
 												});
 			Mappings.Add(defaultMapFromViewMap);
 			if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Created default mapping from viewmap - Path '{defaultMapFromViewMap.Path}'");
+			return defaultMapFromViewMap;
 		}
 
 		if (Logger.IsEnabled(LogLevel.Information)) Logger.LogInformationMessage($"For better performance (avoid reflection), create mapping for for path '{path}', view '{view?.Name}', view model '{viewModel?.Name}'");
@@ -134,6 +135,7 @@ public class RouteResolverDefault : RouteResolver
 				return IsDialogViewType(view);
 			});
 			if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Created default mapping - Path '{defaultMap.Path}'");
+			Mappings.Add(defaultMap);
 			return defaultMap;
 		}
 
