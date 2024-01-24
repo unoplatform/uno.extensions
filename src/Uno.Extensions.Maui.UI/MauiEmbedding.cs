@@ -59,6 +59,9 @@ public static partial class MauiEmbedding
 	private static MauiAppBuilder ConfigureMauiAppBuilder<TApp>(Application app, Microsoft.UI.Xaml.Window window, Action<MauiAppBuilder>? configure)
 		where TApp : MauiApplication
 	{
+		// Forcing hot reload to false to prevent exceptions being raised
+		Microsoft.Maui.HotReload.MauiHotReloadHelper.IsEnabled = false;
+
 		var mauiAppBuilder = MauiApp.CreateBuilder()
 			.UseMauiEmbedding<TApp>()
 			.RegisterPlatformServices(app);
@@ -149,6 +152,19 @@ public static partial class MauiEmbedding
 	}
 
 #endif
+
+	internal record EmbeddedApplication : IPlatformApplication
+	{
+		public EmbeddedApplication(IServiceProvider services, IApplication application)
+		{
+			Services = services;
+			Application = application;
+			IPlatformApplication.Current = this;
+		}
+
+		public IServiceProvider Services { get; }
+		public IApplication Application { get; }
+	}
 
 	// NOTE: This was part of the POC and is out of scope for the MVP. Keeping it in case we want to add it back later.
 	/*

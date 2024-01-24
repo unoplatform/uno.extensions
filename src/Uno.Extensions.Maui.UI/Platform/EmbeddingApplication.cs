@@ -3,11 +3,8 @@
 /// <summary>
 /// Provides a base Application class for Maui Embedding
 /// </summary>
-public partial class EmbeddingApplication
+[Obsolete("The EmbeddingApplication is obsolete in .NET 8. Please use Microsoft.UI.Xaml.Application", error: true)]
+public partial class EmbeddingApplication : Application
 {
-	static EmbeddingApplication()
-	{
-		// Forcing hot reload to false to prevent exceptions being raised
-		Microsoft.Maui.HotReload.MauiHotReloadHelper.IsEnabled = false;
-	}
+	
 }

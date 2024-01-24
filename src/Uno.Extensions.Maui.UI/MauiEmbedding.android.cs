@@ -34,12 +34,7 @@ partial class MauiEmbedding
 		rootContext.InitializeScopedServices();
 
 		var iApp = mauiApp.Services.GetRequiredService<IApplication>();
-		if(app is not EmbeddingApplication embeddingApp)
-		{
-			throw new MauiEmbeddingException(Properties.Resources.TheApplicationMustInheritFromEmbeddingApplication);
-		}
-
-		embeddingApp.InitializeApplication(scope.ServiceProvider, iApp);
+		_ = new EmbeddedApplication(mauiApp.Services, iApp);
 
 		// Initializing with the Activity to set the current activity.
 		// The Bundle is not actually used by Maui

@@ -1,9 +1,8 @@
 using MauiEmbedding.MauiControls;
-using Uno.Extensions.Maui.Platform;
 
 namespace MauiEmbedding;
 
-public class App : EmbeddingApplication
+public class App : Application
 {
 	protected Window? MainWindow { get; private set; }
 	protected IHost? Host { get; private set; }
