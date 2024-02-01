@@ -25,8 +25,10 @@ public static class ServiceCollectionExtensions
 					.AddHostedService<NavigationHostedService>()
 					.AddSingleton<NavigationConfig>(sp =>
 					{
-						var config = new NavigationConfig(RouteResolver: typeof(RouteResolverDefault), AddressBarUpdateEnabled: true);
-						//RouteResolver: typeof(RouteResolverDefault), AddressBarUpdateEnabled: true
+						var config = new NavigationConfig(
+							RouteResolver: typeof(RouteResolverDefault),
+							AddressBarUpdateEnabled: true,
+							UseNativeBackButton: true);
 						var inputConfig = sp.GetService<IOptions<NavigationConfig>>()?.Value;
 						config = config with
 						{
