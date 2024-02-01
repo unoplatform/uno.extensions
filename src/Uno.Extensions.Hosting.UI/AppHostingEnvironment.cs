@@ -20,15 +20,16 @@ internal class AppHostingEnvironment : HostingEnvironment, IAppHostEnvironment, 
 					{
 						var href = Imports.GetLocation();
 						var appUriBuilder = new UriBuilder(applicationUri);
-						var url = new UriBuilder(href);
-						url.Query = appUriBuilder.Query;
-						url.Path = appUriBuilder.Path;
+						var url = new UriBuilder(href)
+						{
+							Query = appUriBuilder.Query,
+							Path = appUriBuilder.Path
+						};
 						var webUri = url.Uri.OriginalString;
-						var result = Imports.PushState($"{webUri}", "", $"{webUri}");
+						// Use state = 1 to align with the state managed by the SystemNavigationManager (Uno)
+						var result = Imports.ReplaceState("1", "", $"{webUri}");
 					});
 	}
-
-
 #endif
 }
 
@@ -39,7 +40,7 @@ internal static partial class Imports
 	public static partial string GetLocation();
 
 
-	[System.Runtime.InteropServices.JavaScript.JSImport("globalThis.window.history.pushState")]
-	public static partial string PushState(string state, string title, string url);
+	[System.Runtime.InteropServices.JavaScript.JSImport("globalThis.window.history.replaceState")]
+	public static partial string ReplaceState(string state, string title, string url);
 }
 #endif
