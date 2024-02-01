@@ -6,6 +6,8 @@ internal class BrowserAddressBarService : IHostedService
 	private readonly IRouteNotifier _notifier;
 	private readonly IHasAddressBar? _addressbarHost;
 	private readonly NavigationConfig? _config;
+	private Action? _unregister;
+
 	public BrowserAddressBarService(
 		ILogger<BrowserAddressBarService> logger,
 		IRouteNotifier notifier,
@@ -21,9 +23,22 @@ internal class BrowserAddressBarService : IHostedService
 
 	public Task StartAsync(CancellationToken cancellationToken)
 	{
+		if (_logger.IsEnabled(LogLevel.Trace))
+		{
+			_logger.LogTraceMessage($"Starting {nameof(BrowserAddressBarService)}");
+		}
+
 		if (_addressbarHost is not null && (_config?.AddressBarUpdateEnabled ?? true))
 		{
 			_notifier.RouteChanged += RouteChanged;
+			_unregister = ()=> _notifier.RouteChanged -= RouteChanged; 
+		}
+		else
+		{
+			if (_logger.IsEnabled(LogLevel.Debug))
+			{
+				_logger.LogDebugMessage($"{nameof(IHasAddressBar)} not defined, or {nameof(NavigationConfig.AddressBarUpdateEnabled)} set to false");
+			}
 		}
 
 		return Task.CompletedTask;
@@ -31,10 +46,14 @@ internal class BrowserAddressBarService : IHostedService
 
 	public Task StopAsync(CancellationToken cancellationToken)
 	{
-		if (_addressbarHost is not null)
+		if (_logger.IsEnabled(LogLevel.Trace))
 		{
-			_notifier.RouteChanged -= RouteChanged;
+			_logger.LogTraceMessage($"Starting {nameof(BrowserAddressBarService)}");
 		}
+
+		var stopAction = _unregister;
+		_unregister = default;
+		stopAction?.Invoke();
 
 		return Task.CompletedTask;
 	}
@@ -51,16 +70,18 @@ internal class BrowserAddressBarService : IHostedService
 				return;
 			}
 
-			var url = new UriBuilder();
-			url.Query = route.Query();
-			url.Path = route.FullPath()?.Replace("+", "/");
+			var url = new UriBuilder
+			{
+				Query = route.Query(),
+				Path = route.FullPath()?.Replace("+", "/")
+			};
 			await _addressbarHost!.UpdateAddressBar(url.Uri);
 		}
 		catch (Exception ex)
 		{
 			if (_logger.IsEnabled(LogLevel.Warning))
 			{
-				_logger.LogWarning($"Error encountered updating address bar on route changed event - {ex.Message}");
+				_logger.LogWarningMessage($"Error encountered updating address bar on route changed event - {ex.Message}");
 			}
 		}
 	}
