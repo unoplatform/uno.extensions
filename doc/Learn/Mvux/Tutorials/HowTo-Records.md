@@ -6,13 +6,16 @@ uid: Uno.Extensions.Mvux.HowToWriteRecordss
 
 ## What is a Record
 
-A [record](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/builtin-types/record) behaves like a class, offering the feature of **immutability**, where the values assigned to it remain unchanged once set. It's possible to create records using the `record` modifier, for example:
+A [record](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/builtin-types/record) behaves like a class*, offering the feature of **immutability**, where the values assigned to it remain unchanged once set. It's possible to create records using the `record` modifier, for example:
 
 ```csharp
-public record MyRecord()
+public record MyRecord();
 ```
 
-Records **can** be, but are not necessarily, immutable.
+Records **can** be, but are not necessarily, immutable. Also, records introduces the `with` operator, which is a helpful tool to deal with immutable objects, we will see more about this operator in the **Updating records** section.
+
+> [!IMPORTANT]
+> \* When using `record struct`, there are some differences in how it behaves compared to regular records or classes because it combines value-type characteristics with the features of records. Learn more about [`struct`](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/builtin-types/struct).
 
 ## Why Immutability in MVUX
 
@@ -28,13 +31,13 @@ Immutability makes our application more robust in handling concurrency and threa
 
 ## How to create immutable records
 
-You can create immutable records in two ways. First, declare your record with a primary constructor and parameters; this will create an immutable record with the specified parameters as its properties:
+You can create immutable records in three ways. First, declare your record with a [primary constructor](https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/classes-and-structs/instance-constructors#primary-constructors) and parameters; this will create an immutable record with the specified parameters as its properties:
 
 ```csharp
 public partial record ChatResponse(string Message, bool IsError);
 ```
 
-Another way is by creating properties using the `init` keyword instead of `set` to enforce immutability. Here's a brief example:
+The second way is by creating properties using the `init` keyword instead of `set` to enforce immutability. Here's a brief example:
 
 ```csharp
 public partial record ChatResponse
@@ -44,11 +47,26 @@ public partial record ChatResponse
 }
 ```
 
+Finally, it's possible to mix the two approaches by using the primary constructor and adding properties for non-essential values. For example, consider a `ChatResponse` record where `Message` is essential, but `IsError` is not:
+
+```csharp
+public partial record ChatResponse(string Message)
+{
+    public bool IsError { get; init; }
+}
+```
+
+```csharp
+new ChatResponse("Hello, I'm a bot"); //with IsError defaulting to false
+```
+
 When you create a record, if you let the properties change with the `set` keyword, the record won't be immutable. This means you won't be able to lock in or keep the values from changing once you've set them.
 
 ## How to use records with MVUX
 
-Records can be instantiated from the presentation layer as a parameter for a request or in the business layer, where data is usually retrieved/processed. For example, in our `ChatService`, we would have the following method being called from the Model. A `ChatEntry` list is received as a parameter from the Model, where `ChatEntry` is also a record, and we create an instance of `ChatResponse`, returning it to the Model:
+Records are designed to be a simple data structure, excellent for exchanging data, such as requests and responses, between application layers. 
+
+For instance, in our `ChatService`, the `AskAsync` method is called from the Model. It receives a list of `ChatEntry` records, which are used to create a request. The method returns a `ChatResponse` (record) instance to the Model, handling data from the presentation layer to the business layer:
 
 ```csharp
 public async ValueTask<ChatResponse> AskAsync(IImmutableList<ChatEntry> history)
@@ -61,7 +79,7 @@ public async ValueTask<ChatResponse> AskAsync(IImmutableList<ChatEntry> history)
     {
         var response = result.Choices.Select(choice => choice.Message.Content);
 
-        return new ChatResponse(string.Join("", responseContent));
+        return new ChatResponse(string.Join("", response));
     }
     else
     {
@@ -72,7 +90,7 @@ public async ValueTask<ChatResponse> AskAsync(IImmutableList<ChatEntry> history)
 
 ## Updating records
 
-As we are dealing with immutable records, it's not possible to update them or their properties. To achieve that, we need to create a new instance based on the previous record. This ensures we are not modifying data from the UI in the wrong thread. See the example:
+As we are dealing with immutable records, it's not possible to update them or their properties. To achieve that, we need to create a new instance based on the previous record. The `with` operator will create a new instance of the object and do a **shallow** copy of all the members of the original object. This ensures we are not modifying data from the UI in the wrong thread. See the example:
 
 Given the `Message` record:
 
