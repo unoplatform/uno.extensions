@@ -122,7 +122,7 @@ public static class RouteExtensions
 		var segments = currentRoute?.Segments(resolver).ToList() ?? new();
 		foreach (var qualifierChar in qualifier)
 		{
-			if (qualifierChar + "" == Qualifiers.NavigateBack)
+			if (qualifierChar + "" == Qualifiers.NavigateBack && segments.Count > 0)
 			{
 				segments.RemoveAt(segments.Count - 1);
 			}
