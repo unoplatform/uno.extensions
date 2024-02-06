@@ -20,7 +20,7 @@ public static class HostBuilderExtensions
 		Action<IViewRegistry, IRouteRegistry>? viewRouteBuilder,
 		Func<IServiceCollection, IViewRegistry>? createViewRegistry,
 		Func<IServiceCollection, IRouteRegistry>? createRouteRegistry,
-		Func<NavigationConfig, NavigationConfig>? configure,
+		Func<NavigationConfiguration, NavigationConfiguration>? configure,
 		Action<IServiceCollection> configureServices)
 	{
 		return hostBuilder.UseNavigation(
@@ -46,7 +46,7 @@ public static class HostBuilderExtensions
 		Action<IViewRegistry, IRouteRegistry>? viewRouteBuilder = null,
 		Func<IServiceCollection, IViewRegistry>? createViewRegistry = null,
 		Func<IServiceCollection, IRouteRegistry>? createRouteRegistry = null,
-		Func<NavigationConfig, NavigationConfig>? configure = null,
+		Func<NavigationConfiguration, NavigationConfiguration>? configure = null,
 		Action<HostBuilderContext, IServiceCollection>? configureServices = default)
 	{
 		if (hostBuilder.IsRegistered(nameof(UseNavigation)))
@@ -57,7 +57,7 @@ public static class HostBuilderExtensions
 			.UseConfiguration(
 				configure: configBuilder =>
 					configBuilder
-						.Section<NavigationConfig>(nameof(NavigationConfig)))
+						.Section<NavigationConfiguration>(nameof(NavigationConfiguration)))
 			.ConfigureServices((ctx, services) =>
 			{
 				_ = services.AddNavigation(configure, viewRouteBuilder, createViewRegistry, createRouteRegistry);
@@ -82,7 +82,7 @@ public static class HostBuilderExtensions
 		Action<IViewRegistry, IRouteRegistry>? viewRouteBuilder = null,
 		Func<IServiceCollection, MappedViewRegistry>? createMappedViewRegistry = null,
 		Func<IServiceCollection, IRouteRegistry>? createRouteRegistry = null,
-		Func<NavigationConfig, NavigationConfig>? configure = null,
+		Func<NavigationConfiguration, NavigationConfiguration>? configure = null,
 		Action<HostBuilderContext, IServiceCollection>? configureServices = default)
 	{
 		return hostBuilder.UseNavigation(

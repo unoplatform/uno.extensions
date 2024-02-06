@@ -1,17 +1,19 @@
-﻿namespace Uno.Extensions.Navigation;
+﻿using Windows.UI.Core;
+
+namespace Uno.Extensions.Navigation;
 
 internal class BrowserAddressBarService : IHostedService
 {
 	private readonly ILogger _logger;
 	private readonly IRouteNotifier _notifier;
 	private readonly IHasAddressBar? _addressbarHost;
-	private readonly NavigationConfig? _config;
+	private readonly NavigationConfiguration? _config;
 	private Action? _unregister;
 
 	public BrowserAddressBarService(
 		ILogger<BrowserAddressBarService> logger,
 		IRouteNotifier notifier,
-		NavigationConfig? config,
+		NavigationConfiguration? config,
 		IHasAddressBar? host = null)
 	{
 		_logger = logger;
@@ -31,13 +33,13 @@ internal class BrowserAddressBarService : IHostedService
 		if (_addressbarHost is not null && (_config?.AddressBarUpdateEnabled ?? true))
 		{
 			_notifier.RouteChanged += RouteChanged;
-			_unregister = ()=> _notifier.RouteChanged -= RouteChanged; 
+			_unregister = () => _notifier.RouteChanged -= RouteChanged;
 		}
 		else
 		{
 			if (_logger.IsEnabled(LogLevel.Debug))
 			{
-				_logger.LogDebugMessage($"{nameof(IHasAddressBar)} not defined, or {nameof(NavigationConfig.AddressBarUpdateEnabled)} set to false");
+				_logger.LogDebugMessage($"{nameof(IHasAddressBar)} not defined, or {nameof(NavigationConfiguration.AddressBarUpdateEnabled)} set to false");
 			}
 		}
 
