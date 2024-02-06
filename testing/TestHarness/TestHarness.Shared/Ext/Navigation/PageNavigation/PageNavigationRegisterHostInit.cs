@@ -23,8 +23,8 @@ public class PageNavigationRegisterHostInit: PageNavigationHostInit
 
 		// RouteMap required for Shell if initialRoute or initialViewModel isn't specified when calling NavigationHost
 		routes.Register(
+					new RouteMap("PageNavigationTwo", View: views.FindByViewModel<PageNavigationTwoViewModel>(), IsDefault: true, DependsOn: "PageNavigationOne"),
 					new RouteMap("PageNavigationOne", View: views.FindByViewModel<PageNavigationOneViewModel>()),
-					new RouteMap("PageNavigationTwo", View: views.FindByViewModel<PageNavigationTwoViewModel>(), IsDefault: true, DependsOn:"PageNavigationOne"),
 					new RouteMap("PageNavigationThree", View: views.FindByViewModel<PageNavigationThreeViewModel>(), DependsOn: "PageNavigationTwo"),
 					new RouteMap("PageNavigationFour", View: views.FindByViewModel<PageNavigationFourViewModel>()),
 					new RouteMap("PageNavigationFive", View: views.FindByViewModel<PageNavigationFiveViewModel>()),

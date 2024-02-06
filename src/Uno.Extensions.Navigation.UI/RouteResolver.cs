@@ -74,13 +74,12 @@ public class RouteResolver : IRouteResolver
 				from drm in maps
 				select FromRouteMap(drm)
 				).ToArray();
-		var dependencies = new Dictionary<string, RouteInfo>();
+		var dependencies =
+			rmaps
+				.Where(m=>m.Path is { Length:>0 })
+				.ToDictionary(m=>m.Path,m=>m);
 		foreach (var map in rmaps)
 		{
-			if (!string.IsNullOrWhiteSpace(map.Path))
-			{
-				dependencies[map.Path] = map;
-			}
 			if (dependencies.TryGetValue(map.DependsOn, out var dependee))
 			{
 				map.DependsOnRoute = dependee;
