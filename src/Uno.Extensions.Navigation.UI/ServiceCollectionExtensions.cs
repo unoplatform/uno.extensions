@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Uno.Extensions;
 
@@ -6,12 +7,12 @@ public static class ServiceCollectionExtensions
 {
 	public static IServiceCollection AddNavigation(
 		this IServiceCollection services,
-		Func<NavigationConfig, NavigationConfig>? configure = null,
+		Func<NavigationConfiguration, NavigationConfiguration>? configure = null,
 		Action<IViewRegistry, IRouteRegistry>? routeBuilder = null,
 		Func<IServiceCollection, IViewRegistry>? createViewRegistry = null,
 		Func<IServiceCollection, IRouteRegistry>? createRouteRegistry = null)
 	{
-		var navConfig = new NavigationConfig();
+		var navConfig = new NavigationConfiguration();
 		navConfig = (configure?.Invoke(navConfig)) ?? navConfig;
 
 		var views = createViewRegistry?.Invoke(services) ?? new ViewRegistry(services);
@@ -23,15 +24,20 @@ public static class ServiceCollectionExtensions
 
 		return services
 					.AddHostedService<NavigationHostedService>()
-					.AddSingleton<NavigationConfig>(sp =>
+					.AddSingleton<NavigationConfiguration>(sp =>
 					{
-						var config = new NavigationConfig(RouteResolver: typeof(RouteResolverDefault), AddressBarUpdateEnabled: true);
-						//RouteResolver: typeof(RouteResolverDefault), AddressBarUpdateEnabled: true
-						var inputConfig = sp.GetService<IOptions<NavigationConfig>>()?.Value;
+						var config = new NavigationConfiguration()
+						{
+							RouteResolver = typeof(RouteResolverDefault),
+							AddressBarUpdateEnabled = true,
+							UseNativeBackButton = true
+						};
+						var inputConfig = sp.GetService<IOptions<NavigationConfiguration>>()?.Value;
 						config = config with
 						{
 							RouteResolver = (navConfig?.RouteResolver) ?? (inputConfig?.RouteResolver) ?? config.RouteResolver,
 							AddressBarUpdateEnabled = (navConfig?.AddressBarUpdateEnabled) ?? (inputConfig?.AddressBarUpdateEnabled) ?? config.AddressBarUpdateEnabled,
+							UseNativeBackButton = (navConfig?.UseNativeBackButton) ?? (inputConfig?.UseNativeBackButton) ?? config.UseNativeBackButton,
 						};
 						return config;
 					})
@@ -43,6 +49,7 @@ public static class ServiceCollectionExtensions
 					.AddSingleton<IRouteNotifier>(sp => sp.GetRequiredService<RouteNotifier>())
 					.AddSingleton<IRouteUpdater>(sp => sp.GetRequiredService<RouteNotifier>())
 					.AddHostedService<BrowserAddressBarService>()
+					.AddHostedService<BackButtonService>()
 					.AddScoped<Navigator>()
 
 
@@ -74,7 +81,7 @@ public static class ServiceCollectionExtensions
 					.AddSingleton<RouteResolverDefault>()
 					.AddSingleton<IRouteResolver>(sp =>
 					{
-						var config = sp.GetRequiredService<NavigationConfig>();
+						var config = sp.GetRequiredService<NavigationConfiguration>();
 						return (sp.GetRequiredService(config.RouteResolver!) as IRouteResolver)!;
 					})
 
