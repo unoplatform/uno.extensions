@@ -44,6 +44,9 @@ public class RouteResolverDefault : RouteResolver
 		var routeMap = InternalDefaultMapping(path,view, viewModel);
 		if(routeMap is not null)
 		{
+			// If the default mapping is being created by a mapped route resolver, the un-mapped
+			// routemap may already be added to the Mappings table, so remove it.
+			Mappings.Remove(route => route.Path == routeMap.Path);
 			Mappings.Add(routeMap);
 			return new[] { routeMap };
 		}
