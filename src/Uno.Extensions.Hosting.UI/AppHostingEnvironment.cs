@@ -1,5 +1,7 @@
 ﻿#if __WASM__
 using Uno.Foundation;
+using Windows.UI.Core;
+
 #endif
 
 namespace Uno.Extensions.Hosting;
@@ -18,6 +20,13 @@ internal class AppHostingEnvironment : HostingEnvironment, IAppHostEnvironment, 
 	{
 		CoreApplication.MainView?.DispatcherQueue.TryEnqueue(() =>
 					{
+						var state = 1;
+						if (PlatformHelper.IsWebAssembly)
+						{
+							var currentView = SystemNavigationManager.GetForCurrentView();
+							state = currentView?.AppViewBackButtonVisibility == AppViewBackButtonVisibility.Visible ? 1 : 0;
+						}
+
 						var href = Imports.GetLocation();
 						var appUriBuilder = new UriBuilder(applicationUri);
 						var url = new UriBuilder(href)
@@ -26,8 +35,8 @@ internal class AppHostingEnvironment : HostingEnvironment, IAppHostEnvironment, 
 							Path = appUriBuilder.Path
 						};
 						var webUri = url.Uri.OriginalString;
-						// Use state = 1 to align with the state managed by the SystemNavigationManager (Uno)
-						var result = Imports.ReplaceState("1", "", $"{webUri}");
+						// Use state = 1 or 0 to align with the state managed by the SystemNavigationManager (Uno)
+						var result = Imports.ReplaceState(state, "", $"{webUri}");
 					});
 	}
 #endif
@@ -41,6 +50,6 @@ internal static partial class Imports
 
 
 	[System.Runtime.InteropServices.JavaScript.JSImport("globalThis.window.history.replaceState")]
-	public static partial string ReplaceState(string state, string title, string url);
+	public static partial string ReplaceState(int state, string title, string url);
 }
 #endif

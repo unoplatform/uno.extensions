@@ -160,7 +160,7 @@ public static class ConfigBuilderExtensions
 					}
 
 					var section = configSection(ctx);
-					services.ConfigureAsWritable<TSettingsOptions>(section, configPath, configurationSection);
+					services.ConfigureAsWritable<TSettingsOptions>(section, configPath);
 				}
 
 			).AsConfigBuilder();

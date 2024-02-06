@@ -27,7 +27,7 @@ public static class NavigatorExtensions
 		}
 		return parent;
 	}
-	
+
 
 #if __IOS__
 	public static Task<NavigationResultResponse<TSource>?> ShowPickerAsync<TSource>(
@@ -48,16 +48,16 @@ public static class NavigatorExtensions
 	}
 #endif
 
-	public static async Task<NavigationResponse?> GoBack(this INavigator navigator, object sender)
+	private static async Task<INavigator?> GoBackNavigator(this INavigator navigator)
 	{
 		var dispatcher = navigator.Get<IServiceProvider>()!.GetRequiredService<IDispatcher>();
 
 		// Default to navigating back on the current navigator
 		if (await navigator.CanNavigate(new Route(Qualifiers.NavigateBack)))
-			//is ControlNavigator ctrlNav &&
-			//await dispatcher.ExecuteAsync(async ct => ctrlNav.CanGoBack))
+		//is ControlNavigator ctrlNav &&
+		//await dispatcher.ExecuteAsync(async ct => ctrlNav.CanGoBack))
 		{
-			return await navigator.NavigateBackAsync(sender);
+			return navigator;
 		}
 
 		// Otherwise, search the hierarchy for the deepest back navigator
@@ -66,8 +66,25 @@ public static class NavigatorExtensions
 		var gobackNavigator = await dispatcher.ExecuteAsync(async ct => region?.FindChildren(
 			child => child.Services?.GetService<INavigator>() is ControlNavigator controlNavigator &&
 				controlNavigator.CanGoBack).LastOrDefault()?.Navigator());
-		return gobackNavigator is not null ?
-			await gobackNavigator.NavigateBackAsync(sender) :
-			new NavigationResponse(Success: false);
+		return gobackNavigator;
 	}
+
+	/// <summary>
+	/// Returns value whether any of the current INavigator instances supports navigating back
+	/// </summary>
+	/// <param name="navigator">The highest level navigator</param>
+	/// <returns>bool indicating whether go back is supported</returns>
+	public static async Task<bool> CanGoBack(this INavigator navigator)
+		=> await GoBackNavigator(navigator) is not null;
+
+	/// <summary>
+	/// Navigates back on the deepest INavigator instance that can go back
+	/// </summary>
+	/// <param name="navigator">The highest level navigator</param>
+	/// <param name="sender">The request sender</param>
+	/// <returns>Navigation response</returns>
+	public static async Task<NavigationResponse?> GoBack(this INavigator navigator, object sender)
+		=> await GoBackNavigator(navigator) is { } goBackNavigator ?
+			await goBackNavigator.NavigateBackAsync(sender) :
+			new NavigationResponse(Success: false);
 }
