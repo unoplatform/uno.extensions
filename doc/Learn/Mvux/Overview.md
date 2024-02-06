@@ -482,5 +482,5 @@ You can then use the MVUX example above as a reference to create your own `IFeed
 
 ## WeatherApp Sample
 
-You can find the code for our weather app here: https://github.com/unoplatform/Uno.Samples/tree/master/UI/MvuxHowTos/WeatherApp
+You can find the code for our weather app [here](https://github.com/unoplatform/Uno.Samples/tree/master/UI/MvuxHowTos/WeatherApp).
 
