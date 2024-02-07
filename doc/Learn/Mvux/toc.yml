@@ -3,8 +3,8 @@
   href: xref:Uno.Extensions.Mvux.Overview
 - name: "How-To: Get started with Mvux"
   href: xref:Uno.Extensions.Mvux.HowToMvuxProject
-- name: "How-To: Write Records with MVUX"
-  href: xref:Uno.Extensions.Mvux.HowToWriteRecords
+- name: "Working with Records"
+  href: xref:Uno.Extensions.Mvux.Records
 - name: Feeds
   href: xref:Uno.Extensions.Mvux.Feeds
 - name: List-Feeds

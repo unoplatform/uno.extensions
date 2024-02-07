@@ -1,5 +1,5 @@
 ---
-uid: Uno.Extensions.Mvux.HowToWriteRecordss
+uid: Uno.Extensions.Mvux.Records
 ---
 
 # How to write Records with MVUX
