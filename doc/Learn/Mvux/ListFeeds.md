@@ -27,36 +27,36 @@ A list-feed can be created in several ways.
 
 Using the Async factory method, the service returns a list of names on load/refresh - using a pull technique. The list-feed is then created with the async call.
 
-    Service code:
+- Service code:
 
-    ```csharp
-    public ValueTask<IImutableList<string>> GetNames(CancellationToken ct = default);
-    ```
+```csharp
+public ValueTask<IImutableList<string>> GetNames(CancellationToken ct = default);
+```
 
-    Model code:
+- Model code:
 
-    ```csharp
-    public IListFeed<string> Names => ListFeed.Async(service.GetNames);
-    ```
+```csharp
+public IListFeed<string> Names => ListFeed.Async(service.GetNames);
+```
 
 ### AsyncEnumerable
 
 In this way, a list-feed is created with an Async Enumerable method that returns an immutable list of names when available - using push technique.
 
-    Service code:  
+- Service code:  
 
-    ```csharp
-    public IAsyncEnumerable<IImutableList<string>> GetNames(
-        [EnumeratorCancellation] CancellationToken ct = default);
-    ```
+```csharp
+public IAsyncEnumerable<IImutableList<string>> GetNames(
+    [EnumeratorCancellation] CancellationToken ct = default);
+```
 
-    Model code:
+- Model code:
 
-    ```csharp
-    public IListFeed<string> Names => ListFeed.AsyncEnumerable(service.GetNames);
-    ```
+```csharp
+public IListFeed<string> Names => ListFeed.AsyncEnumerable(service.GetNames);
+```
 
-    Pull and push are explained more in the [feeds page](xref:Uno.Extensions.Mvux.Feeds#creation-of-feeds).
+Pull and push are explained more in the [feeds page](xref:Uno.Extensions.Mvux.Feeds#creation-of-feeds).
 
 ### Convert from feed of an item-collection
 
