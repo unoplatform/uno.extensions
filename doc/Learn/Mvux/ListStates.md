@@ -129,9 +129,9 @@ public async ValueTask TrimLongNames(CancellationToken ct = default)
 The `RemoveAllAsync` method uses a predicate to determine which items are to be removed:
 
 ```csharp
-    await MyStrings.RemoveAllAsync(
-        match: item => item.Contains("Ő"),
-        ct: cancellationToken);
+await MyStrings.RemoveAllAsync(
+    match: item => item.Contains("Ő"),
+    ct: cancellationToken);
 ```
 
 ### ForEachAsync
