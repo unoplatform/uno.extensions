@@ -14,7 +14,7 @@ In this tutorial, you will learn how to create a project that uses MVUX with a c
 
 ## WeatherApp Sample
 
-You can find the code for our weather app here: https://github.com/unoplatform/Uno.Samples/tree/master/UI/MvuxHowTos/WeatherApp
+You can find the code for our weather app [here](https://github.com/unoplatform/Uno.Samples/tree/master/UI/MvuxHowTos/WeatherApp).
 
 ## Create the Model
 

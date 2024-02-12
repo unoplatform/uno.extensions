@@ -59,17 +59,17 @@ You can learn more about Async Enumerables in [this article](https://learn.micro
 
 You can setup a state without any values, values can always be set using the [`Set`](#set) or the [`Update`](#update) methods.
 
-    ```csharp
-    public IState<City> CurrentCity => State<City>.Empty(this);
-    ```
+```csharp
+public IState<City> CurrentCity => State<City>.Empty(this);
+```
 
 #### Create a state with an initial value
 
 You can setup a state with a synchronous initial value. The state can be set later on using the [`Update`](#update) or the [`Set`](#set) methods.
 
-    ```csharp
-    public IState<City> CurrentCity => State.Value(this, () => new City("Montreal"));
-    ```
+```csharp
+public IState<City> CurrentCity => State.Value(this, () => new City("Montreal"));
+```
 
 #### From a feed
 
