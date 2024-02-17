@@ -25,7 +25,7 @@ jobs:
     displayName: Use GitVersion
 
   - script: |
-      dotnet build testing/TestHarness/TestHarness.Wasm/TestHarness.Wasm.csproj /p:Configuration=Release "/p:InformationalVersion=%GITVERSION_InformationalVersion%" /p:UnoExtensionsDisableNet7=true /p:GeneratePackageOnBuild=false /detailedsummary /bl:$(build.artifactstagingdirectory)/testharness-wasm.binlog
+      dotnet build testing/TestHarness/TestHarness.Wasm/TestHarness.Wasm.csproj /p:Configuration=Release "/p:InformationalVersion=$(GITVERSION_InformationalVersion)" /p:UnoExtensionsDisableNet7=true /p:GeneratePackageOnBuild=false /detailedsummary /bl:$(build.artifactstagingdirectory)/testharness-wasm.binlog
 
   - task: CopyFiles@2
     displayName: 'Publish Wasm Binaries'
