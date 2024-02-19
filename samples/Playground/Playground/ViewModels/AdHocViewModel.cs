@@ -2,10 +2,12 @@
 
 
 using System.Diagnostics;
+using Uno.Extensions.Reactive;
 using Uno.Extensions.Storage;
 
 namespace Playground.ViewModels;
 
+[ReactiveBindable(false)]
 public partial class AdHocViewModel:ObservableObject
 {
 	private readonly IDispatcher _dispatcher;
