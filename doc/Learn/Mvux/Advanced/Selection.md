@@ -127,7 +127,7 @@ You can listen and detect selection changes by either creating a feed that proje
 
 #### Using the Select operator
 
-Using the example above, we can project the `SelectedPerson` property to project or transform the current `Person`, using the `SelectedPerson``s [`Where`](xref:Uno.Extensions.Mvux.Feeds#where) and [`Select`](xref:Uno.Extensions.Mvux.Feeds#select) operators.
+Using the example above, we can project the `SelectedPerson` property to project or transform the current `Person`, using the `SelectedPerson`'s [`Where`](xref:Uno.Extensions.Mvux.Feeds#where) and [`Select`](xref:Uno.Extensions.Mvux.Feeds#select) operators.
 
 ```csharp
 public IFeed<string> GreetingSelect => SelectedPerson.Select(person => person == null ? string.Empty : $"Hello {person.FirstName} {person.LastName}!");
