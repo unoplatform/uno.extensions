@@ -1,4 +1,6 @@
-﻿namespace Uno.Extensions;
+﻿using System.Reflection;
+
+namespace Uno.Extensions;
 
 /// <summary>
 /// Extensions for <see cref="Window"/>
@@ -12,5 +14,5 @@ public static class WindowExtensions
 	/// <param name="logger">[Optional]The logger for log output</param>
 	/// <returns>The theme service for controlling application theme</returns>
 	public static IThemeService GetThemeService(this Window window, ILogger? logger = default) =>
-		new ThemeService(window, new Dispatcher(window), logger);
+		new ThemeService(window, new Dispatcher(window), new Settings(), logger);
 }

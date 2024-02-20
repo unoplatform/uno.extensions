@@ -59,7 +59,12 @@ internal class LocalizationService : IServiceInitialize, ILocalizationService, I
 		}
 	}
 
-	private static bool overrideSupported = true;
+	private static bool overrideSupported =
+#if !__WINDOWS__
+		true;
+#else
+		PlatformHelper.IsAppPackaged;
+#endif
 	private string? PrimaryLanguageOverride
 	{
 		get

@@ -12,5 +12,5 @@ public static class UIElementExtensions
 	/// <param name="logger">[Optional] logger for logging</param>
 	/// <returns>Theme service for controlling application theme</returns>
 	public static IThemeService GetThemeService(this UIElement element, ILogger? logger = default) =>
-		new ThemeService(element, new Dispatcher(element), logger);
+		new ThemeService(element, new Dispatcher(element), new Settings(), logger);
 }

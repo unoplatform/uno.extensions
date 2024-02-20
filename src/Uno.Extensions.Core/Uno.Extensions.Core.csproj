@@ -54,7 +54,11 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<InternalsVisibleTo Include="Uno.Extensions.Core.UI" />
+		<InternalsVisibleTo Include="Uno.Extensions.Core.WinUI" />
 		<InternalsVisibleTo Include="Uno.Extensions.Hosting" />
+		<InternalsVisibleTo Include="Uno.Extensions.Hosting.UWP" />
+		<InternalsVisibleTo Include="Uno.Extensions.Hosting.WinUI" />
 		<InternalsVisibleTo Include="Uno.Extensions.Storage" />
 		<InternalsVisibleTo Include="Uno.Extensions.Storage.UI" />
 		<InternalsVisibleTo Include="Uno.Extensions.Storage.WinUI" />
