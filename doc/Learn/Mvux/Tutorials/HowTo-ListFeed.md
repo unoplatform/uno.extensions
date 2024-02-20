@@ -17,7 +17,7 @@ In this tutorial, you will learn how to create an MVUX project and the basic usa
 
 ## PeopleApp Sample
 
-You can find the code of this tutorial here: https://github.com/unoplatform/Uno.Samples/tree/master/UI/MvuxHowTos/PeopleApp
+You can find the code of this tutorial [here](https://github.com/unoplatform/Uno.Samples/tree/master/UI/MvuxHowTos/PeopleApp).
 
 ## Create the Model
 

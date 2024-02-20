@@ -13,7 +13,7 @@ In this tutorial, you will learn how to create an MVUX project and basic usage o
 
 ## WeddingHallApp Sample
 
-You can find the code for our weather app here: https://github.com/unoplatform/Uno.Samples/tree/master/UI/MvuxHowTos/WeddingHallApp
+You can find the code for our weather app [here](https://github.com/unoplatform/Uno.Samples/tree/master/UI/MvuxHowTos/WeddingHallApp).
 
 ## Create the Model
 

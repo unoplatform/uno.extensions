@@ -14,7 +14,7 @@ In this tutorial, you will also learn how to create an MVUX project and utilizat
 
 ## StockMarketApp Sample
 
-You can find the code of this tutorial here: https://github.com/unoplatform/Uno.Samples/tree/master/UI/MvuxHowTos/StockMarketApp
+You can find the code of this tutorial [here](https://github.com/unoplatform/Uno.Samples/tree/master/UI/MvuxHowTos/StockMarketApp).
 
 ## Create the Model
 
