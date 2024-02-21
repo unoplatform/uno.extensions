@@ -25,4 +25,5 @@ Using Visual Studio, viewing the generated code can be achieved in several ways:
     2. Expand the current target platform (e.g. *net8.0windows10.0...*).
     3. Expand the *Analyzers* sub menu and then *Uno.Extensions.Reactive.Generator*.
     4. Under *Uno.Extensions.Reactive.Generator.FeedsGenerator* you'll find the generated bindable proxy types.
+    
     ![Screenshot of navigating Visual Studio Solution Explorer to inspect generated code](../Assets/InspectingGeneratedCode-3.jpg)
