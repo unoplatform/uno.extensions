@@ -51,7 +51,7 @@ public class ContentDialogNavigator : DialogNavigator
 		}
 
 #if WINUI
-		dialog.XamlRoot = Window!.Content.XamlRoot;
+		dialog.XamlRoot = Window!.Content!.XamlRoot;
 #endif
 
 		dialog.SetInstance(Region);

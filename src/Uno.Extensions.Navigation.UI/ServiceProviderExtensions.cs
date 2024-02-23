@@ -10,7 +10,7 @@ public static class ServiceProviderExtensions
 	/// <param name="services">The IServiceProvider instance to attach</param>
 	public async static Task<IServiceProvider> AttachServicesAsync(this Window window, IServiceProvider services)
 	{
-		return await window.Content
+		return await window.Content!
 				.AttachServiceProvider(services)
 				.RegisterWindowAsync(window);
 	}
