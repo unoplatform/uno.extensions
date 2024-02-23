@@ -2,10 +2,12 @@
 
 
 using System.Diagnostics;
+using Uno.Extensions.Reactive;
 using Uno.Extensions.Storage;
 
 namespace Playground.ViewModels;
 
+[ReactiveBindable(false)]
 public partial class AdHocViewModel:ObservableObject
 {
 	private readonly IDispatcher _dispatcher;
@@ -84,7 +86,9 @@ public partial class AdHocViewModel:ObservableObject
 
 	public async Task LoadWidgets()
 	{
-		var widgets = await _dataService.ReadPackageFileAsync<Widget[]>(_serializer, "data.json");
+		var widgetsAsText = await _dataService.ReadPackageFileAsync(@"Playground\data.json");
+
+		var widgets = await _dataService.ReadPackageFileAsync<Widget[]>(_serializer, @"Playground\data.json");
 	}
 
 	public async Task RunBackgroundTask()

@@ -5,7 +5,8 @@ internal class ScopedThemeService : ThemeService
 	public ScopedThemeService(
 		ILogger<ScopedThemeService> logger,
 		Window window,
-		IDispatcher dispatcher) : base(window, dispatcher, logger)
+		IDispatcher dispatcher,
+		ISettings settings) : base(window, dispatcher, settings, logger)
 	{
 	}
 }

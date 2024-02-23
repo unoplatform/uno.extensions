@@ -5,7 +5,6 @@
 /// </summary>
 public static class UnoHost
 {
-	private const string DefaultUnoAppName = "unoapp";
 
 	/// <summary>
 	/// Initializes a new instance of the HostBuilder class that is pre-configured 
@@ -29,28 +28,7 @@ public static class UnoHost
 			.ConfigureCustomDefaults(args)
 			.ConfigureAppConfiguration((ctx, appConfig) =>
 			{
-				string dataFolder = string.Empty;
-				try
-				{
-					dataFolder = Windows.Storage.ApplicationData.Current?.LocalFolder?.Path ?? string.Empty;
-				}
-				catch
-				{
-					// This will throw an exception on WinUI if unpackaged, so dataFolder will be null
-					// Can also be null on Linux FrameBuffer
-				}
-
-				if (string.IsNullOrWhiteSpace(dataFolder))
-				{
-					var appName = Assembly.GetEntryAssembly()?.GetName().Name ?? DefaultUnoAppName;
-					dataFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData, Environment.SpecialFolderOption.Create), appName);
-				}
-
-				if (!string.IsNullOrWhiteSpace(dataFolder) &&
-					!Directory.Exists(dataFolder))
-				{
-					Directory.CreateDirectory(dataFolder);
-				}
+				var dataFolder = ApplicationDataExtensions.DataFolder();
 
 				var appHost = ctx.HostingEnvironment.FromHostEnvironment(dataFolder, applicationAssembly);
 				ctx.HostingEnvironment = appHost;

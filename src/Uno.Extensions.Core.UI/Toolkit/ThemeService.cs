@@ -6,6 +6,7 @@ internal class ThemeService : IThemeService, IDisposable
 	private UIElement? _rootAccessorElement;
 	private readonly IDispatcher _dispatcher;
 	private readonly ILogger? _logger;
+	private readonly ISettings _settings;
 	private TaskCompletionSource<bool>? _initialization;
 
 	/// <inheritdoc/>
@@ -14,10 +15,12 @@ internal class ThemeService : IThemeService, IDisposable
 	internal ThemeService(
 		Window window,
 		IDispatcher dispatcher,
+		ISettings settings,
 		ILogger? logger = default)
 	{
 		_dispatcher = dispatcher;
 		_logger = logger;
+		_settings = settings;
 
 		if (!_dispatcher.HasThreadAccess && PlatformHelper.IsThreadingEnabled)
 		{
@@ -39,11 +42,13 @@ internal class ThemeService : IThemeService, IDisposable
 	internal ThemeService(
 		UIElement rootAccessorElement,
 		IDispatcher dispatcher,
+		ISettings settings,
 		ILogger? logger = default)
 	{
 		RootElement = rootAccessorElement;
 		_dispatcher = dispatcher;
 		_logger = logger;
+		_settings = settings;
 
 		_ = InitializeAsync();
 	}
@@ -143,7 +148,7 @@ internal class ThemeService : IThemeService, IDisposable
 	{
 		try
 		{
-			ApplicationData.Current.LocalSettings.Values[CurrentThemeSettingsKey] = theme.ToString();
+			_settings.Set(CurrentThemeSettingsKey, theme.ToString());
 		}
 		catch (Exception ex)
 		{
@@ -155,7 +160,7 @@ internal class ThemeService : IThemeService, IDisposable
 	{
 		try
 		{
-			return Enum.TryParse<AppTheme>(ApplicationData.Current.LocalSettings.Values[CurrentThemeSettingsKey] + string.Empty, out var theme) ? theme : AppTheme.System;
+			return Enum.TryParse<AppTheme>(_settings.Get(CurrentThemeSettingsKey) + string.Empty, out var theme) ? theme : AppTheme.System;
 		}
 		catch (Exception ex)
 		{

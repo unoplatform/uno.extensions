@@ -34,6 +34,16 @@ internal record FileStorage(ILogger<FileStorage> Logger, IDataFolderProvider Dat
 				return default;
 			}
 
+#if __WINDOWS__
+			if (!PlatformHelper.IsAppPackaged)
+			{
+				var file = System.IO.Path.Combine(
+								 System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly()?.Location ?? string.Empty) ?? string.Empty,
+								 filename);
+				return File.ReadAllText(file);
+			}
+#endif
+
 			var fileUri = new Uri($"ms-appx:///{filename}");
 			if (Logger.IsEnabled(LogLevel.Trace))
 			{
@@ -79,6 +89,16 @@ internal record FileStorage(ILogger<FileStorage> Logger, IDataFolderProvider Dat
 				}
 				return default;
 			}
+
+#if __WINDOWS__
+			if (!PlatformHelper.IsAppPackaged)
+			{
+				var file = System.IO.Path.Combine(
+								 System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly()?.Location ?? string.Empty) ?? string.Empty,
+								 filename);
+				return System.IO.File.OpenRead(file);
+			}
+#endif
 
 			var storageFile = await StorageFile.GetFileFromApplicationUriAsync(new Uri($"ms-appx:///{filename}"));
 			var stream = await storageFile.OpenStreamForReadAsync();

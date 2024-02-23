@@ -11,13 +11,13 @@
 		<UseWinUI>true</UseWinUI>
 		<DefineConstants>$(DefineConstants);WINUI;UNO_EXT_TIMERS</DefineConstants>
 		<DefaultLanguage>en</DefaultLanguage>
-		<!--<WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>-->
+		<WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
 		<!--<WindowsPackageType>None</WindowsPackageType>-->
-		<EnableMsixTooling>true</EnableMsixTooling>
+		<EnableMsixTooling>false</EnableMsixTooling>
 	</PropertyGroup>
 
 	<PropertyGroup><!-- Bundles the WinAppSDK binaries (Uncomment for unpackaged builds) -->
-		<!-- <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained> -->
+		 <!--<WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>--> 
 		<!-- This bundles the .NET Core libraries (Uncomment for packaged builds)  -->
 		<!--<SelfContained>true</SelfContained>-->
 
