@@ -14,7 +14,7 @@ internal record ApplicationBuilder(Application App, LaunchActivatedEventArgs Arg
 		// When updating Hosting to Uno.WinUI 5.2+ we need to remove the compiler directive
 		Window.Current ?? new Window();
 #else
-		Window.Current;
+		Window.Current!;
 #endif
 
 	public IHost Build()
