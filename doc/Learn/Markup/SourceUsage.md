@@ -1,9 +1,9 @@
 ---
 uid: Uno.Extensions.Markup.SourceUsage
 ---
-# Binding Usage
+# Source and Relative Source
 
-In this section, we explore practical examples of how to implement data binding in Uno Platform applications using C#Markup. These examples include direct source binding, relative source binding, and utilizing data contexts.
+Sometimes, when working with binding expressions, specifying the source or a relative source becomes necessary. In this section, we'll explore how to do that using strongly typed sources.
 
 ## Source Binding
 
@@ -14,29 +14,85 @@ public partial class MainPage : Page
 {
     public MainPage()
     {
+        new StackPanel()
+            .Children(
+                new Button()
+                    .Assign(out var button)
+                    .Content("I am a button"),
 
-        // Creating a TextBox and binding its Text property to a Button's Content
+                // Creating a TextBox and binding its Text property to a Button's Content
 
-        var textBox = new TextBox()
-                        .Text(x => x.Source(button)
-                                    .Binding(() => button.Content));
+                new TextBox()
+                    .Text(x => x.Source(button)
+                                .Binding(() => button.Content));
+                    )
+    }
+}
 
-        // Creating a Button and binding its Content property to the TextBox's Text property with TwoWay binding
-        var button = new Button()
-                        .Content(x => x.Source(textBox)
-                                    .Binding(() => textBox.Text)
-                                    .TwoWay());
+```
 
-        // Binding with a string identifier for the source button
-        var textBox = new TextBox()
-                        .Text(x => x.Source<Button>("myButton")
-                                    .Binding(b => b.Content));
+```cs
+public partial class MainPage : Page
+{
+    public MainPage()
+    {
+        new StackPanel()
+            .Children(
+                new TextBox()
+                    .Text("I am a TextBox"),
 
-        // Binding to a property of a DataContext
-        var textBox = new TextBox()
-                        .Text(x => x.Source(button)
-                                    .DataContext<MockViewModel>()
-                                    .Binding(v => v.Message));
+                // Creating a Button and binding its Content property to the TextBox's Text property with TwoWay binding
+
+                new Button()
+                    .Content(x => x.Source(textbox)
+                                .Binding(() => textbox.Text)
+                                .TwoWay());
+                    )
+    }
+}
+
+```
+
+```cs
+public partial class MainPage : Page
+{
+    public MainPage()
+    {
+        new StackPanel()
+            .Children(
+                new Button()
+                    .Assign(out var button)
+                    .Content("I am a button"),
+
+                // Binding with a string identifier for the source button
+
+                new TextBox()
+                    .Text(x => x.Source<Button>("myButton")
+                                 .Binding(b => b.Content));
+                    )
+    }
+}
+
+```
+
+```cs
+public partial class MainPage : Page
+{
+    public MainPage()
+    {
+        new StackPanel()
+            .Children(
+                new Button()
+                    .Assign(out var button)
+                    .Content("I am a button"),
+
+                // Binding to a property of a DataContext
+
+                new TextBox()
+                    .Text(x => x.Source(button)
+                                .DataContext<MockViewModel>()
+                                .Binding(v => v.Message));
+                    )
     }
 }
 
@@ -103,17 +159,19 @@ These examples illustrate the flexibility of Uno Platform's binding capabilities
 
 Uno Platform provides the following methods to control the binding mode:
 
-Binding() | Sets the Binding
-DataContext<TDataContext>() | Sets the DataContext
-Mode(BindingMode) | Sets Binding Mode
-OneTime() | Sets Binding Mode to OneTime
-OneWay() | Sets the Binding Mode to OneWay
-TwoWay() | Sets the Binding Mode to TwoWay
-Converter(IValueConverter)
-Convert(Func<TSource, TTarget>)
-ConvertBack(Func<TTarget, TSource>)
-FallbackValue(T)
-TargetNullValue(T)
-UpdateSourceTrigger(UpdateSourceTrigger)
+| Property                                  | Description                                                                                                     |
+| ----------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| `Binding()`                               | Sets the Binding                                                                                                |
+| `DataContext<TDataContext>()`             | Sets the DataContext                                                                                            |
+| `Mode(BindingMode)`                       | Sets Binding Mode                                                                                               |
+| `OneTime()`                               | Sets Binding Mode to OneTime                                                                                    |
+| `OneWay()`                                | Sets the Binding Mode to OneWay                                                                                 |
+| `TwoWay()`                                | Sets the Binding Mode to TwoWay                                                                                 |
+| `Converter(IValueConverter)`              | Sets a custom IValueConverter to convert data between the source and target during binding                      |
+| `Convert(Func<TSource, TTarget>)`         | Sets a conversion function to transform the source data to the target type during binding                       |
+| `ConvertBack(Func<TTarget, TSource>)`     | Sets a conversion function to transform the target data back to the source type during binding (TwoWay binding) |
+| `FallbackValue(T)`                        | Sets a fallback value to be used when the source data is null or cannot be converted                            |
+| `TargetNullValue(T)`                      | Sets a value to be used as the target when the source data is null                                              |
+| `UpdateSourceTrigger(UpdateSourceTrigger)`| Sets the trigger that determines when the source property is updated during TwoWay binding.                     |
 
 These methods allow you to specify how changes in the source property should be reflected in the target property, providing flexibility in creating dynamic and responsive UIs.
