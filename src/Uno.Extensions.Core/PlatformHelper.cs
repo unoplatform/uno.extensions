@@ -74,7 +74,7 @@ public static class PlatformHelper
 				|| RuntimeInformation.IsOSPlatform(OSPlatform.Create("BROWSER"));
 
 			// If wasm, then can assume app isn't packaged, so skip this check
-			if (!IsWebAssembly && RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+			if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
 			{
 				_isAppPackaged = IsWindowsAppPackaged();
 			}
