@@ -10,7 +10,7 @@ See the complete [documentation](xref:Uno.Extensions.Overview) for getting start
 
 All the documentation for getting you started with [Uno Platform](https://platform.uno/) can be found on our [website](xref:Uno.Extensions.Overview).
 
-### Where can I get support?
+## Where can I get support?
 
 Support is available through [GitHub Discussions](https://github.com/unoplatform/uno/discussions) or [Discord Server](https://platform.uno/discord) - where our engineering team and community will be able to help you.
 
