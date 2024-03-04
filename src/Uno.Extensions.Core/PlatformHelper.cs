@@ -74,21 +74,26 @@ public static class PlatformHelper
 				|| RuntimeInformation.IsOSPlatform(OSPlatform.Create("BROWSER"));
 
 			// If wasm, then can assume app isn't packaged, so skip this check
-			if (!IsWebAssembly)
+			if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
 			{
-				try
-				{
-					// Application is MSIX packaged if it has an identity: https://learn.microsoft.com/en-us/windows/msix/detect-package-identity
-					int length = 0;
-					var sb = new System.Text.StringBuilder(0);
-					int result = GetCurrentPackageFullName(ref length, sb);
-					_isAppPackaged = result != AppModelErrorNoPackage;
-				}
-				catch
-				{
-					_isAppPackaged = false;
-				}
+				_isAppPackaged = IsWindowsAppPackaged();
 			}
+		}
+	}
+
+	private static bool IsWindowsAppPackaged()
+	{
+		try
+		{
+			// Application is MSIX packaged if it has an identity: https://learn.microsoft.com/en-us/windows/msix/detect-package-identity
+			int length = 0;
+			var sb = new System.Text.StringBuilder(0);
+			int result = GetCurrentPackageFullName(ref length, sb);
+			return result != AppModelErrorNoPackage;
+		}
+		catch
+		{
+			return false;
 		}
 	}
 }
