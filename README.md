@@ -1,6 +1,6 @@
 ﻿# Uno.Extensions
 
-Uno.Extensions is a series of NuGet packages designed to encapsulate common developer tasks associated with building multi-platform mobile, desktop and web applications using Uno Platform.
+Uno.Extensions is a series of NuGet packages designed to encapsulate common developer tasks associated with building multi-platform mobile, desktop, and web applications using Uno Platform.
 
 ## Getting Started
 
@@ -10,6 +10,10 @@ See the complete [documentation](xref:Uno.Extensions.Overview) for getting start
 
 All the documentation for getting you started with [Uno Platform](https://platform.uno/) can be found on our [website](xref:Uno.Extensions.Overview).
 
+## Where can I get support?
+
+Support is available through [GitHub Discussions](https://github.com/unoplatform/uno/discussions) or [Discord Server](https://platform.uno/discord) - where our engineering team and community will be able to help you.
+
 ## License
 
 This project is licensed under the Apache 2.0 license - see the [LICENSE](LICENSE) file for details.
@@ -17,7 +21,7 @@ This project is licensed under the Apache 2.0 license - see the [LICENSE](LICENS
 ## Contributing
 
 Please read our [contributing guide](https://github.com/unoplatform/uno/blob/master/CONTRIBUTING.md) to learn about our development process and how to propose bug fixes and improvements.
-Come visit us on our [Discord Channel #uno-platform](https://discord.gg/eBHZSKG) for help on how to contribute!
+Come visit us on our [Discord Server](https://platform.uno/discord) for help on how to contribute!
 
 Contribute to Uno in your browser using [GitPod.io](https://gitpod.io), follow [our guide here](https://platform.uno/docs/articles/features/working-with-gitpod.html).
 
