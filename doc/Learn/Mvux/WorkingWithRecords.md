@@ -12,7 +12,7 @@ A [record](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/bu
 public record MyRecord();
 ```
 
-Records **can** be, but are not necessarily, immutable. Also, records introduces the `with` operator, which is a helpful tool to deal with immutable objects, we will see more about this operator in the **Updating records** section.
+Records **can** be, but are not necessarily, immutable. Also, records introduce the `with` operator, which is a helpful tool to deal with immutable objects, we will see more about this operator in the **Updating records** section.
 
 > [!IMPORTANT]
 > \* When using `record struct`, there are some differences in how it behaves compared to regular records or classes because it combines value-type characteristics with the features of records. Learn more about [`struct`](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/builtin-types/struct).
