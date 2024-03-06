@@ -17,32 +17,29 @@ new StackPanel()
             .Content("I am a button"),
 
         // Creating a TextBox and binding its Text property to a Button's Content
-
         new TextBox()
             .Text(x => x.Source(button)
                         .Binding(() => button.Content));
-            )
+    )
 ```
 
 ```csharp
 new StackPanel()
     .Children(
         new TextBox()
-            .Assign(out var textbox)
+            .Assign(out var textBox)
             .Text("I am a TextBox"),
 
         // Creating a Button and binding its Content property to the TextBox's Text property with TwoWay binding
-
         new Button()
-            .Content(x => x.Source(textbox)
-                            .Binding(() => textbox.Text)
+            .Content(x => x.Source(textBox)
+                            .Binding(() => textBox.Text)
                             .TwoWay());
-            )
+    )
 ```
 
 ```csharp
 // Binding with a string identifier for the source button
-
 new TextBox()
     .Text(x => x.Source<Button>("myButton")
                 .Binding(b => b.Content));
@@ -56,12 +53,11 @@ new StackPanel()
             .Content("I am a button"),
 
         // Binding to a property of a DataContext
-
         new TextBox()
             .Text(x => x.Source(button)
                         .DataContext<MockViewModel>()
                         .Binding(v => v.Message));
-            )
+    )
 ```
 
 ## Relative Source Binding
@@ -87,18 +83,18 @@ Example of using RelativeSource to bind a parent property to the element propert
 ```csharp
 
 var button = new Button()
-                .Style(
+                 .Style(
                     new Style<Button>()
                         .Setters(s => s
                             .Template(b => new Border()
-                                               // Using RelativeSource to bind to a TemplatedParent property in a style template
+                                            // Using RelativeSource to bind to a TemplatedParent property in a style template
                                                .Background(x => x.RelativeSource<Button>(RelativeSourceMode.TemplatedParent)
                                                                  .Binding(x => x.Background)
                                                )
                             )
                         )
-                )
-                .Background(Colors.Blue);
+                 )
+                 .Background(Colors.Blue);
 
 ```
 

@@ -137,7 +137,7 @@ public partial class MainPage : Page
 
 ## Binding to other sources
 
-Sometimes you may want or need to bind to your ViewModel. The first case we'll take a look at is one in which we want to bind to a property of another element. In this case we will use the `Source` method on the `BindingFactory` to update our binding so that it will bind to a named element in the Visual Tree.
+Sometimes you may want or need to bind to your ViewModel. The first case we'll take a look at is one in which we want to bind to a property of another element. In this case we will use the `Source` method to update our binding so that it will bind to a named element in the Visual Tree.
 
 ```cs
 public partial class MainPage : Page
