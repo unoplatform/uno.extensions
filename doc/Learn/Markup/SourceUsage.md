@@ -104,7 +104,7 @@ Below is a list of methods available for use within binding expressions:
 
 | Property                                  | Description                                                                                                     |
 | ----------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
-| `Binding()`                               | Sets the Binding                                                                                                |
+| `Binding()`                               | Sets the Binding Path                                                                                                 |
 | `DataContext<TDataContext>()`             | Sets the DataContext                                                                                            |
 | `Mode(BindingMode)`                       | Sets Binding Mode                                                                                               |
 | `OneTime()`                               | Sets Binding Mode to OneTime                                                                                    |
