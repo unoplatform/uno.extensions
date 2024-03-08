@@ -55,6 +55,10 @@ new TextBlock()
         .Binding(() => slider.Value))
 ```
 
+ > [!NOTE]
+ > Using the `.Name(out var fe)` syntax not only gives you a variable representing your `FrameworkElement` control but also sets the control's `Name` property to match the variable name. For example, in the scenario mentioned earlier, the `Slider` would have its `Name` property set to "slider" because the variable name used is `slider`.
+
+
 The second is that we can leverage the element name for our binding such as the following:
 
 ```cs
