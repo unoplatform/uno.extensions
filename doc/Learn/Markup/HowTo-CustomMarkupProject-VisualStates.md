@@ -33,13 +33,13 @@ It provides a way to create custom components that can be used in multiple parts
     this.Background(ThemeResource.Get<Brush>("ApplicationPageBackgroundThemeBrush"))
 		.Content(
 				new ChipGroup()
-				.Assign(out var chipGroup)
+				.Name(out var chipGroup)
 				.Items(
 					new Chip()
 						.Margin(5)
 						.Content("First Chip")
 						.Background(new SolidColorBrush(Colors.LightBlue))
-						.Assign(out var navigationChip),
+						.Name(out var navigationChip),
 					new Chip()
 						.Margin(5)
 						.Content("Chip 2")
@@ -49,7 +49,7 @@ It provides a way to create custom components that can be used in multiple parts
 					new Chip()
 						.Margin(5)
 						.Content("Chip 3")
-						.Assign(out var chipElement)
+						.Name(out var chipElement)
 				)
 			);
     ```
@@ -80,7 +80,7 @@ It provides a way to create custom components that can be used in multiple parts
     .Children(
 		new Button()
 			.Content("Go to Second Page")
-			.Assign(out var navigationButton),
+			.Name(out var navigationButton),
 		new SampleUserControl()
 	)
     ```
@@ -109,7 +109,7 @@ It provides a way to create custom components that can be used in multiple parts
 							    .Children(
 								    new Button()
 									    .Content("Go to Main Page")
-									    .Assign(out var navigationButton),
+									    .Name(out var navigationButton),
 								    new SampleUserControl()
 							    )
 					    )
@@ -245,7 +245,7 @@ It provides a way to create custom components that can be used in multiple parts
 							    .Children(
 								    new Button()
 									    .Content("Go to Second Page")
-									    .Assign(out var navigationButton),
+									    .Name(out var navigationButton),
 								    new SampleUserControl()
 							    )
 					    )
@@ -345,7 +345,7 @@ With this we can control events and changes.
 		    )
     ```
 
-    We will change the navigationButton (the same that has been Assign for control the Navigation) and will the Background Color now.
+    We will change the navigationButton (the same that has been assigned for controlling the navigation) and change its background color now.
     And change the value of the Width of the Button that will be used on the EventHandler.
     You can add the Button before the `new SampleUserControl()`.
 
@@ -354,7 +354,7 @@ With this we can control events and changes.
 		.Width(200)
 		.Height(40)
 		.Content("VisualStateManager Test")
-		.Assign(out var btn),
+		.Name(out var btn),
     ```
 
     And to handle the Event Handlers we need to create the Event Handlers so that the events are fired and the actions happen.
@@ -408,7 +408,7 @@ With this we can control events and changes.
     new Button()
     	.Grid(row: 1)
 		.Content("Visual State on UserControl")
-		.Assign(out var visualStateButtonChips)
+		.Name(out var visualStateButtonChips)
     ```
 
     And to handle the Event Handlers we need to create the Event Handlers so that the events are fired and the actions happen.
@@ -581,12 +581,12 @@ With this we can control events and changes.
 							    .Children(
 								    new Button()
 									    .Content("Go to Second Page")
-									    .Assign(out var navigationButton),
+									    .Name(out var navigationButton),
 								    new Button()
 									    .Width(200)
 									    .Height(40)
 									    .Content("VisualStateManager Test")
-									    .Assign(out var btn),
+									    .Name(out var btn),
 								    new SampleUserControl()
 							    )
 					    )

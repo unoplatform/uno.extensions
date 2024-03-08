@@ -147,12 +147,11 @@ public partial class MainPage : Page
 		this.DataContext<MyViewModel>((page, vm) => page
 			.Content(
 				new TextBox()
-					.Assign(out var searchBox)
-					.Text(() => vm.Query)
-					.Name("SearchBox"),
+					.Name(out var searchBox)
+					.Text(() => vm.Query),
 				new TextBox()
 					.Text(x => x
-						.Source("SearchBox")
+						.Source(searchBox)
 						.Binding(() => searchBox.Text))
 			)
 		);
