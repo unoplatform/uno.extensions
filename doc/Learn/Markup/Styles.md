@@ -10,6 +10,18 @@ new Style<TextBlock>()
     .Setters(s => s.FontSize(14))
 ```
 
+<div style="position: relative; width: 100%; padding-bottom: 56.25%;">
+    <iframe
+        src="https://www.youtube-nocookie.com/embed/McQi0-JCciw"
+        title="YouTube video player"
+        frameborder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        allowfullscreen
+        style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;">
+    </iframe>
+</div>
+
+
 ## Basing a Style on another Style
 
 Sometimes you may want to base a style on another style. This can be done one of two ways. The first is that you can provide the name/key of the style. It is important to remember that this has a limitation of only working for globally accessible styles through the Application and is best used for default styles.
