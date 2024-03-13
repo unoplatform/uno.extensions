@@ -7,6 +7,8 @@
 	<ItemGroup Condition=" '$(ImplicitUsings)' == 'true' OR '$(ImplicitUsings)' == 'enable' ">
 		<Using Include="Uno.Extensions.Maui" />
 		<Using Include="Uno.Extensions.Maui.Platform" />
+		<!-- Removes .NET MAUI usings to avoid Ambiguous references -->
+		<Using Remove="@(Using->HasMetadata('Sdk')->WithMetadataValue('Sdk', 'Maui'))"/>
 	</ItemGroup>
 
 	<ItemGroup>

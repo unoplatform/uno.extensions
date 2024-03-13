@@ -31,9 +31,9 @@ public static class MauiHostMarkupExtensions
 
 	[MarkupExtension]
 	public static MauiHost Source<TSource>(this MauiHost host, Func<TSource> propertyBinding, [CallerArgumentExpression("propertyBinding")]string? propertyBindingExpression = null) =>
-		host.Source(x => x.Bind(propertyBinding, propertyBindingExpression));
+		host.Source(x => x.Binding(propertyBinding, propertyBindingExpression));
 
 	[MarkupExtension]
 	public static MauiHost Source<TSource>(this MauiHost host, Func<TSource> propertyBinding, Func<TSource, Type> convertDelegate, [CallerArgumentExpression("propertyBinding")] string? propertyBindingExpression = null) =>
-		host.Source(x => x.Bind(propertyBinding, propertyBindingExpression).Convert(convertDelegate));
+		host.Source(x => x.Binding(propertyBinding, propertyBindingExpression).Convert(convertDelegate));
 }
