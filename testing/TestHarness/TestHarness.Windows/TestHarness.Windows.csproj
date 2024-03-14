@@ -13,7 +13,7 @@
 		<DefaultLanguage>en</DefaultLanguage>
 		<WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
 		<!--<WindowsPackageType>None</WindowsPackageType>-->
-		<EnableMsixTooling>false</EnableMsixTooling>
+		<EnableMsixTooling>true</EnableMsixTooling>
 	</PropertyGroup>
 
 	<PropertyGroup><!-- Bundles the WinAppSDK binaries (Uncomment for unpackaged builds) -->
@@ -41,6 +41,7 @@
 		<PackageReference Include="IdentityModel.OidcClient" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Console" />
 		<PackageReference Include="Microsoft.Identity.Client" />
+		<PackageReference Include="Microsoft.Web.WebView2"/>
 		<PackageReference Include="Microsoft.WindowsAppSDK" />
 		<PackageReference Include="Microsoft.Windows.SDK.BuildTools" />
 		<PackageReference Include="Refit" />
@@ -94,4 +95,33 @@
 
 	<Import Project="..\..\..\src\Uno.Extensions.Core.Generators\buildTransitive\Uno.Extensions.Core.props" />
 	<Import Project="..\TestHarness.Shared\TestHarness.Shared.projitems" Label="Shared" Condition="Exists('..\TestHarness.Shared\TestHarness.Shared.projitems')" />
+
+	<!--
+  This is a temporary workaround to avoid error "NETSDK1152: Found multiple publish output files with the same relative path:"
+  for Microsoft.Web.WebView2.Core.dll, with one coming from MsixContent and the other from the Microsoft.Web.Webview2 Nuget package.
+  If both are present, we only keep the one from the NuGet package. See https://github.com/unoplatform/uno/issues/14555.
+-->
+	<Target Name="ResolveWebView2CoreDuplicates1" BeforeTargets="_ComputeResolvedFilesToPublishTypes" AfterTargets="ComputeFilesToPublish">
+		<Message Importance="high" Text ="Applying workaround to resolve Microsoft.Web.WebView2.Core.dll duplication in package (1)" />
+		<ItemGroup>
+			<_WebView2CoreFilesToExclude Include="@(ResolvedFileToPublish)" Condition="'%(Filename)' == 'Microsoft.Web.WebView2.Core'"/>
+		</ItemGroup>
+		<ItemGroup Condition="'@(_WebView2CoreFilesToExclude->Count())' &gt; 1">
+			<_WebView2CoreFilesToExclude Remove="@(_WebView2CoreFilesToExclude)" Condition="$([System.String]::Copy(%(FullPath)).Contains('.nuget'))"/>
+			<ResolvedFileToPublish Remove="@(_WebView2CoreFilesToExclude)" />
+		</ItemGroup>
+		<Message Importance="high" Text ="Removed: @(_WebView2CoreFilesToExclude)" />
+	</Target>
+
+	<Target Name="ResolveWebView2CoreDuplicates2" BeforeTargets="_ComputeAppxPackagePayload" AfterTargets="GetPackagingOutputs">
+		<Message Importance="high" Text ="Applying workaround to resolve Microsoft.Web.WebView2.Core.dll duplication in package (2)" />
+		<ItemGroup >
+			<_WebView2CoreOutputsToExclude Include="@(PackagingOutputs)" Condition="'%(Filename)' == 'Microsoft.Web.WebView2.Core'"/>
+		</ItemGroup>
+		<ItemGroup Condition="'@(_WebView2CoreOutputsToExclude->Count())' &gt; 1">
+			<_WebView2CoreOutputsToExclude Remove="@(_WebView2CoreOutputsToExclude)" Condition="$([System.String]::Copy(%(FullPath)).Contains('.nuget'))"/>
+			<PackagingOutputs Remove="@(_WebView2CoreOutputsToExclude)" />
+		</ItemGroup>
+		<Message Importance="high" Text ="Removed: @(_WebView2CoreOutputsToExclude)" />
+	</Target>
 </Project>

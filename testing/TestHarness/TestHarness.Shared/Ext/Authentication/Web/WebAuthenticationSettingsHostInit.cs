@@ -11,7 +11,8 @@ public class WebAuthenticationSettingsHostInit : BaseHostInitialization
 		return builder
 			.UseAuthentication(auth =>
 					auth
-					.AddWeb<IWebAuthenticationTestEndpoint>(name: "WebSettings")) // name defines not only the name of the provider but also the section in the appsettings file
+					.AddWeb<IWebAuthenticationTestEndpoint>(name: "WebSettings")
+					.AddWeb<IWebAuthenticationTestEndpoint>(name: "WebSettings2")) // name defines not only the name of the provider but also the section in the appsettings file
 
 				.ConfigureServices(services =>
 					services
