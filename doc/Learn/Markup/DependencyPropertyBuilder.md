@@ -11,7 +11,7 @@ The `DependencyPropertyBuilder` provides a fluent API to help you create a bindi
 
 ```cs
 new TextBlock()
-    .Text(x => x.Bind(() => vm.Message))
+    .Text(x => x.Binding(() => vm.Message))
 ```
 
 When creating a simplified binding such as the one above you may alternatively simply provide the binding expression like:
@@ -50,16 +50,18 @@ Sometimes you aren't binding to the `DataContext` of element and instead you nee
 ```cs
 new Slider().Assign(out var slider),
 new TextBlock()
-    .Text(x => x.Bind(() => slider.Value)
-        .Source(slider))
+    .Text(x => x
+        .Source(slider)
+        .Binding(() => slider.Value))
 ```
 
 The second is that we can leverage the element name for our binding such as the following:
 
 ```cs
 new TextBlock()
-    .Text(x => x.Bind(() => slider.Value)
-        .ElementName("slider")),
+    .Text(x => x
+        .Source("slider")
+        .Binding(() => slider.Value)),
 new Slider().Name("slider")
 ```
 

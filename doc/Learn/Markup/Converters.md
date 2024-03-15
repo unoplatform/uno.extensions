@@ -17,7 +17,7 @@ public static class Converters
 }
 
 new Button()
-    .Enabled(x => x.Bind(() => vm.IsBusy)
+    .Enabled(x => x.Binding(() => vm.IsBusy)
         .Converter(Converters.InverseBoolConverter));
 ```
 
@@ -40,7 +40,7 @@ public partial class MainPage : Page
                         new TextBox()
                             .Text(() => vm.Query)
                         new TextBlock()
-                            .Text(x => x.Bind(() => vm.Query)
+                            .Text(x => x.Binding(() => vm.Query)
                                 .Convert(query => $"Search: {query}"))
                     )
             ));
@@ -64,7 +64,7 @@ Sometimes, we may want to make conditionals or apply specific rules to values or
 ```csharp
 new TextBox()
     .Text(() => vm.Query)
-    .Foreground(x => x.Bind(() => vm.Query)
+    .Foreground(x => x.Binding(() => vm.Query)
         .Convert(query => new SolidColorBrush(!string.IsNullOrEmpty(query) && query.Length > 5 ? Colors.Green : Colors.Red)));
 ```
 
@@ -84,7 +84,7 @@ And use like this:
 ```csharp
 
 new Button()
-    .Enabled(x => x.Bind(() => vm.IsBusy)
+    .Enabled(x => x.Binding(() => vm.IsBusy)
         .Converter(Converters.InverseBoolConverter));
 ```
 
@@ -100,7 +100,7 @@ public partial class MainPage : Page
     {
         this.DataContext<MyViewModel>((page, vm) => page
             .Content(new TextBox()
-                .Text(x => x.Bind(() => vm.Enabled)
+                .Text(x => x.Binding(() => vm.Enabled)
                     .Convert(enabled => $"Enabled: {enabled}")
                     .ConvertBack(text => bool.TryParse(text.Replace("Search: ", ""), out var enabled) ? enabled : false))
             ));
