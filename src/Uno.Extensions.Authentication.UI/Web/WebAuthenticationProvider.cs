@@ -51,6 +51,10 @@ internal record WebAuthenticationProvider
 		if (loginStartUri is null ||
 			string.IsNullOrWhiteSpace(loginStartUri))
 		{
+			if (ProviderLogger.IsEnabled(LogLevel.Warning))
+			{
+				ProviderLogger.LogWarning($"{nameof(InternalSettings.LoginStartUri)} not specified, unable to start login flow");
+			}
 			return default;
 		}
 
@@ -68,6 +72,10 @@ internal record WebAuthenticationProvider
 
 		if (string.IsNullOrWhiteSpace(loginCallbackUri))
 		{
+			if (ProviderLogger.IsEnabled(LogLevel.Warning))
+			{
+				ProviderLogger.LogWarning($"{nameof(InternalSettings.LoginCallbackUri)} not specified and {OAuthRedirectUriParameter} not set in {nameof(InternalSettings.LoginStartUri)}, unable to start login flow");
+			}
 			return default;
 		}
 
@@ -153,7 +161,11 @@ internal record WebAuthenticationProvider
 		if (logoutStartUri is null ||
 			string.IsNullOrWhiteSpace(logoutStartUri))
 		{
-			return true;
+			if (ProviderLogger.IsEnabled(LogLevel.Warning))
+			{
+				ProviderLogger.LogWarning($"{nameof(InternalSettings.LogoutStartUri)} not specified, unable to start logout flow");
+			}
+			return false;
 		}
 
 		var logoutCallbackUri = InternalSettings.LogoutCallbackUri ?? InternalSettings.LoginCallbackUri;
@@ -177,6 +189,10 @@ internal record WebAuthenticationProvider
 
 		if (string.IsNullOrWhiteSpace(logoutCallbackUri))
 		{
+			if (ProviderLogger.IsEnabled(LogLevel.Warning))
+			{
+				ProviderLogger.LogWarning($"{nameof(InternalSettings.LogoutCallbackUri)} not specified and {OAuthRedirectUriParameter} not set in {nameof(InternalSettings.LogoutStartUri)}, unable to start logout flow");
+			}
 			return false;
 		}
 
