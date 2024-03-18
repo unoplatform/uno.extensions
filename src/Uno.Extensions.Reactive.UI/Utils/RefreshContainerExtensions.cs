@@ -73,12 +73,15 @@ public static class RefreshContainerExtensions
 		}
 
 		CompleteDeferral(container);
+
+#if WINUI
 		container.RefreshRequested -= OnRefreshRequested;
 
 		if (args.NewValue is ICommand)
 		{
 			container.RefreshRequested += OnRefreshRequested;
 		}
+#endif
 	}
 
 	private static void OnRefreshRequested(RefreshContainer snd, RefreshRequestedEventArgs args)
