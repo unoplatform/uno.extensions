@@ -27,6 +27,7 @@ public static class HostBuilderExtensions
 		Action<HostBuilderContext, IServiceCollection>? configure = default)
 	{
 		return hostBuilder
+			.UseSerialization()
 			.UseConfiguration(
 				configure: configBuilder =>
 				{
