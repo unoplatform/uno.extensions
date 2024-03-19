@@ -15,7 +15,8 @@ public static class ExtendedSplashScreenExtensions
 		// Capturing SplashScreen for UWP has been deprecated
 		// splash.SplashScreen = args?.SplashScreen;
 #elif WINDOWS
-		splash.SplashScreen = args?.UWPLaunchActivatedEventArgs.SplashScreen;
+		// Capturing SplashScreen for UWP has been deprecated
+		// splash.SplashScreen = args?.UWPLaunchActivatedEventArgs.SplashScreen;
 #endif
 	}
 }
