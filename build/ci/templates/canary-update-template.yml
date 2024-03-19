@@ -12,8 +12,8 @@ steps:
       branchToMerge: main
       summaryFile: '$(Build.ArtifactStagingDirectory)/Canary.md'
       resultFile: '$(Build.ArtifactStagingDirectory)/result.json'
-      nugetUpdaterVersion: 2.3.0-alpha.42
-      packageAuthor: 'nventive,Uno Platform'
+      nugetUpdaterVersion: 2.3.0-alpha.57
+      packageAuthor: 'nventive,Uno Platform,unoplatform'
 
   - powershell: |
       dotnet tool uninstall nventive.nuget.updater.tool --tool-path $(Agent.TempDirectory)
