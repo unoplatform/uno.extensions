@@ -10,6 +10,7 @@ internal record CompatibilityTypesGenerationContext(
 	[ContextType("System.Diagnostics.CodeAnalysis.DynamicallyAccessedMembersAttribute?")] INamedTypeSymbol? DynamicallyAccessedMembersAttribute,
 	[ContextType("System.Diagnostics.CodeAnalysis.MaybeNullAttribute?")] INamedTypeSymbol? MaybeNullAttribute, // .net std 2.1 and above
 	[ContextType("System.Diagnostics.CodeAnalysis.MaybeNullWhenAttribute?")] INamedTypeSymbol? MaybeNullWhenAttribute, // .net std 2.1 and above
+	[ContextType("System.Diagnostics.CodeAnalysis.MemberNotNullAttribute?")] INamedTypeSymbol? MemberNotNullAttribute, // .net std 2.1 and above
 	[ContextType("System.Diagnostics.CodeAnalysis.MemberNotNullWhenAttribute?")] INamedTypeSymbol? MemberNotNullWhenAttribute, // .net std 2.1 and above
 	[ContextType("System.Diagnostics.CodeAnalysis.NotNullIfNotNullAttribute?")] INamedTypeSymbol? NotNullIfNotNullAttribute, // .net std 2.1 and above
 	[ContextType("System.Diagnostics.CodeAnalysis.NotNullWhenAttribute?")] INamedTypeSymbol? NotNullWhenAttribute, // .net std 2.1 and above
