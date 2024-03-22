@@ -1,4 +1,5 @@
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Maui;
 using Microsoft.Maui.ApplicationModel;
 using Uno.Extensions.Hosting;
 

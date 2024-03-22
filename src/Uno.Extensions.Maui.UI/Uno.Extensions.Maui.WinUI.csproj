@@ -15,7 +15,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<Using Remove="Microsoft.Maui.*" />
+		<Using Remove="@(Using->HasMetadata('Sdk')->WithMetadataValue('Sdk', 'Maui'))"/>
 	</ItemGroup>
 
 	<ItemGroup>

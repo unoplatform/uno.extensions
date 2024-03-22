@@ -1,4 +1,6 @@
-﻿namespace Uno.Extensions.Maui;
+﻿using Microsoft.Maui;
+
+namespace Uno.Extensions.Maui;
 
 partial class MauiEmbedding
 {
