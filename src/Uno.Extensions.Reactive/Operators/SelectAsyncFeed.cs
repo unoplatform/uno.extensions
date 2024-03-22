@@ -29,7 +29,7 @@ internal sealed class SelectAsyncFeed<TArg, TResult> : IFeed<TResult>
 	/// <inheritdoc />
 	public IAsyncEnumerable<Message<TResult>> GetSource(SourceContext context, CancellationToken ct)
 	{
-		var subject = new AsyncEnumerableSubject<Message<TResult>>(ReplayMode.EnabledForFirstEnumeratorOnly);
+		var subject = new AsyncEnumerableSubject<Message<TResult>>(AsyncEnumerableReplayMode.EnabledForFirstEnumeratorOnly);
 		var message = new MessageManager<TArg, TResult>(subject.SetNext);
 		var projectionToken = default(CancellationTokenSource);
 		var projection = default(Task);
