@@ -63,7 +63,8 @@ internal record MsalAuthenticationProvider(
 			var result = await AcquireTokenAsync(dispatcher);
 			return new Dictionary<string, string>
 							{
-								{ TokenCacheExtensions.AccessTokenKey, result?.AccessToken??string.Empty}
+								{ TokenCacheExtensions.AccessTokenKey, result?.AccessToken??string.Empty},
+								{ TokenCacheExtensions.IdTokenKey, result?.IdToken??string.Empty}
 							};
 		}
 		catch (MsalClientException ex)
