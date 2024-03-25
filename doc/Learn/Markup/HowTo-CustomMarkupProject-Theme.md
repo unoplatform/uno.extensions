@@ -198,7 +198,7 @@ new Grid().RowDefinitions<Grid>("*, *")
 			.Grid(column: 0)
 			.Content("Toggle Theme")
 			.HorizontalAlignment(HorizontalAlignment.Right)
-			.Assign(out var toggle)
+			.Name(out var toggle)
 	),
 ```
 
