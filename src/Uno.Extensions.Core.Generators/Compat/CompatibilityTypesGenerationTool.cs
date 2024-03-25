@@ -440,7 +440,9 @@ internal class CompatibilityTypesGenerationTool : ICodeGenTool
 		}
 		using var resourceReader = new StreamReader(resource);
 
+#pragma warning disable RS1035 // Using Environment.NewLine is fine
 		var code = this.GetFileHeader() + Environment.NewLine + resourceReader.ReadToEnd();
+#pragma warning restore RS1035
 
 		return (fileName, code);
 	}
