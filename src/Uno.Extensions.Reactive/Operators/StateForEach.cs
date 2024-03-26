@@ -10,7 +10,6 @@ using Uno.Extensions.Reactive.Utils;
 namespace Uno.Extensions.Reactive;
 
 internal sealed class StateForEach<T> : IDisposable
-	where T : notnull
 {
 	private readonly CancellationTokenSource _ct = new();
 	private readonly AsyncAction<Option<T>> _action;

@@ -43,7 +43,7 @@ internal static class OptionExtensions
 		=> async (t, ct) => await func(t.SomeOrDefault(), ct).ConfigureAwait(false);
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static AsyncAction<Option<T>> SomeOrNone<T>(this AsyncAction<T?> func)
+	public static AsyncAction<Option<T?>> SomeOrNone<T>(this AsyncAction<T?> func)
 		where T : struct
 		=> async (t, ct) => await func(t.SomeOrDefault(), ct).ConfigureAwait(false);
 	#endregion

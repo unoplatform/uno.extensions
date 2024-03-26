@@ -13,6 +13,8 @@ namespace Uno.Extensions.Reactive;
 /// <typeparam name="T">The type of the value.</typeparam>
 public interface IState<T> : IFeed<T>, IState
 {
+#pragma warning disable CS1574 // XML comment has cref attribute that could not be resolved : Confusion non resolvable by code between notnull and struct. Can be resolved by user in VS.
+#pragma warning disable CS0419 // Ambiguous reference in cref attribute
 	/// <summary>
 	/// Updates the current internal message.
 	/// </summary>
@@ -20,5 +22,7 @@ public interface IState<T> : IFeed<T>, IState
 	/// <param name="ct">A cancellation to cancel the async operation.</param>
 	/// <returns>A ValueTask to track the async update.</returns>
 	/// <remarks>This is the raw way to update a state, you should consider using the <see cref="State.UpdateAsync{T}"/> method instead.</remarks>
+#pragma warning restore CS1574 // XML comment has cref attribute that could not be resolved
+#pragma warning restore CS0419 // Ambiguous reference in cref attribute
 	ValueTask UpdateMessageAsync(Action<MessageBuilder<T>> updater, CancellationToken ct = default);
 }
