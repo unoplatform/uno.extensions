@@ -4,6 +4,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
+using Uno.Extensions.Reactive.Utils;
 
 namespace Uno.Extensions.Reactive;
 
@@ -34,6 +35,26 @@ partial class State
 			{
 				var updatedValue = updater(m.CurrentData.SomeOrDefault());
 				var updatedData = updatedValue is null ? Option<T>.None() : Option.Some(updatedValue);
+
+				m.Data(updatedData);
+			},
+			ct);
+
+	/// <summary>
+	/// Updates the value of a state
+	/// </summary>
+	/// <typeparam name="T">Type of the value of the state.</typeparam>
+	/// <param name="state">The state to update.</param>
+	/// <param name="updater">The update method to apply to the current value.</param>
+	/// <param name="ct">A cancellation to cancel the async operation.</param>
+	/// <returns>A ValueTask to track the async update.</returns>
+	public static ValueTask UpdateAsync<T>(this IState<T?> state, Func<T?, T?> updater, CancellationToken ct = default)
+		where T : struct
+		=> state.UpdateMessageAsync(
+			m =>
+			{
+				var updatedValue = updater(m.CurrentData.SomeOrDefault());
+				var updatedData = updatedValue.HasValue ? Option.Some<T?>(updatedValue.Value) : Option<T?>.None();
 
 				m.Data(updatedData);
 			},
@@ -135,7 +156,20 @@ partial class State
 	/// <returns>A <see cref="IDisposable"/> that can be used to remove the callback registration.</returns>
 	public static IDisposable ForEachAsync<T>(this IState<T> state, AsyncAction<T?> action, [CallerMemberName] string? caller = null, [CallerLineNumber] int line = -1)
 		where T : notnull
-		=> new StateForEach<T>(state, action, $"ForEachAsync defined in {caller} at line {line}.");
+		=> new StateForEach<T>(state, action.SomeOrNone(), $"ForEachAsync defined in {caller} at line {line}.");
+
+	/// <summary>
+	/// Execute an async callback each time the state is being updated.
+	/// </summary>
+	/// <typeparam name="T">The type of the state</typeparam>
+	/// <param name="state">The state to listen.</param>
+	/// <param name="action">The callback to invoke on each update of the state.</param>
+	/// <param name="caller"> For debug purposes, the name of this subscription. DO NOT provide anything here, let the compiler fulfill this.</param>
+	/// <param name="line">For debug purposes, the name of this subscription. DO NOT provide anything here, let the compiler fulfill this.</param>
+	/// <returns>A <see cref="IDisposable"/> that can be used to remove the callback registration.</returns>
+	public static IDisposable ForEachAsync<T>(this IState<T> state, AsyncAction<T?> action, [CallerMemberName] string? caller = null, [CallerLineNumber] int line = -1)
+		where T : struct
+		=> new StateForEach<T>(state, action.SomeOrNone(), $"ForEachAsync defined in {caller} at line {line}.");
 
 	/// <summary>
 	/// [DEPRECATED] Use .ForEachAsync instead

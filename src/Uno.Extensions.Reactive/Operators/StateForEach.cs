@@ -13,11 +13,11 @@ internal sealed class StateForEach<T> : IDisposable
 	where T : notnull
 {
 	private readonly CancellationTokenSource _ct = new();
-	private readonly AsyncAction<T?> _action;
+	private readonly AsyncAction<Option<T>> _action;
 	private readonly string _name;
 	private readonly Task _task; // Holds ref on the enumeration task. This is also accessed by reflection in tests!
 
-	public StateForEach(ISignal<Message<T>> state, AsyncAction<T?> action, string name = "-unnamed-")
+	public StateForEach(ISignal<Message<T>> state, AsyncAction<Option<T>> action, string name = "-unnamed-")
 	{
 		if (state is not IStateImpl impl)
 		{
@@ -31,14 +31,14 @@ internal sealed class StateForEach<T> : IDisposable
 			.GetSource(impl.Context, _ct.Token)
 			.Skip(1) // Ignore the original state
 			.Where(msg => msg.Changes.Contains(MessageAxis.Data))
-			.Select(msg => msg.Current.Data.SomeOrDefault())
+			.Select(msg => msg.Current.Data)
 			.ForEachAwaitWithCancellationAsync(Execute, _ct.Token);
 
 		// Make sure that we are not being collected if the caller ignores us
 		ConditionalDisposable.Link(state, this);
 	}
 
-	private async Task Execute(T? value, CancellationToken ct)
+	private async Task Execute(Option<T> value, CancellationToken ct)
 	{
 		if (ct.IsCancellationRequested)
 		{

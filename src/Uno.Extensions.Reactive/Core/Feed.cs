@@ -29,6 +29,15 @@ public static partial class Feed
 		where T : notnull
 		=> AttachedProperty.GetOrCreate(valueProvider, static vp => new DynamicFeed<T>(vp));
 
+	/// <summary>
+	/// Gets or create a custom feed from an async method.
+	/// </summary>
+	/// <param name="valueProvider">The async method to use to load the value of the resulting feed.</param>
+	/// <returns>A feed that encapsulate the source.</returns>
+	internal static IFeed<T> Dynamic<T>(AsyncFunc<T?> valueProvider)
+		where T : struct
+		=> AttachedProperty.GetOrCreate(valueProvider, static vp => new DynamicFeed<T>(vp.SomeOrNone()));
+
 
 	/// <summary>
 	/// Gets or create a custom feed from a raw <see cref="IAsyncEnumerable{T}"/> sequence of <see cref="Uno.Extensions.Reactive.Message{T}"/>.

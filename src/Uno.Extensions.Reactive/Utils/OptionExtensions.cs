@@ -37,6 +37,17 @@ internal static class OptionExtensions
 		=> d => d.MapToSomeOrNone(func);
 	#endregion
 
+	#region AsyncAction
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static AsyncAction<Option<T>> SomeOrNone<T>(this AsyncAction<T?> func)
+		=> async (t, ct) => await func(t.SomeOrDefault(), ct).ConfigureAwait(false);
+
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static AsyncAction<Option<T>> SomeOrNone<T>(this AsyncAction<T?> func)
+		where T : struct
+		=> async (t, ct) => await func(t.SomeOrDefault(), ct).ConfigureAwait(false);
+	#endregion
+
 	#region AsyncFunc
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static AsyncFunc<Option<T>> SomeOrNoneWhenNotNull<T>(this AsyncFunc<T> func)
