@@ -16,6 +16,17 @@ You will quickly discover why C# Markup is a developer favorite with:
 - Refactoring support
 - Custom Controls and 3rd party libraries
 
+<div style="position: relative; width: 100%; padding-bottom: 56.25%;">
+    <iframe
+        src="https://www.youtube-nocookie.com/embed/BC3c1qO_kbU"
+        title="YouTube video player"
+        frameborder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        allowfullscreen
+        style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;">
+    </iframe>
+</div>
+
 Let's jump in and take a look at a simple sample that displays 'Hello Uno Platform!' in the center of the screen:
 
 ```cs
