@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.ExceptionServices;
@@ -14,33 +15,33 @@ namespace Uno.Extensions.Reactive;
 partial class Feed
 {
 	/// <summary>
-	/// Get an awaiter to asynchronously get the next data produced by a feed.
+	/// Get an awaiter to asynchronously get the next value produced by a feed.
 	/// </summary>
 	/// <typeparam name="T">The type of the value of the feed.</typeparam>
-	/// <param name="feed">The feed to get data from.</param>
-	/// <returns>An awaiter to asynchronously get the next data produced by the feed.</returns>
+	/// <param name="feed">The feed to get value from.</param>
+	/// <returns>An awaiter to asynchronously get the next value produced by the feed.</returns>
 	public static ValueTaskAwaiter<T?> GetAwaiter<T>(this IFeed<T> feed)
 		where T : notnull
 		=> feed.Value(SourceContext.Current.Token).GetAwaiter();
 
 	/// <summary>
-	/// Get an awaiter to asynchronously get the next data produced by a feed.
+	/// Get an awaiter to asynchronously get the next value produced by a feed.
 	/// </summary>
 	/// <typeparam name="T">The type of the value of the feed.</typeparam>
-	/// <param name="feed">The feed to get data from.</param>
-	/// <returns>An awaiter to asynchronously get the next data produced by the feed.</returns>
+	/// <param name="feed">The feed to get value from.</param>
+	/// <returns>An awaiter to asynchronously get the next value produced by the feed.</returns>
 	public static ValueTaskAwaiter<T?> GetAwaiter<T>(this IFeed<T?> feed)
 		where T : struct
 		=> feed.Value(SourceContext.Current.Token).GetAwaiter();
 
 	/// <summary>
-	/// Asynchronously get the next data produced by a feed.
+	/// Asynchronously get the next value produced by a feed.
 	/// </summary>
 	/// <typeparam name="T">The type of the value of the feed.</typeparam>
-	/// <param name="feed">The feed to get data from.</param>
+	/// <param name="feed">The feed to get value from.</param>
 	/// <param name="ct">A cancellation to cancel the async operation.</param>
-	/// <returns>A ValueTask to asynchronously get the next data produced by the feed.</returns>
-	public static async ValueTask<T?> Value<T>(this IFeed<T> feed, CancellationToken ct)
+	/// <returns>A ValueTask to asynchronously get the next value produced by the feed.</returns>
+	public static async ValueTask<T?> Value<T>(this IFeed<T> feed, CancellationToken ct = default)
 		where T : notnull
 		=> await FeedDependency.TryGetCurrentMessage(feed).ConfigureAwait(false) switch
 		{
@@ -49,13 +50,13 @@ partial class Feed
 		};
 
 	/// <summary>
-	/// Asynchronously get the next data produced by a feed.
+	/// Asynchronously get the next value produced by a feed.
 	/// </summary>
 	/// <typeparam name="T">The type of the value of the feed.</typeparam>
-	/// <param name="feed">The feed to get data from.</param>
+	/// <param name="feed">The feed to get value from.</param>
 	/// <param name="ct">A cancellation to cancel the async operation.</param>
-	/// <returns>A ValueTask to asynchronously get the next data produced by the feed.</returns>
-	public static async ValueTask<T?> Value<T>(this IFeed<T?> feed, CancellationToken ct)
+	/// <returns>A ValueTask to asynchronously get the next value produced by the feed.</returns>
+	public static async ValueTask<T?> Value<T>(this IFeed<T?> feed, CancellationToken ct = default)
 		where T : struct
 		=> await FeedDependency.TryGetCurrentMessage(feed).ConfigureAwait(false) switch
 		{
@@ -64,14 +65,14 @@ partial class Feed
 		};
 
 	/// <summary>
-	/// Asynchronously get the next data produced by a feed.
+	/// Asynchronously get the next value produced by a feed.
 	/// </summary>
 	/// <typeparam name="T">The type of the value of the feed.</typeparam>
-	/// <param name="feed">The feed to get data from.</param>
-	/// <param name="kind">Specify which data can be returned or not.</param>
+	/// <param name="feed">The feed to get value from.</param>
+	/// <param name="kind">Specify which value can be returned or not.</param>
 	/// <param name="ct">A cancellation to cancel the async operation.</param>
-	/// <returns>A ValueTask to asynchronously get the next acceptable data produced by the feed.</returns>
-	public static async ValueTask<T?> Value<T>(this IFeed<T> feed, AsyncFeedValue kind, CancellationToken ct)
+	/// <returns>A ValueTask to asynchronously get the next acceptable value produced by the feed.</returns>
+	public static async ValueTask<T?> Value<T>(this IFeed<T> feed, AsyncFeedValue kind, CancellationToken ct = default)
 		where T : notnull
 		=> await FeedDependency.TryGetCurrentMessage(feed).ConfigureAwait(false) switch
 		{
@@ -81,14 +82,14 @@ partial class Feed
 		};
 
 	/// <summary>
-	/// Asynchronously get the next data produced by a feed.
+	/// Asynchronously get the next value produced by a feed.
 	/// </summary>
 	/// <typeparam name="T">The type of the value of the feed.</typeparam>
-	/// <param name="feed">The feed to get data from.</param>
-	/// <param name="kind">Specify which data can be returned or not.</param>
+	/// <param name="feed">The feed to get value from.</param>
+	/// <param name="kind">Specify which value can be returned or not.</param>
 	/// <param name="ct">A cancellation to cancel the async operation.</param>
-	/// <returns>A ValueTask to asynchronously get the next acceptable data produced by the feed.</returns>
-	public static async ValueTask<T?> Value<T>(this IFeed<T?> feed, AsyncFeedValue kind, CancellationToken ct)
+	/// <returns>A ValueTask to asynchronously get the next acceptable value produced by the feed.</returns>
+	public static async ValueTask<T?> Value<T>(this IFeed<T?> feed, AsyncFeedValue kind, CancellationToken ct = default)
 		where T : struct
 		=> await FeedDependency.TryGetCurrentMessage(feed).ConfigureAwait(false) switch
 		{
@@ -107,19 +108,19 @@ partial class Feed
 	/// <returns>An async enumeration sequence of all acceptable data produced by a feed.</returns>
 	public static IAsyncEnumerable<T?> Values<T>(this IFeed<T> feed, AsyncFeedValue kind = AsyncFeedValue.AllowError, CancellationToken ct = default)
 		where T : notnull
-		=> feed.Options(kind, ct).Select(opt => opt.SomeOrDefault());
+		=> feed.DataSet(kind, ct).Select(opt => opt.SomeOrDefault());
 
 	/// <summary>
-	/// Gets an asynchronous enumerable sequence of all data produced by a feed.
+	/// Gets an asynchronous enumerable sequence of all values produced by a feed.
 	/// </summary>
 	/// <typeparam name="T">The type of the value of the feed.</typeparam>
-	/// <param name="feed">The feed to get data from.</param>
-	/// <param name="kind">Specify which data can be returned or not.</param>
+	/// <param name="feed">The feed to get values from.</param>
+	/// <param name="kind">Specify which values can be returned or not.</param>
 	/// <param name="ct">A cancellation to cancel the async enumeration.</param>
-	/// <returns>An async enumeration sequence of all acceptable data produced by a feed.</returns>
+	/// <returns>An async enumeration sequence of all acceptable values produced by a feed.</returns>
 	public static IAsyncEnumerable<T?> Values<T>(this IFeed<T?> feed, AsyncFeedValue kind = AsyncFeedValue.AllowError, CancellationToken ct = default)
 		where T : struct
-		=> feed.Options(kind, ct).Select(opt => opt.SomeOrDefault());
+		=> feed.DataSet(kind, ct).Select(opt => opt.SomeOrDefault());
 
 	/// <summary>
 	/// Asynchronously get the next data produced by a feed.
@@ -128,11 +129,11 @@ partial class Feed
 	/// <param name="feed">The feed to get data from.</param>
 	/// <param name="ct">A cancellation to cancel the async operation.</param>
 	/// <returns>A ValueTask to asynchronously get the next data produced by the feed.</returns>
-	public static async ValueTask<Option<T>> Option<T>(this IFeed<T> feed, CancellationToken ct)
+	public static async ValueTask<Option<T>> Data<T>(this IFeed<T> feed, CancellationToken ct = default)
 		=> await FeedDependency.TryGetCurrentMessage(feed).ConfigureAwait(false) switch
 		{
 			{ } message => message.Current.EnsureNoError().Data,
-			null => await feed.Options(AsyncFeedValue.Default, ct).FirstOrDefaultAsync(Uno.Extensions.Option<T>.Undefined(), ct).ConfigureAwait(false)
+			null => await feed.DataSet(AsyncFeedValue.Default, ct).FirstOrDefaultAsync(Uno.Extensions.Option<T>.Undefined(), ct).ConfigureAwait(false)
 		};
 
 	/// <summary>
@@ -143,12 +144,12 @@ partial class Feed
 	/// <param name="kind">Specify which data can be returned or not.</param>
 	/// <param name="ct">A cancellation to cancel the async operation.</param>
 	/// <returns>A ValueTask to asynchronously get the next acceptable data produced by the feed.</returns>
-	public static async ValueTask<Option<T>> Option<T>(this IFeed<T> feed, AsyncFeedValue kind, CancellationToken ct)
+	public static async ValueTask<Option<T>> Data<T>(this IFeed<T> feed, AsyncFeedValue kind, CancellationToken ct = default)
 		=> await FeedDependency.TryGetCurrentMessage(feed).ConfigureAwait(false) switch
 		{
 			not null when kind is not AsyncFeedValue.Default => throw new NotSupportedException($"Only kind AsyncFeedValue.Default is currently supported by the dynamic feed (requested: {kind})."),
 			{ } message => message.Current.EnsureNoError().Data,
-			null => await feed.Options(kind, ct).FirstOrDefaultAsync(Uno.Extensions.Option<T>.Undefined(), ct).ConfigureAwait(false)
+			null => await feed.DataSet(kind, ct).FirstOrDefaultAsync(Uno.Extensions.Option<T>.Undefined(), ct).ConfigureAwait(false)
 		};
 
 	/// <summary>
@@ -159,7 +160,7 @@ partial class Feed
 	/// <param name="kind">Specify which data can be returned or not.</param>
 	/// <param name="ct">A cancellation to cancel the async enumeration.</param>
 	/// <returns>An async enumeration sequence of all acceptable data produced by a feed.</returns>
-	public static async IAsyncEnumerable<Option<T>> Options<T>(this IFeed<T> feed, AsyncFeedValue kind = AsyncFeedValue.AllowError, [EnumeratorCancellation] CancellationToken ct = default)
+	public static async IAsyncEnumerable<Option<T>> DataSet<T>(this IFeed<T> feed, AsyncFeedValue kind = AsyncFeedValue.AllowError, [EnumeratorCancellation] CancellationToken ct = default)
 	{
 		using var enumCt = CancellationTokenSource.CreateLinkedTokenSource(ct);
 		try
@@ -194,6 +195,39 @@ partial class Feed
 			enumCt.Cancel();
 		}
 	}
+
+	/// <summary>
+	/// Obsolete, use Data instead.
+	/// </summary>
+	[EditorBrowsable(EditorBrowsableState.Never)]
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#if DEBUG
+	[Obsolete("Use Data instead")]
+#endif
+	public static ValueTask<Option<T>> Option<T>(this IFeed<T> feed, CancellationToken ct = default)
+		=> Data(feed, ct);
+
+	/// <summary>
+	/// Obsolete, use Data instead.
+	/// </summary>
+	[EditorBrowsable(EditorBrowsableState.Never)]
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#if DEBUG
+	[Obsolete("Use Data instead")]
+#endif
+	public static ValueTask<Option<T>> Option<T>(this IFeed<T> feed, AsyncFeedValue kind, CancellationToken ct)
+		=> Data(feed, kind, ct);
+
+	/// <summary>
+	/// Obsolete, use Data instead.
+	/// </summary>
+	[EditorBrowsable(EditorBrowsableState.Never)]
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#if DEBUG
+	[Obsolete("Use DataSet instead")]
+#endif
+	public static IAsyncEnumerable<Option<T>> Options<T>(this IFeed<T> feed, AsyncFeedValue kind = AsyncFeedValue.AllowError, CancellationToken ct = default)
+		=> feed.DataSet(kind, ct);
 
 	/// <summary>
 	/// Asynchronously get the next message produced by a feed.

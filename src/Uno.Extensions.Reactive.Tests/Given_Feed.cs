@@ -24,11 +24,11 @@ public class Given_Feed : FeedTests
 		result.Should().Be(42);
 	}
 
-	[TestMethod]
-	public async Task When_Async()
-	{
-		var sut = Feed.Async<int>(async ct => 42);
-		var result = await sut.Option(CT);
+		[TestMethod]
+		public async Task When_Async()
+		{
+			var sut = Feed.Async<int>(async ct => 42);
+			var result = await sut.Data(CT);
 
 		result.IsSome(out var items).Should().BeTrue();
 		items.Should().Be(42);
