@@ -219,7 +219,7 @@ partial class Feed
 		=> Data(feed, kind, ct);
 
 	/// <summary>
-	/// Obsolete, use Data instead.
+	/// Obsolete, use DataSet instead.
 	/// </summary>
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -234,19 +234,9 @@ partial class Feed
 	/// </summary>
 	/// <typeparam name="T">The type of the value of the feed.</typeparam>
 	/// <param name="feed">The feed to get message from.</param>
-	/// <returns>A ValueTask to asynchronously get the next message produced by the feed.</returns>
-	public static async ValueTask<Message<T>> Message<T>(this IFeed<T> feed)
-		=> await FeedDependency.TryGetCurrentMessage(feed).ConfigureAwait(false)
-			?? await feed.Messages().FirstAsync(SourceContext.Current.Token).ConfigureAwait(false);
-
-	/// <summary>
-	/// Asynchronously get the next message produced by a feed.
-	/// </summary>
-	/// <typeparam name="T">The type of the value of the feed.</typeparam>
-	/// <param name="feed">The feed to get message from.</param>
 	/// <param name="ct">A cancellation to cancel the async operation.</param>
 	/// <returns>A ValueTask to asynchronously get the next message produced by the feed.</returns>
-	public static async ValueTask<Message<T>> Message<T>(this IFeed<T> feed, CancellationToken ct)
+	public static async ValueTask<Message<T>> Message<T>(this IFeed<T> feed, CancellationToken ct = default)
 		=> await FeedDependency.TryGetCurrentMessage(feed).ConfigureAwait(false)
 			?? await feed.Messages().FirstAsync(ct).ConfigureAwait(false);
 

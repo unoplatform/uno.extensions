@@ -35,7 +35,7 @@ public static partial class ListFeed
 	/// <param name="listFeed">The feed to get data from.</param>
 	/// <param name="ct">A cancellation to cancel the async operation.</param>
 	/// <returns>A ValueTask to asynchronously get the next data produced by the feed.</returns>
-	public static async ValueTask<IImmutableList<T>> Value<T>(this IListFeed<T> listFeed, CancellationToken ct)
+	public static async ValueTask<IImmutableList<T>> Value<T>(this IListFeed<T> listFeed, CancellationToken ct = default)
 		=> await FeedDependency.TryGetCurrentMessage(listFeed).ConfigureAwait(false) switch
 		{
 			{ } message => message.Current.EnsureNoError().Data.SomeOrDefault(ImmutableList<T>.Empty),
@@ -50,7 +50,7 @@ public static partial class ListFeed
 	/// <param name="kind">Specify which data can be returned or not.</param>
 	/// <param name="ct">A cancellation to cancel the async operation.</param>
 	/// <returns>A ValueTask to asynchronously get the next acceptable data produced by the feed.</returns>
-	public static async ValueTask<IImmutableList<T>> Value<T>(this IListFeed<T> listFeed, AsyncFeedValue kind, CancellationToken ct)
+	public static async ValueTask<IImmutableList<T>> Value<T>(this IListFeed<T> listFeed, AsyncFeedValue kind, CancellationToken ct = default)
 		=> await FeedDependency.TryGetCurrentMessage(listFeed).ConfigureAwait(false) switch
 		{
 			not null when kind is not AsyncFeedValue.Default => throw new NotSupportedException($"Only kind AsyncFeedValue.Default is currently supported by the dynamic feed (requested: {kind})."),
@@ -67,7 +67,7 @@ public static partial class ListFeed
 	/// <param name="ct">A cancellation to cancel the async enumeration.</param>
 	/// <returns>An async enumeration sequence of all acceptable data produced by a feed.</returns>
 	public static IAsyncEnumerable<IImmutableList<T>> Values<T>(this IListFeed<T> listFeed, AsyncFeedValue kind = AsyncFeedValue.AllowError, CancellationToken ct = default)
-		=> listFeed.Options(kind, ct).Select(opt => opt.SomeOrDefault(ImmutableList<T>.Empty));
+		=> listFeed.DataSet(kind, ct).Select(opt => opt.SomeOrDefault(ImmutableList<T>.Empty));
 
 	/// <summary>
 	/// Asynchronously gets the next collection of items produced by a feed.
@@ -76,11 +76,11 @@ public static partial class ListFeed
 	/// <param name="listFeed">The feed to get data from.</param>
 	/// <param name="ct">A cancellation to cancel the async operation.</param>
 	/// <returns>A ValueTask to asynchronously get the next data produced by the feed.</returns>
-	public static async ValueTask<Option<IImmutableList<T>>> Option<T>(this IListFeed<T> listFeed, CancellationToken ct)
+	public static async ValueTask<Option<IImmutableList<T>>> Data<T>(this IListFeed<T> listFeed, CancellationToken ct = default)
 		=> await FeedDependency.TryGetCurrentMessage(listFeed).ConfigureAwait(false) switch
 		{
 			{ } message => message.Current.EnsureNoError().Data,
-			null => await listFeed.Options(AsyncFeedValue.Default, ct).FirstOrDefaultAsync(Extensions.Option<IImmutableList<T>>.Undefined(), ct).ConfigureAwait(false)
+			null => await listFeed.DataSet(AsyncFeedValue.Default, ct).FirstOrDefaultAsync(Extensions.Option<IImmutableList<T>>.Undefined(), ct).ConfigureAwait(false)
 		};
 
 	/// <summary>
@@ -91,12 +91,12 @@ public static partial class ListFeed
 	/// <param name="kind">Specify which data can be returned or not.</param>
 	/// <param name="ct">A cancellation to cancel the async operation.</param>
 	/// <returns>A ValueTask to asynchronously get the next acceptable data produced by the feed.</returns>
-	public static async ValueTask<Option<IImmutableList<T>>> Option<T>(this IListFeed<T> listFeed, AsyncFeedValue kind, CancellationToken ct)
+	public static async ValueTask<Option<IImmutableList<T>>> Data<T>(this IListFeed<T> listFeed, AsyncFeedValue kind, CancellationToken ct = default)
 		=> await FeedDependency.TryGetCurrentMessage(listFeed).ConfigureAwait(false) switch
 		{
 			not null when kind is not AsyncFeedValue.Default => throw new NotSupportedException($"Only kind AsyncFeedValue.Default is currently supported by the dynamic feed (requested: {kind})."),
 			{ } message => message.Current.EnsureNoError().Data,
-			null => await listFeed.Options(kind, ct).FirstOrDefaultAsync(Extensions.Option<IImmutableList<T>>.Undefined(), ct).ConfigureAwait(false)
+			null => await listFeed.DataSet(kind, ct).FirstOrDefaultAsync(Extensions.Option<IImmutableList<T>>.Undefined(), ct).ConfigureAwait(false)
 		};
 
 	/// <summary>
@@ -107,43 +107,74 @@ public static partial class ListFeed
 	/// <param name="kind">Specify which data can be returned or not.</param>
 	/// <param name="ct">A cancellation to cancel the async enumeration.</param>
 	/// <returns>An async enumeration sequence of all acceptable data produced by a feed.</returns>
-	public static async IAsyncEnumerable<Option<IImmutableList<T>>> Options<T>(this IListFeed<T> listFeed, AsyncFeedValue kind = AsyncFeedValue.AllowError, [EnumeratorCancellation] CancellationToken ct = default)
+	public static async IAsyncEnumerable<Option<IImmutableList<T>>> DataSet<T>(this IListFeed<T> listFeed, AsyncFeedValue kind = AsyncFeedValue.AllowError, [EnumeratorCancellation] CancellationToken ct = default)
 	{
-		var dataHasChanged = true;
-		await foreach (var message in SourceContext.Current.GetOrCreateSource(listFeed).WithCancellation(ct).ConfigureAwait(false))
+		using var enumCt = CancellationTokenSource.CreateLinkedTokenSource(ct);
+		try
 		{
-			var current = message.Current;
-			dataHasChanged |= message.Changes.Contains(MessageAxis.Data);
-
-			// Note: We check flags first to make sure to not touch values that are not needed for FeedDependency.
-
-			if (!kind.HasFlag(AsyncFeedValue.AllowTransient) && current.IsTransient)
+			var dataHasChanged = true;
+			await foreach (var message in SourceContext.Current.GetOrCreateSource(listFeed).WithCancellation(enumCt.Token).ConfigureAwait(false))
 			{
-				continue;
-			}
+				var current = message.Current;
+				dataHasChanged |= message.Changes.Contains(MessageAxis.Data);
 
-			if (!kind.HasFlag(AsyncFeedValue.AllowError) && current.Error is { } error)
-			{
-				ExceptionDispatchInfo.Capture(error).Throw();
-			}
+				// Note: We check flags first to make sure to not touch values that are not needed for FeedDependency.
 
-			if (dataHasChanged)
-			{
-				yield return current.Data;
-				dataHasChanged = false;
+				if (!kind.HasFlag(AsyncFeedValue.AllowTransient) && current.IsTransient)
+				{
+					continue;
+				}
+
+				if (!kind.HasFlag(AsyncFeedValue.AllowError) && current.Error is { } error)
+				{
+					ExceptionDispatchInfo.Capture(error).Throw();
+				}
+
+				if (dataHasChanged)
+				{
+					yield return current.Data;
+					dataHasChanged = false;
+				}
 			}
+		}
+		finally
+		{
+			enumCt.Cancel();
 		}
 	}
 
 	/// <summary>
-	/// Asynchronously gets the next message produced by a feed.
+	/// Obsolete, use Data instead.
 	/// </summary>
-	/// <typeparam name="T">The type of the value of the feed.</typeparam>
-	/// <param name="listFeed">The list feed to get message from.</param>
-	/// <returns>A ValueTask to asynchronously get the next message produced by the feed.</returns>
-	public static async ValueTask<Message<IImmutableList<T>>> Message<T>(this IListFeed<T> listFeed)
-		=> await FeedDependency.TryGetCurrentMessage(listFeed).ConfigureAwait(false)
-			?? await listFeed.Messages().FirstAsync(SourceContext.Current.Token).ConfigureAwait(false);
+	[EditorBrowsable(EditorBrowsableState.Never)]
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#if DEBUG
+	[Obsolete("Use Data instead")]
+#endif
+	public static ValueTask<Option<IImmutableList<T>>> Option<T>(this IListFeed<T> listFeed, CancellationToken ct)
+		=> listFeed.Data(ct);
+
+	/// <summary>
+	/// Obsolete, use Data instead.
+	/// </summary>
+	[EditorBrowsable(EditorBrowsableState.Never)]
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#if DEBUG
+	[Obsolete("Use Data instead")]
+#endif
+	public static ValueTask<Option<IImmutableList<T>>> Option<T>(this IListFeed<T> listFeed, AsyncFeedValue kind, CancellationToken ct)
+		=> listFeed.Data(kind, ct);
+
+	/// <summary>
+	/// Obsolete, use DataSet instead.
+	/// </summary>
+	[EditorBrowsable(EditorBrowsableState.Never)]
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#if DEBUG
+	[Obsolete("Use DataSet instead")]
+#endif
+	public static IAsyncEnumerable<Option<IImmutableList<T>>> Options<T>(this IListFeed<T> listFeed, AsyncFeedValue kind = AsyncFeedValue.AllowError, CancellationToken ct = default)
+		=> listFeed.DataSet(kind, ct);
 
 	/// <summary>
 	/// Asynchronously get the next message produced by a feed.
@@ -152,7 +183,7 @@ public static partial class ListFeed
 	/// <param name="listFeed">The list feed to get message from.</param>
 	/// <param name="ct">A cancellation to cancel the async operation.</param>
 	/// <returns>A ValueTask to asynchronously get the next message produced by the feed.</returns>
-	public static async ValueTask<Message<IImmutableList<T>>> Message<T>(this IListFeed<T> listFeed, CancellationToken ct)
+	public static async ValueTask<Message<IImmutableList<T>>> Message<T>(this IListFeed<T> listFeed, CancellationToken ct = default)
 		=> await FeedDependency.TryGetCurrentMessage(listFeed).ConfigureAwait(false)
 			?? await listFeed.Messages().FirstAsync(ct).ConfigureAwait(false);
 
@@ -232,8 +263,8 @@ public static partial class ListFeed
 	/// <param name="source">The source list feed to get selected items for.</param>
 	/// <param name="ct">A cancellation to cancel the async operation.</param>
 	/// <returns>The selected items, or an empty collection if none.</returns>
-	[EditorBrowsable(EditorBrowsableState.Never)]
-	public static async ValueTask<IImmutableList<T>> GetSelectedItems<T>(this IListFeed<T> source, CancellationToken ct)
+	[EditorBrowsable(EditorBrowsableState.Advanced)]
+	public static async ValueTask<IImmutableList<T>> GetSelectedItems<T>(this IListFeed<T> source, CancellationToken ct = default)
 		=> (await source.Message(ct).ConfigureAwait(false)).Current.GetSelectedItems();
 
 	/// <summary>
@@ -243,8 +274,8 @@ public static partial class ListFeed
 	/// <param name="source">The source list feed to get selected items for.</param>
 	/// <param name="ct">A cancellation to cancel the async operation.</param>
 	/// <returns>The selected item, or null if none.</returns>
-	[EditorBrowsable(EditorBrowsableState.Never)]
-	public static async ValueTask<T?> GetSelectedItem<T>(this IListFeed<T> source, CancellationToken ct)
+	[EditorBrowsable(EditorBrowsableState.Advanced)]
+	public static async ValueTask<T?> GetSelectedItem<T>(this IListFeed<T> source, CancellationToken ct = default)
 		where T : notnull
 		=> (await source.Message(ct).ConfigureAwait(false)).Current.GetSelectedItem();
 }

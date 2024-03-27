@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using FluentAssertions;
+using FluentAssertions.Execution;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Uno.Extensions.Reactive.Testing;
 
@@ -34,7 +36,19 @@ public sealed class ItemsConstraint<T> : AxisConstraint
 		if (actualItemsOpt.IsSome(out var actualItems))
 		{
 			actualItems.Should().BeAssignableTo<IImmutableList<T>>();
-			((IImmutableList<T>)actualItems).Should().BeEquivalentTo(_items.SomeOrDefault()!);
+
+			var actualImmutableItems = (IImmutableList<T>)actualItems;
+			var expectedImmutableItems = _items.SomeOrDefault()!;
+
+			actualImmutableItems.Count.Should().Be(expectedImmutableItems.Count);
+
+			for (var i = 0; i < expectedImmutableItems.Count; i++)
+			{
+				using (AssertionScope.Current.ForContext($"item [{i}]"))
+				{
+					actualImmutableItems[i].Should().BeEquivalentTo(expectedImmutableItems[i]);
+				}
+			}
 		}
 	}
 

@@ -15,6 +15,7 @@ static partial class ListState
 	/// [DEPRECATED] Use UpdateMessageAsync instead
 	/// </summary>
 	[EditorBrowsable(EditorBrowsableState.Never)]
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #if DEBUG // To avoid usage in internal reactive code, but without forcing apps to update right away
 	[Obsolete("Use UpdateMessageAsync")]
 #endif
@@ -29,7 +30,7 @@ static partial class ListState
 	/// <param name="updater">The update method to apply to the current value.</param>
 	/// <param name="ct">A cancellation to cancel the async operation.</param>
 	/// <returns>A ValueTask to track the async update.</returns>
-	public static ValueTask UpdateAsync<T>(this IListState<T> state, Func<IImmutableList<T>, IImmutableList<T>> updater, CancellationToken ct = default)
+	public static ValueTask UpdateAsync<T>(this IListState<T> state, Func<IImmutableList<T>, IImmutableList<T>?> updater, CancellationToken ct = default)
 		=> state.UpdateMessageAsync(
 			m =>
 			{
@@ -44,6 +45,7 @@ static partial class ListState
 	/// [DEPRECATED] Use UpdateAsync instead
 	/// </summary>
 	[EditorBrowsable(EditorBrowsableState.Never)]
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #if DEBUG // To avoid usage in internal reactive code, but without forcing apps to update right away
 	[Obsolete("Use UpdateAsync")]
 #endif
@@ -65,51 +67,23 @@ static partial class ListState
 	/// [DEPRECATED] Use UpdateDataAsync instead
 	/// </summary>
 	[EditorBrowsable(EditorBrowsableState.Never)]
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #if DEBUG // To avoid usage in internal reactive code, but without forcing apps to update right away
 	[Obsolete("Use UpdateDataAsync")]
 #endif
 	public static ValueTask UpdateData<T>(this IListState<T> state, Func<Option<IImmutableList<T>>, Option<IImmutableList<T>>> updater, CancellationToken ct)
 		=> UpdateDataAsync(state, updater, ct);
 
-	/// <summary>
-	/// Updates the value of a list state
-	/// </summary>
-	/// <typeparam name="T">Type of the items of the list state.</typeparam>
-	/// <param name="state">The list state to update.</param>
-	/// <param name="updater">The update method to apply to the current list.</param>
-	/// <param name="ct">A cancellation to cancel the async operation.</param>
-	/// <returns>A ValueTask to track the async update.</returns>
-	public static ValueTask UpdateDataAsync<T>(this IListState<T> state, Func<Option<IImmutableList<T>>, IImmutableList<T>> updater, CancellationToken ct = default)
-		=> state.UpdateMessageAsync(m => m.Data(updater(m.CurrentData)), ct);
 
 	/// <summary>
 	/// [DEPRECATED] Use UpdateDataAsync instead
 	/// </summary>
 	[EditorBrowsable(EditorBrowsableState.Never)]
-#if DEBUG // To avoid usage in internal reactive code, but without forcing apps to update right away
-	[Obsolete("Use UpdateDataAsync")]
-#endif
-	public static ValueTask UpdateData<T>(this IListState<T> state, Func<Option<IImmutableList<T>>, IImmutableList<T>> updater, CancellationToken ct)
-		=> UpdateDataAsync(state, updater, ct);
-
-	/// <summary>
-	/// [DEPRECATED] Use UpdateDataAsync instead
-	/// </summary>
-	[EditorBrowsable(EditorBrowsableState.Never)]
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #if DEBUG // To avoid usage in internal reactive code, but without forcing apps to update right away
 	[Obsolete("Use UpdateDataAsync")]
 #endif
 	public static ValueTask UpdateValue<T>(this IListState<T> state, Func<Option<IImmutableList<T>>, Option<IImmutableList<T>>> updater, CancellationToken ct)
-		=> UpdateDataAsync(state, updater, ct);
-
-	/// <summary>
-	/// [DEPRECATED] Use UpdateDataAsync instead
-	/// </summary>
-	[EditorBrowsable(EditorBrowsableState.Never)]
-#if DEBUG // To avoid usage in internal reactive code, but without forcing apps to update right away
-	[Obsolete("Use UpdateDataAsync")]
-#endif
-	public static ValueTask UpdateValue<T>(this IListState<T> state, Func<Option<IImmutableList<T>>, IImmutableList<T>> updater, CancellationToken ct)
 		=> UpdateDataAsync(state, updater, ct);
 
 
@@ -123,7 +97,7 @@ static partial class ListState
 	/// <param name="ct">A token to abort the async add operation.</param>
 	/// <returns></returns>
 	public static ValueTask InsertAsync<T>(this IListState<T> state, T item, CancellationToken ct = default)
-		=> state.UpdateDataAsync(items => items.SomeOrDefault(ImmutableList<T>.Empty).Insert(0, item), ct);
+		=> state.UpdateDataAsync(items => Option.Some((items.SomeOrDefault() ?? ImmutableList<T>.Empty).Insert(0, item)), ct);
 
 	/// <summary>
 	/// Adds an item into a list state
@@ -134,7 +108,7 @@ static partial class ListState
 	/// <param name="ct">A token to abort the async add operation.</param>
 	/// <returns></returns>
 	public static ValueTask AddAsync<T>(this IListState<T> state, T item, CancellationToken ct = default)
-		=> state.UpdateDataAsync(items => items.SomeOrDefault(ImmutableList<T>.Empty).Add(item), ct);
+		=> state.UpdateDataAsync(items => Option.Some((items.SomeOrDefault() ?? ImmutableList<T>.Empty).Add(item)), ct);
 
 	/// <summary>
 	/// Removes all matching items from a list state.
@@ -176,6 +150,7 @@ static partial class ListState
 	/// [DEPRECATED] Use .UpdateAllAsync instead
 	/// </summary>
 	[EditorBrowsable(EditorBrowsableState.Never)]
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #if DEBUG // To avoid usage in internal reactive code, but without forcing apps to update right away
 	[Obsolete("Use UpdateAllAsync")]
 #endif
@@ -204,6 +179,7 @@ static partial class ListState
 	/// [DEPRECATED] Use .ForEachAsync instead
 	/// </summary>
 	[EditorBrowsable(EditorBrowsableState.Never)]
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #if DEBUG // To avoid usage in internal reactive code, but without forcing apps to update right away
 	[Obsolete("Use ForEachAsync")]
 #endif
@@ -241,7 +217,7 @@ static partial class ListState
 
 		await state.UpdateMessageAsync(msg =>
 		{
-			var items = msg.CurrentData.SomeOrDefault(ImmutableList<T>.Empty);
+			var items = msg.CurrentData.SomeOrDefault() ?? ImmutableList<T>.Empty;
 			if (SelectionInfo.TryCreateMultiple(items, selectedItems, out var selection, comparer))
 			{
 				success = true;
@@ -268,7 +244,7 @@ static partial class ListState
 
 		await state.UpdateMessageAsync(msg =>
 		{
-			var items = msg.CurrentData.SomeOrDefault(ImmutableList<T>.Empty);
+			var items = msg.CurrentData.SomeOrDefault() ?? ImmutableList<T>.Empty;
 			if (SelectionInfo.TryCreateSingle(items, selectedItem, out var selection, comparer))
 			{
 				success = true;
@@ -294,6 +270,7 @@ static partial class ListState
 	/// [DEPRECATED] Use .ClearSelectionAsync instead
 	/// </summary>
 	[EditorBrowsable(EditorBrowsableState.Never)]
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #if DEBUG // To avoid usage in internal reactive code, but without forcing apps to update right away
 	[Obsolete("Use ClearSelectionAsync")]
 #endif
