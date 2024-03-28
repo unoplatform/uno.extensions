@@ -274,9 +274,9 @@ internal class SelectionFacet : IDisposable, ISelectionInfo
 #endif
 		_service.SelectRange(itemIndexRange);
 
-		if (_service.GetSelectedRanges() is { Count: 1 } selection)
+		if (_service.GetSelectedRanges() is [{ Length: 1 } singleSelection])
 		{
-			MoveCurrentToPosition(selection.First().FirstIndex, isCancelable: false, isSelectionRangeUpdate: true);
+			MoveCurrentToPosition(singleSelection.FirstIndex, isCancelable: false, isSelectionRangeUpdate: true);
 		}
 	}
 
@@ -295,9 +295,9 @@ internal class SelectionFacet : IDisposable, ISelectionInfo
 
 		if (CurrentPosition >= itemIndexRange.FirstIndex
 			&& CurrentPosition <= itemIndexRange.LastIndex
-			&& _service.GetSelectedRanges() is { Count: >= 1 } selection)
+			&& _service.GetSelectedRanges() is [{ Length: 1 } singleSelection])
 		{
-			MoveCurrentToPosition(selection.First().FirstIndex, isCancelable: false, isSelectionRangeUpdate: true);
+			MoveCurrentToPosition(singleSelection.FirstIndex, isCancelable: false, isSelectionRangeUpdate: true);
 		}
 	}
 

@@ -201,7 +201,7 @@ public sealed record SelectionInfo
 	/// <param name="index">The index to validate.</param>
 	/// <returns>True is the index is present, false otherwise.</returns>
 	public bool Contains(int index)
-		=> Ranges.Any(range => range.FirstIndex >= index && range.LastIndex <= index);
+		=> Ranges.Any(range => range.FirstIndex <= index && index <= range.LastIndex);
 
 	/// <summary>
 	/// Create a new SelectionInfo which contains ranges of this instance among the provided <paramref name="range"/>.

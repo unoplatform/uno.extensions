@@ -17,5 +17,7 @@ public sealed record SelectionIndexRange(uint FirstIndex, uint Length)
 
 	/// <inheritdoc />
 	public override string ToString()
-		=> $"[{FirstIndex}, {LastIndex}]";
+		=> Length is 0
+			? "--Empty--"
+			: $"[{FirstIndex}, {LastIndex}]";
 }
