@@ -67,9 +67,9 @@ internal sealed class PaginationService : IPaginationService, IDisposable
 			throw new ObjectDisposedException(nameof(PaginationService));
 		}
 
-		using (await _gate.LockAsync(ct))
+		using (await _gate.LockAsync(ct).ConfigureAwait(false))
 		{
-			return await new LoadRequest(this, count).GetResult(ct);
+			return await new LoadRequest(this, count).GetResult(ct).ConfigureAwait(false);
 		}
 	}
 

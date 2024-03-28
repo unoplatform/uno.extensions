@@ -11,7 +11,7 @@ namespace Uno.Extensions.Reactive;
 /// Provides a set of static methods to create and manipulate <see cref="IFeed{T}"/>.
 /// </summary>
 /// <typeparam name="T">The type of the data.</typeparam>
-public static class Feed<T> // We set the T on the class to it greatly helps type inference of factory delegates
+public static partial class Feed<T> // We set the T on the class to it greatly helps type inference of factory delegates
 {
 	/// <summary>
 	/// Gets or create a custom feed from an async method.

@@ -80,7 +80,7 @@ public static partial class ListFeed
 		=> await FeedDependency.TryGetCurrentMessage(listFeed).ConfigureAwait(false) switch
 		{
 			{ } message => message.Current.EnsureNoError().Data,
-			null => await listFeed.Options(AsyncFeedValue.Default, ct).FirstOrDefaultAsync(Extensions.Option<IImmutableList<T>>.Undefined(), ct)
+			null => await listFeed.Options(AsyncFeedValue.Default, ct).FirstOrDefaultAsync(Extensions.Option<IImmutableList<T>>.Undefined(), ct).ConfigureAwait(false)
 		};
 
 	/// <summary>
@@ -96,7 +96,7 @@ public static partial class ListFeed
 		{
 			not null when kind is not AsyncFeedValue.Default => throw new NotSupportedException($"Only kind AsyncFeedValue.Default is currently supported by the dynamic feed (requested: {kind})."),
 			{ } message => message.Current.EnsureNoError().Data,
-			null => await listFeed.Options(kind, ct).FirstOrDefaultAsync(Extensions.Option<IImmutableList<T>>.Undefined(), ct)
+			null => await listFeed.Options(kind, ct).FirstOrDefaultAsync(Extensions.Option<IImmutableList<T>>.Undefined(), ct).ConfigureAwait(false)
 		};
 
 	/// <summary>
@@ -234,7 +234,7 @@ public static partial class ListFeed
 	/// <returns>The selected items, or an empty collection if none.</returns>
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	public static async ValueTask<IImmutableList<T>> GetSelectedItems<T>(this IListFeed<T> source, CancellationToken ct)
-		=> (await source.Message(ct)).Current.GetSelectedItems();
+		=> (await source.Message(ct).ConfigureAwait(false)).Current.GetSelectedItems();
 
 	/// <summary>
 	/// Gets the selected item of a list feed, or null if none.
@@ -246,5 +246,5 @@ public static partial class ListFeed
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	public static async ValueTask<T?> GetSelectedItem<T>(this IListFeed<T> source, CancellationToken ct)
 		where T : notnull
-		=> (await source.Message(ct)).Current.GetSelectedItem();
+		=> (await source.Message(ct).ConfigureAwait(false)).Current.GetSelectedItem();
 }

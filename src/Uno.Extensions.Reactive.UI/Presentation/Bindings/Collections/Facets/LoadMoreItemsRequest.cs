@@ -35,7 +35,7 @@ internal class LoadMoreItemsRequest
 	{
 		try
 		{
-			return (await _result.Task).Count;
+			return (await _result.Task.ConfigureAwait(false)).Count;
 		}
 		catch (OperationCanceledException)
 		{

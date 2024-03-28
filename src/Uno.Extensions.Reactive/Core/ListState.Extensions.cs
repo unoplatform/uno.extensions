@@ -247,7 +247,7 @@ static partial class ListState
 				success = true;
 				msg.Selected(selection);
 			}
-		}, ct);
+		}, ct).ConfigureAwait(false);
 
 		return success;
 	}
@@ -274,7 +274,7 @@ static partial class ListState
 				success = true;
 				msg.Selected(selection);
 			}
-		}, ct);
+		}, ct).ConfigureAwait(false);
 
 		return success;
 	}
@@ -286,9 +286,9 @@ static partial class ListState
 	/// <param name="state">The state to update.</param>
 	/// <param name="ct">A token to abort the async operation.</param>
 	/// <returns></returns>
-	public static async ValueTask ClearSelectionAsync<T>(this IListState<T> state, CancellationToken ct = default)
+	public static ValueTask ClearSelectionAsync<T>(this IListState<T> state, CancellationToken ct = default)
 		where T : notnull
-		=> await state.UpdateMessageAsync(msg => msg.Selected(SelectionInfo.Empty), ct);
+		=> state.UpdateMessageAsync(msg => msg.Selected(SelectionInfo.Empty), ct);
 
 	/// <summary>
 	/// [DEPRECATED] Use .ClearSelectionAsync instead

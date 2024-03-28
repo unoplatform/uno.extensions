@@ -29,7 +29,7 @@ internal sealed class WhereListFeed<T> : IListFeed<T>
 		var localMsg = new MessageManager<IImmutableList<T>, IImmutableList<T>>();
 		await foreach (var parentMsg in context.GetOrCreateSource(_parent).WithCancellation(ct).ConfigureAwait(false))
 		{
-			if (localMsg.Update(DoUpdate, parentMsg))
+			if (localMsg.Update(DoUpdate, parentMsg, ct))
 			{
 				yield return localMsg.Current;
 			}

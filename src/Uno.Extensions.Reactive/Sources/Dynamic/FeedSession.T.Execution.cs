@@ -101,13 +101,13 @@ internal sealed partial class FeedSession<TResult>
 			ValueTask<Option<TResult>> task = default;
 			try
 			{
-				await NotifyBegin();
+				await NotifyBegin().ConfigureAwait(false);
 
 				task = _session._mainAsyncAction(Token);
 			}
 			catch (OperationCanceledException) when (Token.IsCancellationRequested)
 			{
-				await NotifyEnd(FeedExecutionResult.Cancelled);
+				await NotifyEnd(FeedExecutionResult.Cancelled).ConfigureAwait(false);
 
 				lock (StateGate)
 				{
@@ -131,7 +131,7 @@ internal sealed partial class FeedSession<TResult>
 			}
 			catch (Exception error)
 			{
-				await NotifyEnd(FeedExecutionResult.Failed);
+				await NotifyEnd(FeedExecutionResult.Failed).ConfigureAwait(false);
 
 				lock (StateGate)
 				{
@@ -173,7 +173,7 @@ internal sealed partial class FeedSession<TResult>
 
 				if (Token.IsCancellationRequested)
 				{
-					await NotifyEnd(FeedExecutionResult.Cancelled);
+					await NotifyEnd(FeedExecutionResult.Cancelled).ConfigureAwait(false);
 					lock (StateGate)
 					{
 						// Even if we have been cancelled (because a new execution request has been queued),
@@ -224,7 +224,7 @@ internal sealed partial class FeedSession<TResult>
 			{
 				var data = await task.ConfigureAwait(false);
 
-				await NotifyEnd(FeedExecutionResult.Success);
+				await NotifyEnd(FeedExecutionResult.Success).ConfigureAwait(false);
 
 				lock (StateGate)
 				{
@@ -244,7 +244,7 @@ internal sealed partial class FeedSession<TResult>
 			}
 			catch (OperationCanceledException) when (Token.IsCancellationRequested)
 			{
-				await NotifyEnd(FeedExecutionResult.Cancelled);
+				await NotifyEnd(FeedExecutionResult.Cancelled).ConfigureAwait(false);
 
 				lock (StateGate)
 				{
@@ -256,7 +256,7 @@ internal sealed partial class FeedSession<TResult>
 			}
 			catch (Exception error)
 			{
-				await NotifyEnd(FeedExecutionResult.Failed);
+				await NotifyEnd(FeedExecutionResult.Failed).ConfigureAwait(false);
 
 				lock (StateGate)
 				{
@@ -292,7 +292,7 @@ internal sealed partial class FeedSession<TResult>
 			{
 				try
 				{
-					await dependency.OnExecuting(this, Token);
+					await dependency.OnExecuting(this, Token).ConfigureAwait(false);
 				}
 				catch (Exception e)
 				{
@@ -308,7 +308,7 @@ internal sealed partial class FeedSession<TResult>
 				try
 				{
 					// Note: No CT for the end notification (the current Token might already be cancelled).
-					await dependency.OnExecuted(this, result, default);
+					await dependency.OnExecuted(this, result, default).ConfigureAwait(false);
 				}
 				catch (Exception e)
 				{

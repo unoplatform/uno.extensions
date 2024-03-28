@@ -112,7 +112,7 @@ internal sealed class RefCountedForEachRunner<T> : IForEachRunner
 
 		try
 		{
-			await _enumeratorProvider().ForEachAwaitAsync(async item => await _asyncAction(item, ct), ct);
+			await _enumeratorProvider().ForEachAwaitAsync(async item => await _asyncAction(item, ct).ConfigureAwait(false), ct).ConfigureAwait(false);
 		}
 		catch (OperationCanceledException)
 		{

@@ -101,7 +101,7 @@ internal class PaginationDependency<TItem> : IDependency
 
 		_gotItems = true;
 
-		using (await _gate.LockAsync(_ct.Token))
+		using (await _gate.LockAsync(_ct.Token).ConfigureAwait(false))
 		{
 			var (isPagination, req) = FindPaginationRequest(exec);
 			if (_pages is null // Initial load (req is then expected to be an InitialLoadRequest)
@@ -118,7 +118,7 @@ internal class PaginationDependency<TItem> : IDependency
 				return _items;
 			}
 
-			if (await _pages.MoveNextAsync(req?.DesiredPageSize))
+			if (await _pages.MoveNextAsync(req?.DesiredPageSize).ConfigureAwait(false))
 			{
 				// No needs to configure the _pageInfo, it has been done in the OnLoading method.
 				_items = _items.AddRange(_pages.Current);

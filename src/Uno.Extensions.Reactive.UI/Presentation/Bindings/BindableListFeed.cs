@@ -75,7 +75,8 @@ public sealed partial class BindableListFeed<T> : ISignal<IMessage>, IListState<
 					(current, @params) => current
 						.With(@params.parentMsg)
 						.Data(@params.parentMsg.Current.Data.Map(_ => @params.collectionView)),
-					(parentMsg, collectionView)))
+					(parentMsg, collectionView),
+					ct))
 			{
 				yield return localMsg.Current;
 			}
@@ -171,18 +172,18 @@ public sealed partial class BindableListFeed<T> : ISignal<IMessage>, IListState<
 		{
 			var originalCount = currentCount;
 
-			await pageTokens.WaitFor(requests.RequestMoreItems(desiredCount), ct);
+			await pageTokens.WaitFor(requests.RequestMoreItems(desiredCount), ct).ConfigureAwait(false);
 
 			var resultCount = currentCount;
 
 			return (uint)Math.Max(0, resultCount - originalCount);
 		}
 
-		async ValueTask SetSelected(SelectionInfo info, CancellationToken ct)
-			=> await state.UpdateMessageAsync(msg => msg.Selected(info).Set(BindableViewModelBase.BindingSource, collection), ct);
+		ValueTask SetSelected(SelectionInfo info, CancellationToken ct)
+			=> state.UpdateMessageAsync(msg => msg.Selected(info).Set(BindableViewModelBase.BindingSource, collection), ct);
 
-		async ValueTask Edit(Func<IDifferentialCollectionNode, IDifferentialCollectionNode> change, CancellationToken ct)
-			=> await state.UpdateMessageAsync(
+		ValueTask Edit(Func<IDifferentialCollectionNode, IDifferentialCollectionNode> change, CancellationToken ct)
+			=> state.UpdateMessageAsync(
 				msg =>
 				{
 					// Note: The change might have been computed on an older version of the collection
@@ -208,6 +209,6 @@ public sealed partial class BindableListFeed<T> : ISignal<IMessage>, IListState<
 	/// <inheritdoc />
 	public async ValueTask DisposeAsync()
 	{
-		await _state.DisposeAsync();
+		await _state.DisposeAsync().ConfigureAwait(false);
 	}
 }

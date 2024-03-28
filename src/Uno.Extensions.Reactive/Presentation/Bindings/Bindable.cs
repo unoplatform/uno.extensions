@@ -209,7 +209,7 @@ public class Bindable<T> : IBindable, INotifyPropertyChanged, IFeed<T>
 			_asyncSetCt?.Cancel();
 			_asyncSetCt = new();
 
-			await _property.Update(_ => value, true, _asyncSetCt.Token);
+			await _property.Update(_ => value, true, _asyncSetCt.Token).ConfigureAwait(false);
 		}
 		catch (OperationCanceledException)
 		{
@@ -247,7 +247,7 @@ public class Bindable<T> : IBindable, INotifyPropertyChanged, IFeed<T>
 
 			// 2. Propagate the update to the parent (i.e. update the backing state)
 			// Note: We re-invoke the 'update' delegate here (instead of using the '_value') to make sure to respect ACID
-			await _property.Update(t => set(t, update(get(t))), false, ct);
+			await _property.Update(t => set(t, update(get(t))), false, ct).ConfigureAwait(false);
 		}
 	}
 

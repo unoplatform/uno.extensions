@@ -49,7 +49,7 @@ internal sealed class StateForEach<T> : IDisposable
 
 		try
 		{
-			await _action(value, ct);
+			await _action(value, ct).ConfigureAwait(false);
 		}
 		catch (OperationCanceledException) when (ct.IsCancellationRequested)
 		{

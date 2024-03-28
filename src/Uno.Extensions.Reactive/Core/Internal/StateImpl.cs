@@ -118,7 +118,7 @@ internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, ISta
 
 		var update = new Update(updater, _updatesKind);
 		_inner.Add(update);
-		await update.HasBeenApplied; // Makes sure to forward (the first) error to the caller if any.
+		await update.HasBeenApplied.ConfigureAwait(false); // Makes sure to forward (the first) error to the caller if any.
 	}
 
 	private void Enable()
@@ -144,7 +144,7 @@ internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, ISta
 		//		 This is a temporary patch until we support dynamic updates of the subscription mode in FeedSubscription (i.e. the _subscriptionMode).
 		if (_subscription is { } sub)
 		{
-			await sub.DisposeAsync();
+			await sub.DisposeAsync().ConfigureAwait(false);
 		}
 		_subscriptionMode?.Dispose();
 	}

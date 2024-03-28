@@ -26,7 +26,7 @@ internal class SingletonServiceProvider : IServiceProvider, IAsyncDisposable
 			switch (service)
 			{
 				case IAsyncDisposable asyncDisposable:
-					await asyncDisposable.DisposeAsync();
+					await asyncDisposable.DisposeAsync().ConfigureAwait(false);
 					break;
 
 				case IDisposable disposable:

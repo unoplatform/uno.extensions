@@ -110,7 +110,7 @@ internal sealed class AsyncFeed<T> : IFeed<T>
 				if (load is not null)
 				{
 					// Make sure to await the end of the last projection before completing the subject!
-					await load;
+					await load.ConfigureAwait(false);
 				}
 				subject.Complete();
 			}

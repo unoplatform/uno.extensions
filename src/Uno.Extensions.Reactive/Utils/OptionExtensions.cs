@@ -40,16 +40,16 @@ internal static class OptionExtensions
 	#region AsyncFunc
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static AsyncFunc<Option<T>> SomeOrNoneWhenNotNull<T>(this AsyncFunc<T> func)
-		=> async ct => Option.SomeOrNone(await func(ct));
+		=> async ct => Option.SomeOrNone(await func(ct).ConfigureAwait(false));
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static AsyncFunc<Option<T>> SomeOrNone<T>(this AsyncFunc<T?> func)
-		=> async ct => Option.SomeOrNone(await func(ct));
+		=> async ct => Option.SomeOrNone(await func(ct).ConfigureAwait(false));
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static AsyncFunc<Option<T>> SomeOrNone<T>(this AsyncFunc<T?> func)
 		where T : struct
-		=> async ct => Option.SomeOrNone(await func(ct));
+		=> async ct => Option.SomeOrNone(await func(ct).ConfigureAwait(false));
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static AsyncFunc<Option<T>, Option<TResult>> SomeOrNoneWhenNotNull<T, TResult>(this AsyncFunc<T, TResult> func)

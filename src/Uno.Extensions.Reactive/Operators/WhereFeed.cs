@@ -32,7 +32,7 @@ internal sealed class WhereFeed<T> : IFeed<T>
 		var localMsg = new MessageManager<T, T>();
 		await foreach (var parentMsg in context.GetOrCreateSource(_parent).WithCancellation(ct).ConfigureAwait(false))
 		{
-			if (localMsg.Update(DoUpdate, parentMsg))
+			if (localMsg.Update(DoUpdate, parentMsg, ct))
 			{
 				yield return localMsg.Current;
 			}

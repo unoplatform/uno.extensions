@@ -52,7 +52,7 @@ internal sealed class CompositeAsyncDisposable : ICollection<IAsyncDisposable>, 
 		var (isRemoved, asyncDispose) = RemoveCore(item);
 		if (isRemoved)
 		{
-			await asyncDispose;
+			await asyncDispose.ConfigureAwait(false);
 			return true;
 		}
 		else

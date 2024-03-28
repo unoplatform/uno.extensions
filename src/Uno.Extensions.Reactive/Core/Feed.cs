@@ -242,10 +242,13 @@ public static partial class Feed
 					return ImmutableList<TResult>.Empty;
 				}
 
-				var items = await FeedExecution.Current!.GetPaginated<TResult>(
-					b => b
-						.ByIndex()
-						.GetPage((req, ct) => gp(value, req, ct)));
+				var items = await FeedExecution
+					.Current
+					!.GetPaginated<TResult>(
+						b => b
+							.ByIndex()
+							.GetPage((req, ct) => gp(value, req, ct)))
+					.ConfigureAwait(false);
 
 				return items;
 			});
@@ -280,10 +283,13 @@ public static partial class Feed
 					return ImmutableList<TResult>.Empty;
 				}
 
-				var items = await FeedExecution.Current!.GetPaginated<TResult>(
-					b => b
-						.ByCursor(args.firstPage)
-						.GetPage((token, count, ct) => args.getPage(value, token, count, ct)));
+				var items = await FeedExecution
+					.Current
+					!.GetPaginated<TResult>(
+						b => b
+							.ByCursor(args.firstPage)
+							.GetPage((token, count, ct) => args.getPage(value, token, count, ct)))
+					.ConfigureAwait(false);
 
 				return items;
 			});

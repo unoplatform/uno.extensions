@@ -83,8 +83,8 @@ internal class FeedSubscription<T> : IAsyncDisposable, ISourceContextOwner
 	/// <inheritdoc />
 	public async ValueTask DisposeAsync()
 	{
-		await _context.DisposeAsync();
+		await _context.DisposeAsync().ConfigureAwait(false);
 		_requests.Dispose();
-		await _messages.DisposeAsync();
+		await _messages.DisposeAsync().ConfigureAwait(false);
 	}
 }
