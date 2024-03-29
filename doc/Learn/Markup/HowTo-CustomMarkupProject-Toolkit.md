@@ -75,8 +75,8 @@ The navigation bar can include items such as a back button, a page title, and ot
 		.Name(out var navigationButton),
     ```
 
-    The main ideia here is to create a button that have assign itself, through the `Name` extension method, the output variable named in this case as `navigationButton`.
-    After that we need to add a Click EventHandler to add the Navigation using the Frame.Navigate. 
+    The main idea here is to create a button that has to assign itself, through the `Name` extension method, the output variable named in this case is `navigationButton`.
+    After that, we need to add a Click EventHandler to add the Navigation using the Frame.Navigate. 
 
     > Notice how simple it is to create an action for the Button's Click event.
 
@@ -284,7 +284,7 @@ Chips are often used to display short pieces of information such as tags, catego
 		)
     ```
 
-    And we need to add the event handlers  on our code.
+    And we need to add the event handlers to our code.
     Notice that we are using the `Name` extension method to have access to the chipElement in other places.
     
     ```csharp
