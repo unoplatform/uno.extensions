@@ -345,7 +345,7 @@ With this we can control events and changes.
 		    )
     ```
 
-    We will change the navigationButton (the same that has been assigned for controlling the navigation) and change its background color now.
+    We will change the navigationButton (the same one that has been assigned for controlling the navigation) and change its background color now.
     And change the value of the Width of the Button that will be used on the EventHandler.
     You can add the Button before the `new SampleUserControl()`.
 

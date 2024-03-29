@@ -45,7 +45,7 @@ If you wish to perform tasks such as manipulate the value of the binding or form
 
 ### Reference Sources
 
-Sometimes you aren't binding to the `DataContext` of element and instead you need to reference another source. With WinUI we have 2 ways of doing this. The first is that we could specify a source directly such as:
+Sometimes you aren't binding to the `DataContext` of the element and instead, you need to reference another source. With WinUI we have 2 ways of doing this. The first is that we could specify a source directly such as:
 
 ```cs
 new Slider().Name(out var slider),
