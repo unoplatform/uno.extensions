@@ -129,11 +129,11 @@ public static class StateExtensions
 	/// </summary>
 	/// <typeparam name="T">Type of the value of the state.</typeparam>
 	/// <param name="listState">The list state to refresh.</param>
-	/// <param name="ct">An cancellation to abort the asynchronous operation, cf. remarks for details.</param>
+	/// <param name="ct"> A cancellation to abort the asynchronous operation, cf. remarks for details.</param>
 	/// <returns>An asynchronous boolean indicating if the source has been refreshed or not.</returns>
 	/// <remarks>
 	/// Cancelling the <paramref name="ct"/> will only cancel the wait for the refreshed message on state, but it won't cancel the refresh itself.
-	/// Once refreshed has been requested, it cannot be cancelled.
+	/// Once refreshed has been requested, it cannot be canceled.
 	/// </remarks>
 	[EditorBrowsable(EditorBrowsableState.Advanced)]
 	public static async ValueTask<bool> TryRefreshAsync<T>(this IListState<T> listState, CancellationToken ct = default)

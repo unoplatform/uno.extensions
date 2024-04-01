@@ -19,7 +19,7 @@ public interface IState : IAsyncDisposable
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	SourceContext Context { get; }
 
-	// Note: Should a State always be only a wrapper over a feed (i.e. no interface, only concrete type!) and expose (internally?) it's FeedSubscription?
+	// Note: Should a State always be only a wrapper over a feed (i.e. no interface, only concrete type!) and expose (internally?) its FeedSubscription?
 	/// <summary>
 	/// The request source to use to manipulate that state.
 	/// </summary>
