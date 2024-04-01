@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -62,6 +63,9 @@ internal sealed class ListFeedSelection<TSource, TOther> : IListState<TSource>, 
 	public SourceContext Context { get; }
 
 	/// <inheritdoc />
+	public IRequestSource Requests => Enable().Requests;
+
+	/// <inheritdoc />
 	public IAsyncEnumerable<Message<IImmutableList<TSource>>> GetSource(SourceContext context, CancellationToken ct = default)
 		=> Enable().GetSource(context, ct);
 
@@ -105,10 +109,17 @@ internal sealed class ListFeedSelection<TSource, TOther> : IListState<TSource>, 
 		switch (Interlocked.CompareExchange(ref _state, State.Enabled, State.New))
 		{
 			case State.Disposed: throw new ObjectDisposedException(_name);
-			case State.Enabled: return _impl!;
+			case State.Enabled when _impl is not null: return _impl;
+			case State.Enabled:
+			{
+				SpinWait.SpinUntil(() => _impl is not null || _state != State.Enabled, 100); // Timeout to avoid dead-lock, indicates a deeper issue, like error while instantiating the StateImpl.
+
+				return _impl ?? throw new ObjectDisposedException(_name);
+			}
 		}
 
 		var impl = new StateImpl<IImmutableList<TSource>>(Context, _source.AsFeed(), SubscriptionMode.Eager);
+		_impl = impl;
 
 		SelectionFeedUpdate? currentSelectionFromState = null;
 
@@ -122,7 +133,7 @@ internal sealed class ListFeedSelection<TSource, TOther> : IListState<TSource>, 
 			.Where(msg => msg.Changes.Contains(MessageAxis.Selection) && msg.Current.Get(SelectionUpdateSource) != _selectionState)
 			.ForEachAwaitWithCancellationAsync(SyncFromListToState, ConcurrencyMode.AbortPrevious, _ct.Token);
 
-		return _impl = impl;
+		return impl;
 
 		async ValueTask SyncFromStateToList(Message<TOther> otherMsg, CancellationToken ct)
 		{

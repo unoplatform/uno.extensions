@@ -41,6 +41,8 @@ internal class FeedSubscription<T> : IAsyncDisposable, ISourceContextOwner
 
 	internal Message<T> Current => _messages.TryGetCurrent(out var value) ? value : Message<T>.Initial;
 
+	internal IRequestSource Requests => _requests;
+
 	public IDisposable UpdateMode(SubscriptionMode mode)
 	{
 		// Not supported yet.
