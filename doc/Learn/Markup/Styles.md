@@ -10,6 +10,17 @@ new Style<TextBlock>()
     .Setters(s => s.FontSize(14))
 ```
 
+<div style="position: relative; width: 100%; padding-bottom: 56.25%;">
+    <iframe
+        src="https://www.youtube-nocookie.com/embed/McQi0-JCciw"
+        title="YouTube video player"
+        frameborder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        allowfullscreen
+        style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;">
+    </iframe>
+</div>
+
 ## Using Attached Properties
 
 By default the C# Markup Generators will provide friendly extension methods for properties on the given type for `Style<T>`. This provides an API that is friendly and familiar to the XAML you might be used to as shown in the example above. Sometimes you may need to use Attached DependencyProperties for which there is no generated extension for `Style<T>`, in these cases you can simply call the Add method and pass in both the DependencyProperty and the value:
