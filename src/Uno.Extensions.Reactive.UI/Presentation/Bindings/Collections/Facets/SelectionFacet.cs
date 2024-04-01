@@ -274,9 +274,13 @@ internal class SelectionFacet : IDisposable, ISelectionInfo
 #endif
 		_service.SelectRange(itemIndexRange);
 
-		if (_service.GetSelectedRanges() is { Count: 1 } selection)
+#if UAP10_0_19041
+		if (_service.GetSelectedRanges() is { Count: 1 } ranges && ranges[0] is {Length: 1} singleSelection)
+#else
+		if (_service.GetSelectedRanges() is [{ Length: 1 } singleSelection])
+#endif
 		{
-			MoveCurrentToPosition(selection.First().FirstIndex, isCancelable: false, isSelectionRangeUpdate: true);
+			MoveCurrentToPosition(singleSelection.FirstIndex, isCancelable: false, isSelectionRangeUpdate: true);
 		}
 	}
 
@@ -295,9 +299,13 @@ internal class SelectionFacet : IDisposable, ISelectionInfo
 
 		if (CurrentPosition >= itemIndexRange.FirstIndex
 			&& CurrentPosition <= itemIndexRange.LastIndex
-			&& _service.GetSelectedRanges() is { Count: >= 1 } selection)
+#if UAP10_0_19041
+			&& _service.GetSelectedRanges() is { Count: 1 } ranges && ranges[0] is { Length: 1 } singleSelection)
+#else
+			&& _service.GetSelectedRanges() is [{ Length: 1 } singleSelection])
+#endif
 		{
-			MoveCurrentToPosition(selection.First().FirstIndex, isCancelable: false, isSelectionRangeUpdate: true);
+			MoveCurrentToPosition(singleSelection.FirstIndex, isCancelable: false, isSelectionRangeUpdate: true);
 		}
 	}
 
@@ -355,7 +363,7 @@ internal class SelectionFacet : IDisposable, ISelectionInfo
 		=> _service?.GetSelectedRanges() ?? Array.Empty<ItemIndexRange>();
 #endif
 
-	#endregion
+#endregion
 
 	public void Dispose()
 	{
