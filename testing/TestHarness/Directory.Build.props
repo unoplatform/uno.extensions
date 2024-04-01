@@ -1,6 +1,6 @@
 <Project ToolsVersion="15.0">
 	<PropertyGroup>
-		<LangVersion>10.0</LangVersion>
+		<LangVersion>latest</LangVersion>
 
 		<!-- https://github.com/unoplatform/private/issues/332 -->
 		<Nullable>annotations</Nullable>
