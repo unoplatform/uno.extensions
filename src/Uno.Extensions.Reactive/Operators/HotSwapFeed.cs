@@ -63,7 +63,9 @@ internal sealed class HotSwapFeed<T> : IFeed<T>
 	/// <inheritdoc />
 	public async IAsyncEnumerable<Message<T>> GetSource(SourceContext context, [EnumeratorCancellation] CancellationToken ct = default)
 	{
+#pragma warning disable CA2007 // Consider calling ConfigureAwait on the awaited task, false positive: it's for the DisposeAsync which cannot be configured here
 		await using var session = new Session(this, context, ct);
+#pragma warning restore CA2007
 		while (await session.MoveNextAsync().ConfigureAwait(false))
 		{
 			yield return session.Current;
@@ -109,7 +111,7 @@ internal sealed class HotSwapFeed<T> : IFeed<T>
 			{
 				var moveNext = enumerator.MoveNextAsync().AsTask();
 				if (await Task.WhenAny(moveNext, next.Task).ConfigureAwait(false) == moveNext
-					&& await moveNext)
+					&& await moveNext.ConfigureAwait(false))
 				{
 					var canSkip = !_isFirstMessage && _isFirstMessageOfCurrentEnumerator;
 

@@ -120,14 +120,11 @@ public static class ConfigBuilderExtensions
 	{
 		if (configSection is null)
 		{
-			if (configurationSection is { Length: > 0 })
+			if (configurationSection is not { Length: > 0 })
 			{
-				configSection = ctx => ctx.Configuration.GetSection(configurationSection);
+				configurationSection = typeof(TSettingsOptions).Name;
 			}
-			else
-			{
-				configSection = ctx => ctx.Configuration.GetSection(typeof(TSettingsOptions).Name);
-			}
+			configSection = ctx => ctx.Configuration.GetSection(configurationSection);
 		}
 
 		static string? FilePath(HostBuilderContext hctx)
@@ -160,7 +157,7 @@ public static class ConfigBuilderExtensions
 					}
 
 					var section = configSection(ctx);
-					services.ConfigureAsWritable<TSettingsOptions>(section, configPath);
+					services.ConfigureAsWritable<TSettingsOptions>(section, configPath, configurationSection);
 				}
 
 			).AsConfigBuilder();

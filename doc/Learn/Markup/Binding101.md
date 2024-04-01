@@ -48,7 +48,7 @@ public partial class MainPage : Page
 			.Content(
 				new TextBlock()
 					.Text(x => x
-						.Bind(() => vm.Title)
+						.Binding(() => vm.Title)
 						.Mode(BindingMode.OneTime)
 					)
 			)
@@ -68,7 +68,7 @@ public partial class MainPage : Page
 			.Content(
 				new TextBlock()
 					.Text(x => x
-						.Bind(() => vm.Title)
+						.Binding(() => vm.Title)
 						.OneTime()
 					)
 			)
@@ -88,7 +88,7 @@ public partial class MainPage : Page
 			.Content(
 				new TextBlock()
 					.Text(x => x
-						.Bind(() => vm.Query)
+						.Binding(() => vm.Query)
 						.Convert(query => $"Search: {query}")
 					)
 			)
@@ -125,7 +125,7 @@ public partial class MainPage : Page
 			.Content(
 				new TextBox()
 					.Text(x => x
-						.Bind(() => vm.Enabled)
+						.Binding(() => vm.Enabled)
 						.Convert(enabled => $"Enabled: {enabled}")
 						.ConvertBack(text => bool.TryParse(text.Replace("Search: ", ""), out var enabled) ? enabled : false)
 					)
@@ -137,7 +137,7 @@ public partial class MainPage : Page
 
 ## Binding to other sources
 
-Sometimes you may want or need to bind to your ViewModel. The first case we'll take a look at is one in which we want to bind to a property of another element. In this case we will use the `ElementName` method on the `BindingFactory` to update our binding so that it will bind to a named element in the Visual Tree.
+Sometimes you may want or need to bind to your ViewModel. The first case we'll take a look at is one in which we want to bind to a property of another element. In this case we will use the `Source` method to update our binding so that it will bind to a named element in the Visual Tree.
 
 ```cs
 public partial class MainPage : Page
@@ -152,8 +152,8 @@ public partial class MainPage : Page
 					.Name("SearchBox"),
 				new TextBox()
 					.Text(x => x
-						.Bind(() => searchBox.Text)
-						.ElementName("SearchBox"))
+						.Source("SearchBox")
+						.Binding(() => searchBox.Text))
 			)
 		);
 	}
@@ -173,7 +173,8 @@ public partial class MainPage : Page
 			.Content(
 				new MyCustomControl()
 					.DataContext(x => x
-						.Bind(() => this.DataContext)
+						.Source(this)
+						.Binding(() => this.DataContext)
 						.Convert(dataContext => {
 							if (dataContext is MyViewModel myViewModel)
 							{
@@ -182,7 +183,6 @@ public partial class MainPage : Page
 							return null;
 						})
 						.OneTime()
-						.Source(this)
 					)
 			)
 		);

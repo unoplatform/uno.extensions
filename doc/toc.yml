@@ -32,6 +32,9 @@
     - name: Serialization
       href: Learn/Serialization/toc.yml
       topicHref: xref:Uno.Extensions.Serialization.Overview
+    - name: Storage
+      href: Learn/Storage/toc.yml
+      topicHref: xref:Uno.Extensions.Storage.Overview
     - name: Validation
       href: Learn/Validation/toc.yml
       topicHref: xref:Uno.Extensions.Validation.Overview

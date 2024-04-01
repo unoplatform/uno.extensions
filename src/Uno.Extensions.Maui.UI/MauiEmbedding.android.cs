@@ -1,3 +1,4 @@
+using Microsoft.Maui;
 using Uno.Extensions.Maui.Platform;
 
 namespace Uno.Extensions.Maui;

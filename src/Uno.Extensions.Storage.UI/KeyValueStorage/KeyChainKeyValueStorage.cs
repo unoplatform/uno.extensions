@@ -200,13 +200,7 @@ internal record KeyChainKeyValueStorage(
 				{
 					if (status == SecStatusCode.Param)
 					{
-						if (Logger.IsEnabled(LogLevel.Error))
-						{
-							this.Log().Error(
-							   "Failed to save to the iOS KeyChain. " +
-							   "Make sure an Entitlements.plist file has been provided in the Bundle Signing properties of your project."
-						   );
-						}
+						LogEntitlementsError();
 					}
 
 					throw new SecurityException(status);
@@ -219,6 +213,17 @@ internal record KeyChainKeyValueStorage(
 		if (Logger.IsEnabled(LogLevel.Information))
 		{
 			Logger.LogInformationMessage($"Value for key '{name}' set.");
+		}
+	}
+
+	internal void LogEntitlementsError()
+	{
+		if (Logger.IsEnabled(LogLevel.Error))
+		{
+			Logger.LogErrorMessage(
+				"Failed to save to the KeyChain. " +
+				"See https://aka.platform.uno/missing-keychain-entitlement for more details."
+			);
 		}
 	}
 
@@ -421,6 +426,12 @@ internal record KeyChainKeyValueStorage(
 			var status = SecKeyChain.Update(_record, newRecord);
 			if (status != SecStatusCode.Success)
 			{
+				// -34018 -> A required entitlement isn't present.
+				if (status == (SecStatusCode)(-34018))
+				{
+					_parent.LogEntitlementsError();
+				}
+
 				throw new SecurityException(status);
 			}
 		}

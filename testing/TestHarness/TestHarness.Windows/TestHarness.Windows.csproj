@@ -13,7 +13,7 @@
 		<DefaultLanguage>en</DefaultLanguage>
 		<WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
 		<!--<WindowsPackageType>None</WindowsPackageType>-->
-		<EnableMsixTooling>false</EnableMsixTooling>
+		<EnableMsixTooling>true</EnableMsixTooling>
 	</PropertyGroup>
 
 	<PropertyGroup><!-- Bundles the WinAppSDK binaries (Uncomment for unpackaged builds) -->
@@ -41,6 +41,7 @@
 		<PackageReference Include="IdentityModel.OidcClient" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Console" />
 		<PackageReference Include="Microsoft.Identity.Client" />
+		<PackageReference Include="Microsoft.Web.WebView2"/>
 		<PackageReference Include="Microsoft.WindowsAppSDK" />
 		<PackageReference Include="Microsoft.Windows.SDK.BuildTools" />
 		<PackageReference Include="Refit" />
@@ -93,5 +94,6 @@
 	</ItemGroup>
 
 	<Import Project="..\..\..\src\Uno.Extensions.Core.Generators\buildTransitive\Uno.Extensions.Core.props" />
+	<Import Project="..\..\..\src\Uno.Extensions.Authentication.MSAL\build\Package.targets" />
 	<Import Project="..\TestHarness.Shared\TestHarness.Shared.projitems" Label="Shared" Condition="Exists('..\TestHarness.Shared\TestHarness.Shared.projitems')" />
 </Project>

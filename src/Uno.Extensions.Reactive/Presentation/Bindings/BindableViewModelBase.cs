@@ -133,7 +133,7 @@ public abstract partial class BindableViewModelBase : IBindable, INotifyProperty
 				updated(initialValue);
 				var ct = stateImpl.Context.Token;
 				var source = FeedUIHelper.GetSource(stateImpl, stateImpl.Context);
-				var dispatcher = await _dispatcher.GetFirstResolved(ct);
+				var dispatcher = await _dispatcher.GetFirstResolved(ct).ConfigureAwait(false);
 
 				dispatcher.TryEnqueue(async () =>
 				{
@@ -206,7 +206,7 @@ public abstract partial class BindableViewModelBase : IBindable, INotifyProperty
 	/// <inheritdoc />
 	public async ValueTask DisposeAsync()
 	{
-		await _disposables.DisposeAsync();
+		await _disposables.DisposeAsync().ConfigureAwait(false);
 		_propertyChanged.Dispose();
 		_dispatcher.Dispose();
 	}

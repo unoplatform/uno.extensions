@@ -4,7 +4,7 @@ IFS=$'\n\t'
 
 export UNO_UITEST_TARGETURI=http://localhost:5000
 export UNO_UITEST_DRIVERPATH_CHROME=$BUILD_SOURCESDIRECTORY/build/node_modules/chromedriver/lib/chromedriver
-export UNO_UITEST_CHROME_BINARY_PATH=$BUILD_SOURCESDIRECTORY/build/node_modules/puppeteer/.local-chromium/linux-991974/chrome-linux/chrome
+export UNO_UITEST_CHROME_BINARY_PATH=~/.cache/puppeteer/chrome/linux-119.0.6045.105/chrome-linux64/chrome
 export UNO_UITEST_SCREENSHOT_PATH=$BUILD_ARTIFACTSTAGINGDIRECTORY/screenshots/wasm
 export BIN_LOG_PATH=$BUILD_ARTIFACTSTAGINGDIRECTORY/wasm-uitest.binlog
 export UNO_UITEST_PLATFORM=Browser
@@ -25,8 +25,8 @@ dotnet run --project $UNO_UITEST_WASM_PROJECT -c Release --no-build &
 
 cd $BUILD_SOURCESDIRECTORY/build
 
-npm i chromedriver@102.0.0
-npm i puppeteer@14.1.0
+npm i chromedriver@119.0.0
+npm i puppeteer@21.6.1
 
 mkdir -p $UNO_UITEST_SCREENSHOT_PATH
 

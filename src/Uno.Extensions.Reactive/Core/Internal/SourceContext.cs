@@ -410,7 +410,7 @@ public sealed class SourceContext : IAsyncDisposable
 
 			// Note: We make sure dispose only the values explicitly defined on this context,
 			//		 but not those that are inherited from the parent context.
-			await (_localStates?.DisposeAsync() ?? default);
+			await (_localStates?.DisposeAsync() ?? default).ConfigureAwait(false);
 			_localRequests?.Dispose();
 		}
 		catch (Exception) { }

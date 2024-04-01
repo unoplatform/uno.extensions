@@ -47,13 +47,13 @@ public static class DispatcherQueueProvider
 
 			TryEnqueue(Execute);
 
-			return await tcs.Task;
+			return await tcs.Task.ConfigureAwait(false);
 
 			async void Execute()
 			{
 				try
 				{
-					tcs.TrySetResult(await action(ct));
+					tcs.TrySetResult(await action(ct).ConfigureAwait(false));
 				}
 				catch (Exception error)
 				{
