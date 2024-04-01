@@ -114,12 +114,12 @@ partial class AsyncCommand
 
 			var completed = 0;
 			var task = Task.Run(
-					async () =>
-					{
-						using var _ = context.AsCurrent();
-						await _config.Execute(coercedParameter, ct);
-					},
-					ct);
+				async () =>
+				{
+					using var _ = context.AsCurrent();
+					await _config.Execute(coercedParameter, ct).ConfigureAwait(false);
+				},
+				ct);
 
 			// Note: As the CT is cancelled when the command is disposed, we have to use a registration instead of a continuation
 			// to make sure `ReportExecutionEnded` is run synchronously so before the EventManager is being disposed!

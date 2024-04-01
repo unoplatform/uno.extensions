@@ -76,7 +76,7 @@ internal sealed class LastWinsAsyncOperationManager : IAsyncOperationsManager
 	{
 		try
 		{
-			await operation(ct);
+			await operation(ct).ConfigureAwait(false);
 		}
 		catch (OperationCanceledException) when (ct.IsCancellationRequested)
 		{

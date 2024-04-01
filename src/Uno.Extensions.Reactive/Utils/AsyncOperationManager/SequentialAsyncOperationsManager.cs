@@ -116,7 +116,7 @@ internal sealed class SequentialAsyncOperationsManager : IAsyncOperationsManager
 
 			try
 			{
-				await operation(_ct.Token);
+				await operation(_ct.Token).ConfigureAwait(false);
 			}
 			catch (OperationCanceledException) when (_ct.IsCancellationRequested)
 			{

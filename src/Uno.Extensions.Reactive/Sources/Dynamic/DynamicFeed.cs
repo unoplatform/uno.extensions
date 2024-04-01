@@ -14,7 +14,7 @@ internal sealed class DynamicFeed<T> : IFeed<T>
 
 	public DynamicFeed(AsyncFunc<T?> dataProvider)
 	{
-		_dataProvider = async ct => Option.SomeOrNone(await dataProvider(ct));
+		_dataProvider = async ct => Option.SomeOrNone(await dataProvider(ct).ConfigureAwait(false));
 	}
 
 	public DynamicFeed(AsyncFunc<Option<T>> dataProvider)
@@ -25,9 +25,11 @@ internal sealed class DynamicFeed<T> : IFeed<T>
 	/// <inheritdoc />
 	public async IAsyncEnumerable<Message<T>> GetSource(SourceContext context, [EnumeratorCancellation] CancellationToken ct = default)
 	{
+#pragma warning disable CA2007 // Consider calling ConfigureAwait on the awaited task, false positive: it's for the DisposeAsync which cannot be configured here
 		await using var session = new FeedSession<T>(this, context, _dataProvider, ct);
+#pragma warning restore CA2007
 
-		while (await session.MoveNextAsync())
+		while (await session.MoveNextAsync().ConfigureAwait(false))
 		{
 			yield return session.Current;
 		}
