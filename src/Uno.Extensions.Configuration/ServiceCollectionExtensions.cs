@@ -1,7 +1,4 @@
-﻿using System.Collections.Immutable;
-using System.ComponentModel;
-
-namespace Uno.Extensions.Configuration;
+﻿namespace Uno.Extensions.Configuration;
 
 /// <summary>
 /// Extension methods for <see cref="IServiceCollection"/>.
@@ -27,13 +24,14 @@ public static class ServiceCollectionExtensions
 		string? name = "")
 			where T : class, new()
 	{
+		var sectionName = name != typeof(T).Name ? name : default;
 		return services
 			// Note - we've replaced the Configure method call with the three calls subsequent three calls so that
 			// we can use a local copy of ConfigurationBinder that handles ImmutableList
 			//.Configure<T>(section)
 			.AddOptions()
-			.AddSingleton<IOptionsChangeTokenSource<T>>(new ConfigurationChangeTokenSource<T>(name ?? Options.DefaultName, section))
-			.AddSingleton<IConfigureOptions<T>>(new Uno.Extensions.Configuration.Internal.NamedConfigureFromConfigurationOptions<T>(name ?? Options.DefaultName, section, _ => { }))
+			.AddSingleton<IOptionsChangeTokenSource<T>>(new ConfigurationChangeTokenSource<T>(sectionName ?? Options.DefaultName, section))
+			.AddSingleton<IConfigureOptions<T>>(new Uno.Extensions.Configuration.Internal.NamedConfigureFromConfigurationOptions<T>(sectionName ?? Options.DefaultName, section, _ => { }))
 
 			.AddTransient<IWritableOptions<T>>(provider =>
 			{
