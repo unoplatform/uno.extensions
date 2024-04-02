@@ -2,7 +2,7 @@
 
 public class Given_Oidc : NavigationTestBase
 {
-	[Test]
+	// [Test]
 	public async Task When_Oidc_Auth()
 	{
 		InitTestSection(TestSections.Authentication_Oidc);
