@@ -22,12 +22,15 @@ public sealed class TestDispatcher : IDispatcher, IDisposable
 	/// </summary>
 	public TestDispatcher(string? testName = null)
 	{
-		_thread = new Thread(Run)
-		{
-			Name =  testName is {Length: >0} ? $"TestDispatcher for '{testName}'" : "testDispacther"
-		};
+		Name = testName ?? "testDispatcher";
+		_thread = new Thread(Run) { Name =  Name };
 		_thread.Start();
 	}
+
+	/// <summary>
+	/// Gets the name of the dispatcher thread.
+	/// </summary>
+	public string Name { get; }
 
 	/// <inheritdoc />
 	public bool HasThreadAccess => Thread.CurrentThread == _thread;

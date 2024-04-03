@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading;
 
 namespace Uno.Extensions.Reactive.Dispatching;
@@ -15,6 +16,7 @@ internal sealed class DispatcherLocal<T>
 	private const string _cannotCreateForBackgroundThread = "This value cannot be created for a background thread";
 	private const string _cannotCreateFromAnotherThread = "The value is not present and cannot be created from another thread";
 
+	private readonly object _writeGate = new();
 	private readonly bool _allowBackgroundValue;
 	private readonly bool _allowCreationFromAnotherThread;
 	private readonly Func<IDispatcher?, T> _factory;
@@ -124,112 +126,142 @@ internal sealed class DispatcherLocal<T>
 
 	private (bool hasValue, T? value, string? errorMessage) GetValueCore(IDispatcher? owner, IDispatcher? current)
 	{
-		if (owner is not null)
+		var hasWriteAccess = false;
+		try
 		{
-			// The value is missing, we need to create a new one
-			var createdValue = default(_Value);
-			while (true)
+			if (owner is not null)
 			{
-				if (_mainUiValue is null)
+				// The value is missing, we need to create a new one
+				var createdValue = default(_Value);
+				while (true)
 				{
-					if (!_allowCreationFromAnotherThread && owner != current)
+					if (_mainUiValue is null)
+					{
+						if (!_allowCreationFromAnotherThread && owner != current)
+						{
+							return (false, default, _cannotCreateFromAnotherThread);
+						}
+
+						if (!hasWriteAccess)
+						{
+							Monitor.Enter(_writeGate, ref hasWriteAccess);
+						}
+
+						createdValue ??= new _Value(owner, _factory(owner));
+						if (Interlocked.CompareExchange(ref _mainUiValue, createdValue, null) is not null)
+						{
+							// We failed to assign the _mainUiValue, which indicates a concurrency conflict, retry whole process!
+							continue;
+						}
+
+						return (true, createdValue.Value, null);
+					}
+					else if (_mainUiValue.Scheduler == owner)
+					{
+						return (true, _mainUiValue.Value, null);
+					}
+
+					var currentUiValues = _otherUiValues;
+					if (currentUiValues is null || !currentUiValues.TryGetValue(owner, out var value))
+					{
+						if (!_allowCreationFromAnotherThread && owner != current)
+						{
+							return (false, default, _cannotCreateFromAnotherThread);
+						}
+
+						if (!hasWriteAccess)
+						{
+							Monitor.Enter(_writeGate, ref hasWriteAccess);
+						}
+
+						createdValue ??= new _Value(owner, _factory(owner));
+						var updatedUiValues = (currentUiValues ?? ImmutableDictionary<IDispatcher, _Value>.Empty).Add(owner, createdValue);
+						if (Interlocked.CompareExchange(ref _otherUiValues, updatedUiValues, currentUiValues) != currentUiValues)
+						{
+							// We failed to update the _uiValues, which indicates a concurrency conflict, retry whole process!
+							continue;
+						}
+
+						return (true, createdValue.Value, null);
+					}
+					else
+					{
+						return (true, value.Value, null);
+					}
+				}
+			}
+			else if (_allowBackgroundValue)
+			{
+				if (_backgroundValue is null)
+				{
+					if (!_allowCreationFromAnotherThread && current is not null)
 					{
 						return (false, default, _cannotCreateFromAnotherThread);
 					}
 
-					createdValue ??= new _Value(owner, _factory(owner));
-					if (Interlocked.CompareExchange(ref _mainUiValue, createdValue, null) is not null)
+					if (!hasWriteAccess)
 					{
-						// We failed to assign the _mainUiValue, which indicates a concurrency conflict, retry whole process!
-						continue;
+						Monitor.Enter(_writeGate, ref hasWriteAccess);
 					}
 
-					return (true, createdValue.Value, null);
-				}
-				else if (_mainUiValue.Scheduler == owner)
-				{
-					return (true, _mainUiValue.Value, null);
+					Interlocked.CompareExchange(ref _backgroundValue, new _Value(null, _factory(owner)), null);
 				}
 
-				var currentUiValues = _otherUiValues;
-				if (currentUiValues is null || !currentUiValues.TryGetValue(owner, out var value))
-				{
-					if (!_allowCreationFromAnotherThread && owner != current)
-					{
-						return (false, default, _cannotCreateFromAnotherThread);
-					}
-
-					createdValue ??= new _Value(owner, _factory(owner));
-					var updatedUiValues = (currentUiValues ?? ImmutableDictionary<IDispatcher, _Value>.Empty).Add(owner, createdValue);
-					if (Interlocked.CompareExchange(ref _otherUiValues, updatedUiValues, currentUiValues) != currentUiValues)
-					{
-						// We failed to update the _uiValues, which indicates a concurrency conflict, retry whole process!
-						continue;
-					}
-
-					return (true, createdValue.Value, null);
-				}
-				else
-				{
-					return (true, value.Value, null);
-				}
+				return (true, _backgroundValue.Value, null);
 			}
-		}
-		else if (_allowBackgroundValue)
-		{
-			if (_backgroundValue is null)
+			else
 			{
-				if (!_allowCreationFromAnotherThread && current is not null)
-				{
-					return (false, default, _cannotCreateFromAnotherThread);
-				}
-
-				Interlocked.CompareExchange(ref _backgroundValue, new _Value(null, _factory(owner)), null);
+				return (false, default, _cannotCreateForBackgroundThread);
 			}
-
-			return (true, _backgroundValue.Value, null);
 		}
-		else
+		finally
 		{
-			return (false, default, _cannotCreateForBackgroundThread);
+			if (hasWriteAccess)
+			{
+				Monitor.Exit(_writeGate);
+			}
 		}
 	}
 
 	private void SetValueCore(IDispatcher? scheduler, T rawValue)
 	{
-		if (scheduler is not null)
+		lock (_writeGate)
 		{
-			var value = new _Value(scheduler, rawValue);
+			if (scheduler is not null)
+			{
+				var value = new _Value(scheduler, rawValue);
 
-			if (Interlocked.CompareExchange(ref _mainUiValue, value, null) is null)
-			{
-				return;
+				if (Interlocked.CompareExchange(ref _mainUiValue, value, null) is null)
+				{
+					return;
+				}
+				else if (_mainUiValue.Scheduler == scheduler)
+				{
+					_mainUiValue = value;
+					return;
+				}
+				else
+				{
+					ImmutableInterlocked.Update(ref _otherUiValues, SetItem, value);
+
+					static ImmutableDictionary<IDispatcher, _Value> SetItem(ImmutableDictionary<IDispatcher, _Value>? current, _Value v2)
+						=> (current ?? ImmutableDictionary<IDispatcher, _Value>.Empty).SetItem(v2.Scheduler!, v2);
+				}
 			}
-			else if (_mainUiValue.Scheduler == scheduler)
+			else if (_allowBackgroundValue)
 			{
-				_mainUiValue = value;
-				return;
+				_backgroundValue = new _Value(null, rawValue);
 			}
 			else
 			{
-				ImmutableInterlocked.Update(ref _otherUiValues, SetItem, value);
-
-				static ImmutableDictionary<IDispatcher, _Value> SetItem(ImmutableDictionary<IDispatcher, _Value>? current, _Value v2)
-					=> (current ?? ImmutableDictionary<IDispatcher, _Value>.Empty).SetItem(v2.Scheduler!, v2);
-			}
-		}
-		else if (_allowBackgroundValue)
-		{
-			_backgroundValue = new _Value(null, rawValue);
-		}
-		else
-		{
-			throw new InvalidOperationException(_cannotCreateForBackgroundThread);
+				throw new InvalidOperationException(_cannotCreateForBackgroundThread);
+			} 
 		}
 	}
 
 	/// <summary>
-	///  Gets value for all dispatcher, and optionally for the background thread.
+	/// Gets value for all dispatcher, and optionally for the background thread.
+	/// WARNING: This method is only PARTIALLY thread-safe (no exception if value is created while enumerating, but newly created values won't be enumerated).
 	/// </summary>
 	public IEnumerable<(IDispatcher? scheduler, T value)> GetValues(bool includeBackground = true)
 	{
@@ -249,6 +281,42 @@ internal sealed class DispatcherLocal<T>
 		if (includeBackground && _backgroundValue is not null)
 		{
 			yield return (null, _backgroundValue.Value);
+		}
+	}
+
+	/// <summary>
+	/// Executes an action for the value each dispatcher, and optionally for the background thread.
+	/// WARNING: This method is thread-safe, but the action is executed in a lock, so it should be fast.
+	/// </summary>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public void ForEachValue(Action<IDispatcher?, T> action, bool includeBackground = true)
+		=> ForEachValue(static (a, d, v) => a(d, v), action, includeBackground);
+
+	/// <summary>
+	/// Executes an action for the value each dispatcher, and optionally for the background thread.
+	/// WARNING: This method is thread-safe, but the action is executed in a lock, so it should be fast.
+	/// </summary>
+	public void ForEachValue<TState>(Action<TState, IDispatcher?, T> action, TState state, bool includeBackground = true)
+	{
+		lock (_writeGate)
+		{
+			if (_mainUiValue is not null)
+			{
+				action(state, _mainUiValue.Scheduler, _mainUiValue.Value);
+
+				if (_otherUiValues is { } otherUiValues)
+				{
+					foreach (var ui in otherUiValues)
+					{
+						action(state, ui.Key, ui.Value.Value);
+					}
+				}
+			}
+
+			if (includeBackground && _backgroundValue is not null)
+			{
+				action(state, null, _backgroundValue.Value);
+			}
 		}
 	}
 

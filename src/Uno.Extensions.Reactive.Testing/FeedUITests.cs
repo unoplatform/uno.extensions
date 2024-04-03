@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.Win32.SafeHandles;
 using Uno.Extensions.Reactive.Bindings;
@@ -37,7 +38,8 @@ public class FeedUITests : FeedTests, ISourceContextOwner
 
 		if (DispatcherHelper.GetForCurrentThread == DispatcherHelper.NotConfigured)
 		{
-			var dispatcher = new TestDispatcher(TestContext?.TestName);
+			var name = TestContext?.TestName is { Length: > 0 } testName ? $"TestDispatcher for '{testName}'" : null;
+			var dispatcher = new TestDispatcher(name);
 			_testDispatcher = new(dispatcher, () => dispatcher.HasThreadAccess ? dispatcher : null);
 			DispatcherHelper.GetForCurrentThread = _testDispatcher.Value.Resolve;
 		}
