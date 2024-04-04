@@ -109,7 +109,7 @@ public static class MessengerExtensions
 		{
 			using var _ = SourceContext.GetOrCreate(other).AsCurrent();
 
-			if ((await other.Option(ct)).IsSome(out var master) && predicate(master, message.Value))
+			if ((await other.Data(ct)).IsSome(out var master) && predicate(master, message.Value))
 			{
 				await update(state, message, keySelector, ct);
 			}

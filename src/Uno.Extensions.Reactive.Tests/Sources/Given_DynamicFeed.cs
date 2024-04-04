@@ -17,6 +17,32 @@ namespace Uno.Extensions.Reactive.Tests.Sources;
 public class Given_DynamicFeed : FeedTests
 {
 	[TestMethod]
+	public async Task When_Dynamic_Then_AcceptsNotNullAndStruct()
+	{
+		(Feed.Dynamic(async _ => 42) is IFeed<int>).Should().BeTrue();
+		(Feed.Dynamic(async _ => default(int?)) is IFeed<int>).Should().BeTrue();
+		(Feed.Dynamic(async _ => "") is IFeed<string>).Should().BeTrue();
+		(Feed.Dynamic(async _ => default(string?)) is IFeed<string>).Should().BeTrue();
+		(Feed.Dynamic(async _ => new MyClass()) is IFeed<MyClass>).Should().BeTrue();
+		(Feed.Dynamic(async _ => default(MyClass?)) is IFeed<MyClass>).Should().BeTrue();
+		(Feed.Dynamic(async _ => new MyStruct()) is IFeed<MyStruct>).Should().BeTrue();
+		(Feed.Dynamic(async _ => default(MyStruct?)) is IFeed<MyStruct>).Should().BeTrue();
+	}
+
+	[TestMethod]
+	public async Task When_Dynamic_2_Then_AcceptsNotNullAndStruct()
+	{
+		(Feed<int>.Dynamic(async _ => 42) is IFeed<int>).Should().BeTrue();
+		(Feed<int?>.Dynamic(async _ => default(int?)) is IFeed<int?>).Should().BeTrue();
+		(Feed<string>.Dynamic(async _ => "") is IFeed<string>).Should().BeTrue();
+		(Feed<string?>.Dynamic(async _ => default(string?)) is IFeed<string?>).Should().BeTrue();
+		(Feed<MyClass>.Dynamic(async _ => new MyClass()) is IFeed<MyClass>).Should().BeTrue();
+		(Feed<MyClass?>.Dynamic(async _ => default(MyClass?)) is IFeed<MyClass?>).Should().BeTrue();
+		(Feed<MyStruct>.Dynamic(async _ => new MyStruct()) is IFeed<MyStruct>).Should().BeTrue();
+		(Feed<MyStruct?>.Dynamic(async _ => default(MyStruct?)) is IFeed<MyStruct?>).Should().BeTrue();
+	}
+
+	[TestMethod]
 	public void When_DelegateSync_Then_LoadSync()
 	{
 		var sut = new DynamicFeed<int>(async _ => 42).Record();
@@ -678,4 +704,7 @@ public class Given_DynamicFeed : FeedTests
 		{
 		}
 	}
+
+	private record class MyClass;
+	private record struct MyStruct;
 }

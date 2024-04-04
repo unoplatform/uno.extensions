@@ -15,6 +15,42 @@ namespace Uno.Extensions.Reactive.Tests.Extensions;
 public class Given_StateForEach : FeedTests
 {
 	[TestMethod]
+	[ExpectedException(typeof(InvalidOperationException))] // Note: This is a compilation tests!
+	public async Task When_ForEachAsync_Then_AcceptsNotNullAndStruct()
+	{
+		default(IState<int>)!.ForEachAsync(async (i, ct) => this.ToString());
+		default(IState<int?>)!.ForEachAsync(async (i, ct) => this.ToString());
+		default(IState<string>)!.ForEachAsync(async (i, ct) => this.ToString());
+#nullable disable
+#pragma warning disable CS8632 // The annotation for nullable reference types should only be used in code within a '#nullable' annotations context.
+		default(IState<string?>)!.ForEachAsync(async (i, ct) => this.ToString());
+#pragma warning restore CS8632 // The annotation for nullable reference types should only be used in code within a '#nullable' annotations context.
+#nullable restore
+		default(IState<MyStruct>)!.ForEachAsync(async (i, ct) => this.ToString());
+		default(IState<MyStruct?>)!.ForEachAsync(async (i, ct) => this.ToString());
+		default(IState<MyClass>)!.ForEachAsync(async (i, ct) => this.ToString());
+#nullable disable
+#pragma warning disable CS8632 // The annotation for nullable reference types should only be used in code within a '#nullable' annotations context.
+		default(IState<MyClass?>)!.ForEachAsync(async (i, ct) => this.ToString());
+#pragma warning restore CS8632 // The annotation for nullable reference types should only be used in code within a '#nullable' annotations context.
+#nullable restore
+	}
+
+	[TestMethod]
+	[ExpectedException(typeof(InvalidOperationException))] // Note: This is a compilation tests!
+	public async Task When_ForEachDataAsync_Then_AcceptsNotNullAndStruct()
+	{
+		default(IState<int>)!.ForEachAsync(async (i, ct) => this.ToString());
+		default(IState<int?>)!.ForEachDataAsync(async (i, ct) => this.ToString());
+		default(IState<string>)!.ForEachDataAsync(async (i, ct) => this.ToString());
+		default(IState<string?>)!.ForEachDataAsync(async (i, ct) => this.ToString());
+		default(IState<MyStruct>)!.ForEachDataAsync(async (i, ct) => this.ToString());
+		default(IState<MyStruct?>)!.ForEachDataAsync(async (i, ct) => this.ToString());
+		default(IState<MyClass>)!.ForEachDataAsync(async (i, ct) => this.ToString());
+		default(IState<MyClass?>)!.ForEachDataAsync(async (i, ct) => this.ToString());
+	}
+
+	[TestMethod]
 	public async Task When_UpdateState_Then_CallbackInvokedIgnoringInitialValue()
 	{
 		var state = State.Value(this, () => 1);
@@ -127,4 +163,7 @@ public class Given_StateForEach : FeedTests
 
 		result.Single().Should().NotBeNull().And.BeEquivalentTo(ImmutableList<int>.Empty);
 	}
+
+	private record class MyClass;
+	private record struct MyStruct;
 }

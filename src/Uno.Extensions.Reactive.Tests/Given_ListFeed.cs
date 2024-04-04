@@ -32,7 +32,7 @@ public class Given_ListFeed : FeedTests
 	{
 		var source = new[] { 41, 42, 43 };
 		var sut = ListFeed.Async<int>(async ct => source.ToImmutableList());
-		var result = await sut.Option(CT);
+		var result = await sut.Data(CT);
 
 		result.IsSome(out var items).Should().BeTrue();
 		items.Should().BeEquivalentTo(source);

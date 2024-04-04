@@ -26,7 +26,7 @@ public class Given_Messaging : FeedTests
 
 		messenger.Send(new EntityMessage<MyEntity>(EntityChange.Created, new(42)));
 
-		var result = await state.Option(CT);
+		var result = await state.Data(CT);
 		result.Should().Be(Option<MyEntity>.None());
 	}
 
@@ -54,7 +54,7 @@ public class Given_Messaging : FeedTests
 
 		messenger.Send(new EntityMessage<MyEntity>(EntityChange.Deleted, new(42, 1)));
 
-		var result = await state.Option(CT);
+		var result = await state.Data(CT);
 		result.Should().Be(Option<MyEntity>.None());
 	}
 
@@ -111,7 +111,7 @@ public class Given_Messaging : FeedTests
 
 		messenger.Send(new EntityMessage<MyEntity>(EntityChange.Created, new(42)));
 
-		var result = await state.Option(CT);
+		var result = await state.Data(CT);
 		result.Should().Be(Option<MyEntity>.None());
 	}
 
@@ -145,7 +145,7 @@ public class Given_Messaging : FeedTests
 		intermediate.Should().BeEquivalentTo(new MyEntity(42));
 
 		messenger.Send(new EntityMessage<MyEntity>(EntityChange.Deleted, new(42, 2)));
-		var result = await state.Option(CT);
+		var result = await state.Data(CT);
 		result.Should().Be(Option<MyEntity>.None());
 	}
 

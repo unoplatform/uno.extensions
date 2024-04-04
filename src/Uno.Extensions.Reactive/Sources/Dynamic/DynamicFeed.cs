@@ -5,6 +5,7 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using Uno.Extensions.Reactive.Config;
 using Uno.Extensions.Reactive.Core;
+using Uno.Extensions.Reactive.Utils;
 
 namespace Uno.Extensions.Reactive.Sources;
 
@@ -14,7 +15,7 @@ internal sealed class DynamicFeed<T> : IFeed<T>
 
 	public DynamicFeed(AsyncFunc<T?> dataProvider)
 	{
-		_dataProvider = async ct => Option.SomeOrNone(await dataProvider(ct).ConfigureAwait(false));
+		_dataProvider = dataProvider.SomeOrNone();
 	}
 
 	public DynamicFeed(AsyncFunc<Option<T>> dataProvider)
