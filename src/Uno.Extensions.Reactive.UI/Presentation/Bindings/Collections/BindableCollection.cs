@@ -152,13 +152,7 @@ namespace Uno.Extensions.Reactive.Bindings.Collections
 				return;
 			}
 
-			lock (_holder)
-			{
-				foreach (var holder in _holder.GetValues())
-				{
-					holder.value.Update(source, changes, mode);
-				}
-			}
+			_holder.ForEachValue((_, value) => value.Update(source, changes, mode)); 
 		}
 
 		/// <summary>

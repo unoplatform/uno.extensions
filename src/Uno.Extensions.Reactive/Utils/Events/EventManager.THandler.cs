@@ -50,6 +50,8 @@ internal class EventManager<THandler, TArgs>
 	/// <inheritdoc />
 	public void Raise(TArgs args)
 	{
+		// Note: We prefer to use the GetValues instead of the ForEachValueAsync as we don't mind to miss a new handler
+		//		 inserted during enumeration, and the handler might be heavy and would lock the DispatcherLocal for too long.
 		foreach (var list in _invocationLists.GetValues())
 		{
 			list.value.Invoke(args);
@@ -59,6 +61,8 @@ internal class EventManager<THandler, TArgs>
 	/// <inheritdoc />
 	public void Raise(Func<TArgs> args)
 	{
+		// Note: We prefer to use the GetValues instead of the ForEachValueAsync as we don't mind to miss a new handler
+		//		 inserted during enumeration, and the handler might be heavy and would lock the DispatcherLocal for too long.
 		foreach (var list in _invocationLists.GetValues())
 		{
 			list.value.Invoke(args);
@@ -76,10 +80,5 @@ internal class EventManager<THandler, TArgs>
 
 	/// <inheritdoc />
 	public void Dispose()
-	{
-		foreach (var list in _invocationLists.GetValues())
-		{
-			list.value.Dispose();
-		}
-	}
+		=> _invocationLists.ForEachValue(static (_, list) => list.Dispose());
 }
