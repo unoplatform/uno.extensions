@@ -260,8 +260,8 @@ internal sealed class DispatcherLocal<T>
 	}
 
 	/// <summary>
-	/// Gets value for all dispatcher, and optionally for the background thread.
-	/// WARNING: This method is only PARTIALLY thread-safe (no exception if value is created while enumerating, but newly created values won't be enumerated).
+	/// Gets a value for all dispatchers, and optionally for the background thread.
+	/// WARNING: This method is only PARTIALLY thread-safe (no exception if the value is created while enumerating, but newly created values won't be enumerated).
 	/// </summary>
 	public IEnumerable<(IDispatcher? scheduler, T value)> GetValues(bool includeBackground = true)
 	{
@@ -285,7 +285,7 @@ internal sealed class DispatcherLocal<T>
 	}
 
 	/// <summary>
-	/// Executes an action for the value each dispatcher, and optionally for the background thread.
+	/// Executes an action for the value of each dispatcher, and optionally for the background thread.
 	/// WARNING: This method is thread-safe, but the action is executed in a lock, so it should be fast.
 	/// </summary>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -293,7 +293,7 @@ internal sealed class DispatcherLocal<T>
 		=> ForEachValue(static (a, d, v) => a(d, v), action, includeBackground);
 
 	/// <summary>
-	/// Executes an action for the value each dispatcher, and optionally for the background thread.
+	/// Executes an action for the value of each dispatcher, and optionally for the background thread.
 	/// WARNING: This method is thread-safe, but the action is executed in a lock, so it should be fast.
 	/// </summary>
 	public void ForEachValue<TState>(Action<TState, IDispatcher?, T> action, TState state, bool includeBackground = true)
