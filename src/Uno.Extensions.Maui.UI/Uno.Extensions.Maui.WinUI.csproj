@@ -24,6 +24,7 @@
 		<PackageReference Include="Uno.WinUI" />
 		<PackageReference Include="Microsoft.Maui.Controls" />
 		<PackageReference Include="Microsoft.Maui.Controls.Compatibility" />
+		<PackageReference Include="Microsoft.Graphics.Win2D" Condition="$(TargetFramework.Contains('-windows10'))" />
 	</ItemGroup>
 
 	<ItemGroup>
