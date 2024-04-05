@@ -1,4 +1,4 @@
-﻿<Project Sdk="MSBuild.Sdk.Extras" ToolsVersion="15.0">
+﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
 	<Import Project="..\tfms-ui-winui.props" />
 
 	<PropertyGroup>
@@ -9,7 +9,7 @@
 	</PropertyGroup>
 
 	<Import Project="common.props" />
-	
+
 	<PropertyGroup>
 		<PackageId>Uno.Extensions.Authentication.Oidc.WinUI</PackageId>
 		<DefineConstants>$(DefineConstants);WINUI</DefineConstants>
@@ -18,7 +18,7 @@
 	<ItemGroup >
 		<PackageReference Include="Uno.WinUI" />
 	</ItemGroup>
-	
+
 	<ItemGroup>
 		<ProjectReference Include="..\Uno.Extensions.Authentication.UI\Uno.Extensions.Authentication.WinUI.csproj" />
 		<ProjectReference Include="..\Uno.Extensions.Http.UI\Uno.Extensions.Http.WinUI.csproj" />
