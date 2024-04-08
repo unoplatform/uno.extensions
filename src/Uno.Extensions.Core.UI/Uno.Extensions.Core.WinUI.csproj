@@ -1,10 +1,10 @@
-﻿<Project Sdk="MSBuild.Sdk.Extras" ToolsVersion="15.0">
+﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
 	<Import Project="..\tfms-ui-winui.props" />
 
 	<PropertyGroup>
 		<Description>Core Extensions for the Uno Platform (WinUI)</Description>
 	</PropertyGroup>
-	
+
 	<Import Project="common.props" />
 
 	<PropertyGroup>
