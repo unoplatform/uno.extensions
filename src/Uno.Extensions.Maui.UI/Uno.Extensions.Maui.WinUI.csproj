@@ -12,6 +12,7 @@
 		<IsMauiEmbedding>false</IsMauiEmbedding>
 		<IsMauiEmbedding Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android' OR $([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios' OR $([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst' OR $(TargetFramework.Contains('windows10'))">true</IsMauiEmbedding>
 		<DefineConstants Condition="$(IsMauiEmbedding)">$(DefineConstants);MAUI_EMBEDDING</DefineConstants>
+		<ExcludeWinAppSdkReference>true</ExcludeWinAppSdkReference>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -24,6 +25,7 @@
 		<PackageReference Include="Uno.WinUI" />
 		<PackageReference Include="Microsoft.Maui.Controls" />
 		<PackageReference Include="Microsoft.Maui.Controls.Compatibility" />
+		<PackageReference Include="Microsoft.Graphics.Win2D" Condition="$(TargetFramework.Contains('-windows10'))" />
 	</ItemGroup>
 
 	<ItemGroup>

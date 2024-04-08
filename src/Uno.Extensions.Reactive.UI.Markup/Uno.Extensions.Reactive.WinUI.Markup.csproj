@@ -1,4 +1,4 @@
-﻿<Project Sdk="MSBuild.Sdk.Extras" ToolsVersion="15.0">
+﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
 	<Import Project="..\tfms-ui-winui.props" />
 
 	<PropertyGroup>
@@ -6,7 +6,7 @@
 		<!--Temporary disable missing XML doc until fixed in the whole package-->
 		<WarningsNotAsErrors>$(WarningsNotAsErrors);CS1591</WarningsNotAsErrors>
 		<DefineConstants>$(DefineConstants);WINUI</DefineConstants>
-		<WinAppSdkVersion>1.4.231219000</WinAppSdkVersion>
+		<PackageDescription>A set of C# for Markup helpers for Uno.Extensions.Reactive.WinUI</PackageDescription>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -18,8 +18,4 @@
 	<ItemGroup>
 		<ProjectReference Include="..\Uno.Extensions.Reactive.UI\Uno.Extensions.Reactive.WinUI.csproj" />
 	</ItemGroup>
-
-	<PropertyGroup>
-		<PackageDescription>A set of C# for Markup helpers for Uno.Extensions.Reactive.WinUI</PackageDescription>
-	</PropertyGroup>
 </Project>

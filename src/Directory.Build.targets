@@ -47,7 +47,7 @@
 
 	<Choose>
 		<When Condition="$(_IsWinUI)">
-			<ItemGroup>
+			<ItemGroup Condition="$(ExcludeWinAppSdkReference) != 'true'">
 				<PackageReference Include="Microsoft.WindowsAppSDK" Condition="$(WinAppSdkVersion)==''"/>
 				<PackageReference Include="Microsoft.WindowsAppSDK" Condition="$(WinAppSdkVersion)!=''" VersionOverride="$(WinAppSdkVersion)"/>
 				<PackageReference Include="Microsoft.Windows.SDK.BuildTools" />
@@ -95,5 +95,5 @@
 			 <!--Prevent projects from duplicating assemblies in every output folder-->
 			<Private Condition="'$(OutputType)' == 'library' and '$(NugetOverrideVersion)'==''">false</Private>
 		</ProjectReference>
-	</ItemDefinitionGroup> 
+	</ItemDefinitionGroup>
 </Project>

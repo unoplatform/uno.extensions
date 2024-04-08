@@ -1,4 +1,4 @@
-﻿<Project Sdk="MSBuild.Sdk.Extras" ToolsVersion="15.0">
+﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
 	<Import Project="..\tfms-ui-winui.props" />
 
 	<!--
@@ -10,7 +10,7 @@
 		<EnableDefaultPageItems>false</EnableDefaultPageItems>
 		<DefineConstants>$(DefineConstants);WINUI</DefineConstants>
 		<PackageId>Uno.Extensions.Reactive.WinUI</PackageId>
-		
+
 		<UnoXamlResourcesTrimming Condition="'$(MSBuildRuntimeType)'=='Core' and '$(Configuration)'=='Release'">true</UnoXamlResourcesTrimming>
 	</PropertyGroup>
 

@@ -1,4 +1,4 @@
-﻿<Project Sdk="MSBuild.Sdk.Extras" ToolsVersion="15.0">
+﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
 	<Import Project="..\tfms-ui-winui.props" />
 	<ItemGroup>
 	  <Compile Remove="WasmScripts\**" />
@@ -10,7 +10,7 @@
 		<UnoRuntimeProjectReference Include="Uno.Extensions.Hosting.WinUI.Wasm.csproj" />
 		<UnoRuntimeProjectReference Include="Uno.Extensions.Hosting.WinUI.Skia.csproj" />
 	</ItemGroup>
-	
+
 	<ItemGroup>
 		<Content Include="buildTransitive\Uno.Extensions.Hosting.WinUI.props">
 			<PackagePath>buildTransitive</PackagePath>
