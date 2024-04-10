@@ -49,15 +49,18 @@ new Button()
             .Content(x => x.TemplateBind(() => button.Content))))
 ```
 
-## All other Framework Templates
+## ItemsPanelTemplate
 
-In all other cases, `Template` properties are treated the same with a simple delegate expected to return the desired UI. In these cases, it is assumed that the same context as the parent is available and there is no need for additional typing on the delegate.
+An `ItemsPanelTemplate` should contain exactly one `FrameworkElement`-derived class that serves as the root element for items. As a result, `ItemsPanelTemplate` properties are built using a strongly typed generic extension that will give you access to a `configureItemsPanel` delegate that will allow you to configure the element used as the root of the `ItemsPanelTemplate` with the desired properties.
 
 ```cs
 new ListView()
-    .ItemsPanel(() => new ItemsStackPanel()
-        .Orientation(Orientation.Vertical))
+    .ItemsPanel<ItemsStackPanel>(panel => panel.Orientation(Orientation.Vertical))
 ```
+
+## All other Framework Templates
+
+In all other cases, `Template` properties are treated the same with a simple delegate expected to return the desired UI. In these cases, it is assumed that the same context as the parent is available and there is no need for additional typing on the delegate.
 
 ## Next Steps
 
