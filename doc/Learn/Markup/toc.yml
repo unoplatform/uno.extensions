@@ -2,6 +2,8 @@
 
 - name: Overview
   href: xref:Uno.Extensions.Markup.Overview
+- name: Upgrading
+  href: xref:Uno.Extensions.Markup.Upgrading
 - name: Binding, Static & Theme Resources
   href: xref:Uno.Extensions.Markup.DependencyPropertyBuilder
   items:

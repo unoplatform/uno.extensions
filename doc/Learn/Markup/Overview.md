@@ -192,3 +192,4 @@ Learn more about:
 - [VisualStateManagers](xref:Uno.Extensions.Markup.VisualStateManager)
   - [Storyboards](xref:Uno.Extensions.Markup.Storyboards)
 - [Generating C# Extensions for your libraries](xref:Uno.Extensions.Markup.GeneratingExtensions)
+- [Upgrading C# Markup](xref:Uno.Extensions.Markup.Upgrading)
