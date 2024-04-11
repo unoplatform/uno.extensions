@@ -18,7 +18,7 @@ It's recommended that instead of hosting individual .NET MAUI controls in a `Mau
 
 For new applications created using the Uno Platform Template Wizard for Visual Studio, .NET MAUI Embedding can be selected as a feature when creating the application.
 
-1. Start by selecting either the Blank or Default template, and clicking the Customize button (since neither of the predefined configurations include the .NET MAUI Embedding by default).
+1. Start by selecting either the Blank or Default template.
 
     ![Select startup type](Assets/GettingStarted01-StartupType.png)
 
@@ -34,8 +34,10 @@ For new applications created using the Uno Platform Template Wizard for Visual S
 
     ![Project structure](Assets/GettingStarted04-ProjectStructure.png)
 
-1. The application can be run by setting the desired platform project (Mobile or Windows) to be the startup project and then pressing F5 or clicking the Run button. The default layout shows a text, "Hello Uno Platform", which is an Uno TextBlock, followed by an Image, two TextBlock and, a Button, which are all .NET MAUI controls.
+1. The application can be run by selecting the desired platform in the dropdown, then pressing F5 or clicking the Run button. The default layout shows a text, "Hello Uno Platform", which is an Uno TextBlock, followed by an Image, two TextBlock and, a Button, which are all .NET MAUI controls.
 
+    ![Selecting target](Assets/GettingStarted04.1-ProjectStructure.png)
+    
     ![Running on Windows](Assets/GettingStarted05-RunningOnWindows.png)
 
 These steps can also be achieved via the command lines by invoking the following commands
