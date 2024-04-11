@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -127,36 +129,48 @@ public abstract partial class BindableViewModelBase : IBindable, INotifyProperty
 		{
 			try
 			{
-				var initialValue = stateImpl.Current.Current.Data.SomeOrDefault(GetDefaultValueForBindings<TProperty>());
+				var defaultValue = GetDefaultValueForBindings<TProperty>();
+				var value = stateImpl.Current.Current.Data.SomeOrDefault(defaultValue);
 
 				// We run the update sync in setup, no matter the thread
-				updated(initialValue);
+				updated(value);
+
 				var ct = stateImpl.Context.Token;
 				var source = FeedUIHelper.GetSource(stateImpl, stateImpl.Context);
 				var dispatcher = await _dispatcher.GetFirstResolved(ct).ConfigureAwait(false);
+				var updateScheduled = 0;
 
-				dispatcher.TryEnqueue(async () =>
-				{
-					try
-					{
-						// Note: No needs to use .WithCancellation() here as we are enumerating the stateImp which is going to be disposed anyway.
-						await foreach (var msg in source.WithCancellation(ct).ConfigureAwait(true))
+				// Note: We use for each here to deduplicate updates in case of fast updates of the source.
+				//		 This also ensure to not wait to for the UI thread before fetching MoveNext the source.
+				_ = source
+					.ForEachAsync(OnMessage, ct)
+					.ContinueWith(
+						enumeration =>
 						{
-							if (msg.Changes.Contains(MessageAxis.Data) && !(msg.Current.Get(BindingSource)?.Equals((this, propertyName)) ?? false))
-							{
-								updated(msg.Current.Data.SomeOrDefault(GetDefaultValueForBindings<TProperty>()));
-								_propertyChanged.Raise(new PropertyChangedEventArgs(propertyName));
-							}
+							this.Log().Error(
+								enumeration.Exception!,
+								$"Synchronization from ViewModel to View of '{propertyName}' failed."
+								+ "(This is a final error, changes made in the VM are no longer propagated to the View.)");
+						},
+						TaskContinuationOptions.OnlyOnFaulted);
+				void OnMessage(Message<TProperty> msg)
+				{
+					if (msg.Changes.Contains(MessageAxis.Data) && !(msg.Current.Get(BindingSource)?.Equals((this, propertyName)) ?? false))
+					{
+						value = msg.Current.Data.SomeOrDefault(defaultValue);
+						if (Interlocked.CompareExchange(ref updateScheduled, 1, 0) is 0)
+						{
+							dispatcher.TryEnqueue(UpdateValue);
 						}
 					}
-					catch (Exception error)
-					{
-						this.Log().Error(
-							error,
-							$"Synchronization from ViewModel to View of '{propertyName}' failed."
-							+ "(This is a final error, changes made in the VM are no longer propagated to the View.)");
-					}
-				});
+				}
+
+				void UpdateValue()
+				{
+					updateScheduled = 0;
+					updated(value);
+					_propertyChanged.Raise(new PropertyChangedEventArgs(propertyName));
+				}
 			}
 			catch (Exception error)
 			{
