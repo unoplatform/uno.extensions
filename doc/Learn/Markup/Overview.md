@@ -150,7 +150,7 @@ public sealed partial class MainPage : Page
                         .Height(150)
                         .Margin(12)
                         .HorizontalAlignment(HorizontalAlignment.Center)
-                        .Source("ms-appx:///Counter/Assets/logo.png"),
+                        .Source("ms-appx:///Assets/logo.png"),
                     new TextBox()
                         .Margin(12)
                         .HorizontalAlignment(HorizontalAlignment.Center)
