@@ -53,7 +53,8 @@
 		<PackageVersion Include="Uno.UI.MSAL"  Version="5.0.19" />
 		<PackageVersion Include="Uno.UI.Runtime.WebAssembly" Version="5.0.19" />
 		<PackageVersion Include="Uno.UI.RuntimeTests.Engine" Version="0.24.0-dev.95" />
-		<PackageVersion Include="Uno.WinUI" Version="5.0.19" />
+		<PackageVersion Include="Uno.WinUI" Version="5.0.19" Condition="!$(MSBuildProjectName.Contains('Maui'))" />
+		<PackageVersion Include="Uno.WinUI" Version="5.2.22" Condition="$(MSBuildProjectName.Contains('Maui'))"/>
 		<PackageVersion Include="Uno.WinUI.Markup" Version="5.2.0-dev.58" />
 		<PackageVersion Include="Uno.WinUI.MSAL" Version="5.0.19" />
 		<PackageVersion Include="Uno.WinUI.Runtime.WebAssembly" Version="5.0.19" />

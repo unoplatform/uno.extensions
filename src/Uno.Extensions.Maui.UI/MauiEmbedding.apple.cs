@@ -6,29 +6,12 @@ partial class MauiEmbedding
     // https://github.com/dotnet/maui/blob/ace9fe5e7d8d9bd16a2ae0b2fe2b888ad681433e/src/Core/src/Platform/iOS/MauiUIApplicationDelegate.cs#L36-L70
     private static MauiAppBuilder RegisterPlatformServices(this MauiAppBuilder builder, Application app)
     {
-        builder.Services.AddSingleton<UIWindow>(sp =>
-            {
-                var window = sp.GetRequiredService<Microsoft.UI.Xaml.Window>();
-
-                // In 5.2 there's a public WindowHelper.GetNativeWindow method but need to call via reflection to maintain support for
-                // pre 5.2 versions of Uno
-                var nativeWindowProp = window.GetType().GetProperty("NativeWindow", BindingFlags.Instance | BindingFlags.NonPublic);
-                if (nativeWindowProp is not null)
-                {
-                    var nativeWindow = nativeWindowProp.GetValue(window) as UIWindow;
-                    return nativeWindow!;
-                }
-
-                // The _window field is the only way to grab the underlying UIWindow from inside the CoreWindow
-                // https://github.com/unoplatform/uno/blob/34a32058b812a0a08e658eba5e298ea9d258c231/src/Uno.UWP/UI/Core/CoreWindow.iOS.cs#L17
-                var internalWindow = typeof(CoreWindow).GetField("_window", BindingFlags.Instance | BindingFlags.NonPublic);
-                if (internalWindow is null)
-                {
-                    throw new MauiEmbeddingException(Properties.Resources.MissingWindowPrivateField);
-                }
-                var uiwindow = internalWindow?.GetValue(window.CoreWindow) as UIWindow;
-                return uiwindow!;
-            })
+        builder.Services.AddTransient<UIWindow>(sp =>
+        {
+            var window = sp.GetRequiredService<Microsoft.UI.Xaml.Window>();
+            var nativeWindow = WindowHelper.GetNativeWindow(window);
+            return nativeWindow is UIWindow uiWindow ? uiWindow : throw new InvalidOperationException("Unable to locate the Native UIWindow");
+        })
             .AddSingleton<IUIApplicationDelegate>(sp => sp.GetRequiredService<Application>());
 
         return builder;
