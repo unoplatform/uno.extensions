@@ -37,7 +37,7 @@ public static class DispatcherQueueProvider
 
 		/// <inheritdoc />
 		public bool TryEnqueue(Action action)
-			=> _queue.TryEnqueue(() => action());
+			=> _queue.TryEnqueue(Unsafe.As<DispatcherQueueHandler>(action));
 
 		/// <inheritdoc />
 		public async ValueTask<TResult> ExecuteAsync<TResult>(AsyncFunc<TResult> action, CancellationToken ct)
