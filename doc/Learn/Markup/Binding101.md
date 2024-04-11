@@ -151,7 +151,7 @@ public partial class MainPage : Page
 					.Text(() => vm.Query),
 				new TextBox()
 					.Text(x => x
-						.Source(searchBox)
+						.Source(nameof(searchBox))
 						.Binding(() => searchBox.Text))
 			)
 		);
