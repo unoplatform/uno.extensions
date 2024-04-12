@@ -35,7 +35,7 @@ internal class FeedSubscription<T> : IAsyncDisposable, ISourceContextOwner
 			isInitialSyncValuesSkippingAllowed: true);
 	}
 
-	string ISourceContextOwner.Name => $"Sub on '{_feed}' for ctx '{_context.Parent!.Owner.Name}'.";
+	string ISourceContextOwner.Name => $"Sub on '{LogHelper.GetIdentifier(_feed)}' for ctx '{_context.Parent!.Owner.Name}'.";
 
 	IDispatcher? ISourceContextOwner.Dispatcher => null;
 
@@ -64,7 +64,7 @@ internal class FeedSubscription<T> : IAsyncDisposable, ISourceContextOwner
 			{
 				// We make sure that even if we are replaying a previous message, the changes collection contains all keys.
 				isFirstMessage = false;
-				yield return Message<T>.Initial.OverrideBy(msg);
+				yield return Message<T>.Initial.OverrideBy(msg);			
 			}
 			else
 			{

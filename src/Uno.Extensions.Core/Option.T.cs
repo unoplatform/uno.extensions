@@ -166,6 +166,9 @@ public readonly struct Option<T> : IOption, IEquatable<Option<T>>
 		{
 			OptionType.Undefined => $"Undefined<{typeof(T).Name}>",
 			OptionType.None => $"None<{typeof(T).Name}>",
-			_ => $"Some({_value switch { string => _value, IEnumerable enumerable => string.Join(",", enumerable.Cast<object>()), _ => _value }})",
+			_ when _value is null => "Some(--null--)",
+			_ when _value is string str => $"Some({str})",
+			_ when _value is IEnumerable enumerable => $"Some({string.Join(",", enumerable.Cast<object>())})",
+			_ => $"Some({_value})",
 		};
 }
