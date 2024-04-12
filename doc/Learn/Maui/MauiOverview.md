@@ -37,7 +37,7 @@ For new applications created using the Uno Platform Template Wizard for Visual S
 1. The application can be run by selecting the desired platform in the dropdown, then pressing F5 or clicking the Run button. The default layout shows a text, "Hello Uno Platform", which is an Uno TextBlock, followed by an Image, two TextBlock and, a Button, which are all .NET MAUI controls.
 
     ![Selecting target](Assets/GettingStarted04.1-ProjectStructure.png)
-    
+
     ![Running on Windows](Assets/GettingStarted05-RunningOnWindows.png)
 
 These steps can also be achieved via the command lines by invoking the following commands
@@ -50,6 +50,28 @@ dotnet new unoapp -preset blank -maui -o SimpleMauiApp
 ## Get Started - Existing Uno Application
 
 .NET MAUI Embedding can be added to any existing Uno application via the following steps. The .NET MAUI Embedding feature is only supported in Uno applications that target iOS, Android, MacCatalyst, and Windows, as shown in the Platforms folder in the following solution structure. These instructions are appropriate for an Uno application targeting .NET 7.
+
+### Adding MauiEmbedding Dependenciess
+
+# [**Single Project**](#tab/single-project)
+
+![Starting solution structure - SingleProject](Assets/GettingStartedExisting01-StartSingleProjectStructure.png)
+
+1. **UnoFeatures**
+  In the class library find the `<UnoFeatures>` property and add `MauiEmbedding`. This step add all the dependencies you need for you to have MauiEmbedding working with you project.
+
+  ```diff
+  <UnoFeatures>
+    ...
+    Serialization;
+    Localization;
+    Navigation;
+    ExtensionsCore;
+  +	MauiEmbedding;
+  </UnoFeatures>
+  ```
+
+# [**Multi-Head (Legacy)**](#tab/multi-project)
 
 ![Starting solution structure](Assets/GettingStartedExisting01-StartProjectStructure.png)
 
@@ -137,6 +159,10 @@ Add a reference in the existing class library to [Uno.Extensions.Maui.WinUI](htt
       </ItemGroup>
     </Project>
     ```
+
+***
+
+### Adding Maui Class Library
 
 1. **Maui class library**
 
