@@ -25,6 +25,18 @@ The `dotnet` templates included in the `Uno.Templates` package are used to easil
 
     The argument specified after the `-o` flag (i.e. MyProjectName) will act as the name for both a containing directory and the generated solution.
 
+    To add unit testing to your solution, execute:
+
+    ```dotnetcli
+    dotnet new unoapp-tests -o MyProjectName.Tests
+    ```
+
+    To add a server project, execute:
+
+    ```dotnetcli
+    dotnet new unoapp-server -o MyProjectName.Server
+    ```
+
 * Open the solution in Visual Studio
 
     `.\MyProjectName\MyProjectName.sln`
@@ -35,6 +47,8 @@ The generated solution will contain:
 
 * *MyProjectName* - for application logic, and other constructs like view models and services, as well as the pages, controls and other views that make up the UI of the application
 * *MyProjectName/Platforms* - platform-specific folders for each supported platform.
+* *MyProjectName.Tests* - unit testing projects.
+* *MyProjectName.Server* - backend server projects.
 
     ![The structure of the generated solution](./Learn/images/ProjectStructure-min.png)
 
@@ -80,3 +94,9 @@ The generated solution will contain:
 * Go back to the project *Tests\\MyProjectName.UI.Tests* and right click. Then, *Run Tests*
 
     ![Test Explorer in VS](./Learn/images/TestExplorer-min.png)
+
+### 6. Running the Server
+
+* Set the MyProjectName.Server project as the startup project.
+
+* Start the server by pressing F5 which will host your backend services.
