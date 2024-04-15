@@ -2,6 +2,7 @@ using UIKit;
 using Uno.Extensions.Maui.Platform;
 using Microsoft.Maui;
 using Windows.UI.Core;
+using Uno.UI.Xaml;
 
 namespace Uno.Extensions.Maui;
 
