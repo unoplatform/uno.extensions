@@ -21,7 +21,7 @@ In this tutorial, you'll learn how to set up an Uno Platform project to use MVUX
 
     - Give your project an appropriate name.
 
-    - When prompted Select *Blank* under the Presets section.
+    - When prompted select the *Blank* template under the Presets section.
 
         ![Screenshot displaying the intro screen of the Uno Extension wizard in Visual Studio](../Assets/MvuxProject-StartupType.png)
 

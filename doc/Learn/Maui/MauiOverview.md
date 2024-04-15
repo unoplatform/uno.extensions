@@ -18,7 +18,7 @@ It's recommended that instead of hosting individual .NET MAUI controls in a `Mau
 
 For new applications created using the Uno Platform Template Wizard for Visual Studio, .NET MAUI Embedding can be selected as a feature when creating the application.
 
-1. Start by selecting either the Blank or Default template.
+1. Start by selecting either the **Blank** or **Recommended** preset template.
 
     ![Select startup type](Assets/GettingStarted01-StartupType.png)
 
@@ -49,16 +49,17 @@ dotnet new unoapp -preset blank -maui -o SimpleMauiApp
 
 ## Get Started - Existing Uno Application
 
-.NET MAUI Embedding can be added to any existing Uno application via the following steps. The .NET MAUI Embedding feature is only supported in Uno applications that target iOS, Android, MacCatalyst, and Windows, as shown in the Platforms folder in the following solution structure. These instructions are appropriate for an Uno application targeting .NET 7.
+.NET MAUI Embedding can be added to any existing Uno application via the following steps. The .NET MAUI Embedding feature is only supported in Uno applications that target iOS, Android, MacCatalyst, and Windows, as shown in the Platforms folder in the following solution structure.
 
 ### MauiEmbedding Dependencies
 
-# [**Single Project**](#tab/single-project)
+#### [**Single Project Template**](#tab/single-project)
 
 ![Starting solution structure - SingleProject](Assets/GettingStartedExisting01-StartSingleProjectStructure.png)
 
-**UnoFeatures**
-In the class library find the `<UnoFeatures>` property and add `MauiEmbedding`. This step add all the dependencies you need for you to have MauiEmbedding working with you project.
+##### UnoFeatures
+
+In the **.csproj** file, find the `<UnoFeatures>` property and add `MauiEmbedding`. This step adds all the dependencies you need for you to have Maui Embedding working with your project.
 
 ```diff
 <UnoFeatures>
@@ -71,7 +72,7 @@ In the class library find the `<UnoFeatures>` property and add `MauiEmbedding`. 
 </UnoFeatures>
 ```
 
-# [**Multi-Head (Legacy)**](#tab/multi-project)
+#### [**Multi-Head Project Template (Legacy)**](#tab/multi-project)
 
 ![Starting solution structure](Assets/GettingStartedExisting01-StartProjectStructure.png)
 
@@ -162,9 +163,9 @@ Add a reference in the existing class library to [Uno.Extensions.Maui.WinUI](htt
 
 ***
 
-### Maui Class Library
+### Add MAUI Aplication 
 
-1. **Maui class library**
+1. **MAUI Class Library**
 
     Add a new .NET MAUI Class Library to the application, `ExistingUnoApp.MauiControls`.
 
@@ -302,4 +303,4 @@ Add a reference in the existing class library to [Uno.Extensions.Maui.WinUI](htt
     </Page>
     ```
 
-Build and run on each target platform to see the .NET MAUI control embedded within the Uno application
+Build and run on each target platform to see the .NET MAUI control embedded within the Uno application.
