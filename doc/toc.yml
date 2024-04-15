@@ -5,7 +5,7 @@
       href: xref:Uno.Extensions.Overview
     - name: "How-To: Getting Started"
       href: xref:Uno.Extensions.HowToGettingStarted
-      name: "How-To: Getting Started with Tests"
+    - name: "How-To: Getting Started with Tests"
       href: xref:Uno.Extensions.GettingStartedTests
     - name: Authentication
       href: Learn/Authentication/toc.yml
