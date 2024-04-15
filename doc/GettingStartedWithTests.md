@@ -1,13 +1,16 @@
 ---
 uid: Uno.Extensions.GettingStartedTests
 ---
-# How-To: Creating an application with Uno.Extensions
+# How-To: Creating an application with tests using Uno.Extensions
 
 This tutorial will walk through how to create an Uno application with the `dotnet new` tool, which is already configured to use the Uno.Extensions.
 
 ## Step-by-steps
 
 ### 1. Installing extension templates
+
+> [!NOTE]
+> Make sure to setup your environment first by [following our instructions](xref:Uno.GetStarted.vs2022).
 
 The `dotnet` templates included in the `Uno.Templates` package are used to easily create new projects that already reference the Uno.Extensions.
 
@@ -20,22 +23,10 @@ The `dotnet` templates included in the `Uno.Templates` package are used to easil
 * Navigate to the desired projects directory, and use the `unoapp` template to generate the starter solution discussed above
 
     ```dotnetcli
-    dotnet new unoapp -o MyProjectName
+    dotnet new unoapp -o MyProjectName -server true -tests "unit" -tests "ui"
     ```
 
     The argument specified after the `-o` flag (i.e. MyProjectName) will act as the name for both a containing directory and the generated solution.
-
-    To add unit testing to your solution, execute:
-
-    ```dotnetcli
-    dotnet new unoapp-tests -o MyProjectName.Tests
-    ```
-
-    To add a server project, execute:
-
-    ```dotnetcli
-    dotnet new unoapp-server -o MyProjectName.Server
-    ```
 
 * Open the solution in Visual Studio
 
@@ -47,10 +38,10 @@ The generated solution will contain:
 
 * *MyProjectName* - for application logic, and other constructs like view models and services, as well as the pages, controls and other views that make up the UI of the application
 * *MyProjectName/Platforms* - platform-specific folders for each supported platform.
-* *MyProjectName.Tests* - unit testing projects.
+* *MyProjectName.Tests* and *MyProjectName.UI.Tests* - for writing unit and UI tests respectively.
 * *MyProjectName.Server* - backend server projects.
 
-    ![The structure of the generated solution](./Learn/images/ProjectStructure-min.png)
+    ![The structure of the generated solution](./Learn/images/ProjectStructure-Tests-min.png)
 
 ### 3. Running the Application
 
@@ -58,7 +49,7 @@ The generated solution will contain:
 
     ![A screenshot of the generated targets](./Learn/images/GeneratedTargets-min.png)
 
-* Click the "play" button, or press F5 to start debugging. The project will be compiled and deployed based on the target platform.
+* Click the "play" button, or press F5 to start debugging. The project will be compiled and deployed based on the target platform. For more detailed instructions specific to each platform, refer to the [Debug the App](xref:Uno.GettingStarted.CreateAnApp.VS2022#debug-the-app) documentation.
 
 ### 4. Running the Unit Tests
 
