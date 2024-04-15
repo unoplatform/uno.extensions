@@ -49,7 +49,7 @@ The navigation bar can include items such as a back button, a page title, and ot
 				    new NavigationBar().Content("Title Second Page"),
 				    new Button()
 					    .Content("Go to Main Page")
-					    .Assign(out var navigationButton)
+					    .Name(out var navigationButton)
 			    ));
 
 		    navigationButton.Click += (s, e) =>
@@ -72,11 +72,11 @@ The navigation bar can include items such as a back button, a page title, and ot
     ```csharp
     new Button()
 		.Content("Go to Second Page")
-		.Assign(out var navigationButton),
+		.Name(out var navigationButton),
     ```
 
-    The main ideia here is to create a button that have Assign it self the output variable named in this case as navigationButton.
-    After that we need to add a Click EventHandler to add the Navigation using the Frame.Navigate. 
+    The main idea here is to create a button that has to assign itself, through the `Name` extension method, the output variable named in this case is `navigationButton`.
+    After that, we need to add a Click EventHandler to add the Navigation using the Frame.Navigate. 
 
     > Notice how simple it is to create an action for the Button's Click event.
 
@@ -168,7 +168,7 @@ The navigation bar can include items such as a back button, a page title, and ot
 				    new NavigationBar().Content("Title Main Page"),
 				    new Button()
 					    .Content("Go to Second Page")
-					    .Assign(out var navigationButton)
+					    .Name(out var navigationButton)
 			    ));
 
 		    navigationButton.Click += (s, e) =>
@@ -242,13 +242,13 @@ Chips are often used to display short pieces of information such as tags, catego
 
     ```csharp
     new ChipGroup()
-		.Assign(out var chipGroup)
+		.Name(out var chipGroup)
 		.Items(
 			new Chip()
 				.Margin(5)
 				.Content("Go to Second Page")
 				.Background(new SolidColorBrush(Colors.LightBlue))
-    			.Assign(out var navigationChip),
+    			.Name(out var navigationChip),
 		)
     ```
 
@@ -259,7 +259,7 @@ Chips are often used to display short pieces of information such as tags, catego
 
     ```csharp
     new ChipGroup()
-		.Assign(out var chipGroup)
+		.Name(out var chipGroup)
 		.Items(
             new Chip()
 				.Margin(5)
@@ -274,18 +274,18 @@ Chips are often used to display short pieces of information such as tags, catego
 
     ```csharp
     new ChipGroup()
-		.Assign(out var chipGroup)
+		.Name(out var chipGroup)
 		.Items(
 			
 			new Chip()
 				.Margin(5)
 				.Content("Chip 3")
-				.Assign(out var chipElement)
+				.Name(out var chipElement)
 		)
     ```
 
-    And we need to add the event handlers  on our code.
-    Notice that we are using the Assign to have access to the chipElement in other places.
+    And we need to add the event handlers to our code.
+    Notice that we are using the `Name` extension method to have access to the chipElement in other places.
     
     ```csharp
     
@@ -392,9 +392,9 @@ Chips are often used to display short pieces of information such as tags, catego
 							    .Children(
 								    new Button()
 									    .Content("Go to Second Page")
-									    .Assign(out var navigationButton),
+									    .Name(out var navigationButton),
 								    new ChipGroup()
-									    .Assign(out var chipGroup)
+									    .Name(out var chipGroup)
 									    .Items(
 										    new Chip()
 											    .Margin(5)
@@ -404,7 +404,7 @@ Chips are often used to display short pieces of information such as tags, catego
 											    .Margin(5)
 											    .CanRemove(true)
 											    .Content("Chip 2")
-											    .Assign(out var chipRemoveElement)
+											    .Name(out var chipRemoveElement)
 											    .Style(new Style<Chip>()
 														    .Setters(s => s.Foreground(new SolidColorBrush(Colors.Red)))
 												    ),
@@ -413,7 +413,7 @@ Chips are often used to display short pieces of information such as tags, catego
 											    .Content("Chip 3")
 											    //.Icon(new PathIcon().Data(StaticResource.Get<Geometry>("Icon_Check")))
 											    //.Icon(new SymbolIcon(Symbol.Favorite))
-											    .Assign(out var chipElement)
+											    .Name(out var chipElement)
 									    )
 							    )
 					    )
