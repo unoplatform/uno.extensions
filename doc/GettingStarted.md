@@ -36,7 +36,7 @@ The `dotnet` templates included in the `Uno.Templates` package are used to easil
 
 The generated solution will contain:
 
-* *MyProjectName* - for application logic, and other constructs like view models and services, as well as the pages, controls and other views that make up the UI of the application.
+* *MyProjectName* - for application logic, and other constructs like view models and services, as well as the pages, controls, and other views that make up the UI of the application.
 * *MyProjectName/Platforms* - platform-specific folders for each supported platform.
 
     ![The structure of the generated solution](./Learn/images/ProjectStructure-min.png)

@@ -16,6 +16,9 @@ It's recommended that instead of hosting individual .NET MAUI controls in a `Mau
 
 ## Get Started - New Uno Application
 
+> [!NOTE]
+> Make sure to setup your environment first by [following our instructions](xref:Uno.GetStarted.vs2022).
+
 For new applications created using the Uno Platform Template Wizard for Visual Studio, .NET MAUI Embedding can be selected as a feature when creating the application.
 
 1. Start by selecting either the **Blank** or **Recommended** preset template.
@@ -163,7 +166,7 @@ Add a reference in the existing class library to [Uno.Extensions.Maui.WinUI](htt
 
 ***
 
-### Add MAUI Aplication 
+### Add MAUI Application 
 
 1. **MAUI Class Library**
 
