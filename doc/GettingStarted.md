@@ -47,4 +47,4 @@ The generated solution will contain:
 
     ![A screenshot of the generated targets](./Learn/images/GeneratedTargets-min.png)
 
-* Click the "play" button, or press F5 to start debugging. The project will be compiled and deployed based on the target platform.
+* Click the "play" button, or press F5 to start debugging. The project will be compiled and deployed based on the target platform. For more detailed instructions specific to each platform, refer to the [Debug the App](xref:Uno.GettingStarted.CreateAnApp.VS2022#debug-the-app) documentation.
