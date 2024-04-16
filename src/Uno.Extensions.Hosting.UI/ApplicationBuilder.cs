@@ -10,7 +10,9 @@ internal record ApplicationBuilder(Application App, LaunchActivatedEventArgs Arg
 #if NET6_0_OR_GREATER && WINDOWS && !HAS_UNO
 		new Window();
 #else
-		Window.Current;
+		// Window.Current can be null with Uno.WinUI 5.2+
+		// When updating Hosting to Uno.WinUI 5.2+ we need to remove the compiler directive
+		Window.Current ?? new Window();
 #endif
 
 	public IHost Build()

@@ -1,0 +1,6 @@
+<Project>
+  <PropertyGroup>
+    <UnoVersion>5.2.22</UnoVersion>
+    <WinAppSdkVersion>1.5.240404000</WinAppSdkVersion>
+  </PropertyGroup>
+</Project>
