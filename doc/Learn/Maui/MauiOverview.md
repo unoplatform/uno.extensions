@@ -66,11 +66,11 @@ In the **.csproj** file, find the `<UnoFeatures>` property and add `MauiEmbeddin
 
 ```diff
 <UnoFeatures>
-  ...
-  Serialization;
-  Localization;
-  Navigation;
-  ExtensionsCore;
+   ...
+   Serialization;
+   Localization;
+   Navigation;
+   ExtensionsCore;
 + MauiEmbedding;
 </UnoFeatures>
 ```
@@ -166,7 +166,7 @@ Add a reference in the existing class library to [Uno.Extensions.Maui.WinUI](htt
 
 ***
 
-### Add MAUI Application 
+### Add MAUI Application
 
 1. **MAUI Class Library**
 

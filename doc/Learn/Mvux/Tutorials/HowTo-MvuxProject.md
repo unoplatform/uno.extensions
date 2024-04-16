@@ -10,7 +10,7 @@ In this tutorial, you'll learn how to set up an Uno Platform project to use MVUX
 > Make sure to setup your environment first by [following our instructions](xref:Uno.GetStarted.vs2022).
 
 1. Make sure your environment is set up properly by using [uno check](xref:UnoCheck.UsingUnoCheck).
-1. You can create a Uno App by either using the Uno Platform Visual Studio extension or via the command line interface.
+1. You can create an Uno Platform App by either using the Uno Platform Visual Studio extension or via the command line interface.
 
     # [**Visual Studio**](#tab/vs)
 
