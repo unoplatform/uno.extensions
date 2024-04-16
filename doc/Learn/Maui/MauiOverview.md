@@ -71,7 +71,7 @@ In the **.csproj** file, find the `<UnoFeatures>` property and add `MauiEmbeddin
    Localization;
    Navigation;
    ExtensionsCore;
-+ MauiEmbedding;
++  MauiEmbedding;
 </UnoFeatures>
 ```
 
