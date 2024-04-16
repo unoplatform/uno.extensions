@@ -5,6 +5,9 @@ uid: Uno.Extensions.HowToGettingStarted
 
 This tutorial will walk through how to create an Uno application with the `dotnet new` tool, which is already configured to use the Uno.Extensions.
 
+> [!NOTE]
+> Make sure to setup your environment first by [following our instructions](xref:Uno.GetStarted.vs2022).
+
 ## Step-by-steps
 
 ### 1. Exploring the Solution
