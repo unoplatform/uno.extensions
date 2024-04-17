@@ -24,7 +24,7 @@ public class CustomEntry : Entry
 				return;
 			}
 
-#if IOS
+#if IOS || MACCATALYST
 			if (h.PlatformView is UIKit.UITextField textField)
 			{
 				var color = entry.BorderColor?.ToPlatform().CGColor ?? UIKit.UIColor.Black.CGColor;

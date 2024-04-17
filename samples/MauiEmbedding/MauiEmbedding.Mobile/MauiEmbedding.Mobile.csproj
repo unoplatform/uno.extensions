@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 	<!-- This is only required because this project references Uno.Extensions.Maui.WinUI as a package reference (ie by source) -->
 	<Import Project="..\..\..\src\Uno.Extensions.Maui.UI\build\Package.props" />
 
@@ -37,7 +37,6 @@
 		<PackageReference Include="Microsoft.Extensions.Logging.Console" />
 		<PackageReference Include="Uno.Extensions.Logging.OSLog" />
 		<PackageReference Include="Telerik.UI.for.Maui" Condition="$(_UseTelerik)"/>
-		<PackageReference Include="CommunityToolkit.Maui" />
 		<PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" />
 		<!--<PackageReference Include="Uno.WinUI.RemoteControl" Condition="'$(Configuration)'=='Debug'" />-->
 	</ItemGroup>

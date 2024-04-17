@@ -1,4 +1,4 @@
-﻿namespace Uno.Extensions.Hosting;
+namespace Uno.Extensions.Hosting;
 
 internal record ApplicationBuilder(Application App, LaunchActivatedEventArgs Arguments, Assembly ApplicationAssembly) : IApplicationBuilder
 {
@@ -9,6 +9,10 @@ internal record ApplicationBuilder(Application App, LaunchActivatedEventArgs Arg
 	public Window Window { get; } =
 #if NET6_0_OR_GREATER && WINDOWS && !HAS_UNO
 		new Window();
+#elif HAS_UNO_WINUI
+		// Window.Current can be null with Uno.WinUI 5.2+
+		// When updating Hosting to Uno.WinUI 5.2+ we need to remove the compiler directive
+		Window.Current ?? new Window();
 #else
 		Window.Current;
 #endif
