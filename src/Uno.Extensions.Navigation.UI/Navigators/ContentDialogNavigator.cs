@@ -51,6 +51,7 @@ public class ContentDialogNavigator : DialogNavigator
 		}
 
 #if WINUI
+		// NOTE: We needed to add the ! operator on Content due to a nullability issue starting in Uno.WinUI 5.2
 		dialog.XamlRoot = Window!.Content!.XamlRoot;
 #endif
 
