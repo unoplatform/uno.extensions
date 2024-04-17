@@ -1,4 +1,15 @@
 <Project ToolsVersion="15.0">
+	<!--
+		Due to an issue with duplicate references on output for Windows we need to ensure that when building for MAUI Embedding that we use the same version
+		of both WinUI and Uno.WinUI across Extensions and the MauiEmbedding Sample Project.
+	-->
+	<PropertyGroup Condition="$(SolutionName) != 'MauiEmbedding'">
+		<UnoVersion Condition="$(UnoVersion) == '' AND !$(MSBuildProjectName.Contains('Maui'))">5.0.19</UnoVersion>
+		<UnoVersion Condition="$(UnoVersion) == '' AND $(MSBuildProjectName.Contains('Maui'))">5.2.22</UnoVersion>
+		<WinAppSdkVersion Condition="$(WinAppSdkVersion) == ''">1.4.231219000</WinAppSdkVersion>
+	</PropertyGroup>
+
+	<Import Project="$(MSBuildThisFileDirectory)maui-embedding.props" Condition="$(SolutionName) == 'MauiEmbedding'" />
 	<ItemGroup>
 		<PackageVersion Include="CommunityToolkit.Mvvm" Version="7.0.1" />
 		<PackageVersion Include="DotNet.ReproducibleBuilds" Version="1.1.1" />
@@ -14,7 +25,7 @@
 		<PackageVersion Include="Microsoft.Extensions.Http" Version="8.0.0" />
 		<PackageVersion Include="Microsoft.Extensions.Localization.Abstractions" Version="8.0.1" />
 		<PackageVersion Include="Microsoft.Extensions.Logging" Version="8.0.0" />
-		<PackageVersion Include="Microsoft.Identity.Client" Version="4.55.0" />
+		<PackageVersion Include="Microsoft.Identity.Client" Version="4.60.3" />
 		<PackageVersion Include="Microsoft.Identity.Client.Extensions.Msal" Version="2.22.0" />
 		<PackageVersion Include="Microsoft.Maui.Controls" Version="8.0.3" />
 		<PackageVersion Include="Microsoft.Maui.Controls.Compatibility" Version="8.0.3" />
@@ -23,7 +34,7 @@
 		<PackageVersion Include="Microsoft.SourceLink.GitHub" Version="1.1.1" />
 		<PackageVersion Include="Microsoft.UI.Xaml" Version="2.7.1" />
 		<PackageVersion Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.756" />
-		<PackageVersion Include="Microsoft.WindowsAppSDK" Version="1.4.231219000" />
+		<PackageVersion Include="Microsoft.WindowsAppSDK" Version="$(WinAppSdkVersion)" />
 		<PackageVersion Include="Microsoft.Graphics.Win2D" Version="1.2.0" />
 		<PackageVersion Include="Moq" Version="4.17.2" />
 		<PackageVersion Include="Refit" Version="6.3.2" />
@@ -48,15 +59,15 @@
 		<PackageVersion Include="Uno.Toolkit" Version="5.0.15" />
 		<PackageVersion Include="Uno.Toolkit.UI" Version="5.0.15" />
 		<PackageVersion Include="Uno.Toolkit.WinUI" Version="5.0.15" />
-		<PackageVersion Include="Uno.UI" Version="5.0.19" />
-		<PackageVersion Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="5.0.19"/>
-		<PackageVersion Include="Uno.UI.MSAL"  Version="5.0.19" />
-		<PackageVersion Include="Uno.UI.Runtime.WebAssembly" Version="5.0.19" />
+		<PackageVersion Include="Uno.UI" Version="$(UnoVersion)" />
+		<PackageVersion Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="$(UnoVersion)"/>
+		<PackageVersion Include="Uno.UI.MSAL"  Version="$(UnoVersion)" />
+		<PackageVersion Include="Uno.UI.Runtime.WebAssembly" Version="$(UnoVersion)" />
 		<PackageVersion Include="Uno.UI.RuntimeTests.Engine" Version="0.24.0-dev.95" />
-		<PackageVersion Include="Uno.WinUI" Version="5.0.19" />
+		<PackageVersion Include="Uno.WinUI" Version="$(UnoVersion)" />
 		<PackageVersion Include="Uno.WinUI.Markup" Version="5.2.4" />
-		<PackageVersion Include="Uno.WinUI.MSAL" Version="5.0.19" />
-		<PackageVersion Include="Uno.WinUI.Runtime.WebAssembly" Version="5.0.19" />
+		<PackageVersion Include="Uno.WinUI.MSAL" Version="$(UnoVersion)" />
+		<PackageVersion Include="Uno.WinUI.Runtime.WebAssembly" Version="$(UnoVersion)" />
 		<PackageVersion Include="coverlet.collector" Version="3.1.2" />
 		<PackageVersion Include="xunit" Version="2.4.1" />
 		<PackageVersion Include="xunit.runner.visualstudio" Version="2.4.1" />

@@ -1,4 +1,6 @@
 <Project>
+	<Import Project="../../src/maui-embedding.props" />
+
 	<PropertyGroup>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
