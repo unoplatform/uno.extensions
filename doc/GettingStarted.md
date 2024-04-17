@@ -12,12 +12,9 @@ This tutorial will walk through how to create an Uno application with the `dotne
 
 ### 1. Exploring the Solution
 
-The generated solution will contain:
+The generated solution will contain *MyProjectName* for application logic, including constructs like ViewModels and services, along with the pages, controls, and other views constituting the UI of the application.
 
-* *MyProjectName* - for application logic, and other constructs like ViewModels and services, as well as the pages, controls, and other views that make up the UI of the application.
-* *MyProjectName/Platforms* - platform-specific folders for each supported platform.
-
-    ![The structure of the generated solution](./Learn/images/ProjectStructure-min.png)
+![The structure of the generated solution](./Learn/images/ProjectStructure-min.png)
 
 ### 2. Running the Application
 
