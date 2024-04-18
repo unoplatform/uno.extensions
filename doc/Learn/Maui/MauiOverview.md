@@ -33,7 +33,7 @@ For new applications created using the Uno Platform Template Wizard for Visual S
 
     ![Project structure](Assets/GettingStarted04-ProjectStructure.png)
 
-1. The application can be run by selecting the desired platform in the dropdown, then pressing F5 or clicking the Run button. The default layout shows a text, "Hello Uno Platform", which is an Uno TextBlock, followed by an Image, two TextBlock and, a Button, which are all .NET MAUI controls. For more detailed instructions specific to each platform, refer to the [Debug the App](xref:Uno.GettingStarted.CreateAnApp.VS2022#debug-the-app) documentation.
+1. The application can be run by selecting the desired platform in the dropdown, then pressing F5 or clicking the Run button. The default layout shows a text, "Hello Uno Platform", which is an Uno TextBlock, followed by an Image, two TextBlock, and, a Button, which are all .NET MAUI controls. For more detailed instructions specific to each platform, refer to the [Debug the App](xref:Uno.GettingStarted.CreateAnApp.VS2022#debug-the-app) documentation.
 
     ![Selecting target](Assets/GettingStarted04.1-ProjectStructure.png)
 
