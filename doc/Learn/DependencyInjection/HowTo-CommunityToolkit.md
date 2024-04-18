@@ -14,7 +14,7 @@ This tutorial will walk you through how to set up this feature and use it to man
 ## Step-by-steps
 
 > [!IMPORTANT]
-> This guide assumes you used the template wizard or `dotnet new unoapp` to create your solution. If not, it is recommended that you follow the [Creating an app article](xref:Uno.GettingStarted.CreateAnApp.VS2022) for creating an application from the template.
+> This guide assumes you used the template wizard or `dotnet new unoapp` to create your solution. If not, it is recommended that you follow the [Creating an application with Uno.Extensions article](xref:Uno.Extensions.HowToGettingStarted) for creating an application from the template.
 
 ### 1. Add the CommunityToolkit.Mvvm package to your project
 
