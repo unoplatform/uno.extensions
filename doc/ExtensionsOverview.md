@@ -3,6 +3,9 @@ uid: Uno.Extensions.Overview
 ---
 # Get to a fully functional project in minutes
 
+> [!NOTE]
+> Before getting started with Uno.Extensions, make sure to setup your environment by [following our instructions](xref:Uno.GetStarted.vs2022).
+
 Uno.Extensions is a series of NuGet packages designed to encapsulate common functions when building multi-platform mobile, desktop, and web applications using Uno Platform. Thoughtfully designed components and features retain easy extensibility and customization while providing a solid foundation for your application.
 
 The Uno.Extensions follows the Microsoft.Extensions model that creates a host environment where you can register additional dependencies. The registered dependencies are then available throughout the application via the Services (`IServiceProvider`) property on the `IHost` instance.

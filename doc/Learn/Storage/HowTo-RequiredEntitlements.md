@@ -8,7 +8,9 @@ On Apple platforms (iOS, Mac Catalyst) the Uno storage extension use the OS Key 
 ## Step-by-steps
 
 > [!IMPORTANT]
-> This guide assumes you used the template wizard or `dotnet new unoapp` to create your solution. If not, it is recommended that you follow the [instructions](xref:Uno.Extensions.HowToGettingStarted) for creating an application from the template.
+> This guide assumes you used the template wizard or `dotnet new unoapp` to create your solution. If not, it is recommended that you follow the [Creating an app article](xref:Uno.GettingStarted.CreateAnApp.VS2022) for creating an application from the template.
+
+
 
 ### 1. Adding the Entitlements.plist file
 
