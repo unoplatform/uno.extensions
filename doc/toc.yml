@@ -3,6 +3,8 @@
   items:
     - name: Uno.Extensions Overview
       href: xref:Uno.Extensions.Overview
+    - name: "How-To: Getting Started"
+      href: xref:Uno.Extensions.HowToGettingStarted
     - name: Authentication
       href: Learn/Authentication/toc.yml
       topicHref: xref:Uno.Extensions.Authentication.Overview
