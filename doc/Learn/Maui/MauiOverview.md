@@ -25,10 +25,6 @@ For new applications created using the Uno Platform Template Wizard for Visual S
 
     ![Select startup type](Assets/GettingStarted01-StartupType.png)
 
-1. .NET MAUI Embedding is only supported on iOS, Android, MacCatalyst, and Windows. If you have any other platforms selected, the .NET MAUI Embedding feature will be disabled. Select the Platforms section and make sure only iOS, Android, MacCatalyst, and Windows are selected.
-
-    ![Select platforms](Assets/GettingStarted02-Platforms.png)
-
 1. Select the Features section and include the MAUI Embedding feature, before clicking the Create button to complete the creation of the application.
 
     ![Select feature - .NET MAUI Embedding](Assets/GettingStarted03-MAUIEmbedding.png)
