@@ -16,16 +16,16 @@ This tutorial will walk you through how to create an Uno application with Uno.Ex
 
 * Create a new C# solution using the **Uno Platform App** template, from Visual Studio's **Start Page**, then click the **Next** button
 
-    ![Visual Studio - Get started - Selecting `create a new project` option](Assets/tutorial01/newproject1.PNG)  
-    ![Visual Studio - Create a new project - Selecting `Uno Platform App` option](Assets/tutorial01/newproject2.PNG)
+    ![Visual Studio - Get started - Selecting `create a new project` option](./Learn/images/newproject1.png)
+    ![Visual Studio - Create a new project - Selecting `Uno Platform App` option](./Learn/images/newproject2.png)
 
 * Configure your new project by providing a project name and a location, check the "**Place solution and project in the same directory**" option, then click the **Create** button
 
-    ![Visual Studio - Configure project name and location](Assets/tutorial01/configure-new-unoplatform-app.PNG)
+    ![Visual Studio - Configure project name and location](./Learn/images/configure-new-unoplatform-app.png)
 
 * Choose a template preset to build your application
 
-    ![Visual Studio - Configure your new project](getting-started/wizard/assets/intro.png)
+    ![Visual Studio - Configure your new project](./Learn/images/intro.png)
 
     > [!TIP]
     > For a detailed overview of the Uno Platform project template wizard and all its options, see [this](xref:Uno.GettingStarted.UsingWizard).
@@ -50,7 +50,7 @@ The `dotnet` templates included in the `Uno.Templates` package are used to easil
 * Navigate to the desired projects directory, and use the `unoapp` template to generate the starter solution discussed above
 
     ```dotnetcli
-    dotnet new unoapp-extensions -n MyProjectName -o MyProject
+    dotnet new unoapp -o MyProject -preset recommended
     ```
 
     The argument specified after the `-o` flag (i.e. MyProjectName) will act as the name for both a containing directory and the generated solution.
@@ -64,7 +64,6 @@ The `dotnet` templates included in the `Uno.Templates` package are used to easil
 The generated solution will contain *MyProjectName* for application logic, including constructs like ViewModels and services, along with the pages, controls, and other views constituting the UI of the application.
 
 ![The structure of the generated solution](./Learn/images/ProjectStructure-min.png)
-// Add new picture here
 
 ### 3. Running the Application
 
