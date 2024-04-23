@@ -6,8 +6,11 @@ uid: Uno.Extensions.Mvux.HowToMvuxProject
 
 In this tutorial, you'll learn how to set up an Uno Platform project to use MVUX.
 
+> [!NOTE]
+> Make sure to setup your environment first by [following our instructions](xref:Uno.GetStarted.vs2022).
+
 1. Make sure your environment is set up properly by using [uno check](xref:UnoCheck.UsingUnoCheck).
-1. You can create a Uno App by either using the Uno Platform Visual Studio extension or via the command line interface.
+1. You can create an Uno Platform App by either using the Uno Platform Visual Studio extension or via the command line interface.
 
     # [**Visual Studio**](#tab/vs)
 
@@ -15,19 +18,19 @@ In this tutorial, you'll learn how to set up an Uno Platform project to use MVUX
 
     - Make sure you have the latest version of Uno Extension (v4.8 or higher) installed.
 
-        ![Screenshot displaying how to check the version of the Uno Extension wizard version in Visual Studio extension manager](../Assets/MvuxProject-VsixVersion.jpg)
+        ![Screenshot displaying how to check the version of the Uno Extension wizard version in Visual Studio extension manager](../Assets/MvuxProject-VsixVersion.png)
 
     - Press <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>N</kbd> to create a new project and select "Uno Platform App".
 
     - Give your project an appropriate name.
 
-    - When prompted Select *Blank* and click *Customize*
+    - When prompted select the *Blank* template under the Presets section.
 
-        ![Screenshot displaying the intro screen of the Uno Extension wizard in Visual Studio](../Assets/MvuxProject-StartupType.jpg)
+        ![Screenshot displaying the intro screen of the Uno Extension wizard in Visual Studio](../Assets/MvuxProject-StartupType.png)
 
     - In the *Presentation* tab (3rd one), select MVUX.
 
-        ![Screenshot displaying how to pre-install MVUX in the generated project](../Assets/MvuxProject-Mvux.jpg)
+        ![Screenshot displaying how to pre-install MVUX in the generated project](../Assets/MvuxProject-Mvux.png)
 
     - Click *Create* on the bottom right corner.
 
