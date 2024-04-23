@@ -166,13 +166,9 @@ public readonly struct Option<T> : IOption, IEquatable<Option<T>>
 		{
 			OptionType.Undefined => $"Undefined<{typeof(T).Name}>",
 			OptionType.None => $"None<{typeof(T).Name}>",
-<<<<<<< HEAD
-			_ => $"Some({(_value is IEnumerable enumerable ? string.Join(",", enumerable.Cast<object>()) : _value)})",
-=======
 			_ when _value is null => "Some(--null--)",
 			_ when _value is string str => $"Some({str})",
 			_ when _value is IEnumerable enumerable => $"Some({string.Join(",", enumerable.Cast<object>())})",
 			_ => $"Some({_value})",
->>>>>>> 210896929 (fix(mvux): Properties update might be defferred too long if dispatcher is under heavy stress)
 		};
 }
