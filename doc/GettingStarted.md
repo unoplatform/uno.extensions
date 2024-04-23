@@ -35,7 +35,7 @@ This tutorial will walk you through how to create an Uno application with Uno.Ex
 * Wait for the projects to be created, and their dependencies to be restored
 
 * A banner at the top of the editor may ask to reload projects, click **Reload projects**:  
-    ![Visual Studio - A banner indicating to reload projects](Assets/quick-start/vs2022-project-reload.png)
+    ![Visual Studio - A banner indicating to reload projects](./Learn/images/vs2022-project-reload.png)
 
 #### Create an Uno Platform app with the CLI:
 
