@@ -1,16 +1,16 @@
 ---
 uid: Uno.Extensions.Storage.HowToRequiredEntitlements
 ---
-# How-To: Adding Required Entitlements
+# How-To: Add Required Entitlements
 
-On Apple platforms (iOS, Mac Catalyst) the Uno storage extension use the OS Key Chain service to store secrets. This requires your application to have the [`keychain-access-groups`](https://developer.apple.com/documentation/bundleresources/entitlements/keychain-access-groups) entitlement to work properly.
+On Apple platforms (iOS, Mac Catalyst) the Uno storage extension uses the OS Key Chain service to store secrets. This requires your application to have the [`keychain-access-groups`](https://developer.apple.com/documentation/bundleresources/entitlements/keychain-access-groups) entitlement to work properly.
 
 ## Step-by-steps
 
 > [!IMPORTANT]
 > This guide assumes you used the template wizard or `dotnet new unoapp` to create your solution. If not, it is recommended that you follow the [instructions](xref:Uno.Extensions.HowToGettingStarted) for creating an application from the template.
 
-### 1. Adding the Entitlements.plist file
+### 1. Add the Entitlements.plist file
 
 The default location, inside your project, for the new file(s) should be:
 
@@ -35,7 +35,7 @@ The variables `$(AppIdentifierPrefix)` and `$(CFBundleIdentifier)` will be repla
 
 ### 2. Add capabilities in your Apple Developer Account
 
-Adding the `Entitlements.plist` to your project is not enough. You must also add the capability inside your Apple Developer Account and create a provisioning profile specific for your application. You can follow Microsoft's instruction for both steps:
+Adding the `Entitlements.plist` to your project is not enough. You must also add the capability inside your Apple Developer Account and create a provisioning profile specific for your application. You can follow Microsoft's instructions for both steps:
 
 * [Microsoft iOS](https://learn.microsoft.com/en-us/dotnet/maui/ios/capabilities?#add-capabilities-in-your-apple-developer-account)
 * [Microsoft Mac Catalyst](https://learn.microsoft.com/en-us/dotnet/maui/mac-catalyst/capabilities?#add-capabilities-in-your-apple-developer-account)
@@ -63,7 +63,7 @@ The values for the `CodesignKey` and `CodesignProvision` **must** match the valu
 
 ### 4. Rebuilding your application
 
-Finally rebuilding the application for your target(s) will now code sign your application. This makes the entitlements valid and allow the Key Chain API to work properly at runtime.
+Finally rebuilding the application for your target(s) will now code sign your application. This makes the entitlements valid and allows the Key Chain API to work properly at runtime.
 
 ### 5. Troubleshooting
 

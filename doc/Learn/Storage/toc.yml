@@ -1,4 +1,4 @@
 - name: Overview
-  href: xref:Uno.Extensions.Serialization.Overview
-- name: "How-To: Get started with serialization"
-  href: xref:Uno.Extensions.Serialization.HowToSerialization
+  href: xref:Uno.Extensions.Storage.Overview
+- name: "How-To: Add Required Entitlements"
+  href: xref:Uno.Extensions.Storage.HowToRequiredEntitlements
