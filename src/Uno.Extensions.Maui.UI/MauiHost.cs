@@ -9,7 +9,7 @@ namespace Uno.Extensions.Maui;
 /// </summary>
 public partial class MauiHost : ContentControl
 {
-	private static object locker = new object();
+	private static readonly object locker = new();
 
 	/// <summary>
 	/// The Maui Source property represents the type of the Maui View to create
@@ -47,7 +47,7 @@ public partial class MauiHost : ContentControl
 #endif
 			// Allow the use of Dependency Injection for the View
 			var instance = ActivatorUtilities.CreateInstance(mauiContext.Services, type);
-			if(instance is VisualElement visualElement)
+			if (instance is VisualElement visualElement)
 			{
 				mauiHost.VisualElement = visualElement;
 				visualElement.Parent = app.Windows[0];
@@ -107,9 +107,11 @@ public partial class MauiHost : ContentControl
 	private void OnActualThemeChanged(FrameworkElement sender, object args)
 	{
 		if (IPlatformApplication.Current is null || IPlatformApplication.Current.Application is not MauiApplication app)
+		{
 			return;
+		}
 
-		lock(locker)
+		lock (locker)
 		{
 			// Try to prevent multiple updates if there are multiple Hosts within an App
 			var theme = sender.ActualTheme switch

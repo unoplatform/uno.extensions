@@ -1,4 +1,6 @@
 ﻿using Microsoft.Maui;
+using Window = Microsoft.UI.Xaml.Window;
+using MauiWindow = Microsoft.Maui.Controls.Window;
 
 namespace Uno.Extensions.Maui;
 
@@ -29,5 +31,20 @@ partial class MauiEmbedding
 		_ = new EmbeddedApplication(mauiApp.Services, iApp);
 		app.SetApplicationHandler(iApp, rootContext);
 		InitializeApplicationMainPage(iApp);
+		SetContentWindow(iApp);
+	}
+
+	private static void SetContentWindow(IApplication app)
+	{
+		ArgumentNullException.ThrowIfNull(app.Handler?.MauiContext);
+		var mauiApplicationType = app.GetType();
+		var appWindowsProp = mauiApplicationType.GetField("_windows");
+		ArgumentNullException.ThrowIfNull(appWindowsProp);
+		var windows = appWindowsProp.GetValue(app) as List<MauiWindow>;
+		ArgumentNullException.ThrowIfNull(windows);
+		var mauiWindow = new MauiWindow();
+		var window = app.Handler.MauiContext.Services.GetRequiredService<Window>();
+		window.SetWindowHandler(mauiWindow, app.Handler.MauiContext);
+		windows.Add(mauiWindow);
 	}
 }
