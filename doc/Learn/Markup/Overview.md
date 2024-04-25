@@ -175,7 +175,7 @@ public sealed partial class MainPage : Page
 
 ## Conclusion
 
-This overview has provided a brief introduction to C# Markup with an introduction to how to create controls and set properties, as well as how to use data binding and resources. Check out the full [Counter sample](TBD) to see how to use C# Markup to create a complete application. Check out the [C# Markup reference](TBD) for more information on available extension methods.
+This overview provides a brief introduction to C# Markup, including how to create controls, set properties, and use data binding and resources. For a comprehensive guide on using C# Markup to build a complete application, check out the full [Counter tutorial](xref:Uno.Workshop.Counter). This tutorial offers two variants: [C# Markup + MVUX](xref:Uno.Workshop.Counter.CSharp.MVUX) and [C# Markup + MVVM](xref:Uno.Workshop.Counter.CSharp.MVVM).
 
 ## Next Steps
 
