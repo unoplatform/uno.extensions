@@ -125,7 +125,7 @@ The API is meant to be self documenting, as you can see that we are working with
 ```cs
 public static class MyResources
 {
-    public static readonly ThemeResource<Color> MyColor =
+    public static readonly Resource<Color> MyColor =
         ThemeResource.Create<Color>(nameof(MyColor), "#FF0000", "#FFFFFF");
 }
 ```
