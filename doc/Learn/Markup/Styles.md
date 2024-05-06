@@ -43,7 +43,7 @@ The second way is to provide a `Style` instance.
 
 ```cs
 new Style<TextBlock>()
-    .Assign(out var baseStyle);
+    .Name(out var baseStyle);
 
 new Style<TextBlock>()
     .BasedOn(baseStyle)
