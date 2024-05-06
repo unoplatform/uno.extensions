@@ -20,7 +20,7 @@ When updating the children of a given control, it is important to ensure that th
 ```cs
 new Grid()
     .Children(
-        new TextBlock().Assign(out var textBlock)
+        new TextBlock().Name(out var textBlock)
     )
     .VisualStateManager(vsm => vsm
         .Group(group => group
@@ -36,7 +36,7 @@ In addition to adding various style setters to a given state, it is also possibl
 ```cs
 new Grid()
     .Children(
-        new TextBlock().Assign(out var textBlock)
+        new TextBlock().Name(out var textBlock)
     )
     .VisualStateManager(vsm => vsm
         .Group(group => group

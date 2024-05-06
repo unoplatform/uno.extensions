@@ -1057,7 +1057,7 @@ In the ViewModel, the Model's data is already loaded into the Instance of the cl
 					.Text(Title)
 					.FontSize(18)
 					.FontWeight(FontWeights.Bold)
-					.Assign(out var searchText),
+					.Name(out var searchText),
 				new TextBlock()
 					.Text(SubTitle)
 					.FontSize(16)
@@ -1335,7 +1335,7 @@ In the ViewModel, the Model's data is already loaded into the Instance of the cl
 					    .Text(Title)
 					    .FontSize(18)
 					    .FontWeight(FontWeights.Bold)
-					    .Assign(out var searchText),
+					    .Name(out var searchText),
 				    new TextBlock()
 					    .Text(SubTitle)
 					    .FontSize(16)
@@ -1607,7 +1607,7 @@ In the ViewModel, the Model's data is already loaded into the Instance of the cl
 					    .Text(Title)
 					    .FontSize(18)
 					    .FontWeight(FontWeights.Bold)
-					    .Assign(out var searchText),
+					    .Name(out var searchText),
 				    new TextBlock()
 					    .Text(SubTitle)
 					    .FontSize(16)
@@ -1986,7 +1986,7 @@ In the ViewModel, the Model's data is already loaded into the Instance of the cl
 					    .Text(Title)
 					    .FontSize(18)
 					    .FontWeight(FontWeights.Bold)
-					    .Assign(out var searchText),
+					    .Name(out var searchText),
 				    new TextBlock()
 					    .Text(SubTitle)
 					    .FontSize(16)
