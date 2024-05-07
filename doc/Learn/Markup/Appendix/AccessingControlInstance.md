@@ -6,7 +6,7 @@ uid: Uno.Extensions.Markup.Appendix.AccessingControlInstance
 
 There are a number of times when you may find yourself wanting to access the instance of a control that you initialized. This could be useful for bindings or even to later configure Event Handlers on the control. You can most easily do this with the `Name` method as follows:
 
-```cs
+```csharp
 this.Content(
     new StackPanel()
         .Children(
@@ -24,7 +24,7 @@ button.Click += delegate {
 
 You can also define a CallBack using the `Name` method:
 
-```cs
+```csharp
 int i = 1;
 
 this.Content(
@@ -33,9 +33,9 @@ this.Content(
             new Button()
                 .Name(button => 
                 {
-                    b.Click += (s, e) =>
+                    button.Click += (s, e) =>
                     {
-                        b.Content = $"Clicked {i++} times";
+                        button.Content = $"Clicked {i++} times";
                     };
                 })
                 .Content("Press Me")
@@ -45,7 +45,7 @@ this.Content(
 
 Or if you want to expose a variable and also define a CallBack:
 
-```cs
+```csharp
 int i = 1;
 
 this.Content(
