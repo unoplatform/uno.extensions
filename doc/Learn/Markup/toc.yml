@@ -17,6 +17,8 @@
       href: xref:Uno.Extensions.Markup.UnoThemes
 - name: Attached Properties
   href: xref:Uno.Extensions.Markup.AttachedProperties
+- name: Source and Relative Source
+  href: xref:Uno.Extensions.Markup.SourceUsage
 - name: Resource Dictionaries
   href: xref:Uno.Extensions.Markup.Resources
 - name: Styles
