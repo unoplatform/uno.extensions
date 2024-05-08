@@ -9,6 +9,8 @@
   items:
     - name: Binding 101
       href: xref:Uno.Extensions.Markup.Binding101
+    - name: Source and Relative Source
+      href: xref:Uno.Extensions.Markup.SourceUsage
     - name: Converters
       href: xref:Uno.Extensions.Markup.Converters
     - name: Using Static & Theme Resources
