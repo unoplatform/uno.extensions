@@ -41,6 +41,9 @@
 - name: C# Markup
   href: Learn/Markup/toc.yml
   topicHref: xref:Uno.Extensions.Markup.Overview
+- name: Source Usage
+  href: Learn/Markup/SourceUsage.md
+  topicHref: xref:Uno.Extensions.Markup.SourceUsage
 - name: MVUX
   href: Learn/Mvux/toc.yml
   topicHref: xref:Uno.Extensions.Mvux.Overview
