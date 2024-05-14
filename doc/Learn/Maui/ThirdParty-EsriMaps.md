@@ -18,15 +18,49 @@ In order to use the MapView control, you first need to create an account via the
 
 ## Getting Started
 
-1. Create a new application using the `unoapp` template, enabling .NET MAUI Embedding. In this case, we're going to use the Blank template (`-preset blank`) and include .NET MAUI Embedding support (`-maui`).
+### [Visual Studio](#tab/vs)
+
+> [!NOTE]
+> If you don't have the **Uno Platform Extension for Visual Studio** installed, follow [these instructions](xref:Uno.GetStarted.vs2022).
+
+- Launch **Visual Studio** and click on **Create new project** on the Start Window. Alternatively, if you're already in Visual Studio, click **New, Project** from the **File** menu.
+
+- Type `Uno Platform` in the search box
+
+- Click **Uno Platform App**, then **Next**
+
+- Name the project `ArcGisApp` and click **Create**
+
+At this point you'll enter the **Uno Platform Template Wizard**, giving you options to customize the generated application. For this tutorial, we're only going to configure the markup language and the presentation framework.
+
+- Select **Blank** in **Presets** selection
+
+- Select the **Platforms** tab and unselect **Desktop** and **Web Assembly** platforms
+
+For more information on all the template options, see [Using the Uno Platform Template](xref:Uno.GettingStarted.UsingWizard).
+
+- Click **Create** to complete the wizard
+
+The template will create a solution with a single cross-platform project, named `ArcGisApp`, ready to run.
+
+### [Command Line](#tab/cli)
+
+> [!NOTE]
+> If you don't have the Uno Platform dotnet new templates installed, follow [dotnet new templates for Uno Platform](xref:Uno.GetStarted.dotnet-new).
+
+Create a new application using the `unoapp` template, enabling .NET MAUI Embedding. In this case, we're going to use the Blank template (`-preset blank`) and include .NET MAUI Embedding support (`-maui`).
 
     ```
-    dotnet new unoapp -preset blank -maui -o MauiEmbeddingApp
+    dotnet new unoapp -preset blank -maui -platforms "android" -platforms "ios" -platforms "maccatalyst" -platforms "windows" -o ArcGisApp
     ```
 
-1. Next, add a reference to the [Esri.ArcGISRuntime.Maui NuGet package](https://www.nuget.org/packages/Esri.ArcGISRuntime.Maui) to the `MauiEmbeddingApp.MauiControls` project.
+This will create a new folder called **ArcGisApp** containing the new application.
 
-1. In the `AppBuilderExtensions` class, on `MauiEmbeddingApp.MauiControls` project, update the `UseMauiControls` extension method to call the `UseArcGISRuntime` method.
+## Nuget Packages 
+Add a reference to the [Esri.ArcGISRuntime.Maui NuGet package](https://www.nuget.org/packages/Esri.ArcGISRuntime.Maui) to the `MauiEmbeddingApp.MauiControls` project.
+
+## Updating AppBuilderExtensions
+In the `AppBuilderExtensions` class, on `MauiEmbeddingApp.MauiControls` project, update the `UseMauiControls` extension method to call the `UseArcGISRuntime` method.
 
     ```cs
     using Esri.ArcGISRuntime;
