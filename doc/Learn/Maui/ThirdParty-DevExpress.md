@@ -26,22 +26,56 @@ Once you have an account with DevExpress, you need to visit the [Your DevExpress
 
 ## Getting Started
 
-1. Create a new application using the `unoapp` template, enabling .NET MAUI Embedding. In this case, we're going to use the Blank template (`-preset blank`) and include .NET MAUI Embedding support (`-maui`).
+### [Visual Studio](#tab/vs)
+ 
+> [!NOTE]
+> If you don't have the **Uno Platform Extension for Visual Studio** installed, follow [these instructions](xref:Uno.GetStarted.vs2022).
+ 
+- Launch **Visual Studio** and click on **Create new project** on the Start Window. Alternatively, if you're already in Visual Studio, click **New, Project** from the **File** menu.
+ 
+- Type `Uno Platform` in the search box
+ 
+- Click **Uno Platform App**, then **Next**
+ 
+- Name the project `DevExpressApp` and click **Create**
+ 
+At this point you'll enter the **Uno Platform Template Wizard**, giving you options to customize the generated application. For this tutorial, we're only going to configure the markup language and the presentation framework.
+ 
+- Select **Blank** in **Presets** selection
+ 
+- Select the **Platforms** tab and unselect **MacCatalyst** and **Windows** platforms
+ 
+For more information on all the template options, see [Using the Uno Platform Template](xref:Uno.GettingStarted.UsingWizard).
+ 
+- Click **Create** to complete the wizard
+ 
+The template will create a solution with a single cross-platform project, named `DevExpressApp`, ready to run.
 
-    ```dotnetcli
-    dotnet new unoapp -preset blank -maui -o MauiEmbeddingApp
+### [Command Line](#tab/cli)
+ 
+> [!NOTE]
+> If you don't have the Uno Platform dotnet new templates installed, follow [dotnet new templates for Uno Platform](xref:Uno.GetStarted.dotnet-new).
+ 
+Create a new application using the `unoapp` template, enabling .NET MAUI Embedding. In this case, we're going to use the Blank template (`-preset blank`) and include .NET MAUI Embedding support (`-maui`).
+ 
     ```
+    dotnet new unoapp -preset blank -maui -platforms "android" -platforms "ios" -platforms "wasm" -platforms "desktop" -o DevExpressApp
+    ```
+ 
+This will create a new folder called **DevExpressApp** containing the new application.
 
-1. Remove the `net8.0`, `net8.0-maccatalyst` and, `net8.0-windows10.0.19041.0` target frameworks from both the MauiEmbeddingApp and MauiEmbeddingApp.MauiControls projects. Also, remove `net8.0-maccatalyst` from the MauiEmbeddingApp.Mobile project, and remove the MauiEmbeddingApp.Windows project. The DevExpress .NET MAUI Controls only supports iOS and Android.
+## Nuget Packages
 
-1. Next, add a reference to `DevExpress.Maui.DataGrid` to the MauiEmbeddingApp.MauiControls project.
+Add a reference to `DevExpress.Maui.DataGrid` to the DevExpressApp.MauiControls project.
 
-1. In the `AppBuilderExtensions` class, on `MauiEmbeddingApp.MauiControls` project, update the `UseMauiControls` extension method to call the `UseDevExpress` method.
+## Updating AppBuilderExtensions
+
+In the `AppBuilderExtensions` class, on `DevExpressApp.MauiControls` project, update the `UseMauiControls` extension method to call the `UseDevExpress` method.
 
     ```cs
     using DevExpress.Maui;
 
-    namespace MauiEmbeddingApp;
+    namespace DevExpressApp;
 
     public static class AppBuilderExtensions
     {
@@ -50,20 +84,20 @@ Once you have an account with DevExpress, you need to visit the [Your DevExpress
                 .UseDevExpress()
                 .ConfigureFonts(fonts =>
                 {
-                    fonts.AddFont("MauiEmbeddingApp/Assets/Fonts/OpenSansRegular.ttf", "OpenSansRegular");
-                    fonts.AddFont("MauiEmbeddingApp/Assets/Fonts/OpenSansSemibold.ttf", "OpenSansSemibold");
+                    fonts.AddFont("DevExpressApp/Assets/Fonts/OpenSansRegular.ttf", "OpenSansRegular");
+                    fonts.AddFont("DevExpressApp/Assets/Fonts/OpenSansSemibold.ttf", "OpenSansSemibold");
                 });
     }
     ```
 
 ## Adding DataGridView Control
 
-1. Update the EmbeddedControl.xaml in the  `MauiEmbeddingApp.MauiControls` project with the following XAML that includes the `DataGridView` control.
+1. Update the EmbeddedControl.xaml in the  `DevExpressApp.MauiControls` project with the following XAML that includes the `DataGridView` control.
 
     ```xml
     <?xml version="1.0" encoding="utf-8" ?>
     <ContentView
-        x:Class="MauiEmbeddingApp.MauiControls.EmbeddedControl"
+        x:Class="DevExpressApp.MauiControls.EmbeddedControl"
         xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
         xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
         xmlns:dxg="clr-namespace:DevExpress.Maui.DataGrid;assembly=DevExpress.Maui.DataGrid">
@@ -82,7 +116,7 @@ Once you have an account with DevExpress, you need to visit the [Your DevExpress
 1. Update the EmbeddedControl.xaml.cs with the following code.
 
     ```cs
-    namespace MauiEmbeddingApp.MauiControls;
+    namespace DevExpressApp.MauiControls;
 
     public partial class EmbeddedControl : ContentView
     {
@@ -93,10 +127,10 @@ Once you have an account with DevExpress, you need to visit the [Your DevExpress
     }
     ```
 
-1. It's time to create the ViewModel that will hold the properties that will be data bound to the `DataGridViewControl` control. In `MauiEmbeddingApp` project, create a new folder called `ViewModels` and add a new class called `MainViewModel`. This class will have the following code:
+1. It's time to create the ViewModel that will hold the properties that will be data bound to the `DataGridViewControl` control. In `DevExpressApp` project, create a new folder called `ViewModels` and add a new class called `MainViewModel`. This class will have the following code:
 
     ```cs
-    namespace MauiEmbeddingApp.ViewModels;
+    namespace DevExpressApp.ViewModels;
 
     public class MainViewModel
     {
@@ -246,10 +280,10 @@ Once you have an account with DevExpress, you need to visit the [Your DevExpress
 1. The final step is to add the `MainViewModel` as the `DataContext` of the `MainPage.xaml` file. The final `MainPage.xaml` file will look like this:
 
     ```xml
-    <Page x:Class="MauiEmbeddingApp.MainPage"
+    <Page x:Class="DevExpressApp.MainPage"
           xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
           xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-          xmlns:local="using:MauiEmbeddingApp.ViewModels"
+          xmlns:local="using:DevExpressApp.ViewModels"
           xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
           xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
           mc:Ignorable="d"
@@ -259,7 +293,7 @@ Once you have an account with DevExpress, you need to visit the [Your DevExpress
         </Page.DataContext>
         <StackPanel>
             <embed:MauiHost
-                xmlns:controls="using:MauiEmbeddingApp.MauiControls"
+                xmlns:controls="using:DevExpressApp.MauiControls"
                 xmlns:embed="using:Uno.Extensions.Maui"
                 Source="controls:EmbeddedControl" />
         </StackPanel>
