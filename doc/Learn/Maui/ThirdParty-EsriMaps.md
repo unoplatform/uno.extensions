@@ -57,17 +57,17 @@ Create a new application using the `unoapp` template, enabling .NET MAUI Embeddi
 This will create a new folder called **ArcGisApp** containing the new application.
 
 ## Nuget Packages 
-Add a reference to the [Esri.ArcGISRuntime.Maui NuGet package](https://www.nuget.org/packages/Esri.ArcGISRuntime.Maui) to the `MauiEmbeddingApp.MauiControls` project.
+Add a reference to the [Esri.ArcGISRuntime.Maui NuGet package](https://www.nuget.org/packages/Esri.ArcGISRuntime.Maui) to the `ArcGisApp.MauiControls` project.
 
 ## Updating AppBuilderExtensions
-In the `AppBuilderExtensions` class, on `MauiEmbeddingApp.MauiControls` project, update the `UseMauiControls` extension method to call the `UseArcGISRuntime` method.
+In the `AppBuilderExtensions` class, on `ArcGisApp.MauiControls` project, update the `UseMauiControls` extension method to call the `UseArcGISRuntime` method.
 
     ```cs
     using Esri.ArcGISRuntime;
     using Esri.ArcGISRuntime.Maui;
     using Esri.ArcGISRuntime.Security;
 
-    namespace MauiEmbeddingApp;
+    namespace ArcGisApp;
 
     public static class AppBuilderExtensions
     {
@@ -83,8 +83,8 @@ In the `AppBuilderExtensions` class, on `MauiEmbeddingApp.MauiControls` project,
                 )
                 .ConfigureFonts(fonts =>
                 {
-                    fonts.AddFont("MauiEmbeddingApp/Assets/Fonts/OpenSansRegular.ttf", "OpenSansRegular");
-                    fonts.AddFont("MauiEmbeddingApp/Assets/Fonts/OpenSansSemibold.ttf", "OpenSansSemibold");
+                    fonts.AddFont("ArcGisApp/Assets/Fonts/OpenSansRegular.ttf", "OpenSansRegular");
+                    fonts.AddFont("ArcGisApp/Assets/Fonts/OpenSansSemibold.ttf", "OpenSansSemibold");
                 });
     }
     ```
@@ -102,7 +102,7 @@ In the `AppBuilderExtensions` class, on `MauiEmbeddingApp.MauiControls` project,
         xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
         xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
         xmlns:esriUI="clr-namespace:Esri.ArcGISRuntime.Maui;assembly=Esri.ArcGISRuntime.Maui"
-        x:Class="MauiEmbeddingApp.MauiControls.EmbeddedControl">
+        x:Class="ArcGisApp.MauiControls.EmbeddedControl">
         <Grid>
             <esriUI:MapView x:Name="mapView"
                             HeightRequest="300"
@@ -118,7 +118,7 @@ In the `AppBuilderExtensions` class, on `MauiEmbeddingApp.MauiControls` project,
     using Esri.ArcGISRuntime.Mapping;
     using Map = Esri.ArcGISRuntime.Mapping.Map;
 
-    namespace MauiEmbeddingApp.MauiControls;
+    namespace ArcGisApp.MauiControls;
 
     public partial class EmbeddedControl : ContentView
     {
