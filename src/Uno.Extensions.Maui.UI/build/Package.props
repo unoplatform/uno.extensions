@@ -20,12 +20,4 @@
 		<IncludeXamlNamespaces Include="not_maui" />
 		<ExcludeXamlNamespaces Include="maui" />
 	</ItemGroup>
-
-	<Choose>
-		<When Condition="$(TargetFramework.Contains('windows10'))">
-			<PropertyGroup Condition=" '$(OutputType)' != 'WinExe' AND '$(OutputType)' != 'Exe' ">
-				<EnableMsixTooling>false</EnableMsixTooling>
-			</PropertyGroup>
-		</When>
-	</Choose>
 </Project>
