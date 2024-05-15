@@ -11,6 +11,14 @@
 		<Using Remove="@(Using->HasMetadata('Sdk')->WithMetadataValue('Sdk', 'Maui'))"/>
 	</ItemGroup>
 
+	<Choose>
+		<When Condition="$(TargetFramework.Contains('windows10'))">
+			<PropertyGroup Condition=" '$(UsingUnoSdk)' != 'true' AND '$(OutputType)' != 'WinExe' AND '$(OutputType)' != 'Exe' ">
+				<EnableMsixTooling>false</EnableMsixTooling>
+			</PropertyGroup>
+		</When>
+	</Choose>
+
 	<ItemGroup>
 		<Using Remove="Microsoft.Maui.*" />
 		<Analyzer Remove="Microsoft.Maui.Controls.SourceGen" />
