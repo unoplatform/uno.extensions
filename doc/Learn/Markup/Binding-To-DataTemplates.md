@@ -6,12 +6,12 @@ uid: Uno.Extensions.Markup.BindToDataTemplate
 
 When working with DataTemplates, accessing data or commands from the parent context can be challenging. DataTemplates operate within their own scope, making it difficult to bind properties or trigger actions in the parent view model. This separation can lead to confusion, especially when dealing with nested templates and multiple levels of data context. 
 
-See the following example how we could access the command `RemoveItemCommand` defined inside the `ViewModel` class inside the ListView `ItemTemplate`.
+See the following example of how we could access the command `RemoveItemCommand` defined inside the `ViewModel` class inside the ListView `ItemTemplate`.
 
 ```csharp
 this.DataContext(new ViewModel(), (page, vm)
-	=> page
-	.Content(
+    => page
+    .Content(
         new ListView()
             .ItemsSource(() => vm.Items)
             .ItemTemplate<Item>(item =>
@@ -35,7 +35,7 @@ this.DataContext(new ViewModel(), (page, vm)
 )
 ```
 
-Alternatively we could extract the button instance to a helper method and take advantage of the `RelativeSource` method to provide the `CommandParameter`.
+Alternatively, we could extract the button instance to a helper method and take advantage of the `RelativeSource` method to provide the `CommandParameter`.
 
 ```csharp
 ...
@@ -54,7 +54,7 @@ private Button CreateButton()
                                    .Binding(btn => btn.DataContext)
             )
            .Command(x => x
-                        // Since we we don't have access to the `page` alias here (as we have on the previous example)
+                        // Since we don't have access to the `page` alias here (as we have in the previous example)
                         // We need to set `this` as the source
                         .Source(this)
                         // Here we specify the DataContext type so that we can access the ViewModel alias in the Binding method
@@ -63,7 +63,7 @@ private Button CreateButton()
             );
 ```
 
-Since the `CommandParameter` we're providing it's the `Item` from the List, we can simplify it by using the Xaml equivalent as `{Binding .}` that in C# Markup is `(x => x.Binding())`. So the code would look like:
+Since the `CommandParameter` we're providing is the `Item` from the List, we can simplify it by using the Xaml equivalent as `{Binding .}` that in C# Markup is `(x => x.Binding())`. So the code would look like:
 
 ```csharp
 private Button CreateButton()
