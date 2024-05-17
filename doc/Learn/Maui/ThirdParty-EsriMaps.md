@@ -31,11 +31,13 @@ In order to use the MapView control, you first need to create an account via the
 
 - Name the project `ArcGisApp` and click **Create**
 
-At this point you'll enter the **Uno Platform Template Wizard**, giving you options to customize the generated application. For this tutorial, we're only going to configure the markup language and the presentation framework.
+At this point you'll enter the **Uno Platform Template Wizard**, giving you options to customize the generated application.
 
 - Select **Blank** in **Presets** selection
 
 - Select the **Platforms** tab and unselect **Desktop** and **Web Assembly** platforms
+
+- Select the **Features** tab and click on **.NET MAUI Embedding**
 
 For more information on all the template options, see [Using the Uno Platform Template](xref:Uno.GettingStarted.UsingWizard).
 
