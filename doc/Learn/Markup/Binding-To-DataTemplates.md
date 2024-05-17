@@ -4,9 +4,9 @@ uid: Uno.Extensions.Markup.BindToDataTemplate
 
 # Binding to DataTemplates
 
-When working with DataTemplates, accessing data or commands from the parent context can be challenging. DataTemplates operate within their own scope, making it difficult to bind properties or trigger actions in the parent view model. This separation can lead to confusion, especially when dealing with nested templates and multiple levels of data context. 
+When working with `DataTemplate`s, accessing data or commands from the parent context can be challenging. `DataTemplate`s operate within their own scope, making it difficult to bind properties or trigger actions in the parent `DataContext`. This separation can lead to confusion, especially when dealing with nested templates and multiple levels of data context.
 
-See the following example of how we could access the command `RemoveItemCommand` defined inside the `ViewModel` class inside the ListView `ItemTemplate`.
+In the following example, the parent `DataContext` is the `ViewModel`. The `ViewModel` contains an `ICommand RemoveItemCommand`. The code demonstrates how to access that `ICommand` inside the `ItemTemplate` of the `ListView`.
 
 ```csharp
 this.DataContext(new ViewModel(), (page, vm)
@@ -35,7 +35,7 @@ this.DataContext(new ViewModel(), (page, vm)
 )
 ```
 
-Alternatively, we could extract the button instance to a helper method and take advantage of the `RelativeSource` method to provide the `CommandParameter`.
+Alternatively, we could extract the `Button` to a helper method and take advantage of the `RelativeSource` method to provide the `CommandParameter`.
 
 ```csharp
 ...
@@ -63,7 +63,7 @@ private Button CreateButton()
             );
 ```
 
-Since the `CommandParameter` we're providing is the `Item` from the List, we can simplify it by using the Xaml equivalent as `{Binding .}` that in C# Markup is `(x => x.Binding())`. So the code would look like:
+Since the `CommandParameter` we're providing is the `DataContext` of the `ItemTemplate` from the `ListView`, we can simplify it by using the XAML equivalent of `{Binding .}`. In C# Markup this is `(x => x.Binding())`:
 
 ```csharp
 private Button CreateButton()
@@ -76,7 +76,7 @@ private Button CreateButton()
             );
 ```
 
-To know more about the `Source` and `RelativeSource` usage in C# Markup access our [Source and Relative Source](xref:Uno.Extensions.Markup.SourceUsage) docs.
+For more information about `Source` and `RelativeSource` usages in C# Markup, refer to the [Source and Relative Source](xref:Uno.Extensions.Markup.SourceUsage) documentation.
 
 ## Next Steps
 
