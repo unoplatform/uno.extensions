@@ -23,14 +23,14 @@
 		<PackageVersion Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.3233" />
 		<PackageVersion Include="Refit" Version="6.3.2" />
 		<PackageVersion Include="Refit.HttpClientFactory" Version="6.3.2" />
-		<PackageVersion Include="SkiaSharp" Version="2.88.3" />
-		<PackageVersion Include="SkiaSharp.NativeAssets.Linux" Version="2.88.3" />
-		<PackageVersion Include="SkiaSharp.HarfBuzz" Version="2.88.3" />
-		<PackageVersion Include="SkiaSharp.Skottie" Version="2.88.3" />
-		<PackageVersion Include="SkiaSharp.Views" Version="2.88.3" />
-		<PackageVersion Include="SkiaSharp.Views.Uno" Version="2.88.3" />
-		<PackageVersion Include="SkiaSharp.Views.Uno.WinUI" Version="2.88.3" />
-		<PackageVersion Include="SkiaSharp.Views.WPF" Version="2.88.3" />
+		<PackageVersion Include="SkiaSharp" Version="2.88.7" />
+		<PackageVersion Include="SkiaSharp.NativeAssets.Linux" Version="2.88.7" />
+		<PackageVersion Include="SkiaSharp.HarfBuzz" Version="2.88.7" />
+		<PackageVersion Include="SkiaSharp.Skottie" Version="2.88.7" />
+		<PackageVersion Include="SkiaSharp.Views" Version="2.88.7" />
+		<PackageVersion Include="SkiaSharp.Views.Uno" Version="2.88.7" />
+		<PackageVersion Include="SkiaSharp.Views.Uno.WinUI" Version="2.88.7" />
+		<PackageVersion Include="SkiaSharp.Views.WPF" Version="2.88.7" />
 		<PackageVersion Include="Swashbuckle.AspNetCore" Version="6.2.3" />
 		<PackageVersion Include="System.ComponentModel.Annotations" Version="5.0.0" />
 		<PackageVersion Include="System.Text.Json" Version="8.0.1" />
@@ -38,13 +38,13 @@
 		<PackageVersion Include="Uno.Core.Extensions.Logging.Singleton" Version="4.0.1" />
 		<PackageVersion Include="Uno.Extensions.Logging.OSLog " Version="1.7.0" />
 		<PackageVersion Include="Uno.Extensions.Logging.WebAssembly.Console" Version="1.7.0" />
-		<PackageVersion Include="Uno.Material" Version="4.0.4" />
-		<PackageVersion Include="Uno.Material.WinUI" Version="4.0.4" />
+		<PackageVersion Include="Uno.Material" Version="5.0.13" />
+		<PackageVersion Include="Uno.Material.WinUI" Version="5.0.13" />
 		<PackageVersion Include="Uno.Microsoft.Toolkit.Uwp.UI" Version="7.1.11" />
-		<PackageVersion Include="Uno.Toolkit.UI" Version="5.0.15" />
-		<PackageVersion Include="Uno.Toolkit.UI.Material" Version="5.0.15" />
-		<PackageVersion Include="Uno.Toolkit.WinUI" Version="5.0.15" />
-		<PackageVersion Include="Uno.Toolkit.WinUI.Material" Version="5.0.15" />
+		<PackageVersion Include="Uno.Toolkit.UI" Version="6.0.24" />
+		<PackageVersion Include="Uno.Toolkit.UI.Material" Version="6.0.24" />
+		<PackageVersion Include="Uno.Toolkit.WinUI" Version="6.0.24" />
+		<PackageVersion Include="Uno.Toolkit.WinUI.Material" Version="6.0.24" />
 		<PackageVersion Include="Uno.UI" Version="5.2.132" />
 		<PackageVersion Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="5.2.132" />
 		<PackageVersion Include="Uno.UI.MSAL" Version="5.2.132" />
@@ -73,7 +73,7 @@
 		<PackageVersion Include="NUnit" Version="3.13.3" />
 		<PackageVersion Include="NUnit3TestAdapter" Version="4.5.0" />
 		<PackageVersion Include="NunitXml.TestLogger" Version="3.0.131" />
-		<PackageVersion Include="Xamarin.Google.Android.Material" Version="1.4.0.4" />
+		<PackageVersion Include="Xamarin.Google.Android.Material" Version="1.5.0.13" />
 		<PackageVersion Include="Xamarin.UITest" Version="4.1.2" />
 	</ItemGroup>
 
