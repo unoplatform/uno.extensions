@@ -90,9 +90,64 @@ In the `AppBuilderExtensions` class, on `DevExpressApp.MauiControls` project, up
     }
     ```
 
+## Adding Chart Control
+
+1. Create a new file - `ChartControl.xaml` and add the following code:
+
+    ```xml
+    <?xml version="1.0" encoding="utf-8" ?>
+    <ScrollView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+                xmlns:dxg="clr-namespace:DevExpress.Maui.DataGrid;assembly=DevExpress.Maui.DataGrid"
+                xmlns:dxc="clr-namespace:DevExpress.Maui.Charts;assembly=DevExpress.Maui.Charts"
+                x:Class="DevExpressApp.MauiControls.ChartControl"
+                xmlns:local="clr-namespace:DevExpressApp.MauiControls"
+                HorizontalOptions="Fill"
+                VerticalOptions="Fill">
+      <dxc:ChartView>
+    		<dxc:ChartView.BindingContext>
+    			<local:ViewModel />
+    		</dxc:ChartView.BindingContext>
+    		<dxc:ChartView.Series>
+    			<dxc:LineSeries DisplayName="{Binding GdpValueForUSA.CountryName}">
+    				<dxc:LineSeries.Data>
+    					<dxc:SeriesDataAdapter DataSource="{Binding GdpValueForUSA.Values}"
+    										   ArgumentDataMember="Year">
+    						<dxc:ValueDataMember Type="Value"
+    											 Member="Value" />
+    					</dxc:SeriesDataAdapter>
+    				</dxc:LineSeries.Data>
+    			</dxc:LineSeries>
+
+    			<dxc:LineSeries DisplayName="{Binding GdpValueForChina.CountryName}">
+    				<dxc:LineSeries.Data>
+    					<dxc:SeriesDataAdapter DataSource="{Binding GdpValueForChina.Values}"
+    										   ArgumentDataMember="Year">
+    						<dxc:ValueDataMember Type="Value"
+    											 Member="Value" />
+    					</dxc:SeriesDataAdapter>
+    				</dxc:LineSeries.Data>
+    			</dxc:LineSeries>
+
+    			<dxc:LineSeries DisplayName="{Binding GdpValueForJapan.CountryName}">
+    				<dxc:LineSeries.Data>
+    					<dxc:SeriesDataAdapter DataSource="{Binding GdpValueForJapan.Values}"
+    										   ArgumentDataMember="Year">
+    						<dxc:ValueDataMember Type="Value"
+    											 Member="Value" />
+    					</dxc:SeriesDataAdapter>
+    				</dxc:LineSeries.Data>
+    			</dxc:LineSeries>
+    		</dxc:ChartView.Series>
+    	</dxc:ChartView>
+</ScrollView>
+    ```
+
+
 ## Adding DataGridView Control
 
-1. Update the EmbeddedControl.xaml in the  `DevExpressApp.MauiControls` project with the following XAML that includes the `DataGridView` control.
+1. Update the `EmbeddedControl.xaml` in the  `DevExpressApp.MauiControls` project with the following XAML that includes the `DataGridView` control.
 
     ```xml
     <?xml version="1.0" encoding="utf-8" ?>
@@ -113,7 +168,7 @@ In the `AppBuilderExtensions` class, on `DevExpressApp.MauiControls` project, up
     > [!NOTE]
     > You may notice that the `Binding` markup extension is used on some properties. The `MauiEmbedding` can handle bindings between Maui Controls and UnoPlatform, just make sure the property in the `Binding` expression matches the property on your ViewModel.
 
-1. Update the EmbeddedControl.xaml.cs with the following code.
+1. Update the `EmbeddedControl.xaml.cs` with the following code.
 
     ```cs
     namespace DevExpressApp.MauiControls;
