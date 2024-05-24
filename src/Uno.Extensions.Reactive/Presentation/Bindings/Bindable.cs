@@ -18,6 +18,10 @@ namespace Uno.Extensions.Reactive.Bindings;
 [EditorBrowsable(EditorBrowsableState.Never)]
 public class Bindable<T> : IBindable, INotifyPropertyChanged, IFeed<T>
 {
+	private static readonly IEqualityComparer<T> _comparer = typeof(T).IsValueType
+		? EqualityComparer<T>.Default
+		: ReferenceEqualityComparer<T>.Default; // We use ref-equality for object to avoid deep comparison on the UI thread
+
 	/// <inheritdoc />
 	public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -164,7 +168,7 @@ public class Bindable<T> : IBindable, INotifyPropertyChanged, IFeed<T>
 	/// <remarks>This is not thread safe and is expected to be invoked from the UI thread.</remarks>
 	private bool SetValueCore(T value, IChangeSet? changes)
 	{
-		if (object.ReferenceEquals(_value, value))
+		if (_comparer.Equals(_value, value))
 		{
 			return false;
 		}
