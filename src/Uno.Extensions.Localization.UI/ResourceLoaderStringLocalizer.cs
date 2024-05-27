@@ -64,11 +64,12 @@ public class ResourceLoaderStringLocalizer : IStringLocalizer
 		string? resource = null;
 		try
 		{
+			resource =
 #if WINDOWS
-			resource = _appResourceMap.GetValue(name)?.ValueAsString ??
-							_defaultResourceMap.GetValue(name)?.ValueAsString;
+				_appResourceMap.GetValue(name)?.ValueAsString ??
+				_defaultResourceMap.GetValue(name)?.ValueAsString;
 #else
-			resource = _appResourceLoader?.GetString(name) ??
+				(_appResourceLoader?.GetString(name) is { Length: > 0 } tmp ? tmp : null) ??
 				_defaultResourceLoader.GetString(name);
 #endif
 
