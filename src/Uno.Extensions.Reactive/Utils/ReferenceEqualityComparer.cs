@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Uno.Extensions.Reactive.Tests._Utils;
+namespace Uno.Extensions.Reactive.Utils;
 
 internal class ReferenceEqualityComparer<T> : IEqualityComparer<T>
 {
