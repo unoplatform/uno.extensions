@@ -3,6 +3,11 @@
 		<Using Include="Uno.Extensions.Authentication.MSAL" />
 	</ItemGroup>
 
+	<PropertyGroup Condition="'$(_IsNetStd)'!='true' and '$(_IsMacOS)'!='true' and '$(_IsCatalyst)'!='true'" >
+		<IsMSALSupported>true</IsMSALSupported>
+		<DefineConstants>$(DefineConstants);UNO_EXT_MSAL</DefineConstants>
+	</PropertyGroup>
+
 	<!--
   This is a temporary workaround to avoid error "NETSDK1152: Found multiple publish output files with the same relative path:"
   for Microsoft.Web.WebView2.Core.dll, with one coming from MsixContent and the other from the Microsoft.Web.Webview2 Nuget package.

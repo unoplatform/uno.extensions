@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<TargetFramework>net8.0</TargetFramework>
+		<TargetFramework>net8.0-windows</TargetFramework>
 		<DefineConstants>$(DefineConstants);WINUI;UNO_EXT_TIMERS</DefineConstants>
 		<AssemblyName>TestHarnessApp</AssemblyName>
 		<UnoExtensionsGeneration_DisableNotNullIfNotNullAttribute>true</UnoExtensionsGeneration_DisableNotNullIfNotNullAttribute>
@@ -10,7 +10,7 @@
 		<PackageReference Include="System.ComponentModel.Annotations" />
 		<PackageReference Include="Uno.CommunityToolkit.WinUI.UI" />
 		<PackageReference Include="FluentValidation" />
-		<PackageReference Include="Microsoft.Identity.Client" />
+		<!--<PackageReference Include="Microsoft.Identity.Client" />-->
 		<PackageReference Include="Microsoft.Extensions.Logging" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Console" />
 		<PackageReference Include="Refit" />
@@ -22,7 +22,7 @@
 		<PackageReference Include="Uno.Material.WinUI" />
 		<PackageReference Include="Uno.Toolkit.WinUI.Material" />
 		<PackageReference Include="Uno.Toolkit.WinUI" />
-		<PackageReference Include="Uno.WinUI.MSAL" />
+		<!--<PackageReference Include="Uno.WinUI.MSAL" />-->
 		<PackageReference Include="SkiaSharp.HarfBuzz" />
 		<PackageReference Include="SkiaSharp.Views.WPF" />
 		<PackageReference Include="SkiaSharp.Skottie" />

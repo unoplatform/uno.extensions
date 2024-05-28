@@ -1,10 +1,12 @@
 ﻿
 using Uno.Extensions.Logging;
 using LogLevel = Microsoft.Extensions.Logging.LogLevel;
+#if UNO_EXT_MSAL
 #if __WASM__
 using MsalCacheHelper = Microsoft.Identity.Client.Extensions.Msal.Wasm.MsalCacheHelper;
 #else
 using MsalCacheHelper = Microsoft.Identity.Client.Extensions.Msal.MsalCacheHelper;
+#endif
 #endif
 
 namespace Uno.Extensions.Authentication.MSAL;
@@ -17,6 +19,7 @@ internal record MsalAuthenticationProvider(
 		MsalAuthenticationSettings? Settings = null) : BaseAuthenticationProvider(ProviderLogger, DefaultName, Tokens)
 {
 	public const string DefaultName = "Msal";
+#if UNO_EXT_MSAL
 	private const string CacheFileName = "msal.cache";
 
 	private IPublicClientApplication? _pca;
@@ -253,6 +256,5 @@ internal record MsalAuthenticationProvider(
 
 		return default;
 	}
+#endif
 }
-
-
