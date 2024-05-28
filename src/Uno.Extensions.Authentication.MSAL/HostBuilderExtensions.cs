@@ -26,6 +26,9 @@ public static class HostBuilderExtensions
 		Action<IMsalAuthenticationBuilder>? configure = default,
 		string name = MsalAuthenticationProvider.DefaultName)
 	{
+#if !UNO_EXT_MSAL
+		return builder;
+#else
 		var hostBuilder = (builder as IBuilder)?.HostBuilder;
 		if (hostBuilder is null)
 		{
@@ -53,6 +56,6 @@ public static class HostBuilderExtensions
 					provider.Build();
 					return provider;
 				});
+#endif
 	}
-
 }
