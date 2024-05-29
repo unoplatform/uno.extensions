@@ -9,8 +9,10 @@ The MapView control, that's part of the ArcGIS Maps SDK for .NET, can be used in
 
 An existing sample app that showcases the controls is available [here](https://github.com/unoplatform/Uno.Samples/tree/master/UI/MauiEmbedding/ArcGisApp).
 
-> [!NOTE] 
+> [!NOTE]
 > For this sample you don't need to have a license, because it's just a demo and for development purposes.
+>
+> Esri ArcGIS Maps SDK for .NET is currently only compatible with Windows, Android, iOS, and MacCatalyst when used with Uno Platform at the moment.
 
 ## Installation
 
@@ -52,9 +54,9 @@ The template will create a solution with a single cross-platform project, named 
 
 Create a new application using the `unoapp` template, enabling .NET MAUI Embedding. In this case, we're going to use the Blank template (`-preset blank`) and include .NET MAUI Embedding support (`-maui`).
 
-    ```
-    dotnet new unoapp -preset blank -maui -platforms "android" -platforms "ios" -platforms "maccatalyst" -platforms "windows" -o ArcGisApp
-    ```
+```bash
+dotnet new unoapp -preset blank -maui -platforms "android" -platforms "ios" -platforms "maccatalyst" -platforms "windows" -o ArcGisApp
+```
 
 This will create a new folder called **ArcGisApp** containing the new application.
 
@@ -68,35 +70,35 @@ Add a reference to the [Esri.ArcGISRuntime.Maui NuGet package](https://www.nuget
 
 In the `AppBuilderExtensions` class, on `ArcGisApp.MauiControls` project, update the `UseMauiControls` extension method to call the `UseArcGISRuntime` method.
 
-    ```cs
-    using Esri.ArcGISRuntime;
-    using Esri.ArcGISRuntime.Maui;
-    using Esri.ArcGISRuntime.Security;
+```cs
+using Esri.ArcGISRuntime;
+using Esri.ArcGISRuntime.Maui;
+using Esri.ArcGISRuntime.Security;
 
-    namespace ArcGisApp;
+namespace ArcGisApp;
 
-    public static class AppBuilderExtensions
-    {
-        public static MauiAppBuilder UseMauiControls(this MauiAppBuilder builder) 
-            => builder
-                .UseArcGISRuntime(
-                //config => config
-                //    .UseLicense("[Your ArcGIS Maps SDK License key]")
-                //    .UseApiKey("[Your ArcGIS location services API Key]")
-                //    .ConfigureAuthentication(auth => auth
-                //        .UseDefaultChallengeHandler() // Use the default authentication dialog
-                //    )
-                )
-                .ConfigureFonts(fonts =>
-                {
-                    fonts.AddFont("ArcGisApp/Assets/Fonts/OpenSansRegular.ttf", "OpenSansRegular");
-                    fonts.AddFont("ArcGisApp/Assets/Fonts/OpenSansSemibold.ttf", "OpenSansSemibold");
-                });
-    }
-    ```
+public static class AppBuilderExtensions
+{
+    public static MauiAppBuilder UseMauiControls(this MauiAppBuilder builder) 
+        => builder
+            .UseArcGISRuntime(
+            //config => config
+            //    .UseLicense("[Your ArcGIS Maps SDK License key]")
+            //    .UseApiKey("[Your ArcGIS location services API Key]")
+            //    .ConfigureAuthentication(auth => auth
+            //        .UseDefaultChallengeHandler() // Use the default authentication dialog
+            //    )
+            )
+            .ConfigureFonts(fonts =>
+            {
+                fonts.AddFont("ArcGisApp/Assets/Fonts/OpenSansRegular.ttf", "OpenSansRegular");
+                fonts.AddFont("ArcGisApp/Assets/Fonts/OpenSansSemibold.ttf", "OpenSansSemibold");
+            });
+}
+```
 
-    > [!NOTE]
-    > If you have a license key and/or a location service API key, uncomment the `delegate` provided on `UseArcGISRuntime` method. This isn't required to run this sample.
+> [!NOTE]
+> If you have a license key and/or a location service API key, uncomment the `delegate` provided on `UseArcGISRuntime` method. This isn't required to run this sample.
 
 ## Adding MapView
 
@@ -146,10 +148,12 @@ In the `AppBuilderExtensions` class, on `ArcGisApp.MauiControls` project, update
 
 1. Now the project is good to go! Press F5 and should see the MapView control running on your application.
 
-**App Render Output**
+## App Render Output
 
 - **Android:**
-  - ![Android EsriMaps](Assets/Screenshots/Android/EsriMaps.png)
+
+    ![Android EsriMaps](Assets/Screenshots/Android/EsriMaps.png)
 
 - **Windows:**
-  - ![Windows EsriMaps](Assets/Screenshots/Windows/EsriMaps.png)
+
+    ![Windows EsriMaps](Assets/Screenshots/Windows/EsriMaps.png)
