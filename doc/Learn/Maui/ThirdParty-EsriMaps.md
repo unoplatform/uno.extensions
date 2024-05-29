@@ -147,6 +147,7 @@ public static class AppBuilderExtensions
     ```
 
 1. Now the project is good to go! Press F5 and should see the MapView control running on your application.
+   For more detailed instructions specific to each platform, refer to the [Debug the App](xref:Uno.GettingStarted.CreateAnApp.VS2022#debug-the-app) documentation.
 
 ## App Render Output
 
