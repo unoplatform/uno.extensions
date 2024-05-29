@@ -48,7 +48,7 @@ The template will create a solution with a single cross-platform project, named 
 ### [Command Line](#tab/cli)
 
 > [!NOTE]
-> If you don't have the Uno Platform dotnet new templates installed, follow [dotnet new templates for Uno Platform](xref:Uno.GetStarted.dotnet-new).
+> If you don't have the **Uno Platform dotnet new templates** installed, follow [dotnet new templates for Uno Platform](xref:Uno.GetStarted.dotnet-new).
 
 Create a new application using the `unoapp` template, enabling .NET MAUI Embedding. In this case, we're going to use the Blank template (`-preset blank`) and include .NET MAUI Embedding support (`-maui`).
 
@@ -58,10 +58,14 @@ Create a new application using the `unoapp` template, enabling .NET MAUI Embeddi
 
 This will create a new folder called **ArcGisApp** containing the new application.
 
-## Nuget Packages 
+---
+
+## Nuget Packages
+
 Add a reference to the [Esri.ArcGISRuntime.Maui NuGet package](https://www.nuget.org/packages/Esri.ArcGISRuntime.Maui) to the `ArcGisApp.MauiControls` project.
 
 ## Updating AppBuilderExtensions
+
 In the `AppBuilderExtensions` class, on `ArcGisApp.MauiControls` project, update the `UseMauiControls` extension method to call the `UseArcGISRuntime` method.
 
     ```cs
