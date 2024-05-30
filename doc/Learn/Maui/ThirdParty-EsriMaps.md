@@ -12,7 +12,7 @@ An existing sample app that showcases the controls is available [here](https://g
 > [!NOTE]
 > For this sample you don't need to have a license, because it's just a demo and for development purposes.
 >
-> Esri ArcGIS Maps SDK for .NET is currently only compatible with Windows, Android, iOS, and MacCatalyst when used with Uno Platform at the moment.
+> Esri ArcGIS Maps SDK for .NET is currently only compatible with Windows, Android, iOS, and Mac Catalyst when used with Uno Platform at the moment.
 
 ## Installation
 
