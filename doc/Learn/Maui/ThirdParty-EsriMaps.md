@@ -159,6 +159,10 @@ public static class AppBuilderExtensions
 
     ![iOS EsriMaps](Assets/Screenshots/iOS/EsriMaps.png)
 
+- **Mac Catalyst:**
+
+    ![Mac Catalyst EsriMaps](Assets/Screenshots/MacCatalyst/EsriMaps.png)
+
 - **Windows:**
 
     ![Windows EsriMaps](Assets/Screenshots/Windows/EsriMaps.png)
