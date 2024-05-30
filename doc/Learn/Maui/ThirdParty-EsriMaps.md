@@ -41,11 +41,11 @@ At this point you'll enter the **Uno Platform Template Wizard**, giving you opti
 
 - Select the **Features** tab and click on **.NET MAUI Embedding**
 
-For more information on all the template options, see [Using the Uno Platform Template](xref:Uno.GettingStarted.UsingWizard).
-
 - Click **Create** to complete the wizard
 
 The template will create a solution with a single cross-platform project, named `ArcGisApp`, ready to run.
+
+For more information on all the template options, see [Using the Uno Platform Template](xref:Uno.GettingStarted.UsingWizard).
 
 ### [Command Line](#tab/cli)
 
