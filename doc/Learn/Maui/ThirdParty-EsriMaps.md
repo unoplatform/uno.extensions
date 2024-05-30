@@ -91,8 +91,8 @@ public static class AppBuilderExtensions
             )
             .ConfigureFonts(fonts =>
             {
-                fonts.AddFont("ArcGisApp/Assets/Fonts/OpenSansRegular.ttf", "OpenSansRegular");
-                fonts.AddFont("ArcGisApp/Assets/Fonts/OpenSansSemibold.ttf", "OpenSansSemibold");
+                fonts.AddFont("Assets/Fonts/OpenSansRegular.ttf", "OpenSansRegular");
+                fonts.AddFont("Assets/Fonts/OpenSansSemibold.ttf", "OpenSansSemibold");
             });
 }
 ```
