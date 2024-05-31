@@ -58,9 +58,9 @@ For more information on all the template options, see [Using the Uno Platform Te
  
 Create a new application using the `unoapp` template, enabling .NET MAUI Embedding. In this case, we're going to use the Blank template (`-preset blank`) and include .NET MAUI Embedding support (`-maui`).
  
-    ```bash
-    dotnet new unoapp -preset blank -maui -platforms "android" -platforms "ios" -platforms "wasm" -platforms "desktop" -o DevExpressApp
-    ```
+```bash
+dotnet new unoapp -preset blank -maui -platforms "android" -platforms "ios" -platforms "wasm" -platforms "desktop" -o DevExpressApp
+```
  
 This will create a new folder called **DevExpressApp** containing the new application.
 
