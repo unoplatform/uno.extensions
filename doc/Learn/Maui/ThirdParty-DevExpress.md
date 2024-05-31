@@ -39,7 +39,7 @@ Once you have an account with DevExpress, you need to visit the [Your DevExpress
  
 - Name the project `DevExpressApp` and click **Create**
  
-At this point you'll enter the **Uno Platform Template Wizard**, giving you options to customize the generated application. For this tutorial, we're only going to configure the markup language and the presentation framework.
+At this point you'll enter the **Uno Platform Template Wizard**, giving you options to customize the generated application.
  
 - Select **Blank** in **Presets** selection
  
@@ -58,11 +58,13 @@ The template will create a solution with a single cross-platform project, named 
  
 Create a new application using the `unoapp` template, enabling .NET MAUI Embedding. In this case, we're going to use the Blank template (`-preset blank`) and include .NET MAUI Embedding support (`-maui`).
  
-    ```
+    ```bash
     dotnet new unoapp -preset blank -maui -platforms "android" -platforms "ios" -platforms "wasm" -platforms "desktop" -o DevExpressApp
     ```
  
 This will create a new folder called **DevExpressApp** containing the new application.
+
+---
 
 ## Nuget Packages
 
