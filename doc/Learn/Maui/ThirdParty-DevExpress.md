@@ -45,11 +45,11 @@ At this point you'll enter the **Uno Platform Template Wizard**, giving you opti
  
 - Select the **Platforms** tab and unselect **MacCatalyst** and **Windows** platforms
  
-For more information on all the template options, see [Using the Uno Platform Template](xref:Uno.GettingStarted.UsingWizard).
- 
 - Click **Create** to complete the wizard
  
 The template will create a solution with a single cross-platform project, named `DevExpressApp`, ready to run.
+
+For more information on all the template options, see [Using the Uno Platform Template](xref:Uno.GettingStarted.UsingWizard).
 
 ### [Command Line](#tab/cli)
  
@@ -143,13 +143,13 @@ In the `AppBuilderExtensions` class, on `DevExpressApp.MauiControls` project, up
     			</dxc:LineSeries>
     		</dxc:ChartView.Series>
     	</dxc:ChartView>
-</ScrollView>
+    </ScrollView>
     ```
 
 
 ## Adding DataGridView Control
 
-1. Update the `EmbeddedControl.xaml` in the  `DevExpressApp.MauiControls` project with the following XAML that includes the `DataGridView` control.
+1. Update the `EmbeddedControl.xaml` in the `DevExpressApp.MauiControls` project with the following XAML that includes the `DataGridView` control:
 
     ```xml
     <?xml version="1.0" encoding="utf-8" ?>
@@ -168,9 +168,9 @@ In the `AppBuilderExtensions` class, on `DevExpressApp.MauiControls` project, up
     ```
 
     > [!NOTE]
-    > You may notice that the `Binding` markup extension is used on some properties. The `MauiEmbedding` can handle bindings between Maui Controls and UnoPlatform, just make sure the property in the `Binding` expression matches the property on your ViewModel.
+    > You may notice that the `Binding` markup extension is used on some properties. The `MauiEmbedding` can handle bindings between Maui Controls and Uno Platform, just make sure the property in the `Binding` expression matches the property on your ViewModel.
 
-1. Update the `EmbeddedControl.xaml.cs` with the following code.
+1. Update the `EmbeddedControl.xaml.cs` with the following code:
 
     ```cs
     namespace DevExpressApp.MauiControls;
