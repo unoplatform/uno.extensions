@@ -5,6 +5,9 @@ uid: Uno.Extensions.Navigation.HowToDisplayMessageDialog
 
 This topic walks through using Navigation to display a prompt using a `MessageDialog`. This can also be used for simple user interactions, such as a confirmation dialog, where the user is prompted with an Ok/Cancel, or Yes/No, question.
 
+> [!NOTE]
+> This guide uses predefined code created by the Uno Template using the `Recommended` preset, however, it uses the `MVVM` approach for the examples instead of `MVUX` defined in the `Recommended` preset.
+
 ## Step-by-steps
 
 > [!IMPORTANT]
@@ -51,14 +54,15 @@ This topic walks through using Navigation to display a prompt using a `MessageDi
     ```csharp
     public async Task ShowSimpleDialog()
     {
-     var result = await _navigator.ShowMessageDialogAsync<string>(this,
-      title: "This is Uno",
-      content: "Hello Uno.Extensions!",
-      buttons: new[]
-            {
-       new DialogAction("Ok"),
-       new DialogAction("Cancel")
-            });
+        var result = await _navigator.ShowMessageDialogAsync<string>(
+            this,
+            title: "This is Uno",
+            content: "Hello Uno.Extensions!",
+            buttons:
+            [
+                new DialogAction("Ok"),
+                new DialogAction("Cancel")
+            ]);
     }
     ```
 
@@ -70,38 +74,38 @@ This topic walks through using Navigation to display a prompt using a `MessageDi
 
 If you want to use the same `MessageDialog` in different places in your application you can define a `MessageDialogViewMap` and then reference it by the route you assign to it.
 
-- Create a `MessageDialogViewMap` instance and register it with both `views` and `routes` in `App.xaml.host.cs`
+- Create a `MessageDialogViewMap` instance and register it with both `views` and `routes` in `App.xaml.cs`
 
     ```csharp
     private static void RegisterRoutes(IViewRegistry views, IRouteRegistry routes)
     {
         var messageDialog = new MessageDialogViewMap(
-            title: "This is Uno",
+            Title: "This is Uno",
             Content: "Hello Uno.Extensions",
-            Buttons: new[]
-            {
+            Buttons:
+            [
                 new DialogAction(Label:"Yes"),
                 new DialogAction(Label:"No")
-            }
+            ]
         );
 
+        views.Register(
+            new ViewMap(ViewModel: typeof(ShellViewModel)),
+            new ViewMap<MainPage, MainViewModel>(),
+            new DataViewMap<SecondPage, SecondViewModel, Entity>(),
+                messageDialog
+            );
 
-     views.Register(
-      new ViewMap<ShellControl,ShellViewModel>(),
-      new ViewMap<MainPage, MainViewModel>(),
-      new ViewMap<SecondPage, SecondViewModel>(),
-            messageDialog
-      );
-
-     routes
-      .Register(
-       new RouteMap("", View: views.FindByViewModel<ShellViewModel>() ,
-                    Nested: new RouteMap[]
-                    {
-                     new RouteMap("Main", View: views.FindByViewModel<MainViewModel>()),
-                     new RouteMap("Second", View: views.FindByViewModel<SecondViewModel>()),
-                        new RouteMap("MyMessage", View: messageDialog)
-                    }));
+        routes.Register(
+            new RouteMap("", View: views.FindByViewModel<ShellViewModel>(),
+                Nested:
+                [
+                    new RouteMap("Main", View: views.FindByViewModel<MainViewModel>()),
+                    new RouteMap("Second", View: views.FindByViewModel<SecondViewModel>()),
+                    new RouteMap("MyMessage", View: messageDialog)
+                ]
+            )
+        );
     }
     ```
 
@@ -117,29 +121,29 @@ If you want to use the same `MessageDialog` in different places in your applicat
 
     ```csharp
     var localizedMessageDialog = new LocalizableMessageDialogViewMap(
-        Content: localizer => localizer?["MyDialog_Content"]??string.Empty,
-     Buttons: new[]
-        {
-      new LocalizableDialogAction( LabelProvider:localizer=>localizer?["Dialog_Ok"]??string.Empty),
-            new LocalizableDialogAction( LabelProvider:localizer=>localizer?["Dialog_Cancel"]??string.Empty)
-        }
+        Content: localizer => localizer?["MyDialog_Content"] ?? string.Empty,
+        Buttons:
+        [
+            new LocalizableDialogAction(LabelProvider: localizer => localizer?["Dialog_Ok"] ?? string.Empty),
+            new LocalizableDialogAction(LabelProvider: localizer => localizer?["Dialog_Cancel"] ?? string.Empty)
+        ]
     );
     ```
 
-- Add resources for `MyDialog_Content`, `Dialog_Ok` and `Dialog_Cancel` to `Resources.resw`
+- Add resources for `MyDialog_Content`, `Dialog_Ok`, and `Dialog_Cancel` to `Resources.resw`
     ![Localized MessageDialog resources](images/LocalizedMessageDialogResources.png)
 
-- Make sure the `UseLocalization` extension method is called in the `BuildAppHost` method in `App.xaml.host.cs`
+- Make sure the `UseLocalization` extension method is called in the `OnLaunched` method in `App.xaml.cs`
 
     ```csharp
-    private static IHost BuildAppHost()
+    protected async override void OnLaunched(LaunchActivatedEventArgs args)
     {
-     return UnoHost
-       .CreateDefaultBuilder()
-       // ... omitted for brevity
-       .UseLocalization()
-       .Build(enableUnoLogging: true);
-
+        var builder = this.CreateBuilder(args)
+            .UseToolkitNavigation()
+            .Configure(host => host
+            // ... omitted for brevity
+            .UseLocalization()
+            // ... omitted for brevity
     }
     ```
 

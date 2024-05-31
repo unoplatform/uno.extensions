@@ -5,6 +5,9 @@ uid: Uno.Extensions.Navigation.HowToNavigateBetweenPages
 
 This topic covers using Navigation to navigate between two pages using frame-based navigation.
 
+> [!NOTE]
+> This guide uses predefined code created by the Uno Template using the `Recommended` preset, however, it uses the `MVVM` approach for the examples instead of `MVUX` defined in the `Recommended` preset.
+
 ## Step-by-steps
 
 > [!IMPORTANT]
@@ -26,7 +29,7 @@ This topic covers using Navigation to navigate between two pages using frame-bas
 
 ### 2. Navigating to a New Page
 
-* Add a new `Page` to navigate to, `SamplePage.xaml`, in the UI (shared) project
+* Add a new `Page` to navigate to, `SamplePage.xaml`
 * In `MainPage.xaml` replace the existing `Button` with the following XAML, which includes a handler for the Click event
 
     ```xml
@@ -64,28 +67,31 @@ This topic covers using Navigation to navigate between two pages using frame-bas
 ### 4. Defining ViewMap and RouteMap
 
 At this point, if you inspect the Output window you'll see a line that says something similar to:
-`For better performance (avoid reflection), create mapping for for path 'Sample', view 'SamplePage', view model`
+`For better performance (avoid reflection), create a mapping for for path 'Sample', view 'SamplePage', view model`
 This warning exists because Navigation uses reflection as a fallback mechanism to associate types and the corresponding navigation route. This can be resolved by specifying a `ViewMap` and a `RouteMap` for the `SamplePage` to eliminate the need for reflection
 
-* Update the `RegisterRoutes` method in the `App.xaml.host.cs` file
+* Update the `RegisterRoutes` method in the `App.xaml.cs` file
 
     ```csharp
     private static void RegisterRoutes(IViewRegistry views, IRouteRegistry routes)
     {
         views.Register(
-            new ViewMap<ShellControl,ShellViewModel>(),
+            new ViewMap(ViewModel: typeof(ShellViewModel)),
             new ViewMap<MainPage, MainViewModel>(),
-            new ViewMap<SecondPage, SecondViewModel>(),
+            new DataViewMap<SecondPage, SecondViewModel, Entity>(),
             new ViewMap<SamplePage>()
-            );
+        );
 
         routes.Register(
-            new RouteMap("", View: views.FindByViewModel<ShellViewModel>() ,
-                    Nested: new RouteMap[] {
-                        new RouteMap("Main", View: views.FindByViewModel<MainViewModel>()),
-                        new RouteMap("Second", View: views.FindByViewModel<SecondViewModel>()),
-                        new RouteMap("Sample", View: views.FindByView<SamplePage>()),
-                }));
+            new RouteMap("", View: views.FindByViewModel<ShellViewModel>(),
+                Nested:
+                [
+                    new ("Main", View: views.FindByViewModel<MainViewModel>()),
+                    new ("Second", View: views.FindByViewModel<SecondViewModel>()),
+                    new ("Sample", View: views.FindByView<SamplePage>()),
+                ]
+            )
+        );
     }
     ```
 
@@ -93,7 +99,7 @@ This warning exists because Navigation uses reflection as a fallback mechanism t
 
 By defining a `ViewMap` that associates a view with a view model, an instance of the view model can dynamically be created and is subsequently set as the `DataContext` on the view that's navigated to.
 
-* Create a new class `SampleViewModel` in the ViewModels folder of the class library project
+* Create a new class `SampleViewModel` in the Presentation folder
 
     ```csharp
     public class SampleViewModel
@@ -105,7 +111,7 @@ By defining a `ViewMap` that associates a view with a view model, an instance of
     }
     ```
 
-* Update `ViewMap` in `App.xaml.host.cs` to include `SampleViewModel`
+* Update `ViewMap` in `App.xaml.cs` to include `SampleViewModel`
 
     ```csharp
     new ViewMap<SamplePage, SampleViewModel>()

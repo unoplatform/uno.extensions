@@ -5,6 +5,9 @@ uid: Uno.Extensions.Navigation.HowToDisplayItem
 
 This topic walks through how to use Navigation to display the details of an item selected from a list. This demonstrates an important aspect of Navigation which is the ability to pass data as part of a navigation request.
 
+> [!NOTE]
+> This guide uses predefined code created by the Uno Template using the `Recommended` preset, however, it uses the `MVVM` approach for the examples instead of `MVUX` defined in the `Recommended` preset.
+
 ## Step-by-steps
 
 > [!IMPORTANT]
@@ -20,10 +23,10 @@ Often it is necessary to pass a data item from one page to another. This scenari
     public record Widget(string Name, double Weight);
     ```
 
-- Change the `ViewMap` in `App.xaml.host.cs` that associates the `SecondPage` and `SecondViewModel`, to include a `DataMap` that references the `Widget` type.
+- Change the `ViewMap` in `App.xaml.cs` that associates the `SecondPage` and `SecondViewModel`, to be a `DataViewMap` object that allows you to specify the `Widget` type.
 
     ```csharp
-    new ViewMap<SecondPage, SecondViewModel>(Data: new DataMap<Widget>())
+    new DataViewMap<SecondPage, SecondViewModel, Widget>()
     ```
 
 ### 2. Pass data when navigating
@@ -33,9 +36,9 @@ Often it is necessary to pass a data item from one page to another. This scenari
     ```csharp
     public async Task GoToSecondPage()
     {
-     var widget = new Widget("CrazySpinner", 34.0);
+        var widget = new Widget("CrazySpinner", 34.0);
 
-     await _navigator.NavigateViewModelAsync<SecondViewModel>(this, data: widget);
+        await _navigator.NavigateViewModelAsync<SecondViewModel>(this, data: widget);
     }
     ```
 
@@ -67,7 +70,7 @@ Often it is necessary to pass a data item from one page to another. This scenari
 
 ### 4. Navigating with data
 
-- Because there's a mapping between the `Widget` and the `SecondViewModel` (in the `ViewMap` defined in `App.xaml.host.cs`), an alternative way to navigate is by calling the `NavigateDataAsync` and specifying the data object to pass in the navigation request. The type of the data object will be used to revolve which route to navigate to
+- Because there's a mapping between the `Widget` and the `SecondViewModel` (in the `ViewMap` defined in `App.xaml.cs`), an alternative way to navigate is by calling the `NavigateDataAsync` and specifying the data object to pass in the navigation request. The type of the data object will be used to resolve which route to navigate to.
 
     ```csharp
     await _navigator.NavigateDataAsync(this, data: widget);
@@ -80,11 +83,11 @@ A common application scenario is to present a list of items, for example present
 - Add a `Widgets` property to your `MainViewModel`
 
     ```csharp
-    public Widget[] Widgets { get; } = new[]
-    {
+    public Widget[] Widgets { get; } =
+    [
         new Widget("NormalSpinner", 5.0),
-        new Widget("HeavySpinner",50.0)
-    };
+        new Widget("HeavySpinner", 50.0)
+    ];
     ```
 
 - Update `MainPage.xaml` to replace the `Button` with a `ListView` which has the `ItemsSource` property data bound to the `Widgets` property. The `Navigation.Request` property defines the route that will be navigated to when an item in the `ListView` is selected.
@@ -126,11 +129,11 @@ If you have a `ListView` that has items of different types, the navigation route
 - Change the `Widgets` property in `MainViewModel` to include an array of different types of widgets.
 
     ```csharp
-    public Widget[] Widgets { get; } = new Widget[]
-    {
+    public Widget[] Widgets { get; } = 
+    [
         new BasicWidget("NormalSpinner", 5.0),
-        new AdvancedWidget("HeavySpinner",50.0)
-    };
+        new AdvancedWidget("HeavySpinner", 50.0)
+    ];
     ```
 
 - Clone the `SecondPage.xaml` and `SecondPage.xaml.cs` files, and rename the files to `ThirdPage.xaml` and `ThirdPage.xaml.cs` respectively. Make sure you also change the class name in both files from `SecondPage` to `ThirdPage`, as well as the `Content` property of the `NavigationBar` to read "Third Page".
@@ -159,27 +162,28 @@ If you have a `ListView` that has items of different types, the navigation route
     }
     ```
 
-- Add a `ViewMap` and `RouteMap` for `ThirdPage` and `ThirdViewModel`, specifying the `AdvancedWidget` in the `DataMap`. Also update DataMap for `SecondViewModel` to be `BasicWidget` instead of `Widget`
+- Add a `DataViewMap` and `RouteMap` for `ThirdPage` and `ThirdViewModel`, specifying the `AdvancedWidget`. Also, update `DataViewMap` for `SecondViewModel` to be `BasicWidget` instead of `Widget`
 
     ```csharp
     private static void RegisterRoutes(IViewRegistry views, IRouteRegistry routes)
     {
         views.Register(
-            new ViewMap<ShellControl, ShellViewModel>(),
+            new ViewMap(ViewModel: typeof(ShellViewModel)),
             new ViewMap<MainPage, MainViewModel>(),
-            new ViewMap<SecondPage, SecondViewModel>(Data: new DataMap<BasicWidget>()),
-            new ViewMap<ThirdPage, ThirdViewModel>(Data: new DataMap<AdvancedWidget>())
-            );
+            new DataViewMap<SecondPage, SecondViewModel, BasicWidget>(),
+            new DataViewMap<ThirdPage, ThirdViewModel, AdvancedWidget>()
+        );
 
-        routes
-            .Register(
-                new RouteMap("", View: views.FindByViewModel<ShellViewModel>(),
-                    Nested: new RouteMap[]
-                    {
-                        new RouteMap("Main", View: views.FindByViewModel<MainViewModel>()),
-                        new RouteMap("Second", View: views.FindByViewModel<SecondViewModel>()),
-                        new RouteMap("Third", View: views.FindByViewModel<ThirdViewModel>()),
-                    }));
+        routes.Register(
+            new RouteMap("", View: views.FindByViewModel<ShellViewModel>(),
+                Nested:
+                [
+                    new ("Main", View: views.FindByViewModel<MainViewModel>()),
+                    new ("Second", View: views.FindByViewModel<SecondViewModel>()),
+                    new ("Third", View: views.FindByViewModel<ThirdViewModel>()),
+                ]
+            )
+        );
     }
     ```
 
