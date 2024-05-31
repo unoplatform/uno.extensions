@@ -86,8 +86,8 @@ In the `AppBuilderExtensions` class, on `DevExpressApp.MauiControls` project, up
                 .UseDevExpress()
                 .ConfigureFonts(fonts =>
                 {
-                    fonts.AddFont("DevExpressApp/Assets/Fonts/OpenSansRegular.ttf", "OpenSansRegular");
-                    fonts.AddFont("DevExpressApp/Assets/Fonts/OpenSansSemibold.ttf", "OpenSansSemibold");
+                    fonts.AddFont("Assets/Fonts/OpenSansRegular.ttf", "OpenSansRegular");
+                    fonts.AddFont("Assets/Fonts/OpenSansSemibold.ttf", "OpenSansSemibold");
                 });
     }
     ```
