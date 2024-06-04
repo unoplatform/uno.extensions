@@ -31,16 +31,10 @@ The last thing we'll need from the zip file is the nuget.config file. This file 
 1. Create a new application using the `unoapp` template, enabling .NET MAUI Embedding. In this case, we're going to use the Blank template (`-preset blank`) and include .NET MAUI Embedding support (`-maui`).
 
     ```
-    dotnet new unoapp -preset blank -maui -o MauiEmbeddingApp
+    dotnet new unoapp -preset blank -maui -platforms "android" -platforms "ios" -o GrialKitApp
     ```
 
-1. Remove the `net8.0`, `net8.0-maccatalyst`, and `net8.0-windows10.0.19041.0` target frameworks from both the MauiEmbeddingApp and MauiEmbeddingApp.MauiControls projects.  
-
-1. Remove the `net8.0-maccatalyst` target framework from the MauiEmbeddingApp.Mobile project.  
-
-1. Remove the `MauiEmbeddingApp.Windows` project from the solution.  
-
-1. Add the `GrailLicense` file to the MauiEmbeddingApp.MauiControls project as an `EmbeddedResource`
+1. Add the `GrialLicense` file to the GrialKitApp.MauiControls project as an `EmbeddedResource`
 
 1. Add the nuget.config file to the solution folder and make sure that the `packageSourceCredentials` section includes username and password. If you're missing credentials, go to the [profile page](https://admin.grialkit.com/secure/grial/front/profile) in the admin portal and click on the Nuget tab where you can create credentials for your account.
 
@@ -61,7 +55,7 @@ The last thing we'll need from the zip file is the nuget.config file. This file 
 </configuration>
 ```
 
-1. In the project file (csproj) for MauiEmbeddingApp.Mobile update the `ApplicationTitle` and `ApplicationId` properties with those retrieved earlier from the zip file.
+1. In the project file (csproj) for GrialKitApp.Mobile update the `ApplicationTitle` and `ApplicationId` properties with those retrieved earlier from the zip file.
 
 1. Expand out the MauiEmbeddingApp.Mobile project and locate the Main.Android.cs file. Change the Label property of the ApplicationAttribute from `@string/ApplicationName` to the ApplicationTitle retrieved earlier from the zip file.
 
