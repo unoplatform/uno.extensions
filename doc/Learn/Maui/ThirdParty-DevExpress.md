@@ -1,6 +1,7 @@
 ---
 uid: Uno.Extensions.Maui.ThirdParty.DevExpress
 ---
+
 # .NET MAUI Embedding - DevExpress .NET MAUI Controls
 
 The controls from [DevExpress .NET MAUI Controls](https://www.devexpress.com/maui/) can be used in an Uno Platform application via .NET MAUI Embedding.
@@ -8,6 +9,9 @@ The controls from [DevExpress .NET MAUI Controls](https://www.devexpress.com/mau
 ## Sample App
 
 An existing sample app that showcases the controls is available [here](https://github.com/unoplatform/Uno.Samples/tree/master/UI/MauiEmbedding/DevExpressApp).
+
+> [!NOTE]
+> DevExpress .NET MAUI Controls are currently only compatible with Android and iOS with Uno Platform at the moment.
 
 ## Installation
 
@@ -27,41 +31,43 @@ Once you have an account with DevExpress, you need to visit the [Your DevExpress
 ## Getting Started
 
 ### [Visual Studio](#tab/vs)
- 
+
 > [!NOTE]
 > If you don't have the **Uno Platform Extension for Visual Studio** installed, follow [these instructions](xref:Uno.GetStarted.vs2022).
- 
+
 - Launch **Visual Studio** and click on **Create new project** on the Start Window. Alternatively, if you're already in Visual Studio, click **New, Project** from the **File** menu.
- 
+
 - Type `Uno Platform` in the search box
- 
+
 - Click **Uno Platform App**, then **Next**
- 
+
 - Name the project `DevExpressApp` and click **Create**
- 
+
 At this point you'll enter the **Uno Platform Template Wizard**, giving you options to customize the generated application.
- 
+
 - Select **Blank** in **Presets** selection
- 
-- Select the **Platforms** tab and unselect **MacCatalyst** and **Windows** platforms
- 
+
+- Select the **Platforms** tab and unselect **WebAssembly**, **macOS (Catalyst)**, **Windows**, and **Desktop** platforms
+
+- Select the **Features** tab and click on **.NET MAUI Embedding**
+
 - Click **Create** to complete the wizard
- 
+
 The template will create a solution with a single cross-platform project, named `DevExpressApp`, ready to run.
 
 For more information on all the template options, see [Using the Uno Platform Template](xref:Uno.GettingStarted.UsingWizard).
 
 ### [Command Line](#tab/cli)
- 
+
 > [!NOTE]
-> If you don't have the Uno Platform dotnet new templates installed, follow [dotnet new templates for Uno Platform](xref:Uno.GetStarted.dotnet-new).
- 
+> If you don't have the **Uno Platform dotnet new templates** installed, follow [dotnet new templates for Uno Platform](xref:Uno.GetStarted.dotnet-new).
+
 Create a new application using the `unoapp` template, enabling .NET MAUI Embedding. In this case, we're going to use the Blank template (`-preset blank`) and include .NET MAUI Embedding support (`-maui`).
- 
+
 ```bash
-dotnet new unoapp -preset blank -maui -platforms "android" -platforms "ios" -platforms "wasm" -platforms "desktop" -o DevExpressApp
+dotnet new unoapp -preset blank -maui -platforms "android" -platforms "ios" -o DevExpressApp
 ```
- 
+
 This will create a new folder called **DevExpressApp** containing the new application.
 
 ---
@@ -74,23 +80,23 @@ Add a reference to `DevExpress.Maui.DataGrid` to the DevExpressApp.MauiControls 
 
 In the `AppBuilderExtensions` class, on `DevExpressApp.MauiControls` project, update the `UseMauiControls` extension method to call the `UseDevExpress` method.
 
-    ```cs
-    using DevExpress.Maui;
+```csharp
+using DevExpress.Maui;
 
-    namespace DevExpressApp;
+namespace DevExpressApp;
 
-    public static class AppBuilderExtensions
-    {
-        public static MauiAppBuilder UseMauiControls(this MauiAppBuilder builder)
-            => builder
-                .UseDevExpress()
-                .ConfigureFonts(fonts =>
-                {
-                    fonts.AddFont("Assets/Fonts/OpenSansRegular.ttf", "OpenSansRegular");
-                    fonts.AddFont("Assets/Fonts/OpenSansSemibold.ttf", "OpenSansSemibold");
-                });
-    }
-    ```
+public static class AppBuilderExtensions
+{
+    public static MauiAppBuilder UseMauiControls(this MauiAppBuilder builder)
+        => builder
+            .UseDevExpress()
+            .ConfigureFonts(fonts =>
+            {
+                fonts.AddFont("Assets/Fonts/OpenSansRegular.ttf", "OpenSansRegular");
+                fonts.AddFont("Assets/Fonts/OpenSansSemibold.ttf", "OpenSansSemibold");
+            });
+}
+```
 
 ## Adding Chart Control
 
@@ -108,44 +114,43 @@ In the `AppBuilderExtensions` class, on `DevExpressApp.MauiControls` project, up
                 HorizontalOptions="Fill"
                 VerticalOptions="Fill">
       <dxc:ChartView>
-    		<dxc:ChartView.BindingContext>
-    			<local:ViewModel />
-    		</dxc:ChartView.BindingContext>
-    		<dxc:ChartView.Series>
-    			<dxc:LineSeries DisplayName="{Binding GdpValueForUSA.CountryName}">
-    				<dxc:LineSeries.Data>
-    					<dxc:SeriesDataAdapter DataSource="{Binding GdpValueForUSA.Values}"
-    										   ArgumentDataMember="Year">
-    						<dxc:ValueDataMember Type="Value"
-    											 Member="Value" />
-    					</dxc:SeriesDataAdapter>
-    				</dxc:LineSeries.Data>
-    			</dxc:LineSeries>
+            <dxc:ChartView.BindingContext>
+                <local:ViewModel />
+            </dxc:ChartView.BindingContext>
+            <dxc:ChartView.Series>
+                <dxc:LineSeries DisplayName="{Binding GdpValueForUSA.CountryName}">
+                    <dxc:LineSeries.Data>
+                        <dxc:SeriesDataAdapter DataSource="{Binding GdpValueForUSA.Values}"
+                                               ArgumentDataMember="Year">
+                            <dxc:ValueDataMember Type="Value"
+                                                 Member="Value" />
+                        </dxc:SeriesDataAdapter>
+                    </dxc:LineSeries.Data>
+                </dxc:LineSeries>
 
-    			<dxc:LineSeries DisplayName="{Binding GdpValueForChina.CountryName}">
-    				<dxc:LineSeries.Data>
-    					<dxc:SeriesDataAdapter DataSource="{Binding GdpValueForChina.Values}"
-    										   ArgumentDataMember="Year">
-    						<dxc:ValueDataMember Type="Value"
-    											 Member="Value" />
-    					</dxc:SeriesDataAdapter>
-    				</dxc:LineSeries.Data>
-    			</dxc:LineSeries>
+                <dxc:LineSeries DisplayName="{Binding GdpValueForChina.CountryName}">
+                    <dxc:LineSeries.Data>
+                        <dxc:SeriesDataAdapter DataSource="{Binding GdpValueForChina.Values}"
+                                               ArgumentDataMember="Year">
+                            <dxc:ValueDataMember Type="Value"
+                                                 Member="Value" />
+                        </dxc:SeriesDataAdapter>
+                    </dxc:LineSeries.Data>
+                </dxc:LineSeries>
 
-    			<dxc:LineSeries DisplayName="{Binding GdpValueForJapan.CountryName}">
-    				<dxc:LineSeries.Data>
-    					<dxc:SeriesDataAdapter DataSource="{Binding GdpValueForJapan.Values}"
-    										   ArgumentDataMember="Year">
-    						<dxc:ValueDataMember Type="Value"
-    											 Member="Value" />
-    					</dxc:SeriesDataAdapter>
-    				</dxc:LineSeries.Data>
-    			</dxc:LineSeries>
-    		</dxc:ChartView.Series>
-    	</dxc:ChartView>
+                <dxc:LineSeries DisplayName="{Binding GdpValueForJapan.CountryName}">
+                    <dxc:LineSeries.Data>
+                        <dxc:SeriesDataAdapter DataSource="{Binding GdpValueForJapan.Values}"
+                                               ArgumentDataMember="Year">
+                            <dxc:ValueDataMember Type="Value"
+                                                 Member="Value" />
+                        </dxc:SeriesDataAdapter>
+                    </dxc:LineSeries.Data>
+                </dxc:LineSeries>
+            </dxc:ChartView.Series>
+        </dxc:ChartView>
     </ScrollView>
     ```
-
 
 ## Adding DataGridView Control
 
@@ -172,7 +177,7 @@ In the `AppBuilderExtensions` class, on `DevExpressApp.MauiControls` project, up
 
 1. Update the `EmbeddedControl.xaml.cs` with the following code:
 
-    ```cs
+    ```csharp
     namespace DevExpressApp.MauiControls;
 
     public partial class EmbeddedControl : ContentView
@@ -186,7 +191,7 @@ In the `AppBuilderExtensions` class, on `DevExpressApp.MauiControls` project, up
 
 1. It's time to create the ViewModel that will hold the properties that will be data bound to the `DataGridViewControl` control. In `DevExpressApp` project, create a new folder called `ViewModels` and add a new class called `MainViewModel`. This class will have the following code:
 
-    ```cs
+    ```csharp
     namespace DevExpressApp.ViewModels;
 
     public class MainViewModel
@@ -197,7 +202,7 @@ In the `AppBuilderExtensions` class, on `DevExpressApp.MauiControls` project, up
 
 1. And let's create the `Employee` model and mock it.
 
-    ```cs
+    ```csharp
     public enum AccessLevel
     {
         Admin,
@@ -359,10 +364,12 @@ In the `AppBuilderExtensions` class, on `DevExpressApp.MauiControls` project, up
 
 1. Now the project is good to go! Press F5 and you should see the `DataGridView` control working as expected.
 
-**App Render Output**
+## App Render Output
 
 - **Android:**
-  - ![Android DevExpress](Assets/Screenshots/Android/DevExpress.png)
+
+    ![Android DevExpress](Assets/Screenshots/Android/DevExpress.png)
 
 - **iOS:**
-  - ![iOS DevExpress](Assets/Screenshots/iOS/DevExpress.png)
+
+    ![iOS DevExpress](Assets/Screenshots/iOS/DevExpress.png)
