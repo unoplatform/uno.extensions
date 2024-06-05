@@ -1,6 +1,7 @@
 ---
 uid: Uno.Extensions.Maui.ThirdParty.DevExpress
 ---
+
 # .NET MAUI Embedding - DevExpress .NET MAUI Controls
 
 The controls from [DevExpress .NET MAUI Controls](https://www.devexpress.com/maui/) can be used in an Uno Platform application via .NET MAUI Embedding.
@@ -8,6 +9,9 @@ The controls from [DevExpress .NET MAUI Controls](https://www.devexpress.com/mau
 ## Sample App
 
 An existing sample app that showcases the controls is available [here](https://github.com/unoplatform/Uno.Samples/tree/master/UI/MauiEmbedding/DevExpressApp).
+
+> [!NOTE]
+> DevExpress .NET MAUI Controls are currently only compatible with Android and iOS with Uno Platform at the moment.
 
 ## Installation
 
@@ -26,44 +30,82 @@ Once you have an account with DevExpress, you need to visit the [Your DevExpress
 
 ## Getting Started
 
-1. Create a new application using the `unoapp` template, enabling .NET MAUI Embedding. In this case, we're going to use the Blank template (`-preset blank`) and include .NET MAUI Embedding support (`-maui`).
+### [Visual Studio](#tab/vs)
 
-    ```dotnetcli
-    dotnet new unoapp -preset blank -maui -o MauiEmbeddingApp
-    ```
+> [!NOTE]
+> If you don't have the **Uno Platform Extension for Visual Studio** installed, follow [these instructions](xref:Uno.GetStarted.vs2022).
 
-1. Remove the `net8.0`, `net8.0-maccatalyst` and, `net8.0-windows10.0.19041.0` target frameworks from both the MauiEmbeddingApp and MauiEmbeddingApp.MauiControls projects. Also, remove `net8.0-maccatalyst` from the MauiEmbeddingApp.Mobile project, and remove the MauiEmbeddingApp.Windows project. The DevExpress .NET MAUI Controls only supports iOS and Android.
+- Launch **Visual Studio** and click on **Create new project** on the Start Window. Alternatively, if you're already in Visual Studio, click **New, Project** from the **File** menu.
 
-1. Next, add a reference to `DevExpress.Maui.DataGrid` to the MauiEmbeddingApp.MauiControls project.
+- Type `Uno Platform` in the search box
 
-1. In the `AppBuilderExtensions` class, on `MauiEmbeddingApp.MauiControls` project, update the `UseMauiControls` extension method to call the `UseDevExpress` method.
+- Click **Uno Platform App**, then **Next**
 
-    ```cs
-    using DevExpress.Maui;
+- Name the project `DevExpressApp` and click **Create**
 
-    namespace MauiEmbeddingApp;
+At this point you'll enter the **Uno Platform Template Wizard**, giving you options to customize the generated application.
 
-    public static class AppBuilderExtensions
-    {
-        public static MauiAppBuilder UseMauiControls(this MauiAppBuilder builder)
-            => builder
-                .UseDevExpress()
-                .ConfigureFonts(fonts =>
-                {
-                    fonts.AddFont("MauiEmbeddingApp/Assets/Fonts/OpenSansRegular.ttf", "OpenSansRegular");
-                    fonts.AddFont("MauiEmbeddingApp/Assets/Fonts/OpenSansSemibold.ttf", "OpenSansSemibold");
-                });
-    }
-    ```
+- Select **Blank** in **Presets** selection
+
+- Select the **Platforms** tab and unselect **WebAssembly**, **macOS (Catalyst)**, **Windows**, and **Desktop** platforms
+
+- Select the **Features** tab and click on **.NET MAUI Embedding** and **Toolkit**
+
+- Click **Create** to complete the wizard
+
+The template will create a solution with a single cross-platform project, named `DevExpressApp`, ready to run.
+
+For more information on all the template options, see [Using the Uno Platform Template](xref:Uno.GettingStarted.UsingWizard).
+
+### [Command Line](#tab/cli)
+
+> [!NOTE]
+> If you don't have the **Uno Platform dotnet new templates** installed, follow [dotnet new templates for Uno Platform](xref:Uno.GetStarted.dotnet-new).
+
+Create a new application using the `unoapp` template, enabling .NET MAUI Embedding. In this case, we're going to use the Blank template (`-preset blank`) and include .NET MAUI Embedding support (`-maui`).
+
+```bash
+dotnet new unoapp -preset blank -maui -toolkit -platforms "android" -platforms "ios" -o DevExpressApp
+```
+
+This will create a new folder called **DevExpressApp** containing the new application.
+
+---
+
+## NuGet Packages
+
+Add a reference to `DevExpress.Maui.DataGrid` to the DevExpressApp.MauiControls project.
+
+## Updating AppBuilderExtensions
+
+In the `AppBuilderExtensions` class, on `DevExpressApp.MauiControls` project, update the `UseMauiControls` extension method to call the `UseDevExpress` method.
+
+```csharp
+using DevExpress.Maui;
+
+namespace DevExpressApp;
+
+public static class AppBuilderExtensions
+{
+    public static MauiAppBuilder UseMauiControls(this MauiAppBuilder builder)
+        => builder
+            .UseDevExpress()
+            .ConfigureFonts(fonts =>
+            {
+                fonts.AddFont("Assets/Fonts/OpenSansRegular.ttf", "OpenSansRegular");
+                fonts.AddFont("Assets/Fonts/OpenSansSemibold.ttf", "OpenSansSemibold");
+            });
+}
+```
 
 ## Adding DataGridView Control
 
-1. Update the EmbeddedControl.xaml in the  `MauiEmbeddingApp.MauiControls` project with the following XAML that includes the `DataGridView` control.
+1. Update the `EmbeddedControl.xaml` in the `DevExpressApp.MauiControls` project with the following XAML that includes the `DataGridView` control:
 
     ```xml
     <?xml version="1.0" encoding="utf-8" ?>
     <ContentView
-        x:Class="MauiEmbeddingApp.MauiControls.EmbeddedControl"
+        x:Class="DevExpressApp.MauiControls.EmbeddedControl"
         xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
         xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
         xmlns:dxg="clr-namespace:DevExpress.Maui.DataGrid;assembly=DevExpress.Maui.DataGrid">
@@ -77,12 +119,12 @@ Once you have an account with DevExpress, you need to visit the [Your DevExpress
     ```
 
     > [!NOTE]
-    > You may notice that the `Binding` markup extension is used on some properties. The `MauiEmbedding` can handle bindings between Maui Controls and UnoPlatform, just make sure the property in the `Binding` expression matches the property on your ViewModel.
+    > You may notice that the `Binding` markup extension is used on some properties. The `MauiEmbedding` can handle bindings between MAUI Controls and Uno Platform, just make sure the property in the `Binding` expression matches the property on your ViewModel.
 
-1. Update the EmbeddedControl.xaml.cs with the following code.
+1. Update the `EmbeddedControl.xaml.cs` with the following code:
 
-    ```cs
-    namespace MauiEmbeddingApp.MauiControls;
+    ```csharp
+    namespace DevExpressApp.MauiControls;
 
     public partial class EmbeddedControl : ContentView
     {
@@ -93,10 +135,10 @@ Once you have an account with DevExpress, you need to visit the [Your DevExpress
     }
     ```
 
-1. It's time to create the ViewModel that will hold the properties that will be data bound to the `DataGridViewControl` control. In `MauiEmbeddingApp` project, create a new folder called `ViewModels` and add a new class called `MainViewModel`. This class will have the following code:
+1. It's time to create the ViewModel that will hold the properties that will be data bound to the `DataGridViewControl` control. In the `DevExpressApp` project, create a new folder called `ViewModels` and add a new class called `MainViewModel`. This class will have the following code:
 
-    ```cs
-    namespace MauiEmbeddingApp.ViewModels;
+    ```csharp
+    namespace DevExpressApp.ViewModels;
 
     public class MainViewModel
     {
@@ -106,7 +148,7 @@ Once you have an account with DevExpress, you need to visit the [Your DevExpress
 
 1. And let's create the `Employee` model and mock it.
 
-    ```cs
+    ```csharp
     public enum AccessLevel
     {
         Admin,
@@ -246,32 +288,36 @@ Once you have an account with DevExpress, you need to visit the [Your DevExpress
 1. The final step is to add the `MainViewModel` as the `DataContext` of the `MainPage.xaml` file. The final `MainPage.xaml` file will look like this:
 
     ```xml
-    <Page x:Class="MauiEmbeddingApp.MainPage"
+    <Page x:Class="DevExpressApp.MainPage"
           xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
           xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-          xmlns:local="using:MauiEmbeddingApp.ViewModels"
+          xmlns:local="using:DevExpressApp.ViewModels"
           xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
           xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+          xmlns:utu="using:Uno.Toolkit.UI"
+          utu:SafeArea.Insets="VisibleBounds"
           mc:Ignorable="d"
           Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Page.DataContext>
             <local:MainViewModel />
         </Page.DataContext>
-        <StackPanel>
-            <embed:MauiHost
-                xmlns:controls="using:MauiEmbeddingApp.MauiControls"
-                xmlns:embed="using:Uno.Extensions.Maui"
-                Source="controls:EmbeddedControl" />
-        </StackPanel>
+        <Border>
+            <embed:MauiHost xmlns:controls="using:DevExpressApp.MauiControls"
+                            xmlns:embed="using:Uno.Extensions.Maui"
+                            Source="controls:EmbeddedControl" />
+        </Border>
     </Page>
     ```
 
 1. Now the project is good to go! Press F5 and you should see the `DataGridView` control working as expected.
+   For more detailed instructions specific to each platform, refer to the [Debug the App](xref:Uno.GettingStarted.CreateAnApp.VS2022#debug-the-app) documentation.
 
-**App Render Output**
+## App Render Output
 
 - **Android:**
-  - ![Android DevExpress](Assets/Screenshots/Android/DevExpress.png)
+
+    ![Android DevExpress](Assets/Screenshots/Android/DevExpress.png)
 
 - **iOS:**
-  - ![iOS DevExpress](Assets/Screenshots/iOS/DevExpress.png)
+
+    ![iOS DevExpress](Assets/Screenshots/iOS/DevExpress.png)
