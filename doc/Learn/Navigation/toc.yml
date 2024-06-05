@@ -10,8 +10,8 @@
   href: xref:Uno.Extensions.Navigation.HowToDisplayMessageDialog
 - name: "How-To: Request a value"
   href: xref:Uno.Extensions.Navigation.HowToSelectValue
-- name: "How-To: Display a modal flyout"
-  href: xref:Uno.Extensions.Navigation.HowToShowFlyout
+- name: "How-To: Display a Dialog (modal or flyout)"
+  href: xref:Uno.Extensions.Navigation.HowToShowDialog
 - name: "How-To: Display an item"
   href: xref:Uno.Extensions.Navigation.HowToDisplayItem
 - name: Advanced
