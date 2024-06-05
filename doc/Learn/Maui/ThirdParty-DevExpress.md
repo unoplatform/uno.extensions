@@ -49,7 +49,7 @@ At this point you'll enter the **Uno Platform Template Wizard**, giving you opti
 
 - Select the **Platforms** tab and unselect **WebAssembly**, **macOS (Catalyst)**, **Windows**, and **Desktop** platforms
 
-- Select the **Features** tab and click on **.NET MAUI Embedding**
+- Select the **Features** tab and click on **.NET MAUI Embedding** and **Toolkit**
 
 - Click **Create** to complete the wizard
 
@@ -65,14 +65,14 @@ For more information on all the template options, see [Using the Uno Platform Te
 Create a new application using the `unoapp` template, enabling .NET MAUI Embedding. In this case, we're going to use the Blank template (`-preset blank`) and include .NET MAUI Embedding support (`-maui`).
 
 ```bash
-dotnet new unoapp -preset blank -maui -platforms "android" -platforms "ios" -o DevExpressApp
+dotnet new unoapp -preset blank -maui -toolkit -platforms "android" -platforms "ios" -o DevExpressApp
 ```
 
 This will create a new folder called **DevExpressApp** containing the new application.
 
 ---
 
-## Nuget Packages
+## NuGet Packages
 
 Add a reference to `DevExpress.Maui.DataGrid` to the DevExpressApp.MauiControls project.
 
@@ -98,60 +98,6 @@ public static class AppBuilderExtensions
 }
 ```
 
-## Adding Chart Control
-
-1. Create a new file - `ChartControl.xaml` and add the following code:
-
-    ```xml
-    <?xml version="1.0" encoding="utf-8" ?>
-    <ScrollView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-                xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-                xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
-                xmlns:dxg="clr-namespace:DevExpress.Maui.DataGrid;assembly=DevExpress.Maui.DataGrid"
-                xmlns:dxc="clr-namespace:DevExpress.Maui.Charts;assembly=DevExpress.Maui.Charts"
-                x:Class="DevExpressApp.MauiControls.ChartControl"
-                xmlns:local="clr-namespace:DevExpressApp.MauiControls"
-                HorizontalOptions="Fill"
-                VerticalOptions="Fill">
-      <dxc:ChartView>
-            <dxc:ChartView.BindingContext>
-                <local:ViewModel />
-            </dxc:ChartView.BindingContext>
-            <dxc:ChartView.Series>
-                <dxc:LineSeries DisplayName="{Binding GdpValueForUSA.CountryName}">
-                    <dxc:LineSeries.Data>
-                        <dxc:SeriesDataAdapter DataSource="{Binding GdpValueForUSA.Values}"
-                                               ArgumentDataMember="Year">
-                            <dxc:ValueDataMember Type="Value"
-                                                 Member="Value" />
-                        </dxc:SeriesDataAdapter>
-                    </dxc:LineSeries.Data>
-                </dxc:LineSeries>
-
-                <dxc:LineSeries DisplayName="{Binding GdpValueForChina.CountryName}">
-                    <dxc:LineSeries.Data>
-                        <dxc:SeriesDataAdapter DataSource="{Binding GdpValueForChina.Values}"
-                                               ArgumentDataMember="Year">
-                            <dxc:ValueDataMember Type="Value"
-                                                 Member="Value" />
-                        </dxc:SeriesDataAdapter>
-                    </dxc:LineSeries.Data>
-                </dxc:LineSeries>
-
-                <dxc:LineSeries DisplayName="{Binding GdpValueForJapan.CountryName}">
-                    <dxc:LineSeries.Data>
-                        <dxc:SeriesDataAdapter DataSource="{Binding GdpValueForJapan.Values}"
-                                               ArgumentDataMember="Year">
-                            <dxc:ValueDataMember Type="Value"
-                                                 Member="Value" />
-                        </dxc:SeriesDataAdapter>
-                    </dxc:LineSeries.Data>
-                </dxc:LineSeries>
-            </dxc:ChartView.Series>
-        </dxc:ChartView>
-    </ScrollView>
-    ```
-
 ## Adding DataGridView Control
 
 1. Update the `EmbeddedControl.xaml` in the `DevExpressApp.MauiControls` project with the following XAML that includes the `DataGridView` control:
@@ -173,7 +119,7 @@ public static class AppBuilderExtensions
     ```
 
     > [!NOTE]
-    > You may notice that the `Binding` markup extension is used on some properties. The `MauiEmbedding` can handle bindings between Maui Controls and Uno Platform, just make sure the property in the `Binding` expression matches the property on your ViewModel.
+    > You may notice that the `Binding` markup extension is used on some properties. The `MauiEmbedding` can handle bindings between MAUI Controls and Uno Platform, just make sure the property in the `Binding` expression matches the property on your ViewModel.
 
 1. Update the `EmbeddedControl.xaml.cs` with the following code:
 
@@ -189,7 +135,7 @@ public static class AppBuilderExtensions
     }
     ```
 
-1. It's time to create the ViewModel that will hold the properties that will be data bound to the `DataGridViewControl` control. In `DevExpressApp` project, create a new folder called `ViewModels` and add a new class called `MainViewModel`. This class will have the following code:
+1. It's time to create the ViewModel that will hold the properties that will be data bound to the `DataGridViewControl` control. In the `DevExpressApp` project, create a new folder called `ViewModels` and add a new class called `MainViewModel`. This class will have the following code:
 
     ```csharp
     namespace DevExpressApp.ViewModels;
@@ -348,21 +294,23 @@ public static class AppBuilderExtensions
           xmlns:local="using:DevExpressApp.ViewModels"
           xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
           xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+          xmlns:utu="using:Uno.Toolkit.UI"
+          utu:SafeArea.Insets="VisibleBounds"
           mc:Ignorable="d"
           Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Page.DataContext>
             <local:MainViewModel />
         </Page.DataContext>
-        <StackPanel>
-            <embed:MauiHost
-                xmlns:controls="using:DevExpressApp.MauiControls"
-                xmlns:embed="using:Uno.Extensions.Maui"
-                Source="controls:EmbeddedControl" />
-        </StackPanel>
+        <Border>
+            <embed:MauiHost xmlns:controls="using:DevExpressApp.MauiControls"
+                            xmlns:embed="using:Uno.Extensions.Maui"
+                            Source="controls:EmbeddedControl" />
+        </Border>
     </Page>
     ```
 
 1. Now the project is good to go! Press F5 and you should see the `DataGridView` control working as expected.
+   For more detailed instructions specific to each platform, refer to the [Debug the App](xref:Uno.GettingStarted.CreateAnApp.VS2022#debug-the-app) documentation.
 
 ## App Render Output
 
