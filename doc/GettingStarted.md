@@ -12,6 +12,8 @@ This tutorial will walk you through how to create an Uno application with Uno.Ex
 
 ### 1. Creating the app
 
+### [Wizard](#tab/wizard)
+
 #### Create an Uno Platform app with Wizard
 
 * Create a new C# solution using the **Uno Platform App** template, from Visual Studio's **Start Page**, then click the **Next** button
@@ -37,6 +39,8 @@ This tutorial will walk you through how to create an Uno application with Uno.Ex
 * A banner at the top of the editor may ask to reload projects, click **Reload projects**:  
     ![Visual Studio - A banner indicating to reload projects](./Learn/images/vs2022-project-reload.png)
 
+### [Command Line](#tab/cli)
+
 #### Create an Uno Platform app with the CLI
 
 The `dotnet` templates included in the `Uno.Templates` package are used to easily create new projects that already reference the Uno.Extensions.
@@ -58,6 +62,8 @@ The `dotnet` templates included in the `Uno.Templates` package are used to easil
 * Open the solution in Visual Studio
 
     `.\MyProjectName\MyProjectName.sln`
+
+---
 
 ### 2. Exploring the Solution
 
