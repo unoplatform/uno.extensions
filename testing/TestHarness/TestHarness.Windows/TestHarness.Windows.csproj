@@ -53,6 +53,7 @@
 		<PackageReference Include="Uno.Toolkit.WinUI.Material" />
 		<PackageReference Include="Uno.Toolkit.WinUI" />
 		<PackageReference Include="Uno.WinUI.MSAL" />
+		<PackageReference Include="Uno.WinUI" />
 		<Manifest Include="$(ApplicationManifest)" />
 	</ItemGroup>
 
