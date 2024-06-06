@@ -3,7 +3,7 @@ uid: Uno.Extensions.Hosting.HowToHostingSetup
 ---
 # How-To: Get Started with Hosting
 
-`Uno.Extensions.Hosting` can be used to register services that will be accessible throughout the application via dependency injection (DI). This tutorial will walk you through the critical steps needed to leverage hosting in your application.
+`Hosting` can be used to register services that will be accessible throughout the application via dependency injection (DI). This tutorial will walk you through the critical steps needed to leverage hosting in your application.
 
 > [!WARNING]
 > The steps outlined here are unnecessary if you used the new project wizard template to create your solution. Otherwise, it is recommended that you follow the [Creating an application with Uno.Extensions article](xref:Uno.Extensions.HowToGettingStarted) for creating an application from the template.
@@ -12,7 +12,16 @@ uid: Uno.Extensions.Hosting.HowToHostingSetup
 
 ### 1. Installation
 
-* Install the [Uno.Extensions.Hosting.WinUI](https://www.nuget.org/packages/Uno.Extensions.Hosting.WinUI) package from NuGet.
+* Add `Hosting` to the `<UnoFeatures>` property in the Class Library (.csproj) file. If you already have `Extensions` in `<UnoFeatures>`, then `Hosting` is already installed, as its dependencies are included with the `Extensions` feature.
+
+    ```diff
+    <UnoFeatures>
+        Material;
+    +   Hosting;
+        Toolkit;
+        MVUX;
+    </UnoFeatures>
+    ```
 
 ### 2. Create and Configure IApplicationBuilder
 

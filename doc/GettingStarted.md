@@ -1,14 +1,14 @@
 ---
 uid: Uno.Extensions.HowToGettingStarted
 ---
-# How-To: Creating an application with Uno.Extensions
+# How-To: Getting Started
 
-This tutorial will walk you through how to create an Uno application with Uno.Extensions using the Wizard and CLI.
+This tutorial will walk you through how to create an Uno application with Uno.Extensions using the Wizard and CLI and how to install Uno.Extensions to an existing Uno application.
 
 > [!NOTE]
 > Make sure to setup your environment first by [following our instructions](xref:Uno.GetStarted.vs2022).
 
-## Step-by-steps
+## Creating a new application
 
 ### 1. Creating the app
 
@@ -78,3 +78,36 @@ The generated solution will contain *MyProjectName* for application logic, inclu
     ![A screenshot of the generated targets](./Learn/images/GeneratedTargets-min.png)
 
 * Click the "play" button, or press F5 to start debugging. The project will be compiled and deployed based on the target platform. For more detailed instructions specific to each platform, refer to the [Debug the App](xref:Uno.GettingStarted.CreateAnApp.VS2022#debug-the-app) documentation.
+
+## Installing Extensions in an existing project
+
+To get started with Extensions in your project, follow these steps:
+
+### Step 1: Add Hosting to Your Project
+
+Hosting is the foundation for using Extensions. Begin by adding Hosting to your project. Refer to the detailed instructions in the [Hosting Setup Documentation](xref:Uno.Extensions.Hosting.HowToHostingSetup).
+
+### Step 2: Configure the OnLaunched Method
+
+After setting up Hosting, adjust the `OnLaunched` method in `App.xaml.cs` to initialize the Extensions features. Ensure you have added the necessary [Uno Platform Features](xref:Uno.Features.Uno.Sdk#uno-platform-features).
+
+Update the `Configure` method as shown below:
+
+```csharp
+var builder = this.CreateBuilder(args)
+    .Configure(host => host
+        // Configure the host builder
+        .UseConfiguration(...)
+        .UseLocalization()
+        .UseSerialization(...)
+        .UseHttp(...)
+    );
+```
+
+### Step 3: Use the Builder to Create the Main Window
+
+Finally, instead of directly creating an instance of a `Window` using `MainWindow = new Window()`, use the `builder` to set up the main window:
+
+```csharp
+MainWindow = builder.Window;
+```
