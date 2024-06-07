@@ -83,7 +83,7 @@ This will create a new folder called **MauiCommunityToolkitApp** containing the 
 
 ## Adding DrawingView
 
-1. Update the EmbeddedControl.xaml in the `MauiEmbedding.MauiControls` project with the following XAML that includes the `DrawingView` control
+1. Update the EmbeddedControl.xaml in the `MauiCommunityToolkitApp.MauiControls` project with the following XAML that includes the `DrawingView` control
 
     ```xml
     <?xml version="1.0" encoding="utf-8" ?>
