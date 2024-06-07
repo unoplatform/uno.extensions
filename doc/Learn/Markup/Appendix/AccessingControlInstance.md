@@ -22,7 +22,7 @@ button.Click += delegate {
 }
 ```
 
-You can also define a CallBack using the `Name` method:
+You can also define a `delegate` using the `Name` method:
 
 ```csharp
 int i = 1;
@@ -43,7 +43,7 @@ this.Content(
 );
 ```
 
-Or if you want to expose a variable and also define a CallBack:
+Or if you want to expose a variable and also define a `delegate`:
 
 ```csharp
 int i = 1;
