@@ -10,8 +10,6 @@ The controls from MauiCommunityToolkit can be used in an Uno Platform applicatio
 An existing sample app that showcases the controls is available [here](https://github.com/unoplatform/Uno.Samples/tree/master/UI/MauiEmbedding/MauiCommunityToolkitApp).
 
 > [!NOTE]
-> For this sample you don't need to have a license, because it's just a demo and for development purposes.
->
 > MauiCommunityToolkitApp SDK for .NET is currently only compatible with Windows, Android, iOS, and Mac Catalyst when used with Uno Platform.
 
 ## Getting Started
@@ -77,8 +75,8 @@ This will create a new folder called **MauiCommunityToolkitApp** containing the 
                 .UseMauiCommunityToolkit()
                 .ConfigureFonts(fonts =>
                 {
-                    fonts.AddFont("MauiCommunityToolkitApp/Assets/Fonts/OpenSansRegular.ttf", "OpenSansRegular");
-                    fonts.AddFont("MauiCommunityToolkitApp/Assets/Fonts/OpenSansSemibold.ttf", "OpenSansSemibold");
+                    fonts.AddFont("Assets/Fonts/OpenSansRegular.ttf", "OpenSansRegular");
+                    fonts.AddFont("Assets/Fonts/OpenSansSemibold.ttf", "OpenSansSemibold");
                 });
     }
     ```
