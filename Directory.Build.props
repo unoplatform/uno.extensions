@@ -21,6 +21,12 @@
 	<PropertyGroup>
 		<!-- Forces Uno's XamlFileGenerator to write error when XAML is invalid-->
 		<ShouldWriteErrorOnInvalidXaml>True</ShouldWriteErrorOnInvalidXaml>
+
+		<!-- Uno docs: We don't have have the fix from https://github.com/microsoft/WindowsAppSDK/pull/4124 as libraries are still on 1.4, so we workaround it ourselves. -->
+		<!-- This workaround can be removed once we update to 1.5 -->
+		<!-- Only application projects should have the PRIs from references merged into the project's own PRI -->
+		<ShouldComputeInputPris Condition="'$(ShouldComputeInputPris)' == '' AND ('$(OutputType)' == 'WinExe' OR '$(OutputType)' == 'Exe')">true</ShouldComputeInputPris>
+		<ShouldComputeInputPris Condition="'$(ShouldComputeInputPris)' == ''">false</ShouldComputeInputPris>
 	</PropertyGroup>
 
 	<PropertyGroup>
@@ -30,6 +36,31 @@
 		<Build_Windows  Condition="$([MSBuild]::IsOSPlatform('windows'))">true</Build_Windows>
 		<Build_Windows  Condition="!$([MSBuild]::IsOSPlatform('windows'))">false</Build_Windows>
 	</PropertyGroup>
+
+	<Target Name="UnoWorkaroundWinAppSDK14Issue" Condition="'$(ShouldComputeInputPris)' == 'false'" BeforeTargets="_GetPriFilesFromPayload">
+		<PropertyGroup>
+			<!-- _GetPriFilesFromPayload and _ComputeInputPriFiles are intentionally not included. -->
+			<_GenerateProjectPriFileDependsOn>
+				BeforeGenerateProjectPriFile;
+				_GeneratePrisForPortableLibraries;
+				_GenerateProjectPriConfigurationFiles;
+				_CalculateInputsForGenerateProjectPriFileCore;
+				_GenerateProjectPriFileCore;
+				_AddFileReadsAndFileWritesForProjectPri;
+				_CreateProjectPriFileItem;
+				_ExpandProjectPriFile;
+				_ExpandPriFiles;
+				AfterGenerateProjectPriFile
+			</_GenerateProjectPriFileDependsOn>
+		</PropertyGroup>
+	</Target>
+
+	<Target Name="UnoWorkaroundWrongToolkitInclusion" Condition="'$(ShouldComputeInputPris)' == 'false'" AfterTargets="_UnoIncludeUIToolkit">
+		<ItemGroup>
+			<PriOutputs Remove="$(PkgUno_WinUI)/lib/net8.0-windows10.0.19041.0/Uno.UI.Toolkit.pri" />
+			<None Remove="$(PkgUno_WinUI)/lib/net8.0-windows10.0.19041.0/Uno.UI.Toolkit/**" />
+		</ItemGroup>
+	</Target>
 
 	<Import Project="DebugPlatforms.props" Condition="exists('DebugPlatforms.props')" />
 
