@@ -4,17 +4,10 @@ namespace TestHarness.Ext.Navigation.Apps.Chefs;
 
 public partial class ChefsHostInit : BaseHostInitialization
 {
-	//protected override IHostBuilder Custom(IHostBuilder builder)
-	//{
-	//	return builder.ConfigureServices(services =>
-	//				services
-	//						.AddSingleton<IAuthenticationRouteInfo>(
-	//								_ => new AuthenticationRouteInfo<
-	//										ChefsLoginViewModel,
-	//										ChefsHomeViewModel>())
-	//			);
-	//}
-
+	protected override IHostBuilder Navigation(IHostBuilder builder)
+	{
+		return builder.UseNavigation(ReactiveViewModelMappings.ViewModelMappings, RegisterRoutes);
+	}
 	protected override void RegisterRoutes(IViewRegistry views, IRouteRegistry routes)
 	{
 

@@ -7,7 +7,8 @@
 	  mc:Ignorable="d"
 	  Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-	<Grid>
+	<StackPanel>
 		<TextBlock Text="Root" />
-	</Grid>
+		<TextBlock Text="{Binding Credentials.Username}" />
+	</StackPanel>
 </Page>

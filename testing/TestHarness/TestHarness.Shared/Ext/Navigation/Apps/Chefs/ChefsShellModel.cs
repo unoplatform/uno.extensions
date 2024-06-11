@@ -11,9 +11,6 @@ internal record ChefsShellModel
 		_ = Start();
 	}
 
-	public async Task Start()
-	{
-		await Navigator.NavigateViewModelAsync<ChefsRootModel>(this, Qualifiers.ClearBackStack);
-	}
 
+	public async Task Start() => await Navigator.NavigateViewModelAsync<ChefsWelcomeModel>(this);
 }
