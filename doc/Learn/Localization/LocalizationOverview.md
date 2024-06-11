@@ -10,6 +10,15 @@ Many apps store these pieces of text in dedicated resource files that the app pa
 
 It uses [Microsoft.Extensions.Localization](https://www.nuget.org/packages/Microsoft.Extensions.Localization) for any localization-related work. For documentation on the broader process of localization, read the references listed at the bottom.
 
+## Installation
+
+`Localization` is provided as an Uno Feature. To enable `Localization` support in your application, add `Localization` to the `<UnoFeatures>` property in the Class Library (.csproj) file.
+
+> [!IMPORTANT]
+> This walkthrough assumes you created your app using the Single Project template. If you used a different template, please refer to our [Migrating Projects to Single Project](xref:Uno.Development.MigratingToSingleProject) documentation.
+
+For more information about `UnoFeatures` refer to our [Using the Uno.Sdk](xref:Uno.Features.Uno.Sdk) docs.
+
 ## Set up localization
 
 ```csharp

@@ -7,6 +7,15 @@ Uno.Extensions.Http allows for the registration of API **endpoints** as multiple
 
 For additional documentation on HTTP requests, read the references listed at the bottom.
 
+## Installation
+
+`Http` is provided as an Uno Feature. To enable `Http` support in your application, add `Http` to the `<UnoFeatures>` property in the Class Library (.csproj) file.
+
+> [!IMPORTANT]
+> This walkthrough assumes you created your app using the Single Project template. If you used a different template, please refer to our [Migrating Projects to Single Project](xref:Uno.Development.MigratingToSingleProject) documentation.
+
+For more information about `UnoFeatures` refer to our [Using the Uno.Sdk](xref:Uno.Features.Uno.Sdk) docs.
+
 ## Register Endpoints
 
 Web resources exposed through an API are defined in the application as clients. These client registrations include type arguments and endpoints to be used for the client. The endpoint is defined in the `EndpointOptions` class. While it uses the platform-native HTTP handler by default, this value can be configured.

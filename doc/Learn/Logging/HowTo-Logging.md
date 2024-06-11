@@ -5,15 +5,25 @@ uid: Uno.Extensions.Logging.UseLogging
 
 `Uno.Extensions.Logging` allows you to leverage logging capabilities tailored to your target platform to easily record events for XAML layout, Uno-internal messages, and custom events with severity and verbosity levels of your choice.
 
-> [!NOTE]
-> When adding logging support to an application, add the [Uno.Extensions.Logging.WinUI](https://www.nuget.org/packages/Uno.Extensions.Logging.WinUI) NuGet package (instead of `Uno.Extensions.Logging`) which includes platform specific loggers.
-
 ## Step-by-steps
 
 > [!IMPORTANT]
 > This guide assumes you used the template wizard or `dotnet new unoapp` to create your solution. If not, it is recommended that you follow the [Creating an application with Uno.Extensions article](xref:Uno.Extensions.HowToGettingStarted) for creating an application from the template.
 
-### 1. Opt into logging
+### 1. Installation
+
+* Add `Logging` to the `<UnoFeatures>` property in the Class Library (.csproj) file. If you already have `Extensions` in `<UnoFeatures>`, then `Logging` is already installed, as its dependencies are included with the `Extensions` feature.
+
+    ```diff
+    <UnoFeatures>
+        Material;
+    +   Logging;
+        Toolkit;
+        MVUX;
+    </UnoFeatures>
+    ```
+
+### 2. Opt into logging
 
 * Uno.Extensions offers a simple way to wire up platform-specific log providers such as `Uno.Extensions.Logging.OSLogLoggerProvider` for iOS and `Uno.Extensions.Logging.WebAssembly.WebAssemblyConsoleLoggerProvider` for WASM as both debug and console logging.
 
@@ -29,7 +39,7 @@ uid: Uno.Extensions.Logging.UseLogging
     ...
     ```
 
-### 2. Use the injected service to log application events
+### 3. Use the injected service to log application events
 
 * Add a constructor parameter of `ILogger` type to a view model you registered with the service collection:
 

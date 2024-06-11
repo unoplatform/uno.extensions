@@ -9,6 +9,8 @@ In this tutorial, you'll learn how to set up an Uno Platform project to use MVUX
 > [!NOTE]
 > Make sure to setup your environment first by [following our instructions](xref:Uno.GetStarted.vs2022).
 
+## Creating a new Uno app with MVUX
+
 1. Make sure your environment is set up properly by using [uno check](xref:UnoCheck.UsingUnoCheck).
 1. You can create an Uno Platform App by either using the Uno Platform Visual Studio extension or via the command line interface.
 
@@ -48,3 +50,21 @@ In this tutorial, you'll learn how to set up an Uno Platform project to use MVUX
         on using the CLI interface of creating projects.
 
    - Launch the created solution, MyApp.sln, in  Visual Studio or Visual Studio Code.
+
+## Add MVUX to an existing Uno app
+
+> [!IMPORTANT]
+> This guide assumes you created your app using the Single Project template. If you used a different template, please refer to our [Migrating Projects to Single Project](xref:Uno.Development.MigratingToSingleProject) documentation.
+
+`MVUX` is provided as an Uno Feature. To enable `MVUX` support in your application, add `MVUX` to the `<UnoFeatures>` property in the Class Library (.csproj) file.
+
+```diff
+<UnoFeatures>
+    Material;
+    Extensions;
++   MVUX;
+    Toolkit;
+</UnoFeatures>
+```
+
+For more information about `UnoFeatures` refer to our [Using the Uno.Sdk](xref:Uno.Features.Uno.Sdk) docs.

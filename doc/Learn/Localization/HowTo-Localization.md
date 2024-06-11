@@ -10,7 +10,21 @@ uid: Uno.Extensions.Localization.HowToUseLocalization
 > [!IMPORTANT]
 > This guide assumes you used the template wizard or `dotnet new unoapp` to create your solution. If not, it is recommended that you follow the [Creating an application with Uno.Extensions article](xref:Uno.Extensions.HowToGettingStarted) for creating an application from the template.
 
-### 1. Opt into localization
+### 1. Installation
+
+* Add `Localization` to the `<UnoFeatures>` property in the Class Library (.csproj) file.
+
+    ```diff
+    <UnoFeatures>
+        Material;
+        Extensions;
+    +   Localization;
+        Toolkit;
+        MVUX;
+    </UnoFeatures>
+    ```
+
+### 2. Opt into localization
 
 * Organize your application's localized `resw` resources into folders corresponding to a language tag
 
@@ -28,7 +42,7 @@ uid: Uno.Extensions.Localization.HowToUseLocalization
     }
     ```
 
-### 2. Use the localization service to resolve localized text
+### 3. Use the localization service to resolve localized text
 
 * Add a constructor parameter of `IStringLocalizer` type to a view model you registered with the service collection:
 
@@ -55,7 +69,7 @@ uid: Uno.Extensions.Localization.HowToUseLocalization
     var isResourceNotFound = myString.ResourceNotFound;
     ```
 
-### 3. Update the UI culture with `LocalizationSettings`
+### 4. Update the UI culture with `LocalizationSettings`
 
 * Add a constructor parameter of `ILocalizationService` type to a view model you registered with the service collection:
 

@@ -16,7 +16,16 @@ uid: Uno.Extensions.Authentication.HowToMsalAuthentication
 
 - The identity provider will provider you with a client ID and guidance on scopes to use.
 
-- Make sure `Uno.Extensions.Authentication.MSAL.WinUI` NuGet package is installed in your solution.
+- Add `AuthenticationMsal` to the `<UnoFeatures>` property in the Class Library (.csproj) file.
+
+    ```diff
+    <UnoFeatures>
+        Material;
+    +   AuthenticationMsal;
+        Toolkit;
+        MVUX;
+    </UnoFeatures>
+    ```
 
 ### 2. Set up MSAL authentication
 
