@@ -492,7 +492,7 @@ using Syncfusion.Maui.Core.Hosting;
 1. Now the project is good to go! Press F5 and you should see the `SfCircularChart` control. Without specifying a license key, you'll see a prompt informing you that you're running the application using a trial version.
 
     > [!NOTE]
-    > There is a known issue with the trial version prompt that can cause the application to crash on startup. If this is encountered running this sample, the `MainPage.xaml` can be updated to remove the `Source` property on the `MauiHost`. The `Source` property can then be set in the codebehind file in an event handler for the `Loaded` event of the `Page`.
+    > When running on Windows without a valid Syncfusion license (in demo mode) the app will crash due to the Demo Mode dialog being launched too early. You can work around this by setting the Control Type in your MauiHost from the Loaded event.
 
     ```cs
     namespace MauiEmbeddingApp;
