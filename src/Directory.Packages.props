@@ -6,7 +6,7 @@
 	<PropertyGroup Condition="$(SolutionName) != 'MauiEmbedding'">
 		<UnoVersion Condition="$(UnoVersion) == '' AND !$(MSBuildProjectName.Contains('Maui'))">5.0.19</UnoVersion>
 		<UnoVersion Condition="$(UnoVersion) == '' AND $(MSBuildProjectName.Contains('Maui'))">5.2.22</UnoVersion>
-		<WinAppSdkVersion Condition="$(WinAppSdkVersion) == ''">1.4.231219000</WinAppSdkVersion>
+		<WinAppSdkVersion Condition="$(WinAppSdkVersion) == ''">1.5.240311000</WinAppSdkVersion>
 	</PropertyGroup>
 
 	<Import Project="$(MSBuildThisFileDirectory)maui-embedding.props" Condition="$(SolutionName) == 'MauiEmbedding'" />
@@ -33,7 +33,7 @@
 		<PackageVersion Include="Microsoft.Net.Compilers.Toolset" Version="4.2.0" />
 		<PackageVersion Include="Microsoft.SourceLink.GitHub" Version="1.1.1" />
 		<PackageVersion Include="Microsoft.UI.Xaml" Version="2.7.1" />
-		<PackageVersion Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.756" />
+		<PackageVersion Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.3233" />
 		<PackageVersion Include="Microsoft.WindowsAppSDK" Version="$(WinAppSdkVersion)" />
 		<PackageVersion Include="Microsoft.Graphics.Win2D" Version="1.2.0" />
 		<PackageVersion Include="Moq" Version="4.17.2" />
