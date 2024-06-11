@@ -9,26 +9,65 @@ The controls from Syncfusion .NET MAUI Controls can be used in an Uno Platform a
 
 An existing sample app that showcases the controls is available [here](https://github.com/unoplatform/Uno.Samples/tree/master/UI/MauiEmbedding/SyncfusionApp).
 
+> [!NOTE]
+> SyncFusionApp SDK for .NET is currently only compatible with Windows, Android, iOS, and Mac Catalyst when used with Uno Platform.
+
 ## Installation
 
 In order to use the Syncfusion controls, you will need to create an account and purchase a Syncfusion license [here](https://help.syncfusion.com/maui/licensing/overview). This sample can be run in development without a license key.
 
 ## Getting Started
 
-1. Create a new application using the `unoapp` template, enabling .NET MAUI Embedding. In this case, we're going to use the Blank template (`-preset blank`) and include .NET MAUI Embedding support (`-maui`).
+### [Visual Studio](#tab/vs)
 
-    ```dotnetcli
-    dotnet new unoapp -preset blank -maui -o MauiEmbeddingApp
-    ```
+> [!NOTE]
+> If you don't have the **Uno Platform Extension for Visual Studio** installed, follow [these instructions](xref:Uno.GetStarted.vs2022).
 
-1. Next, add a reference to the [Syncfusion.Maui.Charts package](https://www.nuget.org/packages/Syncfusion.Maui.Charts) to the `MauiEmbeddingApp.MauiControls` project.
+- Launch **Visual Studio** and click on **Create new project** on the Start Window. Alternatively, if you're already in Visual Studio, click **New, Project** from the **File** menu.
 
-1. In the `AppBuilderExtensions` class, on `MauiEmbeddingApp.MauiControls` project, update the `UseMauiControls` extension method to call the `ConfigureSyncfusionCore` method.
+- Type `Uno Platform` in the search box
+
+- Click **Uno Platform App**, then **Next**
+
+- Name the project `SyncFusionApp` and click **Create**
+
+At this point you'll enter the **Uno Platform Template Wizard**, giving you options to customize the generated application.
+
+- Select **Blank** in **Presets** selection
+
+- Select the **Platforms** tab and unselect **Desktop** and **Web Assembly** platforms
+
+- Select the **Features** tab and click on **.NET MAUI Embedding**
+
+- Click **Create** to complete the wizard
+
+The template will create a solution with a single cross-platform project, named `SyncFusionApp`, ready to run.
+
+For more information on all the template options, see [Using the Uno Platform Template](xref:Uno.GettingStarted.UsingWizard).
+
+### [Command Line](#tab/cli)
+
+> [!NOTE]
+> If you don't have the **Uno Platform dotnet new templates** installed, follow [dotnet new templates for Uno Platform](xref:Uno.GetStarted.dotnet-new).
+
+Create a new application using the `unoapp` template, enabling .NET MAUI Embedding. In this case, we're going to use the Blank template (`-preset blank`) and include .NET MAUI Embedding support (`-maui`).
+
+```bash
+dotnet new unoapp -preset blank -maui -platforms "android" -platforms "ios" -platforms "maccatalyst" -platforms "windows" -o SyncFusionApp
+```
+
+This will create a new folder called **SyncFusionApp** containing the new application.
+
+---
+
+1. Next, add a reference to the [Syncfusion.Maui.Charts package](https://www.nuget.org/packages/Syncfusion.Maui.Charts) to the `SyncFusionApp.MauiControls` project.
+
+1. In the `AppBuilderExtensions` class, on `SyncFusionApp.MauiControls` project, update the `UseMauiControls` extension method to call the `ConfigureSyncfusionCore` method.
 
 ```cs
 using Syncfusion.Maui.Core.Hosting;
 
-    namespace MauiEmbeddingApp;
+    namespace SyncFusionApp;
 
     public static class AppBuilderExtensions
     {
@@ -37,24 +76,24 @@ using Syncfusion.Maui.Core.Hosting;
                 .ConfigureSyncfusionCore()
                 .ConfigureFonts(fonts =>
                 {
-                    fonts.AddFont("MauiEmbeddingApp/Assets/Fonts/OpenSansRegular.ttf", "OpenSansRegular");
-                    fonts.AddFont("MauiEmbeddingApp/Assets/Fonts/OpenSansSemibold.ttf", "OpenSansSemibold");
+                    fonts.AddFont("Assets/Fonts/OpenSansRegular.ttf", "OpenSansRegular");
+                    fonts.AddFont("Assets/Fonts/OpenSansSemibold.ttf", "OpenSansSemibold");
                 });
     }
 ```
 
 ## Adding SfCircularChart
 
-1. Update the EmbeddedControl.xaml in the  `MauiEmbeddingApp.MauiControls` project with the following XAML that includes the `SfCircularChart` control, which will be used to display a doughnut shaped chart.
+1. Update the EmbeddedControl.xaml in the  `SyncFusionApp.MauiControls` project with the following XAML that includes the `SfCircularChart` control, which will be used to display a doughnut shaped chart.
 
 ```xml
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
-             x:Class="MauiEmbeddingApp.MauiControls.EmbeddedControl"
+             x:Class="SyncFusionApp.MauiControls.EmbeddedControl"
              xmlns:chart="http://schemas.syncfusion.com/maui"
-             xmlns:local="clr-namespace:MauiEmbeddingApp.MauiControls.ViewModels"
+             xmlns:local="clr-namespace:SyncFusionApp.MauiControls.ViewModels"
              HorizontalOptions="Fill"
              VerticalOptions="Fill">
     <chart:SfCircularChart x:Name="chart"
@@ -118,7 +157,7 @@ using Syncfusion.Maui.Core.Hosting;
 1. Update the EmbeddedControl.xaml.cs with the following code.
 
     ```cs
-    namespace MauiEmbeddingApp.MauiControls;
+    namespace SyncFusionApp.MauiControls;
 
     public partial class EmbeddedControl : ContentView
     {
@@ -129,16 +168,16 @@ using Syncfusion.Maui.Core.Hosting;
     }
     ```
 
-1. It's time to create the ViewModel that will hold the properties that will be data bound to the `SfCircularChart` control. In `MauiEmbeddingApp.MauiControls` project, create a new folder called `ViewModels` and add a new class called `EmbeddedViewModel`. This class will have the following code:
+1. It's time to create the ViewModel that will hold the properties that will be data bound to the `SfCircularChart` control. In `SyncFusionApp.MauiControls` project, create a new folder called `ViewModels` and add a new class called `EmbeddedViewModel`. This class will have the following code:
 
     ```cs
-    using MauiEmbeddingApp.MauiControls.Models;
+    using SyncFusionApp.MauiControls.Models;
     using Syncfusion.Maui.Charts;
     using System.Collections.ObjectModel;
     using System.ComponentModel;
     using System.Windows.Input;
 
-    namespace MauiEmbeddingApp.MauiControls.ViewModels;
+    namespace SyncFusionApp.MauiControls.ViewModels;
 
     public class EmbeddedViewModel : INotifyPropertyChanged
     {
@@ -336,10 +375,10 @@ using Syncfusion.Maui.Core.Hosting;
     }
     ```
 
-1. The `EmbeddedViewModel` class is dependent on a `ChartDataModel` class which needs to be created. In `MauiEmbeddingApp.MauiControls` project, create a new folder called `Models` and add a new class called `ChartDataModel`. This class will have the following code:
+1. The `EmbeddedViewModel` class is dependent on a `ChartDataModel` class which needs to be created. In `SyncFusionApp.MauiControls` project, create a new folder called `Models` and add a new class called `ChartDataModel`. This class will have the following code:
 
     ```cs
-    namespace MauiEmbeddingApp.MauiControls.Models;
+    namespace SyncFusionApp.MauiControls.Models;
 
     public class ChartDataModel
     {
@@ -477,7 +516,7 @@ using Syncfusion.Maui.Core.Hosting;
 
 ```xml
 <?xml version="1.0" encoding="utf-8" ?>
-<ContentView x:Class="MauiEmbeddingApp.MauiControls.EmbeddedControl"
+<ContentView x:Class="SyncFusionApp.MauiControls.EmbeddedControl"
 			 ...
              >
     <chart:SfCircularChart x:Name="chart"
@@ -495,7 +534,7 @@ using Syncfusion.Maui.Core.Hosting;
     > When running on Windows without a valid Syncfusion license (in demo mode) the app will crash due to the Demo Mode dialog being launched too early. You can work around this by setting the Control Type in your MauiHost from the Loaded event.
 
     ```cs
-    namespace MauiEmbeddingApp;
+    namespace SyncFusionApp;
 
     public sealed partial class MainPage : Page
     {
@@ -512,6 +551,8 @@ using Syncfusion.Maui.Core.Hosting;
         }
     }
     ```
+
+For more detailed instructions specific to each platform, refer to the [Debug the App](xref:Uno.GettingStarted.CreateAnApp.VS2022#debug-the-app) documentation.
 
 **App Render Output**
 
