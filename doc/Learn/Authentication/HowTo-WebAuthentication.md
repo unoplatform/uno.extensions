@@ -16,7 +16,16 @@ uid: Uno.Extensions.Authentication.HowToWebAuthentication
 
 - A client id (and client secret) will be provided to you.
 
-- Make sure `Uno.Extensions.Authentication.WinUI` NuGet package is installed in your solution.
+- Add `Authentication` to the `<UnoFeatures>` property in the Class Library (.csproj) file.
+
+    ```diff
+    <UnoFeatures>
+        Material;
+    +   Authentication;
+        Toolkit;
+        MVUX;
+    </UnoFeatures>
+    ```
 
 ### 2. Set up web authentication
 
@@ -72,10 +81,10 @@ uid: Uno.Extensions.Authentication.HowToWebAuthentication
 
     ```json
     {
-    "Web": {
-        "LoginStartUri": "URI_TO_LOGIN",
-        "LogoutStartUri": "URI_TO_LOGOUT"
-    }
+        "Web": {
+            "LoginStartUri": "URI_TO_LOGIN",
+            "LogoutStartUri": "URI_TO_LOGOUT"
+        }
     }
     ```
 

@@ -10,7 +10,21 @@ When working with a complex application, centralized registration of your API en
 > [!IMPORTANT]
 > This guide assumes you used the template wizard or `dotnet new unoapp` to create your solution. If not, it is recommended that you follow the [Creating an application with Uno.Extensions article](xref:Uno.Extensions.HowToGettingStarted) for creating an application from the template.
 
-### 1. Enable HTTP
+### 1. Installation
+
+* Add `Http` to the `<UnoFeatures>` property in the Class Library (.csproj) file.
+
+    ```diff
+    <UnoFeatures>
+        Material;
+        Extensions;
+    +   Http;
+        Toolkit;
+        MVUX;
+    </UnoFeatures>
+    ```
+
+### 2. Enable HTTP
 
 * Call the `UseHttp()` method to register a HTTP client with the `IHostBuilder` which implements `IHttpClient`:
 
@@ -26,7 +40,7 @@ When working with a complex application, centralized registration of your API en
     }
     ```
 
-### 2. Register Endpoints
+### 3. Register Endpoints
 
 * The `AddClient` extension method is used to register a client with the service collection.
 
@@ -66,7 +80,7 @@ When working with a complex application, centralized registration of your API en
     }
     ```
 
-### 3. Use the Service to Request Data
+### 4. Use the Service to Request Data
 
 * Since you registered the service with the service collection, you can now inject the `IShowService` implementation into your view models and use it to request information about a show from the endpoint:
 

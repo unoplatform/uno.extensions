@@ -16,9 +16,18 @@ This tutorial will walk you through how to set up this feature and use it to man
 > [!IMPORTANT]
 > This guide assumes you used the template wizard or `dotnet new unoapp` to create your solution. If not, it is recommended that you follow the [Creating an application with Uno.Extensions article](xref:Uno.Extensions.HowToGettingStarted) for creating an application from the template.
 
-### 1. Add the CommunityToolkit.Mvvm package to your project
+### 1. Add CommunityToolkit.Mvvm to your project
 
-* Add the [CommunityToolkit.Mvvm](https://www.nuget.org/packages/CommunityToolkit.Mvvm) package to your project.
+* Add `Mvvm` to the `<UnoFeatures>` property in the Class Library (.csproj) file. This will add the [CommunityToolkit.Mvvm](https://www.nuget.org/packages/CommunityToolkit.Mvvm) package to your project.
+
+    ```diff
+    <UnoFeatures>
+        Material;
+        Extensions;
+    +   Mvvm;
+        Toolkit;
+    </UnoFeatures>
+    ```
 
 ### 2. Register services with the DI container
 

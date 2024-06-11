@@ -15,6 +15,15 @@ Navigation needs to encompass a range of UI concepts:
 * Displaying a <a href="https://learn.microsoft.com/uwp/api/windows.ui.xaml.controls.primitives.popup" target="_blank">`Popup`</a> or <a href="https://learn.microsoft.com/windows/apps/design/controls/dialogs-and-flyouts/flyouts" target="_blank">`Flyout`</a>
 * Prompt a <a href="https://learn.microsoft.com/uwp/api/windows.ui.xaml.controls.contentdialog" target="_blank">`ContentDialog`</a> or <a href="https://learn.microsoft.com/uwp/api/windows.ui.popups.messagedialog" target="_blank">`MessageDialog`</a>
 
+## Installation
+
+`Navigation` is provided as an Uno Feature. To enable `Navigation` support in your application, add `Navigation` to the `<UnoFeatures>` property in the Class Library (.csproj) file.
+
+> [!IMPORTANT]
+> This walkthrough assumes you created your app using the Single Project template. If you used a different template, please refer to our [Migrating Projects to Single Project](xref:Uno.Development.MigratingToSingleProject) documentation.
+
+For more information about `UnoFeatures` refer to our [Using the Uno.Sdk](xref:Uno.Features.Uno.Sdk) docs.
+
 ## What triggers Navigation?
 
 Navigation can be triggered for a number of reasons:

@@ -10,7 +10,21 @@ Accessing the serialized and deserialized representation of an object can be imp
 > [!IMPORTANT]
 > This guide assumes you used the template wizard or `dotnet new unoapp` to create your solution. If not, it is recommended that you follow the [Creating an application with Uno.Extensions article](xref:Uno.Extensions.HowToGettingStarted) for creating an application from the template.
 
-### 1. Opt into Serialization
+### 1. Installation
+
+* Add `Serialization` to the `<UnoFeatures>` property in the Class Library (.csproj) file.
+
+    ```diff
+    <UnoFeatures>
+        Material;
+        Extensions;
+    +   Serialization;
+        Toolkit;
+        MVUX;
+    </UnoFeatures>
+    ```
+
+### 2. Opt into Serialization
 
 * Call the `UseSerialization()` method to register a serializer that implements `ISerializer` with the service collection:
 
@@ -25,7 +39,7 @@ Accessing the serialized and deserialized representation of an object can be imp
     ...
     ```
 
-### 2. Preparing the class to be serialized efficiently
+### 3. Preparing the class to be serialized efficiently
 
 * Below is a simple `Person` class which will be serialized to JSON:
 
@@ -72,7 +86,7 @@ Accessing the serialized and deserialized representation of an object can be imp
     ...
     ```
 
-### 3. Configuring the serializer
+### 4. Configuring the serializer
 
 * The default serializer implementation uses `System.Text.Json`. The serialization can be configured by registering an instance of `JsonSerializerOptions`:
 
@@ -91,7 +105,7 @@ Accessing the serialized and deserialized representation of an object can be imp
     ...
     ```
 
-### 4. Serialize and deserialize JSON data
+### 5. Serialize and deserialize JSON data
 
 * Obtain an instance of `ISerializer<Person>` in the view-model from DI:
 
