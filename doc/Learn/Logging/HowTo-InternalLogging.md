@@ -18,7 +18,7 @@ uid: Uno.Extensions.Logging.UseInternalLogging
 * To log Uno-internal messages, you first need to call `UseLogging()` on the `IHost` instance, passing `true` in for the enableUnoLogging parameter:
 
     ```csharp
-    private IHost Host { get; }
+    private IHost Host { get; set; }
 
     protected override void OnLaunched(LaunchActivatedEventArgs e)
     {
@@ -49,7 +49,7 @@ uid: Uno.Extensions.Logging.UseInternalLogging
 * Conditionally enable the recording of debug events depending on the hosting environment:
 
     ```csharp
-    private IHost Host { get; }
+    private IHost Host { get; set; }
 
     protected override void OnLaunched(LaunchActivatedEventArgs e)
     {

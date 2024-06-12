@@ -25,7 +25,7 @@ This tutorial will walk you through how to set up this feature and use it to man
 * Register services with the DI container as you normally would. For instance, you can use the `Configure` method on `IHostBuilder` to register services with the DI container:
 
     ```csharp
-    private IHost host { get; set; }
+    private IHost Host { get; set; }
 
     protected override void OnLaunched(LaunchActivatedEventArgs args)
     {
@@ -38,7 +38,7 @@ This tutorial will walk you through how to set up this feature and use it to man
                 );
             });
 
-        host = appBuilder.Build();
+        Host = appBuilder.Build();
     }
     ```
 
@@ -47,7 +47,7 @@ This tutorial will walk you through how to set up this feature and use it to man
 * Observe that the built `IHost` instance is available to the `App.cs` file. It is stored in a property on the `App` class:
 
     ```csharp
-    private IHost host { get; set; }
+    private IHost Host { get; set; }
     ```
 
 * Because the `IHost` instance is available to the `App.cs` file, you can get the `IHost.Services` collection and configure the service provider to use it.
@@ -58,7 +58,7 @@ This tutorial will walk you through how to set up this feature and use it to man
     protected override void OnLaunched(LaunchActivatedEventArgs args)
     {
         ...
-        Ioc.Default.ConfigureServices(host.Services);
+        Ioc.Default.ConfigureServices(Host.Services);
     }
     ```
 

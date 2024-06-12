@@ -12,7 +12,7 @@ Hosting is delivered as a NuGet package [Uno.Extensions.Hosting.WinUI](https://w
 Initialization of the `IHost` instance is done from the generated App.cs file of your solution. It should be created as soon as the application is launched. The following snippet uses the `CreateBuilder()` extension method to instantiate an `IApplicationBuilder` from your `Application`. It is then possible to configure the associated `IHostBuilder` to register services or use the numerous extensions offered by this library.
 
 ```csharp
-private IHost Host { get; }
+private IHost Host { get; set; }
 
 protected override void OnLaunched(LaunchActivatedEventArgs e)
 {
@@ -64,7 +64,7 @@ public class SimpleHostService : IHostedService
 The implementation can be registered during the host initialization by calling the `AddHostedService` method on the `IServiceCollection` returned by the `ConfigureServices` method on the `IHostBuilder`.
 
 ```csharp
-private IHost Host { get; }
+private IHost Host { get; set; }
 
 protected override void OnLaunched(LaunchActivatedEventArgs e)
 {
@@ -127,7 +127,7 @@ Debug.WriteLine($"Environment: {env.EnvironmentName}");
 The current hosting environment can be changed with the `UseEnvironment()` extension method.
 
 ```csharp
-private IHost Host { get; }
+private IHost Host { get; set; }
 
 protected override void OnLaunched(LaunchActivatedEventArgs e)
 {
@@ -144,7 +144,7 @@ protected override void OnLaunched(LaunchActivatedEventArgs e)
 The current hosting environment can also be used when configuring the host builder.
 
 ```csharp
-private IHost Host { get; }
+private IHost Host { get; set; }
 
 protected override void OnLaunched(LaunchActivatedEventArgs e)
 {

@@ -17,7 +17,7 @@ uid: Uno.Extensions.Authentication.HowToAuthentication
 - Append `UseAuthentication` to the `IHostBuilder` instance. The `Login` callback is used to verify the credentials. If the user is authenticated, the callback needs to return a non-empty dictionary of key-value pairs (this would typically contain tokens such as an access token and/or refresh token).
 
     ```csharp
-    private IHost Host { get; }
+    private IHost Host { get; set; }
 
     protected override void OnLaunched(LaunchActivatedEventArgs args)
     {
@@ -163,7 +163,7 @@ From this walk through, you can see how the IAuthenticationService can be used t
 - Add configuration for Refit endpoints
 
     ```csharp
-    private IHost Host { get; }
+    private IHost Host { get; set; }
 
     protected override void OnLaunched(LaunchActivatedEventArgs args)
     {
@@ -200,7 +200,7 @@ From this walk through, you can see how the IAuthenticationService can be used t
 - Add the `UseAuthentication` method to the `InitializeHost` method, this time using the `AddCustom` overload that accepts a type parameter. Instead of an `IServiceProvider` being passed into the `Login` callback, an instance of the `IDummyJsonEndpoint` will be provided.
 
     ```csharp
-    private IHost Host { get; }
+    private IHost Host { get; set;}
 
     protected override void OnLaunched(LaunchActivatedEventArgs args)
     {
