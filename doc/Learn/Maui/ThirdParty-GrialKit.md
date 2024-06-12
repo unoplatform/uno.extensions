@@ -9,6 +9,9 @@ The controls from Grial UI Kit can be used in an Uno Platform application via .N
 
 An existing sample app that showcases the controls is available [here](https://github.com/unoplatform/Uno.Samples/tree/master/UI/MauiEmbedding/GrialKitApp).
 
+> [!NOTE]
+ > GrialKit SDK for .NET is currently only compatible with Android and iOS when used with Uno Platform at the moment.
+
 ## Installation
 
 In order to use the Grial UI Kit controls, you first need to [sign up](https://admin.grialkit.com/secure/grial/front/signup). 
@@ -28,21 +31,56 @@ The last thing we'll need from the zip file is the nuget.config file. This file 
 
 ## Getting Started
 
-1. Create a new application using the `unoapp` template, enabling .NET MAUI Embedding. In this case, we're going to use the Blank template (`-preset blank`) and include .NET MAUI Embedding support (`-maui`).
+### [Visual Studio](#tab/vs)
 
-    ```
-    dotnet new unoapp -preset blank -maui -o MauiEmbeddingApp
-    ```
+ > [!NOTE]
+ > If you don't have the **Uno Platform Extension for Visual Studio** installed, follow [these instructions](xref:Uno.GetStarted.vs2022).
+ - Launch **Visual Studio** and click on **Create new project** on the Start Window. Alternatively, if you're already in Visual Studio, click **New, Project** from the **File** menu.
 
-1. Remove the `net8.0`, `net8.0-maccatalyst`, and `net8.0-windows10.0.19041.0` target frameworks from both the MauiEmbeddingApp and MauiEmbeddingApp.MauiControls projects.  
+ - Type `Uno Platform` in the search box
 
-1. Remove the `net8.0-maccatalyst` target framework from the MauiEmbeddingApp.Mobile project.  
+ - Click **Uno Platform App**, then **Next**
 
-1. Remove the `MauiEmbeddingApp.Windows` project from the solution.  
+ - Name the project `GrialKitApp` and click **Create**
 
-1. Add the `GrailLicense` file to the MauiEmbeddingApp.MauiControls project as an `EmbeddedResource`
+ At this point you'll enter the **Uno Platform Template Wizard**, giving you options to customize the generated application.
 
-1. Add the nuget.config file to the solution folder and make sure that the `packageSourceCredentials` section includes username and password. If you're missing credentials, go to the [profile page](https://admin.grialkit.com/secure/grial/front/profile) in the admin portal and click on the Nuget tab where you can create credentials for your account.
+ - Select **Blank** in **Presets** selection
+
+ - Select the **Platforms** tab and unselect **Desktop**, **Windows**, **MacOS** and **Web Assembly** platforms
+
+ - Select the **Features** tab and click on **.NET MAUI Embedding**
+
+ - Click **Create** to complete the wizard
+
+ The template will create a solution with a single cross-platform project, named `GrialKitApp`, ready to run.
+
+ For more information on all the template options, see [Using the Uno Platform Template](xref:Uno.GettingStarted.UsingWizard).
+
+ ### [Command Line](#tab/cli)
+
+ > [!NOTE]
+ > If you don't have the **Uno Platform dotnet new templates** installed, follow [dotnet new templates for Uno Platform](xref:Uno.GetStarted.dotnet-new).
+ Create a new application using the `unoapp` template, enabling .NET MAUI Embedding. In this case, we're going to use the Blank template (`-preset blank`) and include .NET MAUI Embedding support (`-maui`).
+
+ ```bash
+ dotnet new unoapp -preset blank -maui -platforms "android" -platforms "ios" -o GrialKitApp
+ ```
+
+ This will create a new folder called **GrialKitApp** containing the new application.
+
+ ---
+
+1. Add the `GrialLicense` file to the GrialKitApp.MauiControls project as an `EmbeddedResource`
+
+```csharp
+  <!--<ItemGroup Condition=" Exists('GrialLicense') ">
+    <None Remove="GrialLicense" />
+    <EmbeddedResource Include="GrialLicense" />
+  </ItemGroup>-->
+```
+
+2. Add the nuget.config file to the solution folder and make sure that the `packageSourceCredentials` section includes username and password. If you're missing credentials, go to the [profile page](https://admin.grialkit.com/secure/grial/front/profile) in the admin portal and click on the Nuget tab where you can create credentials for your account.
 
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
@@ -61,9 +99,9 @@ The last thing we'll need from the zip file is the nuget.config file. This file 
 </configuration>
 ```
 
-1. In the project file (csproj) for MauiEmbeddingApp.Mobile update the `ApplicationTitle` and `ApplicationId` properties with those retrieved earlier from the zip file.
+3. In the project file (csproj) for GrialKitApp.Mobile update the `ApplicationTitle` and `ApplicationId` properties with those retrieved earlier from the zip file.
 
-1. Expand out the MauiEmbeddingApp.Mobile project and locate the Main.Android.cs file. Change the Label property of the ApplicationAttribute from `@string/ApplicationName` to the ApplicationTitle retrieved earlier from the zip file.
+4. Expand out the GrailKitApp project and locate the Main.Android.cs file under `Platforms/Android`. Change the Label property of the ApplicationAttribute from `@string/ApplicationName` to the ApplicationTitle retrieved earlier from the zip file.
 
 ```cs
 [global::Android.App.ApplicationAttribute(
@@ -76,14 +114,14 @@ The last thing we'll need from the zip file is the nuget.config file. This file 
 public class Application : Microsoft.UI.Xaml.NativeApplication
 ```
 
-1. Add a reference to the UXDivers.GrialMaui NuGet packages to the MauiEmbeddingApp.MauiControls project.  
+5. Add a reference to the UXDivers.GrialMaui NuGet packages to the GrialKitApp.MauiControls project.  
 
-1. In the `AppBuilderExtensions` class, update the `UseMauiControls` extension method to call the `GrialKit.Init` and `UseGrial` methods.  
+6. In the `AppBuilderExtensions` class, update the `UseMauiControls` extension method to call the `GrialKit.Init` and `UseGrial` methods.  
 
 ```cs
 using UXDivers.Grial;
 
-namespace MauiEmbeddingApp;
+namespace GrialKitApp;
 
 public static class AppBuilderExtensions
 {
@@ -95,16 +133,16 @@ public static class AppBuilderExtensions
                 { "AccentColor", Color.FromArgb("#FF3F75FF") }
         });
 
-        GrialKit.Init(theme, "MauiEmbeddingApp.MauiControls.GrialLicense");
+        GrialKit.Init(theme, "GrialKitApp.MauiControls.GrialLicense");
 #else
-        GrialKit.Init("MauiEmbeddingApp.MauiControls.GrialLicense");
+        GrialKit.Init("GrialKitApp.MauiControls.GrialLicense");
 #endif
         return builder
             .UseGrial()
             .ConfigureFonts(fonts =>
             {
-                fonts.AddFont("MauiEmbeddingApp/Assets/Fonts/OpenSansRegular.ttf", "OpenSansRegular");
-                fonts.AddFont("MauiEmbeddingApp/Assets/Fonts/OpenSansSemibold.ttf", "OpenSansSemibold");
+                fonts.AddFont("Assets/Fonts/OpenSansRegular.ttf", "OpenSansRegular");
+                fonts.AddFont("Assets/Fonts/OpenSansSemibold.ttf", "OpenSansSemibold");
             });
     }
 }
@@ -122,7 +160,7 @@ The PieChart is one of many controls that's available in the Grial UI Kit. More 
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              xmlns:grial="http://uxdivers.com/grial"
-             x:Class="MauiEmbeddingApp.MauiControls.EmbeddedControl"
+             x:Class="GrialKitApp.MauiControls.EmbeddedControl"
              HorizontalOptions="Fill"
              VerticalOptions="Fill">
   <ContentPage.Resources>
@@ -161,10 +199,10 @@ The PieChart is one of many controls that's available in the Grial UI Kit. More 
 </ContentView>
 ```
 
-1. Update the EmbeddedControl.xaml.cs with the following code that sets the `BindingContext` for the chart (the PieChart) to be a basic set of data. 
+2. Update the EmbeddedControl.xaml.cs with the following code that sets the `BindingContext` for the chart (the PieChart) to be a basic set of data. 
 
 ```cs
-namespace MauiEmbeddingApp.MauiControls;
+namespace GrialKitApp.MauiControls;
 
 public partial class EmbeddedControl : ContentView
 {
@@ -196,6 +234,8 @@ public partial class EmbeddedControl : ContentView
     }
 }
 ```
+3. Now the project is good to go! Press F5 and should see the PieChart control running on your application.
+   For more detailed instructions specific to each platform, refer to the [Debug the App](xref:Uno.GettingStarted.CreateAnApp.VS2022#debug-the-app) documentation.
 
 **App Render Output**
 
