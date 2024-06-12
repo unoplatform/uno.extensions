@@ -20,6 +20,7 @@
 		<IsMacCatalyst>false</IsMacCatalyst>
 		<IsWinAppSdk>false</IsWinAppSdk>
 		<_UseTelerik>false</_UseTelerik>
+		<ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
 	</PropertyGroup>
 
 	<Choose>
