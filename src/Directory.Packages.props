@@ -6,7 +6,7 @@
 	<PropertyGroup Condition="$(SolutionName) != 'MauiEmbedding'">
 		<UnoVersion Condition="$(UnoVersion) == '' AND !$(MSBuildProjectName.Contains('Maui'))">5.0.19</UnoVersion>
 		<UnoVersion Condition="$(UnoVersion) == '' AND $(MSBuildProjectName.Contains('Maui'))">5.2.22</UnoVersion>
-		<WinAppSdkVersion Condition="$(WinAppSdkVersion) == ''">1.4.231219000</WinAppSdkVersion>
+		<WinAppSdkVersion Condition="$(WinAppSdkVersion) == ''">1.5.240311000</WinAppSdkVersion>
 	</PropertyGroup>
 
 	<Import Project="$(MSBuildThisFileDirectory)maui-embedding.props" Condition="$(SolutionName) == 'MauiEmbedding'" />
@@ -25,15 +25,15 @@
 		<PackageVersion Include="Microsoft.Extensions.Http" Version="8.0.0" />
 		<PackageVersion Include="Microsoft.Extensions.Localization.Abstractions" Version="8.0.1" />
 		<PackageVersion Include="Microsoft.Extensions.Logging" Version="8.0.0" />
-		<PackageVersion Include="Microsoft.Identity.Client" Version="4.60.3" />
-		<PackageVersion Include="Microsoft.Identity.Client.Extensions.Msal" Version="2.22.0" />
+		<PackageVersion Include="Microsoft.Identity.Client" Version="4.61.3" />
+		<PackageVersion Include="Microsoft.Identity.Client.Extensions.Msal" Version="4.61.3" />
 		<PackageVersion Include="Microsoft.Maui.Controls" Version="8.0.3" />
 		<PackageVersion Include="Microsoft.Maui.Controls.Compatibility" Version="8.0.3" />
 		<PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.6.2" />
 		<PackageVersion Include="Microsoft.Net.Compilers.Toolset" Version="4.2.0" />
 		<PackageVersion Include="Microsoft.SourceLink.GitHub" Version="1.1.1" />
 		<PackageVersion Include="Microsoft.UI.Xaml" Version="2.7.1" />
-		<PackageVersion Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.756" />
+		<PackageVersion Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.3233" />
 		<PackageVersion Include="Microsoft.WindowsAppSDK" Version="$(WinAppSdkVersion)" />
 		<PackageVersion Include="Microsoft.Graphics.Win2D" Version="1.2.0" />
 		<PackageVersion Include="Moq" Version="4.17.2" />
@@ -53,8 +53,8 @@
 		<PackageVersion Include="Uno.Core" Version="4.0.1" />
 		<PackageVersion Include="Uno.Extensions.Logging.OSLog" Version="1.7.0" />
 		<PackageVersion Include="Uno.Extensions.Logging.WebAssembly.Console" Version="1.7.0" />
-		<PackageVersion Include="Uno.Extensions.Markup.Generators" Version="5.2.0-dev.58" />
-		<PackageVersion Include="Uno.Extensions.Markup.WinUI" Version="5.2.0-dev.58" />
+		<PackageVersion Include="Uno.Extensions.Markup.Generators" Version="5.2.14" />
+		<PackageVersion Include="Uno.Extensions.Markup.WinUI" Version="5.2.14" />
 		<PackageVersion Include="Uno.Roslyn" Version="1.3.0-dev.12" />
 		<PackageVersion Include="Uno.Toolkit" Version="5.0.15" />
 		<PackageVersion Include="Uno.Toolkit.UI" Version="5.0.15" />
@@ -65,7 +65,7 @@
 		<PackageVersion Include="Uno.UI.Runtime.WebAssembly" Version="$(UnoVersion)" />
 		<PackageVersion Include="Uno.UI.RuntimeTests.Engine" Version="0.24.0-dev.95" />
 		<PackageVersion Include="Uno.WinUI" Version="$(UnoVersion)" />
-		<PackageVersion Include="Uno.WinUI.Markup" Version="5.2.0-dev.58" />
+		<PackageVersion Include="Uno.WinUI.Markup" Version="5.2.14" />
 		<PackageVersion Include="Uno.WinUI.MSAL" Version="$(UnoVersion)" />
 		<PackageVersion Include="Uno.WinUI.Runtime.WebAssembly" Version="$(UnoVersion)" />
 		<PackageVersion Include="coverlet.collector" Version="3.1.2" />

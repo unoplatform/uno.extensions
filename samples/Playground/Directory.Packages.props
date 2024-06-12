@@ -17,28 +17,28 @@
 		<PackageVersion Include="Microsoft.WindowsAppSDK" Version="1.5.240311000" />
 		<PackageVersion Include="Refit" Version="6.3.2" />
 		<PackageVersion Include="Refit.HttpClientFactory" Version="6.3.2" />
-		<PackageVersion Include="SkiaSharp.Views" Version="2.88.6" />
-		<PackageVersion Include="SkiaSharp.Views.Uno.WinUI" Version="2.88.6" />
-		<PackageVersion Include="SkiaSharp.Skottie" Version="2.88.6" />
+		<PackageVersion Include="SkiaSharp.Views" Version="2.88.7" />
+		<PackageVersion Include="SkiaSharp.Views.Uno.WinUI" Version="2.88.7" />
+		<PackageVersion Include="SkiaSharp.Skottie" Version="2.88.7" />
 		<PackageVersion Include="System.Text.Json" Version="8.0.1" />
 		<PackageVersion Include="Uno.Core" Version="4.0.1" />
 		<PackageVersion Include="Uno.Core.Extensions.Logging.Singleton" Version="4.0.1" />
 		<PackageVersion Include="Uno.Extensions.Logging.OSLog " Version="1.7.0" />
 		<PackageVersion Include="Uno.Extensions.Logging.WebAssembly.Console" Version="1.7.0" />
-		<PackageVersion Include="Uno.Material" Version="4.0.4" />
-		<PackageVersion Include="Uno.Material.WinUI" Version="4.0.4" />
-		<PackageVersion Include="Uno.Toolkit.WinUI" Version="5.0.15" />
-		<PackageVersion Include="Uno.Toolkit.WinUI.Material" Version="5.0.15" />
-		<PackageVersion Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="5.0.19" />
+		<PackageVersion Include="Uno.Material" Version="5.0.13" />
+		<PackageVersion Include="Uno.Material.WinUI" Version="5.0.13" />
+		<PackageVersion Include="Uno.Toolkit.WinUI" Version="6.0.24" />
+		<PackageVersion Include="Uno.Toolkit.WinUI.Material" Version="6.0.24" />
+		<PackageVersion Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="5.2.132" />
 		<PackageVersion Include="Uno.UniversalImageLoader" Version="1.9.36" />
-		<PackageVersion Include="Uno.Wasm.Bootstrap" Version="8.0.7" />
-		<PackageVersion Include="Uno.Wasm.Bootstrap.DevServer" Version="8.0.7" />
-		<PackageVersion Include="Uno.WinUI" Version="5.0.19" />
-		<PackageVersion Include="Uno.WinUI.WebAssembly" Version="5.0.19" />
-		<PackageVersion Include="Uno.WinUI.Skia.Gtk" Version="5.0.19" />
-		<PackageVersion Include="Uno.WinUI.DevServer" Version="5.0.19" />
+		<PackageVersion Include="Uno.Wasm.Bootstrap" Version="8.0.16" />
+		<PackageVersion Include="Uno.Wasm.Bootstrap.DevServer" Version="8.0.16" />
+		<PackageVersion Include="Uno.WinUI" Version="5.2.132" />
+		<PackageVersion Include="Uno.WinUI.WebAssembly" Version="5.2.132" />
+		<PackageVersion Include="Uno.WinUI.Skia.Gtk" Version="5.2.132" />
+		<PackageVersion Include="Uno.WinUI.DevServer" Version="5.2.132" />
 		<PackageVersion Include="Uno.Resizetizer" Version="1.2.0" />
-		<PackageVersion Include="Uno.WinUI.Lottie" Version="5.0.19" />
+		<PackageVersion Include="Uno.WinUI.Lottie" Version="5.2.132" />
 		<PackageVersion Include="Xamarin.Google.Android.Material" Version="1.9.0.3"/>
 	</ItemGroup>
 </Project>

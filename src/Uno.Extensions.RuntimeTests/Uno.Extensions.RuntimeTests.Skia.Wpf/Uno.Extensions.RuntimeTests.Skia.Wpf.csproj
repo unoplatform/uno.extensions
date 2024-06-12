@@ -27,12 +27,12 @@
 	<ItemGroup>
 		<PackageReference Update="Microsoft.Net.Compilers.Toolset" Version="4.2.0" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Console" Version="8.0.0" />
-		<PackageReference Include="Uno.WinUI.Skia.Wpf" Version="5.0.19" />
-		<PackageReference Include="Uno.WinUI.RemoteControl" Version="5.0.19" Condition="'$(Configuration)'=='Debug'" />
-		<PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="5.0.19" />
-		<PackageReference Include="Uno.WinUI.Lottie" Version="5.0.19" />
-		<PackageReference Include="SkiaSharp.Skottie" Version="2.88.3" />
-		<PackageReference Include="SkiaSharp.Views.Uno.WinUI" Version="2.88.3" />
+		<PackageReference Include="Uno.WinUI.Skia.Wpf" Version="5.2.132" />
+		<PackageReference Include="Uno.WinUI.RemoteControl" Version="5.2.132" Condition="'$(Configuration)'=='Debug'" />
+		<PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="5.2.132" />
+		<PackageReference Include="Uno.WinUI.Lottie" Version="5.2.132" />
+		<PackageReference Include="SkiaSharp.Skottie" Version="2.88.7" />
+		<PackageReference Include="SkiaSharp.Views.Uno.WinUI" Version="2.88.7" />
 	</ItemGroup>
 	<ItemGroup>
 		<UpToDateCheckInput Include="..\Uno.Extensions.RuntimeTests.Shared\**\*.xaml" />

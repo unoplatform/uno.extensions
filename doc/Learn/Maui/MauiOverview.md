@@ -87,8 +87,8 @@ Add a reference in the existing class library to [Uno.Extensions.Maui.WinUI](htt
     <Project ToolsVersion="15.0">
       <ItemGroup>
         ...
-        <!--<PackageVersion Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.756" /> -->
-        <!-- <PackageVersion Include="Microsoft.WindowsAppSDK" Version="1.4.231219000" />-->
+        <!--<PackageVersion Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.3233" /> -->
+        <!-- <PackageVersion Include="Microsoft.WindowsAppSDK" Version="1.5.240311000" />-->
         ...
         <!--<PackageVersion Include="Xamarin.Google.Android.Material" Version="1.9.0.2" />-->
         ...
