@@ -12,6 +12,7 @@ public enum TestSections
 	Navigation_NavigationView,
 	Navigation_TabBar,
 	Navigation_Reactive,
+	Apps_Chefs,
 	Apps_Commerce,
 	Apps_Commerce_ShellControl,
 	Apps_ToDo,

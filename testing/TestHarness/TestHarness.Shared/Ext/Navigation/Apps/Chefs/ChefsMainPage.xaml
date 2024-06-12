@@ -1,0 +1,67 @@
+﻿<testharness:BaseTestSectionPage xmlns:testharness="using:TestHarness"
+								 x:Class="TestHarness.Ext.Navigation.Apps.Chefs.ChefsMainPage"
+								 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+								 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+								 xmlns:local="using:TestHarness.Ext.Navigation.PageNavigation"
+								 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+								 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+								 mc:Ignorable="d"
+								 xmlns:utu="using:Uno.Toolkit.UI"
+								 Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+	<Grid>
+		<VisualStateManager.VisualStateGroups>
+			<VisualStateGroup>
+				<VisualState x:Name="NarrowWindow">
+					<VisualState.Setters>
+						<Setter Target="NavigationRoot.Width"
+								Value="400" />
+					</VisualState.Setters>
+				</VisualState>
+				<VisualState x:Name="WideWindow" />
+
+			</VisualStateGroup>
+		</VisualStateManager.VisualStateGroups>
+
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition />
+			<RowDefinition Height="Auto" />
+		</Grid.RowDefinitions>
+		<TextBlock Text="Sample App: Chefs Tests"
+				   Margin="20"
+				   FontSize="30" />
+		<ScrollViewer Grid.Row="1"
+					  ScrollViewer.HorizontalScrollBarVisibility="Auto"
+					  ScrollViewer.HorizontalScrollMode="Auto"
+					  ScrollViewer.VerticalScrollBarVisibility="Disabled"
+					  ScrollViewer.VerticalScrollMode="Disabled">
+			<Border 							HorizontalAlignment="Left"
+												VerticalAlignment="Stretch"
+												BorderBrush="Black"
+												BorderThickness="2">
+
+				<utu:ExtendedSplashScreen AutomationProperties.AutomationId="NavigationRoot"
+								x:Name="NavigationRoot"
+								HorizontalAlignment="Left"
+								VerticalAlignment="Stretch"
+								HorizontalContentAlignment="Stretch"
+								VerticalContentAlignment="Stretch"
+								Width="1920" />
+			</Border>
+		</ScrollViewer>
+		<StackPanel Grid.Row="2"
+					Orientation="Horizontal"
+					HorizontalAlignment="Center">
+			<Button AutomationProperties.AutomationId="ShowAppButton"
+					Content="Chefs App"
+					Click="ShowAppClick" />
+			<Button AutomationProperties.AutomationId="NarrowButton"
+					Content="Narrow"
+					Click="NarrowClick" />
+			<Button AutomationProperties.AutomationId="WideButton"
+					Content="Wide"
+					Click="WideClick" />
+		</StackPanel>
+	</Grid>
+
+</testharness:BaseTestSectionPage>

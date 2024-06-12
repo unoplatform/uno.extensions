@@ -127,6 +127,102 @@
       <DependentUpon>LocalizationOnePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Localization\LocalizationOneViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Chefs\ChefsCompletedDialog.xaml.cs">
+      <DependentUpon>ChefsCompletedDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Chefs\ChefsCookbookDetailModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Chefs\ChefsCookbookDetailPage.xaml.cs">
+      <DependentUpon>ChefsCookbookDetailPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Chefs\ChefsCreateUpdateCookbookModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Chefs\ChefsCreateUpdateCookbookPage.xaml.cs">
+      <DependentUpon>ChefsCreateUpdateCookbookPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Chefs\ChefsFavoriteRecipesModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Chefs\ChefsFavoriteRecipesPage.xaml.cs">
+      <DependentUpon>ChefsFavoriteRecipesPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Chefs\ChefsFilterModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Chefs\ChefsFilterPage.xaml.cs">
+      <DependentUpon>ChefsFilterPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Chefs\ChefsGenericDialog.xaml.cs">
+      <DependentUpon>ChefsGenericDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Chefs\ChefsGenericDialogModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Chefs\ChefsHomeModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Chefs\ChefsHomePage.xaml.cs">
+      <DependentUpon>ChefsHomePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Chefs\ChefsHostInit.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Chefs\ChefsLiveCookingModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Chefs\ChefsLiveCookingPage.xaml.cs">
+      <DependentUpon>ChefsLiveCookingPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Chefs\ChefsLoginModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Chefs\ChefsLoginPage.xaml.cs">
+      <DependentUpon>ChefsLoginPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Chefs\ChefsMainPage.xaml.cs">
+      <DependentUpon>ChefsMainPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Chefs\ChefsMapModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Chefs\ChefsMapPage.xaml.cs">
+      <DependentUpon>ChefsMapPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Chefs\ChefsNotificationsModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Chefs\ChefsNotificationsPage.xaml.cs">
+      <DependentUpon>ChefsNotificationsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Chefs\ChefsProfileModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Chefs\ChefsProfilePage.xaml.cs">
+      <DependentUpon>ChefsProfilePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Chefs\ChefsRecipeDetailsModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Chefs\ChefsRecipeDetailsPage.xaml.cs">
+      <DependentUpon>ChefsRecipeDetailsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Chefs\ChefsReviewsModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Chefs\ChefsReviewsPage.xaml.cs">
+      <DependentUpon>ChefsReviewsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Chefs\ChefsRootModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Chefs\ChefsRootPage.xaml.cs">
+      <DependentUpon>ChefsRootPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Chefs\ChefsSearchModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Chefs\ChefsSearchPage.xaml.cs">
+      <DependentUpon>ChefsSearchPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Chefs\ChefsSettingsModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Chefs\ChefsSettingsPage.xaml.cs">
+      <DependentUpon>ChefsSettingsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Chefs\ChefsShellModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Chefs\ChefsWelcomeModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Chefs\ChefsWelcomePage.xaml.cs">
+      <DependentUpon>ChefsWelcomePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Chefs\Models\ChefsAppConfig.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Chefs\Models\ChefsCategory.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Chefs\Models\ChefsCategoryWithCount.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Chefs\Models\ChefsCookbook.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Chefs\Models\ChefsCookbookImages.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Chefs\Models\ChefsCredentials.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Chefs\Models\ChefsDialogInfo.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Chefs\Models\ChefsGroupedNotification.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Chefs\Models\ChefsIChefEntity.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Chefs\Models\ChefsIngredient.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Chefs\Models\ChefsNotification.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Chefs\Models\ChefsNutrition.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Chefs\Models\ChefsNutritionChartItem.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Chefs\Models\ChefsRecipe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Chefs\Models\ChefsReview.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Chefs\Models\ChefsSearchFilter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Chefs\Models\ChefsSearchHistory.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Chefs\Models\ChefsStep.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Chefs\Models\ChefsUpdateCookBook.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Chefs\Models\ChefsUser.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Commerce\BaseCommerceViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Commerce\CommerceCredentials.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Commerce\CommerceDealsPage.xaml.cs">
@@ -480,6 +576,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="$(MSBuildThisFileDirectory)Ext\Http\Refit\HttpRefitOnePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Chefs\ChefsMainPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
