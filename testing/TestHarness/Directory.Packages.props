@@ -78,5 +78,5 @@
 	</ItemGroup>
 
 
-	<Import Project="../../src/winappsdk-workaround.targets" Condition="exists('../../src/winappsdk-workaround.targets')" />
+	<Import Project="../../src/winappsdk-workaround.targets" Condition="exists('../../src/winappsdk-workaround.targets') and $(TargetFramework.Contains('windows10'))" />
 </Project>
