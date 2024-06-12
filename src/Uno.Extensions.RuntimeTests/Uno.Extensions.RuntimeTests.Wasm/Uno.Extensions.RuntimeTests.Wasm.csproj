@@ -52,8 +52,8 @@
 		<PackageReference Include="Uno.WinUI.WebAssembly" Version="5.2.132" />
 		<PackageReference Include="Uno.WinUI.RemoteControl" Version="5.2.132" Condition="'$(Configuration)'=='Debug'" />
 		<PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="5.2.132" />
-		<PackageReference Include="Uno.Wasm.Bootstrap" Version="8.0.7" />
-		<PackageReference Include="Uno.Wasm.Bootstrap.DevServer" Version="8.0.7" />
+		<PackageReference Include="Uno.Wasm.Bootstrap" Version="8.0.16" />
+		<PackageReference Include="Uno.Wasm.Bootstrap.DevServer" Version="8.0.16" />
 		<PackageReference Include="Uno.WinUI.Lottie" Version="5.2.132" />
 	</ItemGroup>
 	<Import Project="..\Uno.Extensions.RuntimeTests.Shared\Uno.Extensions.RuntimeTests.Shared.projitems" Label="Shared" Condition="Exists('..\Uno.Extensions.RuntimeTests.Shared\Uno.Extensions.RuntimeTests.Shared.projitems')" />
