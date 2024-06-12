@@ -95,7 +95,7 @@ public class MessageDialogNavigator : DialogNavigator
 		};
 		md.Commands.AddRange(commands);
 
-#if WINUI
+#if WINUI || HAS_UNO_WINUI
 		var window = Window!;
 		var hwnd = WinRT.Interop.WindowNative.GetWindowHandle(window);
 		WinRT.Interop.InitializeWithWindow.Initialize(md, hwnd);
