@@ -59,8 +59,8 @@
 		<PackageVersion Include="Uno.UITest.Xamarin" Version="1.1.0-dev.70" />
 		<PackageVersion Include="Uno.UITest.Helpers" Version="1.1.0-dev.70" />
 		<PackageVersion Include="Uno.UniversalImageLoader" Version="1.9.36" />
-		<PackageVersion Include="Uno.Wasm.Bootstrap" Version="8.0.7" />
-		<PackageVersion Include="Uno.Wasm.Bootstrap.DevServer" Version="8.0.7" />
+		<PackageVersion Include="Uno.Wasm.Bootstrap" Version="8.0.16" />
+		<PackageVersion Include="Uno.Wasm.Bootstrap.DevServer" Version="8.0.16" />
 		<PackageVersion Include="Uno.WinUI" Version="5.2.132" />
 		<PackageVersion Include="Uno.WinUI.Skia.Gtk" Version="5.2.132" />
 		<PackageVersion Include="Uno.WinUI.Skia.Linux.FrameBuffer" Version="5.2.132" />

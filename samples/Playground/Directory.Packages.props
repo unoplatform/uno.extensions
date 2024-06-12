@@ -31,8 +31,8 @@
 		<PackageVersion Include="Uno.Toolkit.WinUI.Material" Version="6.0.24" />
 		<PackageVersion Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="5.2.132" />
 		<PackageVersion Include="Uno.UniversalImageLoader" Version="1.9.36" />
-		<PackageVersion Include="Uno.Wasm.Bootstrap" Version="8.0.14" />
-		<PackageVersion Include="Uno.Wasm.Bootstrap.DevServer" Version="8.0.14" />
+		<PackageVersion Include="Uno.Wasm.Bootstrap" Version="8.0.16" />
+		<PackageVersion Include="Uno.Wasm.Bootstrap.DevServer" Version="8.0.16" />
 		<PackageVersion Include="Uno.WinUI" Version="5.2.132" />
 		<PackageVersion Include="Uno.WinUI.WebAssembly" Version="5.2.132" />
 		<PackageVersion Include="Uno.WinUI.Skia.Gtk" Version="5.2.132" />
