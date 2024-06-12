@@ -71,13 +71,24 @@ public class NavigationViewNavigator : SelectorNavigator<Microsoft.UI.Xaml.Contr
 				return Array.Empty<object>();
 			}
 
-
-			if (Control.MenuItemsSource is IEnumerable items)
+			if (Control.MenuItemsSource is IEnumerable ||
+				Control.FooterMenuItemsSource is IEnumerable)
 			{
-				return items.OfType<object>().ToArray();
+				var menuItemsSource = Control.MenuItemsSource is IEnumerable<NavigationViewItem> itemsSource ?
+					itemsSource.ToArray() : Array.Empty<NavigationViewItem>();
+				var footerMenuItemsSource = Control.FooterMenuItemsSource is IEnumerable<NavigationViewItem> footerItemsSource ?
+					footerItemsSource.ToArray() : Array.Empty<NavigationViewItem>();
+
+				var allitems = menuItemsSource.Concat(footerMenuItemsSource).ToArray();
+
+				return allitems;
 			}
 
-			return Control.MenuItems.ToArray();
+			var menuItems = Control.MenuItems.OfType<NavigationViewItem>();
+			var footerMenuItems = Control.FooterMenuItems.OfType<NavigationViewItem>();
+			var navigationViewItems = menuItems.Concat(footerMenuItems).ToArray();
+
+			return navigationViewItems;
 		}
 	}
 
