@@ -32,6 +32,8 @@
       href: xref:Uno.Extensions.Markup.Storyboards
 - name: Using and Generating Extensions
   href: xref:Uno.Extensions.Markup.GeneratingExtensions
+- name: Using Theme Service
+  href: xref:Uno.Extensions.Markup.ThemeService
 - name: Appendix
   items:
     - name: TextBlock Run
