@@ -2,13 +2,44 @@
 	  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 	  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	  xmlns:local="using:TestHarness.Ext.Navigation.Apps.Chefs"
+	  xmlns:uen="using:Uno.Extensions.Navigation.UI"
+	  xmlns:utu="using:Uno.Toolkit.UI"
 	  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	  mc:Ignorable="d"
 	  Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-	<StackPanel>
-		<TextBlock Text="Root" />
-		<TextBlock Text="{Binding Credentials.Username}" />
-	</StackPanel>
+	<Grid>
+		<Grid x:Name="MainGrid"
+			  RowSpacing="0"
+			  Background="{ThemeResource SurfaceBrush}"
+			  uen:Region.Attached="True" >
+			<Grid.RowDefinitions>
+				<RowDefinition />
+				<RowDefinition Height="Auto" />
+			</Grid.RowDefinitions>
+			<Grid x:Name="NavigationGrid"
+				  uen:Region.Attached="True"
+				  uen:Region.Navigator="Visibility" />
+
+			<utu:TabBar x:Name="Tabs" Grid.Row="1"
+						uen:Region.Attached="True">
+				<utu:TabBarItem uen:Region.Name="ChefsHome"
+								IsSelectable="True"
+								Content="Home" >
+				</utu:TabBarItem>
+
+				<utu:TabBarItem uen:Region.Name="ChefsSearch"
+								IsSelectable="True"
+								Content="Search">
+				</utu:TabBarItem>
+
+				<utu:TabBarItem uen:Region.Name="ChefsFavoriteRecipes"
+								IsSelectable="True"
+								Content="Favorites">
+				</utu:TabBarItem>
+			</utu:TabBar>
+
+		</Grid>
+	</Grid>
 </Page>

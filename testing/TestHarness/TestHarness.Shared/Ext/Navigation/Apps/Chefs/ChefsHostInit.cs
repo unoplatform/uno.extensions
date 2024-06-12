@@ -6,7 +6,7 @@ public partial class ChefsHostInit : BaseHostInitialization
 {
 	protected override IHostBuilder Navigation(IHostBuilder builder)
 	{
-		return builder.UseNavigation(ReactiveViewModelMappings.ViewModelMappings, RegisterRoutes);
+		return builder.UseNavigation(ReactiveViewModelMappings.ViewModelMappings, RegisterRoutes).UseToolkitNavigation();
 	}
 	protected override void RegisterRoutes(IViewRegistry views, IRouteRegistry routes)
 	{
