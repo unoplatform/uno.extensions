@@ -1,5 +1,8 @@
-﻿namespace TestHarness.Ext.Navigation.Apps.Chefs;
+﻿using TestHarness.Ext.Navigation.Apps.Chefs.Models;
 
-public partial class ChefsRecipeDetailsModel
+namespace TestHarness.Ext.Navigation.Apps.Chefs;
+
+public partial class ChefsRecipeDetailsModel(ChefsRecipe recipe)
 {
+	public ChefsRecipe Recipe { get; } = recipe;
 }

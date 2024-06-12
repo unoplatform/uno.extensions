@@ -5,9 +5,17 @@
 	  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	  mc:Ignorable="d"
+	  xmlns:uen="using:Uno.Extensions.Navigation.UI"
 	  Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-	<Grid>
+	<StackPanel>
 		<TextBlock Text="ChefsProfile" />
-	</Grid>
+		<TextBlock Text="{Binding Recipe.Name}" />
+		<Button Content="CloseWithRecipe (back)"
+				uen:Navigation.Request="-"
+				uen:Navigation.Data="{Binding Recipe}" />
+		<Button Content="CloseWithRecipe (forward)"
+				uen:Navigation.Request=""
+				uen:Navigation.Data="{Binding Recipe}" />
+	</StackPanel>
 </Page>

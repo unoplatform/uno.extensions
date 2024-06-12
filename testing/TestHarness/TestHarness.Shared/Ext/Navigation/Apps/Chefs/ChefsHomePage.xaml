@@ -7,7 +7,11 @@
 	  mc:Ignorable="d"
 	  Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-	<Grid>
+	<StackPanel>
 		<TextBlock Text="ChefsHome" />
-	</Grid>
+		<Button Content="Profile"
+				Command="{Binding ShowCurrentProfile}" />
+		<Button Content="Profile (New)"
+				Command="{Binding ShowCurrentProfileNew}" />
+	</StackPanel>
 </Page>
