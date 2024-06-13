@@ -91,9 +91,9 @@ When working with a complex application, centralized registration of your API en
 
 ## See also
 
-- [How-To: Consume a web API with HttpClient](xref:Uno.Development.ConsumeWebApi)
-- [How-To: Create a Strongly-Typed REST Client for an API](xref:Uno.Extensions.Http.HowToRefit)
-- [How-To: Configure with Custom Endpoint Options](xref:Uno.Extensions.Http.HowToEndpointOptions)
-- [Overview: HTTP](xref:Uno.Extensions.Http.Overview)
-- [Overview: Polly and HttpClientFactory](https://github.com/App-vNext/Polly/wiki/Polly-and-HttpClientFactory)
-- [Explore: TestHarness HTTP Endpoints](https://github.com/unoplatform/uno.extensions/tree/main/testing/TestHarness/TestHarness.Shared/Ext/Http/Endpoints)
+* [How-To: Consume a web API with HttpClient](xref:Uno.Development.ConsumeWebApi)
+* [How-To: Create a Strongly-Typed REST Client for an API](xref:Uno.Extensions.Http.HowToRefit)
+* [How-To: Configure with Custom Endpoint Options](xref:Uno.Extensions.Http.HowToEndpointOptions)
+* [Overview: HTTP](xref:Uno.Extensions.Http.Overview)
+* [Overview: Polly and HttpClientFactory](https://github.com/App-vNext/Polly/wiki/Polly-and-HttpClientFactory)
+* [Explore: TestHarness HTTP Endpoints](https://github.com/unoplatform/uno.extensions/tree/main/testing/TestHarness/TestHarness.Shared/Ext/Http/Endpoints)

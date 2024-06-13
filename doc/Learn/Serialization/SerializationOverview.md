@@ -46,6 +46,7 @@ public class MyViewModel : ObservableObject
 ## Configuring ISerializer
 
 ### JSON
+
 The default serializer implementation only supports serializing to JSON. Because it uses `System.Text.Json`, the specifics of this behavior can be configured with `JsonSerializerOptions`. The following example shows how to register an instance of `JsonSerializerOptions` with the host.
 
 ```csharp

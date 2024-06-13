@@ -19,7 +19,7 @@ uid: Uno.Extensions.Hosting.HowToHostingSetup
 * We need to expose the `IHost` instance to the rest of App.cs. Add the following property to your class file:
 
     ```cs
-    private IHost Host { get; }
+    private IHost Host { get; set; }
     ```
 
 * As soon as your app is launched, use the `CreateBuilder()` extension method to instantiate an `IApplicationBuilder` from your `Application` object:

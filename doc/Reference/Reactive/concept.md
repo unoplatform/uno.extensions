@@ -8,10 +8,10 @@ When asynchronously loading data, the standard pattern is to use a `Task<T>`. A 
 ```csharp
 public async Task<decimal> GetShippingCost(CancellationToken ct)
 {
-	var country = SelectedCountry;
-	var cost = await _shippingService.GetShippingCost(country);
+    var country = SelectedCountry;
+    var cost = await _shippingService.GetShippingCost(country);
 
-	return cost;
+    return cost;
 }
 ```
 
@@ -30,10 +30,10 @@ Or with `IAsyncEnumerable`:
 ```csharp
 public async IAsyncEnumerable<decimal> GetShippingCost([EnumerationCancellation] CancellationToken ct = default)
 {
-	await foreach (var country in SelectedCountry)
-	{
-		yield return await _shippingService.GetShippingCost(country);
-	}
+    await foreach (var country in SelectedCountry)
+    {
+        yield return await _shippingService.GetShippingCost(country);
+    }
 }
 ```
 
@@ -48,14 +48,14 @@ With data, `IFeed<T>` currently supports 3 main metadata (named “axis”):
 * Error: If there is any exception linked to the current data
 * Progress: Indicates whether the current data is transient or final.
 * Data: This represents the _data_ itself, but also adds information about it.
-	It wraps the value into an `Option<T>` that adds the ability to make a distinction between the different states of the value:
-	* Some: Represents a valid data.
-	* None: Indicates that a value has been loaded but should be considered empty, and we should not be rendered as-is in the UI. In our example, when you cannot ship to the selected country.
-	* Undefined: This represents a missing value, i.e. there is no info about the data yet. Typically this is because we are asynchronously loading it.
+  * It wraps the value into an `Option<T>` that adds the ability to make a distinction between the different states of the value:
+    * Some: Represents a valid data.
+    * None: Indicates that a value has been loaded but should be considered empty, and we should not be rendered as-is in the UI. In our example, when you cannot ship to the selected country.
+    * Undefined: This represents a missing value, i.e. there is no info about the data yet. Typically this is because we are asynchronously loading it.
 
 Here is a diagram of common messages produced by a feed when asynchronously loading and refreshing data:
 
-```
+```diagram
      ┌─────────────────────┐
      │                     │
      │         ┌─────────┐ │

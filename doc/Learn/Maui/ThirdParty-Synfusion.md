@@ -25,95 +25,95 @@ In order to use the Syncfusion controls, you will need to create an account and 
 
 1. In the `AppBuilderExtensions` class, on `MauiEmbeddingApp.MauiControls` project, update the `UseMauiControls` extension method to call the `ConfigureSyncfusionCore` method.
 
-```cs
-using Syncfusion.Maui.Core.Hosting;
+    ```cs
+    using Syncfusion.Maui.Core.Hosting;
 
-    namespace MauiEmbeddingApp;
+        namespace MauiEmbeddingApp;
 
-    public static class AppBuilderExtensions
-    {
-        public static MauiAppBuilder UseMauiControls(this MauiAppBuilder builder)
-            => builder
-                .ConfigureSyncfusionCore()
-                .ConfigureFonts(fonts =>
-                {
-                    fonts.AddFont("MauiEmbeddingApp/Assets/Fonts/OpenSansRegular.ttf", "OpenSansRegular");
-                    fonts.AddFont("MauiEmbeddingApp/Assets/Fonts/OpenSansSemibold.ttf", "OpenSansSemibold");
-                });
-    }
-```
+        public static class AppBuilderExtensions
+        {
+            public static MauiAppBuilder UseMauiControls(this MauiAppBuilder builder)
+                => builder
+                    .ConfigureSyncfusionCore()
+                    .ConfigureFonts(fonts =>
+                    {
+                        fonts.AddFont("MauiEmbeddingApp/Assets/Fonts/OpenSansRegular.ttf", "OpenSansRegular");
+                        fonts.AddFont("MauiEmbeddingApp/Assets/Fonts/OpenSansSemibold.ttf", "OpenSansSemibold");
+                    });
+        }
+    ```
 
 ## Adding SfCircularChart
 
 1. Update the EmbeddedControl.xaml in the  `MauiEmbeddingApp.MauiControls` project with the following XAML that includes the `SfCircularChart` control, which will be used to display a doughnut shaped chart.
 
-```xml
-<?xml version="1.0" encoding="utf-8" ?>
-<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
-             x:Class="MauiEmbeddingApp.MauiControls.EmbeddedControl"
-             xmlns:chart="http://schemas.syncfusion.com/maui"
-             xmlns:local="clr-namespace:MauiEmbeddingApp.MauiControls.ViewModels"
-             HorizontalOptions="Fill"
-             VerticalOptions="Fill">
-    <chart:SfCircularChart x:Name="chart"
-                           HorizontalOptions="Fill"
-                           VerticalOptions="Fill">
-        <chart:SfCircularChart.Title>
-            <Label Text="Project Cost Breakdown"
-                   Margin="0"
-                   HorizontalOptions="Fill"
-                   HorizontalTextAlignment="Center"
-                   VerticalOptions="Center"
-                   FontSize="16"
-                   TextColor="Black" />
-        </chart:SfCircularChart.Title>
-        <chart:SfCircularChart.Legend>
-            <chart:ChartLegend />
-        </chart:SfCircularChart.Legend>
-        <chart:SfCircularChart.Series>
-            <chart:DoughnutSeries x:Name="series"
-                                  ExplodeIndex="{Binding SelectedIndex}"
-                                  ExplodeOnTouch="True"
-                                  ShowDataLabels="True"
-                                  Radius="0.9"
-                                  PaletteBrushes="{Binding PaletteBrushes}"
-                                  ItemsSource="{Binding DoughnutSeriesData}"
-                                  XBindingPath="Name"
-                                  YBindingPath="Value"
-                                  EnableAnimation="False"
-                                  StrokeWidth="1"
-                                  Stroke="White"
-                                  LegendIcon="SeriesType">
-                <chart:DoughnutSeries.CenterView>
-                    <StackLayout x:Name="layout"
-                                 HeightRequest="{Binding CenterHoleSize}"
-                                 WidthRequest="{Binding CenterHoleSize}">
-                        <Label Text="{Binding Name,Source={x:Reference embeddedViewModel}}"
-                               FontSize="13"
-                               HorizontalOptions="Center"
-                               VerticalOptions="EndAndExpand"
-                               Margin="5" />
-                        <Label Text="{Binding Value,Source={x:Reference embeddedViewModel},StringFormat='{0}%'}"
-                               FontSize="12"
-                               HorizontalOptions="Center"
-                               VerticalOptions="StartAndExpand"
-                               Margin="5" />
-                    </StackLayout>
-                </chart:DoughnutSeries.CenterView>
-                <chart:DoughnutSeries.DataLabelSettings>
-                    <chart:CircularDataLabelSettings>
-                        <chart:CircularDataLabelSettings.LabelStyle>
-                            <chart:ChartDataLabelStyle LabelFormat="0'M" />
-                        </chart:CircularDataLabelSettings.LabelStyle>
-                    </chart:CircularDataLabelSettings>
-                </chart:DoughnutSeries.DataLabelSettings>
-            </chart:DoughnutSeries>
-        </chart:SfCircularChart.Series>
-    </chart:SfCircularChart>
-</ContentView>
-```
+    ```xml
+    <?xml version="1.0" encoding="utf-8" ?>
+    <ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+                x:Class="MauiEmbeddingApp.MauiControls.EmbeddedControl"
+                xmlns:chart="http://schemas.syncfusion.com/maui"
+                xmlns:local="clr-namespace:MauiEmbeddingApp.MauiControls.ViewModels"
+                HorizontalOptions="Fill"
+                VerticalOptions="Fill">
+        <chart:SfCircularChart x:Name="chart"
+                            HorizontalOptions="Fill"
+                            VerticalOptions="Fill">
+            <chart:SfCircularChart.Title>
+                <Label Text="Project Cost Breakdown"
+                    Margin="0"
+                    HorizontalOptions="Fill"
+                    HorizontalTextAlignment="Center"
+                    VerticalOptions="Center"
+                    FontSize="16"
+                    TextColor="Black" />
+            </chart:SfCircularChart.Title>
+            <chart:SfCircularChart.Legend>
+                <chart:ChartLegend />
+            </chart:SfCircularChart.Legend>
+            <chart:SfCircularChart.Series>
+                <chart:DoughnutSeries x:Name="series"
+                                    ExplodeIndex="{Binding SelectedIndex}"
+                                    ExplodeOnTouch="True"
+                                    ShowDataLabels="True"
+                                    Radius="0.9"
+                                    PaletteBrushes="{Binding PaletteBrushes}"
+                                    ItemsSource="{Binding DoughnutSeriesData}"
+                                    XBindingPath="Name"
+                                    YBindingPath="Value"
+                                    EnableAnimation="False"
+                                    StrokeWidth="1"
+                                    Stroke="White"
+                                    LegendIcon="SeriesType">
+                    <chart:DoughnutSeries.CenterView>
+                        <StackLayout x:Name="layout"
+                                    HeightRequest="{Binding CenterHoleSize}"
+                                    WidthRequest="{Binding CenterHoleSize}">
+                            <Label Text="{Binding Name,Source={x:Reference embeddedViewModel}}"
+                                FontSize="13"
+                                HorizontalOptions="Center"
+                                VerticalOptions="EndAndExpand"
+                                Margin="5" />
+                            <Label Text="{Binding Value,Source={x:Reference embeddedViewModel},StringFormat='{0}%'}"
+                                FontSize="12"
+                                HorizontalOptions="Center"
+                                VerticalOptions="StartAndExpand"
+                                Margin="5" />
+                        </StackLayout>
+                    </chart:DoughnutSeries.CenterView>
+                    <chart:DoughnutSeries.DataLabelSettings>
+                        <chart:CircularDataLabelSettings>
+                            <chart:CircularDataLabelSettings.LabelStyle>
+                                <chart:ChartDataLabelStyle LabelFormat="0'M" />
+                            </chart:CircularDataLabelSettings.LabelStyle>
+                        </chart:CircularDataLabelSettings>
+                    </chart:DoughnutSeries.DataLabelSettings>
+                </chart:DoughnutSeries>
+            </chart:SfCircularChart.Series>
+        </chart:SfCircularChart>
+    </ContentView>
+    ```
 
 1. Update the EmbeddedControl.xaml.cs with the following code.
 
@@ -475,24 +475,24 @@ using Syncfusion.Maui.Core.Hosting;
 
 1. The next step is to add the `EmbeddedViewModel` as the `DataContext` of the `SfCircularChart` in the `EmbeddedControl.xaml`:
 
-```xml
-<?xml version="1.0" encoding="utf-8" ?>
-<ContentView x:Class="MauiEmbeddingApp.MauiControls.EmbeddedControl"
-			 ...
-             >
-    <chart:SfCircularChart x:Name="chart"
-                           HorizontalOptions="Fill"
-                           VerticalOptions="Fill">
-        <chart:SfCircularChart.BindingContext>
-            <local:EmbeddedViewModel x:Name="embeddedViewModel" />
-        </chart:SfCircularChart.BindingContext>
-        ...
-```
+    ```xml
+    <?xml version="1.0" encoding="utf-8" ?>
+    <ContentView x:Class="MauiEmbeddingApp.MauiControls.EmbeddedControl"
+                ...
+                >
+        <chart:SfCircularChart x:Name="chart"
+                            HorizontalOptions="Fill"
+                            VerticalOptions="Fill">
+            <chart:SfCircularChart.BindingContext>
+                <local:EmbeddedViewModel x:Name="embeddedViewModel" />
+            </chart:SfCircularChart.BindingContext>
+            ...
+    ```
 
 1. Now the project is good to go! Press F5 and you should see the `SfCircularChart` control. Without specifying a license key, you'll see a prompt informing you that you're running the application using a trial version.
 
     > [!NOTE]
-    > There is a known issue with the trial version prompt that can cause the application to crash on startup. If this is encountered running this sample, the `MainPage.xaml` can be updated to remove the `Source` property on the `MauiHost`. The `Source` property can then be set in the codebehind file in an event handler for the `Loaded` event of the `Page`.
+    > There is a known issue with the trial version prompt that can cause the application to crash on startup. If this is encountered running this sample, the `MainPage.xaml` can be updated to remove the `Source` property on the `MauiHost`. The `Source` property can then be set in the code behind file in an event handler for the `Loaded` event of the `Page`.
 
     ```cs
     namespace MauiEmbeddingApp;
@@ -513,7 +513,7 @@ using Syncfusion.Maui.Core.Hosting;
     }
     ```
 
-**App Render Output**
+## App Render Output
 
 - **Android:**
   - ![Android Syncfusion](Assets/Screenshots/Android/Syncfusion.png)

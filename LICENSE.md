@@ -2,9 +2,9 @@
 
 Copyright (c) Uno Platform
 
-All rights reserved. 
+All rights reserved.
 
-# Apache 2.0 License
+## Apache 2.0 License
 
                                  Apache License
                            Version 2.0, January 2004

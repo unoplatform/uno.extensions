@@ -48,7 +48,7 @@ public partial class MainPage : Page
 }
 ```
 
-##### Shorthand Syntax
+#### Shorthand Syntax
 
 Instead of using the full `IDependencyPropertyBuilder` to provide our Binding and Converter, we can additionally use the shorthand syntax provided by an additional extension that is provided by the generator. To do this we simply need to provide our `Binding` and `Convert` delegates as follows:
 
@@ -88,7 +88,7 @@ new Button()
         .Converter(Converters.InverseBoolConverter));
 ```
 
-##  ConvertBack
+## ConvertBack
 
 Similarly, you may need to convert the value back to the original type when the value is updated.
 In this case, you can use the `ConvertBack` method to provide a converter to the binding.

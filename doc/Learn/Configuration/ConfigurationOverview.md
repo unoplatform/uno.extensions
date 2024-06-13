@@ -45,7 +45,7 @@ public class MyService : IMyService
 To use `appsettings.json` file packaged as **EmbeddedResource** in the application:
 
 ```csharp
-private IHost Host { get; }
+private IHost Host { get; set; }
 
 protected override void OnLaunched(LaunchActivatedEventArgs e)
 {
@@ -66,7 +66,7 @@ protected override void OnLaunched(LaunchActivatedEventArgs e)
 The recommended approach to specifying a configuration file source, especially when targeting Web Assembly (WASM), is to register it as an **EmbeddedResource** as described above. Configuration data read from embedded resources has the benefit of being available to the application immediately upon startup. However, it is still possible to package the file source as **Content** instead:
 
 ```csharp
-private IHost Host { get; }
+private IHost Host { get; set; }
 
 protected override void OnLaunched(LaunchActivatedEventArgs e)
 {
@@ -88,7 +88,7 @@ protected override void OnLaunched(LaunchActivatedEventArgs e)
 Both `EmbeddedSource` and `ContentSource` methods will also create settings files that are specific to the current environment by default, `appsettings.<hostenvironment>.json` (eg `appsettings.development.json`). This can be disabled by setting the `includeEnvironmentSettings` argument to `false` (default value is `true`):
 
 ```csharp
-private IHost Host { get; }
+private IHost Host { get; set; }
 
 protected override void OnLaunched(LaunchActivatedEventArgs e)
 {

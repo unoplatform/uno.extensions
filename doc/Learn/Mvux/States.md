@@ -216,13 +216,12 @@ Let's modify the XAML [above](#how-to-bind-the-view-to-a-state) with the followi
 </Page>
 ```
 
-When pressing the _Increment slider_ button, the generated `IncrementSlider` command will be executed invoking the `IncrementSilder` method on the Model resulting on an incrementation of the value.
+When pressing the _Increment slider_ button, the generated `IncrementSlider` command will be executed invoking the `IncrementSilder` method on the Model resulting in an incrementation of the value.
 
 This is what the result will look like:
 
 ![A video that demonstrates the effect of the recent updates applied to the slider-app](Assets/SliderApp-2.gif)
 
 The source code for the sample app can be found [here](https://github.com/unoplatform/Uno.Samples/tree/master/UI/MvuxHowTos/SliderApp).
-
 
 To learn more about Commands read the Commands section in [this article](xref:Uno.Extensions.Reactive.InApps#commands).

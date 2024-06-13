@@ -8,7 +8,7 @@ uid: Uno.Extensions.Markup.Upgrading
 
 ### ItemsPanel Property
 
-The signature for the `ItemsPanel` property extension method has changed to a strongly typed generic method that accepts a delegate to configure the root element of the `ItemsPanelTemplate`. 
+The signature for the `ItemsPanel` property extension method has changed to a strongly typed generic method that accepts a delegate to configure the root element of the `ItemsPanelTemplate`.
 
 The `ItemsPanel` property extension method that previously looked like this:
 
