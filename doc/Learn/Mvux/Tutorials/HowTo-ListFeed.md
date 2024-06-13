@@ -9,11 +9,11 @@ and displays a collection of items from a service, and enables refreshing the da
 
 In this tutorial, you will learn how to create an MVUX project and the basic usage of a list-feed (`IListFeed<T>`), and the `FeedView` control.
 
- - For our data, we're going to create a service that asynchronously provides a collection of `Person` entities upon request.  
- - You'll learn how to use a feed to asynchronously request this data from the service.
- - How to display the data on the UI
- - How to use the `FeedView` control to display the data and automatically respond to the current feed status.
- - Use a refresh button to retrieve the latest weather data on-demand.
+- For our data, we're going to create a service that asynchronously provides a collection of `Person` entities upon request.  
+- You'll learn how to use a feed to asynchronously request this data from the service.
+- How to display the data on the UI
+- How to use the `FeedView` control to display the data and automatically respond to the current feed status.
+- Use a refresh button to retrieve the latest weather data on-demand.
 
 ## PeopleApp Sample
 
@@ -72,7 +72,7 @@ You can find the code of this tutorial [here](https://github.com/unoplatform/Uno
     > [!NOTE]  
     > Feeds (`IFeed<T>` and `IListFeed<T>` for collections) are used as a gateway to asynchronously request data from a service and wrap the result or an error if any in metadata to be displayed in the View in accordingly.  
     Learn more about list-feeds [here](xref:Uno.Extensions.Mvux.HowToListFeed).
-
+    >
     > [!TIP]  
     > Feeds are stateless and are there for when the data from the service is read-only and we're not planning to enable edits to it.  
     MVUX also provides stateful feeds. For that purpose States (`IState<T>` and `<IListState<T>` for collections) come in handy.  
@@ -93,7 +93,7 @@ This is similar in concept to an `IObservable<IEnumerable<T>>`, where an `IListF
 To make it possible to data bind to feeds, the MVUX analyzers read the `PeopleModel`
 and generate a bindable proxy called `BindableWeatherModel`,
 which exposes properties that the View can data bind to.
-                                            
+
 1. Open the file `MainView.xaml` and add the following namespace to the XAML:
 
     `xmlns:mvux="using:Uno.Extensions.Reactive.UI"`

@@ -38,14 +38,14 @@ Depending on the type of the XAML element, the `Navigation.Request` property wil
             uen:Navigation.Request="Sample" />
     ```
 
-> [!TIP]
-> As Navigation.Request attached property exists in the `Uno.Extensions.Navigation.UI` namespace you will need to import this namespace on the `Page` element with
+    > [!TIP]
+    > As Navigation.Request attached property exists in the `Uno.Extensions.Navigation.UI` namespace you will need to import this namespace on the `Page` element with
 
-```csharp
-<Page x:Class="NavigateInXAML.Views.SamplePage"
-    ...
-    xmlns:uen="using:Uno.Extensions.Navigation.UI">
-```
+    ```csharp
+    <Page x:Class="NavigateInXAML.Views.SamplePage"
+        ...
+        xmlns:uen="using:Uno.Extensions.Navigation.UI">
+    ```
 
 - In `SamplePage.xaml` add a `Button`, again with the `Navigation.Request` attached property. The "-" navigation route is used to navigate back.
 
@@ -54,8 +54,8 @@ Depending on the type of the XAML element, the `Navigation.Request` property wil
             uen:Navigation.Request="-" />
     ```
 
-> [!TIP]
-> Whilst this works, it relies on reflection to convert the request path "Sample" to the corresponding view, i.e. `SamplePage`. It's better to define `ViewMap` and `RouteMap`
+    > [!TIP]
+    > While this works, it relies on reflection to convert the request path "Sample" to the corresponding view, i.e. `SamplePage`. It's better to define `ViewMap` and `RouteMap`
 
 - Add a `ViewMap` and a `RouteMap` for the `SamplePage` into the `RegisterRoutes` method in the `App.xaml.host.cs` file
 

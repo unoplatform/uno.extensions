@@ -47,7 +47,6 @@ The cultures which the app will support are enumerated in a specific section of 
 
 To add a new resource file, right-click on the project and select **Add > New Item...**. Select **Resource File (.resw)** and name it `Resources.resw`. Resource files have a key-value pair structure. The key is used to identify the resource, and the value can represent any valid property value such as translated text, the width of an item, or a color.
 
-
 ### Resolving localized strings
 
 Once local-specific resources are included, the localization feature can be used to resolve those localized values.

@@ -5,7 +5,7 @@ uid: Reference.Navigation.RouteMap
 
 ## RouteMap
 
-In order for navigation to support both view and viewmodel based navigation it is necessary to have some way to define a mapping, or association, between a view and viewmodel (for example MainPage is mapped to MainViewModel, and vice versa).  However, given the different intents and behaviours we needed to support, navigation supports a more complex mapping that is referred to as a RouteMap.
+In order for navigation to support both view and viewmodel based navigation it is necessary to have some way to define a mapping, or association, between a view and viewmodel (for example MainPage is mapped to MainViewModel, and vice versa).  However, given the different intents and behaviors we needed to support, navigation supports a more complex mapping that is referred to as a RouteMap.
 
 A RouteMap is made up of the following components:
 

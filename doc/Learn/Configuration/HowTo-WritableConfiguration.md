@@ -20,7 +20,7 @@ A special interface called `IWritableOptions<T>` is registered as a service when
 * To enable configuration, you first need to call `UseConfiguration()` on the `IHostBuilder` instance:
 
     ```csharp
-    private IHost Host { get; }
+    private IHost Host { get; set; }
 
     protected override void OnLaunched(LaunchActivatedEventArgs e)
     {
@@ -38,7 +38,7 @@ A special interface called `IWritableOptions<T>` is registered as a service when
 * Use the `EmbeddedSource<T>()` extension method to load configuration information from a JSON file called `appsettings.json` embedded inside the `App` assembly:
 
     ```csharp
-    private IHost Host { get; }
+    private IHost Host { get; set; }
 
     protected override void OnLaunched(LaunchActivatedEventArgs e)
     {
@@ -73,7 +73,7 @@ A special interface called `IWritableOptions<T>` is registered as a service when
 * Register the newly-defined configuration section by calling `Section<T>()` on `IConfigBuilder`:
 
     ```csharp
-    private IHost Host { get; }
+    private IHost Host { get; set; }
 
     protected override void OnLaunched(LaunchActivatedEventArgs e)
     {

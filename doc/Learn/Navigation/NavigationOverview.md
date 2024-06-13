@@ -30,6 +30,7 @@ Prompt the user using a flyout or content dialog to get a response
 ## Architecture Objectives
 
 ### Navigation needs to be accessible from anywhere
+
 * View (Code behind)
 i.e. in context of a page/usercontrol
 * View (XAML)
@@ -38,6 +39,7 @@ i.e. using attached properties
 i.e. in a context that doesn't have access to the UI layer
 
 ### Navigation needs to make use of available data
+
 * Uri
 Used to share links to the app (eg deeplink)
 * DTO

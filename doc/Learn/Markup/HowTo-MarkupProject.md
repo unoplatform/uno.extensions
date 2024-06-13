@@ -9,9 +9,9 @@ In this tutorial, you'll learn how to set up an Uno Platform project to use C# M
 1. Make sure your environment is set up properly by using [uno check](xref:UnoCheck.UsingUnoCheck).
 1. You can create a Uno App by either using the Uno Platform Visual Studio extension or via the command line interface.
 
-    # [**Visual Studio**](#tab/vs)
+  ## [**Visual Studio**](#tab/vs)
 
-    #### Using Visual Studio 2022 Uno Platform Extension
+  ### Using Visual Studio 2022 Uno Platform Extension
 
     - Open the Visual Studio and select Extensions => Manage Extensions and Search (<kbd>Ctrl</kbd> + <kbd>E</kbd>) for unoplatform.
 
@@ -33,9 +33,9 @@ In this tutorial, you'll learn how to set up an Uno Platform project to use C# M
 
     - Click *Create* on the bottom right corner.
 
-    # [**CLI**](#tab/cli)
+  ## [**CLI**](#tab/cli)
 
-    #### Using the command line interface
+  ### Using the command line interface
 
     - Run the following command, using an appropriate name (`MySampleProject` in this page).
 

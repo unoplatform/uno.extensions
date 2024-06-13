@@ -6,10 +6,10 @@ uid: Uno.Extensions.Mvux.HowToSimpleState
 
 In this tutorial, you will learn how to create an MVUX project and basic usage of a state (`IState<T>`) and the `FeedView` control, to asynchronously load, display and manipulate data from and to an service.
 
- - The data is provided by a service that asynchronously retrieves and updates a single value that determines the crowdedness of a wedding hall, via a 'remote' service.
- - A State to asynchronously request and update the data from and to the service.
- - The `FeedView` control will be used to display the data and automatically respond to the current State status.
- - See how MVUX generates commands and learn how to react to them in the Model.
+- The data is provided by a service that asynchronously retrieves and updates a single value that determines the crowdedness of a wedding hall, via a 'remote' service.
+- A State to asynchronously request and update the data from and to the service.
+- The `FeedView` control will be used to display the data and automatically respond to the current State status.
+- See how MVUX generates commands and learn how to react to them in the Model.
 
 ## WeddingHallApp Sample
 
@@ -87,7 +87,7 @@ You can find the code for our weather app [here](https://github.com/unoplatform/
     > Feeds and States (`IState<T>` and `IListState<T>` for collections) are both used as a gateway to asynchronously request data from a service and wrap the result or error (if any) in metadata to be displayed in the View in accordingly.
     However, unlike a Feed, a State, as its name suggests, is stateful.
     While a Feed is just a query of a stream of data, a State also implies an up-to-date value that represents the current state of the application that can be accessed and updated.
-
+    >
     > [!TIP]
     > Unlike feeds, States require a reference to the owner type which is used to store and manage the state of the model.
     In addition, by having a reference to the owner, we link the lifetime of the model with its owner, and the State is ready to be collected by the Garbage Collector as soon as its owner is disposed.
@@ -117,7 +117,7 @@ The difference of States is that they provide update operators and enable manipu
     </StackPanel>
     ```
 
-When the user edits the text in the `TextBox`, MVUXs data-binding adapters translate between the data-binding into updating the `HallCrowdedness` state, by recreating the whole `HallCrowdedness` entity (it's immutable) with the changed `NumberOfPeopleInHall` value that was received per the `TextBox` edit.
+    When the user edits the text in the `TextBox`, MVUXs data-binding adapters translate between the data-binding into updating the `HallCrowdedness` state, by recreating the whole `HallCrowdedness` entity (it's immutable) with the changed `NumberOfPeopleInHall` value that was received per the `TextBox` edit.
 
 ## MVUX commands
 
@@ -164,4 +164,3 @@ When the user edits the text in the `TextBox`, MVUXs data-binding adapters trans
     ![A screenshot showing Visual Studio stopped at the breakpoint](../Assets/SimpleState-3.jpg)
 
     As you can see, the current value of the state has gotten the updated number '*15*'. This is now being saved to the service, in the following line execution once you hit <kbd>F5</kbd> again.
-

@@ -10,7 +10,7 @@ Binding to the `SelectedItem` property is not even required, as this works autom
 
 To synchronize to the selected value in the `Model` side, use the `Selection` operator of the `IListFeed`.
 
-### Recap of the *PeopleApp* example
+## Recap of the *PeopleApp* example
 
 We'll be using the *PeopleApp* example which we've built step-by-step in [this tutorial](xref:Uno.Extensions.Mvux.HowToListFeed).  
 
@@ -210,7 +210,7 @@ Then change `.Selection(SelectedPerson)` to `.Selection(SelectedPeople)`.
 
 This is what's changed in the PeopleModel class:
 
-```chsarp
+```csharp
 public partial record PeopleModel(IPeopleService PeopleService)
 {
     public IListFeed<Person> People =>

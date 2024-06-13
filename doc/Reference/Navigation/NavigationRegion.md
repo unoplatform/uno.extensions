@@ -11,15 +11,15 @@ For selection-based regions, the selectable items (NavigationViewItem, TabBarIte
 
 ```csharp
 <muxc:NavigationView uen:Region.Attached="true">
-	<muxc:NavigationView.MenuItems>
-		<muxc:NavigationViewItem Content="Products" uen:Region.Name="Products" />
-		<muxc:NavigationViewItem Content="Deals" uen:Region.Name="Deals" />
-		<muxc:NavigationViewItem Content="Profile" uen:Region.Name="Profile" />
-	</muxc:NavigationView.MenuItems>
+    <muxc:NavigationView.MenuItems>
+        <muxc:NavigationViewItem Content="Products" uen:Region.Name="Products" />
+        <muxc:NavigationViewItem Content="Deals" uen:Region.Name="Deals" />
+        <muxc:NavigationViewItem Content="Profile" uen:Region.Name="Profile" />
+    </muxc:NavigationView.MenuItems>
 </muxc:NavigationView>
 ```
 
 Switching selected item:
-	`naviator.NavigateRouteAsync(this,"Deals");`
+    `naviator.NavigateRouteAsync(this,"Deals");`
 
 - Define what a navigation region is and how the hierarchy of regions is created with the Region.Attached property

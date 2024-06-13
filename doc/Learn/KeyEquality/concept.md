@@ -72,9 +72,9 @@ You have several way to configure the keys:
 
     ```csharp
     public partial record MyItem(
-    	[property:Key] Guid EntityId,
-    	[property:Key] string SourceId,
-    	string Value);
+        [property:Key] Guid EntityId,
+        [property:Key] string SourceId,
+        string Value);
     ```
 
     > [!IMPORTANT]
