@@ -28,19 +28,10 @@ Choosing the right control for your navigation needs is important, and one commo
   </Grid>
   ```
 
-* Add a `RowDefinition` to the `Grid`'s `RowDefinitions` collection. This will define the height of the `NavigationView`'s menu.
-
-  ```xml
-  <Grid.RowDefinitions>
-      <RowDefinition Height="Auto" />
-      <RowDefinition />
-  </Grid.RowDefinitions>
-  ```
-
 * Add a `NavigationView` control to the `Grid`. This will be the menu for the app.
 
   ```xml
-  <NavigationView Grid.Row="1">
+  <NavigationView>
       ...
   </NavigationView>
   ```
@@ -53,7 +44,7 @@ Choosing the right control for your navigation needs is important, and one commo
   For this tutorial, `Grid` should be placed in the `Content` area.
 
   ```xml
-  <Grid Grid.Row="1">
+  <Grid>
       ...
   </Grid>
   ```
@@ -75,24 +66,24 @@ Choosing the right control for your navigation needs is important, and one commo
 * Inside the `Grid` element of the `NavigationView`, add a `Grid` element to represent the content of each view you can to navigate to.
 
   ```xml
-  <Grid Grid.Row="1">
+  <Grid>
       <Grid>
           <TextBlock Text="One"
-                    FontSize="24"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center" />
+                     FontSize="24"
+                     HorizontalAlignment="Center"
+                     VerticalAlignment="Center" />
       </Grid>
       <Grid>
           <TextBlock Text="Two"
-                    FontSize="24"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center" />
+                     FontSize="24"
+                     HorizontalAlignment="Center"
+                     VerticalAlignment="Center" />
       </Grid>
       <Grid>
           <TextBlock Text="Three"
-                    FontSize="24"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center" />
+                     FontSize="24"
+                     HorizontalAlignment="Center"
+                     VerticalAlignment="Center" />
       </Grid>
   </Grid>
   ```
@@ -103,7 +94,7 @@ Choosing the right control for your navigation needs is important, and one commo
 
 * Add the `uen:Region.Attached` attached property to each of the following elements:
 
-  * The `Grid` element that contains the `NavigationView` and the `Grid` element that contains the content area.
+  * The `Grid` element that contains the `NavigationView`.
   * The `NavigationView` element.
   * The `Grid` element that contains the content area.
 
@@ -134,6 +125,9 @@ Choosing the right control for your navigation needs is important, and one commo
   ```xml
   uen:Region.Navigator="Visibility"
   ```
+
+  > [!IMPORTANT]
+  > Even if you're not utilizing the `<Grid>` element to arrange the content (ie, you're navigating between pages defined with routes), you must still include the `<Grid>` element with the `uen:Region.Navigator="Visibility"` and `uen:Region.Attached="True"` attached properties. These properties are essential for enabling the navigator functionality.
 
 * Add the `uen:Region.Name` attached property to each of the `Grid` elements that contain the content area. This will define the name of the view that the `Grid` will represent.
 
@@ -180,21 +174,20 @@ Choosing the right control for your navigation needs is important, and one commo
 * Add a new **Page** item to your app called `ProductsPage` with the following code:
 
   ```xml
-  <Page
-      x:Class="UsingNavigationView.Views.ProductsPage"
-      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-      xmlns:local="using:Uno.Extensions.Navigation.UI.Samples"
-      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-      mc:Ignorable="d"
-      Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+  <Page x:Class="UsingNavigationView.Views.ProductsPage"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="using:Uno.Extensions.Navigation.UI.Samples"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
       <Grid>
           <TextBlock Text="Products"
-                    FontSize="24"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center" />
+                     FontSize="24"
+                     HorizontalAlignment="Center"
+                     VerticalAlignment="Center" />
       </Grid>
   </Page>
   ```
@@ -278,13 +271,8 @@ Choosing the right control for your navigation needs is important, and one commo
       Background="{ThemeResource MaterialBackgroundBrush}">
 
     <Grid uen:Region.Attached="True">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition />
-        </Grid.RowDefinitions>
 
-        <NavigationView uen:Region.Attached="true"
-                        Grid.Row="1">
+        <NavigationView uen:Region.Attached="true">
             <NavigationView.MenuItems>
                 <NavigationViewItem Content="One"
                                     uen:Region.Name="One" />
@@ -297,8 +285,7 @@ Choosing the right control for your navigation needs is important, and one commo
             </NavigationView.MenuItems>
 
             <Grid uen:Region.Attached="True"
-                  uen:Region.Navigator="Visibility"
-                  Grid.Row="1">
+                  uen:Region.Navigator="Visibility">
                 <Grid uen:Region.Name="One"
                       Visibility="Collapsed">
                     <TextBlock Text="One"
