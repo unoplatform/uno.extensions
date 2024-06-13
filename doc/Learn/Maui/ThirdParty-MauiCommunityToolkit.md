@@ -109,18 +109,18 @@ An existing sample app that showcases the controls is available [here](https://g
 
 1. It's time to create the ViewModel that will hold the properties that will be data bound to the `DrawingView` control. On `MauiEmbeddingApp` project, create a new folder called `ViewModels` and add a new class called `MainViewModel`. This class will have the following code:
 
-```cs
-namespace MauiEmbeddingApp.ViewModels;
+    ```cs
+    namespace MauiEmbeddingApp.ViewModels;
 
-partial class MainViewModel : ObservableObject
-{
-	[ObservableProperty]
-	bool isMultiLineModeEnabled;
+    partial class MainViewModel : ObservableObject
+    {
+        [ObservableProperty]
+        bool isMultiLineModeEnabled;
 
-	[ObservableProperty]
-	bool shouldCleanOnFinish;
-}
-```
+        [ObservableProperty]
+        bool shouldCleanOnFinish;
+    }
+    ```
 
 1. The `MainViewModel` uses the `ObservableObject` base class that comes from the `CommunityToolkit.MVVM` NuGet package. This significantly reduces the amount of boilerplate code required. Add a reference to the [CommunityToolkit.Mvvm NuGet package](https://www.nuget.org/packages/CommunityToolkit.Mvvm) to the MauiEmbeddingApp project.
 
@@ -162,7 +162,7 @@ partial class MainViewModel : ObservableObject
 
 1. Now the project is good to go! Press F5 and you should see the `DrawingView` control working as expected. And tweaking the `ToggleSwitch` controls should change the `DrawingView` behavior.
 
-**App Render Output**
+## App Render Output
 
 - **Android:**
   - ![Android CommunityToolkit](Assets/Screenshots/Android/CommunityToolkit.png)

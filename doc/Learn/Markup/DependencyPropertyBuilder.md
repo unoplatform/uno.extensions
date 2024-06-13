@@ -28,7 +28,7 @@ new TextBlock()
     .Text(() => vm.Client.Contact.FirstName)
 ```
 
-#### Understanding the Binding Expression
+### Understanding the Binding Expression
 
 The **Binding Expression** is a lambda expression that provides the path to the property you are binding to.
 

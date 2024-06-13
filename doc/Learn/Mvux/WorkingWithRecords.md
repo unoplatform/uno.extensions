@@ -64,7 +64,7 @@ new ChatResponse("Hello, I'm a bot"); //with IsError defaulting to false
 
 ## How to use records with MVUX
 
-Records are designed to be a simple data structure, excellent for exchanging data, such as requests and responses, between application layers. 
+Records are designed to be a simple data structure, excellent for exchanging data, such as requests and responses, between application layers.
 
 For instance, in our `ChatService`, the `AskAsync` method is called from the Model. It receives a list of `ChatEntry` records, which are used to create a request. The method returns a `ChatResponse` (record) instance to the Model, handling data from the presentation layer to the business layer:
 
@@ -119,7 +119,7 @@ await Messages.UpdateAsync(message);
 
 Check out our SimpleCalc workshop and ChatGPT sample to see how we put these tips into action in real apps, using MVUX and immutable records.
 
- - [SimpleCalc Workshop](xref:Workshop.SimpleCalc.GettingStarted)
-   - [MVUX & XAML](xref:Workshop.SimpleCalc.MVUX.XAML.FirstProject)
-   - [MVUX & C# Markup](xref:Workshop.SimpleCalc.MVUX.CSharp.FirstProject)
- - [ChatGPT Sample](https://github.com/unoplatform/Uno.Samples/tree/master/UI/ChatGPT)
+- [SimpleCalc Workshop](xref:Workshop.SimpleCalc.GettingStarted)
+  - [MVUX & XAML](xref:Workshop.SimpleCalc.MVUX.XAML.FirstProject)
+  - [MVUX & C# Markup](xref:Workshop.SimpleCalc.MVUX.CSharp.FirstProject)
+- [ChatGPT Sample](https://github.com/unoplatform/Uno.Samples/tree/master/UI/ChatGPT)

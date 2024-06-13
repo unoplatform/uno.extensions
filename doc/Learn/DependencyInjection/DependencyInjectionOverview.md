@@ -11,7 +11,7 @@ Apps built using hosting can leverage dependency injection (DI) to register serv
 Services are registered with the host using the `ConfigureServices` method on the `IHostBuilder`. The following snippet shows how to register a service with the host:
 
 ```csharp
-private IHost Host { get; }
+private IHost Host { get; set; }
 
 protected override void OnLaunched(LaunchActivatedEventArgs e)
 {
@@ -71,7 +71,7 @@ Typically, services are registered with the `Singleton` lifetime.
 Uno.Extensions provides a way to register multiple services of the same type with different names. This is useful in scenarios where multiple implementations of the same service are configured differently in an implementation factory and the correct implementation needs to be resolved at runtime. The following snippet shows how to register a named service with the host:
 
 ```csharp
-private IHost Host { get; }
+private IHost Host { get; set; }
 
 protected override void OnLaunched(LaunchActivatedEventArgs e)
 {
@@ -102,7 +102,7 @@ var service = Host.Services.GetNamedService<ISimpleService>("SimpleNamedServiceO
 Uno.Extensions provides a way to register services using a factory method. This is useful in scenarios where the service implementation is not known until runtime. The following snippet shows how to register a service with the host using a factory method:
 
 ```csharp
-private IHost Host { get; }
+private IHost Host { get; set; }
 
 protected override void OnLaunched(LaunchActivatedEventArgs e)
 {

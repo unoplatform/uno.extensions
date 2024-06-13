@@ -17,18 +17,18 @@ The `IAuthenticationService` interface defines the methods that an application c
 ```csharp
 public interface IAuthenticationService
 {
-	string[] Providers { get; }
-	ValueTask<bool> LoginAsync(IDispatcher? dispatcher, IDictionary<string, string>? credentials = default, string? provider = null, CancellationToken? cancellationToken = default);
-	ValueTask<bool> RefreshAsync(CancellationToken? cancellationToken = default);
-	ValueTask<bool> LogoutAsync(IDispatcher? dispatcher, CancellationToken? cancellationToken = default);
-	ValueTask<bool> IsAuthenticated(CancellationToken? cancellationToken = default);
-	event EventHandler LoggedOut;
+    string[] Providers { get; }
+    ValueTask<bool> LoginAsync(IDispatcher? dispatcher, IDictionary<string, string>? credentials = default, string? provider = null, CancellationToken? cancellationToken = default);
+    ValueTask<bool> RefreshAsync(CancellationToken? cancellationToken = default);
+    ValueTask<bool> LogoutAsync(IDispatcher? dispatcher, CancellationToken? cancellationToken = default);
+    ValueTask<bool> IsAuthenticated(CancellationToken? cancellationToken = default);
+    event EventHandler LoggedOut;
 }
 ```
 
 There are any number of different application workflows that require authentication but they typically boil down to using one or more of the `IAuthenticationService` methods. For example:
 
-**Login on launch**
+### Login on launch
 
 In this scenario the user is required to be authenticated in order to access the application. This is a workflow that redirects the user to a login prompt if they aren't authenticated when the application is launched.
 
@@ -40,7 +40,7 @@ In this scenario the user is required to be authenticated in order to access the
 - If `LoginAsync` returns true, app navigates to home page
 - The user might decide to logout of the application, which invokes the `IAuthenticationService.LogoutAsync` method, the application then navigates back to the login page.
 
-**User login requested**
+### User login requested
 
 In this scenario the application doesn't require the user to be authenticated unless they want to access certain parts of the application (or there is additional/different information that's available to the user if they've logged in)
 
@@ -84,7 +84,7 @@ The `WebAuthenticationProvider` provides an implementation that displays a web v
 
 Before the `WebAuthenticationProvider` is automatically built, there are platform specific checks invoked internally which occasionally alter behavior during the authentication process:
 
-**Windows**: The `AddWeb()` extension method will initialize a `WebAuthenticator` to launch an out-of-process browser. This is done preemtively to support its usage within `WebAuthenticationProvider` during login and logout instead of the `WebAuthenticationBroker` used for other platforms.
+**Windows**: The `AddWeb()` extension method will initialize a `WebAuthenticator` to launch an out-of-process browser. This is done preemptively to support its usage within `WebAuthenticationProvider` during login and logout instead of the `WebAuthenticationBroker` used for other platforms.
 
 **Other platforms**: For a description of various subtle differences when displaying a web login prompt on multiple platforms, see [Web Authentication Broker](https://platform.uno/docs/articles/features/web-authentication-broker.html). The broker will only respond to the `PrefersEphemeralWebBrowserSession` setting value in iOS (versions 13.0+), while the other platforms will ignore it.
 

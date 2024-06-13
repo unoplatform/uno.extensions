@@ -3,7 +3,7 @@ uid: Uno.Extensions.Maui.ThirdParty.EsriMaps
 ---
 # .NET MAUI Embedding - Esri ArcGIS Maps SDK for .NET
 
-The MapView control, that's part of the ArcGIS Maps SDK for .NET, can be used in an Uno Platform application via .NET MAUI Embedding. 
+The MapView control, that's part of the ArcGIS Maps SDK for .NET, can be used in an Uno Platform application via .NET MAUI Embedding.
 
 ## Sample App
 
