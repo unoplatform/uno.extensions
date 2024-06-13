@@ -36,4 +36,16 @@
 		</ItemGroup>
 		<Message Importance="high" Text ="Removed: @(_WebView2CoreOutputsToExclude)" />
 	</Target>
+
+	<Target Name="_ValidateMsalDependencyWasm"
+			BeforeTargets="Compile"
+			Condition="'$(IsUnoHead)'=='true' and '$(UnoRuntimeIdentifier)'=='WebAssembly'">
+		<ItemGroup>
+			<_ClientRefs Include="@(ReferencePath)" Condition="'%(ReferencePath.NuGetPackageId)' == 'Microsoft.Identity.Client'" />
+			<_MsalRefs Include="@(ReferencePath)" Condition="'%(ReferencePath.NuGetPackageId)' == 'Microsoft.Identity.Client.Extensions.Msal'" />
+		</ItemGroup>
+		<Error Condition="'@(_ClientRefs)'==''" Text="In order to use Uno.Extensions.Authentication.MSAL, the 'Microsoft.Identity.Client' NuGet Package must be referenced in the project." />
+		<Error Condition="'@(_MsalRefs)'==''" Text="In order to use Uno.Extensions.Authentication.MSAL, the 'Microsoft.Identity.Client.Extensions.Msal' NuGet Package must be referenced in the project." />
+	</Target>
+
 </Project>
