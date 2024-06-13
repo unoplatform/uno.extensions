@@ -12,20 +12,20 @@ Given an `IWeatherService` and `ILocationService`:
 ```csharp
 public interface IWeatherService
 {
-	/// <summary>
-	/// Asynchronously gets the current weather
-	/// </summary>
-	Task<WeatherInfo> GetCurrentWeather(CancellationToken ct);
+    /// <summary>
+    /// Asynchronously gets the current weather
+    /// </summary>
+    Task<WeatherInfo> GetCurrentWeather(CancellationToken ct);
 
-	/// <summary>
-	/// Asynchronously gets the details of a weather alert.
-	/// </summary>
-	Task<string> GetAlertDetails(WeatherAlert alert, CancellationToken ct);
+    /// <summary>
+    /// Asynchronously gets the details of a weather alert.
+    /// </summary>
+    Task<string> GetAlertDetails(WeatherAlert alert, CancellationToken ct);
 
-	/// <summary>
-	/// Asynchronously gets the weather forecast for the given day
-	/// </summary>
-	Task<WeatherInfo> GetWeatherForecast(DateTime date, CancellationToken ct);
+    /// <summary>
+    /// Asynchronously gets the weather forecast for the given day
+    /// </summary>
+    Task<WeatherInfo> GetWeatherForecast(DateTime date, CancellationToken ct);
 }
 
 public record WeatherInfo(double Temperature, WeatherAlert? Alert);
@@ -34,15 +34,15 @@ public record WeatherAlert(Guid Id, string? Title);
 
 public interface ILocationService
 {
-	/// <summary>
-	/// Asynchronously gets the name of the current city.
-	/// </summary>
-	Task<string> GetCurrentCity(CancellationToken ct);
+    /// <summary>
+    /// Asynchronously gets the name of the current city.
+    /// </summary>
+    Task<string> GetCurrentCity(CancellationToken ct);
 
-	/// <summary>
-	/// Gets teh list of all supported cities.
-	/// </summary>
-	Task<ImmutableList<string>> GetCities(CancellationToken ct);
+    /// <summary>
+    /// Gets teh list of all supported cities.
+    /// </summary>
+    Task<ImmutableList<string>> GetCities(CancellationToken ct);
 }
 ```
 
@@ -68,7 +68,7 @@ private Signal _refreshWeather = new();
 public IFeed<WeatherInfo> Weather => Feed.Async(async ct => await _weatherService.GetCurrentWeather(ct), _refreshWeather);
 
 public void RefreshWeather()
-	=> _refreshWeather.Raise();
+    => _refreshWeather.Raise();
 ```
 
 ### AsyncEnumerable
@@ -82,11 +82,11 @@ public IFeed<WeatherInfo> Weather => Feed.AsyncEnumerable(() => GetWeather());
 
 private async IAsyncEnumerable<WeatherInfo> GetWeather([EnumeratorCancellation] CancellationToken ct = default)
 {
-	while (!ct.IsCancellationRequested)
-	{
-		yield return await _weatherService.GetCurrentWeather(ct);
-		await Task.Delay(TimeSpan.FromHours(1), ct);
-	}
+    while (!ct.IsCancellationRequested)
+    {
+        yield return await _weatherService.GetCurrentWeather(ct);
+        await Task.Delay(TimeSpan.FromHours(1), ct);
+    }
 }
 ```
 
@@ -107,24 +107,24 @@ public IFeed<WeatherInfo> Weather => Feed.Create(GetWeather);
 
 private async IAsyncEnumerable<Message<WeatherInfo>> GetWeather([EnumeratorCancellation] CancellationToken ct = default)
 {
-	var message = Message<WeatherInfo>.Initial;
-	var weather = Option<WeatherInfo>.Undefined();
-	var error = default(Exception);
-	while (!ct.IsCancellationRequested)
-	{
-		try
-		{
-			weather = await _weatherService.GetCurrentWeather(ct);
-			error = default;
-		}
-		catch (Exception ex)
-		{
-			error = ex;
-		}
+    var message = Message<WeatherInfo>.Initial;
+    var weather = Option<WeatherInfo>.Undefined();
+    var error = default(Exception);
+    while (!ct.IsCancellationRequested)
+    {
+        try
+        {
+            weather = await _weatherService.GetCurrentWeather(ct);
+            error = default;
+        }
+        catch (Exception ex)
+        {
+            error = ex;
+        }
 
-		yield return message = message.With().Data(weather).Error(error);
-		await Task.Delay(TimeSpan.FromHours(1), ct);
-	}
+        yield return message = message.With().Data(weather).Error(error);
+        await Task.Delay(TimeSpan.FromHours(1), ct);
+    }
 }
 ```
 
@@ -139,8 +139,8 @@ You can apply some operators directly on any _feed_.
 > private IFeed<int> _values;
 >
 > public IFeed<string> Value => from value in _values
-> 	where value == 42
-> 	select value.ToString();
+>   where value == 42
+>   select value.ToString();
 > ```
 
 ### Where
@@ -151,8 +151,8 @@ Be aware that unlike `IEnumerable`, `IObservable`, and `IAsyncEnumerable`, if th
 
 ```csharp
 public IFeed<WeatherAlert> Alert => Weather
-	.Where(weather => weather.Alert is not null)
-	.Select(weather => weather.Alert!);
+    .Where(weather => weather.Alert is not null)
+    .Select(weather => weather.Alert!);
 ```
 
 ### Select
@@ -161,8 +161,8 @@ Synchronously projects each data from the source _feed_.
 
 ```csharp
 public IFeed<WeatherAlert> Alert => Weather
-	.Where(weather => weather.Alert is not null)
-	.Select(weather => weather.Alert!);
+    .Where(weather => weather.Alert is not null)
+    .Select(weather => weather.Alert!);
 ```
 
 ### SelectAsync
@@ -171,7 +171,7 @@ Asynchronously projects each data from the source _feed_.
 
 ```csharp
 public IFeed<string> AlertDetails => Alert
-	.SelectAsync(async (alert, ct) => await _weatherService.GetAlertDetails(alert, ct));
+    .SelectAsync(async (alert, ct) => await _weatherService.GetAlertDetails(alert, ct));
 ```
 
 ### GetAwaiter
@@ -181,7 +181,7 @@ This allows the use of `await` on a _feed_, for instance when you want to captur
 ```csharp
 public async ValueTask ShareAlert(CancellationToken ct)
 {
-	var alert = await Alert; // Gets the current WeatherAlert
-	await _shareService.Share(alert, ct);
+    var alert = await Alert; // Gets the current WeatherAlert
+    await _shareService.Share(alert, ct);
 }
 ```

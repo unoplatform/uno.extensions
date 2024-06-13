@@ -46,8 +46,9 @@ Choosing the right control for your navigation needs is important, and one commo
   ```
 
 * Add a `Grid` element to the control. `NavigationView` contains two sections for content:
-  - A pane which contains a list of navigation `MenuItems`
-  - The content area intended to correspond with the selected `NavigationViewItem`.
+
+  * A pane which contains a list of navigation `MenuItems`
+  * The content area intended to correspond with the selected `NavigationViewItem`.
 
   For this tutorial, `Grid` should be placed in the `Content` area.
 
@@ -102,9 +103,9 @@ Choosing the right control for your navigation needs is important, and one commo
 
 * Add the `uen:Region.Attached` attached property to each of the following elements:
 
-    * The `Grid` element that contains the `NavigationView` and the `Grid` element that contains the content area.
-    * The `NavigationView` element.
-    * The `Grid` element that contains the content area.
+  * The `Grid` element that contains the `NavigationView` and the `Grid` element that contains the content area.
+  * The `NavigationView` element.
+  * The `Grid` element that contains the content area.
 
   ```xml
   uen:Region.Attached="True"

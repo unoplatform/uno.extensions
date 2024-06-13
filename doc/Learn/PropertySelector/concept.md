@@ -19,10 +19,10 @@ And a helper class:
 ```csharp
 public static class Math
 {
-	public T Increment<T>(T instance, PropertySelector<T, int> selector)
-	{
-		// ..
-	}
+    public T Increment<T>(T instance, PropertySelector<T, int> selector)
+    {
+        // ..
+    }
 }
 ```
 
@@ -58,11 +58,11 @@ so it becomes possible to resolve the `IValueAccessor` using the `PropertySelect
 ```csharp
 public T Increment(T entity, PropertySelector<T, int> selector, [CallerFilePath] string path = "", [CallerLineNumber] int line = -1)
 {
-	var accessor = PropertySelectors.Get(selector, nameof(selector), path, line);
-	var currentValue = accessor.Get(entity);
-	var updatedEntity = accessor.Set(entity, currentValue + 1);
+    var accessor = PropertySelectors.Get(selector, nameof(selector), path, line);
+    var currentValue = accessor.Get(entity);
+    var updatedEntity = accessor.Set(entity, currentValue + 1);
 
-	return updatedEntity;
+    return updatedEntity;
 }
 ```
 
@@ -79,11 +79,11 @@ You have to resolve the `IValueAccessor` and pass it as parameter.
 
 ```csharp
 public T Increment(T entity, PropertySelector<T, int> selector, [CallerFilePath] string path = "", [CallerLineNumber] int line = -1)
-	=> IncrementCore(entity, PropertySelectors.Get(selector, nameof(selector), path, line));
+    => IncrementCore(entity, PropertySelectors.Get(selector, nameof(selector), path, line));
 
 public T Increment(T entity, PropertySelector<T, int> selector, int by, [CallerFilePath] string path = "", [CallerLineNumber] int line = -1)
-	=> IncrementCore(entity, PropertySelectors.Get(selector, nameof(selector), path, line));
+    => IncrementCore(entity, PropertySelectors.Get(selector, nameof(selector), path, line));
 
 private T IncrementCore<T>(T entity, IValueAccessor<T, int> accessor, int by)
-	=> accessor.Set(entity, accessor.Get(entity) + by)
+    => accessor.Set(entity, accessor.Get(entity) + by)
 ```

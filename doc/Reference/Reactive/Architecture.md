@@ -30,16 +30,16 @@ The `key` is usually the delegate that **is provided by the user**. It’s reall
 
 ```csharp
 public static Feed<string> ToString(this IFeed<T> feed, Func<T, string> toString)
-	=> feed.Select(t => toString(t));
+  => feed.Select(t => toString(t));
 ```
 
-As the delegate ` t => toString(t)` is declared in the method itself, it will be re-instantiated each time. Valid implementations would have been:
+As the delegate `t => toString(t)` is declared in the method itself, it will be re-instantiated each time. Valid implementations would have been:
 
 ```csharp
 public static Feed<string> ToString(this IFeed<T> feed, Func<T, string> toString)
-	=> feed.Select(toString); // We are directly forwarding the user delegate
+  => feed.Select(toString); // We are directly forwarding the user delegate
 public static Feed<string> ToString(this IFeed<T> feed, Func<T, string> toString)
-	=> AttachedProperty.GetOrCreate(owner: feed, key: toString, factory: (theFeed, theToString) => theFeed.Select(t => theToString(t))); // We are explicitly caching the instance.
+  => AttachedProperty.GetOrCreate(owner: feed, key: toString, factory: (theFeed, theToString) => theFeed.Select(t => theToString(t))); // We are explicitly caching the instance.
 ```
 
 ### Subscription caching
@@ -52,7 +52,7 @@ Those _context_ are weakly attached to a owner (typically a `ViewModel`) and eac
 
 > When implementing an `IFeed`, the `context` provided in the `GetSource` is only intended to be used to restore it as current in some circumstances, like invoking a user’s async method.
   Your _feed_ must remain state less, so you should not use `context.GetOrCreateSource(parent)`.
-
+>
 > On the other side, each helper that allow user to “subscribe” to a _feed_ should do something like `SourceContext.Current.GetOrCreateSource(feed)` (and not `feed.GetSource(SourceContext.Current)`)
 
 ## Issuing messages
@@ -65,8 +65,8 @@ If you don't have any _parent feed_ the easiest way is to start from `Message<T>
 var current = Message<int>.Initial;
 for (var i = 0; i++; i < 42)
 {
-	yield return i;
-	await Task.Delay(100, ct);
+  yield return i;
+  await Task.Delay(100, ct);
 }
 ```
 
@@ -77,24 +77,24 @@ var manager = new MessageManager<TParent, TResult>();
 var msgIndex = 0;
 await foreach(var parentMsg in _parent.GetSource(context))
 {
-	if (manager.Update(localMsg => localMsg.With(parentMsg).Data(msgIndex++)))
-	{
-		yield return manager.Current;
-	}
+  if (manager.Update(localMsg => localMsg.With(parentMsg).Data(msgIndex++)))
+  {
+    yield return manager.Current;
+  }
 }
 ```
 
 > Make sure that your feed always produces at least on message. If there isn’t any relevant, send the `Message.Initial` before completing the `IAsyncEnumerable` source.
-
+>
 > If you have a _parent feed_ make sure to **always** forward the parent message, even if the parent message does not change any local value: `manager.Update(localMsg => localMsg.With(parentMsg))`.
-
+>
 > Be aware that enumeration of an `IAsyncEnumerable` is sequential (i.e. one value at once). The `MessageManager` also has a constructor that allows to asynchronously send messages to an `AsyncEnumerableSubject`.
 
 ## Axes
 
 An _axe_ is referring to an “informational axe” related to a given _data_, a.k.a. a metadata. Currently the _feed_ framework is managing (i.e., actively generating value for) only 2 metadata: _error_ and _progress_, but as _Messages_ are designed to encapsulate a _data_ and all its metadata, a `MessageEntry` can have more than those 2 well-known axes.
 
-```
+```diagram
 ┌────┐1   *┌────────┐    2┌────────────┐1   *┌────────────────┐
 │Feed├────►│Message │  ┌─►│MessageEntry├────►│MessageAxis     │
 └────┘     ├────────┤  │  ├────────────┤     └─────┬──────────┘
@@ -108,9 +108,9 @@ An _axe_ is referring to an “informational axe” related to a given _data_, a
 <!-- To edit diagram: https://asciiflow.com/#/share/eJytUksKwjAQvcowazdVQexO%2FOyErlxlE3CoQk1hkkqLeAvxMOJpPInx3za2tGIYwiR58%2Ba9ITtUckPoqySKOhjJjBh93AlMBfrDfq8jMLNZdzC0maHU2IPAy%2BFcCg8AlHudD4sArx7SkrEqhLgVzoiW5bfjye5z0lqGBHdNXx6mynBWVzlK1%2FrmBt69vliFKnUvSL59g2jAWTMP%2BCx7ETBt13GiHUETaWQO5xWqPIdnnDCTMuDwTJlj%2FuCKJt6DK5GtpApJQ85rwHHIdubPI0CRwhX0v%2Fk9ev3%2BAaHxqvhgCxkl1JarlcWCYtzj%2FgrdASiH) -->
 
 > `MessageEntry` are basically dictionaries of `MessageAxis` and `MessageAxisValue`, except **they are returning `MessageAxisValue.Unset` instead of throwing error for unset axes**.
-
+>
 > The `DataAxis` is a special axis that must be set on all entries. It exists only to unify/ease implementation. You should use `Option.Undefined` to “unset” the data.
-
+>
 > If you are about to add an axe, you should make sure to provided extensions methods over `IMessageBuilder` and `IMessageEntry` to read/write it directly to/from the effective metadata type. The generic `Get` and `Set` are there for that and should not be used directly in user’s code.
 
 ## Request
@@ -119,19 +119,19 @@ The subscriber of a feed can send some _request_ to the source feed to enhance i
 The most common _request_ is the `RefreshRequest`.
 
 > When implementing an `IFeed` you have access to those requests using the `Requests<TRequest>()` method on the `SourceContext` you get in the `GetSource`.
-
+>
 > When consuming a feed, you can send a request to that feed by creating a "child" context (`SourceContext.CreateChild()`) giving you own `IRequestSource`.
 
 ## Token and TokenSet
 
 In a response to a _request_ a feed might issue a _token_ that is then added to its messages so the subscriber that  sent the request is able to track the completion of the _request_.
-This is the case for the *Refresh* and the *Pagination* which are forwarding those tokens through the refresh and the pagintation axes.
+This is the case for the _Refresh_ and the _Pagination_ which are forwarding those tokens through the refresh and the pagintation axes.
 
 As when a subscriber sends a _request_, it might be handled by more than one feed. For instance, when combining two `AsyncFeed` instances, the _refresh request_ will cause those two feeds to refresh their data.
 Even if it's not yet the implemented, we can also imagine that an _operator feed_ (such as the `SelectAsyncFeed`) might also trigger a refresh of its own projection.
-*Refresh*  and *Pagination* axes are working with `TokenSet`. It is a collection of `IToken` that only keep the latest tokens for a given source in relation to the subscription context.
+_Refresh_  and _Pagination_ axes are working with `TokenSet`. It is a collection of `IToken` that only keep the latest tokens for a given source in relation to the subscription context.
 
-```
+```diagram
         Subscriber       Combine     Async A     Async B
 
             │               │           │           │
@@ -167,10 +167,10 @@ IsExecuting │               │           │           │
 
 > [!NOTE]
 > As a subscriber, you can use the `TokenSetAwaiter` to wait for a set that has been produced by a request.
-
+>
 > [!NOTE]
 > When implementing an `IFeed` you can use the `CoercingRequestManager` or the `SequentialRequestManager` to easily implement such request / token logic.
-
+>
 > When you answer to a request with a token, you **must** then issue a new message with that token.
 
 ## View
@@ -183,7 +183,7 @@ While developing in the _feed_ framework, the most interesting view-related part
 Those binding friendly properties are generated by the `FeedsGenerator`.
 
 > To trigger the generation, the class needs to have at least on constructor which has an `IInput`, or an `ICommandBuilder` parameter, or flag the type with `[ReactiveBindable(true)]` attribute.
-
+>
 > When we generate a binding friendly class for a type `MyType` we are generating a `BindableMyType` class nested into the `MyType` itself. This class inherits from the `BindableViewModelBase`.
 
 ### Denormalizing
@@ -191,9 +191,9 @@ Those binding friendly properties are generated by the `FeedsGenerator`.
 In order to make a record editable field per field (e.g. a user profile where you want to edit first name and last name independently), we can generate a `BindableRecord` object that we re-expose each property of the `Record` independently.
 
 > When a record is denormalized, we are generating / maintaining only one `State<Record>`. Setting a value of any of the denormalized properties, will update that root _state_.
-
+>
 > When a record is denormalized, we can no longer directly set a record instance on the `VM.Record` (the property is of type `BindableRecord`). To work around this, if the record does not have a `Value` property which would conflict, we are generating a get/set property `Value` which can be used to set the instance (e.g. `VM.Record.Value`).
-
+>
 > When a property is updated, we also ensure to raise the property changes, including for the `Value` property (if defined) and the `GetValue` method.
 
 ### Dispatching and threading considerations
@@ -204,7 +204,7 @@ To avoid strong dependency on a dispatcher (neither by injection nor by the need
 
 The `EventManager` will capture the thread used to register an event handler and will then make sure to invoke that handler on that thread if it was a UI thread. This allows `BindableVM` to be data-bound to multiple window/UI threads.
 
-```
+```diagram
 ┌───────────────┐     ┌───────────────┐
 │EventManager   │     │IInvocationList│
 ├───────────────┤1   *├───────────────┤
@@ -229,5 +229,5 @@ The `EventManager` will capture the thread used to register an event handler and
 <!-- To edit diagram: https://asciiflow.com/#/share/eJyrVspLzE1VslJyLUvNK%2FFNzEtMTy1S0lHKSawE0lZK1TFKFTFKVpYmJjoxSpVAlpG5JZBVklpRAuTEKD2asodUpAACZOiLickDksjuhJgDM8%2FTM68sPzmxJDM%2FzyezuASug1RkCDSOHH0Q2xxTUjQyEvNSclKLNLH4c9ourGogeoNSc%2FPLUuFSSH7DlIHqSMwsTtVILEov1lRADQ1MGfJCA39sTduEJzQU8AJsashwH6lRhGEhca6krjto4leYO10yiwsSS5IzUoswMgTUXt%2FSnJLMkIyi1MQUbHmGSLfhjnu6%2BRZ3eiLXLPQEQWL8E7QZZphzfmJxTmpxcmZeOlxbYGlqaSpEgLp2KtUq1QIAei9oAQ%3D%3D) -->
 
 > We have one `IInvocationList` per UI thread and one for all background threads (the `MultiThreadInvocationList`).
-
+>
 > As a bonus, when a dispatcher bound handler is about to be invoked from another thread, it can be coalesced to be raised only once (cf. `CoalescingDispatcherInvocationList`).

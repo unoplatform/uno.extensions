@@ -17,7 +17,7 @@ uid: Uno.Extensions.Authentication.HowToAuthentication
 - Append `UseAuthentication` to the `IHostBuilder` instance. The `Login` callback is used to verify the credentials. If the user is authenticated, the callback needs to return a non-empty dictionary of key-value pairs (this would typically contain tokens such as an access token and/or refresh token).
 
     ```csharp
-    private IHost Host { get; }
+    private IHost Host { get; set; }
 
     protected override void OnLaunched(LaunchActivatedEventArgs args)
     {
@@ -42,7 +42,7 @@ uid: Uno.Extensions.Authentication.HowToAuthentication
 > [!TIP]
 > On Apple platforms (iOS, Mac Catalyst) the Uno storage extension, used by the authentication extension, use the OS Key Chain service to store secrets. This requires your application to have the [proper entitlements](xref:Uno.Extensions.Storage.HowToRequiredEntitlements) to work properly.
 
-- Update `MainPage` to accept input via `TextBox` with a binding expression to connect to the `Username` property on the view model. The `Button` is also bound to the `Authenticate` method. 
+- Update `MainPage` to accept input via `TextBox` with a binding expression to connect to the `Username` property on the view model. The `Button` is also bound to the `Authenticate` method.
 
     ```xml
     <TextBox Text="{Binding Username, Mode=TwoWay}" />
@@ -163,7 +163,7 @@ From this walk through, you can see how the IAuthenticationService can be used t
 - Add configuration for Refit endpoints
 
     ```csharp
-    private IHost Host { get; }
+    private IHost Host { get; set; }
 
     protected override void OnLaunched(LaunchActivatedEventArgs args)
     {
@@ -200,7 +200,7 @@ From this walk through, you can see how the IAuthenticationService can be used t
 - Add the `UseAuthentication` method to the `InitializeHost` method, this time using the `AddCustom` overload that accepts a type parameter. Instead of an `IServiceProvider` being passed into the `Login` callback, an instance of the `IDummyJsonEndpoint` will be provided.
 
     ```csharp
-    private IHost Host { get; }
+    private IHost Host { get; set; }
 
     protected override void OnLaunched(LaunchActivatedEventArgs args)
     {

@@ -24,7 +24,7 @@ By default, enabling validation will register the default `Validator` type with 
 
 ## Using the validation service
 
-The `IValidator` service is injected into the constructor of view models which specifies the `IValidator` service as a dependency. View models that need to validate data can then use the `ValidateAsync` method to execute validation rules on an object. The `ValidateAsync` method returns a `ValueTask<T>` that completes when validation is complete. The `ValueTask` result is an `IEnumerable<ValidationResult>` which contains elements that indicate whether the object is valid or not. 
+The `IValidator` service is injected into the constructor of view models which specifies the `IValidator` service as a dependency. View models that need to validate data can then use the `ValidateAsync` method to execute validation rules on an object. The `ValidateAsync` method returns a `ValueTask<T>` that completes when validation is complete. The `ValueTask` result is an `IEnumerable<ValidationResult>` which contains elements that indicate whether the object is valid or not.
 
 The following example shows how to use the service to validate a `Person` object:
 
@@ -64,10 +64,11 @@ The service checks whether the `Person` object is valid and handles calling the 
 
 Instances of a class that are passed into the `ValidateAsync` method of the default validator have three primary implementation options to allow for validation:
 
-# [**INotifyDataErrorInfo**](#tab/notify-data-error-info)
-A common choice for entities that need to implement validation is the `INotifyDataErrorInfo` interface. Internally, the `GetErrors` method exposed by these objects is called by the validator. The .NET Community Toolkit provides an `ObservableValidator` class that implements this interface and provides the base functionality to execute validation rules on properties that have been decorated with validation attributes. `ObservableValidator` is a good choice for objects that need to be observable because it also implements `ObservableObject`. 
+### [**INotifyDataErrorInfo**](#tab/notify-data-error-info)
 
-### Code example
+A common choice for entities that need to implement validation is the `INotifyDataErrorInfo` interface. Internally, the `GetErrors` method exposed by these objects is called by the validator. The .NET Community Toolkit provides an `ObservableValidator` class that implements this interface and provides the base functionality to execute validation rules on properties that have been decorated with validation attributes. `ObservableValidator` is a good choice for objects that need to be observable because it also implements `ObservableObject`.
+
+#### Code example
 
 An example using validation attributes is shown below:
 
@@ -89,12 +90,13 @@ It is also possible to define custom validation attributes by deriving from the 
 
 For more information, see the reference documentation about [INotifyDataErrorInfo](https://learn.microsoft.com/dotnet/api/system.componentmodel.inotifydataerrorinfo) and [ObservableValidator](https://docs.microsoft.com/windows/communitytoolkit/mvvm/observablevalidator).
 
-# [**IValidatableObject**](#tab/validatable-object)
-Another option is the `IValidatableObject` interface. Like `INotifyDataErrorInfo`, it is implemented by a class to ensure properties can be validated based on the attributes they are decorated with. Validator support for this interface is provided internally with the `TryValidateObject` method used by the default validator to execute validation rules on the entity in question. This method returns an `IEnumerable<ValidationResult>` which contains elements that indicate whether the object is valid or not. 
+### [**IValidatableObject**](#tab/validatable-object)
+
+Another option is the `IValidatableObject` interface. Like `INotifyDataErrorInfo`, it is implemented by a class to ensure properties can be validated based on the attributes they are decorated with. Validator support for this interface is provided internally with the `TryValidateObject` method used by the default validator to execute validation rules on the entity in question. This method returns an `IEnumerable<ValidationResult>` which contains elements that indicate whether the object is valid or not.
 
 Unlike other options, `IValidatableObject` based types can define more advanced validation behavior in the `Validate` method implementation. Here, it is typical to complement the behavior of attributes by invoking `TryValidateProperty` on multiple members, or to do any other kind of inter-property validation. The default validator is responsible for invoking this `Validate` method.
 
-### Code example
+#### Code example
 
 ```csharp
 public class Person : IValidatableObject
@@ -129,7 +131,8 @@ public class Person : IValidatableObject
 
 For more information, see the reference documentation about [`IValidatableObject`](https://docs.microsoft.com/dotnet/api/system.componentmodel.dataannotations.ivalidatableobject), [`CustomValidationAttribute`](https://learn.microsoft.com/en-us/dotnet/api/system.componentmodel.dataannotations.customvalidationattribute).
 
-# [**Fluent**](#tab/fluent-validation)
+### [**Fluent**](#tab/fluent-validation)
+
 [FluentValidation](https://www.nuget.org/packages/FluentValidation/) is a popular choice for entities needing to implement validation. It is a library that provides a fluent API for defining validation rules. This choice allows for chained validator calls and minimal modifications to the model definition. It is possible to use a [Fluent validator](https://docs.fluentvalidation.net/en/latest/start.html) by registering the implementation like below:
 
 ```csharp

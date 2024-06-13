@@ -50,11 +50,11 @@ public IState<string> City => State.AsyncEnumerable(this, () => GetCurrentCity()
 
 public async IAsyncEnumerable<string> GetCurrentCity([EnumeratorCancellation] CancellationToken ct = default)
 {
-	while (!ct.IsCancellationRequested)
-	{
-		yield return await _locationService.GetCurrentCity(ct);
-		await Task.Delay(TimeSpan.FromMinutes(15), ct);
-	}
+    while (!ct.IsCancellationRequested)
+    {
+        yield return await _locationService.GetCurrentCity(ct);
+        await Task.Delay(TimeSpan.FromMinutes(15), ct);
+    }
 }
 ```
 
@@ -69,24 +69,24 @@ public IState<string> City => State.Create(this, GetCurrentCity);
 
 public async IAsyncEnumerable<Message<string>> GetCurrentCity([EnumeratorCancellation] CancellationToken ct = default)
 {
-	var message = Message<string>.Initial;
-	var city = Option<string>.Undefined();
-	var error = default(Exception);
-	while (!ct.IsCancellationRequested)
-	{
-		try
-		{
-			city = await _locationService.GetCurrentCity(ct);
-			error = default;
-		}
-		catch (Exception ex)
-		{
-			error = ex;
-		}
+    var message = Message<string>.Initial;
+    var city = Option<string>.Undefined();
+    var error = default(Exception);
+    while (!ct.IsCancellationRequested)
+    {
+        try
+        {
+            city = await _locationService.GetCurrentCity(ct);
+            error = default;
+        }
+        catch (Exception ex)
+        {
+            error = ex;
+        }
 
-		yield return message = message.With().Data(city).Error(error);
-		await Task.Delay(TimeSpan.FromHours(1), ct);
-	}
+        yield return message = message.With().Data(city).Error(error);
+        await Task.Delay(TimeSpan.FromHours(1), ct);
+    }
 }
 ```
 
@@ -109,8 +109,8 @@ public IState<string> City => State<string>.Empty(this);
 
 public async ValueTask SetCurrent(CancellationToken ct)
 {
-	var city = await _locationService.GetCurrentCity(ct);
-	await City.UpdateValue(_ => city, ct);
+    var city = await _locationService.GetCurrentCity(ct);
+    await City.UpdateValue(_ => city, ct);
 }
 ```
 
@@ -123,15 +123,15 @@ public IState<string> Error => State<string>.Empty(this);
 
 public async ValueTask Share(CancellationToken ct)
 {
-	try
-	{
-		../..
-		await Error.Set(string.Empty, ct);
-	}
-	catch (Exception error)
-	{
-		await Error.Set("Share failed.", ct);
-	}
+    try
+    {
+        ../..
+        await Error.Set(string.Empty, ct);
+    }
+    catch (Exception error)
+    {
+        await Error.Set("Share failed.", ct);
+    }
 }
 ```
 
@@ -144,8 +144,8 @@ public async ValueTask Share(CancellationToken ct)
 >
 > public async ValueTask Up(CancellationToken ct)
 > {
-> 	var current = await Counter;
-> 	Counter.Set(current + 1, ct);
+>   var current = await Counter;
+>   Counter.Set(current + 1, ct);
 > }
 > ```
 >
@@ -154,7 +154,7 @@ public async ValueTask Share(CancellationToken ct)
 > ```csharp
 > public async ValueTask Up(CancellationToken ct)
 > {
-> 	Counter.Update(current => current + 1, ct);
+>   Counter.Update(current => current + 1, ct);
 > }
 > ```
 

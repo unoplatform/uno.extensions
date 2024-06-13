@@ -5,16 +5,7 @@ uid: Uno.Extensions.Markup.Resources
 
 All `FrameworkElement`-inheriting types and `Application` have a couple of special extensions to help you manage your resources.
 
-<div style="position: relative; width: 100%; padding-bottom: 56.25%;">
-    <iframe
-        src="https://www.youtube-nocookie.com/embed/W3P9Vd8QuGY"
-        title="YouTube video player"
-        frameborder="0"
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-        allowfullscreen
-        style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;">
-    </iframe>
-</div>
+> [!Video https://www.youtube-nocookie.com/embed/W3P9Vd8QuGY]
 
 ## Merging Resource Dictionaries
 

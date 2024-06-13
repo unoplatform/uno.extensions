@@ -62,96 +62,96 @@ When accessing resources with a [REST-style](https://www.ics.uci.edu/~fielding/p
 
 * We will use [Hoppscotch](https://hoppscotch.io) to make an HTTP request and inspect the response. Open it, and make a `GET` request to the `/jokes/search` endpoint with the query parameter `query` set to `fight`.
 
-    * Your screen should appear similar to this:
+  * Your screen should appear similar to this:
 
-        ![Hoppscotch](../images/http-refit-hoppscotch.png)
+    ![Hoppscotch](../images/http-refit-hoppscotch.png)
 
-    * For informational purposes, this is the full HTTP request URL:
+  * For informational purposes, this is the full HTTP request URL:
 
-        ```http
-        GET https://api.chucknorris.io/jokes/search?query=fight
-        ```
+    ```http
+    GET https://api.chucknorris.io/jokes/search?query=fight
+    ```
 
-    * The **response body** pane will populate with a formatted JSON object that looks similar to this:
+  * The **response body** pane will populate with a formatted JSON object that looks similar to this:
 
-        ```json
-        {
-            "total": 111,
-            "result": [
-                {
-                    "categories": [],
-                    "created_at": "2020-01-05 13:42:18.823766",
-                    "icon_url": "https://assets.chucknorris.host/img/avatar/chuck-norris.png",
-                    "id": "VvGL-lRHSsOL-jj9IEDWRA",
-                    "updated_at": "2020-01-05 13:42:18.823766",
-                    "url": "https://api.chucknorris.io/jokes/VvGL-lRHSsOL-jj9IEDWRA",
-                    "value": "Chuck Norris doesn't beat people up he looks at them they get scared and fight their self to the death"
-                },
-            ...
-            ]
-        }
-        ```
+    ```json
+    {
+        "total": 111,
+        "result": [
+            {
+                "categories": [],
+                "created_at": "2020-01-05 13:42:18.823766",
+                "icon_url": "https://assets.chucknorris.host/img/avatar/chuck-norris.png",
+                "id": "VvGL-lRHSsOL-jj9IEDWRA",
+                "updated_at": "2020-01-05 13:42:18.823766",
+                "url": "https://api.chucknorris.io/jokes/VvGL-lRHSsOL-jj9IEDWRA",
+                "value": "Chuck Norris doesn't beat people up he looks at them they get scared and fight their self to the death"
+            },
+        ...
+        ]
+    }
+    ```
 
-    * Since this response is needed for the next step, copy the entire JSON object from the **response body** pane
+  * Since this response is needed for the next step, copy the entire JSON object from the **response body** pane
 
 * Next, we need to use a language-agnostic tool that infers a data model from the response we recieved. We will open [quicktype](https://app.quicktype.io/) and use it to generate a data model from the JSON we copied above
 
-    * Replace any demo text in the left **JSON** pane with our text by pasting the JSON object into editor
+  * Replace any demo text in the left **JSON** pane with our text by pasting the JSON object into editor
 
-    * Within the properties box on the right side, make the following selections:
+  * Within the properties box on the right side, make the following selections:
 
-        * **C#** as the _language_
+    * **C#** as the _language_
 
-        * **System Text Json**  as the _serialization framework_
+    * **System Text Json**  as the _serialization framework_
 
-        * **Complete** as the _output features_
+    * **Complete** as the _output features_
 
-    * Your screen should appear similar to this:
+  * Your screen should appear similar to this:
 
-        ![Hoppscotch](../images/http-refit-quicktype.png)
+    ![Hoppscotch](../images/http-refit-quicktype.png)
 
-    * For the purposes of this tutorial, only select and copy the two model classes `Welcome` and `Result` from the right side containing the generated C# code.
+  * For the purposes of this tutorial, only select and copy the two model classes `Welcome` and `Result` from the right side containing the generated C# code.
 
-        * What you copied should appear like this:
+    * What you copied should appear like this:
 
-            ```csharp
-            public partial class Welcome
-            {
-                [JsonPropertyName("total")]
-                public long Total { get; set; }
+        ```csharp
+        public partial class Welcome
+        {
+            [JsonPropertyName("total")]
+            public long Total { get; set; }
 
-                [JsonPropertyName("result")]
-                public List<Result> Result { get; set; }
-            }
+            [JsonPropertyName("result")]
+            public List<Result> Result { get; set; }
+        }
 
-            public partial class Result
-            {
-                [JsonPropertyName("categories")]
-                public List<Category> Categories { get; set; }
+        public partial class Result
+        {
+            [JsonPropertyName("categories")]
+            public List<Category> Categories { get; set; }
 
-                [JsonPropertyName("created_at")]
-                public DateTimeOffset CreatedAt { get; set; }
+            [JsonPropertyName("created_at")]
+            public DateTimeOffset CreatedAt { get; set; }
 
-                [JsonPropertyName("icon_url")]
-                public Uri IconUrl { get; set; }
+            [JsonPropertyName("icon_url")]
+            public Uri IconUrl { get; set; }
 
-                [JsonPropertyName("id")]
-                public string Id { get; set; }
+            [JsonPropertyName("id")]
+            public string Id { get; set; }
 
-                [JsonPropertyName("updated_at")]
-                public DateTimeOffset UpdatedAt { get; set; }
+            [JsonPropertyName("updated_at")]
+            public DateTimeOffset UpdatedAt { get; set; }
 
-                [JsonPropertyName("url")]
-                public Uri Url { get; set; }
+            [JsonPropertyName("url")]
+            public Uri Url { get; set; }
 
-                [JsonPropertyName("value")]
-                public string Value { get; set; }
-            }
-            ```
+            [JsonPropertyName("value")]
+            public string Value { get; set; }
+        }
+        ```
 
-    * Go back to Visual Studio and create a new folder named `Models` in the shared project. Create a new file named `ChuckNorrisData.cs` in the `Models` folder and paste the code you copied into it.
+  * Go back to Visual Studio and create a new folder named `Models` in the shared project. Create a new file named `ChuckNorrisData.cs` in the `Models` folder and paste the code you copied into it.
 
-    * Rename the partial classes `Welcome` to `ChuckNorrisData` and `Result` to `ChuckNorrisDataResult`
+  * Rename the partial classes `Welcome` to `ChuckNorrisData` and `Result` to `ChuckNorrisDataResult`
 
 ### 4. Register the endpoint
 
@@ -209,9 +209,9 @@ When accessing resources with a [REST-style](https://www.ics.uci.edu/~fielding/p
 
 * We set `UseNativeHandler` to `true` to use the native HTTP handler for the platform. This is recommended for production apps unless you have a specific reason to use the managed handler.
 
-    * On Windows, intercepting the network traffic of your app with tools like **Fiddler** is not possible when using the native handler. This is because it does not use a compatible network stack.
+  * On Windows, intercepting the network traffic of your app with tools like **Fiddler** is not possible when using the native handler. This is because it does not use a compatible network stack.
 
-    * In these cases, you can set `UseNativeHandler` to `false` to use the managed handler instead
+  * In these cases, you can set `UseNativeHandler` to `false` to use the managed handler instead
 
 * That block of JSON from the above file is called a configuration section. In this case, it's used to configure the HTTP client associated with the endpoint. For more information, see the [overview](xref:Uno.Extensions.Configuration.Overview#sections) for configuration sections.
 
@@ -254,11 +254,11 @@ When accessing resources with a [REST-style](https://www.ics.uci.edu/~fielding/p
 
 ## See also
 
-- [How-To: Consume a web API with HttpClient](xref:Uno.Development.ConsumeWebApi)
-- [How-To: Register an Endpoint for HTTP Requests](xref:Uno.Extensions.Http.HowToHttp)
-- [Overview: HTTP](xref:Uno.Extensions.Http.Overview)
-- [Overview: Use HttpClientFactory to implement resilient HTTP requests](https://learn.microsoft.com/dotnet/architecture/microservices/implement-resilient-applications/use-httpclientfactory-to-implement-resilient-http-requests#benefits-of-using-ihttpclientfactory)
-- [Overview: What is Refit?](https://github.com/reactiveui/refit)
-- [Explore: Hoppscotch tool](https://hoppscotch.io)
-- [Explore: quicktype tool](https://app.quicktype.io/)
-- [Explore: TestHarness Refit Endpoints](https://github.com/unoplatform/uno.extensions/tree/main/testing/TestHarness/TestHarness.Shared/Ext/Http/Refit)
+* [How-To: Consume a web API with HttpClient](xref:Uno.Development.ConsumeWebApi)
+* [How-To: Register an Endpoint for HTTP Requests](xref:Uno.Extensions.Http.HowToHttp)
+* [Overview: HTTP](xref:Uno.Extensions.Http.Overview)
+* [Overview: Use HttpClientFactory to implement resilient HTTP requests](https://learn.microsoft.com/dotnet/architecture/microservices/implement-resilient-applications/use-httpclientfactory-to-implement-resilient-http-requests#benefits-of-using-ihttpclientfactory)
+* [Overview: What is Refit?](https://github.com/reactiveui/refit)
+* [Explore: Hoppscotch tool](https://hoppscotch.io)
+* [Explore: quicktype tool](https://app.quicktype.io/)
+* [Explore: TestHarness Refit Endpoints](https://github.com/unoplatform/uno.extensions/tree/main/testing/TestHarness/TestHarness.Shared/Ext/Http/Refit)

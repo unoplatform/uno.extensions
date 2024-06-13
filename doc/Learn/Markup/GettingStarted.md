@@ -54,7 +54,8 @@ new Button()
 
 When building the content of a given control, you can make use of the `DataContext` extension to provide a strongly typed context for bindings. It is important to note that these extensions will not create or resolve your DataContext. These extensions are meant to help you create [strongly typed bindings](xref:Uno.Extensions.Markup.DependencyPropertyBuilder).
 
-**Strongly Typed DataContext**
+### Strongly Typed DataContext
+
 ```cs
 public partial class MyPage : Page
 {
@@ -66,7 +67,8 @@ public partial class MyPage : Page
 }
 ```
 
-**Providing the DataContext**
+### Providing the DataContext
+
 ```cs
 public partial class MyPage : Page
 {
@@ -78,7 +80,8 @@ public partial class MyPage : Page
 }
 ```
 
-**Binding a DataContext**
+### Binding a DataContext
+
 ```cs
 public partial class MyPage : Page
 {
@@ -107,10 +110,10 @@ public partial class MyPage : Page
 Learn more about:
 
 - [Binding, Static & Theme Resources](xref:Uno.Extensions.Markup.DependencyPropertyBuilder)
-    - [Binding 101](xref:Uno.Extensions.Markup.Binding101)
-    - [Converters](xref:Uno.Extensions.Markup.Converters)
-    - [Using Static & Theme Resources](xref:Uno.Extensions.Markup.StaticAndThemeResources)
-    - [Using Uno.Themes.WinUI.Markup](xref:Uno.Extensions.Markup.UnoThemes)
+  - [Binding 101](xref:Uno.Extensions.Markup.Binding101)
+  - [Converters](xref:Uno.Extensions.Markup.Converters)
+  - [Using Static & Theme Resources](xref:Uno.Extensions.Markup.StaticAndThemeResources)
+  - [Using Uno.Themes.WinUI.Markup](xref:Uno.Extensions.Markup.UnoThemes)
 - [Attached Properties](xref:Uno.Extensions.Markup.AttachedProperties)
 - [Styles](xref:Uno.Extensions.Markup.Styles)
 - [Templates](xref:Uno.Extensions.Markup.Templates)

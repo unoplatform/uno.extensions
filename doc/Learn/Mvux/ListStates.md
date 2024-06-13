@@ -12,11 +12,11 @@ Recall that feeds are stateless and are only read-only data output to the View, 
 
 So an `IState<T>` is a stateful feed of a single item of `T`, whereas an `IListState<T>` is a stateful feed of multiple items of `T`.
 
-# How to create a list-state
+## How to create a list-state
 
 The static `ListState` class provides factory methods for creating `IListState<T>` objects, here they are:
 
-## Empty
+### Empty
 
 Creates an empty list-state:
 
@@ -24,7 +24,7 @@ Creates an empty list-state:
 IListState<string> MyStrings = ListState<string>.Empty(this);
 ```
 
-## Value
+### Value
 
 Creates a list-state with an initial synchronous value:
 
@@ -41,7 +41,7 @@ private readonly IImmutableList<string> _favorites =
 public IListState<string> Favorites => ListState.Value(this, () => _favorites);
 ```
 
-## Async
+### Async
 
 Creates a list-state from an async method:
 
@@ -52,7 +52,7 @@ public ValueTask<IImmutableList<string>> GetStrings(CancellationToken ct) => new
 public IListState<string> Favorites => ListState.Async(this, GetStrings);
 ```
 
-## AsyncEnumerable
+### AsyncEnumerable
 
 ```csharp
 public async IAsyncEnumerable<IImmutableList<string>> GetStrings([EnumeratorCancellation] CancellationToken ct)
@@ -63,18 +63,18 @@ public async IAsyncEnumerable<IImmutableList<string>> GetStrings([EnumeratorCanc
 public IListState<string> Favorites => ListState.AsyncEnumerable(this, GetStrings);
 ```
 
-## FromFeed
+#### FromFeed
 
 ```csharp
 public IListFeed<string> FavoritesFeed => ...
 public IListState<string> FavoritesState => ListState.FromFeed(this, FavoritesFeed);
 ```
 
-## Operators
+### Operators
 
 In the following examples, we'll refer to `MyStrings` which is an `IListState<string>`, to demonstrate how to use the various operators `IListState<T>` provides to update its state with modified data.
 
-### Add
+#### Add
 
 The `AddAsync` method adds an item to the end of the List State:
 
@@ -82,7 +82,7 @@ The `AddAsync` method adds an item to the end of the List State:
 await MyStrings.AddAsync("Gord Downie", cancellationToken);
 ```
 
-### Insert
+#### Insert
 
 The `InsertAsync` method inserts an item to the beginning of the List State:
 
@@ -90,7 +90,7 @@ The `InsertAsync` method inserts an item to the beginning of the List State:
 await MyStrings.InsertAsync("Margaret Atwood", cancellationToken);
 ```
 
-### Update
+#### Update
 
 There are various ways to update values in the list-state:
 
@@ -124,7 +124,7 @@ public async ValueTask TrimLongNames(CancellationToken ct = default)
 }
 ```
 
-### Remove
+#### Remove
 
 The `RemoveAllAsync` method uses a predicate to determine which items are to be removed:
 
@@ -134,7 +134,7 @@ await MyStrings.RemoveAllAsync(
     ct: cancellationToken);
 ```
 
-### ForEachAsync
+#### ForEachAsync
 
 This operator can be called from an `IListState<T>` to execute an asynchronous action when the data changes. The action is invoked once for the entire set of data, rather than for individual items:
 
@@ -150,7 +150,7 @@ private async ValueTask PerformAction(IImmutableList<string> items, Cancellation
 
 ```
 
-## Selection operators
+### Selection operators
 
 Like list-feed, list-state provides out-the-box support for Selection.  
 This feature enables flagging single or multiple items in the State as 'selected'.
@@ -158,7 +158,7 @@ This feature enables flagging single or multiple items in the State as 'selected
 Selection works seamlessly and automatically with the `ListView` and other selection controls.
 In case you need to select an item manually for example in response to a button pressed or when finding a searched item, you can use the following methods that enable manual changing of the Selection state of items in the list-state:
 
-### TrySelectAsync
+#### TrySelectAsync
 
 The `TrySelectAsync` method attempts to find the first occurrence of the item or items passed in as an argument and flag it as 'selected'.
 
@@ -166,7 +166,7 @@ This method comes in two flavors, one that accepts a single item to be selected,
 
 It returns a boolean value indicating if the desired selection item was found and has been selected.
 
-#### Single item selection
+##### Single item selection
 
 ```csharp
 IListState<string> Names => ...
@@ -177,7 +177,7 @@ private ValueTask SelectCharlie(CancellationToken ct)
 }
 ```
 
-#### Multi-item selection
+##### Multi-item selection
 
 ```csharp
 IListState<string> Names => ...
@@ -189,7 +189,7 @@ private ValueTask SelectCharlieAndJoe(CancellationToken ct)
 }
 ```
 
-### ClearSelection
+#### ClearSelection
 
 The `ClearSelection` method clears the current selection and flags all items as 'not selected':
 
@@ -197,7 +197,7 @@ The `ClearSelection` method clears the current selection and flags all items as 
 await MyStrings.ClearSelection(cancellationToken);
 ```
 
-## Subscribing to the selection
+### Subscribing to the selection
 
 You can create a Feed that reflects the currently selected item or items (when using multi-selection) of a Feed.  
 This is explained in detail in the [Selection page](xref:Uno.Extensions.Mvux.Advanced.Selection).

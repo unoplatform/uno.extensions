@@ -27,6 +27,7 @@ This tutorial will show you how to build a responsive layout with multiple navig
     ```
 
 ### 2. Define the view's layout
+
 * Add necessary `RowDefinitions` to the root `Grid` in `MainPage.xaml`:
 
     ```xml
@@ -62,6 +63,7 @@ This tutorial will show you how to build a responsive layout with multiple navig
     ```
 
 * Add multiple sectors of distinct content to the `NavigationView` content area:
+
     ```xml
     <Grid>
         <Grid.RowDefinitions>
@@ -108,12 +110,14 @@ This tutorial will show you how to build a responsive layout with multiple navig
         </muxc:NavigationView>
     </Grid>
     ```
+
     It's important to make each element that represents a sector of app content have it's `Visibility` explicitly set to `Collapsed`. Uno.Extensions will handle toggling it back to `Visible` when necessary.
 
 **Built for complex layout scenarios:**
 While the WinUI `NavigationView` control by itself is a good choice for a responsive shell layout because of its adaptability to different screen sizes and breakpoints, this guide will demonstrate Uno.Extensions navigation features using the `TabBar` control together with it.
 
 ### 3. Complementing the NavigationView with a TabBar
+
 * Add a `TabBar` to the `NavigationView` content area:
 
     ```xml
@@ -366,6 +370,7 @@ While the WinUI `NavigationView` control by itself is a good choice for a respon
     ```
 
 ### 5. Toggle visibility for responsive design
+
 * Finally, specify groups for the `VisualStateManager` to adjust the page layout based on how close the window size is to a couple of defined breakpoints:
 
     ```xml

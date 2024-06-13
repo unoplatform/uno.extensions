@@ -23,7 +23,7 @@ uid: Uno.Extensions.Authentication.HowToMsalAuthentication
 - Use the `UseAuthentication()` extension method to configure the `IHostBuilder` to use an authentication provider. In our case, we will be using the `MsalAuthenticationProvider`.
 
     ```csharp
-    private IHost Host { get; }
+    private IHost Host { get; set; }
 
     protected override void OnLaunched(LaunchActivatedEventArgs args)
     {
@@ -43,7 +43,7 @@ uid: Uno.Extensions.Authentication.HowToMsalAuthentication
 - Add the `MsalAuthenticationProvider` using the `AddMsal()` extension method which configures the `IAuthenticationBuilder` to use it.
 
     ```csharp
-    private IHost Host { get; }
+    private IHost Host { get; set; }
 
     protected override void OnLaunched(LaunchActivatedEventArgs args)
     {

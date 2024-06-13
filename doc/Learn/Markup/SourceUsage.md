@@ -76,8 +76,6 @@ var textBlock = new TextBlock()
 
 ```
 
-
-
 Example of using RelativeSource to bind a parent property to the element property:
 
 ```csharp

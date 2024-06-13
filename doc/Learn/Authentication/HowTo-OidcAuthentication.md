@@ -23,7 +23,7 @@ uid: Uno.Extensions.Authentication.HowToOidcAuthentication
 - Use the `UseAuthentication()` extension method to configure the `IHostBuilder` to use an authentication provider. In our case, we will be using the `OidcAuthenticationProvider`.
 
     ```csharp
-    private IHost Host { get; }
+    private IHost Host { get; set; }
 
     protected override void OnLaunched(LaunchActivatedEventArgs args)
     {
@@ -43,7 +43,7 @@ uid: Uno.Extensions.Authentication.HowToOidcAuthentication
 - Add the `OidcAuthenticationProvider` using the `AddOidc()` extension method which configures the `IAuthenticationBuilder` to use it.
 
     ```csharp
-    private IHost Host { get; }
+    private IHost Host { get; set; }
 
     protected override void OnLaunched(LaunchActivatedEventArgs args)
     {

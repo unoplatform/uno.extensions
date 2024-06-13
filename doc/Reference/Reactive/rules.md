@@ -14,7 +14,7 @@ You have to ensure that the provided _property_name_ matches the name of a prope
 
 > [!TIP]
 > Prefer to provide the _property_name_ using the `nameof` expression: `[FeedParameter(nameof(TheProperty))]`.
-> This ensure better discoverability and increase maintenability as refactoring tools will automatically update the name.
+> This ensure better discoverability and increase maintainability as refactoring tools will automatically update the name.
 
 ## Feed2002
 
