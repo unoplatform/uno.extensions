@@ -34,6 +34,13 @@ internal record MsalAuthenticationProvider(
 		if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"Invoking settings Build callback");
 		Settings?.Build?.Invoke(builder);
 
+		var clientId = config.ClientId;
+
+		if (string.IsNullOrEmpty(clientId) || !IsValidGuid(clientId))
+		{
+			Logger.LogWarning("A valid ClientId (GUID) is required for MSAL. Please provide the ClientId in the appsettings.json file.");
+		}
+
 		_scopes = config.Scopes ?? new string[] { };
 		if (_scopes.Length == 0 &&
 			Settings?.Scopes is not null)
@@ -122,6 +129,11 @@ internal record MsalAuthenticationProvider(
 		}
 
 		return default;
+	}
+
+	private static bool IsValidGuid(string guidString)
+	{
+		return Guid.TryParse(guidString, out _);
 	}
 
 
