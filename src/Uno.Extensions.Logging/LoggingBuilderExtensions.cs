@@ -166,7 +166,7 @@ public static class LoggingBuilderExtensions
 	/// Sets the log level for Uno namespaces related to the hot reload and remote control feature.
 	/// <br/><br/>
 	/// This method will configure the log level for the following namespaces:
-	/// <br/>Uno.UI.RemoteControl
+	/// <br/>Uno.UI.DevServer
 	/// </summary>
 	/// <param name="builder">
 	/// The <see cref="ILoggingBuilder"/> to configure.
@@ -180,7 +180,7 @@ public static class LoggingBuilderExtensions
 	public static ILoggingBuilder HotReloadCoreLogLevel(this ILoggingBuilder builder, LogLevel logLevel)
 	{
 		// RemoteControl and HotReload related
-		builder.AddFilter("Uno.UI.RemoteControl", logLevel);
+		builder.AddFilter("Uno.UI.DevServer", logLevel);
 		return builder;
 	}
 

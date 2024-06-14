@@ -30,7 +30,7 @@
         HorizontalAlignment="Center"
         VerticalAlignment="Center"
         Margin="8" />
-      <TextBlock Text="Hello! 1 2 3 45"
+      <TextBlock Text="Hello! 1 2 3 4 5 6 7 8 9 10"
                  HorizontalAlignment="Center"
                  VerticalAlignment="Center"
                  Margin="8" />

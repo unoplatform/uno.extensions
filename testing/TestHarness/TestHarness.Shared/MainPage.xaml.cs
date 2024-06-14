@@ -1,4 +1,3 @@
-
 namespace TestHarness;
 
 public sealed partial class MainPage : Page

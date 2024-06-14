@@ -1,3 +1,5 @@
+using Uno.Extensions.Navigation;
+
 namespace UnoApp1.Presentation;
 
 public class ShellModel

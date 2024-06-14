@@ -13,7 +13,7 @@
 			<RowDefinition />
 		</Grid.RowDefinitions>
 		<TextBlock AutomationProperties.AutomationId="TestHarnessMainPageTitle"
-				   Text="Test Harness"
+				   Text="Test Harness 1 2"
 				   Margin="20"
 				   FontSize="30"
 				   VerticalAlignment="Top"

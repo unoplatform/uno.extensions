@@ -1,4 +1,5 @@
 using Uno.Extensions.Diagnostics;
+using Uno.UI;
 
 namespace TestHarness;
 
@@ -28,6 +29,9 @@ public sealed partial class App : Application
 				_window = new Window();
 #else
 		_window = Window.Current;
+#endif
+#if DEBUG
+		_window.EnableHotReload();
 #endif
 
 		// Need to manually create and then dispose an IHost in order to set

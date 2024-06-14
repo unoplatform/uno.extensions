@@ -1,4 +1,5 @@
 using System.Net;
+using Uno.Extensions.Serialization;
 
 namespace UnoApp1.Services.Caching;
 public sealed class WeatherCache : IWeatherCache

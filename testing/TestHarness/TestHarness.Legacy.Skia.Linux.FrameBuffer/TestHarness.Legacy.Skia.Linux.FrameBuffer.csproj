@@ -21,7 +21,7 @@
 		<PackageReference Include="IdentityModel.OidcClient" />
 		<PackageReference Include="Uno.Microsoft.Toolkit.Uwp.UI" />
 		<PackageReference Include="Microsoft.Identity.Client" />
-		<PackageReference Include="Uno.UI.RemoteControl" Condition="'$(Configuration)'=='Debug'" />
+		<PackageReference Include="Uno.UI.DevServer" Condition="'$(Configuration)'=='Debug'" />
 		<PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" />
 		<PackageReference Include="Microsoft.Extensions.Logging" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Console" />

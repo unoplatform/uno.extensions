@@ -19,11 +19,12 @@
 		<utu:NavigationBar  AutomationProperties.AutomationId="LoginNavigationBar"
 							Content="Login" />
 
-		<Grid Grid.Row="1">
+		<StackPanel Grid.Row="1">
 			<Button AutomationProperties.AutomationId="LoginButton"
 					VerticalAlignment="Top"
 					Content="Login"
 					Click="{x:Bind ViewModel.Login}" />
-		</Grid>
+			<TextBlock Text="test 1 2 3" />
+		</StackPanel>
 	</Grid>
 </Page>

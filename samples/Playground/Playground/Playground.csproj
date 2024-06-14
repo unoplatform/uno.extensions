@@ -10,7 +10,8 @@
 
   <ItemGroup>
     <PackageReference Include="Uno.WinUI" />
-    <PackageReference Include="Uno.Resizetizer" />
+		<PackageReference Include="Uno.WinUI.DevServer" Condition="'$(Configuration)'=='Debug'" />
+		<PackageReference Include="Uno.Resizetizer" />
     <PackageReference Include="Microsoft.Extensions.Logging.Console" />
 		<PackageReference Include="CommunityToolkit.Mvvm" />
 		<PackageReference Include="Uno.Toolkit.WinUI" />

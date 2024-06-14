@@ -1,3 +1,8 @@
+using Uno.Extensions;
+using Uno.Extensions.Configuration;
+using Uno.Extensions.Hosting;
+using Uno.Extensions.Localization;
+using Uno.Extensions.Navigation;
 using Uno.Resizetizer;
 
 namespace UnoApp1;

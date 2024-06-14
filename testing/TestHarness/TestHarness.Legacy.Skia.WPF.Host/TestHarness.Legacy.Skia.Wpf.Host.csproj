@@ -10,7 +10,7 @@
 		<PackageReference Include="Uno.UI.Skia.Wpf" />
 		<PackageReference Include="SkiaSharp.HarfBuzz" />
 		<PackageReference Include="SkiaSharp.Views.WPF" />
-		<PackageReference Include="Uno.UI.RemoteControl" Condition="'$(Configuration)'=='Debug'" />
+		<PackageReference Include="Uno.UI.DevServer" Condition="'$(Configuration)'=='Debug'" />
 		<PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" />
 	</ItemGroup>
 	<ItemGroup>

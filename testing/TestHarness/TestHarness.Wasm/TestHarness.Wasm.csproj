@@ -61,7 +61,7 @@
 		<PackageReference Include="System.Text.Json" />
 		<PackageReference Include="Uno.Extensions.Logging.WebAssembly.Console" />
 		<PackageReference Include="Uno.WinUI.WebAssembly" />
-		<PackageReference Include="Uno.WinUI.RemoteControl" Condition="'$(Configuration)'=='Debug'" />
+		<PackageReference Include="Uno.WinUI.DevServer" Condition="'$(Configuration)'=='Debug'" />
 		<PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" />
 		<PackageReference Include="Uno.Wasm.Bootstrap" />
 		<PackageReference Include="Uno.Wasm.Bootstrap.DevServer" />

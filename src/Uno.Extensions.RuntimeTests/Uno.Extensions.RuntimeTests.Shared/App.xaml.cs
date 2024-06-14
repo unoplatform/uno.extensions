@@ -109,7 +109,7 @@ namespace Uno.Extensions.RuntimeTests
 				// builder.AddFilter("Uno.UI.DataBinding.BinderReferenceHolder", LogLevel.Debug );
 
 				// RemoteControl and HotReload related
-				// builder.AddFilter("Uno.UI.RemoteControl", LogLevel.Information);
+				// builder.AddFilter("Uno.UI.DevServer", LogLevel.Information);
 
 				// Debug JS interop
 				// builder.AddFilter("Uno.Foundation.WebAssemblyRuntime", LogLevel.Debug );

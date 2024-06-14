@@ -1,4 +1,6 @@
-using System.Runtime.InteropServices.JavaScript;
+using Uno.UI;
+
+[assembly: System.Reflection.Metadata.MetadataUpdateHandler(typeof(Playground.CommerceUpdateHandler))]
 
 namespace Playground;
 
@@ -25,8 +27,11 @@ public partial class App : Application
 			.ConfigureApp()
 			.UseToolkitNavigation();
 		_window = appBuilder.Window;
+#if DEBUG
+		_window.EnableHotReload();
+#endif
 
-		var hostingOption = InitOption.Splash;
+		var hostingOption = InitOption.NavigationRoot;
 
 		switch (hostingOption)
 		{
@@ -205,4 +210,11 @@ public class LongStartHostedService : IHostedService
 {
 	public Task StartAsync(CancellationToken cancellationToken) => Task.Delay(2000, cancellationToken);
 	public Task StopAsync(CancellationToken cancellationToken) => Task.CompletedTask;
+}
+
+public static class CommerceUpdateHandler
+{
+	internal static void UpdateApplication(Type[]? types)
+	{
+	}
 }

@@ -14,7 +14,7 @@
 			<RowDefinition Height="Auto" />
 			<RowDefinition />
 		</Grid.RowDefinitions>
-		<ui:NavigationBar Content="Second Page"
+		<ui:NavigationBar Content="Second Page 1"
 						  x:Uid="Page_NavigationBar"
 						  Style="{StaticResource MaterialNavigationBarStyle}">
 			<ui:NavigationBar.MainCommand>

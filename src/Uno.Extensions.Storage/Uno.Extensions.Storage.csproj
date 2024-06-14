@@ -9,6 +9,7 @@
 
 		<!-- As we are InternalsVisibleTo, we disable some compatibility types that are not used by package itself. -->
 		<UnoExtensionsGeneration_DisableModuleInitializerAttribute>True</UnoExtensionsGeneration_DisableModuleInitializerAttribute>
+		<UnoExtensionsGeneration_DisableMetadataUpdateHandlerAttribute>true</UnoExtensionsGeneration_DisableMetadataUpdateHandlerAttribute>
 	</PropertyGroup>
 	<ItemGroup>
 		<Compile Remove="KeyValueStorage\ApplicationDataKeyedStorage.cs" />

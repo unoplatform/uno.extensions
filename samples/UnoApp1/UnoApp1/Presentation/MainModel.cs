@@ -1,3 +1,6 @@
+using Uno.Extensions.Navigation;
+using Uno.Extensions.Reactive;
+
 namespace UnoApp1.Presentation;
 
 public partial record MainModel
