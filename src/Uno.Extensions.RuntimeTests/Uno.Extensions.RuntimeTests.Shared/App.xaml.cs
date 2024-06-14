@@ -50,8 +50,8 @@ namespace Uno.Extensions.RuntimeTests
 #endif
 
 			ForceAssemblyLoading();
-			_window.Content ??= new Uno.UI.RuntimeTests.UnitTestsControl();
-			_window.Activate();
+			_window!.Content ??= new Uno.UI.RuntimeTests.UnitTestsControl();
+			_window!.Activate();
 		}
 
 		/// <summary>

@@ -8,7 +8,7 @@ It allows the declaration of an operator directly on items instead of dealing wi
 A _list feed_ goes in `None` if the list does not have any elements.
 
 > [!NOTE]
-> `ListFeed<T>` is using the _key equality_ to track multiple version of a same entity whitin different messages of the `ListFeed<T>`.
+> `ListFeed<T>` is using the _key equality_ to track multiple version of a same entity within different messages of the `ListFeed<T>`.
 > [Read more about _key equality_.](../KeyEquality/concept.md).
 
 ## Sources: How to create a list feed
@@ -42,13 +42,13 @@ This allows the creation of a _list feed_ from a _feed of list_.
 
 ```csharp
 public IListFeed<WeatherInfo> Forecast => Feed
-	.Async(async ct => new []
-	{
-		await _weatherService.GetWeatherForecast(DateTime.Today.AddDays(1), ct),
-		await _weatherService.GetWeatherForecast(DateTime.Today.AddDays(2), ct),
-	})
-	.Select(list => list.ToImmutableList())
-	.AsListFeed();
+    .Async(async ct => new []
+    {
+        await _weatherService.GetWeatherForecast(DateTime.Today.AddDays(1), ct),
+        await _weatherService.GetWeatherForecast(DateTime.Today.AddDays(2), ct),
+    })
+    .Select(list => list.ToImmutableList())
+    .AsListFeed();
 ```
 
 ### AsFeed

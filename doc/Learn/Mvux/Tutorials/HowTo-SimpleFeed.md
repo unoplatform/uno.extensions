@@ -6,11 +6,11 @@ uid: Uno.Extensions.Mvux.HowToSimpleFeed
 
 In this tutorial, you will learn how to create a project that uses MVUX with a combination of a feed (`IFeed<T>`) and the `FeedView` control to asynchronously load and display data coming from a service.
 
- - The data will come from a service that asynchronously provides a single value of current weather information upon request.
- - An `IFeed` will be created and used to asynchronously request data from the service.
- - The `FeedView` control will be used to display the data and automatically respond to the current feed status.
- - The `FeedView` will be styled to use a different template when awaiting data from the service.
- - A Refresh button will be added to retrieve the latest weather data on-demand.
+- The data will come from a service that asynchronously provides a single value of current weather information upon request.
+- An `IFeed` will be created and used to asynchronously request data from the service.
+- The `FeedView` control will be used to display the data and automatically respond to the current feed status.
+- The `FeedView` will be styled to use a different template when awaiting data from the service.
+- A Refresh button will be added to retrieve the latest weather data on-demand.
 
 ## WeatherApp Sample
 
@@ -61,7 +61,6 @@ You can find the code for our weather app [here](https://github.com/unoplatform/
     > [!NOTE]
     > Feeds (`IFeed<T>` and `IListFeed<T>` for collections) are used as a gateway to asynchronously request data from a service and wrap the result or error (if any) in metadata to be displayed in the View in accordingly.
     Learn more about list-feeds [here](xref:Uno.Extensions.Mvux.HowToListFeed).
-
 
 ## Data bind the View
 
@@ -200,4 +199,3 @@ In the following step you'll learn how to customize the progress-ring you saw be
     ![A screenshot of the app demonstrating how the FeedView displays "Requesting temperature..."](../Assets/SimpleFeed-7.jpg)
 
 1. Once the data is the available and the `FeedView` switches to its `ValueTemplate` (the first default `DataTemplate` in our example).
-

@@ -13,7 +13,7 @@ Binding a property directly from one UI element to another is a common scenario.
 new StackPanel()
     .Children(
         new Button()
-            .Assign(out var button)
+            .Name(out var button)
             .Content("I am a button"),
 
         // Creating a TextBox and binding its Text property to a Button's Content
@@ -27,7 +27,7 @@ new StackPanel()
 new StackPanel()
     .Children(
         new TextBox()
-            .Assign(out var textBox)
+            .Name(out var textBox)
             .Text("I am a TextBox"),
 
         // Creating a Button and binding its Content property to the TextBox's Text property with TwoWay binding
@@ -49,7 +49,7 @@ new TextBox()
 new StackPanel()
     .Children(
         new Button()
-            .Assign(out var button)
+            .Name(out var button)
             .Content("I am a button"),
 
         // Binding to a property of a DataContext
@@ -75,8 +75,6 @@ var textBlock = new TextBlock()
                                 .Binding(t => t.Tag));
 
 ```
-
-
 
 Example of using RelativeSource to bind a parent property to the element property:
 

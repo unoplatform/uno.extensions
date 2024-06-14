@@ -8,9 +8,9 @@ In this tutorial, you will learn how to create an MVUX project that displays sto
 
 In this tutorial, you will also learn how to create an MVUX project and utilization of feed (`IFeed<T>`) and the `FeedView` control to display data pushed in asynchronously from an `IAsyncEnumerable<T>`.
 
- - For our data, we're going to create a service that has an `IAsyncEnumerable<T>` method that returns periodic stock market updates.
- - You'll learn how to use a feed to asynchronously request this data from the service.
- - How to use the `FeedView` control to display the asynchronous data and automatically respond to the current feed status.
+- For our data, we're going to create a service that has an `IAsyncEnumerable<T>` method that returns periodic stock market updates.
+- You'll learn how to use a feed to asynchronously request this data from the service.
+- How to use the `FeedView` control to display the asynchronous data and automatically respond to the current feed status.
 
 ## StockMarketApp Sample
 
@@ -85,7 +85,7 @@ You can find the code of this tutorial [here](https://github.com/unoplatform/Uno
 > [!NOTE]  
 > Feeds (`IFeed<T>` and `IListFeed<T>` for collections) are used as a gateway to asynchronously request data from a service and wrap the result or error if any in metadata to be displayed in the View accordingly.  
 > Learn more about list-feeds [here](xref:Uno.Extensions.Mvux.HowToListFeed).
-
+>
 > [!TIP]  
 > Feeds are stateless
 > and are there for when the data from the service is read-only and we're not planning to enable edits to it.  
@@ -128,7 +128,7 @@ and generate a bindable proxy called `BindableStockMarketModel`, which exposes p
 
     ```csharp
     this.DataContext = new BindableStockMarketModel(new StockMarketService());
-    ```   
+    ```
 
 1. Press <kbd>F5</kbd> to run the app.
 

@@ -13,7 +13,6 @@ The `MauiHost` control (that's part of the Uno.Extensions.Maui.WinUI package) is
 
 It's recommended that instead of hosting individual .NET MAUI controls in a `MauiHost` element, a `ContentView` should be created inside a .NET MAUI class library and set as the `Source` on a `MauiHost` element. This makes it easier to add multiple .NET MAUI controls, as well as setting properties, including data binding, in XAML.
 
-
 ## Get Started - New Uno Application
 
 > [!NOTE]
@@ -87,8 +86,8 @@ Add a reference in the existing class library to [Uno.Extensions.Maui.WinUI](htt
     <Project ToolsVersion="15.0">
       <ItemGroup>
         ...
-        <!--<PackageVersion Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.756" /> -->
-        <!-- <PackageVersion Include="Microsoft.WindowsAppSDK" Version="1.4.231219000" />-->
+        <!--<PackageVersion Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.3233" /> -->
+        <!-- <PackageVersion Include="Microsoft.WindowsAppSDK" Version="1.5.240311000" />-->
         ...
         <!--<PackageVersion Include="Xamarin.Google.Android.Material" Version="1.9.0.2" />-->
         ...

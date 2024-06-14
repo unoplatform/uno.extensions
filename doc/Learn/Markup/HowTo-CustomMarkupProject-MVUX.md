@@ -10,9 +10,9 @@ Create a new project using MVUX
 
 - In this tutorial, you will [set up the environment and create the Markup project and MVUX](xref:Uno.Extensions.HowToMarkupMVUX)
 
-## Start With MVUX.
+## Start With MVUX
 
-The MVUX provides a structured approach to managing the application state and updating the user interface within the Uno Platform, following the principles of MVU architecture. 
+The MVUX provides a structured approach to managing the application state and updating the user interface within the Uno Platform, following the principles of MVU architecture.
 It aims to simplify state management and UI development by providing abstractions and conventions for working with feeds, states, and views.
 
 In this tutorial, you can learn about the [MVUX](xref:Uno.Extensions.Mvux.Overview) using XAML.
@@ -22,23 +22,21 @@ The same concept can be applied to C# Markup.
 By the way, let's use the same existing example in XAML to make the conversation in C# Markup.
 Let's try to simplify the use to be able to explain the features.
 
-**WeatherApp Sample XAML**
+### WeatherApp Sample XAML
 
 You can find the code for our weather app here: https://github.com/unoplatform/Uno.Samples/tree/master/UI/MvuxHowTos/WeatherApp
 
-
-
-### Add elements and set attributes on the UI.
+### Add elements and set attributes on the UI
 
 Change the *MainPage* to have a different content as the sample bellow.
 
 - Customizing the UI
 
-    # [**C# Markup**](#tab/cs)
+  #### [**C# Markup**](#tab/cs)
 
-    #### C# Markup.
+  ##### C# Markup
 
-    - The code below shows how to use the FeedView to list information on MVUX.
+  - The code below shows how to use the FeedView to list information on MVUX.
     But first to have the information we will create the WeatherModel and the WeatherService.
 
     First, let's create the Weather Service.
@@ -47,7 +45,7 @@ Change the *MainPage* to have a different content as the sample bellow.
     After that, we create an IWeatherService, (With defining the GetCurrentWeather) and an implementation of it on the WeatherService.
     For this case, just have a new WeatherInfo with a random temperature.
 
-    > Notice that the WeatherInfo is been created for every new request, following the MVU standard. 
+    > Notice that the WeatherInfo is been created for every new request, following the MVU standard.
 
     ```csharp
     namespace MySampleProjectMVUX;
@@ -98,15 +96,14 @@ Change the *MainPage* to have a different content as the sample bellow.
 
     And after that add the FeedView.
 
-    
     ```csharp
     new FeedView()
         .Source(() => vm.CurrentWeather)
         //.Source(x => x.Bind(() => vm.CurrentWeather))
-							
+                
         //You can use the Function
         .DataTemplate((sample) => GetDataTemplate())
-							
+                            
         //Or you can use direct the Element
         .ProgressTemplate<StackPanel>((sample) => 
             new StackPanel().Children(
@@ -115,9 +112,9 @@ Change the *MainPage* to have a different content as the sample bellow.
     )
     ```
 
-    # [**XAML**](#tab/cli)
-    
-    #### XAML
+  #### [**XAML**](#tab/cli)
+
+  ##### XAML
 
     MainPage.xaml
 
@@ -147,11 +144,12 @@ Change the *MainPage* to have a different content as the sample bellow.
         this.DataContext = new BindableWeatherModel(new WeatherService());
     }
     ```
-    # [**Full Code**](#tab/code)
-    
-    #### Full C# Markup code
-    
-    - Example of the complete code on the MainPage.cs, so you can follow along in your own project.
+
+  #### [**Full Code**](#tab/code)
+
+  ##### Full C# Markup code
+
+  - Example of the complete code on the MainPage.cs, so you can follow along in your own project.
 
     ```csharp
     namespace MySampleProjectMVUX;
@@ -159,55 +157,55 @@ Change the *MainPage* to have a different content as the sample bellow.
 
     public sealed partial class MainPage : Page
     {
-	    public MainPage()
-	    {
+        public MainPage()
+        {
 
-		    this.DataContext = new BindableWeatherModel(new WeatherService());
+            this.DataContext = new BindableWeatherModel(new WeatherService());
 
-		    this.DataContext<BindableWeatherModel>((page, vm) => page
-			    .Background(ThemeResource.Get<Brush>("ApplicationPageBackgroundThemeBrush"))
-			    .Content(
-				    new StackPanel()
-					    .VerticalAlignment(VerticalAlignment.Center)
-					    .HorizontalAlignment(HorizontalAlignment.Center)
-					    .Children(
-						    new TextBlock()
-							    .Text("Hello Uno Platform!"),
-						    new FeedView()
-							    .Source(() => vm.CurrentWeather)
-							    .Source(x => x.Bind(() => vm.CurrentWeather))
-							
-							    //You can use the Function
-							    .DataTemplate((sample) => GetDataTemplate())
-							
-							    //Or you can use direct the Element
-							    .ProgressTemplate<StackPanel>((sample) => 
-								    new StackPanel().Children(
-									    new TextBlock().Text("Loading...")
-								    )
-							    )
-					    )
-			    )
-		    );
-	    }
-	    //Using Template
-	    public StackPanel GetDataTemplate()
-	    {
-		    return new StackPanel()
-				    .Orientation(Orientation.Vertical)
-				    .Children(
-					    new TextBlock()
-						    .Margin(10)
-						    //.DataContext(x => x.Bind("Data"))
-						    //.Text(x => x.Bind("Temperature"))
-						    .Text("Temperature")
-					    //,
-					    //new Button()
-					    //	.Margin(10)
-					    //	.Content("Refresh")
-					    //	.Command(x => x.Bind("Refresh"))
-				    );
-	    }
+            this.DataContext<BindableWeatherModel>((page, vm) => page
+                .Background(ThemeResource.Get<Brush>("ApplicationPageBackgroundThemeBrush"))
+                .Content(
+                    new StackPanel()
+                        .VerticalAlignment(VerticalAlignment.Center)
+                        .HorizontalAlignment(HorizontalAlignment.Center)
+                        .Children(
+                            new TextBlock()
+                                .Text("Hello Uno Platform!"),
+                            new FeedView()
+                                .Source(() => vm.CurrentWeather)
+                                .Source(x => x.Bind(() => vm.CurrentWeather))
+                            
+                                //You can use the Function
+                                .DataTemplate((sample) => GetDataTemplate())
+                            
+                                //Or you can use direct the Element
+                                .ProgressTemplate<StackPanel>((sample) => 
+                                    new StackPanel().Children(
+                                        new TextBlock().Text("Loading...")
+                                    )
+                                )
+                        )
+                )
+            );
+        }
+        //Using Template
+        public StackPanel GetDataTemplate()
+        {
+            return new StackPanel()
+                    .Orientation(Orientation.Vertical)
+                    .Children(
+                        new TextBlock()
+                            .Margin(10)
+                            //.DataContext(x => x.Bind("Data"))
+                            //.Text(x => x.Bind("Temperature"))
+                            .Text("Temperature")
+                        //,
+                        //new Button()
+                        //  .Margin(10)
+                        //  .Content("Refresh")
+                        //  .Command(x => x.Bind("Refresh"))
+                    );
+        }
     }
 
     ```

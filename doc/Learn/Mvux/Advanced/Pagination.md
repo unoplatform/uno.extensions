@@ -93,8 +93,8 @@ Inside this callback, we call the service by providing it with the following par
 ```xml
 <Page 
     x:Class="PaginationPeopleApp.MainPage"
-	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:PaginationPeopleApp"
     xmlns:mvux="using:Uno.Extensions.Reactive.UI">
 
@@ -261,7 +261,7 @@ public static IListFeed<T> AsyncPaginatedByCursor<TCursor>(TCursor firstPage, Ge
 
 where the `GetPage` type is a delegate with the following pattern:
 
-```
+```csharp
 public delegate ValueTask<PageResult<TCursor, TItem>> GetPage<TCursor, TItem>(TCursor cursor, uint? desiredPageSize, CancellationToken ct);
 ```
 

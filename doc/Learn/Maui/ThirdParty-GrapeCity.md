@@ -35,8 +35,8 @@ In order to use the ComponentOne controls, you first need to install the Compone
 
     public static class AppBuilderExtensions
     {
-	    public static MauiAppBuilder UseMauiControls(this MauiAppBuilder builder)
-		    => builder
+      public static MauiAppBuilder UseMauiControls(this MauiAppBuilder builder)
+        => builder
                 .RegisterFlexGridControls()
                 .RegisterCalendarControls()
                 .ConfigureFonts(fonts =>
@@ -55,7 +55,7 @@ In order to use the ComponentOne controls, you first need to install the Compone
 
 1. Wrap content in `ScrollViewer` on the `MainPage` of the Uno Platform application to make sure the full `FlexGrid` and other controls can be scrolled into the view.
 
-**App Render Output**
+### App Render Output
 
 - **Android:**
   - ![Android FlexGrid](Assets/Screenshots/Android/C1_FlexGrid.png)
@@ -63,14 +63,13 @@ In order to use the ComponentOne controls, you first need to install the Compone
 - **Windows:**
   - ![Windows FlexGrid](Assets/Screenshots/Windows/C1_FlexGrid.png)
 
-
 ## Adding Calendar
 
 1. Follow the [Calendar Quick Start](https://www.grapecity.com/componentone/docs/maui/online-maui/calendarquickstart.html) to apply XAML to the EmbeddedControl.xaml.
 
 1. In order for the Calendar control to render correctly on all platforms you should set both `HeightRequest` and `WidthRequest` attributes on the Calendar control.
 
-**App Render Output**
+### App Render Output
 
 - **Android:**
   - ![Android Calendar](Assets/Screenshots/Android/C1_Calendar.png)

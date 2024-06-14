@@ -2,60 +2,74 @@ trigger:
   branches:
     include:
       - main
+      - feature/*
       - release/*
       - legacy/*
-
-  paths:
-    include:
-    - '/'
-    exclude:
-    # don't trigger the CI if only docs files are changed
-    - doc/*
-    - '**/*.md'
-    - '*.md'
-
 
 pr:
   branches:
     include:
       - main
+      - feature/*
       - release/*
       - legacy/*
 
-  paths:
-    include:
-    - '/'
-    exclude:
-    # don't trigger the CI if only docs files are changed
-    - doc/*
-    - '**/*.md'
-    - '*.md'
+stages:
+- stage: Determine_Changes
+  displayName: Determine Changes
+  jobs:
+  - template: stage-determine-changes.yml
 
-jobs:
-- template: .azure-pipelines.Packages.yml
+- stage: Docs_Validations
+  displayName: Docs Validations
+  dependsOn: Determine_Changes
+  # Trigger this stage when docs files are changed
+  condition: or(eq(dependencies.Determine_Changes.outputs['evaluate_changes.DetermineChanges.docsOnly'], 'true'), eq(dependencies.Determine_Changes.outputs['evaluate_changes.DetermineChanges.mixedChanges'], 'true'))
+  jobs:
+  - template: stage-docs-validations.yml
 
-- template: .azure-pipelines.Windows.yml
-  parameters:
-    solution: testing/TestHarness/TestHarness-winui.slnf
-    solutionName: TestHarness_WinUI
+- stage: Packages
+  displayName: Packages
+  dependsOn: Determine_Changes
+  # Don't trigger this stage if only docs files are changed
+  condition: ne(dependencies.Determine_Changes.outputs['evaluate_changes.DetermineChanges.docsOnly'], 'true')
+  jobs:
+  - template: stage-build-packages.yml
+  - template: stage-build-changelog.yml
 
-- template: .azure-pipelines.Windows.yml
-  parameters:
-    solution: testing/TestHarness/TestHarness-ui.slnf
-    solutionName: TestHarness_UI
+- stage: Build_Samples
+  displayName: Build Samples
+  dependsOn: Determine_Changes
+  # Don't trigger this stage if only docs files are changed
+  condition: ne(dependencies.Determine_Changes.outputs['evaluate_changes.DetermineChanges.docsOnly'], 'true')
+  jobs:
+  - template: stage-build-windows.yml
+    parameters:
+      solution: testing/TestHarness/TestHarness-winui.slnf
+      solutionName: TestHarness_WinUI
 
-- template: .azure-pipelines.Windows.yml
-  parameters:
-    solution: samples/Playground/Playground.sln
-    solutionName: Playground
+  - template: stage-build-windows.yml
+    parameters:
+      solution: testing/TestHarness/TestHarness-ui.slnf
+      solutionName: TestHarness_UI
 
-- template: .azure-pipelines.Windows.yml
-  parameters:
-    solution: samples/MauiEmbedding/MauiEmbedding.sln
-    solutionName: MauiEmbedding
+  - template: stage-build-windows.yml
+    parameters:
+      solution: samples/Playground/Playground.sln
+      solutionName: Playground
 
-- template: .azure-pipelines.Wasm.yml
-- template: .azure-pipelines.UITests.Wasm.yml
-- template: .azure-pipelines.RuntimeTests.Skia.yml
-- template: .azure-pipelines.Changelog.yml
+  - template: stage-build-windows.yml
+    parameters:
+      solution: samples/MauiEmbedding/MauiEmbedding.sln
+      solutionName: MauiEmbedding
 
+  - template: stage-build-wasm.yml
+
+- stage: Build_Tests
+  displayName: Build Tests
+  dependsOn: Determine_Changes
+  # Don't trigger this stage if only docs files are changed
+  condition: ne(dependencies.Determine_Changes.outputs['evaluate_changes.DetermineChanges.docsOnly'], 'true')
+  jobs:
+  - template: stage-build-uitests-wasm.yml
+  - template: stage-build-runtimetests-skia.yml

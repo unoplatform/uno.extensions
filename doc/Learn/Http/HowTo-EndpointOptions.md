@@ -68,27 +68,27 @@ It's often necessary to include an API key alongside requests to a web API. This
     }
     ```
 
-    * `ctx` represents the `HostBuilderContext`. This can be used to access the configuration of the host.
+  * `ctx` represents the `HostBuilderContext`. This can be used to access the configuration of the host.
 
-    * `services` is an instance of `IServiceCollection`. This is used to register services with the host.
+  * `services` is an instance of `IServiceCollection`. This is used to register services with the host.
 
 * An extension method `AddClientWithEndpoint<TInterface, TEndpoint>()` is included which allows specifying **custom endpoint options** when adding a typed client to the service collection.
 
-    * Use this extension method to register a typed client with the service collection and specify custom endpoint options of the type `CustomEndpointOptions`.
+  * Use this extension method to register a typed client with the service collection and specify custom endpoint options of the type `CustomEndpointOptions`.
 
-        ```csharp
-        protected override void OnLaunched(LaunchActivatedEventArgs args)
-        {
-            var appBuilder = this.CreateBuilder(args)
-                .Configure(hostBuilder =>
-                {
-                    hostBuilder.UseHttp((ctx, services) => {
-                        services.AddClientWithEndpoint<HttpEndpointsOneViewModel, CustomEndpointOptions>();
-                    });
+    ```csharp
+    protected override void OnLaunched(LaunchActivatedEventArgs args)
+    {
+        var appBuilder = this.CreateBuilder(args)
+            .Configure(hostBuilder =>
+            {
+                hostBuilder.UseHttp((ctx, services) => {
+                    services.AddClientWithEndpoint<HttpEndpointsOneViewModel, CustomEndpointOptions>();
                 });
-            ...
-        }
-        ```
+            });
+        ...
+    }
+    ```
 
     * Type parameter `TInterface` is the service or view model interface that will be used to access the endpoint.
 
@@ -96,7 +96,42 @@ It's often necessary to include an API key alongside requests to a web API. This
 
 * The extension method above allows you to pass arguments for various details such as the `HostBuilderContext`, an endpoint name (which corresponds to a configuration section), and a callback for configuring the `HttpClient` associated with this endpoint.
 
-    * Add this information to the method call as shown below:
+  * Add this information to the method call as shown below:
+
+    ```csharp
+    protected override void OnLaunched(LaunchActivatedEventArgs args)
+    {
+        var appBuilder = this.CreateBuilder(args)
+            .Configure(hostBuilder =>
+            {
+                hostBuilder.UseHttp((ctx, services) => {
+                    services.AddClientWithEndpoint<HttpEndpointsOneViewModel, CustomEndpointOptions>(
+                        ctx,
+                        name: "HttpDummyJsonEndpoint",
+                        configure: (builder, options) =>
+                        {
+                            builder.ConfigureHttpClient(client =>
+                            {
+                                    // Configure the HttpClient here
+                            });
+                        }
+                    );
+                });
+            });
+        ...
+    }
+    ```
+
+    * We assigned the endpoint a name of `HttpDummyJsonEndpoint`. This name corresponds to a configuration section in the `appsettings.json` file. We will add this section in the next section.
+
+    * The `configure` callback is used to configure the `HttpClient` associated with the endpoint.
+
+        > [!TIP]
+        > This callback is optional. If you do not need to configure the `HttpClient`, you can omit this callback.
+
+      * Notice that the callback accepts two arguments: `builder` and `options`. `options` is an instance of `CustomEndpointOptions` which we defined earlier. We will use this to access the custom options you defined in the previous section.
+
+      * Add an `ApiKey` to the request headers on the client using the `ConfigureHttpClient` method.
 
         ```csharp
         protected override void OnLaunched(LaunchActivatedEventArgs args)
@@ -112,7 +147,10 @@ It's often necessary to include an API key alongside requests to a web API. This
                             {
                                 builder.ConfigureHttpClient(client =>
                                 {
-                                    // Configure the HttpClient here
+                                    if (options?.ApiKey is not null)
+                                    {
+                                        client.DefaultRequestHeaders.Add("ApiKey", options.ApiKey);
+                                    }
                                 });
                             }
                         );
@@ -122,47 +160,9 @@ It's often necessary to include an API key alongside requests to a web API. This
         }
         ```
 
-    * We assigned the endpoint a name of `HttpDummyJsonEndpoint`. This name corresponds to a configuration section in the `appsettings.json` file. We will add this section in the next section.
+        * The `ApiKey` header is added to the `HttpClient` using the `DefaultRequestHeaders` property.
 
-    * The `configure` callback is used to configure the `HttpClient` associated with the endpoint.
-
-        > [!TIP]
-        > This callback is optional. If you do not need to configure the `HttpClient`, you can omit this callback.
-
-        * Notice that the callback accepts two arguments: `builder` and `options`. `options` is an instance of `CustomEndpointOptions` which we defined earlier. We will use this to access the custom options you defined in the previous section.
-
-        * Add an `ApiKey` to the request headers on the client using the `ConfigureHttpClient` method.
-
-            ```csharp
-            protected override void OnLaunched(LaunchActivatedEventArgs args)
-            {
-                var appBuilder = this.CreateBuilder(args)
-                    .Configure(hostBuilder =>
-                    {
-                        hostBuilder.UseHttp((ctx, services) => {
-                            services.AddClientWithEndpoint<HttpEndpointsOneViewModel, CustomEndpointOptions>(
-                                ctx,
-                                name: "HttpDummyJsonEndpoint",
-                                configure: (builder, options) =>
-                                {
-                                    builder.ConfigureHttpClient(client =>
-                                    {
-                                        if (options?.ApiKey is not null)
-                                        {
-                                            client.DefaultRequestHeaders.Add("ApiKey", options.ApiKey);
-                                        }
-                                    });
-                                }
-                            );
-                        });
-                    });
-                ...
-            }
-            ```
-
-            * The `ApiKey` header is added to the `HttpClient` using the `DefaultRequestHeaders` property.
-
-            * The value of the header is set to the `ApiKey` property of the `CustomEndpointOptions` instance.
+        * The value of the header is set to the `ApiKey` property of the `CustomEndpointOptions` instance.
 
 * We have successfully registered an endpoint with the service collection. We will now add a configuration section for this endpoint.
 
@@ -180,13 +180,13 @@ It's often necessary to include an API key alongside requests to a web API. This
     }
     ```
 
-    * The name of the configuration section _must_ match the name of the endpoint you specified in the previous section.
+  * The name of the configuration section _must_ match the name of the endpoint you specified in the previous section.
 
-    * The `Url` property is used to specify the URL of the endpoint.
+  * The `Url` property is used to specify the URL of the endpoint.
 
-    * The `ApiKey` property is used to specify the API key that will be added to the request header.
+  * The `ApiKey` property is used to specify the API key that will be added to the request header.
 
-    * The `UseNativeHandler` property is used to explicitly specify whether to use the native HTTP handler.
+  * The `UseNativeHandler` property is used to explicitly specify whether to use the native HTTP handler.
 
 ### 4. Using the endpoint
 
@@ -211,15 +211,15 @@ It's often necessary to include an API key alongside requests to a web API. This
     }
     ```
 
-    * The `HttpClient` instance is injected into the view model. This instance is configured with the options we specified in the previous sections.
+  * The `HttpClient` instance is injected into the view model. This instance is configured with the options we specified in the previous sections.
 
 * All the details of `IHttpClientFactory` are abstracted away from the view model. The view model can simply use this `HttpClient` instance to make requests to the endpoint. The instance can have a managed lifecycle, while a significant amount of ceremony and unintuitive workarounds are avoided.
 
 ## See also
 
-- [How-To: Register an Endpoint for HTTP Requests](xref:Uno.Extensions.Http.HowToHttp)
-- [How-To: Consume a web API with HttpClient](xref:Uno.Development.ConsumeWebApi)
-- [How-To: Create a Strongly-Typed REST Client for an API](xref:Uno.Extensions.Http.HowToRefit)
-- [Overview: HTTP](xref:Uno.Extensions.Http.Overview)
-- [Overview: Polly and HttpClientFactory](https://github.com/App-vNext/Polly/wiki/Polly-and-HttpClientFactory)
-- [Explore: TestHarness HTTP Endpoints](https://github.com/unoplatform/uno.extensions/tree/main/testing/TestHarness/TestHarness.Shared/Ext/Http/Endpoints)
+* [How-To: Register an Endpoint for HTTP Requests](xref:Uno.Extensions.Http.HowToHttp)
+* [How-To: Consume a web API with HttpClient](xref:Uno.Development.ConsumeWebApi)
+* [How-To: Create a Strongly-Typed REST Client for an API](xref:Uno.Extensions.Http.HowToRefit)
+* [Overview: HTTP](xref:Uno.Extensions.Http.Overview)
+* [Overview: Polly and HttpClientFactory](https://github.com/App-vNext/Polly/wiki/Polly-and-HttpClientFactory)
+* [Explore: TestHarness HTTP Endpoints](https://github.com/unoplatform/uno.extensions/tree/main/testing/TestHarness/TestHarness.Shared/Ext/Http/Endpoints)

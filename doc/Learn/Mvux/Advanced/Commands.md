@@ -96,7 +96,7 @@ When command generation is switched off, the methods under the scope which has b
 #### Using the CommandParameter
 
 An additional parameter can be added to the method on the Model, which is then assigned with the value of the `CommandParameter` received from the View. For example, when a `Button` is clicked, the [`Button.CommandParameter`](https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.primitives.buttonbase.commandparameter) value will be passed to the command.  
-The `CommandParameter` value is first passed to the `CanExecute` method on the command to determine if the command can be executed. The command checks both that the `CommandParameter` value can be cast to the correct type, and that there's not already an invocation of the command for that `CommandParameter` value. Assuming `CanExecute` returns true, when the `Button` is clicked the `Execute` method on the command is invoked which routes the call, including the `CommandParameter` value (correctly cast to the appropriate type), to the method on the Model. 
+The `CommandParameter` value is first passed to the `CanExecute` method on the command to determine if the command can be executed. The command checks both that the `CommandParameter` value can be cast to the correct type, and that there's not already an invocation of the command for that `CommandParameter` value. Assuming `CanExecute` returns true, when the `Button` is clicked the `Execute` method on the command is invoked which routes the call, including the `CommandParameter` value (correctly cast to the appropriate type), to the method on the Model.
 
 In this example the Model defines a method, `DoWork`, that accepts a parameter, `param`:
 
@@ -120,7 +120,7 @@ The command can be consumed in the View by setting the `CommandParameter` on the
 If the `CommandParameter` is null, or if its type doesn't match the parameter type of the method, the button will remain disabled.  
 On the other hand, in case the `CommandParameter` is specified in the View but the method in the Model doesn't have a parameter, the View's `CommandParameter` value will just be disregarded.
 
-It's also still recommended to include a `CancellationToken`, which will allow the method to be cancelled. For example, the preferred definition for the `DoWork` method would be asynchronous and include the `CancellationToken` parameter. 
+It's also still recommended to include a `CancellationToken`, which will allow the method to be cancelled. For example, the preferred definition for the `DoWork` method would be asynchronous and include the `CancellationToken` parameter.
 
 ```csharp
 public ValueType DoWork(double param, CancellationToken ct) { ... }
@@ -242,7 +242,6 @@ The `Click` event on the `Button` can then be bound using x:Bind to the Save met
 #### ImplicitFeedCommandParameter attribute
 
 You can opt-in or opt-out of implicit matching of Feeds and command parameters by decorating the current assembly or class with the [`ImplicitFeedCommandParameters`](https://github.com/unoplatform/uno.extensions/blob/main/src/Uno.Extensions.Reactive/Config/ImplicitFeedCommandParametersAttribute.cs) attribute:  
-
 
 ```csharp
 [assembly:ImplicitFeedCommandParameter(false)]
@@ -420,6 +419,7 @@ Method name    | Signature
 **Then**       | public void Then(AsyncAction<T> execute);
 
 `AsyncAction` refers to an action with a variable number of parameters (up to 16), with its last parameter being a `CancellationToken`, and returns a `ValueTask`:
+
 ```chsarp
 public delegate ValueTask AsyncAction<in T1, T2...>(T1 t1, T2 t2 ... , CancellationToken ct);
 ```

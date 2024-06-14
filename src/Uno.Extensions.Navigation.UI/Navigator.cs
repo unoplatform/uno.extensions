@@ -1,6 +1,4 @@
-﻿using System.Diagnostics;
-using Uno.Extensions.Diagnostics;
-using Uno.Extensions.Navigation.UI;
+﻿using Uno.Extensions.Diagnostics;
 
 namespace Uno.Extensions.Navigation;
 
@@ -202,7 +200,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 
 		if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"Building fully qualified route for unhandled request. New request: {request.Route}");
 
-		if(Region.Navigator() is ClosableNavigator closable)
+		if (Region.Navigator() is ClosableNavigator closable)
 		{
 			if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"Closing navigator and redirecting request");
 			return closable.CloseAndNavigateAsync(request);
@@ -546,6 +544,27 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 		if (Route?.IsEmpty() == false)
 		{
 			var currentRouteMap = Resolver.FindByPath(Route.Base);
+			if (currentRouteMap != null || routeMap != null)
+			{
+				if (routeMap?.Parent is not null &&
+					currentRouteMap?.Parent is not null &&
+					currentRouteMap?.Parent != routeMap.Parent)
+				{
+					return false;
+				}
+			}
+		}
+
+		// If a flyout is hosting a page it will inject frameview
+		// resulting in an empty route for the flyout navigator.
+		// In this case we need to check the child regions for a route
+		// and use that to determine if the current navigator should be
+		// closed (ie we can navigate to the current route inside the flyout)
+		if (this is ClosableNavigator closable &&
+			Route?.IsEmpty() == true &&
+			Region.Children.FirstOrDefault(x => x.Navigator()?.Route?.IsEmpty() == false) is { } childRegion)
+		{
+			var currentRouteMap = Resolver.FindByPath(childRegion.Navigator()?.Route?.Base);
 			if (currentRouteMap != null || routeMap != null)
 			{
 				if (routeMap?.Parent is not null &&

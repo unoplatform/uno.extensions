@@ -18,7 +18,7 @@ uid: Uno.Extensions.Logging.UseInternalLogging
 * To log Uno-internal messages, you first need to call `UseLogging()` on the `IHost` instance, passing `true` in for the enableUnoLogging parameter:
 
     ```csharp
-    private IHost Host { get; }
+    private IHost Host { get; set; }
 
     protected override void OnLaunched(LaunchActivatedEventArgs e)
     {
@@ -35,21 +35,21 @@ uid: Uno.Extensions.Logging.UseInternalLogging
 
 * There are multiple log levels that correspond to differing degrees of severity:
 
-| Level | Description |
-|-------|-------------|
-| Trace | Used for parts of a method to capture a flow. |
-| Debug | Used for diagnostics information. |
-| Information | Used for general successful information. Generally the default minimum. |
-| Warning | Used for anything that can potentially cause application oddities. Automatically recoverable. |
-| Error | Used for anything that is fatal to the current operation but not to the whole process. Potentially recoverable. |
-| Critical | Used for anything that is forcing a shutdown to prevent data loss or corruption. Not recoverable. |
+    | Level | Description |
+    |-------|-------------|
+    | Trace | Used for parts of a method to capture a flow. |
+    | Debug | Used for diagnostics information. |
+    | Information | Used for general successful information. Generally the default minimum. |
+    | Warning | Used for anything that can potentially cause application oddities. Automatically recoverable. |
+    | Error | Used for anything that is fatal to the current operation but not to the whole process. Potentially recoverable. |
+    | Critical | Used for anything that is forcing a shutdown to prevent data loss or corruption. Not recoverable. |
 
 * To increase the verbosity of the events recorded when using the development hosting environment, you can adjust the minimum levels as well as those for the XAML layout.
 
 * Conditionally enable the recording of debug events depending on the hosting environment:
 
     ```csharp
-    private IHost Host { get; }
+    private IHost Host { get; set; }
 
     protected override void OnLaunched(LaunchActivatedEventArgs e)
     {

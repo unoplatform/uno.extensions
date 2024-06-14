@@ -181,7 +181,7 @@ They all share a common goal - to send and intercept entity-message messages to 
     This overload takes the state to apply the entity messages on and the key-selector that determines by which property this entity is identified.
     It is designated for single-value states (`IState<T>`) and will update the state if an entity message has been received about an update or a deletion of an entity that is equal to the one currently present in the state.
 
-    In the following example, if any of the details of the current user change and an update entity message has been sent with the messenger about the change, the `CurrentUser` state will update the `User` entity to reflect those changes.    
+    In the following example, if any of the details of the current user change and an update entity message has been sent with the messenger about the change, the `CurrentUser` state will update the `User` entity to reflect those changes.
 
     ```csharp
     public partial record MyModel
@@ -204,7 +204,7 @@ They all share a common goal - to send and intercept entity-message messages to 
 - `Observe<TEntity, TKey>(IListState<TEntity> listState, Func<TEntity, TKey> keySelector)`
 
     This overload is similar to the previous one, except it takes a list-state and applies the entity messages on it, using the key-selector parameter to determine by which property this entity is identified with for comparison purposes.
-    As long as entity-messages are sent from the service, the list-state will remain in sync and reflect newly added, deleted, or updated entities.   
+    As long as entity-messages are sent from the service, the list-state will remain in sync and reflect newly added, deleted, or updated entities.
 
     This method is also the one that was used in the sample code above:
 

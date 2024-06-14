@@ -15,7 +15,7 @@ public sealed partial class App : Application
 
 	protected override async void OnLaunched(LaunchActivatedEventArgs args)
 	{
-#if WINDOWS
+#if WINDOWS10_0_19041_0_OR_GREATER
 		// This is only required because we don't run UnoHost.CreateDefaultHost until a
 		// test scenario is selected. This line is included to ensure web auth test cases
 		// work, without having to navigate to a test scenario in the new app instance
@@ -24,7 +24,7 @@ public sealed partial class App : Application
 #endif
 
 
-#if NET6_0_OR_GREATER && WINDOWS
+#if NET6_0_OR_GREATER && WINDOWS10_0_19041_0_OR_GREATER
 				_window = new Window();
 #else
 		_window = Window.Current;

@@ -22,7 +22,7 @@ The content of the file(s) should be:
 ```xml
 <key>keychain-access-groups</key> 
  <array> 
- 	<string>$(AppIdentifierPrefix)$(CFBundleIdentifier)</string> 
+     <string>$(AppIdentifierPrefix)$(CFBundleIdentifier)</string> 
  </array>
 ```
 
@@ -40,7 +40,7 @@ Adding the `Entitlements.plist` to your project is not enough. You must also add
 * [Microsoft iOS](https://learn.microsoft.com/en-us/dotnet/maui/ios/capabilities?#add-capabilities-in-your-apple-developer-account)
 * [Microsoft Mac Catalyst](https://learn.microsoft.com/en-us/dotnet/maui/mac-catalyst/capabilities?#add-capabilities-in-your-apple-developer-account)
 
-> [!CHEAT]
+> [!NOTE]
 > You can use XCode to create a project, go to the **Signing and Capabilities**, use the same bundle identifier, add the **Keychain Sharing** capacity (again using the same bundle identifier) then ask Xcode to _fix_ your `Xcode Managed Profile`.
 
 ### 3. Modifying the `*.Mobile.csproj`
@@ -58,7 +58,7 @@ A new property group should be added to your `*.csproj` project file. The exampl
 
 The values for the `CodesignKey` and `CodesignProvision` **must** match the values from the [Apple Developer Portal](https://developer.apple.com/account).
 
-> [!CHEAT]
+> [!NOTE]
 > If you used Xcode earlier then build the application and get both values from the build logs.
 
 ### 4. Rebuilding your application

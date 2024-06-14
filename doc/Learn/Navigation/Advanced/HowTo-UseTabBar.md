@@ -5,7 +5,7 @@ uid: Uno.Extensions.Navigation.Advanced.TabBar
 
 The navigation capabilities offered by Uno.Extensions include regions. Regions allow you to associate a specific sector of the view with an individual item on a navigation control from the same `Page`. Likewise, the Uno.Extensions library has built-in support for responding to navigation gestures from the [Toolkit](https://github.com/unoplatform/uno.toolkit.ui) `TabBar`. Follow the steps below to define a user interface centered around navigating with this control.
 
-Since `TabBar` comes from the `Uno.Toolkit` you need to make sure your project has a reference to [Uno.Extensions.Navigation.Toolkit.WinUI](https://www.nuget.org/packages/Uno.Extensions.Navigation.Toolkit.WinUI) nuget package and that you call the `UseToolkitNavigation` extension method on the `IApplicationBuilder` (not `IHostBuilder`). 
+Since `TabBar` comes from the `Uno.Toolkit` you need to make sure your project has a reference to [Uno.Extensions.Navigation.Toolkit.WinUI](https://www.nuget.org/packages/Uno.Extensions.Navigation.Toolkit.WinUI) nuget package and that you call the `UseToolkitNavigation` extension method on the `IApplicationBuilder` (not `IHostBuilder`).
 
 ```csharp
 var builder = this.CreateBuilder(args)
@@ -263,7 +263,7 @@ var builder = this.CreateBuilder(args)
 
 * For the purposes for this tutorial, `SignUpPage` will be associated with its own view model `SignUpViewModel`. Add a new **Class** item to your app called `SignUpViewModel` with the following code:
 
-  ```csharp 
+  ```csharp
   namespace UsingTabBar.ViewModels;
   
   public class SignUpViewModel
@@ -329,7 +329,7 @@ var builder = this.CreateBuilder(args)
 
 #### Code example
 
-```xml    
+```xml
 <Page x:Class="UsingTabBar.Views.MainPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"

@@ -70,7 +70,7 @@ public record MyRecord(string Value = "");
 
 public record MyRecord(string Value)
 {
-	public MyRecord(): this("a default value") { }
+    public MyRecord(): this("a default value") { }
 }
 ```
 

@@ -12,17 +12,17 @@ It will subscribe to your feed and persist all received messages. Then you can a
 [TestMethod]
 public async Task When_ProviderReturnsValueSync_Then_GetSome()
 {
-	var sut = Feed.Async(async ct =>
-	{
-		await Task.Delay(500, ct);
-		return 42;
-	});
-	using var result = await sut.Record();
+    var sut = Feed.Async(async ct =>
+    {
+        await Task.Delay(500, ct);
+        return 42;
+    });
+    using var result = await sut.Record();
 
-	result.Should().Be(r => r
-		.Message(Changed.Progress, Data.Undefined, Error.No, Progress.Transient)
-		.Message(Changed.Data, 42, Error.No, Progress.Final)
-	);
+    result.Should().Be(r => r
+        .Message(Changed.Progress, Data.Undefined, Error.No, Progress.Transient)
+        .Message(Changed.Data, 42, Error.No, Progress.Final)
+    );
 }
 ```
 

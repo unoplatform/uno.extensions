@@ -161,7 +161,6 @@ Sometimes your application may need to switch between multiple views without the
   </Grid>
   ```
 
-
 * Next, we need to set the `Region.Name` attached property on each child `Grid` to the corresponding view name:
 
   ```xml
@@ -187,10 +186,11 @@ Sometimes your application may need to switch between multiple views without the
       </Grid>
   </Grid>
   ```
+
 * While you have designated the Grids above as regions, it is important to keep in mind the visual tree structure:
-  - The parent Grid is the region container.
-  - The child Grids are the regions.
-  - The TextBlocks are the content of the regions.
+  * The parent Grid is the region container.
+  * The child Grids are the regions.
+  * The TextBlocks are the content of the regions.
 
 > [!IMPORTANT]
 > To specify one of these regions as a route, you must prefix the request name with "./" to indicate that the request involves a _nested_ region. For example, if you want to navigate to the "One" view, you would use the request "./One" which includes the nested qualifier.

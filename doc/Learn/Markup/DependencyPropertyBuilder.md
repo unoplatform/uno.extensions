@@ -28,7 +28,7 @@ new TextBlock()
     .Text(() => vm.Client.Contact.FirstName)
 ```
 
-#### Understanding the Binding Expression
+### Understanding the Binding Expression
 
 The **Binding Expression** is a lambda expression that provides the path to the property you are binding to.
 
@@ -45,7 +45,7 @@ If you wish to perform tasks such as manipulate the value of the binding or form
 
 ### Reference Sources
 
-Sometimes you aren't binding to the `DataContext` of the element and instead, you need to reference another source. With WinUI we have 2 ways of doing this. The first is that we could specify a source directly such as:
+Sometimes you aren't binding to the `DataContext` of the element and instead, you need to reference another source:
 
 ```cs
 new Slider().Name(out var slider),
@@ -57,17 +57,6 @@ new TextBlock()
 
  > [!NOTE]
  > Using the `.Name(out var fe)` syntax not only gives you a variable representing your `FrameworkElement` control but also sets the control's `Name` property to match the variable name. For example, in the scenario mentioned earlier, the `Slider` would have its `Name` property set to "slider" because the variable name used is `slider`.
-
-
-The second is that we can leverage the element name for our binding such as the following:
-
-```cs
-new TextBlock()
-    .Text(x => x
-        .Source("slider")
-        .Binding(() => slider.Value)),
-new Slider().Name("slider")
-```
 
 ## Additional Reading
 

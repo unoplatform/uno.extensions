@@ -78,7 +78,7 @@ For more information about configuring `HttpClient` with custom endpoint options
 Similarly, **Refit endpoints** can be registered as services and configured in a similar way.
 
 ```csharp
-private IHost Host { get; }
+private IHost Host { get; set; }
 
 protected override void OnLaunched(LaunchActivatedEventArgs args)
 {

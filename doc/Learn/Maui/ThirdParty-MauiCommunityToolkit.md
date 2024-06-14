@@ -154,15 +154,15 @@ This will create a new folder called **MauiCommunityToolkitApp** containing the 
 ```cs
 namespace MauiCommunityToolkitApp.ViewModels;
 
-partial class MainViewModel : ObservableObject
-{
-	[ObservableProperty]
-	bool isMultiLineModeEnabled;
+    partial class MainViewModel : ObservableObject
+    {
+        [ObservableProperty]
+        bool isMultiLineModeEnabled;
 
-	[ObservableProperty]
-	bool shouldCleanOnFinish;
-}
-```
+        [ObservableProperty]
+        bool shouldCleanOnFinish;
+    }
+    ```
 
 1. The `MainViewModel` uses the `ObservableObject` base class that comes from the `CommunityToolkit.MVVM` NuGet package. This significantly reduces the amount of boilerplate code required. Add a reference to the [CommunityToolkit.Mvvm NuGet package](https://www.nuget.org/packages/CommunityToolkit.Mvvm) to the MauiCommunityToolkitApp project.
 
