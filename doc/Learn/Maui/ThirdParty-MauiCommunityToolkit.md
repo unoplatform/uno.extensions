@@ -59,12 +59,12 @@ This will create a new folder called **MauiCommunityToolkitApp** containing the 
 
 ---
 
-1. Add a reference to the [MauiCommunityToolkitApp.Maui NuGet package](https://www.nuget.org/packages/CommunityToolkit.Maui) to the MauiCommunityToolkitApp.MauiControls project.
+1. Add a reference to the [CommunityToolkitApp.Maui NuGet package](https://www.nuget.org/packages/CommunityToolkit.Maui) to the MauiCommunityToolkitApp.MauiControls project.
 
 1. In the `AppBuilderExtensions` class, on `MauiCommunityToolkitApp.MauiControls` project, update the `UseMauiControls` extension method to call the `UseMauiCommunityToolkit` method.
 
     ```cs
-    using MauiCommunityToolkitApp.Maui;
+    using CommunityToolkitApp.Maui;
 
     namespace MauiCommunityToolkitApp;
 
