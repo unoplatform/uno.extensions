@@ -64,7 +64,7 @@ This will create a new folder called **MauiCommunityToolkitApp** containing the 
 1. In the `AppBuilderExtensions` class, on `MauiCommunityToolkitApp.MauiControls` project, update the `UseMauiControls` extension method to call the `UseMauiCommunityToolkit` method.
 
     ```cs
-    using CommunityToolkitApp.Maui;
+    using CommunityToolkit.Maui;
 
     namespace MauiCommunityToolkitApp;
 
