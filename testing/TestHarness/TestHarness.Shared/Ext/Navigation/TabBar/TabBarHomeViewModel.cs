@@ -1,5 +1,6 @@
 ﻿namespace TestHarness.Ext.Navigation.TabBar;
 
+[ReactiveBindable(false)]
 public partial class TabBarHomeViewModel : ObservableObject
 {
 	private RouteResolverDefault routeResolver;

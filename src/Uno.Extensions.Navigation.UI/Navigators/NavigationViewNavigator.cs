@@ -19,7 +19,7 @@ public class NavigationViewNavigator : SelectorNavigator<Microsoft.UI.Xaml.Contr
 		// Make sure selectionchanged event handlers are wired up
 		base.ControlInitialize();
 
-		if(Control?.SelectedItem is not null)
+		if (Control?.SelectedItem is not null)
 		{
 			_ = SelectionChanged(Control, MenuItemToFrameworkElement(Control.SelectedItem));
 		}
@@ -71,24 +71,17 @@ public class NavigationViewNavigator : SelectorNavigator<Microsoft.UI.Xaml.Contr
 				return Array.Empty<object>();
 			}
 
-			if (Control.MenuItemsSource is IEnumerable ||
-				Control.FooterMenuItemsSource is IEnumerable)
-			{
-				var menuItemsSource = Control.MenuItemsSource is IEnumerable<NavigationViewItem> itemsSource ?
-					itemsSource.ToArray() : Array.Empty<NavigationViewItem>();
-				var footerMenuItemsSource = Control.FooterMenuItemsSource is IEnumerable<NavigationViewItem> footerItemsSource ?
-					footerItemsSource.ToArray() : Array.Empty<NavigationViewItem>();
+			static IEnumerable<object> GetItems(object source, IEnumerable items) =>
+	(source as IEnumerable)?.OfType<object>() ??
+	items?.OfType<object>() ??
+	Array.Empty<object>();
 
-				var allitems = menuItemsSource.Concat(footerMenuItemsSource).ToArray();
+			var allitems = Enumerable.Concat(
+				GetItems(Control.MenuItemsSource, Control.MenuItems),
+				GetItems(Control.FooterMenuItemsSource, Control.FooterMenuItems)
+			).ToArray();
 
-				return allitems;
-			}
-
-			var menuItems = Control.MenuItems.OfType<NavigationViewItem>();
-			var footerMenuItems = Control.FooterMenuItems.OfType<NavigationViewItem>();
-			var navigationViewItems = menuItems.Concat(footerMenuItems).ToArray();
-
-			return navigationViewItems;
+			return allitems;
 		}
 	}
 
