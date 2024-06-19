@@ -10,6 +10,15 @@ There are two aspects to the Authentication extensions:
 - Authentication: the process of authenticating the user and acquiring tokens
 - Authorization: tokens (acquired via authentication) can be queried to control access to parts of the application or supplied to service call so the user can be authorized to access the back-end service
 
+## Installation
+
+`Authentication` is provided as an Uno Feature. To enable `Authentication` support in your application, add `Authentication` to the `<UnoFeatures>` property in the Class Library (.csproj) file. In case you are using Msal Authentication add `AuthenticationMsal`, or `AuthenticationOidc` for Oidc Authentication.
+
+> [!IMPORTANT]
+> This walkthrough assumes you created your app using the Single Project template. If you used a different template, please refer to our [Migrating Projects to Single Project](xref:Uno.Development.MigratingToSingleProject) documentation.
+
+For more information about `UnoFeatures` refer to our [Using the Uno.Sdk](xref:Uno.Features.Uno.Sdk) docs.
+
 ## IAuthenticationService
 
 The `IAuthenticationService` interface defines the methods that an application can call to authenticate the user.
@@ -64,11 +73,11 @@ The `CustomAuthenticationProvider` provides a basic implementation of the `IAuth
 
 ### MSAL
 
-The `MsalAuthenticationProvider` (in the Uno.Extensions.Authentication.MSAL.UI or Uno.Extensions.Authentication.MSAL.WinUI packages) wraps the [MSAL library](https://github.com/AzureAD/microsoft-authentication-library-for-dotnet) from Microsoft into an implementation of `IAuthenticationProvider`. This implementation ignores any credentials passed into the `LoginAsync` method, instead invoking the web based authentication process required to authentication with Microsoft. Learn [Msal authentication](xref:Uno.Extensions.Authentication.HowToMsalAuthentication)
+The `MsalAuthenticationProvider` wraps the [MSAL library](https://github.com/AzureAD/microsoft-authentication-library-for-dotnet) from Microsoft into an implementation of `IAuthenticationProvider`. This implementation ignores any credentials passed into the `LoginAsync` method, instead invoking the web based authentication process required to authentication with Microsoft. Learn [Msal authentication](xref:Uno.Extensions.Authentication.HowToMsalAuthentication)
 
 ### Oidc
 
-The `OidcAuthenticationProvider` (in the Uno.Extensions.Authentication.Oidc.UI or Uno.Extensions.Authentication.Oidc.WinUI packages) wraps support for any [OpenID Connect](https://openid.net/connect/) backend, including [IdentityServer](https://duendesoftware.com/products/identityserver). Learn [Oidc authentication](xref:Uno.Extensions.Authentication.HowToOidcAuthentication)
+The `OidcAuthenticationProvider` wraps support for any [OpenID Connect](https://openid.net/connect/) backend, including [IdentityServer](https://duendesoftware.com/products/identityserver). Learn [Oidc authentication](xref:Uno.Extensions.Authentication.HowToOidcAuthentication)
 
 #### Platform-specific behavior
 

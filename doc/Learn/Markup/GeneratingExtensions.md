@@ -16,9 +16,6 @@ The Uno Platform team is shipping a number of pre-generated extension libraries 
 - [Uno.Extensions.Reactive.WinUI.Markup](https://www.nuget.org/packages/Uno.Extensions.Reactive.WinUI.Markup)
 - [Uno.Themes.WinUI.Markup](https://www.nuget.org/packages/Uno.Themes.WinUI.Markup)
 
-> [!TIP]
-> For more information on generating extensions on your own libraries see [Generating Extensions](xref:Uno.Extensions.Markup.GeneratingExtensions).
-
 ## Using the Generator for 3rd Party Libraries
 
 To generate extensions for another assembly (i.e. from a NuGet dependency) you can add the `GenerateMarkupForAssembly` attribute to the assembly with a specified reference type from the assembly to scan.
@@ -32,9 +29,3 @@ using Microsoft.UI.Xaml.Generator;
 
 > [!TIP]
 > If you do not add the reference to the Generator NuGet this attribute will be ignored and no source will be generated.
-
-## Next Steps
-
-Learn more about:
-
-- [Generating C# Extensions for your libraries](xref:Uno.Extensions.Markup.GeneratingExtensions)

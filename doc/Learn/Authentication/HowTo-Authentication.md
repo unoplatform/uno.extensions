@@ -12,7 +12,16 @@ uid: Uno.Extensions.Authentication.HowToAuthentication
 
 ### 1. Basic Credential Checking
 
-- Install `Uno.Extensions.Authentication` into all projects
+- Add `Authentication` to the `<UnoFeatures>` property in the Class Library (.csproj) file.
+
+    ```diff
+    <UnoFeatures>
+        Material;
+    +   Authentication;
+        Toolkit;
+        MVUX;
+    </UnoFeatures>
+    ```
 
 - Append `UseAuthentication` to the `IHostBuilder` instance. The `Login` callback is used to verify the credentials. If the user is authenticated, the callback needs to return a non-empty dictionary of key-value pairs (this would typically contain tokens such as an access token and/or refresh token).
 
@@ -133,7 +142,17 @@ From this walk through, you can see how the IAuthenticationService can be used t
 
 ### 2. Invoking an Authentication Service
 
-- Add `Uno.Extensions.Http.Refit` package reference to Extensions.props
+- Add `Http` to the `<UnoFeatures>` property in the Class Library (.csproj) file. This will bring the references we need to access `Refit`.
+
+    ```diff
+    <UnoFeatures>
+        Material;
+        Authentication;
+    +   Http;
+        Toolkit;
+        MVUX;
+    </UnoFeatures>
+    ```
 
 - Add POCO objects to working with [dummyjson.com](https://dummyjson.com)
 

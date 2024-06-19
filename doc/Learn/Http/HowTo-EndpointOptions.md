@@ -38,6 +38,18 @@ It's often necessary to include an API key alongside requests to a web API. This
 
 ### 2. Defining the endpoint
 
+* Add `Http` to the `<UnoFeatures>` property in the Class Library (.csproj) file.
+
+    ```diff
+    <UnoFeatures>
+        Material;
+        Extensions;
+    +   Http;
+        Toolkit;
+        MVUX;
+    </UnoFeatures>
+    ```
+
 * Enable HTTP by calling the `UseHttp()` method to register a HTTP client with the `IHostBuilder`:
 
     ```csharp

@@ -10,7 +10,20 @@ uid: Uno.Extensions.Configuration.HowToConfiguration
 > [!IMPORTANT]
 > This guide assumes you used the template wizard or `dotnet new unoapp` to create your solution. If not, it is recommended that you follow the [**Creating an application with Uno.Extensions** documentation](xref:Uno.Extensions.HowToGettingStarted) to create an application from the template.
 
-### 1. Specify configuration information to load on `IConfigBuilder`
+### 1. Installation
+
+* Add `Configuration` to the `<UnoFeatures>` property in the Class Library (.csproj) file. If you already have `Extensions` in `<UnoFeatures>`, then `Configuration` is already installed, as its dependencies are included with the `Extensions` feature.
+
+    ```diff
+    <UnoFeatures>
+        Material;
+    +   Configuration;
+        Toolkit;
+        MVUX;
+    </UnoFeatures>
+    ```
+
+### 2. Specify configuration information to load on `IConfigBuilder`
 
 * Uno.Extensions apps specify which configuration information to load by calling the `UseConfiguration()` extension method for `IHostBuilder`.
 
@@ -50,7 +63,7 @@ uid: Uno.Extensions.Configuration.HowToConfiguration
     }
     ```
 
-### 2. Define a class to model the configuration section
+### 3. Define a class to model the configuration section
 
 * Your JSON file(s) will consist of a serialized representation of multiple properties and their values. Hence, configuration sections allow you to programmatically read a specific subset of these properties from the instantiated class that represents them.
 
@@ -66,7 +79,7 @@ uid: Uno.Extensions.Configuration.HowToConfiguration
     }
     ```
 
-### 3. Load a specific configuration section
+### 4. Load a specific configuration section
 
 * You can now use the `Section<T>()` extension method on `IConfigBuilder` to load configuration information for class or record of the type argument you specify:
 
@@ -89,7 +102,7 @@ uid: Uno.Extensions.Configuration.HowToConfiguration
     }
     ```
 
-### 4. Read configuration section values from a registered service
+### 5. Read configuration section values from a registered service
 
 * To access the instantiated representation of the configuration section you registered above, complete with values populated from the `appsettings.json` file, you'll need to add a new constructor parameter for it to one of your application's services.
 

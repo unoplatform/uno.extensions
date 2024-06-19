@@ -8,6 +8,15 @@ uid: Uno.Extensions.Serialization.Overview
 
 `Uno.Extensions.Serialization` allows for simplified access to serializer objects as dependencies. This library supports the new serialization [technique](https://devblogs.microsoft.com/dotnet/try-the-new-system-text-json-source-generator) powered by code generation.
 
+## Installation
+
+`Serialization` is provided as an Uno Feature. To enable `Serialization` support in your application, add `Serialization` to the `<UnoFeatures>` property in the Class Library (.csproj) file.
+
+> [!IMPORTANT]
+> This walkthrough assumes you created your app using the Single Project template. If you used a different template, please refer to our [Migrating Projects to Single Project](xref:Uno.Development.MigratingToSingleProject) documentation.
+
+For more information about `UnoFeatures` refer to our [Using the Uno.Sdk](xref:Uno.Features.Uno.Sdk) docs.
+
 ## Using a Serializer
 
 The `ISerializer` interface provides a simple API for serializing and deserializing objects. Once serialization is enabled for an application, the `ISerializer` can be accessed as a dependency. The following example shows how to enable serialization for an application with the `UseSerialization()` extension method.

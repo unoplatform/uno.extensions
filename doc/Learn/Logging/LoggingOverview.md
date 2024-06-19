@@ -8,6 +8,18 @@ Apps that record events typically do so for informational or diagnostic purposes
 
 It uses [Microsoft.Extensions.Logging](https://www.nuget.org/packages/Microsoft.Extensions.Logging) for logging abstractions. For more documentation about logging, read the references listed at the bottom.
 
+## Installation
+
+> [!NOTE]
+> If you already have `Extensions` in `<UnoFeatures>`, then `Logging` is already installed, as its dependencies are included with the `Extensions` feature.
+
+`Logging` is provided as an Uno Feature. To enable `Logging` support in your application, add `Logging` to the `<UnoFeatures>` property in the Class Library (.csproj) file.
+
+> [!IMPORTANT]
+> This walkthrough assumes you created your app using the Single Project template. If you used a different template, please refer to our [Migrating Projects to Single Project](xref:Uno.Development.MigratingToSingleProject) documentation.
+
+For more information about `UnoFeatures` refer to our [Using the Uno.Sdk](xref:Uno.Features.Uno.Sdk) docs.
+
 ## Platform Log Providers
 
 To wire-up the platform-specific log providers for debug and console logging, use the extension method `UseLogging()` on the `IHostBuilder` instance:
