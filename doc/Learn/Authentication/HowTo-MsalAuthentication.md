@@ -89,7 +89,7 @@ uid: Uno.Extensions.Authentication.HowToMsalAuthentication
     ```
 
     This configuration can also be done in the root App.cs file:
-    
+
     ```csharp
     private IHost Host { get; set; }
 
@@ -115,7 +115,11 @@ uid: Uno.Extensions.Authentication.HowToMsalAuthentication
 
     > [!WARNING]
     > A ClientId of GUID format is required for MSAL Authentication to work. You can specify it in the appsettings.json file, or in the code itself.
-    > If the ClientId cannot be found, the following warning will be logged: _Uno.Extensions.Authentication.MSAL.MsalAuthenticationProvider[0] A valid ClientId (GUID) is required for MSAL. Please provide the ClientId in the appsettings.json file._
+    > If the ClientId cannot be found, the following warning will be logged:
+
+    ```xml
+    Uno.Extensions.Authentication.MSAL.MsalAuthenticationProvider[0] A valid ClientId (GUID) is required for MSAL. Please provide the ClientId in the appsettings.json file.
+    ```
 
 ### 4. Use the provider in your application
 
