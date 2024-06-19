@@ -16,7 +16,16 @@ uid: Uno.Extensions.Authentication.HowToOidcAuthentication
 
 - A client id (and client secret) will be provided to you.
 
-- Make sure `Uno.Extensions.Authentication.Oidc.WinUI` NuGet package is installed in your solution.
+- Add `AuthenticationOidc` to the `<UnoFeatures>` property in the Class Library (.csproj) file.
+
+    ```diff
+    <UnoFeatures>
+        Material;
+    +   AuthenticationOidc;
+        Toolkit;
+        MVUX;
+    </UnoFeatures>
+    ```
 
 ### 2. Set up OIDC authentication
 

@@ -10,7 +10,21 @@ When accessing resources with a [REST-style](https://www.ics.uci.edu/~fielding/p
 > [!IMPORTANT]
 > This guide assumes you used the template wizard or `dotnet new unoapp` to create your solution. If not, it is recommended that you follow the [**Creating an application with Uno.Extensions** documentation](xref:Uno.Extensions.HowToGettingStarted) to create an application from the template.
 
-### 1. Enable HTTP
+### 1. Installation
+
+* Add `Http` to the `<UnoFeatures>` property in the Class Library (.csproj) file.
+
+    ```diff
+    <UnoFeatures>
+        Material;
+        Extensions;
+    +   Http;
+        Toolkit;
+        MVUX;
+    </UnoFeatures>
+    ```
+
+### 2. Enable HTTP
 
 * When working with a complex application, centralized registration of your API endpoints is a good practice. This allows you to easily change the endpoint for a given service. It also reduces the complexity to adding new services which can then have their `HttpClient` instance reused across multiple instances of view models or other services.
 
@@ -30,7 +44,7 @@ When accessing resources with a [REST-style](https://www.ics.uci.edu/~fielding/p
 
 * This feature requires the [Uno.Extensions.Http.WinUI](https://www.nuget.org/packages/Uno.Extensions.Http.WinUI) package. It uses [Microsoft Extensions](https://www.nuget.org/packages/Microsoft.Extensions.Http) for any HTTP-related [work](https://learn.microsoft.com/dotnet/architecture/microservices/implement-resilient-applications/use-httpclientfactory-to-implement-resilient-http-requests#benefits-of-using-ihttpclientfactory) such as naming or configuring the `HttpClient` instance associated with your endpoints.
 
-### 2. Define the live interface
+### 3. Define the live interface
 
 * For the purposes of this tutorial, we will create and register an interface for the Chuck Norris facts web API which is documented [here](https://api.chucknorris.io/)
 
@@ -54,7 +68,7 @@ When accessing resources with a [REST-style](https://www.ics.uci.edu/~fielding/p
 
 * `ApiResponse<T>` is used to deserialize the response from the API. It is defined in the `Refit` package.
 
-### 3. Generate a data model from the API response
+### 4. Generate a data model from the API response
 
 * The next step is to generate a data model from the response we will get from the API. This will be used to deserialize the response which we'll learn is a JSON object with a `total` property and `result` that contains an array of Chuck Norris data objects.
 
@@ -153,7 +167,7 @@ When accessing resources with a [REST-style](https://www.ics.uci.edu/~fielding/p
 
   * Rename the partial classes `Welcome` to `ChuckNorrisData` and `Result` to `ChuckNorrisDataResult`
 
-### 4. Register the endpoint
+### 5. Register the endpoint
 
 * Unlike standard HTTP endpoints, Refit endpoints you define will be registered as a service with the `AddRefitClient<T>()` extension method, where the type argument `T` corresponds to an interface you define.
 
@@ -217,7 +231,7 @@ When accessing resources with a [REST-style](https://www.ics.uci.edu/~fielding/p
 
 * Observe that the name of the configuration section is similar to that of the endpoint interface we defined earlier. By default, the interface name without the leading `I` prefix is assumed to be the section name. This can be overridden by specifying a name while registering the service. The name you use should be the second argument to `AddRefitClient<T>()`.
 
-### 5. Use the endpoint
+### 6. Use the endpoint
 
 * `IChuckNorrisEndpoint` can now be used in a service implementation by injecting it into the constructor.  This interface will be used to make requests to the web service and deserialize responses.
 

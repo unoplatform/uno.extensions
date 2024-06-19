@@ -15,7 +15,16 @@ A special interface called `IWritableOptions<T>` is registered as a service when
 
 ### 1. Prepare for writing configuration values
 
-* Ensure your project has `Uno.Extensions.Configuration` installed as a NuGet [package](https://www.nuget.org/packages/Uno.Extensions.Configuration/).
+* Add `Configuration` to the `<UnoFeatures>` property in the Class Library (.csproj) file. If you already have `Configuration` in `<UnoFeatures>`, then `Configuration` is already installed, as its dependencies are included with the `Extensions` feature.
+
+    ```diff
+    <UnoFeatures>
+        Material;
+    +   Configuration;
+        Toolkit;
+        MVUX;
+    </UnoFeatures>
+    ```
 
 * To enable configuration, you first need to call `UseConfiguration()` on the `IHostBuilder` instance:
 
