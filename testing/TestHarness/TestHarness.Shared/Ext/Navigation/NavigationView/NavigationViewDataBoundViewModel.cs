@@ -1,11 +1,13 @@
 ﻿namespace TestHarness.Ext.Navigation.NavigationView;
 
+[ReactiveBindable(false)]
 public partial class NavigationViewDataBoundViewModel : ObservableObject
 {
 	[ObservableProperty]
 	private string selectedNavigationItem = "Deals";
 
-	public string[] NavigationItems { get; } = new string[] { "Products", "Deals", "Profile" };
+	public string[] NavigationItems { get; } = ["Products", "Deals"];
+	public string[] FooterItems { get; } = ["Profile"];
 
 	public void SelectProfile()
 	{

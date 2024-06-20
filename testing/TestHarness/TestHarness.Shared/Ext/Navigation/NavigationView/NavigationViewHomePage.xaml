@@ -35,10 +35,13 @@
 				<muxc:NavigationViewItem AutomationProperties.AutomationId="DealsNavigationViewItem"
 										 Content="Deals"
 										 uen:Region.Name="Deals" />
+				</muxc:NavigationView.MenuItems>
+			<muxc:NavigationView.FooterMenuItems>
+
 				<muxc:NavigationViewItem AutomationProperties.AutomationId="ProfileNavigationViewItem"
 										 Content="Profile"
 										 uen:Region.Name="Profile" />
-			</muxc:NavigationView.MenuItems>
+			</muxc:NavigationView.FooterMenuItems>
 			<Grid uen:Region.Attached="True"
 				  uen:Region.Navigator="Visibility">
 				<StackPanel uen:Region.Name="Products"

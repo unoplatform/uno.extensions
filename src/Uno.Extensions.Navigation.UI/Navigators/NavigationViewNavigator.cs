@@ -19,7 +19,7 @@ public class NavigationViewNavigator : SelectorNavigator<Microsoft.UI.Xaml.Contr
 		// Make sure selectionchanged event handlers are wired up
 		base.ControlInitialize();
 
-		if(Control?.SelectedItem is not null)
+		if (Control?.SelectedItem is not null)
 		{
 			_ = SelectionChanged(Control, MenuItemToFrameworkElement(Control.SelectedItem));
 		}
@@ -71,13 +71,17 @@ public class NavigationViewNavigator : SelectorNavigator<Microsoft.UI.Xaml.Contr
 				return Array.Empty<object>();
 			}
 
+			static IEnumerable<object> GetItems(object source, IEnumerable items) =>
+	(source as IEnumerable)?.OfType<object>() ??
+	items?.OfType<object>() ??
+	Array.Empty<object>();
 
-			if (Control.MenuItemsSource is IEnumerable items)
-			{
-				return items.OfType<object>().ToArray();
-			}
+			var allitems = Enumerable.Concat(
+				GetItems(Control.MenuItemsSource, Control.MenuItems),
+				GetItems(Control.FooterMenuItemsSource, Control.FooterMenuItems)
+			).ToArray();
 
-			return Control.MenuItems.ToArray();
+			return allitems;
 		}
 	}
 

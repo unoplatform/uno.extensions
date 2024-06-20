@@ -10,7 +10,6 @@
 	  xmlns:utu="using:Uno.Toolkit.UI"
 	  xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
 	  Background="LightBlue">
-
 	<Grid>
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto" />
@@ -38,6 +37,7 @@
 							 SelectedItem="{Binding SelectedNavigationItem, Mode=TwoWay}"
 							 ItemInvoked="NavigationItemInvoked"
 							 MenuItemsSource="{Binding NavigationItems}"
+							 FooterMenuItemsSource="{Binding FooterItems}"
 							 IsSettingsVisible="True">
 			<muxc:NavigationView.MenuItemTemplate>
 				<DataTemplate x:Key="NavigationViewMenuItemDataTemplate">
