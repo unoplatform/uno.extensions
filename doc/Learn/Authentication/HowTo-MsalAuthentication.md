@@ -88,6 +88,40 @@ uid: Uno.Extensions.Authentication.HowToMsalAuthentication
     }
     ```
 
+    This configuration can also be done in the root App.cs file:
+
+    ```csharp
+    private IHost Host { get; set; }
+
+    protected override void OnLaunched(LaunchActivatedEventArgs args)
+    {
+        var builder = this.CreateBuilder(args)
+            .Configure(host =>
+            {
+                host
+                .UseAuthentication(builder =>
+                {
+                    builder.AddMsal(msal =>
+                        msal
+                        .Builder(msalBuilder => 
+                            msalBuilder.WithClientId("161a9fb5-3b16-487a-81a2-ac45dcc0ad3b"))
+                        .Scopes(new[] { "Tasks.Read", "User.Read", "Tasks.ReadWrite" })
+                    );
+                });
+            });
+        ...
+    }
+    ```
+
+    > [!WARNING]
+    > A ClientId of GUID format is required for MSAL Authentication to work. You can specify it in the appsettings.json file, or in the code itself.
+    > If the ClientId cannot be found, the app will crash with the following error:
+
+    ```xml
+    Exception thrown: 'Microsoft.Identity.Client.MsalClientException' in Microsoft.Identity.Client.dll
+    No ClientId was specified.
+    ```
+
 ### 4. Use the provider in your application
 
 - Update the `MainPage` to include a `Button` labeled to sign in with Microsoft.
