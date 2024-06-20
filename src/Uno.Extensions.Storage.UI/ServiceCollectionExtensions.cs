@@ -9,14 +9,15 @@ internal static class ServiceCollectionExtensions
 	private static TKeyValueStorage CreateKeyValueStorage<TKeyValueStorage>(
 		this IServiceProvider sp,
 		string name,
-		Func<ILogger<TKeyValueStorage>, InMemoryKeyValueStorage, KeyValueStorageSettings, ISerializer, TKeyValueStorage> creator)
+		Func<ILogger<TKeyValueStorage>, InMemoryKeyValueStorage, KeyValueStorageSettings, ISerializer, ISettings, TKeyValueStorage> creator)
 	{
 		var l = sp.GetRequiredService<ILogger<TKeyValueStorage>>();
 		var s = sp.GetRequiredService<ISerializer>();
 		var inmem = sp.GetRequiredService<InMemoryKeyValueStorage>();
 		var config = sp.GetRequiredService<IOptions<KeyValueStorageConfiguration>>();
 		var settings = config.Value.GetSettingsOrDefault(name);
-		return creator(l, inmem, settings, s);
+		var unpackaged = sp.GetRequiredService<ISettings>();
+		return creator(l, inmem, settings, s, unpackaged);
 	}
 
 	public static IServiceCollection AddKeyedStorage(this IServiceCollection services)
@@ -27,7 +28,7 @@ internal static class ServiceCollectionExtensions
 					ApplicationDataKeyValueStorage.Name,
 					sp => sp.CreateKeyValueStorage<ApplicationDataKeyValueStorage>(
 								ApplicationDataKeyValueStorage.Name,
-								(l,inmem, settings,s)=>new ApplicationDataKeyValueStorage(l, inmem, settings, s)
+								(l, inmem, settings, s, unpackaged) => new ApplicationDataKeyValueStorage(l, inmem, settings, s, unpackaged)
 								)
 					)
 #if __ANDROID__
@@ -35,7 +36,7 @@ internal static class ServiceCollectionExtensions
 					KeyStoreKeyValueStorage.Name,
 					sp => sp.CreateKeyValueStorage<KeyStoreKeyValueStorage>(
 								KeyStoreKeyValueStorage.Name,
-								(l, inmem, settings, s) => new KeyStoreKeyValueStorage(l, inmem, settings, s)
+								(l, inmem, settings, s, unpackaged) => new KeyStoreKeyValueStorage(l, inmem, settings, s)
 								)
 					)
 #endif
@@ -44,7 +45,7 @@ internal static class ServiceCollectionExtensions
 					KeyChainKeyValueStorage.Name,
 					sp => sp.CreateKeyValueStorage<KeyChainKeyValueStorage>(
 								KeyChainKeyValueStorage.Name,
-								(l, inmem, settings, s) => new KeyChainKeyValueStorage(l, inmem, settings, s)
+								(l, inmem, settings, s, unpackaged) => new KeyChainKeyValueStorage(l, inmem, settings, s)
 								)
 					)
 #endif
@@ -57,7 +58,7 @@ internal static class ServiceCollectionExtensions
 					EncryptedApplicationDataKeyValueStorage.Name,
 					sp => sp.CreateKeyValueStorage<EncryptedApplicationDataKeyValueStorage>(
 								EncryptedApplicationDataKeyValueStorage.Name,
-								(l, inmem, settings, s) => new EncryptedApplicationDataKeyValueStorage(l, inmem, settings, s)
+								(l, inmem, settings, s, unpackaged) => new EncryptedApplicationDataKeyValueStorage(l, inmem, settings, s, unpackaged)
 								)
 					)
 #endif
