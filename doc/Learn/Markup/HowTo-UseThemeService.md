@@ -1,5 +1,5 @@
 ---
-uid: Uno.Extensions.ThemeService
+uid: Uno.Extensions.Markup.ThemeService
 ---
 
 # How to use Theme Service
