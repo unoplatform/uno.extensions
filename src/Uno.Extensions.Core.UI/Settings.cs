@@ -106,7 +106,7 @@ internal record Settings(ILogger<Settings>? Logger = default) : ISettings
 		get
 		{
 			Initialize();
-			return _useFileSettings ? settings.Keys : ApplicationData.Current.LocalSettings.Values.Keys.Select(k => k.ToString()).ToArray();
+			return _useFileSettings ? settings.Keys : ApplicationData.Current.LocalSettings.Values.Keys.Select(k => k.ToString(CultureInfo.InvariableCulture)).ToArray();
 		}
 	}
 }
