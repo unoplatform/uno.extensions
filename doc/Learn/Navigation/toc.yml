@@ -32,3 +32,5 @@
       href: xref:Uno.Extensions.Navigation.Advanced.Panel
     - name: "How-To: Navigate using a ContentControl"
       href: xref:Uno.Extensions.Navigation.Advanced.ContentControl
+    - name: "How-To: Use IRouteNotifier to Handle Route Changes"
+      href: xref:Uno.Extensions.Navigation.Advanced.IRouteNotifier
