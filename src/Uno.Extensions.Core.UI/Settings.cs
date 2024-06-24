@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System.Globalization;
+using System.Text.Json;
 
 namespace Uno.Extensions;
 
@@ -106,7 +107,7 @@ internal record Settings(ILogger<Settings>? Logger = default) : ISettings
 		get
 		{
 			Initialize();
-			return _useFileSettings ? settings.Keys : ApplicationData.Current.LocalSettings.Values.Keys.Select(k => k.ToString(CultureInfo.InvariableCulture)).ToArray();
+			return _useFileSettings ? settings.Keys : ApplicationData.Current.LocalSettings.Values.Keys.Select(k => k.ToString(CultureInfo.InvariantCulture)).ToArray();
 		}
 	}
 }
