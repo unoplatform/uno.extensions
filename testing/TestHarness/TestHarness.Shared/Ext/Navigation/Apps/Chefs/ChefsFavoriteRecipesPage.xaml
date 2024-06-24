@@ -5,9 +5,47 @@
 	  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	  mc:Ignorable="d"
+	  xmlns:utu="using:Uno.Toolkit.UI"
+	  xmlns:uen="using:Uno.Extensions.Navigation.UI"
+	  xmlns:um="using:Uno.Material"
 	  Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
 	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition />
+		</Grid.RowDefinitions>
 		<TextBlock Text="ChefsFavoriteRecipes" />
+
+		<Grid uen:Region.Attached="True"
+			  Grid.Row="1">
+			<Grid.RowDefinitions>
+				<RowDefinition Height="Auto" />
+				<RowDefinition />
+			</Grid.RowDefinitions>
+			<utu:TabBar uen:Region.Attached="True">
+				<utu:TabBarItem Content="ChefsMyRecipes"
+								uen:Region.Name="ChefsMyRecipes" />
+				<utu:TabBarItem Content="ChefsCookbooks"
+								uen:Region.Name="ChefsCookbooks" />
+			</utu:TabBar>
+			<Grid Grid.Row="1"
+				  uen:Region.Attached="True"
+				  uen:Region.Navigator="Visibility">
+
+				<Grid			  uen:Region.Name="ChefsMyRecipes"
+								  Visibility="Collapsed">
+					<TextBlock Text="ChefsMyRecipes" />
+
+				</Grid>
+
+				<Grid			  uen:Region.Name="ChefsCookbooks"
+								  Visibility="Collapsed">
+					<TextBlock Text="ChefsCookbooks" />
+
+				</Grid>
+
+			</Grid>
+		</Grid>
 	</Grid>
 </Page>
