@@ -3,6 +3,8 @@ namespace TestHarness.Ext.Navigation.Apps.Chefs.Models;
 
 public record ChefsSearchFilter()
 {
+	public string Category { get; set; }
+
 	//	OrganizeCategory? OrganizeCategory = null,
 	//	Time? Time = null,
 	//	Difficulty? Difficulty = null,

@@ -15,6 +15,11 @@ public partial class ChefsHomeModel(INavigator navigator)
 		await navigator.NavigateRouteAsync(this, "ChefsProfile", qualifier: Qualifiers.Dialog, data: new ChefsUser { FullName = "Tester User (new)" });
 	}
 
+	public async ValueTask ShowSearchCategory()
+	{
+		await navigator.NavigateDataAsync(this, data: new ChefsSearchFilter { Category = "Lunch" }, qualifier: Qualifiers.ClearBackStack);
+	}
+
 
 }
 

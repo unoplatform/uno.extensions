@@ -7,7 +7,10 @@
 	  mc:Ignorable="d"
 	  Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-	<Grid>
+	<StackPanel>
 		<TextBlock Text="ChefsSearch" />
-	</Grid>
+		<TextBlock Text="{Binding Filter.Category}" />
+		<Button Content="Recipe"
+				Command="{Binding ShowRecipe}" />
+	</StackPanel>
 </Page>

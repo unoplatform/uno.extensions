@@ -13,5 +13,7 @@
 				Command="{Binding ShowCurrentProfile}" />
 		<Button Content="Profile (New)"
 				Command="{Binding ShowCurrentProfileNew}" />
+		<Button Content="Search - Lunch"
+				Command="{Binding ShowSearchCategory}" />
 	</StackPanel>
 </Page>

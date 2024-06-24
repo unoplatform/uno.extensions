@@ -5,10 +5,21 @@
 	  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	  mc:Ignorable="d"
+	  xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
+	  xmlns:utu="using:Uno.Toolkit.UI"
+	  xmlns:uen="using:Uno.Extensions.Navigation.UI"
+	  xmlns:um="using:Uno.Material"
 	  Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-	<StackPanel>
-		<TextBlock Text="ChefsRecipeDetails" />
-		<TextBlock Text="{Binding Recipe.Name}" />
-	</StackPanel>
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition />
+		</Grid.RowDefinitions>
+		<utu:NavigationBar  AutomationProperties.AutomationId="ChefsRecipeDetailsNavigationBar"
+							Content="ChefsRecipeDetails" />
+		<StackPanel>
+			<TextBlock Text="{Binding Recipe.Name}" />
+		</StackPanel>
+		</Grid>
 </Page>
