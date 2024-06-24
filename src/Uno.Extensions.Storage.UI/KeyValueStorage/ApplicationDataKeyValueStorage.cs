@@ -4,17 +4,74 @@ internal record ApplicationDataKeyValueStorage
 	(ILogger<ApplicationDataKeyValueStorage> Logger,
 	InMemoryKeyValueStorage InMemoryStorage,
 	KeyValueStorageSettings Settings,
-	ISerializer Serializer) : BaseKeyValueStorageWithCaching(InMemoryStorage, Settings)
+	ISerializer Serializer,
+	ISettings UnpackagedSettings
+	) : BaseKeyValueStorageWithCaching(InMemoryStorage, Settings)
 {
 	public const string Name = "ApplicationData";
 
 	// Do not change this value.
 	private const string KeyNameSuffix = "_ADCSSS";
 
-	private readonly ApplicationDataContainer _dataContainer = ApplicationData.Current.LocalSettings;
+	private ApplicationDataContainer DataContainer => ApplicationData.Current.LocalSettings;
 
 	/// <inheritdoc />
 	public override bool IsEncrypted => false;
+
+	private bool UseApplicationData =>
+#if !WINDOWS
+		true;
+#else
+		PlatformHelper.IsAppPackaged;
+#endif
+	private bool TryGetSetting(string name, out object? value)
+	{
+		if (UseApplicationData)
+		{
+			return DataContainer.Values.TryGetValue(GetKey(name), out value);
+		}
+		else
+		{
+			return UnpackagedSettings.Get(name) is string t
+				? (value = t) is not null
+				: (value = null) is not null;
+		}
+	}
+	private void RemoveSetting(string name)
+	{
+		if (UseApplicationData)
+		{
+			_ = DataContainer.Values.Remove(GetKey(name));
+		}
+		else
+		{
+			UnpackagedSettings.Remove(name);
+		}
+	}
+
+	private void SetSetting(string name, object? value)
+	{
+		if (UseApplicationData)
+		{
+			DataContainer.Values[GetKey(name)] = value;
+		}
+		else
+		{
+			UnpackagedSettings.Set(name, value?.ToString());
+		}
+	}
+
+	private void ClearSettings()
+	{
+		if (UseApplicationData)
+		{
+			DataContainer.Values.Clear();
+		}
+		else
+		{
+			UnpackagedSettings.Clear();
+		}
+	}
 
 	/// <inheritdoc />
 	protected override async ValueTask InternalClearAsync(string? name, CancellationToken ct)
@@ -27,13 +84,11 @@ internal record ApplicationDataKeyValueStorage
 		if (name is not null &&
 			!string.IsNullOrEmpty(name))
 		{
-			_ = _dataContainer.Values.Remove(GetKey(name));
-
+			RemoveSetting(name);
 		}
 		else
 		{
-			_dataContainer.Values.Clear();
-
+			ClearSettings();
 		}
 
 		if (Logger.IsEnabled(LogLevel.Information))
@@ -46,46 +101,71 @@ internal record ApplicationDataKeyValueStorage
 	/// <inheritdoc />
 	protected override async ValueTask<string[]> InternalGetKeysAsync(CancellationToken ct)
 	{
-		return _dataContainer
+		if (UseApplicationData)
+		{
+			return DataContainer
 			.Values
 			.Keys
-			.Where(key=>key.EndsWith(KeyNameSuffix))
-			.Select(key => GetName(key)) // filter-out non-encrypted storage
+			.Where(key => key.EndsWith(KeyNameSuffix))
+			.Select(GetName) // filter-out non-encrypted storage
 			.Trim()
 			.ToArray();
+		}
+		else
+		{
+			return UnpackagedSettings
+			.Keys
+			.Where(key => key.EndsWith(KeyNameSuffix))
+			.Select(GetName) // filter-out non-encrypted storage
+			.Trim()
+			.ToArray();
+
+		}
 	}
 
 	/// <inheritdoc />
 #nullable disable
 	protected override async ValueTask<T> InternalGetAsync<T>(string name, CancellationToken ct)
 	{
-		if (Logger.IsEnabled(LogLevel.Debug))
+		try
 		{
-			Logger.LogDebugMessage($"Getting value for key '{name}'.");
-		}
+			if (Logger.IsEnabled(LogLevel.Debug))
+			{
+				Logger.LogDebugMessage($"Getting value for key '{name}'.");
+			}
 
-		if (!_dataContainer.Values.TryGetValue(GetKey(name), out var data))
+			if (!TryGetSetting(GetKey(name), out var data))
+			{
+				throw new KeyNotFoundException(name);
+			}
+
+			var value = await GetTypedValue<T>(data, ct);
+
+			if (Logger.IsEnabled(LogLevel.Information))
+			{
+				Logger.LogInformationMessage($"Retrieved value for key '{name}'.");
+			}
+
+			return value;
+		}
+		catch (Exception ex)
 		{
-			throw new KeyNotFoundException(name);
+			if (Logger.IsEnabled(LogLevel.Warning))
+			{
+				Logger.LogWarningMessage($"Error getting value for key '{name}'.", ex.Message);
+			}
+
+			return default;
 		}
-
-		var value = await GetTypedValue<T>(data,ct);
-
-		if (Logger.IsEnabled(LogLevel.Information))
-		{
-			Logger.LogInformationMessage($"Retrieved value for key '{name}'.");
-		}
-
-		return value;
 	}
 #nullable restore
 
-	protected virtual async Task<T?> GetTypedValue<T>(object? data, CancellationToken ct) 
+	protected virtual async Task<T?> GetTypedValue<T>(object? data, CancellationToken ct)
 	{
 		return this.Deserialize<T>(data as string);
 	}
 
-	protected virtual async Task<object> GetObjectValue<T>(T data, CancellationToken ct) where T :notnull
+	protected virtual async Task<object> GetObjectValue<T>(T data, CancellationToken ct) where T : notnull
 	{
 		return this.Serialize(data);
 	}
@@ -98,8 +178,8 @@ internal record ApplicationDataKeyValueStorage
 			Logger.LogDebugMessage($"Setting value for key '{name}'.");
 		}
 
-		var data= await GetObjectValue(value, ct);
-		_dataContainer.Values[GetKey(name)] = data;
+		var data = await GetObjectValue(value, ct);
+		SetSetting(GetKey(name), data);
 
 		if (Logger.IsEnabled(LogLevel.Information))
 		{

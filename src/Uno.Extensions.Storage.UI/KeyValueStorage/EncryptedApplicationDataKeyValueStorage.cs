@@ -10,8 +10,9 @@ internal record EncryptedApplicationDataKeyValueStorage(
 	ILogger<ApplicationDataKeyValueStorage> EncryptedLogger,
 	InMemoryKeyValueStorage InMemoryStorage,
 	KeyValueStorageSettings Settings,
-	ISerializer Serializer)
-	: ApplicationDataKeyValueStorage(EncryptedLogger, InMemoryStorage, Settings, Serializer)
+	ISerializer Serializer,
+	ISettings UnpackagedSettings)
+	: ApplicationDataKeyValueStorage(EncryptedLogger, InMemoryStorage, Settings, Serializer, UnpackagedSettings)
 {
 	public new const string Name = "EncryptedApplicationData";
 

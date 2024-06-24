@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System.Globalization;
+using System.Text.Json;
 
 namespace Uno.Extensions;
 
@@ -60,7 +61,7 @@ internal record Settings(ILogger<Settings>? Logger = default) : ISettings
 			return settings.TryGetValue(key, out var value) ? value : default;
 		}
 	}
-	public void Set(string key, string value)
+	public void Set(string key, string? value)
 	{
 		Initialize();
 		if (!_useFileSettings)
@@ -80,6 +81,33 @@ internal record Settings(ILogger<Settings>? Logger = default) : ISettings
 #if __WINDOWS__
 			File.WriteAllText(SettingsFile, JsonSerializer.Serialize(settings));
 #endif
+		}
+	}
+
+	public void Remove(string key) => Set(key, null);
+
+	public void Clear()
+	{
+		Initialize();
+		if (!_useFileSettings)
+		{
+			ApplicationData.Current.LocalSettings.Values.Clear();
+		}
+		else
+		{
+			settings.Clear();
+#if __WINDOWS__
+			File.WriteAllText(SettingsFile, JsonSerializer.Serialize(settings));
+#endif
+		}
+	}
+
+	public IReadOnlyCollection<string> Keys
+	{
+		get
+		{
+			Initialize();
+			return _useFileSettings ? settings.Keys : ApplicationData.Current.LocalSettings.Values.Keys.Select(k => k.ToString(CultureInfo.InvariantCulture)).ToArray();
 		}
 	}
 }

@@ -1,6 +1,4 @@
-﻿using System.Collections.Immutable;
-using Microsoft.Extensions.Options;
-using Uno.Extensions.Storage.KeyValueStorage;
+﻿using Uno.Extensions.Storage.KeyValueStorage;
 
 namespace TestHarness;
 
@@ -22,7 +20,8 @@ public class StorageHostInit : BaseHostInitialization
 						var s = sp.GetRequiredService<ISerializer>();
 						var config = sp.GetRequiredService<IOptions<KeyValueStorageConfiguration>>();
 						var settings = config.Value.GetSettingsOrDefault(NoCacheStorage);
-						return new TestingKeyValueStorage(l,inmem, settings, s);
+						var unpackaged = sp.GetRequiredService<ISettings>();
+						return new TestingKeyValueStorage(l, inmem, settings, s, unpackaged);
 					}));
 	}
 
@@ -39,7 +38,7 @@ public class StorageHostInit : BaseHostInitialization
 	}
 }
 
-internal record  TestingKeyValueStorage
+internal record TestingKeyValueStorage
 #if __ANDROID__
 			: KeyStoreKeyValueStorage
 			{
@@ -47,7 +46,8 @@ internal record  TestingKeyValueStorage
 		ILogger<TestingKeyValueStorage> logger,
 		InMemoryKeyValueStorage inmem,
 		KeyValueStorageSettings settings,
-		ISerializer serializer) : base(logger, inmem, settings, serializer)
+		ISerializer serializer,
+	ISettings UnpackagedSettings) : base(logger, inmem, settings, serializer)
 	{
 
 	}
@@ -55,14 +55,16 @@ internal record  TestingKeyValueStorage
 			(ILogger<TestingKeyValueStorage> TestingLogger,
 	InMemoryKeyValueStorage InMemoryStorage,
 	KeyValueStorageSettings Settings,
-	ISerializer Serializer) : KeyChainKeyValueStorage(TestingLogger, InMemoryStorage, Settings, Serializer)
+	ISerializer Serializer,
+	ISettings UnpackagedSettings) : KeyChainKeyValueStorage(TestingLogger, InMemoryStorage, Settings, Serializer)
 {
 
 #else
 			(ILogger<TestingKeyValueStorage> TestingLogger,
 	InMemoryKeyValueStorage InMemoryStorage,
 	KeyValueStorageSettings Settings,
-	ISerializer Serializer) : ApplicationDataKeyValueStorage(TestingLogger, InMemoryStorage, Settings, Serializer)
+	ISerializer Serializer,
+	ISettings UnpackagedSettings) : ApplicationDataKeyValueStorage(TestingLogger, InMemoryStorage, Settings, Serializer, UnpackagedSettings)
 {
 #endif
 
