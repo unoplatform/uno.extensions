@@ -102,7 +102,7 @@ uid: Uno.Extensions.Authentication.HowToAuthentication
     }
     ```
 
-- Update the "Second" route in `App.xaml.host.cs` to specify that it depends on the "Main" route. This will make sure that even if the app navigates directly to the SecondPage, the MainPage will be added to the backstack.
+- Update the "Second" route in `App.xaml.cs` to specify that it depends on the "Main" route. This will make sure that even if the app navigates directly to the SecondPage, the MainPage will be added to the back stack.
 
     ```csharp
     routes

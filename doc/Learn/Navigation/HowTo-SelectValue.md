@@ -5,6 +5,9 @@ uid: Uno.Extensions.Navigation.HowToSelectValue
 
 This topic walks through using Navigation to request a value from the user. For example selecting a value from a list of items.
 
+> [!NOTE]
+> This guide uses predefined code created by the Uno Template using the `Recommended` preset, however, it uses the `MVVM` approach for the examples instead of `MVUX` defined in the `Recommended` preset.
+
 ## Step-by-steps
 
 > [!IMPORTANT]
@@ -23,11 +26,11 @@ This scenario will use Navigation to navigate to a page in order for the user to
 - Add `Widgets` property to `SecondViewModel` to define the list of items to pick from.
 
     ```csharp
-    public Widget[] Widgets { get; } = new[]
-    {
+    public Widget[] Widgets { get; } =
+    [
         new Widget("NormalSpinner", 5.0),
-        new Widget("HeavySpinner",50.0)
-    };
+        new Widget("HeavySpinner", 50.0)
+    ];
     ```
 
 - Add a `ListView` to `SecondPage.xaml` to display the items returned by the `Widgets` property. The `Navigation.Request` property specifies a route of `-` which will navigate back to the previous page.
@@ -54,20 +57,20 @@ This scenario will use Navigation to navigate to a page in order for the user to
     ```csharp
     public async Task GoToSecondPage()
     {
-     var widget = await _navigator.GetDataAsync<SecondViewModel, Widget>(this);
+        var widget = await _navigator.GetDataAsync<SecondViewModel, Widget>(this);
     }
     ```
 
-- The selected a value from the `ListView` on `SecondPage` will get returned to the `widget` variable in `MainViewModel`.
+- The selected value from the `ListView` on `SecondPage` will get returned to the `widget` variable in `MainViewModel`.
 
 ### 2. Navigating ForResult Type
 
-In the preceding step the `GetDataAsync` method call specified two generic arguments, `SecondViewModel` which defines the view to navigate to, and `Widget` which defines the type of data to be returned. The `ViewMap` can be updated to define an association between the view and the type of data being requested.
+In the preceding step, the `GetDataAsync` method call specified two generic arguments, `SecondViewModel` which defines the view to navigate to, and `Widget` which defines the type of data to be returned. The `ViewMap` can be updated to `ResultDataViewMap` to define an association between the view and the type of data being requested.
 
 - Update the `ViewMap` for `SecondViewModel` as follows:
 
     ```csharp
-    new ViewMap<SecondPage, SecondViewModel>(ResultData: typeof(Widget))
+    new ResultDataViewMap<SecondPage, SecondViewModel, Widget>()
     ```
 
 - Update the `GetDataAsync` method call to only specify the result data type, `Widget`.
@@ -75,7 +78,7 @@ In the preceding step the `GetDataAsync` method call specified two generic argum
     ```csharp
     public async Task GoToSecondPage()
     {
-     var widget = await _navigator.GetDataAsync<Widget>(this);
+        var widget = await _navigator.GetDataAsync<Widget>(this);
     }
     ```
 

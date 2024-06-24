@@ -3,7 +3,10 @@ uid: Uno.Extensions.Navigation.HowToNavigateInCode
 ---
 # How-To: Navigate in Code
 
-This topic walks through controlling Navigation from code, either in the code-behind file of a Page or in the corresponding view model. One of the Navigation objectives was a single navigation construct that applies where ever you choose to write your navigation code.
+This topic walks through controlling Navigation from code, either in the code-behind file of a Page or in the corresponding view model. One of the Navigation objectives was a single navigation construct that applies wherever you choose to write your navigation code.
+
+> [!NOTE]
+> This guide uses predefined code created by the Uno Template using the `Recommended` preset, however, it uses the `MVVM` approach for the examples instead of `MVUX` defined in the `Recommended` preset.
 
 ## Step-by-steps
 
@@ -14,7 +17,7 @@ This topic walks through controlling Navigation from code, either in the code-be
 
 Navigation can be invoked in the code-behind file of a `Page` by using the `Navigator` extension method to get an `INavigator` instance.
 
-- Add a new `Page` to navigate to, `SamplePage.xaml`, in the UI (shared) project
+- Add a new `Page` to navigate to, `SamplePage.xaml`
 - In `MainPage.xaml` update the `Button` to the following XAML, which includes a handler for the `Click` event
 
     ```xml
@@ -64,26 +67,28 @@ The `NavigateViewAsync` method uses the type of the view, i.e. `SamplePage`, to 
     }
     ```
 
-- Add `ViewMap` and `RouteMap` instances in the `RegisterRoutes` method in `App.xaml.host.cs`. This associates the `SampleViewModel` with the `SamplePage`, as well as avoiding the use of reflection for route discovery.
+- Add `ViewMap` and `RouteMap` instances in the `RegisterRoutes` method in `App.xaml.cs`. This associates the `SampleViewModel` with the `SamplePage`, as well as avoiding the use of reflection for route discovery.
 
     ```csharp
     private static void RegisterRoutes(IViewRegistry views, IRouteRegistry routes)
     {
         views.Register(
-            new ViewMap<ShellControl,ShellViewModel>(),
+            new ViewMap(ViewModel: typeof(ShellViewModel)),
             new ViewMap<MainPage, MainViewModel>(),
-            new ViewMap<SecondPage, SecondViewModel>(),
+            new DataViewMap<SecondPage, SecondViewModel, Entity>(),
             new ViewMap<SamplePage, SampleViewModel>()
-            );
+        );
 
         routes.Register(
-         new RouteMap("", View: views.FindByViewModel<ShellViewModel>() ,
-                Nested: new RouteMap[]
-                {
-                    new RouteMap("Main", View: views.FindByViewModel<MainViewModel>()),
-                    new RouteMap("Second", View: views.FindByViewModel<SecondViewModel>()),
-                    new RouteMap("Sample", View: views.FindByViewModel<SampleViewModel>()),
-                }));
+            new RouteMap("", View: views.FindByViewModel<ShellViewModel>(),
+                Nested:
+                [
+                    new ("Main", View: views.FindByViewModel<MainViewModel>()),
+                    new ("Second", View: views.FindByViewModel<SecondViewModel>()),
+                    new ("Sample", View: views.FindByViewModel<SampleViewModel>()),
+                ]
+            )
+        );
     }
     ```
 

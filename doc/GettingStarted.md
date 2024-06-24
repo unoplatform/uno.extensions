@@ -23,7 +23,7 @@ This tutorial will walk you through how to create an Uno application with Uno.Ex
 
     ![Visual Studio - Configure project name and location](./Learn/images/configure-new-unoplatform-app.png)
 
-* Choose a template preset to build your application
+* Choose the **Recommended** preset to build your application
 
     ![Visual Studio - Configure your new project](./Learn/images/intro.png)
 

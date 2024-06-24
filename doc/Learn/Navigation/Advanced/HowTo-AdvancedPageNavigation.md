@@ -7,6 +7,14 @@ When using navigation, you may not want to allow the current page to remain in t
 
 Using backward/forward navigation in your app requires a degree of extra consideration. Users always expect the back/forward button to take them to a page that is still relevant, yet logically related to the current page and direction. This page contains several concise tutorials about how to implement navigation techniques that address these more advanced problems.
 
+> [!NOTE]
+> This guide uses predefined code created by the Uno Template using the `Recommended` preset, however, it uses the `MVVM` approach for the examples instead of `MVUX` defined in the `Recommended` preset.
+
+## Step-by-steps
+
+> [!IMPORTANT]
+> This guide assumes you used the template wizard or `dotnet new unoapp` to create your solution. If not, it is recommended that you follow the [Creating an application with Uno.Extensions article](xref:Uno.Extensions.HowToGettingStarted) for creating an application from the template.
+
 ## Techniques
 
 ### Navigating to a Page and Clearing Back Stack
@@ -58,7 +66,7 @@ It is possible to navigate to a page and clear the back stack from code behind u
     ```csharp
     public async Task GoToSecondPage()
     {
-     await _navigator.NavigateViewModelAsync<SecondViewModel>(this, qualifier: Qualifiers.ClearBackStack);
+        await _navigator.NavigateViewModelAsync<SecondViewModel>(this, qualifier: Qualifiers.ClearBackStack);
     }
     ```
 
@@ -70,7 +78,7 @@ Another common scenario is to navigate to a page and then remove the current pag
 
 #### From XAML
 
-- Add a new `Page` to navigate to, `SamplePage.xaml`, in the UI (shared) project
+- Add a new `Page` to navigate to, `SamplePage.xaml`
 
 - In `SecondPage.xaml` add a `Button` with the following XAML, which does _not_ include a handler for the Click event
 
@@ -91,8 +99,8 @@ Another common scenario is to navigate to a page and then remove the current pag
 
 #### From code behind
 
-- Add a new `Page` to navigate to, `SamplePage.xaml`, in the UI (shared) project
-- In `SecondPage.xaml` add a `Button` with the following XAML, which includes a handler for the Click event  
+- Add a new `Page` to navigate to, `SamplePage.xaml`
+- In `SecondPage.xaml` add a `Button` with the following XAML, which includes a handler for the Click event
 
     ```xml
     <Button HorizontalAlignment="Center"
