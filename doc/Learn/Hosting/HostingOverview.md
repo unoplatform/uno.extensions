@@ -10,6 +10,8 @@ Hosting is provided as an Uno Feature. To enable `Hosting` support in your appli
 > [!IMPORTANT]
 > This walkthrough assumes you created your app using the Single Project template. If you used a different template, please refer to our [Migrating Projects to Single Project](xref:Uno.Development.MigratingToSingleProject) documentation.
 
+[!include[getting-help](../includes/getting-help.md)]
+
 ## Building a Hosted Application
 
 Initialization of the `IHost` instance is done from the generated App.cs file of your solution. It should be created as soon as the application is launched. The following snippet uses the `CreateBuilder()` extension method to instantiate an `IApplicationBuilder` from your `Application`. It is then possible to configure the associated `IHostBuilder` to register services or use the numerous extensions offered by this library.
