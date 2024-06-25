@@ -21,6 +21,11 @@ public static class TokenCacheExtensions
 	public const string RefreshTokenKey = "RefreshToken";
 
 	/// <summary>
+	/// Defines a key for the token cache which corresponds to a Id token element.
+	/// </summary>
+	public const string IdTokenKey = "IdToken";
+
+	/// <summary>
 	/// Gets the access token from the token cache.
 	/// </summary>
 	/// <param name="cache">

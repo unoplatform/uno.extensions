@@ -91,6 +91,20 @@ internal class AuthenticationService : IAuthenticationService
 		return isAuthenticated;
 	}
 
+	public async ValueTask<IEnumerable<Claim>> GetClaims(string tokenType = TokenCacheExtensions.IdTokenKey, CancellationToken? cancellationToken = default)
+	{
+		var ct = cancellationToken ?? CancellationToken.None;
+
+		var tokens = await _tokens.GetAsync(ct);
+
+		if(tokens.TryGetValue(tokenType, out var idToken))
+		{
+			var jwtToken = new JwtSecurityToken(idToken);
+			return jwtToken.Claims;
+		}
+		return Enumerable.Empty<Claim>();
+	}
+
 	private void TokensCleared(object sender, EventArgs e)
 	{
 		if (_logger.IsEnabled(LogLevel.Trace)) _logger.LogTraceMessage($"Tokens cleared, raising LoggedOut event");

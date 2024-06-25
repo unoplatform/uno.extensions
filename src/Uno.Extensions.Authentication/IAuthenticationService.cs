@@ -67,6 +67,19 @@ public interface IAuthenticationService
 	ValueTask<bool> IsAuthenticated(CancellationToken? cancellationToken = default);
 
 	/// <summary>
+	/// Gets claims associated with a specified token type.
+	/// </summary>
+	/// <param name="tokenType">
+	/// The token type <see cref="TokenCacheExtensions.IdTokenKey"/> or <see cref="TokenCacheExtensions.AccessTokenKey"/></param>
+	/// <param name="cancellationToken">
+	/// A cancellation token that can be used to cancel the operation. Optional
+	/// </param>
+	/// <returns>
+	/// A task that represents the asynchronous operation. The task result is a an enumerable of claims associated with the specified token.
+	/// </returns>
+	ValueTask<IEnumerable<Claim>> GetClaims(string tokenType = TokenCacheExtensions.IdTokenKey, CancellationToken? cancellationToken = default);
+
+	/// <summary>
 	/// Defines an event that is raised when the user is logged out.
 	/// </summary>
 	event EventHandler LoggedOut;
