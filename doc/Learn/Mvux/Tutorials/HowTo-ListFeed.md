@@ -150,3 +150,114 @@ which exposes properties that the View can data bind to.
     ![Screenshot of navigating Visual Studio Solution Explorer to inspect generated code](../Assets/InspectGeneratedCode.jpg)
 
     Read [inspecting the generated code](xref:Uno.Extensions.Mvux.Advanced.InspectGeneratedCode) for more.
+
+
+## Add search / filtering criteria
+
+Let assume that we want to display only items that match some given criteria.
+
+1. Update the file *PeopleService.cs*, to add a `PersonCriteria` parameter to the `GetPeopleAsync` method:
+
+    ```csharp
+    namespace PeopleApp;
+
+    public partial record PersonCriteria(string? Term, bool IsDarkSideOnly)
+    {
+        public bool Match(Person person)
+        {
+            if (Term is { Length: > 0 } term
+                && !person.FirstName.Contains(term,StringComparison.OrdinalIgnoreCase)
+                && !person.LastName.Contains(term, StringComparison.OrdinalIgnoreCase))
+            {
+                return false;
+            }
+            
+            if (IsDarkSideOnly && !person.IsDarkSide)
+            {
+                return false;
+            }
+            
+            return true;
+        }
+    }
+
+    public partial record Person(string FirstName, string LastName, bool IsDarkSide);
+
+    public interface IPeopleService
+    {
+        ValueTask<IImmutableList<Person>> GetPeopleAsync(PersonCriteria criteria, CancellationToken ct);
+    }
+
+    public class PeopleService
+    {
+        public async ValueTask<IImmutableList<Person>> GetPeopleAsync(PersonCriteria criteria, CancellationToken ct)
+        {
+            await Task.Delay(TimeSpan.FromSeconds(2), ct);
+            
+            var people = new Person[]
+            {
+                new Person(FirstName: "Master", LastName: "Yoda", IsDarkSide: false),
+                new Person(FirstName: "Darth", LastName: "Vader", IsDarkSide: true)
+            };
+            
+            return people.Where(criteria.Match).ToImmutableList();
+        }
+    }
+    ```
+
+1. Update the *PeopleModel.cs* file with the following:
+
+    ```csharp
+    using Uno.Extensions.Reactive;
+    
+    namespace PeopleApp;
+    
+    public partial record PeopleModel(IPeopleService PeopleService)
+    {
+		public IState<PersonCriteria> Criteria => State.Value(this, () => new PersonCriteria());
+	
+        public IListFeed<Person> People => Criteria.Select(PeopleService.GetPeopleAsync).AsListFeed();
+    }
+    ```
+	
+	> [!NOTE]  
+	> Here we use the `AsListFeed` operator to create the `ListFeed`. 
+	> This converts a `Feed<ImmutableList<T>>` to an `IListFeed<T>`
+	> (Cf. [AsListFeed](xref:xref:Uno.Extensions.Mvux.ListFeeds)).
+	
+1. Finally update your view `MainView.xaml` to add UI to edit the criteria:
+
+    ```xml
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel>
+            <TextBox Header="Search term" Text="{Binding Criteria.Term, Mode=TwoWay}" />
+            <ToggleSwitch Header="Show the dark side only" IsOn="{Binding Criteria.IsDarkSideOnly, Mode=TwoWay}" />
+        </StackPanel>
+
+        <mvux:FeedView Source="{Binding People}">
+			<DataTemplate>
+				<ListView ItemsSource="{Binding Data}">
+
+					<ListView.Header>
+						<Button Content="Refresh" Command="{Binding Refresh}" />
+					</ListView.Header>
+
+					<ListView.ItemTemplate>
+						<DataTemplate>
+							<StackPanel Orientation="Horizontal" Spacing="5">
+								<TextBlock Text="{Binding FirstName}"/>
+								<TextBlock Text="{Binding LastName}"/>
+							</StackPanel>
+						</DataTemplate>
+					</ListView.ItemTemplate>
+
+				</ListView>
+			</DataTemplate>
+		</mvux:FeedView>
+	</Grid>
+    ```
