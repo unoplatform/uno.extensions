@@ -16,6 +16,7 @@ public static class WindowExtensions
 	/// <param name="initialView">[optional] Initial navigation view</param>
 	/// <param name="initialViewModel">[optional] Initial navigation viewmodel</param>
 	/// <param name="initialNavigate">[optional] Callback to drive initial navigation for app</param>
+	/// <param name="doNotActivate">[optional] Do not activate the window after initializing navigation</param>
 	/// <returns>The created IHost</returns>
 	public static Task<IHost> InitializeNavigationAsync(
 		this Window window,
@@ -24,18 +25,20 @@ public static class WindowExtensions
 		string? initialRoute = "",
 		Type? initialView = null,
 		Type? initialViewModel = null,
-		Func<IServiceProvider, INavigator, Task>? initialNavigate = null)
+		Func<IServiceProvider, INavigator, Task>? initialNavigate = null,
+		bool doNotActivate = false)
 	{
 		return window.InternalInitializeNavigationAsync(
 			buildHost,
 			navigationRoot,
 			initialRoute, initialView, initialViewModel,
 			ApplyLoadingTask,
-			initialNavigate
+			initialNavigate,
+			doNotActivate
 			);
 	}
 
-	internal static void ApplyLoadingTask(this Window window, FrameworkElement root, Task navInit)
+	internal static void ApplyLoadingTask(this Window window, FrameworkElement root, Task navInit, bool doNotActivate)
 	{
 		var activate = true;
 		if (root is LoadingView lv)
@@ -53,7 +56,8 @@ public static class WindowExtensions
 					loadingTask = new Func<Task>(async () =>
 					{
 						await navInit;
-						window.Activate();
+						if (!doNotActivate)
+							window.Activate();
 					})();
 				}
 			}
@@ -61,7 +65,7 @@ public static class WindowExtensions
 			lv.Source = loading;
 		}
 
-		if (activate)
+		if (activate && !doNotActivate)
 		{
 			// Activate immediately to show the splash screen
 			window.Activate();

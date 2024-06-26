@@ -9,9 +9,10 @@ public static class ApplicationBuilderExtensions
 	/// <typeparam name="TShell">The <see cref="UIElement" /> to use for the App Shell.</typeparam>
 	/// <param name="appBuilder">The <see cref="IApplicationBuilder" />.</param>
 	/// <param name="initialNavigate">An optional Navigation Delegate to conditionally control where the app should navigate on launch.</param>
+	/// <param name="doNotActivate">An optional flag to prevent the Window from activating right after initialization but only when host is completely loaded.</param>
 	/// <returns>The <see cref="IHost" />.</returns>
 	public static async Task<IHost> NavigateAsync<TShell>(this IApplicationBuilder appBuilder,
-		Func<IServiceProvider, INavigator, Task>? initialNavigate = null)
+		Func<IServiceProvider, INavigator, Task>? initialNavigate = null, bool doNotActivate = false)
 		where TShell : UIElement, new()
 	{
 		var appRoot = new TShell();
@@ -21,7 +22,7 @@ public static class ApplicationBuilderExtensions
 			navRoot = contentProvider.ContentControl;
 		}
 
-		Action<Window, FrameworkElement, Task> initializeViewHost = (_, _, _) => { };
+		Action<Window, FrameworkElement, Task, bool> initializeViewHost = (_, _, _, _) => { };
 		if (appBuilder.Properties.TryGetValue(typeof(IRootViewInitializer), out var propValue) && propValue is IRootViewInitializer initializer)
 		{
 			navRoot ??= initializer.CreateDefaultView();
@@ -43,7 +44,8 @@ public static class ApplicationBuilderExtensions
 			buildHost: () => Task.FromResult(appBuilder.Build()),
 			navigationRoot: navRoot,
 			initializeViewHost: initializeViewHost,
-			initialNavigate: initialNavigate
+			initialNavigate: initialNavigate,
+			doNotActivate: doNotActivate
 		);
 	}
 }
