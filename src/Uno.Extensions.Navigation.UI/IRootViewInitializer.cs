@@ -22,5 +22,6 @@ internal interface IRootViewInitializer
 	/// <param name="window"></param>
 	/// <param name="element"></param>
 	/// <param name="loadingTask"></param>
-	void InitializeViewHost(Window window, FrameworkElement element, Task loadingTask);
+	/// <param name="doNotActivate"></param>
+	void InitializeViewHost(Window window, FrameworkElement element, Task loadingTask, bool doNotActivate = false);
 }
