@@ -1,4 +1,6 @@
-﻿using SkiaSharp;
+﻿using NUnit.Framework.Legacy;
+
+using SkiaSharp;
 
 namespace TestHarness.UITest.TestFramework;
 
@@ -111,7 +113,7 @@ public static class ImageAssert
 
 		if (expectedRect != FirstQuadrant && actualRect != FirstQuadrant)
 		{
-			Assert.AreEqual(expectedRect.Size, actualRect.Size, WithContext("Compare rects don't have the same size"));
+			Assert.That(expectedRect.Size, Is.EqualTo(actualRect.Size), WithContext("Compare rects don't have the same size"));
 		}
 
 		if (expectedRect == FirstQuadrant && actualRect == FirstQuadrant)
@@ -119,7 +121,7 @@ public static class ImageAssert
 			var effectiveExpectedBitmapSize = new Size(
 				(int)(expectedBitmap.Size.Width * expectedToActualScale),
 				(int)(expectedBitmap.Size.Height * expectedToActualScale));
-			Assert.AreEqual(effectiveExpectedBitmapSize, actualBitmap.Size, WithContext("Screenshots don't have the same size"));
+			Assert.That(effectiveExpectedBitmapSize, Is.EqualTo(actualBitmap.Size), WithContext("Screenshots don't have the same size"));
 		}
 
 		expectedRect = Normalize(expectedRect, expectedBitmap.Size);
@@ -314,8 +316,8 @@ public static class ImageAssert
 			var x = expectation.Location.X;
 			var y = expectation.Location.Y;
 
-			Assert.GreaterOrEqual(bitmap.Width, x);
-			Assert.GreaterOrEqual(bitmap.Height, y);
+			Assert.That(bitmap.Width, Is.GreaterThanOrEqualTo(x));
+			Assert.That(bitmap.Height, Is.GreaterThanOrEqualTo(y));
 
 			var result = new StringBuilder();
 			result.AppendLine(expectation.Name);

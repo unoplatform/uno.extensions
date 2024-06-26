@@ -33,10 +33,10 @@
 
 	<Import Project="DebugPlatforms.props" Condition="exists('DebugPlatforms.props')" />
 
-	 <Target Name="Log disabled platforms" BeforeTargets="BeforeBuild">
-        <Message Importance="high" Condition="!$(Build_Android)" Text="Android not included in build" />
-        <Message Importance="high" Condition="!$(Build_iOS)" Text="iOS not included in build" />
-        <Message Importance="high" Condition="!$(Build_MacOS)" Text="MacOS not included in build" />
-        <Message Importance="high" Condition="!$(Build_Windows)" Text="Windows not included in build" />
-    </Target>
+	<Target Name="Log disabled platforms" BeforeTargets="BeforeBuild">
+		<Message Importance="high" Condition="!$(Build_Android)" Text="Android not included in build" />
+		<Message Importance="high" Condition="!$(Build_iOS)" Text="iOS not included in build" />
+		<Message Importance="high" Condition="!$(Build_MacOS)" Text="MacOS not included in build" />
+		<Message Importance="high" Condition="!$(Build_Windows)" Text="Windows not included in build" />
+	</Target>
 </Project>

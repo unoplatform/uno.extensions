@@ -6,12 +6,12 @@
 		<Nullable>annotations</Nullable>
 		<NoWarn>$(NoWarn);NU5104;NU1504;NU1505;CS1591;MSB3277;XA0101;CS8785;CS8669;CA1416</NoWarn>
 		<ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
-		
+
 		<ConditionalCompilationSymbols>
 			<ConditionalCompilationSymbol Name="UNO_EXT_TIMERS" Comment="Controls whether performance timers are enabled (off by default)" />
 		</ConditionalCompilationSymbols>
 
-		
+
 		<!--<DefineConstants>$(DefineConstants);UNO_EXT_TIMERS</DefineConstants>-->
 	</PropertyGroup>
 
@@ -65,6 +65,6 @@
 	<PropertyGroup Condition="'$(_IsIOS)' == 'true'">
 		<MtouchExtraArgs>$(MtouchExtraArgs) --registrar=static</MtouchExtraArgs>
 	</PropertyGroup>
-	
+
 	<Import Project="$(MSBuildThisFileDirectory)..\..\src\crosstargeting_override.props" Condition="exists('$(MSBuildThisFileDirectory)..\..\src\crosstargeting_override.props')" />
 </Project>
