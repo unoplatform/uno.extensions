@@ -17,7 +17,7 @@ public partial class NavigationViewDataViewModel
 			if (entity is not null)
 			{
 				await Navigator.NavigateDataAsync(this, entity, qualifier: Qualifiers.Nested);
-				_ = Entity.Update(_ => default(IChefEntity), CancellationToken.None);
+				_ = Entity.UpdateAsync(_ => default(IChefEntity), CancellationToken.None);
 			}
 		});
 	}
