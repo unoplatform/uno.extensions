@@ -4,10 +4,13 @@
 	  xmlns:local="using:TestHarness.Ext.Navigation.Apps.Chefs"
 	  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	  xmlns:uen="using:Uno.Extensions.Navigation.UI"
 	  mc:Ignorable="d"
 	  Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
 	<Grid>
 		<TextBlock Text="ChefsFavoriteRecipes" />
+		<Button Content="Recipe Details"
+				uen:Navigation.Request="ChefsFavoriteRecipeDetails" />
 	</Grid>
 </Page>
