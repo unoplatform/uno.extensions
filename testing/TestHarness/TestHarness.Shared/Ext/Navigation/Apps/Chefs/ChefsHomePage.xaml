@@ -1,24 +1,19 @@
 ﻿<Page x:Class="TestHarness.Ext.Navigation.Apps.Chefs.ChefsHomePage"
 	  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 	  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-	  xmlns:local="using:TestHarness.Ext.Navigation.Apps.Chefs"
 	  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	  xmlns:local="using:TestHarness.Ext.Navigation.Apps.Chefs"
 	  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	  xmlns:uen="using:Uno.Extensions.Navigation.UI"
-	  mc:Ignorable="d"
-	  Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+	  Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+	  mc:Ignorable="d">
 
 	<StackPanel>
 		<TextBlock Text="ChefsHome" />
-		<Button Content="Profile"
-				Command="{Binding ShowCurrentProfile}" />
-		<Button Content="Profile (New)"
-				Command="{Binding ShowCurrentProfileNew}" />
-		<Button Content="Recipe Details"
-				uen:Navigation.Request="ChefsRecipeDetails" />
-		<Button Content="Search"
-				uen:Navigation.Request="ChefsSearch" />
-		<Button Content="Notifications"
-				uen:Navigation.Request="ChefsNotifications" />
+		<Button Command="{Binding ShowCurrentProfile}" Content="Profile" />
+		<Button Command="{Binding ShowCurrentProfileNew}" Content="Profile (New)" />
+		<Button Command="{Binding NavigateToRecipeDetail}" Content="Recipe Details" />
+		<Button uen:Navigation.Request="ChefsSearch" Content="Search" />
+		<Button uen:Navigation.Request="ChefsNotifications" Content="Notifications" />
 	</StackPanel>
 </Page>
