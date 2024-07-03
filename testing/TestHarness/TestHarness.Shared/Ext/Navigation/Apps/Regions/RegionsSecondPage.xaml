@@ -1,0 +1,54 @@
+﻿<Page x:Class="TestHarness.Ext.Navigation.Apps.Regions.RegionsSecondPage"
+	  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	  xmlns:local="using:TestHarness.Ext.Navigation.Apps.Regions"
+	  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	  xmlns:triggers="using:TestHarness"
+	  xmlns:uen="using:Uno.Extensions.Navigation.UI"
+	  xmlns:utu="using:Uno.Toolkit.UI"
+	  Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+	  mc:Ignorable="d">
+
+	<Grid x:Name="ParentGrid">
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition />
+		</Grid.RowDefinitions>
+		<utu:NavigationBar Content="Second Page" />
+
+		<Grid Grid.Row="1">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="*" />
+				<ColumnDefinition Width="*" />
+			</Grid.ColumnDefinitions>
+			<Grid>
+				<Button uen:Navigation.Request="RegionsFourth" Content="Fourth" />
+
+				<ListView x:Name="ProductsListView"
+						  uen:Navigation.Request="RegionsFourth"
+						  AutomationProperties.AutomationId="ProductsListView"
+						  ItemsSource="{Binding Items}">
+					<ListView.ItemTemplate>
+						<DataTemplate x:DataType="local:FourthData">
+							<TextBlock FontSize="30" Text="{x:Bind Name}" />
+						</DataTemplate>
+					</ListView.ItemTemplate>
+				</ListView>
+
+			</Grid>
+			<Grid x:Name="DetailsGrid"
+				  Grid.Column="1"
+				  Background="LightPink">
+				<ContentControl x:Name="Details"
+								Grid.Column="1"
+								HorizontalAlignment="Stretch"
+								VerticalAlignment="Stretch"
+								HorizontalContentAlignment="Stretch"
+								VerticalContentAlignment="Stretch"
+								uen:Region.Attached="True"
+								uen:Region.Name="Host" />
+			</Grid>
+		</Grid>
+	</Grid>
+</Page>
