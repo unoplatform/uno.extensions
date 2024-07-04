@@ -2,7 +2,8 @@
 
 	<PropertyGroup>
 		<TargetFramework>netstandard2.0</TargetFramework>
-		<IsPackable>false</IsPackable>	
+		<IsPackable>false</IsPackable>
+		<EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
 		<!--
 			Defines that this project output is a tool of the given package ID,
 			so nuget override will copy it in the 'tools' directory of that package instead of the 'lib' of the current package folder.

@@ -17,6 +17,5 @@
 		</Grid.RowDefinitions>
 		<utu:NavigationBar Content="NavigationView Settings"
 						   AutomationProperties.AutomationId="NavigationViewSettingsNavigationBar" />
-		
 	</Grid>
 </Page>
