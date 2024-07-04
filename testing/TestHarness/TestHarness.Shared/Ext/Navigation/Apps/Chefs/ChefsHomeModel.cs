@@ -15,6 +15,10 @@ public partial class ChefsHomeModel(INavigator navigator)
 		await navigator.NavigateRouteAsync(this, "ChefsProfile", qualifier: Qualifiers.Dialog, data: new ChefsUser { FullName = "Tester User (new)" });
 	}
 
+	public async ValueTask NavigateToRecipeDetail()
+	{
+		await navigator.NavigateRouteAsync(this, "ChefsRecipeDetails", data: new ChefsRecipe { Name = "Home Page" });
+	}
 
 }
 

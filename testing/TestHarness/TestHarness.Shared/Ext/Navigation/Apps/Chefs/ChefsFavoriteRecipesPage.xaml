@@ -1,13 +1,15 @@
 ﻿<Page x:Class="TestHarness.Ext.Navigation.Apps.Chefs.ChefsFavoriteRecipesPage"
 	  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 	  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-	  xmlns:local="using:TestHarness.Ext.Navigation.Apps.Chefs"
 	  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	  xmlns:local="using:TestHarness.Ext.Navigation.Apps.Chefs"
 	  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-	  mc:Ignorable="d"
-	  Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+	  xmlns:uen="using:Uno.Extensions.Navigation.UI"
+	  Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+	  mc:Ignorable="d">
 
 	<Grid>
 		<TextBlock Text="ChefsFavoriteRecipes" />
+		<Button Command="{Binding NavigateToRecipeDetail}" Content="Recipe Details" />
 	</Grid>
 </Page>

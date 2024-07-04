@@ -1,5 +1,11 @@
-﻿namespace TestHarness.Ext.Navigation.Apps.Chefs;
+﻿using TestHarness.Ext.Navigation.Apps.Chefs.Models;
 
-public partial class ChefsSearchModel
+namespace TestHarness.Ext.Navigation.Apps.Chefs;
+
+public partial class ChefsSearchModel(INavigator navigator)
 {
+	public async ValueTask NavigateToRecipeDetail()
+	{
+		await navigator.NavigateRouteAsync(this, "ChefsSearchRecipeDetails", data: new ChefsRecipe { Name = "Search Page" });
+	}
 }
