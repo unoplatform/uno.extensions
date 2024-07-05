@@ -23,9 +23,14 @@
 				<ColumnDefinition Width="*" />
 			</Grid.ColumnDefinitions>
 			<Grid>
+				<Grid.RowDefinitions>
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="*" />
+				</Grid.RowDefinitions>
 				<Button uen:Navigation.Request="RegionsFourth" Content="Fourth" />
 
 				<ListView x:Name="ProductsListView"
+						  Grid.Row="1"
 						  uen:Navigation.Request="RegionsFourth"
 						  AutomationProperties.AutomationId="ProductsListView"
 						  ItemsSource="{Binding Items}">
@@ -46,8 +51,7 @@
 								VerticalAlignment="Stretch"
 								HorizontalContentAlignment="Stretch"
 								VerticalContentAlignment="Stretch"
-								uen:Region.Attached="True"
-								uen:Region.Name="Host" />
+								uen:Region.Attached="True" />
 			</Grid>
 		</Grid>
 	</Grid>
