@@ -84,8 +84,8 @@ internal record ForceBindingsUpdateGenerationContext(
 			_XBindFiles ??= Context
 								.AdditionalFiles
 								.Select(ExtractXBindClassName)
-								.Where(className=> className is not null)
-								.Select(x=>x!) // Is there a better way to force not null here?
+								.Where(className => className is not null)
+								.Select(x => x!) // Is there a better way to force not null here?
 								.ToImmutableHashSet();
 			return _XBindFiles;
 		}

@@ -54,7 +54,7 @@ internal class ForceBindingsUpdateGenTool_1 : ICodeGenTool
 	{
 		var className = model.Name;
 
-		var updateInterface = _ctx.ForceBindingsUpdateInterface.ToDisplayString();
+		var updateInterface = _ctx.ForceBindingsUpdateInterface.ToFullString();
 		var fileCode = this.AsPartialOf(
 			model,
 			attributes: default,
