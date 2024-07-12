@@ -46,7 +46,7 @@ public static class ServiceProviderExtensions
 					.CloneScopedInstance<IDispatcher>(services);
 	}
 
-	
+
 
 	/// <summary>
 	/// Initializes navigation for an application using a ContentControl
@@ -91,8 +91,9 @@ public static class ServiceProviderExtensions
 		string? initialRoute = "",
 		Type? initialView = null,
 		Type? initialViewModel = null,
-		Action<Window, FrameworkElement, Task>? initializeViewHost = null,
-		Func<IServiceProvider, INavigator, Task>? initialNavigate = null)
+		Action<Window, FrameworkElement, Task, bool>? initializeViewHost = null,
+		Func<IServiceProvider, INavigator, Task>? initialNavigate = null,
+		bool doNotActivate = false)
 	{
 		if (window.Content is null)
 		{
@@ -100,7 +101,7 @@ public static class ServiceProviderExtensions
 		}
 
 		var buildTask = window.BuildAndInitializeHostAsync(navigationRoot, buildHost, initialRoute, initialView, initialViewModel, initialNavigate);
-		initializeViewHost?.Invoke(window, navigationRoot, buildTask);
+		initializeViewHost?.Invoke(window, navigationRoot, buildTask, doNotActivate);
 		return buildTask;
 	}
 
@@ -124,8 +125,9 @@ public static class ServiceProviderExtensions
 
 		await startup;
 
-		// Fallback to make sure the window is activated
-		window.Activate();
+		var hostLifetime = host.Services.GetRequiredService<IHostApplicationLifetime>();
+		// Activate the window after the application has started
+		hostLifetime.ApplicationStarted.Register(() => window.Activate());
 
 		return host;
 	}
