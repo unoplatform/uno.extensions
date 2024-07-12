@@ -37,10 +37,6 @@ internal static class CodeGenToolExtensions
 
 		return $@"{tool.GetFileHeader(3)}
 
-			using global::System;
-			using global::System.Linq;
-			using global::System.Threading.Tasks;
-
 			namespace {type.ContainingNamespace}
 			{{
 				{types.Select((def, i) => $"{def.Indent(i + (i == 0 ? 0 : 4))}\r\n{"{".Indent(i + 4)}").JoinBy("\r\n")}
