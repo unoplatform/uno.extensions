@@ -122,10 +122,10 @@ public static class ServiceProviderExtensions
 
 		await Task.Run(() => host.StartAsync());
 
-		await startup;
-
 		// Fallback to make sure the window is activated
 		window.Activate();
+
+		await startup;
 
 		return host;
 	}
