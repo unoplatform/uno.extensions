@@ -347,9 +347,9 @@ internal class KeyEqualityGenerationTool : ICodeGenTool
 					{{
 						{types
 							.Select(type =>
-								$@"if (type == typeof({type}))
+								$@"if (type == typeof({type.ToFullString()}))
 								{{
-									return new {NS.Equality}.KeyEqualityComparer<{type}>();
+									return new {NS.Equality}.KeyEqualityComparer<{type.ToFullString()}>();
 								}}")
 							.Align(6)}
 
