@@ -10,4 +10,9 @@ internal interface ISelectionService : ISelectionInfo
 	/// Event raise when any properties of the service has changed
 	/// </summary>
 	event EventHandler StateChanged;
+
+	/// <summary>
+	/// Replace the selected range.
+	/// </summary>
+	void ReplaceRange(ItemIndexRange itemIndexRange);
 }
