@@ -61,7 +61,7 @@ public partial class FeedView
 				{
 					try
 					{
-						subscription.RequestRefresh(() => IsExecuting = false);
+						subscription.RequestRefresh(EndExecution);
 					}
 					catch (Exception error)
 					{
@@ -69,9 +69,16 @@ public partial class FeedView
 						{
 							this.Log().Warn(error, "Failed to send a refresh request");
 						}
-						IsExecuting = false;
+						EndExecution();
 					}
 				});
+
+				void EndExecution()
+#if WINUI
+					=> _view.DispatcherQueue.TryEnqueue(() => IsExecuting = false);
+#else
+					=> _view.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () => IsExecuting = false);
+#endif
 			}
 		}
 	}
