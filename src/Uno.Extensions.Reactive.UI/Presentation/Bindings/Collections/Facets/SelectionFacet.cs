@@ -38,12 +38,19 @@ internal class SelectionFacet : IDisposable, ISelectionInfo
 
 	private bool _isInit;
 
-	public SelectionFacet(IBindableCollectionViewSource source, CollectionChangedFacet collectionChangedFacet, Func < IObservableVector<object>> target)
+	public SelectionFacet(IBindableCollectionViewSource source, CollectionChangedFacet collectionChangedFacet, Func <IObservableVector<object>> target)
 	{
 		_service = source.GetService(typeof(ISelectionService)) as ISelectionService;
 		_target = new Lazy<IObservableVector<object>>(target, LazyThreadSafetyMode.None);
 		_dispatcher = source.Dispatcher;
 		_collectionChangedFacet = collectionChangedFacet;
+
+#if __WINDOWS__
+		if (_service is not null)
+		{
+			UpdateLocalSelection(_service.GetSelectedRanges());
+		}
+#endif
 	}
 
 	private void Init()
