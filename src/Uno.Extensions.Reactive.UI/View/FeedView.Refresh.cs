@@ -75,9 +75,9 @@ public partial class FeedView
 
 				void EndExecution()
 #if WINUI
-					=> _view.DispatcherQueue.TryEnqueue(() => IsExecuting = false);
+					=> _ = _view.DispatcherQueue.TryEnqueue(() => IsExecuting = false);
 #else
-					=> _view.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () => IsExecuting = false);
+					=> _ = _view.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () => IsExecuting = false);
 #endif
 			}
 		}
