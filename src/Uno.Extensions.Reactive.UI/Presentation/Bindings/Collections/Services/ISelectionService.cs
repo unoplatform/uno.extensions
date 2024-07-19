@@ -12,7 +12,7 @@ internal interface ISelectionService : ISelectionInfo
 	event EventHandler StateChanged;
 
 	/// <summary>
-	/// Replace the selected range.
+	/// Replace the current selection range with the specified item index range.
 	/// </summary>
 	void ReplaceRange(ItemIndexRange itemIndexRange);
 }

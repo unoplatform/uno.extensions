@@ -284,6 +284,7 @@ internal class SelectionFacet : IDisposable, ISelectionInfo
 		}
 	}
 
+	/// <inheritdoc />
 	public void ReplaceRange(ItemIndexRange itemIndexRange)
 	{
 		if (_service is null)
