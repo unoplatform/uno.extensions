@@ -36,6 +36,9 @@
 					Click="{x:Bind ViewModel.SettingsWriteTest}"
 					Content="Settings Write Test" />
 			<TextBlock x:Name="TxtUrl" AutomationProperties.AutomationId="OnePageTxtUrlFromBrowser" />
+			<TextBlock x:Name="TxtDataContext"
+					   Text="DataContext is ok"
+					   AutomationProperties.AutomationId="OnePageTxtDataContext" />
 			<Button AutomationProperties.AutomationId="OnePageGetUrlFromBrowser"
 					Click="GetUrlFromBrowser"
 					Content="Get URL" />
