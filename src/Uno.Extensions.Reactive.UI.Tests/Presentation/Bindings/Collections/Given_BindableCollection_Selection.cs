@@ -91,6 +91,80 @@ public partial class Given_BindableCollection_Selection : FeedTests
 		}, CT);
 	}
 
+	[TestMethod]
+	[InjectedPointer(PointerDeviceType.Mouse)]
+#if !__SKIA__
+	[Ignore("Pointer injection not supported yet on this platform")]
+#endif
+	public async Task When_SelectItemInView_ComboBox()
+	{
+		var (vm, cb, itemsView, items) = await SetupComboBox();
+
+		// Open the ComboBox
+		InputInjectorHelper.Current.Tap(cb);
+		await TestHelper.WaitFor(async ct => cb.IsDropDownOpen, CT);
+
+		// Select the second item
+		var comboBoxItems = UIHelper.GetChildren<ComboBoxItem>(cb).ToArray();
+		InputInjectorHelper.Current.Tap(comboBoxItems[1]);
+
+		await TestHelper.WaitFor(async ct => itemsView.CurrentItem is MyItem { Value: 42 }, CT);
+	}
+
+	[TestMethod]
+	[InjectedPointer(PointerDeviceType.Mouse)]
+#if !__SKIA__
+	[Ignore("Pointer injection not supported yet on this platform")]
+#endif
+	public async Task When_SelectItemAndAboveInView_ComboBox()
+	{
+		var (vm, cb, itemsView, items) = await SetupComboBox();
+
+		// Open the ComboBox
+		InputInjectorHelper.Current.Tap(cb);
+		await TestHelper.WaitFor(async ct => cb.IsDropDownOpen, CT);
+
+		// Select the second item
+		var comboBoxItems = UIHelper.GetChildren<ComboBoxItem>(cb).ToArray();
+		InputInjectorHelper.Current.Tap(comboBoxItems[1]);
+
+		await TestHelper.WaitFor(async ct => itemsView.CurrentItem is MyItem { Value: 42 }, CT);
+
+		// Select the first item
+		InputInjectorHelper.Current.Tap(cb);
+		await TestHelper.WaitFor(async ct => cb.IsDropDownOpen, CT);
+		InputInjectorHelper.Current.Tap(comboBoxItems[0]);
+
+		await TestHelper.WaitFor(async ct => itemsView.CurrentItem is MyItem { Value: 41 }, CT);
+	}
+
+	[TestMethod]
+	[InjectedPointer(PointerDeviceType.Mouse)]
+#if !__SKIA__
+	[Ignore("Pointer injection not supported yet on this platform")]
+#endif
+	public async Task When_SelectItemAndBelowInView_ComboBox()
+	{
+		var (vm, cb, itemsView, items) = await SetupComboBox();
+
+		// Open the ComboBox
+		InputInjectorHelper.Current.Tap(cb);
+		await TestHelper.WaitFor(async ct => cb.IsDropDownOpen, CT);
+
+		// Select the second item
+		var comboBoxItems = UIHelper.GetChildren<ComboBoxItem>(cb).ToArray();
+		InputInjectorHelper.Current.Tap(comboBoxItems[1]);
+
+		await TestHelper.WaitFor(async ct => itemsView.CurrentItem is MyItem { Value: 42 }, CT);
+
+		// Select the third item
+		InputInjectorHelper.Current.Tap(cb);
+		await TestHelper.WaitFor(async ct => cb.IsDropDownOpen, CT);
+		InputInjectorHelper.Current.Tap(comboBoxItems[2]);
+
+		await TestHelper.WaitFor(async ct => itemsView.CurrentItem is MyItem { Value: 43 }, CT);
+	}
+
 	private async Task<(BindableGiven_BindableCollection_Selection_Model, ListView, ListViewItem[])> SetupListView(ListViewSelectionMode selectionMode)
 	{
 		var vm = new BindableGiven_BindableCollection_Selection_Model();
@@ -106,5 +180,18 @@ public partial class Given_BindableCollection_Selection : FeedTests
 		}, CT);
 
 		return (vm, lv, lvItems);
+	}
+
+	private async Task<(BindableGiven_BindableCollection_Selection_Model, ComboBox, ICollectionView, MyItem[])> SetupComboBox()
+	{
+		var vm = new BindableGiven_BindableCollection_Selection_Model();
+		var itemsView = new CollectionViewSource { Source = vm.Items }.View;
+		var cb = new ComboBox { ItemsSource = itemsView };
+
+		await UIHelper.Load(cb, CT);
+
+		var items = vm.Items.Value.ToArray();
+
+		return (vm, cb, itemsView, items);
 	}
 }
