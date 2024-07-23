@@ -44,7 +44,7 @@ internal class AppHostingEnvironment : HostingEnvironment, IAppHostEnvironment, 
 						Imports.DisplayMessage($"UpdateAddressBar - WebUri: {webUri}");
 
 						// Use state = 1 or 0 to align with the state managed by the SystemNavigationManager (Uno)
-						var result = Imports.ReplaceState(state, "", $"{webUri}");
+						var result = Imports.ReplaceState(0, "", $"{webUri}");
 
 						Imports.DisplayMessage($"UpdateAddressBar - Result: {result}");
 					});
