@@ -43,8 +43,13 @@ internal class AppHostingEnvironment : HostingEnvironment, IAppHostEnvironment, 
 
 						Imports.DisplayMessage($"UpdateAddressBar - WebUri: {webUri}");
 
+						string path = url.Uri.AbsolutePath;
+						string routeName = path.TrimStart('/');
+
+						Imports.DisplayMessage($"UpdateAddressBar - routeName: {routeName}");
+
 						// Use state = 1 or 0 to align with the state managed by the SystemNavigationManager (Uno)
-						var result = Imports.ReplaceState(0, "", $"{webUri}");
+						var result = Imports.ReplaceState(routeName, "", $"{webUri}");
 
 						Imports.DisplayMessage($"UpdateAddressBar - Result: {result}");
 					});
@@ -58,9 +63,8 @@ internal static partial class Imports
 	[System.Runtime.InteropServices.JavaScript.JSImport("globalThis.Uno.Extensions.Hosting.getLocation")]
 	public static partial string GetLocation();
 
-
 	[System.Runtime.InteropServices.JavaScript.JSImport("globalThis.window.history.replaceState")]
-	public static partial string ReplaceState(int state, string title, string url);
+	public static partial string ReplaceState(string state, string title, string url);
 
 	[System.Runtime.InteropServices.JavaScript.JSImport("globalThis.Uno.Extensions.Hosting.displayMessage")]
 	public static partial string DisplayMessage(string message);
