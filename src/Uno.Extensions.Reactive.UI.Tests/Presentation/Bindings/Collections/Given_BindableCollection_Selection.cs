@@ -185,13 +185,12 @@ public partial class Given_BindableCollection_Selection : FeedTests
 	private async Task<(BindableGiven_BindableCollection_Selection_Model, ComboBox, ICollectionView, MyItem[])> SetupComboBox()
 	{
 		var vm = new BindableGiven_BindableCollection_Selection_Model();
-		var itemsView = new CollectionViewSource { Source = vm.Items }.View;
-		var cb = new ComboBox { ItemsSource = itemsView };
+		var cb = new ComboBox { ItemsSource = vm.Items };
 
 		await UIHelper.Load(cb, CT);
 
 		var items = vm.Items.Value.ToArray();
 
-		return (vm, cb, itemsView, items);
+		return (vm, cb, items);
 	}
 }
