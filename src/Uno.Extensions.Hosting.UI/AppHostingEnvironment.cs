@@ -25,9 +25,14 @@ internal class AppHostingEnvironment : HostingEnvironment, IAppHostEnvironment, 
 						{
 							var currentView = SystemNavigationManager.GetForCurrentView();
 							state = currentView?.AppViewBackButtonVisibility == AppViewBackButtonVisibility.Visible ? 1 : 0;
+
+							Imports.DisplayMessage($"UpdateAddressBar - State: {state}");
 						}
 
 						var href = Imports.GetLocation();
+
+						Imports.DisplayMessage($"UpdateAddressBar - Href: {href}");
+
 						var appUriBuilder = new UriBuilder(applicationUri);
 						var url = new UriBuilder(href)
 						{
@@ -35,8 +40,13 @@ internal class AppHostingEnvironment : HostingEnvironment, IAppHostEnvironment, 
 							Path = appUriBuilder.Path
 						};
 						var webUri = url.Uri.OriginalString;
+
+						Imports.DisplayMessage($"UpdateAddressBar - WebUri: {webUri}");
+
 						// Use state = 1 or 0 to align with the state managed by the SystemNavigationManager (Uno)
 						var result = Imports.ReplaceState(state, "", $"{webUri}");
+
+						Imports.DisplayMessage($"UpdateAddressBar - Result: {result}");
 					});
 	}
 #endif
@@ -51,5 +61,8 @@ internal static partial class Imports
 
 	[System.Runtime.InteropServices.JavaScript.JSImport("globalThis.window.history.replaceState")]
 	public static partial string ReplaceState(int state, string title, string url);
+
+	[System.Runtime.InteropServices.JavaScript.JSImport("globalThis.Uno.Extensions.Hosting.displayMessage")]
+	public static partial string DisplayMessage(string message);
 }
 #endif

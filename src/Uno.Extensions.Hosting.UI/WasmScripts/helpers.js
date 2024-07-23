@@ -6,7 +6,9 @@
             static getLocation() {
                 return window.location.href;
             }
-            
+            static displayMessage(message) {
+                return console.log(message);
+            }
         }
         Extensions.Hosting = Hosting;
     })(Extensions = Uno.Extensions || (Uno.Extensions = {}));

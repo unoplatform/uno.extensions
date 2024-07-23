@@ -67,6 +67,7 @@ internal class BrowserAddressBarService : IHostedService
 		{
 			var rootRegion = e.Region.Root();
 			var route = rootRegion.GetRoute();
+			_logger.LogInformationMessage($"Route Changed: {route}");
 			if (route is null)
 			{
 				return;
@@ -77,7 +78,12 @@ internal class BrowserAddressBarService : IHostedService
 				Query = route.Query(),
 				Path = route.FullPath()?.Replace("+", "/")
 			};
+
+			_logger.LogInformationMessage($"New URL: {url.Uri}");
+
 			await _addressbarHost!.UpdateAddressBar(url.Uri);
+
+			_logger.LogInformationMessage("Finished updating URL");
 		}
 		catch (Exception ex)
 		{
