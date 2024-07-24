@@ -52,23 +52,32 @@ internal class AppHostingEnvironment : HostingEnvironment, IAppHostEnvironment, 
 
 						// Use state = 1 or 0 to align with the state managed by the SystemNavigationManager (Uno)
 
+						//Main
 						if(history.Count == 0)
 						{
 							Imports.ReplaceState(routeName, "", $"{webUri}");
 							history.Add(routeName);
 							Imports.DisplayMessage($"UpdateAddressBar - Start: history.Add: {routeName}");
 						}
-						else if (history.Contains(routeName))
+						//Navigating back - apart from Main
+						else if (history.Contains(routeName) && routeName != history.First())
 						{
 							Imports.ReplaceState(routeName, "", $"{webUri}");
 							history.Remove(routeName);
 							Imports.DisplayMessage($"UpdateAddressBar - history.Remove: {routeName}");
 						}
-						else
+						//Navigating forward
+						else if (history.First() != routeName)
 						{
 							var result = Imports.PushState(routeName, "", $"{webUri}");
 							history.Add(routeName);
 							Imports.DisplayMessage($"UpdateAddressBar - history.Add: {routeName}");
+						}
+						//Navigated back to Main
+						else
+						{
+							Imports.ReplaceState(routeName, "", $"{webUri}");
+							Imports.DisplayMessage($"UpdateAddressBar - navigated to {routeName}");
 						}
 					});
 	}
