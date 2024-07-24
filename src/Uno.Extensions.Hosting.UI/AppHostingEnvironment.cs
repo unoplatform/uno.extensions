@@ -13,6 +13,8 @@ internal class AppHostingEnvironment : HostingEnvironment, IAppHostEnvironment, 
 {
 	public string? AppDataPath { get; init; }
 
+	private List<string> history = new List<string>();
+
 	public Assembly? HostAssembly { get; init; }
 
 #if __WASM__
@@ -49,9 +51,25 @@ internal class AppHostingEnvironment : HostingEnvironment, IAppHostEnvironment, 
 						Imports.DisplayMessage($"UpdateAddressBar - routeName: {routeName}");
 
 						// Use state = 1 or 0 to align with the state managed by the SystemNavigationManager (Uno)
-						var result = Imports.PushState(routeName, "", $"{webUri}");
 
-						Imports.DisplayMessage($"UpdateAddressBar - Result: {result}");
+						if(history.Count == 0)
+						{
+							Imports.ReplaceState(routeName, "", $"{webUri}");
+							history.Add(routeName);
+							Imports.DisplayMessage($"UpdateAddressBar - Start: history.Add: {routeName}");
+						}
+						else if (history.Contains(routeName))
+						{
+							Imports.ReplaceState(routeName, "", $"{webUri}");
+							history.Remove(routeName);
+							Imports.DisplayMessage($"UpdateAddressBar - history.Remove: {routeName}");
+						}
+						else
+						{
+							var result = Imports.PushState(routeName, "", $"{webUri}");
+							history.Add(routeName);
+							Imports.DisplayMessage($"UpdateAddressBar - history.Add: {routeName}");
+						}
 					});
 	}
 #endif
@@ -65,6 +83,9 @@ internal static partial class Imports
 
 	[System.Runtime.InteropServices.JavaScript.JSImport("globalThis.window.history.pushState")]
 	public static partial string PushState(string state, string title, string url);
+
+	[System.Runtime.InteropServices.JavaScript.JSImport("globalThis.window.history.replaceState")]
+	public static partial string ReplaceState(string state, string title, string url);
 
 	[System.Runtime.InteropServices.JavaScript.JSImport("globalThis.Uno.Extensions.Hosting.displayMessage")]
 	public static partial string DisplayMessage(string message);
