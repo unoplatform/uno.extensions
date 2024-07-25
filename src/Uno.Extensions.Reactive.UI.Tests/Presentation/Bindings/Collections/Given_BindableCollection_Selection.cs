@@ -98,7 +98,7 @@ public partial class Given_BindableCollection_Selection : FeedTests
 #endif
 	public async Task When_SelectItemInView_ComboBox()
 	{
-		var (vm, cb, itemsView, items) = await SetupComboBox();
+		var (vm, cb, items) = await SetupComboBox();
 
 		// Open the ComboBox
 		InputInjectorHelper.Current.Tap(cb);
@@ -108,7 +108,7 @@ public partial class Given_BindableCollection_Selection : FeedTests
 		var comboBoxItems = UIHelper.GetChildren<ComboBoxItem>(cb).ToArray();
 		InputInjectorHelper.Current.Tap(comboBoxItems[1]);
 
-		await TestHelper.WaitFor(async ct => itemsView.CurrentItem is MyItem { Value: 42 }, CT);
+		await TestHelper.WaitFor(async ct => ((ICollectionView)cb.ItemsSource).CurrentItem is MyItem { Value: 42 }, CT);
 	}
 
 	[TestMethod]
@@ -118,7 +118,7 @@ public partial class Given_BindableCollection_Selection : FeedTests
 #endif
 	public async Task When_SelectItemAndAboveInView_ComboBox()
 	{
-		var (vm, cb, itemsView, items) = await SetupComboBox();
+		var (vm, cb, items) = await SetupComboBox();
 
 		// Open the ComboBox
 		InputInjectorHelper.Current.Tap(cb);
@@ -128,14 +128,14 @@ public partial class Given_BindableCollection_Selection : FeedTests
 		var comboBoxItems = UIHelper.GetChildren<ComboBoxItem>(cb).ToArray();
 		InputInjectorHelper.Current.Tap(comboBoxItems[1]);
 
-		await TestHelper.WaitFor(async ct => itemsView.CurrentItem is MyItem { Value: 42 }, CT);
+		await TestHelper.WaitFor(async ct => ((ICollectionView)cb.ItemsSource).CurrentItem is MyItem { Value: 42 }, CT);
 
 		// Select the first item
 		InputInjectorHelper.Current.Tap(cb);
 		await TestHelper.WaitFor(async ct => cb.IsDropDownOpen, CT);
 		InputInjectorHelper.Current.Tap(comboBoxItems[0]);
 
-		await TestHelper.WaitFor(async ct => itemsView.CurrentItem is MyItem { Value: 41 }, CT);
+		await TestHelper.WaitFor(async ct => ((ICollectionView)cb.ItemsSource).CurrentItem is MyItem { Value: 41 }, CT);
 	}
 
 	[TestMethod]
@@ -145,7 +145,7 @@ public partial class Given_BindableCollection_Selection : FeedTests
 #endif
 	public async Task When_SelectItemAndBelowInView_ComboBox()
 	{
-		var (vm, cb, itemsView, items) = await SetupComboBox();
+		var (vm, cb, items) = await SetupComboBox();
 
 		// Open the ComboBox
 		InputInjectorHelper.Current.Tap(cb);
@@ -155,14 +155,14 @@ public partial class Given_BindableCollection_Selection : FeedTests
 		var comboBoxItems = UIHelper.GetChildren<ComboBoxItem>(cb).ToArray();
 		InputInjectorHelper.Current.Tap(comboBoxItems[1]);
 
-		await TestHelper.WaitFor(async ct => itemsView.CurrentItem is MyItem { Value: 42 }, CT);
+		await TestHelper.WaitFor(async ct => ((ICollectionView)cb.ItemsSource).CurrentItem is MyItem { Value: 42 }, CT);
 
 		// Select the third item
 		InputInjectorHelper.Current.Tap(cb);
 		await TestHelper.WaitFor(async ct => cb.IsDropDownOpen, CT);
 		InputInjectorHelper.Current.Tap(comboBoxItems[2]);
 
-		await TestHelper.WaitFor(async ct => itemsView.CurrentItem is MyItem { Value: 43 }, CT);
+		await TestHelper.WaitFor(async ct => ((ICollectionView)cb.ItemsSource).CurrentItem is MyItem { Value: 43 }, CT);
 	}
 
 	private async Task<(BindableGiven_BindableCollection_Selection_Model, ListView, ListViewItem[])> SetupListView(ListViewSelectionMode selectionMode)
@@ -182,14 +182,14 @@ public partial class Given_BindableCollection_Selection : FeedTests
 		return (vm, lv, lvItems);
 	}
 
-	private async Task<(BindableGiven_BindableCollection_Selection_Model, ComboBox, ICollectionView, MyItem[])> SetupComboBox()
+	private async Task<(BindableGiven_BindableCollection_Selection_Model, ComboBox, MyItem[])> SetupComboBox()
 	{
 		var vm = new BindableGiven_BindableCollection_Selection_Model();
 		var cb = new ComboBox { ItemsSource = vm.Items };
 
 		await UIHelper.Load(cb, CT);
 
-		var items = vm.Items.Value.ToArray();
+		var items = vm.Items.ToArray();
 
 		return (vm, cb, items);
 	}
