@@ -72,12 +72,14 @@ internal class BrowserAddressBarService : IHostedService
 				return;
 			}
 
+			var canGoBack = rootRegion.Navigator() is { } navigator && await navigator.CanGoBack();
+
 			var url = new UriBuilder
 			{
 				Query = route.Query(),
 				Path = route.FullPath()?.Replace("+", "/")
 			};
-			await _addressbarHost!.UpdateAddressBar(url.Uri);
+			await _addressbarHost!.UpdateAddressBar(url.Uri, canGoBack);
 		}
 		catch (Exception ex)
 		{
