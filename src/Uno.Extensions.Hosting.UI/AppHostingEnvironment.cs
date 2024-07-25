@@ -16,15 +16,14 @@ internal class AppHostingEnvironment : HostingEnvironment, IAppHostEnvironment, 
 	public Assembly? HostAssembly { get; init; }
 
 #if __WASM__
-	public async Task UpdateAddressBar(Uri applicationUri)
+	public async Task UpdateAddressBar(Uri applicationUri, bool canGoBack)
 	{
 		CoreApplication.MainView?.DispatcherQueue.TryEnqueue(() =>
 					{
 						var state = 1;
 						if (PlatformHelper.IsWebAssembly)
 						{
-							var currentView = SystemNavigationManager.GetForCurrentView();
-							state = currentView?.AppViewBackButtonVisibility == AppViewBackButtonVisibility.Visible ? 1 : 0;
+							state = canGoBack ? 1 : 0;
 						}
 
 						var href = Imports.GetLocation();
