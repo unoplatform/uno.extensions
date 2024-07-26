@@ -2,7 +2,7 @@
 <Project>
 
 	<ItemGroup>
-		<UnoRuntimeEnabledPackage Include="Uno.Extensions.Logging.WinUI" PackageBasePath="$(MSBuildThisFileDirectory)" />
+		<UnoRuntimeEnabledPackage Include="Uno.Extensions.Logging.WinUI" PackageBasePath="$(MSBuildThisFileDirectory)..\" />
 	</ItemGroup>
 
 </Project>
