@@ -14,4 +14,22 @@ public sealed partial class PageNavigationOnePage : Page
 		await this.Navigator()!.NavigateViewAsync<PageNavigationTwoPage>(this);
 	}
 
+
+	public async void GetUrlFromBrowser(object sender, RoutedEventArgs e)
+	{
+#if __WASM__
+		var url = Imports.GetLocation();
+
+		TxtUrl.Text = url;
+#else
+		TxtUrl.Text = "Not supported";
+#endif
+	}
 }
+#if __WASM__
+internal static partial class Imports
+{
+	[System.Runtime.InteropServices.JavaScript.JSImport("globalThis.Uno.Extensions.Hosting.getLocation")]
+	public static partial string GetLocation();
+}
+#endif
