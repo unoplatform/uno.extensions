@@ -23,6 +23,7 @@
 	<ItemGroup>
 		<PackageReference Include="Microsoft.Extensions.Hosting" />
 		<PackageReference Include="Microsoft.Extensions.Logging" />
+		<PackageReference Include="System.IdentityModel.Tokens.Jwt" />
 		<PackageReference Include="System.Threading.Tasks.Extensions" />
 	</ItemGroup>
 	<ItemGroup>
