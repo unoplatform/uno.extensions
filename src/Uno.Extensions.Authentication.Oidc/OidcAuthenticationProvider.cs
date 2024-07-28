@@ -37,6 +37,7 @@ internal record OidcAuthenticationProvider(
 
 		var token = authenticationResult.AccessToken;
 		var refreshToken = authenticationResult.RefreshToken;
+		var idToken = authenticationResult.IdentityToken;
 
 		if (token is not null)
 		{
@@ -44,6 +45,11 @@ internal record OidcAuthenticationProvider(
 			if (refreshToken is not null)
 			{
 				creds[TokenCacheExtensions.RefreshTokenKey] = refreshToken;
+			}
+
+			if (idToken is not null)
+			{
+				creds[TokenCacheExtensions.IdTokenKey] = idToken;
 			}
 
 			return creds;
@@ -73,6 +79,7 @@ internal record OidcAuthenticationProvider(
 		var result = await _client.RefreshTokenAsync(token);
 		var accessToken = result.AccessToken;
 		var refreshToken = result.RefreshToken;
+		var idToken = result.IdentityToken;
 
 		if (token is not null)
 		{
@@ -80,6 +87,11 @@ internal record OidcAuthenticationProvider(
 			if (refreshToken is not null)
 			{
 				creds[TokenCacheExtensions.RefreshTokenKey] = refreshToken;
+			}
+
+			if (idToken is not null)
+			{
+				creds[TokenCacheExtensions.IdTokenKey] = idToken;
 			}
 
 			return creds;
