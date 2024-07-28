@@ -28,7 +28,7 @@ internal record ApplicationDataKeyValueStorage
 	{
 		if (UseApplicationData)
 		{
-			return DataContainer.Values.TryGetValue(GetKey(name), out value);
+			return DataContainer.Values.TryGetValue(name, out value);
 		}
 		else
 		{
@@ -41,7 +41,7 @@ internal record ApplicationDataKeyValueStorage
 	{
 		if (UseApplicationData)
 		{
-			_ = DataContainer.Values.Remove(GetKey(name));
+			_ = DataContainer.Values.Remove(name);
 		}
 		else
 		{
@@ -53,7 +53,7 @@ internal record ApplicationDataKeyValueStorage
 	{
 		if (UseApplicationData)
 		{
-			DataContainer.Values[GetKey(name)] = value;
+			DataContainer.Values[name] = value;
 		}
 		else
 		{
@@ -84,7 +84,7 @@ internal record ApplicationDataKeyValueStorage
 		if (name is not null &&
 			!string.IsNullOrEmpty(name))
 		{
-			RemoveSetting(name);
+			RemoveSetting(GetKey(name));
 		}
 		else
 		{
