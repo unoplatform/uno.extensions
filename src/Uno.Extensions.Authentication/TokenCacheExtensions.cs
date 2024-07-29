@@ -1,7 +1,4 @@
-﻿
-
-using System.Threading;
-using Uno.Extensions.Serialization;
+﻿using Uno.Extensions.Serialization;
 
 namespace Uno.Extensions.Authentication;
 
@@ -19,6 +16,11 @@ public static class TokenCacheExtensions
 	/// Defines a key for the token cache which corresponds to a refresh token element.
 	/// </summary>
 	public const string RefreshTokenKey = "RefreshToken";
+
+	/// <summary>
+	/// Defines a key for the token cache which corresponds to an ID token element.
+	/// </summary>
+	public const string IdTokenKey = "IdToken";
 
 	/// <summary>
 	/// Gets the access token from the token cache.
