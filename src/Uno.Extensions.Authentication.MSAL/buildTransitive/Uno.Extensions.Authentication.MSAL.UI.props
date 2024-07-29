@@ -2,7 +2,7 @@
 <Project>
 
 	<ItemGroup>
-		<UnoRuntimeEnabledPackage Include="Uno.Extensions.Authentication.MSAL.UI" PackageBasePath="$(MSBuildThisFileDirectory)" />
+		<UnoRuntimeEnabledPackage Include="Uno.Extensions.Authentication.MSAL.UI" PackageBasePath="$(MSBuildThisFileDirectory)..\" />
 	</ItemGroup>
 
 </Project>
