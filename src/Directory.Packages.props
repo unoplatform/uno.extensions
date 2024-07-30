@@ -3,13 +3,16 @@
 		Due to an issue with duplicate references on output for Windows we need to ensure that when building for MAUI Embedding that we use the same version
 		of both WinUI and Uno.WinUI across Extensions and the MauiEmbedding Sample Project.
 	-->
-	<PropertyGroup Condition="$(SolutionName) != 'MauiEmbedding'">
-		<UnoVersion Condition="$(UnoVersion) == '' AND !$(MSBuildProjectName.Contains('Maui'))">5.0.19</UnoVersion>
-		<UnoVersion Condition="$(UnoVersion) == '' AND $(MSBuildProjectName.Contains('Maui'))">5.2.22</UnoVersion>
+	<!-- <PropertyGroup Condition="$(SolutionName) != 'MauiEmbedding'">
+		<UnoVersion Condition="$(UnoVersion) == '' AND !$(MSBuildProjectName.Contains('Maui'))">5.2.175</UnoVersion>
+		<UnoVersion Condition="$(UnoVersion) == '' AND $(MSBuildProjectName.Contains('Maui'))">5.2.175</UnoVersion>
 		<WinAppSdkVersion Condition="$(WinAppSdkVersion) == ''">1.5.240311000</WinAppSdkVersion>
-	</PropertyGroup>
+	</PropertyGroup> -->
 
-	<Import Project="$(MSBuildThisFileDirectory)maui-embedding.props" Condition="$(SolutionName) == 'MauiEmbedding'" />
+	<!--<PropertyGroup>
+		<UnoToolkitVersion>5.0.15</UnoToolkitVersion>
+	</PropertyGroup>-->
+
 	<ItemGroup>
 		<PackageVersion Include="CommunityToolkit.Mvvm" Version="7.0.1" />
 		<PackageVersion Include="DotNet.ReproducibleBuilds" Version="1.1.1" />
@@ -33,8 +36,8 @@
 		<PackageVersion Include="Microsoft.Net.Compilers.Toolset" Version="4.2.0" />
 		<PackageVersion Include="Microsoft.SourceLink.GitHub" Version="1.1.1" />
 		<PackageVersion Include="Microsoft.UI.Xaml" Version="2.7.1" />
-		<PackageVersion Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.3233" />
-		<PackageVersion Include="Microsoft.WindowsAppSDK" Version="$(WinAppSdkVersion)" />
+		<!-- <PackageVersion Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.3233" /> -->
+		<!-- <PackageVersion Include="Microsoft.WindowsAppSDK" Version="$(WinAppSdkVersion)" /> -->
 		<PackageVersion Include="Microsoft.Graphics.Win2D" Version="1.2.0" />
 		<PackageVersion Include="Moq" Version="4.17.2" />
 		<PackageVersion Include="Refit" Version="6.3.2" />
@@ -51,23 +54,26 @@
 		<PackageVersion Include="System.Text.Json" Version="8.0.4" />
 		<PackageVersion Include="System.Threading.Tasks.Extensions" Version="4.5.4" />
 		<PackageVersion Include="Uno.Core" Version="4.1.1" />
-		<PackageVersion Include="Uno.Extensions.Logging.OSLog" Version="1.7.0" />
+		<PackageVersion Include="Uno.Core.Extensions" Version="4.1.1" />
+		<PackageVersion Include="Uno.Core.Extensions.Collections" Version="4.1.1" />
+		<PackageVersion Include="Uno.Core.Extensions.Logging.Singleton" Version="4.1.1" />		
+		<PackageVersion Include="Uno.Extensions.Logging.OSLog" Version="1.7.0" /> 
 		<PackageVersion Include="Uno.Extensions.Logging.WebAssembly.Console" Version="1.7.0" />
-		<PackageVersion Include="Uno.Extensions.Markup.Generators" Version="5.2.14" />
-		<PackageVersion Include="Uno.Extensions.Markup.WinUI" Version="5.2.14" />
+		<PackageVersion Include="Uno.Extensions.Markup.Generators" Version="5.3.12" />
+		<PackageVersion Include="Uno.Extensions.Markup.WinUI" Version="5.3.12" />
 		<PackageVersion Include="Uno.Roslyn" Version="1.3.0-dev.12" />
-		<PackageVersion Include="Uno.Toolkit" Version="5.0.15" />
-		<PackageVersion Include="Uno.Toolkit.UI" Version="5.0.15" />
-		<PackageVersion Include="Uno.Toolkit.WinUI" Version="5.0.15" />
-		<PackageVersion Include="Uno.UI" Version="$(UnoVersion)" />
+		<PackageVersion Include="Uno.Toolkit" Version="6.1.7" />
+		<!--<PackageVersion Include="Uno.Toolkit.UI" Version="5.0.15" />
+		<PackageVersion Include="Uno.Toolkit.WinUI" Version="5.0.15" />-->
+		<!--<PackageVersion Include="Uno.UI" Version="$(UnoVersion)" />-->
 		<PackageVersion Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="$(UnoVersion)"/>
-		<PackageVersion Include="Uno.UI.MSAL"  Version="$(UnoVersion)" />
-		<PackageVersion Include="Uno.UI.Runtime.WebAssembly" Version="$(UnoVersion)" />
-		<PackageVersion Include="Uno.UI.RuntimeTests.Engine" Version="0.24.0-dev.95" />
-		<PackageVersion Include="Uno.WinUI" Version="$(UnoVersion)" />
-		<PackageVersion Include="Uno.WinUI.Markup" Version="5.2.14" />
+		<!--<PackageVersion Include="Uno.UI.MSAL"  Version="$(UnoVersion)" />
+		<PackageVersion Include="Uno.UI.Runtime.WebAssembly" Version="$(UnoVersion)" />-->
+		<PackageVersion Include="Uno.UI.RuntimeTests.Engine" Version="0.37.0-dev.126" />
+		<!--<PackageVersion Include="Uno.WinUI" Version="$(UnoVersion)" />-->
+		<PackageVersion Include="Uno.WinUI.Markup" Version="5.3.12" />
 		<PackageVersion Include="Uno.WinUI.MSAL" Version="$(UnoVersion)" />
-		<PackageVersion Include="Uno.WinUI.Runtime.WebAssembly" Version="$(UnoVersion)" />
+		<!--<PackageVersion Include="Uno.WinUI.Runtime.WebAssembly" Version="$(UnoVersion)" />-->
 		<PackageVersion Include="coverlet.collector" Version="3.1.2" />
 		<PackageVersion Include="xunit" Version="2.4.1" />
 		<PackageVersion Include="xunit.runner.visualstudio" Version="2.4.1" />

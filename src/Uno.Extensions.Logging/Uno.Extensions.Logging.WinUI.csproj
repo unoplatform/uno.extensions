@@ -1,21 +1,16 @@
-<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
-
+<Project Sdk="Uno.Sdk">
 	<Import Project="..\tfms-ui-winui.props" />
 
-	<ItemGroup>
-		<UnoRuntimeProjectReference Include="Uno.Extensions.Logging.WinUI.Wasm.csproj" />
-		<UnoRuntimeProjectReference Include="Uno.Extensions.Logging.WinUI.Skia.csproj" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<Content Include="buildTransitive\Uno.Extensions.Logging.WinUI.props">
-			<PackagePath>buildTransitive</PackagePath>
-			<Pack>true</Pack>
-		</Content>
-	</ItemGroup>
-
 	<PropertyGroup>
+		<Description>Logging Extensions for platform specific providers for Uno Platform, UWP and WinUI</Description>
+
+		<!--Temporary disable missing XML doc until fixed in the whole package-->
+		<WarningsNotAsErrors>$(WarningsNotAsErrors);CS1591</WarningsNotAsErrors>
+
 		<DefineConstants>$(DefineConstants);WINUI</DefineConstants>
+
+		<UnoSingleProject>true</UnoSingleProject>
+		<OutputType>Library</OutputType>
 	</PropertyGroup>
 
 	<ItemGroup Condition="'$(_IsIOS)' == 'true' or '$(_IsCatalyst)' == 'true'">
@@ -23,23 +18,19 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Uno.WinUI" />
+		<PackageReference Include="Microsoft.Extensions.Hosting" />
+		<PackageReference Include="Microsoft.Extensions.Logging" />
+
+		<PackageReference Include="Uno.Core.Extensions.Logging.Singleton" />
+		<PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" />
 	</ItemGroup>
 
-	<Import Project="common.props"/>
-
 	<ItemGroup>
-		<ProjectReference Include="Uno.Extensions.Logging.WinUI.Wasm.csproj"
-			ReferenceOutputAssembly="false"
-			LinkLibraryDependencies="false"
-			CopyLocal="false"
-			SkipGetTargetFrameworkProperties="true"
-			GlobalPropertiesToRemove="TargetFramework" />
-		<ProjectReference Include="Uno.Extensions.Logging.WinUI.Skia.csproj"
-			ReferenceOutputAssembly="false"
-			LinkLibraryDependencies="false"
-			CopyLocal="false"
-			SkipGetTargetFrameworkProperties="true"
-			GlobalPropertiesToRemove="TargetFramework" />
+		<ProjectReference Include="..\Uno.Extensions.Core\Uno.Extensions.Core.csproj" />
+		<ProjectReference Include="..\Uno.Extensions.Hosting\Uno.Extensions.Hosting.csproj" />
+	</ItemGroup>
+
+	<ItemGroup Condition="'$(IsBrowserWasm)'=='true'">
+		<PackageReference Include="Uno.Extensions.Logging.WebAssembly.Console" />
 	</ItemGroup>
 </Project>

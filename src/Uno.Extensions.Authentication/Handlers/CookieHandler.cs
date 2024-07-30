@@ -1,6 +1,4 @@
-﻿using Uno.Extensions.Logging;
-
-namespace Uno.Extensions.Authentication.Handlers;
+﻿namespace Uno.Extensions.Authentication.Handlers;
 
 internal class CookieHandler : BaseAuthorizationHandler
 {
@@ -31,12 +29,17 @@ internal class CookieHandler : BaseAuthorizationHandler
 		var accessToken = await _tokens.AccessTokenAsync() ?? string.Empty;
 		var refreshToken = await _tokens.RefreshTokenAsync() ?? string.Empty;
 
+		if (request.RequestUri is null)
+		{
+			return false;
+		}
+
 		var builder = new UriBuilder(request.RequestUri);
 		builder.Path = string.Empty;
 		var baseUrl = builder.Uri;
 
 		// Forcibly expire any existing cookie
-		var cookies = _cookieManager.ClearCookies(this.InnerHandler, baseUrl);
+		var cookies = this.InnerHandler is { } innerHandler ? _cookieManager.ClearCookies(innerHandler, baseUrl) : default;
 		var setHeaders = cookies == null;
 		cookies ??= new CookieContainer();
 
@@ -84,6 +87,10 @@ internal class CookieHandler : BaseAuthorizationHandler
 			HttpResponseMessage response,
 			CancellationToken ct)
 	{
+		if (request.RequestUri is null)
+		{
+			return false;
+		}
 
 		var cookies = new CookieContainer();
 		var cookieHeader = response.Headers.FirstOrDefault(x => x.Key == "Set-Cookie").Value;

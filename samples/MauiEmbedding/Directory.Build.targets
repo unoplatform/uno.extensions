@@ -1,9 +1,2 @@
-<Project>
-	<ItemGroup>
-		<!-- Removes native usings to avoid Ambiguous reference -->
-		<Using Remove="@(Using->HasMetadata('Platform'))" />
-	</ItemGroup>
-
-	<Import Project="..\..\src\winappsdk-workaround.targets" Condition="exists('..\..\src\winappsdk-workaround.targets')" />
-
+﻿<Project>
 </Project>

@@ -45,7 +45,7 @@
 		Condition="'$(IsCoreProject)'== 'False' And '$(IsGeneratorProject)' == 'False'"
 		Project="$(MSBuildThisFileDirectory)\Uno.Extensions.Core.Generators\buildTransitive\Uno.Extensions.Core.props" />
 
-	<Choose>
+	<!--<Choose>
 		<When Condition="$(_IsWinUI)">
 			<ItemGroup Condition="$(ExcludeWinAppSdkReference) != 'true'">
 				<PackageReference Include="Microsoft.WindowsAppSDK" Condition="$(WinAppSdkVersion)==''"/>
@@ -53,7 +53,7 @@
 				<PackageReference Include="Microsoft.Windows.SDK.BuildTools" />
 			</ItemGroup>
 		</When>
-	</Choose>
+	</Choose>-->
 
 	<Choose>
 		<When Condition="$(_IsAndroid)">

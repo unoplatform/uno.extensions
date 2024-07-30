@@ -1,4 +1,4 @@
-﻿using FluentAssertions.Common;
+﻿using TestContext = NUnit.Framework.TestContext;
 
 namespace TestHarness.UITest;
 
@@ -7,7 +7,7 @@ public abstract class TestBase
 {
 	private IApp? _app;
 
-		private readonly string _screenShotPath = Environment.GetEnvironmentVariable("UNO_UITEST_SCREENSHOT_PATH");
+	private readonly string _screenShotPath = Environment.GetEnvironmentVariable("UNO_UITEST_SCREENSHOT_PATH");
 	private DateTime _startTime;
 
 
@@ -65,11 +65,11 @@ public abstract class TestBase
 		App.Dispose();
 		var field = typeof(AppInitializer).GetField("_currentApp",
 						System.Reflection.BindingFlags.Static |
-						System.Reflection.BindingFlags.NonPublic );
-		field.SetValue(null, null);
+						System.Reflection.BindingFlags.NonPublic);
+		field?.SetValue(null, null);
 	}
 
-	
+
 	private void WriteSystemLogs(string fileName)
 	{
 		if (_app != null && AppInitializer.GetLocalPlatform() == Platform.Browser)

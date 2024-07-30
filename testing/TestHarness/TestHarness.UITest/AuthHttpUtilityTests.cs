@@ -1,12 +1,10 @@
-﻿using System.Web;
-
-namespace TestHarness.UITest;
+﻿namespace TestHarness.UITest;
 
 [TestFixture]
-public class AuthHttpUtilityTests 
+public class AuthHttpUtilityTests
 {
 	[Test]
-	[Ignore("Removed to avoid direct dependency on Uno.Extensions libraries")]
+	[NUnit.Framework.Ignore("Removed to avoid direct dependency on Uno.Extensions libraries")]
 	public void ParseQueryStringTest()
 	{
 		//var query = AuthHttpUtility.ExtractArguments("myapp:///#access_token=somelongtoken&expires=1662391139");

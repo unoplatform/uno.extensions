@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
+﻿<Project Sdk="Uno.Sdk">
 	<Import Project="..\tfms-ui-winui.props" />
 
 	<PropertyGroup>
@@ -6,21 +6,40 @@
 		<EnableDefaultPageItems>false</EnableDefaultPageItems>
 		<AssemblyName>Uno.Extensions.Authentication.Oidc.WinUI</AssemblyName>
 
-	</PropertyGroup>
+		<!--Temporary disable missing XML doc until fixed in the whole package-->
+		<WarningsNotAsErrors>$(WarningsNotAsErrors);CS1591</WarningsNotAsErrors>
 
-	<Import Project="common.props" />
+		<UnoSingleProject>true</UnoSingleProject>
+		<OutputType>Library</OutputType>
+	</PropertyGroup>
 
 	<PropertyGroup>
 		<PackageId>Uno.Extensions.Authentication.Oidc.WinUI</PackageId>
 		<DefineConstants>$(DefineConstants);WINUI</DefineConstants>
 	</PropertyGroup>
 
-	<ItemGroup >
-		<PackageReference Include="Uno.WinUI" />
-	</ItemGroup>
-
 	<ItemGroup>
 		<ProjectReference Include="..\Uno.Extensions.Authentication.UI\Uno.Extensions.Authentication.WinUI.csproj" />
 		<ProjectReference Include="..\Uno.Extensions.Http.UI\Uno.Extensions.Http.WinUI.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Uno.Extensions.Core\Uno.Extensions.Core.csproj" />
+		<ProjectReference Include="..\Uno.Extensions.Configuration\Uno.Extensions.Configuration.csproj" />
+		<ProjectReference Include="..\Uno.Extensions.Hosting\Uno.Extensions.Hosting.csproj" />
+		<ProjectReference Include="..\Uno.Extensions.Authentication\Uno.Extensions.Authentication.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.Extensions.Localization.Abstractions" />
+		<PackageReference Include="IdentityModel.OidcClient" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Page Include="**\*.xaml" Exclude="bin\**\*.xaml;obj\**\*.xaml" />
+		<Compile Update="**\*.xaml.cs">
+			<DependentUpon>%(Filename)</DependentUpon>
+		</Compile>
+		<UpToDateCheckInput Include="**\*.xaml" Exclude="bin\**\*.xaml;obj\**\*.xaml" />
 	</ItemGroup>
 </Project>

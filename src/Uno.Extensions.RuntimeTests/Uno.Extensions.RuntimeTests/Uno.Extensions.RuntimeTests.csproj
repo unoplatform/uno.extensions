@@ -1,0 +1,49 @@
+<Project Sdk="Uno.Sdk">
+	<Import Project="..\..\tfms-ui-winui.props" />
+  <PropertyGroup>
+		
+		<OutputType>Exe</OutputType>
+    <UnoSingleProject>true</UnoSingleProject>
+
+    <!-- Display name -->
+    <ApplicationTitle>Uno.Extensions.RuntimeTests</ApplicationTitle>
+    <!-- App Identifier -->
+    <ApplicationId>com.companyname.Uno.Extensions.RuntimeTests</ApplicationId>
+    <!-- Versions -->
+    <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
+    <ApplicationVersion>1</ApplicationVersion>
+    <!--
+      If you encounter this error message:
+
+        error NETSDK1148: A referenced assembly was compiled using a newer version of Microsoft.Windows.SDK.NET.dll.
+        Please update to a newer .NET SDK in order to reference this assembly.
+
+      This means that the two packages below must be aligned with the "build" version number of
+      the "Microsoft.Windows.SDK.BuildTools" package above, and the "revision" version number
+      must be the highest found in https://www.nuget.org/packages/Microsoft.Windows.SDK.NET.Ref.
+    -->
+    <!-- <WindowsSdkPackageVersion>10.0.22621.28</WindowsSdkPackageVersion> -->
+
+    <!--
+      UnoFeatures let's you quickly add and manage implicit package references based on the features you want to use.
+      https://aka.platform.uno/singleproject-features
+    -->
+    <UnoFeatures>
+    </UnoFeatures>
+  </PropertyGroup>
+
+
+  <ItemGroup>
+    <!--<PackageReference Include="Uno.UI.RuntimeTests.Engine" />-->
+    <PackageReference Include="SkiaSharp.Skottie" VersionOverride="2.88.8" Condition="$(TargetFramework.Contains('desktop'))" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!--
+			This file is being imported in all runtime tests head.
+			Add here ref to all UI tests projects.
+		-->
+    <ProjectReference Include="..\..\Uno.Extensions.Reactive.UI.Tests\Uno.Extensions.Reactive.WinUI.Tests.csproj" />
+    <ProjectReference Include="..\Uno.Extensions.RuntimeTests.Core\Uno.Extensions.RuntimeTests.Core.csproj" />
+  </ItemGroup>
+</Project>

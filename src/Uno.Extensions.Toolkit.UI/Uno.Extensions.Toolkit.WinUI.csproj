@@ -1,13 +1,16 @@
-﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
+﻿<Project Sdk="Uno.Sdk">
 	<Import Project="..\tfms-ui-winui.props" />
 
 	<PropertyGroup>
 		<Description>Toolkit Extensions for the Uno Platform (WinUI)</Description>
-	</PropertyGroup>
 
-	<PropertyGroup>
 		<PackageId>Uno.Extensions.Toolkit.WinUI</PackageId>
 		<DefineConstants>$(DefineConstants);WINUI</DefineConstants>
+
+		<ImplicitUsings>false</ImplicitUsings>
+		
+		<UnoSingleProject>true</UnoSingleProject>
+		<OutputType>Library</OutputType>
 	</PropertyGroup>
 
 </Project>

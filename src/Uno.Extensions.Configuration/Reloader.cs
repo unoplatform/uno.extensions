@@ -29,7 +29,9 @@ internal class Reloader
 				Logger.LogTraceMessage($@"Config provider of type '{fp.GetType().Name}'");
 			}
 
-			if (fp is FileConfigurationProvider fcp && (configFile is null || configFile.ToLower().Contains(fcp.Source.Path?.Split('/', '\\').Last().ToLower())))
+			if (fp is FileConfigurationProvider fcp &&
+				fcp.Source.Path is { Length: > 0 } &&
+				(configFile is null || configFile.ToLower().Contains(fcp.Source.Path.Split('/', '\\').Last().ToLower())))
 			{
 				if (Logger.IsEnabled(LogLevel.Trace))
 				{

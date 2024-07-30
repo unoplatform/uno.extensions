@@ -1,9 +1,0 @@
-﻿<Project Sdk="MSBuild.Sdk.Extras" ToolsVersion="15.0">
-	<Import Project="..\tfms-ui-uwp.props" />
-
-	<Import Project="common.props" />
-
-	<ItemGroup>
-		<PackageReference Include="Uno.UI" />
-	</ItemGroup>
-</Project>

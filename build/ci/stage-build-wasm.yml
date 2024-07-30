@@ -25,12 +25,12 @@ jobs:
     displayName: Use GitVersion
 
   - script: |
-      dotnet build testing/TestHarness/TestHarness.Wasm/TestHarness.Wasm.csproj /p:Configuration=Release "/p:InformationalVersion=$(GITVERSION_InformationalVersion)" /p:UnoExtensionsDisableNet7=true /p:GeneratePackageOnBuild=false /detailedsummary /bl:$(build.artifactstagingdirectory)/testharness-wasm.binlog
+      dotnet build "testing/TestHarness/TestHarness.sln" /p:Build_Web=true /p:Build_Android=false /p:Build_MacCatalyst=false /p:Build_iOS=false /p:Build_Windows=false /p:Build_Desktop=false /p:Configuration=Release "/p:InformationalVersion=$(GITVERSION_InformationalVersion)" /p:GeneratePackageOnBuild=false /detailedsummary "/bl:$(build.artifactstagingdirectory)/testharness-wasm.binlog"
 
   - task: CopyFiles@2
     displayName: 'Publish Wasm Binaries'
     inputs:
-      SourceFolder: $(build.sourcesdirectory)/testing/TestHarness/TestHarness.Wasm/bin/Release/net8.0/dist
+      SourceFolder: $(build.sourcesdirectory)/testing/TestHarness/TestHarness/bin/Release/net8.0-browserwasm/dist
       Contents: '**/*.*'
       TargetFolder: $(build.artifactstagingdirectory)/Wasm
       CleanTargetFolder: false

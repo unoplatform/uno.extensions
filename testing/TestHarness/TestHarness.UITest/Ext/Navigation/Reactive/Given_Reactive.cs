@@ -1,4 +1,5 @@
-﻿namespace TestHarness.UITest;
+﻿
+namespace TestHarness.UITest;
 
 public class Given_Reactive : NavigationTestBase
 {

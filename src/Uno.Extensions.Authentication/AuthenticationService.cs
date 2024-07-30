@@ -91,7 +91,7 @@ internal class AuthenticationService : IAuthenticationService
 		return isAuthenticated;
 	}
 
-	private void TokensCleared(object sender, EventArgs e)
+	private void TokensCleared(object? sender, EventArgs e)
 	{
 		if (_logger.IsEnabled(LogLevel.Trace)) _logger.LogTraceMessage($"Tokens cleared, raising LoggedOut event");
 		LoggedOut?.Invoke(this, EventArgs.Empty);

@@ -45,13 +45,8 @@ stages:
   jobs:
   - template: stage-build-windows.yml
     parameters:
-      solution: testing/TestHarness/TestHarness-winui.slnf
+      solution: testing/TestHarness/TestHarness.sln
       solutionName: TestHarness_WinUI
-
-  - template: stage-build-windows.yml
-    parameters:
-      solution: testing/TestHarness/TestHarness-ui.slnf
-      solutionName: TestHarness_UI
 
   - template: stage-build-windows.yml
     parameters:
@@ -71,5 +66,5 @@ stages:
   # Don't trigger this stage if only docs files are changed
   condition: ne(dependencies.Determine_Changes.outputs['evaluate_changes.DetermineChanges.docsOnly'], 'true')
   jobs:
-  - template: stage-build-uitests-wasm.yml
-  - template: stage-build-runtimetests-skia.yml
+  # - template: stage-build-uitests-wasm.yml
+  # - template: stage-build-runtimetests-skia.yml

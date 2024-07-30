@@ -26,9 +26,11 @@
 	<PropertyGroup>
 		<Build_Android>true</Build_Android>
 		<Build_iOS>true</Build_iOS>
-		<Build_MacOS>true</Build_MacOS>
+		<Build_MacCatalyst>true</Build_MacCatalyst>
 		<Build_Windows  Condition="$([MSBuild]::IsOSPlatform('windows'))">true</Build_Windows>
 		<Build_Windows  Condition="!$([MSBuild]::IsOSPlatform('windows'))">false</Build_Windows>
+		<Build_Desktop>true</Build_Desktop>
+		<Build_Web>true</Build_Web>
 	</PropertyGroup>
 
 	<Import Project="DebugPlatforms.props" Condition="exists('DebugPlatforms.props')" />
@@ -36,7 +38,7 @@
 	 <Target Name="Log disabled platforms" BeforeTargets="BeforeBuild">
         <Message Importance="high" Condition="!$(Build_Android)" Text="Android not included in build" />
         <Message Importance="high" Condition="!$(Build_iOS)" Text="iOS not included in build" />
-        <Message Importance="high" Condition="!$(Build_MacOS)" Text="MacOS not included in build" />
+        <Message Importance="high" Condition="!$(Build_MacCatalyst)" Text="MacOS not included in build" />
         <Message Importance="high" Condition="!$(Build_Windows)" Text="Windows not included in build" />
     </Target>
 </Project>

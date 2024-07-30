@@ -1,6 +1,4 @@
-﻿using SkiaSharp;
-
-namespace TestHarness.UITest.TestFramework;
+﻿namespace TestHarness.UITest.TestFramework;
 
 public static class ImageAssert
 {
@@ -303,29 +301,29 @@ public static class ImageAssert
 	}
 	#endregion
 
-	#region HasPixels
-	public static void HasPixels(ScreenshotInfo actual, params ExpectedPixels[] expectations)
-	{
-		var bitmap = actual.GetBitmap();
-		using var assertionScope = new AssertionScope("ImageAssert");
+	//#region HasPixels
+	//public static void HasPixels(ScreenshotInfo actual, params ExpectedPixels[] expectations)
+	//{
+	//	var bitmap = actual.GetBitmap();
+	//	using var assertionScope = new AssertionScope("ImageAssert");
 
-		foreach (var expectation in expectations)
-		{
-			var x = expectation.Location.X;
-			var y = expectation.Location.Y;
+	//	foreach (var expectation in expectations)
+	//	{
+	//		var x = expectation.Location.X;
+	//		var y = expectation.Location.Y;
 
-			Assert.GreaterOrEqual(bitmap.Width, x);
-			Assert.GreaterOrEqual(bitmap.Height, y);
+	//		Assert.GreaterOrEqual(bitmap.Width, x);
+	//		Assert.GreaterOrEqual(bitmap.Height, y);
 
-			var result = new StringBuilder();
-			result.AppendLine(expectation.Name);
-			if (!Validate(expectation, bitmap, 1, result))
-			{
-				assertionScope.FailWith(result.ToString());
-			}
-		}
-	}
-	#endregion
+	//		var result = new StringBuilder();
+	//		result.AppendLine(expectation.Name);
+	//		if (!Validate(expectation, bitmap, 1, result))
+	//		{
+	//			assertionScope.FailWith(result.ToString());
+	//		}
+	//	}
+	//}
+	//#endregion
 
 	#region Validation core (ExpectedPixels)
 	private static bool Validate(ExpectedPixels expectation, PlatformBitmap actualBitmap, double expectedToActualScale, StringBuilder report)

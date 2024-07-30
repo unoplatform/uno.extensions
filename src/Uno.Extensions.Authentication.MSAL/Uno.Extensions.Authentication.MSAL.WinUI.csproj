@@ -1,34 +1,24 @@
-﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
+﻿<Project Sdk="Uno.Sdk">
 	<Import Project="..\tfms-ui-winui.props" />
-
-	<PropertyGroup>
-		<Description>MSAL Authentication Extensions for the Uno Platform (WinUI)</Description>
-		<EnableDefaultPageItems>false</EnableDefaultPageItems>
-	</PropertyGroup>
-
-	<ItemGroup>
-		<UnoRuntimeProjectReference Include="Uno.Extensions.Authentication.MSAL.WinUI.Wasm.csproj" />
-		<!--<UnoRuntimeProjectReference Include="Uno.Extensions.Authentication.MSAL.WinUI.Skia.csproj" />-->
-	</ItemGroup>
-
-	<ItemGroup>
-		<Content Include="buildTransitive\Uno.Extensions.Authentication.MSAL.WinUI.props">
-			<PackagePath>buildTransitive</PackagePath>
-			<Pack>true</Pack>
-		</Content>
-	</ItemGroup>
-
-	<PropertyGroup Condition="$(_IsWinUI)">
-		<Platforms>x86;x64;arm64</Platforms>
-		<RuntimeIdentifiers>win-x86;win-x64;win-arm64</RuntimeIdentifiers>
-	</PropertyGroup>
-
-	<Import Project="common.props" />
 
 	<PropertyGroup>
 		<PackageId>Uno.Extensions.Authentication.MSAL.WinUI</PackageId>
 		<DefineConstants>$(DefineConstants);WINUI</DefineConstants>
+
+		<Description>MSAL Authentication Extensions for the Uno Platform (WinUI)</Description>
+		<EnableDefaultPageItems>false</EnableDefaultPageItems>
+
+		<!--<Platforms>x86;x64;arm64</Platforms>
+		<RuntimeIdentifiers>win-x86;win-x64;win-arm64</RuntimeIdentifiers>-->
+
+		<UnoSingleProject>true</UnoSingleProject>
+		<OutputType>Library</OutputType>
 	</PropertyGroup>
+
+	<ItemGroup >
+		<!-- MSAL isn't supported on skia targets, macos or maccatalyst -->
+		<PackageReference Include="Uno.WinUI.MSAL" Condition="'$(IsMSALSupported)'=='true'" />
+	</ItemGroup>
 
 	<PropertyGroup Condition="$(TargetFramework.ToLower().StartsWith('net6')) and $(_IsAndroid)">
 		<SupportedOSPlatformVersion>31.0</SupportedOSPlatformVersion>
@@ -48,14 +38,43 @@
 		<TargetPlatformVersion>15.4</TargetPlatformVersion>
 	</PropertyGroup>
 
-	<ItemGroup >
-		<PackageReference Include="Uno.WinUI" />
-		<!-- MSAL isn't supported on skia targets, macos or maccatalyst -->
-		<PackageReference Include="Uno.WinUI.MSAL" Condition="'$(IsMSALSupported)'=='true'" />
+	<ItemGroup>
+		<ProjectReference Include="..\Uno.Extensions.Http.UI\Uno.Extensions.Http.WinUI.csproj" />
+	</ItemGroup>
+
+	<PropertyGroup>
+		<!--Temporary disable missing XML doc until fixed in the whole package-->
+		<WarningsNotAsErrors>$(WarningsNotAsErrors);CS1591</WarningsNotAsErrors>
+		<IsMSALSupported>false</IsMSALSupported>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(_IsNetStd)'!='true' and '$(_IsMacOS)'!='true' and '$(_IsCatalyst)'!='true'" >
+		<IsMSALSupported>true</IsMSALSupported>
+		<DefineConstants>$(DefineConstants);UNO_EXT_MSAL</DefineConstants>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Uno.Extensions.Core\Uno.Extensions.Core.csproj" />
+		<ProjectReference Include="..\Uno.Extensions.Configuration\Uno.Extensions.Configuration.csproj" />
+		<ProjectReference Include="..\Uno.Extensions.Hosting\Uno.Extensions.Hosting.csproj" />
+		<ProjectReference Include="..\Uno.Extensions.Authentication\Uno.Extensions.Authentication.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\Uno.Extensions.Http.UI\Uno.Extensions.Http.WinUI.csproj" />
-		<ProjectReference Include="Uno.Extensions.Authentication.MSAL.WinUI.Wasm.csproj" ReferenceOutputAssembly="false" LinkLibraryDependencies="false" CopyLocal="false" SkipGetTargetFrameworkProperties="true" GlobalPropertiesToRemove="TargetFramework" />
+		<PackageReference Include="Microsoft.Extensions.Localization.Abstractions" />
+		<PackageReference Include="Microsoft.Identity.Client" Condition="'$(IsMSALSupported)'=='true'" />
+		<PackageReference Include="Microsoft.Identity.Client.Extensions.Msal" Condition="'$(IsMSALSupported)'=='true'" />
+	</ItemGroup>
+
+	<ItemGroup Condition="'$(IsBrowserWasm)'!='true'">
+		<Compile Remove="**\*.wasm.cs"/>
+	</ItemGroup>
+
+	<ItemGroup>
+		<Page Include="**\*.xaml" Exclude="bin\**\*.xaml;obj\**\*.xaml" />
+		<Compile Update="**\*.xaml.cs">
+			<DependentUpon>%(Filename)</DependentUpon>
+		</Compile>
+		<UpToDateCheckInput Include="**\*.xaml" Exclude="bin\**\*.xaml;obj\**\*.xaml" />
 	</ItemGroup>
 </Project>

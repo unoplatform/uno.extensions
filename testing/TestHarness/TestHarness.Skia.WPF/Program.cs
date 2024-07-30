@@ -1,3 +1,0 @@
-namespace TestHarness.Skia.Gtk
-{
-}

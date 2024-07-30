@@ -1,18 +1,29 @@
-﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
+﻿<Project Sdk="Uno.Sdk">
 	<Import Project="..\tfms-ui-winui.props" />
 
 	<PropertyGroup>
+		<AssemblyName>Uno.Extensions.Core.UI</AssemblyName>
+		<RootNamespace>Uno.Extensions</RootNamespace>
+		<!--Temporary disable missing XML doc until fixed in the whole package-->
+		<WarningsNotAsErrors>$(WarningsNotAsErrors);CS1591</WarningsNotAsErrors>
+		<!-- As we are InternalsVisibleTo, we disable some compatibility types that are not used by package itself. -->
+		<UnoExtensionsGeneration_DisableModuleInitializerAttribute>True</UnoExtensionsGeneration_DisableModuleInitializerAttribute>
+
 		<Description>Core Extensions for the Uno Platform (WinUI)</Description>
-	</PropertyGroup>
 
-	<Import Project="common.props" />
-
-	<PropertyGroup>
 		<PackageId>Uno.Extensions.Core.WinUI</PackageId>
 		<DefineConstants>$(DefineConstants);WINUI</DefineConstants>
+
+		<UnoSingleProject>true</UnoSingleProject>
+		<OutputType>Library</OutputType>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Uno.WinUI" />
+		<ProjectReference Include="..\Uno.Extensions.Core\Uno.Extensions.Core.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<InternalsVisibleTo Include="Uno.Extensions.Hosting.UWP" />
+		<InternalsVisibleTo Include="Uno.Extensions.Hosting.WinUI" />
 	</ItemGroup>
 </Project>

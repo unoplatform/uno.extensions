@@ -41,8 +41,8 @@ public class RouteResolverDefault : RouteResolver
 
 	private RouteInfo[] DefaultMapping(string? path = null, Type? view = null, Type? viewModel = null)
 	{
-		var routeMap = InternalDefaultMapping(path,view, viewModel);
-		if(routeMap is not null)
+		var routeMap = InternalDefaultMapping(path, view, viewModel);
+		if (routeMap is not null)
 		{
 			// If the default mapping is being created by a mapped route resolver, the un-mapped
 			// routemap may already be added to the Mappings table, so remove it.

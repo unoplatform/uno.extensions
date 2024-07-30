@@ -1,25 +1,45 @@
-﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
+﻿<Project Sdk="Uno.Sdk">
 	<Import Project="..\tfms-ui-winui.props" />
 
 	<PropertyGroup>
+		<AssemblyName>Uno.Extensions.Storage.UI</AssemblyName>
+
+		<!--Temporary disable missing XML doc until fixed in the whole package-->
+		<WarningsNotAsErrors>$(WarningsNotAsErrors);CS1591</WarningsNotAsErrors>
+
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		
 		<Description>Storage Extensions for Uno Platform (WinUI)</Description>
 		<EnableDefaultPageItems>false</EnableDefaultPageItems>
 
 		<!-- As we are InternalsVisibleTo, we disable some compatibility types that are not used by package itself. -->
 		<UnoExtensionsGeneration_DisableModuleInitializerAttribute>True</UnoExtensionsGeneration_DisableModuleInitializerAttribute>
-	</PropertyGroup>
 
-	<Import Project="common.props" />
 
-	<PropertyGroup>
+		<UnoSingleProject>true</UnoSingleProject>
+		<OutputType>Library</OutputType>
+
 		<PackageId>Uno.Extensions.Storage.WinUI</PackageId>
 		<DefineConstants>$(DefineConstants);WINUI</DefineConstants>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Uno.WinUI" />
+		<ProjectReference Include="..\Uno.Extensions.Core\Uno.Extensions.Core.csproj" />
+		<ProjectReference Include="..\Uno.Extensions.Storage\Uno.Extensions.Storage.csproj" />
+		<ProjectReference Include="..\Uno.Extensions.Serialization\Uno.Extensions.Serialization.csproj" />
+		<ProjectReference Include="..\Uno.Extensions.Configuration\Uno.Extensions.Configuration.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+		<Page Include="**\*.xaml" Exclude="bin\**\*.xaml;obj\**\*.xaml" />
+		<Compile Update="**\*.xaml.cs">
+			<DependentUpon>%(Filename)</DependentUpon>
+		</Compile>
+		<UpToDateCheckInput Include="**\*.xaml" Exclude="bin\**\*.xaml;obj\**\*.xaml" />
+	</ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Uno.Core.Extensions.Collections" />
+	</ItemGroup>
 	<ItemGroup>
 		<InternalsVisibleTo Include="TestHarnessApp" />
 	</ItemGroup>
