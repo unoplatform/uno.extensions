@@ -66,6 +66,6 @@ stages:
   # Don't trigger this stage if only docs files are changed
   condition: ne(dependencies.Determine_Changes.outputs['evaluate_changes.DetermineChanges.docsOnly'], 'true')
   jobs:
-  # Disabled as need to fix uitests and waiting on uno fix: https://github.com/unoplatform/uno/pull/17668
-  # - template: stage-build-uitests-wasm.yml
+  - template: stage-build-uitests-wasm.yml
+  # Disabled waiting on uno fix: https://github.com/unoplatform/uno/pull/17668
   # - template: stage-build-runtimetests-skia.yml
