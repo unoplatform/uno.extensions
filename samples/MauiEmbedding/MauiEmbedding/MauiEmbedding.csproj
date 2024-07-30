@@ -1,4 +1,4 @@
-<Project Sdk="Uno.Sdk">
+﻿<Project Sdk="Uno.Sdk">
 	<Import Project="..\..\..\src\tfms-ui-maui.props" />
 
   <PropertyGroup>
@@ -31,10 +31,8 @@
     -->
     <UnoFeatures>
       Material;
-      Dsp;
       Toolkit;
-      Mvvm;
-      ThemeService;
+			Mvvm;
     </UnoFeatures>
   </PropertyGroup>
 

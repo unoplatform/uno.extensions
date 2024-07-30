@@ -12,8 +12,6 @@
 				<!-- Load Uno.UI.Toolkit resources -->
 				<ToolkitResources xmlns="using:Uno.Toolkit.UI" />
 
-				<!--<MaterialColors xmlns="using:Uno.Material"  />
-			<MaterialFonts xmlns="using:Uno.Material"  />-->
 				<MaterialResources xmlns="using:Uno.Material" />
 
 				<MaterialToolkitResources xmlns="using:Uno.Toolkit.UI.Material" />
@@ -23,7 +21,6 @@
 
 			</ResourceDictionary.MergedDictionaries>
 
-			<!-- Add resources here -->
 			<x:Double x:Key="WideMinWindowWidth">800</x:Double>
 
 			<Style TargetType="utu:LoadingView">

@@ -35,6 +35,7 @@
 			Toolkit;
 			Mvvm;
     </UnoFeatures>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)'=='Debug' or '$(IsUiAutomationMappingEnabled)'=='True'">

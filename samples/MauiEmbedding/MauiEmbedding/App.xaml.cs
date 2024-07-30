@@ -74,8 +74,6 @@ public partial class App : Application
         MainWindow = builder.Window;
 
         Host = await builder.NavigateAsync<Shell>();
-
-        //MainWindow.Content = new MainPage();
     }
 
     private static void RegisterRoutes(IViewRegistry views, IRouteRegistry routes)
