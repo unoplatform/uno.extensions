@@ -18,7 +18,7 @@
 	<ItemGroup >
 		<!-- MSAL isn't supported on skia targets, macos or maccatalyst -->
 		<PackageReference Include="Uno.WinUI" />
-		<PackageReference Include="Uno.WinUI.MSAL" Condition="'$(IsMSALSupported)'=='true'" />
+		<PackageReference Include="Uno.WinUI.MSAL" />
 	</ItemGroup>
 
 	<PropertyGroup Condition="$(TargetFramework.ToLower().StartsWith('net6')) and $(_IsAndroid)">
@@ -46,11 +46,9 @@
 	<PropertyGroup>
 		<!--Temporary disable missing XML doc until fixed in the whole package-->
 		<WarningsNotAsErrors>$(WarningsNotAsErrors);CS1591</WarningsNotAsErrors>
-		<IsMSALSupported>false</IsMSALSupported>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(_IsNetStd)'!='true' and '$(_IsMacOS)'!='true' and '$(_IsCatalyst)'!='true'" >
-		<IsMSALSupported>true</IsMSALSupported>
 		<DefineConstants>$(DefineConstants);UNO_EXT_MSAL</DefineConstants>
 	</PropertyGroup>
 
@@ -63,8 +61,8 @@
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.Extensions.Localization.Abstractions" />
-		<PackageReference Include="Microsoft.Identity.Client" Condition="'$(IsMSALSupported)'=='true'" />
-		<PackageReference Include="Microsoft.Identity.Client.Extensions.Msal" Condition="'$(IsMSALSupported)'=='true'" />
+		<PackageReference Include="Microsoft.Identity.Client" />
+		<PackageReference Include="Microsoft.Identity.Client.Extensions.Msal" />
 	</ItemGroup>
 
 	<ItemGroup Condition="'$(IsBrowserWasm)'!='true'">
