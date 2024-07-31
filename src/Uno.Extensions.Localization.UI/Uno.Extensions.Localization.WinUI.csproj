@@ -1,21 +1,30 @@
-﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
+﻿<Project Sdk="Uno.Sdk">
 	<Import Project="..\tfms-ui-winui.props" />
 
 	<PropertyGroup>
 		<Description>Localization Extensions for registering IStringLocalizer implementation for Uno Platform (WinUI)</Description>
-	</PropertyGroup>
 
-	<Import Project="common.props" />
-
-	<PropertyGroup>
 		<DefineConstants>$(DefineConstants);WINUI</DefineConstants>
+		<!--Temporary disable missing XML doc until fixed in the whole package-->
+		<WarningsNotAsErrors>$(WarningsNotAsErrors);CS1591</WarningsNotAsErrors>
+
+		<UnoSingleProject>true</UnoSingleProject>
+		<OutputType>Library</OutputType>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Uno.WinUI" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" />
+		<PackageReference Include="Microsoft.Extensions.Hosting" />
+		<PackageReference Include="Microsoft.Extensions.Localization.Abstractions" />
 	</ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\Uno.Extensions.Configuration\Uno.Extensions.Configuration.csproj" />
+		<ProjectReference Include="..\Uno.Extensions.Localization\Uno.Extensions.Localization.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Remove="LinkerDefinition.*.xml" />
 	  <EmbeddedResource Include="LinkerDefinition.WinUI.xml">
 	    <LogicalName>$(AssemblyName).xml</LogicalName>
 	  </EmbeddedResource>

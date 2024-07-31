@@ -10,11 +10,9 @@
 		you need to make sure that the version provided here matches https://github.com/novotnyllc/MSBuildSdkExtras/blob/main/Source/MSBuild.Sdk.Extras/DefaultItems/ImplicitPackages.targets#L11.
 		This is not an issue when libraries are referenced through nuget packages. See https://github.com/unoplatform/uno/issues/446 for more details.
 		-->
-		<PackageVersion Include="Microsoft.NETCore.UniversalWindowsPlatform" Version="6.2.13" />
-		<PackageVersion Include="Microsoft.UI.Xaml" Version="2.7.1" />
 		<PackageVersion Include="Microsoft.Windows.Compatibility" Version="7.0.3" />
-		<PackageVersion Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.3233" />
-		<PackageVersion Include="Microsoft.WindowsAppSDK" Version="1.5.240311000" />
+		<!--<PackageVersion Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.3233" />
+		<PackageVersion Include="Microsoft.WindowsAppSDK" Version="1.5.240311000" />-->
 		<PackageVersion Include="Refit" Version="6.3.2" />
 		<PackageVersion Include="Refit.HttpClientFactory" Version="6.3.2" />
 		<PackageVersion Include="SkiaSharp.Views" Version="2.88.7" />
@@ -25,20 +23,20 @@
 		<PackageVersion Include="Uno.Core.Extensions.Logging.Singleton" Version="4.1.1" />
 		<PackageVersion Include="Uno.Extensions.Logging.OSLog " Version="1.7.0" />
 		<PackageVersion Include="Uno.Extensions.Logging.WebAssembly.Console" Version="1.7.0" />
-		<PackageVersion Include="Uno.Material" Version="5.0.13" />
-		<PackageVersion Include="Uno.Material.WinUI" Version="5.0.13" />
-		<PackageVersion Include="Uno.Toolkit.WinUI" Version="6.0.24" />
-		<PackageVersion Include="Uno.Toolkit.WinUI.Material" Version="6.0.24" />
-		<PackageVersion Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="5.2.132" />
-		<PackageVersion Include="Uno.UniversalImageLoader" Version="1.9.36" />
-		<PackageVersion Include="Uno.Wasm.Bootstrap" Version="8.0.16" />
+		<!--<PackageVersion Include="Uno.Material" Version="5.0.13" />
+		<PackageVersion Include="Uno.Material.WinUI" Version="5.0.13" />-->
+		<!--<PackageVersion Include="Uno.Toolkit.WinUI" Version="6.1.17" />
+		<PackageVersion Include="Uno.Toolkit.WinUI.Material" Version="6.1.7" />-->
+		<PackageVersion Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="$(UnoVersion)" />
+		<!--<PackageVersion Include="Uno.UniversalImageLoader" Version="1.9.36" />-->
+		<!--<PackageVersion Include="Uno.Wasm.Bootstrap" Version="8.0.16" />
 		<PackageVersion Include="Uno.Wasm.Bootstrap.DevServer" Version="8.0.16" />
-		<PackageVersion Include="Uno.WinUI" Version="5.2.132" />
-		<PackageVersion Include="Uno.WinUI.WebAssembly" Version="5.2.132" />
-		<PackageVersion Include="Uno.WinUI.Skia.Gtk" Version="5.2.132" />
-		<PackageVersion Include="Uno.WinUI.DevServer" Version="5.2.132" />
-		<PackageVersion Include="Uno.Resizetizer" Version="1.2.0" />
-		<PackageVersion Include="Uno.WinUI.Lottie" Version="5.2.132" />
-		<PackageVersion Include="Xamarin.Google.Android.Material" Version="1.9.0.3"/>
+		<PackageVersion Include="Uno.WinUI" Version="$(UnoVersion)" />
+		<PackageVersion Include="Uno.WinUI.WebAssembly" Version="$(UnoVersion)" />
+		<PackageVersion Include="Uno.WinUI.Skia.Gtk" Version="$(UnoVersion)" />
+		<PackageVersion Include="Uno.WinUI.DevServer" Version="$(UnoVersion)" />-->
+		<!--<PackageVersion Include="Uno.Resizetizer" Version="1.2.0" />
+		<PackageVersion Include="Uno.WinUI.Lottie" Version="$(UnoVersion)" />-->
+		<!--<PackageVersion Include="Xamarin.Google.Android.Material" Version="1.9.0.3"/>-->
 	</ItemGroup>
 </Project>

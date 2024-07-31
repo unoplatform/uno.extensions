@@ -4,7 +4,9 @@
 	<PropertyGroup>
 		<!-- <Build_Android>false</Build_Android> -->
 		<!-- <Build_iOS>false</Build_iOS> -->
-		<!-- <Build_MacOS>false</Build_MacOS> -->
+		<!-- <Build_MacCatalyst>false</Build_MacCatalyst> -->
 		<!-- <Build_Windows>false</Build_Windows> -->
+		<!-- <Build_Desktop>false</Build_Desktop> -->
+		<!-- <Build_Web>false</Build_Web> -->
 	</PropertyGroup>
 </Project>

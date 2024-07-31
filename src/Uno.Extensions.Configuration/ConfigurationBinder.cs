@@ -43,7 +43,7 @@ public static class ConfigurationBinder
 			throw new ArgumentNullException(nameof(configuration));
 		}
 
-		object result = configuration.Get(typeof(T), configureOptions);
+		object? result = configuration.Get(typeof(T), configureOptions);
 		if (result == null)
 		{
 			return default(T)!;
@@ -60,7 +60,7 @@ public static class ConfigurationBinder
 	/// <param name="type">The type of the new instance to bind.</param>
 	/// <returns>The new instance if successful, null otherwise.</returns>
 
-	public static object Get(this IConfiguration configuration, Type type)
+	public static object? Get(this IConfiguration configuration, Type type)
 		=> configuration.Get(type, _ => { });
 
 	/// <summary>
@@ -73,7 +73,7 @@ public static class ConfigurationBinder
 	/// <param name="configureOptions">Configures the binder options.</param>
 	/// <returns>The new instance if successful, null otherwise.</returns>
 
-	public static object Get(
+	public static object? Get(
 		this IConfiguration configuration,
 
 			Type type,
@@ -199,7 +199,7 @@ public static class ConfigurationBinder
 	}
 
 
-	private static void BindNonScalar(this IConfiguration configuration, object instance, BinderOptions options)
+	private static void BindNonScalar(this IConfiguration configuration, object? instance, BinderOptions options)
 	{
 		if (instance != null)
 		{
@@ -240,7 +240,7 @@ public static class ConfigurationBinder
 			return;
 		}
 
-		object propertyValue = property.GetValue(instance);
+		object? propertyValue = property.GetValue(instance);
 		bool hasSetter = property.SetMethod != null && (property.SetMethod.IsPublic || options.BindNonPublicProperties);
 
 		if (propertyValue == null && !hasSetter)
@@ -258,16 +258,16 @@ public static class ConfigurationBinder
 		}
 	}
 
-	private static object BindToCollection(Type type, IConfiguration config, BinderOptions options)
+	private static object? BindToCollection(Type type, IConfiguration config, BinderOptions options)
 	{
 		Type genericType = typeof(List<>).MakeGenericType(type.GenericTypeArguments[0]);
-		object instance = Activator.CreateInstance(genericType);
+		object? instance = Activator.CreateInstance(genericType);
 		BindCollection(instance, genericType, config, options);
 		return instance;
 	}
 
 	// Try to create an array/dictionary instance to back various collection interfaces
-	private static object AttemptBindToCollectionInterfaces(
+	private static object? AttemptBindToCollectionInterfaces(
 
 			Type type,
 		IConfiguration config, BinderOptions options)
@@ -288,7 +288,7 @@ public static class ConfigurationBinder
 		if (collectionInterface != null)
 		{
 			Type dictionaryType = typeof(Dictionary<,>).MakeGenericType(type.GenericTypeArguments[0], type.GenericTypeArguments[1]);
-			object instance = Activator.CreateInstance(dictionaryType);
+			object? instance = Activator.CreateInstance(dictionaryType);
 			BindDictionary(instance, dictionaryType, config, options);
 			return instance;
 		}
@@ -296,7 +296,7 @@ public static class ConfigurationBinder
 		collectionInterface = FindOpenGenericInterface(typeof(IDictionary<,>), type);
 		if (collectionInterface != null)
 		{
-			object instance = Activator.CreateInstance(typeof(Dictionary<,>).MakeGenericType(type.GenericTypeArguments[0], type.GenericTypeArguments[1]));
+			object? instance = Activator.CreateInstance(typeof(Dictionary<,>).MakeGenericType(type.GenericTypeArguments[0], type.GenericTypeArguments[1]));
 			BindDictionary(instance, collectionInterface, config, options);
 			return instance;
 		}
@@ -326,10 +326,11 @@ public static class ConfigurationBinder
 	}
 
 
-	private static object BindInstance(
-
-			Type type,
-		object instance, IConfiguration config, BinderOptions options)
+	private static object? BindInstance(
+		Type type,
+		object? instance,
+		IConfiguration config,
+		BinderOptions options)
 	{
 		// if binding IConfigurationSection, break early
 		if (type == typeof(IConfigurationSection))
@@ -375,7 +376,7 @@ public static class ConfigurationBinder
 			}
 			else if (type.IsArray)
 			{
-				instance = BindArray((Array)instance, config, options);
+				instance = BindArray((instance as Array)!, config, options);
 			}
 			else
 			{
@@ -404,7 +405,7 @@ public static class ConfigurationBinder
 		return instance;
 	}
 
-	private static object CreateInstance(
+	private static object? CreateInstance(
 
 		Type type)
 	{
@@ -420,7 +421,7 @@ public static class ConfigurationBinder
 				throw new InvalidOperationException("error");
 			}
 
-			return Array.CreateInstance(type.GetElementType(), 0);
+			return Array.CreateInstance(type.GetElementType()!, 0);
 		}
 
 		if (!type.IsValueType)
@@ -443,7 +444,7 @@ public static class ConfigurationBinder
 	}
 
 	private static void BindDictionary(
-		object dictionary,
+		object? dictionary,
 			Type dictionaryType,
 		IConfiguration config, BinderOptions options)
 	{
@@ -458,10 +459,10 @@ public static class ConfigurationBinder
 			return;
 		}
 
-		PropertyInfo setter = dictionaryType.GetProperty("Item", DeclaredOnlyLookup);
+		PropertyInfo? setter = dictionaryType.GetProperty("Item", DeclaredOnlyLookup);
 		foreach (IConfigurationSection child in config.GetChildren())
 		{
-			object item = BindInstance(
+			object? item = BindInstance(
 				type: valueType,
 				instance: null!,
 				config: child,
@@ -471,36 +472,37 @@ public static class ConfigurationBinder
 				if (keyType == typeof(string))
 				{
 					string key = child.Key;
-					setter.SetValue(dictionary, item, new object[] { key });
+					setter?.SetValue(dictionary, item, new object[] { key });
 				}
 				else if (keyTypeIsEnum)
 				{
 					object key = Enum.Parse(keyType, child.Key);
-					setter.SetValue(dictionary, item, new object[] { key });
+					setter?.SetValue(dictionary, item, new object[] { key });
 				}
 			}
 		}
 	}
 
 	private static void BindCollection(
-		object collection,
+		object? collection,
 			Type collectionType,
 		IConfiguration config, BinderOptions options)
 	{
 		// ICollection<T> is guaranteed to have exactly one parameter
 		Type itemType = collectionType.GenericTypeArguments[0];
-		MethodInfo addMethod = collectionType.GetMethod("Add", DeclaredOnlyLookup);
+		MethodInfo? addMethod = collectionType.GetMethod("Add", DeclaredOnlyLookup);
 
 		foreach (IConfigurationSection section in config.GetChildren())
 		{
 			try
 			{
-				object item = BindInstance(
+				object? item = BindInstance(
 					type: itemType,
 					instance: null!,
 					config: section,
 					options: options);
-				if (item != null)
+				if (item != null &&
+					addMethod is not null)
 				{
 					addMethod.Invoke(collection, new[] { item });
 				}
@@ -511,27 +513,27 @@ public static class ConfigurationBinder
 		}
 	}
 
-	private static object BindImmutableList(
-		object collection,
-			Type collectionType,
+	private static object? BindImmutableList(
+		object? collection,
+		Type collectionType,
 		IConfiguration config, BinderOptions options)
 	{
 		// ICollection<T> is guaranteed to have exactly one parameter
 		Type itemType = collectionType.GenericTypeArguments[0];
-		MethodInfo addMethod = collectionType.GetMethod("Add", DeclaredOnlyLookup);
+		MethodInfo? addMethod = collectionType.GetMethod("Add", DeclaredOnlyLookup);
 
 		foreach (IConfigurationSection section in config.GetChildren())
 		{
 			try
 			{
-				object item = BindInstance(
+				object? item = BindInstance(
 					type: itemType,
 					instance: null!,
 					config: section,
 					options: options);
 				if (item != null)
 				{
-					collection = addMethod.Invoke(collection, new[] { item });
+					collection = addMethod!.Invoke(collection, new[] { item });
 				}
 			}
 			catch
@@ -547,8 +549,8 @@ public static class ConfigurationBinder
 	{
 		IConfigurationSection[] children = config.GetChildren().ToArray();
 		int arrayLength = source.Length;
-		Type elementType = source.GetType().GetElementType();
-		var newArray = Array.CreateInstance(elementType, arrayLength + children.Length);
+		Type elementType = source.GetType().GetElementType()!;
+		var newArray = Array.CreateInstance(elementType!, arrayLength + children.Length);
 
 		// binding to array has to preserve already initialized arrays with values
 		if (arrayLength > 0)
@@ -560,7 +562,7 @@ public static class ConfigurationBinder
 		{
 			try
 			{
-				object item = BindInstance(
+				object? item = BindInstance(
 					type: elementType,
 					instance: null!,
 					config: children[i],
@@ -598,7 +600,7 @@ public static class ConfigurationBinder
 			{
 				return true;
 			}
-			return TryConvertValue(Nullable.GetUnderlyingType(type), value, path, out result, out error);
+			return TryConvertValue(Nullable.GetUnderlyingType(type)!, value, path, out result, out error);
 		}
 
 		TypeConverter converter = TypeDescriptor.GetConverter(type);
@@ -606,7 +608,7 @@ public static class ConfigurationBinder
 		{
 			try
 			{
-				result = converter.ConvertFromInvariantString(value);
+				result = converter.ConvertFromInvariantString(value)!;
 			}
 			catch (Exception ex)
 			{
@@ -678,7 +680,7 @@ public static class ConfigurationBinder
 		do
 		{
 			allProperties.AddRange(type.GetProperties(DeclaredOnlyLookup));
-			type = type.BaseType;
+			type = type.BaseType!;
 		}
 		while (type != typeof(object));
 
@@ -686,7 +688,7 @@ public static class ConfigurationBinder
 	}
 
 
-	private static object GetPropertyValue(PropertyInfo property, object instance, IConfiguration config, BinderOptions options)
+	private static object? GetPropertyValue(PropertyInfo property, object instance, IConfiguration config, BinderOptions options)
 	{
 		string propertyName = GetPropertyName(property);
 		return BindInstance(

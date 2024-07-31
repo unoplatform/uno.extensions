@@ -10,8 +10,8 @@ using Java.Security;
 using Javax.Crypto;
 using Microsoft.Extensions.Logging;
 using Uno.Extensions;
+using Uno.Extensions.Logging;
 using Uno.Extensions.Threading;
-using Uno.Logging;
 
 namespace Uno.Extensions.Storage.KeyValueStorage;
 
@@ -29,7 +29,7 @@ internal record KeyStoreKeyValueStorage : BaseKeyValueStorageWithCaching
 
 	private readonly ILogger _logger;
 	private readonly ISerializer _serializer;
-	private readonly string _fileName = Path.Combine(ApplicationData.Current.LocalFolder.Path ,DefaultFileName);
+	private readonly string _fileName = Path.Combine(ApplicationData.Current.LocalFolder.Path, DefaultFileName);
 	private readonly char[] _rootPassword = DefaultPrivatePassword.ToCharArray();
 	private readonly KeyStore.PasswordProtection _protection = new KeyStore.PasswordProtection(DefaultPrivatePassword.ToCharArray());
 
@@ -133,7 +133,7 @@ internal record KeyStoreKeyValueStorage : BaseKeyValueStorageWithCaching
 
 
 	/// <inheritdoc />
-	protected override async ValueTask InternalSetAsync<T>(string name, T value, CancellationToken ct) 
+	protected override async ValueTask InternalSetAsync<T>(string name, T value, CancellationToken ct)
 	{
 		if (_logger.IsEnabled(LogLevel.Debug))
 		{
@@ -167,7 +167,10 @@ internal record KeyStoreKeyValueStorage : BaseKeyValueStorageWithCaching
 
 		if (keyStore is null)
 		{
-			this.Log().Error("Could not load keystore");
+			if (_logger.IsEnabled(LogLevel.Error))
+			{
+				_logger.LogErrorMessage("Could not load keystore");
+			}
 			throw new Exception("Unable to create keystore");
 		}
 
@@ -199,7 +202,7 @@ internal record KeyStoreKeyValueStorage : BaseKeyValueStorageWithCaching
 		{
 			if (_logger.IsEnabled(LogLevel.Error))
 			{
-				this.Log().Error("Could not load keystore file. Loading an empty store.", error);
+				_logger.LogErrorMessage(error, "Could not load keystore file. Loading an empty store.");
 			}
 
 			keyStore.Load(null, _rootPassword);

@@ -1,74 +1,56 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows')) or '$(EnableWindowsTargeting)' == 'true'">$(TargetFrameworks);net8.0-windows10.0.19041</TargetFrameworks>
-    <TargetFrameworks>$(TargetFrameworks);net8.0;net8.0-android;net8.0-ios;net8.0-maccatalyst</TargetFrameworks>
-    <TargetFrameworks Condition="'$(OverrideTargetFrameworks)'!=''">$(OverrideTargetFrameworks)</TargetFrameworks>
+<Project Sdk="Uno.Sdk">
+	<Import Project="..\..\..\src\tfms-ui-winui.props" />
 
-    <!-- Ensures the .xr.xml files are generated in a proper layout folder -->
-    <GenerateLibraryLayout>true</GenerateLibraryLayout>
-  </PropertyGroup>
+	<PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Uno.WinUI" />
-    <PackageReference Include="Uno.Resizetizer" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Console" />
-		<PackageReference Include="CommunityToolkit.Mvvm" />
-		<PackageReference Include="Uno.Toolkit.WinUI" />
-		<PackageReference Include="Uno.Toolkit.WinUI.Material" />
-  </ItemGroup>
+		<OutputType>Exe</OutputType>
+		<UnoSingleProject>true</UnoSingleProject>
 
+		<!-- Display name -->
+		<ApplicationTitle>Playground</ApplicationTitle>
+		<!-- App Identifier -->
+		<ApplicationId>com.companyname.Playground</ApplicationId>
+		<!-- Versions -->
+		<ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
+		<ApplicationVersion>1</ApplicationVersion>
+		<!--
+			If you encounter this error message:
 
-  <Choose>
-    <When Condition="$(IsWinAppSdk)">
-      <PropertyGroup>
-        <!--
-        If you encounter this error message:
+				error NETSDK1148: A referenced assembly was compiled using a newer version of Microsoft.Windows.SDK.NET.dll.
+				Please update to a newer .NET SDK in order to reference this assembly.
 
-          error NETSDK1148: A referenced assembly was compiled using a newer version of Microsoft.Windows.SDK.NET.dll.
-          Please update to a newer .NET SDK in order to reference this assembly.
+			This means that the two packages below must be aligned with the "build" version number of
+			the "Microsoft.Windows.SDK.BuildTools" package above, and the "revision" version number
+			must be the highest found in https://www.nuget.org/packages/Microsoft.Windows.SDK.NET.Ref.
+		-->
+		<!-- <WindowsSdkPackageVersion>10.0.22621.28</WindowsSdkPackageVersion> -->
 
-        This means that the two packages below must be aligned with the "build" version number of
-        the "Microsoft.Windows.SDK.BuildTools" package above, and the "revision" version number
-        must be the highest found in https://www.nuget.org/packages/Microsoft.Windows.SDK.NET.Ref.
-        -->
-        <!-- <WindowsSdkPackageVersion>10.0.22621.28</WindowsSdkPackageVersion> -->
-      </PropertyGroup>
-      <ItemGroup>
-        <PackageReference Include="Microsoft.WindowsAppSDK" />
-        <PackageReference Include="Microsoft.Windows.SDK.BuildTools" />
-      </ItemGroup>
-    </When>
-    <Otherwise>
-      <ItemGroup>
-        <PackageReference Include="Uno.WinUI.Lottie" />
+		<!--
+			UnoFeatures let's you quickly add and manage implicit package references based on the features you want to use.
+			https://aka.platform.uno/singleproject-features
+		-->
+		<UnoFeatures>
+			Material;
+			Toolkit;
+			Mvvm;
+		</UnoFeatures>
+	</PropertyGroup>
 
-        <!-- Include all images by default - matches the __WindowsAppSdkDefaultImageIncludes property in the WindowsAppSDK -->
-        <Content Include="Assets\**;**/*.png;**/*.bmp;**/*.jpg;**/*.dds;**/*.tif;**/*.tga;**/*.gif" Exclude="bin\**;obj\**;**\*.svg" />
-        <Page Include="**\*.xaml" Exclude="bin\**\*.xaml;obj\**\*.xaml" />
-        <Compile Update="**\*.xaml.cs">
-          <DependentUpon>%(Filename)</DependentUpon>
-        </Compile>
-        <PRIResource Include="**\*.resw" />
-      </ItemGroup>
-    </Otherwise>
-  </Choose>
+	<ItemGroup>
+		<PackageReference Include="Uno.Core.Extensions.Logging.Singleton"/>
+	</ItemGroup>
 
-  <ItemGroup>
-    <UnoImage Include="Assets\**\*.svg" />
-    <UpToDateCheckInput Include="**\*.xaml" Exclude="bin\**\*.xaml;obj\**\*.xaml" />
-  </ItemGroup>
+	<ItemGroup>
+		<None Remove="appsettings.development.json" />
+		<None Remove="appsettings.json" />
+		<None Remove="data.json" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <None Remove="appsettings.development.json" />
-    <None Remove="appsettings.json" />
-    <None Remove="data.json" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Include="appsettings.development.json" />
-    <EmbeddedResource Include="appsettings.json" />
-    <Content Include="data.json" />
-  </ItemGroup>
+	<ItemGroup>
+		<EmbeddedResource Include="appsettings.development.json" />
+		<EmbeddedResource Include="appsettings.json" />
+		<Content Include="data.json" />
+	</ItemGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Configuration\Uno.Extensions.Configuration.csproj" />
@@ -93,4 +75,13 @@
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Validation.Fluent\Uno.Extensions.Validation.Fluent.csproj" />
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Validation\Uno.Extensions.Validation.csproj" />
 	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Core.Generators\Uno.Extensions.Core.Generators.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Navigation.Generators\Uno.Extensions.Navigation.Generators.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Reactive.Generator\Uno.Extensions.Reactive.Generator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+	</ItemGroup>
+
+	<!-- Reference generators props. This required only when referencing extensions project as source code (instead of packages) -->
+	<Import Project="..\..\..\src\Uno.Extensions.Core.Generators\buildTransitive\Uno.Extensions.Core.props" />
 </Project>

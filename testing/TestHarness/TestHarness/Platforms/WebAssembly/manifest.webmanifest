@@ -1,0 +1,10 @@
+{
+  "background_color": "#ffffff",
+  "description": "TestHarness",
+  "display": "standalone",
+  "name": "TestHarness",
+  "short_name": "TestHarness",
+  "start_url": "/index.html",
+  "theme_color": "#ffffff",
+  "scope": "/"
+}

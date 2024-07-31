@@ -18,7 +18,7 @@ public static class NavigationRequestExtensions
 			{
 				maps = resolver.FindByView(hint.View, navigator);
 			}
-			if (maps is  null &&
+			if (maps is null &&
 				hint.ViewModel is not null)
 			{
 				maps = resolver.FindByViewModel(hint.ViewModel, navigator);
@@ -113,7 +113,7 @@ public static class NavigationRequestExtensions
 								m.IsGenericMethodDefinition).ToArray();
 		var navMethod = navMethods.First();
 		var constructedNavMethod = navMethod.MakeGenericMethod(hint.Result);
-		var nav = (NavigationRequest)constructedNavMethod.Invoke(null, new object?[] { hint, navigator, resolver, sender, data, cancellation });
+		var nav = (NavigationRequest)constructedNavMethod.Invoke(null, new object?[] { hint, navigator, resolver, sender, data, cancellation })!;
 		return nav;
 
 	}

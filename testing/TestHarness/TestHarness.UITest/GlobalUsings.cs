@@ -10,6 +10,7 @@ global using System.Text;
 global using System.Threading.Tasks;
 global using FluentAssertions;
 global using FluentAssertions.Execution;
+global using Microsoft.VisualStudio.TestTools.UnitTesting;
 global using NUnit.Framework;
 global using NUnit.Framework.Interfaces;
 global using NUnit.Framework.Internal;
@@ -22,3 +23,5 @@ global using Uno.UITest.Helpers;
 global using Uno.UITest.Helpers.Queries;
 global using Uno.UITests.Helpers;
 global using static System.Math;
+global using Assert = Microsoft.VisualStudio.TestTools.UnitTesting.Assert;
+

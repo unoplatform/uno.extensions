@@ -41,7 +41,8 @@ internal class ReloadService : IHostedService, IStartupService
 		var configSourceFiles = new List<string>();
 		foreach (var fp in fileProviders)
 		{
-			if (fp is FileConfigurationProvider fcp)
+			if (fp is FileConfigurationProvider fcp &&
+				fcp.Source.Path is { Length: > 0 })
 			{
 				reloadEnabled = true;
 				// Sometimes fcp.Source.Path returns just filename, sometime config/filename

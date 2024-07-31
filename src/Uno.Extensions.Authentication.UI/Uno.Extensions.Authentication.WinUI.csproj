@@ -1,12 +1,14 @@
-﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
+﻿<Project Sdk="Uno.Sdk">
 	<Import Project="..\tfms-ui-winui.props" />
 
 	<PropertyGroup>
 		<Description>Authentication Extensions for the Uno Platform (WinUI)</Description>
 		<EnableDefaultPageItems>false</EnableDefaultPageItems>
-	</PropertyGroup>
 
-	<Import Project="common.props" />
+
+		<UnoSingleProject>true</UnoSingleProject>
+		<OutputType>Library</OutputType>
+	</PropertyGroup>
 
 	<PropertyGroup>
 		<PackageId>Uno.Extensions.Authentication.WinUI</PackageId>
@@ -14,11 +16,32 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Uno.WinUI" />
+		<ProjectReference Include="..\Uno.Extensions.Navigation.UI\Uno.Extensions.Navigation.WinUI.csproj" />
+		<ProjectReference Include="..\Uno.Extensions.Http.UI\Uno.Extensions.Http.WinUI.csproj" />
+	</ItemGroup>
+
+	<PropertyGroup>
+		<AssemblyName>Uno.Extensions.Authentication.UI</AssemblyName>
+
+		<!--Temporary disable missing XML doc until fixed in the whole package-->
+		<WarningsNotAsErrors>$(WarningsNotAsErrors);CS1591</WarningsNotAsErrors>
+	</PropertyGroup>
+
+
+	<ItemGroup>
+		<ProjectReference Include="..\Uno.Extensions.Navigation\Uno.Extensions.Navigation.csproj" />
+		<ProjectReference Include="..\Uno.Extensions.Authentication\Uno.Extensions.Authentication.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\Uno.Extensions.Navigation.UI\Uno.Extensions.Navigation.WinUI.csproj" />
-		<ProjectReference Include="..\Uno.Extensions.Http.UI\Uno.Extensions.Http.WinUI.csproj" />
+		<PackageReference Include="Microsoft.Extensions.Localization.Abstractions" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Page Include="**\*.xaml" Exclude="bin\**\*.xaml;obj\**\*.xaml" />
+		<Compile Update="**\*.xaml.cs">
+			<DependentUpon>%(Filename)</DependentUpon>
+		</Compile>
+		<UpToDateCheckInput Include="**\*.xaml" Exclude="bin\**\*.xaml;obj\**\*.xaml" />
 	</ItemGroup>
 </Project>

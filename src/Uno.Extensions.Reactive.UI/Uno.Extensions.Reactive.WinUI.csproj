@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
+﻿<Project Sdk="Uno.Sdk">
 	<Import Project="..\tfms-ui-winui.props" />
 
 	<!--
@@ -6,21 +6,41 @@
 	Please see https://github.com/unoplatform/uno/issues/3909 for more details.
 	-->
 	<PropertyGroup>
+		<AssemblyName>Uno.Extensions.Reactive.UI</AssemblyName>
+		<ImplicitUsings>false</ImplicitUsings>
+
 		<Description>Reactive Extensions for the Uno Platform (WinUI)</Description>
 		<EnableDefaultPageItems>false</EnableDefaultPageItems>
 		<DefineConstants>$(DefineConstants);WINUI</DefineConstants>
 		<PackageId>Uno.Extensions.Reactive.WinUI</PackageId>
 
 		<UnoXamlResourcesTrimming Condition="'$(MSBuildRuntimeType)'=='Core' and '$(Configuration)'=='Release'">true</UnoXamlResourcesTrimming>
+
+		<UnoSingleProject>true</UnoSingleProject>
+		<OutputType>Library</OutputType>
+
+		<UnoFeatures>
+			Toolkit
+		</UnoFeatures>
 	</PropertyGroup>
 
-	<Import Project="common.props" />
-
 	<ItemGroup>
-		<PackageReference Include="Uno.WinUI" />
+		<EditorConfigFiles Include="../Uno.Extensions.Reactive/.editorconfig" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Uno.Toolkit.WinUI" />
+		<PackageReference Include="Microsoft.Bcl.AsyncInterfaces" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Uno.Extensions.Reactive\Uno.Extensions.Reactive.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Page Include="**\*.xaml" Exclude="bin\**\*.xaml;obj\**\*.xaml" />
+		<Compile Update="**\*.xaml.cs">
+			<DependentUpon>%(Filename)</DependentUpon>
+		</Compile>
+		<UpToDateCheckInput Include="**\*.xaml" Exclude="bin\**\*.xaml;obj\**\*.xaml" />
 	</ItemGroup>
 </Project>

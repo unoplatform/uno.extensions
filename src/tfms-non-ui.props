@@ -4,6 +4,6 @@
 	that are part of a cross-platform library (eg Uno.Extensions.Hosting.UWP.Wasm)-->
 <Project>
 	<PropertyGroup>
-		<TargetFramework>netstandard2.0</TargetFramework>
+		<TargetFrameworks>net8.0</TargetFrameworks>
 	</PropertyGroup>
 </Project>

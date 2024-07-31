@@ -1,11 +1,14 @@
-﻿<Project Sdk="MSBuild.Sdk.Extras" ToolsVersion="15.0">
-	<Import Project="..\tfms-ui-all.props" />
+﻿<Project Sdk="Uno.Sdk">
+	<Import Project="..\tfms-ui-winui.props" />
 
 	<PropertyGroup>
 		<Description>Logging Extensions for configuring Serilog for Uno Platform, UWP and WinUI</Description>
 
 		<!--Temporary disable missing XML doc until fixed in the whole package-->
 		<WarningsNotAsErrors>$(WarningsNotAsErrors);CS1591</WarningsNotAsErrors>
+
+		<UnoSingleProject>true</UnoSingleProject>
+		<OutputType>Library</OutputType>
 	</PropertyGroup>
 
   <ItemGroup Condition="'$(_IsIOS)' == 'true' or '$(_IsAndroid)' == 'true' or '$(_IsMacOS)'=='true' or '$(_IsCatalyst)' == 'true'">

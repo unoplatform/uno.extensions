@@ -27,13 +27,17 @@ public static class NavigationRequestExtensions
 	public static NavigationRequest WithData(this NavigationRequest request, object? data)
 		=> data is null ?
 				request :
-				request with {
-					Route = request.Route with {
-						Data = request.Route.Data.Combine(new Dictionary<string, object>() { { string.Empty, data } }) } };
+				request with
+				{
+					Route = request.Route with
+					{
+						Data = request.Route.Data.Combine(new Dictionary<string, object>() { { string.Empty, data } })
+					}
+				};
 
 	public static NavigationRequest IncludeDependentRoutes(this NavigationRequest request, IRouteResolver resolver)
 	{
-		if (request.Route.Base.IsNullOrWhiteSpace())
+		if (request.Route.Base is not { Length: > 0 })
 		{
 			return request;
 		}

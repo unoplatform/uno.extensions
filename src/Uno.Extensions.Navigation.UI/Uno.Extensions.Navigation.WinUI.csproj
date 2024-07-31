@@ -1,20 +1,57 @@
-﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
+﻿<Project Sdk="Uno.Sdk">
 	<Import Project="..\tfms-ui-winui.props" />
 
 	<PropertyGroup>
-		<Description>Navigation Extensions for the Uno Platform (WinUI)</Description>
-		<EnableDefaultPageItems>false</EnableDefaultPageItems>
-	</PropertyGroup>
+		<AssemblyName>Uno.Extensions.Navigation.UI</AssemblyName>
 
-	<Import Project="common.props" />
+		<!--Temporary disable missing XML doc until fixed in the whole package-->
+		<WarningsNotAsErrors>$(WarningsNotAsErrors);CS1591</WarningsNotAsErrors>
 
-	<PropertyGroup>
+		<!-- As we are InternalsVisibleTo, we disable some compatibility types that are not used by package itself. -->
+		<UnoExtensionsGeneration_DisableModuleInitializerAttribute>True</UnoExtensionsGeneration_DisableModuleInitializerAttribute>
+
 		<PackageId>Uno.Extensions.Navigation.WinUI</PackageId>
 		<DefineConstants>$(DefineConstants);WINUI</DefineConstants>
+
+		<Description>Navigation Extensions for the Uno Platform (WinUI)</Description>
+		<EnableDefaultPageItems>false</EnableDefaultPageItems>
+
+		<UnoSingleProject>true</UnoSingleProject>
+		<OutputType>Library</OutputType>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Uno.WinUI" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" />
+		<PackageReference Include="Microsoft.Extensions.Localization.Abstractions" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Uno.Extensions.Configuration\Uno.Extensions.Configuration.csproj" />
+		<ProjectReference Include="..\Uno.Extensions.Navigation\Uno.Extensions.Navigation.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<EmbeddedResource Include="LinkerDefinition.xml">
+			<LogicalName>$(AssemblyName).xml</LogicalName>
+		</EmbeddedResource>
+	</ItemGroup>
+
+
+	<ItemGroup>
+		<Page Include="**\*.xaml" Exclude="bin\**\*.xaml;obj\**\*.xaml" />
+		<Compile Update="**\*.xaml.cs">
+			<DependentUpon>%(Filename)</DependentUpon>
+		</Compile>
+		<UpToDateCheckInput Include="**\*.xaml" Exclude="bin\**\*.xaml;obj\**\*.xaml" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<InternalsVisibleTo Include="Uno.Extensions.Navigation.Toolkit.UI" />
+		<InternalsVisibleTo Include="Uno.Extensions.Navigation.Toolkit.WinUI" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Uno.Core.Extensions" />
 	</ItemGroup>
 
 	<ItemGroup>

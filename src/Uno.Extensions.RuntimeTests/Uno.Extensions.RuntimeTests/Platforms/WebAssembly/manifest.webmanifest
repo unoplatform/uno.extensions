@@ -1,0 +1,10 @@
+{
+  "background_color": "#ffffff",
+  "description": "Uno.Extensions.RuntimeTests",
+  "display": "standalone",
+  "name": "Uno.Extensions.RuntimeTests",
+  "short_name": "Uno.Extensions.RuntimeTests",
+  "start_url": "/index.html",
+  "theme_color": "#ffffff",
+  "scope": "/"
+}

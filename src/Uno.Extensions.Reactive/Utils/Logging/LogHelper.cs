@@ -1,6 +1,4 @@
-﻿using System;
-using System.Linq;
-using System.Threading;
+﻿using System.Linq;
 using Uno.Extensions.Reactive;
 
 namespace Uno.Extensions.Reactive.Logging;
@@ -14,7 +12,7 @@ internal static class LogHelper
 #if DEBUG
 			_ => $"{GetTypeName(obj)}-{obj.GetHashCode():X8}",
 #else
-			_ => obj.ToString()
+			_ => obj.ToString() ?? string.Empty
 #endif
 		};
 

@@ -1,41 +1,40 @@
-﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
+﻿<Project Sdk="Uno.Sdk">
 	<Import Project="..\tfms-ui-winui.props" />
-	<ItemGroup>
-	  <Compile Remove="WasmScripts\**" />
-	  <EmbeddedResource Remove="WasmScripts\**" />
-	  <None Remove="WasmScripts\**" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<UnoRuntimeProjectReference Include="Uno.Extensions.Hosting.WinUI.Wasm.csproj" />
-		<UnoRuntimeProjectReference Include="Uno.Extensions.Hosting.WinUI.Skia.csproj" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<Content Include="buildTransitive\Uno.Extensions.Hosting.WinUI.props">
-			<PackagePath>buildTransitive</PackagePath>
-			<Pack>true</Pack>
-		</Content>
-	</ItemGroup>
 
 	<PropertyGroup>
-		<DefineConstants>$(DefineConstants);WINUI</DefineConstants>
-	</PropertyGroup>
+		<Description>Hosting Extensions for creating and configuring IHost for Uno Platform, UWP and WinUI</Description>
 
+		<!--Temporary disable missing XML doc until fixed in the whole package-->
+		<WarningsNotAsErrors>$(WarningsNotAsErrors);CS1591</WarningsNotAsErrors>
+
+		<DefineConstants>$(DefineConstants);WINUI</DefineConstants>
+
+		<UnoSingleProject>true</UnoSingleProject>
+		<OutputType>Library</OutputType>
+
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+	</PropertyGroup>
+	
 	<ItemGroup>
-		<PackageReference Include="Uno.WinUI" />
+		<PackageReference Include="Microsoft.Extensions.Hosting" />
+	</ItemGroup>
+
+	<ItemGroup Condition="'$(IsBrowserWasm)'!='true'">
+		<Compile Remove="WasmScripts\**" />
+		<EmbeddedResource Remove="WasmScripts\**" />
+		<None Remove="WasmScripts\**" />
+	</ItemGroup>
+	
+	<ItemGroup Condition="'$(IsBrowserWasm)'=='true'">
+		<None Remove="WasmScripts\**" />
+		<EmbeddedResource Include="WasmScripts\**" />
 	</ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\Uno.Extensions.Hosting\Uno.Extensions.Hosting.csproj" />
+		<ProjectReference Include="..\Uno.Extensions.Core\Uno.Extensions.Core.csproj" />
+		<ProjectReference Include="..\Uno.Extensions.Storage\Uno.Extensions.Storage.csproj" />
 		<ProjectReference Include="..\Uno.Extensions.Core.UI\Uno.Extensions.Core.WinUI.csproj" />
 		<ProjectReference Include="..\Uno.Extensions.Storage.UI\Uno.Extensions.Storage.WinUI.csproj" />
-	</ItemGroup>
-
-
-	<Import Project="common.props" />
-
-	<ItemGroup>
-		<ProjectReference Include="Uno.Extensions.Hosting.WinUI.Wasm.csproj" ReferenceOutputAssembly="false" LinkLibraryDependencies="false" CopyLocal="false" SkipGetTargetFrameworkProperties="true" GlobalPropertiesToRemove="TargetFramework" />
-		<ProjectReference Include="Uno.Extensions.Hosting.WinUI.Skia.csproj" ReferenceOutputAssembly="false" LinkLibraryDependencies="false" CopyLocal="false" SkipGetTargetFrameworkProperties="true" GlobalPropertiesToRemove="TargetFramework" />
 	</ItemGroup>
 </Project>

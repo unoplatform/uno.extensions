@@ -10,7 +10,6 @@ using Microsoft.Extensions.Logging;
 using Security;
 using Uno.Extensions;
 using Uno.Extensions.Threading;
-using Uno.Logging;
 
 namespace Uno.Extensions.Storage.KeyValueStorage;
 
@@ -43,7 +42,7 @@ internal record KeyChainKeyValueStorage(
 
 		await CheckConsistencyWithFileStorage(ct);
 
-		if(name is null)
+		if (name is null)
 		{
 			return;
 		}
@@ -232,7 +231,7 @@ internal record KeyChainKeyValueStorage(
 	{
 		await CheckConsistencyWithFileStorage(ct);
 
-		return await GetAllKeysWithoutValidation(ct)??Array.Empty<string>();
+		return await GetAllKeysWithoutValidation(ct) ?? Array.Empty<string>();
 	}
 
 	/// <inheritdoc/>
@@ -295,7 +294,7 @@ internal record KeyChainKeyValueStorage(
 							{
 								foreach (var key in keys)
 								{
-									await ClearValueWithoutValidation( key, ct);
+									await ClearValueWithoutValidation(key, ct);
 								}
 							}
 
@@ -331,7 +330,7 @@ internal record KeyChainKeyValueStorage(
 
 		if (status == SecStatusCode.Success && data?.ValueData is not null)
 		{
-			keys = this.Deserialize<string[]>(data.ValueData)?? new string[0];
+			keys = this.Deserialize<string[]>(data.ValueData) ?? new string[0];
 		}
 		else
 		{
@@ -389,7 +388,7 @@ internal record KeyChainKeyValueStorage(
 
 		public void Commit()
 		{
-			if (_updatedKey.HasValue())
+			if (_updatedKey is { })
 			{
 				// Simply forget about the affected key, thus nothing will happen when we get disposed.
 				_updatedKey = null;
@@ -398,7 +397,7 @@ internal record KeyChainKeyValueStorage(
 
 		public void Dispose()
 		{
-			if (_updatedKey.HasValue())
+			if (_updatedKey is { })
 			{
 				// Commit wasn't called.
 				this.SaveKeys(_originalKeys);

@@ -1,21 +1,13 @@
-﻿#if __WASM__
-using Uno.Foundation;
-using Windows.UI.Core;
-
-#endif
+﻿using Windows.UI.Core;
 
 namespace Uno.Extensions.Hosting;
 
-internal class AppHostingEnvironment : HostingEnvironment, IAppHostEnvironment, IDataFolderProvider
-#if __WASM__
-	, IHasAddressBar
-#endif
+internal class AppHostingEnvironment : HostingEnvironment, IAppHostEnvironment, IDataFolderProvider, IHasAddressBar
 {
 	public string? AppDataPath { get; init; }
 
 	public Assembly? HostAssembly { get; init; }
 
-#if __WASM__
 	public async Task UpdateAddressBar(Uri applicationUri, bool canGoBack)
 	{
 		CoreApplication.MainView?.DispatcherQueue.TryEnqueue(() =>
@@ -24,24 +16,22 @@ internal class AppHostingEnvironment : HostingEnvironment, IAppHostEnvironment, 
 						if (PlatformHelper.IsWebAssembly)
 						{
 							state = canGoBack ? 1 : 0;
-						}
 
-						var href = Imports.GetLocation();
-						var appUriBuilder = new UriBuilder(applicationUri);
-						var url = new UriBuilder(href)
-						{
-							Query = appUriBuilder.Query,
-							Path = appUriBuilder.Path
-						};
-						var webUri = url.Uri.OriginalString;
-						// Use state = 1 or 0 to align with the state managed by the SystemNavigationManager (Uno)
-						var result = Imports.ReplaceState(state, "", $"{webUri}");
+							var href = Imports.GetLocation();
+							var appUriBuilder = new UriBuilder(applicationUri);
+							var url = new UriBuilder(href)
+							{
+								Query = appUriBuilder.Query,
+								Path = appUriBuilder.Path
+							};
+							var webUri = url.Uri.OriginalString;
+							// Use state = 1 or 0 to align with the state managed by the SystemNavigationManager (Uno)
+							var result = Imports.ReplaceState(state, "", $"{webUri}");
+						}
 					});
 	}
-#endif
 }
 
-#if __WASM__
 internal static partial class Imports
 {
 	[System.Runtime.InteropServices.JavaScript.JSImport("globalThis.Uno.Extensions.Hosting.getLocation")]
@@ -51,4 +41,3 @@ internal static partial class Imports
 	[System.Runtime.InteropServices.JavaScript.JSImport("globalThis.window.history.replaceState")]
 	public static partial string ReplaceState(int state, string title, string url);
 }
-#endif

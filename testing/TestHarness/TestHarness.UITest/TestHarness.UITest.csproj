@@ -17,10 +17,11 @@
 		<PackageReference Include="Uno.UITest" />
 		<PackageReference Include="Uno.UITest.Selenium" />
 		<PackageReference Include="Uno.UITest.Xamarin" />
-		<PackageReference Include="Uno.UITest.Helpers" />
 		<PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" PrivateAssets="All" />
 		<PackageReference Include="NunitXml.TestLogger"/>
 		<PackageReference Include="SkiaSharp.NativeAssets.Linux" />
+		<PackageReference Include="MSTest.TestAdapter" />
+		<PackageReference Include="MSTest.TestFramework"/>
 	</ItemGroup>
 
 	<ItemGroup>

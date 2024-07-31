@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
+﻿<Project Sdk="Uno.Sdk">
 	<Import Project="..\tfms-ui-winui.props" />
 
 	<PropertyGroup>
@@ -8,6 +8,9 @@
 		<WarningsNotAsErrors>$(WarningsNotAsErrors);CS1591</WarningsNotAsErrors>
 		<DefineConstants>$(DefineConstants);WINUI</DefineConstants>
 		<PackageDescription>A set of C# for Markup helpers for Uno.Extensions.Navigation.WinUI</PackageDescription>
+		
+		<UnoSingleProject>true</UnoSingleProject>
+		<OutputType>Library</OutputType>
 	</PropertyGroup>
 
 	<ItemGroup>

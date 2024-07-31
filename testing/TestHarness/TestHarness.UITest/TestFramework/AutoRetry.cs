@@ -59,7 +59,7 @@ public partial class AutoRetryAttribute : NUnitAttribute, IRepeatTest
 		/// </summary>
 		/// <param name="context">The context in which the test should run.</param>
 		/// <returns>A TestResult</returns>
-		public override TestResult Execute(TestExecutionContext context)
+		public override NUnit.Framework.Internal.TestResult Execute(TestExecutionContext context)
 		{
 			int count = _tryCount;
 

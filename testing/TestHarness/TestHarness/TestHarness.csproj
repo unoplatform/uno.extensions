@@ -1,0 +1,92 @@
+﻿<Project Sdk="Uno.Sdk">
+	<Import Project="..\..\..\src\tfms-ui-winui.props" />
+
+	<PropertyGroup>
+
+		<OutputType>Exe</OutputType>
+		<UnoSingleProject>true</UnoSingleProject>
+
+		<!-- Display name -->
+		<ApplicationTitle>TestHarness</ApplicationTitle>
+		<!-- App Identifier -->
+		<ApplicationId>com.companyname.TestHarness</ApplicationId>
+		<!-- Versions -->
+		<ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
+		<ApplicationVersion>1</ApplicationVersion>
+		<AssemblyName>TestHarnessApp</AssemblyName>
+		<!--
+			If you encounter this error message:
+
+				error NETSDK1148: A referenced assembly was compiled using a newer version of Microsoft.Windows.SDK.NET.dll.
+				Please update to a newer .NET SDK in order to reference this assembly.
+
+			This means that the two packages below must be aligned with the "build" version number of
+			the "Microsoft.Windows.SDK.BuildTools" package above, and the "revision" version number
+			must be the highest found in https://www.nuget.org/packages/Microsoft.Windows.SDK.NET.Ref.
+		-->
+		<!-- <WindowsSdkPackageVersion>10.0.22621.28</WindowsSdkPackageVersion> -->
+
+		<!--
+			UnoFeatures let's you quickly add and manage implicit package references based on the features you want to use.
+			https://aka.platform.uno/singleproject-features
+		-->
+		<UnoFeatures>
+			Material;
+			Toolkit;
+			Mvvm;
+		</UnoFeatures>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)'=='Debug' or '$(IsUiAutomationMappingEnabled)'=='True'">
+		<IsUiAutomationMappingEnabled>True</IsUiAutomationMappingEnabled>
+		<DefineConstants>$(DefineConstants);USE_UITESTS</DefineConstants>
+	</PropertyGroup>
+
+
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Authentication.Oidc\Uno.Extensions.Authentication.Oidc.WinUI.csproj" />
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Authentication\Uno.Extensions.Authentication.csproj" />
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Authentication.UI\Uno.Extensions.Authentication.WinUI.csproj" />
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Authentication.MSAL\Uno.Extensions.Authentication.MSAL.WinUI.csproj" />
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Configuration\Uno.Extensions.Configuration.csproj" />
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Localization.UI\Uno.Extensions.Localization.WinUI.csproj" />
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Core\Uno.Extensions.Core.csproj" />
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Core.Generators\Uno.Extensions.Core.Generators.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Hosting.UI\Uno.Extensions.Hosting.WinUI.csproj" />
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Hosting\Uno.Extensions.Hosting.csproj" />
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Logging.Serilog\Uno.Extensions.Logging.Serilog.csproj" />
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Logging\Uno.Extensions.Logging.WinUI.csproj" />
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Navigation.Toolkit\Uno.Extensions.Navigation.Toolkit.WinUI.csproj" />
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Navigation.UI\Uno.Extensions.Navigation.WinUI.csproj" />
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Navigation\Uno.Extensions.Navigation.csproj" />
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Navigation.Generators\Uno.Extensions.Navigation.Generators.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Reactive.UI\Uno.Extensions.Reactive.WinUI.csproj" />
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Reactive\Uno.Extensions.Reactive.csproj" />
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Reactive.Generator\Uno.Extensions.Reactive.Generator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Serialization.Http\Uno.Extensions.Serialization.Http.csproj" />
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Serialization.Refit\Uno.Extensions.Serialization.Refit.csproj" />
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Serialization\Uno.Extensions.Serialization.csproj" />
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Http.UI\Uno.Extensions.Http.WinUI.csproj" />
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Http\Uno.Extensions.Http.csproj" />
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Http.Refit\Uno.Extensions.Http.Refit.csproj" />
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Validation\Uno.Extensions.Validation.csproj" />
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Validation.Fluent\Uno.Extensions.Validation.Fluent.csproj" />
+		<ProjectReference Include="..\TestHarness.Core\TestHarness.Core.csproj" />
+
+		<PackageReference Include="Uno.Core.Extensions.Logging.Singleton"/>
+		<!--<PackageReference Include="Uno.Wasm.Bootstrap" />
+		<PackageReference Include="Uno.Wasm.Bootstrap.DevServer" />
+		<PackageReference Include="Uno.Resizetizer" />-->
+	</ItemGroup>
+
+
+
+	<ItemGroup>
+		<None Update="MainPage.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</None>
+	</ItemGroup>
+
+</Project>
