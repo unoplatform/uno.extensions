@@ -47,6 +47,8 @@
 - name: .NET MAUI Embedding
   href: Learn/Maui/toc.yml
   topicHref: xref:Uno.Extensions.Maui.Overview
+- name: Theme Service
+  href: xref:Uno.Extensions.ThemeService.Overview
 - name: Reference
   items:
     - name: MVUX
