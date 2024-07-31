@@ -48,8 +48,7 @@
   href: Learn/Maui/toc.yml
   topicHref: xref:Uno.Extensions.Maui.Overview
 - name: Theme Service
-  href: Learn/ThemeService/toc.yml
-  topicHref: xref:Uno.Extensions.ThemeService.Overview
+  href: xref:Uno.Extensions.ThemeService.Overview
 - name: Reference
   items:
     - name: MVUX
