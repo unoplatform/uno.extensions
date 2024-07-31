@@ -1,10 +1,5 @@
 namespace Playground;
 
-public partial class App : Application
-{
-	private IHost? _host;
-}
-
 public class DebugHttpHandler : DelegatingHandler
 {
 	public DebugHttpHandler(HttpMessageHandler? innerHandler = null)
