@@ -30,6 +30,15 @@
 		<DefineConstants>$(DefineConstants);WINUI</DefineConstants>
 	</PropertyGroup>
 
+<<<<<<< HEAD
+=======
+	<ItemGroup >
+		<!-- MSAL isn't supported on skia targets, macos or maccatalyst -->
+		<PackageReference Include="Uno.WinUI" />
+		<PackageReference Include="Uno.WinUI.MSAL" />
+	</ItemGroup>
+
+>>>>>>> 8b1cd8495 (fix: stub out msal methods on non-supported platforms)
 	<PropertyGroup Condition="$(TargetFramework.ToLower().StartsWith('net6')) and $(_IsAndroid)">
 		<SupportedOSPlatformVersion>31.0</SupportedOSPlatformVersion>
 		<TargetPlatformMinVersion>31.0</TargetPlatformMinVersion>
@@ -56,6 +65,43 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\Uno.Extensions.Http.UI\Uno.Extensions.Http.WinUI.csproj" />
+<<<<<<< HEAD
 		<ProjectReference Include="Uno.Extensions.Authentication.MSAL.WinUI.Wasm.csproj" ReferenceOutputAssembly="false" LinkLibraryDependencies="false" CopyLocal="false" SkipGetTargetFrameworkProperties="true" GlobalPropertiesToRemove="TargetFramework" />
+=======
+	</ItemGroup>
+
+	<PropertyGroup>
+		<!--Temporary disable missing XML doc until fixed in the whole package-->
+		<WarningsNotAsErrors>$(WarningsNotAsErrors);CS1591</WarningsNotAsErrors>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(_IsNetStd)'!='true' and '$(_IsMacOS)'!='true' and '$(_IsCatalyst)'!='true'" >
+		<DefineConstants>$(DefineConstants);UNO_EXT_MSAL</DefineConstants>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Uno.Extensions.Core\Uno.Extensions.Core.csproj" />
+		<ProjectReference Include="..\Uno.Extensions.Configuration\Uno.Extensions.Configuration.csproj" />
+		<ProjectReference Include="..\Uno.Extensions.Hosting\Uno.Extensions.Hosting.csproj" />
+		<ProjectReference Include="..\Uno.Extensions.Authentication\Uno.Extensions.Authentication.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.Extensions.Localization.Abstractions" />
+		<PackageReference Include="Microsoft.Identity.Client" />
+		<PackageReference Include="Microsoft.Identity.Client.Extensions.Msal" />
+	</ItemGroup>
+
+	<ItemGroup Condition="'$(IsBrowserWasm)'!='true'">
+		<Compile Remove="**\*.wasm.cs"/>
+	</ItemGroup>
+
+	<ItemGroup>
+		<Page Include="**\*.xaml" Exclude="bin\**\*.xaml;obj\**\*.xaml" />
+		<Compile Update="**\*.xaml.cs">
+			<DependentUpon>%(Filename)</DependentUpon>
+		</Compile>
+		<UpToDateCheckInput Include="**\*.xaml" Exclude="bin\**\*.xaml;obj\**\*.xaml" />
+>>>>>>> 8b1cd8495 (fix: stub out msal methods on non-supported platforms)
 	</ItemGroup>
 </Project>

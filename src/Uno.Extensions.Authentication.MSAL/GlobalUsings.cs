@@ -9,10 +9,8 @@ global using System.Threading;
 global using System.Threading.Tasks;
 global using Microsoft.Extensions.Logging;
 global using Microsoft.Extensions.Options;
-#if UNO_EXT_MSAL
 global using Microsoft.Identity.Client;
 global using Microsoft.Identity.Client.Extensions.Msal;
-#endif
 global using Uno.Extensions.Authentication;
 global using Uno.Extensions.Authentication.MSAL;
 global using Uno.Extensions.Configuration;

@@ -15,7 +15,6 @@ public class MsalAuthenticationHostInit : BaseMsalHostInitialization
 					auth.AddMsal(msal =>
 						msal
 							.Scopes(new[] { "Tasks.Read", "User.Read", "Tasks.ReadWrite" })
-#if UNO_EXT_MSAL
 							.Builder(msalBuilder =>
 								msalBuilder
 									.WithClientId("161a9fb5-3b16-487a-81a2-ac45dcc0ad3b")
@@ -25,7 +24,6 @@ public class MsalAuthenticationHostInit : BaseMsalHostInitialization
 						//{
 						//	msalBuilder = msalBuilder.WithIosKeychainSecurityGroup(settings.KeychainSecurityGroup);
 						//}
-#endif
 						)
 				);
 	}
