@@ -2,6 +2,9 @@
 
 Uno.Extensions is a series of NuGet packages designed to encapsulate common developer tasks associated with building multi-platform mobile, desktop, and web applications using Uno Platform.
 
+> [!NOTE]
+> Uno.Extensions has dropped support for UWP and has been updated to use the Uno.Sdk for packages that reference Uno.WinUI.
+
 ## Getting Started
 
 See the complete [documentation](xref:Uno.Extensions.Overview) for getting started with Uno.Extensions.
