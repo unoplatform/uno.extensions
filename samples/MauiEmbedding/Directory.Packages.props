@@ -16,7 +16,7 @@
     <PackageVersion Include="Syncfusion.Maui.DataGrid" Version="22.2.9" />
     <PackageVersion Include="Uno.Core.Extensions.Logging.Singleton" Version="4.1.1" />
     <PackageVersion Include="Uno.Extensions.Logging.OSLog" Version="1.7.0" />
-    <PackageVersion Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="5.3.90" />
+    <PackageVersion Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="$(UnoVersion)" />
     <PackageVersion Include="Telerik.UI.for.Maui" Version="5.1.0" Condition="$(_UseTelerik)" />
     <PackageVersion Include="Esri.ArcGISRuntime.Maui" Version="200.1.0" />
     <PackageVersion Include="Microsoft.Windows.Compatibility" Version="7.0.4" />

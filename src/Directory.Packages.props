@@ -4,8 +4,8 @@
 		of both WinUI and Uno.WinUI across Extensions and the MauiEmbedding Sample Project.
 	-->
 	<!-- <PropertyGroup Condition="$(SolutionName) != 'MauiEmbedding'">
-		<UnoVersion Condition="5.3.90 == '' AND !$(MSBuildProjectName.Contains('Maui'))">5.2.175</UnoVersion>
-		<UnoVersion Condition="5.3.90 == '' AND $(MSBuildProjectName.Contains('Maui'))">5.2.175</UnoVersion>
+		<UnoVersion Condition="$(UnoVersion) == '' AND !$(MSBuildProjectName.Contains('Maui'))">5.2.175</UnoVersion>
+		<UnoVersion Condition="$(UnoVersion) == '' AND $(MSBuildProjectName.Contains('Maui'))">5.2.175</UnoVersion>
 		<WinAppSdkVersion Condition="$(WinAppSdkVersion) == ''">1.5.240311000</WinAppSdkVersion>
 	</PropertyGroup> -->
 
