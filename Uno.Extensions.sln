@@ -78,17 +78,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Authenticati
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{BEBE0A7A-DF4F-4250-A50E-6901C936A01B}"
 	ProjectSection(SolutionItems) = preProject
-		crosstargeting_override.props.sample = crosstargeting_override.props.sample
-		Directory.Build.props = Directory.Build.props
-		Directory.Build.targets = Directory.Build.targets
-		Directory.Packages.props = Directory.Packages.props
-		..\global.json = ..\global.json
-		tfms-non-ui.props = tfms-non-ui.props
-		tfms-ui-maui.props = tfms-ui-maui.props
-		tfms-ui-winui-runtimetests.props = tfms-ui-winui-runtimetests.props
-		tfms-ui-winui.props = tfms-ui-winui.props
-		Uno.CrossTargeting.props = Uno.CrossTargeting.props
-		winappsdk-workaround.targets = winappsdk-workaround.targets
+		src\Directory.Build.props = src\Directory.Build.props
+		src\Directory.Build.targets = src\Directory.Build.targets
+		src\Directory.Packages.props = src\Directory.Packages.props
+		global.json = global.json
+		src\tfms-non-ui.props = src\tfms-non-ui.props
+		src\tfms-ui-maui.props = src\tfms-ui-maui.props
+		src\tfms-ui-winui-runtimetests.props = src\tfms-ui-winui-runtimetests.props
+		src\tfms-ui-winui.props = src\tfms-ui-winui.props
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Authentication.Oidc.WinUI", "src\Uno.Extensions.Authentication.Oidc\Uno.Extensions.Authentication.Oidc.WinUI.csproj", "{456DDC7B-4009-4A4E-819D-4E7EA1BEC5FB}"
