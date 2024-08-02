@@ -40,7 +40,7 @@ jobs:
   - task: MSBuild@1
     displayName: Build Extensions Packages
     inputs:
-      solution: src/Uno.Extensions-packageonly.slnf
+      solution: Uno.Extensions-packageonly.slnf
       msbuildLocationMethod: location
       msbuildLocation: $(MSBUILDPATH)
       msbuildArchitecture: x86

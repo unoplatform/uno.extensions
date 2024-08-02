@@ -30,7 +30,7 @@
 
   - script: dotnet build Uno.Extensions-runtimetests.slnf /p:Build_Android=false /p:Build_iOS=false /p:Build_Windows=false /p:Build_MacCatalyst=false /p:Build_Web=false -c Debug -p:GeneratePackageOnBuild=false -bl:$(Build.ArtifactStagingDirectory)/skia-runtime-test-build.binlog
     displayName: 'Build Runtime Tests app'
-    workingDirectory: $(Build.SourcesDirectory)/src
+    workingDirectory: $(Build.SourcesDirectory)
 
   - task: PublishBuildArtifacts@1
     displayName: Publish Build Logs
