@@ -1,0 +1,42 @@
+jobs:
+- job: Android_Tests
+  displayName: 'Android UI Tests'
+  timeoutInMinutes: 60
+  variables:
+    CI_Build: true
+    SourceLinkEnabled: false
+
+  pool:
+    vmImage: 'macos-14'
+
+  steps:
+  - checkout: self
+    clean: true
+
+  - template: templates/dotnet-install-mac.yml
+  - template: templates/canary-updater.yml
+
+  - bash: |
+      chmod +x $(build.sourcesdirectory)/build/ci/scripts/android-uitest-run.sh
+      $(build.sourcesdirectory)/build/ci/scripts/android-uitest-run.sh
+    displayName: Build and Run Android Tests
+    env:
+      BUILD_SOURCESDIRECTORY: "$(build.sourcesdirectory)"
+      BUILD_ARTIFACTSTAGINGDIRECTORY: "$(build.artifactstagingdirectory)"
+
+  - task: PublishTestResults@2
+    condition: always()
+    retryCountOnTaskFailure: 3
+    inputs:
+      testRunTitle: 'Android Test Run'
+      testResultsFormat: 'NUnit'
+      testResultsFiles: '$(build.sourcesdirectory)/build/TestResult.xml'
+      failTaskOnFailedTests: true
+
+  - task: PublishBuildArtifacts@1
+    condition: always()
+    retryCountOnTaskFailure: 3
+    inputs:
+      PathtoPublish: $(build.artifactstagingdirectory)
+      ArtifactName: uno-uitest-tests
+      ArtifactType: Container
