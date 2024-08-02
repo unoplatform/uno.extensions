@@ -1,0 +1,26 @@
+{
+  "solution": {
+    "path": "Uno.Extensions.sln",
+    "projects": [
+      "src\\Uno.Extensions.Core.Generators\\Uno.Extensions.Core.Generators.csproj",
+      "src\\Uno.Extensions.Core.Tests\\Uno.Extensions.Core.Tests.csproj",
+      "src\\Uno.Extensions.Core\\Uno.Extensions.Core.csproj",
+      "src\\Uno.Extensions.Reactive.Generator\\Uno.Extensions.Reactive.Generator.csproj",
+      "src\\Uno.Extensions.Reactive.Messaging\\Uno.Extensions.Reactive.Messaging.csproj",
+      "src\\Uno.Extensions.Reactive.Testing\\Uno.Extensions.Reactive.Testing.csproj",
+      "src\\Uno.Extensions.Reactive.Tests\\Uno.Extensions.Reactive.Tests.csproj",
+      "src\\Uno.Extensions.Reactive.UI.Markup\\Uno.Extensions.Reactive.WinUI.Markup.csproj",
+      "src\\Uno.Extensions.Reactive.UI.Tests\\Uno.Extensions.Reactive.WinUI.Tests.csproj",
+      "src\\Uno.Extensions.Reactive.UI\\Uno.Extensions.Reactive.UI.csproj",
+      "src\\Uno.Extensions.Reactive.UI\\Uno.Extensions.Reactive.WinUI.csproj",
+      "src\\Uno.Extensions.Reactive\\Uno.Extensions.Reactive.csproj",
+      "src\\Uno.Extensions.RuntimeTests.Core\\Uno.Extensions.RuntimeTests.Core.csproj",
+      "src\\Uno.Extensions.RuntimeTests\\Uno.Extensions.RuntimeTests.Mobile\\Uno.Extensions.RuntimeTests.Mobile.csproj",
+      "src\\Uno.Extensions.RuntimeTests\\Uno.Extensions.RuntimeTests.Shared\\Uno.Extensions.RuntimeTests.Shared.shproj",
+      "src\\Uno.Extensions.RuntimeTests\\Uno.Extensions.RuntimeTests.Skia.Gtk\\Uno.Extensions.RuntimeTests.Skia.Gtk.csproj",
+      "src\\Uno.Extensions.RuntimeTests\\Uno.Extensions.RuntimeTests.Skia.Wpf\\Uno.Extensions.RuntimeTests.Skia.Wpf.csproj",
+      "src\\Uno.Extensions.RuntimeTests\\Uno.Extensions.RuntimeTests.Wasm\\Uno.Extensions.RuntimeTests.Wasm.csproj",
+      "src\\Uno.Extensions.RuntimeTests\\Uno.Extensions.RuntimeTests.Windows\\Uno.Extensions.RuntimeTests.Windows.csproj"
+    ]
+  }
+}

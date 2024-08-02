@@ -35,26 +35,16 @@
 		<PackageVersion Include="SkiaSharp.Views.WPF" Version="2.88.7" />
 		<PackageVersion Include="Swashbuckle.AspNetCore" Version="6.2.3" />
 		<PackageVersion Include="System.ComponentModel.Annotations" Version="5.0.0" />
-		<!--<PackageVersion Include="System.Text.Json" Version="8.0.4" />-->
 		<PackageVersion Include="Uno.CommunityToolkit.WinUI.UI" Version="7.1.100" />
 		<PackageVersion Include="Uno.Core.Extensions.Logging.Singleton" Version="4.1.1" />
-		<PackageVersion Include="Uno.Extensions.Logging.OSLog " Version="1.7.0" />
+		<PackageVersion Include="Uno.Extensions.Logging.OSLog" Version="1.7.0" />
 		<PackageVersion Include="Uno.Extensions.Logging.WebAssembly.Console" Version="1.7.0" />
-		<!--<PackageVersion Include="Uno.Material" Version="5.0.13" />
-		<PackageVersion Include="Uno.Material.WinUI" Version="5.0.13" />-->
-		<!--<PackageVersion Include="Uno.Microsoft.Toolkit.Uwp.UI" Version="7.1.11" />-->
-		<!--<PackageVersion Include="Uno.Toolkit.UI" Version="6.0.24" />
-		<PackageVersion Include="Uno.Toolkit.UI.Material" Version="6.0.24" />
-		<PackageVersion Include="Uno.Toolkit.WinUI" Version="6.0.24" />
-		<PackageVersion Include="Uno.Toolkit.WinUI.Material" Version="6.0.24" />-->
+		<PackageVersion Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="$(UnoVersion)"/>
 		<PackageVersion Include="Uno.UITest" Version="1.1.0-dev.70" />
 		<PackageVersion Include="Uno.UITest.Selenium" Version="1.1.0-dev.70" />
 		<PackageVersion Include="Uno.UITest.Xamarin" Version="1.1.0-dev.70" />
 		<PackageVersion Include="Uno.UITest.Helpers" Version="1.1.0-dev.70" />
-		<!--<PackageVersion Include="Uno.UniversalImageLoader" Version="1.9.36" />
-		<PackageVersion Include="Uno.Resizetizer" Version="1.4.10" />
-		<PackageVersion Include="Uno.Wasm.Bootstrap" Version="8.0.17" />
-		<PackageVersion Include="Uno.Wasm.Bootstrap.DevServer" Version="8.0.17" />-->
+		<PackageVersion Include="Uno.WinUI" Version="$(UnoVersion)" />
 		<PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.9.0" />
 		<PackageVersion Include="Newtonsoft.Json" Version="13.0.3" />
 		<PackageVersion Include="NUnit" Version="4.1.0" />

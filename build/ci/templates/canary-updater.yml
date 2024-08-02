@@ -1,7 +1,7 @@
 steps:
   - template: canary-update-template.yml
     parameters:
-      SolutionToUpdate: 'src/Uno.Extensions.sln'
+      SolutionToUpdate: 'Uno.Extensions.sln'
 
   - template: canary-update-template.yml
     parameters:

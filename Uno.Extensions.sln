@@ -3,29 +3,29 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.1.31903.286
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Core", "Uno.Extensions.Core\Uno.Extensions.Core.csproj", "{793208E1-158C-4218-A453-E8256947E2ED}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Core", "src\Uno.Extensions.Core\Uno.Extensions.Core.csproj", "{793208E1-158C-4218-A453-E8256947E2ED}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Hosting", "Uno.Extensions.Hosting\Uno.Extensions.Hosting.csproj", "{D5CAEE0E-E43F-4432-92C5-FE3B2181897D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Hosting", "src\Uno.Extensions.Hosting\Uno.Extensions.Hosting.csproj", "{D5CAEE0E-E43F-4432-92C5-FE3B2181897D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Localization", "Uno.Extensions.Localization\Uno.Extensions.Localization.csproj", "{ECCF3E50-2D4A-43A7-B16D-88EFC06017AD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Localization", "src\Uno.Extensions.Localization\Uno.Extensions.Localization.csproj", "{ECCF3E50-2D4A-43A7-B16D-88EFC06017AD}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Configuration", "Uno.Extensions.Configuration\Uno.Extensions.Configuration.csproj", "{D8703D0A-D1C9-4C6B-AE18-507FBC1C5823}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Configuration", "src\Uno.Extensions.Configuration\Uno.Extensions.Configuration.csproj", "{D8703D0A-D1C9-4C6B-AE18-507FBC1C5823}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Serialization", "Uno.Extensions.Serialization\Uno.Extensions.Serialization.csproj", "{247E0202-11F8-428A-B6F2-6AABCD222475}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Serialization", "src\Uno.Extensions.Serialization\Uno.Extensions.Serialization.csproj", "{247E0202-11F8-428A-B6F2-6AABCD222475}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Http", "Uno.Extensions.Http\Uno.Extensions.Http.csproj", "{F6921B06-3F17-442B-B245-786DEFFE60A2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Http", "src\Uno.Extensions.Http\Uno.Extensions.Http.csproj", "{F6921B06-3F17-442B-B245-786DEFFE60A2}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Http.Refit", "Uno.Extensions.Http.Refit\Uno.Extensions.Http.Refit.csproj", "{571B4368-E13C-4ECA-B342-5838E2020310}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Http.Refit", "src\Uno.Extensions.Http.Refit\Uno.Extensions.Http.Refit.csproj", "{571B4368-E13C-4ECA-B342-5838E2020310}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Serialization.Http", "Uno.Extensions.Serialization.Http\Uno.Extensions.Serialization.Http.csproj", "{A04C2FDC-34A0-4619-8C80-BFDED66B72CD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Serialization.Http", "src\Uno.Extensions.Serialization.Http\Uno.Extensions.Serialization.Http.csproj", "{A04C2FDC-34A0-4619-8C80-BFDED66B72CD}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Serialization.Refit", "Uno.Extensions.Serialization.Refit\Uno.Extensions.Serialization.Refit.csproj", "{F03CE17C-F19D-4057-983E-5A260624B888}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Serialization.Refit", "src\Uno.Extensions.Serialization.Refit\Uno.Extensions.Serialization.Refit.csproj", "{F03CE17C-F19D-4057-983E-5A260624B888}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Serialization.Tests", "Uno.Extensions.Serialization.Tests\Uno.Extensions.Serialization.Tests.csproj", "{811AEBB3-BCE1-4B53-8F93-ACFAA3328C14}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Serialization.Tests", "src\Uno.Extensions.Serialization.Tests\Uno.Extensions.Serialization.Tests.csproj", "{811AEBB3-BCE1-4B53-8F93-ACFAA3328C14}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Logging.Serilog", "Uno.Extensions.Logging.Serilog\Uno.Extensions.Logging.Serilog.csproj", "{CE4D658B-DC36-46CB-85C0-F8DA140E92BA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Logging.Serilog", "src\Uno.Extensions.Logging.Serilog\Uno.Extensions.Logging.Serilog.csproj", "{CE4D658B-DC36-46CB-85C0-F8DA140E92BA}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Navigation", "Uno.Extensions.Navigation\Uno.Extensions.Navigation.csproj", "{0271AD7C-E7FD-4BB0-BDE5-3EE834AF2199}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Navigation", "src\Uno.Extensions.Navigation\Uno.Extensions.Navigation.csproj", "{0271AD7C-E7FD-4BB0-BDE5-3EE834AF2199}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Serialization", "Serialization", "{D3FBC1A0-E7E5-431A-BAC6-BCE8DB1AD4FB}"
 EndProject
@@ -43,38 +43,38 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Configuration", "Configurat
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Reactive", "Reactive", "{6B956AB1-06A6-4BEC-9467-E7B593A89E34}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Reactive", "Uno.Extensions.Reactive\Uno.Extensions.Reactive.csproj", "{4CFBA6CE-2C70-4241-8085-B40D6DD36D1F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Reactive", "src\Uno.Extensions.Reactive\Uno.Extensions.Reactive.csproj", "{4CFBA6CE-2C70-4241-8085-B40D6DD36D1F}"
 	ProjectSection(ProjectDependencies) = postProject
 		{4CAB68E2-8ABC-489E-9F6A-3BE6A91A0DC3} = {4CAB68E2-8ABC-489E-9F6A-3BE6A91A0DC3}
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Reactive.Testing", "Uno.Extensions.Reactive.Testing\Uno.Extensions.Reactive.Testing.csproj", "{FEA65A36-C4FB-4A4D-9F6B-A6E0778BB363}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Reactive.Testing", "src\Uno.Extensions.Reactive.Testing\Uno.Extensions.Reactive.Testing.csproj", "{FEA65A36-C4FB-4A4D-9F6B-A6E0778BB363}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Reactive.Tests", "Uno.Extensions.Reactive.Tests\Uno.Extensions.Reactive.Tests.csproj", "{2125E823-0EAF-44D0-A9AF-85B2F0E50C14}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Reactive.Tests", "src\Uno.Extensions.Reactive.Tests\Uno.Extensions.Reactive.Tests.csproj", "{2125E823-0EAF-44D0-A9AF-85B2F0E50C14}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Navigation.WinUI", "Uno.Extensions.Navigation.UI\Uno.Extensions.Navigation.WinUI.csproj", "{7AB8EDEC-D027-428D-A59E-2C3AAC4BF904}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Navigation.WinUI", "src\Uno.Extensions.Navigation.UI\Uno.Extensions.Navigation.WinUI.csproj", "{7AB8EDEC-D027-428D-A59E-2C3AAC4BF904}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Localization.WinUI", "Uno.Extensions.Localization.UI\Uno.Extensions.Localization.WinUI.csproj", "{ED24D8A7-F009-46EB-B848-1CFAA34487D5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Localization.WinUI", "src\Uno.Extensions.Localization.UI\Uno.Extensions.Localization.WinUI.csproj", "{ED24D8A7-F009-46EB-B848-1CFAA34487D5}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Reactive.Generator", "Uno.Extensions.Reactive.Generator\Uno.Extensions.Reactive.Generator.csproj", "{4CAB68E2-8ABC-489E-9F6A-3BE6A91A0DC3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Reactive.Generator", "src\Uno.Extensions.Reactive.Generator\Uno.Extensions.Reactive.Generator.csproj", "{4CAB68E2-8ABC-489E-9F6A-3BE6A91A0DC3}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Hosting.WinUI", "Uno.Extensions.Hosting.UI\Uno.Extensions.Hosting.WinUI.csproj", "{5AF1DA94-11B0-4C30-BEF5-7FF3A5F9D869}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Hosting.WinUI", "src\Uno.Extensions.Hosting.UI\Uno.Extensions.Hosting.WinUI.csproj", "{5AF1DA94-11B0-4C30-BEF5-7FF3A5F9D869}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Logging.WinUI", "Uno.Extensions.Logging\Uno.Extensions.Logging.WinUI.csproj", "{ABC151F8-855F-4D2B-A7AA-F0207AD6E847}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Logging.WinUI", "src\Uno.Extensions.Logging\Uno.Extensions.Logging.WinUI.csproj", "{ABC151F8-855F-4D2B-A7AA-F0207AD6E847}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Navigation.Toolkit.WinUI", "Uno.Extensions.Navigation.Toolkit\Uno.Extensions.Navigation.Toolkit.WinUI.csproj", "{54E67E51-B1D0-4A3F-9EE9-A58329074CC3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Navigation.Toolkit.WinUI", "src\Uno.Extensions.Navigation.Toolkit\Uno.Extensions.Navigation.Toolkit.WinUI.csproj", "{54E67E51-B1D0-4A3F-9EE9-A58329074CC3}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Reactive.WinUI", "Uno.Extensions.Reactive.UI\Uno.Extensions.Reactive.WinUI.csproj", "{0F3C7D7A-C57C-41C0-86B9-34C9B5A1643A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Reactive.WinUI", "src\Uno.Extensions.Reactive.UI\Uno.Extensions.Reactive.WinUI.csproj", "{0F3C7D7A-C57C-41C0-86B9-34C9B5A1643A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Reactive.Messaging", "Uno.Extensions.Reactive.Messaging\Uno.Extensions.Reactive.Messaging.csproj", "{B54E4D85-188D-4B19-93B0-2248FFAA6144}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Reactive.Messaging", "src\Uno.Extensions.Reactive.Messaging\Uno.Extensions.Reactive.Messaging.csproj", "{B54E4D85-188D-4B19-93B0-2248FFAA6144}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Authentication", "Authentication", "{FEABD28F-23AE-4CDC-9933-44D6717C681C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Authentication", "Uno.Extensions.Authentication\Uno.Extensions.Authentication.csproj", "{E3EF3679-46F8-4E20-A491-E2D1FD7D881B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Authentication", "src\Uno.Extensions.Authentication\Uno.Extensions.Authentication.csproj", "{E3EF3679-46F8-4E20-A491-E2D1FD7D881B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Authentication.WinUI", "Uno.Extensions.Authentication.UI\Uno.Extensions.Authentication.WinUI.csproj", "{C76A3086-846C-4919-A1A3-7F2E67C5A355}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Authentication.WinUI", "src\Uno.Extensions.Authentication.UI\Uno.Extensions.Authentication.WinUI.csproj", "{C76A3086-846C-4919-A1A3-7F2E67C5A355}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Authentication.MSAL.WinUI", "Uno.Extensions.Authentication.MSAL\Uno.Extensions.Authentication.MSAL.WinUI.csproj", "{978A32D5-B542-4E4D-9F2E-AE78752F9633}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Authentication.MSAL.WinUI", "src\Uno.Extensions.Authentication.MSAL\Uno.Extensions.Authentication.MSAL.WinUI.csproj", "{978A32D5-B542-4E4D-9F2E-AE78752F9633}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{BEBE0A7A-DF4F-4250-A50E-6901C936A01B}"
 	ProjectSection(SolutionItems) = preProject
@@ -82,7 +82,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		Directory.Build.props = Directory.Build.props
 		Directory.Build.targets = Directory.Build.targets
 		Directory.Packages.props = Directory.Packages.props
-		global.json = global.json
+		..\global.json = ..\global.json
 		tfms-non-ui.props = tfms-non-ui.props
 		tfms-ui-maui.props = tfms-ui-maui.props
 		tfms-ui-winui-runtimetests.props = tfms-ui-winui-runtimetests.props
@@ -91,53 +91,53 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		winappsdk-workaround.targets = winappsdk-workaround.targets
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Authentication.Oidc.WinUI", "Uno.Extensions.Authentication.Oidc\Uno.Extensions.Authentication.Oidc.WinUI.csproj", "{456DDC7B-4009-4A4E-819D-4E7EA1BEC5FB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Authentication.Oidc.WinUI", "src\Uno.Extensions.Authentication.Oidc\Uno.Extensions.Authentication.Oidc.WinUI.csproj", "{456DDC7B-4009-4A4E-819D-4E7EA1BEC5FB}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Storage", "Storage", "{8C4F4055-0DDD-4BA9-BC90-12B92D9EE774}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Storage", "Uno.Extensions.Storage\Uno.Extensions.Storage.csproj", "{FE27ED72-D0A7-4C6C-B23D-3D178557D889}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Storage", "src\Uno.Extensions.Storage\Uno.Extensions.Storage.csproj", "{FE27ED72-D0A7-4C6C-B23D-3D178557D889}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Storage.WinUI", "Uno.Extensions.Storage.UI\Uno.Extensions.Storage.WinUI.csproj", "{24904601-971A-40B0-BA89-EADB2442513A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Storage.WinUI", "src\Uno.Extensions.Storage.UI\Uno.Extensions.Storage.WinUI.csproj", "{24904601-971A-40B0-BA89-EADB2442513A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Core.Generators", "Uno.Extensions.Core.Generators\Uno.Extensions.Core.Generators.csproj", "{A58BFE43-C9CF-40FD-B39A-B0488967810B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Core.Generators", "src\Uno.Extensions.Core.Generators\Uno.Extensions.Core.Generators.csproj", "{A58BFE43-C9CF-40FD-B39A-B0488967810B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Core.Tests", "Uno.Extensions.Core.Tests\Uno.Extensions.Core.Tests.csproj", "{70345491-481C-4B75-902C-8D7E473EE4BA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Core.Tests", "src\Uno.Extensions.Core.Tests\Uno.Extensions.Core.Tests.csproj", "{70345491-481C-4B75-902C-8D7E473EE4BA}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Navigation.WinUI.Markup", "Uno.Extensions.Navigation.UI.Markup\Uno.Extensions.Navigation.WinUI.Markup.csproj", "{93D4147A-94BC-4599-94EB-51E77E673BF9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Navigation.WinUI.Markup", "src\Uno.Extensions.Navigation.UI.Markup\Uno.Extensions.Navigation.WinUI.Markup.csproj", "{93D4147A-94BC-4599-94EB-51E77E673BF9}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Reactive.WinUI.Markup", "Uno.Extensions.Reactive.UI.Markup\Uno.Extensions.Reactive.WinUI.Markup.csproj", "{2890C1C1-D58C-4D39-963E-F27D17F96E9F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Reactive.WinUI.Markup", "src\Uno.Extensions.Reactive.UI.Markup\Uno.Extensions.Reactive.WinUI.Markup.csproj", "{2890C1C1-D58C-4D39-963E-F27D17F96E9F}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Tests", "Solution Tests", "{FB399485-A0B1-4416-A494-E19AC7F5A665}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Reactive.WinUI.Tests", "Uno.Extensions.Reactive.UI.Tests\Uno.Extensions.Reactive.WinUI.Tests.csproj", "{38982DC2-D562-4702-B215-3819EC434DA1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Reactive.WinUI.Tests", "src\Uno.Extensions.Reactive.UI.Tests\Uno.Extensions.Reactive.WinUI.Tests.csproj", "{38982DC2-D562-4702-B215-3819EC434DA1}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Toolkit", "Toolkit", "{069DD21F-46E5-4379-ADF6-81AE5FCD54B5}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Toolkit", "Uno.Extensions.Toolkit\Uno.Extensions.Toolkit.csproj", "{219987B9-C746-40B4-AEE2-91D542075BFE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Toolkit", "src\Uno.Extensions.Toolkit\Uno.Extensions.Toolkit.csproj", "{219987B9-C746-40B4-AEE2-91D542075BFE}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Toolkit.WinUI", "Uno.Extensions.Toolkit.UI\Uno.Extensions.Toolkit.WinUI.csproj", "{2FADB746-5211-44DB-8F2B-5B4C9617290B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Toolkit.WinUI", "src\Uno.Extensions.Toolkit.UI\Uno.Extensions.Toolkit.WinUI.csproj", "{2FADB746-5211-44DB-8F2B-5B4C9617290B}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Validation", "Validation", "{B1477A2C-41F4-4970-8640-5CCF8DA3EDFD}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Validation", "Uno.Extensions.Validation\Uno.Extensions.Validation.csproj", "{F0668EB6-9C39-42A9-BE4A-AF57FD7E9A1D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Validation", "src\Uno.Extensions.Validation\Uno.Extensions.Validation.csproj", "{F0668EB6-9C39-42A9-BE4A-AF57FD7E9A1D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Validation.Fluent", "Uno.Extensions.Validation.Fluent\Uno.Extensions.Validation.Fluent.csproj", "{EEF81643-E541-4298-92FF-F0AF8433C44B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Validation.Fluent", "src\Uno.Extensions.Validation.Fluent\Uno.Extensions.Validation.Fluent.csproj", "{EEF81643-E541-4298-92FF-F0AF8433C44B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Core.WinUI", "Uno.Extensions.Core.UI\Uno.Extensions.Core.WinUI.csproj", "{FBD4CA61-6709-40BA-9E64-C34672A27568}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Core.WinUI", "src\Uno.Extensions.Core.UI\Uno.Extensions.Core.WinUI.csproj", "{FBD4CA61-6709-40BA-9E64-C34672A27568}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Navigation.Generators", "Uno.Extensions.Navigation.Generators\Uno.Extensions.Navigation.Generators.csproj", "{2F076ADB-04CE-4C75-A63E-90A160BB4C30}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Navigation.Generators", "src\Uno.Extensions.Navigation.Generators\Uno.Extensions.Navigation.Generators.csproj", "{2F076ADB-04CE-4C75-A63E-90A160BB4C30}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Http.WinUI", "Uno.Extensions.Http.UI\Uno.Extensions.Http.WinUI.csproj", "{E2F71C96-1C18-4C05-AD21-94231A260436}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Http.WinUI", "src\Uno.Extensions.Http.UI\Uno.Extensions.Http.WinUI.csproj", "{E2F71C96-1C18-4C05-AD21-94231A260436}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Maui.WinUI", "Uno.Extensions.Maui.UI\Uno.Extensions.Maui.WinUI.csproj", "{D2F84DF8-C3BF-4FA2-B378-6AEDD6B6C350}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Maui.WinUI", "src\Uno.Extensions.Maui.UI\Uno.Extensions.Maui.WinUI.csproj", "{D2F84DF8-C3BF-4FA2-B378-6AEDD6B6C350}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Maui", "Maui", "{2197ADCE-59C4-465A-B380-0B06BF68BBBC}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Maui.WinUI.Markup", "Uno.Extensions.Maui.WinUI.Markup\Uno.Extensions.Maui.WinUI.Markup.csproj", "{B72698C5-6706-4275-8A2B-A1D39FE9B13E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Maui.WinUI.Markup", "src\Uno.Extensions.Maui.WinUI.Markup\Uno.Extensions.Maui.WinUI.Markup.csproj", "{B72698C5-6706-4275-8A2B-A1D39FE9B13E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.RuntimeTests", "Uno.Extensions.RuntimeTests\Uno.Extensions.RuntimeTests\Uno.Extensions.RuntimeTests.csproj", "{A42362AF-8A61-4BBA-AA8A-E43323D5A063}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.RuntimeTests", "src\Uno.Extensions.RuntimeTests\Uno.Extensions.RuntimeTests\Uno.Extensions.RuntimeTests.csproj", "{A42362AF-8A61-4BBA-AA8A-E43323D5A063}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.RuntimeTests.Core", "Uno.Extensions.RuntimeTests\Uno.Extensions.RuntimeTests.Core\Uno.Extensions.RuntimeTests.Core.csproj", "{869C9E5B-0F85-4316-BC4B-CB6CBFCC02A3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.RuntimeTests.Core", "src\Uno.Extensions.RuntimeTests\Uno.Extensions.RuntimeTests.Core\Uno.Extensions.RuntimeTests.Core.csproj", "{869C9E5B-0F85-4316-BC4B-CB6CBFCC02A3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

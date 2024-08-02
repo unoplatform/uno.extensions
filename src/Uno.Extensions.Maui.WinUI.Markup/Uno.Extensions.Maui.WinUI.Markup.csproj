@@ -19,6 +19,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.Extensions.Logging" />
+		<PackageReference Include="Uno.WinUI" />
 		<PackageReference Include="Uno.WinUI.Markup" />
 		<PackageReference Include="Microsoft.Maui.Controls" />
 		<PackageReference Include="Microsoft.Maui.Controls.Compatibility" />
