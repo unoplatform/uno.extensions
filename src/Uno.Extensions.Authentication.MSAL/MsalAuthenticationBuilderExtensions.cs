@@ -5,8 +5,6 @@
 /// </summary>
 public static class MsalAuthenticationBuilderExtensions
 {
-#if UNO_EXT_MSAL
-
 	/// <summary>
 	/// Configures the MSAL authentication feature to use a public client application builder.
 	/// </summary>
@@ -24,6 +22,9 @@ public static class MsalAuthenticationBuilderExtensions
 		Action<PublicClientApplicationBuilder> build
 		)
 	{
+#if !UNO_EXT_MSAL
+		return builder;
+#else
 		if (builder is IBuilder<MsalAuthenticationSettings> authBuilder)
 		{
 			authBuilder.Settings = authBuilder.Settings with
@@ -33,6 +34,7 @@ public static class MsalAuthenticationBuilderExtensions
 		}
 
 		return builder;
+#endif
 	}
 
 	/// <summary>
@@ -52,6 +54,9 @@ public static class MsalAuthenticationBuilderExtensions
 		Action<StorageCreationPropertiesBuilder> store
 		)
 	{
+#if !UNO_EXT_MSAL
+		return builder;
+#else
 		if (builder is IBuilder<MsalAuthenticationSettings> authBuilder)
 		{
 			authBuilder.Settings = authBuilder.Settings with
@@ -61,8 +66,8 @@ public static class MsalAuthenticationBuilderExtensions
 		}
 
 		return builder;
-	}
 #endif
+	}
 
 	/// <summary>
 	/// Configures the MSAL authentication feature to be built with the specified scopes for authentication.
@@ -81,6 +86,9 @@ public static class MsalAuthenticationBuilderExtensions
 		string[] scopes
 		)
 	{
+#if !UNO_EXT_MSAL
+		return builder;
+#else
 		if (builder is IBuilder<MsalAuthenticationSettings> authBuilder)
 		{
 			authBuilder.Settings = authBuilder.Settings with
@@ -90,9 +98,9 @@ public static class MsalAuthenticationBuilderExtensions
 		}
 
 		return builder;
+#endif
 	}
 
-#if UNO_EXT_MSAL
 	/// <summary>
 	/// Configures a public client application builder to create the MSAL authentication 
 	/// feature to use the redirect Uri provided by WebAuthenticationBroker.
@@ -106,7 +114,10 @@ public static class MsalAuthenticationBuilderExtensions
 	[MethodImpl(MethodImplOptions.NoInlining)]
 	public static PublicClientApplicationBuilder WithWebRedirectUri(this PublicClientApplicationBuilder builder)
 	{
+#if !UNO_EXT_MSAL
+		return builder;
+#else
 		return builder.WithRedirectUri(WebAuthenticationBroker.GetCurrentApplicationCallbackUri().OriginalString);
-	}
 #endif
+	}
 }
