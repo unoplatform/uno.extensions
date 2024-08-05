@@ -61,7 +61,6 @@ This allows an easy inclusion of the Toolkit in existing projects.
 
     ```xml
     <PackageVersion Include="Uno.Toolkit.WinUI" Version="0.0.0" />
-    <PackageVersion Include="Uno.Extensions.Toolkit.WinUI" Version="0.0.0" />
     <PackageVersion Include="Uno.Toolkit.WinUI.Markup" Version="0.0.0" />
     ```
 
@@ -73,7 +72,6 @@ This allows an easy inclusion of the Toolkit in existing projects.
     - PROJECT_NAME.Windows.csproj (or PROJECT_NAME.UWP.csproj for existing projects)
 
     ```xml
-    <PackageReference Include="Uno.Extensions.Toolkit.WinUI" />
     <PackageReference Include="Uno.Toolkit.WinUI.Markup" />
     ```
 
