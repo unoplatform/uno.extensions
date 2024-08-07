@@ -43,6 +43,7 @@ internal class UnoServiceProviderFactory : IServiceProviderFactory<IServiceProvi
 		var serviceProvider = _mauiAppBuilder.Services.BuildServiceProvider();
 
 		// Register the singleton instances captured earlier with the mutable instance container
+		// TODO: Revisit this and ensure that we shouldn't refactor this... it's a bit of a hack
 		singletons.ForEach(sreg => serviceProvider.AddSingletonInstance(sreg.ServiceType, sreg.Implementation));
 
 		_mauiAppBuilder.ConfigureContainer(new MauiServiceProviderFactory(serviceProvider));
