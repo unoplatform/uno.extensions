@@ -41,8 +41,6 @@ public static class ServiceCollectionExtensions
 						};
 						return config;
 					})
-					.AddSingleton<ISingletonInstanceRepository, InstanceRepository>()
-					.AddScoped<IScopedInstanceRepository, InstanceRepository>()
 					.AddSingleton<IResponseNavigatorFactory, ResponseNavigatorFactory>()
 
 					.AddSingleton<RouteNotifier>()

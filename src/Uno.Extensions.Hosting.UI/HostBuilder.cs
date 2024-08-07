@@ -224,6 +224,10 @@ public class HostBuilder : IHostBuilder
 		// register configuration as factory to make it dispose with the service provider
 		services.AddSingleton(_ => _appConfiguration!);
 		services.AddSingleton<IHostApplicationLifetime, ApplicationLifetime>();
+
+		services.AddSingleton<ISingletonInstanceRepository, InstanceRepository>();
+		services.AddScoped<IScopedInstanceRepository, InstanceRepository>();
+
 		services.AddSingleton((Func<IServiceProvider, IHost>)(_ =>
 		{
 			return (IHost)new Internal.Host(_appServices,
