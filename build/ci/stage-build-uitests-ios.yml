@@ -16,7 +16,7 @@ jobs:
 
   - template: templates/xcode-select.yml
     parameters:
-      xCodeRoot: $(XCODE_ROOT)
+      xCodeRoot: '/Applications/Xcode_15.2.app'
 
   - template: templates/canary-updater.yml
 
