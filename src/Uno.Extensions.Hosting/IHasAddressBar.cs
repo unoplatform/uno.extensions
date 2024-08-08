@@ -12,8 +12,11 @@ public interface IHasAddressBar
 	/// <param name="applicationUri">
 	/// The URI to update the address bar with.
 	/// </param>
+	/// <param name="canGoBack">
+	/// Whether it is possible to navigate back or not.
+	/// </param>
 	/// <returns>
 	/// A task that completes when the address bar has been updated.
 	/// </returns>
-	Task UpdateAddressBar(Uri applicationUri);
+	Task UpdateAddressBar(Uri applicationUri, bool canGoBack);
 }
