@@ -26,7 +26,7 @@
 		<StackPanel Grid.Row="1"
 					HorizontalAlignment="Center"
 					VerticalAlignment="Center">
-			<Button uen:Navigation.Request="/RegionsFourth" Content="Go to Fourth" />
+			<Button uen:Navigation.Request="RegionsFourth" Content="Go to Fourth" />
 		</StackPanel>
 	</Grid>
 </Page>
