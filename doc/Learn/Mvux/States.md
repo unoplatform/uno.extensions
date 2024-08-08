@@ -156,7 +156,7 @@ public async ValueTask IncrementSlider(CancellationToken ct = default)
         ? currentValue + 1
         : 1;
 
-    await SliderValue.Update(updater: incrementValue, ct);
+    await SliderValue.UpdateAsync(updater: incrementValue, ct);
 }
 ```
 
@@ -169,7 +169,7 @@ There are additional methods that update the data of a State such as `Set` and `
 ```csharp
 public async ValueTask SetSliderMiddle(CancellationToken ct = default)
 {    
-    await SliderValue.Set(50, ct);
+    await SliderValue.SetAsync(50, ct);
 }
 ```
 
