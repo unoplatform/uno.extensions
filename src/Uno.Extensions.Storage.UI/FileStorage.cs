@@ -27,9 +27,9 @@ internal record FileStorage(ILogger<FileStorage> Logger, IDataFolderProvider Dat
 		{
 			if (!await FileExistsInPackage(filename))
 			{
-				if (Logger.IsEnabled(LogLevel.Warning))
+				if (Logger.IsEnabled(LogLevel.Information))
 				{
-					Logger.LogWarningMessage($"File '{filename}' does not exist in package");
+					Logger.LogInformationMessage($"File '{filename}' does not exist in package");
 				}
 				return default;
 			}
@@ -68,9 +68,9 @@ internal record FileStorage(ILogger<FileStorage> Logger, IDataFolderProvider Dat
 		}
 		catch (Exception ex)
 		{
-			if (Logger.IsEnabled(LogLevel.Warning))
+			if (Logger.IsEnabled(LogLevel.Information))
 			{
-				Logger.LogWarningMessage($"Unable to read file '{filename}' due to exception {ex.Message}");
+				Logger.LogInformationMessage($"Unable to read file '{filename}' due to exception {ex.Message}");
 			}
 			return default;
 		}
