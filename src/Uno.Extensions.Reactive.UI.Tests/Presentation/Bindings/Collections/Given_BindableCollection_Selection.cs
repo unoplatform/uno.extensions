@@ -62,6 +62,19 @@ public partial class Given_BindableCollection_Selection : FeedTests
 	}
 
 	[TestMethod]
+	public async Task When_PreselectedItem_SelectedItems_ListView()
+	{
+		var (vm, lv, items) = await SetupListView(ListViewSelectionMode.Multiple);
+
+		items[0].IsSelected = true;
+
+		await TestHelper.WaitFor(async ct =>
+		{
+			return (await vm.Items.GetSelectedItems(ct)).SequenceEqual(new MyItem[] { });
+		}, CT);
+	}
+
+	[TestMethod]
 	[InjectedPointer(PointerDeviceType.Mouse)]
 #if !__SKIA__
 	[Ignore("Pointer injection not supported yet on this platform")]
