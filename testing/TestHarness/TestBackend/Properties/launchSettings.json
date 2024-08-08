@@ -9,7 +9,7 @@
   },
   "profiles": {
     // This profile is first in order for dotnet run to pick it up by default
-    "UnoApp70 (WebAssembly)": {
+    "TestHarness (WebAssembly)": {
       "commandName": "Project",
       "dotnetRunMessages": true,
       "launchBrowser": true,
@@ -19,7 +19,7 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
-    "UnoApp70 (WebAssembly IIS Express)": {
+    "TestHarness (WebAssembly IIS Express)": {
       "commandName": "IISExpress",
       "launchBrowser": true,
       "inspectUri": "{wsProtocol}://{url.hostname}:{url.port}/_framework/debug/ws-proxy?browser={browserInspectUri}",
@@ -28,19 +28,19 @@
       }
     },
     // Note: In order to select this profile, you'll need to comment the `Packaged` profile below until this is fixed: https://aka.platform.uno/wasdk-maui-debug-profile-issue
-    "UnoApp70 (WinAppSDK Unpackaged)": {
+    "TestHarness (WinAppSDK Unpackaged)": {
       "commandName": "Project",
       "compatibleTargetFramework": "windows"
     },
-    "UnoApp70 (WinAppSDK Packaged)": {
+    "TestHarness (WinAppSDK Packaged)": {
       "commandName": "MsixPackage",
       "compatibleTargetFramework": "windows"
     },
-    "UnoApp70 (Desktop)": {
+    "TestHarness (Desktop)": {
       "commandName": "Project",
       "compatibleTargetFramework": "desktop"
     },
-    "UnoApp70 (Desktop WSL2)": {
+    "TestHarness (Desktop WSL2)": {
       "commandName": "WSL2",
       "commandLineArgs": "{ProjectDir}/bin/Debug/net8.0-desktop/TestHarness.dll",
       "distributionName": "",
