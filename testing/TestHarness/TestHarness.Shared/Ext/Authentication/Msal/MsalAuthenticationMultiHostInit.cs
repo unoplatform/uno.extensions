@@ -103,7 +103,6 @@ public class MsalAuthenticationMultiHostInit : BaseMsalHostInitialization
 								}
 								return default;
 							}), name: "CustomService")
-#if UNO_EXT_MSAL
 						.AddMsal(msal =>
 							msal
 								.Scopes(new[] { "Tasks.Read", "User.Read", "Tasks.ReadWrite" })
@@ -118,7 +117,6 @@ public class MsalAuthenticationMultiHostInit : BaseMsalHostInitialization
 							//}
 							, name: "MsalCode")
 						.AddMsal(name: "MsalConfig")
-#endif
 						);
 	}
 

@@ -50,8 +50,7 @@
 
 	<ItemGroup >
 		<PackageReference Include="Uno.WinUI" />
-		<!-- MSAL isn't supported on skia targets, macos or maccatalyst -->
-		<PackageReference Include="Uno.WinUI.MSAL" Condition="'$(IsMSALSupported)'=='true'" />
+		<PackageReference Include="Uno.WinUI.MSAL" />
 	</ItemGroup>
 
 	<ItemGroup>

@@ -38,8 +38,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="Uno.UI" />
-		<!-- MSAL isn't supported on skia targets, macos or maccatalyst -->
-		<PackageReference Include="Uno.UI.MSAL" Condition="'$(IsMSALSupported)'=='true'" />
+		<PackageReference Include="Uno.UI.MSAL" />
 	</ItemGroup>
 
 	<ItemGroup>

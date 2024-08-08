@@ -4,7 +4,6 @@
 	</ItemGroup>
 
 	<PropertyGroup Condition="'$(_IsNetStd)'!='true' and '$(_IsMacOS)'!='true' and '$(_IsCatalyst)'!='true'" >
-		<IsMSALSupported>true</IsMSALSupported>
 		<DefineConstants>$(DefineConstants);UNO_EXT_MSAL</DefineConstants>
 	</PropertyGroup>
 
