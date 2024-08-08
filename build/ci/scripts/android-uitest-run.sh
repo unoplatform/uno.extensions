@@ -7,7 +7,7 @@ set -x
 
 export UNO_UITEST_SCREENSHOT_PATH=$BUILD_ARTIFACTSTAGINGDIRECTORY/screenshots/android
 export UNO_UITEST_PLATFORM=Android
-export UNO_UITEST_ANDROIDAPK_PATH=$BUILD_SOURCESDIRECTORY/testing/TestHarness/TestHarness/bin/Release/net8.0-android/android-x64/uno.platform.extensions.demo-Signed.apk
+export UNO_UITEST_ANDROIDAPK_PATH=$BUILD_SOURCESDIRECTORY/testing/TestHarness/TestHarness/bin/Release/net8.0-android/android-x64/com.companyname.TestHarness-Signed.apk
 export UNO_UITEST_PROJECT=$BUILD_SOURCESDIRECTORY/testing/TestHarness/TestHarness.UITest
 export UNO_UITEST_ANDROID_PROJECT=$BUILD_SOURCESDIRECTORY/testing/TestHarness/TestHarness
 export UNO_UITEST_BINARY=$BUILD_SOURCESDIRECTORY/testing/TestHarness/TestHarness.UITest/bin/Release/net47/TestHarness.UITest.dll
