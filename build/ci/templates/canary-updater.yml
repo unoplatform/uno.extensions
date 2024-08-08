@@ -19,7 +19,7 @@ steps:
       gci -r -include "info.plist" |
       foreach-object {
           $a = $_.fullname; ( get-content $a ) |
-          foreach-object { $_ -replace "uno.platform.extensions.demo","uno.platform.extensions.demo-canary" } |
+          foreach-object { $_ -replace "com.companyname.TestHarness","com.companyname.TestHarness-canary" } |
           set-content $a }
     displayName: 'Adjust info.plist bundle name'
     condition: startsWith(variables['Build.SourceBranch'], 'refs/heads/canaries')
@@ -28,7 +28,7 @@ steps:
       gci -r -include AndroidManifest.xml,android-uitest-run.sh |
       foreach-object {
           $a = $_.fullname; ( get-content $a ) |
-          foreach-object { $_ -replace "uno.platform.extensions.demo","uno.platform.extensions.demo.canary" } |
+          foreach-object { $_ -replace "com.companyname.TestHarness","com.companyname.TestHarness.canary" } |
           set-content $a }
     displayName: 'Adjust AndroidManifest bundle name'
     condition: startsWith(variables['Build.SourceBranch'], 'refs/heads/canaries')
