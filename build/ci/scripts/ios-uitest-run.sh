@@ -22,7 +22,7 @@ xcrun simctl list devices --json
 mkdir -p $UNO_UITEST_SCREENSHOT_PATH/_logs
 
 cd $UNO_UITEST_IOS_PROJECT
-dotnet build -p:TargetFrameworkOverride=net8.0-ios -r iossimulator-x64 -c Release -p:IsUiAutomationMappingEnabled=True -bl:$BUILD_ARTIFACTSTAGINGDIRECTORY/ios-app.binlog
+dotnet build -p:UnoTargetFrameworkOverride=net8.0-ios -r iossimulator-x64 -c Release -p:IsUiAutomationMappingEnabled=True -bl:$BUILD_ARTIFACTSTAGINGDIRECTORY/ios-app.binlog
 
 ##
 ## Pre-install the application to avoid https://github.com/microsoft/appcenter/issues/2389
