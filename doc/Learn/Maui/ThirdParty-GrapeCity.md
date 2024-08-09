@@ -7,7 +7,7 @@ The FlexGrid and Calendar in the ComponentOne .NET MAUI Controls can be used in 
 
 ## Sample App
 
-An existing sample app that showcases the controls is available [here](https://github.com/unoplatform/Uno.Samples/tree/master/UI/MauiEmbedding/MauiEmbeddingApp).
+An existing sample app that showcases the controls is available [here](https://github.com/unoplatform/Uno.Samples/tree/master/UI/MauiEmbedding/GrapeCityApp).
 
 ## Installation
 

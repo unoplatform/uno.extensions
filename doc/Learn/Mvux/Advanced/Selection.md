@@ -58,7 +58,7 @@ The data is then displayed on the View using a `ListView`:
 MVUX has two extension methods of `IListFeed<T>`, that enable single or multi-selection.
 
 > [!NOTE]  
-> The source code for the sample app demonstrated in this section can be found [here](https://github.com/unoplatform/Uno.Samples/tree/master/UI/MvuxHowTos/AdvancedPeopleApp).
+> The source code for the sample app demonstrated in this section can be found on [GitHub](https://github.com/unoplatform/Uno.Samples/tree/master/UI/MvuxHowTos/SelectionPeopleApp).
 
 ## Single-item selection
 
@@ -119,7 +119,7 @@ When running the app, the top section will reflect the item the user selects in 
 ![A video demonstrating selection with MVUX](../Assets/Selection.gif)
 
 > [!NOTE]  
-> The source code for the sample app can be found [here](https://github.com/unoplatform/Uno.Samples/tree/master/UI/MvuxHowTos/AdvancedPeopleApp).
+> The source code for the sample app can be found [GitHub](https://github.com/unoplatform/Uno.Samples/tree/master/UI/MvuxHowTos/SelectionPeopleApp).
 
 ### Listening to the selected value
 

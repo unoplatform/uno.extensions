@@ -73,7 +73,7 @@ public void SetUp()
 ## Support for selection and pagination
 
 MVUX also provides built-in support for Selection and Pagination.
-See more information on [Selection](xref:Uno.Extensions.Mvux.Advanced.Selection) or [Pagination](xref:Overview.Mvux.Advanced.Pagination).
+See more information on [Selection](xref:Uno.Extensions.Mvux.Advanced.Selection) or [Pagination](xref:Uno.Extensions.Mvux.Advanced.Pagination).
 
 ## Operators
 
