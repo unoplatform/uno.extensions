@@ -49,6 +49,6 @@ jobs:
     condition: always()
     retryCountOnTaskFailure: 3
     inputs:
-      PathtoPublish: $(build.sourcesdirectory)/testing/TestHarness/TestHarness/bin/Release/net8.0-ios/iossimulator-x64/TestHarness.app
+      PathtoPublish: $(build.sourcesdirectory)/testing/TestHarness/TestHarness/bin/Release/net8.0-ios/iossimulator-x64/TestHarnessApp.app
       ArtifactName: uno-uitest-ios-bin
       ArtifactType: Container

@@ -3,7 +3,7 @@ set -euo pipefail
 IFS=$'\n\t'
 
 export UNO_UITEST_PLATFORM=iOS
-export UNO_UITEST_IOSBUNDLE_PATH=$BUILD_SOURCESDIRECTORY/testing/TestHarness/TestHarness/bin/Release/net8.0-ios/iossimulator-x64/
+export UNO_UITEST_IOSBUNDLE_PATH=$BUILD_SOURCESDIRECTORY/testing/TestHarness/TestHarness/bin/Release/net8.0-ios/iossimulator-x64/TestHarnessApp.app
 export UNO_UITEST_SCREENSHOT_PATH=$BUILD_ARTIFACTSTAGINGDIRECTORY/screenshots/ios
 export UNO_UITEST_PROJECT=$BUILD_SOURCESDIRECTORY/testing/TestHarness/TestHarness.UITest
 export UNO_UITEST_LOGFILE=$BUILD_ARTIFACTSTAGINGDIRECTORY/screenshots/ios/nunit-log.txt
@@ -67,22 +67,8 @@ fi
 
 xcrun simctl boot "$UITEST_IOSDEVICE_ID" || true
 
-# Look for an .app file in the directory specified by UNO_UITEST_IOSBUNDLE_PATH
-APP_FILE=$(find "$UNO_UITEST_IOSBUNDLE_PATH" -name "*.app" -type d | head -n 1)
+idb install --udid "$UITEST_IOSDEVICE_ID" "$UNO_UITEST_IOSBUNDLE_PATH"
 
-# Check if an .app file was found
-if [ -n "$APP_FILE" ]; then
-	echo "Found .app file: $APP_FILE"
-
-	# Set the UNO_UITEST_IOSBUNDLE_PATH to the found .app file path
-	export UNO_UITEST_IOSBUNDLE_PATH="$APP_FILE"
-
-	# Run the idb install command
-	idb install --udid "$UITEST_IOSDEVICE_ID" "$UNO_UITEST_IOSBUNDLE_PATH"
-else
-	echo "No .app file found in $UNO_UITEST_IOSBUNDLE_PATH"
-	exit 1
-fi
 
 # Run the tests
 
