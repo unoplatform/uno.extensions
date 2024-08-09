@@ -151,11 +151,22 @@ public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 			RemoveLastFromBackStack();
 		}
 
+		var parentRegion = this.Region.Parent;
+		while (parentRegion is { } &&
+			parentRegion.Name is null)
+		{
+			parentRegion = parentRegion.Parent;
+		}
 
 		for (var i = 0; i < segments.Length - 1; i++)
 		{
 			var map = segments[i];
 			if (map.RenderView is null)
+			{
+				continue;
+			}
+
+			if (parentRegion?.Name == map.Path)
 			{
 				continue;
 			}
