@@ -77,7 +77,7 @@ cd $UNO_UITEST_PROJECT
 dotnet test \
 	-c Release \
 	-l:"console;verbosity=normal" \
-	--logger "nunit;LogFileName=$BUILD_SOURCESDIRECTORY/build/TestResult.xml" \
+	--logger:"nunit;LogFileName=$BUILD_SOURCESDIRECTORY/build/TestResult.xml" \
 	--blame-hang-timeout $UITEST_TEST_TIMEOUT \
 	-v m \
 	|| true
