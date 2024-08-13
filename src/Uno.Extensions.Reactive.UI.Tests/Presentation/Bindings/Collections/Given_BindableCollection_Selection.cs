@@ -98,7 +98,7 @@ public partial class Given_BindableCollection_Selection : FeedTests
 #endif
 	public async Task When_SelectItemInView_ComboBox()
 	{
-		var (vm, cb, items) = await SetupComboBox();
+		var (vm, cb) = await SetupComboBox();
 
 		// Open the ComboBox
 		InputInjectorHelper.Current.Tap(cb);
@@ -118,7 +118,7 @@ public partial class Given_BindableCollection_Selection : FeedTests
 #endif
 	public async Task When_SelectItemAndAboveInView_ComboBox()
 	{
-		var (vm, cb, items) = await SetupComboBox();
+		var (vm, cb) = await SetupComboBox();
 
 		// Open the ComboBox
 		InputInjectorHelper.Current.Tap(cb);
@@ -145,7 +145,7 @@ public partial class Given_BindableCollection_Selection : FeedTests
 #endif
 	public async Task When_SelectItemAndBelowInView_ComboBox()
 	{
-		var (vm, cb, items) = await SetupComboBox();
+		var (vm, cb) = await SetupComboBox();
 
 		// Open the ComboBox
 		InputInjectorHelper.Current.Tap(cb);
@@ -182,15 +182,13 @@ public partial class Given_BindableCollection_Selection : FeedTests
 		return (vm, lv, lvItems);
 	}
 
-	private async Task<(BindableGiven_BindableCollection_Selection_Model, ComboBox, MyItem[])> SetupComboBox()
+	private async Task<(BindableGiven_BindableCollection_Selection_Model, ComboBox)> SetupComboBox()
 	{
 		var vm = new BindableGiven_BindableCollection_Selection_Model();
 		var cb = new ComboBox { ItemsSource = vm.Items };
 
 		await UIHelper.Load(cb, CT);
 
-		var items = vm.Items.ToArray();
-
-		return (vm, cb, items);
+		return (vm, cb);
 	}
 }
