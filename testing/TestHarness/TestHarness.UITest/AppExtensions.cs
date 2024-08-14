@@ -18,8 +18,7 @@ public static class AppExtensions
 	{
 		app.WaitElement(listName);
 		await Task.Delay(UIWaitTimeInMilliseconds);
-
-		var list = app.Marked(listName);
+		var list = new QueryEx(q => q.All().Marked(listName));
 		list.SetDependencyPropertyValue("SelectedIndex", indexToSelect);
 		await Task.Delay(UIWaitTimeInMilliseconds);
 

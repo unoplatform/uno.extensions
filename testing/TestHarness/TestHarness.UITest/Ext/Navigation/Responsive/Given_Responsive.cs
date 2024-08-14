@@ -12,7 +12,7 @@ public class Given_Responsive : NavigationTestBase
 		App.WaitElement("ResponsiveHomeNavigationBar");
 
 
-		var widgetsListView = App.Marked("WidgetsListView");
+		var widgetsListView = App.MarkedAnywhere("WidgetsListView");
 		App.WaitElement("WidgetsListView");
 
 		// Select the narrow layout
@@ -32,7 +32,7 @@ public class Given_Responsive : NavigationTestBase
 
 		await Task.Yield();
 
-		widgetsListView = App.Marked("WidgetsListView");
+		widgetsListView = App.MarkedAnywhere("WidgetsListView");
 		visibility = widgetsListView.WaitUntilExists().GetDependencyPropertyValue("Visibility");
 		visibility.Should().NotBeNull();
 

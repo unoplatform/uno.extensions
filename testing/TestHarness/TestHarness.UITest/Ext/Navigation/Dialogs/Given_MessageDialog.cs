@@ -16,7 +16,7 @@ public class Given_MessageDialog : NavigationTestBase
 		ImageAssert.AreNotEqual(screenBefore, screenAfter);
 
 		App
-			.Marked("CloseMessageDialogToggleButton")
+			.MarkedAnywhere("CloseMessageDialogToggleButton")
 			.SetDependencyPropertyValue("IsChecked", true.ToString());
 
 

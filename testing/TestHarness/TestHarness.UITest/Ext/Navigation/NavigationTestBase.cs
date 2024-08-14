@@ -5,12 +5,12 @@ public abstract class NavigationTestBase : TestBase
 {
 	protected void InitTestSection(TestSections section)
 	{
-		var theListView = App.Marked(TestHarness.Constants.TestSectionsListView);
+		var theListView = App.MarkedAnywhere(TestHarness.Constants.TestSectionsListView);
 		App.WaitForElement(theListView);
 
 		theListView.SetDependencyPropertyValue("SelectedIndex", ((int)section).ToString());
 
-		App.WaitForElement(q => q.Marked(TestHarness.Constants.NavigationRoot));
+		App.WaitForElement(q => q.All().Marked(TestHarness.Constants.NavigationRoot));
 
 	}
 

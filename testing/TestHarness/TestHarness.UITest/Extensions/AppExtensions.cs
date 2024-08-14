@@ -48,9 +48,13 @@ public static class AppExtensions
 	public static IAppResult[] WaitElement(this IApp app, string marked, string timeoutMessage = "Timed out waiting for element '{0}'...", TimeSpan? timeout = null, TimeSpan? retryFrequency = null, TimeSpan? postTimeout = null)
 	{
 		Console.WriteLine($"Waiting for '{marked}'");
-		return app.WaitForElement(marked, string.Format(timeoutMessage,marked), timeout, retryFrequency, postTimeout);
+		return app.WaitForElement(q => q.All().Marked(marked), string.Format(timeoutMessage,marked), timeout, retryFrequency, postTimeout);
 	}
 
+	public static QueryEx MarkedAnywhere(this IApp app, string marked)
+	{
+		return new QueryEx(q => q.All().Marked(marked));
+	}
 
 	public static QueryEx ToQueryEx(this Func<IAppQuery, IAppQuery> query) => new QueryEx(query);
 }

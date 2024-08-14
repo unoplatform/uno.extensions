@@ -144,14 +144,14 @@ public class Given_Apps_Commerce : NavigationTestBase
 		/// Tap through each navigation view item
 		await App.TapAndWait("DealsNavigationViewItem", "DealsNavigationBar");
 		var dealsId = App
-			.Marked("DealsViewModelIdTextBlock")
+			.MarkedAnywhere("DealsViewModelIdTextBlock")
 			.WaitUntilExists()
 			.GetDependencyPropertyValue<string>("Text");
 		dealsId.Should().NotBeNull();
 
 		await App.TapAndWait("ProductsNavigationViewItem", "ProductsNavigationBar");
 		var productsId = App
-			.Marked("ProductsViewModelIdTextBlock")
+			.MarkedAnywhere("ProductsViewModelIdTextBlock")
 			.WaitUntilExists()
 			.GetDependencyPropertyValue<string>("Text");
 		productsId.Should().NotBeNull();
@@ -161,7 +161,7 @@ public class Given_Apps_Commerce : NavigationTestBase
 		// Now go back to Deals and Products page and validate the Ids are the same (ie same instance of the viewmodel)
 		await App.TapAndWait("DealsNavigationViewItem", "DealsNavigationBar");
 		var newDealsId = App
-			.Marked("DealsViewModelIdTextBlock")
+			.MarkedAnywhere("DealsViewModelIdTextBlock")
 			.WaitUntilExists()
 			.GetDependencyPropertyValue<string>("Text");
 		newDealsId.Should().NotBeNull();
@@ -169,7 +169,7 @@ public class Given_Apps_Commerce : NavigationTestBase
 
 		await App.TapAndWait("ProductsNavigationViewItem", "ProductsNavigationBar");
 		var newProductsId = App
-			.Marked("ProductsViewModelIdTextBlock")
+			.MarkedAnywhere("ProductsViewModelIdTextBlock")
 			.WaitUntilExists()
 			.GetDependencyPropertyValue<string>("Text");
 		newProductsId.Should().NotBeNull();

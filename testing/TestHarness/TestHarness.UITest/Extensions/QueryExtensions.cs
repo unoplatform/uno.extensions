@@ -15,7 +15,7 @@ public static class QueryExtensions
 	/// </summary>
 	public static void WaitForText(this IApp app, string elementName, string expectedText, TimeSpan? timeout = null)
 	{
-		var element = app.Marked(elementName);
+		var element = app.MarkedAnywhere(elementName);
 		app.WaitForElement(element, timeout: timeout);
 		app.WaitForText(element, expectedText);
 	}
@@ -25,7 +25,7 @@ public static class QueryExtensions
 	/// </summary>
 	public static void WaitForFocus(this IApp app, string elementName)
 	{
-		var element = app.Marked(elementName);
+		var element = app.MarkedAnywhere(elementName);
 		app.WaitForElement(element);
 		app.WaitForDependencyPropertyValue(element, "FocusState", "Pointer");
 	}
@@ -68,7 +68,7 @@ public static class QueryExtensions
 	/// </summary>
 	public static string GetText(this IApp app, string elementName)
 	{
-		var element = app.Marked(elementName);
+		var element = app.MarkedAnywhere(elementName);
 		app.WaitForElement(element);
 		return element.GetText();
 	}

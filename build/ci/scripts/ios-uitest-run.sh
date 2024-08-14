@@ -9,11 +9,10 @@ export UNO_UITEST_PROJECT=$BUILD_SOURCESDIRECTORY/testing/TestHarness/TestHarnes
 export UNO_UITEST_LOGFILE=$BUILD_ARTIFACTSTAGINGDIRECTORY/screenshots/ios/nunit-log.txt
 export UNO_UITEST_IOS_PROJECT=$BUILD_SOURCESDIRECTORY/testing/TestHarness/TestHarness
 export UITEST_TEST_TIMEOUT=90m
-
-export UNO_UITEST_SIMULATOR_VERSION="com.apple.CoreSimulator.SimRuntime.iOS-16-1"
+export UNO_UITEST_SIMULATOR_VERSION="com.apple.CoreSimulator.SimRuntime.iOS-17-2"
 export UNO_UITEST_SIMULATOR_NAME="iPad Pro (12.9-inch) (6th generation)"
 
-echo "Lising iOS simulators"
+echo "Listing iOS simulators"
 xcrun simctl list devices --json
 
 /Applications/Xcode.app/Contents/Developer/Applications/Simulator.app/Contents/MacOS/Simulator &
@@ -28,10 +27,10 @@ dotnet build -p:UnoTargetFrameworkOverride=net8.0-ios -r iossimulator-x64 -c Rel
 ## Pre-install the application to avoid https://github.com/microsoft/appcenter/issues/2389
 ##
 
-## Install iOS 16.1 simulators
-xcodes runtimes install --keep-archive 'iOS 16.1' || true
+## Install iOS 17.2 simulators
+xcodes runtimes install --keep-archive 'iOS 17.2' || true
 
-# Wait while ios runtime 16.1 is not having simulators. The install process may
+# Wait while ios runtime 17.2 is not having simulators. The install process may
 # take a few seconds and "simctl list devices" may not return devices.
 while true; do
 	export UITEST_IOSDEVICE_ID=`xcrun simctl list -j | jq -r --arg sim "$UNO_UITEST_SIMULATOR_VERSION" --arg name "$UNO_UITEST_SIMULATOR_NAME" '.devices[$sim] | .[] | select(.name==$name) | .udid'`
@@ -82,10 +81,13 @@ dotnet test \
 	-v m \
 	|| true
 
+
+cp $BUILD_SOURCESDIRECTORY/build/TestResult.xml" $UNO_UITEST_SCREENSHOT_PATH
+
 # export the simulator logs
 export LOG_FILEPATH=$UNO_UITEST_SCREENSHOT_PATH/_logs
 export TMP_LOG_FILEPATH=/tmp/DeviceLog-`date +"%Y%m%d%H%M%S"`.logarchive
 export LOG_FILEPATH_FULL=$LOG_FILEPATH/DeviceLog-`date +"%Y%m%d%H%M%S"`.txt
 
-xcrun simctl spawn booted log collect --output $TMP_LOG_FILEPATH
-log show --style syslog $TMP_LOG_FILEPATH > $LOG_FILEPATH_FULL
+# xcrun simctl spawn booted log collect --output $TMP_LOG_FILEPATH
+# log show --style syslog $TMP_LOG_FILEPATH > $LOG_FILEPATH_FULL
