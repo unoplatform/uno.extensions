@@ -65,11 +65,11 @@ public partial class Given_HotReload : FeedUITests
 	}
 
 	[ReactiveBindable(false)]
-	[Model(bindable: typeof(BindableWhen_UpdateValueTypeFeedInModel_Then_BindableUpdated_MyModel))]
+	[Model(bindable: typeof(When_UpdateValueTypeFeedInModel_Then_BindableUpdated_MyViewModel))]
 	[MetadataUpdateOriginalType(typeof(When_UpdateValueTypeFeedInModel_Then_BindableUpdated_MyModel))]
 	public partial class When_UpdateValueTypeFeedInModel_Then_BindableUpdated_MyModel_v1
 	{
-		internal BindableWhen_UpdateValueTypeFeedInModel_Then_BindableUpdated_MyModel __reactiveBindableViewModel = default!;
+		internal When_UpdateValueTypeFeedInModel_Then_BindableUpdated_MyViewModel __reactiveBindableViewModel = default!;
 
 		public IFeed<string> MyFeed => Feed.Async(async ct => "Feed value from model v1");
 	}
@@ -101,11 +101,11 @@ public partial class Given_HotReload : FeedUITests
 	}
 
 	[ReactiveBindable(false)]
-	[Model(bindable: typeof(BindableWhen_UpdateRecordFeedInModel_Then_BindableUpdated_MyModel))]
+	[Model(bindable: typeof(When_UpdateRecordFeedInModel_Then_BindableUpdated_MyViewModel))]
 	[MetadataUpdateOriginalType(typeof(When_UpdateRecordFeedInModel_Then_BindableUpdated_MyModel))]
 	public partial class When_UpdateRecordFeedInModel_Then_BindableUpdated_MyModel_v1
 	{
-		internal BindableWhen_UpdateRecordFeedInModel_Then_BindableUpdated_MyModel __reactiveBindableViewModel = default!;
+		internal When_UpdateRecordFeedInModel_Then_BindableUpdated_MyViewModel __reactiveBindableViewModel = default!;
 
 		public IFeed<When_UpdateRecordFeedInModel_Then_BindableUpdated_Record> MyFeed => Feed.Async(async ct => new When_UpdateRecordFeedInModel_Then_BindableUpdated_Record("Feed value from model v1"));
 	}
@@ -115,7 +115,7 @@ public partial class Given_HotReload : FeedUITests
 	[TestMethod]
 	public async Task When_ChangeKindOfValueTypeFeedInModel_Then_BindableUpdated()
 	{
-		var bindable = new BindableWhen_ChangeKindOfValueTypeFeedInModel_Then_BindableUpdated_MyModel();
+		var bindable = new When_ChangeKindOfValueTypeFeedInModel_Then_BindableUpdated_MyViewModel();
 
 		var tcs = new TaskCompletionSource();
 		Dispatcher.TryEnqueue(() => bindable.PropertyChanged += (s, e) => tcs.TrySetResult());
@@ -135,11 +135,11 @@ public partial class Given_HotReload : FeedUITests
 	}
 
 	[ReactiveBindable(false)]
-	[Model(bindable: typeof(BindableWhen_ChangeKindOfValueTypeFeedInModel_Then_BindableUpdated_MyModel))]
+	[Model(bindable: typeof(When_ChangeKindOfValueTypeFeedInModel_Then_BindableUpdated_MyViewModel))]
 	[MetadataUpdateOriginalType(typeof(When_ChangeKindOfValueTypeFeedInModel_Then_BindableUpdated_MyModel))]
 	public partial class When_ChangeKindOfValueTypeFeedInModel_Then_BindableUpdated_MyModel_v1
 	{
-		internal BindableWhen_ChangeKindOfValueTypeFeedInModel_Then_BindableUpdated_MyModel __reactiveBindableViewModel = default!;
+		internal When_ChangeKindOfValueTypeFeedInModel_Then_BindableUpdated_MyViewModel __reactiveBindableViewModel = default!;
 
 		public IFeed<string> MyFeed => Feed.Dynamic(async ct => "Feed value from model v1");
 	}
@@ -149,7 +149,7 @@ public partial class Given_HotReload : FeedUITests
 	[TestMethod]
 	public async Task When_ChangeKindOfRecordFeedInModel_Then_BindableUpdated()
 	{
-		var bindable = new BindableWhen_ChangeKindOfRecordFeedInModel_Then_BindableUpdated_MyModel();
+		var bindable = new When_ChangeKindOfRecordFeedInModel_Then_BindableUpdated_MyViewModel();
 
 		var tcs = new TaskCompletionSource();
 		Dispatcher.TryEnqueue(() => bindable.PropertyChanged += (s, e) => tcs.TrySetResult());
@@ -171,11 +171,11 @@ public partial class Given_HotReload : FeedUITests
 	}
 
 	[ReactiveBindable(false)]
-	[Model(bindable: typeof(BindableWhen_ChangeKindOfRecordFeedInModel_Then_BindableUpdated_MyModel))]
+	[Model(bindable: typeof(When_ChangeKindOfRecordFeedInModel_Then_BindableUpdated_MyViewModel))]
 	[MetadataUpdateOriginalType(typeof(When_ChangeKindOfRecordFeedInModel_Then_BindableUpdated_MyModel))]
 	public partial class When_ChangeKindOfRecordFeedInModel_Then_BindableUpdated_MyModel_v1
 	{
-		internal BindableWhen_ChangeKindOfRecordFeedInModel_Then_BindableUpdated_MyModel __reactiveBindableViewModel = default!;
+		internal When_ChangeKindOfRecordFeedInModel_Then_BindableUpdated_MyViewModel __reactiveBindableViewModel = default!;
 
 		public IFeed<When_ChangeKindOfRecordFeedInModel_Then_BindableUpdated_Record> MyFeed => Feed.Dynamic(async ct => new When_ChangeKindOfRecordFeedInModel_Then_BindableUpdated_Record("Feed value from model v1"));
 	}
