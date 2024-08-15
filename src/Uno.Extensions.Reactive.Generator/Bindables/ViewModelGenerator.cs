@@ -7,16 +7,16 @@ using Uno.Extensions.Generators;
 
 namespace Uno.Extensions.Reactive.Generator;
 
-internal class BindableGenerator : ICodeGenTool
+internal class ViewModelGenerator : ICodeGenTool
 {
-	// Version 1 used with ViewModelGenTool Versions 1 and 2
-	public string Version => "1";
+	// To Match with the ViewModelGenTool.Version
+	public string Version => "3";
 
 	private readonly BindableGenerationContext _ctx;
 
-	private List<INamedTypeSymbol> _toGenerate = new();
+	private List<INamedTypeSymbol> _toGenerate = [];
 
-	public BindableGenerator(BindableGenerationContext ctx)
+	public ViewModelGenerator(BindableGenerationContext ctx)
 	{
 		_ctx = ctx;
 	}
@@ -31,7 +31,7 @@ internal class BindableGenerator : ICodeGenTool
 			}
 
 			_toGenerate.Add(named);
-			return $"{symbol.ContainingNamespace}.Bindable{symbol.GetPascalCaseName()}";
+			return $"{symbol.ContainingNamespace}.{GetViewModelName(named)}";
 		}
 
 		return null;
@@ -73,7 +73,7 @@ internal class BindableGenerator : ICodeGenTool
 						prop.Type.Is(_ctx.IImmutableList, allowBaseTypes: false, out var immutableList)
 						|| prop.Type.Is(_ctx.ImmutableList, allowBaseTypes: false, out immutableList)
 					)
-					&& GetBindableType(immutableList.TypeArguments.Single()) is {} itemBindableType)
+					&& GetBindableType(immutableList.TypeArguments.Single()) is { } itemBindableType)
 				{
 					var itemType = immutableList.TypeArguments.Single();
 					var propertyInfo = prop.Type.Is(_ctx.ImmutableList, allowBaseTypes: false, out _)
@@ -84,6 +84,7 @@ internal class BindableGenerator : ICodeGenTool
 					initializer = $@"_{camelName} = new {bindable}(
 						{propertyInfo.Align(6)},
 						p => new {itemBindableType}(p));";
+
 					property = new Property(prop.Type.DeclaredAccessibility, bindable, prop.Name)
 					{
 						Getter = $"_{camelName}"
@@ -100,7 +101,7 @@ internal class BindableGenerator : ICodeGenTool
 				//		Getter = $"_{camelName}"
 				//	};
 				//}
-				else if (GetBindableType(prop.Type) is {} subBindable)
+				else if (GetBindableType(prop.Type) is { } subBindable)
 				{
 					bindable = subBindable;
 					initializer = $@"_{camelName} = new {bindable}({GetPropertyInfo(prop.Type)});";
@@ -150,6 +151,8 @@ internal class BindableGenerator : ICodeGenTool
 				Setter = "base.SetValue(value)"
 			};
 
+		var vm = GetViewModelName(record);
+
 		var code = @$"{this.GetFileHeader()}
 
 using System;
@@ -159,11 +162,11 @@ using System.Threading.Tasks;
 namespace {record.ContainingNamespace}
 {{
 	{this.GetCodeGenAttribute()}
-	{record.GetAccessibilityAsCSharpCodeString()} sealed class Bindable{record.GetPascalCaseName()} : {NS.Bindings}.Bindable<{record}>
+	{record.GetAccessibilityAsCSharpCodeString()} sealed class {vm} : {NS.Bindings}.Bindable<{record}>
 	{{
 		{properties.Select(prop => $"private readonly {prop.bindable} _{prop.symbol.GetCamelCaseName()};").Align(2)}
 
-		public Bindable{record.GetPascalCaseName()}({NS.Bindings}.BindablePropertyInfo<{record}> property)
+		public {vm}({NS.Bindings}.BindablePropertyInfo<{record}> property)
 			: base(property, hasValueProperty: {(valueProperty is null ? "false" : "true")})
 		{{
 			{properties.Select(prop => prop.initializer).Align(3)}
@@ -179,6 +182,12 @@ namespace {record.ContainingNamespace}
 }}
 ";
 
-return code;
+		return code;
 	}
+
+	private static string GetModelName(INamedTypeSymbol type)
+		=> type.Name.TrimEnd("Model", StringComparison.Ordinal);
+
+	private static string GetViewModelName(INamedTypeSymbol model)
+		=> $"{GetModelName(model)}ViewModel";
 }
