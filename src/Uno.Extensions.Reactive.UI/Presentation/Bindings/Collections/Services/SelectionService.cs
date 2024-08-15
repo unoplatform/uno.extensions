@@ -56,6 +56,15 @@ internal sealed class SelectionService : ISelectionService, IDisposable, ISelect
 	}
 
 	/// <inheritdoc />
+	public void ReplaceRange(ItemIndexRange itemIndexRange)
+	{
+		if (Update((_, updated) => SelectionInfo.Empty.Add(updated), new SelectionIndexRange((uint)itemIndexRange.FirstIndex, itemIndexRange.Length)))
+		{
+			PushToSource();
+		}
+	}
+
+	/// <inheritdoc />
 	public void DeselectRange(ItemIndexRange itemIndexRange)
 	{
 		if (Update((info, removed) => info.Remove(removed), new SelectionIndexRange((uint)itemIndexRange.FirstIndex, itemIndexRange.Length)))

@@ -251,7 +251,7 @@ internal class SelectionFacet : IDisposable, ISelectionInfo
 		{
 			if (index >= 0)
 			{
-				SelectRange(new ItemIndexRange(index, 1));
+				ReplaceRange(new ItemIndexRange(index, 1));
 			}
 			else if (oldPosition >= 0)
 			{
@@ -283,6 +283,30 @@ internal class SelectionFacet : IDisposable, ISelectionInfo
 
 #if UAP10_0_19041
 		if (_service.GetSelectedRanges() is { Count: 1 } ranges && ranges[0] is {Length: 1} singleSelection)
+#else
+		if (_service.GetSelectedRanges() is [{ Length: 1 } singleSelection])
+#endif
+		{
+			MoveCurrentToPosition(singleSelection.FirstIndex, isCancelable: false, isSelectionRangeUpdate: true);
+		}
+	}
+
+	/// <inheritdoc />
+	public void ReplaceRange(ItemIndexRange itemIndexRange)
+	{
+		if (_service is null)
+		{
+			return;
+		}
+
+#if __WINDOWS__
+    _localSelection.Clear();
+    _localSelection.Add(itemIndexRange);
+#endif
+		_service.ReplaceRange(itemIndexRange);
+
+#if UAP10_0_19041
+    if (_service.GetSelectedRanges() is { Count: 1 } ranges && ranges[0] is { Length: 1 } singleSelection)
 #else
 		if (_service.GetSelectedRanges() is [{ Length: 1 } singleSelection])
 #endif
