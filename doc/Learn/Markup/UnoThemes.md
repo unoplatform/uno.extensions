@@ -4,7 +4,7 @@ uid: Uno.Extensions.Markup.UnoThemes
 
 # Using Uno.Themes.WinUI.Markup
 
-The [Uno.Themes.WinUI.Markup](https://www.nuget.org/packages/Uno.Themes.WinUI.Markup) package is designed to make it easier to use the [Uno.Material Theme](xref:uno.themes.material.getstarted). This provides a strongly typed Theme API that is descriptive and self-documenting for all of the available theme resources including Colors, Brushes, and Styles. If you have already read the docs for [Static &amp; Theme Resources](xref:Uno.Extensions.Markup.StaticAndThemeResources), this should feel familiar.
+The [Uno.Themes.WinUI.Markup](https://www.nuget.org/packages/Uno.Themes.WinUI.Markup) package is designed to make it easier to use the [Uno.Material Theme](xref:Uno.Themes.Material.GetStarted). This provides a strongly typed Theme API that is descriptive and self-documenting for all of the available theme resources including Colors, Brushes, and Styles. If you have already read the docs for [Static &amp; Theme Resources](xref:Uno.Extensions.Markup.StaticAndThemeResources), this should feel familiar.
 
 ```csharp
 new Button()
