@@ -76,11 +76,11 @@ public partial class Given_ViewModel_Then_GenerateBindable
 		=> Assert.IsNotNull(GetBindable(typeof(Given_ViewModel_Then_GenerateBindable_FlaggedCodeGen_NotSuffixed)));
 
 	[TestMethod]
-	public void NestedFlaggedCodeGen_NotSuffixedViewModel()
+	public void NestedFlaggedCodeGen_NotSuffixedTest()
 		=> Assert.IsNotNull(GetBindable(typeof(NestedFlaggedCodeGen_NotSuffixed)));
 
 	[TestMethod]
-	public void NestedInternalFlaggedCodeGen_NotSuffixedViewModel()
+	public void NestedInternalFlaggedCodeGen_NotSuffixedTest()
 		=> Assert.IsNotNull(GetBindable(typeof(NestedInternalFlaggedCodeGen_NotSuffixed)));
 
 	[TestMethod]
