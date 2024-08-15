@@ -25,4 +25,4 @@ but the property _property_name_ is not of type `IFeed<T>` (nor `IState<T>`).
 
 > [!NOTE]
 > If your property is synchronous (i.e. not a `Feed` nor a `State`), you don't need to use the `[FeedParameter]` attribute.
-> Remove the parameter from teh method and get your value from the property directly.
+> Remove the parameter from the method and get your value from the property directly.
