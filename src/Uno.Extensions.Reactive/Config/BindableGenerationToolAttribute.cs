@@ -13,5 +13,5 @@ public class BindableGenerationToolAttribute : Attribute
 	/// Gets or sets the version of tool that should be used to generate bindables.
 	/// </summary>
 	/// <remarks>Set this to 1 to use code gen used in Uno.Extensions.Reactive versions below 2.3</remarks>
-	public int Version { get; init; } = 2;
+	public int Version { get; init; } = 3;
 }
