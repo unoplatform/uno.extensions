@@ -45,7 +45,7 @@ public partial class Given_HotReload : FeedUITests
 	[TestMethod]
 	public async Task When_UpdateValueTypeFeedInModel_Then_BindableUpdated()
 	{
-		var bindable = new BindableWhen_UpdateValueTypeFeedInModel_Then_BindableUpdated_MyModel();
+		var bindable = new When_UpdateValueTypeFeedInModel_Then_BindableUpdated_MyViewModel();
 
 		var tcs = new TaskCompletionSource();
 		Dispatcher.TryEnqueue(() => bindable.PropertyChanged += (s, e) => tcs.TrySetResult());
@@ -79,7 +79,7 @@ public partial class Given_HotReload : FeedUITests
 	[TestMethod]
 	public async Task When_UpdateRecordFeedInModel_Then_BindableUpdated()
 	{
-		var bindable = new BindableWhen_UpdateRecordFeedInModel_Then_BindableUpdated_MyModel();
+		var bindable = new When_UpdateRecordFeedInModel_Then_BindableUpdated_MyViewModel();
 
 		var tcs = new TaskCompletionSource();
 		Dispatcher.TryEnqueue(() => bindable.PropertyChanged += (s, e) => tcs.TrySetResult());

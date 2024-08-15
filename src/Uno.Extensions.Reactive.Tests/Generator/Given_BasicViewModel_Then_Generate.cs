@@ -17,11 +17,11 @@ public partial class Given_BasicViewModel_Then_Generate : FeedUITests
 	[TestMethod]
 	public async Task Test_Constructors()
 	{
-		await using var bindableCtor1 = new BindableGiven_BasicViewModel_Then_Generate__ViewModel();
+		await using var bindableCtor1 = new Given_BasicViewModel_Then_Generate__ViewViewModel();
 
-		await using var bindableCtor2 = new BindableGiven_BasicViewModel_Then_Generate__ViewModel(aRandomService: "aRandomService");
+		await using var bindableCtor2 = new Given_BasicViewModel_Then_Generate__ViewViewModel(aRandomService: "aRandomService");
 
-		await using var bindableCtor3 = new BindableGiven_BasicViewModel_Then_Generate__ViewModel(
+		await using var bindableCtor3 = new Given_BasicViewModel_Then_Generate__ViewViewModel(
 			anExternalInput: default(IFeed<string>)!,
 			anExternalReadWriteInput: default(IState<string>)!,
 			anExternalRecordInput: default(IFeed<MyRecord>)!,
@@ -31,7 +31,7 @@ public partial class Given_BasicViewModel_Then_Generate : FeedUITests
 	[TestMethod]
 	public async Task When_FeedOfKindOfImmutableList_Then_TreatAsListFeed()
 	{
-		await using var bindable = new BindableWhen_FeedOfKindOfImmutableList_Then_TreatAsListFeed_ViewModel();
+		await using var bindable = new When_FeedOfKindOfImmutableList_Then_TreatAsListFeed_ViewViewModel();
 
 		AssertIsValid(bindable.AFeedOfArray);
 		AssertIsValid(bindable.AFeedOfImmutableList);
@@ -81,7 +81,7 @@ public partial class Given_BasicViewModel_Then_Generate : FeedUITests
 	[TestMethod]
 	public async Task When_FeedOfKindOfRawEnumerable_Then_DoNotTreatAsListFeed()
 	{
-		await using var bindable = new BindableWhen_FeedOfKindOfRawEnumerable_Then_DoNotTreatAsListFeed_ViewModel();
+		await using var bindable = new When_FeedOfKindOfRawEnumerable_Then_DoNotTreatAsListFeed_ViewViewModel();
 
 		AssertIsValid(bindable.AFeedOfEnumerable);
 
