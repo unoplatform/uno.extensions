@@ -18,14 +18,14 @@ internal class ViewModelGenTool_1 : ICodeGenTool
 	public string Version => "1";
 
 	private readonly BindableGenerationContext _ctx;
-	private readonly BindableGenerator _bindables;
+	private readonly ViewModelGenerator_1 _bindables;
 	private readonly BindableViewModelMappingGenerator _viewModelsMapping;
 	private readonly IAssemblySymbol _assembly;
 
 	public ViewModelGenTool_1(BindableGenerationContext ctx)
 	{
 		_ctx = ctx;
-		_bindables = new BindableGenerator(ctx);
+		_bindables = new ViewModelGenerator_1(ctx);
 		_viewModelsMapping = new BindableViewModelMappingGenerator(ctx);
 		_assembly = ctx.Context.Compilation.Assembly;
 	}

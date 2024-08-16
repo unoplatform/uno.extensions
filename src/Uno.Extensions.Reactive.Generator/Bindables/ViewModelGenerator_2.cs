@@ -7,16 +7,16 @@ using Uno.Extensions.Generators;
 
 namespace Uno.Extensions.Reactive.Generator;
 
-internal class ViewModelGenerator : ICodeGenTool
+internal class ViewModelGenerator_2 : ICodeGenTool
 {
 	// To Match with the ViewModelGenTool.Version
-	public string Version => "3";
+	public string Version => "2";
 
 	private readonly BindableGenerationContext _ctx;
 
 	private List<INamedTypeSymbol> _toGenerate = [];
 
-	public ViewModelGenerator(BindableGenerationContext ctx)
+	public ViewModelGenerator_2(BindableGenerationContext ctx)
 	{
 		_ctx = ctx;
 	}

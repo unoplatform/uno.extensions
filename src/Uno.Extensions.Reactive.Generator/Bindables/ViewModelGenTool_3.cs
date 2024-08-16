@@ -16,7 +16,7 @@ internal class ViewModelGenTool_3 : ICodeGenTool
 	private const string ViewModelSufix = "ViewModel";
 
 	private readonly BindableGenerationContext _ctx;
-	private readonly ViewModelGenerator _bindables;
+	private readonly ViewModelGenerator_2 _bindables;
 	private readonly BindableViewModelMappingGenerator _viewModelsMapping;
 	private readonly IAssemblySymbol _assembly;
 
@@ -25,7 +25,7 @@ internal class ViewModelGenTool_3 : ICodeGenTool
 	public ViewModelGenTool_3(BindableGenerationContext ctx)
 	{
 		_ctx = ctx;
-		_bindables = new ViewModelGenerator(ctx);
+		_bindables = new ViewModelGenerator_2(ctx);
 		_viewModelsMapping = new BindableViewModelMappingGenerator(ctx);
 		_assembly = ctx.Context.Compilation.Assembly;
 	}
