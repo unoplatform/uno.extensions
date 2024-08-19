@@ -4,30 +4,51 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Uno.Extensions.Generators;
 using Uno.Extensions.Reactive.Config;
-using Uno.RoslynHelpers;
 using static Microsoft.CodeAnalysis.Accessibility;
+
 
 namespace Uno.Extensions.Reactive.Generator;
 
-internal class ViewModelGenTool_2 : ICodeGenTool
+internal class ViewModelGenTool_3 : ICodeGenTool
 {
-	/// <inheritdoc />
-	public string Version => "2";
+	private const string ViewModelSufix = "ViewModel";
 
 	private readonly BindableGenerationContext _ctx;
-	private readonly ViewModelGenerator_1 _bindables;
+	private readonly ViewModelGenerator_2 _bindables;
 	private readonly BindableViewModelMappingGenerator _viewModelsMapping;
 	private readonly IAssemblySymbol _assembly;
 
-	public ViewModelGenTool_2(BindableGenerationContext ctx)
+	public string Version => "3";
+
+	public ViewModelGenTool_3(BindableGenerationContext ctx)
 	{
 		_ctx = ctx;
-		_bindables = new ViewModelGenerator_1(ctx);
+		_bindables = new ViewModelGenerator_2(ctx);
 		_viewModelsMapping = new BindableViewModelMappingGenerator(ctx);
 		_assembly = ctx.Context.Compilation.Assembly;
+	}
+
+	public IEnumerable<(string fileName, string code)> Generate()
+	{
+		var models = from module in _assembly.Modules
+					 from type in module.GetNamespaceTypes()
+					 where IsSupported(type)
+					 select type;
+
+		foreach (var model in models)
+		{
+			yield return ($"{model}.Bindable", GenerateViewModel(model));
+			yield return (model.ToString(), GeneratePartialModel(model));
+		}
+
+		foreach (var (type, code) in _bindables.Generate())
+		{
+			yield return (type.ToString(), code);
+		}
+
+		yield return _viewModelsMapping.Generate();
 	}
 
 	private bool IsSupported([NotNullWhen(true)] INamedTypeSymbol? type)
@@ -37,14 +58,14 @@ internal class ViewModelGenTool_2 : ICodeGenTool
 			return false;
 		}
 
-		if (_ctx.IsGenerationEnabled(type) is {} isEnabled)
+		if (_ctx.IsGenerationEnabled(type) is { } isEnabled)
 		{
 			// If the attribute is set, we don't check for the `partial`: the build as to fail if not
 			return isEnabled;
 		}
 
 		if (type.IsPartial()
-			&& (type.ContainingAssembly.FindAttribute<ImplicitBindablesAttribute>() ?? new ()) is { IsEnabled: true } @implicit // Note: the type might be from another assembly than current
+			&& (type.ContainingAssembly.FindAttribute<ImplicitBindablesAttribute>() ?? new()) is { IsEnabled: true } @implicit // Note: the type might be from another assembly than current
 			&& @implicit.Patterns.Any(pattern => Regex.IsMatch(type.ToString(), pattern)))
 		{
 			return true;
@@ -53,48 +74,32 @@ internal class ViewModelGenTool_2 : ICodeGenTool
 		return false;
 	}
 
-	public IEnumerable<(string fileName, string code)> Generate()
-	{
-		var models = from module in _assembly.Modules
-			from type in module.GetNamespaceTypes()
-			where IsSupported(type)
-			select type;
-
-		foreach (var model in models)
-		{
-			yield return (model + ".Bindable", GenerateViewModel(model));
-			yield return (model.ToString(), GeneratePartialModel(model));
-		}
-
-		foreach (var (type, code) in _bindables.Generate())
-		{
-			yield return (type.ToString(), code: code);
-		}
-
-		yield return _viewModelsMapping.Generate();
-	}
+	private static string GetModelName(INamedTypeSymbol type)
+		=> type.Name.TrimEnd("Model", StringComparison.Ordinal);
 
 	private static string GetViewModelName(INamedTypeSymbol model)
-		=> $"Bindable{model.Name}";
+		=> $"{GetModelName(model)}{ViewModelSufix}";
 
 	private static string GetViewModelFullName(INamedTypeSymbol model)
-		=> $"{model.ToFullString().TrimEnd(model.Name, StringComparison.Ordinal)}Bindable{model.Name}";
+		=> $"{model.ToFullString().TrimEnd(model.Name, StringComparison.Ordinal)}{GetModelName(model)}{ViewModelSufix}";
 
 	private string GenerateViewModel(INamedTypeSymbol model)
 	{
 		var vmName = GetViewModelName(model);
 		var hasBaseType = IsSupported(model.BaseType);
+
 		var baseType = hasBaseType
 			? GetViewModelFullName(model.BaseType!)
 			: $"{NS.Bindings}.BindableViewModelBase";
 
 		var members = GetMembers(model).ToList();
+
 		var vm = this.InSameNamespaceOf(
 			model,
 			$@"
 				{this.GetCodeGenAttribute()}
 				[{NS.Bindings}.Bindable(typeof({model.ToFullString()}))]
-				{model.DeclaredAccessibility.ToCSharpCodeString()} partial class {vmName} : {baseType} 
+				{model.DeclaredAccessibility.ToCSharpCodeString()} partial class {vmName} : {baseType}
 				{{
 					{members.Select(member => member.GetBackingField()).Align(5)}
 
@@ -196,10 +201,11 @@ internal class ViewModelGenTool_2 : ICodeGenTool
 					private void __Reactive_OnModelPropertyChanged(object? sender, global::System.ComponentModel.PropertyChangedEventArgs args)
 						=> base.RaisePropertyChanged(args.PropertyName);
 
-					{hasBaseType switch {
-						false => $"public {model.ToFullString()} {N.Model} {{ get; private set; }}",
-						true => $"public new {model.ToFullString()} {N.Model} => ({model.ToFullString()}) base.{N.Model};",
-					}}
+					{hasBaseType switch
+						{
+							false => $"public {model.ToFullString()} {N.Model} {{ get; private set; }}",
+							true => $"public new {model.ToFullString()} {N.Model} => ({model.ToFullString()}) base.{N.Model};",
+						}}
 
 					{members.Select(member => member.GetDeclaration()).Align(5)}
 				}}");
@@ -217,7 +223,7 @@ internal class ViewModelGenTool_2 : ICodeGenTool
 	}
 
 	/// <summary>
-	/// Gets the instance of the 
+	/// Gets the instance of the
 	/// </summary>
 	/// <param name="model"></param>
 	/// <returns></returns>
@@ -262,12 +268,12 @@ internal class ViewModelGenTool_2 : ICodeGenTool
 					break;
 
 				case IFieldSymbol field when _ctx.IsFeed(field.Type, out var valueType):
-				{
-					yield return _bindables.GetBindableType(valueType) is { } bindableType && !field.HasAttributes(_ctx.ValueAttribute)
-						? new BindableFromFeedField(field, valueType, bindableType)
-						: new PropertyFromFeedField(field, valueType);
-					break;
-				}
+					{
+						yield return _bindables.GetBindableType(valueType) is { } bindableType && !field.HasAttributes(_ctx.ValueAttribute)
+							? new BindableFromFeedField(field, valueType, bindableType)
+							: new PropertyFromFeedField(field, valueType);
+						break;
+					}
 
 				case IFieldSymbol field:
 					yield return new MappedField(field);
@@ -282,12 +288,12 @@ internal class ViewModelGenTool_2 : ICodeGenTool
 					break;
 
 				case IPropertySymbol property when _ctx.IsFeed(property.Type, out var valueType):
-				{
-					yield return _bindables.GetBindableType(valueType) is { } bindableType && !property.HasAttributes(_ctx.ValueAttribute)
-						? new BindableFromFeedProperty(property, valueType, bindableType)
-						: new PropertyFromFeedProperty(property, valueType);
-					break;
-				}
+					{
+						yield return _bindables.GetBindableType(valueType) is { } bindableType && !property.HasAttributes(_ctx.ValueAttribute)
+							? new BindableFromFeedProperty(property, valueType, bindableType)
+							: new PropertyFromFeedProperty(property, valueType);
+						break;
+					}
 
 				case IPropertySymbol property:
 					yield return new MappedProperty(property);
@@ -303,4 +309,5 @@ internal class ViewModelGenTool_2 : ICodeGenTool
 			}
 		}
 	}
+
 }

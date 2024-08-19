@@ -76,11 +76,11 @@ public partial class Given_ViewModel_Then_GenerateBindable
 		=> Assert.IsNotNull(GetBindable(typeof(Given_ViewModel_Then_GenerateBindable_FlaggedCodeGen_NotSuffixed)));
 
 	[TestMethod]
-	public void NestedFlaggedCodeGen_NotSuffixedViewModel()
+	public void NestedFlaggedCodeGen_NotSuffixedTest()
 		=> Assert.IsNotNull(GetBindable(typeof(NestedFlaggedCodeGen_NotSuffixed)));
 
 	[TestMethod]
-	public void NestedInternalFlaggedCodeGen_NotSuffixedViewModel()
+	public void NestedInternalFlaggedCodeGen_NotSuffixedTest()
 		=> Assert.IsNotNull(GetBindable(typeof(NestedInternalFlaggedCodeGen_NotSuffixed)));
 
 	[TestMethod]
@@ -98,22 +98,30 @@ public partial class Given_ViewModel_Then_GenerateBindable
 	private Type? GetBindable(Type vmType)
 		=> GetBindable(vmType.FullName!);
 
+
 	private Type? GetBindable(string vmType)
 	{
+		vmType = TrimEnd(vmType, "Model", StringComparison.Ordinal);
+
 		var index = vmType.LastIndexOf('+');
 		if (index >= 0)
 		{
-			return GetType().Assembly.GetType($"{vmType.Substring(0, index)}+Bindable{vmType.Substring(index + 1)}");
+			return GetType().Assembly.GetType($"{vmType.Substring(0, index)}+{vmType.Substring(index + 1)}ViewModel");
 		}
 
 		index = vmType.LastIndexOf('.');
 		if (index >= 0)
 		{
-			return GetType().Assembly.GetType($"{vmType.Substring(0, index)}.Bindable{vmType.Substring(index + 1)}");
+			return GetType().Assembly.GetType($"{vmType.Substring(0, index)}.{vmType.Substring(index + 1)}ViewModel");
 		}
 
-		return GetType().Assembly.GetType("Bindable" + vmType);
+		return GetType().Assembly.GetType($"{vmType}ViewModel");
 	}
+
+	private string TrimEnd(string text, string value, StringComparison comparison)
+		=> text.EndsWith(value, comparison)
+			? text.Substring(0, text.Length - value.Length)
+			: text;
 
 	public partial class Nested_ViewModel { }
 

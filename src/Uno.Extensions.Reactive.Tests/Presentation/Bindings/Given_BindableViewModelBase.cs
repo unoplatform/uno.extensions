@@ -15,7 +15,7 @@ public partial class Given_BindableViewModelBase : FeedUITests
 	[TestMethod]
 	public async Task When_UpdateSourceMultipleTimeWhileUIThreadFreeze_Then_LastWin()
 	{
-		var sut = new BindableWhen_UpdateSourceMultipleTimeWhileUIThreadFreeze_Then_LastWin_Model();
+		var sut = new When_UpdateSourceMultipleTimeWhileUIThreadFreeze_Then_LastWin_ViewModel();
 
 		var changes = 0;
 		var uiFrozen = new ManualResetEvent(false);

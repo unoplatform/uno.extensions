@@ -18,15 +18,15 @@ public partial class Given_RecordWithList_Then_GenerateListOfBindable : FeedUITe
 	[TestMethod]
 	public async Task IsListOfBindable()
 	{
-		await using var sut = new BindableMyViewModel();
+		await using var sut = new MyViewViewModel();
 
-		sut.MyFeed.Items.Should().BeAssignableTo<IEnumerable<BindableMyRecordWithListItem>>();
+		sut.MyFeed.Items.Should().BeAssignableTo<IEnumerable<MyRecordWithListItemViewModel>>();
 	}
 
 	[TestMethod]
 	public async Task SupportsAdd()
 	{
-		await using var sut = new BindableMyViewModel();
+		await using var sut = new MyViewViewModel();
 		var args = new List<NotifyCollectionChangedEventArgs>();
 		var result = sut.Model.MyFeed.Select(r => r.Items).Record();
 
@@ -48,7 +48,7 @@ public partial class Given_RecordWithList_Then_GenerateListOfBindable : FeedUITe
 	[TestMethod]
 	public async Task SupportsRemove()
 	{
-		await using var sut = new BindableMyViewModel();
+		await using var sut = new MyViewViewModel();
 		var args = new List<NotifyCollectionChangedEventArgs>();
 		var result = sut.Model.MyFeed.Select(r => r.Items).Record();
 
