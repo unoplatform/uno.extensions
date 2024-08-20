@@ -59,6 +59,7 @@
 		<PackageVersion Include="System.Net.Http" Version="4.3.4" />
 		<PackageVersion Include="System.Text.RegularExpressions" Version="4.3.1" />
 		<PackageVersion Include="System.Text.Json" Version="8.0.4" />
+		<PackageVersion Include="Xamarin.TestCloud.Agent" Version="0.23.2" />
 	</ItemGroup>
 
 </Project>
