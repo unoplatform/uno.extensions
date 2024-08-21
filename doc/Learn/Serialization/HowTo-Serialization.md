@@ -5,7 +5,7 @@ uid: Uno.Extensions.Serialization.HowToSerialization
 
 Accessing the serialized and deserialized representation of an object can be important for dynamic, data-rich applications. Uno.Extensions supports the [new serialization technique](https://devblogs.microsoft.com/dotnet/try-the-new-system-text-json-source-generator) powered by code generation, but you can optionally revert to the previous one which uses reflection.
 
-## Step-by-steps
+## Step-by-step
 
 > [!IMPORTANT]
 > This guide assumes you used the template wizard or `dotnet new unoapp` to create your solution. If not, it is recommended that you follow the [**Creating an application with Uno.Extensions** documentation](xref:Uno.Extensions.HowToGettingStarted) to create an application from the template.

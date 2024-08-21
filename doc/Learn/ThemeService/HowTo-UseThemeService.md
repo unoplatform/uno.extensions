@@ -6,7 +6,7 @@ uid: Uno.Extensions.ThemeService.Overview
 
 This topic explains how to use the `ThemeService` for runtime theme switching and persisting user theme preferences.
 
-## Step-by-steps
+## Step-by-step
 
 1. **Register ThemeService**:
     Add the `ThemeService` to your project's host builder configuration.
