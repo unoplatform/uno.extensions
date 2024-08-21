@@ -5,7 +5,7 @@ uid: Uno.Extensions.Configuration.HowToConfiguration
 
 `Uno.Extensions.Configuration` provides you with a consistent way to view configuration data from a number of distinct sources. It leverages the `IOptions<T>` interface from [Microsoft.Extensions.Options](https://learn.microsoft.com/dotnet/api/microsoft.extensions.options) to offer [read-only](https://learn.microsoft.com/dotnet/core/extensions/configuration#concepts-and-abstractions) access to values organized into sections. Unlike the [Writable Configuration](xref:Uno.Extensions.Configuration.HowToWritableConfiguration) (aka Settings) pattern, this does not allow for programmatic writing by itself.
 
-## Step-by-steps
+## Step-by-step
 
 > [!IMPORTANT]
 > This guide assumes you used the template wizard or `dotnet new unoapp` to create your solution. If not, it is recommended that you follow the [**Creating an application with Uno.Extensions** documentation](xref:Uno.Extensions.HowToGettingStarted) to create an application from the template.

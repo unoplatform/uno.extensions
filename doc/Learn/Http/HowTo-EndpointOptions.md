@@ -14,7 +14,7 @@ It's often necessary to include an API key alongside requests to a web API. This
 
 * Knowledge of how to [register an endpoint for HTTP requests](xref:Uno.Extensions.Http.HowToHttp)
 
-## Step-by-steps
+## Step-by-step
 
 > [!IMPORTANT]
 > This guide assumes you used the template wizard or `dotnet new unoapp` to create your solution. If not, it is recommended that you follow the [**Creating an application with Uno.Extensions** documentation](xref:Uno.Extensions.HowToGettingStarted) to create an application from the template.

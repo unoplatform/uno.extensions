@@ -8,7 +8,7 @@ uid: Uno.Extensions.Hosting.HowToHostingSetup
 > [!WARNING]
 > The steps outlined here are unnecessary if you used the new project wizard template to create your solution. Otherwise, it is recommended that you follow the [Creating an application with Uno.Extensions article](xref:Uno.Extensions.HowToGettingStarted) for creating an application from the template.
 
-## Step-by-steps
+## Step-by-step
 
 ### 1. Installation
 

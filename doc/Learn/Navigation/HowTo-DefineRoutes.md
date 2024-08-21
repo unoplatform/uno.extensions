@@ -8,7 +8,7 @@ Routes provide an easy and dynamic way of navigating through your app, either vi
 
 This topic walks through the process of defining routes.
 
-## Step-by-steps
+## Step-by-step
 
 > [!IMPORTANT]
 > This guide assumes you used the template wizard or `dotnet new unoapp` to create your solution. If not, it is recommended that you follow the [Creating an application with Uno.Extensions article](xref:Uno.Extensions.HowToGettingStarted) to create an application from the template.
