@@ -10,10 +10,10 @@ Like [feeds](xref:Uno.Extensions.Mvux.Feeds), states are used to manage asynchro
 
 Contrary to Feeds, states are stateful (as the name suggests) in that they keep a record of the current data value. States also allow the current value to be modified, which is useful for two-way binding scenarios.
 
-MVUX utilizes its powerful code-generation engine to generate a bindable proxy for each Model, which holds the state information of the data, as well as a bindable proxy for entities where needed, for instance, if the entities are immutable (e.g. records - the recommended type).  
+MVUX utilizes its powerful code-generation engine to generate a bindable proxy for each Model, which holds the state information of the data, as well as a bindable proxy for entities where needed, for instance, if the entities are immutable (e.g. records - the recommended type).
 The bindable proxies use as a bridge that enables immutable entities to work with the WinUI data-binding engine. The states in the Model are monitored for data-binding changes, and in response to any change, the objects are recreated fresh, instead of their properties being changed.
 
-States keep the current value of the data, so every new subscription to them, (such as awaiting them or binding them to an additional control, etc.), will use the data currently loaded in the state (if any).  
+States keep the current value of the data, so every new subscription to them, (such as awaiting them or binding them to an additional control, etc.), will use the data currently loaded in the state (if any).
 
 Like a feed, states can be reloaded, which will invoke the asynchronous operation that is used to create the state.
 
@@ -52,7 +52,7 @@ A State can also be created from an Async Enumerable as follows:
 public IState<StockValue> MyStockCurrentValue => State.AsyncEnumerable(this, ContactsService.GetMyStockCurrentValue);
 ```
 
-Make sure the Async Enumerable methods have a `CancellationToken` parameter and are decorated with the `EnumerationCancellation` attribute.  
+Make sure the Async Enumerable methods have a `CancellationToken` parameter and are decorated with the `EnumerationCancellation` attribute.
 You can learn more about Async Enumerables in [this article](https://learn.microsoft.com/archive/msdn-magazine/2019/november/csharp-iterating-with-async-enumerables-in-csharp-8#a-tour-through-async-enumerables).
 
 #### Start with an empty state
@@ -83,7 +83,7 @@ public IState<int> MyState => State.FromFeed(this, MyFeed);
 #### Other ways to create states
 
 > [!TIP]
-> A state can also be constructed manually by building its underlying Messages or Options.  
+> A state can also be constructed manually by building its underlying Messages or Options.
 > This is intended for advanced users and is explained [here](xref:Uno.Extensions.Reactive.State#create).
 
 ### Usage of States
@@ -111,7 +111,7 @@ States are built to be cooperating with the data-binding engine. A State will au
 1. Replace all child elements in the _MainPage.xaml_ with the following:
 
     ```xml
-    <Page 
+    <Page
         x:Class="SliderApp.MainPage"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -119,15 +119,15 @@ States are built to be cooperating with the data-binding engine. A State will au
         <Page.DataContext>
             <local:BindableSliderModel />
         </Page.DataContext>
-    
+
         <StackPanel>
             <StackPanel Orientation="Horizontal" Spacing="5">
                 <TextBlock Text="Current state value:" />
                 <TextBlock Text="{Binding SliderValue}" />
             </StackPanel>
-    
+
             <Border Height="1" Background="DarkGray" />
-    
+
             <TextBlock Text="Set state value:"/>
             <Slider Value="{Binding SliderValue, Mode=TwoWay}" />
         </StackPanel>
@@ -144,7 +144,7 @@ In this scenario, the `DataContext` is set to an instance of the `BindableSlider
 
 #### Update
 
-To manually update the current value of a state, use its `Update` method.  
+To manually update the current value of a state, use its `Update` method.
 
 In this example we'll add the method `IncrementSlider` that gets the current value and increases it by one (if it doesn't exceed 100):
 
@@ -168,14 +168,14 @@ There are additional methods that update the data of a State such as `Set` and `
 
 ```csharp
 public async ValueTask SetSliderMiddle(CancellationToken ct = default)
-{    
+{
     await SliderValue.SetAsync(50, ct);
 }
 ```
 
 ### Subscribing to changes
 
-The `ForEachAsync` enables executing a callback each time the value of the `IState<T>` is updated.
+The `ForEach` enables executing a callback each time the value of the `IState<T>` is updated.
 
 This extension-method takes a single parameter which is a async callback that takes two parameters. The first parameter is of type `T?`, where `T` is type of the `IState`, and represents the new value of the state. The second parameter is a `CancellationToken` which can be used to cancel a long running action.
 
@@ -188,7 +188,7 @@ public partial record Model
 
     public async ValueTask EnableChangeTracking()
     {
-        MyState.ForEachAsync(PerformAction);
+        MyState.ForEach(PerformAction);
     }
 
     public async ValueTask PerformAction(string item, CancellationToken ct)
@@ -196,6 +196,22 @@ public partial record Model
         ...
     }
 }
+```
+
+Additionally, the `ForEach` method can be set using the Fluent API:
+
+```csharp
+public partial record Model
+{
+    public IState<string> MyState => State.Value(this, "Initial value")
+                                          .ForEach(PerformAction);
+
+    public async ValueTask PerformAction(string item, CancellationToken ct)
+    {
+        ...
+    }
+}
+
 ```
 
 ### Commands
