@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
@@ -119,7 +119,7 @@ public class Given_StateForEach : FeedTests
 
 		var state = State.Async(this, async ct => 1)
 						 .ForEach(UpdateResultAsync);
-						 
+
 		await state.ForEach(UpdateResultAsync);
 
 		await state.SetAsync(2, CT);
@@ -176,6 +176,9 @@ public class Given_StateForEach : FeedTests
 		await state.SetAsync(2, CT);
 		await state.SetAsync(42, CT);
 		await state.SetAsync(3, CT);
+
+		//Test fails sometime because of time needed to process the exception
+		await Task.Delay(100);
 
 		result.Should().BeEquivalentTo(new[] { 2, 3 });
 	}
