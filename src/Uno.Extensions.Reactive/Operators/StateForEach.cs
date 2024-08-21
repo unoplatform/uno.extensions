@@ -20,6 +20,8 @@ internal sealed class StateForEach<T> : IDisposable
 
 	public StateForEach(ISignal<Message<T>> state, AsyncAction<Option<T>> action, string name = "-unnamed-")
 	{
+		ArgumentNullException.ThrowIfNull(state);
+
 		if (state is not IStateImpl impl)
 		{
 			throw new InvalidOperationException("Execute is supported only on internal state implementation.");

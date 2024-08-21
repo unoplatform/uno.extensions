@@ -17,7 +17,7 @@ namespace Uno.Extensions.Reactive.Tests.Extensions;
 public class Given_StateForEach : FeedTests
 {
 	[TestMethod]
-	[ExpectedException(typeof(InvalidOperationException))] // Note: This is a compilation tests!
+	[ExpectedException(typeof(ArgumentNullException))] // Note: This is a compilation tests!
 	public async Task When_ForEachAsync_Then_AcceptsNotNullAndStruct()
 	{
 		_ = default(IState<int>)!.ForEach(async (i, ct) => this.ToString());
@@ -39,7 +39,7 @@ public class Given_StateForEach : FeedTests
 	}
 
 	[TestMethod]
-	[ExpectedException(typeof(InvalidOperationException))] // Note: This is a compilation tests!
+	[ExpectedException(typeof(ArgumentNullException))] // Note: This is a compilation tests!
 	public async Task When_ForEachDataAsync_Then_AcceptsNotNullAndStruct()
 	{
 		_ = default(IState<int>)!.ForEach(async (i, ct) => this.ToString());

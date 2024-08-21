@@ -212,8 +212,9 @@ partial class State
 	public static IState<T> ForEach<T>(this IState<T> state, AsyncAction<T?> action, [CallerMemberName] string? caller = null, [CallerLineNumber] int line = -1)
 		where T : notnull
 	{
-		_ = new StateForEach<T>(state, action.SomeOrNone(), $"ForEach defined in {caller} at line {line}.");
-
+		_ = AttachedProperty.GetOrCreate(owner: state,
+										 key: action,
+										 factory: (s, ks) => new StateForEach<T>(state, action.SomeOrNone(), $"ForEach defined in {caller} at line {line}."));
 		return state;
 	}
 
@@ -230,7 +231,9 @@ partial class State
 	public static IState<T> ForEach<T>(this IState<T> state, AsyncAction<T?> action, out IDisposable disposable, [CallerMemberName] string? caller = null, [CallerLineNumber] int line = -1)
 		where T : notnull
 	{
-		disposable = new StateForEach<T>(state, action.SomeOrNone(), $"ForEach defined in {caller} at line {line}.");
+		disposable = AttachedProperty.GetOrCreate(owner: state,
+												  key: action,
+												  factory: (s, ks) => new StateForEach<T>(state, action.SomeOrNone(), $"ForEach defined in {caller} at line {line}."));
 
 		return state;
 	}
@@ -247,7 +250,9 @@ partial class State
 	public static IState<T?> ForEach<T>(this IState<T?> state, AsyncAction<T?> action, [CallerMemberName] string? caller = null, [CallerLineNumber] int line = -1)
 		where T : struct
 	{
-		_ = new StateForEach<T?>(state, action.SomeOrNone(), $"ForEach defined in {caller} at line {line}.");
+		_ = AttachedProperty.GetOrCreate(owner: state,
+										 key: action,
+										 factory: (s, ks) => new StateForEach<T?>(state, action.SomeOrNone(), $"ForEach defined in {caller} at line {line}."));
 
 		return state;
 	}
@@ -265,7 +270,9 @@ partial class State
 	public static IState<T?> ForEach<T>(this IState<T?> state, AsyncAction<T?> action, out IDisposable disposable, [CallerMemberName] string? caller = null, [CallerLineNumber] int line = -1)
 		where T : struct
 	{
-		disposable = new StateForEach<T?>(state, action.SomeOrNone(), $"ForEach defined in {caller} at line {line}.");
+		disposable = AttachedProperty.GetOrCreate(owner: state,
+												  key: action,
+												  factory: (s, ks) => new StateForEach<T?>(state, action.SomeOrNone(), $"ForEach defined in {caller} at line {line}."));
 
 		return state;
 	}
