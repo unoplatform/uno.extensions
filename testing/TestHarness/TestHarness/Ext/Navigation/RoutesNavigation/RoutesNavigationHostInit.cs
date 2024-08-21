@@ -7,7 +7,6 @@ public class RoutesNavigationHostInit : BaseHostInitialization
 		views.Register(
 			new ViewMap<HomePage>(),
 			new ViewMap<SamplePage>(),
-			//new ViewMap<SecondPage>(),
 			new ViewMap<ListTemplate>(),
 			new ViewMap<ItemsPage>(),
 			new ViewMap(ViewModel: typeof(ShellViewModel))
@@ -21,7 +20,6 @@ public class RoutesNavigationHostInit : BaseHostInitialization
 				{
 						new RouteMap("HomePage", View: views.FindByView<HomePage>()),
 						new RouteMap("SamplePage", View: views.FindByView<SamplePage>()),
-						//new RouteMap("SecondPage", View: views.FindByView<SecondPage>()),
 						new RouteMap("List_Template", View: views.FindByView<ListTemplate>()),
 						new RouteMap("ItemsPage", View: views.FindByView<ItemsPage>()),
 				}));

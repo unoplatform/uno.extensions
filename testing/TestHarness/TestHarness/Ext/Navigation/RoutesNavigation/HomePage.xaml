@@ -15,19 +15,27 @@
 					Orientation="Vertical"
 					HorizontalAlignment="Center">
 			<Button Content="SamplePage"
-					uen:Navigation.Request="Sample" />
+					uen:Navigation.Request="Sample"
+					AutomationProperties.AutomationId="SamplePageButton" />
 			<Button Content="SecondPage"
-					uen:Navigation.Request="Second" />
+					uen:Navigation.Request="Second"
+					AutomationProperties.AutomationId="SecondPageButton" />
 			<Button Content="Second Page (not registered)"
-					uen:Navigation.Request="SecondPage" />
+					uen:Navigation.Request="SecondPage"
+					AutomationProperties.AutomationId="SecondPageUnregisteredButton" />
 			<Button Content="List_Template"
-					uen:Navigation.Request="List_Template" />
+					uen:Navigation.Request="List_Template"
+					AutomationProperties.AutomationId="ListTemplateButton" />
 			<Button Content="ItemsPage"
-					uen:Navigation.Request="Items" />
+					uen:Navigation.Request="Items"
+					AutomationProperties.AutomationId="ItemsPageButton" />
 			<Button Content="MyControl"
-					uen:Navigation.Request="MyControl" />
+					uen:Navigation.Request="MyControl"
+					AutomationProperties.AutomationId="MyControlButton" />
 			<Button Content="MyControlView"
-					uen:Navigation.Request="MyControlView" />
+					uen:Navigation.Request="MyControlView"
+					AutomationProperties.AutomationId="MyControlViewButton" />
+
 		</StackPanel>
 
 	</Grid>

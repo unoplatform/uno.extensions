@@ -15,7 +15,7 @@
 			<RowDefinition />
 		</Grid.RowDefinitions>
 		<utu:NavigationBar Content="Second Page"
-						   AutomationProperties.AutomationId="SamplePage" />
+						   AutomationProperties.AutomationId="SecondPage" />
 		<StackPanel HorizontalAlignment="Center"
 					VerticalAlignment="Center"
 					Grid.Row="1">
