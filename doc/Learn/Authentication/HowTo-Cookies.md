@@ -8,7 +8,7 @@ Using **cookies** is a common way to store tokens that are needed to authenticat
 > [!IMPORTANT]
 > To follow these steps, you first need to have an authentication system set up. We recommend choosing one of the `IAuthenticationProvider` implementations provided by Uno Extensions. Cookie authorization can complement any of the tutorials such as [Get Started with Authentication](xref:Uno.Extensions.Authentication.HowToAuthentication).
 
-## Step-by-steps
+## Step-by-step
 
 ### 1. Enable cookies
 

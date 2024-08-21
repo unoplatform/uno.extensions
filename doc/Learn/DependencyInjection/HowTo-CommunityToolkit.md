@@ -11,7 +11,7 @@ This tutorial will walk you through how to set up this feature and use it to man
 > [!WARNING]
 > This approach to resolving dependencies is _not_ recommended, and should serve primarily as a stopgap measure while you refactor your codebase to use constructor injection.
 
-## Step-by-steps
+## Step-by-step
 
 > [!IMPORTANT]
 > This guide assumes you used the template wizard or `dotnet new unoapp` to create your solution. If not, it is recommended that you follow the [**Creating an application with Uno.Extensions** documentation](xref:Uno.Extensions.HowToGettingStarted) to create an application from the template.
