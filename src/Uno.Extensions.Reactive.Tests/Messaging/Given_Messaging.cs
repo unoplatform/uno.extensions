@@ -58,6 +58,42 @@ public class Given_Messaging : FeedTests
 	}
 
 	[TestMethod]
+	public async Task When_Fluent_Multiple_Observe_Value_Updated_Then_StateUpdated_Once()
+	{
+		int callsCount = 0;
+		var messenger = new WeakReferenceMessenger();
+		var state = State.Value(this, () => new MyEntity(42))
+						 .Observe(messenger, i => i.Key)
+						 .Observe(messenger, i => i.Key)
+						 .ForEach(async (i, ct) => callsCount++);
+
+		messenger.Send(new EntityMessage<MyEntity>(EntityChange.Updated, new(42, 1)));
+
+		var result = await state;
+		result.Should().BeEquivalentTo(new MyEntity(42, 1));
+		callsCount.Should().Be(1);
+	}
+
+	[TestMethod]
+	public async Task When_Mixed_Multiple_Observe_Value_Updated_Then_StateUpdated_Once()
+	{
+		int callsCount = 0;
+		var messenger = new WeakReferenceMessenger();
+		var state = State.Value(this, () => new MyEntity(42))
+						 .Observe(messenger, i => i.Key)
+						 .ForEach(async (i, ct) => callsCount++);
+
+
+		messenger.Observe(state, i => i.Key);
+
+		messenger.Send(new EntityMessage<MyEntity>(EntityChange.Updated, new(42, 1)));
+
+		var result = await state;
+		result.Should().BeEquivalentTo(new MyEntity(42, 1));
+		callsCount.Should().Be(1);
+	}
+
+	[TestMethod]
 	public async Task When_Fluent_Value_Updated_Then_StateUpdated_And_ForEach()
 	{
 		var versions = new List<int>();
@@ -255,6 +291,21 @@ public class Given_Messaging : FeedTests
 		var state = State.Value(this, () => new MyEntity(42));
 
 		messenger.Observe(state, i => i.Key).Dispose();
+
+		messenger.Send(new EntityMessage<MyEntity>(EntityChange.Updated, new(42, 1)));
+
+		var result = await state;
+		result.Should().BeEquivalentTo(new MyEntity(42));
+	}
+
+	[TestMethod]
+	public async Task When_Fluent_DisposedAndUpdated_Then_StateNotUpdated()
+	{
+		var messenger = new WeakReferenceMessenger();
+		var state = State.Value(this, () => new MyEntity(42))
+						 .Observe(messenger, i => i.Key, out var disposable);
+
+		disposable.Dispose();
 
 		messenger.Send(new EntityMessage<MyEntity>(EntityChange.Updated, new(42, 1)));
 
