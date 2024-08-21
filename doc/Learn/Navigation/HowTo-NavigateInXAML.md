@@ -90,7 +90,7 @@ Depending on the type of the XAML element, the `Navigation.Request` property wil
 In addition to specifying the route to navigate to, the Navigation.Data attached property can be used to define the data to be attached to the navigation request. The data can be accessed by the view model associated with the route using constructor injection.
 
 > [!NOTE]
-> It's currently not possible to send data with `uen:Navigation.Data` alongside `uen:Region.Name` when navigating through NavigationView or TabBar items. `uen:Navigation.Data` only supports sending data with `uen:Navigation.Request`. To send data when navigating with these items, you'll need to use code-behind or a view model. For more details, see this example [here](https://github.com/unoplatform/Uno.Samples/blob/master/UI/Navigation/src/Navigation/Presentation/TabBarWithDataNavigation/TabBarWithDataViewModel.cs#L23-L29).
+> It's currently not possible to send data with `uen:Navigation.Data` alongside `uen:Region.Name` when navigating through NavigationView or TabBar items. `uen:Navigation.Data` only supports sending data with `uen:Navigation.Request`. To send data when navigating with these items, you'll need to use code-behind or a view model. For more details, see this example [here](https://github.com/unoplatform/Uno.Samples/blob/20a110a75de43c8ddb04f149ae96fe2b74c93af1/UI/Navigation/src/Navigation/Presentation/TabBarWithDataNavigation/TabBarWithDataViewModel.cs#L23-L29).
 
 - Define a record (or class), `Widget`, that is the type of data that will be attached to the navigation request.
 
