@@ -82,6 +82,8 @@ public class RouteResolverDefault : RouteResolver
 		if (path is null ||
 			string.IsNullOrWhiteSpace(path))
 		{
+			if (Logger.IsEnabled(LogLevel.Warning))
+				Logger.LogWarningMessage($"Unable to resolve path from types. Path: '{path}', View: '{view?.Name}', ViewModel: '{viewModel?.Name}'");
 			return default;
 		}
 
@@ -130,6 +132,12 @@ public class RouteResolverDefault : RouteResolver
 			viewModel = TypeFromPath(trimmedPath, false, ViewModelSuffixes);
 		}
 
+		if (view != null && IsCommonControlName(view.Name))
+		{
+			if (Logger.IsEnabled(LogLevel.Warning))
+				Logger.LogWarningMessage($"Potential conflict detected: The route '{path}' resolved to a common control or class name '{view.Name}'. This could lead to unexpected behavior.");
+		}
+
 		if (path is not null &&
 			!string.IsNullOrWhiteSpace(path))
 		{
@@ -143,13 +151,21 @@ public class RouteResolverDefault : RouteResolver
 		}
 
 		if (Logger.IsEnabled(LogLevel.Warning)) Logger.LogWarningMessage($"Unable to create default mapping");
-		return default;
+		return null;
+	}
+
+	private bool IsCommonControlName(string name)
+	{
+		var commonNames = new List<string> { "Scroll", "List", "Grid", "Tree", "Web", "Navigation", "Content", "User", "Items", "Menu" };
+		return commonNames.Contains(name);
 	}
 
 	private Type? TypeFromPath(string path, bool allowMatchExact, IEnumerable<string> suffixes, Func<Type, bool>? condition = null)
 	{
 		if (string.IsNullOrWhiteSpace(path))
 		{
+			if (Logger.IsEnabled(LogLevel.Warning))
+				Logger.LogWarningMessage($"Navigation failed: Empty or null path provided.");
 			return default;
 		}
 
@@ -168,6 +184,8 @@ public class RouteResolverDefault : RouteResolver
 				}
 			}
 		}
+		if (Logger.IsEnabled(LogLevel.Warning))
+			Logger.LogWarningMessage($"Navigation failed: Could not resolve type for path '{path}'.");
 
 		return null;
 	}

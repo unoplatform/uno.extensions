@@ -6,6 +6,8 @@ public enum TestSections
 	Navigation_ContentControl,
 	Navigation_PageNavigation,
 	Navigation_PageNavigationRegistered,
+	Navigation_RoutesNavigation,
+	Navigation_RoutesNavigationRegistered,
 	Navigation_Dialogs,
 	Navigation_Responsive,
 	Navigation_ListToDetails,
