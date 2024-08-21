@@ -178,6 +178,29 @@ partial class State
 		=> SetAsync(state, value, ct);
 
 	/// <summary>
+	/// [DEPRECATED] Use ForEach instead
+	/// </summary>
+	[EditorBrowsable(EditorBrowsableState.Never)]
+#if DEBUG // To avoid usage in internal reactive code, but without forcing apps to update right away
+	[Obsolete("Use ForEach")]
+#endif
+	public static IDisposable ForEachAsync<T>(this IState<T> state, AsyncAction<T?> action, [CallerMemberName] string? caller = null, [CallerLineNumber] int line = -1)
+		where T : notnull
+		=> new StateForEach<T>(state, action.SomeOrNone(), $"ForEachAsync defined in {caller} at line {line}.");
+
+	/// <summary>
+	/// [DEPRECATED] Use ForEach instead
+	/// </summary>
+	[EditorBrowsable(EditorBrowsableState.Never)]
+#if DEBUG // To avoid usage in internal reactive code, but without forcing apps to update right away
+	[Obsolete("Use ForEach")]
+#endif
+	public static IDisposable ForEachAsync<T>(this IState<T?> state, AsyncAction<T?> action, [CallerMemberName] string? caller = null, [CallerLineNumber] int line = -1)
+		where T : struct
+		=> new StateForEach<T?>(state, action.SomeOrNone(), $"ForEachAsync defined in {caller} at line {line}.");
+
+
+	/// <summary>
 	/// Execute an async callback each time the state is being updated.
 	/// </summary>
 	/// <typeparam name="T">The type of the state</typeparam>
@@ -185,10 +208,32 @@ partial class State
 	/// <param name="action">The callback to invoke on each update of the state.</param>
 	/// <param name="caller"> For debug purposes, the name of this subscription. DO NOT provide anything here, let the compiler fulfill this.</param>
 	/// <param name="line">For debug purposes, the name of this subscription. DO NOT provide anything here, let the compiler fulfill this.</param>
-	/// <returns>A <see cref="IDisposable"/> that can be used to remove the callback registration.</returns>
-	public static IDisposable ForEachAsync<T>(this IState<T> state, AsyncAction<T?> action, [CallerMemberName] string? caller = null, [CallerLineNumber] int line = -1)
+	/// <returns>An <see cref="IState"/> that can be used to chain other operations.</returns>
+	public static IState<T> ForEach<T>(this IState<T> state, AsyncAction<T?> action, [CallerMemberName] string? caller = null, [CallerLineNumber] int line = -1)
 		where T : notnull
-		=> new StateForEach<T>(state, action.SomeOrNone(), $"ForEachAsync defined in {caller} at line {line}.");
+	{
+		_ = new StateForEach<T>(state, action.SomeOrNone(), $"ForEach defined in {caller} at line {line}.");
+
+		return state;
+	}
+
+	/// <summary>
+	/// Execute an async callback each time the state is being updated.
+	/// </summary>
+	/// <typeparam name="T">The type of the state</typeparam>
+	/// <param name="state">The state to listen.</param>
+	/// <param name="action">The callback to invoke on each update of the state.</param>
+	/// <param name="caller"> For debug purposes, the name of this subscription. DO NOT provide anything here, let the compiler fulfill this.</param>
+	/// <param name="line">For debug purposes, the name of this subscription. DO NOT provide anything here, let the compiler fulfill this.</param>
+	/// <param name="disposable"> A <see cref="IDisposable"/> that can be used to remove the callback registration.</param>
+	/// <returns>An <see cref="IState"/> that can be used to chain other operations.</returns>
+	public static IState<T> ForEach<T>(this IState<T> state, AsyncAction<T?> action, out IDisposable disposable, [CallerMemberName] string? caller = null, [CallerLineNumber] int line = -1)
+		where T : notnull
+	{
+		disposable = new StateForEach<T>(state, action.SomeOrNone(), $"ForEach defined in {caller} at line {line}.");
+
+		return state;
+	}
 
 	/// <summary>
 	/// Execute an async callback each time the state is being updated.
@@ -199,9 +244,31 @@ partial class State
 	/// <param name="caller"> For debug purposes, the name of this subscription. DO NOT provide anything here, let the compiler fulfill this.</param>
 	/// <param name="line">For debug purposes, the name of this subscription. DO NOT provide anything here, let the compiler fulfill this.</param>
 	/// <returns>A <see cref="IDisposable"/> that can be used to remove the callback registration.</returns>
-	public static IDisposable ForEachAsync<T>(this IState<T?> state, AsyncAction<T?> action, [CallerMemberName] string? caller = null, [CallerLineNumber] int line = -1)
+	public static IState<T?> ForEach<T>(this IState<T?> state, AsyncAction<T?> action, [CallerMemberName] string? caller = null, [CallerLineNumber] int line = -1)
 		where T : struct
-		=> new StateForEach<T?>(state, action.SomeOrNone(), $"ForEachAsync defined in {caller} at line {line}.");
+	{
+		_ = new StateForEach<T?>(state, action.SomeOrNone(), $"ForEach defined in {caller} at line {line}.");
+
+		return state;
+	}
+
+	/// <summary>
+	/// Execute an async callback each time the state is being updated.
+	/// </summary>
+	/// <typeparam name="T">The type of the state</typeparam>
+	/// <param name="state">The state to listen.</param>
+	/// <param name="action">The callback to invoke on each update of the state.</param>
+	/// <param name="caller"> For debug purposes, the name of this subscription. DO NOT provide anything here, let the compiler fulfill this.</param>
+	/// <param name="line">For debug purposes, the name of this subscription. DO NOT provide anything here, let the compiler fulfill this.</param>	
+	/// <param name="disposable"> A <see cref="IDisposable"/> that can be used to remove the callback registration.</param>
+	/// <returns>An <see cref="IState"/> that can be used to chain other operations.</returns>
+	public static IState<T?> ForEach<T>(this IState<T?> state, AsyncAction<T?> action, out IDisposable disposable, [CallerMemberName] string? caller = null, [CallerLineNumber] int line = -1)
+		where T : struct
+	{
+		disposable = new StateForEach<T?>(state, action.SomeOrNone(), $"ForEach defined in {caller} at line {line}.");
+
+		return state;
+	}
 
 
 	/// <summary>
@@ -221,9 +288,13 @@ partial class State
 	/// </summary>
 	[EditorBrowsable(EditorBrowsableState.Never)]
 #if DEBUG // To avoid usage in internal reactive code, but without forcing apps to update right away
-	[Obsolete("Use ForEachAsync")]
+	[Obsolete("Use ForEach")]
 #endif
 	public static IDisposable Execute<T>(this IState<T> state, AsyncAction<T?> action, [CallerMemberName] string? caller = null, [CallerLineNumber] int line = -1)
 		where T : notnull
-		=> ForEachAsync(state, action, caller, line);
+	{
+		_ = ForEachAsync(state, action, caller, line);
+
+		return Disposable.Empty;
+	}
 }
