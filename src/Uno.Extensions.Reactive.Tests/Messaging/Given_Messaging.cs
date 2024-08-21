@@ -45,6 +45,57 @@ public class Given_Messaging : FeedTests
 	}
 
 	[TestMethod]
+	public async Task When_Fluent_Value_Updated_Then_StateUpdated()
+	{
+		var messenger = new WeakReferenceMessenger();
+		var state = State.Value(this, () => new MyEntity(42))
+						 .Observe(messenger, i => i.Key);
+
+		messenger.Send(new EntityMessage<MyEntity>(EntityChange.Updated, new(42, 1)));
+
+		var result = await state;
+		result.Should().BeEquivalentTo(new MyEntity(42, 1));
+	}
+
+	[TestMethod]
+	public async Task When_Fluent_Value_Updated_Then_StateUpdated_And_ForEach()
+	{
+		var versions = new List<int>();
+
+		var messenger = new WeakReferenceMessenger();
+		var state = State.Value(this, () => new MyEntity(42))
+						 .Observe(messenger, i => i.Key)
+						 .ForEach(async (i, ct) => versions.Add(i!.Version));
+
+		messenger.Send(new EntityMessage<MyEntity>(EntityChange.Updated, new(42, 3)));
+		messenger.Send(new EntityMessage<MyEntity>(EntityChange.Updated, new(42, 4)));
+
+		var result = await state;
+
+		result.Should().BeEquivalentTo(new MyEntity(42, 4));
+		versions.Should().BeEquivalentTo(new[] { 3, 4 });
+	}
+
+	[TestMethod]
+	public async Task When_Fluent_Async_Updated_Then_StateUpdated_And_ForEach()
+	{
+		var versions = new List<int>();
+
+		var messenger = new WeakReferenceMessenger();
+		var state = State.Async(this, async ct => new MyEntity(42))
+						 .Observe(messenger, i => i.Key)
+						 .ForEach(async (i, ct) => versions.Add(i!.Version));
+
+		messenger.Send(new EntityMessage<MyEntity>(EntityChange.Updated, new(42, 5)));
+		messenger.Send(new EntityMessage<MyEntity>(EntityChange.Updated, new(42, 1)));
+
+		var result = await state;
+
+		result.Should().BeEquivalentTo(new MyEntity(42, 1));
+		versions.Should().BeEquivalentTo(new[] { 5, 1 });
+	}
+
+	[TestMethod]
 	public async Task When_Deleted_Then_StateUpdated()
 	{
 		var messenger = new WeakReferenceMessenger();
