@@ -12,5 +12,4 @@ public sealed partial class RoutesNavigationMainPage : BaseTestSectionPage
 	{
 		await Navigator.NavigateRouteAsync(this, "");
 	}
-
 }
