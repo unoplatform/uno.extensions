@@ -160,12 +160,38 @@ public class Given_Messaging : FeedTests
 	}
 
 	[TestMethod]
+	public async Task When_Fluent_Created_Then_ListStateUpdated()
+	{
+		var messenger = new WeakReferenceMessenger();
+		var state = ListState<MyEntity>.Empty(this)
+									   .Observe(messenger, i => i.Key);
+
+		messenger.Send(new EntityMessage<MyEntity>(EntityChange.Created, new(42)));
+
+		var result = await state;
+		result.Should().BeEquivalentTo(Items(42));
+	}
+
+	[TestMethod]
 	public async Task When_Updated_Then_ListStateUpdated()
 	{
 		var messenger = new WeakReferenceMessenger();
 		var state = ListState<MyEntity>.Value(this, () => Items(42));
 
 		messenger.Observe(state, i => i.Key);
+
+		messenger.Send(new EntityMessage<MyEntity>(EntityChange.Updated, new(42, 1)));
+
+		var result = await state;
+		result.Should().BeEquivalentTo(Items((42, 1)));
+	}
+
+	[TestMethod]
+	public async Task When_Fluent_Updated_Then_ListStateUpdated()
+	{
+		var messenger = new WeakReferenceMessenger();
+		var state = ListState<MyEntity>.Value(this, () => Items(42))
+									   .Observe(messenger, i => i.Key);
 
 		messenger.Send(new EntityMessage<MyEntity>(EntityChange.Updated, new(42, 1)));
 
@@ -320,6 +346,21 @@ public class Given_Messaging : FeedTests
 		var state = ListState<MyEntity>.Value(this, () => Items(42));
 
 		messenger.Observe(state, i => i.Key).Dispose();
+
+		messenger.Send(new EntityMessage<MyEntity>(EntityChange.Updated, new(42, 1)));
+
+		var result = await state;
+		result.Should().BeEquivalentTo(Items(42));
+	}
+
+	[TestMethod]
+	public async Task When_Fluent_DisposedAndUpdated_Then_ListStateNotUpdated()
+	{
+		var messenger = new WeakReferenceMessenger();
+		var state = ListState<MyEntity>.Value(this, () => Items(42))
+									   .Observe(messenger, i => i.Key, out var sut);
+
+		sut.Dispose();
 
 		messenger.Send(new EntityMessage<MyEntity>(EntityChange.Updated, new(42, 1)));
 

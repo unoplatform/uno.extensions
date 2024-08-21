@@ -261,7 +261,20 @@ public class Given_StateForEach : FeedTests
 		var state = ListState.Value(this, () => ImmutableList.Create(1, 2, 3));
 		var result = new List<IImmutableList<int>>();
 
-		state.ForEachAsync(async (list, ct) => result.Add(list));
+		await state.ForEach(async (list, ct) => result.Add(list));
+
+		await state.UpdateDataAsync(_ => Option.None<IImmutableList<int>>(), CT);
+
+		result.Single().Should().NotBeNull().And.BeEquivalentTo(ImmutableList<int>.Empty);
+	}
+
+	[TestMethod]
+	public async Task When_Fluent_UpdateListStateWithNone_Then_CallbackGetsEmptyList()
+	{
+		var result = new List<IImmutableList<int>>();
+
+		var state = ListState.Value(this, () => ImmutableList.Create(1, 2, 3))
+							 .ForEach(async (list, ct) => result.Add(list));
 
 		await state.UpdateDataAsync(_ => Option.None<IImmutableList<int>>(), CT);
 
