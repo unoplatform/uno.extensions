@@ -6,6 +6,7 @@
 								 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 								 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 								 mc:Ignorable="d"
+								 xmlns:uen="using:Uno.Extensions.Navigation.UI"
 								 Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 	<Grid>
 		<Grid.RowDefinitions>
@@ -13,7 +14,7 @@
 			<RowDefinition />
 			<RowDefinition Height="Auto" />
 		</Grid.RowDefinitions>
-		<TextBlock Text="Page Navigation Tests"
+		<TextBlock Text="Route Navigation Tests"
 				   Margin="20"
 				   FontSize="30" />
 
@@ -28,7 +29,9 @@
 		<StackPanel Grid.Row="2"
 					Orientation="Horizontal"
 					HorizontalAlignment="Center">
-			<TextBlock Text="Test" />
+			<Button AutomationProperties.AutomationId="ShowAppButton"
+					Content="Route Navigation App"
+					Click="ShowAppClick" />
 		</StackPanel>
 	</Grid>
 
