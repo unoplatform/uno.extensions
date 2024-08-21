@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
@@ -83,6 +83,53 @@ public class Given_StateForEach : FeedTests
 	}
 
 	[TestMethod]
+	public async Task When_Fluent_Multiple_UpdateState_Then_CallbackInvokedIgnoringInitialValue()
+	{
+		var result = new List<int>();
+
+		ValueTask UpdateResultAsync(int i, CancellationToken ct)
+		{
+			result.Add(i);
+
+			return ValueTask.CompletedTask;
+		}
+
+		var state = State.Async(this, async ct => 1)
+						 .ForEach(UpdateResultAsync)
+						 .ForEach(UpdateResultAsync);
+
+		await state.SetAsync(2, CT);
+		await state.SetAsync(3, CT);
+		await state.SetAsync(4, CT);
+
+		result.Should().BeEquivalentTo(new[] { 2, 3, 4 });
+	}
+
+	[TestMethod]
+	public async Task When_Mixed_Multiple_UpdateState_Then_CallbackInvokedIgnoringInitialValue()
+	{
+		var result = new List<int>();
+
+		ValueTask UpdateResultAsync(int i, CancellationToken ct)
+		{
+			result.Add(i);
+
+			return ValueTask.CompletedTask;
+		}
+
+		var state = State.Async(this, async ct => 1)
+						 .ForEach(UpdateResultAsync);
+						 
+		await state.ForEach(UpdateResultAsync);
+
+		await state.SetAsync(2, CT);
+		await state.SetAsync(3, CT);
+		await state.SetAsync(4, CT);
+
+		result.Should().BeEquivalentTo(new[] { 2, 3, 4 });
+	}
+
+	[TestMethod]
 	public async Task When_UpdateStateAndCallbackIsAsync_Then_CallsAreQueued()
 	{
 		var state = State.Value(this, () => 1);
@@ -138,6 +185,23 @@ public class Given_StateForEach : FeedTests
 	{
 		var state = State.Value(this, () => 1);
 		await state.ForEach(async (i, ct) => this.ToString(), out var sut);
+
+		await state.DisposeAsync();
+
+		var enumerationTask = sut.GetType().GetField("_task", BindingFlags.Instance | BindingFlags.NonPublic)?.GetValue(sut) as Task;
+		if (enumerationTask is null)
+		{
+			Assert.Fail("Unable to get the private _task field of the StateListener<T>.");
+		}
+
+		enumerationTask.Status.Should().Be(TaskStatus.RanToCompletion);
+	}
+
+	[TestMethod]
+	public async Task When_Fluent_DisposeState_Then_EnumerationStop()
+	{
+		var state = State.Value(this, () => 1)
+						 .ForEach(async (i, ct) => this.ToString(), out var sut);
 
 		await state.DisposeAsync();
 
