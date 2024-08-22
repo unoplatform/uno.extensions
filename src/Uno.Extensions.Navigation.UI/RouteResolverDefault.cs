@@ -124,11 +124,8 @@ public class RouteResolverDefault : RouteResolver
 
 			if (view is not null)
 			{
-				if (view != null)
-				{
-					if (Logger.IsEnabled(LogLevel.Information))
-						Logger.LogInformationMessage($"Potential conflict detected: The route '{path}' resolved to a common control or class name '{view.Name}'. This could lead to unexpected behavior.");
-				}
+				if (Logger.IsEnabled(LogLevel.Information))
+					Logger.LogInformationMessage($"Potential conflict detected: The route '{path}' resolved to a common control or class name '{view.Name}'. This could lead to unexpected behavior.");
 			}
 			
 		}
