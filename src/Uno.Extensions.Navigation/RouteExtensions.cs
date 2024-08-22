@@ -37,8 +37,7 @@ public static class RouteExtensions
 			nextQualifier = qualifierMatch.Value;
 		}
 
-		qualifierMatch = alphaRegex.Match(path);
-		var routeBase = qualifierMatch.Success ? qualifierMatch.Value : String.Empty;
+		var routeBase = path.Split("/").FirstOrDefault();
 		if (routeBase is { Length: > 0 })
 		{
 			if (path.Length > routeBase.Length + 1)
