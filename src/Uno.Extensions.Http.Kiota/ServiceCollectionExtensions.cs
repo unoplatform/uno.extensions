@@ -75,12 +75,11 @@ public static class ServiceCollectionExtensions
 			{
 				var tokenCache = sp.GetRequiredService<ITokenCache>();
 				var allowedHostsValidator = sp.GetRequiredService<AllowedHostsValidator>();
-				var accessTokenProvider = new TokenProvider(tokenCache, allowedHostsValidator);
-				var authProvider = new BaseBearerTokenAuthenticationProvider(accessTokenProvider);
+				var authProvider = new KiotaAuthenticationAdapter(tokenCache, allowedHostsValidator);
 
+				var httpClient = sp.GetRequiredService<HttpClient>();
 				var parseNodeFactory = new Microsoft.Kiota.Serialization.Json.JsonParseNodeFactory();
 				var serializationWriterFactory = new Microsoft.Kiota.Serialization.Json.JsonSerializationWriterFactory();
-				var httpClient = sp.GetRequiredService<IHttpClientFactory>().CreateClient(name ?? typeof(TClient).FullName ?? "DefaultClient");
 
 				var requestAdapter = new HttpClientRequestAdapter(authProvider, parseNodeFactory, serializationWriterFactory, httpClient);
 
