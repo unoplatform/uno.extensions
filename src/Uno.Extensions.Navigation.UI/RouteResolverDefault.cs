@@ -55,9 +55,7 @@ public class RouteResolverDefault : RouteResolver
 
 	protected virtual RouteInfo? InternalDefaultMapping(string? path = null, Type? view = null, Type? viewModel = null)
 	{
-		if (path is null &&
-			view is null &&
-			viewModel is null)
+		if (path is null && view is null && viewModel is null)
 		{
 			return default;
 		}
@@ -71,16 +69,14 @@ public class RouteResolverDefault : RouteResolver
 		// Trim any qualifiers
 		path = path.ExtractBase(out _, out _);
 
-		// If no path is provided, attempt to get a path
-		// from the view or viewmodel type provided
+		// If no path is provided, attempt to get a path from the view or viewmodel type provided
 		if (string.IsNullOrWhiteSpace(path))
 		{
 			path = PathFromTypes(view, viewModel);
 		}
 
 		// If path is still null, we can't build a mapping, so just return
-		if (path is null ||
-			string.IsNullOrWhiteSpace(path))
+		if (path is null || string.IsNullOrWhiteSpace(path))
 		{
 			if (Logger.IsEnabled(LogLevel.Warning))
 				Logger.LogWarningMessage($"Unable to resolve path from types. Path: '{path}', View: '{view?.Name}', ViewModel: '{viewModel?.Name}'");
@@ -98,27 +94,28 @@ public class RouteResolverDefault : RouteResolver
 		if (viewMap is not null)
 		{
 			var viewFunc = (viewMap.View is not null) ?
-										() => viewMap.View :
-										viewMap.ViewSelector;
+										   () => viewMap.View :
+										   viewMap.ViewSelector;
 			var defaultMapFromViewMap = new RouteInfo(
-												Path: path,
-												View: viewFunc,
-												ViewAttributes: viewMap.ViewAttributes,
-												ViewModel: viewMap.ViewModel,
-												Data: viewMap.Data?.Data,
-												ToQuery: viewMap?.Data?.UntypedToQuery,
-												FromQuery: viewMap?.Data?.UntypedFromQuery,
-												ResultData: viewMap?.ResultData,
-												IsDialogViewType: () =>
-												{
-													return IsDialogViewType(viewFunc?.Invoke());
-												});
+										   Path: path,
+										   View: viewFunc,
+										   ViewAttributes: viewMap.ViewAttributes,
+										   ViewModel: viewMap.ViewModel,
+										   Data: viewMap.Data?.Data,
+										   ToQuery: viewMap?.Data?.UntypedToQuery,
+										   FromQuery: viewMap?.Data?.UntypedFromQuery,
+										   ResultData: viewMap?.ResultData,
+										   IsDialogViewType: () =>
+										   {
+											   return IsDialogViewType(viewFunc?.Invoke());
+										   });
 			Mappings.Add(defaultMapFromViewMap);
 			if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Created default mapping from viewmap - Path '{defaultMapFromViewMap.Path}'");
 			return defaultMapFromViewMap;
 		}
 
-		if (Logger.IsEnabled(LogLevel.Information)) Logger.LogInformationMessage($"For better performance (avoid reflection), create mapping for for path '{path}', view '{view?.Name}', view model '{viewModel?.Name}'");
+		if (Logger.IsEnabled(LogLevel.Information))
+			Logger.LogInformationMessage($"For better performance (avoid reflection), create mapping for path '{path}', view '{view?.Name}', view model '{viewModel?.Name}'");
 
 		if (view is null)
 		{
@@ -132,14 +129,15 @@ public class RouteResolverDefault : RouteResolver
 			viewModel = TypeFromPath(trimmedPath, false, ViewModelSuffixes);
 		}
 
-		if (view != null && IsCommonControlName(view.Name))
+		bool isKnownFrameworkElement = view != null;
+
+		if (isKnownFrameworkElement)
 		{
-			if (Logger.IsEnabled(LogLevel.Warning))
-				Logger.LogWarningMessage($"Potential conflict detected: The route '{path}' resolved to a common control or class name '{view.Name}'. This could lead to unexpected behavior.");
+			if (Logger.IsEnabled(LogLevel.Information))
+				Logger.LogInformationMessage($"Resolved route '{path}' to known FrameworkElement: '{view.Name}'.");
 		}
 
-		if (path is not null &&
-			!string.IsNullOrWhiteSpace(path))
+		if (path is not null && !string.IsNullOrWhiteSpace(path))
 		{
 			var defaultMap = new RouteInfo(path, View: () => view, ViewModel: viewModel, IsDialogViewType: () =>
 			{
@@ -150,14 +148,8 @@ public class RouteResolverDefault : RouteResolver
 			return defaultMap;
 		}
 
-		if (Logger.IsEnabled(LogLevel.Warning)) Logger.LogWarningMessage($"Unable to create default mapping");
-		return null;
-	}
-
-	private bool IsCommonControlName(string name)
-	{
-		var commonNames = new List<string> { "Scroll", "List", "Grid", "Tree", "Web", "Navigation", "Content", "User", "Items", "Menu" };
-		return commonNames.Contains(name);
+		if (Logger.IsEnabled(LogLevel.Warning)) Logger.LogWarningMessage($"Unable to create default mapping for path '{path}', view '{view?.Name}', view model '{viewModel?.Name}'");
+		return default;
 	}
 
 	private Type? TypeFromPath(string path, bool allowMatchExact, IEnumerable<string> suffixes, Func<Type, bool>? condition = null)
