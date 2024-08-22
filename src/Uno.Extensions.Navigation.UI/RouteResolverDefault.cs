@@ -121,20 +121,22 @@ public class RouteResolverDefault : RouteResolver
 		{
 			var trimmedPath = TrimSuffices(path, ViewModelSuffixes);
 			view = TypeFromPath(trimmedPath, true, ViewSuffixes, type => type.IsSubclassOf(typeof(FrameworkElement)));
+
+			if (view is not null)
+			{
+				if (view != null)
+				{
+					if (Logger.IsEnabled(LogLevel.Information))
+						Logger.LogInformationMessage($"Potential conflict detected: The route '{path}' resolved to a common control or class name '{view.Name}'. This could lead to unexpected behavior.");
+				}
+			}
+			
 		}
 
 		if (viewModel is null)
 		{
 			var trimmedPath = TrimSuffices(path, ViewSuffixes);
 			viewModel = TypeFromPath(trimmedPath, false, ViewModelSuffixes);
-		}
-
-		bool isKnownFrameworkElement = view != null;
-
-		if (isKnownFrameworkElement)
-		{
-			if (Logger.IsEnabled(LogLevel.Information))
-				Logger.LogInformationMessage($"Resolved route '{path}' to known FrameworkElement: '{view.Name}'.");
 		}
 
 		if (path is not null && !string.IsNullOrWhiteSpace(path))
