@@ -60,6 +60,8 @@ fi
 cd $UNO_UITEST_ANDROID_PROJECT
 dotnet publish -f net8.0-android -p:UnoTargetFrameworkOverride=net8.0-android -c Release -p:RuntimeIdentifier=android-x64 /p:IsUiAutomationMappingEnabled=True /p:AndroidUseSharedRuntime=false /p:AotAssemblies=false  -bl:$BUILD_ARTIFACTSTAGINGDIRECTORY/android-app.binlog
 
+cd $BUILD_SOURCESDIRECTORY/build
+
 mkdir -p $UNO_UITEST_SCREENSHOT_PATH
 
 cp $UNO_UITEST_ANDROIDAPK_PATH $UNO_UITEST_SCREENSHOT_PATH
