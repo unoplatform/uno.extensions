@@ -12,6 +12,9 @@ public sealed partial class FrameView : UserControl
 	public FrameView()
 	{
 		InitializeComponent();
+
+		// Prevent inheritance of DataContext from Parent to avoid propagation to Children
+		DataContext = null;
 	}
 
 	/// <summary>
