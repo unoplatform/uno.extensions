@@ -20,7 +20,7 @@ public partial class Given_RecordWithList_Then_GenerateListOfBindable : FeedUITe
 	{
 		await using var sut = new MyViewViewModel();
 
-		sut.MyFeed.Items.Should().BeAssignableTo<IEnumerable<MyRecordWithListItemViewModel>>();
+		sut.MyFeed.Items.Should().BeAssignableTo<IEnumerable<BindableMyRecordWithListItemViewModel>>();
 	}
 
 	[TestMethod]

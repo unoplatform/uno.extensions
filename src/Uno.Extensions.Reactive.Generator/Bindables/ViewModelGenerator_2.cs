@@ -186,8 +186,8 @@ namespace {record.ContainingNamespace}
 	}
 
 	private static string GetModelName(INamedTypeSymbol type)
-		=> type.Name.TrimEnd("Model", StringComparison.Ordinal);
+			=> type.GetPascalCaseName().TrimEnd("Model", StringComparison.Ordinal);
 
 	private static string GetViewModelName(INamedTypeSymbol model)
-		=> $"{GetModelName(model)}ViewModel";
+		=> $"Bindable{GetModelName(model)}ViewModel";
 }
