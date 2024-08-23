@@ -70,7 +70,7 @@ You can find the code of this tutorial [here](https://github.com/unoplatform/Uno
 
     We're using a [record](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/record) for the `Stock` type on purpose, as records are immutable and ensure the purity of objects as well as other features.
 
-    The `GetCurrentMarket` emits a collection of stocks with updated values every 5 seconds.  
+    The `GetCurrentMarket` emits a collection of stocks with updated values every 5 seconds.
     The `IListFeed<T>` is a feed tailored for dealing with collections.
 
 1. Create a class named *StockMarketModel.cs* replacing its content with the following:
@@ -82,32 +82,32 @@ You can find the code of this tutorial [here](https://github.com/unoplatform/Uno
     }
     ```
 
-> [!NOTE]  
-> Feeds (`IFeed<T>` and `IListFeed<T>` for collections) are used as a gateway to asynchronously request data from a service and wrap the result or error if any in metadata to be displayed in the View accordingly.  
+> [!NOTE]
+> Feeds (`IFeed<T>` and `IListFeed<T>` for collections) are used as a gateway to asynchronously request data from a service and wrap the result or error if any in metadata to be displayed in the View accordingly.
 > Learn more about list-feeds [here](xref:Uno.Extensions.Mvux.HowToListFeed).
 >
-> [!TIP]  
+> [!TIP]
 > Feeds are stateless
-> and are there for when the data from the service is read-only and we're not planning to enable edits to it.  
+> and are there for when the data from the service is read-only and we're not planning to enable edits to it.
 > MVUX also provides stateful feeds. For that purpose States (`IState<T>` and `<IListState<T>` for collections) come handy.
 > Refer to [this tutorial](xref:Uno.Extensions.Mvux.HowToSimpleState) to learn more about states.
 
 ## Data bind the view
 
-The `Stocks` property on `StockMarketModel` is an `IListFeed<T>` where `T` is `Stock`.  
+The `Stocks` property on `StockMarketModel` is an `IListFeed<T>` where `T` is `Stock`.
 This is similar in concept to an `IObservable<IImmutableList<Stock>>`,
 where an `IListsFeed<T>>` represents a sequence of collections pushed in whenever they become available,
 signaling the UI about the new data.
 
 > [!TIP]
-> An `IListFeed<T>` is awaitable, meaning that to get the value of the feed you would execute the following in the model:  
+> An `IListFeed<T>` is awaitable, meaning that to get the value of the feed you would execute the following in the model:
 >
 > ```csharp
 > StockMarket currentMarket = await this.Stocks;
-> ```  
+> ```
 
 To make it possible to data bind to feeds, the MVUX analyzers read the `StockMarketModel`
-and generate a bindable proxy called `BindableStockMarketModel`, which exposes properties that the View can data bind to.
+and generate a ViewModel called `StockMarketViewModel`, which exposes properties that the View can data bind to.
 
 1. Open the file `MainView.xaml` and replace anything inside the `Page` element with the following code:
 
@@ -127,7 +127,7 @@ and generate a bindable proxy called `BindableStockMarketModel`, which exposes p
 1. Press <kbd>F7</kbd> to navigate to open code-view, and in the constructor, after the line that calls `InitializeComponent()`, add the following line:
 
     ```csharp
-    this.DataContext = new BindableStockMarketModel(new StockMarketService());
+    this.DataContext = new StockMarketViewModel(new StockMarketService());
     ```
 
 1. Press <kbd>F5</kbd> to run the app.

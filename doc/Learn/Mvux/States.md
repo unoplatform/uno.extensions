@@ -10,8 +10,8 @@ Like [feeds](xref:Uno.Extensions.Mvux.Feeds), states are used to manage asynchro
 
 Contrary to Feeds, states are stateful (as the name suggests) in that they keep a record of the current data value. States also allow the current value to be modified, which is useful for two-way binding scenarios.
 
-MVUX utilizes its powerful code-generation engine to generate a bindable proxy for each Model, which holds the state information of the data, as well as a bindable proxy for entities where needed, for instance, if the entities are immutable (e.g. records - the recommended type).
-The bindable proxies use as a bridge that enables immutable entities to work with the WinUI data-binding engine. The states in the Model are monitored for data-binding changes, and in response to any change, the objects are recreated fresh, instead of their properties being changed.
+MVUX utilizes its powerful code-generation engine to generate a ViewModel for each Model, which holds the state information of the data, as well as a ViewModel for entities where needed, for instance, if the entities are immutable (e.g. records - the recommended type).
+The ViewModels use as a bridge that enables immutable entities to work with the WinUI data-binding engine. The states in the Model are monitored for data-binding changes, and in response to any change, the objects are recreated fresh, instead of their properties being changed.
 
 States keep the current value of the data, so every new subscription to them, (such as awaiting them or binding them to an additional control, etc.), will use the data currently loaded in the state (if any).
 
@@ -117,7 +117,7 @@ States are built to be cooperating with the data-binding engine. A State will au
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:local="using:SliderApp">
         <Page.DataContext>
-            <local:BindableSliderModel />
+            <local:SliderViewModel />
         </Page.DataContext>
 
         <StackPanel>
@@ -134,7 +134,7 @@ States are built to be cooperating with the data-binding engine. A State will au
     </Page>
     ```
 
-In this scenario, the `DataContext` is set to an instance of the `BindableSliderModel` class, which is the generated bindable proxy for the `SliderModel` record.
+In this scenario, the `DataContext` is set to an instance of the `SliderViewModel` class, which is the generated ViewModel for the `SliderModel` record.
 
 1. When you run the app, moving the `Slider` instantly affects the upper `TextBox`; the `Silder.Value` property has a two-way binding with the `SliderValue` State, so any change to the Slider immediately updates the State value, which in turn affects the data-bound `TextBlock` on top:
 
