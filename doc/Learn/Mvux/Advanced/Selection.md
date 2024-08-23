@@ -4,7 +4,7 @@ uid: Uno.Extensions.Mvux.Advanced.Selection
 
 # Selection
 
-MVUX has embedded support for both [single item](#single-item-selection) and [multi-item selection](#multi-item-selection).
+MVUX has built-in support for both [single item](#single-item-selection) and [multi-item selection](#multi-item-selection).
 Any control that inherits [`Selector`](https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.primitives.selector) (e.g. [`ListView`](https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.listview), [`GridView`](https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.gridview), [`ComboBox`](https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.combobox), [`FlipView`](https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.flipview)), has automatic support for updating a List-State with its current selection.
 Binding to the `SelectedItem` property is not even required, as this works automatically.
 
@@ -86,7 +86,7 @@ The `SelectedPerson` State is initialized with an empty value using `State<Perso
 
 The `Selection` operator was added to the existing `ListFeed.Async(...)` line, it will listen to the `People` List-Feed and will affect its selection changes onto the `SelectedPerson` State property.
 
-In the View side, wrap the `ListView` element in a `Grid`, and insert additional elements to reflect the currently selected value via the `SelectedPerson` State.
+In the View side, wrap the `ListView` element in a `Grid`, and insert additional elements to display the currently selected value via the `SelectedPerson` State.
 We'll also add a separator (using `Border`) to be able to distinguish them.
 
 The View code shall look like the following:
