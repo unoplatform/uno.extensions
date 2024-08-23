@@ -8,6 +8,11 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<!--We need this version of the BindableGenerationTool for the Tests to run properly-->
+		<AssemblyAttribute Include="Uno.Extensions.Reactive.Config.BindableGenerationToolAttribute">
+			<_Parameter1>3</_Parameter1>
+			<_Parameter1_TypeName>System.Int32</_Parameter1_TypeName>
+		</AssemblyAttribute>
 		<PackageReference Include="FluentAssertions" />
 		<PackageReference Include="Microsoft.Bcl.AsyncInterfaces" /><!--For local usage we use the most recent version-->
 		<PackageReference Include="Microsoft.NET.Test.Sdk" />
