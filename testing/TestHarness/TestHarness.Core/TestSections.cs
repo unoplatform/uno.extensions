@@ -19,6 +19,7 @@ public enum TestSections
 	Apps_ToDo,
 	Apps_Regions,
 	Authentication_Custom,
+	Authentication_Custom_Mock,
 	Authentication_Custom_Service,
 	Authentication_Custom_TestBackend,
 	Authentication_Custom_TestBackend_Cookies,
