@@ -26,7 +26,7 @@ public static class MessengerExtensions
 		=> AttachedProperty.GetOrCreate(owner: state,
 										key: keySelector,
 										state: messenger,
-										factory: (s, ks, msg) => new Recipient<IState<TEntity>, TEntity, TKey>(s, msg, ks, StateExtensions.Update));
+										factory: static (s, ks, msg) => new Recipient<IState<TEntity>, TEntity, TKey>(s, msg, ks, StateExtensions.Update));
 
 	/// <summary>
 	/// Listen for <see cref="EntityMessage{TEntity}"/> on the given <paramref name="messenger"/> and updates the <paramref name="listState"/> accordingly.

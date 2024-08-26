@@ -48,8 +48,9 @@ public class Given_Messaging : FeedTests
 	public async Task When_Fluent_Value_Updated_Then_StateUpdated()
 	{
 		var messenger = new WeakReferenceMessenger();
-		var state = State.Value(this, () => new MyEntity(42))
-						 .Observe(messenger, i => i.Key);
+		var state = State
+			.Value(this, () => new MyEntity(42))
+			.Observe(messenger, i => i.Key);
 
 		messenger.Send(new EntityMessage<MyEntity>(EntityChange.Updated, new(42, 1)));
 

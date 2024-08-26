@@ -216,7 +216,7 @@ static partial class ListState
 	{
 		_ = AttachedProperty.GetOrCreate(owner: state,
 										 key: action,
-										 factory: (s, ks) => new StateForEach<IImmutableList<T>>(state, (list, ct) => action(list.SomeOrDefault() ?? ImmutableList<T>.Empty, ct), $"ForEachAsync defined in {caller} at line {line}."));
+										 factory: static (s, ks) => new StateForEach<IImmutableList<T>>(state, (list, ct) => action(list.SomeOrDefault() ?? ImmutableList<T>.Empty, ct), $"ForEach defined in {caller} at line {line}."));
 		return state;
 	}
 
