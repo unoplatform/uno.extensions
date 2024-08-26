@@ -9,15 +9,10 @@
 			<ResourceDictionary.MergedDictionaries>
 				<XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls" />
 
-				<!-- Load Uno.UI.Toolkit resources -->
-				<ToolkitResources xmlns="using:Uno.Toolkit.UI" />
-
-				<MaterialResources xmlns="using:Uno.Material" />
-
-				<MaterialToolkitResources xmlns="using:Uno.Toolkit.UI.Material" />
+				<!--  Load Material Toolkit resources  -->
+				<MaterialToolkitTheme xmlns="using:Uno.Toolkit.UI.Material" />
 
 				<ResourceDictionary Source="ms-appx:///Uno.Extensions.Reactive.UI/View/FeedView.xaml" />
-
 
 			</ResourceDictionary.MergedDictionaries>
 
@@ -25,14 +20,10 @@
 
 			<Style TargetType="utu:LoadingView">
 
-				<Setter Property="HorizontalAlignment"
-						Value="Stretch" />
-				<Setter Property="HorizontalContentAlignment"
-						Value="Stretch" />
-				<Setter Property="VerticalAlignment"
-						Value="Stretch" />
-				<Setter Property="VerticalContentAlignment"
-						Value="Stretch" />
+				<Setter Property="HorizontalAlignment" Value="Stretch" />
+				<Setter Property="HorizontalContentAlignment" Value="Stretch" />
+				<Setter Property="VerticalAlignment" Value="Stretch" />
+				<Setter Property="VerticalContentAlignment" Value="Stretch" />
 
 				<Setter Property="Template">
 					<Setter.Value>
@@ -43,15 +34,11 @@
 										<VisualState x:Name="Loading" />
 										<VisualState x:Name="Loaded">
 											<Storyboard>
-												<DoubleAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter"
-																			   Storyboard.TargetProperty="Opacity">
-													<LinearDoubleKeyFrame KeyTime="{StaticResource DefaultLoadingViewAnimationDuration}"
-																		  Value="1" />
+												<DoubleAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Opacity">
+													<LinearDoubleKeyFrame KeyTime="{StaticResource DefaultLoadingViewAnimationDuration}" Value="1" />
 												</DoubleAnimationUsingKeyFrames>
-												<DoubleAnimationUsingKeyFrames Storyboard.TargetName="LoadingContentPresenter"
-																			   Storyboard.TargetProperty="Opacity">
-													<LinearDoubleKeyFrame KeyTime="{StaticResource DefaultLoadingViewAnimationDuration}"
-																		  Value="0" />
+												<DoubleAnimationUsingKeyFrames Storyboard.TargetName="LoadingContentPresenter" Storyboard.TargetProperty="Opacity">
+													<LinearDoubleKeyFrame KeyTime="{StaticResource DefaultLoadingViewAnimationDuration}" Value="0" />
 												</DoubleAnimationUsingKeyFrames>
 											</Storyboard>
 										</VisualState>
@@ -78,14 +65,11 @@
 				<Setter Property="LoadingContent">
 					<Setter.Value>
 						<Grid>
-							<ProgressBar IsIndeterminate="True"
-										 Width="100" />
+							<ProgressBar IsIndeterminate="True" Width="100" />
 						</Grid>
 					</Setter.Value>
 				</Setter>
 			</Style>
 		</ResourceDictionary>
 	</Application.Resources>
-
-
 </Application>
