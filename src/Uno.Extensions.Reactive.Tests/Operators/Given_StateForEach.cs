@@ -43,13 +43,13 @@ public class Given_StateForEach : FeedTests
 	public async Task When_ForEachDataAsync_Then_AcceptsNotNullAndStruct()
 	{
 		_ = default(IState<int>)!.ForEach(async (i, ct) => this.ToString());
-		default(IState<int?>)!.ForEachDataAsync(async (i, ct) => this.ToString());
-		default(IState<string>)!.ForEachDataAsync(async (i, ct) => this.ToString());
-		default(IState<string?>)!.ForEachDataAsync(async (i, ct) => this.ToString());
-		default(IState<MyStruct>)!.ForEachDataAsync(async (i, ct) => this.ToString());
-		default(IState<MyStruct?>)!.ForEachDataAsync(async (i, ct) => this.ToString());
-		default(IState<MyClass>)!.ForEachDataAsync(async (i, ct) => this.ToString());
-		default(IState<MyClass?>)!.ForEachDataAsync(async (i, ct) => this.ToString());
+		_ = default(IState<int?>)!.ForEachData(async (i, ct) => this.ToString());
+		_ = default(IState<string>)!.ForEachData(async (i, ct) => this.ToString());
+		_ = default(IState<string?>)!.ForEachData(async (i, ct) => this.ToString());
+		_ = default(IState<MyStruct>)!.ForEachData(async (i, ct) => this.ToString());
+		_ = default(IState<MyStruct?>)!.ForEachData(async (i, ct) => this.ToString());
+		_ = default(IState<MyClass>)!.ForEachData(async (i, ct) => this.ToString());
+		_ = default(IState<MyClass?>)!.ForEachData(async (i, ct) => this.ToString());
 	}
 
 	[TestMethod]
