@@ -214,9 +214,12 @@ static partial class ListState
 	public static IListState<T> ForEach<T>(this IListState<T> state, AsyncAction<IImmutableList<T>> action, [CallerMemberName] string? caller = null, [CallerLineNumber] int line = -1)
 		where T : notnull
 	{
-		_ = AttachedProperty.GetOrCreate(owner: state,
-										 key: action,
-										 factory: static (s, ks) => new StateForEach<IImmutableList<T>>(state, (list, ct) => action(list.SomeOrDefault() ?? ImmutableList<T>.Empty, ct), $"ForEach defined in {caller} at line {line}."));
+		_ = AttachedProperty.GetOrCreate(
+				owner: state,
+				key: action,
+				state: (caller, line),
+				factory: static (s, a, d) => new StateForEach<IImmutableList<T>>(s, (list, ct) => a(list.SomeOrDefault() ?? ImmutableList<T>.Empty, ct), $"ForEach defined in {d.caller} at line {d.line}."));
+
 		return state;
 	}
 
@@ -233,9 +236,11 @@ static partial class ListState
 	public static IListState<T> ForEach<T>(this IListState<T> state, AsyncAction<IImmutableList<T>> action, out IDisposable disposable, [CallerMemberName] string? caller = null, [CallerLineNumber] int line = -1)
 		where T : notnull
 	{
-		disposable = AttachedProperty.GetOrCreate(owner: state,
-												  key: action,
-												  factory: (s, ks) => new StateForEach<IImmutableList<T>>(state, (list, ct) => action(list.SomeOrDefault() ?? ImmutableList<T>.Empty, ct), $"ForEachAsync defined in {caller} at line {line}."));
+		disposable = AttachedProperty.GetOrCreate(
+						owner: state,
+						key: action,
+						state: (caller, line),
+						factory: static (s, a, d) => new StateForEach<IImmutableList<T>>(s, (list, ct) => a(list.SomeOrDefault() ?? ImmutableList<T>.Empty, ct), $"ForEachAsync defined in {d.caller} at line {d.line}."));
 
 		return state;
 	}
