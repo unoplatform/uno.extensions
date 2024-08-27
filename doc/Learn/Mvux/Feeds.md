@@ -6,13 +6,13 @@ uid: Uno.Extensions.Mvux.Feeds
 
 Feeds are there to manage asynchronous operations (for example requesting data from a service) and expose the result to the View in an efficient manner.
 
-They provide out of the box support for task-based methods as well as [Async-Enumerables](https://learn.microsoft.com/dotnet/api/system.collections.generic.iasyncenumerable-1) ones.  
+They provide out of the box support for task-based methods as well as [Async-Enumerables](https://learn.microsoft.com/dotnet/api/system.collections.generic.iasyncenumerable-1) ones.
 
 Feeds include additional metadata that indicates whether the operation is still in progress, ended in an error, or if it was successful, whether the data that was returned contains any entries or was empty.
 
 ## Feeds are stateless
 
-Feeds are typically used to request data from services and expose it in a stateless manner so that the resulting data can be displayed by the View.  
+Feeds are typically used to request data from services and expose it in a stateless manner so that the resulting data can be displayed by the View.
 
 Feeds are stateless and do not provide support for reacting to changes the user makes to the data on the View. The data can only be reloaded and refreshed upon request which is when the underlying task or Async-Enumerable will be invoked and the data refreshed. In other words, a feed is a read-only representation of the data received from the server.
 
@@ -76,7 +76,7 @@ public async IAsyncEnumerable<CounterValue> StartCounting([EnumeratorCancellatio
     while (!ct.IsCancellationRequested)
     {
         await Task.Delay(TimeSpan.FromSeconds(1), ct);
-                
+
         if (ct.IsCancellationRequested)
         {
             yield break;
@@ -128,11 +128,11 @@ private async ValueTask SomeAsyncMethod()
 
 #### Use feeds in an MVUX Model
 
-The MVUX analyzers generate a bindable proxy for each of the models in your app (those with `Model` suffix). For the code generation to work, mark the Models and entities with the `partial` modifier.
+The MVUX analyzers generate a ViewModel for each of the models in your app (those with `Model` suffix). For the code generation to work, mark the Models and entities with the `partial` modifier.
 
-For every `public` feed property (returning `IFeed<T>` or `IListFeed<T>`) found in the model, a corresponding property is generated on the bindable proxy.  
+For every `public` feed property (returning `IFeed<T>` or `IListFeed<T>`) found in the model, a corresponding property is generated on the ViewModel.
 
-MVUX recommends using plain [POCO](https://en.wikipedia.org/wiki/Plain_old_CLR_object) (Plain Old CLR Object) `record` types for the models in your app as they're immutable, and will not require any property change notifications to be raised. The generated bindable proxy and its properties ensure that data-binding will work, even though property change notifications aren't being raised by the models themselves.
+MVUX recommends using plain [POCO](https://en.wikipedia.org/wiki/Plain_old_CLR_object) (Plain Old CLR Object) `record` types for the models in your app as they're immutable, and will not require any property change notifications to be raised. The generated ViewModel and its properties ensure that data-binding will work, even though property change notifications aren't being raised by the models themselves.
 
 #### With regular data-binding
 
@@ -148,9 +148,9 @@ The feed can be consumed directly from the View, by data binding to a property e
 
 #### With the `FeedView` control
 
-The `FeedView` control has been designed to work with feeds and is tailored to the additional metadata mentioned [earlier](#what-are-feeds) that are disclosed by the feed and respond to it automatically and efficiently.  
+The `FeedView` control has been designed to work with feeds and is tailored to the additional metadata mentioned [earlier](#what-are-feeds) that are disclosed by the feed and respond to it automatically and efficiently.
 
-The `FeedView` has templates that change the visible contents based on the current state of the data, such as when the data request is still in progress, an error has occurred, or when the data contained no records.  
+The `FeedView` has templates that change the visible contents based on the current state of the data, such as when the data request is still in progress, an error has occurred, or when the data contained no records.
 Built-in templates are included with the `FeedView` for these states, but they can all be customized.
 
 Here's how to utilize the `FeedView` to display the same data as before:
@@ -159,7 +159,7 @@ Here's how to utilize the `FeedView` to display the same data as before:
 <Page
     ...
     xmlns:mvux="using:Uno.Extensions.Reactive.UI">
-    
+
     <mvux:FeedView Source="{Binding CurrentCount}">
         <DataTemplate>
             <TextBlock DataContext="{Binding Data}" Text="{Binding Value}" />
@@ -176,7 +176,7 @@ An `IFeed` supports some LINQ operators that can be used to apply a transform an
 
 ### Where
 
-The `Where` extension method enables filtering a Feed. It returns a new Feed where the values of the parent one match the specified criteria.  
+The `Where` extension method enables filtering a Feed. It returns a new Feed where the values of the parent one match the specified criteria.
 For example:
 
 ```csharp

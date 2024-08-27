@@ -73,8 +73,8 @@ You can find the code for our weather app [here](https://github.com/unoplatform/
 > WeatherInfo currentWeather = await this.CurrentWeather;
 > ```
 >
-> To make it possible to data bind to a feeds, the MVUX analyzers read the `WeatherModel` and generate a bindable proxy called `BindableWeatherModel`, which exposes properties that the View can data bind to.
-In this case the `BindableWeatherModel` exposes a `CurrentWeather` property that can be uses in a data binding expression the same way you would with a regular property that returns a `WeatherInfo` entity.
+> To make it possible to data bind to a feeds, the MVUX analyzers read the `WeatherModel` and generate a ViewModel called `WeatherViewModel`, which exposes properties that the View can data bind to.
+In this case the `WeatherViewModel` exposes a `CurrentWeather` property that can be uses in a data binding expression the same way you would with a regular property that returns a `WeatherInfo` entity.
 
 1. Open the file `MainView.xaml` and replace the `Page` contents with the following:
 
@@ -85,7 +85,7 @@ In this case the `BindableWeatherModel` exposes a `CurrentWeather` property that
 1. Press <kbd>F7</kbd> to navigate to open code-view, and in the constructor, after the line that calls `InitializeComponent()`, add the following line:
 
     ```csharp
-    this.DataContext = new BindableWeatherModel(new WeatherService());
+    this.DataContext = new WeatherViewModel(new WeatherService());
     ```
 
 1. Press <kbd>F5</kbd> to run the app. The app will load with a default `WeatherInfo` value, with a `Temperature` of `0`:
@@ -99,7 +99,7 @@ In this case the `BindableWeatherModel` exposes a `CurrentWeather` property that
     Note that this is a random value and may be different on your machine.
 
 > [!NOTE]
-> It's worth noting that the `CurrentWeather` feed will only be invoked once, and the value captured in the bindable proxy.
+> It's worth noting that the `CurrentWeather` feed will only be invoked once, and the value captured in the ViewModel.
 > The captured value will be returned to all binding expressions that use CurrentWeather.
 > This means that it's OK to use a lambda expression when defining the IFeed (`=>`), so that it can accessing the local `WeatherService` in `Feed.Async(WeatherService.GetCurrentWeatherModel)`.
 > The `WeatherService` property wouldn't have been available in a regular assignment context (`=`).

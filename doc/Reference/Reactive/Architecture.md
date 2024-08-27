@@ -198,7 +198,7 @@ In order to make a record editable field per field (e.g. a user profile where yo
 
 ### Dispatching and threading considerations
 
-The user’s `ViewModel` are expected to run on background thread for performance considerations. Commands and state updates from generated bindable classes are always ran on a background thread.
+The user’s `ViewModel` are expected to run on background thread for performance considerations. Commands and state updates from generated ViewModel classes are always ran on a background thread.
 
 To avoid strong dependency on a dispatcher (neither by injection nor by the need to create VM on UI thread), all generated classes are auto resolving the dispatcher when an event handler is registered or when a public method is used, using the internal `LazyDispatcherResolver` and `EventManager`. Those classes are then completing their initialization once the first dispatcher is resolved.
 

@@ -49,7 +49,7 @@ Then, in the XAML:
 </Page>
 ```
 
-The `Source` property of the `FeedView` is data bound to the `CurrentContact` property on the bindable proxy (which will correlate to the `IFeed` property with the same name on the Model).
+The `Source` property of the `FeedView` is data bound to the `CurrentContact` property on the ViewModel (which will correlate to the `IFeed` property with the same name on the Model).
 
 In the above example, [`Data`](#data) is a property of the `FeedViewState` instance that the `FeedView` creates from the `IFeed` and sets as the `DataContext` for the various templates.
 
