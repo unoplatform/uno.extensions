@@ -478,10 +478,14 @@ You can then use the MVUX example above as a reference to create your own `IFeed
 - Define your own Models
 - MVUX recommends using record types for the Models in your app as they're immutable.
 <<<<<<< HEAD
+<<<<<<< HEAD
 - The MVUX analyzers auto-generate a ViewModel for each `partial` `class` or `record` named with a _Model_ suffix.
 =======
 - The MVUX analyzers auto-generate a ViewModels for each `partial` `class` or `record` named with a _Model_ suffix.
 >>>>>>> 144b6ab26 (docs: update mvux bindable proxy generated name)
+=======
+- The MVUX analyzers auto-generate a ViewModel for each `partial` `class` or `record` named with a _Model_ suffix.
+>>>>>>> 498d7a785 (chore: Update doc/Learn/Mvux/Overview.md)
 - For every public [`IFeed`](xref:Uno.Extensions.Mvux.Feeds) property found in the model, a corresponding property is generated on the ViewModel.
 - You can use [`IState`](xref:Uno.Extensions.Mvux.States) properties to accepting input from the user.
 
