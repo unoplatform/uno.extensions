@@ -36,7 +36,13 @@ public class ContentControlNavigator : ControlNavigator<ContentControl>
 		if (viewType is null ||
 			viewType.IsSubclassOf(typeof(Page)))
 		{
-			if (viewType is null && Logger.IsEnabled(LogLevel.Warning)) Logger.LogWarningMessage($"Missing view for navigation path '{path}'");
+			if (viewType is null
+				&& path is { Length: > 0 }
+				&& Logger.IsEnabled(LogLevel.Warning))
+			{
+				Logger.LogWarningMessage($"Missing view for navigation path '{path}'");
+			}
+
 			path = viewType is null ? path : default;
 			viewType = typeof(UI.Controls.FrameView);
 		}

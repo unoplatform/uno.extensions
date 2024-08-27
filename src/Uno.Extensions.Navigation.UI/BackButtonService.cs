@@ -78,7 +78,7 @@ internal class BackButtonService : IHostedService
 	{
 		if (_logger.IsEnabled(LogLevel.Trace))
 		{
-			_logger.LogTraceMessage($"Starting {nameof(BackButtonService)}");
+			_logger.LogTraceMessage($"Stopping {nameof(BackButtonService)}");
 		}
 
 		var stopAction = _unregister;

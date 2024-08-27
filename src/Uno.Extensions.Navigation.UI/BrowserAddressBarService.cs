@@ -50,7 +50,7 @@ internal class BrowserAddressBarService : IHostedService
 	{
 		if (_logger.IsEnabled(LogLevel.Trace))
 		{
-			_logger.LogTraceMessage($"Starting {nameof(BrowserAddressBarService)}");
+			_logger.LogTraceMessage($"Stopping {nameof(BrowserAddressBarService)}");
 		}
 
 		var stopAction = _unregister;
