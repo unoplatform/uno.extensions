@@ -6,6 +6,7 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Uno.Extensions.Equality;
+using Uno.Extensions.Reactive.Utils;
 
 namespace Uno.Extensions.Reactive;
 
@@ -181,11 +182,24 @@ static partial class ListState
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #if DEBUG // To avoid usage in internal reactive code, but without forcing apps to update right away
-	[Obsolete("Use ForEachAsync")]
+	[Obsolete("Use ForEach")]
 #endif
 	public static IDisposable Execute<T>(this IListState<T> state, AsyncAction<IImmutableList<T>> action, [CallerMemberName] string? caller = null, [CallerLineNumber] int line = -1)
 		where T : notnull
 		=> ForEachAsync(state, action, caller, line);
+
+
+	/// <summary>
+	/// [DEPRECATED] Use .ForEach instead
+	/// </summary>
+	[EditorBrowsable(EditorBrowsableState.Never)]
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#if DEBUG // To avoid usage in internal reactive code, but without forcing apps to update right away
+	[Obsolete("Use ForEach")]
+#endif
+	public static IDisposable ForEachAsync<T>(this IListState<T> state, AsyncAction<IImmutableList<T>> action, [CallerMemberName] string? caller = null, [CallerLineNumber] int line = -1)
+		where T : notnull
+		=> new StateForEach<IImmutableList<T>>(state, (list, ct) => action(list.SomeOrDefault() ?? ImmutableList<T>.Empty, ct), $"ForEachAsync defined in {caller} at line {line}.");
 
 
 	/// <summary>
@@ -196,10 +210,41 @@ static partial class ListState
 	/// <param name="action">The callback to invoke on each update of the state.</param>
 	/// <param name="caller"> For debug purposes, the name of this subscription. DO NOT provide anything here, let the compiler fulfill this.</param>
 	/// <param name="line">For debug purposes, the name of this subscription. DO NOT provide anything here, let the compiler fulfill this.</param>
-	/// <returns>A <see cref="IDisposable"/> that can be used to remove the callback registration.</returns>
-	public static IDisposable ForEachAsync<T>(this IListState<T> state, AsyncAction<IImmutableList<T>> action, [CallerMemberName] string? caller = null, [CallerLineNumber] int line = -1)
+	/// <returns>A <see cref="IListState{T}"/> that can be used to chain other operations.</returns>
+	public static IListState<T> ForEach<T>(this IListState<T> state, AsyncAction<IImmutableList<T>> action, [CallerMemberName] string? caller = null, [CallerLineNumber] int line = -1)
 		where T : notnull
-		=> new StateForEach<IImmutableList<T>>(state, (list, ct) => action(list.SomeOrDefault() ?? ImmutableList<T>.Empty, ct), $"ForEachAsync defined in {caller} at line {line}.");
+	{
+		_ = AttachedProperty.GetOrCreate(
+				owner: state,
+				key: action,
+				state: (caller, line),
+				factory: static (s, a, d) => new StateForEach<IImmutableList<T>>(s, (list, ct) => a(list.SomeOrDefault() ?? ImmutableList<T>.Empty, ct), $"ForEach defined in {d.caller} at line {d.line}."));
+
+		return state;
+	}
+
+	/// <summary>
+	/// Execute an async callback each time the state is being updated.
+	/// </summary>
+	/// <typeparam name="T">The type of the state</typeparam>
+	/// <param name="state">The state to listen.</param>
+	/// <param name="action">The callback to invoke on each update of the state.</param>
+	/// <param name="caller"> For debug purposes, the name of this subscription. DO NOT provide anything here, let the compiler fulfill this.</param>
+	/// <param name="line">For debug purposes, the name of this subscription. DO NOT provide anything here, let the compiler fulfill this.</param>
+	/// <param name="disposable"> A <see cref="IDisposable"/> that can be used to remove the callback registration.</param>
+	/// <returns>A <see cref="IListState{T}"/> that can be used to chain other operations.</returns>
+	public static IListState<T> ForEach<T>(this IListState<T> state, AsyncAction<IImmutableList<T>> action, out IDisposable disposable, [CallerMemberName] string? caller = null, [CallerLineNumber] int line = -1)
+		where T : notnull
+	{
+		disposable = AttachedProperty.GetOrCreate(
+						owner: state,
+						key: action,
+						state: (caller, line),
+						factory: static (s, a, d) => new StateForEach<IImmutableList<T>>(s, (list, ct) => a(list.SomeOrDefault() ?? ImmutableList<T>.Empty, ct), $"ForEachAsync defined in {d.caller} at line {d.line}."));
+
+		return state;
+	}
+
 	#endregion
 
 	/// <summary>

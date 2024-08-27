@@ -94,7 +94,7 @@ await MyStrings.InsertAsync("Margaret Atwood", cancellationToken);
 
 There are various ways to update values in the list-state:
 
-The `Update` method has an `updater` parameter like the `State` does.  
+The `Update` method has an `updater` parameter like the `State` does.
 This parameter is a `Func<IImmutableList<T>, IImmutableList<T>>`, which when called passes in the existing collection, allows you to apply your modifications to it, and then returns it.
 
 For example:
@@ -134,12 +134,12 @@ await MyStrings.RemoveAllAsync(
     ct: cancellationToken);
 ```
 
-#### ForEachAsync
+#### ForEach
 
 This operator can be called from an `IListState<T>` to execute an asynchronous action when the data changes. The action is invoked once for the entire set of data, rather than for individual items:
 
 ```csharp
-await MyStrings.ForEachAsync(async(list, ct) => await PerformAction(items, ct));
+await MyStrings.ForEach(async(list, ct) => await PerformAction(items, ct));
 
 ...
 
@@ -152,7 +152,7 @@ private async ValueTask PerformAction(IImmutableList<string> items, Cancellation
 
 ### Selection operators
 
-Like list-feed, list-state provides out-the-box support for Selection.  
+Like list-feed, list-state provides out-the-box support for Selection.
 This feature enables flagging single or multiple items in the State as 'selected'.
 
 Selection works seamlessly and automatically with the `ListView` and other selection controls.
@@ -199,5 +199,5 @@ await MyStrings.ClearSelection(cancellationToken);
 
 ### Subscribing to the selection
 
-You can create a Feed that reflects the currently selected item or items (when using multi-selection) of a Feed.  
+You can create a Feed that reflects the currently selected item or items (when using multi-selection) of a Feed.
 This is explained in detail in the [Selection page](xref:Uno.Extensions.Mvux.Advanced.Selection).

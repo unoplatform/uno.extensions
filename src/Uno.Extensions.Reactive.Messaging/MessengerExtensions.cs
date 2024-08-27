@@ -23,7 +23,10 @@ public static class MessengerExtensions
 	/// <param name="keySelector">A selector to get a unique identifier of a <typeparamref name="TEntity"/>.</param>
 	/// <returns>A disposable that can be used to unbind the state from the messenger.</returns>
 	public static IDisposable Observe<TEntity, TKey>(this IMessenger messenger, IState<TEntity> state, Func<TEntity, TKey> keySelector)
-		=> AttachedProperty.GetOrCreate(state, keySelector, messenger, (s, ks, msg) => new Recipient<IState<TEntity>, TEntity, TKey>(s, msg, ks, StateExtensions.Update));
+		=> AttachedProperty.GetOrCreate(owner: state,
+										key: keySelector,
+										state: messenger,
+										factory: static (s, ks, msg) => new Recipient<IState<TEntity>, TEntity, TKey>(s, msg, ks, StateExtensions.Update));
 
 	/// <summary>
 	/// Listen for <see cref="EntityMessage{TEntity}"/> on the given <paramref name="messenger"/> and updates the <paramref name="listState"/> accordingly.
