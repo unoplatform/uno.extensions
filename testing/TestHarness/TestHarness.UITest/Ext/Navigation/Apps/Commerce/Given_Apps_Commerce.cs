@@ -23,16 +23,17 @@ public class Given_Apps_Commerce : NavigationTestBase
 		await App.TapAndWait("DealsTabBarItem", "DealsNavigationBar");
 
 		// Select a deal
-		await App.TapAndWait("DealsPage_DealsTabBarItem", "DealsListView");
+		await App.SelectElementIndexAndWait("DealsTabBar", "0", "DealsListView");
 
-		await App.SelectListViewIndexAndWait("DealsListView", "1", "ProductDetailsNavigationBar");
+		await App.SelectElementIndexAndWait("DealsListView", "1", "ProductDetailsNavigationBar");
 
 		// Go back to list of deals
-		await App.TapAndWait("DetailsBackButton", "DealsListView");
+		App.WaitThenTap("DetailsBackButton");
 
+		await App.SelectElementIndexAndWait("DealsTabBar", "0", "DealsListView");
 
 		// Select another deal
-		await App.SelectListViewIndexAndWait("DealsListView", "2", "ProductDetailsNavigationBar");
+		await App.SelectElementIndexAndWait("DealsListView", "2", "ProductDetailsNavigationBar");
 
 		// Go back to list of deals
 		await App.TapAndWait("DetailsBackButton", "DealsListView");
@@ -66,14 +67,14 @@ public class Given_Apps_Commerce : NavigationTestBase
 		// Select a deal
 		await App.TapAndWait("DealsTabBarItem", "DealsListView");
 
-		await App.SelectListViewIndexAndWait("DealsListView", "1", "ProductDetailsNavigationBar");
+		await App.SelectElementIndexAndWait("DealsListView", "1", "ProductDetailsNavigationBar");
 
 		await App.TapAndWait("DetailsBackButton", "DealsNavigationBar");
 
 		// Select a product
 		await App.TapAndWait("ProductsTabBarItem", "ProductsListView");
 
-		await App.SelectListViewIndexAndWait("ProductsListView", "2", "ProductDetailsNavigationBar");
+		await App.SelectElementIndexAndWait("ProductsListView", "2", "ProductDetailsNavigationBar");
 
 		await App.TapAndWait("DetailsBackButton", "ProductsNavigationBar");
 
@@ -106,14 +107,14 @@ public class Given_Apps_Commerce : NavigationTestBase
 		// Select a deal
 		await App.TapAndWait("DealsNavigationViewItem", "DealsListView");
 
-		await App.SelectListViewIndexAndWait("DealsListView", "2", "ProductDetailsNavigationBar");
+		await App.SelectElementIndexAndWait("DealsListView", "2", "ProductDetailsNavigationBar");
 		App.WaitElement("DealsNavigationBar");
 
 
 		// Select a product
 		await App.TapAndWait("ProductsNavigationViewItem", "ProductsListView");
 
-		await App.SelectListViewIndexAndWait("ProductsListView", "1", "ProductDetailsNavigationBar");
+		await App.SelectElementIndexAndWait("ProductsListView", "1", "ProductDetailsNavigationBar");
 		App.WaitElement("ProductsNavigationBar");
 
 		// Log out
@@ -122,7 +123,6 @@ public class Given_Apps_Commerce : NavigationTestBase
 
 
 	}
-
 
 	[Test]
 	public async Task When_ViewModelInstance()
@@ -176,7 +176,6 @@ public class Given_Apps_Commerce : NavigationTestBase
 		newProductsId.Should().BeEquivalentTo(productsId);
 
 	}
-
 
 	[Test]
 	public async Task When_BackgroundThread()

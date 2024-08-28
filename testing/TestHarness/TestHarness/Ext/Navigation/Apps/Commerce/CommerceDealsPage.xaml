@@ -18,24 +18,18 @@
 			<VisualStateGroup>
 				<VisualState x:Name="Wide">
 					<VisualState.StateTriggers>
-						<triggers:ControlSizeTrigger MinWidth="{StaticResource WideMinWindowWidth}"
-													 TargetElement="{Binding ElementName=ParentGrid}" />
+						<triggers:ControlSizeTrigger MinWidth="{StaticResource WideMinWindowWidth}" TargetElement="{Binding ElementName=ParentGrid}" />
 					</VisualState.StateTriggers>
 					<VisualState.Setters>
 						<!--<Setter Target="DealsListView.SelectionMode"
 								Value="Single" />
 						<Setter Target="DealsListView.IsItemClickEnabled"
 								Value="False" />-->
-						<Setter Target="DealsColumn.Width"
-								Value="*" />
-						<Setter Target="DealsColumn.MinWidth"
-								Value="300" />
-						<Setter Target="DetailsColumn.Width"
-								Value="2*" />
-						<Setter Target="DetailsGrid.Visibility"
-								Value="Visible" />
-						<Setter Target="Details.(uen:Region.Attached)"
-								Value="true" />
+						<Setter Target="DealsColumn.Width" Value="*" />
+						<Setter Target="DealsColumn.MinWidth" Value="300" />
+						<Setter Target="DetailsColumn.Width" Value="2*" />
+						<Setter Target="DetailsGrid.Visibility" Value="Visible" />
+						<Setter Target="Details.(uen:Region.Attached)" Value="true" />
 					</VisualState.Setters>
 				</VisualState>
 				<VisualState x:Name="Narrow">
@@ -56,18 +50,15 @@
 			<RowDefinition Height="Auto" />
 			<RowDefinition />
 		</Grid.RowDefinitions>
-		<utu:NavigationBar  AutomationProperties.AutomationId="DealsNavigationBar"
-							Content="Deals" />
+		<utu:NavigationBar AutomationProperties.AutomationId="DealsNavigationBar" Content="Deals" />
 		<TextBlock AutomationProperties.AutomationId="DealsViewModelIdTextBlock"
 				   Text="{Binding ViewModelId}"
 				   FontWeight="Bold" />
 
 		<Grid Grid.Row="1">
 			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="*"
-								  x:Name="DealsColumn" />
-				<ColumnDefinition Width="0"
-								  x:Name="DetailsColumn" />
+				<ColumnDefinition Width="*" x:Name="DealsColumn" />
+				<ColumnDefinition Width="0" x:Name="DetailsColumn" />
 			</Grid.ColumnDefinitions>
 			<Grid uen:Region.Attached="True">
 				<Grid.RowDefinitions>
@@ -86,7 +77,9 @@
 							Content="Product Details"
 							Click="{x:Bind ViewModel.ShowProduct}" />
 				</StackPanel>
-				<utu:TabBar uen:Region.Attached="True" Grid.Row="1">
+				<utu:TabBar uen:Region.Attached="True"
+							Grid.Row="1"
+							AutomationProperties.AutomationId="DealsTabBar">
 					<utu:TabBarItem x:Uid="DealsPage_DealsTab"
 									AutomationProperties.AutomationId="DealsPage_DealsTabBarItem"
 									Content="Deals"
@@ -110,8 +103,7 @@
 							  uen:Navigation.Request="DealsProduct">
 						<ListView.ItemTemplate>
 							<DataTemplate x:DataType="local:CommerceProduct">
-								<TextBlock Text="{x:Bind Name}"
-										   FontSize="30" />
+								<TextBlock Text="{x:Bind Name}" FontSize="30" />
 							</DataTemplate>
 						</ListView.ItemTemplate>
 					</ListView>

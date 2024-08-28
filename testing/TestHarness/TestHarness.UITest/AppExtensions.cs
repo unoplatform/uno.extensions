@@ -14,7 +14,7 @@ public static class AppExtensions
 		await Task.Delay(UIWaitTimeInMilliseconds);
 	}
 
-	public static async Task SelectListViewIndexAndWait(this IApp app, string listName, string indexToSelect, string elementToWaitFor)
+	public static async Task SelectElementIndexAndWait(this IApp app, string listName, string indexToSelect, string elementToWaitFor)
 	{
 		app.WaitElement(listName);
 		await Task.Delay(UIWaitTimeInMilliseconds);
