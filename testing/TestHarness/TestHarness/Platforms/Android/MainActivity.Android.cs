@@ -3,6 +3,7 @@ using Android.Content.PM;
 using Android.OS;
 using Android.Views;
 using Android.Widget;
+using Java.Interop;
 
 namespace TestHarness.Droid;
 [Activity(
@@ -12,4 +13,6 @@ namespace TestHarness.Droid;
 )]
 public class MainActivity : Microsoft.UI.Xaml.ApplicationActivity
 {
+	[Export("GetDisplayScreenScaling")]
+	public string GetDisplayScreenScaling(string value) => App.GetDisplayScreenScaling(value);
 }

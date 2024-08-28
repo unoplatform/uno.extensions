@@ -14,21 +14,18 @@
 			<RowDefinition Height="Auto" />
 			<RowDefinition />
 		</Grid.RowDefinitions>
-		<utu:NavigationBar Content="Content Dialogs - Second Page"
-						   AutomationProperties.AutomationId="DialogsContentDialogsSecondPageNavigationBar" >
+		<utu:NavigationBar Content="Content Dialogs - Second Page" AutomationProperties.AutomationId="DialogsContentDialogsSecondPageNavigationBar">
 			<utu:NavigationBar.MainCommand>
 				<AppBarButton AutomationProperties.AutomationId="DialogsContentDialogsSecondPageBackButton">
 					<AppBarButton.Icon>
-						<BitmapIcon UriSource="ms-appx:///Assets/Icons/back.png" />
+						<BitmapIcon UriSource="ms-appx:///Assets/Images/back.png" />
 					</AppBarButton.Icon>
 				</AppBarButton>
 			</utu:NavigationBar.MainCommand>
 		</utu:NavigationBar>
 
 		<ScrollViewer Grid.Row="1">
-			<StackPanel>
-
-			</StackPanel>
+			<StackPanel />
 		</ScrollViewer>
 	</Grid>
 </Page>

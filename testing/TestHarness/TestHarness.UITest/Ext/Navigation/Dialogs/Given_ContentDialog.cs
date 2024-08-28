@@ -90,7 +90,11 @@ public class Given_ContentDialog : NavigationTestBase
 
 		App.WaitElement("DialogsContentDialogsSecondPageNavigationBar");
 
-		App.Tap("DialogsContentDialogsSecondPageBackButton");
+		PlatformHelpers.On(
+				iOS: () => App.FastTap("BackButton"),
+				Android: () => App.FastTap(q => q.Marked("DialogsContentDialogsSecondPageNavigationBar").Descendant("AppCompatImageButton")),
+				Browser: () => App.Tap("DialogsContentDialogsSecondPageBackButton")
+			);
 
 		await Task.Delay(AppExtensions.UIWaitTimeInMilliseconds);
 
