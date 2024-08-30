@@ -4,18 +4,61 @@ uid: Uno.Extensions.Reactive.ListFeed
 # ListFeed
 
 The `IListFeed<T>` is _feed_ specialized for handling collections.
-It allows the declaration of an operator directly on items instead of dealing with the list itself.
+It allows the declaration of an operator directly on items instead of dealing with the list itself. Unlike a feed, where each asynchronous operation returns one single item (or a series of single items in the case of an `IAsyncEnumerable`), a `ListFeed` returns a collection of items.
 A _list feed_ goes in `None` if the list does not have any elements.
 
 > [!NOTE]
 > `ListFeed<T>` is using the _key equality_ to track multiple version of a same entity within different messages of the `ListFeed<T>`.
 > [Read more about _key equality_.](../KeyEquality/concept.md).
 
+A couple of points to note about list-feeds:
+
+- [Operators](#operators) are applied to the items within the returned collection, rather than on the entire collection.
+
+- When an empty collection is returned by the service, it's treated as an Empty message. The returned data axis Option will be `None`, even though the result was not `null`. This is because when a control of data items is displayed with an empty collection (for instance a `ListView`), there is no reason to display the `FeedView`'s `ValueTemplate` with an empty `ListView`. The "No data records" `NoneTemplate` makes much more sense in this case. For that reason, both a `null` result and an empty collection are regarded as `None`.
+
+- The `ListFeed` uses the _key equality_ to track multiple versions of the same entity within different messages of the `ListFeed`.
+[Read more about _key equality_](xref:Uno.Extensions.KeyEquality.Concept).
+
 ## Sources: How to create a list feed
 
-To create an `IListFeed<T>`, on the `ListFeed` class, the same `Async`, `AsyncEnumerable` and `Create` methods found on `Feed` can be used.
+To create an `IListFeed<T>`, use the static class `ListFeed` to call one of the following methods:
+
+ **Async**: Creates a `ListFeed` using a method that returns a `Task<IImmutableList<T>>`.
+    
+- Service code:
+
+```csharp
+public ValueTask<IImutableList<string>> GetNames(CancellationToken ct = default);
+```
+
+- Model code:
+
+```csharp
+public IListFeed<string> Names => ListFeed.Async(service.GetNames);
+```
+**AsyncEnumerable**: Creates a `ListFeed` using an `IAsyncEnumerable<IImmutableList<T>>`.
+- Service code:  
+
+```csharp
+public IAsyncEnumerable<IImutableList<string>> GetNames(
+    [EnumeratorCancellation] CancellationToken ct = default);
+```
+
+- Model code:
+
+```csharp
+public IListFeed<string> Names => ListFeed.AsyncEnumerable(service.GetNames);
+```
+Pull and push are explained more in the [feeds page](xref:Uno.Extensions.Mvux.Feeds#creation-of-feeds).
+
+**Create**: Provides custom initialization for a `ListFeed`.
 
 There are also 2 helpers that allow you to convert from/to a _feed_ to/from a _list feed_.
+
+## Operators: How to interact with a list feed
+
+Unlike a `Feed<List<T>>` operators on a _list feed_ are directly interacting with _items_ instead of the list itself.
 
 ### PaginatedAsync
 
@@ -36,9 +79,32 @@ public IListFeed<City> Cities => ListFeed.AsyncPaginated(async (page, ct) => _se
 > For such patterns, you can either just hard-code your _page size_ (e.g. `source.Skip(page.Index * 20).Take(20)`,
 > either use the `page.TotalCount` property (e.g. `source.Skip(page.TotalCount).Take(page.DesiredSize)`).
 
+### Where
+
+This operator allows the filtering of _items_.
+
+> [!WARNING]
+> If all _items_ of the collection are filtered out, the resulting feed will go in _none_ state.
+
+```csharp
+public IListFeed<string> LongNames => Names.Where(name => name.Length >= 10);
+```
+
+### AsFeed
+
+This does the opposite of `AsListFeed` and converts a _list feed_ to a _feed of list_.
+
+```csharp
+public void SetUp()
+{
+    IListFeed<string> stringsListFeed = ...;
+    IFeed<IImmutableCollection<string>> stringsFeed = stringsListFeed.AsFeed();
+}
+```
+
 ### AsListFeed
 
-This allows the creation of a _list feed_ from a _feed of list_.
+A `ListFeed` can also be created from a `Feed` when the `Feed` exposes a collection (`IFeed<IImmutableCollection<T>>`):
 
 ```csharp
 public IListFeed<WeatherInfo> Forecast => Feed
@@ -49,27 +115,4 @@ public IListFeed<WeatherInfo> Forecast => Feed
     })
     .Select(list => list.ToImmutableList())
     .AsListFeed();
-```
-
-### AsFeed
-
-This does the opposite of `AsListFeed` and converts a _list feed_ to a _feed of list_.
-
-```csharp
-public IFeed<IImmutableList<WeatherInfo>> ForecastFeed => Forecast.AsFeed();
-```
-
-## Operators: How to interact with a list feed
-
-Unlike a `Feed<List<T>>` operators on a _list feed_ are directly interacting with _items_ instead of the list itself.
-
-### Where
-
-This operator allows the filtering of _items_.
-
-> [!WARNING]
-> If all _items_ of the collection are filtered out, the resulting feed will go in _none_ state.
-
-```csharp
-public IListFeed<WeatherInfo> HighTempDays => ForecastFeed.Where(weather => weather.Temperature >= 28);
 ```
