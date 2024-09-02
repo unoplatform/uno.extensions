@@ -68,6 +68,7 @@ public partial class App : Application
 		}
 		_window.Activate();
 	}
+
 #if USE_UITESTS
 	public static string GetDisplayScreenScaling(string value) => (DisplayInformation.GetForCurrentView().LogicalDpi * 100f / 96f).ToString(CultureInfo.InvariantCulture);
 #endif
