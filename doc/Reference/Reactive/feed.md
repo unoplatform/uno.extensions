@@ -1,59 +1,30 @@
 ---
 uid: Uno.Extensions.Reactive.Feed
 ---
-# Feed
+# What are feeds?
+
+Feeds are there to manage asynchronous operations (for example requesting data from a service) and expose the result to the View in an efficient manner.
+
+They provide out of the box support for task-based methods as well as [Async-Enumerables](https://learn.microsoft.com/dotnet/api/system.collections.generic.iasyncenumerable-1) ones.
+
+Feeds include additional metadata that indicates whether the operation is still in progress, ended in an error, or if it was successful, whether the data that was returned contains any entries or was empty.
+
+## Feeds are stateless
+
+Feeds are typically used to request data from services and expose it in a stateless manner so that the resulting data can be displayed by the View.
+
+Feeds are stateless and do not provide support for reacting to changes the user makes to the data on the View. The data can only be reloaded and refreshed upon request which is when the underlying task or Async-Enumerable will be invoked and the data refreshed. In other words, a feed is a read-only representation of the data received from the server.
+
+In contrast to feeds, [states](xref:Uno.Extensions.Mvux.States) (`IState` or `IListState`), as the name suggests, are stateful and keep track of the latest value, as updates are applied.
 
 ## Sources: How to create a feed
 
-You can build a _feed_ from different sources. The main entry point is the static class `Feed`:
-
-Given an `IWeatherService` and `ILocationService`:
-
-```csharp
-public interface IWeatherService
-{
-    /// <summary>
-    /// Asynchronously gets the current weather
-    /// </summary>
-    Task<WeatherInfo> GetCurrentWeather(CancellationToken ct);
-
-    /// <summary>
-    /// Asynchronously gets the details of a weather alert.
-    /// </summary>
-    Task<string> GetAlertDetails(WeatherAlert alert, CancellationToken ct);
-
-    /// <summary>
-    /// Asynchronously gets the weather forecast for the given day
-    /// </summary>
-    Task<WeatherInfo> GetWeatherForecast(DateTime date, CancellationToken ct);
-}
-
-public record WeatherInfo(double Temperature, WeatherAlert? Alert);
-
-public record WeatherAlert(Guid Id, string? Title);
-
-public interface ILocationService
-{
-    /// <summary>
-    /// Asynchronously gets the name of the current city.
-    /// </summary>
-    Task<string> GetCurrentCity(CancellationToken ct);
-
-    /// <summary>
-    /// Gets teh list of all supported cities.
-    /// </summary>
-    Task<ImmutableList<string>> GetCities(CancellationToken ct);
-}
-```
-
 ### Async
 
-Creates a feed from an async method.
+Feeds can be created from an async method using the Feed.Async factory method. Here’s an example:
 
 ```csharp
-private IWeatherService _weatherService;
-
-public IFeed<WeatherInfo> Weather => Feed.Async(async ct => await _weatherService.GetCurrentWeather(ct));
+public static IFeed<T> Async<T>(Func<CancellationToken, Task<T>> asyncFunc, Signal? refreshSignal = null);
 ```
 
 The loaded data can be refreshed using a `Signal` trigger that will re-invoke the async method.
@@ -61,33 +32,12 @@ The loaded data can be refreshed using a `Signal` trigger that will re-invoke th
 > [!NOTE]
 > A `Signal` represents a trigger that can be raised at anytime, for instance within an `ICommand` data-bound to a "pull-to-refresh".
 
-```csharp
-private IWeatherService _weatherService;
-private Signal _refreshWeather = new();
-
-public IFeed<WeatherInfo> Weather => Feed.Async(async ct => await _weatherService.GetCurrentWeather(ct), _refreshWeather);
-
-public void RefreshWeather()
-    => _refreshWeather.Raise();
-```
-
 ### AsyncEnumerable
 
-This adapts an `IAsyncEnumerable<T>` into a _feed_.
+This adapts an `IAsyncEnumerable<T>` into a _feed_ using Feed.AsyncEnumerable. Here's an example:
 
 ```csharp
-private IWeatherService _weatherService;
-
-public IFeed<WeatherInfo> Weather => Feed.AsyncEnumerable(() => GetWeather());
-
-private async IAsyncEnumerable<WeatherInfo> GetWeather([EnumeratorCancellation] CancellationToken ct = default)
-{
-    while (!ct.IsCancellationRequested)
-    {
-        yield return await _weatherService.GetCurrentWeather(ct);
-        await Task.Delay(TimeSpan.FromHours(1), ct);
-    }
-}
+public static IFeed<T> AsyncEnumerable<T>(Func<CancellationToken, IAsyncEnumerable<T>> asyncEnumerableFunc);
 ```
 
 > [!NOTE]
@@ -97,35 +47,21 @@ private async IAsyncEnumerable<WeatherInfo> GetWeather([EnumeratorCancellation] 
 
 ### Create
 
-This gives you the ability to create a specialized _feed_ by dealing directly with _messages_.
+This gives you the ability to create a specialized _feed_ by dealing directly with _messages_ using Feed.Create. Here's an example:
 
 > [!NOTE]
 > This is designed for advanced usage and should probably not be used directly in apps.
 
 ```csharp
-public IFeed<WeatherInfo> Weather => Feed.Create(GetWeather);
+public static IFeed<T> Create<T>(Func<CancellationToken, IAsyncEnumerable<Message<T>>> messageFunc);
+```
 
-private async IAsyncEnumerable<Message<WeatherInfo>> GetWeather([EnumeratorCancellation] CancellationToken ct = default)
-{
-    var message = Message<WeatherInfo>.Initial;
-    var weather = Option<WeatherInfo>.Undefined();
-    var error = default(Exception);
-    while (!ct.IsCancellationRequested)
-    {
-        try
-        {
-            weather = await _weatherService.GetCurrentWeather(ct);
-            error = default;
-        }
-        catch (Exception ex)
-        {
-            error = ex;
-        }
+### GetAwaiter
 
-        yield return message = message.With().Data(weather).Error(error);
-        await Task.Delay(TimeSpan.FromHours(1), ct);
-    }
-}
+This allows the use of `await` on a _feed_, for instance when you want to capture the current value to use it in a command.
+
+```csharp
+public static TaskAwaiter<T> GetAwaiter<T>(this IFeed<T> feed);
 ```
 
 ## Operators: How to interact with a feed
@@ -150,9 +86,7 @@ Applies a predicate on the _data_.
 Be aware that unlike `IEnumerable`, `IObservable`, and `IAsyncEnumerable`, if the predicate returns false, a message with a `None` _data_ will be published.
 
 ```csharp
-public IFeed<WeatherAlert> Alert => Weather
-    .Where(weather => weather.Alert is not null)
-    .Select(weather => weather.Alert!);
+public static IFeed<T> Where<T>(this IFeed<T> feed, Func<T, bool> predicate);
 ```
 
 ### Select
@@ -160,9 +94,7 @@ public IFeed<WeatherAlert> Alert => Weather
 Synchronously projects each data from the source _feed_.
 
 ```csharp
-public IFeed<WeatherAlert> Alert => Weather
-    .Where(weather => weather.Alert is not null)
-    .Select(weather => weather.Alert!);
+public static IFeed<TResult> Select<TSource, TResult>(this IFeed<TSource> feed, Func<TSource, TResult> selector);
 ```
 
 ### SelectAsync
@@ -170,18 +102,5 @@ public IFeed<WeatherAlert> Alert => Weather
 Asynchronously projects each data from the source _feed_.
 
 ```csharp
-public IFeed<string> AlertDetails => Alert
-    .SelectAsync(async (alert, ct) => await _weatherService.GetAlertDetails(alert, ct));
-```
-
-### GetAwaiter
-
-This allows the use of `await` on a _feed_, for instance when you want to capture the current value to use it in a command.
-
-```csharp
-public async ValueTask ShareAlert(CancellationToken ct)
-{
-    var alert = await Alert; // Gets the current WeatherAlert
-    await _shareService.Share(alert, ct);
-}
+public static IFeed<TResult> SelectAsync<TSource, TResult>(this IFeed<TSource> feed, Func<TSource, CancellationToken, Task<TResult>> selector);
 ```
