@@ -29,6 +29,8 @@
       href: xref:Uno.Extensions.Mvux.Advanced.Selection
     - name: Pagination
       href: xref:Uno.Extensions.Mvux.Advanced.Pagination
+    - name: Messaging
+      href: xref:Uno.Extensions.Mvux.Advanced.Messaging
     - name: Commands
       href: xref:Uno.Extensions.Mvux.Advanced.Commands
     - name: Inspecting the generated code
