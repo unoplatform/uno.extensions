@@ -21,10 +21,17 @@ In contrast to feeds, [states](xref:Uno.Extensions.Mvux.States) (`IState` or `IL
 
 ### Async
 
-Feeds can be created from an async method using the Feed.Async factory method. Here’s an example:
+Feeds can be created from an async method using the Feed.Async factory method.
 
 ```csharp
-public static IFeed<T> Async<T>(Func<CancellationToken, Task<T>> asyncFunc, Signal? refreshSignal = null);
+public IFeed<CounterValue> Value => Feed.Async(_myService.CountOne);
+```
+
+Here’s an example:
+
+```csharp
+private IWeatherService _weatherService;
+public IFeed<WeatherInfo> Weather => Feed.Async(async ct => await _weatherService.GetCurrentWeather(ct));
 ```
 
 The loaded data can be refreshed using a `Signal` trigger that will re-invoke the async method.
@@ -34,10 +41,27 @@ The loaded data can be refreshed using a `Signal` trigger that will re-invoke th
 
 ### AsyncEnumerable
 
-This adapts an `IAsyncEnumerable<T>` into a _feed_ using Feed.AsyncEnumerable. Here's an example:
+This adapts an `IAsyncEnumerable<T>` into a _feed_ using Feed.AsyncEnumerable.
 
 ```csharp
 public static IFeed<T> AsyncEnumerable<T>(Func<CancellationToken, IAsyncEnumerable<T>> asyncEnumerableFunc);
+```
+
+Here's an example:
+
+```csharp
+private IWeatherService _weatherService;
+
+public IFeed<WeatherInfo> Weather => Feed.AsyncEnumerable(() => GetWeather());
+
+private async IAsyncEnumerable<WeatherInfo> GetWeather([EnumeratorCancellation] CancellationToken ct = default)
+{
+    while (!ct.IsCancellationRequested)
+    {
+        yield return await _weatherService.GetCurrentWeather(ct);
+        await Task.Delay(TimeSpan.FromHours(1), ct);
+    }
+}
 ```
 
 > [!NOTE]
@@ -47,13 +71,41 @@ public static IFeed<T> AsyncEnumerable<T>(Func<CancellationToken, IAsyncEnumerab
 
 ### Create
 
-This gives you the ability to create a specialized _feed_ by dealing directly with _messages_ using Feed.Create. Here's an example:
+This gives you the ability to create a specialized _feed_ by dealing directly with _messages_ using Feed.Create.
 
 > [!NOTE]
 > This is designed for advanced usage and should probably not be used directly in apps.
 
 ```csharp
 public static IFeed<T> Create<T>(Func<CancellationToken, IAsyncEnumerable<Message<T>>> messageFunc);
+```
+
+Here's an example:
+
+```csharp
+public IFeed<WeatherInfo> Weather => Feed.Create(GetWeather);
+
+private async IAsyncEnumerable<Message<WeatherInfo>> GetWeather([EnumeratorCancellation] CancellationToken ct = default)
+{
+    var message = Message<WeatherInfo>.Initial;
+    var weather = Option<WeatherInfo>.Undefined();
+    var error = default(Exception);
+    while (!ct.IsCancellationRequested)
+    {
+        try
+        {
+            weather = await _weatherService.GetCurrentWeather(ct);
+            error = default;
+        }
+        catch (Exception ex)
+        {
+            error = ex;
+        }
+
+        yield return message = message.With().Data(weather).Error(error);
+        await Task.Delay(TimeSpan.FromHours(1), ct);
+    }
+}
 ```
 
 ### GetAwaiter
@@ -97,10 +149,37 @@ Synchronously projects each data from the source _feed_.
 public static IFeed<TResult> Select<TSource, TResult>(this IFeed<TSource> feed, Func<TSource, TResult> selector);
 ```
 
+Here's an exmaple:
+
+```csharp
+public IFeed<WeatherAlert> Alert => Weather
+    .Where(weather => weather.Alert is not null)
+    .Select(weather => weather.Alert!);
+```
+
 ### SelectAsync
 
 Asynchronously projects each data from the source _feed_.
 
 ```csharp
 public static IFeed<TResult> SelectAsync<TSource, TResult>(this IFeed<TSource> feed, Func<TSource, CancellationToken, Task<TResult>> selector);
+```
+
+Here's an example:"
+
+```csharp
+public IFeed<string> AlertDetails => Alert
+    .SelectAsync(async (alert, ct) => await _weatherService.GetAlertDetails(alert, ct));
+```
+
+### GetAwaiter
+
+This allows the use of `await` on a _feed_, for instance when you want to capture the current value to use it in a command.
+
+```csharp
+public async ValueTask ShareAlert(CancellationToken ct)
+{
+    var alert = await Alert; // Gets the current WeatherAlert
+    await _shareService.Share(alert, ct);
+}
 ```
