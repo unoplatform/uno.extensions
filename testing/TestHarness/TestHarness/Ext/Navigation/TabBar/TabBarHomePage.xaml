@@ -24,21 +24,22 @@
 			<RowDefinition Height="Auto" />
 			<RowDefinition />
 		</Grid.RowDefinitions>
-		<utu:NavigationBar Content="TabBar Home"
-						   AutomationProperties.AutomationId="TabBarHomeNavigationBar" />
-		<TextBlock Text="..."
-				   Grid.Row="1"
+		<utu:NavigationBar Content="TabBar Home" AutomationProperties.AutomationId="TabBarHomeNavigationBar" />
+		<TextBlock AutomationProperties.AutomationId="CurrentTabBarItemTextBlock"
+				   x:Uid="CurrentTabBarItemTextBlock"
 				   x:Name="CurrentTabBarItemText"
-				   AutomationProperties.AutomationId="CurrentTabBarItemTextBlock" />
-		<ToggleButton Grid.Row="2" Content="ImplicitMapping" IsChecked="{Binding ImplicitMappingEnabled}" Command="{Binding ToggleIsCheckedCommand}" />
-		<Grid uen:Region.Attached="true"
-							 Grid.Row="3" >
+				   Text="..."
+				   Grid.Row="1" />
+		<ToggleButton Grid.Row="2"
+					  Content="ImplicitMapping"
+					  IsChecked="{Binding ImplicitMappingEnabled}"
+					  Command="{Binding ToggleIsCheckedCommand}" />
+		<Grid uen:Region.Attached="true" Grid.Row="3">
 			<Grid.RowDefinitions>
 				<RowDefinition />
 				<RowDefinition Height="Auto" />
 			</Grid.RowDefinitions>
-			<Grid uen:Region.Attached="True"
-				  uen:Region.Navigator="Visibility">
+			<Grid uen:Region.Attached="True" uen:Region.Navigator="Visibility">
 				<StackPanel uen:Region.Name="Products"
 							AutomationProperties.AutomationId="ProductsStackPanel"
 							Visibility="Collapsed">

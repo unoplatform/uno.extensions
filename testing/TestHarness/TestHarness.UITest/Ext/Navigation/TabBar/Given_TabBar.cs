@@ -55,8 +55,7 @@ public class Given_TabBar : NavigationTestBase
 	private void CheckProductsVisible()
 	{
 		App.WaitElement("ProductsDealsButton");
-		var text = App.MarkedAnywhere("CurrentTabBarItemTextBlock").GetText();
-		text.Should().Be("Products");
+		App.WaitForText("CurrentTabBarItemTextBlock", "Products");
 		var isVisible = App.MarkedAnywhere("ProductsStackPanel").IsVisible();
 		isVisible.Should().Be(true);
 		isVisible = App.MarkedAnywhere("DealsStackPanel").IsVisible();
@@ -68,8 +67,7 @@ public class Given_TabBar : NavigationTestBase
 	private void CheckDealsVisible()
 	{
 		App.WaitElement("DealsProductsButton");
-		var text = App.MarkedAnywhere("CurrentTabBarItemTextBlock").GetText();
-		text.Should().Be("Deals");
+		App.WaitForText("CurrentTabBarItemTextBlock", "Deals");
 		var isVisible = App.MarkedAnywhere("ProductsStackPanel").IsVisible();
 		isVisible.Should().Be(false);
 		isVisible = App.MarkedAnywhere("DealsStackPanel").IsVisible();
@@ -83,8 +81,7 @@ public class Given_TabBar : NavigationTestBase
 	private void CheckProfileVisible()
 	{
 		App.WaitElement("ProfileProductsButton");
-		var text = App.MarkedAnywhere("CurrentTabBarItemTextBlock").GetText();
-		text.Should().Be("Profile");
+		App.WaitForText("CurrentTabBarItemTextBlock", "Profile");
 		var isVisible = App.MarkedAnywhere("ProductsStackPanel").IsVisible();
 		isVisible.Should().Be(false);
 		isVisible = App.MarkedAnywhere("DealsStackPanel").IsVisible();

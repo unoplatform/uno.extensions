@@ -54,8 +54,7 @@ public class Given_NavigationView : NavigationTestBase
 
 	private void CheckProductsVisible()
 	{
-		var text = App.MarkedAnywhere("CurrentNavigationViewItemTextBlock").GetText();
-		text.Should().Be("Products");
+		App.WaitForText("CurrentNavigationViewItemTextBlock", "Products");
 		var isVisible = App.MarkedAnywhere("ProductsStackPanel").IsVisible();
 		isVisible.Should().Be(true);
 		isVisible = App.MarkedAnywhere("DealsStackPanel").IsVisible();
@@ -66,8 +65,7 @@ public class Given_NavigationView : NavigationTestBase
 
 	private void CheckDealsVisible()
 	{
-		var text = App.MarkedAnywhere("CurrentNavigationViewItemTextBlock").GetText();
-		text.Should().Be("Deals");
+		App.WaitForText("CurrentNavigationViewItemTextBlock", "Deals");
 		var isVisible = App.MarkedAnywhere("ProductsStackPanel").IsVisible();
 		isVisible.Should().Be(false);
 		isVisible = App.MarkedAnywhere("DealsStackPanel").IsVisible();
@@ -80,8 +78,7 @@ public class Given_NavigationView : NavigationTestBase
 
 	private void CheckProfileVisible()
 	{
-		var text = App.MarkedAnywhere("CurrentNavigationViewItemTextBlock").GetText();
-		text.Should().Be("Profile");
+		App.WaitForText("CurrentNavigationViewItemTextBlock", "Profile");
 		var isVisible = App.MarkedAnywhere("ProductsStackPanel").IsVisible();
 		isVisible.Should().Be(false);
 		isVisible = App.MarkedAnywhere("DealsStackPanel").IsVisible();
