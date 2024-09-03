@@ -26,7 +26,7 @@ You can create a _state_ using one of the following:
 Creates a state without any initial value.
 
 ```csharp
-public IState<string> City => State<string>.Empty(this);
+public static IState<T> Empty<T>(object owner);
 ```
 
 ### Value
@@ -34,7 +34,7 @@ public IState<string> City => State<string>.Empty(this);
 Creates a state with a synchronous initial value.
 
 ```csharp
-public IState<string> City => State.Value(this, () => "Montréal");
+public static IState<T> Value<T>(object owner, Func<T> valueProvider);
 ```
 
 ### Async
@@ -42,7 +42,7 @@ public IState<string> City => State.Value(this, () => "Montréal");
 Creates a state with an asynchronous initial value.
 
 ```csharp
-public IState<string> City => State.Async(this, async ct => await _locationService.GetCurrentCity(ct));
+public static IState<T> Async<T>(object owner, Func<CancellationToken, Task<T>> asyncFunc, Signal? refreshSignal = null);
 ```
 
 ### AsyncEnumerable
@@ -50,16 +50,7 @@ public IState<string> City => State.Async(this, async ct => await _locationServi
 Like for `Feed.AsyncEnumerable`, this allows you to adapt an `IAsyncEnumerable<T>` into a _state_.
 
 ```csharp
-public IState<string> City => State.AsyncEnumerable(this, () => GetCurrentCity());
-
-public async IAsyncEnumerable<string> GetCurrentCity([EnumeratorCancellation] CancellationToken ct = default)
-{
-    while (!ct.IsCancellationRequested)
-    {
-        yield return await _locationService.GetCurrentCity(ct);
-        await Task.Delay(TimeSpan.FromMinutes(15), ct);
-    }
-}
+public static IState<T> AsyncEnumerable<T>(object owner, Func<CancellationToken, IAsyncEnumerable<T>> asyncEnumerableFunc);
 ```
 
 ### Create
@@ -69,37 +60,14 @@ This gives you the ability to create your own _state_ by dealing directly with _
 > This is designed for advanced usage and should probably not be used directly in apps.
 
 ```csharp
-public IState<string> City => State.Create(this, GetCurrentCity);
-
-public async IAsyncEnumerable<Message<string>> GetCurrentCity([EnumeratorCancellation] CancellationToken ct = default)
-{
-    var message = Message<string>.Initial;
-    var city = Option<string>.Undefined();
-    var error = default(Exception);
-    while (!ct.IsCancellationRequested)
-    {
-        try
-        {
-            city = await _locationService.GetCurrentCity(ct);
-            error = default;
-        }
-        catch (Exception ex)
-        {
-            error = ex;
-        }
-
-        yield return message = message.With().Data(city).Error(error);
-        await Task.Delay(TimeSpan.FromHours(1), ct);
-    }
-}
+public static IState<T> Create<T>(object owner, Func<CancellationToken, IAsyncEnumerable<Message<T>>> messageFunc);
 ```
 ### From a feed
 
 A state can easily be converted from a feed as follows:
 
 ```csharp
-public IFeed<int> MyFeed => ...
-public IState<int> MyState => State.FromFeed(this, MyFeed);
+public static IState<T> FromFeed<T>(object owner, IFeed<T> feed);
 ```
 
 ## Update: How to update a state
@@ -117,13 +85,7 @@ This makes sure that you are working with the latest version of the data.
 This allows you to update the value only of the state.
 
 ```csharp
-public IState<string> City => State<string>.Empty(this);
-
-public async ValueTask SetCurrent(CancellationToken ct)
-{
-    var city = await _locationService.GetCurrentCity(ct);
-    await City.UpdateValue(_ => city, ct);
-}
+public static Task UpdateValue<T>(this IState<T> state, Func<T, T> updater, CancellationToken ct = default);
 ```
 
 ### Set
@@ -131,20 +93,7 @@ public async ValueTask SetCurrent(CancellationToken ct)
 For value types and strings, you also have a `Set` **which does not ensure the respect of the ACID properties**.
 
 ```csharp
-public IState<string> Error => State<string>.Empty(this);
-
-public async ValueTask Share(CancellationToken ct)
-{
-    try
-    {
-        ../..
-        await Error.Set(string.Empty, ct);
-    }
-    catch (Exception error)
-    {
-        await Error.Set("Share failed.", ct);
-    }
-}
+public static Task Set<T>(this IState<T> state, T value, CancellationToken ct = default);
 ```
 
 > [!CAUTION]
@@ -182,7 +131,7 @@ This gives you the ability to update a _state_, including the metadata.
 States are advanced Feeds. As such, they can also be awaited directly:
 
 ```csharp
-City currentCity = await this.CurrentCity;
+public static TaskAwaiter<T> GetAwaiter<T>(this IState<T> state);
 ```
 
 ### Binding the View to a State
@@ -269,25 +218,10 @@ public async ValueTask SetSliderMiddle(CancellationToken ct = default)
  The `ForEach` enables executing a callback each time the value of the `IState<T>` is updated.
     
 This extension-method takes a single parameter which is a async callback that takes two parameters. The first parameter is of type `T?`, where `T` is type of the `IState`, and represents the new value of the state. The second parameter is a `CancellationToken` which can be used to cancel a long running action.
-    
-For example:
-    
+        
 ```csharp
-   public partial record Model
-   {
-       public IState<string> MyState => ...
-   
-       public async ValueTask EnableChangeTracking()
-       {
-           MyState.ForEach(PerformAction);
-       }
-   
-       public async ValueTask PerformAction(string item, CancellationToken ct)
-       {
-           ...
-       }
-   }
-   ```
+public static IDisposable ForEach<T>(this IState<T> state, Func<T?, CancellationToken, Task> action);
+ ```
     
 Additionally, the `ForEach` method can be set using the Fluent API:
     
