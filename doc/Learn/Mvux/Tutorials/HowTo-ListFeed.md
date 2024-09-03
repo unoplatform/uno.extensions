@@ -151,7 +151,6 @@ which exposes properties that the View can data bind to.
 
     Read [inspecting the generated code](xref:Uno.Extensions.Mvux.Advanced.InspectGeneratedCode) for more.
 
-
 ## Add search / filtering criteria
 
 Let assume that we want to display only items that match some given criteria.
@@ -214,17 +213,17 @@ Let assume that we want to display only items that match some given criteria.
     
     public partial record PeopleModel(IPeopleService PeopleService)
     {
-		public IState<PersonCriteria> Criteria => State.Value(this, () => new PersonCriteria());
-	
+        public IState<PersonCriteria> Criteria => State.Value(this, () => new PersonCriteria());
+
         public IListFeed<Person> People => Criteria.Select(PeopleService.GetPeopleAsync).AsListFeed();
     }
     ```
-	
-	> [!NOTE]  
-	> Here we use the `AsListFeed` operator to create the `ListFeed`. 
-	> This converts a `Feed<ImmutableList<T>>` to an `IListFeed<T>`
-	> (Cf. [AsListFeed](xref:xref:Uno.Extensions.Mvux.ListFeeds)).
-	
+
+    > [!NOTE]  
+    > Here we use the `AsListFeed` operator to create the `ListFeed`. 
+    > This converts a `Feed<ImmutableList<T>>` to an `IListFeed<T>`
+    > (Cf. [AsListFeed](xref:xref:Uno.Extensions.Mvux.ListFeeds)).
+
 1. Finally update your view `MainView.xaml` to add UI to edit the criteria:
 
     ```xml
@@ -240,24 +239,24 @@ Let assume that we want to display only items that match some given criteria.
         </StackPanel>
 
         <mvux:FeedView Source="{Binding People}">
-			<DataTemplate>
-				<ListView ItemsSource="{Binding Data}">
+            <DataTemplate>
+                <ListView ItemsSource="{Binding Data}">
 
-					<ListView.Header>
-						<Button Content="Refresh" Command="{Binding Refresh}" />
-					</ListView.Header>
+                    <ListView.Header>
+                        <Button Content="Refresh" Command="{Binding Refresh}" />
+                    </ListView.Header>
 
-					<ListView.ItemTemplate>
-						<DataTemplate>
-							<StackPanel Orientation="Horizontal" Spacing="5">
-								<TextBlock Text="{Binding FirstName}"/>
-								<TextBlock Text="{Binding LastName}"/>
-							</StackPanel>
-						</DataTemplate>
-					</ListView.ItemTemplate>
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal" Spacing="5">
+                                <TextBlock Text="{Binding FirstName}"/>
+                                <TextBlock Text="{Binding LastName}"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
 
-				</ListView>
-			</DataTemplate>
-		</mvux:FeedView>
-	</Grid>
+                </ListView>
+            </DataTemplate>
+        </mvux:FeedView>
+    </Grid>
     ```
