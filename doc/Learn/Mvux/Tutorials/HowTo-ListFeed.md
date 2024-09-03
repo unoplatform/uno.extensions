@@ -220,7 +220,7 @@ Let assume that we want to display only items that match some given criteria.
     ```
 
     > [!NOTE]  
-    > Here we use the `AsListFeed` operator to create the `ListFeed`. 
+    > Here we use the `AsListFeed` operator to create the `ListFeed`.
     > This converts a `Feed<ImmutableList<T>>` to an `IListFeed<T>`
     > (Cf. [AsListFeed](xref:xref:Uno.Extensions.Mvux.ListFeeds)).
 
