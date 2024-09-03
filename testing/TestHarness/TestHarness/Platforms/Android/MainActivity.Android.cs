@@ -13,6 +13,8 @@ namespace TestHarness.Droid;
 )]
 public class MainActivity : Microsoft.UI.Xaml.ApplicationActivity
 {
+#if USE_UITESTS
 	[Export("GetDisplayScreenScaling")]
 	public string GetDisplayScreenScaling(string value) => App.GetDisplayScreenScaling(value);
+#endif
 }
