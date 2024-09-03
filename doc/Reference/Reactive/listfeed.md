@@ -25,17 +25,25 @@ A couple of points to note about list-feeds:
 To create an `IListFeed<T>`, use the static class `ListFeed` to call one of the following methods:
 
  **Async**: Creates a `ListFeed` using a method that returns a `Task<IImmutableList<T>>`.
-
+    
 ```csharp
-public static IListFeed<T> Async<T>(Func<CancellationToken, Task<IImmutableList<T>>> valueProvider, Signal? refresh = null);
+public ValueTask<IImutableList<string>> GetNames(CancellationToken ct = default);
 ```
-
+For example:
+```csharp
+public IListFeed<string> Names => ListFeed.Async(service.GetNames);
+```
 **AsyncEnumerable**: Creates a `ListFeed` using an `IAsyncEnumerable<IImmutableList<T>>`.
 
 ```csharp
-public static IListFeed<T> AsyncEnumerable<T>(Func<CancellationToken, IAsyncEnumerable<IImmutableList<T>>> enumerableProvider);
+public IAsyncEnumerable<IImutableList<string>> GetNames(
+    [EnumeratorCancellation] CancellationToken ct = default);
 ```
 
+For example:
+```csharp
+public IListFeed<string> Names => ListFeed.AsyncEnumerable(service.GetNames);
+```
 Pull and push are explained more in the [feeds page](xref:Uno.Extensions.Mvux.Feeds#creation-of-feeds).
 
 **Create**: Provides custom initialization for a `ListFeed`.
@@ -60,6 +68,11 @@ which will trigger the load of the next page using the delegate that you provide
 public static IListFeed<T> PaginatedAsync<T>(Func<PageRequest, CancellationToken, Task<IImmutableList<T>>> getPage);
 ```
 
+For example:
+```csharp
+public IListFeed<City> Cities => ListFeed.AsyncPaginated(async (page, ct) => _service.GetCities(pageIndex: page.Index, perPage: 20));
+```
+
 > [!CAUTION]
 > On the `Page` struct you have a `DesiredSize` property.
 > This is the number of items the view is requesting to properly fill its "viewport",
@@ -79,11 +92,26 @@ This operator allows the filtering of _items_.
 public static IListFeed<TSource> Where<TSource>(this IListFeed<TSource> source, Predicate<TSource> predicate);
 ```
 
+For example:
+```csharp
+public IListFeed<string> LongNames => Names.Where(name => name.Length >= 10);
+```
+
 ### AsFeed
 
 This does the opposite of `AsListFeed` and converts a _list feed_ to a _feed of list_.
 
 ```csharp
+public static IFeed<IImmutableCollection<T>> AsFeed<T>(this IListFeed<T> source);
+```
+
+For example:
+```csharp
+public void SetUp()
+{
+    IListFeed<string> stringsListFeed = ...;
+    IFeed<IImmutableCollection<string>> stringsFeed = stringsListFeed.AsFeed();
+}
 public static IFeed<IImmutableCollection<T>> AsFeed<T>(this IListFeed<T> source);
 ```
 
@@ -93,4 +121,16 @@ A `ListFeed` can also be created from a `Feed` when the `Feed` exposes a collect
 
 ```csharp
 public static IListFeed<T> AsListFeed<T>(this IFeed<IImmutableCollection<T>> source);
+```
+
+For example:
+```csharp
+public IListFeed<WeatherInfo> Forecast => Feed
+    .Async(async ct => new []
+    {
+        await _weatherService.GetWeatherForecast(DateTime.Today.AddDays(1), ct),
+        await _weatherService.GetWeatherForecast(DateTime.Today.AddDays(2), ct),
+    })
+    .Select(list => list.ToImmutableList())
+    .AsListFeed();
 ```
