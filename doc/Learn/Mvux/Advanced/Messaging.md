@@ -96,7 +96,7 @@ As you can gather from the code, the service interacts with an external source t
 
 There's also the `CreateNewPerson` method, which gets generated as a command in the ViewModel and can be invoked from the View (refer to [commands](xref:Uno.Extensions.Mvux.Advanced.Commands) to learn about how MVUX generates commands). This method uses `CreateRandomName,` which generates a random name (implementation removed for brevity).
 
-The line using the MVUX messaging extension method is the one calling `messenger.` Observe. Read the code, and this line will be explained later.
+The line using the MVUX messaging extension method is the one calling `messenger.Observe` . Read the code, and this line will be explained later.
 
 ```csharp
 using CommunityToolkit.Mvvm.Messaging;
