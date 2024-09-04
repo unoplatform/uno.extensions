@@ -15,6 +15,8 @@ Navigation needs to encompass a range of UI concepts:
 * Displaying a <a href="https://learn.microsoft.com/uwp/api/windows.ui.xaml.controls.primitives.popup" target="_blank">`Popup`</a> or <a href="https://learn.microsoft.com/windows/apps/design/controls/dialogs-and-flyouts/flyouts" target="_blank">`Flyout`</a>
 * Prompt a <a href="https://learn.microsoft.com/uwp/api/windows.ui.xaml.controls.contentdialog" target="_blank">`ContentDialog`</a> or <a href="https://learn.microsoft.com/uwp/api/windows.ui.popups.messagedialog" target="_blank">`MessageDialog`</a>
 
+[!include[getting-help](../includes/getting-help.md)]
+
 ## Installation
 
 `Navigation` is provided as an Uno Feature. To enable `Navigation` support in your application, add `Navigation` to the `<UnoFeatures>` property in the Class Library (.csproj) file.
