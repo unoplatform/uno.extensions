@@ -13,8 +13,7 @@ This tutorial will walk you through how to set up this feature and use it to man
 
 ## Step-by-step
 
-> [!IMPORTANT]
-> This guide assumes you used the template wizard or `dotnet new unoapp` to create your solution. If not, it is recommended that you follow the [**Creating an application with Uno.Extensions** documentation](xref:Uno.Extensions.HowToGettingStarted) to create an application from the template.
+[!include[create-application](../includes/create-application.md)]
 
 ### 1. Add CommunityToolkit.Mvvm to your project
 
