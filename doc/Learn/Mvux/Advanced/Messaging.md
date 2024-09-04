@@ -92,9 +92,9 @@ The purpose of the `Observe` methods (it comes in several overloads, [see below]
 
 In the example below, a model displays a `StateList` of `Person` entities received from a service, loaded using a `State` with the [`Async`](xref:Uno.Extensions.Mvux.ListStates#async) factory method.
 
-As you can gather from the code, the service interacts with an external source to load and save `Person` data. In the example below, we can see the use of two of its methods: `GetAllAsync` and `CreateNameAsync.`
+As you can gather from the code, the service interacts with an external source to load and save `Person` data. In the example below, we can see the use of two of its methods: `GetAllAsync` and `CreateNameAsync`.
 
-There's also the `CreateNewPerson` method, which gets generated as a command in the ViewModel and can be invoked from the View (refer to [commands](xref:Uno.Extensions.Mvux.Advanced.Commands) to learn about how MVUX generates commands). This method uses `CreateRandomName,` which generates a random name (implementation removed for brevity).
+There's also the `CreateNewPerson` method, which gets generated as a command in the ViewModel and can be invoked from the View (refer to [commands](xref:Uno.Extensions.Mvux.Advanced.Commands) to learn about how MVUX generates commands). This method uses `CreateRandomName`, which generates a random name (implementation removed for brevity).
 
 The line using the MVUX messaging extension method is the one calling `messenger.Observe` . Read the code, and this line will be explained later.
 
@@ -293,7 +293,7 @@ The `SelectedPersonPhone` state will only be refreshed if it meets the predicate
 
 - `Observe<TOther, TEntity, TKey>(IState<TEntity> state, IFeed<TOther> other, Func<TOther, TEntity, bool> predicate, Func<TEntity, TKey> keySelector)`
 
-This overload is the same as the previous one, except it watches a single-item state rather than a `ListState,` as in the last example.
+This overload is the same as the previous one, except it watches a single-item state rather than a `ListState`, as in the last example.
 
 ### Update
 
