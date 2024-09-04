@@ -8,17 +8,14 @@ It allows the declaration of an operator directly on items instead of dealing wi
 A _list feed_ goes in `None` if the list does not have any elements.
 
 > [!NOTE]
-> `ListFeed<T>` is using the _key equality_ to track multiple version of a same entity within different messages of the `ListFeed<T>`.
-> [Read more about _key equality_.](../KeyEquality/concept.md).
+> The `ListFeed` uses the _key equality_ to track multiple versions of the same entity within different messages of the `ListFeed`.
+>[Read more about _key equality_](xref:Uno.Extensions.KeyEquality.Concept).
 
 A couple of points to note about list-feeds:
 
 - [Operators](#operators) are applied to the items within the returned collection, rather than on the entire collection.
 
 - When an empty collection is returned by the service, it's treated as an Empty message. The returned data axis Option will be `None`, even though the result was not `null`. This is because when a control of data items is displayed with an empty collection (for instance a `ListView`), there is no reason to display the `FeedView`'s `ValueTemplate` with an empty `ListView`. The "No data records" `NoneTemplate` makes much more sense in this case. For that reason, both a `null` result and an empty collection are regarded as `None`.
-
-- The `ListFeed` uses the _key equality_ to track multiple versions of the same entity within different messages of the `ListFeed`.
-[Read more about _key equality_](xref:Uno.Extensions.KeyEquality.Concept).
 
 ## Sources: How to create a list feed
 
@@ -30,6 +27,7 @@ To create an `IListFeed<T>`, use the static class `ListFeed` to call one of the 
 public ValueTask<IImutableList<string>> GetNames(CancellationToken ct = default);
 ```
 For example:
+
 ```csharp
 public IListFeed<string> Names => ListFeed.Async(service.GetNames);
 ```
@@ -41,6 +39,7 @@ public IAsyncEnumerable<IImutableList<string>> GetNames(
 ```
 
 For example:
+
 ```csharp
 public IListFeed<string> Names => ListFeed.AsyncEnumerable(service.GetNames);
 ```
@@ -69,6 +68,7 @@ public static IListFeed<T> PaginatedAsync<T>(Func<PageRequest, CancellationToken
 ```
 
 For example:
+
 ```csharp
 public IListFeed<City> Cities => ListFeed.AsyncPaginated(async (page, ct) => _service.GetCities(pageIndex: page.Index, perPage: 20));
 ```
@@ -86,13 +86,14 @@ public IListFeed<City> Cities => ListFeed.AsyncPaginated(async (page, ct) => _se
 This operator allows the filtering of _items_.
 
 > [!WARNING]
-> If all _items_ of the collection are filtered out, the resulting feed will go in _none_ state.
+> If all _items_ of the collection are filtered out, the resulting feed will go in `None` state.
 
 ```csharp
 public static IListFeed<TSource> Where<TSource>(this IListFeed<TSource> source, Predicate<TSource> predicate);
 ```
 
 For example:
+
 ```csharp
 public IListFeed<string> LongNames => Names.Where(name => name.Length >= 10);
 ```
@@ -106,6 +107,7 @@ public static IFeed<IImmutableCollection<T>> AsFeed<T>(this IListFeed<T> source)
 ```
 
 For example:
+
 ```csharp
 public void SetUp()
 {
@@ -124,6 +126,7 @@ public static IListFeed<T> AsListFeed<T>(this IFeed<IImmutableCollection<T>> sou
 ```
 
 For example:
+
 ```csharp
 public IListFeed<WeatherInfo> Forecast => Feed
     .Async(async ct => new []
