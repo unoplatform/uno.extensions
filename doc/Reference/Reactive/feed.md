@@ -5,15 +5,15 @@ uid: Uno.Extensions.Reactive.Feed
 
 Feeds are there to manage asynchronous operations (for example requesting data from a service) and expose the result to the View in an efficient manner.
 
-They provide out of the box support for task-based methods as well as [Async-Enumerables](https://learn.microsoft.com/dotnet/api/system.collections.generic.iasyncenumerable-1) ones.
+They provide out of the box support for task-based methods as well as [Async-Enumerables](https://learn.microsoft.com/dotnet/api/system.collections.generic.iasyncenumerable-1).
 
-Feeds include additional metadata that indicates whether the operation is still in progress, ended in an error, or if it was successful, whether the data that was returned contains any entries or was empty.
+Feeds include additional metadata that indicates whether the operation is still in progress, ended in an error, or whether the data that was returned contains any entries or was empty.
 
 ## Feeds are stateless
 
 Feeds are typically used to request data from services and expose it in a stateless manner so that the resulting data can be displayed by the View.
 
-Feeds are stateless and do not provide support for reacting to changes the user makes to the data on the View. The data can only be reloaded and refreshed upon request which is when the underlying task or Async-Enumerable will be invoked and the data refreshed. In other words, a feed is a read-only representation of the data received from the server.
+Feeds are stateless and do not provide support for reacting to changes the user makes to the data on the View. The data can only be reloaded and refreshed upon request which is when the underlying task or `IAsyncEnumerable` will be invoked and the data refreshed. In other words, a feed is a read-only representation of the data received from the server.
 
 In contrast to feeds, [states](xref:Uno.Extensions.Mvux.States) (`IState` or `IListState`), as the name suggests, are stateful and keep track of the latest value, as updates are applied.
 
@@ -165,7 +165,7 @@ Asynchronously projects each data from the source _feed_.
 public static IFeed<TResult> SelectAsync<TSource, TResult>(this IFeed<TSource> feed, Func<TSource, CancellationToken, Task<TResult>> selector);
 ```
 
-Here's an example:"
+Here's an example:
 
 ```csharp
 public IFeed<string> AlertDetails => Alert
