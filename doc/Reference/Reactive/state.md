@@ -30,6 +30,7 @@ public static IState<T> Empty<T>(object owner);
 ```
 
 For example:
+
 ```csharp
 public IState<string> City => State<string>.Empty(this);
 ```
@@ -43,6 +44,7 @@ public static IState<T> Value<T>(object owner, Func<T> valueProvider);
 ```
 
 For example:
+
 ```csharp
 public IState<string> City => State.Value(this, () => "Montréal");
 ```
@@ -54,6 +56,7 @@ Creates a state with an asynchronous initial value.
 public static IState<T> Async<T>(object owner, Func<CancellationToken, Task<T>> asyncFunc, Signal? refreshSignal = null);
 ```
 For example:
+
 ```csharp
 public IState<string> City => State.Async(this, async ct => await _locationService.GetCurrentCity(ct));
 ```
@@ -66,6 +69,7 @@ Like for `Feed.AsyncEnumerable`, this allows you to adapt an `IAsyncEnumerable<T
 public static IState<T> AsyncEnumerable<T>(object owner, Func<CancellationToken, IAsyncEnumerable<T>> asyncEnumerableFunc);
 ```
 For example:
+
 ```csharp
 public IState<string> City => State.AsyncEnumerable(this, () => GetCurrentCity());
 
@@ -89,6 +93,7 @@ public static IState<T> Create<T>(object owner, Func<CancellationToken, IAsyncEn
 ```
 
 For example:
+
 ```csharp
 public IState<string> City => State.Create(this, GetCurrentCity);
 
@@ -124,6 +129,7 @@ public static IState<T> FromFeed<T>(object owner, IFeed<T> feed);
 ```
 
 For example:
+
 ```csharp
 public IFeed<int> MyFeed => ...
 public IState<int> MyState => State.FromFeed(this, MyFeed);
@@ -148,6 +154,7 @@ public static Task UpdateValue<T>(this IState<T> state, Func<T, T> updater, Canc
 ```
 
 For example:
+
 ```csharp
 public IState<string> City => State<string>.Empty(this);
 
@@ -167,6 +174,7 @@ public static Task Set<T>(this IState<T> state, T value, CancellationToken ct = 
 ```
 
 For example:
+
 ```csharp
 public IState<string> Error => State<string>.Empty(this);
 
@@ -223,6 +231,7 @@ public static TaskAwaiter<T> GetAwaiter<T>(this IState<T> state);
 ```
 
 For example:
+
 ```csharp
 City currentCity = await this.CurrentCity;
 ```
@@ -269,15 +278,15 @@ States are built to be cooperating with the data-binding engine. A State will au
 
 In this scenario, the `DataContext` is set to an instance of the `SliderViewModel` class, which is the generated ViewModel for the `SliderModel` record.
 
-1. When you run the app, moving the `Slider` instantly affects the upper `TextBox`; the `Silder.Value` property has a two-way binding with the `SliderValue` State, so any change to the Slider immediately updates the State value, which in turn affects the data-bound `TextBlock` on top:
+1. When you run the app, moving the `Slider` instantly affects the upper `TextBox`. The `Silder.Value` property has a two-way binding with the `SliderValue` State, so any change to the Slider immediately updates the State value, which in turn affects the data-bound `TextBlock` on top:
 
     ![A video of the previous slider app in action](/Learn/Mvux/Assets/SliderApp-1.gif)
 
- ### Change data of a state
+### Change data of a state
     
 #### Update
     
-To manually update the current value of a state, use its `Update` method.
+To manually update the current value of a state, use its `UpdateAsync` method.
     
 In this example we'll add the method `IncrementSlider` that gets the current value and increases it by one (if it doesn't exceed 100):
     
@@ -310,13 +319,14 @@ public async ValueTask SetSliderMiddle(CancellationToken ct = default)
     
  The `ForEach` enables executing a callback each time the value of the `IState<T>` is updated.
     
-This extension-method takes a single parameter which is a async callback that takes two parameters. The first parameter is of type `T?`, where `T` is type of the `IState`, and represents the new value of the state. The second parameter is a `CancellationToken` which can be used to cancel a long running action.
+This extension method takes a single parameter which is an async callback that takes two parameters. The first parameter is of type `T?`, where `T` is type of the `IState`, and represents the new value of the state. The second parameter is a `CancellationToken` which can be used to cancel a long running action.
         
 ```csharp
 public static IDisposable ForEach<T>(this IState<T> state, Func<T?, CancellationToken, Task> action);
  ```
 
-For example:    
+For example:  
+
 ```csharp
    public partial record Model
    {
@@ -350,30 +360,30 @@ Additionally, the `ForEach` method can be set using the Fluent API:
    
    ```
     
-   ### Commands
+### Commands
     
-   Part of the MVUX toolbox is the automatic generation of Commands.
-   In the `IncrementSlider` example [we've just used](#change-data-of-a-state), a special asynchronous Command will be generated that can be used in the View by a `Button` or other controls:
+Part of the MVUX toolbox is the automatic generation of Commands.
+In the `IncrementSlider` example [we've just used](#change-data-of-a-state), a special asynchronous Command will be generated that can be used in the View by a `Button` or other controls:
     
-   Let's modify the XAML [above](#how-to-bind-the-view-to-a-state) with the following:
+Let's modify the XAML [above](#how-to-bind-the-view-to-a-state) with the following:
     
-   ```xml
-           ...
-           <TextBlock Text="Set state value:"/>
-           <Slider Value="{Binding SliderValue, Mode=TwoWay}" />
+```xml
+        ...
+        <TextBlock Text="Set state value:"/>
+        <Slider Value="{Binding SliderValue, Mode=TwoWay}" />
    
-           <Button Content="Increment slider" Command="{Binding IncrementSlider}" />
+        <Button Content="Increment slider" Command="{Binding IncrementSlider" />
    
-       </StackPanel>
-   </Page>
-   ```
+    </StackPanel>
+ </Page>
+```
     
-   When pressing the _Increment slider_ button, the generated `IncrementSlider` command will be executed invoking the `IncrementSilder` method on the Model resulting in an incrementation of the value.
+When pressing the _Increment slider_ button, the generated `IncrementSlider` command will be executed invoking the `IncrementSilder` method on the Model resulting in an incrementation of the value.
     
-   This is what the result will look like:
+This is what the result will look like:
     
-   ![A video that demonstrates the effect of the recent updates applied to the slider-app](/Learn/Mvux/Assets/SliderApp-2.gif)
+![A video that demonstrates the effect of the recent updates applied to the slider-app](/Learn/Mvux/Assets/SliderApp-2.gif)
     
-   The source code for the sample app can be found [here](https://github.com/unoplatform/Uno.Samples/tree/master/UI/MvuxHowTos/SliderApp).
+The source code for the sample app can be found [here](https://github.com/unoplatform/Uno.Samples/tree/9d669111b0c3b3cc473cc73a68e49e261787a5be/UI/MvuxHowTos/SliderApp).
     
-   To learn more about Commands read the Commands section in [this article](xref:Uno.Extensions.Reactive.InApps#commands).
+To learn more about Commands read the Commands section in [this article](xref:Uno.Extensions.Reactive.InApps#commands).
