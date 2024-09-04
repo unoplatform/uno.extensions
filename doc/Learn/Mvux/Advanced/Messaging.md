@@ -137,7 +137,7 @@ The `Observe` method in the model code subscribes the `People` state to the mess
 
 An `EntityMessage<T>` carries an `EntityChange` enum value which indicates its type of change (`Created`, `Updated`, and `Deleted`) and the entity changed.
 
-These messages are sent in the service upon successful creation of a `Person`, signaling the model to update itself with the new data. This is automatically reflected in the `People` `ListState,` which adds the newly created `Person.`
+These messages are sent in the service upon successful creation of a `Person`, signaling the model to update itself with the new data. This is automatically reflected in the `People` `ListState`, which adds the newly created `Person`.
 
 The service's code looks like the following:
 
