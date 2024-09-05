@@ -177,6 +177,9 @@ public class Given_StateForEach : FeedTests
 		await state.SetAsync(42, CT);
 		await state.SetAsync(3, CT);
 
+		//Test fails sometime because of time needed to process the exception
+		await Task.Delay(100);
+
 		result.Should().BeEquivalentTo(new[] { 2, 3 });
 	}
 
