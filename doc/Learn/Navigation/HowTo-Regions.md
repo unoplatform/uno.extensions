@@ -28,7 +28,7 @@ A Region is used to link specific sectors of a view to individual items on a nav
 
 ## How to use Regions
 
-Regions are particularly useful with navigational controls, such as `NavigationView` and `TabBar` for showing or hiding, and opening or closing content and pages. In these cases, it's recommendable to have a `Grid` element as the parent of the navigational control, which we will call as "Parent Grid" in this guide. Additionally, it is essential to define a `Grid` that will hold the content to be displayed based on the selected `NavigationViewItem` or `TabBarItem`, and we will call it a "Content Grid".
+Regions are particularly useful with navigational controls, such as `NavigationView` and `TabBar` for showing or hiding, and opening or closing content and pages. In these cases, it's recommended to have a `Grid` element as the parent of the navigational control, which we will refer to as the "Parent Grid" in this guide. Additionally, it is essential to define a `Grid` that will hold the content to be displayed based on the selected `NavigationViewItem` or `TabBarItem`, and we will call it a "Content Grid".
 
 Then it's needed to add the `Region.Attached="True"` attached property to them, the navigational control and the Content `Grid` can be linked.
 
