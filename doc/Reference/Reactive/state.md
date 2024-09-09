@@ -2,6 +2,7 @@
 uid: Uno.Extensions.Reactive.State
 ---
 # State
+
 Like [feeds](xref:Uno.Extensions.Mvux.Feeds), states are used to manage asynchronous operations and wrap them in metadata that provides information about the current state of the operation, such as whether the operation is still in progress, when an error occurs, or if the result has no data.
 
 However, unlike feeds, states are stateful, meaning they keep a record of the current data value. States also allow the current value to be modified, which is useful for two-way binding scenarios.
@@ -48,6 +49,7 @@ For example:
 ```csharp
 public IState<string> City => State.Value(this, () => "Montréal");
 ```
+
 ### Async
 
 Creates a state with an asynchronous initial value.
@@ -55,6 +57,7 @@ Creates a state with an asynchronous initial value.
 ```csharp
 public static IState<T> Async<T>(object owner, Func<CancellationToken, Task<T>> asyncFunc, Signal? refreshSignal = null);
 ```
+
 For example:
 
 ```csharp
@@ -68,6 +71,7 @@ Like for `Feed.AsyncEnumerable`, this allows you to adapt an `IAsyncEnumerable<T
 ```csharp
 public static IState<T> AsyncEnumerable<T>(object owner, Func<CancellationToken, IAsyncEnumerable<T>> asyncEnumerableFunc);
 ```
+
 For example:
 
 ```csharp
@@ -82,6 +86,7 @@ public async IAsyncEnumerable<string> GetCurrentCity([EnumeratorCancellation] Ca
     }
 }
 ```
+
 ### Create
 
 This gives you the ability to create your own _state_ by dealing directly with _messages_.
@@ -242,17 +247,17 @@ States are built to be cooperating with the data-binding engine. A State will au
 
 1. In an MVUX app (read [How to set up an MVUX project](xref:Uno.Extensions.Mvux.HowToMvuxProject)), add a Model class with a State as follows:
 
-    ```csharp
+```csharp
     public partial record SliderModel
     {
         // create a state with an initial random double value between 0 and 1, multiplied by 100.
         public IState<double> SliderValue => State.Value(this, () => Random.Shared.NextDouble() * 100);
     }
-    ```
+```
 
 1. Replace all child elements in the _MainPage.xaml_ with the following:
 
-    ```xml
+```xml
     <Page
         x:Class="SliderApp.MainPage"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -274,7 +279,7 @@ States are built to be cooperating with the data-binding engine. A State will au
             <Slider Value="{Binding SliderValue, Mode=TwoWay}" />
         </StackPanel>
     </Page>
-    ```
+```
 
 In this scenario, the `DataContext` is set to an instance of the `SliderViewModel` class, which is the generated ViewModel for the `SliderModel` record.
 
@@ -283,13 +288,13 @@ In this scenario, the `DataContext` is set to an instance of the `SliderViewMode
     ![A video of the previous slider app in action](/Learn/Mvux/Assets/SliderApp-1.gif)
 
 ### Change data of a state
-    
+
 #### Update
-    
+
 To manually update the current value of a state, use its `UpdateAsync` method.
-    
+
 In this example we'll add the method `IncrementSlider` that gets the current value and increases it by one (if it doesn't exceed 100):
-    
+
 ```csharp
     public async ValueTask IncrementSlider(CancellationToken ct = default)
     {
@@ -300,32 +305,32 @@ In this example we'll add the method `IncrementSlider` that gets the current val
     
         await SliderValue.UpdateAsync(updater: incrementValue, ct);
     }
- ```
-    
+```
+
 The `updater` parameter of the `Update` method accepts a `Func<T, T>`. The input parameter provides the current value of the State when called. The return value is the new value that will be applied as the new value of the State, in our case we use the `incrementValue` [local function](https://learn.microsoft.com/dotnet/csharp/programming-guide/classes-and-structs/local-functions) to increment `currentValue` by one (or return `1` if the value exceeds `100`).
-    
+
 #### Set
-    
+
 There are additional methods that update the data of a State such as `Set` and `UpdateMessage`, explained [here](xref:Uno.Extensions.Reactive.State#update-how-to-update-a-state). The `Set` method is the same as the `Update`, except that in `Set` there is no callback that provides the current value, instead a new value is provided directly and the old value is discarded:
-    
+
 ```csharp
 public async ValueTask SetSliderMiddle(CancellationToken ct = default)
-{        
+{
     await SliderValue.SetAsync(50, ct);
 }
 ```
-    
+
 ### Subscribing to changes
-    
+
  The `ForEach` enables executing a callback each time the value of the `IState<T>` is updated.
-    
+
 This extension method takes a single parameter which is an async callback that takes two parameters. The first parameter is of type `T?`, where `T` is type of the `IState`, and represents the new value of the state. The second parameter is a `CancellationToken` which can be used to cancel a long running action.
-        
+
 ```csharp
 public static IDisposable ForEach<T>(this IState<T> state, Func<T?, CancellationToken, Task> action);
  ```
 
-For example:  
+For example:
 
 ```csharp
    public partial record Model
@@ -342,11 +347,11 @@ For example:
            ...
        }
    }
-   ```
-    
+```
+
 Additionally, the `ForEach` method can be set using the Fluent API:
-    
-   ```csharp
+
+```csharp
    public partial record Model
    {
        public IState<string> MyState => State.Value(this, "Initial value")
@@ -358,15 +363,15 @@ Additionally, the `ForEach` method can be set using the Fluent API:
        }
    }
    
-   ```
-    
+```
+
 ### Commands
-    
+
 Part of the MVUX toolbox is the automatic generation of Commands.
 In the `IncrementSlider` example [we've just used](#change-data-of-a-state), a special asynchronous Command will be generated that can be used in the View by a `Button` or other controls:
-    
+
 Let's modify the XAML [above](#how-to-bind-the-view-to-a-state) with the following:
-    
+
 ```xml
         ...
         <TextBlock Text="Set state value:"/>
@@ -377,13 +382,13 @@ Let's modify the XAML [above](#how-to-bind-the-view-to-a-state) with the followi
     </StackPanel>
  </Page>
 ```
-    
+
 When pressing the _Increment slider_ button, the generated `IncrementSlider` command will be executed invoking the `IncrementSilder` method on the Model resulting in an incrementation of the value.
-    
+
 This is what the result will look like:
-    
+
 ![A video that demonstrates the effect of the recent updates applied to the slider-app](/Learn/Mvux/Assets/SliderApp-2.gif)
-    
+
 The source code for the sample app can be found [here](https://github.com/unoplatform/Uno.Samples/tree/9d669111b0c3b3cc473cc73a68e49e261787a5be/UI/MvuxHowTos/SliderApp).
-    
+
 To learn more about Commands read the Commands section in [this article](xref:Uno.Extensions.Reactive.InApps#commands).

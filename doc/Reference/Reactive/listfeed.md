@@ -31,6 +31,7 @@ For example:
 ```csharp
 public IListFeed<string> Names => ListFeed.Async(service.GetNames);
 ```
+
 **AsyncEnumerable**: Creates a `ListFeed` using an `IAsyncEnumerable<IImmutableList<T>>`.
 
 ```csharp
@@ -43,6 +44,7 @@ For example:
 ```csharp
 public IListFeed<string> Names => ListFeed.AsyncEnumerable(service.GetNames);
 ```
+
 Pull and push are explained more in the [feeds page](xref:Uno.Extensions.Mvux.Feeds#creation-of-feeds).
 
 **Create**: Provides custom initialization for a `ListFeed`.
@@ -50,6 +52,7 @@ Pull and push are explained more in the [feeds page](xref:Uno.Extensions.Mvux.Fe
 ```csharp
 public static IListFeed<T> Create<T>(Func<CancellationToken, IAsyncEnumerable<Message<IImmutableList<T>>>> sourceProvider);
 ```
+
 There are also 2 helpers that allow you to convert from/to a _feed_ to/from a _list feed_.
 
 ## Operators: How to interact with a list feed
