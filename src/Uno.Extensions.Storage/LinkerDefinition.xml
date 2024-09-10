@@ -1,0 +1,5 @@
+﻿<linker>
+  <assembly fullname="Uno.Extensions.Storage">
+	  <type fullname="Uno.Extensions.Storage.KeyValueStorage.*" />
+  </assembly>
+</linker>

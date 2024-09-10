@@ -1,0 +1,5 @@
+﻿<linker>
+  <assembly fullname="Uno.Extensions.Authentication">
+	  <type fullname="Uno.Extensions.Authentication.Custom.*" />
+  </assembly>
+</linker>
