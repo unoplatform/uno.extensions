@@ -47,8 +47,8 @@
 		<PackageVersion Include="Uno.WinUI" Version="$(UnoVersion)" />
 		<PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.9.0" />
 		<PackageVersion Include="Newtonsoft.Json" Version="13.0.3" />
-		<PackageVersion Include="NUnit" Version="4.1.0" />
-		<PackageVersion Include="NUnit3TestAdapter" Version="4.5.0" />
+		<PackageVersion Include="NUnit" Version="3.14.0" />
+		<PackageVersion Include="NUnit3TestAdapter" Version="4.3.1" />
 		<PackageVersion Include="NunitXml.TestLogger" Version="3.0.131" />
 		<PackageVersion Include="Xamarin.Google.Android.Material" Version="1.5.0.13" />
 		<PackageVersion Include="Xamarin.UITest" Version="4.3.4" />
