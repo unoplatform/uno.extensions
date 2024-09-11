@@ -1,4 +1,6 @@
-﻿namespace Uno.Extensions;
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace Uno.Extensions;
 
 /// <summary>
 /// Provides extension methods for custom authentication to use with <see cref="IAuthenticationBuilder"/>.
@@ -46,7 +48,7 @@ public static class HostBuilderExtensions
 	/// The <see cref="IAuthenticationBuilder"/> to use.
 	/// </param>
 	/// <param name="configure">
-	/// An action to configure how the custom authentication provider will be built. This often uses a 
+	/// An action to configure how the custom authentication provider will be built. This often uses a
 	/// previously-specified service of type TService. Optional
 	/// </param>
 	/// <param name="name">
@@ -74,7 +76,7 @@ public static class HostBuilderExtensions
 	}
 
 
-	internal static IAuthenticationBuilder AddAuthentication<TAuthenticationProvider, TSettings>(
+	internal static IAuthenticationBuilder AddAuthentication<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors | DynamicallyAccessedMemberTypes.NonPublicConstructors)] TAuthenticationProvider, TSettings>(
 		this IAuthenticationBuilder builder,
 		string name,
 		TSettings settings,
