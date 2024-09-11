@@ -5,6 +5,7 @@ IFS=$'\n\t'
 # echo commands
 set -x
 
+export UNO_UITEST_TOCOPY_SCREENSHOT_PATH=$BUILD_SOURCESDIRECTORY/testing/TestHarness/TestHarness.UITest/bin/Release/net8.0
 export UNO_UITEST_SCREENSHOT_PATH=$BUILD_ARTIFACTSTAGINGDIRECTORY/screenshots/android
 export UNO_UITEST_PLATFORM=Android
 export UNO_UITEST_ANDROIDAPK_PATH=$BUILD_SOURCESDIRECTORY/testing/TestHarness/TestHarness/bin/Release/net8.0-android/android-x64/com.companyname.TestHarness-Signed.apk
@@ -65,6 +66,10 @@ cd $BUILD_SOURCESDIRECTORY/build
 mkdir -p $UNO_UITEST_SCREENSHOT_PATH
 
 cp $UNO_UITEST_ANDROIDAPK_PATH $UNO_UITEST_SCREENSHOT_PATH
+
+mkdir -p $UNO_UITEST_SCREENSHOT_PATH/screenshots
+
+cp $UNO_UITEST_TOCOPY_SCREENSHOT_PATH $UNO_UITEST_SCREENSHOT_PATH/screenshots
 
 # Wait for the emulator to finish booting
 $ANDROID_HOME/platform-tools/adb wait-for-device shell 'while [[ -z $(getprop sys.boot_completed | tr -d '\r') ]]; do sleep 1; done; input keyevent 82'
