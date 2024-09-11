@@ -285,7 +285,7 @@ In this scenario, the `DataContext` is set to an instance of the `SliderViewMode
 
 1. When you run the app, moving the `Slider` instantly affects the upper `TextBox`. The `Silder.Value` property has a two-way binding with the `SliderValue` State, so any change to the Slider immediately updates the State value, which in turn affects the data-bound `TextBlock` on top:
 
-    ![A video of the previous slider app in action](/Learn/Mvux/Assets/SliderApp-1.gif)
+    ![A video of the previous slider app in action](/Reference/Reactive/Assets/SliderApp-1.gif)
 
 ### Change data of a state
 
@@ -387,7 +387,7 @@ When pressing the _Increment slider_ button, the generated `IncrementSlider` com
 
 This is what the result will look like:
 
-![A video that demonstrates the effect of the recent updates applied to the slider-app](/Learn/Mvux/Assets/SliderApp-2.gif)
+![A video that demonstrates the effect of the recent updates applied to the slider-app](/Reference/Reactive/Assets/SliderApp-2.gif)
 
 The source code for the sample app can be found [here](https://github.com/unoplatform/Uno.Samples/tree/9d669111b0c3b3cc473cc73a68e49e261787a5be/UI/MvuxHowTos/SliderApp).
 
