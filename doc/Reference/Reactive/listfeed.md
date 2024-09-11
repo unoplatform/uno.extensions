@@ -22,10 +22,11 @@ A couple of points to note about list-feeds:
 To create an `IListFeed<T>`, use the static class `ListFeed` to call one of the following methods:
 
  **Async**: Creates a `ListFeed` using a method that returns a `Task<IImmutableList<T>>`.
-    
+
 ```csharp
 public ValueTask<IImutableList<string>> GetNames(CancellationToken ct = default);
 ```
+
 For example:
 
 ```csharp
