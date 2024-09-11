@@ -1,4 +1,6 @@
-﻿namespace Uno.Extensions;
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace Uno.Extensions;
 
 internal static class ServiceCollectionExtensions
 {
@@ -6,6 +8,7 @@ internal static class ServiceCollectionExtensions
 		=> services
 			.AddSingleton<IStorage, FileStorage>();
 
+	[DynamicDependency(DynamicallyAccessedMemberTypes.PublicConstructors | DynamicallyAccessedMemberTypes.NonPublicConstructors, typeof(InMemoryKeyValueStorage))]
 	private static TKeyValueStorage CreateKeyValueStorage<TKeyValueStorage>(
 		this IServiceProvider sp,
 		string name,
