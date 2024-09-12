@@ -24,7 +24,7 @@ In contrast to feeds, [states](xref:Uno.Extensions.Mvux.States) (`IState` or `IL
 Feeds can be created from an async method using the Feed.Async factory method.
 
 ```csharp
-public IFeed<CounterValue> Value => Feed.Async(_myService.CountOne);
+public static IFeed<T> Async<T>(Func<CancellationToken, Task<T>> asyncFunc);
 ```
 
 Here’s an example:
