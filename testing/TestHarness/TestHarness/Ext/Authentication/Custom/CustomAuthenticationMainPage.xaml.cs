@@ -1,6 +1,7 @@
 ﻿namespace TestHarness.Ext.Authentication.Custom;
 
 [TestSectionRoot("Authentication: Custom",TestSections.Authentication_Custom, typeof(CustomAuthenticationHostInit))]
+[TestSectionRoot("Authentication: Custom with Mock",TestSections.Authentication_Custom_Mock, typeof(CustomAuthenticationMockHostInit))]
 [TestSectionRoot("Authentication: Custom with Service",TestSections.Authentication_Custom_Service, typeof(CustomAuthenticationServiceHostInit))]
 [TestSectionRoot("Authentication: Custom with Test Backend",TestSections.Authentication_Custom_TestBackend, typeof(CustomAuthenticationTestBackendHostInit))]
 [TestSectionRoot("Authentication: Custom with Test Backend using Cookies", TestSections.Authentication_Custom_TestBackend_Cookies, typeof(CustomAuthenticationTestBackendCookieHostInit))]

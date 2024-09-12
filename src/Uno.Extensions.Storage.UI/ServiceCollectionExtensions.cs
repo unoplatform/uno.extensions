@@ -1,4 +1,6 @@
-﻿namespace Uno.Extensions;
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace Uno.Extensions;
 
 internal static class ServiceCollectionExtensions
 {
@@ -6,6 +8,7 @@ internal static class ServiceCollectionExtensions
 		=> services
 			.AddSingleton<IStorage, FileStorage>();
 
+	[DynamicDependency(DynamicallyAccessedMemberTypes.PublicConstructors | DynamicallyAccessedMemberTypes.NonPublicConstructors, typeof(InMemoryKeyValueStorage))]
 	private static TKeyValueStorage CreateKeyValueStorage<TKeyValueStorage>(
 		this IServiceProvider sp,
 		string name,
@@ -63,7 +66,6 @@ internal static class ServiceCollectionExtensions
 					)
 #endif
 				.SetDefaultInstance<IKeyValueStorage>(
-#if WINUI
 #if __ANDROID__
 					KeyStoreKeyValueStorage.Name
 #elif __IOS__
@@ -72,24 +74,9 @@ internal static class ServiceCollectionExtensions
 					EncryptedApplicationDataKeyValueStorage.Name
 #else
 					// For WASM and other platforms where we don't currently have
-					// a secure storage option, we default to InMemory to avoid
+					// a secure storage option, we default to ApplicationDataKeyValueStorage to avoid
 					// security concerns with saving plain text
-					InMemoryKeyValueStorage.Name
-#endif
-
-#else
-#if __ANDROID__
-					PasswordVaultKeyValueStorage.Name
-#elif __IOS__
-					PasswordVaultKeyValueStorage.Name
-#elif WINDOWS_UWP
-					PasswordVaultKeyValueStorage.Name
-#else
-					// For WASM and other platforms where we don't currently have
-					// a secure storage option, we default to InMemory to avoid
-					// security concerns with saving plain text
-					InMemoryKeyValueStorage.Name
-#endif
+					ApplicationDataKeyValueStorage.Name
 #endif
 					);
 	}

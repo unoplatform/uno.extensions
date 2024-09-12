@@ -7,8 +7,9 @@ uid: Uno.Extensions.Hosting.Overview
 
 Hosting is provided as an Uno Feature. To enable `Hosting` support in your application, add `Hosting` to the `<UnoFeatures>` property in the Class Library (.csproj) file. For more information about `UnoFeatures` refer to our [Using the Uno.Sdk](xref:Uno.Features.Uno.Sdk) docs.
 
-> [!IMPORTANT]
-> This walkthrough assumes you created your app using the Single Project template. If you used a different template, please refer to our [Migrating Projects to Single Project](xref:Uno.Development.MigratingToSingleProject) documentation.
+[!include[single-project](../includes/single-project.md)]
+
+[!include[getting-help](../includes/getting-help.md)]
 
 ## Building a Hosted Application
 

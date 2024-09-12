@@ -11,8 +11,7 @@ For additional documentation on HTTP requests, read the references listed at the
 
 `Http` is provided as an Uno Feature. To enable `Http` support in your application, add `Http` to the `<UnoFeatures>` property in the Class Library (.csproj) file.
 
-> [!IMPORTANT]
-> This walkthrough assumes you created your app using the Single Project template. If you used a different template, please refer to our [Migrating Projects to Single Project](xref:Uno.Development.MigratingToSingleProject) documentation.
+[!include[single-project](../includes/single-project.md)]
 
 For more information about `UnoFeatures` refer to our [Using the Uno.Sdk](xref:Uno.Features.Uno.Sdk) docs.
 
@@ -127,4 +126,4 @@ For more information on using Refit, see the [Quickly Create a Strongly-Typed RE
 - [Overview: Delegating handlers](https://learn.microsoft.com/aspnet/web-api/overview/advanced/http-message-handlers)
 - [Overview: Polly and HttpClientFactory](https://github.com/App-vNext/Polly/wiki/Polly-and-HttpClientFactory)
 - [Overview: What is Refit?](https://github.com/reactiveui/refit)
-- [Explore: TestHarness HTTP](https://github.com/unoplatform/uno.extensions/tree/main/testing/TestHarness/TestHarness.Shared/Ext/Http/)
+- [Explore: TestHarness HTTP](https://github.com/unoplatform/uno.extensions/tree/main/testing/TestHarness/TestHarness/Ext/Http/)

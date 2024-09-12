@@ -8,6 +8,8 @@
   href: xref:Uno.Extensions.Navigation.HowToNavigateInXAML
 - name: "How-To: Define Routes"
   href: xref:Uno.Extensions.Navigation.HowToDefineRoutes
+- name: "How-To: Define Regions"
+  href: xref:Uno.Extensions.Navigation.Regions
 - name: "How-To: Display a message dialog"
   href: xref:Uno.Extensions.Navigation.HowToDisplayMessageDialog
 - name: "How-To: Request a value"
@@ -30,3 +32,5 @@
       href: xref:Uno.Extensions.Navigation.Advanced.Panel
     - name: "How-To: Navigate using a ContentControl"
       href: xref:Uno.Extensions.Navigation.Advanced.ContentControl
+    - name: "How-To: Use IRouteNotifier to Handle Route Changes"
+      href: xref:Uno.Extensions.Navigation.Advanced.IRouteNotifier
