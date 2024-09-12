@@ -15,6 +15,13 @@ Here is where messaging comes in handy. The service sends a message about this e
 
 The Community Toolkit messenger is a standard tool for sending and receiving messages between app objects. It enables objects to remain decoupled from each other without keeping a strong reference between the sender and the receiver. Messages can also be sent over specific channels uniquely identified by a token or within certain application areas.
 
+> ![NOTE]
+> To ensure that the Community Toolkit Messenger works correctly, it is essential to register the `IMessenger` service in your app using the following code in `App.xaml.cs`:
+>
+> ```csharp
+>   services.AddSingleton<IMessenger, WeakReferenceMessenger>();
+> ```
+
 The core component of the messenger is the `IMessenger` object. Its primary methods are `Register` and `Send.` `Register` subscribes to an object to start listening to messages of a specific type, whereas `Send` sends messages to all listening parties.
 There are various ways to obtain the `IMessenger` object. Still, we'll use the most common one, which involves using [Dependency Injection](xref:Uno.Extensions.DependencyInjection.Overview) (DI) to register the `IMessenger` service in the app so it can then be resolved when other dependent types (e.g., ViewModels) are constructed.
 
