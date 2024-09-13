@@ -31,10 +31,8 @@ public class Given_Custom : NavigationTestBase
 		App.WaitThenTap("ShowAppButton");
 
 		// Make sure the app has loaded
-
-		// This is not being found when running on CI
-		// Commented out to test - bring it back and investigate the issue
-		//App.WaitElement("LoginNavigationBar");
+		// this ensures `CustomAuthenticationProvider` wasn't linked out by the linker
+		App.WaitElement("LoginNavigationBar");
 
 		// Login
 		await App.TapAndWait("LoginButton", "HomeNavigationBar");
