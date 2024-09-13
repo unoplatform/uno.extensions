@@ -34,7 +34,7 @@
 					<TextBlock HorizontalAlignment="Center"
 							   VerticalAlignment="Center"
 							   Text="All my recipes" />
-					<Button Command="{Binding NavigateToRecipeDetail}"
+					<Button uen:Navigation.Request="ChefsFavoriteRecipes/ChefsRecipeDetails"
 							Content="Recipe Details" />
 				</Grid>
 				<Grid uen:Region.Name="MyCookbooks"
