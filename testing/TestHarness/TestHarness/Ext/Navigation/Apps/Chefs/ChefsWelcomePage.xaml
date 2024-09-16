@@ -10,7 +10,8 @@
 
 	<StackPanel>
 		<TextBlock Text="ChefsWelcome" />
-		<Button Content="Next"
+		<Button AutomationProperties.AutomationId="NextButton"
+				Content="Next"
 				uen:Navigation.Request="ChefsLogin" />
 	</StackPanel>
 </Page>

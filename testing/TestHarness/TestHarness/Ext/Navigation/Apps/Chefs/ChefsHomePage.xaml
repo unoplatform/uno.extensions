@@ -13,7 +13,7 @@
 		<Button Command="{Binding ShowCurrentProfile}" Content="Profile" />
 		<Button Command="{Binding ShowCurrentProfileNew}" Content="Profile (New)" />
 		<Button Command="{Binding NavigateToRecipeDetail}" Content="Recipe Details" />
-		<Button Command="{Binding NavigateToFavoriteRecipes}" Content="Favorite Recipes" />
+		<Button AutomationProperties.AutomationId="FavoriteRecipesButton" Command="{Binding NavigateToFavoriteRecipes}" Content="Favorite Recipes" />
 		<Button uen:Navigation.Request="ChefsSearch" Content="Search" />
 		<Button uen:Navigation.Request="ChefsNotifications" Content="Notifications" />
 	</StackPanel>

@@ -10,7 +10,8 @@
 
 	<StackPanel>
 		<TextBlock Text="ChefsLogin" />
-		<Button Content="Login"
-				Command="{Binding DoLogin}"/>
+		<Button AutomationProperties.AutomationId="LoginButton"
+				Content="Login"
+				Command="{Binding DoLogin}" />
 	</StackPanel>
 </Page>

@@ -6,10 +6,11 @@ public class Given_Apps_Chefs : NavigationTestBase
 	public async Task When_Chefs_FavoriteRecipes_RecipeDetails()
 	{
 		InitTestSection(TestSections.Apps_Chefs);
-
+		
 		App.WaitThenTap("ShowAppButton");
 		App.WaitThenTap("NextButton");
-		App.WaitElement("LoginNavigationBar");
 		App.WaitThenTap("LoginButton");
+		App.WaitThenTap("FavoriteRecipesButton");
+		App.WaitThenTap("RecipeDetailsButton");
 	}
 }
