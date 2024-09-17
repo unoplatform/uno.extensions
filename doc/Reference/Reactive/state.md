@@ -150,12 +150,12 @@ This makes sure that you are working with the latest version of the data.
 > The provided delegate might be invoked more than once in case of concurrent updates.
 > It must be a [pure function](https://en.wikipedia.org/wiki/Pure_function) (i.e. it must not alter anything else than the provided data).
 
-### UpdateValue
+### UpdateAsync
 
 This allows you to update the value only of the state.
 
 ```csharp
-public static Task UpdateValue<T>(this IState<T> state, Func<T, T> updater, CancellationToken ct = default);
+public static ValueTask UpdateAsync<T>(this IState<T> state, Func<T?, T?> updater, CancellationToken ct = default);
 ```
 
 For example:
@@ -166,59 +166,32 @@ public IState<string> City => State<string>.Empty(this);
 public async ValueTask SetCurrent(CancellationToken ct)
 {
     var city = await _locationService.GetCurrentCity(ct);
-    await City.UpdateValue(_ => city, ct);
+    await City.UpdateAsync(currentValue => city, ct);
 }
 ```
 
-### Set
+### UpdateDataAsync
 
-For value types and strings, you also have a `Set` **which does not ensure the respect of the ACID properties**.
+If you need to update both the value and the metadata of the state, you can use `UpdateDataAsync`. This method allows you to work with the entire `Option<T>`.
 
 ```csharp
-public static Task Set<T>(this IState<T> state, T value, CancellationToken ct = default);
+public static ValueTask UpdateDataAsync<T>(this IState<T> state, Func<Option<T>, Option<T>> updater, CancellationToken ct = default);
 ```
 
 For example:
 
 ```csharp
-public IState<string> Error => State<string>.Empty(this);
+public IState<string> City => State<string>.Empty(this);
 
-public async ValueTask Share(CancellationToken ct)
+public async ValueTask UpdateCityMetadata(CancellationToken ct)
 {
-    try
+    await City.UpdateDataAsync(currentData =>
     {
-        ../..
-        await Error.Set(string.Empty, ct);
-    }
-    catch (Exception error)
-    {
-        await Error.Set("Share failed.", ct);
-    }
+        var newData = Option.Some("New York");
+        return newData;
+    }, ct);
 }
 ```
-
-> [!CAUTION]
-> This is designed for simple properties that are independent of their previous.
-> You must not use a previously captured value of the state like this as it would break the ACID properties:
->
-> ```csharp
-> public IState<int> Counter => State<int>.Value(this, () => 0);
->
-> public async ValueTask Up(CancellationToken ct)
-> {
->   var current = await Counter;
->   Counter.Set(current + 1, ct);
-> }
-> ```
->
-> You should instead use the `Update` method:
->
-> ```csharp
-> public async ValueTask Up(CancellationToken ct)
-> {
->   Counter.Update(current => current + 1, ct);
-> }
-> ```
 
 ### UpdateMessage
 

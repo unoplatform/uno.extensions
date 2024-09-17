@@ -118,7 +118,6 @@ public void SetUp()
     IListFeed<string> stringsListFeed = ...;
     IFeed<IImmutableCollection<string>> stringsFeed = stringsListFeed.AsFeed();
 }
-public static IFeed<IImmutableCollection<T>> AsFeed<T>(this IListFeed<T> source);
 ```
 
 ### AsListFeed
