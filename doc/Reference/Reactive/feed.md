@@ -34,11 +34,6 @@ private IWeatherService _weatherService;
 public IFeed<WeatherInfo> Weather => Feed.Async(async ct => await _weatherService.GetCurrentWeather(ct));
 ```
 
-The loaded data can be refreshed using a `Signal` trigger that will re-invoke the async method.
-
-> [!NOTE]
-> A `Signal` represents a trigger that can be raised at anytime, for instance within an `ICommand` data-bound to a "pull-to-refresh".
-
 ### AsyncEnumerable
 
 This adapts an `IAsyncEnumerable<T>` into a _feed_ using Feed.AsyncEnumerable.
