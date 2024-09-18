@@ -6,7 +6,6 @@ IFS=$'\n\t'
 set -x
 
 export UNO_UITEST_SCREENSHOT_PATH=$BUILD_ARTIFACTSTAGINGDIRECTORY/screenshots/android
-export UNO_UITEST_SCREENSHOT_TOCOPY_PATH=$BUILD_SOURCESDIRECTORY/testing/TestHarness/TestHarness.UITest/bin/Release/net8.0
 export UNO_UITEST_PLATFORM=Android
 export UNO_UITEST_ANDROIDAPK_PATH=$BUILD_SOURCESDIRECTORY/testing/TestHarness/TestHarness/bin/Release/net8.0-android/android-x64/com.companyname.TestHarness-Signed.apk
 export UNO_UITEST_PROJECT=$BUILD_SOURCESDIRECTORY/testing/TestHarness/TestHarness.UITest
@@ -83,9 +82,3 @@ dotnet test \
 	--blame-hang-timeout $UITEST_TEST_TIMEOUT \
 	-v m \
 	|| true
-
-cd $BUILD_SOURCESDIRECTORY/build
-
-mkdir -p $UNO_UITEST_SCREENSHOT_PATH/screenshots
-
-cp $UNO_UITEST_SCREENSHOT_TOCOPY_PATH $UNO_UITEST_SCREENSHOT_PATH/screenshots
