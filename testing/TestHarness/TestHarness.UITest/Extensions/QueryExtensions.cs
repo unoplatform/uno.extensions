@@ -186,4 +186,20 @@ public static class QueryExtensions
 		Helpers.App.FastTap(query);
 		return query;
 	}
+
+	public static FileInfo GetInAppScreenshot(this IApp app)
+	{
+		var byte64Image = app.InvokeGeneric("browser:SampleRunner|GetScreenshot", "0")?.ToString() ?? string.Empty;
+
+		var array = Convert.FromBase64String(byte64Image);
+
+		var outputFile = Path.GetTempFileName();
+		File.WriteAllBytes(outputFile, array);
+
+		var finalPath = Path.ChangeExtension(outputFile, ".png");
+
+		File.Move(outputFile, finalPath);
+
+		return new FileInfo(finalPath);
+	}
 }

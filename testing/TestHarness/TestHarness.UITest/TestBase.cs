@@ -1,4 +1,5 @@
-﻿using TestContext = NUnit.Framework.TestContext;
+﻿using System.Text.RegularExpressions;
+using TestContext = NUnit.Framework.TestContext;
 
 namespace TestHarness.UITest;
 
@@ -106,13 +107,15 @@ public abstract class TestBase
 
 		var title = GetCurrentStepTitle(stepName);
 
-		var fileInfo = _app.Screenshot(title);
+		var fileInfo = GetNativeScreenshot(title);
 
 		var fileNameWithoutExt = Path.GetFileNameWithoutExtension(fileInfo.Name);
 		if (fileNameWithoutExt != title)
 		{
+			var outputPath = string.IsNullOrEmpty(_screenShotPath) ? Path.GetDirectoryName(fileInfo.FullName) ?? string.Empty : _screenShotPath;
+
 			var destFileName = Path
-				.Combine(Path.GetDirectoryName(fileInfo.FullName), title + Path.GetExtension(fileInfo.Name))
+				.Combine(outputPath, title + Path.GetExtension(fileInfo.Name))
 				.GetNormalizedLongPath();
 
 			if (File.Exists(destFileName))
@@ -139,16 +142,8 @@ public abstract class TestBase
 		return new ScreenshotInfo(fileInfo, stepName);
 	}
 
-	private static string GetCurrentStepTitle(string stepName) =>
-				$"{TestContext.CurrentContext.Test.Name}_{stepName}"
-					.Replace(" ", "_")
-					.Replace(".", "_")
-					.Replace(":", "_")
-					.Replace("(", "")
-					.Replace(")", "")
-					.Replace("\"", "")
-					.Replace(",", "_")
-					.Replace("__", "_");
+	private static string GetCurrentStepTitle(string stepName)
+		=> Regex.Replace($"{TestContext.CurrentContext.Test.Name}_{stepName}", "[^A-z0-9]", "_");
 
 	public void SetOptions(FileInfo screenshot, ScreenshotOptions options)
 	{
@@ -159,4 +154,15 @@ public abstract class TestBase
 		File.WriteAllText(fileName, $"IgnoreInSnapshotCompare={options.IgnoreInSnapshotCompare}");
 	}
 
+	private FileInfo GetNativeScreenshot(string title)
+	{
+		if (AppInitializer.GetLocalPlatform() == Platform.Android)
+		{
+			return _app.GetInAppScreenshot();
+		}
+		else
+		{
+			return _app.Screenshot(title);
+		}
+	}
 }
