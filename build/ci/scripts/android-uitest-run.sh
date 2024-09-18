@@ -6,11 +6,11 @@ IFS=$'\n\t'
 set -x
 
 export UNO_UITEST_SCREENSHOT_PATH=$BUILD_ARTIFACTSTAGINGDIRECTORY/screenshots/android
+export UNO_UITEST_SCREENSHOT_TOCOPY_PATH=$BUILD_SOURCESDIRECTORY/testing/TestHarness/TestHarness.UITest/bin/Release/net8.0
 export UNO_UITEST_PLATFORM=Android
 export UNO_UITEST_ANDROIDAPK_PATH=$BUILD_SOURCESDIRECTORY/testing/TestHarness/TestHarness/bin/Release/net8.0-android/android-x64/com.companyname.TestHarness-Signed.apk
 export UNO_UITEST_PROJECT=$BUILD_SOURCESDIRECTORY/testing/TestHarness/TestHarness.UITest
 export UNO_UITEST_ANDROID_PROJECT=$BUILD_SOURCESDIRECTORY/testing/TestHarness/TestHarness
-export UNO_UITEST_RUNTIMETESTS_RESULTS_FILE_PATH=$BUILD_SOURCESDIRECTORY/build/TestResult.xml
 export UNO_UITEST_BINARY=$BUILD_SOURCESDIRECTORY/testing/TestHarness/TestHarness.UITest/bin/Release/net47/TestHarness.UITest.dll
 export UNO_EMULATOR_INSTALLED=$BUILD_SOURCESDIRECTORY/build/.emulator_started
 export UITEST_TEST_TIMEOUT=60m
@@ -52,7 +52,7 @@ then
 	echo "Starting emulator"
 
 	# Start emulator in background
-	nohup $ANDROID_HOME/emulator/emulator -avd xamarin_android_emulator -skin 1280x800 -memory 4096 -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim > $UNO_UITEST_SCREENSHOT_PATH/android-emulator-log.txt 2>&1 &
+	nohup $ANDROID_HOME/emulator/emulator -avd xamarin_android_emulator -skin 1280x800 -memory 4096 -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim > /dev/null 2>&1 &
 
 	touch "$UNO_EMULATOR_INSTALLED"
 fi
@@ -79,13 +79,13 @@ cd $UNO_UITEST_PROJECT
 dotnet test \
 	-c Release \
 	-l:"console;verbosity=normal" \
-	--logger "nunit;LogFileName=$UNO_UITEST_RUNTIMETESTS_RESULTS_FILE_PATH" \
+	--logger "nunit;LogFileName=$BUILD_SOURCESDIRECTORY/build/TestResult.xml" \
 	--blame-hang-timeout $UITEST_TEST_TIMEOUT \
 	-v m \
 	|| true
 
-## Copy the results file to the results folder
-cp $UNO_UITEST_RUNTIMETESTS_RESULTS_FILE_PATH $BUILD_ARTIFACTSTAGINGDIRECTORY
+cd $BUILD_SOURCESDIRECTORY/build
 
-## Dump the emulator's system log
-$ANDROID_HOME/platform-tools/adb shell logcat -d > $UNO_UITEST_SCREENSHOT_PATH/android-device-log.txt
+mkdir -p $UNO_UITEST_SCREENSHOT_PATH/screenshots
+
+cp $UNO_UITEST_SCREENSHOT_TOCOPY_PATH $UNO_UITEST_SCREENSHOT_PATH/screenshots
