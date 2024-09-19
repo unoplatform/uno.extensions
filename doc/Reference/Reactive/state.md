@@ -219,7 +219,6 @@ States are built to be cooperating with the data-binding engine. A State will au
 ```csharp
     public partial record SliderModel
     {
-        // create a state with an initial random double value between 0 and 1, multiplied by 100.
         public IState<double> SliderValue => State.Value(this, () => Random.Shared.NextDouble() * 100);
     }
 ```
