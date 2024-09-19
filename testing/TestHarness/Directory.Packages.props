@@ -13,7 +13,7 @@
 		<PackageVersion Include="Microsoft.AspNetCore.Authentication.MicrosoftAccount" Version="6.0.7" />
 		<PackageVersion Include="Microsoft.Extensions.Logging" Version="8.0.0" />
 		<PackageVersion Include="Microsoft.Extensions.Logging.Console" Version="8.0.0" />
-		<PackageVersion Include="Microsoft.Identity.Client" Version="4.61.3" />
+		<PackageVersion Include="Microsoft.Identity.Client" Version="4.64.1" />
 		<PackageVersion Include="Microsoft.Net.Compilers.Toolset" Version="4.2.0" />
 		<PackageVersion Include="Microsoft.NETCore.UniversalWindowsPlatform" Version="6.2.11" />
 		<PackageVersion Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.2" />
@@ -25,14 +25,14 @@
 		<PackageVersion Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.3233" />
 		<PackageVersion Include="Refit" Version="6.3.2" />
 		<PackageVersion Include="Refit.HttpClientFactory" Version="6.3.2" />
-		<PackageVersion Include="SkiaSharp" Version="2.88.7" />
-		<PackageVersion Include="SkiaSharp.NativeAssets.Linux" Version="2.88.7" />
-		<PackageVersion Include="SkiaSharp.HarfBuzz" Version="2.88.7" />
-		<PackageVersion Include="SkiaSharp.Skottie" Version="2.88.7" />
-		<PackageVersion Include="SkiaSharp.Views" Version="2.88.7" />
-		<PackageVersion Include="SkiaSharp.Views.Uno" Version="2.88.7" />
-		<PackageVersion Include="SkiaSharp.Views.Uno.WinUI" Version="2.88.7" />
-		<PackageVersion Include="SkiaSharp.Views.WPF" Version="2.88.7" />
+		<PackageVersion Include="SkiaSharp" Version="2.88.8" />
+		<PackageVersion Include="SkiaSharp.NativeAssets.Linux" Version="2.88.8" />
+		<PackageVersion Include="SkiaSharp.HarfBuzz" Version="2.88.8" />
+		<PackageVersion Include="SkiaSharp.Skottie" Version="2.88.8" />
+		<PackageVersion Include="SkiaSharp.Views" Version="2.88.8" />
+		<PackageVersion Include="SkiaSharp.Views.Uno" Version="2.88.8" />
+		<PackageVersion Include="SkiaSharp.Views.Uno.WinUI" Version="2.88.8" />
+		<PackageVersion Include="SkiaSharp.Views.WPF" Version="2.88.8" />
 		<PackageVersion Include="Swashbuckle.AspNetCore" Version="6.2.3" />
 		<PackageVersion Include="System.ComponentModel.Annotations" Version="5.0.0" />
 		<PackageVersion Include="Uno.CommunityToolkit.WinUI.UI" Version="7.1.100" />
@@ -53,6 +53,12 @@
 		<PackageVersion Include="Xamarin.Google.Android.Material" Version="1.5.0.13" />
 		<PackageVersion Include="Xamarin.UITest" Version="4.3.4" />
 		<PackageVersion Include="coverlet.collector" Version="6.0.2" />
+		<PackageVersion Include="System.Collections.Immutable" Version="8.0.0" />
+
+		<PackageVersion Include="System.Private.Uri" Version="4.3.2" />
+		<PackageVersion Include="System.Net.Http" Version="4.3.4" />
+		<PackageVersion Include="System.Text.RegularExpressions" Version="4.3.1" />
+		<PackageVersion Include="System.Text.Json" Version="8.0.4" />
 	</ItemGroup>
 
 

@@ -14,12 +14,12 @@
 			<_Parameter1_TypeName>System.Int32</_Parameter1_TypeName>
 		</AssemblyAttribute>
 		<PackageReference Include="FluentAssertions" />
-		<PackageReference Include="Microsoft.Bcl.AsyncInterfaces" /><!--For local usage we use the most recent version-->
+		<PackageReference Include="Microsoft.Bcl.AsyncInterfaces" />
 		<PackageReference Include="Microsoft.NET.Test.Sdk" />
 		<PackageReference Include="MSTest.TestAdapter" />
 		<PackageReference Include="MSTest.TestFramework" />
 		<PackageReference Include="coverlet.collector" />
-		<PackageReference Include="System.Collections.Immutable" VersionOverride="6.0.0" /><!--For local usage we use the most recent version-->
+		<PackageReference Include="System.Collections.Immutable" />
 	</ItemGroup>
 
 	<ItemGroup>

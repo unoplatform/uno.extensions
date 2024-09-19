@@ -22,6 +22,7 @@
 		<DebugType>portable</DebugType>
 		<DebugSymbols>True</DebugSymbols>
 		<ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+		<CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
 
 		<!-- Ensures the .xr.xml files are generated in a proper layout folder -->
 		<GenerateLibraryLayout>true</GenerateLibraryLayout>
