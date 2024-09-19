@@ -103,14 +103,6 @@ private async IAsyncEnumerable<Message<WeatherInfo>> GetWeather([EnumeratorCance
 }
 ```
 
-### GetAwaiter
-
-This allows the use of `await` on a _feed_, for instance when you want to capture the current value to use it in a command.
-
-```csharp
-public static TaskAwaiter<T> GetAwaiter<T>(this IFeed<T> feed);
-```
-
 ## Operators: How to interact with a feed
 
 You can apply some operators directly on any _feed_.
@@ -165,16 +157,4 @@ Here's an example:
 ```csharp
 public IFeed<string> AlertDetails => Alert
     .SelectAsync(async (alert, ct) => await _weatherService.GetAlertDetails(alert, ct));
-```
-
-### GetAwaiter
-
-This allows the use of `await` on a _feed_, for instance when you want to capture the current value to use it in a command.
-
-```csharp
-public async ValueTask ShareAlert(CancellationToken ct)
-{
-    var alert = await Alert; // Gets the current WeatherAlert
-    await _shareService.Share(alert, ct);
-}
 ```
