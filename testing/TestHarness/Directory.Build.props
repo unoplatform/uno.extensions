@@ -1,38 +1,17 @@
 <Project>
 	<Import Project="..\..\Directory.Build.props" />
 
-  <PropertyGroup>
-    <ImplicitUsings>enable</ImplicitUsings>
-	  <!-- https://github.com/unoplatform/private/issues/332 -->
-	  <Nullable>annotations</Nullable>
-	  <NoWarn>$(NoWarn);NU5104;NU1504;NU1505;CS1591;MSB3277;XA0101;CS8785;CS8669;CA1416</NoWarn>
-	  <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
-	  <CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
-    <!--
-      Adding NoWarn to remove build warnings
-      NU1507: Warning when there are multiple package sources when using CPM with no source mapping
-      NETSDK1201: Warning that specifying RID won't create self containing app
-      PRI257: Ignore default language (en) not being one of the included resources (eg en-us, en-uk)
-    -->
-    <NoWarn>$(NoWarn);NU1507;NETSDK1201;PRI257</NoWarn>
-	  <ConditionalCompilationSymbols>
-		  <ConditionalCompilationSymbol Name="UNO_EXT_TIMERS" Comment="Controls whether performance timers are enabled (off by default)" />
-	  </ConditionalCompilationSymbols>
-
-
-	  <!--<DefineConstants>$(DefineConstants);UNO_EXT_TIMERS</DefineConstants>-->
-  </PropertyGroup>
-
-  <!-- See https://aka.platform.uno/using-uno-sdk#implicit-packages for more information regarding the Implicit Packages version properties. -->
-  <!-- <PropertyGroup>
-    <UnoToolkitVersion>6.0.24</UnoToolkitVersion>
-    <UnoThemesVersion>5.0.13</UnoThemesVersion>
-  </PropertyGroup> -->
 	<PropertyGroup>
-		<DebugType>portable</DebugType>
-		<DebugSymbols>True</DebugSymbols>
-		<SynthesizeLinkMetadata>true</SynthesizeLinkMetadata>
-		<RootNamespace>TestHarness</RootNamespace>
 		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+
+		<!--
+			Adding NoWarn to remove build warnings
+			NU1507: Warning when there are multiple package sources when using CPM with no source mapping
+			NETSDK1201: Warning that specifying RID won't create self containing app
+			PRI257: Ignore default language (en) not being one of the included resources (eg en-us, en-uk)
+		-->
+		<NoWarn>$(NoWarn);NU1507;NETSDK1201;PRI257</NoWarn>
 	</PropertyGroup>
 </Project>
