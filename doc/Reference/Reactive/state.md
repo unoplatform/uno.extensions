@@ -204,10 +204,6 @@ This gives you the ability to update a _state_, including the metadata.
 
 States are advanced Feeds. As such, they can also be awaited directly:
 
-```csharp
-public static TaskAwaiter<T> GetAwaiter<T>(this IState<T> state);
-```
-
 For example:
 
 ```csharp
