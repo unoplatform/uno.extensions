@@ -15,7 +15,7 @@ Here is where messaging comes in handy. The service sends a message about this e
 
 The Community Toolkit messenger is a standard tool for sending and receiving messages between app objects. It enables objects to remain decoupled from each other without keeping a strong reference between the sender and the receiver. Messages can also be sent over specific channels uniquely identified by a token or within certain application areas.
 
-> ![NOTE]
+> [!NOTE]
 > To ensure that the Community Toolkit Messenger works correctly, it is essential to register the `IMessenger` service in your app using the following code in `App.xaml.cs`:
 >
 > ```csharp
@@ -295,7 +295,7 @@ public partial record PeopleModel
 
 The `SelectedPersonPhone` state will only be refreshed if it meets the predicate criteria, which are limited to the currently selected `Person`.
 
-> ![NOTE]
+> [!NOTE]
 > The `Selection` method above picks up UI selection changes and reflects them onto a state. This subject is covered [here](xref:Uno.Extensions.Mvux.Advanced.Selection).
 
 - `Observe<TOther, TEntity, TKey>(IState<TEntity> state, IFeed<TOther> other, Func<TOther, TEntity, bool> predicate, Func<TEntity, TKey> keySelector)`
