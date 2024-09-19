@@ -72,6 +72,8 @@
           href: Reference/Reactive/Architecture.md
         - name: Analysis rules
           href: Reference/Reactive/rules.md
+    - name: Upgrading Extensions Reactive
+      href: reactive-migration.md
     # - name: Navigation
     #   href: Reference/Navigation/Navigation.md
     #   items:
