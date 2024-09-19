@@ -5,12 +5,6 @@
   href: xref:Uno.Extensions.Mvux.HowToMvuxProject
 - name: "Working with Records"
   href: xref:Uno.Extensions.Mvux.Records
-- name: Feeds
-  href: xref:Uno.Extensions.Mvux.Feeds
-- name: List-Feeds
-  href: xref:Uno.Extensions.Mvux.ListFeeds
-- name: States
-  href: xref:Uno.Extensions.Mvux.States
 - name: List-States
   href: xref:Uno.Extensions.Mvux.ListStates
 - name: The FeedView control
