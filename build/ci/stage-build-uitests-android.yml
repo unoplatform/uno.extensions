@@ -26,7 +26,7 @@ jobs:
 
   - task: PublishTestResults@2
     condition: always()
-    retryCountOnTaskFailure: 3
+    retryCountOnTaskFailure: 2
     inputs:
       testRunTitle: 'Android Test Run'
       testResultsFormat: 'NUnit'
@@ -34,9 +34,9 @@ jobs:
       failTaskOnFailedTests: true
       failTaskOnMissingResultsFile: true
 
-  - task: PublishBuildArtifacts@1
+  - task: PublishBuildArtifacts@1/
     condition: always()
-    retryCountOnTaskFailure: 3
+    retryCountOnTaskFailure: 2
     inputs:
       PathtoPublish: $(build.artifactstagingdirectory)
       ArtifactName: uno-uitest-tests

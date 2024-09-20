@@ -34,7 +34,7 @@ public static class AppExtensions
 	{
 		app.WaitForElement(query, timeout: timeout);
 		Console.WriteLine("Tapping element");
-		app.Tap(query);
+		app.FastTap(query);
 
 		return query;
 	}
