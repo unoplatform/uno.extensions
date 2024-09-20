@@ -34,7 +34,7 @@ jobs:
       failTaskOnFailedTests: true
       failTaskOnMissingResultsFile: true
 
-  - task: PublishBuildArtifacts@1/
+  - task: PublishBuildArtifacts@1
     condition: always()
     retryCountOnTaskFailure: 2
     inputs:
