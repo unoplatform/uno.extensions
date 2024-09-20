@@ -21,7 +21,8 @@ public interface IKeyValueStorage
 	ValueTask ClearAsync(string key, CancellationToken ct);
 
 	/// <summary>
-	/// Gets a value saved under that name. If that value does not exist, throws a <seealso cref="KeyNotFoundException"/>.
+	/// Gets a value saved under that name. If that value does not exist, return the default value of TValue.
+	/// If an exception happens during deserialization it is swallowed and the default value of TValue returned.
 	/// </summary>
 	/// <typeparam name="TValue">The returned value type. This type must be serializable.</typeparam>
 	/// <param name="key">The key to get the value for.</param>
