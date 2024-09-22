@@ -5,11 +5,47 @@
 	  xmlns:local="using:TestHarness.Ext.Navigation.Apps.Chefs"
 	  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	  xmlns:uen="using:Uno.Extensions.Navigation.UI"
+	  xmlns:utu="using:Uno.Toolkit.UI"
 	  Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
 	  mc:Ignorable="d">
 
 	<Grid>
 		<TextBlock Text="ChefsFavoriteRecipes" />
-		<Button Command="{Binding NavigateToRecipeDetail}" Content="Recipe Details" />
+
+		<utu:AutoLayout Padding="16"
+						uen:Region.Attached="True"
+						Spacing="16">
+			<utu:TabBar uen:Region.Attached="True">
+				<utu:TabBarItem uen:Region.Name="MyRecipes"
+								IsSelectable="True"
+								Content="My Recipes" />
+
+				<utu:TabBarItem uen:Region.Name="MyCookbooks"
+								IsSelectable="True"
+								Content="My Cookbooks" />
+			</utu:TabBar>
+
+
+			<Grid uen:Region.Attached="True"
+				  uen:Region.Navigator="Visibility"
+				  utu:AutoLayout.CounterAlignment="Stretch"
+				  utu:AutoLayout.PrimaryAlignment="Stretch">
+				<Grid uen:Region.Name="MyRecipes">
+					<TextBlock HorizontalAlignment="Center"
+							   VerticalAlignment="Center"
+							   Text="All my recipes" />
+					<Button AutomationProperties.AutomationId="RecipeDetailsButton"
+							uen:Navigation.Request="ChefsFavoriteRecipes/ChefsRecipeDetails"
+							Content="Recipe Details" />
+				</Grid>
+				<Grid uen:Region.Name="MyCookbooks"
+					  Visibility="Collapsed">
+
+					<TextBlock HorizontalAlignment="Center"
+							   VerticalAlignment="Center"
+							   Text="All my cookbooks" />
+				</Grid>
+			</Grid>
+		</utu:AutoLayout>
 	</Grid>
 </Page>
