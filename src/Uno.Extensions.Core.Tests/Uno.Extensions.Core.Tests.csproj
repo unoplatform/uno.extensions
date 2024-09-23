@@ -14,7 +14,7 @@
 		<PackageReference Include="MSTest.TestAdapter" />
 		<PackageReference Include="MSTest.TestFramework" />
 		<PackageReference Include="coverlet.collector" />
-		<PackageReference Include="System.Collections.Immutable" VersionOverride="6.0.0" />
+		<PackageReference Include="System.Collections.Immutable" VersionOverride="8.0.0" />
 		<!--For local usage we use the most recent version-->
 		<PackageReference Include="Microsoft.CodeAnalysis.CSharp" />
 	</ItemGroup>

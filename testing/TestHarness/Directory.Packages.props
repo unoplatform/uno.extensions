@@ -1,60 +1,25 @@
 <Project ToolsVersion="15.0">
 	<ItemGroup>
-		<PackageVersion Include="CommunityToolkit.Mvvm" Version="8.0.0" />
-		<PackageVersion Include="CommunityToolkit.WinUI.UI" Version="7.1.2" />
 		<PackageVersion Include="FluentAssertions" Version="6.12.0" />
-		<PackageVersion Include="FluentValidation" Version="11.4.0" />
-		<PackageVersion Include="IdentityModel.OidcClient" Version="5.0.0" />
 		<PackageVersion Include="AspNet.Security.OAuth.Apple" Version="6.0.4" />
 		<PackageVersion Include="MSTest.TestAdapter" Version="2.2.9" />
 		<PackageVersion Include="MSTest.TestFramework" Version="2.2.9" />
 		<PackageVersion Include="Microsoft.AspNetCore.Authentication.Facebook" Version="6.0.7" />
 		<PackageVersion Include="Microsoft.AspNetCore.Authentication.Google" Version="6.0.7" />
 		<PackageVersion Include="Microsoft.AspNetCore.Authentication.MicrosoftAccount" Version="6.0.7" />
-		<PackageVersion Include="Microsoft.Extensions.Logging" Version="8.0.0" />
-		<PackageVersion Include="Microsoft.Extensions.Logging.Console" Version="8.0.0" />
-		<PackageVersion Include="Microsoft.Identity.Client" Version="4.61.3" />
-		<PackageVersion Include="Microsoft.Net.Compilers.Toolset" Version="4.2.0" />
-		<PackageVersion Include="Microsoft.NETCore.UniversalWindowsPlatform" Version="6.2.11" />
 		<PackageVersion Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.2" />
-		<!--<PackageVersion Include="Microsoft.Toolkit.Uwp.UI" Version="7.1.2" />
-		<PackageVersion Include="Microsoft.UI.Xaml" Version="2.8.5" />-->
-		<!--<PackageVersion Include="Microsoft.Web.WebView2" Version="1.0.2365.46" />-->
-		<PackageVersion Include="Microsoft.WindowsAppSDK" Version="1.5.240311000" />
-		<PackageVersion Include="Microsoft.Windows.Compatibility" Version="5.0.0" />
-		<PackageVersion Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.3233" />
-		<PackageVersion Include="Refit" Version="6.3.2" />
-		<PackageVersion Include="Refit.HttpClientFactory" Version="6.3.2" />
 		<PackageVersion Include="SkiaSharp" Version="2.88.7" />
 		<PackageVersion Include="SkiaSharp.NativeAssets.Linux" Version="2.88.7" />
-		<PackageVersion Include="SkiaSharp.HarfBuzz" Version="2.88.7" />
-		<PackageVersion Include="SkiaSharp.Skottie" Version="2.88.7" />
-		<PackageVersion Include="SkiaSharp.Views" Version="2.88.7" />
-		<PackageVersion Include="SkiaSharp.Views.Uno" Version="2.88.7" />
-		<PackageVersion Include="SkiaSharp.Views.Uno.WinUI" Version="2.88.7" />
-		<PackageVersion Include="SkiaSharp.Views.WPF" Version="2.88.7" />
 		<PackageVersion Include="Swashbuckle.AspNetCore" Version="6.2.3" />
-		<PackageVersion Include="System.ComponentModel.Annotations" Version="5.0.0" />
-		<PackageVersion Include="Uno.CommunityToolkit.WinUI.UI" Version="7.1.100" />
-		<PackageVersion Include="Uno.Core.Extensions.Logging.Singleton" Version="4.1.1" />
-		<PackageVersion Include="Uno.Extensions.Logging.OSLog" Version="1.7.0" />
-		<PackageVersion Include="Uno.Extensions.Logging.WebAssembly.Console" Version="1.7.0" />
-		<PackageVersion Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="$(UnoVersion)"/>
 		<PackageVersion Include="Uno.UITest" Version="1.1.0-dev.70" />
 		<PackageVersion Include="Uno.UITest.Selenium" Version="1.1.0-dev.70" />
 		<PackageVersion Include="Uno.UITest.Xamarin" Version="1.1.0-dev.70" />
 		<PackageVersion Include="Uno.UITest.Helpers" Version="1.1.0-dev.70" />
-		<PackageVersion Include="Uno.WinUI" Version="$(UnoVersion)" />
 		<PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.9.0" />
 		<PackageVersion Include="Newtonsoft.Json" Version="13.0.3" />
 		<PackageVersion Include="NUnit" Version="4.1.0" />
 		<PackageVersion Include="NUnit3TestAdapter" Version="4.5.0" />
 		<PackageVersion Include="NunitXml.TestLogger" Version="3.0.131" />
-		<PackageVersion Include="Xamarin.Google.Android.Material" Version="1.5.0.13" />
 		<PackageVersion Include="Xamarin.UITest" Version="4.3.4" />
-		<PackageVersion Include="coverlet.collector" Version="6.0.2" />
 	</ItemGroup>
-
-
-	<Import Project="../../src/winappsdk-workaround.targets" Condition="exists('../../src/winappsdk-workaround.targets') and $(TargetFramework.Contains('windows10'))" />
 </Project>

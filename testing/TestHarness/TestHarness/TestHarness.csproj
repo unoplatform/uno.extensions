@@ -74,21 +74,7 @@
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Validation\Uno.Extensions.Validation.csproj" />
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Validation.Fluent\Uno.Extensions.Validation.Fluent.csproj" />
 		<ProjectReference Include="..\TestHarness.Core\TestHarness.Core.csproj" />
-
-		<PackageReference Include="Uno.Core.Extensions.Logging.Singleton"/>
-		<PackageReference Include="Uno.WinUI" />
-		<PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging"/>
-		<!--<PackageReference Include="Uno.Wasm.Bootstrap" />
-		<PackageReference Include="Uno.Wasm.Bootstrap.DevServer" />
-		<PackageReference Include="Uno.Resizetizer" />-->
 	</ItemGroup>
 
-	<ItemGroup Condition="'$(IsBrowserWasm)'=='true'">
-		<PackageReference Include="Uno.Extensions.Logging.WebAssembly.Console" />
-	</ItemGroup>
-
-	<ItemGroup Condition="'$(IsIOSOrCatalyst)' == 'true'">
-		<PackageReference Include="Uno.Extensions.Logging.OSLog" />
-	</ItemGroup>
 
 </Project>
