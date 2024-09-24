@@ -75,17 +75,21 @@ public class Given_Apps_ToDo : NavigationTestBase
 		App.WaitThenTap("ShowAppButton");
 
 		App.WaitThenTap("NarrowButton");
+		await Task.Delay(5000);
 
 		// Make sure the app has loaded
 		App.WaitElement("WelcomeNavigationBar");
 
 		// Login
 		await App.TapAndWait("LoginButton", "HomeNavigationBar");
+		await Task.Delay(5000);
 
 		// Select a task list
 		await App.TapAndWait("SelectTaskList2Button", "TaskListNavigationBar");
+		await Task.Delay(5000);
 
 		await App.TapAndWait("SelectActiveTask1Button", "TaskNavigationBar");
+		await Task.Delay(5000);
 
 		await App.TapAndWait("DetailsBackButton", "TaskListNavigationBar");
 	}
