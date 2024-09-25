@@ -21,6 +21,7 @@
 		<PackageVersion Include="NUnit" Version="4.1.0" />
 		<PackageVersion Include="NUnit3TestAdapter" Version="4.5.0" />
 		<PackageVersion Include="NunitXml.TestLogger" Version="3.0.131" />
+		<PackageVersion Include="Xamarin.Google.Android.Material" Version="1.5.0.13" />
 		<PackageVersion Include="Xamarin.UITest" Version="4.3.4" />
 	</ItemGroup>
 </Project>
