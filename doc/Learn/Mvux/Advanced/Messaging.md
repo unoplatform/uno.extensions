@@ -301,67 +301,67 @@ These extension methods are available for both `IState<TEntity>` and `IListState
 
 - `IState<TEntity> Observe<TEntity, TKey>(this IState<TEntity> state, IMessenger messenger, Func<TEntity, TKey> keySelector)`
 
-This overload is a fluent API extension method that can be used to observe entity-change messages from the messenger for a specific entity type and apply them to the state. It returns the state itself, so it can be chained with other methods.
+    This overload is a fluent API extension method that can be used to observe entity-change messages from the messenger for a specific entity type and apply them to the state. It returns the state itself, so it can be chained with other methods.
 
-```csharp
-public partial record MyModel
-{
-    protected IUserService UserService { get; }
-
-    public MyModel(IUserService userService, IMessenger messenger)
+    ```csharp
+    public partial record MyModel
     {
-        UserService = userService;
+        protected IUserService UserService { get; }
 
-        CurrentUser
-            .Observe(messenger, user => user.Id)
-            .Observe(messenger, user => user.Name);
+        public MyModel(IUserService userService, IMessenger messenger)
+        {
+            UserService = userService;
+
+            CurrentUser
+                .Observe(messenger, user => user.Id)
+                .Observe(messenger, user => user.Name);
+        }
+
+        public IState<User> CurrentUser => State.Async(this, UserService.GetCurrentUser);
     }
+    ```
 
-    public IState<User> CurrentUser => State.Async(this, UserService.GetCurrentUser);
-}
-```
+    or in a more Fluent API way:
 
-or in a more Fluent API way:
+    ```csharp
+    public partial record MyModel(IUserService UserService, IMessenger Messenger)
+    {
+        public IState<User> CurrentUser => State.Async(this, UserService.GetCurrentUser)
+            .Observe(Messenger, user => user.Id)
+            .Observe(Messenger, user => user.Name);
+    }
+    ```
 
-```csharp
-public partial record MyModel(IUserService UserService, IMessenger Messenger)
-{
-    public IState<User> CurrentUser => State.Async(this, UserService.GetCurrentUser)
-        .Observe(Messenger, user => user.Id)
-        .Observe(Messenger, user => user.Name);
-}
-```
-
-> [!NOTE]
-> Please note that in this example we are using C# Primary Constructors, which is a feature available in C# 9.0.
+    > [!NOTE]
+    > Please note that in this example we are using C# Primary Constructors, which is a feature available in C# 9.0.
 
 - `IState<TEntity> Observe<TEntity, TKey>(this IState<TEntity> state, IMessenger messenger, Func<TEntity, TKey> keySelector, out IDisposable disposable)`
 
-This overload is the same as the previous one, except it returns an `IDisposable` that can be used to dispose of the subscription. When disposed, it will stop the state from observing further entity-change messages from the messenger.
+    This overload is the same as the previous one, except it returns an `IDisposable` that can be used to dispose of the subscription. When disposed, it will stop the state from observing further entity-change messages from the messenger.
 
-```csharp
-public partial record MyModel
-{
-    protected IUserService UserService { get; }
-    private IDisposable subscriptions;
-
-    public MyModel(IUserService userService, IMessenger messenger)
+    ```csharp
+    public partial record MyModel
     {
-        UserService = userService;
+        protected IUserService UserService { get; }
+        private IDisposable subscriptions;
 
-        CurrentUser
-            .Observe(messenger, user => user.Id, out disposable);
+        public MyModel(IUserService userService, IMessenger messenger)
+        {
+            UserService = userService;
+
+            CurrentUser
+                .Observe(messenger, user => user.Id, out disposable);
+        }
+
+        public IState<User> CurrentUser => State.Async(this, UserService.GetCurrentUser);
+
+        // Call this method to cancel the subscription
+        private void CancelSubscriptions()
+        {
+            subscriptions.Dispose();
+        }
     }
-
-    public IState<User> CurrentUser => State.Async(this, UserService.GetCurrentUser);
-
-    // Call this method to cancel the subscription
-    private void CancelSubscriptions()
-    {
-        subscriptions.Dispose();
-    }
-}
-```
+    ```
 
 Two more overload extensions are available for `IListState<TEntity>` and they behave the same as the `IState<TEntity>` overloads.
 
