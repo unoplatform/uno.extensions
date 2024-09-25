@@ -56,6 +56,8 @@
       items:
         - name: Overview
           href: Reference/Reactive/concept.md
+        - name: Upgrading Extensions Reactive
+          href: reactive-migration.md
         - name: General guidelines
           href: Reference/Reactive/general.md
         - name: Feed
@@ -72,8 +74,6 @@
           href: Reference/Reactive/Architecture.md
         - name: Analysis rules
           href: Reference/Reactive/rules.md
-    - name: Upgrading Extensions Reactive
-      href: reactive-migration.md
     # - name: Navigation
     #   href: Reference/Navigation/Navigation.md
     #   items:
