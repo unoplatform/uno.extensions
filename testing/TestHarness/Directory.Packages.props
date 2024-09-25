@@ -11,6 +11,7 @@
 		<PackageVersion Include="SkiaSharp" Version="2.88.7" />
 		<PackageVersion Include="SkiaSharp.NativeAssets.Linux" Version="2.88.7" />
 		<PackageVersion Include="Swashbuckle.AspNetCore" Version="6.2.3" />
+		<PackageVersion Include="Uno.Extensions.Logging.OSLog" Version="1.7.0" />
 		<PackageVersion Include="Uno.Extensions.Logging.WebAssembly.Console" Version="1.7.0" />
 		<PackageVersion Include="Uno.UITest" Version="1.1.0-dev.70" />
 		<PackageVersion Include="Uno.UITest.Selenium" Version="1.1.0-dev.70" />
