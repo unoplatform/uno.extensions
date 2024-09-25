@@ -9,11 +9,8 @@ public class Given_Apps_Chefs : NavigationTestBase
 		
 		App.WaitThenTap("ShowAppButton");
 		App.WaitThenTap("NextButton");
-		await Task.Delay(5000);
 		App.WaitThenTap("LoginButton");
-		await Task.Delay(5000);
 		App.WaitThenTap("FavoriteRecipesButton");
-		await Task.Delay(5000);
 		App.WaitThenTap("RecipeDetailsButton");
 	}
 }

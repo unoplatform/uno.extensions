@@ -75,7 +75,6 @@ public class Given_Apps_ToDo : NavigationTestBase
 		App.WaitThenTap("ShowAppButton");
 
 		App.WaitThenTap("NarrowButton");
-		await Task.Delay(5000);
 
 		// Make sure the app has loaded
 		App.WaitElement("WelcomeNavigationBar");
