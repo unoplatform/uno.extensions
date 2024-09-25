@@ -302,6 +302,81 @@ The `SelectedPersonPhone` state will only be refreshed if it meets the predicate
 
 This overload is the same as the previous one, except it watches a single-item state rather than a `ListState`, as in the last example.
 
+#### Fluent API Observe overloads
+
+These extension methods are available for both `IState<TEntity>` and `IListState<TEntity>` objects.
+
+- `IState<TEntity> Observe<TEntity, TKey>(this IState<TEntity> state, IMessenger messenger, Func<TEntity, TKey> keySelector)`
+
+This overload is a fluent API extension method that can be used to observe entity-change messages from the messenger for a specific entity type and apply them to the state. It returns the state itself, so it can be chained with other methods.
+
+```csharp
+public partial record MyModel
+{
+    protected IUserService UserService { get; }
+
+    public MyModel(IUserService userService, IMessenger messenger)
+    {
+        UserService = userService;
+
+        CurrentUser
+            .Observe(messenger, user => user.Id)
+            .Observe(messenger, user => user.Name);
+    }
+
+    public IState<User> CurrentUser => State.Async(this, UserService.GetCurrentUser);
+}
+```
+
+or in a more Fluent API way:
+
+```csharp
+public partial record MyModel(IUserService UserService, IMessenger Messenger)
+{
+    public IState<User> CurrentUser => State.Async(this, UserService.GetCurrentUser)
+                                            .Observe(Messenger, user => user.Id)
+                                            .Observe(Messenger, user => user.Name);
+}
+```
+
+> [!NOTE]
+> Please not that in this example we are using C# Primary Constructors, which is a feature available in C# 9.0.
+
+- `IState<TEntity> Observe<TEntity, TKey>(this IState<TEntity> state, IMessenger messenger, Func<TEntity, TKey> keySelector, out IDisposable disposable)`
+
+This overload is the same as the previous one, except it returns an `IDisposable` that can be used to dispose of the subscription. This will stop the state from observing entity-change messages from the messenger.
+
+```csharp
+public partial record MyModel
+{
+    protected IUserService UserService { get; }
+    private IDisposable subscriptions;
+
+    public MyModel(IUserService userService, IMessenger messenger)
+    {
+        UserService = userService;
+
+        CurrentUser
+            .Observe(messenger, user => user.Id, out disposable);
+    }
+
+    public IState<User> CurrentUser => State.Async(this, UserService.GetCurrentUser);
+
+    // Call this method to cancel the subscription
+    private void CancelSubscriptions()
+    {
+        subscriptions.Dispose();
+    }
+}
+```
+
+Two more overloads extensions are available for `IListState<TEntity>` and they behave the same as the `IState<TEntity>` overloads.
+
+- `IListState<TEntity> Observe<TEntity, TKey>(this IListState<TEntity> listState, IMessenger messenger, Func<TEntity, TKey> keySelector, out IDisposable disposable)`
+
+- `IListState<TEntity> Observe<TEntity, TKey>(this IListState<TEntity> listState, IMessenger messenger, Func<TEntity, TKey> keySelector)`
+
+
 ### Update
 
 The MVUX messaging package also includes a pair of `Update` methods that enable updating an `IState<T>` or an `IListState<T>` from an `EntityMessage<T>`.
