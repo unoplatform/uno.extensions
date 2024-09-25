@@ -327,17 +327,17 @@ or in a more Fluent API way:
 public partial record MyModel(IUserService UserService, IMessenger Messenger)
 {
     public IState<User> CurrentUser => State.Async(this, UserService.GetCurrentUser)
-                                            .Observe(Messenger, user => user.Id)
-                                            .Observe(Messenger, user => user.Name);
+        .Observe(Messenger, user => user.Id)
+        .Observe(Messenger, user => user.Name);
 }
 ```
 
 > [!NOTE]
-> Please not that in this example we are using C# Primary Constructors, which is a feature available in C# 9.0.
+> Please note that in this example we are using C# Primary Constructors, which is a feature available in C# 9.0.
 
 - `IState<TEntity> Observe<TEntity, TKey>(this IState<TEntity> state, IMessenger messenger, Func<TEntity, TKey> keySelector, out IDisposable disposable)`
 
-This overload is the same as the previous one, except it returns an `IDisposable` that can be used to dispose of the subscription. This will stop the state from observing entity-change messages from the messenger.
+This overload is the same as the previous one, except it returns an `IDisposable` that can be used to dispose of the subscription. When disposed, it will stop the state from observing further entity-change messages from the messenger.
 
 ```csharp
 public partial record MyModel
@@ -363,12 +363,11 @@ public partial record MyModel
 }
 ```
 
-Two more overloads extensions are available for `IListState<TEntity>` and they behave the same as the `IState<TEntity>` overloads.
+Two more overload extensions are available for `IListState<TEntity>` and they behave the same as the `IState<TEntity>` overloads.
 
 - `IListState<TEntity> Observe<TEntity, TKey>(this IListState<TEntity> listState, IMessenger messenger, Func<TEntity, TKey> keySelector, out IDisposable disposable)`
 
 - `IListState<TEntity> Observe<TEntity, TKey>(this IListState<TEntity> listState, IMessenger messenger, Func<TEntity, TKey> keySelector)`
-
 
 ### Update
 
