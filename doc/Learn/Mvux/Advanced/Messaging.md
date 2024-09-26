@@ -344,7 +344,7 @@ These extension methods are available for both `IState<TEntity>` and `IListState
 
 - `IState<TEntity> Observe<TEntity, TKey>(this IState<TEntity> state, IMessenger messenger, Func<TEntity, TKey> keySelector, out IDisposable disposable)`
 
-    This overload is the same as the previous one, except it returns an `IDisposable` that can be used to dispose of the subscription. When disposed, it will stop the state from observing further entity-change messages from the messenger.
+    This overload is the same as the previous one, except it returns an `IDisposable`, which can be used to dispose of the subscription. When disposed, the state will stop observing further entity-change messages from the messenger.
 
     ```csharp
     public partial record MyModel
@@ -370,7 +370,7 @@ These extension methods are available for both `IState<TEntity>` and `IListState
     }
     ```
 
-Two more overload extensions are available for `IListState<TEntity>` and they behave the same as the `IState<TEntity>` overloads.
+Two more overload extensions are available for `IListState<TEntity>`, and they behave the same as the `IState<TEntity>` overloads.
 
 - `IListState<TEntity> Observe<TEntity, TKey>(this IListState<TEntity> listState, IMessenger messenger, Func<TEntity, TKey> keySelector, out IDisposable disposable)`
 
