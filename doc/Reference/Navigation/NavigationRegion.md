@@ -1,15 +1,28 @@
 ---
 uid: Reference.Navigation.Regions
 ---
+
 # What is a Navigation Region
+
+## Regions
+
+A region is a part of the user interface that manages navigation.
+
+Regions are organized in a hierarchy that mirrors the structure of the navigation controls in the user interface. This hierarchy allows navigation commands to move up to parent regions or down to child regions as needed.
+
+To specify a region, you set `Region.Attached="true"` on a navigation control (like Frame, ContentControl, or Grid).
+
+```xml
+<ContentControl uen:Region.Attached="true" />
+```
 
 ## Region Name
 
-Regions can be named by specifying the Region.Name="XXX" property.
+You can name a region by setting the `Region.Name="RegionName"` property.
 
-For selection-based regions, the selectable items (NavigationViewItem, TabBarItem, …) are identified using the Region.Name property
+In selection-based regions, the selectable items (like `NavigationViewItem`, `TabBarItem`, etc.) are identified using the Region.Name property.
 
-```csharp
+```xml
 <muxc:NavigationView uen:Region.Attached="true">
     <muxc:NavigationView.MenuItems>
         <muxc:NavigationViewItem Content="Products" uen:Region.Name="Products" />
@@ -20,6 +33,25 @@ For selection-based regions, the selectable items (NavigationViewItem, TabBarIte
 ```
 
 Switching selected item:
-    `naviator.NavigateRouteAsync(this,"Deals");`
 
-- Define what a navigation region is and how the hierarchy of regions is created with the Region.Attached property
+  ```csharp
+  navigator.NavigateRouteAsync(this, "Deals");
+  ```
+
+  or
+
+  ```csharp
+  navigator.NavigateViewAsync<DealsControl>(this);
+  ```
+
+  or
+
+  ```csharp
+  navigator.NavigateViewModelAsync<DealsViewModel>(this);
+  ```
+
+  or
+
+  ```csharp
+  navigator.NavigateDataAsync(this, selectedDeal);
+  ```
