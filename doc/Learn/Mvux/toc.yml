@@ -1,6 +1,8 @@
 
 - name: Overview
   href: xref:Uno.Extensions.Mvux.Overview
+- name: Upgrading Extensions Reactive
+  href: xref:Uno.Extensions.Reactive.Upgrading
 - name: "How-To: Get started with MVUX"
   href: xref:Uno.Extensions.Mvux.HowToMvuxProject
 - name: "Working with Records"
