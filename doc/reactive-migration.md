@@ -1,5 +1,5 @@
 ---
-uid: Extensions.Migration.Reactive
+uid: Uno.Extensions.Reactive.Upgrading
 ---
 
 # Upgrading Extensions Reactive Version
