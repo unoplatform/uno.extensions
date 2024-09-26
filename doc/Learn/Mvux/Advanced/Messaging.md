@@ -350,7 +350,7 @@ These extension methods are available for both `IState<TEntity>` and `IListState
             UserService = userService;
 
             CurrentUser
-                .Observe(messenger, user => user.Id, out disposable);
+                .Observe(messenger, user => user.Id, out subscriptions);
         }
 
         public IState<User> CurrentUser => State.Async(this, UserService.GetCurrentUser);
