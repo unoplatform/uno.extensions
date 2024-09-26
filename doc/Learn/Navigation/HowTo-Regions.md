@@ -100,7 +100,7 @@ The next important thing to do is to set the region names to associate the navig
 
    Then when a `TabBarItem` is selected the navigator will change the corresponding content `Visibility` to `True` and it will be displayed.
 
-- 2. Another method of setting the content is by using the registered route names associated with a view. For example, if you have three views registered as routes with the names "Products", "Favorites", and "Deals", you can simply configure the navigational control items to correspond with these route names:
+- 1. Another method of setting the content is by using the registered route names associated with a view. For example, if you have three views registered as routes with the names "Products", "Favorites", and "Deals", you can simply configure the navigational control items to correspond with these route names:
 
    ```csharp
    new ("Main", View: views.FindByView<MainPage>(),
