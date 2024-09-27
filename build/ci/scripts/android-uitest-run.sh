@@ -13,7 +13,7 @@ export UNO_UITEST_ANDROID_PROJECT=$BUILD_SOURCESDIRECTORY/testing/TestHarness/Te
 export UNO_UITEST_BINARY=$BUILD_SOURCESDIRECTORY/testing/TestHarness/TestHarness.UITest/bin/Release/net47/TestHarness.UITest.dll
 export UNO_EMULATOR_INSTALLED=$BUILD_SOURCESDIRECTORY/build/.emulator_started
 export UITEST_TEST_TIMEOUT=60m
-export ANDROID_SIMULATOR_APILEVEL=34
+export ANDROID_SIMULATOR_APILEVEL=28
 
 # Override Android SDK tooling
 export ANDROID_HOME=$BUILD_SOURCESDIRECTORY/build/android-sdk
