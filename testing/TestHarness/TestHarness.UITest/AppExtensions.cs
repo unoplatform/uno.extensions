@@ -9,7 +9,7 @@ public static class AppExtensions
 		app.WaitElement(elementToTap);
 		//await Task.Delay(UIWaitTimeInMilliseconds);
 
-		app.FastTap(elementToTap);
+		app.Tap(elementToTap);
 		app.WaitElement(elementToWaitFor);
 
 		//await Task.Delay(UIWaitTimeInMilliseconds);
