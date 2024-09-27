@@ -52,7 +52,7 @@ then
 	echo "Starting emulator"
 
 	# Start emulator in background
-	nohup $ANDROID_HOME/emulator/emulator -avd xamarin_android_emulator -skin 1280x800 -memory 4096 -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim > /dev/null 2>&1 &
+	nohup $ANDROID_HOME/emulator/emulator -avd xamarin_android_emulator -skin 1280x800 -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim -prop ro.debuggable=1 > $UNO_UITEST_SCREENSHOT_PATH/android-emulator-log.txt 2>&1 &
 
 	touch "$UNO_EMULATOR_INSTALLED"
 fi

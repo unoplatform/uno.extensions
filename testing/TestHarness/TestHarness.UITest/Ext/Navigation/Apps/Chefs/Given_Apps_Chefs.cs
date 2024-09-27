@@ -9,8 +9,7 @@ public class Given_Apps_Chefs : NavigationTestBase
 		
 		App.WaitThenTap("ShowAppButton");
 		App.WaitThenTap("NextButton");
-		await Task.Delay(10000);
-		App.WaitThenTap("LoginButton", timeout: TimeSpan.FromSeconds(10));
+		App.WaitThenTap("LoginButton");
 		App.WaitThenTap("FavoriteRecipesButton");
 		App.WaitThenTap("RecipeDetailsButton");
 	}
