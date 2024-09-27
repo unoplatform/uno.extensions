@@ -13,6 +13,7 @@ export UNO_UITEST_ANDROID_PROJECT=$BUILD_SOURCESDIRECTORY/testing/TestHarness/Te
 export UNO_UITEST_BINARY=$BUILD_SOURCESDIRECTORY/testing/TestHarness/TestHarness.UITest/bin/Release/net47/TestHarness.UITest.dll
 export UNO_EMULATOR_INSTALLED=$BUILD_SOURCESDIRECTORY/build/.emulator_started
 export UITEST_TEST_TIMEOUT=60m
+export ANDROID_SIMULATOR_APILEVEL=34
 
 # Override Android SDK tooling
 export ANDROID_HOME=$BUILD_SOURCESDIRECTORY/build/android-sdk
@@ -36,15 +37,15 @@ then
 	echo "y" | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --sdk_root=${ANDROID_HOME} --install 'tools'| tr '\r' '\n' | uniq
 	echo "y" | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --sdk_root=${ANDROID_HOME} --install 'platform-tools'  | tr '\r' '\n' | uniq
 	echo "y" | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --sdk_root=${ANDROID_HOME} --install 'build-tools;34.0.0' | tr '\r' '\n' | uniq
-	echo "y" | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --sdk_root=${ANDROID_HOME} --install 'platforms;android-28' | tr '\r' '\n' | uniq
+	echo "y" | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --sdk_root=${ANDROID_HOME} --install "platforms;android-$ANDROID_SIMULATOR_APILEVEL" | tr '\r' '\n' | uniq
 	echo "y" | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --sdk_root=${ANDROID_HOME} --install 'platforms;android-34' | tr '\r' '\n' | uniq
 	echo "y" | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --sdk_root=${ANDROID_HOME} --install 'extras;android;m2repository' | tr '\r' '\n' | uniq
 
 	# Install AVD files
-	echo "y" | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --sdk_root=${ANDROID_HOME} --install 'system-images;android-28;google_apis_playstore;x86_64'
+	echo "y" | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --sdk_root=${ANDROID_HOME} --install "system-images;android-$ANDROID_SIMULATOR_APILEVEL;google_apis_playstore;x86_64"
 
 	# Create emulator
-	echo "no" | $ANDROID_HOME/cmdline-tools/latest/bin/avdmanager create avd -n xamarin_android_emulator --abi "x86_64" -k 'system-images;android-28;google_apis_playstore;x86_64' --force
+	echo "no" | $ANDROID_HOME/cmdline-tools/latest/bin/avdmanager create avd -n xamarin_android_emulator --abi "x86_64" -k "system-images;android-$ANDROID_SIMULATOR_APILEVEL;google_apis_playstore;x86_64" --force
 
 	echo $ANDROID_HOME/emulator/emulator -list-avds
 
