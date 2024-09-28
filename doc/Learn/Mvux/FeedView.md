@@ -4,7 +4,7 @@ uid: Uno.Extensions.Mvux.FeedView
 
 # The `FeedView` control
 
-The `FeedView` control is one of the main ways to consume Feeds and States within an application. The `FeedView` uses different visual states to control what is displayed on the screen depending on the state of the underlying `IFeed`, or `IState`.
+The `FeedView` control is one of the main ways to consume Feeds and States within an application. It uses different visual states to control what is displayed on the screen depending on the state of the underlying `IFeed`, or `IState`.
 
 ## How to use the `FeedView` control
 
@@ -192,9 +192,7 @@ But you can customize that by overriding the `ProgressTemplate`:
 
 ### NoneTemplate
 
-If you set a template to this property, it will show if the data that was returned from the service contained no entries.
-For instance, if an `IFeed<T>` completed its request successfully with the server returning a `null` result, it's important to note that this is not considered an `Error`. Instead, it's still considered a successful result with no data.
-Similarly, when using `IListFeed<T>`, the `NoneTemplate` will also display if the collection is empty, as well as if the result is `null.`
+Setting a template to this property will show when the data returned from the service contains no entries. For instance, if an `IFeed<T>` completed its request successfully with the server returning a `null` result, it's important to note that this is not considered an `Error`. Instead, it's still considered a successful result with no data. Similarly, when using `IListFeed<T>`, the `NoneTemplate` will also display if the collection is empty, as well as if the result is `null.`
 
 Example:
 
@@ -214,12 +212,14 @@ Example:
 
 ### ErrorTemplate
 
-The `FeedView` will display this template if an Exception was thrown by the underlying asynchronous operation.
+The `FeedView` will display this template if the underlying asynchronous operation throws an Exception.
+
+Example:
 
 ### UndefinedTemplate
 
-This template is displayed when the control loads before the underlying asynchronous operation has even been called.
-As soon as the asynchronous operation is invoked and awaited, the `FeedView` will switch to its `ProgressTemplate`, until the operation has resulted in data, which it will then switch to the `ValueTemplate`, or `NoneTemplate`, depending on the data result.
+This template is displayed when the `FeedView` loads before the underlying asynchronous operation has even been called.
+As soon as the asynchronous operation is invoked and awaited, the `FeedView` will switch to its `ProgressTemplate` until the operation has resulted in data, at which point it will switch to the `ValueTemplate` or `NoneTemplate`, depending on the data result.
 
 Typically, this template will only show for a very short period - a split second or so, depending on how long it takes for the page and its Model to load.
 
@@ -227,7 +227,7 @@ Typically, this template will only show for a very short period - a split second
 
 ### Refresh command property
 
-The `FeedView` provides an asynchronous `Command` you can bind to, which, when executed, will refresh the underlying `Feed` by re-requesting its data source.
+The `FeedView` provides an asynchronous `Command` to which you can bind. When executed, this command will refresh the underlying `Feed` by re-requesting its data source.
 
 Here's how to utilize it:
 
