@@ -216,12 +216,40 @@ The `FeedView` will display this template if the underlying asynchronous operati
 
 Example:
 
+```xml
+<FeedView ...>
+    <DataTemplate>
+        ...
+    </DataTemplate>
+
+    <ErrorTemplate>
+        <DataTemplate>
+            <TextBlock Text="An error has ocurred while loading the data..." />
+        </DataTemplate>
+    </ErrorTemplate>
+</FeedView>
+```
+
 ### UndefinedTemplate
 
 This template is displayed when the `FeedView` loads before the underlying asynchronous operation has even been called.
 As soon as the asynchronous operation is invoked and awaited, the `FeedView` will switch to its `ProgressTemplate` until the operation has resulted in data, at which point it will switch to the `ValueTemplate` or `NoneTemplate`, depending on the data result.
 
 Typically, this template will only show for a very short period - a split second or so, depending on how long it takes for the page and its Model to load.
+
+```xml
+<FeedView ...>
+    <DataTemplate>
+        ...
+    </DataTemplate>
+
+    <UndefinedTemplate>
+        <DataTemplate>
+            <TextBlock Text="this is the start of something beautiful!" />
+        </DataTemplate>
+    </UndefinedTemplate>
+</FeedView>
+```
 
 ## Other notable features
 
