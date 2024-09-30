@@ -34,9 +34,13 @@
 					<TextBlock HorizontalAlignment="Center"
 							   VerticalAlignment="Center"
 							   Text="All my recipes" />
-					<Button AutomationProperties.AutomationId="RecipeDetailsButton"
-							uen:Navigation.Request="ChefsRecipeDetails"
-							Content="Recipe Details" />
+					<StackPanel>
+						<Button AutomationProperties.AutomationId="RecipeDetailsButton"
+								uen:Navigation.Request="ChefsRecipeDetails"
+								Content="Recipe Details" />
+						<Button uen:Navigation.Request="ChefsFavoriteRecipeDetails"
+								Content="Recipe Details (DependsOn)" />
+					</StackPanel>
 				</Grid>
 				<Grid uen:Region.Name="MyCookbooks"
 					  Visibility="Collapsed">
