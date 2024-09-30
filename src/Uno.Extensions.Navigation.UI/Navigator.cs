@@ -136,7 +136,6 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 			return rootNavResponse;
 		}
 
-
 		var rm = !string.IsNullOrWhiteSpace(request.Route.Base) ? Resolver.FindByPath(request.Route.Base) : default;
 
 		// Handle DependsOn
@@ -146,7 +145,53 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 			return dependsNavResponse;
 		}
 
+		var currentRegion = Region;
 
+		while (currentRegion != null)
+		{
+			if (currentRegion.Children.Count != 0)
+			{
+				foreach (var child in currentRegion.Children)
+				{
+					if (child.Navigator() is { } navigator && navigator.GetType().Name == "TabBarNavigator")
+					{
+						var test = navigator;
+						var controlProperty = navigator.GetType().GetProperty("Control");
+						if (controlProperty != null)
+						{
+							var control = controlProperty.GetValue(navigator);
+							if (control != null)
+							{
+								var itemsProperty = control.GetType().GetProperty("Items");
+								if (itemsProperty != null)
+								{
+									var items = itemsProperty.GetValue(control);
+									if (items is ItemCollection ic)
+									{
+										foreach (var item in ic)
+										{
+											if (item is FrameworkElement fe)
+											{
+												var test2 = fe.GetName();
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+
+			if (currentRegion.Parent != null)
+			{
+				currentRegion = currentRegion.Parent;
+			}
+			else
+			{
+				break;
+			}
+		}
 
 		// If the current navigator can handle this route,
 		// then simply return without redirecting the request but
