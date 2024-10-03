@@ -142,7 +142,7 @@ Here's what the app renders like:
 
 ## Offset pagination
 
-Offset pagination is controlled via a State that stores the current page index in the Model, and the List-Feed depending on it, using [the `Select` operator](xref:Uno.Extensions.Mvux.Feeds#select-or-selectasync).
+Offset pagination is controlled via a State that stores the current page index in the Model, and the List-Feed depending on it, using [the `Select` operator](xref:Uno.Extensions.Reactive.Feed#select).
 When the user requests a new page, the current page index state is updated, thereby updating the dependent collection List-Feed.
 
 Using the example started in [incremental loading above](#incremental-loading), we'll add another method to the service, which will disclose to the View how many items are there in total. Getting a count of items is more efficient than enumerating all entries. This is necessary to identify the total number of pages we have.
@@ -188,7 +188,7 @@ public partial record PeopleModel(IPeopleService PeopleService)
 ```
 
 `PeopleManual` is a Feed that reacts to changes in the `CurrentPage` property and projects the current page data according to its number.
-To accomplish this, the [`SelectAsync` operator](xref:Uno.Extensions.Mvux.Feeds#select-or-selectasync) of Feeds is used.
+To accomplish this, the [`SelectAsync` operator](xref:Uno.Extensions.Reactive.Feed#selectasync) of Feeds is used.
 The callback of this operator calls the service's `GetPeopleAsync` with the following arguments:
 
 - `pageSize`: As with the [automatic incremental loading](#incremental-loading) example above we're passing the size of each page, except this time we are manually setting the page size to an arbitrary number via the `DefaultPageSize` constant, which is set to `20`.
