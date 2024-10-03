@@ -270,7 +270,7 @@ In this example we'll add the method `IncrementSlider` that gets the current val
             currentValue <= 99
             ? currentValue + 1
             : 1;
-    
+
         await SliderValue.UpdateAsync(updater: incrementValue, ct);
     }
 ```
@@ -290,6 +290,8 @@ public async ValueTask SetSliderMiddle(CancellationToken ct = default)
 
 ### Subscribing to changes
 
+#### ForEach
+
  The `ForEach` enables executing a callback each time the value of the `IState<T>` is updated.
 
 This extension method takes a single parameter which is an async callback that takes two parameters. The first parameter is of type `T?`, where `T` is type of the `IState`, and represents the new value of the state. The second parameter is a `CancellationToken` which can be used to cancel a long running action.
@@ -304,12 +306,12 @@ For example:
    public partial record Model
    {
        public IState<string> MyState => ...
-   
+
        public async ValueTask EnableChangeTracking()
        {
            MyState.ForEach(PerformAction);
        }
-   
+
        public async ValueTask PerformAction(string item, CancellationToken ct)
        {
            ...
@@ -324,13 +326,13 @@ Additionally, the `ForEach` method can be set using the Fluent API:
    {
        public IState<string> MyState => State.Value(this, "Initial value")
                                              .ForEach(PerformAction);
-   
+
        public async ValueTask PerformAction(string item, CancellationToken ct)
        {
            ...
        }
    }
-   
+
 ```
 
 ### Commands
@@ -344,9 +346,9 @@ Let's modify the XAML [above](#how-to-bind-the-view-to-a-state) with the followi
         ...
         <TextBlock Text="Set state value:"/>
         <Slider Value="{Binding SliderValue, Mode=TwoWay}" />
-   
+
         <Button Content="Increment slider" Command="{Binding IncrementSlider" />
-   
+
     </StackPanel>
  </Page>
 ```
