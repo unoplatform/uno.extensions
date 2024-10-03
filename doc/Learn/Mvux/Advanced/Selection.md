@@ -127,7 +127,7 @@ You can listen and detect selection changes by either creating a feed that proje
 
 #### Using the Select operator
 
-Using the example above, we can project the `SelectedPerson` property to project or transform the current `Person`, using the `SelectedPerson`'s [`Where`](xref:Uno.Extensions.Mvux.Feeds#where) and [`Select`](xref:Uno.Extensions.Mvux.Feeds#select) operators.
+Using the example above, we can project the `SelectedPerson` property to project or transform the current `Person`, using the `SelectedPerson`'s [`Where`](xref:Uno.Extensions.Reactive.Feed#where) and [`Select`](xref:Uno.Extensions.Reactive.Feed#select) operators.
 
 ```csharp
 public IFeed<string> GreetingSelect => SelectedPerson.Select(person => person == null ? string.Empty : $"Hello {person.FirstName} {person.LastName}!");
@@ -141,7 +141,7 @@ A `TextBlock` can then be added in the UI to display the selected value:
 
 #### Using the ForEach operator
 
-Selection can also be propagated manually to a State using the [`ForEach`](xref:Uno.Extensions.Mvux.States#foreach) operator.
+Selection can also be propagated manually to a State using the [`ForEach`](xref:Uno.Extensions.Reactive.State#foreach) operator.
 First, we need to create a State with a default value, which will be used to store the processed value once a selection has occurred.
 
 ```csharp
