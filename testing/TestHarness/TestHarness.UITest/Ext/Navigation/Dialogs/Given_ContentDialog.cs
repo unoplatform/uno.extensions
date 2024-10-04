@@ -15,7 +15,7 @@ public class Given_ContentDialog : NavigationTestBase
 		App.WaitElement("DialogsContentDialogsPage");
 		var screenBefore = TakeScreenshot("When_Dialog_Before");
 		App.Tap(dialogButton);
-		await Task.Delay(500); // Make sure the dialog is showing completely
+		await Task.Delay(1000); // Make sure the dialog is showing completely
 		var screenAfter = TakeScreenshot("When_Dialog_After");
 		ImageAssert.AreNotEqual(screenBefore, screenAfter);
 

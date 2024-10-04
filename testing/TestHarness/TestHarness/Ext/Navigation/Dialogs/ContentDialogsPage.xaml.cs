@@ -21,7 +21,12 @@ public sealed partial class ContentDialogsPage : Page
 	}
 	private async void SimpleDialogCodebehindCancelClick(object sender, RoutedEventArgs args)
 	{
-		var cancelSource = new CancellationTokenSource(TimeSpan.FromSeconds(2));
+#if USE_UITESTS && __ANDROID__
+		var waitTime = 4;
+#else
+		var waitTime = 2;
+#endif
+		var cancelSource = new CancellationTokenSource(TimeSpan.FromSeconds(waitTime));
 		var showDialog = await this.Navigator()!.NavigateViewForResultAsync<DialogsSimpleDialog, Widget>(this, Qualifiers.Dialog, cancellation: cancelSource.Token);
 		if (showDialog is null)
 		{

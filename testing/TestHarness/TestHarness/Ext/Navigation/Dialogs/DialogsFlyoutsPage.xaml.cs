@@ -31,7 +31,12 @@ public sealed partial class DialogsFlyoutsPage : Page
 
 	private async void FlyoutRequestingDataWithCancelClick(object sender, RoutedEventArgs args)
 	{
-		var cancelSource = new CancellationTokenSource(TimeSpan.FromSeconds(2));
+#if USE_UITESTS && __ANDROID__
+		var waitTime = 4;
+#else
+		var waitTime = 2;
+#endif
+		var cancelSource = new CancellationTokenSource(TimeSpan.FromSeconds(waitTime));
 		var nav = this.Navigator()!;
 		var result = await nav.NavigateRouteForResultAsync<Widget>(new object(), "!DialogsBasic", cancellation: cancelSource.Token).AsResult();
 	}
