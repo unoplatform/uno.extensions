@@ -46,7 +46,7 @@ For example:
 public IListFeed<string> Names => ListFeed.AsyncEnumerable(service.GetNames);
 ```
 
-Pull and push are explained more in the [feeds page](xref:Uno.Extensions.Reactive.Feed#sources:how-to-create-a-feed).
+Pull and push are explained more in the [feeds page](xref:Uno.Extensions.Reactive.Feed#sources-how-to-create-a-feed).
 
 **Create**: Provides custom initialization for a `ListFeed`.
 
