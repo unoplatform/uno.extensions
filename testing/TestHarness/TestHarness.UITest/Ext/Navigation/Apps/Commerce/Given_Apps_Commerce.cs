@@ -113,10 +113,12 @@ public class Given_Apps_Commerce : NavigationTestBase
 			iOS: () =>
 			{
 				var title = App.CreateQuery(x => x.WithClass("navigationBar").Descendant("label")).FirstResult();
+
+				Assert.IsNotNull(title);
 				Assert.AreEqual("Deals", title.Text);
 			},
-			Android: async () => App.WaitElement("DealsNavigationBar"),
-			Browser: async () => App.WaitElement("DealsNavigationBar")
+			Android: () => App.WaitElement("DealsNavigationBar"),
+			Browser: () => App.WaitElement("DealsNavigationBar")
 		);
 
 		// Select a product
