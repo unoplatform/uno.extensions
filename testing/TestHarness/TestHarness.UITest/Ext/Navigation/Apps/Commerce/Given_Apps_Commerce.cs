@@ -58,19 +58,7 @@ public class Given_Apps_Commerce : NavigationTestBase
 
 		/// Tap through each tab bar item
 
-		PlatformHelpers.On(
-			iOS: () =>
-			{
-				App.WaitThenTap("DealsTabBarItem");
-				var title = App.CreateQuery(x => x.WithClass("navigationBar").Descendant("label")).FirstResult();
-
-				Assert.AreEqual("Deals", title.Text);
-			},
-			Android: async () => await App.TapAndWait("DealsTabBarItem", "DealsNavigationBar"),
-			Browser: async () => await App.TapAndWait("DealsTabBarItem", "DealsNavigationBar")
-		);
-
-		//await App.TapAndWait("DealsTabBarItem", "DealsNavigationBar");
+		await App.TapAndWait("DealsTabBarItem", "DealsNavigationBar");
 
 		await App.TapAndWait("ProductsTabBarItem", "ProductsNavigationBar");
 
@@ -120,8 +108,16 @@ public class Given_Apps_Commerce : NavigationTestBase
 		await App.TapAndWait("DealsNavigationViewItem", "DealsListView");
 
 		await App.SelectElementIndexAndWait("DealsListView", "2", "ProductDetailsNavigationBar");
-		App.WaitElement("DealsNavigationBar");
 
+		PlatformHelpers.On(
+			iOS: () =>
+			{
+				var title = App.CreateQuery(x => x.WithClass("navigationBar").Descendant("label")).FirstResult();
+				Assert.AreEqual("Deals", title.Text);
+			},
+			Android: async () => App.WaitElement("DealsNavigationBar"),
+			Browser: async () => App.WaitElement("DealsNavigationBar")
+		);
 
 		// Select a product
 		await App.TapAndWait("ProductsNavigationViewItem", "ProductsListView");
