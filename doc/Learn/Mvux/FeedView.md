@@ -106,7 +106,26 @@ For example:
 </Page>
 ```
 
-The `Button`'s `Command` property binds to the `FeedViewState`'s `Refresh` property which exposes a special asynchronous command that when called, triggers a refresh of the parent feed (in our example `CurrentContact`, and the data is re-obtained from the server.
+The `Button`'s `Command` property binds to the `FeedViewState`'s `Refresh` property, which exposes a special asynchronous command that, when called, triggers a refresh of the parent feed, in our example, `CurrentContact`, and the data is re-obtained from the server.
+
+It's also possible to bind the `Refresh` command to a Control outside the `FeedView` template, as shown below:
+
+```xml
+<Page
+    ...
+    xmlns:mvux="using:Uno.Extensions.Reactive.UI">
+
+    <mvux:FeedView x:Name="feedView" Source="{Binding CurrentContact}">
+        <DataTemplate>
+            <StackPanel>
+                <TextBlock Text="{Binding Data.Name}" />
+            </StackPanel>
+        </DataTemplate
+    </mvux:FeedView>
+
+    <Button Content="Refresh" Command="{Binding Refresh, ElementName=feedView}" />
+</Page>
+```
 
 ##### Progress
 
@@ -245,28 +264,8 @@ Typically, this template will only show for a very short period - a split second
 
     <UndefinedTemplate>
         <DataTemplate>
-            <TextBlock Text="this is the start of something beautiful!" />
+            <TextBlock Text="Uno Platform FeedView" />
         </DataTemplate>
     </UndefinedTemplate>
 </FeedView>
-```
-
-## Other notable features
-
-### Refresh command property
-
-The `FeedView` provides an asynchronous `Command` to which you can bind. When executed, this command will refresh the underlying `Feed` by re-requesting its data source.
-
-Here's how to utilize it:
-
-```xml
-<FeedView
-    x:Name="feedView"
-    ...>
-    <DataTemplate>
-        ...
-    </DataTemplate>
-</FeedView>
-
-<Button Content="Refresh" Command="{Binding Refresh, ElementName=feedView}" />
 ```
