@@ -15,7 +15,7 @@ Feeds are typically used to request data from services and expose it in a statel
 
 Feeds are stateless and do not provide support for reacting to changes the user makes to the data on the View. The data can only be reloaded and refreshed upon request which is when the underlying task or `IAsyncEnumerable` will be invoked and the data refreshed. In other words, a feed is a read-only representation of the data received from the server.
 
-In contrast to feeds, [states](xref:Uno.Extensions.Mvux.States) (`IState` or `IListState`), as the name suggests, are stateful and keep track of the latest value, as updates are applied.
+In contrast to feeds, [states](xref:Uno.Extensions.Reactive.State) (`IState` or `IListState`), as the name suggests, are stateful and keep track of the latest value, as updates are applied.
 
 ## Sources: How to create a feed
 
