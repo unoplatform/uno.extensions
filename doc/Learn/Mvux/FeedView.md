@@ -211,7 +211,7 @@ But you can customize that by overriding the `ProgressTemplate`:
 
 ### NoneTemplate
 
-Setting a template to this property will show when the data returned from the service contains no entries. For instance, if an `IFeed<T>` completed its request successfully with the server returning a `null` result, it's important to note that this is not considered an `Error`. Instead, it's still considered a successful result with no data. Similarly, when using `IListFeed<T>`, the `NoneTemplate` will also display if the collection is empty, as well as if the result is `null.`
+Setting a template to this property will show when the data returned from the service contains no entries. For instance, if an `IFeed<T>` completed its request successfully with the server returning a `null` result, it's important to note that this is not considered an error. Instead, it's still considered a successful result with no data. Similarly, when using `IListFeed<T>`, the `NoneTemplate` will also display if the collection is empty, or if the result is `null`.
 
 Example:
 
@@ -251,8 +251,8 @@ Example:
 
 ### UndefinedTemplate
 
-This template is displayed when the `FeedView` loads before the underlying asynchronous operation has even been called.
-As soon as the asynchronous operation is invoked and awaited, the `FeedView` will switch to its `ProgressTemplate` until the operation has resulted in data, at which point it will switch to the `ValueTemplate` or `NoneTemplate`, depending on the data result.
+This template is displayed when the `FeedView` loads before the underlying asynchronous operation has been called.
+As soon as the asynchronous operation is invoked and awaited, the `FeedView` will switch to its `ProgressTemplate` until the operation results in data, at which point it will switch to the `ValueTemplate` or `NoneTemplate`, depending on the data result.
 
 Typically, this template will only show for a very short period - a split second or so, depending on how long it takes for the page and its Model to load.
 
