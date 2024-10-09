@@ -165,7 +165,6 @@ public class Given_PageNavigation : NavigationTestBase
 		App.WaitElement("OnePageToTwoPageButton");
 		var screenAfter = TakeScreenshot("When_PageNavigationXAML_After");
 		ImageAssert.AreEqual(screenBefore, screenAfter, tolerance: PixelTolerance.Exclusive(Constants.DefaultPixelTolerance));
-
 	}
 
 	[Test]
@@ -174,7 +173,6 @@ public class Given_PageNavigation : NavigationTestBase
 		InitTestSection(TestSections.Navigation_PageNavigation);
 
 		App.WaitThenTap("ShowOnePageButton");
-		App.WaitThenTap("OnePageGetUrlFromBrowser");
 
 		// If DataContext is ever changed to anything other than the expected
 		// the text will be "DataContext is not correct"

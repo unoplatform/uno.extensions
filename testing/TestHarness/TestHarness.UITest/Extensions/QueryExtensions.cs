@@ -15,7 +15,7 @@ public static class QueryExtensions
 	/// </summary>
 	public static void WaitForText(this IApp app, string elementName, string expectedText, TimeSpan? timeout = null)
 	{
-		var element = app.Marked(elementName);
+		var element = app.MarkedAnywhere(elementName);
 		app.WaitForElement(element, timeout: timeout);
 		app.WaitForText(element, expectedText);
 	}
@@ -25,7 +25,7 @@ public static class QueryExtensions
 	/// </summary>
 	public static void WaitForFocus(this IApp app, string elementName)
 	{
-		var element = app.Marked(elementName);
+		var element = app.MarkedAnywhere(elementName);
 		app.WaitForElement(element);
 		app.WaitForDependencyPropertyValue(element, "FocusState", "Pointer");
 	}
@@ -68,7 +68,7 @@ public static class QueryExtensions
 	/// </summary>
 	public static string GetText(this IApp app, string elementName)
 	{
-		var element = app.Marked(elementName);
+		var element = app.MarkedAnywhere(elementName);
 		app.WaitForElement(element);
 		return element.GetText();
 	}
@@ -185,5 +185,21 @@ public static class QueryExtensions
 	{
 		Helpers.App.FastTap(query);
 		return query;
+	}
+
+	public static FileInfo GetInAppScreenshot(this IApp app)
+	{
+		var byte64Image = app.InvokeGeneric("browser:SampleRunner|GetScreenshot", "0")?.ToString() ?? string.Empty;
+
+		var array = Convert.FromBase64String(byte64Image);
+
+		var outputFile = Path.GetTempFileName();
+		File.WriteAllBytes(outputFile, array);
+
+		var finalPath = Path.ChangeExtension(outputFile, ".png");
+
+		File.Move(outputFile, finalPath);
+
+		return new FileInfo(finalPath);
 	}
 }

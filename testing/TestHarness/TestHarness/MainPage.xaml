@@ -12,12 +12,29 @@
 			<RowDefinition Height="Auto" />
 			<RowDefinition />
 		</Grid.RowDefinitions>
-		<TextBlock AutomationProperties.AutomationId="TestHarnessMainPageTitle"
-				   Text="Test Harness"
-				   Margin="20"
-				   FontSize="30"
-				   VerticalAlignment="Top"
-				   HorizontalAlignment="Center" />
+
+		<Grid Grid.Row="0">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="*" />
+				<ColumnDefinition Width="Auto" />
+			</Grid.ColumnDefinitions>
+
+			<TextBlock AutomationProperties.AutomationId="TestHarnessMainPageTitle"
+					   Text="Test Harness"
+					   Margin="20"
+					   FontSize="30"
+					   VerticalAlignment="Top"
+					   HorizontalAlignment="Center"
+					   Grid.Column="0" />
+
+			<Button AutomationProperties.AutomationId="TestHarnessMainPageFullScreenButton"
+					Click="Button_Click"
+					Style="{StaticResource IconButtonStyle}"
+					HorizontalAlignment="Right"
+					Grid.Column="1">
+				<PathIcon Data="M18 9H16V12H13V14H18V9ZM6 6H9V4H4V9H6V6ZM20 0H2C0.9 0 0 0.9 0 2V16C0 17.1 0.9 18 2 18H20C21.1 18 22 17.1 22 16V2C22 0.9 21.1 0 20 0ZM20 16.01H2V1.99H20V16.01Z" Foreground="{ThemeResource PrimaryBrush}" />
+			</Button>
+		</Grid>
 
 		<ListView SelectionChanged="TestSectionSelectionChanged"
 				  SelectionMode="Single"

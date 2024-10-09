@@ -1,8 +1,12 @@
 
+using Microsoft.UI.Windowing;
+
 namespace TestHarness;
 
 public sealed partial class MainPage : Page
 {
+	private bool _isFullScreen = false;
+
 	public MainPage()
 	{
 		this.InitializeComponent();
@@ -42,6 +46,17 @@ public sealed partial class MainPage : Page
 			// Clear ListView selection
 			TestSectionsListView.SelectedItem = null;
 		}
+	}
+
+	private void Button_Click(object sender, RoutedEventArgs e)
+	{
+		var app = Application.Current as App;
+
+		var presenterKind = _isFullScreen ? AppWindowPresenterKind.Default : AppWindowPresenterKind.FullScreen;
+
+		_isFullScreen = !_isFullScreen;
+
+		app.Window.AppWindow.SetPresenter(presenterKind);
 	}
 }
 

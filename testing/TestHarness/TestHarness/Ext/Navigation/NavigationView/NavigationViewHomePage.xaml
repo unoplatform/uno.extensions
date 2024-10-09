@@ -17,33 +17,32 @@
 			<RowDefinition Height="Auto" />
 			<RowDefinition />
 		</Grid.RowDefinitions>
-		<utu:NavigationBar Content="NavigationView Home"
-						   AutomationProperties.AutomationId="NavigationViewHomeNavigationBar" />
-		<TextBlock Text="..."
-				   Grid.Row="1"
+		<utu:NavigationBar Content="NavigationView Home" AutomationProperties.AutomationId="NavigationViewHomeNavigationBar" />
+		<TextBlock AutomationProperties.AutomationId="CurrentNavigationViewItemTextBlock"
+				   Text="..."
+				   x:Uid="CurrentNavigationViewItemTextBlock"
 				   x:Name="CurrentNavigationViewItemText"
-				   AutomationProperties.AutomationId="CurrentNavigationViewItemTextBlock" />
+				   Grid.Row="1" />
 		<muxc:NavigationView uen:Region.Attached="true"
 							 Grid.Row="2"
 							 SelectionChanged="NavigationViewItemChanged"
 							 ItemInvoked="NavigationItemInvoked"
 							 IsSettingsVisible="True">
 			<muxc:NavigationView.MenuItems>
-				<muxc:NavigationViewItem  AutomationProperties.AutomationId="ProductsNavigationViewItem"
-										  Content="Products"
-										  uen:Region.Name="Products" />
+				<muxc:NavigationViewItem AutomationProperties.AutomationId="ProductsNavigationViewItem"
+										 Content="Products"
+										 uen:Region.Name="Products" />
 				<muxc:NavigationViewItem AutomationProperties.AutomationId="DealsNavigationViewItem"
 										 Content="Deals"
 										 uen:Region.Name="Deals" />
-				</muxc:NavigationView.MenuItems>
+			</muxc:NavigationView.MenuItems>
 			<muxc:NavigationView.FooterMenuItems>
 
 				<muxc:NavigationViewItem AutomationProperties.AutomationId="ProfileNavigationViewItem"
 										 Content="Profile"
 										 uen:Region.Name="Profile" />
 			</muxc:NavigationView.FooterMenuItems>
-			<Grid uen:Region.Attached="True"
-				  uen:Region.Navigator="Visibility">
+			<Grid uen:Region.Attached="True" uen:Region.Navigator="Visibility">
 				<StackPanel uen:Region.Name="Products"
 							AutomationProperties.AutomationId="ProductsStackPanel"
 							Visibility="Collapsed">

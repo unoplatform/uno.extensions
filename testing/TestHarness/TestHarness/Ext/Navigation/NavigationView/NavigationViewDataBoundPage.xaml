@@ -17,19 +17,16 @@
 			<RowDefinition Height="Auto" />
 			<RowDefinition />
 		</Grid.RowDefinitions>
-		<utu:NavigationBar Content="NavigationView DataBound"
-						   AutomationProperties.AutomationId="NavigationViewDataBoundNavigationBar" />
-		<TextBlock Text="..."
-				   Grid.Row="1"
+		<utu:NavigationBar Content="NavigationView DataBound" AutomationProperties.AutomationId="NavigationViewDataBoundNavigationBar" />
+		<TextBlock AutomationProperties.AutomationId="CurrentNavigationViewItemTextBlock"
+				   x:Uid="CurrentNavigationViewItemTextBlock"
 				   x:Name="CurrentNavigationViewItemText"
-				   AutomationProperties.AutomationId="CurrentNavigationViewItemTextBlock" />
+				   Text="..."
+				   Grid.Row="1" />
 		<StackPanel Orientation="Horizontal">
-			<Button Content="Profile"
-					Click="{x:Bind ViewModel.SelectProfile}" />
-			<Button Content="Deals"
-					Click="{x:Bind ViewModel.SelectDeals}" />
-			<Button Content="Products"
-					Click="{x:Bind ViewModel.SelectProducts}" />
+			<Button Content="Profile" Click="{x:Bind ViewModel.SelectProfile}" />
+			<Button Content="Deals" Click="{x:Bind ViewModel.SelectDeals}" />
+			<Button Content="Products" Click="{x:Bind ViewModel.SelectProducts}" />
 		</StackPanel>
 		<muxc:NavigationView uen:Region.Attached="true"
 							 Grid.Row="3"
@@ -61,8 +58,7 @@
 										 Content="Profile"
 										 uen:Region.Name="Profile" />
 			</muxc:NavigationView.MenuItems>-->
-			<Grid uen:Region.Attached="True"
-				  uen:Region.Navigator="Visibility">
+			<Grid uen:Region.Attached="True" uen:Region.Navigator="Visibility">
 				<StackPanel uen:Region.Name="Products"
 							AutomationProperties.AutomationId="ProductsStackPanel"
 							Visibility="Collapsed">

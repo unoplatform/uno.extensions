@@ -1,38 +1,34 @@
 jobs:
-- job: Wasm_UITests
-  displayName: 'UI Tests - WebAssembly'
-  container: unoplatform/wasm-build:3.0
+- job: Android_Tests
+  displayName: 'Android UI Tests'
+  timeoutInMinutes: 90
+  variables:
+    CI_Build: true
+    SourceLinkEnabled: false
 
   pool:
-    vmImage: 'ubuntu-20.04'
-
-  variables:
-    NUGET_PACKAGES: $(build.sourcesdirectory)/.nuget
+    vmImage: 'macos-14'
 
   steps:
   - checkout: self
     clean: true
 
-  - template: templates/dotnet-install.yml
-
+  - template: templates/dotnet-install-mac.yml
   - template: templates/canary-updater.yml
-  
-  - task: NodeTool@0
-    inputs:
-      versionSpec: '18.x'
 
   - bash: |
-      chmod +x build/ci/scripts/wasm-uitest-run.sh
-      build/ci/scripts/wasm-uitest-run.sh
+      chmod +x $(build.sourcesdirectory)/build/ci/scripts/android-uitest-run.sh
+      $(build.sourcesdirectory)/build/ci/scripts/android-uitest-run.sh
+    displayName: Build and Run Android Tests
     env:
       BUILD_SOURCESDIRECTORY: "$(build.sourcesdirectory)"
       BUILD_ARTIFACTSTAGINGDIRECTORY: "$(build.artifactstagingdirectory)"
-    displayName: 'Running build'
 
   - task: PublishTestResults@2
     condition: always()
+    retryCountOnTaskFailure: 2
     inputs:
-      testRunTitle: 'WebAssembly Test Run'
+      testRunTitle: 'Android Test Run'
       testResultsFormat: 'NUnit'
       testResultsFiles: '$(build.sourcesdirectory)/build/TestResult.xml'
       failTaskOnFailedTests: true
@@ -40,6 +36,7 @@ jobs:
 
   - task: PublishBuildArtifacts@1
     condition: always()
+    retryCountOnTaskFailure: 2
     inputs:
       PathtoPublish: $(build.artifactstagingdirectory)
       ArtifactName: uno-uitest-tests

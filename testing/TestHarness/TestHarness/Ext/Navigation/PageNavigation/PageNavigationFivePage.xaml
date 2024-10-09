@@ -1,10 +1,9 @@
-﻿<Page
-    x:Class="TestHarness.Ext.Navigation.PageNavigation.PageNavigationFivePage"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:TestHarness.Ext.Navigation.PageNavigation"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+﻿<Page x:Class="TestHarness.Ext.Navigation.PageNavigation.PageNavigationFivePage"
+	  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	  xmlns:local="using:TestHarness.Ext.Navigation.PageNavigation"
+	  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	  mc:Ignorable="d"
 	  xmlns:utu="using:Uno.Toolkit.UI"
 	  xmlns:uen="using:Uno.Extensions.Navigation.UI"
@@ -15,61 +14,109 @@
 			<RowDefinition Height="Auto" />
 			<RowDefinition />
 		</Grid.RowDefinitions>
-		<utu:NavigationBar Content="Page Navigation - Five"
-						   AutomationProperties.AutomationId="PageNavigationFive" />
+		<utu:NavigationBar Content="Page Navigation - Five" AutomationProperties.AutomationId="PageNavigationFive" />
 		<StackPanel HorizontalAlignment="Center"
 					VerticalAlignment="Center"
 					Grid.Row="1">
 			<TextBlock>
-	<Run Text="Created on UI Thread: " /><Run Text="{Binding CreatedOnUIThread}" />
+				<Run Text="Created on UI Thread: " /><Run Text="{Binding CreatedOnUIThread}" />
 			</TextBlock>
-			<Button AutomationProperties.AutomationId="FivePageBackButton"
-					Content="Back"
-					uen:Navigation.Request="-" />
-			<Button AutomationProperties.AutomationId="FivePageBackCodebehindButton"
-					Content="Back (Codebehind)"
-					Click="FivePageBackCodebehindClick" />
-			<Button AutomationProperties.AutomationId="FivePageBackViewModelButton"
-					Content="Back (ViewModel)"
-					Click="{x:Bind ViewModel.GoBack}" />
-			<Button AutomationProperties.AutomationId="FivePageToSixPageButton"
-					Content="Six"
-					uen:Navigation.Request="PageNavigationSix" />
-			<Button AutomationProperties.AutomationId="FivePageToSevenPageButton"
-					Content="Seven"
-					uen:Navigation.Request="PageNavigationSeven" />
-			<Button AutomationProperties.AutomationId="FivePageToEightPageButton"
-					Content="Eight"
-					uen:Navigation.Request="PageNavigationEight" />
-			<Button AutomationProperties.AutomationId="FivePageToNinePageButton"
-					Content="Nine"
-					uen:Navigation.Request="PageNavigationNine" />
-			<Button AutomationProperties.AutomationId="FivePageToTenPageButton"
-					Content="Ten"
-					uen:Navigation.Request="PageNavigationTen" />
-			<Button AutomationProperties.AutomationId="FivePageRootPageButton"
-					Content="/ (will navigate to Second (default) with One in backstack)"
-					uen:Navigation.Request="/" />
-			<Button AutomationProperties.AutomationId="FivePageRootOnePageButton"
-					Content="/One (will clear to One)"
-					uen:Navigation.Request="/PageNavigationOne" />
-			<Button AutomationProperties.AutomationId="FivePageRootThreePageButton"
-					Content="/Three (will navigate to Third with One and Two in backstack)"
-					uen:Navigation.Request="/PageNavigationThree" />
-			<Button AutomationProperties.AutomationId="FivePageRootOneFourPageButton"
-					Content="/One/Four (will navigate to Four with One in backstack)"
-					uen:Navigation.Request="/PageNavigationOne/PageNavigationFour" />
-			<Button AutomationProperties.AutomationId="FivePageRootThreeSevenClearPageButton"
-					Content="-/Three/Seven (will navigate to Seven with Six and Three in backstack)"
-					uen:Navigation.Request="-/PageNavigationThree/PageNavigationSeven" />
+
+			<Grid>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="*" />
+					<ColumnDefinition Width="*" />
+				</Grid.ColumnDefinitions>
+				<Grid.RowDefinitions>
+					<!--  8 Rows, as there are 16 buttons  -->
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+				</Grid.RowDefinitions>
+
+				<Button Grid.Row="0"
+						Grid.Column="0"
+						AutomationProperties.AutomationId="FivePageBackButton"
+						Content="Back"
+						uen:Navigation.Request="-" />
+				<Button Grid.Row="0"
+						Grid.Column="1"
+						AutomationProperties.AutomationId="FivePageBackCodebehindButton"
+						Content="Back (Codebehind)"
+						Click="FivePageBackCodebehindClick" />
+				<Button Grid.Row="1"
+						Grid.Column="0"
+						AutomationProperties.AutomationId="FivePageBackViewModelButton"
+						Content="Back (ViewModel)"
+						Click="{x:Bind ViewModel.GoBack}" />
+				<Button Grid.Row="1"
+						Grid.Column="1"
+						AutomationProperties.AutomationId="FivePageToSixPageButton"
+						Content="Six"
+						uen:Navigation.Request="PageNavigationSix" />
+				<Button Grid.Row="2"
+						Grid.Column="0"
+						AutomationProperties.AutomationId="FivePageToSevenPageButton"
+						Content="Seven"
+						uen:Navigation.Request="PageNavigationSeven" />
+				<Button Grid.Row="2"
+						Grid.Column="1"
+						AutomationProperties.AutomationId="FivePageToEightPageButton"
+						Content="Eight"
+						uen:Navigation.Request="PageNavigationEight" />
+				<Button Grid.Row="3"
+						Grid.Column="0"
+						AutomationProperties.AutomationId="FivePageToNinePageButton"
+						Content="Nine"
+						uen:Navigation.Request="PageNavigationNine" />
+				<Button Grid.Row="3"
+						Grid.Column="1"
+						AutomationProperties.AutomationId="FivePageToTenPageButton"
+						Content="Ten"
+						uen:Navigation.Request="PageNavigationTen" />
+				<Button Grid.Row="4"
+						Grid.Column="0"
+						AutomationProperties.AutomationId="FivePageRootPageButton"
+						Content="/ (will navigate to Second (default) with One in backstack)"
+						uen:Navigation.Request="/" />
+				<Button Grid.Row="4"
+						Grid.Column="1"
+						AutomationProperties.AutomationId="FivePageRootOnePageButton"
+						Content="/One (will clear to One)"
+						uen:Navigation.Request="/PageNavigationOne" />
+				<Button Grid.Row="5"
+						Grid.Column="0"
+						AutomationProperties.AutomationId="FivePageRootThreePageButton"
+						Content="/Three (will navigate to Third with One and Two in backstack)"
+						uen:Navigation.Request="/PageNavigationThree" />
+				<Button Grid.Row="5"
+						Grid.Column="1"
+						AutomationProperties.AutomationId="FivePageRootOneFourPageButton"
+						Content="/One/Four (will navigate to Four with One in backstack)"
+						uen:Navigation.Request="/PageNavigationOne/PageNavigationFour" />
+				<Button Grid.Row="6"
+						Grid.Column="0"
+						AutomationProperties.AutomationId="FivePageRootThreeSevenClearPageButton"
+						Content="-/Three/Seven (will navigate to Seven with Six and Three in backstack)"
+						uen:Navigation.Request="-/PageNavigationThree/PageNavigationSeven" />
 
 
-			<Button AutomationProperties.AutomationId="FivePageToSixPageViewModelWithDataButton"
-					Content="Six (ViewModel - With Data)"
-					Click="{x:Bind ViewModel.GoToSixWithData}" />
-			<Button AutomationProperties.AutomationId="FivePageToSixPageViewModelWithDataAndBackButton"
-					Content="Six (ViewModel - With Data and Back)"
-					Click="{x:Bind ViewModel.GoToSixWithDataAndBack}" />
+				<Button Grid.Row="6"
+						Grid.Column="1"
+						AutomationProperties.AutomationId="FivePageToSixPageViewModelWithDataButton"
+						Content="Six (ViewModel - With Data)"
+						Click="{x:Bind ViewModel.GoToSixWithData}" />
+				<Button Grid.Row="7"
+						Grid.Column="0"
+						AutomationProperties.AutomationId="FivePageToSixPageViewModelWithDataAndBackButton"
+						Content="Six (ViewModel - With Data and Back)"
+						Click="{x:Bind ViewModel.GoToSixWithDataAndBack}" />
+			</Grid>
 		</StackPanel>
 	</Grid>
 </Page>

@@ -1,4 +1,5 @@
 using Uno.Extensions.Diagnostics;
+using Windows.Graphics.Display;
 
 namespace TestHarness;
 public partial class App : Application
@@ -46,6 +47,11 @@ public partial class App : Application
 
 		var rootFrame = _window.Content as TestFrameHost;
 
+#if __IOS__ && USE_UITESTS && !__MACCATALYST__
+		// requires Xamarin Test Cloud Agent
+		Xamarin.Calabash.Start();
+#endif
+
 		// Do not repeat app initialization when the Window already has content,
 		// just ensure that the window is active
 		if (rootFrame == null)
@@ -62,4 +68,8 @@ public partial class App : Application
 		}
 		_window.Activate();
 	}
+
+#if USE_UITESTS
+	public static string GetDisplayScreenScaling(string value) => (DisplayInformation.GetForCurrentView().LogicalDpi * 100f / 96f).ToString(CultureInfo.InvariantCulture);
+#endif
 }

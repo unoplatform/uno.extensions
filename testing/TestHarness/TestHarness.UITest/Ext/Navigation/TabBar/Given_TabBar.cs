@@ -55,26 +55,24 @@ public class Given_TabBar : NavigationTestBase
 	private void CheckProductsVisible()
 	{
 		App.WaitElement("ProductsDealsButton");
-		var text = App.Marked("CurrentTabBarItemTextBlock").GetText();
-		text.Should().Be("Products");
-		var isVisible = App.Marked("ProductsStackPanel").IsVisible();
+		App.WaitForText("CurrentTabBarItemTextBlock", "Products");
+		var isVisible = App.MarkedAnywhere("ProductsStackPanel").IsVisible();
 		isVisible.Should().Be(true);
-		isVisible = App.Marked("DealsStackPanel").IsVisible();
+		isVisible = App.MarkedAnywhere("DealsStackPanel").IsVisible();
 		isVisible.Should().Be(false);
-		isVisible = App.Marked("ProfileStackPanel").IsVisible();
+		isVisible = App.MarkedAnywhere("ProfileStackPanel").IsVisible();
 		isVisible.Should().Be(false);
 	}
 
 	private void CheckDealsVisible()
 	{
 		App.WaitElement("DealsProductsButton");
-		var text = App.Marked("CurrentTabBarItemTextBlock").GetText();
-		text.Should().Be("Deals");
-		var isVisible = App.Marked("ProductsStackPanel").IsVisible();
+		App.WaitForText("CurrentTabBarItemTextBlock", "Deals");
+		var isVisible = App.MarkedAnywhere("ProductsStackPanel").IsVisible();
 		isVisible.Should().Be(false);
-		isVisible = App.Marked("DealsStackPanel").IsVisible();
+		isVisible = App.MarkedAnywhere("DealsStackPanel").IsVisible();
 		isVisible.Should().Be(true);
-		isVisible = App.Marked("ProfileStackPanel").IsVisible();
+		isVisible = App.MarkedAnywhere("ProfileStackPanel").IsVisible();
 		isVisible.Should().Be(false);
 
 	}
@@ -83,13 +81,12 @@ public class Given_TabBar : NavigationTestBase
 	private void CheckProfileVisible()
 	{
 		App.WaitElement("ProfileProductsButton");
-		var text = App.Marked("CurrentTabBarItemTextBlock").GetText();
-		text.Should().Be("Profile");
-		var isVisible = App.Marked("ProductsStackPanel").IsVisible();
+		App.WaitForText("CurrentTabBarItemTextBlock", "Profile");
+		var isVisible = App.MarkedAnywhere("ProductsStackPanel").IsVisible();
 		isVisible.Should().Be(false);
-		isVisible = App.Marked("DealsStackPanel").IsVisible();
+		isVisible = App.MarkedAnywhere("DealsStackPanel").IsVisible();
 		isVisible.Should().Be(false);
-		isVisible = App.Marked("ProfileStackPanel").IsVisible();
+		isVisible = App.MarkedAnywhere("ProfileStackPanel").IsVisible();
 		isVisible.Should().Be(true);
 
 	}

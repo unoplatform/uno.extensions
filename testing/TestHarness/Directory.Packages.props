@@ -51,7 +51,7 @@
 		<PackageVersion Include="NUnit3TestAdapter" Version="4.5.0" />
 		<PackageVersion Include="NunitXml.TestLogger" Version="3.0.131" />
 		<PackageVersion Include="Xamarin.Google.Android.Material" Version="1.5.0.13" />
-		<PackageVersion Include="Xamarin.UITest" Version="4.3.4" />
+		<PackageVersion Include="Xamarin.UITest" Version="4.3.5" />
 		<PackageVersion Include="coverlet.collector" Version="6.0.2" />
 		<PackageVersion Include="System.Collections.Immutable" Version="8.0.0" />
 
@@ -59,6 +59,7 @@
 		<PackageVersion Include="System.Net.Http" Version="4.3.4" />
 		<PackageVersion Include="System.Text.RegularExpressions" Version="4.3.1" />
 		<PackageVersion Include="System.Text.Json" Version="8.0.4" />
+		<PackageVersion Include="Xamarin.TestCloud.Agent" Version="0.23.2" />
 	</ItemGroup>
 
 </Project>

@@ -91,4 +91,8 @@
 		<PackageReference Include="Uno.Extensions.Logging.OSLog" />
 	</ItemGroup>
 
+	<ItemGroup Condition="('$(Configuration)'=='Debug' or '$(IsUiAutomationMappingEnabled)'=='True') and '$(TargetFramework)'=='net8.0-ios'">
+		<PackageReference Include="Xamarin.TestCloud.Agent" />
+	</ItemGroup>
+
 </Project>
