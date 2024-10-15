@@ -1,5 +1,4 @@
-﻿using System.Collections.Frozen;
-using IdentityModel.OidcClient.Browser;
+﻿using IdentityModel.OidcClient.Browser;
 
 namespace Uno.Extensions.Authentication.Oidc;
 
@@ -20,8 +19,8 @@ internal record OidcAuthenticationProvider(
 
 		if (Settings is { AutoRedirectUri: true })
 		{
-			config.RedirectUri = WebAuthenticationBroker.GetCurrentApplicationCallbackUri().OriginalString;
-			config.PostLogoutRedirectUri = WebAuthenticationBroker.GetCurrentApplicationCallbackUri().OriginalString;
+			config.RedirectUri = config.PostLogoutRedirectUri = WebAuthenticationBroker
+				.GetCurrentApplicationCallbackUri().OriginalString;
 		}
 
 		config.Browser = Browser;
