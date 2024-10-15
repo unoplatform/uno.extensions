@@ -104,13 +104,13 @@ public static class OidcAuthenticationBuilderExtensions
 	/// </remarks>
 	public static IOidcAuthenticationBuilder AutoRedirectUriFromWebAuthenticationBroker(
 		this IOidcAuthenticationBuilder builder,
-		bool autoReturnUri = true)
+		bool autoRedirectUri = true)
 	{
 		if (builder is IBuilder<OidcAuthenticationSettings> authBuilder)
 		{
 			authBuilder.Settings = authBuilder.Settings with
 			{
-				AutoRedirectUri = autoReturnUri
+				AutoRedirectUri = autoRedirectUri
 			};
 		}
 
