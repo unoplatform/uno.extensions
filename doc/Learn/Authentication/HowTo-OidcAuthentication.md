@@ -7,7 +7,6 @@ uid: Uno.Extensions.Authentication.HowToOidcAuthentication
 
 Under the hood, `OidcAuthenticationProvider` relies on [IdentityModel.OidcClient](https://identitymodel.readthedocs.io/), a widely-used .NET library that handles the core OpenID Connect and OAuth 2.0 protocols. This library manages the complex operations like token handling and user authentication.
 
-
 > [!NOTE]
 > It may be useful to familiarize yourself with the [OpenID Connect](https://openid.net/connect/) protocol before proceeding.
 > You can also explore the [Uno Tutorial for Oidc Authentication](xref:Uno.Tutorials.OpenIDConnect) to learn more about the particularities for different platforms.
@@ -96,6 +95,7 @@ Under the hood, `OidcAuthenticationProvider` relies on [IdentityModel.OidcClient
       }
   }
   ```
+
   > Common scopes include `openid`, `profile`, `email`, and `offline_access`. The `openid` scope is required for OpenID Connect authentication. The `profile` and `email` scopes are used to request additional user information, and the `offline_access` scope is used to request a refresh token. Your identity provider may provide additional scopes, such as `api`, to request access to specific APIs.
 
 - `Authority`: The URL of the identity provider.
@@ -171,6 +171,7 @@ Under the hood, `OidcAuthenticationProvider` relies on [IdentityModel.OidcClient
 ## Advanced Customizations
 
 - You can use your own implementation of `IBrowser` (an interface from the `IdentityModel.OidcClient` library) to customize the browser behavior. This should be done by creating a class that implements the interface and register it using the `.ConfigureServices()` in the `App.xaml.cs` file.
+
   ```csharp
     .ConfigureServices((context, services) =>
     {
