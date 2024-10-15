@@ -47,6 +47,9 @@ new Grid()
                 ))));
 ```
 
+> [!IMPORTANT]  
+> When you use `StateTriggers`, ensure that the `VisualStateGroup` is declared under the first child of the root of a templated control in order for the triggers to take effect automatically. See [WinUI documentation](https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.visualstate#remarks) for more information.
+
 ## Next Steps
 
 - [Storyboards](xref:Uno.Extensions.Markup.Storyboards)
