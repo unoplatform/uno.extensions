@@ -22,7 +22,7 @@ public static class OidcAuthenticationBuilderExtensions
 	public static IOidcAuthenticationBuilder Authority(
 		this IOidcAuthenticationBuilder builder,
 		string authority)
-		=> builder.UpdateOidcClientOptions(options => options.Authority = authority);
+		=> builder.ConfigureOidcClientOptions(options => options.Authority = authority);
 
 	/// <summary>
 	/// Configures the OIDC authentication feature to be built with the specified client ID.
@@ -39,7 +39,7 @@ public static class OidcAuthenticationBuilderExtensions
 	public static IOidcAuthenticationBuilder ClientId(
 		this IOidcAuthenticationBuilder builder,
 		string clientId)
-		=> builder.UpdateOidcClientOptions(options => options.ClientId = clientId);
+		=> builder.ConfigureOidcClientOptions(options => options.ClientId = clientId);
 
 	/// <summary>
 	/// Configures the OIDC authentication feature to be built with the specified client secret.
@@ -56,7 +56,7 @@ public static class OidcAuthenticationBuilderExtensions
 	public static IOidcAuthenticationBuilder ClientSecret(
 		this IOidcAuthenticationBuilder builder,
 		string clientSecret)
-		=> builder.UpdateOidcClientOptions(options => options.ClientSecret = clientSecret);
+		=> builder.ConfigureOidcClientOptions(options => options.ClientSecret = clientSecret);
 
 	/// <summary>
 	/// Configures the OIDC authentication feature to be built with the specified scope.
@@ -73,7 +73,7 @@ public static class OidcAuthenticationBuilderExtensions
 	public static IOidcAuthenticationBuilder Scope(
 		this IOidcAuthenticationBuilder builder,
 		string scope)
-		=> builder.UpdateOidcClientOptions(options => options.Scope = scope);
+		=> builder.ConfigureOidcClientOptions(options => options.Scope = scope);
 
 	/// <summary>
 	/// Configures the OIDC authentication feature to be built with the specified redirect URI.
@@ -90,7 +90,32 @@ public static class OidcAuthenticationBuilderExtensions
 	public static IOidcAuthenticationBuilder RedirectUri(
 		this IOidcAuthenticationBuilder builder,
 		string redirectUri)
-		=> builder.UpdateOidcClientOptions(options => options.RedirectUri = redirectUri);
+		=> builder.ConfigureOidcClientOptions(options => options.RedirectUri = redirectUri);
+
+	/// <summary>
+	/// Let the OidcAuthenticationProvider automatically set the redirect URI to the automatically discovered one from the WebAuthenticationBroker.
+	/// </summary>
+	/// <remarks>
+	/// This feature will use the <see cref="WebAuthenticationBroker.GetCurrentApplicationCallbackUri"/> to set the redirect URI, which is usually discovered automatically by the implementation of the WebAuthenticationBroker (which can be customized).
+	/// More information: <see href="https://platform.uno/docs/articles/features/web-authentication-broker.html">Uno Web Authentication Broker Documentation</see>.
+	///
+	/// > ![IMPORTANT]
+	/// > When this setting is set, the <see cref="OidcClientOptions.RedirectUri"/> and <see cref="OidcClientOptions.PostLogoutRedirectUri"/> settings will be overridden with the value from the WebAuthenticationBroker.
+	/// </remarks>
+	public static IOidcAuthenticationBuilder AutoRedirectUriFromWebAuthenticationBroker(
+		this IOidcAuthenticationBuilder builder,
+		bool autoReturnUri = true)
+	{
+		if (builder is IBuilder<OidcAuthenticationSettings> authBuilder)
+		{
+			authBuilder.Settings = authBuilder.Settings with
+			{
+				AutoRedirectUri = autoReturnUri
+			};
+		}
+
+		return builder;
+	}
 
 	/// <summary>
 	/// Configures the OIDC authentication feature to be built with the specified post-logout redirect URI.
@@ -107,17 +132,17 @@ public static class OidcAuthenticationBuilderExtensions
 	public static IOidcAuthenticationBuilder PostLogoutRedirectUri(
 		this IOidcAuthenticationBuilder builder,
 		string postLogoutRedirectUri)
-		=> builder.UpdateOidcClientOptions(options => options.PostLogoutRedirectUri = postLogoutRedirectUri);
+		=> builder.ConfigureOidcClientOptions(options => options.PostLogoutRedirectUri = postLogoutRedirectUri);
 
 	// Add an advanced builder allowing to tweak the options directly
 	/// <summary>
 	/// Configures the OIDC authentication feature by updating directly the <see cref="OidcClientOptions"/> parameter.
 	/// </summary>
 	/// <remarks>
-	/// A 
+	/// A
 	/// </remarks>
 	[EditorBrowsable(EditorBrowsableState.Advanced)]
-	public static IOidcAuthenticationBuilder UpdateOidcClientOptions(
+	public static IOidcAuthenticationBuilder ConfigureOidcClientOptions(
 		this IOidcAuthenticationBuilder builder,
 		Action<OidcClientOptions> updater)
 	{
