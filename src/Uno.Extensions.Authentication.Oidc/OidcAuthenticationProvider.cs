@@ -17,23 +17,31 @@ internal record OidcAuthenticationProvider(
 	{
 		var config = Settings?.Options ?? Configuration.Get(Name) ?? new OidcClientOptions();
 
-		if (PlatformHelper.IsWebAssembly)
+		if (Settings is { AutoRedirectUri: true })
 		{
-			config.RedirectUri = WebAuthenticationBroker.GetCurrentApplicationCallbackUri().OriginalString;
-			config.PostLogoutRedirectUri = WebAuthenticationBroker.GetCurrentApplicationCallbackUri().OriginalString;
+			config.RedirectUri = config.PostLogoutRedirectUri = WebAuthenticationBroker
+				.GetCurrentApplicationCallbackUri().OriginalString;
 		}
+
 		config.Browser = Browser;
 		_client = new OidcClient(config);
 	}
 
-	protected async override ValueTask<IDictionary<string, string>?> InternalLoginAsync(IDispatcher? dispatcher, IDictionary<string, string>? credentials, CancellationToken cancellationToken)
+	protected override async ValueTask<IDictionary<string, string>?> InternalLoginAsync(IDispatcher? dispatcher, IDictionary<string, string>? credentials, CancellationToken cancellationToken)
 	{
 		if (_client is null)
 		{
+			ProviderLogger.LogError("Client is not initialized.");
 			return default;
 		}
 
-		var authenticationResult = await _client.LoginAsync();
+		var authenticationResult = await _client.LoginAsync(cancellationToken: cancellationToken);
+
+		if(authenticationResult.IsError)
+		{
+			ProviderLogger.LogError("Error logging in: {Error} - {ErrorDescription}", authenticationResult.Error, authenticationResult.ErrorDescription);
+			return default;
+		}
 
 		var token = authenticationResult.AccessToken;
 		var refreshToken = authenticationResult.RefreshToken;
