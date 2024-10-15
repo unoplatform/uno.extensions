@@ -59,46 +59,23 @@ internal class LocalizationService : IServiceInitialize, ILocalizationService, I
 		}
 	}
 
-	private static bool overrideSupported =
-#if !__WINDOWS__
-		true;
-#else
-		PlatformHelper.IsAppPackaged;
-#endif
 	private string? PrimaryLanguageOverride
 	{
 		get
 		{
-			if (!overrideSupported)
-			{
-				return default;
-			}
-			try
-			{
-				return ApplicationLanguages.PrimaryLanguageOverride;
-			}
-			catch (InvalidOperationException)
-			{
-				// This exception is raised on WinUI when unpackaged
-				overrideSupported = false;
-				return default;
-			}
+#if WINDOWS
+			return Microsoft.Windows.Globalization.ApplicationLanguages.PrimaryLanguageOverride;
+#else
+			return ApplicationLanguages.PrimaryLanguageOverride;
+#endif
 		}
 		set
 		{
-			if (!overrideSupported)
-			{
-				return;
-			}
-			try
-			{
-				ApplicationLanguages.PrimaryLanguageOverride = value;
-			}
-			catch (InvalidOperationException)
-			{
-				// This exception is raised on WinUI when unpackaged
-				overrideSupported = false;
-			}
+#if WINDOWS
+			Microsoft.Windows.Globalization.ApplicationLanguages.PrimaryLanguageOverride = value;
+#else
+			ApplicationLanguages.PrimaryLanguageOverride = value;	
+#endif
 		}
 	}
 

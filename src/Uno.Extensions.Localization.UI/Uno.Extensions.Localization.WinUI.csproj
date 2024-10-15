@@ -10,6 +10,8 @@
 
 		<UnoSingleProject>true</UnoSingleProject>
 		<OutputType>Library</OutputType>
+
+		<WinAppSdkVersion>1.6.240923002</WinAppSdkVersion>
 	</PropertyGroup>
 
 	<ItemGroup>
