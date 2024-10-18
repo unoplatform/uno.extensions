@@ -3,7 +3,13 @@ uid: Uno.Extensions.Authentication.HowToOidcAuthentication
 ---
 # How-To: Get Started with Oidc Authentication
 
-`OidcAuthenticationProvider` allows your users to sign in using their identities from a participating identity provider. It can wrap support for any [OpenID Connect](https://openid.net/connect/) backend, such as [IdentityServer](https://duendesoftware.com/products/identityserver) into an implementation of `IAuthenticationProvider`. This tutorial will use the OIDC authorization to validate user credentials.
+`OidcAuthenticationProvider` is a specific implementation of `IAuthenticationProvider` that allows your users to sign in using their identities from a participating identity provider. It provides seamless integration with any [OpenID Connect](https://openid.net/connect/) backend, such as [IdentityServer](https://duendesoftware.com/products/identityserver). By acting as an adapter, it integrates OpenID Connect authentication into the Uno.Extensions ecosystem, allowing you to leverage a unified approach across platforms.
+
+Under the hood, `OidcAuthenticationProvider` relies on [IdentityModel.OidcClient](https://identitymodel.readthedocs.io/), a widely-used .NET library that handles the core OpenID Connect and OAuth 2.0 protocols. This library manages the complex operations like token handling and user authentication.
+
+> [!NOTE]
+> It may be useful to familiarize yourself with the [OpenID Connect](https://openid.net/connect/) protocol before proceeding.
+> You can also explore the [Uno Tutorial for Oidc Authentication](xref:Uno.Tutorials.OpenIDConnect) to learn more about the particularities for different platforms.
 
 ## Step-by-step
 
@@ -78,17 +84,19 @@ uid: Uno.Extensions.Authentication.HowToOidcAuthentication
 
 - We will use the default section name `Oidc` in this example:
 
-    ```json
-    {
-        "Oidc": {
-            "Authority": "https://demo.duendesoftware.com/",
-            "ClientId": "interactive.confidential",
-            "ClientSecret": "secret",
-            "Scope": "openid profile email api offline_access",
-            "RedirectUri": "oidc-auth://callback",
-        }
-    }
-    ```
+  ```json
+  {
+      "Oidc": {
+          "Authority": "https://demo.duendesoftware.com/",
+          "ClientId": "interactive.confidential",
+          "ClientSecret": "secret",
+          "Scope": "openid profile email api offline_access",
+          "RedirectUri": "oidc-auth://callback",
+      }
+  }
+  ```
+
+  > Common scopes include `openid`, `profile`, `email`, and `offline_access`. The `openid` scope is required for OpenID Connect authentication. The `profile` and `email` scopes are used to request additional user information, and the `offline_access` scope is used to request a refresh token. Your identity provider may provide additional scopes, such as `api`, to request access to specific APIs.
 
 - `Authority`: The URL of the identity provider.
 
@@ -97,6 +105,23 @@ uid: Uno.Extensions.Authentication.HowToOidcAuthentication
 - `Scope`: The scope of the access token.
 
 - `RedirectUri`: The URL that the identity provider will redirect to after the user has authenticated.
+  > It is also possible to populate this setting automatically from the WebAuthenticationBroker using the `.AutoRedirectUriFromAuthenticationBroker()` extension method, which will set the redirect URI to the value returned by the `WebAuthenticationBroker.GetCurrentApplicationCallbackUri()` method, which should discover the correct redirect URI for the application/platform. More information can be found in the [Web Authentication Broker documentation](xref:Uno.Features.WAB).
+  >
+  > When used, this setting will override the value set in the configuration file for both the redirect URI and the post-logout redirect URI.
+  > **This setting is ON by default on WebAssembly but opt-in on other platforms.**
+
+- **Advanced settings**: some advanced settings may need to access directly the `OidcClientOptions` from `IdentityModel.OidcClient` used by this extension. This can be done by using the `.ConfigureOidcClientOptions()` extension method.
+
+    ```csharp
+    builder.AddOidc()
+        .ConfigureOidcClientOptions(options =>
+        {
+            // Example of advanced settings for the OidcClientOptions
+            options.DisablePushedAuthorization  = false; // Disable the PAR endpoint
+            options.Policy.RequireIdentityTokenOnRefreshTokenResponse = true; // Require an identity token on refresh token response
+            options.Policy.Discovery.ValidateIssuerName = false; // Disable issuer name validation
+        });
+    ```
 
 ### 4. Use the provider in your application
 
@@ -142,3 +167,15 @@ uid: Uno.Extensions.Authentication.HowToOidcAuthentication
 - Finally, we can pass the login credentials to the `LoginAsync()` method and authenticate with the identity provider. The user will be prompted to sign in to their account when they tap the button in the application.
 
 - `OidcAuthenticationProvider` will then store the user's access token in credential storage. The token will be automatically refreshed when it expires.
+
+## Advanced Customizations
+
+- You can use your own implementation of `IBrowser` (an interface from the `IdentityModel.OidcClient` library) to customize the browser behavior. This should be done by creating a class that implements the interface and register it using the `.ConfigureServices()` in the `App.xaml.cs` file.
+
+  ```csharp
+    .ConfigureServices((context, services) =>
+    {
+        services.AddTransient<IBrowser, CustomBrowser>();
+    })
+
+  ```
