@@ -19,7 +19,11 @@ internal record ApplicationBuilder(Application App, LaunchActivatedEventArgs Arg
 
 	public IHost Build()
 	{
-		var builder = UnoHost.CreateDefaultBuilder(ApplicationAssembly, Environment.GetCommandLineArgs());
+		var builder = UnoHost.CreateDefaultBuilder(
+  			ApplicationAssembly, 
+  			// Skip the first argument which contains the executable path that causes
+  			// issues in the CommandLine parser.
+	 		Environment.GetCommandLineArgs().Skip(1).ToArray());
 		foreach (var del in _delegates)
 		{
 			del(builder);
