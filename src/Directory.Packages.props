@@ -36,8 +36,8 @@
     <PackageVersion Include="Microsoft.UI.Xaml" Version="2.7.1" />
     <PackageVersion Include="Microsoft.Graphics.Win2D" Version="1.2.0" />
     <PackageVersion Include="Moq" Version="4.17.2" />
-    <PackageVersion Include="Refit" Version="6.3.2" />
-    <PackageVersion Include="Refit.HttpClientFactory" Version="6.3.2" />
+    <PackageVersion Include="Refit" Version="7.2.22" />
+    <PackageVersion Include="Refit.HttpClientFactory" Version="7.2.22" />
     <PackageVersion Include="Serilog.Extensions.Hosting" Version="4.2.0" />
     <PackageVersion Include="Serilog.Settings.Configuration" Version="3.3.0" />
     <PackageVersion Include="Serilog.Sinks.Console" Version="4.0.1" />

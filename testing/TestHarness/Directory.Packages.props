@@ -23,8 +23,8 @@
 		<PackageVersion Include="Microsoft.WindowsAppSDK" Version="1.5.240311000" />
 		<PackageVersion Include="Microsoft.Windows.Compatibility" Version="5.0.0" />
 		<PackageVersion Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.3233" />
-		<PackageVersion Include="Refit" Version="6.3.2" />
-		<PackageVersion Include="Refit.HttpClientFactory" Version="6.3.2" />
+		<PackageVersion Include="Refit" Version="7.2.22" />
+		<PackageVersion Include="Refit.HttpClientFactory" Version="7.2.22" />
 		<PackageVersion Include="SkiaSharp" Version="2.88.8" />
 		<PackageVersion Include="SkiaSharp.NativeAssets.Linux" Version="2.88.8" />
 		<PackageVersion Include="SkiaSharp.HarfBuzz" Version="2.88.8" />

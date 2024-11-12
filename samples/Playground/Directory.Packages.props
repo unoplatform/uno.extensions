@@ -6,8 +6,8 @@
 		<PackageVersion Include="Microsoft.Extensions.Logging.Debug" Version="8.0.0" />
 		<PackageVersion Include="Microsoft.Net.Compilers.Toolset" Version="4.2.0" />
 		<PackageVersion Include="Microsoft.Windows.Compatibility" Version="7.0.3" />
-		<PackageVersion Include="Refit" Version="6.3.2" />
-		<PackageVersion Include="Refit.HttpClientFactory" Version="6.3.2" />
+		<PackageVersion Include="Refit" Version="7.2.22" />
+		<PackageVersion Include="Refit.HttpClientFactory" Version="7.2.22" />
 		<PackageVersion Include="SkiaSharp.Views" Version="2.88.7" />
 		<PackageVersion Include="SkiaSharp.Views.Uno.WinUI" Version="2.88.7" />
 		<PackageVersion Include="SkiaSharp.Skottie" Version="2.88.7" />
