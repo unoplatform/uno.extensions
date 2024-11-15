@@ -9,5 +9,5 @@ public class SimpleAuthenticationToken : IAuthenticationTokenProvider
 	public string? AccessToken { get; set; }
 
 	/// <inheritdoc />
-	public Task<string> GetAccessToken() => Task.FromResult(AccessToken ?? string.Empty);
+	public Task<string> GetAccessToken(HttpRequestMessage? requestMessage = default, CancellationToken cancellationToken = default) => Task.FromResult(AccessToken ?? string.Empty);
 }
