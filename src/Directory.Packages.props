@@ -38,15 +38,15 @@
 		<PackageVersion Include="Microsoft.UI.Xaml" Version="2.7.1" />
 		<PackageVersion Include="Microsoft.Graphics.Win2D" Version="1.2.0" />
 		<PackageVersion Include="Moq" Version="4.17.2" />
-		<PackageVersion Include="Refit" Version="6.3.2" />
-		<PackageVersion Include="Refit.HttpClientFactory" Version="6.3.2" />
+		<PackageVersion Include="Refit" Version="7.2.22" />
+		<PackageVersion Include="Refit.HttpClientFactory" Version="7.2.22" />
 		<PackageVersion Include="Serilog.Extensions.Hosting" Version="4.2.0" />
 		<PackageVersion Include="Serilog.Settings.Configuration" Version="3.3.0" />
 		<PackageVersion Include="Serilog.Sinks.Console" Version="4.0.1" />
 		<PackageVersion Include="Serilog.Sinks.Debug" Version="2.0.0" />
 		<PackageVersion Include="Serilog.Sinks.File" Version="5.0.0" />
 		<PackageVersion Include="Serilog.Sinks.Xamarin" Version="1.0.0" />
-		<PackageVersion Include="System.Collections.Immutable" Version="8.0.0" /> 
+		<PackageVersion Include="System.Collections.Immutable" Version="8.0.0" />
 		<PackageVersion Include="System.Linq.Async" Version="4.0.0" />
 		<PackageVersion Include="System.Net.Http.WinHttpHandler" Version="6.0.1" />
 		<PackageVersion Include="System.Text.Json" Version="8.0.5" />
@@ -54,8 +54,8 @@
 		<PackageVersion Include="Uno.Core" Version="4.1.1" />
 		<PackageVersion Include="Uno.Core.Extensions" Version="4.1.1" />
 		<PackageVersion Include="Uno.Core.Extensions.Collections" Version="4.1.1" />
-		<PackageVersion Include="Uno.Core.Extensions.Logging.Singleton" Version="4.1.1" />		
-		<PackageVersion Include="Uno.Extensions.Logging.OSLog" Version="1.7.0" /> 
+		<PackageVersion Include="Uno.Core.Extensions.Logging.Singleton" Version="4.1.1" />
+		<PackageVersion Include="Uno.Extensions.Logging.OSLog" Version="1.7.0" />
 		<PackageVersion Include="Uno.Extensions.Logging.WebAssembly.Console" Version="1.7.0" />
 		<PackageVersion Include="Uno.Extensions.Markup.Generators" Version="5.3.12" />
 		<PackageVersion Include="Uno.Extensions.Markup.WinUI" Version="5.3.12" />
