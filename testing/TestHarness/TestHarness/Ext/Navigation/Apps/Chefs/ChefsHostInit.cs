@@ -54,19 +54,10 @@ public partial class ChefsHostInit : BaseHostInitialization
 						#endregion
 
 						#region Recipe Details
-						new RouteMap("ChefsRecipeDetails", View: views.FindByViewModel<ChefsRecipeDetailsModel>(), DependsOn: "ChefsHome", Nested: new[] {
-							new RouteMap("ChefsIngredientsTabWide"),
-							new RouteMap("ChefsStepsTabWide"),
-							new RouteMap("ChefsReviewsTabWide"),
-							new RouteMap("ChefsNutritionTabWide"),
-							new RouteMap("ChefsIngredientsTab"),
-							new RouteMap("ChefsStepsTab"),
-							new RouteMap("ChefsReviewsTab"),
-							new RouteMap("ChefsNutritionTab"),
-						}),
-						new RouteMap("ChefsSearchRecipeDetails", View: views.FindByViewModel<ChefsRecipeDetailsModel>(), DependsOn: "ChefsSearch"),
-						new RouteMap("ChefsFavoriteRecipeDetails", View: views.FindByViewModel<ChefsRecipeDetailsModel>(), DependsOn: "ChefsFavoriteRecipes"),
-						new RouteMap("ChefsCookbookRecipeDetails", View: views.FindByViewModel<ChefsRecipeDetailsModel>(), DependsOn: "ChefsFavoriteRecipes"),
+						new RouteMap("ChefsRecipeDetails", View: views.FindByViewModel<ChefsRecipeDetailsModel>()),
+						//new RouteMap("ChefsSearchRecipeDetails", View: views.FindByViewModel<ChefsRecipeDetailsModel>(), DependsOn: "ChefsSearch"),
+						//new RouteMap("ChefsFavoriteRecipeDetails", View: views.FindByViewModel<ChefsRecipeDetailsModel>(), DependsOn: "ChefsFavoriteRecipes"),
+						//new RouteMap("ChefsCookbookRecipeDetails", View: views.FindByViewModel<ChefsRecipeDetailsModel>(), DependsOn: "ChefsFavoriteRecipes"),
 						#endregion
 
 						#region Live Cooking
