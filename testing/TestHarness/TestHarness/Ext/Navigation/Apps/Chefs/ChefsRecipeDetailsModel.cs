@@ -14,9 +14,9 @@ public partial class ChefsRecipeDetailsModel(ChefsRecipe recipe, INavigator navi
 		var route = _navigator?.Route?.Base switch
 		{
 			"ChefsRecipeDetails" => "ChefsLiveCooking",
-			"ChefsSearchRecipeDetails" => "ChefsSearchLiveCooking",
-			"ChefsFavoriteRecipeDetails" => "ChefsFavoriteLiveCooking",
-			"ChefsCookbookRecipeDetails" => "ChefsCookbookLiveCooking",
+			"ChefsSearchRecipeDetails" => "ChefsLiveCooking",
+			"ChefsFavoriteRecipeDetails" => "ChefsLiveCooking",
+			"ChefsCookbookRecipeDetails" => "ChefsLiveCooking",
 			_ => throw new InvalidOperationException("Navigating from unknown route")
 		};
 

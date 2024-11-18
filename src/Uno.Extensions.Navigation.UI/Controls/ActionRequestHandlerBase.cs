@@ -37,8 +37,14 @@ public abstract record ActionRequestHandlerBase<TView>(ILogger Logger, IRouteRes
 
 		async void Action(FrameworkElement element, RoutedEventArgs? eventArgs)
 		{
+			INavigator? nav;
 			var path = element.GetRequest();
-			var nav = element.Navigator();
+
+			nav = element.Navigator();
+
+			var route = path.AsRoute();
+
+			var re = await nav!.CanNavigate(route);
 
 			if (nav is null)
 			{
