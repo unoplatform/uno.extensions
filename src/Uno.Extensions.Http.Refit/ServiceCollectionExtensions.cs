@@ -68,7 +68,7 @@ public static class ServiceCollectionExtensions
 				var auth = serviceProvider.GetService<IAuthenticationTokenProvider>();
 				if (auth is not null)
 				{
-					settings.AuthorizationHeaderValueGetter = () => auth.GetAccessToken();
+					settings.AuthorizationHeaderValueGetter = (requestMessage, ct) => auth.GetAccessToken();
 				}
 
 				settingsBuilder?.Invoke(serviceProvider, settings);

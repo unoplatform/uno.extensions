@@ -9,5 +9,5 @@ public  interface IAuthenticationTokenProvider
 	/// Retrieves the current access token
 	/// </summary>
 	/// <returns>Access token</returns>
-	Task<string> GetAccessToken();
+	Task<string> GetAccessToken(CancellationToken cancellationToken = default);
 }
