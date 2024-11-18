@@ -18,6 +18,7 @@
 			<Button Command="{Binding NavigateToRecipeDetail}" Content="Recipe Details" />
 			<Button AutomationProperties.AutomationId="FavoriteRecipesButton" Command="{Binding NavigateToFavoriteRecipes}" Content="Favorite Recipes" />
 			<Button uen:Navigation.Request="ChefsSearch" Content="Search" />
+			<Button uen:Navigation.Request="ChefsProfile" Content="Profile :D" />
 			<Button uen:Navigation.Request="ChefsNotifications" Content="Notifications" />
 		</StackPanel>
 	</Grid>
