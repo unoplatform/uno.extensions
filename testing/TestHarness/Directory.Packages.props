@@ -52,4 +52,8 @@
 		<PackageVersion Include="System.Text.RegularExpressions" Version="4.3.1" />
 		<PackageVersion Include="System.Text.Json" Version="8.0.4" />
 	</ItemGroup>
+
+	<PropertyGroup>
+		<SkiaSharpVersion>2.88.9-preview.2.2</SkiaSharpVersion>
+	</PropertyGroup>
 </Project>
