@@ -34,4 +34,9 @@
     <PackageVersion Include="Xamarin.AndroidX.Collection.Ktx" Version="1.4.2.1" />
     <PackageVersion Include="Xamarin.AndroidX.Collection.Jvm" Version="1.4.2.1" />
   </ItemGroup>
+
+	<PropertyGroup>
+		<AndroidXCollectionVersion>1.4.3.1</AndroidXCollectionVersion>
+		<AndroidXNavigationVersion>2.7.7.6</AndroidXNavigationVersion>
+	</PropertyGroup>
 </Project>
