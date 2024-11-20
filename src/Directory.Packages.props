@@ -1,18 +1,7 @@
 <Project ToolsVersion="15.0">
-	<!--
-		Due to an issue with duplicate references on output for Windows we need to ensure that when building for MAUI Embedding that we use the same version
-		of both WinUI and Uno.WinUI across Extensions and the MauiEmbedding Sample Project.
-	-->
-	<!-- <PropertyGroup Condition="$(SolutionName) != 'MauiEmbedding'">
-		<UnoVersion Condition="$(UnoVersion) == '' AND !$(MSBuildProjectName.Contains('Maui'))">5.2.175</UnoVersion>
-		<UnoVersion Condition="$(UnoVersion) == '' AND $(MSBuildProjectName.Contains('Maui'))">5.2.175</UnoVersion>
-		<WinAppSdkVersion Condition="$(WinAppSdkVersion) == ''">1.5.240311000</WinAppSdkVersion>
-	</PropertyGroup> -->
-
-	<!--<PropertyGroup>
-		<UnoToolkitVersion>5.0.15</UnoToolkitVersion>
-	</PropertyGroup>-->
-
+    <PropertyGroup>
+        <WinAppSdkBuildToolsVersion>10.0.22621.3233</WinAppSdkBuildToolsVersion> <!-- Keep this version until https://github.com/microsoft/WindowsAppSDK/issues/4480 is resolved -->
+    </PropertyGroup>
 	<ItemGroup>
 		<PackageVersion Include="CommunityToolkit.Mvvm" Version="7.0.1" />
 		<PackageVersion Include="DotNet.ReproducibleBuilds" Version="1.1.1" />
