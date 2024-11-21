@@ -78,6 +78,6 @@
 	</ItemGroup>
 
 	<ItemGroup Condition="'$(IsAndroid)' == 'true'">
-		<PackageReference Include="Xamarin.AndroidX.Collection.Ktx"  />
+		<PackageReference Include="Xamarin.AndroidX.Collection.Jvm"  />
 	</ItemGroup>
 </Project>
