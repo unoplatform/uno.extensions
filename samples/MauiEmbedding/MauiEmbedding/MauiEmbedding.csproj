@@ -5,7 +5,7 @@
 
 		<OutputType>Exe</OutputType>
 		<UnoSingleProject>true</UnoSingleProject>
-
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 		<!-- Display name -->
 		<ApplicationTitle>MauiEmbedding</ApplicationTitle>
 		<!-- App Identifier -->
