@@ -16,10 +16,6 @@
 
     <_UseTelerik>false</_UseTelerik>
   </PropertyGroup>
-  <PropertyGroup>
-		<AndroidXCollectionVersion>1.4.3.1</AndroidXCollectionVersion>
-		<AndroidXNavigationVersion>2.7.7.6</AndroidXNavigationVersion>
-	</PropertyGroup>
   <!-- See https://aka.platform.uno/using-uno-sdk#implicit-packages for more information regarding the Implicit Packages version properties. -->
   <!-- <PropertyGroup>
     <UnoExtensionsVersion>4.1.24</UnoExtensionsVersion>
