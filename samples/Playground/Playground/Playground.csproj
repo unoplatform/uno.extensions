@@ -1,11 +1,11 @@
-<Project Sdk="Uno.Sdk">
+﻿<Project Sdk="Uno.Sdk">
 	<Import Project="..\..\..\src\tfms-ui-winui.props" />
 
 	<PropertyGroup>
 
 		<OutputType>Exe</OutputType>
 		<UnoSingleProject>true</UnoSingleProject>
-
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 		<!-- Display name -->
 		<ApplicationTitle>Playground</ApplicationTitle>
 		<!-- App Identifier -->

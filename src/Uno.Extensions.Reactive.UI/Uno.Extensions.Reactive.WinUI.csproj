@@ -8,7 +8,7 @@
 	<PropertyGroup>
 		<AssemblyName>Uno.Extensions.Reactive.UI</AssemblyName>
 		<ImplicitUsings>false</ImplicitUsings>
-
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 		<Description>Reactive Extensions for the Uno Platform (WinUI)</Description>
 		<EnableDefaultPageItems>false</EnableDefaultPageItems>
 		<DefineConstants>$(DefineConstants);WINUI</DefineConstants>
