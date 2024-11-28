@@ -25,13 +25,5 @@
     <PackageVersion Include="Microsoft.Maui.Controls" Version="8.0.3" />
     <PackageVersion Include="Microsoft.Maui.Controls.Compatibility" Version="8.0.3" />
     <PackageVersion Include="Microsoft.Maui.Graphics" Version="8.0.3"  />
-
-    <PackageVersion Include="Xamarin.AndroidX.Navigation.UI" Version="2.7.7.1" />
-    <PackageVersion Include="Xamarin.AndroidX.Navigation.Fragment" Version="2.7.7.1"/>
-    <PackageVersion Include="Xamarin.AndroidX.Navigation.Runtime" Version="2.7.7.1"/>
-    <PackageVersion Include="Xamarin.AndroidX.Navigation.Common" Version="2.7.7.1"/>
-    <PackageVersion Include="Xamarin.AndroidX.Collection" Version="1.4.0.1"/>
-    <PackageVersion Include="Xamarin.AndroidX.Collection.Ktx" Version="1.4.0.1" />
-    <PackageVersion Include="Xamarin.AndroidX.Collection.Jvm" Version="1.4.0.1" />
   </ItemGroup>
 </Project>
