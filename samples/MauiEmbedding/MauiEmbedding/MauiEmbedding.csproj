@@ -76,14 +76,4 @@
 		<PackageReference Include="Microsoft.Maui.Controls.Compatibility"/>
 		<PackageReference Include="Microsoft.Maui.Graphics"  />
 	</ItemGroup>
-
-	<ItemGroup Condition="'$(IsAndroid)' == 'true'">
-		<PackageReference Include="Xamarin.AndroidX.Navigation.UI" />
-		<PackageReference Include="Xamarin.AndroidX.Navigation.Fragment" />
-		<PackageReference Include="Xamarin.AndroidX.Navigation.Runtime" />
-		<PackageReference Include="Xamarin.AndroidX.Navigation.Common" />
-		<PackageReference Include="Xamarin.AndroidX.Collection" />
-		<PackageReference Include="Xamarin.AndroidX.Collection.Jvm" />
-		<PackageReference Include="Xamarin.AndroidX.Collection.Ktx"  />
-	</ItemGroup>
 </Project>
