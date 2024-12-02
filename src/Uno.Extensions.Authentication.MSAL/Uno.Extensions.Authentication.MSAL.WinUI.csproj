@@ -65,6 +65,10 @@
 		<PackageReference Include="Microsoft.Identity.Client.Extensions.Msal" />
 	</ItemGroup>
 
+	<ItemGroup Condition="$(TargetFramework.Contains('windows10'))">
+		<PackageReference Include="Microsoft.Identity.Client.Desktop" />
+	</ItemGroup>
+
 	<ItemGroup Condition="'$(IsBrowserWasm)'!='true'">
 		<Compile Remove="**\*.wasm.cs"/>
 	</ItemGroup>
