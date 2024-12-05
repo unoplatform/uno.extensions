@@ -38,5 +38,6 @@
 
 	<PropertyGroup>
 		<SkiaSharpVersion>2.88.9-preview.2.2</SkiaSharpVersion>
+		<UnoToolkitVersion>6.3.6</UnoToolkitVersion>
 	</PropertyGroup>
 </Project>
