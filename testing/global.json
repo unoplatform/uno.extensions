@@ -1,6 +1,0 @@
-{
-  "msbuild-sdks": {
-    "MSBuild.Sdk.Extras": "3.0.44",
-    "Uno.Sdk.Private": "5.6.0-dev.1103"
-  }
-}
