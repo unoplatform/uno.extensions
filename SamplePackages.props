@@ -35,7 +35,7 @@
 		<SkiaSharpVersion>2.88.9-preview.2.2</SkiaSharpVersion>
 		<SvgSkiaVersion>2.0.0.4</SvgSkiaVersion>
 		<WinAppSdkVersion>1.6.241114003</WinAppSdkVersion>
-		<WinAppSdkBuildToolsVersion>10.0.22621.3233</WinAppSdkBuildToolsVersion> <!-- Keep this version until https://github.com/microsoft/WindowsAppSDK/issues/4480 is resolved -->
+		<WinAppSdkBuildToolsVersion>10.0.26100.1742</WinAppSdkBuildToolsVersion>
 		<MicrosoftLoggingVersion>8.0.1</MicrosoftLoggingVersion>
 		<WindowsCompatibilityVersion>8.0.11</WindowsCompatibilityVersion>
 		<MicrosoftIdentityClientVersion>4.65.0</MicrosoftIdentityClientVersion>
