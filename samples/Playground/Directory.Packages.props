@@ -1,4 +1,5 @@
 <Project ToolsVersion="15.0">
+	<Import Project="$(MSBuildThisFileDirectory)..\..\SamplePackages.props" />
 	<ItemGroup>
 		<PackageVersion Include="CommunityToolkit.Mvvm" Version="8.2.1" />
 		<PackageVersion Include="Microsoft.Extensions.Logging" Version="8.0.0" />
