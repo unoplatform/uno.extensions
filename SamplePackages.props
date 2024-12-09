@@ -1,0 +1,63 @@
+<Project ToolsVersion="15.0">
+	<PropertyGroup>
+		<!-- <UnoVersion>5.5.87</UnoVersion> -->
+		<UnoToolkitVersion>6.3.7</UnoToolkitVersion>
+		<UnoThemesVersion>5.3.1</UnoThemesVersion>
+		<UnoCSharpMarkupVersion>5.5.6</UnoCSharpMarkupVersion>
+		<UnoWasmBootstrapVersion>8.0.21</UnoWasmBootstrapVersion>
+		<UnoLoggingVersion>1.7.0</UnoLoggingVersion>
+		<UnoCoreLoggingSingletonVersion>4.1.1</UnoCoreLoggingSingletonVersion>
+		<UnoUniversalImageLoaderVersion>1.9.37</UnoUniversalImageLoaderVersion>
+		<UnoDspTasksVersion>1.4.0</UnoDspTasksVersion>
+		<UnoResizetizerVersion>1.6.1</UnoResizetizerVersion>
+		<SkiaSharpVersion>2.88.9-preview.2.2</SkiaSharpVersion>
+		<SvgSkiaVersion>2.0.0.4</SvgSkiaVersion>
+		<WinAppSdkVersion>1.6.241114003</WinAppSdkVersion>
+		<WinAppSdkBuildToolsVersion>10.0.26100.1742</WinAppSdkBuildToolsVersion>
+		<MicrosoftLoggingVersion>8.0.1</MicrosoftLoggingVersion>
+		<WindowsCompatibilityVersion>8.0.11</WindowsCompatibilityVersion>
+		<MicrosoftIdentityClientVersion>4.65.0</MicrosoftIdentityClientVersion>
+		<CommunityToolkitMvvmVersion>8.3.2</CommunityToolkitMvvmVersion>
+		<PrismVersion>9.0.537</PrismVersion>
+		<AndroidMaterialVersion>1.11.0.3</AndroidMaterialVersion>
+		<AndroidXLegacySupportV4Version>1.0.0.23</AndroidXLegacySupportV4Version>
+		<AndroidXAppCompatVersion>1.7.0.3</AndroidXAppCompatVersion>
+		<AndroidXRecyclerViewVersion>1.3.2.8</AndroidXRecyclerViewVersion>
+		<AndroidXActivityVersion>1.9.2.1</AndroidXActivityVersion>
+		<AndroidXBrowserVersion>1.8.0.6</AndroidXBrowserVersion>
+		<AndroidXSwipeRefreshLayoutVersion>1.1.0.24</AndroidXSwipeRefreshLayoutVersion>
+		<AndroidXNavigationVersion>2.8.0.1</AndroidXNavigationVersion>
+		<AndroidXCollectionVersion>1.4.4</AndroidXCollectionVersion>
+		<MauiVersion>8.0.91</MauiVersion>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<!-- Microsoft Logging -->
+		<PackageVersion Include="Microsoft.Extensions.Logging" Version="$(MicrosoftLoggingVersion)" />
+		<PackageVersion Include="Microsoft.Extensions.Logging.Console" Version="$(MicrosoftLoggingVersion)" />
+		<PackageVersion Include="Microsoft.Extensions.Logging.Debug" Version="$(MicrosoftLoggingVersion)" />
+
+		<!-- SkiaSharp -->
+		<PackageVersion Include="SkiaSharp" Version="$(SkiaSharpVersion)" />
+		<PackageVersion Include="SkiaSharp.Views.Uno.WinUI" Version="$(SkiaSharpVersion)" />
+		<PackageVersion Include="SkiaSharp.NativeAssets.iOS" Version="$(SkiaSharpVersion)" />
+		<PackageVersion Include="SkiaSharp.NativeAssets.Linux" Version="$(SkiaSharpVersion)" />
+		<PackageVersion Include="SkiaSharp.Skottie" Version="$(SkiaSharpVersion)" />
+
+		<!-- Maui -->
+		<PackageVersion Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
+		<PackageVersion Include="Microsoft.Maui.Controls.Compatibility" Version="$(MauiVersion)" />
+		<PackageVersion Include="Microsoft.Maui.Graphics" Version="$(MauiVersion)" />
+
+		<PackageVersion Include="Xamarin.AndroidX.Navigation.UI" Version="$(AndroidXNavigationVersion)" />
+		<PackageVersion Include="Xamarin.AndroidX.Navigation.Fragment" Version="$(AndroidXNavigationVersion)" />
+		<PackageVersion Include="Xamarin.AndroidX.Navigation.Runtime" Version="$(AndroidXNavigationVersion)" />
+		<PackageVersion Include="Xamarin.AndroidX.Navigation.Common" Version="$(AndroidXNavigationVersion)" />
+		<PackageVersion Include="Xamarin.AndroidX.Collection" Version="$(AndroidXCollectionVersion)"/>
+		<PackageVersion Include="Xamarin.AndroidX.Collection.Ktx" Version="$(AndroidXCollectionVersion)" />
+		<PackageVersion Include="Xamarin.AndroidX.Collection.Jvm" Version="$(AndroidXCollectionVersion)" />
+
+		<PackageVersion Include="Microsoft.Windows.SDK.BuildTools" Version="$(WinAppSdkBuildToolsVersion)" />
+		<PackageVersion Include="Microsoft.WindowsAppSDK" Version="$(WinAppSdkVersion)" />
+	</ItemGroup>
+</Project>
