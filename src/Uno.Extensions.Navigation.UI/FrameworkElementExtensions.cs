@@ -33,9 +33,8 @@ public static class FrameworkElementExtensions
 		var nav = elementRegion.Navigator();
 		if (nav is not null)
 		{
-			var initialNavigation = () => nav.NavigateRouteAsync(root, initialRoute ?? string.Empty);
-
 			var start = () => Task.CompletedTask;
+
 			var hostConfigOptions = sp.GetService<IOptions<HostConfiguration>>();
 			if (hostConfigOptions?.Value is { } hostConfig &&
 				hostConfig.LaunchRoute() is { } launchRoute &&
@@ -55,12 +54,18 @@ public static class FrameworkElementExtensions
 			{
 				start = () => nav.NavigateViewModelAsync(root, initialViewModel);
 			}
+			else
+			{
+				start = () => nav.NavigateRouteAsync(root, initialRoute ?? string.Empty);
+			}
+
 			var fullstart = async () =>
 			{
-				await initialNavigation();
 				await start();
 			};
+
 			var startupTask = elementRegion.Services!.Startup(fullstart);
+
 			return startupTask;
 		}
 		return Task.CompletedTask;
