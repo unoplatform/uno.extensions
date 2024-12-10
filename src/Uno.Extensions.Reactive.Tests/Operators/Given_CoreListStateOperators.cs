@@ -4,7 +4,6 @@ using System.Linq;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json.Linq;
-using Uno.Extensions.Equality;
 using Uno.Extensions.Reactive.Testing;
 using KeyAttribute = Uno.Extensions.Equality.KeyAttribute;
 
