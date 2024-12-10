@@ -112,12 +112,12 @@ public async ValueTask TrimAll(CancellationToken ct = default)
 }
 ```
 
-Another overload is `UpdateAsync`, which allows you to apply an update on items that match a criteria. The `match` predicate is checked for each item. It the item matches the criteria, the updater is invoked which returns a new instance of the item with the update applied:
+Another overload is `UpdateAllAsync`, which allows you to apply an update on items that match a criteria. The `match` predicate is checked for each item. It the item matches the criteria, the updater is invoked which returns a new instance of the item with the update applied:
 
 ```csharp
 public async ValueTask TrimLongNames(CancellationToken ct = default)
 {
-    await MyStrings.UpdateAsync(
+    await MyStrings.UpdateAllAsync(
         match: item => item?.Length > 10,
         updater: item => item.Trim(),
         ct: ct);
