@@ -122,6 +122,60 @@ static partial class ListState
 	public static ValueTask RemoveAllAsync<T>(this IListState<T> state, Predicate<T> match, CancellationToken ct = default)
 		=> state.UpdateDataAsync(itemsOpt => itemsOpt.Map(items => items.RemoveAll(match)), ct);
 
+
+
+	/// <summary>
+	/// Updates all items from a list state that match the key of <paramref name="oldT"/>.
+	/// </summary>
+	/// <typeparam name="T">The type of the items in the list.</typeparam>
+	/// <param name="state">The list state onto which the item should be added.</param>
+	/// <param name="oldT">The old value of the item.</param>
+	/// <param name="newT">The new value for the item.</param>
+	/// <param name="ct">A token to abort the async add operation.</param>
+	/// <returns></returns>
+	public static ValueTask UpdateItemAsync<T>(this IListState<T> state, T oldT,  T newT, CancellationToken ct = default) where T : IKeyEquatable<T>
+		=> state.UpdateDataAsync(
+			itemsOpt => itemsOpt.Map(items =>
+			{
+				var updated = items;
+				foreach (var item in items)
+				{
+					if (item.KeyEquals(oldT))
+					{
+						updated = items.Replace(item, newT);
+					}
+				}
+				return updated;
+			}),
+			ct);
+
+
+	/// <summary>
+	/// Updates all items from a list state that match the key of <paramref name="oldT"/>.
+	/// </summary>
+	/// <typeparam name="T">The type of the items in the list.</typeparam>
+	/// <param name="state">The list state onto which the item should be added.</param>
+	/// <param name="oldT">The old value of the item.</param>
+	/// <param name="updater">How to update items.</param>
+	/// <param name="ct">A token to abort the async add operation.</param>
+	/// <returns></returns>
+	public static ValueTask UpdateItemAsync<T>(this IListState<T> state, T oldT, Func<T, T> updater, CancellationToken ct = default) where T : IKeyEquatable<T>
+		=> state.UpdateDataAsync(
+			itemsOpt => itemsOpt.Map(items =>
+			{
+				var updated = items;
+				foreach (var item in items)
+				{
+					if (item.KeyEquals(oldT))
+					{
+						updated = items.Replace(item, updater(item));
+					}
+				}
+				return updated;
+			}),
+			ct);
+
+
 	/// <summary>
 	/// Updates all matching items from a list state.
 	/// </summary>
