@@ -4,7 +4,9 @@ using System.Linq;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json.Linq;
+using Uno.Extensions.Equality;
 using Uno.Extensions.Reactive.Testing;
+using KeyAttribute = Uno.Extensions.Equality.KeyAttribute;
 
 namespace Uno.Extensions.Reactive.Tests.Operators;
 
@@ -733,6 +735,38 @@ public partial class Given_CoreListStateOperators : FeedTests
 	}
 	#endregion
 
+	#region UpdateItemAsync
+	[TestMethod]
+	public async Task WhenUpdateItemAsync_WithValue_Then_ItemAdded()
+	{
+		LeItem itemToUpdate = new(2, 42);
+		var sut = ListState.Value(this, () => ImmutableList.Create<LeItem>(new(1,41), itemToUpdate, new(3, 43)));
+		var result = sut.Record();
+
+		await sut.UpdateItemAsync(itemToUpdate, new LeItem(2, 84), CT);
+
+		result.Should().Be(m => m
+			.Message(Items.Some(new LeItem(1, 41), new LeItem(2, 42), new LeItem(3, 43)))
+			.Message(Items.Some(new LeItem(1, 41), new LeItem(2, 84), new LeItem(3, 43)))
+		);
+	}
+
+	[TestMethod]
+	public async Task WhenUpdateItemAsync_WithUpdater_Then_ItemAdded()
+	{
+		LeItem itemToUpdate = new(3, 43);
+		var sut = ListState.Value(this, () => ImmutableList.Create<LeItem>(new(1, 41), new (2, 42), itemToUpdate));
+		var result = sut.Record();
+
+		await sut.UpdateItemAsync(itemToUpdate, i => new(3, i.Version * 3), CT);
+
+		result.Should().Be(m => m
+			.Message(Items.Some(new LeItem(1, 41), new LeItem(2, 42), new LeItem(3, 43)))
+			.Message(Items.Some(new LeItem(1, 41), new LeItem(2, 42), new LeItem(3, 129)))
+		);
+	}
+	#endregion
+
 	#region UpdateAsync
 	[TestMethod]
 	public async Task WhenUpdateAsync_Then_ItemAdded()
@@ -753,4 +787,6 @@ public partial class Given_CoreListStateOperators : FeedTests
 	private record struct MyStruct;
 
 	internal partial record class MyItem(int Id, int Version);
+
+	public partial record LeItem([property: Key] int Id, int Version);
 }
