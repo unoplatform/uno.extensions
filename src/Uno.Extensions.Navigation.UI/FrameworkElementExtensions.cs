@@ -59,7 +59,8 @@ public static class FrameworkElementExtensions
 				var response = await initialNavigation();
 
 				if (launchRoute is null ||
-					!launchRoute.FullPath().Equals(response?.Route?.FullPath()))
+					!launchRoute.FullPath().Equals(response?.Route?.FullPath(), StringComparison.OrdinalIgnoreCase))
+
 				{
 					await start();
 				}
