@@ -9,11 +9,11 @@
     <PackageVersion Include="Syncfusion.Maui.Core" Version="22.2.9" />
     <PackageVersion Include="Syncfusion.Maui.Charts" Version="22.2.9" />
     <PackageVersion Include="Syncfusion.Maui.DataGrid" Version="22.2.9" />
-    <PackageVersion Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="$(UnoVersion)" />
+    <!-- <PackageVersion Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="$(UnoVersion)" /> -->
     <PackageVersion Include="Telerik.UI.for.Maui" Version="5.1.0" Condition="$(_UseTelerik)" />
     <PackageVersion Include="Esri.ArcGISRuntime.Maui" Version="200.1.0" />
     <PackageVersion Include="Microsoft.Windows.Compatibility" Version="7.0.4" />
-
+<!-- <PackageVersion Include="Uno.Core" Version="4.1.1" /> -->
 
   </ItemGroup>
 </Project>
