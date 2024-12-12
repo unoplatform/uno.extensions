@@ -3,7 +3,6 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Kiota.Abstractions;
 using Microsoft.Kiota.Abstractions.Authentication;
 using Microsoft.Kiota.Http.HttpClientLibrary;
-using Uno.Extensions.Authentication;
 
 namespace Uno.Extensions.Http.Kiota;
 
@@ -51,33 +50,19 @@ public static class ServiceCollectionExtensions
 		Func<IHttpClientBuilder, TEndpoint?, IHttpClientBuilder>? configure = null
 	)
 		where TClient : class
-		where TEndpoint : EndpointOptions, new()
-	{
-		services.AddKiotaHandlers();
-		services.AddSingleton<AllowedHostsValidator>(sp => new AllowedHostsValidator());
-
-		return services.AddClientWithEndpoint<TClient, TEndpoint>(
+		where TEndpoint : EndpointOptions, new() =>
+		services.AddClientWithEndpoint<TClient, TEndpoint>(
 				context,
 				options,
 				name: name ?? typeof(TClient).FullName ?? "DefaultClient",
-				httpClientFactory: (s, c) => s.AddHttpClient<TClient>(name ?? typeof(TClient).FullName ?? "DefaultClient")
-					.AttachKiotaHandlers()
-					.ConfigureHttpClient(client =>
-					{
-						if (options?.Url != null)
-						{
-							client.BaseAddress = new Uri(options.Url);
-						}
-					}),
+				httpClientFactory: null,
 				configure: configure
 			)
 			.AddSingleton<IRequestAdapter, HttpClientRequestAdapter>(sp =>
 			{
-				var tokenCache = sp.GetRequiredService<ITokenCache>();
-				var allowedHostsValidator = sp.GetRequiredService<AllowedHostsValidator>();
-				var authProvider = new KiotaAuthenticationAdapter(tokenCache, allowedHostsValidator);
-
 				var httpClient = sp.GetRequiredService<HttpClient>();
+				var authProvider = new AnonymousAuthenticationProvider();
+
 				var parseNodeFactory = new Microsoft.Kiota.Serialization.Json.JsonParseNodeFactory();
 				var serializationWriterFactory = new Microsoft.Kiota.Serialization.Json.JsonSerializationWriterFactory();
 
@@ -95,37 +80,5 @@ public static class ServiceCollectionExtensions
 				var requestAdapter = sp.GetRequiredService<IRequestAdapter>();
 				return (TClient)Activator.CreateInstance(typeof(TClient), requestAdapter)!;
 			});
-	}
 
-	/// <summary>
-	/// Dynamically adds Kiota handlers to the service collection.
-	/// </summary>
-	/// <param name="services">The <see cref="IServiceCollection"/> to register the handlers with.</param>
-	/// <returns>The updated <see cref="IServiceCollection"/> with the registered Kiota handlers.</returns>
-	private static IServiceCollection AddKiotaHandlers(this IServiceCollection services)
-	{
-		var kiotaHandlers = KiotaClientFactory.GetDefaultHandlerTypes();
-		foreach (var handler in kiotaHandlers)
-		{
-			services.AddTransient(handler);
-		}
-
-		return services;
-	}
-
-	/// <summary>
-	/// Attaches Kiota handlers to the <see cref="IHttpClientBuilder"/>.
-	/// </summary>
-	/// <param name="builder">The <see cref="IHttpClientBuilder"/> to attach the handlers to.</param>
-	/// <returns>The updated <see cref="IHttpClientBuilder"/> with the attached Kiota handlers.</returns>
-	private static IHttpClientBuilder AttachKiotaHandlers(this IHttpClientBuilder builder)
-	{
-		var kiotaHandlers = KiotaClientFactory.GetDefaultHandlerTypes();
-		foreach (var handler in kiotaHandlers)
-		{
-			builder.AddHttpMessageHandler((sp) => (DelegatingHandler)sp.GetRequiredService(handler));
-		}
-
-		return builder;
-	}
 }
