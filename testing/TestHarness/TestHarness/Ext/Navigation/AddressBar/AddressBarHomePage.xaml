@@ -17,7 +17,7 @@
 			<StackPanel Orientation="Horizontal">
 				<TextBlock Text="This page was created: " />
 				<TextBlock AutomationProperties.AutomationId="TbInstanceCountProperty"
-						   Text="{Binding InstanceCountProperty, Mode=TwoWay}" />
+						   Text="{Binding InstanceCountProperty}" />
 				<TextBlock Text=" times" />
 			</StackPanel>
 
