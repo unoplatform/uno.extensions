@@ -68,12 +68,12 @@
 			
 	</ItemGroup>
 
-	<ItemGroup Condition="$(_IsWinUI)">
+	<ItemGroup Condition="$(TargetFramework.Contains('windows10'))">
 		<PackageReference Include="Microsoft.Windows.SDK.BuildTools" />
 		<PackageReference Include="Microsoft.WindowsAppSDK" />
 	</ItemGroup>
 
-	<ItemGroup Condition="$(TargetFramework.Contains('windows10'))">
+	<ItemGroup Condition="'$(IsAndroid)' == 'true'">
 		<PackageReference Include="Xamarin.AndroidX.Navigation.UI" />
 		<PackageReference Include="Xamarin.AndroidX.Navigation.Fragment" />
 		<PackageReference Include="Xamarin.AndroidX.Navigation.Runtime" />
