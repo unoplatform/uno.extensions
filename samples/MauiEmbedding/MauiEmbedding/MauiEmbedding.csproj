@@ -73,7 +73,7 @@
 		<PackageReference Include="Microsoft.WindowsAppSDK" />
 	</ItemGroup>
 
-	<ItemGroup Condition="'$(IsAndroid)' == 'true'">
+	<ItemGroup Condition="$(TargetFramework.Contains('windows10'))">
 		<PackageReference Include="Xamarin.AndroidX.Navigation.UI" />
 		<PackageReference Include="Xamarin.AndroidX.Navigation.Fragment" />
 		<PackageReference Include="Xamarin.AndroidX.Navigation.Runtime" />
