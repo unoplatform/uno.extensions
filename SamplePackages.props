@@ -48,7 +48,7 @@
 		<PackageVersion Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
 		<PackageVersion Include="Microsoft.Maui.Controls.Compatibility" Version="$(MauiVersion)" />
 		<PackageVersion Include="Microsoft.Maui.Graphics" Version="$(MauiVersion)" />
-		
+
 		<PackageVersion Include="Xamarin.AndroidX.Navigation.UI" Version="$(AndroidXNavigationVersion)" />
 		<PackageVersion Include="Xamarin.AndroidX.Navigation.Fragment" Version="$(AndroidXNavigationVersion)" />
 		<PackageVersion Include="Xamarin.AndroidX.Navigation.Runtime" Version="$(AndroidXNavigationVersion)" />
@@ -56,5 +56,8 @@
 		<PackageVersion Include="Xamarin.AndroidX.Collection" Version="$(AndroidXCollectionVersion)"/>
 		<PackageVersion Include="Xamarin.AndroidX.Collection.Ktx" Version="$(AndroidXCollectionVersion)" />
 		<PackageVersion Include="Xamarin.AndroidX.Collection.Jvm" Version="$(AndroidXCollectionVersion)" />
+
+		<PackageVersion Include="Microsoft.Windows.SDK.BuildTools" Version="$(WinAppSdkBuildToolsVersion)" />
+		<PackageVersion Include="Microsoft.WindowsAppSDK" Version="$(WinAppSdkVersion)" />
 	</ItemGroup>
 </Project>
