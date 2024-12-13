@@ -1,5 +1,5 @@
 ---
-uid: Uno.Extensions.Reactive.Rules
+uid: Uno.Extensions.KeyEquality.Rules
 ---
 # Feeds code analyzers
 
