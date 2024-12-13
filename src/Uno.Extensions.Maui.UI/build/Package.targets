@@ -74,7 +74,7 @@
 
 
 	<!-- Workaround to avoid including Uno.Toolkit.UI XBFs in the PRI file -->
-	<!-- <Target Name="AdjustGetPackagingOutput1" AfterTargets="GetMrtPackagingOutputs"
+	<Target Name="AdjustGetPackagingOutput1" AfterTargets="GetMrtPackagingOutputs"
 		Condition="$(UsingUnoSdk) != 'true'">
 		<Message Importance="high" Text="Applying NuGet packaging workaround for dependent PRI files exclusion" />
 		<ItemGroup>
@@ -91,6 +91,6 @@
 			<_OtherPriFiles2 Include="@(ReferenceCopyLocalPaths)" Condition="'%(Extension)' == '.pri' and ('%(ReferenceCopyLocalPaths.ReferenceSourceTarget)' == 'ProjectReference' or '%(ReferenceCopyLocalPaths.NugetSourceType)'=='Package')" />
 			<ReferenceCopyLocalPaths Remove="@(_OtherPriFiles2)" />
 		</ItemGroup>
-	</Target> -->
+	</Target>
 
 </Project>
