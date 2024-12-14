@@ -37,29 +37,38 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\..\..\src\Uno.Extensions.Core.UI\Uno.Extensions.Core.WinUI.csproj" />
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Configuration\Uno.Extensions.Configuration.csproj" />
-		<ProjectReference Include="..\..\..\src\Uno.Extensions.Hosting.UI\Uno.Extensions.Hosting.WinUI.csproj" />
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Core\Uno.Extensions.Core.csproj" />
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Hosting.UI\Uno.Extensions.Hosting.WinUI.csproj" ExcludeAssets="all" />
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Hosting\Uno.Extensions.Hosting.csproj" />
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Http.Refit\Uno.Extensions.Http.Refit.csproj" />
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Http.UI\Uno.Extensions.Http.WinUI.csproj" />
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Http\Uno.Extensions.Http.csproj" />
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Localization.UI\Uno.Extensions.Localization.WinUI.csproj" />
-		<ProjectReference Include="..\..\..\src\Uno.Extensions.Logging\Uno.Extensions.Logging.WinUI.csproj" />
-		<ProjectReference Include="..\..\..\src\Uno.Extensions.Maui.UI\Uno.Extensions.Maui.WinUI.csproj" />
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Logging\Uno.Extensions.Logging.WinUI.csproj" ExcludeAssets="all" />
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Navigation.Toolkit\Uno.Extensions.Navigation.Toolkit.WinUI.csproj" />
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Navigation.UI\Uno.Extensions.Navigation.WinUI.csproj" />
-		<ProjectReference Include="..\..\..\src\Uno.Extensions.Navigation.Generators\Uno.Extensions.Navigation.Generators.csproj">
-			<ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-			<OutputItemType>Analyzer</OutputItemType>
-		</ProjectReference>
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Navigation\Uno.Extensions.Navigation.csproj" />
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Reactive.UI\Uno.Extensions.Reactive.WinUI.csproj" />
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Reactive\Uno.Extensions.Reactive.csproj" />
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Serialization.Http\Uno.Extensions.Serialization.Http.csproj" />
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Serialization.Refit\Uno.Extensions.Serialization.Refit.csproj" />
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Serialization\Uno.Extensions.Serialization.csproj" />
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Storage.UI\Uno.Extensions.Storage.WinUI.csproj" />
-		<ProjectReference Include="..\MauiEmbedding.MauiControls\MauiEmbedding.MauiControls.csproj" />
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Storage\Uno.Extensions.Storage.csproj" />
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Validation.Fluent\Uno.Extensions.Validation.Fluent.csproj" />
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Validation\Uno.Extensions.Validation.csproj" />
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Maui.UI\Uno.Extensions.Maui.WinUI.csproj" />
 	</ItemGroup>
-	<Import Project="..\..\..\src\Uno.Extensions.Configuration\build\Package.targets" />
-	<Import Project="..\..\..\src\Uno.Extensions.Hosting\build\Package.targets" />
-	<Import Project="..\..\..\src\Uno.Extensions.Localization\build\Package.targets" />
-	<Import Project="..\..\..\src\Uno.Extensions.Maui.UI\build\Package.targets" />
-	<Import Project="..\..\..\src\Uno.Extensions.Navigation\build\Package.targets" />
-	<Import Project="..\..\..\src\Uno.Extensions.Navigation.UI\build\Package.targets" />
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Core.Generators\Uno.Extensions.Core.Generators.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Navigation.Generators\Uno.Extensions.Navigation.Generators.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Reactive.Generator\Uno.Extensions.Reactive.Generator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+	</ItemGroup>
+
+	<!-- Reference generators props. This required only when referencing extensions project as source code (instead of packages) -->
+	<Import Project="..\..\..\src\Uno.Extensions.Core.Generators\buildTransitive\Uno.Extensions.Core.props" />
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.Maui.Controls" />
