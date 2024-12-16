@@ -1,8 +1,7 @@
-﻿<Project Sdk="Uno.Sdk">
+﻿<Project Sdk="Uno.Sdk.Private">
 	<Import Project="..\..\..\src\tfms-ui-maui.props" />
 
 	<PropertyGroup>
-
 		<OutputType>Exe</OutputType>
 		<UnoSingleProject>true</UnoSingleProject>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -29,6 +28,7 @@
 			UnoFeatures let's you quickly add and manage implicit package references based on the features you want to use.
 			https://aka.platform.uno/singleproject-features
 		-->
+		<WindowsSdkPackageVersion>10.0.19041.38</WindowsSdkPackageVersion>
 		<UnoFeatures>
 			Material;
 			Toolkit;
@@ -37,37 +37,40 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Uno.Core.Extensions.Logging.Singleton"/>
-	</ItemGroup>
-
-	<ItemGroup Condition="'$(IsIOSOrCatalyst)' == 'true'">
-		<PackageReference Include="Uno.Extensions.Logging.OSLog" />
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Configuration\Uno.Extensions.Configuration.csproj" />
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Core\Uno.Extensions.Core.csproj" />
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Hosting.UI\Uno.Extensions.Hosting.WinUI.csproj" ExcludeAssets="all" />
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Hosting\Uno.Extensions.Hosting.csproj" />
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Localization.UI\Uno.Extensions.Localization.WinUI.csproj" />
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Logging\Uno.Extensions.Logging.WinUI.csproj" ExcludeAssets="all" />
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Navigation.Toolkit\Uno.Extensions.Navigation.Toolkit.WinUI.csproj" />
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Navigation.UI\Uno.Extensions.Navigation.WinUI.csproj" />
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Navigation\Uno.Extensions.Navigation.csproj" />
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Maui.UI\Uno.Extensions.Maui.WinUI.csproj" />
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Serialization\Uno.Extensions.Serialization.csproj" />
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Storage.UI\Uno.Extensions.Storage.WinUI.csproj" />
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Storage\Uno.Extensions.Storage.csproj" />
+		<ProjectReference Include="..\MauiEmbedding.MauiControls\MauiEmbedding.MauiControls.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\..\..\src\Uno.Extensions.Core.UI\Uno.Extensions.Core.WinUI.csproj" />
-		<ProjectReference Include="..\..\..\src\Uno.Extensions.Configuration\Uno.Extensions.Configuration.csproj" />
-		<ProjectReference Include="..\..\..\src\Uno.Extensions.Hosting.UI\Uno.Extensions.Hosting.WinUI.csproj" />
-		<ProjectReference Include="..\..\..\src\Uno.Extensions.Hosting\Uno.Extensions.Hosting.csproj" />
-		<ProjectReference Include="..\..\..\src\Uno.Extensions.Localization.UI\Uno.Extensions.Localization.WinUI.csproj" />
-		<ProjectReference Include="..\..\..\src\Uno.Extensions.Logging\Uno.Extensions.Logging.WinUI.csproj" />
-		<ProjectReference Include="..\..\..\src\Uno.Extensions.Maui.UI\Uno.Extensions.Maui.WinUI.csproj" />
-		<ProjectReference Include="..\..\..\src\Uno.Extensions.Navigation.Toolkit\Uno.Extensions.Navigation.Toolkit.WinUI.csproj" />
-		<ProjectReference Include="..\..\..\src\Uno.Extensions.Navigation.UI\Uno.Extensions.Navigation.WinUI.csproj" />
-		<ProjectReference Include="..\..\..\src\Uno.Extensions.Navigation.Generators\Uno.Extensions.Navigation.Generators.csproj">
-			<ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-			<OutputItemType>Analyzer</OutputItemType>
-		</ProjectReference>
-		<ProjectReference Include="..\..\..\src\Uno.Extensions.Navigation\Uno.Extensions.Navigation.csproj" />
-		<ProjectReference Include="..\..\..\src\Uno.Extensions.Storage.UI\Uno.Extensions.Storage.WinUI.csproj" />
-		<ProjectReference Include="..\MauiEmbedding.MauiControls\MauiEmbedding.MauiControls.csproj" />
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Core.Generators\Uno.Extensions.Core.Generators.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Navigation.Generators\Uno.Extensions.Navigation.Generators.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
 	</ItemGroup>
-	<Import Project="..\..\..\src\Uno.Extensions.Configuration\build\Package.targets" />
-	<Import Project="..\..\..\src\Uno.Extensions.Hosting\build\Package.targets" />
-	<Import Project="..\..\..\src\Uno.Extensions.Localization\build\Package.targets" />
-	<Import Project="..\..\..\src\Uno.Extensions.Maui.UI\build\Package.targets" />
-	<Import Project="..\..\..\src\Uno.Extensions.Navigation\build\Package.targets" />
-	<Import Project="..\..\..\src\Uno.Extensions.Navigation.UI\build\Package.targets" />
+
+	<!-- Reference generators props. This required only when referencing extensions project as source code (instead of packages) -->
+	<Import Project="..\..\..\src\Uno.Extensions.Core.Generators\buildTransitive\Uno.Extensions.Core.props" />
+	<ItemGroup>
+		<PackageReference Include="Microsoft.Maui.Controls" />
+		<PackageReference Include="Microsoft.Maui.Controls.Compatibility"/>
+		<PackageReference Include="Microsoft.Maui.Graphics"  />
+			
+	</ItemGroup>
+
+	<ItemGroup Condition="$(TargetFramework.Contains('windows10'))">
+		<PackageReference Include="Microsoft.Windows.SDK.BuildTools" />
+		<PackageReference Include="Microsoft.WindowsAppSDK" />
+	</ItemGroup>
 
 	<ItemGroup Condition="'$(IsAndroid)' == 'true'">
 		<PackageReference Include="Xamarin.AndroidX.Navigation.UI" />
@@ -76,12 +79,6 @@
 		<PackageReference Include="Xamarin.AndroidX.Navigation.Common" />
 		<PackageReference Include="Xamarin.AndroidX.Collection" />
 		<PackageReference Include="Xamarin.AndroidX.Collection.Jvm" />
-		<PackageReference Include="Xamarin.AndroidX.Collection.Ktx"  />
-	</ItemGroup>
-
-	<ItemGroup>
-		<PackageReference Include="Microsoft.Maui.Controls" />
-		<PackageReference Include="Microsoft.Maui.Controls.Compatibility"/>
-		<PackageReference Include="Microsoft.Maui.Graphics"  />
+		<PackageReference Include="Xamarin.AndroidX.Collection.Ktx" />
 	</ItemGroup>
 </Project>
