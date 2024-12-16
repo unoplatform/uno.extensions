@@ -1,2 +1,55 @@
 <Project>
+	<!-- Workaround to avoid including Uno.Toolkit.UI XBFs in the PRI file -->
+	<Target Name="AdjustGetPackagingOutput1" AfterTargets="GetMrtPackagingOutputs">
+		<Message Importance="high" Text="Applying NuGet packaging workaround for dependent PRI files exclusion" />
+		<ItemGroup>
+			<_OtherPriFiles Include="@(PackagingOutputs)" Condition="'%(Extension)' == '.pri' and ('%(PackagingOutputs.ReferenceSourceTarget)' == 'ProjectReference' or '%(PackagingOutputs.NugetSourceType)'=='Package')" />
+			<PackagingOutputs Remove="@(_OtherPriFiles)" />
+		</ItemGroup>
+	</Target>
+	
+	<Target Name="AdjustGetPackagingOutput2" BeforeTargets="AddPriPayloadFilesToCopyToOutputDirectoryItems">
+		<Message Importance="high" Text="Applying NuGet packaging workaround for dependent PRI files exclusion" />
+		<ItemGroup>
+			<_OtherPriFiles1 Include="@(_ReferenceRelatedPaths)" Condition="'%(Extension)' == '.pri' and ('%(_ReferenceRelatedPaths.ReferenceSourceTarget)' == 'ProjectReference' or '%(_ReferenceRelatedPaths.NugetSourceType)'=='Package')" />
+			<_ReferenceRelatedPaths Remove="@(_OtherPriFiles1)" />
+
+			<_OtherPriFiles2 Include="@(ReferenceCopyLocalPaths)" Condition="'%(Extension)' == '.pri' and ('%(ReferenceCopyLocalPaths.ReferenceSourceTarget)' == 'ProjectReference' or '%(ReferenceCopyLocalPaths.NugetSourceType)'=='Package')" />
+			<ReferenceCopyLocalPaths Remove="@(_OtherPriFiles2)" />
+		</ItemGroup>
+	</Target>
+
+	<!-- Workaround until https://github.com/unoplatform/uno/pull/17088 is merged -->
+	<PropertyGroup>
+		<!-- Copy from https://github.com/microsoft/WindowsAppSDK/pull/4124 -->
+		<ShouldComputeInputPris Condition="'$(ShouldComputeInputPris)' == '' AND ('$(OutputType)' == 'WinExe' OR '$(OutputType)' == 'Exe')">true</ShouldComputeInputPris>
+		<ShouldComputeInputPris Condition="'$(ShouldComputeInputPris)' == ''">false</ShouldComputeInputPris>
+	</PropertyGroup>
+
+	<Target Name="_UnoIncludeUIToolkit"
+		BeforeTargets="$(_UnoRemoveReferences_BeforeTargets)"
+		Condition="$(ShouldComputeInputPris)">
+
+		<!-- 
+		Since we're not using the standard packaging mechanism, the Uno.UI.Toolkit resources
+		need to be included explicitly.
+		-->
+
+		<ItemGroup>
+			<PriOutputs Include="$(PkgUno_WinUI)/lib/net8.0-windows10.0.19041.0/Uno.UI.Toolkit.pri"
+						TargetPath="Uno.UI.Toolkit.pri"
+						CopyLocal="True"
+						CopyToOutputDirectory="PreserveNewest"
+						OutputGroup="CopyLocalFilesOutputGroup" />
+			<_UnoUIToolkitAssets Include="$(PkgUno_WinUI)/lib/net8.0-windows10.0.19041.0/Uno.UI.Toolkit/**"/>
+			<None
+				Include="@(_UnoUIToolkitAssets)"
+				TargetPath="Uno.UI.Toolkit/%(RecursiveDir)%(Filename)%(Extension)"
+				CopyToOutputDirectory="PreserveNewest" />
+			<_UnoUIToolkitAssets Remove="@(_UnoUIToolkitAssets)" />
+		</ItemGroup>
+	</Target>
+
+	<!-- End Workaround until https://github.com/unoplatform/uno/pull/17088 is merged -->
+
 </Project>
