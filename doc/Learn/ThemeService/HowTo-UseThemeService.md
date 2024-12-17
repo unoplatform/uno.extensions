@@ -1,15 +1,45 @@
 ---
 uid: Uno.Extensions.ThemeService.Overview
 ---
-
 # How to use Theme Service
 
 This topic explains how to use the `ThemeService` for runtime theme switching and persisting user theme preferences.
 
-## Step-by-step
+## Automatic Registration with IoC
 
-1. **Register ThemeService**:
-    Add the `ThemeService` to your project's host builder configuration.
+> [!NOTE]
+> The `ThemeService` is automatically registered when you enable IoC (Dependency Injection) or Extensions UnoFeature in your Uno Platform project. This means you typically *do not* need to explicitly register it using `UseThemeSwitching` unless you are not using IoC.
+
+## Step-by-step (Typical Usage with IoC)
+
+1. **Consume ThemeService**: Inject the `ThemeService` into your view models or other services where you need to manipulate the theme.
+
+    ```csharp
+    public class SettingsViewModel
+    {
+        private readonly IThemeService _themeService;
+        
+        public SettingsViewModel(IThemeService themeService)
+        {
+            _themeService = themeService;
+        }
+
+        public async Task ToggleThemeAsync()
+        {
+            var currentTheme = _themeService.Theme;
+            var newTheme = currentTheme == AppTheme.Dark ? AppTheme.Light : AppTheme.Dark;
+            await _themeService.SetThemeAsync(newTheme);
+        }
+    }
+    ```
+
+## Step-by-step (Manual Registration without IoC or Advanced Scenarios)
+
+If you are *not* using IoC, Extensions, or require more control over the registration process, you can manually register the `ThemeService`:
+
+1. When using the Uno.Sdk, follow this guide on how to add `ThemeService` [UnoFeature](xref:Uno.Features.Uno.Sdk#managing-the-unosdk-version).
+
+1. **Register ThemeService**: Add the `ThemeService` to your project's host builder configuration using `UseThemeSwitching`.
 
     ```csharp
     public partial class App : Application
@@ -24,25 +54,7 @@ This topic explains how to use the `ThemeService` for runtime theme switching an
     }
     ```
 
-2. **Consume ThemeService**:
-    Inject the ThemeService into your view models or other services where you need to manipulate the theme.
-
-    ```csharp
-    public class SettingsViewModel
-    {
-        private readonly IThemeService _themeService;
-        public SettingsViewModel(IThemeService themeService)
-        {
-            _themeService = themeService;
-        }
-        public async Task ToggleThemeAsync()
-        {
-            var currentTheme = _themeService.Theme;
-            var newTheme = currentTheme == AppTheme.Dark ? AppTheme.Light : AppTheme.Dark;
-            await _themeService.SetThemeAsync(newTheme);
-        }
-    }
-    ```
+1. **Consume ThemeService:** (Same as the IoC usage) Inject the `ThemeService` as shown in the previous example.
 
 ## Source Code
 
