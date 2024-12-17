@@ -43,19 +43,30 @@ public static class ServiceCollectionExtensions
 	/// <param name="configure">[Optional] A callback for configuring the endpoint.</param>
 	/// <returns>The updated <see cref="IServiceCollection"/> with the registered Kiota client.</returns>
 	public static IServiceCollection AddKiotaClientWithEndpoint<TClient, TEndpoint>(
-		this IServiceCollection services,
-		HostBuilderContext context,
-		TEndpoint? options = null,
-		string? name = null,
-		Func<IHttpClientBuilder, TEndpoint?, IHttpClientBuilder>? configure = null
-	)
-		where TClient : class
-		where TEndpoint : EndpointOptions, new() =>
-		services.AddClientWithEndpoint<TClient, TEndpoint>(
+	this IServiceCollection services,
+	HostBuilderContext context,
+	TEndpoint? options = null,
+	string? name = null,
+	Func<IHttpClientBuilder, TEndpoint?, IHttpClientBuilder>? configure = null
+)
+	where TClient : class
+	where TEndpoint : EndpointOptions, new()
+	{
+		services.AddKiotaHandlers();
+
+		return services.AddClientWithEndpoint<TClient, TEndpoint>(
 				context,
 				options,
 				name: name ?? typeof(TClient).FullName ?? "DefaultClient",
-				httpClientFactory: null,
+				httpClientFactory: (s, c) => s.AddHttpClient<TClient>(name ?? typeof(TClient).FullName ?? "DefaultClient")
+					.AttachKiotaHandlers()
+					.ConfigureHttpClient(client =>
+					{
+						if (options?.Url != null)
+						{
+							client.BaseAddress = new Uri(options.Url);
+						}
+					}),
 				configure: configure
 			)
 			.AddSingleton<IRequestAdapter, HttpClientRequestAdapter>(sp =>
@@ -80,5 +91,37 @@ public static class ServiceCollectionExtensions
 				var requestAdapter = sp.GetRequiredService<IRequestAdapter>();
 				return (TClient)Activator.CreateInstance(typeof(TClient), requestAdapter)!;
 			});
+	}
+	/// <summary>
+	/// Dynamically adds Kiota handlers to the service collection.
+	/// </summary>
+	/// <param name="services">The <see cref="IServiceCollection"/> to register the handlers with.</param>
+	/// <returns>The updated <see cref="IServiceCollection"/> with the registered Kiota handlers.</returns>
+	private static IServiceCollection AddKiotaHandlers(this IServiceCollection services)
+	{
+		var kiotaHandlers = KiotaClientFactory.GetDefaultHandlerTypes();
+		foreach (var handler in kiotaHandlers)
+		{
+			services.AddTransient(handler);
+		}
+
+		return services;
+	}
+
+	/// <summary>
+	/// Attaches Kiota handlers to the <see cref="IHttpClientBuilder"/>.
+	/// </summary>
+	/// <param name="builder">The <see cref="IHttpClientBuilder"/> to attach the handlers to.</param>
+	/// <returns>The updated <see cref="IHttpClientBuilder"/> with the attached Kiota handlers.</returns>
+	private static IHttpClientBuilder AttachKiotaHandlers(this IHttpClientBuilder builder)
+	{
+		var kiotaHandlers = KiotaClientFactory.GetDefaultHandlerTypes();
+		foreach (var handler in kiotaHandlers)
+		{
+			builder.AddHttpMessageHandler((sp) => (DelegatingHandler)sp.GetRequiredService(handler));
+		}
+
+		return builder;
+	}
 
 }
