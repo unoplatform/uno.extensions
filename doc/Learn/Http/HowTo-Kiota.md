@@ -1,7 +1,7 @@
 ---
 uid: Uno.Extensions.Http.HowToKiota
 ---
-# How-To: Quickly Kiota Client for an API
+# How-To: Quickly create and register a Kiota Client for an API
 
 When working with APIs in your application, having a strongly-typed client can simplify communication and reduce boilerplate code. **Kiota** is a tool that generates strongly-typed API clients from Swagger/OpenAPI definitions. With Uno.Extensions, you can easily register and use Kiota clients in your Uno Platform app without additional setup.
 
@@ -51,7 +51,7 @@ When working with APIs in your application, having a strongly-typed client can s
 * Generate the Client using the OpenAPI specification URL:
 
     ```xml
-    kiota generate -l CSharp -c MyApiClient -n MyApp.Client -d https://localhost:5002/swagger/v1/swagger.json -o ./Client
+    kiota generate -l CSharp -c MyApiClient -n MyApp.Client -d PATH_TO_YOUR_API_SPEC.json -o ./Client
     ```
 
     This will create a client named `MyApiClient` in the Client folder.
