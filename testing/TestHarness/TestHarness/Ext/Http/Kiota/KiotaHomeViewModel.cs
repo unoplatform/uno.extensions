@@ -1,26 +1,33 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
-using TestHarness.Ext.Http.Kiota.Client;
+﻿using TestHarness.Ext.Http.Kiota.Client;
 using Uno.Extensions.Navigation;
 
 namespace TestHarness.Ext.Http.Kiota;
 
-public class KiotaHomeViewModel
+[ReactiveBindable(false)]
+public partial class KiotaHomeViewModel : ObservableObject
 {
 	private readonly PostsApiClient _postsApiClient;
+	private readonly INavigator _navigator;
 
-	public string FetchPostsResult { get; set; } = string.Empty;
+	[ObservableProperty]
+	private string _fetchPostsResult = string.Empty;
 
-	public KiotaHomeViewModel(PostsApiClient postsApiClient)
+	[ObservableProperty]
+	private string _initializationStatus = string.Empty;
+
+	public KiotaHomeViewModel(PostsApiClient postsApiClient, INavigator navigator)
 	{
 		_postsApiClient = postsApiClient;
+		_navigator = navigator;
+
+		InitializationStatus = "Kiota Client initialized successfully.";
 	}
 
 	public async void FetchPosts()
 	{
 		try
 		{
+			FetchPostsResult = "Fetching posts...";
 			var posts = await _postsApiClient.Posts.GetAsync();
 			FetchPostsResult = $"Retrieved {posts?.Count} posts.";
 		}

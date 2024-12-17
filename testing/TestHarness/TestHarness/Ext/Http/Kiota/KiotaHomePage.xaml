@@ -4,9 +4,7 @@
 	  xmlns:local="using:TestHarness.Ext.Http.Kiota"
 	  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-	  xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
 	  xmlns:utu="using:Uno.Toolkit.UI"
-	  xmlns:uen="using:Uno.Extensions.Navigation.UI"
 	  mc:Ignorable="d"
 	  Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
@@ -17,14 +15,22 @@
 		</Grid.RowDefinitions>
 
 		<utu:NavigationBar AutomationProperties.AutomationId="KiotaHomeNavigationBar"
-						   Content="Kiota Home" />
+						   Content="Register Kiota's Client" />
 
 		<StackPanel Grid.Row="1"
 					HorizontalAlignment="Center"
-					VerticalAlignment="Center">
+					VerticalAlignment="Center"
+					Spacing="10">
+			<TextBlock AutomationProperties.AutomationId="InitializationStatusTextBlock"
+					   Text="{Binding InitializationStatus}"
+					   FontWeight="Bold"
+					   FontSize="16"
+					   Foreground="Green" />
+
 			<Button AutomationProperties.AutomationId="FetchPostsButton"
 					Content="Fetch Posts"
 					Click="{x:Bind ViewModel.FetchPosts}" />
+
 			<TextBlock AutomationProperties.AutomationId="FetchPostsResultTextBlock"
 					   Text="{Binding FetchPostsResult}" />
 		</StackPanel>

@@ -11,9 +11,12 @@ public class Given_Kiota : NavigationTestBase
 
 		App.WaitElement("KiotaHomeNavigationBar");
 
+		var initializationStatus = App.GetText("InitializationStatusTextBlock");
+		initializationStatus.Should().Contain("Kiota Client initialized successfully.");
+
 		App.WaitThenTap("FetchPostsButton");
 
-		await Task.Delay(2000);
+		await Task.Delay(1000);
 
 		var fetchResult = App.GetText("FetchPostsResultTextBlock");
 		fetchResult.Should().Contain("Retrieved").And.Contain("posts");

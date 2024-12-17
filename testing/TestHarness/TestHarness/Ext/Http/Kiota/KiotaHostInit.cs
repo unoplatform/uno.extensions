@@ -12,12 +12,19 @@ public class KiotaHostInit : BaseHostInitialization
 		builder.ConfigureServices((context, services) =>
 		{
 			services.AddKiotaClient<PostsApiClient>(context, options: new EndpointOptions { Url = "https://jsonplaceholder.typicode.com" });
+			services.AddTransient<KiotaHomeViewModel>();
 		});
 
 	protected override void RegisterRoutes(IViewRegistry views, IRouteRegistry routes)
 	{
-		views.Register(new ViewMap<KiotaHomePage, KiotaHomeViewModel>());
+		views.Register(
+			new ViewMap<KiotaMainPage>(),
+			new ViewMap<KiotaHomePage, KiotaHomeViewModel>()
+		);
 
-		routes.Register(new RouteMap("", View: views.FindByViewModel<KiotaHomeViewModel>()));
+		routes.Register(
+			new RouteMap("", View: views.FindByView<KiotaMainPage>()),
+			new RouteMap("Home", View: views.FindByViewModel<KiotaHomeViewModel>())
+		);
 	}
 }
