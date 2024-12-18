@@ -5,12 +5,12 @@ uid: Uno.Extensions.ThemeService.Overview
 
 This topic explains how to use the `ThemeService` for runtime theme switching and persisting user theme preferences.
 
-## Automatic Registration with IoC
+## Automatic Registration with DI
 
 > [!NOTE]
-> The `ThemeService` is automatically registered when you enable IoC (Dependency Injection) or Extensions UnoFeature in your Uno Platform project. This means you typically *do not* need to explicitly register it using `UseThemeSwitching` unless you are not using IoC.
+> The `ThemeService` is automatically registered when you enable DI (Dependency Injection) or Extensions UnoFeature in your Uno Platform project. This means you typically *do not* need to explicitly register it using `UseThemeSwitching` unless you are not using DI.
 
-## Step-by-step (Typical Usage with IoC)
+## Step-by-step (Typical Usage with DI)
 
 1. **Consume ThemeService**: Inject the `ThemeService` into your view models or other services where you need to manipulate the theme.
 
@@ -33,9 +33,9 @@ This topic explains how to use the `ThemeService` for runtime theme switching an
     }
     ```
 
-## Step-by-step (Manual Registration without IoC or Advanced Scenarios)
+## Step-by-step (Manual Registration without DI or Advanced Scenarios)
 
-If you are *not* using IoC, Extensions, or require more control over the registration process, you can manually register the `ThemeService`:
+If you are *not* using DI, Extensions, or require more control over the registration process, you can manually register the `ThemeService`:
 
 1. When using the Uno.Sdk, follow this guide on how to add `ThemeService` [UnoFeature](xref:Uno.Features.Uno.Sdk#managing-the-unosdk-version).
 
@@ -54,7 +54,7 @@ If you are *not* using IoC, Extensions, or require more control over the registr
     }
     ```
 
-1. **Consume ThemeService:** (Same as the IoC usage) Inject the `ThemeService` as shown in the previous example.
+1. **Consume ThemeService:** (Same as the DI usage) Inject the `ThemeService` as shown in the previous example.
 
 ## Source Code
 
