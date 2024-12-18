@@ -1,4 +1,6 @@
-﻿namespace Uno.Extensions.Navigation.Navigators;
+﻿using System.Reflection;
+
+namespace Uno.Extensions.Navigation.Navigators;
 
 public class PanelVisiblityNavigator : ControlNavigator<Panel>
 {
@@ -34,6 +36,22 @@ public class PanelVisiblityNavigator : ControlNavigator<Panel>
 
 	protected override async Task<bool> RegionCanNavigate(Route route, RouteInfo? routeMap)
 	{
+		// Check if the SelectorNavigator can navigate to the route
+		// This is to prevent the PanelVisibilityNavigator from navigating to a route that is not specified
+		// As a Region.Name in the Selector (TabBar/NavigationView) Items
+		// Causing a FrameView to be wrongly injected creating a nested navigation
+		var sibling = Region.Parent?.Children.FirstOrDefault(x => x.View != Control);
+		var nav = sibling?.Navigator();
+		var isSelector = nav != null && InheritsFromSelector(nav.GetType());
+
+		if (isSelector)
+		{
+			var itemsProperty = nav!.GetType().GetProperty("Items", BindingFlags.NonPublic | BindingFlags.Instance);
+			var items = itemsProperty?.GetValue(nav) as IEnumerable<FrameworkElement>;
+			var canNavigate = items?.FirstOrDefault(x => x.GetName() == route.Base) != null;
+			return canNavigate;
+		}
+
 		if (!await base.RegionCanNavigate(route, routeMap))
 		{
 			return false;
@@ -150,5 +168,26 @@ public class PanelVisiblityNavigator : ControlNavigator<Panel>
 			Control.Children.OfType<FrameworkElement>().FirstOrDefault(x => x.GetName() == path) ??
 			Control.FindName(path) as FrameworkElement;
 		return controlToShow;
+	}
+
+	private bool InheritsFromSelector(Type type)
+	{
+		if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(SelectorNavigator<>))
+		{
+			return true;
+		}
+
+		var baseType = type.BaseType;
+
+		while (baseType != null && baseType != typeof(object))
+		{
+			if (baseType.IsGenericType && baseType.GetGenericTypeDefinition() == typeof(SelectorNavigator<>))
+			{
+				return true;
+			}
+			baseType = baseType.BaseType;
+		}
+
+		return false;
 	}
 }
