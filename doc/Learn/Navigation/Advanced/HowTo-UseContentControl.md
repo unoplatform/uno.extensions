@@ -5,10 +5,9 @@ uid: Uno.Extensions.Navigation.Advanced.ContentControl
 
 If you want to display a view in a specific location in a page, `ContentControl` is the ideal UI element. For example, you might want to display a view in a `Grid` or `StackPanel` in a specific location. You can use a `ContentControl` to display a view in a specific location.
 
-## Step-by-steps
+## Step-by-step
 
-> [!IMPORTANT]
-> This guide assumes you used the template wizard or `dotnet new unoapp` to create your solution. If not, it is recommended that you follow the [**Creating an application with Uno.Extensions** documentation](xref:Uno.Extensions.HowToGettingStarted) to create an application from the template.
+[!include[create-application](../../includes/create-application.md)]
 
 ### 1. Displaying Content with Content Control
 

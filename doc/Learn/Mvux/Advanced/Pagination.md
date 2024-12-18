@@ -6,7 +6,7 @@ uid: Uno.Extensions.Mvux.Advanced.Pagination
 
 There are several ways to paginate data.
 
-> [!NOTE]  
+> [!NOTE]
 > The source code for the sample app demonstrated in this section can be found [here](https://github.com/unoplatform/Uno.Samples/tree/master/UI/MvuxHowTos/PaginationPeopleApp).
 
 ## Incremental loading
@@ -80,18 +80,18 @@ public partial record PeopleModel(IPeopleService PeopleService)
 
 The `AsyncPaginated` method generates a `ListFeed` that supports pagination.
 
-Whenever the user scrolls down to see additional data and is hitting the end of the collection displayed in a `ListView`, the pagination List-Feed is automatically triggered with a page request.  
+Whenever the user scrolls down to see additional data and is hitting the end of the collection displayed in a `ListView`, the pagination List-Feed is automatically triggered with a page request.
 The parameter of `AsyncPaginated`, is a delegate taking in a [`PageRequest`](#the-pagerequest-type) value and a `CancellationToken` and returning an `IListFeed<T>` where `T` is `Person` in our case. This delegate is invoked when a page request comes in.
 
 Inside this callback, we call the service by providing it with the following parameters:
 
-- `pageSize`: the page size the `ListView` expects being able to display on the first page, which is received via the `DesiredSize` property of the `PageRequest`. This property is a nullable uint, and is null on the first call, as by the time of the first call the UI is initializing the data-binding and there's no data present yet to determine the number of items the UI should place in the space. On the first call, we'll instead use the constant value `DefaultPageSize` which is set to `20`.  
+- `pageSize`: the page size the `ListView` expects being able to display on the first page, which is received via the `DesiredSize` property of the `PageRequest`. This property is a nullable uint, and is null on the first call, as by the time of the first call the UI is initializing the data-binding and there's no data present yet to determine the number of items the UI should place in the space. On the first call, we'll instead use the constant value `DefaultPageSize` which is set to `20`.
 - `firstItemIndex:` The index of the first item on the requested page. We use the current count (which is one-based) as the next one's index (which is zero-based).
 
 ### View
 
 ```xml
-<Page 
+<Page
     x:Class="PaginationPeopleApp.MainPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -112,19 +112,19 @@ Inside this callback, we call the service by providing it with the following par
 </Page>
 ```
 
-In addition, make sure the `DataContext` of the `Page` is set to the generated bindable proxy called `BindablePeopleModel` (*MainPage.xaml.cs*):
+In addition, make sure the `DataContext` of the `Page` is set to the generated ViewModel called `PeopleViewModel` (*MainPage.xaml.cs*):
 
 ```csharp
 public MainPage()
 {
     this.InitializeComponent();
 
-    this.DataContext = new BindablePeopleModel(new PeopleService());
+    this.DataContext = new PeopleViewModel(new PeopleService());
 }
 ```
 
-> [!TIP]  
-> You can inspect the generated code by either placing the cursor on the word `BindablePeopleModel` and hitting <kbd>F12</kbd>, see other ways to inspect the generated code [here](xref:Uno.Extensions.Mvux.Advanced.InspectGeneratedCode).
+> [!TIP]
+> You can inspect the generated code by either placing the cursor on the word `PeopleViewModel` and hitting <kbd>F12</kbd>, see other ways to inspect the generated code [here](xref:Uno.Extensions.Mvux.Advanced.InspectGeneratedCode).
 
 As you can see, there's nothing special in the XAML code as MVUX is taking advantage of the tools already implemented with the `ListView`.
 
@@ -137,12 +137,12 @@ Here's what the app renders like:
 
 ![A video of an app that implements automatic incremental loading](../Assets/PaginationIncrementalLoading.gif)
 
-> [!NOTE]  
+> [!NOTE]
 > The source code for the sample app demonstrated in this section can be found [here](https://github.com/unoplatform/Uno.Samples/tree/master/UI/MvuxHowTos/PaginationPeopleApp).
 
 ## Offset pagination
 
-Offset pagination is controlled via a State that stores the current page index in the Model, and the List-Feed depending on it, using [the `Select` operator](xref:Uno.Extensions.Mvux.Feeds#select-or-selectasync).  
+Offset pagination is controlled via a State that stores the current page index in the Model, and the List-Feed depending on it, using [the `Select` operator](xref:Uno.Extensions.Reactive.Feed#select).
 When the user requests a new page, the current page index state is updated, thereby updating the dependent collection List-Feed.
 
 Using the example started in [incremental loading above](#incremental-loading), we'll add another method to the service, which will disclose to the View how many items are there in total. Getting a count of items is more efficient than enumerating all entries. This is necessary to identify the total number of pages we have.
@@ -187,8 +187,8 @@ public partial record PeopleModel(IPeopleService PeopleService)
 }
 ```
 
-`PeopleManual` is a Feed that reacts to changes in the `CurrentPage` property and projects the current page data according to its number.  
-To accomplish this, the [`SelectAsync` operator](xref:Uno.Extensions.Mvux.Feeds#select-or-selectasync) of Feeds is used.  
+`PeopleManual` is a Feed that reacts to changes in the `CurrentPage` property and projects the current page data according to its number.
+To accomplish this, the [`SelectAsync` operator](xref:Uno.Extensions.Reactive.Feed#selectasync) of Feeds is used.
 The callback of this operator calls the service's `GetPeopleAsync` with the following arguments:
 
 - `pageSize`: As with the [automatic incremental loading](#incremental-loading) example above we're passing the size of each page, except this time we are manually setting the page size to an arbitrary number via the `DefaultPageSize` constant, which is set to `20`.
@@ -203,18 +203,18 @@ Replace the `ListView` from the previous example with this one:
           ItemTemplate="{StaticResource PersonDataTemplate}">
 
     <ListView.Footer>
-        <NumberBox 
+        <NumberBox
             HorizontalAlignment="Center"
             Header="Current page:"
-            Minimum="1" 
+            Minimum="1"
             Maximum="{Binding PageCount}"
-            SpinButtonPlacementMode="Inline"                     
+            SpinButtonPlacementMode="Inline"
             Value="{Binding CurrentPage, Mode=TwoWay}"/>
     </ListView.Footer>
 </ListView>
 ```
 
-The `ListView`'s footer contains a `NumberBox` which increments/decrements the `CurrentPage` State it's bound to, via its `Value` property. The `Maximum` property is bound to `PageCount`, to disable navigating to a page that does not exist.  
+The `ListView`'s footer contains a `NumberBox` which increments/decrements the `CurrentPage` State it's bound to, via its `Value` property. The `Maximum` property is bound to `PageCount`, to disable navigating to a page that does not exist.
 It's then propagated to the `PeopleManual` property as explained [above](#model).
 
 When running the app, the `NumberBox` will be displayed and set with the first page:
@@ -248,7 +248,7 @@ There are several caveats in using `Skip` and `Take` (Offset pagination) with an
 - When we skip data records, the database might still have to process some of the skipped records on its way to the desired ones.
 - If any updates have been applied to the records preceding the currently displayed page, and then the user moves to the next or previous page, there might be inconsistencies in showing the subsequent data, some of the entries might be skipped or shown twice.
 
-An alternative way to paginate data is by using a cursor that points to a specific record and takes the number of desired records in a page onwards.  
+An alternative way to paginate data is by using a cursor that points to a specific record and takes the number of desired records in a page onwards.
 This is referred to as 'keyset pagination' or 'seek-based pagination'.
 
 To utilize this pagination style, MVUX provides another `ListFeed` factory overload, the `AsyncPaginatedByCursor`.
@@ -301,7 +301,7 @@ The method returns a tuple with two components (same as `PageResult`, only keepi
 - An `IImmutableList<Person>` which includes the entities of this page
 - An `int?` which uses as a cursor to the beginning of the next page, if any.
 
-> [!TIP]  
+> [!TIP]
 > The cursor does not necessarily have to be an `int?` or the data type the collection contains, it can also be another key of an entity for the service to look up and return it along with its upcoming entries.
 
 The fully implemented method in the service is as follows:

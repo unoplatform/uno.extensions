@@ -84,7 +84,9 @@ public static partial class State<T>
 	public static IState<T> Value<TOwner>(TOwner owner, Func<T> valueProvider)
 		where TOwner : class
 		// Note: We force the usage of delegate so 2 properties which are doing State.Value(this, () => 42) will effectively have 2 distinct states.
-		=> AttachedProperty.GetOrCreate(owner, valueProvider, static (o, v) => SourceContext.GetOrCreate(o).CreateState(Option.SomeOrNone(v())));
+		=> AttachedProperty.GetOrCreate(owner: owner,
+										key: valueProvider,
+										factory: static (o, v) => SourceContext.GetOrCreate(o).CreateState(Option.SomeOrNone(v())));
 
 	/// <summary>
 	/// Gets or creates a state from a static initial value.
@@ -96,7 +98,9 @@ public static partial class State<T>
 	public static IState<T> Value<TOwner>(TOwner owner, Func<Option<T>> valueProvider)
 		where TOwner : class
 		// Note: We force the usage of delegate so 2 properties which are doing State.Value(this, () => 42) will effectively have 2 distinct states.
-		=> AttachedProperty.GetOrCreate(owner, valueProvider, static (o, v) => SourceContext.GetOrCreate(o).CreateState(v()));
+		=> AttachedProperty.GetOrCreate(owner: owner,
+										key: valueProvider,
+										factory: static (o, v) => SourceContext.GetOrCreate(o).CreateState(v()));
 
 	/// <summary>
 	/// Gets or creates a state from an async method.
@@ -108,7 +112,9 @@ public static partial class State<T>
 	/// <returns>A feed that encapsulate the source.</returns>
 	public static IState<T> Async<TOwner>(TOwner owner, AsyncFunc<Option<T>> valueProvider, Signal? refresh = null)
 		where TOwner : class
-		=> AttachedProperty.GetOrCreate(owner, (valueProvider, refresh), static (o, args) => S(o, new AsyncFeed<T>(args.valueProvider, args.refresh)));
+		=> AttachedProperty.GetOrCreate(owner: owner,
+										key: (valueProvider, refresh),
+										factory: static (o, args) => S(o, new AsyncFeed<T>(args.valueProvider, args.refresh)));
 
 	/// <summary>
 	/// Gets or creates a state from an async method.
@@ -132,7 +138,9 @@ public static partial class State<T>
 	/// <returns>A feed that encapsulate the source.</returns>
 	public static IState<T> Async<TOwner>(TOwner owner, AsyncFunc<T> valueProvider, Signal? refresh = null)
 		where TOwner : class
-		=> AttachedProperty.GetOrCreate(owner, (valueProvider, refresh), static (o, args) => S(o, new AsyncFeed<T>(args.valueProvider.SomeOrNoneWhenNotNull(), args.refresh)));
+		=> AttachedProperty.GetOrCreate(owner: owner,
+										key: (valueProvider, refresh),
+										factory: static (o, args) => S(o, new AsyncFeed<T>(args.valueProvider.SomeOrNoneWhenNotNull(), args.refresh)));
 
 	/// <summary>
 	/// Gets or creates a state from an async method.

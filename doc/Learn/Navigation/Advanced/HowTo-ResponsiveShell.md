@@ -9,10 +9,9 @@ It makes sense to allow `TabBar` to be the dominant navigation surface on these 
 
 This tutorial will show you how to build a responsive layout with multiple navigation controls such as `NavigationView` and the [Uno Toolkit](https://github.com/unoplatform/uno.toolkit.ui) `TabBar` which use the _same_ navigation service behind the scenes.
 
-## Step-by-steps
+## Step-by-step
 
-> [!IMPORTANT]
-> This guide assumes you used the template wizard or `dotnet new unoapp` to create your solution. If not, it is recommended that you follow the [**Creating an application with Uno.Extensions** documentation](xref:Uno.Extensions.HowToGettingStarted) to create an application from the template.
+[!include[create-application](../../includes/create-application.md)]
 
 ### 1. Add necessary XAML namespaces
 

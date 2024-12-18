@@ -14,8 +14,7 @@ There are two aspects to the Authentication extensions:
 
 `Authentication` is provided as an Uno Feature. To enable `Authentication` support in your application, add `Authentication` to the `<UnoFeatures>` property in the Class Library (.csproj) file. In case you are using Msal Authentication add `AuthenticationMsal`, or `AuthenticationOidc` for Oidc Authentication.
 
-> [!IMPORTANT]
-> This walkthrough assumes you created your app using the Single Project template. If you used a different template, please refer to our [Migrating Projects to Single Project](xref:Uno.Development.MigratingToSingleProject) documentation.
+[!include[single-project](../includes/single-project.md)]
 
 For more information about `UnoFeatures` refer to our [Using the Uno.Sdk](xref:Uno.Features.Uno.Sdk) docs.
 

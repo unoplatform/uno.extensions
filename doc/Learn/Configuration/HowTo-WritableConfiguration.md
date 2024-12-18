@@ -11,7 +11,7 @@ A special interface called `IWritableOptions<T>` is registered as a service when
 > [!NOTE]
 > It is common to see this referred to as the _settings_ pattern in certain documentation. This is because the `IOptions<T>` interface is often used to represent settings that can be changed by the user.
 
-## Step-by-steps
+## Step-by-step
 
 ### 1. Prepare for writing configuration values
 

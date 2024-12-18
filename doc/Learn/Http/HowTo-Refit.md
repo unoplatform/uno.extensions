@@ -5,10 +5,9 @@ uid: Uno.Extensions.Http.HowToRefit
 
 When accessing resources with a [REST-style](https://www.ics.uci.edu/~fielding/pubs/dissertation/rest_arch_style.htm) API is a significant part of your application, it is common to look for an SDK that provides a strongly-typed client for the API. This allows you to avoid writing boilerplate code to make requests and deserialize responses. There is sometimes no SDK available yet for the API you want to use, or it's not compatible with your target platform. With the design goal of avoiding boilerplate code in mind, we will walk through how to use [Refit](https://github.com/reactiveui/refit) to quickly create a strongly-typed client for a REST API and register it with the service collection as an endpoint.
 
-## Step-by-steps
+## Step-by-step
 
-> [!IMPORTANT]
-> This guide assumes you used the template wizard or `dotnet new unoapp` to create your solution. If not, it is recommended that you follow the [**Creating an application with Uno.Extensions** documentation](xref:Uno.Extensions.HowToGettingStarted) to create an application from the template.
+[!include[create-application](../includes/create-application.md)]
 
 ### 1. Installation
 

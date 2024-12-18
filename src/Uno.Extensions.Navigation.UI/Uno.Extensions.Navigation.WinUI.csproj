@@ -4,6 +4,8 @@
 	<PropertyGroup>
 		<AssemblyName>Uno.Extensions.Navigation.UI</AssemblyName>
 
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+
 		<!--Temporary disable missing XML doc until fixed in the whole package-->
 		<WarningsNotAsErrors>$(WarningsNotAsErrors);CS1591</WarningsNotAsErrors>
 

@@ -43,7 +43,21 @@
 		<DefineConstants>$(DefineConstants);USE_UITESTS</DefineConstants>
 	</PropertyGroup>
 
-
+	<ItemGroup>
+	  <EmbeddedResource Include="Ext\Authentication\Custom\appsettings.dummyjson.json" />
+	  <EmbeddedResource Include="Ext\Authentication\Custom\appsettings.testbackend.json" />
+	  <EmbeddedResource Include="Ext\Authentication\Msal\appsettings.msal.json" />
+	  <EmbeddedResource Include="Ext\Authentication\Msal\appsettings.msalauthentication.json" />
+	  <EmbeddedResource Include="Ext\Authentication\Msal\appsettings.multi.json" />
+	  <EmbeddedResource Include="Ext\Authentication\Oidc\appsettings.oidc.json" />
+	  <EmbeddedResource Include="Ext\Authentication\Web\appsettings.webauth.json" />
+	  <EmbeddedResource Include="Ext\Authentication\Web\appsettings.webauthsettings.json" />
+	  <EmbeddedResource Include="Ext\Core\Storage\appsettings.storage.json" />
+	  <EmbeddedResource Include="Ext\Http\Endpoints\appsettings.httpendpoints.json" />
+	  <EmbeddedResource Include="Ext\Http\Refit\appsettings.httprefit.json" />
+	  <EmbeddedResource Include="Ext\Localization\appsettings.locale.json" />
+	  <EmbeddedResource Include="Ext\Navigation\Apps\Commerce\appsettings.logging.json" />
+	</ItemGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Authentication.Oidc\Uno.Extensions.Authentication.Oidc.WinUI.csproj" />

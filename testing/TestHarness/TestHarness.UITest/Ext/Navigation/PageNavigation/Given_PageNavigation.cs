@@ -168,6 +168,19 @@ public class Given_PageNavigation : NavigationTestBase
 
 	}
 
+	[Test]
+	public void When_PageNavigationDataContextDidntChange()
+	{
+		InitTestSection(TestSections.Navigation_PageNavigation);
+
+		App.WaitThenTap("ShowOnePageButton");
+		App.WaitThenTap("OnePageGetUrlFromBrowser");
+
+		// If DataContext is ever changed to anything other than the expected
+		// the text will be "DataContext is not correct"
+		App.WaitForText("OnePageTxtDataContext", "DataContext is ok");
+	}
+
 	private void OnePageToFivePage()
 	{
 		App.WaitThenTap("OnePageToTwoPageButton");

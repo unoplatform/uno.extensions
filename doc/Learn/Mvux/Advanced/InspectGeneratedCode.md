@@ -4,8 +4,8 @@ uid: Uno.Extensions.Mvux.Advanced.InspectGeneratedCode
 
 # Inspecting the generated code
 
-MVUX makes extensive use of code generation. It's used to generate bindable proxies for models, entities, and commands.  
-Inspecting the generated code can give you a lot of insight into how the bindable proxies work under the hood as well as how MVUX operates behind the scenes.
+MVUX makes extensive use of code generation. It's used to generate ViewModels for models, entities, and commands.
+Inspecting the generated code can give you a lot of insight into how the ViewModels work under the hood as well as how MVUX operates behind the scenes.
 
 Using Visual Studio, viewing the generated code can be achieved in several ways:
 
@@ -13,7 +13,7 @@ Using Visual Studio, viewing the generated code can be achieved in several ways:
 
     ![Demonstration of hitting F12 in Visual Studio to see generated code](../Assets/InspectingGeneratedCode-1.gif)
 
-1. Hitting <kbd>Ctrl</kbd>+<kbd>T</kbd> and typing in the Bindable type name:
+1. Hitting <kbd>Ctrl</kbd>+<kbd>T</kbd> and typing in the ViewModel type name:
 
     ![Demonstration of hitting Control T in Visual Studio to see generated code](../Assets/InspectingGeneratedCode-2.gif)
 
@@ -24,6 +24,6 @@ Using Visual Studio, viewing the generated code can be achieved in several ways:
     1. Expand the project's *Dependencies* object.
     2. Expand the current target platform (e.g. *net8.0windows10.0...*).
     3. Expand the *Analyzers* sub menu and then *Uno.Extensions.Reactive.Generator*.
-    4. Under *Uno.Extensions.Reactive.Generator.FeedsGenerator* you'll find the generated bindable proxy types.
+    4. Under *Uno.Extensions.Reactive.Generator.FeedsGenerator* you'll find the generated ViewModel types.
 
     ![Screenshot of navigating Visual Studio Solution Explorer to inspect generated code](../Assets/InspectingGeneratedCode-3.png)

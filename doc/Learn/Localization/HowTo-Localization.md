@@ -5,10 +5,9 @@ uid: Uno.Extensions.Localization.HowToUseLocalization
 
 `Uno.Extensions.Localization` uses the locale-specific resources from `resw` files placed in folders corresponding to the well-known language tag (eg en-US). By opting into localization, an implementation of `IStringLocalizer` is registered with your application's `IServiceCollection`.
 
-## Step-by-steps
+## Step-by-step
 
-> [!IMPORTANT]
-> This guide assumes you used the template wizard or `dotnet new unoapp` to create your solution. If not, it is recommended that you follow the [**Creating an application with Uno.Extensions** documentation](xref:Uno.Extensions.HowToGettingStarted) to create an application from the template.
+[!include[create-application](../includes/create-application.md)]
 
 ### 1. Installation
 

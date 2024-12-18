@@ -38,6 +38,9 @@ public sealed partial class MainPage : Page
 				Activator.CreateInstance(section.HostInitializer) :
 				default;
 			this.Frame.Navigate(section.MainPage, hostInit);
+
+			// Clear ListView selection
+			TestSectionsListView.SelectedItem = null;
 		}
 	}
 }

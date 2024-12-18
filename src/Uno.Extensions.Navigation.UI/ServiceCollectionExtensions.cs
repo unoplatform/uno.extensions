@@ -46,8 +46,10 @@ public static class ServiceCollectionExtensions
 					.AddSingleton<RouteNotifier>()
 					.AddSingleton<IRouteNotifier>(sp => sp.GetRequiredService<RouteNotifier>())
 					.AddSingleton<IRouteUpdater>(sp => sp.GetRequiredService<RouteNotifier>())
+#if __WASM__
 					.AddHostedService<BrowserAddressBarService>()
 					.AddHostedService<BackButtonService>()
+#endif
 					.AddScoped<Navigator>()
 
 

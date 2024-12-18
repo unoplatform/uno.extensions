@@ -178,27 +178,23 @@ partial class State
 		=> SetAsync(state, value, ct);
 
 	/// <summary>
-	/// Execute an async callback each time the state is being updated.
+	/// [DEPRECATED] Use ForEach instead
 	/// </summary>
-	/// <typeparam name="T">The type of the state</typeparam>
-	/// <param name="state">The state to listen.</param>
-	/// <param name="action">The callback to invoke on each update of the state.</param>
-	/// <param name="caller"> For debug purposes, the name of this subscription. DO NOT provide anything here, let the compiler fulfill this.</param>
-	/// <param name="line">For debug purposes, the name of this subscription. DO NOT provide anything here, let the compiler fulfill this.</param>
-	/// <returns>A <see cref="IDisposable"/> that can be used to remove the callback registration.</returns>
+	[EditorBrowsable(EditorBrowsableState.Never)]
+#if DEBUG // To avoid usage in internal reactive code, but without forcing apps to update right away
+	[Obsolete("Use ForEach")]
+#endif
 	public static IDisposable ForEachAsync<T>(this IState<T> state, AsyncAction<T?> action, [CallerMemberName] string? caller = null, [CallerLineNumber] int line = -1)
 		where T : notnull
 		=> new StateForEach<T>(state, action.SomeOrNone(), $"ForEachAsync defined in {caller} at line {line}.");
 
 	/// <summary>
-	/// Execute an async callback each time the state is being updated.
+	/// [DEPRECATED] Use ForEach instead
 	/// </summary>
-	/// <typeparam name="T">The type of the state</typeparam>
-	/// <param name="state">The state to listen.</param>
-	/// <param name="action">The callback to invoke on each update of the state.</param>
-	/// <param name="caller"> For debug purposes, the name of this subscription. DO NOT provide anything here, let the compiler fulfill this.</param>
-	/// <param name="line">For debug purposes, the name of this subscription. DO NOT provide anything here, let the compiler fulfill this.</param>
-	/// <returns>A <see cref="IDisposable"/> that can be used to remove the callback registration.</returns>
+	[EditorBrowsable(EditorBrowsableState.Never)]
+#if DEBUG // To avoid usage in internal reactive code, but without forcing apps to update right away
+	[Obsolete("Use ForEach")]
+#endif
 	public static IDisposable ForEachAsync<T>(this IState<T?> state, AsyncAction<T?> action, [CallerMemberName] string? caller = null, [CallerLineNumber] int line = -1)
 		where T : struct
 		=> new StateForEach<T?>(state, action.SomeOrNone(), $"ForEachAsync defined in {caller} at line {line}.");
@@ -212,18 +208,148 @@ partial class State
 	/// <param name="action">The callback to invoke on each update of the state.</param>
 	/// <param name="caller"> For debug purposes, the name of this subscription. DO NOT provide anything here, let the compiler fulfill this.</param>
 	/// <param name="line">For debug purposes, the name of this subscription. DO NOT provide anything here, let the compiler fulfill this.</param>
+	/// <returns>An <see cref="IState"/> that can be used to chain other operations.</returns>
+	public static IState<T> ForEach<T>(this IState<T> state, AsyncAction<T?> action, [CallerMemberName] string? caller = null, [CallerLineNumber] int line = -1)
+		where T : notnull
+	{
+		_ = AttachedProperty.GetOrCreate(
+				owner: state,
+				key: action,
+				state: (caller, line),
+				factory: static (s, a, d) => new StateForEach<T>(s, a.SomeOrNone(), $"ForEach defined in {d.caller} at line {d.line}."));
+
+		return state;
+	}
+
+	/// <summary>
+	/// Execute an async callback each time the state is being updated.
+	/// </summary>
+	/// <typeparam name="T">The type of the state</typeparam>
+	/// <param name="state">The state to listen.</param>
+	/// <param name="action">The callback to invoke on each update of the state.</param>
+	/// <param name="caller"> For debug purposes, the name of this subscription. DO NOT provide anything here, let the compiler fulfill this.</param>
+	/// <param name="line">For debug purposes, the name of this subscription. DO NOT provide anything here, let the compiler fulfill this.</param>
+	/// <param name="disposable"> A <see cref="IDisposable"/> that can be used to remove the callback registration.</param>
+	/// <returns>An <see cref="IState"/> that can be used to chain other operations.</returns>
+	public static IState<T> ForEach<T>(this IState<T> state, AsyncAction<T?> action, out IDisposable disposable, [CallerMemberName] string? caller = null, [CallerLineNumber] int line = -1)
+		where T : notnull
+	{
+		disposable = AttachedProperty.GetOrCreate(
+						owner: state,
+						key: action,
+						state: (caller, line),
+						factory: static (s, a, d) => new StateForEach<T>(s, a.SomeOrNone(), $"ForEach defined in {d.caller} at line {d.line}."));
+
+		return state;
+	}
+
+	/// <summary>
+	/// Execute an async callback each time the state is being updated.
+	/// </summary>
+	/// <typeparam name="T">The type of the state</typeparam>
+	/// <param name="state">The state to listen.</param>
+	/// <param name="action">The callback to invoke on each update of the state.</param>
+	/// <param name="caller"> For debug purposes, the name of this subscription. DO NOT provide anything here, let the compiler fulfill this.</param>
+	/// <param name="line">For debug purposes, the name of this subscription. DO NOT provide anything here, let the compiler fulfill this.</param>
 	/// <returns>A <see cref="IDisposable"/> that can be used to remove the callback registration.</returns>
+	public static IState<T?> ForEach<T>(this IState<T?> state, AsyncAction<T?> action, [CallerMemberName] string? caller = null, [CallerLineNumber] int line = -1)
+		where T : struct
+	{
+		_ = AttachedProperty.GetOrCreate(
+				owner: state,
+				key: action,
+				state: (caller, line),
+				factory: static (s, a, d) => new StateForEach<T?>(s, a.SomeOrNone(), $"ForEach defined in {d.caller} at line {d.line}."));
+
+		return state;
+	}
+
+	/// <summary>
+	/// Execute an async callback each time the state is being updated.
+	/// </summary>
+	/// <typeparam name="T">The type of the state</typeparam>
+	/// <param name="state">The state to listen.</param>
+	/// <param name="action">The callback to invoke on each update of the state.</param>
+	/// <param name="caller"> For debug purposes, the name of this subscription. DO NOT provide anything here, let the compiler fulfill this.</param>
+	/// <param name="line">For debug purposes, the name of this subscription. DO NOT provide anything here, let the compiler fulfill this.</param>	
+	/// <param name="disposable"> A <see cref="IDisposable"/> that can be used to remove the callback registration.</param>
+	/// <returns>An <see cref="IState"/> that can be used to chain other operations.</returns>
+	public static IState<T?> ForEach<T>(this IState<T?> state, AsyncAction<T?> action, out IDisposable disposable, [CallerMemberName] string? caller = null, [CallerLineNumber] int line = -1)
+		where T : struct
+	{
+		disposable = AttachedProperty.GetOrCreate(
+						owner: state,
+						key: action,
+						state: (caller, line),
+						factory: static (s, a, d) => new StateForEach<T?>(s, a.SomeOrNone(), $"ForEach defined in {d.caller} at line {d.line}."));
+
+		return state;
+	}
+
+
+	/// <summary>
+	/// [DEPRECATED] Use ForEachData instead
+	/// </summary>
+	[EditorBrowsable(EditorBrowsableState.Never)]
+#if DEBUG // To avoid usage in internal reactive code, but without forcing apps to update right away
+	[Obsolete("Use ForEachData")]
+#endif
 	public static IDisposable ForEachDataAsync<T>(this IState<T> state, AsyncAction<Option<T>> action, [CallerMemberName] string? caller = null, [CallerLineNumber] int line = -1)
 		=> new StateForEach<T>(state, action, $"ForEachDataAsync defined in {caller} at line {line}.");
+
+	/// <summary>
+	/// Execute an async callback each time the state is being updated.
+	/// </summary>
+	/// <typeparam name="T">The type of the state</typeparam>
+	/// <param name="state">The state to listen.</param>
+	/// <param name="action">The callback to invoke on each update of the state.</param>
+	/// <param name="caller"> For debug purposes, the name of this subscription. DO NOT provide anything here, let the compiler fulfill this.</param>
+	/// <param name="line">For debug purposes, the name of this subscription. DO NOT provide anything here, let the compiler fulfill this.</param>		
+	/// <returns>An <see cref="IState"/> that can be used to chain other operations.</returns>
+	public static IState<T> ForEachData<T>(this IState<T> state, AsyncAction<Option<T>> action, [CallerMemberName] string? caller = null, [CallerLineNumber] int line = -1)
+	{
+		_ = AttachedProperty.GetOrCreate(
+				owner: state,
+				key: action,
+				state: (caller, line),
+				factory: static (s, a, d) => new StateForEach<T>(s, a, $"ForEachData defined in {d.caller} at line {d.line}."));
+
+		return state;
+	}
+
+	/// <summary>
+	/// Execute an async callback each time the state is being updated.
+	/// </summary>
+	/// <typeparam name="T">The type of the state</typeparam>
+	/// <param name="state">The state to listen.</param>
+	/// <param name="action">The callback to invoke on each update of the state.</param>
+	/// <param name="disposable"> A <see cref="IDisposable"/> that can be used to remove the callback registration.</param>
+	/// <param name="caller"> For debug purposes, the name of this subscription. DO NOT provide anything here, let the compiler fulfill this.</param>
+	/// <param name="line">For debug purposes, the name of this subscription. DO NOT provide anything here, let the compiler fulfill this.</param>	
+	/// <returns>An <see cref="IState"/> that can be used to chain other operations.</returns>
+	public static IState<T> ForEachData<T>(this IState<T> state, AsyncAction<Option<T>> action, out IDisposable disposable, [CallerMemberName] string? caller = null, [CallerLineNumber] int line = -1)
+	{
+		disposable = AttachedProperty.GetOrCreate(
+						owner: state,
+						key: action,
+						state: (caller, line),
+						factory: static (s, a, d) => new StateForEach<T>(s, a, $"ForEachData defined in {d.caller} at line {d.line}."));
+
+		return state;
+	}
 
 	/// <summary>
 	/// [DEPRECATED] Use .ForEachAsync instead
 	/// </summary>
 	[EditorBrowsable(EditorBrowsableState.Never)]
 #if DEBUG // To avoid usage in internal reactive code, but without forcing apps to update right away
-	[Obsolete("Use ForEachAsync")]
+	[Obsolete("Use ForEach")]
 #endif
 	public static IDisposable Execute<T>(this IState<T> state, AsyncAction<T?> action, [CallerMemberName] string? caller = null, [CallerLineNumber] int line = -1)
 		where T : notnull
-		=> ForEachAsync(state, action, caller, line);
+	{
+		_ = ForEachAsync(state, action, caller, line);
+
+		return Disposable.Empty;
+	}
 }

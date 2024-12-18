@@ -46,6 +46,13 @@ public partial class FeedsGenerator : ISourceGenerator
 						context.AddSource(PathHelper.SanitizeFileName(generated.fileName) + ".g.cs", generated.code);
 					}
 					break;
+
+				case 3:
+					foreach (var (fileName, code) in new ViewModelGenTool_3(bindableContext).Generate())
+					{
+						context.AddSource(PathHelper.SanitizeFileName(fileName) + ".g.cs", code);
+					}
+					break;
 			}
 		}
 		else

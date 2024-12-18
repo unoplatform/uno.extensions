@@ -5,10 +5,9 @@ uid: Uno.Extensions.DependencyInjection.HowToDependencyInjection
 
 Dependency Injection (DI) is an important design pattern when building loosely-coupled software that allows for maintainability and testing. This tutorial will walk you through how to register services so that they can be consumed throughout your application.
 
-## Step-by-steps
+## Step-by-step
 
-> [!IMPORTANT]
-> This guide assumes you used the template wizard or `dotnet new unoapp` to create your solution. If not, it is recommended that you follow the [**Creating an application with Uno.Extensions** documentation](xref:Uno.Extensions.HowToGettingStarted) to create an application from the template.
+[!include[create-application](../includes/create-application.md)]
 
 ### 1. Plan the contract for your service
 

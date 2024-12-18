@@ -5,10 +5,9 @@ uid: Uno.Extensions.Navigation.Advanced.Panel
 
 Sometimes your application may need to switch between multiple views without the overhead of controls like `Frame` which support a navigation stack. In this case, it makes sense to define sectors of potential view content as **regions** and use another control to toggle the `Visibility` of the multiple views directly. This tutorial will show you how to use a `Panel` to switch between views.
 
-## Step-by-steps
+## Step-by-step
 
-> [!IMPORTANT]
-> This guide assumes you used the template wizard or `dotnet new unoapp` to create your solution. If not, it is recommended that you follow the [**Creating an application with Uno.Extensions** documentation](xref:Uno.Extensions.HowToGettingStarted) to create an application from the template.
+[!include[create-application](../../includes/create-application.md)]
 
 ### 1. Add necessary XAML namespaces
 

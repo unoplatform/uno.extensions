@@ -7,15 +7,16 @@ using Uno.Extensions.Generators;
 
 namespace Uno.Extensions.Reactive.Generator;
 
-internal class BindableGenerator : ICodeGenTool
+internal class ViewModelGenerator_1 : ICodeGenTool
 {
+	// Version 1 used with ViewModelGenTool Versions 1 and 2
 	public string Version => "1";
 
 	private readonly BindableGenerationContext _ctx;
 
 	private List<INamedTypeSymbol> _toGenerate = new();
 
-	public BindableGenerator(BindableGenerationContext ctx)
+	public ViewModelGenerator_1(BindableGenerationContext ctx)
 	{
 		_ctx = ctx;
 	}
@@ -67,6 +68,7 @@ internal class BindableGenerator : ICodeGenTool
 
 				Property property;
 				string bindable, initializer;
+
 				if (( // Either IImmutableList or the concrete ImmutableList
 						prop.Type.Is(_ctx.IImmutableList, allowBaseTypes: false, out var immutableList)
 						|| prop.Type.Is(_ctx.ImmutableList, allowBaseTypes: false, out immutableList)

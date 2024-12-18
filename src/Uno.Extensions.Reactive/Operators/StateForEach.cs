@@ -14,10 +14,14 @@ internal sealed class StateForEach<T> : IDisposable
 	private readonly CancellationTokenSource _ct = new();
 	private readonly AsyncAction<Option<T>> _action;
 	private readonly string _name;
+#pragma warning disable IDE0052 // Remove unread private members
 	private readonly Task _task; // Holds ref on the enumeration task. This is also accessed by reflection in tests!
+#pragma warning restore IDE0052 // Remove unread private members
 
 	public StateForEach(ISignal<Message<T>> state, AsyncAction<Option<T>> action, string name = "-unnamed-")
 	{
+		ArgumentNullException.ThrowIfNull(state);
+
 		if (state is not IStateImpl impl)
 		{
 			throw new InvalidOperationException("Execute is supported only on internal state implementation.");

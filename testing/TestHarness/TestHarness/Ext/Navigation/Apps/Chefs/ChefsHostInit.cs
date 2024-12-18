@@ -44,11 +44,7 @@ public partial class ChefsHostInit : BaseHostInitialization
 						#region Main Tabs
 						new RouteMap("ChefsHome", View: views.FindByViewModel<ChefsHomeModel>(), IsDefault: true),
 						new RouteMap("ChefsSearch", View: views.FindByViewModel<ChefsSearchModel>()),
-						new RouteMap("ChefsFavoriteRecipes", View: views.FindByViewModel<ChefsFavoriteRecipesModel>(), Nested: new[]
-						{
-							new RouteMap("ChefsMyRecipes"),
-							new RouteMap("ChefsCookbooks")
-						}),
+						new RouteMap("ChefsFavoriteRecipes", View: views.FindByViewModel<ChefsFavoriteRecipesModel>()),
 						#endregion
 
 						#region Cookbooks
@@ -58,7 +54,7 @@ public partial class ChefsHostInit : BaseHostInitialization
 						#endregion
 
 						#region Recipe Details
-						new RouteMap("ChefsRecipeDetails", View: views.FindByViewModel<ChefsRecipeDetailsModel>(), DependsOn: "Home", Nested: new[] {
+						new RouteMap("ChefsRecipeDetails", View: views.FindByViewModel<ChefsRecipeDetailsModel>(), DependsOn: "ChefsHome", Nested: new[] {
 							new RouteMap("ChefsIngredientsTabWide"),
 							new RouteMap("ChefsStepsTabWide"),
 							new RouteMap("ChefsReviewsTabWide"),

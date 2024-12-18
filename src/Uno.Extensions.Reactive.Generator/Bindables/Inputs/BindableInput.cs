@@ -7,7 +7,7 @@ namespace Uno.Extensions.Reactive.Generator;
 
 /// <summary>
 /// A VM parameter that somehow implements IFeed&lt;TValue&gt; and which will be exposed on the BindableVM
-/// as de-normalized properties through a generated BindableTValue class (cf. <see cref="BindableGenerator"/>).
+/// as de-normalized properties through a generated BindableTValue class (cf. <see cref="ViewModelGenerator_2"/>).
 /// </summary>
 internal record BindableInput(IParameterSymbol Parameter, ITypeSymbol _valueType, string _bindableType) : IInputInfo
 {

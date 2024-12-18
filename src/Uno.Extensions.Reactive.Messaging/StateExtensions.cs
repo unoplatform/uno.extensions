@@ -2,8 +2,10 @@ using System;
 using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.Messaging;
 using Uno.Extensions.Reactive.Core;
 using Uno.Extensions.Reactive.Sources;
+using Uno.Extensions.Reactive.Utils;
 
 namespace Uno.Extensions.Reactive.Messaging;
 
@@ -152,5 +154,38 @@ public static class StateExtensions
 			.ForEachAsync(msg => awaiter.Received(msg.Current.Get(MessageAxis.Refresh)), ct);
 
 		return await Task.WhenAny(refreshed, messageListener) == refreshed;
+	}
+
+	/// <summary>
+	/// Listen for <see cref="EntityMessage{TEntity}"/> on the given <paramref name="messenger"/> and updates the <paramref name="state"/> accordingly.
+	/// </summary>
+	/// <typeparam name="TEntity">Type of the value of the state.</typeparam>
+	/// <typeparam name="TKey">Type of the identifier that uniquely identifies a <typeparamref name="TEntity"/>.</typeparam>
+	/// <param name="messenger">The messenger to listen for <see cref="EntityMessage{TEntity}"/></param>
+	/// <param name="state">The state to update.</param>
+	/// <param name="keySelector">A selector to get a unique identifier of a <typeparamref name="TEntity"/>.</param>
+	/// <returns>An <see cref="IState"/> that can be used to chain other operations.</returns>
+	public static IState<TEntity> Observe<TEntity, TKey>(this IState<TEntity> state, IMessenger messenger, Func<TEntity, TKey> keySelector)
+	{
+		_ = messenger.Observe(state, keySelector);
+
+		return state;
+	}
+
+	/// <summary>
+	/// Listen for <see cref="EntityMessage{TEntity}"/> on the given <paramref name="messenger"/> and updates the <paramref name="state"/> accordingly.
+	/// </summary>
+	/// <typeparam name="TEntity">Type of the value of the state.</typeparam>
+	/// <typeparam name="TKey">Type of the identifier that uniquely identifies a <typeparamref name="TEntity"/>.</typeparam>
+	/// <param name="messenger">The messenger to listen for <see cref="EntityMessage{TEntity}"/></param>
+	/// <param name="state">The state to update.</param>
+	/// <param name="keySelector">A selector to get a unique identifier of a <typeparamref name="TEntity"/>.</param>
+	/// <param name="disposable"> A <see cref="IDisposable"/> that can be used to remove the callback registration.</param>	
+	/// <returns>An <see cref="IState"/> that can be used to chain other operations.</returns>
+	public static IState<TEntity> Observe<TEntity, TKey>(this IState<TEntity> state, IMessenger messenger, Func<TEntity, TKey> keySelector, out IDisposable disposable)
+	{
+		disposable = messenger.Observe(state, keySelector);
+
+		return state;
 	}
 }

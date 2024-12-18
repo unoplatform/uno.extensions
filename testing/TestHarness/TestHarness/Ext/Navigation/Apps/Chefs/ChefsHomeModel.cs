@@ -20,6 +20,10 @@ public partial class ChefsHomeModel(INavigator navigator)
 		await navigator.NavigateRouteAsync(this, "ChefsRecipeDetails", data: new ChefsRecipe { Name = "Home Page" });
 	}
 
+	public async ValueTask NavigateToFavoriteRecipes()
+	{
+		await navigator.NavigateRouteAsync(this, "ChefsFavoriteRecipes");
+	}
 }
 
 public static class ChefsNavigationExtensions

@@ -23,4 +23,28 @@ public class Given_Custom : NavigationTestBase
 
 	}
 
+	[Test]
+	public async Task When_Custom_Mock_Auth()
+	{
+		InitTestSection(TestSections.Authentication_Custom_Mock);
+
+		App.WaitThenTap("ShowAppButton");
+
+		// Make sure the app has loaded
+		// this ensures `CustomAuthenticationProvider` wasn't linked out by the linker
+		App.WaitElement("LoginNavigationBar");
+
+		// Login
+		await App.TapAndWait("LoginButton", "HomeNavigationBar");
+
+		// Exit the test
+		App.WaitThenTap("ExitTestButton");
+
+		// Re-enter the test
+		InitTestSection(TestSections.Authentication_Custom_Mock);
+
+		// Expect HomePage instead of LoginPage
+		App.WaitElement("HomeNavigationBar");
+	}
+
 }

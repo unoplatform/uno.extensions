@@ -5,10 +5,9 @@ uid: Uno.Extensions.Navigation.HowToShowDialog
 
 This topic provides a step-by-step guide on using Navigation to display a Dialog.
 
-## Step-by-steps
+## Step-by-step
 
-> [!IMPORTANT]
-> This guide assumes you used the template wizard or `dotnet new unoapp` to create your solution. If not, it is recommended that you follow the [**Creating an application with Uno.Extensions** documentation](xref:Uno.Extensions.HowToGettingStarted) to create an application from the template.
+[!include[create-application](../includes/create-application.md)]
 
 ### 1. Displaying a dialog from code
 

@@ -1,14 +1,13 @@
 <linker>
-  <assembly fullname="TestHarness" />
-  <assembly fullname="TestHarness.Core" />
-  <assembly fullname="TestHarnessApp" />
-  <assembly fullname="Uno.UI" />
-  <assembly fullname="Microsoft.Extensions.Options" />
-  <assembly fullname="Refit" />
-  <assembly fullname="System.IdentityModel.Tokens.Jwt" />
-
-  <!-- This is required by Json.NET and any expression.Compile caller -->
-  <assembly fullname="System.Core">
-    <type fullname="System.Linq.Expressions*" />
-  </assembly>
+	<assembly fullname="TestHarness" />
+	<assembly fullname="TestHarness.Core" />
+	<assembly fullname="TestHarnessApp" />
+	<assembly fullname="Uno.UI" />
+	<assembly fullname="Microsoft.Extensions.Options" />
+	<assembly fullname="Refit" />
+	<assembly fullname="System.IdentityModel.Tokens.Jwt" />
+	<!-- This is required by Json.NET and any expression.Compile caller -->
+	<assembly fullname="System.Core">
+		<type fullname="System.Linq.Expressions*" />
+	</assembly>
 </linker>

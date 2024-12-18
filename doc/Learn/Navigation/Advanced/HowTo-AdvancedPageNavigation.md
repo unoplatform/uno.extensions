@@ -7,13 +7,11 @@ When using navigation, you may not want to allow the current page to remain in t
 
 Using backward/forward navigation in your app requires a degree of extra consideration. Users always expect the back/forward button to take them to a page that is still relevant, yet logically related to the current page and direction. This page contains several concise tutorials about how to implement navigation techniques that address these more advanced problems.
 
-> [!NOTE]
-> This guide uses predefined code created by the Uno Template using the `Recommended` preset, however, it uses the `MVVM` approach for the examples instead of `MVUX` defined in the `Recommended` preset.
+[!include[getting-help](../../includes/mvvm-approach.md)]
 
-## Step-by-steps
+## Step-by-step
 
-> [!IMPORTANT]
-> This guide assumes you used the template wizard or `dotnet new unoapp` to create your solution. If not, it is recommended that you follow the [Creating an application with Uno.Extensions article](xref:Uno.Extensions.HowToGettingStarted) for creating an application from the template.
+[!include[create-application](../../includes/create-application.md)]
 
 ## Techniques
 

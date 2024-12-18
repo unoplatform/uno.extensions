@@ -4,11 +4,15 @@
 	  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	  xmlns:local="using:TestHarness.Ext.Navigation.Apps.Chefs"
 	  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	  xmlns:utu="using:Uno.Toolkit.UI"
 	  Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
 	  mc:Ignorable="d">
 
-	<StackPanel>
-		<TextBlock Text="ChefsLiveCooking" />
-		<TextBlock Text="{Binding Recipe.Name}" />
-	</StackPanel>
+	<Grid RowDefinitions="Auto,*">
+		<utu:NavigationBar Content="LiveCooking" />
+		<StackPanel Grid.Row="1">
+			<TextBlock Text="ChefsLiveCooking" />
+			<TextBlock Text="{Binding Recipe.Name}" />
+		</StackPanel>
+	</Grid>
 </Page>
