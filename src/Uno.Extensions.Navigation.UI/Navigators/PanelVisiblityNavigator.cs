@@ -22,7 +22,8 @@ public class PanelVisiblityNavigator : ControlNavigator<Panel>
 		}
 	}
 
-	private void PanelLoaded(object sender, RoutedEventArgs e) {
+	private void PanelLoaded(object sender, RoutedEventArgs e)
+	{
 		if (Control is null)
 		{
 			return;
@@ -40,16 +41,24 @@ public class PanelVisiblityNavigator : ControlNavigator<Panel>
 		// This is to prevent the PanelVisibilityNavigator from navigating to a route that is not specified
 		// As a Region.Name in the Selector (TabBar/NavigationView) Items
 		// Causing a FrameView to be wrongly injected creating a nested navigation
-		var sibling = Region.Parent?.Children.FirstOrDefault(x => x.View != Control);
-		var nav = sibling?.Navigator();
-		var isSelector = nav != null && InheritsFromSelector(nav.GetType());
 
-		if (isSelector)
+		var fullRoute = route.FullPath();
+
+		// NavView usually will be a parent
+		if (Region.Parent is { } parentNavigator &&
+			IsRegionNavigatorSelector(parentNavigator, out var nav))
 		{
-			var itemsProperty = nav!.GetType().GetProperty("Items", BindingFlags.NonPublic | BindingFlags.Instance);
-			var items = itemsProperty?.GetValue(nav) as IEnumerable<FrameworkElement>;
-			var canNavigate = items?.FirstOrDefault(x => x.GetName() == route.Base) != null;
-			return canNavigate;
+			if (CanSelectorNavigate(nav!, fullRoute))
+			{
+				return true;
+			}
+		}
+
+		// TabBar usually will be a sibling
+		var sibling = Region.Parent?.Children.FirstOrDefault(x => x.View != Control);
+		if (sibling is { } && IsRegionNavigatorSelector(sibling, out nav))
+		{
+			return CanSelectorNavigate(nav!, fullRoute);
 		}
 
 		if (!await base.RegionCanNavigate(route, routeMap))
@@ -66,6 +75,23 @@ public class PanelVisiblityNavigator : ControlNavigator<Panel>
 		{
 			return FindByPath(routeMap?.Path ?? route.Base) is not null;
 		});
+	}
+
+	private bool IsRegionNavigatorSelector(IRegion region, out INavigator? navigator)
+	{
+		navigator = region.Navigator();
+		return navigator != null && InheritsFromSelector(navigator.GetType());
+	}
+
+	private bool CanSelectorNavigate(INavigator navigator, string route)
+	{
+		var itemsProperty = navigator.GetType().GetProperty("Items", BindingFlags.NonPublic | BindingFlags.Instance);
+		if (itemsProperty?.GetValue(navigator) is IEnumerable<FrameworkElement> items)
+		{
+			return items.Any(x => x.GetName() == route);
+		}
+
+		return false;
 	}
 
 	private FrameworkElement? CurrentlyVisibleControl { get; set; }
