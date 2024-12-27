@@ -123,6 +123,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestHarness", "TestHarness\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Reactive.Tests", "..\..\src\Uno.Extensions.Reactive.Tests\Uno.Extensions.Reactive.Tests.csproj", "{A39E9AEC-4F8B-4B6F-A4DD-16201F427948}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Uno.Extensions.Http.Kiota", "..\..\src\Uno.Extensions.Http.Kiota\Uno.Extensions.Http.Kiota.csproj", "{49716A71-0D2A-4EB2-83C0-3A7CDD9549B5}"
+EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Reactive.Testing", "..\..\src\Uno.Extensions.Reactive.Testing\Uno.Extensions.Reactive.Testing.csproj", "{1A90701A-FE5D-478A-9D5E-E264D5D0287F}"
 EndProject
 Global
