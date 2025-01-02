@@ -1,4 +1,6 @@
-﻿namespace Uno.Extensions.Navigation.Navigators;
+﻿using System.Reflection;
+
+namespace Uno.Extensions.Navigation.Navigators;
 
 public class PanelVisiblityNavigator : ControlNavigator<Panel>
 {
@@ -20,7 +22,8 @@ public class PanelVisiblityNavigator : ControlNavigator<Panel>
 		}
 	}
 
-	private void PanelLoaded(object sender, RoutedEventArgs e) {
+	private void PanelLoaded(object sender, RoutedEventArgs e)
+	{
 		if (Control is null)
 		{
 			return;
@@ -34,6 +37,30 @@ public class PanelVisiblityNavigator : ControlNavigator<Panel>
 
 	protected override async Task<bool> RegionCanNavigate(Route route, RouteInfo? routeMap)
 	{
+		// Check if the SelectorNavigator can navigate to the route
+		// This is to prevent the PanelVisibilityNavigator from navigating to a route that is not specified
+		// As a Region.Name in the Selector (TabBar/NavigationView) Items
+		// Causing a FrameView to be wrongly injected creating a nested navigation
+
+		var fullRoute = route.FullPath();
+
+		// NavView usually will be a parent
+		if (Region.Parent is { } parentNavigator &&
+			IsRegionNavigatorSelector(parentNavigator, out var nav))
+		{
+			if (CanSelectorNavigate(nav!, fullRoute))
+			{
+				return true;
+			}
+		}
+
+		// TabBar usually will be a sibling
+		var sibling = Region.Parent?.Children.FirstOrDefault(x => x.View != Control);
+		if (sibling is { } && IsRegionNavigatorSelector(sibling, out nav))
+		{
+			return CanSelectorNavigate(nav!, fullRoute);
+		}
+
 		if (!await base.RegionCanNavigate(route, routeMap))
 		{
 			return false;
@@ -48,6 +75,23 @@ public class PanelVisiblityNavigator : ControlNavigator<Panel>
 		{
 			return FindByPath(routeMap?.Path ?? route.Base) is not null;
 		});
+	}
+
+	private bool IsRegionNavigatorSelector(IRegion region, out INavigator? navigator)
+	{
+		navigator = region.Navigator();
+		return navigator != null && InheritsFromSelector(navigator.GetType());
+	}
+
+	private bool CanSelectorNavigate(INavigator navigator, string route)
+	{
+		var itemsProperty = navigator.GetType().GetProperty("Items", BindingFlags.NonPublic | BindingFlags.Instance);
+		if (itemsProperty?.GetValue(navigator) is IEnumerable<FrameworkElement> items)
+		{
+			return items.Any(x => x.GetName() == route);
+		}
+
+		return false;
 	}
 
 	private FrameworkElement? CurrentlyVisibleControl { get; set; }
@@ -150,5 +194,26 @@ public class PanelVisiblityNavigator : ControlNavigator<Panel>
 			Control.Children.OfType<FrameworkElement>().FirstOrDefault(x => x.GetName() == path) ??
 			Control.FindName(path) as FrameworkElement;
 		return controlToShow;
+	}
+
+	private bool InheritsFromSelector(Type type)
+	{
+		if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(SelectorNavigator<>))
+		{
+			return true;
+		}
+
+		var baseType = type.BaseType;
+
+		while (baseType != null && baseType != typeof(object))
+		{
+			if (baseType.IsGenericType && baseType.GetGenericTypeDefinition() == typeof(SelectorNavigator<>))
+			{
+				return true;
+			}
+			baseType = baseType.BaseType;
+		}
+
+		return false;
 	}
 }
