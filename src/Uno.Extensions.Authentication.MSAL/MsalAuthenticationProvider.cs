@@ -1,4 +1,6 @@
-﻿
+﻿#if WINDOWS
+using Microsoft.Identity.Client.Desktop;
+#endif
 using Uno.Extensions.Logging;
 using LogLevel = Microsoft.Extensions.Logging.LogLevel;
 #if UNO_EXT_MSAL
@@ -46,6 +48,11 @@ internal record MsalAuthenticationProvider(
 			if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"Configuring Web RedirectUri");
 			builder.WithWebRedirectUri();
 		}
+
+#if WINDOWS
+		builder.WithWindowsEmbeddedBrowserSupport();
+#endif
+
 		builder.WithUnoHelpers();
 
 		_pca = builder.Build();
