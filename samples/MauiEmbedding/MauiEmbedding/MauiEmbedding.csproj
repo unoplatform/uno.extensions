@@ -2,7 +2,6 @@
 	<Import Project="..\..\..\src\tfms-ui-maui.props" />
 
 	<PropertyGroup>
-		<TargetFrameworks>net8.0-windows10.0.19041</TargetFrameworks>
 		<OutputType>Exe</OutputType>
 		<UnoSingleProject>true</UnoSingleProject>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
