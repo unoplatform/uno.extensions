@@ -56,6 +56,7 @@
 	  <EmbeddedResource Include="Ext\Http\Endpoints\appsettings.httpendpoints.json" />
 	  <EmbeddedResource Include="Ext\Http\Refit\appsettings.httprefit.json" />
 	  <EmbeddedResource Include="Ext\Localization\appsettings.locale.json" />
+	  <EmbeddedResource Include="Ext\Navigation\AddressBar\appsettings.addressbar.json" />
 	  <EmbeddedResource Include="Ext\Navigation\Apps\Commerce\appsettings.logging.json" />
 	</ItemGroup>
 
