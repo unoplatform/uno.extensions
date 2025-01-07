@@ -159,7 +159,7 @@ static partial class ListState
 	/// <param name="updater">How to update items.</param>
 	/// <param name="ct">A token to abort the async add operation.</param>
 	/// <returns></returns>
-	public static ValueTask UpdateItemAsync<T>(this IListState<T> state, T oldT, Func<T, T> updater, CancellationToken ct = default) where T : IKeyEquatable<T>
+	public static ValueTask UpdateItemAsync<T>(this IListState<T> state, T oldItem, Func<T, T> updater, CancellationToken ct = default) where T : IKeyEquatable<T>
 		=> state.UpdateDataAsync(
 			itemsOpt => itemsOpt.Map(items =>
 			{
