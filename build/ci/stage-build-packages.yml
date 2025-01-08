@@ -11,18 +11,7 @@ jobs:
 
   - template: templates/dotnet-install-windows.yml
   - template: templates/canary-updater.yml
-
-  - task: gitversion/setup@0
-    retryCountOnTaskFailure: 3
-    inputs:
-      versionSpec: '5.10.3'
-
-  - task: gitversion/execute@0
-    retryCountOnTaskFailure: 3
-    inputs:
-      useConfigFile: true
-      configFilePath: build/ci/gitversion.yml
-    displayName: Use GitVersion
+  - template: templates/gitversion.yml
 
   - powershell: |
       dotnet tool update -g dotnet-vs
@@ -44,7 +33,7 @@ jobs:
       msbuildLocationMethod: location
       msbuildLocation: $(MSBUILDPATH)
       msbuildArchitecture: x86
-      msbuildArguments: /r /m /v:m /p:Configuration=Release "/p:PackageOutputPath=$(build.artifactstagingdirectory)\nuget" "/p:PackageVersion=$(GitVersion.FullSemVer)" "/p:InformationalVersion=$(GITVERSION_InformationalVersion)"  /detailedsummary /bl:$(build.artifactstagingdirectory)/uno-extensions.binlog
+      msbuildArguments: /r /m /v:m /p:Configuration=Release "/p:PackageOutputPath=$(build.artifactstagingdirectory)\nuget" "/p:PackageVersion=$(NBGV_SemVer2)" "/p:InformationalVersion=$(NBGV_InformationalVersion)"  /detailedsummary /bl:$(build.artifactstagingdirectory)/uno-extensions.binlog
       clean: false
       maximumCpuCount: true
       restoreNugetPackages: false

@@ -11,21 +11,10 @@ jobs:
 
   - template: templates/dotnet-install.yml
   - template: templates/canary-updater.yml
-
-  - task: gitversion/setup@0
-    retryCountOnTaskFailure: 3
-    inputs:
-      versionSpec: '5.10.3'
-
-  - task: gitversion/execute@0
-    retryCountOnTaskFailure: 3
-    inputs:
-      useConfigFile: true
-      configFilePath: build/ci/gitversion.yml
-    displayName: Use GitVersion
+  - template: templates/gitversion.yml
 
   - script: |
-      dotnet build "testing/TestHarness/TestHarness.sln" /p:Build_Web=true /p:Build_Android=false /p:Build_MacCatalyst=false /p:Build_iOS=false /p:Build_Windows=false /p:Build_Desktop=false /p:Configuration=Release "/p:InformationalVersion=$(GITVERSION_InformationalVersion)" /p:GeneratePackageOnBuild=false /detailedsummary "/bl:$(build.artifactstagingdirectory)/testharness-wasm.binlog"
+      dotnet build "testing/TestHarness/TestHarness.sln" /p:Build_Web=true /p:Build_Android=false /p:Build_MacCatalyst=false /p:Build_iOS=false /p:Build_Windows=false /p:Build_Desktop=false /p:Configuration=Release "/p:InformationalVersion=$(NBGV_InformationalVersion)" /p:GeneratePackageOnBuild=false /detailedsummary "/bl:$(build.artifactstagingdirectory)/testharness-wasm.binlog"
 
   - task: CopyFiles@2
     displayName: 'Publish Wasm Binaries'
