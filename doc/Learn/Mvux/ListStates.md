@@ -149,7 +149,7 @@ public async ValueTask MakeUpperCase(CancellationToken ct = default)
     var itemToUpdate = new MyItem(2, "Two");
 
     await MyItems.UpdateItemAsync(
-        oldT: itemToUpdate,
+        oldItem: itemToUpdate,
         updater: item => item with { Value = item.Value.ToUpper()},
         ct: ct);
 }
@@ -163,8 +163,8 @@ public async ValueTask MakeUpperCase(CancellationToken ct = default)
     var itemToUpdate = new MyItem(2, "Two");
 
     await MyItems.UpdateItemAsync(
-        oldT: itemToUpdate,
-        newT: new MyItem(2, "TWO"),
+        oldItem: itemToUpdate,
+        newItem: new MyItem(2, "TWO"),
         ct: ct);
 }
 ```

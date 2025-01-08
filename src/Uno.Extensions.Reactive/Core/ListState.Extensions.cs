@@ -125,24 +125,24 @@ static partial class ListState
 
 
 	/// <summary>
-	/// Updates all items from a list state that match the key of <paramref name="oldT"/>.
+	/// Updates all items from a list state that match the key of <paramref name="oldItem"/>.
 	/// </summary>
 	/// <typeparam name="T">The type of the items in the list.</typeparam>
 	/// <param name="state">The list state onto which the item should be added.</param>
-	/// <param name="oldT">The old value of the item.</param>
-	/// <param name="newT">The new value for the item.</param>
+	/// <param name="oldItem">The old value of the item.</param>
+	/// <param name="newItem">The new value for the item.</param>
 	/// <param name="ct">A token to abort the async add operation.</param>
 	/// <returns></returns>
-	public static ValueTask UpdateItemAsync<T>(this IListState<T> state, T oldT,  T newT, CancellationToken ct = default) where T : IKeyEquatable<T>
+	public static ValueTask UpdateItemAsync<T>(this IListState<T> state, T oldItem,  T newItem, CancellationToken ct = default) where T : IKeyEquatable<T>
 		=> state.UpdateDataAsync(
 			itemsOpt => itemsOpt.Map(items =>
 			{
 				var updated = items;
 				foreach (var item in items)
 				{
-					if (item.KeyEquals(oldT))
+					if (item.KeyEquals(oldItem))
 					{
-						updated = items.Replace(item, newT);
+						updated = items.Replace(item, newItem);
 					}
 				}
 				return updated;
@@ -151,11 +151,11 @@ static partial class ListState
 
 
 	/// <summary>
-	/// Updates all items from a list state that match the key of <paramref name="oldT"/>.
+	/// Updates all items from a list state that match the key of <paramref name="oldItem"/>.
 	/// </summary>
 	/// <typeparam name="T">The type of the items in the list.</typeparam>
 	/// <param name="state">The list state onto which the item should be added.</param>
-	/// <param name="oldT">The old value of the item.</param>
+	/// <param name="oldItem">The old value of the item.</param>
 	/// <param name="updater">How to update items.</param>
 	/// <param name="ct">A token to abort the async add operation.</param>
 	/// <returns></returns>
@@ -166,7 +166,7 @@ static partial class ListState
 				var updated = items;
 				foreach (var item in items)
 				{
-					if (item.KeyEquals(oldT))
+					if (item.KeyEquals(oldItem))
 					{
 						updated = items.Replace(item, updater(item));
 					}
