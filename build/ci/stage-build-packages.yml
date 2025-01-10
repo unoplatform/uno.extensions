@@ -31,9 +31,9 @@ jobs:
       echo MSBUILDPATH: $MSBUILDPATH
     displayName: Setup VS17 Path
 
-  - template: templates/install-windows-sdk.yml
-    parameters:
-      sdkVersion: 19041
+  # - template: templates/install-windows-sdk.yml
+  #   parameters:
+  #     sdkVersion: 19041
 
   - template: templates/update-vs-components.yml
 
