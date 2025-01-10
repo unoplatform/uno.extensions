@@ -48,7 +48,7 @@ uid: Uno.Extensions.Authentication.HowToMsalAuthentication
     }
     ```
 
-- Add the `MsalAuthenticationProvider` using the `AddMsal()` extension method which configures the `IAuthenticationBuilder` to use it.
+- Use the `Configure` method overload that provides access to a `Window` instance. Add the `MsalAuthenticationProvider` using the `AddMsal()` extension method which configures the `IAuthenticationBuilder` to use it.
 
     ```csharp
     private IHost Host { get; set; }
@@ -56,17 +56,20 @@ uid: Uno.Extensions.Authentication.HowToMsalAuthentication
     protected override void OnLaunched(LaunchActivatedEventArgs args)
     {
         var builder = this.CreateBuilder(args)
-            .Configure(host =>
+            .Configure((host, window) =>
             {
                 host
                 .UseAuthentication(builder =>
                 {
-                    builder.AddMsal();
+                    builder.AddMsal(window);
                 });
             });
         ...
     }
     ```
+
+> [!IMPORTANT]
+> The `AddMsal()` method requires a `Window` instance, which the `MsalAuthenticationProvider` uses to set up the authentication dialog. You can access the `Window` instance through the `Configure()` method overload that provides it.
 
 - The `IAuthenticationBuilder` is responsible for managing the lifecycle of the associated provider that was built.
 
@@ -95,12 +98,12 @@ uid: Uno.Extensions.Authentication.HowToMsalAuthentication
     protected override void OnLaunched(LaunchActivatedEventArgs args)
     {
         var builder = this.CreateBuilder(args)
-            .Configure(host =>
+            .Configure((host, window) =>
             {
                 host
                 .UseAuthentication(builder =>
                 {
-                    builder.AddMsal(msal =>
+                    builder.AddMsal(window, msal =>
                         msal
                         .Builder(msalBuilder => 
                             msalBuilder.WithClientId("161a9fb5-3b16-487a-81a2-ac45dcc0ad3b"))
