@@ -51,11 +51,15 @@ internal record MsalAuthenticationProvider(
 
 #if WINDOWS
 		builder.WithBroker(new BrokerOptions(BrokerOptions.OperatingSystems.Windows));
-		builder.WithParentActivityOrWindow(() =>
+
+		if (window is { })
 		{
-			IntPtr hwnd = WinRT.Interop.WindowNative.GetWindowHandle(window);
-			return hwnd;
-		});
+			builder.WithParentActivityOrWindow(() =>
+			{
+				IntPtr hwnd = WinRT.Interop.WindowNative.GetWindowHandle(window);
+				return hwnd;
+			});
+		}
 #endif
 
 		builder.WithUnoHelpers();
