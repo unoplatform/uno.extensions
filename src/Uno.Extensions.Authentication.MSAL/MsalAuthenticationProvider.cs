@@ -2,7 +2,6 @@
 using Microsoft.Identity.Client.Broker;
 #endif
 using Uno.Extensions.Logging;
-using WinRT.Interop;
 using LogLevel = Microsoft.Extensions.Logging.LogLevel;
 #if UNO_EXT_MSAL
 #if __WASM__
@@ -54,7 +53,7 @@ internal record MsalAuthenticationProvider(
 		builder.WithBroker(new BrokerOptions(BrokerOptions.OperatingSystems.Windows));
 		builder.WithParentActivityOrWindow(() =>
 		{
-			IntPtr hwnd = WindowNative.GetWindowHandle(window);
+			IntPtr hwnd = WinRT.Interop.WindowNative.GetWindowHandle(window);
 			return hwnd;
 		});
 #endif
