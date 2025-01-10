@@ -66,7 +66,7 @@
 	</ItemGroup>
 
 	<ItemGroup Condition="$(TargetFramework.Contains('windows10'))">
-		<PackageReference Include="Microsoft.Identity.Client.Desktop" />
+		<PackageReference Include="Microsoft.Identity.Client.Broker" />
 	</ItemGroup>
 
 	<ItemGroup Condition="'$(IsBrowserWasm)'!='true'">

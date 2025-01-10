@@ -1,7 +1,8 @@
 ﻿#if WINDOWS
-using Microsoft.Identity.Client.Desktop;
+using Microsoft.Identity.Client.Broker;
 #endif
 using Uno.Extensions.Logging;
+using WinRT.Interop;
 using LogLevel = Microsoft.Extensions.Logging.LogLevel;
 #if UNO_EXT_MSAL
 #if __WASM__
@@ -27,7 +28,7 @@ internal record MsalAuthenticationProvider(
 	private IPublicClientApplication? _pca;
 	private string[]? _scopes;
 
-	public void Build()
+	public void Build(Window? window)
 	{
 		if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"Building MSAL Provider");
 		var config = Configuration.Get(Name) ?? new MsalConfiguration();
@@ -50,7 +51,12 @@ internal record MsalAuthenticationProvider(
 		}
 
 #if WINDOWS
-		builder.WithWindowsEmbeddedBrowserSupport();
+		builder.WithBroker(new BrokerOptions(BrokerOptions.OperatingSystems.Windows));
+		builder.WithParentActivityOrWindow(() =>
+		{
+			IntPtr hwnd = WindowNative.GetWindowHandle(window);
+			return hwnd;
+		});
 #endif
 
 		builder.WithUnoHelpers();
