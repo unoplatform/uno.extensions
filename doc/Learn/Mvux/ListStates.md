@@ -132,9 +132,6 @@ Two more overloads are available for items that implement `IKeyEquatable<T>` :
 > You don't have to implement `IKeyEquatable<T>` by yourself, see [generation](xref:Uno.Extensions.Equality.concept#generation) for more information.
 
 ```csharp
->
-
-```csharp
 public partial record MyItem([property: Key] int Key, string Value);
 
 IListState<MyItem> MyItems = ListState<MyItem>.Value(this, () => new[]
