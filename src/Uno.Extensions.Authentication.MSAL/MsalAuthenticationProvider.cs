@@ -50,15 +50,19 @@ internal record MsalAuthenticationProvider(
 		}
 
 #if WINDOWS
-		builder.WithBroker(new BrokerOptions(BrokerOptions.OperatingSystems.Windows));
-
+		
 		if (window is { })
 		{
+			builder.WithBroker(new BrokerOptions(BrokerOptions.OperatingSystems.Windows));
 			builder.WithParentActivityOrWindow(() =>
 			{
 				IntPtr hwnd = WinRT.Interop.WindowNative.GetWindowHandle(window);
 				return hwnd;
 			});
+		}
+		else
+		{
+			Logger.LogError("Error: Passing a Window instance is now required. Ensure a valid Window is provided via the .AddMSal overload that takes a Window parameter. Avoiding passing a Window could cause a MsalClientException (\"Only loopback redirect URIs are supported, but a non - loopback URI was found...\") to be thrown.");
 		}
 #endif
 
