@@ -26,26 +26,20 @@ jobs:
           fetch-depth: 0 # Required for gitversion
           submodules: true
 
-      - name: Install GitVersion
-        uses: gittools/actions/gitversion/setup@v0.9.15
-        with:
-          versionSpec: '5.x'
-
-      - name: Determine Version
-        id: gitversion
-        uses: gittools/actions/gitversion/execute@v0.9.15
-        with:
-          useConfigFile: true
-          configFilePath: build/ci/gitversion.yml
-
       - name: Setup dotnet 8.0.301
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: '8.0.301'
 
+      - uses: dotnet/nbgv@f088059084cb5d872e9d1a994433ca6440c2bf72 # v0.4.2
+        id: nbgv
+        with:
+          toolVersion: 3.6.139
+          setAllVars: true
+
       - run: |
           cd testing/TestHarness
-          dotnet build -c Release  /p:Build_Android=false /p:Build_iOS=false /p:Build_Windows=false /p:Build_Desktop=false "/p:Version=${{ steps.gitversion.outputs.fullSemVer }}" /p:GeneratePackageOnBuild=false /detailedsummary
+          dotnet build -c Release  /p:Build_Android=false /p:Build_iOS=false /p:Build_Windows=false /p:Build_Desktop=false "/p:Version=${{ steps.nbgv.outputs.SemVer2 }}" /p:GeneratePackageOnBuild=false /detailedsummary
       - uses: actions/upload-artifact@v3
         with:
           name: wasm-site

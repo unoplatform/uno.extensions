@@ -16,18 +16,7 @@ jobs:
 
   - template: templates/dotnet-install-windows.yml
   - template: templates/canary-updater.yml
-
-  - task: gitversion/setup@0
-    retryCountOnTaskFailure: 3
-    inputs:
-      versionSpec: '5.10.3'
-
-  - task: gitversion/execute@0
-    retryCountOnTaskFailure: 3
-    inputs:
-      useConfigFile: true
-      configFilePath: build/ci/gitversion.yml
-    displayName: Use GitVersion
+  - template: templates/gitversion.yml
 
   - powershell: |
       dotnet tool update -g dotnet-vs
@@ -36,9 +25,9 @@ jobs:
       echo MSBUILDPATH: $MSBUILDPATH
     displayName: Setup VS17 Path
 
-  - template: templates/install-windows-sdk.yml
-    parameters:
-      sdkVersion: 19041
+  # - template: templates/install-windows-sdk.yml
+  #   parameters:
+  #     sdkVersion: 19041
 
   - template: templates/update-vs-components.yml
 
@@ -49,7 +38,7 @@ jobs:
       msbuildLocationMethod: location
       msbuildLocation: $(MSBUILDPATH)
       msbuildArchitecture: x86
-      msbuildArguments: /m /v:m /r /p:Configuration=Release "/p:InformationalVersion=$(GITVERSION_InformationalVersion)" /p:GeneratePackageOnBuild=false /p:AotAssemblies=false /p:UseWebAssemblyAOT=false /detailedsummary /bl:$(build.artifactstagingdirectory)/samples-windows-${{parameters.solutionName}}.binlog
+      msbuildArguments: /m /v:m /r /p:Configuration=Release "/p:InformationalVersion=$(NBGV_InformationalVersion)" /p:GeneratePackageOnBuild=false /p:AotAssemblies=false /p:UseWebAssemblyAOT=false /detailedsummary /bl:$(build.artifactstagingdirectory)/samples-windows-${{parameters.solutionName}}.binlog
       clean: false
       maximumCpuCount: true
       restoreNugetPackages: false
