@@ -70,6 +70,8 @@ uid: Uno.Extensions.Authentication.HowToMsalAuthentication
 
 > [!IMPORTANT]
 > The `AddMsal()` method requires a `Window` instance, which the `MsalAuthenticationProvider` uses to set up the authentication dialog. You can access the `Window` instance through the `Configure()` method overload that provides it.
+> **Note:** Failing to pass a valid `Window` instance could result in a `MsalClientException` with the message:
+> *"Only loopback redirect uri is supported, but <your_redirect_uri> was found. Configure http://localhost or http://localhost:port both during app registration and when you create the PublicClientApplication object. See https://aka.ms/msal-net-os-browser for details."*
 
 - The `IAuthenticationBuilder` is responsible for managing the lifecycle of the associated provider that was built.
 
