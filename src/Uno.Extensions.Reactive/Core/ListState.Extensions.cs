@@ -95,7 +95,7 @@ static partial class ListState
 	/// <typeparam name="T">The type of the items in the list.</typeparam>
 	/// <param name="state">The list state onto which the item should be added.</param>
 	/// <param name="item">The item to add.</param>
-	/// <param name="ct">A token to abort the async add operation.</param>
+	/// <param name="ct">A token to abort the async operation.</param>
 	/// <returns></returns>
 	public static ValueTask InsertAsync<T>(this IListState<T> state, T item, CancellationToken ct = default)
 		=> state.UpdateDataAsync(items => Option.Some((items.SomeOrDefault() ?? ImmutableList<T>.Empty).Insert(0, item)), ct);
@@ -117,7 +117,7 @@ static partial class ListState
 	/// <typeparam name="T">The type of the items in the list.</typeparam>
 	/// <param name="state">The list state onto which the item should be added.</param>
 	/// <param name="match">Predicate to determine which items should be removed.</param>
-	/// <param name="ct">A token to abort the async add operation.</param>
+	/// <param name="ct">A token to abort the async operation.</param>
 	/// <returns></returns>
 	public static ValueTask RemoveAllAsync<T>(this IListState<T> state, Predicate<T> match, CancellationToken ct = default)
 		=> state.UpdateDataAsync(itemsOpt => itemsOpt.Map(items => items.RemoveAll(match)), ct);
@@ -130,7 +130,7 @@ static partial class ListState
 	/// <param name="state">The list state onto which the item should be added.</param>
 	/// <param name="oldItem">The old value of the item.</param>
 	/// <param name="newItem">The new value for the item.</param>
-	/// <param name="ct">A token to abort the async add operation.</param>
+	/// <param name="ct">A token to abort the async operation.</param>
 	/// <returns></returns>
 	public static ValueTask UpdateItemAsync<T>(this IListState<T> state, T oldItem, T newItem, CancellationToken ct = default)
 		where T : notnull, IKeyEquatable<T>
@@ -157,7 +157,7 @@ static partial class ListState
 	/// <param name="state">The list state onto which the item should be added.</param>
 	/// <param name="oldItem">The old value of the item.</param>
 	/// <param name="newItem">The new value for the item.</param>
-	/// <param name="ct">A token to abort the async add operation.</param>
+	/// <param name="ct">A token to abort the async operation.</param>
 	/// <returns></returns>
 	public static ValueTask UpdateItemAsync<T>(this IListState<T?> state, T oldItem, T? newItem, CancellationToken ct = default)
 		where T : struct, IKeyEquatable<T>
@@ -184,7 +184,7 @@ static partial class ListState
 	/// <param name="state">The list state onto which the item should be added.</param>
 	/// <param name="oldItem">The old value of the item.</param>
 	/// <param name="updater">How to update items.</param>
-	/// <param name="ct">A token to abort the async add operation.</param>
+	/// <param name="ct">A token to abort the async operation.</param>
 	/// <returns></returns>
 	public static ValueTask UpdateItemAsync<T>(this IListState<T> state, T oldItem, Func<T, T> updater, CancellationToken ct = default)
 		where T : notnull, IKeyEquatable<T>
@@ -210,7 +210,7 @@ static partial class ListState
 	/// <param name="state">The list state onto which the item should be added.</param>
 	/// <param name="oldItem">The old value of the item.</param>
 	/// <param name="updater">How to update items.</param>
-	/// <param name="ct">A token to abort the async add operation.</param>
+	/// <param name="ct">A token to abort the async operation.</param>
 	/// <returns></returns>
 	public static ValueTask UpdateItemAsync<T>(this IListState<T?> state, T oldItem, Func<T?, T?> updater, CancellationToken ct = default)
 		where T : struct, IKeyEquatable<T>
@@ -237,7 +237,7 @@ static partial class ListState
 	/// <param name="state">The list state onto which the item should be added.</param>
 	/// <param name="match">Predicate to determine which items should be removed.</param>
 	/// <param name="updater">How to update items.</param>
-	/// <param name="ct">A token to abort the async add operation.</param>
+	/// <param name="ct">A token to abort the async operation.</param>
 	/// <returns></returns>
 	public static ValueTask UpdateAllAsync<T>(this IListState<T> state, Predicate<T> match, Func<T, T> updater, CancellationToken ct = default)
 		=> state.UpdateDataAsync(
@@ -272,7 +272,7 @@ static partial class ListState
 	/// <typeparam name="T">The type of the items in the list.</typeparam>
 	/// <param name="listState">The list state onto which the item should be updated.</param>
 	/// <param name="item">The updated version of the item.</param>
-	/// <param name="ct">A token to abort the async add operation.</param>
+	/// <param name="ct">A token to abort the async operation.</param>
 	/// <returns></returns>
 	public static ValueTask UpdateAsync<T>(this IListState<T> listState, T item, CancellationToken ct = default)
 		where T : IKeyEquatable<T>
