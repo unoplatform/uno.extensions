@@ -25,7 +25,7 @@
 		<None Remove="WasmScripts\**" />
 	</ItemGroup>
 	
-	<ItemGroup Condition="'$(IsBrowserWasm)'=='true'">
+	<ItemGroup Condition="'$(IsBrowserWasm)'=='true' or '$(TargetFramework)' == 'net8.0' ">
 		<None Remove="WasmScripts\**" />
 		<EmbeddedResource Include="WasmScripts\**" />
 	</ItemGroup>
