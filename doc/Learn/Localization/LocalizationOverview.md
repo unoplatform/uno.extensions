@@ -14,6 +14,8 @@ It uses [Microsoft.Extensions.Localization](https://www.nuget.org/packages/Micro
 
 `Localization` is provided as an Uno Feature. To enable `Localization` support in your application, add `Localization` to the `<UnoFeatures>` property in the Class Library (.csproj) file.
 
+[!include[existing-app](../includes/existing-app.md)]
+
 [!include[single-project](../includes/single-project.md)]
 
 For more information about `UnoFeatures` refer to our [Using the Uno.Sdk](xref:Uno.Features.Uno.Sdk) docs.

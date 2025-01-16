@@ -43,7 +43,24 @@ uid: Uno.Extensions.Hosting.HowToHostingSetup
     }
     ```
 
-### 3. Build the IHost
+### 3. Set Up the Main Window with the Builder
+
+* Replace `MainWindow = new Window()` or any `MainWindow` assignment with the `builder` approach:
+
+    ```cs
+    protected override void OnLaunched(LaunchActivatedEventArgs e)
+    {
+        var appBuilder = this.CreateBuilder(args)
+        .Configure(host => {
+            // Configure the host builder
+        });
+
+        MainWindow = builder.Window;
+        ...
+    }
+    ```
+
+### 4. Build the IHost
 
 * Finally, build the host and assign it to the `Host` property:
 
@@ -54,6 +71,8 @@ uid: Uno.Extensions.Hosting.HowToHostingSetup
         .Configure(host => {
             // Configure the host builder
         });
+
+        MainWindow = builder.Window;
 
         Host = appBuilder.Build();
         ...

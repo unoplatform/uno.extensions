@@ -14,6 +14,8 @@ This feature uses [Microsoft.Extensions.Configuration](https://www.nuget.org/pac
 
 `Configuration` is provided as an Uno Feature. To enable `Configuration` support in your application, add `Configuration` to the `<UnoFeatures>` property in the Class Library (.csproj) file.
 
+[!include[existing-app](../includes/existing-app.md)]
+
 [!include[single-project](../includes/single-project.md)]
 
 For more information about `UnoFeatures` refer to our [Using the Uno.Sdk](xref:Uno.Features.Uno.Sdk) docs.

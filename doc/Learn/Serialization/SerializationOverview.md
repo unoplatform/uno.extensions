@@ -12,6 +12,8 @@ uid: Uno.Extensions.Serialization.Overview
 
 `Serialization` is provided as an Uno Feature. To enable `Serialization` support in your application, add `Serialization` to the `<UnoFeatures>` property in the Class Library (.csproj) file.
 
+[!include[existing-app](../includes/existing-app.md)]
+
 [!include[single-project](../includes/single-project.md)]
 
 For more information about `UnoFeatures` refer to our [Using the Uno.Sdk](xref:Uno.Features.Uno.Sdk) docs.
