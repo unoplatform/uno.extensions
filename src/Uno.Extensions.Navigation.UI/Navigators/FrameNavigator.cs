@@ -196,8 +196,8 @@ public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 
 		CurrentView?.SetNavigatorInstance(Region.Navigator()!);
 
+		var responseRequest = navSegment with { Qualifier = route.Qualifier, Data = route.Data };
 
-		var responseRequest = navSegment with { Qualifier = route.Qualifier };
 		return responseRequest;
 	}
 

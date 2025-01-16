@@ -2,6 +2,11 @@
 
 public partial class AddressBarHomeModel
 {
+	public IDictionary<string, object> UserId => new Dictionary<string, object>
+	{
+		{ "QueryUser.Id", new Guid("8a5c5b2e-ff96-474b-9e4d-65bde598f6bc") }
+	};
+
 	public static int InstanceCount
 	{
 		get => ApplicationData.Current.LocalSettings.Values.TryGetValue(Constants.HomeInstanceCountKey, out var value)

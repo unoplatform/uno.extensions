@@ -20,6 +20,12 @@
 						   Text="{Binding InstanceCountProperty}" />
 				<TextBlock Text=" times" />
 			</StackPanel>
+			<StackPanel>
+				<Button Content="Go To Second"
+						AutomationProperties.AutomationId="AddressBarSecondButton"
+						uen:Navigation.Request="AddressBarSecond"
+						uen:Navigation.Data="{Binding UserId}" />
+			</StackPanel>
 
 		</StackPanel>
 
