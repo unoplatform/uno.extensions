@@ -42,16 +42,7 @@
 						   FontSize="24"
 						   Text="Two" />
 			</Grid>
-			<Grid uen:Region.Name="RegionsThree" Visibility="Collapsed">
-				<Frame uen:Region.Attached="True">
-					<StackPanel>
-						<TextBlock HorizontalAlignment="Center"
-								   VerticalAlignment="Center"
-								   FontSize="24"
-								   Text="Three" />
-					</StackPanel>
-				</Frame>
-			</Grid>
+			<!--  Third tab is defined as a UserControl in RegionsTabBarItem3.xaml  -->
 		</Grid>
 		<utu:TabBar Grid.Row="2"
 					VerticalAlignment="Bottom"

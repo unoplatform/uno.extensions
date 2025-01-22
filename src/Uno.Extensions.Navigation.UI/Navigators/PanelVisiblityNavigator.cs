@@ -42,30 +42,56 @@ public class PanelVisiblityNavigator : ControlNavigator<Panel>
 		// As a Region.Name in the Selector (TabBar/NavigationView) Items
 		// Causing a FrameView to be wrongly injected creating a nested navigation
 
-		var fullRoute = route.FullPath();
+		//var fullRoute = route.FullPath();
 
 		// NavView usually will be a parent
-		if (Region.Parent is { } parentNavigator &&
-			IsRegionNavigatorSelector(parentNavigator, out var nav))
-		{
-			if (CanSelectorNavigate(nav!, fullRoute))
-			{
-				return true;
-			}
-		}
+		//if (Region.Parent is { } parentNavigator &&
+		//	IsRegionNavigatorSelector(parentNavigator, out var nav))
+		//{
+		//	if (CanSelectorNavigate(nav!, fullRoute))
+		//	{
+		//		return true;
+		//	}
+		//}
 
 		// TabBar usually will be a sibling
-		var sibling = Region.Parent?.Children.FirstOrDefault(x => x.View != Control);
-		if (sibling is { } && IsRegionNavigatorSelector(sibling, out nav))
-		{
-			return CanSelectorNavigate(nav!, fullRoute);
-		}
+		//var sibling = Region.Parent?.Children.FirstOrDefault(x => x.View != Control);
+		//if (sibling is { } && IsRegionNavigatorSelector(sibling, out nav))
+		//{
+		//	return CanSelectorNavigate(nav!, fullRoute);
+		//}
 
 		if (!await base.RegionCanNavigate(route, routeMap))
 		{
 			return false;
 		}
 
+		// Get the current route
+		var currentRoute = Region.Root().GetRoute();
+
+		if (currentRoute is { Path: not null })
+		{
+			// Get the `RouteInfo` for the current route
+			var currentRouteInfo = Resolver.FindByPath(currentRoute.Path.Split('/', StringSplitOptions.RemoveEmptyEntries).FirstOrDefault());
+
+			if (currentRouteInfo is { Nested.Length: > 0 } && routeMap is { })
+			{
+				// check if any of the nested RouteInfo has the Path equals to `route`
+
+				// COVERS 3
+				if (HasMatchingNestedRoute(currentRouteInfo))
+				{
+					return true;
+				}
+				// COVERS 4
+				else if (HasMatchingRoute(currentRouteInfo))
+				{
+					return false;
+				}
+			}
+		}
+
+		// COVERS 2
 		if (routeMap?.RenderView?.IsSubclassOf(typeof(FrameworkElement)) ?? false)
 		{
 			return true;
@@ -73,8 +99,52 @@ public class PanelVisiblityNavigator : ControlNavigator<Panel>
 
 		return await Dispatcher.ExecuteAsync(async cancellation =>
 		{
+			// COVERS 1
 			return FindByPath(routeMap?.Path ?? route.Base) is not null;
 		});
+
+		bool HasMatchingNestedRoute(RouteInfo currentRouteInfo, bool ignoreCurrentRoute = false)
+		{
+			var nestedRoutes = currentRouteInfo.Nested;
+			var path = currentRouteInfo.Path;
+
+			foreach (var nestedRoute in nestedRoutes)
+			{
+				if (ignoreCurrentRoute &&
+					nestedRoute.Path == path)
+				{
+					continue;
+				}
+
+				if (nestedRoute.Path == routeMap.Path)
+				{
+					return true;
+				}
+
+				if (nestedRoute is { Nested.Length: > 0 } &&
+					HasMatchingNestedRoute(nestedRoute, ignoreCurrentRoute))
+				{
+					return true;
+				}
+			}
+
+			return false;
+		}
+
+		bool HasMatchingRoute(RouteInfo routeInfo)
+		{
+			// get the root
+			var parent = routeInfo.Parent;
+			while (parent?.Parent != null)
+			{
+				if(parent.Parent is { })
+				{
+					parent = parent.Parent;
+				}
+			}
+
+			return HasMatchingNestedRoute(parent!, ignoreCurrentRoute: true);
+		}
 	}
 
 	private bool IsRegionNavigatorSelector(IRegion region, out INavigator? navigator)
