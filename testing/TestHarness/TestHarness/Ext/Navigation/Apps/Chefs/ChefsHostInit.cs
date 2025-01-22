@@ -44,13 +44,7 @@ public partial class ChefsHostInit : BaseHostInitialization
 						#region Main Tabs
 						new RouteMap("ChefsHome", View: views.FindByViewModel<ChefsHomeModel>(), IsDefault: true),
 						new RouteMap("ChefsSearch", View: views.FindByViewModel<ChefsSearchModel>()),
-						new RouteMap("ChefsFavoriteRecipes", View: views.FindByViewModel<ChefsFavoriteRecipesModel>(),
-							Nested:
-							[
-								new RouteMap("MyRecipes"),
-								new RouteMap("MyCookbooks"),
-							]
-						),
+						new RouteMap("ChefsFavoriteRecipes", View: views.FindByViewModel<ChefsFavoriteRecipesModel>()),
 						#endregion
 
 						#region Cookbooks

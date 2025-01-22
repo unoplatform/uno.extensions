@@ -74,17 +74,21 @@ public class PanelVisiblityNavigator : ControlNavigator<Panel>
 			// Get the `RouteInfo` for the current route
 			var currentRouteInfo = Resolver.FindByPath(currentRoute.Path.Split('/', StringSplitOptions.RemoveEmptyEntries).FirstOrDefault());
 
-			if (currentRouteInfo is { Nested.Length: > 0 } && routeMap is { })
+			if (currentRouteInfo is { } && routeMap is { })
 			{
 				// check if any of the nested RouteInfo has the Path equals to `route`
 
 				// COVERS 3
-				if (HasMatchingNestedRoute(currentRouteInfo))
+				if (currentRouteInfo.Nested.Length > 0)
 				{
-					return true;
+					if (HasMatchingNestedRoute(currentRouteInfo))
+					{
+						return true;
+					}
 				}
+
 				// COVERS 4
-				else if (HasMatchingRoute(currentRouteInfo))
+				if (HasMatchingRoute(currentRouteInfo))
 				{
 					return false;
 				}
