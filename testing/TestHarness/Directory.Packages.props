@@ -1,5 +1,5 @@
 <Project ToolsVersion="15.0">
-	<Import Project="$(MSBuildThisFileDirectory)..\..\SamplePackages.props" />
+	<Import Project="$(MSBuildThisFileDirectory)..\..\samples\Directory.Packages.props" />
 	<ItemGroup>
 		<PackageVersion Include="CommunityToolkit.WinUI.UI" Version="7.1.2" />
 		<PackageVersion Include="FluentAssertions" Version="6.12.0" />

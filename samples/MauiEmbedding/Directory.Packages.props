@@ -1,5 +1,5 @@
 <Project ToolsVersion="15.0">
-  <Import Project="$(MSBuildThisFileDirectory)..\..\SamplePackages.props" />
+  <Import Project="$(MSBuildThisFileDirectory)..\Directory.Packages.props" />
 
   <ItemGroup>
     <PackageVersion Include="Syncfusion.Maui.Core" Version="22.2.9" />
