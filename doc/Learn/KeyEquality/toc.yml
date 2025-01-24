@@ -1,0 +1,4 @@
+- name: Overview
+  href: xref:Uno.Extensions.KeyEquality.Concept
+- name: Rules
+  href: xref:Uno.Extensions.KeyEquality.Rules

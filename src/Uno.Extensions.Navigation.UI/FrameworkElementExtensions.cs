@@ -1,6 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-
-namespace Uno.Extensions.Navigation;
+﻿namespace Uno.Extensions.Navigation;
 
 public static class FrameworkElementExtensions
 {
@@ -35,11 +33,12 @@ public static class FrameworkElementExtensions
 		{
 			var initialNavigation = () => nav.NavigateRouteAsync(root, initialRoute ?? string.Empty);
 
+			Route? launchRoute = default;
 			var start = () => Task.CompletedTask;
 			var hostConfigOptions = sp.GetService<IOptions<HostConfiguration>>();
 			if (hostConfigOptions?.Value is { } hostConfig &&
-				hostConfig.LaunchRoute() is { } launchRoute &&
-				launchRoute.IsEmpty() == false)
+				(launchRoute = hostConfig.LaunchRoute()) is { } &&
+				!launchRoute.IsEmpty())
 			{
 				start = () => nav.NavigateRouteAsync(root, launchRoute.FullPath());
 			}
@@ -57,8 +56,14 @@ public static class FrameworkElementExtensions
 			}
 			var fullstart = async () =>
 			{
-				await initialNavigation();
-				await start();
+				var response = await initialNavigation();
+
+				if (launchRoute is null ||
+					!launchRoute.FullPath().Equals(response?.Route?.FullPath(), StringComparison.OrdinalIgnoreCase))
+
+				{
+					await start();
+				}
 			};
 			var startupTask = elementRegion.Services!.Startup(fullstart);
 			return startupTask;

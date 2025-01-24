@@ -1,11 +1,10 @@
-﻿<Project Sdk="Uno.Sdk">
+﻿<Project Sdk="Uno.Sdk.Private">
 	<Import Project="..\..\..\src\tfms-ui-maui.props" />
 
 	<PropertyGroup>
-
 		<OutputType>Exe</OutputType>
 		<UnoSingleProject>true</UnoSingleProject>
-
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 		<!-- Display name -->
 		<ApplicationTitle>MauiEmbedding</ApplicationTitle>
 		<!-- App Identifier -->
@@ -37,14 +36,6 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Uno.Core.Extensions.Logging.Singleton"/>
-	</ItemGroup>
-
-	<ItemGroup Condition="'$(IsIOSOrCatalyst)' == 'true'">
-		<PackageReference Include="Uno.Extensions.Logging.OSLog" />
-	</ItemGroup>
-
-	<ItemGroup>
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Core.UI\Uno.Extensions.Core.WinUI.csproj" />
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Configuration\Uno.Extensions.Configuration.csproj" />
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Hosting.UI\Uno.Extensions.Hosting.WinUI.csproj" />
@@ -69,14 +60,6 @@
 	<Import Project="..\..\..\src\Uno.Extensions.Navigation\build\Package.targets" />
 	<Import Project="..\..\..\src\Uno.Extensions.Navigation.UI\build\Package.targets" />
 
-
-
-	<ItemGroup>
-		<PackageReference Include="Microsoft.Maui.Controls" />
-		<PackageReference Include="Microsoft.Maui.Controls.Compatibility"/>
-		<PackageReference Include="Microsoft.Maui.Graphics"  />
-	</ItemGroup>
-
 	<ItemGroup Condition="'$(IsAndroid)' == 'true'">
 		<PackageReference Include="Xamarin.AndroidX.Navigation.UI" />
 		<PackageReference Include="Xamarin.AndroidX.Navigation.Fragment" />
@@ -85,5 +68,11 @@
 		<PackageReference Include="Xamarin.AndroidX.Collection" />
 		<PackageReference Include="Xamarin.AndroidX.Collection.Jvm" />
 		<PackageReference Include="Xamarin.AndroidX.Collection.Ktx"  />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.Maui.Controls" />
+		<PackageReference Include="Microsoft.Maui.Controls.Compatibility"/>
+		<PackageReference Include="Microsoft.Maui.Graphics"  />
 	</ItemGroup>
 </Project>

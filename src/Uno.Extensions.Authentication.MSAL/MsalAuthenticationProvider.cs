@@ -1,4 +1,6 @@
-﻿
+﻿#if WINDOWS
+using Microsoft.Identity.Client.Broker;
+#endif
 using Uno.Extensions.Logging;
 using LogLevel = Microsoft.Extensions.Logging.LogLevel;
 #if UNO_EXT_MSAL
@@ -25,7 +27,7 @@ internal record MsalAuthenticationProvider(
 	private IPublicClientApplication? _pca;
 	private string[]? _scopes;
 
-	public void Build()
+	public void Build(Window? window)
 	{
 		if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"Building MSAL Provider");
 		var config = Configuration.Get(Name) ?? new MsalConfiguration();
@@ -46,6 +48,24 @@ internal record MsalAuthenticationProvider(
 			if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"Configuring Web RedirectUri");
 			builder.WithWebRedirectUri();
 		}
+
+#if WINDOWS
+		
+		if (window is { })
+		{
+			builder.WithBroker(new BrokerOptions(BrokerOptions.OperatingSystems.Windows));
+			builder.WithParentActivityOrWindow(() =>
+			{
+				IntPtr hwnd = WinRT.Interop.WindowNative.GetWindowHandle(window);
+				return hwnd;
+			});
+		}
+		else
+		{
+			Logger.LogError("Error: Passing a Window instance is now required. Ensure a valid Window is provided via the .AddMSal overload that takes a Window parameter. Avoiding passing a Window could cause a MsalClientException (\"Only loopback redirect URIs are supported, but a non - loopback URI was found...\") to be thrown.");
+		}
+#endif
+
 		builder.WithUnoHelpers();
 
 		_pca = builder.Build();

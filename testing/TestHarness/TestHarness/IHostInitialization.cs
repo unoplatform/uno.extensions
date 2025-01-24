@@ -2,5 +2,5 @@
 
 public interface IHostInitialization
 {
-	IHost InitializeHost();
+	IHost InitializeHost(Window window);
 }

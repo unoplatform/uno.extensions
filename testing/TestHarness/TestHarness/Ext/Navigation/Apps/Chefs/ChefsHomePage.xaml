@@ -5,16 +5,20 @@
 	  xmlns:local="using:TestHarness.Ext.Navigation.Apps.Chefs"
 	  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	  xmlns:uen="using:Uno.Extensions.Navigation.UI"
+	  xmlns:utu="using:Uno.Toolkit.UI"
 	  Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
 	  mc:Ignorable="d">
 
-	<StackPanel>
-		<TextBlock Text="ChefsHome" />
-		<Button Command="{Binding ShowCurrentProfile}" Content="Profile" />
-		<Button Command="{Binding ShowCurrentProfileNew}" Content="Profile (New)" />
-		<Button Command="{Binding NavigateToRecipeDetail}" Content="Recipe Details" />
-		<Button AutomationProperties.AutomationId="FavoriteRecipesButton" Command="{Binding NavigateToFavoriteRecipes}" Content="Favorite Recipes" />
-		<Button uen:Navigation.Request="ChefsSearch" Content="Search" />
-		<Button uen:Navigation.Request="ChefsNotifications" Content="Notifications" />
-	</StackPanel>
+	<Grid RowDefinitions="Auto,*">
+		<utu:NavigationBar Content="Home" />
+		<StackPanel Grid.Row="1">
+			<TextBlock Text="ChefsHome" />
+			<Button Command="{Binding ShowCurrentProfile}" Content="Profile" />
+			<Button Command="{Binding ShowCurrentProfileNew}" Content="Profile (New)" />
+			<Button Command="{Binding NavigateToRecipeDetail}" Content="Recipe Details" />
+			<Button AutomationProperties.AutomationId="FavoriteRecipesButton" Command="{Binding NavigateToFavoriteRecipes}" Content="Favorite Recipes" />
+			<Button uen:Navigation.Request="ChefsSearch" Content="Search" />
+			<Button uen:Navigation.Request="ChefsNotifications" Content="Notifications" />
+		</StackPanel>
+	</Grid>
 </Page>

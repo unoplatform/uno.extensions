@@ -8,11 +8,11 @@ public class MsalAuthenticationHostInit : BaseMsalHostInitialization
 	protected override string[] ConfigurationFiles => new string[] { "TestHarness.Ext.Authentication.MSAL.appsettings.msalauthentication.json" };
 
 
-	protected override IHostBuilder Custom(IHostBuilder builder)
+	protected override IHostBuilder Custom(IHostBuilder builder, Window window)
 	{
 		return base.Custom(builder)
 			.UseAuthentication(auth =>
-					auth.AddMsal(msal =>
+					auth.AddMsal(window, msal =>
 						msal
 							.Scopes(new[] { "Tasks.Read", "User.Read", "Tasks.ReadWrite" })
 							.Builder(msalBuilder =>

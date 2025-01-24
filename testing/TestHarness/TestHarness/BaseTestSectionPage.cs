@@ -69,12 +69,12 @@ public partial class BaseTestSectionPage : Page, IDisposable
 				// Uncomment this delay to see the loading/splash view for longer
 				// The Navigation/Apps/Commerce example uses an ExtendedSplashScreen in CommerceMainPage
 				// await Task.Delay(5000);
-				return HostInit!.InitializeHost();
+				return HostInit!.InitializeHost(win);
 			}, navigationRoot: loadingView);
 		}
 		else
 		{
-			Host = await win.InitializeNavigationAsync(async ()=>HostInit!.InitializeHost(), navigationRoot: navigationRoot);
+			Host = await win.InitializeNavigationAsync(async ()=>HostInit!.InitializeHost(win), navigationRoot: navigationRoot);
 		}
 	}
 

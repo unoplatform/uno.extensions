@@ -4,7 +4,7 @@ public abstract class BaseHostInitialization : IHostInitialization
 {
 	protected virtual string[] ConfigurationFiles => Array.Empty<string>();
 
-	public virtual IHost InitializeHost()
+	public virtual IHost InitializeHost(Window window)
 	{
 		var host = UnoHost
 				.CreateDefaultBuilder()
@@ -17,7 +17,7 @@ public abstract class BaseHostInitialization : IHostInitialization
 
 				.Use(builder => Navigation(builder))
 
-				.Use(builder => Custom(builder))
+				.Use(builder => Custom(builder, window))
 
 				.Use(builder => Serialization(builder))
 
@@ -47,6 +47,11 @@ public abstract class BaseHostInitialization : IHostInitialization
 	protected virtual IHostBuilder Custom(IHostBuilder builder)
 	{
 		return builder;
+	}
+
+	protected virtual IHostBuilder Custom(IHostBuilder builder, Window window)
+	{
+		return Custom(builder);
 	}
 
 	protected virtual IHostBuilder Environment(IHostBuilder builder)

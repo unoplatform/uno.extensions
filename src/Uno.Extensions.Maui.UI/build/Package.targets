@@ -72,7 +72,6 @@
 		</Task>
 	</UsingTask>
 
-
 	<!-- Workaround to avoid including Uno.Toolkit.UI XBFs in the PRI file -->
 	<Target Name="AdjustGetPackagingOutput1" AfterTargets="GetMrtPackagingOutputs"
 		Condition="$(UsingUnoSdk) != 'true'">

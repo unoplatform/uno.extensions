@@ -76,8 +76,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Authenticati
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Authentication.MSAL.WinUI", "src\Uno.Extensions.Authentication.MSAL\Uno.Extensions.Authentication.MSAL.WinUI.csproj", "{978A32D5-B542-4E4D-9F2E-AE78752F9633}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{BEBE0A7A-DF4F-4250-A50E-6901C936A01B}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_Solution Items", "_Solution Items", "{BEBE0A7A-DF4F-4250-A50E-6901C936A01B}"
 	ProjectSection(SolutionItems) = preProject
+		src\crosstargeting_override.props = src\crosstargeting_override.props
 		src\Directory.Build.props = src\Directory.Build.props
 		src\Directory.Build.targets = src\Directory.Build.targets
 		src\Directory.Packages.props = src\Directory.Packages.props

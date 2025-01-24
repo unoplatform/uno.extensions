@@ -5,7 +5,7 @@ public class MsalAuthenticationMultiHostInit : BaseMsalHostInitialization
 	protected override string[] ConfigurationFiles => new string[] { "TestHarness.Ext.Authentication.Custom.appsettings.dummyjson.json",
 																	 "TestHarness.Ext.Authentication.MSAL.appsettings.msalauthentication.json",
 																	"TestHarness.Ext.Authentication.MSAL.appsettings.multi.json"};
-	protected override IHostBuilder Custom(IHostBuilder builder)
+	protected override IHostBuilder Custom(IHostBuilder builder, Window window)
 	{
 		return base.Custom(builder)
 			.ConfigureServices((context, services) =>
@@ -103,7 +103,7 @@ public class MsalAuthenticationMultiHostInit : BaseMsalHostInitialization
 								}
 								return default;
 							}), name: "CustomService")
-						.AddMsal(msal =>
+						.AddMsal(window, msal =>
 							msal
 								.Scopes(new[] { "Tasks.Read", "User.Read", "Tasks.ReadWrite" })
 								.Builder(msalBuilder =>
@@ -116,7 +116,7 @@ public class MsalAuthenticationMultiHostInit : BaseMsalHostInitialization
 							//	msalBuilder = msalBuilder.WithIosKeychainSecurityGroup(settings.KeychainSecurityGroup);
 							//}
 							, name: "MsalCode")
-						.AddMsal(name: "MsalConfig")
+						.AddMsal(window, name: "MsalConfig")
 						);
 	}
 

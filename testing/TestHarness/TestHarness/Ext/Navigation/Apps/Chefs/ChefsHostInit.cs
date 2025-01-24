@@ -54,7 +54,7 @@ public partial class ChefsHostInit : BaseHostInitialization
 						#endregion
 
 						#region Recipe Details
-						new RouteMap("ChefsRecipeDetails", View: views.FindByViewModel<ChefsRecipeDetailsModel>(), DependsOn: "Home", Nested: new[] {
+						new RouteMap("ChefsRecipeDetails", View: views.FindByViewModel<ChefsRecipeDetailsModel>(), DependsOn: "ChefsHome", Nested: new[] {
 							new RouteMap("ChefsIngredientsTabWide"),
 							new RouteMap("ChefsStepsTabWide"),
 							new RouteMap("ChefsReviewsTabWide"),

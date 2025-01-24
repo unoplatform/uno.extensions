@@ -1,4 +1,6 @@
-﻿namespace Uno.Extensions.Authentication;
+﻿using System.ComponentModel;
+
+namespace Uno.Extensions.Authentication;
 
 /// <summary>
 /// Provides OIDC-related extension methods for <see cref="IOidcAuthenticationBuilder"/>.
@@ -20,7 +22,7 @@ public static class OidcAuthenticationBuilderExtensions
 	public static IOidcAuthenticationBuilder Authority(
 		this IOidcAuthenticationBuilder builder,
 		string authority)
-		=> builder.ChangeOption(options => options.Authority = authority);
+		=> builder.ConfigureOidcClientOptions(options => options.Authority = authority);
 
 	/// <summary>
 	/// Configures the OIDC authentication feature to be built with the specified client ID.
@@ -37,7 +39,7 @@ public static class OidcAuthenticationBuilderExtensions
 	public static IOidcAuthenticationBuilder ClientId(
 		this IOidcAuthenticationBuilder builder,
 		string clientId)
-		=> builder.ChangeOption(options => options.ClientId = clientId);
+		=> builder.ConfigureOidcClientOptions(options => options.ClientId = clientId);
 
 	/// <summary>
 	/// Configures the OIDC authentication feature to be built with the specified client secret.
@@ -54,7 +56,7 @@ public static class OidcAuthenticationBuilderExtensions
 	public static IOidcAuthenticationBuilder ClientSecret(
 		this IOidcAuthenticationBuilder builder,
 		string clientSecret)
-		=> builder.ChangeOption(options => options.ClientSecret = clientSecret);
+		=> builder.ConfigureOidcClientOptions(options => options.ClientSecret = clientSecret);
 
 	/// <summary>
 	/// Configures the OIDC authentication feature to be built with the specified scope.
@@ -69,9 +71,9 @@ public static class OidcAuthenticationBuilderExtensions
 	/// The <see cref="IOidcAuthenticationBuilder"/> that was passed in.
 	/// </returns>
 	public static IOidcAuthenticationBuilder Scope(
-	this IOidcAuthenticationBuilder builder,
-	string scope)
-	=> builder.ChangeOption(options => options.Scope = scope);
+		this IOidcAuthenticationBuilder builder,
+		string scope)
+		=> builder.ConfigureOidcClientOptions(options => options.Scope = scope);
 
 	/// <summary>
 	/// Configures the OIDC authentication feature to be built with the specified redirect URI.
@@ -86,9 +88,34 @@ public static class OidcAuthenticationBuilderExtensions
 	/// The <see cref="IOidcAuthenticationBuilder"/> that was passed in.
 	/// </returns>
 	public static IOidcAuthenticationBuilder RedirectUri(
-	this IOidcAuthenticationBuilder builder,
-	string redirectUri)
-	=> builder.ChangeOption(options => options.RedirectUri = redirectUri);
+		this IOidcAuthenticationBuilder builder,
+		string redirectUri)
+		=> builder.ConfigureOidcClientOptions(options => options.RedirectUri = redirectUri);
+
+	/// <summary>
+	/// Let the OidcAuthenticationProvider automatically set the redirect URI to the automatically discovered one from the WebAuthenticationBroker.
+	/// </summary>
+	/// <remarks>
+	/// This feature will use the <see cref="WebAuthenticationBroker.GetCurrentApplicationCallbackUri"/> to set the redirect URI, which is usually discovered automatically by the implementation of the WebAuthenticationBroker (which can be customized).
+	/// More information: <see href="https://platform.uno/docs/articles/features/web-authentication-broker.html">Uno Web Authentication Broker Documentation</see>.
+	///
+	/// > ![IMPORTANT]
+	/// > When this setting is set, the <see cref="OidcClientOptions.RedirectUri"/> and <see cref="OidcClientOptions.PostLogoutRedirectUri"/> settings will be overridden with the value from the WebAuthenticationBroker.
+	/// </remarks>
+	public static IOidcAuthenticationBuilder AutoRedirectUriFromWebAuthenticationBroker(
+		this IOidcAuthenticationBuilder builder,
+		bool autoRedirectUri = true)
+	{
+		if (builder is IBuilder<OidcAuthenticationSettings> authBuilder)
+		{
+			authBuilder.Settings = authBuilder.Settings with
+			{
+				AutoRedirectUri = autoRedirectUri
+			};
+		}
+
+		return builder;
+	}
 
 	/// <summary>
 	/// Configures the OIDC authentication feature to be built with the specified post-logout redirect URI.
@@ -103,13 +130,21 @@ public static class OidcAuthenticationBuilderExtensions
 	/// The <see cref="IOidcAuthenticationBuilder"/> that was passed in.
 	/// </returns>
 	public static IOidcAuthenticationBuilder PostLogoutRedirectUri(
-	this IOidcAuthenticationBuilder builder,
-	string postLogoutRedirectUri)
-	=> builder.ChangeOption(options => options.PostLogoutRedirectUri = postLogoutRedirectUri);
-
-	private static IOidcAuthenticationBuilder ChangeOption(
 		this IOidcAuthenticationBuilder builder,
-		Action<OidcClientOptions> change)
+		string postLogoutRedirectUri)
+		=> builder.ConfigureOidcClientOptions(options => options.PostLogoutRedirectUri = postLogoutRedirectUri);
+
+	// Add an advanced builder allowing to tweak the options directly
+	/// <summary>
+	/// Configures the OIDC authentication feature by updating directly the <see cref="OidcClientOptions"/> parameter.
+	/// </summary>
+	/// <remarks>
+	/// A
+	/// </remarks>
+	[EditorBrowsable(EditorBrowsableState.Advanced)]
+	public static IOidcAuthenticationBuilder ConfigureOidcClientOptions(
+		this IOidcAuthenticationBuilder builder,
+		Action<OidcClientOptions> updater)
 	{
 		if (builder is IBuilder<OidcAuthenticationSettings> authBuilder)
 		{
@@ -121,10 +156,9 @@ public static class OidcAuthenticationBuilderExtensions
 				};
 
 			}
-			change(authBuilder.Settings.Options);
+			updater(authBuilder.Settings.Options);
 		}
 
 		return builder;
 	}
-
 }
