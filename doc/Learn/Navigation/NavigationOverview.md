@@ -21,6 +21,8 @@ Navigation needs to encompass a range of UI concepts:
 
 `Navigation` is provided as an Uno Feature. To enable `Navigation` support in your application, add `Navigation` to the `<UnoFeatures>` property in the Class Library (.csproj) file.
 
+[!include[existing-app](../includes/existing-app.md)]
+
 [!include[single-project](../includes/single-project.md)]
 
 For more information about `UnoFeatures` refer to our [Using the Uno.Sdk](xref:Uno.Features.Uno.Sdk) docs.

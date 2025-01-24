@@ -20,6 +20,8 @@ protected override void OnLaunched(LaunchActivatedEventArgs e){
 ...
 ```
 
+[!include[existing-app](../includes/existing-app.md)]
+
 By default, enabling validation will register the default `Validator` type with the DI container. This class implements `IValidator` and provides functionality to execute validation rules on validatable entities.
 
 ## Using the validation service
