@@ -1,16 +1,4 @@
 steps:
   - template: canary-update-template.yml
     parameters:
-      SolutionToUpdate: 'Uno.Extensions.sln'
-
-  - template: canary-update-template.yml
-    parameters:
-      SolutionToUpdate: 'samples/Playground/Playground.sln'
-
-  - template: canary-update-template.yml
-    parameters:
-      SolutionToUpdate: 'samples/MauiEmbedding/MauiEmbedding.sln'
-
-  - template: canary-update-template.yml
-    parameters:
-      SolutionToUpdate: 'testing/TestHarness/TestHarness.sln'
+      SolutionToUpdate: '$(build.sourcesdirectory)'
