@@ -15,19 +15,18 @@
 			<RowDefinition Height="Auto" />
 			<RowDefinition />
 		</Grid.RowDefinitions>
-		<utu:NavigationBar Content="Flyouts"
-						   AutomationProperties.AutomationId="DialogsFlyoutsPage" />
+		<utu:NavigationBar Content="Flyouts" AutomationProperties.AutomationId="DialogsFlyoutsPage" />
 
 		<ScrollViewer Grid.Row="1">
 			<StackPanel>
 				<Button AutomationProperties.AutomationId="FlyoutDialogXamlButton"
 						uen:Navigation.Request="!DialogsBasic"
 						Content="Flyout from Xaml" />
-				<Button  AutomationProperties.AutomationId="FlyoutDialogCodebehindButton"
-						 Content="Flyout from Background Thread"
+				<Button AutomationProperties.AutomationId="FlyoutDialogCodebehindButton"
+						Content="Flyout from Background Thread"
 						Click="FlyoutFromBackgroundClick" />
-				<Button  AutomationProperties.AutomationId="FlyoutDialogCodebehindBackgroundButton"
-						 Content="Flyout from Background Thread requesting data"
+				<Button AutomationProperties.AutomationId="FlyoutDialogCodebehindBackgroundButton"
+						Content="Flyout from Background Thread requesting data"
 						Click="FlyoutFromBackgroundRequestingDataClick" />
 				<Button AutomationProperties.AutomationId="FlyoutDialogCodebehindWithCancelButton"
 						Content="Flyout requesting data with cancellation (2s)"
@@ -37,7 +36,7 @@
 						uen:Navigation.Data="{Binding FlyoutData, Mode=TwoWay}"
 						Content="Complex Flyout from Xaml" />
 
-				
+
 			</StackPanel>
 		</ScrollViewer>
 	</Grid>

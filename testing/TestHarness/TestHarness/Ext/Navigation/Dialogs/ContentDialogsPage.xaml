@@ -14,8 +14,7 @@
 			<RowDefinition Height="Auto" />
 			<RowDefinition />
 		</Grid.RowDefinitions>
-		<utu:NavigationBar Content="Content Dialogs"
-						   AutomationProperties.AutomationId="DialogsContentDialogsPage" />
+		<utu:NavigationBar Content="Content Dialogs" AutomationProperties.AutomationId="DialogsContentDialogsPage" />
 
 		<ScrollViewer Grid.Row="1">
 			<StackPanel>
@@ -41,8 +40,8 @@
 
 
 				<Button AutomationProperties.AutomationId="ComplexDialogSecondPageButton"
-					uen:Navigation.Request="ContentDialogsSecond"
-					Content="Complex Dialog - Second Page" />
+						uen:Navigation.Request="ContentDialogsSecond"
+						Content="Complex Dialog - Second Page" />
 			</StackPanel>
 		</ScrollViewer>
 	</Grid>
