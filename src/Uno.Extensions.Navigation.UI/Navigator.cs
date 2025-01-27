@@ -154,13 +154,21 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 		// where request needs to be sent to parent so that all child
 		// regions receive the request)
 		// Required for Test: Given_NavigationView.When_NavigationView
-		if (await CanNavigate(request.Route) &&
-			!await ParentCanNavigate(request.Route))
+		var canNavigate = await CanNavigate(request.Route);
+		//var parentCanNavigate = request.Route.Base == "ChefsRecipeDetails" ? false : await ParentCanNavigate(request.Route);
+		var parentCanNavigate = await ParentCanNavigate(request.Route);
+		if (canNavigate &&
+			!parentCanNavigate)
 		{
 			if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"No redirection - Navigator can handle request (and parent cannot)");
 			return default;
 		}
 
+		//if (canNavigate)
+		//{
+		//	if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"Navigator can handle request - navigating");
+		//	return default;
+		//}
 
 		// If this is a back/close with no other path, then return
 		// as if this navigator can handl it - it can't, so the request

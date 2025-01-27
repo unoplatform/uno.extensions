@@ -6,6 +6,6 @@ public partial class ChefsFavoriteRecipesModel(INavigator navigator)
 {
 	public async ValueTask NavigateToRecipeDetail()
 	{
-		await navigator.NavigateRouteAsync(this, "ChefsFavoriteRecipeDetails", data: new ChefsRecipe { Name = "Favorite Page" });
+		await navigator.NavigateRouteAsync(this, "/ChefsRoot/ChefsFavoriteRecipes/ChefsRecipeDetails", data: new ChefsRecipe { Name = "Favorite Page" });
 	}
 }
