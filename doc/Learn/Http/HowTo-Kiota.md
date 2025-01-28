@@ -44,13 +44,13 @@ When working with APIs in your application, having a strongly-typed client can s
 
 * Install the Kiota tool:
 
-    ```xml
+    ```bash
     dotnet tool install --global Microsoft.OpenApi.Kiota
     ```
 
 * Generate the Client using the OpenAPI specification URL:
 
-    ```xml
+    ```bash
     kiota generate -l CSharp -c MyApiClient -n MyApp.Client -d PATH_TO_YOUR_API_SPEC.json -o ./Client
     ```
 
