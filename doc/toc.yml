@@ -5,6 +5,8 @@
       href: xref:Uno.Extensions.Overview
     - name: "How-To: Getting Started"
       href: xref:Uno.Extensions.HowToGettingStarted
+    - name: "Upgrading Extensions Version"
+      href: xref:Uno.Extensions.Migration
     - name: Authentication
       href: Learn/Authentication/toc.yml
       topicHref: xref:Uno.Extensions.Authentication.Overview

@@ -112,14 +112,56 @@ public async ValueTask TrimAll(CancellationToken ct = default)
 }
 ```
 
-Another overload is `UpdateAsync`, which allows you to apply an update on items that match a criteria. The `match` predicate is checked for each item. It the item matches the criteria, the updater is invoked which returns a new instance of the item with the update applied:
+Another overload is `UpdateAllAsync`, which allows you to apply an update on items that match a criteria. The `match` predicate is checked for each item. If the item matches the criteria, the updater is invoked which returns a new instance of the item with the update applied:
 
 ```csharp
 public async ValueTask TrimLongNames(CancellationToken ct = default)
 {
-    await MyStrings.UpdateAsync(
+    await MyStrings.UpdateAllAsync(
         match: item => item?.Length > 10,
         updater: item => item.Trim(),
+        ct: ct);
+}
+```
+
+Two more overloads are available for items that implement `IKeyEquatable<T>` :
+
+`UpdateItemAsync` is another overload that allows you to apply an update on items that match the `key` of the specified item. The `key` is validated for each item. For every item that matches, the updater is invoked, returning a new instance of the item with the update applied:
+
+> [!TIP]
+> You don't have to implement `IKeyEquatable<T>` by yourself, see [generation](xref:Uno.Extensions.Equality.concept#generation) for more information.
+
+```csharp
+public partial record MyItem([property: Key] int Key, string Value);
+
+IListState<MyItem> MyItems = ListState<MyItem>.Value(this, () => new[]
+{
+    new MyItem(1, "One"),
+    new MyItem(2, "Two"),
+    new MyItem(3, "Three")
+}.ToImmutableList());
+
+public async ValueTask MakeUpperCase(CancellationToken ct = default)
+{
+    var itemToUpdate = new MyItem(2, "Two");
+
+    await MyItems.UpdateItemAsync(
+        oldItem: itemToUpdate,
+        updater: item => item with { Value = item.Value.ToUpper()},
+        ct: ct);
+}
+```
+
+Instead of using the `updater`, you can also pass in a new item to replace the old one:
+
+```csharp
+public async ValueTask MakeUpperCase(CancellationToken ct = default)
+{
+    var itemToUpdate = new MyItem(2, "Two");
+
+    await MyItems.UpdateItemAsync(
+        oldItem: itemToUpdate,
+        newItem: new MyItem(2, "TWO"),
         ct: ct);
 }
 ```

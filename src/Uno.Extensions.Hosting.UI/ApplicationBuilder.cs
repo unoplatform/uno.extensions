@@ -2,7 +2,7 @@ namespace Uno.Extensions.Hosting;
 
 internal record ApplicationBuilder(Application App, LaunchActivatedEventArgs Arguments, Assembly ApplicationAssembly) : IApplicationBuilder
 {
-	private readonly List<Action<IHostBuilder>> _delegates = new List<Action<IHostBuilder>>();
+	private readonly List<Action<IHostBuilder, Window>> _delegates = [];
 
 	public IDictionary<object, object> Properties { get; } = new Dictionary<object, object>();
 
@@ -26,13 +26,19 @@ internal record ApplicationBuilder(Application App, LaunchActivatedEventArgs Arg
 	 		Environment.GetCommandLineArgs().Skip(1).ToArray());
 		foreach (var del in _delegates)
 		{
-			del(builder);
+			del(builder, Window);
 		}
 
 		return builder.Build();
 	}
 
 	public IApplicationBuilder Configure(Action<IHostBuilder> configureHost)
+	{
+		_delegates.Add((builder, window) => configureHost(builder));
+		return this;
+	}
+
+	public IApplicationBuilder Configure(Action<IHostBuilder, Window> configureHost)
 	{
 		_delegates.Add(configureHost);
 		return this;

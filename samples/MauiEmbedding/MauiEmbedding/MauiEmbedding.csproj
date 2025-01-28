@@ -1,8 +1,7 @@
-﻿<Project Sdk="Uno.Sdk">
+﻿<Project Sdk="Uno.Sdk.Private">
 	<Import Project="..\..\..\src\tfms-ui-maui.props" />
 
 	<PropertyGroup>
-
 		<OutputType>Exe</OutputType>
 		<UnoSingleProject>true</UnoSingleProject>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -35,14 +34,6 @@
 			Mvvm;
 		</UnoFeatures>
 	</PropertyGroup>
-
-	<ItemGroup>
-		<PackageReference Include="Uno.Core.Extensions.Logging.Singleton"/>
-	</ItemGroup>
-
-	<ItemGroup Condition="'$(IsIOSOrCatalyst)' == 'true'">
-		<PackageReference Include="Uno.Extensions.Logging.OSLog" />
-	</ItemGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Core.UI\Uno.Extensions.Core.WinUI.csproj" />

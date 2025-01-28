@@ -23,6 +23,8 @@ Uno.Extensions.Storage facilitate local data storage across multiple platforms, 
 </UnoFeatures>
 ```
 
+[!include[existing-app](../includes/existing-app.md)]
+
 [!include[single-project](../includes/single-project.md)]
 
 For more information about `UnoFeatures` refer to our [Using the Uno.Sdk](xref:Uno.Features.Uno.Sdk) docs.

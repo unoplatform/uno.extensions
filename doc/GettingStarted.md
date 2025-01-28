@@ -104,10 +104,47 @@ var builder = this.CreateBuilder(args)
     );
 ```
 
+Add a `protected` property named Host of type `IHost` to your App.xaml.cs file:
+
+```csharp
+protected IHost? Host { get; private set; }
+```
+
+After creating the `builder`, initialize the `Host` by building it:
+
+```csharp
+Host = builder.Build();
+```
+
 ### Step 3: Use the Builder to Create the Main Window
 
 Finally, instead of directly creating an instance of a `Window` using `MainWindow = new Window()`, use the `builder` to set up the main window:
 
-```csharp
-MainWindow = builder.Window;
+```diff
+-MainWindow = new Window();
+
+var builder = this.CreateBuilder(args)
+    .Configure(host => host
+        // Configure the host builder
+    );
+
++MainWindow = builder.Window;
+
+Host = builder.Build();
+
+if (MainWindow.Content is not Frame rootFrame)
+{
+    rootFrame = new Frame();
+    MainWindow.Content = rootFrame;
+}
+
+if (rootFrame.Content == null)
+{
+    rootFrame.Navigate(typeof(MainPage), args.Arguments);
+}
+
+MainWindow.Activate();
 ```
+
+> [!IMPORTANT]
+> Be sure to remove any other code that sets `MainWindow` or `Window.Current` to prevent conflicts in your application.
