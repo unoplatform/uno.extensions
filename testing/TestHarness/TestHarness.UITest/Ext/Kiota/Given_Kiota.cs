@@ -7,7 +7,7 @@ public class Given_Kiota : NavigationTestBase
 	{
 		InitTestSection(TestSections.Http_Kiota);
 
-		App.WaitThenTap("ShowAppButton");
+		App.WaitThenTap("ShowKiotaPageButton");
 
 		App.WaitElement("KiotaHomeNavigationBar");
 
