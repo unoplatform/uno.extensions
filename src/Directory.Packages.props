@@ -1,7 +1,5 @@
 <Project ToolsVersion="15.0">
   <PropertyGroup>
-    <WinAppSdkBuildToolsVersion>10.0.22621.3233</WinAppSdkBuildToolsVersion>
-    <!-- Keep this version until https://github.com/microsoft/WindowsAppSDK/issues/4480 is resolved -->
   </PropertyGroup>
   <ItemGroup>
     <PackageVersion Include="CommunityToolkit.Mvvm" Version="7.0.1" />
