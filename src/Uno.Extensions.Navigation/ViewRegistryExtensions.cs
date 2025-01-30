@@ -9,7 +9,11 @@ public static class ViewRegistryExtensions
 
 	public static ViewMap FindByViewModel(this IViewRegistry registry, Type? viewModelType)
 	{
-		return registry.Items.FindByInheritedTypes(viewModelType, map => map.ViewModel).First();
+		viewModelType = viewModelType ?? throw new ArgumentNullException(nameof(viewModelType));
+		var viewMap = registry.Items.FindByInheritedTypes(viewModelType, map => map.ViewModel).FirstOrDefault();
+		if (viewMap is null)
+			throw new ViewMapNotFoundByViewModelException(viewModelType);
+		return viewMap;
 	}
 
 	public static ViewMap FindByView<TView>(this IViewRegistry registry)
@@ -19,7 +23,11 @@ public static class ViewRegistryExtensions
 
 	public static ViewMap FindByView(this IViewRegistry registry, Type? viewType)
 	{
-		return registry.Items.FindByInheritedTypes(viewType, map => map.View).First();
+		viewType = viewType ?? throw new ArgumentNullException(nameof(viewType));
+		var viewMap = registry.Items.FindByInheritedTypes(viewType, map => map.View).FirstOrDefault();
+		if (viewMap is null)
+			throw new ViewMapNotFoundByViewException(viewType);
+		return viewMap;
 	}
 
 	public static ViewMap FindByData<TData>(this IViewRegistry registry)
@@ -28,7 +36,11 @@ public static class ViewRegistryExtensions
 	}
 	public static ViewMap FindByData(this IViewRegistry registry, Type? dataType)
 	{
-		return registry.Items.FindByInheritedTypes(dataType, map => map.Data?.Data).First();
+		dataType = dataType ?? throw new ArgumentNullException(nameof(dataType));
+		var viewMap = registry.Items.FindByInheritedTypes(dataType, map => map.Data?.Data).FirstOrDefault();
+		if (viewMap is null)
+			throw new ViewMapNotFoundByDataException(dataType);
+		return viewMap;
 	}
 
 	public static ViewMap FindByResultData<TResultData>(this IViewRegistry registry)
@@ -37,7 +49,11 @@ public static class ViewRegistryExtensions
 	}
 	public static ViewMap FindByResultData(this IViewRegistry registry, Type? dataType)
 	{
-		return registry.Items.FindByInheritedTypes(dataType, map => map.ResultData).First();
+		dataType = dataType ?? throw new ArgumentNullException(nameof(dataType));
+		var viewMap = registry.Items.FindByInheritedTypes(dataType, map => map.ResultData).FirstOrDefault();
+		if (viewMap is null)
+			throw new ViewMapNotFoundByResultDataException(dataType);
+		return viewMap;
 	}
 }
 
