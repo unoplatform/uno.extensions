@@ -16,9 +16,10 @@ public class Given_Kiota : NavigationTestBase
 
 		App.WaitThenTap("FetchPostsButton");
 
-		await Task.Delay(1000);
+		await Task.Delay(2000);
 
 		var fetchResult = App.GetText("FetchPostsResultTextBlock");
-		fetchResult.Should().Contain("Retrieved").And.Contain("posts");
+
+		fetchResult.Should().Contain("Retrieved data").And.Contain("Item1").And.Contain("Item2").And.Contain("Item3");
 	}
 }

@@ -9,25 +9,25 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using System;
-using TestHarness.Ext.Http.Kiota.Client.Posts;
+using TestHarness.Ext.Http.Kiota.Client.Kiota;
 namespace TestHarness.Ext.Http.Kiota.Client
 {
     /// <summary>
     /// The main entry point of the SDK, exposes the configuration and the fluent API.
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.16.0")]
-    public partial class PostsApiClient : BaseRequestBuilder
+    public partial class KiotaTestClient : BaseRequestBuilder
     {
-        /// <summary>The posts property</summary>
-        public global::TestHarness.Ext.Http.Kiota.Client.Posts.PostsRequestBuilder Posts
+        /// <summary>The Kiota property</summary>
+        public global::TestHarness.Ext.Http.Kiota.Client.Kiota.KiotaRequestBuilder Kiota
         {
-            get => new global::TestHarness.Ext.Http.Kiota.Client.Posts.PostsRequestBuilder(PathParameters, RequestAdapter);
+            get => new global::TestHarness.Ext.Http.Kiota.Client.Kiota.KiotaRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>
-        /// Instantiates a new <see cref="global::TestHarness.Ext.Http.Kiota.Client.PostsApiClient"/> and sets the default values.
+        /// Instantiates a new <see cref="global::TestHarness.Ext.Http.Kiota.Client.KiotaTestClient"/> and sets the default values.
         /// </summary>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public PostsApiClient(IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}", new Dictionary<string, object>())
+        public KiotaTestClient(IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}", new Dictionary<string, object>())
         {
             ApiClientBuilder.RegisterDefaultSerializer<JsonSerializationWriterFactory>();
             ApiClientBuilder.RegisterDefaultSerializer<TextSerializationWriterFactory>();
@@ -36,11 +36,6 @@ namespace TestHarness.Ext.Http.Kiota.Client
             ApiClientBuilder.RegisterDefaultDeserializer<JsonParseNodeFactory>();
             ApiClientBuilder.RegisterDefaultDeserializer<TextParseNodeFactory>();
             ApiClientBuilder.RegisterDefaultDeserializer<FormParseNodeFactory>();
-            if (string.IsNullOrEmpty(RequestAdapter.BaseUrl))
-            {
-                RequestAdapter.BaseUrl = "https://jsonplaceholder.typicode.com";
-            }
-            PathParameters.TryAdd("baseurl", RequestAdapter.BaseUrl);
         }
     }
 }
