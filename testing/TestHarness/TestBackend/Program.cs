@@ -1,10 +1,22 @@
 // Setup of Program.cs and WebAuthController comes from https://github.com/dotnet/maui/tree/main/src/Essentials/samples/Sample.Server.WebAuthenticator
 
+using System.Net.NetworkInformation;
+using System.Text;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+
+builder.Services.AddCors(options =>
+{
+	options.AddPolicy("AllowAll", policy =>
+		policy.AllowAnyOrigin()
+			.AllowAnyMethod()
+			.AllowAnyHeader());
+});
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -20,9 +32,21 @@ builder.Services.Configure<Auth>(authSection);
 builder.Services
 		.AddAuthentication(o =>
 				{
-					o.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+					o.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+					o.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+				}).AddJwtBearer(options =>
+				{
+					options.RequireHttpsMetadata = false;
+					options.SaveToken = true;
+					options.TokenValidationParameters = new TokenValidationParameters
+					{
+						ValidateIssuerSigningKey = true,
+						IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("SuperSecureVeryLongSecretKey12345")),
+						ValidateIssuer = false,
+						ValidateAudience = false
+					};
 				})
-		.AddCookie()
+		
 		//.AddFacebook(fb =>
 		//{
 		//	fb.AppId = auth.FacebookAppId!;
@@ -70,7 +94,7 @@ if (app.Environment.IsDevelopment())
 
 //app.UseHttpsRedirection();
 
-
+app.UseCors("AllowAll");
 app.UseAuthentication();
 app.UseAuthorization();
 
