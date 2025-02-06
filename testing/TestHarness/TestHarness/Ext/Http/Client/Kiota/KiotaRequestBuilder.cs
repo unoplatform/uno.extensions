@@ -6,7 +6,6 @@ using System.IO;
 using System.Threading.Tasks;
 using System;
 using TestHarness.Ext.Http.Kiota.Client.Kiota.Data;
-using TestHarness.Ext.Http.Kiota.Client.Kiota.Login;
 namespace TestHarness.Ext.Http.Kiota.Client.Kiota
 {
     /// <summary>
@@ -19,11 +18,6 @@ namespace TestHarness.Ext.Http.Kiota.Client.Kiota
         public global::TestHarness.Ext.Http.Kiota.Client.Kiota.Data.DataRequestBuilder Data
         {
             get => new global::TestHarness.Ext.Http.Kiota.Client.Kiota.Data.DataRequestBuilder(PathParameters, RequestAdapter);
-        }
-        /// <summary>The login property</summary>
-        public global::TestHarness.Ext.Http.Kiota.Client.Kiota.Login.LoginRequestBuilder Login
-        {
-            get => new global::TestHarness.Ext.Http.Kiota.Client.Kiota.Login.LoginRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>
         /// Instantiates a new <see cref="global::TestHarness.Ext.Http.Kiota.Client.Kiota.KiotaRequestBuilder"/> and sets the default values.

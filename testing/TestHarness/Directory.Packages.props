@@ -7,6 +7,7 @@
     <PackageVersion Include="IdentityModel.OidcClient" Version="5.0.0" />
     <PackageVersion Include="AspNet.Security.OAuth.Apple" Version="6.0.4" />
     <PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.12" />
+    <PackageVersion Include="Microsoft.IdentityModel.Tokens" Version="7.1.2" />
     <PackageVersion Include="MSTest.TestAdapter" Version="2.2.9" />
     <PackageVersion Include="MSTest.TestFramework" Version="2.2.9" />
     <PackageVersion Include="Microsoft.AspNetCore.Authentication.Facebook" Version="6.0.7" />
@@ -25,6 +26,7 @@
     <PackageVersion Include="Refit.HttpClientFactory" Version="7.2.22" />
     <PackageVersion Include="Swashbuckle.AspNetCore" Version="6.2.3" />
     <PackageVersion Include="System.ComponentModel.Annotations" Version="5.0.0" />
+    <PackageVersion Include="System.IdentityModel.Tokens.Jwt" Version="7.1.2" />
     <PackageVersion Include="Uno.CommunityToolkit.WinUI.UI" Version="7.1.100" />
     <PackageVersion Include="Uno.UITest" Version="1.1.0-dev.70" />
     <PackageVersion Include="Uno.UITest.Selenium" Version="1.1.0-dev.70" />

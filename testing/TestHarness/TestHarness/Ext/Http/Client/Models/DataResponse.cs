@@ -27,13 +27,13 @@ namespace TestHarness.Ext.Http.Kiota.Client.Models
 #else
         public string Message { get; set; }
 #endif
-        /// <summary>The username property</summary>
+        /// <summary>The token property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public string? Username { get; set; }
+        public string? Token { get; set; }
 #nullable restore
 #else
-        public string Username { get; set; }
+        public string Token { get; set; }
 #endif
         /// <summary>
         /// Creates a new instance of the appropriate class based on discriminator value
@@ -55,7 +55,7 @@ namespace TestHarness.Ext.Http.Kiota.Client.Models
             {
                 { "data", n => { Data = n.GetCollectionOfPrimitiveValues<string>()?.AsList(); } },
                 { "message", n => { Message = n.GetStringValue(); } },
-                { "username", n => { Username = n.GetStringValue(); } },
+                { "token", n => { Token = n.GetStringValue(); } },
             };
         }
         /// <summary>
@@ -67,7 +67,7 @@ namespace TestHarness.Ext.Http.Kiota.Client.Models
             _ = writer ?? throw new ArgumentNullException(nameof(writer));
             writer.WriteCollectionOfPrimitiveValues<string>("data", Data);
             writer.WriteStringValue("message", Message);
-            writer.WriteStringValue("username", Username);
+            writer.WriteStringValue("token", Token);
         }
     }
 }

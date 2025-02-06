@@ -1,8 +1,4 @@
-﻿using System.Text.Json;
-using TestHarness.Ext.Http.Kiota.Client;
-using TestHarness.Ext.Http.Kiota.Client.Models;
-using Microsoft.Kiota.Abstractions;
-using Microsoft.Kiota.Abstractions.Serialization;
+﻿using TestHarness.Ext.Http.Kiota.Client;
 
 namespace TestHarness.Ext.Http.Kiota;
 
@@ -10,20 +6,15 @@ namespace TestHarness.Ext.Http.Kiota;
 public partial class KiotaHomeViewModel : ObservableObject
 {
 	private readonly KiotaTestClient _kiotaClient;
-	private readonly INavigator _navigator;
+	private readonly IAuthenticationService _authService;
 
 	[ObservableProperty]
 	private string _fetchPostsResult = string.Empty;
 
-	[ObservableProperty]
-	private string _initializationStatus = string.Empty;
-
-	public KiotaHomeViewModel(KiotaTestClient kiotaClient, INavigator navigator)
+	public KiotaHomeViewModel(KiotaTestClient kiotaClient, IAuthenticationService authService)
 	{
 		_kiotaClient = kiotaClient;
-		_navigator = navigator;
-
-		InitializationStatus = "Kiota Client initialized successfully.";
+		_authService = authService;
 	}
 
 	public async void FetchPosts()
@@ -32,51 +23,33 @@ public partial class KiotaHomeViewModel : ObservableObject
 		{
 			FetchPostsResult = "Logging in...";
 
-			var loginRequest = new LoginRequest
+			var isLoggedIn = await _authService.LoginAsync(null, new Dictionary<string, string>
 			{
-				Username = "testuser",
-				Password = "password"
-			};
-
-			var loginStream = await _kiotaClient.Kiota.Login.PostAsync(loginRequest);
-			if (loginStream == null)
-			{
-				FetchPostsResult = "Failed to authenticate.";
-				return;
-			}
-
-			var loginJson = await new StreamReader(loginStream).ReadToEndAsync();
-			var loginResponse = await KiotaJsonSerializer.DeserializeAsync<AuthResponse>(loginJson);
-
-			if (loginResponse == null || string.IsNullOrEmpty(loginResponse.AccessToken))
-			{
-				FetchPostsResult = "Failed to authenticate.";
-				return;
-			}
-
-			FetchPostsResult = "Fetching items...";
-			var requestConfig = new Action<RequestConfiguration<DefaultQueryParameters>>(config =>
-			{
-				config.Headers.Add("Authorization", $"Bearer {loginResponse.AccessToken}");
+				{ "Username", "testuser" },
+				{ "Password", "password" }
 			});
 
-			var dataResponse = await _kiotaClient.Kiota.Data.GetAsync(requestConfig);
+			if (!isLoggedIn)
+			{
+				FetchPostsResult = "Authentication failed.";
+				return;
+			}
+
+			FetchPostsResult = "Fetching data...";
+
+			var dataResponse = await _kiotaClient.Kiota.Data.GetAsync();
+
 			if (dataResponse == null)
 			{
 				FetchPostsResult = "No data received.";
 				return;
 			}
 
-			Console.WriteLine($"Received Data: {string.Join(", ", dataResponse.Data)}");
-
-			FetchPostsResult = dataResponse.Data is { Count: > 0 }
-				? $"Retrieved data: {string.Join(", ", dataResponse.Data)}"
-				: "No data received.";
-
+			FetchPostsResult = $"Retrieved data: {string.Join(", ", dataResponse.Data)}\nToken: {dataResponse.Token}";
 		}
 		catch (Exception ex)
 		{
-			FetchPostsResult = $"Failed to fetch posts. Error: {ex.Message}";
+			FetchPostsResult = $"Failed to fetch data. Error: {ex.Message}";
 		}
 	}
 }
