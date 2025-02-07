@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Kiota.Abstractions;
 using Microsoft.Kiota.Abstractions.Authentication;
@@ -53,6 +54,7 @@ public static class ServiceCollectionExtensions
 	where TEndpoint : EndpointOptions, new()
 	{
 		services.AddKiotaHandlers();
+		services.TryAddTransient<HttpMessageHandler, HttpClientHandler>();
 
 		return services.AddClientWithEndpoint<TClient, TEndpoint>(
 				context,
@@ -71,7 +73,9 @@ public static class ServiceCollectionExtensions
 			)
 			.AddSingleton<IRequestAdapter, HttpClientRequestAdapter>(sp =>
 			{
-				var httpClient = sp.GetRequiredService<HttpClient>();
+				var httpClientFactory = sp.GetRequiredService<IHttpClientFactory>();
+				var httpClient = httpClientFactory.CreateClient(name ?? typeof(TClient).FullName ?? "DefaultClient");
+
 				var authProvider = new AnonymousAuthenticationProvider();
 
 				var parseNodeFactory = new Microsoft.Kiota.Serialization.Json.JsonParseNodeFactory();

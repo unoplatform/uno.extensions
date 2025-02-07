@@ -27,12 +27,12 @@
 					   FontSize="16"
 					   Foreground="Green" />
 
-			<Button AutomationProperties.AutomationId="FetchPostsButton"
+			<Button AutomationProperties.AutomationId="FetchItemsButton"
 					Content="Fetch Posts"
-					Click="{x:Bind ViewModel.FetchPosts}" />
+					Click="{x:Bind ViewModel.FetchItems}" />
 
-			<TextBlock AutomationProperties.AutomationId="FetchPostsResultTextBlock"
-					   Text="{Binding FetchPostsResult}" />
+			<TextBlock AutomationProperties.AutomationId="FetchItemsResultTextBlock"
+					   Text="{Binding FetchItemsResult}" />
 		</StackPanel>
 	</Grid>
 </Page>

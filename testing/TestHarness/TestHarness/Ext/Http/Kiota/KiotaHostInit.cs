@@ -44,13 +44,6 @@ public class KiotaHostInit : BaseHostInitialization
 				services.AddKiotaClient<KiotaTestClient>(context, options: new EndpointOptions { Url = "https://localhost:7193" });
 				services.AddTransient<KiotaHomeViewModel>();
 
-				var provider = services.BuildServiceProvider();
-				var handlers = provider.GetServices<DelegatingHandler>().ToList();
-				Console.WriteLine("Registered Handlers:");
-				foreach (var handler in handlers)
-				{
-					Console.WriteLine(handler.GetType().Name);
-				}
 			});
 
 	protected override void RegisterRoutes(IViewRegistry views, IRouteRegistry routes)

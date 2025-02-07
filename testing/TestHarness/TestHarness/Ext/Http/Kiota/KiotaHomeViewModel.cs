@@ -9,19 +9,24 @@ public partial class KiotaHomeViewModel : ObservableObject
 	private readonly IAuthenticationService _authService;
 
 	[ObservableProperty]
-	private string _fetchPostsResult = string.Empty;
+	private string _fetchItemsResult = string.Empty;
+
+	[ObservableProperty]
+	private string _initializationStatus = string.Empty;
+
 
 	public KiotaHomeViewModel(KiotaTestClient kiotaClient, IAuthenticationService authService)
 	{
 		_kiotaClient = kiotaClient;
 		_authService = authService;
+		InitializationStatus = "Kiota Client initialized successfully.";
 	}
 
-	public async void FetchPosts()
+	public async void FetchItems()
 	{
 		try
 		{
-			FetchPostsResult = "Logging in...";
+			FetchItemsResult = "Logging in...";
 
 			var isLoggedIn = await _authService.LoginAsync(null, new Dictionary<string, string>
 			{
@@ -31,25 +36,25 @@ public partial class KiotaHomeViewModel : ObservableObject
 
 			if (!isLoggedIn)
 			{
-				FetchPostsResult = "Authentication failed.";
+				FetchItemsResult = "Authentication failed.";
 				return;
 			}
 
-			FetchPostsResult = "Fetching data...";
+			FetchItemsResult = "Fetching data...";
 
 			var dataResponse = await _kiotaClient.Kiota.Data.GetAsync();
 
 			if (dataResponse == null)
 			{
-				FetchPostsResult = "No data received.";
+				FetchItemsResult = "No data received.";
 				return;
 			}
 
-			FetchPostsResult = $"Retrieved data: {string.Join(", ", dataResponse.Data)}\nToken: {dataResponse.Token}";
+			FetchItemsResult = $"Retrieved data: {string.Join(", ", dataResponse.Data)}\nAuthenticated Request with Token: {dataResponse.Token}";
 		}
 		catch (Exception ex)
 		{
-			FetchPostsResult = $"Failed to fetch data. Error: {ex.Message}";
+			FetchItemsResult = $"Failed to fetch data. Error: {ex.Message}";
 		}
 	}
 }
