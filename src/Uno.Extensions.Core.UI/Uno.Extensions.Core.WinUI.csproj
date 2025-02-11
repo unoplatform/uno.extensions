@@ -25,5 +25,7 @@
 	<ItemGroup>
 		<InternalsVisibleTo Include="Uno.Extensions.Hosting.UWP" />
 		<InternalsVisibleTo Include="Uno.Extensions.Hosting.WinUI" />
+
+		<PackageReference Include="Uno.WinUI" />
 	</ItemGroup>
 </Project>

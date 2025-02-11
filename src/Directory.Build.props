@@ -180,10 +180,8 @@
 		This change is done manually here to avoid 
 		-->
 		<ItemGroup>
-			<PackageReference Update="Uno.WinUI.Runtime.WebAssembly"
-							  Condition="'$(IsUnoHead)' != 'true' AND $([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'browserwasm'"
-							  ExcludeAssets="all"
-							  PrivateAssets="all" />
+			<PackageReference Remove="Uno.WinUI.Runtime.WebAssembly"
+							  Condition="'$(IsUnoHead)' != 'true' AND $([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'browserwasm'" />
 		</ItemGroup>
 	</Target>
 
