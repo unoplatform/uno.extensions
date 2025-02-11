@@ -55,26 +55,20 @@ public static class ServiceCollectionExtensions
 	{
 		services.AddKiotaHandlers();
 		services.TryAddTransient<HttpMessageHandler, HttpClientHandler>();
+		var clientName = name ?? typeof(TClient).FullName ?? "DefaultClient";
 
 		return services.AddClientWithEndpoint<TClient, TEndpoint>(
 				context,
 				options,
-				name: name ?? typeof(TClient).FullName ?? "DefaultClient",
-				httpClientFactory: (s, c) => s.AddHttpClient<TClient>(name ?? typeof(TClient).FullName ?? "DefaultClient")
-					.AttachKiotaHandlers()
-					.ConfigureHttpClient(client =>
-					{
-						if (options?.Url != null)
-						{
-							client.BaseAddress = new Uri(options.Url);
-						}
-					}),
+				name: clientName,
+				httpClientFactory: (s, c) => s.AddHttpClient<TClient>(clientName)
+					.AttachKiotaHandlers(),
 				configure: configure
 			)
 			.AddSingleton<IRequestAdapter, HttpClientRequestAdapter>(sp =>
 			{
 				var httpClientFactory = sp.GetRequiredService<IHttpClientFactory>();
-				var httpClient = httpClientFactory.CreateClient(name ?? typeof(TClient).FullName ?? "DefaultClient");
+				var httpClient = httpClientFactory.CreateClient(clientName);
 
 				var authProvider = new AnonymousAuthenticationProvider();
 
