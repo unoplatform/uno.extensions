@@ -173,6 +173,20 @@
 		<DefaultItemExcludes>$(DefaultItemExcludes);obj/**;bin/**</DefaultItemExcludes>
 	</PropertyGroup>
 
+	<Target Name="__RemoveUnoRuntimeWasm"
+			AfterTargets="UnoImplicitPackages">
+		<!--
+		Disable explicit references to Uno.WinUI.Runtime.WebAssembly in order to avoid using JSInvoke directly
+		This change is done manually here to avoid 
+		-->
+		<ItemGroup>
+			<PackageReference Update="Uno.WinUI.Runtime.WebAssembly"
+							  Condition="'$(IsUnoHead)' != 'true' AND $([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'browserwasm'"
+							  ExcludeAssets="all"
+							  PrivateAssets="all" />
+		</ItemGroup>
+	</Target>
+
 	<Import Project="Uno.CrossTargeting.props" />
 
 </Project>
