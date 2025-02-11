@@ -52,10 +52,10 @@ public partial class App : Application
 
 		var factory = LoggerFactory.Create(builder =>
 		{
-#if __WASM__
+#if BROWSERWASM1_0_OR_GREATER
             builder.AddProvider(new global::Uno.Extensions.Logging.WebAssembly.WebAssemblyConsoleLoggerProvider());
 #elif __IOS__ || __MACCATALYST__
-            builder.AddProvider(new global::Uno.Extensions.Logging.OSLogLoggerProvider());
+			builder.AddProvider(new global::Uno.Extensions.Logging.OSLogLoggerProvider());
 #else
 			builder.AddConsole();
 #endif

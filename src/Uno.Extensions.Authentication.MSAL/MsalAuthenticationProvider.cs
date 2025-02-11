@@ -4,7 +4,7 @@ using Microsoft.Identity.Client.Broker;
 using Uno.Extensions.Logging;
 using LogLevel = Microsoft.Extensions.Logging.LogLevel;
 #if UNO_EXT_MSAL
-#if __WASM__
+#if BROWSERWASM1_0_OR_GREATER
 using MsalCacheHelper = Microsoft.Identity.Client.Extensions.Msal.Wasm.MsalCacheHelper;
 #else
 using MsalCacheHelper = Microsoft.Identity.Client.Extensions.Msal.MsalCacheHelper;
@@ -193,7 +193,7 @@ internal record MsalAuthenticationProvider(
 			var builder = new StorageCreationPropertiesBuilder(CacheFileName, folderPath);
 			Settings?.Store?.Invoke(builder);
 			var storage = builder.Build();
-#if __WASM__
+#if BROWSERWASM1_0_OR_GREATER
 			var cacheHelper = await MsalCacheHelper.CreateAsync(Logger, storage);
 #else
 			var cacheHelper = await MsalCacheHelper.CreateAsync(storage);
