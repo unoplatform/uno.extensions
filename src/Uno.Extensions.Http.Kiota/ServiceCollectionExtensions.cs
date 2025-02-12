@@ -54,7 +54,6 @@ public static class ServiceCollectionExtensions
 	where TEndpoint : EndpointOptions, new()
 	{
 		services.AddKiotaHandlers();
-		services.TryAddTransient<HttpMessageHandler, HttpClientHandler>();
 		var clientName = name ?? typeof(TClient).FullName ?? "DefaultClient";
 
 		return services.AddClientWithEndpoint<TClient, TEndpoint>(

@@ -39,9 +39,11 @@ public class KiotaHostInit : BaseHostInitialization
 					})
 				)
 			)
+			.UseHttp((context, services) =>
+				services.AddKiotaClient<KiotaTestClient>(context, options: new EndpointOptions { Url = "https://localhost:7193" })
+			)
 			.ConfigureServices((context, services) =>
 			{
-				services.AddKiotaClient<KiotaTestClient>(context, options: new EndpointOptions { Url = "https://localhost:7193" });
 				services.AddTransient<KiotaHomeViewModel>();
 
 			});
