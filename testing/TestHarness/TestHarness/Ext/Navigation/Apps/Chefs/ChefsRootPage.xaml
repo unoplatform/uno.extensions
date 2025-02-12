@@ -29,7 +29,7 @@
 								Content="Home" >
 				</utu:TabBarItem>
 
-				<utu:TabBarItem uen:Region.Name="ChefsSearch"
+				<utu:TabBarItem uen:Region.Name="-/ChefsSearch"
 								IsSelectable="True"
 								Content="Search">
 				</utu:TabBarItem>
