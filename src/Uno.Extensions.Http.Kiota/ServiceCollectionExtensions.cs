@@ -57,37 +57,26 @@ public static class ServiceCollectionExtensions
 		var clientName = name ?? typeof(TClient).FullName ?? "DefaultClient";
 
 		return services.AddClientWithEndpoint<TClient, TEndpoint>(
-				context,
-				options,
-				name: clientName,
-				httpClientFactory: (s, c) => s.AddHttpClient<TClient>(clientName)
-					.AttachKiotaHandlers(),
-				configure: configure
-			)
-			.AddSingleton<IRequestAdapter, HttpClientRequestAdapter>(sp =>
-			{
-				var httpClientFactory = sp.GetRequiredService<IHttpClientFactory>();
-				var httpClient = httpClientFactory.CreateClient(clientName);
-
-				var authProvider = new AnonymousAuthenticationProvider();
-
-				var parseNodeFactory = new Microsoft.Kiota.Serialization.Json.JsonParseNodeFactory();
-				var serializationWriterFactory = new Microsoft.Kiota.Serialization.Json.JsonSerializationWriterFactory();
-
-				var requestAdapter = new HttpClientRequestAdapter(authProvider, parseNodeFactory, serializationWriterFactory, httpClient);
-
-				if (options?.Url != null)
+			context,
+			options,
+			name: clientName,
+			httpClientFactory: (s, c) => s
+				.AddHttpClient<TClient>(clientName)
+				.AddTypedClient((httpClient, sp) =>
 				{
-					requestAdapter.BaseUrl = options.Url;
-				}
+					var authProvider = new AnonymousAuthenticationProvider();
 
-				return requestAdapter;
-			})
-			.AddSingleton<TClient>(sp =>
-			{
-				var requestAdapter = sp.GetRequiredService<IRequestAdapter>();
-				return (TClient)Activator.CreateInstance(typeof(TClient), requestAdapter)!;
-			});
+					var parseNodeFactory = new Microsoft.Kiota.Serialization.Json.JsonParseNodeFactory();
+					var serializationWriterFactory = new Microsoft.Kiota.Serialization.Json.JsonSerializationWriterFactory();
+
+					var requestAdapter = new HttpClientRequestAdapter(authProvider, parseNodeFactory, serializationWriterFactory, httpClient);
+
+					return (TClient)Activator.CreateInstance(typeof(TClient), requestAdapter)!;
+
+				})
+				.AttachKiotaHandlers(),
+			configure: configure
+		);
 	}
 	/// <summary>
 	/// Dynamically adds Kiota handlers to the service collection.
