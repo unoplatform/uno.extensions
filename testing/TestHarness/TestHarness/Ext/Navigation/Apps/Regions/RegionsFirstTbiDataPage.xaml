@@ -34,6 +34,7 @@
 					 VerticalAlignment="Center"
 					 FontSize="24"
 					 Header="First Tab"
+					 AutomationProperties.AutomationId="RegionsFirstTbiDataPageTextBox"
 					 Style="{StaticResource FilledTextBoxStyle}"
 					 Text="{Binding Entity.Name, Mode=TwoWay}" />
 		</StackPanel>

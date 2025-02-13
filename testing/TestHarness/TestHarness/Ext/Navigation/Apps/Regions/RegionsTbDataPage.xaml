@@ -30,9 +30,11 @@
 			<utu:TabBar.Items>
 				<utu:TabBarItem uen:Region.Name="RegionsTbiDataOne"
 								uen:Navigation.Data="{Binding Entity}"
+								AutomationProperties.AutomationId="RegionsTbDataPageTabOne"
 								Content="One" />
 				<utu:TabBarItem uen:Region.Name="RegionsTbiDataTwo"
 								uen:Navigation.Data="{Binding Entity}"
+								AutomationProperties.AutomationId="RegionsTbDataPageTabTwo"
 								Content="Two" />
 			</utu:TabBar.Items>
 		</utu:TabBar>

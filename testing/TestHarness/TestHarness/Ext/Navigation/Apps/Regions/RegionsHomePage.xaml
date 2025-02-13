@@ -17,6 +17,7 @@
 		</Grid.RowDefinitions>
 
 		<TextBox Grid.Row="0"
+				 AutomationProperties.AutomationId="RegionsHomePageTextBox"
 				 Text="{Binding MyText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
 		<muxc:NavigationView Grid.Row="1"
@@ -44,6 +45,7 @@
 
 				<muxc:NavigationViewItem uen:Region.Name="RegionsThird"
 										 uen:Navigation.Data="{Binding MyText}"
+										 AutomationProperties.AutomationId="RegionsHomePageThirdPage"
 										 Content="Third Page">
 					<muxc:NavigationViewItem.Icon>
 						<SymbolIcon Symbol="OutlineStar" />
@@ -51,6 +53,7 @@
 				</muxc:NavigationViewItem>
 
 				<muxc:NavigationViewItem uen:Region.Name="RegionsTbData"
+										 AutomationProperties.AutomationId="RegionsHomePageRegionsTbData"
 										 Content="RegionsTbData">
 					<muxc:NavigationViewItem.Icon>
 						<SymbolIcon Symbol="DockBottom" />
