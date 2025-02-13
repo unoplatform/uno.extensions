@@ -35,7 +35,7 @@
 					 FontSize="24"
 					 Header="Second Tab"
 					 AutomationProperties.AutomationId="RegionsSecondTbiDataPageTextBox"
-					 Text="{Binding Entity.Name, Mode=TwoWay}" />
+					 Text="{Binding Entity.Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 		</StackPanel>
 	</Grid>
 </Page>

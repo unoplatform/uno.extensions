@@ -36,7 +36,7 @@
 					 Header="First Tab"
 					 AutomationProperties.AutomationId="RegionsFirstTbiDataPageTextBox"
 					 Style="{StaticResource FilledTextBoxStyle}"
-					 Text="{Binding Entity.Name, Mode=TwoWay}" />
+					 Text="{Binding Entity.Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 		</StackPanel>
 	</Grid>
 </Page>
