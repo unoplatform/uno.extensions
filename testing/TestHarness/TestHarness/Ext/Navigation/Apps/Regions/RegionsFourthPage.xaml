@@ -13,15 +13,7 @@
 			<RowDefinition Height="Auto" />
 			<RowDefinition />
 		</Grid.RowDefinitions>
-		<utu:NavigationBar Content="Fourth Page">
-			<utu:NavigationBar.MainCommand>
-				<AppBarButton>
-					<AppBarButton.Icon>
-						<BitmapIcon UriSource="ms-appx:///Assets/Images/back.png" />
-					</AppBarButton.Icon>
-				</AppBarButton>
-			</utu:NavigationBar.MainCommand>
-		</utu:NavigationBar>
+		<utu:NavigationBar Content="Fourth Page" />
 		<StackPanel Grid.Row="1"
 					HorizontalAlignment="Center"
 					VerticalAlignment="Center">

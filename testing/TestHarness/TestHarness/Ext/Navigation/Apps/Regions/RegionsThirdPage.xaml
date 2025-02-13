@@ -26,7 +26,11 @@
 		<StackPanel Grid.Row="1"
 					HorizontalAlignment="Center"
 					VerticalAlignment="Center">
-			<Button uen:Navigation.Request="RegionsFourth" Content="Go to Fourth" />
+			<TextBlock Text="{Binding MyText}"
+					   HorizontalAlignment="Center"
+					   FontSize="30" />
+			<Button uen:Navigation.Request="RegionsFourth"
+					Content="Go to Fourth" />
 		</StackPanel>
 	</Grid>
 </Page>

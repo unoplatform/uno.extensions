@@ -11,6 +11,14 @@
 	  mc:Ignorable="d">
 
 	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="*" />
+		</Grid.RowDefinitions>
+
+		<TextBox Grid.Row="0"
+				 Text="{Binding MyText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
 		<muxc:NavigationView Grid.Row="1"
 							 uen:Region.Attached="True"
 							 IsBackButtonVisible="Collapsed"
@@ -20,25 +28,30 @@
 							 PaneDisplayMode="Auto">
 			<muxc:NavigationView.MenuItems>
 
-				<muxc:NavigationViewItem uen:Region.Name="RegionsFirst" Content="First Page">
+				<muxc:NavigationViewItem uen:Region.Name="RegionsFirst"
+										 Content="First Page">
 					<muxc:NavigationViewItem.Icon>
 						<SymbolIcon Symbol="Accept" />
 					</muxc:NavigationViewItem.Icon>
 				</muxc:NavigationViewItem>
 
-				<muxc:NavigationViewItem uen:Region.Name="RegionsSecond" Content="Second Page">
+				<muxc:NavigationViewItem uen:Region.Name="RegionsSecond"
+										 Content="Second Page">
 					<muxc:NavigationViewItem.Icon>
 						<SymbolIcon Symbol="Share" />
 					</muxc:NavigationViewItem.Icon>
 				</muxc:NavigationViewItem>
 
-				<muxc:NavigationViewItem uen:Region.Name="RegionsThird" Content="Third Page">
+				<muxc:NavigationViewItem uen:Region.Name="RegionsThird"
+										 uen:Navigation.Data="{Binding MyText}"
+										 Content="Third Page">
 					<muxc:NavigationViewItem.Icon>
 						<SymbolIcon Symbol="OutlineStar" />
 					</muxc:NavigationViewItem.Icon>
 				</muxc:NavigationViewItem>
 
-				<muxc:NavigationViewItem uen:Region.Name="RegionsTbData" Content="RegionsTbData">
+				<muxc:NavigationViewItem uen:Region.Name="RegionsTbData"
+										 Content="RegionsTbData">
 					<muxc:NavigationViewItem.Icon>
 						<SymbolIcon Symbol="DockBottom" />
 					</muxc:NavigationViewItem.Icon>
