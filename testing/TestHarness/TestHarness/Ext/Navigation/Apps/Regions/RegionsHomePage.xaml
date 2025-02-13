@@ -38,6 +38,12 @@
 					</muxc:NavigationViewItem.Icon>
 				</muxc:NavigationViewItem>
 
+				<muxc:NavigationViewItem uen:Region.Name="RegionsTbData" Content="RegionsTbData">
+					<muxc:NavigationViewItem.Icon>
+						<SymbolIcon Symbol="DockBottom" />
+					</muxc:NavigationViewItem.Icon>
+				</muxc:NavigationViewItem>
+
 			</muxc:NavigationView.MenuItems>
 
 			<Grid x:Name="NavigationGrid"

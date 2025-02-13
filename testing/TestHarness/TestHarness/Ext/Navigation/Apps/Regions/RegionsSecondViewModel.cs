@@ -1,12 +1,12 @@
 ﻿namespace TestHarness.Ext.Navigation.Apps.Regions;
 
-public class RegionsSecondViewModel
+public record RegionsSecondViewModel
 {
-	public FourthData[] Items { get; } =
+	public RegionEntityData[] Items { get; } =
 	[
-		new FourthData() { Name="First"},
-		new FourthData() { Name="Second"},
-		new FourthData() { Name="Third"},
-		new FourthData() { Name="Fourth"}
+		new RegionEntityData() { Name="First"},
+		new RegionEntityData() { Name="Second"},
+		new RegionEntityData() { Name="Third"},
+		new RegionEntityData() { Name="Fourth"}
 	];
 }
