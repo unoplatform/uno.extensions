@@ -8,9 +8,4 @@ public class RegionEntityData
 	{
 		Name = name;
 	}
-
-	public RegionEntityData()
-	{
-
-	}
 }
