@@ -1,9 +1,9 @@
 {
-  "descriptionHash": "37FE8D63AB108F248AAA5632A5D37D625F8B9E3A6C439952B4029B0AF49579F337028FE07768B89D6F9210460D77E116F312CB505A43E8EB877131E772464F3B",
-  "descriptionLocation": "../posts-api.yml",
+  "descriptionHash": "105C53BD1B3EF1C81689AB629ABB93A6AD10C5DB2FC6964CDE7BB20A881F7F2D2BF1DA191B519A7B4938B20D52A93033F3E8DB3361289F274A039B0C64CD5D1C",
+  "descriptionLocation": "https://localhost:7193/swagger/v1/swagger.json",
   "lockFileVersion": "1.0.0",
   "kiotaVersion": "1.16.0",
-  "clientClassName": "PostsApiClient",
+  "clientClassName": "KiotaTestClient",
   "clientNamespaceName": "TestHarness.Ext.Http.Kiota.Client",
   "language": "CSharp",
   "usesBackingStore": false,

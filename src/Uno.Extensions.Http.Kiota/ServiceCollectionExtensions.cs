@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Kiota.Abstractions;
 using Microsoft.Kiota.Abstractions.Authentication;
@@ -53,44 +54,29 @@ public static class ServiceCollectionExtensions
 	where TEndpoint : EndpointOptions, new()
 	{
 		services.AddKiotaHandlers();
+		var clientName = name ?? typeof(TClient).FullName ?? "DefaultClient";
 
 		return services.AddClientWithEndpoint<TClient, TEndpoint>(
-				context,
-				options,
-				name: name ?? typeof(TClient).FullName ?? "DefaultClient",
-				httpClientFactory: (s, c) => s.AddHttpClient<TClient>(name ?? typeof(TClient).FullName ?? "DefaultClient")
-					.AttachKiotaHandlers()
-					.ConfigureHttpClient(client =>
-					{
-						if (options?.Url != null)
-						{
-							client.BaseAddress = new Uri(options.Url);
-						}
-					}),
-				configure: configure
-			)
-			.AddSingleton<IRequestAdapter, HttpClientRequestAdapter>(sp =>
-			{
-				var httpClient = sp.GetRequiredService<HttpClient>();
-				var authProvider = new AnonymousAuthenticationProvider();
-
-				var parseNodeFactory = new Microsoft.Kiota.Serialization.Json.JsonParseNodeFactory();
-				var serializationWriterFactory = new Microsoft.Kiota.Serialization.Json.JsonSerializationWriterFactory();
-
-				var requestAdapter = new HttpClientRequestAdapter(authProvider, parseNodeFactory, serializationWriterFactory, httpClient);
-
-				if (options?.Url != null)
+			context,
+			options,
+			name: clientName,
+			httpClientFactory: (s, c) => s
+				.AddHttpClient<TClient>(clientName)
+				.AddTypedClient((httpClient, sp) =>
 				{
-					requestAdapter.BaseUrl = options.Url;
-				}
+					var authProvider = new AnonymousAuthenticationProvider();
 
-				return requestAdapter;
-			})
-			.AddSingleton<TClient>(sp =>
-			{
-				var requestAdapter = sp.GetRequiredService<IRequestAdapter>();
-				return (TClient)Activator.CreateInstance(typeof(TClient), requestAdapter)!;
-			});
+					var parseNodeFactory = new Microsoft.Kiota.Serialization.Json.JsonParseNodeFactory();
+					var serializationWriterFactory = new Microsoft.Kiota.Serialization.Json.JsonSerializationWriterFactory();
+
+					var requestAdapter = new HttpClientRequestAdapter(authProvider, parseNodeFactory, serializationWriterFactory, httpClient);
+
+					return (TClient)Activator.CreateInstance(typeof(TClient), requestAdapter)!;
+
+				})
+				.AttachKiotaHandlers(),
+			configure: configure
+		);
 	}
 	/// <summary>
 	/// Dynamically adds Kiota handlers to the service collection.
