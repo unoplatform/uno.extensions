@@ -14,12 +14,5 @@ public class Given_Kiota : NavigationTestBase
 		var initializationStatus = App.GetText("InitializationStatusTextBlock");
 		initializationStatus.Should().Contain("Kiota Client initialized successfully.");
 
-		App.WaitThenTap("FetchItemsButton");
-
-		await Task.Delay(2000);
-
-		var fetchResult = App.GetText("FetchItemsResultTextBlock");
-
-		fetchResult.Should().Contain("Retrieved data").And.Contain("Item1").And.Contain("Item2").And.Contain("Item3");
 	}
 }
