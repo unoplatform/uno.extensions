@@ -2,7 +2,7 @@
 uid: Uno.Extensions.Reactive.Upgrading
 ---
 
-# Upgrading Extensions Reactive Version
+# Upgrading MVUX
 
 ## Upgrading to Extensions Reactive V5
 
