@@ -6,18 +6,21 @@ public partial class RegionsHostInit : BaseHostInitialization
 	{
 		views.Register(
 			new ViewMap(ViewModel: typeof(RegionsShellModel)),
-			new ViewMap<RegionsHomePage>(),
+			new ViewMap<RegionsHomePage, RegionsHomeViewModel>(),
 			new ViewMap<RegionsFirstPage>(),
 			new ViewMap<RegionsSecondPage, RegionsSecondViewModel>(),
-			new ViewMap<RegionsThirdPage>(),
-			new DataViewMap<RegionsFourthPage, RegionsFourthViewModel, FourthData>()
+			new DataViewMap<RegionsThirdPage, RegionsThirdViewModel, string>(),
+			new DataViewMap<RegionsFourthPage, RegionsFourthViewModel, RegionEntityData>(),
+			new ViewMap<RegionsTbDataPage, RegionsTbDataPageViewModel>(),
+			new DataViewMap<RegionsFirstTbiDataPage, RegionsFirstTbiDataViewModel, RegionEntityData>(),
+			new DataViewMap<RegionsSecondTbiDataPage, RegionsSecondTbiDataViewModel, RegionEntityData>()
 		);
 
 		routes.Register(
 			new RouteMap("", View: views.FindByViewModel<RegionsShellModel>(),
 				Nested:
 				[
-					new ("RegionsHome", View: views.FindByView<RegionsHomePage>(),
+					new ("RegionsHome", View: views.FindByViewModel<RegionsHomeViewModel>(),
 						Nested:
 						[
 							new ("RegionsFirst", View: views.FindByView<RegionsFirstPage>(), IsDefault: true,
@@ -29,9 +32,17 @@ public partial class RegionsHostInit : BaseHostInitialization
 								]
 							),
 							new ("RegionsSecond", View: views.FindByViewModel<RegionsSecondViewModel>()),
-							new ("RegionsThird", View: views.FindByView<RegionsThirdPage>()),
-							new ("RegionsFourth", View: views.FindByViewModel<RegionsFourthViewModel>(), DependsOn: "RegionsSecond")
-						]),
+							new ("RegionsThird", View: views.FindByViewModel<RegionsThirdViewModel>()),
+							new ("RegionsFourth", View: views.FindByViewModel<RegionsFourthViewModel>(), DependsOn: "RegionsSecond"),
+							new ("RegionsTbData", View: views.FindByViewModel<RegionsTbDataPageViewModel>(),
+								Nested:
+								[
+									new ("RegionsTbiDataOne", View: views.FindByViewModel<RegionsFirstTbiDataViewModel>()),
+									new ("RegionsTbiDataTwo", View: views.FindByViewModel<RegionsSecondTbiDataViewModel>())
+								]
+							),
+						]
+					),
 				]
 			)
 		);

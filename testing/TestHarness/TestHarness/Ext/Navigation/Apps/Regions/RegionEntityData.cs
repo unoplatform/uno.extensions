@@ -1,6 +1,11 @@
 ﻿namespace TestHarness.Ext.Navigation.Apps.Regions;
 
-public class FourthData
+public class RegionEntityData
 {
 	public string Name { get; set; }
+
+	public RegionEntityData(string name)
+	{
+		Name = name;
+	}
 }
