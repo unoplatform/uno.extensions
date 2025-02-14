@@ -35,7 +35,7 @@
 							   VerticalAlignment="Center"
 							   Text="All my recipes" />
 					<Button AutomationProperties.AutomationId="RecipeDetailsButton"
-							uen:Navigation.Request="ChefsFavoriteRecipeDetails"
+							uen:Navigation.Request="ChefsRecipeDetails"
 							Content="Recipe Details" />
 				</Grid>
 				<Grid uen:Region.Name="MyCookbooks"
