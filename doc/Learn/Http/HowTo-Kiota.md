@@ -79,7 +79,7 @@ When working with APIs in your application, having a strongly-typed client can s
 
 ### 5. Use the Kiota Client in Your Code
 
-* Inject the ChefsApiClient into your view model or service and make API requests:
+* Inject the ApiClient into your view model or service and make API requests:
 
 ```csharp
 public class MyViewModel
