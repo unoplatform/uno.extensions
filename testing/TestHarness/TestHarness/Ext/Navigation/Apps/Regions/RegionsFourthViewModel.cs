@@ -1,6 +1,6 @@
 ﻿namespace TestHarness.Ext.Navigation.Apps.Regions;
 
-public class RegionsFourthViewModel (FourthData fourthData)
+public class RegionsFourthViewModel (RegionEntityData fourthData)
 {
-	public FourthData FourthData { get; set; } = fourthData;
+	public RegionEntityData FourthData { get; set; } = fourthData;
 }

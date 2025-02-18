@@ -123,7 +123,9 @@ public abstract class SelectorNavigator<TControl> : ControlNavigator<TControl>
 			return;
 		}
 
-		await nav.NavigateRouteAsync(sender, path);
+		var data = selectedItem.GetData();
+
+		await nav.NavigateRouteAsync(sender, path, data: data);
 	}
 
 

@@ -27,7 +27,8 @@
 					<RowDefinition Height="Auto" />
 					<RowDefinition Height="*" />
 				</Grid.RowDefinitions>
-				<Button uen:Navigation.Request="RegionsFourth" Content="Fourth" />
+				<Button uen:Navigation.Request="RegionsFourth"
+						Content="Fourth" />
 
 				<ListView x:Name="ProductsListView"
 						  Grid.Row="1"
@@ -35,8 +36,9 @@
 						  AutomationProperties.AutomationId="ProductsListView"
 						  ItemsSource="{Binding Items}">
 					<ListView.ItemTemplate>
-						<DataTemplate x:DataType="local:FourthData">
-							<TextBlock FontSize="30" Text="{x:Bind Name}" />
+						<DataTemplate x:DataType="local:RegionEntityData">
+							<TextBlock FontSize="30"
+									   Text="{x:Bind Name}" />
 						</DataTemplate>
 					</ListView.ItemTemplate>
 				</ListView>
