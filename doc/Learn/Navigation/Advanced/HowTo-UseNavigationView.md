@@ -256,40 +256,17 @@ Choosing the right control for your navigation needs is important, and one commo
 
 Sometimes, it is necessary to send data to your ViewModel from the previous page. This can be done using the `Navigation.Data` attached property. For example, if you want to send an `Entity` object from the `MainViewModel` to the `ProductsViewModel`:
 
-* Modify the `ProductsViewModel` to accept an `Entity` object as a parameter:
+```diff
+<!-- Adds a products item -->
+<NavigationViewItem Content="Products"
++                   uen:Navigation.Data="{Binding Entity}"
+                    uen:Region.Name="Products" />
+```
 
-  ```diff
-  namespace UsingNavigationView.ViewModels;
+For the full setup and more information on using the `Navigation.Data` attached property, refer to the documentation in the [How-To: Navigate in XAML](xref:Uno.Extensions.Navigation.HowToNavigateInXAML#2-navigationdata) guide.
 
-  public class ProductsViewModel
-  {
-  -   public ProductsViewModel()
-  +   public ProductsViewModel(Entity entity)
-      {
-
-      }
-  }
-  ```
-
-* Replace the `ViewMap` definition with a `DataViewMap` that allows you to pass the data type:
-
-  ```diff
-  - new ViewMap<ProductsPage, ProductsViewModel>(),
-  + new DataViewMap<ProductsPage, ProductsViewModel>, Entity>(),
-  ```
-  > [!NOTE]  
-  > For more information on `ViewMap` and `DataViewMap`, please refer to the **ViewMap** documentation in the [How-To: Define Routes](xref:Uno.Extensions.Navigation.HowToDefineRoutes#viewmap) guide.
-
-* Finally, set the `Navigation.Data` attached property to pass the data:
-
-  ```diff
-  <!-- Adds a products item -->
-      <NavigationViewItem Content="Products"
-  +                       uen:Navigation.Data="{Binding Entity}"
-                          uen:Region.Name="Products" />
-  ```
-
-Now, when navigating to the `ProductsPage`, the `Entity` object will be passed to the `ProductsViewModel`.
+> [!NOTE]  
+> You also need to set up a `DataViewMap`. For more information on `ViewMap` and `DataViewMap`, refer to the **ViewMap** documentation in the [How-To: Define Routes](xref:Uno.Extensions.Navigation.HowToDefineRoutes#viewmap) guide.
 
 ### 6. Putting it all together
 

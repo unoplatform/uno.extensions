@@ -328,40 +328,17 @@ var builder = this.CreateBuilder(args)
 
 Sometimes, it is necessary to send data to your ViewModel from the previous page. This can be done using the `Navigation.Data` attached property. For example, if you want to send an `Entity` object from the `MainViewModel` to the `SignUpViewModel`:
 
-* Modify the `SignUpViewModel` to accept an `Entity` object as a parameter:
+```diff
+<!-- Sign up item -->
+<utu:TabBarItem uen:Region.Name="SignUp"
++               uen:Navigation.Data="{Binding Entity}"
+                Style="{StaticResource MaterialBottomTabBarItemStyle}" />
+```
 
-  ```diff
-  namespace UsingTabBar.ViewModels;
+For the full setup and more information on using the `Navigation.Data` attached property, refer to the documentation in the [How-To: Navigate in XAML](xref:Uno.Extensions.Navigation.HowToNavigateInXAML#2-navigationdata) guide.
 
-  public class SignUpViewModel
-  {
-  -   public SignUpViewModel()
-  +   public SignUPViewModel(Entity entity)
-      {
-
-      }
-  }
-  ```
-
-* Replace the `ViewMap` definition with a `DataViewMap` that allows you to pass the data type:
-
-  ```diff
-  - new ViewMap<SignUpPage, SignUpViewModel>(),
-  + new DataViewMap<SignUpPage, SignUpViewModel, Entity>(),
-  ```
-  > [!NOTE]  
-  > For more information on `ViewMap` and `DataViewMap`, please refer to the **ViewMap** documentation in the [How-To: Define Routes](xref:Uno.Extensions.Navigation.HowToDefineRoutes#viewmap) guide.
-
-* Finally, set the `Navigation.Data` attached property to pass the data:
-
-  ```diff
-  <!-- Sign up item -->
-  <utu:TabBarItem uen:Region.Name="SignUp"
-  +               uen:Navigation.Data="{Binding Entity}"
-                  Style="{StaticResource MaterialBottomTabBarItemStyle}" />
-  ```
-
-Now, when navigating to the `SignUpPage`, the `Entity` object will be passed to the `SignUpViewModel`.
+> [!NOTE]  
+> You also need to set up a `DataViewMap`. For more information on `ViewMap` and `DataViewMap`, refer to the **ViewMap** documentation in the [How-To: Define Routes](xref:Uno.Extensions.Navigation.HowToDefineRoutes#viewmap) guide.
 
 ### 6. Putting it all together
 
