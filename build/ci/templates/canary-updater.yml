@@ -5,12 +5,12 @@ steps:
 
   - template: canary-update-template.yml
     parameters:
-      SolutionToUpdate: 'samples/Playground/Playground.sln'
+      SolutionToUpdate: 'samples/Playground'
 
   - template: canary-update-template.yml
     parameters:
-      SolutionToUpdate: 'samples/MauiEmbedding/MauiEmbedding.sln'
+      SolutionToUpdate: 'samples/MauiEmbedding'
 
   - template: canary-update-template.yml
     parameters:
-      SolutionToUpdate: 'testing/TestHarness/TestHarness.sln'
+      SolutionToUpdate: 'testing/TestHarness'
