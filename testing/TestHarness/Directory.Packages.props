@@ -2,6 +2,7 @@
   <Import Project="$(MSBuildThisFileDirectory)..\..\samples\Directory.Packages.props" />
   <PropertyGroup>
     <UnoLoggingVersion>1.9.0-dev.2</UnoLoggingVersion>
+    <CommunityToolkitMvvmVersion>8.4.0</CommunityToolkitMvvmVersion>
   </PropertyGroup>
   <ItemGroup>
     <PackageVersion Include="CommunityToolkit.WinUI.UI" Version="7.1.2" />
