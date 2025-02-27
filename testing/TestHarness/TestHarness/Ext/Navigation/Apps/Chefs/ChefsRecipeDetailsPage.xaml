@@ -4,13 +4,63 @@
 	  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	  xmlns:local="using:TestHarness.Ext.Navigation.Apps.Chefs"
 	  xmlns:utu="using:Uno.Toolkit.UI"
+	  xmlns:uen="using:Uno.Extensions.Navigation.UI"
 	  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	  Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
 	  mc:Ignorable="d">
 
 	<Grid RowDefinitions="Auto,*">
 		<utu:NavigationBar Content="RecipeDetails" />
-		<StackPanel Grid.Row="1">
+		<StackPanel Grid.Row="1"
+					Spacing="26">
+			<utu:AutoLayout uen:Region.Attached="True">
+				<utu:TabBar uen:Region.Attached="True"
+							utu:AutoLayout.CounterAlignment="Center"
+							Margin="40,0"
+							Style="{StaticResource TopTabBarStyle}">
+					<utu:TabBarItem uen:Region.Name="IngredientsTab"
+									Content="Ingredients" />
+					<utu:TabBarItem uen:Region.Name="StepsTab"
+									Content="Steps" />
+					<utu:TabBarItem uen:Region.Name="ReviewsTab"
+									Content="Reviews" />
+					<utu:TabBarItem uen:Region.Name="NutritionTab"
+									Content="Nutrition" />
+				</utu:TabBar>
+
+				<Grid x:Name="TabNavGrid"
+					  uen:Region.Attached="True"
+					  uen:Region.Navigator="Visibility">
+					<utu:AutoLayout uen:Region.Name="IngredientsTab"
+									HorizontalAlignment="Center">
+						<TextBlock Text="IngredientsTab"
+								   TextWrapping="Wrap" />
+
+					</utu:AutoLayout>
+
+					<utu:AutoLayout uen:Region.Name="StepsTab"
+									HorizontalAlignment="Center"
+									Visibility="Collapsed">
+						<TextBlock Text="StepsTab"
+								   TextWrapping="Wrap" />
+					</utu:AutoLayout>
+
+					<utu:AutoLayout uen:Region.Name="ReviewsTab"
+									HorizontalAlignment="Center"
+									Visibility="Collapsed">
+						<TextBlock Text="ReviewsTab"
+								   TextWrapping="Wrap" />
+					</utu:AutoLayout>
+
+					<Grid uen:Region.Name="NutritionTab"
+						  HorizontalAlignment="Center"
+						  Visibility="Collapsed">
+						<TextBlock Text="NutritionTab"
+								   TextWrapping="Wrap" />
+					</Grid>
+				</Grid>
+
+			</utu:AutoLayout>
 			<TextBlock Text="ChefsRecipeDetails" />
 			<TextBlock Text="{Binding Recipe.Name}" />
 			<Button Command="{Binding LiveCooking}"
