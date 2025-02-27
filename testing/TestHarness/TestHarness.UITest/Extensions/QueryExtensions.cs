@@ -1,5 +1,4 @@
-﻿
-namespace TestHarness.UITest;
+﻿namespace TestHarness.UITest;
 
 public static class QueryExtensions
 {
@@ -71,6 +70,17 @@ public static class QueryExtensions
 		var element = app.Marked(elementName);
 		app.WaitForElement(element);
 		return element.GetText();
+	}
+
+	/// <summary>
+	/// Set the value of the Text property for an element, once it's available.
+	/// </summary>
+	public static void SetText(this IApp app, string elementName, string text)
+	{
+		var element = app.Marked(elementName);
+		app.WaitForElement(element);
+
+		element.SetDependencyPropertyValue("Text", text);
 	}
 
 	/// <summary>
