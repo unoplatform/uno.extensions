@@ -9,7 +9,8 @@ public static class ViewRegistryExtensions
 
 	public static ViewMap FindByViewModel(this IViewRegistry registry, Type? viewModelType)
 	{
-		return registry.Items.FindByInheritedTypes(viewModelType, map => map.ViewModel).First();
+		return registry.Items.FindByInheritedTypes(viewModelType, map => map.ViewModel).FirstOrDefault()
+			?? throw new InvalidOperationException($"A ViewMap for type {viewModelType} could not be found");
 	}
 
 	public static ViewMap FindByView<TView>(this IViewRegistry registry)
@@ -19,7 +20,8 @@ public static class ViewRegistryExtensions
 
 	public static ViewMap FindByView(this IViewRegistry registry, Type? viewType)
 	{
-		return registry.Items.FindByInheritedTypes(viewType, map => map.View).First();
+		return registry.Items.FindByInheritedTypes(viewType, map => map.View).FirstOrDefault()
+			?? throw new InvalidOperationException($"A ViewMap for type {viewType} could not be found");
 	}
 
 	public static ViewMap FindByData<TData>(this IViewRegistry registry)
@@ -28,7 +30,8 @@ public static class ViewRegistryExtensions
 	}
 	public static ViewMap FindByData(this IViewRegistry registry, Type? dataType)
 	{
-		return registry.Items.FindByInheritedTypes(dataType, map => map.Data?.Data).First();
+		return registry.Items.FindByInheritedTypes(dataType, map => map.Data?.Data).FirstOrDefault()
+			?? throw new InvalidOperationException($"A ViewMap for type {dataType} could not be found");
 	}
 
 	public static ViewMap FindByResultData<TResultData>(this IViewRegistry registry)
@@ -37,7 +40,8 @@ public static class ViewRegistryExtensions
 	}
 	public static ViewMap FindByResultData(this IViewRegistry registry, Type? dataType)
 	{
-		return registry.Items.FindByInheritedTypes(dataType, map => map.ResultData).First();
+		return registry.Items.FindByInheritedTypes(dataType, map => map.ResultData).FirstOrDefault()
+			?? throw new InvalidOperationException($"A ViewMap for type {dataType} could not be found");
 	}
 }
 
