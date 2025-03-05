@@ -39,9 +39,15 @@ This tutorial will walk you through how to create an Uno application with Uno.Ex
 * A banner at the top of the editor may ask to reload projects, click **Reload projects**:  
     ![Visual Studio - A banner indicating to reload projects](./Learn/images/vs2022-project-reload.png)
 
-### [Command Line](#tab/cli)
+### Detect problems with Uno Check directly in your IDE
 
-#### Create an Uno Platform app with the CLI
+    Another banner may appear, telling you Uno Check found problems, click **Fix**
+
+    ![Visual Studio - A banner indicating to fix problems](./Learn/images/vs2022-uno-check-banner.png)
+
+    Now it will open a Terminal and run the check again, so you can see what exact problem it may found and let it fix them for you.
+
+#### [Using the Command Line](#tab/cli)
 
 The `dotnet` templates included in the `Uno.Templates` package are used to easily create new projects that already reference the Uno.Extensions.
 
@@ -146,5 +152,25 @@ if (rootFrame.Content == null)
 MainWindow.Activate();
 ```
 
+#### [Using Uno.Extensions.Navigation Alias `Uno.Regions`](#tab/uno-extensions-navigation)
+
+Finally, instead of directly creating an instance of a `Window` using `MainWindow = new Window()`, use the `builder` to set up the main window:
+
+```diff
+-   MainWindow = new Window()
++   MainWindow = builder.Window;
+
++#if DEBUG
++   MainWindow.UseStudio();
++#endif
++   MainWindow.SetWindowIcon();
+
++    Host = await builder.NavigateAsync<Shell>();
+}
+```
+
+---
+
+>>>>>>> 0a9803c29 (chore: Spell checking)
 > [!IMPORTANT]
 > Be sure to remove any other code that sets `MainWindow` to prevent conflicts in your application.
