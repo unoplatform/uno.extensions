@@ -77,6 +77,8 @@
     - name: Navigation
       href: xref:Reference.Navigation.Overview
       items:
+        - name: Overview
+          href: xref:Reference.Navigation.Overview
         - name: Design
           href: xref:Reference.Navigation.Design
         - name: Navigation Region
