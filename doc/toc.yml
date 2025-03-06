@@ -87,3 +87,12 @@
           href: xref:Reference.Navigation.Navigator
         - name: Implement IRequestHandler
           href: xref:Reference.Navigation.RequestHandler
+    - name: Storage
+      href: xref:Reference.Storage.Storage
+      items:
+        - name: Overview
+          href: xref:Reference.Storage.Storage
+        - name: Methods
+          href: xref:Reference.Storage.Methods
+        - name: Storage Extensions
+          href: xref:Reference.Storage.Extensions
