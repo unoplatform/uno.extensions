@@ -30,7 +30,7 @@
 		<ProjectReference Include="..\Uno.Extensions.Hosting\Uno.Extensions.Hosting.csproj" />
 	</ItemGroup>
 
-	<ItemGroup Condition="'$(IsBrowserWasm)'=='true' or '$(TargetFramework)' == 'net8.0'">
+	<ItemGroup Condition="'$(TargetFramework)' == 'net8.0'">
 		<PackageReference Include="Uno.Extensions.Logging.WebAssembly.Console" />
 	</ItemGroup>
 </Project>
