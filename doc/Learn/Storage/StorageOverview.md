@@ -28,3 +28,9 @@ Uno.Extensions.Storage facilitate local data storage across multiple platforms, 
 [!include[single-project](../includes/single-project.md)]
 
 For more information about `UnoFeatures` refer to our [Using the Uno.Sdk](xref:Uno.Features.Uno.Sdk) docs.
+
+## See Also
+
+- [Uno.UI.Toolkit.StorageFileHelper](https://platform.uno/docs/articles/features/file-management.html)
+- Uno specifics for [File and Folder Pickers](https://platform.uno/docs/articles/features/windows-storage-pickers.html)
+- Storing and reading [Settings](https://platform.uno/docs/articles/features/settings.html)
