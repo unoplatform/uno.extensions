@@ -8,6 +8,7 @@ public partial class RegionsHostInit : BaseHostInitialization
 			new ViewMap(ViewModel: typeof(RegionsShellModel)),
 			new ViewMap<RegionsHomePage, RegionsHomeViewModel>(),
 			new ViewMap<RegionsFirstPage>(),
+			new ViewMap<RegionsTabBarItem3>(),
 			new ViewMap<RegionsSecondPage, RegionsSecondViewModel>(),
 			new DataViewMap<RegionsThirdPage, RegionsThirdViewModel, string>(),
 			new DataViewMap<RegionsFourthPage, RegionsFourthViewModel, RegionEntityData>(),
@@ -23,12 +24,12 @@ public partial class RegionsHostInit : BaseHostInitialization
 					new ("RegionsHome", View: views.FindByViewModel<RegionsHomeViewModel>(),
 						Nested:
 						[
-							new ("RegionsFirst", View: views.FindByView<RegionsFirstPage>(), IsDefault: true,
-								Nested:
+							new ("RegionsFirst", View: views.FindByView<RegionsFirstPage>(), IsDefault: true
+								,Nested:
 								[
 									new ("RegionsOne", IsDefault: true),
 									new ("RegionsTwo"),
-									new ("RegionsThree")
+									new ("RegionsThree", View: views.FindByView<RegionsTabBarItem3>())
 								]
 							),
 							new ("RegionsSecond", View: views.FindByViewModel<RegionsSecondViewModel>()),
