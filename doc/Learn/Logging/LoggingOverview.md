@@ -36,7 +36,7 @@ protected override void OnLaunched(LaunchActivatedEventArgs e)
 }
 ```
 
-## Logging
+## DI optimized Logging
 
 When the `UseLogging()` extension method is called, an `ILogger<T>` is registered in the service provider. This logger can be used to log messages to the console. It can then be injected into any class that needs to log messages. The `ILogger<T>` interface is generic, where `T` is the class that is logging the message. The `ILogger<T>` interface is generic, and it must be retrieved from the service provider this way. In order to scope the logger to a specific class, it cannot be used without the generic type parameter.
 
