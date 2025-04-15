@@ -33,7 +33,7 @@ internal abstract record BaseKeyValueStorageWithCaching(
 			if (!settings.DisableInMemoryCache)
 			{
 				var val = await InMemoryStorage.GetAsync<TValue>(key, ct);
-				if (val is not null)
+				if (val != default(TValue))
 				{
 					return val;
 				}
