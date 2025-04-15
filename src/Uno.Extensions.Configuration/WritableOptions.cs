@@ -1,4 +1,6 @@
-﻿namespace Uno.Extensions.Configuration;
+﻿using Uno.Extensions.Serialization;
+
+namespace Uno.Extensions.Configuration;
 
 internal class WritableOptions<T> : IWritableOptions<T>
 	where T : class, new()
@@ -13,10 +15,13 @@ internal class WritableOptions<T> : IWritableOptions<T>
 
 	private readonly ILogger _logger;
 
+	private readonly ISerializer<T> _serializer;
+
 	public WritableOptions(
 		ILogger<IWritableOptions<T>> logger,
 		Reloader reloader,
 		IOptionsMonitor<T> options,
+		ISerializer<T> serializer,
 		string section,
 		string file)
 	{
@@ -25,6 +30,7 @@ internal class WritableOptions<T> : IWritableOptions<T>
 		_options = options;
 		_section = section;
 		_file = file;
+		_serializer = serializer;
 	}
 
 	public T Value
@@ -52,12 +58,18 @@ internal class WritableOptions<T> : IWritableOptions<T>
 		await Reloader.ReadWriteLock.WaitAsync();
 		try
 		{
-			var jObject = File.Exists(physicalPath) ? JsonSerializer.Deserialize<Dictionary<string, object>>(File.ReadAllText(physicalPath)) : new Dictionary<string, object>();
-			jObject = jObject ?? new Dictionary<string, object>();
+			Dictionary<string, T>? jObject = null;
+			if (File.Exists(physicalPath))
+			{
+				using FileStream fs = File.OpenRead(physicalPath);
+				jObject = _serializer.FromStream<Dictionary<string, T>>(fs);
+			}
+
+			jObject = jObject ?? new Dictionary<string, T>();
 
 			jObject[_section] = sectionObject;
 
-			var json = JsonSerializer.Serialize(jObject);
+			var json = _serializer.ToString(jObject);
 			var dir = Path.GetDirectoryName(physicalPath);
 			if (dir is not null && !Directory.Exists(dir))
 			{
