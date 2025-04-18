@@ -190,7 +190,7 @@ public static class RouteExtensions
 		}
 
 		var route = new Route(qualifier, routeBase, path, paras);
-		if ((route.IsBackOrCloseNavigation() && !route.IsClearBackstack()) &&
+		if ((route.IsBackOrCloseNavigation() && !route.IsClearBackStack()) &&
 			data is not null &&
 			data is not IOption)
 		{
