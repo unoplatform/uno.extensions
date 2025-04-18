@@ -39,7 +39,8 @@ public static class HostBuilderExtensions
 			hostBuilder = hostBuilder.ConfigureAppConfiguration(configureAppConfiguration);
 		}
 
-		hostBuilder = hostBuilder.ConfigureServices((ctx, s) =>
+		hostBuilder = hostBuilder.UseSerialization()
+			.ConfigureServices((ctx, s) =>
 				{
 					// We're doing the IsRegistered check here so that the
 					// other configure delegates still run if required

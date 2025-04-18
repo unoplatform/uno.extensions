@@ -1,4 +1,6 @@
-﻿namespace Uno.Extensions.Configuration;
+﻿using Uno.Extensions.Serialization;
+
+namespace Uno.Extensions.Configuration;
 
 /// <summary>
 /// Extension methods for <see cref="IServiceCollection"/>.
@@ -38,7 +40,8 @@ public static class ServiceCollectionExtensions
 				var logger = provider.GetRequiredService<ILogger<IWritableOptions<T>>>();
 				var root = provider.GetRequiredService<Reloader>();
 				var options = provider.GetRequiredService<IOptionsMonitor<T>>();
-				return new WritableOptions<T>(logger, root, options, section.Key, file);
+				var serializer = provider.GetRequiredService<ISerializer<T>>();
+				return new WritableOptions<T>(logger, root, options, serializer, section.Key, file);
 			});
 	}
 }
