@@ -8,17 +8,38 @@ public static class RouteExtensions
 	private static Regex nonAlphaRegex = new Regex(@"([^a-zA-Z0-9])+");
 	private static Regex alphaRegex = new Regex(@"([a-zA-Z0-9])+");
 
+	/// <summary>
+	/// Gets the navigation data from the route.
+	/// </summary>
+	/// <param name="route">The route instance.</param>
+	/// <returns>The navigation data, or null if not available.</returns>
 	public static object? NavigationData(this Route route) =>
 		(route?.Data?.TryGetValue(string.Empty, out var navData) ?? false) ? navData : default;
 
+	/// <summary>
+	/// Determines if the route represents a back navigation by its Qualifier.
+	/// </summary>
+	/// <param name="route">The route instance.</param>
+	/// <returns>True if the route is a back or close navigation; otherwise, false.</returns>
 	public static bool IsBackOrCloseNavigation(this Route route) =>
-		route.Qualifier
-			.StartsWith(Qualifiers.NavigateBack);
+		route.Qualifier.StartsWith(Qualifiers.NavigateBack);
 
-	public static bool IsClearBackstack(this Route route) =>
+	/// <summary>
+	/// Determines if the route clears the BackStack.
+	/// </summary>
+	/// <param name="route">The route instance.</param>
+	/// <returns>True if the route clears the BackStack; otherwise, false.</returns>
+	public static bool IsClearBackStack(this Route route) =>
 		route.Qualifier
 			.StartsWith(Qualifiers.ClearBackStack);
 
+	/// <summary>
+	/// Extracts the base path, qualifier, and next path from the given path.
+	/// </summary>
+	/// <param name="path">The full path.</param>
+	/// <param name="nextQualifier">The extracted qualifier.</param>
+	/// <param name="nextPath">The remaining path after the base is extracted.</param>
+	/// <returns>The base path, or null if not available.</returns>
 	public static string? ExtractBase(this string? path, out string nextQualifier, out string nextPath)
 	{
 		nextPath = path ?? string.Empty;
@@ -56,6 +77,12 @@ public static class RouteExtensions
 		return routeBase;
 	}
 
+	/// <summary>
+	/// Trims the specified text from the start of the string once.
+	/// </summary>
+	/// <param name="text">The original string.</param>
+	/// <param name="textToTrim">The text to trim.</param>
+	/// <returns>The trimmed string.</returns>
 	public static string TrimStartOnce(this string text, string textToTrim)
 	{
 		if (text.StartsWith(textToTrim))
@@ -71,6 +98,11 @@ public static class RouteExtensions
 		return text;
 	}
 
+	/// <summary>
+	/// Removes the qualifier from the given path.
+	/// </summary>
+	/// <param name="path">The path with a qualifier.</param>
+	/// <returns>The path without the qualifier.</returns>
 	public static string? WithoutQualifier(this string? path)
 	{
 		if(path is null ||
@@ -87,14 +119,31 @@ public static class RouteExtensions
 		return path;
 	}
 
-
+	/// <summary>
+	/// Adds a qualifier to the given path.
+	/// </summary>
+	/// <param name="path">The original path.</param>
+	/// <param name="qualifier">The qualifier to add.</param>
+	/// <returns>The path with the qualifier.</returns>
 	public static string WithQualifier(this string path, string? qualifier) => (qualifier is null || string.IsNullOrWhiteSpace(qualifier)) ? path : $"{qualifier}{path}";
 
+	/// <summary>
+	/// Converts a RouteInfo instance to a Route.
+	/// </summary>
+	/// <param name="map">The RouteInfo instance.</param>
+	/// <returns>The corresponding Route.</returns>
 	public static Route AsRoute(this RouteInfo map)
 	{
 		return new Route(Qualifiers.None, map.Path);
 	}
 
+	/// <summary>
+	/// Converts a URI to a Route.
+	/// </summary>
+	/// <param name="uri">The URI to convert.</param>
+	/// <param name="data">Optional data to include in the route.</param>
+	/// <param name="resolver">Optional route resolver.</param>
+	/// <returns>The corresponding Route.</returns>
 	public static Route AsRoute(this Uri uri, object? data = null, IRouteResolver? resolver = null)
 	{
 		var path = uri.OriginalString;
@@ -152,6 +201,11 @@ public static class RouteExtensions
 		return route;
 	}
 
+	/// <summary>
+	/// Parses query parameters from a query string.
+	/// </summary>
+	/// <param name="queryString">The query string.</param>
+	/// <returns>A dictionary of query parameters.</returns>
 	public static IDictionary<string, object> ParseQueryParameters(this string queryString)
 	{
 		return (from pair in (queryString + string.Empty).Split('&')
@@ -170,13 +224,28 @@ public static class RouteExtensions
 	"?" + string.Join("&", route.Data.Where(x => x.Key != string.Empty).Select(kvp => $"{kvp.Key}={kvp.Value}")) :
 	null;
 
+	/// <summary>
+	/// Determines if the route is a frame navigation.
+	/// </summary>
+	/// <param name="route">The route instance.</param>
+	/// <returns>True if the route is a frame navigation; otherwise, false.</returns>
 	public static bool IsFrameNavigation(this Route route) =>
 	// We want to make forward navigation between frames simple, so don't require +
 	route.Qualifier == Qualifiers.None ||
 	route.Qualifier.StartsWith(Qualifiers.NavigateBack);
 
+	/// <summary>
+	/// Determines if the route is internal.
+	/// </summary>
+	/// <param name="route">The route instance.</param>
+	/// <returns>True if the route is internal; otherwise, false.</returns>
 	public static bool IsInternal(this Route route) => route.IsInternal;
 
+	/// <summary>
+	/// Determines if the route is the root route.
+	/// </summary>
+	/// <param name="route">The route instance.</param>
+	/// <returns>True if the route is the root route; otherwise, false.</returns>
 	public static bool IsRoot(this Route route) => route.Qualifier.StartsWith(Qualifiers.Root);
 
 	// Note: Disabling parent routing - leaving this code in case parent routing is required
