@@ -1,4 +1,7 @@
-﻿namespace Uno.Extensions.Storage;
+﻿using System.Collections.Immutable;
+using System.ComponentModel.DataAnnotations;
+using System.Text;
+namespace Uno.Extensions.Storage;
 
 internal record FileStorage(ILogger<FileStorage> Logger, IDataFolderProvider DataFolderProvider) : IStorage
 {
@@ -75,6 +78,118 @@ internal record FileStorage(ILogger<FileStorage> Logger, IDataFolderProvider Dat
 			return default;
 		}
 
+	}
+
+    /// <summary>
+    /// Reads specific line ranges from a file in the application package.
+    /// </summary>
+    /// <param name="filename">The relative path to the file to read.</param>
+    /// <param name="lineRanges">A list of tuples specifying the start and end line numbers to select and return.</param>
+    /// <returns>An immutable list of strings containing the selected lines, or null if the file cannot be read.</returns>
+	public async Task<IImmutableList<string>?> ReadPackageFileAsync(string filename,List<(int Start, int End)> lineRanges)
+	{
+		try
+		{
+			if (!await FileExistsInPackage(filename))
+			{
+				if (Logger.IsEnabled(LogLevel.Information))
+				{
+					Logger.LogInformationMessage($"File '{filename}' does not exist in package");
+				}
+				return default;
+			}
+
+#if __WINDOWS__
+			if (!PlatformHelper.IsAppPackaged)
+			{
+				var file = System.IO.Path.Combine(
+								 System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly()?.Location ?? string.Empty) ?? string.Empty,
+								 filename);
+
+				 string[] fileContent = File.ReadAllLines(file);
+				 if (fileContent.Length == 0)
+		         {
+					 if (Logger.IsEnabled(LogLevel.Warning))
+					 {
+						 Logger.LogWarningMessage($"File '{filename}' is empty");
+					 }
+					 return default;
+				 }
+				 return GetSelectedLines(fileContent, lineRanges);
+			}
+#endif
+
+			var fileUri = new Uri($"ms-appx:///{filename}");
+			if (Logger.IsEnabled(LogLevel.Trace))
+			{
+				Logger.LogTraceMessage($"Reading file '{fileUri}'");
+			}
+			var storageFile = await StorageFile.GetFileFromApplicationUriAsync(fileUri);
+			if (File.Exists(storageFile.Path))
+			{
+				if (Logger.IsEnabled(LogLevel.Trace))
+				{
+					Logger.LogTraceMessage($"Reading file with path '{storageFile.Path}' that does exist");
+				}
+				
+				string[] fileContent = File.ReadAllLines(storageFile.Path);
+
+				if (fileContent.Length == 0)
+				{
+					if (Logger.IsEnabled(LogLevel.Warning))
+					{
+						Logger.LogWarningMessage($"File '{filename}' is empty");
+					}
+					return default;
+				}
+
+				return GetSelectedLines(fileContent, lineRanges);
+			}
+
+			if (Logger.IsEnabled(LogLevel.Warning))
+			{
+				Logger.LogWarningMessage($"File doesn't exist with path '{storageFile.Path}'");
+			}
+			return default;
+		}
+		catch (Exception ex)
+		{
+			if (Logger.IsEnabled(LogLevel.Information))
+			{
+				Logger.LogInformationMessage($"Unable to read file '{filename}' due to exception {ex.Message}");
+			}
+			return default;
+		}
+
+	}
+
+	private IImmutableList<string> GetSelectedLines(string[] fileContent, List<(int Start, int End)> lineRanges)
+	{
+		if (Logger.IsEnabled(LogLevel.Trace))
+		{
+			Logger.LogTraceMessage($"Selecting lines '{lineRanges}'");
+		}
+
+		var selectedLines = new List<string>();
+		foreach (var (Start, End) in lineRanges)
+		{
+			var start = Math.Clamp(Start, 0, fileContent.Length);
+			var end = Math.Clamp(End, start, fileContent.Length);
+			selectedLines.AddRange(fileContent[start..end]);
+		}
+		if (Logger.IsEnabled(LogLevel.Trace))
+		{
+			if(selectedLines.Count == 0)
+			{
+				Logger.LogTraceMessage($"No lines matched {lineRanges}");
+			}
+			else
+			{
+				Logger.LogTraceMessage($"Selected lines (Count: {selectedLines.Count}) successfull");
+			}
+			
+		}
+		return selectedLines.ToImmutableList();
 	}
 
 	public async Task<Stream?> OpenPackageFileAsync(string filename)
