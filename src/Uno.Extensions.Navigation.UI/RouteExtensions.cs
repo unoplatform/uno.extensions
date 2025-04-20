@@ -47,7 +47,7 @@ public static class RouteExtensions
 		IRouteResolver resolver,
 		INavigator navigator)
 	{
-		var isClear = route.IsClearBackstack();
+		var isClear = route.IsClearBackStack();
 		var segments = route.ForwardSegments(resolver);
 
 		var navRoute = (navigator is IStackNavigator deepNav) ? deepNav.FullRoute : navigator.Route;

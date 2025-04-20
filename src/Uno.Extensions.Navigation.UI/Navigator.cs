@@ -688,7 +688,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 			}
 
 			#region Unverified
-			if (request.Route.IsBackOrCloseNavigation() && !request.Route.IsClearBackstack())
+			if (request.Route.IsBackOrCloseNavigation() && !request.Route.IsClearBackStack())
 			{
 				return null;
 			}
