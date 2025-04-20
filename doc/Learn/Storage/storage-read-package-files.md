@@ -2,7 +2,7 @@
 uid: Uno.Extensions.Storage.HandlingPackageFiles
 ---
 
-#  Handling Package Files with Storage
+# Handling Package Files with Storage
 
 ## Usage Examples for Create, Read and Write Operations on Package Files
 
@@ -13,7 +13,7 @@ The `IStorage` interface provides methods to interact with files in your applica
 If you need to create a folder in your application's package, you can use the `CreateFolderAsync` method. This is helpful for organizing files into directories.
 
 ```csharp
-public async Task CreateFolderExample(IStorage storage)
+public async Task CreateFolderExample()
 {
     var folderName = "NewFolder";
 
@@ -58,7 +58,7 @@ public async Task ReadFileExample()
 If you need to read specific lines from a file, you can use the overload of `ReadPackageFileAsync` that accepts line ranges. This is particularly helpful for processing large files where only certain sections are needed.
 
 ```csharp
-public async Task ReadSpecificLinesExample(IStorage storage)
+public async Task ReadSpecificLinesExample()
 {
     var fileName = "example.txt";
     var lineRanges = new List<(int Start, int End)>
@@ -161,7 +161,7 @@ public async Task OpenFileAsStreamExample()
     {
         Console.WriteLine($"Successfully opened file '{fileName}' as a stream.");
         // Process the stream as needed
-        
+
     }
     else
     {
