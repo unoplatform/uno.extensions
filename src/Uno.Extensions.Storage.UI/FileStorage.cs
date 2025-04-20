@@ -80,12 +80,7 @@ internal record FileStorage(ILogger<FileStorage> Logger, IDataFolderProvider Dat
 
 	}
 
-    /// <summary>
-    /// Reads specific line ranges from a file in the application package.
-    /// </summary>
-    /// <param name="filename">The relative path to the file to read.</param>
-    /// <param name="lineRanges">A list of tuples specifying the start and end line numbers to select and return.</param>
-    /// <returns>An immutable list of strings containing the selected lines, or null if the file cannot be read.</returns>
+	/// <inheritdoc/>
 	public async Task<IImmutableList<string>?> ReadPackageFileAsync(string filename,List<(int Start, int End)> lineRanges)
 	{
 		try
@@ -163,7 +158,7 @@ internal record FileStorage(ILogger<FileStorage> Logger, IDataFolderProvider Dat
 
 	}
 
-	private IImmutableList<string> GetSelectedLines(string[] fileContent, List<(int Start, int End)> lineRanges)
+	private ImmutableList<string> GetSelectedLines(string[] fileContent, List<(int Start, int End)> lineRanges)
 	{
 		if (Logger.IsEnabled(LogLevel.Trace))
 		{
