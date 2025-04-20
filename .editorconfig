@@ -33,6 +33,8 @@ indent_style = space
 
 [*.md]
 indent_style = space
+trim_trailing_whitespace = true
+insert_final_newline = true
 
 [*.cs]
 # http://kent-boogaart.com/blog/editorconfig-reference-for-c-developers#csharp_indent_block_contents

@@ -40,17 +40,17 @@
     - name: Validation
       href: Learn/Validation/toc.yml
       topicHref: xref:Uno.Extensions.Validation.Overview
-- name: C# Markup
-  href: Learn/Markup/toc.yml
-  topicHref: xref:Uno.Extensions.Markup.Overview
-- name: MVUX
-  href: Learn/Mvux/toc.yml
-  topicHref: xref:Uno.Extensions.Mvux.Overview
-- name: .NET MAUI Embedding
-  href: Learn/Maui/toc.yml
-  topicHref: xref:Uno.Extensions.Maui.Overview
-- name: Theme Service
-  href: xref:Uno.Extensions.ThemeService.Overview
+    - name: MVUX
+      href: Learn/Mvux/toc.yml
+      topicHref: xref:Uno.Extensions.Mvux.Overview
+    - name: .NET MAUI Embedding
+      href: Learn/Maui/toc.yml
+      topicHref: xref:Uno.Extensions.Maui.Overview
+    - name: Theme Service
+      href: xref:Uno.Extensions.ThemeService.Overview
+    - name: C# Markup
+      href: Learn/Markup/toc.yml
+      topicHref: xref:Uno.Extensions.Markup.Overview
 - name: Reference
   items:
     - name: MVUX

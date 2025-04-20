@@ -15,6 +15,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<PackageReference Include="Uno.Core" />
+		<PackageReference Include="Uno.Core.Extensions" />
+		<PackageReference Include="Uno.Core.Extensions.Collections" />
 		<PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" />
 		<PackageReference Include="Microsoft.Extensions.Hosting" />
 	</ItemGroup>
