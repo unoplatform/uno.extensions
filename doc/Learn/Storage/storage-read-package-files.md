@@ -2,9 +2,9 @@
 uid: Uno.Extensions.Storage.HandlingPackageFiles
 ---
 
-# Usage Examples for Storage
+#  Handling Package Files with Storage
 
-## Create, Read and Write Operations on Package Files
+## Usage Examples for Create, Read and Write Operations on Package Files
 
 The `IStorage` interface provides methods to interact with files in your application's package. Below are some examples to help you understand how to use these methods effectively in your application. All of them have to be nested in a class or record of course.
 

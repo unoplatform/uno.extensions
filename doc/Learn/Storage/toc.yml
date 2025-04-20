@@ -2,3 +2,5 @@
   href: xref:Uno.Extensions.Storage.Overview
 - name: "How-To: Add Required Entitlements"
   href: xref:Uno.Extensions.Storage.HowToRequiredEntitlements
+- name: Handling Package Files with Storage
+  href: xref:Uno.Extensions.Storage.HandlingPackageFiles
