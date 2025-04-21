@@ -81,7 +81,7 @@ internal record FileStorage(ILogger<FileStorage> Logger, IDataFolderProvider Dat
 	}
 
 	/// <inheritdoc/>
-	public async Task<IImmutableList<string>?> ReadPackageFileAsync(string filename,List<(int Start, int End)> lineRanges)
+	public async Task<ImmutableList<string>?> ReadPackageFileAsync(string filename,List<(int Start, int End)> lineRanges)
 	{
 		try
 		{
