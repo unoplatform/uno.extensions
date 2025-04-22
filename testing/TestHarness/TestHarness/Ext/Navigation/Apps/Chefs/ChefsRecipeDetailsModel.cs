@@ -13,13 +13,9 @@ public partial class ChefsRecipeDetailsModel(ChefsRecipe recipe, INavigator navi
 	{
 		var route = _navigator?.Route?.Base switch
 		{
-			"ChefsRecipeDetails" => "ChefsLiveCooking",
-			"ChefsSearchRecipeDetails" => "ChefsSearchLiveCooking",
-			"ChefsFavoriteRecipeDetails" => "ChefsFavoriteLiveCooking",
-			"ChefsCookbookRecipeDetails" => "ChefsCookbookLiveCooking",
-			_ => throw new InvalidOperationException("Navigating from unknown route")
+			_ => "ChefsLiveCooking"
 		};
 
-		await _navigator.NavigateRouteAsync(this, route, data: new ChefsLiveCookingParameter(Recipe, ImmutableList<ChefsStep>.Empty));
+		await _navigator.NavigateDataAsync(this, new ChefsLiveCookingParameter(Recipe, ImmutableList<ChefsStep>.Empty));
 	}
 }

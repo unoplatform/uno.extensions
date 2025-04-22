@@ -6,6 +6,6 @@ public partial class ChefsSearchModel(INavigator navigator)
 {
 	public async ValueTask NavigateToRecipeDetail()
 	{
-		await navigator.NavigateRouteAsync(this, "ChefsSearchRecipeDetails", data: new ChefsRecipe { Name = "Search Page" });
+		await navigator.NavigateRouteAsync(this, "ChefsRecipeDetails", data: new ChefsRecipe { Name = "Search" });
 	}
 }
