@@ -15,7 +15,7 @@ public class Given_Apps_ToDo : NavigationTestBase
 		// Make sure the app has loaded
 		App.WaitElement("WelcomeNavigationBar");
 
-		// Login
+		// NavToHome
 		await App.TapAndWait("LoginButton", "HomeNavigationBar");
 
 		// Select a task list
@@ -50,7 +50,7 @@ public class Given_Apps_ToDo : NavigationTestBase
 		// Make sure the app has loaded
 		App.WaitElement("WelcomeNavigationBar");
 
-		// Login
+		// NavToHome
 		await App.TapAndWait("LoginButton", "HomeNavigationBar");
 
 		// Select a task list
@@ -79,7 +79,7 @@ public class Given_Apps_ToDo : NavigationTestBase
 		// Make sure the app has loaded
 		App.WaitElement("WelcomeNavigationBar");
 
-		// Login
+		// NavToHome
 		await App.TapAndWait("LoginButton", "HomeNavigationBar");
 
 		// Select a task list

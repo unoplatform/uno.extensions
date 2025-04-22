@@ -5,11 +5,18 @@
 	  xmlns:local="using:TestHarness.Ext.Navigation.Apps.Chefs"
 	  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	  xmlns:uen="using:Uno.Extensions.Navigation.UI"
+	  xmlns:utu="using:Uno.Toolkit.UI"
 	  Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
 	  mc:Ignorable="d">
 
-	<Grid>
-		<TextBlock Text="ChefsSearch" />
-		<Button Command="{Binding NavigateToRecipeDetail}" Content="Recipe Details" />
+	<Grid RowDefinitions="Auto, *">
+		<utu:NavigationBar Content="Search"
+						   AutomationProperties.AutomationId="SearchNavigationBar" />
+		<StackPanel Grid.Row="1">
+			<TextBlock Text="ChefsSearch" />
+			<Button Command="{Binding NavigateToRecipeDetail}"
+					AutomationProperties.AutomationId="SearchRecipeDetails"
+					Content="Recipe Details" />
+		</StackPanel>
 	</Grid>
 </Page>
