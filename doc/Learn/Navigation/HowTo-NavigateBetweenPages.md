@@ -3,7 +3,7 @@ uid: Uno.Extensions.Navigation.HowToNavigateBetweenPages
 ---
 # How-To: Navigate Between Pages
 
-This topic covers using Navigation to navigate between two pages using frame-based navigation.
+This topic covers using Navigation to navigate between two pages using Uno Extensions Navigation through code behind of the Page.
 
 [!include[getting-help](../includes/mvvm-approach.md)]
 
@@ -21,7 +21,7 @@ This topic covers using Navigation to navigate between two pages using frame-bas
         Extensions;
     +   Navigation;
         Toolkit;
-        MVUX;
+        MVVX;
     </UnoFeatures>
     ```
 
