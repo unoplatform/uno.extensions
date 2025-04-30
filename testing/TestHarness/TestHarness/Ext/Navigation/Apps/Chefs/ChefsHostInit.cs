@@ -42,55 +42,40 @@ public partial class ChefsHostInit : BaseHostInitialization
 					new RouteMap("ChefsRoot", View: views.FindByViewModel<ChefsRootModel>(), Nested: new RouteMap[]
 					{
 						#region Main Tabs
-						new RouteMap("ChefsHome", View: views.FindByViewModel<ChefsHomeModel>(), IsDefault: true),
-						new RouteMap("ChefsSearch", View: views.FindByViewModel<ChefsSearchModel>()),
-						new RouteMap("ChefsFavoriteRecipes", View: views.FindByViewModel<ChefsFavoriteRecipesModel>()),
+						//new RouteMap("ChefsHome", View: views.FindByViewModel<ChefsHomeModel>(), IsDefault: true),
+						//new RouteMap("ChefsSearch", View: views.FindByViewModel<ChefsSearchModel>()),
+						//new RouteMap("ChefsFavoriteRecipes", View: views.FindByViewModel<ChefsFavoriteRecipesModel>()),
 						#endregion
 
 						#region Cookbooks
-						new RouteMap("ChefsCookbookDetails", View: views.FindByViewModel<ChefsCookbookDetailModel>(), DependsOn: "FavoriteRecipes"),
-						new RouteMap("ChefsUpdateCookbook", View: views.FindByViewModel<ChefsCreateUpdateCookbookModel>(), DependsOn: "FavoriteRecipes"),
-						new RouteMap("ChefsCreateCookbook", View: views.FindByViewModel<ChefsCreateUpdateCookbookModel>(), DependsOn: "FavoriteRecipes"),
+						//new RouteMap("ChefsCookbookDetails", View: views.FindByViewModel<ChefsCookbookDetailModel>(), DependsOn: "FavoriteRecipes"),
+						//new RouteMap("ChefsUpdateCookbook", View: views.FindByViewModel<ChefsCreateUpdateCookbookModel>(), DependsOn: "FavoriteRecipes"),
+						//new RouteMap("ChefsCreateCookbook", View: views.FindByViewModel<ChefsCreateUpdateCookbookModel>(), DependsOn: "FavoriteRecipes"),
 						#endregion
 
 						#region Recipe Details
-						new RouteMap("ChefsRecipeDetails", View: views.FindByViewModel<ChefsRecipeDetailsModel>(), DependsOn: "ChefsHome", Nested: new[] {
-							new RouteMap("ChefsIngredientsTabWide"),
-							new RouteMap("ChefsStepsTabWide"),
-							new RouteMap("ChefsReviewsTabWide"),
-							new RouteMap("ChefsNutritionTabWide"),
-							new RouteMap("ChefsIngredientsTab"),
-							new RouteMap("ChefsStepsTab"),
-							new RouteMap("ChefsReviewsTab"),
-							new RouteMap("ChefsNutritionTab"),
-						}),
-						new RouteMap("ChefsSearchRecipeDetails", View: views.FindByViewModel<ChefsRecipeDetailsModel>(), DependsOn: "ChefsSearch"),
-						new RouteMap("ChefsFavoriteRecipeDetails", View: views.FindByViewModel<ChefsRecipeDetailsModel>(), DependsOn: "ChefsFavoriteRecipes"),
-						new RouteMap("ChefsCookbookRecipeDetails", View: views.FindByViewModel<ChefsRecipeDetailsModel>(), DependsOn: "ChefsFavoriteRecipes"),
+						//new RouteMap("ChefsRecipeDetails", View: views.FindByViewModel<ChefsRecipeDetailsModel>(), DependsOn: "ChefsHome"),
 						#endregion
 
 						#region Live Cooking
-						new RouteMap("ChefsLiveCooking", View: views.FindByViewModel<ChefsLiveCookingModel>(), DependsOn: "ChefsRecipeDetails"),
-						new RouteMap("ChefsSearchLiveCooking", View: views.FindByViewModel<ChefsLiveCookingModel>(), DependsOn: "ChefsSearchRecipeDetails"),
-						new RouteMap("ChefsFavoriteLiveCooking", View: views.FindByViewModel<ChefsLiveCookingModel>(), DependsOn: "ChefsFavoriteRecipeDetails"),
-						new RouteMap("ChefsCookbookLiveCooking", View: views.FindByViewModel<ChefsLiveCookingModel>(), DependsOn: "ChefsCookbookRecipeDetails"),
+						//new RouteMap("ChefsLiveCooking", View: views.FindByViewModel<ChefsLiveCookingModel>()),
 						#endregion
 
-						new RouteMap("ChefsMap", View: views.FindByViewModel<ChefsMapModel>(), DependsOn: "ChefsHome"),
+						//new RouteMap("ChefsMap", View: views.FindByViewModel<ChefsMapModel>(), DependsOn: "ChefsHome"),
 					}),
-					new RouteMap("ChefsNotifications", View: views.FindByViewModel<ChefsNotificationsModel>(), Nested: new RouteMap[]
-					{
-						new RouteMap("ChefsAllTab"),
-						new RouteMap("ChefsUnreadTab"),
-						new RouteMap("ChefsReadTab"),
-					}),
-					new RouteMap("ChefsFilter", View: views.FindByViewModel<ChefsFilterModel>()),
-					new RouteMap("ChefsReviews", View: views.FindByViewModel<ChefsReviewsModel>()),
-					new RouteMap("ChefsProfile", View: views.FindByViewModel<ChefsProfileModel>()),
-					new RouteMap("ChefsSettings", View: views.FindByViewModel<ChefsSettingsModel>(), DependsOn: "ChefsProfile"),
-					new RouteMap("ChefsCompleted", View: views.FindByView<ChefsCompletedDialog>()),
-					new RouteMap("ChefsMap", View: views.FindByViewModel<ChefsMapModel>(), DependsOn: "ChefsMain"),
-					new RouteMap("ChefsDialog", View: views.FindByView<ChefsGenericDialog>())
+					//new RouteMap("ChefsNotifications", View: views.FindByViewModel<ChefsNotificationsModel>(), Nested: new RouteMap[]
+					//{
+					//	new RouteMap("ChefsAllTab"),
+					//	new RouteMap("ChefsUnreadTab"),
+					//	new RouteMap("ChefsReadTab"),
+					//}),
+					//new RouteMap("ChefsFilter", View: views.FindByViewModel<ChefsFilterModel>()),
+					//new RouteMap("ChefsReviews", View: views.FindByViewModel<ChefsReviewsModel>()),
+					//new RouteMap("ChefsProfile", View: views.FindByViewModel<ChefsProfileModel>()),
+					//new RouteMap("ChefsSettings", View: views.FindByViewModel<ChefsSettingsModel>(), DependsOn: "ChefsProfile"),
+					//new RouteMap("ChefsCompleted", View: views.FindByView<ChefsCompletedDialog>()),
+					//new RouteMap("ChefsMap", View: views.FindByViewModel<ChefsMapModel>(), DependsOn: "ChefsMain"),
+					//new RouteMap("ChefsDialog", View: views.FindByView<ChefsGenericDialog>())
 				}
 			)
 		);
