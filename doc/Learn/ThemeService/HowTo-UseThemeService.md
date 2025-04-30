@@ -12,6 +12,8 @@ This topic explains how to use the `ThemeService` for runtime theme switching an
 
 ## Step-by-step (Typical Usage with DI)
 
+### [MVVM](#tab/mvvm)
+
 1. **Consume ThemeService**: Inject the `ThemeService` into your view models or other services where you need to manipulate the theme.
 
     ```csharp
@@ -32,6 +34,68 @@ This topic explains how to use the `ThemeService` for runtime theme switching an
         }
     }
     ```
+
+### [MVUX](#tab/mvux)
+
+1. **Consume ThemeService**: Inject the `ThemeService` into your models or other services where you need to manipulate the theme.
+2. **Bind to View**: Use a State or Command to bind your UI in your XAML. <!-- TODO: Add Links to each of the tabs -->
+
+    ### [Model](#tab/mvux/csharp)
+
+    In case you want to use it together with a State, e.g. to bind a control to the current theme trigger a Task with each Time, the Value changes, here is a simple example:
+ 
+    ```cssharp
+    namespace UnoAppName.Presentation.ViewModels;
+    public partial record MainModel
+    {
+        private readonly IThemeService _themeService;
+
+        public MainModel(
+            IThemeService themeService)
+        {
+            _themeService = themeService;
+        }
+
+    public IState<bool> IsDarkMode => State<bool>.Value(this, () => _themeService.Theme == AppTheme.Dark)
+                                                 .ForEach(SwitchThemeAsync);
+
+    public async ValueTask SwitchThemeAsync(bool item,CancellationToken ctk = default)
+    {
+        
+        _ = item switch
+        {
+            true => await _themeService.SetThemeAsync(AppTheme.Light),
+            false => await _themeService.SetThemeAsync(AppTheme.Dark)
+        };
+    }
+    ```
+
+    ### [View](#tab/mvux/xaml)
+
+    With this, you can bind the `IsDarkMode` state to a toggle switch in your XAML:
+
+    ```xml
+    <ToggleSwitch x:Name="ThemeSwitch"
+                Grid.Row="1"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Top"
+                Margin="0,0,10,0"
+                IsOn="{Binding Path=IsDarkMode, Mode=TwoWay}"
+                Foreground="{ThemeResource OnPrimaryContainerBrush}"
+                Style="{ThemeResource ToggleSwitchStyle}">
+    <ToggleSwitch.OnContent>
+        <FontIcon Glyph="&#xE708;"/>
+    </ToggleSwitch.OnContent>
+    <ToggleSwitch.OffContent>
+        <FontIcon Glyph="&#xE706;"/>
+    </ToggleSwitch.OffContent>
+    </ToggleSwitch>
+    ```
+
+    > [!NOTE]
+    > In case, you try to bind a `CommandExtension.Command` to a ToggleSwitch, you will need to use the `IsOn` property to bind it, because `Toggled` Behaviour is not triggering the `CommandExtensions.Command`.
+
+---
 
 ## Step-by-step (Manual Registration without DI or Advanced Scenarios)
 
