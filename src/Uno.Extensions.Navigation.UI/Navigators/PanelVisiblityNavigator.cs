@@ -1,4 +1,6 @@
-﻿namespace Uno.Extensions.Navigation.Navigators;
+﻿using System.Reflection;
+
+namespace Uno.Extensions.Navigation.Navigators;
 
 public class PanelVisiblityNavigator : ControlNavigator<Panel>
 {
@@ -45,11 +47,65 @@ public class PanelVisiblityNavigator : ControlNavigator<Panel>
 
 	protected override async Task<bool> RegionCanNavigate(Route route, RouteInfo? routeMap)
 	{
+		// Check if the SelectorNavigator can navigate to the route
+		// This is to prevent the PanelVisibilityNavigator from navigating to a route that is not specified
+		// As a Region.Name in the Selector (TabBar/NavigationView) Items
+		// Causing a FrameView to be wrongly injected creating a nested navigation
+
+		//var fullRoute = route.FullPath();
+
+		// NavView usually will be a parent
+		//if (Region.Parent is { } parentNavigator &&
+		//	IsRegionNavigatorSelector(parentNavigator, out var nav))
+		//{
+		//	if (CanSelectorNavigate(nav!, fullRoute))
+		//	{
+		//		return true;
+		//	}
+		//}
+
+		// TabBar usually will be a sibling
+		//var sibling = Region.Parent?.Children.FirstOrDefault(x => x.View != Control);
+		//if (sibling is { } && IsRegionNavigatorSelector(sibling, out nav))
+		//{
+		//	return CanSelectorNavigate(nav!, fullRoute);
+		//}
+
 		if (!await base.RegionCanNavigate(route, routeMap))
 		{
 			return false;
 		}
 
+		// Get the current route
+		var currentRoute = Region.Root().GetRoute();
+
+		if (currentRoute is { Path: not null })
+		{
+			// Get the `RouteInfo` for the current route
+			var currentRouteInfo = Resolver.FindByPath(currentRoute.Path.Split('/', StringSplitOptions.RemoveEmptyEntries).FirstOrDefault());
+
+			if (currentRouteInfo is { } && routeMap is { })
+			{
+				// check if any of the nested RouteInfo has the Path equals to `route`
+
+				// COVERS 3
+				if (currentRouteInfo.Nested.Length > 0)
+				{
+					if (HasMatchingNestedRoute(currentRouteInfo))
+					{
+						return true;
+					}
+				}
+
+				// COVERS 4
+				if (HasMatchingRoute(currentRouteInfo))
+				{
+					return false;
+				}
+			}
+		}
+
+		// COVERS 2
 		if (routeMap?.RenderView?.IsSubclassOf(typeof(FrameworkElement)) ?? false)
 		{
 			return true;
@@ -57,8 +113,69 @@ public class PanelVisiblityNavigator : ControlNavigator<Panel>
 
 		return await Dispatcher.ExecuteAsync(async cancellation =>
 		{
+			// COVERS 1
 			return FindByPath(routeMap?.Path ?? route.Base) is not null;
 		});
+
+		bool HasMatchingNestedRoute(RouteInfo currentRouteInfo, bool ignoreCurrentRoute = false)
+		{
+			var nestedRoutes = currentRouteInfo.Nested;
+			var path = currentRouteInfo.Path;
+
+			foreach (var nestedRoute in nestedRoutes)
+			{
+				if (ignoreCurrentRoute &&
+					nestedRoute.Path == path)
+				{
+					continue;
+				}
+
+				if (nestedRoute.Path == routeMap.Path)
+				{
+					return true;
+				}
+
+				if (nestedRoute is { Nested.Length: > 0 } &&
+					HasMatchingNestedRoute(nestedRoute, ignoreCurrentRoute))
+				{
+					return true;
+				}
+			}
+
+			return false;
+		}
+
+		bool HasMatchingRoute(RouteInfo routeInfo)
+		{
+			// get the root
+			var parent = routeInfo.Parent;
+			while (parent?.Parent != null)
+			{
+				if(parent.Parent is { })
+				{
+					parent = parent.Parent;
+				}
+			}
+
+			return HasMatchingNestedRoute(parent!, ignoreCurrentRoute: true);
+		}
+	}
+
+	private bool IsRegionNavigatorSelector(IRegion region, out INavigator? navigator)
+	{
+		navigator = region.Navigator();
+		return navigator != null && InheritsFromSelector(navigator.GetType());
+	}
+
+	private bool CanSelectorNavigate(INavigator navigator, string route)
+	{
+		var itemsProperty = navigator.GetType().GetProperty("Items", BindingFlags.NonPublic | BindingFlags.Instance);
+		if (itemsProperty?.GetValue(navigator) is IEnumerable<FrameworkElement> items)
+		{
+			return items.Any(x => x.GetName() == route);
+		}
+
+		return false;
 	}
 
 	private FrameworkElement? CurrentlyVisibleControl { get; set; }
@@ -161,5 +278,26 @@ public class PanelVisiblityNavigator : ControlNavigator<Panel>
 			Control.Children.OfType<FrameworkElement>().FirstOrDefault(x => x.GetName() == path) ??
 			Control.FindName(path) as FrameworkElement;
 		return controlToShow;
+	}
+
+	private bool InheritsFromSelector(Type type)
+	{
+		if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(SelectorNavigator<>))
+		{
+			return true;
+		}
+
+		var baseType = type.BaseType;
+
+		while (baseType != null && baseType != typeof(object))
+		{
+			if (baseType.IsGenericType && baseType.GetGenericTypeDefinition() == typeof(SelectorNavigator<>))
+			{
+				return true;
+			}
+			baseType = baseType.BaseType;
+		}
+
+		return false;
 	}
 }

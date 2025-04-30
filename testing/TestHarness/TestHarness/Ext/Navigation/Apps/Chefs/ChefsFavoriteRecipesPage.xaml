@@ -10,8 +10,9 @@
 	  mc:Ignorable="d">
 
 	<Grid>
-		<TextBlock Text="ChefsFavoriteRecipes" />
-
+		<!--<TextBlock Text="ChefsFavoriteRecipes" />-->
+		<Button uen:Navigation.Request="ChefsRecipeDetails"
+				Content="Recipe Details" />
 		<utu:AutoLayout Padding="16"
 						uen:Region.Attached="True"
 						Spacing="16">
@@ -35,7 +36,7 @@
 							   VerticalAlignment="Center"
 							   Text="All my recipes" />
 					<Button AutomationProperties.AutomationId="RecipeDetailsButton"
-							uen:Navigation.Request="ChefsFavoriteRecipeDetails"
+							uen:Navigation.Request="ChefsRecipeDetails"
 							Content="Recipe Details" />
 				</Grid>
 				<Grid uen:Region.Name="MyCookbooks"
