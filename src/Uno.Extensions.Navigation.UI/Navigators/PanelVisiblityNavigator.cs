@@ -14,21 +14,32 @@ public class PanelVisiblityNavigator : ControlNavigator<Panel>
 		RegionControlProvider controlProvider)
 		: base(logger, dispatcher, region, resolver, controlProvider.RegionControl as Grid)
 	{
-		if (region.View is not null)
+		if (region.View is { } view)
 		{
-			region.View.Loaded += PanelLoaded;
+			if (view.IsLoaded)
+			{
+				HandlePanelChildren();
+			}
+			else
+			{
+				view.Loaded += PanelLoaded;
+			}
 		}
 	}
 
-	private void PanelLoaded(object sender, RoutedEventArgs e) {
+	private void PanelLoaded(object sender, RoutedEventArgs e)
+	{
 		if (Control is null)
 		{
 			return;
 		}
 		Control.Loaded -= PanelLoaded;
+		HandlePanelChildren();
+	}
 
-		var existingRoutes =
-			Control.Children.OfType<FrameworkElement>().Select(x => x.GetName()).Where(x => x is { Length: > 0 });
+	private void HandlePanelChildren()
+	{
+		var existingRoutes = Control?.Children.OfType<FrameworkElement>().Select(x => x.GetName()).Where(x => x is { Length: > 0 });
 		existingRoutes.ForEach(r => Resolver.InsertRoute(new RouteInfo(r))).ToArray();
 	}
 
