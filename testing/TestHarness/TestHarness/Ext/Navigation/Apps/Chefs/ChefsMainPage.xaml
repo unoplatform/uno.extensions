@@ -13,8 +13,7 @@
 			<VisualStateGroup>
 				<VisualState x:Name="NarrowWindow">
 					<VisualState.Setters>
-						<Setter Target="NavigationRoot.Width"
-								Value="400" />
+						<Setter Target="NavigationRoot.Width" Value="400" />
 					</VisualState.Setters>
 				</VisualState>
 				<VisualState x:Name="WideWindow" />
@@ -24,31 +23,23 @@
 
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto" />
-			<RowDefinition />
+			<RowDefinition Height="*"/>
 			<RowDefinition Height="Auto" />
 		</Grid.RowDefinitions>
 		<TextBlock Text="Sample App: Chefs Tests"
 				   Margin="20"
 				   FontSize="30" />
-		<ScrollViewer Grid.Row="1"
-					  ScrollViewer.HorizontalScrollBarVisibility="Auto"
-					  ScrollViewer.HorizontalScrollMode="Auto"
-					  ScrollViewer.VerticalScrollBarVisibility="Disabled"
-					  ScrollViewer.VerticalScrollMode="Disabled">
-			<Border 							HorizontalAlignment="Left"
-												VerticalAlignment="Stretch"
-												BorderBrush="Black"
-												BorderThickness="2">
+		<Border BorderBrush="Black"
+				Grid.Row="1"
+				BorderThickness="2">
 
-				<utu:ExtendedSplashScreen AutomationProperties.AutomationId="NavigationRoot"
-								x:Name="NavigationRoot"
-								HorizontalAlignment="Left"
-								VerticalAlignment="Stretch"
-								HorizontalContentAlignment="Stretch"
-								VerticalContentAlignment="Stretch"
-								Width="1920" />
-			</Border>
-		</ScrollViewer>
+			<utu:ExtendedSplashScreen AutomationProperties.AutomationId="NavigationRoot"
+									  x:Name="NavigationRoot"
+									  HorizontalAlignment="Stretch"
+									  VerticalAlignment="Stretch"
+									  HorizontalContentAlignment="Stretch"
+									  VerticalContentAlignment="Stretch" />
+		</Border>
 		<StackPanel Grid.Row="2"
 					Orientation="Horizontal"
 					HorizontalAlignment="Center">

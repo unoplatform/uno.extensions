@@ -2,17 +2,27 @@
 	  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 	  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	  xmlns:conv="using:TestHarness.Converters"
 	  xmlns:local="using:TestHarness.Ext.Navigation.Apps.Chefs"
 	  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	  xmlns:utu="using:Uno.Toolkit.UI"
 	  Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
 	  mc:Ignorable="d">
-
+	<Page.Resources>
+		<conv:StringFormatter x:Key="StringFormatter" />
+	</Page.Resources>
 	<Grid RowDefinitions="Auto,*">
-		<utu:NavigationBar Content="LiveCooking" />
+		<utu:NavigationBar Content="Live Cooking"
+						   AutomationProperties.AutomationId="{Binding Recipe.Name, Converter={StaticResource StringFormatter}, ConverterParameter='{}{0}LiveCookingNavigationBar'}">
+			<utu:NavigationBar.MainCommand>
+				<AppBarButton Icon="Back"
+							  AutomationProperties.AutomationId="{Binding Recipe.Name, Converter={StaticResource StringFormatter}, ConverterParameter='{}{0}LiveCookingBackButton'}" />
+			</utu:NavigationBar.MainCommand>
+		</utu:NavigationBar>
 		<StackPanel Grid.Row="1">
-			<TextBlock Text="ChefsLiveCooking" />
-			<TextBlock Text="{Binding Recipe.Name}" />
+			<TextBlock Text="Navigation Source:" />
+			<TextBlock Text="{Binding Recipe.Name}"
+					   AutomationProperties.AutomationId="{Binding Recipe.Name, Converter={StaticResource StringFormatter}, ConverterParameter='{}{0}LiveCookingRecipeName'}" />
 		</StackPanel>
 	</Grid>
 </Page>
