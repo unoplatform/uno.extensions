@@ -5,15 +5,27 @@
 	  xmlns:local="using:TestHarness.Ext.Navigation.Apps.Chefs"
 	  xmlns:utu="using:Uno.Toolkit.UI"
 	  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	  xmlns:conv="using:TestHarness.Converters"
 	  Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
 	  mc:Ignorable="d">
+	<Page.Resources>
+		<conv:StringFormatter x:Key="StringFormatter" />
+	</Page.Resources>
 
 	<Grid RowDefinitions="Auto,*">
-		<utu:NavigationBar Content="RecipeDetails" />
+		<utu:NavigationBar Content="Recipe Details"
+						   AutomationProperties.AutomationId="{Binding Recipe.Name, Converter={StaticResource StringFormatter}, ConverterParameter='{}{0}RecipeDetailsNavigationBar'}">
+			<utu:NavigationBar.MainCommand>
+				<AppBarButton Icon="Back"
+							  AutomationProperties.AutomationId="{Binding Recipe.Name, Converter={StaticResource StringFormatter}, ConverterParameter='{}{0}RecipeDetailsBackButton'}" />
+			</utu:NavigationBar.MainCommand>
+		</utu:NavigationBar>
 		<StackPanel Grid.Row="1">
-			<TextBlock Text="ChefsRecipeDetails" />
-			<TextBlock Text="{Binding Recipe.Name}" />
+			<TextBlock Text="Navigation Source:" />
+			<TextBlock Text="{Binding Recipe.Name}"
+					   AutomationProperties.AutomationId="{Binding Recipe.Name, Converter={StaticResource StringFormatter}, ConverterParameter='{}{0}RecipeDetailsRecipeName'}" />
 			<Button Command="{Binding LiveCooking}"
+					 AutomationProperties.AutomationId="{Binding Recipe.Name, Converter={StaticResource StringFormatter}, ConverterParameter='{}{0}LiveCooking'}"
 					Content="Start Cooking!" />
 		</StackPanel>
 	</Grid>

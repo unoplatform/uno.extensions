@@ -9,41 +9,47 @@
 	  Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
 	  mc:Ignorable="d">
 
-	<Grid>
-		<TextBlock Text="ChefsFavoriteRecipes" />
-
+	<Grid RowDefinitions="Auto, *">
+		<utu:NavigationBar Content="Favorites"
+						   AutomationProperties.AutomationId="FavoritesNavigationBar" />
 		<utu:AutoLayout Padding="16"
+						Grid.Row="1"
 						uen:Region.Attached="True"
 						Spacing="16">
-			<utu:TabBar uen:Region.Attached="True">
+			<utu:TabBar uen:Region.Attached="True"
+						AutomationProperties.AutomationId="FavoritesTabBar"
+						SelectedIndex="0">
 				<utu:TabBarItem uen:Region.Name="MyRecipes"
-								IsSelectable="True"
 								Content="My Recipes" />
 
 				<utu:TabBarItem uen:Region.Name="MyCookbooks"
-								IsSelectable="True"
 								Content="My Cookbooks" />
 			</utu:TabBar>
-
 
 			<Grid uen:Region.Attached="True"
 				  uen:Region.Navigator="Visibility"
 				  utu:AutoLayout.CounterAlignment="Stretch"
 				  utu:AutoLayout.PrimaryAlignment="Stretch">
 				<Grid uen:Region.Name="MyRecipes">
-					<TextBlock HorizontalAlignment="Center"
-							   VerticalAlignment="Center"
-							   Text="All my recipes" />
-					<Button AutomationProperties.AutomationId="RecipeDetailsButton"
-							uen:Navigation.Request="ChefsFavoriteRecipeDetails"
-							Content="Recipe Details" />
+					<StackPanel HorizontalAlignment="Center"
+								VerticalAlignment="Center">
+						<TextBlock Text="All my recipes" />
+						<Button AutomationProperties.AutomationId="FavoritesRecipeDetails"
+								Command="{Binding NavigateToRecipeDetail}"
+								Content="Recipe Details" />
+					</StackPanel>
+
 				</Grid>
 				<Grid uen:Region.Name="MyCookbooks"
 					  Visibility="Collapsed">
+					<StackPanel HorizontalAlignment="Center"
+								VerticalAlignment="Center">
+						<TextBlock Text="All my cookbooks" />
+						<Button AutomationProperties.AutomationId="CookbookDetailsButton"
+								Command="{Binding NavigateToCookbookDetail}"
+								Content="Cookbook Details" />
+					</StackPanel>
 
-					<TextBlock HorizontalAlignment="Center"
-							   VerticalAlignment="Center"
-							   Text="All my cookbooks" />
 				</Grid>
 			</Grid>
 		</utu:AutoLayout>

@@ -9,7 +9,7 @@ public class Given_Custom : NavigationTestBase
 
 		App.WaitThenTap("ShowAppButton");
 
-		// Login - this will login using the predefined username/password, and then navigate to home page
+		// NavToHome - this will login using the predefined username/password, and then navigate to home page
 		App.WaitThenTap("LoginButton");
 
 		// Retrieving products should work since successful login
@@ -34,7 +34,7 @@ public class Given_Custom : NavigationTestBase
 		// this ensures `CustomAuthenticationProvider` wasn't linked out by the linker
 		App.WaitElement("LoginNavigationBar");
 
-		// Login
+		// NavToHome
 		await App.TapAndWait("LoginButton", "HomeNavigationBar");
 
 		// Exit the test
