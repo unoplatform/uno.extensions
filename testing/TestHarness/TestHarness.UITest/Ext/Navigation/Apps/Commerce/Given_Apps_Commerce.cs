@@ -15,7 +15,7 @@ public class Given_Apps_Commerce : NavigationTestBase
 		// Make sure the app has loaded
 		App.WaitElement("LoginNavigationBar");
 
-		// Login
+		// NavToHome
 		App.WaitThenTap("LoginButton");
 
 		// Select Deals tab
@@ -52,7 +52,7 @@ public class Given_Apps_Commerce : NavigationTestBase
 		// Make sure the app has loaded
 		App.WaitElement("LoginNavigationBar");
 
-		// Login
+		// NavToHome
 		App.WaitThenTap("LoginButton");
 
 		/// Tap through each tab bar item
@@ -90,7 +90,7 @@ public class Given_Apps_Commerce : NavigationTestBase
 		// Make sure the app has loaded
 		App.WaitElement("LoginNavigationBar");
 
-		// Login
+		// NavToHome
 		App.WaitThenTap("LoginButton");
 
 
@@ -137,7 +137,7 @@ public class Given_Apps_Commerce : NavigationTestBase
 		// Make sure the app has loaded
 		App.WaitElement("LoginNavigationBar");
 
-		// Login
+		// NavToHome
 		App.WaitThenTap("LoginButton");
 
 
@@ -191,7 +191,7 @@ public class Given_Apps_Commerce : NavigationTestBase
 		// Make sure the app has loaded
 		App.WaitElement("LoginNavigationBar");
 
-		// Login
+		// NavToHome
 		App.WaitThenTap("LoginButton");
 
 
