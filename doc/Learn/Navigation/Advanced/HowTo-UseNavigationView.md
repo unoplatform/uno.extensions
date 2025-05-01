@@ -207,7 +207,7 @@ Choosing the right control for your navigation needs is important, and one commo
   }
   ```
 
-* Register `ViewMap` and `RouteMap` instances inside the `RegisterRoutes` method in `App.cs`. This associates the `ProductsPage` described above with `ProductsViewModel`, as well as avoiding the use of reflection for route discovery.
+* Register `ViewMap` and `RouteMap` instances inside the `RegisterRoutes` method in `App.xaml.cs`. This associates the `ProductsPage` described above with `ProductsViewModel`, as well as avoiding the use of reflection for route discovery.
 
   ```csharp
   private static void RegisterRoutes(IViewRegistry views, IRouteRegistry routes)
@@ -252,6 +252,22 @@ Choosing the right control for your navigation needs is important, and one commo
   </NavigationView.MenuItems>
   ```
 
+#### Using the `Navigation.Data` attached property
+
+Sometimes, it is necessary to send data to your ViewModel from the previous page. This can be done using the `Navigation.Data` attached property. For example, if you want to send an `Entity` object from the `MainViewModel` to the `ProductsViewModel`:
+
+```diff
+<!-- Adds a products item -->
+<NavigationViewItem Content="Products"
++                   uen:Navigation.Data="{Binding Entity}"
+                    uen:Region.Name="Products" />
+```
+
+For the full setup and more information on using the `Navigation.Data` attached property, refer to the documentation in the [How-To: Navigate in XAML](xref:Uno.Extensions.Navigation.HowToNavigateInXAML#2-navigationdata) guide.
+
+> [!NOTE]  
+> You also need to set up a `DataViewMap`. For more information on `ViewMap` and `DataViewMap`, refer to the **ViewMap** documentation in the [How-To: Define Routes](xref:Uno.Extensions.Navigation.HowToDefineRoutes#viewmap) guide.
+
 ### 6. Putting it all together
 
 * Observe how the `NavigationView` and the content area are now connected. When you select a `NavigationViewItem`, the corresponding `Grid` or `Page` will be shown.
@@ -285,6 +301,7 @@ Choosing the right control for your navigation needs is important, and one commo
                 <NavigationViewItem Content="Three"
                                     uen:Region.Name="Three" />
                 <NavigationViewItem Content="Products"
+                                    uen:Navigation.Data="{Binding Entity}"
                                     uen:Region.Name="Products" />
             </NavigationView.MenuItems>
 

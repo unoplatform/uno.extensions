@@ -272,21 +272,21 @@ var builder = this.CreateBuilder(args)
   
   public class SignUpViewModel
   {
-      public SignUpViewMode()
+      public SignUpViewModel()
       {
 
       }
   }
   ```
 
-* Register `ViewMap` and `RouteMap` instances inside the `RegisterRoutes` method in `App.cs`. This associates the `SignUpPage` described above with `SignUpViewModel`, as well as avoiding the use of reflection for route discovery.
+* Register `ViewMap` and `RouteMap` instances inside the `RegisterRoutes` method in `App.xaml.cs`. This associates the `SignUpPage` described above with `SignUpViewModel`, as well as avoiding the use of reflection for route discovery.
 
     ```csharp
     private static void RegisterRoutes(IViewRegistry views, IRouteRegistry routes)
     {
         views.Register(
             new ViewMap(ViewModel: typeof(ShellViewModel)),
-            new ViewMap<LoginPage, LoginViewModel>(),
+            new ViewMap<SignUpPage, SignUpViewModel>(),
             new ViewMap<MainPage, MainViewModel>()
         );
     
@@ -297,7 +297,7 @@ var builder = this.CreateBuilder(args)
                     new RouteMap("Main", View: views.FindByViewModel<MainViewModel>(),
                         Nested:
                         [ 
-                            new RouteMap("Login", View: views.FindByViewModel<LoginViewModel>())
+                            new RouteMap("SignUp", View: views.FindByViewModel<SignUpViewModel>())
                         ]
                     )
                 ]
@@ -323,6 +323,22 @@ var builder = this.CreateBuilder(args)
                         Style="{StaticResource MaterialBottomTabBarItemStyle}" />
     </utu:TabBar.Items>
     ```
+
+#### Using the `Navigation.Data` attached property
+
+Sometimes, it is necessary to send data to your ViewModel from the previous page. This can be done using the `Navigation.Data` attached property. For example, if you want to send an `Entity` object from the `MainViewModel` to the `SignUpViewModel`:
+
+```diff
+<!-- Sign up item -->
+<utu:TabBarItem uen:Region.Name="SignUp"
++               uen:Navigation.Data="{Binding Entity}"
+                Style="{StaticResource MaterialBottomTabBarItemStyle}" />
+```
+
+For the full setup and more information on using the `Navigation.Data` attached property, refer to the documentation in the [How-To: Navigate in XAML](xref:Uno.Extensions.Navigation.HowToNavigateInXAML#2-navigationdata) guide.
+
+> [!NOTE]  
+> You also need to set up a `DataViewMap`. For more information on `ViewMap` and `DataViewMap`, refer to the **ViewMap** documentation in the [How-To: Define Routes](xref:Uno.Extensions.Navigation.HowToDefineRoutes#viewmap) guide.
 
 ### 6. Putting it all together
 
@@ -391,6 +407,7 @@ var builder = this.CreateBuilder(args)
                 <utu:TabBarItem uen:Region.Name="Three" 
                                 Style="{StaticResource MaterialBottomTabBarItemStyle}" />
                 <utu:TabBarItem uen:Region.Name="SignUp" 
+                                uen:Navigation.Data="{Binding Entity}"
                                 Style="{StaticResource MaterialBottomTabBarItemStyle}" />
             </utu:TabBar.Items>
         </utu:TabBar>
