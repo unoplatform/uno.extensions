@@ -1,4 +1,16 @@
 - name: Overview
   href: xref:Uno.Extensions.Storage.Overview
+- name: Create a new Folder
+  href: xref:Uno.Extensions.Storage.CreateFolder
+- name: Read a Package File
+  href: xref:Uno.Extensions.Storage.ReadFile
+- name: Read specific lines from a file
+  href: xref:Uno.Extensions.Storage.ReadFile.SpecificLines
+- name: Use a Serializer to Read a File
+  href: xref:Uno.Extensions.Storage.UseSerializer
+- name: Read a File as Stream
+  href: xref:Uno.Extensions.Storage.ReadFile.StreamReader
+- name: Writing to a File
+  href: xref:Uno.Extensions.Storage.WriteFile
 - name: "How-To: Add Required Entitlements"
   href: xref:Uno.Extensions.Storage.HowToRequiredEntitlements

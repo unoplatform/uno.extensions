@@ -19,7 +19,7 @@ items:
   type: Interface
   source:
     id: IKeyValueStorage
-    path: C:\Users\Sonja\source\sample apps\docfx-temp-repo\src\Uno.Extensions.Storage\KeyValueStorage\IKeyValueStorage.cs
+    path: ~\..\src\Uno.Extensions.Storage\KeyValueStorage\IKeyValueStorage.cs
     startLine: 7
   assemblies:
   - Uno.Extensions.Storage
@@ -42,7 +42,7 @@ items:
   type: Property
   source:
     id: IsEncrypted
-    path: C:\Users\Sonja\source\sample apps\docfx-temp-repo\src\Uno.Extensions.Storage\KeyValueStorage\IKeyValueStorage.cs
+    path: ~\..\src\Uno.Extensions.Storage\KeyValueStorage\IKeyValueStorage.cs
     startLine: 12
   assemblies:
   - Uno.Extensions.Storage
@@ -69,7 +69,7 @@ items:
   type: Method
   source:
     id: ClearAsync
-    path: C:\Users\Sonja\source\sample apps\docfx-temp-repo\src\Uno.Extensions.Storage\KeyValueStorage\IKeyValueStorage.cs
+    path: ~\..\src\Uno.Extensions.Storage\KeyValueStorage\IKeyValueStorage.cs
     startLine: 20
   assemblies:
   - Uno.Extensions.Storage
@@ -106,7 +106,7 @@ items:
   type: Method
   source:
     id: GetAsync
-    path: C:\Users\Sonja\source\sample apps\docfx-temp-repo\src\Uno.Extensions.Storage\KeyValueStorage\IKeyValueStorage.cs
+    path: ~\..\src\Uno.Extensions.Storage\KeyValueStorage\IKeyValueStorage.cs
     startLine: 30
   assemblies:
   - Uno.Extensions.Storage
@@ -147,7 +147,7 @@ items:
   type: Method
   source:
     id: SetAsync
-    path: C:\Users\Sonja\source\sample apps\docfx-temp-repo\src\Uno.Extensions.Storage\KeyValueStorage\IKeyValueStorage.cs
+    path: ~\..\src\Uno.Extensions.Storage\KeyValueStorage\IKeyValueStorage.cs
     startLine: 41
   assemblies:
   - Uno.Extensions.Storage
@@ -190,7 +190,7 @@ items:
   type: Method
   source:
     id: GetKeysAsync
-    path: C:\Users\Sonja\source\sample apps\docfx-temp-repo\src\Uno.Extensions.Storage\KeyValueStorage\IKeyValueStorage.cs
+    path: ~\..\src\Uno.Extensions.Storage\KeyValueStorage\IKeyValueStorage.cs
     startLine: 48
   assemblies:
   - Uno.Extensions.Storage

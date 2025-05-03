@@ -15,7 +15,7 @@ items:
   type: Interface
   source:
     id: IDataFolderProvider
-    path: C:\Users\Sonja\source\sample apps\docfx-temp-repo\src\Uno.Extensions.Storage\IDataFolderProvider.cs
+    path: ~\..\src\Uno.Extensions.Storage\IDataFolderProvider.cs
     startLine: 5
   assemblies:
   - Uno.Extensions.Storage
@@ -38,7 +38,7 @@ items:
   type: Property
   source:
     id: AppDataPath
-    path: C:\Users\Sonja\source\sample apps\docfx-temp-repo\src\Uno.Extensions.Storage\IDataFolderProvider.cs
+    path: ~\..\src\Uno.Extensions.Storage\IDataFolderProvider.cs
     startLine: 10
   assemblies:
   - Uno.Extensions.Storage
