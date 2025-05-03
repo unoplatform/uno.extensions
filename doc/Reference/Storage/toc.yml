@@ -10,6 +10,16 @@ items:
   - uid: Uno.Extensions.Storage.IStorage
     name: IStorage
     type: Interface
+  - uid: Uno.Extensions.Storage.StorageExtensions
+    name: StorageExtensions
+    type: Class
+- uid: Uno.Extensions.Storage.Enumerable
+  name: Uno.Extensions.Storage.Enumerable
+  type: Namespace
+  items:
+  - uid: Uno.Extensions.Storage.Enumerable.EnumerableExtensions
+    name: EnumerableExtensions
+    type: Class
 - uid: Uno.Extensions.Storage.KeyValueStorage
   name: Uno.Extensions.Storage.KeyValueStorage
   type: Namespace

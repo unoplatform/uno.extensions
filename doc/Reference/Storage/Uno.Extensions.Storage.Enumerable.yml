@@ -1,0 +1,24 @@
+### YamlMime:ManagedReference
+items:
+- uid: Uno.Extensions.Storage.Enumerable
+  commentId: N:Uno.Extensions.Storage.Enumerable
+  id: Uno.Extensions.Storage.Enumerable
+  children:
+  - Uno.Extensions.Storage.Enumerable.EnumerableExtensions
+  langs:
+  - csharp
+  - vb
+  name: Uno.Extensions.Storage.Enumerable
+  nameWithType: Uno.Extensions.Storage.Enumerable
+  fullName: Uno.Extensions.Storage.Enumerable
+  type: Namespace
+  assemblies:
+  - Uno.Extensions.Storage
+references:
+- uid: Uno.Extensions.Storage.Enumerable.EnumerableExtensions
+  commentId: T:Uno.Extensions.Storage.Enumerable.EnumerableExtensions
+  href: Uno.Extensions.Storage.Enumerable.EnumerableExtensions.html
+  name: EnumerableExtensions
+  nameWithType: EnumerableExtensions
+  fullName: Uno.Extensions.Storage.Enumerable.EnumerableExtensions
+memberLayout: SeparatePages

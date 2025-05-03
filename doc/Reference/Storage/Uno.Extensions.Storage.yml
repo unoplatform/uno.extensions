@@ -6,6 +6,7 @@ items:
   children:
   - Uno.Extensions.Storage.IDataFolderProvider
   - Uno.Extensions.Storage.IStorage
+  - Uno.Extensions.Storage.StorageExtensions
   langs:
   - csharp
   - vb
@@ -24,8 +25,46 @@ references:
   fullName: Uno.Extensions.Storage.IDataFolderProvider
 - uid: Uno.Extensions.Storage.IStorage
   commentId: T:Uno.Extensions.Storage.IStorage
+  parent: Uno.Extensions.Storage
   href: Uno.Extensions.Storage.IStorage.html
   name: IStorage
   nameWithType: IStorage
   fullName: Uno.Extensions.Storage.IStorage
+- uid: Uno.Extensions.Storage.StorageExtensions
+  commentId: T:Uno.Extensions.Storage.StorageExtensions
+  parent: Uno.Extensions.Storage
+  href: Uno.Extensions.Storage.StorageExtensions.html
+  name: StorageExtensions
+  nameWithType: StorageExtensions
+  fullName: Uno.Extensions.Storage.StorageExtensions
+- uid: Uno.Extensions.Storage
+  commentId: N:Uno.Extensions.Storage
+  href: Uno.html
+  name: Uno.Extensions.Storage
+  nameWithType: Uno.Extensions.Storage
+  fullName: Uno.Extensions.Storage
+  spec.csharp:
+  - uid: Uno
+    name: Uno
+    href: Uno.html
+  - name: .
+  - uid: Uno.Extensions
+    name: Extensions
+    href: Uno.Extensions.html
+  - name: .
+  - uid: Uno.Extensions.Storage
+    name: Storage
+    href: Uno.Extensions.Storage.html
+  spec.vb:
+  - uid: Uno
+    name: Uno
+    href: Uno.html
+  - name: .
+  - uid: Uno.Extensions
+    name: Extensions
+    href: Uno.Extensions.html
+  - name: .
+  - uid: Uno.Extensions.Storage
+    name: Storage
+    href: Uno.Extensions.Storage.html
 memberLayout: SeparatePages

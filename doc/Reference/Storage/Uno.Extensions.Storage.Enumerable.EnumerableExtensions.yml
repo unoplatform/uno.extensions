@@ -1,0 +1,694 @@
+### YamlMime:ManagedReference
+items:
+- uid: Uno.Extensions.Storage.Enumerable.EnumerableExtensions
+  commentId: T:Uno.Extensions.Storage.Enumerable.EnumerableExtensions
+  id: EnumerableExtensions
+  parent: Uno.Extensions.Storage.Enumerable
+  children:
+  - Uno.Extensions.Storage.Enumerable.EnumerableExtensions.GetItemsWithinRange(System.Collections.Generic.IEnumerable{System.String},System.ValueTuple{System.Int32,System.Int32})
+  - Uno.Extensions.Storage.Enumerable.EnumerableExtensions.SelectItemsByRanges(System.Collections.Generic.IEnumerable{System.String},System.Collections.Generic.IEnumerable{System.ValueTuple{System.Int32,System.Int32}})
+  langs:
+  - csharp
+  - vb
+  name: EnumerableExtensions
+  nameWithType: EnumerableExtensions
+  fullName: Uno.Extensions.Storage.Enumerable.EnumerableExtensions
+  type: Class
+  source:
+    id: EnumerableExtensions
+    path: C:\Users\Sonja\source\sample apps\docfx-temp-repo\src\Uno.Extensions.Storage\EnumerableExtensions.string.cs
+    startLine: 5
+  assemblies:
+  - Uno.Extensions.Storage
+  namespace: Uno.Extensions.Storage.Enumerable
+  summary: Provides <xref href="System.Collections.Generic.IEnumerable%601" data-throw-if-not-resolved="false"></xref> extension methods for working with <xref href="Uno.Extensions.Storage.IStorage" data-throw-if-not-resolved="false"></xref>
+  example: []
+  syntax:
+    content: public static class EnumerableExtensions
+    content.vb: Public Module EnumerableExtensions
+  inheritance:
+  - System.Object
+  inheritedMembers:
+  - System.Object.Equals(System.Object)
+  - System.Object.Equals(System.Object,System.Object)
+  - System.Object.GetHashCode
+  - System.Object.GetType
+  - System.Object.MemberwiseClone
+  - System.Object.ReferenceEquals(System.Object,System.Object)
+  - System.Object.ToString
+- uid: Uno.Extensions.Storage.Enumerable.EnumerableExtensions.SelectItemsByRanges(System.Collections.Generic.IEnumerable{System.String},System.Collections.Generic.IEnumerable{System.ValueTuple{System.Int32,System.Int32}})
+  commentId: M:Uno.Extensions.Storage.Enumerable.EnumerableExtensions.SelectItemsByRanges(System.Collections.Generic.IEnumerable{System.String},System.Collections.Generic.IEnumerable{System.ValueTuple{System.Int32,System.Int32}})
+  id: SelectItemsByRanges(System.Collections.Generic.IEnumerable{System.String},System.Collections.Generic.IEnumerable{System.ValueTuple{System.Int32,System.Int32}})
+  isExtensionMethod: true
+  parent: Uno.Extensions.Storage.Enumerable.EnumerableExtensions
+  langs:
+  - csharp
+  - vb
+  name: SelectItemsByRanges(IEnumerable<string>, IEnumerable<(int Start, int End)>)
+  nameWithType: EnumerableExtensions.SelectItemsByRanges(IEnumerable<string>, IEnumerable<(int Start, int End)>)
+  fullName: Uno.Extensions.Storage.Enumerable.EnumerableExtensions.SelectItemsByRanges(System.Collections.Generic.IEnumerable<string>, System.Collections.Generic.IEnumerable<(int Start, int End)>)
+  type: Method
+  source:
+    id: SelectItemsByRanges
+    path: C:\Users\Sonja\source\sample apps\docfx-temp-repo\src\Uno.Extensions.Storage\EnumerableExtensions.string.cs
+    startLine: 19
+  assemblies:
+  - Uno.Extensions.Storage
+  namespace: Uno.Extensions.Storage.Enumerable
+  summary: Selects string typed items from the input collection based on the specified ranges.
+  example: []
+  syntax:
+    content: public static IEnumerable<string> SelectItemsByRanges(this IEnumerable<string> source, IEnumerable<(int Start, int End)> ranges)
+    parameters:
+    - id: source
+      type: System.Collections.Generic.IEnumerable{System.String}
+      description: The collection of string typed items to select from.
+    - id: ranges
+      type: System.Collections.Generic.IEnumerable{System.ValueTuple{System.Int32,System.Int32}}
+      description: >-
+        A collection of ranges, where each range is a tuple containing a start and end index.
+
+        The start index specifies the first item to include, and the end index specifies the last item to include.
+    return:
+      type: System.Collections.Generic.IEnumerable{System.String}
+      description: >-
+        An enumerable collection of strings, where each string represents the items within a specified range.
+
+        If a range is invalid (e.g. start is greater than the last one), an empty string is returned for that range.
+    content.vb: Public Shared Function SelectItemsByRanges(source As IEnumerable(Of String), ranges As IEnumerable(Of (Start As Integer, [End] As Integer))) As IEnumerable(Of String)
+  overload: Uno.Extensions.Storage.Enumerable.EnumerableExtensions.SelectItemsByRanges*
+  nameWithType.vb: EnumerableExtensions.SelectItemsByRanges(IEnumerable(Of String), IEnumerable(Of (Start As Integer, End As Integer)))
+  fullName.vb: Uno.Extensions.Storage.Enumerable.EnumerableExtensions.SelectItemsByRanges(System.Collections.Generic.IEnumerable(Of String), System.Collections.Generic.IEnumerable(Of (Start As Integer, End As Integer)))
+  name.vb: SelectItemsByRanges(IEnumerable(Of String), IEnumerable(Of (Start As Integer, End As Integer)))
+- uid: Uno.Extensions.Storage.Enumerable.EnumerableExtensions.GetItemsWithinRange(System.Collections.Generic.IEnumerable{System.String},System.ValueTuple{System.Int32,System.Int32})
+  commentId: M:Uno.Extensions.Storage.Enumerable.EnumerableExtensions.GetItemsWithinRange(System.Collections.Generic.IEnumerable{System.String},System.ValueTuple{System.Int32,System.Int32})
+  id: GetItemsWithinRange(System.Collections.Generic.IEnumerable{System.String},System.ValueTuple{System.Int32,System.Int32})
+  isExtensionMethod: true
+  parent: Uno.Extensions.Storage.Enumerable.EnumerableExtensions
+  langs:
+  - csharp
+  - vb
+  name: GetItemsWithinRange(IEnumerable<string>, (int Start, int End))
+  nameWithType: EnumerableExtensions.GetItemsWithinRange(IEnumerable<string>, (int Start, int End))
+  fullName: Uno.Extensions.Storage.Enumerable.EnumerableExtensions.GetItemsWithinRange(System.Collections.Generic.IEnumerable<string>, (int Start, int End))
+  type: Method
+  source:
+    id: GetItemsWithinRange
+    path: C:\Users\Sonja\source\sample apps\docfx-temp-repo\src\Uno.Extensions.Storage\EnumerableExtensions.string.cs
+    startLine: 40
+  assemblies:
+  - Uno.Extensions.Storage
+  namespace: Uno.Extensions.Storage.Enumerable
+  summary: Retrieves the concatenated items within the specified range as one single <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/reference-types">string</a> joined by <xref href="System.Environment.NewLine" data-throw-if-not-resolved="false"></xref> character.
+  example: []
+  syntax:
+    content: public static string GetItemsWithinRange(this IEnumerable<string> source, (int Start, int End) range)
+    parameters:
+    - id: source
+      type: System.Collections.Generic.IEnumerable{System.String}
+      description: The <xref href="System.Collections.Generic.IEnumerable%601" data-throw-if-not-resolved="false"></xref> to select from.
+    - id: range
+      type: System.ValueTuple{System.Int32,System.Int32}
+      description: >-
+        A tuple containing the start and end indices of the range as <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/integral-numeric-types">int</a>.
+
+        The start index specifies the first item to include, and the end index specifies the last item to include.
+    return:
+      type: System.String
+      description: A string containing the string typed items of <code class="paramref">source</code> within the specified range, joined by the system's newline character.
+    content.vb: Public Shared Function GetItemsWithinRange(source As IEnumerable(Of String), range As (Start As Integer, [End] As Integer)) As String
+  overload: Uno.Extensions.Storage.Enumerable.EnumerableExtensions.GetItemsWithinRange*
+  nameWithType.vb: EnumerableExtensions.GetItemsWithinRange(IEnumerable(Of String), (Start As Integer, End As Integer))
+  fullName.vb: Uno.Extensions.Storage.Enumerable.EnumerableExtensions.GetItemsWithinRange(System.Collections.Generic.IEnumerable(Of String), (Start As Integer, End As Integer))
+  name.vb: GetItemsWithinRange(IEnumerable(Of String), (Start As Integer, End As Integer))
+references:
+- uid: System.Collections.Generic.IEnumerable`1
+  commentId: T:System.Collections.Generic.IEnumerable`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1
+  name: IEnumerable<T>
+  nameWithType: IEnumerable<T>
+  fullName: System.Collections.Generic.IEnumerable<T>
+  nameWithType.vb: IEnumerable(Of T)
+  fullName.vb: System.Collections.Generic.IEnumerable(Of T)
+  name.vb: IEnumerable(Of T)
+  spec.csharp:
+  - uid: System.Collections.Generic.IEnumerable`1
+    name: IEnumerable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1
+  - name: <
+  - name: T
+  - name: '>'
+  spec.vb:
+  - uid: System.Collections.Generic.IEnumerable`1
+    name: IEnumerable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )
+- uid: Uno.Extensions.Storage.IStorage
+  commentId: T:Uno.Extensions.Storage.IStorage
+  parent: Uno.Extensions.Storage
+  href: Uno.Extensions.Storage.IStorage.html
+  name: IStorage
+  nameWithType: IStorage
+  fullName: Uno.Extensions.Storage.IStorage
+- uid: Uno.Extensions.Storage.Enumerable
+  commentId: N:Uno.Extensions.Storage.Enumerable
+  href: Uno.html
+  name: Uno.Extensions.Storage.Enumerable
+  nameWithType: Uno.Extensions.Storage.Enumerable
+  fullName: Uno.Extensions.Storage.Enumerable
+  spec.csharp:
+  - uid: Uno
+    name: Uno
+    href: Uno.html
+  - name: .
+  - uid: Uno.Extensions
+    name: Extensions
+    href: Uno.Extensions.html
+  - name: .
+  - uid: Uno.Extensions.Storage
+    name: Storage
+    href: Uno.Extensions.Storage.html
+  - name: .
+  - uid: Uno.Extensions.Storage.Enumerable
+    name: Enumerable
+    href: Uno.Extensions.Storage.Enumerable.html
+  spec.vb:
+  - uid: Uno
+    name: Uno
+    href: Uno.html
+  - name: .
+  - uid: Uno.Extensions
+    name: Extensions
+    href: Uno.Extensions.html
+  - name: .
+  - uid: Uno.Extensions.Storage
+    name: Storage
+    href: Uno.Extensions.Storage.html
+  - name: .
+  - uid: Uno.Extensions.Storage.Enumerable
+    name: Enumerable
+    href: Uno.Extensions.Storage.Enumerable.html
+- uid: System.Object
+  commentId: T:System.Object
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object
+  name: object
+  nameWithType: object
+  fullName: object
+  nameWithType.vb: Object
+  fullName.vb: Object
+  name.vb: Object
+- uid: System.Object.Equals(System.Object)
+  commentId: M:System.Object.Equals(System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  name: Equals(object)
+  nameWithType: object.Equals(object)
+  fullName: object.Equals(object)
+  nameWithType.vb: Object.Equals(Object)
+  fullName.vb: Object.Equals(Object)
+  name.vb: Equals(Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.Equals(System.Object,System.Object)
+  commentId: M:System.Object.Equals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  name: Equals(object, object)
+  nameWithType: object.Equals(object, object)
+  fullName: object.Equals(object, object)
+  nameWithType.vb: Object.Equals(Object, Object)
+  fullName.vb: Object.Equals(Object, Object)
+  name.vb: Equals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.GetHashCode
+  commentId: M:System.Object.GetHashCode
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  name: GetHashCode()
+  nameWithType: object.GetHashCode()
+  fullName: object.GetHashCode()
+  nameWithType.vb: Object.GetHashCode()
+  fullName.vb: Object.GetHashCode()
+  spec.csharp:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+- uid: System.Object.GetType
+  commentId: M:System.Object.GetType
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  name: GetType()
+  nameWithType: object.GetType()
+  fullName: object.GetType()
+  nameWithType.vb: Object.GetType()
+  fullName.vb: Object.GetType()
+  spec.csharp:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+- uid: System.Object.MemberwiseClone
+  commentId: M:System.Object.MemberwiseClone
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  name: MemberwiseClone()
+  nameWithType: object.MemberwiseClone()
+  fullName: object.MemberwiseClone()
+  nameWithType.vb: Object.MemberwiseClone()
+  fullName.vb: Object.MemberwiseClone()
+  spec.csharp:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+- uid: System.Object.ReferenceEquals(System.Object,System.Object)
+  commentId: M:System.Object.ReferenceEquals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  name: ReferenceEquals(object, object)
+  nameWithType: object.ReferenceEquals(object, object)
+  fullName: object.ReferenceEquals(object, object)
+  nameWithType.vb: Object.ReferenceEquals(Object, Object)
+  fullName.vb: Object.ReferenceEquals(Object, Object)
+  name.vb: ReferenceEquals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.ToString
+  commentId: M:System.Object.ToString
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  name: ToString()
+  nameWithType: object.ToString()
+  fullName: object.ToString()
+  nameWithType.vb: Object.ToString()
+  fullName.vb: Object.ToString()
+  spec.csharp:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+- uid: Uno.Extensions.Storage
+  commentId: N:Uno.Extensions.Storage
+  href: Uno.html
+  name: Uno.Extensions.Storage
+  nameWithType: Uno.Extensions.Storage
+  fullName: Uno.Extensions.Storage
+  spec.csharp:
+  - uid: Uno
+    name: Uno
+    href: Uno.html
+  - name: .
+  - uid: Uno.Extensions
+    name: Extensions
+    href: Uno.Extensions.html
+  - name: .
+  - uid: Uno.Extensions.Storage
+    name: Storage
+    href: Uno.Extensions.Storage.html
+  spec.vb:
+  - uid: Uno
+    name: Uno
+    href: Uno.html
+  - name: .
+  - uid: Uno.Extensions
+    name: Extensions
+    href: Uno.Extensions.html
+  - name: .
+  - uid: Uno.Extensions.Storage
+    name: Storage
+    href: Uno.Extensions.Storage.html
+- uid: System
+  commentId: N:System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: Uno.Extensions.Storage.Enumerable.EnumerableExtensions.SelectItemsByRanges*
+  commentId: Overload:Uno.Extensions.Storage.Enumerable.EnumerableExtensions.SelectItemsByRanges
+  href: Uno.Extensions.Storage.Enumerable.EnumerableExtensions.SelectItemsByRanges.html#Uno_Extensions_Storage_Enumerable_EnumerableExtensions_SelectItemsByRanges_System_Collections_Generic_IEnumerable_System_String__System_Collections_Generic_IEnumerable_System_ValueTuple_System_Int32_System_Int32___
+  name: SelectItemsByRanges
+  nameWithType: EnumerableExtensions.SelectItemsByRanges
+  fullName: Uno.Extensions.Storage.Enumerable.EnumerableExtensions.SelectItemsByRanges
+- uid: System.Collections.Generic.IEnumerable{System.String}
+  commentId: T:System.Collections.Generic.IEnumerable{System.String}
+  parent: System.Collections.Generic
+  definition: System.Collections.Generic.IEnumerable`1
+  href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1
+  name: IEnumerable<string>
+  nameWithType: IEnumerable<string>
+  fullName: System.Collections.Generic.IEnumerable<string>
+  nameWithType.vb: IEnumerable(Of String)
+  fullName.vb: System.Collections.Generic.IEnumerable(Of String)
+  name.vb: IEnumerable(Of String)
+  spec.csharp:
+  - uid: System.Collections.Generic.IEnumerable`1
+    name: IEnumerable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1
+  - name: <
+  - uid: System.String
+    name: string
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: '>'
+  spec.vb:
+  - uid: System.Collections.Generic.IEnumerable`1
+    name: IEnumerable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: System.String
+    name: String
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: )
+- uid: System.Collections.Generic.IEnumerable{System.ValueTuple{System.Int32,System.Int32}}
+  commentId: T:System.Collections.Generic.IEnumerable{System.ValueTuple{System.Int32,System.Int32}}
+  parent: System.Collections.Generic
+  definition: System.Collections.Generic.IEnumerable`1
+  href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1
+  name: IEnumerable<(int, int)>
+  nameWithType: IEnumerable<(int, int)>
+  fullName: System.Collections.Generic.IEnumerable<(int, int)>
+  nameWithType.vb: IEnumerable(Of (Integer, Integer))
+  fullName.vb: System.Collections.Generic.IEnumerable(Of (Integer, Integer))
+  name.vb: IEnumerable(Of (Integer, Integer))
+  spec.csharp:
+  - uid: System.Collections.Generic.IEnumerable`1
+    name: IEnumerable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1
+  - name: <
+  - name: (
+  - uid: System.Int32
+    name: int
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.int32
+  - name: ','
+  - name: " "
+  - uid: System.Int32
+    name: int
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.int32
+  - name: )
+  - name: '>'
+  spec.vb:
+  - uid: System.Collections.Generic.IEnumerable`1
+    name: IEnumerable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: (
+  - uid: System.Int32
+    name: Integer
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.int32
+  - name: ','
+  - name: " "
+  - uid: System.Int32
+    name: Integer
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.int32
+  - name: )
+  - name: )
+- uid: System.Collections.Generic
+  commentId: N:System.Collections.Generic
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System.Collections.Generic
+  nameWithType: System.Collections.Generic
+  fullName: System.Collections.Generic
+  spec.csharp:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Collections
+    name: Collections
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections
+  - name: .
+  - uid: System.Collections.Generic
+    name: Generic
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic
+  spec.vb:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Collections
+    name: Collections
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections
+  - name: .
+  - uid: System.Collections.Generic
+    name: Generic
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic
+- uid: System.Environment.NewLine
+  commentId: P:System.Environment.NewLine
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.environment.newline
+  name: NewLine
+  nameWithType: Environment.NewLine
+  fullName: System.Environment.NewLine
+- uid: Uno.Extensions.Storage.Enumerable.EnumerableExtensions.GetItemsWithinRange*
+  commentId: Overload:Uno.Extensions.Storage.Enumerable.EnumerableExtensions.GetItemsWithinRange
+  href: Uno.Extensions.Storage.Enumerable.EnumerableExtensions.GetItemsWithinRange.html#Uno_Extensions_Storage_Enumerable_EnumerableExtensions_GetItemsWithinRange_System_Collections_Generic_IEnumerable_System_String__System_ValueTuple_System_Int32_System_Int32__
+  name: GetItemsWithinRange
+  nameWithType: EnumerableExtensions.GetItemsWithinRange
+  fullName: Uno.Extensions.Storage.Enumerable.EnumerableExtensions.GetItemsWithinRange
+- uid: System.ValueTuple{System.Int32,System.Int32}
+  commentId: T:System.ValueTuple{System.Int32,System.Int32}
+  parent: System
+  definition: System.ValueTuple`2
+  href: https://learn.microsoft.com/dotnet/api/system.int32
+  name: (int Start, int End)
+  nameWithType: (int Start, int End)
+  fullName: (int Start, int End)
+  nameWithType.vb: (Start As Integer, End As Integer)
+  fullName.vb: (Start As Integer, End As Integer)
+  name.vb: (Start As Integer, End As Integer)
+  spec.csharp:
+  - name: (
+  - uid: System.Int32
+    name: int
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.int32
+  - name: " "
+  - uid: System.ValueTuple{System.Int32,System.Int32}.Start
+    name: Start
+    href: https://learn.microsoft.com/dotnet/api/system.valuetuple-system.int32,system.int32-.start
+  - name: ','
+  - name: " "
+  - uid: System.Int32
+    name: int
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.int32
+  - name: " "
+  - uid: System.ValueTuple{System.Int32,System.Int32}.End
+    name: End
+    href: https://learn.microsoft.com/dotnet/api/system.valuetuple-system.int32,system.int32-.end
+  - name: )
+  spec.vb:
+  - name: (
+  - uid: System.ValueTuple{System.Int32,System.Int32}.Start
+    name: Start
+    href: https://learn.microsoft.com/dotnet/api/system.valuetuple-system.int32,system.int32-.start
+  - name: " "
+  - name: As
+  - name: " "
+  - uid: System.Int32
+    name: Integer
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.int32
+  - name: ','
+  - name: " "
+  - uid: System.ValueTuple{System.Int32,System.Int32}.End
+    name: End
+    href: https://learn.microsoft.com/dotnet/api/system.valuetuple-system.int32,system.int32-.end
+  - name: " "
+  - name: As
+  - name: " "
+  - uid: System.Int32
+    name: Integer
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.int32
+  - name: )
+- uid: System.String
+  commentId: T:System.String
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.string
+  name: string
+  nameWithType: string
+  fullName: string
+  nameWithType.vb: String
+  fullName.vb: String
+  name.vb: String
+- uid: System.ValueTuple`2
+  commentId: T:System.ValueTuple`2
+  name: (T1, T2)
+  nameWithType: (T1, T2)
+  fullName: (T1, T2)
+  spec.csharp:
+  - name: (
+  - name: T1
+  - name: ','
+  - name: " "
+  - name: T2
+  - name: )
+  spec.vb:
+  - name: (
+  - name: T1
+  - name: ','
+  - name: " "
+  - name: T2
+  - name: )
+memberLayout: SeparatePages

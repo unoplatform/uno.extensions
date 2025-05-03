@@ -1,5 +1,9 @@
 {
   "Uno.Extensions.Storage": "Uno.Extensions.Storage.yml",
+  "Uno.Extensions.Storage.Enumerable": "Uno.Extensions.Storage.Enumerable.yml",
+  "Uno.Extensions.Storage.Enumerable.EnumerableExtensions": "Uno.Extensions.Storage.Enumerable.EnumerableExtensions.yml",
+  "Uno.Extensions.Storage.Enumerable.EnumerableExtensions.GetItemsWithinRange(System.Collections.Generic.IEnumerable{System.String},System.ValueTuple{System.Int32,System.Int32})": "Uno.Extensions.Storage.Enumerable.EnumerableExtensions.yml",
+  "Uno.Extensions.Storage.Enumerable.EnumerableExtensions.SelectItemsByRanges(System.Collections.Generic.IEnumerable{System.String},System.Collections.Generic.IEnumerable{System.ValueTuple{System.Int32,System.Int32}})": "Uno.Extensions.Storage.Enumerable.EnumerableExtensions.yml",
   "Uno.Extensions.Storage.IDataFolderProvider": "Uno.Extensions.Storage.IDataFolderProvider.yml",
   "Uno.Extensions.Storage.IDataFolderProvider.AppDataPath": "Uno.Extensions.Storage.IDataFolderProvider.yml",
   "Uno.Extensions.Storage.IStorage": "Uno.Extensions.Storage.IStorage.yml",
@@ -15,5 +19,8 @@
   "Uno.Extensions.Storage.KeyValueStorage.IKeyValueStorage.IsEncrypted": "Uno.Extensions.Storage.KeyValueStorage.IKeyValueStorage.yml",
   "Uno.Extensions.Storage.KeyValueStorage.IKeyValueStorage.SetAsync``1(System.String,``0,System.Threading.CancellationToken)": "Uno.Extensions.Storage.KeyValueStorage.IKeyValueStorage.yml",
   "Uno.Extensions.Storage.KeyValueStorage.KeyValueStorageSettings": "Uno.Extensions.Storage.KeyValueStorage.KeyValueStorageSettings.yml",
-  "Uno.Extensions.Storage.KeyValueStorage.KeyValueStorageSettings.DisableInMemoryCache": "Uno.Extensions.Storage.KeyValueStorage.KeyValueStorageSettings.yml"
+  "Uno.Extensions.Storage.KeyValueStorage.KeyValueStorageSettings.DisableInMemoryCache": "Uno.Extensions.Storage.KeyValueStorage.KeyValueStorageSettings.yml",
+  "Uno.Extensions.Storage.StorageExtensions": "Uno.Extensions.Storage.StorageExtensions.yml",
+  "Uno.Extensions.Storage.StorageExtensions.ReadLinesFromPackageFile(Uno.Extensions.Storage.IStorage,System.String,System.Collections.Generic.IEnumerable{System.ValueTuple{System.Int32,System.Int32}})": "Uno.Extensions.Storage.StorageExtensions.yml",
+  "Uno.Extensions.Storage.StorageExtensions.ReadPackageFileAsync``1(Uno.Extensions.Storage.IStorage,Uno.Extensions.Serialization.ISerializer,System.String)": "Uno.Extensions.Storage.StorageExtensions.yml"
 }

@@ -18,7 +18,7 @@ items:
   type: Interface
   source:
     id: IStorage
-    path: C:\Users\Sonja\source\sample apps\docfx-temp-repo\src\Uno.Extensions.Storage\IStorage.cs
+    path: ~\..\src\Uno.Extensions.Storage\IStorage.cs
     startLine: 5
   assemblies:
   - Uno.Extensions.Storage
@@ -41,7 +41,7 @@ items:
   type: Method
   source:
     id: CreateFolderAsync
-    path: C:\Users\Sonja\source\sample apps\docfx-temp-repo\src\Uno.Extensions.Storage\IStorage.cs
+    path: ~\..\src\Uno.Extensions.Storage\IStorage.cs
     startLine: 12
   assemblies:
   - Uno.Extensions.Storage
@@ -75,7 +75,7 @@ items:
   type: Method
   source:
     id: ReadPackageFileAsync
-    path: C:\Users\Sonja\source\sample apps\docfx-temp-repo\src\Uno.Extensions.Storage\IStorage.cs
+    path: ~\..\src\Uno.Extensions.Storage\IStorage.cs
     startLine: 19
   assemblies:
   - Uno.Extensions.Storage
@@ -109,7 +109,7 @@ items:
   type: Method
   source:
     id: OpenPackageFileAsync
-    path: C:\Users\Sonja\source\sample apps\docfx-temp-repo\src\Uno.Extensions.Storage\IStorage.cs
+    path: ~\..\src\Uno.Extensions.Storage\IStorage.cs
     startLine: 26
   assemblies:
   - Uno.Extensions.Storage
@@ -143,7 +143,7 @@ items:
   type: Method
   source:
     id: WriteFileAsync
-    path: C:\Users\Sonja\source\sample apps\docfx-temp-repo\src\Uno.Extensions.Storage\IStorage.cs
+    path: ~\..\src\Uno.Extensions.Storage\IStorage.cs
     startLine: 35
   assemblies:
   - Uno.Extensions.Storage
