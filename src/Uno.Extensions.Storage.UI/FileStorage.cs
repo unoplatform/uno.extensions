@@ -81,7 +81,7 @@ internal record FileStorage(ILogger<FileStorage> Logger, IDataFolderProvider Dat
 	}
 
 	/// <inheritdoc/>
-	public async Task<ImmutableList<string>?> ReadPackageFileAsync(string filename, IEnumerable<(int Start, int End)> lineRanges)
+	public async ValueTask<IEnumerable<string>?> ReadPackageFileAsync(string filename, IEnumerable<(int Start, int End)> lineRanges) // TODO: Check if this maybe shoud get made a ImmutableList or ImmutableArray as return type instead since this is a readonly task
 	{
 		try
 		{
@@ -110,7 +110,7 @@ internal record FileStorage(ILogger<FileStorage> Logger, IDataFolderProvider Dat
 					 }
 					 return default;
 				 }
-				 return GetSelectedLines(fileContent, lineRanges);
+				return fileContent.SelectItemsByRanges(lineRanges);
 			}
 #endif
 
@@ -138,7 +138,7 @@ internal record FileStorage(ILogger<FileStorage> Logger, IDataFolderProvider Dat
 					return default;
 				}
 
-				return fileContent.SelectItemsByRanges(lineRanges);
+				return fileContent.SelectItemsByRanges(lineRanges); // TODO: Check why this is showing to be not available for Android target
 			}
 
 			if (Logger.IsEnabled(LogLevel.Warning))
