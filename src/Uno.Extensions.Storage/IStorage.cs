@@ -22,14 +22,6 @@ public interface IStorage
 	Task<string?> ReadPackageFileAsync(string filename);
 
 	/// <summary>
-	/// Reads specific line ranges from a file in the application package.
-	/// </summary>
-	/// <param name="filename">The relative path to the file to read.</param>
-	/// <param name="lineRanges">A list of tuples specifying the start and end line numbers to select and return.</param>
-	/// <returns>An <see cref="ImmutableList{T}"/> of <see langword="string"/> containing the selected lines from <paramref name="lineRanges"/>, or <see langword="null"/> if the file cannot be read.</returns>
-	Task<ImmutableList<string>?> ReadPackageFileAsync(string filename, List<(int Start, int End)> lineRanges);
-
-	/// <summary>
 	/// Opens a file for reading from the application package
 	/// </summary>
 	/// <param name="filename">The relative path to the file to read</param>
