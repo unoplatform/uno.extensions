@@ -37,7 +37,7 @@ This tutorial will walk you through :
 
 * Choose the Presentation kind for your new Project. By using the **Recommended** preset in the wizard, this will default to **MVUX**.
 
-    ![Visual Studio - Choose the Presentation kind for your new project](./Learn/images/newproject-wizard-present-mvux-markup-xaml.png)
+    ![Visual Studio - Choose the Presentation kind for your new project](./Learn/images//newproject-wizard-presentation-mvux.png)
 
     > [!NOTE]
     > By using the **Recommended** preset, you will have to choose between **MVVM** or **MVUX** and not being able to choose **None**
