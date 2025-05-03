@@ -203,7 +203,7 @@ After creating the `builder`, initialize the `Host` by building it:
 ```csharp
 Host = builder.Build();
 ```
-
+<!-- TODO: The Build Command here is not used in Navigation, MVUX Setup so maybe this should be tabbed content depending on the setup!-->
 ### Step 3: Use the Builder to Create the Main Window
 
 Finally, instead of directly creating an instance of a `Window` using `MainWindow = new Window()`, use the `builder` to set up the main window:
