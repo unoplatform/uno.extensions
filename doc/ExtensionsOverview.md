@@ -22,6 +22,7 @@ Alongside Uno, the app template references a lineup of battle-tested packages pr
 |[Navigation](xref:Uno.Extensions.Navigation.HowToNavigateBetweenPages)|The Uno.Extensions.Navigation package provides a routing framework for navigation.|
 |[Reactive](xref:Uno.Extensions.Reactive.General)|The Uno.Extensions.Reactive package provides a development framework for reactive applications.|
 |[Serialization](xref:Uno.Extensions.Serialization.Overview)|The Uno.Extensions.Serialization package provides helpers for JSON serialization.|
+|[Storage](xref:Uno.Extensions.Storage.Overview)|The Uno.Extensions.Storage package provides helpers to read and write from Package included files, your App might need at runtime.|
 |[Validation](xref:Uno.Extensions.Validation.Overview)|The Uno.Extensions.Validation package provides support for data validation.|
 
 > [!TIP]
