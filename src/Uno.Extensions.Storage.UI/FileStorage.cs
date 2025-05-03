@@ -81,7 +81,7 @@ internal record FileStorage(ILogger<FileStorage> Logger, IDataFolderProvider Dat
 	}
 
 	/// <inheritdoc/>
-	public async Task<ImmutableList<string>?> ReadPackageFileAsync(string filename,List<(int Start, int End)> lineRanges)
+	public async Task<ImmutableList<string>?> ReadPackageFileAsync(string filename, IEnumerable<(int Start, int End)> lineRanges)
 	{
 		try
 		{
@@ -126,7 +126,7 @@ internal record FileStorage(ILogger<FileStorage> Logger, IDataFolderProvider Dat
 				{
 					Logger.LogTraceMessage($"Reading file with path '{storageFile.Path}' that does exist");
 				}
-				
+
 				string[] fileContent = File.ReadAllLines(storageFile.Path);
 
 				if (fileContent.Length == 0)
@@ -138,7 +138,7 @@ internal record FileStorage(ILogger<FileStorage> Logger, IDataFolderProvider Dat
 					return default;
 				}
 
-				return GetSelectedLines(fileContent, lineRanges);
+				return fileContent.SelectItemsByRanges(lineRanges);
 			}
 
 			if (Logger.IsEnabled(LogLevel.Warning))
@@ -156,35 +156,6 @@ internal record FileStorage(ILogger<FileStorage> Logger, IDataFolderProvider Dat
 			return default;
 		}
 
-	}
-
-	private ImmutableList<string> GetSelectedLines(string[] fileContent, List<(int Start, int End)> lineRanges)
-	{
-		if (Logger.IsEnabled(LogLevel.Trace))
-		{
-			Logger.LogTraceMessage($"Selecting lines '{lineRanges}'");
-		}
-
-		var selectedLines = new List<string>();
-		foreach (var (Start, End) in lineRanges)
-		{
-			var start = Math.Clamp(Start, 0, fileContent.Length);
-			var end = Math.Clamp(End, start, fileContent.Length);
-			selectedLines.AddRange(fileContent[start..end]);
-		}
-		if (Logger.IsEnabled(LogLevel.Trace))
-		{
-			if(selectedLines.Count == 0)
-			{
-				Logger.LogTraceMessage($"No lines matched {lineRanges}");
-			}
-			else
-			{
-				Logger.LogTraceMessage($"Selected lines (Count: {selectedLines.Count}) successfull");
-			}
-			
-		}
-		return selectedLines.ToImmutableList();
 	}
 
 	public async Task<Stream?> OpenPackageFileAsync(string filename)
