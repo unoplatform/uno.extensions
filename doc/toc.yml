@@ -1,5 +1,5 @@
 - name: Overview
-  href: xref:Uno.Extensions.Overview
+  topicHref: xref:Uno.Extensions.Overview
   items:
     - name: Uno.Extensions Overview
       href: xref:Uno.Extensions.Overview
@@ -54,7 +54,7 @@
 - name: Reference
   items:
     - name: MVUX
-      href: Reference/Reactive/concept.md
+      topicHref: Reference/Reactive/concept.md
       items:
         - name: Overview
           href: Reference/Reactive/concept.md
@@ -75,8 +75,10 @@
         - name: Analysis rules
           href: Reference/Reactive/rules.md
     - name: Navigation
-      href: xref:Reference.Navigation.Overview
+      topicHref: xref:Reference.Navigation.Overview
       items:
+        - name: Overview
+          href: xref:Reference.Navigation.Overview
         - name: Design
           href: xref:Reference.Navigation.Design
         - name: Navigation Region

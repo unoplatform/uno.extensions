@@ -34,5 +34,6 @@ protected override void OnLaunched(LaunchActivatedEventArgs args)
 }
 ```
 
-Failing to pass a valid `Window` instance could result in a `MsalClientException` with the message:
-*"Only loopback redirect uri is supported, but <your_redirect_uri> was found. Configure http://localhost or http://localhost:port both during app registration and when you create the PublicClientApplication object. See https://aka.ms/msal-net-os-browser for details."*
+> [!IMPORTANT]
+> Failing to pass a valid `Window` instance could result in a `MsalClientException` with the message:
+> *"Only loopback redirect uri is supported, but <your_redirect_uri> was found. Configure `http://localhost` or `http://localhost:port` both during app registration and when you create the PublicClientApplication object. See `https://aka.ms/msal-net-os-browser` for details."*
