@@ -28,9 +28,7 @@ This tutorial will walk you through :
     ![Visual Studio - Check the `place project in same folder as solution` option](./Learn/images/newproject-vs2022-check-samefolder-as-sln.png)
 
     > [!TIP]
-    > With the Visual Studio Wizard it's currently not possible to create a Uno Project in an already existing Solution, but as simplest workarounds, your options are:
-    > - Using the [`dotnet new unoapp` CLI](#using-the-command-line) by providing the `-n` or `--name` AND `-o` or `--output` argument right from your commandline in VS 2022 or external Terminal application.
-    > - Creating the wanted Project as new Solution, as you would normally want it do in your existing solution, but in a different Directory, and move the created Project files afterwards to your initial Solution, similar as if you would add additional targets.
+    > With the Visual Studio Wizard it's currently not possible to create a Uno Project in an already existing Solution, but as simplest workarounds, you can creating the wanted Project as new Solution, as you would normally want it do in your existing solution, but in a different Directory, and move the created Project files afterwards to your initial Solution, similar as if you would add additional targets.
 <!-- TODO: Add link to the appropriate mentioned Guide, since should only point out, that there is this limitation and give a short list of options that can be considered.-->
 
 * Choose the **Recommended** preset on the panel on the left side of the wizard window
@@ -71,7 +69,7 @@ The `dotnet` templates included in the `Uno.Templates` package are used to easil
     dotnet new install Uno.Templates
     ```
 
-* Navigate to the desired projects directory, and use the `unoapp` template to generate the starter solution discussed above
+* Navigate to the desired projects directory, and use the `unoapp` template to generate a new solution
 
     ```dotnetcli
     dotnet new unoapp -o MyProject -preset recommended
@@ -79,14 +77,8 @@ The `dotnet` templates included in the `Uno.Templates` package are used to easil
 
     > [!NOTE]
     > In case you don't provide the `-n` or `--name` argument to the `dotnet new` CLI, the argument specified after the `-o` flag (i.e. MyProjectName) will act as the name for both a containing directory and the generated solution.
-
-    If you are trying to add a new Project to an already existing Solution, you should consider using both of this arguments.
-
-    For example, if your Solution is nested in a `src` Folder, you could use this:
-
-    ```dotnetcli
-    dotnet new unoapp -o src/MyProject -n MyProject -preset recommended
-    ```
+    > [!ATTENTION]
+    > If you are trying to add a new Project to an already existing Solution, it will warn you that the solution items like `Directory.Packages.props` would get changes applied, so in case, you might have added Packages you could loose those changes by using the `--force` argument!
 
 * Open the solution in Visual Studio or any other IDE you may choose
 
