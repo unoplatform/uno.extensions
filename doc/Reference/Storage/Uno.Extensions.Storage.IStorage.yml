@@ -1,0 +1,400 @@
+### YamlMime:ManagedReference
+items:
+- uid: Uno.Extensions.Storage.IStorage
+  commentId: T:Uno.Extensions.Storage.IStorage
+  id: IStorage
+  parent: Uno.Extensions.Storage
+  children:
+  - Uno.Extensions.Storage.IStorage.CreateFolderAsync(System.String)
+  - Uno.Extensions.Storage.IStorage.OpenPackageFileAsync(System.String)
+  - Uno.Extensions.Storage.IStorage.ReadPackageFileAsync(System.String)
+  - Uno.Extensions.Storage.IStorage.WriteFileAsync(System.String,System.String,System.Boolean)
+  langs:
+  - csharp
+  - vb
+  name: IStorage
+  nameWithType: IStorage
+  fullName: Uno.Extensions.Storage.IStorage
+  type: Interface
+  source:
+    id: IStorage
+    path: C:\Users\Sonja\source\sample apps\docfx-temp-repo\src\Uno.Extensions.Storage\IStorage.cs
+    startLine: 5
+  assemblies:
+  - Uno.Extensions.Storage
+  namespace: Uno.Extensions.Storage
+  summary: Wrapper for accessing file storage for application
+  example: []
+  syntax:
+    content: public interface IStorage
+    content.vb: Public Interface IStorage
+- uid: Uno.Extensions.Storage.IStorage.CreateFolderAsync(System.String)
+  commentId: M:Uno.Extensions.Storage.IStorage.CreateFolderAsync(System.String)
+  id: CreateFolderAsync(System.String)
+  parent: Uno.Extensions.Storage.IStorage
+  langs:
+  - csharp
+  - vb
+  name: CreateFolderAsync(string)
+  nameWithType: IStorage.CreateFolderAsync(string)
+  fullName: Uno.Extensions.Storage.IStorage.CreateFolderAsync(string)
+  type: Method
+  source:
+    id: CreateFolderAsync
+    path: C:\Users\Sonja\source\sample apps\docfx-temp-repo\src\Uno.Extensions.Storage\IStorage.cs
+    startLine: 12
+  assemblies:
+  - Uno.Extensions.Storage
+  namespace: Uno.Extensions.Storage
+  summary: Create a folder relative to app data
+  example: []
+  syntax:
+    content: Task<string?> CreateFolderAsync(string foldername)
+    parameters:
+    - id: foldername
+      type: System.String
+      description: The name of the folder to create
+    return:
+      type: System.Threading.Tasks.Task{System.String}
+      description: Folder path is folder successfully created
+    content.vb: Function CreateFolderAsync(foldername As String) As Task(Of String)
+  overload: Uno.Extensions.Storage.IStorage.CreateFolderAsync*
+  nameWithType.vb: IStorage.CreateFolderAsync(String)
+  fullName.vb: Uno.Extensions.Storage.IStorage.CreateFolderAsync(String)
+  name.vb: CreateFolderAsync(String)
+- uid: Uno.Extensions.Storage.IStorage.ReadPackageFileAsync(System.String)
+  commentId: M:Uno.Extensions.Storage.IStorage.ReadPackageFileAsync(System.String)
+  id: ReadPackageFileAsync(System.String)
+  parent: Uno.Extensions.Storage.IStorage
+  langs:
+  - csharp
+  - vb
+  name: ReadPackageFileAsync(string)
+  nameWithType: IStorage.ReadPackageFileAsync(string)
+  fullName: Uno.Extensions.Storage.IStorage.ReadPackageFileAsync(string)
+  type: Method
+  source:
+    id: ReadPackageFileAsync
+    path: C:\Users\Sonja\source\sample apps\docfx-temp-repo\src\Uno.Extensions.Storage\IStorage.cs
+    startLine: 19
+  assemblies:
+  - Uno.Extensions.Storage
+  namespace: Uno.Extensions.Storage
+  summary: Reads a file from the application package
+  example: []
+  syntax:
+    content: Task<string?> ReadPackageFileAsync(string filename)
+    parameters:
+    - id: filename
+      type: System.String
+      description: The relative path to the file to read
+    return:
+      type: System.Threading.Tasks.Task{System.String}
+      description: The text contents of the file if the file can be read
+    content.vb: Function ReadPackageFileAsync(filename As String) As Task(Of String)
+  overload: Uno.Extensions.Storage.IStorage.ReadPackageFileAsync*
+  nameWithType.vb: IStorage.ReadPackageFileAsync(String)
+  fullName.vb: Uno.Extensions.Storage.IStorage.ReadPackageFileAsync(String)
+  name.vb: ReadPackageFileAsync(String)
+- uid: Uno.Extensions.Storage.IStorage.OpenPackageFileAsync(System.String)
+  commentId: M:Uno.Extensions.Storage.IStorage.OpenPackageFileAsync(System.String)
+  id: OpenPackageFileAsync(System.String)
+  parent: Uno.Extensions.Storage.IStorage
+  langs:
+  - csharp
+  - vb
+  name: OpenPackageFileAsync(string)
+  nameWithType: IStorage.OpenPackageFileAsync(string)
+  fullName: Uno.Extensions.Storage.IStorage.OpenPackageFileAsync(string)
+  type: Method
+  source:
+    id: OpenPackageFileAsync
+    path: C:\Users\Sonja\source\sample apps\docfx-temp-repo\src\Uno.Extensions.Storage\IStorage.cs
+    startLine: 26
+  assemblies:
+  - Uno.Extensions.Storage
+  namespace: Uno.Extensions.Storage
+  summary: Opens a file for reading from the application package
+  example: []
+  syntax:
+    content: Task<Stream?> OpenPackageFileAsync(string filename)
+    parameters:
+    - id: filename
+      type: System.String
+      description: The relative path to the file to read
+    return:
+      type: System.Threading.Tasks.Task{System.IO.Stream}
+      description: Stream for the file if it can be opened
+    content.vb: Function OpenPackageFileAsync(filename As String) As Task(Of Stream)
+  overload: Uno.Extensions.Storage.IStorage.OpenPackageFileAsync*
+  nameWithType.vb: IStorage.OpenPackageFileAsync(String)
+  fullName.vb: Uno.Extensions.Storage.IStorage.OpenPackageFileAsync(String)
+  name.vb: OpenPackageFileAsync(String)
+- uid: Uno.Extensions.Storage.IStorage.WriteFileAsync(System.String,System.String,System.Boolean)
+  commentId: M:Uno.Extensions.Storage.IStorage.WriteFileAsync(System.String,System.String,System.Boolean)
+  id: WriteFileAsync(System.String,System.String,System.Boolean)
+  parent: Uno.Extensions.Storage.IStorage
+  langs:
+  - csharp
+  - vb
+  name: WriteFileAsync(string, string, bool)
+  nameWithType: IStorage.WriteFileAsync(string, string, bool)
+  fullName: Uno.Extensions.Storage.IStorage.WriteFileAsync(string, string, bool)
+  type: Method
+  source:
+    id: WriteFileAsync
+    path: C:\Users\Sonja\source\sample apps\docfx-temp-repo\src\Uno.Extensions.Storage\IStorage.cs
+    startLine: 35
+  assemblies:
+  - Uno.Extensions.Storage
+  namespace: Uno.Extensions.Storage
+  summary: Writes to a file relative to app data
+  example: []
+  syntax:
+    content: Task WriteFileAsync(string filename, string text, bool overwrite)
+    parameters:
+    - id: filename
+      type: System.String
+      description: The relative path to the file to write
+    - id: text
+      type: System.String
+      description: The text to write
+    - id: overwrite
+      type: System.Boolean
+      description: Whether to override existing file
+    return:
+      type: System.Threading.Tasks.Task
+      description: Awaitable task
+    content.vb: Function WriteFileAsync(filename As String, text As String, overwrite As Boolean) As Task
+  overload: Uno.Extensions.Storage.IStorage.WriteFileAsync*
+  nameWithType.vb: IStorage.WriteFileAsync(String, String, Boolean)
+  fullName.vb: Uno.Extensions.Storage.IStorage.WriteFileAsync(String, String, Boolean)
+  name.vb: WriteFileAsync(String, String, Boolean)
+references:
+- uid: Uno.Extensions.Storage
+  commentId: N:Uno.Extensions.Storage
+  href: Uno.html
+  name: Uno.Extensions.Storage
+  nameWithType: Uno.Extensions.Storage
+  fullName: Uno.Extensions.Storage
+  spec.csharp:
+  - uid: Uno
+    name: Uno
+    href: Uno.html
+  - name: .
+  - uid: Uno.Extensions
+    name: Extensions
+    href: Uno.Extensions.html
+  - name: .
+  - uid: Uno.Extensions.Storage
+    name: Storage
+    href: Uno.Extensions.Storage.html
+  spec.vb:
+  - uid: Uno
+    name: Uno
+    href: Uno.html
+  - name: .
+  - uid: Uno.Extensions
+    name: Extensions
+    href: Uno.Extensions.html
+  - name: .
+  - uid: Uno.Extensions.Storage
+    name: Storage
+    href: Uno.Extensions.Storage.html
+- uid: Uno.Extensions.Storage.IStorage.CreateFolderAsync*
+  commentId: Overload:Uno.Extensions.Storage.IStorage.CreateFolderAsync
+  href: Uno.Extensions.Storage.IStorage.CreateFolderAsync.html#Uno_Extensions_Storage_IStorage_CreateFolderAsync_System_String_
+  name: CreateFolderAsync
+  nameWithType: IStorage.CreateFolderAsync
+  fullName: Uno.Extensions.Storage.IStorage.CreateFolderAsync
+- uid: System.String
+  commentId: T:System.String
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.string
+  name: string
+  nameWithType: string
+  fullName: string
+  nameWithType.vb: String
+  fullName.vb: String
+  name.vb: String
+- uid: System.Threading.Tasks.Task{System.String}
+  commentId: T:System.Threading.Tasks.Task{System.String}
+  parent: System.Threading.Tasks
+  definition: System.Threading.Tasks.Task`1
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  name: Task<string>
+  nameWithType: Task<string>
+  fullName: System.Threading.Tasks.Task<string>
+  nameWithType.vb: Task(Of String)
+  fullName.vb: System.Threading.Tasks.Task(Of String)
+  name.vb: Task(Of String)
+  spec.csharp:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: <
+  - uid: System.String
+    name: string
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: '>'
+  spec.vb:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: System.String
+    name: String
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: )
+- uid: System
+  commentId: N:System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: System.Threading.Tasks.Task`1
+  commentId: T:System.Threading.Tasks.Task`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  name: Task<TResult>
+  nameWithType: Task<TResult>
+  fullName: System.Threading.Tasks.Task<TResult>
+  nameWithType.vb: Task(Of TResult)
+  fullName.vb: System.Threading.Tasks.Task(Of TResult)
+  name.vb: Task(Of TResult)
+  spec.csharp:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: <
+  - name: TResult
+  - name: '>'
+  spec.vb:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: TResult
+  - name: )
+- uid: System.Threading.Tasks
+  commentId: N:System.Threading.Tasks
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System.Threading.Tasks
+  nameWithType: System.Threading.Tasks
+  fullName: System.Threading.Tasks
+  spec.csharp:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Threading
+    name: Threading
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading
+  - name: .
+  - uid: System.Threading.Tasks
+    name: Tasks
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks
+  spec.vb:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Threading
+    name: Threading
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading
+  - name: .
+  - uid: System.Threading.Tasks
+    name: Tasks
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks
+- uid: Uno.Extensions.Storage.IStorage.ReadPackageFileAsync*
+  commentId: Overload:Uno.Extensions.Storage.IStorage.ReadPackageFileAsync
+  href: Uno.Extensions.Storage.IStorage.ReadPackageFileAsync.html#Uno_Extensions_Storage_IStorage_ReadPackageFileAsync_System_String_
+  name: ReadPackageFileAsync
+  nameWithType: IStorage.ReadPackageFileAsync
+  fullName: Uno.Extensions.Storage.IStorage.ReadPackageFileAsync
+- uid: Uno.Extensions.Storage.IStorage.OpenPackageFileAsync*
+  commentId: Overload:Uno.Extensions.Storage.IStorage.OpenPackageFileAsync
+  href: Uno.Extensions.Storage.IStorage.OpenPackageFileAsync.html#Uno_Extensions_Storage_IStorage_OpenPackageFileAsync_System_String_
+  name: OpenPackageFileAsync
+  nameWithType: IStorage.OpenPackageFileAsync
+  fullName: Uno.Extensions.Storage.IStorage.OpenPackageFileAsync
+- uid: System.Threading.Tasks.Task{System.IO.Stream}
+  commentId: T:System.Threading.Tasks.Task{System.IO.Stream}
+  parent: System.Threading.Tasks
+  definition: System.Threading.Tasks.Task`1
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  name: Task<Stream>
+  nameWithType: Task<Stream>
+  fullName: System.Threading.Tasks.Task<System.IO.Stream>
+  nameWithType.vb: Task(Of Stream)
+  fullName.vb: System.Threading.Tasks.Task(Of System.IO.Stream)
+  name.vb: Task(Of Stream)
+  spec.csharp:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: <
+  - uid: System.IO.Stream
+    name: Stream
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.io.stream
+  - name: '>'
+  spec.vb:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: System.IO.Stream
+    name: Stream
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.io.stream
+  - name: )
+- uid: Uno.Extensions.Storage.IStorage.WriteFileAsync*
+  commentId: Overload:Uno.Extensions.Storage.IStorage.WriteFileAsync
+  href: Uno.Extensions.Storage.IStorage.WriteFileAsync.html#Uno_Extensions_Storage_IStorage_WriteFileAsync_System_String_System_String_System_Boolean_
+  name: WriteFileAsync
+  nameWithType: IStorage.WriteFileAsync
+  fullName: Uno.Extensions.Storage.IStorage.WriteFileAsync
+- uid: System.Boolean
+  commentId: T:System.Boolean
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.boolean
+  name: bool
+  nameWithType: bool
+  fullName: bool
+  nameWithType.vb: Boolean
+  fullName.vb: Boolean
+  name.vb: Boolean
+- uid: System.Threading.Tasks.Task
+  commentId: T:System.Threading.Tasks.Task
+  parent: System.Threading.Tasks
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task
+  name: Task
+  nameWithType: Task
+  fullName: System.Threading.Tasks.Task
+memberLayout: SeparatePages

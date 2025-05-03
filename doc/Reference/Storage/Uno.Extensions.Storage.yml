@@ -1,0 +1,31 @@
+### YamlMime:ManagedReference
+items:
+- uid: Uno.Extensions.Storage
+  commentId: N:Uno.Extensions.Storage
+  id: Uno.Extensions.Storage
+  children:
+  - Uno.Extensions.Storage.IDataFolderProvider
+  - Uno.Extensions.Storage.IStorage
+  langs:
+  - csharp
+  - vb
+  name: Uno.Extensions.Storage
+  nameWithType: Uno.Extensions.Storage
+  fullName: Uno.Extensions.Storage
+  type: Namespace
+  assemblies:
+  - Uno.Extensions.Storage
+references:
+- uid: Uno.Extensions.Storage.IDataFolderProvider
+  commentId: T:Uno.Extensions.Storage.IDataFolderProvider
+  href: Uno.Extensions.Storage.IDataFolderProvider.html
+  name: IDataFolderProvider
+  nameWithType: IDataFolderProvider
+  fullName: Uno.Extensions.Storage.IDataFolderProvider
+- uid: Uno.Extensions.Storage.IStorage
+  commentId: T:Uno.Extensions.Storage.IStorage
+  href: Uno.Extensions.Storage.IStorage.html
+  name: IStorage
+  nameWithType: IStorage
+  fullName: Uno.Extensions.Storage.IStorage
+memberLayout: SeparatePages

@@ -1,0 +1,19 @@
+{
+  "Uno.Extensions.Storage": "Uno.Extensions.Storage.yml",
+  "Uno.Extensions.Storage.IDataFolderProvider": "Uno.Extensions.Storage.IDataFolderProvider.yml",
+  "Uno.Extensions.Storage.IDataFolderProvider.AppDataPath": "Uno.Extensions.Storage.IDataFolderProvider.yml",
+  "Uno.Extensions.Storage.IStorage": "Uno.Extensions.Storage.IStorage.yml",
+  "Uno.Extensions.Storage.IStorage.CreateFolderAsync(System.String)": "Uno.Extensions.Storage.IStorage.yml",
+  "Uno.Extensions.Storage.IStorage.OpenPackageFileAsync(System.String)": "Uno.Extensions.Storage.IStorage.yml",
+  "Uno.Extensions.Storage.IStorage.ReadPackageFileAsync(System.String)": "Uno.Extensions.Storage.IStorage.yml",
+  "Uno.Extensions.Storage.IStorage.WriteFileAsync(System.String,System.String,System.Boolean)": "Uno.Extensions.Storage.IStorage.yml",
+  "Uno.Extensions.Storage.KeyValueStorage": "Uno.Extensions.Storage.KeyValueStorage.yml",
+  "Uno.Extensions.Storage.KeyValueStorage.IKeyValueStorage": "Uno.Extensions.Storage.KeyValueStorage.IKeyValueStorage.yml",
+  "Uno.Extensions.Storage.KeyValueStorage.IKeyValueStorage.ClearAsync(System.String,System.Threading.CancellationToken)": "Uno.Extensions.Storage.KeyValueStorage.IKeyValueStorage.yml",
+  "Uno.Extensions.Storage.KeyValueStorage.IKeyValueStorage.GetAsync``1(System.String,System.Threading.CancellationToken)": "Uno.Extensions.Storage.KeyValueStorage.IKeyValueStorage.yml",
+  "Uno.Extensions.Storage.KeyValueStorage.IKeyValueStorage.GetKeysAsync(System.Threading.CancellationToken)": "Uno.Extensions.Storage.KeyValueStorage.IKeyValueStorage.yml",
+  "Uno.Extensions.Storage.KeyValueStorage.IKeyValueStorage.IsEncrypted": "Uno.Extensions.Storage.KeyValueStorage.IKeyValueStorage.yml",
+  "Uno.Extensions.Storage.KeyValueStorage.IKeyValueStorage.SetAsync``1(System.String,``0,System.Threading.CancellationToken)": "Uno.Extensions.Storage.KeyValueStorage.IKeyValueStorage.yml",
+  "Uno.Extensions.Storage.KeyValueStorage.KeyValueStorageSettings": "Uno.Extensions.Storage.KeyValueStorage.KeyValueStorageSettings.yml",
+  "Uno.Extensions.Storage.KeyValueStorage.KeyValueStorageSettings.DisableInMemoryCache": "Uno.Extensions.Storage.KeyValueStorage.KeyValueStorageSettings.yml"
+}

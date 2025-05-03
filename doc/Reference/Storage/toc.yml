@@ -1,0 +1,23 @@
+### YamlMime:TableOfContent
+items:
+- uid: Uno.Extensions.Storage
+  name: Uno.Extensions.Storage
+  type: Namespace
+  items:
+  - uid: Uno.Extensions.Storage.IDataFolderProvider
+    name: IDataFolderProvider
+    type: Interface
+  - uid: Uno.Extensions.Storage.IStorage
+    name: IStorage
+    type: Interface
+- uid: Uno.Extensions.Storage.KeyValueStorage
+  name: Uno.Extensions.Storage.KeyValueStorage
+  type: Namespace
+  items:
+  - uid: Uno.Extensions.Storage.KeyValueStorage.IKeyValueStorage
+    name: IKeyValueStorage
+    type: Interface
+  - uid: Uno.Extensions.Storage.KeyValueStorage.KeyValueStorageSettings
+    name: KeyValueStorageSettings
+    type: Class
+memberLayout: SeparatePages
