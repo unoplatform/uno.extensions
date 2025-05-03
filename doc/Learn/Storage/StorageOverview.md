@@ -34,3 +34,4 @@ For more information about `UnoFeatures` refer to our [Using the Uno.Sdk](xref:U
 - [Uno.UI.Toolkit.StorageFileHelper](https://platform.uno/docs/articles/features/file-management.html)
 - Uno specifics for [File and Folder Pickers](https://platform.uno/docs/articles/features/windows-storage-pickers.html)
 - Storing and reading [Settings](https://platform.uno/docs/articles/features/settings.html)
+- [Uno.Extensions.Storage Reference](xref:Uno.Extensions.Storage)
