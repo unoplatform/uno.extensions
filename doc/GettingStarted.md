@@ -93,36 +93,95 @@ To get started with Extensions in your project, follow these steps:
 
 Hosting is the foundation for using Extensions. Begin by adding Hosting to your project. Refer to the detailed instructions in the [Hosting Setup Documentation](xref:Uno.Extensions.Hosting.HowToHostingSetup).
 
+After this, add a `protected` property named Host of type `IHost` to your `App.xaml.cs` file below the MainWindow Property:
+
+```csharp
+protected Window? MainWindow { get; private set; }
+protected IHost? Host { get; private set; }
+```
+
 ### Step 2: Configure the OnLaunched Method
 
 After setting up Hosting, adjust the `OnLaunched` method in `App.xaml.cs` to initialize the Extensions features. Ensure you have added the necessary [Uno Platform Features](xref:Uno.Features.Uno.Sdk#uno-platform-features).
 
-Update the `Configure` method as shown below:
+Create or Upgrade the `HostBuilder` depending on your desired Extensions:
 
 ```csharp
 var builder = this.CreateBuilder(args)
+    // Add navigation support for toolkit controls such as TabBar and NavigationView
+    .UseTookitNavigation()
+    // Configure the host builder
     .Configure(host => host
-        // Configure the host builder
-        .UseConfiguration(...)
+#if DEBUG
+        // Switch to Development environment when running in DEBUG
+        .UseEnvironment(Environments.Development)
+#endif
+        // Get Read and Write functions for Package Files
+        .UseStorage()
+                .UseLogging(configure: (context, logBuilder) =>
+        {
+            // Configure log levels for different categories of logging
+            logBuilder
+                .SetMinimumLevel(
+                    context.HostingEnvironment.IsDevelopment() ?
+                        LogLevel.Information :
+                        LogLevel.Warning)
+
+                // Default filters for core Uno Platform namespaces
+                .CoreLogLevel(LogLevel.Warning);
+
+            // Uno Platform namespace filter groups
+            // Uncomment individual methods to see more detailed logging
+
+            //// Generic Xaml events
+            //logBuilder.XamlLogLevel(LogLevel.Debug);
+            //// Layout specific messages
+            //logBuilder.XamlLayoutLogLevel(LogLevel.Debug);
+            //// Storage messages
+            //logBuilder.StorageLogLevel(LogLevel.Debug);
+            //// Binding related messages
+            logBuilder.XamlBindingLogLevel(LogLevel.Debug);
+            //// Binder memory references tracking
+            logBuilder.BinderMemoryReferenceLogLevel(LogLevel.Debug);
+            //// DevServer and HotReload related
+            //logBuilder.HotReloadCoreLogLevel(LogLevel.Information);
+            //// Debug JS interop
+            //logBuilder.WebAssemblyLogLevel(LogLevel.Debug);
+
+        }, enableUnoLogging: true)
+        .UseConfiguration(configure: configBuilder =>
+            configBuilder
+                .EmbeddedSource<App>()
+                .Section<AppConfig>()
+                // Add future Sections that should be read from `appsettings.json` file here
+        )
+        // Enable localization (see appsettings.json and Package.appxmanifest to define your currently supported languages)
         .UseLocalization()
-        .UseSerialization(...)
-        .UseHttp(...)
+        // Register Json serializers (ISerializer and ISerializer)
+        .UseSerialization((context, services) => services
+            .AddContentSerializer(context)
+            .AddJsonTypeInfo(WeatherForecastContext.Default.IImmutableListWeatherForecast))
+        .UseHttp((context, services) => services
+            // Register HttpClient
+#if DEBUG
+            // DelegatingHandler will be automatically injected into Refit Client
+            .AddTransient<DelegatingHandler, DebugHttpHandler>()
+#endif
+            .AddSingleton<IWeatherCache, WeatherCache>()
+            .AddRefitClient<IApiClient>(context))
+        .ConfigureServices((context, services) =>
+            services
+                // TODO: Register your regular services
+                .AddSingleton<ISampleService, SampleService>()
+        )
+        // Enable Uno.Extensions.Navigation and add this content in case you use MVUX
+        .UseNavigation(ReactiveViewModelMappings.ViewModelMappings, RegisterRoutes)
     );
 ```
 
-Add a `protected` property named Host of type `IHost` to your App.xaml.cs file:
-
-```csharp
-protected IHost? Host { get; private set; }
-```
-
-After creating the `builder`, initialize the `Host` by building it:
-
-```csharp
-Host = builder.Build();
-```
-
 ### Step 3: Use the Builder to Create the Main Window
+
+#### [Using Frame Navigation](#tab/frame-navigation)
 
 Finally, instead of directly creating an instance of a `Window` using `MainWindow = new Window()`, use the `builder` to set up the main window:
 
@@ -135,6 +194,10 @@ var builder = this.CreateBuilder(args)
     );
 
 +MainWindow = builder.Window;
+
++#if DEBUG
++    MainWindow.UseStudio();
++#endif
 
 Host = builder.Build();
 
@@ -164,13 +227,15 @@ Finally, instead of directly creating an instance of a `Window` using `MainWindo
 +   MainWindow.UseStudio();
 +#endif
 +   MainWindow.SetWindowIcon();
-
-+    Host = await builder.NavigateAsync<Shell>();
++   Host = await builder.NavigateAsync<Shell>();
 }
 ```
 
 ---
 
->>>>>>> 0a9803c29 (chore: Spell checking)
 > [!IMPORTANT]
 > Be sure to remove any other code that sets `MainWindow` to prevent conflicts in your application.
+
+---
+
+[!INCLUDE [getting-help](./Learn/includes/getting-help.md)]
