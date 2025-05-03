@@ -1,4 +1,8 @@
 namespace Uno.Extensions.Storage.Enumerable;
+
+/// <summary>
+/// Provides <see cref="IEnumerable{TResult}"/> extension methods for working with <see cref="IStorage"/>
+/// </summary>
 public static class EnumerableExtensions
 {
     /// <summary>
@@ -23,18 +27,18 @@ public static class EnumerableExtensions
         }
     }
 
-    /// <summary>
-    /// Retrieves a single string containing the concatenated items within the specified range.
-    /// </summary>
-    /// <param name="source">The collection to select from.</param>
-    /// <param name="range">
-    /// A tuple containing the start and end indices of the range.
-    /// The start index specifies the first item to include, and the end index specifies the last item to include.
-    /// </param>
-    /// <returns>
-    /// A string containing the string typed items of <paramref name="source"/> within the specified range, joined by the system's newline character.
-    /// </returns>
-    public static string GetItemsWithinRange(this IEnumerable<string> source, (int Start, int End) range)
+	/// <summary>
+	/// Retrieves the concatenated items within the specified range as one single <see langword="string"/> joined by <see cref="Environment.NewLine"/> character.
+	/// </summary>
+	/// <param name="source">The <see cref="IEnumerable{TData}"/> to select from.</param>
+	/// <param name="range">
+	/// A tuple containing the start and end indices of the range as <see langword="int"/>.
+	/// The start index specifies the first item to include, and the end index specifies the last item to include.
+	/// </param>
+	/// <returns>
+	/// A string containing the string typed items of <paramref name="source"/> within the specified range, joined by the system's newline character.
+	/// </returns>
+	public static string GetItemsWithinRange(this IEnumerable<string> source, (int Start, int End) range) // TODO: Consider to limit int to min 0 value instead of implicit allowing negative.
     {
         source = source.Safe();
         var startIndex = Math.Clamp(
@@ -51,5 +55,4 @@ public static class EnumerableExtensions
                      .Take(endIndex - startIndex)
                      .JoinBy(Environment.NewLine);
     }
-
 }
