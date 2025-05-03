@@ -12,11 +12,11 @@ This tutorial will walk you through :
 > [!NOTE]
 > Make sure to setup your environment first by [following the Getting Started Guide](https://platform.uno/docs/articles/get-started.html).
 
-## [Creating a new application](#tab/new-app)
+## Creating a new application
 
 ### 1. Creating the app
 
-#### [Using the Wizard](#tab/new-app/wizard)
+#### [Using the Wizard](#tab/wizard)
 
 * Create a new C# solution using the **Uno Platform App** template, from Visual Studio's **Start Page**, then click the **Next** button
 
@@ -61,7 +61,7 @@ This tutorial will walk you through :
 
     ![Visual Studio - A banner indicating to reload projects](./Learn/images/vs2022-project-reload.png)
 
-#### [Using the Command Line](#tab/newapp/cli)
+#### [Using the Command Line](#tab/cli)
 
 The `dotnet` templates included in the `Uno.Templates` package are used to easily create new projects that already reference the Uno.Extensions.
 
