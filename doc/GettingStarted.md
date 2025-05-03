@@ -1,47 +1,67 @@
 ---
 uid: Uno.Extensions.HowToGettingStarted
 ---
+<!--markdownlint-disable MD004 MD051 -->
 # How-To: Getting Started
 
-This tutorial will walk you through how to create an Uno application with Uno.Extensions using the Wizard and CLI and how to install Uno.Extensions to an existing Uno application.
+This tutorial will walk you through :
+
+- How to: Create an Uno application with Uno.Extensions using the Wizard and CLI
+- How to: Upgrade an existing Uno Application to use Uno.Extensions
 
 > [!NOTE]
-> Make sure to setup your environment first by [following our instructions](xref:Uno.GetStarted.vs2022).
+> Make sure to setup your environment first by [following the Getting Started Guide](https://platform.uno/docs/articles/get-started.html).
 
-## Creating a new application
+## [Creating a new application](#tab/new-app)
 
 ### 1. Creating the app
 
-### [Wizard](#tab/wizard)
-
-#### Create an Uno Platform app with Wizard
+#### [Using the Wizard](#tab/new-app/wizard)
 
 * Create a new C# solution using the **Uno Platform App** template, from Visual Studio's **Start Page**, then click the **Next** button
 
-    ![Visual Studio - Get started - Selecting `create a new project` option](./Learn/images/newproject1.png)
-    ![Visual Studio - Create a new project - Selecting `Uno Platform App` option](./Learn/images/newproject2.png)
+    ![Visual Studio - Get started - Selecting `create a new project` option](./Learn/images/newproject-vs2022-create-new-app.png)
+    ![Visual Studio - Create a new project - Selecting `Uno Platform App` option](./Learn/images/newproject-vs2022-select-unoapp.png)
 
 * Configure your new project by providing a project name and a location, check the "**Place solution and project in the same directory**" option, then click the **Create** button
 
-    ![Visual Studio - Configure project name and location](./Learn/images/configure-new-unoplatform-app.png)
-
-* Choose the **Recommended** preset to build your application
-
-    ![Visual Studio - Configure your new project](./Learn/images/intro.png)
+    ![Visual Studio - Check the `place project in same folder as solution` option](./Learn/images/newproject-vs2022-check-samefolder-as-sln.png)
 
     > [!TIP]
-    > For a detailed overview of the Uno Platform project template wizard and all its options, see [this](xref:Uno.GettingStarted.UsingWizard).
+    > With the Visual Studio Wizard it's currently not possible to create a Uno Project in an already existing Solution, but as simplest workarounds, your options are:
+    > - Using the [`dotnet new unoapp` CLI](#using-the-command-line) by providing the `-n` or `--name` AND `-o` or `--output` argument right from your commandline in VS 2022 or external Terminal application.
+    > - Creating the wanted Project as new Solution, as you would normally want it do in your existing solution, but in a different Directory, and move the created Project files afterwards to your initial Solution, similar as if you would add additional targets.
+<!-- TODO: Add link to the appropriate mentioned Guide, since should only point out, that there is this limitation and give a short list of options that can be considered.-->
+
+* Choose the **Recommended** preset on the panel on the left side of the wizard window
+
+    ![Visual Studio - Configure your new project](./Learn/images/newproject-wizard-intro.png)
+
+* Choose the Presentation kind for your new Project. By using the **Recommended** preset in the wizard, this will default to **MVUX**.
+
+    ![Visual Studio - Choose the Presentation kind for your new project](./Learn/images/newproject-wizard-present-mvux-markup-xaml.png)
+
+    > [!NOTE]
+    > By using the **Recommended** preset, you will have to choose between **MVVM** or **MVUX** and not being able to choose **None**
+
+* On the **Extensions** tab, you can now select those you want to include from creation process to your project and by that, in most of the cases, get some extension specific content right out of the Box into your Project!
+
+    ![Visual Studio - Select the Extensions you want to include into your new project](./Learn/images/newproject-wizard-extensions.gif)
+
+    > [!TIP]
+    > For a detailed overview of the Uno Platform project template wizard and all its options, you can [visit the Wizard Getting Started Guide](xref:Uno.GettingStarted.UsingWizard).
+    > [!TIP]
+    > Please notice, that depending on the Extensions you want to use and might got forwarded to this guide here, the Options you should select or will need can differ from this, as this is meant as general starting point with Extensions. So please check the Extension specific Guides for future instructions you may have to select.
 
 * Click the create button
 
 * Wait for the projects to be created, and their dependencies to be restored
 
-* A banner at the top of the editor may ask to reload projects, click **Reload projects**:  
+* In case, you get a banner at the top of the editor may ask to reload projects, click **Reload projects**:
+
     ![Visual Studio - A banner indicating to reload projects](./Learn/images/vs2022-project-reload.png)
 
-### [Command Line](#tab/cli)
-
-#### Create an Uno Platform app with the CLI
+#### [Using the Command Line](#tab/newapp/cli)
 
 The `dotnet` templates included in the `Uno.Templates` package are used to easily create new projects that already reference the Uno.Extensions.
 
@@ -57,9 +77,18 @@ The `dotnet` templates included in the `Uno.Templates` package are used to easil
     dotnet new unoapp -o MyProject -preset recommended
     ```
 
-    The argument specified after the `-o` flag (i.e. MyProjectName) will act as the name for both a containing directory and the generated solution.
+    > [!NOTE]
+    > In case you don't provide the `-n` or `--name` argument to the `dotnet new` CLI, the argument specified after the `-o` flag (i.e. MyProjectName) will act as the name for both a containing directory and the generated solution.
 
-* Open the solution in Visual Studio
+    If you are trying to add a new Project to an already existing Solution, you should consider using both of this arguments.
+
+    For example, if your Solution is nested in a `src` Folder, you could use this:
+
+    ```dotnetcli
+    dotnet new unoapp -o src/MyProject -n MyProject -preset recommended
+    ```
+
+* Open the solution in Visual Studio or any other IDE you may choose
 
     `.\MyProjectName\MyProjectName.sln`
 
@@ -67,17 +96,27 @@ The `dotnet` templates included in the `Uno.Templates` package are used to easil
 
 ### 2. Exploring the Solution
 
-The generated solution will contain *MyProjectName* for application logic, including constructs like ViewModels and services, along with the pages, controls, and other views constituting the UI of the application.
+The generated solution will contain *MyProjectName* for application logic, including template contained constructs like ViewModels and services, along with the pages, controls, and other views constituting the UI of the application.
 
 ![The structure of the generated solution](./Learn/images/ProjectStructure-min.png)
 
+As good starting point to check out the code you now have in place, you could take a look into `App.xaml.cs`, where you will find the HostBuilder as the central configuration and setup point of your Apps capabilities, or else the `MainPage.xaml` (or .cs if you choosen cSharp-Markup) as first Page your app will show at Runtime.
+
+You cant wait to see your new Uno App in action and the restoring process of the nuget packages is completed? Let's run your app!
+
+> [!NOTE]
+> This restoring process may take some moments to minutes, depending on your Network and already local available packages
+
 ### 3. Running the Application
+
+> [!IMPORTANT]
+> In case your IDE is not Visual Studio 2022, please refer for the steps to actually run your app to the [VS Code guide](https://platform.uno/docs/articles/create-an-app-vscode.html#debug-the-app) or [Rider guide](https://platform.uno/docs/articles/create-an-app-rider.html#debug-the-app)
 
 * Select a target from the drop-down as pictured below
 
     ![A screenshot of the generated targets](./Learn/images/GeneratedTargets-min.png)
 
-* Click the "play" button, or press F5 to start debugging. The project will be compiled and deployed based on the target platform. For more detailed instructions specific to each platform, refer to the [Debug the App](xref:Uno.GettingStarted.CreateAnApp.VS2022#debug-the-app) documentation.
+* Click the "play" button, or press `F5` to start debugging. The project will be compiled and deployed based on the target platform. For more detailed instructions specific to each platform in Visual Studio 2022, refer to the [Debug the App](xref:Uno.GettingStarted.CreateAnApp.VS2022#debug-the-app) documentation.
 
 ## Installing Extensions in an existing project
 
