@@ -12,13 +12,13 @@ When working with APIs in your application, having a strongly-typed client can s
 
 ### 1. Installation
 
-* Add `Http` to the `<UnoFeatures>` property in the Class Library (`.csproj`) file:
+* Add `HttpKiota` to the `<UnoFeatures>` property in the Class Library (`.csproj`) file:
 
     ```diff
     <UnoFeatures>
         Material;
         Extensions;
-    +   Http;
+    +   HttpKiota;
         Toolkit;
         MVUX;
     </UnoFeatures>
@@ -48,10 +48,14 @@ When working with APIs in your application, having a strongly-typed client can s
     dotnet tool install --global Microsoft.OpenApi.Kiota
     ```
 
-* Generate the Client using the OpenAPI specification URL:
+* Generate the Client using the OpenAPI specification URL or a local file:
 
     ```bash
-    kiota generate -l CSharp -c MyApiClient -n MyApp.Client -d PATH_TO_YOUR_API_SPEC.json -o ./Client
+    # From a static spec file
+    kiota generate --openapi PATH_TO_YOUR_API_SPEC.json --language CSharp --class-name MyApiClient --namespace MyApp.Client --output ./Client
+
+    # OR directly from the running server’s Swagger endpoint
+    kiota generate --openapi http://localhost:5002/swagger/v1/swagger.json --language CSharp --class-name MyApiClient --namespace MyApp.Client --output ./Client
     ```
 
     This will create a client named `MyApiClient` in the Client folder.
