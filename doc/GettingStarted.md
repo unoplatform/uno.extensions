@@ -126,27 +126,84 @@ To get started with Extensions in your project, follow these steps:
 
 Hosting is the foundation for using Extensions. Begin by adding Hosting to your project. Refer to the detailed instructions in the [Hosting Setup Documentation](xref:Uno.Extensions.Hosting.HowToHostingSetup).
 
+After this, add a `protected` property named Host of type `IHost` to your `App.xaml.cs` file below the MainWindow Property:
+
+```csharp
+protected Window? MainWindow { get; private set; }
+protected IHost? Host { get; private set; }
+```
+
 ### Step 2: Configure the OnLaunched Method
 
 After setting up Hosting, adjust the `OnLaunched` method in `App.xaml.cs` to initialize the Extensions features. Ensure you have added the necessary [Uno Platform Features](xref:Uno.Features.Uno.Sdk#uno-platform-features).
 
-Update the `Configure` method as shown below:
+Update the `Configure` method according to your needed Extensions:
 
 ```csharp
 var builder = this.CreateBuilder(args)
+    // Add navigation support for toolkit controls such as TabBar and NavigationView
+    .UseTookitNavigation()
+    // Configure the host builder
     .Configure(host => host
-        // Configure the host builder
-        .UseConfiguration(...)
+#if DEBUG
+        // Switch to Development environment when running in DEBUG
+        .UseEnvironment(Environments.Development)
+#endif
+        // Get Read and Write functions for Package Files
+        .UseStorage()
+                .UseLogging(configure: (context, logBuilder) =>
+        {
+            // Configure log levels for different categories of logging
+            logBuilder
+                .SetMinimumLevel(
+                    context.HostingEnvironment.IsDevelopment() ?
+                        LogLevel.Information :
+                        LogLevel.Warning)
+
+                // Default filters for core Uno Platform namespaces
+                .CoreLogLevel(LogLevel.Warning);
+
+            // Uno Platform namespace filter groups
+            // Uncomment individual methods to see more detailed logging
+
+            //// Generic Xaml events
+            //logBuilder.XamlLogLevel(LogLevel.Debug);
+            //// Layout specific messages
+            //logBuilder.XamlLayoutLogLevel(LogLevel.Debug);
+            //// Storage messages
+            //logBuilder.StorageLogLevel(LogLevel.Debug);
+            //// Binding related messages
+            logBuilder.XamlBindingLogLevel(LogLevel.Debug);
+            //// Binder memory references tracking
+            logBuilder.BinderMemoryReferenceLogLevel(LogLevel.Debug);
+            //// DevServer and HotReload related
+            //logBuilder.HotReloadCoreLogLevel(LogLevel.Information);
+            //// Debug JS interop
+            //logBuilder.WebAssemblyLogLevel(LogLevel.Debug);
+
+        }, enableUnoLogging: true)
+        .UseConfiguration(configure: configBuilder =>
+            configBuilder
+                .EmbeddedSource<App>()
+                .Section<AppConfig>()
+                // Add future Sections that should be read from `appsettings.json` file here
+        )
+        // Enable localization (see appsettings.json and Package.appxmanifest to define your currently supported languages)
         .UseLocalization()
+        .ConfigureServices((context, services) =>
+            services
+                // Register your services
+                .AddSingleton<ISampleService, SampleService>()
+                // Add JsonTypeInfo here if you opt-in to Serialization
+                .AddJsonTypeInfo(SomeSampleContext.Default.SomeSample)
+                // Use this to get a ISerializer<SomeSample>
+                .AddSingleton(new JsonSerializerOptions { PropertyNameCaseInsensitive = true })
+        )
+        // Enable Uno.Extensions.Navigation and add this content in case you use MVUX
+        .UseNavigation(ReactiveViewModelMappings.ViewModelMappings, RegisterRoutes)
         .UseSerialization(...)
         .UseHttp(...)
     );
-```
-
-Add a `protected` property named Host of type `IHost` to your App.xaml.cs file:
-
-```csharp
-protected IHost? Host { get; private set; }
 ```
 
 After creating the `builder`, initialize the `Host` by building it:
