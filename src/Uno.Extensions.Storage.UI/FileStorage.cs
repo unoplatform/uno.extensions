@@ -1,12 +1,10 @@
-﻿using System.Collections.Immutable;
-using System.ComponentModel.DataAnnotations;
-using System.Text;
-namespace Uno.Extensions.Storage;
+﻿namespace Uno.Extensions.Storage;
 
 internal record FileStorage(ILogger<FileStorage> Logger, IDataFolderProvider DataFolderProvider) : IStorage
 {
 	private Task<bool> FileExistsInPackage(string fileName) => Uno.UI.Toolkit.StorageFileHelper.ExistsInPackage(fileName);
 
+	/// <inheritdoc/>
 	public async Task<string?> CreateFolderAsync(string foldername)
 	{
 		var path = DataFolderProvider.AppDataPath;
@@ -24,6 +22,7 @@ internal record FileStorage(ILogger<FileStorage> Logger, IDataFolderProvider Dat
 		return folder.Path;
 	}
 
+	/// <inheritdoc/>
 	public async Task<string?> ReadPackageFileAsync(string filename)
 	{
 		try
@@ -81,7 +80,7 @@ internal record FileStorage(ILogger<FileStorage> Logger, IDataFolderProvider Dat
 	}
 
 	/// <inheritdoc/>
-	public async ValueTask<IEnumerable<string>?> ReadPackageFileAsync(string filename, IEnumerable<(int Start, int End)> lineRanges) // TODO: Check if this maybe shoud get made a ImmutableList or ImmutableArray as return type instead since this is a readonly task
+	public async ValueTask<IEnumerable<string>?> ReadPackageFileAsync(string filename, IEnumerable<(int Start, int End)> lineRanges) // TODO: Check if this maybe should get made a ImmutableList or ImmutableArray as return type instead since this is a readonly task
 	{
 		try
 		{
@@ -158,6 +157,7 @@ internal record FileStorage(ILogger<FileStorage> Logger, IDataFolderProvider Dat
 
 	}
 
+	/// <inheritdoc/>
 	public async Task<Stream?> OpenPackageFileAsync(string filename)
 	{
 		try

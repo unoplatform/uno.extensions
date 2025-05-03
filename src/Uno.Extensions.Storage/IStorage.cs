@@ -1,6 +1,4 @@
-﻿using System.Collections.Immutable;
-
-namespace Uno.Extensions.Storage;
+﻿namespace Uno.Extensions.Storage;
 
 /// <summary>
 /// Wrapper for accessing file storage for application
