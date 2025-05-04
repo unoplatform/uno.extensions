@@ -21,7 +21,7 @@ But in general Storage feature allows you to read and write files in your app's 
 
 - [Uno.Extensions.Storage Reference](xref:Uno.Extensions.Storage)
 
-## Which files could be prefered to use Storage instead of `appsettings.json` via `IConfiguration`
+## Which files could be preferred to use Storage instead of `appsettings.json` via `IConfiguration`
 
 As simple as it sounds, you can use the Storage feature to read and write files independent of their type, while `appsettings.json` is a JSON file that is used to store application settings and configuration data.
 
@@ -32,7 +32,7 @@ To name only some of the possible types:
 - .json -> could be Serialized/Deserialized by using the `Uno.Extensions.Serialization` Extension
 - .csv -> could be Serialized/Deserialized with an appropriate `CsvSerializer`
 
-Additional Librarys required for serialization/deserialization:
+Additional Libraries required for serialization/deserialization:
 
 - .docx/.xlsx
   - `OpenXML`

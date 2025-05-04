@@ -166,7 +166,8 @@
 		"Telerik",
 		"listfeed",
 		"Kiota",
-		"cref"
+	  "cref",
+	  "langword"
 	],
 	"patterns": [
 		{
