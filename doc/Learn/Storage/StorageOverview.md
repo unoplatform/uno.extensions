@@ -13,15 +13,15 @@ But in general, Storage feature allows you to read and write files in your app's
 - **Start here:** [Getting Started with Storage](xref:Uno.Extensions.Storage.GettingStarted)
 - Handling Package Files
   - [Creating Folders]
- [Reading Package Files]
-* [Opening Package Files to read the Content directly as Stream]
-* [Writing to Package Files]
+  - [Reading Package Files]
+  - [Opening Package Files to read the Content directly as Stream]
+  - [Writing to Package Files]
 
 Additionally there are some more useful Extensions you get with this Package:
 
-* [Get Serialized Data from your Package Files]
-<!-- TODO: Uncomment this after https://github.com/unoplatform/uno.extensions/pull/2734 has been merged * [Read specific lines of a package file]
-* [Get specific Items from a `IEnumerable<string>`] -->
+  - [Get Serialized Data from your Package Files]
+<!-- TODO: Uncomment this after https://github.com/unoplatform/uno.extensions/pull/2734 has been merged  - [Read specific lines of a package file]
+  - [Get specific Items from a `IEnumerable<string>`] -->
 
 - [How to: Required Entitlements](xref:Uno.Extensions.Storage.HowToRequiredEntitlements)
 
