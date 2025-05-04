@@ -49,30 +49,7 @@
                         CornerRadius="{TemplateBinding CornerRadius}" />
 				</Grid>
 			</ControlTemplate>
-			<ios:ControlTemplate x:Key="MobileFrameTemplate" TargetType="Frame">
-				<Grid>
-					<VisualStateManager.VisualStateGroups>
-						<VisualStateGroup>
-							<VisualState x:Name="Normal">
-								<VisualState.StateTriggers>
-									<AdaptiveTrigger MinWindowWidth="700" />
-								</VisualState.StateTriggers>
-								<VisualState.Setters>
-									<Setter Target="FlyoutRoot.Width" Value="370" />
-									<Setter Target="FlyoutRoot.Height" Value="400" />
-									<Setter Target="FlyoutRoot.HorizontalAlignment" Value="Center" />
-									<Setter Target="FlyoutRoot.VerticalAlignment" Value="Center" />
-								</VisualState.Setters>
-							</VisualState>
-						</VisualStateGroup>
-					</VisualStateManager.VisualStateGroups>
-					<utu:NativeFramePresenter
-                        x:Name="FlyoutRoot"
-                        HorizontalAlignment="Stretch"
-                        VerticalAlignment="Stretch" />
-				</Grid>
-			</ios:ControlTemplate>
-			<android:ControlTemplate x:Key="MobileFrameTemplate" TargetType="Frame">
+			<mobile:ControlTemplate x:Key="MobileFrameTemplate" TargetType="Frame">
 				<Grid>
 					<VisualStateManager.VisualStateGroups>
 						<VisualStateGroup>
@@ -82,7 +59,8 @@
 								</VisualState.StateTriggers>
 								<VisualState.Setters>
 									<Setter Target="FlyoutRoot.MinWidth" Value="370" />
-									<Setter Target="FlyoutRoot.MinHeight" Value="370" />
+									<ios:Setter Target="FlyoutRoot.MinHeight" Value="400" />
+									<android:Setter Target="FlyoutRoot.MinHeight" Value="370" />
 									<Setter Target="FlyoutRoot.HorizontalAlignment" Value="Center" />
 									<Setter Target="FlyoutRoot.VerticalAlignment" Value="Center" />
 								</VisualState.Setters>
@@ -94,7 +72,7 @@
                         HorizontalAlignment="Stretch"
                         VerticalAlignment="Stretch" />
 				</Grid>
-			</android:ControlTemplate>
+			</mobile:ControlTemplate>
 		</UserControl.Resources>
 		<Frame uen:Region.Attached="True" not_mobile:Template="{StaticResource FrameTemplate}" mobile:Template="{StaticResource MobileFrameTemplate}" />
 	</UserControl>
