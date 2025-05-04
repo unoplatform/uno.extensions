@@ -19,7 +19,7 @@ But in general, Storage feature allows you to read and write files in your app's
 
 Additionally there are some more useful Extensions you get with this Package:
 
-  - [Get Serialized Data from your Package Files]
+- [Get Serialized Data from your Package Files]
 <!-- TODO: Uncomment this after https://github.com/unoplatform/uno.extensions/pull/2734 has been merged  - [Read specific lines of a package file]
   - [Get specific Items from a `IEnumerable<string>`] -->
 
@@ -27,7 +27,6 @@ Additionally there are some more useful Extensions you get with this Package:
 
 > [!IMPORTANT]
 > On Apple platforms (iOS, Mac Catalyst) the Uno storage extension, used by the authentication extension, uses the OS Key Chain service to store secrets. This requires your application to have the [proper entitlements](xref:Uno.Extensions.Storage.HowToRequiredEntitlements) to work properly.
-
 > [!IMPORTANT]
 > All files or folders, you want to interact with using Storage Extension, have to be nested the AppData Path your App is executing from.
 > [!IMPORTANT]
@@ -51,7 +50,7 @@ As simple as it sounds, you can use the Storage feature to read and write files 
 - .json -> could be Serialized/Deserialized by using the `Uno.Extensions.Serialization` Extension
 - .csv -> could be Serialized/Deserialized with an appropriate `CsvSerializer`
 
-### Usefull additional Serializer Libraries for more special files
+### Useful additional Serializer Libraries for more special files
 
 > [!NOTE]
 > This List is not guaranteed to be complete!

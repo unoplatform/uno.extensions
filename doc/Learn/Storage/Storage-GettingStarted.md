@@ -96,3 +96,6 @@ Now as your Project is set up to use the Storage feature, you can add files to y
 Now that you have set up your project and added files to it, you can start using the Storage feature in your application.
 
 Here are some common tasks you might want to do with the Storage feature:
+
+---
+[!INCLUDE [getting-help](./includes/getting-help.md)]
