@@ -11,7 +11,7 @@
       href: xref:Uno.Extensions.Storage.CreateFolder
     - name: Read a Package File content as string
       href: xref:Uno.Extensions.Storage.PackageFiles.ReadFile
-    - name: Use Serialialization to read Package File as deserialized object
+    - name: Use Serialization to read Package File as deserialized object
       href: xref:Uno.Extensions.Storage.UseSerializer
     - name: Read specific lines from a Package File
       href: xref:Uno.Extensions.Storage.PackageFiles.ReadFile.SpecificLines

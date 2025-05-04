@@ -66,7 +66,7 @@ This tutorial will walk you through :
     Now it will open a Terminal and run the check again, so you can see what exact problem it may found and let it fix them for you.
 
     > [!NOTE]
-    > Currently this may show you an Android Emulator would be missing error (maybe also ask you twice if it should attempt to fix it), but will fail either way. If you are not requiring this Platform at the moment or do know, that is defintely not the case, you can ignore this error and continue with the next steps. Those should not appear if you don't selected the Android/iOS target in the Wizard.
+    > Currently this may show you an Android Emulator would be missing error (maybe also ask you twice if it should attempt to fix it), but will fail either way. If you are not requiring this Platform at the moment or do know, that is definitely not the case, you can ignore this error and continue with the next steps. Those should not appear if you don't selected the Android/iOS target in the Wizard.
 
 #### [Using the Command Line](#tab/cli)
 
@@ -261,7 +261,7 @@ Finally, instead of directly creating an instance of a `Window` using `MainWindo
 +   MainWindow.UseStudio();
 +#endif
 +   MainWindow.SetWindowIcon();
-        
+
 +    Host = await builder.NavigateAsync<Shell>();
 }
 ```
