@@ -16,9 +16,11 @@ uid: Uno.Extensions.Storage.GettingStarted
 > [!TIP]
 > In case you might already have a Uno single-head project, you can still proceed from here to add the Storage feature to your existing project.
 
-## Setting up your project
+So let's get started with a Step-by-Step guide to add the Storage feature to your project!
 
-To set up your project to use the Storage feature, you need to follow these steps:
+## 1. Setting up your project
+
+First of all, to set up your project using the Storage feature, you need to follow these steps:
 
 1. `Storage` is provided as an Uno Feature. To enable `Storage` support in your application, add `Storage` to the `<UnoFeatures>` property in your .csproj file.
 
@@ -67,7 +69,7 @@ To set up your project to use the Storage feature, you need to follow these step
         }
     ```
 
-## Adding files to your project
+## 2. Adding files to your project
 
 Now as your Project is set up to use the Storage feature, you can add files to your project.
 
@@ -88,3 +90,9 @@ Now as your Project is set up to use the Storage feature, you can add files to y
 
     > [!NOTE]
     > Same Properties setting would apply if those files are in any other directory of your project/solution structure.
+
+## Next Steps
+
+Now that you have set up your project and added files to it, you can start using the Storage feature in your application.
+
+Here are some common tasks you might want to do with the Storage feature:
