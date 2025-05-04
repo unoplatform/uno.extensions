@@ -1,7 +1,7 @@
 <Project ToolsVersion="15.0">
 	<PropertyGroup>
 		<!-- <UnoVersion>5.5.87</UnoVersion> -->
-		<UnoToolkitVersion>6.3.7</UnoToolkitVersion>
+		<UnoToolkitVersion>7.1.0-dev.4</UnoToolkitVersion>
 		<UnoThemesVersion>5.3.1</UnoThemesVersion>
 		<UnoCSharpMarkupVersion>5.5.6</UnoCSharpMarkupVersion>
 		<UnoWasmBootstrapVersion>8.0.21</UnoWasmBootstrapVersion>
