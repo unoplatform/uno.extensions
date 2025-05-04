@@ -26,4 +26,8 @@ Additionally there are some more useful Extensions you get with this Package:
 
 ---
 
+**Previous Readings:** [Storage Overview](xref:Uno.Extensions.Storage.Overview) | **Next step:** Check out the [Getting Started Guide](xref:Uno.Extensions.Storage.GettingStarted)
+
+---
+
 [!INCLUDE [getting-help](./includes/getting-help.md)]

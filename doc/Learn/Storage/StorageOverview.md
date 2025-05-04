@@ -8,14 +8,13 @@ Uno.Extensions.Storage facilitate local data storage across multiple platforms, 
 
 But in general Storage feature allows you to read and write files in your app's local storage but also create additional folders, as you may know as regular `System.IO` functionality, just platform independent and working just fine with Dependency Injection (DI) and the Uno.Extensions.Serialization Extension.
 
-> [!IMPORTANT]
-> On Apple platforms (iOS, Mac Catalyst) the Uno storage extension, used by the authentication extension, uses the OS Key Chain service to store secrets. This requires your application to have the [proper entitlements](xref:Uno.Extensions.Storage.HowToRequiredEntitlements) to work properly.
-
-## Explore the Storage Feature
+## Explore the Storage Feature and Tutorials
 
 - [Getting Started with Storage](xref:Uno.Extensions.Storage.GettingStarted)
-
 - [How to: Required Entitlements](xref:Uno.Extensions.Storage.HowToRequiredEntitlements)
+
+> [!IMPORTANT]
+> On Apple platforms (iOS, Mac Catalyst) the Uno storage extension, used by the authentication extension, uses the OS Key Chain service to store secrets. This requires your application to have the [proper entitlements](xref:Uno.Extensions.Storage.HowToRequiredEntitlements) to work properly.
 
 ## Visit the Reference
 
