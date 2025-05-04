@@ -4,7 +4,7 @@ uid: Uno.Extensions.Storage.HowTo-HandlingPackageFiles
 
 # How-To: Handling Package Files in your App
 
-Especially on Windows Platform, apps might be Packaged and be stored at specific Folders, which might be User specific or also could be installed globally there. To enable you even in this maybe complex situation to gracefully work with the Files your app needs at runtime or also beyond this, Uno Storage Extension provides a platform specific implementation to solve this for you.
+On the Windows platform, apps may be packaged and stored in specific folders, which can either be user-specific or installed globally. To help you efficiently manage the files your app needs at runtime or beyond, the Uno Storage Extension provides a platform-specific implementation to simplify this process.
 
 Here is a overview of the Tasks it can help you with, als core part the IStorage Interface:
 
