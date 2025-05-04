@@ -59,6 +59,15 @@ This tutorial will walk you through :
 
     ![Visual Studio - A banner indicating to reload projects](./Learn/images/vs2022-project-reload.png)
 
+* Another banner may appear, telling you Uno Check found problems, click **Fix**
+
+    ![Visual Studio - A banner indicating to fix problems](./Learn/images/vs2022-uno-check-banner.png)
+
+    Now it will open a Terminal and run the check again, so you can see what exact problem it may found and let it fix them for you.
+
+    > [!NOTE]
+    > Currently this may show you an Android Emulator would be missing error (maybe also ask you twice if it should attempt to fix it), but will fail either way. If you are not requiring this Platform at the moment or do know, that is defintely not the case, you can ignore this error and continue with the next steps. Those should not appear if you don't selected the Android/iOS target in the Wizard.
+
 #### [Using the Command Line](#tab/cli)
 
 The `dotnet` templates included in the `Uno.Templates` package are used to easily create new projects that already reference the Uno.Extensions.
@@ -129,7 +138,7 @@ protected IHost? Host { get; private set; }
 
 After setting up Hosting, adjust the `OnLaunched` method in `App.xaml.cs` to initialize the Extensions features. Ensure you have added the necessary [Uno Platform Features](xref:Uno.Features.Uno.Sdk#uno-platform-features).
 
-Update the `Configure` method according to your needed Extensions:
+Create or Upgrade the `HostBuilder` depending on your desired Extensions:
 
 ```csharp
 var builder = this.CreateBuilder(args)
@@ -182,29 +191,31 @@ var builder = this.CreateBuilder(args)
         )
         // Enable localization (see appsettings.json and Package.appxmanifest to define your currently supported languages)
         .UseLocalization()
+        // Register Json serializers (ISerializer and ISerializer)
+        .UseSerialization((context, services) => services
+            .AddContentSerializer(context)
+            .AddJsonTypeInfo(WeatherForecastContext.Default.IImmutableListWeatherForecast))
+        .UseHttp((context, services) => services
+            // Register HttpClient
+#if DEBUG
+            // DelegatingHandler will be automatically injected into Refit Client
+            .AddTransient<DelegatingHandler, DebugHttpHandler>()
+#endif
+            .AddSingleton<IWeatherCache, WeatherCache>()
+            .AddRefitClient<IApiClient>(context))
         .ConfigureServices((context, services) =>
             services
-                // Register your services
+                // TODO: Register your regular services
                 .AddSingleton<ISampleService, SampleService>()
-                // Add JsonTypeInfo here if you opt-in to Serialization
-                .AddJsonTypeInfo(SomeSampleContext.Default.SomeSample)
-                // Use this to get a ISerializer<SomeSample>
-                .AddSingleton(new JsonSerializerOptions { PropertyNameCaseInsensitive = true })
         )
         // Enable Uno.Extensions.Navigation and add this content in case you use MVUX
         .UseNavigation(ReactiveViewModelMappings.ViewModelMappings, RegisterRoutes)
-        .UseSerialization(...)
-        .UseHttp(...)
     );
 ```
 
-After creating the `builder`, initialize the `Host` by building it:
-
-```csharp
-Host = builder.Build();
-```
-<!-- TODO: The Build Command here is not used in Navigation, MVUX Setup so maybe this should be tabbed content depending on the setup!-->
 ### Step 3: Use the Builder to Create the Main Window
+
+#### [Using Frame Navigation](#tab/frame-navigation)
 
 Finally, instead of directly creating an instance of a `Window` using `MainWindow = new Window()`, use the `builder` to set up the main window:
 
@@ -217,6 +228,10 @@ var builder = this.CreateBuilder(args)
     );
 
 +MainWindow = builder.Window;
+
++#if DEBUG
++    MainWindow.UseStudio();
++#endif
 
 Host = builder.Build();
 
@@ -234,5 +249,28 @@ if (rootFrame.Content == null)
 MainWindow.Activate();
 ```
 
+#### [Using Uno.Extensions.Navigation Alias `Uno.Regions`](#tab/uno-extensions-navigation)
+
+Finally, instead of directly creating an instance of a `Window` using `MainWindow = new Window()`, use the `builder` to set up the main window:
+
+```diff
+-   MainWindow = new Window()
++   MainWindow = builder.Window;
+
++#if DEBUG
++   MainWindow.UseStudio();
++#endif
++   MainWindow.SetWindowIcon();
+        
++    Host = await builder.NavigateAsync<Shell>();
+}
+```
+
+---
+
 > [!IMPORTANT]
 > Be sure to remove any other code that sets `MainWindow` or `Window.Current` to prevent conflicts in your application.
+
+---
+
+[!INCLUDE [getting-help](./Learn/includes/getting-help.md)]
