@@ -32,4 +32,4 @@ Make sure to opt-in to Storage Extension:
 
 1. Add `.UseStorage()` in your `App.xaml.cs` HostBuilder
 2. Add `Storage;` into your .csproj file in the `<UnoFeatures>` tags
-3. Let your Model or ViewModel take `IStorage` into its Constructor requirements, so the DI will get it for you
+3. Inject `IStorage` into your Model or ViewModel constructor to enable Dependency Injection (DI) to resolve it automatically.
