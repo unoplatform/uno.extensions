@@ -50,6 +50,7 @@ public class PanelVisiblityNavigator : ControlNavigator<Panel>
 			return false;
 		}
 
+
 		if (routeMap?.RenderView?.IsSubclassOf(typeof(FrameworkElement)) ?? false)
 		{
 			return true;
