@@ -163,7 +163,7 @@ When the command is executed and the `ResetCounter` method is invoked, because t
 
 As before, it's recommended that the method be made asynchronous and include a `CancellationToken` parameter.
 
-This behavior can be configured using the [`FeedParameter`](#feedparameter-attribute) and [`ImplicitFeedCommandParameter`](#implicitfeedcommandparameter-attribute) attributes. For example, the implicit resolution of feed parameters has been disabled and an explicit feed parameter has been specified specified for the newValue parameter for the `ResetCounter` method.
+This behavior can be configured using the [`FeedParameter`](#feedparameter-attribute) and [`ImplicitFeedCommandParameter`](#implicitfeedcommandparameter-attribute) attributes. For example, the implicit resolution of feed parameters has been disabled and an explicit feed parameter has been specified for the newValue parameter for the `ResetCounter` method.
 
 ```csharp
 public IFeed<int> CounterValue => ...
@@ -328,7 +328,7 @@ The `Command.Async` method will create a command that when executed will run the
 
 #### Create & Create\<T>
 
-You can use the API in the `Command.Create` factory methods to create a command. The `Command.Create` provides an `ICommandBuilder` parameter, which you can use to configure the command in a fluent API fashion.
+You can use the `Command.Create` factory methods to create a command. The `Command.Create` provides an `ICommandBuilder` parameter, which you can use to configure the command in a fluent API fashion.
 This API is intended for Uno Platform's internal use but can be useful if you need to create custom commands.
 
 `ICommandBuilder` provides the three methods below.
@@ -351,7 +351,7 @@ This API is intended for Uno Platform's internal use but can be useful if you ne
   public IAsyncCommand MyCommand => Command.Create<int>(builder => builder.When(i => i > 10));
   ```
 
-  In the above example, the predicate passed into the `When` method will be executed when the UI wants to determine if the command can be executed, which will only be true if the command parameter is greater than 10.
+  In the above example, the predicate passed into the `When` method will be executed when the UI wants to determine if the command can be executed, which will only happen when the command parameter is greater than 10.
 
 - ##### Then
 
