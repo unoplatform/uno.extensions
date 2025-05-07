@@ -17,7 +17,7 @@ public partial class ChefsHomeModel(INavigator navigator)
 
 	public async ValueTask NavigateToRecipeDetail()
 	{
-		await navigator.NavigateRouteAsync(this, "ChefsRecipeDetails", data: new ChefsRecipe { Name = "Home" });
+		await navigator.NavigateRouteAsync(this, "ChefsRecipeDetails", data: new ChefsRecipe { Name = "Home Page" });
 	}
 
 	public async ValueTask NavigateToFavoriteRecipes()

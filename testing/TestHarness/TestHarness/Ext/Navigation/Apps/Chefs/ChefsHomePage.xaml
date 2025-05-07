@@ -10,13 +10,15 @@
 	  mc:Ignorable="d">
 
 	<Grid RowDefinitions="Auto,*">
-		<utu:NavigationBar Content="Home" AutomationProperties.AutomationId="HomeNavigationBar"/>
+		<utu:NavigationBar Content="Home" />
 		<StackPanel Grid.Row="1">
-			<TextBlock Text="ChefsHome" AutomationProperties.AutomationId="Chefs_Home_TextBlock"/>
-			<Button Command="{Binding ShowCurrentProfile}" Content="Profile" AutomationProperties.AutomationId="HomeProfileBtn"/>
-			<Button Command="{Binding ShowCurrentProfileNew}" Content="Profile (New)" AutomationProperties.AutomationId="HomeProfileNewBtn" />
-			<Button uen:Navigation.Request="ChefsNotifications" Content="Notifications" AutomationProperties.AutomationId="HomeNotificationsBtn"/>
-			<Button Command="{Binding NavigateToRecipeDetail}" Content="Recipe Details" AutomationProperties.AutomationId="HomeRecipeDetails"/>
+			<TextBlock Text="ChefsHome" />
+			<Button Command="{Binding ShowCurrentProfile}" Content="Profile" />
+			<Button Command="{Binding ShowCurrentProfileNew}" Content="Profile (New)" />
+			<Button Command="{Binding NavigateToRecipeDetail}" Content="Recipe Details" />
+			<Button AutomationProperties.AutomationId="FavoriteRecipesButton" Command="{Binding NavigateToFavoriteRecipes}" Content="Favorite Recipes" />
+			<Button uen:Navigation.Request="ChefsSearch" Content="Search" />
+			<Button uen:Navigation.Request="ChefsNotifications" Content="Notifications" />
 		</StackPanel>
 	</Grid>
 </Page>
