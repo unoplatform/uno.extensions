@@ -179,8 +179,7 @@ public static class RouteExtensions
 
 	public static bool IsRoot(this Route route) => route.Qualifier.StartsWith(Qualifiers.Root);
 
-	// Note: Disabling parent routing - leaving this code in case parent routing is required
-	//public static bool IsParent(this Route route) => route.Qualifier.StartsWith(Qualifiers.Parent);
+	public static bool IsParent(this Route route) => route.Qualifier.StartsWith(Qualifiers.Parent);
 
 	public static bool IsNested(this Route route) => route.Qualifier.StartsWith(Qualifiers.Nested);
 

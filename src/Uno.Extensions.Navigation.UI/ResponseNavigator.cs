@@ -36,8 +36,7 @@ public class ResponseNavigator<TResult> : IResponseNavigator, IInstance<IService
 		var navResponse = await Navigation.NavigateAsync(request);
 
 		if (request.Route.FrameIsBackNavigation() ||
-			// Note: Disabling parent routing - leaving this code in case parent routing is required
-			//request.Route.TrimQualifier(Qualifiers.Parent).FrameIsBackNavigation() || // Handles ../- 
+			request.Route.TrimQualifier(Qualifiers.Parent).FrameIsBackNavigation() || // Handles ../- 
 			request.Route.TrimQualifier(Qualifiers.Nested).FrameIsBackNavigation() || // Handles ./- 
 			(request.Route.IsRoot() && request.Route.TrimQualifier(Qualifiers.Root).FrameIsBackNavigation() && this.Navigation.GetParent() == null))
 		{
