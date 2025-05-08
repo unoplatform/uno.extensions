@@ -1,9 +1,9 @@
 ﻿
 namespace TestHarness.Ext.Navigation.Apps.Chefs;
 
-public sealed partial class ChefsRegistrationPage : Page
+public sealed partial class ChefsReviewsPage : Page
 {
-	public ChefsRegistrationPage()
+	public ChefsReviewsPage()
 	{
 		this.InitializeComponent();
 	}

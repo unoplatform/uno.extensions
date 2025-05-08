@@ -13,7 +13,7 @@
 		<Grid x:Name="MainGrid"
 			  RowSpacing="0"
 			  Background="{ThemeResource SurfaceBrush}"
-			  uen:Region.Attached="True">
+			  uen:Region.Attached="True" >
 			<Grid.RowDefinitions>
 				<RowDefinition />
 				<RowDefinition Height="Auto" />
@@ -22,24 +22,22 @@
 				  uen:Region.Attached="True"
 				  uen:Region.Navigator="Visibility" />
 
-			<utu:TabBar x:Name="MainTabs"
-						AutomationProperties.AutomationId="MainTabs"
-						Grid.Row="1"
+			<utu:TabBar x:Name="Tabs" Grid.Row="1"
 						uen:Region.Attached="True">
 				<utu:TabBarItem uen:Region.Name="ChefsHome"
-								AutomationProperties.AutomationId="HomeTabBarItem"
 								IsSelectable="True"
-								Content="Home" />
+								Content="Home" >
+				</utu:TabBarItem>
 
-				<utu:TabBarItem uen:Region.Name="ChefsSearch"
+				<utu:TabBarItem uen:Region.Name="-/ChefsSearch"
 								IsSelectable="True"
-								AutomationProperties.AutomationId="SearchTabBarItem"
-								Content="Search" />
+								Content="Search">
+				</utu:TabBarItem>
 
 				<utu:TabBarItem uen:Region.Name="ChefsFavoriteRecipes"
-								AutomationProperties.AutomationId="FavoriteTabBarItem"
 								IsSelectable="True"
-								Content="Favorites" />
+								Content="Favorites">
+				</utu:TabBarItem>
 			</utu:TabBar>
 
 		</Grid>
