@@ -146,14 +146,6 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 			return dependsNavResponse;
 		}
 
-		// Handle implicit forward navigation (eg navigation invoked inside of a child region that should be sent to the parent region)
-		// This is only required for stack navigators, as other navigators will handle this internally
-		if (rm is not null &&
-			await RedirectForImplicitForwardNavigation(request, rm) is { } implicitNavResponse)
-		{
-			return implicitNavResponse;
-		}
-
 		// If the current navigator can handle this route,
 		// then simply return without redirecting the request but
 		// only if parent can't navigate to route (eg composite region
@@ -228,25 +220,6 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 		}
 
 		if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"Back navigation being handled by root region");
-		return default;
-	}
-
-	private async Task<Task<NavigationResponse?>?> RedirectForImplicitForwardNavigation(NavigationRequest request, RouteInfo rm)
-	{
-		var ancestors = Region.Ancestors(true);
-
-		var internalRoute = request.AsInternal();
-
-		foreach (var navAncestor in ancestors)
-		{
-			if (navAncestor.Navigator is IStackNavigator &&
-				Resolver.FindByPath(navAncestor.Route?.Base) is {  } ancestorMap &&
-				ancestorMap.Parent == rm.Parent)
-			{
-				return navAncestor.Navigator.NavigateAsync(internalRoute);
-			}
-		}
-
 		return default;
 	}
 
