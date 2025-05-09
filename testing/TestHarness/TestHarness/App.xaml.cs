@@ -23,8 +23,8 @@ public partial class App : Application
 #endif
 
 
-#if NET6_0_OR_GREATER && WINDOWS10_0_19041_0_OR_GREATER
-				_window = new Window();
+#if (NET6_0_OR_GREATER && WINDOWS10_0_19041_0_OR_GREATER) || HAS_UNO_WINUI
+		_window = new Window();
 #else
 		_window = Window.Current;
 #endif
