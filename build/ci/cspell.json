@@ -98,7 +98,8 @@
 		"Validatable",
 		"backstack",
 		"viewmap",
-		"datamap"
+		"datamap",
+		"prerequirements"
 	],
 	"ignoreWords": [
 		"ADAL",
@@ -166,8 +167,8 @@
 		"Telerik",
 		"listfeed",
 		"Kiota",
-	  "cref",
-	  "langword"
+		"cref",
+		"langword"
 	],
 	"patterns": [
 		{
