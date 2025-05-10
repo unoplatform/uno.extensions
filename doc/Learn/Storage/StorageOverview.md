@@ -43,7 +43,7 @@ As simple as it sounds, you can use the Storage feature to read and write files 
 
 ### Classic file types to use with Storage
 
-- .txt -> simply get the content as a <see langword="string"/> or use the [`IEnumerable<string> StorageExtensions.ReadLinesFromPackageFile(string filename, IEnumerable<(int Start, int End)> lineRanges)`](xref:Uno.Extensions.Storage.StorageExtensions.ReadLinesFromPackageFile) Extension in this Feature Package to define, which line ranges you want to get from this a file.
+- .txt -> simply get the content as a <see langword="string"/> <!--TODO: Uncomment this if PR #2734 has been merged https://github.com/unoplatform/uno.extensions/pull/2734 // or use the [`IEnumerable<string> StorageExtensions.ReadLinesFromPackageFile(string filename, IEnumerable<(int Start, int End)> lineRanges)`](xref:Uno.Extensions.Storage.StorageExtensions.ReadLinesFromPackageFile) Extension in this Feature Package to define, which line ranges you want to get from this a file.-->
 - .xml -> could be Serialized/Deserialized with an appropriate `XmlSerializer`
 - .json -> could be Serialized/Deserialized by using the `Uno.Extensions.Serialization` Extension
 - .csv -> could be Serialized/Deserialized with an appropriate `CsvSerializer`

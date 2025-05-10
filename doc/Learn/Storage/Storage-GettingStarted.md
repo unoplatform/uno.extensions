@@ -7,7 +7,7 @@ uid: Uno.Extensions.Storage.GettingStarted
 > [NOTE]
 > To get a overview of the Storage feature capabilities and common file types, please refer to the [Storage Overview](xref:Uno.Extensions.Storage.Overview) page.
 
-## Pre-requisites
+## Prerequisites
 
 [!INCLUDE [single-project](../includes/single-project.md)]
 
@@ -88,7 +88,6 @@ First of all, to set up your project using the Storage feature, you need to foll
 ---
 
 ## 2. Adding files to your project
-
 
 Now as your Project is set up to use the Storage feature, you can add files to your project.
 

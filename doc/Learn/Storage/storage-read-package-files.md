@@ -1,18 +1,27 @@
 ---
-uid: Uno.Extensions.Storage.PackageFiles.HowToPackageFiles
+uid: Uno.Extensions.Storage.HowToPackageFiles
 ---
 
 # How To: Handling Package Files with Storage
 
-## Usage Examples for Create, Read and Write Operations on Package Files
+The `IStorage` interface provides methods to work with files contained in your application's package.
 
-The `IStorage` interface provides methods to work with regular files in your application's package.
+These operations including:
 
-Below are some examples to help you understand how to use these methods effectively in your application. All of them assuming to be used in a class or record definition of course.
+- [How To: Handling Package Files with Storage](#how-to-handling-package-files-with-storage)
+  - [Prerequisites](#prerequisites)
+  - [Create Folder](#create-folder)
+  - [Read File as string](#read-file-as-string)
+  - [Read File with Serialization](#read-file-with-serialization)
+  - [Open Package File as Stream](#open-package-file-as-stream)
+    - [Important Note on Stream Handling](#important-note-on-stream-handling)
+  - [Writing to File](#writing-to-file)
 
 ## Prerequisites
 
-Before we dive right into the following Samples, please make sure, you did set up your Uno App following the [Storage getting Started Guide](xref:Uno.Extensions.Storage.GettingStarted).
+[!INCLUDE [use-storage-prerequisites](./includes/use-storage-prerequisites.md)]
+
+The following code samples to help you understand how to use these methods effectively in your application. All of them assuming to be used in a class or record definition of course.
 
 ## [Create Folder](#tab/create-folder)
 
@@ -23,7 +32,7 @@ public async Task CreateFolderExample()
 {
     var folderName = "NewFolder";
 
-    var folderPath = await storage.CreateFolderAsync(folderName);
+    var folderPath = await _storage.CreateFolderAsync(folderName);
 
     if (folderPath is not null)
     {
@@ -36,19 +45,18 @@ public async Task CreateFolderExample()
 }
 ```
 
-## [Read as string](#tab/read-as-string)
+## [Read File as string](#tab/read-file-as-string)
 
 You can read the contents of a file in your application's package as a string using the `ReadPackageFileAsync` method. This is useful for scenarios like loading configuration files or templates.
 
 ```csharp
-public async Task ReadFileExample()
+public async Task ReadThisFile(string fileNameToRead = "example.txt")
 {
-    var fileName = "example.txt";
-    var fileContent = await storage.ReadPackageFileAsync(fileName);
+    var fileContent = await _storage.ReadPackageFileAsync(fileNameToRead);
 
     if (fileContent is not null)
     {
-        Console.WriteLine($"File Content: {fileContent}");
+        Console.WriteLine($"File Content:\n{fileContent}");
     }
     else
     {
@@ -57,7 +65,7 @@ public async Task ReadFileExample()
 }
 ```
 
-<!-- TODO: Uncomment this, if https://github.com/unoplatform/uno.extensions/pull/2734 has been merged
+<!-- TODO: Uncomment this if PR #2734 has been merged https://github.com/unoplatform/uno.extensions/pull/2734
 
 ## [Reading specified Lines from Package File](#tab/reading-specified-lines-from-package-file)
 
@@ -67,7 +75,7 @@ You can also read just selected lines from a file, which is particularly useful 
 public async Task ReadSpecificLinesExample()
 {
     var fileName = "example.txt";
-    var lineRanges = new List<(int Start, int End)>
+    var lineRanges = new List<(int Start, int End)> // this could any type fitting as IEnumerable<(int,int)> since this function does not manipulate the provided Values.
     {
         (0, 5), // Read lines 0 to 5
         (10, 15) // Read lines 10 to 15
@@ -77,48 +85,47 @@ public async Task ReadSpecificLinesExample()
 
     if (selectedLines is not null)
     {
-        foreach (var line in selectedLines)
-        {
-            Console.WriteLine(line);
-        }
+        Console.WriteLine(line);
     }
     else
     {
         Console.WriteLine($"File '{fileName}' not found or empty.");
     }
 }
-```
+``` -->
 
 > [!TIP]
 > This function is expecting 1-based integer tuple pairs, so you could gracefully use common text editor's line numbering, to provide the appropriate values!
-
---- -->
 
 ## [Read File with Serialization](#tab/read-file-with-Serialization)
 
 You can get already deserialized data from your Package File content using the `StorageExtensions.ReadPackageFileAsync<TData>` method. This is ideal for scenarios like loading json formatted files without having to use `appsettings.json`.
 
+> [!TIP]
+> Make sure, your Model or ViewModel awaits this Typed Serializer.
+
 ```csharp
-public async Task ReadAndDeserializeFile(ISerializer serializer)
+public SampleModel(ISerializer<Person> _serializer)
 {
-    var fileName = "data.json";
-
-    var data = await storage.ReadPackageFileAsync<Person>(serializer, fileName);
-
-    if (data is not null)
+    public async Task ReadAndDeserializeFile(string fileName = "data.json")
     {
-        Console.WriteLine($"Deserialized Data: {data}");
-    }
-    else
-    {
-        Console.WriteLine($"File '{fileName}' not found or could not be deserialized.");
+
+        var data = await storage.ReadPackageFileAsync<Person>(_serializer, fileName);
+
+        if (data is not null)
+        {
+            Console.WriteLine($"Deserialized Data: {data}");
+        }
+        else
+        {
+            Console.WriteLine($"File '{fileName}' not found or could not be deserialized.");
+        }
     }
 }
-
 ```
 
 > [!TIP]
-> For example this could be a sample definition of `Person`, using [**`Uno.Extensions.Serialization`**](../Serialization/SerializationOverview.md)
+> For example this could be a sample definition of `Person`, using [**`Uno.Extensions.Serialization`**](xref:Uno.Extensions.Serialization.Overview)
 >
 > ```csharp
 > public record Person(string FirstName, string LastName);
@@ -136,16 +143,17 @@ public async Task OpenFileAsStreamExample()
 {
     var fileName = "example.bin";
 
-    using var stream = await storage.OpenPackageFileAsync(fileName);
-
-    if (stream is not null)
+    using var stream = await storage.OpenPackageFileAsync(fileName)
     {
-        Console.WriteLine($"Successfully opened file '{fileName}' as a stream.");
-        // Process the stream as needed
-    }
-    else
-    {
-        Console.WriteLine($"File '{fileName}' not found in the package.");
+        if (stream is not null)
+        {
+            Console.WriteLine($"Successfully opened file '{fileName}' as a stream.");
+            // Process the stream as needed
+        }
+        else
+        {
+            Console.WriteLine($"File '{fileName}' not found in the package.");
+        }
     }
 }
 ```
@@ -165,32 +173,33 @@ public async Task OpenFileAsStreamExample()
 
     // Ensure the stream is properly disposed of after use
     using var stream = await storage.OpenPackageFileAsync(fileName);
-
-    if (stream is not null)
     {
-        Console.WriteLine($"Successfully opened file '{fileName}' as a stream.");
-        // Process the stream as needed
+        if (stream is not null)
+        {
+            Console.WriteLine($"Successfully opened file '{fileName}' as a stream.");
+            // Process the stream as needed
 
-    }
-    else
-    {
-        Console.WriteLine($"File '{fileName}' not found in the package.");
+        }
+        else
+        {
+            Console.WriteLine($"File '{fileName}' not found in the package.");
+        }
     }
 }
 ```
 
-By using the `using` statement, you can guarantee that the stream is closed automatically when it goes out of scope, simplifying resource management and improving code reliability.
+> [!TIP]
+> When working with <see cref="Stream"/>, it is essential to ensure they are properly closed after use to prevent resource leaks and potential issues with file or network operations. In C#, this can be achieved by using a `using` statement, which ensures that the stream is disposed of correctly, even if an exception occurs during processing.
+>
+> With the `using` statement, you can guarantee that the stream is closed automatically when it goes out of scope, simplifying resource management and improving code reliability.
 
 ## [Writing to File](#tab/write-to-file)
 
 To write content to a file in your application's package, use the `WriteFileAsync` method. This method allows you to overwrite an existing file or create a new one.
 
 ```csharp
-public async Task WriteFileExample()
+public async Task WriteFileExample(string fileName = "output.txt", string toBeWrittenContent = "Hello, Uno Platform!", bool shouldOverwrite = false)
 {
-    var fileName = "output.txt";
-    var content = "Hello, Uno Platform!";
-    var overwrite = true;
 
     try
     {
