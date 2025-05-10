@@ -22,7 +22,7 @@ public class PanelVisiblityNavigator : ControlNavigator<Panel>
 			}
 			else
 			{
-				view.Loaded += PanelLoaded;
+				region.View.Loaded += PanelLoaded;
 			}
 		}
 	}
@@ -49,6 +49,7 @@ public class PanelVisiblityNavigator : ControlNavigator<Panel>
 		{
 			return false;
 		}
+
 
 		if (routeMap?.RenderView?.IsSubclassOf(typeof(FrameworkElement)) ?? false)
 		{
