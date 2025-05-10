@@ -5,17 +5,7 @@
   items:
     - name: Getting Started with Storage
       href: xref:Uno.Extensions.Storage.GettingStarted
-    - name: Create a new Folder
-      href: xref:Uno.Extensions.Storage.CreateFolder
-    - name: Read a Package File content as string
-      href: xref:Uno.Extensions.Storage.PackageFiles.ReadFile
-    - name: Use Serialization to read Package File as deserialized object
-      href: xref:Uno.Extensions.Storage.UseSerializer
-    - name: Read specific lines from a Package File
-      href: xref:Uno.Extensions.Storage.PackageFiles.ReadFile.SpecificLines
-    - name: Open Package File as Stream
-      href: xref:Uno.Extensions.Storage.PackageFiles.ReadFile.StreamReader
-    - name: Writing to a Package File
-      href: xref:Uno.Extensions.Storage.PackageFiles.WriteFile
+    - name: Using Storage Functions
+      href: xref:Uno.Extensions.Storage.UsingStorageExtension
 - name: "How-To: Add Required Entitlements"
   href: xref:Uno.Extensions.Storage.HowToRequiredEntitlements

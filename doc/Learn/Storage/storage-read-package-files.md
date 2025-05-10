@@ -1,5 +1,5 @@
 ---
-uid: Uno.Extensions.Storage.HandlingPackageFiles
+uid: Uno.Extensions.Storage.UsingStorageExtensions
 ---
 
 # Handling Package Files with Storage
