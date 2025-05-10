@@ -163,7 +163,7 @@ When the command is executed and the `ResetCounter` method is invoked, because t
 
 As before, it's recommended that the method be made asynchronous and include a `CancellationToken` parameter.
 
-This behavior can be configured using the [`FeedParameter`](#feedparameter-attribute) and [`ImplicitFeedCommandParameter`](#implicitfeedcommandparameter-attribute) attributes. For example, the implicit resolution of feed parameters has been disabled and an explicit feed parameter specified for the newValue parameter for the `ResetCounter` method.
+This behavior can be configured using the [`FeedParameter`](#feedparameter-attribute) and [`ImplicitFeedCommandParameter`](#implicitfeedcommandparameter-attribute) attributes. For example, the implicit resolution of feed parameters has been disabled and an explicit feed parameter has been specified for the newValue parameter for the `ResetCounter` method.
 
 ```csharp
 public IFeed<int> CounterValue => ...
@@ -180,7 +180,7 @@ Here is a recap of the rules the Model method must comply with for an `IAsyncCom
 - Any return values of the method (if any) will be discarded.
 - The method may have one `CancellationToken` parameter or none.
 - The method may have multiple parameters that can be resolved from feeds (see [Additional Feed parameters](#additional-feed-parameters) above).
-- The method may have one parameter additional, other than parameters resolved from Feeds or `CancellationToken`, to be provided from the View's `CommandParameter` property.
+- The method may have one additional parameter, other than parameters resolved from Feeds or `CancellationToken`, to be provided from the View's `CommandParameter` property.
 
 ### Configuring command generation using attributes
 
@@ -188,7 +188,7 @@ Here is a recap of the rules the Model method must comply with for an `IAsyncCom
 
 By default, implicit command generation is enabled when the MVUX package is referenced. That means that any method in the Model that matches the [command generation rules](#command-generation-rules) will have an accompanying command wrapper generated for it.
 
-However, you may choose to enable, or disable, implicit command generation for a specific class, or assembly. Conversely, when implicit command generation has been disabled for an assembly, it can be enabled for specific classes.
+However, you may turn implicit command generation on or off for a specific class or assembly. Conversely, when implicit command generation has been disabled for an assembly, it can be enabled for specific classes.
 
 Enabling, or disabling, implicit command generation can be achieved using the [`ImplicitCommands`](https://github.com/unoplatform/uno.extensions/blob/main/src/Uno.Extensions.Reactive/Config/ImplicitCommandsAttribute.cs) attribute.
 
@@ -328,8 +328,8 @@ The `Command.Async` method will create a command that when executed will run the
 
 #### Create & Create\<T>
 
-To create a command you can use the API provided in the `Command.Create` factory methods. The `Command.Create` provides an `ICommandBuilder` parameter which you can use to configure the command in a fluent-API fashion.
-This API is intended for Uno Platform's internal use but can come in handy if you need to create custom commands.
+You can use the `Command.Create` factory methods to create a command. The `Command.Create` provides an `ICommandBuilder` parameter, which you can use to configure the command in a fluent API fashion.
+This API is intended for Uno Platform's internal use but can be useful if you need to create custom commands.
 
 `ICommandBuilder` provides the three methods below.
 
@@ -351,11 +351,11 @@ This API is intended for Uno Platform's internal use but can come in handy if yo
   public IAsyncCommand MyCommand => Command.Create<int>(builder => builder.When(i => i > 10));
   ```
 
-  In the above example, the predicate passed into the `When` method will be executed when the UI wants to determine if the command can be executed, which will only be true if the command parameter will be greater than 10.
+  In the above example, the predicate passed into the `When` method will be executed when the UI wants to determine if the command can be executed, which will only happen when the command parameter is greater than 10.
 
 - ##### Then
 
-  Sets the asynchronous callback to be invoked when the Command is executed. This method will be generic if there's a preceding parameter setting (via `Given` or `When`).
+  This method sets the asynchronous callback to be invoked when the Command is executed. If there's a preceding parameter setting (via `Given` or `When`), it will be generic.
 
   ```csharp
   public IAsyncCommand MyCommand => Command.Create(builder => builder.Then(async ct => await ExecuteMyCommand(ct)));
@@ -370,7 +370,7 @@ This API is intended for Uno Platform's internal use but can come in handy if yo
 
 #### Example
 
-Here's a complete example where the MyCommand is defined in the Model.
+Here's a complete example of how `MyCommand` is defined in the Model.
 
 ```csharp
 public IAsyncCommand MyCommand =>
@@ -380,7 +380,7 @@ public IAsyncCommand MyCommand =>
         .When(currentPage => currentPage > 0)
         .Then(async (currentPage, ct) => await NavigateToPage(currentPage, ct)));
 
-public IFeed<int> CurentPage => ...
+public IFeed<int> CurrentPage => ...
 
 public ValueTask NavigateToPage(int currentPage, CancellationToken ct) { ... }
 ```
@@ -429,6 +429,6 @@ Method name    | Signature
 
 `AsyncAction` refers to an action with a variable number of parameters (up to 16), with its last parameter being a `CancellationToken`, and returns a `ValueTask`:
 
-```chsarp
+```csharp
 public delegate ValueTask AsyncAction<in T1, T2...>(T1 t1, T2 t2 ... , CancellationToken ct);
 ```
