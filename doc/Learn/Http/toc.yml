@@ -7,4 +7,4 @@
 - name: "How-To: Configure with endpoint options"
   href: xref:Uno.Extensions.Http.HowToEndpointOptions
 - name: "How-To: Create a Kiota Client"
-  href: Uno.Extensions.Http.HowToKiota
+  href: xref:Uno.Extensions.Http.HowToKiota
