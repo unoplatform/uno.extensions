@@ -1,0 +1,31 @@
+### YamlMime:ManagedReference
+items:
+- uid: Uno.Extensions.Storage.KeyValueStorage
+  commentId: N:Uno.Extensions.Storage.KeyValueStorage
+  id: Uno.Extensions.Storage.KeyValueStorage
+  children:
+  - Uno.Extensions.Storage.KeyValueStorage.IKeyValueStorage
+  - Uno.Extensions.Storage.KeyValueStorage.KeyValueStorageSettings
+  langs:
+  - csharp
+  - vb
+  name: Uno.Extensions.Storage.KeyValueStorage
+  nameWithType: Uno.Extensions.Storage.KeyValueStorage
+  fullName: Uno.Extensions.Storage.KeyValueStorage
+  type: Namespace
+  assemblies:
+  - Uno.Extensions.Storage
+references:
+- uid: Uno.Extensions.Storage.KeyValueStorage.IKeyValueStorage
+  commentId: T:Uno.Extensions.Storage.KeyValueStorage.IKeyValueStorage
+  href: Uno.Extensions.Storage.KeyValueStorage.IKeyValueStorage.html
+  name: IKeyValueStorage
+  nameWithType: IKeyValueStorage
+  fullName: Uno.Extensions.Storage.KeyValueStorage.IKeyValueStorage
+- uid: Uno.Extensions.Storage.KeyValueStorage.KeyValueStorageSettings
+  commentId: T:Uno.Extensions.Storage.KeyValueStorage.KeyValueStorageSettings
+  href: Uno.Extensions.Storage.KeyValueStorage.KeyValueStorageSettings.html
+  name: KeyValueStorageSettings
+  nameWithType: KeyValueStorageSettings
+  fullName: Uno.Extensions.Storage.KeyValueStorage.KeyValueStorageSettings
+memberLayout: SeparatePages

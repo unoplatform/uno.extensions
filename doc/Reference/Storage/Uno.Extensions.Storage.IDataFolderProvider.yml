@@ -1,0 +1,110 @@
+### YamlMime:ManagedReference
+items:
+- uid: Uno.Extensions.Storage.IDataFolderProvider
+  commentId: T:Uno.Extensions.Storage.IDataFolderProvider
+  id: IDataFolderProvider
+  parent: Uno.Extensions.Storage
+  children:
+  - Uno.Extensions.Storage.IDataFolderProvider.AppDataPath
+  langs:
+  - csharp
+  - vb
+  name: IDataFolderProvider
+  nameWithType: IDataFolderProvider
+  fullName: Uno.Extensions.Storage.IDataFolderProvider
+  type: Interface
+  source:
+    id: IDataFolderProvider
+    path: ~\..\src\Uno.Extensions.Storage\IDataFolderProvider.cs
+    startLine: 5
+  assemblies:
+  - Uno.Extensions.Storage
+  namespace: Uno.Extensions.Storage
+  summary: Interface for providing the data folder path for the application
+  example: []
+  syntax:
+    content: public interface IDataFolderProvider
+    content.vb: Public Interface IDataFolderProvider
+- uid: Uno.Extensions.Storage.IDataFolderProvider.AppDataPath
+  commentId: P:Uno.Extensions.Storage.IDataFolderProvider.AppDataPath
+  id: AppDataPath
+  parent: Uno.Extensions.Storage.IDataFolderProvider
+  langs:
+  - csharp
+  - vb
+  name: AppDataPath
+  nameWithType: IDataFolderProvider.AppDataPath
+  fullName: Uno.Extensions.Storage.IDataFolderProvider.AppDataPath
+  type: Property
+  source:
+    id: AppDataPath
+    path: ~\..\src\Uno.Extensions.Storage\IDataFolderProvider.cs
+    startLine: 10
+  assemblies:
+  - Uno.Extensions.Storage
+  namespace: Uno.Extensions.Storage
+  summary: The path to the application data folder
+  example: []
+  syntax:
+    content: string? AppDataPath { get; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: ReadOnly Property AppDataPath As String
+  overload: Uno.Extensions.Storage.IDataFolderProvider.AppDataPath*
+references:
+- uid: Uno.Extensions.Storage
+  commentId: N:Uno.Extensions.Storage
+  href: Uno.html
+  name: Uno.Extensions.Storage
+  nameWithType: Uno.Extensions.Storage
+  fullName: Uno.Extensions.Storage
+  spec.csharp:
+  - uid: Uno
+    name: Uno
+    href: Uno.html
+  - name: .
+  - uid: Uno.Extensions
+    name: Extensions
+    href: Uno.Extensions.html
+  - name: .
+  - uid: Uno.Extensions.Storage
+    name: Storage
+    href: Uno.Extensions.Storage.html
+  spec.vb:
+  - uid: Uno
+    name: Uno
+    href: Uno.html
+  - name: .
+  - uid: Uno.Extensions
+    name: Extensions
+    href: Uno.Extensions.html
+  - name: .
+  - uid: Uno.Extensions.Storage
+    name: Storage
+    href: Uno.Extensions.Storage.html
+- uid: Uno.Extensions.Storage.IDataFolderProvider.AppDataPath*
+  commentId: Overload:Uno.Extensions.Storage.IDataFolderProvider.AppDataPath
+  href: Uno.Extensions.Storage.IDataFolderProvider.AppDataPath.html#Uno_Extensions_Storage_IDataFolderProvider_AppDataPath
+  name: AppDataPath
+  nameWithType: IDataFolderProvider.AppDataPath
+  fullName: Uno.Extensions.Storage.IDataFolderProvider.AppDataPath
+- uid: System.String
+  commentId: T:System.String
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.string
+  name: string
+  nameWithType: string
+  fullName: string
+  nameWithType.vb: String
+  fullName.vb: String
+  name.vb: String
+- uid: System
+  commentId: N:System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System
+  nameWithType: System
+  fullName: System
+memberLayout: SeparatePages

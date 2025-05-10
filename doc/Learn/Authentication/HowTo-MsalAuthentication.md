@@ -67,12 +67,12 @@ uid: Uno.Extensions.Authentication.HowToMsalAuthentication
         ...
     }
     ```
-
+<!-- markdownlint-disable MD034-->
 > [!IMPORTANT]
 > The `AddMsal()` method requires a `Window` instance, which the `MsalAuthenticationProvider` uses to set up the authentication dialog. You can access the `Window` instance through the `Configure()` method overload that provides it.
 > **Note:** Failing to pass a valid `Window` instance could result in a `MsalClientException` with the message:
-> *"Only loopback redirect uri is supported, but <your_redirect_uri> was found. Configure http://localhost or http://localhost:port both during app registration and when you create the PublicClientApplication object. See https://aka.ms/msal-net-os-browser for details."*
-
+> *"Only loopback redirect uri is supported, but <your_redirect_uri> was found. Configure `http://localhost` or `http://localhost:port` both during app registration and when you create the PublicClientApplication object. See https://aka.ms/msal-net-os-browser for details."*
+<!-- markdownlint-restore MD034-->
 - The `IAuthenticationBuilder` is responsible for managing the lifecycle of the associated provider that was built.
 
 - Because it is configured to use MSAL, the user will eventually be prompted to sign in to their Microsoft account when they use your application. `MsalAuthenticationProvider` will then store the user's access token in credential storage. The token will be automatically refreshed when it expires.

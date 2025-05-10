@@ -4,6 +4,11 @@ namespace Uno.Extensions;
 
 internal static class ServiceCollectionExtensions
 {
+	/// <summary>
+	/// Adds file-based storage singleton to the service collection.
+	/// </summary>
+	/// <param name="services">The service collection to which the file storage service will be added.</param>
+	/// <returns>The updated service collection.</returns>
 	public static IServiceCollection AddFileStorage(this IServiceCollection services)
 		=> services
 			.AddSingleton<IStorage, FileStorage>();
@@ -23,6 +28,29 @@ internal static class ServiceCollectionExtensions
 		return creator(l, inmem, settings, s, unpackaged);
 	}
 
+	/// <summary>
+	/// Adds keyed storage implementations to the service collection, including platform-specific implementations.
+	/// </summary>
+	/// <param name="services">The service collection to which the keyed storage services will be added.</param>
+	/// <returns>The updated service collection.</returns>
+	/// <remarks>
+	/// This method registers multiple implementations of <see cref="IKeyValueStorage"/> for different platforms:
+	/// <list type="bullet">
+	/// <item><description>In-memory storage for all platforms.</description></item>
+	/// <item><description>Application data storage for all platforms.</description></item>
+	/// <item><description>KeyStore storage for Android.</description></item>
+	/// <item><description>KeyChain storage for iOS.</description></item>
+	/// <item><description>PasswordVault storage for UWP and other supported platforms.</description></item>
+	/// <item><description>Encrypted application data storage for Windows.</description></item>
+	/// </list>
+	/// The default storage implementation is selected based on the platform:
+	/// <list type="bullet">
+	/// <item><description>KeyStore for Android.</description></item>
+	/// <item><description>KeyChain for iOS.</description></item>
+	/// <item><description>Encrypted application data storage for Windows.</description></item>
+	/// <item><description>Application data storage for other platforms.</description></item>
+	/// </list>
+	/// </remarks>
 	public static IServiceCollection AddKeyedStorage(this IServiceCollection services)
 	{
 		return services

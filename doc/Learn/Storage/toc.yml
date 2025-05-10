@@ -1,4 +1,11 @@
 - name: Overview
   href: xref:Uno.Extensions.Storage.Overview
+- name: Handling Package Files
+  topicHref: xref:Uno.Extensions.Storage.GettingStarted
+  items:
+    - name: Getting Started with Storage
+      href: xref:Uno.Extensions.Storage.GettingStarted
+    - name: Using Storage Functions
+      href: xref:Uno.Extensions.Storage.UsingStorageExtension
 - name: "How-To: Add Required Entitlements"
   href: xref:Uno.Extensions.Storage.HowToRequiredEntitlements
