@@ -92,7 +92,9 @@ This topic explains how to use the `ThemeService` for runtime theme switching an
     </ToggleSwitch.OffContent>
     </ToggleSwitch>
     ```
+
     <!-- TODO: Check if IsOn can get changed to CommandBinding Extensions usage of #1391 #1309 #1310 -->
+
 ---
 
 ## Step-by-step (Manual Registration without DI or Advanced Scenarios)
