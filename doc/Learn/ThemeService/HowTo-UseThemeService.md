@@ -92,10 +92,7 @@ This topic explains how to use the `ThemeService` for runtime theme switching an
     </ToggleSwitch.OffContent>
     </ToggleSwitch>
     ```
-
-    > [!NOTE]
-    > In case, you try to bind a `CommandExtension.Command` to a ToggleSwitch, you will need to use the `IsOn` property to bind it, because `Toggled` Behaviour is not triggering the `CommandExtensions.Command`.
-
+    <!-- TODO: Check if IsOn can get changed to CommandBinding Extensions usage of #1391 #1309 #1310 -->
 ---
 
 ## Step-by-step (Manual Registration without DI or Advanced Scenarios)
