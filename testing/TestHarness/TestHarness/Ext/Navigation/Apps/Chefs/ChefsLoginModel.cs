@@ -15,6 +15,6 @@ public partial class ChefsLoginModel
 
 	public async ValueTask DoLogin()
 	{
-		await _navigator.NavigateViewModelAsync<ChefsRootModel>(this, Qualifiers.ClearBackStack, new ChefsCredentials { Username = "Tester" });
+		await _navigator.NavigateViewModelAsync<ChefsRootModel>(this, Qualifiers.ClearBackStack);
 	}
 }
