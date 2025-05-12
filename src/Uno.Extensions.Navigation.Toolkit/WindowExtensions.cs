@@ -53,7 +53,7 @@ public static class WindowExtensions
 					loadingTask = new Func<Task>(async () =>
 					{
 						await navInit;
-						window.Activate();
+						window.ActivateWhenReady();
 					})();
 				}
 			}
@@ -64,7 +64,7 @@ public static class WindowExtensions
 		if (activate)
 		{
 			// Activate immediately to show the splash screen
-			window.Activate();
+			window.ActivateWhenReady();
 		}
 	}
 }
