@@ -120,11 +120,22 @@ public class PanelVisiblityNavigator : ControlNavigator<Panel>
 				controlToShow.Visibility = Visibility.Visible;
 			}
 			CurrentlyVisibleControl = controlToShow;
+
+			RearrangeChildren(controlToShow);
 		}
 
 		Control.ReassignRegionParent();
 
 		return path;
+	}
+
+	private void RearrangeChildren(FrameworkElement? controlToShow)
+	{
+		if (controlToShow != Control!.Children.First())
+		{
+			Control.Children.Remove(controlToShow);
+			Control.Children.Insert(0, controlToShow);
+		}
 	}
 
 	protected override async Task PostNavigateAsync()
