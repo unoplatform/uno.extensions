@@ -142,4 +142,54 @@ public class Given_AddressBar : NavigationTestBase
 
 		StringAssert.Contains(url, "Value=0");
 	}
+
+	[Test]
+	[ActivePlatforms(Platform.Browser)]
+	public void When_AddressBar_Navigating_Through_NavItems_AddressBar_Updates()
+	{
+		InitTestSection(TestSections.Navigation_AddressBar_Nested);
+
+		App.WaitElement("AddressBarRootPageNavigationView");
+
+		// Sequencial check
+		App.WaitThenTap("AddressBarRootPageCoffeeNavItem");
+		AssertAddressBarUrl("AddressBarCoffeePage", "AddressBarCoffee");
+
+		App.WaitThenTap("AddressBarRootPageHomeNavItem");
+		AssertAddressBarUrl("AddressBarHomePage", "AddressBarHome");
+
+		App.WaitThenTap("AddressBarRootPageSecondNavItem");
+		AssertAddressBarUrl("AddressBarSecondPage", "AddressBarSecond");
+
+		// Non-Sequencial check
+		App.WaitThenTap("AddressBarRootPageHomeNavItem");
+		AssertAddressBarUrl("AddressBarHomePage", "AddressBarHome");
+
+		App.WaitThenTap("AddressBarRootPageSecondNavItem");
+		AssertAddressBarUrl("AddressBarSecondPage", "AddressBarSecond");
+
+		App.WaitThenTap("AddressBarRootPageHomeNavItem");
+		AssertAddressBarUrl("AddressBarHomePage", "AddressBarHome");
+
+		App.WaitThenTap("AddressBarRootPageCoffeeNavItem");
+		AssertAddressBarUrl("AddressBarCoffeePage", "AddressBarCoffee");
+
+		App.WaitThenTap("AddressBarRootPageSecondNavItem");
+		AssertAddressBarUrl("AddressBarSecondPage", "AddressBarSecond");
+
+		App.WaitThenTap("AddressBarRootPageHomeNavItem");
+		AssertAddressBarUrl("AddressBarHomePage", "AddressBarHome");
+
+		App.WaitThenTap("AddressBarRootPageSecondNavItem");
+		AssertAddressBarUrl("AddressBarSecondPage", "AddressBarSecond");
+	}
+
+	private void AssertAddressBarUrl(string pageSuffix, string contains)
+	{
+		App.WaitThenTap($"{pageSuffix}GetUrlFromBrowser");
+
+		var url = App.GetText($"{pageSuffix}TxtUrlFromBrowser");
+
+		StringAssert.Contains(url, contains);
+	}
 }
