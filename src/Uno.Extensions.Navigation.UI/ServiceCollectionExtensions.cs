@@ -46,8 +46,10 @@ public static class ServiceCollectionExtensions
 					.AddSingleton<RouteNotifier>()
 					.AddSingleton<IRouteNotifier>(sp => sp.GetRequiredService<RouteNotifier>())
 					.AddSingleton<IRouteUpdater>(sp => sp.GetRequiredService<RouteNotifier>())
-#if BROWSERWASM1_0_OR_GREATER
+					// TODO: Bring it back to WASM #if
+					// Just to debug on skia
 					.AddHostedService<BrowserAddressBarService>()
+#if BROWSERWASM1_0_OR_GREATER
 					.AddHostedService<BackButtonService>()
 #endif
 					.AddScoped<Navigator>()
