@@ -13,41 +13,49 @@ public static class EnumerableExtensions
     /// A collection of ranges, where each range is a tuple containing a start and end index.
     /// The start index specifies the first item to include, and the end index specifies the last item to include.
     /// </param>
+    /// <param name="isNullBased">
+    /// Indicates whether the range indices are 0-based (<c>true</c>) or 1-based (<c>false</c>).
+    /// If <c>true</c>, the start and end indices are treated as 0-based; otherwise, they are treated as 1-based.
+    /// </param>
     /// <returns>
     /// An enumerable collection of strings, where each string represents the items within a specified range.
     /// If a range is invalid (e.g. start is greater than the last one), an empty string is returned for that range.
     /// </returns>
-    public static IEnumerable<string> SelectItemsByRanges(this IEnumerable<string> source, IEnumerable<(int Start, int End)> ranges)
+    public static IEnumerable<string> SelectItemsByRanges(this IEnumerable<string> source, IEnumerable<(int Start, int End)> ranges, bool isNullBased = true)
     {
         source = source.Safe();
         if (!ranges.Safe().Any()) yield return source.JoinBy(Environment.NewLine);
         foreach (var range in ranges)
         {
-            yield return source.GetItemsWithinRange(range);
+            yield return source.GetItemsWithinRange(range, isNullBased);
         }
     }
 
-	/// <summary>
-	/// Retrieves the concatenated items within the specified range as one single <see langword="string"/> joined by <see cref="Environment.NewLine"/> character.
-	/// </summary>
-	/// <param name="source">The <see cref="IEnumerable{TData}"/> to select from.</param>
-	/// <param name="range">
-	/// A tuple containing the start and end indices of the range as <see langword="int"/>.
-	/// The start index specifies the first item to include, and the end index specifies the last item to include.
-	/// </param>
-	/// <returns>
-	/// A string containing the string typed items of <paramref name="source"/> within the specified range, joined by the system's newline character.
-	/// </returns>
-	public static string GetItemsWithinRange(this IEnumerable<string> source, (int Start, int End) range) // TODO: Consider to limit int to min 0 value instead of implicit allowing negative.
+    /// <summary>
+    /// Retrieves the concatenated items within the specified range as one single <see langword="string"/> joined by <see cref="Environment.NewLine"/> character.
+    /// </summary>
+    /// <param name="source">The <see cref="IEnumerable{TData}"/> to select from.</param>
+    /// <param name="range">
+    /// A tuple containing the start and end indices of the range as <see langword="int"/>.
+    /// The start index specifies the first item to include, and the end index specifies the last item to include.
+    /// </param>
+    /// <param name="isNullBased">
+    /// Indicates whether the range indices are 0-based (<c>true</c>) or 1-based (<c>false</c>).
+    /// If <c>true</c>, the start and end indices are treated as 0-based; otherwise, they are treated as 1-based.
+    /// </param>
+    /// <returns>
+    /// A string containing the string typed items of <paramref name="source"/> within the specified range, joined by the system's newline character.
+    /// </returns>
+    public static string GetItemsWithinRange(this IEnumerable<string> source, (int Start, int End) range, bool isNullBased = true) // TODO: Consider to limit int to min 0 value instead of implicit allowing negative.
     {
         source = source.Safe();
         var startIndex = Math.Clamp(
-            value: range.Start,
+            value: range.Start - (isNullBased ? 0 : 1),
             min: 0,
             max: source.Count());
 
         var endIndex = Math.Clamp(
-            value: range.End,
+            value: range.End - (isNullBased ? 0 : 1),
             min: startIndex,
             max: source.Count()); // Ensure 'End' does not exceed available lines
 

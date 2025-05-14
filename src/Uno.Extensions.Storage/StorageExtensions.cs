@@ -47,7 +47,7 @@ public static class StorageExtensions
 		}
 
 		return fileContent.Split(Environment.NewLine)
-						  .SelectItemsByRanges(lineRanges)
+						  .SelectItemsByRanges(lineRanges, isNullBased: false)
 						  .JoinBy(Environment.NewLine);
 	}
 }
