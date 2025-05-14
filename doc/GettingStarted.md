@@ -147,4 +147,4 @@ MainWindow.Activate();
 ```
 
 > [!IMPORTANT]
-> Be sure to remove any other code that sets `MainWindow` or `Window.Current` to prevent conflicts in your application.
+> Be sure to remove any other code that sets `MainWindow` to prevent conflicts in your application.
