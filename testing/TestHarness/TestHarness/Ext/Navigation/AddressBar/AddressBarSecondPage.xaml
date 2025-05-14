@@ -31,6 +31,9 @@
 			<Button AutomationProperties.AutomationId="GetUrlFromBrowser"
 					Click="GetUrlFromBrowser"
 					Content="Get URL" />
+
+			<Button uen:Navigation.Request="-"
+					Content="Go Back" />
 		</StackPanel>
 
 	</Grid>
