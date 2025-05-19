@@ -23,8 +23,19 @@ public static class EnumerableExtensions
     /// </returns>
     public static IEnumerable<string> SelectItemsByRanges(this IEnumerable<string> source, IEnumerable<(int Start, int End)> ranges, bool isNullBased = true)
     {
-        if (!ranges.Safe().Any()) yield return source.JoinBy(Environment.NewLine);
-        foreach (var range in ranges)
+		if (source is null || ranges is null)
+		{
+			yield return string.Empty;
+			yield break;
+		}
+
+		if (!ranges.Any())
+		{
+			yield return source.JoinBy(Environment.NewLine);
+			yield break;
+		}
+
+		foreach (var range in ranges)
         {
             yield return source.GetItemsWithinRange(range, isNullBased);
         }
@@ -47,18 +58,29 @@ public static class EnumerableExtensions
     /// </returns>
     public static string GetItemsWithinRange(this IEnumerable<string> source, (int Start, int End) range, bool isNullBased = true) // TODO: Consider to limit int to min 0 value instead of implicit allowing negative.
     {
-        var startIndex = Math.Clamp(
+		if (source is null)
+		{
+			return string.Empty;
+		}
+
+		var list = source as IList<string> ?? [.. source];
+		if (list.Count == 0)
+		{
+			return string.Empty;
+		}
+
+		var startIndex = Math.Clamp(
             value: range.Start - (isNullBased ? 0 : 1),
             min: 0,
-            max: source.Count());
+            max: list.Count);
 
         var endIndex = Math.Clamp(
             value: range.End - (isNullBased ? 0 : 1),
             min: startIndex,
-            max: source.Count()); // Ensure 'End' does not exceed available lines
+            max: list.Count); // Ensure 'End' does not exceed available lines
 
-        return source.Skip(startIndex)
-                     .Take(endIndex - startIndex)
-                     .JoinBy(Environment.NewLine);
+        return list.Skip(startIndex)
+                   .Take(endIndex - startIndex)
+                   .JoinBy(Environment.NewLine);
     }
 }
