@@ -23,7 +23,6 @@ public static class EnumerableExtensions
     /// </returns>
     public static IEnumerable<string> SelectItemsByRanges(this IEnumerable<string> source, IEnumerable<(int Start, int End)> ranges, bool isNullBased = true)
     {
-        source = source.Safe();
         if (!ranges.Safe().Any()) yield return source.JoinBy(Environment.NewLine);
         foreach (var range in ranges)
         {
@@ -48,7 +47,6 @@ public static class EnumerableExtensions
     /// </returns>
     public static string GetItemsWithinRange(this IEnumerable<string> source, (int Start, int End) range, bool isNullBased = true) // TODO: Consider to limit int to min 0 value instead of implicit allowing negative.
     {
-        source = source.Safe();
         var startIndex = Math.Clamp(
             value: range.Start - (isNullBased ? 0 : 1),
             min: 0,
