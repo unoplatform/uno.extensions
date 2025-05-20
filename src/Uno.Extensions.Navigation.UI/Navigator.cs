@@ -626,7 +626,10 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 			return default;
 		}
 
-		var mapping = Resolver.FindByPath(request.Route.Base);
+		var path = request.Route.Path is { Length: > 0 } routePath ? routePath : request.Route.Base;
+
+		var mapping = Resolver.FindByPath(path);
+
 		if (mapping?.ToQuery is not null)
 		{
 			request = request with { Route = request.Route with { Data = request.Route.Data?.AsParameters(mapping) } };

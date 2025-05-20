@@ -6,7 +6,7 @@ public record PageNavigationOneViewModel(IServiceProvider Services, INavigator N
 	: BasePageNavigationViewModel(Dispatcher)
 {
 
-	public List<PageNavigationModel> Items { get; } = Enumerable.Range(0, 50).Select(x => new PageNavigationModel(x)).ToList();
+	public List<PageNavigationModel> Items { get; } = Enumerable.Range(0, 50).Select(x => new PageNavigationModel(x.ToString())).ToList();
 
 	public async void GoToTwo()
 	{
@@ -42,7 +42,7 @@ public record PageNavigationOneViewModel(IServiceProvider Services, INavigator N
 
 }
 
-public record PageNavigationModel(int Value);
+public record PageNavigationModel(string Value);
 
 public record BasePageNavigationViewModel
 {

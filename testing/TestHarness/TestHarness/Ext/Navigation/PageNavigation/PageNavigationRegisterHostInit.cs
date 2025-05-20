@@ -8,7 +8,15 @@ public class PageNavigationRegisterHostInit: PageNavigationHostInit
 	{
 		views.Register(
 			new ViewMap<PageNavigationOnePage, PageNavigationOneViewModel>(),
-			new DataViewMap<PageNavigationTwoPage, PageNavigationTwoViewModel, PageNavigationModel>(),
+			new DataViewMap<PageNavigationTwoPage, PageNavigationTwoViewModel, PageNavigationModel>(
+				ToQuery: model => new Dictionary<string, string>() { { nameof(PageNavigationModel.Value), model.Value } },
+
+				FromQuery: (sp, query) => Task.FromResult<PageNavigationModel?>(
+					query.TryGetValue(nameof(PageNavigationModel.Value), out object? value) && value is string id
+					? new(id)
+					: null
+				)
+			),
 			new ViewMap<PageNavigationThreePage, PageNavigationThreeViewModel>(),
 			new ViewMap<PageNavigationFourPage, PageNavigationFourViewModel>(),
 			new ViewMap<PageNavigationFivePage, PageNavigationFiveViewModel>(),
