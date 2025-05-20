@@ -8,6 +8,8 @@ public record PageNavigationOneViewModel(IServiceProvider Services, INavigator N
 
 	public List<PageNavigationModel> Items { get; } = Enumerable.Range(0, 50).Select(x => new PageNavigationModel(x.ToString())).ToList();
 
+	public PageNavigationModel FirstItem => Items.FirstOrDefault();
+
 	public async void GoToTwo()
 	{
 		await Settings.UpdateAsync(s => s with { PagesVisited = s.PagesVisited.Add(this.GetType().Name) });
