@@ -184,11 +184,11 @@ public class Given_AddressBar : NavigationTestBase
 		AssertAddressBarUrl("AddressBarSecondPage", "AddressBarSecond");
 	}
 
-	private void AssertAddressBarUrl(string pageSuffix, string contains)
+	private void AssertAddressBarUrl(string pagePrefix, string contains)
 	{
-		App.WaitThenTap($"{pageSuffix}GetUrlFromBrowser");
+		App.WaitThenTap($"{pagePrefix}GetUrlFromBrowser");
 
-		var url = App.GetText($"{pageSuffix}TxtUrlFromBrowser");
+		var url = App.GetText($"{pagePrefix}TxtUrlFromBrowser");
 
 		StringAssert.Contains(url, contains);
 	}
