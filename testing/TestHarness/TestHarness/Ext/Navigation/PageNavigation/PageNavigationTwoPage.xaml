@@ -40,7 +40,7 @@
 					Content="Back (Codebehind)"
 					Click="TwoPageBackCodebehindClick" />
 			<Button AutomationProperties.AutomationId="TwoPageToThreePageViewModelButton"
-					Content="Three (ViewModel)"
+					Content="Three (ViewModel with Data)"
 					Click="{x:Bind ViewModel.GoToThree}" />
 			<Button AutomationProperties.AutomationId="TwoPageBackViewModelButton"
 					Content="Back (ViewModel)"

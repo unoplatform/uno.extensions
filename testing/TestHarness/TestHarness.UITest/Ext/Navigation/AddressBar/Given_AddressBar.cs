@@ -62,9 +62,18 @@ public class Given_AddressBar : NavigationTestBase
 
 		App.WaitThenTap("OnePageToTwoPageWithDataButton");
 
-		App.WaitThenTap("SecondPageGetUrlFromBrowser");
+		AssertAddressBarUrl("Second");
 
-		var url = App.GetText("SecondPageTxtUrlFromBrowser");
+		App.WaitThenTap("TwoPageToThreePageViewModelButton");
+
+		AssertAddressBarUrl("Third");
+	}
+
+	private void AssertAddressBarUrl(string prefix)
+	{
+		App.WaitThenTap($"{prefix}PageGetUrlFromBrowser");
+
+		var url = App.GetText($"{prefix}PageTxtUrlFromBrowser");
 
 		StringAssert.Contains(url, "Value=0");
 	}
