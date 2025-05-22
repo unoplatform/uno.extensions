@@ -24,6 +24,7 @@
 				   x:Name="CurrentNavigationViewItemText"
 				   AutomationProperties.AutomationId="CurrentNavigationViewItemTextBlock" />
 		<muxc:NavigationView uen:Region.Attached="true"
+							 x:Name="NavView"
 							 Grid.Row="2"
 							 SelectionChanged="NavigationViewItemChanged"
 							 ItemInvoked="NavigationItemInvoked"
