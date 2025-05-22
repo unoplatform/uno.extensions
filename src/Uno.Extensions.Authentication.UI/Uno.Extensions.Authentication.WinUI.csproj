@@ -8,6 +8,7 @@
 
 		<UnoSingleProject>true</UnoSingleProject>
 		<OutputType>Library</OutputType>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	</PropertyGroup>
 
 	<PropertyGroup>
