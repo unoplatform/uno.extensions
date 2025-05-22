@@ -19,4 +19,14 @@ public sealed partial class PageNavigationTwoPage : Page
 		await this.Navigator()!.NavigateBackAsync(this);
 	}
 
+	public async void GetUrlFromBrowser(object sender, RoutedEventArgs e)
+	{
+#if __WASM__
+		var url = PageNavigationJSImports.GetLocation();
+
+		TxtUrl.Text = url;
+#else
+		TxtUrl.Text = "Not supported";
+#endif
+	}
 }

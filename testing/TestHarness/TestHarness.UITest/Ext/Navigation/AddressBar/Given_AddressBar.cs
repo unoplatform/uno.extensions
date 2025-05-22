@@ -28,4 +28,53 @@ public class Given_AddressBar : NavigationTestBase
 
 		StringAssert.Contains(url, "QueryUser.Id=8a5c5b2e-ff96-474b-9e4d-65bde598f6bc");
 	}
+
+	[Test]
+	[ActivePlatforms(Platform.Browser)]
+	public void When_PageNavigationNavigateRootUpdateUrl()
+	{
+		InitTestSection(TestSections.Navigation_PageNavigation);
+
+		App.WaitThenTap("ShowOnePageButton");
+
+		App.WaitThenTap("OnePageGetUrlFromBrowser");
+		App.WaitElement("OnePageTxtUrlFromBrowser");
+		var urlBefore = App.GetText("OnePageTxtUrlFromBrowser");
+
+		App.WaitThenTap("OnePageToTwoPageButton");
+
+		App.WaitThenTap("TwoPageBackButton");
+
+		App.WaitThenTap("OnePageGetUrlFromBrowser");
+		App.WaitElement("OnePageTxtUrlFromBrowser");
+		var urlAfter = App.GetText("OnePageTxtUrlFromBrowser");
+
+		Assert.AreEqual(urlBefore, urlAfter);
+	}
+
+	[Test]
+	[ActivePlatforms(Platform.Browser)]
+	public void When_PageNavigationNavigateQueryParamsDependsOn()
+	{
+		InitTestSection(TestSections.Navigation_PageNavigationRegistered);
+
+		App.WaitThenTap("ShowOnePageButton");
+
+		App.WaitThenTap("OnePageToTwoPageWithDataButton");
+
+		AssertAddressBarUrl("Second");
+
+		App.WaitThenTap("TwoPageToThreePageViewModelButton");
+
+		AssertAddressBarUrl("Third");
+	}
+
+	private void AssertAddressBarUrl(string prefix)
+	{
+		App.WaitThenTap($"{prefix}PageGetUrlFromBrowser");
+
+		var url = App.GetText($"{prefix}PageTxtUrlFromBrowser");
+
+		StringAssert.Contains(url, "Value=0");
+	}
 }
