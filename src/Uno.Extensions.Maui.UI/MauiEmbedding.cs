@@ -31,10 +31,8 @@ public static partial class MauiEmbedding
 	public static IHostBuilder UseMauiEmbedding<TApp>(this IHostBuilder builder, Microsoft.UI.Xaml.Application app, Microsoft.UI.Xaml.Window window, Action<MauiAppBuilder>? configure = null)
 		where TApp : MauiApplication
 	{
-#if MAUI_EMBEDDING
 		var mauiAppBuilder = ConfigureMauiAppBuilder<TApp>(app, window, configure);
 		builder.UseServiceProviderFactory(new UnoServiceProviderFactory(mauiAppBuilder, () => BuildMauiApp(mauiAppBuilder, app, window)));
-#endif
 		return builder;
 	}
 
@@ -47,15 +45,9 @@ public static partial class MauiEmbedding
 	public static MauiApp UseMauiEmbedding<TApp>(this Microsoft.UI.Xaml.Application app, Microsoft.UI.Xaml.Window window, Action<MauiAppBuilder>? configure = null)
 		where TApp : MauiApplication
 	{
-#if MAUI_EMBEDDING
 		var mauiAppBuilder = ConfigureMauiAppBuilder<TApp>(app, window, configure);
 		return BuildMauiApp(mauiAppBuilder, app, window);
-#else
-		return default!;
-#endif
 	}
-
-#if MAUI_EMBEDDING
 
 	private static MauiAppBuilder ConfigureMauiAppBuilder<TApp>(Application app, Microsoft.UI.Xaml.Window window, Action<MauiAppBuilder>? configure)
 		where TApp : MauiApplication
@@ -93,6 +85,24 @@ public static partial class MauiEmbedding
 #endif
 		return mauiApp;
 	}
+
+#if !ANDROID && !IOS && !WINDOWS
+	private static MauiAppBuilder RegisterPlatformServices(this MauiAppBuilder builder, Application app)
+	{
+		return builder;
+	}
+
+	private static void InitializeMauiEmbeddingApp(this MauiApp mauiApp, Application app)
+	{
+		var rootContext = new MauiContext(mauiApp.Services);
+		rootContext.InitializeScopedServices();
+
+		var iApp = mauiApp.Services.GetRequiredService<IApplication>();
+		_ = new EmbeddedApplication(mauiApp.Services, iApp);
+		app.SetApplicationHandler(iApp, rootContext);
+		InitializeApplicationMainPage(iApp);
+	}
+#endif
 
 	private static void InitializeScopedServices(this IMauiContext scopedContext)
 	{
@@ -151,8 +161,6 @@ public static partial class MauiEmbedding
 			windows.Add(window);
 		}
 	}
-
-#endif
 
 	internal record EmbeddedApplication : IPlatformApplication
 	{

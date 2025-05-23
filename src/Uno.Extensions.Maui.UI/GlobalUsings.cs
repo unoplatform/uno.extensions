@@ -14,10 +14,8 @@ global using Microsoft.Maui.Controls;
 global using Microsoft.Maui.Embedding;
 global using Microsoft.Maui.Hosting;
 global using Microsoft.Maui.Platform;
-#if MAUI_EMBEDDING
 global using Uno.Extensions;
 global using Uno.Extensions.Maui.Internals;
-#endif
 
 // Where there's a name conflict, alias the WinUI type with same name
 global using Application = Microsoft.UI.Xaml.Application;

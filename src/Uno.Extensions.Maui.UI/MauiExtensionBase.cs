@@ -5,8 +5,6 @@
 /// </summary>
 public abstract class MauiExtensionBase : MarkupExtension
 {
-#if MAUI_EMBEDDING
-
 	private ILogger? _logger;
 
 	/// <summary>
@@ -82,7 +80,6 @@ public abstract class MauiExtensionBase : MarkupExtension
 	/// <param name="property">The <see cref="BindableProperty"/> to set.</param>
 	/// <param name="propertyName">The name of the property to set.</param>
 	protected abstract void SetValue(View view, Type viewType, Type propertyType, BindableProperty property, string propertyName);
-#endif
 
 	/// <summary>
 	/// Returns a default value of <paramref name="type"/>.

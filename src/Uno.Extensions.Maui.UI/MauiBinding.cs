@@ -36,7 +36,6 @@ public class MauiBinding : MauiExtensionBase
 	/// </summary>
 	public object? Source { get; set; }
 
-#if MAUI_EMBEDDING
 	/// <inheritdoc/>
 	protected override void SetValue(View view, Type viewType, Type propertyType, BindableProperty property, string propertyName)
 	{
@@ -68,5 +67,4 @@ public class MauiBinding : MauiExtensionBase
 
 		view.SetBinding(property, binding);
 	}
-#endif
 }

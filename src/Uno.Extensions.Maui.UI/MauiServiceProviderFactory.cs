@@ -1,5 +1,4 @@
-﻿#if MAUI_EMBEDDING
-namespace Uno.Extensions.Maui;
+﻿namespace Uno.Extensions.Maui;
 internal class MauiServiceProviderFactory : IServiceProviderFactory<IServiceProvider>
 {
 	private readonly IServiceProvider _serviceProvider;
@@ -9,4 +8,3 @@ internal class MauiServiceProviderFactory : IServiceProviderFactory<IServiceProv
 	public IServiceProvider CreateBuilder(IServiceCollection services) => _serviceProvider;
 	public IServiceProvider CreateServiceProvider(IServiceProvider containerBuilder) => _serviceProvider;
 }
-#endif

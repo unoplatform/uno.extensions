@@ -11,8 +11,6 @@ public class MauiThickness : MarkupExtension
 	/// </summary>
 	public string Value { get; set; } = string.Empty;
 
-
-#if MAUI_EMBEDDING
 	static readonly Microsoft.Maui.Converters.ThicknessTypeConverter mauiThicknessConverter = new();
 
 	/// <inheritdoc />
@@ -25,5 +23,4 @@ public class MauiThickness : MarkupExtension
 
 		return mauiThicknessConverter.ConvertFrom(null, CultureInfo.InvariantCulture, Value);
 	}
-#endif
 }

@@ -12,7 +12,6 @@ public class MauiResource : MauiExtensionBase
 	/// </summary>
 	public string Key { get; set; } = string.Empty;
 
-#if MAUI_EMBEDDING
 	/// <summary>
 	/// Sets the value of the view's property by the key.
 	/// </summary>
@@ -36,5 +35,4 @@ public class MauiResource : MauiExtensionBase
 			view.SetDynamicResource(property, Key);
 		}
 	}
-#endif
 }

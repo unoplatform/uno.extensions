@@ -1,4 +1,3 @@
-#if MAUI_EMBEDDING
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Maui.Animations;
 
@@ -53,4 +52,3 @@ internal class UnoServiceProviderFactory : IServiceProviderFactory<IServiceProvi
 
 	public IServiceProvider CreateServiceProvider(IServiceProvider services) => services;
 }
-#endif

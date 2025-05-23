@@ -19,7 +19,6 @@ public partial class MauiHost : ContentControl
 
 	private static void OnSourceChanged(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs args)
 	{
-#if MAUI_EMBEDDING
 		// Sanity Check
 		if (IPlatformApplication.Current?.Application is null
 			&& MauiApplication.Current?.Handler.MauiContext is not null)
@@ -75,10 +74,7 @@ public partial class MauiHost : ContentControl
 #endif
 			throw new MauiEmbeddingException(Properties.Resources.UnexpectedErrorConvertingMauiViewToNativeView, ex);
 		}
-#endif
 	}
-
-#if MAUI_EMBEDDING
 
 	private static ILogger GetLogger() =>
 		IPlatformApplication.Current?.Services.GetRequiredService<ILogger<MauiHost>>() ?? throw new MauiEmbeddingInitializationException();
@@ -145,7 +141,6 @@ public partial class MauiHost : ContentControl
 			null => null,
 			_ => GetPage(element.Parent)
 		};
-#endif
 
 	/// <summary>
 	/// Fires when the VisualElement has changed.
@@ -165,8 +160,6 @@ public partial class MauiHost : ContentControl
 		get => (Type?)GetValue(SourceProperty);
 		set => SetValue(SourceProperty, value);
 	}
-
-#if MAUI_EMBEDDING
 
 	private bool _initializedResources;
 	private void OnLoading(FrameworkElement sender, object args)
@@ -206,5 +199,4 @@ public partial class MauiHost : ContentControl
 			VisualElement.BindingContext = DataContext;
 		}
 	}
-#endif
 }
