@@ -2,9 +2,9 @@
 
 namespace TestHarness.Ext.Navigation.AddressBar;
 
-public partial class AddressBarCoffeModel
+public partial class AddressBarCoffeeModel
 {
-	public AddressBarCoffeModel(INavigator navigator)
+	public AddressBarCoffeeModel(INavigator navigator)
 	{
 
 	}

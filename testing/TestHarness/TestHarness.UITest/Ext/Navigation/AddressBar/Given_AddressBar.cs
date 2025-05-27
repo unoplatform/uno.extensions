@@ -34,7 +34,7 @@ public class Given_AddressBar : NavigationTestBase
 	{
 		//Navigation starts with `Navigator.NavigateViewModelAsync<T>()`
 		InitTestSection(TestSections.Navigation_AddressBar_Nested);
-		When_AddressBar_Navigated_Back_Params_Clear();
+		Navigate_And_Clear_Params();
 	}
 
 	[Test]
@@ -43,10 +43,10 @@ public class Given_AddressBar : NavigationTestBase
 	{
 		//Navigation starts with `IsDefault: true` on HostInit
 		InitTestSection(TestSections.Navigation_AddressBar_Nested_Default);
-		When_AddressBar_Navigated_Back_Params_Clear();
+		Navigate_And_Clear_Params();
 	}
 
-	private void When_AddressBar_Navigated_Back_Params_Clear()
+	private void Navigate_And_Clear_Params()
 	{
 		App.WaitElement("AddressBarRootPageNavigationView");
 

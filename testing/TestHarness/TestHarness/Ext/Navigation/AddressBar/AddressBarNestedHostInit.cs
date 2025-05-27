@@ -14,7 +14,7 @@ public class AddressBarNestedHostInit : BaseHostInitialization
 		views.Register(
 			new ViewMap(ViewModel: typeof(ShellViewModel)),
 			new ViewMap<AddressBarRootPage, AddressBarRootModel>(),
-			new ViewMap<AddressBarCoffeePage, AddressBarCoffeModel>(),
+			new ViewMap<AddressBarCoffeePage, AddressBarCoffeeModel>(),
 			new ViewMap<AddressBarHomePage, AddressBarHomeModel>(),
 			new DataViewMap<AddressBarSecondPage, AddressBarSecondModel, AddressBarUser>(
 				ToQuery: user => new Dictionary<string, string>
