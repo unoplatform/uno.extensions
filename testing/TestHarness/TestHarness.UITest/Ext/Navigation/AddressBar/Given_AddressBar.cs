@@ -21,11 +21,76 @@ public class Given_AddressBar : NavigationTestBase
 		InitTestSection(TestSections.Navigation_AddressBar);
 
 		App.WaitThenTap("AddressBarSecondButton");
+		AssertAddressBarUrl("AddressBarSecondPage", "?QueryUser.Id");
 
-		App.WaitThenTap("GetUrlFromBrowser");
+		//Ensure query parameters were cleared
+		App.WaitThenTap("AddressBarSecondPageGoBack");
+		AssertAddressBarUrl("AddressBarHomePage", "?QueryUser.Id", false);
+	}
 
-		var url = App.GetText("TxtUrlFromBrowser");
+	[Test]
+	[ActivePlatforms(Platform.Browser)]
+	public void When_AddressBar_Nested_Navigated_Back_Params_Clear()
+	{
+		//Navigation starts with `Navigator.NavigateViewModelAsync<T>()`
+		InitTestSection(TestSections.Navigation_AddressBar_Nested);
+		When_AddressBar_Navigated_Back_Params_Clear();
+	}
 
-		StringAssert.Contains(url, "QueryUser.Id=8a5c5b2e-ff96-474b-9e4d-65bde598f6bc");
+	[Test]
+	[ActivePlatforms(Platform.Browser)]
+	public void When_AddressBar_Nested_Default_Navigated_Back_Params_Clear()
+	{
+		//Navigation starts with `IsDefault: true` on HostInit
+		InitTestSection(TestSections.Navigation_AddressBar_Nested_Default);
+		When_AddressBar_Navigated_Back_Params_Clear();
+	}
+
+	private void When_AddressBar_Navigated_Back_Params_Clear()
+	{
+		App.WaitElement("AddressBarRootPageNavigationView");
+
+		//Goes to HomePage
+		App.WaitThenTap("AddressBarRootPageHomeNavItem");
+
+		//Goes to SecondPage
+		App.WaitThenTap("AddressBarSecondButton");
+		AssertAddressBarUrl("AddressBarSecondPage", "?QueryUser.Id");
+
+		//Goes back to HomePage
+		App.WaitThenTap("AddressBarSecondPageGoBack");
+		AssertAddressBarUrl("AddressBarHomePage", "?QueryUser.Id", false);
+
+		//Goes to CoffeePage
+		App.WaitThenTap("AddressBarRootPageCoffeeNavItem");
+		AssertAddressBarUrl("AddressBarCoffeePage", "?QueryUser.Id", false);
+
+		//Goes to HomePage one more time
+		App.WaitThenTap("AddressBarRootPageHomeNavItem");
+		AssertAddressBarUrl("AddressBarHomePage", "?QueryUser.Id", false);
+
+		//Goes to SecondPage to ensure params are added
+		App.WaitThenTap("AddressBarSecondButton");
+		AssertAddressBarUrl("AddressBarSecondPage", "?QueryUser.Id");
+
+		//Goes back to HomePage to ensure params are cleared
+		App.WaitThenTap("AddressBarSecondPageGoBack");
+		AssertAddressBarUrl("AddressBarHomePage", "?QueryUser.Id", false);
+	}
+
+	private void AssertAddressBarUrl(string pagePrefix, string contains, bool assertContains = true)
+	{
+		App.WaitThenTap($"{pagePrefix}GetUrlFromBrowser");
+
+		var url = App.GetText($"{pagePrefix}TxtUrlFromBrowser");
+
+		if (assertContains)
+		{
+			StringAssert.Contains(url, contains);
+		}
+		else
+		{
+			Assert.IsFalse(url.Contains(contains));
+		}
 	}
 }

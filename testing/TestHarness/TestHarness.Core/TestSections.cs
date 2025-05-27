@@ -14,6 +14,8 @@ public enum TestSections
 	Navigation_TabBar,
 	Navigation_Reactive,
 	Navigation_AddressBar,
+	Navigation_AddressBar_Nested,
+	Navigation_AddressBar_Nested_Default,
 	Apps_Chefs,
 	Apps_Commerce,
 	Apps_Commerce_ShellControl,
