@@ -28,10 +28,10 @@
 		<GenerateLibraryLayout>true</GenerateLibraryLayout>
 		<ImplicitUsings>true</ImplicitUsings>
 		<OutputType>Library</OutputType>
-
+		<IsPackable>true</IsPackable>
 		<UnoExtensionsGeneration_DisableCreateNewOnMetadataUpdateAttribute>True</UnoExtensionsGeneration_DisableCreateNewOnMetadataUpdateAttribute>
 
-
+		<WindowsSdkPackageVersion>10.0.19041.57</WindowsSdkPackageVersion>
 		<!-- Enables hard links for obj -> bin files (symlinks generally don't work there -->
 		<CreateHardLinksForCopyFilesToOutputDirectoryIfPossible>true</CreateHardLinksForCopyFilesToOutputDirectoryIfPossible>
 
