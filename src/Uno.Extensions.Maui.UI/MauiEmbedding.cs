@@ -2,6 +2,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Maui;
 using Microsoft.Maui.ApplicationModel;
 using Uno.Extensions.Hosting;
+using Uno.Foundation.Extensibility;
 
 namespace Uno.Extensions.Maui;
 
@@ -125,6 +126,7 @@ public static partial class MauiEmbedding
 		app.MainPage = page;
 		_ = page.ToPlatform(context);
 
+		
 		// Create a Maui Window and initialize a Handler shim. This will expose the actual Application Window
 		var virtualWindow = new Microsoft.Maui.Controls.Window();
 		virtualWindow.Handler = new EmbeddedWindowHandler
@@ -139,6 +141,16 @@ public static partial class MauiEmbedding
 			VirtualView = virtualWindow,
 			MauiContext = context
 		};
+
+		if (ApiExtensibility.CreateInstance<IPlatformViewProvider>(typeof(MauiEmbedding), out var platformViewProvider))
+		{
+			PlatformViewP
+		}
+		else
+		{
+			throw new InvalidOperationException("Unable to create IPlatformViewProvider instance");
+		}
+
 		virtualWindow.Page = page;
 
 		app.SetCoreWindow(virtualWindow);

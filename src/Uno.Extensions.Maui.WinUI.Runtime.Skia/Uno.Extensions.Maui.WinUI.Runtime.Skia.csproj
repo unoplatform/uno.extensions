@@ -1,0 +1,13 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	<Import Project="..\tfms-ui-maui.props" />
+  <PropertyGroup>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+	<ItemGroup>
+		<PackageReference Include="Uno.WinUI" />
+	</ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Uno.Extensions.Maui.UI\Uno.Extensions.Maui.WinUI.csproj" />
+  </ItemGroup>
+</Project>
