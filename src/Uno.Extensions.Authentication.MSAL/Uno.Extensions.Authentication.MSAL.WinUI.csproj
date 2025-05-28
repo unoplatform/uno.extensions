@@ -13,6 +13,8 @@
 
 		<UnoSingleProject>true</UnoSingleProject>
 		<OutputType>Library</OutputType>
+
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	</PropertyGroup>
 
 	<ItemGroup >
@@ -20,6 +22,10 @@
 		<PackageReference Include="Uno.WinUI" />
 		<PackageReference Include="Uno.WinUI.MSAL" />
 	</ItemGroup>
+
+	<PropertyGroup Condition="$(TargetFramework.Contains('windows10'))">
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+	</PropertyGroup>
 
 	<PropertyGroup Condition="$(TargetFramework.ToLower().StartsWith('net6')) and $(_IsAndroid)">
 		<SupportedOSPlatformVersion>31.0</SupportedOSPlatformVersion>
