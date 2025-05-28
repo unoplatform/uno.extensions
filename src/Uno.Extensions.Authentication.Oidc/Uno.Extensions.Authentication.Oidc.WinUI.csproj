@@ -11,11 +11,16 @@
 
 		<UnoSingleProject>true</UnoSingleProject>
 		<OutputType>Library</OutputType>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	</PropertyGroup>
 
 	<PropertyGroup>
 		<PackageId>Uno.Extensions.Authentication.Oidc.WinUI</PackageId>
 		<DefineConstants>$(DefineConstants);WINUI</DefineConstants>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="$(TargetFramework.Contains('windows10'))">
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	</PropertyGroup>
 
 	<ItemGroup>

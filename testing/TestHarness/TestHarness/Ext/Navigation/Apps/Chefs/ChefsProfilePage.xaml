@@ -11,11 +11,12 @@
 	<StackPanel>
 		<TextBlock Text="ChefsProfile" />
 		<TextBlock Text="{Binding Recipe.Name}" />
-		<Button Content="CloseWithRecipe (back)"
-				uen:Navigation.Request="-"
-				uen:Navigation.Data="{Binding Recipe}" />
-		<Button Content="CloseWithRecipe (forward)"
-				uen:Navigation.Request=""
+		
+		<Button Content="Close"
+				uen:Navigation.Request="-" />
+
+		<Button Content="CloseWithRecipe"
+				uen:Navigation.Request="ChefsRecipeDetails"
 				uen:Navigation.Data="{Binding Recipe}" />
 	</StackPanel>
 </Page>

@@ -32,6 +32,22 @@ In selection-based regions, the selectable items (like `NavigationViewItem`, `Ta
 </muxc:NavigationView>
 ```
 
+`SettingsItem` in `NavigationView` is generated automatically by the control, so it is not possible to set its region name in XAML. Instead, you can do so in code behind on `Loaded`:
+
+```xml
+public MainPage()
+{
+    this.InitializeComponent();
+    this.Loaded += MainPage_Loaded;
+}
+
+private void MainPage_Loaded(object sender, RoutedEventArgs e)
+{
+    var item = (NavigationViewItem)MyNavigationView.SettingsItem;
+    Region.SetName(item, "MyRegionName");
+}
+```
+
 Switching selected item:
 
   ```csharp
