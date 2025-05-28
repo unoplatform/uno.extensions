@@ -1,8 +1,8 @@
 ﻿namespace TestHarness.Ext.Navigation.AddressBar;
 
-public sealed partial class AddressBarHomePage : Page
+public sealed partial class AddressBarCoffeePage : Page
 {
-	public AddressBarHomePage()
+	public AddressBarCoffeePage()
 	{
 		this.InitializeComponent();
 	}
