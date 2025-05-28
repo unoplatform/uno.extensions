@@ -1,4 +1,6 @@
 ﻿
+using Uno.Extensions.Navigation.UI;
+
 namespace TestHarness.Ext.Navigation.NavigationView;
 
 public sealed partial class NavigationViewHomePage : Page
@@ -6,14 +8,13 @@ public sealed partial class NavigationViewHomePage : Page
 	public NavigationViewHomePage()
 	{
 		this.InitializeComponent();
+		this.Loaded += NavigationViewHomePage_Loaded;
 	}
 
-	public void NavigationItemInvoked(Microsoft.UI.Xaml.Controls.NavigationView sender, Microsoft.UI.Xaml.Controls.NavigationViewItemInvokedEventArgs e)
+	private void NavigationViewHomePage_Loaded(object sender, RoutedEventArgs e)
 	{
-		if(e.InvokedItemContainer == sender.SettingsItem as Microsoft.UI.Xaml.Controls.NavigationViewItem)
-		{
-			this.Navigator()!.NavigateViewModelAsync<NavigationViewSettingsViewModel>(this);
-		}
+		var item = (NavigationViewItem)NavView.SettingsItem;
+		Region.SetName(item, "Settings");
 	}
 
 	private void NavigationViewItemChanged(Microsoft.UI.Xaml.Controls.NavigationView sender, NavigationViewSelectionChangedEventArgs args)

@@ -13,10 +13,10 @@
 		<utu:NavigationBar Content="Home" AutomationProperties.AutomationId="HomeNavigationBar"/>
 		<StackPanel Grid.Row="1">
 			<TextBlock Text="ChefsHome" AutomationProperties.AutomationId="Chefs_Home_TextBlock"/>
-			<Button Command="{Binding ShowCurrentProfile}" Content="Profile" AutomationProperties.AutomationId="HomeProfileBtn"/>
-			<Button Command="{Binding ShowCurrentProfileNew}" Content="Profile (New)" AutomationProperties.AutomationId="HomeProfileNewBtn" />
+			<Button uen:Navigation.Request="!ChefsProfile" Content="Profile" />
 			<Button uen:Navigation.Request="ChefsNotifications" Content="Notifications" AutomationProperties.AutomationId="HomeNotificationsBtn"/>
 			<Button Command="{Binding NavigateToRecipeDetail}" Content="Recipe Details" AutomationProperties.AutomationId="HomeRecipeDetails"/>
+			<Button Command="{Binding NavigateToSearch}" Content="Search" />
 		</StackPanel>
 	</Grid>
 </Page>

@@ -257,7 +257,7 @@ public class App : Application
 
     protected override void OnLaunched(LaunchActivatedEventArgs args)
     {
-#if NET6_0_OR_GREATER && WINDOWS && !HAS_UNO
+#if (NET6_0_OR_GREATER && WINDOWS) || HAS_UNO_WINUI
         MainWindow = new Window();
 #else
         MainWindow = Microsoft.UI.Xaml.Window.Current;

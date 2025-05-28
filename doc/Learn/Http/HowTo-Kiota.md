@@ -52,10 +52,10 @@ When working with APIs in your application, having a strongly-typed client can s
 
     ```bash
     # From a static spec file
-    kiota generate --openapi PATH_TO_YOUR_API_SPEC.json --language CSharp --class-name MyApiClient --namespace MyApp.Client --output ./Client
+    kiota generate --openapi PATH_TO_YOUR_API_SPEC.json --language CSharp --class-name MyApiClient --namespace-name MyApp.Client --output ./Client
 
     # OR directly from the running server’s Swagger endpoint
-    kiota generate --openapi http://localhost:5002/swagger/v1/swagger.json --language CSharp --class-name MyApiClient --namespace MyApp.Client --output ./Client
+    kiota generate --openapi http://localhost:5002/swagger/v1/swagger.json --language CSharp --class-name MyApiClient --namespace-name MyApp.Client --output ./Client
     ```
 
     This will create a client named `MyApiClient` in the Client folder.
