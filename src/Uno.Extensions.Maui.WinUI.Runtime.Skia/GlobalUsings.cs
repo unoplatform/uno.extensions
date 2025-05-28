@@ -11,11 +11,9 @@ global using Microsoft.Maui.Controls;
 global using Microsoft.Maui.Embedding;
 global using Microsoft.Maui.Hosting;
 global using Microsoft.Maui.Platform;
-#if MAUI_EMBEDDING
 global using Uno.Extensions;
 global using Uno.Extensions.Maui.Extensibility;
 global using Uno.Extensions.Maui.Internals;
-#endif
 global using Microsoft.UI.Xaml;
 global using Microsoft.UI.Xaml.Controls;
 global using Microsoft.UI.Xaml.Markup;
