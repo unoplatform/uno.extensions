@@ -16,7 +16,7 @@
 	<ItemGroup>
 		<PackageReference Include="System.Collections.Immutable" />
 		<PackageReference Include="System.Linq.Async" />
-		<PackageReference Include="Uno.Toolkit" />
+		<PackageReference Include="Uno.Toolkit" VersionOverride="7.0.7" />
 	</ItemGroup>
 
 	<ItemGroup>

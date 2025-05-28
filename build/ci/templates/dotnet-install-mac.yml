@@ -1,6 +1,6 @@
 parameters:
-  DotNetVersion: '8.0.301'
-  UnoCheck_Version: '1.23.0'
+  DotNetVersion: '9.0.200'
+  UnoCheck_Version: '1.30.1'
   # UnoCheck_Manifest: 'https://raw.githubusercontent.com/unoplatform/uno.check/3b250f49b719d1cf5ab205f997c3959b5e9fed1d/manifests/uno.ui.manifest.json'
   Dotnet_Root: '/usr/local/share/dotnet/'
   Dotnet_Tools: '~/.dotnet/tools'
