@@ -37,14 +37,14 @@ In selection-based regions, the selectable items (like `NavigationViewItem`, `Ta
 ```xml
 public MainPage()
 {
-	this.InitializeComponent();
-	this.Loaded += MainPage_Loaded;
+    this.InitializeComponent();
+    this.Loaded += MainPage_Loaded;
 }
 
 private void MainPage_Loaded(object sender, RoutedEventArgs e)
 {
-	var item = (NavigationViewItem)MyNavigationView.SettingsItem;
-	Region.SetName(item, "MyRegionName");
+    var item = (NavigationViewItem)MyNavigationView.SettingsItem;
+    Region.SetName(item, "MyRegionName");
 }
 ```
 
