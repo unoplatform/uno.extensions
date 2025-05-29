@@ -16,7 +16,8 @@
 			<RowDefinition Height="Auto" />
 			<RowDefinition />
 		</Grid.RowDefinitions>
-		<utu:NavigationBar AutomationProperties.AutomationId="PageNavigationOne" Content="Page Navigation - One" />
+		<utu:NavigationBar AutomationProperties.AutomationId="PageNavigationOne"
+						   Content="Page Navigation - One" />
 		<StackPanel Grid.Row="1"
 					HorizontalAlignment="Center"
 					VerticalAlignment="Center">
@@ -32,10 +33,15 @@
 			<Button AutomationProperties.AutomationId="OnePageToTwoPageViewModelButton"
 					Click="{x:Bind ViewModel.GoToTwo}"
 					Content="Two (ViewModel)" />
+			<Button AutomationProperties.AutomationId="OnePageToTwoPageWithDataButton"
+					uen:Navigation.Request="PageNavigationTwo"
+					uen:Navigation.Data="{Binding FirstItem}"
+					Content="Two (With Data)" />
 			<Button AutomationProperties.AutomationId="RapidSettingsWriteTestButton"
 					Click="{x:Bind ViewModel.SettingsWriteTest}"
 					Content="Settings Write Test" />
-			<TextBlock x:Name="TxtUrl" AutomationProperties.AutomationId="OnePageTxtUrlFromBrowser" />
+			<TextBlock x:Name="TxtUrl"
+					   AutomationProperties.AutomationId="OnePageTxtUrlFromBrowser" />
 			<TextBlock x:Name="TxtDataContext"
 					   Text="DataContext is ok"
 					   AutomationProperties.AutomationId="OnePageTxtDataContext" />
@@ -44,11 +50,13 @@
 					Content="Get URL" />
 		</StackPanel>
 		<ScrollViewer Grid.Row="2">
-			<muxc:ItemsRepeater uen:Navigation.Request="PageNavigationTwo" ItemsSource="{Binding Items}">
+			<muxc:ItemsRepeater uen:Navigation.Request="PageNavigationTwo"
+								ItemsSource="{Binding Items}">
 				<muxc:ItemsRepeater.ItemTemplate>
 					<DataTemplate>
 						<!--<UserControl>-->
-						<Grid Height="200" Background="Red">
+						<Grid Height="200"
+							  Background="Red">
 							<Border HorizontalAlignment="Center"
 									VerticalAlignment="Top"
 									Background="Pink">

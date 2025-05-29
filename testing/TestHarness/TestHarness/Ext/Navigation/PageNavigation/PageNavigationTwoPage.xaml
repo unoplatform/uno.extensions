@@ -19,9 +19,14 @@
 					VerticalAlignment="Center"
 					Grid.Row="1">
 			<TextBlock>
-	<Run Text="Created on UI Thread: " /><Run Text="{Binding CreatedOnUIThread}" />
+				<Run Text="Created on UI Thread: " /><Run Text="{Binding CreatedOnUIThread}" />
 			</TextBlock>
 			<TextBlock Text="{Binding Model.Value}" />
+			<TextBlock x:Name="TxtUrl"
+					   AutomationProperties.AutomationId="SecondPageTxtUrlFromBrowser" />
+			<Button AutomationProperties.AutomationId="SecondPageGetUrlFromBrowser"
+					Click="GetUrlFromBrowser"
+					Content="Get URL" />
 			<Button AutomationProperties.AutomationId="TwoPageToThreePageButton"
 					Content="Three"
 					uen:Navigation.Request="PageNavigationThree" />
@@ -35,7 +40,7 @@
 					Content="Back (Codebehind)"
 					Click="TwoPageBackCodebehindClick" />
 			<Button AutomationProperties.AutomationId="TwoPageToThreePageViewModelButton"
-					Content="Three (ViewModel)"
+					Content="Three (ViewModel with Data)"
 					Click="{x:Bind ViewModel.GoToThree}" />
 			<Button AutomationProperties.AutomationId="TwoPageBackViewModelButton"
 					Content="Back (ViewModel)"
