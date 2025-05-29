@@ -1,12 +1,15 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Uno.Sdk">
 	<Import Project="..\tfms-ui-maui.props" />
   <PropertyGroup>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+		<UnoFeatures>
+			SkiaRenderer;
+		</UnoFeatures>
   </PropertyGroup>
-	<ItemGroup>
-		<PackageReference Include="Uno.WinUI" />
-	</ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Uno.Extensions.Maui.UI\Extensibility\Impl\MauiInitExtension.cs" Link="MauiInitExtension.cs" />
+  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Uno.Extensions.Maui.UI\Uno.Extensions.Maui.WinUI.csproj" />
   </ItemGroup>
