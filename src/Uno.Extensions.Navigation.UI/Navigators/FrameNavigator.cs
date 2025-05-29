@@ -131,7 +131,7 @@ public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 			if (segments.Length > 1 ||
 				!string.IsNullOrWhiteSpace(request.Route.Path) ||
 				request.Route.Data?.Count > 0 ||
-				request.Route.IsClearBackstack())
+				request.Route.IsClearBackStack())
 			{
 				refreshViewModel = true;
 			}
