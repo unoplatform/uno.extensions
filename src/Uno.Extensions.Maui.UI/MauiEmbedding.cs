@@ -2,6 +2,12 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Maui;
 using Microsoft.Maui.ApplicationModel;
 using Uno.Extensions.Hosting;
+using Uno.Extensions.Maui.Extensibility;
+using Uno.Extensions.Maui.Platform;
+
+#if !WINDOWS
+using Uno.Foundation.Extensibility;
+#endif
 
 namespace Uno.Extensions.Maui;
 
@@ -10,6 +16,17 @@ namespace Uno.Extensions.Maui;
 /// </summary>
 public static partial class MauiEmbedding
 {
+	private static Lazy<IMauiInitExtension> _mauiInitExtension = new Lazy<IMauiInitExtension>(() =>
+			{
+#if !WINDOWS
+				ApiExtensibility.CreateInstance<IMauiInitExtension>(typeof(MauiEmbedding), out var extension);
+				return extension ?? new MauiInitExtension();
+#else
+				// On Windows, we don't use the extensibility system, so we can just return a new instance directly.
+				return new MauiInitExtension();
+#endif
+
+			});
 	/// <summary>
 	/// Registers Maui embedding in the Uno Platform app builder.
 	/// </summary>
@@ -94,64 +111,12 @@ public static partial class MauiEmbedding
 		return mauiApp;
 	}
 
-	private static void InitializeScopedServices(this IMauiContext scopedContext)
-	{
-		var scopedServices = scopedContext.Services.GetServices<IMauiInitializeScopedService>();
-
-		foreach (var service in scopedServices)
-		{
-			service.Initialize(scopedContext.Services);
-		}
-	}
+	
 
 	private static void InitializeApplicationMainPage(IApplication iApp)
 	{
-		if (iApp is not MauiApplication app || app.Handler?.MauiContext is null)
-		{
-			// NOTE: This method is supposed to be called immediately after we initialize the Application Handler
-			// This should never actually happen but is required due to nullability
-			return;
-		}
-
-#if ANDROID
-		var services = app.Handler.MauiContext.Services;
-		var context = new MauiContext(services, services.GetRequiredService<Android.App.Activity>());
-#else
-		var context = app.Handler.MauiContext;
-#endif
-
-		// Create an Application Main Page and initialize a Handler with the Maui Context
-		var page = new ContentPage();
-		app.MainPage = page;
-		_ = page.ToPlatform(context);
-
-		// Create a Maui Window and initialize a Handler shim. This will expose the actual Application Window
-		var virtualWindow = new Microsoft.Maui.Controls.Window();
-		virtualWindow.Handler = new EmbeddedWindowHandler
-		{
-#if IOS || MACCATALYST
-			PlatformView = context.Services.GetRequiredService<UIKit.UIWindow>(),
-#elif ANDROID
-			PlatformView = context.Services.GetRequiredService<Android.App.Activity>(),
-#elif WINDOWS
-			PlatformView = context.Services.GetRequiredService<Microsoft.UI.Xaml.Window>(),
-#endif
-			VirtualView = virtualWindow,
-			MauiContext = context
-		};
-		virtualWindow.Page = page;
-
-		app.SetCoreWindow(virtualWindow);
+		_mauiInitExtension.Value.Initialize(iApp);
 	}
-
-	private static void SetCoreWindow(this IApplication app, Microsoft.Maui.Controls.Window window)
-	{
-		if (app.Windows is List<Microsoft.Maui.Controls.Window> windows)
-		{
-			windows.Add(window);
-		}
-	}
-
 #endif
 
 	internal record EmbeddedApplication : IPlatformApplication
@@ -165,6 +130,17 @@ public static partial class MauiEmbedding
 
 		public IServiceProvider Services { get; }
 		public IApplication Application { get; }
+	}
+
+	private static MauiAppBuilder RegisterPlatformServices(this MauiAppBuilder builder, Application app)
+	{
+		_mauiInitExtension.Value.RegisterPlatformServices(builder, app);
+		return builder;
+	}
+
+	private static void InitializeMauiEmbeddingApp(this MauiApp mauiApp, Application app)
+	{
+		_mauiInitExtension.Value.InitializeMauiEmbeddingApp(mauiApp, app);
 	}
 
 	// NOTE: This was part of the POC and is out of scope for the MVP. Keeping it in case we want to add it back later.
