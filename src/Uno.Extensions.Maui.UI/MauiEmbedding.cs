@@ -4,7 +4,10 @@ using Microsoft.Maui.ApplicationModel;
 using Uno.Extensions.Hosting;
 using Uno.Extensions.Maui.Extensibility;
 using Uno.Extensions.Maui.Platform;
+
+#if !WINDOWS
 using Uno.Foundation.Extensibility;
+#endif
 
 namespace Uno.Extensions.Maui;
 
@@ -15,8 +18,14 @@ public static partial class MauiEmbedding
 {
 	private static Lazy<IMauiInitExtension> _mauiInitExtension = new Lazy<IMauiInitExtension>(() =>
 			{
+#if !WINDOWS
 				ApiExtensibility.CreateInstance<IMauiInitExtension>(typeof(MauiEmbedding), out var extension);
 				return extension ?? new MauiInitExtension();
+#else
+				// On Windows, we don't use the extensibility system, so we can just return a new instance directly.
+				return new MauiInitExtension();
+#endif
+
 			});
 	/// <summary>
 	/// Registers Maui embedding in the Uno Platform app builder.

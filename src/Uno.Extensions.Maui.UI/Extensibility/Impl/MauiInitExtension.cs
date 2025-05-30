@@ -93,7 +93,7 @@ internal class MauiInitExtension : IMauiInitExtension
 
 		Microsoft.Maui.ApplicationModel.Platform.Init(() => mauiApp.Services.GetRequiredService<UIKit.UIWindow>().RootViewController!);
 		_ = new MauiEmbedding.EmbeddedApplication(mauiApp.Services, iApp);
-		app.SetApplicationHandler(iApp, rootContext);
+		UIKit.UIApplication.SharedApplication.Delegate.SetApplicationHandler(iApp, rootContext);
 		Initialize(iApp);
 #elif WINDOWS
 		var rootContext = new MauiContext(mauiApp.Services);
@@ -133,7 +133,7 @@ internal class MauiInitExtension : IMauiInitExtension
 			var nativeWindow = Uno.UI.Xaml.WindowHelper.GetNativeWindow(window);
 			return nativeWindow is UIKit.UIWindow uiWindow ? uiWindow : throw new InvalidOperationException("Unable to locate the Native UIWindow");
 		})
-			.AddSingleton<UIKit.IUIApplicationDelegate>(sp => sp.GetRequiredService<Application>());
+			.AddSingleton<UIKit.IUIApplicationDelegate>(sp => UIKit.UIApplication.SharedApplication.Delegate);
 
 		return builder;
 #elif WINDOWS
