@@ -17,8 +17,8 @@
 		<PackageId>Uno.Extensions.Navigation.Toolkit.WinUI</PackageId>
 		<DefineConstants>$(DefineConstants);WINUI</DefineConstants>
 
-	<UnoFeatures>
-			Toolkit
+		<UnoFeatures>
+			Toolkit;
 		</UnoFeatures>
 	</PropertyGroup>
 
