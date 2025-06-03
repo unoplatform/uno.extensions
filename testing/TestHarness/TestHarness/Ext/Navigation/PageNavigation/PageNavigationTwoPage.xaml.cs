@@ -22,7 +22,7 @@ public sealed partial class PageNavigationTwoPage : Page
 	public async void GetUrlFromBrowser(object sender, RoutedEventArgs e)
 	{
 #if __WASM__
-		var url = PageNavigationJSImports.GetLocation();
+		var url = AddressBarJSImports.GetUrl();
 
 		TxtUrl.Text = url;
 #else

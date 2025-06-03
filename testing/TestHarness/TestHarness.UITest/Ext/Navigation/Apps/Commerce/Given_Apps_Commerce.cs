@@ -119,10 +119,7 @@ public class Given_Apps_Commerce : NavigationTestBase
 		// Log out
 		App.WaitThenTap("ProfileNavigationViewItem");
 		await App.TapAndWait("LogoutButton", "LoginButton");
-
-
 	}
-
 
 	[Test]
 	public async Task When_ViewModelInstance()
@@ -139,7 +136,6 @@ public class Given_Apps_Commerce : NavigationTestBase
 
 		// NavToHome
 		App.WaitThenTap("LoginButton");
-
 
 		/// Tap through each navigation view item
 		await App.TapAndWait("DealsNavigationViewItem", "DealsNavigationBar");

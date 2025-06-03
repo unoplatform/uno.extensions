@@ -56,8 +56,8 @@ public static class ServiceCollectionExtensions
 					// Register the region for each control type
 					.AddRegion<Frame, FrameNavigator>()
 					.AddRegion<ContentControl, ContentControlNavigator>()
-				   .AddRegion<Panel, PanelVisiblityNavigator>(name: PanelVisiblityNavigator.NavigatorName)
-				   .AddRegion<Microsoft.UI.Xaml.Controls.NavigationView, NavigationViewNavigator>()
+					.AddRegion<Panel, PanelVisiblityNavigator>(name: PanelVisiblityNavigator.NavigatorName)
+					.AddRegion<Microsoft.UI.Xaml.Controls.NavigationView, NavigationViewNavigator>()
 					.AddRegion<ContentDialog, ContentDialogNavigator>(true)
 					.AddRegion<MessageDialog, MessageDialogNavigator>(true)
 					.AddRegion<Flyout, FlyoutNavigator>(true)
