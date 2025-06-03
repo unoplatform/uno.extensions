@@ -183,14 +183,6 @@ public partial class
 
 		return builder;
 #elif WINDOWS
-		//_clone = app.Resources.Clone();
-		//_ = builder.Services.RemoveWhere(sd =>
-		//			sd.ServiceType == typeof(IMauiInitializeService) &&
-		//								(
-		//									// Match using Name since the types are internal to Maui
-		//									sd.ImplementationType is { Name: "MauiControlsInitializer" } ||
-		//									sd.ImplementationType is { Name: "MauiCoreInitializer" }
-		//								));
 		return builder;
 #else
 		throw new PlatformNotSupportedException("MauiEmbedding is not supported on this platform.");

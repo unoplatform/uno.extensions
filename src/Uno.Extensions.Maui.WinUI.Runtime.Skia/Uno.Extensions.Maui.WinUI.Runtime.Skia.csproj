@@ -8,9 +8,9 @@
 	<PropertyGroup>
 		<WindowsSdkPackageVersion>10.0.19041.57</WindowsSdkPackageVersion>
 	</PropertyGroup>
-  <PropertyGroup>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
+	<PropertyGroup>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
 		<UseMaui>true</UseMaui>
 		<NoWarn>$(NoWarn);NU5104;NU5048;NU1009</NoWarn>
 		<Description>Skia Renderer support package for .NET MAUI embedding for Uno app.</Description>
@@ -20,11 +20,11 @@
 		<UnoSingleProject>true</UnoSingleProject>
 		<OutputType>Library</OutputType>
 		<DefineConstants>$(DefineConstants);MAUI_RUNTIME_SKIA</DefineConstants>
-  </PropertyGroup>
-  <ItemGroup>
-    <Compile Include="..\Uno.Extensions.Maui.UI\Extensibility\Impl\MauiEmbeddingExtension.cs" Link="MauiEmbeddingExtension.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Uno.Extensions.Maui.UI\Uno.Extensions.Maui.WinUI.csproj" />
-  </ItemGroup>
+	</PropertyGroup>
+	<ItemGroup>
+		<Compile Include="..\Uno.Extensions.Maui.UI\Extensibility\Impl\MauiEmbeddingExtension.cs" Link="MauiEmbeddingExtension.cs" />
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\Uno.Extensions.Maui.UI\Uno.Extensions.Maui.WinUI.csproj" />
+	</ItemGroup>
 </Project>
