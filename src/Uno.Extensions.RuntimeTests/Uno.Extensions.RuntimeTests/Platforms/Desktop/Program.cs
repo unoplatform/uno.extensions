@@ -1,4 +1,5 @@
 using Uno.UI.Runtime.Skia;
+using Uno.UI.Hosting;
 
 namespace Uno.Extensions.RuntimeTests;
 public class Program
