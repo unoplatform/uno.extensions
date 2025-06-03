@@ -16,7 +16,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<Using Remove="@(Using-&gt;HasMetadata('Sdk')-&gt;WithMetadataValue('Sdk', 'Maui'))" />
+		<Using Remove="@(Using->HasMetadata('Sdk')->WithMetadataValue('Sdk', 'Maui'))" />
 	</ItemGroup>
 
 	<ItemGroup>
