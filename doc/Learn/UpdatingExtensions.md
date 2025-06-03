@@ -6,7 +6,7 @@ uid: Uno.Extensions.Migration
 
 ## Upgrading to Extensions 6.0
 
-The Uno SDK dependencies for Uno Extensions have been updated to Uno SDK version 6.x. This means that you will need to update your project to at least use the Uno SDK version referenced by Uno Extensions.
+The Uno SDK dependencies for Uno Extensions have been updated to Uno SDK version 6.0. Ensure to [update your uno.sdk](xref:Uno.Development.UpgradeUnoNuget) to the latest version.
 
 ## Upgrading to Extensions 5.2
 
