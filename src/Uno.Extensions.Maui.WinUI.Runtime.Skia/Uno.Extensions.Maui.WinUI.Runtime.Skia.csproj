@@ -10,8 +10,8 @@
 	</PropertyGroup>
   <PropertyGroup>
     <ImplicitUsings>enable</ImplicitUsings>
+		<Version>5.4.0-dev.27</Version>
     <Nullable>enable</Nullable>
-		<IsPackable>true</IsPackable>
 		<UseMaui>true</UseMaui>
 		<NoWarn>$(NoWarn);NU5104;NU5048;NU1009</NoWarn>
 		<Description>Extensions to embed .NET MAUI controls within your Uno app.</Description>
