@@ -5,10 +5,6 @@ using Uno.Extensions.Hosting;
 using Uno.Extensions.Maui.Extensibility;
 using Uno.Extensions.Maui.Platform;
 
-#if !Has_UNO
-using Uno.Foundation.Extensibility;
-#endif
-
 namespace Uno.Extensions.Maui;
 
 /// <summary>

@@ -2,7 +2,6 @@ using Microsoft.Maui;
 using Microsoft.Maui.ApplicationModel;
 using Uno.Extensions.Maui.Extensibility;
 using Uno.Extensions.Maui.Platform;
-using Uno.Foundation.Extensibility;
 using Windows.Foundation;
 
 namespace Uno.Extensions.Maui;
