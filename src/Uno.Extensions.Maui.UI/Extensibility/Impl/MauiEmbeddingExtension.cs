@@ -36,9 +36,9 @@ public partial class
 
 	private static readonly Lazy<IMauiEmbeddingExtension> _instance = new Lazy<IMauiEmbeddingExtension>(() =>
 	{
-#if !WINDOWS && MAUI_RUNTIME_SKIA
+#if !WINDOWS
 		ApiExtensibility.CreateInstance<IMauiEmbeddingExtension>(typeof(MauiEmbedding), out var extension);
-		return extension ?? throw new InvalidOperationException("Missing runtime extension registration for Maui Embedding");
+		return extension ?? new MauiEmbeddingExtension();
 #else
 		// On Windows we don't use the extensibility system, so we can just return a new instance directly.
 		return new MauiEmbeddingExtension();
