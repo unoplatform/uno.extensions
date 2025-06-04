@@ -16,12 +16,12 @@ internal class RouteNotifier : IRouteNotifier, IRouteUpdater
 
 	private IDictionary<Guid, StringBuilder> navigationSegments = new Dictionary<Guid, StringBuilder>();
 	private IDictionary<Guid, int> runningNavigations = new Dictionary<Guid, int>();
-	private IRegion? _rootRegion;
+	private IDictionary<Guid, IRegion> rootRegions = new Dictionary<Guid, IRegion>();
 
 	public void StartNavigation(INavigator navigator, IRegion region, NavigationRequest request)
 	{
 		var id = request.Id;
-		_rootRegion = region.Root();
+		rootRegions[id] = region.Root();
 
 		if (!runningNavigations.TryGetValue(id, out var count) ||
 			count == 0)
@@ -56,7 +56,8 @@ internal class RouteNotifier : IRouteNotifier, IRouteUpdater
 			}
 			navigationSegments.Remove(id);
 
-			var navRegion = _rootRegion ?? region.Root();
+			var navRegion = rootRegions.TryGetValue(id, out var r) ? r : region.Root();
+			rootRegions.Remove(id);
 			RouteChanged?.Invoke(this, new RouteChangedEventArgs(navRegion, response?.Navigator));
 		}
 	}
