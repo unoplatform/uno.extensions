@@ -2,7 +2,7 @@
 	<PropertyGroup>
 		<!-- <UnoVersion>6.0.465</UnoVersion> -->
 		<UnoExtensionsVersion>5.3.8</UnoExtensionsVersion>
-		<UnoToolkitVersion>7.0.2</UnoToolkitVersion>
+		<UnoToolkitVersion>7.0.7</UnoToolkitVersion>
 		<UnoThemesVersion>5.5.1</UnoThemesVersion>
 		<UnoCSharpMarkupVersion>6.0.15</UnoCSharpMarkupVersion>
 		<UnoWasmBootstrapVersion>8.0.23</UnoWasmBootstrapVersion>
