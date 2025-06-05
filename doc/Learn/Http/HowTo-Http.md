@@ -25,6 +25,7 @@ When working with a complex application, centralized registration of your API en
     ```
     > [!NOTE]
     > As of Uno Platform 6.0, Http no longer includes Uno.Extensions.Http.Refit. Use HttpRefit for Refit-based clients or HttpKiota for Kiota-generated clients.
+    > [Migrating to Uno Platform 6.0](xref:Uno.Development.MigratingToUno6)
 
 ### 2. Enable HTTP
 
