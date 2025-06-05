@@ -5,4 +5,4 @@ steps:
     retryCountOnTaskFailure: 3
     inputs:
       packageType: sdk
-      version: 9.0.300
+      version: 9.0.200
