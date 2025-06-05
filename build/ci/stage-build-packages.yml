@@ -44,6 +44,13 @@ jobs:
       versionSelector: specificVersion
       testPlatformVersion: 17.5.0
 
+  - task: UseDotNet@2
+    displayName: 'Use .NET SDK'
+    retryCountOnTaskFailure: 3
+    inputs:
+      packageType: sdk
+      version: 8.0.301
+
   - task: VSTest@2
     inputs:
       testAssemblyVer2: |
