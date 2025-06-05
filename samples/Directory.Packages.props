@@ -13,8 +13,8 @@
 		<UnoResizetizerVersion>1.8.1</UnoResizetizerVersion>
 		<SkiaSharpVersion>3.119.0-preview.1.2</SkiaSharpVersion>
 		<SvgSkiaVersion>3.0.2</SvgSkiaVersion>
-		<WinAppSdkVersion>1.7.250401001</WinAppSdkVersion>
-		<WinAppSdkBuildToolsVersion>10.0.26100.3916</WinAppSdkBuildToolsVersion>
+		<WinAppSdkVersion>1.7.250513003</WinAppSdkVersion>
+		<WinAppSdkBuildToolsVersion>10.0.26100.4188</WinAppSdkBuildToolsVersion>
 		<MicrosoftLoggingVersion>8.0.1</MicrosoftLoggingVersion>
 		<WindowsCompatibilityVersion>8.0.15</WindowsCompatibilityVersion>
 		<MicrosoftIdentityClientVersion>4.70.2</MicrosoftIdentityClientVersion>
