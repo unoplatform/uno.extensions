@@ -27,7 +27,7 @@
     <PackageVersion Include="Microsoft.Identity.Client.Extensions.Msal" Version="4.61.3" />
     <PackageVersion Include="Microsoft.Identity.Client.Broker" Version="4.61.3" />
     <PackageVersion Include="Microsoft.Maui.Controls" Version="8.0.3" />
-    <PackageVersion Include="Microsoft.Maui.Controls.Compatibility" Version="8.0.3" />
+    <PackageVersion Include="Microsoft.Maui.Controls.Compatibility" Version="8.0.100" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.6.2" />
     <PackageVersion Include="Microsoft.Net.Compilers.Toolset" Version="4.2.0" />
     <PackageVersion Include="Microsoft.SourceLink.GitHub" Version="1.1.1" />
