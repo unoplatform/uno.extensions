@@ -30,6 +30,8 @@ jobs:
     displayName: Build Extensions Packages
     inputs:
       solution: Uno.Extensions-packageonly.slnf
+      msbuildLocationMethod: location
+      msbuildLocation: $(MSBUILDPATH)
       msbuildArchitecture: x86
       msbuildArguments: /r /m /v:m /p:Configuration=Release "/p:PackageOutputPath=$(build.artifactstagingdirectory)\nuget" "/p:PackageVersion=$(NBGV_SemVer2)" "/p:InformationalVersion=$(NBGV_InformationalVersion)"  /detailedsummary /bl:$(build.artifactstagingdirectory)/uno-extensions.binlog
       clean: false
