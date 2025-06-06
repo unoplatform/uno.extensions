@@ -35,8 +35,6 @@ jobs:
     displayName: Build Samples
     inputs:
       solution: ${{parameters.solution}}
-      msbuildLocationMethod: location
-      msbuildLocation: $(MSBUILDPATH)
       msbuildArchitecture: x86
       msbuildArguments: /m /v:m /r /p:Configuration=Release "/p:InformationalVersion=$(NBGV_InformationalVersion)" /p:GeneratePackageOnBuild=false /p:AotAssemblies=false /p:UseWebAssemblyAOT=false /detailedsummary /bl:$(build.artifactstagingdirectory)/samples-windows-${{parameters.solutionName}}.binlog
       clean: false
