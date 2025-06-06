@@ -1,14 +1,52 @@
 ﻿namespace Uno.Extensions.Navigation;
 
+/// <summary>
+/// Provides constants for various navigation qualifiers.
+/// </summary>
 public static class Qualifiers
 {
-	public const string Separator = "/";
-	public const string Root = "/";
-	public const string None = "";
-	public const string Nested = "./";
-	// Note: Disabling parent routing - leaving this code in case parent routing is required
-	//public const string Parent = "../";
-	public const string Dialog = "!";
-	public const string NavigateBack = "-";
-	public const string ClearBackStack = "-/";
+    /// <summary>
+    /// The separator used in navigation paths.
+    /// <value>"/"</value>
+    /// </summary>
+    public const string Separator = "/";
+
+    /// <summary>
+    /// Represents the root of the navigation path.
+    /// <value>"/"</value>
+    /// </summary>
+    public const string Root = "/";
+
+    /// <summary>
+    /// Represents no navigation qualifier.
+    /// <value>""</value>
+    /// </summary>
+    public const string None = "";
+
+    /// <summary>
+    /// Represents a nested navigation path.
+    /// <value>"./"</value>
+    /// </summary>
+    public const string Nested = "./";
+
+    // Note: Disabling parent routing - leaving this code in case parent routing is required
+    //public const string Parent = "../";
+
+    /// <summary>
+    /// Represents a dialog navigation.
+    /// <value>"!"</value>
+    /// </summary>
+    public const string Dialog = "!";
+
+    /// <summary>
+    /// Represents a navigation back action.
+    /// <value>"-"</value>
+    /// </summary>
+    public const string NavigateBack = "-";
+
+    /// <summary>
+    /// Represents a clear back stack action.
+    /// <value>"-/"</value>
+    /// </summary>
+    public const string ClearBackStack = "-/";
 }
