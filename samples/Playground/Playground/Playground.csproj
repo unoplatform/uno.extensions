@@ -34,6 +34,13 @@
 			Toolkit;
 			Mvvm;
 		</UnoFeatures>
+		
+		<!--
+			The Uno.Sdk.Private is pulling Microsoft.WindowsAppSDK v1.6, while the Uno.Sdk used to build packages is using v1.7
+			This causes the buidl to fail as we 2 different references to the WebView2Loader.dll.
+			By setting this property, we force the Uno.Sdk[.Private] to use the same version as the one used when building the extension packages.
+		-->
+		<WinAppSdkVersion>1.7.250513003</WinAppSdkVersion>
 	</PropertyGroup>
 
 	<ItemGroup>
