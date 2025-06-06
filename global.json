@@ -1,7 +1,7 @@
 {
   "msbuild-sdks": {
     "MSBuild.Sdk.Extras": "3.0.44",
-    "Uno.Sdk": "6.0.110",
-    "Uno.Sdk.Private": "6.0.704"
+    "Uno.Sdk": "6.0.67",
+    "Uno.Sdk.Private": "6.0.465"
   }
 }
