@@ -4,6 +4,7 @@ internal record FileStorage(ILogger<FileStorage> Logger, IDataFolderProvider Dat
 {
 	private Task<bool> FileExistsInPackage(string fileName) => Uno.UI.Toolkit.StorageFileHelper.ExistsInPackage(fileName);
 
+	/// <inheritdoc/>
 	public async Task<string?> CreateFolderAsync(string foldername)
 	{
 		var path = DataFolderProvider.AppDataPath;
@@ -21,6 +22,7 @@ internal record FileStorage(ILogger<FileStorage> Logger, IDataFolderProvider Dat
 		return folder.Path;
 	}
 
+	/// <inheritdoc/>
 	public async Task<string?> ReadPackageFileAsync(string filename)
 	{
 		try
@@ -77,6 +79,85 @@ internal record FileStorage(ILogger<FileStorage> Logger, IDataFolderProvider Dat
 
 	}
 
+	/// <inheritdoc/>
+	public async ValueTask<IEnumerable<string>?> ReadPackageFileAsync(string filename, IEnumerable<(int Start, int End)> lineRanges) // TODO: Check if this maybe should get made a ImmutableList or ImmutableArray as return type instead since this is a readonly task
+	{
+		try
+		{
+			if (!await FileExistsInPackage(filename))
+			{
+				if (Logger.IsEnabled(LogLevel.Information))
+				{
+					Logger.LogInformationMessage($"File '{filename}' does not exist in package");
+				}
+				return default;
+			}
+
+#if __WINDOWS__
+			if (!PlatformHelper.IsAppPackaged)
+			{
+				var file = System.IO.Path.Combine(
+								 System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly()?.Location ?? string.Empty) ?? string.Empty,
+								 filename);
+
+				 string[] fileContent = File.ReadAllLines(file);
+				 if (fileContent.Length == 0)
+		         {
+					 if (Logger.IsEnabled(LogLevel.Warning))
+					 {
+						 Logger.LogWarningMessage($"File '{filename}' is empty");
+					 }
+					 return default;
+				 }
+				return fileContent.SelectItemsByRanges(lineRanges);
+			}
+#endif
+
+			var fileUri = new Uri($"ms-appx:///{filename}");
+			if (Logger.IsEnabled(LogLevel.Trace))
+			{
+				Logger.LogTraceMessage($"Reading file '{fileUri}'");
+			}
+			var storageFile = await StorageFile.GetFileFromApplicationUriAsync(fileUri);
+			if (File.Exists(storageFile.Path))
+			{
+				if (Logger.IsEnabled(LogLevel.Trace))
+				{
+					Logger.LogTraceMessage($"Reading file with path '{storageFile.Path}' that does exist");
+				}
+
+				string[] fileContent = File.ReadAllLines(storageFile.Path);
+
+				if (fileContent.Length == 0)
+				{
+					if (Logger.IsEnabled(LogLevel.Warning))
+					{
+						Logger.LogWarningMessage($"File '{filename}' is empty");
+					}
+					return default;
+				}
+
+				return fileContent.SelectItemsByRanges(lineRanges); // TODO: Check why this is showing to be not available for Android target
+			}
+
+			if (Logger.IsEnabled(LogLevel.Warning))
+			{
+				Logger.LogWarningMessage($"File doesn't exist with path '{storageFile.Path}'");
+			}
+			return default;
+		}
+		catch (Exception ex)
+		{
+			if (Logger.IsEnabled(LogLevel.Information))
+			{
+				Logger.LogInformationMessage($"Unable to read file '{filename}' due to exception {ex.Message}");
+			}
+			return default;
+		}
+
+	}
+
+	/// <inheritdoc/>
 	public async Task<Stream?> OpenPackageFileAsync(string filename)
 	{
 		try
