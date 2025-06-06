@@ -18,8 +18,8 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.Maui.Controls" Version="8.0.3"/>
-		<PackageReference Include="Microsoft.Maui.Controls.Compatibility"  Version="8.0.3"/>
+		<PackageReference Include="Microsoft.Maui.Controls" Version="8.0.100"/>
+		<PackageReference Include="Microsoft.Maui.Controls.Compatibility"  Version="8.0.100"/>
 		<PackageReference Include="Syncfusion.Maui.Core" Version="22.2.9" />
 		<PackageReference Include="Syncfusion.Maui.Charts" Version="22.2.9" />
 		<PackageReference Include="Syncfusion.Maui.DataGrid" Version="22.2.9" />
