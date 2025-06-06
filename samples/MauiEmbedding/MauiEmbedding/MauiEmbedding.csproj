@@ -33,6 +33,7 @@
 			Toolkit;
 			Mvvm;
 		</UnoFeatures>
+		<WinAppSdkVersion>1.7.250513003</WinAppSdkVersion>
 	</PropertyGroup>
 
 	<ItemGroup>
