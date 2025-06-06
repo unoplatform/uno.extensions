@@ -23,6 +23,7 @@ When working with a complex application, centralized registration of your API en
         MVUX;
     </UnoFeatures>
     ```
+
     > [!NOTE]
     > As of Uno Platform 6.0, Http no longer includes Uno.Extensions.Http.Refit. Use HttpRefit for Refit-based clients or HttpKiota for Kiota-generated clients.
     > [Migrating to Uno Platform 6.0](xref:Uno.Development.MigratingToUno6)
@@ -30,8 +31,8 @@ When working with a complex application, centralized registration of your API en
 ### 2. Enable HTTP
 
 * Call the appropriate method to register a HTTP client with the `IHostBuilder` which implements `IHttpClient`:
-    * Use .UseHttpRefit() for Refit clients
-    * Use .UseHttpKiota() for Kiota clients
+  * Use .UseHttpRefit() for Refit clients
+  * Use .UseHttpKiota() for Kiota clients
 
     ```csharp
     protected override void OnLaunched(LaunchActivatedEventArgs args)
