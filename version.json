@@ -1,6 +1,10 @@
 {
   "$schema": "https://raw.githubusercontent.com/dotnet/Nerdbank.GitVersioning/main/src/NerdBank.GitVersioning/version.schema.json",
+<<<<<<< HEAD
   "version": "5.3",
+=======
+  "version": "6.0-dev.{height}",
+>>>>>>> 41d5306e (chore: Bump to v6)
   "nuGetPackageVersion": {
     "semVer": 2.0
   },
