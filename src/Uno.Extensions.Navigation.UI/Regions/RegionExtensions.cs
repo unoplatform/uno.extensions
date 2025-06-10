@@ -1,6 +1,4 @@
-﻿using Windows.Media.Devices;
-
-namespace Uno.Extensions.Navigation.Regions;
+﻿namespace Uno.Extensions.Navigation.Regions;
 
 public static class RegionExtensions
 {

@@ -64,14 +64,6 @@ public class PanelVisiblityNavigator : ControlNavigator<Panel>
 
 	public Route? CurrentRoute { get; private set; }
 
-	protected override async Task<Route?> ExecuteRequestAsync(NavigationRequest request)
-	{
-		// TODO: Ensure this call is really needed
-		UpdateCurrentRoute(request.Route);
-
-		return await base.ExecuteRequestAsync(request);
-	}
-
 	public void UpdateCurrentRoute(Route? route)
 	{
 		if (route is null)
