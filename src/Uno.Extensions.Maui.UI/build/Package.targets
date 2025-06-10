@@ -91,5 +91,4 @@
 			<ReferenceCopyLocalPaths Remove="@(_OtherPriFiles2)" />
 		</ItemGroup>
 	</Target>
-
 </Project>

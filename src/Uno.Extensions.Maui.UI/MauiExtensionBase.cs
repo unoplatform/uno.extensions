@@ -66,7 +66,7 @@ public abstract class MauiExtensionBase : MarkupExtension
 		return base.ProvideValue(serviceProvider);
 	}
 
-	private ILogger GetLogger()
+	internal ILogger GetLogger()
 	{
 		var factory = MauiEmbedding.MauiContext.Services.GetRequiredService<ILoggerFactory>();
 		var implementingType = GetType();
