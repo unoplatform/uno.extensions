@@ -78,22 +78,6 @@ public class Given_AddressBar : NavigationTestBase
 		AssertAddressBarUrl("AddressBarHomePage", "?QueryUser.Id", false);
 	}
 
-	private void AssertAddressBarUrl(string pagePrefix, string contains, bool assertContains = true)
-	{
-		App.WaitThenTap($"{pagePrefix}GetUrlFromBrowser");
-
-		var url = App.GetText($"{pagePrefix}TxtUrlFromBrowser");
-
-		if (assertContains)
-		{
-			StringAssert.Contains(url, contains);
-		}
-		else
-		{
-			Assert.IsFalse(url.Contains(contains));
-		}
-	}
-
 	[Test]
 	[ActivePlatforms(Platform.Browser)]
 	public void When_PageNavigationNavigateRootUpdateUrl()
@@ -127,20 +111,11 @@ public class Given_AddressBar : NavigationTestBase
 
 		App.WaitThenTap("OnePageToTwoPageWithDataButton");
 
-		AssertAddressBarUrl("Second");
+		AssertAddressBarUrl("SecondPage", "Value=0");
 
 		App.WaitThenTap("TwoPageToThreePageViewModelButton");
 
-		AssertAddressBarUrl("Third");
-	}
-
-	private void AssertAddressBarUrl(string prefix)
-	{
-		App.WaitThenTap($"{prefix}PageGetUrlFromBrowser");
-
-		var url = App.GetText($"{prefix}PageTxtUrlFromBrowser");
-
-		StringAssert.Contains(url, "Value=0");
+		AssertAddressBarUrl("ThirdPage", "Value=0");
 	}
 
 	[Test]
@@ -184,12 +159,57 @@ public class Given_AddressBar : NavigationTestBase
 		AssertAddressBarUrl("AddressBarSecondPage", "AddressBarSecond");
 	}
 
-	private void AssertAddressBarUrl(string pagePrefix, string contains)
+	[Test]
+	public async Task When_Chefs_Navigating_Through_TabBarItems_AddressBar_Updates()
+	{
+		InitTestSection(TestSections.Apps_Chefs);
+
+		App.WaitThenTap("ShowAppButton");
+		App.WaitThenTap("NextButton");
+		App.WaitThenTap("LoginButton");
+
+		// MainTabs
+
+		App.WaitThenTap("SearchTabBarItem");
+		AssertAddressBarUrl("ChefsSearchPage", "ChefsSearch");
+
+		App.WaitThenTap("HomeTabBarItem");
+		AssertAddressBarUrl("ChefsHomePage", "ChefsHome");
+
+		App.WaitThenTap("FavoriteTabBarItem");
+		AssertAddressBarUrl("ChefsFavoriteRecipesPage", "ChefsFavoriteRecipes");
+
+		App.WaitThenTap("SearchTabBarItem");
+		AssertAddressBarUrl("ChefsSearchPage", "ChefsSearch");
+
+		App.WaitThenTap("HomeTabBarItem");
+		AssertAddressBarUrl("ChefsHomePage", "ChefsHome");
+
+		// Nested Tabs
+
+		App.WaitThenTap("FavoriteTabBarItem");
+		AssertAddressBarUrl("ChefsFavoriteRecipesPage", "MyRecipes");
+
+		App.WaitThenTap("MyCookbooksFavoritesTabBar");
+		AssertAddressBarUrl("ChefsFavoriteRecipesPage", "MyCookbooks");
+
+		App.WaitThenTap("MyRecipesFavoritesTabBar");
+		AssertAddressBarUrl("ChefsFavoriteRecipesPage", "MyRecipes");
+	}
+
+	private void AssertAddressBarUrl(string pagePrefix, string contains, bool assertContains = true)
 	{
 		App.WaitThenTap($"{pagePrefix}GetUrlFromBrowser");
 
 		var url = App.GetText($"{pagePrefix}TxtUrlFromBrowser");
 
-		StringAssert.Contains(url, contains);
+		if (assertContains)
+		{
+			StringAssert.Contains(url, contains);
+		}
+		else
+		{
+			Assert.IsFalse(url.Contains(contains));
+		}
 	}
 }
