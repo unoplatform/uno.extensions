@@ -1,4 +1,6 @@
-﻿namespace Uno.Extensions.Navigation.Regions;
+﻿using Windows.Media.Devices;
+
+namespace Uno.Extensions.Navigation.Regions;
 
 public static class RegionExtensions
 {
@@ -56,10 +58,24 @@ public static class RegionExtensions
 
 	public static Route? GetRoute(this IRegion region)
 	{
-		var regionRoute = region.Navigator()?.Route;
-		return regionRoute.Merge(
-							region?.Children
-								.Select(x => (x.Name, CurrentRoute: x.GetRoute())));
+		var navigator = region.Navigator();
+		var regionRoute = navigator?.Route;
+
+		IEnumerable<(string? Name, Route? CurrentRoute)>? children;
+
+		if (navigator is PanelVisiblityNavigator pvn)
+		{
+			children = region?.Children
+						.FirstOrDefault(x => x.Navigator()?.Route == pvn.CurrentRoute) is { } childRegion
+						? new[] { (childRegion.Name, CurrentRoute: childRegion.GetRoute()) }
+						: null;
+		}
+		else
+		{
+			children = region?.Children.Select(x => (x.Name, CurrentRoute: x.GetRoute()));
+		}
+
+		return regionRoute.Merge(children);
 	}
 
 	public static IEnumerable<IRegion> FindChildren(this IRegion region, Func<IRegion, bool> predicate)
