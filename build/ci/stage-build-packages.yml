@@ -31,7 +31,7 @@ jobs:
     inputs:
       solution: Uno.Extensions-packageonly.slnf
       msbuildArchitecture: x86
-      msbuildArguments: /r /m /v:m /p:Configuration=Release "/p:PackageOutputPath=$(build.artifactstagingdirectory)\nuget" "/p:PackageVersion=$(NBGV_SemVer2)" "/p:InformationalVersion=$(NBGV_InformationalVersion)"  /detailedsummary /bl:$(build.artifactstagingdirectory)/uno-extensions.binlog
+      msbuildArguments: /r /m /v:m /p:Configuration=Release "/p:PackageOutputPath=$(build.artifactstagingdirectory)" "/p:PackageVersion=$(NBGV_SemVer2)" "/p:InformationalVersion=$(NBGV_InformationalVersion)"  /detailedsummary /bl:$(build.artifactstagingdirectory)/build-packages.binlog
       clean: false
       maximumCpuCount: true
       restoreNugetPackages: false
@@ -77,4 +77,4 @@ jobs:
   - task: PublishBuildArtifacts@1
     condition: always()
     inputs:
-        ArtifactName: $(Build.DefinitionName)
+        ArtifactName: NuGet_Packages
