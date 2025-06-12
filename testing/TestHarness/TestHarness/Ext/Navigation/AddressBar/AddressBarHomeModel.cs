@@ -7,6 +7,8 @@ public partial class AddressBarHomeModel
 		{ "QueryUser.Id", new Guid("8a5c5b2e-ff96-474b-9e4d-65bde598f6bc") }
 	};
 
+	public AddressBarUser User => new(new Guid("8a5c5b2e-ff96-474b-9e4d-65bde598f6bc"), "João Rodrigues");
+
 	public static int InstanceCount
 	{
 		get => ApplicationData.Current.LocalSettings.Values.TryGetValue(Constants.HomeInstanceCountKey, out var value)

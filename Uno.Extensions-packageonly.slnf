@@ -23,6 +23,7 @@
       "src\\Uno.Extensions.Logging\\Uno.Extensions.Logging.WinUI.csproj",
       "src\\Uno.Extensions.Maui.UI\\Uno.Extensions.Maui.WinUI.csproj",
       "src\\Uno.Extensions.Maui.WinUI.Markup\\Uno.Extensions.Maui.WinUI.Markup.csproj",
+      "src\\Uno.Extensions.Maui.WinUI.Runtime.Skia\\Uno.Extensions.Maui.WinUI.Runtime.Skia.csproj",
       "src\\Uno.Extensions.Navigation.Generators\\Uno.Extensions.Navigation.Generators.csproj",
       "src\\Uno.Extensions.Navigation.Toolkit\\Uno.Extensions.Navigation.Toolkit.WinUI.csproj",
       "src\\Uno.Extensions.Navigation.UI.Markup\\Uno.Extensions.Navigation.WinUI.Markup.csproj",
