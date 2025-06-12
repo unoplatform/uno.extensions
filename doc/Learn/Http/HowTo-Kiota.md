@@ -57,7 +57,21 @@ When working with APIs in your application, having a strongly-typed client can s
     kiota generate --openapi http://localhost:5002/swagger/v1/swagger.json --language CSharp --class-name MyApiClient --namespace-name MyApp.Client.MyApi --output ./MyApp/Content/Client/MyApi
     ```
 
-    This will create a client named `MyApiClient` in the Client folder.
+    This will create a client named `MyApiClient` in the `Clients` folder.
+
+* If those has not been already included in your `Directory.Packages.props` file, the kiota CLI tool will recommend you to add following NuGet packages via dotnet:
+
+  ```xml
+  <ItemGroup>
+    <PackageVersion Include="Microsoft.Kiota.Authentification.Azure" Version="1.17.4"/>
+    <PackageVersion Include="Microsoft.Kiota.Bundle" Version="1.17.4"/>
+  </ItemGroup>
+  ```
+
+  > [!IMPORTANT]
+  > As using `dotnet add package` will result in the error `In "C:\Users\YourName\source\repos\YourAppsGitHubRepo\src\YourApp\" were unable to find a Project.` add them manually into the above mentioned file in your `Solution Items` folder.
+  > [!TIP]
+  > Using the plural for the `Clients` folder name enables you also to get a proper expandable Project structure, in case you might will like to make requests to different API like your Database, a external Client API or just more than one external API. By providing the appropriate namespace part behind the `Clients`, that also automatically separates the generated code for the different API Clients generated.
 
 ### 4. Register the Kiota Client
 
