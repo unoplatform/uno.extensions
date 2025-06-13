@@ -9,7 +9,8 @@ using Microsoft.Maui;
 namespace Uno.Extensions.Maui.Extensibility;
 
 /// <summary>  
-/// Provides methods for embedding and initializing Maui applications within a platform-specific context.  
+/// Provides methods for embedding and initializing Maui applications within a platform-specific context.
+/// Default implementation is provided to handle non-MAUI platforms when using Skia rendering
 /// </summary>
 [EditorBrowsable(EditorBrowsableState.Never)]
 public interface IMauiEmbeddingExtension
@@ -36,13 +37,17 @@ public interface IMauiEmbeddingExtension
 	void InitializeMauiEmbeddingApp(MauiApp mauiApp, Application app) { }
 
 	/// <summary>  
-	/// Builds the Maui application using the specified builder, application, and window.  
-	/// </summary>  
+	/// Builds the Maui application using the specified builder, application, and window.
+	/// </summary>
+	/// <remarks>
+	/// Default implementation creates an empty MauiApp for compatibility with non-MAUI platforms when using Skia renderers
+	/// </remarks>
 	/// <param name="builder">The Maui application builder.</param>  
 	/// <param name="app">The application instance.</param>  
 	/// <param name="window">The platform-specific window instance.</param>  
 	/// <returns>The built Maui application.</returns>  
-	MauiApp BuildMauiApp(MauiAppBuilder builder, Application app, Microsoft.UI.Xaml.Window window) => default!;
+	MauiApp BuildMauiApp(MauiAppBuilder builder, Application app, Microsoft.UI.Xaml.Window window)
+		=> MauiApp.CreateBuilder(useDefaults: false).Build();
 
 	/// <summary>  
 	/// Handles changes to the source of a dependency object.  
