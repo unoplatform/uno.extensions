@@ -1,4 +1,4 @@
-﻿using IdentityModel.OidcClient.Browser;
+﻿using Duende.IdentityModel.OidcClient.Browser;
 
 namespace Uno.Extensions.Authentication.Oidc;
 
