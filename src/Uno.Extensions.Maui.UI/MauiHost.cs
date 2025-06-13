@@ -1,6 +1,8 @@
-using Microsoft.Maui.ApplicationModel;
 using Microsoft.Maui;
+using Microsoft.Maui.ApplicationModel;
+using Uno.Extensions.Maui.Extensibility;
 using Uno.Extensions.Maui.Platform;
+using Windows.Foundation;
 
 namespace Uno.Extensions.Maui;
 
@@ -19,63 +21,7 @@ public partial class MauiHost : ContentControl
 
 	private static void OnSourceChanged(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs args)
 	{
-#if MAUI_EMBEDDING
-		// Sanity Check
-		if (IPlatformApplication.Current?.Application is null
-			&& MauiApplication.Current?.Handler.MauiContext is not null)
-		{
-			_ = new MauiEmbedding.EmbeddedApplication(MauiApplication.Current.Handler.MauiContext.Services, MauiApplication.Current);
-		}
-
-		if (args.NewValue is null ||
-			args.NewValue is not Type type ||
-			!type.IsAssignableTo(typeof(VisualElement)) ||
-			dependencyObject is not MauiHost mauiHost ||
-			MauiApplication.Current?.Handler?.MauiContext is null)
-		{
-			return;
-		}
-
-		try
-		{
-			var app = MauiApplication.Current;
-#if ANDROID
-			var services = app.Handler.MauiContext.Services;
-			var mauiContext = new MauiContext(services, services.GetRequiredService<Android.App.Activity>());
-#else
-			var mauiContext = MauiApplication.Current.Handler.MauiContext;
-#endif
-			// Allow the use of Dependency Injection for the View
-			var instance = ActivatorUtilities.CreateInstance(mauiContext.Services, type);
-			if(instance is VisualElement visualElement)
-			{
-				mauiHost.VisualElement = visualElement;
-				visualElement.Parent = app.Windows[0];
-				visualElement.BindingContext = mauiHost.DataContext;
-			}
-			else
-			{
-				throw new MauiEmbeddingException(string.Format(Properties.Resources.TypeMustInheritFromPageOrView, instance.GetType().FullName));
-			}
-
-			var native = visualElement.ToPlatform(mauiContext);
-			mauiHost.Content = native;
-
-			mauiHost.VisualElementChanged.Invoke(mauiHost, new VisualElementChangedEventArgs(visualElement));
-		}
-		catch (Exception ex)
-		{
-			var logger = GetLogger();
-			if (logger.IsEnabled(LogLevel.Error))
-			{
-				logger.LogError(ex, Properties.Resources.UnableToConvertMauiViewToNativeView);
-			}
-#if DEBUG
-			System.Diagnostics.Debugger.Break();
-#endif
-			throw new MauiEmbeddingException(Properties.Resources.UnexpectedErrorConvertingMauiViewToNativeView, ex);
-		}
-#endif
+		MauiEmbeddingExtension.Default.OnSourceChanged(dependencyObject, args);
 	}
 
 #if MAUI_EMBEDDING
@@ -101,7 +47,7 @@ public partial class MauiHost : ContentControl
 
 	private void OnSizeChanged(object sender, SizeChangedEventArgs e)
 	{
-		VisualElement?.PlatformSizeChanged();
+		MauiEmbeddingExtension.Default.OnSizeChanged(VisualElement);
 	}
 
 	private void OnActualThemeChanged(FrameworkElement sender, object args)
@@ -147,6 +93,8 @@ public partial class MauiHost : ContentControl
 		};
 #endif
 
+
+
 	/// <summary>
 	/// Fires when the VisualElement has changed.
 	/// </summary>
@@ -155,7 +103,7 @@ public partial class MauiHost : ContentControl
 	/// <summary>
 	/// Gets the Maui <see cref="VisualElement"/> created by the Source.
 	/// </summary>
-	public VisualElement? VisualElement { get; private set; }
+	public VisualElement? VisualElement { get; internal set; }
 
 	/// <summary>
 	/// Gets or sets the <see cref="Type"/> of the Maui Content Source.
@@ -164,6 +112,16 @@ public partial class MauiHost : ContentControl
 	{
 		get => (Type?)GetValue(SourceProperty);
 		set => SetValue(SourceProperty, value);
+	}
+
+	internal void InvokeVisualElementChanged(VisualElement visualElement)
+	{
+		VisualElementChanged.Invoke(this, new VisualElementChangedEventArgs(visualElement));
+	}
+
+	internal ILogger GetLoggerInternal()
+	{
+		return GetLogger();
 	}
 
 #if MAUI_EMBEDDING

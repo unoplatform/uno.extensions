@@ -10,7 +10,7 @@ public sealed partial class AddressBarSecondPage : Page
 	public async void GetUrlFromBrowser(object sender, RoutedEventArgs e)
 	{
 #if __WASM__
-		var url = ImportsJS.GetUrl();
+		var url = AddressBarJSImports.GetUrl();
 
 		TxtUrl.Text = url;
 #else
@@ -18,10 +18,3 @@ public sealed partial class AddressBarSecondPage : Page
 #endif
 	}
 }
-#if __WASM__
-internal static partial class ImportsJS
-{
-	[System.Runtime.InteropServices.JavaScript.JSImport("globalThis.Uno.Extensions.Hosting.getLocation")]
-	public static partial string GetUrl();
-}
-#endif

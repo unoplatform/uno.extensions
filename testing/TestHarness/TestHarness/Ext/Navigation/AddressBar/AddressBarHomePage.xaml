@@ -24,7 +24,14 @@
 				<Button Content="Go To Second"
 						AutomationProperties.AutomationId="AddressBarSecondButton"
 						uen:Navigation.Request="AddressBarSecond"
-						uen:Navigation.Data="{Binding UserId}" />
+						uen:Navigation.Data="{Binding User}" />
+
+				<TextBlock x:Name="TxtUrl"
+						   AutomationProperties.AutomationId="AddressBarHomePageTxtUrlFromBrowser" />
+
+				<Button AutomationProperties.AutomationId="AddressBarHomePageGetUrlFromBrowser"
+						Click="GetUrlFromBrowser"
+						Content="Get URL" />
 			</StackPanel>
 
 		</StackPanel>

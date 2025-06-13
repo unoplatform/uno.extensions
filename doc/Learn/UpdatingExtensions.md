@@ -4,6 +4,10 @@ uid: Uno.Extensions.Migration
 
 # Upgrading Extensions Version
 
+## Upgrading to Extensions 6.0
+
+The Uno SDK dependencies for Uno Extensions have been updated to Uno SDK version 6.0. Ensure to [update your uno.sdk](xref:Uno.Development.UpgradeUnoNuget) to the latest version.
+
 ## Upgrading to Extensions 5.2
 
 ### MSAL Authentication

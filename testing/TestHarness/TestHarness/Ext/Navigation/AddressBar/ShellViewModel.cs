@@ -1,4 +1,5 @@
-﻿namespace TestHarness.Ext.Navigation.AddressBar;
+﻿
+namespace TestHarness.Ext.Navigation.AddressBar;
 
 public record ShellViewModel
 {
@@ -7,5 +8,9 @@ public record ShellViewModel
 	public ShellViewModel(INavigator navigator)
 	{
 		Navigator = navigator;
+
+		_ = Start();
 	}
+
+	private async Task Start() => await Navigator.NavigateViewModelAsync<AddressBarRootModel>(this);
 }

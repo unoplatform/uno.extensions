@@ -6,7 +6,7 @@ public record PageNavigationTwoViewModel (INavigator Navigator, IDispatcher Disp
 	public async void GoToThree()
 	{
 		await Settings.UpdateAsync(s => s with { PagesVisited = s.PagesVisited.Add(this.GetType().Name) });
-		await Navigator.NavigateViewModelAsync<PageNavigationThreeViewModel>(this);
+		await Navigator.NavigateViewModelAsync<PageNavigationThreeViewModel>(this, data: Model);
 	}
 
 	public async void GoBack()
