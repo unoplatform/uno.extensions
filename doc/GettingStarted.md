@@ -1,6 +1,7 @@
 ---
 uid: Uno.Extensions.HowToGettingStarted
 ---
+<!-- markdownlint-disable MD051 -->
 # How-To: Getting Started
 
 This tutorial will walk you through how to create an Uno application with Uno.Extensions using the Wizard and CLI and how to install Uno.Extensions to an existing Uno application.
