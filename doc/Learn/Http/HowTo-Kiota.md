@@ -71,7 +71,7 @@ When working with APIs in your application, having a strongly-typed client can s
   > [!IMPORTANT]
   > As using `dotnet add package` will result in the error `In "C:\Users\YourName\source\repos\YourAppsGitHubRepo\src\YourApp\" were unable to find a Project.` add them manually into the above mentioned file in your `Solution Items` folder.
   > [!TIP]
-  > Using the plural for the `Clients` folder name enables you also to get a proper expandable Project structure, in case you might will like to make requests to different API like your Database, a external Client API or just more than one external API. By providing the appropriate namespace part behind the `Clients`, that also automatically separates the generated code for the different API Clients generated.
+  > We recommend naming the output folder (and namespace) in plural (e.g. Clients) to accommodate multiple generated APIs.
 
 ### 4. Register the Kiota Client
 
