@@ -174,7 +174,6 @@ public class Given_PageNavigation : NavigationTestBase
 		InitTestSection(TestSections.Navigation_PageNavigation);
 
 		App.WaitThenTap("ShowOnePageButton");
-		App.WaitThenTap("OnePageGetUrlFromBrowser");
 
 		// If DataContext is ever changed to anything other than the expected
 		// the text will be "DataContext is not correct"
@@ -188,28 +187,5 @@ public class Given_PageNavigation : NavigationTestBase
 		App.WaitThenTap("ThreePageToFourPageButton");
 		App.WaitThenTap("FourPageToFivePageButton");
 
-	}
-
-	[Test]
-	[ActivePlatforms(Platform.Browser)]
-	public void When_PageNavigationNavigateRootUpdateUrl()
-	{
-		InitTestSection(TestSections.Navigation_PageNavigation);
-
-		App.WaitThenTap("ShowOnePageButton");
-
-		App.WaitThenTap("OnePageGetUrlFromBrowser");
-		App.WaitElement("OnePageTxtUrlFromBrowser");
-		var urlBefore = App.GetText("OnePageTxtUrlFromBrowser");
-
-		App.WaitThenTap("OnePageToTwoPageButton");
-
-		App.WaitThenTap("TwoPageBackButton");
-
-		App.WaitThenTap("OnePageGetUrlFromBrowser");
-		App.WaitElement("OnePageTxtUrlFromBrowser");
-		var urlAfter = App.GetText("OnePageTxtUrlFromBrowser");
-
-		Assert.AreEqual(urlBefore, urlAfter);
 	}
 }

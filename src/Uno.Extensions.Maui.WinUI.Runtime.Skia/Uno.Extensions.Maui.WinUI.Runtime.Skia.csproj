@@ -1,0 +1,32 @@
+﻿<Project Sdk="Uno.Sdk">
+	<PropertyGroup>
+		<TargetFrameworks Condition="'$(Build_iOS)'=='true'">$(TargetFrameworks);net8.0-ios</TargetFrameworks>
+		<TargetFrameworks Condition="'$(Build_MacCatalyst)'=='true'">$(TargetFrameworks);net8.0-maccatalyst</TargetFrameworks>
+		<TargetFrameworks Condition="'$(Build_Android)'=='true'">$(TargetFrameworks);net8.0-android</TargetFrameworks>
+	</PropertyGroup>
+	<PropertyGroup>
+		<WindowsSdkPackageVersion>10.0.19041.57</WindowsSdkPackageVersion>
+	</PropertyGroup>
+	<PropertyGroup>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<UseMaui>true</UseMaui>
+		<NoWarn>$(NoWarn);NU5104;NU5048;NU1009</NoWarn>
+		<Description>Skia Renderer support package for .NET MAUI embedding for Uno app.</Description>
+		<!--Temporary disable missing XML doc until fixed in the whole package-->
+		<WarningsNotAsErrors>$(WarningsNotAsErrors);CS1591</WarningsNotAsErrors>
+		<ExcludeWinAppSdkReference>true</ExcludeWinAppSdkReference>
+		<UnoSingleProject>true</UnoSingleProject>
+		<OutputType>Library</OutputType>
+		<DefineConstants>$(DefineConstants);MAUI_RUNTIME_SKIA</DefineConstants>
+		<UnoFeatures>
+			SkiaRenderer;
+		</UnoFeatures>
+	</PropertyGroup>
+	<ItemGroup>
+		<Compile Include="..\Uno.Extensions.Maui.UI\Extensibility\Impl\MauiEmbeddingExtension.cs" Link="MauiEmbeddingExtension.cs" />
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\Uno.Extensions.Maui.UI\Uno.Extensions.Maui.WinUI.csproj" />
+	</ItemGroup>
+</Project>

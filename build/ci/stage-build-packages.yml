@@ -30,8 +30,6 @@ jobs:
     displayName: Build Extensions Packages
     inputs:
       solution: Uno.Extensions-packageonly.slnf
-      msbuildLocationMethod: location
-      msbuildLocation: $(MSBUILDPATH)
       msbuildArchitecture: x86
       msbuildArguments: /r /m /v:m /p:Configuration=Release "/p:PackageOutputPath=$(build.artifactstagingdirectory)\nuget" "/p:PackageVersion=$(NBGV_SemVer2)" "/p:InformationalVersion=$(NBGV_InformationalVersion)"  /detailedsummary /bl:$(build.artifactstagingdirectory)/uno-extensions.binlog
       clean: false
@@ -45,6 +43,13 @@ jobs:
     inputs:
       versionSelector: specificVersion
       testPlatformVersion: 17.5.0
+
+  - task: UseDotNet@2
+    displayName: 'Use .NET SDK'
+    retryCountOnTaskFailure: 3
+    inputs:
+      packageType: sdk
+      version: 8.0.301
 
   - task: VSTest@2
     inputs:

@@ -26,11 +26,15 @@
 			</TextBlock>
 
 			<TextBlock x:Name="TxtUrl"
-					   AutomationProperties.AutomationId="TxtUrlFromBrowser" />
+					   AutomationProperties.AutomationId="AddressBarSecondPageTxtUrlFromBrowser" />
 
-			<Button AutomationProperties.AutomationId="GetUrlFromBrowser"
+			<Button AutomationProperties.AutomationId="AddressBarSecondPageGetUrlFromBrowser"
 					Click="GetUrlFromBrowser"
 					Content="Get URL" />
+
+			<Button uen:Navigation.Request="-"
+					Content="Go Back"
+					AutomationProperties.AutomationId="AddressBarSecondPageGoBack" />
 		</StackPanel>
 
 	</Grid>

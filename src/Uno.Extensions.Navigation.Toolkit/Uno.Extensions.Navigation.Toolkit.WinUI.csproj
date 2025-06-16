@@ -4,7 +4,7 @@
 	<PropertyGroup>
 		<AssemblyName>Uno.Extensions.Navigation.Toolkit.UI</AssemblyName>
 		<NoWarn>$(NoWarn);CA1416</NoWarn>
-
+		<WindowsSdkPackageVersion>10.0.19041.57</WindowsSdkPackageVersion>
 		<!--Temporary disable missing XML doc until fixed in the whole package-->
 		<WarningsNotAsErrors>$(WarningsNotAsErrors);CS1591</WarningsNotAsErrors>
 
@@ -13,12 +13,12 @@
 
 		<UnoSingleProject>true</UnoSingleProject>
 		<OutputType>Library</OutputType>
-
+		
 		<PackageId>Uno.Extensions.Navigation.Toolkit.WinUI</PackageId>
 		<DefineConstants>$(DefineConstants);WINUI</DefineConstants>
 
-	<UnoFeatures>
-			Toolkit
+		<UnoFeatures>
+			Toolkit;
 		</UnoFeatures>
 	</PropertyGroup>
 

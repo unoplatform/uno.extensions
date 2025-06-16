@@ -235,6 +235,8 @@ public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 				if (await FrameGoBack(route.NavigationData(), previousMapping) is { } parameter)
 				{
 					request = request.WithData(parameter);
+					responseRoute = CloneWithData(responseRoute, request.Route.Data);
+					previousRoute = CloneWithData(previousRoute, request.Route.Data);
 				}
 			}
 			else
@@ -263,6 +265,16 @@ public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 		}
 
 		return responseRoute;
+	}
+
+	private static Route? CloneWithData(Route? route, IDictionary<string, object>? data)
+	{
+		if (route is { } && data is { Count:> 0})
+		{
+			return route with { Data = data };
+		}
+
+		return route;
 	}
 
 	private void Frame_Navigating(object sender, NavigatingCancelEventArgs e)

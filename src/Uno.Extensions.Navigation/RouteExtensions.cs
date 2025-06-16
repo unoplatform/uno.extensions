@@ -348,20 +348,25 @@ public static class RouteExtensions
 
 	public static IDictionary<string, object> Combine(this IDictionary<string, object>? data, IDictionary<string, object>? childData)
 	{
-		if (data is null)
+		var result = new Dictionary<string, object>();
+
+		if (data is not null)
 		{
-			return childData ?? new Dictionary<string, object>();
+			foreach (var x in data)
+			{
+				result[x.Key] = x.Value;
+			}
 		}
 
 		if (childData is not null)
 		{
 			foreach (var x in childData)
 			{
-				data[x.Key] = x.Value;
+				result[x.Key] = x.Value;
 			}
 		}
 
-		return data;
+		return result;
 	}
 
 	public static Route? Merge(this Route? route, IEnumerable<(string?, Route?)>? childRoutes)

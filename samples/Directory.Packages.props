@@ -1,34 +1,36 @@
 <Project ToolsVersion="15.0">
 	<PropertyGroup>
-		<!-- <UnoVersion>5.5.87</UnoVersion> -->
-		<UnoToolkitVersion>6.3.7</UnoToolkitVersion>
-		<UnoThemesVersion>5.3.1</UnoThemesVersion>
-		<UnoCSharpMarkupVersion>5.5.6</UnoCSharpMarkupVersion>
-		<UnoWasmBootstrapVersion>8.0.21</UnoWasmBootstrapVersion>
+		<!-- <UnoVersion>6.0.465</UnoVersion> -->
+		<UnoExtensionsVersion>5.3.8</UnoExtensionsVersion>
+		<UnoToolkitVersion>7.0.7</UnoToolkitVersion>
+		<UnoThemesVersion>5.5.1</UnoThemesVersion>
+		<UnoCSharpMarkupVersion>6.0.15</UnoCSharpMarkupVersion>
+		<UnoWasmBootstrapVersion>8.0.23</UnoWasmBootstrapVersion>
 		<UnoLoggingVersion>1.7.0</UnoLoggingVersion>
 		<UnoCoreLoggingSingletonVersion>4.1.1</UnoCoreLoggingSingletonVersion>
 		<UnoUniversalImageLoaderVersion>1.9.37</UnoUniversalImageLoaderVersion>
 		<UnoDspTasksVersion>1.4.0</UnoDspTasksVersion>
-		<UnoResizetizerVersion>1.6.1</UnoResizetizerVersion>
-		<SkiaSharpVersion>2.88.9-preview.2.2</SkiaSharpVersion>
-		<SvgSkiaVersion>2.0.0.4</SvgSkiaVersion>
-		<WinAppSdkVersion>1.6.241114003</WinAppSdkVersion>
-		<WinAppSdkBuildToolsVersion>10.0.26100.1742</WinAppSdkBuildToolsVersion>
+		<UnoResizetizerVersion>1.8.1</UnoResizetizerVersion>
+		<SkiaSharpVersion>3.119.0-preview.1.2</SkiaSharpVersion>
+		<SvgSkiaVersion>3.0.2</SvgSkiaVersion>
+		<WinAppSdkVersion>1.7.250513003</WinAppSdkVersion>
+		<WinAppSdkBuildToolsVersion>10.0.26100.4188</WinAppSdkBuildToolsVersion>
 		<MicrosoftLoggingVersion>8.0.1</MicrosoftLoggingVersion>
-		<WindowsCompatibilityVersion>8.0.11</WindowsCompatibilityVersion>
-		<MicrosoftIdentityClientVersion>4.65.0</MicrosoftIdentityClientVersion>
-		<CommunityToolkitMvvmVersion>8.3.2</CommunityToolkitMvvmVersion>
+		<WindowsCompatibilityVersion>8.0.15</WindowsCompatibilityVersion>
+		<MicrosoftIdentityClientVersion>4.70.2</MicrosoftIdentityClientVersion>
+		<CommunityToolkitMvvmVersion>8.4.0</CommunityToolkitMvvmVersion>
 		<PrismVersion>9.0.537</PrismVersion>
-		<AndroidMaterialVersion>1.11.0.3</AndroidMaterialVersion>
+		<AndroidMaterialVersion>1.12.0.2</AndroidMaterialVersion>
 		<AndroidXLegacySupportV4Version>1.0.0.23</AndroidXLegacySupportV4Version>
-		<AndroidXAppCompatVersion>1.7.0.3</AndroidXAppCompatVersion>
-		<AndroidXRecyclerViewVersion>1.3.2.8</AndroidXRecyclerViewVersion>
-		<AndroidXActivityVersion>1.9.2.1</AndroidXActivityVersion>
-		<AndroidXBrowserVersion>1.8.0.6</AndroidXBrowserVersion>
+		<AndroidXSplashScreenVersion>1.0.1.14</AndroidXSplashScreenVersion>
+		<AndroidXAppCompatVersion>1.7.0.5</AndroidXAppCompatVersion>
+		<AndroidXRecyclerViewVersion>1.3.2.10</AndroidXRecyclerViewVersion>
+		<AndroidXActivityVersion>1.9.3.2</AndroidXActivityVersion>
+		<AndroidXBrowserVersion>1.8.0.8</AndroidXBrowserVersion>
 		<AndroidXSwipeRefreshLayoutVersion>1.1.0.24</AndroidXSwipeRefreshLayoutVersion>
-		<AndroidXNavigationVersion>2.8.0.1</AndroidXNavigationVersion>
-		<AndroidXCollectionVersion>1.4.4</AndroidXCollectionVersion>
-		<MauiVersion>8.0.3</MauiVersion>
+		<AndroidXNavigationVersion>2.8.5.1</AndroidXNavigationVersion>
+		<AndroidXCollectionVersion>1.4.5.2</AndroidXCollectionVersion>
+		<MauiVersion>8.0.100</MauiVersion>
 	</PropertyGroup>
 
 	<ItemGroup>

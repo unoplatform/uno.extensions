@@ -13,6 +13,13 @@ The `MauiHost` control (that's part of the Uno.Extensions.Maui.WinUI package) is
 
 It's recommended that instead of hosting individual .NET MAUI controls in a `MauiHost` element, a `ContentView` should be created inside a .NET MAUI class library and set as the `Source` on a `MauiHost` element. This makes it easier to add multiple .NET MAUI controls, as well as setting properties, including data binding, in XAML.
 
+## MAUI Embedding with Skia rendered applications
+
+.NET MAUI Embedding is also supported in applications that use Skia rendering via [Native Control Embedding](xref:Uno.Skia.Embedding.Native).
+
+> [!IMPORTANT]
+> Native elements require non-infinite layout bounds in order to render correctly. Refer to the [Features section](xref:Uno.Skia.Embedding.Native#features) of the Native Control Embedding documentation for more information on how to use Skia rendering with native controls.
+
 ## Get Started - New Uno Application
 
 > [!NOTE]
@@ -292,6 +299,7 @@ Add a reference in the existing class library to [Uno.Extensions.Maui.WinUI](htt
       <Grid>
         ...
         <embed:MauiHost x:Name="MauiHostElement"
+                MaxHeight="500"
                 xmlns:embed="using:Uno.Extensions.Maui"
                 xmlns:controls="using:ExistingUnoApp.MauiControls"
                 Source="controls:EmbeddedControl" />
@@ -299,5 +307,8 @@ Add a reference in the existing class library to [Uno.Extensions.Maui.WinUI](htt
       </Grid>
     </Page>
     ```
+
+> [!NOTE]
+> A MaxHeight is set here to ensure proper layout and rendering of the embedded control on Skia rendered applications. Refer to the [MAUI Embedding with Skia rendered applications](#maui-embedding-with-skia-rendered-applications) section for more information.
 
 Build and run on each target platform to see the .NET MAUI control embedded within the Uno application.
