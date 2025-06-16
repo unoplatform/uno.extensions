@@ -9,17 +9,14 @@
 		<!--Temporary disable missing XML doc until fixed in the whole package-->
 		<WarningsNotAsErrors>$(WarningsNotAsErrors);CS1591</WarningsNotAsErrors>
 
-		<IsMauiEmbedding>false</IsMauiEmbedding>
-		<IsMauiEmbedding Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android' OR $([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios' OR $([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst' OR $(TargetFramework.Contains('windows10'))">true</IsMauiEmbedding>
-		<DefineConstants Condition="$(IsMauiEmbedding)">$(DefineConstants);MAUI_EMBEDDING</DefineConstants>
+		<IsMauiEmbedding Condition="'$(IsMauiEmbedding)'==''">true</IsMauiEmbedding>
 		<ExcludeWinAppSdkReference>true</ExcludeWinAppSdkReference>
-
 		<UnoSingleProject>true</UnoSingleProject>
 		<OutputType>Library</OutputType>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<Using Remove="@(Using->HasMetadata('Sdk')->WithMetadataValue('Sdk', 'Maui'))"/>
+		<Using Remove="@(Using->HasMetadata('Sdk')->WithMetadataValue('Sdk', 'Maui'))" />
 	</ItemGroup>
 
 	<ItemGroup>

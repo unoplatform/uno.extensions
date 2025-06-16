@@ -26,7 +26,7 @@ When working with APIs in your application, having a strongly-typed client can s
 
 ### 2. Enable Http in Host Builder
 
-* Add the UseHttp method to the `IHostBuilder`:
+* Add the UseHttpKiota method to the `IHostBuilder`:
 
     ```csharp
     protected override void OnLaunched(LaunchActivatedEventArgs args)
@@ -34,7 +34,7 @@ When working with APIs in your application, having a strongly-typed client can s
         var appBuilder = this.CreateBuilder(args)
             .Configure(hostBuilder =>
             {
-                hostBuilder.UseHttp();
+                hostBuilder.UseHttpKiota();
             });
         ...
     }
@@ -71,7 +71,7 @@ When working with APIs in your application, having a strongly-typed client can s
         var appBuilder = this.CreateBuilder(args)
             .Configure(hostBuilder =>
             {
-                hostBuilder.UseHttp((context, services) =>
+                hostBuilder.UseHttpKiota((context, services) =>
                     services.AddKiotaClient<MyApiClient>(
                         context,
                         options: new EndpointOptions { Url = "https://localhost:5002" }

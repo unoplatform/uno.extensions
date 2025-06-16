@@ -11,13 +11,13 @@ When accessing resources with a [REST-style](https://www.ics.uci.edu/~fielding/p
 
 ### 1. Installation
 
-* Add `Http` to the `<UnoFeatures>` property in the Class Library (.csproj) file.
+* Add `HttpRefit` to the `<UnoFeatures>` property in the Class Library (.csproj) file.
 
     ```diff
     <UnoFeatures>
         Material;
         Extensions;
-    +   Http;
+    +   HttpRefit;
         Toolkit;
         MVUX;
     </UnoFeatures>
@@ -35,7 +35,7 @@ When accessing resources with a [REST-style](https://www.ics.uci.edu/~fielding/p
         var appBuilder = this.CreateBuilder(args)
             .Configure(hostBuilder =>
             {
-                hostBuilder.UseHttp();
+                hostBuilder.UseHttpRefit();
             });
         ...
     }
@@ -178,7 +178,7 @@ When accessing resources with a [REST-style](https://www.ics.uci.edu/~fielding/p
         var appBuilder = this.CreateBuilder(args)
             .Configure(hostBuilder =>
             {
-                hostBuilder.UseHttp((context, services) =>
+                hostBuilder.UseHttpRefit((context, services) =>
                     services.AddRefitClient<IChuckNorrisEndpoint>(context, httpClient =>
                     {
                         httpClient.BaseAddress = new Uri("https://api.chucknorris.io/");
@@ -199,7 +199,7 @@ When accessing resources with a [REST-style](https://www.ics.uci.edu/~fielding/p
         var appBuilder = this.CreateBuilder(args)
             .Configure(hostBuilder =>
             {
-                hostBuilder.UseHttp((context, services) =>
+                hostBuilder.UseHttpRefit((context, services) =>
                     services.AddRefitClient<IChuckNorrisEndpoint>(context)
                 );
             });

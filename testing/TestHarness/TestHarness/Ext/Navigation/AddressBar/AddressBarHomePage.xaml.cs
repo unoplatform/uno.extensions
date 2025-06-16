@@ -6,4 +6,15 @@ public sealed partial class AddressBarHomePage : Page
 	{
 		this.InitializeComponent();
 	}
+
+	public async void GetUrlFromBrowser(object sender, RoutedEventArgs e)
+	{
+#if __WASM__
+		var url = AddressBarJSImports.GetUrl();
+
+		TxtUrl.Text = url;
+#else
+		TxtUrl.Text = "Not supported";
+#endif
+	}
 }
