@@ -33,7 +33,7 @@ public sealed partial class PageNavigationOnePage : Page
 	public async void GetUrlFromBrowser(object sender, RoutedEventArgs e)
 	{
 #if __WASM__
-		var url = Imports.GetLocation();
+		var url = AddressBarJSImports.GetUrl();
 
 		TxtUrl.Text = url;
 #else
@@ -41,10 +41,3 @@ public sealed partial class PageNavigationOnePage : Page
 #endif
 	}
 }
-#if __WASM__
-internal static partial class Imports
-{
-	[System.Runtime.InteropServices.JavaScript.JSImport("globalThis.Uno.Extensions.Hosting.getLocation")]
-	public static partial string GetLocation();
-}
-#endif
