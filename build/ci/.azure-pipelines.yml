@@ -69,3 +69,34 @@ stages:
   - template: stage-build-uitests-wasm.yml
   # Disabled waiting on uno fix: https://github.com/unoplatform/uno/pull/17668
   # - template: stage-build-runtimetests-skia.yml
+
+##
+## Publishing
+##
+
+- stage: Publish_Dev
+  displayName: 'Publish - Dev NuGet'
+  condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/master'), startsWith(variables['Build.SourceBranch'], 'refs/heads/feature')), not(eq(variables['build.reason'], 'PullRequest')))
+  dependsOn: Packages
+  jobs:
+  - template: publish/publish-nuget-dev.yml
+    parameters:
+      vmImage: 'windows-2022'
+
+- stage: Publish_Prod_Dev
+  displayName: 'Publish - Prod Dev NuGet'
+  condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/heads/release/'), not(eq(variables['build.reason'], 'PullRequest')))
+  dependsOn: Packages
+  jobs:
+  - template: publish/publish-nuget-prod-dev.yml
+    parameters:
+      vmImage: 'windows-2022'
+  
+- stage: Publish_Prod_Public
+  displayName: 'Publish - Prod NuGet.org'
+  condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/heads/release/'), not(eq(variables['build.reason'], 'PullRequest')))
+  dependsOn: Publish_Prod_Dev
+  jobs:
+  - template: publish/publish-nuget-prod.yml
+    parameters:
+      vmImage: 'windows-2022'
