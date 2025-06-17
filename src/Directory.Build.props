@@ -173,13 +173,18 @@
 
 	<Target Name="__RemoveUnoRuntimeWasm"
 			AfterTargets="UnoImplicitPackages">
+		<ItemGroup Condition="'$(IsUnoHead)' != 'true' AND $([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'browserwasm'">
 		<!--
 		Disable explicit references to Uno.WinUI.Runtime.WebAssembly in order to avoid using JSInvoke directly
 		This change is done manually here to avoid 
 		-->
-		<ItemGroup>
-			<PackageReference Remove="Uno.WinUI.Runtime.WebAssembly"
-							  Condition="'$(IsUnoHead)' != 'true' AND $([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'browserwasm'" />
+			<PackageReference Remove="Uno.WinUI.Runtime.WebAssembly" />
+
+			<!--
+				We also remove the Uno.WinUI.WebAssembly package reference, as it is not needed in this case and will break the skia renderer
+				https://github.com/unoplatform/uno/issues/20792
+			-->
+			<PackageReference Remove="Uno.WinUI.WebAssembly" />
 		</ItemGroup>
 	</Target>
 
