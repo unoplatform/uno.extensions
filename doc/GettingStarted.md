@@ -41,11 +41,11 @@ This tutorial will walk you through how to create an Uno application with Uno.Ex
 
 ### Detect problems with Uno Check directly in your IDE
 
-    Another banner may appear, telling you Uno Check found problems, click **Fix**
+Another banner may appear, telling you Uno Check found problems, click **Fix**
 
-    ![Visual Studio - A banner indicating to fix problems](./Learn/images/vs2022-uno-check-banner.png)
+![Visual Studio - A banner indicating to fix problems](./Learn/images/vs2022-uno-check-banner.png)
 
-    Now it will open a Terminal and run the check again, so you can see what exact problem it may found and let it fix them for you.
+Now it will open a Terminal and run the check again, so you can see what exact problem it may found and let it fix them for you.
 
 #### [Using the Command Line](#tab/cli)
 
