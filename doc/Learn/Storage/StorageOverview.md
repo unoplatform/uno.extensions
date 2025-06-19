@@ -2,7 +2,7 @@
 uid: Uno.Extensions.Storage.Overview
 ---
 
-# Storage
+# Storage Overview
 
 Uno.Extensions.Storage facilitate local data storage across multiple platforms, including WebAssembly, Android, iOS, macOS, Desktop and Windows. This extension is particularly useful for applications that require secure, persistent storage of user preferences, configuration settings, and sensitive information such as tokens and credentials.
 
@@ -28,3 +28,7 @@ Uno.Extensions.Storage facilitate local data storage across multiple platforms, 
 [!include[single-project](../includes/single-project.md)]
 
 For more information about `UnoFeatures` refer to our [Using the Uno.Sdk](xref:Uno.Features.Uno.Sdk) docs.
+
+## Next Steps
+
+- [How To: Handling Package Files with Storage](./HowTo-handling-package-files-with-storage.md)

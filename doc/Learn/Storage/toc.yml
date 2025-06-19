@@ -1,4 +1,8 @@
 - name: Overview
   href: xref:Uno.Extensions.Storage.Overview
-- name: "How-To: Add Required Entitlements"
+- name: Getting Started with Storage Extensions
+  href: xref:Uno.Extensions.Storage.GettingStarted
+- name: How To: Handling Package files
+  href: xref:Uno.Extensions.Storage.HowToPackageFiles
+- name: How-To: Add Required Entitlements on Apple Platforms
   href: xref:Uno.Extensions.Storage.HowToRequiredEntitlements
