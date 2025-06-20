@@ -52,13 +52,27 @@ When working with APIs in your application, having a strongly-typed client can s
 
     ```bash
     # From a static spec file
-    kiota generate --openapi PATH_TO_YOUR_API_SPEC.json --language CSharp --class-name MyApiClient --namespace-name MyApp.Client --output ./Client
+    kiota generate --openapi PATH_TO_YOUR_API_SPEC.json --language CSharp --class-name MyApiClient --namespace-name MyApp.Clients.MyApi --output ./MyApp/Clients/MyApi
 
     # OR directly from the running server’s Swagger endpoint
-    kiota generate --openapi http://localhost:5002/swagger/v1/swagger.json --language CSharp --class-name MyApiClient --namespace-name MyApp.Client --output ./Client
+    kiota generate --openapi http://localhost:5002/swagger/v1/swagger.json --language CSharp --class-name MyApiClient --namespace-name MyApp.Clients.MyApi --output ./MyApp/Clients/MyApi
     ```
 
-    This will create a client named `MyApiClient` in the Client folder.
+    This will create a client named `MyApiClient` in the `Clients` folder.
+
+* If those has not been already included in your `Directory.Packages.props` file, the kiota CLI tool will recommend you to add following NuGet packages via dotnet:
+
+  ```xml
+  <ItemGroup>
+    <PackageVersion Include="Microsoft.Kiota.Authentification.Azure" Version="1.17.4"/>
+    <PackageVersion Include="Microsoft.Kiota.Bundle" Version="1.17.4"/>
+  </ItemGroup>
+  ```
+
+  > [!IMPORTANT]
+  > As using `dotnet add package` will result in the error `In "C:\Users\YourName\source\repos\YourAppsGitHubRepo\src\YourApp\" were unable to find a Project.` add them manually into the above mentioned file in your `Solution Items` folder.
+  > [!TIP]
+  > We recommend naming the output folder (and namespace) in plural (e.g. Clients) to accommodate multiple generated APIs.
 
 ### 4. Register the Kiota Client
 
