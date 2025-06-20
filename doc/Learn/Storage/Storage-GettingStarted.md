@@ -4,8 +4,8 @@ uid: Uno.Extensions.Storage.GettingStarted
 
 # Getting Started with Storage Extensions
 
-> [NOTE]
-> To get a overview of the Storage feature capabilities and common file types, please refer to the [Storage Overview](xref:Uno.Extensions.Storage.Overview) page.
+> [!NOTE]
+> For an overview of the Storage feature capabilities and common file types, please refer to the [Storage Overview](xref:Uno.Extensions.Storage.Overview) page.
 
 ## Prerequisites
 
@@ -31,7 +31,7 @@ First of all, to set up your project using the Storage feature, you need to foll
     </UnoFeatures>
     ```
 
-2. Add `.UseStorage()` in your `App.xaml.cs` HostBuilder
+1. Add `.UseStorage()` in your `App.xaml.cs` HostBuilder
 
     ```diff
     protected async override void OnLaunched(LaunchActivatedEventArgs args)
@@ -40,7 +40,7 @@ First of all, to set up your project using the Storage feature, you need to foll
             // Add navigation support for toolkit controls such as TabBar and NavigationView
             .UseToolkitNavigation()
             .Configure(host => host
-                .UseStorage()
+    +           .UseStorage()
                 )
             );
             MainWindow = builder.Window;
@@ -50,10 +50,9 @@ First of all, to set up your project using the Storage feature, you need to foll
     #endif
             MainWindow.SetWindowIcon();
             Host = await builder.Build(); // or use `await builder.NavigateAsync<Shell>();` if you want to use Uno.Extensions.Navigation
-
     ```
 
-3. Inject `IStorage` into your Model's or ViewModel's constructor to enable Dependency Injection (DI) to resolve it automatically.
+1. Inject `IStorage` into your Model's or ViewModel's constructor to enable Dependency Injection (DI) to resolve it automatically.
 
    ## [MVUX](#tab/mvux)
 

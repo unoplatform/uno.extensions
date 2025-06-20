@@ -28,57 +28,7 @@ As simple as it sounds, you can use the Storage feature to read and write files 
 >
 > As long as you can provide a [ISerializer](https://github.com/unoplatform/uno.extensions/blob/main/src/Uno.Extensions.Serialization/ISerializer.cs) or your file is generally readable as `string` or `Stream`, this can be handled with Uno.Extensions.Storage.
 > [!NOTE]
-> Keep in mind, that for other files you might have their BuildAction property set to Resources or Content, you only need to call them via `ms-appx:Here/comes/your/filepath.txt` for example to get the file from the package.
-
-### Classic file types to use with Storage
-
-- .txt -> simply get the content as a `string`
-- .xml -> could be Serialized/Deserialized with an appropriate `XmlSerializer`
-- .json -> could be Serialized/Deserialized by using the `Uno.Extensions.Serialization` Extension
-- .csv -> could be Serialized/Deserialized with an appropriate `CsvSerializer`
-
-### Useful additional Serializer Libraries for more special files
-
-> [!NOTE]
-> This List is not guaranteed to be complete!
-
-- .docx/.xlsx
-  - `OpenXML`
-  - SyncFusion (all payed)
-    - [Word Framework](https://www.syncfusion.com/document-processing/word-framework/winui)
-    - [Excel Framework](https://www.syncfusion.com/document-processing/excel-framework/winui)
-    - [PowerPoint Framework](https://www.syncfusion.com/document-processing/presentation-framework/winui)
-- .pdf
-  - [PdfPig (Free & Open Source)](https://github.com/UglyToad/PdfPig)
-  - [PDFsharp (Free & Open Source, payed advanced support)](https://pdfsharp.com/)
-  - [SyncFusion (Payed)](https://www.syncfusion.com/document-processing/pdf-framework/winui) this has many capabilities, which might make you consider using it either way, if you use the MAUI Embedding feature in .NET 8 Uno Apps.
-
-### File types you can not use Storage for
-
-**Binary files like:**
-
-- .exe
-- .dll
-
-**Compressed files like:**
-
-- .zip
-- .tar
-- .gz
-
-> [!NOTE]
-> They have to be extracted before usage
-
-Multimedia files like:
-
-- .mp3
-- .mp4
-- .jpg
-- .png
-- .gif
-
-> [!TIP]
-> You can handle Image files like .png and .svg via [***Uno.Resizetizer***](xref:Uno.Resizetizer.GettingStarted), which is present in every Uno Project by default.
+> For other files that have their BuildAction set to Resources or Content, these can be referenced via `ms-appx:///Here/comes/your/filepath.txt` to read the file from the package.
 
 ## Next steps
 
