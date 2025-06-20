@@ -113,6 +113,13 @@ NavigateViewModelForResultAsync<TViewViewModel, TResult>()
 NavigateDataForResultAsync<TData, TResult>()
 ```
 
+The return type of `NavigateForResultAsync` and all its variations is `NavigationResultResponse<TResult>`. To get the actual value, use `.SomeOrDefault()` on the result:
+
+```csharp
+var result = await navigator.NavigateRouteForResultAsync<Widget>(this, "Second", data: widget).AsResult();
+var actualResult = result.SomeOrDefault();
+```
+
 ## NavigationResponse
 
 The `NavigationResponse` object encapsulates the result of a navigation operation. It includes:
