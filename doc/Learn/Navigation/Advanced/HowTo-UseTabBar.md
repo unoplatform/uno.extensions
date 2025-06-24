@@ -305,6 +305,9 @@ var builder = this.CreateBuilder(args)
         );
     }
     ```
+
+    > [!NOTE]  
+    > To ensure that navigating between tabs only updates the content region (and doesn’t replace the entire page or TabBar), nest each `TabBar` child route under the `Main` route.
   
 * Importantly, the snippet above establishes a route name `SignUp` for `SignUpPage`. We can use this route name to navigate to the `SignUpPage` view element.
 

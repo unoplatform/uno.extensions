@@ -234,6 +234,9 @@ Choosing the right control for your navigation needs is important, and one commo
   }
   ```
 
+  > [!NOTE]  
+  > To ensure selecting a `NavigationViewItem` only swaps the content region (and doesn’t replace the entire page or the `NavigationView` itself), nest each NavigationView child route under the `Main` route.
+
 * Importantly, the snippet above establishes a route name `Products` for `ProductsPage`. We can use this route name to navigate to the `ProductsPage` view element.
 
 * Add a `NavigationViewItem` to the `NavigationView` element with the `uen:Region.Name` attached property set to `Products`.
