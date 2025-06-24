@@ -235,7 +235,7 @@ Choosing the right control for your navigation needs is important, and one commo
   ```
 
   > [!NOTE]  
-  > To ensure selecting a `NavigationViewItem` only swaps the content region (and doesn’t replace the entire page or the `NavigationView` itself), nest each NavigationView child route under the `Main` route.
+  > To ensure selecting a `NavigationViewItem` only updates the content region (and doesn’t replace the entire page or the `NavigationView` itself), nest each `NavigationViewItem` as a `RouteMap` under the `Main` `RouteMap`.
 
 * Importantly, the snippet above establishes a route name `Products` for `ProductsPage`. We can use this route name to navigate to the `ProductsPage` view element.
 
