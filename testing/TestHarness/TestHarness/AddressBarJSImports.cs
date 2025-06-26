@@ -1,4 +1,4 @@
-﻿namespace TestHarness.Ext.Navigation.AddressBar;
+﻿namespace TestHarness;
 
 #if __WASM__
 internal static partial class AddressBarJSImports
