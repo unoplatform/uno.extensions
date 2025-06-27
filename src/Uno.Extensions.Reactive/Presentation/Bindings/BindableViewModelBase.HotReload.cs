@@ -422,7 +422,7 @@ partial class BindableViewModelBase
 		hotSwap.HotSwap(updated);
 
 		// We also make sure to register the state as the backing state for the updated feed.
-		// his is use-full for incremental updates, where we will search for state from the current `updated`.
+		// This is useful for incremental updates, where we will search for state from the current `updated`.
 		context.States.GetOrCreateState<IFeed<T>, IState<T>>(updated, (ctx, f) => state);
 		(_propertyFeedsCache ??= new())[(property, typeof(T))] = updated;
 	}
