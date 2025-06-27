@@ -218,7 +218,7 @@ public static class NavigatorExtensions
 		DialogAction[]? buttons = default,
 		CancellationToken cancellation = default)
 	{
-		await navigator.ShowMessageDialogAsync<object>(sender, route, content, title, delayInput, defaultButtonIndex, cancelButtonIndex, buttons, cancellation);
+		await navigator.ShowMessageDialogAsync<object>(sender, route, content ?? string.Empty, title ?? string.Empty, delayInput, defaultButtonIndex, cancelButtonIndex, buttons, cancellation);
 	}
 
 	public static async Task<TResult?> ShowMessageDialogAsync<TResult>(
