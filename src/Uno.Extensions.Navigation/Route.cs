@@ -19,6 +19,12 @@ public record Route(string Qualifier = Qualifiers.None, string? Base = null, str
 
 	public static Route NestedRoute(string path) => new Route(Qualifiers.Nested, path, null, null);
 
+	/// <summary>
+	/// Returns the current Route as <see langword="string"/> 
+	/// </summary>
+	/// <value>
+	/// The navigated Route with this pattern: <see cref="Qualifier"/> <see cref="Base"/> <see cref="Path"/> Route.Query()<br/>
+	/// or <see cref="string.Empty"/> if this would be null</value>
 	public override string ToString()
 	{
 		try
