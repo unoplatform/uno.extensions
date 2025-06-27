@@ -40,7 +40,7 @@ jobs:
       - run: |
           cd testing/TestHarness
           dotnet build -c Release  /p:Build_Android=false /p:Build_iOS=false /p:Build_Windows=false /p:Build_Desktop=false "/p:Version=${{ steps.nbgv.outputs.SemVer2 }}" /p:GeneratePackageOnBuild=false /detailedsummary
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: wasm-site
           path: ${{ env.DIST_PATH }}
