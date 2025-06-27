@@ -9,6 +9,9 @@ Dependency Injection (DI) is an important design pattern when building loosely-c
 
 [!include[create-application](../includes/create-application.md)]
 
+> [!IMPORTANT]
+> If you created your app without setting up Hosting, make sure to check out the [Hosting setup](xref:Uno.Extensions.Hosting.HowToHostingSetup) first so you have everything in place before continuing with this guide.
+
 ### 1. Plan the contract for your service
 
 * Create a new interface which declares the method(s) your service offers:

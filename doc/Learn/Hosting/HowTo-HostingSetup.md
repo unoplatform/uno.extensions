@@ -30,6 +30,12 @@ uid: Uno.Extensions.Hosting.HowToHostingSetup
     private IHost Host { get; set; }
     ```
 
+  The `IHost` type is defined in the `Microsoft.Extensions.Hosting` namespace. Since this and other related types will be used throughout this guide, it's recommended to add this namespace to your `GlobalUsings.cs` file for convenience and cleaner code.
+
+  ```csharp
+  global using Microsoft.Extensions.Hosting;
+  ```
+
 * As soon as your app is launched, use the `CreateBuilder()` extension method to instantiate an `IApplicationBuilder` from your `Application` object:
 
     ```cs
