@@ -1,51 +1,88 @@
 ---
 uid: Uno.Extensions.Navigation.HowToNavigateInXAML
 ---
+<!-- markdownlint-disable MD051 -->
 # How-To: Navigate in XAML
 
 This topic walks through controlling Navigation from XAML. This includes specifying data that should be attached to the navigation request.
-
-[!include[getting-help](../includes/mvvm-approach.md)]
 
 ## Step-by-step
 
 [!include[create-application](../includes/create-application.md)]
 
+> [!INFO]
+> Make sure to opt-in to `Uno.Regions` (in `dotnet new` CLI, the option you need to add is `-nav regions`) to use the Uno Navigation and get your `App.xaml.cs` prepared with the `RegisterRoutes`. Otherwise, it defaults to [***Native Frame Navigation***](https://platform.uno/docs/articles/guides/native-frame-nav-tutorial.html).
+
+## [MVVM](#tab/mvvm)
+
+[!include [getting-help](../includes/mvvm-approach.md)]
+
+## [MVUX](#tab/mvux)
+
+[!include [getting-help](../includes/mvux-approach.md)]
+
+---
+
 ### 1. Navigation.Request
 
-Navigation can be defined in XAML by placing the `Navigation.Request` attached property on a specific XAML element. The string value specified in the `Navigation.Request` is the route to be navigated to.
-Depending on the type of the XAML element, the `Navigation.Request` property will attach to an appropriate event in order to trigger navigation. For example, on a `Button`, the `Click` event will be used to trigger navigation, whereas the `SelectionChanged` event on a `ListView` is used. If you place a `Navigation.Request` property on a static element, such as a `Border`, `Image`, or `TextBlock`, the `Tapped` event will be used to trigger navigation.
+[!INCLUDE [navigate-xaml-request](./includes/navigate-xaml-request.md)]
 
-- Add a new `Page` to navigate to, `SamplePage.xaml`
+#### [MVVM Setup](#tab/mvvm/setup)
 
-- Add a new class, `SampleViewModel`, to the class library project
+- Add a new class, `SampleViewModel`, to the project:
 
     ```csharp
     public class SampleViewModel
     {
+        private readonly INavigator _navigator;
+
         public SampleViewModel(INavigator navigator)
         {
             _navigator = navigator;
         }
 
-        private readonly INavigator _navigator;
     }
     ```
 
-- In `MainPage.xaml` update the `Button` to use the `Navigation.Request` attached property instead of the `Click` event handler.
+#### [MVUX Setup](#tab/mvux/setup)
 
-    ```xml
-    <Button Content="Go to SamplePage"
-            uen:Navigation.Request="Sample" />
-    ```
+- Add a new class, `SampleViewModel`, to the project:
+
+    ![Adding-new-Item-to-sln](../images/Adding-new-Item-to-sln.png)
+    ![Adding-new-Item-class](../images/Adding-new-Item-class.png)
+    ![renaming-class-to-record-mvux](../images/renaming-class-to-record-mvux.png)
+    ![Adding-mvux-model-constructor-DI](../images/Adding-mvux-model-constructor-DI.png)
 
     > [!TIP]
-    > As Navigation.Request attached property exists in the `Uno.Extensions.Navigation.UI` namespace you will need to import this namespace on the `Page` element with
+    > You can use Visual Studio Snippets for the constructor by using the `ctor` keyword. Afterwards you only need to add the required Service Interfaces for DI and transfer them to their fields to make them available not only in the Constructor.
+
+    ```csharp
+    public class SampleModel
+    {
+        private readonly INavigator _navigator;
+
+        public SampleModel(INavigator navigator)
+        {
+            _navigator = navigator;
+        }
+    }
+    ```
+
+---
+
+- As Navigation.Request attached property exists in the `Uno.Extensions.Navigation.UI` namespace you will need to import this namespace on the `Page` element:
 
     ```csharp
     <Page x:Class="NavigateInXAML.Views.SamplePage"
         ...
         xmlns:uen="using:Uno.Extensions.Navigation.UI">
+    ```
+
+- In `MainPage.xaml` update the `Button` you got from the templated App to use the `Navigation.Request` attached property instead of the `Click` event handler.
+
+    ```xml
+    <Button Content="Go to SamplePage"
+            uen:Navigation.Request="Sample" />
     ```
 
 - In `SamplePage.xaml` add a `Button`, again with the `Navigation.Request` attached property. The "-" navigation route is used to navigate back.
@@ -58,80 +95,29 @@ Depending on the type of the XAML element, the `Navigation.Request` property wil
     > [!TIP]
     > While this works, it relies on reflection to convert the request path "Sample" to the corresponding view, i.e. `SamplePage`. It's better to define `ViewMap` and `RouteMap`
 
-- Add a `ViewMap` and a `RouteMap` for the `SamplePage` into the `RegisterRoutes` method in the `App.xaml.cs` file
+- Add a `ViewMap` and a `RouteMap` for the `SamplePage` into the `RegisterRoutes` method in the `App.xaml.cs` file:
 
-    ```csharp
-    private static void RegisterRoutes(IViewRegistry views, IRouteRegistry routes)
-    {
-        views.Register(
-            new ViewMap(ViewModel: typeof(ShellViewModel)),
-            new ViewMap<MainPage, MainViewModel>(),
-            new DataViewMap<SecondPage, SecondViewModel, Entity>(),
-            new ViewMap<SamplePage, SampleViewModel>()
-        );
+#### [Register Routes MVVM](#tab/mvvm/RegisterRoutes)
 
-        routes.Register(
-            new RouteMap("", View: views.FindByViewModel<ShellViewModel>(),
-                Nested:
-                [
-                    new ("Main", View: views.FindByViewModel<MainViewModel>()),
-                    new ("Second", View: views.FindByViewModel<SecondViewModel>()),
-                    new ("Sample", View: views.FindByViewModel<SampleViewModel>()),
-                ]
-            )
-        );
-    }
-    ```
+[!INCLUDE [register-routes-mvvm](./includes/register-routes-mvvm.md)]
+
+#### [Register Routes MVUX](#tab/mvux/RegisterRoutes)
+
+[!INCLUDE [register-routes-mvux](./includes/register-routes-mvux.md)]
+
+---
 
 ### 2. Navigation.Data
 
+#### [MVVM](#tab/mvvm/NavigationData)
+
 In addition to specifying the route to navigate to, the Navigation.Data attached property can be used to define the data to be attached to the navigation request. The data can be accessed by the view model associated with the route using constructor injection.
 
-- Define a record (or class), `Widget`, that is the type of data that will be attached to the navigation request.
-
-    ```csharp
-    public record Widget(string Name, double Weight);
-    ```
+[!INCLUDE [navigation-data-inline](./includes/navigation-data-inline.md)]
 
 - Add a property, `Widgets`, to `MainViewModel` that returns an array of predefined `Widget` instances.
 
-    ```csharp
-    public Widget[] Widgets { get; } =
-    [
-        new Widget("NormalSpinner", 5.0),
-        new Widget("HeavySpinner", 50.0)
-    ];
-    ```
-
-- Replace the `Button` with a `ListView` in `MainPage.xaml` that has the `ItemsSource` property data bound to the `Widgets` property.
-
-    ```xml
-    <StackPanel Grid.Row="1"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center">
-        <ListView ItemsSource="{Binding Widgets}"
-                  x:Name="WidgetsList"
-                  SelectionMode="Single">
-            <ListView.ItemTemplate>
-                <DataTemplate>
-                    <StackPanel Orientation="Horizontal"
-                                Padding="10">
-                        <TextBlock Text="{Binding Name}" />
-                        <TextBlock Text="{Binding Age}" />
-                    </StackPanel>
-                </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>
-    </StackPanel>
-    ```
-
-- Add a `Button` to the `StackPanel` on  `MainPage.xaml` that has both `Navigation.Request`, that specified the navigation route, and the `Navigation.Data` properties. In this case the `Navigation.Data` attached property is data bound to the `SelectedItem` property on the named element `WidgetsList` (which matches the `x:Name` set on the previously added `ListView`)
-
-    ```xml
-    <Button Content="Go to Sample Page"
-            uen:Navigation.Request="Sample"
-            uen:Navigation.Data="{Binding SelectedItem, ElementName=WidgetsList}"/>
-    ```
+[!INCLUDE [navigation-widgets-inline](./includes/navigation-widgets-inline.md)]
 
 - Update `SecondViewModel` to accept a `Widget` as the second constructor parameter
 
@@ -150,21 +136,50 @@ In addition to specifying the route to navigate to, the Navigation.Data attached
 
     ```
 
-- Add a `TextBlock` to `SecondPage.xaml` that shows the name of the `Widget` supplied during navigation.
-
-    ```xml
-    <TextBlock HorizontalAlignment="Center"
-               VerticalAlignment="Center">
-        <Run Text="Widget Name:" />
-        <Run Text="{Binding Name}" />
-    </TextBlock>
-    ```
+[!INCLUDE [navigation-showing-widgets](./includes/navigation-showing-widgets-inline.md)]
 
 - In order for the `Widget` to be injected into the `SampleViewModel` during navigation, a `DataMap` has to be added to the `ViewMap`. Therefore, we can change the `ViewMap` instantiation to `DataViewMap` and provide the `Widget` as a generic argument:
 
     ```csharp
     new DataViewMap<SamplePage, SampleViewModel, Widget>()
     ```
+
+#### [MVUX](#tab/mvux/NavigationData)
+
+In addition to specifying the route to navigate to, the Navigation.Data attached property can be used to define the data to be attached to the navigation request. The data can be accessed by the appropriate model associated with the route using constructor injection.
+
+[!INCLUDE [navigation-data-inline](./includes/navigation-data-inline.md)]
+
+- Add a property, `Widgets`, to `MainModel` that returns an array of predefined `Widget` instances.
+
+    [!INCLUDE [navigation-widgets-inline](./includes/navigation-widgets-inline.md)]
+
+- Update `SecondModel` to accept a `Widget` as the second constructor parameter
+
+    ```csharp
+    public class SampleModel
+    {
+        public string Title => "Sample Page";
+
+        public string Name { get; }
+
+        public SampleModel(Widget widget)
+        {
+            Name = widget.Name;
+        }
+    }
+
+    ```
+
+[!INCLUDE [navigation-showing-widgets](./includes/navigation-showing-widgets-inline.md)]
+
+- In order for the `Widget` to be injected into the `SampleModel` during navigation, a `DataMap` has to be added to the `ViewMap`. Therefore, we can change the `ViewMap` instantiation to `DataViewMap` and provide the `Widget` as a generic argument:
+
+    ```csharp
+    new DataViewMap<SamplePage, SampleModel, Widget>()
+    ```
+
+---
 
 ### 3. Navigating To SelectedItem
 
@@ -186,3 +201,7 @@ Instead of having to select an item in the `ListView` and then clicking on the `
         </ListView.ItemTemplate>
     </ListView>
     ```
+
+Beside the `ListView` Control, you can also use the `NavigationView` from WinUI3 instead for your Navigation!
+
+- [HowTo-UseNavigationView](./Advanced/HowTo-UseNavigationView.md)
