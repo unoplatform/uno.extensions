@@ -17,7 +17,7 @@ Using backward/forward navigation in your app requires a degree of extra conside
 
 ### Navigating to a Page and Clearing Back Stack
 
-#### From XAML
+#### [From XAML](#tab/xaml-clear-back-stack)
 
 The `Navigation.Request` attribute paired with the qualifier syntax, provided by navigation Extensions, offers a powerful way to navigate to a page and then clear the back stack from XAML.
 
@@ -41,7 +41,7 @@ The `Navigation.Request` attribute paired with the qualifier syntax, provided by
             uen:Navigation.Request="-/Second" />
     ```
 
-#### From Codebehind
+#### [From Codebehind](#tab/codebehind-clear-backs-stack)
 
 It is possible to navigate to a page and clear the back stack from code behind using a more typical navigation service method such as `NavigateViewModelAsync<T>`. This can be done by specifying the `Qualifiers.ClearBackStack` qualifier.
 
@@ -74,7 +74,7 @@ If you run the application and navigate to the `SecondPage` the back button in t
 
 Another common scenario is to navigate to a page and then remove the current page from the back stack.
 
-#### From XAML
+#### [From XAML](#tab/xaml-remove-one-page-from-back-stack)
 
 - Add a new `Page` to navigate to, `SamplePage.xaml`
 
@@ -95,7 +95,7 @@ Another common scenario is to navigate to a page and then remove the current pag
             uen:Navigation.Request="-Sample" />
     ```
 
-#### From code behind
+#### [From code behind](#tab/codebehind-remove-one-page-from-back-stack)
 
 - Add a new `Page` to navigate to, `SamplePage.xaml`
 - In `SecondPage.xaml` add a `Button` with the following XAML, which includes a handler for the Click event
