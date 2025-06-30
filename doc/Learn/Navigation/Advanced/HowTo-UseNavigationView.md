@@ -3,7 +3,7 @@ uid: Uno.Extensions.Navigation.Advanced.NavigationView
 ---
 # How-To: Use a NavigationView to Switch Views
 
-Choosing the right control for your navigation needs is important, and one common choice is `NavigationView`. This control adapts to different screen sizes and offers a uniform top-level navigation experience. `NavigationView` is a great option for adaptive, customizable, and mobile-friendly navigation. The Uno Platform extensions for navigation provide built-in support for using `NavigationView` and `NavigationViewItem` to switch between views. This tutorial will show you how to configure a `NavigationView` for use with the navigation extensions.
+Choosing the right control for your navigation needs is important, and one common choice is `NavigationView`. This control adapts to different screen sizes and offers a uniform top-level navigation experience. `NavigationView` is a great option for adaptive, customizable, and mobile-friendly navigation. The Uno Platform extensions for navigation provide built-in support for using `NavigationView` and `NavigationViewItem` to switch between views. This tutorial will show you how to configure a `NavigationView` for use with the navigation extensions also for more complex scenarios, like for supporting multiple navigated component-areas in the Content of the `NavigationView`.
 
 [!include[getting-help](../../includes/mvvm-approach.md)]
 
