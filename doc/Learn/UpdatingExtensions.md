@@ -21,8 +21,6 @@ When upgrading to later versions, you must make sure to update the Namespaces in
 
 In case you only using the `Uno.Extensions.Authentication.Oidc` pulled in through the `<UnoFeatures>AuthenticationOidc</UnoFeatures>` in your `.csproj` and don't have any future Namespace usings added, there is nothing left to do!
 
-> [!TIP]
-> To update eventual other Packages of this Provider like the `IdentityServer`, you may use alongside of the OidcClient, you can check the NuGet Package Manager in Visual Studio 2022, Rider or using the dotnet CLI if you may use VS Code.
 
 ## Upgrading to Extensions 5.2
 
