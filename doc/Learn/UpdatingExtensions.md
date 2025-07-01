@@ -12,7 +12,7 @@ The Uno SDK dependencies for Uno Extensions have been updated to Uno SDK version
 
 Up from the v6.0.12 of Uno.Extensions, the NuGet Package Dependency known as `IdentityModel.OidcClient`, used in the [Oidc Authentication Extension](xref:Uno.Extensions.Authentication.HowToOidcAuthentication), has been [rebranded](https://github.com/DuendeSoftware/foss/blob/main/README.md#relationship-to-identitymodel).
 
-When upgrading to later versions, you must make sure to update the Namespaces in your App, to match the new ones. e.g. in your `globalUsings.cs` file at your Project root directory:
+When upgrading to later versions, you must make sure to update the Namespaces in your App, to match the new ones. e.g. in your `GlobalUsings.cs` file at your Project root directory:
 
 ```diff
 - global using IdentityModel.OidcClient
