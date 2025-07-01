@@ -23,22 +23,6 @@ In case you only using the `Uno.Extensions.Authentication.Oidc` pulled in throug
 
 The Uno SDK dependencies for Uno Extensions have been updated to Uno SDK version 6.0. Ensure to [update your uno.sdk](xref:Uno.Development.UpgradeUnoNuget) to the latest version.
 
-### OidcClient Authentication
-
-Up from the v6.0.12 of Uno.Extensions, the NuGet Package Dependency known as `IdentityModel.OidcClient`, used in the [Oidc Authentication Extension](xref:Uno.Extensions.Authentication.HowToOidcAuthentication), has been [rebranded](https://github.com/DuendeSoftware/foss/blob/main/README.md#relationship-to-identitymodel).
-
-When upgrading to later versions, you must make sure to update the Namespaces in your App, to match the new ones. e.g. in your `globalUsings.cs` file at your Project root directory:
-
-```diff
-- global using IdentityModel.OidcClient
-+ global using Duende.IdentityModel.OidcClient
-```
-
-In case you only using the `Uno.Extensions.Authentication.Oidc` pulled in through the `<UnoFeatures>AuthenticationOidc</UnoFeatures>` in your `.csproj` and don't have any future Namespace usings added, there is nothing left to do!
-
-> [!TIP]
-> To update eventual other Packages of this Provider like the `IdentityServer`, you may use alongside of the OidcClient, you can check the NuGet Package Manager in Visual Studio 2022, Rider or using the dotnet CLI if you may use VS Code.
-
 ## Upgrading to Extensions 5.2
 
 ### MSAL Authentication
