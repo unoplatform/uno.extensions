@@ -19,7 +19,7 @@ When upgrading to later versions, you must make sure to update the Namespaces in
 + global using Duende.IdentityModel.OidcClient
 ```
 
-In case you only using the `Uno.Extensions.Authentication.Oidc` pulled in through the `<UnoFeatures>AuthenticationOidc</UnoFeatures>` in your `.csproj` and don't have any future Namespace usings added, there is nothing left to do!
+In case you only using the `Uno.Extensions.Authentication.Oidc` pulled in through the `<UnoFeatures>AuthenticationOidc</UnoFeatures>` in your `.csproj` and don't have any extra namespace usings added, there would be no further change required.
 
 
 ## Upgrading to Extensions 5.2
