@@ -101,6 +101,11 @@ internal class ViewModelGenTool_3 : ICodeGenTool
 				[{NS.Bindings}.Bindable(typeof({model.ToFullString()}))]
 				{model.DeclaredAccessibility.ToCSharpCodeString()} partial class {vmName} : {baseType}
 				{{
+					#if {!hasBaseType} // !hasBaseType
+					[global::System.ComponentModel.EditorBrowsable(global::System.ComponentModel.EditorBrowsableState.Never)]
+					protected object? __reactiveModel;
+					#endif
+
 					{members.Select(member => member.GetBackingField()).Align(5)}
 
 					{model
@@ -124,20 +129,23 @@ internal class ViewModelGenTool_3 : ICodeGenTool
 					{{
 						var {N.Ctor.Ctx} = {NS.Core}.SourceContext.GetOrCreate({N.Ctor.Model});
 
-						{(hasBaseType ? "" : @$"// Share the context between Model and ViewModel
-							{NS.Core}.SourceContext.Set(this, {N.Ctor.Ctx});
-							base.RegisterDisposable({N.Ctor.Model});
-							{N.Model} = {N.Ctor.Model};").Align(6)}
+						#if {!hasBaseType} // !hasBaseType
+						// Share the context between Model and ViewModel
+						{NS.Core}.SourceContext.Set(this, {N.Ctor.Ctx});
+						base.RegisterDisposable({N.Ctor.Model});
 
+						__reactiveModel = {N.Ctor.Model};
 						{N.Ctor.Model}.__reactiveBindableViewModel = this;
+						#endif
 
 						{members.Select(member => member.GetInitialization()).Align(6)}
 
-						{(hasBaseType ? "" : $@"
-							if ({N.Ctor.Model} is global::System.ComponentModel.INotifyPropertyChanged npc)
-							{{
-								npc.PropertyChanged += __Reactive_OnModelPropertyChanged;
-							}}").Align(6)}
+						#if {!hasBaseType} // !hasBaseType
+						if ({N.Ctor.Model} is global::System.ComponentModel.INotifyPropertyChanged npc)
+						{{
+							npc.PropertyChanged += __Reactive_OnModelPropertyChanged;
+						}}
+						#endif
 					}}
 
 					#region Hot-reload support
@@ -146,18 +154,32 @@ internal class ViewModelGenTool_3 : ICodeGenTool
 					protected override (Type type, string name, object? value)[] __Reactive_GetModelArguments()
 						=> __reactiveModelArgs ?? base.__Reactive_GetModelArguments();
 
-					#if {!hasBaseType}
-					protected override void __Reactive_UpdateModel(object updatedModel)
+					#if {!hasBaseType} // !hasBaseType
+					protected override sealed void __Reactive_UpdateModel(object updatedModel)
 					{{
-						if ({N.Model} is global::System.ComponentModel.INotifyPropertyChanged npc)
+						var previousModel = __reactiveModel;
+						__reactiveModel = updatedModel;
+
+						if (previousModel is not null)
 						{{
-							npc.PropertyChanged -= __Reactive_OnModelPropertyChanged;
+							// base.UnregisterDisposable((global::System.IAsyncDisposable)previousModel); ==> Will dispose the model **AND the SourceContext**, which is not what we want.
+							((dynamic)previousModel).__reactiveBindableViewModel = null;
+							if (previousModel is global::System.ComponentModel.INotifyPropertyChanged oldNpc)
+							{{
+								oldNpc.PropertyChanged -= __Reactive_OnModelPropertyChanged;
+							}}
 						}}
 
-						var previousModel = (object){N.Model};
+						((dynamic)updatedModel).__reactiveBindableViewModel = this;
+						base.RegisterDisposable((global::System.IAsyncDisposable)updatedModel);
 
 						__Reactive_BindableInitializeForUpdatedModel(updatedModel, {NS.Core}.SourceContext.GetOrCreate(updatedModel));
 						__Reactive_TryPatchBindableProperties(previousModel, updatedModel);
+
+						if (updatedModel is global::System.ComponentModel.INotifyPropertyChanged newNpc)
+						{{
+							newNpc.PropertyChanged += __Reactive_OnModelPropertyChanged;
+						}}
 
 						base.RaisePropertyChanged(""""); // 'Model' and any other mapped property.
 					}}
@@ -165,18 +187,22 @@ internal class ViewModelGenTool_3 : ICodeGenTool
 
 					protected {(hasBaseType ? "override" : "virtual")} void __Reactive_BindableInitializeForUpdatedModel(object updatedModel, {NS.Core}.SourceContext {N.Ctor.Ctx})
 					{{
-						#if {hasBaseType}
+						#if {hasBaseType} // hasBaseType
 						base.__Reactive_BindableInitializeForUpdatedModel(updatedModel, {N.Ctor.Ctx});
-						#else
-						//{N.Model} = model;
 						#endif
 
 						dynamic {N.Ctor.Model} = updatedModel;
 
-						{N.Ctor.Model}.__reactiveBindableViewModel = this;
-
 						{members.Select(member => $@"try
 							{{
+								if (__Reactive_Log().IsEnabled(global::Microsoft.Extensions.Logging.LogLevel.Trace))
+								{{
+									global::Microsoft.Extensions.Logging.LoggerExtensions.Log(
+										__Reactive_Log(),
+										global::Microsoft.Extensions.Logging.LogLevel.Trace,
+										$""(RE)initializing '{member.Name}' from the updated model."");
+								}}
+
 								{member.GetInitialization()}
 							}}
 							catch (Exception)
@@ -189,23 +215,13 @@ internal class ViewModelGenTool_3 : ICodeGenTool
 										$""Failed to initialize '{member.Name}' from the updated model, this member is unlikely to work properly."");
 								}}
 							}}").Align(6)}
-
-						{(hasBaseType ? "" : @$"
-							if ({N.Ctor.Model} is global::System.ComponentModel.INotifyPropertyChanged npc)
-							{{
-								npc.PropertyChanged += __Reactive_OnModelPropertyChanged;
-							}}").Align(6)}
 					}}
 					#endregion
 
 					private void __Reactive_OnModelPropertyChanged(object? sender, global::System.ComponentModel.PropertyChangedEventArgs args)
 						=> base.RaisePropertyChanged(args.PropertyName);
 
-					{hasBaseType switch
-						{
-							false => $"public {model.ToFullString()} {N.Model} {{ get; private set; }}",
-							true => $"public new {model.ToFullString()} {N.Model} => ({model.ToFullString()}) base.{N.Model};",
-						}}
+					public {(hasBaseType ? "new ":"")}{model.ToFullString()} {N.Model} => ({model.ToFullString()}) __reactiveModel;
 
 					{members.Select(member => member.GetDeclaration()).Align(5)}
 				}}");
