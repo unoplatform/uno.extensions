@@ -3,7 +3,7 @@ uid: Uno.Extensions.Navigation.Advanced.NavigationView
 ---
 # How-To: Use a NavigationView to Switch Views
 
-Choosing the right control for your navigation needs is important, and one common choice is `NavigationView`. This control adapts to different screen sizes and offers a uniform top-level navigation experience. `NavigationView` is a great option for adaptive, customizable, and mobile-friendly navigation. The Uno Platform extensions for navigation provide built-in support for using `NavigationView` and `NavigationViewItem` to switch between views. This tutorial will show you how to configure a `NavigationView` for use with the navigation extensions.
+Choosing the right control for your navigation needs is important, and one common choice is `NavigationView`. This control adapts to different screen sizes and offers a uniform top-level navigation experience. `NavigationView` is a great option for adaptive, customizable, and mobile-friendly navigation. The Uno Platform extensions for navigation provide built-in support for using `NavigationView` and `NavigationViewItem` to switch between views. This tutorial will show you how to configure a `NavigationView` for use with the navigation extensions also for more complex scenarios, like for supporting multiple navigated component-areas in the Content of the `NavigationView`.
 
 [!include[getting-help](../../includes/mvvm-approach.md)]
 
@@ -128,7 +128,7 @@ Choosing the right control for your navigation needs is important, and one commo
   ```
 
   > [!IMPORTANT]
-  > Even if you're not utilizing the `<Grid>` element to arrange the content (ie, you're navigating between pages defined with routes), you must still include the `<Grid>` element with the `uen:Region.Navigator="Visibility"` and `uen:Region.Attached="True"` attached properties. These properties are essential for enabling the navigator functionality.
+  > Even if you're not utilizing the `<Grid>` element to arrange the content(e.g. if its additionally navigating between pages defined with routes, beside just switching visibility of defined controls in this Tag), you must still include the `<Grid>` element with the `uen:Region.Navigator="Visibility"` and `uen:Region.Attached="True"` attached properties. These properties are essential for enabling the navigator functionality.
 
 * Add the `uen:Region.Name` attached property to each of the `Grid` elements that contain the content area. This will define the name of the view that the `Grid` will represent.
 
@@ -336,3 +336,4 @@ For the full setup and more information on using the `Navigation.Data` attached 
     </Grid>
 </Page>
 ```
+<!-- TODO: Add additional sample (maybe seperate this and this additional one) that's showing how that should be done, when there are no fix Elements like the Grid's above, than only the NavigationView would be meant to navigate just between Pages. This is missing currently and making it hard for Beginners to get a good understanding and same time stay true to SOC! -->
