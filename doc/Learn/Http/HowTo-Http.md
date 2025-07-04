@@ -11,14 +11,13 @@ When working with a complex application, centralized registration of your API en
 
 ### 1. Installation
 
-* Add `HttpRefit` (or `HttpKiota` if using Kiota-generated clients) to the `<UnoFeatures>` property in the Class Library (.csproj) file.
+* Add `Http` to the `<UnoFeatures>` property in the Class Library (.csproj) file.
 
     ```diff
     <UnoFeatures>
         Material;
         Extensions;
-    -   Http;
-    +   HttpRefit;
+    +   Http;
         Toolkit;
         MVUX;
     </UnoFeatures>
@@ -30,9 +29,7 @@ When working with a complex application, centralized registration of your API en
 
 ### 2. Enable HTTP
 
-* Call the appropriate method to register a HTTP client with the `IHostBuilder` which implements `IHttpClient`:
-  * Use .UseHttpRefit() for Refit clients
-  * Use .UseHttpKiota() for Kiota clients
+* Call the `UseHttp()` method to register a HTTP client with the `IHostBuilder` which implements `IHttpClient`:
 
     ```csharp
     protected override void OnLaunched(LaunchActivatedEventArgs args)
@@ -41,7 +38,6 @@ When working with a complex application, centralized registration of your API en
             .Configure(hostBuilder =>
             {
                 hostBuilder.UseHttp();
-                hostBuilder.UseHttpRefit(); // or UseHttpKiota()
             });
         ...
     }
@@ -49,9 +45,9 @@ When working with a complex application, centralized registration of your API en
 
 ### 3. Register Endpoints
 
-* The `AddRefitClient` or `AddKiotaClient` extension method is used to register a client with the service collection when using Refit or Kiota respectively in Uno.Extensions.
+* The `AddClient` extension method is used to register a client with the service collection.
 
-* While these extension methods can take a delegate as its argument, the recommended way to configure the HTTP client is to specify a configuration section name. This allows you to configure the added HTTP client using the `appsettings.json` file.
+* While the `AddClient()` extension method can take a delegate as its argument, the recommended way to configure the HTTP client is to specify a configuration section name. This allows you to configure the added HTTP client using the `appsettings.json` file.
 
     ```csharp
     protected override void OnLaunched(LaunchActivatedEventArgs args)
@@ -59,19 +55,13 @@ When working with a complex application, centralized registration of your API en
         var appBuilder = this.CreateBuilder(args)
             .Configure(hostBuilder =>
             {
-                hostBuilder.UseHttp(services =>
-                    services.AddRefitClient<IShowService>("ShowService")
-                    // For Kiota:
-                    // hostBuilder.UseHttpKiota(services =>
-                    //     services.AddKiotaClient<IShowService>("ShowService")
-                    // );
-                );
+                services.AddClient<IShowService, ShowService>("ShowService")
             });
         ...
     }
     ```
 
-* Ultimately, your service will be based on the functionality provided by the web API, but the `IShowService` interface will be implemented by Refit or Kiota and injected into your application at runtime. You will make requests to the registered endpoint through this interface. In this case, the service interface will look something like this:
+* Ultimately, your service will be based on the functionality provided by the web API, but the `HttpClient` associated with it will be injected into the constructor of your service implementation. You will make requests to the registered endpoint inside your service implementation. In this case, the service interface will look something like this:
 
     ```csharp
     public interface IShowService
