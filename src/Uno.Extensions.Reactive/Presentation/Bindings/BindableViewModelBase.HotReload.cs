@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
@@ -22,9 +23,10 @@ namespace Uno.Extensions.Reactive.Bindings;
 
 partial class BindableViewModelBase
 {
+	private static readonly ILogger _untypedLog = LogExtensions.Log<BindableViewModelBase>();
 	private static List<WeakReference<BindableViewModelBase>>? _instances;
 
-	private static readonly ILogger _untypedLog = LogExtensions.Log<BindableViewModelBase>();
+	private Dictionary<(string name, Type valueType), object>? _propertyFeedsCache;
 
 	internal static void HotPatch(Type bindable, Type originalModel, Type updatedModel)
 	{
@@ -228,7 +230,7 @@ partial class BindableViewModelBase
 	/// <param name="previousModel">Old instance of the model that is being replaced.</param>
 	/// <param name="updatedModel">New instance of the model.</param>
 	[EditorBrowsable(EditorBrowsableState.Never)]
-	protected static void __Reactive_TryPatchBindableProperties(object? previousModel, object? updatedModel)
+	protected void __Reactive_TryPatchBindableProperties(object? previousModel, object? updatedModel)
 	{
 		var log = (previousModel ?? updatedModel)?.Log() ?? _untypedLog;
 		var trace = log.IsEnabled(LogLevel.Trace);
@@ -242,73 +244,97 @@ partial class BindableViewModelBase
 			return;
 		}
 
+		var context = SourceContext.GetOrCreate(this); // The same as for previousModel et updatedModel
+		Debug.Assert(SourceContext.GetOrCreate(previousModel) == context);
+		Debug.Assert(SourceContext.GetOrCreate(updatedModel) == context);
+
 		var previousModelType = previousModel.GetType();
 		var updatedModelType = updatedModel.GetType();
 
 		if (trace) log.Trace($"Transferring state from '{previousModelType}:{previousModel.GetHashCode():X8}' to '{updatedModelType}:{updatedModel.GetHashCode():X8}'.");
 
-		foreach (var previousProperty in previousModelType.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic))
+		var previousProperties = previousModelType.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic).ToDictionary(prop => prop.Name, StringComparer.Ordinal);
+		var updatedProperties = updatedModelType.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic).ToDictionary(prop => prop.Name, StringComparer.Ordinal);
+		var properties = previousProperties.Keys.Concat(updatedProperties.Keys).Distinct(StringComparer.Ordinal);
+
+		_propertyFeedsCache ??= new();
+
+		foreach (var property in properties)
 		{
 			try
 			{
-				if (!IsFeed(previousModel, previousProperty, out var previousFeed, out var previousValueType))
-				{
-					if (trace) log.Trace($"Property {previousProperty.Name} was not a feed in the previous model, cannot transfer state.");
+				previousProperties.TryGetValue(property, out var previousProperty);
+				updatedProperties.TryGetValue(property, out var updatedProperty);
 
+				var previousFeed = GetAsFeed(previousModel, previousProperty);
+				var updatedFeed = GetAsFeed(updatedModel, updatedProperty);
+
+				if (previousFeed is null && updatedFeed is null)
+				{
+					if (trace) log.Trace($"Property {property} was and is not a feed property.");
 					continue;
 				}
 
-				if (updatedModelType.GetProperty(previousProperty.Name, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic) is { } updatedProperty)
+				if (updatedFeed is not null && previousFeed?.valueType != updatedFeed.Value.valueType)
 				{
-					if (!IsFeed(updatedModel, updatedProperty, out var updatedFeed, out var updatedValueType))
-					{
-						if (trace) log.Trace($"Property {updatedProperty.Name} is no longer a feed in updated model, cannot transfer state.");
+					// If the previous model doesn't have a feed property or an incompatible one,
+					// search in history if a feed with the same type has already existed for that property.
+					previousFeed = GetLastFeed(property, updatedFeed.Value.valueType);
+				}
 
-						continue;
+				if (previousFeed is null)
+				{
+					if (trace) log.Trace($"Property {property} was not a feed (and has never been) in the previous model(s), cannot transfer state.");
+					continue;
+				}
+
+				if (updatedFeed is null || previousFeed.Value.valueType != updatedFeed.Value.valueType)
+				{
+					// If the feed has been removed, or if the type of the new feed is not compatible, we still make sure to disconnect the old state from its current source.
+					// Doing so we prevent leakage, ensure to reflect the state of the model, and make sure we will be able to re-use the underlying state if the property is added back.
+					object? replacementFeed;
+					var reason = updatedFeed is null
+						? "has been removed"
+						: $"has changed type (was IFeed<{previousFeed.Value.valueType.Name}> and is now IFeed<{updatedFeed.Value.valueType.Name}>)";
+					
+					switch (FeedConfiguration.HotReloadRemovalBehavior)
+					{
+						case HotReloadRemovalBehavior.Error:
+							if (trace) log.Trace($"Property {property} {reason}, make backing state to go in error state.");
+							replacementFeed = CreateErrorFeed(previousFeed.Value.valueType, $"Property '{property}' {reason}.");
+							break;
+						
+						case HotReloadRemovalBehavior.Clear:
+							if (trace) log.Trace($"Property {property} {reason}, make backing state to go in undefined state.");
+							replacementFeed = CreateUndefinedFeed(previousFeed.Value.valueType);
+							break;
+						
+						default:
+							if (trace) log.Trace($"Property {property} {reason}, keep backing state untouched.");
+							replacementFeed = CreateSilentFeed(previousFeed.Value.valueType);
+							break;
 					}
 
-					if (previousValueType != updatedValueType)
-					{
-						if (log.IsEnabled(LogLevel.Information)) log.Info($"Cannot transfer state of property '{previousProperty.Name}', the type of feed is not the same (was: IFeed<{previousValueType.Name}> | is: IFeed<{updatedValueType.Name}>).");
-
-						continue;
-					}
-
-					if (trace) log.Trace($"Property {updatedProperty.Name} has been updated, replace the source feed of backing state by the new instance.");
-
-					TryPatchBindableProperty(previousModel, previousProperty.Name, previousValueType, previousFeed, updatedFeed);
-				}
-				else if (FeedConfiguration.HotReloadRemovalBehavior is HotReloadRemovalBehavior.Error)
-				{
-					if (trace) log.Trace($"Property {previousProperty.Name} has been removed, make backing state to go in error state.");
-
-					TryPatchBindableProperty(updatedModel, previousProperty.Name, previousValueType, previousFeed, CreateErrorFeed(previousValueType, $"Property '{previousProperty.Name}' has been removed."));
-				}
-				else if (FeedConfiguration.HotReloadRemovalBehavior is HotReloadRemovalBehavior.Clear)
-				{
-					if (trace) log.Trace($"Property {previousProperty.Name} has been removed, make backing state to go in undefined state.");
-
-					TryPatchBindableProperty(updatedModel, previousProperty.Name, previousValueType, previousFeed, CreateUndefinedFeed(previousValueType));
-				}
-				else if (trace)
-				{
-					log.Trace($"Property {previousProperty.Name} has been removed, keep backing state untouched.");
+					updatedFeed = (replacementFeed, previousFeed.Value.valueType);
 				}
 
+				TryPatchBindableProperty(updatedModel, property, previousFeed.Value.valueType, previousFeed.Value.instance, updatedFeed.Value.instance);
 			}
 			catch (Exception error)
 			{
-				if (log.IsEnabled(LogLevel.Warning)) log.Warn(error, $"Failed to transfer the state of '{previousProperty.Name}'.");
+				if (log.IsEnabled(LogLevel.Warning)) log.Warn(error, $"Failed to transfer the state of '{property}'.");
 			}
 		}
 	}
-
 
 	private static object CreateErrorFeed(Type valueType, string message)
 		=> Activator.CreateInstance(typeof(ErrorFeed<>).MakeGenericType(valueType), new InvalidOperationException(message))!;
 
 	private static object CreateUndefinedFeed(Type valueType)
 		=> Activator.CreateInstance(typeof(UndefinedFeed<>).MakeGenericType(valueType))!;
+
+	private static object CreateSilentFeed(Type valueType)
+		=> Activator.CreateInstance(typeof(SilentFeed<>).MakeGenericType(valueType))!;
 
 	private class ErrorFeed<T> : IFeed<T>
 	{
@@ -335,47 +361,69 @@ partial class BindableViewModelBase
 		}
 	}
 
-	private static bool IsFeed(object model, PropertyInfo property, [NotNullWhen(true)] out object? instance, [NotNullWhen(true)] out Type? valueType)
+	private class SilentFeed<T> : IFeed<T>
 	{
-		var type = property.PropertyType;
-		var feed = IsIFeed(type)
-			? type
-			: property.PropertyType.GetInterfaces().FirstOrDefault(IsIFeed);
-
-		if (feed is not null)
+		/// <inheritdoc />
+		public async IAsyncEnumerable<Message<T>> GetSource(SourceContext context, [EnumeratorCancellation] CancellationToken ct = default)
 		{
-			valueType = feed.GetGenericArguments()[0];
-			instance = property.GetValue(model);
+			yield break;
 		}
-		else 
+	}
+
+	private static (object instance, Type valueType)? GetAsFeed(object model, PropertyInfo? property)
+		=> property is not null && IsFeed(property.PropertyType, out var valueType) && property.GetValue(model) is { } instance
+			? (instance, valueType)
+			: null;
+
+	private (object instance, Type valueType)? GetLastFeed(string property, Type valueType)
+		=> _propertyFeedsCache?.TryGetValue((property, valueType), out var instance) is true
+			? (instance, valueType)
+			: null;
+
+	private static bool IsFeed(Type type, [NotNullWhen(true)] out Type? valueType)
+	{
+		var feedType = IsIFeed(type) ? type : type.GetInterfaces().FirstOrDefault(IsIFeed);
+		if (feedType is null)
 		{
 			valueType = null;
-			instance = null;
+			return false;
 		}
-
-		return instance is not null;
+		else
+		{
+			valueType = feedType.GetGenericArguments()[0];
+			return true;
+		}
 
 		static bool IsIFeed(Type intf)
 			=> intf is { GenericTypeArguments.Length: 1 } && intf.GetGenericTypeDefinition() == typeof(IFeed<>);
 	}
 
-	private static void TryPatchBindableProperty(object model, string property, Type valueType, object previousFeed, object updatedFeed)
+	private static readonly MethodInfo? _tryPatchBindableProperty = typeof(BindableViewModelBase).GetMethod(nameof(TryPatchBindablePropertyGeneric), BindingFlags.Instance | BindingFlags.NonPublic);
+
+	private void TryPatchBindableProperty(object model, string property, Type valueType, object previousFeed, object updatedFeed)
+		=> _tryPatchBindableProperty!.MakeGenericMethod(valueType).Invoke(this, [model, property, previousFeed, updatedFeed]);
+
+	private void TryPatchBindablePropertyGeneric<T>(object model, string property, IFeed<T> previous, IFeed<T> updated)
 	{
-		// Like in the `Property` method, we use the context to resolve the state that is use to back the `Bindable` of that feed.
+		// Like in the `Property` method, we use the context to resolve the state that is used to back the `Bindable` of that feed.
 		// (If it's already an IState, we let to the context the responsibility to re-use it or not.)
 		var context = SourceContext.GetOrCreate(model);
-		var previousState = _getOrCreateState!.MakeGenericMethod(valueType).Invoke(context, new[] { previousFeed });
-
-		var hotSwapType = typeof(IHotSwapState<>).MakeGenericType(valueType);
-		if (!hotSwapType.IsInstanceOfType(previousState))
+		var state = context.GetOrCreateState(previous);
+		if (state is not IHotSwapState<T> hotSwap)
 		{
-			if (model.Log().IsEnabled(LogLevel.Information)) model.Log().Info($"The state '{previousState?.GetType()}' used for '{property}' does not support hot-swap.");
+			if (model.Log().IsEnabled(LogLevel.Information))
+			{
+				model.Log().Info($"The state '{state.GetType()}' used for '{property}' does not support hot-swap.");
+			}
 
 			return;
 		}
 
-		hotSwapType.GetMethod(nameof(IHotSwapState<object>.HotSwap), BindingFlags.Instance | BindingFlags.Public)!.Invoke(previousState, new[] { updatedFeed });
-	}
+		hotSwap.HotSwap(updated);
 
-	private static readonly MethodInfo? _getOrCreateState = typeof(SourceContext).GetMethod(nameof(SourceContext.GetOrCreateState), BindingFlags.Instance | BindingFlags.Public);
+		// We also make sure to register the state as the backing state for the updated feed.
+		// This is useful for incremental updates, where we will search for state from the current `updated`.
+		context.States.GetOrCreateState<IFeed<T>, IState<T>>(updated, (ctx, f) => state);
+		(_propertyFeedsCache ??= new())[(property, typeof(T))] = updated;
+	}
 }

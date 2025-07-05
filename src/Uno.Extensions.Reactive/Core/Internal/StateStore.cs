@@ -82,7 +82,7 @@ internal class StateStore : IStateStore
 				: (TState)(states[source] = factory(_root, source));
 		}
 
-		if (_states is null) // The context has been disposed while we where creating the State ...
+		if (_states is null) // The context has been disposed while we were creating the State ...
 		{
 			_ = state.DisposeAsync();
 			throw new ObjectDisposedException(nameof(SourceContext));
@@ -109,7 +109,7 @@ internal class StateStore : IStateStore
 			states[state] = state;
 		}
 
-		if (_states is null) // The context has been disposed while we where creating the State ...
+		if (_states is null) // The context has been disposed while we were creating the State ...
 		{
 			_ = state.DisposeAsync();
 			throw new ObjectDisposedException(nameof(SourceContext));
