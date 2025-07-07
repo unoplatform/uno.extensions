@@ -53,10 +53,14 @@ When working with a complex application, centralized registration of your API en
     protected override void OnLaunched(LaunchActivatedEventArgs args)
     {
         var appBuilder = this.CreateBuilder(args)
-            .Configure(hostBuilder =>
-            {
-                services.AddClient<IShowService, ShowService>("ShowService")
-            });
+           .Configure(hostBuilder => 
+           { 
+               hostBuilder 
+                   .UseHttp((context, services) => 
+                   { 
+                       services.AddClient<IShowService, ShowService>(context, "ShowService"); 
+                   }); 
+           });
         ...
     }
     ```
