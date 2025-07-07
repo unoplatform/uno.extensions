@@ -234,6 +234,9 @@ Choosing the right control for your navigation needs is important, and one commo
   }
   ```
 
+  > [!NOTE]  
+  > To ensure selecting a `NavigationViewItem` only updates the content region (and doesn’t replace the entire page or the `NavigationView` itself), nest each `NavigationViewItem` as a `RouteMap` under the `Main` `RouteMap`. You do not need to declare **explicit** `RouteMap` entries for navigation to work, but if you do, they must be nested under Main.
+
 * Importantly, the snippet above establishes a route name `Products` for `ProductsPage`. We can use this route name to navigate to the `ProductsPage` view element.
 
 * Add a `NavigationViewItem` to the `NavigationView` element with the `uen:Region.Name` attached property set to `Products`.
