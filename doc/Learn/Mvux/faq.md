@@ -23,7 +23,7 @@ Yes, you can use `MVUX` with `MVVM`, although it is not recommended. However, yo
    ```
 
     > [!NOTE]
-    > In MVUX, the `ViewModel` for a `Model` is created when the class name matches the regex "Model$", this means, any class that ends with "Model" will be considered a `Model`
+    > In MVUX, the `ViewModel` for a `Model` is created when the class name matches the regex "Model$", this means any class that ends with "Model" will be considered a `Model`
 
 3. If you are using the Uno Platform for Navigation, ensure you register your `MVVM` ViewModels in the `App.xaml.cs` file with their corresponding `Page` types.
 
