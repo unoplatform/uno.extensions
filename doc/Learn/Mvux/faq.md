@@ -46,3 +46,6 @@ Yes, you can use `MVUX` with `MVVM`, although it is not recommended. However, yo
         );
     }
    ```
+
+> [!IMPORTANT]
+> You can implement the `MVVM` pattern manually or enable the `Mvvm` Uno Feature, which adds support for the [CommunityToolkit.Mvvm](https://www.nuget.org/packages/CommunityToolkit.Mvvm) package.
