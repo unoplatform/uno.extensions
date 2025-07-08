@@ -40,7 +40,7 @@ public abstract partial class BindableViewModelBase : IBindable, INotifyProperty
 	/// <summary>
 	/// Creates a new instance of BindableViewModelBase
 	/// </summary>
-	public BindableViewModelBase()
+	protected BindableViewModelBase()
 	{
 		_propertyChanged = new(this, h => h.Invoke, isCoalescable: false, schedulersProvider: _dispatcher.FindDispatcher);
 
@@ -55,6 +55,13 @@ public abstract partial class BindableViewModelBase : IBindable, INotifyProperty
 	/// <param name="disposable">The disposable.</param>
 	protected void RegisterDisposable(IAsyncDisposable disposable)
 		=> _disposables.Add(disposable);
+
+	/// <summary>
+	/// Removes a disposable that is going to be disposed with this instance.
+	/// </summary>
+	/// <param name="disposable">The disposable.</param>
+	protected void UnregisterDisposable(IAsyncDisposable disposable)
+		=> _disposables.Remove(disposable);
 
 	/// <summary>
 	/// Raise the property changed event for the given property name.
