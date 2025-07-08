@@ -31,8 +31,8 @@ Yes, you can use `MVUX` with `MVVM`, although it is not recommended. However, yo
     private static void RegisterRoutes(IViewRegistry views, IRouteRegistry routes)
     {
         views.Register(
-            new ViewMap<MainPage, MainViewModel>(),
-            new DataViewMap<SecondPage, SecondModel, Entity>()
+            new ViewMap<MainPage, MainViewModel>(), //Map MainPage to MainViewModel (MVVM)
+            new DataViewMap<SecondPage, SecondModel, Entity>() //Map SecondPage to SecondModel (MVUX)
         );
 
         routes.Register(
@@ -46,6 +46,10 @@ Yes, you can use `MVUX` with `MVVM`, although it is not recommended. However, yo
         );
     }
    ```
+
+In the example above, the `MainPage` is mapped to the `MainViewModel` using `MVVM`, while the `SecondPage` is mapped to the `SecondModel`, which uses `MVUX`.
+
+See the complete example [here](https://github.com/unoplatform/Uno.Samples/tree/master/UI/CombiningMVUXAndMVVM).
 
 > [!IMPORTANT]
 > You can implement the `MVVM` pattern manually or enable the `Mvvm` Uno Feature, which adds support for the [CommunityToolkit.Mvvm](https://www.nuget.org/packages/CommunityToolkit.Mvvm) package.
