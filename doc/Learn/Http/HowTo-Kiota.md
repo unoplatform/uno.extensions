@@ -24,6 +24,17 @@ When working with APIs in your application, having a strongly-typed client can s
     </UnoFeatures>
     ```
 
+### 2. Add the required Kiota NuGet Package to your app
+
+Make sure your `Directory.Packages.props` file and `.csproj` file containing the required Kiota NuGet Package, by using the dotnet CLI:
+
+```bash
+dotnet add package Microsoft.Kiota.Bundle --project "./MyApp/"
+```
+
+> [!TIP]
+> By using the dotnet CLI tool, you can make sure, to always use the latest version of the Package. But for CPM to work with this command, you will have to make sure to add the `--project` to the command. Otherwise it will fail to find your project file.
+
 ### 2. Enable Http in Host Builder
 
 * Add the UseHttp method to the `IHostBuilder`:
@@ -58,20 +69,6 @@ When working with APIs in your application, having a strongly-typed client can s
     ```
 
     This will create a client named `MyApiClient` in the `Clients` folder.
-
-* If those has not been already included in your `Directory.Packages.props` file, the kiota CLI tool will recommend you to add following NuGet packages via dotnet:
-
-  ```xml
-  <ItemGroup>
-    <PackageVersion Include="Microsoft.Kiota.Authentification.Azure" Version="1.17.4"/>
-    <PackageVersion Include="Microsoft.Kiota.Bundle" Version="1.17.4"/>
-  </ItemGroup>
-  ```
-
-  > [!IMPORTANT]
-  > As using `dotnet add package` will result in the error `In "C:\Users\YourName\source\repos\YourAppsGitHubRepo\src\YourApp\" were unable to find a Project.` add them manually into the above mentioned file in your `Solution Items` folder.
-  > [!TIP]
-  > We recommend naming the output folder (and namespace) in plural (e.g. Clients) to accommodate multiple generated APIs.
 
 ### 4. Register the Kiota Client
 
