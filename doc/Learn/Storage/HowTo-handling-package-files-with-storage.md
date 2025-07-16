@@ -6,7 +6,7 @@ uid: Uno.Extensions.Storage.HowToPackageFiles
 
 The `IStorage` interface provides methods to work with files contained in your application's package.
 
-These operations including:
+These operations include:
 
 - [How To: Handling Package Files with Storage](#how-to-handling-package-files-with-storage)
   - [Prerequisites](#prerequisites)
