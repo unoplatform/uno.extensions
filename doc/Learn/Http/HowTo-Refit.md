@@ -35,7 +35,7 @@ When accessing resources with a [REST-style](https://www.ics.uci.edu/~fielding/p
         var appBuilder = this.CreateBuilder(args)
             .Configure(hostBuilder =>
             {
-                hostBuilder.UseHttpRefit();
+                hostBuilder.UseHttp();
             });
         ...
     }
@@ -178,7 +178,7 @@ When accessing resources with a [REST-style](https://www.ics.uci.edu/~fielding/p
         var appBuilder = this.CreateBuilder(args)
             .Configure(hostBuilder =>
             {
-                hostBuilder.UseHttpRefit((context, services) =>
+                hostBuilder.UseHttp((context, services) =>
                     services.AddRefitClient<IChuckNorrisEndpoint>(context, httpClient =>
                     {
                         httpClient.BaseAddress = new Uri("https://api.chucknorris.io/");
@@ -199,7 +199,7 @@ When accessing resources with a [REST-style](https://www.ics.uci.edu/~fielding/p
         var appBuilder = this.CreateBuilder(args)
             .Configure(hostBuilder =>
             {
-                hostBuilder.UseHttpRefit((context, services) =>
+                hostBuilder.UseHttp((context, services) =>
                     services.AddRefitClient<IChuckNorrisEndpoint>(context)
                 );
             });

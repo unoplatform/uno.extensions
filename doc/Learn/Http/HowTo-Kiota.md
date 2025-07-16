@@ -26,7 +26,7 @@ When working with APIs in your application, having a strongly-typed client can s
 
 ### 2. Enable Http in Host Builder
 
-* Add the UseHttpKiota method to the `IHostBuilder`:
+* Add the UseHttp method to the `IHostBuilder`:
 
     ```csharp
     protected override void OnLaunched(LaunchActivatedEventArgs args)
@@ -34,7 +34,7 @@ When working with APIs in your application, having a strongly-typed client can s
         var appBuilder = this.CreateBuilder(args)
             .Configure(hostBuilder =>
             {
-                hostBuilder.UseHttpKiota();
+                hostBuilder.UseHttp();
             });
         ...
     }
@@ -52,10 +52,9 @@ When working with APIs in your application, having a strongly-typed client can s
 
     ```bash
     # From a static spec file
-    kiota generate --openapi PATH_TO_YOUR_API_SPEC.json --language CSharp --class-name MyApiClient --namespace-name MyApp.Client --output ./Client
-
+    kiota generate --openapi PATH_TO_YOUR_API_SPEC.json --language CSharp --class-name MyApiClient --namespace-name MyApp.Client.MyApi --output ./MyApp/Content/Client/MyApi
     # OR directly from the running server’s Swagger endpoint
-    kiota generate --openapi http://localhost:5002/swagger/v1/swagger.json --language CSharp --class-name MyApiClient --namespace-name MyApp.Client --output ./Client
+    kiota generate --openapi http://localhost:5002/swagger/v1/swagger.json --language CSharp --class-name MyApiClient --namespace-name MyApp.Client.MyApi --output ./MyApp/Content/Client/MyApi
     ```
 
     This will create a client named `MyApiClient` in the Client folder.
@@ -71,7 +70,7 @@ When working with APIs in your application, having a strongly-typed client can s
         var appBuilder = this.CreateBuilder(args)
             .Configure(hostBuilder =>
             {
-                hostBuilder.UseHttpKiota((context, services) =>
+                hostBuilder.UseHttp((context, services) =>
                     services.AddKiotaClient<MyApiClient>(
                         context,
                         options: new EndpointOptions { Url = "https://localhost:5002" }
