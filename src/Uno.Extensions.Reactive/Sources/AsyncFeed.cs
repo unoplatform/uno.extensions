@@ -29,7 +29,7 @@ internal sealed class AsyncFeed<T> : IFeed<T>
 	/// <inheritdoc />
 	public IAsyncEnumerable<Message<T>> GetSource(SourceContext context, CancellationToken ct = default)
 	{
-		var loadRequests = new AsyncEnumerableSubject<RefreshToken>(ReplayMode.EnabledForFirstEnumeratorOnly);
+		var loadRequests = new AsyncEnumerableSubject<RefreshToken>(AsyncEnumerableReplayMode.EnabledForFirstEnumeratorOnly);
 		var current = RefreshToken.Initial(this, context);
 
 		// Request initial load (without refresh)
@@ -73,7 +73,7 @@ internal sealed class AsyncFeed<T> : IFeed<T>
 		// Note: We prefer to manually enumerate the version instead of using the ForEachAwaitWithCancellationAsync
 		//		 so we have a better control of when we do cancel the 'loadToken' (ak.a. 'previousLoad')
 
-		var subject = new AsyncEnumerableSubject<Message<T>>(ReplayMode.EnabledForFirstEnumeratorOnly);
+		var subject = new AsyncEnumerableSubject<Message<T>>(AsyncEnumerableReplayMode.EnabledForFirstEnumeratorOnly);
 		var message = new MessageManager<T>(subject.SetNext);
 		var loadToken = default(CancellationTokenSource);
 		var load = default(Task);
