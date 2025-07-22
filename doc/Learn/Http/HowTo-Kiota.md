@@ -24,6 +24,17 @@ When working with APIs in your application, having a strongly-typed client can s
     </UnoFeatures>
     ```
 
+### 2. Add the required Kiota NuGet Package to your app
+
+Make sure your `Directory.Packages.props` file and `.csproj` file containing the required Kiota NuGet Package, by using the dotnet CLI:
+
+```bash
+dotnet add package Microsoft.Kiota.Bundle --project "./MyApp/"
+```
+
+> [!TIP]
+> By using the dotnet CLI tool, you can make sure, to always use the latest version of the Package. But for CPM to work with this command, you will have to make sure to add the `--project` to the command. Otherwise it will fail to find your project file.
+
 ### 2. Enable Http in Host Builder
 
 * Add the UseHttp method to the `IHostBuilder`:
@@ -57,7 +68,7 @@ When working with APIs in your application, having a strongly-typed client can s
     kiota generate --openapi http://localhost:5002/swagger/v1/swagger.json --language CSharp --class-name MyApiClient --namespace-name MyApp.Client.MyApi --output ./MyApp/Content/Client/MyApi
     ```
 
-    This will create a client named `MyApiClient` in the Client folder.
+    This will create a client named `MyApiClient` in the `Clients` folder.
 
 ### 4. Register the Kiota Client
 
