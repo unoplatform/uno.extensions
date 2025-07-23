@@ -3,7 +3,7 @@ uid: Uno.Extensions.Maui.ThirdParty.ComponentOne
 ---
 # .NET MAUI Embedding - ComponentOne .NET MAUI Controls
 
-The ComponentOne FlexGrid and Calendar .NET MAUI Controls from the MESCIUS can be used in an Uno Platform application via .NET MAUI Embedding.
+The ComponentOne FlexGrid and Calendar .NET MAUI Controls from MESCIUS can be used in an Uno Platform application via .NET MAUI Embedding.
 
 ## Sample App
 
