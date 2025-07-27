@@ -17,7 +17,7 @@ jobs:
       DIST_PATH: testing/TestHarness/TestHarness/bin/Release/net8.0-browserwasm/dist
 
     if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     container: 'unoplatform/wasm-build:3.0'
     name: Build and Deploy Job
     steps:
@@ -61,7 +61,7 @@ jobs:
 
   close_pull_request_job:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     name: Close Pull Request Job
     steps:
       - name: Close Pull Request
