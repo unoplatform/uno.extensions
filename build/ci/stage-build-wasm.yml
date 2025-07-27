@@ -3,7 +3,7 @@ jobs:
   displayName: 'Samples - WebAssembly'
 
   pool:
-    vmImage: 'ubuntu-latest'
+    vmImage: 'ubuntu-24.04'
 
   steps:
   - checkout: self
