@@ -109,7 +109,7 @@ Create or Upgrade the `HostBuilder` depending on your desired Extensions:
 ```csharp
 var builder = this.CreateBuilder(args)
     // Add navigation support for toolkit controls such as TabBar and NavigationView
-    .UseTookitNavigation()
+    .UseToolkitNavigation()
     // Configure the host builder
     .Configure(host => host
 #if DEBUG
