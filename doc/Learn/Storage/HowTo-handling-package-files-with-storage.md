@@ -109,7 +109,7 @@ public SampleModel(ISerializer<Person> _serializer)
     public async Task ReadAndDeserializeFile(string fileName = "data.json")
     {
 
-        var data = await storage.ReadPackageFileAsync<Person>(_serializer, fileName);
+        var data = await _storage.ReadPackageFileAsync<Person>(_serializer, fileName);
 
         if (data is not null)
         {
