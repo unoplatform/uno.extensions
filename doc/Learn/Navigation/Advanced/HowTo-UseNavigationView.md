@@ -336,4 +336,4 @@ For the full setup and more information on using the `Navigation.Data` attached 
     </Grid>
 </Page>
 ```
-<!-- TODO: Add additional sample (maybe seperate this and this additional one) that's showing how that should be done, when there are no fix Elements like the Grid's above, than only the NavigationView would be meant to navigate just between Pages. This is missing currently and making it hard for Beginners to get a good understanding and same time stay true to SOC! -->
+<!-- TODO: Add additional sample (maybe separate this and this additional one) that's showing how that should be done, when there are no fixed Elements like the Grid's above, then only the NavigationView would be meant to navigate just between Pages. This is missing currently and making it hard for Beginners to get a good understanding and same time stay true to SOC! -->
