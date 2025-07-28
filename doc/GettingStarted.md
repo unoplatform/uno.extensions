@@ -208,7 +208,7 @@ if (rootFrame.Content == null)
 MainWindow.Activate();
 ```
 
-#### [Using Uno.Extensions.Navigation Alias `Uno.Regions`](#tab/uno-extensions-navigation)
+#### [Using Region Navigation](#tab/uno-extensions-navigation)
 
 Finally, instead of directly creating an instance of a `Window` using `MainWindow = new Window()`, use the `builder` to set up the main window:
 
