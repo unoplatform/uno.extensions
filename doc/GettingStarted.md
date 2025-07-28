@@ -160,7 +160,6 @@ var builder = this.CreateBuilder(args)
         // Register Json serializers (ISerializer and ISerializer)
         .UseSerialization((context, services) => services
             .AddContentSerializer(context)
-            .AddJsonTypeInfo(WeatherForecastContext.Default.IImmutableListWeatherForecast))
         .UseHttp((context, services) => services
             // Register HttpClient
 #if DEBUG
