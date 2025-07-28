@@ -36,7 +36,7 @@ This topic walks through controlling Navigation from XAML. This includes specify
 
 [!include [getting-help](../includes/mvux-approach.md)]
 
-- Add a new class, `SampleViewModel`, to the project:
+- Add a new class, `SampleModel`, to the project:
 
     ![Adding-new-Item-to-sln](../images/Adding-new-Item-to-sln.png)
     ![Adding-new-Item-class](../images/Adding-new-Item-class.png)
