@@ -19,7 +19,7 @@ public static class EnumerableExtensions
     /// </param>
     /// <returns>
     /// An enumerable collection of strings, where each string represents the items within a specified range.
-    /// If a range is invalid (e.g. start is greater than the last one), an empty string is returned for that range.
+    /// If a range is invalid (e.g. the start index is greater than the end index), an empty string is returned for that range.
     /// </returns>
     public static IEnumerable<string> SelectItemsByRanges(this IEnumerable<string> source, IEnumerable<(int Start, int End)> ranges, bool isNullBased = true)
     {
