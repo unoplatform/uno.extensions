@@ -167,8 +167,6 @@ var builder = this.CreateBuilder(args)
             // DelegatingHandler will be automatically injected into Refit Client
             .AddTransient<DelegatingHandler, DebugHttpHandler>()
 #endif
-            .AddSingleton<IWeatherCache, WeatherCache>()
-            .AddRefitClient<IApiClient>(context))
         .ConfigureServices((context, services) =>
             services
                 // TODO: Register your regular services
