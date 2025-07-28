@@ -193,10 +193,6 @@ var builder = this.CreateBuilder(args)
 
 +MainWindow = builder.Window;
 
-+#if DEBUG
-+    MainWindow.UseStudio();
-+#endif
-
 Host = builder.Build();
 
 if (MainWindow.Content is not Frame rootFrame)
