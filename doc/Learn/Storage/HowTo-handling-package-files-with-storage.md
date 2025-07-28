@@ -172,7 +172,7 @@ public async Task WriteFileExample(string fileName = "output.txt", string toBeWr
 
     try
     {
-        await storage.WriteFileAsync(fileName, content, overwrite);
+        await storage.WriteFileAsync(fileName, toBeWrittenContent, shouldOverwrite);
         Console.WriteLine($"Successfully wrote to file '{fileName}'.");
     }
     catch (Exception ex)
