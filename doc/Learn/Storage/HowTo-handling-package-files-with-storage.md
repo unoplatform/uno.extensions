@@ -59,7 +59,7 @@ public async Task ReadThisFile(string fileNameToRead = "example.txt")
     }
     else
     {
-        Console.WriteLine($"File '{fileName}' not found in the package.");
+        Console.WriteLine($"File '{fileNameToRead}' not found in the package.");
     }
 }
 ```
