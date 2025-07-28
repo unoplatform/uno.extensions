@@ -155,7 +155,7 @@ In addition to specifying the route to navigate to, the Navigation.Data attached
 - Update `SecondModel` to accept a `Widget` as the second constructor parameter
 
     ```csharp
-    public class SampleModel
+    public partial record SampleModel
     {
         public string Title => "Sample Page";
 
