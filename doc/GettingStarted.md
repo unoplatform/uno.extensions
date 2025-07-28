@@ -217,10 +217,6 @@ Finally, instead of directly creating an instance of a `Window` using `MainWindo
 -   MainWindow = new Window()
 +   MainWindow = builder.Window;
 
-+#if DEBUG
-+   MainWindow.UseStudio();
-+#endif
-+   MainWindow.SetWindowIcon();
 +   Host = await builder.NavigateAsync<Shell>();
 }
 ```
