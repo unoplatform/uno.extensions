@@ -114,7 +114,7 @@ public class MyViewModel
 ## See also
 
 * [Overview: What is Kiota?](https://learn.microsoft.com/en-us/openapi/kiota/)
-* [Kiota with Dependency Injection](https://learn.microsoft.com/en-us/openapi/kiota/tutorials/dotnet-dependency-injection)  
+* [Kiota with Dependency Injection](https://learn.microsoft.com/en-us/openapi/kiota/tutorials/dotnet-dependency-injection)
 * [Overview: HTTP](xref:Uno.Extensions.Http.Overview)
 * [How-To: Consume a web API with HttpClient](xref:Uno.Development.ConsumeWebApi)
 * [How-To: Register an Endpoint for HTTP Requests](xref:Uno.Extensions.Http.HowToHttp)
