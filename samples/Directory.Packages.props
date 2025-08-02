@@ -11,7 +11,7 @@
 		<UnoUniversalImageLoaderVersion>1.9.37</UnoUniversalImageLoaderVersion>
 		<UnoDspTasksVersion>1.4.0</UnoDspTasksVersion>
 		<UnoResizetizerVersion>1.8.1</UnoResizetizerVersion>
-		<SkiaSharpVersion>3.119.0-preview.1.2</SkiaSharpVersion>
+		<SkiaSharpVersion>3.119.0</SkiaSharpVersion>
 		<SvgSkiaVersion>3.0.2</SvgSkiaVersion>
 		<WinAppSdkVersion>1.7.250513003</WinAppSdkVersion>
 		<WinAppSdkBuildToolsVersion>10.0.26100.4188</WinAppSdkBuildToolsVersion>
