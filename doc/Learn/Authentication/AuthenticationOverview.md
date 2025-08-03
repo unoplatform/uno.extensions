@@ -75,35 +75,82 @@ The process of authentication with a given authority is implemented by an authen
 > [!NOTE]
 > The `IAuthenticationProvider` implementations are all marked as internal as they should be configured via the extensions methods on the `IHostBuilder` and the builder interface for the corresponding implementation.
 
-### Custom
+### [Custom](#tab/custom)
 
 The `CustomAuthenticationProvider` provides a basic implementation of the `IAuthenticationProvider` that requires callback methods to be defined for performing login, refresh and logout actions. Learn [Custom authentication](xref:Uno.Extensions.Authentication.HowToAuthentication)
 
-### MSAL
+### [MSAL](#tab/msal)
 
 The `MsalAuthenticationProvider` wraps the [MSAL library](https://github.com/AzureAD/microsoft-authentication-library-for-dotnet) from Microsoft into an implementation of `IAuthenticationProvider`. This implementation ignores any credentials passed into the `LoginAsync` method, instead invoking the web based authentication process required to authentication with Microsoft. Learn [Msal authentication](xref:Uno.Extensions.Authentication.HowToMsalAuthentication)
 
-### Oidc
+### [Oidc](#tab/oidc)
 
 The `OidcAuthenticationProvider` wraps support for any [OpenID Connect](https://openid.net/connect/) backend, including [IdentityServer](https://duendesoftware.com/products/identityserver). Learn [Oidc authentication](xref:Uno.Extensions.Authentication.HowToOidcAuthentication)
 
-#### Platform-specific behavior
+#### [Platform-specific behavior](#tab/oidc/platform-specifics)
 
 When the `OidcAuthenticationProvider` is automatically built, there are platform specific checks invoked internally which occasionally alter behavior during the authentication process:
 
 **WebAssembly**: The `OidcAuthenticationProvider` will automatically use the `WebAuthenticationBroker` to obtain redirect URIs during the authentication process. This is done to avoid the need for a redirect to a custom URI scheme, which is not supported in the browser.
 
-### Web
+### [Web](#tab/web)
 
 The `WebAuthenticationProvider` provides an implementation that displays a web view in order for the user to login. After login, the web view redirects back to the application, along with any tokens. Learn [Web Authentication](xref:Uno.Extensions.Authentication.HowToWebAuthentication)
 
-#### Platform-specific behavior
+#### [Platform-specific behavior](#tab/web/platform-specifics)
 
 Before the `WebAuthenticationProvider` is automatically built, there are platform specific checks invoked internally which occasionally alter behavior during the authentication process:
 
 **Windows**: The `AddWeb()` extension method will initialize a `WebAuthenticator` to launch an out-of-process browser. This is done preemptively to support its usage within `WebAuthenticationProvider` during login and logout instead of the `WebAuthenticationBroker` used for other platforms.
 
 **Other platforms**: For a description of various subtle differences when displaying a web login prompt on multiple platforms, see [Web Authentication Broker](https://platform.uno/docs/articles/features/web-authentication-broker.html). The broker will only respond to the `PrefersEphemeralWebBrowserSession` setting value in iOS (versions 13.0+), while the other platforms will ignore it.
+
+### [WebConfiguration Options](#tab/web/config-options)
+
+The `WebAuthenticationProvider` can be configured using the `WebConfiguration` defined properties.
+
+The following properties are available:
+
+```csharp
+internal record WebConfiguration
+{
+	public bool PrefersEphemeralWebBrowserSession { get; init; }
+	public string? LoginStartUri { get; init; }
+	public string? LoginCallbackUri { get; init; }
+	public string? AccessTokenKey { get; init; }
+	public string? RefreshTokenKey { get; init; }
+	public string? IdTokenKey { get; init; }
+	public IDictionary<string, string>? OtherTokenKeys { get; init; }
+	public string? LogoutStartUri { get; init; }
+	public string? LogoutCallbackUri { get; init; }
+}
+```
+
+So for example, in your `appsettings.json` file, you could include the following configuration:
+
+```json
+{
+	"Web": {
+		"LoginStartUri": "https://example.com/login",
+        "LoginCallbackUri": "https://example.com/signin-provider-callback",
+        "IdTokenKey": "id_token_key",
+		"LogoutStartUri": "https://example.com/logout",
+        "LogoutCallbackUri": "https://example.com/logout-provider-callback",
+        "AccessTokenKey": "access_token_key",
+        "RefreshTokenKey": "refresh_token_key",
+        "OtherTokenKeys": {
+            "custom_token_key": "custom_token_value"
+        }
+	}
+}
+```
+
+> [!NOTE]
+> The `LoginCallbackUri` and `LogoutCallbackUri` are used to redirect the user back to the application after they have logged in or logged out. These URIs should be registered with the identity provider.
+> [!NOTE]
+> The `AccessTokenKey`, `RefreshTokenKey`, and `IdTokenKey` are used to store the tokens in the credential storage. The `OtherTokenKeys` dictionary can be used to store any additional tokens that are returned by the identity provider.
+> [!NOTE]
+> Usually, the `AccessToken` in will be returned from the `Token` endpoint, which is called after the user has authenticated or authorized your application to [act on-behalf-of the user](https://learn.microsoft.com/en-us/entra/identity-platform/v2-oauth2-on-behalf-of-flow). *(This Link is specific to Microsoft Entra ID, but the concept applies to other identity providers as well.)*
 
 ## Http Handlers
 
@@ -115,4 +162,4 @@ The `HeaderHandler` is used to apply the access token to the http request using 
 
 ### Cookies
 
-The `CookieHandler` is used to apply the access token, and/or refresh token, to the http request as cookies. This requires the cookie name for access token and request token to be specified as part of configuring the application. Learn how to use [Cookies](xref:Uno.Extensions.Authentication.HowToCookieAuthorization) to authorize
+The `CookieHandler` is used to apply the access token, and/or refresh token, to the http request as cookies. This requires the cookie name for access token and request token to be specified as part of configuring the application. Learn how to use [Cookies](xref:Uno.Extensions.Authentication.HowToCookieAuthorization) to authorize.
