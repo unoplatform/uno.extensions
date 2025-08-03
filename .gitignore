@@ -336,3 +336,5 @@ ASALocalRun/
 DebugPlatforms.props
 .DS_Store
 **/.icons
+
+!build/ci/publish
