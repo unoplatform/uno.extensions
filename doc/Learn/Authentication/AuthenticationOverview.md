@@ -142,7 +142,7 @@ So for example, in your `appsettings.json` file, you could include the following
 > The `LoginCallbackUri` and `LogoutCallbackUri` are used to redirect the user back to the application after they have logged in or logged out. These URIs should be registered with the identity provider.
 > [!NOTE]
 > The `AccessTokenKey`, `RefreshTokenKey`, and `IdTokenKey` are used to store the tokens in the credential storage. The `OtherTokenKeys` dictionary can be used to store any additional tokens that are returned by the identity provider.
-> [NOTE]
+> [!NOTE]
 > Usually, the `AccessToken` in will be returned from the `Token` endpoint, which is called after the user has authenticated or authorized your application to [act on-behalf-of the user](https://learn.microsoft.com/en-us/entra/identity-platform/v2-oauth2-on-behalf-of-flow). *(This Link is specific to Microsoft Entra ID, but the concept applies to other identity providers as well.)*
 
 ## Http Handlers
