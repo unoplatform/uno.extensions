@@ -48,7 +48,7 @@ public class MyViewModel : ObservableObject
     public void Serialize()
     {
         var myObject = new Person();
-        var json = _serializer.Serialize(myObject);
+        var json = _serializer.ToString(myObject);
     }
 }
 ```
