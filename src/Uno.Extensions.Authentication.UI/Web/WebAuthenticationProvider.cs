@@ -108,8 +108,8 @@ internal record WebAuthenticationProvider
 		var query = authData.StartsWith(loginCallbackUri) ?
 			AuthHttpUtility.ExtractArguments(authData) : // authData is a fully qualified url, so need to extract query or fragment
 			AuthHttpUtility.ParseQueryString(authData.TrimStart('#').TrimStart('?')); // authData isn't full url, so just process as query or fragment
-
-
+		// cspell:ignore Pkce
+		// TODO: Add here support for oAuth Authorization Code Flow with Pkce-Challenge, by providing at least a AsyncFunc that could be used just like Login/Logout to exchange the code for tokens. <see href="https://datatracker.ietf.org/doc/html/rfc6749#section-4.1.2"/> of what we would have at this time in code, wich is not enough to get tokens in the following lines.
 		var tokens = new Dictionary<string, string>();
 		if (query is null)
 		{
