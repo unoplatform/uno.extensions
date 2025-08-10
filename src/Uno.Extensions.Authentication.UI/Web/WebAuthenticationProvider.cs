@@ -100,7 +100,7 @@ internal record WebAuthenticationProvider
 		else
 		{
 			// Use the DI provided IWebAuthenticationBrokerProvider if available 
-			userResult = await WebAuthBroker.AuthenticateAsync(WebAuthenticationOptions.None,new Uri(loginStartUri), new Uri(loginCallbackUri), cancellationToken);
+			userResult = await WebAuthBroker.AuthenticateAsync(WebAuthenticationOptions.None, new Uri(loginStartUri), new Uri(loginCallbackUri), cancellationToken);
 		}
 		var authData = userResult?.ResponseData ?? string.Empty;
 
