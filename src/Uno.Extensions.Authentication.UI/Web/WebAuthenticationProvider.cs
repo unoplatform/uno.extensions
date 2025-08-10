@@ -1,5 +1,7 @@
 ﻿using Microsoft.Extensions.Options;
-
+#if !WINDOWS
+using Uno.AuthenticationBroker;
+#endif
 namespace Uno.Extensions.Authentication.Web;
 
 internal record WebAuthenticationProvider
@@ -8,7 +10,10 @@ internal record WebAuthenticationProvider
 	IOptionsSnapshot<WebConfiguration> Configuration,
 	IServiceProvider Services,
 	ITokenCache Tokens
-) : BaseAuthenticationProvider(ProviderLogger, DefaultName, Tokens)
+#if !WINDOWS
+	,IWebAuthenticationBrokerProvider? WebAuthBroker = null
+#endif
+	) : BaseAuthenticationProvider(ProviderLogger, DefaultName, Tokens)
 {
 	private const string OAuthRedirectUriParameter = "redirect_uri";
 
@@ -87,15 +92,24 @@ internal record WebAuthenticationProvider
 		var userResult = await WinUIEx.WebAuthenticator.AuthenticateAsync(new Uri(loginStartUri), new Uri(loginCallbackUri));
 		var authData = string.Join("&", userResult.Properties.Select(x => $"{x.Key}={x.Value}"))??string.Empty;
 #else
-		var userResult = await WebAuthenticationBroker.AuthenticateAsync(WebAuthenticationOptions.None, new Uri(loginStartUri), new Uri(loginCallbackUri));
+		WebAuthenticationResult? userResult;
+		if (WebAuthBroker is null)
+		{
+			userResult = await WebAuthenticationBroker.AuthenticateAsync(WebAuthenticationOptions.None, new Uri(loginStartUri), new Uri(loginCallbackUri));
+		}
+		else
+		{
+			// Use the DI provided IWebAuthenticationBrokerProvider if available 
+			userResult = await WebAuthBroker.AuthenticateAsync(WebAuthenticationOptions.None, new Uri(loginStartUri), new Uri(loginCallbackUri), cancellationToken);
+		}
 		var authData = userResult?.ResponseData ?? string.Empty;
 
 #endif
 		var query = authData.StartsWith(loginCallbackUri) ?
 			AuthHttpUtility.ExtractArguments(authData) : // authData is a fully qualified url, so need to extract query or fragment
 			AuthHttpUtility.ParseQueryString(authData.TrimStart('#').TrimStart('?')); // authData isn't full url, so just process as query or fragment
-
-
+		// cspell:ignore PKCE
+		// TODO: Add here support for oAuth Authorization Code Flow with PKCE-Challenge, by providing at least a AsyncFunc that could be used just like Login/Logout to exchange the code for tokens. <see href="https://datatracker.ietf.org/doc/html/rfc6749#section-4.1.2"/> of what we would have at this time in code, which is not enough to get tokens in the following lines.
 		var tokens = new Dictionary<string, string>();
 		if (query is null)
 		{
@@ -200,8 +214,17 @@ internal record WebAuthenticationProvider
 		var userResult = await WinUIEx.WebAuthenticator.AuthenticateAsync(new Uri(logoutStartUri), new Uri(logoutCallbackUri));
 		var authData = string.Join("&", userResult.Properties.Select(x => $"{x.Key}={x.Value}"));
 #else
-		var userResult = await WebAuthenticationBroker.AuthenticateAsync(WebAuthenticationOptions.None, new Uri(logoutStartUri), new Uri(logoutCallbackUri));
-		var authData = userResult?.ResponseData;
+		WebAuthenticationResult? userResult;
+		if (WebAuthBroker is null)
+		{
+			userResult = await WebAuthenticationBroker.AuthenticateAsync(WebAuthenticationOptions.None, new Uri(logoutStartUri), new Uri(logoutCallbackUri));
+		}
+		else
+		{
+			// Use the DI provided IWebAuthenticationBrokerProvider if available 
+			userResult = await WebAuthBroker.AuthenticateAsync(WebAuthenticationOptions.None, new Uri(logoutStartUri), new Uri(logoutCallbackUri), cancellationToken);
+		}
+		var authData = userResult?.ResponseData; 
 
 #endif
 		return true;
@@ -234,7 +257,14 @@ internal record WebAuthenticationProvider<TService>
 	IOptionsSnapshot<WebConfiguration> Configuration,
 	IServiceProvider Services,
 	ITokenCache Tokens
-) : WebAuthenticationProvider(ServiceLogger, Configuration, Services, Tokens)
+#if !WINDOWS
+	,IWebAuthenticationBrokerProvider? WebAuthBroker = null
+#endif
+) : WebAuthenticationProvider(ServiceLogger, Configuration, Services, Tokens
+#if !WINDOWS 
+	, WebAuthBroker
+#endif
+	)
 	where TService : notnull
 {
 	public WebAuthenticationSettings<TService>? TypedSettings
