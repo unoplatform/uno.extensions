@@ -215,7 +215,7 @@ internal record WebAuthenticationProvider
 		var authData = string.Join("&", userResult.Properties.Select(x => $"{x.Key}={x.Value}"));
 #else
 		WebAuthenticationResult? userResult;
-		if (WebAuthBroker is null) 
+		if (WebAuthBroker is null)
 		{
 			userResult = await WebAuthenticationBroker.AuthenticateAsync(WebAuthenticationOptions.None, new Uri(logoutStartUri), new Uri(logoutCallbackUri));
 		}
