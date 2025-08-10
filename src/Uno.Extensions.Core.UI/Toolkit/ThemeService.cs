@@ -82,7 +82,13 @@ internal class ThemeService : IThemeService, IDisposable
 
 	private void ElementThemeChanged(FrameworkElement sender, object args)
 	{
-		ThemeChanged?.Invoke(this, GetSavedTheme());
+		_ = InternalSetThemeAsync(sender.ActualTheme switch
+		{
+			ElementTheme.Default => AppTheme.System,
+			ElementTheme.Dark => AppTheme.Dark,
+			ElementTheme.Light => AppTheme.Light,
+			_ => AppTheme.System,
+		});
 	}
 
 	/// <inheritdoc/>
@@ -108,10 +114,7 @@ internal class ThemeService : IThemeService, IDisposable
 		}
 		else
 		{
-			return await _dispatcher.ExecuteAsync(async (ct) =>
-			{
-				return InternalSetThemeOnUIThread(theme);
-			});
+			return await _dispatcher.ExecuteAsync(async _ => InternalSetThemeOnUIThread(theme));
 		}
 
 	}
@@ -182,7 +185,7 @@ internal class ThemeService : IThemeService, IDisposable
 		}
 
 		_initialization = new TaskCompletionSource<bool>();
-		
+
 		var theme = GetSavedTheme();
 		var success = await InternalSetThemeAsync(theme);
 		if (!success)
