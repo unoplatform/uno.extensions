@@ -8,6 +8,7 @@ namespace Uno.Extensions.Reactive.UI;
 /// A control to render <see cref="IFeed{T}"/>
 /// </summary>
 [ContentProperty(Name = nameof(ValueTemplate))]
+[Microsoft.UI.Xaml.Data.Bindable]
 public partial class FeedView : Control
 {
 	#region Source DP
