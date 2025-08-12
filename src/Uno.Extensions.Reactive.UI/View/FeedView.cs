@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 namespace Uno.Extensions.Reactive.UI;
@@ -8,6 +9,7 @@ namespace Uno.Extensions.Reactive.UI;
 /// A control to render <see cref="IFeed{T}"/>
 /// </summary>
 [ContentProperty(Name = nameof(ValueTemplate))]
+[Microsoft.UI.Xaml.Data.Bindable]
 public partial class FeedView : Control
 {
 	#region Source DP
@@ -170,6 +172,7 @@ public partial class FeedView : Control
 	/// <summary>
 	/// Backing dependency property for <see cref="ErrorTemplate"/>.
 	/// </summary>
+	[DynamicDependency(nameof(ErrorTemplate))]
 	public static readonly DependencyProperty ErrorTemplateProperty = DependencyProperty.Register(
 		"ErrorTemplate", typeof(DataTemplate), typeof(FeedView), new PropertyMetadata(default(DataTemplate)));
 
