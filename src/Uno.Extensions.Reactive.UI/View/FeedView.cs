@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 namespace Uno.Extensions.Reactive.UI;
@@ -171,6 +172,7 @@ public partial class FeedView : Control
 	/// <summary>
 	/// Backing dependency property for <see cref="ErrorTemplate"/>.
 	/// </summary>
+	[DynamicDependency(nameof(ErrorTemplate))]
 	public static readonly DependencyProperty ErrorTemplateProperty = DependencyProperty.Register(
 		"ErrorTemplate", typeof(DataTemplate), typeof(FeedView), new PropertyMetadata(default(DataTemplate)));
 
