@@ -78,22 +78,6 @@ public class Given_AddressBar : NavigationTestBase
 		AssertAddressBarUrl("AddressBarHomePage", "?QueryUser.Id", false);
 	}
 
-	private void AssertAddressBarUrl(string pagePrefix, string contains, bool assertContains = true)
-	{
-		App.WaitThenTap($"{pagePrefix}GetUrlFromBrowser");
-
-		var url = App.GetText($"{pagePrefix}TxtUrlFromBrowser");
-
-		if (assertContains)
-		{
-			StringAssert.Contains(url, contains);
-		}
-		else
-		{
-			Assert.IsFalse(url.Contains(contains));
-		}
-	}
-
 	[Test]
 	[ActivePlatforms(Platform.Browser)]
 	public void When_PageNavigationNavigateRootUpdateUrl()
@@ -127,19 +111,41 @@ public class Given_AddressBar : NavigationTestBase
 
 		App.WaitThenTap("OnePageToTwoPageWithDataButton");
 
-		AssertAddressBarUrl("Second");
+		AssertAddressBarUrl("SecondPage", "Value=0");
 
 		App.WaitThenTap("TwoPageToThreePageViewModelButton");
 
-		AssertAddressBarUrl("Third");
+		AssertAddressBarUrl("ThirdPage", "Value=0");
 	}
 
-	private void AssertAddressBarUrl(string prefix)
+	[Test]
+	[ActivePlatforms(Platform.Browser)]
+	public async Task When_Commerce_Navigate_RootFrameNavigator_AddressBar_Updates()
 	{
-		App.WaitThenTap($"{prefix}PageGetUrlFromBrowser");
+		InitTestSection(TestSections.Apps_Commerce);
 
-		var url = App.GetText($"{prefix}PageTxtUrlFromBrowser");
+		App.WaitThenTap("ShowAppButton");
 
-		StringAssert.Contains(url, "Value=0");
+		App.WaitThenTap("LoginButton");
+
+		await App.TapAndWait("SettingsNavigationViewItem", "SettingsNavigationBar");
+
+		AssertAddressBarUrl("CommerceSettingsPage", "Settings");
+	}
+
+	private void AssertAddressBarUrl(string pagePrefix, string contains, bool assertContains = true)
+	{
+		App.WaitThenTap($"{pagePrefix}GetUrlFromBrowser");
+
+		var url = App.GetText($"{pagePrefix}TxtUrlFromBrowser");
+
+		if (assertContains)
+		{
+			StringAssert.Contains(url, contains);
+		}
+		else
+		{
+			Assert.IsFalse(url.Contains(contains));
+		}
 	}
 }
