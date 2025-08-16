@@ -118,17 +118,6 @@ internal record WebAuthenticationProvider
 			tokens.AddOrReplace(idTokenKey, idToken);
 		}
 
-		var otherTokenKeys = InternalSettings.TokenOptions.OtherTokenKeys;
-		
-		foreach (var (codeKey, urlTokenKey) in otherTokenKeys)
-		{
-			var value = query.Get(codeKey);
-			if (!string.IsNullOrWhiteSpace(value))
-			{
-				tokens.AddOrReplace(urlTokenKey, value);
-			}
-		}
-
 		return await PostLogin(credentials, authData, tokens, cancellationToken);
 	}
 
