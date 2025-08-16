@@ -236,7 +236,7 @@ public static class TokenCacheExtensions
 	/// <returns>
 	/// A <see cref="ValueTask"/> that represents an asynchronous operation.
 	/// </returns>
-	public static async ValueTask SaveTokensAsync(this ITokenCache cache, string provider, string? idTokenKey = null, string? idToken = null, string? accessTokenKey = null, string? accessToken = null, string? refreshTokenKey = null, string? refreshToken = null, string? expiresInKey = null, string? expiresIn = null, CancellationToken? cancellation = default)
+	public static async ValueTask SaveNamedTokensAsync(this ITokenCache cache, string provider, string? idTokenKey = null, string? idToken = null, string? accessTokenKey = null, string? accessToken = null, string? refreshTokenKey = null, string? refreshToken = null, string? expiresInKey = null, string? expiresIn = null, CancellationToken? cancellation = default)
     {
         var ct = cancellation ?? CancellationToken.None;
         var dict = await cache.GetAsync(ct);
