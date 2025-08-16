@@ -177,13 +177,16 @@ public static class TokenCacheExtensions
 	/// <param name="refreshToken">
 	/// The refresh token to save. Optional
 	/// </param>
+	/// <param name="expiresInToken">
+	/// The expires in token to save. Optional
+	/// </param>
 	/// <param name="cancellation">
 	/// A <see cref="CancellationToken"/> which can be used to cancel the operation. Optional
 	/// </param>
 	/// <returns>
 	/// A task that represents an asynchronous operation.
 	/// </returns>
-	public static async ValueTask SaveTokensAsync(this ITokenCache cache, string provider, string? accessToken = null, string? refreshToken = null, CancellationToken? cancellation = default)
+	public static async ValueTask SaveTokensAsync(this ITokenCache cache, string provider, string? accessToken = null, string? refreshToken = null, string? expiresInToken = null, CancellationToken? cancellation = default)
 	{
 		var ct = cancellation ?? CancellationToken.None;
 		var dict = await cache.GetAsync(ct);
@@ -194,6 +197,10 @@ public static class TokenCacheExtensions
 		if (!string.IsNullOrWhiteSpace(refreshToken))
 		{
 			dict[RefreshTokenKey] = refreshToken!;
+		}
+		if(!string.IsNullOrWhiteSpace(expiresInToken))
+		{
+			dict[ExpiresInKey] = expiresInToken!;
 		}
 		await cache.SaveAsync(provider, dict, ct);
 	}
