@@ -103,29 +103,29 @@ internal record WebAuthenticationProvider
 		var accessToken = query.Get(InternalSettings.TokenOptions.AccessTokenKey ?? TokenCacheExtensions.AccessTokenKey);
 		if (!string.IsNullOrWhiteSpace(accessToken))
 		{
-			tokens[accessTokenKey] = accessToken;
+			tokens.AddOrReplace(accessTokenKey,accessToken);
 		}
 		var refreshTokenKey = InternalSettings.TokenOptions.RefreshTokenKey ?? TokenCacheExtensions.RefreshTokenKey;
 		var refreshToken = query.Get(InternalSettings.TokenOptions.RefreshTokenKey ?? TokenCacheExtensions.RefreshTokenKey);
 		if (!string.IsNullOrWhiteSpace(refreshToken))
 		{
-			tokens[refreshTokenKey] = refreshToken;
+			tokens.AddOrReplace(refreshTokenKey,refreshToken);
 		}
 		var idTokenKey = InternalSettings.TokenOptions.IdTokenKey ?? TokenCacheExtensions.IdTokenKey;
 		var idToken = query.Get(InternalSettings.TokenOptions.IdTokenKey ?? TokenCacheExtensions.IdTokenKey);
 		if (!string.IsNullOrWhiteSpace(idToken))
 		{
-			tokens[idTokenKey] = idToken;
+			tokens.AddOrReplace(idTokenKey, idToken);
 		}
 
 		var otherTokenKeys = InternalSettings.TokenOptions.OtherTokenKeys;
 		
-		foreach (var (key, tokenValue) in otherTokenKeys)
+		foreach (var (codeKey, urlTokenKey) in otherTokenKeys)
 		{
-			var value = query.Get(key);
+			var value = query.Get(codeKey);
 			if (!string.IsNullOrWhiteSpace(value))
 			{
-				tokens[key] = value;
+				tokens.AddOrReplace(urlTokenKey, value);
 			}
 		}
 
