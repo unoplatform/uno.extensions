@@ -38,6 +38,7 @@ public static class HostBuilderExtensions
 			.UseConfiguration(configure: configBuilder =>
 					configBuilder
 						.Section<WebConfiguration>(name)
+						.Section<TokenCacheOptions>(string.Join(':', name, TokenCacheOptions.DefaultSectionName))
 				);
 
 
