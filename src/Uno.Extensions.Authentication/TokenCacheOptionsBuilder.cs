@@ -113,7 +113,7 @@ public class TokenCacheOptionsBuilder
 	{
 		foreach (var (codeKey, urlKey) in _otherTokenKeys)
 		{
-		    _otherTokenKeys.AddOrReplace(codeKey, urlKey);
+		    _preConfiguredOptions.OtherTokenKeys.AddOrReplace(codeKey, urlKey);
 		}
 
 		var options = new TokenCacheOptions
