@@ -120,10 +120,10 @@ internal record WebAuthenticationProvider
 
 		foreach(var (codeKey, uriKey) in InternalSettings.TokenOptions.OtherTokenKeys)
 		{
-			var code = query.Get(codeKey);
-			if (!string.IsNullOrWhiteSpace(code))
+			var uriValue = query.Get(uriKey);
+			if (!string.IsNullOrWhiteSpace(uriValue))
 			{
-				tokens.AddOrReplace(uriKey, code);
+				tokens.AddOrReplace(codeKey, uriValue);
 			}
 		}
 
