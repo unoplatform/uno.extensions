@@ -11,9 +11,7 @@ internal record WebAuthenticationSettings
 	public string? LoginCallbackUri { get; init; }
 
 	public AsyncFunc<IServiceProvider, ITokenCache, IDictionary<string, string>?, string?, string>? PrepareLoginCallbackUri { get; init; }
-	public AsyncFunc<IServiceProvider, ITokenCache, IDictionary<string, string>?, string?, string?> ExchangeCode { get; init; }
-	public string? TokenEndpoint { get; init; }
-	public bool UsePkce { get; init; } = false;
+
 	public string AccessTokenKey { get; init; } = "access_token";
 	public string RefreshTokenKey { get; init; } = "refresh_token";
 
