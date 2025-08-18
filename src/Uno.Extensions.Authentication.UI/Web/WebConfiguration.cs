@@ -1,6 +1,6 @@
 ﻿namespace Uno.Extensions.Authentication.Web;
 
-internal record WebConfiguration
+public record WebConfiguration
 {
 	public bool PrefersEphemeralWebBrowserSession { get; init; }
 	public string? LoginStartUri { get; init; }
