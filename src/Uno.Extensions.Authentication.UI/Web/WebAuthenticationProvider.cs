@@ -100,19 +100,19 @@ internal record WebAuthenticationProvider
 			return tokens;
 		}
 		var accessTokenKey = InternalSettings.TokenOptions.AccessTokenKey ?? TokenCacheExtensions.AccessTokenKey;
-		var accessToken = query.Get(InternalSettings.TokenOptions.AccessTokenKey ?? TokenCacheExtensions.AccessTokenKey);
+		var accessToken = query.Get(accessTokenKey);
 		if (!string.IsNullOrWhiteSpace(accessToken))
 		{
 			tokens.AddOrReplace(accessTokenKey,accessToken);
 		}
 		var refreshTokenKey = InternalSettings.TokenOptions.RefreshTokenKey ?? TokenCacheExtensions.RefreshTokenKey;
-		var refreshToken = query.Get(InternalSettings.TokenOptions.RefreshTokenKey ?? TokenCacheExtensions.RefreshTokenKey);
+		var refreshToken = query.Get(refreshTokenKey);
 		if (!string.IsNullOrWhiteSpace(refreshToken))
 		{
 			tokens.AddOrReplace(refreshTokenKey,refreshToken);
 		}
 		var idTokenKey = InternalSettings.TokenOptions.IdTokenKey ?? TokenCacheExtensions.IdTokenKey;
-		var idToken = query.Get(InternalSettings.TokenOptions.IdTokenKey ?? TokenCacheExtensions.IdTokenKey);
+		var idToken = query.Get(idTokenKey);
 		if (!string.IsNullOrWhiteSpace(idToken))
 		{
 			tokens.AddOrReplace(idTokenKey, idToken);
