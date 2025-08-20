@@ -146,7 +146,7 @@ For more information on using Kiota to generate and register your client see the
 
 By using the `IAuthenticationTokenProvider` interface, you can easily manage authentication tokens in your Uno application. This interface definition coming from the `Uno.Extensions.Http` namespace is containing the `GetAccessToken` Method which allows you to retrieve the access token using `Refit` Extension for example or create your own implementation.
 
-You can find a sample usage for its `SimpleAutnenticationToken` Implementation in the [`Uno.Extensions.Playground` Project](https://github.com/unoplatform/uno.extensions/blob/main/samples/Playground/Playground/AppHost.cs#L47)
+You can find a sample usage for its `SimpleAuthenticationToken` Implementation in the [`Uno.Extensions.Playground` Project](https://github.com/unoplatform/uno.extensions/blob/main/samples/Playground/Playground/AppHost.cs#L47)
 
 ## References
 
