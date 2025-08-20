@@ -83,9 +83,30 @@ The `CustomAuthenticationProvider` provides a basic implementation of the `IAuth
 
 The `MsalAuthenticationProvider` wraps the [MSAL library](https://github.com/AzureAD/microsoft-authentication-library-for-dotnet) from Microsoft into an implementation of `IAuthenticationProvider`. This implementation ignores any credentials passed into the `LoginAsync` method, instead invoking the web based authentication process required to authentication with Microsoft. Learn [Msal authentication](xref:Uno.Extensions.Authentication.HowToMsalAuthentication)
 
+Find MSAL Authentication also implemented in the [Uno ToDo App Sample](https://github.com/unoplatform/Uno.Samples/blob/master/reference/ToDo/src/ToDo/Business/AuthenticationService.cs).
+
+**The following Lookups are from Microsoft Entra about the Authentication process using MSAL**:
+
+- [How to use Continuous Access Evaluation enabled APIs in your applications](https://learn.microsoft.com/en-us/entra/identity-platform/app-resilience-continuous-access-evaluation?tabs=dotnet)
+- [Scenario Desktop app configuration](https://learn.microsoft.com/en-us/entra/identity-platform/scenario-desktop-app-configuration?tabs=dotnet)
+- [Scenario Desktop acquire tokens interactively](https://learn.microsoft.com/en-us/entra/identity-platform/scenario-desktop-acquire-token-interactive?tabs=dotnet)
+
 ### [Oidc](#tab/oidc)
 
 The `OidcAuthenticationProvider` wraps support for any [OpenID Connect](https://openid.net/connect/) backend, including [IdentityServer](https://duendesoftware.com/products/identityserver). Learn [Oidc authentication](xref:Uno.Extensions.Authentication.HowToOidcAuthentication)
+
+**Microsoft Entra OIDC Documentation**:
+
+- [Oidc Protocol](https://learn.microsoft.com/en-us/entra/identity-platform/v2-protocols-oidc)
+- [UserInfo Endpoint](https://learn.microsoft.com/en-us/entra/identity-platform/userinfo)
+
+**Alternative Oidc Libraries**:
+
+- [OpenIdDict for OIDC Authentication](https://documentation.openiddict.com/introduction)
+  - [Integration with Operating Systems](https://documentation.openiddict.com/integrations/operating-systems)
+  - [Integration with System.Net.Http](https://documentation.openiddict.com/integrations/system-net-http)
+  - [Web Providers](https://documentation.openiddict.com/integrations/web-providers)
+  - [Integrating with Entity Framework Core](https://documentation.openiddict.com/integrations/entity-framework-core)
 
 #### [Platform-specific behavior](#tab/oidc/platform-specifics)
 
@@ -102,6 +123,8 @@ The `WebAuthenticationProvider` provides an implementation that displays a web v
 Before the `WebAuthenticationProvider` is automatically built, there are platform specific checks invoked internally which occasionally alter behavior during the authentication process:
 
 **Windows**: The `AddWeb()` extension method will initialize a `WebAuthenticator` to launch an out-of-process browser. This is done preemptively to support its usage within `WebAuthenticationProvider` during login and logout instead of the `WebAuthenticationBroker` used for other platforms.
+
+You can find an alternative for Device Protocol usage on Windows in the [oAuth2Manager coming from then WinAppSdk](https://learn.microsoft.com/de-de/windows/apps/develop/security/oauth2?tabs=csharp) and [its Sample Project](https://github.com/microsoft/WindowsAppSDK-Samples/blob/release/experimental/Samples/OAuth2Manager/README.md). For using this, make sure you lookup the [Uno Specific Docs for Protocol Activation](https://platform.uno/docs/articles/features/protocol-activation.html#handling-protocol-activation) and [Windowing API](https://platform.uno/docs/articles/features/windows-ui-xaml-window.html#explaining-basic-windowing-apis) because there are slightly differences you should acknowledge to avoid problems.
 
 **Other platforms**: For a description of various subtle differences when displaying a web login prompt on multiple platforms, see [Web Authentication Broker](https://platform.uno/docs/articles/features/web-authentication-broker.html). The broker will only respond to the `PrefersEphemeralWebBrowserSession` setting value in iOS (versions 13.0+), while the other platforms will ignore it.
 
@@ -151,15 +174,59 @@ So for example, in your `appsettings.json` file, you could include the following
 > The `AccessTokenKey`, `RefreshTokenKey`, and `IdTokenKey` are used to store the tokens in the credential storage. The `OtherTokenKeys` dictionary can be used to store any additional tokens that are returned by the identity provider.
 > [!NOTE]
 > Usually, the `AccessToken` in will be returned from the `Token` endpoint, which is called after the user has authenticated or authorized your application to [act on-behalf-of the user](https://learn.microsoft.com/en-us/entra/identity-platform/v2-oauth2-on-behalf-of-flow). *(This Link is specific to Microsoft Entra ID, but the concept applies to other identity providers as well.)*
+> Usually, the `AccessToken` will be returned from the `Token` endpoint, which is called after the user has authenticated or authorized your application to [act on-behalf-of the user](https://learn.microsoft.com/en-us/entra/identity-platform/v2-oauth2-on-behalf-of-flow). *(This Link is specific to Microsoft Entra ID, but the concept applies to other identity providers as well.)*
+---
 
 ## Http Handlers
 
 Once a user has been authenticated, the tokens are cached and are available for use when invoking service calls. Rather than developers having to access the tokens and manually appending the tokens to the http request, the Authentication extensions includes http handlers which will be inserted into the request pipeline in order to apply the tokens as required.
 
+- [Learn more about Http Extensions in your Uno Apps](xref:Uno.Extensions.Http.Overview)
+
 ### Authorization Header
 
 The `HeaderHandler` is used to apply the access token to the http request using the `Authorization` header. The default scheme is `Bearer` but this can be override to use a different scheme, such as basic.
 
+- [Using Http Header Properties](https://learn.microsoft.com/de-de/dotnet/fundamentals/networking/http/httpclient-migrate-from-httpwebrequest#usage-of-header-properties)
+
 ### Cookies
 
 The `CookieHandler` is used to apply the access token, and/or refresh token, to the http request as cookies. This requires the cookie name for access token and request token to be specified as part of configuring the application. Learn how to use [Cookies](xref:Uno.Extensions.Authentication.HowToCookieAuthorization) to authorize.
+The `CookieHandler` is used to apply the access token, and/or refresh token, to the http request as cookies. This requires the cookie name for access token and request token to be specified as part of configuring the application. Learn how to use [Cookies](xref:Uno.Extensions.Authentication.HowToCookieAuthorization) to authorize
+
+## Future Readings
+
+### Microsoft
+
+The following links should give you a first overview over most of the oAuth2 (integrated in the Web Authentication e.g. on Windows) and OpenID Connect Authorization concepts with visual diagrams and links to Microsoft specific sample apps e.g. useful if you choose MSAL Authentication:
+
+- [Authorization Code Flow](https://learn.microsoft.com/en-us/entra/identity-platform/v2-oauth2-auth-code-flow)
+- [Client Credentials Grant Flow](https://learn.microsoft.com/en-us/entra/identity-platform/v2-oauth2-client-creds-grant-flow)
+- [Device Code Flow](https://learn.microsoft.com/en-us/entra/identity-platform/v2-oauth2-device-code)
+- [On-Behalf-Of Flow](https://learn.microsoft.com/en-us/entra/identity-platform/v2-oauth2-on-behalf-of-flow)
+- [Implicit Grant Flow](https://learn.microsoft.com/en-us/entra/identity-platform/v2-oauth2-implicit-grant-flow)
+- [Resource Owner Password Credentials Grant](https://learn.microsoft.com/en-us/entra/identity-platform/v2-oauth-ropc)
+
+### Additional Resources
+
+- [Securing secrets in .NET 8 with Azure Key Vault from 'The Code Man'](https://thecodeman.net/posts/securing-secrets-in-dotnet-with-azure-key-vault)
+- [Using HttpClient and HttpRequestMessage Properties for Authentication Redirect and Callback actions](https://learn.microsoft.com/en-us/dotnet/fundamentals/networking/http/httpclient-migrate-from-httpwebrequest#usage-of-httpclient-and-httprequestmessage-properties)
+- [The System.Net.Http.HttpClient Class](https://learn.microsoft.com/en-us/dotnet/fundamentals/runtime-libraries/system-net-http-httpclient)
+- [The System.Net.Http.HttpListener Class to handle callbacks](https://learn.microsoft.com/en-us/dotnet/fundamentals/runtime-libraries/system-net-httplistener)
+- [Using TLS and SSL for Secure Web Communication using Certificates](https://learn.microsoft.com/en-us/dotnet/core/extensions/sslstream-best-practices)
+- [Breaking Changes for Default TLS cipher suites in .NET on Linux](https://learn.microsoft.com/en-us/dotnet/core/compatibility/cryptography/5.0/default-cipher-suites-for-tls-on-linux?source=recommendations)
+- [API `System.Security.Cryptography.Pkcs` removed from .NET `9.0.3`](https://learn.microsoft.com/en-us/dotnet/core/compatibility/cryptography/9.0/api-removed-pkcs)
+- [Use the System Browser to open the Authentication UI for a interactive Authentication Flow](https://learn.microsoft.com/de-de/windows/apps/develop/launch/launch-default-app)
+- [WebView2 for BasicAuthentication interaction](https://learn.microsoft.com/de-de/microsoft-edge/webview2/concepts/basic-authentication?tabs=csharp) - [Uno specifics](https://platform.uno/docs/articles/controls/WebView.html)
+
+### Server Project specific Information and Resources
+<!-- cspell: ignore HSTS Antiforgery -->
+- [Using Authentication and Authorization in your Server Minimal API ASP NET Core Project](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/minimal-apis/security?view=aspnetcore-9.0)
+- [Protect Secrets in development](https://learn.microsoft.com/en-us/aspnet/core/security/app-secrets?view=aspnetcore-9.0&tabs=windows)
+- [Enforce HTTPS](https://learn.microsoft.com/en-us/aspnet/core/security/enforcing-ssl?view=aspnetcore-9.0&tabs=visual-studio%2Clinux-sles) <!-- TODO: Add information about HSTS usage in Uno Wasm and Uno.Wasm.Bootstrapper.Server using Server Project -->
+- [Antiforgery in Minimal API against Cross-Site Request Forgery (CSRF/XSRF)](https://learn.microsoft.com/en-us/aspnet/core/security/anti-request-forgery?view=aspnetcore-9.0#antiforgery-with-minimal-apis) e.g. this is the reason for oAuth PKCE Token Challenging!
+- [Allowing Requests like Authentication from same Origin with Cors Policy](https://learn.microsoft.com/en-us/aspnet/core/security/cors?view=aspnetcore-9.0)
+- [Share Cookies Among your Apps](https://learn.microsoft.com/en-us/aspnet/core/security/cookie-sharing?view=aspnetcore-9.0) or [Using SameSite Cookies](https://learn.microsoft.com/en-us/aspnet/core/security/samesite?view=aspnetcore-9.0)
+- [Learn path about how to use a Entity Framework Core Database in a Minimal API Project](https://learn.microsoft.com/en-us/training/modules/build-web-api-minimal-database/?view=aspnetcore-9.0)
+- [Map Static files](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/map-static-files?view=aspnetcore-9.0)
+- [Use Static file authorization](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/static-files?view=aspnetcore-9.0#static-file-authorization)
