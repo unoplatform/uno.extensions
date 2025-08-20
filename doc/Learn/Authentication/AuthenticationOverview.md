@@ -82,7 +82,7 @@ Find MSAL Authentication also implemented in the [Uno ToDo App Sample](https://g
 
 - [How to use Continuous Access Evaluation enabled APIs in your applications](https://learn.microsoft.com/en-us/entra/identity-platform/app-resilience-continuous-access-evaluation?tabs=dotnet)
 - [Scenario Desktop app configuration](https://learn.microsoft.com/en-us/entra/identity-platform/scenario-desktop-app-configuration?tabs=dotnet)
-- [Scenario Desktop aqquire tokens interactively](https://learn.microsoft.com/en-us/entra/identity-platform/scenario-desktop-acquire-token-interactive?tabs=dotnet)
+- [Scenario Desktop acquire tokens interactively](https://learn.microsoft.com/en-us/entra/identity-platform/scenario-desktop-acquire-token-interactive?tabs=dotnet)
 
 ### [Oidc](#tab/oidc)
 
