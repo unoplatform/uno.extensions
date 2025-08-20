@@ -1,4 +1,6 @@
-﻿namespace Uno.Extensions.Authentication;
+﻿using System.ComponentModel;
+
+namespace Uno.Extensions.Authentication;
 
 /// <summary>
 /// Provides web-related extension methods for <see cref="IWebAuthenticationBuilder"/>.
@@ -917,7 +919,7 @@ AsyncFunc<TService, string> prepare)
 				=> s with
 				{
 					RefreshCallback = (service, services, cache, tokens, cancellationToken) =>
-			refreshCallback(service, tokens, cancellationToken)
+						refreshCallback(service, tokens, cancellationToken)
 				});
 
 	/// <summary>
@@ -945,56 +947,54 @@ AsyncFunc<TService, string> prepare)
 			builder.Property((WebAuthenticationSettings<TService> s)
 				=> s with { RefreshCallback = refreshCallback });
 
+	// Add an advanced builder allowing to tweak the options directly
 	/// <summary>
-	/// Configures the web authentication feature to be built with the specified access token key. This key is used to retrieve the access token
-	/// from the dictionary of tokens that are used for authentication.
-	/// The underlying property that will be set to such key is located on <see cref="WebAuthenticationSettings.AccessTokenKey"/>.
+	/// Configures the Web authentication feature by updating directly the <see cref="TokenCacheOptions"/> parameter.
 	/// </summary>
-	/// <typeparam name="TWebAuthenticationBuilder">
-	/// The type of <see cref="IWebAuthenticationBuilder"/> implementation that will be configured.
-	/// </typeparam>
-	/// <param name="builder">
-	/// The instance of the <see cref="IWebAuthenticationBuilder"/> implementation to configure.
-	/// </param>
-	/// <param name="key">
-	/// The key to use to retrieve the access token from the dictionary of tokens that are used for authentication.
-	/// </param>
-	/// <returns>
-	/// An instance of the <see cref="IWebAuthenticationBuilder"/> implementation that was passed in.
-	/// </returns>
-	public static TWebAuthenticationBuilder AccessTokenKey<TWebAuthenticationBuilder>(
-		this TWebAuthenticationBuilder builder,
-		string key)
-				where TWebAuthenticationBuilder : IWebAuthenticationBuilder =>
+	/// <remarks>
+	/// The <see cref="IWebAuthenticationBuilder"/> with updated <see cref="TokenCacheOptions"/> will be returned.
+	/// </remarks>
+	[EditorBrowsable(EditorBrowsableState.Advanced)]
+	public static IWebAuthenticationBuilder<TService> ConfigureTokenCacheKeys<TService>(
+		this IWebAuthenticationBuilder<TService> builder,
+		Func<TokenCacheOptionsBuilder,TokenCacheOptionsBuilder> updater) where TService : notnull
+	{
+		if (builder is IBuilder<WebAuthenticationSettings<TService>> authBuilder)
+		{
+			var optionsBuilder = TokenCacheOptionsBuilder.Create(authBuilder.Settings.TokenOptions);
+			var resultingBuilder = updater.Invoke(optionsBuilder);
+			authBuilder.Settings = authBuilder.Settings with
+			{
+				TokenOptions = resultingBuilder.Build()
+			};
+		}
 
-			builder.Property((WebAuthenticationSettings s)
-				=> s with { AccessTokenKey = key });
-
+		return builder;
+	}
+	// Add an advanced builder allowing to tweak the options directly
 	/// <summary>
-	/// Configures the web authentication feature to be built with the specified refresh token key. This key is used to retrieve the refresh token
-	/// from the dictionary of tokens that are used for authentication.
-	/// The underlying property that will be set to such key is located on <see cref="WebAuthenticationSettings.RefreshTokenKey"/>.
+	/// Configures the Web authentication feature by updating directly the <see cref="TokenCacheOptions"/> parameter.
 	/// </summary>
-	/// <typeparam name="TWebAuthenticationBuilder">
-	/// The type of <see cref="IWebAuthenticationBuilder"/> implementation that will be configured.
-	/// </typeparam>
-	/// <param name="builder">
-	/// The instance of the <see cref="IWebAuthenticationBuilder"/> implementation to configure.
-	/// </param>
-	/// <param name="key">
-	/// The key to use to retrieve the refresh token from the dictionary of tokens that are used for authentication.
-	/// </param>
-	/// <returns>
-	/// An instance of the <see cref="IWebAuthenticationBuilder"/> implementation that was passed in.
-	/// </returns>
-	public static TWebAuthenticationBuilder RefreshTokenKey<TWebAuthenticationBuilder>(
-		this TWebAuthenticationBuilder builder,
-		string key)
-				where TWebAuthenticationBuilder : IWebAuthenticationBuilder =>
+	/// <remarks>
+	/// The <see cref="IWebAuthenticationBuilder"/> with updated <see cref="TokenCacheOptions"/> will be returned.
+	/// </remarks>
+	[EditorBrowsable(EditorBrowsableState.Advanced)]
+	public static IWebAuthenticationBuilder ConfigureTokenCacheKeys(
+		this IWebAuthenticationBuilder builder,
+		Func<TokenCacheOptionsBuilder,TokenCacheOptionsBuilder> updater)
+	{
+		if (builder is IBuilder<WebAuthenticationSettings> authBuilder)
+		{
+			var optionsBuilder = TokenCacheOptionsBuilder.Create(authBuilder.Settings.TokenOptions);
+		    var resultingBuilder = updater.Invoke(optionsBuilder);
+			authBuilder.Settings = authBuilder.Settings with
+			{
+				TokenOptions = resultingBuilder.Build()
+			};
+		}
 
-			builder.Property((WebAuthenticationSettings s)
-				=> s with { RefreshTokenKey = key });
-
+		return builder;
+	}
 	private static TBuilder Property<TBuilder, TSettings>(
 		this TBuilder builder,
 		Func<TSettings, TSettings> setProperty)

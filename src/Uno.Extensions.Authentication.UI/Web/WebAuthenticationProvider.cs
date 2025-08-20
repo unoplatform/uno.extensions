@@ -32,8 +32,7 @@ internal record WebAuthenticationProvider
 						PrefersEphemeralWebBrowserSession = _internalSettings.PrefersEphemeralWebBrowserSession || config.PrefersEphemeralWebBrowserSession,
 						LoginStartUri = !string.IsNullOrWhiteSpace(config.LoginStartUri) ? config.LoginStartUri : _internalSettings.LoginStartUri,
 						LoginCallbackUri = !string.IsNullOrWhiteSpace(config.LoginCallbackUri) ? config.LoginCallbackUri : _internalSettings.LoginCallbackUri,
-						AccessTokenKey = config.AccessTokenKey is not null && !string.IsNullOrWhiteSpace(config.AccessTokenKey) ? config.AccessTokenKey : _internalSettings.AccessTokenKey,
-						RefreshTokenKey = config.RefreshTokenKey is not null && !string.IsNullOrWhiteSpace(config.RefreshTokenKey) ? config.RefreshTokenKey : _internalSettings.RefreshTokenKey,
+						TokenOptions = config.TokenOptions ?? _internalSettings.TokenOptions,
 						LogoutStartUri = !string.IsNullOrWhiteSpace(config.LogoutStartUri) ? config.LogoutStartUri : _internalSettings.LogoutStartUri,
 						LogoutCallbackUri = !string.IsNullOrWhiteSpace(config.LogoutCallbackUri) ? config.LogoutCallbackUri : _internalSettings.LogoutCallbackUri,
 					};
@@ -95,22 +94,37 @@ internal record WebAuthenticationProvider
 			AuthHttpUtility.ExtractArguments(authData) : // authData is a fully qualified url, so need to extract query or fragment
 			AuthHttpUtility.ParseQueryString(authData.TrimStart('#').TrimStart('?')); // authData isn't full url, so just process as query or fragment
 
-
 		var tokens = new Dictionary<string, string>();
 		if (query is null)
 		{
 			return tokens;
 		}
-
-		var accessToken = query.Get(InternalSettings.AccessTokenKey ?? TokenCacheExtensions.AccessTokenKey);
+		var accessTokenKey = InternalSettings.TokenOptions.AccessTokenKey ?? TokenCacheExtensions.AccessTokenKey;
+		var accessToken = query.Get(accessTokenKey);
 		if (!string.IsNullOrWhiteSpace(accessToken))
 		{
-			tokens[TokenCacheExtensions.AccessTokenKey] = accessToken;
+			tokens.AddOrReplace(accessTokenKey,accessToken);
 		}
-		var refreshToken = query.Get(InternalSettings.RefreshTokenKey ?? TokenCacheExtensions.RefreshTokenKey);
+		var refreshTokenKey = InternalSettings.TokenOptions.RefreshTokenKey ?? TokenCacheExtensions.RefreshTokenKey;
+		var refreshToken = query.Get(refreshTokenKey);
 		if (!string.IsNullOrWhiteSpace(refreshToken))
 		{
-			tokens[TokenCacheExtensions.RefreshTokenKey] = refreshToken;
+			tokens.AddOrReplace(refreshTokenKey,refreshToken);
+		}
+		var idTokenKey = InternalSettings.TokenOptions.IdTokenKey ?? TokenCacheExtensions.IdTokenKey;
+		var idToken = query.Get(idTokenKey);
+		if (!string.IsNullOrWhiteSpace(idToken))
+		{
+			tokens.AddOrReplace(idTokenKey, idToken);
+		}
+
+		foreach(var (codeKey, uriKey) in InternalSettings.TokenOptions.OtherTokenKeys)
+		{
+			var uriValue = query.Get(uriKey);
+			if (!string.IsNullOrWhiteSpace(uriValue))
+			{
+				tokens.AddOrReplace(codeKey, uriValue);
+			}
 		}
 
 		return await PostLogin(credentials, authData, tokens, cancellationToken);
