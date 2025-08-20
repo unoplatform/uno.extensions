@@ -38,8 +38,6 @@ internal record WebAuthenticationSettings<TService> : WebAuthenticationSettings
 
 	public new AsyncFunc<TService, IServiceProvider, ITokenCache, IDictionary<string, string>?, string, IDictionary<string, string>, IDictionary<string, string>?>? PostLoginCallback { get; init; }
 
-	public new AsyncFunc<TService, IServiceProvider, ITokenCache, IDictionary<string, string>?, string?, string>? ExchangeCode { get; init; }
-
 	public new AsyncFunc<TService, IServiceProvider, ITokenCache, IDictionary<string, string>?, string?, string>? PrepareLogoutStartUri { get; init; }
 
 	public new AsyncFunc<TService, IServiceProvider, ITokenCache, IDictionary<string, string>?, string?, string>? PrepareLogoutCallbackUri { get; init; }
