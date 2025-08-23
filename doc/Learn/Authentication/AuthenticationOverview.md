@@ -156,25 +156,33 @@ So for example, in your `appsettings.json` file, you could include the following
 	"Web": {
 		"LoginStartUri": "https://example.com/login",
         "LoginCallbackUri": "https://example.com/signin-provider-callback",
-        "IdTokenKey": "id_token_key",
+        "IdTokenKey": "id_token",
 		"LogoutStartUri": "https://example.com/logout",
         "LogoutCallbackUri": "https://example.com/logout-provider-callback",
-        "AccessTokenKey": "access_token_key",
-        "RefreshTokenKey": "refresh_token_key",
+        "AccessTokenKey": "access_token",
+        "RefreshTokenKey": "refresh_token",
         "OtherTokenKeys": {
-            "custom_token_key": "custom_token_value"
+            "custom_token_key": "custom_token"
         }
 	}
 }
 ```
 
+The Token keys are assumed to be the response keys returned from the identity provider, that will be used in the response url infront of the token value. For example, the `access_token` key is used to retrieve the access token from the response like this:
+
+```
+access_token=fsjaiafjioangosafn&expires_in=3600&token_type=Bearer
+```
+
+The `LoginCallbackUri` and `LogoutCallbackUri` are used to redirect the user back to the application after they have logged in or logged out. These URIs should be registered with the identity provider.
+
+You can use the `PostLogin` Callback to perform any additional processing after the user has logged in, such as retrieving user information from a user info endpoint, or extracting additional tokens from the response url, which is provided as string argument in the `AsyncFunc`. To make the Authentication Process fail e.g. if you discovered the Response contains an Error response, you can simply make the `PostLogin` return `null` or `default`.
+
 > [!NOTE]
-> The `LoginCallbackUri` and `LogoutCallbackUri` are used to redirect the user back to the application after they have logged in or logged out. These URIs should be registered with the identity provider.
+> The `AccessTokenKey`, `RefreshTokenKey`, and `IdTokenKey` are used to store the tokens in the credential storage after the `PostLogin` has been returned. The `OtherTokenKeys` dictionary can be used to store any additional tokens that are returned by the identity provider, but are not read from the WebAuthenticationProvider of Uno at this time.
 > [!NOTE]
-> The `AccessTokenKey`, `RefreshTokenKey`, and `IdTokenKey` are used to store the tokens in the credential storage. The `OtherTokenKeys` dictionary can be used to store any additional tokens that are returned by the identity provider.
-> [!NOTE]
-> Usually, the `AccessToken` in will be returned from the `Token` endpoint, which is called after the user has authenticated or authorized your application to [act on-behalf-of the user](https://learn.microsoft.com/en-us/entra/identity-platform/v2-oauth2-on-behalf-of-flow). *(This Link is specific to Microsoft Entra ID, but the concept applies to other identity providers as well.)*
-> Usually, the `AccessToken` will be returned from the `Token` endpoint, which is called after the user has authenticated or authorized your application to [act on-behalf-of the user](https://learn.microsoft.com/en-us/entra/identity-platform/v2-oauth2-on-behalf-of-flow). *(This Link is specific to Microsoft Entra ID, but the concept applies to other identity providers as well.)*
+> Usually, the `AccessToken` and `RefreshToken` will be returned from the `Token` endpoint, which is needed to be called in the `PostLogin` Callback you can register for in the Web Authentication registration in your App.xaml.cs, which is called after the user has authenticated to your identity server instance or authorized your application to [act on-behalf-of the user](https://learn.microsoft.com/en-us/entra/identity-platform/v2-oauth2-on-behalf-of-flow) to an external API. *(This Link is specific to Microsoft Entra ID, but the concept applies to other identity providers as well.)*
+
 ---
 
 ## Http Handlers
@@ -206,6 +214,8 @@ The following links should give you a first overview over most of the oAuth2 (in
 - [On-Behalf-Of Flow](https://learn.microsoft.com/en-us/entra/identity-platform/v2-oauth2-on-behalf-of-flow)
 - [Implicit Grant Flow](https://learn.microsoft.com/en-us/entra/identity-platform/v2-oauth2-implicit-grant-flow)
 - [Resource Owner Password Credentials Grant](https://learn.microsoft.com/en-us/entra/identity-platform/v2-oauth-ropc)
+- [Redirect or Reply URLs](https://learn.microsoft.com/en-us/entra/identity-platform/reply-url)
+- [Use a state parameter to prevent cross-site request forgery attacks](https://learn.microsoft.com/en-us/entra/identity-platform/reply-url#use-a-state-parameter)
 
 ### Additional Resources
 
