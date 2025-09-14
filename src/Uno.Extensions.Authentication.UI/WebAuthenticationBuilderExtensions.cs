@@ -955,17 +955,68 @@ AsyncFunc<TService, string> prepare)
 	/// The <see cref="IWebAuthenticationBuilder"/> with updated <see cref="TokenCacheOptions"/> will be returned.
 	/// </remarks>
 	[EditorBrowsable(EditorBrowsableState.Advanced)]
-	public static IWebAuthenticationBuilder<TService> ConfigureTokenCacheKeys<TService>(
+	public static IWebAuthenticationBuilder<TService> ConfigureUriTokenKeys<TService>(
 		this IWebAuthenticationBuilder<TService> builder,
-		Func<TokenCacheOptionsBuilder,TokenCacheOptionsBuilder> updater) where TService : notnull
+		Action<UriTokenOptions> configure)
+		where TService : notnull
 	{
 		if (builder is IBuilder<WebAuthenticationSettings<TService>> authBuilder)
 		{
-			var optionsBuilder = TokenCacheOptionsBuilder.Create(authBuilder.Settings.TokenOptions);
-			var resultingBuilder = updater.Invoke(optionsBuilder);
+			var uriTokenOptions = authBuilder.Settings.UriTokenOptions;
+			configure.Invoke(uriTokenOptions);
 			authBuilder.Settings = authBuilder.Settings with
 			{
-				TokenOptions = resultingBuilder.Build()
+				UriTokenOptions = uriTokenOptions
+			};
+		}
+
+		return builder;
+	}
+	// Add an advanced builder allowing to tweak the options directly
+	/// <summary>
+	/// Configures the Web authentication feature by updating directly the <see cref="TokenCacheOptions"/> parameter.
+	/// </summary>
+	/// <remarks>
+	/// The <see cref="IWebAuthenticationBuilder"/> with updated <see cref="TokenCacheOptions"/> will be returned.
+	/// </remarks>
+	[EditorBrowsable(EditorBrowsableState.Advanced)]
+	public static IWebAuthenticationBuilder ConfigureUriTokenKeys(
+		this IWebAuthenticationBuilder builder,
+		Action<UriTokenOptions> configure)
+	{
+		if (builder is IBuilder<WebAuthenticationSettings> authBuilder)
+		{
+			var uriTokenOptions = authBuilder.Settings.UriTokenOptions;
+			configure.Invoke(uriTokenOptions);
+			authBuilder.Settings = authBuilder.Settings with
+			{
+				UriTokenOptions = uriTokenOptions
+			};
+		}
+
+		return builder;
+	}
+
+	// Add an advanced builder allowing to tweak the options directly
+	/// <summary>
+	/// Configures the Web authentication feature by updating directly the <see cref="TokenCacheOptions"/> parameter.
+	/// </summary>
+	/// <remarks>
+	/// The <see cref="IWebAuthenticationBuilder"/> with updated <see cref="TokenCacheOptions"/> will be returned.
+	/// </remarks>
+	[EditorBrowsable(EditorBrowsableState.Advanced)]
+	public static IWebAuthenticationBuilder<TService> ConfigureTokenCacheKeys<TService>(
+		this IWebAuthenticationBuilder<TService> builder,
+		Action<TokenCacheOptions> configure)
+		where TService : notnull
+	{
+		if (builder is IBuilder<WebAuthenticationSettings<TService>> authBuilder)
+		{
+			var tcOptions = authBuilder.Settings.TokenCacheOptions;
+			configure.Invoke(tcOptions);
+			authBuilder.Settings = authBuilder.Settings with
+			{
+				TokenCacheOptions = tcOptions
 			};
 		}
 
@@ -981,15 +1032,15 @@ AsyncFunc<TService, string> prepare)
 	[EditorBrowsable(EditorBrowsableState.Advanced)]
 	public static IWebAuthenticationBuilder ConfigureTokenCacheKeys(
 		this IWebAuthenticationBuilder builder,
-		Func<TokenCacheOptionsBuilder,TokenCacheOptionsBuilder> updater)
+		Action<TokenCacheOptions> configure)
 	{
 		if (builder is IBuilder<WebAuthenticationSettings> authBuilder)
 		{
-			var optionsBuilder = TokenCacheOptionsBuilder.Create(authBuilder.Settings.TokenOptions);
-		    var resultingBuilder = updater.Invoke(optionsBuilder);
+			var tcOptions = authBuilder.Settings.TokenCacheOptions;
+			configure.Invoke(tcOptions);
 			authBuilder.Settings = authBuilder.Settings with
 			{
-				TokenOptions = resultingBuilder.Build()
+				TokenCacheOptions = tcOptions
 			};
 		}
 
