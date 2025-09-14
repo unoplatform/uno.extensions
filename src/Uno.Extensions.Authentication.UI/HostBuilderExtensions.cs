@@ -37,10 +37,7 @@ public static class HostBuilderExtensions
 		hostBuilder
 			.UseConfiguration(configure: configBuilder =>
 					configBuilder
-						.Section<WebConfiguration>(name)
-						.Section<TokenCacheOptions>(string.Join(':', name, TokenCacheOptions.DefaultSectionName))
-				);
-
+						.Section<WebConfiguration>(name));
 
 		var authBuilder = builder.AsBuilder<WebAuthenticationBuilder>();
 
@@ -90,9 +87,8 @@ public static class HostBuilderExtensions
 		hostBuilder
 			.UseConfiguration(configure: configBuilder =>
 					configBuilder
-						.Section<WebConfiguration>(name)
-						.Section<TokenCacheOptions>(string.Join(':', name, TokenCacheOptions.DefaultSectionName))
-				);
+						.Section<WebConfiguration>(name));
+		
 		var authBuilder = builder.AsBuilder<WebAuthenticationBuilder<TService>>();
 
 		configure?.Invoke(authBuilder);
