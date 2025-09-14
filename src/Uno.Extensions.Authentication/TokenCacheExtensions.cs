@@ -10,22 +10,22 @@ public static class TokenCacheExtensions
 	/// <summary>
 	/// Defines a key for the token cache which corresponds to an access token element.
 	/// </summary>
-	public const string AccessTokenKey = "access_token";
+	public const string AccessTokenKey = "AccessToken";
 
 	/// <summary>
 	/// Defines a key for the token cache which corresponds to a refresh token element.
 	/// </summary>
-	public const string RefreshTokenKey = "refresh_token";
+	public const string RefreshTokenKey = "RefreshToken";
 
 	/// <summary>
 	/// Defines a key for the token cache which corresponds to an ID token element.
 	/// </summary>
-	public const string IdTokenKey = "id_token";
+	public const string IdTokenKey = "IdToken";
 
 	/// <summary>
 	/// Defines a key for the token cache which corresponds to an expires in element.
 	/// </summary>
-	public const string ExpiresInKey = "expires_in";
+	public const string ExpiresInKey = "ExpiresInKey";
 	/// <summary>
 	/// Gets the access token from the token cache.
 	/// </summary>
