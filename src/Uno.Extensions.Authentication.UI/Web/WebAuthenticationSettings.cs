@@ -12,7 +12,8 @@ internal record WebAuthenticationSettings
 
 	public AsyncFunc<IServiceProvider, ITokenCache, IDictionary<string, string>?, string?, string>? PrepareLoginCallbackUri { get; init; }
 
-    public TokenCacheOptions TokenOptions { get; init; } = new ();
+    public TokenCacheOptions TokenCacheOptions { get; init; } = new ();
+	public UriTokenOptions UriTokenOptions { get; init; } = new ();
 
 	public AsyncFunc<IServiceProvider, ITokenCache, IDictionary<string, string>?, string, IDictionary<string, string>, IDictionary<string, string>?>? PostLoginCallback { get; init; }
 
