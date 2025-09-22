@@ -1,4 +1,6 @@
-﻿namespace Uno.Extensions.Hosting;
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace Uno.Extensions.Hosting;
 
 /// <summary>
 /// Contains helpers to create a HostBuilder that is tailored to multiple target platforms.
@@ -59,7 +61,7 @@ public static class UnoHost
 	{
 		PlatformHelper.SetAppAssembly(applicationAssembly);
 		applicationAssembly = PlatformHelper.GetAppAssembly()!;
-		return new HostBuilder()
+		var builder = new HostBuilder()
 			.ConfigureCustomDefaults(args)
 			.ConfigureAppConfiguration((ctx, appConfig) =>
 			{
@@ -102,7 +104,15 @@ public static class UnoHost
 						config.AddInMemoryCollection(queryDict);
 					}
 				})
-			.ConfigureServices((ctx, services) => services.Configure<HostConfiguration>(ctx.Configuration.GetSection(nameof(HostConfiguration))))
 			.UseStorage();
+		return ConfigureHostConfigurationServices(builder);
+
+		[UnconditionalSuppressMessage("Trimming", "IL2026", Justification = "🤷‍♂️")]
+		static IHostBuilder ConfigureHostConfigurationServices(IHostBuilder builder)
+		{
+			builder
+				.ConfigureServices((ctx, services) => services.Configure<HostConfiguration>(ctx.Configuration.GetSection(nameof(HostConfiguration))));
+			return builder;
+		}
 	}
 }

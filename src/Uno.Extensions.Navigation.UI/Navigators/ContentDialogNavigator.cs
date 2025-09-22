@@ -1,4 +1,6 @@
-﻿namespace Uno.Extensions.Navigation.Navigators;
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace Uno.Extensions.Navigation.Navigators;
 
 public class ContentDialogNavigator : DialogNavigator
 {
@@ -44,7 +46,7 @@ public class ContentDialogNavigator : DialogNavigator
 			return null;
 		}
 
-		var dialog = Activator.CreateInstance(mapping.RenderView) as ContentDialog;
+		var dialog = mapping.RenderView.CreateInstance<ContentDialog>(Logger);
 		if (dialog is null)
 		{
 			return null;
