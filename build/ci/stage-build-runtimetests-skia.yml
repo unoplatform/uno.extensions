@@ -43,7 +43,7 @@
 
   - script: xvfb-run --auto-servernum --server-args='-screen 0 1280x1024x24' dotnet Uno.Extensions.RuntimeTests.dll
     displayName: 'Run Runtime Tests'
-    workingDirectory: $(Build.SourcesDirectory)/src/Uno.Extensions.RuntimeTests/Uno.Extensions.RuntimeTests/bin/Debug/net8.0-desktop
+    workingDirectory: $(Build.SourcesDirectory)/src/Uno.Extensions.RuntimeTests/Uno.Extensions.RuntimeTests/bin/Debug/net9.0-desktop
     env:
       UNO_RUNTIME_TESTS_RUN_TESTS: '{}'
       UNO_RUNTIME_TESTS_OUTPUT_PATH: '$(Common.TestResultsDirectory)/skia-runtime-tests-results.xml'
