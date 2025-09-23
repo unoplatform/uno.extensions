@@ -31,4 +31,5 @@
       href: xref:Uno.Extensions.Mvux.Advanced.Commands
     - name: Inspecting the generated code
       href: xref:Uno.Extensions.Mvux.Advanced.InspectGeneratedCode
-
+- name: FAQ
+  href: xref:Uno.Extensions.Mvux.FAQ
