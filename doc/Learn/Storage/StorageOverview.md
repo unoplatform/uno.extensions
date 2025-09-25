@@ -22,7 +22,7 @@ As simple as it sounds, you can use the Storage feature to read and write files 
 > [!TIP]
 > Here is a rule for Storage Package files to remember:
 >
-> As long as you can provide a [ISerializer](https://github.com/unoplatform/uno.extensions/blob/main/src/Uno.Extensions.Serialization/ISerializer.cs) or your file is generally readable as <see langword="string"/> or <see cref="Stream"/>, this can be handled with Uno.Extensions.Storage.
+> As long as you can provide a [ISerializer](https://github.com/unoplatform/uno.extensions/blob/main/src/Uno.Extensions.Serialization/ISerializer.cs) or your file is generally readable as `string` or `Stream`, this can be handled with Uno.Extensions.Storage.
 > [!NOTE]
 > For other files that have their BuildAction set to Resources or Content, these can be referenced via `ms-appx:///Here/comes/your/filepath.txt` to read the file from the package.
 
