@@ -49,7 +49,7 @@ First of all, to set up your project using the Storage feature, you need to foll
             MainWindow.UseStudio();
     #endif
             MainWindow.SetWindowIcon();
-            Host = await builder.Build(); // or use `await builder.NavigateAsync<Shell>();` if you want to use Uno.Extensions.Navigation
+            Host = await builder.Build(); // or use `Host = await builder.NavigateAsync<Shell>();` if you want to use Uno.Extensions.Navigation
     ```
 
 1. Inject `IStorage` into your Model's or ViewModel's constructor to enable Dependency Injection (DI) to resolve it automatically.
