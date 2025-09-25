@@ -21,7 +21,7 @@ This topic covers using Navigation to navigate between two pages using Uno Exten
         Extensions;
     +   Navigation;
         Toolkit;
-        MVVX;
+        MVVM;
     </UnoFeatures>
     ```
 
