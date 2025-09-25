@@ -230,7 +230,7 @@ The following links should give you a first overview over most of the oAuth2 (in
 - [WebView2 for BasicAuthentication interaction](https://learn.microsoft.com/en-us/microsoft-edge/webview2/concepts/basic-authentication?tabs=csharp) - [Uno specifics](https://platform.uno/docs/articles/controls/WebView.html)
 
 > [!NOTE]
-> BasicAuthentication is not jet implemented in Uno.
+> BasicAuthentication is not yet implemented in Uno.
 
 ### Server Project specific Information and Resources
 <!-- cspell: ignore HSTS Antiforgery -->
