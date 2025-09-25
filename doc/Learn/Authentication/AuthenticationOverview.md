@@ -119,6 +119,9 @@ Before the `WebAuthenticationProvider` is automatically built, there are platfor
 
 You can find an alternative for Device Protocol usage on Windows in the [oAuth2Manager from the WinAppSDK](https://learn.microsoft.com/en-us/windows/apps/develop/security/oauth2?tabs=csharp) and [its Sample Project](https://github.com/microsoft/WindowsAppSDK-Samples/blob/release/experimental/Samples/OAuth2Manager/README.md). If you use this approach, make sure to review the [Uno-specific documentation for Protocol Activation](https://platform.uno/docs/articles/features/protocol-activation.html#handling-protocol-activation) and the [Windowing API](https://platform.uno/docs/articles/features/windows-ui-xaml-window.html#explaining-basic-windowing-apis), as there are slight differences you should be aware of to avoid potential issues.
 
+**Skia Desktop**:
+Because the `WebAuthenticationBroker` is not yet implemented for the Desktop Target, all Authentication Extensions which are using this (e.g. Web, Oidc until Uno Extensions Version 7.0) will fail too.
+
 **Other platforms**: For a description of various subtle differences when displaying a web login prompt on multiple platforms, see [Web Authentication Broker](https://platform.uno/docs/articles/features/web-authentication-broker.html). The broker will only respond to the `PrefersEphemeralWebBrowserSession` setting value in iOS (versions 13.0+), while the other platforms will ignore it.
 
 ### [WebConfiguration Options](#tab/web/config-options)

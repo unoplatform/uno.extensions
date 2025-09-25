@@ -156,10 +156,11 @@ You can find a sample usage for its `SimpleAuthenticationToken` Implementation i
 - [How-To: Create a Strongly-Typed REST Client for an API](xref:Uno.Extensions.Http.HowToRefit)
 - [Overview: Use HttpClientFactory to implement resilient HTTP requests](https://learn.microsoft.com/dotnet/architecture/microservices/implement-resilient-applications/use-httpclientfactory-to-implement-resilient-http-requests#benefits-of-using-ihttpclientfactory)
 - [Overview: Delegating handlers](https://learn.microsoft.com/aspnet/web-api/overview/advanced/http-message-handlers)
+- [Extending HttpClient with delegating handlers in ASP.NET Core](https://www.milanjovanovic.tech/blog/extending-httpclient-with-delegating-handlers-in-aspnetcore) which could also be used with the Uno Templates contained Sample of the Delegating Handler!
 - [Overview: Polly and HttpClientFactory](https://github.com/App-vNext/Polly/wiki/Polly-and-HttpClientFactory)
 - [Overview: What is Refit?](https://github.com/reactiveui/refit)
 - [Overview: What is Kiota?](https://learn.microsoft.com/en-us/openapi/kiota/)
 - [Explore: TestHarness HTTP](https://github.com/unoplatform/uno.extensions/tree/main/testing/TestHarness/TestHarness/Ext/Http/)
 - [Using HTTP/3 with Http Client](https://learn.microsoft.com/en-us/dotnet/core/extensions/httpclient-http3)
 - [The System.Net.Http.HttpClient Class](https://learn.microsoft.com/en-us/dotnet/fundamentals/runtime-libraries/system-net-http-httpclient)
-- [The System.Net.Http.HttpListener Class](https://learn.microsoft.com/de-de/dotnet/fundamentals/runtime-libraries/system-net-httplistener)
+- [The System.Net.Http.HttpListener Class](https://learn.microsoft.com/en-us/dotnet/fundamentals/runtime-libraries/system-net-httplistener)

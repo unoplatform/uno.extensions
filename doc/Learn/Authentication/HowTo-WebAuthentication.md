@@ -167,4 +167,4 @@ uid: Uno.Extensions.Authentication.HowToWebAuthentication
 
 - Finally, we can pass the login credentials to the `LoginAsync()` method and authenticate with the identity provider. The user will be prompted to sign in to their account when they tap the button in the application.
 
-- `WebAuthenticationProvider` will then store the user's access token in credential storage. The token will be automatically refreshed when it expires.
+- `WebAuthenticationProvider` will then store the user's access token in credential storage. The token will be automatically refreshed when it expires by calling the `Refresh` Delegate you can define in the Hostbuilder.
