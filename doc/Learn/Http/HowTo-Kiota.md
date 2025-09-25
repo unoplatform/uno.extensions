@@ -63,7 +63,6 @@ When working with APIs in your application, having a strongly-typed client can s
 
   ```xml
   <ItemGroup>
-    <PackageVersion Include="Microsoft.Kiota.Authentification.Azure" Version="1.17.4"/>
     <PackageVersion Include="Microsoft.Kiota.Bundle" Version="1.17.4"/>
   </ItemGroup>
   ```
