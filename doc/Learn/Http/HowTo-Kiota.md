@@ -57,7 +57,7 @@ When working with APIs in your application, having a strongly-typed client can s
     kiota generate --openapi http://localhost:5002/swagger/v1/swagger.json --language CSharp --class-name MyApiClient --namespace-name MyApp.Client.MyApi --output ./MyApp/Content/Client/MyApi
     ```
 
-    This will create a client named `MyApiClient` in the `Clients` folder.
+    This will create a client named `MyApiClient` in the `MyApi` folder.
 
 * If those has not been already included in your `Directory.Packages.props` file, the kiota CLI tool will recommend you to add following NuGet packages via dotnet:
 
@@ -69,8 +69,6 @@ When working with APIs in your application, having a strongly-typed client can s
 
   > [!IMPORTANT]
   > As using `dotnet add package` will result in the error `In "C:\Users\YourName\source\repos\YourAppsGitHubRepo\src\YourApp\" were unable to find a Project.` add them manually into the above mentioned file in your `Solution Items` folder.
-  > [!TIP]
-  > We recommend naming the output folder (and namespace) in plural (e.g. Clients) to accommodate multiple generated APIs.
 
 ### 4. Register the Kiota Client
 
