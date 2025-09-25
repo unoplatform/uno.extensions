@@ -117,7 +117,7 @@ Before the `WebAuthenticationProvider` is automatically built, there are platfor
 
 **Windows**: The `AddWeb()` extension method will initialize a `WebAuthenticator` to launch an out-of-process browser. This is done preemptively to support its usage within `WebAuthenticationProvider` during login and logout instead of the `WebAuthenticationBroker` used for other platforms.
 
-You can find an alternative for Device Protocol usage on Windows in the [oAuth2Manager coming from then WinAppSdk](https://learn.microsoft.com/de-de/windows/apps/develop/security/oauth2?tabs=csharp) and [its Sample Project](https://github.com/microsoft/WindowsAppSDK-Samples/blob/release/experimental/Samples/OAuth2Manager/README.md). For using this, make sure you lookup the [Uno Specific Docs for Protocol Activation](https://platform.uno/docs/articles/features/protocol-activation.html#handling-protocol-activation) and [Windowing API](https://platform.uno/docs/articles/features/windows-ui-xaml-window.html#explaining-basic-windowing-apis) because there are slightly differences you should acknowledge to avoid problems.
+You can find an alternative for Device Protocol usage on Windows in the [oAuth2Manager from the WinAppSDK](https://learn.microsoft.com/en-us/windows/apps/develop/security/oauth2?tabs=csharp) and [its Sample Project](https://github.com/microsoft/WindowsAppSDK-Samples/blob/release/experimental/Samples/OAuth2Manager/README.md). If you use this approach, make sure to review the [Uno-specific documentation for Protocol Activation](https://platform.uno/docs/articles/features/protocol-activation.html#handling-protocol-activation) and the [Windowing API](https://platform.uno/docs/articles/features/windows-ui-xaml-window.html#explaining-basic-windowing-apis), as there are slight differences you should be aware of to avoid potential issues.
 
 **Other platforms**: For a description of various subtle differences when displaying a web login prompt on multiple platforms, see [Web Authentication Broker](https://platform.uno/docs/articles/features/web-authentication-broker.html). The broker will only respond to the `PrefersEphemeralWebBrowserSession` setting value in iOS (versions 13.0+), while the other platforms will ignore it.
 
@@ -164,8 +164,11 @@ So for example, in your `appsettings.json` file, you could include the following
 The Token keys are assumed to be the response keys returned from the identity provider, that will be used in the response url infront of the token value. For example, the `access_token` key is used to retrieve the access token from the response like this:
 
 ```
-access_token=fsjaiafjioangosafn&expires_in=3600&token_type=Bearer
+access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9&expires_in=3600&token_type=Bearer
 ```
+
+> [!NOTE]
+> The `OtherTokenKeys` Property shown above is until now not read by the `WebAuthenticationProvider`, which we are using with `.AddWeb()` in the Hostbuilder.
 
 The `LoginCallbackUri` and `LogoutCallbackUri` are used to redirect the user back to the application after they have logged in or logged out. These URIs should be registered with the identity provider.
 
@@ -175,6 +178,8 @@ You can use the `PostLogin` Callback to perform any additional processing after 
 > The `AccessTokenKey`, `RefreshTokenKey`, and `IdTokenKey` are used to store the tokens in the credential storage after the `PostLogin` has been returned. The `OtherTokenKeys` dictionary can be used to store any additional tokens that are returned by the identity provider, but are not read from the WebAuthenticationProvider of Uno at this time.
 > [!NOTE]
 > Usually, the `AccessToken` and `RefreshToken` will be returned from the `Token` endpoint, which is needed to be called in the `PostLogin` Callback you can register for in the Web Authentication registration in your App.xaml.cs, which is called after the user has authenticated to your identity server instance or authorized your application to [act on-behalf-of the user](https://learn.microsoft.com/en-us/entra/identity-platform/v2-oauth2-on-behalf-of-flow) to an external API. *(This Link is specific to Microsoft Entra ID, but the concept applies to other identity providers as well.)*
+> [!IMPORTANT]
+> You should never clear type any credentials in appsettings or code, like the sample content shown above of the Access Token. For Development purposes, you can instead and better use `dotnet user-secrets` via the IDE Terminal for example or and if you are publishing your App, Services like [Azure Key Vault](https://learn.microsoft.com/en-us/azure/devops/pipelines/process/set-secret-variables?view=azure-devops&tabs=yaml%2Cbash) are a good Option to choose for safe handling of vulnurable Data like these and can also easily connected via the available [Options for CI/CD in the **Uno App Templates**](https://platform.uno/docs/articles/getting-started/wizard/using-wizard.html#11-ci-pipeline).
 
 ---
 
@@ -188,7 +193,7 @@ Once a user has been authenticated, the tokens are cached and are available for 
 
 The `HeaderHandler` is used to apply the access token to the http request using the `Authorization` header. The default scheme is `Bearer` but this can be override to use a different scheme, such as basic.
 
-- [Using Http Header Properties](https://learn.microsoft.com/de-de/dotnet/fundamentals/networking/http/httpclient-migrate-from-httpwebrequest#usage-of-header-properties)
+- [Using Http Header Properties](https://learn.microsoft.com/en-us/dotnet/fundamentals/networking/http/httpclient-migrate-from-httpwebrequest#usage-of-header-properties)
 
 ### Cookies
 
@@ -218,8 +223,11 @@ The following links should give you a first overview over most of the oAuth2 (in
 - [Using TLS and SSL for Secure Web Communication using Certificates](https://learn.microsoft.com/en-us/dotnet/core/extensions/sslstream-best-practices)
 - [Breaking Changes for Default TLS cipher suites in .NET on Linux](https://learn.microsoft.com/en-us/dotnet/core/compatibility/cryptography/5.0/default-cipher-suites-for-tls-on-linux?source=recommendations)
 - [API `System.Security.Cryptography.Pkcs` removed from .NET `9.0.3`](https://learn.microsoft.com/en-us/dotnet/core/compatibility/cryptography/9.0/api-removed-pkcs)
-- [Use the System Browser to open the Authentication UI for a interactive Authentication Flow](https://learn.microsoft.com/de-de/windows/apps/develop/launch/launch-default-app)
-- [WebView2 for BasicAuthentication interaction](https://learn.microsoft.com/de-de/microsoft-edge/webview2/concepts/basic-authentication?tabs=csharp) - [Uno specifics](https://platform.uno/docs/articles/controls/WebView.html)
+- [Use the System Browser to open the Authentication UI for a interactive Authentication Flow](https://learn.microsoft.com/en-us/windows/apps/develop/launch/launch-default-app)
+- [WebView2 for BasicAuthentication interaction](https://learn.microsoft.com/en-us/microsoft-edge/webview2/concepts/basic-authentication?tabs=csharp) - [Uno specifics](https://platform.uno/docs/articles/controls/WebView.html)
+
+> [!NOTE]
+> BasicAuthentication is not jet implemented in Uno.
 
 ### Server Project specific Information and Resources
 <!-- cspell: ignore HSTS Antiforgery -->
@@ -232,3 +240,4 @@ The following links should give you a first overview over most of the oAuth2 (in
 - [Learn path about how to use a Entity Framework Core Database in a Minimal API Project](https://learn.microsoft.com/en-us/training/modules/build-web-api-minimal-database/?view=aspnetcore-9.0)
 - [Map Static files](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/map-static-files?view=aspnetcore-9.0)
 - [Use Static file authorization](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/static-files?view=aspnetcore-9.0#static-file-authorization)
+- [Extending HttpClient with delegating handlers in ASP.NET Core e.g. for handling Authentication](https://www.milanjovanovic.tech/blog/extending-httpclient-with-delegating-handlers-in-aspnetcore) which could also be used with the Uno Templates contained Sample of the Delegating Handler!
