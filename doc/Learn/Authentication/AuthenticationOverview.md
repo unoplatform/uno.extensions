@@ -171,14 +171,14 @@ access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9&expires_in=3600&token_type=Bea
 ```
 
 > [!NOTE]
-> The `OtherTokenKeys` Property shown above is until now not read by the `WebAuthenticationProvider`, which we are using with `.AddWeb()` in the Hostbuilder.
+> The `OtherTokenKeys` Property shown above is currently not read by the `WebAuthenticationProvider`, which we are using with `.AddWeb()` in the Hostbuilder.
 
 The `LoginCallbackUri` and `LogoutCallbackUri` are used to redirect the user back to the application after they have logged in or logged out. These URIs should be registered with the identity provider.
 
 You can use the `PostLogin` Callback to perform any additional processing after the user has logged in, such as retrieving user information from a user info endpoint, or extracting additional tokens from the response url, which is provided as string argument in the `AsyncFunc`. To make the Authentication Process fail e.g. if you discovered the Response contains an Error response, you can simply make the `PostLogin` return `null` or `default`.
 
 > [!NOTE]
-> The `AccessTokenKey`, `RefreshTokenKey`, and `IdTokenKey` are used to store the tokens in the credential storage after the `PostLogin` has been returned. The `OtherTokenKeys` dictionary can be used to store any additional tokens that are returned by the identity provider, but are not read from the WebAuthenticationProvider of Uno at this time.
+> The `AccessTokenKey`, `RefreshTokenKey`, and `IdTokenKey` are used to store the tokens in the credential storage after the `PostLogin` has been returned. The `OtherTokenKeys` dictionary can be used to store any additional tokens that are returned by the identity provider, but are not read by the WebAuthenticationProvider of Uno at this time.
 > [!NOTE]
 > Usually, the `AccessToken` and `RefreshToken` will be returned from the `Token` endpoint, which is needed to be called in the `PostLogin` Callback you can register for in the Web Authentication registration in your App.xaml.cs, which is called after the user has authenticated to your identity server instance or authorized your application to [act on-behalf-of the user](https://learn.microsoft.com/en-us/entra/identity-platform/v2-oauth2-on-behalf-of-flow) to an external API. *(This Link is specific to Microsoft Entra ID, but the concept applies to other identity providers as well.)*
 > [!IMPORTANT]
@@ -230,10 +230,10 @@ The following links should give you a first overview over most of the oAuth2 (in
 - [Breaking Changes for Default TLS cipher suites in .NET on Linux](https://learn.microsoft.com/en-us/dotnet/core/compatibility/cryptography/5.0/default-cipher-suites-for-tls-on-linux?source=recommendations)
 - [API `System.Security.Cryptography.Pkcs` removed from .NET `9.0.3`](https://learn.microsoft.com/en-us/dotnet/core/compatibility/cryptography/9.0/api-removed-pkcs)
 - [Use the System Browser to open the Authentication UI for a interactive Authentication Flow](https://learn.microsoft.com/en-us/windows/apps/develop/launch/launch-default-app)
-- [WebView2 for BasicAuthentication interaction](https://learn.microsoft.com/en-us/microsoft-edge/webview2/concepts/basic-authentication?tabs=csharp) - [Uno specifics](https://platform.uno/docs/articles/controls/WebView.html)
+- [WebView2 for **Basic Authentication** interaction](https://learn.microsoft.com/en-us/microsoft-edge/webview2/concepts/basic-authentication?tabs=csharp) - [Uno specifics](https://platform.uno/docs/articles/controls/WebView.html)
 
 > [!NOTE]
-> BasicAuthentication is not yet implemented in Uno.
+> Basic Authentication is not yet implemented in Uno.
 
 ### Server Project specific Information and Resources
 <!-- cspell: ignore HSTS Antiforgery -->
