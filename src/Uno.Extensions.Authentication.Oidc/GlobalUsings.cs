@@ -14,6 +14,6 @@ global using Uno.Extensions.Authentication.Handlers;
 global using Uno.Extensions.Configuration;
 global using Uno.Extensions.Hosting;
 global using Windows.Security.Authentication.Web;
-global using IdentityModel.OidcClient;
+global using Duende.IdentityModel.OidcClient;
 
 
