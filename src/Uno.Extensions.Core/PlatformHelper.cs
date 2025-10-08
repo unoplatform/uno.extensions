@@ -1,4 +1,7 @@
-﻿namespace Uno.Extensions;
+﻿using System.Reflection;
+using System.Runtime.CompilerServices;
+
+namespace Uno.Extensions;
 
 public static class PlatformHelper
 {
@@ -54,6 +57,45 @@ public static class PlatformHelper
 			EnsureInitialized();
 			return _isAppPackaged;
 		}
+	}
+
+	/// <summary>
+	///   Attempts to obtain the "App" <see cref="T:Assembly"/>.
+	/// </summary>
+	/// <returns>
+	///   An <see cref="T:Assembly"/> if the "Application" assembly can be found; otherwise, <see langword="null"/>.
+	/// </returns>
+	/// <remarks>
+	///   <para>The complication is NativeAOT, within which:</para>
+	///   <list type="bullet">
+	///     <item><term><see cref="M:Assembly.GetEntryAssembly()"/>: Returns a non-<see langword="null"/> value. (Yay.)</term></item>
+	///     <item><term><see cref="M:Assembly.GetExecutingAssembly()"/>: Always an exception.</term></item>
+	///     <item><term>
+	///       <see cref="M:Assembly.GetCallingAssembly()"/>: Throws <see cref="T:PlatformNotSupportedException"/> <i>by default</i>.
+	///       Can return <see cref="M:Assembly.GetEntryAssembly()"/> if the
+	///       <c>Switch.System.Reflection.Assembly.SimulatedCallingAssembly</c> runtime switch is <c>true</c>.
+	///     </term></item>
+	///   </list>
+	/// </remarks>
+	internal static Assembly? GetAppAssembly()
+	{
+#pragma warning disable RS0030
+		if (!RuntimeFeature.IsDynamicCodeCompiled && !RuntimeFeature.IsDynamicCodeSupported)
+		{
+			// Assume NativeAOT. Might also be iOS+FullAOT…?
+			return Assembly.GetEntryAssembly();
+		}
+
+		try
+		{
+			return Assembly.GetCallingAssembly();
+		}
+		catch (Exception)
+		{
+			// Log?
+			return Assembly.GetEntryAssembly();
+		}
+#pragma warning restore RS0030
 	}
 
 	/// <summary>

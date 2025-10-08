@@ -1,6 +1,6 @@
 namespace Uno.Extensions.Hosting;
 
-internal record ApplicationBuilder(Application App, LaunchActivatedEventArgs Arguments, Assembly ApplicationAssembly) : IApplicationBuilder
+internal record ApplicationBuilder(Application App, LaunchActivatedEventArgs Arguments, Assembly? ApplicationAssembly) : IApplicationBuilder
 {
 	private readonly List<Action<IHostBuilder, Window>> _delegates = [];
 

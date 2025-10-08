@@ -1,4 +1,6 @@
-﻿namespace Uno.Extensions.Hosting;
+﻿using System.Reflection;
+
+namespace Uno.Extensions.Hosting;
 
 /// <summary>
 /// Extensions for the <see cref="IApplicationBuilder" />
@@ -12,5 +14,7 @@ public static class ApplicationExtensions
 	/// <param name="args">The <see cref="LaunchActivatedEventArgs" /> passed to OnLaunched.</param>
 	/// <returns></returns>
 	public static IApplicationBuilder CreateBuilder(this Application app, LaunchActivatedEventArgs args) =>
-		new ApplicationBuilder(app, args, Assembly.GetCallingAssembly());
+		new ApplicationBuilder(app, args, PlatformHelper.GetAppAssembly());
+	public static IApplicationBuilder CreateBuilder(this Application app, LaunchActivatedEventArgs args, Assembly? applicationAssembly) =>
+		new ApplicationBuilder(app, args, applicationAssembly);
 }

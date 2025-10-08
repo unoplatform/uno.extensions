@@ -18,11 +18,11 @@ public static class UnoHost
     /// </returns>
     public static IHostBuilder CreateDefaultBuilder(string[]? args = null)
     {
-        var callingAssembly = Assembly.GetCallingAssembly();
+        var callingAssembly = PlatformHelper.GetAppAssembly()!;
         return CreateDefaultBuilder(callingAssembly, args);
     }
 
-    internal static IHostBuilder CreateDefaultBuilder(Assembly applicationAssembly, string[]? args = null)
+    internal static IHostBuilder CreateDefaultBuilder(Assembly? applicationAssembly, string[]? args = null)
     {
         return new HostBuilder()
             .ConfigureCustomDefaults(args)
