@@ -1,5 +1,4 @@
 ﻿using System.Reflection;
-using System.Runtime.CompilerServices;
 
 namespace Uno.Extensions;
 
@@ -14,6 +13,8 @@ public static class PlatformHelper
 	private static bool _isNetCore;
 	private static bool _initialized;
 	private static bool _isWebAssembly;
+
+	private static Assembly? _appAssembly;
 
 	/// <summary>
 	/// Determines if the platform is runnnig WebAssembly
@@ -59,6 +60,8 @@ public static class PlatformHelper
 		}
 	}
 
+	internal static void SetAppAssembly(Assembly assembly) => _appAssembly = assembly;
+
 	/// <summary>
 	///   Attempts to obtain the "App" <see cref="T:Assembly"/>.
 	/// </summary>
@@ -83,17 +86,17 @@ public static class PlatformHelper
 		if (!RuntimeFeature.IsDynamicCodeCompiled && !RuntimeFeature.IsDynamicCodeSupported)
 		{
 			// Assume NativeAOT. Might also be iOS+FullAOT…?
-			return Assembly.GetEntryAssembly();
+			return _appAssembly ??= Assembly.GetEntryAssembly();
 		}
 
 		try
 		{
-			return Assembly.GetCallingAssembly();
+			return _appAssembly ??= Assembly.GetCallingAssembly();
 		}
 		catch (Exception)
 		{
 			// Log?
-			return Assembly.GetEntryAssembly();
+			return _appAssembly ??= Assembly.GetEntryAssembly();
 		}
 #pragma warning restore RS0030
 	}
