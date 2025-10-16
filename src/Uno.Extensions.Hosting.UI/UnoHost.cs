@@ -7,9 +7,28 @@ public static class UnoHost
 {
 
 	/// <summary>
+	/// Obsolete; use <see cref="CreateDefaultBuilder(Assembly, System.String[])"/> or
+	/// <see cref="CreateDefaultBuilder{TApplication}(System.String[])"/>.
+	/// </summary>
+	/// <param name="args">
+	/// The command line arguments.
+	/// </param>
+	/// <returns>
+	/// The initialized IHostBuilder.
+	/// </returns>
+	[Obsolete("Use CreateDefaultBuilder(Assembly, string[]) or CreateDefaultBuilder<TApplication>(string[]) instead.")]
+	public static IHostBuilder CreateDefaultBuilder(string[]? args = null)
+	{
+		return CreateDefaultBuilder(PlatformHelper.GetAppAssembly()!, args);
+	}
+
+	/// <summary>
 	/// Initializes a new instance of the HostBuilder class that is pre-configured 
 	/// for multi-platform Uno applications.
 	/// </summary>
+	/// <typeparam name="TApplication">
+	/// The type of the main Application.  Used to determine the App's <see cref="Assembly" />.
+	/// </typeparam>
 	/// <param name="args">
 	/// The command line arguments.
 	/// </param>
@@ -23,9 +42,23 @@ public static class UnoHost
 		return CreateDefaultBuilder(callingAssembly, args);
 	}
 
+	/// <summary>
+	/// Initializes a new instance of the HostBuilder class that is pre-configured
+	/// for multi-platform Uno applications.
+	/// </summary>
+	/// <param name="applicationAssembly">
+	/// The application <see cref="Assembly"/>.
+	/// </param>
+	/// <param name="args">
+	/// The command line arguments.
+	/// </param>
+	/// <returns>
+	/// The initialized IHostBuilder.
+	/// </returns>
 	public static IHostBuilder CreateDefaultBuilder(Assembly applicationAssembly, string[]? args = null)
 	{
 		PlatformHelper.SetAppAssembly(applicationAssembly);
+		applicationAssembly = PlatformHelper.GetAppAssembly()!;
 		return new HostBuilder()
 			.ConfigureCustomDefaults(args)
 			.ConfigureAppConfiguration((ctx, appConfig) =>

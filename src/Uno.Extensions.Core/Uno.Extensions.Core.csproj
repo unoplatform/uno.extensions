@@ -63,7 +63,6 @@
 		<InternalsVisibleTo Include="Uno.Extensions.Storage.UI" />
 		<InternalsVisibleTo Include="Uno.Extensions.Storage.WinUI" />
 		<InternalsVisibleTo Include="Uno.Extensions.Configuration" />
-		<InternalsVisibleTo Include="Uno.Extensions.Logging.Serilog" />
 		<InternalsVisibleTo Include="Uno.Extensions.Navigation" />
 		<InternalsVisibleTo Include="Uno.Extensions.Navigation.UI" />
 		<InternalsVisibleTo Include="Uno.Extensions.Navigation.WinUI" />
