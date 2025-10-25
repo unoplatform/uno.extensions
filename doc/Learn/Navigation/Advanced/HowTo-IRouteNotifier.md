@@ -125,7 +125,7 @@ For the following sample, let's assume, we are working on MainPage and it's corr
     ```
 
     > [!NOTE]
-    > The automatic Eventhandler refactoring command in the Visual Studio IDE defaults to give us an `private void` as you seen above this sample. But as we need to `await` the State to set the new Value in Mvux, this Eventhandler needs to become an `private async void`. Remark here, that if you just type `await` infront of the Title line, the IDE will potentially auto format your previous `private void` to `private async Task`, which will promt you the error message, that the Definition of the Eventhandler is **incompartible like this** with the registration we made for this in the Constructor of our Model before, so make sure to check this if you run into such error.
+    > The automatic event handler refactoring command in the Visual Studio IDE defaults to give us a `private void` as you see above this sample. But as we need to `await` the State to set the new Value in Mvux, this event handler needs to become a `private async void`. Note here, that if you just type `await` in front of the Title line, the IDE will potentially auto format your previous `private void` to `private async Task`, which will prompt you the error message, that the definition of the event handler is **incompatible like this** with the registration we made for this in the constructor of our Model before, so make sure to check this if you run into such error.
 
 6. Let's combine the `RouteNotifier` with some [Localization support](xref:Uno.Extensions.Localization.Overview)! Update the Route Changed Eventhandler contained line to request our `IStringLocalizer` for the value of our Route name with the suffix of `Title`.
 
