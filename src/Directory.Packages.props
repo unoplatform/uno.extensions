@@ -2,10 +2,11 @@
   <PropertyGroup>
   </PropertyGroup>
   <ItemGroup>
+    <PackageVersion Include="Microsoft.CodeAnalysis.BannedApiAnalyzers" Version="3.3.4" />
     <PackageVersion Include="CommunityToolkit.Mvvm" Version="7.0.1" />
     <PackageVersion Include="DotNet.ReproducibleBuilds" Version="1.1.1" />
     <PackageVersion Include="FluentAssertions" Version="6.7.0" />
-    <PackageVersion Include="IdentityModel.OidcClient" Version="5.0.0" />
+    <PackageVersion Include="Duende.IdentityModel.OidcClient" Version="6.0.1" />
     <PackageVersion Include="Microsoft.Extensions.Hosting.Abstractions" Version="8.0.1" />
     <PackageVersion Include="Microsoft.Kiota.Abstractions" Version="1.16.4" />
     <PackageVersion Include="Microsoft.Kiota.Http.HttpClientLibrary" Version="1.16.4" />

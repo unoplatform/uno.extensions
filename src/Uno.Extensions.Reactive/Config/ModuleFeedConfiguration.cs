@@ -16,7 +16,10 @@ namespace Uno.Extensions.Reactive.Config;
 public static class ModuleFeedConfiguration
 {
 	private static readonly ILogger _log = LogExtensions.Log<FeedConfiguration>();
+
+#pragma warning disable RS0030
 	private static readonly string? _entryAssembly = Assembly.GetEntryAssembly()?.GetName().Name;
+#pragma warning restore RS0030
 
 	/// <summary>
 	/// Configures hot-reload for MVUX framework.

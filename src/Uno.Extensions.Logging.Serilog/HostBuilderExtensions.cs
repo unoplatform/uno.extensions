@@ -134,7 +134,7 @@ public static class HostBuilderExtensions
             return null;
         }
 
-        var assemblyName = Assembly.GetEntryAssembly()?.FullName ?? "unologging";
+        var assemblyName = PlatformHelper.GetAppAssembly()?.FullName ?? "unologging";
         return Path.Combine(logDirectory, $"{assemblyName}.log");
     }
 }
