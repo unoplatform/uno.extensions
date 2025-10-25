@@ -6,23 +6,17 @@
 		<Product  Condition="'$(Product)'==''">$(AssemblyName) ($(TargetFramework))</Product>
 		<PackageLicenseExpression  Condition="'$(PackageLicenseExpression)'==''">Apache-2.0</PackageLicenseExpression>
 		<DefaultLanguage Condition="'$(DefaultLanguage)'==''">en-US</DefaultLanguage>
+		<_LocalUnoPngPath>$(MSBuildThisFileDirectory)..\.icons\uno.png</_LocalUnoPngPath>
+		<PackageIcon Condition=" '$(PackageIcon)' == '' And Exists($(_LocalUnoPngPath)) ">uno.png</PackageIcon>
 	</PropertyGroup>
 
-	<Target Name="DownloadAndSetPackageIcon" AfterTargets="Build"  Condition="'$(PackageIcon)'==''">
-		<PropertyGroup>
-			<IconUrl>https://uno-assets.platform.uno/logos/uno.png</IconUrl>
-		</PropertyGroup>
-
-		<DownloadFile SourceUrl="$(IconUrl)" DestinationFolder="$(MSBuildThisFileDirectory)\.icons">
-			<Output TaskParameter="DownloadedFile" PropertyName="UnoPackageDownloadedIcon" />
-		</DownloadFile>
-
-		<PropertyGroup>
-			<PackageIcon>$([System.IO.Path]::GetFileName($(UnoPackageDownloadedIcon)))</PackageIcon>
-		</PropertyGroup>
-
-		<ItemGroup>
-			<None Include="$(UnoPackageDownloadedIcon)" Pack="true" PackagePath="\" Visible="false" />
-		</ItemGroup>
-	</Target>
+	<ItemGroup>
+		<None
+				Condition=" Exists($(_LocalUnoPngPath)) "
+				Include="$(_LocalUnoPngPath)"
+				Pack="true"
+				PackagePath="\"
+				Visible="false"
+		/>
+	</ItemGroup>
 </Project>

@@ -39,8 +39,9 @@ internal record FileStorage(ILogger<FileStorage> Logger, IDataFolderProvider Dat
 #if __WINDOWS__
 			if (!PlatformHelper.IsAppPackaged)
 			{
+				// Maintain existing semantics (at least until we try to run this under NativeAOT)
 				var file = System.IO.Path.Combine(
-								 System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly()?.Location ?? string.Empty) ?? string.Empty,
+								 System.IO.Path.GetDirectoryName(PlatformHelper.GetAppAssembly()?.Location ?? string.Empty) ?? string.Empty,
 								 filename);
 				return File.ReadAllText(file);
 			}
@@ -96,8 +97,9 @@ internal record FileStorage(ILogger<FileStorage> Logger, IDataFolderProvider Dat
 #if __WINDOWS__
 			if (!PlatformHelper.IsAppPackaged)
 			{
+				// Maintain existing semantics (at least until we try to run this under NativeAOT)
 				var file = System.IO.Path.Combine(
-								 System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly()?.Location ?? string.Empty) ?? string.Empty,
+								 System.IO.Path.GetDirectoryName(PlatformHelper.GetAppAssembly()?.Location ?? string.Empty) ?? string.Empty,
 								 filename);
 				return System.IO.File.OpenRead(file);
 			}
