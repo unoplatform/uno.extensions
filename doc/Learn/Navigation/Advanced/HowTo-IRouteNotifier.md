@@ -294,7 +294,7 @@ For the following sample, let's assume, we are working on MainPage and it's corr
 
 ---
 
-### Use the `IRouteNotifyer` from everywhere in your App
+### Use the `IRouteNotifier` from everywhere in your App
 
 It's possible to access the `IRouteNotifier` service directly from `App.xaml.cs` or anywhere you have access to the `IHost` to retrieve services. This allows you to subscribe to route changes and respond accordingly in your application.
 
