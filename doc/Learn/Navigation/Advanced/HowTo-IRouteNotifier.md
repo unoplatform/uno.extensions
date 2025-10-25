@@ -45,7 +45,7 @@ It's possible to access an `INavigator` through the `RouteChanged` event provide
 private void RouteChanged(object? sender, RouteChangedEventArgs e)
 {
     var navigator = e.Navigator;
-    
+
 +   var currentRouteName = e.Navigator.Route?.ToString();
 
     // Other Logic to use `INavigator` here
@@ -56,7 +56,7 @@ private void RouteChanged(object? sender, RouteChangedEventArgs e)
 
 By listening to Route Changes like this, we can for example set the Root Page Title, which could be shown in a `NavigationView` Header, dependant on the current Route name. But it's rarely happening that our Page Headline does match the Route Name since those can not contain Characters like Spaces and nobody would want to change the RouteMap just to have another localization culture supported.
 
-For the following sample, let's assume, we are working on MainPage and it's corresponding Model is named `MainModel`. 
+For the following sample, let's assume, we are working on MainPage and it's corresponding Model is named `MainModel`.
 
 #### [Mvux](#tab/mvux)
 
@@ -78,9 +78,10 @@ For the following sample, let's assume, we are working on MainPage and it's corr
         }
     }
     ```
+
 2. Add your Route Names to the `./Strings/[locID]/Resources.resw` and add suffix each of them with `Title`.
 3. Get an Instance of `IStringLocalizer` through your Model Constructor
-        
+
     ```diff
     public partial record MainModel
     {
@@ -117,7 +118,7 @@ For the following sample, let's assume, we are working on MainPage and it's corr
     private async void RouteChanged(object? sender, RouteChangedEventArgs e)
     {
         var navigator = e.Navigator;
-        
+
        var currentRouteName = e.Navigator.Route?.ToString();
         +   await Title.SetAsync(currentRouteName]);
 
@@ -167,7 +168,133 @@ For the following sample, let's assume, we are working on MainPage and it's corr
 
 #### [Mvvm](#tab/mvvm)
 
+1. Because the `IRouteNotifier` doesn't have a direct Property of `INavigator`, we need to acquire an Instance of this through the Constructor of our ViewModel:
 
+    ```diff
+    public class MainViewModel : ObservableObject
+    {
+        private readonly IRouteNotifier _routeNotifier;
+    +   private readonly INavigator _navigator;
+
+        public MainViewModel(
+            IRouteNotifier routeNotifier,
+    +       INavigator navigator)
+        {
+            _routeNotifier = routeNotifier;
+            _routeNotifier.RouteChanged += RouteChanged;
+    +       _navigator = navigator;
+        }
+    }
+    ```
+
+2. Add your Route Names to the `./Strings/[locID]/Resources.resw` and add suffix each of them with `Title`.
+
+3. Get an Instance of `IStringLocalizer` through your ViewModel Constructor
+
+    ```diff
+    public class MainViewModel : ObservableObject
+    {
+        private readonly IRouteNotifier _routeNotifier;
+        private readonly INavigator _navigator;
+    +   private readonly IStringLocalizer _stringLocalizer;
+
+        public MainViewModel(
+            IRouteNotifier routeNotifier,
+            INavigator navigator,
+    +       IStringLocalizer stringLocalizer)
+        {
+            _routeNotifier = routeNotifier;
+            _routeNotifier.RouteChanged += RouteChanged;
+            _navigator = navigator;
+    +       _stringLocalizer = stringLocalizer;
+        }
+    }
+    ```
+
+4. Create a `Title` property in your ViewModel with an initial Value of the Route name by requesting the previously gotten `INavigator`:
+
+    ```csharp
+    private string _title = string.Empty;
+    public string Title
+    {
+        get => _title;
+        set => SetProperty(ref _title, value);
+    }
+    ```
+
+    Then initialize it in the constructor:
+
+    ```diff
+    public MainViewModel(
+        IRouteNotifier routeNotifier,
+        INavigator navigator,
+        IStringLocalizer stringLocalizer)
+    {
+        _routeNotifier = routeNotifier;
+        _routeNotifier.RouteChanged += RouteChanged;
+        _navigator = navigator;
+        _stringLocalizer = stringLocalizer;
+    +   _title = _navigator.Route?.ToString() ?? string.Empty;
+    }
+    ```
+
+    > [!NOTE]
+    > The `ToString()` of the `Route`-Type does have an overwritten Behaviour, to return the Name of the current Route as `string`.
+    > Since the `Route` Property of the `INavigator` is defined as nullable, we need to use `?` and the coalescence Operator `??` to provide a non-null Value for our property in this case.
+
+5. Now we can use the Event Handler, to update our Title each time it gets called:
+
+    ```diff
+    private void RouteChanged(object? sender, RouteChangedEventArgs e)
+    {
+        var navigator = e.Navigator;
+
+        var currentRouteName = e.Navigator.Route?.ToString();
+    +   Title = currentRouteName ?? string.Empty;
+
+        // Other Logic to use `INavigator` here
+    }
+    ```
+
+6. Let's combine the `RouteNotifier` with some [Localization support](xref:Uno.Extensions.Localization.Overview)! Update the Route Changed Eventhandler contained line to request our `IStringLocalizer` for the value of our Route name with the suffix of `Title`.
+
+    ```diff
+    private void RouteChanged(object? sender, RouteChangedEventArgs e)
+    {
+        var navigator = e.Navigator;
+
+        var currentRouteName = e.Navigator.Route?.ToString();
+    +   Title = _stringLocalizer[currentRouteName + "Title"];
+
+        // Other Logic to use `INavigator` here
+    }
+    ```
+
+    > [!TIP]
+    > By using a Suffix, you could easily scale the variants and could also have a `+ "SubTitle"` as simplest Example.
+
+7. Your corresponding UI could then be set up like this with a `NavigationView` suitable to a Navigation related display for example:
+
+    ```xaml
+    <NavigationView uen:Region.Attached="True"
+                    Header="{Binding Title}">
+        <NavigationView.MenuItems>
+            <NavigationViewItem Content="Home"
+                                uen:Region.Name="Dashboard"
+                                Icon="Home" />
+            <NavigationViewItem Content="Create new List"
+                                uen:Region.Name="CreateNewList"
+                                Icon="AddFriend" />
+        </NavigationView.MenuItems>
+        <NavigationView.Content>
+            <Grid uen:Region.Attached="True"
+                  uen:Region.Navigator="Visibility"
+                  Visibility="Visible"/>
+        </NavigationView.Content>
+    </NavigationView>
+    ```
+
+---
 
 ### Use the `IRouteNotifyer` from everywhere in your App
 
@@ -185,4 +312,3 @@ notifier.RouteChanged += (s, e) =>
     Debug.WriteLine($"Navigated to {e.Region?.Name}");
 };
 ```
-
