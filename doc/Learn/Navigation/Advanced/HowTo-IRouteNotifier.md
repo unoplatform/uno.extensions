@@ -58,7 +58,7 @@ For the following sample, let's assume, we are working on MainPage and it's corr
 
 #### [Mvux](#tab/mvux)
 
-1. Because of the `IRouteNotifier` doesn't have a direct Property of `INavigator`, we do need to aquire an Instance of this through the Constructor of our Model:
+1. Because of the `IRouteNotifier` doesn't have a direct Property of `INavigator`, we do need to acquire an Instance of this through the Constructor of our Model:
 
     ```diff
     public partial record MainModel
