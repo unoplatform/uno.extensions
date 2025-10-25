@@ -29,6 +29,13 @@ jobs:
 
   - template: templates/update-vs-components.yml
 
+  - task: DotNetCoreCLI@2
+    displayName: Download uno.png
+    inputs:
+      command: 'build'
+      projects: Uno.Extensions.sln
+      arguments: '--no-restore -t:DownloadPackageIcon'
+
   - task: MSBuild@1
     displayName: Build Extensions Packages
     inputs:

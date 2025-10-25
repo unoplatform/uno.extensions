@@ -1,0 +1,3 @@
+M:System.Reflection.Assembly.GetEntryAssembly; Use PlatformHelper.GetAppAssembly() instead
+M:System.Reflection.Assembly.GetCallingAssembly; Not supported under NativeAOT, use PlatformHelper.GetAppAssembly() instead
+M:System.Reflection.Assembly.GetExecutingAssembly; Not supported under NativeAOT, use PlatformHelper.GetAppAssembly() instead

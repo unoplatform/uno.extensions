@@ -165,7 +165,7 @@ public class HostBuilder : IHostBuilder
 
 		if (string.IsNullOrEmpty(_hostingEnvironment.ApplicationName))
 		{
-			_hostingEnvironment.ApplicationName = Assembly.GetEntryAssembly()?.GetName().Name;
+			_hostingEnvironment.ApplicationName = PlatformHelper.GetAppAssembly()?.GetName().Name;
 		}
 
 		_hostingEnvironment.ContentRootFileProvider = _defaultProvider = new PhysicalFileProvider(_hostingEnvironment.ContentRootPath);
