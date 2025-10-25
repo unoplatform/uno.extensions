@@ -23,6 +23,8 @@
 		<ShouldWriteErrorOnInvalidXaml>True</ShouldWriteErrorOnInvalidXaml>
 		<!-- Required by uno 6.0 (WinRT.Runtime.dll >= 2.2.0) -->
 		<WindowsSdkPackageVersion>10.0.19041.57</WindowsSdkPackageVersion>
+
+		<UnoIconUrl>https://uno-assets.platform.uno/logos/uno.png</UnoIconUrl>
 	</PropertyGroup>
 
 	<PropertyGroup>
