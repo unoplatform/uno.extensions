@@ -309,6 +309,6 @@ Host = await builder.NavigateAsync<Shell>();
 var notifier = Host.Services.GetService<IRouteNotifier>();
 notifier.RouteChanged += (s, e) =>
 {
-    Debug.WriteLine($"Navigated to {e.Region?.Name}");
+    Debug.WriteLine($"Navigated to {e.Navigator.Route?.ToString()}");
 };
 ```
