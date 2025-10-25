@@ -108,7 +108,7 @@ For the following sample, let's assume, we are working on MainPage and it's corr
 
     > [!NOTE]
     > The `ToString()` of the `Route`-Type does have an overwritten Behaviour, to return the Name of the current Route as `string`.
-    > Since the `Route` Property of the `INavigator` is defined as nullable, we need to use `?` and the coaleszenz Operator `??` to provide a non-null Value for our State in this case.
+    > Since the `Route` Property of the `INavigator` is defined as nullable, we need to use `?` and the coalescence operator `??` to provide a non-null Value for our State in this case.
 
 5. Now we can use the Event Handler, to update our Title each time it gets called:
 
