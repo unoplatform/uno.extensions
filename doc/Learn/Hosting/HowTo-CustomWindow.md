@@ -158,13 +158,23 @@ public partial class App : Application
                     );
             });
 
-        // Get the window instance (guaranteed to be MyCustomWindow due to factory)
+        // Get the window instance
         MainWindow = appBuilder.Window;
+
+        // To access custom properties/methods, cast to your custom type
+        if (MainWindow is MyCustomWindow customWindow)
+        {
+            // Now you can access custom members
+            customWindow.IncrementClickCount();
+        }
 
         Host = appBuilder.Build();
     }
 }
 ```
+
+> [!NOTE]
+> When using a custom Window, the `Window` property from `IApplicationBuilder` returns your custom instance, but it's typed as `Window` for compatibility. Cast it to your custom type when you need to access custom properties or methods.
 
 ## Summary
 
@@ -172,6 +182,6 @@ The custom Window factory feature allows you to:
 
 1. Pass a factory function `() => new CustomWindow()` to `CreateBuilder`
 2. Use the returned `Window` instance, which will be your custom type
-3. Access custom properties and methods through casting or strongly-typed property
+3. Access custom properties and methods by casting to your specific Window type when needed
 
 This provides full flexibility to customize the Window behavior while still leveraging the Uno Extensions Hosting infrastructure.
