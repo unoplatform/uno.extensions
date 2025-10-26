@@ -135,7 +135,7 @@ public partial class App : Application
 {
     private IHost? Host { get; set; }
     
-    protected MyCustomWindow? MainWindow { get; private set; }
+    protected Window? MainWindow { get; private set; }
 
     protected override void OnLaunched(LaunchActivatedEventArgs args)
     {
@@ -158,8 +158,8 @@ public partial class App : Application
                     );
             });
 
-        // Get the custom window instance
-        MainWindow = appBuilder.Window as MyCustomWindow;
+        // Get the window instance (guaranteed to be MyCustomWindow due to factory)
+        MainWindow = appBuilder.Window;
 
         Host = appBuilder.Build();
     }
