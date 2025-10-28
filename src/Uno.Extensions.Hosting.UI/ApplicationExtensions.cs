@@ -25,23 +25,17 @@ public static class ApplicationExtensions
 		new ApplicationBuilder(app, args, applicationAssembly);
 
 	/// <summary>
-	/// Creates an instance of the <see cref="IApplicationBuilder" /> for the given <see cref="Application" /> with a custom Window factory
+	/// Configures the application to use a custom Window instance
 	/// </summary>
-	/// <param name="app">The <see cref="Application" /></param>
-	/// <param name="args">The <see cref="LaunchActivatedEventArgs" /> passed to OnLaunched.</param>
+	/// <param name="builder">The <see cref="IApplicationBuilder" /></param>
 	/// <param name="windowFactory">A factory function to create a custom Window instance.</param>
-	/// <returns></returns>
-	public static IApplicationBuilder CreateBuilder(this Application app, LaunchActivatedEventArgs args, Func<Window> windowFactory) =>
-		new ApplicationBuilder(app, args, app.GetType().Assembly, windowFactory);
-
-	/// <summary>
-	/// Creates an instance of the <see cref="IApplicationBuilder" /> for the given <see cref="Application" /> with a custom Window factory
-	/// </summary>
-	/// <param name="app">The <see cref="Application" /></param>
-	/// <param name="args">The <see cref="LaunchActivatedEventArgs" /> passed to OnLaunched.</param>
-	/// <param name="applicationAssembly">The application assembly.</param>
-	/// <param name="windowFactory">A factory function to create a custom Window instance.</param>
-	/// <returns></returns>
-	public static IApplicationBuilder CreateBuilder(this Application app, LaunchActivatedEventArgs args, Assembly applicationAssembly, Func<Window> windowFactory) =>
-		new ApplicationBuilder(app, args, applicationAssembly, windowFactory);
+	/// <returns>The <see cref="IApplicationBuilder" /></returns>
+	public static IApplicationBuilder UseWindow(this IApplicationBuilder builder, Func<Window> windowFactory)
+	{
+		if (builder is ApplicationBuilder appBuilder)
+		{
+			appBuilder.Window = windowFactory();
+		}
+		return builder;
+	}
 }

@@ -37,15 +37,16 @@ public class MyCustomWindow : Window
 }
 ```
 
-### 2. Use the Window Factory with CreateBuilder
+### 2. Use the UseWindow() Extension Method
 
-In your `App.xaml.cs`, use the `CreateBuilder` overload that accepts a `Func<Window>`:
+In your `App.xaml.cs`, use the `UseWindow()` method to configure a custom Window:
 
 ```csharp
 protected override void OnLaunched(LaunchActivatedEventArgs args)
 {
-    // Create builder with a custom Window factory
-    var appBuilder = this.CreateBuilder(args, () => new MyCustomWindow())
+    // Create builder with a custom Window using UseWindow()
+    var appBuilder = this.CreateBuilder(args)
+        .UseWindow(() => new MyCustomWindow())
         .Configure(host => {
             // Configure the host builder
             host.UseConfiguration(configure: configBuilder =>
@@ -64,29 +65,6 @@ protected override void OnLaunched(LaunchActivatedEventArgs args)
         customWindow.CustomMethod();
     }
 
-    Host = appBuilder.Build();
-}
-```
-
-### 3. Alternative: Use with Custom Assembly
-
-If you need to specify both a custom Window and a custom application assembly:
-
-```csharp
-protected override void OnLaunched(LaunchActivatedEventArgs args)
-{
-    var customAssembly = typeof(MyApp).Assembly;
-
-    var appBuilder = this.CreateBuilder(
-        args, 
-        customAssembly, 
-        () => new MyCustomWindow()
-    )
-    .Configure(host => {
-        // Configure the host builder
-    });
-
-    MainWindow = appBuilder.Window;
     Host = appBuilder.Build();
 }
 ```
@@ -139,7 +117,8 @@ public partial class App : Application
 
     protected override void OnLaunched(LaunchActivatedEventArgs args)
     {
-        var appBuilder = this.CreateBuilder(args, () => new MyCustomWindow())
+        var appBuilder = this.CreateBuilder(args)
+            .UseWindow(() => new MyCustomWindow())
             .Configure(host => {
                 host
 #if DEBUG
@@ -178,10 +157,10 @@ public partial class App : Application
 
 ## Summary
 
-The custom Window factory feature allows you to:
+The `UseWindow()` extension method allows you to:
 
-1. Pass a factory function `() => new CustomWindow()` to `CreateBuilder`
-2. Use the returned `Window` instance, which will be your custom type
+1. Use the fluent `.UseWindow(() => new CustomWindow())` pattern consistent with other `.UseXYZ()` methods
+2. Chain the window configuration with other builder methods
 3. Access custom properties and methods by casting to your specific Window type when needed
 
-This provides full flexibility to customize the Window behavior while still leveraging the Uno Extensions Hosting infrastructure.
+This provides full flexibility to customize the Window behavior while maintaining a consistent API with other Uno Extensions Hosting features.

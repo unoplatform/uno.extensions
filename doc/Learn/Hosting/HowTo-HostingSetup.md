@@ -87,18 +87,19 @@ uid: Uno.Extensions.Hosting.HowToHostingSetup
 
 ### 5. (Optional) Use a Custom Window
 
-If you need to use a custom `Window`-derived type, you can provide a factory function to `CreateBuilder`:
+If you need to use a custom `Window`-derived type, you can use the `UseWindow()` method:
 
 ```cs
 protected override void OnLaunched(LaunchActivatedEventArgs e)
 {
-    // Create builder with a custom Window factory
-    var appBuilder = this.CreateBuilder(args, () => new MyCustomWindow())
-    .Configure(host => {
-        // Configure the host builder
-    });
+    // Create builder with a custom Window
+    var appBuilder = this.CreateBuilder(args)
+        .UseWindow(() => new MyCustomWindow())
+        .Configure(host => {
+            // Configure the host builder
+        });
 
-    MainWindow = builder.Window; // This will be your MyCustomWindow instance
+    MainWindow = appBuilder.Window; // This will be your MyCustomWindow instance
 
     Host = appBuilder.Build();
     ...
