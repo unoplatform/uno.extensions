@@ -2,69 +2,43 @@
 uid: Uno.Extensions.Mvux.HowToMvuxProject
 ---
 
-# How to set up an MVUX project
+# MVUX Project Setup
 
-In this tutorial, you'll learn how to set up an Uno Platform project to use MVUX.
+Concise instructions for starting a new Uno Platform project with MVUX or enabling MVUX in an existing solution.
 
-> [!NOTE]
-> Make sure to setup your environment first by [following our instructions](xref:Uno.GetStarted.vs2022).
+## TL;DR
+- Run `uno check` and complete the Uno environment setup before proceeding.
+- New project: pick MVUX in the Visual Studio wizard or pass `-presentation mvux` when using `dotnet new unoapp`.
+- Existing project: add `MVUX;` to the `<UnoFeatures>` list in the shared project file and rebuild.
 
-## Creating a new Uno app with MVUX
+## Prerequisites
+- Follow the environment checklist (xref:Uno.GetStarted.vs2022).
+- Validate tooling with `uno check` (xref:UnoCheck.UsingUnoCheck).
 
-1. Make sure your environment is set up properly by using [uno check](xref:UnoCheck.UsingUnoCheck).
-1. You can create an Uno Platform App by either using the Uno Platform Visual Studio extension or via the command line interface.
+## Create a New MVUX App
+- **Visual Studio 2022 (extension v4.8+)**
+  - Create a new *Uno Platform App* (`Ctrl`+`Shift`+`N`).
+  - Choose the *Blank* preset, open the **Presentation** tab, and select *MVUX*.
+  - Finish the wizard; the generated solution includes MVUX packages and templates.
+- **Command Line**
+  ```cmd
+  dotnet new unoapp -preset blank -presentation mvux -o MyApp
+  ```
+  - Open `MyApp.sln` in Visual Studio or VS Code to start building.
 
-   ## [**Visual Studio**](#tab/vs)
+## Enable MVUX in an Existing App
+- Applies to projects created with the Uno Single Project template (xref:Uno.Development.MigratingToSingleProject).
+- Edit the shared `.csproj` and update `<UnoFeatures>`:
+  ```xml
+  <UnoFeatures>
+      Material;
+      Extensions;
+      MVUX;
+      Toolkit;
+  </UnoFeatures>
+  ```
+- Rebuild the solution so the MVUX feature packages and generators activate.
 
-   ### Using Visual Studio 2022 Uno Platform Extension
-
-   - Make sure you have the latest version of Uno Extension (v4.8 or higher) installed.
-
-        ![Screenshot displaying how to check the version of the Uno Extension wizard version in Visual Studio extension manager](../Assets/MvuxProject-VsixVersion.png)
-
-   - Press <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>N</kbd> to create a new project and select "Uno Platform App".
-
-   - Give your project an appropriate name.
-
-   - When prompted select the *Blank* template under the Presets section.
-
-        ![Screenshot displaying the intro screen of the Uno Extension wizard in Visual Studio](../Assets/MvuxProject-StartupType.png)
-
-   - In the *Presentation* tab (3rd one), select MVUX.
-
-        ![Screenshot displaying how to pre-install MVUX in the generated project](../Assets/MvuxProject-Mvux.png)
-
-   - Click *Create* on the bottom right corner.
-
-   ## [**CLI**](#tab/cli)
-
-   ### Using the command line interface
-
-   - Run the following command, using an appropriate name (`MyApp` in this page).
-
-        ```cmd
-        dotnet new unoapp -preset blank -presentation mvux -o MyApp
-        ```
-
-        Refer to [this](https://platform.uno/docs/articles/get-started-dotnet-new.html) article for more details
-        on using the CLI interface of creating projects.
-
-   - Launch the created solution, MyApp.sln, in  Visual Studio or Visual Studio Code.
-
-## Add MVUX to an existing Uno app
-
-> [!IMPORTANT]
-> This guide assumes you created your app using the Single Project template. If you used a different template, please refer to our [Migrating Projects to Single Project](xref:Uno.Development.MigratingToSingleProject) documentation.
-
-`MVUX` is provided as an Uno Feature. To enable `MVUX` support in your application, add `MVUX` to the `<UnoFeatures>` property in the Class Library (.csproj) file.
-
-```diff
-<UnoFeatures>
-    Material;
-    Extensions;
-+   MVUX;
-    Toolkit;
-</UnoFeatures>
-```
-
-For more information about `UnoFeatures` refer to our [Using the Uno.Sdk](xref:Uno.Features.Uno.Sdk) docs.
+## Next Steps
+- Explore the MVUX overview (xref:Uno.Extensions.Mvux.Overview).
+- Review Feed and State concepts before wiring data flows.

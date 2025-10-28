@@ -2,44 +2,44 @@
 uid: Uno.Extensions.Reactive.Upgrading
 ---
 
-# Upgrading MVUX
+# MVUX Upgrade Guide
 
-## Upgrading to Extensions Reactive V5
+Concise checklist to move projects to Uno.Extensions.Reactive V5 while understanding the generator changes.
 
-Upgrading to Uno.Extension.Reactive V5 should not require any changes to your application code. However, there are new features and improvements that you may want to take advantage of.
+## TL;DR
+- V5 keeps V4 behavior by default; no breaking change when updating packages.
+- Opt-in to the new generator (view-model output) using `[assembly: BindableGenerationTool(3)]`.
+- Update any code-behind or markup that instantiates generated types (rename `Bindable*Model` ➝ `*ViewModel`).
 
-### MVUX Generated Code
+## What Changed in V5
+- Generated output now defaults to `MyModelViewModel` instead of `BindableMyModel` when the new tool is enabled.
+- Same analyzer still supports legacy bindable proxies for backward compatibility.
+- No runtime API differences; only source-generated types differ.
 
-In V4, the MVUX analyzer generates a bindable proxy for each of the models in your app. For example, the bindable proxy for `MainModel` was named `BindableMainModel`.
+## Upgrade Steps
+- **Update packages**: bump Uno.Extensions.Reactive to V5.
+- **Decide generator mode**:
+  - Keep legacy output → no action required.
+  - Adopt view-model output → add `Uno.Extensions.Reactive.Config.BindableGenerationTool(3)` at the assembly level (often in `GlobalUsings.cs`).
+- **Rename references**: replace `Bindable<MyModel>` usages with `<MyModel>ViewModel` in page constructors, DI registrations, or markup.
 
-This behavior has changed in V5, and the MVUX analyzer will now generate a ViewModel class for each of your app's models. For example, the generated code for `MainModel` will be named `MainViewModel`.
-
-> [!IMPORTANT]
-> You don't have to do anything if you update but want to keep the old behavior. The generator will continue to generate the bindable proxies.
-
-To upgrade your application and use the latest generator, you must set an assembly level attribute, `BindableGenerationTool`, in the `GlobalUsing.cs`.
-
+## Sample Update
 ```csharp
-// GlobalUsing.cs
+// GlobalUsings.cs
 [assembly: Uno.Extensions.Reactive.Config.BindableGenerationTool(3)]
+
+// Before
+DataContext = new BindableMainModel();
+
+// After
+DataContext = new MainViewModel();
 ```
 
-You will also need to update the references to the generated classes. These are usually referenced in the code-behind file when using XAML, for example, `MainPage.xaml.cs`, or in the Page UI definition when using C# for Markup, for example, `MainPage.cs`.
+## Verification
+- Rebuild the project to regenerate source.
+- Inspect generated files under `obj/Debug/net.../g.cs` to confirm new class names.
+- Run UI smoke tests to ensure bindings resolve as expected.
 
-```csharp
-// V4
-public MainPage()
-{
-    this.InitializeComponent();
-    DataContext = new BindableMainModel();
-}
-```
-
-```csharp
-// V5
-public MainPage()
-{
-    this.InitializeComponent();
-    DataContext = new MainViewModel();
-}
-```
+## See Also
+- [MVUX Overview](xref:Uno.Extensions.Mvux.Overview)
+- Generator configuration reference (xref:Uno.Extensions.Reactive.Config.BindableGenerationTool)

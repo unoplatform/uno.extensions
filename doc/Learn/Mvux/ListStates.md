@@ -2,244 +2,90 @@
 uid: Uno.Extensions.Mvux.ListStates
 ---
 
-# What are list-states
+# MVUX List-State Guide
 
-List-state is the collection counterpart of [state](xref:Uno.Extensions.Mvux.States).
+Compact reference for creating and manipulating `IListState<T>` within MVUX models.
 
-List-state adds extra operators which make it easier to apply updates on multiple items instead of just a single item.
+## TL;DR
+- `IListState<T>` is the mutable (via snapshots) list counterpart to `IState<T>`; use it for collections that accept updates from the view.
+- Compose list-states with `ListState.Empty`, `ListState.Value`, `ListState.Async`, `ListState.AsyncEnumerable`, or `ListState.FromFeed`.
+- Apply updates with built-in helpers such as `AddAsync`, `InsertAsync`, `Update*`, `RemoveAllAsync`, `ForEach`, and selection APIs (`TrySelectAsync`, `ClearSelection`).
 
-Recall that feeds are stateless and are only read-only data output to the View, and are not responding to changes, whereas states are stateful, and update the Model and its entities upon changes made in the View using two-way data-binding, or on demand via Commands.
+## Why Use List-State
+- Keeps MVUX data flow unidirectional while handling collection updates triggered by two-way bindings or commands.
+- Adds list-specific operators so you don’t have to clone immutable lists manually.
+- Works with selection-enabled XAML controls out of the box.
 
-So an `IState<T>` is a stateful feed of a single item of `T`, whereas an `IListState<T>` is a stateful feed of multiple items of `T`.
-
-## How to create a list-state
-
-The static `ListState` class provides factory methods for creating `IListState<T>` objects, here they are:
-
-### Empty
-
-Creates an empty list-state:
-
+## Creating an `IListState<T>`
 ```csharp
-IListState<string> MyStrings = ListState<string>.Empty(this);
+// Empty list
+IListState<string> Names = ListState<string>.Empty(this);
+
+// Pre-populated synchronous value
+public IListState<string> Favorites =>
+    ListState.Value(this, () => ImmutableArray.Create("Terry Fox", "David Suzuki", "Margaret Atwood"));
+
+// Async factory
+public IListState<string> Recent =>
+    ListState.Async(this, ct => FetchRecentAsync(ct));
+
+// Streaming updates
+public IListState<string> Streamed =>
+    ListState.AsyncEnumerable(this, GetSnapshots);
+
+// Bridge an IListFeed
+public IListState<string> FromFeed =>
+    ListState.FromFeed(this, FavoritesFeed);
 ```
 
-### Value
-
-Creates a list-state with an initial synchronous value:
-
+## Mutating the Collection
 ```csharp
-private readonly IImmutableList<string> _favorites =
-    new string[]
-    {
-        "Terry Fox",
-        "David Suzuki",
-        "Margaret Atwood"
-    }
-    .ToImmutableArray();
+await Names.AddAsync("Gord Downie", ct);          // append
+await Names.InsertAsync("Margaret Atwood", ct);   // insert at start
 
-public IListState<string> Favorites => ListState.Value(this, () => _favorites);
+await Names.Update(existing =>
+    existing.Select(item => item.Trim()).ToImmutableList(), ct);
+
+await Names.UpdateAllAsync(item => item.Length > 10,
+    item => item.Trim(), ct);
 ```
 
-### Async
-
-Creates a list-state from an async method:
-
+### Keyed Updates
 ```csharp
-public ValueTask<IImmutableList<string>> GetStrings(CancellationToken ct) => new(_favorites);
+public partial record MyItem([property: Key] int Id, string Value);
 
+await Items.UpdateItemAsync(
+    oldItem: new MyItem(2, "Two"),
+    updater: item => item with { Value = item.Value.ToUpperInvariant() },
+    ct: ct);
 
-public IListState<string> Favorites => ListState.Async(this, GetStrings);
+await Items.UpdateItemAsync(
+    oldItem: new MyItem(3, "Three"),
+    newItem: new MyItem(3, "THREE"),
+    ct: ct);
 ```
 
-### AsyncEnumerable
-
+### Removal & Iteration
 ```csharp
-public async IAsyncEnumerable<IImmutableList<string>> GetStrings([EnumeratorCancellation] CancellationToken ct)
+await Names.RemoveAllAsync(item => item.Contains("Ő"), ct);
+
+await Names.ForEach(async (items, token) =>
 {
-    yield return _favorites;
-}
-
-public IListState<string> Favorites => ListState.AsyncEnumerable(this, GetStrings);
+    await LogAsync(items, token);
+});
 ```
 
-#### FromFeed
+## Selection Helpers
+- `TrySelectAsync(item)` / `TrySelectAsync(items)` — flag one or many entries as selected; returns `bool` indicating success.
+- `ClearSelection(ct)` — clear current selection.
+- Subscribe to selection changes with feeds as described in (xref:Uno.Extensions.Mvux.Advanced.Selection).
 
 ```csharp
-public IListFeed<string> FavoritesFeed => ...
-public IListState<string> FavoritesState => ListState.FromFeed(this, FavoritesFeed);
+bool selected = await Names.TrySelectAsync("charlie", ct);
+await Names.ClearSelection(ct);
 ```
 
-### Operators
-
-In the following examples, we'll refer to `MyStrings` which is an `IListState<string>`, to demonstrate how to use the various operators `IListState<T>` provides to update its state with modified data.
-
-#### Add
-
-The `AddAsync` method adds an item to the end of the List State:
-
-```csharp
-await MyStrings.AddAsync("Gord Downie", cancellationToken);
-```
-
-#### Insert
-
-The `InsertAsync` method inserts an item to the beginning of the List State:
-
-```csharp
-await MyStrings.InsertAsync("Margaret Atwood", cancellationToken);
-```
-
-#### Update
-
-There are various ways to update values in the list-state:
-
-The `Update` method has an `updater` parameter like the `State` does.
-This parameter is a `Func<IImmutableList<T>, IImmutableList<T>>`, which when called passes in the existing collection, allows you to apply your modifications to it, and then returns it.
-
-For example:
-
-```csharp
-public async ValueTask TrimAll(CancellationToken ct = default)
-{
-    await MyStrings.Update(
-        updater: existing =>
-            existing
-            .Select(item =>
-                item.Trim())
-            .ToImmutableList(),
-        ct: ct);
-}
-```
-
-Another overload is `UpdateAllAsync`, which allows you to apply an update on items that match a criteria. The `match` predicate is checked for each item. If the item matches the criteria, the updater is invoked which returns a new instance of the item with the update applied:
-
-```csharp
-public async ValueTask TrimLongNames(CancellationToken ct = default)
-{
-    await MyStrings.UpdateAllAsync(
-        match: item => item?.Length > 10,
-        updater: item => item.Trim(),
-        ct: ct);
-}
-```
-
-Two more overloads are available for items that implement `IKeyEquatable<T>` :
-
-`UpdateItemAsync` is another overload that allows you to apply an update on items that match the `key` of the specified item. The `key` is validated for each item. For every item that matches, the updater is invoked, returning a new instance of the item with the update applied:
-
-> [!TIP]
-> You don't have to implement `IKeyEquatable<T>` by yourself, see [generation](xref:Uno.Extensions.Equality.concept#generation) for more information.
-
-```csharp
-public partial record MyItem([property: Key] int Key, string Value);
-
-IListState<MyItem> MyItems = ListState<MyItem>.Value(this, () => new[]
-{
-    new MyItem(1, "One"),
-    new MyItem(2, "Two"),
-    new MyItem(3, "Three")
-}.ToImmutableList());
-
-public async ValueTask MakeUpperCase(CancellationToken ct = default)
-{
-    var itemToUpdate = new MyItem(2, "Two");
-
-    await MyItems.UpdateItemAsync(
-        oldItem: itemToUpdate,
-        updater: item => item with { Value = item.Value.ToUpper()},
-        ct: ct);
-}
-```
-
-Instead of using the `updater`, you can also pass in a new item to replace the old one:
-
-```csharp
-public async ValueTask MakeUpperCase(CancellationToken ct = default)
-{
-    var itemToUpdate = new MyItem(2, "Two");
-
-    await MyItems.UpdateItemAsync(
-        oldItem: itemToUpdate,
-        newItem: new MyItem(2, "TWO"),
-        ct: ct);
-}
-```
-
-#### Remove
-
-The `RemoveAllAsync` method uses a predicate to determine which items are to be removed:
-
-```csharp
-await MyStrings.RemoveAllAsync(
-    match: item => item.Contains("Ő"),
-    ct: cancellationToken);
-```
-
-#### ForEach
-
-This operator can be called from an `IListState<T>` to execute an asynchronous action when the data changes. The action is invoked once for the entire set of data, rather than for individual items:
-
-```csharp
-await MyStrings.ForEach(async(list, ct) => await PerformAction(items, ct));
-
-...
-
-private async ValueTask PerformAction(IImmutableList<string> items, CancellationToken ct)
-{
-    ...
-}
-
-```
-
-### Selection operators
-
-Like list-feed, list-state provides out-the-box support for Selection.
-This feature enables flagging single or multiple items in the State as 'selected'.
-
-Selection works seamlessly and automatically with the `ListView` and other selection controls.
-In case you need to select an item manually for example in response to a button pressed or when finding a searched item, you can use the following methods that enable manual changing of the Selection state of items in the list-state:
-
-#### TrySelectAsync
-
-The `TrySelectAsync` method attempts to find the first occurrence of the item or items passed in as an argument and flag it as 'selected'.
-
-This method comes in two flavors, one that accepts a single item to be selected, while the other one takes multiple.
-
-It returns a boolean value indicating if the desired selection item was found and has been selected.
-
-##### Single item selection
-
-```csharp
-IListState<string> Names => ...
-
-private ValueTask SelectCharlie(CancellationToken ct)
-{
-    bool selected = await Names.TrySelectAsync("charlie", ct);
-}
-```
-
-##### Multi-item selection
-
-```csharp
-IListState<string> Names => ...
-
-private ValueTask SelectCharlieAndJoe(CancellationToken ct)
-{
-    ImmutableList<string> charlieAndJoe = ImmutableList.Create("charlie", "joe");
-    bool selected = await Names.TrySelectAsync(charlieAndJoe, ct);
-}
-```
-
-#### ClearSelection
-
-The `ClearSelection` method clears the current selection and flags all items as 'not selected':
-
-```csharp
-await MyStrings.ClearSelection(cancellationToken);
-```
-
-### Subscribing to the selection
-
-You can create a Feed that reflects the currently selected item or items (when using multi-selection) of a Feed.
-This is explained in detail in the [Selection page](xref:Uno.Extensions.Mvux.Advanced.Selection).
+## See Also
+- [State basics](xref:Uno.Extensions.Mvux.States)
+- [Selection](xref:Uno.Extensions.Mvux.Advanced.Selection)
+- [Equality generation](xref:Uno.Extensions.Equality.concept#generation)
