@@ -118,8 +118,10 @@ When running the app, the top section will reflect the item the user selects in 
 
 ![A video demonstrating selection with MVUX](../Assets/Selection.gif)
 
+> [!WARNING]
+> The `ListView` does contain an existing Command invoked on `ItemClick`, the `ItemClickCommand`. When you want to use the `Selection(...)` operator of the `ListState` bound to another `State` like in the Sample above, the `SelectedPerson`, make sure to **not** set the `ItemClickCommand` property of the `ListView`, as it will interfere with the selection behavior and not update the selection State as expected. You have to choose either one of the two options.
 > [!NOTE]
-> The source code for the sample app can be found [GitHub](https://github.com/unoplatform/Uno.Samples/tree/master/UI/MvuxHowTos/SelectionPeopleApp).
+> The source code for the sample app can be found in the [SelectionPeopleApp in the Uno Samples Repository](https://github.com/unoplatform/Uno.Samples/tree/master/UI/MvuxHowTos/SelectionPeopleApp).
 
 ### Listening to the selected value
 
@@ -225,7 +227,7 @@ public partial record PeopleModel(IPeopleService PeopleService)
 Head to the View and enable multi-selection in the `ListView` by changing its `SelectionMode` property to `Multiple`.
 
 > [!NOTE]
-> The source code for the sample app can be found [here](https://github.com/unoplatform/Uno.Samples/tree/master/UI/MvuxHowTos/SelectionPeopleApp).
+> The source code for the sample app can be found in the [SelectionPeopleApp in the Uno Samples Repository](https://github.com/unoplatform/Uno.Samples/tree/master/UI/MvuxHowTos/SelectionPeopleApp).
 
 ## Manual selection
 
