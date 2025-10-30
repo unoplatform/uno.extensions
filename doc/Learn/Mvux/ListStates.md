@@ -172,7 +172,7 @@ public async ValueTask RenameMemberAsync(string modifiedMemberName, Cancellation
 }
 ```
 
-Differently to the previous examples where we worked with complex types like records that would support Instanciation with `new`, simple types like `string` can not. So to reach the replacement in this case, we drop the existing item by using `_ =>` and return the new value directly from the `updater` function.
+Differently to the previous examples where we worked with complex types like records that would support instantiation with `new`, simple types like `string` can not. So to reach the replacement in this case, we drop the existing item by using `_ =>` and return the new value directly from the `updater` function.
 
 #### `UpdateItemAsync` - Key-based selective Item Update
 
