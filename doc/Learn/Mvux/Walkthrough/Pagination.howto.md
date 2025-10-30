@@ -76,13 +76,13 @@ Key point: we don’t tell the view about paging; we give the view a feed that k
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
-	<ListView ItemsSource="{Binding PeopleFeed}">
-		<ListView.ItemTemplate>
-			<DataTemplate>
-				<TextBlock Text="{Binding FirstName}" />
-			</DataTemplate>
-		</ListView.ItemTemplate>
-	</ListView>
+    <ListView ItemsSource="{Binding PeopleFeed}">
+        <ListView.ItemTemplate>
+            <DataTemplate>
+                <TextBlock Text="{Binding FirstName}" />
+            </DataTemplate>
+        </ListView.ItemTemplate>
+    </ListView>
 </Page>
 ```
 
