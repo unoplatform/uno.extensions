@@ -42,14 +42,14 @@ so visually we only need to update the current item and not animate the removal 
 
 The implementation of this concept is located in the `Uno.Extensions.Equality` namespace.
 
-## IKeyEquatable<T>
+## `IKeyEquatable<T>`
 
 This is like `IEquatable<T>` but specialized for the _key_ comparison.
 
 When you implement this, you should compare only the keys of your object.
 
 > [!TIP]
-> You usually don't have to implement it by yourself, see [generation](#generation).
+> If you work with records you usually don't have to implement it by yourself, see [generation](#generation).
 
 ## KeyEqualityComparer
 
