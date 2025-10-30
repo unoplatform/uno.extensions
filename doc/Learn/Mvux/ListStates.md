@@ -241,5 +241,20 @@ await MyStrings.ClearSelection(cancellationToken);
 
 ### Subscribing to the selection
 
-You can create a Feed that reflects the currently selected item or items (when using multi-selection) of a Feed.
-This is explained in detail in the [Selection page](xref:Uno.Extensions.Mvux.Advanced.Selection).
+You can create a Feed that reflects the currently selected item or items (when using multi-selection) of a Feed or a State, if you want to have the `ForEach(...)` and `Update*` Support for this and more as listed above.
+
+The `Selection` Operator of the `IListState<T>` has automatic support for updating a State with its current selection.
+
+```csharp
+public IListState<string> Members => ListState<string>.Value(this, () => ImmutableList.Create([ ... ]))
+                                                      .Selection(SelectedMember);
+
+public IState<string> SelectedMember => State<string>.Value(this, () => string.Empty);
+```
+
+The main advantage of using a `ListState` over a `ListFeed` for selection is that the `ListState` does support things like Updating the List instead of requiring you to request a Refresh from the connected Service.
+
+> [!TIP]
+> The full capabilities of the `Selection` operator are explained in detail in the [Selection page](xref:Uno.Extensions.Mvux.Advanced.Selection) for applying on a `ListFeed`.
+> [!WARNING]
+> If you use the `ListView`-Control, make sure to **not** set the `ItemClickCommand` property of the `ListView` simultaneously to the `Selection(...)` operator of the `ListState`, as it will interfere with the selection behavior and not update the State you use to reflect the current selection as expected. You have to choose either one of the two options.
