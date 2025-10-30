@@ -40,6 +40,9 @@
     - name: Validation
       href: Learn/Validation/toc.yml
       topicHref: xref:Uno.Extensions.Validation.Overview
+    - name: KeyEquality
+      href: Learn/KeyEquality/toc.yml
+      topicHref: xref:Uno.Extensions.KeyEquality.Concept
     - name: Walkthroughs
       href: Learn/Walkthrough/toc.yml
 - name: C# Markup
