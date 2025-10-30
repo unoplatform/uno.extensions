@@ -115,6 +115,6 @@ To disable the generation for the whole project, set that attribute directly on 
 ```
 
 > [!IMPORTANT]
-> This disable only the generation based on implicit keys.
+> This disables only the generation based on implicit keys.
 > If you have a record that has a property flagged with the `[Key]` attribute,
 > the generator will still generate the `IKeyEquatable<T>` implementation for that type.
