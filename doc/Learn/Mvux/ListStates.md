@@ -54,7 +54,7 @@ public IListState<string> Favorites => ListState.Async(this, GetStrings);
 
 ### AsyncEnumerable
 
-Creates a list-state from an async enumerable method, thats capable of yielding multiple items instead of a single collection:
+Creates a list-state from an async enumerable method, that's capable of yielding multiple items instead of a single collection:
 
 ```csharp
 public async IAsyncEnumerable<IImmutableList<string>> GetStrings([EnumeratorCancellation] CancellationToken ct)
