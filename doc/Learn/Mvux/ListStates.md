@@ -136,7 +136,7 @@ public async ValueTask TrimLongNames(CancellationToken ct = default)
 
 #### `UpdateAllAsync` with simple types
 
-When working with simple types like `string`, you can use the `UpdateAllAsync` method to update multiple items based on a matching condition. Here's an example that demonstrates how to selectivly replace one or more items in a list of strings:
+When working with simple types like `string`, you can use the `UpdateAllAsync` method to update multiple items based on a matching condition. Here's an example that demonstrates how to selectively replace one or more items in a list of strings:
 
 ```csharp
 public IListState<string> Members => ListState<string>.Value(this,
