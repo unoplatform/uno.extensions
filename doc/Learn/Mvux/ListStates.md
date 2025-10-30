@@ -162,7 +162,7 @@ public async ValueTask RenameMemberAsync(string modifiedMemberName, Cancellation
     if (string.IsNullOrWhiteSpace(modifiedMemberName))
         return;
 
-    await DashboardList.UpdateAllAsync(
+    await Members.UpdateAllAsync(
         match: item => item == replaceMember,
         updater: _ => modifiedMemberName,
         ct: ct
