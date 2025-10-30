@@ -66,7 +66,7 @@ The `IKeyEquatable<T>` implementation is automatically generated for `partial re
 
 ### How to configure keys?
 
-You have several way to configure the keys:
+You have several ways to configure the keys:
 
 1. Add the `[Key]` attribute on properties that should be used for _key equality_.
 
