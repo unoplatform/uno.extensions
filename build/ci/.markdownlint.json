@@ -1,10 +1,13 @@
-﻿{
-	"default": true,
-	"line-length": false,
-	"commands-show-output": false,
-	"no-bare-urls": false,
-	"no-inline-html": false,
-	"no-duplicate-heading": false,
-	"MD023": false,
-	"MD051": false
+{
+        "default": true,
+        "line-length": false,
+        "commands-show-output": false,
+        "no-bare-urls": false,
+        "no-inline-html": false,
+        "no-duplicate-heading": false,
+        "MD023": false,
+        "MD025": {
+                "front_matter_title": ""
+        },
+        "MD051": false
 }
