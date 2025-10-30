@@ -101,7 +101,7 @@ You have several ways to configure the keys:
 
     > [!IMPORTANT]
     > The generation of `IKeyEquatable<T>` using implicit keys will use only **one** matching property.
-    > The properties a tested in the order in which they have been defined on the `[ImplicitKeyEquality]` attribute.
+    > The properties are tested in the order in which they have been defined on the `[ImplicitKeyEquality]` attribute.
     > This means that in the example above, if a record have 2 properties `Id` and `EntityId`, only the property named `Id` will be used.
 
 ## How to disable generation?
