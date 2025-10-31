@@ -42,7 +42,7 @@ protected override void OnLaunched(LaunchActivatedEventArgs args)
 }
 ```
 
-2. The app now knows how to authenticate using OIDC. The actual provider configuration is done in app settings (see next how-to).
+1. The app now knows how to authenticate using OIDC. The actual provider configuration is done in app settings (see next how-to).
 
 **What this gives you**
 
@@ -51,7 +51,7 @@ protected override void OnLaunched(LaunchActivatedEventArgs args)
 
 ---
 
-# 2. Store OIDC settings in configuration
+## 2. Store OIDC settings in configuration
 
 **Goal:** configure the OIDC provider (authority, client id, scopes) from `appsettings.json` (or equivalent).
 
@@ -78,7 +78,7 @@ protected override void OnLaunched(LaunchActivatedEventArgs args)
 * `Scope`: include `openid` at minimum; add `profile`, `email`, `offline_access` if needed. ([Uno Platform][1])
 * `RedirectUri`: must match what the IdP knows.
 
-2. Make sure your host builder loads configuration (the Uno.Extensions template already does).
+1. Make sure your host builder loads configuration (the Uno.Extensions template already does).
 
 **Why a fixed name?**
 
@@ -86,7 +86,7 @@ protected override void OnLaunched(LaunchActivatedEventArgs args)
 
 ---
 
-# 3. Generate redirect URI automatically
+## 3. Generate redirect URI automatically
 
 **Goal:** avoid hardcoding `RedirectUri` and let the platform give it to you.
 
@@ -115,7 +115,7 @@ host
 
 ---
 
-# 4. Show a “Sign in” button in XAML
+## 4. Show a “Sign in” button in XAML
 
 **Goal:** let the user tap a button and run the authentication flow.
 
@@ -163,7 +163,7 @@ public partial class MainViewModel
 
 ---
 
-# 5. Customize OIDC client options
+## 5. Customize OIDC client options
 
 **Goal:** tweak low-level OIDC behavior (discovery, PAR, policies).
 
@@ -198,7 +198,7 @@ host
 
 ---
 
-# 6. Use a custom browser for sign-in
+## 6. Use a custom browser for sign-in
 
 **Goal:** control how the sign-in UI is shown (in-app, system browser, custom wrapper).
 
@@ -218,7 +218,7 @@ public class CustomBrowser : IBrowser
 }
 ```
 
-2. Register it in app builder:
+1. Register it in app builder:
 
 ```csharp
 .ConfigureServices((context, services) =>
@@ -234,7 +234,7 @@ public class CustomBrowser : IBrowser
 
 ---
 
-# 7. Make sure the app is registered in the IdP
+## 7. Make sure the app is registered in the IdP
 
 **Goal:** ensure the OIDC flow can complete.
 
@@ -249,7 +249,7 @@ If any of these are missing, the OIDC provider in Uno.Extensions will start but 
 
 ---
 
-# 8. Quick FAQ (RAG-friendly)
+## 8. Quick FAQ (RAG-friendly)
 
 **Q: Where do I turn on authentication?**
 A: In the host builder: `.UseAuthentication(auth => auth.AddOidc());` ([Uno Platform][1])

@@ -4,7 +4,7 @@
 This how-to shows how to let users sign in with their Microsoft identity in an Uno Platform app using **Uno.Extensions** and **MSAL**.
 
 > Depends on NuGet:
-
+>
 > - Uno.Extensions.Authentication.Msal.WinUI (or the meta package that brings it in)
 > - Microsoft.Identity.Client (transitive)
 
@@ -116,5 +116,3 @@ public class MainViewModel : ObservableObject
 ```
 
 This triggers the MSAL flow. Token is cached and refreshed automatically.
-
-[1]: https://platform.uno/docs/articles/external/uno.extensions/doc/Learn/Authentication/HowTo-MsalAuthentication.html "How-To: Get Started with MSAL Authentication "
