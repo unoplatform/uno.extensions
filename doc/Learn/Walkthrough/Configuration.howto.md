@@ -1,5 +1,5 @@
 ---
-uid: Uno.Extensions.Configuration.Configuration
+uid: Uno.Extensions.Configuration.Configuration.HowTo
 title: Load Configuration Sections
 tags: [configuration, appsettings, options]
 ---

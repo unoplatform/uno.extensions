@@ -1,5 +1,5 @@
 ---
-uid: Uno.Extensions.Hosting.HostingSetup
+uid: Uno.Extensions.Hosting.HostingSetup.HowTo
 title: Configure Uno Hosting
 tags: [hosting, dependency-injection, startup]
 ---

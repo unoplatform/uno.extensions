@@ -1,5 +1,5 @@
 ---
-uid: Uno.Extensions.Logging.InternalLogging
+uid: Uno.Extensions.Logging.InternalLogging.HowTo
 title: Tune Internal Logging
 tags: [logging, diagnostics, uno-internals]
 ---

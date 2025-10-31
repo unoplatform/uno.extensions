@@ -1,5 +1,5 @@
 ---
-uid: Uno.Extensions.Storage.RequiredEntitlements
+uid: Uno.Extensions.Storage.RequiredEntitlements.HowTo
 title: Enable Keychain Entitlements
 tags: [storage, ios, mac-catalyst, entitlements]
 ---

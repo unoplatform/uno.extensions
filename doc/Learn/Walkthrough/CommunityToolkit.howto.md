@@ -1,5 +1,5 @@
 ---
-uid: Uno.Extensions.DependencyInjection.CommunityToolkit
+uid: Uno.Extensions.DependencyInjection.CommunityToolkit.HowTo
 title: Use CommunityToolkit IoC
 tags: [dependency-injection, toolkit, ioc]
 ---

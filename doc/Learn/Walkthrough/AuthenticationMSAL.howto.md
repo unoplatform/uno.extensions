@@ -1,3 +1,8 @@
+---
+uid: Uno.Extensions.Authentication.Msal.HowTo
+title: Authenticate Users with MSAL
+tags: [authentication, msal, navigation]
+---
 
 # Sign in with Microsoft account (MSAL)
 

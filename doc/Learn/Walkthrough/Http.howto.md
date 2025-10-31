@@ -1,5 +1,5 @@
 ---
-uid: Uno.Extensions.Http.Http
+uid: Uno.Extensions.Http.Http.HowTo
 title: Centralize HTTP Endpoints
 tags: [http, configuration, typed-client]
 ---

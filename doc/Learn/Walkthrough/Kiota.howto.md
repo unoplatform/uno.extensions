@@ -1,5 +1,5 @@
 ---
-uid: Uno.Extensions.Http.Kiota
+uid: Uno.Extensions.Http.Kiota.HowTo
 title: Generate Kiota Clients
 tags: [http, kiota, openapi, typed-client]
 ---

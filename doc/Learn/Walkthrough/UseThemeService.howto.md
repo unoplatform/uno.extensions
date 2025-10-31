@@ -1,5 +1,5 @@
 ---
-uid: Uno.Extensions.ThemeService.UseThemeService
+uid: Uno.Extensions.ThemeService.UseThemeService.HowTo
 title: Switch Themes at Runtime
 tags: [theme, ui, personalization]
 ---

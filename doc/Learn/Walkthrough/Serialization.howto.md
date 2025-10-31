@@ -1,5 +1,5 @@
 ---
-uid: Uno.Extensions.Serialization.Serialization
+uid: Uno.Extensions.Serialization.Serialization.HowTo
 title: Serialize JSON with Source Generators
 tags: [serialization, json, system-text-json]
 ---

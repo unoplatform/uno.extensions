@@ -1,5 +1,5 @@
 ---
-uid: Uno.Extensions.Configuration.WritableConfiguration
+uid: Uno.Extensions.Configuration.WritableConfiguration.HowTo
 title: Persist Writable Settings
 tags: [configuration, writable, options]
 ---

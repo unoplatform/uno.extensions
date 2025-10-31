@@ -1,5 +1,5 @@
 ---
-uid: Uno.Extensions.Http.HttpEndpointOptions
+uid: Uno.Extensions.Http.HttpEndpointOptions.HowTo
 title: Customize Endpoint Options
 tags: [http, configuration, headers, endpoint-options]
 ---

@@ -1,5 +1,5 @@
 ---
-uid: Uno.Extensions.Http.Refit
+uid: Uno.Extensions.Http.Refit.HowTo
 title: Build Refit Clients
 tags: [http, refit, typed-client, configuration]
 ---

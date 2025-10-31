@@ -1,3 +1,8 @@
+---
+uid: Uno.Extensions.Authentication.Oidc.HowTo
+title: Authenticate Users with OIDC
+tags: [authentication, oidc, navigation]
+---
 
 # Let users sign in with OIDC
 

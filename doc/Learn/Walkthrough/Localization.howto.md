@@ -1,5 +1,5 @@
 ---
-uid: Uno.Extensions.Localization.Localization
+uid: Uno.Extensions.Localization.Localization.HowTo
 title: Localize Your App
 tags: [localization, globalization, string-localizer]
 ---

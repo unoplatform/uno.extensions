@@ -1,5 +1,5 @@
 ---
-uid: Uno.Extensions.Logging.Logging
+uid: Uno.Extensions.Logging.Logging.HowTo
 title: Add Structured Logging
 tags: [logging, diagnostics, observability]
 ---

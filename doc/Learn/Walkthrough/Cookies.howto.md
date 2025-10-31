@@ -1,5 +1,5 @@
 ---
-uid: Uno.Extensions.Authentication.CookieAuthorization
+uid: Uno.Extensions.Authentication.CookieAuthorization.HowTo
 title: Persist Auth Tokens in Cookies
 tags: [authentication, cookies, tokens]
 ---

@@ -1,5 +1,5 @@
 ---
-uid: Uno.Extensions.DependencyInjection.DependencyInjection
+uid: Uno.Extensions.DependencyInjection.DependencyInjection.HowTo
 title: Register and Consume Services
 tags: [dependency-injection, services]
 ---
