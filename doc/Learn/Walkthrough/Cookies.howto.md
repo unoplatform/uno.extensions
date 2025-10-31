@@ -1,6 +1,6 @@
 ---
 uid: Uno.Extensions.Authentication.CookieAuthorization
-title: Persist Tokens in Cookies
+title: Persist Auth Tokens in Cookies
 tags: [authentication, cookies, tokens]
 ---
 # Reuse authentication tokens stored in cookies
