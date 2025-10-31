@@ -9,5 +9,6 @@
         "MD025": {
                 "front_matter_title": ""
         },
-        "MD051": false
+        "MD051": false,
+        "no-emphasis-as-heading": false
 }
