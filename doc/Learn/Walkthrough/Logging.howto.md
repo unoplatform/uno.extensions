@@ -68,5 +68,5 @@ Log at the appropriate level (`LogDebug`, `LogWarning`, `LogError`, etc.) to con
 ## Resources
 
 - [Logging overview](xref:Uno.Extensions.Logging.Overview)
-- [Internal logging configuration](xref:Uno.Extensions.Logging.Internal)
+- [Internal logging configuration](xref:Uno.Extensions.Logging.UseInternalLogging)
 - [Microsoft.Extensions.Logging documentation](https://learn.microsoft.com/dotnet/core/extensions/logging)
