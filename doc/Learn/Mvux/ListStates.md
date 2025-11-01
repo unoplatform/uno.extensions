@@ -246,8 +246,12 @@ You can create a Feed that reflects the currently selected item or items (when u
 The `Selection` Operator of the `IListState<T>` has automatic support for updating a State with its current selection.
 
 ```csharp
-public IListState<string> Members => ListState<string>.Value(this, () => ImmutableList.Create([ ... ]))
-                                                      .Selection(SelectedMember);
+public IListState<string> Members => ListState<string>.Value(this,
+    () => ImmutableList.Create(
+    [
+      ... 
+    ])
+    ).Selection(SelectedMember);
 
 public IState<string> SelectedMember => State<string>.Value(this, () => string.Empty);
 ```
@@ -257,4 +261,4 @@ The main advantage of using a `ListState` over a `ListFeed` for selection is tha
 > [!TIP]
 > The full capabilities of the `Selection` operator are explained in detail in the [Selection page](xref:Uno.Extensions.Mvux.Advanced.Selection) for applying on a `ListFeed`.
 > [!WARNING]
-> If you use the `ListView`-Control, make sure to **not** set the `ItemClickCommand` property of the `ListView` simultaneously to the `Selection(...)` operator of the `ListState`, as it will interfere with the selection behavior and not update the State you use to reflect the current selection as expected. You have to choose either one of the two options.
+> If you use the `ListView`-Control, the `SelectedPerson`, make sure to **not** set both, the `ItemClickCommand` property of the `ListView` **and** the `.Selection(...)` operator, as it may will not update the selection State as expected or not trigger both Commands.
