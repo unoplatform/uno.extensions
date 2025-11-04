@@ -6,7 +6,7 @@ tags: [uno, uno-platform, uno-extensions, navigation, routes, RouteMap, ViewMap,
 
 # Define Navigation Routes
 
-## Register views and routes
+## Register Navigation Views and Routes
 
 ```csharp
 private static void RegisterRoutes(IViewRegistry views, IRouteRegistry routes)

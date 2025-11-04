@@ -21,7 +21,7 @@ tags: [uno, uno-platform, uno-extensions, uno-toolkit, navigation, TabBar, TabBa
           xmlns:utu="using:Uno.Toolkit.UI">
     ```
 
-## Define Layout
+## Set Up Tabbar for page navigation
 
 Create the basic structure with TabBar and content areas.
 
@@ -76,7 +76,7 @@ Create the basic structure with TabBar and content areas.
     </utu:TabBar>
     ```
 
-## Set Up Regions
+## Set Up Regions and link Tabbar items with page content
 
 Enable region navigation for TabBar.
 
