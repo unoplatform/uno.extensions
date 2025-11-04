@@ -1,12 +1,12 @@
 ---
 uid: Uno.Extensions.Navigation.Walkthrough.DefineRegions
 title: Define Navigation Regions
-tags: [uno, uno-platform, uno-extensions, navigation, regions, Region.Attached, Region.Navigator, Region.Name, NavigationView, TabBar, Visibility, nested-navigation, attached-properties, region-definition, region-based-navigation, content-switching, inline-content, route-based-content, hierarchical-frames, region-frames, NavigationViewItem, TabBarItem, region-mapping, content-visibility, region-navigator, Uno.Toolkit]
+tags: [uno, uno-platform, uno-extensions, navigation, regions, Region.Attached, Region.Navigator, Region.Name, NavigationView, TabBar, Visibility, nested-navigation, attached-properties, region-definition, region-based-navigation, content-switching, inline-content, route-based-content, region-frames, NavigationViewItem, TabBarItem, region-mapping, content-visibility, region-navigator, Uno.Toolkit]
 ---
 
-# Define Navigation Regions
+# Navigate between regions inside the same page (Region-based navigation)
 
-## Link navigation control with content
+## Link navigation control with content using regions
 
 ```xml
 <Grid uen:Region.Attached="True">
