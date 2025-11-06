@@ -9,7 +9,7 @@ Describe your REST API with a Refit interface, register it once, and let Uno Ext
 
 ## Enable Refit support
 
-Add the `HttpRefit` feature so the project references `Uno.Extensions.Http.Refit`.
+Add the `HttpRefit` UnoFeature so the project references `Uno.Extensions.Http.Refit`.
 
 ```diff
 <UnoFeatures>

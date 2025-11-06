@@ -2,10 +2,7 @@
 
 **Goal:** UI shows a list of stocks that keeps changing because the data is *pushed* (not polled by the UI).
 
-**Dependencies:**
-
-* `Uno.Extensions`
-* `Uno.Extensions.Reactive` (for `IFeed<T>`, `IListFeed<T>`, `ListFeed`)
+Requires the `MVUX` UnoFeature.
 
 **Model**
 

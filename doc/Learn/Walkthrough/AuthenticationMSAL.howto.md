@@ -8,10 +8,7 @@ tags: [authentication, msal, navigation]
 
 This how-to shows how to let users sign in with their Microsoft identity in an Uno Platform app using **Uno.Extensions** and **MSAL**.
 
-> Depends on NuGet:
->
-> - Uno.Extensions.Authentication.Msal.WinUI (or the meta package that brings it in)
-> - Microsoft.Identity.Client (transitive)
+Requires the `AuthenticationMsal` UnoFeature
 
 ## 1. Register the app in Entra ID
 

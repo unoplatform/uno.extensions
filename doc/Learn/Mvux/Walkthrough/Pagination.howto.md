@@ -11,7 +11,7 @@ Use this when you just want “user scrolls → list asks for more” and your d
 
 * An MVUX **feed** that implements `ISupportIncrementalLoading` (MVUX does that for you when you use paginated feeds).
 * A list control that knows incremental loading, like **ListView** / **GridView**. The doc page calls this the “easiest and most straight-forward” way. ([Uno Platform][1])
-* Package: `Uno.Extensions.Reactive` (comes with MVUX features).
+* Requires the `MVUX` UnoFeature.
 
 ### 1. Make the service accept paging
 
@@ -210,7 +210,7 @@ Both the original MVUX doc and the Toolkit ItemsRepeater doc expose **progress /
 
 Bind to `IsLoading` (see how-to #2) and show a footer spinner.
 
-[1]: https://platform.uno/docs/articles/external/uno.extensions/doc/Learn/Mvux/Advanced/Pagination.html?utm_source=chatgpt.com "Pagination"
-[2]: https://platform.uno/docs/articles/external/uno.toolkit.ui/doc/helpers/itemsrepeater-extensions.html?utm_source=chatgpt.com "ItemsRepeater Extensions"
-[3]: https://platform.uno/docs/articles/external/workshops/tube-player/modules/08-Add-API-endpoints/README.html?utm_source=chatgpt.com "Module 8 - Add API endpoints"
-[4]: https://platform.uno/docs/articles/external/uno.extensions/doc/Overview/Mvux/FeedView.html?utm_source=chatgpt.com "The FeedView control"
+[1]: https://platform.uno/docs/articles/external/uno.extensions/doc/Learn/Mvux/Advanced/Pagination.html "Pagination"
+[2]: https://platform.uno/docs/articles/external/uno.toolkit.ui/doc/helpers/itemsrepeater-extensions.html "ItemsRepeater Extensions"
+[3]: https://platform.uno/docs/articles/external/workshops/tube-player/modules/08-Add-API-endpoints/README.html "Module 8 - Add API endpoints"
+[4]: https://platform.uno/docs/articles/external/uno.extensions/doc/Overview/Mvux/FeedView.html "The FeedView control"
