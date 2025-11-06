@@ -22,7 +22,7 @@ Store per-endpoint details—like API keys or tenant identifiers—so they can b
 
 ## Enable HTTP endpoints
 
-Add the base `Http` feature to bring in `Uno.Extensions.Http.WinUI`.
+Add the base `Http` UnoFeature to bring in `Uno.Extensions.Http.WinUI`.
 
 ```diff
 <UnoFeatures>

@@ -5,13 +5,7 @@ uid: Uno.Extensions.Mvux.ListFeed.HowTo
 
 These how-tos show how to **load a collection from a service**, **show it with `FeedView`**, and **filter it with MVUX** using Uno.Extensions.
 
-> **NuGet to mention (per how-to):**
->
-> * `Uno.Extensions.Reactive`
-> * `Uno.Extensions.Serialization` (if you fetch from HTTP / want serialization)
-> * `Uno.Extensions.Http` (if later you swap to HTTP)
->
-> For the basic in-memory examples below, **`Uno.Extensions.Reactive`** is the important one.
+Requires the `MVUX` UnoFeature.
 
 ---
 

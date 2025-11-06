@@ -5,10 +5,9 @@ uid: Uno.Extensions.Mvux.FeedView.HowTo
 
 **Goal:** render the current value of an `IFeed<T>` or `IState<T>` in XAML.
 
-**Dependencies**
+Requires the `MVUX` UnoFeature.
 
-* NuGet: `Uno.Extensions.Reactive.UI`
-* XAML namespace:
+XAML namespace:
 
 ```xml
 <Page

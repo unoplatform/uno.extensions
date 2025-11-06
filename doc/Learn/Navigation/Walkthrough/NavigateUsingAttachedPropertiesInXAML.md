@@ -44,6 +44,60 @@ public class SampleViewModel
         uen:Navigation.Request="-" />
 ```
 
+## Navigate from ListView item selection
+
+Use `Navigation.Request` on ListView to navigate when an item is selected.
+
+```xml
+<ListView ItemsSource="{Binding Cities}"
+          uen:Navigation.Request="CityDetails">
+    <ListView.ItemTemplate>
+        <DataTemplate>
+            <TextBlock Text="{Binding Name}" />
+        </DataTemplate>
+    </ListView.ItemTemplate>
+</ListView>
+```
+
+Selected item is automatically passed as navigation data.
+
+## Navigate from ItemsRepeater item click
+
+Use `Navigation.Request` directly on ItemsRepeater to navigate when an item is clicked.
+
+```xml
+<ItemsRepeater ItemsSource="{Binding Cities}"
+               uen:Navigation.Request="CityDetails">
+    <ItemsRepeater.ItemTemplate>
+        <DataTemplate x:DataType="models:City">
+            <StackPanel Margin="0,0,0,8">
+                <TextBlock Text="{x:Bind Name}" />
+                <TextBlock Text="{x:Bind Population}" />
+            </StackPanel>
+        </DataTemplate>
+    </ItemsRepeater.ItemTemplate>
+</ItemsRepeater>
+```
+
+Clicked item is automatically passed as navigation data.
+
+## Navigate from GridView item click
+
+```xml
+<GridView ItemsSource="{Binding Products}"
+          uen:Navigation.Request="ProductDetails">
+    <GridView.ItemTemplate>
+        <DataTemplate>
+            <Grid Width="150" Height="150">
+                <Image Source="{Binding ImageUrl}" />
+                <TextBlock Text="{Binding Name}" 
+                           VerticalAlignment="Bottom" />
+            </Grid>
+        </DataTemplate>
+    </GridView.ItemTemplate>
+</GridView>
+```
+
 ## Pass data between pages
 
 Pass data with navigation requests using `Navigation.Data` attached property.

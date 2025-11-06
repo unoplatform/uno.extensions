@@ -9,7 +9,7 @@ Use Uno configuration to hydrate strongly typed options from embedded `appsettin
 
 ## Enable configuration support
 
-Add the `Configuration` feature (included automatically when `Extensions` is enabled).
+Add the `Configuration` UnoFeature (included automatically when `Extensions` is enabled).
 
 ```diff
 <UnoFeatures>
