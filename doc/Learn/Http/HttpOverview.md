@@ -142,6 +142,12 @@ protected override void OnLaunched(LaunchActivatedEventArgs args)
 
 For more information on using Kiota to generate and register your client see the [How-To: Create and register a Kiota client for an API](xref:Uno.Extensions.Http.HowToKiota) guide.
 
+## Uno Extensions Http IAuthenticationTokenProvider
+
+By using the `IAuthenticationTokenProvider` interface, you can easily manage authentication tokens in your Uno application. This interface definition coming from the `Uno.Extensions.Http` namespace is containing the `GetAccessToken` Method which allows you to retrieve the access token using `Refit` Extension for example or create your own implementation.
+
+You can find a sample usage for its `SimpleAuthenticationToken` Implementation in the [`Uno.Extensions.Playground` Project](https://github.com/unoplatform/uno.extensions/blob/main/samples/Playground/Playground/AppHost.cs#L47)
+
 ## References
 
 - [How-To: Consume a web API with HttpClient](xref:Uno.Development.ConsumeWebApi)
@@ -150,7 +156,11 @@ For more information on using Kiota to generate and register your client see the
 - [How-To: Create a Strongly-Typed REST Client for an API](xref:Uno.Extensions.Http.HowToRefit)
 - [Overview: Use HttpClientFactory to implement resilient HTTP requests](https://learn.microsoft.com/dotnet/architecture/microservices/implement-resilient-applications/use-httpclientfactory-to-implement-resilient-http-requests#benefits-of-using-ihttpclientfactory)
 - [Overview: Delegating handlers](https://learn.microsoft.com/aspnet/web-api/overview/advanced/http-message-handlers)
+- [Extending HttpClient with delegating handlers in ASP.NET Core](https://www.milanjovanovic.tech/blog/extending-httpclient-with-delegating-handlers-in-aspnetcore) which could also be used with the Uno Templates contained Sample of the Delegating Handler!
 - [Overview: Polly and HttpClientFactory](https://github.com/App-vNext/Polly/wiki/Polly-and-HttpClientFactory)
 - [Overview: What is Refit?](https://github.com/reactiveui/refit)
 - [Overview: What is Kiota?](https://learn.microsoft.com/en-us/openapi/kiota/)
 - [Explore: TestHarness HTTP](https://github.com/unoplatform/uno.extensions/tree/main/testing/TestHarness/TestHarness/Ext/Http/)
+- [Using HTTP/3 with Http Client](https://learn.microsoft.com/en-us/dotnet/core/extensions/httpclient-http3)
+- [The System.Net.Http.HttpClient Class](https://learn.microsoft.com/en-us/dotnet/fundamentals/runtime-libraries/system-net-http-httpclient)
+- [The System.Net.Http.HttpListener Class](https://learn.microsoft.com/en-us/dotnet/fundamentals/runtime-libraries/system-net-httplistener)
