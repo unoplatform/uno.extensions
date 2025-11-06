@@ -5,11 +5,7 @@ uid: Uno.Extensions.Mvux.SimpleState.HowTo
 
 **Goal:** load a single value from an async service into an MVUX `IState<T>` and show it in the UI.
 
-**Dependencies**
-
-* `Uno.Extensions`
-* `Uno.Extensions.Reactive`
-* Your project created with MVUX template (any recent Uno.Extensions MVUX app is fine).
+Requires the `MVUX` UnoFeature.
 
 **Model**
 

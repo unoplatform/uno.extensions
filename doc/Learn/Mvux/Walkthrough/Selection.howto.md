@@ -9,7 +9,7 @@ uid: Uno.Extensions.Mvux.Selection.HowTo
 
 ## What you need
 
-* NuGet: `Uno.Extensions.Reactive`
+* The `MVUX` Uno Feature.
 * A model that exposes an `IListFeed<Person>`
 
 ```csharp
@@ -34,7 +34,7 @@ public partial record PeopleModel(IPeopleService PeopleService)
     public IListFeed<Person> People =>
         ListFeed
             .Async(PeopleService.GetPeopleAsync)
-            .Selection(SelectedPerson); // 👈 connects UI selection to state
+            .Selection(SelectedPerson); // connects UI selection to state
 
     public IState<Person?> SelectedPerson => State<Person?>.Empty(this);
 }

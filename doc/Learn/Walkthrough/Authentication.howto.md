@@ -4,30 +4,12 @@ title: Authenticate Users with Custom Logic
 tags: [authentication, custom-login, navigation]
 ---
 
-Here’s a RAG-friendly, outcome-first rewrite of that page, split into small, single-purpose how-tos.
-
-Each how-to:
-
-* starts with the **outcome** (not the API name),
-* has minimal prerequisites,
-* shows the code right away,
-* doesn’t branch (“if you want X, else Y…” → separate how-tos instead),
-* and repeats bits on purpose so each chunk can stand alone.
-
-Source for all of this: ([Uno Platform][1])
-
----
-
 ## 1. Sign in with a hard-coded user
 
 **Goal**
 Accept a username, check it yourself (no server), and mark the user as authenticated.
 
-**Dependencies**
-
-* `Uno.Extensions.Authentication`
-* `Uno.Extensions.Hosting`
-* `Uno.Extensions.Navigation` (to navigate after login)
+Requires the `Authentication` UnoFeature.
 
 **1. Enable Authentication feature in the shared .csproj**
 
@@ -141,10 +123,7 @@ Notes:
 **Goal**
 When the app starts, check if we have stored credentials; if yes, go straight to the “signed-in” view.
 
-**Dependencies**
-
-* `Uno.Extensions.Authentication`
-* `Uno.Extensions.Navigation`
+Requires the `Authentication` UnoFeature.
 
 **1. In your shell/root viewmodel, refresh at startup**
 
@@ -204,10 +183,7 @@ routes
 **Goal**
 After a successful login, go to a page/viewmodel that needs an authenticated user.
 
-**Dependencies**
-
-* `Uno.Extensions.Navigation`
-* Auth already configured (see How-to 1)
+Requires the `Authentication` UnoFeature.
 
 **Viewmodel**
 
@@ -236,12 +212,9 @@ This is the minimal “login → go somewhere” pattern. ([Uno Platform][1])
 ## 4. Sign out from a protected page
 
 **Goal**
-Show a **Logout** button on a page that’s only useful when the user is signed in.
+Show a **Logout** button on a page that's only useful when the user is signed in.
 
-**Dependencies**
-
-* `Uno.Extensions.Authentication`
-* `Uno.Extensions.Navigation` (optional, if you want to navigate after logout)
+Requires the `Authentication` UnoFeature.
 
 **1. Add a Logout button to the page**
 
@@ -278,14 +251,9 @@ Why record? The original doc uses a record for brevity, but a class is fine too.
 ## 5. Sign in by calling a backend (Refit)
 
 **Goal**
-Instead of validating “Bob” locally, call a real (or demo) API and store the returned token.
+Instead of validating "Bob" locally, call a real (or demo) API and store the returned token.
 
-**Dependencies**
-
-* `Uno.Extensions.Authentication`
-* `Uno.Extensions.Http`
-* `Refit` (brought in by the Uno HTTP extension)
-* `Uno.Extensions.Navigation`
+Requires the `Authentication` and `HttpRefit` UnoFeatures.
 
 **1. Enable HTTP in the .csproj**
 

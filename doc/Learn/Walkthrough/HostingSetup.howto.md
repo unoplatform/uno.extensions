@@ -9,7 +9,7 @@ Create an Uno host so you can register services, windows, and features through a
 
 ## Enable the hosting feature
 
-Add `Hosting` to pull in `Uno.Extensions.Hosting` (already included when `Extensions` is enabled).
+Add the `Hosting` UnoFeature to pull in `Uno.Extensions.Hosting` (already included when `Extensions` is enabled).
 
 ```diff
 <UnoFeatures>

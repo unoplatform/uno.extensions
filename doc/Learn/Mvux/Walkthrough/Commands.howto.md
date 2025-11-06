@@ -5,14 +5,12 @@ uid: Uno.Extensions.Mvux.Commands.HowTo
 
 **Outcome:** A public method on your MVUX model shows up in the ViewModel as a command and can be bound to a `<Button>`.
 
-**Dependencies**
-
-* `Uno.Extensions.Reactive` (or the umbrella Uno.Extensions package your app already uses)
+Requires the `MVUX` UnoFeature.
 
 **When to use**
 
 * You have a model method like `Save()` or `DoWork()` and you just want a button to call it.
-* You don’t want to hand-write an `ICommand`.
+* You don't want to hand-write an `ICommand`.
 
 ## Steps
 
@@ -58,10 +56,6 @@ uid: Uno.Extensions.Mvux.Commands.HowTo
 
 **Outcome:** Button disables while your async method runs.
 
-**Dependencies**
-
-* `Uno.Extensions.Reactive`
-
 ### Steps
 
 1. **Async method on the model**
@@ -98,11 +92,7 @@ uid: Uno.Extensions.Mvux.Commands.HowTo
 
 ### Pass a value from the view to the model command
 
-**Outcome:** You click a button and the model method receives the button’s `CommandParameter`.
-
-**Dependencies**
-
-* `Uno.Extensions.Reactive`
+**Outcome:** You click a button and the model method receives the button's `CommandParameter`.
 
 ### Steps
 
@@ -151,10 +141,6 @@ uid: Uno.Extensions.Mvux.Commands.HowTo
 ### Use the latest feed value when a command runs
 
 **Outcome:** Your method parameter is auto-filled with the current value of a feed on the same model.
-
-**Dependencies**
-
-* `Uno.Extensions.Reactive`
 
 ### When to use
 
@@ -216,10 +202,6 @@ public void ResetCounter([FeedParameter(nameof(CounterValue))] int newValue)
 
 **Outcome:** Public methods stay as methods on the ViewModel; commands are not generated.
 
-**Dependencies**
-
-* `Uno.Extensions.Reactive`
-
 ### Option A – turn off on a method
 
 ```csharp
@@ -265,10 +247,6 @@ using Uno.Extensions.Reactive;
 
 **Outcome:** Even if commands are globally disabled, this method still becomes a command.
 
-**Dependencies**
-
-* `Uno.Extensions.Reactive`
-
 ### Steps
 
 1. **Disable globally**
@@ -304,11 +282,10 @@ using Uno.Extensions.Reactive;
 
 **Outcome:** An event like `DoubleTapped` can trigger a generated command and pass a parameter.
 
-**Dependencies**
+Requires:
 
 * `Uno.Microsoft.Xaml.Behaviors.Interactivity.WinUI`
 * `Uno.Microsoft.Xaml.Behaviors.WinUI.Managed`
-* `Uno.Extensions.Reactive`
 
 ### Steps
 
@@ -353,13 +330,9 @@ using Uno.Extensions.Reactive;
 
 **Outcome:** You hand-build a command in the model for special scenarios.
 
-**Dependencies**
-
-* `Uno.Extensions.Reactive`
-
 ### When to use
 
-* You need a command that doesn’t come from a public method.
+* You need a command that doesn't come from a public method.
 * You want fine control over what `CanExecute` or parameters are.
 
 ### Example
@@ -398,10 +371,6 @@ public partial record MyModel
 ### Create a command that uses feed value + can-execute + async work
 
 **Outcome:** Command takes the current feed value, checks a condition, then runs.
-
-**Dependencies**
-
-* `Uno.Extensions.Reactive`
 
 ### Example
 
@@ -460,4 +429,4 @@ public IAsyncCommand MethodName { get; }
 
 ---
 
-[1]: https://platform.uno/docs/articles/external/uno.extensions/doc/Learn/Mvux/Advanced/Commands.html?utm_source=chatgpt.com "Commands"
+[1]: https://platform.uno/docs/articles/external/uno.extensions/doc/Learn/Mvux/Advanced/Commands.html "Commands"

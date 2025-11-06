@@ -9,7 +9,7 @@ Enable Uno logging so platform-specific providers capture diagnostic information
 
 ## Enable logging support
 
-Add the `Logging` feature to include `Uno.Extensions.Logging`.
+Add the `Logging` UnoFeature to include `Uno.Extensions.Logging`.
 
 ```diff
 <UnoFeatures>

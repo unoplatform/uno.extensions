@@ -8,12 +8,8 @@ tags: [authentication, oidc, navigation]
 
 **Goal:** enable sign-in against an OpenID Connect (OIDC) provider in an Uno.Extensions app.
 
-**Dependencies**
-
-```xml
-
-* NuGet: `Uno.Extensions.Authentication.Oidc.WinUI` (or the package that brings OIDC for your template)
-* In your shared `.csproj`, add the feature:
+Requires the `AuthenticationOidc` UnoFeature
+Enable the feature in your shared `.csproj`:
 
 ```xml
 <UnoFeatures>
