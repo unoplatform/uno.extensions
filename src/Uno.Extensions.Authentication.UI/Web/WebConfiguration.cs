@@ -1,10 +1,13 @@
 ﻿namespace Uno.Extensions.Authentication.Web;
 
-internal record WebConfiguration
+public record WebConfiguration
 {
 	public bool PrefersEphemeralWebBrowserSession { get; init; }
 	public string? LoginStartUri { get; init; }
 	public string? LoginCallbackUri { get; init; }
+	public string? TokenEndpoint { get; init; }
+	public string? UserInfoEndpoint { get; init; }
+	public bool UsePkce { get; init; } = false;
 	public string? AccessTokenKey { get; init; }
 	public string? RefreshTokenKey { get; init; }
 	public string? IdTokenKey { get; init; }
