@@ -283,6 +283,7 @@ using Uno.Extensions.Reactive;
 **Outcome:** An event like `DoubleTapped` can trigger a generated command and pass a parameter.
 
 Requires:
+
 * `Uno.Microsoft.Xaml.Behaviors.Interactivity.WinUI`
 * `Uno.Microsoft.Xaml.Behaviors.WinUI.Managed`
 
