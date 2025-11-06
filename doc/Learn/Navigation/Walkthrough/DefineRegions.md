@@ -94,6 +94,75 @@ Associate TabBar items with route names:
 
 * When a TabBarItem is selected, the navigator displays the page corresponding to the route name.
 
+## Switch content using buttons
+
+Use `Navigation.Request` with relative path `RegionName` to navigate within the current page's regions.
+
+```xml
+<Grid uen:Region.Attached="True">
+    <Grid.RowDefinitions>
+        <RowDefinition Height="Auto" />
+        <RowDefinition />
+    </Grid.RowDefinitions>
+    
+    <!-- Button navigation to regions -->
+    <StackPanel Orientation="Horizontal">
+        <Button Content="Show Products" 
+                uen:Navigation.Request="Products" />
+        <Button Content="Show Favorites" 
+                uen:Navigation.Request="Favorites" />
+    </StackPanel>
+    
+    <!-- Region content -->
+    <Grid Grid.Row="1"
+          uen:Region.Attached="True"
+          uen:Region.Navigator="Visibility">
+        <Grid uen:Region.Name="Products" Visibility="Collapsed">
+            <!-- Products content -->
+        </Grid>
+        <Grid uen:Region.Name="Favorites" Visibility="Collapsed">
+            <!-- Favorites content -->
+        </Grid>
+    </Grid>
+</Grid>
+```
+
+## Navigate from ItemsRepeater item click
+
+Use `Navigation.Request` directly on ItemsRepeater to navigate to regions when an item is clicked.
+
+```xml
+<Grid uen:Region.Attached="True">
+    <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="Auto" />
+        <ColumnDefinition />
+    </Grid.ColumnDefinitions>
+    
+    <!-- ItemsRepeater with direct navigation -->
+    <ItemsRepeater ItemsSource="{Binding Categories}"
+                   uen:Navigation.Request="CategoryDetails">
+        <ItemsRepeater.ItemTemplate>
+            <DataTemplate x:DataType="models:Category">
+                <StackPanel Margin="0,0,0,4">
+                    <TextBlock Text="{Binding Name}" />
+                </StackPanel>
+            </DataTemplate>
+        </ItemsRepeater.ItemTemplate>
+    </ItemsRepeater>
+    
+    <!-- Region content -->
+    <Grid Grid.Column="1"
+          uen:Region.Attached="True"
+          uen:Region.Navigator="Visibility">
+        <Grid uen:Region.Name="CategoryDetails" Visibility="Collapsed">
+            <!-- Category details content -->
+        </Grid>
+    </Grid>
+</Grid>
+```
+
+Clicked item is automatically passed as navigation data to the region.
+
 ## Using Regions with NavigationView
 
 Same principles apply:

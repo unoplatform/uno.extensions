@@ -9,7 +9,7 @@ Drive Uno Platform HTTP clients from configuration so each service shares resili
 
 ## Enable shared HTTP clients
 
-Add the `Http` feature to the shared project so `Uno.Extensions.Http.WinUI` is included.
+Add the `Http` UnoFeature to the shared project so `Uno.Extensions.Http.WinUI` is included.
 
 ```diff
 <UnoFeatures>

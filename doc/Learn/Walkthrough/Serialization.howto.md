@@ -9,7 +9,7 @@ Register Uno serialization with source-generated metadata so your apps can seria
 
 ## Enable the serialization feature
 
-Add the `Serialization` feature to bring in `Uno.Extensions.Serialization`.
+Add the `Serialization` UnoFeature to bring in `Uno.Extensions.Serialization`.
 
 ```diff
 <UnoFeatures>

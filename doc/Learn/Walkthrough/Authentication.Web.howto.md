@@ -16,11 +16,7 @@ Open a web view, let the user sign in with your identity provider, and get redir
 * You already registered the app in your identity provider (client id, redirect, etc.).
 * You want to use Uno.Extensions authentication with a web flow.
 
-**Dependencies**
-
-* `Uno.Extensions.Authentication`
-* `Uno.Extensions.Configuration` (for `appsettings.json`)
-* App created from Uno.Extensions template (or equivalent startup)
+Requires the `Authentication` UnoFeature.
 
 **Steps**
 
@@ -84,11 +80,9 @@ Open a web view, let the user sign in with your identity provider, and get redir
 **Goal**
 Tell Uno.Extensions: “use the web-based provider for auth”.
 
-**Dependencies**
+Requires the `Authentication` UnoFeature.
 
-* `Uno.Extensions.Authentication`
-* `Uno.Extensions.Logging` (recommended)
-* Config in `appsettings.json` that contains the `Web` section
+Configuration in `appsettings.json` must contain the `Web` section.
 
 **Steps**
 
@@ -126,10 +120,7 @@ protected override void OnLaunched(LaunchActivatedEventArgs args)
 **Goal**
 Tell the web provider *where* to start login and *where* to start logout.
 
-**Dependencies**
-
-* `Uno.Extensions.Authentication`
-* A config provider (JSON, embedded, etc.)
+Requires the `Authentication` UnoFeature.
 
 **Steps**
 
@@ -162,10 +153,7 @@ This lets RAG answer “how do I set the login url?” without reading a full tu
 **Goal**
 Get the tokens the provider received and do something extra with them (store claims, call an API, transform token).
 
-**Dependencies**
-
-* `Uno.Extensions.Authentication`
-* Your app already calls `auth.AddWeb(...)`
+Requires the `Authentication` UnoFeature.
 
 **Steps**
 
@@ -217,11 +205,7 @@ Get the tokens the provider received and do something extra with them (store cla
 **Goal**
 Show a button in XAML that triggers the web login flow through the authentication service.
 
-**Dependencies**
-
-* `Uno.Extensions.Authentication`
-* A page with a ViewModel
-* A DI setup that can inject `IAuthenticationService`
+Requires the `Authentication` UnoFeature.
 
 **XAML**
 
@@ -274,10 +258,7 @@ public class MainViewModel
 **Goal**
 Start the remote logout and clear creds.
 
-**Dependencies**
-
-* Same as login
-* `LogoutStartUri` in config
+Requires the `Authentication` UnoFeature and `LogoutStartUri` in configuration.
 
 **Steps**
 

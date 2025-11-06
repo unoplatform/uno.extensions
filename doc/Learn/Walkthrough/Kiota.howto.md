@@ -9,7 +9,7 @@ Turn an OpenAPI description into a typed client, register it with Uno Extensions
 
 ## Enable Kiota support
 
-Add the `HttpKiota` feature to pull in Kiota integration and HTTP plumbing.
+Add the `HttpKiota` UnoFeature to pull in Kiota integration and HTTP plumbing.
 
 ```diff
 <UnoFeatures>

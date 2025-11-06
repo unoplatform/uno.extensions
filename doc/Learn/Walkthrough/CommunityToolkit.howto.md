@@ -12,7 +12,7 @@ Expose the Uno Extensions service provider through `CommunityToolkit.Mvvm` when 
 
 ## Enable the toolkit IoC bridge
 
-Add the `Mvvm` feature so `CommunityToolkit.Mvvm` is referenced.
+Add the `Mvvm` Uno Feature so `CommunityToolkit.Mvvm` is referenced.
 
 ```diff
 <UnoFeatures>

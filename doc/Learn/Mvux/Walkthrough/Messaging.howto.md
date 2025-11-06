@@ -14,11 +14,7 @@ You have an `IListState<T>` (for example, a list of people) and a service that c
 * Your UI shows a **list** (`IListState<T>` / `ListState.Async(...)`).
 * You want **create / update / delete** to flow to the UI.
 
-## Dependencies
-
-* `Uno.Extensions.Reactive`
-* `Uno.Extensions.Reactive.Messaging` (the MVUX/messenger glue) ([Uno Platform][1])
-* `CommunityToolkit.Mvvm` (for `IMessenger`) ([Uno Platform][1])
+Requires the `MVUX` UnoFeature.
 
 ```csharp
 using CommunityToolkit.Mvvm.Messaging;
@@ -70,10 +66,7 @@ public partial record PeopleModel
 
 You changed data in a service (for example, created a `Person`) and need every MVUX model that shows people to refresh.
 
-### Dependencies
-
-* `CommunityToolkit.Mvvm`
-* `Uno.Extensions.Reactive.Messaging` (for `EntityMessage<T>` and `EntityChange`) ([Uno Platform][1])
+Requires the `MVUX` UnoFeature.
 
 ```csharp
 using CommunityToolkit.Mvvm.Messaging;
@@ -127,9 +120,7 @@ Any model that called `messenger.Observe(...)` for `Person` will update itself i
 
 Your models and services need `IMessenger`, but nothing is providing it.
 
-### Dependencies
-
-* `CommunityToolkit.Mvvm` (for `IMessenger`, `WeakReferenceMessenger`) ([Uno Platform][1])
+Requires the `MVUX` and `MVVM` UnoFeature.
 
 ```csharp
 // in App.xaml.cs or your Startup/Host builder

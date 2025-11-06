@@ -5,11 +5,7 @@ uid: Uno.Extensions.Mvux.SimpleFeed.HowTo
 
 **Goal:** display a list of items that comes from a feed (MVUX `Feed<T>`).
 
-**Dependencies:**
-
-* `Uno.Extensions`
-* `Uno.Extensions.Reactive` (or the meta package that brings it)
-* A view model using MVUX feed pattern
+Requires the `MVUX` UnoFeature.
 
 ```csharp
 // ViewModels/ProductsViewModel.cs
