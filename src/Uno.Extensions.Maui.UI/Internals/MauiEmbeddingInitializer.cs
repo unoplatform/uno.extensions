@@ -23,9 +23,6 @@ internal class MauiEmbeddingInitializer : IMauiInitializeService
 				mauiApp.Resources.MergedDictionaries.Add(resources);
 			}
 
-			// Initialize the MauiApplication to ensure there is a Window and MainPage to ensure references to these will work.
-			mauiApp.MainPage = new Microsoft.Maui.Controls.Page();
-
 			// Make sure the requested app theme matches our app
 			mauiApp.UserAppTheme = _app.RequestedTheme switch
 			{
