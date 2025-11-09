@@ -209,7 +209,24 @@ public partial class
 			return nativeWindow is UIKit.UIWindow uiWindow ? uiWindow : throw new InvalidOperationException("Unable to locate the Native UIWindow");
 		})
 			.AddSingleton<UIKit.IUIApplicationDelegate>(sp => UIKit.UIApplication.SharedApplication.Delegate);
-
+		builder.ConfigureLifecycleEvents(life =>
+		{
+			//Microsoft.Maui.ApplicationModel.Platform.Init(() => UIKit.UIApplication.SharedApplication.KeyWindow?.RootViewController!);
+			life.AddiOS(ios => ios
+				.WillFinishLaunching((a, options) =>
+				{
+					Microsoft.Maui.ApplicationModel.Platform.Init(() => app.Window?.RootViewController!);
+					return true;
+				})
+				.OpenUrl((app, url, options) =>
+				{
+					return Microsoft.Maui.ApplicationModel.Platform.OpenUrl(app, url, options);
+				})
+				.ContinueUserActivity((app, userActivity, completionHandler) =>
+				{
+					return Microsoft.Maui.ApplicationModel.Platform.ContinueUserActivity(app, userActivity, completionHandler);
+				}));
+		});
 		return builder;
 #elif WINDOWS
 		return builder;
