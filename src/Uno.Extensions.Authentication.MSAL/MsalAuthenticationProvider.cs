@@ -4,6 +4,9 @@ using Microsoft.Identity.Client.Broker;
 using Uno.Extensions.Logging;
 using LogLevel = Microsoft.Extensions.Logging.LogLevel;
 #if UNO_EXT_MSAL
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using System.Text.Json.Serialization.Metadata;
 using MsalCacheHelper = Microsoft.Identity.Client.Extensions.Msal.MsalCacheHelper;
 #endif
 
@@ -246,7 +249,7 @@ internal record MsalAuthenticationProvider(
 		try
 		{
 			Logger.LogInformation("Attempting to perform silent sign in . . .");
-			Logger.LogInformation($"Authentication Scopes: {JsonSerializer.Serialize(_scopes)}");
+			Logger.LogInformation($"Authentication Scopes: {ToJson(_scopes)}");
 
 			Logger.LogInformation($"Account Name: {firstAccount.Username}");
 
@@ -268,5 +271,24 @@ internal record MsalAuthenticationProvider(
 
 		return default;
 	}
+
+	static string? ToJson (string[]? values)
+	{
+		if (values == null)
+		{
+			return null;
+		}
+
+		return JsonSerializer.Serialize(values, StringArrayJsonSerializerContext.Default.StringArray);
+	}
+
 #endif
 }
+
+#if UNO_EXT_MSAL
+[JsonSourceGenerationOptions]
+[JsonSerializable(typeof(string[]))]
+internal sealed partial class StringArrayJsonSerializerContext : JsonSerializerContext
+{
+}
+#endif  // UNO_EXT_MSAL

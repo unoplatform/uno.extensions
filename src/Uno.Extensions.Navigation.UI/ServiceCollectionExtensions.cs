@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using System.Diagnostics.CodeAnalysis;
+
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Uno.Extensions;
@@ -113,7 +115,11 @@ public static class ServiceCollectionExtensions
 #pragma warning restore CS8603 // Possible null reference return.
 	}
 
-	public static IServiceCollection AddRegion<TControl, TRegion>(this IServiceCollection services, bool isRequestRegion = false, string? name = null)
+	public static IServiceCollection AddRegion<
+		TControl,
+		[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)]
+		TRegion
+	>(this IServiceCollection services, bool isRequestRegion = false, string? name = null)
 		where TRegion : class, INavigator
 	{
 		var names = name is not null ? new[] { name } : new[] { typeof(TControl).Name };
