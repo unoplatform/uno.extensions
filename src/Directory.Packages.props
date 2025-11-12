@@ -33,7 +33,7 @@
     <PackageVersion Include="Microsoft.Net.Compilers.Toolset" Version="4.2.0" />
     <PackageVersion Include="Microsoft.SourceLink.GitHub" Version="1.1.1" />
     <PackageVersion Include="Microsoft.UI.Xaml" Version="2.7.1" />
-    <PackageVersion Include="Microsoft.Graphics.Win2D" Version="1.2.0" />
+    <PackageVersion Include="Microsoft.Graphics.Win2D" Version="1.3.2" />
     <PackageVersion Include="Moq" Version="4.17.2" />
     <PackageVersion Include="Refit" Version="7.2.22" />
     <PackageVersion Include="Refit.HttpClientFactory" Version="7.2.22" />
