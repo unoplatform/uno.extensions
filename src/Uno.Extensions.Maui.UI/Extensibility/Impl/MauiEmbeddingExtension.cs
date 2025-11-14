@@ -168,6 +168,8 @@ public partial class
 				throw new MauiEmbeddingException(Properties.Resources.CouldNotFindCurrentActivity);
 			});
 
+		// Configure Android lifecycle events to initialize Platform services
+		// at the correct time during Activity creation
 		builder.ConfigureLifecycleEvents(events =>
 		{
 			events.AddAndroid(android => android
