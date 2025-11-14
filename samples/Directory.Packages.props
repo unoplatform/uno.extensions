@@ -1,20 +1,9 @@
 <Project ToolsVersion="15.0">
 	<PropertyGroup>
-		<!-- <UnoVersion>6.0.465</UnoVersion> -->
-		<UnoExtensionsVersion>5.3.8</UnoExtensionsVersion>
-		<UnoToolkitVersion>7.0.7</UnoToolkitVersion>
-		<UnoThemesVersion>5.5.1</UnoThemesVersion>
-		<UnoCSharpMarkupVersion>6.0.15</UnoCSharpMarkupVersion>
-		<UnoWasmBootstrapVersion>8.0.23</UnoWasmBootstrapVersion>
-		<UnoLoggingVersion>1.7.0</UnoLoggingVersion>
-		<UnoCoreLoggingSingletonVersion>4.1.1</UnoCoreLoggingSingletonVersion>
-		<UnoUniversalImageLoaderVersion>1.9.37</UnoUniversalImageLoaderVersion>
-		<UnoDspTasksVersion>1.4.0</UnoDspTasksVersion>
-		<UnoResizetizerVersion>1.8.1</UnoResizetizerVersion>
 		<SkiaSharpVersion>3.119.1</SkiaSharpVersion>
 		<SvgSkiaVersion>3.0.2</SvgSkiaVersion>
-		<WinAppSdkVersion>1.7.250513003</WinAppSdkVersion>
-		<WinAppSdkBuildToolsVersion>10.0.26100.4188</WinAppSdkBuildToolsVersion>
+		<WinAppSdkVersion>1.7.250909003</WinAppSdkVersion>
+		<WinAppSdkBuildToolsVersion>10.0.26100.4948</WinAppSdkBuildToolsVersion>
 		<MicrosoftLoggingVersion>9.0.9</MicrosoftLoggingVersion>
 		<WindowsCompatibilityVersion>8.0.15</WindowsCompatibilityVersion>
 		<MicrosoftIdentityClientVersion>4.70.2</MicrosoftIdentityClientVersion>
