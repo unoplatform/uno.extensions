@@ -124,10 +124,6 @@ public partial class
 		var iApp = mauiApp.Services.GetRequiredService<IApplication>();
 		_ = new MauiEmbedding.EmbeddedApplication(mauiApp.Services, iApp);
 
-		// Initializing with the Activity to set the current activity.
-		// The Bundle is not actually used by Maui
-		Microsoft.Maui.ApplicationModel.Platform.Init(activity, null);
-
 		androidApp.SetApplicationHandler(iApp, rootContext);
 		Initialize(iApp);
 #elif IOS || MACCATALYST
@@ -171,6 +167,16 @@ public partial class
 
 				throw new MauiEmbeddingException(Properties.Resources.CouldNotFindCurrentActivity);
 			});
+
+		builder.ConfigureLifecycleEvents(events =>
+		{
+			events.AddAndroid(android => android
+				.OnCreate((activity, bundle) =>
+				{
+					Microsoft.Maui.ApplicationModel.Platform.Init(activity, bundle);
+				}));
+		});
+
 		return builder;
 #elif IOS || MACCATALYST
 		builder.Services.AddTransient<UIKit.UIWindow>(sp =>
