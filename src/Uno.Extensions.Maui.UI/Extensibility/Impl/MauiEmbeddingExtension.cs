@@ -124,10 +124,6 @@ public partial class
 		var iApp = mauiApp.Services.GetRequiredService<IApplication>();
 		_ = new MauiEmbedding.EmbeddedApplication(mauiApp.Services, iApp);
 
-		// Initializing with the Activity to set the current activity.
-		// The Bundle is not actually used by Maui
-		Microsoft.Maui.ApplicationModel.Platform.Init(activity, null);
-
 		androidApp.SetApplicationHandler(iApp, rootContext);
 		Initialize(iApp);
 #elif IOS || MACCATALYST
