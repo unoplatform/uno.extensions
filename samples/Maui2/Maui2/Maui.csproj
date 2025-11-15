@@ -1,0 +1,66 @@
+﻿<Project Sdk="Uno.Sdk.Private">
+  <PropertyGroup>
+    <TargetFrameworks>net10.0-android</TargetFrameworks>
+
+    <OutputType>Exe</OutputType>
+    <UnoSingleProject>true</UnoSingleProject>
+
+    <!-- Display name -->
+    <ApplicationTitle>Maui2</ApplicationTitle>
+    <!-- App Identifier -->
+    <ApplicationId>com.companyname.maui2</ApplicationId>
+    <!-- Versions -->
+    <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
+    <ApplicationVersion>1</ApplicationVersion>
+    <!-- Package Publisher -->
+    <ApplicationPublisher>Maui2</ApplicationPublisher>
+    <!-- Package Description -->
+    <Description>Maui2 powered by Uno Platform.</Description>
+
+    <!--
+      UnoFeatures are used to quickly add and manage features enabled for your app.
+      https://aka.platform.uno/singleproject-features
+    -->
+    <UnoFeatures>
+      SkiaRenderer;
+    </UnoFeatures>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\src\Uno.Extensions.Maui.UI\Uno.Extensions.Maui.WinUI.csproj" />
+    <ProjectReference Include="..\..\..\src\Uno.Extensions.Maui.WinUI.Runtime.Skia\Uno.Extensions.Maui.WinUI.Runtime.Skia.csproj" />
+    <ProjectReference Include="..\Maui2.MauiControls\Maui.MauiControls.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Core.UI\Uno.Extensions.Core.WinUI.csproj" />
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Configuration\Uno.Extensions.Configuration.csproj" />
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Hosting.UI\Uno.Extensions.Hosting.WinUI.csproj" />
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Hosting\Uno.Extensions.Hosting.csproj" />
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Localization.UI\Uno.Extensions.Localization.WinUI.csproj" />
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Logging\Uno.Extensions.Logging.WinUI.csproj" />
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Navigation.Toolkit\Uno.Extensions.Navigation.Toolkit.WinUI.csproj" />
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Navigation.UI\Uno.Extensions.Navigation.WinUI.csproj" />
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Navigation.Generators\Uno.Extensions.Navigation.Generators.csproj">
+			<ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+			<OutputItemType>Analyzer</OutputItemType>
+		</ProjectReference>
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Navigation\Uno.Extensions.Navigation.csproj" />
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Storage.UI\Uno.Extensions.Storage.WinUI.csproj" />
+	</ItemGroup>
+	<Import Project="..\..\..\src\Uno.Extensions.Configuration\build\Package.targets" />
+	<Import Project="..\..\..\src\Uno.Extensions.Hosting\build\Package.targets" />
+	<Import Project="..\..\..\src\Uno.Extensions.Localization\build\Package.targets" />
+	<Import Project="..\..\..\src\Uno.Extensions.Maui.UI\build\Package.targets" />
+	<Import Project="..\..\..\src\Uno.Extensions.Navigation\build\Package.targets" />
+	<Import Project="..\..\..\src\Uno.Extensions.Navigation.UI\build\Package.targets" />
+
+    <ItemGroup Condition="'$(IsAndroid)' == 'true'">
+		<PackageReference Include="Xamarin.AndroidX.Navigation.UI" />
+		<PackageReference Include="Xamarin.AndroidX.Navigation.Fragment" />
+		<PackageReference Include="Xamarin.AndroidX.Navigation.Runtime" />
+		<PackageReference Include="Xamarin.AndroidX.Navigation.Common" />
+		<PackageReference Include="Xamarin.AndroidX.Collection" />
+		<PackageReference Include="Xamarin.AndroidX.Collection.Jvm" />
+		<PackageReference Include="Xamarin.AndroidX.Collection.Ktx" />
+	</ItemGroup>
+</Project>

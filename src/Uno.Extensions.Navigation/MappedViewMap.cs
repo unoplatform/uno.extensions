@@ -1,4 +1,6 @@
-﻿namespace Uno.Extensions.Navigation;
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace Uno.Extensions.Navigation;
 
 internal record MappedViewMap(
 		Type? View = null,
@@ -6,6 +8,8 @@ internal record MappedViewMap(
 		Type? ViewModel = null,
 		DataMap? Data = null,
 		Type? ResultData = null,
+		[param:   DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor | DynamicallyAccessedMemberTypes.PublicConstructors)]
+		[property:DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor | DynamicallyAccessedMemberTypes.PublicConstructors)]
 		Type? MappedViewModel = null
 	) : ViewMap(View, ViewSelector, ViewModel, Data, ResultData)
 {

@@ -1,4 +1,6 @@
-﻿namespace Uno.Extensions.Navigation.Navigators;
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace Uno.Extensions.Navigation.Navigators;
 
 public class PopupNavigator : ControlNavigator<Popup>
 {
@@ -29,7 +31,11 @@ public class PopupNavigator : ControlNavigator<Popup>
         Region.Navigator()?.NavigateRouteAsync((sender ?? Control) ?? this, "hide");
     }
 
-    protected override async Task<string?> Show(string? path, Type? viewType, object? data)
+	protected override async Task<string?> Show(
+		string? path,
+		[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor)]
+		Type? viewType,
+		object? data)
     {
         if (Control is null)
         {
