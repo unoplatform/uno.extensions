@@ -24,6 +24,7 @@ public record RouteInfo(
 	public RouteInfo? DependsOnRoute { get; set; }
 
 	[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor)]
+	[UnconditionalSuppressMessage("Trimming", "IL2073", Justification = "Cannot 'forward' `[DynamicallyAccessedMembers]` to Func<T>; would need to use a new type, which would be an ABI break.")]
 	public Type? RenderView => View?.Invoke();
 	public bool IsDependent = !string.IsNullOrWhiteSpace(DependsOn);
 }
