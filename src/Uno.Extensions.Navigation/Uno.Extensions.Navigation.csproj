@@ -9,6 +9,8 @@
 
 		<!-- As we are InternalsVisibleTo, we disable some compatibility types that are not used by package itself. -->
 		<UnoExtensionsGeneration_DisableModuleInitializerAttribute>True</UnoExtensionsGeneration_DisableModuleInitializerAttribute>
+
+		<IsAotCompatible>true</IsAotCompatible>
 	</PropertyGroup>
 
 	<ItemGroup>
