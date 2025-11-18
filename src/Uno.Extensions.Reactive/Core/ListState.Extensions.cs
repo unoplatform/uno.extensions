@@ -409,6 +409,101 @@ static partial class ListState
 	}
 
 	/// <summary>
+	/// Tries to deselect a single item in a list state.
+	/// </summary>
+	/// <typeparam name="T">The type of the state</typeparam>
+	/// <param name="state">The state to update.</param>
+	/// <param name="itemToDeselect">The item to deselect.</param>
+	/// <param name="ct">A token to abort the async operation.</param>
+	/// <returns>True if the item was found and deselected, false otherwise.</returns>
+	public static async ValueTask<bool> TryDeselectAsync<T>(this IListState<T> state, T itemToDeselect, CancellationToken ct = default)
+		where T : notnull
+	{
+		var comparer = ListFeed<T>.DefaultComparer.Entity;
+		var success = false;
+
+		await state.UpdateMessageAsync(msg =>
+		{
+			var items = msg.CurrentData.SomeOrDefault() ?? ImmutableList<T>.Empty;
+			if (items.Count == 0)
+			{
+				return;
+			}
+
+			var itemIndex = comparer is null ? items.IndexOf(itemToDeselect) : items.IndexOf(itemToDeselect, comparer);
+			if (itemIndex < 0)
+			{
+				return;
+			}
+
+			var currentSelection = msg.CurrentSelected;
+			if (currentSelection.IsEmpty || !currentSelection.Contains(itemIndex))
+			{
+				return;
+			}
+
+			var rangeToRemove = new SelectionIndexRange((uint)itemIndex, 1);
+			var newSelection = currentSelection.Remove(rangeToRemove);
+			
+			success = true;
+			msg.Selected(newSelection);
+		}, ct).ConfigureAwait(false);
+
+		return success;
+	}
+
+	/// <summary>
+	/// Tries to deselect multiple items in a list state.
+	/// </summary>
+	/// <typeparam name="T">The type of the state</typeparam>
+	/// <param name="state">The state to update.</param>
+	/// <param name="itemsToDeselect">The items to deselect.</param>
+	/// <param name="ct">A token to abort the async operation.</param>
+	/// <returns>True if at least one item was found and deselected, false otherwise.</returns>
+	public static async ValueTask<bool> TryDeselectAsync<T>(this IListState<T> state, IImmutableList<T> itemsToDeselect, CancellationToken ct = default)
+		where T : notnull
+	{
+		var comparer = ListFeed<T>.DefaultComparer.Entity;
+		var success = false;
+
+		await state.UpdateMessageAsync(msg =>
+		{
+			var items = msg.CurrentData.SomeOrDefault() ?? ImmutableList<T>.Empty;
+			if (items.Count == 0 || itemsToDeselect is null or { Count: 0 })
+			{
+				return;
+			}
+
+			var currentSelection = msg.CurrentSelected;
+			if (currentSelection.IsEmpty)
+			{
+				return;
+			}
+
+			var indexOf = comparer is null ? (Func<T, int>)items.IndexOf : item => items.IndexOf(item, comparer);
+			var newSelection = currentSelection;
+			
+			foreach (var itemToDeselect in itemsToDeselect)
+			{
+				var itemIndex = indexOf(itemToDeselect);
+				if (itemIndex >= 0 && currentSelection.Contains(itemIndex))
+				{
+					var rangeToRemove = new SelectionIndexRange((uint)itemIndex, 1);
+					newSelection = newSelection.Remove(rangeToRemove);
+					success = true;
+				}
+			}
+
+			if (success)
+			{
+				msg.Selected(newSelection);
+			}
+		}, ct).ConfigureAwait(false);
+
+		return success;
+	}
+
+	/// <summary>
 	/// Clear the selection info of a list state.
 	/// </summary>
 	/// <typeparam name="T">The type of the state</typeparam>
