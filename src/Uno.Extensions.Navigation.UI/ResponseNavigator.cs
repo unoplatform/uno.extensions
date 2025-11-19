@@ -1,4 +1,6 @@
-﻿namespace Uno.Extensions.Navigation;
+﻿using Windows.UI.Core;
+
+namespace Uno.Extensions.Navigation;
 
 public class ResponseNavigator<TResult> : IResponseNavigator, IInstance<IServiceProvider>
 {
