@@ -423,19 +423,19 @@ static partial class ListState
 	/// <param name="state">The state to update.</param>
 	/// <param name="itemToDeselect">The item to deselect.</param>
 	/// <param name="ct">A token to abort the async operation.</param>
-	/// <returns>The number of items that were deselected (0 or 1).</returns>
-	public static async ValueTask<int> TryDeselectAsync<T>(this IListState<T> state, T itemToDeselect, CancellationToken ct = default)
+	/// <returns>True if the item was found and deselected, false otherwise.</returns>
+	public static async ValueTask<bool> TryDeselectAsync<T>(this IListState<T> state, T itemToDeselect, CancellationToken ct = default)
 		where T : notnull
 	{
 		var comparer = ListFeed<T>.DefaultComparer.Entity;
-		var count = 0;
+		var success = false;
 
 		await state.UpdateMessageAsync(msg =>
 		{
 			var items = msg.CurrentData.SomeOrDefault() ?? ImmutableList<T>.Empty;
 			if (items.Count == 0)
 			{
-				count = 0;
+				success = false;
 				return;
 			}
 
@@ -444,16 +444,16 @@ static partial class ListState
 			
 			if (newSelection != currentSelection)
 			{
-				count = 1;
+				success = true;
 				msg.Selected(newSelection);
 			}
 			else
 			{
-				count = 0; // Make sure to update the flag in case of the delegate is being invoked more than once (optimistic concurrency)
+				success = false; // Make sure to update the flag in case of the delegate is being invoked more than once (optimistic concurrency)
 			}
 		}, ct).ConfigureAwait(false);
 
-		return count;
+		return success;
 	}
 
 	/// <summary>
