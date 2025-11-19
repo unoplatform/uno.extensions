@@ -232,7 +232,7 @@ public sealed record SelectionInfo
 	/// <param name="itemsToDeselect">The items to remove from selection.</param>
 	/// <param name="comparer">Optional equality comparer for items.</param>
 	/// <returns>Either the same instance if no changes were made, or a new SelectionInfo with items removed.</returns>
-	public SelectionInfo Remove<T>(IImmutableList<T> items, IImmutableList<T> itemsToDeselect, IEqualityComparer<T>? comparer = null)
+	public SelectionInfo Remove<T>(IImmutableList<T>? items, IImmutableList<T>? itemsToDeselect, IEqualityComparer<T>? comparer = null)
 	{
 		if (IsEmpty || items is null or { Count: 0 } || itemsToDeselect is null or { Count: 0 })
 		{
