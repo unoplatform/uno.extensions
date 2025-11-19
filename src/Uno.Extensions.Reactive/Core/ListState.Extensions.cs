@@ -439,7 +439,7 @@ static partial class ListState
 				return;
 			}
 
-			var currentSelection = msg.CurrentSelected;
+			var currentSelection = msg.Get(MessageAxis.Selection) ?? SelectionInfo.Empty;
 			var newSelection = currentSelection.Remove(items, ImmutableList.Create(itemToDeselect), comparer);
 			
 			if (newSelection != currentSelection)
@@ -479,7 +479,7 @@ static partial class ListState
 				return;
 			}
 
-			var currentSelection = msg.CurrentSelected;
+			var currentSelection = msg.Get(MessageAxis.Selection) ?? SelectionInfo.Empty;
 			var newSelection = currentSelection.Remove(items, itemsToDeselect, comparer);
 
 			if (newSelection != currentSelection)
