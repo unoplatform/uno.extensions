@@ -82,16 +82,10 @@ internal class ThemeService : IThemeService, IDisposable
 
 	private void ElementThemeChanged(FrameworkElement sender, object args)
 	{
-		var currentActualTheme = sender.ActualTheme switch
-		{
-			ElementTheme.Dark => AppTheme.Dark,
-			ElementTheme.Light => AppTheme.Light,
-			_ => AppTheme.System,
-		};
-
 		var savedThemePreference = GetSavedTheme();
 
 		// Only respond to system-driven changes if the user's preference is explicitly 'System'.
+		// If the user has set an explicit Dark or Light preference, ignore system theme changes.
 		if (savedThemePreference == AppTheme.System)
 		{
 			ThemeChanged?.Invoke(this, savedThemePreference);
