@@ -793,9 +793,9 @@ public partial class Given_CoreListStateOperators : FeedTests
 		await sut.TrySelectAsync(ImmutableList.Create(41, 42, 43), CT);
 
 		// Deselect one item
-		var success = await sut.TryDeselectAsync(42, CT);
+		var count = await sut.TryDeselectAsync(42, CT);
 
-		success.Should().BeTrue();
+		count.Should().Be(1);
 		result.Should().Be(m => m
 			.Message(Items.Some(41, 42, 43, 44, 45))
 			.Message(Items.Some(41, 42, 43, 44, 45), Selection.Items(41, 42, 43))
@@ -804,7 +804,7 @@ public partial class Given_CoreListStateOperators : FeedTests
 	}
 
 	[TestMethod]
-	public async Task WhenTryDeselectAsync_SingleItem_NotSelected_Then_ReturnsFalse()
+	public async Task WhenTryDeselectAsync_SingleItem_NotSelected_Then_ReturnsZero()
 	{
 		var sut = ListState.Value(this, () => ImmutableList.Create(41, 42, 43, 44, 45));
 		var result = sut.Record();
@@ -813,9 +813,9 @@ public partial class Given_CoreListStateOperators : FeedTests
 		await sut.TrySelectAsync(ImmutableList.Create(41, 43), CT);
 
 		// Try to deselect an item that's not selected
-		var success = await sut.TryDeselectAsync(42, CT);
+		var count = await sut.TryDeselectAsync(42, CT);
 
-		success.Should().BeFalse();
+		count.Should().Be(0);
 		result.Should().Be(m => m
 			.Message(Items.Some(41, 42, 43, 44, 45))
 			.Message(Items.Some(41, 42, 43, 44, 45), Selection.Items(41, 43))
@@ -823,7 +823,7 @@ public partial class Given_CoreListStateOperators : FeedTests
 	}
 
 	[TestMethod]
-	public async Task WhenTryDeselectAsync_SingleItem_NotInList_Then_ReturnsFalse()
+	public async Task WhenTryDeselectAsync_SingleItem_NotInList_Then_ReturnsZero()
 	{
 		var sut = ListState.Value(this, () => ImmutableList.Create(41, 42, 43));
 		var result = sut.Record();
@@ -832,9 +832,9 @@ public partial class Given_CoreListStateOperators : FeedTests
 		await sut.TrySelectAsync(ImmutableList.Create(41, 42), CT);
 
 		// Try to deselect an item that's not in the list
-		var success = await sut.TryDeselectAsync(99, CT);
+		var count = await sut.TryDeselectAsync(99, CT);
 
-		success.Should().BeFalse();
+		count.Should().Be(0);
 		result.Should().Be(m => m
 			.Message(Items.Some(41, 42, 43))
 			.Message(Items.Some(41, 42, 43), Selection.Items(41, 42))
@@ -842,30 +842,30 @@ public partial class Given_CoreListStateOperators : FeedTests
 	}
 
 	[TestMethod]
-	public async Task WhenTryDeselectAsync_SingleItem_EmptySelection_Then_ReturnsFalse()
+	public async Task WhenTryDeselectAsync_SingleItem_EmptySelection_Then_ReturnsZero()
 	{
 		var sut = ListState.Value(this, () => ImmutableList.Create(41, 42, 43));
 		var result = sut.Record();
 
 		// Try to deselect when nothing is selected
-		var success = await sut.TryDeselectAsync(42, CT);
+		var count = await sut.TryDeselectAsync(42, CT);
 
-		success.Should().BeFalse();
+		count.Should().Be(0);
 		result.Should().Be(m => m
 			.Message(Items.Some(41, 42, 43))
 		);
 	}
 
 	[TestMethod]
-	public async Task WhenTryDeselectAsync_SingleItem_EmptyList_Then_ReturnsFalse()
+	public async Task WhenTryDeselectAsync_SingleItem_EmptyList_Then_ReturnsZero()
 	{
 		var sut = ListState.Value(this, () => ImmutableList<int>.Empty);
 		var result = sut.Record();
 
 		// Try to deselect from empty list
-		var success = await sut.TryDeselectAsync(42, CT);
+		var count = await sut.TryDeselectAsync(42, CT);
 
-		success.Should().BeFalse();
+		count.Should().Be(0);
 		result.Should().Be(m => m
 			.Message(Data.None)
 		);
@@ -881,9 +881,9 @@ public partial class Given_CoreListStateOperators : FeedTests
 		await sut.TrySelectAsync(42, CT);
 
 		// Deselect the only selected item
-		var success = await sut.TryDeselectAsync(42, CT);
+		var count = await sut.TryDeselectAsync(42, CT);
 
-		success.Should().BeTrue();
+		count.Should().Be(1);
 		result.Should().Be(m => m
 			.Message(Items.Some(41, 42, 43))
 			.Message(Items.Some(41, 42, 43), Selection.Items(42))
@@ -901,9 +901,9 @@ public partial class Given_CoreListStateOperators : FeedTests
 		await sut.TrySelectAsync(ImmutableList.Create(41, 42, 43, 44, 45), CT);
 
 		// Deselect multiple items
-		var success = await sut.TryDeselectAsync(ImmutableList.Create(42, 44), CT);
+		var count = await sut.TryDeselectAsync(ImmutableList.Create(42, 44), CT);
 
-		success.Should().BeTrue();
+		count.Should().Be(2);
 		result.Should().Be(m => m
 			.Message(Items.Some(41, 42, 43, 44, 45))
 			.Message(Items.Some(41, 42, 43, 44, 45), Selection.Items(41, 42, 43, 44, 45))
@@ -921,9 +921,9 @@ public partial class Given_CoreListStateOperators : FeedTests
 		await sut.TrySelectAsync(ImmutableList.Create(41, 43, 45), CT);
 
 		// Try to deselect mix of selected and unselected items
-		var success = await sut.TryDeselectAsync(ImmutableList.Create(42, 43, 44), CT);
+		var count = await sut.TryDeselectAsync(ImmutableList.Create(42, 43, 44), CT);
 
-		success.Should().BeTrue();
+		count.Should().Be(1);
 		result.Should().Be(m => m
 			.Message(Items.Some(41, 42, 43, 44, 45))
 			.Message(Items.Some(41, 42, 43, 44, 45), Selection.Items(41, 43, 45))
@@ -932,7 +932,7 @@ public partial class Given_CoreListStateOperators : FeedTests
 	}
 
 	[TestMethod]
-	public async Task WhenTryDeselectAsync_MultipleItems_NoneSelected_Then_ReturnsFalse()
+	public async Task WhenTryDeselectAsync_MultipleItems_NoneSelected_Then_ReturnsZero()
 	{
 		var sut = ListState.Value(this, () => ImmutableList.Create(41, 42, 43, 44, 45));
 		var result = sut.Record();
@@ -941,9 +941,9 @@ public partial class Given_CoreListStateOperators : FeedTests
 		await sut.TrySelectAsync(ImmutableList.Create(41, 45), CT);
 
 		// Try to deselect items that are not selected
-		var success = await sut.TryDeselectAsync(ImmutableList.Create(42, 43, 44), CT);
+		var count = await sut.TryDeselectAsync(ImmutableList.Create(42, 43, 44), CT);
 
-		success.Should().BeFalse();
+		count.Should().Be(0);
 		result.Should().Be(m => m
 			.Message(Items.Some(41, 42, 43, 44, 45))
 			.Message(Items.Some(41, 42, 43, 44, 45), Selection.Items(41, 45))
@@ -951,22 +951,22 @@ public partial class Given_CoreListStateOperators : FeedTests
 	}
 
 	[TestMethod]
-	public async Task WhenTryDeselectAsync_MultipleItems_EmptyList_Then_ReturnsFalse()
+	public async Task WhenTryDeselectAsync_MultipleItems_EmptyList_Then_ReturnsZero()
 	{
 		var sut = ListState.Value(this, () => ImmutableList<int>.Empty);
 		var result = sut.Record();
 
 		// Try to deselect from empty list
-		var success = await sut.TryDeselectAsync(ImmutableList.Create(41, 42), CT);
+		var count = await sut.TryDeselectAsync(ImmutableList.Create(41, 42), CT);
 
-		success.Should().BeFalse();
+		count.Should().Be(0);
 		result.Should().Be(m => m
 			.Message(Data.None)
 		);
 	}
 
 	[TestMethod]
-	public async Task WhenTryDeselectAsync_MultipleItems_NullList_Then_ReturnsFalse()
+	public async Task WhenTryDeselectAsync_MultipleItems_NullList_Then_ReturnsZero()
 	{
 		var sut = ListState.Value(this, () => ImmutableList.Create(41, 42, 43));
 		var result = sut.Record();
@@ -974,9 +974,9 @@ public partial class Given_CoreListStateOperators : FeedTests
 		await sut.TrySelectAsync(ImmutableList.Create(41, 42), CT);
 
 		// Try to deselect with null list
-		var success = await sut.TryDeselectAsync(null!, CT);
+		var count = await sut.TryDeselectAsync(null!, CT);
 
-		success.Should().BeFalse();
+		count.Should().Be(0);
 		result.Should().Be(m => m
 			.Message(Items.Some(41, 42, 43))
 			.Message(Items.Some(41, 42, 43), Selection.Items(41, 42))
@@ -984,15 +984,15 @@ public partial class Given_CoreListStateOperators : FeedTests
 	}
 
 	[TestMethod]
-	public async Task WhenTryDeselectAsync_MultipleItems_EmptySelection_Then_ReturnsFalse()
+	public async Task WhenTryDeselectAsync_MultipleItems_EmptySelection_Then_ReturnsZero()
 	{
 		var sut = ListState.Value(this, () => ImmutableList.Create(41, 42, 43));
 		var result = sut.Record();
 
 		// Try to deselect when nothing is selected
-		var success = await sut.TryDeselectAsync(ImmutableList.Create(41, 42), CT);
+		var count = await sut.TryDeselectAsync(ImmutableList.Create(41, 42), CT);
 
-		success.Should().BeFalse();
+		count.Should().Be(0);
 		result.Should().Be(m => m
 			.Message(Items.Some(41, 42, 43))
 		);
@@ -1008,9 +1008,9 @@ public partial class Given_CoreListStateOperators : FeedTests
 		await sut.TrySelectAsync(ImmutableList.Create(41, 43), CT);
 
 		// Deselect all selected items
-		var success = await sut.TryDeselectAsync(ImmutableList.Create(41, 43), CT);
+		var count = await sut.TryDeselectAsync(ImmutableList.Create(41, 43), CT);
 
-		success.Should().BeTrue();
+		count.Should().Be(2);
 		result.Should().Be(m => m
 			.Message(Items.Some(41, 42, 43))
 			.Message(Items.Some(41, 42, 43), Selection.Items(41, 43))
@@ -1028,9 +1028,9 @@ public partial class Given_CoreListStateOperators : FeedTests
 		await sut.TrySelectAsync(ImmutableList.Create(42, 43, 44, 45, 46), CT);
 
 		// Deselect middle items
-		var success = await sut.TryDeselectAsync(ImmutableList.Create(43, 44, 45), CT);
+		var count = await sut.TryDeselectAsync(ImmutableList.Create(43, 44, 45), CT);
 
-		success.Should().BeTrue();
+		count.Should().Be(3);
 		result.Should().Be(m => m
 			.Message(Items.Some(41, 42, 43, 44, 45, 46, 47))
 			.Message(Items.Some(41, 42, 43, 44, 45, 46, 47), Selection.Items(42, 43, 44, 45, 46))

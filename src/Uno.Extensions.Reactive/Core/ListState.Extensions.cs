@@ -376,6 +376,10 @@ static partial class ListState
 				success = true;
 				msg.Selected(selection);
 			}
+			else
+			{
+				success = false; // Make sure to update the flag in case of the delegate is being invoked more than once (optimistic concurrency)
+			}
 		}, ct).ConfigureAwait(false);
 
 		return success;
@@ -403,6 +407,10 @@ static partial class ListState
 				success = true;
 				msg.Selected(selection);
 			}
+			else
+			{
+				success = false; // Make sure to update the flag in case of the delegate is being invoked more than once (optimistic concurrency)
+			}
 		}, ct).ConfigureAwait(false);
 
 		return success;
@@ -415,41 +423,37 @@ static partial class ListState
 	/// <param name="state">The state to update.</param>
 	/// <param name="itemToDeselect">The item to deselect.</param>
 	/// <param name="ct">A token to abort the async operation.</param>
-	/// <returns>True if the item was found and deselected, false otherwise.</returns>
-	public static async ValueTask<bool> TryDeselectAsync<T>(this IListState<T> state, T itemToDeselect, CancellationToken ct = default)
+	/// <returns>The number of items that were deselected (0 or 1).</returns>
+	public static async ValueTask<int> TryDeselectAsync<T>(this IListState<T> state, T itemToDeselect, CancellationToken ct = default)
 		where T : notnull
 	{
 		var comparer = ListFeed<T>.DefaultComparer.Entity;
-		var success = false;
+		var count = 0;
 
 		await state.UpdateMessageAsync(msg =>
 		{
 			var items = msg.CurrentData.SomeOrDefault() ?? ImmutableList<T>.Empty;
 			if (items.Count == 0)
 			{
-				return;
-			}
-
-			var itemIndex = comparer is null ? items.IndexOf(itemToDeselect) : items.IndexOf(itemToDeselect, comparer);
-			if (itemIndex < 0)
-			{
+				count = 0;
 				return;
 			}
 
 			var currentSelection = msg.CurrentSelected;
-			if (currentSelection.IsEmpty || !currentSelection.Contains(itemIndex))
-			{
-				return;
-			}
-
-			var rangeToRemove = new SelectionIndexRange((uint)itemIndex, 1);
-			var newSelection = currentSelection.Remove(rangeToRemove);
+			var newSelection = currentSelection.Remove(items, ImmutableList.Create(itemToDeselect), comparer);
 			
-			success = true;
-			msg.Selected(newSelection);
+			if (newSelection != currentSelection)
+			{
+				count = 1;
+				msg.Selected(newSelection);
+			}
+			else
+			{
+				count = 0; // Make sure to update the flag in case of the delegate is being invoked more than once (optimistic concurrency)
+			}
 		}, ct).ConfigureAwait(false);
 
-		return success;
+		return count;
 	}
 
 	/// <summary>
@@ -459,48 +463,38 @@ static partial class ListState
 	/// <param name="state">The state to update.</param>
 	/// <param name="itemsToDeselect">The items to deselect.</param>
 	/// <param name="ct">A token to abort the async operation.</param>
-	/// <returns>True if at least one item was found and deselected, false otherwise.</returns>
-	public static async ValueTask<bool> TryDeselectAsync<T>(this IListState<T> state, IImmutableList<T> itemsToDeselect, CancellationToken ct = default)
+	/// <returns>The number of items that were deselected.</returns>
+	public static async ValueTask<int> TryDeselectAsync<T>(this IListState<T> state, IImmutableList<T> itemsToDeselect, CancellationToken ct = default)
 		where T : notnull
 	{
 		var comparer = ListFeed<T>.DefaultComparer.Entity;
-		var success = false;
+		var count = 0;
 
 		await state.UpdateMessageAsync(msg =>
 		{
 			var items = msg.CurrentData.SomeOrDefault() ?? ImmutableList<T>.Empty;
 			if (items.Count == 0 || itemsToDeselect is null or { Count: 0 })
 			{
+				count = 0;
 				return;
 			}
 
 			var currentSelection = msg.CurrentSelected;
-			if (currentSelection.IsEmpty)
-			{
-				return;
-			}
+			var newSelection = currentSelection.Remove(items, itemsToDeselect, comparer);
 
-			var indexOf = comparer is null ? (Func<T, int>)items.IndexOf : item => items.IndexOf(item, comparer);
-			var newSelection = currentSelection;
-			
-			foreach (var itemToDeselect in itemsToDeselect)
+			if (newSelection != currentSelection)
 			{
-				var itemIndex = indexOf(itemToDeselect);
-				if (itemIndex >= 0 && currentSelection.Contains(itemIndex))
-				{
-					var rangeToRemove = new SelectionIndexRange((uint)itemIndex, 1);
-					newSelection = newSelection.Remove(rangeToRemove);
-					success = true;
-				}
-			}
-
-			if (success)
-			{
+				// Count how many items were actually deselected
+				count = (int)(currentSelection.Count - newSelection.Count);
 				msg.Selected(newSelection);
+			}
+			else
+			{
+				count = 0; // Make sure to update the flag in case of the delegate is being invoked more than once (optimistic concurrency)
 			}
 		}, ct).ConfigureAwait(false);
 
-		return success;
+		return count;
 	}
 
 	/// <summary>
