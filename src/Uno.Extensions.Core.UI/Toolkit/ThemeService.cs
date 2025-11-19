@@ -94,7 +94,7 @@ internal class ThemeService : IThemeService, IDisposable
 		// Only respond to system-driven changes if the user's preference is explicitly 'System'.
 		if (savedThemePreference == AppTheme.System)
 		{
-			ThemeChanged?.Invoke(this, currentActualTheme);
+			ThemeChanged?.Invoke(this, savedThemePreference);
 		}
 	}
 
