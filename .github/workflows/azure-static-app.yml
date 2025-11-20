@@ -14,22 +14,22 @@ on:
 jobs:
   build_and_deploy_job:
     env:
-      DIST_PATH: testing/TestHarness/TestHarness/bin/Release/net9.0-browserwasm/dist
+      DIST_PATH: testing/TestHarness/TestHarness/bin/Release/net9.0-browserwasm/wwwroot
 
     if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
     runs-on: ubuntu-24.04
     container: 'unoplatform/wasm-build:3.0'
     name: Build and Deploy Job
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 0 # Required for gitversion
           submodules: true
 
-      - name: Setup dotnet 8.0.301
-        uses: actions/setup-dotnet@v3
+      - name: Setup dotnet 9.0.308
+        uses: actions/setup-dotnet@v5
         with:
-          dotnet-version: '8.0.301'
+          dotnet-version: '9.0.308'
 
       - uses: dotnet/nbgv@f088059084cb5d872e9d1a994433ca6440c2bf72 # v0.4.2
         id: nbgv
