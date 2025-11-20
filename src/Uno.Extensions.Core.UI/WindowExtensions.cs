@@ -5,7 +5,7 @@ namespace Uno.Extensions;
 /// <summary>
 /// Extensions for <see cref="Window"/>
 /// </summary>
-public static partial class WindowExtensions
+public static class WindowExtensions
 {
 	/// <summary>
 	/// Gets the theme service for the window
