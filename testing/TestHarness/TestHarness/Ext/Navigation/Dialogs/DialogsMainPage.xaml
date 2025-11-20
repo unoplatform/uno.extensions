@@ -32,11 +32,6 @@
 		<StackPanel Grid.Row="2"
 					Orientation="Horizontal"
 					HorizontalAlignment="Center">
-			<StackPanel.Resources>
-				<SolidColorBrush x:Key="FilledButtonBackgroundPointerOver" Color="Yellow" />
-				<SolidColorBrush x:Key="FilledButtonBackgroundPressed" Color="Green" />
-				<SolidColorBrush x:Key="FilledButtonBackgroundDisabled" Color="Blue" />
-			</StackPanel.Resources>
 			<Button AutomationProperties.AutomationId="MessageDialogsButton"
 					Content="Message Dialogs"
 					Click="MessageDialogsClick" />
