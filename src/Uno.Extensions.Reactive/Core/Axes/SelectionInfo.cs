@@ -225,6 +225,37 @@ public sealed record SelectionInfo
 		=> new(SelectionHelper.Remove(Ranges, range));
 
 	/// <summary>
+	/// Create a new SelectionInfo which contains ranges of this instance except the items to deselect.
+	/// </summary>
+	/// <typeparam name="T">The type of items in the list.</typeparam>
+	/// <param name="items">The full list of items.</param>
+	/// <param name="itemsToDeselect">The items to remove from selection.</param>
+	/// <param name="comparer">Optional equality comparer for items.</param>
+	/// <returns>Either the same instance if no changes were made, or a new SelectionInfo with items removed.</returns>
+	public SelectionInfo Remove<T>(IImmutableList<T> items, IImmutableList<T> itemsToDeselect, IEqualityComparer<T>? comparer = null)
+	{
+		if (IsEmpty || items is null or { Count: 0 } || itemsToDeselect is null or { Count: 0 })
+		{
+			return this;
+		}
+
+		var indexOf = comparer is null ? (Func<T, int>)items.IndexOf : item => items.IndexOf(item, comparer);
+		var newSelection = this;
+		
+		foreach (var itemToDeselect in itemsToDeselect)
+		{
+			var itemIndex = indexOf(itemToDeselect);
+			if (itemIndex >= 0 && newSelection.Contains(itemIndex))
+			{
+				var rangeToRemove = new SelectionIndexRange((uint)itemIndex, 1);
+				newSelection = newSelection.Remove(rangeToRemove);
+			}
+		}
+
+		return newSelection;
+	}
+
+	/// <summary>
 	/// Returns the <see cref="Empty"/> instance.
 	/// </summary>
 	/// <returns>Returns the <see cref="Empty"/> instance.</returns>
