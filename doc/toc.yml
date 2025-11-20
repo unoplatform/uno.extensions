@@ -40,6 +40,8 @@
     - name: Validation
       href: Learn/Validation/toc.yml
       topicHref: xref:Uno.Extensions.Validation.Overview
+    - name: Walkthroughs
+      href: Learn/Walkthrough/toc.yml
 - name: C# Markup
   href: Learn/Markup/toc.yml
   topicHref: xref:Uno.Extensions.Markup.Overview

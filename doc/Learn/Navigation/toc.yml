@@ -1,5 +1,41 @@
 - name: Overview
   href: xref:Uno.Extensions.Navigation.Overview
+- name: Walkthrough
+  items:
+    - name: Register Navigation Routes and Associate Views to ViewModels
+      href: xref:Uno.Extensions.Navigation.Walkthrough.RegisterRoutes
+    - name: Navigate Forward and Backward from Code-Behind
+      href: xref:Uno.Extensions.Navigation.Walkthrough.NavigateCodeBehind
+    - name: Navigate Between Pages via ViewModel
+      href: xref:Uno.Extensions.Navigation.Walkthrough.NavigateViewModel
+    - name: Navigate Using Attached Properties in XAML
+      href: xref:Uno.Extensions.Navigation.Walkthrough.NavigateXAML
+    - name: Define Navigation Routes for Views and ViewModels
+      href: xref:Uno.Extensions.Navigation.Walkthrough.DefineRoutes
+    - name: Define Navigation Regions to Link Controls with Content Areas
+      href: xref:Uno.Extensions.Navigation.Walkthrough.DefineRegions
+    - name: Display Message Dialogs for User Prompts
+      href: xref:Uno.Extensions.Navigation.Walkthrough.DisplayMessageDialog
+    - name: Request and Return Data from Navigation
+      href: xref:Uno.Extensions.Navigation.Walkthrough.SelectValue
+    - name: Display Dialogs as Flyouts or Modals
+      href: xref:Uno.Extensions.Navigation.Walkthrough.ShowDialog
+    - name: Pass Data During Navigation to Display Item Details
+      href: xref:Uno.Extensions.Navigation.Walkthrough.DisplayItemDetails
+    - name: Navigate Between Tab Views using TabBar with Region-Based Content Switching
+      href: xref:Uno.Extensions.Navigation.Walkthrough.Advanced.UseTabBar
+    - name: Navigate Between Menu Items using NavigationView with Adaptive Region-Based Navigation
+      href: xref:Uno.Extensions.Navigation.Walkthrough.Advanced.UseNavigationView
+    - name: Display Views in Specific Locations using ContentControl with Region-Based Navigation
+      href: xref:Uno.Extensions.Navigation.Walkthrough.Advanced.UseContentControl
+    - name: Switch Between Views using Panel with Visibility-Based Region Navigation
+      href: xref:Uno.Extensions.Navigation.Walkthrough.Advanced.UsePanel
+    - name: Build Responsive Navigation Layouts using NavigationView and TabBar with VisualStateManager
+      href: xref:Uno.Extensions.Navigation.Walkthrough.Advanced.ResponsiveShell
+    - name: Track and Respond to Route Changes using IRouteNotifier with RouteChanged Event
+      href: xref:Uno.Extensions.Navigation.Walkthrough.Advanced.IRouteNotifier
+    - name: Manage Back Stack and Multi-Page Navigation using NavigateRouteAsync and Navigation Qualifiers
+      href: xref:Uno.Extensions.Navigation.Walkthrough.Advanced.AdvancedPageNavigation
 - name: "How-To: Get started with navigation"
   href: xref:Uno.Extensions.Navigation.HowToNavigateBetweenPages
 - name: "How-To: Navigate via code behind"
