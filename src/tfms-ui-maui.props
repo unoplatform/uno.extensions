@@ -4,11 +4,11 @@
 		<TargetFrameworks>$(UnoTargetFrameworkOverride)</TargetFrameworks>
 	</PropertyGroup>
 	<PropertyGroup  Condition="'$(UnoTargetFrameworkOverride)'==''">
-		<TargetFrameworks Condition="'$(Build_iOS)'=='true'">$(TargetFrameworks);net8.0-ios</TargetFrameworks>
-		<TargetFrameworks Condition="'$(Build_MacCatalyst)'=='true'">$(TargetFrameworks);net8.0-maccatalyst</TargetFrameworks>
-		<TargetFrameworks Condition="'$(Build_Android)'=='true'">$(TargetFrameworks);net8.0-android</TargetFrameworks>
-		<TargetFrameworks Condition="'$(Build_Windows)'=='true'">$(TargetFrameworks);net8.0-windows10.0.19041</TargetFrameworks>
-		<TargetFrameworks>$(TargetFrameworks);net8.0</TargetFrameworks>
+		<TargetFrameworks Condition="'$(Build_iOS)'=='true'">$(TargetFrameworks);net9.0-ios</TargetFrameworks>
+		<TargetFrameworks Condition="'$(Build_MacCatalyst)'=='true'">$(TargetFrameworks);net9.0-maccatalyst</TargetFrameworks>
+		<TargetFrameworks Condition="'$(Build_Android)'=='true'">$(TargetFrameworks);net9.0-android</TargetFrameworks>
+		<TargetFrameworks Condition="'$(Build_Windows)'=='true'">$(TargetFrameworks);net9.0-windows10.0.19041</TargetFrameworks>
+		<TargetFrameworks>$(TargetFrameworks);net9.0</TargetFrameworks>
 	</PropertyGroup>
 	<PropertyGroup>
 		<WindowsSdkPackageVersion>10.0.19041.57</WindowsSdkPackageVersion>

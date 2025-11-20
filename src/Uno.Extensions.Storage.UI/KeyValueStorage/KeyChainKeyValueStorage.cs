@@ -310,7 +310,7 @@ internal record KeyChainKeyValueStorage(
 
 	private T? Deserialize<T>(NSData data)
 	{
-		return Serializer.FromString<T>(NSString.FromData(data, NSStringEncoding.UTF8));
+		return Serializer.FromString<T>(NSString.FromData(data, NSStringEncoding.UTF8) ?? "");
 	}
 
 	private NSData Serialize<T>(T value)
