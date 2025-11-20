@@ -782,6 +782,263 @@ public partial class Given_CoreListStateOperators : FeedTests
 	}
 	#endregion
 
+	#region TryDeselectAsync
+	[TestMethod]
+	public async Task WhenTryDeselectAsync_SingleItem_Then_ItemDeselected()
+	{
+		var sut = ListState.Value(this, () => ImmutableList.Create(41, 42, 43, 44, 45));
+		var result = sut.Record();
+
+		// Select multiple items first
+		await sut.TrySelectAsync(ImmutableList.Create(41, 42, 43), CT);
+
+		// Deselect one item
+		var success = await sut.TryDeselectAsync(42, CT);
+
+		success.Should().BeTrue();
+		result.Should().Be(m => m
+			.Message(Items.Some(41, 42, 43, 44, 45))
+			.Message(Items.Some(41, 42, 43, 44, 45), Selection.Items(41, 42, 43))
+			.Message(Items.Some(41, 42, 43, 44, 45), Selection.Items(41, 43))
+		);
+	}
+
+	[TestMethod]
+	public async Task WhenTryDeselectAsync_SingleItem_NotSelected_Then_ReturnsFalse()
+	{
+		var sut = ListState.Value(this, () => ImmutableList.Create(41, 42, 43, 44, 45));
+		var result = sut.Record();
+
+		// Select some items
+		await sut.TrySelectAsync(ImmutableList.Create(41, 43), CT);
+
+		// Try to deselect an item that's not selected
+		var success = await sut.TryDeselectAsync(42, CT);
+
+		success.Should().BeFalse();
+		result.Should().Be(m => m
+			.Message(Items.Some(41, 42, 43, 44, 45))
+			.Message(Items.Some(41, 42, 43, 44, 45), Selection.Items(41, 43))
+		);
+	}
+
+	[TestMethod]
+	public async Task WhenTryDeselectAsync_SingleItem_NotInList_Then_ReturnsFalse()
+	{
+		var sut = ListState.Value(this, () => ImmutableList.Create(41, 42, 43));
+		var result = sut.Record();
+
+		// Select some items
+		await sut.TrySelectAsync(ImmutableList.Create(41, 42), CT);
+
+		// Try to deselect an item that's not in the list
+		var success = await sut.TryDeselectAsync(99, CT);
+
+		success.Should().BeFalse();
+		result.Should().Be(m => m
+			.Message(Items.Some(41, 42, 43))
+			.Message(Items.Some(41, 42, 43), Selection.Items(41, 42))
+		);
+	}
+
+	[TestMethod]
+	public async Task WhenTryDeselectAsync_SingleItem_EmptySelection_Then_ReturnsFalse()
+	{
+		var sut = ListState.Value(this, () => ImmutableList.Create(41, 42, 43));
+		var result = sut.Record();
+
+		// Try to deselect when nothing is selected
+		var success = await sut.TryDeselectAsync(42, CT);
+
+		success.Should().BeFalse();
+		result.Should().Be(m => m
+			.Message(Items.Some(41, 42, 43))
+		);
+	}
+
+	[TestMethod]
+	public async Task WhenTryDeselectAsync_SingleItem_EmptyList_Then_ReturnsFalse()
+	{
+		var sut = ListState.Value(this, () => ImmutableList<int>.Empty);
+		var result = sut.Record();
+
+		// Try to deselect from empty list
+		var success = await sut.TryDeselectAsync(42, CT);
+
+		success.Should().BeFalse();
+		result.Should().Be(m => m
+			.Message(Data.None)
+		);
+	}
+
+	[TestMethod]
+	public async Task WhenTryDeselectAsync_SingleItem_LastSelectedItem_Then_SelectionBecomesEmpty()
+	{
+		var sut = ListState.Value(this, () => ImmutableList.Create(41, 42, 43));
+		var result = sut.Record();
+
+		// Select only one item
+		await sut.TrySelectAsync(42, CT);
+
+		// Deselect the only selected item
+		var success = await sut.TryDeselectAsync(42, CT);
+
+		success.Should().BeTrue();
+		result.Should().Be(m => m
+			.Message(Items.Some(41, 42, 43))
+			.Message(Items.Some(41, 42, 43), Selection.Items(42))
+			.Message(Items.Some(41, 42, 43), Selection.Empty)
+		);
+	}
+
+	[TestMethod]
+	public async Task WhenTryDeselectAsync_MultipleItems_Then_ItemsDeselected()
+	{
+		var sut = ListState.Value(this, () => ImmutableList.Create(41, 42, 43, 44, 45));
+		var result = sut.Record();
+
+		// Select all items
+		await sut.TrySelectAsync(ImmutableList.Create(41, 42, 43, 44, 45), CT);
+
+		// Deselect multiple items
+		var count = await sut.TryDeselectAsync(ImmutableList.Create(42, 44), CT);
+
+		count.Should().Be(2);
+		result.Should().Be(m => m
+			.Message(Items.Some(41, 42, 43, 44, 45))
+			.Message(Items.Some(41, 42, 43, 44, 45), Selection.Items(41, 42, 43, 44, 45))
+			.Message(Items.Some(41, 42, 43, 44, 45), Selection.Items(41, 43, 45))
+		);
+	}
+
+	[TestMethod]
+	public async Task WhenTryDeselectAsync_MultipleItems_SomeNotSelected_Then_DeselectsOnlySelectedOnes()
+	{
+		var sut = ListState.Value(this, () => ImmutableList.Create(41, 42, 43, 44, 45));
+		var result = sut.Record();
+
+		// Select some items
+		await sut.TrySelectAsync(ImmutableList.Create(41, 43, 45), CT);
+
+		// Try to deselect mix of selected and unselected items
+		var count = await sut.TryDeselectAsync(ImmutableList.Create(42, 43, 44), CT);
+
+		count.Should().Be(1);
+		result.Should().Be(m => m
+			.Message(Items.Some(41, 42, 43, 44, 45))
+			.Message(Items.Some(41, 42, 43, 44, 45), Selection.Items(41, 43, 45))
+			.Message(Items.Some(41, 42, 43, 44, 45), Selection.Items(41, 45))
+		);
+	}
+
+	[TestMethod]
+	public async Task WhenTryDeselectAsync_MultipleItems_NoneSelected_Then_ReturnsZero()
+	{
+		var sut = ListState.Value(this, () => ImmutableList.Create(41, 42, 43, 44, 45));
+		var result = sut.Record();
+
+		// Select some items
+		await sut.TrySelectAsync(ImmutableList.Create(41, 45), CT);
+
+		// Try to deselect items that are not selected
+		var count = await sut.TryDeselectAsync(ImmutableList.Create(42, 43, 44), CT);
+
+		count.Should().Be(0);
+		result.Should().Be(m => m
+			.Message(Items.Some(41, 42, 43, 44, 45))
+			.Message(Items.Some(41, 42, 43, 44, 45), Selection.Items(41, 45))
+		);
+	}
+
+	[TestMethod]
+	public async Task WhenTryDeselectAsync_MultipleItems_EmptyList_Then_ReturnsZero()
+	{
+		var sut = ListState.Value(this, () => ImmutableList<int>.Empty);
+		var result = sut.Record();
+
+		// Try to deselect from empty list
+		var count = await sut.TryDeselectAsync(ImmutableList.Create(41, 42), CT);
+
+		count.Should().Be(0);
+		result.Should().Be(m => m
+			.Message(Data.None)
+		);
+	}
+
+	[TestMethod]
+	public async Task WhenTryDeselectAsync_MultipleItems_NullList_Then_ReturnsZero()
+	{
+		var sut = ListState.Value(this, () => ImmutableList.Create(41, 42, 43));
+		var result = sut.Record();
+
+		await sut.TrySelectAsync(ImmutableList.Create(41, 42), CT);
+
+		// Try to deselect with null list
+		var count = await sut.TryDeselectAsync(null!, CT);
+
+		count.Should().Be(0);
+		result.Should().Be(m => m
+			.Message(Items.Some(41, 42, 43))
+			.Message(Items.Some(41, 42, 43), Selection.Items(41, 42))
+		);
+	}
+
+	[TestMethod]
+	public async Task WhenTryDeselectAsync_MultipleItems_EmptySelection_Then_ReturnsZero()
+	{
+		var sut = ListState.Value(this, () => ImmutableList.Create(41, 42, 43));
+		var result = sut.Record();
+
+		// Try to deselect when nothing is selected
+		var count = await sut.TryDeselectAsync(ImmutableList.Create(41, 42), CT);
+
+		count.Should().Be(0);
+		result.Should().Be(m => m
+			.Message(Items.Some(41, 42, 43))
+		);
+	}
+
+	[TestMethod]
+	public async Task WhenTryDeselectAsync_MultipleItems_AllSelectedItems_Then_SelectionBecomesEmpty()
+	{
+		var sut = ListState.Value(this, () => ImmutableList.Create(41, 42, 43));
+		var result = sut.Record();
+
+		// Select items
+		await sut.TrySelectAsync(ImmutableList.Create(41, 43), CT);
+
+		// Deselect all selected items
+		var count = await sut.TryDeselectAsync(ImmutableList.Create(41, 43), CT);
+
+		count.Should().Be(2);
+		result.Should().Be(m => m
+			.Message(Items.Some(41, 42, 43))
+			.Message(Items.Some(41, 42, 43), Selection.Items(41, 43))
+			.Message(Items.Some(41, 42, 43), Selection.Empty)
+		);
+	}
+
+	[TestMethod]
+	public async Task WhenTryDeselectAsync_ConsecutiveItems_Then_RangesHandledCorrectly()
+	{
+		var sut = ListState.Value(this, () => ImmutableList.Create(41, 42, 43, 44, 45, 46, 47));
+		var result = sut.Record();
+
+		// Select a range
+		await sut.TrySelectAsync(ImmutableList.Create(42, 43, 44, 45, 46), CT);
+
+		// Deselect middle items
+		var count = await sut.TryDeselectAsync(ImmutableList.Create(43, 44, 45), CT);
+
+		count.Should().Be(3);
+		result.Should().Be(m => m
+			.Message(Items.Some(41, 42, 43, 44, 45, 46, 47))
+			.Message(Items.Some(41, 42, 43, 44, 45, 46, 47), Selection.Items(42, 43, 44, 45, 46))
+			.Message(Items.Some(41, 42, 43, 44, 45, 46, 47), Selection.Items(42, 46))
+		);
+	}
+	#endregion
+
 	private record class MyClass;
 	private record struct MyStruct;
 

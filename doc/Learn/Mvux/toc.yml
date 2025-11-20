@@ -1,10 +1,29 @@
-
 - name: Overview
   href: xref:Uno.Extensions.Mvux.Overview
 - name: Upgrading MVUX
   href: xref:Uno.Extensions.Reactive.Upgrading
 - name: "How-To: Get started with MVUX"
   href: xref:Uno.Extensions.Mvux.HowToMvuxProject
+- name: Walkthrough
+  items:
+    - name: Simple State
+      href: xref:Uno.Extensions.Mvux.SimpleState.HowTo
+    - name: Simple Feed
+      href: xref:Uno.Extensions.Mvux.SimpleFeed.HowTo
+    - name: List Feed
+      href: xref:Uno.Extensions.Mvux.ListFeed.HowTo
+    - name: FeedView
+      href: xref:Uno.Extensions.Mvux.FeedView.HowTo
+    - name: Push List Feed
+      href: Walkthrough/PushListFeed.howto.md
+    - name: Selection
+      href: xref:Uno.Extensions.Mvux.Selection.HowTo
+    - name: Pagination
+      href: xref:Uno.Extensions.Mvux.Pagination.HowTo
+    - name: Messaging
+      href: xref:Uno.Extensions.Mvux.Messaging.HowTo
+    - name: Commands
+      href: xref:Uno.Extensions.Mvux.Commands.HowTo
 - name: "Working with Records"
   href: xref:Uno.Extensions.Mvux.Records
 - name: List-States
