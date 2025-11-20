@@ -4,9 +4,9 @@ title: Navigate Forward and Backward from Code-Behind
 tags: [uno, uno-platform, uno-extensions, navigation, INavigator, code-behind, xaml-cs, NavigateViewAsync, NavigateBackAsync, Navigator-extension-method, page-navigation, view-navigation, forward-navigation, backward-navigation, ViewMap, RouteMap, click-handler, event-handler, imperative-navigation]
 ---
 
-# Navigate Forward and Backward from Code-Behind
+# Navigate between two pages from Code-Behind
 
-## Navigate to another page
+## Navigate forward to another page via button click
 
 ```xml
 <Button Content="Go to SamplePage"
@@ -22,7 +22,7 @@ private void GoToSamplePageClick(object sender, RoutedEventArgs e)
 
 `Navigator()` extension method provides access to navigation from any Page.
 
-## Navigate back to previous page
+## Navigate back to previous page via button click
 
 ```xml
 <Button Content="Go Back"

@@ -43,6 +43,9 @@
     - name: KeyEquality
       href: Learn/KeyEquality/toc.yml
       topicHref: xref:Uno.Extensions.KeyEquality.Concept
+    - name: Walkthroughs
+      href: Learn/Walkthrough/toc.yml
+
 - name: C# Markup
   href: Learn/Markup/toc.yml
   topicHref: xref:Uno.Extensions.Markup.Overview
