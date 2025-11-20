@@ -1,4 +1,6 @@
-﻿namespace Uno.Extensions.Navigation;
+﻿using Windows.UI.Core;
+
+namespace Uno.Extensions.Navigation;
 
 public class ResponseNavigator<TResult> : IResponseNavigator, IInstance<IServiceProvider>
 {
@@ -11,6 +13,8 @@ public class ResponseNavigator<TResult> : IResponseNavigator, IInstance<IService
 	private IDispatcher Dispatcher => (Navigation as Navigator)!.Dispatcher;
 
 	public IServiceProvider? Instance => Navigation.Get<IServiceProvider>();
+
+	private SystemNavigationManager? _systemNavigationManager;
 
 	public ResponseNavigator(INavigator internalNavigation, NavigationRequest request)
 	{
@@ -26,6 +30,13 @@ public class ResponseNavigator<TResult> : IResponseNavigator, IInstance<IService
 			});
 		}
 
+		// Hook up to SystemNavigationManager.BackRequested to handle back navigation
+		// from NavigationBar (Toolkit) and other sources that raise this event
+		_systemNavigationManager = SystemNavigationManager.GetForCurrentView();
+		if (_systemNavigationManager != null)
+		{
+			_systemNavigationManager.BackRequested += OnSystemBackRequested;
+		}
 
 		// Replace the navigator
 		Navigation.Get<IServiceProvider>()?.AddScopedInstance<INavigator>(this);
@@ -65,12 +76,27 @@ public class ResponseNavigator<TResult> : IResponseNavigator, IInstance<IService
 		return navResponse;
 	}
 
+	private async void OnSystemBackRequested(object? sender, BackRequestedEventArgs e)
+	{
+		// When back navigation is requested via SystemNavigationManager (e.g., from NavigationBar),
+		// complete the ForResult task with None to prevent the race condition
+		// Note: We don't mark e.Handled here because BackButtonService will handle the actual navigation
+		await ApplyResult(Option.None<TResult>());
+	}
+
 	private async Task ApplyResult(Option<TResult> responseData)
 	{
 		if (ResultCompletion.Task.Status == TaskStatus.Canceled ||
 			ResultCompletion.Task.Status == TaskStatus.RanToCompletion)
 		{
 			return;
+		}
+
+		// Unhook from SystemNavigationManager to avoid memory leaks
+		if (_systemNavigationManager != null)
+		{
+			_systemNavigationManager.BackRequested -= OnSystemBackRequested;
+			_systemNavigationManager = null;
 		}
 
 		// Restore the navigator

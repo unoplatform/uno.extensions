@@ -1,0 +1,16 @@
+<Page x:Class="TestHarness.Ext.Navigation.ForResult.ForResultMainPage"
+	  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	  xmlns:uen="using:Uno.Extensions.Navigation.UI"
+	  Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+	<uen:NavigationView uen:Region.Attached="True"
+						uen:Region.Name="Main"
+						AutomationProperties.AutomationId="NavigationRoot">
+		<uen:NavigationView.MenuItems>
+			<uen:NavigationViewItem uen:Region.Name="ForResultFirst"
+									Content="ForResult Test"
+									AutomationProperties.AutomationId="ForResultMenuItem" />
+		</uen:NavigationView.MenuItems>
+	</uen:NavigationView>
+</Page>
