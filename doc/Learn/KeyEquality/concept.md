@@ -42,14 +42,14 @@ so visually we only need to update the current item and not animate the removal 
 
 The implementation of this concept is located in the `Uno.Extensions.Equality` namespace.
 
-## IKeyEquatable<T>
+## `IKeyEquatable<T>`
 
 This is like `IEquatable<T>` but specialized for the _key_ comparison.
 
 When you implement this, you should compare only the keys of your object.
 
 > [!TIP]
-> You usually don't have to implement it by yourself, see [generation](#generation).
+> If you work with records you usually don't have to implement it by yourself, see [generation](#generation).
 
 ## KeyEqualityComparer
 
@@ -66,7 +66,7 @@ The `IKeyEquatable<T>` implementation is automatically generated for `partial re
 
 ### How to configure keys?
 
-You have several way to configure the keys:
+You have several ways to configure the keys:
 
 1. Add the `[Key]` attribute on properties that should be used for _key equality_.
 
@@ -101,8 +101,8 @@ You have several way to configure the keys:
 
     > [!IMPORTANT]
     > The generation of `IKeyEquatable<T>` using implicit keys will use only **one** matching property.
-    > The properties a tested in the order in which they have been defined on the `[ImplicitKeyEquality]` attribute.
-    > This means that in the example above, if a record have 2 properties `Id` and `EntityId`, only the property named `Id` will be used.
+    > The properties are tested in the order in which they have been defined on the `[ImplicitKeyEquality]` attribute.
+    > This means that in the example above, if a record has 2 properties `Id` and `EntityId`, only the property named `Id` will be used.
 
 ## How to disable generation?
 
@@ -115,6 +115,6 @@ To disable the generation for the whole project, set that attribute directly on 
 ```
 
 > [!IMPORTANT]
-> This disable only the generation based on implicit keys.
+> This disables only the generation based on implicit keys.
 > If you have a record that has a property flagged with the `[Key]` attribute,
 > the generator will still generate the `IKeyEquatable<T>` implementation for that type.
