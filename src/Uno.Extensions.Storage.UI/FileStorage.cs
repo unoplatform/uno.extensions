@@ -4,6 +4,7 @@ internal record FileStorage(ILogger<FileStorage> Logger, IDataFolderProvider Dat
 {
 	private Task<bool> FileExistsInPackage(string fileName) => Uno.UI.Toolkit.StorageFileHelper.ExistsInPackage(fileName);
 
+	/// <inheritdoc/>
 	public async Task<string?> CreateFolderAsync(string foldername)
 	{
 		var path = DataFolderProvider.AppDataPath;
@@ -21,6 +22,7 @@ internal record FileStorage(ILogger<FileStorage> Logger, IDataFolderProvider Dat
 		return folder.Path;
 	}
 
+	/// <inheritdoc/>
 	public async Task<string?> ReadPackageFileAsync(string filename)
 	{
 		try
@@ -78,6 +80,7 @@ internal record FileStorage(ILogger<FileStorage> Logger, IDataFolderProvider Dat
 
 	}
 
+	/// <inheritdoc/>
 	public async Task<Stream?> OpenPackageFileAsync(string filename)
 	{
 		try
