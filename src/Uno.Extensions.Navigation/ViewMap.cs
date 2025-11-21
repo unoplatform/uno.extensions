@@ -37,11 +37,19 @@ public record ViewMap(
 }
 
 public record ViewMap<TView>(
+	[param:   DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor | DynamicallyAccessedMemberTypes.PublicConstructors)]
 	Type? ViewModel = null,
 	DataMap? Data = null,
 	Type? ResultData = null,
 	object? ViewAttributes = null
-) : ViewMap(View: typeof(TView), ViewModel: ViewModel, Data: Data, ResultData: ResultData, ViewAttributes: ViewAttributes)
+) : ViewMap(
+	View: typeof(TView),
+	ViewSelector: null,
+	ViewModel: ViewModel,
+	Data: Data,
+	ResultData: ResultData,
+	ViewAttributes: ViewAttributes
+)
 	where TView: class, new()
 {
 	public override void RegisterTypes(IServiceCollection services)
@@ -51,7 +59,11 @@ public record ViewMap<TView>(
 	}
 }
 
-public record ViewMap<TView, TViewModel>(
+public record ViewMap<
+	TView,
+	[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)]
+	TViewModel
+>(
 	DataMap? Data = null,
 	Type? ResultData = null,
 	object? ViewAttributes = null
