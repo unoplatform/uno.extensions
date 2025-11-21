@@ -350,7 +350,7 @@ public class WebAuthenticatorResult
 	{
 		get
 		{
-			if (Properties.TryGetValue("refresh_token_expires_in", out var value))
+			if (Properties.TryGetValue("expires_in", out var value))
 			{
 				if (int.TryParse(value, out var i))
 					return DateTimeOffset.UtcNow.AddSeconds(i);

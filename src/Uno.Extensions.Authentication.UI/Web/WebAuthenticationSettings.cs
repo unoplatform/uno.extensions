@@ -13,6 +13,7 @@ internal record WebAuthenticationSettings
 	public AsyncFunc<IServiceProvider, ITokenCache, IDictionary<string, string>?, string?, string>? PrepareLoginCallbackUri { get; init; }
 
 	public string AccessTokenKey { get; init; } = "access_token";
+
 	public string RefreshTokenKey { get; init; } = "refresh_token";
 
 	public AsyncFunc<IServiceProvider, ITokenCache, IDictionary<string, string>?, string, IDictionary<string, string>, IDictionary<string, string>?>? PostLoginCallback { get; init; }
