@@ -451,6 +451,11 @@ public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 			lastRoute = lastRoute.Next();
 		}
 		Route = lastRoute;
+
+		if (Region.Parent?.Navigator() is PanelVisiblityNavigator pvn)
+		{
+			pvn.UpdateCurrentRoute(lastRoute);
+		}
 	}
 
 	protected override Task CheckLoadedAsync() => _content is not null ? _content.EnsureLoaded() : Task.CompletedTask;
