@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 namespace Uno.Extensions.Reactive.Bindings;
@@ -12,16 +13,21 @@ namespace Uno.Extensions.Reactive.Bindings;
 [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
 public class ModelAttribute : Attribute
 {
+	internal const DynamicallyAccessedMemberTypes BindableRequirements = DynamicallyAccessedMemberTypes.PublicProperties;
+
 	/// <summary>
 	/// Type of the generated bindable for the _model_.
 	/// </summary>
+	[DynamicallyAccessedMembers(BindableRequirements)]
 	public Type Bindable { get; }
 
 	/// <summary>
 	/// Flags a class as a _model_.
 	/// </summary>
 	/// <param name="bindable">The type of the _bindable view model_.</param>
-	public ModelAttribute(Type bindable)
+	public ModelAttribute(
+		[DynamicallyAccessedMembers(BindableRequirements)]
+		Type bindable)
 	{
 		Bindable = bindable;
 	}
