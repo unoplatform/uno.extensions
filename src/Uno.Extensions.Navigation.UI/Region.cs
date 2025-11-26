@@ -17,11 +17,15 @@ public static class Region
 		{
 			if (_logger is null && Interlocked.CompareExchange(ref _loggerWarningIssued, 1, 0) == 0)
 			{
-				Console.Error.WriteLine(
-					"[Uno.Extensions.Navigation] Logger has not been initialized. This can occur when Region.Attached is set " +
-					"before the navigation host is fully started. Navigation logging will be disabled until the host starts. " +
-					"If you're using Region.Attached inside an ExtendedSplashScreen, consider whether it's necessary - " +
-					"the navigation system typically handles initial navigation automatically.");
+				// This warning is expected when Region.Attached="True" is used before the navigation
+				// host is fully started (e.g., inside ExtendedSplashScreen content). The region will
+				// be properly initialized once the view is loaded and services become available.
+				// Navigation logging will be disabled until NavigationHostedService.StartAsync runs.
+				System.Diagnostics.Debug.WriteLine(
+					"[Uno.Extensions.Navigation] Region.Attached is being used before the navigation host has fully started. " +
+					"This typically happens when Region.Attached=\"True\" is set on content inside an ExtendedSplashScreen. " +
+					"The region will defer its full initialization until services are available. " +
+					"Navigation logging is temporarily disabled and will be enabled once the host starts.");
 			}
 			return _logger ?? NullLogger<NavigationRegion>.Instance;
 		}
