@@ -13,6 +13,40 @@ A Region is used to link specific sectors of a view to individual items on a nav
 > [!NOTE]
 > If an app only uses basic navigation between pages without any nested views or pages, it is not necessary to register routes. In such cases, the default `Frame` and navigator are sufficient to manage the navigation, simplifying the setup and reducing the need for additional configuration.
 
+## Avoid Using Region.Attached in Shell.xaml Content
+
+When using the navigation extensions with an `ExtendedSplashScreen` in your `Shell.xaml`, do **not** add `Region.Attached="True"` to content inside the `ExtendedSplashScreen`. This includes any custom content you might want to add while the splash screen is loading.
+
+**Incorrect Usage (Avoid This):**
+```xml
+<utu:ExtendedSplashScreen x:Name="Splash">
+    <!-- DO NOT add Region.Attached here - navigation host is not ready yet -->
+    <Grid uen:Region.Attached="True"
+          uen:Region.Navigator="Visibility">
+        <!-- This will cause initialization issues -->
+    </Grid>
+</utu:ExtendedSplashScreen>
+```
+
+**Why:** The `Region.Attached` property triggers navigation region initialization, which requires the navigation host (and its dependency injection container) to be fully started. During `Shell.xaml` construction, the host is not yet ready, leading to initialization issues.
+
+**Correct Approach:** The navigation system handles the initial navigation automatically from the Shell to your initial page. You don't need to manually add region-attached content inside the `ExtendedSplashScreen`. Instead, define your regions on your actual pages (like `MainPage`) where the navigation host is fully initialized.
+
+```xml
+<!-- Shell.xaml - Keep ExtendedSplashScreen content simple -->
+<utu:ExtendedSplashScreen x:Name="Splash">
+    <!-- Only use loading indicators, no Region.Attached content -->
+</utu:ExtendedSplashScreen>
+
+<!-- MainPage.xaml - Define regions here instead -->
+<Page>
+    <Grid uen:Region.Attached="True"
+          uen:Region.Navigator="Visibility">
+        <!-- Navigation content works correctly here -->
+    </Grid>
+</Page>
+```
+
 ## Properties in the Region Class
 
 1. **`Region.Attached`**:
