@@ -9,7 +9,25 @@ namespace Uno.Extensions.Navigation.UI;
 public static class Region
 {
 	private static ILogger? _logger;
-	internal static ILogger Logger { get => _logger ?? NullLogger<NavigationRegion>.Instance; set => _logger = value; }
+	private static bool _loggerWarningIssued;
+
+	internal static ILogger Logger
+	{
+		get
+		{
+			if (_logger is null && !_loggerWarningIssued)
+			{
+				_loggerWarningIssued = true;
+				Console.Error.WriteLine(
+					"[Uno.Extensions.Navigation] Logger has not been initialized. This can occur when Region.Attached is set " +
+					"before the navigation host is fully started. Navigation logging will be disabled until the host starts. " +
+					"If you're using Region.Attached inside an ExtendedSplashScreen, consider whether it's necessary - " +
+					"the navigation system typically handles initial navigation automatically.");
+			}
+			return _logger ?? NullLogger<NavigationRegion>.Instance;
+		}
+		set => _logger = value;
+	}
 
 	public static readonly DependencyProperty InstanceProperty =
 	   DependencyProperty.RegisterAttached(
