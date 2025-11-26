@@ -9,15 +9,14 @@ namespace Uno.Extensions.Navigation.UI;
 public static class Region
 {
 	private static ILogger? _logger;
-	private static bool _loggerWarningIssued;
+	private static int _loggerWarningIssued;
 
 	internal static ILogger Logger
 	{
 		get
 		{
-			if (_logger is null && !_loggerWarningIssued)
+			if (_logger is null && Interlocked.CompareExchange(ref _loggerWarningIssued, 1, 0) == 0)
 			{
-				_loggerWarningIssued = true;
 				Console.Error.WriteLine(
 					"[Uno.Extensions.Navigation] Logger has not been initialized. This can occur when Region.Attached is set " +
 					"before the navigation host is fully started. Navigation logging will be disabled until the host starts. " +
