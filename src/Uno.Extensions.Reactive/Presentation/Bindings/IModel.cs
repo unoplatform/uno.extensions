@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 namespace Uno.Extensions.Reactive.Bindings;
@@ -13,7 +14,9 @@ namespace Uno.Extensions.Reactive.Bindings;
 /// EVen if it's not recommended, this gives to the _Model_ to ability to interact with its _ViewModel_ if needed.
 /// </remarks>
 [EditorBrowsable(EditorBrowsableState.Advanced)]
-public interface IModel<out TViewModel>
+public interface IModel<
+	[DynamicallyAccessedMembers(ModelAttribute.BindableRequirements)]
+	out TViewModel>
 {
 	/// <summary>
 	/// Gets the instance of the view model associated to this model.

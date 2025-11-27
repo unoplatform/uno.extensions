@@ -1,4 +1,6 @@
-﻿namespace Uno.Extensions;
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace Uno.Extensions;
 
 public static class ServiceCollectionExtensions
 {
@@ -15,7 +17,10 @@ public static class ServiceCollectionExtensions
 
 	}
 
-	public static IServiceCollection AddNamedSingleton<TService, TImplementation>(this IServiceCollection services, string Name)
+	public static IServiceCollection AddNamedSingleton<
+		TService,
+		[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TImplementation
+	>(this IServiceCollection services, string Name)
 		where TService : class where TImplementation : class, TService
 	{
 		// Register the concrete type (the NamedInstance will use this
@@ -43,7 +48,10 @@ public static class ServiceCollectionExtensions
 				.AddSingleton<INamedInstance<TService>>(sp => new NamedInstanceReference<TService>(sp, OriginalName, Name));
 	}
 
-	public static IServiceCollection SetDefaultInstance<TService, TImplementation>(this IServiceCollection services)
+	public static IServiceCollection SetDefaultInstance<
+		TService,
+		[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TImplementation
+	>(this IServiceCollection services)
 		where TService : class where TImplementation : class, TService
 	{
 		return services.AddNamedSingleton<TService, TImplementation>(DefaultInstanceKey);

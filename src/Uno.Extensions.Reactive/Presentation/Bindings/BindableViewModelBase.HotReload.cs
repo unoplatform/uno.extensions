@@ -95,6 +95,7 @@ partial class BindableViewModelBase
 		}
 	}
 
+	[UnconditionalSuppressMessage("Trimming", "IL2067", Justification = "HotReload does not support trimmed environments.")]
 	private void HotPatch(Type originalModel, Type updatedModelType)
 	{
 		using var ctx = SourceContext.PreConfigure(updatedModelType, SourceContext.GetOrCreate(this));
@@ -113,7 +114,9 @@ partial class BindableViewModelBase
 	/// (cf. <see cref="__Reactive_GetModelArguments"/> and <see cref="__Reactive_TryGetMissingModelArgument"/>).
 	/// </summary>
 	[EditorBrowsable(EditorBrowsableState.Never)]
-	protected virtual object __Reactive_CreateModelInstance(Type updatedModelType)
+	protected virtual object __Reactive_CreateModelInstance(
+		[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)]
+		Type updatedModelType)
 	{
 		var provider = ServiceProviderHelper.FindProvider(this);
 
@@ -230,6 +233,8 @@ partial class BindableViewModelBase
 	/// <param name="previousModel">Old instance of the model that is being replaced.</param>
 	/// <param name="updatedModel">New instance of the model.</param>
 	[EditorBrowsable(EditorBrowsableState.Never)]
+	[RequiresDynamicCode("HotReload does not support trimmed environments.")]
+	[RequiresUnreferencedCode("HotReload does not support trimmed environments.")]
 	protected void __Reactive_TryPatchBindableProperties(object? previousModel, object? updatedModel)
 	{
 		var log = (previousModel ?? updatedModel)?.Log() ?? _untypedLog;
@@ -253,8 +258,8 @@ partial class BindableViewModelBase
 
 		if (trace) log.Trace($"Transferring state from '{previousModelType}:{previousModel.GetHashCode():X8}' to '{updatedModelType}:{updatedModel.GetHashCode():X8}'.");
 
-		var previousProperties = previousModelType.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic).ToDictionary(prop => prop.Name, StringComparer.Ordinal);
-		var updatedProperties = updatedModelType.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic).ToDictionary(prop => prop.Name, StringComparer.Ordinal);
+		var previousProperties = GetInstanceProperties(previousModelType);
+		var updatedProperties = GetInstanceProperties(updatedModelType);
 		var properties = previousProperties.Keys.Concat(updatedProperties.Keys).Distinct(StringComparer.Ordinal);
 
 		_propertyFeedsCache ??= new();
@@ -327,12 +332,24 @@ partial class BindableViewModelBase
 		}
 	}
 
+	private static Dictionary<string, PropertyInfo> GetInstanceProperties(
+		[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties | DynamicallyAccessedMemberTypes.NonPublicProperties)]
+		Type type)
+		=> type.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
+			.ToDictionary(prop => prop.Name, StringComparer.Ordinal);
+
+	[RequiresUnreferencedCode("HotReload does not support trimmed environments.")]
+	[UnconditionalSuppressMessage("Trimming", "IL3050", Justification = "HotReload does not support trimmed environments.")]
 	private static object CreateErrorFeed(Type valueType, string message)
 		=> Activator.CreateInstance(typeof(ErrorFeed<>).MakeGenericType(valueType), new InvalidOperationException(message))!;
 
+	[RequiresUnreferencedCode("HotReload does not support trimmed environments.")]
+	[UnconditionalSuppressMessage("Trimming", "IL3050", Justification = "HotReload does not support trimmed environments.")]
 	private static object CreateUndefinedFeed(Type valueType)
 		=> Activator.CreateInstance(typeof(UndefinedFeed<>).MakeGenericType(valueType))!;
 
+	[RequiresUnreferencedCode("HotReload does not support trimmed environments.")]
+	[UnconditionalSuppressMessage("Trimming", "IL3050", Justification = "HotReload does not support trimmed environments.")]
 	private static object CreateSilentFeed(Type valueType)
 		=> Activator.CreateInstance(typeof(SilentFeed<>).MakeGenericType(valueType))!;
 
@@ -380,6 +397,7 @@ partial class BindableViewModelBase
 			? (instance, valueType)
 			: null;
 
+	[UnconditionalSuppressMessage("Trimming", "IL2070", Justification = "Should only fail if IFeed<T> is trimmed away; returns `false` should that happen.")]
 	private static bool IsFeed(Type type, [NotNullWhen(true)] out Type? valueType)
 	{
 		var feedType = IsIFeed(type) ? type : type.GetInterfaces().FirstOrDefault(IsIFeed);
@@ -400,6 +418,8 @@ partial class BindableViewModelBase
 
 	private static readonly MethodInfo? _tryPatchBindableProperty = typeof(BindableViewModelBase).GetMethod(nameof(TryPatchBindablePropertyGeneric), BindingFlags.Instance | BindingFlags.NonPublic);
 
+	[RequiresDynamicCode("HotReload does not support trimmed environments.")]
+	[UnconditionalSuppressMessage("Trimming", "IL2060", Justification = "HotReload does not support trimmed environments.")]
 	private void TryPatchBindableProperty(object model, string property, Type valueType, object previousFeed, object updatedFeed)
 		=> _tryPatchBindableProperty!.MakeGenericMethod(valueType).Invoke(this, [model, property, previousFeed, updatedFeed]);
 
