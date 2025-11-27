@@ -16,6 +16,7 @@ A Region is used to link specific sectors of a view to individual items on a nav
 When using the navigation extensions with an `ExtendedSplashScreen` in your `Shell.xaml`, do **not** add `Region.Attached="True"` to content inside the `ExtendedSplashScreen`. This includes any custom content you might want to add while the splash screen is loading.
 
 **Incorrect Usage (Avoid This):**
+
 ```xml
 <utu:ExtendedSplashScreen x:Name="Splash">
     <!-- DO NOT add Region.Attached here - navigation host is not ready yet -->
