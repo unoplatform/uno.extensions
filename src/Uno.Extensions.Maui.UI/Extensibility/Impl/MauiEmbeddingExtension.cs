@@ -125,16 +125,13 @@ public partial class
 	{
 #if ANDROID
 		var androidApp = mauiApp.Services.GetRequiredService<Android.App.Application>();
-		var activity = mauiApp.Services.GetRequiredService<Android.App.Activity>();
 		var scope = mauiApp.Services.CreateScope();
 		var rootContext = new MauiContext(scope.ServiceProvider, androidApp);
 		InitializeScopedServices(rootContext);
 		var iApp = mauiApp.Services.GetRequiredService<IApplication>();
 		_ = new MauiEmbedding.EmbeddedApplication(mauiApp.Services, iApp);
 
-		// Initializing with the Activity to set the current activity.
-		// The Bundle is not actually used by Maui
-		Microsoft.Maui.ApplicationModel.Platform.Init(activity, null);
+		// Platform.Init is now handled via ConfigureLifecycleEvents in RegisterPlatformServices
 
 		androidApp.SetApplicationHandler(iApp, rootContext);
 		Initialize(iApp);
