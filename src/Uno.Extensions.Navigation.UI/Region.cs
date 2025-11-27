@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging.Abstractions;
+﻿using System.Diagnostics;
+using Microsoft.Extensions.Logging.Abstractions;
 using Uno.Extensions.Navigation.Regions;
 
 namespace Uno.Extensions.Navigation.UI;
@@ -9,26 +10,10 @@ namespace Uno.Extensions.Navigation.UI;
 public static class Region
 {
 	private static ILogger? _logger;
-	private static int _loggerWarningIssued;
 
 	internal static ILogger Logger
 	{
-		get
-		{
-			if (_logger is null && Interlocked.CompareExchange(ref _loggerWarningIssued, 1, 0) == 0)
-			{
-				// This warning is expected when Region.Attached="True" is used before the navigation
-				// host is fully started (e.g., inside ExtendedSplashScreen content). The region will
-				// be properly initialized once the view is loaded and services become available.
-				// Navigation logging will be disabled until NavigationHostedService.StartAsync runs.
-				System.Diagnostics.Debug.WriteLine(
-					"[Uno.Extensions.Navigation] Region.Attached is being used before the navigation host has fully started. " +
-					"This typically happens when Region.Attached=\"True\" is set on content inside an ExtendedSplashScreen. " +
-					"The region will defer its full initialization until services are available. " +
-					"Navigation logging is temporarily disabled and will be enabled once the host starts.");
-			}
-			return _logger ?? NullLogger<NavigationRegion>.Instance;
-		}
+		get => _logger ?? NullLogger<NavigationRegion>.Instance;
 		set => _logger = value;
 	}
 
