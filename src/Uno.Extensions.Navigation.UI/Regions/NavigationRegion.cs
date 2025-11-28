@@ -262,8 +262,45 @@ public sealed class NavigationRegion : IRegion
 			_logger.LogTraceMessage($"Reassigning parent (set parent to null and then call AssignParent to find new parent)");
 		}
 
+		// Check if we can safely reassign the parent
+		// If View is null, root, or not attached, we shouldn't clear the existing parent
+		// as AssignParent would return early without finding a new parent
+		if (View is null || _isRoot || !View.GetAttached())
+		{
+			if (_logger.IsEnabled(LogLevel.Trace))
+			{
+				_logger.LogTraceMessage($"(Name: {Name}) Cannot reassign parent: View is null ({View is null}), IsRoot ({_isRoot}), or not attached ({View?.GetAttached() != true})");
+			}
+			return;
+		}
+
+		// Try to find the new parent before clearing the current one
+		var newParent = View.FindParentRegion(out var routeName);
+
+		if (newParent is null && Parent is not null)
+		{
+			// If we can't find a new parent and we have an existing parent,
+			// keep the existing parent to avoid orphaning the region
+			if (_logger.IsEnabled(LogLevel.Trace))
+			{
+				_logger.LogTraceMessage($"(Name: {Name}) Cannot find new parent, keeping existing parent to avoid orphaning the region");
+			}
+			return;
+		}
+
+		// Safe to update the parent now
 		Parent = null;
-		AssignParent();
+		Name = routeName;
+
+		if (newParent is not null)
+		{
+			Parent = newParent;
+		}
+		else
+		{
+			// No parent found and no existing parent - call AssignParent to handle root initialization
+			AssignParent();
+		}
 	}
 
 	private async Task HandleLoaded()
