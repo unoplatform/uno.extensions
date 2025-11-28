@@ -12,7 +12,7 @@ To synchronize to the selected value in the `Model` side, use the `Selection` op
 
 ## Recap of the *PeopleApp* example
 
-We'll be using the *PeopleApp* example which we've built step-by-step in [this tutorial](xref:Uno.Extensions.Mvux.HowToListFeed).
+We'll be using the *PeopleApp* example which we've built step-by-step in [the tutorial about how to use List-Feeds](xref:Uno.Extensions.Mvux.HowToListFeed).
 
 The *PeopleApp* uses an `IListFeed<T>` where `T` is a `Person` [record](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/record) with the properties `FirstName` and `LastName`.
 It has a service that has the following contract:
@@ -119,7 +119,7 @@ When running the app, the top section will reflect the item the user selects in 
 ![A video demonstrating selection with MVUX](../Assets/Selection.gif)
 
 > [!NOTE]
-> The source code for the sample app can be found [GitHub](https://github.com/unoplatform/Uno.Samples/tree/master/UI/MvuxHowTos/SelectionPeopleApp).
+> The source code for the sample app can be found in the [SelectionPeopleApp in the Uno Samples Repository](https://github.com/unoplatform/Uno.Samples/tree/master/UI/MvuxHowTos/SelectionPeopleApp).
 
 ### Listening to the selected value
 
@@ -225,11 +225,14 @@ public partial record PeopleModel(IPeopleService PeopleService)
 Head to the View and enable multi-selection in the `ListView` by changing its `SelectionMode` property to `Multiple`.
 
 > [!NOTE]
-> The source code for the sample app can be found [here](https://github.com/unoplatform/Uno.Samples/tree/master/UI/MvuxHowTos/SelectionPeopleApp).
+> The source code for the sample app can be found in the [SelectionPeopleApp in the Uno Samples Repository](https://github.com/unoplatform/Uno.Samples/tree/master/UI/MvuxHowTos/SelectionPeopleApp).
 
 ## Manual selection
 
 The options above explained how to subscribe to selection that has been requested in the View by a Selector control (i.e. `ListView`).
 If you want to manually select an item or multiple items, rather use a [List-State](xref:Uno.Extensions.Mvux.ListStates) instead of a List-Feed to load the items, so that you can update their selection state. You can then use the List-State's selection operators to manually select items.
+
+> [!WARNING]
+> The `ListView` does contain an existing Command invoked on `ItemClick`, the `ItemClickCommand`. When you want to use the `Selection(...)` operator of the `ListState<T>` or `ListFeed<T>` bound to another `State` like in the [Sample above, where we used ListFeed for this](#single-item-selection), the `SelectedPerson`, make sure to **not** set both, the `ItemClickCommand` property of the `ListView` **and** the `.Selection(...)` operator, as it may will not update the selection State as expected or not trigger both Commands
 
 Refer to the [selection operators](xref:Uno.Extensions.Mvux.ListStates#selection-operators) section in the List-State page for documentation on how to use manual selection.
