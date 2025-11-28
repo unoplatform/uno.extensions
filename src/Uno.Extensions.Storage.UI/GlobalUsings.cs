@@ -14,6 +14,7 @@ global using Uno.Extensions.DependencyInjection;
 global using Uno.Extensions.Logging;
 global using Uno.Extensions.Serialization;
 global using Uno.Extensions.Storage;
+global using Uno.Extensions.Storage.Enumerable;
 global using Uno.Extensions.Storage.KeyValueStorage;
 global using Uno.Extensions.Threading;
 global using Windows.Security.Credentials;
