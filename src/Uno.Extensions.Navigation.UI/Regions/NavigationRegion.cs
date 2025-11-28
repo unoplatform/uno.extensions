@@ -288,17 +288,18 @@ public sealed class NavigationRegion : IRegion
 			return;
 		}
 
-		// Safe to update the parent now
-		Parent = null;
-		Name = routeName;
-
 		if (newParent is not null)
 		{
+			// Found a new parent - update parent and name atomically
+			// Setting Parent removes from old parent's Children (if any),
+			// then adds to new parent's Children
 			Parent = newParent;
+			Name = routeName;
 		}
 		else
 		{
-			// No parent found and no existing parent - call AssignParent to handle root initialization
+			// No new parent found and no existing parent (Parent is null at this point
+			// due to the early return above) - call AssignParent to handle root initialization
 			AssignParent();
 		}
 	}
