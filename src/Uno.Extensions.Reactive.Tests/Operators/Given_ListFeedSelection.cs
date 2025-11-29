@@ -805,4 +805,70 @@ public partial class Given_ListFeedSelection : FeedTests
 
 		public int? MyEntityKey { get; init; }
 	}
+
+	[TestMethod]
+	public async Task When_AddAsyncThenTrySelectAsync_Then_SelectionStateDoesNotReceiveIntermediateNone()
+	{
+		// This test verifies the fix for issue #2942
+		// When AddAsync is called followed by TrySelectAsync, the selection state's
+		// ForEach callback should only fire with the selected value, not with null first
+
+		var selection = State<int>.Empty(this).Record();
+		var list = ListState.Async(this, async _ => ImmutableList<int>.Empty);
+		var sut = ListFeedSelection<int>.Create(list, selection.Feed, "sut").Record();
+
+		await sut.WaitForMessages(1);
+
+		// Add an item to the list and then select it
+		await list.AddAsync(42, CT);
+		await list.TrySelectAsync(42, CT);
+
+		// The selection state should only get the selected value (42), not None/null first
+		await selection.Should().BeAsync(r => r
+			.Message(Data.None, Error.No, Progress.Final)  // Initial empty state
+			.Message(42, Error.No, Progress.Final)         // Selected value (should not have intermediate None)
+		);
+
+		await sut.Should().BeAsync(r => r
+			.Message(Data.None, Error.No, Progress.Final, Selection.Empty)
+			.Message(m => m
+				.Changed(Changed.Data)
+				.Current(Items.Some(42), Error.No, Progress.Final, Selection.Empty))
+			.Message(m => m
+				.Changed(Changed.Selection & MessageAxes.SelectionSource)
+				.Current(Items.Some(42), Error.No, Progress.Final, Selection.Items(42)))
+		);
+	}
+
+	[TestMethod]
+	public async Task When_AddAsyncThenTrySelectAsync_WithInitialData_Then_SelectionStateDoesNotReceiveIntermediateNone()
+	{
+		// Same as above but with an initial list that already has data
+
+		var selection = State<int>.Empty(this).Record();
+		var list = ListState.Async(this, async _ => Enumerable.Range(0, 5).ToImmutableList());
+		var sut = ListFeedSelection<int>.Create(list, selection.Feed, "sut").Record();
+
+		await sut.WaitForMessages(1);
+
+		// Add an item to the list and then select it
+		await list.AddAsync(42, CT);
+		await list.TrySelectAsync(42, CT);
+
+		// The selection state should only get the selected value (42), not None/null first
+		await selection.Should().BeAsync(r => r
+			.Message(Data.None, Error.No, Progress.Final)  // Initial empty state
+			.Message(42, Error.No, Progress.Final)         // Selected value (should not have intermediate None)
+		);
+
+		await sut.Should().BeAsync(r => r
+			.Message(Items.Range(5), Error.No, Progress.Final, Selection.Empty)
+			.Message(m => m
+				.Changed(Changed.Data)
+				.Current(Items.Some(0, 1, 2, 3, 4, 42), Error.No, Progress.Final, Selection.Empty))
+			.Message(m => m
+				.Changed(Changed.Selection & MessageAxes.SelectionSource)
+				.Current(Items.Some(0, 1, 2, 3, 4, 42), Error.No, Progress.Final, Selection.Items(42)))
+		);
+	}
 }
