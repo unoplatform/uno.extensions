@@ -4,6 +4,8 @@ uid: Uno.Extensions.Markup.HowToCustomMarkupProjectTheme
 
 # C# Markup project setup
 
+> **UnoFeature:** Material (for Material theme)
+
 In this tutorial, you'll learn how to set up an Uno Platform project to use C# Markup to change the Theme.
 
 1. For this tutorial we will continue to use the Sample created on the [Custom your own C# Markup - Learn how to use Toolkit](xref:Uno.Extensions.HowToCustomMarkupProjectToolkit) tutorial and change on the [Custom your own C# Markup - Learn how to change Visual States and User Controls](xref:Uno.Extensions.HowToCustomMarkupProjectVisualStates).
@@ -43,13 +45,17 @@ Below we can see how to include and how to customize each of the two.
 
 ### Material
 
-Assuming that we are on the Fluent Theme and we want to change to the Material Theme, we just need to change some files (Or add some Nuget References) and it is done.
+> **UnoFeature:** Material
 
-#### Below is the list of files we need to modify
+The recommended way to add Material theme to your project is by adding the `Material` UnoFeature to your .csproj file. This will automatically include all necessary packages.
+
+Assuming that we are on the Fluent Theme and we want to change to the Material Theme, we just need to add the `Material` UnoFeature.
+
+#### What the Material UnoFeature includes
+
+When you add the `Material` UnoFeature, the following packages are automatically added:
 
 - In the File Directory.Packages.props:
-
-In the `Directory.Packages.props`, we need to add the `PackageReference` below or use the Manage NuGet Packages Manager and update the versions for the project.
 
 ```xml
     <PackageVersion Include="Uno.Material.WinUI.Markup" Version="0.0.0" />
@@ -59,7 +65,7 @@ In the `Directory.Packages.props`, we need to add the `PackageReference` below o
 
 --------------------------------------------------------------
 
-If you prefer you can use the Manage NuGet Packages:
+(Alternative: If you're not using UnoFeatures, you can manually manage NuGet Packages:
 In the Solution Explorer panel, right-click on your app's App Code Library project (PROJECT_NAME.csproj)
 and select Manage NuGet Packages...
 
@@ -67,13 +73,11 @@ and select Manage NuGet Packages...
 
 - `Material.WinUI.Markup`,
 - `Uno.Material.WinUI`
-- `Uno.Dsp.Tasks`
+- `Uno.Dsp.Tasks`)
 
 --------------------------------------------------------------
 
-- In the File of Projects References:
-
-Add PackageReference to the PROJECT_NAME.csproj and the PROJECT_NAME.[Platform].csproj projects.
+- Package references in PROJECT_NAME.csproj and PROJECT_NAME.[Platform].csproj projects:
 
 ```xml
 <PackageReference Include="Uno.Material.WinUI.Markup" />

@@ -6,6 +6,8 @@ tags: [uno, uno-platform, uno-extensions, navigation, INavigator, ViewModel, MVV
 
 # Navigate Between Pages via ViewModel
 
+> **UnoFeature:** Navigation
+
 ## Navigate to another page
 
 ```csharp

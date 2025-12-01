@@ -4,6 +4,8 @@ uid: Uno.Extensions.Navigation.Overview
 
 # Introduction
 
+> **UnoFeature:** Navigation
+
 ## What is Navigation?
 
 Navigation needs to encompass a range of UI concepts:

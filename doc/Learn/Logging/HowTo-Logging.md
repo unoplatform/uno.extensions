@@ -3,6 +3,8 @@ uid: Uno.Extensions.Logging.UseLogging
 ---
 # How-To: Enable and Use Logging
 
+> **UnoFeature:** Logging
+
 `Uno.Extensions.Logging` allows you to leverage logging capabilities tailored to your target platform to easily record events for XAML layout, Uno-internal messages, and custom events with severity and verbosity levels of your choice.
 
 ## Step-by-step

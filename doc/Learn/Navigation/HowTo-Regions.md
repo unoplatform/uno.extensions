@@ -3,6 +3,8 @@ uid: Uno.Extensions.Navigation.Regions
 ---
 # How-To: Define Regions
 
+> **UnoFeature:** Navigation
+
 A Region is used to link specific sectors of a view to individual items on a navigation control within the same page. This helps in managing and organizing navigation within different sections of a view, ensuring that each section can independently display and navigate through content. Regions are usually used to manage the navigation of pages and to display or hide content with controls like `NavigationView` and `TabBars`.
 
 > [!IMPORTANT]

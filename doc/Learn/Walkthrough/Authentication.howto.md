@@ -4,6 +4,8 @@ title: Authenticate Users with Custom Logic
 tags: [authentication, custom-login, navigation]
 ---
 
+> **UnoFeature:** Authentication
+
 ## 1. Sign in with a hard-coded user
 
 **Goal**

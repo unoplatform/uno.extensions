@@ -3,6 +3,8 @@ uid: Uno.Extensions.Authentication.HowToCookieAuthorization
 ---
 # How-To: Using Cookies to Authorize
 
+> **UnoFeature:** Authentication (or AuthenticationMsal/AuthenticationOidc as appropriate)
+
 Using **cookies** is a common way to store tokens that are needed to authenticate a user. When an HTTP request is successfully authenticated, the server will return a response that creates a cookie containing a token value. Uno Extensions makes these cookie-related authorization steps less tedious by doing the work of extracting these values and applying them to future requests. This tutorial will teach you how to configure authentication to apply tokens from a cookie when they are available.
 
 > [!IMPORTANT]

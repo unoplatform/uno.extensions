@@ -6,6 +6,8 @@ tags: [uno, uno-platform, uno-extensions, navigation, dialog, modal, flyout, Qua
 
 # Display Dialogs as Flyouts or Modals
 
+> **UnoFeature:** Navigation
+
 ## Show dialog from code
 
 ```csharp

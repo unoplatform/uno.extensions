@@ -3,6 +3,8 @@ uid: Uno.Extensions.Navigation.HowToNavigateInCode
 ---
 # How-To: Navigate in Code
 
+> **UnoFeature:** Navigation
+
 This topic walks through controlling Navigation from code, either in the code-behind file of a Page or in the corresponding view model. One of the Navigation objectives was a single navigation construct that applies wherever you choose to write your navigation code.
 
 [!include[getting-help](../includes/mvvm-approach.md)]

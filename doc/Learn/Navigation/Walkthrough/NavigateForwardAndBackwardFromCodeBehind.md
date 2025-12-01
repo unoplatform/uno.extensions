@@ -6,6 +6,8 @@ tags: [uno, uno-platform, uno-extensions, navigation, INavigator, code-behind, x
 
 # Navigate between two pages from Code-Behind
 
+> **UnoFeature:** Navigation
+
 ## Navigate forward to another page via button click
 
 ```xml

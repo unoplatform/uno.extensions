@@ -3,6 +3,8 @@ uid: Uno.Extensions.Navigation.Advanced.ResponsiveShell
 ---
 # How-To: Build a Responsive Layout using NavigationView and TabBar
 
+> **UnoFeature:** Navigation (and Toolkit for TabBar)
+
 Apps that scale across multiple devices and form factors need to be able to adapt their layout to the available screen real estate. When your app is running on narrow devices, such as phones, you may want to hide the navigation pane and show a hamburger menu button instead.
 
 It makes sense to allow `TabBar` to be the dominant navigation surface on these devices. On larger devices, such as tablets and desktops, you may want to show the navigation pane and hide the hamburger menu button. Using the `TabBar` would be a poor choice for navigation on these devices. The platform includes a `VisualStateManger` that allows you to define different visual states for different screen sizes in XAML, showing the navigation pane and hamburger menu button as appropriate.

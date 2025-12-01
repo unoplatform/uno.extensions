@@ -4,6 +4,8 @@ uid: Uno.Extensions.Mvux.Overview
 
 # MVUX Overview
 
+> **UnoFeature:** MVUX
+
 **M**odel, **V**iew, **U**pdate, e**X**tended (**MVUX**) is an implementation of the Model-View-Update design pattern, that encourages the flow of immutable data in a single direction. What differentiates MVUX from other MVU implementations is that it has been designed to support data binding.
 
 ## Why MVUX?

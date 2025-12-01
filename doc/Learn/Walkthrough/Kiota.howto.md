@@ -3,6 +3,9 @@ uid: Uno.Extensions.Http.Kiota.HowTo
 title: Generate Kiota Clients
 tags: [http, kiota, openapi, typed-client]
 ---
+
+> **UnoFeature:** HttpKiota
+
 # Generate Kiota clients from OpenAPI
 
 Turn an OpenAPI description into a typed client, register it with Uno Extensions, and wire it to your view models.

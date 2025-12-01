@@ -3,6 +3,9 @@ uid: Uno.Extensions.Serialization.Serialization.HowTo
 title: Serialize JSON with Source Generators
 tags: [serialization, json, system-text-json]
 ---
+
+> **UnoFeature:** Serialization
+
 # Serialize JSON with source generators
 
 Register Uno serialization with source-generated metadata so your apps can serialize and deserialize models efficiently using `System.Text.Json`.

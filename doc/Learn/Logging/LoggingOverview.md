@@ -4,6 +4,8 @@ uid: Uno.Extensions.Logging.Overview
 
 # Logging
 
+> **UnoFeature:** Logging (or Serilog for Serilog integration)
+
 Apps that record events typically do so for informational or diagnostic purposes, depending on the desired level of verbosity. **Logging** is the process of recording events to either a _persistent_ store such as a text file or database, or a _transient_ location like the standard output console. The `Uno.Extensions.Logging` library leverages logging capabilities tailored to the target platform to easily write entries for both app-specific and Uno internal events to one or more locations. These locations where logs can be written are referred to as **providers**. This feature enables a simple way to wire up custom log providers for locations not included by the runtime libraries or extensions.
 
 It uses [Microsoft.Extensions.Logging](https://www.nuget.org/packages/Microsoft.Extensions.Logging) for logging abstractions. For more documentation about logging, read the references listed at the bottom.

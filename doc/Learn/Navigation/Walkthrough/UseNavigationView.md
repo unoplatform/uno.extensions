@@ -6,6 +6,8 @@ tags: [uno, uno-platform, uno-extensions, navigation, NavigationView, Navigation
 
 # Navigate Between Menu Items using NavigationView with Adaptive Region-Based Navigation
 
+> **UnoFeature:** Navigation
+
 ## Create menu-based navigation interface
 
 Create the basic structure with NavigationView and content area.
