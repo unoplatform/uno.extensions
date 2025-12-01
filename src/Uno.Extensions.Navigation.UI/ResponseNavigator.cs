@@ -51,6 +51,13 @@ public class ResponseNavigator<TResult> : IResponseNavigator, IInstance<IService
 	/// <inheritdoc />
 	public async Task CompleteWithResult(object? responseData)
 	{
+		// Early return if already completed to avoid unnecessary processing
+		if (ResultCompletion.Task.Status == TaskStatus.Canceled ||
+			ResultCompletion.Task.Status == TaskStatus.RanToCompletion)
+		{
+			return;
+		}
+
 		var result = responseData is Option<TResult> res ? res : default;
 		if (result.Type != OptionType.Some)
 		{
