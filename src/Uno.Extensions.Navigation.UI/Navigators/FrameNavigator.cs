@@ -259,6 +259,17 @@ public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 		await InitializeCurrentView(request, previousRoute ?? Route.Empty, mapping);
 
 
+		// Complete any pending ResponseNavigator before restoring the previous navigator.
+		// This handles the case when back navigation occurs outside of the ResponseNavigator's
+		// NavigateAsync method (e.g., hardware back button, NavigationBar back button pressed
+		// before ViewModel is fully loaded).
+		var currentNavigator = Region.Services?.GetInstance<INavigator>();
+		if (currentNavigator is IResponseNavigator responseNavigator)
+		{
+			var responseData = request.Route.ResponseData();
+			await responseNavigator.CompleteWithResult(responseData);
+		}
+
 		// Restore the INavigator instance
 		var navigator = CurrentView?.GetNavigatorInstance();
 		if (navigator is not null)
