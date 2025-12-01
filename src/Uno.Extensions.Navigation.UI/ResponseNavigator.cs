@@ -42,27 +42,33 @@ public class ResponseNavigator<TResult> : IResponseNavigator, IInstance<IService
 			(request.Route.IsRoot() && request.Route.TrimQualifier(Qualifiers.Root).FrameIsBackNavigation() && this.Navigation.GetParent() == null))
 		{
 			var responseData = request.Route.ResponseData();
-			var result = responseData is Option<TResult> res ? res : default;
-			if (result.Type != OptionType.Some)
-			{
-				if (responseData is IOption objectResponse)
-				{
-					responseData = objectResponse.SomeOrDefault();
-				}
-
-				if (responseData is TResult data)
-				{
-					result = Option.Some(data);
-				}
-				else
-				{
-					result = Option.None<TResult>();
-				}
-			}
-			await ApplyResult(result);
+			await CompleteWithResult(responseData);
 		}
 
 		return navResponse;
+	}
+
+	/// <inheritdoc />
+	public async Task CompleteWithResult(object? responseData)
+	{
+		var result = responseData is Option<TResult> res ? res : default;
+		if (result.Type != OptionType.Some)
+		{
+			if (responseData is IOption objectResponse)
+			{
+				responseData = objectResponse.SomeOrDefault();
+			}
+
+			if (responseData is TResult data)
+			{
+				result = Option.Some(data);
+			}
+			else
+			{
+				result = Option.None<TResult>();
+			}
+		}
+		await ApplyResult(result);
 	}
 
 	private async Task ApplyResult(Option<TResult> responseData)
