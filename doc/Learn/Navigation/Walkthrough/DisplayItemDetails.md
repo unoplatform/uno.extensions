@@ -6,7 +6,7 @@ tags: [uno, uno-platform, uno-extensions, navigation, data-passing, DataViewMap,
 
 # Pass Data During Navigation
 
-> **UnoFeature:** Navigation
+> **UnoFeatures:** `Navigation` (add to `<UnoFeatures>` in your `.csproj`)
 
 ## Pass data to another page
 

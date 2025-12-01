@@ -4,7 +4,7 @@ uid: Uno.Extensions.DependencyInjection.HowToCommunityToolkit
 
 # How-To: Manually Resolving Dependencies with CommunityToolkit.Mvvm
 
-> **UnoFeature:** Mvvm (for CommunityToolkit.Mvvm support)
+> **UnoFeatures:** `Mvvm` (add to `<UnoFeatures>` in your `.csproj`)
 
 While making gradual changes to an existing app's codebase, you may find it necessary to access the DI container to manually resolve dependencies. For instance, if you are overhauling a view model to separate its logic into services, you may need to resolve the service without using constructor injection. The [CommunityToolkit.Mvvm](https://www.nuget.org/packages/CommunityToolkit.Mvvm) package provides a static `Ioc.Default` property that exposes the DI container used by the application.
 

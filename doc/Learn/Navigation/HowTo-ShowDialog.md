@@ -3,7 +3,7 @@ uid: Uno.Extensions.Navigation.HowToShowDialog
 ---
 # How-To: Display a Dialog (modal or flyout)
 
-> **UnoFeature:** Navigation
+> **UnoFeatures:** `Navigation` (add to `<UnoFeatures>` in your `.csproj`)
 
 This topic provides a step-by-step guide on using Navigation to display a Dialog.
 

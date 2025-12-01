@@ -4,7 +4,7 @@ uid: Uno.Extensions.Mvux.ListStates
 
 # What are list-states
 
-> **UnoFeature:** MVUX
+> **UnoFeatures:** `MVUX` (add to `<UnoFeatures>` in your `.csproj`)
 
 List-state is the collection counterpart of [state](xref:Uno.Extensions.Mvux.States).
 

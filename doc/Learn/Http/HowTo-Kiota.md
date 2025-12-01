@@ -3,7 +3,7 @@ uid: Uno.Extensions.Http.HowToKiota
 ---
 # How-To: Quickly create and register a Kiota Client for an API
 
-> **UnoFeature:** HttpKiota
+> **UnoFeatures:** `HttpKiota` (add to `<UnoFeatures>` in your `.csproj`)
 
 When working with APIs in your application, having a strongly-typed client can simplify communication and reduce boilerplate code. **Kiota** is a tool that generates strongly-typed API clients from Swagger/OpenAPI definitions. With Uno.Extensions, you can easily register and use Kiota clients in your Uno Platform app without additional setup.
 

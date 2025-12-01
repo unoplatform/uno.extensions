@@ -4,7 +4,7 @@ uid: Uno.Extensions.Serialization.Overview
 
 # Serialization
 
-> **UnoFeature:** Serialization
+> **UnoFeatures:** `Serialization` (add to `<UnoFeatures>` in your `.csproj`)
 
 **Serialization** involves converting an object into a format that can be easily stored or transmitted. On the receiving end, the object is reconstructed back into its original form through **deserialization**. These two operations complement each other and can be important for dynamic, data-rich applications.
 

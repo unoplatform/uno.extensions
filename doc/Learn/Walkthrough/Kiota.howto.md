@@ -4,7 +4,7 @@ title: Generate Kiota Clients
 tags: [http, kiota, openapi, typed-client]
 ---
 
-> **UnoFeature:** HttpKiota
+> **UnoFeatures:** `HttpKiota` (add to `<UnoFeatures>` in your `.csproj`)
 
 # Generate Kiota clients from OpenAPI
 

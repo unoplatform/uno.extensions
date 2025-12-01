@@ -6,7 +6,7 @@ tags: [uno, uno-platform, uno-extensions, uno-toolkit, navigation, TabBar, TabBa
 
 # Navigate Between Tab Views using TabBar with Region-Based Content Switching
 
-> **UnoFeature:** Navigation (and Toolkit for TabBar)
+> **UnoFeatures:** `Navigation;Toolkit` (add to `<UnoFeatures>` in your `.csproj`)
 
 * Enable Toolkit navigation in `App.xaml.cs`:
 

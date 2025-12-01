@@ -4,7 +4,7 @@ uid: Uno.Extensions.Markup.HowToMarkupProjectToolkit
 
 # How to set up an C# Markup project for Toolkit
 
-> **UnoFeature:** CSharpMarkup
+> **UnoFeatures:** `CSharpMarkup` (add to `<UnoFeatures>` in your `.csproj`)
 
 In this tutorial, you'll learn how to set up an Uno Platform project to use C# Markup.
 

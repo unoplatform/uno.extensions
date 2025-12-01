@@ -4,7 +4,7 @@ uid: Uno.Extensions.Mvux.HowToSimpleState
 
 # How to create a state with a command
 
-> **UnoFeature:** MVUX
+> **UnoFeatures:** `MVUX` (add to `<UnoFeatures>` in your `.csproj`)
 
 In this tutorial, you will learn how to create an MVUX project and basic usage of a state (`IState<T>`) and the `FeedView` control, to asynchronously load, display and manipulate data from and to an service.
 

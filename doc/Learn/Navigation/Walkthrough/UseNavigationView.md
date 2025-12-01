@@ -6,7 +6,7 @@ tags: [uno, uno-platform, uno-extensions, navigation, NavigationView, Navigation
 
 # Navigate Between Menu Items using NavigationView with Adaptive Region-Based Navigation
 
-> **UnoFeature:** Navigation
+> **UnoFeatures:** `Navigation` (add to `<UnoFeatures>` in your `.csproj`)
 
 ## Create menu-based navigation interface
 

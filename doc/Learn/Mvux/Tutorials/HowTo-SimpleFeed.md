@@ -4,7 +4,7 @@ uid: Uno.Extensions.Mvux.HowToSimpleFeed
 
 # How to create a feed
 
-> **UnoFeature:** MVUX
+> **UnoFeatures:** `MVUX` (add to `<UnoFeatures>` in your `.csproj`)
 
 In this tutorial, you will learn how to create a project that uses MVUX with a combination of a feed (`IFeed<T>`) and the `FeedView` control to asynchronously load and display data coming from a service.
 

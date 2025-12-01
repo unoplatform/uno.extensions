@@ -3,7 +3,7 @@ uid: Uno.Extensions.ThemeService.Overview
 ---
 # How to use Theme Service
 
-> **UnoFeature:** ThemeService
+> **UnoFeatures:** `ThemeService` (add to `<UnoFeatures>` in your `.csproj`)
 
 This topic explains how to use the `ThemeService` for runtime theme switching and persisting user theme preferences.
 

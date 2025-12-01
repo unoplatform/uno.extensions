@@ -4,7 +4,7 @@ uid: Uno.Extensions.Http.HowToEndpointOptions
 
 # How-To: Configure `HttpClient` with Custom Endpoint Options
 
-> **UnoFeature:** Http
+> **UnoFeatures:** `Http` (add to `<UnoFeatures>` in your `.csproj`)
 
 It's often necessary to include an API key alongside requests to a web API. This can be done by adding a header to the request. The steps below will show you how to easily specify custom options, such as an access token, when adding an endpoint. You can then configure the associated `HttpClient` from these options.
 

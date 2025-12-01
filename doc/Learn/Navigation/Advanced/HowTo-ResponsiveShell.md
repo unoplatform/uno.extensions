@@ -3,7 +3,7 @@ uid: Uno.Extensions.Navigation.Advanced.ResponsiveShell
 ---
 # How-To: Build a Responsive Layout using NavigationView and TabBar
 
-> **UnoFeature:** Navigation (and Toolkit for TabBar)
+> **UnoFeatures:** `Navigation;Toolkit` (add to `<UnoFeatures>` in your `.csproj`)
 
 Apps that scale across multiple devices and form factors need to be able to adapt their layout to the available screen real estate. When your app is running on narrow devices, such as phones, you may want to hide the navigation pane and show a hamburger menu button instead.
 

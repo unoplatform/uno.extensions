@@ -6,7 +6,7 @@ tags: [uno, uno-platform, uno-extensions, navigation, back-stack, Qualifiers.Cle
 
 # Manage Back Stack and Multi-Page Navigation
 
-> **UnoFeature:** Navigation
+> **UnoFeatures:** `Navigation` (add to `<UnoFeatures>` in your `.csproj`)
 
 ## Clear back stack when navigating
 

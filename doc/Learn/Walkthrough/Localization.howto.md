@@ -4,7 +4,7 @@ title: Localize Your App
 tags: [localization, globalization, string-localizer]
 ---
 
-> **UnoFeature:** Localization
+> **UnoFeatures:** `Localization` (add to `<UnoFeatures>` in your `.csproj`)
 
 # Localize strings and switch cultures at runtime
 

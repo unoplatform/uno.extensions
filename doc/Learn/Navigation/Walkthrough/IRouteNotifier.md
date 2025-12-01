@@ -6,7 +6,7 @@ tags: [uno, uno-platform, uno-extensions, navigation, IRouteNotifier, RouteChang
 
 # Track and Respond to Route Changes
 
-> **UnoFeature:** Navigation
+> **UnoFeatures:** `Navigation` (add to `<UnoFeatures>` in your `.csproj`)
 
 ## Monitor route changes
 

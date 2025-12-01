@@ -4,7 +4,7 @@ uid: Uno.Extensions.Configuration.HowToWritableConfiguration
 
 # How-To: Writable Configuration
 
-> **UnoFeature:** Configuration
+> **UnoFeatures:** `Configuration` (add to `<UnoFeatures>` in your `.csproj`)
 
 **Writable Configuration** extends the standard, [read-only](xref:Uno.Extensions.Configuration.HowToConfiguration) pattern by allowing for programmatic writing of configuration values at runtime. This is useful for scenarios where you want to persist user preferences or other trivial information that may be changed over time. `Uno.Extensions.Configuration` extends the `IOptionsSnapshot<T>` interface from [Microsoft.Extensions.Options](https://learn.microsoft.com/dotnet/api/microsoft.extensions.options) to support this.
 

@@ -4,7 +4,7 @@ title: Configure Uno Hosting
 tags: [hosting, dependency-injection, startup]
 ---
 
-> **UnoFeature:** Hosting
+> **UnoFeatures:** `Hosting` (add to `<UnoFeatures>` in your `.csproj`)
 
 # Configure hosting for dependency injection
 

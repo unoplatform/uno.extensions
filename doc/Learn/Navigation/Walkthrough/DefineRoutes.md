@@ -6,7 +6,7 @@ tags: [uno, uno-platform, uno-extensions, navigation, routes, RouteMap, ViewMap,
 
 # Define Navigation Routes
 
-> **UnoFeature:** Navigation
+> **UnoFeatures:** `Navigation` (add to `<UnoFeatures>` in your `.csproj`)
 
 ## Register Navigation Views and Routes
 

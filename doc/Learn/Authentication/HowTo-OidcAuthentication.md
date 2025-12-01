@@ -3,7 +3,7 @@ uid: Uno.Extensions.Authentication.HowToOidcAuthentication
 ---
 # How-To: Get Started with Oidc Authentication
 
-> **UnoFeature:** AuthenticationOidc
+> **UnoFeatures:** `AuthenticationOidc` (add to `<UnoFeatures>` in your `.csproj`)
 
 `OidcAuthenticationProvider` is a specific implementation of `IAuthenticationProvider` that allows your users to sign in using their identities from a participating identity provider. It provides seamless integration with any [OpenID Connect](https://openid.net/connect/) backend, such as [Duende.IdentityServer](https://duendesoftware.com/products/identityserver). By acting as an adapter, it integrates OpenID Connect authentication into the Uno.Extensions ecosystem, allowing you to leverage a unified approach across platforms.
 

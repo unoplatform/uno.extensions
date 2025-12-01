@@ -3,7 +3,7 @@ uid: Uno.Extensions.Navigation.Advanced.ContentControl
 ---
 # How-To: Use a ContentControl to Display a View
 
-> **UnoFeature:** Navigation
+> **UnoFeatures:** `Navigation` (add to `<UnoFeatures>` in your `.csproj`)
 
 If you want to display a view in a specific location in a page, `ContentControl` is the ideal UI element. For example, you might want to display a view in a `Grid` or `StackPanel` in a specific location. You can use a `ContentControl` to display a view in a specific location.
 
