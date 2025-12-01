@@ -18,9 +18,9 @@ public partial class Given_BindableAttribute_Then_Flagged : FeedUITests
 	[TestMethod]
 	public void ViewModelGenerator_GeneratesBindableAttributeForRecords()
 	{
-		// When ViewModelGenerator_1 or ViewModelGenerator_2 generates a bindable wrapper for a record type,
+		// When ViewModelGenerator_2 generates a bindable wrapper for a record type,
 		// it should include the BindableAttribute to avoid reflection at runtime.
-		// The generated type should be named Bindable{RecordName}ViewModel for ViewModelGenerator_2
+		// ViewModelGenerator_2 generates types named Bindable{RecordName}ViewModel
 		var bindableType = typeof(BindableTestRecordViewModel);
 		
 		Assert.IsNotNull(bindableType, "The generated bindable type should exist");
@@ -57,13 +57,13 @@ public partial class Given_BindableAttribute_Then_Flagged : FeedUITests
 	}
 }
 
-// Test record for ViewModelGenerator (used by ViewModelGenTool_3)
+// Test record for ViewModelGenerator_2 (generates bindable wrappers for records)
 public partial record TestRecord(string Name, int Value);
 
 // Test record with nested list to verify complex scenarios
 public partial record TestRecordWithList(ImmutableList<TestRecord> Items);
 
-// Test model/viewmodel pair for ViewModelGenTool_3
+// Test model for ViewModelGenTool_3 (generates view models from partial classes with feeds)
 public partial class TestModel
 {
 	public IFeed<string> Name => Feed.Async(async ct => "Test");
