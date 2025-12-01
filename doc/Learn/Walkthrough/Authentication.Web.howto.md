@@ -4,7 +4,7 @@ title: Authenticate Users with a Web View
 tags: [authentication, web, navigation]
 ---
 
-> **UnoFeature:** Authentication
+> **UnoFeatures:** `Authentication` (add to `<UnoFeatures>` in your `.csproj`)
 
 # Let users sign in from a web view
 

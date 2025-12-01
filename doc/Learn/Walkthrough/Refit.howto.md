@@ -4,7 +4,7 @@ title: Build Refit Clients
 tags: [http, refit, typed-client, configuration]
 ---
 
-> **UnoFeature:** HttpRefit
+> **UnoFeatures:** `HttpRefit` (add to `<UnoFeatures>` in your `.csproj`)
 
 # Build Refit endpoints from configuration
 

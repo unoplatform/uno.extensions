@@ -4,7 +4,7 @@ title: Persist Writable Settings
 tags: [configuration, writable, options]
 ---
 
-> **UnoFeature:** Configuration
+> **UnoFeatures:** `Configuration` (add to `<UnoFeatures>` in your `.csproj`)
 
 # Persist writable settings with `IWritableOptions`
 

@@ -3,7 +3,7 @@ uid: Uno.Extensions.Http.HowToHttp
 ---
 # How-To: Register an Endpoint for HTTP Requests
 
-> **UnoFeature:** Http
+> **UnoFeatures:** `Http` (add to `<UnoFeatures>` in your `.csproj`)
 
 When working with a complex application, centralized registration of your API endpoints is a good practice. This allows you to easily change the endpoint for a given service, and to easily add new services.
 

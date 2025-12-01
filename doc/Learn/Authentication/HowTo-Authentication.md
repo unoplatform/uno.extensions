@@ -3,7 +3,7 @@ uid: Uno.Extensions.Authentication.HowToAuthentication
 ---
 # How-To: Get Started with Authentication
 
-> **UnoFeature:** Authentication
+> **UnoFeatures:** `Authentication` (add to `<UnoFeatures>` in your `.csproj`)
 
 `Uno.Extensions.Authentication` provides you with a consistent way to add authentication to your application. It is recommended to use one of the built-in `IAuthenticationService` implementations. This tutorial will use the custom authorization to validate user credentials.
 

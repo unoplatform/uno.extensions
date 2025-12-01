@@ -4,7 +4,7 @@ title: Authenticate Users with Custom Logic
 tags: [authentication, custom-login, navigation]
 ---
 
-> **UnoFeature:** Authentication
+> **UnoFeatures:** `Authentication` (add to `<UnoFeatures>` in your `.csproj`)
 
 ## 1. Sign in with a hard-coded user
 

@@ -3,7 +3,7 @@ uid: Uno.Extensions.Hosting.Overview
 ---
 # Hosting
 
-> **UnoFeature:** Hosting
+> **UnoFeatures:** `Hosting` (add to `<UnoFeatures>` in your `.csproj`)
 
 `Hosting` provides an implementation of the abstraction for building applications which support initialization of dependencies, establishing different environment types, and the full breadth of extensible features offered by Uno.Extensions.
 

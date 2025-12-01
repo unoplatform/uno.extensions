@@ -3,7 +3,7 @@ uid: Uno.Extensions.Navigation.Advanced.PageNavigation
 ---
 # How-To: Employ Advanced Page Navigation Techniques
 
-> **UnoFeature:** Navigation
+> **UnoFeatures:** `Navigation` (add to `<UnoFeatures>` in your `.csproj`)
 
 When using navigation, you may not want to allow the current page to remain in the back-stack. If you want to navigate to the main page of the application after signing in, there should not be a login page still in the back-stack for a user to accidentally to go back to.
 

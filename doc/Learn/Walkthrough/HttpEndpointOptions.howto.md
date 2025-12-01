@@ -4,7 +4,7 @@ title: Customize Endpoint Options
 tags: [http, configuration, headers, endpoint-options]
 ---
 
-> **UnoFeature:** Http
+> **UnoFeatures:** `Http` (add to `<UnoFeatures>` in your `.csproj`)
 
 # Inject custom headers with endpoint options
 

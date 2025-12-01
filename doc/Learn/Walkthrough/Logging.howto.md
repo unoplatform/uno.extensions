@@ -4,7 +4,7 @@ title: Add Structured Logging
 tags: [logging, diagnostics, observability]
 ---
 
-> **UnoFeature:** Logging
+> **UnoFeatures:** `Logging` (add to `<UnoFeatures>` in your `.csproj`)
 
 # Add structured logging to your Uno app
 

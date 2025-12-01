@@ -3,7 +3,7 @@ uid: Uno.Extensions.Navigation.HowToNavigateBetweenPages
 ---
 # How-To: Navigate Between Pages
 
-> **UnoFeature:** Navigation
+> **UnoFeatures:** `Navigation` (add to `<UnoFeatures>` in your `.csproj`)
 
 This topic covers using Navigation to navigate between two pages using frame-based navigation.
 

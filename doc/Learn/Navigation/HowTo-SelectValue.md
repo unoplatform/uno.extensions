@@ -3,7 +3,7 @@ uid: Uno.Extensions.Navigation.HowToSelectValue
 ---
 # How-To: Select a Value
 
-> **UnoFeature:** Navigation
+> **UnoFeatures:** `Navigation` (add to `<UnoFeatures>` in your `.csproj`)
 
 This topic walks through using Navigation to request a value from the user. For example selecting a value from a list of items.
 

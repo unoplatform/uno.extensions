@@ -6,7 +6,7 @@ tags: [uno, uno-platform, uno-extensions, navigation, GetDataAsync, ResultDataVi
 
 # Request and Return Data from Navigation
 
-> **UnoFeature:** Navigation
+> **UnoFeatures:** `Navigation` (add to `<UnoFeatures>` in your `.csproj`)
 
 ## Request data from another page
 

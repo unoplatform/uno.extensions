@@ -4,7 +4,7 @@ title: Authenticate Users with OIDC
 tags: [authentication, oidc, navigation]
 ---
 
-> **UnoFeature:** AuthenticationOidc
+> **UnoFeatures:** `AuthenticationOidc` (add to `<UnoFeatures>` in your `.csproj`)
 
 # Let users sign in with OIDC
 

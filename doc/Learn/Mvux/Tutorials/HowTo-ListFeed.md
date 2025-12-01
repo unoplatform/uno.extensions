@@ -4,7 +4,7 @@ uid: Uno.Extensions.Mvux.HowToListFeed
 
 # How to create a list feed
 
-> **UnoFeature:** MVUX
+> **UnoFeatures:** `MVUX` (add to `<UnoFeatures>` in your `.csproj`)
 
 In this tutorial, you will learn how to create an MVUX project that asynchronously requests
 and displays a collection of items from a service, and enables refreshing the data.

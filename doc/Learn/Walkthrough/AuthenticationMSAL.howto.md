@@ -4,7 +4,7 @@ title: Authenticate Users with MSAL
 tags: [authentication, msal, navigation]
 ---
 
-> **UnoFeature:** AuthenticationMsal
+> **UnoFeatures:** `AuthenticationMsal` (add to `<UnoFeatures>` in your `.csproj`)
 
 # Sign in with Microsoft account (MSAL)
 

@@ -3,7 +3,7 @@ uid: Uno.Extensions.Navigation.HowToNavigateInXAML
 ---
 # How-To: Navigate in XAML
 
-> **UnoFeature:** Navigation
+> **UnoFeatures:** `Navigation` (add to `<UnoFeatures>` in your `.csproj`)
 
 This topic walks through controlling Navigation from XAML. This includes specifying data that should be attached to the navigation request.
 

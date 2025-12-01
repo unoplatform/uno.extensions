@@ -3,7 +3,7 @@ uid: Uno.Extensions.Authentication.HowToWebAuthentication
 ---
 # How-To: Get Started with Web Authentication
 
-> **UnoFeature:** Authentication
+> **UnoFeatures:** `Authentication` (add to `<UnoFeatures>` in your `.csproj`)
 
 `WebAuthenticationProvider` provides an implementation that displays a web view in order for the user to login. After login, the web view redirects back to the application, along with any tokens. This tutorial will use web authorization to validate user credentials.
 

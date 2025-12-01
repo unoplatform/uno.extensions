@@ -4,7 +4,7 @@ uid: Uno.Extensions.Mvux.HowToMvuxProject
 
 # How to set up an MVUX project
 
-> **UnoFeature:** MVUX
+> **UnoFeatures:** `MVUX` (add to `<UnoFeatures>` in your `.csproj`)
 
 In this tutorial, you'll learn how to set up an Uno Platform project to use MVUX.
 

@@ -4,7 +4,7 @@ uid: Uno.Extensions.Mvux.Records
 
 # How to write Records with MVUX
 
-> **UnoFeature:** MVUX
+> **UnoFeatures:** `MVUX` (add to `<UnoFeatures>` in your `.csproj`)
 
 ## What is a Record
 

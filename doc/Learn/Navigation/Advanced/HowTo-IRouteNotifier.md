@@ -3,7 +3,7 @@ uid: Uno.Extensions.Navigation.Advanced.IRouteNotifier
 ---
 # How-To: Use `IRouteNotifier` to Handle Route Changes
 
-> **UnoFeature:** Navigation
+> **UnoFeatures:** `Navigation` (add to `<UnoFeatures>` in your `.csproj`)
 
 The `IRouteNotifier` interface allows you to track and respond to route changes through the `RouteChanged` event. This guide will show you how to use `IRouteNotifier` to handle route changes and improve your app's navigation.
 

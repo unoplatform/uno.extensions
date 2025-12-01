@@ -6,7 +6,7 @@ tags: [uno, uno-platform, uno-extensions, navigation, INavigator, ViewModel, MVV
 
 # Navigate Between Pages via ViewModel
 
-> **UnoFeature:** Navigation
+> **UnoFeatures:** `Navigation` (add to `<UnoFeatures>` in your `.csproj`)
 
 ## Navigate to another page
 

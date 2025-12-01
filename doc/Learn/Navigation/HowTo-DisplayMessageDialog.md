@@ -3,7 +3,7 @@ uid: Uno.Extensions.Navigation.HowToDisplayMessageDialog
 ---
 # How-To: Display a Message Dialog
 
-> **UnoFeature:** Navigation
+> **UnoFeatures:** `Navigation` (add to `<UnoFeatures>` in your `.csproj`)
 
 This topic walks through using Navigation to display a prompt using a `MessageDialog`. This can also be used for simple user interactions, such as a confirmation dialog, where the user is prompted with an Ok/Cancel, or Yes/No, question.
 

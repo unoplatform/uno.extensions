@@ -3,7 +3,7 @@ uid: Uno.Extensions.Localization.HowToUseLocalization
 ---
 # How-To: Configure and Use Localization
 
-> **UnoFeature:** Localization
+> **UnoFeatures:** `Localization` (add to `<UnoFeatures>` in your `.csproj`)
 
 `Uno.Extensions.Localization` uses the locale-specific resources from `resw` files placed in folders corresponding to the well-known language tag (eg en-US). By opting into localization, an implementation of `IStringLocalizer` is registered with your application's `IServiceCollection`.
 

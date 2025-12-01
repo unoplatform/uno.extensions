@@ -4,7 +4,7 @@ title: Load Configuration Sections
 tags: [configuration, appsettings, options]
 ---
 
-> **UnoFeature:** Configuration
+> **UnoFeatures:** `Configuration` (add to `<UnoFeatures>` in your `.csproj`)
 
 # Load configuration sections from embedded JSON
 

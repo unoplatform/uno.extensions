@@ -3,7 +3,7 @@ uid: Uno.Extensions.Navigation.Advanced.Panel
 ---
 # How-To: Use a Panel to Switch Views
 
-> **UnoFeature:** Navigation
+> **UnoFeatures:** `Navigation` (add to `<UnoFeatures>` in your `.csproj`)
 
 Sometimes your application may need to switch between multiple views without the overhead of controls like `Frame` which support a navigation stack. In this case, it makes sense to define sectors of potential view content as **regions** and use another control to toggle the `Visibility` of the multiple views directly. This tutorial will show you how to use a `Panel` to switch between views.
 

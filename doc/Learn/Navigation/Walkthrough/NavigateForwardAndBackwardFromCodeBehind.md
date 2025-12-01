@@ -6,7 +6,7 @@ tags: [uno, uno-platform, uno-extensions, navigation, INavigator, code-behind, x
 
 # Navigate between two pages from Code-Behind
 
-> **UnoFeature:** Navigation
+> **UnoFeatures:** `Navigation` (add to `<UnoFeatures>` in your `.csproj`)
 
 ## Navigate forward to another page via button click
 

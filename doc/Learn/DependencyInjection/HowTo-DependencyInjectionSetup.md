@@ -3,7 +3,7 @@ uid: Uno.Extensions.DependencyInjection.HowToDependencyInjection
 ---
 # How-To: Use Services with Dependency Injection
 
-> **UnoFeature:** Hosting (Dependency Injection is included with Hosting)
+> **UnoFeatures:** `Hosting` (add to `<UnoFeatures>` in your `.csproj`)
 
 Dependency Injection (DI) is an important design pattern when building loosely-coupled software that allows for maintainability and testing. This tutorial will walk you through how to register services so that they can be consumed throughout your application.
 

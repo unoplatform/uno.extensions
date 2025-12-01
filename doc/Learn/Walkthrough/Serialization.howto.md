@@ -4,7 +4,7 @@ title: Serialize JSON with Source Generators
 tags: [serialization, json, system-text-json]
 ---
 
-> **UnoFeature:** Serialization
+> **UnoFeatures:** `Serialization` (add to `<UnoFeatures>` in your `.csproj`)
 
 # Serialize JSON with source generators
 

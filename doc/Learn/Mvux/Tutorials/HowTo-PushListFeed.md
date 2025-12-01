@@ -4,7 +4,7 @@ uid: Uno.Extensions.Mvux.HowToPushListFeed
 
 # How to create a list feed where values are pushed in
 
-> **UnoFeature:** MVUX
+> **UnoFeatures:** `MVUX` (add to `<UnoFeatures>` in your `.csproj`)
 
 In this tutorial, you will learn how to create an MVUX project that displays stock data that is pushed in from a service using an [Async Enumerable](https://learn.microsoft.com/archive/msdn-magazine/2019/november/csharp-iterating-with-async-enumerables-in-csharp-8#a-tour-through-async-enumerables) method.
 

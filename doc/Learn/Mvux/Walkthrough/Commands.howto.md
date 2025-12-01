@@ -50,8 +50,6 @@ Requires the `MVUX` UnoFeature.
 
 ---
 
-## 2. `02-run-async-model-method-and-auto-disable-button.md`
-
 ### Run an async model method and auto-disable the button
 
 **Outcome:** Button disables while your async method runs.

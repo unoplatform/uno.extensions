@@ -4,7 +4,7 @@ uid: Uno.Extensions.Markup.HowToCustomMarkupProjectTheme
 
 # C# Markup project setup
 
-> **UnoFeature:** Material (for Material theme)
+> **UnoFeatures:** `Material` (add to `<UnoFeatures>` in your `.csproj`)
 
 In this tutorial, you'll learn how to set up an Uno Platform project to use C# Markup to change the Theme.
 
@@ -45,7 +45,7 @@ Below we can see how to include and how to customize each of the two.
 
 ### Material
 
-> **UnoFeature:** Material
+> **UnoFeatures:** `Material` (add to `<UnoFeatures>` in your `.csproj`)
 
 The recommended way to add Material theme to your project is by adding the `Material` UnoFeature to your .csproj file. This will automatically include all necessary packages.
 
@@ -73,7 +73,7 @@ and select Manage NuGet Packages...
 
 - `Material.WinUI.Markup`,
 - `Uno.Material.WinUI`
-- `Uno.Dsp.Tasks`)
+- `Uno.Dsp.Tasks`
 
 --------------------------------------------------------------
 
