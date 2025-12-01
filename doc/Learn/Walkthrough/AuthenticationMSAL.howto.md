@@ -4,6 +4,8 @@ title: Authenticate Users with MSAL
 tags: [authentication, msal, navigation]
 ---
 
+> **UnoFeatures:** `AuthenticationMsal` (add to `<UnoFeatures>` in your `.csproj`)
+
 # Sign in with Microsoft account (MSAL)
 
 This how-to shows how to let users sign in with their Microsoft identity in an Uno Platform app using **Uno.Extensions** and **MSAL**.

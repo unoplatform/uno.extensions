@@ -3,6 +3,9 @@ uid: Uno.Extensions.Http.Refit.HowTo
 title: Build Refit Clients
 tags: [http, refit, typed-client, configuration]
 ---
+
+> **UnoFeatures:** `HttpRefit` (add to `<UnoFeatures>` in your `.csproj`)
+
 # Build Refit endpoints from configuration
 
 Describe your REST API with a Refit interface, register it once, and let Uno Extensions provide a configured `HttpClient`.

@@ -6,6 +6,8 @@ tags: [uno, uno-platform, uno-extensions, navigation, ContentControl, UserContro
 
 # Display Views in Specific Locations using ContentControl with Region-Based Navigation
 
+> **UnoFeatures:** `Navigation` (add to `<UnoFeatures>` in your `.csproj`)
+
 * Import namespaces in XAML:
 
     ```xml

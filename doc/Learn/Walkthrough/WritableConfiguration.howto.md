@@ -3,6 +3,9 @@ uid: Uno.Extensions.Configuration.WritableConfiguration.HowTo
 title: Persist Writable Settings
 tags: [configuration, writable, options]
 ---
+
+> **UnoFeatures:** `Configuration` (add to `<UnoFeatures>` in your `.csproj`)
+
 # Persist writable settings with `IWritableOptions`
 
 Capture user preferences by updating configuration sections at runtime through Uno’s writable options support.

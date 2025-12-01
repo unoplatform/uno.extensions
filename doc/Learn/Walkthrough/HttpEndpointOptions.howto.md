@@ -3,6 +3,9 @@ uid: Uno.Extensions.Http.HttpEndpointOptions.HowTo
 title: Customize Endpoint Options
 tags: [http, configuration, headers, endpoint-options]
 ---
+
+> **UnoFeatures:** `Http` (add to `<UnoFeatures>` in your `.csproj`)
+
 # Inject custom headers with endpoint options
 
 Capture API-specific settings in a custom options type and apply them each time Uno Extensions builds the `HttpClient`.

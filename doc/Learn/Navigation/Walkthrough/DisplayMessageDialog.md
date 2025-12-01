@@ -6,6 +6,8 @@ tags: [uno, uno-platform, uno-extensions, navigation, message-dialog, ShowMessag
 
 # Display Message Dialogs
 
+> **UnoFeatures:** `Navigation` (add to `<UnoFeatures>` in your `.csproj`)
+
 ## Show a simple message dialog
 
 ```csharp

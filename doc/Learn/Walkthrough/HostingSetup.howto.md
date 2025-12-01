@@ -3,6 +3,9 @@ uid: Uno.Extensions.Hosting.HostingSetup.HowTo
 title: Configure Uno Hosting
 tags: [hosting, dependency-injection, startup]
 ---
+
+> **UnoFeatures:** `Hosting` (add to `<UnoFeatures>` in your `.csproj`)
+
 # Configure hosting for dependency injection
 
 Create an Uno host so you can register services, windows, and features through a unified startup pipeline.
