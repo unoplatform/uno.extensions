@@ -4,6 +4,8 @@ uid: Uno.Extensions.Mvux.HowToMvuxProject
 
 # How to set up an MVUX project
 
+> **UnoFeature:** MVUX
+
 In this tutorial, you'll learn how to set up an Uno Platform project to use MVUX.
 
 > [!NOTE]

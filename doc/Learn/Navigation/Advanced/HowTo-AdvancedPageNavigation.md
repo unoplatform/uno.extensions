@@ -3,6 +3,8 @@ uid: Uno.Extensions.Navigation.Advanced.PageNavigation
 ---
 # How-To: Employ Advanced Page Navigation Techniques
 
+> **UnoFeature:** Navigation
+
 When using navigation, you may not want to allow the current page to remain in the back-stack. If you want to navigate to the main page of the application after signing in, there should not be a login page still in the back-stack for a user to accidentally to go back to.
 
 Using backward/forward navigation in your app requires a degree of extra consideration. Users always expect the back/forward button to take them to a page that is still relevant, yet logically related to the current page and direction. This page contains several concise tutorials about how to implement navigation techniques that address these more advanced problems.

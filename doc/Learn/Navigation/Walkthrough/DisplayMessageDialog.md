@@ -6,6 +6,8 @@ tags: [uno, uno-platform, uno-extensions, navigation, message-dialog, ShowMessag
 
 # Display Message Dialogs
 
+> **UnoFeature:** Navigation
+
 ## Show a simple message dialog
 
 ```csharp

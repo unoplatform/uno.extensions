@@ -3,6 +3,8 @@ uid: Uno.Extensions.ThemeService.Overview
 ---
 # How to use Theme Service
 
+> **UnoFeature:** ThemeService
+
 This topic explains how to use the `ThemeService` for runtime theme switching and persisting user theme preferences.
 
 ## Automatic Registration with DI

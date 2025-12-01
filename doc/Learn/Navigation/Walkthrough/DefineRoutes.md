@@ -6,6 +6,8 @@ tags: [uno, uno-platform, uno-extensions, navigation, routes, RouteMap, ViewMap,
 
 # Define Navigation Routes
 
+> **UnoFeature:** Navigation
+
 ## Register Navigation Views and Routes
 
 ```csharp

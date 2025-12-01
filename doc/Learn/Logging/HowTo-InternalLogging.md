@@ -3,6 +3,8 @@ uid: Uno.Extensions.Logging.UseInternalLogging
 ---
 # How-To: Enable Internal Logging Based on Your Hosting Environment
 
+> **UnoFeature:** Logging
+
 `Uno.Extensions.Logging` provides logging capabilities tailored to your target platform. It allows the recording of events for XAML layout, Uno-internal messages, and custom events with severity and verbosity levels of your choice.
 
 ## Step-by-step

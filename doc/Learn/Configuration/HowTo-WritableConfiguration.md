@@ -4,6 +4,8 @@ uid: Uno.Extensions.Configuration.HowToWritableConfiguration
 
 # How-To: Writable Configuration
 
+> **UnoFeature:** Configuration
+
 **Writable Configuration** extends the standard, [read-only](xref:Uno.Extensions.Configuration.HowToConfiguration) pattern by allowing for programmatic writing of configuration values at runtime. This is useful for scenarios where you want to persist user preferences or other trivial information that may be changed over time. `Uno.Extensions.Configuration` extends the `IOptionsSnapshot<T>` interface from [Microsoft.Extensions.Options](https://learn.microsoft.com/dotnet/api/microsoft.extensions.options) to support this.
 
 A special interface called `IWritableOptions<T>` is registered as a service when you use the `UseConfiguration()` extension method. In this tutorial, we will walk through how to use the `UpdateAsync()` method on this interface to modify values of a specific configuration section. For a refresher on configuration sections, see [Sections](xref:Uno.Extensions.Configuration.Overview#sections).

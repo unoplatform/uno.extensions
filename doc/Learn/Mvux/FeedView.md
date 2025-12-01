@@ -4,6 +4,8 @@ uid: Uno.Extensions.Mvux.FeedView
 
 # The `FeedView` control
 
+> **UnoFeature:** MVUX
+
 The `FeedView` control is one of the main ways to consume Feeds and States within an application. It uses different visual states to control what is displayed on the screen depending on the state of the underlying `IFeed`, or `IState`.
 
 ## How to use the `FeedView` control

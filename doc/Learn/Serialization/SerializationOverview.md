@@ -4,6 +4,8 @@ uid: Uno.Extensions.Serialization.Overview
 
 # Serialization
 
+> **UnoFeature:** Serialization
+
 **Serialization** involves converting an object into a format that can be easily stored or transmitted. On the receiving end, the object is reconstructed back into its original form through **deserialization**. These two operations complement each other and can be important for dynamic, data-rich applications.
 
 `Uno.Extensions.Serialization` allows for simplified access to serializer objects as dependencies. This library supports the new serialization [technique](https://devblogs.microsoft.com/dotnet/try-the-new-system-text-json-source-generator) powered by code generation.

@@ -4,6 +4,8 @@ uid: Uno.Extensions.Mvux.Advanced.Pagination
 
 # Pagination
 
+> **UnoFeature:** MVUX
+
 There are several ways to paginate data.
 
 > [!NOTE]

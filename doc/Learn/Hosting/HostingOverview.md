@@ -3,6 +3,8 @@ uid: Uno.Extensions.Hosting.Overview
 ---
 # Hosting
 
+> **UnoFeature:** Hosting
+
 `Hosting` provides an implementation of the abstraction for building applications which support initialization of dependencies, establishing different environment types, and the full breadth of extensible features offered by Uno.Extensions.
 
 Hosting is provided as an Uno Feature. To enable `Hosting` support in your application, add `Hosting` to the `<UnoFeatures>` property in the Class Library (.csproj) file. For more information about `UnoFeatures` refer to our [Using the Uno.Sdk](xref:Uno.Features.Uno.Sdk) docs.

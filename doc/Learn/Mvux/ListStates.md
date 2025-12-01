@@ -4,6 +4,8 @@ uid: Uno.Extensions.Mvux.ListStates
 
 # What are list-states
 
+> **UnoFeature:** MVUX
+
 List-state is the collection counterpart of [state](xref:Uno.Extensions.Mvux.States).
 
 List-state adds extra operators which make it easier to apply updates on multiple items instead of just a single item.

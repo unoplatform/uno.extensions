@@ -3,6 +3,9 @@ uid: Uno.Extensions.Logging.Logging.HowTo
 title: Add Structured Logging
 tags: [logging, diagnostics, observability]
 ---
+
+> **UnoFeature:** Logging
+
 # Add structured logging to your Uno app
 
 Enable Uno logging so platform-specific providers capture diagnostic information, then inject `ILogger` into your services and view models.
