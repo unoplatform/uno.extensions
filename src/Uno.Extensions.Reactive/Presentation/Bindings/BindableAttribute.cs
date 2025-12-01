@@ -7,7 +7,11 @@ namespace Uno.Extensions.Reactive.Bindings;
 /// <summary>
 /// Flags a class as a _bindable_ (a.k.a. _view model_).
 /// </summary>
-/// <remarks>This attribute is added by the feeds generator on the _view model_ type, you should not have to use it.</remarks>
+/// <remarks>
+/// This attribute is added by the feeds generator on the _view model_ type, you should not have to use it.
+/// This attribute is used at compile-time by Uno Platform and WinAppSDK to generate bindings.
+/// Note: The binding generators validate only the attribute name, not the namespace.
+/// </remarks>
 [EditorBrowsable(EditorBrowsableState.Advanced)]
 [AttributeUsage(AttributeTargets.Class)]
 public class BindableAttribute : Attribute
