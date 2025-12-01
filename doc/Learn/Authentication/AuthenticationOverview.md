@@ -3,6 +3,8 @@ uid: Uno.Extensions.Authentication.Overview
 ---
 # Authentication
 
+> **UnoFeatures:** `Authentication`, `AuthenticationMsal`, or `AuthenticationOidc` (add to `<UnoFeatures>` in your `.csproj`)
+
 Uno.Extensions.Authentication is designed to make it simple to add authentication to an application. Authenticating a user may be used to restrict access to specific parts of the application, or in order to supply an access token when calling a back-end service.
 
 There are two aspects to the Authentication extensions:

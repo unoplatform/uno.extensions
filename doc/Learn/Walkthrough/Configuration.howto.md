@@ -3,6 +3,9 @@ uid: Uno.Extensions.Configuration.Configuration.HowTo
 title: Load Configuration Sections
 tags: [configuration, appsettings, options]
 ---
+
+> **UnoFeatures:** `Configuration` (add to `<UnoFeatures>` in your `.csproj`)
+
 # Load configuration sections from embedded JSON
 
 Use Uno configuration to hydrate strongly typed options from embedded `appsettings.json` files and inject them into your services.

@@ -3,6 +3,9 @@ uid: Uno.Extensions.Http.Http.HowTo
 title: Centralize HTTP Endpoints
 tags: [http, configuration, typed-client]
 ---
+
+> **UnoFeatures:** `Http` (add to `<UnoFeatures>` in your `.csproj`)
+
 # Centralize HTTP endpoints from appsettings
 
 Drive Uno Platform HTTP clients from configuration so each service shares resilient, named `HttpClient` instances.

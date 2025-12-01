@@ -6,6 +6,8 @@ tags: [uno, uno-platform, uno-extensions, navigation, Panel, Grid, StackPanel, r
 
 # Switch Between Views using Panel with Visibility-Based Region Navigation
 
+> **UnoFeatures:** `Navigation` (add to `<UnoFeatures>` in your `.csproj`)
+
 * Import Navigation namespace in XAML:
 
     ```xml

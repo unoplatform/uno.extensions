@@ -3,6 +3,9 @@ uid: Uno.Extensions.Localization.Localization.HowTo
 title: Localize Your App
 tags: [localization, globalization, string-localizer]
 ---
+
+> **UnoFeatures:** `Localization` (add to `<UnoFeatures>` in your `.csproj`)
+
 # Localize strings and switch cultures at runtime
 
 Register Uno localization, resolve localized strings through `IStringLocalizer`, and update the active culture from your view models.

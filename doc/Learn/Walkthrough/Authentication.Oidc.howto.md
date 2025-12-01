@@ -4,6 +4,8 @@ title: Authenticate Users with OIDC
 tags: [authentication, oidc, navigation]
 ---
 
+> **UnoFeatures:** `AuthenticationOidc` (add to `<UnoFeatures>` in your `.csproj`)
+
 # Let users sign in with OIDC
 
 **Goal:** enable sign-in against an OpenID Connect (OIDC) provider in an Uno.Extensions app.

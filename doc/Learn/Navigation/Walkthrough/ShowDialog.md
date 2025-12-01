@@ -6,6 +6,8 @@ tags: [uno, uno-platform, uno-extensions, navigation, dialog, modal, flyout, Qua
 
 # Display Dialogs as Flyouts or Modals
 
+> **UnoFeatures:** `Navigation` (add to `<UnoFeatures>` in your `.csproj`)
+
 ## Show dialog from code
 
 ```csharp

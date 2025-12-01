@@ -6,6 +6,11 @@ tags: [uno, uno-platform, uno-extensions, navigation, regions, Region.Attached, 
 
 # Navigate between regions inside the same page (Region-based navigation)
 
+**UnoFeatures:** `Navigation;Toolkit` (add to `<UnoFeatures>` in your `.csproj`)
+
+> [!IMPORTANT]
+> **Do not use `Region.Attached="True"` inside Shell.xaml or ExtendedSplashScreen content.** The navigation host is not ready during Shell construction. Define regions on your actual pages (like `MainPage`) instead.
+
 ## Link navigation control with content using regions
 
 ```xml

@@ -6,6 +6,8 @@ tags: [uno, uno-platform, uno-extensions, navigation, XAML, Navigation.Request, 
 
 # Navigate Between Pages using Navigation Attached Properties in XAML
 
+> **UnoFeatures:** `Navigation` (add to `<UnoFeatures>` in your `.csproj`)
+
 * Import the Navigation namespace in XAML:
 
     ```xml

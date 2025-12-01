@@ -6,6 +6,8 @@ tags: [uno, uno-platform, uno-extensions, uno-toolkit, navigation, responsive-de
 
 # Build Responsive Navigation Layouts using NavigationView and TabBar with VisualStateManager
 
+> **UnoFeatures:** `Navigation;Toolkit` (add to `<UnoFeatures>` in your `.csproj`)
+
 * Import namespaces in XAML:
 
     ```xml
