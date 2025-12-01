@@ -57,15 +57,16 @@ public partial class Given_BindableAttribute_Then_Flagged : FeedUITests
 	}
 }
 
+// Test model for ViewModelGenTool_3 (generates view models from partial classes with feeds)
+// This will trigger generation of bindable wrappers for the records it references
+public partial class TestModel
+{
+	public IFeed<TestRecord> Record => Feed.Async(async ct => new TestRecord("Test", 42));
+	public IFeed<TestRecordWithList> RecordWithList => Feed.Async(async ct => new TestRecordWithList(ImmutableList<TestRecord>.Empty));
+}
+
 // Test record for ViewModelGenerator_2 (generates bindable wrappers for records)
 public partial record TestRecord(string Name, int Value);
 
 // Test record with nested list to verify complex scenarios
 public partial record TestRecordWithList(ImmutableList<TestRecord> Items);
-
-// Test model for ViewModelGenTool_3 (generates view models from partial classes with feeds)
-public partial class TestModel
-{
-	public IFeed<string> Name => Feed.Async(async ct => "Test");
-	public IFeed<int> Value => Feed.Async(async ct => 42);
-}
