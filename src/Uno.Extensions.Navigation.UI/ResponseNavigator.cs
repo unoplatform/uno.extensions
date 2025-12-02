@@ -42,14 +42,19 @@ public class ResponseNavigator<TResult> : IResponseNavigator, IInstance<IService
 			(request.Route.IsRoot() && request.Route.TrimQualifier(Qualifiers.Root).FrameIsBackNavigation() && this.Navigation.GetParent() == null))
 		{
 			var responseData = request.Route.ResponseData();
-			await CompleteWithResult(responseData);
+			await CompleteWithResultCore(responseData);
 		}
 
 		return navResponse;
 	}
 
 	/// <inheritdoc />
-	public async Task CompleteWithResult(object? responseData)
+	async Task IResponseNavigator.CompleteWithResult(object? responseData)
+	{
+		await CompleteWithResultCore(responseData);
+	}
+
+	private async Task CompleteWithResultCore(object? responseData)
 	{
 		// Early return if already completed to avoid unnecessary processing
 		if (ResultCompletion.Task.Status == TaskStatus.Canceled ||
@@ -66,14 +71,7 @@ public class ResponseNavigator<TResult> : IResponseNavigator, IInstance<IService
 				responseData = objectResponse.SomeOrDefault();
 			}
 
-			if (responseData is TResult data)
-			{
-				result = Option.Some(data);
-			}
-			else
-			{
-				result = Option.None<TResult>();
-			}
+			result = responseData is TResult data ? Option.Some(data) : Option.None<TResult>();
 		}
 		await ApplyResult(result);
 	}
