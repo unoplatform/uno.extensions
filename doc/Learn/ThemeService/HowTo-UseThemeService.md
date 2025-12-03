@@ -45,7 +45,7 @@ This topic explains how to use the `ThemeService` for runtime theme switching an
 
     In case you want to use it together with a State, e.g. to bind a control to the current theme trigger a Task with each Time, the Value changes, here is a simple example:
 
-    ```cssharp
+    ```csharp
     namespace UnoAppName.Presentation.ViewModels;
     public partial record MainModel
     {
@@ -60,13 +60,13 @@ This topic explains how to use the `ThemeService` for runtime theme switching an
     public IState<bool> IsDarkMode => State<bool>.Value(this, () => _themeService.Theme == AppTheme.Dark)
                                                  .ForEach(SwitchThemeAsync);
 
-    public async ValueTask SwitchThemeAsync(bool item,CancellationToken ctk = default)
+    public async ValueTask SwitchThemeAsync(bool item, CancellationToken ctk = default)
     {
 
         _ = item switch
         {
-            true => await _themeService.SetThemeAsync(AppTheme.Light),
-            false => await _themeService.SetThemeAsync(AppTheme.Dark)
+            true => await _themeService.SetThemeAsync(AppTheme.Dark),
+            false => await _themeService.SetThemeAsync(AppTheme.Light)
         };
     }
     ```
