@@ -4,7 +4,7 @@ uid: Uno.Extensions.KeyEquality.Concept
 # Concept
 
 When working with immutable objects (usually `record`), each modification on an entity means that a new instance is created.
-While this offers lots of [great advantages](https://en.wikipedia.org/wiki/Immutable_object), it makes more difficult to properly track (and animate) changes on an (immutable) item in a (immutable) collection.
+While this offers lots of [great advantages](https://en.wikipedia.org/wiki/Immutable_object), it makes it more difficult to properly track (and animate) changes on an (immutable) item in a (immutable) collection.
 
 The _key equality_ is a standardized way to determine that 2 objects that are not `Equals` are however representing the same entity.
 
