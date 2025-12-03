@@ -170,7 +170,7 @@ So for example, in your `appsettings.json` file, you could include the following
 
 The Token keys are assumed to be the response keys returned from the identity provider, that will be used in the response url infront of the token value. For example, the `access_token` key is used to retrieve the access token from the response like this:
 
-```
+```text
 access_token=fsjaiafjioangosafn&expires_in=3600&token_type=Bearer
 ```
 
