@@ -1,4 +1,6 @@
-﻿namespace Uno.Extensions;
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace Uno.Extensions;
 
 /// <summary>
 /// Extensions for <see cref="IServiceCollection"/>
@@ -49,7 +51,14 @@ public static class ServiceCollectionExtensions
 	/// <param name="name">[optional] Name of the endpoint (used to load from appsettings)</param>
 	/// <param name="configure">[optional] Callback to configure the endpoint</param>
 	/// <returns>Updated service collection</returns>
-	public static IServiceCollection AddClientWithEndpoint<TClient, TImplementation, TEndpoint>(
+	public static IServiceCollection AddClientWithEndpoint<
+		[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)]
+		TClient,
+		[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)]
+		TImplementation,
+		[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)]
+		TEndpoint
+	>(
 		 this IServiceCollection services,
 		 HostBuilderContext context,
 		 TEndpoint? options = null,
@@ -102,7 +111,13 @@ public static class ServiceCollectionExtensions
 	/// <param name="httpClientFactory">[optional] Callback to configure the HttpClient</param>
 	/// <param name="configure">[optional] Callback to configure the endpoint</param>
 	/// <returns>Updated service collection</returns>
-	public static IServiceCollection AddClientWithEndpoint<TInterface, TEndpoint>(
+	[RequiresUnreferencedCode("From `ConfigurationBinder.Get<T>(IConfiguration)`.")]
+	public static IServiceCollection AddClientWithEndpoint<
+		[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)]
+		TInterface,
+		[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)]
+		TEndpoint
+	>(
 		  this IServiceCollection services,
 		  HostBuilderContext context,
 		  TEndpoint? options = null,
