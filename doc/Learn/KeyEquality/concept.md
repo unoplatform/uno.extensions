@@ -30,7 +30,7 @@ Are the same person : true
 In this example, the _key_ is the `Name`, and any instance of `Person` that `Name == "John Doe"` is considered to represent the same person,
 no matter values of the other properties.
 
-Then if you are dealing with list:
+Then if you are dealing with a list:
 
 ```csharp
 var list1 = ImmutableList.Create(john1);
