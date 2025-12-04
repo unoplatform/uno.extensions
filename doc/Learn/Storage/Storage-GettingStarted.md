@@ -26,7 +26,6 @@ First of all, to set up your project using the Storage feature, you need to foll
 
     ```diff
     <UnoFeatures>
-    +    Hosting;
     +    Storage;
     </UnoFeatures>
     ```
