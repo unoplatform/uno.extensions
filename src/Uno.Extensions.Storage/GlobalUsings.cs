@@ -8,3 +8,4 @@ global using Microsoft.Extensions.Logging;
 global using Uno.Extensions.Logging;
 global using Uno.Extensions.Serialization;
 global using Uno.Extensions.Threading;
+global using Uno.Extensions.Storage.Enumerable;
