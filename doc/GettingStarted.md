@@ -118,7 +118,7 @@ var builder = this.CreateBuilder(args)
 #endif
         // Get Read and Write functions for Package Files
         .UseStorage()
-                .UseLogging(configure: (context, logBuilder) =>
+        .UseLogging(configure: (context, logBuilder) =>
         {
             // Configure log levels for different categories of logging
             logBuilder
