@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -16,8 +17,13 @@ namespace Uno.Extensions.Reactive.Bindings;
 /// <typeparam name="T">The type of the value</typeparam>
 /// <remarks>This type is not thread safe and is expected to be manipulated only from the UI thread.</remarks>
 [EditorBrowsable(EditorBrowsableState.Never)]
-public class Bindable<T> : IBindable, INotifyPropertyChanged, IFeed<T>
+public class Bindable<
+	[DynamicallyAccessedMembers(TRequirements)]
+	T
+> : IBindable, INotifyPropertyChanged, IFeed<T>
 {
+	internal const DynamicallyAccessedMemberTypes TRequirements = DynamicallyAccessedMemberTypes.PublicProperties;
+
 	private static readonly IEqualityComparer<T> _comparer = typeof(T).IsValueType
 		? EqualityComparer<T>.Default
 		: ReferenceEqualityComparer<T>.Default; // We use ref-equality for object to avoid deep comparison on the UI thread

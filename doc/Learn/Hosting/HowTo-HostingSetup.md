@@ -3,6 +3,8 @@ uid: Uno.Extensions.Hosting.HowToHostingSetup
 ---
 # How-To: Get Started with Hosting
 
+> **UnoFeatures:** `Hosting` (add to `<UnoFeatures>` in your `.csproj`)
+
 `Hosting` can be used to register services that will be accessible throughout the application via dependency injection (DI). This tutorial will walk you through the critical steps needed to leverage hosting in your application.
 
 [!include[create-application](../includes/create-application.md)]

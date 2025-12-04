@@ -4,6 +4,8 @@ uid: Uno.Extensions.Mvux.Advanced.Commands
 
 # Commands
 
+> **UnoFeatures:** `MVUX` (add to `<UnoFeatures>` in your `.csproj`)
+
 This page covers the following topics:
 
 - [Commands](#commands)

@@ -11,7 +11,12 @@ namespace Uno.Extensions.Conversion;
 /// </summary>
 /// <typeparam name="TFrom">The source value type</typeparam>
 /// <typeparam name="TTo">The target value type</typeparam>
-internal class LockedMemoizedConverter<TFrom, TTo> : ICachedConverter<TFrom, TTo>, IConverter<TFrom, TTo>
+internal class LockedMemoizedConverter<
+	[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor)]
+	TFrom,
+	[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor)]
+	TTo
+> : ICachedConverter<TFrom, TTo>, IConverter<TFrom, TTo>
 	where TFrom : class
 	where TTo : class
 {

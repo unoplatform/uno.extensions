@@ -39,6 +39,7 @@
 					Content="Localized Dialogs"
 					Click="LocalizedDialogsClick" />
 			<Button AutomationProperties.AutomationId="ContentDialogsButton"
+					Foreground="Red"
 					Content="Content Dialogs"
 					Click="ContentDialogsClick" />
 			<Button AutomationProperties.AutomationId="FlyoutsButton"

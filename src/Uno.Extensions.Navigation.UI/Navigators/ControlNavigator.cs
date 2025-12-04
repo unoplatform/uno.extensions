@@ -1,4 +1,6 @@
-﻿namespace Uno.Extensions.Navigation.Navigators;
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace Uno.Extensions.Navigation.Navigators;
 
 public abstract class ControlNavigator<TControl> : ControlNavigator
 	where TControl : class
@@ -27,7 +29,11 @@ public abstract class ControlNavigator<TControl> : ControlNavigator
 
 	protected virtual FrameworkElement? CurrentView => default;
 
-	protected abstract Task<string?> Show(string? path, Type? viewType, object? data);
+	protected abstract Task<string?> Show(
+		string? path,
+		[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor)]
+		Type? viewType,
+		object? data);
 
 	protected override async Task<Route?> ExecuteRequestAsync(NavigationRequest request)
 	{
@@ -96,7 +102,9 @@ public abstract class ControlNavigator<TControl> : ControlNavigator
 
 	protected override string NavigatorToString => (Route?.ToString()) ?? string.Empty;
 
-	protected object? CreateControlFromType(Type typeToCreate)
+	protected object? CreateControlFromType(
+		[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor)]
+		Type typeToCreate)
 	{
 		try
 		{

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -7,7 +8,9 @@ using Microsoft.Extensions.Logging;
 using Uno.Extensions.Reactive.Bindings;
 using Uno.Extensions.Reactive.Logging;
 
+#pragma warning disable IL2026  // 'RequiresUnreferencedCodeAttribute' can break functionality when trimming application code.
 [assembly: System.Reflection.Metadata.MetadataUpdateHandler(typeof(Uno.Extensions.Reactive.Core.HotReload.HotReloadService))]
+#pragma warning restore IL2026
 
 namespace Uno.Extensions.Reactive.Core.HotReload;
 
@@ -25,6 +28,7 @@ internal static class HotReloadService
 	{
 	}
 
+	[RequiresUnreferencedCode("`MetadataUpdateOriginalTypeAttribute` may be a per-assembly type, so it cannot be statically known.")]
 	internal static void UpdateApplication(Type[]? types)
 	{
 		if (_trace) _log.Trace($"Received metadata updates for {types?.Length} types to be processed by MVUX hot-patch engine.");
@@ -59,6 +63,7 @@ internal static class HotReloadService
 
 	// As the MetadataUpdateOriginalTypeAttribute might have been generated in the project, we have to use reflection instead of cannot use this:
 	//&& type.GetCustomAttribute<MetadataUpdateOriginalTypeAttribute>() is { OriginalType : not null } typeUpdate)
+	[RequiresUnreferencedCode("`MetadataUpdateOriginalTypeAttribute` may be a per-assembly type, so it cannot be statically known.")]
 	private static Type? GetOriginalType(Type type)
 		=> type
 			.GetCustomAttributes()

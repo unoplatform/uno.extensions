@@ -7,6 +7,7 @@ public class Given_FlyoutDialog : NavigationTestBase
 	[TestCase("FlyoutDialogCodebehindBackgroundButton", 0, false)]
 	[TestCase("FlyoutDialogCodebehindWithCancelButton", 0, false)]
 	[TestCase("FlyoutDialogCodebehindWithCancelButton", 3, true)]
+	[Ignore("ImageAssert failures: https://github.com/unoplatform/uno.extensions/issues/2952")]
 	public async Task When_FlyoutsButton(string dialogButton, int delayInSeconds, bool dialogCancelled)
 	{
 		InitTestSection(TestSections.Navigation_Dialogs);

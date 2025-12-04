@@ -1,4 +1,6 @@
-﻿namespace Uno.Extensions.Navigation.Navigators;
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace Uno.Extensions.Navigation.Navigators;
 
 public class FlyoutNavigator : ClosableNavigator
 {
@@ -105,7 +107,7 @@ public class FlyoutNavigator : ClosableNavigator
 		{
 			if (!injectedFlyout)
 			{
-				flyout = Activator.CreateInstance(viewType) as Flyout;
+				flyout = viewType.CreateInstance<Flyout>(Logger);
 			}
 			else
 			{

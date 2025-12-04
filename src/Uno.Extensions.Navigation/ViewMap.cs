@@ -1,9 +1,13 @@
-﻿namespace Uno.Extensions.Navigation;
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace Uno.Extensions.Navigation;
 
 #pragma warning disable SA1313 // Parameter names should begin with lower-case letter
 public record ViewMap(
 	Type? View = null,
 	Func<Type?>? ViewSelector = null,
+	[param:   DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor | DynamicallyAccessedMemberTypes.PublicConstructors)]
+	[property:DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor | DynamicallyAccessedMemberTypes.PublicConstructors)]
 	Type? ViewModel = null,
 	DataMap? Data = null,
 	Type? ResultData = null,
@@ -33,11 +37,19 @@ public record ViewMap(
 }
 
 public record ViewMap<TView>(
+	[param:   DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor | DynamicallyAccessedMemberTypes.PublicConstructors)]
 	Type? ViewModel = null,
 	DataMap? Data = null,
 	Type? ResultData = null,
 	object? ViewAttributes = null
-) : ViewMap(View: typeof(TView), ViewModel: ViewModel, Data: Data, ResultData: ResultData, ViewAttributes: ViewAttributes)
+) : ViewMap(
+	View: typeof(TView),
+	ViewSelector: null,
+	ViewModel: ViewModel,
+	Data: Data,
+	ResultData: ResultData,
+	ViewAttributes: ViewAttributes
+)
 	where TView: class, new()
 {
 	public override void RegisterTypes(IServiceCollection services)
@@ -47,7 +59,11 @@ public record ViewMap<TView>(
 	}
 }
 
-public record ViewMap<TView, TViewModel>(
+public record ViewMap<
+	TView,
+	[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)]
+	TViewModel
+>(
 	DataMap? Data = null,
 	Type? ResultData = null,
 	object? ViewAttributes = null
@@ -56,7 +72,12 @@ public record ViewMap<TView, TViewModel>(
 {
 }
 
-public record DataViewMap<TView, TViewModel, TData>(
+public record DataViewMap<
+	TView,
+	[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)]
+	TViewModel,
+	TData
+>(
 	Func<TData, IDictionary<string, string>>? ToQuery = null,
 	Func<IServiceProvider, IDictionary<string, object>, Task<TData?>>? FromQuery = null,
 	Type? ResultData = null,
@@ -67,7 +88,12 @@ public record DataViewMap<TView, TViewModel, TData>(
 {
 }
 
-public record ResultDataViewMap<TView, TViewModel, TResultData>(
+public record ResultDataViewMap<
+	TView,
+	[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)]
+	TViewModel,
+	TResultData
+>(
 	DataMap? Data = null,
 	object? ViewAttributes = null
 ) : ViewMap<TView,TViewModel>(Data: Data, ResultData: typeof(TResultData), ViewAttributes: ViewAttributes)

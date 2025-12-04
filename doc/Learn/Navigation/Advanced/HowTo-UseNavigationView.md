@@ -3,6 +3,8 @@ uid: Uno.Extensions.Navigation.Advanced.NavigationView
 ---
 # How-To: Use a NavigationView to Switch Views
 
+> **UnoFeatures:** `Navigation` (add to `<UnoFeatures>` in your `.csproj`)
+
 Choosing the right control for your navigation needs is important, and one common choice is `NavigationView`. This control adapts to different screen sizes and offers a uniform top-level navigation experience. `NavigationView` is a great option for adaptive, customizable, and mobile-friendly navigation. The Uno Platform extensions for navigation provide built-in support for using `NavigationView` and `NavigationViewItem` to switch between views. This tutorial will show you how to configure a `NavigationView` for use with the navigation extensions.
 
 [!include[getting-help](../../includes/mvvm-approach.md)]

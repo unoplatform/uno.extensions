@@ -36,12 +36,12 @@
 		-->
 
 		<ItemGroup>
-			<PriOutputs Include="$(PkgUno_WinUI)/lib/net8.0-windows10.0.19041.0/Uno.UI.Toolkit.pri"
+			<PriOutputs Include="$(PkgUno_WinUI)/lib/net9.0-windows10.0.19041.0/Uno.UI.Toolkit.pri"
 						TargetPath="Uno.UI.Toolkit.pri"
 						CopyLocal="True"
 						CopyToOutputDirectory="PreserveNewest"
 						OutputGroup="CopyLocalFilesOutputGroup" />
-			<_UnoUIToolkitAssets Include="$(PkgUno_WinUI)/lib/net8.0-windows10.0.19041.0/Uno.UI.Toolkit/**"/>
+			<_UnoUIToolkitAssets Include="$(PkgUno_WinUI)/lib/net9.0-windows10.0.19041.0/Uno.UI.Toolkit/**"/>
 			<None
 				Include="@(_UnoUIToolkitAssets)"
 				TargetPath="Uno.UI.Toolkit/%(RecursiveDir)%(Filename)%(Extension)"

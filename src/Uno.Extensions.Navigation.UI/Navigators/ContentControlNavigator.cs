@@ -1,4 +1,6 @@
-﻿namespace Uno.Extensions.Navigation.Navigators;
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace Uno.Extensions.Navigation.Navigators;
 
 public class ContentControlNavigator : ControlNavigator<ContentControl>
 {
@@ -31,7 +33,11 @@ public class ContentControlNavigator : ControlNavigator<ContentControl>
 		return view?.IsSubclassOf(typeof(FrameworkElement)) ??
 			(view is null && routeMap.ViewModel is not null); // Inject a FrameView if no View specified but there is a viewmodel (eg for shellviewmodel scenario) (ie return true if view is null)
 	}
-	protected override async Task<string?> Show(string? path, Type? viewType, object? data)
+	protected override async Task<string?> Show(
+		string? path,
+		[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor)]
+		Type? viewType,
+		object? data)
 	{
 		if (viewType is null ||
 			viewType.IsSubclassOf(typeof(Page)))

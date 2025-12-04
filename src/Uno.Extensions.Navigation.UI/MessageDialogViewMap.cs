@@ -1,4 +1,6 @@
-﻿namespace Uno.Extensions.Navigation;
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace Uno.Extensions.Navigation;
 
 #pragma warning disable SA1313 // Parameter names should begin with lower-case letter
 internal record MessageDialogAttributes(
@@ -20,11 +22,13 @@ public record MessageDialogViewMap(
 	int DefaultButtonIndex = 0,
 	int CancelButtonIndex = 0,
 	DialogAction[]? Buttons = default,
+	[param:   DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor | DynamicallyAccessedMemberTypes.PublicConstructors)]
 	Type? ViewModel = default,
 	DataMap? Data = default,
 	Type? ResultData = default
 ) : ViewMap(
 		View: typeof(MessageDialog),
+		ViewSelector: null,
 		ViewModel: ViewModel,
 		Data: Data,
 		ResultData: ResultData,
@@ -46,11 +50,13 @@ public record LocalizableMessageDialogViewMap(
 	int DefaultButtonIndex = 0,
 	int CancelButtonIndex = 0,
 	LocalizableDialogAction[]? Buttons = default,
+	[param:   DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor | DynamicallyAccessedMemberTypes.PublicConstructors)]
 	Type? ViewModel = default,
 	DataMap? Data = default,
 	Type? ResultData = default
 ) : ViewMap(
 		View: typeof(MessageDialog),
+		ViewSelector: null,
 		ViewModel: ViewModel,
 		Data: Data,
 		ResultData: ResultData,

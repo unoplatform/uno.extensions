@@ -4,6 +4,8 @@ uid: Uno.Extensions.Mvux.Advanced.InspectGeneratedCode
 
 # Inspecting the generated code
 
+> **UnoFeatures:** `MVUX` (add to `<UnoFeatures>` in your `.csproj`)
+
 MVUX makes extensive use of code generation. It's used to generate ViewModels for models, entities, and commands.
 Inspecting the generated code can give you a lot of insight into how the ViewModels work under the hood as well as how MVUX operates behind the scenes.
 

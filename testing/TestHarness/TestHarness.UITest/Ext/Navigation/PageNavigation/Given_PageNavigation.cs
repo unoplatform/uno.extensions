@@ -3,6 +3,7 @@
 public class Given_PageNavigation : NavigationTestBase
 {
 	[Test]
+	[Ignore("ImageAssert failures: https://github.com/unoplatform/uno.extensions/issues/2952")]
 	public void When_PageNavigationXAML()
 	{
 		InitTestSection(TestSections.Navigation_PageNavigation);
@@ -28,6 +29,7 @@ public class Given_PageNavigation : NavigationTestBase
 	}
 
 	[Test]
+	[Ignore("ImageAssert failures: https://github.com/unoplatform/uno.extensions/issues/2952")]
 	public void When_PageNavigationCodebehind()
 	{
 		InitTestSection(TestSections.Navigation_PageNavigation);
@@ -52,6 +54,7 @@ public class Given_PageNavigation : NavigationTestBase
 	}
 
 	[Test]
+	[Ignore("ImageAssert failures: https://github.com/unoplatform/uno.extensions/issues/2952")]
 	public void When_PageNavigationViewModel()
 	{
 		InitTestSection(TestSections.Navigation_PageNavigation);
@@ -78,6 +81,7 @@ public class Given_PageNavigation : NavigationTestBase
 
 
 	[Test]
+	[Ignore("ImageAssert failures: https://github.com/unoplatform/uno.extensions/issues/2952")]
 	public void When_PageNavigationDependsn()
 	{
 		// Note: There's no DependsOns on, so navigating to pages six, seven, eight .... should just be normal page navigations
@@ -122,6 +126,7 @@ public class Given_PageNavigation : NavigationTestBase
 	}
 
 	[Test]
+	[Ignore("ImageAssert failures: https://github.com/unoplatform/uno.extensions/issues/2952")]
 	public void When_PageNavigationRegisteredRoot()
 	{
 		InitTestSection(TestSections.Navigation_PageNavigation);

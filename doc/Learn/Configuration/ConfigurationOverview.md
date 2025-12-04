@@ -3,6 +3,8 @@ uid: Uno.Extensions.Configuration.Overview
 ---
 # Configuration
 
+> **UnoFeatures:** `Configuration` (add to `<UnoFeatures>` in your `.csproj`)
+
 `Uno.Extensions.Configuration` provides a uniform way to read or write configuration data from a number of distinct sources. The implementation of `IOptions<T>` from [Microsoft.Extensions.Options](https://learn.microsoft.com/dotnet/api/microsoft.extensions.options) allows for [read-only](https://learn.microsoft.com/dotnet/core/extensions/configuration#concepts-and-abstractions) access to values organized into **configuration sections**. The [writable configuration](xref:Uno.Extensions.Configuration.HowToWritableConfiguration) pattern supports the ability to update configuration values at runtime.
 
 This feature uses [Microsoft.Extensions.Configuration](https://www.nuget.org/packages/Microsoft.Extensions.Configuration) for any configuration related work. For more documentation on configuration, read the references listed at the bottom.
