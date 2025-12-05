@@ -4,6 +4,8 @@ uid: Uno.Extensions.Localization.Overview
 
 # Localization
 
+> **UnoFeatures:** `Localization` (add to `<UnoFeatures>` in your `.csproj`)
+
 It is often necessary to adapt an application to a specific subset of users within a market. **Localization** includes the type of actions developers take to modify both user interface elements and content to adhere to more languages or cultures. Specifically, text **translation** is done by applying alternate strings of text at runtime which accommodate a user's language preference.
 
 Many apps store these pieces of text in dedicated resource files that the app parses and assigns as text throughout the application. `Uno.Extensions.Localization` provides a consistent way to resolve the text of a specific culture or locale across platforms. This feature allows for modifying them to be applied upon app restart.

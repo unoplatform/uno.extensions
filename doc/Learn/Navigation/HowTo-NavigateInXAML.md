@@ -4,6 +4,8 @@ uid: Uno.Extensions.Navigation.HowToNavigateInXAML
 <!-- markdownlint-disable MD051 -->
 # How-To: Navigate in XAML
 
+> **UnoFeatures:** `Navigation` (add to `<UnoFeatures>` in your `.csproj`)
+
 This topic walks through controlling Navigation from XAML. This includes specifying data that should be attached to the navigation request.
 
 ## Prerequisites

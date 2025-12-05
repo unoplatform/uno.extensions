@@ -1,4 +1,6 @@
-﻿namespace Uno.Extensions.Navigation.Navigators;
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace Uno.Extensions.Navigation.Navigators;
 
 public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 {
@@ -348,7 +350,11 @@ public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 		return parameter;
 	}
 
-	protected override async Task<string?> Show(string? path, Type? viewType, object? data)
+	protected override async Task<string?> Show(
+		string? path,
+		[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor)]
+		Type? viewType,
+		object? data)
 	{
 		if (Control is null || viewType is null)
 		{

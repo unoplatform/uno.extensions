@@ -39,7 +39,7 @@
 			This causes the buidl to fail as we 2 different references to the WebView2Loader.dll.
 			By setting this property, we force the Uno.Sdk[.Private] to use the same version as the one used when building the extension packages.
 		-->
-		<WinAppSdkVersion>1.7.250513003</WinAppSdkVersion>
+		<WinAppSdkVersion>1.7.250909003</WinAppSdkVersion>
 	</PropertyGroup>
 
 	<ItemGroup>

@@ -1,4 +1,6 @@
-﻿namespace Uno.Extensions.Navigation;
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace Uno.Extensions.Navigation;
 
 public static class NavigationRequestExtensions
 {
@@ -107,16 +109,40 @@ public static class NavigationRequestExtensions
 			var request = new NavigationRequest(sender, hint.ToRoute(navigator, resolver, data), cancellation);
 			return request;
 		}
-		var navMethods = typeof(NavigationRequestExtensions)
-					.GetMethods(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)
-					.Where(m => m.Name == nameof(ToRequest) &&
-								m.IsGenericMethodDefinition).ToArray();
-		var navMethod = navMethods.First();
-		var constructedNavMethod = navMethod.MakeGenericMethod(hint.Result);
-		var nav = (NavigationRequest)constructedNavMethod.Invoke(null, new object?[] { hint, navigator, resolver, sender, data, cancellation })!;
-		return nav;
-
+		return InvokeToRequest(hint, hint.Result, navigator, resolver, sender, data, cancellation);
 	}
+
+	[UnconditionalSuppressMessage("Trimming", "IL2060", Justification = "hide until proper solution can be determined")]
+	[UnconditionalSuppressMessage("Trimming", "IL3050", Justification = "hide until proper solution can be determined")]
+	private static NavigationRequest InvokeToRequest(
+		RouteHint hint,
+		Type resultType,
+		INavigator navigator,
+		IRouteResolver resolver,
+		object sender,
+		object? data,
+		CancellationToken cancellation)
+	{
+		try
+		{
+			var navMethods = typeof(NavigationRequestExtensions)
+						.GetMethods(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)
+						.Where(m => m.Name == nameof(ToRequest) &&
+									m.IsGenericMethodDefinition).ToArray();
+			var navMethod = navMethods.First();
+			var constructedNavMethod = navMethod.MakeGenericMethod(resultType);
+			var nav = (NavigationRequest)constructedNavMethod.Invoke(null, new object?[] { hint, navigator, resolver, sender, data, cancellation })!;
+			return nav;
+		}
+		catch (Exception e)
+		{
+			// TODO: how to get an ILogger?
+			Console.Error.WriteLine($"Could not invoke ToRequest<{resultType.FullName}>(…): {e.Message}");
+			Console.Error.WriteLine(e);
+			throw;
+		}
+    }
+
 
 	internal static NavigationRequest<TResult> ToRequest<TResult>(
 		this RouteHint hint,

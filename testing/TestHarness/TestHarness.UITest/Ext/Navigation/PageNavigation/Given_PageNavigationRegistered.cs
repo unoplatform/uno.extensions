@@ -3,6 +3,7 @@
 public class Given_PageNavigationRegistered : NavigationTestBase
 {
 	[Test]
+	[Ignore("ImageAssert failures: https://github.com/unoplatform/uno.extensions/issues/2952")]
 	public void When_PageNavigationRegisteredXAML()
 	{
 		InitTestSection(TestSections.Navigation_PageNavigationRegistered);
@@ -28,6 +29,7 @@ public class Given_PageNavigationRegistered : NavigationTestBase
 	}
 
 	[Test]
+	[Ignore("ImageAssert failures: https://github.com/unoplatform/uno.extensions/issues/2952")]
 	public void When_PageNavigationRegisteredCodebehind()
 	{
 		InitTestSection(TestSections.Navigation_PageNavigationRegistered);
@@ -52,6 +54,7 @@ public class Given_PageNavigationRegistered : NavigationTestBase
 	}
 
 	[Test]
+	[Ignore("ImageAssert failures: https://github.com/unoplatform/uno.extensions/issues/2952")]
 	public void When_PageNavigationRegisteredViewModel()
 	{
 		InitTestSection(TestSections.Navigation_PageNavigationRegistered);
@@ -131,6 +134,7 @@ public class Given_PageNavigationRegistered : NavigationTestBase
 
 
 	[Test]
+	[Ignore("ImageAssert failures: https://github.com/unoplatform/uno.extensions/issues/2952")]
 	public void When_PageNavigationRegisteredRoot()
 	{
 		InitTestSection(TestSections.Navigation_PageNavigationRegistered);

@@ -1,4 +1,6 @@
-﻿namespace Uno.Extensions.Navigation.Navigators;
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace Uno.Extensions.Navigation.Navigators;
 
 public abstract class SelectorNavigator<TControl> : ControlNavigator<TControl>
 	where TControl : class
@@ -51,7 +53,11 @@ public abstract class SelectorNavigator<TControl> : ControlNavigator<TControl>
 	{
 	}
 
-	protected override async Task<string?> Show(string? path, Type? viewType, object? data)
+	protected override async Task<string?> Show(
+		string? path,
+		[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor)]
+		Type? viewType,
+		object? data)
 	{
 		if (Control is null)
 		{

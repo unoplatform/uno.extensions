@@ -1,4 +1,6 @@
 ﻿using System.ComponentModel;
+using Microsoft.Maui.LifecycleEvents;
+
 
 #if !WINDOWS
 using Uno.Foundation.Extensibility;
@@ -70,7 +72,6 @@ public partial class
 
 		// Create an Application Main Page and initialize a Handler with the Maui Context
 		var page = new ContentPage();
-		app.MainPage = page;
 
 		_ = page.ToPlatform(context);
 
@@ -99,8 +100,10 @@ public partial class
 	/// <inheritdoc/>
 	public MauiApp BuildMauiApp(MauiAppBuilder builder, Application app, Microsoft.UI.Xaml.Window window)
 	{
-		var mauiApp = builder.Build();
-		InitializeMauiEmbeddingApp(mauiApp, app);
+		try
+		{
+			var mauiApp = builder.Build();
+			InitializeMauiEmbeddingApp(mauiApp, app);
 
 #if WINDOWS
 		window.Activated += (s, args) =>
@@ -108,7 +111,13 @@ public partial class
 			WindowStateManager.Default.OnActivated(window, args);
 		};
 #endif
-		return mauiApp;
+			return mauiApp;
+		}
+		catch (Exception e)
+		{
+			Console.WriteLine($"Error building MAUI App: {e}");
+			throw;
+		}
 	}
 
 	/// <inheritdoc/>
@@ -116,17 +125,13 @@ public partial class
 	{
 #if ANDROID
 		var androidApp = mauiApp.Services.GetRequiredService<Android.App.Application>();
-		var activity = mauiApp.Services.GetRequiredService<Android.App.Activity>();
 		var scope = mauiApp.Services.CreateScope();
 		var rootContext = new MauiContext(scope.ServiceProvider, androidApp);
 		InitializeScopedServices(rootContext);
-
 		var iApp = mauiApp.Services.GetRequiredService<IApplication>();
 		_ = new MauiEmbedding.EmbeddedApplication(mauiApp.Services, iApp);
 
-		// Initializing with the Activity to set the current activity.
-		// The Bundle is not actually used by Maui
-		Microsoft.Maui.ApplicationModel.Platform.Init(activity, null);
+		// Platform.Init is now handled via ConfigureLifecycleEvents in RegisterPlatformServices
 
 		androidApp.SetApplicationHandler(iApp, rootContext);
 		Initialize(iApp);
@@ -162,15 +167,36 @@ public partial class
 			throw new MauiEmbeddingException(string.Format(Properties.Resources.UnexpectedAndroidApplicationContextType, Android.App.Application.Context.GetType().FullName));
 		}
 
+		if (UI.ContextHelper.Current is not Android.App.Activity currentActivity)
+		{
+			throw new MauiEmbeddingException(Properties.Resources.CouldNotFindCurrentActivity);
+		}
 		builder.Services.AddSingleton<Android.App.Application>(androidApp)
 			.AddTransient<Android.Content.Context>(_ => UI.ContextHelper.Current)
-			.AddTransient<Android.App.Activity>(_ =>
+			.AddTransient<Android.App.Activity>(_ => currentActivity);
+		builder.ConfigureLifecycleEvents(life =>
 			{
-				if (UI.ContextHelper.Current is Android.App.Activity currentActivity)
-					return currentActivity;
+				Microsoft.Maui.ApplicationModel.Platform.Init(androidApp);
 
-				throw new MauiEmbeddingException(Properties.Resources.CouldNotFindCurrentActivity);
-			});
+				life.AddAndroid(android => android
+					.OnCreate((activity, savedInstanceState) =>
+					{
+						Microsoft.Maui.ApplicationModel.Platform.Init(activity, savedInstanceState);
+					})
+					.OnRequestPermissionsResult((activity, requestCode, permissions, grantResults) =>
+					{
+						Microsoft.Maui.ApplicationModel.Platform.OnRequestPermissionsResult(requestCode, permissions, grantResults);
+					})
+					.OnNewIntent((activity, intent) =>
+					{
+						Microsoft.Maui.ApplicationModel.Platform.OnNewIntent(intent);
+					})
+					.OnResume((activity) =>
+					{
+						Microsoft.Maui.ApplicationModel.Platform.OnResume();
+					}));
+				})
+				;
 		return builder;
 #elif IOS || MACCATALYST
 		builder.Services.AddTransient<UIKit.UIWindow>(sp =>
