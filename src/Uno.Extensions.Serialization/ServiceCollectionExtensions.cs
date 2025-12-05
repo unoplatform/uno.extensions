@@ -30,7 +30,11 @@ public static class ServiceCollectionExtensions
 			})
 			.AddSingleton<SystemTextJsonSerializer>()
 			.AddSingleton<ISerializer>(services => services.GetRequiredService<SystemTextJsonSerializer>())
-			.AddSingleton(typeof(ISerializer<>), typeof(SystemTextJsonGeneratedSerializer<>));
+			.AddSingleton(typeof(ISerializer<>), typeof(SystemTextJsonGeneratedSerializer<>))
+			// Register JSON type info for common types to support AOT scenarios where reflection is disabled
+			.AddJsonTypeInfo(CommonTypesJsonSerializerContext.Default.String)
+			.AddJsonTypeInfo(CommonTypesJsonSerializerContext.Default.StringArray)
+			.AddJsonTypeInfo(CommonTypesJsonSerializerContext.Default.Boolean);
 	}
 
 	/// <summary>
