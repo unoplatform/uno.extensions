@@ -15,22 +15,9 @@ public class SystemTextJsonGeneratedSerializerTests
 	[TestInitialize]
 	public void InitializeTests()
 	{
-		// Register serialization services to support AOT scenarios
-		var services = new ServiceCollection();
-		
-		// First register SystemTextJsonSerializer as singleton for ISerializer
-		services.AddSingleton<SystemTextJsonSerializer>();
-		services.AddSingleton<ISerializer>(sp => sp.GetRequiredService<SystemTextJsonSerializer>());
-		
-		// Register the generic serializer factory
-		services.AddSingleton(typeof(ISerializer<>), typeof(SystemTextJsonGeneratedSerializer<>));
-		
-		// Register type info for test types
-		services.AddJsonTypeInfo(TestTypesJsonSerializerContext.Default.SimpleClass);
-		services.AddJsonTypeInfo(TestTypesJsonSerializerContext.Default.SimpleRecord);
-		
-		var serviceProvider = services.BuildServiceProvider();
-		Serializer = (SystemTextJsonGeneratedSerializer<SimpleClass>)serviceProvider.GetRequiredService<ISerializer<SimpleClass>>();
+		var services = new ServiceCollection().BuildServiceProvider();
+		var reflectionSerializer = new SystemTextJsonSerializer(services);
+		Serializer = new SystemTextJsonGeneratedSerializer<SimpleClass>(reflectionSerializer,SimpleClassContext.Default.SimpleClass);
 	}
 
 	[TestMethod]
@@ -113,5 +100,10 @@ public class SystemTextJsonGeneratedSerializerTests
 	{
 		return new SimpleRecord(SimpleTextProperty: SimpleText + "Record");
 	}
+}
+
+[JsonSerializable(typeof(SimpleClass))]
+internal partial class SimpleClassContext : JsonSerializerContext
+{
 }
 

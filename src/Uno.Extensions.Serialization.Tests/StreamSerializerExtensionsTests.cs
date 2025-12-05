@@ -12,28 +12,14 @@ public class SerializerExtensionsTests
 	[TestInitialize]
 	public void InitializeTests()
 	{
-		// Register serialization services to support AOT scenarios
-		var services = new ServiceCollection();
-		
-		// First register SystemTextJsonSerializer as singleton for ISerializer
-		services.AddSingleton<SystemTextJsonSerializer>();
-		services.AddSingleton<ISerializer>(sp => sp.GetRequiredService<SystemTextJsonSerializer>());
-		
-		// Register the generic serializer factory
-		services.AddSingleton(typeof(ISerializer<>), typeof(SystemTextJsonGeneratedSerializer<>));
-		
-		// Register type info for test types
-		services.AddJsonTypeInfo(TestTypesJsonSerializerContext.Default.SimpleClass);
-		services.AddJsonTypeInfo(TestTypesJsonSerializerContext.Default.SimpleRecord);
-		
-		var serviceProvider = services.BuildServiceProvider();
-		Serializer = serviceProvider.GetRequiredService<SystemTextJsonSerializer>();
+		var services = new ServiceCollection().BuildServiceProvider();
+		Serializer = new SystemTextJsonSerializer(services);
 	}
 
 	[TestMethod]
 	public void ToAndFromStreamTest()
 	{
-		var classEntity = (SimpleClass)SystemTextJsonSerializerTests.CreateSimpleClassInstance();
+		var classEntity = SystemTextJsonSerializerTests.CreateSimpleClassInstance();
 		var stream = Serializer.ToStream(classEntity);
 		stream.Seek(0, SeekOrigin.Begin);
 		var cloneClass = Serializer.FromStream<SimpleClass>(stream);
@@ -42,7 +28,7 @@ public class SerializerExtensionsTests
 		var anotherCloneClass = Serializer.FromStream<SimpleClass>(stream);
 		VerifyEntity(cloneClass, anotherCloneClass);
 
-		var recordEntity = (SimpleRecord)SystemTextJsonSerializerTests.CreateSimpleRecordInstance();
+		var recordEntity = SystemTextJsonSerializerTests.CreateSimpleRecordInstance();
 		stream = Serializer.ToStream(recordEntity);
 		stream.Seek(0, SeekOrigin.Begin);
 		var cloneRecord = Serializer.FromStream<SimpleRecord>(stream);
@@ -55,7 +41,7 @@ public class SerializerExtensionsTests
 	[TestMethod]
 	public void ReadWriteToStreamTest()
 	{
-		var classEntity = (SimpleClass)SystemTextJsonSerializerTests.CreateSimpleClassInstance();
+		var classEntity = SystemTextJsonSerializerTests.CreateSimpleClassInstance() as SimpleClass;
 		using var ms = new MemoryStream();
 		Serializer.ToStream(ms, classEntity);
 		var pos = ms.Position;
@@ -65,7 +51,7 @@ public class SerializerExtensionsTests
 		Assert.AreEqual(pos, ms.Position);
 
 		ms.Seek(0, SeekOrigin.Begin);
-		Serializer.ToStream<SimpleClass>(ms, classEntity);
+		Serializer.ToStream(ms, (object)classEntity);
 		pos = ms.Position;
 		ms.Seek(0, SeekOrigin.Begin);
 		cloneClass = Serializer.FromStream<SimpleClass>(ms);
@@ -76,12 +62,12 @@ public class SerializerExtensionsTests
 	[TestMethod]
 	public void ToFromStringTest()
 	{
-		var classEntity = (SimpleClass)SystemTextJsonSerializerTests.CreateSimpleClassInstance();
+		var classEntity = SystemTextJsonSerializerTests.CreateSimpleClassInstance() as SimpleClass;
 		var stringValue = Serializer.ToString(classEntity);
 		var cloneClass = Serializer.FromString<SimpleClass>(stringValue);
 		VerifyEntity(classEntity, cloneClass);
 
-		var recordEntity = (SimpleRecord)SystemTextJsonSerializerTests.CreateSimpleRecordInstance();
+		var recordEntity = SystemTextJsonSerializerTests.CreateSimpleRecordInstance() as SimpleRecord;
 		stringValue = Serializer.ToString(recordEntity);
 		var cloneRecord = Serializer.FromString<SimpleRecord>(stringValue);
 		VerifyEntity(recordEntity, cloneRecord);

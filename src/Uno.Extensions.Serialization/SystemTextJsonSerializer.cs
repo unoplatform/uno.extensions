@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using System.Text.Json.Serialization.Metadata;
 
 namespace Uno.Extensions.Serialization;
 
@@ -7,7 +8,7 @@ namespace Uno.Extensions.Serialization;
 /// </summary>
 public class SystemTextJsonSerializer : ISerializer
 {
-	private readonly JsonSerializerOptions? _serializerOptions;
+	private readonly JsonSerializerOptions _serializerOptions;
 	private readonly IServiceProvider _services;
 
 	private ISerializerTypedInstance? TypedSerializer(Type jsonType) => _services.GetServices<ISerializerTypedInstance>().FirstOrDefault(x => x.JsonType == jsonType);
@@ -24,7 +25,35 @@ public class SystemTextJsonSerializer : ISerializer
 	public SystemTextJsonSerializer(IServiceProvider services, JsonSerializerOptions? serializerOptions = null)
 	{
 		_services = services;
-		_serializerOptions = serializerOptions;
+		_serializerOptions = ConfigureSerializerOptions(serializerOptions);
+	}
+
+	private static JsonSerializerOptions ConfigureSerializerOptions(JsonSerializerOptions? options)
+	{
+		// Create a new options instance or clone the provided one to avoid modifying shared instances
+		var configuredOptions = options is null
+			? new JsonSerializerOptions()
+			: new JsonSerializerOptions(options);
+
+		// Configure TypeInfoResolver to support both reflection-based and AOT scenarios.
+		// Use DefaultJsonTypeInfoResolver for reflection-based serialization combined with
+		// CommonTypesJsonSerializerContext for common types that have source-generated metadata.
+		if (configuredOptions.TypeInfoResolver is null)
+		{
+			configuredOptions.TypeInfoResolver = JsonTypeInfoResolver.Combine(
+				new DefaultJsonTypeInfoResolver(),
+				CommonTypesJsonSerializerContext.Default);
+		}
+		else
+		{
+			// User provided a resolver - combine it with default resolver and common types
+			configuredOptions.TypeInfoResolver = JsonTypeInfoResolver.Combine(
+				configuredOptions.TypeInfoResolver,
+				new DefaultJsonTypeInfoResolver(),
+				CommonTypesJsonSerializerContext.Default);
+		}
+
+		return configuredOptions;
 	}
 
 	/// <summary>
