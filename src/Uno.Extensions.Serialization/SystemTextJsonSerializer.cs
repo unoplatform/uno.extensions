@@ -46,7 +46,9 @@ public class SystemTextJsonSerializer : ISerializer
 		}
 		else
 		{
-			// User provided a resolver - combine it with default resolver and common types
+			// User provided a resolver - place it first so it has priority.
+			// DefaultJsonTypeInfoResolver and CommonTypesJsonSerializerContext serve as fallbacks
+			// for types not handled by the user's resolver.
 			configuredOptions.TypeInfoResolver = JsonTypeInfoResolver.Combine(
 				configuredOptions.TypeInfoResolver,
 				new DefaultJsonTypeInfoResolver(),
