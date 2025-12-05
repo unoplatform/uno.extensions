@@ -33,7 +33,7 @@ public class SerializerExtensionsTests
 	[TestMethod]
 	public void ToAndFromStreamTest()
 	{
-		var classEntity = SystemTextJsonSerializerTests.CreateSimpleClassInstance() as SimpleClass;
+		var classEntity = (SimpleClass)SystemTextJsonSerializerTests.CreateSimpleClassInstance();
 		var stream = Serializer.ToStream(classEntity);
 		stream.Seek(0, SeekOrigin.Begin);
 		var cloneClass = Serializer.FromStream<SimpleClass>(stream);
@@ -42,7 +42,7 @@ public class SerializerExtensionsTests
 		var anotherCloneClass = Serializer.FromStream<SimpleClass>(stream);
 		VerifyEntity(cloneClass, anotherCloneClass);
 
-		var recordEntity = SystemTextJsonSerializerTests.CreateSimpleRecordInstance() as SimpleRecord;
+		var recordEntity = (SimpleRecord)SystemTextJsonSerializerTests.CreateSimpleRecordInstance();
 		stream = Serializer.ToStream(recordEntity);
 		stream.Seek(0, SeekOrigin.Begin);
 		var cloneRecord = Serializer.FromStream<SimpleRecord>(stream);
@@ -55,7 +55,7 @@ public class SerializerExtensionsTests
 	[TestMethod]
 	public void ReadWriteToStreamTest()
 	{
-		var classEntity = SystemTextJsonSerializerTests.CreateSimpleClassInstance() as SimpleClass;
+		var classEntity = (SimpleClass)SystemTextJsonSerializerTests.CreateSimpleClassInstance();
 		using var ms = new MemoryStream();
 		Serializer.ToStream(ms, classEntity);
 		var pos = ms.Position;
@@ -76,12 +76,12 @@ public class SerializerExtensionsTests
 	[TestMethod]
 	public void ToFromStringTest()
 	{
-		var classEntity = SystemTextJsonSerializerTests.CreateSimpleClassInstance() as SimpleClass;
+		var classEntity = (SimpleClass)SystemTextJsonSerializerTests.CreateSimpleClassInstance();
 		var stringValue = Serializer.ToString(classEntity);
 		var cloneClass = Serializer.FromString<SimpleClass>(stringValue);
 		VerifyEntity(classEntity, cloneClass);
 
-		var recordEntity = SystemTextJsonSerializerTests.CreateSimpleRecordInstance() as SimpleRecord;
+		var recordEntity = (SimpleRecord)SystemTextJsonSerializerTests.CreateSimpleRecordInstance();
 		stringValue = Serializer.ToString(recordEntity);
 		var cloneRecord = Serializer.FromString<SimpleRecord>(stringValue);
 		VerifyEntity(recordEntity, cloneRecord);

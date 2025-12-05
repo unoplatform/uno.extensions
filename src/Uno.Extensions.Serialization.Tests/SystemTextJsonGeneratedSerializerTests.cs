@@ -30,7 +30,7 @@ public class SystemTextJsonGeneratedSerializerTests
 		services.AddJsonTypeInfo(TestTypesJsonSerializerContext.Default.SimpleRecord);
 		
 		var serviceProvider = services.BuildServiceProvider();
-		Serializer = serviceProvider.GetRequiredService<ISerializer<SimpleClass>>() as SystemTextJsonGeneratedSerializer<SimpleClass>;
+		Serializer = (SystemTextJsonGeneratedSerializer<SimpleClass>)serviceProvider.GetRequiredService<ISerializer<SimpleClass>>();
 	}
 
 	[TestMethod]
