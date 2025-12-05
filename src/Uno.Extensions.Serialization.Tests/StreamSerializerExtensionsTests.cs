@@ -12,14 +12,28 @@ public class SerializerExtensionsTests
 	[TestInitialize]
 	public void InitializeTests()
 	{
-		var services = new ServiceCollection().BuildServiceProvider();
-		Serializer = new SystemTextJsonSerializer(services);
+		// Register serialization services to support AOT scenarios
+		var services = new ServiceCollection();
+		
+		// First register SystemTextJsonSerializer as singleton for ISerializer
+		services.AddSingleton<SystemTextJsonSerializer>();
+		services.AddSingleton<ISerializer>(sp => sp.GetRequiredService<SystemTextJsonSerializer>());
+		
+		// Register the generic serializer factory
+		services.AddSingleton(typeof(ISerializer<>), typeof(SystemTextJsonGeneratedSerializer<>));
+		
+		// Register type info for test types
+		services.AddJsonTypeInfo(TestTypesJsonSerializerContext.Default.SimpleClass);
+		services.AddJsonTypeInfo(TestTypesJsonSerializerContext.Default.SimpleRecord);
+		
+		var serviceProvider = services.BuildServiceProvider();
+		Serializer = serviceProvider.GetRequiredService<SystemTextJsonSerializer>();
 	}
 
 	[TestMethod]
 	public void ToAndFromStreamTest()
 	{
-		var classEntity = SystemTextJsonSerializerTests.CreateSimpleClassInstance();
+		var classEntity = SystemTextJsonSerializerTests.CreateSimpleClassInstance() as SimpleClass;
 		var stream = Serializer.ToStream(classEntity);
 		stream.Seek(0, SeekOrigin.Begin);
 		var cloneClass = Serializer.FromStream<SimpleClass>(stream);
@@ -28,7 +42,7 @@ public class SerializerExtensionsTests
 		var anotherCloneClass = Serializer.FromStream<SimpleClass>(stream);
 		VerifyEntity(cloneClass, anotherCloneClass);
 
-		var recordEntity = SystemTextJsonSerializerTests.CreateSimpleRecordInstance();
+		var recordEntity = SystemTextJsonSerializerTests.CreateSimpleRecordInstance() as SimpleRecord;
 		stream = Serializer.ToStream(recordEntity);
 		stream.Seek(0, SeekOrigin.Begin);
 		var cloneRecord = Serializer.FromStream<SimpleRecord>(stream);
@@ -51,7 +65,7 @@ public class SerializerExtensionsTests
 		Assert.AreEqual(pos, ms.Position);
 
 		ms.Seek(0, SeekOrigin.Begin);
-		Serializer.ToStream(ms, (object)classEntity);
+		Serializer.ToStream<SimpleClass>(ms, classEntity);
 		pos = ms.Position;
 		ms.Seek(0, SeekOrigin.Begin);
 		cloneClass = Serializer.FromStream<SimpleClass>(ms);

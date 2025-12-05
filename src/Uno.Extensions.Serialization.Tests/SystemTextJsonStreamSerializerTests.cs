@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Text.Json.Serialization;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -15,8 +16,22 @@ public class SystemTextJsonSerializerTests
 	[TestInitialize]
 	public void InitializeTests()
 	{
-		var services = new ServiceCollection().BuildServiceProvider();
-		Serializer = new SystemTextJsonSerializer(services);
+		// Register serialization services to support AOT scenarios
+		var services = new ServiceCollection();
+		
+		// First register SystemTextJsonSerializer as singleton for ISerializer
+		services.AddSingleton<SystemTextJsonSerializer>();
+		services.AddSingleton<ISerializer>(sp => sp.GetRequiredService<SystemTextJsonSerializer>());
+		
+		// Register the generic serializer factory
+		services.AddSingleton(typeof(ISerializer<>), typeof(SystemTextJsonGeneratedSerializer<>));
+		
+		// Register type info for test types
+		services.AddJsonTypeInfo(TestTypesJsonSerializerContext.Default.SimpleClass);
+		services.AddJsonTypeInfo(TestTypesJsonSerializerContext.Default.SimpleRecord);
+		
+		var serviceProvider = services.BuildServiceProvider();
+		Serializer = serviceProvider.GetRequiredService<SystemTextJsonSerializer>();
 	}
 
 	[TestMethod]
@@ -112,5 +127,14 @@ public record SimpleRecord(string SimpleTextProperty) : ISimpleText;
 public interface ISimpleText
 {
 	string SimpleTextProperty { get; }
+}
+
+/// <summary>
+/// Source-generated JSON serializer context for test types to support AOT scenarios.
+/// </summary>
+[JsonSerializable(typeof(SimpleClass))]
+[JsonSerializable(typeof(SimpleRecord))]
+internal partial class TestTypesJsonSerializerContext : JsonSerializerContext
+{
 }
 
