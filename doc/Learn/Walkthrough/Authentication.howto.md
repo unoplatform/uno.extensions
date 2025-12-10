@@ -5,9 +5,10 @@ tags: [authentication, custom-login, navigation]
 ---
 
 > **UnoFeatures:** `Authentication` (add to `<UnoFeatures>` in your `.csproj`)
-
+>
 > [!IMPORTANT]
-> - Use `IAuthenticationService` from `Uno.Extensions.Authentication` 
+>
+> - Use `IAuthenticationService` from `Uno.Extensions.Authentication`
 > - Inject `IAuthenticationService` into ViewModels via constructor parameters
 
 ## 1. Sign in with a hard-coded user
@@ -62,10 +63,10 @@ protected override void OnLaunched(LaunchActivatedEventArgs args)
 
 What happens:
 
-* we add a **custom** auth provider,
-* we get a credential dictionary (like `{ "Username": "Bob" }`),
-* we return **the same dictionary** to signal success,
-* or `default` to signal failure. ([Uno Platform][1])
+- we add a **custom** auth provider,
+- we get a credential dictionary (like `{ "Username": "Bob" }`),
+- we return **the same dictionary** to signal success,
+- or `default` to signal failure. ([Uno Platform][1])
 
 **3. Bind the login UI to viewmodel**
 
@@ -119,8 +120,8 @@ public class MainViewModel
 
 Notes:
 
-* `LoginAsync` needs a dispatcher → inject it.
-* On success we navigate. ([Uno Platform][1])
+- `LoginAsync` needs a dispatcher → inject it.
+- On success we navigate. ([Uno Platform][1])
 
 ---
 
@@ -389,8 +390,8 @@ protected override void OnLaunched(LaunchActivatedEventArgs args)
 
 Differences vs local check:
 
-* we used `AddCustom<IDummyJsonEndpoint>` to get the API instance directly,
-* we placed the token back into credentials. ([Uno Platform][1])
+- we used `AddCustom<IDummyJsonEndpoint>` to get the API instance directly,
+- we placed the token back into credentials. ([Uno Platform][1])
 
 **6. Update the login viewmodel to send username + password**
 
