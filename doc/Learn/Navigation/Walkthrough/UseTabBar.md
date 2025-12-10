@@ -8,6 +8,9 @@ tags: [uno, uno-platform, uno-extensions, uno-toolkit, navigation, TabBar, TabBa
 
 > **UnoFeatures:** `Navigation;Toolkit` (add to `<UnoFeatures>` in your `.csproj`)
 
+> [!NOTE]
+> For TabBar navigation to work properly, ensure the root Grid has `uen:Region.Attached="True"` and each TabBarItem has a corresponding `uen:Region.Name` that matches a content area with the same name.
+
 * Enable Toolkit navigation in `App.xaml.cs`:
 
     ```csharp
@@ -83,12 +86,12 @@ Create the basic structure with TabBar and content areas.
 Enable region navigation for TabBar.
 
 * Add `Region.Attached="True"` to:
-  * Parent Grid
+  * Parent Grid (also give it an `x:Name` for reference)
   * Content Grid container
   * TabBar control
 
     ```xml
-    <Grid uen:Region.Attached="True">
+    <Grid x:Name="RootGrid" uen:Region.Attached="True">
         <Grid uen:Region.Attached="True" Grid.Row="1">
             <!-- Content areas -->
         </Grid>
@@ -126,14 +129,20 @@ Enable region navigation for TabBar.
     <utu:TabBar uen:Region.Attached="True" Grid.Row="2">
         <utu:TabBar.Items>
             <utu:TabBarItem uen:Region.Name="One"
+                            utu:TabBarItem.OnClickBehaviorsTarget="{Binding ElementName=RootGrid}"
                             Style="{StaticResource MaterialBottomTabBarItemStyle}" />
             <utu:TabBarItem uen:Region.Name="Two"
+                            utu:TabBarItem.OnClickBehaviorsTarget="{Binding ElementName=RootGrid}"
                             Style="{StaticResource MaterialBottomTabBarItemStyle}" />
             <utu:TabBarItem uen:Region.Name="Three"
+                            utu:TabBarItem.OnClickBehaviorsTarget="{Binding ElementName=RootGrid}"
                             Style="{StaticResource MaterialBottomTabBarItemStyle}" />
         </utu:TabBar.Items>
     </utu:TabBar>
     ```
+
+> [!NOTE]
+> The `OnClickBehaviorsTarget` binding ensures TabBarItem clicks are handled by the region-enabled root Grid. This may be required in some scenarios for navigation to work properly.
 
 ## Navigate to specific sections within tabs
 
@@ -197,6 +206,14 @@ Add TabBarItem that navigates to a separate Page.
     <utu:TabBarItem uen:Region.Name="SignUp"
                     Style="{StaticResource MaterialBottomTabBarItemStyle}" />
     ```
+
+## Common Issues
+
+If TabBar navigation is not working:
+
+* Verify `uen:Region.Attached="True"` is set on the root Grid with an `x:Name`
+* Add `utu:TabBarItem.OnClickBehaviorsTarget="{Binding ElementName=RootGrid}"` to each TabBarItem
+* Ensure each TabBarItem has `uen:Region.Name` matching a content region
 
 ## Pass data to tab content
 
