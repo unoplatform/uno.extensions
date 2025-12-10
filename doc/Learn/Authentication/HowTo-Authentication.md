@@ -5,6 +5,10 @@ uid: Uno.Extensions.Authentication.HowToAuthentication
 
 > **UnoFeatures:** `Authentication` (add to `<UnoFeatures>` in your `.csproj`)
 
+> [!IMPORTANT]
+> - Use `IAuthenticationService` from `Uno.Extensions.Authentication` 
+> - Inject `IAuthenticationService` into ViewModels via constructor parameters
+
 `Uno.Extensions.Authentication` provides you with a consistent way to add authentication to your application. It is recommended to use one of the built-in `IAuthenticationService` implementations. This tutorial will use the custom authorization to validate user credentials.
 
 ## Step-by-step

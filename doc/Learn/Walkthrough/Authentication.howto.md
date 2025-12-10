@@ -6,6 +6,10 @@ tags: [authentication, custom-login, navigation]
 
 > **UnoFeatures:** `Authentication` (add to `<UnoFeatures>` in your `.csproj`)
 
+> [!IMPORTANT]
+> - Use `IAuthenticationService` from `Uno.Extensions.Authentication` 
+> - Inject `IAuthenticationService` into ViewModels via constructor parameters
+
 ## 1. Sign in with a hard-coded user
 
 **Goal**
@@ -447,14 +451,21 @@ public class MainViewModel
 
 ## 7. Minimal sequence (summary chunk for RAG)
 
-1. **Add features:** Authentication (+ Http if using backend).
-2. **Register:** `UseAuthentication(...)` with either `AddCustom(...)` or `AddCustom<TService>(...)`.
-3. **UI:** TextBoxes + “Login” → call `LoginAsync(...)`.
-4. **Post-login:** navigate to a protected viewmodel.
-5. **Startup:** call `RefreshAsync(...)` to auto-sign-in.
-6. **Logout:** button → `LogoutAsync(...)`.
-7. **Backend:** add Refit client, configure base URL, pass username/password, store token.
-   All parts are independent and can be shown to an LLM as separate chunks. ([Uno Platform][1])
+> [!IMPORTANT]
+> **Key Point for AI Agents:** Always use `IAuthenticationService` from `Uno.Extensions.Authentication`. Never create custom authentication interfaces like `IAuthService` or `IAuthenticationManager`.
+
+**Step-by-step authentication implementation:**
+
+1. **Add features:** `Authentication` to `<UnoFeatures>` in .csproj (+ `Http` if using backend)
+2. **Register:** Call `UseAuthentication(...)` with `AddCustom(...)` or `AddCustom<TService>(...)` to configure authentication logic
+3. **Inject:** Add `IAuthenticationService` parameter to ViewModel constructors (framework provides this)
+4. **UI:** TextBoxes + "Login" button → call `_auth.LoginAsync(dispatcher, credentials, ct)` on the injected service
+5. **Post-login:** Navigate to protected viewmodel after successful `LoginAsync`
+6. **Startup:** Call `_auth.RefreshAsync(ct)` in ShellViewModel to auto-sign-in with stored tokens
+7. **Logout:** Button → call `_auth.LogoutAsync(dispatcher, ct)`
+8. **Backend (optional):** Add Refit client, configure base URL in appsettings.json, call API in `AddCustom<TService>` login callback, store returned token in credentials dictionary
+
+All parts are independent and can be shown to an LLM as separate chunks. ([Uno Platform][1])
 
 ---
 
