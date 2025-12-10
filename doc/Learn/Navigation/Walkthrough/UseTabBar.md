@@ -143,7 +143,7 @@ Enable region navigation for TabBar.
     ```
 
 > [!NOTE]
-> The `OnClickBehaviorsTarget` binding ensures TabBarItem clicks are handled by the region-enabled root Grid. This may be required in some scenarios for navigation to work properly.
+> The `OnClickBehaviorsTarget` binding ensures TabBarItem clicks are handled by the region-enabled root Grid. This is required for proper navigation functionality.
 
 ## Navigate to specific sections within tabs
 
