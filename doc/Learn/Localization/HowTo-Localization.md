@@ -66,11 +66,11 @@ It is recommended to follow the pattern: `PageName.ElementType.Purpose`
 
 Examples:
 
-- `LoginPage.TextBlock.WelcomeBack` - TextBlock showing "Welcome Back" on LoginPage
-- `LoginPage.Button.SignIn` - Sign In button on LoginPage
-- `HomePage.TextBlock.Greeting` - Greeting message on HomePage
-- `RegisterPage.TextBox.EmailInput` - Email input on RegisterPage
-- `Shell.NavigationViewItem.Home` - Home navigation item in Shell
+* `LoginPage.TextBlock.WelcomeBack` - TextBlock showing "Welcome Back" on LoginPage
+* `LoginPage.Button.SignIn` - Sign In button on LoginPage
+* `HomePage.TextBlock.Greeting` - Greeting message on HomePage
+* `RegisterPage.TextBox.EmailInput` - Email input on RegisterPage
+* `Shell.NavigationViewItem.Home` - Home navigation item in Shell
 
 #### Corresponding Resources.resw Entries
 
