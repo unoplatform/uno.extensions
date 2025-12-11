@@ -73,6 +73,35 @@ For example, if the `x:Uid` property of a `TextBlock` is `MyTextBlock`, the key 
 <TextBlock x:Uid="MyTextBlock" />
 ```
 
+**Example - LoginPage:**
+
+```xml
+<StackPanel>
+    <TextBlock x:Uid="LoginPage.TextBlock.WelcomeBack" />
+    <TextBlock x:Uid="LoginPage.TextBlock.SignInPrompt" />
+    <Button x:Uid="LoginPage.Button.Login" />
+</StackPanel>
+```
+
+**Corresponding Resources.resw entries:**
+
+| Name | Value |
+|------|-------|
+| `LoginPage.TextBlock.WelcomeBack.Text` | Welcome Back |
+| `LoginPage.TextBlock.SignInPrompt.Text` | Sign in to continue |
+| `LoginPage.Button.Login.Content` | Login |
+
+**Common Element Properties:**
+
+- `TextBlock`: Use `.Text` suffix (e.g., `MyTextBlock.Text`)
+- `Button`: Use `.Content` suffix (e.g., `MyButton.Content`)
+- `TextBox`: Use `.Header` and `.PlaceholderText` suffixes
+- `NavigationViewItem`: Use `.Content` suffix
+- `ToolTip`: Use `.Content` suffix
+
+> [!NOTE]
+> When localization is enabled, text elements should use `x:Uid` attributes to properly support multiple languages and cultures.
+
 #### Using resources in code-behind
 
 Setting the `x:Uid` property in markup is not required to resolve localized resources like text. The `IStringLocalizer` service can be resolved by the service provider. This service can be used to resolve localized strings in code behind.
