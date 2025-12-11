@@ -137,15 +137,15 @@ The following properties are available:
 ```csharp
 internal record WebConfiguration
 {
-	public bool PrefersEphemeralWebBrowserSession { get; init; }
-	public string? LoginStartUri { get; init; }
-	public string? LoginCallbackUri { get; init; }
-	public string? AccessTokenKey { get; init; }
-	public string? RefreshTokenKey { get; init; }
-	public string? IdTokenKey { get; init; }
-	public IDictionary<string, string>? OtherTokenKeys { get; init; }
-	public string? LogoutStartUri { get; init; }
-	public string? LogoutCallbackUri { get; init; }
+    public bool PrefersEphemeralWebBrowserSession { get; init; }
+    public string? LoginStartUri { get; init; }
+    public string? LoginCallbackUri { get; init; }
+    public string? AccessTokenKey { get; init; }
+    public string? RefreshTokenKey { get; init; }
+    public string? IdTokenKey { get; init; }
+    public IDictionary<string, string>? OtherTokenKeys { get; init; }
+    public string? LogoutStartUri { get; init; }
+    public string? LogoutCallbackUri { get; init; }
 }
 ```
 
@@ -153,18 +153,18 @@ So for example, in your `appsettings.json` file, you could include the following
 
 ```json
 {
-	"Web": {
-		"LoginStartUri": "https://example.com/login",
+    "Web": {
+        "LoginStartUri": "https://example.com/login",
         "LoginCallbackUri": "https://example.com/signin-provider-callback",
         "IdTokenKey": "id_token",
-		"LogoutStartUri": "https://example.com/logout",
+        "LogoutStartUri": "https://example.com/logout",
         "LogoutCallbackUri": "https://example.com/logout-provider-callback",
         "AccessTokenKey": "access_token",
         "RefreshTokenKey": "refresh_token",
         "OtherTokenKeys": {
             "custom_token_key": "custom_token"
         }
-	}
+    }
 }
 ```
 
@@ -226,11 +226,11 @@ The following links should give you a first overview over most of the oAuth2 (in
 - [Using TLS and SSL for Secure Web Communication using Certificates](https://learn.microsoft.com/en-us/dotnet/core/extensions/sslstream-best-practices)
 - [Breaking Changes for Default TLS cipher suites in .NET on Linux](https://learn.microsoft.com/en-us/dotnet/core/compatibility/cryptography/5.0/default-cipher-suites-for-tls-on-linux?source=recommendations)
 - [API `System.Security.Cryptography.Pkcs` removed from .NET `9.0.3`](https://learn.microsoft.com/en-us/dotnet/core/compatibility/cryptography/9.0/api-removed-pkcs)
-- [Use the System Browser to open the Authentication UI for a interactive Authentication Flow](https://learn.microsoft.com/de-de/windows/apps/develop/launch/launch-default-app)
-- [WebView2 for BasicAuthentication interaction](https://learn.microsoft.com/de-de/microsoft-edge/webview2/concepts/basic-authentication?tabs=csharp) - [Uno specifics](https://platform.uno/docs/articles/controls/WebView.html)
+- [Use the System Browser to open the Authentication UI for a interactive Authentication Flow](https://learn.microsoft.com/en-us/windows/apps/develop/launch/launch-default-app)
+- [WebView2 for BasicAuthentication interaction](https://learn.microsoft.com/en-us/microsoft-edge/webview2/concepts/basic-authentication?tabs=csharp) - [Uno specifics](https://platform.uno/docs/articles/controls/WebView.html)
 
 ### Server Project specific Information and Resources
-<!-- cspell: ignore HSTS Antiforgery -->
+<!-- cspell: ignore HSTS Antiforgery PKCE -->
 - [Using Authentication and Authorization in your Server Minimal API ASP NET Core Project](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/minimal-apis/security?view=aspnetcore-9.0)
 - [Protect Secrets in development](https://learn.microsoft.com/en-us/aspnet/core/security/app-secrets?view=aspnetcore-9.0&tabs=windows)
 - [Enforce HTTPS](https://learn.microsoft.com/en-us/aspnet/core/security/enforcing-ssl?view=aspnetcore-9.0&tabs=visual-studio%2Clinux-sles) <!-- TODO: Add information about HSTS usage in Uno Wasm and Uno.Wasm.Bootstrapper.Server using Server Project -->
