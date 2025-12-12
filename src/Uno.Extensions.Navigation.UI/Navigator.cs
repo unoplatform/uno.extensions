@@ -81,16 +81,24 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 			// Append Internal qualifier to avoid requests being sent back to parent
 			request = request.AsInternal();
 
-			if (request.Route.IsDialog())
+			try
 			{
-				// Dialogs will load a separate navigation hierarchy
-				// so there's no need to route the request to child regions
-				response = await DialogNavigateAsync(request);
+				if (request.Route.IsDialog())
+				{
+					// Dialogs will load a separate navigation hierarchy
+					// so there's no need to route the request to child regions
+					response = await DialogNavigateAsync(request);
+				}
+				else
+				{
+					// Invoke the region specific navigation
+					response = await RegionNavigateAsync(request);
+				}
 			}
-			else
+			catch (Exception ex)
 			{
-				// Invoke the region specific navigation
-				response = await RegionNavigateAsync(request);
+				if (Logger.IsEnabled(LogLevel.Error)) Logger.LogErrorMessage(ex, $"Navigation failed for route '{request.Route}' - {ex.Message}");
+				throw;
 			}
 		}
 		RouteUpdater.EndNavigation(this, Region, request, response);
@@ -656,7 +664,16 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 		}
 
 		if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"Invoking control specific navigation - start");
-		var executedResponse = await CoreNavigateAsync(request);
+		NavigationResponse? executedResponse;
+		try
+		{
+			executedResponse = await CoreNavigateAsync(request);
+		}
+		catch (Exception ex)
+		{
+			if (Logger.IsEnabled(LogLevel.Error)) Logger.LogErrorMessage(ex, $"Navigation failed - {ex.Message}");
+			throw;
+		}
 		if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"Invoking control specific navigation - end");
 
 
