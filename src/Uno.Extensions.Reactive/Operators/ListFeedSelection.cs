@@ -14,6 +14,9 @@ namespace Uno.Extensions.Reactive.Operators;
 internal sealed class ListFeedSelection<TSource, TOther> : IListState<TSource>, IStateImpl
 {
 	internal static MessageAxis<object?> SelectionUpdateSource { get; } = new(MessageAxes.SelectionSource, _ => null) { IsTransient = true };
+	
+	// Sentinel marker to indicate selection was cleared due to data changes (not an explicit user action)
+	private static readonly object InternalSelectionClear = new();
 
 	private readonly IListFeed<TSource> _source;
 	private readonly IState<TOther> _selectionState;
@@ -93,11 +96,13 @@ internal sealed class ListFeedSelection<TSource, TOther> : IListState<TSource>, 
 						// TODO: This is only to ensure reliability, we should detect changes on the collection and update the SelectionInfo accordingly!
 						u.Set(MessageAxis.Selection, MessageAxisValue.Unset, null);
 
+						// Mark this as an internal clear due to data changes, not an explicit selection change
+						u.Set(SelectionUpdateSource, InternalSelectionClear);
 						selectionHasChanged = true;
 					}
-
-					if (selectionHasChanged)
+					else if (selectionHasChanged)
 					{
+						// This is an explicit selection change from the caller
 						u.Set(SelectionUpdateSource, this);
 					}
 				},
@@ -130,7 +135,9 @@ internal sealed class ListFeedSelection<TSource, TOther> : IListState<TSource>, 
 
 		Context
 			.GetOrCreateSource(impl)
-			.Where(msg => msg.Changes.Contains(MessageAxis.Selection) && msg.Current.Get(SelectionUpdateSource) != _selectionState)
+			.Where(msg => msg.Changes.Contains(MessageAxis.Selection) 
+				&& msg.Current.Get(SelectionUpdateSource) != _selectionState
+				&& msg.Current.Get(SelectionUpdateSource) != InternalSelectionClear)
 			.ForEachAwaitWithCancellationAsync(SyncFromListToState, ConcurrencyMode.AbortPrevious, _ct.Token);
 
 		return impl;
