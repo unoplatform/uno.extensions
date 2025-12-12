@@ -8,9 +8,9 @@ tags: [uno, uno-platform, uno-extensions, uno-toolkit, navigation, TabBar, TabBa
 
 > **UnoFeatures:** `Navigation;Toolkit` (add to `<UnoFeatures>` in your `.csproj`)
 >
-> [!NOTE]
+> [!IMPORTANT]
 >
-> For TabBar navigation to work properly, the root Grid must have `uen:Region.Attached="True"`.
+> For TabBar navigation to function correctly, the root Grid must have `uen:Region.Attached="True"`.
 
 * Enable Toolkit navigation in `App.xaml.cs`:
 
@@ -204,12 +204,12 @@ Add TabBarItem that navigates to a separate Page.
 
 ## Common Issues
 
-If TabBar navigation is not working:
+If TabBar items don't switch content, or navigation throws errors:
 
-* Verify `uen:Region.Attached="True"` is set on the root Grid
+* Verify `uen:Region.Attached="True"` is set on the Grid containing both the TabBar and the content regions (see examples above)
 * Ensure each TabBarItem has `uen:Region.Name` matching a content region
 * Confirm `UseToolkitNavigation()` is called in `App.xaml.cs`
-* Check that content areas have `Visibility="Collapsed"` initially
+* Check that content regions have `Visibility="Collapsed"` initially
 
 ## Pass data to tab content
 
