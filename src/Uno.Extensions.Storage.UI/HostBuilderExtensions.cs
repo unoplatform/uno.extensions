@@ -21,7 +21,7 @@ public static class HostBuilderExtensions
 	/// </summary>
 	/// <param name="hostBuilder">The host builder instance to register with</param>
 	/// <param name="configure">Callback for configuring services</param>
-	/// <returns></returns>
+	/// <returns>The updated host builder instance</returns>
 	public static IHostBuilder UseStorage(
 		this IHostBuilder hostBuilder,
 		Action<HostBuilderContext, IServiceCollection>? configure = default)
