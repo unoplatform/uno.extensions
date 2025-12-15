@@ -18,6 +18,7 @@ public static class DispatcherQueueExtensions
 							catch (Exception ex)
 							{
 								completion.SetException(ex);
+								throw;
 							}
 						});
 		return await completion.Task;
