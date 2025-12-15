@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Kiota.Abstractions;
@@ -12,6 +14,9 @@ namespace Uno.Extensions.Http.Kiota;
 /// </summary>
 public static class ServiceCollectionExtensions
 {
+	internal const string RequiresDynamicCodeMessage = "Binding strongly typed objects to configuration values may require generating dynamic code at runtime. [From Array.CreateInstance() and others.]";
+	internal const string RequiresUnreferencedCodeMessage = "Cannot statically analyze the type of instance so its members may be trimmed. [From TypeDescriptor.GetConverter() and others.]";
+
 	/// <summary>
 	/// Registers a Kiota client with the specified <paramref name="name"/> and endpoint options.
 	/// </summary>
@@ -22,7 +27,12 @@ public static class ServiceCollectionExtensions
 	/// <param name="name">[Optional] The name for locating endpoint information in appsettings.</param>
 	/// <param name="configure">[Optional] A callback for configuring the endpoint.</param>
 	/// <returns>The updated <see cref="IServiceCollection"/> with the registered Kiota client.</returns>
-	public static IServiceCollection AddKiotaClient<TClient>(
+	[RequiresDynamicCode(RequiresDynamicCodeMessage)]
+	[RequiresUnreferencedCode(RequiresUnreferencedCodeMessage)]
+	public static IServiceCollection AddKiotaClient<
+		[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)]
+		TClient
+	>(
 		this IServiceCollection services,
 		HostBuilderContext context,
 		EndpointOptions? options = null,
@@ -43,7 +53,13 @@ public static class ServiceCollectionExtensions
 	/// <param name="name">[Optional] The name for locating endpoint information in appsettings.</param>
 	/// <param name="configure">[Optional] A callback for configuring the endpoint.</param>
 	/// <returns>The updated <see cref="IServiceCollection"/> with the registered Kiota client.</returns>
-	public static IServiceCollection AddKiotaClientWithEndpoint<TClient, TEndpoint>(
+	[RequiresDynamicCode(RequiresDynamicCodeMessage)]
+	[RequiresUnreferencedCode(RequiresUnreferencedCodeMessage)]
+	public static IServiceCollection AddKiotaClientWithEndpoint<
+		[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)]
+		TClient,
+		TEndpoint
+	>(
 	this IServiceCollection services,
 	HostBuilderContext context,
 	TEndpoint? options = null,
@@ -83,6 +99,7 @@ public static class ServiceCollectionExtensions
 	/// </summary>
 	/// <param name="services">The <see cref="IServiceCollection"/> to register the handlers with.</param>
 	/// <returns>The updated <see cref="IServiceCollection"/> with the registered Kiota handlers.</returns>
+	[UnconditionalSuppressMessage("Trimming", "IL2072", Justification = "Cannot annotate IEnumerator<T>.Current.get")]
 	private static IServiceCollection AddKiotaHandlers(this IServiceCollection services)
 	{
 		var kiotaHandlers = KiotaClientFactory.GetDefaultHandlerTypes();
