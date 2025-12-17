@@ -99,7 +99,6 @@ Now as your Project is set up to use the Storage feature, you can add files to y
     </ItemGroup>
     ```
 
-    As you may have noticed, the `CopyToOutputDirectory` property is set to `PreserveNewest`, which means that the files will be copied to the output directory only if they are newer than the existing files. This is useful for keeping your output directory clean and avoiding unnecessary file copies, while still ensuring that the latest versions of your files are available at runtime.
 
     > [!NOTE]
     > Same Properties setting would apply if those files are in any other directory of your project/solution structure.
