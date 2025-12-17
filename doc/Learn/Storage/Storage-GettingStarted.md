@@ -86,7 +86,7 @@ First of all, to set up your project using the Storage feature, you need to foll
 
 Now as your Project is set up to use the Storage feature, you can add files to your project.
 
-1. Add the file(s) you want to read or write to in your app to the Application Directory.
+1. Add the file(s) you want to read or write to in your app
 
     > [!TIP]
     > For the use of best practice, this would be the `Assets\` nested directory(s) of your solution/project structure, but you are free to use any other path of your app.
