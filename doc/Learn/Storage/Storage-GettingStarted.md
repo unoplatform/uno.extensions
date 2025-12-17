@@ -16,7 +16,6 @@ uid: Uno.Extensions.Storage.GettingStarted
 > [!TIP]
 > In case you might already have a Uno single-head project, you can still proceed from here to add the Storage feature to your existing project.
 
-So let's get started with a Step-by-Step guide to add the Storage feature to your project!
 
 ## 1. Setting up your project
 
