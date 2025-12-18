@@ -42,27 +42,38 @@ public class ResponseNavigator<TResult> : IResponseNavigator, IInstance<IService
 			(request.Route.IsRoot() && request.Route.TrimQualifier(Qualifiers.Root).FrameIsBackNavigation() && this.Navigation.GetParent() == null))
 		{
 			var responseData = request.Route.ResponseData();
-			var result = responseData is Option<TResult> res ? res : default;
-			if (result.Type != OptionType.Some)
-			{
-				if (responseData is IOption objectResponse)
-				{
-					responseData = objectResponse.SomeOrDefault();
-				}
-
-				if (responseData is TResult data)
-				{
-					result = Option.Some(data);
-				}
-				else
-				{
-					result = Option.None<TResult>();
-				}
-			}
-			await ApplyResult(result);
+			await CompleteWithResultCore(responseData);
 		}
 
 		return navResponse;
+	}
+
+	/// <inheritdoc />
+	async Task IResponseNavigator.CompleteWithResult(object? responseData)
+	{
+		await CompleteWithResultCore(responseData);
+	}
+
+	private async Task CompleteWithResultCore(object? responseData)
+	{
+		// Early return if already completed to avoid unnecessary processing
+		if (ResultCompletion.Task.Status == TaskStatus.Canceled ||
+			ResultCompletion.Task.Status == TaskStatus.RanToCompletion)
+		{
+			return;
+		}
+
+		var result = responseData is Option<TResult> res ? res : default;
+		if (result.Type != OptionType.Some)
+		{
+			if (responseData is IOption objectResponse)
+			{
+				responseData = objectResponse.SomeOrDefault();
+			}
+
+			result = responseData is TResult data ? Option.Some(data) : Option.None<TResult>();
+		}
+		await ApplyResult(result);
 	}
 
 	private async Task ApplyResult(Option<TResult> responseData)
