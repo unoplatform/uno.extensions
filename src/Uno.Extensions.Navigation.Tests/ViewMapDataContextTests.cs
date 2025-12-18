@@ -1,0 +1,219 @@
+namespace Uno.Extensions.Navigation.Tests;
+
+/// <summary>
+/// Tests for ViewMap DataContext initialization timing issues
+/// Reproduces: https://github.com/unoplatform/uno.extensions/issues/XXXX
+/// Bug: DataContext is null on first launch but works after Hot Reload
+/// </summary>
+[TestClass]
+public class ViewMapDataContextTests
+{
+	/// <summary>
+	/// Test that ViewMap registration properly registers ViewModel types in DI container
+	/// immediately when ViewMap.RegisterTypes is called
+	/// </summary>
+	[TestMethod]
+	public void ViewMap_RegisterTypes_ShouldRegisterViewModelInDI()
+	{
+		// Arrange
+		var services = new ServiceCollection();
+		var viewMap = new ViewMap<TestPage, TestViewModel>();
+
+		// Act
+		viewMap.RegisterTypes(services);
+		var provider = services.BuildServiceProvider();
+
+		// Assert - ViewModel should be resolvable immediately after RegisterTypes
+		var viewModel = provider.GetService<TestViewModel>();
+		viewModel.Should().NotBeNull("ViewModel should be registered in DI container when ViewMap.RegisterTypes is called");
+	}
+
+	/// <summary>
+	/// Test that ViewRegistry.InsertItem calls ViewMap.RegisterTypes
+	/// This is critical for the timing issue - ViewModels must be registered when ViewMaps are inserted
+	/// </summary>
+	[TestMethod]
+	public void ViewRegistry_InsertItem_ShouldCallRegisterTypes()
+	{
+		// Arrange
+		var services = new ServiceCollection();
+		var viewRegistry = new ViewRegistry(services);
+
+		// Act - This should trigger InsertItem which should call RegisterTypes
+		viewRegistry.Register(
+			new ViewMap<TestPage, TestViewModel>()
+		);
+
+		var provider = services.BuildServiceProvider();
+
+		// Assert - ViewModel should be registered
+		var viewModel = provider.GetService<TestViewModel>();
+		viewModel.Should().NotBeNull("ViewModel should be registered when ViewMap is registered in ViewRegistry");
+	}
+
+	/// <summary>
+	/// Test that multiple ViewMap registrations all have their ViewModels registered
+	/// </summary>
+	[TestMethod]
+	public void ViewRegistry_MultipleViewMaps_AllViewModelsShouldBeRegistered()
+	{
+		// Arrange
+		var services = new ServiceCollection();
+		var viewRegistry = new ViewRegistry(services);
+
+		// Act - Register multiple ViewMaps
+		viewRegistry.Register(
+			new ViewMap<TestPage, TestViewModel>(),
+			new ViewMap<TestPage2, TestViewModel2>(),
+			new ViewMap<TestPage3, TestViewModel3>()
+		);
+
+		var provider = services.BuildServiceProvider();
+
+		// Assert - All ViewModels should be resolvable
+		provider.GetService<TestViewModel>().Should().NotBeNull();
+		provider.GetService<TestViewModel2>().Should().NotBeNull();
+		provider.GetService<TestViewModel3>().Should().NotBeNull();
+	}
+
+	/// <summary>
+	/// Test that ViewMap registration happens before any RouteMap is used
+	/// This ensures that ViewModels are available when routes are resolved
+	/// </summary>
+	[TestMethod]
+	public void ViewRegistry_And_RouteRegistry_Registration_ViewModelsShouldBeAvailableImmediately()
+	{
+		// Arrange
+		var services = new ServiceCollection();
+		var viewRegistry = new ViewRegistry(services);
+		var routeRegistry = new RouteRegistry(services);
+
+		// Act - Register ViewMaps and RouteMaps
+		viewRegistry.Register(
+			new ViewMap<TestPage, TestViewModel>()
+		);
+
+		routeRegistry.Register(
+			new RouteMap("TestPage", View: new ViewMap<TestPage, TestViewModel>())
+		);
+
+		var provider = services.BuildServiceProvider();
+
+		// Assert - ViewModel should be available
+		var viewModel = provider.GetService<TestViewModel>();
+		viewModel.Should().NotBeNull("ViewModel should be registered and available");
+	}
+
+	/// <summary>
+	/// Test MappedViewMap (used with MVUX) properly registers both original and mapped ViewModels
+	/// </summary>
+	[TestMethod]
+	public void MappedViewMap_RegisterTypes_ShouldRegisterBothViewModels()
+	{
+		// Arrange
+		var services = new ServiceCollection();
+		var mappedViewMap = new MappedViewMap(
+			View: typeof(TestPage),
+			ViewModel: typeof(TestViewModel),
+			MappedViewModel: typeof(TestBindableViewModel)
+		);
+
+		// Act
+		mappedViewMap.RegisterTypes(services);
+		var provider = services.BuildServiceProvider();
+
+		// Assert - Both ViewModels should be registered
+		var originalViewModel = provider.GetService<TestViewModel>();
+		var mappedViewModel = provider.GetService<TestBindableViewModel>();
+		
+		originalViewModel.Should().NotBeNull("Original ViewModel should be registered");
+		mappedViewModel.Should().NotBeNull("Mapped ViewModel should be registered");
+	}
+
+	/// <summary>
+	/// Test MappedViewRegistry properly creates MappedViewMap and registers both ViewModels
+	/// </summary>
+	[TestMethod]
+	public void MappedViewRegistry_InsertItem_ShouldRegisterBothViewModels()
+	{
+		// Arrange
+		var services = new ServiceCollection();
+		var viewModelMappings = new Dictionary<Type, Type>
+		{
+			{ typeof(TestViewModel), typeof(TestBindableViewModel) }
+		};
+		var viewRegistry = new MappedViewRegistry(services, viewModelMappings);
+
+		// Act - Register ViewMap - this should create a MappedViewMap internally
+		viewRegistry.Register(
+			new ViewMap<TestPage, TestViewModel>()
+		);
+
+		var provider = services.BuildServiceProvider();
+
+		// Assert - Both ViewModels should be registered
+		var originalViewModel = provider.GetService<TestViewModel>();
+		var mappedViewModel = provider.GetService<TestBindableViewModel>();
+		
+		originalViewModel.Should().NotBeNull("Original ViewModel should be registered");
+		mappedViewModel.Should().NotBeNull("Mapped ViewModel (from MappedViewMap) should be registered");
+	}
+
+	/// <summary>
+	/// Test that View type is also registered when using ViewMap with generic type
+	/// </summary>
+	[TestMethod]
+	public void ViewMap_Generic_ShouldRegisterViewType()
+	{
+		// Arrange
+		var services = new ServiceCollection();
+		var viewMap = new ViewMap<TestPage, TestViewModel>();
+
+		// Act
+		viewMap.RegisterTypes(services);
+		var provider = services.BuildServiceProvider();
+
+		// Assert - Both View and ViewModel should be registered
+		var view = provider.GetService<TestPage>();
+		var viewModel = provider.GetService<TestViewModel>();
+		
+		view.Should().NotBeNull("View should be registered");
+		viewModel.Should().NotBeNull("ViewModel should be registered");
+	}
+
+	// Test helper classes
+	public class TestPage
+	{
+		public TestPage() { }
+	}
+
+	public class TestPage2
+	{
+		public TestPage2() { }
+	}
+
+	public class TestPage3
+	{
+		public TestPage3() { }
+	}
+
+	public class TestViewModel
+	{
+		public string Name { get; set; } = "Test";
+	}
+
+	public class TestViewModel2
+	{
+		public string Name { get; set; } = "Test2";
+	}
+
+	public class TestViewModel3
+	{
+		public string Name { get; set; } = "Test3";
+	}
+
+	public class TestBindableViewModel
+	{
+		public string Name { get; set; } = "BindableTest";
+	}
+}
