@@ -12,11 +12,21 @@ This how-to shows how to let users sign in with their Microsoft identity in an U
 
 Requires the `AuthenticationMsal` UnoFeature
 
+> [!TIP]
+> **For comprehensive guides:**
+> - See [Complete MSAL Setup Guide](xref:Uno.Extensions.Authentication.HowToMsalSetup) for detailed Azure AD configuration and all options
+> - See [MSAL Troubleshooting Guide](xref:Uno.Extensions.Authentication.HowToMsalTroubleshooting) for common issues and solutions
+
 ## 1. Register the app in Entra ID
 
-- Go to the Microsoft identity platform and create an app registration.
+- Go to the [Microsoft identity platform](https://portal.azure.com/#view/Microsoft_AAD_IAM/ActiveDirectoryMenuBlade/~/RegisteredApps) and create an app registration.
 - Copy the **Application (client) ID**.
 - Add **Redirect URI**: `http://localhost` or `http://localhost:{port}`.
+- Under **Authentication**, configure platform as **Mobile and desktop applications**.
+- Enable **Public client flows** under Advanced settings.
+
+> [!TIP]
+> For detailed Azure AD configuration steps, see the [Complete MSAL Setup Guide](xref:Uno.Extensions.Authentication.HowToMsalSetup).
 
 (Why? Uno’s MSAL provider will throw if the redirect isn’t loopback, same as MSAL itself.)
 
@@ -120,3 +130,17 @@ public class MainViewModel : ObservableObject
 ```
 
 This triggers the MSAL flow. Token is cached and refreshed automatically.
+
+## Troubleshooting
+
+If you encounter issues during authentication, refer to the [MSAL Troubleshooting Guide](xref:Uno.Extensions.Authentication.HowToMsalTroubleshooting) which covers:
+
+- Configuration validation
+- Common AADSTS error codes and solutions
+- Azure AD verification using Azure CLI
+- Platform-specific issues
+
+## Next Steps
+
+- **[Complete MSAL Setup Guide](xref:Uno.Extensions.Authentication.HowToMsalSetup)** - Learn about all configuration options, token retrieval, and Microsoft Graph integration
+- **[MSAL Troubleshooting](xref:Uno.Extensions.Authentication.HowToMsalTroubleshooting)** - Systematic debugging approach and common issues

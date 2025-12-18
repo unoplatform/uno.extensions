@@ -4,6 +4,10 @@
   href: xref:Uno.Extensions.Authentication.HowToAuthentication
 - name: "How-To: Use MSAL authentication"
   href: xref:Uno.Extensions.Authentication.HowToMsalAuthentication
+- name: "How-To: Complete MSAL setup guide"
+  href: xref:Uno.Extensions.Authentication.HowToMsalSetup
+- name: "How-To: Troubleshoot MSAL authentication"
+  href: xref:Uno.Extensions.Authentication.HowToMsalTroubleshooting
 - name: "How-To: Use OIDC authentication"
   href: xref:Uno.Extensions.Authentication.HowToOidcAuthentication
 - name: "How-To: Use web authentication"
