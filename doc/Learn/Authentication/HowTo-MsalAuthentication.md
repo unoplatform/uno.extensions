@@ -9,6 +9,7 @@ uid: Uno.Extensions.Authentication.HowToMsalAuthentication
 
 > [!TIP]
 > **For comprehensive setup including Azure AD configuration:**
+>
 > - See [Complete MSAL Setup Guide](xref:Uno.Extensions.Authentication.HowToMsalSetup) for detailed Azure AD app registration and configuration
 > - See [MSAL Troubleshooting Guide](xref:Uno.Extensions.Authentication.HowToMsalTroubleshooting) for common issues and solutions
 

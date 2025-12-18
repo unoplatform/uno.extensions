@@ -14,6 +14,7 @@ Requires the `AuthenticationMsal` UnoFeature
 
 > [!TIP]
 > **For comprehensive guides:**
+>
 > - See [Complete MSAL Setup Guide](xref:Uno.Extensions.Authentication.HowToMsalSetup) for detailed Azure AD configuration and all options
 > - See [MSAL Troubleshooting Guide](xref:Uno.Extensions.Authentication.HowToMsalTroubleshooting) for common issues and solutions
 

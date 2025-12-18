@@ -85,6 +85,7 @@ Example output:
 ```
 
 **Key points:**
+
 - Redirect URIs should be in `publicClient.redirectUris`, not `web.redirectUris`
 - For mobile/desktop apps, use public client flow
 - `signInAudience` determines tenant configuration
@@ -113,7 +114,8 @@ $app.Web
 ### Issue 1: MsalClientException - Loopback Redirect URI
 
 **Error:**
-```
+
+```text
 Microsoft.Identity.Client.MsalClientException: Only loopback redirect uri is supported, but <your_redirect_uri> was found.
 ```
 
@@ -165,7 +167,8 @@ Should return: `["http://localhost"]`
 ### Issue 2: AADSTS700016 - Application Not Found
 
 **Error:**
-```
+
+```text
 AADSTS700016: Application with identifier '<client-id>' was not found in the directory '<tenant-id>'.
 ```
 
@@ -196,7 +199,8 @@ If the command fails, the app doesn't exist or you don't have permission.
 ### Issue 3: AADSTS50011 - Reply URL Mismatch
 
 **Error:**
-```
+
+```text
 AADSTS50011: The reply URL specified in the request does not match the reply URLs configured for the application.
 ```
 
@@ -236,7 +240,8 @@ And in Azure AD, add `http://localhost:5000` as well.
 ### Issue 4: AADSTS65001 - User Consent Required
 
 **Error:**
-```
+
+```text
 AADSTS65001: The user or administrator has not consented to use the application.
 ```
 
@@ -251,10 +256,11 @@ AADSTS65001: The user or administrator has not consented to use the application.
 2. Grant admin consent:
    - Portal: Click **Grant admin consent for \<tenant\>** button
    - CLI:
+
      ```bash
      # List service principals
      az ad sp list --filter "appId eq '<client-id>'"
-     
+
      # Grant admin consent (requires admin role)
      az ad app permission admin-consent --id <client-id>
      ```
@@ -272,7 +278,8 @@ AADSTS65001: The user or administrator has not consented to use the application.
 ### Issue 5: AADSTS90002 - Tenant Not Found
 
 **Error:**
-```
+
+```text
 AADSTS90002: Tenant '<tenant-id>' not found.
 ```
 
@@ -309,7 +316,8 @@ az account show --query tenantId
 ### Issue 6: No ClientId Specified
 
 **Error:**
-```
+
+```text
 Microsoft.Identity.Client.MsalClientException: No ClientId was specified.
 ```
 
@@ -468,6 +476,7 @@ Update Azure AD accordingly.
 **Browser Limitations:**
 
 MSAL on WebAssembly uses the system browser. Ensure:
+
 - Redirect URI is registered in Azure AD
 - Pop-up blockers are not preventing authentication
 - CORS is configured if calling APIs

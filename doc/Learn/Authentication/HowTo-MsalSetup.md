@@ -126,6 +126,7 @@ Edit your `.csproj` file:
 ```
 
 This automatically adds the required NuGet packages:
+
 - `Uno.Extensions.Authentication.MSAL`
 - `Microsoft.Identity.Client`
 
@@ -800,6 +801,7 @@ MSAL on WebAssembly opens authentication in a popup or redirect:
 ```
 
 Update Azure AD to include your WebAssembly URL in **Single-page application** platform:
+
 - Add `https://yourdomain.com` or `https://localhost:5000` (for development)
 
 **Pop-up Blockers:**
