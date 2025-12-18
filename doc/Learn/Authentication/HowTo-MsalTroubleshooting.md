@@ -125,33 +125,34 @@ Microsoft.Identity.Client.MsalClientException: Only loopback redirect uri is sup
 
 1. Ensure Window is passed to AddMsal:
 
-```csharp
-protected override void OnLaunched(LaunchActivatedEventArgs args)
-{
-    var builder = this.CreateBuilder(args)
-        .Configure((host, window) =>  // Use this overload
-        {
-            host.UseAuthentication(auth =>
-            {
-                auth.AddMsal(window);  // Pass window here
-            });
-        });
-}
-```
+   ```csharp
+   protected override void OnLaunched(LaunchActivatedEventArgs args)
+   {
+       var builder = this.CreateBuilder(args)
+           .Configure((host, window) =>  // Use this overload
+           {
+               host.UseAuthentication(auth =>
+               {
+                   auth.AddMsal(window);  // Pass window here
+               });
+           });
+   }
+   ```
 
 2. Update `appsettings.json` to use loopback URI:
 
-```json
-{
-  "Msal": {
-    "ClientId": "your-client-id",
-    "RedirectUri": "http://localhost",
-    "Scopes": ["User.Read"]
-  }
-}
-```
+   ```json
+   {
+     "Msal": {
+       "ClientId": "your-client-id",
+       "RedirectUri": "http://localhost",
+       "Scopes": ["User.Read"]
+     }
+   }
+   ```
 
 3. Update Azure AD app registration:
+
    - Go to **Authentication** > **Platform configurations** > **Mobile and desktop applications**
    - Add `http://localhost` as a redirect URI
    - Enable public client flows
@@ -178,20 +179,21 @@ AADSTS700016: Application with identifier '<client-id>' was not found in the dir
 
 1. Verify ClientId in appsettings.json:
 
-```bash
-# Extract from appsettings
-cat appsettings.json | grep ClientId
-```
+   ```bash
+   # Extract from appsettings
+   cat appsettings.json | grep ClientId
+   ```
 
 2. Verify app exists in Azure AD:
 
-```bash
-az ad app show --id <client-id>
-```
+   ```bash
+   az ad app show --id <client-id>
+   ```
 
-If the command fails, the app doesn't exist or you don't have permission.
+   If the command fails, the app doesn't exist or you don't have permission.
 
 3. Check if you're using the correct tenant:
+
    - For single tenant: `"Authority": "https://login.microsoftonline.com/<tenant-id>"`
    - For multi-tenant: `"Authority": "https://login.microsoftonline.com/common"`
    - For work/school accounts: `"Authority": "https://login.microsoftonline.com/organizations"`
@@ -210,30 +212,30 @@ AADSTS50011: The reply URL specified in the request does not match the reply URL
 
 1. Check your configured redirect URI:
 
-```bash
-# In your app
-cat appsettings.json | grep RedirectUri
+   ```bash
+   # In your app
+   cat appsettings.json | grep RedirectUri
 
-# In Azure AD
-az ad app show --id <client-id> --query "publicClient.redirectUris"
-```
+   # In Azure AD
+   az ad app show --id <client-id> --query "publicClient.redirectUris"
+   ```
 
 2. They must match exactly. Update Azure AD:
 
-```bash
-# Add redirect URI (if missing)
-az ad app update --id <client-id> --public-client-redirect-uris "http://localhost"
-```
+   ```bash
+   # Add redirect URI (if missing)
+   az ad app update --id <client-id> --public-client-redirect-uris "http://localhost"
+   ```
 
 3. For apps that specify a port, ensure consistency:
 
-```json
-{
-  "Msal": {
-    "RedirectUri": "http://localhost:5000"
-  }
-}
-```
+   ```json
+   {
+     "Msal": {
+       "RedirectUri": "http://localhost:5000"
+     }
+   }
+   ```
 
 And in Azure AD, add `http://localhost:5000` as well.
 
@@ -289,29 +291,29 @@ AADSTS90002: Tenant '<tenant-id>' not found.
 
 1. Find your tenant ID:
 
-```bash
-az account show --query tenantId
-```
+   ```bash
+   az account show --query tenantId
+   ```
 
 2. Update Authority in appsettings.json:
 
-```json
-{
-  "Msal": {
-    "Authority": "https://login.microsoftonline.com/<correct-tenant-id>"
-  }
-}
-```
+   ```json
+   {
+     "Msal": {
+       "Authority": "https://login.microsoftonline.com/<correct-tenant-id>"
+     }
+   }
+   ```
 
 3. For multi-tenant apps, use `common` or `organizations`:
 
-```json
-{
-  "Msal": {
-    "Authority": "https://login.microsoftonline.com/common"
-  }
-}
-```
+   ```json
+   {
+     "Msal": {
+       "Authority": "https://login.microsoftonline.com/common"
+     }
+   }
+   ```
 
 ### Issue 6: No ClientId Specified
 
@@ -326,23 +328,24 @@ Microsoft.Identity.Client.MsalClientException: No ClientId was specified.
 **Solution:**
 
 1. Verify appsettings.json exists and is included in build:
+
    - Check `.csproj` for `<Content Include="appsettings*.json" />`
 
 2. Ensure configuration section name matches:
 
-```json
-{
-  "Msal": {  // Section name must be "Msal" (default)
-    "ClientId": "your-guid-here"
-  }
-}
-```
+   ```json
+   {
+     "Msal": {  // Section name must be "Msal" (default)
+       "ClientId": "your-guid-here"
+     }
+   }
+   ```
 
 3. If using a custom section name, configure it:
 
-```csharp
-auth.AddMsal(window, config: builder.Configuration.GetSection("MyCustomMsal"))
-```
+   ```csharp
+   auth.AddMsal(window, config: builder.Configuration.GetSection("MyCustomMsal"))
+   ```
 
 ### Issue 7: Token Expiration / Refresh Issues
 
@@ -351,28 +354,29 @@ auth.AddMsal(window, config: builder.Configuration.GetSection("MyCustomMsal"))
 **Solution:**
 
 1. MSAL automatically handles token refresh. Verify refresh tokens are enabled:
+
    - Azure AD: **API permissions** should include `offline_access` scope
 
 2. Add offline_access to scopes:
 
-```json
-{
-  "Msal": {
-    "Scopes": ["User.Read", "offline_access"]
-  }
-}
-```
+   ```json
+   {
+     "Msal": {
+       "Scopes": ["User.Read", "offline_access"]
+     }
+   }
+   ```
 
 3. Check token cache configuration (platform-specific):
 
-```csharp
-// iOS - configure keychain access group if needed
-auth.AddMsal(window, msal => msal
-    .Builder(builder => builder
-        .WithIosKeychainSecurityGroup("com.yourcompany.yourapp")
-    )
-);
-```
+   ```csharp
+   // iOS - configure keychain access group if needed
+   auth.AddMsal(window, msal => msal
+       .Builder(builder => builder
+           .WithIosKeychainSecurityGroup("com.yourcompany.yourapp")
+       )
+   );
+   ```
 
 ## Multi-Tenant Configuration
 
@@ -393,6 +397,7 @@ For apps that only sign in users from one Azure AD tenant:
 **Azure AD Setting:** `signInAudience: "AzureADMyOrg"`
 
 **Validation:**
+
 ```bash
 az ad app show --id <client-id> --query "signInAudience"
 ```
