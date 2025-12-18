@@ -7,6 +7,12 @@ uid: Uno.Extensions.Authentication.HowToMsalAuthentication
 
 `MsalAuthenticationProvider` allows your users to sign in using their Microsoft identities. It wraps the [MSAL library](https://github.com/AzureAD/microsoft-authentication-library-for-dotnet) from Microsoft into an implementation of `IAuthenticationProvider`. This tutorial will use MSAL authorization to validate user credentials.
 
+> [!TIP]
+> **For comprehensive setup including Azure AD configuration:**
+>
+> - See [Complete MSAL Setup Guide](xref:Uno.Extensions.Authentication.HowToMsalSetup) for detailed Azure AD app registration and configuration
+> - See [MSAL Troubleshooting Guide](xref:Uno.Extensions.Authentication.HowToMsalTroubleshooting) for common issues and solutions
+
 ## Step-by-step
 
 [!include[create-application](../includes/create-application.md)]
@@ -14,6 +20,9 @@ uid: Uno.Extensions.Authentication.HowToMsalAuthentication
 ### 1. Prepare for MSAL authentication
 
 - For this type of authentication, the application must be registered with the Microsoft identity platform. For more information, see [Register an application with the Microsoft identity platform](https://learn.microsoft.com/azure/active-directory/develop/quickstart-register-app).
+
+> [!TIP]
+> For detailed step-by-step Azure AD configuration, see the [Complete MSAL Setup Guide](xref:Uno.Extensions.Authentication.HowToMsalSetup).
 
 - The identity provider will provider you with a client ID and guidance on scopes to use.
 
@@ -173,3 +182,9 @@ uid: Uno.Extensions.Authentication.HowToMsalAuthentication
 - Finally, we can run the application and sign in with our Microsoft account. The user will be prompted to sign in to their Microsoft account when they tap the button in the application.
 
 - `MsalAuthenticationProvider` will then store the user's access token in credential storage. The token will be automatically refreshed when it expires.
+
+## Next Steps
+
+- **[Complete MSAL Setup Guide](xref:Uno.Extensions.Authentication.HowToMsalSetup)** - Comprehensive guide including Azure AD configuration, all configuration options, and token retrieval patterns
+- **[MSAL Troubleshooting Guide](xref:Uno.Extensions.Authentication.HowToMsalTroubleshooting)** - Solutions for common MSAL authentication issues
+- **[Authentication Overview](xref:Uno.Extensions.Authentication.Overview)** - Learn about other authentication providers
