@@ -4,6 +4,8 @@
 		<TargetFramework>net9.0</TargetFramework>
 		<IsPackable>false</IsPackable>
 		<Nullable>disable</Nullable>
+		<!-- Disable JSON reflection to test AOT-compatible serialization -->
+		<JsonSerializerIsReflectionEnabledByDefault>false</JsonSerializerIsReflectionEnabledByDefault>
 	</PropertyGroup>
 
 	<ItemGroup>
