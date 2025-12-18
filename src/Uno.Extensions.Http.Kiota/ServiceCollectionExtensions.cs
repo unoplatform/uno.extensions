@@ -102,7 +102,7 @@ public static class ServiceCollectionExtensions
 	[UnconditionalSuppressMessage("Trimming", "IL2072", Justification = "Cannot annotate IEnumerator<T>.Current.get")]
 	private static IServiceCollection AddKiotaHandlers(this IServiceCollection services)
 	{
-		var kiotaHandlers = KiotaClientFactory.GetDefaultHandlerTypes();
+		var kiotaHandlers = KiotaClientFactory.GetDefaultHandlerActivatableTypes();
 		foreach (var handler in kiotaHandlers)
 		{
 			services.AddTransient(handler);
@@ -118,7 +118,7 @@ public static class ServiceCollectionExtensions
 	/// <returns>The updated <see cref="IHttpClientBuilder"/> with the attached Kiota handlers.</returns>
 	private static IHttpClientBuilder AttachKiotaHandlers(this IHttpClientBuilder builder)
 	{
-		var kiotaHandlers = KiotaClientFactory.GetDefaultHandlerTypes();
+		var kiotaHandlers = KiotaClientFactory.GetDefaultHandlerActivatableTypes();
 		foreach (var handler in kiotaHandlers)
 		{
 			builder.AddHttpMessageHandler((sp) => (DelegatingHandler)sp.GetRequiredService(handler));
