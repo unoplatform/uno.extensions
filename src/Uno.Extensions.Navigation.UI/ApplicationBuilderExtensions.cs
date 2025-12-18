@@ -1,7 +1,11 @@
-﻿namespace Uno.Extensions;
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace Uno.Extensions;
 
 public static class ApplicationBuilderExtensions
 {
+	internal const string RequiresUnreferencedCodeMessage = "Cannot statically analyze the type of instance so its members may be trimmed. [From TypeDescriptor.GetConverter() and others.]";
+
 	/// <summary>
 	/// Creates the Application Shell and will initialize the Shell Content before creating
 	/// the <see cref="IHost" /> and initializing the app with the initial navigation.
@@ -10,6 +14,7 @@ public static class ApplicationBuilderExtensions
 	/// <param name="appBuilder">The <see cref="IApplicationBuilder" />.</param>
 	/// <param name="initialNavigate">An optional Navigation Delegate to conditionally control where the app should navigate on launch.</param>
 	/// <returns>The <see cref="IHost" />.</returns>
+	[RequiresUnreferencedCode(RequiresUnreferencedCodeMessage)]
 	public static async Task<IHost> NavigateAsync<TShell>(this IApplicationBuilder appBuilder,
 		Func<IServiceProvider, INavigator, Task>? initialNavigate = null)
 		where TShell : UIElement, new()

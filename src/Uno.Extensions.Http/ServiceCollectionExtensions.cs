@@ -7,6 +7,9 @@ namespace Uno.Extensions;
 /// </summary>
 public static class ServiceCollectionExtensions
 {
+	internal const string RequiresDynamicCodeMessage = "Binding strongly typed objects to configuration values may require generating dynamic code at runtime. [From Array.CreateInstance() and others.]";
+	internal const string RequiresUnreferencedCodeMessage = "Cannot statically analyze the type of instance so its members may be trimmed. [From TypeDescriptor.GetConverter() and others.]";
+
 	private static char[] InterfaceNamePrefix = new[] { 'i', 'I' };
 
 	private static T Conditional<T>(
@@ -28,7 +31,14 @@ public static class ServiceCollectionExtensions
 	/// <param name="name">[optional] Name of the endpoint (used to load from appsettings)</param>
 	/// <param name="configure">[optional] Callback to configure the endpoint</param>
 	/// <returns>Updated service collection</returns>
-	public static IServiceCollection AddClient<TClient, TImplementation>(
+	[RequiresDynamicCode(RequiresDynamicCodeMessage)]
+	[RequiresUnreferencedCode(RequiresUnreferencedCodeMessage)]
+	public static IServiceCollection AddClient<
+		[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)]
+		TClient,
+		[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)]
+		TImplementation
+	>(
 		 this IServiceCollection services,
 		 HostBuilderContext context,
 		 EndpointOptions? options = null,
@@ -51,6 +61,8 @@ public static class ServiceCollectionExtensions
 	/// <param name="name">[optional] Name of the endpoint (used to load from appsettings)</param>
 	/// <param name="configure">[optional] Callback to configure the endpoint</param>
 	/// <returns>Updated service collection</returns>
+	[RequiresDynamicCode(RequiresDynamicCodeMessage)]
+	[RequiresUnreferencedCode(RequiresUnreferencedCodeMessage)]
 	public static IServiceCollection AddClientWithEndpoint<
 		[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)]
 		TClient,
@@ -88,6 +100,8 @@ public static class ServiceCollectionExtensions
 	/// <param name="httpClientFactory">[optional] Callback to configure the HttpClient</param>
 	/// <param name="configure">[optional] Callback to configure the endpoint</param>
 	/// <returns>Updated service collection</returns>
+	[RequiresDynamicCode(RequiresDynamicCodeMessage)]
+	[RequiresUnreferencedCode(RequiresUnreferencedCodeMessage)]
 	public static IServiceCollection AddClient<TInterface>(
 		  this IServiceCollection services,
 		  HostBuilderContext context,
@@ -111,7 +125,8 @@ public static class ServiceCollectionExtensions
 	/// <param name="httpClientFactory">[optional] Callback to configure the HttpClient</param>
 	/// <param name="configure">[optional] Callback to configure the endpoint</param>
 	/// <returns>Updated service collection</returns>
-	[RequiresUnreferencedCode("From `ConfigurationBinder.Get<T>(IConfiguration)`.")]
+	[RequiresDynamicCode(RequiresDynamicCodeMessage)]
+	[RequiresUnreferencedCode(RequiresUnreferencedCodeMessage)]
 	public static IServiceCollection AddClientWithEndpoint<
 		[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)]
 		TInterface,
