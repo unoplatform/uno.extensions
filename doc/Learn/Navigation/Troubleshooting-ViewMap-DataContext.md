@@ -69,6 +69,277 @@ internal static async ValueTask InjectServicesAndSetDataContextAsync(
 }
 ```
 
+## Navigation Lifecycle Deep Dive
+
+Understanding the complete navigation lifecycle is crucial for troubleshooting DataContext issues. Here's a detailed explanation of what happens when you navigate to a page.
+
+### Complete Navigation Flow
+
+```mermaid
+sequenceDiagram
+    participant App as Application
+    participant Nav as INavigator
+    participant RU as RouteUpdater
+    participant RR as RouteResolver
+    participant Reg as Region
+    participant CN as ControlNavigator
+    participant DI as DI Container
+    participant View as Page/View
+    participant VM as ViewModel
+
+    App->>Nav: NavigateRouteAsync("Main")
+    Note over Nav: Navigator.NavigateAsync
+    
+    Nav->>RU: StartNavigation
+    Note over Nav: Initialize request
+    
+    Nav->>Nav: InitializeRequest
+    Note over Nav: Apply route Init logic
+    
+    Nav->>Nav: RedirectNavigateAsync?
+    alt Needs Redirect
+        Nav->>Nav: Route to child/parent
+    end
+    
+    Nav->>RR: FindByPath("Main")
+    RR-->>Nav: RouteInfo (ViewMap)
+    
+    Nav->>CN: RegionNavigateAsync
+    Note over CN: ControlNavigator handling
+    
+    CN->>CN: ExecuteRequestAsync
+    
+    alt Frame Navigation
+        CN->>CN: NavigateForwardAsync
+        CN->>View: Create Page instance
+        Note over View: View instantiated from DI
+        View-->>CN: Page instance
+    end
+    
+    CN->>CN: InitializeCurrentView
+    
+    CN->>CN: CreateViewModel
+    Note over CN,DI: ViewModel Resolution
+    
+    CN->>DI: GetService(ViewModelType)
+    alt ViewModel in DI
+        DI-->>CN: ViewModel instance
+    else Not in DI
+        CN->>DI: Resolve constructor parameters
+        DI-->>CN: Parameters (INavigator, services, etc.)
+        CN->>VM: new ViewModel(params)
+        VM-->>CN: ViewModel instance
+    end
+    
+    CN->>View: InjectServicesAndSetDataContextAsync
+    Note over View: DataContext Assignment
+    View->>View: this.DataContext = viewModel
+    
+    CN->>Reg: Display view in region
+    
+    CN-->>Nav: NavigationResponse
+    Nav->>RU: EndNavigation
+    Nav-->>App: NavigationResponse (Success)
+    
+    Note over View,VM: View is displayed<br/>DataContext is bound<br/>Bindings are active
+```
+
+### Key Stages Explained
+
+#### 1. Navigation Initiation
+
+When you call `NavigateRouteAsync`, `NavigateViewModelAsync`, or use XAML navigation:
+
+```csharp
+// Code navigation
+await _navigator.NavigateRouteAsync(this, "Main");
+
+// XAML navigation
+<Button uen:Navigation.Request="Main" />
+```
+
+The `Navigator.NavigateAsync` method is invoked, starting the lifecycle.
+
+#### 2. Route Initialization and Redirection
+
+**RouteUpdater.StartNavigation** marks the beginning of navigation tracking.
+
+The `InitializeRequest` method runs any custom logic defined in the `RouteMap.Init` parameter:
+
+```csharp
+new RouteMap("Main", 
+    View: views.FindByViewModel<MainViewModel>(),
+    Init: (request) => 
+    {
+        // Custom initialization logic
+        // e.g., redirect if not authenticated
+        return request;
+    })
+```
+
+The navigator checks if the request needs **redirection**:
+- To a child region (nested navigation)
+- To a parent region (route doesn't match current region)
+
+#### 3. Route Resolution
+
+The `RouteResolver.FindByPath` method looks up the route in the `RouteMap` and `ViewMap` registrations:
+
+```csharp
+var routeInfo = resolver.FindByPath("Main");
+// Returns: RouteInfo containing View type, ViewModel type, Data mapping, etc.
+```
+
+This is where the **ViewMap registration** becomes critical. If no mapping exists, navigation fails.
+
+#### 4. Region-Specific Navigation
+
+Different navigator types handle navigation differently:
+
+**FrameNavigator** (page navigation):
+- Checks if forward or backward navigation
+- Manages back stack
+- Creates/retrieves the Page instance
+- Calls `Frame.Navigate(pageType)`
+
+**ContentControlNavigator** (content switching):
+- Sets `ContentControl.Content` to the view
+
+**PanelVisibilityNavigator** (visibility switching):
+- Changes `Visibility` of child elements
+
+#### 5. View Creation
+
+The View is created through DI or Activator:
+
+```csharp
+// From ControlNavigator.CreateControlFromType
+var view = services?.GetService(viewType) ?? Activator.CreateInstance(viewType);
+```
+
+The View is instantiated **before** the ViewModel. At this point, `view.DataContext` is `null`.
+
+#### 6. ViewModel Creation
+
+The `CreateViewModel` method in `ControlNavigator` follows this process:
+
+```csharp
+protected async Task<object?> CreateViewModel(
+    IServiceProvider services,
+    NavigationRequest request,
+    Route route,
+    RouteInfo? mapping)
+{
+    // Step 1: Try to get from DI
+    var vm = services.GetService(mapping.ViewModel);
+    
+    if (vm is null)
+    {
+        // Step 2: Try reflection with constructor injection
+        var constructor = mapping.ViewModel.GetNavigationConstructor(navigator, services, out var args);
+        vm = constructor.Invoke(args);
+    }
+    
+    // Step 3: Inject INavigator if ViewModel implements IInjectable<INavigator>
+    if (vm is IInjectable<INavigator> navAware)
+    {
+        navAware.Inject(navigator);
+    }
+    
+    return vm;
+}
+```
+
+**Constructor resolution order**:
+1. DI container (`services.GetService(ViewModelType)`)
+2. Reflection with available parameters from DI
+
+**Common ViewModel constructors**:
+
+```csharp
+// Simple - no dependencies
+public MainViewModel() { }
+
+// With INavigator
+public MainViewModel(INavigator navigator) { }
+
+// With service dependencies
+public MainViewModel(INavigator navigator, IProductService productService) { }
+
+// With data parameter (DataViewMap)
+public ProductDetailViewModel(Product product, INavigator navigator) { }
+```
+
+#### 7. DataContext Assignment
+
+The critical moment - `InjectServicesAndSetDataContextAsync` assigns the ViewModel:
+
+```csharp
+await view.InjectServicesAndSetDataContextAsync(services, navigator, viewModel);
+
+// Inside this method:
+if (view is not null && viewModel is not null && view.DataContext != viewModel)
+{
+    view.DataContext = viewModel;  // ← DataContext assigned here
+}
+```
+
+After this assignment:
+- All `{Binding}` expressions in XAML resolve to ViewModel properties
+- `x:Bind` expressions are connected (for compiled bindings)
+- UI updates reflect ViewModel state
+
+#### 8. View Display
+
+The view is displayed in the appropriate region:
+- **Frame**: Page added to navigation stack and displayed
+- **ContentControl**: Content property set
+- **Panel**: Visibility changed to `Visible`
+
+The `RouteUpdater.EndNavigation` marks completion, and a `NavigationResponse` is returned.
+
+### DataContext Assignment Verification Points
+
+At each stage, verify:
+
+| Stage | Verification | What to Check |
+|-------|--------------|---------------|
+| **Route Resolution** | RouteInfo exists | ViewMap registered correctly |
+| **View Creation** | View instance created | View type in DI or has parameterless constructor |
+| **ViewModel Creation** | ViewModel instance created | Dependencies registered in DI |
+| **DataContext Assignment** | `view.DataContext != null` | ViewModel was successfully created |
+| **Binding Activation** | UI shows data | ViewModel implements INotifyPropertyChanged |
+
+### Common Lifecycle Failure Points
+
+**Failure at Route Resolution**:
+```
+Symptom: Navigation doesn't happen
+Cause: Missing ViewMap registration
+Fix: Add ViewMap to views.Register()
+```
+
+**Failure at ViewModel Creation**:
+```
+Symptom: DataContext is null
+Cause: Missing DI registration for ViewModel dependencies
+Fix: Register all constructor dependencies in DI
+```
+
+**Failure at DataContext Assignment**:
+```
+Symptom: DataContext null even though ViewModel created
+Cause: View created outside navigation framework
+Fix: Always use navigation framework, not manual instantiation
+```
+
+**Failure at Binding**:
+```
+Symptom: DataContext set but UI doesn't update
+Cause: ViewModel doesn't implement INotifyPropertyChanged
+Fix: Implement INotifyPropertyChanged or use MVUX
+```
+
 ## Prerequisites: DI + ViewMap Relationship
 
 For `DataContext` to be set correctly, **both** of these must be properly configured:
@@ -438,15 +709,6 @@ public MainPage()
 }
 ```
 
-**Exception**: If you need to set DataContext for design-time data:
-
-```xml
-<Page x:Class="MyApp.Views.MainPage"
-      xmlns:vm="using:MyApp.ViewModels"
-      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-      d:DataContext="{d:DesignInstance Type=vm:MainViewModel, IsDesignTimeCreatable=True}">
-```
-
 ## Advanced Debugging Techniques
 
 ### Technique 1: Breakpoint in FrameworkElementExtensions
@@ -582,14 +844,4 @@ When troubleshooting null DataContext issues, verify:
 - [Dependency Injection Setup](xref:Uno.Extensions.DependencyInjection.Overview) - DI configuration
 - [Navigation Overview](xref:Uno.Extensions.Navigation.Overview) - Navigation concepts
 
-## Additional Resources
-
-If you're still experiencing issues after following this guide:
-
-1. Check the [Uno Platform Discord](https://platform.uno/discord) #uno-extensions channel
-2. Review sample applications in the [Uno.Extensions repository](https://github.com/unoplatform/uno.extensions/tree/main/samples)
-3. File an issue on [GitHub](https://github.com/unoplatform/uno.extensions/issues) with:
-   - Your ViewMap registration code
-   - Your DI registration code
-   - Your navigation code
-   - Any error messages or logs
+[!include[getting-help](../includes/getting-help.md)]
