@@ -181,6 +181,103 @@ public class ViewMapDataContextTests
 		viewModel.Should().NotBeNull("ViewModel should be registered");
 	}
 
+	/// <summary>
+	/// Critical test: Simulate the actual UseNavigation registration flow
+	/// to ensure ViewModels are accessible from scoped service providers
+	/// </summary>
+	[TestMethod]
+	public void SimulateUseNavigation_ViewModelShouldBeAccessibleFromScopedProvider()
+	{
+		// Arrange - Simulate the exact flow from ServiceCollectionExtensions.AddNavigation
+		var services = new ServiceCollection();
+		
+		// Step 1: Create registries (like AddNavigation does)
+		var views = new ViewRegistry(services);
+		var routes = new RouteRegistry(services);
+		
+		// Step 2: Register ViewMaps (simulating routeBuilder callback)
+		views.Register(
+			new ViewMap<TestPage, TestViewModel>()
+		);
+		routes.Register(
+			new RouteMap("TestPage", View: new ViewMap<TestPage, TestViewModel>())
+		);
+		
+		// Step 3: Register registries as singletons (like AddNavigation does)
+		services.AddSingleton(views.GetType(), views);
+		services.AddSingleton<IViewRegistry>(sp => (IViewRegistry)sp.GetRequiredService(views.GetType()));
+		services.AddSingleton(routes.GetType(), routes);
+		services.AddSingleton<IRouteRegistry>(sp => (RouteRegistry)sp.GetRequiredService(routes.GetType()));
+		
+		// Step 4: Build service provider
+		var rootProvider = services.BuildServiceProvider();
+		
+		// Step 5: Create a scoped provider (like navigation does during page navigation)
+		using var scope = rootProvider.CreateScope();
+		var scopedProvider = scope.ServiceProvider;
+		
+		// Assert - ViewModel should be accessible from scoped provider
+		var viewModelFromRoot = rootProvider.GetService<TestViewModel>();
+		var viewModelFromScoped = scopedProvider.GetService<TestViewModel>();
+		
+		viewModelFromRoot.Should().NotBeNull("ViewModel should be accessible from root provider");
+		viewModelFromScoped.Should().NotBeNull("ViewModel should be accessible from scoped provider (CRITICAL for navigation)");
+	}
+
+	/// <summary>
+	/// Test that transient ViewModels registered via AddTransient(Type) 
+	/// are properly resolved from scoped service providers
+	/// </summary>
+	[TestMethod]
+	public void TransientRegistration_ByType_ShouldResolveFromScopedProvider()
+	{
+		// Arrange
+		var services = new ServiceCollection();
+		
+		// This mimics what ViewMap.RegisterTypes does on line 21
+		services.AddTransient(typeof(TestViewModel));
+		
+		var rootProvider = services.BuildServiceProvider();
+		
+		// Act - Create scoped provider and try to resolve
+		using var scope = rootProvider.CreateScope();
+		var scopedProvider = scope.ServiceProvider;
+		
+		var viewModelFromScoped = scopedProvider.GetService(typeof(TestViewModel));
+		
+		// Assert
+		viewModelFromScoped.Should().NotBeNull("Transient service registered by Type should resolve from scoped provider");
+		viewModelFromScoped.Should().BeOfType<TestViewModel>();
+	}
+
+	/// <summary>
+	/// CRITICAL TEST: Reproduces the bug!
+	/// When ViewMap is registered only in RouteMap (not in ViewRegistry), 
+	/// the ViewModel is NOT registered in DI because RouteRegistry.InsertItem 
+	/// doesn't call ViewMap.RegisterTypes()
+	/// </summary>
+	[TestMethod]
+	public void RouteRegistry_InsertItem_ShouldRegisterViewMapTypes_BugReproduction()
+	{
+		// Arrange
+		var services = new ServiceCollection();
+		var routeRegistry = new RouteRegistry(services);
+
+		// Act - Register a RouteMap with an embedded ViewMap
+		// This is what users do in their app setup
+		routeRegistry.Register(
+			new RouteMap("TestPage", View: new ViewMap<TestPage, TestViewModel>())
+		);
+
+		var provider = services.BuildServiceProvider();
+
+		// Assert - ViewModel should be registered BUT IT'S NOT!
+		var viewModel = provider.GetService<TestViewModel>();
+		
+		// THIS TEST WILL FAIL - revealing the bug!
+		viewModel.Should().NotBeNull("ViewModel should be registered when ViewMap is in RouteMap");
+	}
+
 	// Test helper classes
 	public class TestPage
 	{
