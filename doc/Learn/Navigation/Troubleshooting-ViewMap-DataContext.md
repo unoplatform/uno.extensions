@@ -284,7 +284,8 @@ views.Register(
 // Check ViewModel constructor and register all dependencies
 public class MyViewModel
 {
-    public MyViewModel(IMyService service)  // ← Register IMyService
+    // NOTE: IMyService must be registered in DI
+    public MyViewModel(IMyService service)
     {
     }
 }
@@ -297,10 +298,11 @@ services.AddSingleton<IMyService, MyService>();
 
 ```csharp
 // WRONG: Manual instantiation bypasses navigation
+// This uses traditional UWP/WinUI Frame navigation instead of Uno.Extensions Navigation
 var page = new MainPage();
 Frame.Navigate(page);
 
-// CORRECT: Use navigation framework
+// CORRECT: Use Uno.Extensions Navigation framework
 await _navigator.NavigateViewModelAsync<MainViewModel>(this);
 ```
 
@@ -390,7 +392,8 @@ public partial record MyViewModel
 // WRONG: Conflicting registrations
 views.Register(
     new ViewMap<MainPage, MainViewModel>(),
-    new ViewMap<MainPage, OtherViewModel>()  // ← Conflict!
+    // NOTE: Conflict! Same View cannot have two different ViewModels
+    new ViewMap<MainPage, OtherViewModel>()
 );
 ```
 
@@ -401,7 +404,8 @@ views.Register(
 ```csharp
 // Check that route points to correct ViewModel
 routes.Register(
-    new RouteMap("Main", View: views.FindByViewModel<MainViewModel>())  // ← Verify this
+    // NOTE: Verify this ViewModel type is correct for your route
+    new RouteMap("Main", View: views.FindByViewModel<MainViewModel>())
 );
 ```
 
@@ -422,7 +426,8 @@ routes.Register(
 public MainPage()
 {
     InitializeComponent();
-    this.DataContext = new MainViewModel();  // ← Remove this
+    // NOTE: Remove this - let navigation framework set DataContext
+    this.DataContext = new MainViewModel();
 }
 
 // CORRECT: Let navigation framework set it via ViewMap
