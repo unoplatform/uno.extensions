@@ -178,6 +178,7 @@ new RouteMap("Main",
 ```
 
 The navigator checks if the request needs **redirection**:
+
 - To a child region (nested navigation)
 - To a parent region (route doesn't match current region)
 
@@ -197,15 +198,18 @@ This is where the **ViewMap registration** becomes critical. If no mapping exist
 Different navigator types handle navigation differently:
 
 **FrameNavigator** (page navigation):
+
 - Checks if forward or backward navigation
 - Manages back stack
 - Creates/retrieves the Page instance
 - Calls `Frame.Navigate(pageType)`
 
 **ContentControlNavigator** (content switching):
+
 - Sets `ContentControl.Content` to the view
 
 **PanelVisibilityNavigator** (visibility switching):
+
 - Changes `Visibility` of child elements
 
 #### 5. View Creation
@@ -251,6 +255,7 @@ protected async Task<object?> CreateViewModel(
 ```
 
 **Constructor resolution order**:
+
 1. DI container (`services.GetService(ViewModelType)`)
 2. Reflection with available parameters from DI
 
@@ -285,6 +290,7 @@ if (view is not null && viewModel is not null && view.DataContext != viewModel)
 ```
 
 After this assignment:
+
 - All `{Binding}` expressions in XAML resolve to ViewModel properties
 - `x:Bind` expressions are connected (for compiled bindings)
 - UI updates reflect ViewModel state
@@ -292,6 +298,7 @@ After this assignment:
 #### 8. View Display
 
 The view is displayed in the appropriate region:
+
 - **Frame**: Page added to navigation stack and displayed
 - **ContentControl**: Content property set
 - **Panel**: Visibility changed to `Visible`
@@ -313,28 +320,32 @@ At each stage, verify:
 ### Common Lifecycle Failure Points
 
 **Failure at Route Resolution**:
-```
+
+```text
 Symptom: Navigation doesn't happen
 Cause: Missing ViewMap registration
 Fix: Add ViewMap to views.Register()
 ```
 
 **Failure at ViewModel Creation**:
-```
+
+```text
 Symptom: DataContext is null
 Cause: Missing DI registration for ViewModel dependencies
 Fix: Register all constructor dependencies in DI
 ```
 
 **Failure at DataContext Assignment**:
-```
+
+```text
 Symptom: DataContext null even though ViewModel created
 Cause: View created outside navigation framework
 Fix: Always use navigation framework, not manual instantiation
 ```
 
 **Failure at Binding**:
-```
+
+```text
 Symptom: DataContext set but UI doesn't update
 Cause: ViewModel doesn't implement INotifyPropertyChanged
 Fix: Implement INotifyPropertyChanged or use MVUX
@@ -571,7 +582,7 @@ services.AddSingleton<IMyService, MyService>();
 // WRONG: Manual instantiation bypasses navigation
 // This uses traditional UWP/WinUI Frame navigation instead of Uno.Extensions Navigation
 var page = new MainPage();
-Frame.Navigate(page);
+Frame.Navigate(typeof(MainPage));
 
 // CORRECT: Use Uno.Extensions Navigation framework
 await _navigator.NavigateViewModelAsync<MainViewModel>(this);
