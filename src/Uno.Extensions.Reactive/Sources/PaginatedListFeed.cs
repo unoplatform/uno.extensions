@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -13,7 +14,11 @@ using Uno.Extensions.Reactive.Utils;
 
 namespace Uno.Extensions.Reactive.Sources;
 
-internal class PaginatedListFeed<TCursor, TItem> : IListFeed<TItem>
+internal class PaginatedListFeed<
+	TCursor,
+	[DynamicallyAccessedMembers(ListFeed.TRequirements)]
+	TItem
+> : IListFeed<TItem>
 {
 	private readonly TCursor _firstPage;
 	private readonly GetPage<TCursor, TItem> _getPage;

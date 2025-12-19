@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
@@ -16,7 +17,10 @@ namespace Uno.Extensions.Reactive;
 /// Provides a set of static methods to create and manipulate <see cref="IListState{T}"/>.
 /// </summary>
 /// <typeparam name="T">The type of the data.</typeparam>
-public static class ListState<T>
+public static class ListState<
+	[DynamicallyAccessedMembers(ListFeed.TRequirements)]
+	T
+>
 {
 	/// <summary>
 	/// Creates a custom feed from a raw <see cref="IAsyncEnumerable{T}"/> sequence of <see cref="Message{T}"/>.

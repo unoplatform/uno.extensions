@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Uno.Extensions.Collections.Tracking;
 using Uno.Extensions.Reactive.Collections;
@@ -15,7 +16,11 @@ namespace Uno.Extensions.Reactive.Bindings;
 /// <typeparam name="TItem">The type of the items.</typeparam>
 /// <typeparam name="TBindableItem">The type of the bindable of the item.</typeparam>
 [EditorBrowsable(EditorBrowsableState.Never)]
-public class BindableImmutableList<TItem, TBindableItem> : BindableEnumerable<IImmutableList<TItem>, TItem, TBindableItem>, IList<TItem>
+public class BindableImmutableList<
+	[DynamicallyAccessedMembers(ListFeed.TRequirements)]
+	TItem,
+	TBindableItem
+> : BindableEnumerable<IImmutableList<TItem>, TItem, TBindableItem>, IList<TItem>
 	where TBindableItem : Bindable<TItem>
 	where TItem : notnull
 {

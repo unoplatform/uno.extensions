@@ -330,7 +330,10 @@ public sealed class SourceContext : IAsyncDisposable
 	/// <param name="feed">The list feed to get source from.</param>
 	/// <returns>The list state wrapping the given list feed</returns>
 	[EditorBrowsable(EditorBrowsableState.Advanced)]
-	public IListState<T> GetOrCreateListState<T>(IListFeed<T> feed)
+	public IListState<T> GetOrCreateListState<
+		[DynamicallyAccessedMembers(ListFeed.TRequirements)]
+		T
+	>(IListFeed<T> feed)
 		=> States.GetOrCreateState<IListFeed<T>, IListState<T>>(feed, static (ctx, f) => new ListStateImpl<T>((StateImpl<IImmutableList<T>>)ctx.GetOrCreateState(f.AsFeed())));
 
 	/// <summary>
@@ -340,12 +343,18 @@ public sealed class SourceContext : IAsyncDisposable
 	/// <param name="feed">The list feed to get source from.</param>
 	/// <returns>The list state wrapping the given list feed</returns>
 	[EditorBrowsable(EditorBrowsableState.Advanced)]
-	public IListState<T> GetOrCreateListState<T>(IFeed<IImmutableList<T>> feed)
+	public IListState<T> GetOrCreateListState<
+		[DynamicallyAccessedMembers(ListFeed.TRequirements)]
+		T
+	>(IFeed<IImmutableList<T>> feed)
 		=> States.GetOrCreateState<IFeed<IImmutableList<T>>, IListState<T>>(feed, static (ctx, f) => new ListStateImpl<T>((StateImpl<IImmutableList<T>>)ctx.GetOrCreateState(f)));
 
 	// WARNING: DO NOT USE, this breaks the cache by providing a custom config!
 	// We need to make those config "upgradable" in order to properly share the instances of State
-	internal ListStateImpl<T> DoNotUse_GetOrCreateListState<T>(IListFeed<T> feed, StateUpdateKind updatesKind)
+	internal ListStateImpl<T> DoNotUse_GetOrCreateListState<
+		[DynamicallyAccessedMembers(ListFeed.TRequirements)]
+		T
+	>(IListFeed<T> feed, StateUpdateKind updatesKind)
 		=> States.GetOrCreateState(feed, /*static*/ (ctx, f) => new ListStateImpl<T>(new StateImpl<IImmutableList<T>>(ctx, f.AsFeed(), updatesKind: updatesKind)));
 
 	/// <summary>
@@ -367,7 +376,10 @@ public sealed class SourceContext : IAsyncDisposable
 	/// <returns>The list state wrapping the given list feed</returns>
 	/// <exception cref="ObjectDisposedException">This context has been disposed.</exception>
 	[EditorBrowsable(EditorBrowsableState.Advanced)]
-	public IListState<T> CreateListState<T>(Option<IImmutableList<T>> initialValue)
+	public IListState<T> CreateListState<
+		[DynamicallyAccessedMembers(ListFeed.TRequirements)]
+		T
+	>(Option<IImmutableList<T>> initialValue)
 		=> States.CreateState<IImmutableList<T>, IListState<T>>(initialValue, static (ctx, iv) => new ListStateImpl<T>((StateImpl<IImmutableList<T>>)ctx.CreateState(iv)));
 	#endregion
 

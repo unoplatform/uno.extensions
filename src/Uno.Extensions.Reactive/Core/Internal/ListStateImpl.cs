@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Immutable;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -17,7 +18,10 @@ namespace Uno.Extensions.Reactive;
 
 // Note: This is a "quick implementation". Inheriting from FeedToListFeedAdapter is most probably not a good idea.
 
-internal class ListStateImpl<T> : FeedToListFeedAdapter<T>, IListState<T>, IStateImpl
+internal class ListStateImpl<
+	[DynamicallyAccessedMembers(ListFeed.TRequirements)]
+	T
+> : FeedToListFeedAdapter<T>, IListState<T>, IStateImpl
 {
 	private readonly StateImpl<IImmutableList<T>> _implementation;
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using Uno.Extensions.Reactive.Core;
 
@@ -30,13 +31,19 @@ public class BindableHelper
 	/// <param name="name">Name of the property backed by the resulting bindable list.</param>
 	/// <param name="source">The source list state.</param>
 	/// <returns>A bindable friendly list feed.</returns>
-	public static IListFeed<T> CreateBindableList<T>(string name, IListState<T> source)
+	public static IListFeed<T> CreateBindableList<
+		[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)]
+		T
+	>(string name, IListState<T> source)
 		=> _factory.CreateList(name, source);
 
 	private class NullBindableFactory : IBindableFactory
 	{
 		/// <inheritdoc />
-		public IListFeed<T> CreateList<T>(string name, IListState<T> source)
+		public IListFeed<T> CreateList<
+			[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)]
+			T
+		>(string name, IListState<T> source)
 			=> source;
 	}
 }

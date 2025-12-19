@@ -1,12 +1,16 @@
 ﻿using System;
 using System.Collections.Immutable;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Uno.Extensions.Edition;
 using Uno.Extensions.Reactive.Logging;
 
 namespace Uno.Extensions.Reactive.Operators;
 
-internal static class ListFeedSelection<T>
+internal static class ListFeedSelection<
+	[DynamicallyAccessedMembers(ListFeed.TRequirements)]
+	T
+>
 {
 	public static IListState<T> Create(IListFeed<T> source, IState<IImmutableList<T>> selectionState, string logTag)
 	{

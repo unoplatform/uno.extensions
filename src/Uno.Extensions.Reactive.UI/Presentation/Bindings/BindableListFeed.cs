@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
@@ -19,7 +20,10 @@ namespace Uno.Extensions.Reactive.Bindings;
 /// An helper class use to data-bind a <see cref="IListFeed{T}"/>.
 /// </summary>
 /// <typeparam name="T">The type of the items.</typeparam>
-public sealed partial class BindableListFeed<T> : ISignal<IMessage>, IListState<T>, IInput<IImmutableList<T>>
+public sealed partial class BindableListFeed<
+	[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)]
+	T
+> : ISignal<IMessage>, IListState<T>, IInput<IImmutableList<T>>
 {
 	private readonly BindableCollection _items;
 	private readonly IListState<T> _state;
@@ -30,6 +34,7 @@ public sealed partial class BindableListFeed<T> : ISignal<IMessage>, IListState<
 	/// <param name="propertyName">The name of the property backed by the object.</param>
 	/// <param name="source">The source data stream.</param>
 	/// <param name="ctx">The context of the owner.</param>
+	[DynamicDependency(DynamicallyAccessedMemberTypes.PublicProperties, typeof(BindableListFeed<>))]
 	public BindableListFeed(string propertyName, IListFeed<T> source, SourceContext ctx)
 	{
 		PropertyName = propertyName;
@@ -43,6 +48,7 @@ public sealed partial class BindableListFeed<T> : ISignal<IMessage>, IListState<
 	/// </summary>
 	/// <param name="propertyName">The name of the property backed by the object.</param>
 	/// <param name="source">The source data stream.</param>
+	[DynamicDependency(DynamicallyAccessedMemberTypes.PublicProperties, typeof(BindableListFeed<>))]
 	public BindableListFeed(string propertyName, IListState<T> source)
 	{
 		PropertyName = propertyName;

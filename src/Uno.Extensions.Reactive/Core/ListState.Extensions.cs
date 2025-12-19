@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Immutable;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
@@ -20,7 +21,10 @@ static partial class ListState
 #if DEBUG // To avoid usage in internal reactive code, but without forcing apps to update right away
 	[Obsolete("Use UpdateMessageAsync")]
 #endif
-	public static ValueTask UpdateMessage<T>(this IListState<T> state, Action<MessageBuilder<IImmutableList<T>>> updater, CancellationToken ct)
+	public static ValueTask UpdateMessage<
+		[DynamicallyAccessedMembers(ListFeed.TRequirements)]
+		T
+	>(this IListState<T> state, Action<MessageBuilder<IImmutableList<T>>> updater, CancellationToken ct)
 		=> state.UpdateMessageAsync(updater, ct);
 
 	/// <summary>
@@ -31,7 +35,10 @@ static partial class ListState
 	/// <param name="updater">The update method to apply to the current value.</param>
 	/// <param name="ct">A cancellation to cancel the async operation.</param>
 	/// <returns>A ValueTask to track the async update.</returns>
-	public static ValueTask UpdateAsync<T>(this IListState<T> state, Func<IImmutableList<T>, IImmutableList<T>?> updater, CancellationToken ct = default)
+	public static ValueTask UpdateAsync<
+		[DynamicallyAccessedMembers(ListFeed.TRequirements)]
+		T
+	>(this IListState<T> state, Func<IImmutableList<T>, IImmutableList<T>?> updater, CancellationToken ct = default)
 		=> state.UpdateMessageAsync(
 			m =>
 			{
@@ -50,7 +57,10 @@ static partial class ListState
 #if DEBUG // To avoid usage in internal reactive code, but without forcing apps to update right away
 	[Obsolete("Use UpdateAsync")]
 #endif
-	public static ValueTask Update<T>(this IListState<T> state, Func<IImmutableList<T>, IImmutableList<T>> updater, CancellationToken ct)
+	public static ValueTask Update<
+		[DynamicallyAccessedMembers(ListFeed.TRequirements)]
+		T
+	>(this IListState<T> state, Func<IImmutableList<T>, IImmutableList<T>> updater, CancellationToken ct)
 		=> UpdateAsync(state, updater, ct);
 
 	/// <summary>
@@ -61,7 +71,10 @@ static partial class ListState
 	/// <param name="updater">The update method to apply to the current list.</param>
 	/// <param name="ct">A cancellation to cancel the async operation.</param>
 	/// <returns>A ValueTask to track the async update.</returns>
-	public static ValueTask UpdateDataAsync<T>(this IListState<T> state, Func<Option<IImmutableList<T>>, Option<IImmutableList<T>>> updater, CancellationToken ct = default)
+	public static ValueTask UpdateDataAsync<
+		[DynamicallyAccessedMembers(ListFeed.TRequirements)]
+		T
+	>(this IListState<T> state, Func<Option<IImmutableList<T>>, Option<IImmutableList<T>>> updater, CancellationToken ct = default)
 		=> state.UpdateMessageAsync(m => m.Data(updater(m.CurrentData)), ct);
 
 	/// <summary>
@@ -72,7 +85,10 @@ static partial class ListState
 #if DEBUG // To avoid usage in internal reactive code, but without forcing apps to update right away
 	[Obsolete("Use UpdateDataAsync")]
 #endif
-	public static ValueTask UpdateData<T>(this IListState<T> state, Func<Option<IImmutableList<T>>, Option<IImmutableList<T>>> updater, CancellationToken ct)
+	public static ValueTask UpdateData<
+		[DynamicallyAccessedMembers(ListFeed.TRequirements)]
+		T
+	>(this IListState<T> state, Func<Option<IImmutableList<T>>, Option<IImmutableList<T>>> updater, CancellationToken ct)
 		=> UpdateDataAsync(state, updater, ct);
 
 
@@ -84,7 +100,10 @@ static partial class ListState
 #if DEBUG // To avoid usage in internal reactive code, but without forcing apps to update right away
 	[Obsolete("Use UpdateDataAsync")]
 #endif
-	public static ValueTask UpdateValue<T>(this IListState<T> state, Func<Option<IImmutableList<T>>, Option<IImmutableList<T>>> updater, CancellationToken ct)
+	public static ValueTask UpdateValue<
+		[DynamicallyAccessedMembers(ListFeed.TRequirements)]
+		T
+	>(this IListState<T> state, Func<Option<IImmutableList<T>>, Option<IImmutableList<T>>> updater, CancellationToken ct)
 		=> UpdateDataAsync(state, updater, ct);
 
 
@@ -97,7 +116,10 @@ static partial class ListState
 	/// <param name="item">The item to add.</param>
 	/// <param name="ct">A token to abort the async operation.</param>
 	/// <returns></returns>
-	public static ValueTask InsertAsync<T>(this IListState<T> state, T item, CancellationToken ct = default)
+	public static ValueTask InsertAsync<
+		[DynamicallyAccessedMembers(ListFeed.TRequirements)]
+		T
+	>(this IListState<T> state, T item, CancellationToken ct = default)
 		=> state.UpdateDataAsync(items => Option.Some((items.SomeOrDefault() ?? ImmutableList<T>.Empty).Insert(0, item)), ct);
 
 	/// <summary>
@@ -108,7 +130,10 @@ static partial class ListState
 	/// <param name="item">The item to add.</param>
 	/// <param name="ct">A token to abort the async add operation.</param>
 	/// <returns></returns>
-	public static ValueTask AddAsync<T>(this IListState<T> state, T item, CancellationToken ct = default)
+	public static ValueTask AddAsync<
+		[DynamicallyAccessedMembers(ListFeed.TRequirements)]
+		T
+	>(this IListState<T> state, T item, CancellationToken ct = default)
 		=> state.UpdateDataAsync(items => Option.Some((items.SomeOrDefault() ?? ImmutableList<T>.Empty).Add(item)), ct);
 
 	/// <summary>
@@ -119,7 +144,10 @@ static partial class ListState
 	/// <param name="match">Predicate to determine which items should be removed.</param>
 	/// <param name="ct">A token to abort the async operation.</param>
 	/// <returns></returns>
-	public static ValueTask RemoveAllAsync<T>(this IListState<T> state, Predicate<T> match, CancellationToken ct = default)
+	public static ValueTask RemoveAllAsync<
+		[DynamicallyAccessedMembers(ListFeed.TRequirements)]
+		T
+	>(this IListState<T> state, Predicate<T> match, CancellationToken ct = default)
 		=> state.UpdateDataAsync(itemsOpt => itemsOpt.Map(items => items.RemoveAll(match)), ct);
 
 
@@ -132,7 +160,10 @@ static partial class ListState
 	/// <param name="newItem">The new value for the item.</param>
 	/// <param name="ct">A token to abort the async operation.</param>
 	/// <returns></returns>
-	public static ValueTask UpdateItemAsync<T>(this IListState<T> state, T oldItem, T newItem, CancellationToken ct = default)
+	public static ValueTask UpdateItemAsync<
+		[DynamicallyAccessedMembers(ListFeed.TRequirements)]
+		T
+	>(this IListState<T> state, T oldItem, T newItem, CancellationToken ct = default)
 		where T : notnull, IKeyEquatable<T>
 		=> state.UpdateDataAsync(
 			itemsOpt => itemsOpt.Map(items =>
@@ -159,7 +190,10 @@ static partial class ListState
 	/// <param name="newItem">The new value for the item.</param>
 	/// <param name="ct">A token to abort the async operation.</param>
 	/// <returns></returns>
-	public static ValueTask UpdateItemAsync<T>(this IListState<T?> state, T oldItem, T? newItem, CancellationToken ct = default)
+	public static ValueTask UpdateItemAsync<
+		[DynamicallyAccessedMembers(ListFeed.TRequirements)]
+		T
+	>(this IListState<T?> state, T oldItem, T? newItem, CancellationToken ct = default)
 		where T : struct, IKeyEquatable<T>
 		=> state.UpdateDataAsync(
 			itemsOpt => itemsOpt.Map(items =>
@@ -186,7 +220,10 @@ static partial class ListState
 	/// <param name="updater">How to update items.</param>
 	/// <param name="ct">A token to abort the async operation.</param>
 	/// <returns></returns>
-	public static ValueTask UpdateItemAsync<T>(this IListState<T> state, T oldItem, Func<T, T> updater, CancellationToken ct = default)
+	public static ValueTask UpdateItemAsync<
+		[DynamicallyAccessedMembers(ListFeed.TRequirements)]
+		T
+	>(this IListState<T> state, T oldItem, Func<T, T> updater, CancellationToken ct = default)
 		where T : notnull, IKeyEquatable<T>
 		=> state.UpdateDataAsync(
 			itemsOpt => itemsOpt.Map(items =>
@@ -212,7 +249,10 @@ static partial class ListState
 	/// <param name="updater">How to update items.</param>
 	/// <param name="ct">A token to abort the async operation.</param>
 	/// <returns></returns>
-	public static ValueTask UpdateItemAsync<T>(this IListState<T?> state, T oldItem, Func<T?, T?> updater, CancellationToken ct = default)
+	public static ValueTask UpdateItemAsync<
+		[DynamicallyAccessedMembers(ListFeed.TRequirements)]
+		T
+	>(this IListState<T?> state, T oldItem, Func<T?, T?> updater, CancellationToken ct = default)
 		where T : struct, IKeyEquatable<T>
 		=> state.UpdateDataAsync(
 			itemsOpt => itemsOpt.Map(items =>
@@ -239,7 +279,10 @@ static partial class ListState
 	/// <param name="updater">How to update items.</param>
 	/// <param name="ct">A token to abort the async operation.</param>
 	/// <returns></returns>
-	public static ValueTask UpdateAllAsync<T>(this IListState<T> state, Predicate<T> match, Func<T, T> updater, CancellationToken ct = default)
+	public static ValueTask UpdateAllAsync<
+		[DynamicallyAccessedMembers(ListFeed.TRequirements)]
+		T
+	>(this IListState<T> state, Predicate<T> match, Func<T, T> updater, CancellationToken ct = default)
 		=> state.UpdateDataAsync(
 			itemsOpt => itemsOpt.Map(items =>
 			{
@@ -263,7 +306,10 @@ static partial class ListState
 #if DEBUG // To avoid usage in internal reactive code, but without forcing apps to update right away
 	[Obsolete("Use UpdateAllAsync")]
 #endif
-	public static ValueTask UpdateAsync<T>(this IListState<T> state, Predicate<T> match, Func<T, T> updater, CancellationToken ct)
+	public static ValueTask UpdateAsync<
+		[DynamicallyAccessedMembers(ListFeed.TRequirements)]
+		T
+	>(this IListState<T> state, Predicate<T> match, Func<T, T> updater, CancellationToken ct)
 		=> UpdateAllAsync(state, match, updater, ct);
 
 	/// <summary>
@@ -274,7 +320,10 @@ static partial class ListState
 	/// <param name="item">The updated version of the item.</param>
 	/// <param name="ct">A token to abort the async operation.</param>
 	/// <returns></returns>
-	public static ValueTask UpdateAsync<T>(this IListState<T> listState, T item, CancellationToken ct = default)
+	public static ValueTask UpdateAsync<
+		[DynamicallyAccessedMembers(ListFeed.TRequirements)]
+		T
+	>(this IListState<T> listState, T item, CancellationToken ct = default)
 		where T : IKeyEquatable<T>
 		=> listState.UpdateAsync(items =>
 		{
@@ -292,7 +341,10 @@ static partial class ListState
 #if DEBUG // To avoid usage in internal reactive code, but without forcing apps to update right away
 	[Obsolete("Use ForEach")]
 #endif
-	public static IDisposable Execute<T>(this IListState<T> state, AsyncAction<IImmutableList<T>> action, [CallerMemberName] string? caller = null, [CallerLineNumber] int line = -1)
+	public static IDisposable Execute<
+		[DynamicallyAccessedMembers(ListFeed.TRequirements)]
+		T
+	>(this IListState<T> state, AsyncAction<IImmutableList<T>> action, [CallerMemberName] string? caller = null, [CallerLineNumber] int line = -1)
 		where T : notnull
 		=> ForEachAsync(state, action, caller, line);
 
@@ -305,7 +357,10 @@ static partial class ListState
 #if DEBUG // To avoid usage in internal reactive code, but without forcing apps to update right away
 	[Obsolete("Use ForEach")]
 #endif
-	public static IDisposable ForEachAsync<T>(this IListState<T> state, AsyncAction<IImmutableList<T>> action, [CallerMemberName] string? caller = null, [CallerLineNumber] int line = -1)
+	public static IDisposable ForEachAsync<
+		[DynamicallyAccessedMembers(ListFeed.TRequirements)]
+		T
+	>(this IListState<T> state, AsyncAction<IImmutableList<T>> action, [CallerMemberName] string? caller = null, [CallerLineNumber] int line = -1)
 		where T : notnull
 		=> new StateForEach<IImmutableList<T>>(state, (list, ct) => action(list.SomeOrDefault() ?? ImmutableList<T>.Empty, ct), $"ForEachAsync defined in {caller} at line {line}.");
 
@@ -319,7 +374,10 @@ static partial class ListState
 	/// <param name="caller"> For debug purposes, the name of this subscription. DO NOT provide anything here, let the compiler fulfill this.</param>
 	/// <param name="line">For debug purposes, the name of this subscription. DO NOT provide anything here, let the compiler fulfill this.</param>
 	/// <returns>A <see cref="IListState{T}"/> that can be used to chain other operations.</returns>
-	public static IListState<T> ForEach<T>(this IListState<T> state, AsyncAction<IImmutableList<T>> action, [CallerMemberName] string? caller = null, [CallerLineNumber] int line = -1)
+	public static IListState<T> ForEach<
+		[DynamicallyAccessedMembers(ListFeed.TRequirements)]
+		T
+	>(this IListState<T> state, AsyncAction<IImmutableList<T>> action, [CallerMemberName] string? caller = null, [CallerLineNumber] int line = -1)
 		where T : notnull
 	{
 		_ = AttachedProperty.GetOrCreate(
@@ -341,7 +399,10 @@ static partial class ListState
 	/// <param name="line">For debug purposes, the name of this subscription. DO NOT provide anything here, let the compiler fulfill this.</param>
 	/// <param name="disposable"> A <see cref="IDisposable"/> that can be used to remove the callback registration.</param>
 	/// <returns>A <see cref="IListState{T}"/> that can be used to chain other operations.</returns>
-	public static IListState<T> ForEach<T>(this IListState<T> state, AsyncAction<IImmutableList<T>> action, out IDisposable disposable, [CallerMemberName] string? caller = null, [CallerLineNumber] int line = -1)
+	public static IListState<T> ForEach<
+		[DynamicallyAccessedMembers(ListFeed.TRequirements)]
+		T
+	>(this IListState<T> state, AsyncAction<IImmutableList<T>> action, out IDisposable disposable, [CallerMemberName] string? caller = null, [CallerLineNumber] int line = -1)
 		where T : notnull
 	{
 		disposable = AttachedProperty.GetOrCreate(
@@ -363,7 +424,10 @@ static partial class ListState
 	/// <param name="selectedItems">The items to flag as selected.</param>
 	/// <param name="ct">A token to abort the async operation.</param>
 	/// <returns></returns>
-	public static async ValueTask<bool> TrySelectAsync<T>(this IListState<T> state, IImmutableList<T> selectedItems, CancellationToken ct = default)
+	public static async ValueTask<bool> TrySelectAsync<
+		[DynamicallyAccessedMembers(ListFeed.TRequirements)]
+		T
+	>(this IListState<T> state, IImmutableList<T> selectedItems, CancellationToken ct = default)
 	{
 		var comparer = ListFeed<T>.DefaultComparer.Entity;
 		var success = false;
@@ -393,7 +457,10 @@ static partial class ListState
 	/// <param name="selectedItem">The item to flag as selected.</param>
 	/// <param name="ct">A token to abort the async operation.</param>
 	/// <returns></returns>
-	public static async ValueTask<bool> TrySelectAsync<T>(this IListState<T> state, T selectedItem, CancellationToken ct = default)
+	public static async ValueTask<bool> TrySelectAsync<
+		[DynamicallyAccessedMembers(ListFeed.TRequirements)]
+		T
+	>(this IListState<T> state, T selectedItem, CancellationToken ct = default)
 		where T : notnull
 	{
 		var comparer = ListFeed<T>.DefaultComparer.Entity;
@@ -424,7 +491,10 @@ static partial class ListState
 	/// <param name="itemToDeselect">The item to deselect.</param>
 	/// <param name="ct">A token to abort the async operation.</param>
 	/// <returns>True if the item was found and deselected, false otherwise.</returns>
-	public static async ValueTask<bool> TryDeselectAsync<T>(this IListState<T> state, T itemToDeselect, CancellationToken ct = default)
+	public static async ValueTask<bool> TryDeselectAsync<
+		[DynamicallyAccessedMembers(ListFeed.TRequirements)]
+		T
+	>(this IListState<T> state, T itemToDeselect, CancellationToken ct = default)
 		where T : notnull
 	{
 		var comparer = ListFeed<T>.DefaultComparer.Entity;
@@ -464,7 +534,10 @@ static partial class ListState
 	/// <param name="itemsToDeselect">The items to deselect.</param>
 	/// <param name="ct">A token to abort the async operation.</param>
 	/// <returns>The number of items that were deselected.</returns>
-	public static async ValueTask<int> TryDeselectAsync<T>(this IListState<T> state, IImmutableList<T> itemsToDeselect, CancellationToken ct = default)
+	public static async ValueTask<int> TryDeselectAsync<
+		[DynamicallyAccessedMembers(ListFeed.TRequirements)]
+		T
+	>(this IListState<T> state, IImmutableList<T> itemsToDeselect, CancellationToken ct = default)
 		where T : notnull
 	{
 		var comparer = ListFeed<T>.DefaultComparer.Entity;
@@ -504,7 +577,10 @@ static partial class ListState
 	/// <param name="state">The state to update.</param>
 	/// <param name="ct">A token to abort the async operation.</param>
 	/// <returns></returns>
-	public static ValueTask ClearSelectionAsync<T>(this IListState<T> state, CancellationToken ct = default)
+	public static ValueTask ClearSelectionAsync<
+		[DynamicallyAccessedMembers(ListFeed.TRequirements)]
+		T
+	>(this IListState<T> state, CancellationToken ct = default)
 		where T : notnull
 		=> state.UpdateMessageAsync(msg => msg.Selected(SelectionInfo.Empty), ct);
 
@@ -516,7 +592,10 @@ static partial class ListState
 #if DEBUG // To avoid usage in internal reactive code, but without forcing apps to update right away
 	[Obsolete("Use ClearSelectionAsync")]
 #endif
-	public static ValueTask ClearSelection<T>(this IListState<T> state, CancellationToken ct = default)
+	public static ValueTask ClearSelection<
+		[DynamicallyAccessedMembers(ListFeed.TRequirements)]
+		T
+	>(this IListState<T> state, CancellationToken ct = default)
 		where T : notnull
 		=> ClearSelectionAsync(state, ct);
 }

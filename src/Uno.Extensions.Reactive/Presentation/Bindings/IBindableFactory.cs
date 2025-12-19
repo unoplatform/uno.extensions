@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 namespace Uno.Extensions.Reactive.Bindings;
@@ -22,5 +23,8 @@ public interface IBindableFactory
 	/// <param name="name">Name of the property backed by the resulting bindable list.</param>
 	/// <param name="source">The source list state.</param>
 	/// <returns>A bindable friendly list feed.</returns>
-	IListFeed<T> CreateList<T>(string name, IListState<T> source);
+	IListFeed<T> CreateList<
+		[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)]
+		T
+	>(string name, IListState<T> source);
 }
