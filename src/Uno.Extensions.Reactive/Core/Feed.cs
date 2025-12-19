@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using Uno.Extensions.Reactive.Operators;
@@ -233,7 +234,11 @@ public static partial class Feed
 	/// <param name="source">The source feed to project.</param>
 	/// <param name="getPage">The async method to load a page of items.</param>
 	/// <returns>A paginated list feed.</returns>
-	public static IListFeed<TResult> SelectPaginatedAsync<TSource, TResult>(
+	public static IListFeed<TResult> SelectPaginatedAsync<
+		TSource,
+		[DynamicallyAccessedMembers(ListFeed.TRequirements)]
+		TResult
+	>(
 		this IFeed<TSource> source,
 		AsyncFunc<TSource, PageRequest, IImmutableList<TResult>> getPage)
 		where TSource : notnull
@@ -273,7 +278,12 @@ public static partial class Feed
 	/// <param name="firstPage">The cursor of the first page.</param>
 	/// <param name="getPage">The async method to load a page of items.</param>
 	/// <returns>A paginated list feed.</returns>
-	public static IListFeed<TResult> SelectPaginatedByCursorAsync<TSource, TCursor, TResult>(
+	public static IListFeed<TResult> SelectPaginatedByCursorAsync<
+		TSource,
+		TCursor,
+		[DynamicallyAccessedMembers(ListFeed.TRequirements)]
+		TResult
+	>(
 		this IFeed<TSource> source,
 		TCursor firstPage,
 		GetPage<TSource, TCursor, TResult> getPage)

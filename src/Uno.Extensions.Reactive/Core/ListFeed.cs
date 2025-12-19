@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
@@ -14,6 +15,9 @@ namespace Uno.Extensions.Reactive;
 
 public static partial class ListFeed
 {
+	internal const DynamicallyAccessedMemberTypes TRequirements =
+		DynamicallyAccessedMemberTypes.PublicProperties;
+
 	#region Sources
 	// Note: Those are helpers for which the T is set by type inference on provider.
 	//		 We must have only one overload per method.
@@ -24,7 +28,10 @@ public static partial class ListFeed
 	/// <typeparam name="T">The type of the value of the resulting feed.</typeparam>
 	/// <param name="sourceProvider">The provider of the message enumerable sequence.</param>
 	/// <returns>A feed that encapsulate the source.</returns>
-	public static IListFeed<T> Create<T>(Func<CancellationToken, IAsyncEnumerable<Message<IImmutableList<T>>>> sourceProvider)
+	public static IListFeed<T> Create<
+		[DynamicallyAccessedMembers(TRequirements)]
+		T
+	>(Func<CancellationToken, IAsyncEnumerable<Message<IImmutableList<T>>>> sourceProvider)
 		=> Feed.Create(sourceProvider).AsListFeed();
 
 	/// <summary>
@@ -34,7 +41,10 @@ public static partial class ListFeed
 	/// <param name="valueProvider">The async method to use to load the value of the resulting feed.</param>
 	/// <param name="refresh">A refresh trigger to reload the <paramref name="valueProvider"/>.</param>
 	/// <returns>A feed that encapsulate the source.</returns>
-	public static IListFeed<T> Async<T>(AsyncFunc<IImmutableList<T>> valueProvider, Signal? refresh = null)
+	public static IListFeed<T> Async<
+		[DynamicallyAccessedMembers(TRequirements)]
+		T
+	>(AsyncFunc<IImmutableList<T>> valueProvider, Signal? refresh = null)
 		=> Feed.Async(valueProvider, refresh).AsListFeed();
 
 	/// <summary>
@@ -44,7 +54,10 @@ public static partial class ListFeed
 	/// <param name="valueProvider">The async method to use to load the value of the resulting feed.</param>
 	/// <param name="refresh">A refresh trigger to reload the <paramref name="valueProvider"/>.</param>
 	/// <returns>A feed that encapsulate the source.</returns>
-	public static IListFeed<T> Async<T>(AsyncFunc<ImmutableList<T>> valueProvider, Signal? refresh = null)
+	public static IListFeed<T> Async<
+		[DynamicallyAccessedMembers(TRequirements)]
+		T
+	>(AsyncFunc<ImmutableList<T>> valueProvider, Signal? refresh = null)
 		=> Feed.Async(valueProvider, refresh).AsListFeed();
 
 	/// <summary>
@@ -53,7 +66,10 @@ public static partial class ListFeed
 	/// <typeparam name="T">The type of the data of the resulting feed.</typeparam>
 	/// <param name="enumerableProvider">The async enumerable sequence of value of the resulting feed.</param>
 	/// <returns>A feed that encapsulate the source.</returns>
-	public static IListFeed<T> AsyncEnumerable<T>(Func<CancellationToken, IAsyncEnumerable<IImmutableList<T>>> enumerableProvider)
+	public static IListFeed<T> AsyncEnumerable<
+		[DynamicallyAccessedMembers(TRequirements)]
+		T
+	>(Func<CancellationToken, IAsyncEnumerable<IImmutableList<T>>> enumerableProvider)
 		=> Feed.AsyncEnumerable(enumerableProvider).AsListFeed();
 
 	/// <summary>
@@ -67,7 +83,10 @@ public static partial class ListFeed
 #if DEBUG
 	[Obsolete("Use PaginatedAsync instead")]
 #endif
-	public static IListFeed<T> AsyncPaginated<T>(AsyncFunc<PageRequest, IImmutableList<T>> getPage)
+	public static IListFeed<T> AsyncPaginated<
+		[DynamicallyAccessedMembers(TRequirements)]
+		T
+	>(AsyncFunc<PageRequest, IImmutableList<T>> getPage)
 		=> PaginatedAsync(getPage);
 
 	/// <summary>
@@ -76,7 +95,10 @@ public static partial class ListFeed
 	/// <typeparam name="T">The type of the data of the resulting feed.</typeparam>
 	/// <param name="getPage">The async method to load a page of items.</param>
 	/// <returns>A paginated list feed.</returns>
-	public static IListFeed<T> PaginatedAsync<T>(AsyncFunc<PageRequest, IImmutableList<T>> getPage)
+	public static IListFeed<T> PaginatedAsync<
+		[DynamicallyAccessedMembers(TRequirements)]
+		T
+	>(AsyncFunc<PageRequest, IImmutableList<T>> getPage)
 		=> ListFeed<T>.PaginatedAsync(getPage);
 	#endregion
 
@@ -93,7 +115,10 @@ public static partial class ListFeed
 	/// if all items are filtered out from source list feed,
 	/// the resulting list feed  **will produce a message** with its data set to None.
 	/// </remarks>
-	public static IListFeed<TSource> Where<TSource>(
+	public static IListFeed<TSource> Where<
+		[DynamicallyAccessedMembers(TRequirements)]
+		TSource
+	>(
 		this IListFeed<TSource> source,
 		Predicate<TSource> predicate)
 		=> AttachedProperty.GetOrCreate(source, predicate, static (src, p) => new WhereListFeed<TSource>(src, p));
@@ -119,7 +144,10 @@ public static partial class ListFeed
 	/// <param name="caller">For debug purposes, the name of this subscription. DO NOT provide anything here, let the compiler provide this.</param>
 	/// <param name="line">For debug purposes, the name of this subscription. DO NOT provide anything here, let the compiler provide this.</param>
 	/// <returns>A ListState from and onto which the selection is going to be synced.</returns>
-	public static IListState<TSource> Selection<TSource>(
+	public static IListState<TSource> Selection<
+		[DynamicallyAccessedMembers(TRequirements)]
+		TSource
+	>(
 		this IListFeed<TSource> source,
 		IState<IImmutableList<TSource>> selectionState,
 		[CallerMemberName] string caller = "",
@@ -138,7 +166,10 @@ public static partial class ListFeed
 	/// <param name="caller">For debug purposes, the name of this subscription. DO NOT provide anything here, let the compiler provide this.</param>
 	/// <param name="line">For debug purposes, the name of this subscription. DO NOT provide anything here, let the compiler provide this.</param>
 	/// <returns>A ListState from and onto which the selection is going to be synced.</returns>
-	public static IListState<TSource> Selection<TSource>(
+	public static IListState<TSource> Selection<
+		[DynamicallyAccessedMembers(TRequirements)]
+		TSource
+	>(
 		this IListFeed<TSource> source,
 		IState<TSource> selectionState,
 		[CallerMemberName] string caller = "",
@@ -169,7 +200,12 @@ public static partial class ListFeed
 	/// DO NOT provide anything here, let the compiler provide this.
 	/// </param>
 	/// <returns>A ListState from and onto which the selection is going to be synced.</returns>
-	public static IListState<TSource> Selection<TSource, TSourceKey, TOther>(
+	public static IListState<TSource> Selection<
+		[DynamicallyAccessedMembers(TRequirements)]
+		TSource,
+		TSourceKey,
+		TOther
+	>(
 		this IListFeed<TSource> source,
 		IState<TOther> selectionState,
 		PropertySelector<TOther, TSourceKey?> keySelector,
@@ -212,7 +248,12 @@ public static partial class ListFeed
 	/// DO NOT provide anything here, let the compiler provide this.
 	/// </param>
 	/// <returns>A ListState from and onto which the selection is going to be synced.</returns>
-	public static IListState<TSource> Selection<TSource, TSourceKey, TOther>(
+	public static IListState<TSource> Selection<
+		[DynamicallyAccessedMembers(TRequirements)]
+		TSource,
+		TSourceKey,
+		TOther
+	>(
 		this IListFeed<TSource> source,
 		IState<TOther> selectionState,
 		PropertySelector<TOther, TSourceKey?> keySelector,

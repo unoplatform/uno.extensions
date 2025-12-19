@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using Uno.Extensions.Reactive.Core;
 using Uno.Extensions.Reactive.Utils;
@@ -24,6 +25,9 @@ public sealed class BindableFactory : IBindableFactory
 	}
 
 	/// <inheritdoc />
-	public IListFeed<T> CreateList<T>(string name, IListState<T> source)
+	public IListFeed<T> CreateList<
+		[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)]
+		T
+	>(string name, IListState<T> source)
 		=> new BindableListFeed<T>(name, source);
 }

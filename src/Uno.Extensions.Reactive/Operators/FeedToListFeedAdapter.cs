@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
@@ -11,7 +12,10 @@ using Uno.Extensions.Reactive.Core;
 
 namespace Uno.Extensions.Reactive.Operators;
 
-internal class FeedToListFeedAdapter<T> : FeedToListFeedAdapter<IImmutableList<T>, T>
+internal class FeedToListFeedAdapter<
+	[DynamicallyAccessedMembers(ListFeed.TRequirements)]
+	T
+> : FeedToListFeedAdapter<IImmutableList<T>, T>
 {
 	public FeedToListFeedAdapter(IFeed<IImmutableList<T>> source, ItemComparer<T> itemComparer = default)
 		: base(source, list => list, itemComparer)
@@ -23,7 +27,11 @@ internal class FeedToListFeedAdapter<T> : FeedToListFeedAdapter<IImmutableList<T
 // which crashes when using instances of this record in dictionaries (caching) and break the AOT build.
 // cf. https://github.com/unoplatform/Uno.Samples/issues/139
 
-internal class FeedToListFeedAdapter<TCollection, TItem> : IListFeed<TItem>
+internal class FeedToListFeedAdapter<
+	TCollection,
+	[DynamicallyAccessedMembers(ListFeed.TRequirements)]
+	TItem
+> : IListFeed<TItem>
 {
 	private readonly IFeed<TCollection> _source;
 	private readonly Func<TCollection, IImmutableList<TItem>> _toImmutable;

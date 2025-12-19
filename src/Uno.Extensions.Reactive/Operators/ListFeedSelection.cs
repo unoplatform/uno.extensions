@@ -11,7 +11,11 @@ using Uno.Extensions.Reactive.Utils;
 
 namespace Uno.Extensions.Reactive.Operators;
 
-internal sealed class ListFeedSelection<TSource, TOther> : IListState<TSource>, IStateImpl
+internal sealed class ListFeedSelection<
+	[DynamicallyAccessedMembers(ListFeed.TRequirements)]
+	TSource,
+	TOther
+> : IListState<TSource>, IStateImpl
 {
 	internal static MessageAxis<object?> SelectionUpdateSource { get; } = new(MessageAxes.SelectionSource, _ => null) { IsTransient = true };
 	

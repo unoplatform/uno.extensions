@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Immutable;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -12,7 +13,10 @@ namespace Uno.Extensions.Reactive;
 /// 2. can be updated
 /// </summary>
 /// <typeparam name="T">The type of the items in the list.</typeparam>
-public interface IListState<T> : IListFeed<T>, IState
+public interface IListState<
+	[DynamicallyAccessedMembers(ListFeed.TRequirements)]
+	T
+> : IListFeed<T>, IState
 {
 	/// <summary>
 	/// Updates the current internal message.

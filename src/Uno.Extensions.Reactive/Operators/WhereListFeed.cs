@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
@@ -10,7 +11,10 @@ using Uno.Extensions.Reactive.Core;
 
 namespace Uno.Extensions.Reactive.Operators;
 
-internal sealed class WhereListFeed<T> : IListFeed<T>
+internal sealed class WhereListFeed<
+	[DynamicallyAccessedMembers(ListFeed.TRequirements)]
+	T
+> : IListFeed<T>
 {
 	private static readonly CollectionAnalyzer<T> _analyzer = ListFeed<T>.DefaultAnalyzer;
 

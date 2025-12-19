@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using Windows.Foundation;
@@ -22,6 +23,7 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Views
 		private readonly PaginationFacet? _pagination;
 		private readonly EditionFacet? _edition;
 
+		[DynamicDependency(DynamicallyAccessedMemberTypes.PublicProperties, typeof(BasicView))]
 		public BasicView(
 			CollectionFacet collectionFacet,
 			CollectionChangedFacet collectionChangedFacet,
