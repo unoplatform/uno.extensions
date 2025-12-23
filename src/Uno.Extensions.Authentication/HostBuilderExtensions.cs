@@ -144,6 +144,7 @@ public static class HostBuilderExtensions
 							new TokenCache(
 								sp.GetRequiredService<ILogger<TokenCache>>(),
 								sp.GetRequiredDefaultInstance<IKeyValueStorage>()))
+					.AddJsonTypeInfo(TokenCacheContext.Default)
 					.AddSingleton<IAuthenticationService, AuthenticationService>();
 			})
 			.Authorization(configureAuthorization);
