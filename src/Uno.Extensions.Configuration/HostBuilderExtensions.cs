@@ -39,7 +39,7 @@ public static class HostBuilderExtensions
 			hostBuilder = hostBuilder.ConfigureAppConfiguration(configureAppConfiguration);
 		}
 
-		hostBuilder = hostBuilder.UseSerialization()
+		hostBuilder = hostBuilder.UseJsonSerializationResolvers()
 			.ConfigureServices((ctx, s) =>
 				{
 					// We're doing the IsRegistered check here so that the

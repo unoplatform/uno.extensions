@@ -27,7 +27,7 @@ Accessing the serialized and deserialized representation of an object can be imp
 
 ### 2. Opt into Serialization
 
-* Call the `UseSerialization()` method to register a serializer that implements `ISerializer` with the service collection:
+* Call the `UseJsonSerializationResolvers()` method to register a serializer that implements `ISerializer` with the service collection:
 
     ```csharp
     protected override void OnLaunched(LaunchActivatedEventArgs e)
@@ -35,10 +35,28 @@ Accessing the serialized and deserialized representation of an object can be imp
         var appBuilder = this.CreateBuilder(args)
             .Configure(host => {
                 host
-                .UseSerialization();
+                    .UseJsonSerializationResolvers(...);
             });
     ...
     ```
+
+The `.UseJsonSerializationResolvers()` extension method accepts an array of
+`IJsonTypeInfoResolver` instances.  This can be "empty" if *your app is not trimmed*.
+If your app *is* trimmed, e.g. you build with `-p:PublishTrimmed=true`, then you must
+also use [System.Text.Json Source Generation](https://learn.microsoft.com/dotnet/standard/serialization/system-text-json/source-generation)
+and provide ghe generated `IJsonTypeInfoResolver` values:
+
+```csharp
+var appBuilder = this.CreateBuilder(args)
+    .Configure(host => {
+        host.UseJsonSerializationResolvers(AppJsonSerializerContext.Default);
+    });
+
+[JsonSerializable(typeof(…))]
+internal partial class AppJsonSerializerContext : JsonSerializerContext
+{
+}
+```
 
 ### 3. Preparing the class to be serialized efficiently
 
@@ -82,14 +100,14 @@ Accessing the serialized and deserialized representation of an object can be imp
         var appBuilder = this.CreateBuilder(args)
             .Configure(host => {
                 host
-                .UseSerialization(services => services.AddJsonTypeInfo(PersonContext.Default.Person));
+                .UseJsonSerializationResolvers(PersonContext.Default);
             });
     ...
     ```
 
 ### 4. Configuring the serializer
 
-* The default serializer implementation uses `System.Text.Json`. The serialization can be configured by registering an instance of `JsonSerializerOptions`:
+* The default serializer implementation uses `System.Text.Json`. The serialization can be configured by using the `.ConfigureJsonSerializationOptions()` extension method to update `options.SerializerOptions`:
 
     ```csharp
     protected override void OnLaunched(LaunchActivatedEventArgs e)
@@ -97,10 +115,10 @@ Accessing the serialized and deserialized representation of an object can be imp
         var appBuilder = this.CreateBuilder(args)
             .Configure(host => {
                 host
-                .UseSerialization(services =>
+                .UseJsonSerializationResolvers(PersonContext.Default)
+                .ConfigureServices((ctx, services) =>
                 {
-                    services.AddJsonTypeInfo(PersonContext.Default.Person);
-                    services.AddSingleton(new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                    services.ConfigureJsonSerializationOptions(options => options.SerializerOptions.PropertyNameCaseInsensitive = true);
                 });
             });
     ...
