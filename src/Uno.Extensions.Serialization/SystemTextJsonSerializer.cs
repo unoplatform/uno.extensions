@@ -5,8 +5,15 @@ namespace Uno.Extensions.Serialization;
 /// <summary>
 /// A reflection-based serializer implementation for System.Text.Json.
 /// </summary>
+[UnconditionalSuppressMessage("Trimming", "IL2046",
+	Justification = "This type uses JsonSerializer, requiring [RequiresDynamicCode] and [RequiresUnreferencedCode], but not all implementations of ISerializer should have that constraint.")]
+[UnconditionalSuppressMessage("Trimming", "IL3051",
+	Justification = "This type uses JsonSerializer, requiring [RequiresDynamicCode] and [RequiresUnreferencedCode], but not all implementations of ISerializer<T> should have that constraint.")]
 public class SystemTextJsonSerializer : ISerializer
 {
+	internal const string RequiresDynamicCodeMessage = "JSON serialization and deserialization might require types that cannot be statically analyzed and might need runtime code generation. Use System.Text.Json source generation for native AOT applications. [From JsonSerializer.Serialize().]";
+	internal const string RequiresUnreferencedCodeMessage = "JSON serialization and deserialization might require types that cannot be statically analyzed. Use the overload that takes a JsonTypeInfo or JsonSerializerContext, or make sure all of the required types are preserved. [From JsonSerializer.Serialize().]";
+
 	private readonly JsonSerializerOptions? _serializerOptions;
 	private readonly IServiceProvider _services;
 
@@ -39,7 +46,8 @@ public class SystemTextJsonSerializer : ISerializer
 	/// <returns>
 	/// The instance of targetType deserialized from the source.
 	/// </returns>
-	[RequiresUnreferencedCode("From JsonDeserializer: JSON serialization and deserialization might require types that cannot be statically analyzed and might need runtime code generation. Use System.Text.Json source generation for native AOT applications.")]
+	[RequiresDynamicCode(RequiresDynamicCodeMessage)]
+	[RequiresUnreferencedCode(RequiresUnreferencedCodeMessage)]
 	public object? FromStream(Stream source, Type targetType)
 	{
 		var typedSerializer = TypedSerializer(targetType);
@@ -58,7 +66,8 @@ public class SystemTextJsonSerializer : ISerializer
 	/// <param name="valueType">
 	/// The type to use to serialize the object. value must be convertible to this type.
 	/// </param>
-	[RequiresUnreferencedCode("From JsonDeserializer: JSON serialization and deserialization might require types that cannot be statically analyzed and might need runtime code generation. Use System.Text.Json source generation for native AOT applications.")]
+	[RequiresDynamicCode(RequiresDynamicCodeMessage)]
+	[RequiresUnreferencedCode(RequiresUnreferencedCodeMessage)]
 	public void ToStream(Stream stream, object value, Type valueType)
 	{
 		var typedSerializer = TypedSerializer(valueType);
@@ -84,7 +93,8 @@ public class SystemTextJsonSerializer : ISerializer
 	/// <returns>
 	/// The serialized representation of value.
 	/// </returns>
-	[RequiresUnreferencedCode("From JsonDeserializer: JSON serialization and deserialization might require types that cannot be statically analyzed and might need runtime code generation. Use System.Text.Json source generation for native AOT applications.")]
+	[RequiresDynamicCode(RequiresDynamicCodeMessage)]
+	[RequiresUnreferencedCode(RequiresUnreferencedCodeMessage)]
 	public string ToString(object value, Type valueType)
 	{
 		var typedSerializer = TypedSerializer(valueType);
@@ -103,7 +113,8 @@ public class SystemTextJsonSerializer : ISerializer
 	/// <returns>
 	/// The instance of targetType deserialized from the source.
 	/// </returns>
-	[RequiresUnreferencedCode("From JsonDeserializer: JSON serialization and deserialization might require types that cannot be statically analyzed and might need runtime code generation. Use System.Text.Json source generation for native AOT applications.")]
+	[RequiresDynamicCode(RequiresDynamicCodeMessage)]
+	[RequiresUnreferencedCode(RequiresUnreferencedCodeMessage)]
 	public object? FromString(string source, Type targetType)
 	{
 		var typedSerializer = TypedSerializer(targetType);
@@ -117,6 +128,10 @@ public class SystemTextJsonSerializer : ISerializer
 /// <typeparam name="T">
 /// The type of the objects to serialize and deserialize.
 /// </typeparam>
+[UnconditionalSuppressMessage("Trimming", "IL2046",
+	Justification = "This type uses JsonSerializer, requiring [RequiresDynamicCode] and [RequiresUnreferencedCode], but not all implementations of ISerializer<T> should have that constraint.")]
+[UnconditionalSuppressMessage("Trimming", "IL3051",
+	Justification = "This type uses JsonSerializer, requiring [RequiresDynamicCode] and [RequiresUnreferencedCode], but not all implementations of ISerializer<T> should have that constraint.")]
 public class SystemTextJsonSerializer<T> : SystemTextJsonSerializer, ISerializer<T>
 {
 	/// <summary>
@@ -135,18 +150,24 @@ public class SystemTextJsonSerializer<T> : SystemTextJsonSerializer, ISerializer
 	}
 
 	/// <inheritdoc/>
+	[RequiresDynamicCode(RequiresDynamicCodeMessage)]
+	[RequiresUnreferencedCode(RequiresUnreferencedCodeMessage)]
 	public T? FromString(string source)
 	{
 		return FromString(source, typeof(T)) is T value ? value : default;
 	}
 
 	/// <inheritdoc/>
+	[RequiresDynamicCode(RequiresDynamicCodeMessage)]
+	[RequiresUnreferencedCode(RequiresUnreferencedCodeMessage)]
 	public T? FromStream(Stream source)
 	{
 		return FromStream(source, typeof(T)) is T value ? value : default;
 	}
 
 	/// <inheritdoc/>
+	[RequiresDynamicCode(RequiresDynamicCodeMessage)]
+	[RequiresUnreferencedCode(RequiresUnreferencedCodeMessage)]
 	public string ToString(T value)
 	{
 		if (value is null)
@@ -158,6 +179,8 @@ public class SystemTextJsonSerializer<T> : SystemTextJsonSerializer, ISerializer
 	}
 
 	/// <inheritdoc/>
+	[RequiresDynamicCode(RequiresDynamicCodeMessage)]
+	[RequiresUnreferencedCode(RequiresUnreferencedCodeMessage)]
 	public void ToStream(Stream stream, T value)
 	{
 		if (value is null)
