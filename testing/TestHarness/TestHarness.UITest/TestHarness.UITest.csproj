@@ -3,11 +3,11 @@
 	<PropertyGroup>
 		<TargetFramework>net9.0</TargetFramework>
 		<RootNamespace>TestHarness.UITest</RootNamespace>
+		<OutputType>Exe</OutputType>
 	</PropertyGroup>
 
 	<ItemGroup>
 		<PackageReference Include="FluentAssertions" />
-		<PackageReference Include="Microsoft.NET.Test.Sdk" />
 		<PackageReference Include="Newtonsoft.Json" />
 		<PackageReference Include="NUnit" />
 		<PackageReference Include="SkiaSharp" />
@@ -19,8 +19,15 @@
 		<PackageReference Include="Uno.UITest.Xamarin" />
 		<PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" PrivateAssets="All" />
 		<PackageReference Include="NunitXml.TestLogger"/>
+
+		<!-- VersionOverride is because NUnit3TestAdapter version being used here is still on MTP v1. -->
+		<!-- We are not yet able to update NUnit3TestAdapter to 6.x (which uses MTP v2) because we need NunitXml.TestLogger which is still MTP v1 -->
+		<!-- Once NunitXml.TestLogger ships v8, remove the below VersionOverride and update NUnit3TestAdapter -->
+		<!-- For reference: https://github.com/spekt/testlogger/pull/215 -->
+		<!-- https://github.com/spekt/testlogger/pull/214 -->
+		<PackageReference Include="Microsoft.Testing.Extensions.TrxReport" VersionOverride="1.9.1" />
+
 		<PackageReference Include="SkiaSharp.NativeAssets.Linux" />
-		<PackageReference Include="MSTest.TestAdapter" />
 		<PackageReference Include="MSTest.TestFramework"/>
 	</ItemGroup>
 

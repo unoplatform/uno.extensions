@@ -3,7 +3,6 @@ using System.Collections.Immutable;
 using System.Linq;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Newtonsoft.Json.Linq;
 using Uno.Extensions.Reactive.Testing;
 using KeyAttribute = Uno.Extensions.Equality.KeyAttribute;
 
@@ -14,9 +13,10 @@ public partial class Given_CoreListStateOperators : FeedTests
 {
 	#region UpdateAsync
 	[TestMethod]
-	[ExpectedException(typeof(NullReferenceException))] // Note: This is a compilation tests!
+	// TODO: Expect null ref exception
 	public async Task When_UpdateAsync_Then_AcceptsNotNullAndStruct()
 	{
+		// Note: This is a compilation tests!
 		await default(IListState<int>)!.UpdateAsync(_ => ImmutableList.Create(42), CT);
 		await default(IListState<int>)!.UpdateAsync(_ => default(IImmutableList<int>), CT);
 		await default(IListState<int?>)!.UpdateAsync(_ => ImmutableList.Create<int?>(42), CT);
@@ -274,9 +274,10 @@ public partial class Given_CoreListStateOperators : FeedTests
 
 	#region UpdateDataAsync
 	[TestMethod]
-	[ExpectedException(typeof(NullReferenceException))] // Note: This is a compilation tests!
+	// TODO: Expect null ref exception
 	public async Task When_UpdateDataAsync_Then_AcceptsNotNullAndStruct()
 	{
+		// Note: This is a compilation tests!
 		await default(IListState<int>)!.UpdateDataAsync(_ => ImmutableList.Create(42), CT);
 		await default(IListState<int>)!.UpdateDataAsync(_ => default(ImmutableList<int>)!, CT);
 		await default(IListState<int?>)!.UpdateDataAsync(_ => ImmutableList.Create<int?>(42), CT);

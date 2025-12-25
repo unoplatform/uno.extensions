@@ -678,7 +678,8 @@ public partial class Given_Methods_Then_GenerateCommands : FeedUITests
 	[TestMethod]
 	[DataRow(nameof(When_MultipleFeedParameter_ViewModel.MyMethod), nameof(When_MixedViewAndFeedParameter_ViewModel.MyParameter))]
 	[DataRow(nameof(When_MultipleFeedParameter_ViewModel.MyMethodWithCt), nameof(When_MixedViewAndFeedParameter_ViewModel.MyParameter), _ct)]
-	private async Task When_MultipleFeedParameter_ViewModel_ArgsReDispatchedProperly(string method, params string[] expectedArgs)
+	[Ignore]
+	public async Task When_MultipleFeedParameter_ViewModel_ArgsReDispatchedProperly(string method, params string[] expectedArgs)
 	{
 		await using var vm = new When_MultipleFeedParameter_ViewViewModel();
 
@@ -795,7 +796,8 @@ public partial class Given_Methods_Then_GenerateCommands : FeedUITests
 	[DataRow(nameof(When_MixedViewAndFeedParameter_ViewModel.MyMethod2WithCt), nameof(When_MixedViewAndFeedParameter_ViewModel.MyParameter), _viewParam, _ct)]
 	[DataRow(nameof(When_MixedViewAndFeedParameter_ViewModel.MyMethod3), _viewParam, nameof(When_MixedViewAndFeedParameter_ViewModel.MyParameter), nameof(When_MixedViewAndFeedParameter_ViewModel.MyParameter2))]
 	[DataRow(nameof(When_MixedViewAndFeedParameter_ViewModel.MyMethod3WithCt), _viewParam, nameof(When_MixedViewAndFeedParameter_ViewModel.MyParameter), nameof(When_MixedViewAndFeedParameter_ViewModel.MyParameter2), _ct)]
-	private async Task When_MixedViewAndFeedParameter_ArgsReDispatchedProperly(string method, params string[] expectedArgs)
+	[Ignore]
+	public async Task When_MixedViewAndFeedParameter_ArgsReDispatchedProperly(string method, params string[] expectedArgs)
 	{
 		await using var vm = new When_MixedViewAndFeedParameter_ViewViewModel();
 

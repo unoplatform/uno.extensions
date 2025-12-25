@@ -47,18 +47,16 @@ public class Given_PropertySelectorGenerator
 		=> Test(new RootNullableRecord<NullableValueRecord>(new("hello")), "world", e => e.Nested!.Value);
 
 	[TestMethod]
-	[ExpectedException(typeof(NullReferenceException))]
 	public void When_NullableNestedValue_SuppressionWithNull()
-		=> GetAccessor<RootNullableRecord<NullableValueRecord>, string?>(e => e.Nested!.Value).Get(new (default));
+		=> Assert.ThrowsExactly< NullReferenceException>(() => GetAccessor<RootNullableRecord<NullableValueRecord>, string?>(e => e.Nested!.Value).Get(new (default)));
 
 	[TestMethod]
 	public void When_NullableNestedValue_DoubleSuppression()
 		=> Test(new RootNullableRecord<NullableValueRecord>(new("hello")), "world", e => e.Nested!.Value!);
 
 	[TestMethod]
-	[ExpectedException(typeof(NullReferenceException))]
 	public void When_NullableNestedValue_DoubleSuppressionWithIntermediateNull()
-		=> GetAccessor<RootNullableRecord<NullableValueRecord>, string>(e => e.Nested!.Value!).Get(new(default));
+		=> Assert.ThrowsExactly<NullReferenceException>(() => GetAccessor<RootNullableRecord<NullableValueRecord>, string>(e => e.Nested!.Value!).Get(new(default)));
 
 	[TestMethod]
 	public void When_NullableNestedValue_DoubleSuppressionWithFinalNull()

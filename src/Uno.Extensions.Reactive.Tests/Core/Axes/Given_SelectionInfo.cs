@@ -27,7 +27,7 @@ public class Given_SelectionInfo
 	}
 
 	[TestMethod]
-	[DynamicData(nameof(GetAddCases), DynamicDataSourceType.Method)]
+	[DynamicData(nameof(GetAddCases))]
 	public void When_Add(TestCase @case)
 	{
 		var result = @case.Original.Add(@case.Range);
@@ -98,7 +98,7 @@ public class Given_SelectionInfo
 	}
 
 	[TestMethod]
-	[DynamicData(nameof(GetRemoveCases), DynamicDataSourceType.Method)]
+	[DynamicData(nameof(GetRemoveCases))]
 	public void When_Remove(TestCase @case)
 	{
 		var result = @case.Original.Remove(@case.Range);

@@ -13,6 +13,13 @@ jobs:
   - checkout: self
     clean: true
 
+  - task: UseDotNet@2
+    displayName: 'Install .NET 9 runtime'
+    retryCountOnTaskFailure: 3
+    inputs:
+      packageType: runtime
+      version: '9.0.x'
+
   - template: templates/dotnet-install.yml
 
   - template: templates/canary-updater.yml

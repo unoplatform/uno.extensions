@@ -26,6 +26,7 @@
       "src\\Uno.Extensions.Maui.WinUI.Runtime.Skia\\Uno.Extensions.Maui.WinUI.Runtime.Skia.csproj",
       "src\\Uno.Extensions.Navigation.Generators\\Uno.Extensions.Navigation.Generators.csproj",
       "src\\Uno.Extensions.Navigation.Toolkit\\Uno.Extensions.Navigation.Toolkit.WinUI.csproj",
+      "src\\Uno.Extensions.Navigation.Tests\\Uno.Extensions.Navigation.Tests.csproj",
       "src\\Uno.Extensions.Navigation.UI.Markup\\Uno.Extensions.Navigation.WinUI.Markup.csproj",
       "src\\Uno.Extensions.Navigation.UI\\Uno.Extensions.Navigation.WinUI.csproj",
       "src\\Uno.Extensions.Navigation\\Uno.Extensions.Navigation.csproj",

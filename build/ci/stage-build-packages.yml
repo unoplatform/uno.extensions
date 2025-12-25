@@ -48,29 +48,25 @@ jobs:
       logProjectEvents: false
       createLogFile: false
 
-  - task: VisualStudioTestPlatformInstaller@1
-    displayName: 'Visual Studio Test Platform Installer'
-    inputs:
-      versionSelector: specificVersion
-      testPlatformVersion: 17.5.0
-
   - task: UseDotNet@2
-    displayName: 'Use .NET SDK'
+    displayName: 'Install .NET 9 runtime'
     retryCountOnTaskFailure: 3
     inputs:
-      packageType: sdk
-      version: 8.0.301
+      packageType: runtime
+      version: '9.0.x'
 
-  - task: VSTest@2
+  - task: DotNetCoreCLI@2
+    displayName: Run tests
     inputs:
-      testAssemblyVer2: |
-        **/*.Tests.dll
-        !**/*UI.Tests.dll
-        !**/obj/**
-      vsTestVersion: toolsInstaller
-      testSelector: testAssemblies
-      runSettingsFile: build/tests.runsettings
-      
+      command: 'test'
+      projects: Uno.Extensions-packageonly.slnf
+      arguments: '--no-build --no-progress --configuration Release --hangdump --hangdump-timeout 30s'
+
+  - task: PublishBuildArtifacts@1
+    condition: always()
+    inputs:
+        ArtifactName: TestResults
+        PathtoPublish: '$(Agent.TempDirectory)'
 
   - task: PowerShell@2
     displayName: Authenticode Sign Packages

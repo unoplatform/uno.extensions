@@ -12,10 +12,10 @@ public class Given_CoreFeedOperators
 {
 	#region GetAwaiter
 	[TestMethod]
-	[ExpectedException(typeof(NullReferenceException))]
+	// TODO: Expect null ref exception
 	public async Task When_GetAwaiter_Then_AcceptsNotNullAndStruct()
 	{
-		// Note: Those ar compilation tests! Will always throw null ref
+		// Note: Those are compilation tests! Will always throw null ref
 
 		var intValue = await default(IFeed<int>)!;
 		var nullableIntValue = await default(IFeed<int?>)!;
@@ -124,9 +124,10 @@ public class Given_CoreFeedOperators
 
 	#region Value
 	[TestMethod]
-	[ExpectedException(typeof(NullReferenceException))] // Note: Those are compilation tests! Will always throw null ref
+	// TODO: Expect null ref exception
 	public async Task When_Value_Then_AcceptsNotNullAndStruct()
 	{
+		// Note: Those are compilation tests! Will always throw null ref
 		var intValue = await default(IFeed<int>)!.Value();
 		var nullableIntValue = await default(IFeed<int?>)!.Value();
 
@@ -181,9 +182,10 @@ public class Given_CoreFeedOperators
 
 	#region Data
 	[TestMethod]
-	[ExpectedException(typeof(NullReferenceException))] // Note: Those are compilation tests! Will always throw null ref
+	// TODO: Expect null ref exception
 	public async Task When_Data_Then_AcceptsNotNullAndStruct()
 	{
+		// Note: Those are compilation tests! Will always throw null ref
 		var intValue = await default(IFeed<int>)!.Data();
 		var nullableIntValue = await default(IFeed<int?>)!.Data();
 
@@ -216,9 +218,10 @@ public class Given_CoreFeedOperators
 
 	#region Message
 	[TestMethod]
-	[ExpectedException(typeof(NullReferenceException))] // Note: Those are compilation tests! Will always throw null ref
+	// TODO: Expect null ref exception
 	public async Task When_Message_Then_AcceptsNotNullAndStruct()
 	{
+		// Note: Those are compilation tests! Will always throw null ref
 		var intValue = await default(IFeed<int>)!.Message();
 		var nullableIntValue = await default(IFeed<int?>)!.Message();
 
@@ -233,9 +236,10 @@ public class Given_CoreFeedOperators
 	}
 
 	[TestMethod]
-	[ExpectedException(typeof(NullReferenceException))] // Note: Those are compilation tests! Will always throw null ref
+	// TODO: Expect null ref exception
 	public async Task When_Messages_Then_AcceptsNotNullAndStruct()
 	{
+		// Note: Those are compilation tests! Will always throw null ref
 		var intValue = default(IFeed<int>)!.Messages();
 		var nullableIntValue = default(IFeed<int?>)!.Messages();
 

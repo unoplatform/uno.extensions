@@ -17,9 +17,10 @@ namespace Uno.Extensions.Reactive.Tests.Extensions;
 public class Given_StateForEach : FeedTests
 {
 	[TestMethod]
-	[ExpectedException(typeof(ArgumentNullException))] // Note: This is a compilation tests!
+	// TODO: Expect null ref exception
 	public async Task When_ForEachAsync_Then_AcceptsNotNullAndStruct()
 	{
+		// Note: This is a compilation tests!
 		_ = default(IState<int>)!.ForEach(async (i, ct) => this.ToString());
 		_ = default(IState<int?>)!.ForEach(async (i, ct) => this.ToString());
 		_ = default(IState<string>)!.ForEach(async (i, ct) => this.ToString());
@@ -39,9 +40,10 @@ public class Given_StateForEach : FeedTests
 	}
 
 	[TestMethod]
-	[ExpectedException(typeof(ArgumentNullException))] // Note: This is a compilation tests!
+	// TODO: Expect null ref exception
 	public async Task When_ForEachDataAsync_Then_AcceptsNotNullAndStruct()
 	{
+		// Note: This is a compilation tests!
 		_ = default(IState<int>)!.ForEach(async (i, ct) => this.ToString());
 		_ = default(IState<int?>)!.ForEachData(async (i, ct) => this.ToString());
 		_ = default(IState<string>)!.ForEachData(async (i, ct) => this.ToString());
