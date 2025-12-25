@@ -119,7 +119,7 @@ internal abstract class CollectionTrackerTester<TCollection, T>
 		var kept1 = previousEnumerable.Except(removed).ToArray(); // either updated or moved (or nothing at all)
 		var kept2 = updatedEnumerable.Except(added).ToArray();
 
-		Assert.AreEqual(kept1.Length, kept2.Length);
+		Assert.HasCount(kept1.Length, kept2);
 
 		var notUpdated = kept1.Except(kept2, _itemComparer ?? EqualityComparer<T>.Default).ToArray(); // moved (or nothing at all): items for which the vistiro should not have been invoked
 		var updated = kept1.Except(notUpdated).Join(kept2, l => l, r => r, (originalItem, updatedItem) => (originalItem, updatedItem), _itemComparer ?? EqualityComparer<T>.Default).ToArray();

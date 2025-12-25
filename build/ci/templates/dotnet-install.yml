@@ -4,5 +4,4 @@ steps:
     displayName: 'Use .NET SDK'
     retryCountOnTaskFailure: 3
     inputs:
-      packageType: sdk
-      version: 9.0.200
+      useGlobalJson: true

@@ -8,8 +8,7 @@
 
   variables:
     NUGET_PACKAGES: $(build.sourcesdirectory)/.nuget
-    DotNetVersion: '8.0.301'
-    UnoCheck_Version: '1.23.0'
+    UnoCheck_Version: '1.34.0-dev.24'
     # UnoCheck_Manifest: 'https://raw.githubusercontent.com/unoplatform/uno.check/3b250f49b719d1cf5ab205f997c3959b5e9fed1d/manifests/uno.ui.manifest.json'
 
   steps:
@@ -19,8 +18,7 @@
   - task: UseDotNet@2
     displayName: 'Use .NET'
     inputs:
-      packageType: 'sdk'
-      version: $(DotNetVersion)
+      useGlobalJson: true
       
   - script: |
         dotnet tool install -g uno.check --version $(UnoCheck_Version) --add-source https://api.nuget.org/v3/index.json

@@ -8,8 +8,10 @@
     <PackageVersion Include="AspNet.Security.OAuth.Apple" Version="6.0.4" />
     <PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.12" />
     <PackageVersion Include="Microsoft.IdentityModel.Tokens" Version="7.1.2" />
-    <PackageVersion Include="MSTest.TestAdapter" Version="2.2.9" />
-    <PackageVersion Include="MSTest.TestFramework" Version="2.2.9" />
+    <PackageVersion Include="MSTest.TestAdapter" Version="4.0.2" />
+    <PackageVersion Include="MSTest.TestFramework" Version="4.0.2" />
+    <PackageVersion Include="Microsoft.Testing.Extensions.TrxReport" Version="2.0.2" />
+    <PackageVersion Include="Microsoft.Testing.Extensions.HangDump" Version="2.0.2" />
     <PackageVersion Include="Microsoft.AspNetCore.Authentication.Facebook" Version="6.0.7" />
     <PackageVersion Include="Microsoft.AspNetCore.Authentication.Google" Version="6.0.7" />
     <PackageVersion Include="Microsoft.AspNetCore.Authentication.MicrosoftAccount" Version="6.0.7" />
@@ -32,14 +34,12 @@
     <PackageVersion Include="Uno.UITest.Selenium" Version="1.1.0-dev.70" />
     <PackageVersion Include="Uno.UITest.Xamarin" Version="1.1.0-dev.70" />
     <PackageVersion Include="Uno.UITest.Helpers" Version="1.1.0-dev.70" />
-    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.9.0" />
     <PackageVersion Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageVersion Include="NUnit" Version="4.1.0" />
-    <PackageVersion Include="NUnit3TestAdapter" Version="4.5.0" />
-    <PackageVersion Include="NunitXml.TestLogger" Version="3.0.131" />
+    <PackageVersion Include="NUnit3TestAdapter" Version="5.2.0" />
+    <PackageVersion Include="NunitXml.TestLogger" Version="7.1.0" />
     <PackageVersion Include="Xamarin.Google.Android.Material" Version="1.5.0.13" />
     <PackageVersion Include="Xamarin.UITest" Version="4.3.4" />
-    <PackageVersion Include="coverlet.collector" Version="6.0.2" />
     <PackageVersion Include="System.Collections.Immutable" Version="8.0.0" />
     <PackageVersion Include="System.Private.Uri" Version="4.3.2" />
     <PackageVersion Include="System.Net.Http" Version="4.3.4" />

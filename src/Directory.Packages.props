@@ -14,8 +14,11 @@
     <PackageVersion Include="Microsoft.Kiota.Serialization.Json" Version="1.21.0" />
     <PackageVersion Include="Microsoft.Kiota.Serialization.Multipart" Version="1.21.0" />
     <PackageVersion Include="Microsoft.Kiota.Serialization.Text" Version="1.21.0" />
-    <PackageVersion Include="MSTest.TestAdapter" Version="2.2.9" />
-    <PackageVersion Include="MSTest.TestFramework" Version="2.2.9" />
+    <PackageVersion Include="MSTest.TestAdapter" Version="4.0.2" />
+    <PackageVersion Include="MSTest.TestFramework" Version="4.0.2" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.0.1" />
+    <PackageVersion Include="Microsoft.Testing.Extensions.TrxReport" Version="2.0.2" />
+    <PackageVersion Include="Microsoft.Testing.Extensions.HangDump" Version="2.0.2" />
     <PackageVersion Include="Microsoft.Bcl.AsyncInterfaces" Version="8.0.0" />
     <PackageVersion Include="Microsoft.CodeAnalysis.CSharp" Version="4.1.0" />
     <PackageVersion Include="Microsoft.Extensions.Configuration.Abstractions" Version="9.0.9" />
@@ -29,7 +32,6 @@
     <PackageVersion Include="Microsoft.Identity.Client.Broker" Version="4.61.3" />
     <PackageVersion Include="Microsoft.Maui.Controls" Version="9.0.111" />
     <PackageVersion Include="Microsoft.Maui.Controls.Compatibility" Version="9.0.111" />
-    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.6.2" />
     <PackageVersion Include="Microsoft.Net.Compilers.Toolset" Version="4.2.0" />
     <PackageVersion Include="Microsoft.SourceLink.GitHub" Version="1.1.1" />
     <PackageVersion Include="Microsoft.UI.Xaml" Version="2.7.1" />
@@ -62,7 +64,6 @@
     <PackageVersion Include="Uno.WinUI" Version="$(UnoVersion)" />
     <PackageVersion Include="Uno.WinUI.Markup" Version="5.3.12" />
     <PackageVersion Include="Uno.WinUI.MSAL" Version="$(UnoVersion)" />
-    <PackageVersion Include="coverlet.collector" Version="3.1.2" />
     <PackageVersion Include="xunit" Version="2.4.1" />
     <PackageVersion Include="xunit.runner.visualstudio" Version="2.4.1" />
     <PackageVersion Include="System.ComponentModel.Annotations" Version="5.0.0" />

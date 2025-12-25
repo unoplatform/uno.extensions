@@ -13,10 +13,10 @@ public class Given_CoreListFeedOperators
 {
 	#region GetAwaiter
 	[TestMethod]
-	[ExpectedException(typeof(NullReferenceException))]
+	// TODO: Expect null ref exception
 	public async Task When_GetAwaiter_Then_AcceptsNotNullAndStruct()
 	{
-		// Note: Those ar compilation tests! Will always throw null ref
+		// Note: Those are compilation tests! Will always throw null ref
 
 		var intValue = await default(IListFeed<int>)!;
 		var nullableIntValue = await default(IListFeed<int?>)!;
@@ -117,9 +117,10 @@ public class Given_CoreListFeedOperators
 
 	#region Value
 	[TestMethod]
-	[ExpectedException(typeof(NullReferenceException))] // Note: Those are compilation tests! Will always throw null ref
+	// TODO: Expect null ref exception
 	public async Task When_Value_Then_AcceptsNotNullAndStruct()
 	{
+		// Note: Those are compilation tests! Will always throw null ref
 		var intValue = await default(IListFeed<int>)!.Value();
 		var nullableIntValue = await default(IListFeed<int?>)!.Value();
 
@@ -158,9 +159,10 @@ public class Given_CoreListFeedOperators
 
 	#region Data
 	[TestMethod]
-	[ExpectedException(typeof(NullReferenceException))] // Note: Those are compilation tests! Will always throw null ref
+	// TODO: Expect null ref exception
 	public async Task When_Data_Then_AcceptsNotNullAndStruct()
 	{
+		// Note: Those are compilation tests! Will always throw null ref
 		var intValue = await default(IListFeed<int>)!.Data();
 		var nullableIntValue = await default(IListFeed<int?>)!.Data();
 
@@ -193,9 +195,10 @@ public class Given_CoreListFeedOperators
 
 	#region Message
 	[TestMethod]
-	[ExpectedException(typeof(NullReferenceException))] // Note: Those are compilation tests! Will always throw null ref
+	// TODO: Expect null ref exception
 	public async Task When_Message_Then_AcceptsNotNullAndStruct()
 	{
+		// Note: Those are compilation tests! Will always throw null ref
 		var intValue = await default(IListFeed<int>)!.Message();
 		var nullableIntValue = await default(IListFeed<int?>)!.Message();
 
@@ -210,9 +213,10 @@ public class Given_CoreListFeedOperators
 	}
 
 	[TestMethod]
-	[ExpectedException(typeof(NullReferenceException))] // Note: Those are compilation tests! Will always throw null ref
+	// TODO: Expect null ref exception
 	public async Task When_Messages_Then_AcceptsNotNullAndStruct()
 	{
+		// Note: Those are compilation tests! Will always throw null ref
 		var intValue = default(IListFeed<int>)!.Messages();
 		var nullableIntValue = default(IListFeed<int?>)!.Messages();
 

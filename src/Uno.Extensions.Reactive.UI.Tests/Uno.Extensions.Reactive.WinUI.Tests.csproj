@@ -7,7 +7,7 @@
 		<DefineConstants>$(DefineConstants);WINUI</DefineConstants>
 
 		<UnoSingleProject>true</UnoSingleProject>
-		<OutputType>Library</OutputType>
+		<OutputType>Exe</OutputType>
 	</PropertyGroup>
 
 	<ItemGroup Condition="$(IsXamarinIOS) or $(IsXamarinMac) or $(IsMonoAndroid)">
@@ -28,6 +28,9 @@
 
 	<ItemGroup>
 		<PackageReference Include="MSTest.TestFramework" />
+		<PackageReference Include="MSTest.TestAdapter" />
+		<PackageReference Include="Microsoft.Testing.Extensions.TrxReport" />
+		<PackageReference Include="Microsoft.Testing.Extensions.HangDump" />
 		<!--<PackageReference Include="Uno.UI.RuntimeTests.Engine" />-->
 	</ItemGroup>
 

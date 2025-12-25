@@ -35,6 +35,10 @@
 		<Build_Windows  Condition="!$([MSBuild]::IsOSPlatform('windows'))">false</Build_Windows>
 		<Build_Desktop>true</Build_Desktop>
 		<Build_Web>true</Build_Web>
+
+		<EnableMSTestRunner>true</EnableMSTestRunner>
+		<EnableNUnitRunner>true</EnableNUnitRunner>
+		<NoWarn>$(NoWarn);MSTEST0001</NoWarn>
 	</PropertyGroup>
 
 	<Import Project="DebugPlatforms.props" Condition="exists('DebugPlatforms.props')" />

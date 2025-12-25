@@ -35,7 +35,8 @@ cd $UNO_UITEST_PROJECT
 ## Run the tests
 dotnet test \
 	-c Release \
-	-l:"console;verbosity=normal" \
-	--logger "nunit;LogFileName=$BUILD_SOURCESDIRECTORY/build/TestResult.xml" \
-	-v m \
+	--no-progress \
+	--report-spekt-nunit \
+	--report-spekt-nunit-filename TestResult.xml \
+	--results-directory $BUILD_SOURCESDIRECTORY/build \
 	|| true

@@ -41,14 +41,13 @@ public class Given_RequestSource : FeedTests
 	}
 
 	[TestMethod]
-	[ExpectedException(typeof(ObjectDisposedException))]
 	public async Task When_DisposedAndSend_Then_Throws()
 	{
 		var sut = new CompositeRequestSource();
 		var rq = new TestRequest();
 
 		sut.Dispose();
-		sut.Send(rq);
+		Assert.ThrowsExactly<ObjectDisposedException>(() => sut.Send(rq));
 	}
 
 	private Task<List<IContextRequest>> Take(RequestSource sut, int count, CancellationToken ct)
