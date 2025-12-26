@@ -3,9 +3,12 @@
 
 	<PropertyGroup>
 		<Description>Serialization Extensions for working with ISerializer for the Uno Platform, UWP and WinUI</Description>
+		<IsAotCompatible>true</IsAotCompatible>
 
 		<!--Temporary disable missing XML doc until fixed in the whole package-->
 		<WarningsNotAsErrors>$(WarningsNotAsErrors);CS1591</WarningsNotAsErrors>
+		<!-- error CS0436: The type 'ServiceCollectionExtensions' in '…src/Uno.Extensions.Serialization/ServiceCollectionExtensions.cs' conflicts with the imported type 'ServiceCollectionExtensions' in 'Uno.Extensions.Core, Version=255.255.255.255, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'src/Uno.Extensions.Serialization/ServiceCollectionExtensions.cs'. -->
+		<NoWarn>$(NoWarn);CS0436</NoWarn>
 	</PropertyGroup>
 
 	<ItemGroup>

@@ -1,4 +1,7 @@
-﻿namespace Uno.Extensions;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Text.Json.Serialization.Metadata;
+
+namespace Uno.Extensions;
 
 /// <summary>
 /// Extensions for <see cref="IHostBuilder"/> to add serialization.
@@ -18,6 +21,8 @@ public static class HostBuilderExtensions
 	/// <returns>
 	/// The <see cref="IHostBuilder"/> with serialization added.
 	/// </returns>
+	[RequiresDynamicCode("Default behavior requires Reflection. Use UseSerializationResolversinstead.")]
+	[RequiresUnreferencedCode("Default behavior requires Reflection. Use UseSerializationResolvers() instead.")]
 	public static IHostBuilder UseSerialization(this IHostBuilder hostBuilder, Action<IServiceCollection> configure)
 	{
 		return hostBuilder.UseSerialization((context, builder) => configure.Invoke(builder));
@@ -35,6 +40,8 @@ public static class HostBuilderExtensions
 	/// <returns>
 	/// The <see cref="IHostBuilder"/> with serialization added.
 	/// </returns>
+	[RequiresDynamicCode("Default behavior requires Reflection. Use UseSerializationResolversinstead.")]
+	[RequiresUnreferencedCode("Default behavior requires Reflection. Use UseSerializationResolvers() instead.")]
 	public static IHostBuilder UseSerialization(this IHostBuilder hostBuilder, Action<HostBuilderContext, IServiceCollection>? configure = default)
 	{
 		return hostBuilder
@@ -43,5 +50,21 @@ public static class HostBuilderExtensions
 					_ = s.AddSystemTextJsonSerialization(ctx);
 					configure?.Invoke(ctx, s);
 				});
+	}
+
+	public static IHostBuilder UseSerializationResolvers(this IHostBuilder hostBuilder, Action<IServiceCollection> configure)
+	{
+		return hostBuilder.UseSerializationResolvers((context, builder) => configure.Invoke(builder));
+	}
+
+	public static IHostBuilder UseSerializationResolvers(this IHostBuilder hostBuilder, Action<HostBuilderContext, IServiceCollection>? configure = default, params IJsonTypeInfoResolver[] typeInfoResolvers)
+	{
+		return hostBuilder
+			.ConfigureServices((ctx, s) =>
+			{
+				_ = s.AddSerialization(ctx);
+				_ = s.AddSerializationJsonTypeInfoResolvers(typeInfoResolvers);
+				configure?.Invoke(ctx, s);
+			});
 	}
 }

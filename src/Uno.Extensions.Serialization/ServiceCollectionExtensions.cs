@@ -1,4 +1,9 @@
-﻿namespace Uno.Extensions;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Text.Json.Serialization.Metadata;
+
+using Microsoft.Extensions.Options;
+
+namespace Uno.Extensions;
 
 /// <summary>
 /// This class is used for serialization configuration.
@@ -6,12 +11,28 @@
 /// </summary>
 public static class ServiceCollectionExtensions
 {
+	public static IServiceCollection AddSerialization(
+		this IServiceCollection services,
+		HostBuilderContext context)
+	{
+		if (context.IsRegistered(nameof(AddSerialization)))
+		{
+			return services;
+		}
+		return services
+			.AddSingleton<SystemTextJsonSerializer>()
+			.AddSingleton<ISerializer>(services => services.GetRequiredService<SystemTextJsonSerializer>())
+			.AddSingleton(typeof(ISerializer<>), typeof(SystemTextJsonGeneratedSerializer<>));
+	}
+
 	/// <summary>
 	/// Adds the serialization services to the <see cref="IServiceCollection"/>.
 	/// </summary>
 	/// <param name="services">Service collection.</param>
 	/// <param name="context">The <see cref="HostBuilderContext"/> to use when adding services</param>
 	/// <returns><see cref="IServiceCollection"/>.</returns>
+	[RequiresDynamicCode("Default behavior requires Reflection. Use AddSerialization() + AddJsonTypeInfoResolvers() instead.")]
+	[RequiresUnreferencedCode("Default behavior requires Reflection. Use AddSerialization() + AddJsonTypeInfoResolvers() instead.")]
 	public static IServiceCollection AddSystemTextJsonSerialization(
 		this IServiceCollection services,
 		HostBuilderContext context)
@@ -22,12 +43,7 @@ public static class ServiceCollectionExtensions
 		}
 
 		return services
-			.AddSingleton(sp => new JsonSerializerOptions
-			{
-				NumberHandling = System.Text.Json.Serialization.JsonNumberHandling.AllowReadingFromString,
-				DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault,
-				AllowTrailingCommas = true
-			})
+			.AddSingleton(sp => new JsonSerializerOptions(SerializationOptions.DefaultSerializerOptions))
 			.AddSingleton<SystemTextJsonSerializer>()
 			.AddSingleton<ISerializer>(services => services.GetRequiredService<SystemTextJsonSerializer>())
 			.AddSingleton(typeof(ISerializer<>), typeof(SystemTextJsonGeneratedSerializer<>));
@@ -53,9 +69,30 @@ public static class ServiceCollectionExtensions
 		JsonTypeInfo<TEntity> instance
 		)
 	{
+		if (instance.OriginatingResolver is {} resolver)
+		{
+			AddSerializationJsonTypeInfoResolvers(services, resolver);
+		}
 		return services
 			.AddSingleton(instance)
 			.AddSingleton<ISerializerTypedInstance>(sp => new SerializerTypedInstance<TEntity>(sp, instance));
+	}
+
+	public static IServiceCollection ConfigureSerializationOptions(this IServiceCollection services, Action<SerializationOptions> configureOptions)
+	{
+		services.Configure<SerializationOptions>(configureOptions);
+		return services;
+	}
+
+	public static IServiceCollection AddSerializationJsonTypeInfoResolvers(this IServiceCollection services, params IJsonTypeInfoResolver[] typeInfoResolvers)
+	{
+		return services.ConfigureSerializationOptions(options =>
+		{
+			foreach (var resolver in typeInfoResolvers)
+			{
+				options.SerializerOptions.TypeInfoResolverChain.Add(resolver);
+			}
+		});
 	}
 }
 
