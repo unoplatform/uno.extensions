@@ -1,6 +1,4 @@
 - name: Overview
   href: xref:Uno.Extensions.Storage.Overview
-- name: Getting Started
-  href: xref:Uno.Extensions.Storage.GettingStarted
 - name: "How-To: Add Required Entitlements"
   href: xref:Uno.Extensions.Storage.HowToRequiredEntitlements

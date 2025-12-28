@@ -6,33 +6,76 @@ uid: Uno.Extensions.Storage.Overview
 
 > **UnoFeatures:** `Storage` (add to `<UnoFeatures>` in your `.csproj`)
 
-Uno.Extensions.Storage facilitate local data storage across multiple platforms, including WebAssembly, Android, iOS, macOS, Desktop and Windows. This extension is particularly useful for applications that require secure, persistent storage of user preferences, configuration settings, and sensitive information such as tokens and credentials.
+Uno.Extensions.Storage facilitate local data storage across multiple platforms, including WebAssembly, Android, iOS, macOS, Desktop and Windows. This extension is particularly useful for applications that require secure, persistent storage of user preferences, configuration settings, and sensitive information such as tokens and credentials. Additionally, it provides an `ISerializer` from [Uno.Extensions.Serialization](xref:Uno.Extensions.Serialization.Overview) to return the deserialized type your code needs.
 
 > [!IMPORTANT]
 > On Apple platforms (iOS, Mac Catalyst) the Uno storage extension, used by the authentication extension, uses the OS Key Chain service to store secrets. This requires your application to have the [proper entitlements](xref:Uno.Extensions.Storage.HowToRequiredEntitlements) to work properly.
 
-Additionally, it enables to provide a own `ISerializer` from [Uno.Extensions.Serialization](xref:Uno.Extensions.Serialization.Overview) if your Data or File format is not supported out of the box.
+## Getting Started
 
-## Explore the Storage Feature
+[!INCLUDE [single-project](../includes/single-project.md)]
 
-- **Start here:** [Getting Started with Storage](xref:Uno.Extensions.Storage.GettingStarted)
-- Handling Package Files
+[!INCLUDE [create-application](../includes/create-application.md)]
+
+### 1. Prepare for Storage
+
+- Add `Storage` to the `<UnoFeatures>` property in your .csproj file.
+
+    ```diff
+    <UnoFeatures>
+    +   Storage;
+    </UnoFeatures>
+    ```
+
+### 2. Set up Storage
+
+- Use the `UseStorage()` extension method to configure the `IHostBuilder` to enable Storage.
+
+    ```csharp
+    private IHost Host { get; set; }
+
+    protected override void OnLaunched(LaunchActivatedEventArgs args)
+    {
+        var builder = this.CreateBuilder(args)
+            .Configure(host =>
+            {
+                host.UseStorage();
+            });
+        ...
+    }
+    ```
+
+### 3. Inject IStorage into your view model
+
+- Inject `IStorage` into your view model's constructor to enable dependency injection.
+
+    ```csharp
+    public partial class MainViewModel
+    {
+        private readonly IStorage _storage;
+
+        public MainViewModel(IStorage storage)
+        {
+            _storage = storage;
+        }
+    }
+    ```
+
+### 4. Add files to your project
+
+- Add the file(s) you want to read or write to in your app.
+
+- Open your .csproj file and add the following to the `<ItemGroup>` section:
+
+    ```xml
+    <ItemGroup>
+        <Resource Include="Assets\<YourFolderNameIfAny>\*" CopyToOutputDirectory="PreserveNewest" />
+    </ItemGroup>
+    ```
+
+## Additional Resources
+
 - [How to: Required Entitlements](xref:Uno.Extensions.Storage.HowToRequiredEntitlements)
-
-## Which files could be preferred to use Storage instead of `appsettings.json` via `IConfiguration`
-
-As simple as it sounds, you can use the Storage feature to read and write files (*almost*) independent of their type, while `appsettings.json` is a JSON file that is used to store application settings and configuration data.
-
-> [!TIP]
-> Here is a rule for Storage Package files to remember:
->
-> As long as you can provide a [ISerializer](https://github.com/unoplatform/uno.extensions/blob/main/src/Uno.Extensions.Serialization/ISerializer.cs) or your file is generally readable as `string` or `Stream`, this can be handled with Uno.Extensions.Storage.
-> [!NOTE]
-> For other files that have their BuildAction set to Resources or Content, these can be referenced via `ms-appx:///Here/comes/your/filepath.txt` to read the file from the package.
-
-## Next steps
-
-Check out the [Getting Started Guide](xref:Uno.Extensions.Storage.GettingStarted)
 
 ## See Also
 
