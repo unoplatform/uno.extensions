@@ -99,7 +99,7 @@ var builder = this.CreateBuilder(args)
         // Configure the host builder
         .UseConfiguration(...)
         .UseLocalization()
-        .UseSerialization(...)
+        .UseJsonSerializationResolvers(...)
         .UseHttp(...)
     );
 ```

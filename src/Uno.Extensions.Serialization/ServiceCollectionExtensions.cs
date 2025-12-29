@@ -1,4 +1,9 @@
-﻿namespace Uno.Extensions;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Text.Json.Serialization.Metadata;
+
+using Microsoft.Extensions.Options;
+
+namespace Uno.Extensions;
 
 /// <summary>
 /// This class is used for serialization configuration.
@@ -7,11 +12,47 @@
 public static class ServiceCollectionExtensions
 {
 	/// <summary>
+	///   Adds the serialization services to the <see cref="IServiceCollection"/>.
+	/// </summary>
+	/// <param name="services">
+	///   The <see cref="IServiceCollection"/> to add JSON Serialization to.
+	/// </param>
+	/// <param name="context">The <see cref="HostBuilderContext"/> to use when adding services</param>
+	/// <returns>
+	///   The modified <see cref="IServiceCollection" />.
+	/// </returns>
+	/// <remarks>
+	///   This method should be used in conjunction with <see cref="AddJsonSerializationTypeInfoResolvers" /> or
+	///   <see cref="ConfigureJsonSerializationOptions" /> to explicitly add
+	///   <see cref="IJsonTypeInfoResolver" /> instances to consult for serialization and deserialization.
+	///   Otherwise, methods such as <see cref="ISerializer.ToString" /> may throw <see cref="InvalidOperationException" />.
+	/// </remarks>
+	public static IServiceCollection AddJsonSerialization(
+		this IServiceCollection services,
+		HostBuilderContext context)
+	{
+		if (context.IsRegistered(nameof(AddJsonSerialization)))
+		{
+			return services;
+		}
+		return services
+			.AddSingleton<SystemTextJsonSerializer>()
+			.AddSingleton<ISerializer>(services => services.GetRequiredService<SystemTextJsonSerializer>())
+			.AddSingleton(typeof(ISerializer<>), typeof(SystemTextJsonGeneratedSerializer<>));
+	}
+
+	/// <summary>
 	/// Adds the serialization services to the <see cref="IServiceCollection"/>.
 	/// </summary>
 	/// <param name="services">Service collection.</param>
 	/// <param name="context">The <see cref="HostBuilderContext"/> to use when adding services</param>
 	/// <returns><see cref="IServiceCollection"/>.</returns>
+	/// <remarks>
+	///   Consider using <see cref="AddJsonSerialization" /> and <see cref="AddJsonSerializationTypeInfoResolvers" />
+	///   for use in trimming-enabled environments such as NativeAOT.
+	/// </remarks>
+	[RequiresDynamicCode("Default behavior requires Reflection. Use AddJsonSerialization() + AddJsonSerializationTypeInfoResolvers() instead.")]
+	[RequiresUnreferencedCode("Default behavior requires Reflection. Use AddJsonSerialization() + AddJsonSerializationTypeInfoResolvers() instead.")]
 	public static IServiceCollection AddSystemTextJsonSerialization(
 		this IServiceCollection services,
 		HostBuilderContext context)
@@ -22,12 +63,7 @@ public static class ServiceCollectionExtensions
 		}
 
 		return services
-			.AddSingleton(sp => new JsonSerializerOptions
-			{
-				NumberHandling = System.Text.Json.Serialization.JsonNumberHandling.AllowReadingFromString,
-				DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault,
-				AllowTrailingCommas = true
-			})
+			.AddSingleton(sp => new JsonSerializerOptions(JsonSerializationOptions.DefaultSerializerOptions))
 			.AddSingleton<SystemTextJsonSerializer>()
 			.AddSingleton<ISerializer>(services => services.GetRequiredService<SystemTextJsonSerializer>())
 			.AddSingleton(typeof(ISerializer<>), typeof(SystemTextJsonGeneratedSerializer<>));
@@ -53,9 +89,55 @@ public static class ServiceCollectionExtensions
 		JsonTypeInfo<TEntity> instance
 		)
 	{
+		if (instance.OriginatingResolver is {} resolver)
+		{
+			AddJsonSerializationTypeInfoResolvers(services, [resolver]);
+		}
 		return services
 			.AddSingleton(instance)
 			.AddSingleton<ISerializerTypedInstance>(sp => new SerializerTypedInstance<TEntity>(sp, instance));
+	}
+
+	/// <summary>
+	///   Configures options used for reading and writing JSON when using
+	///   <see cref="SystemTextJsonSerializer" />-backed <see cref="ISerializer" /> instances.
+	/// </summary>
+	/// <param name="services">
+	///   The <see cref="IServiceCollection"/> to configure options on.
+	/// </param>
+	/// <param name="configureOptions">
+	///   The <see cref="Action{JsonSerializationOptions}" /> to configure the <see cref="JsonSerializationOptions" />
+	/// </param>
+	/// <returns>
+	///   The modified <see cref="IServiceCollection" />.
+	/// </returns>
+	public static IServiceCollection ConfigureJsonSerializationOptions(this IServiceCollection services, Action<JsonSerializationOptions> configureOptions)
+	{
+		services.Configure<JsonSerializationOptions>(configureOptions);
+		return services;
+	}
+
+	/// <summary>
+	///   Adds additional <see cref="IJsonTypeInfoResolver"/> instances to use for JSON serialization and deserialization.
+	/// </summary>
+	/// <param name="services">
+	///   The <see cref="IServiceCollection"/> to add <see cref="IJsonTypeInfoResolver"/> instances to.
+	/// </param>
+	/// <param name="typeInfoResolvers">
+	///   An enumerable of <see cref="IJsonTypeInfoResolver" /> instances to use for JSON serialization and deserialization.
+	/// </param>
+	/// <returns>
+	///   The modified <see cref="IServiceCollection" />.
+	/// </returns>
+	public static IServiceCollection AddJsonSerializationTypeInfoResolvers(this IServiceCollection services, params IEnumerable<IJsonTypeInfoResolver> typeInfoResolvers)
+	{
+		return services.ConfigureJsonSerializationOptions(options =>
+		{
+			foreach (var resolver in typeInfoResolvers)
+			{
+				options.SerializerOptions.TypeInfoResolverChain.Add(resolver);
+			}
+		});
 	}
 }
 
