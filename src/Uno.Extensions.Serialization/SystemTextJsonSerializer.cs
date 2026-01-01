@@ -1,4 +1,6 @@
-﻿namespace Uno.Extensions.Serialization;
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace Uno.Extensions.Serialization;
 
 /// <summary>
 /// A reflection-based serializer implementation for System.Text.Json.
@@ -37,6 +39,7 @@ public class SystemTextJsonSerializer : ISerializer
 	/// <returns>
 	/// The instance of targetType deserialized from the source.
 	/// </returns>
+	[RequiresUnreferencedCode("From JsonDeserializer: JSON serialization and deserialization might require types that cannot be statically analyzed and might need runtime code generation. Use System.Text.Json source generation for native AOT applications.")]
 	public object? FromStream(Stream source, Type targetType)
 	{
 		var typedSerializer = TypedSerializer(targetType);
@@ -55,6 +58,7 @@ public class SystemTextJsonSerializer : ISerializer
 	/// <param name="valueType">
 	/// The type to use to serialize the object. value must be convertible to this type.
 	/// </param>
+	[RequiresUnreferencedCode("From JsonDeserializer: JSON serialization and deserialization might require types that cannot be statically analyzed and might need runtime code generation. Use System.Text.Json source generation for native AOT applications.")]
 	public void ToStream(Stream stream, object value, Type valueType)
 	{
 		var typedSerializer = TypedSerializer(valueType);
@@ -80,6 +84,7 @@ public class SystemTextJsonSerializer : ISerializer
 	/// <returns>
 	/// The serialized representation of value.
 	/// </returns>
+	[RequiresUnreferencedCode("From JsonDeserializer: JSON serialization and deserialization might require types that cannot be statically analyzed and might need runtime code generation. Use System.Text.Json source generation for native AOT applications.")]
 	public string ToString(object value, Type valueType)
 	{
 		var typedSerializer = TypedSerializer(valueType);
@@ -98,6 +103,7 @@ public class SystemTextJsonSerializer : ISerializer
 	/// <returns>
 	/// The instance of targetType deserialized from the source.
 	/// </returns>
+	[RequiresUnreferencedCode("From JsonDeserializer: JSON serialization and deserialization might require types that cannot be statically analyzed and might need runtime code generation. Use System.Text.Json source generation for native AOT applications.")]
 	public object? FromString(string source, Type targetType)
 	{
 		var typedSerializer = TypedSerializer(targetType);

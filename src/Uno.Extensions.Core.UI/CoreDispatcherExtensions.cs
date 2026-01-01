@@ -19,6 +19,7 @@ public static class CoreDispatcherExtensions
 			catch (Exception ex)
 			{
 				completion.TrySetException(ex);
+				throw;
 			}
 		});
 		return await completion.Task;

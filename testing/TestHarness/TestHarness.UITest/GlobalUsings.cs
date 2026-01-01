@@ -24,4 +24,5 @@ global using Uno.UITest.Helpers.Queries;
 global using Uno.UITests.Helpers;
 global using static System.Math;
 global using Assert = Microsoft.VisualStudio.TestTools.UnitTesting.Assert;
+global using IgnoreAttribute = NUnit.Framework.IgnoreAttribute;
 
