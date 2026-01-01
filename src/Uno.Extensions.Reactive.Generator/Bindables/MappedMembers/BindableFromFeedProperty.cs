@@ -19,8 +19,15 @@ internal record BindableFromFeedProperty(IPropertySymbol _property, ITypeSymbol 
 		=> null;
 
 	/// <inheritdoc />
-	public string GetDeclaration()
-		=> $"{_property.GetAccessibilityAsCSharpCodeString()} {_bindableValueType} {_property.Name} {{ get; private set; }}";
+	public string GetDeclaration() =>
+		$$"""
+		{{_property.GetAccessibilityAsCSharpCodeString()}} {{_bindableValueType}} {{_property.Name}}
+		{
+			[global::System.Diagnostics.CodeAnalysis.DynamicDependency(global::System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes.PublicProperties, typeof({{_bindableValueType}}))]
+			get;
+			private set;
+		}
+		""";
 
 	/// <inheritdoc />
 	public string? GetInitialization()

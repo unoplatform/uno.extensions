@@ -4,6 +4,11 @@ uid: Uno.Extensions.Authentication.Overview
 # Authentication
 
 > **UnoFeatures:** `Authentication`, `AuthenticationMsal`, or `AuthenticationOidc` (add to `<UnoFeatures>` in your `.csproj`)
+>
+> [!IMPORTANT]
+>
+> - Use `IAuthenticationService` from `Uno.Extensions.Authentication`
+> - Inject `IAuthenticationService` into ViewModels via constructor parameters
 
 Uno.Extensions.Authentication is designed to make it simple to add authentication to an application. Authenticating a user may be used to restrict access to specific parts of the application, or in order to supply an access token when calling a back-end service.
 
@@ -24,7 +29,7 @@ For more information about `UnoFeatures` refer to our [Using the Uno.Sdk](xref:U
 
 ## IAuthenticationService
 
-The `IAuthenticationService` interface defines the methods that an application can call to authenticate the user.
+The `IAuthenticationService` is the framework-provided authentication interface that you inject into your ViewModels. It defines the methods that an application can call to authenticate the user.
 
 ```csharp
 public interface IAuthenticationService

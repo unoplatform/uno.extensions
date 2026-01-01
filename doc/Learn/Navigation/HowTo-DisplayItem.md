@@ -78,6 +78,9 @@ Often it is necessary to pass a data item from one page to another. This scenari
 
 ### 5. Navigating for selected value in a `ListView`
 
+> [!IMPORTANT]
+> For navigation from `ListView` and `GridView`, **always use `uen:Navigation.Request`** attached property.
+
 A common application scenario is to present a list of items, for example presented in a `ListView`. When the user selects an item, the application navigates to a new view in order to display the details of that item.
 
 - Add a `Widgets` property to your `MainViewModel`
