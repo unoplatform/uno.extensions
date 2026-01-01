@@ -7,6 +7,8 @@ uid: Uno.Extensions.Localization.HowToUseLocalization
 
 `Uno.Extensions.Localization` uses the locale-specific resources from `resw` files placed in folders corresponding to the well-known language tag (eg en-US). By opting into localization, an implementation of `IStringLocalizer` is registered with your application's `IServiceCollection`.
 
+When localization is enabled, user-facing text in XAML should use `x:Uid` attributes rather than hardcoded text values. This allows the text to be resolved from resource files based on the current culture.
+
 ## Step-by-step
 
 [!include[create-application](../includes/create-application.md)]
@@ -43,7 +45,48 @@ uid: Uno.Extensions.Localization.HowToUseLocalization
     }
     ```
 
-### 3. Use the localization service to resolve localized text
+### 3. Add x:Uid to XAML elements
+
+When localization is enabled, user-facing text should use `x:Uid` attributes to reference localized strings in resource files.
+
+```xml
+<TextBlock x:Uid="LoginPage.TextBlock.WelcomeBack"
+           Style="{StaticResource TitleLargeTextBlockStyle}"
+           HorizontalAlignment="Center" />
+
+<Button x:Uid="LoginPage.Button.SignIn"
+        Command="{Binding LoginCommand}" />
+
+<TextBox x:Uid="LoginPage.TextBox.EmailInput" />
+```
+
+#### Naming Convention for x:Uid
+
+It is recommended to follow the pattern: `PageName.ElementType.Purpose`
+
+Examples:
+
+* `LoginPage.TextBlock.WelcomeBack` - TextBlock showing "Welcome Back" on LoginPage
+* `LoginPage.Button.SignIn` - Sign In button on LoginPage
+* `HomePage.TextBlock.Greeting` - Greeting message on HomePage
+* `RegisterPage.TextBox.EmailInput` - Email input on RegisterPage
+* `Shell.NavigationViewItem.Home` - Home navigation item in Shell
+
+#### Corresponding Resources.resw Entries
+
+For each `x:Uid`, create matching entries in `Strings/[language]/Resources.resw`:
+
+| Name | Value | Comment |
+|------|-------|----------|
+| `LoginPage.TextBlock.WelcomeBack.Text` | Welcome Back | TextBlock text |
+| `LoginPage.Button.SignIn.Content` | Sign In | Button content |
+| `LoginPage.TextBox.EmailInput.PlaceholderText` | Enter your email | TextBox placeholder |
+| `LoginPage.TextBox.EmailInput.Header` | Email Address | TextBox header |
+
+> [!NOTE]
+> The property suffix (`.Text`, `.Content`, `.PlaceholderText`) must match the XAML property you want to set.
+
+### 4. Use the localization service to resolve localized text
 
 * Add a constructor parameter of `IStringLocalizer` type to a view model you registered with the service collection:
 
@@ -70,7 +113,7 @@ uid: Uno.Extensions.Localization.HowToUseLocalization
     var isResourceNotFound = myString.ResourceNotFound;
     ```
 
-### 4. Update the UI culture with `LocalizationSettings`
+### 5. Update the UI culture with `LocalizationSettings`
 
 * Add a constructor parameter of `ILocalizationService` type to a view model you registered with the service collection:
 
