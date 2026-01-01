@@ -2,6 +2,7 @@
 
 using System.Collections.Immutable;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Uno.Extensions.Configuration.Internal;
 
@@ -11,9 +12,34 @@ namespace Uno.Extensions.Configuration.Internal;
 public static class ConfigurationBinder
 {
 	private const BindingFlags DeclaredOnlyLookup = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static | BindingFlags.DeclaredOnly;
+	private const DynamicallyAccessedMemberTypes DeclaredOnlyMethodRequirements =
+		  DynamicallyAccessedMemberTypes.NonPublicMethods
+		| DynamicallyAccessedMemberTypes.PublicMethods;
+	private const DynamicallyAccessedMemberTypes DeclaredOnlyPropertyRequirements =
+		  DynamicallyAccessedMemberTypes.NonPublicProperties
+		| DynamicallyAccessedMemberTypes.PublicProperties;
+	private const DynamicallyAccessedMemberTypes AllMembersAndInterfaces =
+		  DynamicallyAccessedMemberTypes.PublicConstructors
+		| DynamicallyAccessedMemberTypes.NonPublicConstructors
+		| DynamicallyAccessedMemberTypes.PublicEvents
+		| DynamicallyAccessedMemberTypes.NonPublicEvents
+		| DynamicallyAccessedMemberTypes.PublicFields
+		| DynamicallyAccessedMemberTypes.NonPublicFields
+		| DynamicallyAccessedMemberTypes.PublicMethods
+		| DynamicallyAccessedMemberTypes.NonPublicMethods
+		| DynamicallyAccessedMemberTypes.PublicNestedTypes
+		| DynamicallyAccessedMemberTypes.NonPublicNestedTypes
+		| DynamicallyAccessedMemberTypes.PublicProperties
+		| DynamicallyAccessedMemberTypes.NonPublicProperties
+		| DynamicallyAccessedMemberTypes.Interfaces
+		;
+
 	private const string TrimmingWarningMessage = "In case the type is non-primitive, the trimmer cannot statically analyze the object's type so its members may be trimmed.";
 	private const string InstanceGetTypeTrimmingWarningMessage = "Cannot statically analyze the type of instance so its members may be trimmed";
 	private const string PropertyTrimmingWarningMessage = "Cannot statically analyze property.PropertyType so its members may be trimmed.";
+
+	internal const string RequiresDynamicCodeMessage = "Binding strongly typed objects to configuration values may require generating dynamic code at runtime. [From Array.CreateInstance() and others.]";
+	internal const string RequiresUnreferencedCodeMessage = "Cannot statically analyze the type of instance so its members may be trimmed. [From TypeDescriptor.GetConverter() and others.]";
 
 	/// <summary>
 	/// Attempts to bind the configuration instance to a new instance of type T.
@@ -23,6 +49,8 @@ public static class ConfigurationBinder
 	/// <typeparam name="T">The type of the new instance to bind.</typeparam>
 	/// <param name="configuration">The configuration instance to bind.</param>
 	/// <returns>The new instance of T if successful, default(T) otherwise.</returns>
+	[RequiresDynamicCode(RequiresDynamicCodeMessage)]
+	[RequiresUnreferencedCode(RequiresUnreferencedCodeMessage)]
 	public static T Get<T>(this IConfiguration configuration)
 		=> configuration.Get<T>(_ => { });
 
@@ -35,7 +63,8 @@ public static class ConfigurationBinder
 	/// <param name="configuration">The configuration instance to bind.</param>
 	/// <param name="configureOptions">Configures the binder options.</param>
 	/// <returns>The new instance of T if successful, default(T) otherwise.</returns>
-
+	[RequiresDynamicCode(RequiresDynamicCodeMessage)]
+	[RequiresUnreferencedCode(RequiresUnreferencedCodeMessage)]
 	public static T Get<T>(this IConfiguration configuration, Action<BinderOptions> configureOptions)
 	{
 		if (configuration == null)
@@ -59,7 +88,8 @@ public static class ConfigurationBinder
 	/// <param name="configuration">The configuration instance to bind.</param>
 	/// <param name="type">The type of the new instance to bind.</param>
 	/// <returns>The new instance if successful, null otherwise.</returns>
-
+	[RequiresDynamicCode(RequiresDynamicCodeMessage)]
+	[RequiresUnreferencedCode(RequiresUnreferencedCodeMessage)]
 	public static object? Get(this IConfiguration configuration, Type type)
 		=> configuration.Get(type, _ => { });
 
@@ -72,7 +102,8 @@ public static class ConfigurationBinder
 	/// <param name="type">The type of the new instance to bind.</param>
 	/// <param name="configureOptions">Configures the binder options.</param>
 	/// <returns>The new instance if successful, null otherwise.</returns>
-
+	[RequiresDynamicCode(RequiresDynamicCodeMessage)]
+	[RequiresUnreferencedCode(RequiresUnreferencedCodeMessage)]
 	public static object? Get(
 		this IConfiguration configuration,
 
@@ -95,7 +126,8 @@ public static class ConfigurationBinder
 	/// <param name="configuration">The configuration instance to bind.</param>
 	/// <param name="key">The key of the configuration section to bind.</param>
 	/// <param name="instance">The object to bind.</param>
-
+	[RequiresDynamicCode(RequiresDynamicCodeMessage)]
+	[RequiresUnreferencedCode(RequiresUnreferencedCodeMessage)]
 	public static void Bind(this IConfiguration configuration, string key, object instance)
 		=> configuration.GetSection(key).Bind(instance);
 
@@ -104,7 +136,8 @@ public static class ConfigurationBinder
 	/// </summary>
 	/// <param name="configuration">The configuration instance to bind.</param>
 	/// <param name="instance">The object to bind.</param>
-
+	[RequiresDynamicCode(RequiresDynamicCodeMessage)]
+	[RequiresUnreferencedCode(RequiresUnreferencedCodeMessage)]
 	public static void Bind(this IConfiguration configuration, object instance)
 		=> configuration.Bind(instance, o => { });
 
@@ -114,7 +147,8 @@ public static class ConfigurationBinder
 	/// <param name="configuration">The configuration instance to bind.</param>
 	/// <param name="instance">The object to bind.</param>
 	/// <param name="configureOptions">Configures the binder options.</param>
-
+	[RequiresDynamicCode(RequiresDynamicCodeMessage)]
+	[RequiresUnreferencedCode(RequiresUnreferencedCodeMessage)]
 	public static void Bind(this IConfiguration configuration, object instance, Action<BinderOptions> configureOptions)
 	{
 		if (configuration == null)
@@ -137,7 +171,7 @@ public static class ConfigurationBinder
 	/// <param name="configuration">The configuration.</param>
 	/// <param name="key">The key of the configuration section's value to convert.</param>
 	/// <returns>The converted value.</returns>
-
+	[RequiresUnreferencedCode(RequiresUnreferencedCodeMessage)]
 	public static T GetValue<T>(this IConfiguration configuration, string key)
 	{
 		return GetValue(configuration, key, default(T))!;
@@ -151,7 +185,7 @@ public static class ConfigurationBinder
 	/// <param name="key">The key of the configuration section's value to convert.</param>
 	/// <param name="defaultValue">The default value to use if no value is found.</param>
 	/// <returns>The converted value.</returns>
-
+	[RequiresUnreferencedCode(RequiresUnreferencedCodeMessage)]
 	public static T GetValue<T>(this IConfiguration configuration, string key, T defaultValue)
 	{
 		return (T)GetValue(configuration, typeof(T), key, defaultValue!);
@@ -164,7 +198,7 @@ public static class ConfigurationBinder
 	/// <param name="type">The type to convert the value to.</param>
 	/// <param name="key">The key of the configuration section's value to convert.</param>
 	/// <returns>The converted value.</returns>
-
+	[RequiresUnreferencedCode(RequiresUnreferencedCodeMessage)]
 	public static object GetValue(
 		this IConfiguration configuration,
 
@@ -182,7 +216,7 @@ public static class ConfigurationBinder
 	/// <param name="key">The key of the configuration section's value to convert.</param>
 	/// <param name="defaultValue">The default value to use if no value is found.</param>
 	/// <returns>The converted value.</returns>
-
+	[RequiresUnreferencedCode(RequiresUnreferencedCodeMessage)]
 	public static object GetValue(
 		this IConfiguration configuration,
 
@@ -199,6 +233,9 @@ public static class ConfigurationBinder
 	}
 
 
+	[RequiresDynamicCode(RequiresDynamicCodeMessage)]
+	[RequiresUnreferencedCode(RequiresUnreferencedCodeMessage)]
+	[UnconditionalSuppressMessage("Trimming", "IL2072", Justification = "TODO")]
 	private static void BindNonScalar(this IConfiguration configuration, object? instance, BinderOptions options)
 	{
 		if (instance != null)
@@ -230,6 +267,8 @@ public static class ConfigurationBinder
 	}
 
 
+	[RequiresDynamicCode(RequiresDynamicCodeMessage)]
+	[RequiresUnreferencedCode(RequiresUnreferencedCodeMessage)]
 	private static void BindProperty(PropertyInfo property, object instance, IConfiguration config, BinderOptions options)
 	{
 		// We don't support set only, non public, or indexer properties
@@ -258,6 +297,8 @@ public static class ConfigurationBinder
 		}
 	}
 
+	[RequiresDynamicCode(RequiresDynamicCodeMessage)]
+	[RequiresUnreferencedCode(RequiresUnreferencedCodeMessage)]
 	private static object? BindToCollection(Type type, IConfiguration config, BinderOptions options)
 	{
 		Type genericType = typeof(List<>).MakeGenericType(type.GenericTypeArguments[0]);
@@ -267,8 +308,10 @@ public static class ConfigurationBinder
 	}
 
 	// Try to create an array/dictionary instance to back various collection interfaces
+	[RequiresDynamicCode(RequiresDynamicCodeMessage)]
+	[RequiresUnreferencedCode(RequiresUnreferencedCodeMessage)]
 	private static object? AttemptBindToCollectionInterfaces(
-
+			[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.Interfaces)]
 			Type type,
 		IConfiguration config, BinderOptions options)
 	{
@@ -326,7 +369,10 @@ public static class ConfigurationBinder
 	}
 
 
+	[RequiresDynamicCode(RequiresDynamicCodeMessage)]
+	[RequiresUnreferencedCode(RequiresUnreferencedCodeMessage)]
 	private static object? BindInstance(
+		[DynamicallyAccessedMembers(AllMembersAndInterfaces)]
 		Type type,
 		object? instance,
 		IConfiguration config,
@@ -405,8 +451,9 @@ public static class ConfigurationBinder
 		return instance;
 	}
 
+	[RequiresDynamicCode(RequiresDynamicCodeMessage)]
 	private static object? CreateInstance(
-
+		[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor)]
 		Type type)
 	{
 		if (type.IsInterface || type.IsAbstract)
@@ -426,11 +473,15 @@ public static class ConfigurationBinder
 
 		if (!type.IsValueType)
 		{
-			bool hasDefaultConstructor = type.GetConstructors(DeclaredOnlyLookup).Any(ctor => ctor.IsPublic && ctor.GetParameters().Length == 0);
+			bool hasDefaultConstructor = HasDefaultConstructor(type);
 			if (!hasDefaultConstructor)
 			{
 				throw new InvalidOperationException("error");
 			}
+
+			[UnconditionalSuppressMessage("Trimming", "IL2070", Justification = "We don't need *all* constructors, just the default, which is part of `type`.")]
+			static bool HasDefaultConstructor(Type t)
+				=> t.GetConstructors(DeclaredOnlyLookup).Any(ctor => ctor.IsPublic && ctor.GetParameters().Length == 0);
 		}
 
 		try
@@ -443,9 +494,12 @@ public static class ConfigurationBinder
 		}
 	}
 
+	[RequiresDynamicCode(RequiresDynamicCodeMessage)]
+	[RequiresUnreferencedCode(RequiresUnreferencedCodeMessage)]
+	[UnconditionalSuppressMessage("Trimming", "IL2062", Justification = "Unable to add `DynamicallyAccessedMemberTypes.*` to `Type.GenericTypeArguments[1]`.")]
 	private static void BindDictionary(
 		object? dictionary,
-			Type dictionaryType,
+		[DynamicallyAccessedMembers(DeclaredOnlyPropertyRequirements)] Type dictionaryType,
 		IConfiguration config, BinderOptions options)
 	{
 		// IDictionary<K,V> is guaranteed to have exactly two parameters
@@ -483,9 +537,12 @@ public static class ConfigurationBinder
 		}
 	}
 
+	[RequiresDynamicCode(RequiresDynamicCodeMessage)]
+	[RequiresUnreferencedCode(RequiresUnreferencedCodeMessage)]
+	[UnconditionalSuppressMessage("Trimming", "IL2062", Justification = "Unable to add `DynamicallyAccessedMemberTypes.*` to `Type.GenericTypeArguments[0]`.")]
 	private static void BindCollection(
 		object? collection,
-			Type collectionType,
+		[DynamicallyAccessedMembers(DeclaredOnlyMethodRequirements)] Type collectionType,
 		IConfiguration config, BinderOptions options)
 	{
 		// ICollection<T> is guaranteed to have exactly one parameter
@@ -513,8 +570,12 @@ public static class ConfigurationBinder
 		}
 	}
 
+	[RequiresDynamicCode(RequiresDynamicCodeMessage)]
+	[RequiresUnreferencedCode(RequiresUnreferencedCodeMessage)]
+	[UnconditionalSuppressMessage("Trimming", "IL2062", Justification = "Unable to add `DynamicallyAccessedMemberTypes.*` to `Type.GenericTypeArguments[0]`.")]
 	private static object? BindImmutableList(
 		object? collection,
+		[DynamicallyAccessedMembers(DeclaredOnlyMethodRequirements)]
 		Type collectionType,
 		IConfiguration config, BinderOptions options)
 	{
@@ -544,7 +605,9 @@ public static class ConfigurationBinder
 		return collection;
 	}
 
-
+	[RequiresDynamicCode(RequiresDynamicCodeMessage)]
+	[RequiresUnreferencedCode(RequiresUnreferencedCodeMessage)]
+	[UnconditionalSuppressMessage("Trimming", "IL2072", Justification = "Cannot add `DynamicallyAccessedMemberTypes.Interfaces` to `Type.GetElementType()`.")]
 	private static Array BindArray(Array source, IConfiguration config, BinderOptions options)
 	{
 		IConfigurationSection[] children = config.GetChildren().ToArray();
@@ -581,9 +644,9 @@ public static class ConfigurationBinder
 	}
 
 
+	[RequiresUnreferencedCode(RequiresUnreferencedCodeMessage)]
 	private static bool TryConvertValue(
-
-			Type type,
+		[DynamicallyAccessedMembers(AllMembersAndInterfaces)] Type type,
 		string value, string path, out object result, out Exception error)
 	{
 		error = null!;
@@ -633,10 +696,9 @@ public static class ConfigurationBinder
 		return false;
 	}
 
-
+	[RequiresUnreferencedCode(RequiresUnreferencedCodeMessage)]
 	private static object ConvertValue(
-
-			Type type,
+		[DynamicallyAccessedMembers(AllMembersAndInterfaces)] Type type,
 		string value, string path)
 	{
 		object result;
@@ -649,8 +711,12 @@ public static class ConfigurationBinder
 		return result;
 	}
 
+	[return: DynamicallyAccessedMembers(DeclaredOnlyMethodRequirements | DeclaredOnlyPropertyRequirements)]
+	[UnconditionalSuppressMessage("Trimming", "IL2073", Justification = "There is no way to declare that the return type *actually* fulfills `[return: DAM]`.")]
+	[UnconditionalSuppressMessage("Trimming", "IL2068", Justification = "There is no way to declare that the return type *actually* fulfills `[return: DAM]`.")]
 	private static Type FindOpenGenericInterface(
 		Type expected,
+			[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.Interfaces)]
 			Type actual)
 	{
 		if (actual.IsGenericType &&
@@ -671,8 +737,9 @@ public static class ConfigurationBinder
 		return null!;
 	}
 
+	[UnconditionalSuppressMessage("Trimming", "IL2072", Justification = "Cannot add `DynamicallyAccessedMemberTypes.NonPublicProperties` to `Type.BaseType`.")]
 	private static List<PropertyInfo> GetAllProperties(
-
+			[DynamicallyAccessedMembers(DeclaredOnlyPropertyRequirements)]
 			Type type)
 	{
 		var allProperties = new List<PropertyInfo>();
@@ -687,7 +754,9 @@ public static class ConfigurationBinder
 		return allProperties;
 	}
 
-
+	[RequiresDynamicCode(RequiresDynamicCodeMessage)]
+	[RequiresUnreferencedCode(RequiresUnreferencedCodeMessage)]
+	[UnconditionalSuppressMessage("Trimming", "IL2072", Justification = "Cannot add `DynamicallyAccessedMemberTypes.Interfaces` to `PropertyInfo.PropertyType`.")]
 	private static object? GetPropertyValue(PropertyInfo property, object instance, IConfiguration config, BinderOptions options)
 	{
 		string propertyName = GetPropertyName(property);

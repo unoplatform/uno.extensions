@@ -1,10 +1,15 @@
-﻿namespace Uno.Extensions;
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace Uno.Extensions;
 
 /// <summary>
 /// Provides extension methods for web authentication to use with <see cref="IAuthenticationBuilder"/>.
 /// </summary>
 public static class HostBuilderExtensions
 {
+	internal const string RequiresDynamicCodeMessage = "Binding strongly typed objects to configuration values may require generating dynamic code at runtime. [From Array.CreateInstance() and others.]";
+	internal const string RequiresUnreferencedCodeMessage = "Cannot statically analyze the type of instance so its members may be trimmed. [From TypeDescriptor.GetConverter() and others.]";
+
 	/// <summary>
 	/// Adds web authentication to the specified <see cref="IAuthenticationBuilder"/>.
 	/// </summary>
@@ -20,6 +25,7 @@ public static class HostBuilderExtensions
 	/// <returns>
 	/// The <see cref="IAuthenticationBuilder"/> that was passed in.
 	/// </returns>
+	[RequiresUnreferencedCode(RequiresUnreferencedCodeMessage)]
 	public static IAuthenticationBuilder AddWeb(
 		this IAuthenticationBuilder builder,
 		Action<IWebAuthenticationBuilder>? configure = default,
@@ -70,6 +76,7 @@ public static class HostBuilderExtensions
 	/// <returns>
 	/// The <see cref="IAuthenticationBuilder"/> that was passed in.
 	/// </returns>
+	[RequiresUnreferencedCode(RequiresUnreferencedCodeMessage)]
 	public static IAuthenticationBuilder AddWeb<TService>(
 		this IAuthenticationBuilder builder,
 		Action<IWebAuthenticationBuilder<TService>>? configure = default,

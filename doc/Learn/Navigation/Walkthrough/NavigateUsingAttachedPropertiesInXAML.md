@@ -48,6 +48,9 @@ public class SampleViewModel
 
 ## Navigate from ListView item selection
 
+> [!IMPORTANT]
+> For navigation from `ListView` and other selection controls, **always use `uen:Navigation.Request`** attached property.
+
 Use `Navigation.Request` on ListView to navigate when an item is selected.
 
 ```xml
@@ -64,6 +67,9 @@ Use `Navigation.Request` on ListView to navigate when an item is selected.
 Selected item is automatically passed as navigation data.
 
 ## Navigate from ItemsRepeater item click
+
+> [!IMPORTANT]
+> For navigation from `ItemsRepeater`, **always use `uen:Navigation.Request`** attached property.
 
 Use `Navigation.Request` directly on ItemsRepeater to navigate when an item is clicked.
 
@@ -84,6 +90,9 @@ Use `Navigation.Request` directly on ItemsRepeater to navigate when an item is c
 Clicked item is automatically passed as navigation data.
 
 ## Navigate from GridView item click
+
+> [!IMPORTANT]
+> For navigation from `GridView`, **always use `uen:Navigation.Request`** attached property.
 
 ```xml
 <GridView ItemsSource="{Binding Products}"

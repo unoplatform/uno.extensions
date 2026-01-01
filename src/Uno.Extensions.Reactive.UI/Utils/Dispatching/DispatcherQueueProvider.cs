@@ -58,6 +58,7 @@ public static class DispatcherQueueProvider
 				catch (Exception error)
 				{
 					tcs.TrySetException(error);
+					throw;
 				}
 			}
 		}
