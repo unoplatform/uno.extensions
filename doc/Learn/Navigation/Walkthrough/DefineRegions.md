@@ -134,6 +134,9 @@ Use `Navigation.Request` with relative path `RegionName` to navigate within the 
 
 ## Navigate from ItemsRepeater item click
 
+> [!IMPORTANT]
+> For navigation from `ItemsRepeater`, **always use `uen:Navigation.Request`** attached property.
+
 Use `Navigation.Request` directly on ItemsRepeater to navigate to regions when an item is clicked.
 
 ```xml
