@@ -177,6 +177,9 @@ The type of view to navigate to
 
 ### 3. Navigating between pages (XAML)
 
+> [!IMPORTANT]
+> For declarative navigation in XAML, **always use `uen:Navigation.Request`** attached property.
+
 * Navigate forward to new page by specifying the route in the `Navigation.Request` attached property
 
     **XAML**

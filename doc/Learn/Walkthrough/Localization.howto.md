@@ -43,6 +43,60 @@ protected override void OnLaunched(LaunchActivatedEventArgs args)
 
 This registers `IStringLocalizer` and `ILocalizationService` against the DI container.
 
+## Use x:Uid in XAML
+
+When localization is enabled, user-facing text should use `x:Uid` attributes to reference localized strings.
+
+### Example: LoginPage.xaml
+
+```xml
+<StackPanel Spacing="16">
+    <TextBlock x:Uid="LoginPage.TextBlock.WelcomeBack"
+               Style="{StaticResource TitleLargeTextBlockStyle}"
+               HorizontalAlignment="Center" />
+    
+    <TextBlock x:Uid="LoginPage.TextBlock.SignInPrompt"
+               Style="{StaticResource BodyMediumTextBlockStyle}"
+               Opacity="0.7" />
+    
+    <TextBox x:Uid="LoginPage.TextBox.Email" />
+    
+    <PasswordBox x:Uid="LoginPage.PasswordBox.Password" />
+    
+    <Button x:Uid="LoginPage.Button.Login"
+            Command="{Binding LoginCommand}" />
+</StackPanel>
+```
+
+### Create Resources.resw entries
+
+In `Strings/en-US/Resources.resw`:
+
+| Name | Value |
+|------|-------|
+| `LoginPage.TextBlock.WelcomeBack.Text` | Welcome Back |
+| `LoginPage.TextBlock.SignInPrompt.Text` | Sign in to continue |
+| `LoginPage.TextBox.Email.PlaceholderText` | Email |
+| `LoginPage.TextBox.Email.Header` | Email Address |
+| `LoginPage.PasswordBox.Password.PlaceholderText` | Password |
+| `LoginPage.PasswordBox.Password.Header` | Password |
+| `LoginPage.Button.Login.Content` | Login |
+
+In `Strings/fr-FR/Resources.resw`:
+
+| Name | Value |
+|------|-------|
+| `LoginPage.TextBlock.WelcomeBack.Text` | Bon Retour |
+| `LoginPage.TextBlock.SignInPrompt.Text` | Connectez-vous pour continuer |
+| `LoginPage.TextBox.Email.PlaceholderText` | E-mail |
+| `LoginPage.TextBox.Email.Header` | Adresse E-mail |
+| `LoginPage.PasswordBox.Password.PlaceholderText` | Mot de passe |
+| `LoginPage.PasswordBox.Password.Header` | Mot de passe |
+| `LoginPage.Button.Login.Content` | Connexion |
+
+> [!NOTE]
+> The recommended naming convention is `PageName.ElementType.Purpose` with the appropriate property suffix. Common property suffixes include `.Text` for TextBlock, `.Content` for Button and NavigationViewItem, and `.PlaceholderText` or `.Header` for TextBox and PasswordBox.
+
 ## Resolve localized strings
 
 Inject `IStringLocalizer` wherever you need localized text.
