@@ -3,6 +3,8 @@ uid: Uno.Extensions.Http.Overview
 ---
 # HTTP
 
+> **UnoFeatures:** `Http`, `HttpRefit`, or `HttpKiota` (add to `<UnoFeatures>` in your `.csproj`)
+
 Uno.Extensions.Http allows for the registration of API **endpoints** as multiple typed `HttpClient` instances. In this centralized location for accessing web resources, the lifecycle of the corresponding `HttpMessageHandler` objects is managed. Added clients can optionally be configured to use the platform-native handler. Additional functionality is provided to clear cookies or log diagnostic messages in responses. This library uses [Microsoft.Extensions.Http](https://www.nuget.org/packages/Microsoft.Extensions.Http) for any HTTP related work.
 
 For additional documentation on HTTP requests, read the references listed at the bottom.

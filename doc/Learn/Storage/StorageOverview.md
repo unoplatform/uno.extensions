@@ -4,6 +4,8 @@ uid: Uno.Extensions.Storage.Overview
 
 # Storage Overview
 
+> **UnoFeatures:** `Storage` (add to `<UnoFeatures>` in your `.csproj`)
+
 Uno.Extensions.Storage facilitate local data storage across multiple platforms, including WebAssembly, Android, iOS, macOS, Desktop and Windows. This extension is particularly useful for applications that require secure, persistent storage of user preferences, configuration settings, and sensitive information such as tokens and credentials.
 
 > [!IMPORTANT]

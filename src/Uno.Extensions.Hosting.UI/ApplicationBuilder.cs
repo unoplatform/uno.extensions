@@ -1,3 +1,5 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace Uno.Extensions.Hosting;
 
 internal record ApplicationBuilder(Application App, LaunchActivatedEventArgs Arguments, Assembly ApplicationAssembly) : IApplicationBuilder
@@ -13,6 +15,8 @@ internal record ApplicationBuilder(Application App, LaunchActivatedEventArgs Arg
 		Window.Current!;
 #endif
 
+	[RequiresDynamicCode(UnoHost.RequiresDynamicCodeMessage)]
+	[RequiresUnreferencedCode(UnoHost.RequiresUnreferencedCodeMessage)]
 	public IHost Build()
 	{
 		var builder = UnoHost.CreateDefaultBuilder(

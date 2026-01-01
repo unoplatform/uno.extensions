@@ -4,6 +4,8 @@ uid: Uno.Extensions.Navigation.Overview
 
 # Introduction
 
+> **UnoFeatures:** `Navigation` (add to `<UnoFeatures>` in your `.csproj`)
+
 ## What is Navigation?
 
 Navigation needs to encompass a range of UI concepts:
@@ -174,6 +176,9 @@ The type of view to navigate to
     ```
 
 ### 3. Navigating between pages (XAML)
+
+> [!IMPORTANT]
+> For declarative navigation in XAML, **always use `uen:Navigation.Request`** attached property.
 
 * Navigate forward to new page by specifying the route in the `Navigation.Request` attached property
 
