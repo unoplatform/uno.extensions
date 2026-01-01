@@ -1,4 +1,5 @@
-﻿
+﻿using System.Diagnostics.CodeAnalysis;
+
 namespace Uno.Extensions;
 
 /// <summary>
@@ -6,6 +7,9 @@ namespace Uno.Extensions;
 /// </summary>
 public static class HostBuilderExtensions
 {
+	internal const string RequiresDynamicCodeMessage = "Binding strongly typed objects to configuration values may require generating dynamic code at runtime. [From Array.CreateInstance() and others.]";
+	internal const string RequiresUnreferencedCodeMessage = "Cannot statically analyze the type of instance so its members may be trimmed. [From TypeDescriptor.GetConverter() and others.]";
+
 	/// <summary>
 	/// Adds MSAL authentication to the specified <see cref="IAuthenticationBuilder"/>.
 	/// </summary>
@@ -22,6 +26,8 @@ public static class HostBuilderExtensions
 	/// The <see cref="IAuthenticationBuilder"/> that was passed in.
 	/// </returns>
 	[Obsolete("This method is obsolete. Please use the AddMsal overload that accepts a 'Window' parameter to specify the authentication window. The overload without 'Window' will be removed in a future release.", false)]
+	[RequiresDynamicCode(RequiresDynamicCodeMessage)]
+	[RequiresUnreferencedCode(RequiresUnreferencedCodeMessage)]
 	public static IAuthenticationBuilder AddMsal(
 		this IAuthenticationBuilder builder,
 		Action<IMsalAuthenticationBuilder>? configure = default,
@@ -48,6 +54,8 @@ public static class HostBuilderExtensions
 	/// <returns>
 	/// The <see cref="IAuthenticationBuilder"/> that was passed in.
 	/// </returns>
+	[RequiresDynamicCode(RequiresDynamicCodeMessage)]
+	[RequiresUnreferencedCode(RequiresUnreferencedCodeMessage)]
 	public static IAuthenticationBuilder AddMsal(
 		this IAuthenticationBuilder builder,
 		Window window,
@@ -57,6 +65,8 @@ public static class HostBuilderExtensions
 		return InternalAddMsal(builder, window, configure, name);
 	}
 
+	[RequiresDynamicCode(RequiresDynamicCodeMessage)]
+	[RequiresUnreferencedCode(RequiresUnreferencedCodeMessage)]
 	private static IAuthenticationBuilder InternalAddMsal(
 		this IAuthenticationBuilder builder,
 		Window? window,

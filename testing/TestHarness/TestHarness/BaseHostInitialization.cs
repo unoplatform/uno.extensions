@@ -7,7 +7,7 @@ public abstract class BaseHostInitialization : IHostInitialization
 	public virtual IHost InitializeHost(Window window)
 	{
 		var host = UnoHost
-				.CreateDefaultBuilder()
+				.CreateDefaultBuilder(typeof(BaseHostInitialization).Assembly)
 
 				.Use(builder => Environment(builder))
 

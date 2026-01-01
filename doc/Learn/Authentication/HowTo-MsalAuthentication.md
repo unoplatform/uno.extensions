@@ -3,6 +3,8 @@ uid: Uno.Extensions.Authentication.HowToMsalAuthentication
 ---
 # How-To: Get Started with MSAL Authentication
 
+> **UnoFeatures:** `AuthenticationMsal` (add to `<UnoFeatures>` in your `.csproj`)
+
 `MsalAuthenticationProvider` allows your users to sign in using their Microsoft identities. It wraps the [MSAL library](https://github.com/AzureAD/microsoft-authentication-library-for-dotnet) from Microsoft into an implementation of `IAuthenticationProvider`. This tutorial will use MSAL authorization to validate user credentials.
 
 ## Step-by-step

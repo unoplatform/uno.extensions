@@ -3,6 +3,7 @@
 
 	<PropertyGroup>
 		<Description>Localization Extensions for registering IStringLocalizer implementation for Uno Platform (WinUI)</Description>
+		<IsAotCompatible>true</IsAotCompatible>
 
 		<DefineConstants>$(DefineConstants);WINUI</DefineConstants>
 		<!--Temporary disable missing XML doc until fixed in the whole package-->

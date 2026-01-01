@@ -4,6 +4,8 @@ uid: Uno.Extensions.Localization.Overview
 
 # Localization
 
+> **UnoFeatures:** `Localization` (add to `<UnoFeatures>` in your `.csproj`)
+
 It is often necessary to adapt an application to a specific subset of users within a market. **Localization** includes the type of actions developers take to modify both user interface elements and content to adhere to more languages or cultures. Specifically, text **translation** is done by applying alternate strings of text at runtime which accommodate a user's language preference.
 
 Many apps store these pieces of text in dedicated resource files that the app parses and assigns as text throughout the application. `Uno.Extensions.Localization` provides a consistent way to resolve the text of a specific culture or locale across platforms. This feature allows for modifying them to be applied upon app restart.
@@ -70,6 +72,35 @@ For example, if the `x:Uid` property of a `TextBlock` is `MyTextBlock`, the key 
 ```xml
 <TextBlock x:Uid="MyTextBlock" />
 ```
+
+**Example - LoginPage:**
+
+```xml
+<StackPanel>
+    <TextBlock x:Uid="LoginPage.TextBlock.WelcomeBack" />
+    <TextBlock x:Uid="LoginPage.TextBlock.SignInPrompt" />
+    <Button x:Uid="LoginPage.Button.Login" />
+</StackPanel>
+```
+
+**Corresponding Resources.resw entries:**
+
+| Name | Value |
+|------|-------|
+| `LoginPage.TextBlock.WelcomeBack.Text` | Welcome Back |
+| `LoginPage.TextBlock.SignInPrompt.Text` | Sign in to continue |
+| `LoginPage.Button.Login.Content` | Login |
+
+**Common Element Properties:**
+
+- `TextBlock`: Use `.Text` suffix (e.g., `MyTextBlock.Text`)
+- `Button`: Use `.Content` suffix (e.g., `MyButton.Content`)
+- `TextBox`: Use `.Header` and `.PlaceholderText` suffixes
+- `NavigationViewItem`: Use `.Content` suffix
+- `ToolTip`: Use `.Content` suffix
+
+> [!NOTE]
+> When localization is enabled, text elements should use `x:Uid` attributes to properly support multiple languages and cultures.
 
 #### Using resources in code-behind
 
