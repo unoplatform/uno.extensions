@@ -3,6 +3,8 @@ uid: Uno.Extensions.Serialization.HowToSerialization
 ---
 # How-To: Serialize and Deserialize JSON Data
 
+> **UnoFeatures:** `Serialization` (add to `<UnoFeatures>` in your `.csproj`)
+
 Accessing the serialized and deserialized representation of an object can be important for dynamic, data-rich applications. Uno.Extensions supports the [new serialization technique](https://devblogs.microsoft.com/dotnet/try-the-new-system-text-json-source-generator) powered by code generation, but you can optionally revert to the previous one which uses reflection.
 
 ## Step-by-step

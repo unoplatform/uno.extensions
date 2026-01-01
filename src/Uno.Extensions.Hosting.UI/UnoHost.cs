@@ -1,10 +1,14 @@
-﻿namespace Uno.Extensions.Hosting;
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace Uno.Extensions.Hosting;
 
 /// <summary>
 /// Contains helpers to create a HostBuilder that is tailored to multiple target platforms.
 /// </summary>
 public static class UnoHost
 {
+	internal const string RequiresDynamicCodeMessage = "Binding strongly typed objects to configuration values may require generating dynamic code at runtime. [From Array.CreateInstance() and others.]";
+	internal const string RequiresUnreferencedCodeMessage = "Cannot statically analyze the type of instance so its members may be trimmed. [From TypeDescriptor.GetConverter() and others.]";
 
 	/// <summary>
 	/// Obsolete; use <see cref="CreateDefaultBuilder(Assembly, System.String[])"/> or
@@ -17,6 +21,8 @@ public static class UnoHost
 	/// The initialized IHostBuilder.
 	/// </returns>
 	[Obsolete("Use CreateDefaultBuilder(Assembly, string[]) or CreateDefaultBuilder<TApplication>(string[]) instead.")]
+	[RequiresDynamicCode(RequiresDynamicCodeMessage)]
+	[RequiresUnreferencedCode(RequiresUnreferencedCodeMessage)]
 	public static IHostBuilder CreateDefaultBuilder(string[]? args = null)
 	{
 		return CreateDefaultBuilder(PlatformHelper.GetAppAssembly()!, args);
@@ -35,6 +41,8 @@ public static class UnoHost
 	/// <returns>
 	/// The initialized IHostBuilder.
 	/// </returns>
+	[RequiresDynamicCode(RequiresDynamicCodeMessage)]
+	[RequiresUnreferencedCode(RequiresUnreferencedCodeMessage)]
 	public static IHostBuilder CreateDefaultBuilder<TApplication>(string[]? args = null)
 		where TApplication : Application
 	{
@@ -55,11 +63,13 @@ public static class UnoHost
 	/// <returns>
 	/// The initialized IHostBuilder.
 	/// </returns>
+	[RequiresDynamicCode(RequiresDynamicCodeMessage)]
+	[RequiresUnreferencedCode(RequiresUnreferencedCodeMessage)]
 	public static IHostBuilder CreateDefaultBuilder(Assembly applicationAssembly, string[]? args = null)
 	{
 		PlatformHelper.SetAppAssembly(applicationAssembly);
 		applicationAssembly = PlatformHelper.GetAppAssembly()!;
-		return new HostBuilder()
+		var builder = new HostBuilder()
 			.ConfigureCustomDefaults(args)
 			.ConfigureAppConfiguration((ctx, appConfig) =>
 			{
@@ -102,7 +112,15 @@ public static class UnoHost
 						config.AddInMemoryCollection(queryDict);
 					}
 				})
-			.ConfigureServices((ctx, services) => services.Configure<HostConfiguration>(ctx.Configuration.GetSection(nameof(HostConfiguration))))
 			.UseStorage();
+		return ConfigureHostConfigurationServices(builder);
+
+		[UnconditionalSuppressMessage("Trimming", "IL2026", Justification = "🤷‍♂️")]
+		static IHostBuilder ConfigureHostConfigurationServices(IHostBuilder builder)
+		{
+			builder
+				.ConfigureServices((ctx, services) => services.Configure<HostConfiguration>(ctx.Configuration.GetSection(nameof(HostConfiguration))));
+			return builder;
+		}
 	}
 }

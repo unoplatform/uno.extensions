@@ -4,6 +4,8 @@ uid: Uno.Extensions.ThemeService.Overview
 <!--markdownlint-disable MD051 -->
 # How to use Theme Service
 
+> **UnoFeatures:** `ThemeService` (add to `<UnoFeatures>` in your `.csproj`)
+
 This topic explains how to use the `ThemeService` for runtime theme switching and persisting user theme preferences.
 
 ## Automatic Registration with DI

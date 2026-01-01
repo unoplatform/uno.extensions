@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Reflection;
 
 namespace Uno.Extensions.Navigation;
 
@@ -160,14 +161,14 @@ public class RouteResolverDefault : RouteResolver
 			return default;
 		}
 
-		if (allowMatchExact && LoadedTypes.TryGetValue(path, out var type))
+		if (allowMatchExact && TryGetLoadedType(path, out var type))
 		{
 			return type;
 		}
 
 		foreach (var suffix in suffixes)
 		{
-			if (LoadedTypes.TryGetValue($"{path}{suffix}", out type))
+			if (TryGetLoadedType($"{path}{suffix}", out type))
 			{
 				if (condition?.Invoke(type) ?? true)
 				{
@@ -179,6 +180,12 @@ public class RouteResolverDefault : RouteResolver
 			Logger.LogWarningMessage($"Navigation failed: Could not resolve type for path '{path}'.");
 
 		return null;
+
+		[UnconditionalSuppressMessage("Trimming", "IL2026", Justification = "LoadedTypes has the message; suppress use to limit contagion.")]
+		bool TryGetLoadedType(string path, [NotNullWhen (true)] out Type? type)
+        {
+            return LoadedTypes.TryGetValue(path, out type);
+        }
 	}
 
 	private string PathFromTypes(Type? view, Type? viewModel)
@@ -235,6 +242,7 @@ public class RouteResolverDefault : RouteResolver
 
 	public IDictionary<string, Type> LoadedTypes
 	{
+		[RequiresUnreferencedCode("From Assembly.GetTypes(): Types might be removed")]
 		get
 		{
 			if (loadedTypes is null)
@@ -254,6 +262,8 @@ public class RouteResolverDefault : RouteResolver
 public static class AssemblyExtensions
 {
 	public static IList<string> Excludes { get; } = new List<string>();
+
+	[RequiresUnreferencedCode("From Assembly.GetTypes(): Types might be removed")]
 	public static Type[] SafeGetTypes(this Assembly assembly)
 	{
 		try
