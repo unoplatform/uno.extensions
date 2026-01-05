@@ -213,15 +213,15 @@ public sealed class NavigationRegion : IRegion
 			}
 
 			var parent = View.FindParentRegion(out var routeName);
+			Name = routeName;
 
 			if (_logger.IsEnabled(LogLevel.Trace))
 			{
-				_logger.LogTraceMessage($"(Name: {Name}) Parent region found ({parent is not null}) with name ({routeName})");
+				_logger.LogTraceMessage($"(Name: {Name}) Parent region found ({parent is not null}) with name ({Name})");
 			}
       
 			if (parent is not null)
 			{
-				Name = routeName;
 				Parent = parent;
 			}
 			else if (fallbackParent is not null)
