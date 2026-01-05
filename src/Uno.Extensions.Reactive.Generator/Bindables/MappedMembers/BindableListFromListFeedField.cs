@@ -18,8 +18,12 @@ internal record BindableListFromListFeedField(IFieldSymbol _field, ITypeSymbol _
 		=> null;
 
 	/// <inheritdoc />
-	public string GetDeclaration()
-		=> $"{_field.GetAccessibilityAsCSharpCodeString()} {NS.Reactive}.IListFeed<{_valueType.ToFullString()}> {_field.Name};"; // Note: This should be a State
+	// Note: This should be a State
+	public string GetDeclaration() =>
+		$$"""
+		[global::System.Diagnostics.CodeAnalysis.DynamicDependency(global::System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes.PublicProperties, typeof({{_valueType.ToFullString()}}))]
+		{{_field.GetAccessibilityAsCSharpCodeString()}} {{NS.Reactive}}.IListFeed<{{_valueType.ToFullString()}}> {{_field.Name}};
+		""";
 
 	/// <inheritdoc />
 	public string? GetInitialization()

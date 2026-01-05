@@ -18,8 +18,16 @@ internal record BindableListFromListFeedProperty(IPropertySymbol _property, ITyp
 		=> null;
 
 	/// <inheritdoc />
-	public string GetDeclaration()
-		=> $"{_property.GetAccessibilityAsCSharpCodeString()} {NS.Reactive}.IListFeed<{_valueType.ToFullString()}> {_property.Name} {{ get; private set; }}"; // Note: This should be a State
+	// Note: This should be a State
+	public string GetDeclaration() =>
+		$$"""
+		{{_property.GetAccessibilityAsCSharpCodeString()}} {{NS.Reactive}}.IListFeed<{{_valueType.ToFullString()}}> {{_property.Name}}
+		{
+			[global::System.Diagnostics.CodeAnalysis.DynamicDependency(global::System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes.PublicProperties, typeof({{_valueType.ToFullString()}}))]
+			get;
+			private set;
+		}
+		""";
 
 	/// <inheritdoc />
 	public string GetInitialization()
