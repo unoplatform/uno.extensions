@@ -10,7 +10,7 @@ public sealed class NavigationRegion : IRegion
 
 	private IServiceProvider? _services;
 	private IRegion? _parent;
-	private IRegion? _previousParent;
+	private WeakReference<IRegion>? _previousParent;
 	private bool _isRoot;
 	private bool _isLoaded;
 	public IRegion? Parent
@@ -21,7 +21,7 @@ public sealed class NavigationRegion : IRegion
 			if (_parent is not null)
 			{
 				_parent.Children.Remove(this);
-				_previousParent = _parent;
+				_previousParent = new WeakReference<IRegion>(_parent);
 			}
 			_parent = value;
 			if (_parent is not null)
@@ -198,7 +198,7 @@ public sealed class NavigationRegion : IRegion
 		return View.IsLoaded ? HandleLoaded() : Task.CompletedTask;
 	}
 
-	private void AssignParent()
+	private void AssignParent(IRegion? fallbackParent = null)
 	{
 		if (View is null || _isRoot || !View.GetAttached())
 		{
@@ -223,6 +223,15 @@ public sealed class NavigationRegion : IRegion
 			if (parent is not null)
 			{
 				Parent = parent;
+			}
+			else if (fallbackParent is not null)
+			{
+				if (_logger.IsEnabled(LogLevel.Trace))
+				{
+					_logger.LogTraceMessage($"(Name: {Name}) Cannot find parent in visual tree, using fallback parent to avoid orphaning during Hot Reload");
+				}
+				Parent = fallbackParent;
+				return;
 			}
 		}
 
@@ -268,33 +277,15 @@ public sealed class NavigationRegion : IRegion
 		{
 			if (_logger.IsEnabled(LogLevel.Trace))
 			{
-				_logger.LogTraceMessage($"(Name: {Name}) Cannot reassign parent: View is null ({View is null}), IsRoot ({_isRoot}), or not attached ({View?.GetAttached() != true})");
+				_logger.LogTraceMessage($"(Name: {Name}) Cannot reassign parent: View is null ({View is null}), IsRoot ({_isRoot}), or not attached ({!(View?.GetAttached() ?? false)})");
 			}
 			return;
 		}
 
-		var newParent = View.FindParentRegion(out var routeName);
+		IRegion? fallbackParent = null;
+		_previousParent?.TryGetTarget(out fallbackParent);
 
-		if (newParent is null && _previousParent is not null)
-		{
-			if (_logger.IsEnabled(LogLevel.Trace))
-			{
-				_logger.LogTraceMessage($"(Name: {Name}) Cannot find new parent, restoring previous parent to avoid orphaning during Hot Reload");
-			}
-			Parent = _previousParent;
-			return;
-		}
-
-		if (newParent is not null)
-		{
-			Parent = newParent;
-			Name = routeName;
-			_previousParent = null;
-		}
-		else
-		{
-			AssignParent();
-		}
+		AssignParent(fallbackParent);
 	}
 
 	private async Task HandleLoaded()
