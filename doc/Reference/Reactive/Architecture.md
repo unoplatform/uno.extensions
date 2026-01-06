@@ -3,28 +3,28 @@ uid: Reference.Reactive.Dev
 ---
 # Feeds architecture
 
-This document gives information about the architecture and the implementation of _feeds_. To get information about the usage off the _feeds_ framework, you should look [to this doc](xref:Uno.Extensions.Reactive.Concept).
+This document provides information about the architecture and implementation of _feeds_. To learn about how to use the _feeds_ framework in your applications, refer to the [feeds concepts documentation](xref:Uno.Extensions.Reactive.Concept).
 
 ## Dev general guidelines
 
-* All instances of _feeds_ should be cached using the `AttachedProperty` helper.
-* Consequently, all _feed_ implementation must be state less (except the special case of `State<T>`).
-* When invoking a user asynchronous method, the `SourceContext` should be set as ambient (cf. `FeedHelper.InvokeAsync`).
-* Untyped interfaces (`IMessage`, `IMessageEntry`, etc.) exists only for binding consideration and should not be re-implemented nor used in source code.
+* All instances of _feeds_ should be cached using the `AttachedProperty` helper class. This helper ensures that each feed instance is cached and reused based on an owner and key.
+* Consequently, all _feed_ implementations must be stateless (except for the special case of `State<T>`).
+* When invoking a user's asynchronous method, the `SourceContext` should be set as ambient (see `FeedHelper.InvokeAsync`). The `SourceContext` manages the subscription state and caching for feeds.
+* Untyped interfaces (such as `IMessage`, `IMessageEntry`, etc.) exist only for data binding purposes and should not be re-implemented or used in source code.
 
 ## Caching
 
-In order to allow a light creation syntax in a property getter (`public Feed<int> MyFeed => _anotherFeed.Select(_ => 42)`, which is re-evaluated each time the property is get), but without rebuilding and re-querying the _feed_  each time, we have 2 levels of caching.
+To enable a lightweight creation syntax in property getters (such as `public Feed<int> MyFeed => _anotherFeed.Select(_ => 42)`, which is re-evaluated each time the property is accessed), while avoiding rebuilding and re-querying the _feed_ on every access, the framework implements two levels of caching.
 
 ### Instance caching
 
-First is the instance of the _feed_ itself. This is done using the `AttachedProperty` helper class. Each feed if attached to a `owner` and identified by a `key`. It makes sure that for a given `owner` we have only one instance of the declared _feed_, i.e. running `_anotherFeed.Select(_ => 42)` will always return the same instance.
+The first level caches the _feed_ instance itself using the `AttachedProperty` helper class. Each feed is attached to an `owner` and identified by a `key`. This ensures that for a given `owner`, there is only one instance of the declared _feed_. For example, calling `_anotherFeed.Select(_ => 42)` multiple times will always return the same feed instance.
 
-The `owner` is usually (by order of preference):
+The `owner` is determined by the following order of preference:
 
-1. The _parent feed_ if any (`_anotherFeed` in example above);
-1. The [`Target`](https://learn.microsoft.com/dotnet/api/system.delegate.target) of the `key` delegate, so the instance of the class that is declaring the _feed_;
-1. The `key` delegate itself if it’s a static delegate instance (e.g., in the example above `_ => 42` the `Target` is going to be `null` as we don’t have any capture)
+1. The _parent feed_, if one exists (such as `_anotherFeed` in the example above)
+2. The [`Target`](https://learn.microsoft.com/dotnet/api/system.delegate.target) property of the `key` delegate, which is the instance of the class declaring the _feed_
+3. The `key` delegate itself, if it's a static delegate instance (for example, in `_ => 42`, the `Target` will be `null` because the delegate doesn't capture any variables)
 
 The `key` is usually the delegate that **is provided by the user**. It’s really important here to note that a helper method like below would break the instance caching:
 
@@ -33,7 +33,7 @@ public static Feed<string> ToString(this IFeed<T> feed, Func<T, string> toString
   => feed.Select(t => toString(t));
 ```
 
-As the delegate `t => toString(t)` is declared in the method itself, it will be re-instantiated each time. Valid implementations would have been:
+As the delegate `t => toString(t)` is declared in the method itself, it will be re-instantiated each time. Valid implementations would be:
 
 ```csharp
 public static Feed<string> ToString(this IFeed<T> feed, Func<T, string> toString)
@@ -44,22 +44,22 @@ public static Feed<string> ToString(this IFeed<T> feed, Func<T, string> toString
 
 ### Subscription caching
 
-The second level of caching is for the “subscription” on a _feed_. This is needed to make sure that in a given _context_, enumerating / awaiting multiple times to a same _feed_ won’t re-build the value (noticeably, won’t re-request a value coming from a web API call).
+The second level of caching manages the "subscription" to a _feed_. This ensures that within a given _context_, enumerating or awaiting the same _feed_ multiple times won't rebuild the value (notably, it won't re-request a value from a web API call).
 
 This caching is achieved by the `SourceContext`.
 
-Those _context_ are weakly attached to a owner (typically a `ViewModel`) and each call to `context.GetOrCreateSource(feed)` will return a state full subscription to the `feed` which will replay the last received _message_.
+These _context_ instances are weakly attached to an owner (typically a `ViewModel`), and each call to `context.GetOrCreateSource(feed)` returns a stateful subscription to the `feed` that replays the last received _message_.
 
-> When implementing an `IFeed`, the `context` provided in the `GetSource` is only intended to be used to restore it as current in some circumstances, like invoking a user’s async method.
-  Your _feed_ must remain state less, so you should not use `context.GetOrCreateSource(parent)`.
+> [!IMPORTANT]
+> When implementing an `IFeed`, the `context` provided in `GetSource` is only intended to be used to restore it as the current context in specific circumstances, such as when invoking a user's async method. Your _feed_ must remain stateless, so you should not call `context.GetOrCreateSource(parent)`.
 >
-> On the other side, each helper that allow user to “subscribe” to a _feed_ should do something like `SourceContext.Current.GetOrCreateSource(feed)` (and not `feed.GetSource(SourceContext.Current)`)
+> On the other hand, any helper that allows users to "subscribe" to a _feed_ should use `SourceContext.Current.GetOrCreateSource(feed)` rather than `feed.GetSource(SourceContext.Current)`.
 
 ## Issuing messages
 
-When implementing an `IFeed` you will have to create some messages.
+When implementing an `IFeed`, you need to create and yield messages to subscribers.
 
-If you don't have any _parent feed_ the easiest way is to start from `Message<T>.Initial` (do not send it as first message), then update it:
+If your feed doesn't have a _parent feed_, the easiest approach is to start with `Message<T>.Initial` (do not send it as the first message), and then update it:
 
 ```csharp
 var current = Message<int>.Initial;
@@ -70,7 +70,7 @@ for (var i = 0; i++; i < 42)
 }
 ```
 
-If you do have a _parent feed_, you should use the `MessageManager<TParent, TResult>`, eg.:
+If your feed does have a _parent feed_, you should use the `MessageManager<TParent, TResult>` class, for example:
 
 ```csharp
 var manager = new MessageManager<TParent, TResult>();
@@ -84,11 +84,13 @@ await foreach(var parentMsg in _parent.GetSource(context))
 }
 ```
 
-> Make sure that your feed always produces at least on message. If there isn’t any relevant, send the `Message.Initial` before completing the `IAsyncEnumerable` source.
+> [!IMPORTANT]
+> Make sure that your feed always produces at least one message. If there isn't any relevant message to send, yield `Message<T>.Initial` before completing the `IAsyncEnumerable` source.
 >
-> If you have a _parent feed_ make sure to **always** forward the parent message, even if the parent message does not change any local value: `manager.Update(localMsg => localMsg.With(parentMsg))`.
+> If you have a _parent feed_, make sure to **always** forward the parent message, even if it doesn't change any local value: `manager.Update(localMsg => localMsg.With(parentMsg))`.
 >
-> Be aware that enumeration of an `IAsyncEnumerable` is sequential (i.e. one value at once). The `MessageManager` also has a constructor that allows to asynchronously send messages to an `AsyncEnumerableSubject`.
+> [!NOTE]
+> Enumeration of an `IAsyncEnumerable` is sequential (i.e., one value at a time). The `MessageManager` also has a constructor that allows asynchronously sending messages to an `AsyncEnumerableSubject`.
 
 ## Axes
 
