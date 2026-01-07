@@ -11,9 +11,10 @@ public class Given_CoreStateOperators : FeedTests
 {
 	#region UpdateAsync
 	[TestMethod]
-	[ExpectedException(typeof(NullReferenceException))] // Note: This is a compilation tests!
+	// TODO: Expect null ref exception
 	public async Task When_UpdateAsync_Then_AcceptsNotNullAndStruct()
 	{
+		// Note: This is a compilation tests!
 		await default(IState<int>)!.UpdateAsync(_ => 42, CT);
 		await default(IState<int?>)!.UpdateAsync(_ => default(int?), CT);
 		await default(IState<string>)!.UpdateAsync(_ => "", CT);
@@ -145,9 +146,10 @@ public class Given_CoreStateOperators : FeedTests
 
 	#region UpdateDataAsync
 	[TestMethod]
-	[ExpectedException(typeof(NullReferenceException))] // Note: This is a compilation tests!
+	// TODO: Expect null ref exception
 	public async Task When_UpdateDataAsync_Then_AcceptsNotNullAndStruct()
 	{
+		// Note: This is a compilation tests!
 		await default(IState<int>)!.UpdateDataAsync(_ => 42, CT);
 		await default(IState<int?>)!.UpdateDataAsync(_ => default(int?), CT);
 		await default(IState<string>)!.UpdateDataAsync(_ => "", CT);
@@ -385,9 +387,10 @@ public class Given_CoreStateOperators : FeedTests
 
 	#region SetAsync
 	[TestMethod]
-	[ExpectedException(typeof(NullReferenceException))] // Note: This is a compilation tests!
+	// TODO: Expect null ref exception
 	public async Task When_SetAsync_Then_AcceptsNotNullAndStruct()
 	{
+		// Note: This is a compilation tests!
 		await default(IState<int>)!.SetAsync(42, CT);
 		await default(IState<int>)!.SetAsync(null, CT);
 

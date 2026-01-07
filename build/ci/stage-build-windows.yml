@@ -46,20 +46,19 @@ jobs:
       logProjectEvents: false
       createLogFile: false
 
-  - task: VisualStudioTestPlatformInstaller@1
-    displayName: 'Visual Studio Test Platform Installer'
+  - task: UseDotNet@2
+    displayName: 'Install .NET 9 runtime'
+    retryCountOnTaskFailure: 3
     inputs:
-      versionSelector: specificVersion
-      testPlatformVersion: 17.1.0
+      packageType: runtime
+      version: '9.0.x'
 
-  - task: VSTest@2
+  - task: DotNetCoreCLI@2
+    displayName: Run tests
     inputs:
-      testAssemblyVer2: |
-        **/*test*.dll
-        !**/*UItest*.dll
-        !**/obj/**
-      vsTestVersion: toolsInstaller
-      testSelector: testAssemblies
+      command: 'test'
+      projects: ${{parameters.solution}}
+      arguments: '--no-build --no-progress --configuration Release'
 
   - task: PowerShell@2
     displayName: Authenticode Sign Packages

@@ -28,6 +28,10 @@ using Uno.Extensions;
 using Uno.Extensions.Reactive;
 using Uno.Extensions.Threading;
 
+#pragma warning disable MSTEST0045 // Use 'CooperativeCancellation = true' with '[Timeout]' - the tests need to be modified to be friendly to cooperative cancellation.
+// NOTE: Cooperative cancellation is when MSTest requests cancellation for the TestContext.CancellationToken when the timeout happens, and the test is responsible to terminate when it receives cancellation.
+// Non-cooperative cancellation is when MSTest just keeps the test method running but stops observing it and considers it failing.
+
 namespace Uno.Core.Tests.Threading
 {
 	[TestClass]
@@ -37,7 +41,7 @@ namespace Uno.Core.Tests.Threading
 		public TestContext TestContext { get; set; }
 
 #if DEBUG
-		private const TestTimeout _timeout = TestTimeout.Infinite;
+		private const int _timeout = int.MaxValue;
 #else
 		private const int _timeout = 5000;
 #endif
