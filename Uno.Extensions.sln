@@ -141,6 +141,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Http.Kiota",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Uno.Extensions.Maui.WinUI.Runtime.Skia", "src\Uno.Extensions.Maui.WinUI.Runtime.Skia\Uno.Extensions.Maui.WinUI.Runtime.Skia.csproj", "{76AF6C8E-A738-FF6A-EAB1-FE94DAC56658}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{827E0CD3-B72D-47B6-A68D-7590B98EB39B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Uno.Extensions.Serialization.AotTests", "src\Uno.Extensions.Serialization.AotTests\Uno.Extensions.Serialization.AotTests.csproj", "{DF77B943-13C2-4D98-8364-BA0DDC2C156D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -769,6 +773,22 @@ Global
 		{76AF6C8E-A738-FF6A-EAB1-FE94DAC56658}.Release|x64.Build.0 = Release|Any CPU
 		{76AF6C8E-A738-FF6A-EAB1-FE94DAC56658}.Release|x86.ActiveCfg = Release|Any CPU
 		{76AF6C8E-A738-FF6A-EAB1-FE94DAC56658}.Release|x86.Build.0 = Release|Any CPU
+		{DF77B943-13C2-4D98-8364-BA0DDC2C156D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DF77B943-13C2-4D98-8364-BA0DDC2C156D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DF77B943-13C2-4D98-8364-BA0DDC2C156D}.Debug|arm64.ActiveCfg = Debug|Any CPU
+		{DF77B943-13C2-4D98-8364-BA0DDC2C156D}.Debug|arm64.Build.0 = Debug|Any CPU
+		{DF77B943-13C2-4D98-8364-BA0DDC2C156D}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{DF77B943-13C2-4D98-8364-BA0DDC2C156D}.Debug|x64.Build.0 = Debug|Any CPU
+		{DF77B943-13C2-4D98-8364-BA0DDC2C156D}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{DF77B943-13C2-4D98-8364-BA0DDC2C156D}.Debug|x86.Build.0 = Debug|Any CPU
+		{DF77B943-13C2-4D98-8364-BA0DDC2C156D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DF77B943-13C2-4D98-8364-BA0DDC2C156D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DF77B943-13C2-4D98-8364-BA0DDC2C156D}.Release|arm64.ActiveCfg = Release|Any CPU
+		{DF77B943-13C2-4D98-8364-BA0DDC2C156D}.Release|arm64.Build.0 = Release|Any CPU
+		{DF77B943-13C2-4D98-8364-BA0DDC2C156D}.Release|x64.ActiveCfg = Release|Any CPU
+		{DF77B943-13C2-4D98-8364-BA0DDC2C156D}.Release|x64.Build.0 = Release|Any CPU
+		{DF77B943-13C2-4D98-8364-BA0DDC2C156D}.Release|x86.ActiveCfg = Release|Any CPU
+		{DF77B943-13C2-4D98-8364-BA0DDC2C156D}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -817,6 +837,7 @@ Global
 		{869C9E5B-0F85-4316-BC4B-CB6CBFCC02A3} = {FB399485-A0B1-4416-A494-E19AC7F5A665}
 		{C9827C80-312B-4E81-B539-2D305D893A6C} = {45179294-70DC-47E8-AD22-1296F897B594}
 		{76AF6C8E-A738-FF6A-EAB1-FE94DAC56658} = {2197ADCE-59C4-465A-B380-0B06BF68BBBC}
+		{DF77B943-13C2-4D98-8364-BA0DDC2C156D} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6E7B035D-9A64-4D95-89AA-9D4653F17C42}
