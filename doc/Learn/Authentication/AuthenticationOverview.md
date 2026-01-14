@@ -95,7 +95,7 @@ When the `OidcAuthenticationProvider` is automatically built, there are platform
 
 ### Web
 
-The `WebAuthenticationProvider` provides an implementation that displays a web view in order for the user to login. After login, the web view redirects back to the application, along with any tokens. Learn [Web Authentication](xref:Uno.Extensions.Authentication.HowToWebAuthentication)
+The `WebAuthenticationProvider` provides an implementation that uses the system's `WebAuthenticationBroker` API to display an authentication window for the user to login. After login, the authentication flow redirects back to the application, along with any tokens. Learn [Web Authentication](xref:Uno.Extensions.Authentication.HowToWebAuthentication)
 
 #### Platform-specific behavior
 
