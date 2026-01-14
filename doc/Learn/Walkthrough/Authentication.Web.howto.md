@@ -11,7 +11,7 @@ tags: [authentication, web, navigation]
 ## 1. Show a web page to sign users in
 
 **Goal**
-Open a system browser or authentication window, let the user sign in with your identity provider, and get redirected back to the app.
+Open a system authentication window (which may use a system browser), let the user sign in with your identity provider, and get redirected back to the app.
 
 **When to use**
 
@@ -72,7 +72,7 @@ Requires the `Authentication` UnoFeature.
 
 **What happens**
 
-* The `WebAuthenticationProvider` opens that login URL using the system's `WebAuthenticationBroker` API (system browser or authentication window).
+* The `WebAuthenticationProvider` opens that login URL using the system's `WebAuthenticationBroker` API, which displays an authentication window.
 * After the provider finishes the external login, it redirects back to the app and the provider stores the tokens.
 
 ---
