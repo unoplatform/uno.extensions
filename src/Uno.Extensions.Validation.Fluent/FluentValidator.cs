@@ -27,7 +27,7 @@ internal class FluentValidator<T> : IValidator<T>
 		if (instance is T tInstance)
 		{
 			var validationResult = (await _validator.ValidateAsync(tInstance, cancellationToken));
-			result = validationResult?.Errors.Select(x => new ValidationResult(x.ErrorMessage))?.ToList();
+			result = validationResult?.Errors.Select(x => new ValidationResult(x.ErrorMessage, new[] { x.PropertyName }))?.ToList();
 		}
 
 		return result ?? new List<ValidationResult>();
