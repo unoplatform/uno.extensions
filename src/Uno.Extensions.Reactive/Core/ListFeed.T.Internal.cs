@@ -26,5 +26,5 @@ static partial class ListFeed<T>
 	internal static CollectionAnalyzer<T> DefaultAnalyzer { get; } = new(DefaultComparer);
 
 	internal static CollectionAnalyzer<T> GetAnalyzer(ItemComparer<T> comparer)
-		=> comparer is { IsNull: true } ? DefaultAnalyzer : new(comparer);
+		=> comparer is { IsNull: true } ? DefaultAnalyzer : new(GetComparer(comparer));
 }
