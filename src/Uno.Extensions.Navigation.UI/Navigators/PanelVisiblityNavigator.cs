@@ -64,6 +64,18 @@ public class PanelVisiblityNavigator : ControlNavigator<Panel>
 		});
 	}
 
+	public Route? CurrentRoute { get; private set; }
+
+	public void UpdateCurrentRoute(Route? route)
+	{
+		if (route is null)
+		{
+			return;
+		}
+
+		CurrentRoute = route;
+	}
+
 	private FrameworkElement? CurrentlyVisibleControl { get; set; }
 
 	protected override async Task<string?> Show(
