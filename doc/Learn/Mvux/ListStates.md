@@ -14,6 +14,10 @@ Recall that feeds are stateless and are only read-only data output to the View, 
 
 So an `IState<T>` is a stateful feed of a single item of `T`, whereas an `IListState<T>` is a stateful feed of multiple items of `T`.
 
+> [!IMPORTANT]
+> Always remeber to providing the `this` parameter as Reference to the Model to which Context it belongs, when you are defining `ListState` or `State`, if you are either initializing or updating those statefull Properties in any kind of way.
+<!-- TODO: We should add short information, why providing this argument is specifically required for those two, but not for Feed or ListFeed Pproperties -->
+
 ## How to create a list-state
 
 The static `ListState` class provides factory methods for creating `IListState<T>` objects, here they are:
@@ -43,15 +47,35 @@ private readonly IImmutableList<string> _favorites =
 public IListState<string> Favorites => ListState.Value(this, () => _favorites);
 ```
 
-### Async
+You could also use `ImmutableList.Create(...)` which takes a `params ReadonlySpan<string> items` in the sample above, instead of using the `new string[]{...}.ToImmutableArray()` Extension Method, to avoid additional casting.
 
-Creates a list-state from an async method:
+Using an inline Lambda Expression like the following Sample shows, does also satisfy the required to be returned `Func<IImmutableList<string>>` of the `ListState.Value(...)` initialization:
 
 ```csharp
-public ValueTask<IImmutableList<string>> GetStrings(CancellationToken ct) => new(_favorites);
+public IListState<string> Favorites => ListState.Value(this, () 
+    => ImmutableList.Create(
+        [
+            "Terry Fox",
+            "David Suzuki",
+            "Margaret Atwood"
+        ]))
+```
+
+### Async
+
+Creates a list-state from an async method, using the same source backing field of the Value initialization above:
+
+```csharp
+public ValueTask<IImmutableList<string>> GetStrings(CancellationToken ct) => _favorites;
 
 
 public IListState<string> Favorites => ListState.Async(this, GetStrings);
+```
+
+or to avoid creating more Methods, if you already have the backing field source, instead of a Service-class with a suitable `async ValueTask<ImmutableList<string>>`, you could also use a async lambda expression like this:
+
+```csharp
+public IListState<string> Favorites => ListState.Async(this, async (ct) => _favorites);
 ```
 
 ### AsyncEnumerable
