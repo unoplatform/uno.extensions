@@ -4,6 +4,7 @@ parameters:
 
 jobs:
 - job: Samples_Windows_${{parameters.solutionName}}
+  cancelTimeoutInMinutes: 0
   displayName: 'Samples - Windows (${{parameters.solutionName}})'
   timeoutInMinutes: 90
 
