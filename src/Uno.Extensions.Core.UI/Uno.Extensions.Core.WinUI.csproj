@@ -25,6 +25,7 @@
 	<ItemGroup>
 		<InternalsVisibleTo Include="Uno.Extensions.Hosting.UWP" />
 		<InternalsVisibleTo Include="Uno.Extensions.Hosting.WinUI" />
+		<InternalsVisibleTo Include="Uno.Extensions.Logging.Serilog" />
 
 		<PackageReference Include="Uno.WinUI" />
 	</ItemGroup>
