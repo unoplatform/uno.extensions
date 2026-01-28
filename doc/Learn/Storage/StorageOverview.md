@@ -2,7 +2,7 @@
 uid: Uno.Extensions.Storage.Overview
 ---
 
-# Storage
+# Storage Overview
 
 > **UnoFeatures:** `Storage` (add to `<UnoFeatures>` in your `.csproj`)
 
@@ -30,3 +30,7 @@ Uno.Extensions.Storage facilitate local data storage across multiple platforms, 
 [!include[single-project](../includes/single-project.md)]
 
 For more information about `UnoFeatures` refer to our [Using the Uno.Sdk](xref:Uno.Features.Uno.Sdk) docs.
+
+## Next Steps
+
+- [How To: Handling Package Files with Storage](./HowTo-handling-package-files-with-storage.md)

@@ -25,6 +25,8 @@
 		"devs",
 		"Dismissable",
 		"Docfx",
+		"dotnet",
+		"dotnetcli",
 		"ellipsize",
 		"Entra",
 		"Expando",
@@ -83,6 +85,7 @@
 		"UI's",
 		"unmanaged",
 		"Uno's",
+		"unoapp",
 		"unoplatform",
 		"UWP's",
 		"VSIX",
@@ -168,7 +171,9 @@
 		"Grial",
 		"Telerik",
 		"listfeed",
-		"Kiota"
+		"Kiota",
+		"cref",
+		"langword"
 	],
 	"patterns": [
 		{
