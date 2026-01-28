@@ -1,5 +1,6 @@
 jobs:
 - job: Packages
+  cancelTimeoutInMinutes: 0
   timeoutInMinutes: 90
 
   pool:
