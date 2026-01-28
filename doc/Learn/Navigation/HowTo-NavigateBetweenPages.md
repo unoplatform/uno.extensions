@@ -23,7 +23,7 @@ This topic covers using Navigation to navigate between two pages using frame-bas
         Extensions;
     +   Navigation;
         Toolkit;
-        MVUX;
+        MVVM;
     </UnoFeatures>
     ```
 
