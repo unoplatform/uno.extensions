@@ -266,7 +266,12 @@ public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 			Region.Services?.AddScopedInstance<INavigator>(navigator);
 		}
 
-		return responseRoute;
+		// Return previousRoute to preserve nested route state for child regions (e.g., TabBar).
+		// responseRoute only contains the back qualifier without nested paths, while previousRoute
+		// contains the full route including nested paths (e.g., "Main/Third"). This ensures that
+		// when navigating back to a page with nested routes, the child regions restore their
+		// previously selected state instead of navigating to the default nested route.
+		return previousRoute;
 	}
 
 	private static Route? CloneWithData(Route? route, IDictionary<string, object>? data)
