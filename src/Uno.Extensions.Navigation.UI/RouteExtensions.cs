@@ -60,7 +60,10 @@ public static class RouteExtensions
 			// This allows the same page to appear multiple times in the backstack,
 			// but if navigating to the same page that is currently displayed,
 			// the segment is filtered out which triggers a viewmodel refresh instead.
-			return segments.Where(x => x.Path != currentPagePath).ToArray();
+			if (!string.IsNullOrWhiteSpace(currentPagePath))
+			{
+				return segments.Where(x => x.Path != currentPagePath).ToArray();
+			}
 		}
 		return segments.ToArray();
 	}
