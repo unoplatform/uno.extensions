@@ -53,7 +53,14 @@ public static class RouteExtensions
 		var navRoute = (navigator is IStackNavigator deepNav) ? deepNav.FullRoute : navigator.Route;
 		if (!isClear && navRoute is not null && !navRoute.IsEmpty())
 		{
-			return segments.Where(x => !navRoute.Contains(x.Path)).ToArray();
+			// Get the current page (last segment in the navigation route)
+			var currentPagePath = navRoute.Last().Base;
+
+			// Only filter out the segment if it matches the current page.
+			// This allows the same page to appear multiple times in the backstack,
+			// but if navigating to the same page that is currently displayed,
+			// the segment is filtered out which triggers a viewmodel refresh instead.
+			return segments.Where(x => x.Path != currentPagePath).ToArray();
 		}
 		return segments.ToArray();
 	}
@@ -135,8 +142,8 @@ public static class RouteExtensions
 		var newSegments = frameRoute.ForwardSegments(resolver);
 		if (newSegments is not null)
 		{
-			var newOnly = newSegments.Where(x => !segments.Contains(x)).ToArray();
-			segments.AddRange(newOnly);
+			// Add all new segments to allow the same page to appear multiple times in the backstack
+			segments.AddRange(newSegments);
 		}
 
 		var routeBase = segments.FirstOrDefault()?.Path;
