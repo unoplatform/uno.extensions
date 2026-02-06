@@ -1,5 +1,6 @@
 jobs:
 - job: Samples_WebAssembly
+  cancelTimeoutInMinutes: 0
   displayName: 'Samples - WebAssembly'
 
   pool:

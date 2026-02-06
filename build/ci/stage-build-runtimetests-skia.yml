@@ -1,5 +1,6 @@
 ﻿jobs:
 - job: Skia_Tests
+  cancelTimeoutInMinutes: 0
   displayName: 'Runtime Tests - Skia Desktop'
   timeoutInMinutes: 60
   

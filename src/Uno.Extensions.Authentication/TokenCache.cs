@@ -1,4 +1,6 @@
-﻿namespace Uno.Extensions.Authentication;
+﻿using System.Text.Json.Serialization;
+
+namespace Uno.Extensions.Authentication;
 
 internal record TokenCache : ITokenCache
 {
@@ -141,4 +143,9 @@ internal record TokenCache : ITokenCache
 			tokenLock.Release();
 		}
 	}
+}
+
+[JsonSerializable(typeof(string))]
+internal partial class TokenCacheContext : JsonSerializerContext
+{
 }

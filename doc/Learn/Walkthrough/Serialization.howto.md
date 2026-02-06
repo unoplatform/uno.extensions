@@ -34,13 +34,12 @@ protected override void OnLaunched(LaunchActivatedEventArgs args)
     var builder = this.CreateBuilder(args)
         .Configure(host =>
         {
-            host.UseSerialization(services =>
-                services.AddJsonTypeInfo(PersonContext.Default.Person));
+            host.UseSerialization([PersonContext.Default]);
         });
 }
 ```
 
-`AddJsonTypeInfo` registers the compiled metadata so the serializer can avoid runtime reflection.
+`UseSerialization` registers the compiled metadata so the serializer can avoid runtime reflection.
 
 ## Generate the context for your models
 
@@ -61,22 +60,22 @@ public sealed class Person
 }
 ```
 
-At build time the source generator emits `PersonContext.Default.Person`, which exposes the required `JsonTypeInfo<Person>`.
+At build time the source generator emits `PersonContext.Default`, which exposes the required `IJsonTypeInfoResolver`.
 
 ## Customize serialization options
 
-Register `JsonSerializerOptions` to tweak casing, naming, or converters.
+Alter `JsonSerializerOptions` to tweak casing, naming, or converters.
 
 ```csharp
-host.UseSerialization(services =>
+host.UseSerialization([PersonContext.Default], (context, services) =>
 {
-    services.AddJsonTypeInfo(PersonContext.Default.Person);
-    services.AddSingleton(new JsonSerializerOptions
+    services.ConfigureJsonSerializationOptions(options =>
     {
-        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-        WriteIndented = true
+        options.SerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+        options.SerializerOptions.WriteIndented = true;
     });
-});
+},
+PersonContext.Default);
 ```
 
 Any options registered in DI apply to all `ISerializer<T>` instances for `System.Text.Json`.

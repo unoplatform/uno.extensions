@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Text.Json.Serialization;
 
@@ -15,9 +16,16 @@ public class SystemTextJsonGeneratedSerializerTests
 	[TestInitialize]
 	public void InitializeTests()
 	{
-		var services = new ServiceCollection().BuildServiceProvider();
-		var reflectionSerializer = new SystemTextJsonSerializer(services);
-		Serializer = new SystemTextJsonGeneratedSerializer<SimpleClass>(reflectionSerializer,SimpleClassContext.Default.SimpleClass);
+		var context = new HostBuilderContext(new Dictionary<object, object>());
+		var services = new ServiceCollection();
+
+#if WITH_AOT_TRIMMING
+		services.AddJsonSerialization(context, SimpleClassContext.Default);
+#endif  // WITH_AOT_TRIMMING
+
+		var serviceProvider = services.BuildServiceProvider();
+		var reflectionSerializer = new SystemTextJsonSerializer(serviceProvider);
+		Serializer = new SystemTextJsonGeneratedSerializer<SimpleClass>(reflectionSerializer, SimpleClassContext.Default.SimpleClass);
 	}
 
 	[TestMethod]
@@ -102,7 +110,9 @@ public class SystemTextJsonGeneratedSerializerTests
 	}
 }
 
+[JsonSerializable(typeof(ISimpleText))]
 [JsonSerializable(typeof(SimpleClass))]
+[JsonSerializable(typeof(SimpleRecord))]
 internal partial class SimpleClassContext : JsonSerializerContext
 {
 }

@@ -24,7 +24,7 @@ stages:
   displayName: Docs Validations
   dependsOn: Determine_Changes
   # Trigger this stage when docs files are changed
-  condition: or(eq(dependencies.Determine_Changes.outputs['evaluate_changes.DetermineChanges.docsOnly'], 'true'), eq(dependencies.Determine_Changes.outputs['evaluate_changes.DetermineChanges.mixedChanges'], 'true'))
+  condition: and(succeeded(), or(eq(dependencies.Determine_Changes.outputs['evaluate_changes.DetermineChanges.docsOnly'], 'true'), eq(dependencies.Determine_Changes.outputs['evaluate_changes.DetermineChanges.mixedChanges'], 'true')))
   jobs:
   - template: stage-docs-validations.yml
 
@@ -32,7 +32,7 @@ stages:
   displayName: Packages
   dependsOn: Determine_Changes
   # Don't trigger this stage if only docs files are changed
-  condition: ne(dependencies.Determine_Changes.outputs['evaluate_changes.DetermineChanges.docsOnly'], 'true')
+  condition: and(succeeded(), ne(dependencies.Determine_Changes.outputs['evaluate_changes.DetermineChanges.docsOnly'], 'true'))
   jobs:
   - template: stage-build-packages.yml
   - template: stage-build-changelog.yml
@@ -41,7 +41,7 @@ stages:
   displayName: Build Samples
   dependsOn: Determine_Changes
   # Don't trigger this stage if only docs files are changed
-  condition: ne(dependencies.Determine_Changes.outputs['evaluate_changes.DetermineChanges.docsOnly'], 'true')
+  condition: and(succeeded(), ne(dependencies.Determine_Changes.outputs['evaluate_changes.DetermineChanges.docsOnly'], 'true'))
   jobs:
   - template: stage-build-windows.yml
     parameters:
@@ -64,7 +64,7 @@ stages:
   displayName: Build Tests
   dependsOn: Determine_Changes
   # Don't trigger this stage if only docs files are changed
-  condition: ne(dependencies.Determine_Changes.outputs['evaluate_changes.DetermineChanges.docsOnly'], 'true')
+  condition: and(succeeded(), ne(dependencies.Determine_Changes.outputs['evaluate_changes.DetermineChanges.docsOnly'], 'true'))
   jobs:
   - template: stage-build-uitests-wasm.yml
   # Disabled waiting on uno fix: https://github.com/unoplatform/uno/pull/17668

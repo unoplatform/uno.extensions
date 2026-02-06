@@ -2,7 +2,7 @@
 uid: Uno.Extensions.Navigation.Overview
 ---
 
-# Introduction
+# Introduction to Uno Platform Navigation
 
 > **UnoFeatures:** `Navigation` (add to `<UnoFeatures>` in your `.csproj`)
 
