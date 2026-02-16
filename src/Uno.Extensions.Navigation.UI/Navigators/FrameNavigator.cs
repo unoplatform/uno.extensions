@@ -9,6 +9,11 @@ public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 
 	public override bool CanGoBack => Control?.BackStackDepth > 0;
 
+	// Tracks nested route state (e.g., which tab was selected) for each
+	// page on the Frame back stack, so it can be restored on back navigation.
+	private readonly Stack<Route?> _nestedRouteStack = new();
+	private Route? _pendingNestedRestore;
+
 	public FrameNavigator(
 		ILogger<FrameNavigator> logger,
 		IDispatcher dispatcher,
@@ -74,6 +79,16 @@ public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 	protected override Task<Route?> ExecuteRequestAsync(NavigationRequest request)
 	{
 		var route = request.Route;
+
+		// For forward navigation, save the current nested route state (e.g., active tab)
+		// before clearing children, so it can be restored on back navigation.
+		if (route.FrameIsForwardNavigation())
+		{
+			var nestedRoute = CollectNestedRoute();
+			if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Saving nested route '{nestedRoute?.Base}' before forward navigation (stack depth: {_nestedRouteStack.Count})");
+			_nestedRouteStack.Push(nestedRoute);
+		}
+
 		// Detach all nested regions as we're moving away from the current view
 		Region.Children.Clear();
 
@@ -111,6 +126,11 @@ public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 		while (numberOfPagesToRemove > 1)
 		{
 			RemoveLastFromBackStack();
+			if (_nestedRouteStack.Count > 0)
+			{
+				if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Discarding nested route from stack during forward page removal (remaining: {_nestedRouteStack.Count - 1})");
+				_nestedRouteStack.Pop();
+			}
 			numberOfPagesToRemove--;
 		}
 
@@ -144,6 +164,8 @@ public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 		if (route.FrameIsRooted())
 		{
 			ClearBackStack();
+			if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Clearing nested route stack for rooted navigation (discarding {_nestedRouteStack.Count} entries)");
+			_nestedRouteStack.Clear();
 		}
 
 		// If there were pages to remove, after navigating we need to remove
@@ -151,6 +173,11 @@ public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 		if (route.FrameNumberOfPagesToRemove() > 0)
 		{
 			RemoveLastFromBackStack();
+			if (_nestedRouteStack.Count > 0)
+			{
+				if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Discarding nested route from stack after forward navigation (remaining: {_nestedRouteStack.Count - 1})");
+				_nestedRouteStack.Pop();
+			}
 		}
 
 		var parentRegion = this.Region.Parent;
@@ -219,8 +246,18 @@ public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 		{
 			// Don't remove the last context, as that's the current page
 			RemoveLastFromBackStack();
+			if (_nestedRouteStack.Count > 0)
+			{
+				if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Discarding nested route from stack during back page removal (remaining: {_nestedRouteStack.Count - 1})");
+				_nestedRouteStack.Pop();
+			}
 			numberOfPagesToRemove--;
 		}
+
+		// Restore the saved nested route for the page we're navigating back to
+		_pendingNestedRestore = _nestedRouteStack.Count > 0 ? _nestedRouteStack.Pop() : null;
+		if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Pending nested restore for back navigation: '{_pendingNestedRestore?.Base}' (stack depth: {_nestedRouteStack.Count})");
+
 		var responseRoute = route with { Path = null };
 		var previousRoute = FullRoute.ApplyFrameRoute(Resolver, responseRoute, this);
 		var previousBase = previousRoute?.Last()?.Base;
@@ -454,4 +491,55 @@ public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 	}
 
 	protected override Task CheckLoadedAsync() => _content is not null ? _content.EnsureLoaded() : Task.CompletedTask;
+
+	protected override NavigationRequest UpdateRequestForChildNavigation(NavigationRequest request)
+	{
+		var savedRoute = _pendingNestedRestore;
+		_pendingNestedRestore = null;
+
+		if (savedRoute is not null &&
+			!savedRoute.IsEmpty() &&
+			request.Route.IsEmpty())
+		{
+			if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Restoring nested route '{savedRoute.Base}' after back navigation");
+			request = request with
+			{
+				Route = new Route(Qualifiers.None, savedRoute.Base, savedRoute.Path)
+			};
+		}
+
+		return request;
+	}
+
+	/// <summary>
+	/// Walks the child region hierarchy to find the first navigator with a
+	/// non-empty Route. This captures nested navigation state such as which
+	/// tab is currently selected inside the page displayed by this Frame.
+	/// </summary>
+	private Route? CollectNestedRoute()
+	{
+		var result = FindFirstNonEmptyRoute(Region);
+		if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"CollectNestedRoute found: '{result?.Base}'");
+		return result;
+
+		static Route? FindFirstNonEmptyRoute(IRegion region)
+		{
+			foreach (var child in region.Children)
+			{
+				var nav = child.Navigator();
+				if (nav?.Route is { } route && !route.IsEmpty())
+				{
+					return route;
+				}
+
+				var childResult = FindFirstNonEmptyRoute(child);
+				if (childResult is not null)
+				{
+					return childResult;
+				}
+			}
+
+			return null;
+		}
+	}
 }

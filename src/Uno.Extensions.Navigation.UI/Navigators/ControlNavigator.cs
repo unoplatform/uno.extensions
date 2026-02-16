@@ -154,10 +154,19 @@ public abstract class ControlNavigator : Navigator
 			request = request with { Route = request.Route.Trim(regionResponse?.Route) };
 		}
 
+		request = UpdateRequestForChildNavigation(request);
+
 		var coreResponse = await base.CoreNavigateAsync(request);
 
 		return coreResponse ?? regionResponse;
 	}
+
+	/// <summary>
+	/// Called after this navigator has handled its portion of the navigation and before
+	/// the remaining route is forwarded to child regions. Allows derived navigators
+	/// to modify the request, such as restoring previously saved nested route state.
+	/// </summary>
+	protected virtual NavigationRequest UpdateRequestForChildNavigation(NavigationRequest request) => request;
 
 	private async Task<NavigationResponse?> ControlCoreNavigateAsync(NavigationRequest request)
 	{
