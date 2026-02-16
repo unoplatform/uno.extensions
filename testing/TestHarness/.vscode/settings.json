@@ -1,0 +1,33 @@
+{
+	"chat.mcp.serverSampling": {
+		"TestHarness/.vscode/mcp.json: uno-app": {
+			"allowedModels": [
+				"copilot/claude-sonnet-4.5",
+				"copilot/auto",
+				"copilot/claude-haiku-4.5",
+				"copilot/claude-opus-41",
+				"copilot/claude-opus-4.5",
+				"copilot/claude-opus-4.6",
+				"copilot/claude-opus-4.6-fast",
+				"copilot/claude-sonnet-4",
+				"copilot/gemini-2.5-pro",
+				"copilot/gemini-3-flash-preview",
+				"copilot/gemini-3-pro-preview",
+				"copilot/gpt-4.1",
+				"copilot/gpt-4o",
+				"copilot/gpt-5",
+				"copilot/gpt-5-mini",
+				"copilot/gpt-5-codex",
+				"copilot/gpt-5.1",
+				"copilot/gpt-5.1-codex",
+				"copilot/gpt-5.1-codex-max",
+				"copilot/gpt-5.1-codex-mini",
+				"copilot/gpt-5.2",
+				"copilot/gpt-5.2-codex",
+				"copilot/gpt-5.3-codex",
+				"copilot/grok-code-fast-1",
+				"copilot/oswe-vscode-prime"
+			]
+		}
+	}
+}

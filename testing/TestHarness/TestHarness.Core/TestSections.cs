@@ -12,6 +12,7 @@ public enum TestSections
 	Navigation_ListToDetails,
 	Navigation_NavigationView,
 	Navigation_TabBar,
+	Navigation_TabBar_BackNavState,
 	Navigation_Reactive,
 	Navigation_AddressBar,
 	Navigation_AddressBar_Nested,

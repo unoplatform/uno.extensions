@@ -1,0 +1,10 @@
+ {
+ 	"servers": {
+ 		"uno-docs-mcp": {
+ 			"url": "https://mcp-docs.platform.uno/v1"
+ 		},
+		"uno-app": {
+			"url": "https://mcp.platform.uno/v1"
+		}
+ 	}
+ }
