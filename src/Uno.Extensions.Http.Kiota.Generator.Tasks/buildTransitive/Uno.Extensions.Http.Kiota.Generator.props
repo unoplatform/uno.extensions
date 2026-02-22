@@ -1,0 +1,43 @@
+<Project>
+
+	<!--
+		Defines the KiotaOpenApiReference item group and default properties
+		for Kiota OpenAPI code generation during dotnet build.
+
+		Users add references in their .csproj:
+		  <KiotaOpenApiReference Include="openapi.json"
+		    ClientClassName="PetStoreClient"
+		    Namespace="MyApp.PetStore" />
+	-->
+
+	<!-- Global generation properties (can be overridden per-project) -->
+	<PropertyGroup>
+		<KiotaGeneratorEnabled Condition="'$(KiotaGeneratorEnabled)' == ''">true</KiotaGeneratorEnabled>
+		<KiotaOutputPath Condition="'$(KiotaOutputPath)' == ''">$(IntermediateOutputPath)KiotaGenerated\</KiotaOutputPath>
+		<KiotaDefaultUsesBackingStore Condition="'$(KiotaDefaultUsesBackingStore)' == ''">false</KiotaDefaultUsesBackingStore>
+		<KiotaDefaultIncludeAdditionalData Condition="'$(KiotaDefaultIncludeAdditionalData)' == ''">true</KiotaDefaultIncludeAdditionalData>
+		<KiotaDefaultExcludeBackwardCompatible Condition="'$(KiotaDefaultExcludeBackwardCompatible)' == ''">false</KiotaDefaultExcludeBackwardCompatible>
+		<KiotaDefaultTypeAccessModifier Condition="'$(KiotaDefaultTypeAccessModifier)' == ''">Public</KiotaDefaultTypeAccessModifier>
+		<KiotaLogLevel Condition="'$(KiotaLogLevel)' == ''">Warning</KiotaLogLevel>
+	</PropertyGroup>
+
+	<!-- Default metadata for all KiotaOpenApiReference items -->
+	<ItemDefinitionGroup>
+		<KiotaOpenApiReference>
+			<ClientClassName>ApiClient</ClientClassName>
+			<Namespace>$(RootNamespace).Client</Namespace>
+			<UsesBackingStore>$(KiotaDefaultUsesBackingStore)</UsesBackingStore>
+			<IncludeAdditionalData>$(KiotaDefaultIncludeAdditionalData)</IncludeAdditionalData>
+			<ExcludeBackwardCompatible>$(KiotaDefaultExcludeBackwardCompatible)</ExcludeBackwardCompatible>
+			<TypeAccessModifier>$(KiotaDefaultTypeAccessModifier)</TypeAccessModifier>
+			<IncludePatterns></IncludePatterns>
+			<ExcludePatterns></ExcludePatterns>
+			<Serializers></Serializers>
+			<Deserializers></Deserializers>
+			<StructuredMimeTypes></StructuredMimeTypes>
+			<CleanOutput>false</CleanOutput>
+			<DisableValidationRules></DisableValidationRules>
+		</KiotaOpenApiReference>
+	</ItemDefinitionGroup>
+
+</Project>

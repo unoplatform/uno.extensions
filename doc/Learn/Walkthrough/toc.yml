@@ -24,6 +24,10 @@
   href: Refit.howto.md
 - name: Generate Kiota Clients
   href: Kiota.howto.md
+- name: Generate Kiota Clients at Build Time
+  href: ../Http/HowTo-KiotaBuildGeneration.md
+- name: Migrate to Build-Time Kiota Generation
+  href: ../Http/HowTo-KiotaMigration.md
 - name: Serialize JSON with Source Generators
   href: Serialization.howto.md
 - name: Authenticate Users with Custom Logic

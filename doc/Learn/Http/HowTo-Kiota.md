@@ -9,6 +9,9 @@ When working with APIs in your application, having a strongly-typed client can s
 
 ## Step-by-Step Guide
 
+> [!TIP]
+> You can skip the manual CLI workflow below by using **build-time code generation** instead. See [Generate Kiota clients at build time](xref:Uno.Extensions.Http.HowToKiotaBuildGeneration) for a zero-install approach that generates code automatically during `dotnet build`.
+
 > [!IMPORTANT]
 > This guide assumes you used the template wizard or `dotnet new unoapp` to create your solution. If not, it is recommended that you follow the [**Creating an application with Uno.Extensions** documentation](xref:Uno.Extensions.HowToGettingStarted) to create an application from the template.
 
@@ -111,8 +114,35 @@ public class MyViewModel
 
 * Ensure your server is running and the swagger.json file is accessible at the specified URL when generating the Kiota client.
 
+## Build-time code generation (recommended)
+
+Instead of installing the Kiota CLI tool and running `kiota generate` manually, you can add an OpenAPI spec to your project and let `dotnet build` generate the client automatically.
+
+**MSBuild task** — add a `<KiotaOpenApiReference>` to your `.csproj`:
+
+```xml
+<ItemGroup>
+  <KiotaOpenApiReference Include="petstore.json"
+    ClientClassName="MyApiClient"
+    Namespace="MyApp.Client.MyApi" />
+</ItemGroup>
+```
+
+**Source generator** — add an `<AdditionalFiles>` item with `KiotaClientName` metadata for real-time IDE IntelliSense:
+
+```xml
+<ItemGroup>
+  <AdditionalFiles Include="petstore.json"
+    KiotaClientName="MyApiClient"
+    KiotaNamespace="MyApp.Client.MyApi" />
+</ItemGroup>
+```
+
+Both approaches produce output identical to the Kiota CLI and are fully compatible with `AddKiotaClient<T>()`. For the complete configuration reference, see [Generate Kiota clients at build time](xref:Uno.Extensions.Http.HowToKiotaBuildGeneration).
+
 ## See also
 
+* [Migrate to build-time Kiota generation](xref:Uno.Extensions.Http.HowToKiotaMigration) — step-by-step migration from manual CLI or between task/generator
 * [Overview: What is Kiota?](https://learn.microsoft.com/en-us/openapi/kiota/)
 * [Overview: HTTP](xref:Uno.Extensions.Http.Overview)
 * [How-To: Consume a web API with HttpClient](xref:Uno.Development.ConsumeWebApi)

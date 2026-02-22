@@ -1,0 +1,447 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Enum Types Test API",
+    "description": "Test API for enum type code generation patterns, including simple string enums, integer enums, flags enums, and enum properties on models.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.example.com/v1"
+    }
+  ],
+  "paths": {
+    "/tasks": {
+      "get": {
+        "operationId": "listTasks",
+        "summary": "List tasks",
+        "description": "Returns tasks filtered by priority and status.",
+        "parameters": [
+          {
+            "name": "priority",
+            "in": "query",
+            "description": "Filter by priority level",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/Priority"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "description": "Filter by task status",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/TaskStatus"
+            }
+          },
+          {
+            "name": "sortBy",
+            "in": "query",
+            "description": "Sort field",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/SortField"
+            }
+          },
+          {
+            "name": "sortDirection",
+            "in": "query",
+            "description": "Sort direction",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/SortDirection"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A list of tasks",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TaskItem"
+                  }
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Client error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "createTask",
+        "summary": "Create a task",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateTaskRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Task created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaskItem"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Client error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tasks/{taskId}": {
+      "get": {
+        "operationId": "getTask",
+        "summary": "Get a task by ID",
+        "parameters": [
+          {
+            "name": "taskId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A single task",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaskItem"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Client error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users": {
+      "get": {
+        "operationId": "listUsers",
+        "summary": "List users",
+        "responses": {
+          "200": {
+            "description": "A list of users",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/User"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "TaskItem": {
+        "type": "object",
+        "required": [
+          "id",
+          "title",
+          "status",
+          "priority"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "status": {
+            "$ref": "#/components/schemas/TaskStatus"
+          },
+          "priority": {
+            "$ref": "#/components/schemas/Priority"
+          },
+          "category": {
+            "$ref": "#/components/schemas/Category"
+          },
+          "labels": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Label"
+            },
+            "description": "Labels/tags applied to this task — tests array of enums"
+          },
+          "permissions": {
+            "$ref": "#/components/schemas/Permission"
+          },
+          "visibility": {
+            "$ref": "#/components/schemas/Visibility"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "dueDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "assigneeId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "estimatedHours": {
+            "type": "number",
+            "format": "float"
+          }
+        }
+      },
+      "CreateTaskRequest": {
+        "type": "object",
+        "required": [
+          "title",
+          "priority"
+        ],
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "priority": {
+            "$ref": "#/components/schemas/Priority"
+          },
+          "category": {
+            "$ref": "#/components/schemas/Category"
+          },
+          "labels": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Label"
+            }
+          },
+          "visibility": {
+            "$ref": "#/components/schemas/Visibility"
+          },
+          "dueDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "assigneeId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      },
+      "User": {
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "role"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "role": {
+            "$ref": "#/components/schemas/UserRole"
+          },
+          "permissions": {
+            "$ref": "#/components/schemas/Permission"
+          },
+          "preferredTheme": {
+            "$ref": "#/components/schemas/Theme"
+          },
+          "notificationPreferences": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NotificationType"
+            },
+            "description": "Notification types the user wants to receive — tests array of enums"
+          }
+        }
+      },
+      "TaskStatus": {
+        "type": "string",
+        "description": "Status of a task — basic string enum",
+        "enum": [
+          "open",
+          "in-progress",
+          "review",
+          "done",
+          "cancelled"
+        ]
+      },
+      "Priority": {
+        "type": "string",
+        "description": "Priority level — basic string enum",
+        "enum": [
+          "critical",
+          "high",
+          "medium",
+          "low"
+        ]
+      },
+      "Category": {
+        "type": "string",
+        "description": "Task category — tests enum with dashed values",
+        "enum": [
+          "bug-fix",
+          "feature-request",
+          "documentation",
+          "tech-debt",
+          "security-patch"
+        ]
+      },
+      "Label": {
+        "type": "string",
+        "description": "Label for categorization — used in array context",
+        "enum": [
+          "frontend",
+          "backend",
+          "infrastructure",
+          "database",
+          "api",
+          "ui-ux"
+        ]
+      },
+      "Permission": {
+        "type": "string",
+        "description": "Permission flags — tests flags enum pattern (used in array context as bit flags)",
+        "enum": [
+          "read",
+          "write",
+          "delete",
+          "admin",
+          "export"
+        ]
+      },
+      "UserRole": {
+        "type": "string",
+        "description": "User role — simple string enum",
+        "enum": [
+          "viewer",
+          "editor",
+          "admin",
+          "super-admin"
+        ]
+      },
+      "Visibility": {
+        "type": "string",
+        "description": "Visibility level",
+        "enum": [
+          "public",
+          "private",
+          "team-only",
+          "organization"
+        ]
+      },
+      "SortField": {
+        "type": "string",
+        "description": "Fields available for sorting",
+        "enum": [
+          "createdAt",
+          "dueDate",
+          "priority",
+          "status",
+          "title"
+        ]
+      },
+      "SortDirection": {
+        "type": "string",
+        "description": "Sort direction",
+        "enum": [
+          "asc",
+          "desc"
+        ]
+      },
+      "Theme": {
+        "type": "string",
+        "description": "UI theme preference",
+        "enum": [
+          "light",
+          "dark",
+          "system-default",
+          "high-contrast"
+        ]
+      },
+      "NotificationType": {
+        "type": "string",
+        "description": "Types of notifications — used in array context",
+        "enum": [
+          "email",
+          "push",
+          "in-app",
+          "sms",
+          "webhook"
+        ]
+      },
+      "ApiError": {
+        "type": "object",
+        "required": [
+          "code",
+          "message"
+        ],
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

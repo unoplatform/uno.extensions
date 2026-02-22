@@ -26,4 +26,58 @@
 		<ProjectReference Include="..\Uno.Extensions.Serialization\Uno.Extensions.Serialization.csproj" />
 	</ItemGroup>
 
+	<!--
+		Source generator bundling.
+		The Kiota source generator (Phase 2) is shipped inside this NuGet package
+		under analyzers/dotnet/cs/, following the ToolOfPackage convention used by
+		Uno.Extensions.Core.Generators, Navigation.Generators, and Reactive.Generator.
+
+		Because the source generator depends on libraries that are NOT provided
+		by the Roslyn host (Microsoft.OpenApi, SharpYaml, DotNet.Glob), we must
+		bundle those DLLs alongside the generator. The source generator project
+		sets CopyLocalLockFileAssemblies=true so all dependency DLLs appear in
+		its output directory.
+	-->
+	<ItemGroup>
+		<ProjectReference Include="..\Uno.Extensions.Http.Kiota.SourceGenerator\Uno.Extensions.Http.Kiota.SourceGenerator.csproj"
+		                  ReferenceOutputAssembly="false" />
+	</ItemGroup>
+
+	<PropertyGroup>
+		<_KiotaSrcGenOutDir>..\Uno.Extensions.Http.Kiota.SourceGenerator\bin\Uno.Extensions.Http.Kiota.SourceGenerator\$(Configuration)\netstandard2.0\</_KiotaSrcGenOutDir>
+	</PropertyGroup>
+
+	<!-- Generator DLL -->
+	<ItemGroup>
+		<None Include="$(_KiotaSrcGenOutDir)Uno.Extensions.Http.Kiota.SourceGenerator.dll"
+		      Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+	</ItemGroup>
+
+	<!--
+		Third-party dependency DLLs required by the generator at analysis time.
+		Only include libraries that Roslyn does NOT already provide.
+		Do NOT include System.* or Microsoft.CodeAnalysis.* assemblies.
+	-->
+	<ItemGroup>
+		<None Include="$(_KiotaSrcGenOutDir)Microsoft.OpenApi.dll"
+		      Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+		<None Include="$(_KiotaSrcGenOutDir)Microsoft.OpenApi.Readers.dll"
+		      Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+		<None Include="$(_KiotaSrcGenOutDir)SharpYaml.dll"
+		      Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+		<None Include="$(_KiotaSrcGenOutDir)DotNet.Glob.dll"
+		      Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+	</ItemGroup>
+
+	<!--
+		BuildTransitive props: CompilerVisibleProperty / CompilerVisibleItemMetadata
+		declarations that let consuming projects pass configuration to the source
+		generator via MSBuild properties and AdditionalFiles metadata.
+		Packed as Uno.Extensions.Http.Kiota.props so NuGet auto-imports it.
+	-->
+	<ItemGroup>
+		<None Include="..\Uno.Extensions.Http.Kiota.SourceGenerator\buildTransitive\Uno.Extensions.Http.Kiota.SourceGenerator.props"
+		      Pack="true" PackagePath="buildTransitive\Uno.Extensions.Http.Kiota.props" Visible="false" />
+	</ItemGroup>
+
 </Project>

@@ -1,0 +1,91 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>netstandard2.0</TargetFramework>
+		<LangVersion>latest</LangVersion>
+		<IsPackable>false</IsPackable>
+		<ImplicitUsings>false</ImplicitUsings>
+
+		<!--
+			Defines that this project output is a tool of the given package ID,
+			so nuget override will copy it in the 'analyzers' directory of that
+			package instead of the 'lib' of the current package folder.
+		-->
+		<ToolOfPackage>Uno.Extensions.Http.Kiota</ToolOfPackage>
+
+		<RootNamespace>Uno.Extensions.Http.Kiota.SourceGenerator</RootNamespace>
+
+		<!-- Roslyn analyzer contract: enforce IIncrementalGenerator design rules -->
+		<EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
+
+		<!--
+			RS2008: Enable analyzer release tracking for the analyzer project.
+			Suppressed because we track releases via AnalyzerReleases .md files
+			but don't yet publish diagnostic IDs (those come in later tasks).
+			NU1900/NU1903: suppress transient vulnerability-data-fetch failures
+			from private NuGet feeds during restore.
+		-->
+		<NoWarn>$(NoWarn);RS2008;NU1900;NU1903</NoWarn>
+
+		<!--
+			All internal types have XML doc comments (T060).
+			Enable to guard against future undocumented public API.
+		-->
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+
+		<!--
+			Copy NuGet dependency DLLs (Microsoft.OpenApi, SharpYaml, DotNet.Glob, etc.)
+			to the output directory so the host package can bundle them alongside the
+			generator in analyzers/dotnet/cs/. Without this, only the generator DLL
+			appears in the output and Roslyn cannot resolve the dependencies at
+			design-time or build-time.
+		-->
+		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+	</PropertyGroup>
+
+	<!-- Allow test project to access internal types -->
+	<ItemGroup>
+		<InternalsVisibleTo Include="Uno.Extensions.Http.Kiota.Generator.Tests" />
+	</ItemGroup>
+
+	<!-- Roslyn + Uno Roslyn helpers -->
+	<ItemGroup>
+		<PackageReference Include="Uno.Roslyn" PrivateAssets="All" />
+		<PackageReference Include="Microsoft.CodeAnalysis.CSharp" PrivateAssets="All" />
+	</ItemGroup>
+
+	<!--
+		OpenAPI parsing (netstandard2.0-compatible).
+		Microsoft.OpenApi v3.x only targets net8.0+, so it cannot be used in a
+		source generator.  Microsoft.OpenApi.Readers 1.6.28 transitively brings
+		in Microsoft.OpenApi 1.6.x which supports netstandard2.0.  We override
+		the centrally-managed version for this project only.
+	-->
+	<ItemGroup>
+		<PackageReference Include="Microsoft.OpenApi" PrivateAssets="All" VersionOverride="1.6.28" />
+		<PackageReference Include="Microsoft.OpenApi.Readers" PrivateAssets="All" />
+	</ItemGroup>
+
+	<!-- Glob pattern matching for path filtering -->
+	<ItemGroup>
+		<PackageReference Include="DotNet.Glob" PrivateAssets="All" />
+	</ItemGroup>
+
+	<!-- Analyzer release tracking -->
+	<ItemGroup>
+		<AdditionalFiles Include="AnalyzerReleases.Shipped.md" />
+		<AdditionalFiles Include="AnalyzerReleases.Unshipped.md" />
+	</ItemGroup>
+
+	<!--
+		Build transitive props for CompilerVisibleProperty / CompilerVisibleItemMetadata
+		declarations that expose MSBuild configuration to the source generator.
+	-->
+	<ItemGroup>
+		<None Include="buildTransitive\**\*"
+		      CopyToOutputDirectory="PreserveNewest"
+		      Pack="true"
+		      PackagePath="buildTransitive" />
+	</ItemGroup>
+
+</Project>

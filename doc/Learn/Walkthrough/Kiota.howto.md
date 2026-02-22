@@ -28,6 +28,38 @@ This feature adds the `Uno.Extensions.Http.Kiota` package alongside the standard
 
 ## Generate the Kiota client
 
+You have three options for generating the client code. **Build-time generation is recommended** because it requires no tool installation and regenerates automatically when the spec changes.
+
+### Option 1: MSBuild task (recommended)
+
+Add your OpenAPI spec file to the project and declare a `<KiotaOpenApiReference>`:
+
+```xml
+<ItemGroup>
+  <KiotaOpenApiReference Include="swagger.json"
+    ClientClassName="MyApiClient"
+    Namespace="MyApp.Client.MyApi" />
+</ItemGroup>
+```
+
+Run `dotnet build` and the client is generated automatically.
+
+### Option 2: Source generator (IDE IntelliSense)
+
+For real-time IntelliSense without building, add the spec as an `AdditionalFiles` item:
+
+```xml
+<ItemGroup>
+  <AdditionalFiles Include="swagger.json"
+    KiotaClientName="MyApiClient"
+    KiotaNamespace="MyApp.Client.MyApi" />
+</ItemGroup>
+```
+
+Types appear in IntelliSense as you type. See [Generate Kiota clients at build time](xref:Uno.Extensions.Http.HowToKiotaBuildGeneration) for the full configuration reference.
+
+### Option 3: Manual Kiota CLI
+
 Use the Kiota CLI to scaffold a client from your OpenAPI document.
 
 ```bash
@@ -89,6 +121,7 @@ If you add `Uno.Extensions.Authentication`, the registered handlers automaticall
 
 ## Resources
 
+- [Generate Kiota clients at build time](xref:Uno.Extensions.Http.HowToKiotaBuildGeneration)
 - [Kiota overview](https://learn.microsoft.com/en-us/openapi/kiota/)
 - [HTTP overview](xref:Uno.Extensions.Http.Overview)
 - [Register HTTP endpoints](xref:Uno.Extensions.Http.HowToHttp)

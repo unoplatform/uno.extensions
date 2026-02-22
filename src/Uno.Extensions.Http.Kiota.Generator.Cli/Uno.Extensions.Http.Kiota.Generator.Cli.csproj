@@ -1,0 +1,50 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<TargetFrameworks>net8.0;net9.0</TargetFrameworks>
+		<RollForward>Major</RollForward>
+		<AssemblyName>kiota-gen</AssemblyName>
+		<RootNamespace>Uno.Extensions.Http.Kiota.Generator.Cli</RootNamespace>
+
+		<!-- Packaging: embed in NuGet tools/ folder via Generator.Tasks package -->
+		<IsPackable>true</IsPackable>
+		<PackAsTool>false</PackAsTool>
+		<SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
+
+		<!-- Self-contained publish for cross-platform distribution -->
+		<PublishTrimmed>true</PublishTrimmed>
+		<PublishSingleFile>true</PublishSingleFile>
+
+		<!-- All internal types have XML doc comments (T060) -->
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+
+		<!--
+			Disable transitive pinning: Kiota.Builder 1.30.0 pulls in newer transitive
+			dependencies (e.g. Microsoft.Extensions.Logging.Abstractions 10.x) than the
+			central versions used by the rest of the repo. Since this is a standalone
+			executable (not a shared library), free-floating transitive versions are safe.
+		-->
+		<CentralPackageTransitivePinningEnabled>false</CentralPackageTransitivePinningEnabled>
+
+		<!--
+			NU1900/NU1903: suppress transient vulnerability-data-fetch failures
+			from private NuGet feeds during restore.
+			NU5128: multi-TFM exe produces lib/ entries without matching
+			dependency groups — expected for a CLI tool that is bundled into
+			the Generator.Tasks NuGet package, not consumed as a library.
+		-->
+		<NoWarn>$(NoWarn);NU1900;NU1903;NU5128</NoWarn>
+	</PropertyGroup>
+
+	<!-- Allow test project to access internal types (BuildConfiguration, GeneratorOptions, etc.) -->
+	<ItemGroup>
+		<InternalsVisibleTo Include="Uno.Extensions.Http.Kiota.Generator.Tests" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.OpenApi.Kiota.Builder" />
+		<PackageReference Include="System.CommandLine" />
+	</ItemGroup>
+
+</Project>

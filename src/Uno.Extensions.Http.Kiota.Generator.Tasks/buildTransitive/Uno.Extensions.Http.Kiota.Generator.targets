@@ -1,0 +1,136 @@
+<Project>
+
+	<!--
+		═══════════════════════════════════════════════════════════════════════
+		Uno.Extensions.Http.Kiota.Generator.targets
+
+		Hooks Kiota OpenAPI code generation into the MSBuild compile pipeline.
+		For each <KiotaOpenApiReference> item defined in the consuming project,
+		runs the kiota-gen CLI to produce C# client code, then includes the
+		generated sources in compilation.
+
+		Companion file: Uno.Extensions.Http.Kiota.Generator.props
+		  (defines KiotaOpenApiReference item defaults and global properties)
+		═══════════════════════════════════════════════════════════════════════
+	-->
+
+	<!-- Register the KiotaGenerate MSBuild task for structured error reporting -->
+	<UsingTask TaskName="Uno.Extensions.Http.Kiota.Generator.Tasks.KiotaGenerateTask"
+			   AssemblyFile="$(MSBuildThisFileDirectory)..\lib\netstandard2.0\Uno.Extensions.Http.Kiota.Generator.Tasks.dll" />
+
+	<!-- ═══════════════════════════════════════════════════════════════════
+	     Resolve the kiota-gen CLI tool binary.
+
+	     Two packaging layouts are supported:
+	       1. Framework-dependent (default):
+	            tools/<tfm>/any/kiota-gen.dll  → invoked via "dotnet exec"
+	       2. RID-specific self-contained (future release packaging):
+	            tools/<rid>/kiota-gen[.exe]    → invoked directly
+
+	     The framework-dependent layout is checked first (net9.0 preferred
+	     over net8.0). The RID-specific layout acts as a fallback.
+	     ═══════════════════════════════════════════════════════════════════ -->
+	<PropertyGroup>
+		<_KiotaToolsDir>$(MSBuildThisFileDirectory)..\tools\</_KiotaToolsDir>
+
+		<!-- Framework-dependent tool resolution (preferred) -->
+		<_KiotaToolDll Condition="'$(_KiotaToolDll)' == '' AND Exists('$(_KiotaToolsDir)net9.0\any\kiota-gen.dll')">$(_KiotaToolsDir)net9.0\any\kiota-gen.dll</_KiotaToolDll>
+		<_KiotaToolDll Condition="'$(_KiotaToolDll)' == '' AND Exists('$(_KiotaToolsDir)net8.0\any\kiota-gen.dll')">$(_KiotaToolsDir)net8.0\any\kiota-gen.dll</_KiotaToolDll>
+
+		<!-- RID-specific self-contained tool resolution (fallback) -->
+		<_KiotaToolExe Condition="'$(_KiotaToolDll)' == '' AND $([MSBuild]::IsOSPlatform('Windows'))">$(_KiotaToolsDir)win-x64\kiota-gen.exe</_KiotaToolExe>
+		<_KiotaToolExe Condition="'$(_KiotaToolDll)' == '' AND '$(_KiotaToolExe)' == '' AND $([MSBuild]::IsOSPlatform('Linux'))">$(_KiotaToolsDir)linux-x64/kiota-gen</_KiotaToolExe>
+		<_KiotaToolExe Condition="'$(_KiotaToolDll)' == '' AND '$(_KiotaToolExe)' == '' AND $([MSBuild]::IsOSPlatform('OSX')) AND '$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)' == 'Arm64'">$(_KiotaToolsDir)osx-arm64/kiota-gen</_KiotaToolExe>
+		<_KiotaToolExe Condition="'$(_KiotaToolDll)' == '' AND '$(_KiotaToolExe)' == '' AND $([MSBuild]::IsOSPlatform('OSX')) AND '$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)' != 'Arm64'">$(_KiotaToolsDir)osx-x64/kiota-gen</_KiotaToolExe>
+	</PropertyGroup>
+
+	<!-- ═══════════════════════════════════════════════════════════════════
+	     Hook into the compile pipeline.
+	     _KiotaGenerate runs before CoreCompile so generated code is
+	     available to the C# compiler.
+	     ═══════════════════════════════════════════════════════════════════ -->
+	<PropertyGroup>
+		<CoreCompileDependsOn>_KiotaGenerate;$(CoreCompileDependsOn)</CoreCompileDependsOn>
+	</PropertyGroup>
+
+	<!-- ═══════════════════════════════════════════════════════════════════
+	     _KiotaGenerate
+
+	     Runs kiota-gen for each <KiotaOpenApiReference> item.
+
+	     Incremental build:
+	       Input  = the OpenAPI spec file
+	       Output = a .stamp file per ClientClassName
+	     The target only re-runs when the spec is newer than the stamp.
+
+	     The CLI handles empty string arguments gracefully for optional
+	     array options (IncludePatterns, ExcludePatterns, etc.) via its
+	     ExpandSemicolonSeparated helper — empty strings are filtered out.
+	     ═══════════════════════════════════════════════════════════════════ -->
+	<Target Name="_KiotaGenerate"
+			Condition="'$(KiotaGeneratorEnabled)' == 'true' AND '@(KiotaOpenApiReference)' != ''"
+			Inputs="@(KiotaOpenApiReference)"
+			Outputs="@(KiotaOpenApiReference -> '$(KiotaOutputPath)%(ClientClassName).stamp')">
+
+		<!-- Ensure the per-client output directory exists -->
+		<MakeDir Directories="$(KiotaOutputPath)%(KiotaOpenApiReference.ClientClassName)" />
+
+		<!--
+			Invoke kiota-gen via the typed MSBuild task for structured error
+			reporting. Each CLI diagnostic (error KIOTAXXX / warning KIOTAXXX)
+			is parsed into a proper MSBuild error or warning with subcategory
+			and code, surfacing cleanly in the IDE Error List.
+		-->
+		<KiotaGenerateTask
+			KiotaToolDll="$(_KiotaToolDll)"
+			KiotaToolExe="$(_KiotaToolExe)"
+			OpenApi="%(KiotaOpenApiReference.FullPath)"
+			OutputDirectory="$(KiotaOutputPath)%(KiotaOpenApiReference.ClientClassName)"
+			ClientClassName="%(KiotaOpenApiReference.ClientClassName)"
+			Namespace="%(KiotaOpenApiReference.Namespace)"
+			UsesBackingStore="%(KiotaOpenApiReference.UsesBackingStore)"
+			IncludeAdditionalData="%(KiotaOpenApiReference.IncludeAdditionalData)"
+			ExcludeBackwardCompatible="%(KiotaOpenApiReference.ExcludeBackwardCompatible)"
+			TypeAccessModifier="%(KiotaOpenApiReference.TypeAccessModifier)"
+			IncludePatterns="%(KiotaOpenApiReference.IncludePatterns)"
+			ExcludePatterns="%(KiotaOpenApiReference.ExcludePatterns)"
+			Serializers="%(KiotaOpenApiReference.Serializers)"
+			Deserializers="%(KiotaOpenApiReference.Deserializers)"
+			StructuredMimeTypes="%(KiotaOpenApiReference.StructuredMimeTypes)"
+			CleanOutput="%(KiotaOpenApiReference.CleanOutput)"
+			DisableValidationRules="%(KiotaOpenApiReference.DisableValidationRules)"
+			KiotaLogLevel="$(KiotaLogLevel)">
+			<Output TaskParameter="GeneratedFiles" ItemName="_KiotaGeneratedFiles" />
+		</KiotaGenerateTask>
+
+		<!-- Create stamp file for incremental build tracking -->
+		<Touch Files="$(KiotaOutputPath)%(KiotaOpenApiReference.ClientClassName).stamp" AlwaysCreate="true" />
+	</Target>
+
+	<!-- ═══════════════════════════════════════════════════════════════════
+	     _KiotaIncludeGenerated
+
+	     Adds all generated .cs files under KiotaOutputPath to the Compile
+	     item group so the C# compiler picks them up.
+	     Uses Link metadata to display them under a KiotaGenerated virtual
+	     folder in Solution Explorer.
+	     ═══════════════════════════════════════════════════════════════════ -->
+	<Target Name="_KiotaIncludeGenerated"
+			BeforeTargets="CoreCompile"
+			Condition="'$(KiotaGeneratorEnabled)' == 'true' AND '@(KiotaOpenApiReference)' != ''">
+		<ItemGroup>
+			<Compile Include="$(KiotaOutputPath)**\*.cs"
+					 Link="KiotaGenerated\%(RecursiveDir)%(Filename)%(Extension)" />
+		</ItemGroup>
+	</Target>
+
+	<!-- ═══════════════════════════════════════════════════════════════════
+	     _KiotaClean
+
+	     Removes all generated files and stamp files during `dotnet clean`.
+	     ═══════════════════════════════════════════════════════════════════ -->
+	<Target Name="_KiotaClean" BeforeTargets="CoreClean">
+		<RemoveDir Directories="$(KiotaOutputPath)" />
+	</Target>
+
+</Project>

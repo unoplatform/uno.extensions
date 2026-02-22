@@ -1,0 +1,375 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Inheritance Test API",
+    "description": "Test API for allOf-based class inheritance with discriminators.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.example.com/v1"
+    }
+  ],
+  "paths": {
+    "/animals": {
+      "get": {
+        "operationId": "listAnimals",
+        "summary": "List all animals",
+        "responses": {
+          "200": {
+            "description": "A list of animals",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Animal"
+                  }
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Client error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "createAnimal",
+        "summary": "Create an animal",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Animal"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Animal created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Animal"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Client error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/animals/{animalId}": {
+      "get": {
+        "operationId": "getAnimal",
+        "summary": "Get a specific animal",
+        "parameters": [
+          {
+            "name": "animalId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A single animal",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Animal"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Client error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/vehicles": {
+      "get": {
+        "operationId": "listVehicles",
+        "summary": "List all vehicles",
+        "responses": {
+          "200": {
+            "description": "A list of vehicles",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Vehicle"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Animal": {
+        "type": "object",
+        "required": [
+          "name",
+          "animalType"
+        ],
+        "discriminator": {
+          "propertyName": "animalType",
+          "mapping": {
+            "cat": "#/components/schemas/Cat",
+            "dog": "#/components/schemas/Dog",
+            "bird": "#/components/schemas/Bird"
+          }
+        },
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of the animal"
+          },
+          "animalType": {
+            "type": "string",
+            "description": "Discriminator property for animal type"
+          },
+          "weight": {
+            "type": "number",
+            "format": "double",
+            "description": "Weight in kilograms"
+          },
+          "birthDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "isAdopted": {
+            "type": "boolean"
+          }
+        }
+      },
+      "Cat": {
+        "description": "A cat",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Animal"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "color": {
+                "type": "string",
+                "description": "Fur color"
+              },
+              "isIndoor": {
+                "type": "boolean",
+                "description": "Whether the cat is indoor-only"
+              },
+              "breed": {
+                "type": "string",
+                "description": "Cat breed"
+              }
+            }
+          }
+        ]
+      },
+      "Dog": {
+        "description": "A dog",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Animal"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "breed": {
+                "type": "string",
+                "description": "Dog breed"
+              },
+              "isTrained": {
+                "type": "boolean",
+                "description": "Whether the dog is trained"
+              },
+              "barkVolume": {
+                "type": "integer",
+                "format": "int32",
+                "description": "Bark volume on a scale of 1-10"
+              }
+            }
+          }
+        ]
+      },
+      "Bird": {
+        "description": "A bird",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Animal"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "canFly": {
+                "type": "boolean",
+                "description": "Whether the bird can fly"
+              },
+              "wingspan": {
+                "type": "number",
+                "format": "double",
+                "description": "Wingspan in centimeters"
+              },
+              "species": {
+                "type": "string",
+                "description": "Bird species"
+              }
+            }
+          }
+        ]
+      },
+      "Vehicle": {
+        "type": "object",
+        "required": [
+          "vehicleType"
+        ],
+        "discriminator": {
+          "propertyName": "vehicleType",
+          "mapping": {
+            "car": "#/components/schemas/Car",
+            "truck": "#/components/schemas/Truck"
+          }
+        },
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "vehicleType": {
+            "type": "string"
+          },
+          "manufacturer": {
+            "type": "string"
+          },
+          "year": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "Car": {
+        "description": "A car",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Vehicle"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "numberOfDoors": {
+                "type": "integer",
+                "format": "int32"
+              },
+              "trunkCapacity": {
+                "type": "number",
+                "format": "double",
+                "description": "Trunk capacity in liters"
+              }
+            }
+          }
+        ]
+      },
+      "Truck": {
+        "description": "A truck",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Vehicle"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "payloadCapacity": {
+                "type": "number",
+                "format": "double",
+                "description": "Payload capacity in kilograms"
+              },
+              "numberOfAxles": {
+                "type": "integer",
+                "format": "int32"
+              },
+              "hasFlatbed": {
+                "type": "boolean"
+              }
+            }
+          }
+        ]
+      },
+      "DomesticCat": {
+        "description": "A domestic cat — tests multi-level inheritance (DomesticCat -> Cat -> Animal)",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Cat"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "ownerName": {
+                "type": "string",
+                "description": "Name of the owner"
+              },
+              "isLitterTrained": {
+                "type": "boolean",
+                "description": "Whether the cat is litter trained"
+              }
+            }
+          }
+        ]
+      },
+      "ApiError": {
+        "type": "object",
+        "required": [
+          "code",
+          "message"
+        ],
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

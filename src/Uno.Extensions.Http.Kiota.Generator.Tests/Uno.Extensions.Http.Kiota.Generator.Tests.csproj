@@ -1,0 +1,85 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net9.0</TargetFramework>
+		<IsPackable>false</IsPackable>
+		<RootNamespace>Uno.Extensions.Http.Kiota.Generator.Tests</RootNamespace>
+
+		<!-- Emit source-generator output for inspection during test debugging -->
+		<EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
+		<CompilerGeneratedFilesOutputPath>obj/g</CompilerGeneratedFilesOutputPath>
+
+		<!-- Build tooling test project — no public API surface requiring XML docs -->
+		<GenerateDocumentationFile>false</GenerateDocumentationFile>
+
+		<!--
+			Disable transitive pinning: Generator.Cli pulls in newer transitive
+			dependencies via Kiota.Builder that conflict with central pinning.
+			Test projects are not shipped, so free-floating versions are safe.
+		-->
+		<CentralPackageTransitivePinningEnabled>false</CentralPackageTransitivePinningEnabled>
+
+		<!--
+			NU1900/NU1903: suppress transient vulnerability-data-fetch failures
+			from private NuGet feeds during restore.
+			NU1605: allow Microsoft.OpenApi downgrade from 3.3.1 (Kiota.Builder
+			transitive) to 1.6.28 (source generator compatibility). The source
+			generator targets netstandard2.0 and requires the 1.x series.
+		-->
+		<NoWarn>$(NoWarn);NU1900;NU1903;NU1605</NoWarn>
+	</PropertyGroup>
+
+	<!-- Test framework packages (MSTest, matching repo convention) -->
+	<ItemGroup>
+		<PackageReference Include="Microsoft.NET.Test.Sdk" />
+		<PackageReference Include="MSTest.TestAdapter" />
+		<PackageReference Include="MSTest.TestFramework" />
+		<PackageReference Include="FluentAssertions" />
+		<PackageReference Include="coverlet.collector" />
+	</ItemGroup>
+
+	<!-- Roslyn APIs used by source generator tests (SourceText, etc.) -->
+	<ItemGroup>
+		<PackageReference Include="Microsoft.CodeAnalysis.CSharp" />
+	</ItemGroup>
+
+	<!-- MSBuild types used by KiotaGenerateTask unit tests -->
+	<ItemGroup>
+		<PackageReference Include="Microsoft.Build.Framework" />
+		<PackageReference Include="Microsoft.Build.Utilities.Core" />
+	</ItemGroup>
+
+	<!--
+		OpenAPI parsing types. The source generator uses Microsoft.OpenApi 1.6.28
+		(netstandard2.0-compatible), which is incompatible with v3.3.1 pulled in
+		transitively by Kiota.Builder. We pin to 1.6.28 and suppress NU1605.
+	-->
+	<ItemGroup>
+		<PackageReference Include="Microsoft.OpenApi" VersionOverride="1.6.28" />
+		<PackageReference Include="Microsoft.OpenApi.Readers" />
+	</ItemGroup>
+
+	<!-- Project references to the code under test -->
+	<ItemGroup>
+		<ProjectReference Include="..\Uno.Extensions.Http.Kiota.Generator.Cli\Uno.Extensions.Http.Kiota.Generator.Cli.csproj" />
+		<ProjectReference Include="..\Uno.Extensions.Http.Kiota.Generator.Tasks\Uno.Extensions.Http.Kiota.Generator.Tasks.csproj" />
+		<ProjectReference Include="..\Uno.Extensions.Http.Kiota.SourceGenerator\Uno.Extensions.Http.Kiota.SourceGenerator.csproj" />
+	</ItemGroup>
+
+	<!--
+		TestData/ — OpenAPI spec files used by integration and parity tests.
+		Copied to output directory so tests can locate them via relative paths.
+	-->
+	<ItemGroup>
+		<None Include="TestData\**\*" CopyToOutputDirectory="PreserveNewest" LinkBase="TestData" />
+	</ItemGroup>
+
+	<!--
+		GoldenFiles/ — Reference output from the Kiota CLI, used by parity tests.
+		Copied to output directory for comparison during test execution.
+	-->
+	<ItemGroup>
+		<None Include="GoldenFiles\**\*" CopyToOutputDirectory="PreserveNewest" LinkBase="GoldenFiles" />
+	</ItemGroup>
+
+</Project>

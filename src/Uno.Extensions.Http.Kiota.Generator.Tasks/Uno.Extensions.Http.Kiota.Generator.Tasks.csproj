@@ -1,0 +1,137 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>netstandard2.0</TargetFramework>
+		<RootNamespace>Uno.Extensions.Http.Kiota.Generator.Tasks</RootNamespace>
+		<IsPackable>true</IsPackable>
+		<PackageId>Uno.Extensions.Http.Kiota.Generator</PackageId>
+		<Description>MSBuild integration for Kiota OpenAPI code generation. Automatically generates C# REST client code from OpenAPI specifications during dotnet build — no tool installation required.</Description>
+		<PackageTags>kiota openapi codegen msbuild rest-client uno-platform code-generation swagger api-client</PackageTags>
+		<PackageReadmeFile>PackageReadme.md</PackageReadmeFile>
+
+		<!-- MSBuild task package conventions -->
+		<DevelopmentDependency>true</DevelopmentDependency>
+		<NoPackageAnalysis>true</NoPackageAnalysis>
+		<SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
+
+		<!-- All public types have XML doc comments (T060) -->
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+
+		<!--
+			Microsoft.Build.Utilities.Core 17.12.6 has a known advisory (GHSA-w3q9-fxm7-j8fq).
+			This is safe for our usage: the package is only used at build time as a private asset,
+			never shipped to consuming applications.
+			NU1900: suppress transient vulnerability-data-fetch failures during restore.
+		-->
+		<NoWarn>$(NoWarn);NU1900;NU1903</NoWarn>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.Build.Framework" PrivateAssets="All" />
+		<PackageReference Include="Microsoft.Build.Utilities.Core" PrivateAssets="All" />
+	</ItemGroup>
+
+	<!-- Pack buildTransitive props/targets into the NuGet package -->
+	<ItemGroup>
+		<None Include="buildTransitive\**\*" Pack="true" PackagePath="buildTransitive" />
+	</ItemGroup>
+
+	<!-- Pack the package README -->
+	<ItemGroup>
+		<None Include="PackageReadme.md" Pack="true" PackagePath="\" />
+	</ItemGroup>
+
+	<!--
+		Pack the task assembly itself into lib/netstandard2.0/ so UsingTask
+		in the .targets file can resolve it via:
+		  AssemblyFile="$(MSBuildThisFileDirectory)..\lib\netstandard2.0\..."
+
+		The default PackagePath for lib already works because TargetFramework
+		is netstandard2.0 and IsPackable=true. We suppress NU5100 since MSBuild
+		task assemblies in lib/ are intentional (they are loaded by the build
+		engine, not as a project reference).
+	-->
+	<PropertyGroup>
+		<NoWarn>$(NoWarn);NU5100</NoWarn>
+	</PropertyGroup>
+
+	<!--
+		═══════════════════════════════════════════════════════════════════
+		CLI Tool Publishing & NuGet Packaging
+
+		The kiota-gen CLI tool is published as a framework-dependent
+		deployment for both net8.0 and net9.0, then packed into the
+		NuGet package under tools/<tfm>/any/.
+
+		The _PublishKiotaCli target runs automatically before pack,
+		publishing the CLI project for both TFMs with self-contained
+		and trimming disabled (framework-dependent deployment).
+
+		Expected NuGet layout:
+		  tools/
+		    net8.0/any/kiota-gen.dll, *.deps.json, ...
+		    net9.0/any/kiota-gen.dll, *.deps.json, ...
+		  buildTransitive/
+		    Uno.Extensions.Http.Kiota.Generator.props
+		    Uno.Extensions.Http.Kiota.Generator.targets
+		  lib/
+		    netstandard2.0/
+		      Uno.Extensions.Http.Kiota.Generator.Tasks.dll
+
+		To skip CLI publishing (e.g., when CI publishes separately):
+		  dotnet pack /p:KiotaSkipCliPublish=true
+		═══════════════════════════════════════════════════════════════════
+	-->
+	<PropertyGroup>
+		<_KiotaCliProject>$(MSBuildProjectDirectory)\..\Uno.Extensions.Http.Kiota.Generator.Cli\Uno.Extensions.Http.Kiota.Generator.Cli.csproj</_KiotaCliProject>
+		<!--
+			Publish output goes under this project's obj/ to avoid depending
+			on the CLI project's BaseOutputPath layout (which includes a
+			$(MSBuildProjectName) subdirectory per repo convention).
+		-->
+		<_KiotaCliPublishDir>$(BaseIntermediateOutputPath)kiota-cli-publish\</_KiotaCliPublishDir>
+	</PropertyGroup>
+
+	<!--
+		Publish the kiota-gen CLI for both target frameworks before NuGet
+		packing. Uses framework-dependent deployment to keep package size
+		small (~5 MB vs ~60 MB for self-contained per-RID builds).
+
+		The consuming .targets file resolves the tool via:
+		  tools/net9.0/any/kiota-gen.dll  (preferred)
+		  tools/net8.0/any/kiota-gen.dll  (fallback)
+		and invokes it through 'dotnet exec'.
+	-->
+	<Target Name="_PublishKiotaCli"
+			BeforeTargets="GenerateNuspec"
+			Condition="'$(DesignTimeBuild)' != 'true' AND '$(KiotaSkipCliPublish)' != 'true'">
+
+		<Message Text="Publishing kiota-gen CLI (net8.0, framework-dependent)..." Importance="high" />
+		<Exec Command="dotnet publish &quot;$(_KiotaCliProject)&quot; -f net8.0 -c $(Configuration) --no-self-contained -p:PublishTrimmed=false -p:PublishSingleFile=false -v minimal -o &quot;$(_KiotaCliPublishDir)net8.0&quot;" />
+
+		<Message Text="Publishing kiota-gen CLI (net9.0, framework-dependent)..." Importance="high" />
+		<Exec Command="dotnet publish &quot;$(_KiotaCliProject)&quot; -f net9.0 -c $(Configuration) --no-self-contained -p:PublishTrimmed=false -p:PublishSingleFile=false -v minimal -o &quot;$(_KiotaCliPublishDir)net9.0&quot;" />
+
+		<!--
+			Add the published CLI files to _PackageFiles for NuGet inclusion.
+
+			IMPORTANT: We must use intermediate item groups to avoid MSBuild's
+			item metadata batching issue. When adding to an existing item group
+			with %(Filename)%(Extension), MSBuild batches against the EXISTING
+			items (PackageReadme.md, .props, .targets, etc.) rather than the
+			new glob results. Using intermediate items preserves the correct
+			per-file metadata from the glob expansion.
+		-->
+		<ItemGroup>
+			<_KiotaCliNet8Published Include="$(_KiotaCliPublishDir)net8.0\**" />
+			<_KiotaCliNet9Published Include="$(_KiotaCliPublishDir)net9.0\**" />
+		</ItemGroup>
+		<ItemGroup>
+			<_PackageFiles Include="@(_KiotaCliNet8Published)"
+						   PackagePath="tools/net8.0/any/%(RecursiveDir)%(Filename)%(Extension)" />
+			<_PackageFiles Include="@(_KiotaCliNet9Published)"
+						   PackagePath="tools/net9.0/any/%(RecursiveDir)%(Filename)%(Extension)" />
+		</ItemGroup>
+	</Target>
+
+</Project>

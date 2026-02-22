@@ -63,15 +63,44 @@ jobs:
       version: 8.0.301
 
   - task: VSTest@2
+    displayName: Run Unit Tests
     inputs:
       testAssemblyVer2: |
         **/*.Tests.dll
         **/*.AotTests.dll
         !**/*UI.Tests.dll
+        !**/Kiota.Generator.Tests.dll
         !**/obj/**
       vsTestVersion: toolsInstaller
       testSelector: testAssemblies
       runSettingsFile: build/tests.runsettings
+      testRunTitle: 'Unit Tests'
+
+  # -----------------------------------------------------------------
+  # Kiota Generator tests — parity validation & integration
+  #
+  # Runs the Kiota source-generator and CLI wrapper tests in a
+  # dedicated step so results are reported separately in the CI
+  # dashboard.  Includes:
+  #   • Parity tests:       golden-file comparison vs Kiota CLI output
+  #   • Integration tests:  end-to-end CLI subprocess invocations
+  #   • Performance tests:  large-spec handling and incremental caching
+  #   • NuGet validation:   package structure and content verification
+  #
+  # The Generator.Cli project is built as part of the solution filter
+  # (Uno.Extensions-packageonly.slnf) so its output is available for
+  # subprocess-based CLI tests.
+  # -----------------------------------------------------------------
+  - task: VSTest@2
+    displayName: Kiota Generator & Parity Tests
+    inputs:
+      testAssemblyVer2: |
+        **/Kiota.Generator.Tests.dll
+        !**/obj/**
+      vsTestVersion: toolsInstaller
+      testSelector: testAssemblies
+      runSettingsFile: build/tests.runsettings
+      testRunTitle: 'Kiota Generator & Parity Tests'
       
 
   - task: PowerShell@2

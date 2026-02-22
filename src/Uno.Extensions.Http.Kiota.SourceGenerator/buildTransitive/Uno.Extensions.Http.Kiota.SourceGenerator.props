@@ -1,0 +1,67 @@
+<Project>
+
+	<!--
+		CompilerVisibleProperty and CompilerVisibleItemMetadata declarations
+		that expose MSBuild configuration to the Kiota incremental source generator.
+
+		Global properties are read via:
+		  optionsProvider.GlobalOptions.TryGetValue("build_property.KiotaGenerator_Enabled", ...)
+
+		Per-file metadata is read via:
+		  optionsProvider.GetOptions(file).TryGetValue("build_metadata.AdditionalFiles.KiotaClientName", ...)
+
+		Usage in consuming project:
+
+		  <PropertyGroup>
+		    <KiotaGenerator_Enabled>true</KiotaGenerator_Enabled>
+		  </PropertyGroup>
+
+		  <ItemGroup>
+		    <AdditionalFiles Include="openapi.json"
+		      KiotaClientName="PetStoreClient"
+		      KiotaNamespace="MyApp.PetStore" />
+		  </ItemGroup>
+	-->
+
+	<!-- ============================================================ -->
+	<!-- Default property values (can be overridden per-project)      -->
+	<!-- ============================================================ -->
+	<PropertyGroup>
+		<KiotaGenerator_Enabled Condition="'$(KiotaGenerator_Enabled)' == ''">true</KiotaGenerator_Enabled>
+		<KiotaGenerator_DefaultUsesBackingStore Condition="'$(KiotaGenerator_DefaultUsesBackingStore)' == ''">false</KiotaGenerator_DefaultUsesBackingStore>
+		<KiotaGenerator_DefaultIncludeAdditionalData Condition="'$(KiotaGenerator_DefaultIncludeAdditionalData)' == ''">true</KiotaGenerator_DefaultIncludeAdditionalData>
+		<KiotaGenerator_DefaultExcludeBackwardCompatible Condition="'$(KiotaGenerator_DefaultExcludeBackwardCompatible)' == ''">false</KiotaGenerator_DefaultExcludeBackwardCompatible>
+		<KiotaGenerator_DefaultTypeAccessModifier Condition="'$(KiotaGenerator_DefaultTypeAccessModifier)' == ''">Public</KiotaGenerator_DefaultTypeAccessModifier>
+	</PropertyGroup>
+
+	<!-- ============================================================ -->
+	<!-- Global properties visible to the source generator            -->
+	<!--   Read via: build_property.KiotaGenerator_*                  -->
+	<!-- ============================================================ -->
+	<ItemGroup>
+		<CompilerVisibleProperty Include="KiotaGenerator_Enabled" />
+		<CompilerVisibleProperty Include="KiotaGenerator_DefaultUsesBackingStore" />
+		<CompilerVisibleProperty Include="KiotaGenerator_DefaultIncludeAdditionalData" />
+		<CompilerVisibleProperty Include="KiotaGenerator_DefaultExcludeBackwardCompatible" />
+		<CompilerVisibleProperty Include="KiotaGenerator_DefaultTypeAccessModifier" />
+	</ItemGroup>
+
+	<!-- ============================================================ -->
+	<!-- Per-file AdditionalFiles metadata visible to the generator   -->
+	<!--   Read via: build_metadata.AdditionalFiles.Kiota*            -->
+	<!--                                                              -->
+	<!-- KiotaClientName acts as the opt-in marker: files without it  -->
+	<!-- are ignored by the generator.                                -->
+	<!-- ============================================================ -->
+	<ItemGroup>
+		<CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="KiotaClientName" />
+		<CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="KiotaNamespace" />
+		<CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="KiotaUsesBackingStore" />
+		<CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="KiotaIncludeAdditionalData" />
+		<CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="KiotaExcludeBackwardCompatible" />
+		<CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="KiotaTypeAccessModifier" />
+		<CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="KiotaIncludePatterns" />
+		<CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="KiotaExcludePatterns" />
+	</ItemGroup>
+
+</Project>

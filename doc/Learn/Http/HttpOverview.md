@@ -144,6 +144,9 @@ protected override void OnLaunched(LaunchActivatedEventArgs args)
 
 For more information on using Kiota to generate and register your client see the [How-To: Create and register a Kiota client for an API](xref:Uno.Extensions.Http.HowToKiota) guide.
 
+> [!TIP]
+> You can also generate Kiota clients automatically at build time using an **MSBuild task** or a **Roslyn source generator** — no manual CLI step required. See [How-To: Generate Kiota clients at build time](xref:Uno.Extensions.Http.HowToKiotaBuildGeneration) for details.
+
 ## References
 
 - [How-To: Consume a web API with HttpClient](xref:Uno.Development.ConsumeWebApi)
@@ -155,4 +158,5 @@ For more information on using Kiota to generate and register your client see the
 - [Overview: Polly and HttpClientFactory](https://github.com/App-vNext/Polly/wiki/Polly-and-HttpClientFactory)
 - [Overview: What is Refit?](https://github.com/reactiveui/refit)
 - [Overview: What is Kiota?](https://learn.microsoft.com/en-us/openapi/kiota/)
+- [How-To: Generate Kiota clients at build time](xref:Uno.Extensions.Http.HowToKiotaBuildGeneration)
 - [Explore: TestHarness HTTP](https://github.com/unoplatform/uno.extensions/tree/main/testing/TestHarness/TestHarness/Ext/Http/)

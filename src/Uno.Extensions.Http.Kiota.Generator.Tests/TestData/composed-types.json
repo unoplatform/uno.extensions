@@ -1,0 +1,512 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Composed Types Test API",
+    "description": "Test API for oneOf/anyOf composed type code generation.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.example.com/v1"
+    }
+  ],
+  "paths": {
+    "/payments": {
+      "post": {
+        "operationId": "createPayment",
+        "summary": "Create a payment",
+        "description": "Creates a payment using one of the supported payment methods (oneOf).",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PaymentMethod"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Payment created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentResult"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Client error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "operationId": "listPayments",
+        "summary": "List payments",
+        "responses": {
+          "200": {
+            "description": "A list of payments",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PaymentResult"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/notifications": {
+      "post": {
+        "operationId": "sendNotification",
+        "summary": "Send a notification",
+        "description": "Sends a notification via any combination of channels (anyOf).",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NotificationRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Notification sent",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotificationResult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/content": {
+      "get": {
+        "operationId": "getContent",
+        "summary": "Get content",
+        "description": "Returns content that can be one of several types (oneOf with primitive).",
+        "responses": {
+          "200": {
+            "description": "Content result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContentBlock"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/settings": {
+      "get": {
+        "operationId": "getSettings",
+        "summary": "Get settings",
+        "description": "Returns a setting value that can be a string, integer, or boolean (oneOf primitives).",
+        "responses": {
+          "200": {
+            "description": "Setting value",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SettingValue"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "operationId": "updateSettings",
+        "summary": "Update settings",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SettingValue"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Setting updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SettingValue"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "PaymentMethod": {
+        "description": "A payment method — demonstrates oneOf with object types",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/CreditCardPayment"
+          },
+          {
+            "$ref": "#/components/schemas/BankTransferPayment"
+          },
+          {
+            "$ref": "#/components/schemas/DigitalWalletPayment"
+          }
+        ],
+        "discriminator": {
+          "propertyName": "paymentType",
+          "mapping": {
+            "credit_card": "#/components/schemas/CreditCardPayment",
+            "bank_transfer": "#/components/schemas/BankTransferPayment",
+            "digital_wallet": "#/components/schemas/DigitalWalletPayment"
+          }
+        }
+      },
+      "CreditCardPayment": {
+        "type": "object",
+        "required": [
+          "paymentType",
+          "cardNumber",
+          "expiryMonth",
+          "expiryYear"
+        ],
+        "properties": {
+          "paymentType": {
+            "type": "string"
+          },
+          "cardNumber": {
+            "type": "string",
+            "description": "Masked card number"
+          },
+          "expiryMonth": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "expiryYear": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "cardholderName": {
+            "type": "string"
+          },
+          "billingAddress": {
+            "$ref": "#/components/schemas/Address"
+          }
+        }
+      },
+      "BankTransferPayment": {
+        "type": "object",
+        "required": [
+          "paymentType",
+          "accountNumber",
+          "routingNumber"
+        ],
+        "properties": {
+          "paymentType": {
+            "type": "string"
+          },
+          "accountNumber": {
+            "type": "string"
+          },
+          "routingNumber": {
+            "type": "string"
+          },
+          "bankName": {
+            "type": "string"
+          },
+          "accountHolderName": {
+            "type": "string"
+          }
+        }
+      },
+      "DigitalWalletPayment": {
+        "type": "object",
+        "required": [
+          "paymentType",
+          "walletProvider",
+          "walletToken"
+        ],
+        "properties": {
+          "paymentType": {
+            "type": "string"
+          },
+          "walletProvider": {
+            "type": "string",
+            "description": "e.g. PayPal, Apple Pay, Google Pay"
+          },
+          "walletToken": {
+            "type": "string",
+            "description": "Token from the digital wallet provider"
+          },
+          "email": {
+            "type": "string"
+          }
+        }
+      },
+      "PaymentResult": {
+        "type": "object",
+        "properties": {
+          "transactionId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "completed",
+              "failed",
+              "refunded"
+            ]
+          },
+          "amount": {
+            "type": "number",
+            "format": "decimal"
+          },
+          "currency": {
+            "type": "string"
+          },
+          "paymentMethod": {
+            "$ref": "#/components/schemas/PaymentMethod"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "NotificationRequest": {
+        "type": "object",
+        "required": [
+          "message",
+          "channels"
+        ],
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "channels": {
+            "$ref": "#/components/schemas/NotificationChannels"
+          }
+        }
+      },
+      "NotificationChannels": {
+        "description": "One or more notification channels — demonstrates anyOf",
+        "anyOf": [
+          {
+            "$ref": "#/components/schemas/EmailChannel"
+          },
+          {
+            "$ref": "#/components/schemas/SmsChannel"
+          },
+          {
+            "$ref": "#/components/schemas/PushChannel"
+          }
+        ]
+      },
+      "EmailChannel": {
+        "type": "object",
+        "required": [
+          "emailAddress"
+        ],
+        "properties": {
+          "emailAddress": {
+            "type": "string"
+          },
+          "subject": {
+            "type": "string"
+          },
+          "isHtml": {
+            "type": "boolean"
+          }
+        }
+      },
+      "SmsChannel": {
+        "type": "object",
+        "required": [
+          "phoneNumber"
+        ],
+        "properties": {
+          "phoneNumber": {
+            "type": "string"
+          },
+          "countryCode": {
+            "type": "string"
+          }
+        }
+      },
+      "PushChannel": {
+        "type": "object",
+        "required": [
+          "deviceToken"
+        ],
+        "properties": {
+          "deviceToken": {
+            "type": "string"
+          },
+          "platform": {
+            "type": "string",
+            "enum": [
+              "ios",
+              "android",
+              "web"
+            ]
+          }
+        }
+      },
+      "NotificationResult": {
+        "type": "object",
+        "properties": {
+          "notificationId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "status": {
+            "type": "string"
+          },
+          "sentAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "ContentBlock": {
+        "description": "Content that can be text, rich media, or structured data — demonstrates oneOf with mixed types",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/TextContent"
+          },
+          {
+            "$ref": "#/components/schemas/ImageContent"
+          },
+          {
+            "type": "string",
+            "description": "Raw text content"
+          }
+        ]
+      },
+      "TextContent": {
+        "type": "object",
+        "required": [
+          "body"
+        ],
+        "properties": {
+          "body": {
+            "type": "string"
+          },
+          "format": {
+            "type": "string",
+            "enum": [
+              "plain",
+              "markdown",
+              "html"
+            ]
+          },
+          "language": {
+            "type": "string"
+          }
+        }
+      },
+      "ImageContent": {
+        "type": "object",
+        "required": [
+          "url"
+        ],
+        "properties": {
+          "url": {
+            "type": "string"
+          },
+          "altText": {
+            "type": "string"
+          },
+          "width": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "height": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "mimeType": {
+            "type": "string"
+          }
+        }
+      },
+      "SettingValue": {
+        "description": "A setting value that can be a string, integer, or boolean — demonstrates oneOf with primitives only",
+        "oneOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "type": "boolean"
+          }
+        ]
+      },
+      "Address": {
+        "type": "object",
+        "properties": {
+          "street": {
+            "type": "string"
+          },
+          "city": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          },
+          "zipCode": {
+            "type": "string"
+          },
+          "country": {
+            "type": "string"
+          }
+        }
+      },
+      "ApiError": {
+        "type": "object",
+        "required": [
+          "code",
+          "message"
+        ],
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}
