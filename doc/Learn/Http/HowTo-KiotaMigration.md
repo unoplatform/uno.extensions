@@ -306,6 +306,7 @@ If both hand-generated files and build-generated files exist, you will get `CS01
 
 ## See also
 
+* [Kiota Source Generator Reference](xref:Uno.Extensions.Http.HowToKiotaSourceGenerator) — in-depth pipeline architecture, all diagnostics, and troubleshooting
 * [Generate Kiota clients at build time](xref:Uno.Extensions.Http.HowToKiotaBuildGeneration) — full reference for properties, metadata, and diagnostics
 * [Create a Kiota Client](xref:Uno.Extensions.Http.HowToKiota) — initial Kiota setup and DI registration
 * [HTTP overview](xref:Uno.Extensions.Http.Overview)

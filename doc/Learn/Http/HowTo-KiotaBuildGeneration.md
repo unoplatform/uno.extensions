@@ -255,6 +255,8 @@ Both generation approaches emit structured diagnostics with `KIOTA` prefixed cod
 | `KIOTA030` | Info | Generation completed successfully. |
 | `KIOTA031` | Warning | Generation completed with some types skipped. |
 | `KIOTA040` | Error | Unexpected error in the generator pipeline. |
+| `KIOTA050` | Warning | Failed to emit source for an individual type (partial generation continues). |
+| `KIOTA051` | Error | Failed to build the code model (CodeDOM) from the OpenAPI document. |
 
 In the MSBuild task, these appear as standard MSBuild errors/warnings in the Error List. In the source generator, they appear as Roslyn analyzer diagnostics.
 
@@ -272,6 +274,7 @@ If you are currently generating code with `kiota generate` (or `dotnet kiota gen
 
 ## See also
 
+* [Kiota Source Generator Reference](xref:Uno.Extensions.Http.HowToKiotaSourceGenerator) — in-depth pipeline architecture, all diagnostics, and advanced troubleshooting
 * [Migrate to build-time Kiota generation](xref:Uno.Extensions.Http.HowToKiotaMigration) — step-by-step migration from manual CLI or between task/generator
 * [How-To: Create a Kiota Client](xref:Uno.Extensions.Http.HowToKiota) — initial Kiota setup and DI registration
 * [Overview: What is Kiota?](https://learn.microsoft.com/en-us/openapi/kiota/)

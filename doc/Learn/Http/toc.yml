@@ -10,5 +10,7 @@
   href: xref:Uno.Extensions.Http.HowToKiota
 - name: "How-To: Generate Kiota clients at build time"
   href: xref:Uno.Extensions.Http.HowToKiotaBuildGeneration
+- name: "Kiota Source Generator Reference"
+  href: xref:Uno.Extensions.Http.HowToKiotaSourceGenerator
 - name: "How-To: Migrate to build-time Kiota generation"
   href: xref:Uno.Extensions.Http.HowToKiotaMigration

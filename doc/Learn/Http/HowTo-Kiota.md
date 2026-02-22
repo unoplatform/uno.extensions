@@ -142,6 +142,7 @@ Both approaches produce output identical to the Kiota CLI and are fully compatib
 
 ## See also
 
+* [Kiota Source Generator Reference](xref:Uno.Extensions.Http.HowToKiotaSourceGenerator) — in-depth pipeline architecture, all diagnostics, and troubleshooting
 * [Migrate to build-time Kiota generation](xref:Uno.Extensions.Http.HowToKiotaMigration) — step-by-step migration from manual CLI or between task/generator
 * [Overview: What is Kiota?](https://learn.microsoft.com/en-us/openapi/kiota/)
 * [Overview: HTTP](xref:Uno.Extensions.Http.Overview)

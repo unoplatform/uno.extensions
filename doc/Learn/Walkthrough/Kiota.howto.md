@@ -122,6 +122,8 @@ If you add `Uno.Extensions.Authentication`, the registered handlers automaticall
 ## Resources
 
 - [Generate Kiota clients at build time](xref:Uno.Extensions.Http.HowToKiotaBuildGeneration)
+- [Kiota Source Generator Reference](xref:Uno.Extensions.Http.HowToKiotaSourceGenerator)
+- [Migrate to build-time Kiota generation](xref:Uno.Extensions.Http.HowToKiotaMigration)
 - [Kiota overview](https://learn.microsoft.com/en-us/openapi/kiota/)
 - [HTTP overview](xref:Uno.Extensions.Http.Overview)
 - [Register HTTP endpoints](xref:Uno.Extensions.Http.HowToHttp)

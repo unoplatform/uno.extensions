@@ -159,4 +159,5 @@ For more information on using Kiota to generate and register your client see the
 - [Overview: What is Refit?](https://github.com/reactiveui/refit)
 - [Overview: What is Kiota?](https://learn.microsoft.com/en-us/openapi/kiota/)
 - [How-To: Generate Kiota clients at build time](xref:Uno.Extensions.Http.HowToKiotaBuildGeneration)
+- [Kiota Source Generator Reference](xref:Uno.Extensions.Http.HowToKiotaSourceGenerator)
 - [Explore: TestHarness HTTP](https://github.com/unoplatform/uno.extensions/tree/main/testing/TestHarness/TestHarness/Ext/Http/)
