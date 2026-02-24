@@ -1,0 +1,35 @@
+<Page x:Class="TestHarness.Ext.Http.KiotaSourceGen.KiotaSourceGenHomePage"
+	  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	  xmlns:local="using:TestHarness.Ext.Http.KiotaSourceGen"
+	  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	  mc:Ignorable="d"
+	  Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+	<ScrollViewer>
+		<StackPanel Spacing="12" Padding="20">
+			<TextBlock Text="Kiota Source Generator Test" Style="{StaticResource TitleTextBlockStyle}" />
+
+			<TextBlock Text="Initialization Status:" FontWeight="Bold" />
+			<TextBlock AutomationProperties.AutomationId="SourceGenInitStatusTextBlock"
+					   Text="{Binding InitializationStatus}" />
+
+			<TextBlock Text="Client Type:" FontWeight="Bold" />
+			<TextBlock AutomationProperties.AutomationId="SourceGenClientTypeTextBlock"
+					   Text="{Binding ClientTypeName}" />
+
+			<TextBlock Text="Pets Endpoint:" FontWeight="Bold" />
+			<TextBlock AutomationProperties.AutomationId="SourceGenPetsEndpointTextBlock"
+					   Text="{Binding PetsEndpointInfo}" />
+
+			<Button AutomationProperties.AutomationId="SourceGenFetchPetsButton"
+					Content="Fetch Pets"
+					Command="{Binding FetchPetsCommand}" />
+
+			<TextBlock Text="Fetch Result:" FontWeight="Bold" />
+			<TextBlock AutomationProperties.AutomationId="SourceGenFetchResultTextBlock"
+					   Text="{Binding FetchResult}"
+					   TextWrapping="Wrap" />
+		</StackPanel>
+	</ScrollViewer>
+</Page>

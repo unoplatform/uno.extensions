@@ -1,0 +1,16 @@
+<Page x:Class="TestHarness.Ext.Http.KiotaSourceGen.KiotaSourceGenMainPage"
+	  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	  xmlns:local="using:TestHarness.Ext.Http.KiotaSourceGen"
+	  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	  mc:Ignorable="d"
+	  Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+	<Grid>
+		<Button AutomationProperties.AutomationId="ShowSourceGenHomeButton"
+				Content="Show SourceGen Home"
+				HorizontalAlignment="Center"
+				VerticalAlignment="Center"
+				Click="ShowSourceGenHomeClick" />
+	</Grid>
+</Page>

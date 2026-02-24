@@ -1,6 +1,11 @@
 ﻿<Project Sdk="Uno.Sdk.Private">
 	<Import Project="..\..\..\src\tfms-ui-winui.props" />
 
+	<!-- Import buildTransitive props for Kiota generators (required for ProjectReference consumption) -->
+	<Import Project="..\..\..\src\Uno.Extensions.Http.Kiota.SourceGenerator\buildTransitive\Uno.Extensions.Http.Kiota.SourceGenerator.props" />
+	<Import Project="..\..\..\src\Uno.Extensions.Http.Kiota.Generator.Tasks\buildTransitive\Uno.Extensions.Http.Kiota.Generator.props" />
+	<Import Project="..\..\..\src\Uno.Extensions.Http.Kiota.Generator.Tasks\buildTransitive\Uno.Extensions.Http.Kiota.Generator.targets" />
+
 	<PropertyGroup>
 
 		<OutputType>Exe</OutputType>
@@ -55,6 +60,8 @@
 	  <EmbeddedResource Include="Ext\Core\Storage\appsettings.storage.json" />
 	  <EmbeddedResource Include="Ext\Http\Endpoints\appsettings.httpendpoints.json" />
 	  <EmbeddedResource Include="Ext\Http\Refit\appsettings.httprefit.json" />
+	  <EmbeddedResource Include="Ext\Http\KiotaBuildGen\appsettings.kiotabuildgen.json" />
+	  <EmbeddedResource Include="Ext\Http\KiotaSourceGen\appsettings.kiotasourcegen.json" />
 	  <EmbeddedResource Include="Ext\Localization\appsettings.locale.json" />
 	  <EmbeddedResource Include="Ext\Navigation\AddressBar\appsettings.addressbar.json" />
 	  <EmbeddedResource Include="Ext\Navigation\Apps\Commerce\appsettings.logging.json" />
@@ -63,6 +70,20 @@
 	<ItemGroup>
 	  <PackageReference Include="Microsoft.IdentityModel.Tokens" />
 	  <PackageReference Include="System.IdentityModel.Tokens.Jwt" />
+	</ItemGroup>
+
+	<!-- Kiota Build Generation (MSBuild task) -->
+	<ItemGroup>
+	  <KiotaOpenApiReference Include="Ext\Http\KiotaBuildGen\petstore-buildgen.json"
+	    ClientClassName="BuildGenPetClient"
+	    Namespace="TestHarness.Ext.Http.KiotaBuildGen.BuildGenClient" />
+	</ItemGroup>
+
+	<!-- Kiota Source Generation (Roslyn incremental source generator) -->
+	<ItemGroup>
+	  <AdditionalFiles Include="Ext\Http\KiotaSourceGen\petstore-sourcegen.json"
+	    KiotaClientName="SourceGenPetClient"
+	    KiotaNamespace="TestHarness.Ext.Http.KiotaSourceGen.SourceGenClient" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -91,6 +112,8 @@
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Http.UI\Uno.Extensions.Http.WinUI.csproj" />
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Http\Uno.Extensions.Http.csproj" />
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Http.Kiota\Uno.Extensions.Http.Kiota.csproj" />
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Http.Kiota.SourceGenerator\Uno.Extensions.Http.Kiota.SourceGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Http.Kiota.Generator.Tasks\Uno.Extensions.Http.Kiota.Generator.Tasks.csproj" ReferenceOutputAssembly="false" />
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Http.Refit\Uno.Extensions.Http.Refit.csproj" />
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Validation\Uno.Extensions.Validation.csproj" />
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Validation.Fluent\Uno.Extensions.Validation.Fluent.csproj" />

@@ -14,9 +14,16 @@
 		═══════════════════════════════════════════════════════════════════════
 	-->
 
-	<!-- Register the KiotaGenerate MSBuild task for structured error reporting -->
+	<!-- Register the KiotaGenerate MSBuild task for structured error reporting.
+	     When consumed from a NuGet package the DLL lives under lib/netstandard2.0/.
+	     When consumed from source (ProjectReference + Import) we fall back to the
+	     normal build output directory. -->
+	<PropertyGroup>
+		<_KiotaTaskAssembly>$(MSBuildThisFileDirectory)..\lib\netstandard2.0\Uno.Extensions.Http.Kiota.Generator.Tasks.dll</_KiotaTaskAssembly>
+		<_KiotaTaskAssembly Condition="!Exists('$(_KiotaTaskAssembly)')">$(MSBuildThisFileDirectory)..\bin\Uno.Extensions.Http.Kiota.Generator.Tasks\$(Configuration)\netstandard2.0\Uno.Extensions.Http.Kiota.Generator.Tasks.dll</_KiotaTaskAssembly>
+	</PropertyGroup>
 	<UsingTask TaskName="Uno.Extensions.Http.Kiota.Generator.Tasks.KiotaGenerateTask"
-			   AssemblyFile="$(MSBuildThisFileDirectory)..\lib\netstandard2.0\Uno.Extensions.Http.Kiota.Generator.Tasks.dll" />
+			   AssemblyFile="$(_KiotaTaskAssembly)" />
 
 	<!-- ═══════════════════════════════════════════════════════════════════
 	     Resolve the kiota-gen CLI tool binary.
@@ -33,15 +40,24 @@
 	<PropertyGroup>
 		<_KiotaToolsDir>$(MSBuildThisFileDirectory)..\tools\</_KiotaToolsDir>
 
-		<!-- Framework-dependent tool resolution (preferred) -->
+		<!-- Framework-dependent tool resolution (preferred — NuGet package layout) -->
 		<_KiotaToolDll Condition="'$(_KiotaToolDll)' == '' AND Exists('$(_KiotaToolsDir)net9.0\any\kiota-gen.dll')">$(_KiotaToolsDir)net9.0\any\kiota-gen.dll</_KiotaToolDll>
 		<_KiotaToolDll Condition="'$(_KiotaToolDll)' == '' AND Exists('$(_KiotaToolsDir)net8.0\any\kiota-gen.dll')">$(_KiotaToolsDir)net8.0\any\kiota-gen.dll</_KiotaToolDll>
 
-		<!-- RID-specific self-contained tool resolution (fallback) -->
-		<_KiotaToolExe Condition="'$(_KiotaToolDll)' == '' AND $([MSBuild]::IsOSPlatform('Windows'))">$(_KiotaToolsDir)win-x64\kiota-gen.exe</_KiotaToolExe>
-		<_KiotaToolExe Condition="'$(_KiotaToolDll)' == '' AND '$(_KiotaToolExe)' == '' AND $([MSBuild]::IsOSPlatform('Linux'))">$(_KiotaToolsDir)linux-x64/kiota-gen</_KiotaToolExe>
-		<_KiotaToolExe Condition="'$(_KiotaToolDll)' == '' AND '$(_KiotaToolExe)' == '' AND $([MSBuild]::IsOSPlatform('OSX')) AND '$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)' == 'Arm64'">$(_KiotaToolsDir)osx-arm64/kiota-gen</_KiotaToolExe>
-		<_KiotaToolExe Condition="'$(_KiotaToolDll)' == '' AND '$(_KiotaToolExe)' == '' AND $([MSBuild]::IsOSPlatform('OSX')) AND '$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)' != 'Arm64'">$(_KiotaToolsDir)osx-x64/kiota-gen</_KiotaToolExe>
+		<!-- RID-specific self-contained tool resolution (NuGet package layout, future) -->
+		<_KiotaToolExe Condition="'$(_KiotaToolDll)' == '' AND '$(_KiotaToolExe)' == '' AND $([MSBuild]::IsOSPlatform('Windows')) AND Exists('$(_KiotaToolsDir)win-x64\kiota-gen.exe')">$(_KiotaToolsDir)win-x64\kiota-gen.exe</_KiotaToolExe>
+		<_KiotaToolExe Condition="'$(_KiotaToolDll)' == '' AND '$(_KiotaToolExe)' == '' AND $([MSBuild]::IsOSPlatform('Linux')) AND Exists('$(_KiotaToolsDir)linux-x64/kiota-gen')">$(_KiotaToolsDir)linux-x64/kiota-gen</_KiotaToolExe>
+		<_KiotaToolExe Condition="'$(_KiotaToolDll)' == '' AND '$(_KiotaToolExe)' == '' AND $([MSBuild]::IsOSPlatform('OSX')) AND '$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)' == 'Arm64' AND Exists('$(_KiotaToolsDir)osx-arm64/kiota-gen')">$(_KiotaToolsDir)osx-arm64/kiota-gen</_KiotaToolExe>
+		<_KiotaToolExe Condition="'$(_KiotaToolDll)' == '' AND '$(_KiotaToolExe)' == '' AND $([MSBuild]::IsOSPlatform('OSX')) AND '$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)' != 'Arm64' AND Exists('$(_KiotaToolsDir)osx-x64/kiota-gen')">$(_KiotaToolsDir)osx-x64/kiota-gen</_KiotaToolExe>
+
+		<!--
+			Local development fallback: resolve from the CLI project's build
+			output when consumed via ProjectReference + Import (source), not
+			from a NuGet package.  Mirrors the task-assembly fallback above.
+		-->
+		<_KiotaCliProjectBinDir Condition="'$(_KiotaToolDll)' == '' AND '$(_KiotaToolExe)' == ''">$(MSBuildThisFileDirectory)..\..\Uno.Extensions.Http.Kiota.Generator.Cli\bin\Uno.Extensions.Http.Kiota.Generator.Cli\$(Configuration)\</_KiotaCliProjectBinDir>
+		<_KiotaToolDll Condition="'$(_KiotaToolDll)' == '' AND '$(_KiotaToolExe)' == '' AND Exists('$(_KiotaCliProjectBinDir)net9.0\kiota-gen.dll')">$(_KiotaCliProjectBinDir)net9.0\kiota-gen.dll</_KiotaToolDll>
+		<_KiotaToolDll Condition="'$(_KiotaToolDll)' == '' AND '$(_KiotaToolExe)' == '' AND Exists('$(_KiotaCliProjectBinDir)net8.0\kiota-gen.dll')">$(_KiotaCliProjectBinDir)net8.0\kiota-gen.dll</_KiotaToolDll>
 	</PropertyGroup>
 
 	<!-- ═══════════════════════════════════════════════════════════════════

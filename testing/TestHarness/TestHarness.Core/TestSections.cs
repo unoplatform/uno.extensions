@@ -38,6 +38,8 @@ public enum TestSections
 	Http_Endpoints,
 	Http_Refit,
 	Http_Kiota,
+	Http_Kiota_BuildGen,
+	Http_Kiota_SourceGen,
 	Toolkit_ThemeService,
 	Validation
 }

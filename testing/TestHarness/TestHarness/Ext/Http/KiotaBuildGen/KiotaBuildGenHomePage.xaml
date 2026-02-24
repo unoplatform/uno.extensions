@@ -1,0 +1,48 @@
+<Page x:Class="TestHarness.Ext.Http.KiotaBuildGen.KiotaBuildGenHomePage"
+	  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	  xmlns:utu="using:Uno.Toolkit.UI"
+	  mc:Ignorable="d"
+	  Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition />
+		</Grid.RowDefinitions>
+
+		<utu:NavigationBar AutomationProperties.AutomationId="BuildGenHomeNavigationBar"
+						   Content="Kiota Build-Time Generation (MSBuild Task)" />
+
+		<StackPanel Grid.Row="1"
+					HorizontalAlignment="Center"
+					VerticalAlignment="Center"
+					Spacing="10">
+
+			<TextBlock AutomationProperties.AutomationId="BuildGenInitStatusTextBlock"
+					   Text="{Binding InitializationStatus}"
+					   FontWeight="Bold"
+					   FontSize="16"
+					   Foreground="Green" />
+
+			<TextBlock AutomationProperties.AutomationId="BuildGenClientTypeTextBlock"
+					   Text="{Binding ClientTypeName}"
+					   FontSize="14" />
+
+			<TextBlock AutomationProperties.AutomationId="BuildGenPetsEndpointTextBlock"
+					   Text="{Binding PetsEndpointInfo}"
+					   FontSize="14" />
+
+			<Button AutomationProperties.AutomationId="BuildGenFetchPetsButton"
+					Content="Fetch Pets"
+					Click="{x:Bind ViewModel.FetchPets}" />
+
+			<TextBlock AutomationProperties.AutomationId="BuildGenFetchResultTextBlock"
+					   Text="{Binding FetchResult}"
+					   TextWrapping="Wrap"
+					   MaxWidth="400" />
+		</StackPanel>
+	</Grid>
+</Page>
