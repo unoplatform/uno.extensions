@@ -8,6 +8,7 @@ using System.Threading;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Text;
+using Uno.Extensions.Generators;
 using Uno.Extensions.Http.Kiota.SourceGenerator.CodeDom;
 using Uno.Extensions.Http.Kiota.SourceGenerator.Configuration;
 using Uno.Extensions.Http.Kiota.SourceGenerator.Emitter;
@@ -50,7 +51,7 @@ namespace Uno.Extensions.Http.Kiota.SourceGenerator;
 /// </para>
 /// </summary>
 [Generator(LanguageNames.CSharp)]
-internal sealed class KiotaSourceGenerator : IIncrementalGenerator
+internal sealed class KiotaSourceGenerator : IIncrementalGenerator, ICodeGenTool
 {
 	// ------------------------------------------------------------------
 	// Diagnostic descriptors
@@ -110,9 +111,12 @@ internal sealed class KiotaSourceGenerator : IIncrementalGenerator
 		defaultSeverity: DiagnosticSeverity.Error,
 		isEnabledByDefault: true);
 
+	public string Version => "1";
+
 	/// <inheritdoc />
 	public void Initialize(IncrementalGeneratorInitializationContext context)
 	{
+		Console.WriteLine("STEVE: FDDF");
 		// Step 1: Combine each AdditionalText with the AnalyzerConfigOptionsProvider
 		//         so we can read per-file metadata in predicates and transforms.
 		var filesWithOptions = context.AdditionalTextsProvider

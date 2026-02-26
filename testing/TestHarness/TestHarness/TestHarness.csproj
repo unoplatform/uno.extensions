@@ -1,10 +1,22 @@
 ﻿<Project Sdk="Uno.Sdk.Private">
 	<Import Project="..\..\..\src\tfms-ui-winui.props" />
 
+	<!--
+		Kiota generator selection: set UseKiotaBuildGen to switch between
+		the MSBuild-task (BuildGen) and Roslyn source-generator (SourceGen)
+		approaches. Only one can be active at a time.
+
+		  dotnet build -p:UseKiotaBuildGen=true   (default – MSBuild task)
+		  dotnet build -p:UseKiotaBuildGen=false   (Roslyn source generator)
+	-->
+	<PropertyGroup>
+		<UseKiotaBuildGen Condition="'$(UseKiotaBuildGen)' == ''">false</UseKiotaBuildGen>
+	</PropertyGroup>
+
 	<!-- Import buildTransitive props for Kiota generators (required for ProjectReference consumption) -->
-	<Import Project="..\..\..\src\Uno.Extensions.Http.Kiota.SourceGenerator\buildTransitive\Uno.Extensions.Http.Kiota.SourceGenerator.props" />
-	<Import Project="..\..\..\src\Uno.Extensions.Http.Kiota.Generator.Tasks\buildTransitive\Uno.Extensions.Http.Kiota.Generator.props" />
-	<Import Project="..\..\..\src\Uno.Extensions.Http.Kiota.Generator.Tasks\buildTransitive\Uno.Extensions.Http.Kiota.Generator.targets" />
+	<Import Condition="'$(UseKiotaBuildGen)' != 'true'" Project="..\..\..\src\Uno.Extensions.Http.Kiota.SourceGenerator\buildTransitive\Uno.Extensions.Http.Kiota.SourceGenerator.props" />
+	<Import Condition="'$(UseKiotaBuildGen)' == 'true'" Project="..\..\..\src\Uno.Extensions.Http.Kiota.Generator.Tasks\buildTransitive\Uno.Extensions.Http.Kiota.Generator.props" />
+	<Import Condition="'$(UseKiotaBuildGen)' == 'true'" Project="..\..\..\src\Uno.Extensions.Http.Kiota.Generator.Tasks\buildTransitive\Uno.Extensions.Http.Kiota.Generator.targets" />
 
 	<PropertyGroup>
 
@@ -60,8 +72,8 @@
 	  <EmbeddedResource Include="Ext\Core\Storage\appsettings.storage.json" />
 	  <EmbeddedResource Include="Ext\Http\Endpoints\appsettings.httpendpoints.json" />
 	  <EmbeddedResource Include="Ext\Http\Refit\appsettings.httprefit.json" />
-	  <EmbeddedResource Include="Ext\Http\KiotaBuildGen\appsettings.kiotabuildgen.json" />
-	  <EmbeddedResource Include="Ext\Http\KiotaSourceGen\appsettings.kiotasourcegen.json" />
+	  <EmbeddedResource Condition="'$(UseKiotaBuildGen)' == 'true'" Include="Ext\Http\KiotaBuildGen\appsettings.kiotabuildgen.json" />
+	  <EmbeddedResource Condition="'$(UseKiotaBuildGen)' != 'true'" Include="Ext\Http\KiotaSourceGen\appsettings.kiotasourcegen.json" />
 	  <EmbeddedResource Include="Ext\Localization\appsettings.locale.json" />
 	  <EmbeddedResource Include="Ext\Navigation\AddressBar\appsettings.addressbar.json" />
 	  <EmbeddedResource Include="Ext\Navigation\Apps\Commerce\appsettings.logging.json" />
@@ -72,18 +84,32 @@
 	  <PackageReference Include="System.IdentityModel.Tokens.Jwt" />
 	</ItemGroup>
 
-	<!-- Kiota Build Generation (MSBuild task) -->
-	<ItemGroup>
-	  <KiotaOpenApiReference Include="Ext\Http\KiotaBuildGen\petstore-buildgen.json"
-	    ClientClassName="BuildGenPetClient"
-	    Namespace="TestHarness.Ext.Http.KiotaBuildGen.BuildGenClient" />
+	<!-- Kiota Build Generation (MSBuild task) – active when UseKiotaBuildGen=true -->
+	<ItemGroup Condition="'$(UseKiotaBuildGen)' == 'true'">
+	  <KiotaOpenApiReference Include="Ext\Http\KiotaBuildGen\petstore-buildgen.json" ClientClassName="BuildGenPetClient" Namespace="TestHarness.Ext.Http.KiotaBuildGen.BuildGenClient" />
 	</ItemGroup>
 
-	<!-- Kiota Source Generation (Roslyn incremental source generator) -->
+	<!-- Kiota Source Generation (Roslyn incremental source generator) – active when UseKiotaBuildGen=false -->
+	<ItemGroup Condition="'$(UseKiotaBuildGen)' != 'true'">
+	  <AdditionalFiles Include="Ext\Http\KiotaSourceGen\petstore-sourcegen.json" KiotaClientName="SourceGenPetClient" KiotaNamespace="TestHarness.Ext.Http.KiotaSourceGen.SourceGenClient" />
+	</ItemGroup>
+
+	<!--
+		Always exclude the checked-in KiotaGenerated folder from default SDK
+		Compile globbing.  In BuildGen mode the _KiotaIncludeGenerated target
+		re-adds the freshly generated files; in SourceGen mode they aren't needed.
+	-->
 	<ItemGroup>
-	  <AdditionalFiles Include="Ext\Http\KiotaSourceGen\petstore-sourcegen.json"
-	    KiotaClientName="SourceGenPetClient"
-	    KiotaNamespace="TestHarness.Ext.Http.KiotaSourceGen.SourceGenClient" />
+		<Compile Remove="KiotaGenerated\**" />
+		<None Remove="KiotaGenerated\**" />
+	</ItemGroup>
+
+	<!-- Exclude source files for the inactive Kiota generator mode -->
+	<ItemGroup Condition="'$(UseKiotaBuildGen)' == 'true'">
+		<Compile Remove="Ext\Http\KiotaSourceGen\**" />
+		<Page Remove="Ext\Http\KiotaSourceGen\**" />
+		<Content Remove="Ext\Http\KiotaSourceGen\**" />
+		<None Remove="Ext\Http\KiotaSourceGen\**" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -112,8 +138,8 @@
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Http.UI\Uno.Extensions.Http.WinUI.csproj" />
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Http\Uno.Extensions.Http.csproj" />
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Http.Kiota\Uno.Extensions.Http.Kiota.csproj" />
-		<ProjectReference Include="..\..\..\src\Uno.Extensions.Http.Kiota.SourceGenerator\Uno.Extensions.Http.Kiota.SourceGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
-		<ProjectReference Include="..\..\..\src\Uno.Extensions.Http.Kiota.Generator.Tasks\Uno.Extensions.Http.Kiota.Generator.Tasks.csproj" ReferenceOutputAssembly="false" />
+		<ProjectReference Condition="'$(UseKiotaBuildGen)' != 'true'" Include="..\..\..\src\Uno.Extensions.Http.Kiota.SourceGenerator\Uno.Extensions.Http.Kiota.SourceGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+		<ProjectReference Condition="'$(UseKiotaBuildGen)' == 'true'" Include="..\..\..\src\Uno.Extensions.Http.Kiota.Generator.Tasks\Uno.Extensions.Http.Kiota.Generator.Tasks.csproj" ReferenceOutputAssembly="false" />
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Http.Refit\Uno.Extensions.Http.Refit.csproj" />
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Validation\Uno.Extensions.Validation.csproj" />
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Validation.Fluent\Uno.Extensions.Validation.Fluent.csproj" />
