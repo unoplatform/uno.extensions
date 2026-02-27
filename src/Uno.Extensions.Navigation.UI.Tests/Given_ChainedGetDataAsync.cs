@@ -463,4 +463,318 @@ public class Given_ChainedGetDataAsync
 			await host.StopAsync();
 		}
 	}
+
+	/// <summary>
+	/// When GetDataAsync is cancelled via CancellationToken before a result is returned,
+	/// the ResponseNavigator should apply a None result and the awaiter should receive null.
+	///
+	/// The ResponseNavigator constructor registers a cancellation callback that calls
+	/// ApplyResult(Option.None&lt;TResult&gt;()), which should:
+	/// 1. Complete the TaskCompletionSource with None
+	/// 2. Restore the original navigator in DI
+	/// </summary>
+	[TestMethod]
+	public async Task When_GetDataAsync_IsCancelled_Then_ReturnsNullAndRestoresNavigator()
+	{
+		var (host, navigator, root) = await SetupNavigationAsync();
+
+		try
+		{
+			// Create a CancellationTokenSource that we control
+			using var userCts = new CancellationTokenSource();
+
+			// Start GetDataAsync with our cancellable token
+			var getDataTask = navigator.GetDataAsync<ResultEntity>(root, cancellation: userCts.Token);
+
+			// Wait for the ResponseNavigator to be set up in DI
+			using var navCts = new CancellationTokenSource(Timeout);
+			await UIHelper.WaitFor(
+				() => root.Navigator() is IResponseNavigator,
+				navCts.Token);
+
+			root.Navigator().Should().BeAssignableTo<IResponseNavigator>(
+				"after GetDataAsync forward nav, the DI navigator should be a ResponseNavigator");
+
+			// Cancel the token — this should trigger the cancellation callback in ResponseNavigator
+			userCts.Cancel();
+
+			// The GetDataAsync task should now complete (with null / default since None)
+			using var resultCts = new CancellationTokenSource(Timeout);
+			var result = await getDataTask.WaitAsync(resultCts.Token);
+			result.Should().BeNull("GetDataAsync should return null/default when cancelled");
+
+			// After cancellation + result applied, the navigator should be restored
+			using var restoreCts = new CancellationTokenSource(Timeout);
+			await UIHelper.WaitFor(
+				() => root.Navigator() is not IResponseNavigator,
+				restoreCts.Token);
+
+			root.Navigator().Should().NotBeAssignableTo<IResponseNavigator>(
+				"after cancellation, the navigator should be restored to the original (non-Response) navigator");
+		}
+		finally
+		{
+			await host.StopAsync();
+		}
+	}
+
+	/// <summary>
+	/// When the user manually navigates to a different route (not back) while GetDataAsync
+	/// is pending, the ResponseNavigator in DI gets replaced by the plain navigator
+	/// (see Navigator.RegionNavigateAsync line ~651 where responseNavigator is null → services.AddScopedInstance).
+	///
+	/// The GetDataAsync should eventually time out or remain pending (the TaskCompletionSource
+	/// is never completed). The key thing to verify is that the navigation infrastructure
+	/// doesn't crash and subsequent navigation still works.
+	/// </summary>
+	[TestMethod]
+	public async Task When_UserNavigatesAway_DuringGetDataAsync_Then_NavigatorIsReplaced()
+	{
+		var (host, navigator, root) = await SetupNavigationAsync();
+
+		try
+		{
+			// Start GetDataAsync which navigates to Sibling
+			var getDataTask = navigator.GetDataAsync<ResultEntity>(root);
+
+			using var navCts = new CancellationTokenSource(Timeout);
+			await UIHelper.WaitFor(
+				() => root.Navigator() is IResponseNavigator,
+				navCts.Token);
+
+			var responseNav = root.Navigator()!;
+			responseNav.Should().BeAssignableTo<IResponseNavigator>(
+				"after GetDataAsync, DI should have ResponseNavigator");
+
+			// User manually navigates to a *different* route (not back with result)
+			// This simulates clicking a navigation link instead of using the expected back-with-result flow.
+			// The Navigator.RegionNavigateAsync will replace the DI navigator with itself (non-response).
+			await responseNav.NavigateRouteAsync(root, route: "SiblingTwo");
+
+			// Wait for navigation to settle
+			using var navCts2 = new CancellationTokenSource(Timeout);
+			await UIHelper.WaitFor(
+				() =>
+				{
+					var nav = root.Navigator();
+					// After forward nav without Result, the DI navigator should no longer be the original ResponseNavigator
+					return nav is not null && !ReferenceEquals(nav, responseNav);
+				},
+				navCts2.Token);
+
+			// The navigator should have been replaced (may or may not be a ResponseNavigator depending
+			// on implementation details, but it should not be the original ResponseNavigator)
+			root.Navigator().Should().NotBeSameAs(responseNav,
+				"after manual forward navigation, the DI navigator should be replaced");
+
+			// The original GetDataAsync task is now orphaned — its TaskCompletionSource will never
+			// be completed by the normal flow. Verify it hasn't faulted.
+			getDataTask.IsFaulted.Should().BeFalse(
+				"the orphaned GetDataAsync should not fault");
+
+			// Verify subsequent navigation still works (navigate back to a known state)
+			var currentNav = root.Navigator()!;
+			await currentNav.NavigateBackAsync(root);
+
+			using var backCts = new CancellationTokenSource(Timeout);
+			await UIHelper.WaitFor(
+				() => root.Navigator() is not null,
+				backCts.Token);
+		}
+		finally
+		{
+			await host.StopAsync();
+		}
+	}
+
+	/// <summary>
+	/// When GetDataAsync is cancelled in a chained scenario (outer pending, inner cancelled),
+	/// the inner cancellation should not break the outer chain's ability to receive its result.
+	///
+	/// Flow:
+	///   Main → GetDataAsync → Sibling → GetDataAsync(cancelled) → SiblingTwo
+	///   Inner GetDataAsync is cancelled while on SiblingTwo.
+	///   Then the user navigates back from SiblingTwo to Sibling (without result).
+	///   Then Sibling returns a result to Main via NavigateBackWithResultAsync.
+	///   Main's outer GetDataAsync should still complete successfully.
+	/// </summary>
+	[TestMethod]
+	public async Task When_InnerGetDataAsync_IsCancelled_Then_OuterChainStillWorks()
+	{
+		var (host, navigator, root) = await SetupNavigationAsync();
+
+		try
+		{
+			// Step 1: Main → GetDataAsync → Sibling (outer)
+			var outerTask = navigator.GetDataAsync<ResultEntity>(root);
+
+			using var cts1 = new CancellationTokenSource(Timeout);
+			await UIHelper.WaitFor(
+				() => root.Navigator() is IResponseNavigator,
+				cts1.Token);
+			var siblingNav = root.Navigator()!;
+
+			// Step 2: Sibling → GetDataAsync(cancellable) → SiblingTwo (inner)
+			using var innerCts = new CancellationTokenSource();
+			var innerTask = siblingNav.GetDataAsync<ResultEntity>(root, cancellation: innerCts.Token);
+
+			using var cts2 = new CancellationTokenSource(Timeout);
+			await UIHelper.WaitFor(
+				() =>
+				{
+					var nav = root.Navigator();
+					return nav is IResponseNavigator && !ReferenceEquals(nav, siblingNav);
+				},
+				cts2.Token);
+
+			// Step 3: Cancel the inner GetDataAsync
+			innerCts.Cancel();
+
+			// Inner task should complete with null (None)
+			using var innerResultCts = new CancellationTokenSource(Timeout);
+			var innerResult = await innerTask.WaitAsync(innerResultCts.Token);
+			innerResult.Should().BeNull("cancelled inner GetDataAsync should return null");
+
+			// Step 4: Navigate back from SiblingTwo to Sibling (plain back, no result)
+			var currentNav = root.Navigator()!;
+			await currentNav.NavigateBackAsync(root);
+
+			// Wait for back navigation to settle and the outer ResponseNavigator to be restored
+			using var cts3 = new CancellationTokenSource(Timeout);
+			await UIHelper.WaitFor(
+				() => root.Navigator() is IResponseNavigator,
+				cts3.Token);
+
+			// Step 5: Sibling returns result to Main (outer chain)
+			var restoredNav = root.Navigator()!;
+			await restoredNav.NavigateBackWithResultAsync(
+				root,
+				data: Option.Some(new ResultEntity("Outer result after inner cancel")));
+
+			// Outer task should complete successfully
+			using var outerResultCts = new CancellationTokenSource(Timeout);
+			var outerResult = await outerTask.WaitAsync(outerResultCts.Token);
+			outerResult.Should().NotBeNull("outer GetDataAsync should complete even though inner was cancelled");
+			outerResult!.Name.Should().Be("Outer result after inner cancel");
+		}
+		finally
+		{
+			await host.StopAsync();
+		}
+	}
+
+	/// <summary>
+	/// When the user navigates back without providing a result (plain back navigation
+	/// instead of NavigateBackWithResultAsync), the ResponseNavigator should detect the
+	/// back navigation and apply a None result, completing the GetDataAsync with null.
+	/// </summary>
+	[TestMethod]
+	public async Task When_NavigateBack_WithoutResult_Then_GetDataAsyncReturnsNull()
+	{
+		var (host, navigator, root) = await SetupNavigationAsync();
+
+		try
+		{
+			// Start GetDataAsync → navigates to Sibling
+			var getDataTask = navigator.GetDataAsync<ResultEntity>(root);
+
+			using var navCts = new CancellationTokenSource(Timeout);
+			await UIHelper.WaitFor(
+				() => root.Navigator() is IResponseNavigator,
+				navCts.Token);
+
+			var siblingNav = root.Navigator()!;
+
+			// Navigate back WITHOUT a result (simulates user pressing back button)
+			await siblingNav.NavigateBackAsync(root);
+
+			// The GetDataAsync should complete with null (None result)
+			using var resultCts = new CancellationTokenSource(Timeout);
+			var result = await getDataTask.WaitAsync(resultCts.Token);
+			result.Should().BeNull(
+				"GetDataAsync should return null when user navigates back without providing a result");
+
+			// Navigator should be restored
+			using var restoreCts = new CancellationTokenSource(Timeout);
+			await UIHelper.WaitFor(
+				() => root.Navigator() is not IResponseNavigator,
+				restoreCts.Token);
+
+			root.Navigator().Should().NotBeAssignableTo<IResponseNavigator>(
+				"after back-without-result, the navigator should be restored");
+		}
+		finally
+		{
+			await host.StopAsync();
+		}
+	}
+
+	/// <summary>
+	/// In a two-level chain, when the deepest page navigates back without a result
+	/// (e.g. user presses back button on SiblingTwo), the middle page's inner GetDataAsync
+	/// should complete with null, but the outer chain should remain intact — the middle
+	/// page can still return a result to the outer caller.
+	/// </summary>
+	[TestMethod]
+	public async Task When_ChainedInnerNavigatesBack_WithoutResult_Then_OuterChainSurvives()
+	{
+		var (host, navigator, root) = await SetupNavigationAsync();
+
+		try
+		{
+			// Outer: Main → GetDataAsync → Sibling
+			var outerTask = navigator.GetDataAsync<ResultEntity>(root);
+
+			using var cts1 = new CancellationTokenSource(Timeout);
+			await UIHelper.WaitFor(
+				() => root.Navigator() is IResponseNavigator,
+				cts1.Token);
+			var siblingNav = root.Navigator()!;
+
+			// Inner: Sibling → GetDataAsync → SiblingTwo
+			var innerTask = siblingNav.GetDataAsync<ResultEntity>(root);
+
+			using var cts2 = new CancellationTokenSource(Timeout);
+			await UIHelper.WaitFor(
+				() =>
+				{
+					var nav = root.Navigator();
+					return nav is IResponseNavigator && !ReferenceEquals(nav, siblingNav);
+				},
+				cts2.Token);
+
+			var siblingTwoNav = root.Navigator()!;
+
+			// SiblingTwo navigates back WITHOUT result (user presses back)
+			await siblingTwoNav.NavigateBackAsync(root);
+
+			// Inner task should complete with null
+			using var innerCts = new CancellationTokenSource(Timeout);
+			var innerResult = await innerTask.WaitAsync(innerCts.Token);
+			innerResult.Should().BeNull(
+				"inner GetDataAsync should return null when the target navigates back without result");
+
+			// Outer chain should still be active: the outer ResponseNavigator should be restored
+			using var cts3 = new CancellationTokenSource(Timeout);
+			await UIHelper.WaitFor(
+				() => root.Navigator() is IResponseNavigator,
+				cts3.Token);
+
+			// Sibling can still return a result to Main
+			var restoredNav = root.Navigator()!;
+			await restoredNav.NavigateBackWithResultAsync(
+				root,
+				data: Option.Some(new ResultEntity("Outer result")));
+
+			using var outerCts = new CancellationTokenSource(Timeout);
+			var outerResult = await outerTask.WaitAsync(outerCts.Token);
+			outerResult.Should().NotBeNull(
+				"outer GetDataAsync should complete successfully even though inner returned no result");
+			outerResult!.Name.Should().Be("Outer result");
+		}
+		finally
+		{
+			await host.StopAsync();
+		}
+	}
 }
