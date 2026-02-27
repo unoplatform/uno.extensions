@@ -243,11 +243,73 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 				Resolver.FindByPath(navAncestor.Route?.Base) is {  } ancestorMap &&
 				ancestorMap.Parent == rm.Parent)
 			{
+				// When the match is the current navigator itself, check whether
+				// the parent region already manages a visual child for the target
+				// route (e.g., a FrameView in a PanelVisibilityNavigator created
+				// for tabs). If so, skip the self-redirect so the request falls
+				// through to the parent, which handles it as a visibility switch
+				// (tab change) rather than a frame push.
+				if (navAncestor.Navigator == this &&
+					await IsSiblingTabRoute(rm))
+				{
+					continue;
+				}
+
 				return navAncestor.Navigator.NavigateAsync(internalRoute);
 			}
 		}
 
 		return default;
+	}
+
+	/// <summary>
+	/// Determines whether the target route is a tab managed by a sibling
+	/// SelectorNavigator (e.g., TabBar) under the same composite parent.
+	/// This handles both pre-existing FrameViews (already visited tabs)
+	/// and lazily-created tabs that haven't been visited yet.
+	/// </summary>
+	private async Task<bool> IsSiblingTabRoute(RouteInfo targetRoute)
+	{
+		// The parent must be a PanelVisibilityNavigator (visibility-based content switching)
+		if (Region.Parent?.Navigator() is not PanelVisiblityNavigator)
+		{
+			return false;
+		}
+
+		// Quick check: does the panel already contain a visual child for the target route?
+		if (Region.Parent?.View is Panel parentPanel &&
+			parentPanel.Children
+				.OfType<FrameworkElement>()
+				.Any(c => c.GetName() == targetRoute.Path))
+		{
+			return true;
+		}
+
+		// The target's FrameView may not exist yet (lazy tab creation).
+		// Check if any sibling SelectorNavigator (TabBar) under the composite
+		// parent region has an item matching the target route name.
+		var compositeRegion = Region.Parent?.Parent;
+		if (compositeRegion is null)
+		{
+			return false;
+		}
+
+		var tabRoute = new Route(Qualifiers.None, Base: targetRoute.Path ?? string.Empty);
+		foreach (var sibling in compositeRegion.Children)
+		{
+			var sibNavigator = sibling.Navigator();
+			if (sibNavigator is not null &&
+				sibNavigator.GetType().BaseType is { IsGenericType: true } baseType &&
+				baseType.GetGenericTypeDefinition() == typeof(SelectorNavigator<>))
+			{
+				if (await sibNavigator.CanNavigate(tabRoute))
+				{
+					return true;
+				}
+			}
+		}
+
+		return false;
 	}
 
 	private async Task<Task<NavigationResponse?>?> RedirectForDependsOn(NavigationRequest request, RouteInfo? rm)
