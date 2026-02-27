@@ -1,4 +1,4 @@
-﻿namespace Uno.Extensions.Navigation;
+namespace Uno.Extensions.Navigation;
 
 public class ResponseNavigator<TResult> : IResponseNavigator, IInstance<IServiceProvider>
 {
@@ -17,7 +17,6 @@ public class ResponseNavigator<TResult> : IResponseNavigator, IInstance<IService
 		Navigation = internalNavigation;
 		ResultCompletion = new TaskCompletionSource<Option<TResult>>();
 
-
 		if (request.Cancellation.HasValue)
 		{
 			request.Cancellation.Value.Register(async () =>
@@ -25,7 +24,6 @@ public class ResponseNavigator<TResult> : IResponseNavigator, IInstance<IService
 				await ApplyResult(Option.None<TResult>());
 			});
 		}
-
 
 		// Replace the navigator
 		Navigation.Get<IServiceProvider>()?.AddScopedInstance<INavigator>(this);
@@ -73,8 +71,20 @@ public class ResponseNavigator<TResult> : IResponseNavigator, IInstance<IService
 			return;
 		}
 
-		// Restore the navigator
-		Navigation.Get<IServiceProvider>()?.AddScopedInstance<INavigator>(this.Navigation);
+		// Restore the navigator in DI — but only if the current DI navigator is not
+		// a different ResponseNavigator that is still waiting for its result.
+		// In chained GetDataAsync scenarios (A→B→C), when C returns to B,
+		// FrameNavigator's back-nav cache may have already restored the outer
+		// ResponseNavigator (for A→B) into DI. We must not overwrite it.
+		var services = Navigation.Get<IServiceProvider>();
+		if (services is not null)
+		{
+			var currentNav = services.GetService<INavigator>();
+			if (currentNav is not IResponseNavigator || ReferenceEquals(currentNav, this))
+			{
+				services.AddScopedInstance<INavigator>(this.Navigation);
+			}
+		}
 
 		await Dispatcher.ExecuteAsync(() =>
 		{

@@ -1,4 +1,4 @@
-﻿using Uno.Extensions.Diagnostics;
+using Uno.Extensions.Diagnostics;
 
 namespace Uno.Extensions.Navigation;
 
@@ -638,7 +638,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 		dataFactor.Parameters = (request.Route?.Data) ?? new Dictionary<string, object>();
 
 		IResponseNavigator? responseNavigator = default;
-		if (request.Result is not null)
+		if (request.Result is not null && !(request.Route?.IsBackOrCloseNavigation() ?? false))
 		{
 			if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Attempting to create response navigator for result type {request.Result.Name}");
 			var responseFactory = services.GetRequiredService<IResponseNavigatorFactory>();

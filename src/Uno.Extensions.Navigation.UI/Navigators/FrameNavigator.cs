@@ -1,4 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Uno.Extensions.Navigation.Navigators;
 
@@ -11,6 +11,13 @@ public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 	// when navigating away, so it can be restored when navigating back.
 	// Key: PageStackEntry index in back stack
 	private readonly Dictionary<int, Route?> _childRoutesCache = new();
+
+	// Stores the INavigator instance (e.g. ResponseNavigator) that was active on a page
+	// when navigating away from it, so it can be restored when navigating back.
+	// This survives page re-creation (NavigationCacheMode=Disabled) unlike the
+	// NavigatorInstance attached property which is tied to the page instance.
+	// Key: PageStackEntry index in back stack
+	private readonly Dictionary<int, INavigator> _navigatorCache = new();
 
 	// Temporarily holds the child route to restore after back navigation.
 	// Set during NavigatedBackAsync and consumed by AdjustRequestForChildNavigation.
@@ -145,15 +152,33 @@ public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 		// displaying the correct page
 		if (Control!.SourcePageType != lastMap.RenderView)
 		{
+			// Capture the navigator of the page we're about to leave (before Frame.Navigate
+			// pushes it onto the back stack). This is needed because when navigating back,
+			// the Frame may create a new page instance (NavigationCacheMode=Disabled),
+			// losing the NavigatorInstance attached property on the old instance.
+			var previousNavigator = CurrentView?.GetNavigatorInstance();
+
 			await Show(lastMap.Path, lastMap.RenderView, request.Route.NavigationData());
 
-			// Store the child route for the page we just navigated away from
-			// This allows us to restore nested state (e.g., TabBar selection) when navigating back
-			// The entry was just added to the back stack by Frame.Navigate
-			if (previousChildRoute is not null && Control.BackStack.Count > 0)
+			if (Control.BackStack.Count > 0)
 			{
 				var backStackIndex = Control.BackStack.Count - 1;
-				_childRoutesCache[backStackIndex] = previousChildRoute;
+
+				// Store the child route for the page we just navigated away from
+				// This allows us to restore nested state (e.g., TabBar selection) when navigating back
+				// The entry was just added to the back stack by Frame.Navigate
+				if (previousChildRoute is not null)
+				{
+					_childRoutesCache[backStackIndex] = previousChildRoute;
+				}
+
+				// Store the navigator of the page we just left in a cache indexed by
+				// back stack position. This ensures it can be restored on back navigation
+				// even if the page instance is re-created.
+				if (previousNavigator is not null)
+				{
+					_navigatorCache[backStackIndex] = previousNavigator;
+				}
 			}
 		}
 		else
@@ -228,7 +253,8 @@ public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 
 		await InitializeCurrentView(request, lastMap.AsRoute() with { Data = request.Route.Data }, lastMap, refreshViewModel);
 
-		CurrentView?.SetNavigatorInstance(Region.Navigator()!);
+		var navToStore = Region.Navigator()!;
+		CurrentView?.SetNavigatorInstance(navToStore);
 
 		var responseRequest = navSegment with { Qualifier = route.Qualifier, Data = route.Data };
 
@@ -244,17 +270,43 @@ public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 
 		var route = request.Route;
 
-		// Retrieve the stored child route for the page we're navigating back to.
-		// This allows us to restore nested state (e.g., TabBar selection).
+		// Retrieve the stored child route and navigator for the page we're navigating back to.
+		// This allows us to restore nested state (e.g., TabBar selection) and the correct
+		// INavigator instance (e.g., ResponseNavigator for chained GetDataAsync).
 		//
 		// There are two back-navigation paths:
-		//   1. Our code calls Frame.GoBack() — the back stack entry is still present,
+		//   1. Our code calls Frame.GoBack() - the back stack entry is still present,
 		//      so the stored route is at BackStack.Count - N, where N is the number
 		//      of pages being removed (typically 1 for a single-step back).
 		//   2. An external control (e.g., NavigationBar MainCommand) calls Frame.GoBack()
-		//      before our code runs — the back stack entry was already popped, so the
+		//      before our code runs - the back stack entry was already popped, so the
 		//      stored route is at BackStack.Count (the former BackStack.Count - N).
+		//
+		// We try the EXTERNAL index first (BackStack.Count) because in the internal case
+		// there is never an entry at BackStack.Count (the current page isn't stored in the
+		// cache - only back stack entries are). This prevents the internal path from
+		// accidentally consuming an earlier page's cached data when the back stack was
+		// already popped by an external GoBack.
 		Route? storedChildRoute = null;
+		INavigator? storedNavigator = null;
+
+		// Try external path first: if GoBack was already performed externally
+		// (e.g., NavigationBar MainCommand), the popped entry's former index
+		// equals the current BackStack.Count.
+		bool isExternalGoBack = false;
+		{
+			var externalBackIndex = Control.BackStack.Count;
+			if (_childRoutesCache.TryGetValue(externalBackIndex, out storedChildRoute))
+			{
+				_childRoutesCache.Remove(externalBackIndex);
+				isExternalGoBack = true;
+			}
+			if (_navigatorCache.TryGetValue(externalBackIndex, out storedNavigator))
+			{
+				_navigatorCache.Remove(externalBackIndex);
+				isExternalGoBack = true;
+			}
+		}
 
 		// Determine how many pages will be removed as part of this back navigation.
 		// We default to 1 to preserve existing behavior when the route does not
@@ -265,26 +317,24 @@ public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 			pagesToRemove = 1;
 		}
 
-		if (Control.BackStack.Count > 0)
+		// Fallback: internal back path. Only used when this is NOT an external GoBack.
+		// When an external GoBack pops the back stack before we run, the internal
+		// indices shift down by one. If we allowed the internal fallback, it would
+		// grab a child route belonging to a different (earlier) page, consuming it
+		// prematurely and causing the correct page to lose its nested state.
+		if (!isExternalGoBack && Control.BackStack.Count > 0)
 		{
-			// Internal back: the target entry is at Count - pagesToRemove
 			var backStackIndex = Control.BackStack.Count - pagesToRemove;
-			if (backStackIndex >= 0 && backStackIndex < Control.BackStack.Count &&
-				_childRoutesCache.TryGetValue(backStackIndex, out storedChildRoute))
+			if (backStackIndex >= 0 && backStackIndex < Control.BackStack.Count)
 			{
-				_childRoutesCache.Remove(backStackIndex);
-			}
-		}
-
-		// Fallback: if the back stack was already popped externally (e.g., NavigationBar),
-		// the entry that held our cached route was removed. Its former index equals the
-		// current BackStack.Count.
-		if (storedChildRoute is null)
-		{
-			var externalBackIndex = Control.BackStack.Count;
-			if (_childRoutesCache.TryGetValue(externalBackIndex, out storedChildRoute))
-			{
-				_childRoutesCache.Remove(externalBackIndex);
+				if (storedChildRoute is null && _childRoutesCache.TryGetValue(backStackIndex, out storedChildRoute))
+				{
+					_childRoutesCache.Remove(backStackIndex);
+				}
+				if (storedNavigator is null && _navigatorCache.TryGetValue(backStackIndex, out storedNavigator))
+				{
+					_navigatorCache.Remove(backStackIndex);
+				}
 			}
 		}
 
@@ -339,16 +389,23 @@ public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 
 		var mapping = Resolver.FindByView(Control.Content.GetType(), this);
 
+		// Restore the INavigator BEFORE InitializeCurrentView so that the ViewModel
+		// created during initialization gets the correct navigator from DI.
+		// In chained GetDataAsync scenarios (TabOne→Sibling→SiblingTwo→back→Sibling),
+		// the page may be re-created (NavigationCacheMode=Disabled), so the attached
+		// property is lost. The _navigatorCache survives page re-creation.
+		if (storedNavigator is null)
+		{
+			// Fall back to the page's attached property (works when page instance is cached)
+			storedNavigator = CurrentView?.GetNavigatorInstance();
+		}
+
+		if (storedNavigator is not null)
+		{
+			Region.Services?.AddScopedInstance<INavigator>(storedNavigator);
+		}
 
 		await InitializeCurrentView(request, previousRoute ?? Route.Empty, mapping);
-
-
-		// Restore the INavigator instance
-		var navigator = CurrentView?.GetNavigatorInstance();
-		if (navigator is not null)
-		{
-			Region.Services?.AddScopedInstance<INavigator>(navigator);
-		}
 
 		return responseRoute;
 	}
@@ -503,9 +560,10 @@ public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 		}
 		if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Removing last item from backstack (current count = {Control.BackStack.Count})");
 		
-		// Clean up the cached child route for the entry being removed
+		// Clean up the cached child route and navigator for the entry being removed
 		var indexToRemove = Control.BackStack.Count - 1;
 		_childRoutesCache.Remove(indexToRemove);
+		_navigatorCache.Remove(indexToRemove);
 		
 		Control.BackStack.RemoveAt(indexToRemove);
 		if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Item removed from backstack");
@@ -520,8 +578,9 @@ public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 
 		if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Clearing backstack");
 		
-		// Clear all cached child routes
+		// Clear all cached child routes and navigators
 		_childRoutesCache.Clear();
+		_navigatorCache.Clear();
 		
 		Control.BackStack.Clear();
 		if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Backstack cleared");
@@ -685,6 +744,10 @@ public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 
 		if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Restoring previously selected child route '{childRoute.Base}' after back navigation");
 
-		return request with { Route = childRoute };
+		// Strip Result from child restoration requests. The Result type is only meaningful
+		// for the original navigate-for-result flow and should not leak into child region
+		// restoration. Without this, child navigators would create unnecessary
+		// ResponseNavigators that corrupt navigator scope registrations.
+		return request with { Route = childRoute, Result = null };
 	}
 }
