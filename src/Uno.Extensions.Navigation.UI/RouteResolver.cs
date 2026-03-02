@@ -1,4 +1,6 @@
-﻿namespace Uno.Extensions.Navigation;
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace Uno.Extensions.Navigation;
 
 public class RouteResolver : IRouteResolver
 {
@@ -196,13 +198,18 @@ public class RouteResolver : IRouteResolver
 		}
 	}
 
-	public RouteInfo? FindByViewModel(Type? viewModelType, INavigator? navigator)
+	public RouteInfo? FindByViewModel(
+		[DynamicallyAccessedMembers(Uno.Extensions.Diagnostics.Annotations.ViewModelRequirements)]
+		Type? viewModelType,
+		INavigator? navigator)
 	{
 		var maps = InternalFindByViewModel(viewModelType);
 		return BestNavigatorRouteInfo(maps, navigator);
 	}
 
-	protected virtual RouteInfo[] InternalFindByViewModel(Type? viewModelType)
+	protected virtual RouteInfo[] InternalFindByViewModel(
+		[DynamicallyAccessedMembers(Uno.Extensions.Diagnostics.Annotations.ViewModelRequirements)]
+		Type? viewModelType)
 		=> FindRouteByType(viewModelType, map => map.ViewModel);
 
 	public RouteInfo? FindByView(Type? viewType, INavigator? navigator)

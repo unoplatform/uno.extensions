@@ -1,4 +1,5 @@
-﻿using Uno.Extensions;
+﻿using System.Diagnostics.CodeAnalysis;
+using Uno.Extensions;
 using Uno.Logging;
 
 namespace Uno.Extensions.Navigation;
@@ -127,26 +128,45 @@ public static class NavigatorExtensions
 		return navigator.NavigateRouteHintForResultAsync<TResult>(hint, sender, data, cancellation);
 	}
 
-	public static Task<NavigationResponse?> NavigateViewModelAsync<TViewViewModel>(
+	public static Task<NavigationResponse?> NavigateViewModelAsync<
+		[DynamicallyAccessedMembers(Uno.Extensions.Diagnostics.Annotations.ViewModelRequirements)]
+		TViewModel
+	>(
 		this INavigator navigator, object sender, string qualifier = Qualifiers.None, object? data = null, CancellationToken cancellation = default)
 	{
-		return navigator.NavigateViewModelAsync(sender, typeof(TViewViewModel), qualifier, data, cancellation);
+		return navigator.NavigateViewModelAsync(sender, typeof(TViewModel), qualifier, data, cancellation);
 	}
 
 	public static Task<NavigationResponse?> NavigateViewModelAsync(
-		this INavigator navigator, object sender, Type viewModelType, string qualifier = Qualifiers.None, object? data = null, CancellationToken cancellation = default)
+		this INavigator navigator,
+		object sender,
+		[DynamicallyAccessedMembers(Uno.Extensions.Diagnostics.Annotations.ViewModelRequirements)]
+		Type viewModelType,
+		string qualifier = Qualifiers.None,
+		object? data = null, CancellationToken cancellation = default)
 	{
 		var hint = new RouteHint { ViewModel = viewModelType, Qualifier = qualifier };//, Data = data?.GetType() };
 		return navigator.NavigateRouteHintAsync(hint, sender, data, cancellation);
 	}
 
-	public static Task<NavigationResultResponse<TResult>?> NavigateViewModelForResultAsync<TViewViewModel, TResult>(
+	public static Task<NavigationResultResponse<TResult>?> NavigateViewModelForResultAsync<
+		[DynamicallyAccessedMembers(Uno.Extensions.Diagnostics.Annotations.ViewModelRequirements)]
+		TViewModel,
+		TResult
+	>(
 		this INavigator navigator, object sender, string qualifier = Qualifiers.None, object? data = null, CancellationToken cancellation = default)
 	{
-		return navigator.NavigateViewModelForResultAsync<TResult>(sender, typeof(TViewViewModel), qualifier, data, cancellation);
+		return navigator.NavigateViewModelForResultAsync<TResult>(sender, typeof(TViewModel), qualifier, data, cancellation);
 	}
+
 	public static Task<NavigationResultResponse<TResult>?> NavigateViewModelForResultAsync<TResult>(
-		this INavigator navigator, object sender, Type viewModelType, string qualifier = Qualifiers.None, object? data = null, CancellationToken cancellation = default)
+		this INavigator navigator,
+		object sender,
+		[DynamicallyAccessedMembers(Uno.Extensions.Diagnostics.Annotations.ViewModelRequirements)]
+		Type viewModelType,
+		string qualifier = Qualifiers.None,
+		object? data = null,
+		CancellationToken cancellation = default)
 	{
 		var hint = new RouteHint
 		{
@@ -196,7 +216,10 @@ public static class NavigatorExtensions
 		return result.SomeOrDefault();
 	}
 
-	public static async Task<TResult?> GetDataAsync<TViewModel, TResult>(this INavigator navigator, object sender, string qualifier = Qualifiers.None, object? data = null, CancellationToken cancellation = default)
+	public static async Task<TResult?> GetDataAsync<
+		[DynamicallyAccessedMembers(Uno.Extensions.Diagnostics.Annotations.ViewModelRequirements)]
+		TViewModel,
+		TResult>(this INavigator navigator, object sender, string qualifier = Qualifiers.None, object? data = null, CancellationToken cancellation = default)
 	{
 		var result = await navigator.NavigateViewModelForResultAsync<TViewModel, TResult>(sender, qualifier, data, cancellation: cancellation).AsResult();
 		return result.SomeOrDefault();

@@ -1,4 +1,6 @@
-﻿namespace Uno.Extensions;
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace Uno.Extensions;
 
 /// <summary>
 /// Extension methods on <see cref="Window" />.
@@ -23,6 +25,7 @@ public static class WindowExtensions
 		LoadingView navigationRoot,
 		string? initialRoute = "",
 		Type? initialView = null,
+		[DynamicallyAccessedMembers(Uno.Extensions.Diagnostics.Annotations.ViewModelRequirements)]
 		Type? initialViewModel = null,
 		Func<IServiceProvider, INavigator, Task>? initialNavigate = null)
 	{

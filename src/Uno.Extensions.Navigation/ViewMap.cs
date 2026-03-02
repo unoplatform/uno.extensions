@@ -6,8 +6,8 @@ namespace Uno.Extensions.Navigation;
 public record ViewMap(
 	Type? View = null,
 	Func<Type?>? ViewSelector = null,
-	[param:   DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor | DynamicallyAccessedMemberTypes.PublicConstructors)]
-	[property:DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor | DynamicallyAccessedMemberTypes.PublicConstructors)]
+	[param:   DynamicallyAccessedMembers(Uno.Extensions.Diagnostics.Annotations.ViewModelRequirements)]
+	[property:DynamicallyAccessedMembers(Uno.Extensions.Diagnostics.Annotations.ViewModelRequirements)]
 	Type? ViewModel = null,
 	DataMap? Data = null,
 	Type? ResultData = null,
@@ -37,7 +37,7 @@ public record ViewMap(
 }
 
 public record ViewMap<TView>(
-	[param:   DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor | DynamicallyAccessedMemberTypes.PublicConstructors)]
+	[param:   DynamicallyAccessedMembers(Uno.Extensions.Diagnostics.Annotations.ViewModelRequirements)]
 	Type? ViewModel = null,
 	DataMap? Data = null,
 	Type? ResultData = null,
@@ -61,7 +61,7 @@ public record ViewMap<TView>(
 
 public record ViewMap<
 	TView,
-	[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)]
+	[DynamicallyAccessedMembers(Uno.Extensions.Diagnostics.Annotations.ViewModelRequirements)]
 	TViewModel
 >(
 	DataMap? Data = null,
@@ -74,8 +74,9 @@ public record ViewMap<
 
 public record DataViewMap<
 	TView,
-	[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)]
+	[DynamicallyAccessedMembers(Uno.Extensions.Diagnostics.Annotations.ViewModelRequirements)]
 	TViewModel,
+	[DynamicallyAccessedMembers(Uno.Extensions.Diagnostics.Annotations.DataRequirements)]
 	TData
 >(
 	Func<TData, IDictionary<string, string>>? ToQuery = null,
@@ -90,8 +91,9 @@ public record DataViewMap<
 
 public record ResultDataViewMap<
 	TView,
-	[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)]
+	[DynamicallyAccessedMembers(Uno.Extensions.Diagnostics.Annotations.ViewModelRequirements)]
 	TViewModel,
+	[DynamicallyAccessedMembers(Uno.Extensions.Diagnostics.Annotations.ResultDataRequirements)]
 	TResultData
 >(
 	DataMap? Data = null,

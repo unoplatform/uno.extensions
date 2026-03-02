@@ -22,9 +22,10 @@ public record MessageDialogViewMap(
 	int DefaultButtonIndex = 0,
 	int CancelButtonIndex = 0,
 	DialogAction[]? Buttons = default,
-	[param:   DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor | DynamicallyAccessedMemberTypes.PublicConstructors)]
+	[param:   DynamicallyAccessedMembers(Uno.Extensions.Diagnostics.Annotations.ViewModelRequirements)]
 	Type? ViewModel = default,
 	DataMap? Data = default,
+	[param:   DynamicallyAccessedMembers(Uno.Extensions.Diagnostics.Annotations.ResultDataRequirements)]
 	Type? ResultData = default
 ) : ViewMap(
 		View: typeof(MessageDialog),
@@ -50,9 +51,10 @@ public record LocalizableMessageDialogViewMap(
 	int DefaultButtonIndex = 0,
 	int CancelButtonIndex = 0,
 	LocalizableDialogAction[]? Buttons = default,
-	[param:   DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor | DynamicallyAccessedMemberTypes.PublicConstructors)]
+	[param:   DynamicallyAccessedMembers(Uno.Extensions.Diagnostics.Annotations.ViewModelRequirements)]
 	Type? ViewModel = default,
 	DataMap? Data = default,
+	[param:   DynamicallyAccessedMembers(Uno.Extensions.Diagnostics.Annotations.ResultDataRequirements)]
 	Type? ResultData = default
 ) : ViewMap(
 		View: typeof(MessageDialog),
