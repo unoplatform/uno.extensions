@@ -1,4 +1,6 @@
-﻿namespace Uno.Extensions.Navigation;
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace Uno.Extensions.Navigation;
 
 public class MappedRouteResolver : RouteResolverDefault
 {
@@ -35,29 +37,35 @@ public class MappedRouteResolver : RouteResolverDefault
 			Nested: ResolveViewMaps(drm.Nested)));
 	}
 
-	protected override RouteInfo[] InternalFindByViewModel(Type? viewModelType)
+	protected override RouteInfo[] InternalFindByViewModel(
+		[DynamicallyAccessedMembers(Uno.Extensions.Diagnostics.Annotations.ViewModelRequirements)]
+		Type? viewModelType)
 	{
 		if (viewModelType is not null &&
-			_viewModelMappings.TryGetValue(viewModelType, out var bindableViewModel))
+			TryGetViewModel(viewModelType, out var bindableViewModel))
 		{
 			return base.InternalFindByViewModel(bindableViewModel);
 		}
 		return base.InternalFindByViewModel(viewModelType);
 	}
 
-	protected override RouteInfo? InternalDefaultMapping(string? path = null, Type? view = null, Type? viewModel = null)
+	protected override RouteInfo? InternalDefaultMapping(
+		string? path = null,
+		Type? view = null,
+		[DynamicallyAccessedMembers(Uno.Extensions.Diagnostics.Annotations.ViewModelRequirements)]
+		Type? viewModel = null)
 	{
 		// Check to see if the viewmodel type specified is actually a mapped viewmodel (eg a bindableviewmodel in case of mvux)
 		// If it is, set viewModel to be the un-mapped viewmodel type so that the routemap can be correctly created.
 		if(viewModel is not null &&
 			_viewModelMappings.FirstOrDefault(x=>x.Value==viewModel) is { } mapping)
 		{
-			viewModel = mapping.Key;
+			SetViewModel(mapping.Key, out viewModel);
 		}
 
 		var routeInfo = base.InternalDefaultMapping(path, view, viewModel);
 		if (routeInfo?.ViewModel != null &&
-			_viewModelMappings.TryGetValue(routeInfo.ViewModel, out var bindableViewModel))
+			TryGetViewModel(routeInfo.ViewModel, out var bindableViewModel))
 		{
 			return FromRouteMap(new RouteMap(
 				Path: routeInfo.Path,
@@ -77,5 +85,17 @@ public class MappedRouteResolver : RouteResolverDefault
 				));
 		}
 		return routeInfo;
+
+		static void SetViewModel (Type type, out Type value)
+		{
+			value = type;
+		}
 	}
+
+	private bool TryGetViewModel(
+		Type key,
+		[NotNullWhen(true)]
+		[DynamicallyAccessedMembers(Uno.Extensions.Diagnostics.Annotations.ViewModelRequirements)]
+		out Type? value)
+		=> _viewModelMappings.TryGetValue(key, out value);
 }

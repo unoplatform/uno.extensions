@@ -27,7 +27,9 @@ public class RouteResolverDefault : RouteResolver
 		return map ?? DefaultMapping(path: path).FirstOrDefault();
 	}
 
-	protected override RouteInfo[] InternalFindByViewModel(Type? viewModel)
+	protected override RouteInfo[] InternalFindByViewModel(
+		[DynamicallyAccessedMembers(Uno.Extensions.Diagnostics.Annotations.ViewModelRequirements)]
+		Type? viewModel)
 	{
 		var map = base.InternalFindByViewModel(viewModel);
 		return map.Any() ? map : DefaultMapping(viewModel: viewModel);
@@ -40,7 +42,11 @@ public class RouteResolverDefault : RouteResolver
 	}
 
 
-	private RouteInfo[] DefaultMapping(string? path = null, Type? view = null, Type? viewModel = null)
+	private RouteInfo[] DefaultMapping(
+		string? path = null,
+		Type? view = null,
+		[DynamicallyAccessedMembers(Uno.Extensions.Diagnostics.Annotations.ViewModelRequirements)]
+		Type? viewModel = null)
 	{
 		var routeMap = InternalDefaultMapping(path, view, viewModel);
 		if (routeMap is not null)
@@ -54,7 +60,11 @@ public class RouteResolverDefault : RouteResolver
 		return Array.Empty<RouteInfo>();
 	}
 
-	protected virtual RouteInfo? InternalDefaultMapping(string? path = null, Type? view = null, Type? viewModel = null)
+	protected virtual RouteInfo? InternalDefaultMapping(
+		string? path = null,
+		Type? view = null,
+		[DynamicallyAccessedMembers(Uno.Extensions.Diagnostics.Annotations.ViewModelRequirements)]
+		Type? viewModel = null)
 	{
 		if (path is null && view is null && viewModel is null)
 		{
@@ -152,6 +162,8 @@ public class RouteResolverDefault : RouteResolver
 		return default;
 	}
 
+	[UnconditionalSuppressMessage("Trimming", "IL2072", Justification = "Codepath originally intended for non-trimming use. If this is the linchpin, we're doomed.")]
+	[return: DynamicallyAccessedMembers(Uno.Extensions.Diagnostics.Annotations.ViewModelRequirements)]
 	private Type? TypeFromPath(string path, bool allowMatchExact, IEnumerable<string> suffixes, Func<Type, bool>? condition = null)
 	{
 		if (string.IsNullOrWhiteSpace(path))
@@ -188,7 +200,10 @@ public class RouteResolverDefault : RouteResolver
         }
 	}
 
-	private string PathFromTypes(Type? view, Type? viewModel)
+	private string PathFromTypes(
+		Type? view,
+		[DynamicallyAccessedMembers(Uno.Extensions.Diagnostics.Annotations.ViewModelRequirements)]
+		Type? viewModel)
 	{
 		if (view is null && viewModel is null)
 		{

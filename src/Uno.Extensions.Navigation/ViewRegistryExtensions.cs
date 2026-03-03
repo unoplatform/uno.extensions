@@ -1,13 +1,21 @@
-﻿namespace Uno.Extensions.Navigation;
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace Uno.Extensions.Navigation;
 
 public static class ViewRegistryExtensions
 {
-	public static ViewMap FindByViewModel<TViewModel>(this IViewRegistry registry)
+	public static ViewMap FindByViewModel<
+		[DynamicallyAccessedMembers(Uno.Extensions.Diagnostics.Annotations.ViewModelRequirements)]
+		TViewModel
+	>(this IViewRegistry registry)
 	{
 		return registry.FindByViewModel(typeof(TViewModel));
 	}
 
-	public static ViewMap FindByViewModel(this IViewRegistry registry, Type? viewModelType)
+	public static ViewMap FindByViewModel(
+		this IViewRegistry registry,
+		[DynamicallyAccessedMembers(Uno.Extensions.Diagnostics.Annotations.ViewModelRequirements)]
+		Type? viewModelType)
 	{
 		return registry.Items.FindByInheritedTypes(viewModelType, map => map.ViewModel).FirstOrDefault()
 			?? throw new InvalidOperationException($"A ViewMap for type {viewModelType} could not be found");

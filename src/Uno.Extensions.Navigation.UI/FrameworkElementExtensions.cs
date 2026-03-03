@@ -1,4 +1,6 @@
-﻿namespace Uno.Extensions.Navigation;
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace Uno.Extensions.Navigation;
 
 public static class FrameworkElementExtensions
 {
@@ -20,7 +22,10 @@ public static class FrameworkElementExtensions
 	public static Task HostAsync(
 		this FrameworkElement root,
 		IServiceProvider sp,
-		string? initialRoute = "", Type? initialView = null, Type? initialViewModel = null,
+		string? initialRoute = "",
+		Type? initialView = null,
+		[DynamicallyAccessedMembers(Uno.Extensions.Diagnostics.Annotations.ViewModelRequirements)]
+		Type? initialViewModel = null,
 		Func<IServiceProvider, INavigator, Task>? initialNavigate = null)
 	{
 		var services = sp.CreateNavigationScope();
