@@ -230,6 +230,27 @@ public class RouteResolver : IRouteResolver
 	public RouteInfo? FindByResultData(Type? dataType, INavigator? navigator)
 	{
 		var maps = FindRouteByType(dataType, map => map.ResultData);
+
+		// When resolving by result data for navigation (e.g., GetDataAsync),
+		// exclude the route the navigator is currently on to avoid navigating
+		// to ourselves. Without this, BestNavigatorRouteInfo would prefer the
+		// current page because it has the highest ancestor intersection count.
+		if (navigator is not null && maps.Length > 1)
+		{
+			var currentRouteBase = (navigator is IStackNavigator stackNav)
+				? stackNav.FullRoute?.Last()?.Base
+				: navigator.Route?.Base;
+
+			if (!string.IsNullOrEmpty(currentRouteBase))
+			{
+				var filtered = maps.Where(m => m.Path != currentRouteBase).ToArray();
+				if (filtered.Length > 0)
+				{
+					maps = filtered;
+				}
+			}
+		}
+
 		return BestNavigatorRouteInfo(maps, navigator);
 	}
 

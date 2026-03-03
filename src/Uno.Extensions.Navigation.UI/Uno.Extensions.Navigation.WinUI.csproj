@@ -50,6 +50,7 @@
 	<ItemGroup>
 		<InternalsVisibleTo Include="Uno.Extensions.Navigation.Toolkit.UI" />
 		<InternalsVisibleTo Include="Uno.Extensions.Navigation.Toolkit.WinUI" />
+		<InternalsVisibleTo Include="Uno.Extensions.Navigation.WinUI.Tests" />
 	</ItemGroup>
 
 	<ItemGroup>

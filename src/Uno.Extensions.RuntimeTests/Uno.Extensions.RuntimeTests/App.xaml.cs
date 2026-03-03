@@ -9,6 +9,8 @@ public partial class App : Application
 	{
 		var reactive_UI_Tests = new Given_FeedView();
 		var navigation_UI_Tests = new Given_RouteNotifier();
+		var navigation_ChainedResult_Tests = new Given_ChainedGetDataAsync();
+		var navigation_TabNavigation_Tests = new Given_TabNavigation();
 	}
 
 	/// <summary>
