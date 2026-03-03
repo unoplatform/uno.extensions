@@ -120,12 +120,13 @@ public static class ServiceProviderExtensions
 		var services = await window.AttachServicesAsync(host.Services);
 		var startup = viewHost.HostAsync(services, initialRoute, initialView, initialViewModel, initialNavigate);
 
-		await Task.Run(() => host.StartAsync());
-
-		// Fallback to make sure the window is activated
+		// Activate the window so the user sees content as soon as navigation places it in the visual tree.
 		window.Activate();
 
-		await startup;
+		// Start hosted services AFTER navigation setup
+		var hostStartTask = host.StartAsync();
+
+		await Task.WhenAll(hostStartTask, startup);
 
 		return host;
 	}
