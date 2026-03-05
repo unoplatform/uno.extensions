@@ -117,7 +117,7 @@ public record TelemetryConfiguration
     public AzureMonitorOptions? AzureMonitor { get; init; }
     public ApplicationInsightsOptions? ApplicationInsights { get; init; }
     public RaygunOptions? Raygun { get; init; }
-    public OtlpExporterOptions? Otlp { get; init; }
+    public OpenTelemetryOptions? OpenTelemetry { get; init; }
 }
 ```
 
@@ -152,7 +152,7 @@ public static class TelemetryBuilderExtensions
 {
     /// <summary>
     /// Adds OpenTelemetry tracing and metrics with the OTLP exporter.
-    /// Connection string / endpoint can be set in appsettings.json under Telemetry:Otlp.
+    /// Connection string / endpoint can be set in appsettings.json under Telemetry:OpenTelemetry.
     /// </summary>
     public static ITelemetryBuilder AddOpenTelemetry(
         this ITelemetryBuilder builder,
@@ -167,7 +167,7 @@ public record OpenTelemetryOptions
     /// <summary>Callback to customize the MeterProviderBuilder.</summary>
     public Action<MeterProviderBuilder>? ConfigureMetrics { get; init; }
 
-    /// <summary>OTLP endpoint. Falls back to Telemetry:Otlp:Endpoint in config.</summary>
+    /// <summary>OTLP endpoint. Falls back to Telemetry:OpenTelemetry:Endpoint in config.</summary>
     public string? Endpoint { get; init; }
 }
 ```
@@ -228,7 +228,7 @@ public static class TelemetryBuilderExtensions
 {
     /// <summary>
     /// Auto-wires the Application Insights SDK (classic, non-OTel path).
-    /// Instrumentation key from Telemetry:ApplicationInsights:InstrumentationKey.
+    /// Connection string from Telemetry:ApplicationInsights:ConnectionString.
     /// </summary>
     public static ITelemetryBuilder AddApplicationInsights(
         this ITelemetryBuilder builder,
@@ -278,25 +278,20 @@ All provider settings can be driven from configuration, minimizing code:
     "ServiceName": "MyApp",
     "ServiceVersion": "1.0.0",
     "CaptureUnhandledExceptions": true,
-
-    "Otlp": {
+    "OpenTelemetry": {
       "Endpoint": "http://localhost:4317"
     },
-
     "Sentry": {
       "Dsn": "https://examplePublicKey@o0.ingest.sentry.io/0",
       "TracesSampleRate": 0.5,
       "Environment": "production"
     },
-
     "AzureMonitor": {
       "ConnectionString": "InstrumentationKey=...;IngestionEndpoint=..."
     },
-
     "ApplicationInsights": {
       "ConnectionString": "InstrumentationKey=..."
     },
-
     "Raygun": {
       "ApiKey": "paste-your-api-key"
     }
