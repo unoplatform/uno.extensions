@@ -1,0 +1,92 @@
+<Page x:Class="TestHarness.Ext.Navigation.TabBar.TabBarClearBackStack.TabBarClearBackStackDetailPage"
+	  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	  mc:Ignorable="d"
+	  xmlns:uen="using:Uno.Extensions.Navigation.UI"
+	  xmlns:utu="using:Uno.Toolkit.UI"
+	  NavigationCacheMode="Required"
+	  Background="LightSalmon">
+
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition />
+		</Grid.RowDefinitions>
+
+		<utu:NavigationBar Content="Details (deep page)"
+						   AutomationProperties.AutomationId="DetailNavigationBar" />
+
+		<ScrollViewer Grid.Row="1">
+			<StackPanel Margin="20" Spacing="12">
+				<TextBlock Text="You are now on a page OUTSIDE the tabbed Root."
+						   TextWrapping="Wrap"
+						   FontSize="16" />
+				<TextBlock Text="Each button below tries a different approach to navigate back to Root/Home with the TabBar visible."
+						   TextWrapping="Wrap"
+						   FontSize="14"
+						   Foreground="Gray" />
+
+				<TextBlock Text="Expected: All buttons should return to the Root page with the TabBar visible and the Home tab selected."
+						   TextWrapping="Wrap"
+						   FontSize="14"
+						   Foreground="OrangeRed"
+						   FontWeight="Bold" />
+
+				<!-- Approach 1: absolute route -->
+				<Button Content="1) NavigateRouteAsync /Root/Home"
+						AutomationProperties.AutomationId="NavTest1Button"
+						Click="NavTest1_Click"
+						HorizontalAlignment="Stretch" />
+
+				<!-- Approach 2: clear-prefix route with dash -->
+				<Button Content="2) NavigateRouteAsync -/Root/Home"
+						AutomationProperties.AutomationId="NavTest2Button"
+						Click="NavTest2_Click"
+						HorizontalAlignment="Stretch" />
+
+				<!-- Approach 3: absolute route + ClearBackStack -->
+				<Button Content="3) /Root/Home + ClearBackStack"
+						AutomationProperties.AutomationId="NavTest3Button"
+						Click="NavTest3_Click"
+						HorizontalAlignment="Stretch" />
+
+				<!-- Approach 4: clear-prefix + ClearBackStack -->
+				<Button Content="4) -/Root/Home + ClearBackStack"
+						AutomationProperties.AutomationId="NavTest4Button"
+						Click="NavTest4_Click"
+						HorizontalAlignment="Stretch" />
+
+				<!-- Approach 5: NavigateBackAsync to Root first, then route -->
+				<Button Content="5) Back(Root) then /Root/Home"
+						AutomationProperties.AutomationId="NavTest5Button"
+						Click="NavTest5_Click"
+						HorizontalAlignment="Stretch" />
+
+				<!-- Approach 6: NavigateViewModelAsync with ClearBackStack -->
+				<Button Content="6) ViewModelAsync&lt;Home&gt; + ClearBackStack"
+						AutomationProperties.AutomationId="NavTest6Button"
+						Click="NavTest6_Click"
+						HorizontalAlignment="Stretch" />
+
+				<!-- Approach 7: just NavigateBackAsync to Root -->
+				<Button Content="7) NavigateBackAsync(Root)"
+						AutomationProperties.AutomationId="NavTest7Button"
+						Click="NavTest7_Click"
+						HorizontalAlignment="Stretch" />
+
+				<!-- Simple go-back button for comparison -->
+				<Button Content="Go Back (standard)"
+						AutomationProperties.AutomationId="DetailGoBackButton"
+						uen:Navigation.Request="-"
+						HorizontalAlignment="Stretch" />
+
+				<TextBlock x:Name="StatusText"
+						   AutomationProperties.AutomationId="DetailStatusText"
+						   TextWrapping="Wrap"
+						   Foreground="Red" />
+			</StackPanel>
+		</ScrollViewer>
+	</Grid>
+</Page>
