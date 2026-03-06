@@ -32,9 +32,9 @@
 			<utu:TabBarItem Content="Home"
 							uen:Region.Name="Home"
 							AutomationProperties.AutomationId="HomeTabBarItem" />
-			<utu:TabBarItem Content="MyRun"
-							uen:Region.Name="MyRun"
-							AutomationProperties.AutomationId="MyRunTabBarItem" />
+			<utu:TabBarItem Content="TabTwo"
+							uen:Region.Name="TabTwo"
+							AutomationProperties.AutomationId="TabTwoTabBarItem" />
 		</utu:TabBar>
 	</Grid>
 </Page>

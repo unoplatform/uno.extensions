@@ -2,10 +2,7 @@ namespace TestHarness.Ext.Navigation.TabBar.TabBarClearBackStack;
 
 /// <summary>
 /// Shell ViewModel that navigates to Root on startup.
-/// Mirrors the driver app's ShellViewModel which calls:
-///   await _navigator.NavigateViewAsync&lt;RootPage&gt;(this, Qualifiers.Root);
-/// This is important because the driver app does NOT use IsDefault on the Root route.
-/// Instead, Root is navigated to explicitly by the ShellViewModel.
+/// Root is navigated to explicitly (no IsDefault on the Root route).
 /// </summary>
 public class TabBarClearBackStackShellModel
 {
@@ -19,8 +16,7 @@ public class TabBarClearBackStackShellModel
 
 	private async Task Start()
 	{
-		// Navigate to Root explicitly, just like the driver app's ShellViewModel does:
-		// await _navigator.NavigateViewAsync<RootPage>(this, Qualifiers.Root);
+		// Navigate to Root explicitly (no IsDefault on Root route)
 		await _navigator.NavigateViewAsync<TabBarClearBackStackRootPage>(this, Qualifiers.Root);
 	}
 }

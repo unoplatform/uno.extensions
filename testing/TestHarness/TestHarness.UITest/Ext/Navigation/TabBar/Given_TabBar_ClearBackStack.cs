@@ -7,13 +7,13 @@ namespace TestHarness.UITest;
 /// Reproduces: https://github.com/unoplatform/uno.extensions/issues/72
 /// 
 /// The issue: When on a page that was forward-navigated from within a tab
-/// (e.g. Root/MyRun -> StopDetails), attempting to navigate back to Root/Home
+/// (e.g. Root/TabTwo -> Details), attempting to navigate back to Root/Home
 /// using ClearBackStack or similar qualifiers creates a new Home page without
 /// the TabBar, instead of returning to the existing tabbed Root page.
 /// </summary>
 public class Given_TabBar_ClearBackStack : NavigationTestBase
 {
-	private void NavigateToStopDetails()
+	private void NavigateToDetails()
 	{
 		InitTestSection(TestSections.Navigation_TabBar_ClearBackStack);
 
@@ -22,13 +22,13 @@ public class Given_TabBar_ClearBackStack : NavigationTestBase
 		App.WaitElement("ClearBackStackTabBar");
 		App.WaitElement("HomeSection");
 
-		// Switch to MyRun tab
-		App.WaitThenTap("MyRunTabBarItem");
-		App.WaitElement("MyRunSection");
+		// Switch to TabTwo tab
+		App.WaitThenTap("TabTwoTabBarItem");
+		App.WaitElement("TabTwoSection");
 
-		// Navigate to StopDetails (forward navigation, leaves tabbed root)
-		App.WaitThenTap("GoToStopDetailsButton");
-		App.WaitElement("StopDetailNavigationBar");
+		// Navigate to Details (forward navigation, leaves tabbed root)
+		App.WaitThenTap("GoToDetailsButton");
+		App.WaitElement("DetailNavigationBar");
 	}
 
 	private void AssertBackAtTabbedRoot()
@@ -47,9 +47,9 @@ public class Given_TabBar_ClearBackStack : NavigationTestBase
 		var isTabBarVisible = App.Marked("ClearBackStackTabBar").IsVisible();
 		isTabBarVisible.Should().Be(true, "TabBar should be visible, meaning we're on the Root page not a standalone Home page");
 
-		// StopDetails should NOT be visible
-		var isStopDetailVisible = App.Marked("StopDetailNavigationBar").IsVisible();
-		isStopDetailVisible.Should().Be(false, "StopDetails page should no longer be visible");
+		// Details should NOT be visible
+		var isDetailVisible = App.Marked("DetailNavigationBar").IsVisible();
+		isDetailVisible.Should().Be(false, "Details page should no longer be visible");
 	}
 
 	/// <summary>
@@ -58,7 +58,7 @@ public class Given_TabBar_ClearBackStack : NavigationTestBase
 	[Test]
 	public async Task When_NavigateRoute_Absolute_From_Deep_Page()
 	{
-		NavigateToStopDetails();
+		NavigateToDetails();
 		App.WaitThenTap("NavTest1Button");
 		AssertBackAtTabbedRoot();
 	}
@@ -69,7 +69,7 @@ public class Given_TabBar_ClearBackStack : NavigationTestBase
 	[Test]
 	public async Task When_NavigateRoute_ClearPrefix_From_Deep_Page()
 	{
-		NavigateToStopDetails();
+		NavigateToDetails();
 		App.WaitThenTap("NavTest2Button");
 		AssertBackAtTabbedRoot();
 	}
@@ -80,7 +80,7 @@ public class Given_TabBar_ClearBackStack : NavigationTestBase
 	[Test]
 	public async Task When_NavigateRoute_ClearBackStack_From_Deep_Page()
 	{
-		NavigateToStopDetails();
+		NavigateToDetails();
 		App.WaitThenTap("NavTest3Button");
 		AssertBackAtTabbedRoot();
 	}
@@ -91,7 +91,7 @@ public class Given_TabBar_ClearBackStack : NavigationTestBase
 	[Test]
 	public async Task When_NavigateRoute_ClearPrefix_ClearBackStack_From_Deep_Page()
 	{
-		NavigateToStopDetails();
+		NavigateToDetails();
 		App.WaitThenTap("NavTest4Button");
 		AssertBackAtTabbedRoot();
 	}
@@ -102,7 +102,7 @@ public class Given_TabBar_ClearBackStack : NavigationTestBase
 	[Test]
 	public async Task When_NavigateBack_Root_Then_Route_From_Deep_Page()
 	{
-		NavigateToStopDetails();
+		NavigateToDetails();
 		App.WaitThenTap("NavTest5Button");
 		AssertBackAtTabbedRoot();
 	}
@@ -113,7 +113,7 @@ public class Given_TabBar_ClearBackStack : NavigationTestBase
 	[Test]
 	public async Task When_NavigateViewModel_ClearBackStack_From_Deep_Page()
 	{
-		NavigateToStopDetails();
+		NavigateToDetails();
 		App.WaitThenTap("NavTest6Button");
 		AssertBackAtTabbedRoot();
 	}
@@ -124,11 +124,11 @@ public class Given_TabBar_ClearBackStack : NavigationTestBase
 	[Test]
 	public async Task When_NavigateBack_Root_From_Deep_Page()
 	{
-		NavigateToStopDetails();
+		NavigateToDetails();
 		App.WaitThenTap("NavTest7Button");
 
 		// For this test, we should be back at Root with the TabBar
-		// The MyRun tab should still be selected since that's where we were
+		// The TabTwo tab should still be selected since that's where we were
 		App.WaitElement("ClearBackStackRootNavigationBar");
 		App.WaitElement("ClearBackStackTabBar");
 
@@ -137,24 +137,24 @@ public class Given_TabBar_ClearBackStack : NavigationTestBase
 	}
 
 	/// <summary>
-	/// Test: Standard back navigation from StopDetails should return to Root/MyRun tab
+	/// Test: Standard back navigation from Details should return to Root/TabTwo tab
 	/// (baseline test to verify the test setup works)
 	/// </summary>
 	[Test]
 	public async Task When_StandardBack_From_Deep_Page()
 	{
-		NavigateToStopDetails();
-		App.WaitThenTap("StopDetailGoBackButton");
+		NavigateToDetails();
+		App.WaitThenTap("DetailGoBackButton");
 
-		// Should be back on Root page with MyRun tab still selected
+		// Should be back on Root page with TabTwo tab still selected
 		App.WaitElement("ClearBackStackRootNavigationBar");
 		App.WaitElement("ClearBackStackTabBar");
-		App.WaitElement("MyRunSection");
+		App.WaitElement("TabTwoSection");
 
 		var isTabBarVisible = App.Marked("ClearBackStackTabBar").IsVisible();
 		isTabBarVisible.Should().Be(true, "TabBar should be visible after standard back navigation");
 
-		var isMyRunVisible = App.Marked("MyRunSection").IsVisible();
-		isMyRunVisible.Should().Be(true, "MyRun section should be visible since we went back from StopDetails");
+		var isTabTwoVisible = App.Marked("TabTwoSection").IsVisible();
+		isTabTwoVisible.Should().Be(true, "TabTwo section should be visible since we went back from Details");
 	}
 }

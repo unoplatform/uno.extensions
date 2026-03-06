@@ -1,8 +1,8 @@
 namespace TestHarness.Ext.Navigation.TabBar.TabBarClearBackStack;
 
-public sealed partial class TabBarClearBackStackStopDetailPage : Page
+public sealed partial class TabBarClearBackStackDetailPage : Page
 {
-	public TabBarClearBackStackStopDetailPage()
+	public TabBarClearBackStackDetailPage()
 	{
 		NavigationCacheMode = NavigationCacheMode.Required;
 		this.InitializeComponent();
