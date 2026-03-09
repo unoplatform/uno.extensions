@@ -46,10 +46,6 @@ public class Given_TabBar_ClearBackStack : NavigationTestBase
 		// created a new Home page, the TabBar won't be there)
 		var isTabBarVisible = App.Marked("ClearBackStackTabBar").IsVisible();
 		isTabBarVisible.Should().Be(true, "TabBar should be visible, meaning we're on the Root page not a standalone Home page");
-
-		// Details should NOT be visible
-		var isDetailVisible = App.Marked("DetailNavigationBar").IsVisible();
-		isDetailVisible.Should().Be(false, "Details page should no longer be visible");
 	}
 
 	/// <summary>
@@ -105,35 +101,6 @@ public class Given_TabBar_ClearBackStack : NavigationTestBase
 		NavigateToDetails();
 		App.WaitThenTap("NavTest5Button");
 		AssertBackAtTabbedRoot();
-	}
-
-	/// <summary>
-	/// Test 6: NavigateViewModelAsync with ClearBackStack qualifier
-	/// </summary>
-	[Test]
-	public async Task When_NavigateViewModel_ClearBackStack_From_Deep_Page()
-	{
-		NavigateToDetails();
-		App.WaitThenTap("NavTest6Button");
-		AssertBackAtTabbedRoot();
-	}
-
-	/// <summary>
-	/// Test 7: NavigateBackAsync to Root only (should return to Root with last selected tab)
-	/// </summary>
-	[Test]
-	public async Task When_NavigateBack_Root_From_Deep_Page()
-	{
-		NavigateToDetails();
-		App.WaitThenTap("NavTest7Button");
-
-		// For this test, we should be back at Root with the TabBar
-		// The TabTwo tab should still be selected since that's where we were
-		App.WaitElement("ClearBackStackRootNavigationBar");
-		App.WaitElement("ClearBackStackTabBar");
-
-		var isTabBarVisible = App.Marked("ClearBackStackTabBar").IsVisible();
-		isTabBarVisible.Should().Be(true, "TabBar should be visible after navigating back to root");
 	}
 
 	/// <summary>

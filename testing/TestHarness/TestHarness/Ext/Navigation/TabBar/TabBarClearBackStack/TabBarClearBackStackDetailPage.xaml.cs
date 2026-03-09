@@ -4,7 +4,6 @@ public sealed partial class TabBarClearBackStackDetailPage : Page
 {
 	public TabBarClearBackStackDetailPage()
 	{
-		NavigationCacheMode = NavigationCacheMode.Required;
 		this.InitializeComponent();
 	}
 
@@ -79,31 +78,4 @@ public sealed partial class TabBarClearBackStackDetailPage : Page
 		}
 	}
 
-	private async void NavTest6_Click(object sender, RoutedEventArgs e)
-	{
-		try
-		{
-			// Approach 6: ViewModel-based navigation with ClearBackStack
-			var nav = this.Navigator()!;
-			await nav.NavigateViewModelAsync<TabBarClearBackStackHomeModel>(this, qualifier: Qualifiers.ClearBackStack);
-		}
-		catch (Exception ex)
-		{
-			StatusText.Text = $"Test 6 failed: {ex.Message}";
-		}
-	}
-
-	private async void NavTest7_Click(object sender, RoutedEventArgs e)
-	{
-		try
-		{
-			// Approach 7: just NavigateBackAsync to Root
-			var nav = this.Navigator()!;
-			await nav.NavigateBackAsync(this, Qualifiers.Root);
-		}
-		catch (Exception ex)
-		{
-			StatusText.Text = $"Test 7 failed: {ex.Message}";
-		}
-	}
 }

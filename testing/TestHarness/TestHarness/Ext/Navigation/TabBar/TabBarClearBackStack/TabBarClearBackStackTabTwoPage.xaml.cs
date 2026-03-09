@@ -5,7 +5,6 @@ public sealed partial class TabBarClearBackStackTabTwoPage : Page
 	public TabBarClearBackStackTabTwoPage()
 	{
 		this.InitializeComponent();
-		NavigationCacheMode = NavigationCacheMode.Required;
 	}
 
 	private async void GoToDetails_Click(object sender, RoutedEventArgs e)

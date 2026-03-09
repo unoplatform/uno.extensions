@@ -64,18 +64,6 @@
 						Click="NavTest5_Click"
 						HorizontalAlignment="Stretch" />
 
-				<!-- Approach 6: NavigateViewModelAsync with ClearBackStack -->
-				<Button Content="6) ViewModelAsync&lt;Home&gt; + ClearBackStack"
-						AutomationProperties.AutomationId="NavTest6Button"
-						Click="NavTest6_Click"
-						HorizontalAlignment="Stretch" />
-
-				<!-- Approach 7: just NavigateBackAsync to Root -->
-				<Button Content="7) NavigateBackAsync(Root)"
-						AutomationProperties.AutomationId="NavTest7Button"
-						Click="NavTest7_Click"
-						HorizontalAlignment="Stretch" />
-
 				<!-- Simple go-back button for comparison -->
 				<Button Content="Go Back (standard)"
 						AutomationProperties.AutomationId="DetailGoBackButton"

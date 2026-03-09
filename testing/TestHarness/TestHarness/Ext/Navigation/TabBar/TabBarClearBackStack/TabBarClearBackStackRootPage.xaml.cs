@@ -4,7 +4,6 @@ public sealed partial class TabBarClearBackStackRootPage : Page
 {
 	public TabBarClearBackStackRootPage()
 	{
-		NavigationCacheMode = NavigationCacheMode.Required;
 		this.InitializeComponent();
 	}
 }
