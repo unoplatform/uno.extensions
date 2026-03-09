@@ -1,0 +1,26 @@
+<Page x:Class="TestHarness.Ext.Navigation.TabBar.TabBarClearBackStack.TabBarClearBackStackHomePage"
+	  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	  mc:Ignorable="d"
+	  NavigationCacheMode="Required"
+	  AutomationProperties.AutomationId="HomeSection"
+	  Background="LightGreen">
+
+	<Grid>
+		<StackPanel HorizontalAlignment="Center"
+					VerticalAlignment="Center"
+					Spacing="20">
+			<TextBlock Text="Home Tab"
+					   AutomationProperties.AutomationId="HomeSectionText"
+					   FontSize="24"
+					   HorizontalAlignment="Center" />
+			<TextBlock Text="If you see this WITH the TabBar below, navigation worked correctly."
+					   TextWrapping="Wrap"
+					   HorizontalAlignment="Center"
+					   Foreground="Green"
+					   FontSize="16" />
+		</StackPanel>
+	</Grid>
+</Page>
