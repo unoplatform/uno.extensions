@@ -1,0 +1,21 @@
+<Project Sdk="Uno.Sdk">
+	<Import Project="..\tfms-ui-winui.props" />
+
+	<PropertyGroup>
+		<Description>Test library for Core UI extensions (WinUI)</Description>
+		<EnableDefaultPageItems>false</EnableDefaultPageItems>
+		<DefineConstants>$(DefineConstants);WINUI</DefineConstants>
+		<UnoSingleProject>true</UnoSingleProject>
+		<OutputType>Library</OutputType>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="MSTest.TestFramework" />
+		<PackageReference Include="FluentAssertions" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Uno.Extensions.Core.UI\Uno.Extensions.Core.WinUI.csproj" />
+		<ProjectReference Include="..\Uno.Extensions.RuntimeTests\Uno.Extensions.RuntimeTests.Core\Uno.Extensions.RuntimeTests.Core.csproj" />
+	</ItemGroup>
+</Project>
