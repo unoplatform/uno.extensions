@@ -60,6 +60,10 @@ public class ContentControlNavigator : ControlNavigator<ContentControl>
 
 		try
 		{
+			// Close any active dialogs/flyouts before clearing children,
+			// otherwise they persist as overlays even after navigation
+			Region.CloseActiveClosableNavigators();
+
 			// Clear all child navigation regions
 			Region.Children.Clear();
 

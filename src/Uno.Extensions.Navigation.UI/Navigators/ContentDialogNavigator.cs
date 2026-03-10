@@ -86,5 +86,16 @@ public class ContentDialogNavigator : DialogNavigator
 	}
 
 
+	protected override Task CloseNavigator()
+	{
+		if (_activeDialog is { } dialog)
+		{
+			_activeDialog = null;
+			dialog.Hide();
+		}
+
+		return base.CloseNavigator();
+	}
+
 	protected override Task CheckLoadedAsync() => _activeDialog is not null ? _activeDialog.EnsureLoaded() : Task.CompletedTask;
 }

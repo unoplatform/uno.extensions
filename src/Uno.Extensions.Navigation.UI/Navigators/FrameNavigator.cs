@@ -104,6 +104,10 @@ public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 			childRoute = CaptureActiveChildRoute();
 		}
 
+		// Close any active dialogs/flyouts before clearing children,
+		// otherwise they persist as overlays even after navigation
+		Region.CloseActiveClosableNavigators();
+
 		// Detach all nested regions as we're moving away from the current view
 		Region.Children.Clear();
 

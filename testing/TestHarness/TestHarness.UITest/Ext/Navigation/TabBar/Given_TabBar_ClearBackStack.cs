@@ -124,4 +124,29 @@ public class Given_TabBar_ClearBackStack : NavigationTestBase
 		var isTabTwoVisible = App.Marked("TabTwoSection").IsVisible();
 		isTabTwoVisible.Should().Be(true, "TabTwo section should be visible since we went back from Details");
 	}
+
+	/// <summary>
+	/// Test 6: Open a ContentDialog from the deep page, then navigate to /Root/Home
+	/// from inside the dialog. The dialog should be dismissed and we should end up
+	/// at the tabbed root.
+	/// Reproduces: ContentDialog not closed during root navigation
+	/// </summary>
+	[Test]
+	public async Task When_ContentDialog_Open_And_Navigate_Root()
+	{
+		NavigateToDetails();
+
+		// Open the ContentDialog
+		App.WaitThenTap("NavTest6ShowDialogButton");
+
+		// Wait for the dialog to appear
+		App.WaitElement("DialogContentText");
+		App.WaitElement("DialogNavToRootButton");
+
+		// Navigate to /Root/Home from inside the dialog
+		App.WaitThenTap("DialogNavToRootButton");
+
+		// The dialog should be dismissed and we should be at the tabbed root
+		AssertBackAtTabbedRoot();
+	}
 }
