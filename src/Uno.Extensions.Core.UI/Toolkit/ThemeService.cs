@@ -82,6 +82,17 @@ internal class ThemeService : IThemeService, IDisposable
 
 	private void ElementThemeChanged(FrameworkElement sender, object args)
 	{
+		var savedTheme = GetSavedTheme();
+		if (savedTheme == AppTheme.System)
+		{
+			// OS theme changed while following system theme.
+			// Don't set an explicit RequestedTheme, which would override
+			// ElementTheme.Default and prevent future system theme changes
+			// from being tracked.
+			ThemeChanged?.Invoke(this, AppTheme.System);
+			return;
+		}
+
 		_ = InternalSetThemeAsync(sender.ActualTheme switch
 		{
 			ElementTheme.Default => AppTheme.System,

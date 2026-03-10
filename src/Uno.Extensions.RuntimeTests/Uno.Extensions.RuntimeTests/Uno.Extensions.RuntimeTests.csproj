@@ -43,6 +43,7 @@
 			This file is being imported in all runtime tests head.
 			Add here ref to all UI tests projects.
 		-->
+    <ProjectReference Include="..\..\Uno.Extensions.Core.UI.Tests\Uno.Extensions.Core.WinUI.Tests.csproj" />
     <ProjectReference Include="..\..\Uno.Extensions.Reactive.UI.Tests\Uno.Extensions.Reactive.WinUI.Tests.csproj" />
     <ProjectReference Include="..\..\Uno.Extensions.Navigation.UI.Tests\Uno.Extensions.Navigation.WinUI.Tests.csproj" />
     <ProjectReference Include="..\Uno.Extensions.RuntimeTests.Core\Uno.Extensions.RuntimeTests.Core.csproj" />
