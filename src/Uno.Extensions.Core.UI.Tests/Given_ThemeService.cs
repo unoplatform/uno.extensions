@@ -118,19 +118,31 @@ public class Given_ThemeService
 
 		using var service = new ThemeService(element, dispatcher, settings);
 
-		AppTheme? receivedTheme = null;
-		service.ThemeChanged += (_, theme) => receivedTheme = theme;
+		var tcs = new TaskCompletionSource<AppTheme>();
+		service.ThemeChanged += (_, theme) => tcs.TrySetResult(theme);
 
 		// Act - Change to light; without XamlRoot, InternalSetThemeAsync will fail silently
 		element.RequestedTheme = ElementTheme.Light;
 
-		// Give time for any async event processing
-		await Task.Delay(500);
+		// Assert - Without XamlRoot, InternalSetThemeAsync fails silently so no event fires.
+		// The key verification is that the System shortcut path is NOT taken for explicit themes.
+		using var cts = new CancellationTokenSource(TimeSpan.FromMilliseconds(200));
+		cts.Token.Register(() => tcs.TrySetCanceled());
 
-		// Assert - ThemeChanged should NOT have fired with AppTheme.System
-		// (Without XamlRoot, InternalSetThemeAsync fails, so no event fires at all,
-		// but the key assertion is that the System shortcut path was not taken)
-		receivedTheme.Should().NotBe(AppTheme.System,
-			because: "when an explicit theme is saved, the system theme shortcut should not be taken");
+		var eventFired = false;
+		try
+		{
+			var receivedTheme = await tcs.Task;
+			eventFired = true;
+			receivedTheme.Should().NotBe(AppTheme.System,
+				because: "when an explicit theme is saved, the system theme shortcut should not be taken");
+		}
+		catch (TaskCanceledException)
+		{
+			// Expected: no event fires because InternalSetThemeAsync cannot succeed without XamlRoot
+		}
+
+		eventFired.Should().BeFalse(
+			because: "without a XamlRoot, InternalSetThemeAsync fails silently and ThemeChanged should not fire");
 	}
 }
