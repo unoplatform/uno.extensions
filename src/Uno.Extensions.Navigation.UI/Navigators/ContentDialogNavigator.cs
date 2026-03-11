@@ -88,13 +88,16 @@ public class ContentDialogNavigator : DialogNavigator
 
 	protected override Task CloseNavigator()
 	{
-		if (_activeDialog is { } dialog)
-		{
-			_activeDialog = null;
-			dialog.Hide();
-		}
+		var dialog = _activeDialog;
+		_activeDialog = null;
 
-		return base.CloseNavigator();
+		// Cancel the ShowTask before calling Hide() so the ContinueWith
+		// continuation sees a canceled task and skips the back-navigation.
+		var result = base.CloseNavigator();
+
+		dialog?.Hide();
+
+		return result;
 	}
 
 	protected override Task CheckLoadedAsync() => _activeDialog is not null ? _activeDialog.EnsureLoaded() : Task.CompletedTask;
