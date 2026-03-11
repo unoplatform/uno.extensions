@@ -77,4 +77,25 @@ public static class RegionExtensions
 			}
 		}
 	}
+
+	/// <summary>
+	/// Closes any active closable navigators (ContentDialogs, MessageDialogs, Flyouts)
+	/// in the region's child hierarchy. This should be called before clearing children
+	/// when navigating away, to ensure overlays don't persist on screen.
+	/// </summary>
+	internal static void CloseActiveClosableNavigators(this IRegion region)
+	{
+		// Materialize to array first since closing may modify the children collection
+		var closableRegions = region.FindChildren(
+			r => r.Services?.GetService<INavigator>() is ClosableNavigator { CanGoBack: true }
+		).ToArray();
+
+		foreach (var childRegion in closableRegions)
+		{
+			if (childRegion.Services?.GetService<INavigator>() is ClosableNavigator closable)
+			{
+				_ = closable.ForceCloseAsync();
+			}
+		}
+	}
 }

@@ -78,4 +78,19 @@ public sealed partial class TabBarClearBackStackDetailPage : Page
 		}
 	}
 
+	private async void NavTest6_Click(object sender, RoutedEventArgs e)
+	{
+		try
+		{
+			// Approach 6: open a ContentDialog, then navigate to root from inside it.
+			// The dialog should be dismissed automatically when root navigation occurs.
+			var nav = this.Navigator()!;
+			await nav.NavigateViewAsync<TabBarClearBackStackTestDialog>(this, Qualifiers.Dialog);
+		}
+		catch (Exception ex)
+		{
+			StatusText.Text = $"Test 6 failed: {ex.Message}";
+		}
+	}
+
 }

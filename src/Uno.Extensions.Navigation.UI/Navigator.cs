@@ -399,6 +399,15 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 		// Required for Test: Given_PageNavigationRegistered.When_PageNavigationRegisteredRoot
 		if (request.Route.IsRoot())
 		{
+			// If we're inside a ClosableNavigator (dialog/flyout) whose region is not parented
+			// in the main region tree, delegate through CloseAndNavigateAsync so the request
+			// escapes to the navigator that opened the dialog.
+			if (Region.Parent is null && this is ClosableNavigator closable)
+			{
+				if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"Closing closable navigator and redirecting root request via source");
+				return closable.CloseAndNavigateAsync(request);
+			}
+
 			if (Region.Parent?.Parent is null)
 			{
 				// If parent's Parent is null, then parent is the root

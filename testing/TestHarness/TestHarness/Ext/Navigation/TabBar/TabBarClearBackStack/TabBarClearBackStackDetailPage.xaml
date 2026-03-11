@@ -70,6 +70,12 @@
 						uen:Navigation.Request="-"
 						HorizontalAlignment="Stretch" />
 
+				<!-- ContentDialog test: dialog should be closed by root navigation -->
+				<Button Content="6) Show Dialog (navigate from inside)"
+						AutomationProperties.AutomationId="NavTest6ShowDialogButton"
+						Click="NavTest6_Click"
+						HorizontalAlignment="Stretch" />
+
 				<TextBlock x:Name="StatusText"
 						   AutomationProperties.AutomationId="DetailStatusText"
 						   TextWrapping="Wrap"

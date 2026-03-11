@@ -52,4 +52,10 @@ public abstract class ClosableNavigator : ControlNavigator
 	/// </summary>
 	/// <returns>Task that can be awaited</returns>
 	protected abstract Task CloseNavigator();
+
+	/// <summary>
+	/// Closes the navigator without any subsequent navigation.
+	/// Used internally when navigating away from a page that has open dialogs/flyouts.
+	/// </summary>
+	internal Task ForceCloseAsync() => CloseNavigator();
 }
