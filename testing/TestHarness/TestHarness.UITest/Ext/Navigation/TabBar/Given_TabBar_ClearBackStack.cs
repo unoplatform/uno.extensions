@@ -149,10 +149,9 @@ public class Given_TabBar_ClearBackStack : NavigationTestBase
 		// The dialog should be dismissed and we should be at the tabbed root
 		AssertBackAtTabbedRoot();
 
-		// Verify the dialog is actually dismissed (not just hidden behind the root page)
-		var isDialogContentVisible = App.Marked("DialogContentText").IsVisible();
-		isDialogContentVisible.Should().Be(false, "Dialog content should no longer be visible after navigating to root");
-		var isDialogButtonVisible = App.Marked("DialogNavToRootButton").IsVisible();
-		isDialogButtonVisible.Should().Be(false, "Dialog button should no longer be visible after navigating to root");
+		// Verify the dialog is actually dismissed (not just hidden behind the root page).
+		// Use WaitForNoElement to allow time for the dialog overlay to be removed.
+		App.WaitForNoElement("DialogContentText", "ContentDialog content should be dismissed after navigating to root");
+		App.WaitForNoElement("DialogNavToRootButton", "ContentDialog button should be dismissed after navigating to root");
 	}
 }
