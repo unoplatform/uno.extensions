@@ -131,7 +131,7 @@ Two more overloads are available for items that implement `IKeyEquatable<T>` :
 `UpdateItemAsync` is another overload that allows you to apply an update on items that match the `key` of the specified item. The `key` is validated for each item. For every item that matches, the updater is invoked, returning a new instance of the item with the update applied:
 
 > [!TIP]
-> You don't have to implement `IKeyEquatable<T>` by yourself, see [generation](xref:Uno.Extensions.Equality.concept#generation) for more information.
+> You don't have to implement `IKeyEquatable<T>` by yourself when working with records, see [Key Equality Generation](xref:Uno.Extensions.KeyEquality.Concept#generation) for more information.
 
 ```csharp
 public partial record MyItem([property: Key] int Key, string Value);
