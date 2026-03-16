@@ -35,6 +35,8 @@ public static partial class ListState
 	/// <typeparam name="TValue">The type of the value of the resulting feed.</typeparam>
 	/// <param name="owner">The owner of the state.</param>
 	/// <param name="valueProvider">The provider of the initial value of the state.</param>
+	/// <param name="name">The caller member name, used as a stable cache key.</param>
+	/// <param name="line">The caller line number, used as a stable cache key.</param>
 	/// <returns>A state that encapsulate the source.</returns>
 	public static IListState<TValue> Value<TOwner, TValue>(TOwner owner, Func<IImmutableList<TValue>> valueProvider, [CallerMemberName] string? name = null, [CallerLineNumber] int line = -1)
 		where TOwner : class
@@ -47,6 +49,8 @@ public static partial class ListState
 	/// <typeparam name="TValue">The type of the value of the resulting feed.</typeparam>
 	/// <param name="owner">The owner of the state.</param>
 	/// <param name="valueProvider">The provider of the initial value of the state.</param>
+	/// <param name="name">The caller member name, used as a stable cache key.</param>
+	/// <param name="line">The caller line number, used as a stable cache key.</param>
 	/// <returns>A state that encapsulate the source.</returns>
 	public static IListState<TValue> Value<TOwner, TValue>(TOwner owner, Func<ImmutableList<TValue>> valueProvider, [CallerMemberName] string? name = null, [CallerLineNumber] int line = -1)
 		where TOwner : class
