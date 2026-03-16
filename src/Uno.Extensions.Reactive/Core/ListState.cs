@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading;
 
 namespace Uno.Extensions.Reactive;
@@ -35,10 +36,9 @@ public static partial class ListState
 	/// <param name="owner">The owner of the state.</param>
 	/// <param name="valueProvider">The provider of the initial value of the state.</param>
 	/// <returns>A state that encapsulate the source.</returns>
-	public static IListState<TValue> Value<TOwner, TValue>(TOwner owner, Func<IImmutableList<TValue>> valueProvider)
+	public static IListState<TValue> Value<TOwner, TValue>(TOwner owner, Func<IImmutableList<TValue>> valueProvider, [CallerMemberName] string? name = null, [CallerLineNumber] int line = -1)
 		where TOwner : class
-	// Note: We force the usage of delegate so 2 properties which are doing State.Value(this, () => 42) will effectively have 2 distinct states.
-		=> ListState<TValue>.Value(owner, valueProvider);
+		=> ListState<TValue>.Value(owner, valueProvider, name, line);
 
 	/// <summary>
 	/// Gets or creates a list state from a static initial list of items.
@@ -48,10 +48,9 @@ public static partial class ListState
 	/// <param name="owner">The owner of the state.</param>
 	/// <param name="valueProvider">The provider of the initial value of the state.</param>
 	/// <returns>A state that encapsulate the source.</returns>
-	public static IListState<TValue> Value<TOwner, TValue>(TOwner owner, Func<ImmutableList<TValue>> valueProvider)
+	public static IListState<TValue> Value<TOwner, TValue>(TOwner owner, Func<ImmutableList<TValue>> valueProvider, [CallerMemberName] string? name = null, [CallerLineNumber] int line = -1)
 		where TOwner : class
-	// Note: We force the usage of delegate so 2 properties which are doing State.Value(this, () => 42) will effectively have 2 distinct states.
-		=> ListState<TValue>.Value(owner, valueProvider);
+		=> ListState<TValue>.Value(owner, valueProvider, name, line);
 
 	/// <summary>
 	/// Gets or creates a list state from an async method.
