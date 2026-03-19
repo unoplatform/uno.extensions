@@ -86,6 +86,8 @@ When the `OidcAuthenticationProvider` is automatically built, there are platform
 
 **WebAssembly**: The `OidcAuthenticationProvider` will automatically use the `WebAuthenticationBroker` to obtain redirect URIs during the authentication process. This is done to avoid the need for a redirect to a custom URI scheme, which is not supported in the browser.
 
+**Skia Desktop** (`net10.0-desktop`): The `WebAuthenticationBroker` is **not available** on Skia Desktop targets (Windows, macOS, Linux via Skia). Calling `LoginAsync` without a custom `IBrowser` implementation will throw a `NotImplementedException`. To use OIDC on Skia Desktop, register a custom `IBrowser` that opens the system browser and listens on a loopback URI. See the [OIDC how-to](xref:Uno.Extensions.Authentication.HowToOidcAuthentication) for details. For Microsoft Entra ID, consider using the [`MsalAuthenticationProvider`](xref:Uno.Extensions.Authentication.HowToMsalAuthentication) instead, which has built-in desktop support.
+
 ### Web
 
 The `WebAuthenticationProvider` provides an implementation that displays a web view in order for the user to login. After login, the web view redirects back to the application, along with any tokens. Learn [Web Authentication](xref:Uno.Extensions.Authentication.HowToWebAuthentication)

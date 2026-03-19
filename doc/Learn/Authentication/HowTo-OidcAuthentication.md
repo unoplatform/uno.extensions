@@ -5,7 +5,14 @@ uid: Uno.Extensions.Authentication.HowToOidcAuthentication
 
 `OidcAuthenticationProvider` is a specific implementation of `IAuthenticationProvider` that allows your users to sign in using their identities from a participating identity provider. It provides seamless integration with any [OpenID Connect](https://openid.net/connect/) backend, such as [IdentityServer](https://duendesoftware.com/products/identityserver). By acting as an adapter, it integrates OpenID Connect authentication into the Uno.Extensions ecosystem, allowing you to leverage a unified approach across platforms.
 
-Under the hood, `OidcAuthenticationProvider` relies on [IdentityModel.OidcClient](https://identitymodel.readthedocs.io/), a widely-used .NET library that handles the core OpenID Connect and OAuth 2.0 protocols. This library manages the complex operations like token handling and user authentication.
+Under the hood, `OidcAuthenticationProvider` relies on [IdentityModel.OidcClient](https://identitymodel.readthedocs.io/), for all non-Windows targets, as a widely-used .NET library that handles the core OpenID Connect and OAuth 2.0 protocols. This library manages the complex operations like token handling and user authentication.
+
+> [!IMPORTANT]
+> **Platform support:** The `OidcAuthenticationProvider` requires the `WebAuthenticationBroker` or a custom `IBrowser` implementation to open the login page. The `WebAuthenticationBroker` is currently supported on **Android, iOS, macOS, and WebAssembly**. It is **not available on Skia Desktop** (`net10.0-desktop`). Calling `LoginAsync` on Skia Desktop without a custom `IBrowser` will throw a `NotImplementedException`.
+>
+> **Workarounds:**
+> - **For Microsoft Entra ID / Azure AD:** Use the [`MsalAuthenticationProvider`](xref:Uno.Extensions.Authentication.HowToMsalAuthentication) instead, which has built-in desktop browser support.
+> - **For other OIDC providers on desktop:** Provide a custom `IBrowser` implementation that opens the system browser and listens on a loopback URI. See [Advanced Customizations](#advanced-customizations) below.
 
 > [!NOTE]
 > It may be useful to familiarize yourself with the [OpenID Connect](https://openid.net/connect/) protocol before proceeding.
@@ -170,12 +177,65 @@ Under the hood, `OidcAuthenticationProvider` relies on [IdentityModel.OidcClient
 
 ## Advanced Customizations
 
-- You can use your own implementation of `IBrowser` (an interface from the `IdentityModel.OidcClient` library) to customize the browser behavior. This should be done by creating a class that implements the interface and register it using the `.ConfigureServices()` in the `App.xaml.cs` file.
+### Custom IBrowser implementation
 
-  ```csharp
-    .ConfigureServices((context, services) =>
+You can use your own implementation of `IBrowser` (an interface from the `IdentityModel.OidcClient` library) to customize the browser behavior. This is **required on Skia Desktop** (`net10.0-desktop`), where no default browser implementation is provided.
+
+Register your implementation using `.ConfigureServices()` in the `App.xaml.cs` file:
+
+```csharp
+.ConfigureServices((context, services) =>
+{
+    services.AddTransient<IBrowser, SystemBrowser>();
+})
+```
+
+A typical `IBrowser` implementation for desktop opens the system browser and listens for the redirect on a loopback URI:
+
+```csharp
+using IdentityModel.OidcClient.Browser;
+using System.Diagnostics;
+using System.Net;
+using System.Net.Sockets;
+
+public class SystemBrowser : IBrowser
+{
+    public async Task<BrowserResult> InvokeAsync(BrowserOptions options, CancellationToken cancellationToken = default)
     {
-        services.AddTransient<IBrowser, CustomBrowser>();
-    })
+        // Listen on the redirect URI (loopback)
+        using var listener = new HttpListener();
+        var redirectUri = options.EndUrl;
+        if (!redirectUri.EndsWith("/"))
+            redirectUri += "/";
+        listener.Prefixes.Add(redirectUri);
+        listener.Start();
 
-  ```
+        // Open the system browser
+        Process.Start(new ProcessStartInfo
+        {
+            FileName = options.StartUrl,
+            UseShellExecute = true
+        });
+
+        // Wait for the callback
+        var context = await listener.GetContextAsync();
+        var result = new BrowserResult
+        {
+            Response = context.Request.Url?.ToString() ?? string.Empty,
+            ResultType = BrowserResultType.Success
+        };
+
+        // Send a response to the browser
+        var response = context.Response;
+        var buffer = System.Text.Encoding.UTF8.GetBytes("<html><body>Authentication complete. You can close this window.</body></html>");
+        response.ContentLength64 = buffer.Length;
+        await response.OutputStream.WriteAsync(buffer, cancellationToken);
+        response.Close();
+
+        return result;
+    }
+}
+```
+
+> [!NOTE]
+> When using a custom `IBrowser` on desktop, set your OIDC `RedirectUri` to a loopback address (e.g. `http://127.0.0.1:{port}/callback`) and register this URI with your identity provider.
