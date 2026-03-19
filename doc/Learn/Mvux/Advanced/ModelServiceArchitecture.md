@@ -84,29 +84,33 @@ Use this table when deciding where a piece of logic belongs:
 
 4. **Services are stateless by default.** A service *can* hold internal state (caches, connection pools), but it should not expose reactive `IState` or `IFeed` properties. If a service needs to push updates, return `IAsyncEnumerable<T>` and let the model wrap it in a feed.
 
-## Model composition (instead of inheritance)
+## Model composition vs inheritance
 
-MVUX models **cannot inherit from each other** in a meaningful way. The code generator processes each `partial record` with a `Model` suffix independently and generates a ViewModel for its directly declared `IFeed`/`IState` properties. Inherited feed/state properties from a base record are not reliably processed.
-
-### Why not inheritance?
+MVUX model inheritance **does work** — the code generator mirrors C# record inheritance for the generated ViewModels. If `DerivedModel` inherits from `BaseModel`, then `DerivedViewModel` will inherit from `BaseViewModel`, and inherited `IFeed`/`IState` properties are accessible through normal C# inheritance.
 
 ```csharp
-// ⚠️ Don't do this — the generator may not process inherited feeds
+// ✅ This compiles and works — DerivedItemViewModel inherits Items from BaseItemViewModel
 public partial record BaseItemModel(IItemService Service)
 {
     public IListState<Item> Items => ListState.Async(this, Service.GetItemsAsync);
 }
 
-public partial record LootModel(IItemService Service) : BaseItemModel(Service)
+public partial record DerivedItemModel(IItemService Service) : BaseItemModel(Service)
 {
-    // Items feed is inherited but may not appear in the generated LootViewModel
+    public IState<string> ExtraProp => State.Value(this, () => "derived");
+    // Items is inherited and accessible on DerivedItemViewModel
 }
 ```
 
-### Use composition through shared services
+> [!NOTE]
+> Both the base and derived types must follow the `Model` suffix naming convention (e.g. `BaseItemModel`, `DerivedItemModel`) so the generator processes each one.
+
+### Prefer composition through shared services
+
+While inheritance works, **composition through shared services is the idiomatic MVUX pattern**. It keeps models flat, independently testable, and avoids coupling their lifecycles:
 
 ```csharp
-// ✅ Extract shared logic into a service
+// Extract shared logic into a service
 public interface IItemService
 {
     ValueTask<IImmutableList<Loot>> GetLootAsync(CancellationToken ct);
@@ -128,7 +132,9 @@ public partial record GiftModel(IItemService ItemService)
 }
 ```
 
-If the two models are nearly identical, that's a signal that you may only need **one model** parameterized by the service call, or that the shared behavior belongs entirely in the service.
+**When to use inheritance:** When you genuinely have an "is-a" relationship and the base model provides shared feeds/states that all derived models need without modification.
+
+**When to use composition:** When the models share *behavior* (the same service calls) but expose different data or have different UI concerns. If two models are nearly identical, that's a signal you may only need one model parameterized by the service call, or that the shared behavior belongs entirely in the service.
 
 ## Cross-cutting UI services
 
