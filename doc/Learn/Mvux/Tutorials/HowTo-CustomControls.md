@@ -25,7 +25,11 @@ The custom control binds to the **generated ViewModel** through standard data bi
 
 ### Use `IEnumerable<T>` for collection properties
 
-When your custom control displays a collection that comes from an `IListFeed<T>` or `IListState<T>`, type your DependencyProperty as `IEnumerable<T>` — **not** `ObservableCollection<T>`:
+When your custom control **displays** a collection owned by the Model (sourced from an `IListFeed<T>` or `IListState<T>`), type your DependencyProperty as `IEnumerable<T>` — **not** `ObservableCollection<T>`:
+
+> [!NOTE]
+> This guidance applies when the **Model owns the collection** and the control only reads it for display.
+> If your control internally manages its own collection (e.g., a game loop spawning and removing entities), the control should own a private `ObservableCollection<T>` internally and the DependencyProperty serves only as an external binding surface. See [Section 4](#4-wrapping-platform-controls-contentdialog-webview2-skcanvaselement) for imperative/rendering controls that manage their own state.
 
 ```csharp
 public sealed partial class LootDisplay : Control
@@ -67,7 +71,7 @@ public sealed partial class LootDisplay : Control
 }
 ```
 
-**Why `IEnumerable<T>`?** The MVUX code generator produces a bindable collection that implements `INotifyCollectionChanged`. By accepting `IEnumerable<T>`, your control works with any collection source — MVUX-generated, `ObservableCollection<T>`, or a plain `List<T>` in design-time data.
+**Why `IEnumerable<T>` and not `List<T>`?** The MVUX code generator produces a bindable collection that implements `INotifyCollectionChanged` but does **not** implement `IList<T>`. Using `List<T>` as the DP type would reject the MVUX-generated collection at runtime. `IEnumerable<T>` is the widest compatible interface — it accepts the MVUX-generated collection, `ObservableCollection<T>`, and a plain `List<T>` in design-time data. If you need indexed access inside the control, cast to `IList` or call `.ToList()` in the property-changed callback.
 
 ### Use the entity type directly for single-value properties
 
@@ -90,12 +94,14 @@ public DifficultyLevel Difficulty
 
 ## 2. Binding the custom control from XAML
 
-In the consuming page, bind the control's DependencyProperties to the MVUX-generated ViewModel properties:
+In the consuming page, bind the control's DependencyProperties to the MVUX-generated ViewModel properties.
+
+The examples below use a `GameModel` that composes data for the `LootDisplay` and `GameBoard` custom controls defined in Section 1.
 
 ### The Model
 
 ```csharp
-public partial record InventoryModel(ILootService LootService)
+public partial record GameModel(ILootService LootService)
 {
     public IListState<Loot> Loot => ListState.Async(this, LootService.GetLootAsync);
 
@@ -106,7 +112,7 @@ public partial record InventoryModel(ILootService LootService)
 ### The XAML
 
 ```xml
-<Page x:Class="MyApp.Presentation.InventoryPage"
+<Page x:Class="MyApp.Presentation.GamePage"
       xmlns:controls="using:MyApp.Controls">
 
     <controls:LootDisplay Items="{Binding Loot}"
@@ -114,7 +120,10 @@ public partial record InventoryModel(ILootService LootService)
 </Page>
 ```
 
-No special wiring is needed. The generated `InventoryViewModel` exposes `Loot` as a bindable collection and `Difficulty` as a bindable property. The custom control receives them through its DependencyProperties.
+No special wiring is needed. The generated `GameViewModel` exposes `Loot` as a bindable collection and `Difficulty` as a bindable property. The custom control receives them through its DependencyProperties.
+
+> [!TIP]
+> MVUX auto-generates a ViewModel for each `partial class` or `record` named with a `Model` suffix. Since V5, the generated class uses the `*ViewModel` naming convention (e.g., `GameModel` -> `GameViewModel`). The older `Bindable*Model` naming from V4 is deprecated. See [Upgrading MVUX](xref:Uno.Extensions.Mvux.ReactiveMigration) for details.
 
 ### Using FeedView for loading and error states
 
@@ -164,11 +173,11 @@ There are three approaches, depending on your needs:
 **Approach A: Code-behind handler calls into the ViewModel**
 
 ```csharp
-// InventoryPage.xaml.cs
+// GamePage.xaml.cs
 private void GameBoard_RunCompleted(object sender, RunCompletedEventArgs e)
 {
     // The DataContext is the generated ViewModel, which exposes model methods as commands
-    if (DataContext is BindableInventoryModel vm)
+    if (DataContext is GameViewModel vm)
     {
         vm.HandleRunCompleted(e.Score);
     }
@@ -211,6 +220,9 @@ private void OnRunFinished(int score)
 ## 4. Wrapping platform controls (ContentDialog, WebView2, SKCanvasElement)
 
 Platform controls that are **rendering surfaces** (WebView2, SKCanvasElement) or **modal UI** (ContentDialog) require a different pattern than data-bound controls. They do not fit the standard DP-binding model because they are driven by imperative APIs.
+
+> [!IMPORTANT]
+> If your custom control **internally owns and mutates its own collections** (e.g., a game loop that spawns/removes entities on a canvas), it falls into this category — not Section 1. The control should manage its state with private `ObservableCollection<T>` fields internally and expose DependencyProperties only for configuration or external data that flows in from the Model.
 
 ### Pattern: Service-driven control registration
 
@@ -343,9 +355,10 @@ The model stays focused on composing feeds/states, and the service owns the busi
 
 | Scenario | Pattern |
 |----------|---------|
-| Collection DP on custom control | Type as `IEnumerable<T>`, subscribe to `INotifyCollectionChanged` |
+| Collection DP on custom control (Model-owned data) | Type as `IEnumerable<T>`, subscribe to `INotifyCollectionChanged` |
+| Collection managed internally by the control | Private `ObservableCollection<T>`, service-driven pattern (Section 4) |
 | Single-value DP | Type to the entity type directly |
-| Control events → Model | Code-behind handler, `CommandExtensions`, or command DP |
+| Control events -> Model | Code-behind handler, `CommandExtensions`, or command DP |
 | Rendering surfaces (WebView2, SKCanvas) | Service-driven registration pattern |
 | ContentDialog | Navigation Extensions with `Qualifiers.Dialog` |
 | Configuration in Model | Inject `IOptions<T>` or `IWritableOptions<T>` |
