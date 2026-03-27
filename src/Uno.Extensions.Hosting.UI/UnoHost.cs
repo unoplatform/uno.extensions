@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using System.Runtime.Loader;
 
 namespace Uno.Extensions.Hosting;
 
@@ -88,7 +89,8 @@ public static class UnoHost
 				{
 					services.AddSingleton(dataProvider);
 				}
-				if (ctx.HostingEnvironment is IHasAddressBar addressBarHost)
+				if (ctx.HostingEnvironment is IHasAddressBar addressBarHost
+					&& AssemblyLoadContext.GetLoadContext(applicationAssembly) == AssemblyLoadContext.Default)
 				{
 					services.AddSingleton(addressBarHost);
 				}
