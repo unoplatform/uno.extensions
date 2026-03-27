@@ -37,11 +37,10 @@ public class Given_BrowserAddressBar
 				})
 			.Build();
 
-		// Assert — on WASM IHasAddressBar should be registered; on other platforms it may not be,
-		// but the important thing is the code path doesn't throw.
-		var config = host.Services.GetService<NavigationConfiguration>();
-		config.Should().NotBeNull();
-		config!.AddressBarUpdateEnabled.Should().BeTrue("default configuration enables address bar updates");
+		// Assert — IHasAddressBar should be registered for the default ALC
+		var addressBar = host.Services.GetService<IHasAddressBar>();
+		addressBar.Should().NotBeNull(
+			"IHasAddressBar must be registered when the application assembly is in the default ALC");
 	}
 
 	/// <summary>
@@ -56,17 +55,12 @@ public class Given_BrowserAddressBar
 		var alc = new AssemblyLoadContext("TestNonDefaultALC", isCollectible: true);
 		try
 		{
-			var assemblyPath = typeof(Given_BrowserAddressBar).Assembly.Location;
-
-			// On some platforms (e.g. single-file publish), Location may be empty.
-			// Skip this test gracefully in that case.
-			if (string.IsNullOrEmpty(assemblyPath))
-			{
-				Assert.Inconclusive("Assembly.Location is not available on this platform.");
-				return;
-			}
-
-			var nonDefaultAssembly = alc.LoadFromAssemblyPath(assemblyPath);
+			// Resolve the assembly path without relying on Assembly.Location
+			// (which can be empty in bundled/single-file scenarios).
+			var assemblyName = typeof(Given_BrowserAddressBar).Assembly.GetName().Name + ".dll";
+			var assemblyPath = Path.Combine(AppContext.BaseDirectory, assemblyName);
+			using var stream = File.OpenRead(assemblyPath);
+			var nonDefaultAssembly = alc.LoadFromStream(stream);
 			AssemblyLoadContext.GetLoadContext(nonDefaultAssembly).Should().NotBe(
 				AssemblyLoadContext.Default,
 				"assembly should be loaded in a non-default ALC");
