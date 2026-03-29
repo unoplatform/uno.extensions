@@ -16,6 +16,8 @@
   steps:
   - checkout: self
     clean: true
+
+  - template: templates/host-cleanup-linux.yml
     
   - task: UseDotNet@2
     displayName: 'Use .NET'
