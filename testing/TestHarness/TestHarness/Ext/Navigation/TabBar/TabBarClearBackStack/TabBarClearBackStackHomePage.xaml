@@ -11,7 +11,8 @@
 	<Grid>
 		<StackPanel HorizontalAlignment="Center"
 					VerticalAlignment="Center"
-					Spacing="20">
+					Spacing="20"
+					Margin="20">
 			<TextBlock Text="Home Tab"
 					   AutomationProperties.AutomationId="HomeSectionText"
 					   FontSize="24"
@@ -21,6 +22,16 @@
 					   HorizontalAlignment="Center"
 					   Foreground="Green"
 					   FontSize="16" />
+			<!-- Opens a passive dialog (no internal navigation button) -->
+			<Button Content="Show Passive Dialog"
+					AutomationProperties.AutomationId="HomeShowPassiveDialogButton"
+					Click="ShowPassiveDialog_Click"
+					HorizontalAlignment="Stretch" />
+			<!-- Triggers external root navigation (simulates e.g. logout-from-another-device) -->
+			<Button Content="Navigate to Root Externally"
+					AutomationProperties.AutomationId="HomeNavToRootExternallyButton"
+					Click="NavToRootExternally_Click"
+					HorizontalAlignment="Stretch" />
 		</StackPanel>
 	</Grid>
 </Page>

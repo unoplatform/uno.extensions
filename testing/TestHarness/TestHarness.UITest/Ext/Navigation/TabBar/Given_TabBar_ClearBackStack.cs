@@ -154,4 +154,38 @@ public class Given_TabBar_ClearBackStack : NavigationTestBase
 		App.WaitForNoElement("DialogContentText", "ContentDialog content should be dismissed after navigating to root");
 		App.WaitForNoElement("DialogNavToRootButton", "ContentDialog button should be dismissed after navigating to root");
 	}
+
+	/// <summary>
+	/// Test 7: Open a passive ContentDialog from the Home tab (no navigation button inside it),
+	/// then trigger root navigation externally from the page behind the dialog.
+	/// This simulates a real-world scenario where a root-level ViewModel (e.g. handling
+	/// "logged out on another device") calls NavigateRouteAsync("/Root/Home") while a
+	/// ContentDialog is open on top.
+	/// The dialog should be closed and we should end up at the tabbed root.
+	/// Reproduces: https://github.com/unoplatform/uno.extensions/issues/72
+	/// </summary>
+	[Test]
+	public async Task When_ContentDialog_Open_And_External_Root_Navigation()
+	{
+		InitTestSection(TestSections.Navigation_TabBar_ClearBackStack);
+
+		// Wait for Root page with TabBar and Home tab to load
+		App.WaitElement("ClearBackStackRootNavigationBar");
+		App.WaitElement("ClearBackStackTabBar");
+		App.WaitElement("HomeSection");
+
+		// Open the passive dialog (it has no internal navigation button)
+		App.WaitThenTap("HomeShowPassiveDialogButton");
+		App.WaitElement("PassiveDialogContentText");
+
+		// Now trigger root navigation from the page behind the dialog
+		// (simulates an external event like "logged out on another device")
+		App.WaitThenTap("HomeNavToRootExternallyButton");
+
+		// The dialog should be dismissed and we should still be at the tabbed root
+		AssertBackAtTabbedRoot();
+
+		// Verify the dialog overlay is actually gone
+		App.WaitForNoElement("PassiveDialogContentText", "Passive ContentDialog should be dismissed when root navigation is triggered externally");
+	}
 }
