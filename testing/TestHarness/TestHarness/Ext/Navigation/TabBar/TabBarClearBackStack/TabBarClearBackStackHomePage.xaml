@@ -32,6 +32,13 @@
 					AutomationProperties.AutomationId="HomeNavToRootExternallyButton"
 					Click="NavToRootExternally_Click"
 					HorizontalAlignment="Stretch" />
+			<!-- Same but with ClearBackStack qualifier (produces a - prefix route).  Used to
+			     verify that forward navigation with - prefix does NOT prematurely deregister
+			     an open dialog from the source region (regression for FrameIsBackNavigation). -->
+			<Button Content="Navigate to Root Externally (ClearBackStack)"
+					AutomationProperties.AutomationId="HomeNavToRootExternallyClearBackStackButton"
+					Click="NavToRootExternallyClearBackStack_Click"
+					HorizontalAlignment="Stretch" />
 		</StackPanel>
 	</Grid>
 </Page>

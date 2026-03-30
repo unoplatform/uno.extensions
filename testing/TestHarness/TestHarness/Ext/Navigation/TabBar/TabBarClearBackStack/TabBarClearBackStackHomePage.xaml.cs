@@ -28,4 +28,17 @@ public sealed partial class TabBarClearBackStackHomePage : Page
 		var nav = this.Navigator()!;
 		await nav.NavigateRouteAsync(this, "/Root/Home");
 	}
+
+	/// <summary>
+	/// Same as <see cref="NavToRootExternally_Click"/> but uses
+	/// <see cref="Qualifiers.ClearBackStack"/>, which produces a route whose qualifier
+	/// starts with '-' (but has a non-empty Base).  Used to verify that
+	/// <c>FrameIsBackNavigation()</c> correctly excludes this route from the
+	/// "pure back/close" branch in <c>ClosableNavigator.ExecuteRequestAsync</c>.
+	/// </summary>
+	private async void NavToRootExternallyClearBackStack_Click(object sender, RoutedEventArgs e)
+	{
+		var nav = this.Navigator()!;
+		await nav.NavigateRouteAsync(this, "/Root/Home", Qualifiers.ClearBackStack);
+	}
 }

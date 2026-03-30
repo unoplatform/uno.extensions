@@ -33,10 +33,13 @@ public abstract class ClosableNavigator : ControlNavigator
 		// so that it can be used to forward navigation requests to.
 		Source ??= request.Source;
 
-		if (request.Route.IsBackOrCloseNavigation())
+		if (request.Route.FrameIsBackNavigation())
 		{
-			// Dialog/flyout is being closed via normal back navigation (e.g. user dismisses it).
-			// Deregister from the launching region so the orphaned region does not linger.
+			// Dialog/flyout is being closed via a pure back/close navigation (qualifier starts with
+			// '-' and no Base, e.g. the user taps Cancel). Forward navigations that happen to carry
+			// a '-' prefix for back-stack clearing (e.g. "-/Root/Home") are NOT pure back navigations
+			// (they have a non-empty Base) and must NOT deregister the region here — the dialog
+			// should remain discoverable by CloseActiveClosableNavigators() for those cases.
 			DeregisterFromSourceRegion();
 		}
 		else if (_sourceRegion is null &&

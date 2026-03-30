@@ -185,4 +185,39 @@ public class Given_TabBar_ClearBackStack : NavigationTestBase
 		// Verify the dialog overlay is actually gone
 		App.WaitForNoElement("PassiveDialogContentText", "Passive ContentDialog should be dismissed when root navigation is triggered externally");
 	}
+
+	/// <summary>
+	/// Test 8: Same as Test 7 but the external navigation uses Qualifiers.ClearBackStack,
+	/// which produces a route whose qualifier starts with '-' (e.g. "-/Root/Home").
+	/// This is a regression test for the use of FrameIsBackNavigation() in
+	/// ClosableNavigator.ExecuteRequestAsync: using IsBackOrCloseNavigation() instead would
+	/// have matched this '-' prefix and incorrectly deregistered the dialog from the source
+	/// region before CloseActiveClosableNavigators could find and close it.
+	/// </summary>
+	[Test]
+	public async Task When_ContentDialog_Open_And_External_Root_Navigation_ClearBackStack()
+	{
+		InitTestSection(TestSections.Navigation_TabBar_ClearBackStack);
+
+		// Wait for Root page with TabBar and Home tab to load
+		App.WaitElement("ClearBackStackRootNavigationBar");
+		App.WaitElement("ClearBackStackTabBar");
+		App.WaitElement("HomeSection");
+
+		// Open the passive dialog (it has no internal navigation button)
+		App.WaitThenTap("HomeShowPassiveDialogButton");
+		App.WaitElement("PassiveDialogContentText");
+
+		// Trigger root navigation with ClearBackStack qualifier from the page behind the dialog.
+		// The resulting route starts with '-' but has non-empty Base ("/Root/Home"), so
+		// FrameIsBackNavigation() returns false and the dialog stays registered with the
+		// source region until CloseActiveClosableNavigators closes it.
+		App.WaitThenTap("HomeNavToRootExternallyClearBackStackButton");
+
+		// The dialog should be dismissed and we should still be at the tabbed root
+		AssertBackAtTabbedRoot();
+
+		// Verify the dialog overlay is actually gone
+		App.WaitForNoElement("PassiveDialogContentText", "Passive ContentDialog should be dismissed when root navigation with ClearBackStack is triggered externally");
+	}
 }
