@@ -10,6 +10,8 @@ jobs:
   - checkout: self
     clean: 'true'
 
+  - template: templates/host-cleanup-linux.yml
+
   - template: templates/dotnet-install.yml
   - template: templates/canary-updater.yml
   - template: templates/gitversion.yml
