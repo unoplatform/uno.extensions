@@ -4,8 +4,6 @@ namespace TestHarness.UITest;
 /// Tests for navigating back to a tabbed root page from a deeply nested page
 /// using various approaches (ClearBackStack, NavigateBackAsync, etc.).
 /// 
-/// Reproduces: https://github.com/unoplatform/uno.extensions/issues/72
-/// 
 /// The issue: When on a page that was forward-navigated from within a tab
 /// (e.g. Root/TabTwo -> Details), attempting to navigate back to Root/Home
 /// using ClearBackStack or similar qualifiers creates a new Home page without
@@ -162,7 +160,6 @@ public class Given_TabBar_ClearBackStack : NavigationTestBase
 	/// "logged out on another device") calls NavigateRouteAsync("/Root/Home") while a
 	/// ContentDialog is open on top.
 	/// The dialog should be closed and we should end up at the tabbed root.
-	/// Reproduces: https://github.com/unoplatform/uno.extensions/issues/72
 	/// </summary>
 	[Test]
 	public async Task When_ContentDialog_Open_And_External_Root_Navigation()
