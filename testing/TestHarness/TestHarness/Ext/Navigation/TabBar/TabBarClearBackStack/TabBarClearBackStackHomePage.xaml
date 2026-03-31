@@ -11,7 +11,8 @@
 	<Grid>
 		<StackPanel HorizontalAlignment="Center"
 					VerticalAlignment="Center"
-					Spacing="20">
+					Spacing="20"
+					Margin="20">
 			<TextBlock Text="Home Tab"
 					   AutomationProperties.AutomationId="HomeSectionText"
 					   FontSize="24"
@@ -21,6 +22,33 @@
 					   HorizontalAlignment="Center"
 					   Foreground="Green"
 					   FontSize="16" />
+			<!-- Opens a passive dialog (no internal navigation button) -->
+			<Button Content="Show Passive Dialog"
+					AutomationProperties.AutomationId="HomeShowPassiveDialogButton"
+					Click="ShowPassiveDialog_Click"
+					HorizontalAlignment="Stretch" />
+			<!-- Triggers external root navigation (simulates e.g. logout-from-another-device) -->
+			<Button Content="Navigate to Root Externally"
+					AutomationProperties.AutomationId="HomeNavToRootExternallyButton"
+					Click="NavToRootExternally_Click"
+					HorizontalAlignment="Stretch" />
+			<!-- Same but with ClearBackStack qualifier (produces a - prefix route).  Used to
+			     verify that forward navigation with - prefix does NOT prematurely deregister
+			     an open dialog from the source region (regression for FrameIsBackNavigation). -->
+			<Button Content="Navigate to Root Externally (ClearBackStack)"
+					AutomationProperties.AutomationId="HomeNavToRootExternallyClearBackStackButton"
+					Click="NavToRootExternallyClearBackStack_Click"
+					HorizontalAlignment="Stretch" />
+			<!-- Opens passive dialog then schedules external root navigation after a delay.
+			     Used by UI tests that cannot tap buttons behind an open ContentDialog overlay. -->
+			<Button Content="Show Dialog Then Nav Externally"
+					AutomationProperties.AutomationId="HomeShowDialogThenNavExternallyButton"
+					Click="ShowDialogThenNavExternally_Click"
+					HorizontalAlignment="Stretch" />
+			<Button Content="Show Dialog Then Nav Externally (ClearBackStack)"
+					AutomationProperties.AutomationId="HomeShowDialogThenNavExternallyClearBackStackButton"
+					Click="ShowDialogThenNavExternallyClearBackStack_Click"
+					HorizontalAlignment="Stretch" />
 		</StackPanel>
 	</Grid>
 </Page>

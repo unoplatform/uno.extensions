@@ -4,8 +4,6 @@ namespace TestHarness.UITest;
 /// Tests for navigating back to a tabbed root page from a deeply nested page
 /// using various approaches (ClearBackStack, NavigateBackAsync, etc.).
 /// 
-/// Reproduces: https://github.com/unoplatform/uno.extensions/issues/72
-/// 
 /// The issue: When on a page that was forward-navigated from within a tab
 /// (e.g. Root/TabTwo -> Details), attempting to navigate back to Root/Home
 /// using ClearBackStack or similar qualifiers creates a new Home page without
@@ -153,5 +151,67 @@ public class Given_TabBar_ClearBackStack : NavigationTestBase
 		// Use WaitForNoElement to allow time for the dialog overlay to be removed.
 		App.WaitForNoElement("DialogContentText", "ContentDialog content should be dismissed after navigating to root");
 		App.WaitForNoElement("DialogNavToRootButton", "ContentDialog button should be dismissed after navigating to root");
+	}
+
+	/// <summary>
+	/// Test 7: Open a passive ContentDialog from the Home tab (no navigation button inside it),
+	/// then trigger root navigation externally from the page behind the dialog.
+	/// This simulates a real-world scenario where a root-level ViewModel (e.g. handling
+	/// "logged out on another device") calls NavigateRouteAsync("/Root/Home") while a
+	/// ContentDialog is open on top.
+	/// The dialog should be closed and we should end up at the tabbed root.
+	/// </summary>
+	[Test]
+	public async Task When_ContentDialog_Open_And_External_Root_Navigation()
+	{
+		InitTestSection(TestSections.Navigation_TabBar_ClearBackStack);
+
+		// Wait for Root page with TabBar and Home tab to load
+		App.WaitElement("ClearBackStackRootNavigationBar");
+		App.WaitElement("ClearBackStackTabBar");
+		App.WaitElement("HomeSection");
+
+		// Open the passive dialog and schedule external root navigation after a delay.
+		// A single button is used because the ContentDialog overlay blocks taps to
+		// buttons on the page behind it.
+		App.WaitThenTap("HomeShowDialogThenNavExternallyButton");
+		App.WaitElement("PassiveDialogContentText");
+
+		// The dialog should be dismissed and we should still be at the tabbed root
+		AssertBackAtTabbedRoot();
+
+		// Verify the dialog overlay is actually gone
+		App.WaitForNoElement("PassiveDialogContentText", "Passive ContentDialog should be dismissed when root navigation is triggered externally");
+	}
+
+	/// <summary>
+	/// Test 8: Same as Test 7 but the external navigation uses Qualifiers.ClearBackStack,
+	/// which produces a route whose qualifier starts with '-' (e.g. "-/Root/Home").
+	/// This is a regression test for the use of FrameIsBackNavigation() in
+	/// ClosableNavigator.ExecuteRequestAsync: using IsBackOrCloseNavigation() instead would
+	/// have matched this '-' prefix and incorrectly deregistered the dialog from the source
+	/// region before CloseActiveClosableNavigators could find and close it.
+	/// </summary>
+	[Test]
+	public async Task When_ContentDialog_Open_And_External_Root_Navigation_ClearBackStack()
+	{
+		InitTestSection(TestSections.Navigation_TabBar_ClearBackStack);
+
+		// Wait for Root page with TabBar and Home tab to load
+		App.WaitElement("ClearBackStackRootNavigationBar");
+		App.WaitElement("ClearBackStackTabBar");
+		App.WaitElement("HomeSection");
+
+		// Open the passive dialog and schedule external root navigation (with ClearBackStack)
+		// after a delay. A single button is used because the ContentDialog overlay blocks
+		// taps to buttons on the page behind it.
+		App.WaitThenTap("HomeShowDialogThenNavExternallyClearBackStackButton");
+		App.WaitElement("PassiveDialogContentText");
+
+		// The dialog should be dismissed and we should still be at the tabbed root
+		AssertBackAtTabbedRoot();
+
+		// Verify the dialog overlay is actually gone
+		App.WaitForNoElement("PassiveDialogContentText", "Passive ContentDialog should be dismissed when root navigation with ClearBackStack is triggered externally");
 	}
 }

@@ -26,7 +26,11 @@ public class TabBarClearBackStackHostInit : BaseHostInitialization
 			new ResultDataViewMap<TabBarClearBackStackDetailPage, TabBarClearBackStackDetailModel, string>(
 				Data: new DataMap<string>()),
 			// ContentDialog for testing dialog dismissal during root navigation
-			new ViewMap<TabBarClearBackStackTestDialog>()
+			// (from inside the dialog)
+			new ViewMap<TabBarClearBackStackTestDialog>(),
+			// Passive ContentDialog (no internal navigation) for testing external root navigation
+			// dismissing an open dialog
+			new ViewMap<TabBarClearBackStackPassiveDialog>()
 		);
 
 		// Route structure:
