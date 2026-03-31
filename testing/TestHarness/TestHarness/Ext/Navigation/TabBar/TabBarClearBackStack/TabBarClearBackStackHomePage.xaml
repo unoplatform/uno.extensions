@@ -39,6 +39,16 @@
 					AutomationProperties.AutomationId="HomeNavToRootExternallyClearBackStackButton"
 					Click="NavToRootExternallyClearBackStack_Click"
 					HorizontalAlignment="Stretch" />
+			<!-- Opens passive dialog then schedules external root navigation after a delay.
+			     Used by UI tests that cannot tap buttons behind an open ContentDialog overlay. -->
+			<Button Content="Show Dialog Then Nav Externally"
+					AutomationProperties.AutomationId="HomeShowDialogThenNavExternallyButton"
+					Click="ShowDialogThenNavExternally_Click"
+					HorizontalAlignment="Stretch" />
+			<Button Content="Show Dialog Then Nav Externally (ClearBackStack)"
+					AutomationProperties.AutomationId="HomeShowDialogThenNavExternallyClearBackStackButton"
+					Click="ShowDialogThenNavExternallyClearBackStack_Click"
+					HorizontalAlignment="Stretch" />
 		</StackPanel>
 	</Grid>
 </Page>

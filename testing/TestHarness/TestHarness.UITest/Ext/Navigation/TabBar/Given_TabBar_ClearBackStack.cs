@@ -171,13 +171,11 @@ public class Given_TabBar_ClearBackStack : NavigationTestBase
 		App.WaitElement("ClearBackStackTabBar");
 		App.WaitElement("HomeSection");
 
-		// Open the passive dialog (it has no internal navigation button)
-		App.WaitThenTap("HomeShowPassiveDialogButton");
+		// Open the passive dialog and schedule external root navigation after a delay.
+		// A single button is used because the ContentDialog overlay blocks taps to
+		// buttons on the page behind it.
+		App.WaitThenTap("HomeShowDialogThenNavExternallyButton");
 		App.WaitElement("PassiveDialogContentText");
-
-		// Now trigger root navigation from the page behind the dialog
-		// (simulates an external event like "logged out on another device")
-		App.WaitThenTap("HomeNavToRootExternallyButton");
 
 		// The dialog should be dismissed and we should still be at the tabbed root
 		AssertBackAtTabbedRoot();
@@ -204,15 +202,11 @@ public class Given_TabBar_ClearBackStack : NavigationTestBase
 		App.WaitElement("ClearBackStackTabBar");
 		App.WaitElement("HomeSection");
 
-		// Open the passive dialog (it has no internal navigation button)
-		App.WaitThenTap("HomeShowPassiveDialogButton");
+		// Open the passive dialog and schedule external root navigation (with ClearBackStack)
+		// after a delay. A single button is used because the ContentDialog overlay blocks
+		// taps to buttons on the page behind it.
+		App.WaitThenTap("HomeShowDialogThenNavExternallyClearBackStackButton");
 		App.WaitElement("PassiveDialogContentText");
-
-		// Trigger root navigation with ClearBackStack qualifier from the page behind the dialog.
-		// The resulting route starts with '-' but has non-empty Base ("/Root/Home"), so
-		// FrameIsBackNavigation() returns false and the dialog stays registered with the
-		// source region until CloseActiveClosableNavigators closes it.
-		App.WaitThenTap("HomeNavToRootExternallyClearBackStackButton");
 
 		// The dialog should be dismissed and we should still be at the tabbed root
 		AssertBackAtTabbedRoot();

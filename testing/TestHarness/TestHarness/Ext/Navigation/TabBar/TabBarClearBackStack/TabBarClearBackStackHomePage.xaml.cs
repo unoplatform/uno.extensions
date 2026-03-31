@@ -41,4 +41,28 @@ public sealed partial class TabBarClearBackStackHomePage : Page
 		var nav = this.Navigator()!;
 		await nav.NavigateRouteAsync(this, "/Root/Home", Qualifiers.ClearBackStack);
 	}
+
+	/// <summary>
+	/// Opens the passive dialog and schedules root navigation after a delay.
+	/// This simulates an external event (e.g. server-side logout) that triggers
+	/// root navigation while a ContentDialog is open. The delay allows the dialog
+	/// to fully appear before the navigation fires.
+	/// UI tests use this because a ContentDialog overlay blocks taps to buttons
+	/// on the page behind it.
+	/// </summary>
+	private async void ShowDialogThenNavExternally_Click(object sender, RoutedEventArgs e)
+	{
+		var nav = this.Navigator()!;
+		_ = nav.NavigateViewAsync<TabBarClearBackStackPassiveDialog>(this, Qualifiers.Dialog);
+		await Task.Delay(2000);
+		await nav.NavigateRouteAsync(this, "/Root/Home");
+	}
+
+	private async void ShowDialogThenNavExternallyClearBackStack_Click(object sender, RoutedEventArgs e)
+	{
+		var nav = this.Navigator()!;
+		_ = nav.NavigateViewAsync<TabBarClearBackStackPassiveDialog>(this, Qualifiers.Dialog);
+		await Task.Delay(2000);
+		await nav.NavigateRouteAsync(this, "/Root/Home", Qualifiers.ClearBackStack);
+	}
 }
