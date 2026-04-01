@@ -290,3 +290,7 @@ The type of view to navigate to
     …
     </UserControl>
     ```
+
+## Troubleshooting
+
+If you're experiencing issues with navigation, ViewMap registration, or DataContext binding, see [Troubleshooting: ViewMap and DataContext](xref:Uno.Extensions.Navigation.Troubleshooting.ViewMapDataContext) for comprehensive diagnostic steps and solutions.
