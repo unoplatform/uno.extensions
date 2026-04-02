@@ -199,6 +199,8 @@ internal sealed class ListFeedSelection<TSource, TOther> : IListState<TSource>, 
 		public bool IsActive(Message<IImmutableList<TSource>>? parent, bool parentChanged, IMessageEntry<IImmutableList<TSource>> msg)
 			=> !parentChanged || !(parent?.Changes.Contains(MessageAxis.Selection) ?? false);
 
+		public bool IsCompactable() => true;
+
 		public void Apply(bool _, MessageBuilder<IImmutableList<TSource>, IImmutableList<TSource>> msg)
 		{
 			var items = msg.CurrentData.SomeOrDefault(ImmutableList<TSource>.Empty);

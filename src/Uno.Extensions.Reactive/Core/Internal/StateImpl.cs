@@ -56,7 +56,7 @@ internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, ISta
 	}
 
 	public StateImpl(SourceContext context, Option<T> defaultValue)
-		: this(context, new AsyncFeed<T>(async _ => defaultValue), SubscriptionMode.Eager)
+		: this(context, new ValueFeed<T>(defaultValue), SubscriptionMode.Eager)
 	{
 	}
 
@@ -171,6 +171,10 @@ internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, ISta
 		public bool IsActive(Message<T>? parent, bool parentChanged, IMessageEntry<T> entry)
 			=> !_firstResult.Task.IsFaulted
 				&& (Kind is StateUpdateKind.Persistent || !parentChanged || !_firstResult.Task.IsCompleted);
+
+		/// <inheritdoc />
+		public bool IsCompactable()
+			=> _firstResult.Task.IsCompletedSuccessfully;
 
 		/// <inheritdoc />
 		public void Apply(bool _, MessageBuilder<T, T> message)

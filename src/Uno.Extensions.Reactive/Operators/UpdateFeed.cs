@@ -16,12 +16,39 @@ internal interface IFeedUpdate<T>
 
 	// TODO: Should remove the 'parentChanged' flag ?
 	void Apply(bool parentChanged, MessageBuilder<T, T> message);
+
+	/// <summary>
+	/// Determines whether this update can be removed from the active updates list
+	/// after it has been applied. Called only when the parent source feed has completed
+	/// (no more parent messages will arrive). When compacted, the update's effect
+	/// remains baked into the current message but the record is released for GC.
+	/// </summary>
+	/// <returns>True if this update does not need to be retained for replay.</returns>
+	bool IsCompactable() => false;
 }
 
-internal record FeedUpdate<T>(Func<Message<T>?, bool, IMessageEntry<T>, bool> IsActive, Action<bool, MessageBuilder<T, T>> Apply) : IFeedUpdate<T>
+/// <summary>
+/// An <see cref="IFeedUpdate{T}"/> that can undo its effect on the current message
+/// when it is removed after having been compacted from the active updates list.
+/// </summary>
+internal interface IFeedRollbackableUpdate<T>
+{
+	void Rollback(MessageManager<T, T> message);
+}
+
+internal record FeedUpdate<T>(
+	Func<Message<T>?, bool, IMessageEntry<T>, bool> IsActive,
+	Action<bool, MessageBuilder<T, T>> Apply,
+	Action<MessageManager<T, T>>? Rollback = null) : IFeedUpdate<T>, IFeedRollbackableUpdate<T>
 {
 	bool IFeedUpdate<T>.IsActive(Message<T>? parent, bool parentChanged, IMessageEntry<T> message) => IsActive(parent, parentChanged, message);
 	void IFeedUpdate<T>.Apply(bool parentChanged, MessageBuilder<T, T> message) => Apply(parentChanged, message);
+
+	bool IFeedUpdate<T>.IsCompactable()
+		=> Rollback is not null;
+
+	void IFeedRollbackableUpdate<T>.Rollback(MessageManager<T, T> message)
+		=> Rollback?.Invoke(message);
 }
 
 internal sealed class UpdateFeed<T> : IFeed<T>
@@ -63,8 +90,10 @@ internal sealed class UpdateFeed<T> : IFeed<T>
 		private readonly MessageManager<T, T> _message;
 
 		private ImmutableList<IFeedUpdate<T>> _activeUpdates;
+		private ImmutableDictionary<IFeedUpdate<T>, IFeedRollbackableUpdate<T>> _compactedUpdates;
 		private bool _isInError;
 		private bool _isParentReady;
+		private bool _isParentCompleted;
 
 		public UpdateFeedSource(UpdateFeed<T> owner, SourceContext context, CancellationToken ct)
 		{
@@ -73,11 +102,24 @@ internal sealed class UpdateFeed<T> : IFeed<T>
 			_subject = new AsyncEnumerableSubject<Message<T>>(ReplayMode.EnabledForFirstEnumeratorOnly);
 			_message = new MessageManager<T, T>(_subject.SetNext);
 			_activeUpdates = ImmutableList<IFeedUpdate<T>>.Empty;
+			_compactedUpdates = ImmutableDictionary<IFeedUpdate<T>, IFeedRollbackableUpdate<T>>.Empty;
 			_isParentReady = owner._waitForParent is null;
 
 			// mode=AbortPrevious => When we receive a new update, we can abort the update and start a new one
 			owner._updates.ForEachAsync(OnUpdateReceived, ct);
-			context.GetOrCreateSource(owner._source).ForEachAsync(OnParentUpdated, ct);
+			context
+				.GetOrCreateSource(owner._source)
+				.ForEachAsync(OnParentUpdated, ct)
+				.ContinueWith(
+					_ =>
+					{
+						lock (this)
+						{
+							_isParentCompleted = true;
+							TryCompact();
+						}
+					},
+					TaskContinuationOptions.ExecuteSynchronously);
 		}
 
 		/// <inheritdoc />
@@ -103,6 +145,18 @@ internal sealed class UpdateFeed<T> : IFeed<T>
 						canDoIncrementalUpdate = false;
 						_activeUpdates = updates;
 					}
+
+					// Handle Remove of previously compacted updates
+					foreach (var r in removed)
+					{
+						if (_compactedUpdates.TryGetValue(r, out var rollbackable))
+						{
+							_compactedUpdates = _compactedUpdates.Remove(r);
+							needsUpdate = true;
+							canDoIncrementalUpdate = false;
+							rollbackable.Rollback(_message);
+						}
+					}
 				}
 
 				if (args.added is { Length: > 0 } added)
@@ -116,6 +170,7 @@ internal sealed class UpdateFeed<T> : IFeed<T>
 						if (canDoIncrementalUpdate)
 						{
 							IncrementalUpdate(added);
+							TryCompact();
 							return;
 						}
 					}
@@ -124,6 +179,7 @@ internal sealed class UpdateFeed<T> : IFeed<T>
 				if (needsUpdate)
 				{
 					RebuildMessage(parentMsg: default);
+					TryCompact();
 				}
 			}
 		}
@@ -166,6 +222,34 @@ internal sealed class UpdateFeed<T> : IFeed<T>
 				},
 				updates,
 				_ct);
+		}
+
+		/// <summary>
+		/// Removes compactable updates from _activeUpdates, keeping their
+		/// effect baked into the current message. Must be called under lock(this).
+		/// </summary>
+		private void TryCompact()
+		{
+			if (!_isParentCompleted || _activeUpdates.IsEmpty)
+			{
+				return;
+			}
+
+			var compacted = _activeUpdates;
+			foreach (var update in _activeUpdates)
+			{
+				if (update.IsCompactable())
+				{
+					compacted = compacted.Remove(update);
+
+					if (update is IFeedRollbackableUpdate<T> rollbackable)
+					{
+						_compactedUpdates = _compactedUpdates.Add(update, rollbackable);
+					}
+				}
+			}
+
+			_activeUpdates = compacted;
 		}
 
 		private void RebuildMessage(Message<T>? parentMsg)
