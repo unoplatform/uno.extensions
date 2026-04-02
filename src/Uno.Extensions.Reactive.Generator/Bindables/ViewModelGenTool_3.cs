@@ -39,13 +39,13 @@ internal class ViewModelGenTool_3 : ICodeGenTool
 
 		foreach (var model in models)
 		{
-			yield return ($"{model}.Bindable", GenerateViewModel(model));
-			yield return (model.ToString(), GeneratePartialModel(model));
+			yield return ($"{model}.ViewModel", GenerateViewModel(model));
+			yield return ($"{model}.Reactive", GeneratePartialModel(model));
 		}
 
 		foreach (var (type, code) in _bindables.Generate())
 		{
-			yield return (type.ToString(), code);
+			yield return ($"{type}.Bindings", code);
 		}
 
 		yield return _viewModelsMapping.Generate();
@@ -87,6 +87,8 @@ internal class ViewModelGenTool_3 : ICodeGenTool
 	{
 		var vmName = GetViewModelName(model);
 		var hasBaseType = IsSupported(model.BaseType);
+		var canBeINPC = !model.IsSealed
+			|| model.IsOrImplements(_ctx.INotifyPropertyChanged, allowBaseTypes: true, out _);
 
 		var baseType = hasBaseType
 			? GetViewModelFullName(model.BaseType!)
@@ -140,7 +142,7 @@ internal class ViewModelGenTool_3 : ICodeGenTool
 
 						{members.Select(member => member.GetInitialization()).Align(6)}
 
-						#if {!hasBaseType} // !hasBaseType
+						#if {!hasBaseType && canBeINPC} // !hasBaseType && canBeINPC
 						if ({N.Ctor.Model} is global::System.ComponentModel.INotifyPropertyChanged npc)
 						{{
 							npc.PropertyChanged += __Reactive_OnModelPropertyChanged;
@@ -164,7 +166,7 @@ internal class ViewModelGenTool_3 : ICodeGenTool
 						{{
 							// base.UnregisterDisposable((global::System.IAsyncDisposable)previousModel); ==> Will dispose the model **AND the SourceContext**, which is not what we want.
 							((dynamic)previousModel).__reactiveBindableViewModel = null;
-							if (previousModel is global::System.ComponentModel.INotifyPropertyChanged oldNpc)
+							if ((previousModel as object) is global::System.ComponentModel.INotifyPropertyChanged oldNpc)
 							{{
 								oldNpc.PropertyChanged -= __Reactive_OnModelPropertyChanged;
 							}}
@@ -176,7 +178,7 @@ internal class ViewModelGenTool_3 : ICodeGenTool
 						__Reactive_BindableInitializeForUpdatedModel(updatedModel, {NS.Core}.SourceContext.GetOrCreate(updatedModel));
 						__Reactive_TryPatchBindableProperties(previousModel, updatedModel);
 
-						if (updatedModel is global::System.ComponentModel.INotifyPropertyChanged newNpc)
+						if ((updatedModel as object) is global::System.ComponentModel.INotifyPropertyChanged newNpc)
 						{{
 							newNpc.PropertyChanged += __Reactive_OnModelPropertyChanged;
 						}}

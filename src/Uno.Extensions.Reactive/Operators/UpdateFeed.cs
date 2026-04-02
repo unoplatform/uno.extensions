@@ -235,12 +235,12 @@ internal sealed class UpdateFeed<T> : IFeed<T>
 				return;
 			}
 
-			var compacted = _activeUpdates;
+			var remainingUpdates = _activeUpdates.ToBuilder();
 			foreach (var update in _activeUpdates)
 			{
 				if (update.IsCompactable())
 				{
-					compacted = compacted.Remove(update);
+					remainingUpdates.Remove(update);
 
 					if (update is IFeedRollbackableUpdate<T> rollbackable)
 					{
@@ -249,7 +249,10 @@ internal sealed class UpdateFeed<T> : IFeed<T>
 				}
 			}
 
-			_activeUpdates = compacted;
+			if (remainingUpdates.Count != _activeUpdates.Count)
+			{
+				_activeUpdates = remainingUpdates.ToImmutable();
+			}
 		}
 
 		private void RebuildMessage(Message<T>? parentMsg)
