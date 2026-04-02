@@ -48,7 +48,10 @@ internal record BindableGenerationContext(
 	[ContextType(typeof(ImmutableList<>))] INamedTypeSymbol ImmutableList,
 	[ContextType(typeof(IImmutableQueue<>))] INamedTypeSymbol IImmutableQueue,
 	[ContextType(typeof(IImmutableSet<>))] INamedTypeSymbol IImmutableSet,
-	[ContextType(typeof(IImmutableStack<>))]  INamedTypeSymbol IImmutableStack)
+	[ContextType(typeof(IImmutableStack<>))]  INamedTypeSymbol IImmutableStack,
+
+	// INotifyPropertyChanged for sealed-type guard in generated ViewModels
+	[ContextType(typeof(System.ComponentModel.INotifyPropertyChanged))] INamedTypeSymbol INotifyPropertyChanged)
 {
 	public bool IsGenerationNotDisable(ISymbol symbol)
 		=> IsGenerationEnabled(symbol) ?? true;
