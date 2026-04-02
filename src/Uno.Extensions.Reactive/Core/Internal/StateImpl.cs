@@ -56,7 +56,7 @@ internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, ISta
 	}
 
 	public StateImpl(SourceContext context, Option<T> defaultValue)
-		: this(context, new AsyncFeed<T>(async _ => defaultValue), SubscriptionMode.Eager)
+		: this(context, new ValueFeed<T>(defaultValue), SubscriptionMode.Eager)
 	{
 	}
 

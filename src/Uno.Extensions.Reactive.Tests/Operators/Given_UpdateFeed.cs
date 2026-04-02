@@ -189,14 +189,10 @@ public class Given_UpdateFeed : FeedTests
 
 	#region _activeUpdates compaction
 	[TestMethod]
-	public async Task When_ManyAddsViaState_Then_ActiveUpdatesAccumulateUntilParentCompletes()
+	public async Task When_ManyAddsViaState_Then_ActiveUpdatesCompacted()
 	{
-		// StateImpl.Update records are compactable via IsCompactable() but TryCompact
-		// only runs when _isParentCompleted is true. For a StateImpl backed by a fixed
-		// value (AsyncFeed), the parent ForEachAsync does not complete until the
-		// SourceContext is disposed, so updates accumulate during normal operation.
-		// This test documents the current behavior; phase 2 will address making the
-		// parent complete earlier for fixed-value feeds.
+		// StateImpl backed by a fixed value uses ValueFeed which completes immediately.
+		// This sets _isParentCompleted=true, enabling TryCompact to prune applied updates.
 		const int count = 100;
 		var (result, sut) = new StateImpl<int>(Context, Option.Some(0)).Record();
 
@@ -215,10 +211,11 @@ public class Given_UpdateFeed : FeedTests
 
 		activeCount.Should().NotBeNull("should be able to find _activeUpdates via reflection");
 
-		// Parent has not completed yet, so compaction has not run.
-		activeCount!.Value.Should().BeGreaterOrEqualTo(
-			count,
-			"_activeUpdates should accumulate until parent completes");
+		// ValueFeed completes immediately, enabling compaction.
+		activeCount!.Value.Should().BeLessOrEqualTo(
+			1,
+			$"_activeUpdates should be compacted after ValueFeed completes, " +
+			$"but {activeCount.Value} Update records remain");
 	}
 
 	[TestMethod]
@@ -286,9 +283,6 @@ public class Given_UpdateFeed : FeedTests
 		// Now remove dummy — triggers rebuild which calls IsActive on tracking
 		tracking.ResetCounts();
 		sut.Remove(dummy);
-
-		// Wait a bit for the rebuild to propagate
-		await Task.Delay(200);
 
 		tracking.IsActiveCallCount.Should().BeGreaterOrEqualTo(1,
 			"rebuild path should call IsActive on remaining updates");
