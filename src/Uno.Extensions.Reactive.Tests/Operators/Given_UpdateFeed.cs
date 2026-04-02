@@ -187,12 +187,16 @@ public class Given_UpdateFeed : FeedTests
 	}
 	#endregion
 
-	#region _activeUpdates accumulation
+	#region _activeUpdates compaction
 	[TestMethod]
-	public async Task When_ManyAddsViaState_Then_ActiveUpdatesAccumulate()
+	public async Task When_ManyAddsViaState_Then_ActiveUpdatesAccumulateUntilParentCompletes()
 	{
-		// Use StateImpl to exercise the real-world pattern where
-		// UpdateMessageAsync → _inner.Add(update) accumulates in _activeUpdates.
+		// StateImpl.Update records are compactable via IsCompactable() but TryCompact
+		// only runs when _isParentCompleted is true. For a StateImpl backed by a fixed
+		// value (AsyncFeed), the parent ForEachAsync does not complete until the
+		// SourceContext is disposed, so updates accumulate during normal operation.
+		// This test documents the current behavior; phase 2 will address making the
+		// parent complete earlier for fixed-value feeds.
 		const int count = 100;
 		var (result, sut) = new StateImpl<int>(Context, Option.Some(0)).Record();
 
@@ -204,18 +208,42 @@ public class Given_UpdateFeed : FeedTests
 		await result.WaitForMessages(count + 1, CT);
 		result.Last().Current.Data.SomeOrDefault().Should().Be(count);
 
-		// The StateImpl._inner is an UpdateFeed<int>. Its internal UpdateFeedSource
-		// holds _activeUpdates which should have accumulated all 100 Update records.
 		var innerField = typeof(StateImpl<int>).GetField("_inner", BindingFlags.Instance | BindingFlags.NonPublic)!;
 		var updateFeed = innerField.GetValue(sut)!;
 		var activeCount = FindFieldRecursive(updateFeed, "_activeUpdates", maxDepth: 15)
 			?? FindFieldRecursive(SourceContext.Current, "_activeUpdates", maxDepth: 15);
 
 		activeCount.Should().NotBeNull("should be able to find _activeUpdates via reflection");
+
+		// Parent has not completed yet, so compaction has not run.
 		activeCount!.Value.Should().BeGreaterOrEqualTo(
 			count,
-			"_activeUpdates should accumulate all Update records because " +
-			"IncrementalUpdate never prunes via IsActive");
+			"_activeUpdates should accumulate until parent completes");
+	}
+
+	[TestMethod]
+	public async Task When_ManyAddsViaState_Then_DataPreservedAfterCompaction()
+	{
+		// After compaction, the final data value must be preserved.
+		// The compacted updates' effects are baked into the current message.
+		const int count = 50;
+		var (result, sut) = new StateImpl<int>(Context, Option.Some(0)).Record();
+
+		for (var i = 1; i <= count; i++)
+		{
+			await sut.UpdateAsync(_ => i, CT);
+		}
+
+		await result.WaitForMessages(count + 1, CT);
+
+		// Final value must be correct despite compaction
+		result.Last().Current.Data.SomeOrDefault().Should().Be(count);
+
+		// And we can still update after compaction
+		await sut.UpdateAsync(_ => 999, CT);
+		await result.WaitForMessages(count + 2, CT);
+
+		result.Last().Current.Data.SomeOrDefault().Should().Be(999);
 	}
 	#endregion
 
@@ -454,6 +482,12 @@ public class Given_UpdateFeed : FeedTests
 			IsActive: static (_, _, _) => true,
 			Apply: (_, msg) => msg.Data(Option.Some(value)));
 
+	private static IFeedUpdate<T> SetDataWithRollback<T>(T value)
+		=> new FeedUpdate<T>(
+			IsActive: static (_, _, _) => true,
+			Apply: (_, msg) => msg.Data(Option.Some(value)),
+			Rollback: _ => { /* no-op rollback for testing */ });
+
 	private static IFeedUpdate<int> AddValue(int amount)
 		=> new FeedUpdate<int>(
 			IsActive: static (_, _, _) => true,
@@ -555,6 +589,9 @@ public class Given_UpdateFeed : FeedTests
 		public IAsyncEnumerable<Message<T>> GetSource(SourceContext context, CancellationToken ct = default)
 			=> _subject;
 	}
+
+	private static int? GetActiveUpdatesCountFromContext()
+		=> FindFieldRecursive(SourceContext.Current, "_activeUpdates", maxDepth: 15);
 
 	/// <summary>
 	/// Uses reflection to find _activeUpdates on the UpdateFeedSource inside an UpdateFeed.

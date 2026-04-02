@@ -82,12 +82,14 @@ private record Update(Action<MessageBuilder<T>> Method, StateUpdateKind Kind) : 
     // ... existing ...
 
     public bool IsCompactable(bool parentCompleted)
-        => parentCompleted && _firstResult.Task.IsCompletedSuccessfully;
+        => _firstResult.Task.IsCompletedSuccessfully
+            && (Kind is StateUpdateKind.Volatile || parentCompleted);
 }
 ```
 
 - **No `IFeedRollbackableUpdate` needed.** `StateImpl.UpdateMessageAsync` only calls `_inner.Add(update)` — there is no code path that calls `_inner.Remove(update)` or `_inner.Replace(old, update)` for these records.
-- Both Volatile and Persistent updates are compactable once parent completes — the parent will never change again, so there is nothing to re-apply against.
+- **Volatile** updates are compactable as soon as applied — they would have been pruned by `IsActive` on the next parent change anyway, so early compaction is semantically equivalent.
+- **Persistent** updates must wait for `parentCompleted` — they need to be re-applied on every parent change.
 - Faulted updates already handled by `IsActive` returning `false`.
 
 #### `SelectionFeedUpdate`
@@ -97,11 +99,11 @@ private class SelectionFeedUpdate : IFeedUpdate<IImmutableList<TSource>>
 {
     // ... existing ...
 
-    public bool IsCompactable(bool parentCompleted) => true;
+    public bool IsCompactable(bool parentCompleted) => parentCompleted;
 }
 ```
 
-- **Always compactable.** Each `SelectionFeedUpdate` overwrites the `Selection` axis entirely — the effect is additive, not incremental.
+- **Compactable after parent completes.** Each `SelectionFeedUpdate` overwrites the `Selection` axis entirely — the effect is additive, not incremental.
 - **No `IFeedRollbackableUpdate` needed.** `Replace(old, new)` is used for cleanliness, but the new update's `Apply` fully overwrites the selection. If `old` was compacted, the Remove side of the Replace is a no-op (old isn't in `_activeUpdates`), and `new` is added and applied — correct behavior since `new` sets the selection from scratch.
 
 #### `FeedUpdate<T>` (generic delegate-based)
@@ -134,7 +136,7 @@ internal record FeedUpdate<T>(
 private class UpdateFeedSource : IAsyncEnumerable<Message<T>>
 {
     // ... existing fields ...
-    private bool _parentCompleted;                                                     // NEW
+    private bool _isParentCompleted;                                                     // NEW
     private ImmutableDictionary<IFeedUpdate<T>, IFeedRollbackableUpdate<T>> _compactedUpdates // NEW
         = ImmutableDictionary<IFeedUpdate<T>, IFeedRollbackableUpdate<T>>.Empty;
 
@@ -152,7 +154,7 @@ private class UpdateFeedSource : IAsyncEnumerable<Message<T>>
                 {
                     lock (this)
                     {
-                        _parentCompleted = true;
+                        _isParentCompleted = true;
                         TryCompact();
                     }
                 },
@@ -216,6 +218,7 @@ private void OnUpdateReceived((IFeedUpdate<T>[]? added, IFeedUpdate<T>[]? remove
         if (needsUpdate)
         {
             RebuildMessage(parentMsg: default);
+            TryCompact();                   // <-- NEW
         }
     }
 }
@@ -230,13 +233,13 @@ private void OnUpdateReceived((IFeedUpdate<T>[]? added, IFeedUpdate<T>[]? remove
 /// </summary>
 private void TryCompact()
 {
-    if (!_parentCompleted || _activeUpdates.IsEmpty)
+    if (_activeUpdates.IsEmpty)
         return;
 
     var compacted = _activeUpdates;
     foreach (var update in _activeUpdates)
     {
-        if (update.IsCompactable(_parentCompleted))
+        if (update.IsCompactable(_isParentCompleted))
         {
             compacted = compacted.Remove(update);
 
@@ -265,20 +268,20 @@ For `SelectionFeedUpdate` (no `IFeedRollbackableUpdate`): `old` isn't in `_activ
 
 ## Thread safety
 
-All paths that read/mutate `_activeUpdates`, `_compactedUpdates`, and `_parentCompleted` run under `lock(this)`:
+All paths that read/mutate `_activeUpdates`, `_compactedUpdates`, and `_isParentCompleted` run under `lock(this)`:
 
 | Path | Lock | Fields accessed |
 |---|---|---|
 | `OnUpdateReceived` | `lock(this)` | all |
 | `OnParentUpdated` | `lock(this)` | `_activeUpdates` |
-| `ContinueWith` callback | `lock(this)` | `_parentCompleted`, `_activeUpdates`, `_compactedUpdates` |
-| `TryCompact` (private) | caller holds lock | `_parentCompleted`, `_activeUpdates`, `_compactedUpdates` |
+| `ContinueWith` callback | `lock(this)` | `_isParentCompleted`, `_activeUpdates`, `_compactedUpdates` |
+| `TryCompact` (private) | caller holds lock | `_isParentCompleted`, `_activeUpdates`, `_compactedUpdates` |
 
 Lock ordering: `lock(this)` then `MessageManager._gate` (inside `_message.Update`). Same as existing `IncrementalUpdate` and `RebuildMessage`. No deadlock risk.
 
 ## Edge cases
 
-- **Parent source never completes:** `_parentCompleted` stays `false`. `IsCompactable(false)` returns `false` for `StateImpl.Update`. `SelectionFeedUpdate` returns `true` — safe since selection is always overwritten. No behavior change for the common case.
+- **Parent source never completes:** `_isParentCompleted` stays `false`. `IsCompactable(false)` returns `false` for `StateImpl.Update`. `SelectionFeedUpdate` returns `true` — safe since selection is always overwritten. No behavior change for the common case.
 - **Error state:** `canDoIncrementalUpdate` is `false` when `_isInError`, so `RebuildMessage` runs (prunes via `IsActive`). `TryCompact` is only called after `IncrementalUpdate`, so not reached during errors.
 - **`_waitForParent` active:** Updates ignored while `!_isParentReady`. No compaction.
 - **`_compactedUpdates` unbounded growth:** Only grows for `IFeedRollbackableUpdate` updates (`FeedUpdate<T>` with explicit `Rollback`). `StateImpl.Update` is not rollbackable. `SelectionFeedUpdate` is not rollbackable. Bounded by design.
@@ -287,7 +290,7 @@ Lock ordering: `lock(this)` then `MessageManager._gate` (inside `_message.Update
 
 | File | Change |
 |---|---|
-| `src/Uno.Extensions.Reactive/Operators/UpdateFeed.cs` | Add `IsCompactable` to `IFeedUpdate<T>`. Add `IFeedRollbackableUpdate<T>`. Extend `FeedUpdate<T>` with optional `Rollback`. Add `_parentCompleted`, `_compactedUpdates`, `TryCompact()` to `UpdateFeedSource`. Modify `OnUpdateReceived`. Chain `ContinueWith` on parent `ForEachAsync`. |
+| `src/Uno.Extensions.Reactive/Operators/UpdateFeed.cs` | Add `IsCompactable` to `IFeedUpdate<T>`. Add `IFeedRollbackableUpdate<T>`. Extend `FeedUpdate<T>` with optional `Rollback`. Add `_isParentCompleted`, `_compactedUpdates`, `TryCompact()` to `UpdateFeedSource`. Modify `OnUpdateReceived`. Chain `ContinueWith` on parent `ForEachAsync`. |
 | `src/Uno.Extensions.Reactive/Core/Internal/StateImpl.cs` | Add `IsCompactable` to `Update` record. |
 | `src/Uno.Extensions.Reactive/Operators/ListFeedSelection.cs` | Add `IsCompactable` to `SelectionFeedUpdate`. |
 

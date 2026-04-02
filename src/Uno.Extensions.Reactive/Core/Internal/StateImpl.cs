@@ -173,6 +173,10 @@ internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, ISta
 				&& (Kind is StateUpdateKind.Persistent || !parentChanged || !_firstResult.Task.IsCompleted);
 
 		/// <inheritdoc />
+		public bool IsCompactable()
+			=> _firstResult.Task.IsCompletedSuccessfully;
+
+		/// <inheritdoc />
 		public void Apply(bool _, MessageBuilder<T, T> message)
 		{
 			try
