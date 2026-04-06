@@ -63,6 +63,19 @@ public static class FrameworkElementExtensions
 			{
 				var response = await initialNavigation();
 
+				if (response is null)
+				{
+					var logger = sp.GetService<ILogger<NavigationRegion>>();
+					if (logger?.IsEnabled(LogLevel.Warning) == true)
+					{
+						logger.LogWarning(
+							"Initial navigation returned null for route '{InitialRoute}' - " +
+							"the application may display a blank screen. " +
+							"Verify that route registrations include an IsDefault route and that the shell's visual tree is loaded.",
+							initialRoute);
+					}
+				}
+
 				if (launchRoute is null ||
 					!launchRoute.FullPath().Equals(response?.Route?.FullPath(), StringComparison.OrdinalIgnoreCase))
 
