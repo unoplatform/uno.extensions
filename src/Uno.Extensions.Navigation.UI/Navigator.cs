@@ -763,7 +763,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 
 			if (Region.Children.Count == 0)
 			{
-				if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"Region has no children to forward request to");
+				if (Logger.IsEnabled(LogLevel.Warning)) Logger.LogWarningMessage($"Region '{Region.Name}' has no children to forward request to (route: '{request.Route}', view loaded: {Region.View?.IsLoaded})");
 				return default;
 			}
 			if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"Region has {Region.Children.Count} children");
@@ -782,6 +782,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 
 				if (request.Route.IsEmpty())
 				{
+					if (Logger.IsEnabled(LogLevel.Warning)) Logger.LogWarningMessage($"Route is still empty after applying defaults - no default route could be resolved for region '{Region.Name}'");
 					return default;
 				}
 			}
@@ -843,6 +844,14 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 				request = request with { Route = request.Route.Append(defaultRoute.Path) };
 
 			}
+			else
+			{
+				if (Logger.IsEnabled(LogLevel.Warning)) Logger.LogWarningMessage($"Route '{route.Path}' has {route.Nested?.Length ?? 0} nested route(s) but none marked IsDefault");
+			}
+		}
+		else
+		{
+			if (Logger.IsEnabled(LogLevel.Warning)) Logger.LogWarningMessage($"No route info found for path '{this.Route?.Base}' - cannot determine default route");
 		}
 
 		return request;
@@ -916,6 +925,13 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 
 	protected virtual Task CheckLoadedAsync()
 	{
-		return Task.CompletedTask;
+		// Wait for the region's view to be loaded so child regions have time to attach.
+		// Subclass navigators (Frame, ContentControl, Flyout, Dialog) override this to wait
+		// for their specific content element. The base implementation waits for the region's
+		// own view, which covers the root/composite navigator case (e.g., during startup
+		// navigation when the shell hasn't been added to the visual tree yet).
+		return Region.View is { IsLoaded: false } view
+			? view.EnsureLoaded(timeoutInSeconds: 5)
+			: Task.CompletedTask;
 	}
 }
