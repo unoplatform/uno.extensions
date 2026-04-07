@@ -1,6 +1,7 @@
 using Uno.Extensions.Navigation.UI.Tests;
 using Uno.Extensions.Reactive.WinUI.Tests;
 using Uno.Resizetizer;
+using Uno.UI.RuntimeTests;
 
 namespace Uno.Extensions.RuntimeTests;
 public partial class App : Application
@@ -8,6 +9,7 @@ public partial class App : Application
 	private static void ForceAssemblyLoading()
 	{
 		var reactive_UI_Tests = new Given_FeedView();
+		var reactive_HotReload_Tests = new Given_HotReload();
 		var navigation_UI_Tests = new Given_RouteNotifier();
 		var navigation_ChainedResult_Tests = new Given_ChainedGetDataAsync();
 		var navigation_TabNavigation_Tests = new Given_TabNavigation();
