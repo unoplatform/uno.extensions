@@ -9,7 +9,9 @@ public partial class App : Application
 	private static void ForceAssemblyLoading()
 	{
 		var reactive_UI_Tests = new Given_FeedView();
+#if DEBUG // Hot-reload tests are only relevant in debug configuration
 		var reactive_HotReload_Tests = new Given_HotReload();
+#endif
 		var navigation_UI_Tests = new Given_RouteNotifier();
 		var navigation_ChainedResult_Tests = new Given_ChainedGetDataAsync();
 		var navigation_TabNavigation_Tests = new Given_TabNavigation();
@@ -30,7 +32,7 @@ public partial class App : Application
 	{
 		MainWindow = new Window();
 #if DEBUG
-		MainWindow.EnableHotReload();
+		MainWindow.UseStudio();
 #endif
 
 

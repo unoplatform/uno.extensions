@@ -1,7 +1,7 @@
 ﻿jobs:
 - job: Skia_Tests
   cancelTimeoutInMinutes: 0
-  displayName: 'Runtime Tests - Skia Desktop (Release)'
+  displayName: 'Runtime Tests - Skia Desktop'
   timeoutInMinutes: 60
 
   pool:
@@ -24,8 +24,8 @@
 
     displayName: 'Run uno-check'
 
-  - script: dotnet build Uno.Extensions-runtimetests.slnf /p:Build_Android=false /p:Build_iOS=false /p:Build_Windows=false /p:Build_MacCatalyst=false /p:Build_Web=false -c Release -p:GeneratePackageOnBuild=false -bl:$(Build.ArtifactStagingDirectory)/skia-runtime-test-build.binlog
-    displayName: 'Build Runtime Tests app (Release)'
+  - script: dotnet build Uno.Extensions-runtimetests.slnf /p:Build_Android=false /p:Build_iOS=false /p:Build_Windows=false /p:Build_MacCatalyst=false /p:Build_Web=false -c Debug -p:GeneratePackageOnBuild=false -bl:$(Build.ArtifactStagingDirectory)/skia-runtime-test-build.binlog
+    displayName: 'Build Runtime Tests app (Debug)'
     workingDirectory: $(Build.SourcesDirectory)
 
   - task: PublishBuildArtifacts@1
@@ -39,7 +39,7 @@
 
   - script: xvfb-run --auto-servernum --server-args='-screen 0 1280x1024x24' dotnet Uno.Extensions.RuntimeTests.dll
     displayName: 'Run Runtime Tests (excluding hot-reload)'
-    workingDirectory: $(Build.SourcesDirectory)/src/Uno.Extensions.RuntimeTests/Uno.Extensions.RuntimeTests/bin/Release/net10.0-desktop
+    workingDirectory: $(Build.SourcesDirectory)/src/Uno.Extensions.RuntimeTests/Uno.Extensions.RuntimeTests/bin/Uno.Extensions.RuntimeTests/Debug/net9.0-desktop
     env:
       UNO_RUNTIME_TESTS_RUN_TESTS: '{"Filter": {"Value": "!Given_HotReload"}}'
       UNO_RUNTIME_TESTS_OUTPUT_PATH: '$(Common.TestResultsDirectory)/skia-runtime-tests-results.xml'
