@@ -21,5 +21,8 @@
 		<PackageReference Include="Microsoft.Extensions.Logging" />
 		<PackageReference Include="Uno.UI.RuntimeTests.Engine" />
 		<PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" />
+		<!-- Required for hot-reload tests ([RunsInSecondaryApp]) - enables HAS_UNO_DEVSERVER in the RuntimeTests.Engine.
+		     Debug-only: in Release the DevServer assembly is not published and would cause a FileNotFoundException. -->
+		<PackageReference Include="Uno.WinUI.DevServer" PrivateAssets="all" Condition="'$(Configuration)' == 'Debug'" />
 	</ItemGroup>
 </Project>

@@ -62,6 +62,7 @@
     <PackageVersion Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="$(UnoVersion)" />
     <PackageVersion Include="Uno.UI.RuntimeTests.Engine" Version="0.37.0-dev.126" />
     <PackageVersion Include="Uno.WinUI" Version="$(UnoVersion)" />
+    <PackageVersion Include="Uno.WinUI.DevServer" Version="$(UnoVersion)" />
     <PackageVersion Include="Uno.WinUI.Markup" Version="5.3.12" />
     <PackageVersion Include="Uno.WinUI.MSAL" Version="$(UnoVersion)" />
     <PackageVersion Include="coverlet.collector" Version="3.1.2" />
