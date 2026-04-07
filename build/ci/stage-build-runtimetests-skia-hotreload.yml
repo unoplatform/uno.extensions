@@ -1,0 +1,56 @@
+jobs:
+- job: Skia_HotReload_Tests
+  cancelTimeoutInMinutes: 0
+  displayName: 'Hot-Reload Tests - Skia Desktop (Debug)'
+  timeoutInMinutes: 60
+
+  pool:
+    vmImage: 'ubuntu-24.04'
+
+  variables:
+    NUGET_PACKAGES: $(build.sourcesdirectory)/.nuget
+
+  steps:
+  - checkout: self
+    clean: true
+
+  - template: templates/host-cleanup-linux.yml
+
+  - template: templates/dotnet-install.yml
+
+  - script: |
+        dotnet tool install -g uno.check --add-source https://api.nuget.org/v3/index.json
+        uno-check --target linux --fix --non-interactive --ci
+
+    displayName: 'Run uno-check'
+
+  - script: dotnet build Uno.Extensions-runtimetests.slnf /p:Build_Android=false /p:Build_iOS=false /p:Build_Windows=false /p:Build_MacCatalyst=false /p:Build_Web=false -c Debug -p:GeneratePackageOnBuild=false -bl:$(Build.ArtifactStagingDirectory)/skia-hotreload-test-build.binlog
+    displayName: 'Build Runtime Tests app (Debug)'
+    workingDirectory: $(Build.SourcesDirectory)
+
+  - task: PublishBuildArtifacts@1
+    displayName: Publish Build Logs
+    retryCountOnTaskFailure: 3
+    condition: always()
+    inputs:
+      PathtoPublish: $(build.artifactstagingdirectory)/skia-hotreload-test-build.binlog
+      ArtifactName: skia-hotreload-test-build
+      ArtifactType: Container
+
+  - script: xvfb-run --auto-servernum --server-args='-screen 0 1280x1024x24' dotnet Uno.Extensions.RuntimeTests.dll
+    displayName: 'Run Hot-Reload Tests'
+    workingDirectory: $(Build.SourcesDirectory)/src/Uno.Extensions.RuntimeTests/Uno.Extensions.RuntimeTests/bin/Debug/net10.0-desktop
+    env:
+      UNO_RUNTIME_TESTS_RUN_TESTS: '{"Filter": {"Value": "Given_HotReload"}}'
+      UNO_RUNTIME_TESTS_OUTPUT_PATH: '$(Common.TestResultsDirectory)/skia-hotreload-tests-results.xml'
+      DOTNET_MODIFIABLE_ASSEMBLIES: debug
+
+  - task: PublishTestResults@2
+    displayName: 'Publish Hot-Reload Tests Results'
+    condition: always()
+    retryCountOnTaskFailure: 3
+    inputs:
+      testRunTitle: 'Hot-Reload Runtime Tests'
+      testResultsFormat: 'NUnit'
+      testResultsFiles: '$(Common.TestResultsDirectory)/skia-hotreload-tests-results.xml'
+      failTaskOnFailedTests: true
