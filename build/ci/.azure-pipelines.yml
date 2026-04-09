@@ -67,7 +67,8 @@ stages:
   condition: and(succeeded(), ne(dependencies.Determine_Changes.outputs['evaluate_changes.DetermineChanges.docsOnly'], 'true'))
   jobs:
   - template: stage-build-uitests-wasm.yml
-  - template: stage-build-runtimetests-skia.yml
+  # Disabled waiting on uno fix: https://github.com/unoplatform/uno/pull/17668
+  # - template: stage-build-runtimetests-skia.yml
   - template: stage-build-runtimetests-skia-hotreload.yml
 
 ##

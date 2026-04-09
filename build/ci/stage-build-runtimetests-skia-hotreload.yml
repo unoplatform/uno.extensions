@@ -41,7 +41,7 @@ jobs:
     displayName: 'Run Hot-Reload Tests'
     workingDirectory: $(Build.SourcesDirectory)/src/Uno.Extensions.RuntimeTests/Uno.Extensions.RuntimeTests/bin/Uno.Extensions.RuntimeTests/Debug/net9.0-desktop
     env:
-      UNO_RUNTIME_TESTS_RUN_TESTS: '{"Filter": {"Value": "Given_HotReload"}}'
+      UNO_RUNTIME_TESTS_RUN_TESTS: '{"Filter": {"Value": "_HotReload"}}'
       UNO_RUNTIME_TESTS_OUTPUT_PATH: '$(Common.TestResultsDirectory)/skia-hotreload-tests-results.xml'
       DOTNET_MODIFIABLE_ASSEMBLIES: debug
 
