@@ -4,9 +4,9 @@
 		<SvgSkiaVersion>3.0.2</SvgSkiaVersion>
 		<WinAppSdkVersion>1.7.250909003</WinAppSdkVersion>
 		<WinAppSdkBuildToolsVersion>10.0.26100.4948</WinAppSdkBuildToolsVersion>
-		<MicrosoftLoggingVersion>9.0.9</MicrosoftLoggingVersion>
+		<MicrosoftLoggingVersion>9.0.14</MicrosoftLoggingVersion>
 		<WindowsCompatibilityVersion>8.0.15</WindowsCompatibilityVersion>
-		<MicrosoftIdentityClientVersion>4.70.2</MicrosoftIdentityClientVersion>
+		<MicrosoftIdentityClientVersion>4.72.1</MicrosoftIdentityClientVersion>
 		<CommunityToolkitMvvmVersion>8.4.0</CommunityToolkitMvvmVersion>
 		<PrismVersion>9.0.537</PrismVersion>
 		<AndroidMaterialVersion>1.12.0.3</AndroidMaterialVersion>
