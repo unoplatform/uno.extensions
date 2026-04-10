@@ -1,7 +1,7 @@
-﻿jobs:
-- job: Skia_Tests
+jobs:
+- job: Skia_HotReload_Tests
   cancelTimeoutInMinutes: 0
-  displayName: 'Runtime Tests - Skia Desktop'
+  displayName: 'Hot-Reload Tests - Skia Desktop (Debug)'
   timeoutInMinutes: 60
 
   pool:
@@ -24,7 +24,7 @@
 
     displayName: 'Run uno-check'
 
-  - script: dotnet build Uno.Extensions-runtimetests.slnf /p:Build_Android=false /p:Build_iOS=false /p:Build_Windows=false /p:Build_MacCatalyst=false /p:Build_Web=false -c Debug -p:GeneratePackageOnBuild=false -bl:$(Build.ArtifactStagingDirectory)/skia-runtime-test-build.binlog
+  - script: dotnet build Uno.Extensions-runtimetests.slnf /p:Build_Android=false /p:Build_iOS=false /p:Build_Windows=false /p:Build_MacCatalyst=false /p:Build_Web=false -c Debug -p:GeneratePackageOnBuild=false -bl:$(Build.ArtifactStagingDirectory)/skia-hotreload-test-build.binlog
     displayName: 'Build Runtime Tests app (Debug)'
     workingDirectory: $(Build.SourcesDirectory)
 
@@ -33,23 +33,24 @@
     retryCountOnTaskFailure: 3
     condition: always()
     inputs:
-      PathtoPublish: $(build.artifactstagingdirectory)/skia-runtime-test-build.binlog
-      ArtifactName: skia-runtime-test-build
+      PathtoPublish: $(build.artifactstagingdirectory)/skia-hotreload-test-build.binlog
+      ArtifactName: skia-hotreload-test-build
       ArtifactType: Container
 
   - script: xvfb-run --auto-servernum --server-args='-screen 0 1280x1024x24' dotnet Uno.Extensions.RuntimeTests.dll
-    displayName: 'Run Runtime Tests (excluding hot-reload)'
+    displayName: 'Run Hot-Reload Tests'
     workingDirectory: $(Build.SourcesDirectory)/src/Uno.Extensions.RuntimeTests/Uno.Extensions.RuntimeTests/bin/Uno.Extensions.RuntimeTests/Debug/net9.0-desktop
     env:
-      UNO_RUNTIME_TESTS_RUN_TESTS: '{"Filter": {"Value": "!_HotReload"}}'
-      UNO_RUNTIME_TESTS_OUTPUT_PATH: '$(Common.TestResultsDirectory)/skia-runtime-tests-results.xml'
+      UNO_RUNTIME_TESTS_RUN_TESTS: '{"Filter": {"Value": "_HotReload"}}'
+      UNO_RUNTIME_TESTS_OUTPUT_PATH: '$(Common.TestResultsDirectory)/skia-hotreload-tests-results.xml'
+      DOTNET_MODIFIABLE_ASSEMBLIES: debug
 
   - task: PublishTestResults@2
-    displayName: 'Publish Runtime Tests Results'
+    displayName: 'Publish Hot-Reload Tests Results'
     condition: always()
     retryCountOnTaskFailure: 3
     inputs:
-      testRunTitle: 'Runtime Tests Run'
+      testRunTitle: 'Hot-Reload Runtime Tests'
       testResultsFormat: 'NUnit'
-      testResultsFiles: '$(Common.TestResultsDirectory)/skia-runtime-tests-results.xml'
+      testResultsFiles: '$(Common.TestResultsDirectory)/skia-hotreload-tests-results.xml'
       failTaskOnFailedTests: true
