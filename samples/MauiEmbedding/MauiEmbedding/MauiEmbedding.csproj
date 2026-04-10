@@ -40,6 +40,8 @@
 			By setting this property, we force the Uno.Sdk[.Private] to use the same version as the one used when building the extension packages.
 		-->
 		<WinAppSdkVersion>1.7.250909003</WinAppSdkVersion>
+
+		<UnoToolkitVersion>8.4.2</UnoToolkitVersion>
 	</PropertyGroup>
 
 	<ItemGroup>
