@@ -53,10 +53,11 @@ stages:
       solution: samples/Playground/Playground.sln
       solutionName: Playground
 
-  - template: stage-build-windows.yml
-    parameters:
-      solution: samples/MauiEmbedding/MauiEmbedding.sln
-      solutionName: MauiEmbedding
+  # Disable: needs update https://github.com/unoplatform/uno.extensions/issues/3056
+  #- template: stage-build-windows.yml
+  #  parameters:
+  #    solution: samples/MauiEmbedding/MauiEmbedding.sln
+  #    solutionName: MauiEmbedding
 
   - template: stage-build-wasm.yml
 
