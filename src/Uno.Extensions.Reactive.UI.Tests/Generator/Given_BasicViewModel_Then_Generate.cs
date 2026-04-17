@@ -16,7 +16,7 @@ public partial class Given_BasicViewModel_Then_Generate
 	[TestMethod]
 	public async Task When_FeedOfKindOfImmutableList_Then_TreatAsListFeed_And_ICollectionView()
 	{
-		await using var bindable = new When_FeedOfKindOfImmutableList_Then_TreatAsListFeed_ViewViewModel();
+		await using var bindable = new When_FeedOfKindOfImmutableList_Then_TreatAsListFeed_ViewModel();
 
 		AssertIsValid(bindable.AFeedOfArray);
 		AssertIsValid(bindable.AFeedOfImmutableList);
@@ -37,7 +37,7 @@ public partial class Given_BasicViewModel_Then_Generate
 		}
 	}
 
-	public partial class When_FeedOfKindOfImmutableList_Then_TreatAsListFeed_ViewModel
+	public partial class When_FeedOfKindOfImmutableList_Then_TreatAsListFeed_Model
 	{
 		public IFeed<string[]> AFeedOfArray { get; } = Feed.Async(async ct => Array.Empty<string>());
 
@@ -63,7 +63,7 @@ public partial class Given_BasicViewModel_Then_Generate
 	[TestMethod]
 	public async Task When_FeedOfKindOfRawEnumerable_Then_DoNotTreatAsListFeed_And_ICollectionView()
 	{
-		await using var bindable = new When_FeedOfKindOfRawEnumerable_Then_DoNotTreatAsListFeed_ViewViewModel();
+		await using var bindable = new When_FeedOfKindOfRawEnumerable_Then_DoNotTreatAsListFeed_ViewModel();
 
 		AssertIsValid(bindable.AFeedOfEnumerable);
 
@@ -74,7 +74,7 @@ public partial class Given_BasicViewModel_Then_Generate
 		}
 	}
 
-	public partial class When_FeedOfKindOfRawEnumerable_Then_DoNotTreatAsListFeed_ViewModel
+	public partial class When_FeedOfKindOfRawEnumerable_Then_DoNotTreatAsListFeed_Model
 	{
 		public IFeed<IEnumerable<string>> AFeedOfEnumerable { get; } = Feed.Async(async ct => Enumerable.Empty<string>());
 	}

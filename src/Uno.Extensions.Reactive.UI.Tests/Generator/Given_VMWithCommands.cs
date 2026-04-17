@@ -15,7 +15,7 @@ namespace Uno.Extensions.Reactive.WinUI.Tests.Generator;
 [RunsOnUIThread]
 public partial class Given_VMWithCommands
 {
-	public partial class When_ParameterFeed_Then_SubscribedWithSameContext_ViewModel
+	public partial class When_ParameterFeed_Then_SubscribedWithSameContext_Model
 	{
 		public int FeedInvokeCount { get; private set; }
 
@@ -30,7 +30,7 @@ public partial class Given_VMWithCommands
 	[TestMethod]
 	public async Task When_ParameterFeed_Then_SubscribedWithSameContext()
 	{
-		var vm = new When_ParameterFeed_Then_SubscribedWithSameContext_ViewViewModel();
+		var vm = new When_ParameterFeed_Then_SubscribedWithSameContext_ViewModel();
 
 		await TestHelper.WaitFor(() => vm.MyFeed != 0, default);
 
@@ -48,7 +48,7 @@ public partial class Given_VMWithCommands
 	{
 		FeedView view;
 		Button doSomething;
-		var vm = new When_ParameterFeed_Then_SubscribedWithSameContext_ViewViewModel();
+		var vm = new When_ParameterFeed_Then_SubscribedWithSameContext_ViewModel();
 		var ui = new StackPanel
 		{
 			DataContext = vm,
