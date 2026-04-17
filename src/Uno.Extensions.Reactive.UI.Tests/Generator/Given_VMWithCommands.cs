@@ -30,7 +30,7 @@ public partial class Given_VMWithCommands
 	[TestMethod]
 	public async Task When_ParameterFeed_Then_SubscribedWithSameContext()
 	{
-		var vm = new BindableWhen_ParameterFeed_Then_SubscribedWithSameContext_ViewModel();
+		var vm = new When_ParameterFeed_Then_SubscribedWithSameContext_ViewViewModel();
 
 		await TestHelper.WaitFor(() => vm.MyFeed != 0, default);
 
@@ -48,7 +48,7 @@ public partial class Given_VMWithCommands
 	{
 		FeedView view;
 		Button doSomething;
-		var vm = new BindableWhen_ParameterFeed_Then_SubscribedWithSameContext_ViewModel();
+		var vm = new When_ParameterFeed_Then_SubscribedWithSameContext_ViewViewModel();
 		var ui = new StackPanel
 		{
 			DataContext = vm,
