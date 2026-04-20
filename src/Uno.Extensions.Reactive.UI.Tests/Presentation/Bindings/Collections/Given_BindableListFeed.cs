@@ -25,7 +25,7 @@ public partial class Given_BindableListFeed : FeedUITests
 	[TestMethod]
 	public async Task When_GetSourceWithDispatcherInSourceContext_Then_GetCollectionViewForUI()
 	{
-		var vm = new BindableGiven_BindableListFeed_Model();
+		var vm = new Given_BindableListFeed_ViewModel();
 		var sut = vm.Items as BindableListFeed<int>;
 
 		sut.Should().NotBeNull();
@@ -44,7 +44,7 @@ public partial class Given_BindableListFeed : FeedUITests
 	[TestMethod]
 	public async Task When_CollectionChanged_Then_CountPropertyChangedRaised()
 	{
-		var vm = new BindableGiven_BindableListFeed_Model();
+		var vm = new Given_BindableListFeed_ViewModel();
 		var sut = vm.Items as BindableListFeed<int>;
 
 		sut.Should().NotBeNull();

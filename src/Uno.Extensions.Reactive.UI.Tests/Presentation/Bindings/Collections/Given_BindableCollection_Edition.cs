@@ -26,7 +26,7 @@ public partial class Given_BindableCollection_Edition : FeedTests
 	[InjectedPointer(PointerDeviceType.Touch)]
 	public async Task When_EditFromView()
 	{
-		var vm = new BindableGiven_BindableCollection_Edition_Model();
+		var vm = new Given_BindableCollection_Edition_ViewModel();
 		var collectionView = (await (vm.Items as ISignal<IMessage>).GetSource(Context, CT).FirstAsync()).Current.Data.SomeOrDefault() as ICollectionView;
 
 		Assert.IsNotNull(collectionView);
@@ -43,9 +43,9 @@ public partial class Given_BindableCollection_Edition : FeedTests
 		}, CT);
 	}
 
-	private async Task<(BindableGiven_BindableCollection_Edition_Model, ListView, ListViewItem[])> SetupListView()
+	private async Task<(Given_BindableCollection_Edition_ViewModel, ListView, ListViewItem[])> SetupListView()
 	{
-		var vm = new BindableGiven_BindableCollection_Edition_Model();
+		var vm = new Given_BindableCollection_Edition_ViewModel();
 		var lv = new ListView { ItemsSource = vm.Items, CanDragItems = true, AllowDrop = true, CanReorderItems = true };
 
 		await UIHelper.Load(lv, CT);
