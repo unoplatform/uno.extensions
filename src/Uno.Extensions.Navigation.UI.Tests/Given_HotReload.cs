@@ -128,6 +128,65 @@ public class Given_HotReload
 	}
 
 	/// <summary>
+	/// Proves that a hot-reload change to the method a <c>RouteMap.Init</c> delegate targets can
+	/// unlock a previously-gated route. Route registration itself is one-shot (the
+	/// <c>RouteResolver</c> snapshots <c>IRouteRegistry.Items</c> at construction), so we cannot
+	/// literally add a new <c>RouteMap</c> via HR. Instead, a pre-registered <c>"NewPage"</c>
+	/// route has an <c>Init</c> delegate that calls <see cref="HotReloadRouteGate.IsAvailable"/>:
+	/// when it returns <c>false</c> the delegate rewrites the request to redirect to
+	/// <c>HotReloadPageOne</c>; once HR flips the method to <c>true</c>, the Init passes the
+	/// request through and navigation resolves to <c>HotReloadPageTwo</c>.
+	/// </summary>
+	[TestMethod]
+	[RunsOnUIThread]
+	public async Task When_UpdateRouteInitGate_Then_GatedRouteBecomesNavigable(CancellationToken ct)
+	{
+		await using var app = await SetupAppAsync(
+			registerViewsAndRoutes: (views, routes) =>
+			{
+				views.Register(
+					new ViewMap<HotReloadPageOne>(),
+					new ViewMap<HotReloadPageTwo>());
+
+				routes.Register(
+					new RouteMap("", Nested: new RouteMap[]
+					{
+						new RouteMap("HotReloadPageOne", View: views.FindByView<HotReloadPageOne>(), IsDefault: true),
+						new RouteMap(
+							"NewPage",
+							View: views.FindByView<HotReloadPageTwo>(),
+							Init: request =>
+								HotReloadRouteGate.IsAvailable()
+									? request
+									: request with { Route = request.Route with { Base = "HotReloadPageOne" } }),
+					}));
+			},
+			initialRoute: "HotReloadPageOne",
+			ct);
+
+		// Baseline: gate closed, navigating to "NewPage" should be redirected by the Init delegate
+		// to "HotReloadPageOne", so HotReloadPageTwo must never appear.
+		await app.FrameNavigator.NavigateRouteAsync(this, "NewPage");
+		await WaitForRouteAsync(app.NavigationRoot, app.FrameNavigator, "HotReloadPageOne", TimeSpan.FromSeconds(30), ct);
+		ResolveCurrentPage<HotReloadPageTwo>(app.NavigationRoot).Should().BeNull(
+			"while the Init gate is closed, NewPage should redirect away and HotReloadPageTwo should not be shown");
+
+		// HR: open the gate. Disposal reverts the file on scope exit.
+		await using var _ = await HotReloadHelper.UpdateSourceFile(
+			"../../Uno.Extensions.Navigation.UI.Tests/HotReloadRouteGate.cs",
+			"return false;",
+			"return true;",
+			ct);
+
+		// Post-HR: gate is open, Init now passes the request through unchanged so NewPage resolves
+		// to its registered view (HotReloadPageTwo).
+		await app.FrameNavigator.NavigateRouteAsync(this, "NewPage");
+		await WaitForRouteAsync(app.NavigationRoot, app.FrameNavigator, "NewPage", TimeSpan.FromSeconds(30), ct);
+		ResolveCurrentPage<HotReloadPageTwo>(app.NavigationRoot).Should().NotBeNull(
+			"with the gate open post-HR, NewPage should resolve to HotReloadPageTwo");
+	}
+
+	/// <summary>
 	/// Boots an Uno host with navigation, hosts it in the runtime-tests engine's already-displayed
 	/// test window, and navigates to <paramref name="initialRoute"/>. Disposal stops the host and
 	/// restores the window's original content.
