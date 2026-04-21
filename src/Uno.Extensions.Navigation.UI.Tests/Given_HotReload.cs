@@ -10,6 +10,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Uno.Extensions.Hosting;
 using Uno.Extensions.Navigation.UI.Controls;
 using Uno.Extensions.Navigation.UI.Tests.Pages;
+using Uno.Extensions.Navigation.UI.Tests.ViewModels;
 using Uno.UI.RuntimeTests;
 
 namespace Uno.Extensions.Navigation.UI.Tests;
@@ -67,6 +68,63 @@ public class Given_HotReload
 		var page2 = ResolveCurrentPage<HotReloadPageTwo>(app.NavigationRoot);
 		page2.Should().NotBeNull("Frame should have navigated to HotReloadPageTwo");
 		page2!.DisplayedValue.Should().Be("updated");
+	}
+
+	/// <summary>
+	/// Proves that a hot-reload change to a ViewModel method body — where the VM is wired to the
+	/// page via <c>ViewMap&lt;TView, TViewModel&gt;()</c> and a <c>RouteMap</c> — is picked up on
+	/// re-navigation. <c>HotReloadVm.DisplayedValue</c> is a property whose getter calls the HR'd
+	/// <c>GetDisplayedValue()</c> method every read, so HR reflection is visible whether the Page
+	/// is re-instantiated on back nav or retrieved from the Frame's cache.
+	/// </summary>
+	[TestMethod]
+	[RunsOnUIThread]
+	public async Task When_UpdateViewModel_Then_ReNavigationReflectsVmChange(CancellationToken ct)
+	{
+		await using var app = await SetupAppAsync(
+			registerViewsAndRoutes: (views, routes) =>
+			{
+				views.Register(
+					new ViewMap<HotReloadVmPage, HotReloadVm>(),
+					new ViewMap<HotReloadPageTwo>());
+
+				routes.Register(
+					new RouteMap("", Nested: new RouteMap[]
+					{
+						new RouteMap("HotReloadVmPage", View: views.FindByView<HotReloadVmPage>(), IsDefault: true),
+						new RouteMap("HotReloadPageTwo", View: views.FindByView<HotReloadPageTwo>()),
+					}));
+			},
+			initialRoute: "HotReloadVmPage",
+			ct);
+
+		var page = ResolveCurrentPage<HotReloadVmPage>(app.NavigationRoot);
+		page.Should().NotBeNull("Frame should have navigated to HotReloadVmPage");
+		page!.DataContext.Should().BeOfType<HotReloadVm>(
+			"ViewMap<HotReloadVmPage, HotReloadVm> should have bound the VM as DataContext");
+		page.DisplayedValue.Should().Be("original");
+
+		// Apply the hot-reload source change to the VM's helper method. Disposal reverts the file.
+		await using var _ = await HotReloadHelper.UpdateSourceFile(
+			"../../Uno.Extensions.Navigation.UI.Tests/ViewModels/HotReloadVm.cs",
+			"""return "original";""",
+			"""return "updated";""",
+			ct);
+
+		// Forward-nav to a sibling, then back. Back-nav is the canonical way to return to a
+		// previously-visited page; forward-navigating to a route already on the back stack
+		// behaves inconsistently in FrameNavigator.
+		await app.FrameNavigator.NavigateRouteAsync(this, "HotReloadPageTwo");
+		await WaitForRouteAsync(app.NavigationRoot, app.FrameNavigator, "HotReloadPageTwo", TimeSpan.FromSeconds(30), ct);
+
+		await app.FrameNavigator.NavigateBackAsync(this);
+		await WaitForRouteAsync(app.NavigationRoot, app.FrameNavigator, "HotReloadVmPage", TimeSpan.FromSeconds(30), ct);
+
+		var refreshedPage = ResolveCurrentPage<HotReloadVmPage>(app.NavigationRoot);
+		refreshedPage.Should().NotBeNull("Frame should have navigated back to HotReloadVmPage");
+		refreshedPage!.DataContext.Should().BeOfType<HotReloadVm>(
+			"HotReloadVm should still be bound on the returned page");
+		refreshedPage.DisplayedValue.Should().Be("updated");
 	}
 
 	/// <summary>
