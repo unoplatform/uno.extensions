@@ -267,6 +267,128 @@ public class Given_HotReload
 			"RegionTwo's VM should read the post-HR method body");
 	}
 
+	/// <summary>
+	/// Proves that hot-reload applied to a modal (<see cref="Microsoft.UI.Xaml.Controls.ContentDialog"/>) view
+	/// does not disturb the underlying Frame's navigation. <see cref="Uno.Extensions.Navigation.Navigators.ContentDialogNavigator"/>
+	/// presents the dialog as a top-level overlay via <c>ShowAsync</c> — it does not push onto the
+	/// Frame's back stack and does not replace the Frame's current page (<c>FrameNavigator.ExecuteRequestAsync</c>
+	/// calls <c>CloseActiveClosableNavigators</c> only on frame nav, not when the modal opens). The test:
+	/// navigates to <see cref="HotReloadPageOne"/>, shows the modal, applies an HR edit to the modal's
+	/// target, re-shows the modal, and asserts throughout that the Frame's route stays pinned to the
+	/// underlying page and that the underlying page instance/value is never mutated.
+	/// </summary>
+	[TestMethod]
+	[RunsOnUIThread]
+	public async Task When_ShowModalAfterUpdate_Then_ModalReflectsUpdateAndFrameStaysStable(CancellationToken ct)
+	{
+		await using var app = await SetupAppAsync(
+			registerViewsAndRoutes: (views, routes) =>
+			{
+				views.Register(
+					new ViewMap<HotReloadPageOne>(),
+					new ViewMap<HotReloadModalDialog>());
+
+				routes.Register(
+					new RouteMap("", Nested: new RouteMap[]
+					{
+						new RouteMap("HotReloadPageOne", View: views.FindByView<HotReloadPageOne>(), IsDefault: true),
+						new RouteMap("HotReloadModalDialog", View: views.FindByView<HotReloadModalDialog>()),
+					}));
+			},
+			initialRoute: "HotReloadPageOne",
+			ct);
+
+		var page1 = ResolveCurrentPage<HotReloadPageOne>(app.NavigationRoot);
+		page1.Should().NotBeNull("Frame should have navigated to HotReloadPageOne");
+		page1!.DisplayedValue.Should().Be("original");
+
+		// Pre-HR: show the modal. The "!" qualifier (or auto-detection via IsDialogViewType)
+		// routes the request through ContentDialogNavigator.DisplayDialog, which builds a fresh
+		// HotReloadModalDialog via Activator and calls ShowAsync on it. The Frame is untouched.
+		await app.FrameNavigator.NavigateRouteAsync(this, "!HotReloadModalDialog");
+
+		var modalBefore = await WaitForModalAsync(TimeSpan.FromSeconds(30), ct);
+		modalBefore.DisplayedValue.Should().Be("original",
+			"pre-HR modal ctor should capture the unchanged method body");
+		app.FrameNavigator.Route?.Base.Should().Be("HotReloadPageOne",
+			"showing a modal must not replace the Frame's underlying page");
+
+		modalBefore.Hide();
+		await WaitForModalClosedAsync(TimeSpan.FromSeconds(10), ct);
+
+		ResolveCurrentPage<HotReloadPageOne>(app.NavigationRoot).Should().BeSameAs(page1,
+			"closing the modal must not remount or replace the underlying page instance");
+		app.FrameNavigator.Route?.Base.Should().Be("HotReloadPageOne",
+			"closing the modal must leave the Frame's route untouched");
+
+		// HR: flip the modal's target. Disposal reverts the file on scope exit.
+		await using var _ = await HotReloadHelper.UpdateSourceFile(
+			"../../Uno.Extensions.Navigation.UI.Tests/HotReloadModalTarget.cs",
+			"""return "original";""",
+			"""return "updated";""",
+			ct);
+
+		// Post-HR: re-show the modal. ContentDialogNavigator constructs a fresh ContentDialog
+		// per navigation (DisplayDialog → CreateInstance), so the new ctor runs against the
+		// HR'd method body.
+		await app.FrameNavigator.NavigateRouteAsync(this, "!HotReloadModalDialog");
+
+		var modalAfter = await WaitForModalAsync(TimeSpan.FromSeconds(30), ct);
+		modalAfter.Should().NotBeSameAs(modalBefore,
+			"ContentDialogNavigator constructs a fresh dialog per navigation — the HR delta is observed via the new instance");
+		modalAfter.DisplayedValue.Should().Be("updated",
+			"post-HR modal ctor should read the updated method body");
+
+		// Core claim: HR on the modal's target does not bleed into the underlying page or
+		// the Frame's navigation state.
+		page1.DisplayedValue.Should().Be("original",
+			"underlying page's DisplayedValue was captured pre-HR and must remain unchanged");
+		app.FrameNavigator.Route?.Base.Should().Be("HotReloadPageOne",
+			"post-HR modal show must not replace the Frame's underlying page");
+
+		modalAfter.Hide();
+		await WaitForModalClosedAsync(TimeSpan.FromSeconds(10), ct);
+
+		ResolveCurrentPage<HotReloadPageOne>(app.NavigationRoot).Should().BeSameAs(page1,
+			"closing the post-HR modal must not remount the underlying page");
+		app.FrameNavigator.Route?.Base.Should().Be("HotReloadPageOne",
+			"Frame's Route must remain on HotReloadPageOne after the full modal+HR cycle");
+	}
+
+	private static async Task<HotReloadModalDialog> WaitForModalAsync(TimeSpan timeout, CancellationToken ct)
+	{
+		var sw = System.Diagnostics.Stopwatch.StartNew();
+		while (sw.Elapsed < timeout)
+		{
+			ct.ThrowIfCancellationRequested();
+			if (HotReloadModalDialog.Current is { } modal)
+			{
+				return modal;
+			}
+			await Task.Delay(50, ct);
+		}
+
+		throw new TimeoutException(
+			$"Modal dialog (HotReloadModalDialog.Current) did not appear within {timeout.TotalSeconds:F0}s.");
+	}
+
+	private static async Task WaitForModalClosedAsync(TimeSpan timeout, CancellationToken ct)
+	{
+		var sw = System.Diagnostics.Stopwatch.StartNew();
+		while (sw.Elapsed < timeout)
+		{
+			ct.ThrowIfCancellationRequested();
+			if (HotReloadModalDialog.Current is null)
+			{
+				return;
+			}
+			await Task.Delay(50, ct);
+		}
+
+		throw new TimeoutException(
+			$"Modal dialog did not close within {timeout.TotalSeconds:F0}s.");
+	}
+
 	private static async Task<global::Uno.Extensions.Navigation.INavigator> WaitForPanelNavigatorAsync(
 		Grid contentGrid,
 		TimeSpan timeout,

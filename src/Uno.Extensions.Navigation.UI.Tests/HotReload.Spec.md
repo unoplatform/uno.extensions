@@ -285,10 +285,33 @@ See docs: *HowTo / ShowDialog*. The view *type* decides dialog vs flyout:
   traversal has to reach popup content. Assert against an observable bound value; don't
   poke private popup internals.
 
-- **ID**: `When_ShowContentDialogAfterUpdate_Then_ModalReflectsUpdate`
-- **Layout**: Same but view type is `ContentDialog` → modal.
-- **Risk**: `ContentDialog` has its own lifecycle via `ShowAsync`; the navigator wraps
-  this, and we want to prove that wrapper doesn't bypass HR on the dialog instance.
+- **ID**: `When_ShowModalAfterUpdate_Then_ModalReflectsUpdateAndFrameStaysStable`
+- **Goal**: HR on a modal (`ContentDialog`-typed) view, and prove the modal lifecycle
+  doesn't disturb the Frame's underlying navigation.
+- **Layout**: `HotReloadPageOne` is the Frame's underlying page (uses `HotReloadTarget`).
+  `HotReloadModalDialog : ContentDialog` is registered via `ViewMap<HotReloadModalDialog>()`
+  and a sibling `RouteMap("HotReloadModalDialog", ...)`. The modal reads
+  `HotReloadModalTarget.GetValue()` in its ctor; a static `HotReloadModalDialog.Current`
+  lets the test reach the live dialog without walking the popup layer.
+- **HR change**: Flip `HotReloadModalTarget.GetValue()` from `"original"` to `"updated"`.
+- **Trigger**: `FrameNavigator.NavigateRouteAsync(this, "!HotReloadModalDialog")`. The `!`
+  qualifier routes through `ContentDialogNavigator` which builds a fresh dialog via
+  `CreateInstance` and calls `ShowAsync` on it. Close each show with `dialog.Hide()`; the
+  `Closed` event clears `Current`.
+- **Assertion**:
+  - Pre-HR modal's `DisplayedValue == "original"`.
+  - After close: `FrameNavigator.Route.Base == "HotReloadPageOne"` and underlying
+    `HotReloadPageOne` instance is the same (by reference) as before the modal opened.
+  - Post-HR modal is a **new** instance and its `DisplayedValue == "updated"`.
+  - Across the full cycle: the underlying page's `DisplayedValue` stays `"original"` and
+    `FrameNavigator.Route.Base` stays pinned to `HotReloadPageOne`. HR on the modal's
+    target does not bleed into the underlying page or the Frame.
+- **Risk**: `ContentDialog` has its own lifecycle via `ShowAsync` (not a Frame push) — the
+  navigator wraps this, so we want to prove that wrapper (a) picks up the HR delta on each
+  new `CreateInstance` and (b) doesn't leak into the Frame's route/back-stack state.
+  `ContentDialogNavigator.DisplayDialog` sets `dialog.XamlRoot = Window.Content!.XamlRoot`,
+  which is satisfied by `UnitTestsUIContentHelper.CurrentTestWindow`; no extra harness work.
+- **Status (2026-04-22)**: Implemented and passing end-to-end on Skia desktop.
 
 ### 5.8 Advanced / stretch scenarios
 
