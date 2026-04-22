@@ -1,5 +1,6 @@
 #if DEBUG // Hot-reload tests are only relevant in debug configuration
 using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -8,6 +9,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Uno.Extensions.Hosting;
+using Uno.Extensions.Navigation;
 using Uno.Extensions.Navigation.UI.Controls;
 using Uno.Extensions.Navigation.UI.Tests.Pages;
 using Uno.Extensions.Navigation.UI.Tests.ViewModels;
@@ -184,6 +186,136 @@ public class Given_HotReload
 		await WaitForRouteAsync(app.NavigationRoot, app.FrameNavigator, "NewPage", TimeSpan.FromSeconds(30), ct);
 		ResolveCurrentPage<HotReloadPageTwo>(app.NavigationRoot).Should().NotBeNull(
 			"with the gate open post-HR, NewPage should resolve to HotReloadPageTwo");
+	}
+
+	/// <summary>
+	/// Proves hot-reload works across Visibility-based region navigation. The host page
+	/// <see cref="HotReloadRegionPage"/> wraps an empty Panel with <c>Region.Navigator="Visibility"</c>;
+	/// <see cref="Uno.Extensions.Navigation.Navigators.PanelVisiblityNavigator"/> materializes a
+	/// FrameView per navigated route into that panel. Each region route resolves to a fresh
+	/// <see cref="HotReloadRegionContentPage"/> whose <see cref="HotReloadRegionVm"/> DataContext
+	/// reads from <see cref="HotReloadRegionTarget.GetValue"/>. After the HR delta flips the target
+	/// from "original" to "updated", switching to RegionTwo lands on a VM that sees the new value.
+	/// </summary>
+	[TestMethod]
+	[RunsOnUIThread]
+	public async Task When_SwitchRegionAfterUpdate_Then_NewlyShownRegionReflectsUpdate(CancellationToken ct)
+	{
+		await using var app = await SetupAppAsync(
+			registerViewsAndRoutes: (views, routes) =>
+			{
+				views.Register(
+					new ViewMap<HotReloadRegionPage>(),
+					new ViewMap<HotReloadRegionContentPage, HotReloadRegionVm>());
+
+				routes.Register(
+					new RouteMap("", Nested: new RouteMap[]
+					{
+						new RouteMap(
+							"HotReloadRegionPage",
+							View: views.FindByView<HotReloadRegionPage>(),
+							IsDefault: true,
+							Nested: new RouteMap[]
+							{
+								new RouteMap("RegionOne", View: views.FindByView<HotReloadRegionContentPage>(), IsDefault: true),
+								new RouteMap("RegionTwo", View: views.FindByView<HotReloadRegionContentPage>()),
+							}),
+					}));
+			},
+			initialRoute: "HotReloadRegionPage",
+			ct);
+
+		var hostPage = ResolveCurrentPage<HotReloadRegionPage>(app.NavigationRoot);
+		hostPage.Should().NotBeNull("Frame should have navigated to HotReloadRegionPage");
+
+		// RegionOne is the IsDefault nested route — the initial navigation's default-descent
+		// (Navigator.DefaultRouteRequest) activates it automatically, so its FrameView is already
+		// materialized inside ContentGrid by the time we land here.
+		var regionOneVm = await WaitForRegionVmAsync(hostPage!.ContentGrid, "RegionOne", TimeSpan.FromSeconds(30), ct);
+		regionOneVm.DisplayedValue.Should().Be("original",
+			"RegionOne's VM should read the pre-HR method body");
+
+		// Drive region switches through the ContentGrid's own navigator (PanelVisiblityNavigator),
+		// not the outer FrameNavigator. The outer FrameNavigator rejects nested region routes at
+		// RegionCanNavigate (route-map parent mismatch) and the request then falls into a bubble-up
+		// path that doesn't cleanly resolve back into the panel, hanging the await. Calling the
+		// panel navigator directly is the shape real app code would take for "I'm inside a
+		// visibility-managed region and want to swap which named child is showing."
+		var panelNavigator = await WaitForPanelNavigatorAsync(hostPage.ContentGrid, TimeSpan.FromSeconds(30), ct);
+
+		// Sanity: region switching itself must work before we bring HR into the mix.
+		await panelNavigator.NavigateRouteAsync(hostPage, "RegionTwo");
+		var regionTwoBefore = await WaitForRegionVmAsync(hostPage.ContentGrid, "RegionTwo", TimeSpan.FromSeconds(30), ct);
+		regionTwoBefore.DisplayedValue.Should().Be("original", "RegionTwo (pre-HR) should also read 'original'");
+
+		// HR: flip the region target's helper method. Disposal reverts the file on scope exit.
+		await using var _ = await HotReloadHelper.UpdateSourceFile(
+			"../../Uno.Extensions.Navigation.UI.Tests/HotReloadRegionTarget.cs",
+			"""return "original";""",
+			"""return "updated";""",
+			ct);
+
+		// Switch back to RegionOne, then forward to RegionTwo — re-showing RegionTwo exercises the
+		// "newly shown region" angle. PanelVisiblityNavigator reuses the existing FrameView/VM, and
+		// because HotReloadRegionVm.DisplayedValue calls GetValue() on every access, the reused VM
+		// now returns "updated".
+		await panelNavigator.NavigateRouteAsync(hostPage, "RegionOne");
+		await panelNavigator.NavigateRouteAsync(hostPage, "RegionTwo");
+
+		var regionTwoVm = await WaitForRegionVmAsync(hostPage.ContentGrid, "RegionTwo", TimeSpan.FromSeconds(30), ct);
+		regionTwoVm.DisplayedValue.Should().Be("updated",
+			"RegionTwo's VM should read the post-HR method body");
+	}
+
+	private static async Task<global::Uno.Extensions.Navigation.INavigator> WaitForPanelNavigatorAsync(
+		Grid contentGrid,
+		TimeSpan timeout,
+		CancellationToken ct)
+	{
+		var sw = System.Diagnostics.Stopwatch.StartNew();
+		while (sw.Elapsed < timeout)
+		{
+			ct.ThrowIfCancellationRequested();
+			if (contentGrid.Navigator() is { } nav)
+			{
+				return nav;
+			}
+			await Task.Delay(50, ct);
+		}
+
+		throw new TimeoutException(
+			$"ContentGrid's navigator (PanelVisiblityNavigator) did not become available within {timeout.TotalSeconds:F0}s.");
+	}
+
+	private static async Task<HotReloadRegionVm> WaitForRegionVmAsync(
+		Grid contentGrid,
+		string regionName,
+		TimeSpan timeout,
+		CancellationToken ct)
+	{
+		var sw = System.Diagnostics.Stopwatch.StartNew();
+		while (sw.Elapsed < timeout)
+		{
+			ct.ThrowIfCancellationRequested();
+			var regionView = contentGrid.Children
+				.OfType<FrameworkElement>()
+				.FirstOrDefault(c => Uno.Extensions.Navigation.UI.Region.GetName(c) == regionName);
+			if (regionView is FrameView fv &&
+				fv.FindName("NavigationFrame") is Frame frame &&
+				frame.Content is HotReloadRegionContentPage page &&
+				page.DataContext is HotReloadRegionVm vm)
+			{
+				return vm;
+			}
+			await Task.Delay(50, ct);
+		}
+
+		var children = string.Join(", ", contentGrid.Children
+			.OfType<FrameworkElement>()
+			.Select(c => $"{c.GetType().Name}[Region.Name='{Uno.Extensions.Navigation.UI.Region.GetName(c)}']"));
+		throw new TimeoutException(
+			$"Region '{regionName}' did not populate a HotReloadRegionContentPage within {timeout.TotalSeconds:F0}s. " +
+			$"ContentGrid children: [{children}].");
 	}
 
 	/// <summary>

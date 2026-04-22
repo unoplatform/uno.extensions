@@ -215,17 +215,14 @@ Selection-based and visibility-based regions use `Region.Attached="True"` on a `
 Each child `Region.Name` is a selectable target. See docs:
 *Reference / Navigation / Regions* and *Walkthrough / UsePanel*.
 
-- **ID**: `When_SwitchRegionAfterUpdate_Then_NewlyShownChildReflectsUpdate`
+- **ID**: `When_SwitchRegionAfterUpdate_Then_NewlyShownRegionReflectsUpdate`
 - **Goal**: HR on a sub-view selected via `Region.Name`.
-- **Layout**: Root `Grid` with `Region.Attached="True"` and two child `Grid`s with
-  `Region.Name="Foo"` / `Region.Name="Bar"`. Each child's DataContext/VM reads from an
-  HR-target method.
-- **HR change**: Target method body.
-- **Trigger**: `navigator.NavigateRouteAsync(this, "Bar")` (switch regions).
-- **Assertion**: `Bar`'s displayed value reflects the update.
-- **Risk**: Regions keep both children in the tree (Visibility toggling). If the child
-  control is the same instance pre/post HR, a field-init-only change won't apply — pick a
-  method-body change.
+- **Layout**: `HotReloadRegionPage` with nested `ContentGrid` (Region.Attached + Region.Navigator="Visibility"). `RegionOne` (IsDefault) and `RegionTwo` both map to `HotReloadRegionContentPage` with `HotReloadRegionVm` whose `DisplayedValue` property reads `HotReloadRegionTarget.GetValue()` on every access.
+- **HR change**: `HotReloadRegionTarget.GetValue()` flip from "original" → "updated".
+- **Trigger**: Switch regions via the ContentGrid's own `PanelVisiblityNavigator` (do NOT use the outer FrameNavigator — it rejects nested region routes at RegionCanNavigate and the bubble-up hangs the await).
+- **Assertion**: After HR and re-show, RegionTwo's VM reflects "updated".
+- **Risk**: PanelVisiblityNavigator reuses existing FrameViews, so the same VM instance is re-visible post-HR. The VM's property getter re-reads the HR'd method on each access — that's what makes the assertion work. If the VM cached the method return value, HR wouldn't be visible without re-instantiation.
+- **Status (2026-04-22)**: Implemented and passing end-to-end on Skia desktop.
 
 - **ID**: `When_UpdateStackPanelChildAfterHR_Then_NewlyShownChildReflectsUpdate`
 - **Goal**: Same as above but with a `StackPanel` instead of `Grid`.
