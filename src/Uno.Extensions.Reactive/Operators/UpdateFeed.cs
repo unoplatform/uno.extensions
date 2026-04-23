@@ -53,7 +53,7 @@ internal record FeedUpdate<T>(
 
 internal sealed class UpdateFeed<T> : IFeed<T>
 {
-	private readonly AsyncEnumerableSubject<(IFeedUpdate<T>[]? added, IFeedUpdate<T>[]? removed)> _updates = new(ReplayMode.Disabled);
+	private readonly AsyncEnumerableSubject<(IFeedUpdate<T>[]? added, IFeedUpdate<T>[]? removed)> _updates = new(AsyncEnumerableReplayMode.Disabled);
 	private readonly IFeed<T> _source;
 	private readonly Predicate<Message<T>>? _waitForParent;
 
@@ -99,7 +99,7 @@ internal sealed class UpdateFeed<T> : IFeed<T>
 		{
 			_owner = owner;
 			_ct = ct;
-			_subject = new AsyncEnumerableSubject<Message<T>>(ReplayMode.EnabledForFirstEnumeratorOnly);
+			_subject = new AsyncEnumerableSubject<Message<T>>(AsyncEnumerableReplayMode.EnabledForFirstEnumeratorOnly);
 			_message = new MessageManager<T, T>(_subject.SetNext);
 			_activeUpdates = ImmutableList<IFeedUpdate<T>>.Empty;
 			_compactedUpdates = ImmutableDictionary<IFeedUpdate<T>, IFeedRollbackableUpdate<T>>.Empty;
