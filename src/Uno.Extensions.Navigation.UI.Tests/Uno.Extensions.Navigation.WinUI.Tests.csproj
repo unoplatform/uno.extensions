@@ -23,6 +23,8 @@
 		<Page Include="Pages\HotReloadNavRequestPage.xaml" />
 		<Page Include="Pages\HotReloadRegionAttachedPage.xaml" />
 		<Page Include="Pages\HotReloadRegionNavigatorPage.xaml" />
+		<Page Include="Pages\HotReloadTabBarXamlPage.xaml" />
+		<Page Include="Pages\HotReloadTabBarCommandPage.xaml" />
 	</ItemGroup>
 
 	<ItemGroup>
