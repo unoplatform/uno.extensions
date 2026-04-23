@@ -29,38 +29,33 @@ public class Given_TabBarHotReload
 		HotReloadHelper.DefaultMetadataUpdateTimeout = TimeSpan.FromSeconds(60);
 	}
 
+	// ──────────────────────────────────────────────────────────────────────
+	// 1. Basic tab switch after HR (2-tab)
+	// ──────────────────────────────────────────────────────────────────────
+
 	/// <summary>
-	/// Proves hot-reload works across TabBar-driven region navigation. The host page
-	/// <see cref="HotReloadTabBarPage"/> contains a TabBar with Region.Attached and two
-	/// TabBarItems (TabOne, TabTwo). Each tab's content resolves to
-	/// <see cref="HotReloadTabContentPage"/> with a <see cref="HotReloadTabBarVm"/> that reads
-	/// <see cref="HotReloadTabBarTarget.GetValue"/> on every access. After the HR delta flips
-	/// the target from "original" to "updated", switching to TabTwo lands on a VM that
-	/// reflects the new value.
+	/// HR flips the target method, then switch to TabTwo → sees "updated".
 	/// </summary>
 	[TestMethod]
 	[RunsOnUIThread]
 	public async Task When_SwitchTabAfterUpdate_Then_SelectedTabReflectsUpdate(CancellationToken ct)
 	{
-		await using var app = await SetupTabBarAppAsync(ct);
+		await using var app = await SetupTwoTabAppAsync(ct);
 
 		var hostPage = ResolveCurrentPage<HotReloadTabBarPage>(app.NavigationRoot);
 		hostPage.Should().NotBeNull("Frame should have navigated to HotReloadTabBarPage");
 
-		// TabOne is the IsDefault nested route — wait for it to materialize.
 		var tabOneVm = await WaitForTabContentVmAsync(
 			hostPage!.ContentGrid, "TabOne", TimeSpan.FromSeconds(30), ct);
 		tabOneVm.DisplayedValue.Should().Be("original",
 			"TabOne's VM should read the pre-HR method body");
 
-		// HR: flip the target's helper method. Disposal reverts the file on scope exit.
 		await using var _ = await HotReloadHelper.UpdateSourceFile(
 			"../../Uno.Extensions.Navigation.UI.Tests/HotReloadTabBarTarget.cs",
 			"""return "original";""",
 			"""return "updated";""",
 			ct);
 
-		// Switch to TabTwo via the TabBar's own navigator.
 		var tabBarNavigator = await WaitForTabBarNavigatorAsync(
 			hostPage.TabBar, TimeSpan.FromSeconds(30), ct);
 		await tabBarNavigator.NavigateRouteAsync(hostPage, "TabTwo");
@@ -71,27 +66,26 @@ public class Given_TabBarHotReload
 			"TabTwo's VM should read the post-HR method body");
 	}
 
+	// ──────────────────────────────────────────────────────────────────────
+	// 2. HR while on TabTwo, switch back to TabOne (2-tab)
+	// ──────────────────────────────────────────────────────────────────────
+
 	/// <summary>
-	/// Complementary to <see cref="When_SwitchTabAfterUpdate_Then_SelectedTabReflectsUpdate"/>:
-	/// applies HR while viewing TabTwo, then switches back to TabOne. Because
-	/// <see cref="HotReloadTabBarVm.DisplayedValue"/> re-reads the HR'd method on every access,
-	/// even a previously-viewed tab's VM reflects the update once re-shown.
+	/// Switch to TabTwo, apply HR, switch back to TabOne → TabOne's reused VM returns "updated".
 	/// </summary>
 	[TestMethod]
 	[RunsOnUIThread]
 	public async Task When_UpdateWhileOnTabTwo_Then_SwitchBackToTabOneReflectsUpdate(CancellationToken ct)
 	{
-		await using var app = await SetupTabBarAppAsync(ct);
+		await using var app = await SetupTwoTabAppAsync(ct);
 
 		var hostPage = ResolveCurrentPage<HotReloadTabBarPage>(app.NavigationRoot);
 		hostPage.Should().NotBeNull("Frame should have navigated to HotReloadTabBarPage");
 
-		// Wait for TabOne (IsDefault) to materialize.
 		var tabOneVmBefore = await WaitForTabContentVmAsync(
 			hostPage!.ContentGrid, "TabOne", TimeSpan.FromSeconds(30), ct);
 		tabOneVmBefore.DisplayedValue.Should().Be("original");
 
-		// Switch to TabTwo before HR — verify baseline there too.
 		var tabBarNavigator = await WaitForTabBarNavigatorAsync(
 			hostPage.TabBar, TimeSpan.FromSeconds(30), ct);
 		await tabBarNavigator.NavigateRouteAsync(hostPage, "TabTwo");
@@ -101,14 +95,12 @@ public class Given_TabBarHotReload
 		tabTwoVm.DisplayedValue.Should().Be("original",
 			"TabTwo (pre-HR) should read 'original'");
 
-		// Apply HR while viewing TabTwo.
 		await using var _ = await HotReloadHelper.UpdateSourceFile(
 			"../../Uno.Extensions.Navigation.UI.Tests/HotReloadTabBarTarget.cs",
 			"""return "original";""",
 			"""return "updated";""",
 			ct);
 
-		// Switch back to TabOne — re-showing it exercises the reused-VM path.
 		await tabBarNavigator.NavigateRouteAsync(hostPage, "TabOne");
 
 		var tabOneVmAfter = await WaitForTabContentVmAsync(
@@ -117,14 +109,195 @@ public class Given_TabBarHotReload
 			"TabOne's VM should read the post-HR method body after switching back");
 	}
 
-	#region Helpers
+	// ──────────────────────────────────────────────────────────────────────
+	// 3. Current tab reflects HR without switching (2-tab)
+	// ──────────────────────────────────────────────────────────────────────
 
 	/// <summary>
-	/// Boots an Uno host with Toolkit navigation (registers <c>TabBarNavigator</c>),
-	/// hosts it in the runtime-tests engine's test window, and navigates to the
-	/// <see cref="HotReloadTabBarPage"/>.
+	/// Verifies the currently-viewed tab's VM property reflects the HR'd method body
+	/// without requiring a tab switch. Because <see cref="HotReloadTabBarVm.DisplayedValue"/>
+	/// re-reads the target on every access, the change is visible immediately. Also verifies
+	/// the TabBar's selected index is not disrupted by the HR delta.
 	/// </summary>
-	private static async Task<TabBarTestApp> SetupTabBarAppAsync(CancellationToken ct)
+	[TestMethod]
+	[RunsOnUIThread]
+	public async Task When_HRApplied_Then_CurrentTabReflectsUpdateAndSelectionPreserved(CancellationToken ct)
+	{
+		await using var app = await SetupTwoTabAppAsync(ct);
+
+		var hostPage = ResolveCurrentPage<HotReloadTabBarPage>(app.NavigationRoot);
+		hostPage.Should().NotBeNull();
+
+		// Switch to TabTwo so we're not on the default tab.
+		var tabBarNavigator = await WaitForTabBarNavigatorAsync(
+			hostPage!.TabBar, TimeSpan.FromSeconds(30), ct);
+		await tabBarNavigator.NavigateRouteAsync(hostPage, "TabTwo");
+
+		var tabTwoVm = await WaitForTabContentVmAsync(
+			hostPage.ContentGrid, "TabTwo", TimeSpan.FromSeconds(30), ct);
+		tabTwoVm.DisplayedValue.Should().Be("original");
+		hostPage.TabBar.SelectedIndex.Should().Be(1, "TabTwo is at index 1");
+
+		await using var _ = await HotReloadHelper.UpdateSourceFile(
+			"../../Uno.Extensions.Navigation.UI.Tests/HotReloadTabBarTarget.cs",
+			"""return "original";""",
+			"""return "updated";""",
+			ct);
+
+		// Without switching tabs — re-read the VM property.
+		tabTwoVm.DisplayedValue.Should().Be("updated",
+			"Current tab's VM should reflect the HR'd method body without switching");
+		hostPage.TabBar.SelectedIndex.Should().Be(1,
+			"TabBar selected index should not change after HR");
+	}
+
+	// ──────────────────────────────────────────────────────────────────────
+	// 4. Unvisited third tab shows updated content (3-tab)
+	// ──────────────────────────────────────────────────────────────────────
+
+	/// <summary>
+	/// A tab that was never visited before HR should show the updated value on first visit.
+	/// This proves the navigation framework doesn't cache stale content for unvisited routes.
+	/// </summary>
+	[TestMethod]
+	[RunsOnUIThread]
+	public async Task When_UnvisitedTabVisitedAfterHR_Then_ShowsUpdatedContent(CancellationToken ct)
+	{
+		await using var app = await SetupThreeTabAppAsync(ct);
+
+		var hostPage = ResolveCurrentPage<HotReloadTabBarThreeTabPage>(app.NavigationRoot);
+		hostPage.Should().NotBeNull();
+
+		// Only visit TabOne (IsDefault). TabTwo and TabThree are never visited.
+		var tabOneVm = await WaitForTabContentVmAsync(
+			hostPage!.ContentGrid, "TabOne", TimeSpan.FromSeconds(30), ct);
+		tabOneVm.DisplayedValue.Should().Be("original");
+
+		await using var _ = await HotReloadHelper.UpdateSourceFile(
+			"../../Uno.Extensions.Navigation.UI.Tests/HotReloadTabBarTarget.cs",
+			"""return "original";""",
+			"""return "updated";""",
+			ct);
+
+		// Switch directly to TabThree (never visited before).
+		var tabBarNavigator = await WaitForTabBarNavigatorAsync(
+			hostPage.TabBar, TimeSpan.FromSeconds(30), ct);
+		await tabBarNavigator.NavigateRouteAsync(hostPage, "TabThree");
+
+		var tabThreeVm = await WaitForTabContentVmAsync(
+			hostPage.ContentGrid, "TabThree", TimeSpan.FromSeconds(30), ct);
+		tabThreeVm.DisplayedValue.Should().Be("updated",
+			"An unvisited tab's fresh VM should read the post-HR method body");
+	}
+
+	// ──────────────────────────────────────────────────────────────────────
+	// 5. Rapid multi-tab switching after HR (3-tab)
+	// ──────────────────────────────────────────────────────────────────────
+
+	/// <summary>
+	/// After HR, cycle through all three tabs and back. Every tab's VM should return
+	/// "updated" and no tab should show blank/null content. Exercises the
+	/// <c>PanelVisiblityNavigator</c>'s show/hide toggling under HR conditions.
+	/// </summary>
+	[TestMethod]
+	[RunsOnUIThread]
+	public async Task When_CycleThroughAllTabsAfterHR_Then_AllReflectUpdate(CancellationToken ct)
+	{
+		await using var app = await SetupThreeTabAppAsync(ct);
+
+		var hostPage = ResolveCurrentPage<HotReloadTabBarThreeTabPage>(app.NavigationRoot);
+		hostPage.Should().NotBeNull();
+
+		var tabOneVm = await WaitForTabContentVmAsync(
+			hostPage!.ContentGrid, "TabOne", TimeSpan.FromSeconds(30), ct);
+		tabOneVm.DisplayedValue.Should().Be("original");
+
+		await using var _ = await HotReloadHelper.UpdateSourceFile(
+			"../../Uno.Extensions.Navigation.UI.Tests/HotReloadTabBarTarget.cs",
+			"""return "original";""",
+			"""return "updated";""",
+			ct);
+
+		var tabBarNavigator = await WaitForTabBarNavigatorAsync(
+			hostPage.TabBar, TimeSpan.FromSeconds(30), ct);
+
+		// Tab1 → Tab2
+		await tabBarNavigator.NavigateRouteAsync(hostPage, "TabTwo");
+		var tab2Vm = await WaitForTabContentVmAsync(
+			hostPage.ContentGrid, "TabTwo", TimeSpan.FromSeconds(30), ct);
+		tab2Vm.DisplayedValue.Should().Be("updated", "TabTwo should reflect HR");
+
+		// Tab2 → Tab3
+		await tabBarNavigator.NavigateRouteAsync(hostPage, "TabThree");
+		var tab3Vm = await WaitForTabContentVmAsync(
+			hostPage.ContentGrid, "TabThree", TimeSpan.FromSeconds(30), ct);
+		tab3Vm.DisplayedValue.Should().Be("updated", "TabThree should reflect HR");
+
+		// Tab3 → Tab1 (returning to previously-visited tab)
+		await tabBarNavigator.NavigateRouteAsync(hostPage, "TabOne");
+		var tab1VmAfter = await WaitForTabContentVmAsync(
+			hostPage.ContentGrid, "TabOne", TimeSpan.FromSeconds(30), ct);
+		tab1VmAfter.DisplayedValue.Should().Be("updated", "TabOne should still reflect HR after full cycle");
+	}
+
+	// ──────────────────────────────────────────────────────────────────────
+	// 6. Gated tab route becomes navigable after HR (3-tab)
+	// ──────────────────────────────────────────────────────────────────────
+
+	/// <summary>
+	/// A third tab's <c>RouteMap.Init</c> delegate gates navigation via
+	/// <see cref="HotReloadTabGateTarget.IsAvailable"/>. While closed, navigating to TabThree
+	/// redirects to TabOne. After HR flips the gate, TabThree resolves to its content page.
+	/// </summary>
+	[TestMethod]
+	[RunsOnUIThread]
+	public async Task When_GatedTabUnlockedByHR_Then_TabContentLoads(CancellationToken ct)
+	{
+		await using var app = await SetupGatedTabAppAsync(ct);
+
+		var hostPage = ResolveCurrentPage<HotReloadTabBarThreeTabPage>(app.NavigationRoot);
+		hostPage.Should().NotBeNull();
+
+		var tabOneVm = await WaitForTabContentVmAsync(
+			hostPage!.ContentGrid, "TabOne", TimeSpan.FromSeconds(30), ct);
+		tabOneVm.Should().NotBeNull("TabOne (IsDefault) should be loaded");
+
+		// Pre-HR: gate closed — navigating to TabThree should redirect to TabOne.
+		var tabBarNavigator = await WaitForTabBarNavigatorAsync(
+			hostPage.TabBar, TimeSpan.FromSeconds(30), ct);
+		await tabBarNavigator.NavigateRouteAsync(hostPage, "TabThree");
+
+		// Give the redirect a moment to settle, then verify TabThree content is absent.
+		await Task.Delay(500, ct);
+		var tabThreeBeforeHR = FindTabContentVm(hostPage.ContentGrid, "TabThree");
+		tabThreeBeforeHR.Should().BeNull(
+			"while the Init gate is closed, TabThree should not populate content");
+
+		// HR: open the gate. Disposal reverts on scope exit.
+		await using var _ = await HotReloadHelper.UpdateSourceFile(
+			"../../Uno.Extensions.Navigation.UI.Tests/HotReloadTabGateTarget.cs",
+			"return false;",
+			"return true;",
+			ct);
+
+		// Post-HR: gate open — TabThree should now resolve.
+		await tabBarNavigator.NavigateRouteAsync(hostPage, "TabThree");
+		var tabThreeVm = await WaitForTabContentVmAsync(
+			hostPage.ContentGrid, "TabThree", TimeSpan.FromSeconds(30), ct);
+		tabThreeVm.Should().NotBeNull(
+			"with the gate open post-HR, TabThree should load content");
+	}
+
+	#region Setup helpers
+
+	/// <summary>
+	/// Generic setup: boots an Uno host with Toolkit navigation, mounts the nav root,
+	/// and waits for the initial route to land.
+	/// </summary>
+	private static async Task<TabBarTestApp> SetupTabBarAppAsync(
+		Action<global::Uno.Extensions.Navigation.IViewRegistry, global::Uno.Extensions.Navigation.IRouteRegistry> registerViewsAndRoutes,
+		string initialRoute,
+		CancellationToken ct)
 	{
 		var window = UnitTestsUIContentHelper.CurrentTestWindow!;
 		var navigationRoot = new ContentControl
@@ -145,32 +318,13 @@ public class Given_TabBarHotReload
 				buildHost: async () => UnoHost
 					.CreateDefaultBuilder(typeof(Given_TabBarHotReload).Assembly)
 					.UseToolkitNavigation()
-					.UseNavigation(viewRouteBuilder: (views, routes) =>
-					{
-						views.Register(
-							new ViewMap<HotReloadTabBarPage>(),
-							new ViewMap<HotReloadTabContentPage, HotReloadTabBarVm>());
-
-						routes.Register(
-							new RouteMap("", Nested: new RouteMap[]
-							{
-								new RouteMap(
-									"HotReloadTabBarPage",
-									View: views.FindByView<HotReloadTabBarPage>(),
-									IsDefault: true,
-									Nested: new RouteMap[]
-									{
-										new RouteMap("TabOne", View: views.FindByView<HotReloadTabContentPage>(), IsDefault: true),
-										new RouteMap("TabTwo", View: views.FindByView<HotReloadTabContentPage>()),
-									}),
-							}));
-					})
+					.UseNavigation(viewRouteBuilder: registerViewsAndRoutes)
 					.Build(),
 				navigationRoot: navigationRoot,
-				initialRoute: "HotReloadTabBarPage");
+				initialRoute: initialRoute);
 
 			var frameNav = await WaitForFrameNavigatorAsync(navigationRoot, TimeSpan.FromSeconds(30), ct);
-			await WaitForRouteAsync(navigationRoot, frameNav, "HotReloadTabBarPage", TimeSpan.FromSeconds(30), ct);
+			await WaitForRouteAsync(navigationRoot, frameNav, initialRoute, TimeSpan.FromSeconds(30), ct);
 
 			return new TabBarTestApp(navigationRoot, frameNav, host);
 		}
@@ -184,6 +338,100 @@ public class Given_TabBarHotReload
 			throw;
 		}
 	}
+
+	/// <summary>2-tab TabBar (TabOne, TabTwo).</summary>
+	private static Task<TabBarTestApp> SetupTwoTabAppAsync(CancellationToken ct)
+		=> SetupTabBarAppAsync(
+			(views, routes) =>
+			{
+				views.Register(
+					new ViewMap<HotReloadTabBarPage>(),
+					new ViewMap<HotReloadTabContentPage, HotReloadTabBarVm>());
+
+				routes.Register(
+					new RouteMap("", Nested: new RouteMap[]
+					{
+						new RouteMap(
+							"HotReloadTabBarPage",
+							View: views.FindByView<HotReloadTabBarPage>(),
+							IsDefault: true,
+							Nested: new RouteMap[]
+							{
+								new RouteMap("TabOne", View: views.FindByView<HotReloadTabContentPage>(), IsDefault: true),
+								new RouteMap("TabTwo", View: views.FindByView<HotReloadTabContentPage>()),
+							}),
+					}));
+			},
+			"HotReloadTabBarPage",
+			ct);
+
+	/// <summary>3-tab TabBar (TabOne, TabTwo, TabThree).</summary>
+	private static Task<TabBarTestApp> SetupThreeTabAppAsync(CancellationToken ct)
+		=> SetupTabBarAppAsync(
+			(views, routes) =>
+			{
+				views.Register(
+					new ViewMap<HotReloadTabBarThreeTabPage>(),
+					new ViewMap<HotReloadTabContentPage, HotReloadTabBarVm>());
+
+				routes.Register(
+					new RouteMap("", Nested: new RouteMap[]
+					{
+						new RouteMap(
+							"HotReloadTabBarThreeTabPage",
+							View: views.FindByView<HotReloadTabBarThreeTabPage>(),
+							IsDefault: true,
+							Nested: new RouteMap[]
+							{
+								new RouteMap("TabOne", View: views.FindByView<HotReloadTabContentPage>(), IsDefault: true),
+								new RouteMap("TabTwo", View: views.FindByView<HotReloadTabContentPage>()),
+								new RouteMap("TabThree", View: views.FindByView<HotReloadTabContentPage>()),
+							}),
+					}));
+			},
+			"HotReloadTabBarThreeTabPage",
+			ct);
+
+	/// <summary>
+	/// 3-tab TabBar where TabThree has a <c>RouteMap.Init</c> gate driven by
+	/// <see cref="HotReloadTabGateTarget.IsAvailable"/>. When the gate is closed the Init
+	/// redirects to TabOne; when open the request passes through unchanged.
+	/// </summary>
+	private static Task<TabBarTestApp> SetupGatedTabAppAsync(CancellationToken ct)
+		=> SetupTabBarAppAsync(
+			(views, routes) =>
+			{
+				views.Register(
+					new ViewMap<HotReloadTabBarThreeTabPage>(),
+					new ViewMap<HotReloadTabContentPage, HotReloadTabBarVm>());
+
+				routes.Register(
+					new RouteMap("", Nested: new RouteMap[]
+					{
+						new RouteMap(
+							"HotReloadTabBarThreeTabPage",
+							View: views.FindByView<HotReloadTabBarThreeTabPage>(),
+							IsDefault: true,
+							Nested: new RouteMap[]
+							{
+								new RouteMap("TabOne", View: views.FindByView<HotReloadTabContentPage>(), IsDefault: true),
+								new RouteMap("TabTwo", View: views.FindByView<HotReloadTabContentPage>()),
+								new RouteMap(
+									"TabThree",
+									View: views.FindByView<HotReloadTabContentPage>(),
+									Init: request =>
+										HotReloadTabGateTarget.IsAvailable()
+											? request
+											: request with { Route = request.Route with { Base = "TabOne" } }),
+							}),
+					}));
+			},
+			"HotReloadTabBarThreeTabPage",
+			ct);
+
+	#endregion
+
+	#region Infrastructure
 
 	private sealed class TabBarTestApp : IAsyncDisposable
 	{
@@ -245,13 +493,8 @@ public class Given_TabBarHotReload
 		while (sw.Elapsed < timeout)
 		{
 			ct.ThrowIfCancellationRequested();
-			var regionView = contentGrid.Children
-				.OfType<FrameworkElement>()
-				.FirstOrDefault(c => Uno.Extensions.Navigation.UI.Region.GetName(c) == regionName);
-			if (regionView is FrameView fv &&
-				fv.FindName("NavigationFrame") is Frame frame &&
-				frame.Content is HotReloadTabContentPage page &&
-				page.DataContext is HotReloadTabBarVm vm)
+			var vm = FindTabContentVm(contentGrid, regionName);
+			if (vm is not null)
 			{
 				return vm;
 			}
@@ -264,6 +507,21 @@ public class Given_TabBarHotReload
 		throw new TimeoutException(
 			$"Tab '{regionName}' did not populate a HotReloadTabContentPage within {timeout.TotalSeconds:F0}s. " +
 			$"ContentGrid children: [{children}].");
+	}
+
+	private static HotReloadTabBarVm? FindTabContentVm(Grid contentGrid, string regionName)
+	{
+		var regionView = contentGrid.Children
+			.OfType<FrameworkElement>()
+			.FirstOrDefault(c => Uno.Extensions.Navigation.UI.Region.GetName(c) == regionName);
+		if (regionView is FrameView fv &&
+			fv.FindName("NavigationFrame") is Frame frame &&
+			frame.Content is HotReloadTabContentPage page &&
+			page.DataContext is HotReloadTabBarVm vm)
+		{
+			return vm;
+		}
+		return null;
 	}
 
 	private static async Task<global::Uno.Extensions.Navigation.INavigator> WaitForFrameNavigatorAsync(
