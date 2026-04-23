@@ -288,6 +288,213 @@ public class Given_TabBarHotReload
 			"with the gate open post-HR, TabThree should load content");
 	}
 
+	// ──────────────────────────────────────────────────────────────────────
+	// 7. Region.Attached removed from TabBar via XAML HR (#2971)
+	// ──────────────────────────────────────────────────────────────────────
+
+	/// <summary>
+	/// XAML HR removes <c>uen:Region.Attached="True"</c> from the TabBar element.
+	/// Without Region.Attached the TabBar no longer drives navigation.
+	/// Bug #2971: after such a change the content area goes blank.
+	/// </summary>
+	[TestMethod]
+	[RunsOnUIThread]
+	public async Task When_RegionAttachedRemovedFromTabBarViaXamlHR_Then_ContentNotBlanked(CancellationToken ct)
+	{
+		await using var app = await SetupXamlTwoTabAppAsync(ct);
+
+		var hostPage = ResolveCurrentPage<HotReloadTabBarXamlPage>(app.NavigationRoot);
+		hostPage.Should().NotBeNull("Frame should have navigated to HotReloadTabBarXamlPage");
+
+		// Baseline: TabOne (default) loaded.
+		var tabOneVm = await WaitForTabContentVmAsync(
+			hostPage!.ContentGrid, "TabOne", TimeSpan.FromSeconds(30), ct);
+		tabOneVm.Should().NotBeNull("TabOne content should be loaded before HR");
+
+		// XAML HR: remove Region.Attached from the TabBar.
+		await using var _ = await HotReloadHelper.UpdateSourceFile(
+			"../../Uno.Extensions.Navigation.UI.Tests/Pages/HotReloadTabBarXamlPage.xaml",
+			"""<utu:TabBar x:Name="TB" Grid.Row="1" uen:Region.Attached="True">""",
+			"""<utu:TabBar x:Name="TB" Grid.Row="1">""",
+			ct);
+
+		// Give the visual tree time to settle after XAML HR.
+		await Task.Delay(1000, ct);
+
+		// The content area should NOT be blank (#2971 causes this).
+		hostPage.ContentGrid.Children.Count.Should().BeGreaterThan(0,
+			"Content area should not be blank after Region.Attached removal (#2971)");
+
+		var tabOneVmAfter = FindTabContentVm(hostPage.ContentGrid, "TabOne");
+		tabOneVmAfter.Should().NotBeNull(
+			"TabOne content should still be accessible after Region.Attached removal (#2971)");
+	}
+
+	// ──────────────────────────────────────────────────────────────────────
+	// 8. Region.Name changed on TabBarItem via XAML HR
+	// ──────────────────────────────────────────────────────────────────────
+
+	/// <summary>
+	/// XAML HR renames <c>Region.Name="TabTwo"</c> to <c>"TabTwoRenamed"</c>
+	/// on the second TabBarItem. Route "TabTwoRenamed" is pre-registered so the
+	/// SelectorNavigator can resolve it.
+	/// </summary>
+	[TestMethod]
+	[RunsOnUIThread]
+	public async Task When_RegionNameChangedOnTabBarItemViaXamlHR_Then_NavigationResolvesNewName(CancellationToken ct)
+	{
+		await using var app = await SetupXamlRenamedRouteAppAsync(ct);
+
+		var hostPage = ResolveCurrentPage<HotReloadTabBarXamlPage>(app.NavigationRoot);
+		hostPage.Should().NotBeNull();
+
+		var tabOneVm = await WaitForTabContentVmAsync(
+			hostPage!.ContentGrid, "TabOne", TimeSpan.FromSeconds(30), ct);
+		tabOneVm.Should().NotBeNull();
+
+		// Pre-HR: navigate to TabTwo (original name).
+		var tabBarNavigator = await WaitForTabBarNavigatorAsync(
+			hostPage.TabBar, TimeSpan.FromSeconds(30), ct);
+		await tabBarNavigator.NavigateRouteAsync(hostPage, "TabTwo");
+
+		var tabTwoVm = await WaitForTabContentVmAsync(
+			hostPage.ContentGrid, "TabTwo", TimeSpan.FromSeconds(30), ct);
+		tabTwoVm.Should().NotBeNull("TabTwo should be navigable before HR");
+
+		// XAML HR: rename Region.Name on the second TabBarItem.
+		await using var _ = await HotReloadHelper.UpdateSourceFile(
+			"../../Uno.Extensions.Navigation.UI.Tests/Pages/HotReloadTabBarXamlPage.xaml",
+			"""<utu:TabBarItem Content="Tab Two" uen:Region.Name="TabTwo" IsSelectable="True" />""",
+			"""<utu:TabBarItem Content="Tab Two" uen:Region.Name="TabTwoRenamed" IsSelectable="True" />""",
+			ct);
+
+		await Task.Delay(500, ct);
+
+		// Navigate to the renamed route.
+		await tabBarNavigator.NavigateRouteAsync(hostPage, "TabTwoRenamed");
+		await Task.Delay(500, ct);
+
+		var renamedVm = FindTabContentVm(hostPage.ContentGrid, "TabTwoRenamed");
+		renamedVm.Should().NotBeNull(
+			"Navigation should resolve the renamed Region.Name after XAML HR");
+	}
+
+	// ──────────────────────────────────────────────────────────────────────
+	// 9. TabBarItem added via XAML HR
+	// ──────────────────────────────────────────────────────────────────────
+
+	/// <summary>
+	/// XAML HR adds a third <c>TabBarItem</c> with Region.Name="TabThree".
+	/// The route is pre-registered so the SelectorNavigator can navigate to it.
+	/// </summary>
+	[TestMethod]
+	[RunsOnUIThread]
+	public async Task When_TabBarItemAddedViaXamlHR_Then_NewTabNavigable(CancellationToken ct)
+	{
+		await using var app = await SetupXamlThreeRouteAppAsync(ct);
+
+		var hostPage = ResolveCurrentPage<HotReloadTabBarXamlPage>(app.NavigationRoot);
+		hostPage.Should().NotBeNull();
+
+		hostPage!.TabBar.Items.Count.Should().Be(2, "page starts with 2 tabs");
+
+		var tabOneVm = await WaitForTabContentVmAsync(
+			hostPage.ContentGrid, "TabOne", TimeSpan.FromSeconds(30), ct);
+		tabOneVm.Should().NotBeNull();
+
+		// Build replacement with correct line endings (CRLF on Windows).
+		var originalLine =
+			"""<utu:TabBarItem Content="Tab Two" uen:Region.Name="TabTwo" IsSelectable="True" />""";
+		var replacementLines =
+			"""<utu:TabBarItem Content="Tab Two" uen:Region.Name="TabTwo" IsSelectable="True" />""" +
+			Environment.NewLine + "\t\t\t" +
+			"""<utu:TabBarItem Content="Tab Three" uen:Region.Name="TabThree" IsSelectable="True" />""";
+
+		// XAML HR: add a third TabBarItem.
+		await using var _ = await HotReloadHelper.UpdateSourceFile(
+			"../../Uno.Extensions.Navigation.UI.Tests/Pages/HotReloadTabBarXamlPage.xaml",
+			originalLine,
+			replacementLines,
+			ct);
+
+		await Task.Delay(1000, ct);
+
+		// TabBar should now have 3 items.
+		hostPage.TabBar.Items.Count.Should().Be(3,
+			"XAML HR should have added a third TabBarItem");
+
+		// Navigate to the new tab.
+		var tabBarNavigator = await WaitForTabBarNavigatorAsync(
+			hostPage.TabBar, TimeSpan.FromSeconds(30), ct);
+		await tabBarNavigator.NavigateRouteAsync(hostPage, "TabThree");
+
+		var tabThreeVm = await WaitForTabContentVmAsync(
+			hostPage.ContentGrid, "TabThree", TimeSpan.FromSeconds(30), ct);
+		tabThreeVm.Should().NotBeNull(
+			"Newly added TabThree should be navigable after XAML HR");
+	}
+
+	// ──────────────────────────────────────────────────────────────────────
+	// 10. Command binding removed + restored via XAML HR (#2912)
+	// ──────────────────────────────────────────────────────────────────────
+
+	/// <summary>
+	/// Bug #2912: Re-adding a Button.Command binding via XAML HR breaks TabBar switching.
+	/// Phase 1 removes the Command binding — tab switching should still work.
+	/// Phase 2 restores it (via file revert) — #2912 reports tab switching breaks.
+	/// </summary>
+	[TestMethod]
+	[RunsOnUIThread]
+	public async Task When_CommandBindingRemovedAndRestoredViaXamlHR_Then_TabSwitchingStillWorks(CancellationToken ct)
+	{
+		await using var app = await SetupCommandTabAppAsync(ct);
+
+		var hostPage = ResolveCurrentPage<HotReloadTabBarCommandPage>(app.NavigationRoot);
+		hostPage.Should().NotBeNull("Frame should have navigated to HotReloadTabBarCommandPage");
+
+		// Baseline: tab switching works.
+		var tabOneVm = await WaitForTabContentVmAsync(
+			hostPage!.ContentGrid, "TabOne", TimeSpan.FromSeconds(30), ct);
+		tabOneVm.Should().NotBeNull();
+
+		var tabBarNavigator = await WaitForTabBarNavigatorAsync(
+			hostPage.TabBar, TimeSpan.FromSeconds(30), ct);
+		await tabBarNavigator.NavigateRouteAsync(hostPage, "TabTwo");
+
+		var tabTwoVm = await WaitForTabContentVmAsync(
+			hostPage.ContentGrid, "TabTwo", TimeSpan.FromSeconds(30), ct);
+		tabTwoVm.Should().NotBeNull("TabTwo should be navigable before HR");
+
+		// Return to TabOne for the HR test.
+		await tabBarNavigator.NavigateRouteAsync(hostPage, "TabOne");
+		await Task.Delay(200, ct);
+
+		// Phase 1: remove the Command binding.
+		var revert = await HotReloadHelper.UpdateSourceFile(
+			"../../Uno.Extensions.Navigation.UI.Tests/Pages/HotReloadTabBarCommandPage.xaml",
+			"""Content="Navigate" Command="{Binding TestCommand}" """,
+			"""Content="Navigate" """,
+			ct);
+
+		// Tab switching should still work without the Command.
+		await tabBarNavigator.NavigateRouteAsync(hostPage, "TabTwo");
+		await Task.Delay(200, ct);
+
+		FindTabContentVm(hostPage.ContentGrid, "TabTwo").Should().NotBeNull(
+			"Tab switching should work after Command binding removal");
+
+		// Phase 2: file revert re-adds the Command binding via XAML HR.
+		await revert.DisposeAsync();
+		await Task.Delay(1000, ct);
+
+		// #2912: tab switching should still work after Command is restored.
+		await tabBarNavigator.NavigateRouteAsync(hostPage, "TabOne");
+		await Task.Delay(500, ct);
+
+		FindTabContentVm(hostPage.ContentGrid, "TabOne").Should().NotBeNull(
+			"Tab switching should work after Command binding is restored (#2912)");
+	}
+
 	#region Setup helpers
 
 	/// <summary>
@@ -427,6 +634,112 @@ public class Given_TabBarHotReload
 					}));
 			},
 			"HotReloadTabBarThreeTabPage",
+			ct);
+
+	/// <summary>XAML-defined 2-tab TabBar page (TabOne, TabTwo).</summary>
+	private static Task<TabBarTestApp> SetupXamlTwoTabAppAsync(CancellationToken ct)
+		=> SetupTabBarAppAsync(
+			(views, routes) =>
+			{
+				views.Register(
+					new ViewMap<HotReloadTabBarXamlPage>(),
+					new ViewMap<HotReloadTabContentPage, HotReloadTabBarVm>());
+
+				routes.Register(
+					new RouteMap("", Nested: new RouteMap[]
+					{
+						new RouteMap(
+							"HotReloadTabBarXamlPage",
+							View: views.FindByView<HotReloadTabBarXamlPage>(),
+							IsDefault: true,
+							Nested: new RouteMap[]
+							{
+								new RouteMap("TabOne", View: views.FindByView<HotReloadTabContentPage>(), IsDefault: true),
+								new RouteMap("TabTwo", View: views.FindByView<HotReloadTabContentPage>()),
+							}),
+					}));
+			},
+			"HotReloadTabBarXamlPage",
+			ct);
+
+	/// <summary>XAML 2-tab page with pre-registered "TabTwoRenamed" route for rename testing.</summary>
+	private static Task<TabBarTestApp> SetupXamlRenamedRouteAppAsync(CancellationToken ct)
+		=> SetupTabBarAppAsync(
+			(views, routes) =>
+			{
+				views.Register(
+					new ViewMap<HotReloadTabBarXamlPage>(),
+					new ViewMap<HotReloadTabContentPage, HotReloadTabBarVm>());
+
+				routes.Register(
+					new RouteMap("", Nested: new RouteMap[]
+					{
+						new RouteMap(
+							"HotReloadTabBarXamlPage",
+							View: views.FindByView<HotReloadTabBarXamlPage>(),
+							IsDefault: true,
+							Nested: new RouteMap[]
+							{
+								new RouteMap("TabOne", View: views.FindByView<HotReloadTabContentPage>(), IsDefault: true),
+								new RouteMap("TabTwo", View: views.FindByView<HotReloadTabContentPage>()),
+								new RouteMap("TabTwoRenamed", View: views.FindByView<HotReloadTabContentPage>()),
+							}),
+					}));
+			},
+			"HotReloadTabBarXamlPage",
+			ct);
+
+	/// <summary>XAML 2-tab page with pre-registered "TabThree" route for add-item testing.</summary>
+	private static Task<TabBarTestApp> SetupXamlThreeRouteAppAsync(CancellationToken ct)
+		=> SetupTabBarAppAsync(
+			(views, routes) =>
+			{
+				views.Register(
+					new ViewMap<HotReloadTabBarXamlPage>(),
+					new ViewMap<HotReloadTabContentPage, HotReloadTabBarVm>());
+
+				routes.Register(
+					new RouteMap("", Nested: new RouteMap[]
+					{
+						new RouteMap(
+							"HotReloadTabBarXamlPage",
+							View: views.FindByView<HotReloadTabBarXamlPage>(),
+							IsDefault: true,
+							Nested: new RouteMap[]
+							{
+								new RouteMap("TabOne", View: views.FindByView<HotReloadTabContentPage>(), IsDefault: true),
+								new RouteMap("TabTwo", View: views.FindByView<HotReloadTabContentPage>()),
+								new RouteMap("TabThree", View: views.FindByView<HotReloadTabContentPage>()),
+							}),
+					}));
+			},
+			"HotReloadTabBarXamlPage",
+			ct);
+
+	/// <summary>Command page with TabBar (TabOne, TabTwo) + Button Command binding for #2912 testing.</summary>
+	private static Task<TabBarTestApp> SetupCommandTabAppAsync(CancellationToken ct)
+		=> SetupTabBarAppAsync(
+			(views, routes) =>
+			{
+				views.Register(
+					new ViewMap<HotReloadTabBarCommandPage>(),
+					new ViewMap<HotReloadTabContentPage, HotReloadTabBarVm>());
+
+				routes.Register(
+					new RouteMap("", Nested: new RouteMap[]
+					{
+						new RouteMap(
+							"HotReloadTabBarCommandPage",
+							View: views.FindByView<HotReloadTabBarCommandPage>(),
+							IsDefault: true,
+							Nested: new RouteMap[]
+							{
+								new RouteMap("TabOne", View: views.FindByView<HotReloadTabContentPage>(), IsDefault: true),
+								new RouteMap("TabTwo", View: views.FindByView<HotReloadTabContentPage>()),
+							}),
+					}));
+			},
+			"HotReloadTabBarCommandPage",
 			ct);
 
 	#endregion
