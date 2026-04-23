@@ -1,4 +1,4 @@
-﻿---
+---
 uid: Uno.Extensions.Mvux.ListStates
 ---
 
@@ -14,7 +14,7 @@ Recall that feeds are stateless and are only read-only data output to the View, 
 
 So an `IState<T>` is a stateful feed of a single item of `T`, whereas an `IListState<T>` is a stateful feed of multiple items of `T`.
 
-## How to create a list-state
+## How To: Create a list-state
 
 The static `ListState` class provides factory methods for creating `IListState<T>` objects, here they are:
 
@@ -56,6 +56,8 @@ public IListState<string> Favorites => ListState.Async(this, GetStrings);
 
 ### AsyncEnumerable
 
+Creates a list-state from an async enumerable method, that's capable of yielding multiple items instead of a single collection:
+
 ```csharp
 public async IAsyncEnumerable<IImmutableList<string>> GetStrings([EnumeratorCancellation] CancellationToken ct)
 {
@@ -65,18 +67,20 @@ public async IAsyncEnumerable<IImmutableList<string>> GetStrings([EnumeratorCanc
 public IListState<string> Favorites => ListState.AsyncEnumerable(this, GetStrings);
 ```
 
-#### FromFeed
+### FromFeed
+
+Extracts the data from an existing `IFeed<IImmutableList<T>>` or `IListFeed<T>` into the new `IListState<T>`:
 
 ```csharp
 public IListFeed<string> FavoritesFeed => ...
 public IListState<string> FavoritesState => ListState.FromFeed(this, FavoritesFeed);
 ```
 
-### Operators
+## Operators
 
 In the following examples, we'll refer to `MyStrings` which is an `IListState<string>`, to demonstrate how to use the various operators `IListState<T>` provides to update its state with modified data.
 
-#### Add
+### Add
 
 The `AddAsync` method adds an item to the end of the List State:
 
@@ -84,7 +88,7 @@ The `AddAsync` method adds an item to the end of the List State:
 await MyStrings.AddAsync("Gord Downie", cancellationToken);
 ```
 
-#### Insert
+### Insert
 
 The `InsertAsync` method inserts an item to the beginning of the List State:
 
@@ -92,11 +96,15 @@ The `InsertAsync` method inserts an item to the beginning of the List State:
 await MyStrings.InsertAsync("Margaret Atwood", cancellationToken);
 ```
 
-#### Update
+### Update
 
 There are various ways to update values in the list-state:
 
-The `Update` method has an `updater` parameter like the `State` does.
+<!--TODO: Add introduction into the `Update()` method which works with EntityMessage but we don't have that documented yet-->
+
+#### `UpdateAsync` - Single Item Update
+
+The `UpdateAsync` method has an `updater` parameter like the `State` does.
 This parameter is a `Func<IImmutableList<T>, IImmutableList<T>>`, which when called passes in the existing collection, allows you to apply your modifications to it, and then returns it.
 
 For example:
@@ -104,7 +112,7 @@ For example:
 ```csharp
 public async ValueTask TrimAll(CancellationToken ct = default)
 {
-    await MyStrings.Update(
+    await MyStrings.UpdateAsync(
         updater: existing =>
             existing
             .Select(item =>
@@ -113,6 +121,8 @@ public async ValueTask TrimAll(CancellationToken ct = default)
         ct: ct);
 }
 ```
+
+#### `UpdateAllAsync` – Multi Item Update
 
 Another overload is `UpdateAllAsync`, which allows you to apply an update on items that match a criteria. The `match` predicate is checked for each item. If the item matches the criteria, the updater is invoked which returns a new instance of the item with the update applied:
 
@@ -126,7 +136,51 @@ public async ValueTask TrimLongNames(CancellationToken ct = default)
 }
 ```
 
+#### `UpdateAllAsync` with simple types
+
+When working with simple types like `string`, you can use the `UpdateAllAsync` method to update multiple items based on a matching condition. Here's an example that demonstrates how to selectively replace one or more items in a list of strings:
+
+```csharp
+public IListState<string> Members => ListState<string>.Value(this,
+    () => ImmutableList.Create(
+        [
+            "Alice",
+            "Bob",
+            "Charlie",
+            "David",
+            "Eve"
+        ]
+    )
+    .Selection(SelectedMember);
+
+public IState<string> SelectedMember => State<string>.Value(this,() => string.Empty);
+
+public IState<string> ModifiedMemberName => State<string>.Empty(this);
+
+public async ValueTask RenameMemberAsync(string modifiedMemberName, CancellationToken ct)
+{
+    var replaceMember = await SelectedMember.GetValueAsync(ct);
+
+    if (string.IsNullOrWhiteSpace(modifiedMemberName))
+        return;
+
+    await Members.UpdateAllAsync(
+        match: item => item == replaceMember,
+        updater: _ => modifiedMemberName,
+        ct: ct
+    );
+
+    await Members.TrySelectAsync(modifiedMemberName, ct);
+}
+```
+
+Unlike the previous examples where we worked with complex types like records that would support instantiation with `new`, simple types like `string` cannot. So to reach the replacement in this case, we drop the existing item by using `_ =>` and return the new value directly from the `updater` function.
+
+#### `UpdateItemAsync` - Key-based selective Item Update
+
 Two more overloads are available for items that implement `IKeyEquatable<T>` :
+
+##### [Updating the properties of an existing Item](#tab/updateitemasync-updating-properties)
 
 `UpdateItemAsync` is another overload that allows you to apply an update on items that match the `key` of the specified item. The `key` is validated for each item. For every item that matches, the updater is invoked, returning a new instance of the item with the update applied:
 
@@ -153,6 +207,8 @@ public async ValueTask MakeUpperCase(CancellationToken ct = default)
         ct: ct);
 }
 ```
+
+##### [Replace with new Item](#tab/updateitemasync-replace)
 
 Instead of using the `updater`, you can also pass in a new item to replace the old one:
 
@@ -202,7 +258,7 @@ This feature enables flagging single or multiple items in the State as 'selected
 Selection works seamlessly and automatically with the `ListView` and other selection controls.
 In case you need to select an item manually for example in response to a button pressed or when finding a searched item, you can use the following methods that enable manual changing of the Selection state of items in the list-state:
 
-#### TrySelectAsync
+#### `TrySelectAsync` - Select item(s)
 
 The `TrySelectAsync` method attempts to find the first occurrence of the item or items passed in as an argument and flag it as 'selected'.
 
@@ -233,12 +289,12 @@ private ValueTask SelectCharlieAndJoe(CancellationToken ct)
 }
 ```
 
-#### ClearSelection
+#### `ClearSelectionAsync` - Unselect all items
 
-The `ClearSelection` method clears the current selection and flags all items as 'not selected':
+The `ClearSelectionAsync` method clears the current selection and flags all items as 'not selected':
 
 ```csharp
-await MyStrings.ClearSelection(cancellationToken);
+await MyStrings.ClearSelectionAsync(cancellationToken);
 ```
 
 ### Subscribing to the selection
