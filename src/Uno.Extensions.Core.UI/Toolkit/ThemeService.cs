@@ -8,6 +8,7 @@ internal class ThemeService : IThemeService, IDisposable
 	private readonly ILogger? _logger;
 	private readonly ISettings _settings;
 	private TaskCompletionSource<bool>? _initialization;
+	private bool _isApplyingTheme;
 
 	/// <inheritdoc/>
 	public event EventHandler<AppTheme>? ThemeChanged;
@@ -82,6 +83,11 @@ internal class ThemeService : IThemeService, IDisposable
 
 	private void ElementThemeChanged(FrameworkElement sender, object args)
 	{
+		if (_isApplyingTheme)
+		{
+			return;
+		}
+
 		var savedTheme = GetSavedTheme();
 		if (savedTheme == AppTheme.System)
 		{
@@ -93,13 +99,13 @@ internal class ThemeService : IThemeService, IDisposable
 			return;
 		}
 
-		_ = InternalSetThemeAsync(sender.ActualTheme switch
-		{
-			ElementTheme.Default => AppTheme.System,
-			ElementTheme.Dark => AppTheme.Dark,
-			ElementTheme.Light => AppTheme.Light,
-			_ => AppTheme.System,
-		});
+		// External theme change (e.g., ancestor RequestedTheme changed by
+		// a hosting environment). Don't re-apply via InternalSetThemeAsync:
+		// sender.ActualTheme is stale during this callback (returns the OLD
+		// value because SetTheme() runs after the event in the theme walk),
+		// so re-applying would set RequestedTheme to the old theme, creating
+		// a conflicting theme boundary.
+		ThemeChanged?.Invoke(this, savedTheme);
 	}
 
 	/// <inheritdoc/>
@@ -140,13 +146,21 @@ internal class ThemeService : IThemeService, IDisposable
 			return false;
 		}
 
-		rootElement.RequestedTheme = theme switch
+		_isApplyingTheme = true;
+		try
 		{
-			AppTheme.System => ElementTheme.Default,
-			AppTheme.Dark => ElementTheme.Dark,
-			AppTheme.Light => ElementTheme.Light,
-			_ => ElementTheme.Default,
-		};
+			rootElement.RequestedTheme = theme switch
+			{
+				AppTheme.System => ElementTheme.Default,
+				AppTheme.Dark => ElementTheme.Dark,
+				AppTheme.Light => ElementTheme.Light,
+				_ => ElementTheme.Default,
+			};
+		}
+		finally
+		{
+			_isApplyingTheme = false;
+		}
 
 		SaveDesiredTheme(theme);
 
@@ -154,8 +168,8 @@ internal class ThemeService : IThemeService, IDisposable
 		{
 			ThemeChanged?.Invoke(this, theme);
 		}
-		return true;
 
+		return true;
 	}
 
 	private void SaveDesiredTheme(AppTheme theme)
