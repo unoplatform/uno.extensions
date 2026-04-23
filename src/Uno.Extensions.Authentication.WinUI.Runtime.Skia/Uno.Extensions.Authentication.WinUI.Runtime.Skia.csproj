@@ -1,0 +1,32 @@
+<Project Sdk="Uno.Sdk">
+	<PropertyGroup>
+		<TargetFrameworks Condition="'$(Build_Desktop)'=='true'">$(TargetFrameworks);net9.0-desktop</TargetFrameworks>
+		<TargetFrameworks>$(TargetFrameworks);net9.0</TargetFrameworks>
+	</PropertyGroup>
+	<PropertyGroup>
+		<WindowsSdkPackageVersion>10.0.19041.57</WindowsSdkPackageVersion>
+	</PropertyGroup>
+	<PropertyGroup>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<NoWarn>$(NoWarn);NU5104;NU5048;NU1009</NoWarn>
+		<Description>Skia Desktop support package for Web Authentication in Uno.Extensions (OIDC, MSAL, Web Auth).</Description>
+		<!--Temporary disable missing XML doc until fixed in the whole package-->
+		<WarningsNotAsErrors>$(WarningsNotAsErrors);CS1591</WarningsNotAsErrors>
+		<UnoSingleProject>true</UnoSingleProject>
+		<OutputType>Library</OutputType>
+		<DefineConstants>$(DefineConstants);SKIA_DESKTOP_AUTH</DefineConstants>
+		<UnoFeatures>
+			SkiaRenderer;
+		</UnoFeatures>
+	</PropertyGroup>
+	<PropertyGroup>
+		<PackageId>Uno.Extensions.Authentication.WinUI.Runtime.Skia</PackageId>
+	</PropertyGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\Uno.Extensions.Authentication.UI\Uno.Extensions.Authentication.WinUI.csproj" />
+	</ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Uno.WinUI" />
+	</ItemGroup>
+</Project>
