@@ -9,6 +9,6 @@ internal static class HotReloadRouteGate
 {
 	internal static bool IsAvailable()
 	{
-		return false;
+		return true;
 	}
 }

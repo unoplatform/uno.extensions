@@ -267,8 +267,8 @@ public class Given_TabBarHotReload
 			hostPage.TabBar, TimeSpan.FromSeconds(30), ct);
 		await tabBarNavigator.NavigateRouteAsync(hostPage, "TabThree");
 
-		// Give the redirect a moment to settle, then verify TabThree content is absent.
-		await Task.Delay(500, ct);
+		// Poll until TabThree is confirmed absent (redirect to TabOne should happen quickly).
+		await WaitForTabAbsentAsync(hostPage.ContentGrid, "TabThree", TimeSpan.FromSeconds(5), ct);
 		var tabThreeBeforeHR = FindTabContentVm(hostPage.ContentGrid, "TabThree");
 		tabThreeBeforeHR.Should().BeNull(
 			"while the Init gate is closed, TabThree should not populate content");
@@ -319,11 +319,9 @@ public class Given_TabBarHotReload
 			"""<utu:TabBar x:Name="TB" Grid.Row="1">""",
 			ct);
 
-		// Give the visual tree time to settle after XAML HR.
-		await Task.Delay(1000, ct);
-
-		// XAML HR replaces the page — re-resolve to check the NEW page's state.
-		var activePage = ResolveCurrentPage<HotReloadTabBarXamlPage>(app.NavigationRoot)!;
+		// Wait for XAML HR to replace the page instance.
+		var activePage = await WaitForPageReplacementAsync<HotReloadTabBarXamlPage>(
+			app.NavigationRoot, hostPage, TimeSpan.FromSeconds(10), ct);
 
 		// The NEW page's content area should NOT be blank (#2971 causes this).
 		activePage.ContentGrid.Children.Count.Should().BeGreaterThan(0,
@@ -373,12 +371,16 @@ public class Given_TabBarHotReload
 			"""<utu:TabBarItem Content="Tab Two" uen:Region.Name="TabTwoRenamed" IsSelectable="True" />""",
 			ct);
 
-		await Task.Delay(1000, ct);
+		// Wait for XAML HR to produce a page with the renamed region.
+		// Uses content-aware polling because async XAML HR from a prior test's
+		// file revert (same .xaml file) could race with this test's modification.
+		var activePage = await WaitForPageMatchingAsync<HotReloadTabBarXamlPage>(
+			app.NavigationRoot,
+			page => page.TabBar.Items.OfType<FrameworkElement>()
+				.Any(i => Uno.Extensions.Navigation.UI.Region.GetName(i) == "TabTwoRenamed"),
+			TimeSpan.FromSeconds(30), ct);
 
-		// XAML HR replaces the page instance — re-resolve to get the new one.
-		var activePage = ResolveCurrentPage<HotReloadTabBarXamlPage>(app.NavigationRoot)!;
-
-		// Verify the Region.Name DP was updated on the new page's TabBarItems.
+		// Sanity-check: full region name list on the replaced page.
 		var regionNames = activePage.TabBar.Items.OfType<FrameworkElement>()
 			.Select(i => Uno.Extensions.Navigation.UI.Region.GetName(i))
 			.ToList();
@@ -389,9 +391,9 @@ public class Given_TabBarHotReload
 		var activeNavigator = await WaitForTabBarNavigatorAsync(
 			activePage.TabBar, TimeSpan.FromSeconds(30), ct);
 		await activeNavigator.NavigateRouteAsync(activePage, "TabTwoRenamed");
-		await Task.Delay(500, ct);
 
-		var renamedVm = FindTabContentVm(activePage.ContentGrid, "TabTwoRenamed");
+		var renamedVm = await WaitForTabContentVmAsync(
+			activePage.ContentGrid, "TabTwoRenamed", TimeSpan.FromSeconds(30), ct);
 		renamedVm.Should().NotBeNull(
 			"Navigation should resolve the renamed Region.Name after XAML HR");
 	}
@@ -402,7 +404,11 @@ public class Given_TabBarHotReload
 
 	/// <summary>
 	/// XAML HR adds a third <c>TabBarItem</c> with Region.Name="TabThree".
-	/// The route is pre-registered so the SelectorNavigator can navigate to it.
+	/// The route is pre-registered in <see cref="SetupXamlThreeRouteAppAsync"/> so
+	/// the SelectorNavigator can resolve it. In a real application, adding a new
+	/// TabBarItem via XAML HR would also require updating the route registration
+	/// in C# (which would itself be a separate HR delta). This test isolates the
+	/// XAML-side behavior by pre-registering the route ahead of time.
 	/// XAML HR replaces the page instance — references must be re-resolved after HR.
 	/// </summary>
 	[TestMethod]
@@ -435,12 +441,15 @@ public class Given_TabBarHotReload
 			replacementLines,
 			ct);
 
-		await Task.Delay(1000, ct);
+		// Wait for XAML HR to produce a page with 3 tabs.
+		// Uses content-aware polling because async XAML HR from a prior test's
+		// file revert (same .xaml file) could race with this test's modification.
+		var activePage = await WaitForPageMatchingAsync<HotReloadTabBarXamlPage>(
+			app.NavigationRoot,
+			page => page.TabBar.Items.Count == 3,
+			TimeSpan.FromSeconds(30), ct);
 
-		// XAML HR replaces the page instance — re-resolve to get the new one.
-		var activePage = ResolveCurrentPage<HotReloadTabBarXamlPage>(app.NavigationRoot)!;
-
-		// TabBar should now have 3 items on the replaced page.
+		// Sanity-check: the replaced page has 3 TabBarItems.
 		activePage.TabBar.Items.Count.Should().Be(3,
 			"XAML HR should have added a third TabBarItem on the replaced page");
 
@@ -488,7 +497,8 @@ public class Given_TabBarHotReload
 
 		// Return to TabOne for the HR test.
 		await tabBarNavigator.NavigateRouteAsync(hostPage, "TabOne");
-		await Task.Delay(200, ct);
+		await WaitForTabContentVmAsync(
+			hostPage.ContentGrid, "TabOne", TimeSpan.FromSeconds(30), ct);
 
 		// Phase 1: remove the Command binding.
 		var revert = await HotReloadHelper.UpdateSourceFile(
@@ -499,20 +509,27 @@ public class Given_TabBarHotReload
 
 		// Tab switching should still work without the Command.
 		await tabBarNavigator.NavigateRouteAsync(hostPage, "TabTwo");
-		await Task.Delay(200, ct);
-
-		FindTabContentVm(hostPage.ContentGrid, "TabTwo").Should().NotBeNull(
+		var tabTwoAfterRemoval = await WaitForTabContentVmAsync(
+			hostPage.ContentGrid, "TabTwo", TimeSpan.FromSeconds(30), ct);
+		tabTwoAfterRemoval.Should().NotBeNull(
 			"Tab switching should work after Command binding removal");
 
 		// Phase 2: file revert re-adds the Command binding via XAML HR.
 		await revert.DisposeAsync();
-		await Task.Delay(1000, ct);
+
+		// Wait for the reverted page to load (XAML HR replaces the page).
+		await WaitForPageReplacementAsync<HotReloadTabBarCommandPage>(
+			app.NavigationRoot, hostPage, TimeSpan.FromSeconds(10), ct);
 
 		// #2912: tab switching should still work after Command is restored.
-		await tabBarNavigator.NavigateRouteAsync(hostPage, "TabOne");
-		await Task.Delay(500, ct);
-
-		FindTabContentVm(hostPage.ContentGrid, "TabOne").Should().NotBeNull(
+		// Re-resolve page and navigator since XAML HR replaced the instance.
+		var revertedPage = ResolveCurrentPage<HotReloadTabBarCommandPage>(app.NavigationRoot)!;
+		var revertedNavigator = await WaitForTabBarNavigatorAsync(
+			revertedPage.TabBar, TimeSpan.FromSeconds(30), ct);
+		await revertedNavigator.NavigateRouteAsync(revertedPage, "TabOne");
+		var tabOneAfterRestore = await WaitForTabContentVmAsync(
+			revertedPage.ContentGrid, "TabOne", TimeSpan.FromSeconds(30), ct);
+		tabOneAfterRestore.Should().NotBeNull(
 			"Tab switching should work after Command binding is restored (#2912)");
 	}
 
@@ -886,6 +903,84 @@ public class Given_TabBarHotReload
 			return frame.Content as TPage;
 		}
 		return root.Content as TPage;
+	}
+
+	/// <summary>
+	/// Polls until XAML HR replaces the page instance (new object reference != old).
+	/// </summary>
+	private static async Task<TPage> WaitForPageReplacementAsync<TPage>(
+		ContentControl root,
+		TPage oldPage,
+		TimeSpan timeout,
+		CancellationToken ct) where TPage : class
+	{
+		var sw = System.Diagnostics.Stopwatch.StartNew();
+		while (sw.Elapsed < timeout)
+		{
+			ct.ThrowIfCancellationRequested();
+			var current = ResolveCurrentPage<TPage>(root);
+			if (current is not null && !ReferenceEquals(current, oldPage))
+			{
+				return current;
+			}
+			await Task.Delay(50, ct);
+		}
+
+		throw new TimeoutException(
+			$"XAML HR did not replace the {typeof(TPage).Name} instance within {timeout.TotalSeconds:F0}s.");
+	}
+
+	/// <summary>
+	/// Polls until the current page matches a content condition.
+	/// Unlike <see cref="WaitForPageReplacementAsync{TPage}"/> which checks only
+	/// for a different object reference, this waits for the page to have specific
+	/// content — avoiding false positives from stale replacements caused by a
+	/// prior test's async file revert on the same .xaml.
+	/// </summary>
+	private static async Task<TPage> WaitForPageMatchingAsync<TPage>(
+		ContentControl root,
+		Func<TPage, bool> condition,
+		TimeSpan timeout,
+		CancellationToken ct) where TPage : class
+	{
+		var sw = System.Diagnostics.Stopwatch.StartNew();
+		while (sw.Elapsed < timeout)
+		{
+			ct.ThrowIfCancellationRequested();
+			var current = ResolveCurrentPage<TPage>(root);
+			if (current is not null && condition(current))
+			{
+				return current;
+			}
+			await Task.Delay(50, ct);
+		}
+
+		throw new TimeoutException(
+			$"No {typeof(TPage).Name} matching the expected content appeared within {timeout.TotalSeconds:F0}s.");
+	}
+
+	/// <summary>
+	/// Polls until a specific tab region is confirmed absent from the content grid.
+	/// </summary>
+	private static async Task WaitForTabAbsentAsync(
+		Grid contentGrid,
+		string regionName,
+		TimeSpan timeout,
+		CancellationToken ct)
+	{
+		var sw = System.Diagnostics.Stopwatch.StartNew();
+		while (sw.Elapsed < timeout)
+		{
+			ct.ThrowIfCancellationRequested();
+			if (FindTabContentVm(contentGrid, regionName) is null)
+			{
+				return;
+			}
+			await Task.Delay(50, ct);
+		}
+
+		throw new TimeoutException(
+			$"Tab '{regionName}' was still present after {timeout.TotalSeconds:F0}s.");
 	}
 
 	private static async Task WaitForRouteAsync(
