@@ -274,16 +274,36 @@ Uses Uno Toolkit's `TabBar` + `TabBarItem` with `Region.Name` on each item. See 
 See docs: *HowTo / ShowDialog*. The view *type* decides dialog vs flyout:
 `ContentDialog` → Modal, `Page` → Flyout. Both take the `!` qualifier / `Qualifiers.Dialog`.
 
-- **ID**: `When_ShowFlyoutAfterUpdate_Then_FlyoutReflectsUpdate`
-- **Layout**: A `Page`-typed `HotReloadFlyoutView` registered as a dialog target. Main
-  page shows it via `navigator.NavigateRouteAsync(this, "!HotReloadFlyoutView")` (or
-  `ShowDialog<T>`).
-- **HR change**: Method body on the flyout view's DataContext.
-- **Trigger**: Dismiss and re-show the flyout.
-- **Assertion**: Re-shown flyout reflects the update.
-- **Risk**: Flyouts are reparented into a popup surface, not the main visual root. XAML HR
-  traversal has to reach popup content. Assert against an observable bound value; don't
-  poke private popup internals.
+- **ID**: `When_ShowFlyoutAfterUpdate_Then_FlyoutReflectsUpdateAndFrameStaysStable`
+- **Goal**: HR on a `Flyout`-typed view, proving both (a) re-shown flyouts reflect the
+  update and (b) the flyout lifecycle does not disturb the underlying Frame's navigation.
+- **Layout**: `HotReloadPageOne` (uses `HotReloadTarget`) is the Frame's underlying page.
+  `HotReloadFlyoutView : Flyout` is registered via `ViewMap<HotReloadFlyoutView>()` and a
+  sibling `RouteMap("HotReloadFlyoutView", ...)`. The flyout reads
+  `HotReloadFlyoutTarget.GetValue()` in its ctor; a static `HotReloadFlyoutView.Current`
+  lets the test reach the live flyout without walking the popup layer.
+- **HR change**: Flip `HotReloadFlyoutTarget.GetValue()` from `"original"` to `"updated"`.
+- **Trigger**: `FrameNavigator.NavigateRouteAsync(this, "!HotReloadFlyoutView")`. The `!`
+  qualifier + `IsDialogViewType` auto-detection (Flyout subclass) routes the request
+  through `FlyoutNavigator`, which builds a fresh Flyout via `CreateInstance` and calls
+  `ShowAt(placementTarget)` (Region.View / window content when the sender isn't a
+  `FrameworkElement`). Close each show with `flyout.Hide()`; the `Closed` event clears
+  `Current`.
+- **Assertion**:
+  - Pre-HR flyout's `DisplayedValue == "original"`.
+  - After close: `FrameNavigator.Route.Base == "HotReloadPageOne"` and the underlying
+    `HotReloadPageOne` instance is the same (by reference) as before the flyout opened.
+  - Post-HR flyout is a **new** instance and its `DisplayedValue == "updated"`.
+  - Across the full cycle: underlying page's `DisplayedValue` stays `"original"` and
+    `FrameNavigator.Route.Base` stays pinned to `HotReloadPageOne`. HR on the flyout's
+    target does not bleed into the underlying page or the Frame.
+- **Risk**: Flyouts are reparented into a popup surface, not the main visual root. For C#
+  HR on the Flyout subclass ctor this isn't an issue (each nav builds a new instance);
+  for XAML HR on popup content it would be. `FlyoutNavigator.ExecuteRequestAsync` returns
+  `route with { Path = null }` for non-injected flyout types so the Frame's route is
+  untouched — but `FlyoutNavigator.Flyout_Closed` calls `NavigateBackAsync` on the
+  scoped dialog region (not the Frame's region), so the outer Frame stays put.
+- **Status (2026-04-23)**: Implemented and passing end-to-end on Skia desktop.
 
 - **ID**: `When_ShowModalAfterUpdate_Then_ModalReflectsUpdateAndFrameStaysStable`
 - **Goal**: HR on a modal (`ContentDialog`-typed) view, and prove the modal lifecycle

@@ -355,6 +355,132 @@ public class Given_HotReload
 			"Frame's Route must remain on HotReloadPageOne after the full modal+HR cycle");
 	}
 
+	/// <summary>
+	/// Proves that a hot-reload edit to a <see cref="Microsoft.UI.Xaml.Controls.Flyout"/>-typed view
+	/// surfaces on each fresh flyout instance and does not disturb the underlying Frame's navigation.
+	/// <see cref="Uno.Extensions.Navigation.Navigators.FlyoutNavigator"/> presents the flyout via
+	/// <c>ShowAt(placementTarget)</c> — it does not push onto the Frame's back stack and does not
+	/// replace the Frame's current page (<c>FlyoutNavigator.ExecuteRequestAsync</c> returns
+	/// <c>route with { Path = null }</c> for non-injected flyout types, so the Frame's route is
+	/// untouched). The test: navigates to <see cref="HotReloadPageOne"/>, shows the flyout, applies
+	/// an HR edit to the flyout's target, re-shows the flyout, and asserts throughout that the
+	/// Frame's route stays pinned to the underlying page and that the underlying page instance/value
+	/// is never mutated.
+	/// </summary>
+	[TestMethod]
+	[RunsOnUIThread]
+	public async Task When_ShowFlyoutAfterUpdate_Then_FlyoutReflectsUpdateAndFrameStaysStable(CancellationToken ct)
+	{
+		await using var app = await SetupAppAsync(
+			registerViewsAndRoutes: (views, routes) =>
+			{
+				views.Register(
+					new ViewMap<HotReloadPageOne>(),
+					new ViewMap<HotReloadFlyoutView>());
+
+				routes.Register(
+					new RouteMap("", Nested: new RouteMap[]
+					{
+						new RouteMap("HotReloadPageOne", View: views.FindByView<HotReloadPageOne>(), IsDefault: true),
+						new RouteMap("HotReloadFlyoutView", View: views.FindByView<HotReloadFlyoutView>()),
+					}));
+			},
+			initialRoute: "HotReloadPageOne",
+			ct);
+
+		var page1 = ResolveCurrentPage<HotReloadPageOne>(app.NavigationRoot);
+		page1.Should().NotBeNull("Frame should have navigated to HotReloadPageOne");
+		page1!.DisplayedValue.Should().Be("original");
+
+		// Pre-HR: show the flyout. The "!" qualifier (auto-detection via IsDialogViewType —
+		// HotReloadFlyoutView subclasses Flyout) routes the request through FlyoutNavigator.
+		// DisplayFlyout builds a fresh HotReloadFlyoutView via CreateInstance and calls ShowAt
+		// using Region.View (or the window's content) as the placement target. The Frame is
+		// untouched: ExecuteRequestAsync returns `route with { Path = null }` for non-injected
+		// flyout types.
+		await app.FrameNavigator.NavigateRouteAsync(this, "!HotReloadFlyoutView");
+
+		var flyoutBefore = await WaitForFlyoutAsync(TimeSpan.FromSeconds(30), ct);
+		flyoutBefore.DisplayedValue.Should().Be("original",
+			"pre-HR flyout ctor should capture the unchanged method body");
+		app.FrameNavigator.Route?.Base.Should().Be("HotReloadPageOne",
+			"showing a flyout must not replace the Frame's underlying page");
+
+		flyoutBefore.Hide();
+		await WaitForFlyoutClosedAsync(TimeSpan.FromSeconds(10), ct);
+
+		ResolveCurrentPage<HotReloadPageOne>(app.NavigationRoot).Should().BeSameAs(page1,
+			"closing the flyout must not remount or replace the underlying page instance");
+		app.FrameNavigator.Route?.Base.Should().Be("HotReloadPageOne",
+			"closing the flyout must leave the Frame's route untouched");
+
+		// HR: flip the flyout's target. Disposal reverts the file on scope exit.
+		await using var _ = await HotReloadHelper.UpdateSourceFile(
+			"../../Uno.Extensions.Navigation.UI.Tests/HotReloadFlyoutTarget.cs",
+			"""return "original";""",
+			"""return "updated";""",
+			ct);
+
+		// Post-HR: re-show the flyout. FlyoutNavigator constructs a fresh Flyout per navigation
+		// (DisplayFlyout → CreateInstance), so the new ctor runs against the HR'd method body.
+		await app.FrameNavigator.NavigateRouteAsync(this, "!HotReloadFlyoutView");
+
+		var flyoutAfter = await WaitForFlyoutAsync(TimeSpan.FromSeconds(30), ct);
+		flyoutAfter.Should().NotBeSameAs(flyoutBefore,
+			"FlyoutNavigator constructs a fresh flyout per navigation — the HR delta is observed via the new instance");
+		flyoutAfter.DisplayedValue.Should().Be("updated",
+			"post-HR flyout ctor should read the updated method body");
+
+		// Core claim: HR on the flyout's target does not bleed into the underlying page or the
+		// Frame's navigation state.
+		page1.DisplayedValue.Should().Be("original",
+			"underlying page's DisplayedValue was captured pre-HR and must remain unchanged");
+		app.FrameNavigator.Route?.Base.Should().Be("HotReloadPageOne",
+			"post-HR flyout show must not replace the Frame's underlying page");
+
+		flyoutAfter.Hide();
+		await WaitForFlyoutClosedAsync(TimeSpan.FromSeconds(10), ct);
+
+		ResolveCurrentPage<HotReloadPageOne>(app.NavigationRoot).Should().BeSameAs(page1,
+			"closing the post-HR flyout must not remount the underlying page");
+		app.FrameNavigator.Route?.Base.Should().Be("HotReloadPageOne",
+			"Frame's Route must remain on HotReloadPageOne after the full flyout+HR cycle");
+	}
+
+	private static async Task<HotReloadFlyoutView> WaitForFlyoutAsync(TimeSpan timeout, CancellationToken ct)
+	{
+		var sw = System.Diagnostics.Stopwatch.StartNew();
+		while (sw.Elapsed < timeout)
+		{
+			ct.ThrowIfCancellationRequested();
+			if (HotReloadFlyoutView.Current is { } flyout)
+			{
+				return flyout;
+			}
+			await Task.Delay(50, ct);
+		}
+
+		throw new TimeoutException(
+			$"Flyout (HotReloadFlyoutView.Current) did not appear within {timeout.TotalSeconds:F0}s.");
+	}
+
+	private static async Task WaitForFlyoutClosedAsync(TimeSpan timeout, CancellationToken ct)
+	{
+		var sw = System.Diagnostics.Stopwatch.StartNew();
+		while (sw.Elapsed < timeout)
+		{
+			ct.ThrowIfCancellationRequested();
+			if (HotReloadFlyoutView.Current is null)
+			{
+				return;
+			}
+			await Task.Delay(50, ct);
+		}
+
+		throw new TimeoutException(
+			$"Flyout did not close within {timeout.TotalSeconds:F0}s.");
+	}
+
 	private static async Task<HotReloadModalDialog> WaitForModalAsync(TimeSpan timeout, CancellationToken ct)
 	{
 		var sw = System.Diagnostics.Stopwatch.StartNew();
