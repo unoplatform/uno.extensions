@@ -7,11 +7,23 @@ public abstract class SelectorNavigator<TControl> : ControlNavigator<TControl>
 {
 	private Action? _detachSelectionChanged;
 
+	// Tracks whether Show() has been called by the normal route cascade.
+	// Used to detect when the initial selection was missed during XAML HR.
+	private bool _showCalled;
+
 	public override void ControlInitialize()
 	{
+		_showCalled = false;
 		if (Control is not null)
 		{
 			_detachSelectionChanged = AttachSelectionChanged((sender, selected) => _ = SelectionChanged(sender, selected));
+
+			// Schedule a deferred check for missed initial selection. During XAML HR,
+			// the selector fires SelectionChanged before this navigator is created,
+			// so the event is lost and content stays blank. On normal first load,
+			// Show() is called by the route cascade in the same dispatch cycle,
+			// setting _showCalled=true before this deferred check runs (no-op).
+			_ = DeferredInitialSelectionCheckAsync();
 		}
 		else
 		{
@@ -20,6 +32,27 @@ public abstract class SelectorNavigator<TControl> : ControlNavigator<TControl>
 				Logger.LogWarningMessage($"Control is null, so unable to attach selection changed handler");
 			}
 		}
+	}
+
+	private async Task DeferredInitialSelectionCheckAsync()
+	{
+		// Yield to the next dispatch cycle. On normal first load, the route cascade
+		// calls Show() in the current cycle, so _showCalled is already true by now.
+		// On XAML HR, no route cascade occurs, so _showCalled stays false.
+		await Dispatcher.ExecuteAsync(async ct =>
+		{
+			if (!_showCalled &&
+				SelectedItem is { } selected &&
+				Region.View is FrameworkElement view)
+			{
+				if (Logger.IsEnabled(LogLevel.Debug))
+				{
+					Logger.LogDebugMessage($"Triggering navigation for missed initial selection (XAML HR)");
+				}
+
+				await SelectionChanged(view, selected);
+			}
+		});
 	}
 
 	protected abstract FrameworkElement? SelectedItem { get; set; }
@@ -59,6 +92,8 @@ public abstract class SelectorNavigator<TControl> : ControlNavigator<TControl>
 		Type? viewType,
 		object? data)
 	{
+		_showCalled = true;
+
 		if (Control is null)
 		{
 			return null;
