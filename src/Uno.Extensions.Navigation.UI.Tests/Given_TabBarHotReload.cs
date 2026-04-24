@@ -338,6 +338,7 @@ public class Given_TabBarHotReload
 	/// XAML HR renames <c>Region.Name="TabTwo"</c> to <c>"TabTwoRenamed"</c>
 	/// on the second TabBarItem. Route "TabTwoRenamed" is pre-registered so the
 	/// SelectorNavigator can resolve it.
+	/// XAML HR replaces the page instance — references must be re-resolved after HR.
 	/// </summary>
 	[TestMethod]
 	[RunsOnUIThread]
@@ -368,13 +369,25 @@ public class Given_TabBarHotReload
 			"""<utu:TabBarItem Content="Tab Two" uen:Region.Name="TabTwoRenamed" IsSelectable="True" />""",
 			ct);
 
+		await Task.Delay(1000, ct);
+
+		// XAML HR replaces the page instance — re-resolve to get the new one.
+		var activePage = ResolveCurrentPage<HotReloadTabBarXamlPage>(app.NavigationRoot)!;
+
+		// Verify the Region.Name DP was updated on the new page's TabBarItems.
+		var regionNames = activePage.TabBar.Items.OfType<FrameworkElement>()
+			.Select(i => Uno.Extensions.Navigation.UI.Region.GetName(i))
+			.ToList();
+		regionNames.Should().Contain("TabTwoRenamed",
+			"XAML HR should produce TabBarItems with the renamed Region.Name");
+
+		// Navigate to the renamed route using the new page's navigator.
+		var activeNavigator = await WaitForTabBarNavigatorAsync(
+			activePage.TabBar, TimeSpan.FromSeconds(30), ct);
+		await activeNavigator.NavigateRouteAsync(activePage, "TabTwoRenamed");
 		await Task.Delay(500, ct);
 
-		// Navigate to the renamed route.
-		await tabBarNavigator.NavigateRouteAsync(hostPage, "TabTwoRenamed");
-		await Task.Delay(500, ct);
-
-		var renamedVm = FindTabContentVm(hostPage.ContentGrid, "TabTwoRenamed");
+		var renamedVm = FindTabContentVm(activePage.ContentGrid, "TabTwoRenamed");
 		renamedVm.Should().NotBeNull(
 			"Navigation should resolve the renamed Region.Name after XAML HR");
 	}
@@ -386,6 +399,7 @@ public class Given_TabBarHotReload
 	/// <summary>
 	/// XAML HR adds a third <c>TabBarItem</c> with Region.Name="TabThree".
 	/// The route is pre-registered so the SelectorNavigator can navigate to it.
+	/// XAML HR replaces the page instance — references must be re-resolved after HR.
 	/// </summary>
 	[TestMethod]
 	[RunsOnUIThread]
@@ -419,17 +433,20 @@ public class Given_TabBarHotReload
 
 		await Task.Delay(1000, ct);
 
-		// TabBar should now have 3 items.
-		hostPage.TabBar.Items.Count.Should().Be(3,
-			"XAML HR should have added a third TabBarItem");
+		// XAML HR replaces the page instance — re-resolve to get the new one.
+		var activePage = ResolveCurrentPage<HotReloadTabBarXamlPage>(app.NavigationRoot)!;
 
-		// Navigate to the new tab.
+		// TabBar should now have 3 items on the replaced page.
+		activePage.TabBar.Items.Count.Should().Be(3,
+			"XAML HR should have added a third TabBarItem on the replaced page");
+
+		// Navigate to the new tab using the new page's navigator.
 		var tabBarNavigator = await WaitForTabBarNavigatorAsync(
-			hostPage.TabBar, TimeSpan.FromSeconds(30), ct);
-		await tabBarNavigator.NavigateRouteAsync(hostPage, "TabThree");
+			activePage.TabBar, TimeSpan.FromSeconds(30), ct);
+		await tabBarNavigator.NavigateRouteAsync(activePage, "TabThree");
 
 		var tabThreeVm = await WaitForTabContentVmAsync(
-			hostPage.ContentGrid, "TabThree", TimeSpan.FromSeconds(30), ct);
+			activePage.ContentGrid, "TabThree", TimeSpan.FromSeconds(30), ct);
 		tabThreeVm.Should().NotBeNull(
 			"Newly added TabThree should be navigable after XAML HR");
 	}
