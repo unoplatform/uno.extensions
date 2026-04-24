@@ -296,6 +296,7 @@ public class Given_TabBarHotReload
 	/// XAML HR removes <c>uen:Region.Attached="True"</c> from the TabBar element.
 	/// Without Region.Attached the TabBar no longer drives navigation.
 	/// Bug #2971: after such a change the content area goes blank.
+	/// XAML HR replaces the page instance — must re-resolve to check the NEW page.
 	/// </summary>
 	[TestMethod]
 	[RunsOnUIThread]
@@ -321,11 +322,14 @@ public class Given_TabBarHotReload
 		// Give the visual tree time to settle after XAML HR.
 		await Task.Delay(1000, ct);
 
-		// The content area should NOT be blank (#2971 causes this).
-		hostPage.ContentGrid.Children.Count.Should().BeGreaterThan(0,
+		// XAML HR replaces the page — re-resolve to check the NEW page's state.
+		var activePage = ResolveCurrentPage<HotReloadTabBarXamlPage>(app.NavigationRoot)!;
+
+		// The NEW page's content area should NOT be blank (#2971 causes this).
+		activePage.ContentGrid.Children.Count.Should().BeGreaterThan(0,
 			"Content area should not be blank after Region.Attached removal (#2971)");
 
-		var tabOneVmAfter = FindTabContentVm(hostPage.ContentGrid, "TabOne");
+		var tabOneVmAfter = FindTabContentVm(activePage.ContentGrid, "TabOne");
 		tabOneVmAfter.Should().NotBeNull(
 			"TabOne content should still be accessible after Region.Attached removal (#2971)");
 	}
