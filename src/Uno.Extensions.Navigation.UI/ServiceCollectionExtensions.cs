@@ -2,6 +2,7 @@
 
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Uno.Extensions.Navigation.UI;
 
 namespace Uno.Extensions;
 
@@ -20,6 +21,11 @@ public static class ServiceCollectionExtensions
 		var views = createViewRegistry?.Invoke(services) ?? new ViewRegistry(services);
 		var routes = createRouteRegistry?.Invoke(services) ?? new RouteRegistry(services);
 		routeBuilder?.Invoke(views, routes);
+
+		// Store references for C# hot-reload route refresh.
+		NavigationRouteUpdateHandler.RouteBuilder = routeBuilder;
+		NavigationRouteUpdateHandler.Views = views;
+		NavigationRouteUpdateHandler.Routes = routes;
 
 		// Only fall back to the navigation flyout if one hasn't already been registered
 		services.AddTransient<Flyout, NavigationFlyout>();
@@ -84,7 +90,15 @@ public static class ServiceCollectionExtensions
 					.AddSingleton<IRouteResolver>(sp =>
 					{
 						var config = sp.GetRequiredService<NavigationConfiguration>();
-						return (sp.GetRequiredService(config.RouteResolver!) as IRouteResolver)!;
+						var resolver = (sp.GetRequiredService(config.RouteResolver!) as IRouteResolver)!;
+
+						// Store for C# hot-reload route refresh.
+						if (resolver is RouteResolver routeResolver)
+						{
+							NavigationRouteUpdateHandler.Resolver = routeResolver;
+						}
+
+						return resolver;
 					})
 
 					.AddScoped<INavigatorFactory, NavigatorFactory>()
