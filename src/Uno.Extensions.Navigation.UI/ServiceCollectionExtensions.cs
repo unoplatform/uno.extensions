@@ -22,10 +22,17 @@ public static class ServiceCollectionExtensions
 		var routes = createRouteRegistry?.Invoke(services) ?? new RouteRegistry(services);
 		routeBuilder?.Invoke(views, routes);
 
-		// Store references for C# hot-reload route refresh.
-		NavigationRouteUpdateHandler.RouteBuilder = routeBuilder;
-		NavigationRouteUpdateHandler.Views = views;
-		NavigationRouteUpdateHandler.Routes = routes;
+		// Build context for C# hot-reload route refresh (registered/unregistered
+		// by NavigationHostedService to avoid leaking navigation engine instances).
+		if (routeBuilder is not null)
+		{
+			services.AddSingleton(new NavigationRouteContext
+			{
+				RouteBuilder = routeBuilder,
+				Views = views,
+				Routes = routes,
+			});
+		}
 
 		// Only fall back to the navigation flyout if one hasn't already been registered
 		services.AddTransient<Flyout, NavigationFlyout>();
@@ -92,10 +99,11 @@ public static class ServiceCollectionExtensions
 						var config = sp.GetRequiredService<NavigationConfiguration>();
 						var resolver = (sp.GetRequiredService(config.RouteResolver!) as IRouteResolver)!;
 
-						// Store for C# hot-reload route refresh.
-						if (resolver is RouteResolver routeResolver)
+						// Store resolver reference for C# hot-reload route refresh.
+						if (resolver is RouteResolver routeResolver &&
+							sp.GetService<NavigationRouteContext>() is { } ctx)
 						{
-							NavigationRouteUpdateHandler.Resolver = routeResolver;
+							ctx.Resolver = routeResolver;
 						}
 
 						return resolver;
