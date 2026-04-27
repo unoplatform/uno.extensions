@@ -140,6 +140,11 @@ public class PanelVisiblityNavigator : ControlNavigator<Panel>
 		return path;
 	}
 
+	protected override Task CheckLoadedAsync()
+		=> CurrentlyVisibleControl is { IsLoaded: false }
+			? CurrentlyVisibleControl.EnsureLoaded()
+			: Task.CompletedTask;
+
 	protected override async Task PostNavigateAsync()
 	{
 		if (Control is not null)
