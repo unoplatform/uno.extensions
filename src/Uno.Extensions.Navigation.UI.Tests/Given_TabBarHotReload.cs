@@ -605,15 +605,18 @@ public class Given_TabBarHotReload
 	/// This test verifies whether the navigation framework picks up the new
 	/// route after a C# hot-reload metadata update.
 	/// Setup uses <see cref="HotReloadTabBarThreeTabPage"/> (3 tabs in code-behind)
-	/// but only registers routes for TabOne and TabTwo. A C# HR is then applied
-	/// (simulating the developer adding the route), and navigation to TabThree
-	/// is attempted.
+	/// but only registers routes for TabOne and TabTwo. The route builder delegate
+	/// conditionally includes TabThree based on
+	/// <see cref="HotReloadRouteRegistration.IncludeTabThree"/>, which returns
+	/// <c>false</c> initially. A C# HR then flips it to <c>true</c>, the
+	/// framework re-invokes the delegate, and navigation to TabThree is attempted.
 	/// </summary>
 	[TestMethod]
 	[RunsOnUIThread]
 	public async Task When_RouteAddedViaCSharpHR_Then_ExistingTabBarItemBecomesNavigable(CancellationToken ct)
 	{
-		// Boot with 3-tab page but only TabOne and TabTwo routes registered.
+		// Boot with 3-tab page; route builder checks HotReloadRouteRegistration
+		// which initially excludes TabThree.
 		await using var app = await SetupThreeTabPartialRoutesAppAsync(ct);
 
 		var hostPage = ResolveCurrentPage<HotReloadTabBarThreeTabPage>(app.NavigationRoot);
@@ -637,13 +640,14 @@ public class Given_TabBarHotReload
 		await WaitForTabContentVmAsync(
 			hostPage.ContentGrid, "TabOne", TimeSpan.FromSeconds(30), ct);
 
-		// C# HR: simulate developer adding the route in App.xaml.cs.
-		// We modify HotReloadTabBarTarget.cs to trigger a metadata update delta,
-		// which mirrors what happens when a developer saves their App.xaml.cs.
+		// C# HR: simulate developer adding the TabThree route.
+		// Flipping HotReloadRouteRegistration.IncludeTabThree() from false → true
+		// triggers a metadata update. The NavigationRouteUpdateHandler re-invokes
+		// the route builder delegate which now includes TabThree.
 		await using var _ = await HotReloadHelper.UpdateSourceFile(
-			"../../Uno.Extensions.Navigation.UI.Tests/HotReloadTabBarTarget.cs",
-			"\"original\"",
-			"\"updated\"",
+			"../../Uno.Extensions.Navigation.UI.Tests/HotReloadRouteRegistration.cs",
+			"=> false",
+			"=> true",
 			ct);
 
 		// Post-HR: try to navigate to TabThree again.
@@ -795,7 +799,11 @@ public class Given_TabBarHotReload
 			"HotReloadTabBarThreeTabPage",
 			ct);
 
-	/// <summary>3-tab code-behind page with only TabOne and TabTwo routes registered (TabThree missing).</summary>
+	/// <summary>
+	/// 3-tab code-behind page whose route builder conditionally includes
+	/// TabThree based on <see cref="HotReloadRouteRegistration.IncludeTabThree"/>.
+	/// Initially only TabOne and TabTwo are registered.
+	/// </summary>
 	private static Task<TabBarTestApp> SetupThreeTabPartialRoutesAppAsync(CancellationToken ct)
 		=> SetupTabBarAppAsync(
 			(views, routes) =>
@@ -804,6 +812,18 @@ public class Given_TabBarHotReload
 					new ViewMap<HotReloadTabBarThreeTabPage>(),
 					new ViewMap<HotReloadTabContentPage, HotReloadTabBarVm>());
 
+				var nested = new List<RouteMap>
+				{
+					new RouteMap("TabOne", View: views.FindByView<HotReloadTabContentPage>(), IsDefault: true),
+					new RouteMap("TabTwo", View: views.FindByView<HotReloadTabContentPage>()),
+				};
+
+				// Conditionally add TabThree — initially false, flipped to true via C# HR.
+				if (HotReloadRouteRegistration.IncludeTabThree())
+				{
+					nested.Add(new RouteMap("TabThree", View: views.FindByView<HotReloadTabContentPage>()));
+				}
+
 				routes.Register(
 					new RouteMap("", Nested: new RouteMap[]
 					{
@@ -811,12 +831,7 @@ public class Given_TabBarHotReload
 							"HotReloadTabBarThreeTabPage",
 							View: views.FindByView<HotReloadTabBarThreeTabPage>(),
 							IsDefault: true,
-							Nested: new RouteMap[]
-							{
-								new RouteMap("TabOne", View: views.FindByView<HotReloadTabContentPage>(), IsDefault: true),
-								new RouteMap("TabTwo", View: views.FindByView<HotReloadTabContentPage>()),
-								// TabThree intentionally NOT registered — simulates missing route.
-							}),
+							Nested: nested.ToArray()),
 					}));
 			},
 			"HotReloadTabBarThreeTabPage",
