@@ -658,6 +658,215 @@ public class Given_TabBarHotReload
 			"After C# HR adds the route, navigating to TabThree should work");
 	}
 
+	// ──────────────────────────────────────────────────────────────────────
+	// 13. Auto-resolve: XAML HR adds TabBarItem whose route name matches a
+	//     type by convention (TabThree → TabThreePage), no explicit RouteMap
+	// ──────────────────────────────────────────────────────────────────────
+
+	/// <summary>
+	/// Tests the <see cref="RouteResolverDefault"/> implicit mapping behaviour
+	/// when a TabBarItem is added via XAML HR and its <c>Region.Name</c>
+	/// matches a Page type by naming convention (route + "Page" suffix).
+	///
+	/// Setup: XAML 2-tab page with routes only for TabOne and TabTwo.
+	/// There is NO explicit RouteMap for "TabThree", but the assembly
+	/// contains <see cref="TabThreePage"/> which matches by convention.
+	///
+	/// XAML HR adds a third TabBarItem with <c>Region.Name="TabThree"</c>.
+	/// The framework should auto-resolve "TabThree" → <c>TabThreePage</c>
+	/// and navigate successfully.
+	/// </summary>
+	[TestMethod]
+	[RunsOnUIThread]
+	public async Task When_TabBarItemAddedViaXamlHR_WithAutoResolvedRoute_Then_NavigationWorks(CancellationToken ct)
+	{
+		// Boot with 2-tab XAML page — NO RouteMap for "TabThree" but
+		// TabThreePage exists in the assembly for auto-resolution.
+		await using var app = await SetupXamlTwoTabAppAsync(ct);
+
+		var hostPage = ResolveCurrentPage<HotReloadTabBarXamlPage>(app.NavigationRoot);
+		hostPage.Should().NotBeNull();
+		hostPage!.TabBar.Items.Count.Should().Be(2, "page starts with 2 tabs");
+
+		var tabOneVm = await WaitForTabContentVmAsync(
+			hostPage.ContentGrid, "TabOne", TimeSpan.FromSeconds(30), ct);
+		tabOneVm.Should().NotBeNull();
+
+		// XAML HR: add a third TabBarItem with Region="TabThree".
+		var originalLine =
+			"""<utu:TabBarItem Content="Tab Two" uen:Region.Name="TabTwo" IsSelectable="True" />""";
+		var replacementLines =
+			"""<utu:TabBarItem Content="Tab Two" uen:Region.Name="TabTwo" IsSelectable="True" />""" +
+			Environment.NewLine + "\t\t\t" +
+			"""<utu:TabBarItem Content="Tab Three" uen:Region.Name="TabThree" IsSelectable="True" />""";
+
+		await using var _ = await HotReloadHelper.UpdateSourceFile(
+			"../../Uno.Extensions.Navigation.UI.Tests/Pages/HotReloadTabBarXamlPage.xaml",
+			originalLine,
+			replacementLines,
+			ct);
+
+		// Wait for XAML HR to produce a page with 3 tabs.
+		var activePage = await WaitForPageMatchingAsync<HotReloadTabBarXamlPage>(
+			app.NavigationRoot,
+			page => page.TabBar.Items.Count == 3,
+			TimeSpan.FromSeconds(30), ct);
+
+		activePage.TabBar.Items.Count.Should().Be(3,
+			"XAML HR should have added a third TabBarItem");
+
+		// Navigate to TabThree — auto-resolve should find TabThreePage.
+		var tabBarNavigator = await WaitForTabBarNavigatorAsync(
+			activePage.TabBar, TimeSpan.FromSeconds(30), ct);
+		await tabBarNavigator.NavigateRouteAsync(activePage, "TabThree");
+
+		// The auto-resolve creates a FrameView → Frame → TabThreePage chain.
+		// Poll until the TabThree region has content.
+		var tabThreeContent = await WaitForTabRegionContentAsync(
+			activePage.ContentGrid, "TabThree", typeof(TabThreePage),
+			TimeSpan.FromSeconds(30), ct);
+		tabThreeContent.Should().NotBeNull(
+			"RouteResolverDefault should auto-resolve 'TabThree' → TabThreePage");
+	}
+
+	// ──────────────────────────────────────────────────────────────────────
+	// 14. XAML HR adds TabBarItem then C# HR adds RouteMap — both in
+	//     sequence within the same test
+	// ──────────────────────────────────────────────────────────────────────
+
+	/// <summary>
+	/// Simulates a developer who adds a new tab in XAML and then wires up
+	/// the route in code. Both hot-reload steps happen in the same session.
+	///
+	/// Setup: XAML 2-tab page with routes only for TabOne and TabTwo.
+	/// Step 1 — XAML HR adds <c>TabBarItem[Region="TabThree"]</c>.
+	/// Step 2 — C# HR flips <see cref="HotReloadRouteRegistration.IncludeTabThree"/>
+	///          from false → true, which adds the RouteMap for "TabThree".
+	/// After both changes, navigation to "TabThree" should work.
+	/// </summary>
+	[TestMethod]
+	[RunsOnUIThread]
+	public async Task When_XamlHRAddsTabThenCSharpHRAddsRoute_Then_NavigationWorks(CancellationToken ct)
+	{
+		// Boot with 2-tab XAML page + partial route builder (TabThree gated).
+		await using var app = await SetupXamlTwoTabPartialRoutesAppAsync(ct);
+
+		var hostPage = ResolveCurrentPage<HotReloadTabBarXamlPage>(app.NavigationRoot);
+		hostPage.Should().NotBeNull();
+		hostPage!.TabBar.Items.Count.Should().Be(2, "page starts with 2 tabs");
+
+		var tabOneVm = await WaitForTabContentVmAsync(
+			hostPage.ContentGrid, "TabOne", TimeSpan.FromSeconds(30), ct);
+		tabOneVm.Should().NotBeNull();
+
+		// Step 1 — XAML HR: add TabBarItem for TabThree.
+		var originalLine =
+			"""<utu:TabBarItem Content="Tab Two" uen:Region.Name="TabTwo" IsSelectable="True" />""";
+		var replacementLines =
+			"""<utu:TabBarItem Content="Tab Two" uen:Region.Name="TabTwo" IsSelectable="True" />""" +
+			Environment.NewLine + "\t\t\t" +
+			"""<utu:TabBarItem Content="Tab Three" uen:Region.Name="TabThree" IsSelectable="True" />""";
+
+		await using var xamlRevert = await HotReloadHelper.UpdateSourceFile(
+			"../../Uno.Extensions.Navigation.UI.Tests/Pages/HotReloadTabBarXamlPage.xaml",
+			originalLine,
+			replacementLines,
+			ct);
+
+		var activePage = await WaitForPageMatchingAsync<HotReloadTabBarXamlPage>(
+			app.NavigationRoot,
+			page => page.TabBar.Items.Count == 3,
+			TimeSpan.FromSeconds(30), ct);
+
+		activePage.TabBar.Items.Count.Should().Be(3,
+			"XAML HR should have added a third TabBarItem");
+
+		// Step 2 — C# HR: add the RouteMap for TabThree.
+		await using var csharpRevert = await HotReloadHelper.UpdateSourceFile(
+			"../../Uno.Extensions.Navigation.UI.Tests/HotReloadRouteRegistration.cs",
+			"=> false",
+			"=> true",
+			ct);
+
+		// Navigate to TabThree.
+		var tabBarNavigator = await WaitForTabBarNavigatorAsync(
+			activePage.TabBar, TimeSpan.FromSeconds(30), ct);
+		await tabBarNavigator.NavigateRouteAsync(activePage, "TabThree");
+
+		var tabThreeVm = await WaitForTabContentVmAsync(
+			activePage.ContentGrid, "TabThree", TimeSpan.FromSeconds(30), ct);
+		tabThreeVm.Should().NotBeNull(
+			"After XAML HR adds the tab and C# HR adds the route, navigation should work");
+	}
+
+	// ──────────────────────────────────────────────────────────────────────
+	// 15. C# HR adds RouteMap first, then XAML HR adds the TabBarItem
+	// ──────────────────────────────────────────────────────────────────────
+
+	/// <summary>
+	/// Reverse order of Test 14: the route is added via C# HR first, then
+	/// the TabBarItem is added via XAML HR.
+	///
+	/// Setup: XAML 2-tab page, route builder conditionally includes TabThree.
+	/// Step 1 — C# HR flips IncludeTabThree → true (route exists, no tab).
+	/// Step 2 — XAML HR adds <c>TabBarItem[Region="TabThree"]</c>.
+	/// Navigation to "TabThree" should work.
+	/// </summary>
+	[TestMethod]
+	[RunsOnUIThread]
+	public async Task When_CSharpHRAddsRouteThenXamlHRAddsTab_Then_NavigationWorks(CancellationToken ct)
+	{
+		// Boot with 2-tab XAML page + partial route builder (TabThree gated).
+		await using var app = await SetupXamlTwoTabPartialRoutesAppAsync(ct);
+
+		var hostPage = ResolveCurrentPage<HotReloadTabBarXamlPage>(app.NavigationRoot);
+		hostPage.Should().NotBeNull();
+		hostPage!.TabBar.Items.Count.Should().Be(2, "page starts with 2 tabs");
+
+		var tabOneVm = await WaitForTabContentVmAsync(
+			hostPage.ContentGrid, "TabOne", TimeSpan.FromSeconds(30), ct);
+		tabOneVm.Should().NotBeNull();
+
+		// Step 1 — C# HR: add the RouteMap for TabThree (tab doesn't exist yet).
+		await using var csharpRevert = await HotReloadHelper.UpdateSourceFile(
+			"../../Uno.Extensions.Navigation.UI.Tests/HotReloadRouteRegistration.cs",
+			"=> false",
+			"=> true",
+			ct);
+
+		// Step 2 — XAML HR: add TabBarItem for TabThree.
+		var originalLine =
+			"""<utu:TabBarItem Content="Tab Two" uen:Region.Name="TabTwo" IsSelectable="True" />""";
+		var replacementLines =
+			"""<utu:TabBarItem Content="Tab Two" uen:Region.Name="TabTwo" IsSelectable="True" />""" +
+			Environment.NewLine + "\t\t\t" +
+			"""<utu:TabBarItem Content="Tab Three" uen:Region.Name="TabThree" IsSelectable="True" />""";
+
+		await using var xamlRevert = await HotReloadHelper.UpdateSourceFile(
+			"../../Uno.Extensions.Navigation.UI.Tests/Pages/HotReloadTabBarXamlPage.xaml",
+			originalLine,
+			replacementLines,
+			ct);
+
+		var activePage = await WaitForPageMatchingAsync<HotReloadTabBarXamlPage>(
+			app.NavigationRoot,
+			page => page.TabBar.Items.Count == 3,
+			TimeSpan.FromSeconds(30), ct);
+
+		activePage.TabBar.Items.Count.Should().Be(3,
+			"XAML HR should have added a third TabBarItem");
+
+		// Navigate to TabThree.
+		var tabBarNavigator = await WaitForTabBarNavigatorAsync(
+			activePage.TabBar, TimeSpan.FromSeconds(30), ct);
+		await tabBarNavigator.NavigateRouteAsync(activePage, "TabThree");
+
+		var tabThreeVm = await WaitForTabContentVmAsync(
+			activePage.ContentGrid, "TabThree", TimeSpan.FromSeconds(30), ct);
+		tabThreeVm.Should().NotBeNull(
+			"After C# HR adds the route and XAML HR adds the tab, navigation should work");
+	}
+
 	#region Setup helpers
 
 	/// <summary>
@@ -917,6 +1126,44 @@ public class Given_TabBarHotReload
 			"HotReloadTabBarXamlPage",
 			ct);
 
+	/// <summary>
+	/// XAML 2-tab page whose route builder conditionally includes TabThree
+	/// based on <see cref="HotReloadRouteRegistration.IncludeTabThree"/>.
+	/// Initially only TabOne and TabTwo routes are registered.
+	/// </summary>
+	private static Task<TabBarTestApp> SetupXamlTwoTabPartialRoutesAppAsync(CancellationToken ct)
+		=> SetupTabBarAppAsync(
+			(views, routes) =>
+			{
+				views.Register(
+					new ViewMap<HotReloadTabBarXamlPage>(),
+					new ViewMap<HotReloadTabContentPage, HotReloadTabBarVm>());
+
+				var nested = new List<RouteMap>
+				{
+					new RouteMap("TabOne", View: views.FindByView<HotReloadTabContentPage>(), IsDefault: true),
+					new RouteMap("TabTwo", View: views.FindByView<HotReloadTabContentPage>()),
+				};
+
+				// Conditionally add TabThree — initially false, flipped to true via C# HR.
+				if (HotReloadRouteRegistration.IncludeTabThree())
+				{
+					nested.Add(new RouteMap("TabThree", View: views.FindByView<HotReloadTabContentPage>()));
+				}
+
+				routes.Register(
+					new RouteMap("", Nested: new RouteMap[]
+					{
+						new RouteMap(
+							"HotReloadTabBarXamlPage",
+							View: views.FindByView<HotReloadTabBarXamlPage>(),
+							IsDefault: true,
+							Nested: nested.ToArray()),
+					}));
+			},
+			"HotReloadTabBarXamlPage",
+			ct);
+
 	/// <summary>Command page with TabBar (TabOne, TabTwo) + Button Command binding for #2912 testing.</summary>
 	private static Task<TabBarTestApp> SetupCommandTabAppAsync(CancellationToken ct)
 		=> SetupTabBarAppAsync(
@@ -1035,6 +1282,39 @@ public class Given_TabBarHotReload
 		{
 			return vm;
 		}
+		return null;
+	}
+
+	/// <summary>
+	/// Polls until the tab region has content matching the expected page type.
+	/// Unlike <see cref="WaitForTabContentVmAsync"/> which looks for a specific VM,
+	/// this checks only that a page of the specified type has been created — useful
+	/// for auto-resolved pages that may not have a bound ViewModel.
+	/// </summary>
+	private static async Task<Page?> WaitForTabRegionContentAsync(
+		Grid contentGrid,
+		string regionName,
+		Type expectedPageType,
+		TimeSpan timeout,
+		CancellationToken ct)
+	{
+		var sw = System.Diagnostics.Stopwatch.StartNew();
+		while (sw.Elapsed < timeout)
+		{
+			ct.ThrowIfCancellationRequested();
+			var regionView = contentGrid.Children
+				.OfType<FrameworkElement>()
+				.FirstOrDefault(c => Uno.Extensions.Navigation.UI.Region.GetName(c) == regionName);
+			if (regionView is FrameView fv &&
+				fv.FindName("NavigationFrame") is Frame frame &&
+				frame.Content is Page page &&
+				expectedPageType.IsAssignableFrom(page.GetType()))
+			{
+				return page;
+			}
+			await Task.Delay(50, ct);
+		}
+
 		return null;
 	}
 
