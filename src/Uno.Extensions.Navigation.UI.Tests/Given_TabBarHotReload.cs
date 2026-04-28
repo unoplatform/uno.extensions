@@ -807,6 +807,322 @@ public class Given_TabBarHotReload
 			"After C# HR adds the route and XAML HR adds the tab, navigation should work");
 	}
 
+	// ──────────────────────────────────────────────────────────────────────
+	// 15. TabBarItem removed via XAML HR
+	// ──────────────────────────────────────────────────────────────────────
+
+	/// <summary>
+	/// XAML HR removes the second TabBarItem (TabTwo) from a 2-tab page.
+	/// After HR, only TabOne should remain. Navigation should continue to
+	/// work on the remaining tab and the removed tab should not be
+	/// accessible.
+	/// </summary>
+	[TestMethod]
+	[RunsOnUIThread]
+	public async Task When_TabBarItemRemovedViaXamlHR_Then_RemainingTabStillWorks(CancellationToken ct)
+	{
+		await using var app = await SetupXamlTwoTabAppAsync(ct);
+
+		var hostPage = ResolveCurrentPage<HotReloadTabBarXamlPage>(app.NavigationRoot);
+		hostPage.Should().NotBeNull();
+		hostPage!.TabBar.Items.Count.Should().Be(2, "page starts with 2 tabs");
+
+		var tabOneVm = await WaitForTabContentVmAsync(
+			hostPage.ContentGrid, "TabOne", TimeSpan.FromSeconds(30), ct);
+		tabOneVm.Should().NotBeNull();
+
+		// XAML HR: remove the TabTwo TabBarItem entirely.
+		var originalLines =
+			"""<utu:TabBarItem Content="Tab One" uen:Region.Name="TabOne" IsSelectable="True" />""" +
+			Environment.NewLine + "\t\t\t" +
+			"""<utu:TabBarItem Content="Tab Two" uen:Region.Name="TabTwo" IsSelectable="True" />""";
+		var replacementLine =
+			"""<utu:TabBarItem Content="Tab One" uen:Region.Name="TabOne" IsSelectable="True" />""";
+
+		await using var _ = await HotReloadHelper.UpdateSourceFile(
+			"../../Uno.Extensions.Navigation.UI.Tests/Pages/HotReloadTabBarXamlPage.xaml",
+			originalLines,
+			replacementLine,
+			ct);
+
+		// Wait for XAML HR to produce a page with only 1 tab.
+		var activePage = await WaitForPageMatchingAsync<HotReloadTabBarXamlPage>(
+			app.NavigationRoot,
+			page => page.TabBar.Items.Count == 1,
+			TimeSpan.FromSeconds(30), ct);
+
+		activePage.TabBar.Items.Count.Should().Be(1,
+			"XAML HR should have removed TabTwo, leaving only TabOne");
+
+		// TabOne should still be navigable on the new page.
+		var tabOneVmAfter = await WaitForTabContentVmAsync(
+			activePage.ContentGrid, "TabOne", TimeSpan.FromSeconds(30), ct);
+		tabOneVmAfter.Should().NotBeNull(
+			"TabOne navigation should still work after TabTwo is removed via XAML HR");
+	}
+
+	// ──────────────────────────────────────────────────────────────────────
+	// 16. TabBarItem order swapped via XAML HR
+	// ──────────────────────────────────────────────────────────────────────
+
+	/// <summary>
+	/// XAML HR swaps the order of TabBarItems (TabTwo first, TabOne second).
+	/// Both tabs should remain navigable after the reorder.
+	/// </summary>
+	[TestMethod]
+	[RunsOnUIThread]
+	public async Task When_TabBarItemOrderSwappedViaXamlHR_Then_BothTabsNavigable(CancellationToken ct)
+	{
+		await using var app = await SetupXamlTwoTabAppAsync(ct);
+
+		var hostPage = ResolveCurrentPage<HotReloadTabBarXamlPage>(app.NavigationRoot);
+		hostPage.Should().NotBeNull();
+		hostPage!.TabBar.Items.Count.Should().Be(2);
+
+		var tabOneVm = await WaitForTabContentVmAsync(
+			hostPage.ContentGrid, "TabOne", TimeSpan.FromSeconds(30), ct);
+		tabOneVm.Should().NotBeNull();
+
+		// XAML HR: swap the order — TabTwo first, TabOne second.
+		var originalLines =
+			"""<utu:TabBarItem Content="Tab One" uen:Region.Name="TabOne" IsSelectable="True" />""" +
+			Environment.NewLine + "\t\t\t" +
+			"""<utu:TabBarItem Content="Tab Two" uen:Region.Name="TabTwo" IsSelectable="True" />""";
+		var swappedLines =
+			"""<utu:TabBarItem Content="Tab Two" uen:Region.Name="TabTwo" IsSelectable="True" />""" +
+			Environment.NewLine + "\t\t\t" +
+			"""<utu:TabBarItem Content="Tab One" uen:Region.Name="TabOne" IsSelectable="True" />""";
+
+		await using var _ = await HotReloadHelper.UpdateSourceFile(
+			"../../Uno.Extensions.Navigation.UI.Tests/Pages/HotReloadTabBarXamlPage.xaml",
+			originalLines,
+			swappedLines,
+			ct);
+
+		// Wait for XAML HR to produce a page where first item is TabTwo.
+		var activePage = await WaitForPageMatchingAsync<HotReloadTabBarXamlPage>(
+			app.NavigationRoot,
+			page =>
+			{
+				var firstItem = page.TabBar.Items.OfType<FrameworkElement>().FirstOrDefault();
+				return firstItem is not null &&
+					   Uno.Extensions.Navigation.UI.Region.GetName(firstItem) == "TabTwo";
+			},
+			TimeSpan.FromSeconds(30), ct);
+
+		activePage.TabBar.Items.Count.Should().Be(2,
+			"Tab count should still be 2 after reorder");
+
+		// Navigate to TabTwo (now first).
+		var tabBarNavigator = await WaitForTabBarNavigatorAsync(
+			activePage.TabBar, TimeSpan.FromSeconds(30), ct);
+		await tabBarNavigator.NavigateRouteAsync(activePage, "TabTwo");
+
+		var tabTwoVm = await WaitForTabContentVmAsync(
+			activePage.ContentGrid, "TabTwo", TimeSpan.FromSeconds(30), ct);
+		tabTwoVm.Should().NotBeNull("TabTwo should be navigable after reorder");
+
+		// Navigate to TabOne (now second).
+		await tabBarNavigator.NavigateRouteAsync(activePage, "TabOne");
+
+		var tabOneVmAfter = await WaitForTabContentVmAsync(
+			activePage.ContentGrid, "TabOne", TimeSpan.FromSeconds(30), ct);
+		tabOneVmAfter.Should().NotBeNull("TabOne should be navigable after reorder");
+	}
+
+	// ──────────────────────────────────────────────────────────────────────
+	// 17. TabBarItem added, removed, then re-added via XAML HR
+	// ──────────────────────────────────────────────────────────────────────
+
+	/// <summary>
+	/// Exercises HR state management: add TabThree, revert (auto-dispose removes
+	/// it), then add it again. Ensures the navigator/region state is not stale
+	/// from the first add.
+	/// </summary>
+	[TestMethod]
+	[RunsOnUIThread]
+	public async Task When_TabBarItemAddedRemovedReaddedViaXamlHR_Then_NavigationStillWorks(CancellationToken ct)
+	{
+		await using var app = await SetupXamlThreeRouteAppAsync(ct);
+
+		var hostPage = ResolveCurrentPage<HotReloadTabBarXamlPage>(app.NavigationRoot);
+		hostPage.Should().NotBeNull();
+		hostPage!.TabBar.Items.Count.Should().Be(2, "page starts with 2 tabs");
+
+		var tabOneVm = await WaitForTabContentVmAsync(
+			hostPage.ContentGrid, "TabOne", TimeSpan.FromSeconds(30), ct);
+		tabOneVm.Should().NotBeNull();
+
+		var originalLine =
+			"""<utu:TabBarItem Content="Tab Two" uen:Region.Name="TabTwo" IsSelectable="True" />""";
+		var withThirdTab =
+			"""<utu:TabBarItem Content="Tab Two" uen:Region.Name="TabTwo" IsSelectable="True" />""" +
+			Environment.NewLine + "\t\t\t" +
+			"""<utu:TabBarItem Content="Tab Three" uen:Region.Name="TabThree" IsSelectable="True" />""";
+
+		// Step 1 — Add TabThree.
+		var addRevert = await HotReloadHelper.UpdateSourceFile(
+			"../../Uno.Extensions.Navigation.UI.Tests/Pages/HotReloadTabBarXamlPage.xaml",
+			originalLine,
+			withThirdTab,
+			ct);
+
+		var pageWith3 = await WaitForPageMatchingAsync<HotReloadTabBarXamlPage>(
+			app.NavigationRoot,
+			page => page.TabBar.Items.Count == 3,
+			TimeSpan.FromSeconds(30), ct);
+		pageWith3.TabBar.Items.Count.Should().Be(3);
+
+		// Navigate to TabThree to populate it.
+		var nav3 = await WaitForTabBarNavigatorAsync(pageWith3.TabBar, TimeSpan.FromSeconds(30), ct);
+		await nav3.NavigateRouteAsync(pageWith3, "TabThree");
+		var tabThreeVm = await WaitForTabContentVmAsync(
+			pageWith3.ContentGrid, "TabThree", TimeSpan.FromSeconds(30), ct);
+		tabThreeVm.Should().NotBeNull("TabThree should be navigable after first add");
+
+		// Step 2 — Revert (removes TabThree).
+		await addRevert.DisposeAsync();
+
+		var pageWith2 = await WaitForPageMatchingAsync<HotReloadTabBarXamlPage>(
+			app.NavigationRoot,
+			page => page.TabBar.Items.Count == 2,
+			TimeSpan.FromSeconds(30), ct);
+		pageWith2.TabBar.Items.Count.Should().Be(2, "TabThree should be gone after revert");
+
+		// Step 3 — Re-add TabThree.
+		await using var _ = await HotReloadHelper.UpdateSourceFile(
+			"../../Uno.Extensions.Navigation.UI.Tests/Pages/HotReloadTabBarXamlPage.xaml",
+			originalLine,
+			withThirdTab,
+			ct);
+
+		var pageWith3Again = await WaitForPageMatchingAsync<HotReloadTabBarXamlPage>(
+			app.NavigationRoot,
+			page => page.TabBar.Items.Count == 3,
+			TimeSpan.FromSeconds(30), ct);
+		pageWith3Again.TabBar.Items.Count.Should().Be(3, "TabThree should be back after re-add");
+
+		// Navigate to TabThree again — state should not be stale.
+		var navAgain = await WaitForTabBarNavigatorAsync(
+			pageWith3Again.TabBar, TimeSpan.FromSeconds(30), ct);
+		await navAgain.NavigateRouteAsync(pageWith3Again, "TabThree");
+
+		var tabThreeVmAgain = await WaitForTabContentVmAsync(
+			pageWith3Again.ContentGrid, "TabThree", TimeSpan.FromSeconds(30), ct);
+		tabThreeVmAgain.Should().NotBeNull(
+			"TabThree should be navigable after add → remove → re-add cycle");
+	}
+
+	// ──────────────────────────────────────────────────────────────────────
+	// 18. TabBarItem Content text changed via XAML HR
+	// ──────────────────────────────────────────────────────────────────────
+
+	/// <summary>
+	/// Simplest XAML HR scenario: change the display text of a TabBarItem.
+	/// Navigation should continue to work — the Region.Name is unchanged,
+	/// only the visual label changes.
+	/// </summary>
+	[TestMethod]
+	[RunsOnUIThread]
+	public async Task When_TabBarItemContentChangedViaXamlHR_Then_NavigationPreserved(CancellationToken ct)
+	{
+		await using var app = await SetupXamlTwoTabAppAsync(ct);
+
+		var hostPage = ResolveCurrentPage<HotReloadTabBarXamlPage>(app.NavigationRoot);
+		hostPage.Should().NotBeNull();
+
+		var tabOneVm = await WaitForTabContentVmAsync(
+			hostPage!.ContentGrid, "TabOne", TimeSpan.FromSeconds(30), ct);
+		tabOneVm.Should().NotBeNull();
+
+		// XAML HR: change "Tab One" to "First Tab".
+		await using var _ = await HotReloadHelper.UpdateSourceFile(
+			"../../Uno.Extensions.Navigation.UI.Tests/Pages/HotReloadTabBarXamlPage.xaml",
+			"""<utu:TabBarItem Content="Tab One" uen:Region.Name="TabOne" IsSelectable="True" />""",
+			"""<utu:TabBarItem Content="First Tab" uen:Region.Name="TabOne" IsSelectable="True" />""",
+			ct);
+
+		// Wait for XAML HR to produce a page where the first tab has updated text.
+		var activePage = await WaitForPageMatchingAsync<HotReloadTabBarXamlPage>(
+			app.NavigationRoot,
+			page =>
+			{
+				var firstItem = page.TabBar.Items.OfType<TabBarItem>().FirstOrDefault();
+				return firstItem is not null && firstItem.Content as string == "First Tab";
+			},
+			TimeSpan.FromSeconds(30), ct);
+
+		// Region.Name should be unchanged.
+		var firstRegion = Uno.Extensions.Navigation.UI.Region.GetName(
+			activePage.TabBar.Items.OfType<FrameworkElement>().First());
+		firstRegion.Should().Be("TabOne", "Region.Name should be unchanged after content text HR");
+
+		// Navigate to TabTwo and back to TabOne to verify navigation works.
+		var tabBarNavigator = await WaitForTabBarNavigatorAsync(
+			activePage.TabBar, TimeSpan.FromSeconds(30), ct);
+		await tabBarNavigator.NavigateRouteAsync(activePage, "TabTwo");
+
+		var tabTwoVm = await WaitForTabContentVmAsync(
+			activePage.ContentGrid, "TabTwo", TimeSpan.FromSeconds(30), ct);
+		tabTwoVm.Should().NotBeNull("TabTwo should be navigable after content text change");
+
+		await tabBarNavigator.NavigateRouteAsync(activePage, "TabOne");
+
+		var tabOneVmAfter = await WaitForTabContentVmAsync(
+			activePage.ContentGrid, "TabOne", TimeSpan.FromSeconds(30), ct);
+		tabOneVmAfter.Should().NotBeNull("TabOne should be navigable after content text change");
+	}
+
+	// ──────────────────────────────────────────────────────────────────────
+	// 19. Region.Attached removed then re-added to TabBar via XAML HR
+	// ──────────────────────────────────────────────────────────────────────
+
+	/// <summary>
+	/// Counterpart to Test 7: remove Region.Attached from the TabBar, then
+	/// re-add it. After the re-add, TabBar-driven navigation should be
+	/// restored. This exercises whether the region system can recover
+	/// from a detach → re-attach cycle.
+	/// </summary>
+	[TestMethod]
+	[RunsOnUIThread]
+	public async Task When_RegionAttachedRemovedThenReaddedViaXamlHR_Then_NavigationRestored(CancellationToken ct)
+	{
+		await using var app = await SetupXamlTwoTabAppAsync(ct);
+
+		var hostPage = ResolveCurrentPage<HotReloadTabBarXamlPage>(app.NavigationRoot);
+		hostPage.Should().NotBeNull();
+
+		var tabOneVm = await WaitForTabContentVmAsync(
+			hostPage!.ContentGrid, "TabOne", TimeSpan.FromSeconds(30), ct);
+		tabOneVm.Should().NotBeNull();
+
+		// Step 1 — Remove Region.Attached from TabBar.
+		var removeRevert = await HotReloadHelper.UpdateSourceFile(
+			"../../Uno.Extensions.Navigation.UI.Tests/Pages/HotReloadTabBarXamlPage.xaml",
+			"""<utu:TabBar x:Name="TB" Grid.Row="1" uen:Region.Attached="True">""",
+			"""<utu:TabBar x:Name="TB" Grid.Row="1">""",
+			ct);
+
+		var detachedPage = await WaitForPageReplacementAsync<HotReloadTabBarXamlPage>(
+			app.NavigationRoot, hostPage, TimeSpan.FromSeconds(30), ct);
+
+		// Step 2 — Re-add Region.Attached (revert the removal).
+		await removeRevert.DisposeAsync();
+
+		var restoredPage = await WaitForPageReplacementAsync<HotReloadTabBarXamlPage>(
+			app.NavigationRoot, detachedPage, TimeSpan.FromSeconds(30), ct);
+
+		// After re-attachment, navigate to TabTwo to verify navigation works.
+		var tabBarNavigator = await WaitForTabBarNavigatorAsync(
+			restoredPage.TabBar, TimeSpan.FromSeconds(30), ct);
+		await tabBarNavigator.NavigateRouteAsync(restoredPage, "TabTwo");
+
+		var tabTwoVm = await WaitForTabContentVmAsync(
+			restoredPage.ContentGrid, "TabTwo", TimeSpan.FromSeconds(30), ct);
+		tabTwoVm.Should().NotBeNull(
+			"Navigation should be restored after Region.Attached is re-added via XAML HR");
+	}
+
 	#region Setup helpers
 
 	/// <summary>
