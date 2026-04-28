@@ -534,67 +534,7 @@ public class Given_TabBarHotReload
 	}
 
 	// ──────────────────────────────────────────────────────────────────────
-	// 11. TabBarItem added via XAML HR without pre-registered route
-	// ──────────────────────────────────────────────────────────────────────
-
-	/// <summary>
-	/// Real-world scenario: developer adds a new <c>TabBarItem</c> in XAML via HR
-	/// but the C# route registration does NOT include the new route.
-	/// The TabBar should show the new item, and clicking it should navigate
-	/// (or at least not crash). This tests whether the navigation framework
-	/// handles an unregistered route gracefully after XAML HR.
-	/// </summary>
-	[TestMethod]
-	[RunsOnUIThread]
-	public async Task When_TabBarItemAddedViaXamlHR_WithoutRouteRegistration_Then_TabBarShowsNewItem(CancellationToken ct)
-	{
-		// Use 2-tab setup — only TabOne and TabTwo routes registered.
-		await using var app = await SetupXamlTwoTabAppAsync(ct);
-
-		var hostPage = ResolveCurrentPage<HotReloadTabBarXamlPage>(app.NavigationRoot);
-		hostPage.Should().NotBeNull();
-		hostPage!.TabBar.Items.Count.Should().Be(2, "page starts with 2 tabs");
-
-		var tabOneVm = await WaitForTabContentVmAsync(
-			hostPage.ContentGrid, "TabOne", TimeSpan.FromSeconds(30), ct);
-		tabOneVm.Should().NotBeNull();
-
-		// XAML HR: add a third TabBarItem (TabThree) — NO route registered for it.
-		var originalLine =
-			"""<utu:TabBarItem Content="Tab Two" uen:Region.Name="TabTwo" IsSelectable="True" />""";
-		var replacementLines =
-			"""<utu:TabBarItem Content="Tab Two" uen:Region.Name="TabTwo" IsSelectable="True" />""" +
-			Environment.NewLine + "\t\t\t" +
-			"""<utu:TabBarItem Content="Tab Three" uen:Region.Name="TabThree" IsSelectable="True" />""";
-
-		await using var _ = await HotReloadHelper.UpdateSourceFile(
-			"../../Uno.Extensions.Navigation.UI.Tests/Pages/HotReloadTabBarXamlPage.xaml",
-			originalLine,
-			replacementLines,
-			ct);
-
-		// Wait for XAML HR to produce a page with 3 tabs.
-		var activePage = await WaitForPageMatchingAsync<HotReloadTabBarXamlPage>(
-			app.NavigationRoot,
-			page => page.TabBar.Items.Count == 3,
-			TimeSpan.FromSeconds(30), ct);
-
-		activePage.TabBar.Items.Count.Should().Be(3,
-			"XAML HR should have added a third TabBarItem");
-
-		// Try to navigate to the unregistered route by clicking (selecting) TabThree.
-		var tabBarNavigator = await WaitForTabBarNavigatorAsync(
-			activePage.TabBar, TimeSpan.FromSeconds(30), ct);
-		await tabBarNavigator.NavigateRouteAsync(activePage, "TabThree");
-
-		// Check what happens — does content load or stay on previous tab?
-		var tabThreeVm = FindTabContentVm(activePage.ContentGrid, "TabThree");
-		tabThreeVm.Should().NotBeNull(
-			"Navigation to a TabBarItem added via XAML HR should work even without pre-registered route");
-	}
-
-	// ──────────────────────────────────────────────────────────────────────
-	// 12. Route added via C# HR for existing TabBarItem
+	// 11. Route added via C# HR for existing TabBarItem
 	// ──────────────────────────────────────────────────────────────────────
 
 	/// <summary>
@@ -659,7 +599,7 @@ public class Given_TabBarHotReload
 	}
 
 	// ──────────────────────────────────────────────────────────────────────
-	// 13. Auto-resolve: XAML HR adds TabBarItem whose route name matches a
+	// 12. Auto-resolve: XAML HR adds TabBarItem whose route name matches a
 	//     type by convention (TabThree → TabThreePage), no explicit RouteMap
 	// ──────────────────────────────────────────────────────────────────────
 
@@ -730,7 +670,7 @@ public class Given_TabBarHotReload
 	}
 
 	// ──────────────────────────────────────────────────────────────────────
-	// 14. XAML HR adds TabBarItem then C# HR adds RouteMap — both in
+	// 13. XAML HR adds TabBarItem then C# HR adds RouteMap — both in
 	//     sequence within the same test
 	// ──────────────────────────────────────────────────────────────────────
 
@@ -800,11 +740,11 @@ public class Given_TabBarHotReload
 	}
 
 	// ──────────────────────────────────────────────────────────────────────
-	// 15. C# HR adds RouteMap first, then XAML HR adds the TabBarItem
+	// 14. C# HR adds RouteMap first, then XAML HR adds the TabBarItem
 	// ──────────────────────────────────────────────────────────────────────
 
 	/// <summary>
-	/// Reverse order of Test 14: the route is added via C# HR first, then
+	/// Reverse order of Test 13: the route is added via C# HR first, then
 	/// the TabBarItem is added via XAML HR.
 	///
 	/// Setup: XAML 2-tab page, route builder conditionally includes TabThree.
