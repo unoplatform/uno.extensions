@@ -175,6 +175,8 @@ public class RouteResolverDefault : RouteResolver
 
 		if (allowMatchExact && TryGetLoadedType(path, out var type))
 		{
+			if (Logger.IsEnabled(LogLevel.Debug))
+				Logger.LogDebugMessage($"Auto-resolve: Exact type match found for path '{path}' → {type.FullName}");
 			return type;
 		}
 
@@ -184,7 +186,13 @@ public class RouteResolverDefault : RouteResolver
 			{
 				if (condition?.Invoke(type) ?? true)
 				{
+					if (Logger.IsEnabled(LogLevel.Debug))
+						Logger.LogDebugMessage($"Auto-resolve: Found type '{path}{suffix}' → {type.FullName} (suffix match)");
 					return type;
+				}
+				else if (Logger.IsEnabled(LogLevel.Trace))
+				{
+					Logger.LogTraceMessage($"Auto-resolve: Type '{path}{suffix}' found but failed condition check (not a FrameworkElement subclass?)");
 				}
 			}
 		}

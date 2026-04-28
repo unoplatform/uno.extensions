@@ -60,7 +60,18 @@ public class PanelVisiblityNavigator : ControlNavigator<Panel>
 
 		return await Dispatcher.ExecuteAsync(async cancellation =>
 		{
-			return FindByPath(routeMap?.Path ?? route.Base) is not null;
+			var path = routeMap?.Path ?? route.Base;
+			var found = FindByPath(path) is not null;
+			if (Logger.IsEnabled(LogLevel.Debug))
+			{
+				if (found)
+					Logger.LogDebugMessage($"PanelVisibility: Existing child found for path '{path}'");
+				else if (routeMap?.RenderView is not null)
+					Logger.LogDebugMessage($"PanelVisibility: No existing child for '{path}', but view type '{routeMap.RenderView.Name}' will be created");
+				else
+					Logger.LogDebugMessage($"PanelVisibility: No existing child for '{path}' and no view type resolved — a FrameView will be created as fallback");
+			}
+			return found;
 		});
 	}
 
