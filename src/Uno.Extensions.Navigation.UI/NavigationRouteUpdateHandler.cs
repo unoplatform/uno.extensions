@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using System.Reflection.Metadata;
 
 [assembly: MetadataUpdateHandler(typeof(Uno.Extensions.Navigation.UI.NavigationRouteUpdateHandler))]
@@ -25,23 +26,16 @@ internal sealed class NavigationRouteContext
 /// </summary>
 internal static class NavigationRouteUpdateHandler
 {
-	private static readonly List<NavigationRouteContext> _contexts = new();
-	private static readonly object _lock = new();
+	private static ImmutableList<NavigationRouteContext> _contexts = ImmutableList<NavigationRouteContext>.Empty;
 
 	internal static void Register(NavigationRouteContext context)
 	{
-		lock (_lock)
-		{
-			_contexts.Add(context);
-		}
+		ImmutableInterlocked.Update(ref _contexts, list => list.Add(context));
 	}
 
 	internal static void Unregister(NavigationRouteContext context)
 	{
-		lock (_lock)
-		{
-			_contexts.Remove(context);
-		}
+		ImmutableInterlocked.Update(ref _contexts, list => list.Remove(context));
 	}
 
 	/// <summary>
@@ -54,13 +48,7 @@ internal static class NavigationRouteUpdateHandler
 	static void UpdateApplication(Type[]? updatedTypes)
 #pragma warning restore IDE0051
 	{
-		NavigationRouteContext[] snapshot;
-		lock (_lock)
-		{
-			snapshot = _contexts.ToArray();
-		}
-
-		foreach (var ctx in snapshot)
+		foreach (var ctx in _contexts)
 		{
 			RebuildRoutes(ctx);
 		}
