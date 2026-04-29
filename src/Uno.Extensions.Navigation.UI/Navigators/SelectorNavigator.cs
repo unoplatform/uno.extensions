@@ -13,7 +13,8 @@ public abstract class SelectorNavigator<TControl> : ControlNavigator<TControl>
 
 	// Stores the nested path from the current ExecuteRequestAsync call so that
 	// Show() → FindByPath() can use it to match composite region names like "Home/Favorites".
-	private string? _currentNestedPath;
+	// AsyncLocal is used to ensure correct behavior across async execution contexts.
+	private static readonly AsyncLocal<string?> _currentNestedPath = new AsyncLocal<string?>();
 
 	public override void ControlInitialize()
 	{
@@ -92,14 +93,14 @@ public abstract class SelectorNavigator<TControl> : ControlNavigator<TControl>
 
 	protected override async Task<Route?> ExecuteRequestAsync(NavigationRequest request)
 	{
-		_currentNestedPath = request.Route.Path;
+		_currentNestedPath.Value = request.Route.Path;
 		try
 		{
 			return await base.ExecuteRequestAsync(request);
 		}
 		finally
 		{
-			_currentNestedPath = null;
+			_currentNestedPath.Value = null;
 		}
 	}
 
@@ -122,7 +123,7 @@ public abstract class SelectorNavigator<TControl> : ControlNavigator<TControl>
 		detach?.Invoke();
 		try
 		{
-			var item = FindByPath(path, _currentNestedPath);
+			var item = FindByPath(path, _currentNestedPath.Value);
 
 			if (Logger.IsEnabled(LogLevel.Trace))
 			{
