@@ -1123,6 +1123,79 @@ public class Given_TabBarHotReload
 			"Navigation should be restored after Region.Attached is re-added via XAML HR");
 	}
 
+	// ──────────────────────────────────────────────────────────────────────
+	// 20. Entire TabBar navigation engine added via XAML HR
+	// ──────────────────────────────────────────────────────────────────────
+
+	/// <summary>
+	/// The page starts as a plain TextBlock with no navigation engine. XAML HR
+	/// replaces the entire content with a Grid containing a content area
+	/// (Region.Navigator="Visibility") and a TabBar with two items.
+	/// After HR, the framework should detect the new navigation engine and
+	/// kick off the initial tab navigation automatically, populating the
+	/// first tab's content without any manual click.
+	/// </summary>
+	[TestMethod]
+	[RunsOnUIThread]
+	public async Task When_TabBarAddedViaXamlHR_Then_InitialTabNavigationKicksIn(CancellationToken ct)
+	{
+		await using var app = await SetupLateAddTabBarAppAsync(ct);
+
+		var hostPage = ResolveCurrentPage<HotReloadTabBarLateAddPage>(app.NavigationRoot);
+		hostPage.Should().NotBeNull("Frame should have navigated to HotReloadTabBarLateAddPage");
+
+		// Baseline: page has no TabBar and no content grid yet.
+		hostPage!.TabBar.Should().BeNull("page should start without a TabBar");
+		hostPage.ContentGrid.Should().BeNull("page should start without a content grid");
+
+		// XAML HR: replace the placeholder with a full TabBar layout.
+		var originalContent = """<TextBlock x:Name="_placeholder" Text="No TabBar yet" />""";
+		var replacementContent =
+			"""<Grid.RowDefinitions>""" + Environment.NewLine +
+			"\t\t\t" + """<RowDefinition />""" + Environment.NewLine +
+			"\t\t\t" + """<RowDefinition Height="Auto" />""" + Environment.NewLine +
+			"\t\t" + """</Grid.RowDefinitions>""" + Environment.NewLine +
+			"\t\t" + """<Grid x:Name="_contentGrid" Grid.Row="0" uen:Region.Attached="True" uen:Region.Navigator="Visibility" />""" + Environment.NewLine +
+			"\t\t" + """<utu:TabBar x:Name="TB" Grid.Row="1" uen:Region.Attached="True">""" + Environment.NewLine +
+			"\t\t\t" + """<utu:TabBarItem Content="Tab One" uen:Region.Name="TabOne" IsSelectable="True" />""" + Environment.NewLine +
+			"\t\t\t" + """<utu:TabBarItem Content="Tab Two" uen:Region.Name="TabTwo" IsSelectable="True" />""" + Environment.NewLine +
+			"\t\t" + """</utu:TabBar>""";
+
+		await using var _ = await HotReloadHelper.UpdateSourceFile(
+			"../../Uno.Extensions.Navigation.UI.Tests/Pages/HotReloadTabBarLateAddPage.xaml",
+			originalContent,
+			replacementContent,
+			ct);
+
+		// Wait for XAML HR to produce a page with a TabBar.
+		var activePage = await WaitForPageMatchingAsync<HotReloadTabBarLateAddPage>(
+			app.NavigationRoot,
+			page => page.TabBar is not null && page.TabBar.Items.Count == 2,
+			TimeSpan.FromSeconds(30), ct);
+
+		activePage.TabBar.Should().NotBeNull("XAML HR should have added a TabBar");
+		activePage.ContentGrid.Should().NotBeNull("XAML HR should have added a content grid");
+		activePage.TabBar!.Items.Count.Should().Be(2, "TabBar should have two items");
+
+		// The initial tab navigation should have kicked in automatically.
+		// TabOne is the default route, so its content should be populated.
+		var tabOneVm = await WaitForTabContentVmAsync(
+			activePage.ContentGrid!, "TabOne", TimeSpan.FromSeconds(30), ct);
+		tabOneVm.Should().NotBeNull(
+			"After XAML HR adds a new TabBar, the initial tab navigation should " +
+			"kick in automatically and populate TabOne's content");
+
+		// Also verify that manual navigation to TabTwo works.
+		var tabBarNavigator = await WaitForTabBarNavigatorAsync(
+			activePage.TabBar, TimeSpan.FromSeconds(30), ct);
+		await tabBarNavigator.NavigateRouteAsync(activePage, "TabTwo");
+
+		var tabTwoVm = await WaitForTabContentVmAsync(
+			activePage.ContentGrid!, "TabTwo", TimeSpan.FromSeconds(30), ct);
+		tabTwoVm.Should().NotBeNull(
+			"Manual navigation to TabTwo should work after TabBar is added via XAML HR");
+	}
+
 	#region Setup helpers
 
 	/// <summary>
@@ -1444,6 +1517,35 @@ public class Given_TabBarHotReload
 					}));
 			},
 			"HotReloadTabBarCommandPage",
+			ct);
+
+	/// <summary>
+	/// Late-add page: starts as a plain TextBlock, XAML HR adds the TabBar layout.
+	/// Routes for TabOne/TabTwo are pre-registered so navigation works once the TabBar appears.
+	/// </summary>
+	private static Task<TabBarTestApp> SetupLateAddTabBarAppAsync(CancellationToken ct)
+		=> SetupTabBarAppAsync(
+			(views, routes) =>
+			{
+				views.Register(
+					new ViewMap<HotReloadTabBarLateAddPage>(),
+					new ViewMap<HotReloadTabContentPage, HotReloadTabBarVm>());
+
+				routes.Register(
+					new RouteMap("", Nested: new RouteMap[]
+					{
+						new RouteMap(
+							"HotReloadTabBarLateAddPage",
+							View: views.FindByView<HotReloadTabBarLateAddPage>(),
+							IsDefault: true,
+							Nested: new RouteMap[]
+							{
+								new RouteMap("TabOne", View: views.FindByView<HotReloadTabContentPage>(), IsDefault: true),
+								new RouteMap("TabTwo", View: views.FindByView<HotReloadTabContentPage>()),
+							}),
+					}));
+			},
+			"HotReloadTabBarLateAddPage",
 			ct);
 
 	#endregion
