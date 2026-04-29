@@ -25,4 +25,13 @@ public abstract class Registry<T> : IRegistry<T>
 	{
 		_items.Add(item);
 	}
+
+	/// <summary>
+	/// Removes all registered items. Used by C# hot-reload to allow
+	/// re-invocation of the route builder delegate.
+	/// </summary>
+	internal void Clear()
+	{
+		_items = new List<T>();
+	}
 }

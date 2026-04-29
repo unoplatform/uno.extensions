@@ -4,7 +4,7 @@ namespace Uno.Extensions.Navigation;
 
 public class RouteResolver : IRouteResolver
 {
-	private RouteInfo? First { get; }
+	private RouteInfo? First { get; set; }
 	protected IList<RouteInfo> Mappings { get; } = new List<RouteInfo>();
 
 	protected ILogger Logger { get; }
@@ -48,6 +48,33 @@ public class RouteResolver : IRouteResolver
 		);
 		Mappings.Add(messageDialogRoute);
 
+	}
+
+	/// <summary>
+	/// Re-reads the route and view registries and rebuilds the internal mappings.
+	/// Called by the C# hot-reload handler after the route builder delegate is
+	/// re-invoked with updated code.
+	/// </summary>
+	internal void Rebuild()
+	{
+		Mappings.Clear();
+
+		var maps = ResolveViewMaps(RouteMaps.Items);
+		if (maps is not null)
+		{
+			First = maps.FirstOrDefault(x => x.IsDefault) ?? maps.FirstOrDefault();
+			Mappings.AddRange(maps.Flatten());
+		}
+		else
+		{
+			First = null;
+		}
+
+		Mappings.Add(new RouteInfo(
+			Path: RouteConstants.MessageDialogUri,
+			View: () => typeof(MessageDialog),
+			ResultData: typeof(MessageDialog)
+		));
 	}
 
 	private void PrintViewMaps(IEnumerable<RouteInfo> maps, string prefix = "")
