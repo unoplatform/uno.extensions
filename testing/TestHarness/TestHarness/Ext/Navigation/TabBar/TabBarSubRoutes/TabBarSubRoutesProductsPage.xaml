@@ -9,8 +9,8 @@
 	<StackPanel VerticalAlignment="Center"
 				HorizontalAlignment="Center"
 				Spacing="12">
-		<TextBlock AutomationProperties.AutomationId="TabBarSubRoutesProductsPageTextBlock"
-				   Text="Products Page"
+		<TextBlock AutomationProperties.AutomationId="TabBarSubRoutesAllProductsTextBlock"
+				   Text="All Products"
 				   FontSize="24"
 				   HorizontalAlignment="Center" />
 	</StackPanel>

@@ -10,10 +10,12 @@
 
 	<!--
 		Sub-Routes Demo:
-		Two TabBarItems target the same base region ("Home") but navigate to different
-		sub-routes within it. Using composite region names "Home/Products" and
-		"Home/Favorites" causes the TabBarNavigator to select the correct item when
-		navigating to either sub-route programmatically.
+		Two TabBarItems both navigate to "ProductListsPage" (a page nested inside
+		HomePage) but target different sub-routes within it:
+		  - "ProductListsPage/AllProducts" → shows the All Products content inside ProductListsPage
+		  - "ProductListsPage/Favorites"   → shows the Favorites content inside ProductListsPage
+		The first segment of the composite region name is the page to navigate to;
+		the second segment is the sub-region to activate within that page.
 	-->
 	<Grid uen:Region.Attached="True">
 		<Grid.RowDefinitions>
@@ -25,22 +27,22 @@
 		<utu:NavigationBar Content="TabBar Sub-Routes Home"
 						   AutomationProperties.AutomationId="TabBarSubRoutesHomeNavigationBar" />
 
-		<!-- Content area: FrameView-based content per tab -->
+		<!-- Content area: renders ProductListsPage (and its own sub-navigation) -->
 		<Grid Grid.Row="1"
 			  uen:Region.Attached="True"
 			  uen:Region.Navigator="Visibility" />
 
-		<!-- TabBar: two items use composite region names targeting the same base region -->
+		<!-- TabBar: composite region names navigate to ProductListsPage + sub-route -->
 		<utu:TabBar Grid.Row="2"
 					uen:Region.Attached="True">
-			<utu:TabBarItem AutomationProperties.AutomationId="HomeProductsTabBarItem"
+			<utu:TabBarItem AutomationProperties.AutomationId="ProductsTabBarItem"
 							IsSelectable="True"
 							Content="Products"
-							uen:Region.Name="Home/Products" />
-			<utu:TabBarItem AutomationProperties.AutomationId="HomeFavoritesTabBarItem"
+							uen:Region.Name="ProductListsPage/AllProducts" />
+			<utu:TabBarItem AutomationProperties.AutomationId="FavoritesTabBarItem"
 							IsSelectable="True"
 							Content="Favorites"
-							uen:Region.Name="Home/Favorites" />
+							uen:Region.Name="ProductListsPage/Favorites" />
 		</utu:TabBar>
 	</Grid>
 </Page>

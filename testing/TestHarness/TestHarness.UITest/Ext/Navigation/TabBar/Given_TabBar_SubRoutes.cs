@@ -2,9 +2,11 @@ namespace TestHarness.UITest;
 
 /// <summary>
 /// Tests for sub-route support in TabBarItem region names.
-/// A composite region name like "Home/Products" navigates to the "Home" region
-/// and then to the "Products" sub-route within it. Two TabBarItems can therefore
-/// share the same base region ("Home") but each select a different sub-route.
+/// Both TabBarItems on HomePage use a composite region name where the first
+/// segment is the intermediate page to navigate to ("ProductListsPage") and
+/// the second segment is the sub-route to activate within that page:
+///   Tab 1 "Products"  — Region.Name="ProductListsPage/AllProducts"
+///   Tab 2 "Favorites" — Region.Name="ProductListsPage/Favorites"
 /// </summary>
 public class Given_TabBar_SubRoutes : NavigationTestBase
 {
@@ -17,16 +19,16 @@ public class Given_TabBar_SubRoutes : NavigationTestBase
 		App.WaitThenTap("ShowTabBarSubRoutesHomeButton");
 		App.WaitElement("TabBarSubRoutesHomeNavigationBar");
 
-		// Tap the "Products" tab — uses Region.Name="Home/Products"
-		App.WaitThenTap("HomeProductsTabBarItem");
-		App.WaitElement("TabBarSubRoutesProductsPageTextBlock");
+		// Tap the "Products" tab — uses Region.Name="ProductListsPage/AllProducts"
+		App.WaitThenTap("ProductsTabBarItem");
+		App.WaitElement("TabBarSubRoutesAllProductsTextBlock");
 
-		// Tap the "Favorites" tab — uses Region.Name="Home/Favorites"
-		App.WaitThenTap("HomeFavoritesTabBarItem");
+		// Tap the "Favorites" tab — uses Region.Name="ProductListsPage/Favorites"
+		App.WaitThenTap("FavoritesTabBarItem");
 		App.WaitElement("TabBarSubRoutesFavoritesPageTextBlock");
 
 		// Switch back to Products
-		App.WaitThenTap("HomeProductsTabBarItem");
-		App.WaitElement("TabBarSubRoutesProductsPageTextBlock");
+		App.WaitThenTap("ProductsTabBarItem");
+		App.WaitElement("TabBarSubRoutesAllProductsTextBlock");
 	}
 }
