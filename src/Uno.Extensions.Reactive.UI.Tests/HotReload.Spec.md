@@ -1,7 +1,7 @@
 # MVUX + Hot Reload Test Spec
 
 Living spec for the MVUX hot-reload tests in
-`Uno.Extensions.Reactive.UI.Tests.Given_HotReload`.
+`Uno.Extensions.Reactive.WinUI.Tests.Given_HotReload`.
 Tracks what scenarios we cover and harness constraints.
 
 Related issue: https://github.com/unoplatform/uno.extensions/issues/2906
@@ -83,7 +83,7 @@ Each scenario should:
 ### 4.3 ListFeed property remove/re-add (implemented)
 
 - **ID**: `When_RemoveAndReAddListFeedProperty_Then_BindingsWork`
-- **Goal**: Same as 5.2 but for `IListFeed<string>` bound to a ListView
+- **Goal**: Same as 4.2 but for `IListFeed<string>` bound to a ListView
   (#2906).
 - **Model**: `MvuxHotReloadListFeedRemoveModel` with
   `IListFeed<string> Items`.

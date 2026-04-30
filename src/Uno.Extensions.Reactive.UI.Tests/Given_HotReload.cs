@@ -1,5 +1,6 @@
 #if DEBUG // Hot-reload tests are only relevant in debug configuration
 using System;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Data;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -38,7 +39,7 @@ public class Given_HotReload
 	[RunsOnUIThread]
 	public async Task When_UpdateMvuxFeedSource_Then_NewViewModelReflectsUpdate(CancellationToken ct)
 	{
-		var vm = new MvuxHotReloadViewModel();
+		await using var vm = new MvuxHotReloadViewModel();
 		var text = new TextBlock();
 		var ui = new StackPanel { DataContext = vm, Children = { text } };
 		text.SetBinding(TextBlock.TextProperty, new Binding { Path = new PropertyPath("CurrentValue") });
@@ -53,7 +54,7 @@ public class Given_HotReload
 			ct);
 
 		// New ViewModel instance picks up the HR'd method body
-		var vm2 = new MvuxHotReloadViewModel();
+		await using var vm2 = new MvuxHotReloadViewModel();
 		var text2 = new TextBlock();
 		var ui2 = new StackPanel { DataContext = vm2, Children = { text2 } };
 		text2.SetBinding(TextBlock.TextProperty, new Binding { Path = new PropertyPath("CurrentValue") });
@@ -68,7 +69,7 @@ public class Given_HotReload
 	[RunsOnUIThread]
 	public async Task When_RemoveAndReAddFeedProperty_Then_BindingsWork(CancellationToken ct)
 	{
-		var vm1 = new MvuxHotReloadFeedRemoveViewModel();
+		await using var vm1 = new MvuxHotReloadFeedRemoveViewModel();
 		var text1 = new TextBlock();
 		var ui1 = new StackPanel { DataContext = vm1, Children = { text1 } };
 		text1.SetBinding(TextBlock.TextProperty, new Binding { Path = new PropertyPath("CurrentValue") });
@@ -92,7 +93,7 @@ public class Given_HotReload
 			ct);
 
 		// New ViewModel after re-add should have working bindings
-		var vm2 = new MvuxHotReloadFeedRemoveViewModel();
+		await using var vm2 = new MvuxHotReloadFeedRemoveViewModel();
 		var text2 = new TextBlock();
 		var ui2 = new StackPanel { DataContext = vm2, Children = { text2 } };
 		text2.SetBinding(TextBlock.TextProperty, new Binding { Path = new PropertyPath("CurrentValue") });
@@ -106,7 +107,7 @@ public class Given_HotReload
 	[RunsOnUIThread]
 	public async Task When_RemoveAndReAddListFeedProperty_Then_BindingsWork(CancellationToken ct)
 	{
-		var vm1 = new MvuxHotReloadListFeedRemoveViewModel();
+		await using var vm1 = new MvuxHotReloadListFeedRemoveViewModel();
 		var list1 = new ListView();
 		list1.SetBinding(ItemsControl.ItemsSourceProperty, new Binding { Path = new PropertyPath("Items") });
 		var ui1 = new StackPanel { DataContext = vm1, Children = { list1 } };
@@ -130,7 +131,7 @@ public class Given_HotReload
 			ct);
 
 		// New ViewModel after re-add should have working bindings
-		var vm2 = new MvuxHotReloadListFeedRemoveViewModel();
+		await using var vm2 = new MvuxHotReloadListFeedRemoveViewModel();
 		var list2 = new ListView();
 		list2.SetBinding(ItemsControl.ItemsSourceProperty, new Binding { Path = new PropertyPath("Items") });
 		var ui2 = new StackPanel { DataContext = vm2, Children = { list2 } };
@@ -144,7 +145,7 @@ public class Given_HotReload
 	[RunsOnUIThread]
 	public async Task When_RemoveAndReAddStateProperty_Then_BindingsWork(CancellationToken ct)
 	{
-		var vm1 = new MvuxHotReloadStateRemoveViewModel();
+		await using var vm1 = new MvuxHotReloadStateRemoveViewModel();
 		var text1 = new TextBlock();
 		var ui1 = new StackPanel { DataContext = vm1, Children = { text1 } };
 		text1.SetBinding(TextBlock.TextProperty, new Binding { Path = new PropertyPath("CurrentValue") });
@@ -165,7 +166,7 @@ public class Given_HotReload
 			"""public IState<string> CurrentValue => State.Async(this, async ct => "stateful");""",
 			ct);
 
-		var vm2 = new MvuxHotReloadStateRemoveViewModel();
+		await using var vm2 = new MvuxHotReloadStateRemoveViewModel();
 		var text2 = new TextBlock();
 		var ui2 = new StackPanel { DataContext = vm2, Children = { text2 } };
 		text2.SetBinding(TextBlock.TextProperty, new Binding { Path = new PropertyPath("CurrentValue") });
@@ -179,7 +180,7 @@ public class Given_HotReload
 	[RunsOnUIThread]
 	public async Task When_RemoveAndReAddMultipleProperties_Then_AllBindingsWork(CancellationToken ct)
 	{
-		var vm1 = new MvuxHotReloadMultiViewModel();
+		await using var vm1 = new MvuxHotReloadMultiViewModel();
 		var text1 = new TextBlock();
 		text1.SetBinding(TextBlock.TextProperty, new Binding { Path = new PropertyPath("Title") });
 		var list1 = new ListView();
@@ -189,19 +190,31 @@ public class Given_HotReload
 		await UIHelper.Load(ui1, ct);
 		await TestHelper.WaitFor(() => text1.Text == "title" && list1.Items.Count == 3, ct);
 
-		await using var delta1 = await HotReloadHelper.UpdateSourceFile(
+		await using var delta1a = await HotReloadHelper.UpdateSourceFile(
 			"../../Uno.Extensions.Reactive.UI.Tests/MvuxHotReloadMultiModel.cs",
-			"public IFeed<string> Title => Feed.Async(async ct => \"title\");\n\tpublic IListFeed<string> Items => ListFeed.Async(async ct => ImmutableList.Create(\"a\", \"b\", \"c\"));",
-			"// properties removed",
+			"""public IFeed<string> Title => Feed.Async(async ct => "title");""",
+			"""// Title removed""",
 			ct);
 
-		await using var delta2 = await HotReloadHelper.UpdateSourceFile(
+		await using var delta1b = await HotReloadHelper.UpdateSourceFile(
 			"../../Uno.Extensions.Reactive.UI.Tests/MvuxHotReloadMultiModel.cs",
-			"// properties removed",
-			"public IFeed<string> Title => Feed.Async(async ct => \"title\");\n\tpublic IListFeed<string> Items => ListFeed.Async(async ct => ImmutableList.Create(\"a\", \"b\", \"c\"));",
+			"""public IListFeed<string> Items => ListFeed.Async(async ct => ImmutableList.Create("a", "b", "c"));""",
+			"""// Items removed""",
 			ct);
 
-		var vm2 = new MvuxHotReloadMultiViewModel();
+		await using var delta2a = await HotReloadHelper.UpdateSourceFile(
+			"../../Uno.Extensions.Reactive.UI.Tests/MvuxHotReloadMultiModel.cs",
+			"""// Title removed""",
+			"""public IFeed<string> Title => Feed.Async(async ct => "title");""",
+			ct);
+
+		await using var delta2b = await HotReloadHelper.UpdateSourceFile(
+			"../../Uno.Extensions.Reactive.UI.Tests/MvuxHotReloadMultiModel.cs",
+			"""// Items removed""",
+			"""public IListFeed<string> Items => ListFeed.Async(async ct => ImmutableList.Create("a", "b", "c"));""",
+			ct);
+
+		await using var vm2 = new MvuxHotReloadMultiViewModel();
 		var text2 = new TextBlock();
 		text2.SetBinding(TextBlock.TextProperty, new Binding { Path = new PropertyPath("Title") });
 		var list2 = new ListView();
