@@ -136,7 +136,15 @@ public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 
 				await InitializeCurrentView(request, this.Route with { Data = request.Route.Data }, mapping, true);
 			}
-			return request.Route;
+
+			// Return only the Base (drop the Path) so that any nested sub-route is
+			// not consumed by Trim and can be forwarded to child navigators.
+			// For example, when both "ProductListsPage/AllProducts" and
+			// "ProductListsPage/Favorites" share the same parent page that is already
+			// showing, only "ProductListsPage" was handled here; the sub-route
+			// ("AllProducts" or "Favorites") must still reach the ContentControl
+			// (or other nested navigator) inside ProductListsPage.
+			return request.Route with { Path = null };
 		}
 
 
