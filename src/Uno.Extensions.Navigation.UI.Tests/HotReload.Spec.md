@@ -224,10 +224,58 @@ Each child `Region.Name` is a selectable target. See docs:
 - **Risk**: PanelVisiblityNavigator reuses existing FrameViews, so the same VM instance is re-visible post-HR. The VM's property getter re-reads the HR'd method on each access — that's what makes the assertion work. If the VM cached the method return value, HR wouldn't be visible without re-instantiation.
 - **Status (2026-04-22)**: Implemented and passing end-to-end on Skia desktop.
 
-- **ID**: `When_UpdateStackPanelChildAfterHR_Then_NewlyShownChildReflectsUpdate`
-- **Goal**: Same as above but with a `StackPanel` instead of `Grid`.
-- **Risk**: `StackPanel` doesn't have rows/columns but the region mechanism is identical
-  — mostly a smoke test that panel type doesn't matter.
+- **ID**: `When_SwitchInlinePanelRegionAfterUpdate_Then_NewlyShownRegionReflectsUpdate`
+- **Goal**: Cover the canonical `HowTo-UsePanel` shape — a `Grid` with
+  `Region.Navigator="Visibility"` containing **pre-existing inline children** identified
+  by `Region.Name` (no `RouteMap` view materialization, no `FrameView` wrapping). This is
+  a different code path from 5.4's first scenario: `PanelVisiblityNavigator.Show` takes
+  the `FindByPath` branch and just toggles `Visibility` on the existing child rather than
+  creating a `FrameView` from a registered view type.
+- **Layout**: `HotReloadPanelHostPage` containing `PanelRoot` (a `Grid` with
+  `Region.Attached + Region.Navigator="Visibility"`) with three pre-existing
+  `InlineRegion` children tagged `One`/`Two`/`Three`. Each `InlineRegion` registers a
+  `RegisterPropertyChangedCallback(VisibilityProperty, …)` that re-reads
+  `HotReloadPanelTarget.GetValue()` into its `TextBlock` whenever it transitions to
+  `Visible`.
+- **HR change**: `HotReloadPanelTarget.GetValue()` flip `original` → `updated`.
+- **Trigger**: `panelNavigator.NavigateRouteAsync(hostPage, "Two")` after the HR delta —
+  `Two` has never been shown, so this is its first Collapsed→Visible transition.
+- **Assertion**: `RegionTwo.Text.Text == "updated"`. Sanity assertion that
+  `RegionOne.Visibility == Collapsed` confirms `PostNavigateAsync` actually flipped the
+  panel rather than the test trivially passing.
+- **Risk**: Inline children pre-exist, so HR field-init/ctor changes would *not* surface
+  here without re-instantiation — the test deliberately uses a method-body change read on
+  every visibility transition. Also: nested route maps for `One`/`Two`/`Three` carry
+  `View: null` because `PanelVisiblityNavigator.FindByPath` matches by `Region.Name`
+  before consulting the route's view; the entries exist purely to give the resolver a
+  known route name and to mark the default region with `IsDefault: true`.
+- **Status (2026-04-30)**: Implemented; sits alongside the route-materialized region
+  scenario above and exercises the *other* `PanelVisiblityNavigator.Show` branch.
+
+- **ID**: `When_ReturnToInlinePanelRegionAfterUpdate_Then_RevisitedRegionReflectsUpdate`
+- **Goal**: Same harness as above but the HR delta applies *after* both regions have been
+  shown once. Re-entering an already-loaded inline child re-reads the HR'd target via the
+  visibility-transition callback, so the test proves the read happens on every
+  Collapsed→Visible flip — not just on first show.
+- **Layout**: Identical to the previous scenario (`HotReloadPanelHostPage`).
+- **HR change**: `HotReloadPanelTarget.GetValue()` flip `original` → `updated`.
+- **Trigger**: Switch `One` → `Two` (pre-HR), apply HR, switch `Two` → `One`.
+- **Assertion**: `RegionOne.Text.Text == "updated"` after the second visit; the inline
+  child instance is the *same* instance that previously showed `original`.
+- **Risk**: Most apps switch back-and-forth between sections, so this is the load-bearing
+  case for HR + inline panel. If the navigator skipped re-reading on revisit (e.g. by
+  short-circuiting Visibility when CurrentlyVisibleControl already pointed at it), the
+  delta would not surface — the test pins down that real Visibility transitions happen
+  on every nav.
+- **Status (2026-04-30)**: Implemented.
+
+- **ID**: `When_UpdateStackPanelChildAfterHR_Then_NewlyShownChildReflectsUpdate` ❌
+- **Goal**: Originally planned variant on the inline-Panel scenario above using a
+  `StackPanel` instead of a `Grid`.
+- **Status**: **Not feasible.** `PanelVisiblityNavigator` casts the region control as
+  `Grid` (`controlProvider.RegionControl as Grid`); a non-`Grid` panel produces a `null`
+  `Control` and `FindByPath` always returns `null`. No coverage gain over the inline-Grid
+  scenarios above — drop unless `PanelVisiblityNavigator` is generalized to `Panel`.
 
 - **ID**: `When_DescentFromEmptyRoot_Then_DefaultRegionChildLoadsAfterUpdate`
 - **Goal**: Cover the `""` → `IsDefault` descent path that the baseline had to side-step.
