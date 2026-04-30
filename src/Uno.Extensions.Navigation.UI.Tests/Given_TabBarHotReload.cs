@@ -1196,6 +1196,83 @@ public class Given_TabBarHotReload
 			"Manual navigation to TabTwo should work after TabBar is added via XAML HR");
 	}
 
+	// ──────────────────────────────────────────────────────────────────────
+	// 21. XAML HR adds TabBar, then C# HR injects route registration
+	// ──────────────────────────────────────────────────────────────────────
+
+	/// <summary>
+	/// The page starts as a plain TextBlock. XAML HR adds a TabBar with
+	/// TabOne, TabTwo, and TabThree items. However, only TabOne and TabTwo
+	/// have pre-registered routes. C# HR then injects the TabThree route
+	/// registration, making it navigable.
+	/// </summary>
+	[TestMethod]
+	[RunsOnUIThread]
+	public async Task When_TabBarAddedViaXamlHR_ThenCSharpHRInjectsRoute_Then_NewTabNavigable(CancellationToken ct)
+	{
+		await using var app = await SetupLateAddTabBarPartialRoutesAppAsync(ct);
+
+		var hostPage = ResolveCurrentPage<HotReloadTabBarLateAddPage>(app.NavigationRoot);
+		hostPage.Should().NotBeNull("Frame should have navigated to HotReloadTabBarLateAddPage");
+
+		// Baseline: page has no TabBar yet.
+		hostPage!.TabBar.Should().BeNull("page should start without a TabBar");
+
+		// XAML HR: replace the placeholder with a full TabBar layout (3 tabs).
+		var originalContent = """<TextBlock x:Name="_placeholder" Text="No TabBar yet" />""";
+		var replacementContent =
+			"""<Grid.RowDefinitions>""" + Environment.NewLine +
+			"\t\t\t" + """<RowDefinition />""" + Environment.NewLine +
+			"\t\t\t" + """<RowDefinition Height="Auto" />""" + Environment.NewLine +
+			"\t\t" + """</Grid.RowDefinitions>""" + Environment.NewLine +
+			"\t\t" + """<Grid x:Name="_contentGrid" Grid.Row="0" uen:Region.Attached="True" uen:Region.Navigator="Visibility" />""" + Environment.NewLine +
+			"\t\t" + """<utu:TabBar x:Name="TB" Grid.Row="1" uen:Region.Attached="True">""" + Environment.NewLine +
+			"\t\t\t" + """<utu:TabBarItem Content="Tab One" uen:Region.Name="TabOne" IsSelectable="True" />""" + Environment.NewLine +
+			"\t\t\t" + """<utu:TabBarItem Content="Tab Two" uen:Region.Name="TabTwo" IsSelectable="True" />""" + Environment.NewLine +
+			"\t\t\t" + """<utu:TabBarItem Content="Tab Three" uen:Region.Name="TabThree" IsSelectable="True" />""" + Environment.NewLine +
+			"\t\t" + """</utu:TabBar>""";
+
+		await using var xamlRevert = await HotReloadHelper.UpdateSourceFile(
+			"../../Uno.Extensions.Navigation.UI.Tests/Pages/HotReloadTabBarLateAddPage.xaml",
+			originalContent,
+			replacementContent,
+			ct);
+
+		// Wait for XAML HR to produce a page with a TabBar.
+		var activePage = await WaitForPageMatchingAsync<HotReloadTabBarLateAddPage>(
+			app.NavigationRoot,
+			page => page.TabBar is not null && page.TabBar.Items.Count == 3,
+			TimeSpan.FromSeconds(30), ct);
+
+		activePage.TabBar.Should().NotBeNull("XAML HR should have added a TabBar");
+		activePage.ContentGrid.Should().NotBeNull("XAML HR should have added a content grid");
+		activePage.TabBar!.Items.Count.Should().Be(3, "TabBar should have three items");
+
+		// Navigate to TabOne (pre-registered route) to verify basic navigation works.
+		var tabBarNavigator = await WaitForTabBarNavigatorAsync(
+			activePage.TabBar, TimeSpan.FromSeconds(30), ct);
+		await tabBarNavigator.NavigateRouteAsync(activePage, "TabOne");
+
+		var tabOneVm = await WaitForTabContentVmAsync(
+			activePage.ContentGrid!, "TabOne", TimeSpan.FromSeconds(30), ct);
+		tabOneVm.Should().NotBeNull("TabOne should be navigable (pre-registered route)");
+
+		// C# HR: inject the TabThree route registration.
+		await using var csRevert = await HotReloadHelper.UpdateSourceFile(
+			"../../Uno.Extensions.Navigation.UI.Tests/HotReloadRouteRegistration.cs",
+			"=> false",
+			"=> true",
+			ct);
+
+		// Post-HR: navigate to TabThree — route should now be available.
+		await tabBarNavigator.NavigateRouteAsync(activePage, "TabThree");
+
+		var tabThreeVm = await WaitForTabContentVmAsync(
+			activePage.ContentGrid!, "TabThree", TimeSpan.FromSeconds(30), ct);
+		tabThreeVm.Should().NotBeNull(
+			"After XAML HR adds TabBar and C# HR injects the route, TabThree should be navigable");
+	}
+
 	#region Setup helpers
 
 	/// <summary>
@@ -1543,6 +1620,43 @@ public class Given_TabBarHotReload
 								new RouteMap("TabOne", View: views.FindByView<HotReloadTabContentPage>(), IsDefault: true),
 								new RouteMap("TabTwo", View: views.FindByView<HotReloadTabContentPage>()),
 							}),
+					}));
+			},
+			"HotReloadTabBarLateAddPage",
+			ct);
+
+	/// <summary>
+	/// Late-add page with partial routes: starts as a plain TextBlock, XAML HR adds the
+	/// TabBar layout. Only TabOne/TabTwo have routes initially; TabThree is conditionally
+	/// added via <see cref="HotReloadRouteRegistration.IncludeTabThree"/>.
+	/// </summary>
+	private static Task<TabBarTestApp> SetupLateAddTabBarPartialRoutesAppAsync(CancellationToken ct)
+		=> SetupTabBarAppAsync(
+			(views, routes) =>
+			{
+				views.Register(
+					new ViewMap<HotReloadTabBarLateAddPage>(),
+					new ViewMap<HotReloadTabContentPage, HotReloadTabBarVm>());
+
+				var nested = new List<RouteMap>
+				{
+					new RouteMap("TabOne", View: views.FindByView<HotReloadTabContentPage>(), IsDefault: true),
+					new RouteMap("TabTwo", View: views.FindByView<HotReloadTabContentPage>()),
+				};
+
+				if (HotReloadRouteRegistration.IncludeTabThree())
+				{
+					nested.Add(new RouteMap("TabThree", View: views.FindByView<HotReloadTabContentPage>()));
+				}
+
+				routes.Register(
+					new RouteMap("", Nested: new RouteMap[]
+					{
+						new RouteMap(
+							"HotReloadTabBarLateAddPage",
+							View: views.FindByView<HotReloadTabBarLateAddPage>(),
+							IsDefault: true,
+							Nested: nested.ToArray()),
 					}));
 			},
 			"HotReloadTabBarLateAddPage",
