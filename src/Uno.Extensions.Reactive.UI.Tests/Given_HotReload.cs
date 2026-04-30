@@ -139,5 +139,79 @@ public class Given_HotReload
 		await TestHelper.WaitFor(() => list2.Items.Count == 3, ct);
 		Assert.AreEqual(3, list2.Items.Count);
 	}
+
+	[TestMethod]
+	[RunsOnUIThread]
+	public async Task When_RemoveAndReAddStateProperty_Then_BindingsWork(CancellationToken ct)
+	{
+		var vm1 = new MvuxHotReloadStateRemoveViewModel();
+		var text1 = new TextBlock();
+		var ui1 = new StackPanel { DataContext = vm1, Children = { text1 } };
+		text1.SetBinding(TextBlock.TextProperty, new Binding { Path = new PropertyPath("CurrentValue") });
+
+		await UIHelper.Load(ui1, ct);
+		await TestHelper.WaitFor(() => text1.Text == "stateful", ct);
+		Assert.AreEqual("stateful", text1.Text);
+
+		await using var delta1 = await HotReloadHelper.UpdateSourceFile(
+			"../../Uno.Extensions.Reactive.UI.Tests/MvuxHotReloadStateRemoveModel.cs",
+			"""public IState<string> CurrentValue => State.Async(this, async ct => "stateful");""",
+			"""// property removed""",
+			ct);
+
+		await using var delta2 = await HotReloadHelper.UpdateSourceFile(
+			"../../Uno.Extensions.Reactive.UI.Tests/MvuxHotReloadStateRemoveModel.cs",
+			"""// property removed""",
+			"""public IState<string> CurrentValue => State.Async(this, async ct => "stateful");""",
+			ct);
+
+		var vm2 = new MvuxHotReloadStateRemoveViewModel();
+		var text2 = new TextBlock();
+		var ui2 = new StackPanel { DataContext = vm2, Children = { text2 } };
+		text2.SetBinding(TextBlock.TextProperty, new Binding { Path = new PropertyPath("CurrentValue") });
+
+		await UIHelper.Load(ui2, ct);
+		await TestHelper.WaitFor(() => text2.Text == "stateful", ct);
+		Assert.AreEqual("stateful", text2.Text);
+	}
+
+	[TestMethod]
+	[RunsOnUIThread]
+	public async Task When_RemoveAndReAddMultipleProperties_Then_AllBindingsWork(CancellationToken ct)
+	{
+		var vm1 = new MvuxHotReloadMultiViewModel();
+		var text1 = new TextBlock();
+		text1.SetBinding(TextBlock.TextProperty, new Binding { Path = new PropertyPath("Title") });
+		var list1 = new ListView();
+		list1.SetBinding(ItemsControl.ItemsSourceProperty, new Binding { Path = new PropertyPath("Items") });
+		var ui1 = new StackPanel { DataContext = vm1, Children = { text1, list1 } };
+
+		await UIHelper.Load(ui1, ct);
+		await TestHelper.WaitFor(() => text1.Text == "title" && list1.Items.Count == 3, ct);
+
+		await using var delta1 = await HotReloadHelper.UpdateSourceFile(
+			"../../Uno.Extensions.Reactive.UI.Tests/MvuxHotReloadMultiModel.cs",
+			"public IFeed<string> Title => Feed.Async(async ct => \"title\");\n\tpublic IListFeed<string> Items => ListFeed.Async(async ct => ImmutableList.Create(\"a\", \"b\", \"c\"));",
+			"// properties removed",
+			ct);
+
+		await using var delta2 = await HotReloadHelper.UpdateSourceFile(
+			"../../Uno.Extensions.Reactive.UI.Tests/MvuxHotReloadMultiModel.cs",
+			"// properties removed",
+			"public IFeed<string> Title => Feed.Async(async ct => \"title\");\n\tpublic IListFeed<string> Items => ListFeed.Async(async ct => ImmutableList.Create(\"a\", \"b\", \"c\"));",
+			ct);
+
+		var vm2 = new MvuxHotReloadMultiViewModel();
+		var text2 = new TextBlock();
+		text2.SetBinding(TextBlock.TextProperty, new Binding { Path = new PropertyPath("Title") });
+		var list2 = new ListView();
+		list2.SetBinding(ItemsControl.ItemsSourceProperty, new Binding { Path = new PropertyPath("Items") });
+		var ui2 = new StackPanel { DataContext = vm2, Children = { text2, list2 } };
+
+		await UIHelper.Load(ui2, ct);
+		await TestHelper.WaitFor(() => text2.Text == "title" && list2.Items.Count == 3, ct);
+		Assert.AreEqual("title", text2.Text);
+		Assert.AreEqual(3, list2.Items.Count);
+	}
 }
 #endif

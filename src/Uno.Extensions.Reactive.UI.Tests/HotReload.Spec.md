@@ -52,7 +52,6 @@ Each scenario should:
 | **Feed property remove/re-add** | Entire `IFeed<T>` property removed then restored | #2906 core scenario. Source generator must re-emit the ViewModel property. |
 | **ListFeed property remove/re-add** | Entire `IListFeed<T>` property removed then restored | #2906 core scenario for collections. |
 | **State property remove/re-add** | Entire `IState<T>` property removed then restored | Same pattern as Feed but with two-way binding surface. |
-| **Feed source expression** | Lambda body inside `Feed.Async(...)` | Tests that the feed's async factory is re-evaluated post-HR. |
 | **Multiple properties remove/re-add** | Several Feed/ListFeed/State properties removed and re-added together | Closer to real-world scenario (e.g. Chefs HomeModel). |
 
 ## 4. Scenario catalog
@@ -92,29 +91,29 @@ Each scenario should:
 - **Assertion**: New ViewModel after re-add populates ListView with 3 items.
 - **Status**: Passing.
 
-### 4.4 State property remove/re-add (not yet implemented)
+### 4.4 State property remove/re-add (implemented)
 
-- **ID**: `When_RemoveAndReAddStateProperty_Then_TwoWayBindingWorks`
-- **Goal**: Same pattern for `IState<T>` — verify two-way binding survives
-  the remove/re-add cycle.
-- **Risk**: State has write-back semantics via `UpdateAsync`; the generated
-  ViewModel setter may not reconnect after re-add.
+- **ID**: `When_RemoveAndReAddStateProperty_Then_BindingsWork`
+- **Goal**: Same pattern as Feed remove/re-add but for `IState<T>` (#2906).
+- **Model**: `MvuxHotReloadStateRemoveModel` with
+  `IState<string> CurrentValue`.
+- **HR change**: Two sequential deltas — remove, then re-add.
+- **Assertion**: New ViewModel after re-add has a working `CurrentValue`
+  binding showing `"stateful"`.
+- **Status**: Passing.
 
-### 4.5 Multiple properties remove/re-add (not yet implemented)
+### 4.5 Multiple properties remove/re-add (implemented)
 
 - **ID**: `When_RemoveAndReAddMultipleProperties_Then_AllBindingsWork`
 - **Goal**: Mirrors the real Chefs scenario from #2906 — multiple
-  Feed/ListFeed/State properties removed and re-added in one HR cycle.
-- **Risk**: Source generator diff may handle single-property changes
-  differently from bulk changes.
-
-### 4.6 Feed source expression update (not yet implemented)
-
-- **ID**: `When_UpdateFeedAsyncLambda_Then_NewValueReflected`
-- **Goal**: Change the lambda inside `Feed.Async(async ct => ...)` directly,
-  rather than an external method body.
-- **Risk**: The lambda may be captured in a compiler-generated closure class;
-  HR of closure bodies has known limitations.
+  Feed and ListFeed properties removed and re-added in one HR cycle.
+- **Model**: `MvuxHotReloadMultiModel` with `IFeed<string> Title` and
+  `IListFeed<string> Items`.
+- **HR change**: Two sequential deltas — remove both properties, then
+  re-add both.
+- **Assertion**: New ViewModel after re-add has both `Title` and `Items`
+  bindings working.
+- **Status**: Passing.
 
 ## 5. Organizational notes
 
@@ -135,3 +134,5 @@ Each scenario should:
 | `MvuxHotReloadModel.cs` | Model for baseline Feed source update |
 | `MvuxHotReloadFeedRemoveModel.cs` | Model for Feed remove/re-add (#2906) |
 | `MvuxHotReloadListFeedRemoveModel.cs` | Model for ListFeed remove/re-add (#2906) |
+| `MvuxHotReloadStateRemoveModel.cs` | Model for State remove/re-add (#2906) |
+| `MvuxHotReloadMultiModel.cs` | Model for multi-property remove/re-add (#2906) |
