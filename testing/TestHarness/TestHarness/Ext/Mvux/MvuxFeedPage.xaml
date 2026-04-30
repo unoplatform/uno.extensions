@@ -1,0 +1,38 @@
+<Page x:Class="TestHarness.Ext.Mvux.MvuxFeedPage"
+	  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	  xmlns:ui="using:Uno.Extensions.Reactive.UI"
+	  mc:Ignorable="d"
+	  Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+	<Grid>
+		<StackPanel HorizontalAlignment="Center"
+					VerticalAlignment="Center"
+					Spacing="8">
+			<TextBlock Text="Feed Test"
+					   FontSize="24" />
+			<ui:FeedView Source="{Binding CurrentItem}">
+				<ui:FeedView.ValueTemplate>
+					<DataTemplate>
+						<StackPanel Spacing="4">
+							<TextBlock AutomationProperties.AutomationId="MvuxFeedItemName"
+									   Text="{Binding Data.Name}"
+									   FontSize="18" />
+							<TextBlock AutomationProperties.AutomationId="MvuxFeedItemId"
+									   Text="{Binding Data.Id}"
+									   FontSize="18" />
+						</StackPanel>
+					</DataTemplate>
+				</ui:FeedView.ValueTemplate>
+				<ui:FeedView.ProgressTemplate>
+					<DataTemplate>
+						<ProgressRing AutomationProperties.AutomationId="MvuxFeedLoading"
+									  IsActive="True" />
+					</DataTemplate>
+				</ui:FeedView.ProgressTemplate>
+			</ui:FeedView>
+		</StackPanel>
+	</Grid>
+</Page>

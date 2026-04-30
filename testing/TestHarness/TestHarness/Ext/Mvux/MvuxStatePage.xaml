@@ -1,0 +1,33 @@
+<Page x:Class="TestHarness.Ext.Mvux.MvuxStatePage"
+	  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	  mc:Ignorable="d"
+	  Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+	<Grid>
+		<StackPanel HorizontalAlignment="Center"
+					VerticalAlignment="Center"
+					Spacing="8">
+			<TextBlock Text="State Test"
+					   FontSize="24" />
+
+			<TextBlock Text="Name:" FontSize="14" />
+			<TextBlock AutomationProperties.AutomationId="MvuxStateNameDisplay"
+					   Text="{Binding Name}"
+					   FontSize="18" />
+			<TextBox AutomationProperties.AutomationId="MvuxStateNameInput"
+					 Text="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+					 PlaceholderText="Enter name" />
+
+			<TextBlock Text="Counter:" FontSize="14" />
+			<TextBlock AutomationProperties.AutomationId="MvuxStateCounterDisplay"
+					   Text="{Binding Counter}"
+					   FontSize="18" />
+			<Button AutomationProperties.AutomationId="MvuxStateIncrementButton"
+					Command="{Binding IncrementCounter}"
+					Content="Increment Counter" />
+		</StackPanel>
+	</Grid>
+</Page>
