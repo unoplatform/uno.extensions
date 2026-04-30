@@ -1,17 +1,41 @@
 ﻿namespace Uno.Extensions.Navigation.UI;
 
-internal record NavigationHostedService(ILogger<NavigationRegion> RegionLogger) : IHostedService, IStartupService
+internal class NavigationHostedService : IHostedService, IStartupService
 {
-	private TaskCompletionSource<bool> _completion = new TaskCompletionSource<bool>();
+	private readonly ILogger<NavigationRegion> _regionLogger;
+	private readonly NavigationRouteContext? _routeContext;
+	private readonly TaskCompletionSource<bool> _completion = new();
+
+	public NavigationHostedService(
+		ILogger<NavigationRegion> regionLogger,
+		NavigationRouteContext? routeContext = null)
+	{
+		_regionLogger = regionLogger;
+		_routeContext = routeContext;
+	}
 
 	public Task StartAsync(CancellationToken cancellationToken)
 	{
-		Region.Logger = RegionLogger;
+		Region.Logger = _regionLogger;
+
+		if (_routeContext is not null)
+		{
+			NavigationRouteUpdateHandler.Register(_routeContext);
+		}
+
 		_completion.SetResult(true);
 		return Task.CompletedTask;
 	}
 
-	public Task StopAsync(CancellationToken cancellationToken) => Task.CompletedTask;
+	public Task StopAsync(CancellationToken cancellationToken)
+	{
+		if (_routeContext is not null)
+		{
+			NavigationRouteUpdateHandler.Unregister(_routeContext);
+		}
+
+		return Task.CompletedTask;
+	}
 
 	public Task StartupComplete() => _completion.Task;
 }
