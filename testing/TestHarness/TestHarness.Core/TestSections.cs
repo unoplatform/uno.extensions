@@ -41,6 +41,5 @@ public enum TestSections
 	Http_Refit,
 	Http_Kiota,
 	Toolkit_ThemeService,
-	Validation,
-	Mvux_Basic
+	Validation
 }

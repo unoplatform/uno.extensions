@@ -28,7 +28,6 @@
 
 	<ItemGroup>
 		<PackageReference Include="MSTest.TestFramework" />
-		<PackageReference Include="FluentAssertions" />
 		<!--<PackageReference Include="Uno.UI.RuntimeTests.Engine" />-->
 	</ItemGroup>
 
