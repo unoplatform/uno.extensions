@@ -11,6 +11,11 @@ public abstract class SelectorNavigator<TControl> : ControlNavigator<TControl>
 	// Used to detect when the initial selection was missed during XAML HR.
 	private bool _showCalled;
 
+	// Stores the nested path from the current ExecuteRequestAsync call so that
+	// Show() → FindByPath() can use it to match composite region names like "Home/Favorites".
+	// AsyncLocal is used to ensure correct behavior across async execution contexts.
+	private static readonly AsyncLocal<string?> _currentNestedPath = new AsyncLocal<string?>();
+
 	public override void ControlInitialize()
 	{
 		_showCalled = false;
@@ -72,7 +77,7 @@ public abstract class SelectorNavigator<TControl> : ControlNavigator<TControl>
 
 		return await Dispatcher.ExecuteAsync(async cancellation =>
 		{
-			return FindByPath(routeMap?.Path ?? route.Base) is not null;
+			return FindByPath(routeMap?.Path ?? route.Base, route.Path) is not null;
 		});
 	}
 
@@ -84,6 +89,19 @@ public abstract class SelectorNavigator<TControl> : ControlNavigator<TControl>
 		RegionControlProvider controlProvider)
 		: base(logger, dispatcher, region, resolver, controlProvider.RegionControl as TControl)
 	{
+	}
+
+	protected override async Task<Route?> ExecuteRequestAsync(NavigationRequest request)
+	{
+		_currentNestedPath.Value = request.Route.Path;
+		try
+		{
+			return await base.ExecuteRequestAsync(request);
+		}
+		finally
+		{
+			_currentNestedPath.Value = null;
+		}
 	}
 
 	protected override async Task<string?> Show(
@@ -105,7 +123,7 @@ public abstract class SelectorNavigator<TControl> : ControlNavigator<TControl>
 		detach?.Invoke();
 		try
 		{
-			var item = FindByPath(path);
+			var item = FindByPath(path, _currentNestedPath.Value);
 
 			if (Logger.IsEnabled(LogLevel.Trace))
 			{
@@ -170,7 +188,7 @@ public abstract class SelectorNavigator<TControl> : ControlNavigator<TControl>
 	}
 
 
-	private FrameworkElement? FindByPath(string? path)
+	private FrameworkElement? FindByPath(string? path, string? nestedPath = null)
 	{
 		if (string.IsNullOrWhiteSpace(path) || Control is null)
 		{
@@ -180,6 +198,25 @@ public abstract class SelectorNavigator<TControl> : ControlNavigator<TControl>
 			}
 
 			return default;
+		}
+
+		// If a nested path is provided, first try to find an item whose composite region name
+		// (e.g. "Home/Favorites") matches the combination of the base path and nested path.
+		// This allows NavigationViewItems and TabBarItems to target sub-routes of the same region.
+		if (!string.IsNullOrWhiteSpace(nestedPath))
+		{
+			var nestedPart = nestedPath.TrimStart('/');
+			if (!string.IsNullOrWhiteSpace(nestedPart))
+			{
+				var compositePath = $"{path}/{nestedPart}";
+				var compositeItem = (from mi in Items
+									 where mi.GetRegionOrElementName().WithoutQualifier() == compositePath
+									 select mi).FirstOrDefault();
+				if (compositeItem is not null)
+				{
+					return compositeItem;
+				}
+			}
 		}
 
 		var item = (from mi in Items

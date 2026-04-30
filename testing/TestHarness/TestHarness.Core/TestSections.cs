@@ -14,6 +14,7 @@ public enum TestSections
 	Navigation_TabBar,
 	Navigation_TabBar_BackNavigation,
 	Navigation_TabBar_ClearBackStack,
+	Navigation_TabBar_SubRoutes,
 	Navigation_Reactive,
 	Navigation_AddressBar,
 	Navigation_AddressBar_Nested,
