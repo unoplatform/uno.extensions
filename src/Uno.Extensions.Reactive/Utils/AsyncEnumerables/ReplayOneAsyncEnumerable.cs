@@ -99,14 +99,16 @@ internal class ReplayOneAsyncEnumerable<T> : IAsyncEnumerable<T>, IDisposable, I
 	{
 		try
 		{
+			// Capture _current BEFORE potentially calling Enable(), so that a thread-pool
+			// continuation (e.g. Task.Yield() inside the source) cannot advance _current
+			// past the value that was current at the moment this subscriber started.
+			var current = _current;
 			var needsToEnableEnumeration = true;
 			if (_isInitialSyncValuesSkippingAllowed)
 			{
 				Enable();
 				needsToEnableEnumeration = false;
 			}
-
-			var current = _current;
 			do
 			{
 				if (current.TryGetValue(out var value))
