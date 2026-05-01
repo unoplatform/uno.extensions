@@ -55,6 +55,9 @@ Each scenario should:
 | **Multiple properties remove/re-add** | Several Feed/ListFeed/State properties removed and re-added together | Closer to real-world scenario (e.g. Chefs HomeModel). |
 | **Feed↔State conversion** | Property type changes between `IFeed<T>` and `IState<T>` | Source generator must regenerate the ViewModel with the new property type. |
 | **Feed/State syntax round-trip** | Multiple type/syntax changes across sequential HR deltas | Validates that repeated conversions don't corrupt generator state. |
+| **State value update** | Lambda body value change inside a State property | Tests whether MVUX re-evaluates after a value-only HR change. |
+| **AsyncEnumerable Feed** | `Feed.AsyncEnumerable` syntax with remove/re-add | Validates HR with a different Feed factory method. |
+| **Feed.Async↔AsyncEnumerable syntax** | Switch between `Feed.Async` and `Feed.AsyncEnumerable` | Validates syntax change across different Feed factory methods. |
 
 ## 4. Scenario catalog
 
@@ -68,7 +71,9 @@ Each scenario should:
   `"updated"`.
 - **Assertion**: Original ViewModel's bound TextBlock updates to `"updated"`;
   new ViewModel instance also shows `"updated"`.
-- **Status**: Passing.
+- **Status**: Failing — MVUX feeds don't re-evaluate when a called method's
+  body changes via HR. The Feed lambda itself is unchanged so the pipeline has
+  no signal to refresh.
 
 ### 4.2 Feed property remove/re-add (implemented)
 
@@ -143,6 +148,42 @@ Each scenario should:
   that repeated type conversions don't corrupt generator state.
 - **Status**: Passing.
 
+### 4.8 State value update (implemented)
+
+- **ID**: `When_UpdateStateValue_Then_NewViewModelReflectsUpdate`
+- **Goal**: Validate that changing the value inside a State lambda
+  (`"stateful"` → `"updated"`) is reflected in both original and new
+  ViewModel instances.
+- **Model**: `MvuxHotReloadStateRemoveModel` (reuses State remove model).
+- **HR change**: Single delta — change lambda return value.
+- **Assertion**: Original VM and new VM both show `"updated"`.
+- **Status**: Failing — lambda body value changes do not trigger Feed/State
+  re-evaluation (same limitation as 4.1).
+
+### 4.9 AsyncEnumerable Feed remove/re-add (implemented)
+
+- **ID**: `When_AsyncEnumerableFeed_RemoveAndReAdd_Then_BindingsWork`
+- **Goal**: Prove remove/re-add works with `Feed.AsyncEnumerable` syntax
+  (different Feed factory method from `Feed.Async`).
+- **Model**: `MvuxHotReloadAsyncEnumerableModel` with
+  `IFeed<string> CurrentValue => Feed.AsyncEnumerable(GetValues)`.
+- **HR change**: Two sequential deltas — remove property, then re-add.
+- **Assertion**: New ViewModel after re-add has a working binding
+  showing `"enumerable"`.
+- **Status**: Passing.
+
+### 4.10 Feed.Async ↔ AsyncEnumerable syntax change (implemented)
+
+- **ID**: `When_ChangeFeedAsyncToAsyncEnumerable_Then_BindingsWork`
+- **Goal**: Prove that switching between `Feed.AsyncEnumerable` and
+  `Feed.Async` syntax via HR works in both directions.
+- **Model**: `MvuxHotReloadAsyncEnumerableModel` starting with
+  `Feed.AsyncEnumerable(GetValues)`.
+- **HR change**: Two deltas — first converts to `Feed.Async(...)`,
+  second converts back to `Feed.AsyncEnumerable(GetValues)`.
+- **Assertion**: Each conversion produces a working binding.
+- **Status**: Passing.
+
 ## 5. Organizational notes
 
 - One test method per scenario.
@@ -166,3 +207,4 @@ Each scenario should:
 | `MvuxHotReloadMultiModel.cs` | Model for multi-property remove/re-add (#2906) |
 | `MvuxHotReloadFeedToStateModel.cs` | Model for Feed→State conversion |
 | `MvuxHotReloadSyntaxChangeModel.cs` | Model for Feed↔State syntax changes |
+| `MvuxHotReloadAsyncEnumerableModel.cs` | Model for AsyncEnumerable Feed scenarios |
