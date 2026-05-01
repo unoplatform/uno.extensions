@@ -6,6 +6,10 @@ public class PanelVisiblityNavigator : ControlNavigator<Panel>
 {
 	public const string NavigatorName = "Visibility";
 
+	// Tracks whether Show() has been called by the normal route cascade.
+	// Used to detect when initial content was missed during XAML HR.
+	private bool _showCalled;
+
 	protected override FrameworkElement? CurrentView => CurrentlyVisibleControl;
 
 	public PanelVisiblityNavigator(
@@ -27,6 +31,61 @@ public class PanelVisiblityNavigator : ControlNavigator<Panel>
 				region.View.Loaded += PanelLoaded;
 			}
 		}
+	}
+
+	public override void ControlInitialize()
+	{
+		_showCalled = false;
+		_ = DeferredInitialRouteCheckAsync();
+	}
+
+	private async Task DeferredInitialRouteCheckAsync()
+	{
+		// Yield to the next dispatch cycle. On normal first load, the route cascade
+		// calls Show() in the current cycle, so _showCalled is already true by now.
+		// On XAML HR page replacement (same page type), no route cascade fires
+		// for child regions, so _showCalled stays false and content goes blank.
+		await Dispatcher.ExecuteAsync(async ct =>
+		{
+			if (_showCalled)
+			{
+				return;
+			}
+
+			// Walk up the region hierarchy to find a navigator with an active route.
+			// The immediate parent (e.g., a Grid composite navigator) may have no route;
+			// we need to reach the FrameNavigator that holds the page-level route.
+			RouteInfo? parentRouteMap = null;
+			var current = Region.Parent;
+			while (current is not null)
+			{
+				var navRoute = current.Navigator()?.Route;
+				if (navRoute?.Base is { Length: > 0 } basePath)
+				{
+					parentRouteMap = Resolver.FindByPath(basePath);
+					if (parentRouteMap?.Nested is { Length: > 0 })
+					{
+						break;
+					}
+				}
+				current = current.Parent;
+			}
+
+			var defaultRoute = parentRouteMap?.Nested?.FirstOrDefault(x => x.IsDefault);
+
+			if (defaultRoute is not null)
+			{
+				if (Logger.IsEnabled(LogLevel.Debug))
+				{
+					Logger.LogDebugMessage($"Triggering deferred navigation to default route '{defaultRoute.Path}' (XAML HR)");
+				}
+
+				// Use an internal request so the route is handled locally
+				// instead of being redirected up to a parent FrameNavigator.
+				var request = new NavigationRequest(this, Route.PageRoute(defaultRoute.Path)).AsInternal();
+				await NavigateAsync(request);
+			}
+		});
 	}
 
 	private void PanelLoaded(object sender, RoutedEventArgs e)
@@ -83,6 +142,8 @@ public class PanelVisiblityNavigator : ControlNavigator<Panel>
 		Type? viewType,
 		object? data)
 	{
+		_showCalled = true;
+
 		if (Control is null)
 		{
 			return string.Empty;
