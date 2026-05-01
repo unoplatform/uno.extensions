@@ -267,6 +267,172 @@ public class Given_HotReload
 			"RegionTwo's VM should read the post-HR method body");
 	}
 
+	/// <summary>
+	/// Proves hot-reload works across the canonical "Use a Panel to switch views" pattern from the
+	/// <c>HowTo-UsePanel</c> docs: a <see cref="Grid"/> region with <c>Region.Navigator="Visibility"</c>
+	/// containing pre-existing inline children identified by <c>Region.Name</c>. Unlike
+	/// <see cref="When_SwitchRegionAfterUpdate_Then_NewlyShownRegionReflectsUpdate"/> — which routes
+	/// pages into a panel via <c>RouteMap</c> + <c>FrameView</c> materialization —
+	/// <see cref="HotReloadPanelHostPage"/> hands the navigator children that already exist, so
+	/// <see cref="Uno.Extensions.Navigation.Navigators.PanelVisiblityNavigator.Show"/> takes the
+	/// <c>FindByPath</c> branch and just toggles <see cref="UIElement.Visibility"/>. Each inline
+	/// child re-reads <see cref="HotReloadPanelTarget.GetValue"/> on every Collapsed→Visible
+	/// transition; that re-read is what surfaces the HR delta when we switch to a fresh region.
+	/// </summary>
+	[TestMethod]
+	[RunsOnUIThread]
+	public async Task When_SwitchInlinePanelRegionAfterUpdate_Then_NewlyShownRegionReflectsUpdate(CancellationToken ct)
+	{
+		await using var app = await SetupAppAsync(
+			registerViewsAndRoutes: (views, routes) =>
+			{
+				views.Register(
+					new ViewMap<HotReloadPanelHostPage>());
+
+				routes.Register(
+					new RouteMap("", Nested: new RouteMap[]
+					{
+						new RouteMap(
+							"HotReloadPanelHostPage",
+							View: views.FindByView<HotReloadPanelHostPage>(),
+							IsDefault: true,
+							Nested: new RouteMap[]
+							{
+								// Inline panel children are matched by Region.Name in
+								// PanelVisiblityNavigator.FindByPath, so the View on these nested
+								// route maps is intentionally null — they exist only to give the
+								// resolver a known route name and to mark the default region.
+								new RouteMap("One", IsDefault: true),
+								new RouteMap("Two"),
+								new RouteMap("Three"),
+							}),
+					}));
+			},
+			initialRoute: "HotReloadPanelHostPage",
+			ct);
+
+		var hostPage = ResolveCurrentPage<HotReloadPanelHostPage>(app.NavigationRoot);
+		hostPage.Should().NotBeNull("Frame should have navigated to HotReloadPanelHostPage");
+
+		// Default-descent should activate the IsDefault nested region "One". The visibility callback
+		// on RegionOne fires on Collapsed→Visible and writes the pre-HR target value.
+		await WaitForInlineRegionTextAsync(hostPage!.RegionOne, "original", TimeSpan.FromSeconds(30), ct);
+
+		// Drive the region switch through the panel's own navigator (PanelVisiblityNavigator), not
+		// the outer FrameNavigator — the outer one rejects nested region routes at
+		// RegionCanNavigate (route-map parent mismatch) and the bubble-up hangs the await. Same
+		// reasoning as the route-materialized region test above.
+		var panelNavigator = await WaitForPanelNavigatorAsync(hostPage.PanelRoot, TimeSpan.FromSeconds(30), ct);
+
+		// HR while RegionTwo is still Collapsed (it has never been shown, so its TextBlock is empty
+		// and the visibility callback has never fired). After the delta lands, switching to "Two"
+		// makes its first Collapsed→Visible transition read the updated method body.
+		await using var _ = await HotReloadHelper.UpdateSourceFile(
+			"../../Uno.Extensions.Navigation.UI.Tests/HotReloadPanelTarget.cs",
+			"""return "original";""",
+			"""return "updated";""",
+			ct);
+
+		await panelNavigator.NavigateRouteAsync(hostPage, "Two");
+
+		await WaitForInlineRegionTextAsync(hostPage.RegionTwo, "updated", TimeSpan.FromSeconds(30), ct);
+
+		// Sanity check: switching to Two must actually have flipped One back to Collapsed —
+		// otherwise PostNavigateAsync didn't run and the test isn't really exercising the navigator.
+		hostPage.RegionOne.Visibility.Should().Be(Visibility.Collapsed,
+			"PanelVisiblityNavigator.PostNavigateAsync should have collapsed the previously-visible region");
+	}
+
+	/// <summary>
+	/// Complement to <see cref="When_SwitchInlinePanelRegionAfterUpdate_Then_NewlyShownRegionReflectsUpdate"/>.
+	/// Switches to a sibling region pre-HR (so it's already been materialized once with the original
+	/// value), applies the HR delta, then switches back to the original region. The inline child
+	/// instances are reused — there is no re-instantiation — so the assertion proves the
+	/// "refresh on visibility transition" callback re-reads the HR target on every Collapsed→Visible
+	/// flip, not just on first show. This is the load-bearing scenario for HR + inline panel
+	/// content because most apps switch back and forth between sections rather than only navigating
+	/// forward into never-seen regions.
+	/// </summary>
+	[TestMethod]
+	[RunsOnUIThread]
+	public async Task When_ReturnToInlinePanelRegionAfterUpdate_Then_RevisitedRegionReflectsUpdate(CancellationToken ct)
+	{
+		await using var app = await SetupAppAsync(
+			registerViewsAndRoutes: (views, routes) =>
+			{
+				views.Register(
+					new ViewMap<HotReloadPanelHostPage>());
+
+				routes.Register(
+					new RouteMap("", Nested: new RouteMap[]
+					{
+						new RouteMap(
+							"HotReloadPanelHostPage",
+							View: views.FindByView<HotReloadPanelHostPage>(),
+							IsDefault: true,
+							Nested: new RouteMap[]
+							{
+								new RouteMap("One", IsDefault: true),
+								new RouteMap("Two"),
+								new RouteMap("Three"),
+							}),
+					}));
+			},
+			initialRoute: "HotReloadPanelHostPage",
+			ct);
+
+		var hostPage = ResolveCurrentPage<HotReloadPanelHostPage>(app.NavigationRoot);
+		hostPage.Should().NotBeNull("Frame should have navigated to HotReloadPanelHostPage");
+
+		await WaitForInlineRegionTextAsync(hostPage!.RegionOne, "original", TimeSpan.FromSeconds(30), ct);
+
+		var panelNavigator = await WaitForPanelNavigatorAsync(hostPage.PanelRoot, TimeSpan.FromSeconds(30), ct);
+
+		// Pre-HR: switch to "Two" so we have an established baseline that the panel switch works
+		// and the inline callback reads the unmodified target.
+		await panelNavigator.NavigateRouteAsync(hostPage, "Two");
+		await WaitForInlineRegionTextAsync(hostPage.RegionTwo, "original", TimeSpan.FromSeconds(30), ct);
+
+		// HR after both regions have been shown at least once — we're proving that re-entering an
+		// already-loaded inline child still picks up the new method body, since the visibility
+		// callback re-reads the target on every Collapsed→Visible transition.
+		await using var _ = await HotReloadHelper.UpdateSourceFile(
+			"../../Uno.Extensions.Navigation.UI.Tests/HotReloadPanelTarget.cs",
+			"""return "original";""",
+			"""return "updated";""",
+			ct);
+
+		await panelNavigator.NavigateRouteAsync(hostPage, "One");
+
+		await WaitForInlineRegionTextAsync(hostPage.RegionOne, "updated", TimeSpan.FromSeconds(30), ct);
+
+		hostPage.RegionTwo.Visibility.Should().Be(Visibility.Collapsed,
+			"PanelVisiblityNavigator.PostNavigateAsync should have collapsed Two when switching back to One");
+	}
+
+	private static async Task WaitForInlineRegionTextAsync(
+		HotReloadPanelHostPage.InlineRegion region,
+		string expectedText,
+		TimeSpan timeout,
+		CancellationToken ct)
+	{
+		var sw = System.Diagnostics.Stopwatch.StartNew();
+		while (sw.Elapsed < timeout)
+		{
+			ct.ThrowIfCancellationRequested();
+			if (region.Text.Text == expectedText)
+			{
+				return;
+			}
+			await Task.Delay(50, ct);
+		}
+
+		throw new TimeoutException(
+			$"Inline region '{Uno.Extensions.Navigation.UI.Region.GetName(region)}' did not display " +
+			$"'{expectedText}' within {timeout.TotalSeconds:F0}s. " +
+			$"Last state: Visibility={region.Visibility}, Text='{region.Text.Text ?? "<null>"}'.");
+	}
+
 	private static async Task<global::Uno.Extensions.Navigation.INavigator> WaitForPanelNavigatorAsync(
 		Grid contentGrid,
 		TimeSpan timeout,
