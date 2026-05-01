@@ -46,9 +46,27 @@ public abstract class SelectorNavigator<TControl> : ControlNavigator<TControl>
 		// On XAML HR, no route cascade occurs, so _showCalled stays false.
 		await Dispatcher.ExecuteAsync(async ct =>
 		{
-			if (!_showCalled &&
-				SelectedItem is { } selected &&
-				Region.View is FrameworkElement view)
+			if (_showCalled || Region.View is not FrameworkElement view)
+			{
+				return;
+			}
+
+			var selected = SelectedItem;
+
+			if (selected is null)
+			{
+				// No item selected — this happens when a brand new selector control
+				// (e.g. TabBar) is added via XAML HR to a page that previously had none.
+				// Pick the first available item to mirror the normal route cascade
+				// behavior where the IsDefault route selects the first matching tab.
+				selected = Items.FirstOrDefault();
+				if (selected is not null)
+				{
+					SelectedItem = selected;
+				}
+			}
+
+			if (selected is not null)
 			{
 				if (Logger.IsEnabled(LogLevel.Debug))
 				{
