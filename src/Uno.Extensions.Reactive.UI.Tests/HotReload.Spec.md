@@ -53,6 +53,8 @@ Each scenario should:
 | **ListFeed property remove/re-add** | Entire `IListFeed<T>` property removed then restored | #2906 core scenario for collections. |
 | **State property remove/re-add** | Entire `IState<T>` property removed then restored | Same pattern as Feed but with two-way binding surface. |
 | **Multiple properties remove/re-add** | Several Feed/ListFeed/State properties removed and re-added together | Closer to real-world scenario (e.g. Chefs HomeModel). |
+| **Feed↔State conversion** | Property type changes between `IFeed<T>` and `IState<T>` | Source generator must regenerate the ViewModel with the new property type. |
+| **Feed/State syntax round-trip** | Multiple type/syntax changes across sequential HR deltas | Validates that repeated conversions don't corrupt generator state. |
 
 ## 4. Scenario catalog
 
@@ -64,7 +66,8 @@ Each scenario should:
   `MvuxHotReloadTarget.GetValue()`.
 - **HR change**: Flip `MvuxHotReloadTarget.GetValue()` from `"original"` to
   `"updated"`.
-- **Assertion**: New ViewModel instance's bound TextBlock shows `"updated"`.
+- **Assertion**: Original ViewModel's bound TextBlock updates to `"updated"`;
+  new ViewModel instance also shows `"updated"`.
 - **Status**: Passing.
 
 ### 4.2 Feed property remove/re-add (implemented)
@@ -115,6 +118,31 @@ Each scenario should:
   bindings working.
 - **Status**: Passing.
 
+### 4.6 Feed to State conversion (implemented)
+
+- **ID**: `When_ConvertFeedToState_Then_BindingsWork`
+- **Goal**: Prove that changing a property from `IFeed<T>` to `IState<T>`
+  via HR correctly regenerates the ViewModel and restores bindings.
+- **Model**: `MvuxHotReloadFeedToStateModel` starting with
+  `IFeed<string> CurrentValue`.
+- **HR change**: Single delta — convert property from `IFeed` + `Feed.Async`
+  to `IState` + `State.Async`.
+- **Assertion**: New ViewModel after conversion has a working binding.
+- **Status**: Passing.
+
+### 4.7 Feed/State syntax change (implemented)
+
+- **ID**: `When_ChangeFeedSyntax_Then_BindingsWork`
+- **Goal**: Prove that changing between Feed and State syntax across
+  multiple HR cycles works. Feed.Async → State.Async → Feed.Async.
+- **Model**: `MvuxHotReloadSyntaxChangeModel` starting with
+  `IFeed<string> CurrentValue => Feed.Async(...)`.
+- **HR change**: Two deltas — first converts to `IState` + `State.Async`,
+  second converts back to `IFeed` + `Feed.Async` (same value throughout).
+- **Assertion**: Each conversion produces a working binding; validates
+  that repeated type conversions don't corrupt generator state.
+- **Status**: Passing.
+
 ## 5. Organizational notes
 
 - One test method per scenario.
@@ -136,3 +164,5 @@ Each scenario should:
 | `MvuxHotReloadListFeedRemoveModel.cs` | Model for ListFeed remove/re-add (#2906) |
 | `MvuxHotReloadStateRemoveModel.cs` | Model for State remove/re-add (#2906) |
 | `MvuxHotReloadMultiModel.cs` | Model for multi-property remove/re-add (#2906) |
+| `MvuxHotReloadFeedToStateModel.cs` | Model for Feed→State conversion |
+| `MvuxHotReloadSyntaxChangeModel.cs` | Model for Feed↔State syntax changes |

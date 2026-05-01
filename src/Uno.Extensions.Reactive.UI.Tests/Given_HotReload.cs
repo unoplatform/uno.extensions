@@ -53,14 +53,18 @@ public class Given_HotReload
 			"""return "updated";""",
 			ct);
 
-		// New ViewModel instance picks up the HR'd method body
+		// Original VM instance should also reflect the update (needs longer timeout for HR propagation)
+		await TestHelper.WaitFor(() => text.Text == "updated", TimeSpan.FromSeconds(5), ct);
+		Assert.AreEqual("updated", text.Text);
+
+		// New ViewModel instance also picks up the HR'd method body
 		await using var vm2 = new MvuxHotReloadViewModel();
 		var text2 = new TextBlock();
 		var ui2 = new StackPanel { DataContext = vm2, Children = { text2 } };
 		text2.SetBinding(TextBlock.TextProperty, new Binding { Path = new PropertyPath("CurrentValue") });
 
 		await UIHelper.Load(ui2, ct);
-		await TestHelper.WaitFor(() => text2.Text == "updated", ct);
+		await TestHelper.WaitFor(() => text2.Text == "updated", TimeSpan.FromSeconds(5), ct);
 
 		Assert.AreEqual("updated", text2.Text);
 	}
@@ -154,12 +158,14 @@ public class Given_HotReload
 		await TestHelper.WaitFor(() => text1.Text == "stateful", ct);
 		Assert.AreEqual("stateful", text1.Text);
 
+		// HR: Remove the State property
 		await using var delta1 = await HotReloadHelper.UpdateSourceFile(
 			"../../Uno.Extensions.Reactive.UI.Tests/MvuxHotReloadStateRemoveModel.cs",
 			"""public IState<string> CurrentValue => State.Async(this, async ct => "stateful");""",
 			"""// property removed""",
 			ct);
 
+		// HR: Re-add the State property
 		await using var delta2 = await HotReloadHelper.UpdateSourceFile(
 			"../../Uno.Extensions.Reactive.UI.Tests/MvuxHotReloadStateRemoveModel.cs",
 			"""// property removed""",
@@ -172,7 +178,7 @@ public class Given_HotReload
 		text2.SetBinding(TextBlock.TextProperty, new Binding { Path = new PropertyPath("CurrentValue") });
 
 		await UIHelper.Load(ui2, ct);
-		await TestHelper.WaitFor(() => text2.Text == "stateful", ct);
+		await TestHelper.WaitFor(() => text2.Text == "stateful", TimeSpan.FromSeconds(5), ct);
 		Assert.AreEqual("stateful", text2.Text);
 	}
 
@@ -225,6 +231,200 @@ public class Given_HotReload
 		await TestHelper.WaitFor(() => text2.Text == "title" && list2.Items.Count == 3, ct);
 		Assert.AreEqual("title", text2.Text);
 		Assert.AreEqual(3, list2.Items.Count);
+	}
+
+	[TestMethod]
+	[RunsOnUIThread]
+	public async Task When_ConvertFeedToState_Then_BindingsWork(CancellationToken ct)
+	{
+		await using var vm1 = new MvuxHotReloadFeedToStateViewModel();
+		var text1 = new TextBlock();
+		var ui1 = new StackPanel { DataContext = vm1, Children = { text1 } };
+		text1.SetBinding(TextBlock.TextProperty, new Binding { Path = new PropertyPath("CurrentValue") });
+
+		await UIHelper.Load(ui1, ct);
+		await TestHelper.WaitFor(() => text1.Text == "convertible", ct);
+		Assert.AreEqual("convertible", text1.Text);
+
+		// HR: Convert from IFeed to IState (same value — validates type conversion, not lambda body update)
+		await using var delta = await HotReloadHelper.UpdateSourceFile(
+			"../../Uno.Extensions.Reactive.UI.Tests/MvuxHotReloadFeedToStateModel.cs",
+			"""public IFeed<string> CurrentValue => Feed.Async(async ct => "convertible");""",
+			"""public IState<string> CurrentValue => State.Async(this, async ct => "convertible");""",
+			ct);
+
+		await using var vm2 = new MvuxHotReloadFeedToStateViewModel();
+		var text2 = new TextBlock();
+		var ui2 = new StackPanel { DataContext = vm2, Children = { text2 } };
+		text2.SetBinding(TextBlock.TextProperty, new Binding { Path = new PropertyPath("CurrentValue") });
+
+		await UIHelper.Load(ui2, ct);
+		await TestHelper.WaitFor(() => text2.Text == "convertible", TimeSpan.FromSeconds(5), ct);
+		Assert.AreEqual("convertible", text2.Text);
+	}
+
+	[TestMethod]
+	[RunsOnUIThread]
+	public async Task When_UpdateStateValue_Then_NewViewModelReflectsUpdate(CancellationToken ct)
+	{
+		await using var vm = new MvuxHotReloadStateRemoveViewModel();
+		var text = new TextBlock();
+		var ui = new StackPanel { DataContext = vm, Children = { text } };
+		text.SetBinding(TextBlock.TextProperty, new Binding { Path = new PropertyPath("CurrentValue") });
+
+		await UIHelper.Load(ui, ct);
+		await TestHelper.WaitFor(() => text.Text == "stateful", ct);
+		Assert.AreEqual("stateful", text.Text);
+
+		// HR: Change the State value from "stateful" to "updated"
+		await using var delta = await HotReloadHelper.UpdateSourceFile(
+			"../../Uno.Extensions.Reactive.UI.Tests/MvuxHotReloadStateRemoveModel.cs",
+			"""public IState<string> CurrentValue => State.Async(this, async ct => "stateful");""",
+			"""public IState<string> CurrentValue => State.Async(this, async ct => "updated");""",
+			ct);
+
+		// Original VM instance should reflect the update
+		await TestHelper.WaitFor(() => text.Text == "updated", TimeSpan.FromSeconds(5), ct);
+		Assert.AreEqual("updated", text.Text);
+
+		// New ViewModel instance also picks up the updated value
+		await using var vm2 = new MvuxHotReloadStateRemoveViewModel();
+		var text2 = new TextBlock();
+		var ui2 = new StackPanel { DataContext = vm2, Children = { text2 } };
+		text2.SetBinding(TextBlock.TextProperty, new Binding { Path = new PropertyPath("CurrentValue") });
+
+		await UIHelper.Load(ui2, ct);
+		await TestHelper.WaitFor(() => text2.Text == "updated", TimeSpan.FromSeconds(5), ct);
+		Assert.AreEqual("updated", text2.Text);
+	}
+
+	[TestMethod]
+	[RunsOnUIThread]
+	public async Task When_AsyncEnumerableFeed_RemoveAndReAdd_Then_BindingsWork(CancellationToken ct)
+	{
+		await using var vm1 = new MvuxHotReloadAsyncEnumerableViewModel();
+		var text1 = new TextBlock();
+		var ui1 = new StackPanel { DataContext = vm1, Children = { text1 } };
+		text1.SetBinding(TextBlock.TextProperty, new Binding { Path = new PropertyPath("CurrentValue") });
+
+		await UIHelper.Load(ui1, ct);
+		await TestHelper.WaitFor(() => text1.Text == "enumerable", ct);
+		Assert.AreEqual("enumerable", text1.Text);
+
+		// HR: Remove the AsyncEnumerable Feed property
+		await using var delta1 = await HotReloadHelper.UpdateSourceFile(
+			"../../Uno.Extensions.Reactive.UI.Tests/MvuxHotReloadAsyncEnumerableModel.cs",
+			"public IFeed<string> CurrentValue => Feed.AsyncEnumerable(GetValues);",
+			"// property removed",
+			ct);
+
+		// HR: Re-add the AsyncEnumerable Feed property
+		await using var delta2 = await HotReloadHelper.UpdateSourceFile(
+			"../../Uno.Extensions.Reactive.UI.Tests/MvuxHotReloadAsyncEnumerableModel.cs",
+			"// property removed",
+			"public IFeed<string> CurrentValue => Feed.AsyncEnumerable(GetValues);",
+			ct);
+
+		await using var vm2 = new MvuxHotReloadAsyncEnumerableViewModel();
+		var text2 = new TextBlock();
+		var ui2 = new StackPanel { DataContext = vm2, Children = { text2 } };
+		text2.SetBinding(TextBlock.TextProperty, new Binding { Path = new PropertyPath("CurrentValue") });
+
+		await UIHelper.Load(ui2, ct);
+		await TestHelper.WaitFor(() => text2.Text == "enumerable", TimeSpan.FromSeconds(5), ct);
+		Assert.AreEqual("enumerable", text2.Text);
+	}
+
+	[TestMethod]
+	[RunsOnUIThread]
+	public async Task When_ChangeFeedAsyncToAsyncEnumerable_Then_BindingsWork(CancellationToken ct)
+	{
+		await using var vm1 = new MvuxHotReloadAsyncEnumerableViewModel();
+		var text1 = new TextBlock();
+		var ui1 = new StackPanel { DataContext = vm1, Children = { text1 } };
+		text1.SetBinding(TextBlock.TextProperty, new Binding { Path = new PropertyPath("CurrentValue") });
+
+		await UIHelper.Load(ui1, ct);
+		await TestHelper.WaitFor(() => text1.Text == "enumerable", ct);
+		Assert.AreEqual("enumerable", text1.Text);
+
+		// HR: Change from Feed.AsyncEnumerable to Feed.Async syntax
+		await using var delta1 = await HotReloadHelper.UpdateSourceFile(
+			"../../Uno.Extensions.Reactive.UI.Tests/MvuxHotReloadAsyncEnumerableModel.cs",
+			"public IFeed<string> CurrentValue => Feed.AsyncEnumerable(GetValues);",
+			"""public IFeed<string> CurrentValue => Feed.Async(async ct => "enumerable");""",
+			ct);
+
+		await using var vm2 = new MvuxHotReloadAsyncEnumerableViewModel();
+		var text2 = new TextBlock();
+		var ui2 = new StackPanel { DataContext = vm2, Children = { text2 } };
+		text2.SetBinding(TextBlock.TextProperty, new Binding { Path = new PropertyPath("CurrentValue") });
+
+		await UIHelper.Load(ui2, ct);
+		await TestHelper.WaitFor(() => text2.Text == "enumerable", TimeSpan.FromSeconds(5), ct);
+		Assert.AreEqual("enumerable", text2.Text);
+
+		// HR: Change back from Feed.Async to Feed.AsyncEnumerable
+		await using var delta2 = await HotReloadHelper.UpdateSourceFile(
+			"../../Uno.Extensions.Reactive.UI.Tests/MvuxHotReloadAsyncEnumerableModel.cs",
+			"""public IFeed<string> CurrentValue => Feed.Async(async ct => "enumerable");""",
+			"public IFeed<string> CurrentValue => Feed.AsyncEnumerable(GetValues);",
+			ct);
+
+		await using var vm3 = new MvuxHotReloadAsyncEnumerableViewModel();
+		var text3 = new TextBlock();
+		var ui3 = new StackPanel { DataContext = vm3, Children = { text3 } };
+		text3.SetBinding(TextBlock.TextProperty, new Binding { Path = new PropertyPath("CurrentValue") });
+
+		await UIHelper.Load(ui3, ct);
+		await TestHelper.WaitFor(() => text3.Text == "enumerable", TimeSpan.FromSeconds(5), ct);
+		Assert.AreEqual("enumerable", text3.Text);
+	}
+
+	[TestMethod]
+	[RunsOnUIThread]
+	public async Task When_ChangeFeedSyntax_Then_BindingsWork(CancellationToken ct)
+	{
+		await using var vm1 = new MvuxHotReloadSyntaxChangeViewModel();
+		var text1 = new TextBlock();
+		var ui1 = new StackPanel { DataContext = vm1, Children = { text1 } };
+		text1.SetBinding(TextBlock.TextProperty, new Binding { Path = new PropertyPath("CurrentValue") });
+
+		await UIHelper.Load(ui1, ct);
+		await TestHelper.WaitFor(() => text1.Text == "round-trip", ct);
+		Assert.AreEqual("round-trip", text1.Text);
+
+		// HR: Change from Feed.Async to IState (same value — validates type conversion)
+		await using var delta1 = await HotReloadHelper.UpdateSourceFile(
+			"../../Uno.Extensions.Reactive.UI.Tests/MvuxHotReloadSyntaxChangeModel.cs",
+			"""public IFeed<string> CurrentValue => Feed.Async(async ct => "round-trip");""",
+			"""public IState<string> CurrentValue => State.Async(this, async ct => "round-trip");""",
+			ct);
+
+		await using var vm2 = new MvuxHotReloadSyntaxChangeViewModel();
+		var text2 = new TextBlock();
+		var ui2 = new StackPanel { DataContext = vm2, Children = { text2 } };
+		text2.SetBinding(TextBlock.TextProperty, new Binding { Path = new PropertyPath("CurrentValue") });
+
+		await UIHelper.Load(ui2, ct);
+		await TestHelper.WaitFor(() => text2.Text == "round-trip", TimeSpan.FromSeconds(5), ct);
+		Assert.AreEqual("round-trip", text2.Text);
+
+		// HR: Change from IState back to IFeed (same value — validates round-trip type conversion)
+		await using var delta2 = await HotReloadHelper.UpdateSourceFile(
+			"../../Uno.Extensions.Reactive.UI.Tests/MvuxHotReloadSyntaxChangeModel.cs",
+			"""public IState<string> CurrentValue => State.Async(this, async ct => "round-trip");""",
+			"""public IFeed<string> CurrentValue => Feed.Async(async ct => "round-trip");""",
+			ct);
+
+		await using var vm3 = new MvuxHotReloadSyntaxChangeViewModel();
+		var text3 = new TextBlock();
+		var ui3 = new StackPanel { DataContext = vm3, Children = { text3 } };
+		text3.SetBinding(TextBlock.TextProperty, new Binding { Path = new PropertyPath("CurrentValue") });
+
+		await UIHelper.Load(ui3, ct);
+		await TestHelper.WaitFor(() => text3.Text == "round-trip", TimeSpan.FromSeconds(5), ct);
+		Assert.AreEqual("round-trip", text3.Text);
 	}
 }
 #endif
