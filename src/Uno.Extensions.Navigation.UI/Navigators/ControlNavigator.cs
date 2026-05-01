@@ -45,10 +45,20 @@ public abstract class ControlNavigator<TControl> : ControlNavigator
 		var route = request.Route;
 		var mapping = Resolver.FindByPath(route.Base);
 
+		if (Logger.IsEnabled(LogLevel.Debug))
+		{
+			if (mapping is not null)
+				Logger.LogDebugMessage($"Route '{route.Base}' resolved to mapping: Path='{mapping.Path}', View={mapping.RenderView?.Name ?? "(none)"}");
+			else
+				Logger.LogDebugMessage($"Route '{route.Base}' has no explicit mapping — relying on auto-resolve or panel child lookup");
+		}
+
 		var executedPath = await Show(mapping?.Path ?? route.Base, mapping?.RenderView, route.Data);
 
 		if (executedPath is null)
 		{
+			if (Logger.IsEnabled(LogLevel.Warning))
+				Logger.LogWarningMessage($"Navigation to '{route.Base}' failed: Show() returned null. No matching view was found or created. Ensure a RouteMap is registered or a Page type named '{route.Base}Page' (or similar suffix) exists in the assembly.");
 			return Route.Empty;
 		}
 

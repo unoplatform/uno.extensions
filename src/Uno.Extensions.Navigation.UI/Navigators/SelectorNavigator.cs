@@ -77,7 +77,16 @@ public abstract class SelectorNavigator<TControl> : ControlNavigator<TControl>
 
 		return await Dispatcher.ExecuteAsync(async cancellation =>
 		{
-			return FindByPath(routeMap?.Path ?? route.Base, route.Path) is not null;
+			var path = routeMap?.Path ?? route.Base;
+			var item = FindByPath(path, route.Path);
+			if (Logger.IsEnabled(LogLevel.Debug))
+			{
+				if (item is not null)
+					Logger.LogDebugMessage($"Selector: Found matching item for path '{path}'");
+				else
+					Logger.LogDebugMessage($"Selector: No item matches path '{path}' — navigation will not proceed through this selector");
+			}
+			return item is not null;
 		});
 	}
 
