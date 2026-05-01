@@ -126,6 +126,28 @@ public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 		var route = request.Route;
 		var segments = route.ForwardSegments(Resolver, this);
 
+		// After a C# hot-reload, the RenderView for a route may change
+		// (e.g., an auto-resolved page is replaced by an explicit mapping).
+		// ForwardSegments filters segments whose path already matches the
+		// navigator's current route, leaving segments empty even though the
+		// underlying page type has changed. Detect this and force
+		// re-navigation by using the unfiltered segment list.
+		if (segments.Length == 0)
+		{
+			var unfilteredSegments = route.ForwardSegments(Resolver);
+			if (unfilteredSegments.Length > 0 &&
+				Control!.SourcePageType is not null &&
+				unfilteredSegments.Last().RenderView is { } expectedView &&
+				Control.SourcePageType != expectedView)
+			{
+				if (Logger.IsEnabled(LogLevel.Debug))
+				{
+					Logger.LogDebugMessage($"RenderView mismatch after route rebuild: Frame shows '{Control.SourcePageType.Name}' but route expects '{expectedView.Name}' — forcing re-navigation");
+				}
+				segments = unfilteredSegments;
+			}
+		}
+
 		// As this is a forward navigation
 		if (segments.Length == 0)
 		{
