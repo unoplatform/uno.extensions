@@ -34,7 +34,7 @@ namespace Uno.Extensions.Navigation.UI.Tests;
 /// </summary>
 [TestClass]
 [RunsInSecondaryApp(ignoreIfNotSupported: true)]
-public class Given_HotReloadNavigation
+public class Given_NavigationHotReload
 {
 	[TestInitialize]
 	public void Setup()
@@ -437,7 +437,7 @@ public class Given_HotReloadNavigation
 		{
 			host = await window.InitializeNavigationAsync(
 				buildHost: async () => UnoHost
-					.CreateDefaultBuilder(typeof(Given_HotReloadNavigation).Assembly)
+					.CreateDefaultBuilder(typeof(Given_NavigationHotReload).Assembly)
 					.UseNavigation(viewRouteBuilder: registerViewsAndRoutes)
 					.Build(),
 				navigationRoot: navigationRoot,
