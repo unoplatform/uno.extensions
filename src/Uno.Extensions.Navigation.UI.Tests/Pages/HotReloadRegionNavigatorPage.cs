@@ -1,28 +1,18 @@
 using Microsoft.UI.Xaml.Controls;
-using Uno.Extensions.Navigation.UI;
 
 namespace Uno.Extensions.Navigation.UI.Tests.Pages;
 
 /// <summary>
-/// Host page for testing Region.Navigator switching via HR.
-/// The InnerGrid has Region.Navigator="Visibility" which can be
-/// toggled/changed to test how the navigation responds.
+/// XAML-backed host page for testing Region.Navigator switching via HR.
+/// XAML HR modifies Region.Navigator on the inner grid.
 /// </summary>
 public sealed partial class HotReloadRegionNavigatorPage : Page
 {
-	public Grid ContentGrid { get; }
-	public Grid InnerGrid { get; }
-
 	public HotReloadRegionNavigatorPage()
 	{
-		ContentGrid = new Grid();
-		Region.SetAttached(ContentGrid, true);
-
-		InnerGrid = new Grid();
-		Region.SetAttached(InnerGrid, true);
-		Region.SetNavigator(InnerGrid, "Visibility");
-		ContentGrid.Children.Add(InnerGrid);
-
-		Content = ContentGrid;
+		this.InitializeComponent();
 	}
+
+	public Grid OuterGrid => (Grid)FindName("_outerGrid");
+	public Grid InnerGrid => (Grid)FindName("_innerGrid");
 }

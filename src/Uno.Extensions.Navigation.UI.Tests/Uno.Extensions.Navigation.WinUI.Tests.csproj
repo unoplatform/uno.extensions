@@ -20,6 +20,12 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<Page Include="Pages\HotReloadNavRequestPage.xaml" />
+		<Page Include="Pages\HotReloadRegionAttachedPage.xaml" />
+		<Page Include="Pages\HotReloadRegionNavigatorPage.xaml" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<ProjectReference Include="..\Uno.Extensions.Navigation.UI\Uno.Extensions.Navigation.WinUI.csproj" />
 		<ProjectReference Include="..\Uno.Extensions.Hosting.UI\Uno.Extensions.Hosting.WinUI.csproj" />
 		<ProjectReference Include="..\Uno.Extensions.RuntimeTests\Uno.Extensions.RuntimeTests.Core\Uno.Extensions.RuntimeTests.Core.csproj" />
