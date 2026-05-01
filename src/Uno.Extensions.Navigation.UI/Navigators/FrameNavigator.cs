@@ -126,6 +126,21 @@ public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 		var route = request.Route;
 		var segments = route.ForwardSegments(Resolver, this);
 
+		// After Hot Reload, the RenderView for a route may change while the
+		// FrameNavigator still considers itself "at" that route. ForwardSegments
+		// filters out routes already in navRoute, resulting in 0 segments.
+		// Detect this by checking if the resolver's current RenderView differs
+		// from what the Frame is actually showing, and bypass the filter.
+		if (segments.Length == 0 && !string.IsNullOrWhiteSpace(route.Base))
+		{
+			var currentMapping = Resolver.FindByPath(route.Base);
+			if (currentMapping?.RenderView is not null &&
+				Control!.SourcePageType != currentMapping.RenderView)
+			{
+				segments = route.ForwardSegments(Resolver);
+			}
+		}
+
 		// As this is a forward navigation
 		if (segments.Length == 0)
 		{

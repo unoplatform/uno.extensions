@@ -70,6 +70,24 @@ public abstract class SelectorNavigator<TControl> : ControlNavigator<TControl>
 
 	protected override async Task<bool> RegionCanNavigate(Route route, RouteInfo? routeMap)
 	{
+		// When a tab item exists but has no registered route (e.g. added via XAML HR),
+		// lazily insert a route with a FrameView so that the sibling
+		// PanelVisiblityNavigator also accepts the navigation and the request
+		// propagates through the composite parent to all children.
+		if (routeMap is null && !string.IsNullOrWhiteSpace(route.Base))
+		{
+			var hasItem = await Dispatcher.ExecuteAsync(async cancellation =>
+			{
+				return FindByPath(route.Base) is not null;
+			});
+
+			if (hasItem)
+			{
+				EnsureRouteRegistered(route.Base);
+				routeMap = Resolver.FindByPath(route.Base);
+			}
+		}
+
 		if (!await base.RegionCanNavigate(route, routeMap))
 		{
 			return false;
@@ -79,6 +97,47 @@ public abstract class SelectorNavigator<TControl> : ControlNavigator<TControl>
 		{
 			return FindByPath(routeMap?.Path ?? route.Base, route.Path) is not null;
 		});
+	}
+
+	/// <summary>
+	/// Inserts a route for the given path if one does not already exist.
+	/// The new route is created as a sibling of existing tab routes (same Parent)
+	/// and inherits the View and ViewModel from a sibling so that the
+	/// <see cref="PanelVisiblityNavigator"/> can create a FrameView and the
+	/// inner FrameNavigator can navigate to the correct page type.
+	/// </summary>
+	private void EnsureRouteRegistered(string path)
+	{
+		if (Resolver.FindByPath(path) is not null)
+		{
+			return;
+		}
+
+		RouteInfo? siblingRoute = null;
+		foreach (var item in Items)
+		{
+			var itemPath = item.GetRegionOrElementName()?.WithoutQualifier();
+			if (string.IsNullOrEmpty(itemPath))
+			{
+				continue;
+			}
+
+			var existing = Resolver.FindByPath(itemPath);
+			if (existing is not null)
+			{
+				siblingRoute = existing;
+				break;
+			}
+		}
+
+		var newRoute = new RouteInfo(
+			path,
+			View: siblingRoute?.View,
+			ViewModel: siblingRoute?.ViewModel)
+		{
+			Parent = siblingRoute?.Parent
+		};
+		Resolver.InsertRoute(newRoute);
 	}
 
 	protected SelectorNavigator(
