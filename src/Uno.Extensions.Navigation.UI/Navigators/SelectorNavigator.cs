@@ -51,20 +51,12 @@ public abstract class SelectorNavigator<TControl> : ControlNavigator<TControl>
 				return;
 			}
 
+			// Only act on an already-selected item. During XAML HR the selector
+			// fires SelectionChanged before this navigator exists, so the item is
+			// selected but the event was lost. On normal first load, SelectedItem
+			// may be null because containers haven't been materialised yet; in that
+			// case the route cascade will handle initial selection — don't interfere.
 			var selected = SelectedItem;
-
-			if (selected is null)
-			{
-				// No item selected — this happens when a brand new selector control
-				// (e.g. TabBar) is added via XAML HR to a page that previously had none.
-				// Pick the first available item to mirror the normal route cascade
-				// behavior where the IsDefault route selects the first matching tab.
-				selected = Items.FirstOrDefault();
-				if (selected is not null)
-				{
-					SelectedItem = selected;
-				}
-			}
 
 			if (selected is not null)
 			{
