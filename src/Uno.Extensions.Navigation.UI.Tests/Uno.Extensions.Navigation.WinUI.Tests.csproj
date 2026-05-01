@@ -20,7 +20,13 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<Page Include="Pages\HotReloadTabBarXamlPage.xaml" />
+		<Page Include="Pages\HotReloadTabBarCommandPage.xaml" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<ProjectReference Include="..\Uno.Extensions.Navigation.UI\Uno.Extensions.Navigation.WinUI.csproj" />
+		<ProjectReference Include="..\Uno.Extensions.Navigation.Toolkit\Uno.Extensions.Navigation.Toolkit.WinUI.csproj" />
 		<ProjectReference Include="..\Uno.Extensions.Hosting.UI\Uno.Extensions.Hosting.WinUI.csproj" />
 		<ProjectReference Include="..\Uno.Extensions.RuntimeTests\Uno.Extensions.RuntimeTests.Core\Uno.Extensions.RuntimeTests.Core.csproj" />
 	</ItemGroup>
