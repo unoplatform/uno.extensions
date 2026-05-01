@@ -46,9 +46,19 @@ public abstract class SelectorNavigator<TControl> : ControlNavigator<TControl>
 		// On XAML HR, no route cascade occurs, so _showCalled stays false.
 		await Dispatcher.ExecuteAsync(async ct =>
 		{
-			if (!_showCalled &&
-				SelectedItem is { } selected &&
-				Region.View is FrameworkElement view)
+			if (_showCalled || Region.View is not FrameworkElement view)
+			{
+				return;
+			}
+
+			// Only act on an already-selected item. During XAML HR the selector
+			// fires SelectionChanged before this navigator exists, so the item is
+			// selected but the event was lost. On normal first load, SelectedItem
+			// may be null because containers haven't been materialised yet; in that
+			// case the route cascade will handle initial selection — don't interfere.
+			var selected = SelectedItem;
+
+			if (selected is not null)
 			{
 				if (Logger.IsEnabled(LogLevel.Debug))
 				{
