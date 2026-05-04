@@ -84,7 +84,7 @@ public static partial class State
 	public static IState<TValue> Async<TOwner, TValue>(TOwner owner, AsyncFunc<TValue?> valueProvider, Signal? refresh = null)
 		where TOwner : class
 		where TValue : struct
-		=> AttachedProperty.GetOrCreate(owner, (valueProvider, refresh), static (o, args) => State<TValue>.S(o, new AsyncFeed<TValue>(args.valueProvider.SomeOrNone(), args.refresh)));
+		=> AttachedProperty.GetOrCreate(owner, (valueProvider, refresh), static (o, args) => State<TValue>.S(o, new AsyncFeed<TValue>(args.valueProvider.SomeOrNone(), args.refresh, args.valueProvider.Method.DeclaringType?.Assembly)));
 
 	/// <summary>
 	/// Gets or creates a state from an async enumerable sequence of value.

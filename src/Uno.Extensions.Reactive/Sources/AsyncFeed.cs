@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
+using Uno.Extensions.Reactive.Config;
 using Uno.Extensions.Reactive.Core;
+using Uno.Extensions.Reactive.Core.HotReload;
 using Uno.Extensions.Reactive.Utils;
 using static Uno.Extensions.Reactive.Core.FeedHelper;
 
@@ -13,15 +16,18 @@ internal sealed class AsyncFeed<T> : IFeed<T>
 {
 	private readonly ISignal? _refresh;
 	private readonly AsyncFunc<Option<T>> _dataProvider;
+	private readonly Assembly? _sourceAssembly;
 
-	public AsyncFeed(AsyncFunc<T?> dataProvider, ISignal? refresh = null)
+	public AsyncFeed(AsyncFunc<T?> dataProvider, ISignal? refresh = null, Assembly? sourceAssembly = null)
 	{
+		_sourceAssembly = sourceAssembly ?? dataProvider.Method.DeclaringType?.Assembly;
 		_dataProvider = dataProvider.SomeOrNone();
 		_refresh = refresh;
 	}
 
-	public AsyncFeed(AsyncFunc<Option<T>> dataProvider, ISignal? refresh = null)
+	public AsyncFeed(AsyncFunc<Option<T>> dataProvider, ISignal? refresh = null, Assembly? sourceAssembly = null)
 	{
+		_sourceAssembly = sourceAssembly ?? dataProvider.Method.DeclaringType?.Assembly;
 		_dataProvider = dataProvider;
 		_refresh = refresh;
 	}
@@ -47,6 +53,21 @@ internal sealed class AsyncFeed<T> : IFeed<T>
 			ct);
 
 		localRefreshTask?.ContinueWith(TryComplete, TaskContinuationOptions.ExecuteSynchronously);
+
+		if (FeedConfiguration.EffectiveHotReload.HasFlag(HotReloadSupport.DynamicFeed) && _sourceAssembly is not null)
+		{
+			void OnApplicationUpdated(Type[] types)
+			{
+				if (types.Any(t => t.Assembly == _sourceAssembly))
+				{
+					var refreshedVersion = RefreshToken.InterlockedIncrement(ref current);
+					loadRequests.SetNext(refreshedVersion);
+				}
+			}
+
+			HotReloadService.ApplicationUpdated += OnApplicationUpdated;
+			ct.Register(() => HotReloadService.ApplicationUpdated -= OnApplicationUpdated);
+		}
 
 		void Refresh(RefreshRequest request)
 		{
