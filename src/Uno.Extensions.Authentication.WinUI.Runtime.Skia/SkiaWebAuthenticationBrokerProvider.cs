@@ -33,6 +33,13 @@ public class SkiaWebAuthenticationBrokerProvider : IWebAuthenticationBrokerProvi
 	public static Func<bool, string> ResponseHtmlProvider { get; set; } = GetDefaultResponseHtml;
 
 	/// <summary>
+	/// Gets or sets a delegate used to open the system browser for authentication.
+	/// Can be overridden for testing or custom browser launch behavior.
+	/// Returns true if the browser was opened successfully.
+	/// </summary>
+	public static Func<Uri, bool>? BrowserLauncher { get; set; }
+
+	/// <summary>
 	/// Initializes a new instance of the <see cref="SkiaWebAuthenticationBrokerProvider"/> class.
 	/// </summary>
 	public SkiaWebAuthenticationBrokerProvider()
@@ -88,7 +95,8 @@ public class SkiaWebAuthenticationBrokerProvider : IWebAuthenticationBrokerProvi
 		var modifiedRequestUri = UpdateRedirectUri(requestUri, actualCallbackUri);
 
 		// Open the browser with the authentication URL
-		if (!TryOpenBrowser(modifiedRequestUri))
+		var openBrowser = BrowserLauncher ?? TryOpenBrowser;
+		if (!openBrowser(modifiedRequestUri))
 		{
 			listener.Stop();
 			return new WebAuthenticationResult(
@@ -101,14 +109,12 @@ public class SkiaWebAuthenticationBrokerProvider : IWebAuthenticationBrokerProvi
 		{
 			while (true)
 			{
-				var contextTask = listener.GetContextAsync();
-
-				var tcs = new TaskCompletionSource<bool>();
-				using var registration = ct.Register(() => tcs.TrySetResult(true));
-
-				var completedTask = await Task.WhenAny(contextTask, tcs.Task);
-
-				if (completedTask == tcs.Task)
+				HttpListenerContext context;
+				try
+				{
+					context = await listener.GetContextAsync().WaitAsync(ct);
+				}
+				catch (OperationCanceledException)
 				{
 					listener.Stop();
 					return new WebAuthenticationResult(
@@ -116,15 +122,15 @@ public class SkiaWebAuthenticationBrokerProvider : IWebAuthenticationBrokerProvi
 						0,
 						WebAuthenticationStatus.UserCancel);
 				}
-
-				var context = await contextTask;
 				var request = context.Request;
 				var url = request.Url;
 
 				// Filter non-callback requests (e.g. favicon.ico, non-GET)
+				var requestPath = url?.AbsolutePath?.TrimEnd('/');
+				var expectedPath = callbackPath.TrimEnd('/');
 				if (url is null ||
 					!string.Equals(request.HttpMethod, "GET", StringComparison.OrdinalIgnoreCase) ||
-					!url.AbsolutePath.StartsWith(callbackPath, StringComparison.OrdinalIgnoreCase))
+					!string.Equals(requestPath, expectedPath, StringComparison.OrdinalIgnoreCase))
 				{
 					context.Response.StatusCode = (int)HttpStatusCode.NotFound;
 					context.Response.Close();

@@ -12,6 +12,22 @@ namespace Uno.Extensions.Authentication.Tests;
 [TestClass]
 public class SkiaWebAuthenticationBrokerProviderTests
 {
+	private Func<Uri, bool>? _originalBrowserLauncher;
+
+	[TestInitialize]
+	public void SetUp()
+	{
+		// Stub the browser launcher so tests don't open a real browser
+		_originalBrowserLauncher = SkiaWebAuthenticationBrokerProvider.BrowserLauncher;
+		SkiaWebAuthenticationBrokerProvider.BrowserLauncher = _ => true;
+	}
+
+	[TestCleanup]
+	public void TearDown()
+	{
+		SkiaWebAuthenticationBrokerProvider.BrowserLauncher = _originalBrowserLauncher;
+	}
+
 	[TestMethod]
 	public void GetCurrentApplicationCallbackUri_ReturnsLoopbackWithPort()
 	{
@@ -59,6 +75,7 @@ public class SkiaWebAuthenticationBrokerProviderTests
 
 		uri.Should().NotBeNull();
 		uri.Host.Should().Be("localhost");
+	}
 
 	[TestMethod]
 	public async Task AuthenticateAsync_ReturnsSuccess_WhenCallbackReceived()
@@ -71,7 +88,7 @@ public class SkiaWebAuthenticationBrokerProviderTests
 
 		using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(10));
 
-		// Start auth (it will try to open a browser which will fail, but the listener starts)
+		// Start auth (browser launch is stubbed via BrowserLauncher)
 		var authTask = provider.AuthenticateAsync(
 			WebAuthenticationOptions.None,
 			requestUri,

@@ -147,6 +147,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Uno.Extensions.Serializatio
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Uno.Extensions.Authentication.WinUI.Runtime.Skia", "src\Uno.Extensions.Authentication.WinUI.Runtime.Skia\Uno.Extensions.Authentication.WinUI.Runtime.Skia.csproj", "{50F1F3CD-F9D7-4B67-A475-F16DB0FC6F5A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Uno.Extensions.Authentication.WinUI.Runtime.Skia.Tests", "src\Uno.Extensions.Authentication.WinUI.Runtime.Skia.Tests\Uno.Extensions.Authentication.WinUI.Runtime.Skia.Tests.csproj", "{13974CF0-A259-417C-AA18-C2DF3D185380}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -807,6 +809,22 @@ Global
 		{50F1F3CD-F9D7-4B67-A475-F16DB0FC6F5A}.Release|x64.Build.0 = Release|Any CPU
 		{50F1F3CD-F9D7-4B67-A475-F16DB0FC6F5A}.Release|x86.ActiveCfg = Release|Any CPU
 		{50F1F3CD-F9D7-4B67-A475-F16DB0FC6F5A}.Release|x86.Build.0 = Release|Any CPU
+		{13974CF0-A259-417C-AA18-C2DF3D185380}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{13974CF0-A259-417C-AA18-C2DF3D185380}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{13974CF0-A259-417C-AA18-C2DF3D185380}.Debug|arm64.ActiveCfg = Debug|Any CPU
+		{13974CF0-A259-417C-AA18-C2DF3D185380}.Debug|arm64.Build.0 = Debug|Any CPU
+		{13974CF0-A259-417C-AA18-C2DF3D185380}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{13974CF0-A259-417C-AA18-C2DF3D185380}.Debug|x64.Build.0 = Debug|Any CPU
+		{13974CF0-A259-417C-AA18-C2DF3D185380}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{13974CF0-A259-417C-AA18-C2DF3D185380}.Debug|x86.Build.0 = Debug|Any CPU
+		{13974CF0-A259-417C-AA18-C2DF3D185380}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{13974CF0-A259-417C-AA18-C2DF3D185380}.Release|Any CPU.Build.0 = Release|Any CPU
+		{13974CF0-A259-417C-AA18-C2DF3D185380}.Release|arm64.ActiveCfg = Release|Any CPU
+		{13974CF0-A259-417C-AA18-C2DF3D185380}.Release|arm64.Build.0 = Release|Any CPU
+		{13974CF0-A259-417C-AA18-C2DF3D185380}.Release|x64.ActiveCfg = Release|Any CPU
+		{13974CF0-A259-417C-AA18-C2DF3D185380}.Release|x64.Build.0 = Release|Any CPU
+		{13974CF0-A259-417C-AA18-C2DF3D185380}.Release|x86.ActiveCfg = Release|Any CPU
+		{13974CF0-A259-417C-AA18-C2DF3D185380}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -857,6 +875,7 @@ Global
 		{76AF6C8E-A738-FF6A-EAB1-FE94DAC56658} = {2197ADCE-59C4-465A-B380-0B06BF68BBBC}
 		{DF77B943-13C2-4D98-8364-BA0DDC2C156D} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
 		{50F1F3CD-F9D7-4B67-A475-F16DB0FC6F5A} = {FEABD28F-23AE-4CDC-9933-44D6717C681C}
+		{13974CF0-A259-417C-AA18-C2DF3D185380} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6E7B035D-9A64-4D95-89AA-9D4653F17C42}
