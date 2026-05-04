@@ -1,9 +1,6 @@
 #nullable enable
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
-using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Runtime.InteropServices;
@@ -25,14 +22,22 @@ namespace Uno.Extensions.Authentication;
 /// </summary>
 public class SkiaWebAuthenticationBrokerProvider : IWebAuthenticationBrokerProvider
 {
-	private const int DefaultListenerPort = 0; // Use any available port
 	private const string LoopbackCallbackPath = "/authentication-callback";
+
+	private readonly Lazy<int> _port;
+
+	/// <summary>
+	/// Gets or sets a delegate that provides the HTML content for the browser response page.
+	/// The boolean parameter indicates whether authentication was successful.
+	/// </summary>
+	public static Func<bool, string> ResponseHtmlProvider { get; set; } = GetDefaultResponseHtml;
 
 	/// <summary>
 	/// Initializes a new instance of the <see cref="SkiaWebAuthenticationBrokerProvider"/> class.
 	/// </summary>
 	public SkiaWebAuthenticationBrokerProvider()
 	{
+		_port = new Lazy<int>(GetAvailablePort);
 	}
 
 	/// <summary>
@@ -47,9 +52,7 @@ public class SkiaWebAuthenticationBrokerProvider : IWebAuthenticationBrokerProvi
 	/// <inheritdoc/>
 	public Uri GetCurrentApplicationCallbackUri()
 	{
-		// For desktop Skia, we use a loopback address with a dynamic port
-		// The actual port will be determined when AuthenticateAsync is called
-		return new Uri($"http://127.0.0.1{LoopbackCallbackPath}");
+		return new Uri($"http://localhost:{_port.Value}{LoopbackCallbackPath}");
 	}
 
 	/// <inheritdoc/>
@@ -59,16 +62,14 @@ public class SkiaWebAuthenticationBrokerProvider : IWebAuthenticationBrokerProvi
 		Uri callbackUri,
 		CancellationToken ct)
 	{
-		// Determine the port to use - if callback specifies a port use that, otherwise use any available
-		var port = callbackUri.IsDefaultPort ? GetAvailablePort() : callbackUri.Port;
-		var listenerUri = BuildListenerUri(callbackUri, port);
+		var port = callbackUri.IsDefaultPort ? _port.Value : callbackUri.Port;
+		var callbackPath = callbackUri.AbsolutePath;
 
-		// Update the request URI to use our actual callback URL with port
-		var actualCallbackUri = BuildActualCallbackUri(callbackUri, port);
-		var modifiedRequestUri = UpdateRequestUriWithCallback(requestUri, callbackUri, actualCallbackUri);
+		// Listen on root to avoid trailing-slash mismatches with IdP redirects
+		var listenerPrefix = $"http://localhost:{port}/";
 
 		using var listener = new HttpListener();
-		listener.Prefixes.Add(listenerUri);
+		listener.Prefixes.Add(listenerPrefix);
 
 		try
 		{
@@ -82,6 +83,10 @@ public class SkiaWebAuthenticationBrokerProvider : IWebAuthenticationBrokerProvi
 				WebAuthenticationStatus.ErrorHttp);
 		}
 
+		// If the callback port changed, update redirect_uri in the request
+		var actualCallbackUri = new UriBuilder(callbackUri) { Port = port, Host = "localhost", Scheme = "http" }.Uri;
+		var modifiedRequestUri = UpdateRedirectUri(requestUri, actualCallbackUri);
+
 		// Open the browser with the authentication URL
 		if (!TryOpenBrowser(modifiedRequestUri))
 		{
@@ -94,51 +99,60 @@ public class SkiaWebAuthenticationBrokerProvider : IWebAuthenticationBrokerProvi
 
 		try
 		{
-			// Wait for the callback
-			var contextTask = listener.GetContextAsync();
-
-			// Create a task that completes when cancellation is requested
-			var tcs = new TaskCompletionSource<bool>();
-			using var registration = ct.Register(() => tcs.TrySetResult(true));
-
-			var completedTask = await Task.WhenAny(contextTask, tcs.Task);
-
-			if (completedTask == tcs.Task)
+			while (true)
 			{
-				// Cancellation was requested
+				var contextTask = listener.GetContextAsync();
+
+				var tcs = new TaskCompletionSource<bool>();
+				using var registration = ct.Register(() => tcs.TrySetResult(true));
+
+				var completedTask = await Task.WhenAny(contextTask, tcs.Task);
+
+				if (completedTask == tcs.Task)
+				{
+					listener.Stop();
+					return new WebAuthenticationResult(
+						null,
+						0,
+						WebAuthenticationStatus.UserCancel);
+				}
+
+				var context = await contextTask;
+				var request = context.Request;
+				var url = request.Url;
+
+				// Filter non-callback requests (e.g. favicon.ico, non-GET)
+				if (url is null ||
+					!string.Equals(request.HttpMethod, "GET", StringComparison.OrdinalIgnoreCase) ||
+					!url.AbsolutePath.StartsWith(callbackPath, StringComparison.OrdinalIgnoreCase))
+				{
+					context.Response.StatusCode = (int)HttpStatusCode.NotFound;
+					context.Response.Close();
+					continue;
+				}
+
+				var responseUrl = url.ToString();
+				await SendBrowserResponse(context.Response, success: true);
 				listener.Stop();
+
 				return new WebAuthenticationResult(
-					null,
+					responseUrl,
 					0,
-					WebAuthenticationStatus.UserCancel);
+					WebAuthenticationStatus.Success);
 			}
-
-			var context = await contextTask;
-			var responseUrl = context.Request.Url?.ToString() ?? string.Empty;
-
-			// Send a response to the browser
-			await SendBrowserResponse(context.Response, success: true);
-
-			listener.Stop();
-
-			return new WebAuthenticationResult(
-				responseUrl,
-				0,
-				WebAuthenticationStatus.Success);
 		}
 		catch (ObjectDisposedException)
 		{
-			// Listener was stopped due to cancellation
 			return new WebAuthenticationResult(
 				null,
 				0,
 				WebAuthenticationStatus.UserCancel);
 		}
-		catch (HttpListenerException ex) when (ct.IsCancellationRequested)
+		catch (HttpListenerException) when (ct.IsCancellationRequested)
 		{
 			return new WebAuthenticationResult(
 				null,
-				(uint)ex.ErrorCode,
+				0,
 				WebAuthenticationStatus.UserCancel);
 		}
 		catch (Exception ex)
@@ -159,63 +173,23 @@ public class SkiaWebAuthenticationBrokerProvider : IWebAuthenticationBrokerProvi
 		return port;
 	}
 
-	private static string BuildListenerUri(Uri callbackUri, int port)
+	private static Uri UpdateRedirectUri(Uri requestUri, Uri actualCallbackUri)
 	{
-		var path = callbackUri.AbsolutePath;
-		if (!path.EndsWith("/"))
+		var query = HttpUtility.ParseQueryString(requestUri.Query);
+		var currentRedirect = query["redirect_uri"];
+		if (currentRedirect is null)
 		{
-			path += "/";
-		}
-		return $"http://127.0.0.1:{port}{path}";
-	}
-
-	private static Uri BuildActualCallbackUri(Uri callbackUri, int port)
-	{
-		var builder = new UriBuilder(callbackUri)
-		{
-			Host = "127.0.0.1",
-			Port = port,
-			Scheme = "http"
-		};
-		return builder.Uri;
-	}
-
-	private static Uri UpdateRequestUriWithCallback(Uri requestUri, Uri originalCallback, Uri actualCallback)
-	{
-		var requestUriString = requestUri.ToString();
-		var originalCallbackEncoded = Uri.EscapeDataString(originalCallback.ToString().TrimEnd('/'));
-		var originalCallbackUnencoded = originalCallback.ToString().TrimEnd('/');
-		var actualCallbackString = actualCallback.ToString().TrimEnd('/');
-
-		// Try to replace the callback URI in the request (both encoded and unencoded forms)
-		if (requestUriString.Contains(originalCallbackEncoded))
-		{
-			requestUriString = requestUriString.Replace(
-				originalCallbackEncoded,
-				Uri.EscapeDataString(actualCallbackString));
-		}
-		else if (requestUriString.Contains(originalCallbackUnencoded))
-		{
-			requestUriString = requestUriString.Replace(
-				originalCallbackUnencoded,
-				actualCallbackString);
-		}
-		else
-		{
-			// Try to find and replace redirect_uri parameter
-			var query = HttpUtility.ParseQueryString(requestUri.Query);
-			if (query["redirect_uri"] != null)
-			{
-				query["redirect_uri"] = actualCallbackString;
-				var builder = new UriBuilder(requestUri)
-				{
-					Query = query.ToString()
-				};
-				return builder.Uri;
-			}
+			return requestUri;
 		}
 
-		return new Uri(requestUriString);
+		var actualCallbackString = actualCallbackUri.ToString().TrimEnd('/');
+		if (string.Equals(currentRedirect.TrimEnd('/'), actualCallbackString, StringComparison.OrdinalIgnoreCase))
+		{
+			return requestUri;
+		}
+
+		query["redirect_uri"] = actualCallbackString;
+		return new UriBuilder(requestUri) { Query = query.ToString() }.Uri;
 	}
 
 	private static bool TryOpenBrowser(Uri uri)
@@ -226,11 +200,11 @@ public class SkiaWebAuthenticationBrokerProvider : IWebAuthenticationBrokerProvi
 
 			if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
 			{
-				// Use cmd to handle URL opening on Windows
+				// Use rundll32 to open URL on Windows
 				Process.Start(new ProcessStartInfo
 				{
-					FileName = "cmd",
-					Arguments = $"/c start \"\" \"{url.Replace("&", "^&")}\"",
+					FileName = "rundll32",
+					Arguments = $"url.dll,FileProtocolHandler {url}",
 					UseShellExecute = false,
 					CreateNoWindow = true
 				});
@@ -277,7 +251,26 @@ public class SkiaWebAuthenticationBrokerProvider : IWebAuthenticationBrokerProvi
 
 	private static async Task SendBrowserResponse(HttpListenerResponse response, bool success)
 	{
-		var html = success
+		var html = ResponseHtmlProvider(success);
+		var buffer = Encoding.UTF8.GetBytes(html);
+		response.ContentType = "text/html; charset=utf-8";
+		response.ContentLength64 = buffer.Length;
+		response.StatusCode = 200;
+
+		try
+		{
+			await response.OutputStream.WriteAsync(buffer);
+			response.OutputStream.Close();
+		}
+		catch
+		{
+			// Ignore errors when sending response
+		}
+	}
+
+	private static string GetDefaultResponseHtml(bool success)
+	{
+		return success
 			? """
 			<!DOCTYPE html>
 			<html>
@@ -329,20 +322,5 @@ public class SkiaWebAuthenticationBrokerProvider : IWebAuthenticationBrokerProvi
 			</body>
 			</html>
 			""";
-
-		var buffer = Encoding.UTF8.GetBytes(html);
-		response.ContentType = "text/html; charset=utf-8";
-		response.ContentLength64 = buffer.Length;
-		response.StatusCode = 200;
-
-		try
-		{
-			await response.OutputStream.WriteAsync(buffer, 0, buffer.Length);
-			response.OutputStream.Close();
-		}
-		catch
-		{
-			// Ignore errors when sending response
-		}
 	}
 }

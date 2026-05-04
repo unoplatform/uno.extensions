@@ -1,0 +1,23 @@
+<Project Sdk="Uno.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net9.0</TargetFramework>
+		<IsPackable>false</IsPackable>
+		<OutputType>Library</OutputType>
+		<UnoSingleProject>true</UnoSingleProject>
+		<NoWarn>$(NoWarn);NU1604</NoWarn>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="FluentAssertions" />
+		<PackageReference Include="Microsoft.NET.Test.Sdk" />
+		<PackageReference Include="MSTest.TestAdapter" />
+		<PackageReference Include="MSTest.TestFramework" />
+		<PackageReference Include="coverlet.collector" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Uno.Extensions.Authentication.WinUI.Runtime.Skia\Uno.Extensions.Authentication.WinUI.Runtime.Skia.csproj" />
+	</ItemGroup>
+
+</Project>
