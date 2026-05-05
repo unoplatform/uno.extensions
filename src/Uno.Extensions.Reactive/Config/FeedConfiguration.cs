@@ -39,7 +39,12 @@ public class FeedConfiguration
 	/// Gets the current configuration of the hot-reload support for the MVUX framework.
 	/// </summary>
 	[EditorBrowsable(EditorBrowsableState.Advanced)]
-	public static HotReloadSupport EffectiveHotReload => _effectiveHotReload ??= HotReload ?? HotReloadSupport.Disabled;
+	public static HotReloadSupport EffectiveHotReload => _effectiveHotReload ??= HotReload ?? DetectHotReloadSupport();
+
+	private static HotReloadSupport DetectHotReloadSupport()
+		=> string.Equals(Environment.GetEnvironmentVariable("DOTNET_MODIFIABLE_ASSEMBLIES"), "debug", StringComparison.OrdinalIgnoreCase)
+			? HotReloadSupport.Enabled
+			: HotReloadSupport.Disabled;
 
 	/// <summary>
 	/// Configures how a bindable should behave when a feed or state is removed from the model.
