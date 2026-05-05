@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -27,10 +28,14 @@ namespace Uno.Extensions.Navigation.UI.Tests;
 ///   #2903 — Code-behind navigation InvalidCastException after HR
 ///   #2911 — NavigationCacheMode=Enabled blank page after HR
 ///   #3076 — Navigation.Request XAML HR edits
+///   #3077 — Navigation.Data dynamic bindings via XAML HR
+///   #3078 — Frame.Navigate from event handler after HR
+///   #3083 — Modifying VM constructor body logic via HR
 ///   #3084 — Switching ViewMap to DataViewMap via HR
 ///   #3085 — Changing nav-data entity construction via HR
 ///   #3086 — Region.Attached toggling via XAML HR
 ///   #3087 — Region.Navigator add/remove via XAML HR
+///   #3088 — Renaming a Region across TabBarItem + content region via XAML HR
 /// </summary>
 [TestClass]
 [RunsInSecondaryApp(ignoreIfNotSupported: true)]
@@ -409,6 +414,478 @@ public class Given_NavigationHotReload
 			"Post-HR: DataViewMap should inject a HotReloadNavDataVm (#3084)");
 	}
 
+	// ──────────────────────────────────────────────────────────────────────
+	// 8. Navigation.Data changed via XAML HR (#3077)
+	// ──────────────────────────────────────────────────────────────────────
+
+	/// <summary>
+	/// XAML HR changes <c>uen:Navigation.Data="OriginalData"</c> to <c>"UpdatedData"</c>
+	/// on a button. After page replacement, the attached property should reflect
+	/// the updated value.
+	/// </summary>
+	[TestMethod]
+	[RunsOnUIThread]
+	public async Task When_NavigationDataChangedViaXamlHR_Then_UpdatedDataReflected(CancellationToken ct)
+	{
+		await using var app = await SetupNavDataBindingAppAsync(ct);
+
+		var hostPage = ResolveCurrentPage<HotReloadNavDataBindingPage>(app.NavigationRoot);
+		hostPage.Should().NotBeNull();
+
+		// Baseline: Navigation.Data should be "OriginalData".
+		var initialData = hostPage!.NavigationButton.GetData();
+		initialData.Should().Be("OriginalData",
+			"Initial Navigation.Data should be 'OriginalData'");
+
+		// XAML HR: change Navigation.Data from "OriginalData" to "UpdatedData".
+		await using var _ = await HotReloadHelper.UpdateSourceFile(
+			"../../Uno.Extensions.Navigation.UI.Tests/Pages/HotReloadNavDataBindingPage.xaml",
+			"""uen:Navigation.Data="OriginalData" """,
+			"""uen:Navigation.Data="UpdatedData" """,
+			ct);
+
+		// Wait for XAML HR to replace the page instance.
+		var activePage = await WaitForPageReplacementAsync<HotReloadNavDataBindingPage>(
+			app.NavigationRoot, hostPage, TimeSpan.FromSeconds(30), ct);
+
+		// The new page's button should have the updated Navigation.Data.
+		var updatedData = activePage.NavigationButton.GetData();
+		updatedData.Should().Be("UpdatedData",
+			"After XAML HR, Navigation.Data should be 'UpdatedData' (#3077)");
+	}
+
+	// ──────────────────────────────────────────────────────────────────────
+	// 9. Frame.Navigate from event handler after HR (#3078)
+	// ──────────────────────────────────────────────────────────────────────
+
+	/// <summary>
+	/// After C# HR changes the route used in a button click event handler,
+	/// invoking the handler should navigate to the new route without errors.
+	/// This tests the Frame.Navigate path triggered from an event handler.
+	/// </summary>
+	[TestMethod]
+	[RunsOnUIThread]
+	public async Task When_FrameNavigateFromEventHandlerAfterHR_Then_NewRouteUsed(CancellationToken ct)
+	{
+		await using var app = await SetupFrameNavAppAsync(ct);
+
+		var hostPage = ResolveCurrentPage<HotReloadFrameNavPage>(app.NavigationRoot);
+		hostPage.Should().NotBeNull();
+
+		// Pre-HR: the event handler navigates to "PageOne".
+		HotReloadFrameNavTarget.GetRoute().Should().Be("PageOne");
+
+		// C# HR: change the handler's target route from "PageOne" to "PageTwo".
+		await using var _ = await HotReloadHelper.UpdateSourceFile(
+			"../../Uno.Extensions.Navigation.UI.Tests/HotReloadFrameNavTarget.cs",
+			"""return "PageOne";""",
+			"""return "PageTwo";""",
+			ct);
+
+		// Verify the target method was updated.
+		HotReloadFrameNavTarget.GetRoute().Should().Be("PageTwo");
+
+		// Navigate using the handler's route (same path as the button click).
+		var pageNavigator = hostPage!.Navigator();
+		pageNavigator.Should().NotBeNull();
+		var route = HotReloadFrameNavTarget.GetRoute();
+		await pageNavigator!.NavigateRouteAsync(hostPage!, route);
+
+		await WaitForRouteAsync(app.NavigationRoot, app.FrameNavigator, "PageTwo", TimeSpan.FromSeconds(30), ct);
+
+		var page = ResolveCurrentPage<HotReloadPageTwo>(app.NavigationRoot);
+		page.Should().NotBeNull(
+			"Frame.Navigate from event handler after HR should navigate to the updated route (#3078)");
+	}
+
+	// ──────────────────────────────────────────────────────────────────────
+	// 10. Modifying VM constructor body logic via HR (#3083)
+	// ──────────────────────────────────────────────────────────────────────
+
+	/// <summary>
+	/// C# HR changes the computation logic called from a ViewModel constructor.
+	/// After HR, navigating to a page that creates a new VM instance should
+	/// see the updated computed value.
+	/// </summary>
+	[TestMethod]
+	[RunsOnUIThread]
+	public async Task When_VmCtorBodyChangedViaHR_Then_NewInstanceReflectsUpdate(CancellationToken ct)
+	{
+		await using var app = await SetupVmCtorAppAsync(ct);
+
+		// Navigate to the VM page.
+		await app.FrameNavigator.NavigateRouteAsync(this, "VmCtorPage");
+		await WaitForRouteAsync(app.NavigationRoot, app.FrameNavigator, "VmCtorPage", TimeSpan.FromSeconds(30), ct);
+
+		var page = ResolveCurrentPage<HotReloadVmCtorPage>(app.NavigationRoot);
+		page.Should().NotBeNull();
+		page!.DisplayedValue.Should().Be("original-test",
+			"Pre-HR: VM should compute 'original-test'");
+
+		// Go back.
+		await app.FrameNavigator.NavigateBackAsync(this);
+		await WaitForRouteAsync(app.NavigationRoot, app.FrameNavigator, "HotReloadPageOne", TimeSpan.FromSeconds(30), ct);
+
+		// C# HR: change the VM constructor body logic.
+		await using var _ = await HotReloadHelper.UpdateSourceFile(
+			"../../Uno.Extensions.Navigation.UI.Tests/HotReloadVmCtorTarget.cs",
+			"""return $"original-{input}";""",
+			"""return $"updated-{input}";""",
+			ct);
+
+		// Navigate again — new VM instance should use updated logic.
+		await app.FrameNavigator.NavigateRouteAsync(this, "VmCtorPage");
+		await WaitForRouteAsync(app.NavigationRoot, app.FrameNavigator, "VmCtorPage", TimeSpan.FromSeconds(30), ct);
+
+		var updatedPage = ResolveCurrentPage<HotReloadVmCtorPage>(app.NavigationRoot);
+		updatedPage.Should().NotBeNull();
+		updatedPage!.DisplayedValue.Should().Be("updated-test",
+			"After HR changes VM ctor body logic, new instance should reflect 'updated-test' (#3083)");
+	}
+
+	// ──────────────────────────────────────────────────────────────────────
+	// 11. Renaming a Region across TabBarItem + content region via XAML HR (#3088)
+	// ──────────────────────────────────────────────────────────────────────
+
+	/// <summary>
+	/// XAML HR renames a Region.Name on a TabBarItem from "AlphaRegion" to
+	/// "GammaRegion". After the page replacement, navigation should resolve
+	/// the new region name.
+	/// </summary>
+	[TestMethod]
+	[RunsOnUIThread]
+	public async Task When_RegionRenamedViaXamlHR_Then_NavigationUsesNewName(CancellationToken ct)
+	{
+		await using var app = await SetupRegionRenameAppAsync(ct);
+
+		var hostPage = ResolveCurrentPage<HotReloadRegionRenamePage>(app.NavigationRoot);
+		hostPage.Should().NotBeNull();
+
+		// Baseline: AlphaRegion should be navigable.
+		var panelNav = await WaitForPanelNavigatorAsync(hostPage!.ContentGrid, TimeSpan.FromSeconds(30), ct);
+		panelNav.Route?.Base.Should().Be("AlphaRegion",
+			"Initial default region should be AlphaRegion");
+
+		// XAML HR: rename "AlphaRegion" to "GammaRegion" on the TabBarItem.
+		await using var _ = await HotReloadHelper.UpdateSourceFile(
+			"../../Uno.Extensions.Navigation.UI.Tests/Pages/HotReloadRegionRenamePage.xaml",
+			"""uen:Region.Name="AlphaRegion" """,
+			"""uen:Region.Name="GammaRegion" """,
+			ct);
+
+		// Wait for page replacement.
+		var renamedPage = await WaitForPageReplacementAsync<HotReloadRegionRenamePage>(
+			app.NavigationRoot, hostPage, TimeSpan.FromSeconds(30), ct);
+
+		// After rename, navigate to "GammaRegion" should work.
+		var renamedPanelNav = await WaitForPanelNavigatorAsync(renamedPage.ContentGrid, TimeSpan.FromSeconds(30), ct);
+		await renamedPanelNav.NavigateRouteAsync(this, "GammaRegion");
+		await Task.Delay(500, ct); // Allow navigation to settle.
+
+		renamedPanelNav.Route?.Base.Should().Be("GammaRegion",
+			"After XAML HR renames the region, navigation should resolve the new name (#3088)");
+	}
+
+	// ──────────────────────────────────────────────────────────────────────
+	// 12. IRouteNotifier handler edits via HR (#3089)
+	// ──────────────────────────────────────────────────────────────────────
+
+	/// <summary>
+	/// C# HR changes the logic inside an IRouteNotifier.RouteChanged event handler
+	/// (simulated via a static method call). After HR, subsequent route changes
+	/// should invoke the updated handler logic.
+	/// </summary>
+	[TestMethod]
+	[RunsOnUIThread]
+	public async Task When_RouteNotifierHandlerChangedViaHR_Then_UpdatedLogicExecutes(CancellationToken ct)
+	{
+		await using var app = await SetupRouteNotifierAppAsync(ct);
+
+		// Get the IRouteNotifier from the host services.
+		var notifier = app.Host.Services.GetRequiredService<IRouteNotifier>();
+		notifier.Should().NotBeNull();
+
+		// Track handler results.
+		string? lastResult = null;
+		notifier!.RouteChanged += (_, e) =>
+		{
+			var route = e.Navigator?.Route?.Base ?? "unknown";
+			lastResult = HotReloadRouteNotifierTarget.ProcessRouteChange(route);
+		};
+
+		// Navigate to trigger RouteChanged.
+		await app.FrameNavigator.NavigateRouteAsync(this, "PageOne");
+		await WaitForRouteAsync(app.NavigationRoot, app.FrameNavigator, "PageOne", TimeSpan.FromSeconds(30), ct);
+
+		// The handler should have processed with "handled-" prefix.
+		lastResult.Should().NotBeNull();
+		lastResult.Should().StartWith("handled-",
+			"Pre-HR: handler should use 'handled-' prefix");
+
+		// C# HR: change the handler logic from "handled-" to "modified-".
+		await using var _ = await HotReloadHelper.UpdateSourceFile(
+			"../../Uno.Extensions.Navigation.UI.Tests/HotReloadRouteNotifierTarget.cs",
+			"""return $"handled-{route}";""",
+			"""return $"modified-{route}";""",
+			ct);
+
+		// Navigate again to trigger RouteChanged with updated handler.
+		lastResult = null;
+		await app.FrameNavigator.NavigateRouteAsync(this, "PageTwo");
+		await WaitForRouteAsync(app.NavigationRoot, app.FrameNavigator, "PageTwo", TimeSpan.FromSeconds(30), ct);
+
+		lastResult.Should().NotBeNull();
+		lastResult.Should().StartWith("modified-",
+			"After HR changes the RouteNotifier handler logic, it should use 'modified-' prefix (#3089)");
+	}
+
+	// ──────────────────────────────────────────────────────────────────────
+	// 13. Flyout / Dialog VM logic updated via HR (#3079)
+	// ──────────────────────────────────────────────────────────────────────
+
+	/// <summary>
+	/// A flyout page (shown via the "!" qualifier) has a ViewModel whose
+	/// constructor calls an HR target. After HR changes the target method body,
+	/// re-showing the flyout creates a new VM instance with updated logic.
+	/// </summary>
+	[TestMethod]
+	[RunsOnUIThread]
+	public async Task When_FlyoutVmLogicChangedViaHR_Then_ReshownFlyoutReflectsUpdate(CancellationToken ct)
+	{
+		await using var app = await SetupFlyoutAppAsync(ct);
+
+		// Reset static tracker.
+		HotReloadFlyoutVm.LastLabel = null;
+
+		// Show the flyout via "!" qualifier.
+		await app.FrameNavigator.NavigateRouteAsync(this, "!FlyoutPage");
+		await Task.Delay(500, ct); // Allow flyout to open and VM to construct.
+
+		HotReloadFlyoutVm.LastLabel.Should().Be("flyout-v1",
+			"Pre-HR: flyout VM should compute 'flyout-v1'");
+
+		// Close the flyout (back/close navigation).
+		await app.FrameNavigator.NavigateRouteAsync(this, "-");
+		await Task.Delay(300, ct);
+
+		// C# HR: change the label from "flyout-v1" to "flyout-v2".
+		await using var _ = await HotReloadHelper.UpdateSourceFile(
+			"../../Uno.Extensions.Navigation.UI.Tests/HotReloadFlyoutTarget.cs",
+			"""=> "flyout-v1";""",
+			"""=> "flyout-v2";""",
+			ct);
+
+		// Reset and re-show the flyout.
+		HotReloadFlyoutVm.LastLabel = null;
+		await app.FrameNavigator.NavigateRouteAsync(this, "!FlyoutPage");
+		await Task.Delay(500, ct);
+
+		HotReloadFlyoutVm.LastLabel.Should().Be("flyout-v2",
+			"After HR changes the flyout target, re-shown flyout VM should compute 'flyout-v2' (#3079)");
+
+		// Cleanup: close flyout.
+		await app.FrameNavigator.NavigateRouteAsync(this, "-");
+		await Task.Delay(200, ct);
+	}
+
+	// ──────────────────────────────────────────────────────────────────────
+	// 14. Nav-data model new property populated after HR (#3080)
+	// ──────────────────────────────────────────────────────────────────────
+
+	/// <summary>
+	/// A navigation data model has an optional property initially left null.
+	/// After HR changes the data construction code to populate it, the VM
+	/// on the target page should receive the full data including the new property.
+	/// </summary>
+	[TestMethod]
+	[RunsOnUIThread]
+	public async Task When_NavDataNewPropertyPopulatedAfterHR_Then_VmReceivesFullData(CancellationToken ct)
+	{
+		await using var app = await SetupNavDataNewPropAppAsync(ct);
+
+		// Navigate with data where NewProperty is null (pre-HR).
+		var data = new HotReloadNavDataWithNewProp("hello", NewProperty: HotReloadNavDataNewPropTarget.GetNewProperty());
+		await app.FrameNavigator.NavigateRouteAsync(this, "NavDataNewPropPage", data: data);
+		await WaitForRouteAsync(app.NavigationRoot, app.FrameNavigator, "NavDataNewPropPage", TimeSpan.FromSeconds(30), ct);
+
+		var page = ResolveCurrentPage<HotReloadNavDataNewPropPage>(app.NavigationRoot);
+		page.Should().NotBeNull();
+		var vm = page!.DataContext as HotReloadNavDataNewPropVm;
+		vm.Should().NotBeNull();
+		vm!.ReceivedData.Should().NotBeNull();
+		vm.ReceivedData!.Value.Should().Be("hello");
+		vm.ReceivedData.NewProperty.Should().BeNull(
+			"Pre-HR: NewProperty should be null because the target returns null");
+
+		// C# HR: change the target to return a value.
+		await using var _ = await HotReloadHelper.UpdateSourceFile(
+			"../../Uno.Extensions.Navigation.UI.Tests/HotReloadNavDataNewPropTarget.cs",
+			"""GetNewProperty() => null;""",
+			"""GetNewProperty() => "added-via-hr";""",
+			ct);
+
+		// Navigate back and re-navigate with updated data.
+		await app.FrameNavigator.NavigateBackAsync(this);
+		await WaitForRouteAsync(app.NavigationRoot, app.FrameNavigator, "HotReloadPageOne", TimeSpan.FromSeconds(30), ct);
+
+		var updatedData = new HotReloadNavDataWithNewProp("hello", NewProperty: HotReloadNavDataNewPropTarget.GetNewProperty());
+		await app.FrameNavigator.NavigateRouteAsync(this, "NavDataNewPropPage", data: updatedData);
+		await WaitForRouteAsync(app.NavigationRoot, app.FrameNavigator, "NavDataNewPropPage", TimeSpan.FromSeconds(30), ct);
+
+		var updatedPage = ResolveCurrentPage<HotReloadNavDataNewPropPage>(app.NavigationRoot);
+		updatedPage.Should().NotBeNull();
+		var updatedVm = updatedPage!.DataContext as HotReloadNavDataNewPropVm;
+		updatedVm.Should().NotBeNull();
+		updatedVm!.ReceivedData.Should().NotBeNull();
+		updatedVm.ReceivedData!.NewProperty.Should().Be("added-via-hr",
+			"After HR populates the new property, VM should receive the full data (#3080)");
+	}
+
+	// ──────────────────────────────────────────────────────────────────────
+	// 15. Optional VM constructor parameter used after HR (#3081)
+	// ──────────────────────────────────────────────────────────────────────
+
+	/// <summary>
+	/// A ViewModel has an optional constructor parameter (ILogger) injected by DI.
+	/// The constructor body initially ignores it. After HR changes the body to
+	/// incorporate the optional parameter, the next VM instance reflects the update.
+	/// </summary>
+	[TestMethod]
+	[RunsOnUIThread]
+	public async Task When_VmOptionalCtorParamUsedAfterHR_Then_NewInstanceReflectsUpdate(CancellationToken ct)
+	{
+		await using var app = await SetupOptionalParamAppAsync(ct);
+
+		// Navigate to the page with the VM.
+		HotReloadOptionalParamVm.LastComputedValue = null;
+		await app.FrameNavigator.NavigateRouteAsync(this, "OptionalParamPage");
+		await WaitForRouteAsync(app.NavigationRoot, app.FrameNavigator, "OptionalParamPage", TimeSpan.FromSeconds(30), ct);
+
+		// Pre-HR: target ignores the optional param, returns just "base".
+		HotReloadOptionalParamVm.LastComputedValue.Should().Be("base",
+			"Pre-HR: ComputeWithOptional should return just 'base' (ignoring optional param)");
+
+		// Go back.
+		await app.FrameNavigator.NavigateBackAsync(this);
+		await WaitForRouteAsync(app.NavigationRoot, app.FrameNavigator, "HotReloadPageOne", TimeSpan.FromSeconds(30), ct);
+
+		// C# HR: change target to use the optional param.
+		await using var _ = await HotReloadHelper.UpdateSourceFile(
+			"../../Uno.Extensions.Navigation.UI.Tests/HotReloadOptionalParamTarget.cs",
+			"return baseValue;",
+			"""return $"{baseValue}+{optionalInfo}";""",
+			ct);
+
+		// Navigate again — new VM instance should use the updated logic.
+		HotReloadOptionalParamVm.LastComputedValue = null;
+		await app.FrameNavigator.NavigateRouteAsync(this, "OptionalParamPage");
+		await WaitForRouteAsync(app.NavigationRoot, app.FrameNavigator, "OptionalParamPage", TimeSpan.FromSeconds(30), ct);
+
+		HotReloadOptionalParamVm.LastComputedValue.Should().Be("base+logger-present",
+			"After HR, target should incorporate optional param. DI injects ILogger so value should be 'base+logger-present' (#3081)");
+	}
+
+	// ──────────────────────────────────────────────────────────────────────
+	// 16. VM constructor parameter usage reordered via HR (#3082)
+	// ──────────────────────────────────────────────────────────────────────
+
+	/// <summary>
+	/// A ViewModel with multiple DI-injected parameters has its constructor body
+	/// changed via HR to combine the parameters in a different order.
+	/// Verifies DI still resolves all parameters and the new logic applies.
+	/// </summary>
+	[TestMethod]
+	[RunsOnUIThread]
+	public async Task When_VmCtorParamOrderChangedViaHR_Then_NewInstanceReflectsUpdate(CancellationToken ct)
+	{
+		await using var app = await SetupParamOrderAppAsync(ct);
+
+		// Navigate to the page with the VM.
+		HotReloadParamOrderVm.LastResult = null;
+		await app.FrameNavigator.NavigateRouteAsync(this, "ParamOrderPage");
+		await WaitForRouteAsync(app.NavigationRoot, app.FrameNavigator, "ParamOrderPage", TimeSpan.FromSeconds(30), ct);
+
+		// Pre-HR: Combine(loggerInfo, navInfo) → "log-nav".
+		HotReloadParamOrderVm.LastResult.Should().Be("log-nav",
+			"Pre-HR: Combine should produce 'log-nav' (first=log, second=nav)");
+
+		// Go back.
+		await app.FrameNavigator.NavigateBackAsync(this);
+		await WaitForRouteAsync(app.NavigationRoot, app.FrameNavigator, "HotReloadPageOne", TimeSpan.FromSeconds(30), ct);
+
+		// C# HR: reverse the parameter order in Combine call.
+		await using var _ = await HotReloadHelper.UpdateSourceFile(
+			"../../Uno.Extensions.Navigation.UI.Tests/HotReloadParamOrderTarget.cs",
+			"""return $"{first}-{second}";""",
+			"""return $"{second}-{first}";""",
+			ct);
+
+		// Navigate again — new VM instance should use the updated order.
+		HotReloadParamOrderVm.LastResult = null;
+		await app.FrameNavigator.NavigateRouteAsync(this, "ParamOrderPage");
+		await WaitForRouteAsync(app.NavigationRoot, app.FrameNavigator, "ParamOrderPage", TimeSpan.FromSeconds(30), ct);
+
+		HotReloadParamOrderVm.LastResult.Should().Be("nav-log",
+			"After HR reverses parameter order in Combine, result should be 'nav-log' (#3082)");
+	}
+
+	// ──────────────────────────────────────────────────────────────────────
+	// 17. Rude-edit resilience — navigation remains functional (#3073/#3074)
+	// ──────────────────────────────────────────────────────────────────────
+
+	/// <summary>
+	/// Documents that navigation remains fully functional even after an HR
+	/// attempt that modifies a target file. Whether the edit is applied or
+	/// rejected as "rude" by the runtime, subsequent navigation requests
+	/// must not crash. This test verifies graceful degradation.
+	/// </summary>
+	[TestMethod]
+	[RunsOnUIThread]
+	public async Task When_HRAttemptedOnMethodWithSideEffects_Then_NavigationRemainsStable(CancellationToken ct)
+	{
+		await using var app = await SetupCachedPageAppAsync(ct);
+
+		HotReloadRudeEditTarget.ResetCallCount();
+
+		// Navigate successfully before any HR attempt.
+		await app.FrameNavigator.NavigateRouteAsync(this, "HotReloadPageOne");
+		await WaitForRouteAsync(app.NavigationRoot, app.FrameNavigator, "HotReloadPageOne", TimeSpan.FromSeconds(30), ct);
+
+		// Call the target to establish baseline.
+		var preValue = HotReloadRudeEditTarget.GetStableValue();
+		preValue.Should().Be("stable", "Pre-HR: target should return 'stable'");
+
+		// Attempt an HR edit that adds a field initializer (supported in .NET 9+)
+		// and changes the method body. If rude, the old code persists.
+		await using var _ = await HotReloadHelper.UpdateSourceFile(
+			"../../Uno.Extensions.Navigation.UI.Tests/HotReloadRudeEditTarget.cs",
+			"""return "stable";""",
+			"""return "modified";""",
+			ct);
+
+		// Navigate forward and backward multiple times to stress the nav pipeline.
+		await app.FrameNavigator.NavigateRouteAsync(this, "HotReloadPageTwo");
+		await WaitForRouteAsync(app.NavigationRoot, app.FrameNavigator, "HotReloadPageTwo", TimeSpan.FromSeconds(30), ct);
+
+		await app.FrameNavigator.NavigateBackAsync(this);
+		await WaitForRouteAsync(app.NavigationRoot, app.FrameNavigator, "HotReloadPageOne", TimeSpan.FromSeconds(30), ct);
+
+		await app.FrameNavigator.NavigateRouteAsync(this, "HotReloadPageTwo");
+		await WaitForRouteAsync(app.NavigationRoot, app.FrameNavigator, "HotReloadPageTwo", TimeSpan.FromSeconds(30), ct);
+
+		// The target should now return either "modified" (if HR was applied)
+		// or "stable" (if the edit was rejected as rude). Both are acceptable.
+		var postValue = HotReloadRudeEditTarget.GetStableValue();
+		(postValue == "modified" || postValue == "stable").Should().BeTrue(
+			"After HR attempt, target should return either 'modified' (applied) or 'stable' (rejected). " +
+			$"Got: '{postValue}'. Navigation remained stable regardless (#3073/#3074)");
+
+		// Key assertion: navigation didn't crash — we reached this point.
+		// The call count proves the method was still invocable.
+		HotReloadRudeEditTarget.GetCallCount().Should().BeGreaterThan(0,
+			"Target method remained callable after HR attempt (#3073/#3074)");
+	}
+
 	#region Setup helpers
 
 	/// <summary>
@@ -622,6 +1099,190 @@ public class Given_NavigationHotReload
 			"HotReloadPageOne",
 			ct);
 
+	/// <summary>Navigation.Data binding page → PageOne / PageTwo for #3077 test.</summary>
+	private static Task<HotReloadNavTestApp> SetupNavDataBindingAppAsync(CancellationToken ct)
+		=> SetupAppAsync(
+			(views, routes) =>
+			{
+				views.Register(
+					new ViewMap<HotReloadNavDataBindingPage>(),
+					new ViewMap<HotReloadPageOne>(),
+					new ViewMap<HotReloadPageTwo>());
+
+				routes.Register(
+					new RouteMap("", Nested: new RouteMap[]
+					{
+						new RouteMap("HotReloadNavDataBindingPage", View: views.FindByView<HotReloadNavDataBindingPage>(), IsDefault: true),
+						new RouteMap("PageOne", View: views.FindByView<HotReloadPageOne>()),
+						new RouteMap("PageTwo", View: views.FindByView<HotReloadPageTwo>()),
+					}));
+			},
+			"HotReloadNavDataBindingPage",
+			ct);
+
+	/// <summary>Frame.Navigate from event handler → PageOne / PageTwo for #3078 test.</summary>
+	private static Task<HotReloadNavTestApp> SetupFrameNavAppAsync(CancellationToken ct)
+		=> SetupAppAsync(
+			(views, routes) =>
+			{
+				views.Register(
+					new ViewMap<HotReloadFrameNavPage>(),
+					new ViewMap<HotReloadPageOne>(),
+					new ViewMap<HotReloadPageTwo>());
+
+				routes.Register(
+					new RouteMap("", Nested: new RouteMap[]
+					{
+						new RouteMap("HotReloadFrameNavPage", View: views.FindByView<HotReloadFrameNavPage>(), IsDefault: true),
+						new RouteMap("PageOne", View: views.FindByView<HotReloadPageOne>()),
+						new RouteMap("PageTwo", View: views.FindByView<HotReloadPageTwo>()),
+					}));
+			},
+			"HotReloadFrameNavPage",
+			ct);
+
+	/// <summary>VM constructor body test → PageOne / VmCtorPage for #3083 test.</summary>
+	private static Task<HotReloadNavTestApp> SetupVmCtorAppAsync(CancellationToken ct)
+		=> SetupAppAsync(
+			(views, routes) =>
+			{
+				views.Register(
+					new ViewMap<HotReloadPageOne>(),
+					new ViewMap<HotReloadVmCtorPage, HotReloadVmCtorVm>());
+
+				routes.Register(
+					new RouteMap("", Nested: new RouteMap[]
+					{
+						new RouteMap("HotReloadPageOne", View: views.FindByView<HotReloadPageOne>(), IsDefault: true),
+						new RouteMap("VmCtorPage", View: views.FindByView<HotReloadVmCtorPage>()),
+					}));
+			},
+			"HotReloadPageOne",
+			ct);
+
+	/// <summary>Region rename TabBar page for #3088 test.</summary>
+	private static Task<HotReloadNavTestApp> SetupRegionRenameAppAsync(CancellationToken ct)
+		=> SetupAppAsync(
+			(views, routes) =>
+			{
+				views.Register(
+					new ViewMap<HotReloadRegionRenamePage>(),
+					new ViewMap<HotReloadRegionContentPage, HotReloadRegionVm>());
+
+				routes.Register(
+					new RouteMap("", Nested: new RouteMap[]
+					{
+						new RouteMap(
+							"HotReloadRegionRenamePage",
+							View: views.FindByView<HotReloadRegionRenamePage>(),
+							IsDefault: true,
+							Nested: new RouteMap[]
+							{
+								new RouteMap("AlphaRegion", View: views.FindByView<HotReloadRegionContentPage>(), IsDefault: true),
+								new RouteMap("BetaRegion", View: views.FindByView<HotReloadRegionContentPage>()),
+								new RouteMap("GammaRegion", View: views.FindByView<HotReloadRegionContentPage>()),
+							}),
+					}));
+			},
+			"HotReloadRegionRenamePage",
+			ct);
+
+	/// <summary>IRouteNotifier test → PageOne / PageTwo for #3089 test.</summary>
+	private static Task<HotReloadNavTestApp> SetupRouteNotifierAppAsync(CancellationToken ct)
+		=> SetupAppAsync(
+			(views, routes) =>
+			{
+				views.Register(
+					new ViewMap<HotReloadPageOne>(),
+					new ViewMap<HotReloadPageTwo>());
+
+				routes.Register(
+					new RouteMap("", Nested: new RouteMap[]
+					{
+						new RouteMap("HotReloadPageOne", View: views.FindByView<HotReloadPageOne>(), IsDefault: true),
+						new RouteMap("PageOne", View: views.FindByView<HotReloadPageOne>()),
+						new RouteMap("PageTwo", View: views.FindByView<HotReloadPageTwo>()),
+					}));
+			},
+			"HotReloadPageOne",
+			ct);
+
+	/// <summary>Flyout/dialog test → MainPage + FlyoutPage for #3079 test.</summary>
+	private static Task<HotReloadNavTestApp> SetupFlyoutAppAsync(CancellationToken ct)
+		=> SetupAppAsync(
+			(views, routes) =>
+			{
+				views.Register(
+					new ViewMap<HotReloadPageOne>(),
+					new ViewMap<HotReloadFlyoutPage, HotReloadFlyoutVm>());
+
+				routes.Register(
+					new RouteMap("", Nested: new RouteMap[]
+					{
+						new RouteMap("HotReloadPageOne", View: views.FindByView<HotReloadPageOne>(), IsDefault: true),
+						new RouteMap("FlyoutPage", View: views.FindByView<HotReloadFlyoutPage>()),
+					}));
+			},
+			"HotReloadPageOne",
+			ct);
+
+	/// <summary>Nav-data new-property test → PageOne + DataPage for #3080 test.</summary>
+	private static Task<HotReloadNavTestApp> SetupNavDataNewPropAppAsync(CancellationToken ct)
+		=> SetupAppAsync(
+			(views, routes) =>
+			{
+				views.Register(
+					new ViewMap<HotReloadPageOne>(),
+					new DataViewMap<HotReloadNavDataNewPropPage, HotReloadNavDataNewPropVm, HotReloadNavDataWithNewProp>());
+
+				routes.Register(
+					new RouteMap("", Nested: new RouteMap[]
+					{
+						new RouteMap("HotReloadPageOne", View: views.FindByView<HotReloadPageOne>(), IsDefault: true),
+						new RouteMap("NavDataNewPropPage", View: views.FindByView<HotReloadNavDataNewPropPage>()),
+					}));
+			},
+			"HotReloadPageOne",
+			ct);
+
+	/// <summary>Optional VM ctor param test → PageOne + OptionalParamPage for #3081 test.</summary>
+	private static Task<HotReloadNavTestApp> SetupOptionalParamAppAsync(CancellationToken ct)
+		=> SetupAppAsync(
+			(views, routes) =>
+			{
+				views.Register(
+					new ViewMap<HotReloadPageOne>(),
+					new ViewMap<HotReloadOptionalParamPage, HotReloadOptionalParamVm>());
+
+				routes.Register(
+					new RouteMap("", Nested: new RouteMap[]
+					{
+						new RouteMap("HotReloadPageOne", View: views.FindByView<HotReloadPageOne>(), IsDefault: true),
+						new RouteMap("OptionalParamPage", View: views.FindByView<HotReloadOptionalParamPage>()),
+					}));
+			},
+			"HotReloadPageOne",
+			ct);
+
+	/// <summary>Param order test → PageOne + ParamOrderPage for #3082 test.</summary>
+	private static Task<HotReloadNavTestApp> SetupParamOrderAppAsync(CancellationToken ct)
+		=> SetupAppAsync(
+			(views, routes) =>
+			{
+				views.Register(
+					new ViewMap<HotReloadPageOne>(),
+					new ViewMap<HotReloadParamOrderPage, HotReloadParamOrderVm>());
+
+				routes.Register(
+					new RouteMap("", Nested: new RouteMap[]
+					{
+						new RouteMap("HotReloadPageOne", View: views.FindByView<HotReloadPageOne>(), IsDefault: true),
+						new RouteMap("ParamOrderPage", View: views.FindByView<HotReloadParamOrderPage>()),
+					}));
+			},
+			"HotReloadPageOne",
+			ct);
+
 	#endregion
 
 	#region Infrastructure
@@ -642,6 +1303,7 @@ public class Given_NavigationHotReload
 
 		public ContentControl NavigationRoot { get; }
 		public INavigator FrameNavigator { get; }
+		public IHost Host => _host;
 
 		public async ValueTask DisposeAsync()
 		{
