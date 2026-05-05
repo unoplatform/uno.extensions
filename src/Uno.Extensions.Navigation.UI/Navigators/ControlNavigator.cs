@@ -141,6 +141,11 @@ public abstract class ControlNavigator : Navigator
 {
 	public virtual bool CanGoBack => false;
 
+	// Tracks whether this navigator has received navigation via the normal
+	// route cascade. Used to detect XAML HR re-creation where the cascade
+	// doesn't re-fire for newly created child navigators.
+	private bool _initialNavigationReceived;
+
 	protected ControlNavigator(
 		ILogger logger,
 		IDispatcher dispatcher,
@@ -198,10 +203,62 @@ public abstract class ControlNavigator : Navigator
 
 	public virtual void ControlInitialize()
 	{
+		_initialNavigationReceived = false;
+		_ = DeferredHrRouteCascadeAsync();
+	}
+
+	/// <summary>
+	/// After yielding one dispatch cycle, checks whether the normal route cascade
+	/// reached this navigator. If not (XAML HR scenario), walks the region hierarchy
+	/// to find a parent with an active route and re-triggers the default child route.
+	/// </summary>
+	private async Task DeferredHrRouteCascadeAsync()
+	{
+		await Dispatcher.ExecuteAsync(async ct =>
+		{
+			if (_initialNavigationReceived)
+			{
+				return;
+			}
+
+			// Walk up the region hierarchy to find a navigator with an active route.
+			// The immediate parent (e.g., a composite Grid navigator) may have no route;
+			// we need to reach the FrameNavigator that holds the page-level route.
+			RouteInfo? parentRouteMap = null;
+			var current = Region.Parent;
+			while (current is not null)
+			{
+				var navRoute = current.Navigator()?.Route;
+				if (navRoute?.Base is { Length: > 0 } basePath)
+				{
+					parentRouteMap = Resolver.FindByPath(basePath);
+					if (parentRouteMap?.Nested is { Length: > 0 })
+					{
+						break;
+					}
+				}
+				current = current.Parent;
+			}
+
+			var defaultRoute = parentRouteMap?.Nested?.FirstOrDefault(x => x.IsDefault);
+
+			if (defaultRoute is not null)
+			{
+				if (Logger.IsEnabled(LogLevel.Debug))
+				{
+					Logger.LogDebugMessage($"Deferred HR cascade: navigating to default route '{defaultRoute.Path}'");
+				}
+
+				var request = new NavigationRequest(this, Route.PageRoute(defaultRoute.Path).AsInternal());
+				await NavigateAsync(request);
+			}
+		});
 	}
 
 	protected async Task<NavigationResponse?> ControlNavigateAsync(NavigationRequest request)
 	{
+		_initialNavigationReceived = true;
+
 		var services = Region.Services;
 		if (services is null)
 		{
