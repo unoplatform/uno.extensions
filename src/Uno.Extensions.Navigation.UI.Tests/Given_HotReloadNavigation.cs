@@ -36,6 +36,9 @@ namespace Uno.Extensions.Navigation.UI.Tests;
 ///   #3086 — Region.Attached toggling via XAML HR
 ///   #3087 — Region.Navigator add/remove via XAML HR
 ///   #3088 — Renaming a Region across TabBarItem + content region via XAML HR
+///   #3072 — Adding/removing a RouteMap at runtime via C# HR
+///   #3075 — Region.Name add/remove on NavigationView/TabBar via XAML HR
+///   #2904 — Panel Region.Names swap via XAML HR (Visibility navigator)
 /// </summary>
 [TestClass]
 [RunsInSecondaryApp(ignoreIfNotSupported: true)]
@@ -886,6 +889,142 @@ public class Given_NavigationHotReload
 			"Target method remained callable after HR attempt (#3073/#3074)");
 	}
 
+	// ──────────────────────────────────────────────────────────────────────
+	// 18. Adding a RouteMap at runtime via C# HR (#3072)
+	// ──────────────────────────────────────────────────────────────────────
+
+	/// <summary>
+	/// C# HR flips a flag that triggers InsertRoute on the resolver,
+	/// making a previously-unregistered route explicitly navigable at runtime.
+	/// This validates that InsertRoute integrates with the navigation pipeline (#3072).
+	/// </summary>
+	[TestMethod]
+	[RunsOnUIThread]
+	public async Task When_RouteMapAddedViaHR_Then_NewRouteNavigable(CancellationToken ct)
+	{
+		await using var app = await SetupRouteRegistrationAppAsync(ct);
+
+		// C# HR: flip the flag to simulate a developer adding a new route.
+		await using var _ = await HotReloadHelper.UpdateSourceFile(
+			"../../Uno.Extensions.Navigation.UI.Tests/HotReloadRouteRegistrationTarget.cs",
+			"""internal static bool ShouldRegisterNewRoute() => false;""",
+			"""internal static bool ShouldRegisterNewRoute() => true;""",
+			ct);
+
+		// After HR, insert the route (simulating what a hot-reload-aware
+		// route registration system would do when it re-evaluates registrations).
+		HotReloadRouteRegistrationTarget.ShouldRegisterNewRoute().Should().BeTrue(
+			"C# HR should have flipped the flag to true");
+
+		var resolver = app.Host.Services.GetRequiredService<IRouteResolver>();
+		resolver.InsertRoute(new RouteInfo("DynamicNewRoute", View: () => typeof(HotReloadNewRoutePage)));
+
+		// Navigate to the newly registered route.
+		await app.FrameNavigator.NavigateRouteAsync(this, "DynamicNewRoute");
+		await WaitForRouteAsync(app.NavigationRoot, app.FrameNavigator, "DynamicNewRoute", TimeSpan.FromSeconds(30), ct);
+
+		var page = ResolveCurrentPage<HotReloadNewRoutePage>(app.NavigationRoot);
+		page.Should().NotBeNull(
+			"Navigation to dynamically-registered route should land on the page (#3072)");
+		page!.DisplayedValue.Should().Be("new-route-loaded");
+	}
+
+	// ──────────────────────────────────────────────────────────────────────
+	// 19. Region.Name add via XAML HR (#3075)
+	// ──────────────────────────────────────────────────────────────────────
+
+	/// <summary>
+	/// XAML HR adds a Region.Name to a previously unnamed Grid child.
+	/// After page replacement, navigation to the new region should succeed.
+	/// This is a "working scenario — needs regression test" per #3075.
+	/// </summary>
+	[TestMethod]
+	[RunsOnUIThread]
+	public async Task When_RegionNameAddedViaXamlHR_Then_NavigationResolvesNewRegion(CancellationToken ct)
+	{
+		await using var app = await SetupRegionNameAddRemoveAppAsync(ct);
+
+		var hostPage = ResolveCurrentPage<HotReloadRegionNameAddRemovePage>(app.NavigationRoot);
+		hostPage.Should().NotBeNull();
+
+		// Baseline: "ExistingRegion" is navigable but "AddedRegion" is not.
+		var panelNav = await WaitForPanelNavigatorAsync(hostPage!.ContentGrid, TimeSpan.FromSeconds(30), ct);
+		panelNav.Route?.Base.Should().Be("ExistingRegion",
+			"Initial default region should be ExistingRegion");
+
+		// XAML HR: add Region.Name="AddedRegion" to the unnamed child.
+		await using var _ = await HotReloadHelper.UpdateSourceFile(
+			"../../Uno.Extensions.Navigation.UI.Tests/Pages/HotReloadRegionNameAddRemovePage.xaml",
+			"""<Grid x:Name="_unnamedChild" />""",
+			"""<Grid x:Name="_unnamedChild" uen:Region.Name="AddedRegion" />""",
+			ct);
+
+		// Wait for page replacement.
+		var updatedPage = await WaitForPageReplacementAsync<HotReloadRegionNameAddRemovePage>(
+			app.NavigationRoot, hostPage, TimeSpan.FromSeconds(30), ct);
+
+		// Navigate to the newly-added region.
+		var updatedPanelNav = await WaitForPanelNavigatorAsync(updatedPage.ContentGrid, TimeSpan.FromSeconds(30), ct);
+		await updatedPanelNav.NavigateRouteAsync(this, "AddedRegion");
+		await Task.Delay(500, ct);
+
+		updatedPanelNav.Route?.Base.Should().Be("AddedRegion",
+			"After XAML HR adds Region.Name, navigation should resolve the new region (#3075)");
+	}
+
+	// ──────────────────────────────────────────────────────────────────────
+	// 20. Panel Region.Names swap via XAML HR (#2904)
+	// ──────────────────────────────────────────────────────────────────────
+
+	/// <summary>
+	/// Renaming Region.Name on a Panel child under a Visibility navigator
+	/// via XAML HR. Bug #2904 reports blank content when Region.Names are renamed.
+	/// This test verifies the Panel navigates correctly after the rename.
+	/// </summary>
+	[TestMethod]
+	[RunsOnUIThread]
+	public async Task When_PanelRegionNamesSwappedViaXamlHR_Then_NavigationStillWorks(CancellationToken ct)
+	{
+		await using var app = await SetupPanelRegionNamesAppAsync(ct);
+
+		var hostPage = ResolveCurrentPage<HotReloadPanelRegionNamesPage>(app.NavigationRoot);
+		hostPage.Should().NotBeNull();
+
+		// Baseline: navigate to RegionTwo.
+		var panelNav = await WaitForPanelNavigatorAsync(hostPage!.ContentGrid, TimeSpan.FromSeconds(30), ct);
+		await panelNav.NavigateRouteAsync(this, "RegionTwo");
+		await Task.Delay(500, ct);
+		panelNav.Route?.Base.Should().Be("RegionTwo",
+			"Pre-HR: should navigate to RegionTwo successfully");
+
+		// XAML HR: rename "RegionOne" to "RegionRenamed" on the first child.
+		await using var _ = await HotReloadHelper.UpdateSourceFile(
+			"../../Uno.Extensions.Navigation.UI.Tests/Pages/HotReloadPanelRegionNamesPage.xaml",
+			"""uen:Region.Name="RegionOne" """,
+			"""uen:Region.Name="RegionRenamed" """,
+			ct);
+
+		// Wait for page replacement after XAML HR.
+		var renamedPage = await WaitForPageReplacementAsync<HotReloadPanelRegionNamesPage>(
+			app.NavigationRoot, hostPage, TimeSpan.FromSeconds(30), ct);
+
+		// After rename, navigate to "RegionRenamed" should work (not blank).
+		var renamedPanelNav = await WaitForPanelNavigatorAsync(renamedPage.ContentGrid, TimeSpan.FromSeconds(30), ct);
+		await renamedPanelNav.NavigateRouteAsync(this, "RegionRenamed");
+		await Task.Delay(500, ct);
+
+		renamedPanelNav.Route?.Base.Should().Be("RegionRenamed",
+			"After XAML HR renames Region.Name on a Panel child, Visibility navigator should " +
+			"resolve the renamed region without going blank (#2904)");
+
+		// Also verify the other untouched region still works.
+		await renamedPanelNav.NavigateRouteAsync(this, "RegionTwo");
+		await Task.Delay(500, ct);
+
+		renamedPanelNav.Route?.Base.Should().Be("RegionTwo",
+			"Untouched region should remain navigable after rename (#2904)");
+	}
+
 	#region Setup helpers
 
 	/// <summary>
@@ -1281,6 +1420,76 @@ public class Given_NavigationHotReload
 					}));
 			},
 			"HotReloadPageOne",
+			ct);
+
+	/// <summary>Route registration test → PageOne only initially, for #3072 test.</summary>
+	private static Task<HotReloadNavTestApp> SetupRouteRegistrationAppAsync(CancellationToken ct)
+		=> SetupAppAsync(
+			(views, routes) =>
+			{
+				views.Register(
+					new ViewMap<HotReloadPageOne>());
+
+				routes.Register(
+					new RouteMap("", Nested: new RouteMap[]
+					{
+						new RouteMap("HotReloadPageOne", View: views.FindByView<HotReloadPageOne>(), IsDefault: true),
+					}));
+			},
+			"HotReloadPageOne",
+			ct);
+
+	/// <summary>Region.Name add/remove test → ExistingRegion + unnamed child for #3075 test.</summary>
+	private static Task<HotReloadNavTestApp> SetupRegionNameAddRemoveAppAsync(CancellationToken ct)
+		=> SetupAppAsync(
+			(views, routes) =>
+			{
+				views.Register(
+					new ViewMap<HotReloadRegionNameAddRemovePage>(),
+					new ViewMap<HotReloadRegionContentPage, HotReloadRegionVm>());
+
+				routes.Register(
+					new RouteMap("", Nested: new RouteMap[]
+					{
+						new RouteMap(
+							"HotReloadRegionNameAddRemovePage",
+							View: views.FindByView<HotReloadRegionNameAddRemovePage>(),
+							IsDefault: true,
+							Nested: new RouteMap[]
+							{
+								new RouteMap("ExistingRegion", View: views.FindByView<HotReloadRegionContentPage>(), IsDefault: true),
+								new RouteMap("AddedRegion", View: views.FindByView<HotReloadRegionContentPage>()),
+							}),
+					}));
+			},
+			"HotReloadRegionNameAddRemovePage",
+			ct);
+
+	/// <summary>Panel Region.Names swap test → RegionOne + RegionTwo + RegionRenamed for #2904 test.</summary>
+	private static Task<HotReloadNavTestApp> SetupPanelRegionNamesAppAsync(CancellationToken ct)
+		=> SetupAppAsync(
+			(views, routes) =>
+			{
+				views.Register(
+					new ViewMap<HotReloadPanelRegionNamesPage>(),
+					new ViewMap<HotReloadRegionContentPage, HotReloadRegionVm>());
+
+				routes.Register(
+					new RouteMap("", Nested: new RouteMap[]
+					{
+						new RouteMap(
+							"HotReloadPanelRegionNamesPage",
+							View: views.FindByView<HotReloadPanelRegionNamesPage>(),
+							IsDefault: true,
+							Nested: new RouteMap[]
+							{
+								new RouteMap("RegionOne", View: views.FindByView<HotReloadRegionContentPage>(), IsDefault: true),
+								new RouteMap("RegionTwo", View: views.FindByView<HotReloadRegionContentPage>()),
+								new RouteMap("RegionRenamed", View: views.FindByView<HotReloadRegionContentPage>()),
+							}),
+					}));
+			},
+			"HotReloadPanelRegionNamesPage",
 			ct);
 
 	#endregion
