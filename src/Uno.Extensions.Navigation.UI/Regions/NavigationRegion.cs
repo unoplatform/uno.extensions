@@ -12,6 +12,7 @@ public sealed class NavigationRegion : IRegion
 	private IRegion? _parent;
 	private bool _isRoot;
 	private bool _isLoaded;
+	private bool _wasUnloaded;
 	public IRegion? Parent
 	{
 		get => _parent;
@@ -171,6 +172,7 @@ public sealed class NavigationRegion : IRegion
 		}
 
 		_isLoaded = false;
+		_wasUnloaded = true;
 
 		View.Loading += ViewLoading;
 		View.Loaded += ViewLoaded;
@@ -303,7 +305,8 @@ public sealed class NavigationRegion : IRegion
 			// If the parent already has an active route (e.g., after XAML HR
 			// recreated this region), re-trigger the route cascade from the parent
 			// so this navigator receives its initial navigation via the normal flow.
-			if (Parent is not null && navigator.Route is null)
+			// Only applies on re-load after unload (HR scenario), not first-time load.
+			if (_wasUnloaded && Parent is not null && navigator.Route is null)
 			{
 				var parentNav = Parent.Navigator();
 				if (parentNav?.Route is { Base.Length: > 0 })
