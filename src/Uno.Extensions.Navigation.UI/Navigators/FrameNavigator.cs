@@ -131,7 +131,13 @@ public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 		// filters out routes already in navRoute, resulting in 0 segments.
 		// Detect this by checking if the resolver's current RenderView differs
 		// from what the Frame is actually showing, and bypass the filter.
-		if (segments.Length == 0 && !string.IsNullOrWhiteSpace(route.Base))
+		// Guard: only apply when the navigator believes it is currently AT
+		// route.Base (Route.Base matches). Without this, normal tab switching
+		// with a deep back stack (e.g., Home→Details→LiveCooking) would
+		// incorrectly bypass the filter because SourcePageType (LiveCookingPage)
+		// differs from the tab's root mapping (HomePage).
+		if (segments.Length == 0 && !string.IsNullOrWhiteSpace(route.Base) &&
+			Route?.Base == route.Base)
 		{
 			var currentMapping = Resolver.FindByPath(route.Base);
 			if (currentMapping?.RenderView is not null &&
