@@ -299,6 +299,24 @@ public sealed class NavigationRegion : IRegion
 					_ = child.Navigator();
 				}
 			}
+
+			// If the parent already has an active route (e.g., after XAML HR
+			// recreated this region), re-trigger the route cascade from the parent
+			// so this navigator receives its initial navigation via the normal flow.
+			if (Parent is not null && navigator.Route is null)
+			{
+				var parentNav = Parent.Navigator();
+				if (parentNav?.Route is { Base.Length: > 0 })
+				{
+					if (_logger.IsEnabled(LogLevel.Trace))
+					{
+						_logger.LogTraceMessage($"(Name: {Name}) Parent already has route '{parentNav.Route}', re-cascading");
+					}
+
+					var request = new NavigationRequest(parentNav, parentNav.Route.AsInternal());
+					_ = parentNav.NavigateAsync(request);
+				}
+			}
 		}
 	}
 
