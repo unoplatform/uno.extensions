@@ -267,7 +267,10 @@ public class Given_HotReload
 	[RunsOnUIThread]
 	public async Task When_UpdateStateValue_Then_NewViewModelReflectsUpdate(CancellationToken ct)
 	{
-		await using var vm = new MvuxHotReloadStateRemoveViewModel();
+		// Note: this test uses its own model (not MvuxHotReloadStateRemoveModel) so that the
+		// shadow generations accumulated by When_RemoveAndReAddStateProperty don't pollute
+		// the per-feed state caches that the binding chain relies on.
+		await using var vm = new MvuxHotReloadStateUpdateViewModel();
 		var text = new TextBlock();
 		var ui = new StackPanel { DataContext = vm, Children = { text } };
 		text.SetBinding(TextBlock.TextProperty, new Binding { Path = new PropertyPath("CurrentValue") });
@@ -278,7 +281,7 @@ public class Given_HotReload
 
 		// HR: Change the State value from "stateful" to "updated"
 		await using var delta = await HotReloadHelper.UpdateSourceFile(
-			"../../Uno.Extensions.Reactive.UI.Tests/MvuxHotReloadStateRemoveModel.cs",
+			"../../Uno.Extensions.Reactive.UI.Tests/MvuxHotReloadStateUpdateModel.cs",
 			"""public IState<string> CurrentValue => State.Async(this, async ct => "stateful");""",
 			"""public IState<string> CurrentValue => State.Async(this, async ct => "updated");""",
 			ct);
@@ -288,7 +291,7 @@ public class Given_HotReload
 		Assert.AreEqual("updated", text.Text);
 
 		// New ViewModel instance also picks up the updated value
-		await using var vm2 = new MvuxHotReloadStateRemoveViewModel();
+		await using var vm2 = new MvuxHotReloadStateUpdateViewModel();
 		var text2 = new TextBlock();
 		var ui2 = new StackPanel { DataContext = vm2, Children = { text2 } };
 		text2.SetBinding(TextBlock.TextProperty, new Binding { Path = new PropertyPath("CurrentValue") });
