@@ -308,6 +308,7 @@ public sealed class NavigationRegion : IRegion
 			// Only applies on re-load after unload (HR scenario), not first-time load.
 			if (_wasUnloaded && Parent is not null && navigator.Route is null)
 			{
+				Console.WriteLine($"[DIAG-NAV] NavigationRegion.HandleLoaded: Re-cascade triggered for '{Name}', parent route='{Parent.Navigator()?.Route}'");
 				var parentNav = Parent.Navigator();
 				if (parentNav?.Route is { Base.Length: > 0 })
 				{
