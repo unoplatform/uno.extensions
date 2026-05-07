@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -23,6 +24,17 @@ internal static class HotReloadService
 	private static readonly bool _trace = _log.IsEnabled(LogLevel.Trace);
 
 	public static event Action<Type[]>? ApplicationUpdated;
+
+	// Maps an original model type to its latest hot-reloaded "shadow" type generation, so that
+	// a model instance constructed AFTER a hot-reload (where `new TModel()` would otherwise
+	// pick up the original type's stale lambdas / cached delegates) can be redirected to the
+	// freshest generation. Populated from `UpdateApplication` for every type that carries
+	// `MetadataUpdateOriginalTypeAttribute`.
+	private static readonly ConcurrentDictionary<Type, Type> _latestShadow = new();
+
+	[RequiresUnreferencedCode("`MetadataUpdateOriginalTypeAttribute` may be a per-assembly type, so it cannot be statically known.")]
+	internal static Type? GetLatestShadowType(Type originalType)
+		=> _latestShadow.TryGetValue(originalType, out var shadow) ? shadow : null;
 
 	internal static void ClearCache(Type[]? types)
 	{
@@ -52,6 +64,11 @@ internal static class HotReloadService
 				if (_trace) _log.Trace($"Type {type.Name} doesn't have it original type defined, cannot process hot-patch.");
 				continue;
 			}
+
+			// Track the latest shadow generation so that ANY new bindable instance constructed
+			// after this update can self-patch its (otherwise stale-lambda-bound) model to the
+			// freshest type. Cf. `BindableViewModelBase.__Reactive_TrySelfHotPatch`.
+			_latestShadow[originalType] = type;
 
 			if (_log.IsEnabled(LogLevel.Information)) _log.Info($"Hot-patching bindables of {originalType} to use the updated {type}.");
 

@@ -148,6 +148,15 @@ internal class ViewModelGenTool_3 : ICodeGenTool
 							npc.PropertyChanged += __Reactive_OnModelPropertyChanged;
 						}}
 						#endif
+
+						#if {!hasBaseType} // !hasBaseType
+						// If a hot-reload delta was applied BEFORE this instance was constructed,
+						// `new {model.Name}()` produced an instance of the original type whose lambdas
+						// still resolve to the pre-update IL. Redirect to the latest shadow generation
+						// (re-using the same per-state hot-swap path that an HR delta would trigger
+						// on a pre-existing instance) so this fresh bindable observes the updated values.
+						base.__Reactive_TrySelfHotPatch(typeof({model.ToFullString()}));
+						#endif
 					}}
 
 					#region Hot-reload support

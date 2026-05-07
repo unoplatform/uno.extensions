@@ -135,6 +135,11 @@ internal class ViewModelGenTool_2 : ICodeGenTool
 							{{
 								npc.PropertyChanged += __Reactive_OnModelPropertyChanged;
 							}}" : "").Align(6)}
+
+						{(hasBaseType ? "" : $@"// If a hot-reload delta was applied BEFORE this instance was constructed,
+							// `new {model.Name}()` produced an instance of the original type whose lambdas
+							// still resolve to the pre-update IL. Redirect to the latest shadow generation.
+							base.__Reactive_TrySelfHotPatch(typeof({model.ToFullString()}));").Align(6)}
 					}}
 
 					#region Hot-reload support
