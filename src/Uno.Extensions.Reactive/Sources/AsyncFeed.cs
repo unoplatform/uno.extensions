@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using Uno.Extensions.Reactive.Config;
@@ -16,18 +16,18 @@ internal sealed class AsyncFeed<T> : IFeed<T>
 {
 	private readonly ISignal? _refresh;
 	private readonly AsyncFunc<Option<T>> _dataProvider;
-	private readonly Assembly? _sourceAssembly;
+	private readonly Type? _sourceType;
 
-	public AsyncFeed(AsyncFunc<T?> dataProvider, ISignal? refresh = null, Assembly? sourceAssembly = null)
+	public AsyncFeed(AsyncFunc<T?> dataProvider, ISignal? refresh = null, Type? sourceType = null)
 	{
-		_sourceAssembly = sourceAssembly ?? dataProvider.Method.DeclaringType?.Assembly;
+		_sourceType = sourceType ?? dataProvider.Method.DeclaringType;
 		_dataProvider = dataProvider.SomeOrNone();
 		_refresh = refresh;
 	}
 
-	public AsyncFeed(AsyncFunc<Option<T>> dataProvider, ISignal? refresh = null, Assembly? sourceAssembly = null)
+	public AsyncFeed(AsyncFunc<Option<T>> dataProvider, ISignal? refresh = null, Type? sourceType = null)
 	{
-		_sourceAssembly = sourceAssembly ?? dataProvider.Method.DeclaringType?.Assembly;
+		_sourceType = sourceType ?? dataProvider.Method.DeclaringType;
 		_dataProvider = dataProvider;
 		_refresh = refresh;
 	}
@@ -44,6 +44,7 @@ internal sealed class AsyncFeed<T> : IFeed<T>
 		// Then subscribe to refresh sources
 		var localRefreshTask = _refresh?.GetSource(context, ct).ForEachAsync(BeginRefresh, ct);
 		var contextRefreshEnded = false;
+		Action? unsubscribeHotReload = null;
 		context.Requests<RefreshRequest>(Refresh, ct);
 		context.Requests<EndRequest>(_ =>
 			{
@@ -54,19 +55,33 @@ internal sealed class AsyncFeed<T> : IFeed<T>
 
 		localRefreshTask?.ContinueWith(TryComplete, TaskContinuationOptions.ExecuteSynchronously);
 
-		if (FeedConfiguration.EffectiveHotReload.HasFlag(HotReloadSupport.DynamicFeed) && _sourceAssembly is not null)
+		if (FeedConfiguration.EffectiveHotReload.HasFlag(HotReloadSupport.AsyncFeed) && _sourceType is not null)
 		{
+			// If the feed was constructed AFTER a previous hot-reload, _sourceType may itself be an EnC shadow type
+			// (e.g. MyModel#3+<>c). Resolve it back to the original so subsequent HR notifications, which we also
+			// resolve to their original, compare equal.
+#pragma warning disable IL2026 // Underlying API uses reflection on a per-assembly attribute that cannot be statically known.
+			var rootSourceType = GetOriginalRootType(_sourceType);
+
 			void OnApplicationUpdated(Type[] types)
 			{
-				if (types.Any(t => t.Assembly == _sourceAssembly))
+				// Each updated type can be either the user type itself or a compiler-generated
+				// nested type (lambda <>c, DisplayClass, async state-machine). Walk up to the
+				// outermost type, then resolve the EnC "shadow" type back to its original via
+				// MetadataUpdateOriginalTypeAttribute, so we match the captured root source type.
+				if (types.Any(t => GetOriginalRootType(t) == rootSourceType))
 				{
 					var refreshedVersion = RefreshToken.InterlockedIncrement(ref current);
-					loadRequests.SetNext(refreshedVersion);
+					// Use TrySetNext so a notification arriving in a tiny race window between completion
+					// and unsubscription does not throw on the hot-reload callback thread.
+					loadRequests.TrySetNext(refreshedVersion);
 				}
 			}
+#pragma warning restore IL2026
 
 			HotReloadService.ApplicationUpdated += OnApplicationUpdated;
-			ct.Register(() => HotReloadService.ApplicationUpdated -= OnApplicationUpdated);
+			unsubscribeHotReload = () => HotReloadService.ApplicationUpdated -= OnApplicationUpdated;
+			ct.Register(() => Interlocked.Exchange(ref unsubscribeHotReload, null)?.Invoke());
 		}
 
 		void Refresh(RefreshRequest request)
@@ -87,6 +102,8 @@ internal sealed class AsyncFeed<T> : IFeed<T>
 		{
 			if (localRefreshTask is not { IsCompleted: false } && contextRefreshEnded)
 			{
+				// Unsubscribe before completing so a HR notification cannot push to a completed subject.
+				Interlocked.Exchange(ref unsubscribeHotReload, null)?.Invoke();
 				loadRequests.TryComplete();
 			}
 		}
@@ -140,5 +157,20 @@ internal sealed class AsyncFeed<T> : IFeed<T>
 				subject.TryFail(error);
 			}
 		}
+	}
+
+	// Walks DeclaringType up to the outermost type, then resolves an EnC "shadow" type
+	// (e.g. MyModel#3, produced when hot-reload rewrites a type) back to its original via
+	// MetadataUpdateOriginalTypeAttribute. Both sides of the HR comparison go through this
+	// so a feed constructed after a prior hot-reload (whose lambda lives on a shadow type)
+	// still matches metadata updates that point at later shadow generations of the same type.
+	[RequiresUnreferencedCode("`MetadataUpdateOriginalTypeAttribute` may be a per-assembly type, so it cannot be statically known.")]
+	private static Type GetOriginalRootType(Type type)
+	{
+		while (type.DeclaringType is { } declaring)
+		{
+			type = declaring;
+		}
+		return HotReloadService.GetOriginalType(type) ?? type;
 	}
 }

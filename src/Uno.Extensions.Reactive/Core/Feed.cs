@@ -69,8 +69,8 @@ public static partial class Feed
 	public static IFeed<T> Async<T>(AsyncFunc<T?> valueProvider, Signal? refresh = null)
 		where T : struct
 		=> refresh is null
-			? AttachedProperty.GetOrCreate(valueProvider, static vp => new AsyncFeed<T>(vp.SomeOrNone(), sourceAssembly: vp.Method.DeclaringType?.Assembly))
-			: AttachedProperty.GetOrCreate(refresh, valueProvider, static (r, vp) => new AsyncFeed<T>(vp.SomeOrNone(), r, vp.Method.DeclaringType?.Assembly));
+			? AttachedProperty.GetOrCreate(valueProvider, static vp => new AsyncFeed<T>(vp.SomeOrNone(), sourceType: vp.Method.DeclaringType))
+			: AttachedProperty.GetOrCreate(refresh, valueProvider, static (r, vp) => new AsyncFeed<T>(vp.SomeOrNone(), r, vp.Method.DeclaringType));
 
 	/// <summary>
 	/// Gets or create a custom feed from an async enumerable sequence of value.

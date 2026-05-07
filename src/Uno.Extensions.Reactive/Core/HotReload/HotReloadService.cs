@@ -64,7 +64,7 @@ internal static class HotReloadService
 	// As the MetadataUpdateOriginalTypeAttribute might have been generated in the project, we have to use reflection instead of cannot use this:
 	//&& type.GetCustomAttribute<MetadataUpdateOriginalTypeAttribute>() is { OriginalType : not null } typeUpdate)
 	[RequiresUnreferencedCode("`MetadataUpdateOriginalTypeAttribute` may be a per-assembly type, so it cannot be statically known.")]
-	private static Type? GetOriginalType(Type type)
+	internal static Type? GetOriginalType(Type type)
 		=> type
 			.GetCustomAttributes()
 			.Select(attr =>

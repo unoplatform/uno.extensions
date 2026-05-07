@@ -23,6 +23,11 @@ public enum HotReloadSupport
 	State = 1 << 2,
 
 	/// <summary>
+	/// Enables the hot-reload support for async feeds (refresh when the type that declares the data provider is updated).
+	/// </summary>
+	AsyncFeed = 1 << 3,
+
+	/// <summary>
 	/// Globally enables the hot-reload support for the MVUX framework.
 	/// </summary>
 	Enabled = 255,

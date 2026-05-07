@@ -56,8 +56,8 @@ public static partial class Feed<T> // We set the T on the class to it greatly h
 	/// <returns>A feed that encapsulate the source.</returns>
 	public static IFeed<T> Async(AsyncFunc<T> valueProvider, Signal? refresh = null)
 		=> refresh is null
-			? AttachedProperty.GetOrCreate(valueProvider, static vp => new AsyncFeed<T>(vp.SomeOrNoneWhenNotNull(), sourceAssembly: vp.Method.DeclaringType?.Assembly))
-			: AttachedProperty.GetOrCreate(refresh, valueProvider, static (r, vp) => new AsyncFeed<T>(vp.SomeOrNoneWhenNotNull(), r, vp.Method.DeclaringType?.Assembly));
+			? AttachedProperty.GetOrCreate(valueProvider, static vp => new AsyncFeed<T>(vp.SomeOrNoneWhenNotNull(), sourceType: vp.Method.DeclaringType))
+			: AttachedProperty.GetOrCreate(refresh, valueProvider, static (r, vp) => new AsyncFeed<T>(vp.SomeOrNoneWhenNotNull(), r, vp.Method.DeclaringType));
 
 	/// <summary>
 	/// Gets or create a custom feed from an async enumerable sequence of value.
