@@ -1,7 +1,8 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using Uno.Extensions.Reactive.Config;
@@ -17,17 +18,23 @@ internal sealed class AsyncFeed<T> : IFeed<T>
 	private readonly ISignal? _refresh;
 	private readonly AsyncFunc<Option<T>> _dataProvider;
 	private readonly Type? _sourceType;
+	private readonly MethodInfo _userMethod;
 
-	public AsyncFeed(AsyncFunc<T?> dataProvider, ISignal? refresh = null, Type? sourceType = null)
+	public AsyncFeed(AsyncFunc<T?> dataProvider, ISignal? refresh = null, Type? sourceType = null, MethodInfo? userMethod = null)
 	{
 		_sourceType = sourceType ?? dataProvider.Method.DeclaringType;
+		_userMethod = userMethod ?? dataProvider.Method;
 		_dataProvider = dataProvider.SomeOrNone();
 		_refresh = refresh;
 	}
 
-	public AsyncFeed(AsyncFunc<Option<T>> dataProvider, ISignal? refresh = null, Type? sourceType = null)
+	public AsyncFeed(AsyncFunc<Option<T>> dataProvider, ISignal? refresh = null, Type? sourceType = null, MethodInfo? userMethod = null)
 	{
 		_sourceType = sourceType ?? dataProvider.Method.DeclaringType;
+		// `dataProvider` is often a wrapper (`SomeOrNone()`, `async ct => await user(ct)`) — its Method
+		// would point at the wrapper, not the user's lambda. Callers that wrap should pass the user's
+		// original Method so the per-property dependency-registry lookup uses the correct member name.
+		_userMethod = userMethod ?? dataProvider.Method;
 		_dataProvider = dataProvider;
 		_refresh = refresh;
 	}
@@ -57,24 +64,24 @@ internal sealed class AsyncFeed<T> : IFeed<T>
 
 		if (FeedConfiguration.EffectiveHotReload.HasFlag(HotReloadSupport.AsyncFeed) && _sourceType is not null)
 		{
-			// If the feed was constructed AFTER a previous hot-reload, _sourceType may itself be an EnC shadow type
-			// (e.g. MyModel#3+<>c). Resolve it back to the original so subsequent HR notifications, which we also
-			// resolve to their original, compare equal.
-#pragma warning disable IL2026 // Underlying API uses reflection on a per-assembly attribute that cannot be statically known.
-			var rootSourceType = GetOriginalRootType(_sourceType);
+#pragma warning disable IL2026 // Underlying API uses reflection on per-assembly metadata that cannot be statically known.
+			// Build the filter set: the lambda's declaring type, plus any extra types the source
+			// generator recorded as dependencies of this property's body (cross-type calls like
+			// `Feed.Async(async ct => Helper.Get())` — editing Helper.cs needs to refresh too).
+			var dependentTypes = BuildDependentTypeSet();
 
 			void OnApplicationUpdated(Type[] types)
 			{
-				// Each updated type can be either the user type itself or a compiler-generated
-				// nested type (lambda <>c, DisplayClass, async state-machine). Walk up to the
-				// outermost type, then resolve the EnC "shadow" type back to its original via
-				// MetadataUpdateOriginalTypeAttribute, so we match the captured root source type.
-				if (types.Any(t => GetOriginalRootType(t) == rootSourceType))
+				foreach (var t in types)
 				{
-					var refreshedVersion = RefreshToken.InterlockedIncrement(ref current);
-					// Use TrySetNext so a notification arriving in a tiny race window between completion
-					// and unsubscription does not throw on the hot-reload callback thread.
-					loadRequests.TrySetNext(refreshedVersion);
+					if (dependentTypes.Contains(GetOriginalRootType(t)))
+					{
+						var refreshedVersion = RefreshToken.InterlockedIncrement(ref current);
+						// Use TrySetNext so a notification arriving in a tiny race window between completion
+						// and unsubscription does not throw on the hot-reload callback thread.
+						loadRequests.TrySetNext(refreshedVersion);
+						return;
+					}
 				}
 			}
 #pragma warning restore IL2026
@@ -157,6 +164,49 @@ internal sealed class AsyncFeed<T> : IFeed<T>
 				subject.TryFail(error);
 			}
 		}
+	}
+
+	[RequiresUnreferencedCode("Resolves hot-reload original types and looks up the per-assembly feed-dependency registry.")]
+	private HashSet<Type> BuildDependentTypeSet()
+	{
+		var set = new HashSet<Type> { GetOriginalRootType(_sourceType!) };
+		var memberName = TryGetUserMemberName(_userMethod);
+		if (memberName is not null)
+		{
+			var registered = FeedDependencyRegistry.Resolve(_sourceType, memberName);
+			if (registered is not null)
+			{
+				foreach (var t in registered)
+				{
+					set.Add(GetOriginalRootType(t));
+				}
+			}
+		}
+		return set;
+	}
+
+	// Compiler-generated lambdas inside a property body have names like "<get_PropertyName>b__N_M".
+	// Extract "PropertyName" so we can look up dependencies registered against the user-visible name.
+	// Returns null if the method is not a compiler-generated lambda (e.g. a method group reference) —
+	// in that case the registry lookup is skipped and the filter falls back to the declaring type alone.
+	private static string? TryGetUserMemberName(MethodInfo method)
+	{
+		var name = method.Name;
+		if (name.Length < 3 || name[0] != '<')
+		{
+			return null;
+		}
+		var end = name.IndexOf('>');
+		if (end <= 1)
+		{
+			return null;
+		}
+		var inner = name.Substring(1, end - 1);
+		if (inner.StartsWith("get_", StringComparison.Ordinal) || inner.StartsWith("set_", StringComparison.Ordinal))
+		{
+			inner = inner.Substring(4);
+		}
+		return inner;
 	}
 
 	// Walks DeclaringType up to the outermost type, then resolves an EnC "shadow" type
