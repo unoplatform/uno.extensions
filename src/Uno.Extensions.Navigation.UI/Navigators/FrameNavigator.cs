@@ -102,12 +102,17 @@ public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 			// function picks children by string length, which can select the wrong
 			// child when multiple FrameViews exist (e.g., picking "Second" over "Third").
 			childRoute = CaptureActiveChildRoute();
-			Console.WriteLine($"[DIAG-NAV] CaptureActiveChildRoute before forward nav: captured='{childRoute?.Base}/{childRoute?.Path}', Route.Base='{Route?.Base}', BackStack.Count={Control.BackStack.Count}");
 		}
 
 		// Close any active dialogs/flyouts before clearing children,
 		// otherwise they persist as overlays even after navigation
 		Region.CloseActiveClosableNavigators();
+
+		// Mark all descendant regions so they know the upcoming unload/reload is due to
+		// navigation (not Hot Reload). This prevents their HandleLoaded from spuriously
+		// re-cascading the parent route, which would override the restored child route
+		// (e.g., "Third" tab) set by AdjustRequestForChildNavigation.
+		SuppressReCascadeOnDescendants(Region);
 
 		// Detach all nested regions as we're moving away from the current view
 		Region.Children.Clear();
@@ -204,7 +209,6 @@ public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 				if (previousChildRoute is not null)
 				{
 					_childRoutesCache[backStackIndex] = previousChildRoute;
-					Console.WriteLine($"[DIAG-NAV] NavigateForwardAsync: Stored childRoute='{previousChildRoute.Base}/{previousChildRoute.Path}' at backStackIndex={backStackIndex}");
 				}
 
 				// Store the navigator of the page we just left in a cache indexed by
@@ -325,7 +329,6 @@ public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 		Route? storedChildRoute = null;
 		INavigator? storedNavigator = null;
 
-		Console.WriteLine($"[DIAG-NAV] NavigatedBackAsync: BackStack.Count={Control.BackStack.Count}, _childRoutesCache keys=[{string.Join(",", _childRoutesCache.Keys)}], route='{route}'");
 
 		// Try external path first: if GoBack was already performed externally
 		// (e.g., NavigationBar MainCommand), the popped entry's former index
@@ -389,7 +392,6 @@ public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 		// Store the child route for injection into the child navigation request.
 		// AdjustRequestForChildNavigation will use this to restore TabBar selections
 		// and other nested state instead of navigating to the default child route.
-		Console.WriteLine($"[DIAG-NAV] NavigatedBackAsync: isExternalGoBack={isExternalGoBack}, storedChildRoute='{storedChildRoute?.Base}/{storedChildRoute?.Path}', isEmpty={storedChildRoute?.IsEmpty()}");
 		if (storedChildRoute?.IsEmpty() == false)
 		{
 			_pendingChildRoute = storedChildRoute;
@@ -590,6 +592,11 @@ public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 		}
 	}
 
+	private static void SuppressReCascadeOnDescendants(IRegion region)
+	{
+		NavigationRegion.SuppressReCascadeOnDescendants(region);
+	}
+
 	private void RemoveLastFromBackStack()
 	{
 		if (Control is null)
@@ -669,17 +676,14 @@ public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 			nestedRoutes.Select(r => r.Path).Where(p => !string.IsNullOrWhiteSpace(p))!);
 		if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"CaptureActiveChildRoute: Looking for active nested route among: [{string.Join(", ", nestedNames)}]");
 
-		Console.WriteLine($"[DIAG-NAV] CaptureActiveChildRoute: currentBase='{currentBase}', nestedNames=[{string.Join(",", nestedNames)}], Region.Children.Count={Region.Children.Count}");
 		var activeNested = FindActiveNestedRoute(Region, nestedNames);
 		if (activeNested is null)
 		{
-			Console.WriteLine($"[DIAG-NAV] CaptureActiveChildRoute: No active nested route found!");
 			if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"CaptureActiveChildRoute: No active nested route found");
 			return null;
 		}
 
 		var result = new Route(Qualifiers.None, currentBase).Append(activeNested);
-		Console.WriteLine($"[DIAG-NAV] CaptureActiveChildRoute: Found '{activeNested}' → result='{result.Base}/{result.Path}'");
 		if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"CaptureActiveChildRoute: Captured active child route '{activeNested}' for base '{currentBase}'");
 		return result;
 	}
@@ -692,7 +696,6 @@ public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 	/// </summary>
 	private string? FindActiveNestedRoute(IRegion region, HashSet<string> nestedNames)
 	{
-		Console.WriteLine($"[DIAG-NAV] FindActiveNestedRoute: region.Name='{region.Name}', children.Count={region.Children.Count}");
 		foreach (var child in region.Children)
 		{
 			// Skip regions whose view is effectively collapsed.
@@ -708,7 +711,6 @@ public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 
 			var nav = child.Navigator();
 			var baseName = nav?.Route?.Base;
-			Console.WriteLine($"[DIAG-NAV] FindActiveNestedRoute: child name='{child.Name}', navType='{nav?.GetType().Name}', Route.Base='{baseName}', collapsed={IsEffectivelyCollapsed(child.View)}");
 			if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"FindActiveNestedRoute: child region name='{child.Name}', navigator type='{nav?.GetType().Name}', Route.Base='{baseName}'");
 
 			if (!string.IsNullOrEmpty(baseName) && nestedNames.Contains(baseName))
@@ -749,10 +751,8 @@ public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 	/// <inheritdoc />
 	protected override NavigationRequest AdjustRequestForChildNavigation(NavigationRequest request)
 	{
-		Console.WriteLine($"[DIAG-NAV] AdjustRequestForChildNavigation: _pendingChildRoute='{_pendingChildRoute?.Base}/{_pendingChildRoute?.Path}', request.Route='{request.Route.Base}/{request.Route.Path}'");
 		if (_pendingChildRoute is null || _pendingChildRoute.IsEmpty())
 		{
-			Console.WriteLine($"[DIAG-NAV] AdjustRequestForChildNavigation: SKIPPED (pending is null or empty)");
 			return request;
 		}
 
@@ -780,7 +780,6 @@ public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 
 		if (childRoute.IsEmpty())
 		{
-			Console.WriteLine($"[DIAG-NAV] AdjustRequestForChildNavigation: childRoute is empty after Next(), returning original request");
 			return request;
 		}
 
@@ -788,7 +787,6 @@ public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 		// to the child region, not as a nested qualifier or back navigation.
 		childRoute = childRoute with { Qualifier = Qualifiers.None };
 
-		Console.WriteLine($"[DIAG-NAV] AdjustRequestForChildNavigation: INJECTING childRoute='{childRoute.Base}/{childRoute.Path}' (was storedRoute='{storedRoute.Base}/{storedRoute.Path}', Route.Base='{Route?.Base}')");
 		if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Restoring previously selected child route '{childRoute.Base}' after back navigation");
 
 		// Strip Result from child restoration requests. The Result type is only meaningful
