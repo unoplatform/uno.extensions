@@ -31,8 +31,10 @@ public class SystemTextJsonSerializer : ISerializer
 		_services = services;
 
 		// Need to use `.GetService<…>()` in order for `.ConfigureJsonSerializationOptions()` callbacks to be invoked.
-		_serializerOptions = services.GetJsonSerializationOptions() ??
-			serializerOptions ??
+		// Need to use `.GetService<…>()` in order for `.ConfigureJsonSerializationOptions()` callbacks to be invoked.
+		var configured = services.GetJsonSerializationOptions();
+		_serializerOptions = serializerOptions ??
+			configured ??
 			JsonSerializationOptions.DefaultSerializerOptions;
 	}
 

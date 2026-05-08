@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
@@ -19,6 +20,11 @@ public class ServiceCollectionExtensionsTests
 	{
 		var context = new HostBuilderContext(new Dictionary<object,object>());
 		var services = new ServiceCollection();
+		services.AddSingleton(new JsonSerializerOptions
+		{
+			ReadCommentHandling = JsonCommentHandling.Skip,
+		});
+		services.AddSingleton<SimpleClassViewModel>();
 
 #if WITH_AOT_TRIMMING
 		services.AddJsonSerialization(context, TestJsonSerializerContext.Default);
@@ -107,6 +113,21 @@ public class ServiceCollectionExtensionsTests
 			_services = originalServices;
 		}
 	}
+
+	internal const string SimpleClassJsonWithComment = """
+	{
+		// comment
+		"SimpleTextProperty": "Hello World"
+	}
+	""";
+
+	[TestMethod]
+	public void DeserializeJsonWithCommentViaRequiredServices()
+	{
+		var viewModel = _services.GetRequiredService<SimpleClassViewModel>();
+		var entity = viewModel.FromJson(SimpleClassJsonWithComment);
+		Assert.AreEqual(entity.SimpleTextProperty, "Hello World");
+	}
 }
 
 
@@ -116,4 +137,9 @@ public class ServiceCollectionExtensionsTests
 [JsonSerializable(typeof(bool))]
 internal sealed partial class TestJsonSerializerContext : JsonSerializerContext
 {
+}
+
+record SimpleClassViewModel(ISerializer<SimpleClass> Serializer)
+{
+	public SimpleClass FromJson(string json) => Serializer.FromString(json);
 }
