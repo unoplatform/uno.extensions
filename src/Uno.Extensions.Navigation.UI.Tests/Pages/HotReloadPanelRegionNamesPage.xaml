@@ -1,0 +1,11 @@
+<Page x:Class="Uno.Extensions.Navigation.UI.Tests.Pages.HotReloadPanelRegionNamesPage"
+	  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	  xmlns:uen="using:Uno.Extensions.Navigation.UI">
+	<Grid uen:Region.Attached="True">
+		<Grid x:Name="_contentGrid" uen:Region.Attached="True" uen:Region.Navigator="Visibility">
+			<Grid uen:Region.Name="RegionOne" />
+			<Grid uen:Region.Name="RegionTwo" />
+		</Grid>
+	</Grid>
+</Page>
