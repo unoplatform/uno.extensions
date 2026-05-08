@@ -108,6 +108,12 @@ public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 		// otherwise they persist as overlays even after navigation
 		Region.CloseActiveClosableNavigators();
 
+		// Mark all descendant regions so they know the upcoming unload/reload is due to
+		// navigation (not Hot Reload). This prevents their HandleLoaded from spuriously
+		// re-cascading the parent route, which would override the restored child route
+		// (e.g., "Third" tab) set by AdjustRequestForChildNavigation.
+		SuppressReCascadeOnDescendants(Region);
+
 		// Detach all nested regions as we're moving away from the current view
 		Region.Children.Clear();
 
@@ -322,6 +328,7 @@ public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 		// already popped by an external GoBack.
 		Route? storedChildRoute = null;
 		INavigator? storedNavigator = null;
+
 
 		// Try external path first: if GoBack was already performed externally
 		// (e.g., NavigationBar MainCommand), the popped entry's former index
@@ -583,6 +590,11 @@ public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 			currentPage.SetName(path ?? string.Empty);
 			currentPage.ReassignRegionParent();
 		}
+	}
+
+	private static void SuppressReCascadeOnDescendants(IRegion region)
+	{
+		NavigationRegion.SuppressReCascadeOnDescendants(region);
 	}
 
 	private void RemoveLastFromBackStack()

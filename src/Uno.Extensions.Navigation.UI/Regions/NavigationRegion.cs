@@ -12,6 +12,11 @@ public sealed class NavigationRegion : IRegion
 	private IRegion? _parent;
 	private bool _isRoot;
 	private bool _isLoaded;
+	private bool _wasUnloaded;
+	// Set by FrameNavigator before Children.Clear() to indicate this region is being
+	// unloaded due to navigation (not Hot Reload). When true, HandleLoaded skips the
+	// HR re-cascade because the parent navigator will cascade the correct route itself.
+	internal bool _suppressReCascadeOnReload;
 	public IRegion? Parent
 	{
 		get => _parent;
@@ -171,6 +176,7 @@ public sealed class NavigationRegion : IRegion
 		}
 
 		_isLoaded = false;
+		_wasUnloaded = true;
 
 		View.Loading += ViewLoading;
 		View.Loaded += ViewLoaded;
@@ -266,6 +272,24 @@ public sealed class NavigationRegion : IRegion
 		AssignParent();
 	}
 
+	/// <summary>
+	/// Marks all descendant NavigationRegions so that when they reload after being
+	/// unloaded by navigation (e.g., Children.Clear()), they do not spuriously
+	/// re-cascade the parent route. This prevents overriding the correct child
+	/// route that the parent navigator restores via AdjustRequestForChildNavigation.
+	/// </summary>
+	internal static void SuppressReCascadeOnDescendants(IRegion region)
+	{
+		foreach (var child in region.Children)
+		{
+			if (child is NavigationRegion navRegion)
+			{
+				navRegion._suppressReCascadeOnReload = true;
+			}
+			SuppressReCascadeOnDescendants(child);
+		}
+	}
+
 	private async Task HandleLoaded()
 	{
 		if (View is null || _isLoaded)
@@ -299,6 +323,29 @@ public sealed class NavigationRegion : IRegion
 					_ = child.Navigator();
 				}
 			}
+
+			// If the parent already has an active route (e.g., after XAML HR
+			// recreated this region), re-trigger the route cascade from the parent
+			// so this navigator receives its initial navigation via the normal flow.
+			// Only applies on re-load after unload (HR scenario), not first-time load.
+			// Skip if this region was unloaded due to navigation (not HR) — the parent
+			// navigator (e.g., FrameNavigator) will cascade the correct route itself
+			// via AdjustRequestForChildNavigation / NavigateChildRegions.
+			if (_wasUnloaded && !_suppressReCascadeOnReload && Parent is not null && navigator.Route is null)
+			{
+				var parentNav = Parent.Navigator();
+				if (parentNav?.Route is { Base.Length: > 0 })
+				{
+					if (_logger.IsEnabled(LogLevel.Trace))
+					{
+						_logger.LogTraceMessage($"(Name: {Name}) Parent already has route '{parentNav.Route}', re-cascading");
+					}
+
+					var request = new NavigationRequest(parentNav, parentNav.Route.AsInternal());
+					_ = parentNav.NavigateAsync(request);
+				}
+			}
+			_suppressReCascadeOnReload = false;
 		}
 	}
 
