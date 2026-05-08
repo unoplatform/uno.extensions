@@ -1,4 +1,5 @@
 # AI Agents Contribution & Coding Instructions
+<!-- cspell:ignore PKCE -->
 
 This document defines strict guardrails for any AI-assisted or automated agent contributions (including Copilot, custom prompt runners, or scripted refactors) working in the **Uno.Extensions** repository. Human contributors must also ensure generated changes comply before merge. It is the single source of truth for repo-wide orientation *and* the rules agents must follow; `CLAUDE.md` at the repo root is a thin pointer that includes this file.
 
@@ -25,7 +26,7 @@ Three solution filters cover the common scenarios:
 
 Folder layout:
 
-```
+```text
 src/                          The 50 published packages, plus generators and test projects.
   Uno.Extensions.<Area>/      Cross-platform "core" of an area (e.g. Reactive, Navigation, Authentication).
   Uno.Extensions.<Area>.UI/   WinUI/Uno-flavored host with .csproj named *.WinUI.csproj.
@@ -66,7 +67,7 @@ The top-level `Directory.Build.props` exposes `Build_Android`, `Build_iOS`, `Bui
 
 <flow_orchestration>
 
-### 1. Plan Node Default
+### 1. Plan Mode Default
 
 - Enter plan mode for ANY non-trivial task (3+ steps or architectural decisions)
 - If something goes sideways, STOP and re-plan immediately - don't keep pushing
@@ -255,7 +256,7 @@ Files in `src/Uno.Extensions.Navigation.UI.Tests/` named `Given_HotReload.cs` (a
 ### Minimum Test Additions Per PR
 
 | Change Type | Required Tests |
-|-------------|----------------|
+| ------------- | ---------------- |
 | New `UseXxx` builder / extension API | Happy-path registration + at least one option-binding case (unit test in `*.Tests`) |
 | New / changed feed or state operator | Subscription, completion, refresh, cancellation cases (`Uno.Extensions.Reactive.Tests`) |
 | New navigator / region behavior | UI test in `Uno.Extensions.Navigation.UI.Tests` covering attach, navigate, back-stack, detach |
@@ -424,7 +425,7 @@ Unexplained deviations block merge.
 ## 5. Quick Reference Table
 
 | Area | Rule |
-|------|------|
+| ------ | ------ |
 | Build | Release: zero warnings (TreatWarningsAsErrors) |
 | Tests | New behavior + edge case in correct project (`*.Tests` / `*.UI.Tests` / `RuntimeTests`) |
 | SOLID | All five applied |
