@@ -140,7 +140,7 @@ public static partial class State<T>
 		where TOwner : class
 		=> AttachedProperty.GetOrCreate(owner: owner,
 										key: (valueProvider, refresh),
-										factory: static (o, args) => S(o, new AsyncFeed<T>(args.valueProvider.SomeOrNoneWhenNotNull(), args.refresh, args.valueProvider.Method.DeclaringType, args.valueProvider.Method)));
+										factory: static (o, args) => S(o, new AsyncFeed<T>(args.valueProvider.SomeOrNoneWhenNotNull(), args.refresh, args.valueProvider)));
 
 	/// <summary>
 	/// Gets or creates a state from an async method.
@@ -151,8 +151,8 @@ public static partial class State<T>
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	internal static IState<T> Async(AsyncFunc<T> valueProvider, Signal? refresh = null)
 		=> refresh is null
-			? AttachedProperty.GetOrCreate(Validate(valueProvider), static vp => S(vp, new AsyncFeed<T>(vp.SomeOrNoneWhenNotNull(), sourceType: vp.Method.DeclaringType, userMethod: vp.Method)))
-			: AttachedProperty.GetOrCreate(refresh, Validate(valueProvider), static (r, vp) => S(vp, new AsyncFeed<T>(vp.SomeOrNoneWhenNotNull(), r, vp.Method.DeclaringType, vp.Method)));
+			? AttachedProperty.GetOrCreate(Validate(valueProvider), static vp => S(vp, new AsyncFeed<T>(vp.SomeOrNoneWhenNotNull(), rawDataProvider: vp)))
+			: AttachedProperty.GetOrCreate(refresh, Validate(valueProvider), static (r, vp) => S(vp, new AsyncFeed<T>(vp.SomeOrNoneWhenNotNull(), r, vp)));
 
 	/// <summary>
 	/// Gets or creates a state from an async enumerable sequence of value.

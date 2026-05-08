@@ -17,24 +17,28 @@ internal sealed class AsyncFeed<T> : IFeed<T>
 {
 	private readonly ISignal? _refresh;
 	private readonly AsyncFunc<Option<T>> _dataProvider;
-	private readonly Type? _sourceType;
-	private readonly MethodInfo _userMethod;
+	// Captured only when HR is enabled (gated in ctors). `dataProvider` is often a wrapper
+	// (`SomeOrNone()`, `async ct => await user(ct)`) — its `Method` would point at the wrapper,
+	// not the user's lambda. Callers that wrap should pass the user's original delegate so the
+	// per-property dependency-registry lookup uses the correct member name.
+	private readonly Delegate? _hotReloadDelegate;
 
-	public AsyncFeed(AsyncFunc<T?> dataProvider, ISignal? refresh = null, Type? sourceType = null, MethodInfo? userMethod = null)
+	public AsyncFeed(AsyncFunc<T?> dataProvider, ISignal? refresh = null, Delegate? rawDataProvider = null)
 	{
-		_sourceType = sourceType ?? dataProvider.Method.DeclaringType;
-		_userMethod = userMethod ?? dataProvider.Method;
+		if (FeedConfiguration.EffectiveHotReload.HasFlag(HotReloadSupport.AsyncFeed))
+		{
+			_hotReloadDelegate = rawDataProvider ?? dataProvider;
+		}
 		_dataProvider = dataProvider.SomeOrNone();
 		_refresh = refresh;
 	}
 
-	public AsyncFeed(AsyncFunc<Option<T>> dataProvider, ISignal? refresh = null, Type? sourceType = null, MethodInfo? userMethod = null)
+	public AsyncFeed(AsyncFunc<Option<T>> dataProvider, ISignal? refresh = null, Delegate? rawDataProvider = null)
 	{
-		_sourceType = sourceType ?? dataProvider.Method.DeclaringType;
-		// `dataProvider` is often a wrapper (`SomeOrNone()`, `async ct => await user(ct)`) — its Method
-		// would point at the wrapper, not the user's lambda. Callers that wrap should pass the user's
-		// original Method so the per-property dependency-registry lookup uses the correct member name.
-		_userMethod = userMethod ?? dataProvider.Method;
+		if (FeedConfiguration.EffectiveHotReload.HasFlag(HotReloadSupport.AsyncFeed))
+		{
+			_hotReloadDelegate = rawDataProvider ?? dataProvider;
+		}
 		_dataProvider = dataProvider;
 		_refresh = refresh;
 	}
@@ -62,13 +66,13 @@ internal sealed class AsyncFeed<T> : IFeed<T>
 
 		localRefreshTask?.ContinueWith(TryComplete, TaskContinuationOptions.ExecuteSynchronously);
 
-		if (FeedConfiguration.EffectiveHotReload.HasFlag(HotReloadSupport.AsyncFeed) && _sourceType is not null)
+		if (_hotReloadDelegate is { Method: { DeclaringType: { } sourceType } sourceMethod })
 		{
 #pragma warning disable IL2026 // Underlying API uses reflection on per-assembly metadata that cannot be statically known.
 			// Build the filter set: the lambda's declaring type, plus any extra types the source
 			// generator recorded as dependencies of this property's body (cross-type calls like
 			// `Feed.Async(async ct => Helper.Get())` — editing Helper.cs needs to refresh too).
-			var dependentTypes = BuildDependentTypeSet();
+			var dependentTypes = BuildDependentTypeSet(sourceType, sourceMethod);
 
 			void OnApplicationUpdated(Type[] types)
 			{
@@ -167,13 +171,13 @@ internal sealed class AsyncFeed<T> : IFeed<T>
 	}
 
 	[RequiresUnreferencedCode("Resolves hot-reload original types and looks up the per-assembly feed-dependency registry.")]
-	private HashSet<Type> BuildDependentTypeSet()
+	private static HashSet<Type> BuildDependentTypeSet(Type sourceType, MethodInfo sourceMethod)
 	{
-		var set = new HashSet<Type> { GetOriginalRootType(_sourceType!) };
-		var memberName = TryGetUserMemberName(_userMethod);
+		var set = new HashSet<Type> { GetOriginalRootType(sourceType) };
+		var memberName = TryGetUserMemberName(sourceMethod);
 		if (memberName is not null)
 		{
-			var registered = FeedDependencyRegistry.Resolve(_sourceType, memberName);
+			var registered = FeedDependencyRegistry.Resolve(sourceType, memberName);
 			if (registered is not null)
 			{
 				foreach (var t in registered)
