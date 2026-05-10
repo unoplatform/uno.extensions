@@ -221,7 +221,7 @@ Each child `Region.Name` is a selectable target. See docs:
 - **HR change**: `HotReloadRegionTarget.GetValue()` flip from "original" → "updated".
 - **Trigger**: Switch regions via the ContentGrid's own `PanelVisiblityNavigator` (do NOT use the outer FrameNavigator — it rejects nested region routes at RegionCanNavigate and the bubble-up hangs the await).
 - **Assertion**: After HR and re-show, RegionTwo's VM reflects "updated".
-- **Risk**: PanelVisiblityNavigator reuses existing FrameViews, so the same VM instance is re-visible post-HR. The VM's property getter re-reads the HR'd method on each access — that's what makes the assertion work. If the VM cached the method return value, HR wouldn't be visible without re-instantiation.
+- **Risk**: `PanelVisiblityNavigator` reuses existing FrameViews, so the same VM instance is re-visible post-HR. The VM's property getter re-reads the HR'd method on each access — that's what makes the assertion work. If the VM cached the method return value, HR wouldn't be visible without re-instantiation.
 - **Status (2026-04-22)**: Implemented and passing end-to-end on Skia desktop.
 
 - **ID**: `When_UpdateStackPanelChildAfterHR_Then_NewlyShownChildReflectsUpdate`
