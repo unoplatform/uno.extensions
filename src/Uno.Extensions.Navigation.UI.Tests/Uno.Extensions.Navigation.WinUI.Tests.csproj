@@ -25,6 +25,7 @@
 		<Page Include="Pages\HotReloadRegionNavigatorPage.xaml" />
 		<Page Include="Pages\HotReloadTabBarXamlPage.xaml" />
 		<Page Include="Pages\HotReloadTabBarCommandPage.xaml" />
+		<Page Include="Pages\HotReloadVmXamlPage.xaml" />
 	</ItemGroup>
 
 	<ItemGroup>

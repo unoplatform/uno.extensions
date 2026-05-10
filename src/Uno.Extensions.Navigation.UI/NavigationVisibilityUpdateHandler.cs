@@ -1,4 +1,5 @@
 using System.Reflection.Metadata;
+using Uno.Extensions.Navigation.Regions;
 
 [assembly: ElementMetadataUpdateHandlerAttribute(typeof(FrameworkElement), typeof(Uno.Extensions.Navigation.UI.NavigationVisibilityUpdateHandler))]
 
@@ -24,12 +25,26 @@ namespace Uno.Extensions.Navigation.UI;
 internal static class NavigationVisibilityUpdateHandler
 {
 	private const string VisibilityKey = "Visibility";
+	private const string HadActiveNavigationKey = "HadActiveNavigation";
 
 	public static void CaptureState(FrameworkElement element, IDictionary<string, object> stateDictionary, Type[]? updatedTypes)
 	{
 		if (IsNavigationManagedElement(element))
 		{
 			stateDictionary[VisibilityKey] = element.Visibility;
+		}
+
+		// Capture whether this element (or any child) had a region with active navigation.
+		// After HR creates a new element instance, the new NavigationRegion objects won't
+		// have _wasUnloaded set, so HandleLoaded won't re-cascade the parent route.
+		// We mark such elements so RestoreState can flag the new regions for re-cascade.
+		if (element.GetInstance() is NavigationRegion { Parent: not null } region)
+		{
+			var navigator = region.Navigator();
+			if (navigator?.Route is { Base.Length: > 0 } || region.Parent.Navigator()?.Route is { Base.Length: > 0 })
+			{
+				stateDictionary[HadActiveNavigationKey] = true;
+			}
 		}
 	}
 
@@ -41,6 +56,14 @@ internal static class NavigationVisibilityUpdateHandler
 			{
 				element.Visibility = savedVisibility;
 			}
+		}
+
+		// If the old element had active navigation, mark the new region so
+		// HandleLoaded will re-cascade the parent route and re-inject the ViewModel.
+		if (stateDictionary.ContainsKey(HadActiveNavigationKey)
+			&& element.GetInstance() is NavigationRegion newRegion)
+		{
+			newRegion.MarkReplacedByHotReload();
 		}
 
 		return Task.CompletedTask;

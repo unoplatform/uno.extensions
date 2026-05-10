@@ -1025,6 +1025,51 @@ public class Given_NavigationHotReload
 			"Untouched region should remain navigable after rename (#2904)");
 	}
 
+	// ──────────────────────────────────────────────────────────────────────
+	// 12. ViewModel (DataContext) survives XAML HR view swap
+	// ──────────────────────────────────────────────────────────────────────
+
+	/// <summary>
+	/// Proves that when XAML HR replaces a page instance via <c>ReplaceViewInstance</c>,
+	/// the new page's DataContext is re-injected by the navigation framework.
+	/// Without the fix, the new <c>NavigationRegion</c> created by <c>InitializeComponent()</c>
+	/// has <c>_wasUnloaded = false</c>, so <c>HandleLoaded</c> never re-cascades the parent
+	/// route, leaving DataContext null on the new page.
+	/// </summary>
+	[TestMethod]
+	[RunsOnUIThread]
+	public async Task When_XamlHRReplacesPage_Then_ViewModelReinjected(CancellationToken ct)
+	{
+		await using var app = await SetupVmXamlPageAppAsync(ct);
+
+		var hostPage = ResolveCurrentPage<HotReloadVmXamlPage>(app.NavigationRoot);
+		hostPage.Should().NotBeNull();
+
+		// Baseline: ViewModel should be injected as DataContext.
+		hostPage!.DataContext.Should().BeOfType<HotReloadVm>(
+			"ViewMap<HotReloadVmXamlPage, HotReloadVm> should bind the VM as DataContext");
+		hostPage.Label.Text.Should().Be("before-hr");
+
+		// XAML HR: change the TextBlock text to trigger a page swap.
+		await using var _ = await HotReloadHelper.UpdateSourceFile(
+			"../../Uno.Extensions.Navigation.UI.Tests/Pages/HotReloadVmXamlPage.xaml",
+			"""Text="before-hr" """,
+			"""Text="after-hr" """,
+			ct);
+
+		// Wait for XAML HR to replace the page instance.
+		var newPage = await WaitForPageReplacementAsync<HotReloadVmXamlPage>(
+			app.NavigationRoot, hostPage, TimeSpan.FromSeconds(30), ct);
+
+		// The new page should have the updated XAML content.
+		newPage.Label.Text.Should().Be("after-hr",
+			"XAML HR should have swapped in a page with the updated TextBlock text");
+
+		// Critical assertion: ViewModel must be re-injected on the new page.
+		newPage.DataContext.Should().BeOfType<HotReloadVm>(
+			"After XAML HR page swap, the navigation framework should re-inject the ViewModel as DataContext");
+	}
+
 	#region Setup helpers
 
 	/// <summary>
@@ -1136,6 +1181,23 @@ public class Given_NavigationHotReload
 					}));
 			},
 			"HotReloadNavRequestPage",
+			ct);
+
+	/// <summary>XAML page with ViewModel binding for view-swap DataContext test.</summary>
+	private static Task<HotReloadNavTestApp> SetupVmXamlPageAppAsync(CancellationToken ct)
+		=> SetupAppAsync(
+			(views, routes) =>
+			{
+				views.Register(
+					new ViewMap<HotReloadVmXamlPage, HotReloadVm>());
+
+				routes.Register(
+					new RouteMap("", Nested: new RouteMap[]
+					{
+						new RouteMap("HotReloadVmXamlPage", View: views.FindByView<HotReloadVmXamlPage>(), IsDefault: true),
+					}));
+			},
+			"HotReloadVmXamlPage",
 			ct);
 
 	/// <summary>Region.Attached page with nested region routes for #3086 test.</summary>
