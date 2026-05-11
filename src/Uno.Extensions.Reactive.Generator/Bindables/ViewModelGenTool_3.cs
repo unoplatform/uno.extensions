@@ -163,7 +163,7 @@ internal class ViewModelGenTool_3 : ICodeGenTool
 						// still resolve to the pre-update IL. Redirect to the latest shadow generation
 						// (re-using the same per-state hot-swap path that an HR delta would trigger
 						// on a pre-existing instance) so this fresh bindable observes the updated values.
-						base.__Reactive_TrySelfHotPatch(typeof({model.ToFullString()}));
+						{NS.Core}.HotReload.HotReloadService.TryHotPatch(this);
 						#endif
 					}}
 

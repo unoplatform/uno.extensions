@@ -115,46 +115,11 @@ partial class BindableViewModelBase
 		__Reactive_UpdateModel(model);
 	}
 
-	/// <summary>
-	/// Called by generated bindable ctors at the end of construction to redirect a freshly-built bindable
-	/// to the latest hot-reloaded shadow generation of its model, if one has been registered since startup.
-	/// </summary>
-	/// <remarks>
-	/// Without this, a `new TBindable()` issued AFTER an HR delta would construct a `new TModel()`
-	/// of the original type — whose lambdas (e.g. those captured by `Feed.Async`) still resolve to the
-	/// pre-update IL. By piggy-backing on <see cref="__Reactive_UpdateModel"/> we get the same
-	/// state hot-swap that a normal HR delta would have applied to a pre-existing instance.
-	/// </remarks>
-	[EditorBrowsable(EditorBrowsableState.Never)]
-	[RequiresUnreferencedCode("`MetadataUpdateOriginalTypeAttribute` may be a per-assembly type, so it cannot be statically known.")]
-	protected void __Reactive_TrySelfHotPatch(
+	internal void HotPatchSelf(
+		Type originalModel,
 		[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)]
-		Type originalModelType)
-	{
-		if (!FeedConfiguration.EffectiveHotReload.HasFlag(HotReloadSupport.State))
-		{
-			return;
-		}
-
-		// `typeof(TModel)` baked into the generated bindable ctor may have already been remapped
-		// by EnC to a shadow type (e.g. `Foo#16`) when the bindable is constructed after a hot-reload.
-		// Resolve back to the canonical original via `MetadataUpdateOriginalTypeAttribute` so we
-		// can look it up in the shadow registry.
-		var canonicalOriginal = HotReloadService.GetOriginalType(originalModelType) ?? originalModelType;
-
-		var shadowType = HotReloadService.GetLatestShadowType(canonicalOriginal);
-		if (shadowType is null)
-		{
-			// No HR delta has fired for this model since startup — nothing to redirect to.
-			return;
-		}
-
-		// Note: even when `shadowType == originalModelType` we still patch — `new TModel()` invoked
-		// from the generated bindable ctor produces an instance of the ORIGINAL type (its IL has
-		// the original ctor token), whose lambdas resolve to pre-HR delegates. Only re-creating the
-		// model via the shadow type's metadata gives us the post-HR lambdas.
-		HotPatch(canonicalOriginal, shadowType);
-	}
+		Type updatedModelType)
+		=> HotPatch(originalModel, updatedModelType);
 
 	/// <summary>
 	/// Invoked by the hot-reload engine to create an instance of the updated model type.
