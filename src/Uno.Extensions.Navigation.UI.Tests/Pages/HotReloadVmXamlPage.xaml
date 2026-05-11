@@ -1,0 +1,8 @@
+<Page x:Class="Uno.Extensions.Navigation.UI.Tests.Pages.HotReloadVmXamlPage"
+	  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	  xmlns:uen="using:Uno.Extensions.Navigation.UI">
+	<Grid uen:Region.Attached="True">
+		<TextBlock x:Name="_label" Text="before-hr" />
+	</Grid>
+</Page>

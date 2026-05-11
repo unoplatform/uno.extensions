@@ -17,6 +17,10 @@ public sealed class NavigationRegion : IRegion
 	// unloaded due to navigation (not Hot Reload). When true, HandleLoaded skips the
 	// HR re-cascade because the parent navigator will cascade the correct route itself.
 	internal bool _suppressReCascadeOnReload;
+	// Set by NavigationVisibilityUpdateHandler.RestoreState when this region was created
+	// by HR's ReplaceViewInstance as a replacement for a region that had active navigation.
+	// Treated as equivalent to _wasUnloaded in HandleLoaded's re-cascade check.
+	private bool _replacedByHotReload;
 	public IRegion? Parent
 	{
 		get => _parent;
@@ -290,6 +294,17 @@ public sealed class NavigationRegion : IRegion
 		}
 	}
 
+	/// <summary>
+	/// Called by <see cref="NavigationVisibilityUpdateHandler.RestoreState"/> when this
+	/// region was created by hot-reload's <c>ReplaceViewInstance</c> as a replacement
+	/// for a region that had active navigation. Causes <see cref="HandleLoaded"/> to
+	/// re-cascade the parent route, re-injecting the ViewModel on the new page instance.
+	/// </summary>
+	internal void MarkReplacedByHotReload()
+	{
+		_replacedByHotReload = true;
+	}
+
 	private async Task HandleLoaded()
 	{
 		if (View is null || _isLoaded)
@@ -331,7 +346,7 @@ public sealed class NavigationRegion : IRegion
 			// Skip if this region was unloaded due to navigation (not HR) — the parent
 			// navigator (e.g., FrameNavigator) will cascade the correct route itself
 			// via AdjustRequestForChildNavigation / NavigateChildRegions.
-			if (_wasUnloaded && !_suppressReCascadeOnReload && Parent is not null && navigator.Route is null)
+			if ((_wasUnloaded || _replacedByHotReload) && !_suppressReCascadeOnReload && Parent is not null && navigator.Route is null)
 			{
 				var parentNav = Parent.Navigator();
 				if (parentNav?.Route is { Base.Length: > 0 })
@@ -346,6 +361,7 @@ public sealed class NavigationRegion : IRegion
 				}
 			}
 			_suppressReCascadeOnReload = false;
+			_replacedByHotReload = false;
 		}
 	}
 
