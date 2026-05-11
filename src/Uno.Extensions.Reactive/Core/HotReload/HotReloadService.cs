@@ -117,7 +117,7 @@ public static class HotReloadService
 		// shadow type's metadata gives us the post-HR lambdas.
 		try
 		{
-			target.HotPatchSelf(canonicalOriginal, shadowType);
+			target.HotPatch(canonicalOriginal, shadowType);
 		}
 		catch (Exception e)
 		{

@@ -100,7 +100,7 @@ partial class BindableViewModelBase
 		}
 	}
 
-	private void HotPatch(
+	internal void HotPatch(
 		Type originalModel,
 		[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)]
 		Type updatedModelType)
@@ -114,12 +114,6 @@ partial class BindableViewModelBase
 
 		__Reactive_UpdateModel(model);
 	}
-
-	internal void HotPatchSelf(
-		Type originalModel,
-		[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)]
-		Type updatedModelType)
-		=> HotPatch(originalModel, updatedModelType);
 
 	/// <summary>
 	/// Invoked by the hot-reload engine to create an instance of the updated model type.
