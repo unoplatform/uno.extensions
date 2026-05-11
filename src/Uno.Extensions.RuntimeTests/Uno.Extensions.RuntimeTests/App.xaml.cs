@@ -18,6 +18,7 @@ public partial class App : Application
 		var navigation_UI_Tests = new Given_RouteNotifier();
 		var navigation_ChainedResult_Tests = new Given_ChainedGetDataAsync();
 		var navigation_TabNavigation_Tests = new Given_TabNavigation();
+		var navigation_TabBarInitial_Tests = new Given_TabBarInitialNavigation();
 	}
 
 	/// <summary>
