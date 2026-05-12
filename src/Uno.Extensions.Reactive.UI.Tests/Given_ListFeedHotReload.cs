@@ -23,7 +23,7 @@ namespace Uno.Extensions.Reactive.WinUI.Tests;
 /// </summary>
 [TestClass]
 [RunsInSecondaryApp(ignoreIfNotSupported: true)]
-public class Given_HotReloadListFeed
+public class Given_ListFeedHotReload
 {
 	[TestInitialize]
 	public void Setup()

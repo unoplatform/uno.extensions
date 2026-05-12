@@ -4,7 +4,7 @@ namespace Uno.Extensions.Reactive.WinUI.Tests;
 
 /// <summary>
 /// Target class for hot-reload ListFeed tests. Method bodies here are modified
-/// at runtime by <see cref="Given_HotReloadListFeed"/> via HotReloadHelper.
+/// at runtime by <see cref="Given_ListFeedHotReload"/> via HotReloadHelper.
 /// <para>
 /// HR on simple static classes works reliably (no source-generated partials,
 /// no record synthesis). The MVUX Model delegates to <see cref="GetPipelineItems"/>
