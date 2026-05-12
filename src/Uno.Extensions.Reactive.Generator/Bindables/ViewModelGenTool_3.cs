@@ -131,6 +131,8 @@ internal class ViewModelGenTool_3 : ICodeGenTool
 								if ({NS.Config}.FeedConfiguration.EffectiveHotReload.HasFlag({NS.Config}.HotReloadSupport.State))
 								{{
 									__reactiveModelArgs = new (Type, string, object?)[] {{ {ctor.Parameters.Select(p => $"(typeof({p.Type.ToFullString()}), \"{p.Name}\", {p.Name} as object)").JoinBy(", ")} }};
+									// Self-patch from the outermost public ctor — after args are captured. Earlier (base/protected ctor) breaks ctor-deps + inheritance.
+									{NS.Core}.HotReload.HotReloadService.TryHotPatch(this);
 								}}
 							}}")
 						.Align(5)}
@@ -156,15 +158,6 @@ internal class ViewModelGenTool_3 : ICodeGenTool
 							npc.PropertyChanged += __Reactive_OnModelPropertyChanged;
 						}}
 						#endif
-
-						#if {!hasBaseType} // !hasBaseType
-						// If a hot-reload delta was applied BEFORE this instance was constructed,
-						// `new {model.Name}()` produced an instance of the original type whose lambdas
-						// still resolve to the pre-update IL. Redirect to the latest shadow generation
-						// (re-using the same per-state hot-swap path that an HR delta would trigger
-						// on a pre-existing instance) so this fresh bindable observes the updated values.
-						{NS.Core}.HotReload.HotReloadService.TryHotPatch(this);
-						#endif
 					}}
 
 					#region Hot-reload support
@@ -189,7 +182,9 @@ internal class ViewModelGenTool_3 : ICodeGenTool
 							}}
 						}}
 
-						((dynamic)updatedModel).__reactiveBindableViewModel = this;
+						// `(dynamic)this` — each model partial shadows `__reactiveBindableViewModel` with its own
+						// bindable type; DLR resolves LHS on runtime type and needs RHS runtime type too.
+						((dynamic)updatedModel).__reactiveBindableViewModel = (dynamic)this;
 						base.RegisterDisposable((global::System.IAsyncDisposable)updatedModel);
 
 						__Reactive_BindableInitializeForUpdatedModel(updatedModel, {NS.Core}.SourceContext.GetOrCreate(updatedModel));
@@ -240,7 +235,8 @@ internal class ViewModelGenTool_3 : ICodeGenTool
 					private void __Reactive_OnModelPropertyChanged(object? sender, global::System.ComponentModel.PropertyChangedEventArgs args)
 						=> base.RaisePropertyChanged(args.PropertyName);
 
-					public {(hasBaseType ? "new ":"")}{model.ToFullString()} {N.Model} => ({model.ToFullString()}) __reactiveModel;
+					// `Unsafe.As<T>` — after HR, `__reactiveModel` holds an EnC shadow not assignable to the original. Layout is shared, dispatch is virtual.
+					public {(hasBaseType ? "new ":"")}{model.ToFullString()} {N.Model} => global::System.Runtime.CompilerServices.Unsafe.As<{model.ToFullString()}>(__reactiveModel!);
 
 					{members.Select(member => member.GetDeclaration()).Align(5)}
 				}}");

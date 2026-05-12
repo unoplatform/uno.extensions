@@ -105,9 +105,21 @@ public static class HotReloadService
 		// is constructed after a hot-reload — resolve back to the canonical original.
 		var canonicalOriginal = GetOriginalType(modelType) ?? modelType;
 
-		if (!_latestShadow.TryGetValue(canonicalOriginal, out var shadowType))
+		// Walk base types: if only an ancestor was edited, patch with the ancestor shadow so
+		// inherited feeds get hot-swapped. Derived-only feeds are kept intact by the patcher.
+		Type? shadowType = null;
+		for (var t = canonicalOriginal; t is not null && t != typeof(object); t = t.BaseType)
 		{
-			// No HR delta has fired for this model since startup — nothing to redirect to.
+			if (_latestShadow.TryGetValue(t, out shadowType))
+			{
+				canonicalOriginal = t;
+				break;
+			}
+		}
+
+		if (shadowType is null)
+		{
+			// No HR delta has fired for this model or any of its ancestors since startup.
 			return;
 		}
 

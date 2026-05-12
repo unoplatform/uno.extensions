@@ -271,6 +271,12 @@ partial class BindableViewModelBase
 
 		_propertyFeedsCache ??= new();
 
+		// "Base-only patch": patching with an ancestor shadow (e.g. parent shadow on a child
+		// bindable). Properties only on the derived model must be left intact, not replaced with
+		// SilentFeed. Canonicalize both sides because shadow types aren't in the inheritance chain.
+		var updatedCanonical = HotReloadService.GetOriginalType(updatedModelType) ?? updatedModelType;
+		var previousCanonical = HotReloadService.GetOriginalType(previousModelType) ?? previousModelType;
+		var isBaseOnlyPatch = updatedCanonical != previousCanonical && updatedCanonical.IsAssignableFrom(previousCanonical);
 		foreach (var property in properties)
 		{
 			try
@@ -284,6 +290,18 @@ partial class BindableViewModelBase
 				if (previousFeed is null && updatedFeed is null)
 				{
 					if (trace) log.Trace($"Property {property} was and is not a feed property.");
+					continue;
+				}
+
+				if (isBaseOnlyPatch && updatedFeed is null)
+				{
+					// Derived-only property; ancestor doesn't have it. Leave binding intact and
+					// cache the current feed so a later HR (re-introducing the property) can find it.
+					if (previousFeed is not null)
+					{
+						(_propertyFeedsCache ??= new())[(property, previousFeed.Value.valueType)] = previousFeed.Value.instance;
+					}
+					if (trace) log.Trace($"Property {property} only exists on the derived surface (base-only patch); leaving binding intact.");
 					continue;
 				}
 
