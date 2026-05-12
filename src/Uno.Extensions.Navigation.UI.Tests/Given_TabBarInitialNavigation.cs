@@ -31,91 +31,56 @@ namespace Uno.Extensions.Navigation.UI.Tests;
 [RunsOnUIThread]
 public class Given_TabBarInitialNavigation
 {
-	private static readonly TimeSpan Timeout = TimeSpan.FromSeconds(15);
-
 	/// <summary>
 	/// A 3-tab TabBar with IsDefault on TabOne should show TabOne's content
 	/// immediately after navigation completes. Verifies the content grid
 	/// has children (FrameView for the default tab).
 	/// </summary>
 	[TestMethod]
-	public async Task When_ThreeTabBarWithDefaultRoute_Then_DefaultTabContentVisible()
+	public async Task When_ThreeTabBarWithDefaultRoute_Then_DefaultTabContentVisible(CancellationToken ct)
 	{
-		var window = new Window();
+		await using var app = await SetupTabBarAppAsync(
+			registerViewsAndRoutes: (views, routes) =>
+			{
+				views.Register(
+					new ViewMap<HotReloadTabBarThreeTabPage>(),
+					new ViewMap<TabAPage>(),
+					new ViewMap<TabBPage>(),
+					new ViewMap<ForwardNavPage>());
 
-		IHost? host = null;
-		host = await window.InitializeNavigationAsync(
-			buildHost: async () => UnoHost
-				.CreateDefaultBuilder(typeof(Given_TabBarInitialNavigation).Assembly)
-				.UseToolkitNavigation()
-				.UseNavigation(
-					viewRouteBuilder: (views, routes) =>
+				routes.Register(
+					new RouteMap("", Nested: new RouteMap[]
 					{
-						views.Register(
-							new ViewMap<HotReloadTabBarThreeTabPage>(),
-							new ViewMap<TabAPage>(),
-							new ViewMap<TabBPage>(),
-							new ViewMap<ForwardNavPage>());
-
-						routes.Register(
-							new RouteMap("", Nested: new RouteMap[]
+						new RouteMap(
+							"HotReloadTabBarThreeTabPage",
+							View: views.FindByView<HotReloadTabBarThreeTabPage>(),
+							IsDefault: true,
+							Nested: new RouteMap[]
 							{
-								new RouteMap(
-									"HotReloadTabBarThreeTabPage",
-									View: views.FindByView<HotReloadTabBarThreeTabPage>(),
-									IsDefault: true,
-									Nested: new RouteMap[]
-									{
-										new RouteMap("TabOne", View: views.FindByView<TabAPage>(), IsDefault: true),
-										new RouteMap("TabTwo", View: views.FindByView<TabBPage>()),
-										new RouteMap("TabThree", View: views.FindByView<ForwardNavPage>()),
-									}),
-							}));
-					})
-				.Build(),
-			initialRoute: "HotReloadTabBarThreeTabPage");
+								new RouteMap("TabOne", View: views.FindByView<TabAPage>(), IsDefault: true),
+								new RouteMap("TabTwo", View: views.FindByView<TabBPage>()),
+								new RouteMap("TabThree", View: views.FindByView<ForwardNavPage>()),
+							}),
+					}));
+			},
+			initialRoute: "HotReloadTabBarThreeTabPage",
+			ct);
 
-		try
-		{
-			var root = window.Content as ContentControl;
-			root.Should().NotBeNull();
+		var hostPage = await WaitForHostPageAsync<HotReloadTabBarThreeTabPage>(app.NavigationRoot, TimeSpan.FromSeconds(30), ct);
+		hostPage.Should().NotBeNull("Frame should have navigated to HotReloadTabBarThreeTabPage");
 
-			// Wait for the host page to load.
-			using var cts = new CancellationTokenSource(Timeout);
-			HotReloadTabBarThreeTabPage? hostPage = null;
-			await UIHelper.WaitFor(() =>
-			{
-				hostPage = GetHostPage(root!);
-				return hostPage is not null;
-			}, cts.Token);
+		// The content grid should have at least one child (the FrameView for TabOne).
+		await UIHelper.WaitFor(() => hostPage!.ContentGrid.Children.Count > 0, ct);
 
-			hostPage.Should().NotBeNull("Frame should have navigated to HotReloadTabBarThreeTabPage");
+		hostPage!.ContentGrid.Children.Count.Should().BeGreaterThan(0,
+			"Default tab content should be visible — the content grid should have a FrameView for TabOne");
 
-			// The content grid should have at least one child (the FrameView for TabOne).
-			await UIHelper.WaitFor(() =>
-			{
-				return hostPage!.ContentGrid.Children.Count > 0;
-			}, cts.Token);
-
-			hostPage!.ContentGrid.Children.Count.Should().BeGreaterThan(0,
-				"Default tab content should be visible — the content grid should have a FrameView for TabOne");
-
-			// Verify the default tab's FrameView exists and contains a TabAPage.
-			var defaultTabFrameView = hostPage.ContentGrid.Children
-				.OfType<FrameView>()
-				.FirstOrDefault(fv => Region.GetName(fv) == "TabOne" || fv.Name == "TabOne");
-			defaultTabFrameView.Should().NotBeNull(
-				"A FrameView for TabOne should exist in the content grid");
-
-			// The navigator should have a route pointing to the default tab.
-			var nav = root!.Navigator();
-			nav.Should().NotBeNull();
-			nav!.Route.Should().NotBeNull("Navigator should have an active route");
-		}
-		finally
-		{
-			await host!.StopAsync();
-		}
+		// Verify the default tab's FrameView exists.
+		var defaultTabFrameView = hostPage.ContentGrid.Children
+			.OfType<FrameView>()
+			.FirstOrDefault(fv => Region.GetName(fv) == "TabOne" || fv.Name == "TabOne");
+		defaultTabFrameView.Should().NotBeNull(
+			"A FrameView for TabOne should exist in the content grid");
 	}
 
 	/// <summary>
@@ -123,87 +88,54 @@ public class Given_TabBarInitialNavigation
 	/// This verifies the full region tree is wired up, not just the default tab.
 	/// </summary>
 	[TestMethod]
-	public async Task When_DefaultTabLoaded_Then_SwitchToOtherTabWorks()
+	public async Task When_DefaultTabLoaded_Then_SwitchToOtherTabWorks(CancellationToken ct)
 	{
-		var window = new Window();
+		await using var app = await SetupTabBarAppAsync(
+			registerViewsAndRoutes: (views, routes) =>
+			{
+				views.Register(
+					new ViewMap<HotReloadTabBarThreeTabPage>(),
+					new ViewMap<TabAPage>(),
+					new ViewMap<TabBPage>(),
+					new ViewMap<ForwardNavPage>());
 
-		IHost? host = null;
-		host = await window.InitializeNavigationAsync(
-			buildHost: async () => UnoHost
-				.CreateDefaultBuilder(typeof(Given_TabBarInitialNavigation).Assembly)
-				.UseToolkitNavigation()
-				.UseNavigation(
-					viewRouteBuilder: (views, routes) =>
+				routes.Register(
+					new RouteMap("", Nested: new RouteMap[]
 					{
-						views.Register(
-							new ViewMap<HotReloadTabBarThreeTabPage>(),
-							new ViewMap<TabAPage>(),
-							new ViewMap<TabBPage>(),
-							new ViewMap<ForwardNavPage>());
-
-						routes.Register(
-							new RouteMap("", Nested: new RouteMap[]
+						new RouteMap(
+							"HotReloadTabBarThreeTabPage",
+							View: views.FindByView<HotReloadTabBarThreeTabPage>(),
+							IsDefault: true,
+							Nested: new RouteMap[]
 							{
-								new RouteMap(
-									"HotReloadTabBarThreeTabPage",
-									View: views.FindByView<HotReloadTabBarThreeTabPage>(),
-									IsDefault: true,
-									Nested: new RouteMap[]
-									{
-										new RouteMap("TabOne", View: views.FindByView<TabAPage>(), IsDefault: true),
-										new RouteMap("TabTwo", View: views.FindByView<TabBPage>()),
-										new RouteMap("TabThree", View: views.FindByView<ForwardNavPage>()),
-									}),
-							}));
-					})
-				.Build(),
-			initialRoute: "HotReloadTabBarThreeTabPage");
+								new RouteMap("TabOne", View: views.FindByView<TabAPage>(), IsDefault: true),
+								new RouteMap("TabTwo", View: views.FindByView<TabBPage>()),
+								new RouteMap("TabThree", View: views.FindByView<ForwardNavPage>()),
+							}),
+					}));
+			},
+			initialRoute: "HotReloadTabBarThreeTabPage",
+			ct);
 
-		try
+		var hostPage = await WaitForHostPageAsync<HotReloadTabBarThreeTabPage>(app.NavigationRoot, TimeSpan.FromSeconds(30), ct);
+		hostPage.Should().NotBeNull();
+
+		// Wait for default tab to load.
+		await UIHelper.WaitFor(() => hostPage!.ContentGrid.Children.Count > 0, ct);
+
+		// Get the TabBar's navigator (the one that knows about tab routes).
+		var tabBarNav = await WaitForTabBarNavigatorAsync(hostPage!.TabBar, TimeSpan.FromSeconds(30), ct);
+		tabBarNav.Should().NotBeNull();
+
+		// Navigate to TabTwo via the TabBar navigator.
+		await tabBarNav.NavigateRouteAsync(hostPage, "TabTwo");
+
+		// Wait for the content to change — the active FrameView region should switch.
+		await UIHelper.WaitFor(() =>
 		{
-			var root = window.Content as ContentControl;
-			root.Should().NotBeNull();
-
-			using var cts = new CancellationTokenSource(Timeout);
-			HotReloadTabBarThreeTabPage? hostPage = null;
-			await UIHelper.WaitFor(() =>
-			{
-				hostPage = GetHostPage(root!);
-				return hostPage is not null;
-			}, cts.Token);
-
-			hostPage.Should().NotBeNull();
-
-			// Wait for default tab to load.
-			await UIHelper.WaitFor(() => hostPage!.ContentGrid.Children.Count > 0, cts.Token);
-
-			// Get the TabBar's navigator (the one that knows about tab routes).
-			INavigator? tabBarNav = null;
-			await UIHelper.WaitFor(() =>
-			{
-				tabBarNav = hostPage!.TabBar.Navigator();
-				return tabBarNav is not null;
-			}, cts.Token);
-			tabBarNav.Should().NotBeNull();
-
-			// Navigate to TabTwo via the TabBar navigator.
-			await tabBarNav!.NavigateRouteAsync(hostPage!, "TabTwo");
-
-			// Wait for the content to change — the active FrameView region should switch.
-			await UIHelper.WaitFor(() =>
-			{
-				var frames = hostPage!.ContentGrid.Children.OfType<FrameView>().ToList();
-				return frames.Any(fv =>
-				{
-					var name = Region.GetName(fv);
-					return name == "TabTwo";
-				});
-			}, cts.Token);
-		}
-		finally
-		{
-			await host!.StopAsync();
-		}
+			var frames = hostPage.ContentGrid.Children.OfType<FrameView>().ToList();
+			return frames.Any(fv => Region.GetName(fv) == "TabTwo");
+		}, ct);
 	}
 
 	/// <summary>
@@ -211,89 +143,167 @@ public class Given_TabBarInitialNavigation
 	/// Uses the XAML page (HotReloadTabBarXamlPage) to test the XAML-driven region attachment path.
 	/// </summary>
 	[TestMethod]
-	public async Task When_XamlTabBarWithDefaultRoute_Then_DefaultTabContentVisible()
+	public async Task When_XamlTabBarWithDefaultRoute_Then_DefaultTabContentVisible(CancellationToken ct)
 	{
-		var window = new Window();
+		await using var app = await SetupTabBarAppAsync(
+			registerViewsAndRoutes: (views, routes) =>
+			{
+				views.Register(
+					new ViewMap<HotReloadTabBarXamlPage>(),
+					new ViewMap<TabAPage>(),
+					new ViewMap<TabBPage>());
+
+				routes.Register(
+					new RouteMap("", Nested: new RouteMap[]
+					{
+						new RouteMap(
+							"HotReloadTabBarXamlPage",
+							View: views.FindByView<HotReloadTabBarXamlPage>(),
+							IsDefault: true,
+							Nested: new RouteMap[]
+							{
+								new RouteMap("TabOne", View: views.FindByView<TabAPage>(), IsDefault: true),
+								new RouteMap("TabTwo", View: views.FindByView<TabBPage>()),
+							}),
+					}));
+			},
+			initialRoute: "HotReloadTabBarXamlPage",
+			ct);
+
+		var hostPage = await WaitForHostPageAsync<HotReloadTabBarXamlPage>(app.NavigationRoot, TimeSpan.FromSeconds(30), ct);
+		hostPage.Should().NotBeNull("Frame should have navigated to HotReloadTabBarXamlPage");
+
+		// Wait for the content grid to have content.
+		await UIHelper.WaitFor(() => hostPage!.ContentGrid.Children.Count > 0, ct);
+
+		hostPage!.ContentGrid.Children.Count.Should().BeGreaterThan(0,
+			"Default tab content should be visible in XAML-defined TabBar layout");
+	}
+
+	#region Setup & Helpers
+
+	/// <summary>
+	/// Boots an Uno host with toolkit navigation, hosts it in the runtime-tests engine's
+	/// already-displayed test window, and navigates to <paramref name="initialRoute"/>.
+	/// Disposal stops the host and restores the window's original content.
+	/// </summary>
+	private static async Task<TabBarTestApp> SetupTabBarAppAsync(
+		Action<IViewRegistry, IRouteRegistry> registerViewsAndRoutes,
+		string initialRoute,
+		CancellationToken ct)
+	{
+		var window = UnitTestsUIContentHelper.CurrentTestWindow!;
+		var navigationRoot = new ContentControl
+		{
+			HorizontalAlignment = HorizontalAlignment.Stretch,
+			VerticalAlignment = VerticalAlignment.Stretch,
+			HorizontalContentAlignment = HorizontalAlignment.Stretch,
+			VerticalContentAlignment = VerticalAlignment.Stretch,
+		};
+
+		UnitTestsUIContentHelper.SaveOriginalContent();
+		window.Content = navigationRoot;
 
 		IHost? host = null;
-		host = await window.InitializeNavigationAsync(
-			buildHost: async () => UnoHost
-				.CreateDefaultBuilder(typeof(Given_TabBarInitialNavigation).Assembly)
-				.UseToolkitNavigation()
-				.UseNavigation(
-					viewRouteBuilder: (views, routes) =>
-					{
-						views.Register(
-							new ViewMap<HotReloadTabBarXamlPage>(),
-							new ViewMap<TabAPage>(),
-							new ViewMap<TabBPage>());
-
-						routes.Register(
-							new RouteMap("", Nested: new RouteMap[]
-							{
-								new RouteMap(
-									"HotReloadTabBarXamlPage",
-									View: views.FindByView<HotReloadTabBarXamlPage>(),
-									IsDefault: true,
-									Nested: new RouteMap[]
-									{
-										new RouteMap("TabOne", View: views.FindByView<TabAPage>(), IsDefault: true),
-										new RouteMap("TabTwo", View: views.FindByView<TabBPage>()),
-									}),
-							}));
-					})
-				.Build(),
-			initialRoute: "HotReloadTabBarXamlPage");
-
 		try
 		{
-			var root = window.Content as ContentControl;
-			root.Should().NotBeNull();
+			host = await window.InitializeNavigationAsync(
+				buildHost: async () => UnoHost
+					.CreateDefaultBuilder(typeof(Given_TabBarInitialNavigation).Assembly)
+					.UseToolkitNavigation()
+					.UseNavigation(viewRouteBuilder: registerViewsAndRoutes)
+					.Build(),
+				navigationRoot: navigationRoot,
+				initialRoute: initialRoute);
 
-			using var cts = new CancellationTokenSource(Timeout);
-			HotReloadTabBarXamlPage? hostPage = null;
-			await UIHelper.WaitFor(() =>
+			return new TabBarTestApp(navigationRoot, host);
+		}
+		catch
+		{
+			if (host is not null)
 			{
-				hostPage = GetXamlHostPage(root!);
-				return hostPage is not null;
-			}, cts.Token);
-
-			hostPage.Should().NotBeNull("Frame should have navigated to HotReloadTabBarXamlPage");
-
-			// Wait for the content grid to have content.
-			await UIHelper.WaitFor(() => hostPage!.ContentGrid.Children.Count > 0, cts.Token);
-
-			hostPage!.ContentGrid.Children.Count.Should().BeGreaterThan(0,
-				"Default tab content should be visible in XAML-defined TabBar layout");
-		}
-		finally
-		{
-			await host!.StopAsync();
+				await host.StopAsync();
+			}
+			UnitTestsUIContentHelper.RestoreOriginalContent();
+			throw;
 		}
 	}
 
-	#region Helpers
-
-	private static HotReloadTabBarThreeTabPage? GetHostPage(ContentControl root)
+	private sealed class TabBarTestApp : IAsyncDisposable
 	{
-		if (root.Content is FrameView fv &&
-			fv.Content is Frame frame &&
-			frame.Content is HotReloadTabBarThreeTabPage page)
+		private readonly IHost _host;
+
+		public TabBarTestApp(ContentControl navigationRoot, IHost host)
 		{
-			return page;
+			NavigationRoot = navigationRoot;
+			_host = host;
 		}
-		return root.Content as HotReloadTabBarThreeTabPage;
+
+		public ContentControl NavigationRoot { get; }
+
+		public async ValueTask DisposeAsync()
+		{
+			try
+			{
+				await _host.StopAsync();
+			}
+			finally
+			{
+				UnitTestsUIContentHelper.RestoreOriginalContent();
+			}
+		}
 	}
 
-	private static HotReloadTabBarXamlPage? GetXamlHostPage(ContentControl root)
+	private static async Task<TPage?> WaitForHostPageAsync<TPage>(
+		ContentControl root,
+		TimeSpan timeout,
+		CancellationToken ct) where TPage : class
 	{
-		if (root.Content is FrameView fv &&
-			fv.Content is Frame frame &&
-			frame.Content is HotReloadTabBarXamlPage page)
+		TPage? result = null;
+		var sw = System.Diagnostics.Stopwatch.StartNew();
+		while (sw.Elapsed < timeout)
 		{
-			return page;
+			ct.ThrowIfCancellationRequested();
+			result = ResolveCurrentPage<TPage>(root);
+			if (result is not null)
+			{
+				return result;
+			}
+			await Task.Delay(50, ct);
 		}
-		return root.Content as HotReloadTabBarXamlPage;
+
+		throw new TimeoutException(
+			$"{typeof(TPage).Name} did not appear within {timeout.TotalSeconds:F0}s. " +
+			$"root.Content={root.Content?.GetType().FullName ?? "<null>"}.");
+	}
+
+	private static TPage? ResolveCurrentPage<TPage>(ContentControl root) where TPage : class
+	{
+		if (root.Content is FrameView fv && fv.FindName("NavigationFrame") is Frame frame)
+		{
+			return frame.Content as TPage;
+		}
+		return root.Content as TPage;
+	}
+
+	private static async Task<INavigator> WaitForTabBarNavigatorAsync(
+		TabBar tabBar,
+		TimeSpan timeout,
+		CancellationToken ct)
+	{
+		var sw = System.Diagnostics.Stopwatch.StartNew();
+		while (sw.Elapsed < timeout)
+		{
+			ct.ThrowIfCancellationRequested();
+			if (tabBar.Navigator() is { } nav)
+			{
+				return nav;
+			}
+			await Task.Delay(50, ct);
+		}
+
+		throw new TimeoutException(
+			$"TabBar's navigator did not become available within {timeout.TotalSeconds:F0}s.");
 	}
 
 	#endregion
