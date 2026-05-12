@@ -882,6 +882,27 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 		// This is required to ensure nested elements (eg Content in a ContentControl)
 		// are loaded. This will ensure the Children collection is correctly populated
 		await CheckLoadedAsync();
+
+		// Child NavigationRegions attach themselves to parent.Children during their
+		// Loaded event handler (HandleLoading → AssignParent). In some hosting
+		// scenarios (e.g., in-process AssemblyLoadContext loading), these Loaded
+		// events may be queued on the dispatcher but not yet processed when this
+		// method returns. Re-schedule on the dispatcher to ensure its queue is
+		// drained and pending attachments complete before the caller checks
+		// Region.Children.
+		if (Region.Children.Count == 0 && Region.View?.IsLoaded == true)
+		{
+			const int maxAttempts = 5;
+			for (var attempt = 0; attempt < maxAttempts && Region.Children.Count == 0; attempt++)
+			{
+				if (Logger.IsEnabled(LogLevel.Trace))
+				{
+					Logger.LogTraceMessage($"Children not yet attached after view loaded (attempt {attempt + 1}/{maxAttempts}), re-scheduling on dispatcher");
+				}
+				await Dispatcher.ExecuteAsync(async ct => true, CancellationToken.None);
+			}
+		}
+
 		PerformanceTimer.Stop(Logger, LogLevel.Trace, loadId);
 	}
 
