@@ -71,6 +71,70 @@ public class Given_HotReload
 
 	[TestMethod]
 	[RunsOnUIThread]
+	public async Task When_NewVMWithCtorDepsConstructedAfterHR_Then_ReflectsUpdate(CancellationToken ct)
+	{
+		await using var vm1 = new MvuxHotReloadCtorDepsViewModel("hello");
+		var text1 = new TextBlock();
+		var ui1 = new StackPanel { DataContext = vm1, Children = { text1 } };
+		text1.SetBinding(TextBlock.TextProperty, new Binding { Path = new PropertyPath("Value") });
+
+		await UIHelper.Load(ui1, ct);
+		await TestHelper.WaitFor(() => text1.Text == "hello-original", ct);
+
+		// HR-edit the model itself so a shadow type is generated and registered in `_latestShadow`.
+		// This is what exercises `TryHotPatch`'s self-patch path on the next VM construction.
+		await using var _ = await HotReloadHelper.UpdateSourceFile(
+			"../../Uno.Extensions.Reactive.UI.Tests/MvuxHotReloadCtorDepsModel.cs",
+			"""public IFeed<string> Value => Feed.Async(async ct => $"{Prefix}-original");""",
+			"""public IFeed<string> Value => Feed.Async(async ct => $"{Prefix}-updated");""",
+			ct);
+
+		// New VM constructed AFTER the HR delta — `_latestShadow` now has an entry for
+		// `MvuxHotReloadCtorDepsModel`, so `TryHotPatch` will attempt to construct the shadow.
+		// Because the model has a required ctor parameter, `__reactiveModelArgs` must already
+		// be populated for `__Reactive_CreateModelInstance(shadowType)` to succeed.
+		await using var vm2 = new MvuxHotReloadCtorDepsViewModel("hello");
+		var text2 = new TextBlock();
+		var ui2 = new StackPanel { DataContext = vm2, Children = { text2 } };
+		text2.SetBinding(TextBlock.TextProperty, new Binding { Path = new PropertyPath("Value") });
+
+		await UIHelper.Load(ui2, ct);
+		await TestHelper.WaitFor(() => text2.Text == "hello-updated", TimeSpan.FromSeconds(5), ct);
+
+		Assert.AreEqual("hello-updated", text2.Text);
+	}
+
+	[TestMethod]
+	[RunsOnUIThread]
+	public async Task When_UpdateInheritedParentModel_Then_ChildBindingsRefresh(CancellationToken ct)
+	{
+		await using var vm = new MvuxHotReloadInheritedChildViewModel();
+		var parentText = new TextBlock();
+		var childText = new TextBlock();
+		var ui = new StackPanel { DataContext = vm, Children = { parentText, childText } };
+		parentText.SetBinding(TextBlock.TextProperty, new Binding { Path = new PropertyPath("ParentValue") });
+		childText.SetBinding(TextBlock.TextProperty, new Binding { Path = new PropertyPath("ChildValue") });
+
+		await UIHelper.Load(ui, ct);
+		await TestHelper.WaitFor(() => parentText.Text == "parent-original" && childText.Text == "child-original", ct);
+
+		// HR-edit the PARENT model. The child instance must:
+		//   (1) see the updated parent feed value (via AsyncFeed's ApplicationUpdated re-fire), and
+		//   (2) keep its own ChildValue intact — i.e. it must NOT be wrongly patched as a parent
+		//       instance by `BindableViewModelBase.HotPatch`'s exact-type filter.
+		await using var _ = await HotReloadHelper.UpdateSourceFile(
+			"../../Uno.Extensions.Reactive.UI.Tests/MvuxHotReloadParentModel.cs",
+			"""public IFeed<string> ParentValue => Feed.Async(async ct => "parent-original");""",
+			"""public IFeed<string> ParentValue => Feed.Async(async ct => "parent-updated");""",
+			ct);
+
+		await TestHelper.WaitFor(() => parentText.Text == "parent-updated", TimeSpan.FromSeconds(5), ct);
+		Assert.AreEqual("parent-updated", parentText.Text);
+		Assert.AreEqual("child-original", childText.Text);
+	}
+
+	[TestMethod]
+	[RunsOnUIThread]
 	public async Task When_RemoveAndReAddFeedProperty_Then_BindingsWork(CancellationToken ct)
 	{
 		await using var vm1 = new MvuxHotReloadFeedRemoveViewModel();

@@ -58,6 +58,8 @@ Each scenario should:
 | **State value update** | Lambda body value change inside a State property | Tests whether MVUX re-evaluates after a value-only HR change. |
 | **AsyncEnumerable Feed** | `Feed.AsyncEnumerable` syntax with remove/re-add | Validates HR with a different Feed factory method. |
 | **Feed.Async↔AsyncEnumerable syntax** | Switch between `Feed.Async` and `Feed.AsyncEnumerable` | Validates syntax change across different Feed factory methods. |
+| **Self-patch with ctor-deps** | New VM constructed AFTER HR on a model with required ctor params | Exercises `TryHotPatch` self-patch path: `__reactiveModelArgs` must be captured in the outermost public ctor before the call fires. |
+| **Inheritance parent-only HR** | Edit a parent model while a child VM is live; child has its own feed and inherits parent's | Exercises base-type shadow walk + base-only-patch detection. Inherited feed must hot-swap; child-only feed must stay intact. |
 
 ## 4. Scenario catalog
 
@@ -184,6 +186,40 @@ Each scenario should:
 - **Assertion**: Each conversion produces a working binding.
 - **Status**: Passing.
 
+### 4.11 Self-patch with ctor-deps (implemented)
+
+- **ID**: `When_NewVMWithCtorDepsConstructedAfterHR_Then_ReflectsUpdate`
+- **Goal**: Prove that a new ViewModel constructed AFTER an HR delta,
+  for a model that requires ctor args, picks up the updated lambda.
+  This is the `TryHotPatch` self-patch path — `__reactiveModelArgs` must
+  be captured in the outermost public ctor before the call fires,
+  otherwise the shadow model cannot be activated.
+- **Model**: `MvuxHotReloadCtorDepsModel(string Prefix)` with
+  `IFeed<string> Value` interpolating the prefix.
+- **HR change**: Single delta on `MvuxHotReloadTarget.cs` to validate the
+  cross-type dependency path with a captured ctor arg.
+- **Assertion**: A second ViewModel constructed with the same prefix
+  after HR shows the post-HR value (`"hello-updated"`).
+- **Status**: Failing on this branch — requires the public-ctor
+  `TryHotPatch` placement from `dev/mara/fix-mvux-hr`.
+
+### 4.12 Inheritance parent-only HR (implemented)
+
+- **ID**: `When_UpdateInheritedParentModel_Then_ChildBindingsRefresh`
+- **Goal**: Prove that editing a parent model while a child VM is live
+  refreshes the inherited feed AND leaves child-only feeds intact.
+  Exercises the base-type shadow walk in `TryHotPatch` and the
+  base-only-patch detection in `TryPatchBindableProperties`.
+- **Models**: `MvuxHotReloadParentModel` (base, with `ParentValue`) and
+  `MvuxHotReloadInheritedChildModel : MvuxHotReloadParentModel` (adds
+  `ChildValue`).
+- **HR change**: Single delta on `MvuxHotReloadParentModel.cs` changing
+  the `ParentValue` lambda literal.
+- **Assertion**: The live child VM's `ParentValue` updates to the new
+  value; `ChildValue` stays at its original value (not blanked).
+- **Status**: Failing on this branch — requires inheritance support
+  from `dev/mara/fix-mvux-hr` (base-type walk + base-only-patch).
+
 ## 5. Organizational notes
 
 - One test method per scenario.
@@ -208,3 +244,6 @@ Each scenario should:
 | `MvuxHotReloadFeedToStateModel.cs` | Model for Feed→State conversion |
 | `MvuxHotReloadSyntaxChangeModel.cs` | Model for Feed↔State syntax changes |
 | `MvuxHotReloadAsyncEnumerableModel.cs` | Model for AsyncEnumerable Feed scenarios |
+| `MvuxHotReloadCtorDepsModel.cs` | Model for ctor-deps self-patch scenario |
+| `MvuxHotReloadParentModel.cs` | Base model for inheritance scenario |
+| `MvuxHotReloadInheritedChildModel.cs` | Derived model for inheritance scenario |
