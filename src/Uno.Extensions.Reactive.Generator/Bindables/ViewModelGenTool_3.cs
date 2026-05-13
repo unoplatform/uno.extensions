@@ -2,8 +2,11 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Uno.Extensions.Generators;
 using Uno.Extensions.Reactive.Config;
 using static Microsoft.CodeAnalysis.Accessibility;
@@ -41,6 +44,11 @@ internal class ViewModelGenTool_3 : ICodeGenTool
 		{
 			yield return ($"{model}.ViewModel", GenerateViewModel(model));
 			yield return ($"{model}.Reactive", GeneratePartialModel(model));
+
+			if (GenerateFeedDependencies(model) is { } feedDependenciesCode)
+			{
+				yield return ($"{model}.FeedDependencies", feedDependenciesCode);
+			}
 		}
 
 		foreach (var (type, code) in _bindables.Generate())
@@ -123,6 +131,8 @@ internal class ViewModelGenTool_3 : ICodeGenTool
 								if ({NS.Config}.FeedConfiguration.EffectiveHotReload.HasFlag({NS.Config}.HotReloadSupport.State))
 								{{
 									__reactiveModelArgs = new (Type, string, object?)[] {{ {ctor.Parameters.Select(p => $"(typeof({p.Type.ToFullString()}), \"{p.Name}\", {p.Name} as object)").JoinBy(", ")} }};
+									// Self-patch from the outermost public ctor — after args are captured. Earlier (base/protected ctor) breaks ctor-deps + inheritance.
+									{NS.Core}.HotReload.HotReloadService.TryHotPatch(this);
 								}}
 							}}")
 						.Align(5)}
@@ -172,7 +182,9 @@ internal class ViewModelGenTool_3 : ICodeGenTool
 							}}
 						}}
 
-						((dynamic)updatedModel).__reactiveBindableViewModel = this;
+						// `(dynamic)this` — each model partial shadows `__reactiveBindableViewModel` with its own
+						// bindable type; DLR resolves LHS on runtime type and needs RHS runtime type too.
+						((dynamic)updatedModel).__reactiveBindableViewModel = (dynamic)this;
 						base.RegisterDisposable((global::System.IAsyncDisposable)updatedModel);
 
 						__Reactive_BindableInitializeForUpdatedModel(updatedModel, {NS.Core}.SourceContext.GetOrCreate(updatedModel));
@@ -223,7 +235,8 @@ internal class ViewModelGenTool_3 : ICodeGenTool
 					private void __Reactive_OnModelPropertyChanged(object? sender, global::System.ComponentModel.PropertyChangedEventArgs args)
 						=> base.RaisePropertyChanged(args.PropertyName);
 
-					public {(hasBaseType ? "new ":"")}{model.ToFullString()} {N.Model} => ({model.ToFullString()}) __reactiveModel;
+					// `Unsafe.As<T>` — after HR, `__reactiveModel` holds an EnC shadow not assignable to the original. Layout is shared, dispatch is virtual.
+					public {(hasBaseType ? "new ":"")}{model.ToFullString()} {N.Model} => global::System.Runtime.CompilerServices.Unsafe.As<{model.ToFullString()}>(__reactiveModel!);
 
 					{members.Select(member => member.GetDeclaration()).Align(5)}
 				}}");
@@ -328,4 +341,133 @@ internal class ViewModelGenTool_3 : ICodeGenTool
 		}
 	}
 
+	// Walks each feed-typed property on the model, collects user-assembly types its body references
+	// (via the semantic model), and emits a [ModuleInitializer] that registers those dependencies in
+	// FeedDependencyRegistry. AsyncFeed reads the registry at construction so a hot-reload metadata
+	// update on a referenced type (e.g. Helper in `Feed.Async(async ct => Helper.Get())`) re-fires
+	// the feed even though the lambda's declaring type didn't change.
+	private string? GenerateFeedDependencies(INamedTypeSymbol model)
+	{
+		var compilation = _ctx.Context.Compilation;
+		var entries = new List<(string Member, List<INamedTypeSymbol> Deps)>();
+
+		foreach (var member in model.GetMembers())
+		{
+			if (member is not IPropertySymbol property)
+			{
+				continue;
+			}
+
+			if (!_ctx.IsFeed(property.Type) && !_ctx.IsListFeed(property.Type) && !_ctx.IsFeedOfList(property.Type))
+			{
+				continue;
+			}
+
+			var deps = ExtractTypeDependencies(property, compilation, model);
+			if (deps.Count > 0)
+			{
+				entries.Add((property.Name, deps));
+			}
+		}
+
+		if (entries.Count == 0)
+		{
+			return null;
+		}
+
+		var sb = new StringBuilder();
+		foreach (var (member, deps) in entries)
+		{
+			var depList = string.Join(", ", deps.Select(d => $"typeof({d.ToFullString()})"));
+			sb.AppendLine($"\t\t\tglobal::Uno.Extensions.Reactive.Core.HotReload.FeedDependencyRegistry.Register(typeof({model.ToFullString()}), \"{member}\", {depList});");
+		}
+
+		var initializerName = $"__{Regex.Replace(model.ToFullString(), "[^A-Za-z0-9_]", "_")}_FeedDependenciesInitializer";
+
+		return this.InSameNamespaceOf(model, $@"
+			{this.GetCodeGenAttribute()}
+			[global::System.ComponentModel.EditorBrowsable(global::System.ComponentModel.EditorBrowsableState.Never)]
+			internal static class {initializerName}
+			{{
+				[global::System.Runtime.CompilerServices.ModuleInitializer]
+				internal static void Initialize()
+				{{
+{sb.ToString().TrimEnd()}
+				}}
+			}}").Align(0);
+	}
+
+	private List<INamedTypeSymbol> ExtractTypeDependencies(IPropertySymbol property, Compilation compilation, INamedTypeSymbol model)
+	{
+		var result = new List<INamedTypeSymbol>();
+		var seen = new HashSet<INamedTypeSymbol>(SymbolEqualityComparer.Default);
+
+		foreach (var syntaxRef in property.DeclaringSyntaxReferences)
+		{
+			if (syntaxRef.GetSyntax() is not PropertyDeclarationSyntax pds)
+			{
+				continue;
+			}
+
+			SyntaxNode? body = (SyntaxNode?)pds.ExpressionBody?.Expression;
+			if (body is null && pds.AccessorList is { } accessors)
+			{
+				var getter = accessors.Accessors.FirstOrDefault(a => a.IsKind(SyntaxKind.GetAccessorDeclaration));
+				body = (SyntaxNode?)getter?.ExpressionBody?.Expression ?? getter?.Body;
+			}
+
+			if (body is null)
+			{
+				continue;
+			}
+
+			var semanticModel = compilation.GetSemanticModel(pds.SyntaxTree);
+
+			foreach (var descendant in body.DescendantNodesAndSelf())
+			{
+				INamedTypeSymbol? type = descendant switch
+				{
+					MemberAccessExpressionSyntax mae => ResolveContainingType(semanticModel.GetSymbolInfo(mae).Symbol),
+					IdentifierNameSyntax ins => ResolveContainingType(semanticModel.GetSymbolInfo(ins).Symbol),
+					ObjectCreationExpressionSyntax oce => (semanticModel.GetSymbolInfo(oce).Symbol as IMethodSymbol)?.ContainingType,
+					_ => null,
+				};
+
+				if (type is null)
+				{
+					continue;
+				}
+
+				while (type.ContainingType is { } ct)
+				{
+					type = ct;
+				}
+
+				if (!SymbolEqualityComparer.Default.Equals(type.ContainingAssembly, _assembly)
+					|| SymbolEqualityComparer.Default.Equals(type, model)
+					|| type.Name.Length == 0
+					|| type.Name[0] == '<')
+				{
+					continue;
+				}
+
+				if (seen.Add(type))
+				{
+					result.Add(type);
+				}
+			}
+		}
+
+		return result;
+	}
+
+	private static INamedTypeSymbol? ResolveContainingType(ISymbol? symbol) => symbol switch
+	{
+		INamedTypeSymbol type => type,
+		IMethodSymbol method => method.ContainingType,
+		IPropertySymbol prop => prop.ContainingType,
+		IFieldSymbol field => field.ContainingType,
+		IEventSymbol evt => evt.ContainingType,
+		_ => null,
+	};
 }

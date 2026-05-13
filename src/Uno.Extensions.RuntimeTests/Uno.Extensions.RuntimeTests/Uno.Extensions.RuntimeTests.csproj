@@ -47,5 +47,6 @@
     <ProjectReference Include="..\..\Uno.Extensions.Reactive.UI.Tests\Uno.Extensions.Reactive.WinUI.Tests.csproj" />
     <ProjectReference Include="..\..\Uno.Extensions.Navigation.UI.Tests\Uno.Extensions.Navigation.WinUI.Tests.csproj" />
     <ProjectReference Include="..\Uno.Extensions.RuntimeTests.Core\Uno.Extensions.RuntimeTests.Core.csproj" />
+    <ProjectReference Include="..\..\Uno.Extensions.Reactive.Generator\Uno.Extensions.Reactive.Generator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
   </ItemGroup>
 </Project>

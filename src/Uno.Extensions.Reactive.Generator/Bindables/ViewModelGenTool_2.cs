@@ -113,6 +113,8 @@ internal class ViewModelGenTool_2 : ICodeGenTool
 								if ({NS.Config}.FeedConfiguration.EffectiveHotReload.HasFlag({NS.Config}.HotReloadSupport.State))
 								{{
 									__reactiveModelArgs = new (Type, string, object?)[] {{ {ctor.Parameters.Select(p => $"(typeof({p.Type.ToFullString()}), \"{p.Name}\", {p.Name} as object)").JoinBy(", ")} }};
+									// Self-patch from the outermost public ctor — after args are captured. Earlier (base/protected ctor) breaks ctor-deps + inheritance.
+									{NS.Core}.HotReload.HotReloadService.TryHotPatch(this);
 								}}
 							}}")
 						.Align(5)}
@@ -172,7 +174,8 @@ internal class ViewModelGenTool_2 : ICodeGenTool
 
 						dynamic {N.Ctor.Model} = updatedModel;
 
-						{N.Ctor.Model}.__reactiveBindableViewModel = this;
+						// `(dynamic)this` — required when inherited models shadow this field with a more-derived type.
+						{N.Ctor.Model}.__reactiveBindableViewModel = (dynamic)this;
 
 						{members.Select(member => $@"try
 							{{
