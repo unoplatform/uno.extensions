@@ -217,7 +217,7 @@ internal partial record CommandFromMethod : IMappedMember
 			return result.ToString();
 		};
 
-		return @$"{Name} ??= new {NS.Commands}.AsyncCommand(
+		return @$"{Name} = new {NS.Commands}.AsyncCommand(
 					nameof({Name}),
 					new {NS.Commands}.CommandConfig[]
 					{{
