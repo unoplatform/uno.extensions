@@ -1,5 +1,6 @@
 using System.Collections.Immutable;
 using System.Reflection.Metadata;
+using Uno.Extensions.Navigation.Regions;
 
 [assembly: MetadataUpdateHandler(typeof(Uno.Extensions.Navigation.UI.NavigationRouteUpdateHandler))]
 
@@ -16,6 +17,14 @@ internal sealed class NavigationRouteContext
 	public required IViewRegistry Views { get; init; }
 	public required IRouteRegistry Routes { get; init; }
 	public RouteResolver? Resolver { get; set; }
+
+	/// <summary>
+	/// The root <see cref="IRegion"/> of the live navigator tree, populated by
+	/// <see cref="NavigationRegion.InitializeRootRegion"/>. Used by the C# hot-reload
+	/// route refresh to walk the live region tree and re-cascade the current route
+	/// when newly registered nested IsDefault routes become available.
+	/// </summary>
+	public IRegion? RootRegion { get; set; }
 }
 
 /// <summary>
@@ -78,6 +87,8 @@ internal static class NavigationRouteUpdateHandler
 			routeRegistry.Clear();
 		}
 
+		var rebuiltSuccessfully = false;
+
 		try
 		{
 			// Re-invoke the (potentially updated) delegate.
@@ -85,6 +96,7 @@ internal static class NavigationRouteUpdateHandler
 
 			// Rebuild the flat lookup tables from the new route data.
 			resolver.Rebuild();
+			rebuiltSuccessfully = true;
 		}
 		catch
 		{
@@ -104,6 +116,47 @@ internal static class NavigationRouteUpdateHandler
 			}
 
 			resolver.Rebuild();
+		}
+
+		// Newly registered nested IsDefault routes don't auto-navigate on their
+		// own — the existing navigator tree already finished its initial cascade
+		// before the routes existed. Walk the live region tree and, for each
+		// navigator whose RouteInfo now exposes an IsDefault nested route that
+		// isn't yet populated as a child region's active route, re-issue a
+		// navigation request at that level. Navigator.CoreNavigateAsync /
+		// DefaultRouteRequest will pick up the new default and descend into it.
+		if (rebuiltSuccessfully && ctx.RootRegion is { } root)
+		{
+			CascadeNewDefaultsFromRoot(root, resolver);
+		}
+	}
+
+	private static void CascadeNewDefaultsFromRoot(IRegion region, RouteResolver resolver)
+	{
+		var navigator = region.Navigator();
+		var currentBase = navigator?.Route?.Base;
+
+		if (navigator is not null &&
+			!string.IsNullOrEmpty(currentBase) &&
+			resolver.FindByPath(currentBase) is { } routeInfo &&
+			routeInfo.Nested?.FirstOrDefault(n => n.IsDefault) is { Path.Length: > 0 } defaultNested &&
+			!region.Children.Any(child =>
+				child.Navigator()?.Route?.Base == defaultNested.Path))
+		{
+			// Issue an empty-route request on this navigator. CoreNavigateAsync's
+			// DefaultRouteRequest path (only entered when Route.IsEmpty()) reads
+			// `this.Route?.Base`, finds the now-registered IsDefault nested entry,
+			// appends it, and NavigateChildRegions dispatches into the matching
+			// child region. The cascade itself descends, so don't also recurse
+			// into this region's children.
+			var request = new NavigationRequest(navigator, Route.Empty.AsInternal());
+			_ = navigator.NavigateAsync(request);
+			return;
+		}
+
+		foreach (var child in region.Children.ToArray())
+		{
+			CascadeNewDefaultsFromRoot(child, resolver);
 		}
 	}
 }

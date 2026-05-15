@@ -140,6 +140,16 @@ public sealed class NavigationRegion : IRegion
 #pragma warning disable CS8603 // Possible null reference return.
 		_services.AddScopedInstance<INavigator>(() => navigator);
 #pragma warning restore CS8603 // Possible null reference return.
+
+		// Store root region reference for C# hot-reload route refresh. After
+		// NavigationRouteUpdateHandler rebuilds the resolver with newly registered
+		// routes, it walks down from this root to find navigators that need a
+		// default-route re-cascade. Mirrors the resolver wire-up in
+		// ServiceCollectionExtensions.AddNavigation.
+		if (_services.GetService<NavigationRouteContext>() is { } ctx)
+		{
+			ctx.RootRegion = this;
+		}
 	}
 
 	private async void ViewLoaded(object sender, RoutedEventArgs e)
