@@ -174,7 +174,7 @@ internal static class NavigationRouteUpdateHandler
 			!string.IsNullOrEmpty(currentBase) &&
 			resolver.FindByPath(currentBase) is { } routeInfo &&
 			routeInfo.Nested?.FirstOrDefault(n => n.IsDefault) is { Path.Length: > 0 } defaultNested &&
-			!HasActiveDescendantRoute(region, defaultNested.Path))
+			!HasActiveDescendantNestedRoute(region, routeInfo.Nested))
 		{
 			// Issue navigation on the matched navigator's CHILD region rather
 			// than the navigator itself. Targeting the matched navigator (e.g.
@@ -202,16 +202,26 @@ internal static class NavigationRouteUpdateHandler
 		}
 	}
 
-	private static bool HasActiveDescendantRoute(IRegion region, string targetPath)
+	/// <summary>
+	/// Returns true if any descendant region already has an active route whose Base
+	/// matches one of the navigator's nested route paths. Used to decide whether to
+	/// cascade an IsDefault nested route: if the user (or a prior cascade) has already
+	/// navigated to any sibling nested route, the current selection must be preserved
+	/// — re-asserting IsDefault here would clobber it (e.g. snapping a TabBar back
+	/// from TabTwo to TabOne after a C# hot-reload).
+	/// </summary>
+	private static bool HasActiveDescendantNestedRoute(IRegion region, RouteInfo[] nestedRoutes)
 	{
 		foreach (var child in region.Children)
 		{
-			if (child.Navigator()?.Route?.Base == targetPath)
+			var childBase = child.Navigator()?.Route?.Base;
+			if (!string.IsNullOrEmpty(childBase) &&
+				nestedRoutes.Any(n => string.Equals(n.Path, childBase, StringComparison.Ordinal)))
 			{
 				return true;
 			}
 
-			if (HasActiveDescendantRoute(child, targetPath))
+			if (HasActiveDescendantNestedRoute(child, nestedRoutes))
 			{
 				return true;
 			}
