@@ -1413,7 +1413,7 @@ public class Given_TabBar_HotReload
 		{
 			host = await window.InitializeNavigationAsync(
 				buildHost: async () => UnoHost
-					.CreateDefaultBuilder(typeof(Given_TabBarHotReload).Assembly)
+					.CreateDefaultBuilder(typeof(Given_TabBar_HotReload).Assembly)
 					.UseToolkitNavigation()
 					.UseNavigation(viewRouteBuilder: registerViewsAndRoutes)
 					.Build(),

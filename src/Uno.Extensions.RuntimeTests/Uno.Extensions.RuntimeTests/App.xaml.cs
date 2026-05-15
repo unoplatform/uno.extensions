@@ -13,7 +13,7 @@ public partial class App : Application
 		var reactive_HotReload_Tests = new Uno.Extensions.Reactive.WinUI.Tests.Given_HotReload();
 		var navigation_HotReload_Tests = new Uno.Extensions.Navigation.UI.Tests.Given_HotReload();
 		var navigation_HotReloadNav_Tests = new Uno.Extensions.Navigation.UI.Tests.Given_NavigationHotReload();
-		var tabBar_HotReload_Tests = new Uno.Extensions.Navigation.UI.Tests.Given_TabBarHotReload();
+		var tabBar_HotReload_Tests = new Uno.Extensions.Navigation.UI.Tests.Given_TabBar_HotReload();
 #endif
 		var navigation_UI_Tests = new Given_RouteNotifier();
 		var navigation_ChainedResult_Tests = new Given_ChainedGetDataAsync();
