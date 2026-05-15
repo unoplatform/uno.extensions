@@ -135,11 +135,33 @@ internal static class NavigationRouteUpdateHandler
 		// runs and lets its async continuations make progress.
 		if (rebuiltSuccessfully && ctx.RootRegion is { } root)
 		{
-			var dispatcher = root.Services?.GetService<IDispatcher>();
-			if (dispatcher is not null)
+			ScheduleCascade(root, resolver);
+		}
+	}
+
+	/// <summary>
+	/// Defers a cascade walk on the dispatcher. Public entry point for callers
+	/// outside the resolver-rebuild path (e.g. XAML hot-reload, which adds new
+	/// active navigation structure under an already-rooted region tree but does
+	/// not invoke this class's <see cref="UpdateApplication"/> hook).
+	/// </summary>
+	internal static void ScheduleCascadeForAllContexts()
+	{
+		foreach (var ctx in _contexts)
+		{
+			if (ctx.Resolver is { } resolver && ctx.RootRegion is { } root)
 			{
-				dispatcher.TryEnqueue(() => CascadeNewDefaultsFromRoot(root, resolver));
+				ScheduleCascade(root, resolver);
 			}
+		}
+	}
+
+	private static void ScheduleCascade(IRegion root, RouteResolver resolver)
+	{
+		var dispatcher = root.Services?.GetService<IDispatcher>();
+		if (dispatcher is not null)
+		{
+			dispatcher.TryEnqueue(() => CascadeNewDefaultsFromRoot(root, resolver));
 		}
 	}
 
