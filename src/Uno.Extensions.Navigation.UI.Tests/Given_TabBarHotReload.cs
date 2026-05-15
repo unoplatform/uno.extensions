@@ -20,7 +20,7 @@ namespace Uno.Extensions.Navigation.UI.Tests;
 
 [TestClass]
 [RunsInSecondaryApp(ignoreIfNotSupported: true)]
-public class Given_TabBarHotReload
+public class Given_TabBar_HotReload
 {
 	[TestInitialize]
 	public void Setup()
