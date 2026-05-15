@@ -258,6 +258,34 @@ Uses Uno Toolkit's `TabBar` + `TabBarItem` with `Region.Name` on each item. See 
 - **Goal**: Complementary direction to catch eager-instantiation caching.
 - **Risk**: Same as above.
 
+- **ID**: `When_MainPageGetsTabBarPagesAndRoutesAddedViaHR_Then_FirstPageIsDefaultlySelected`
+- **Goal**: End-to-end "developer authors tab navigation from scratch via HR" flow.
+  Validates that after every HR step needed to add TabBar navigation has landed, the
+  framework auto-navigates to the IsDefault nested route and the matching TabBarItem
+  becomes the selected one.
+- **Layout**: `HotReloadMainTabBarPage` (placeholder Grid with `Region.Attached="True"`)
+  hosts a TextBlock initially. `FirstPage` and `SecondPage` each start as a placeholder
+  TextBlock. Views for all three pages are pre-registered; nested routes are gated by
+  `HotReloadMainPageRouteGate.IsAvailable` (initially `false`).
+- **HR change**: Four sequential HR operations —
+  (1) XAML HR on `HotReloadMainTabBarPage.xaml` injects a TabBar+content-grid with
+      TabBarItems for `FirstPage`/`SecondPage`,
+  (2) XAML HR on `FirstPage.xaml` rewrites placeholder text,
+  (3) XAML HR on `SecondPage.xaml` rewrites placeholder text,
+  (4) C# HR flips `HotReloadMainPageRouteGate.IsAvailable` from `false` → `true`, which
+      triggers `NavigationRouteUpdateHandler` to re-invoke the route builder and register
+      the nested routes (FirstPage IsDefault).
+- **Trigger**: All four HR operations land in order; then the active page instance is
+  re-resolved.
+- **Assertion**: `FirstPage` is materialized inside the `FirstPage` region of the
+  content grid (default-route auto-navigation worked) AND `TabBar.SelectedIndex == 0`
+  (the first TabBarItem is selected by default).
+- **Risk**: Route additions via HR depend on `NavigationRouteUpdateHandler` re-invoking
+  the builder. If the framework registers routes but does not re-attempt the pending
+  default-tab navigation, the content area may stay empty even though the routes exist.
+  Also: XAML HR creates a fresh page instance on every dependent file's revert/update,
+  so references must be re-resolved before the final assertion.
+
 ### 5.6 `NavigationView`
 
 - **ID**: `When_SwitchNavMenuAfterUpdate_Then_SelectedItemReflectsUpdate`
