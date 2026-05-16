@@ -41,33 +41,49 @@ public abstract class SelectorNavigator<TControl> : ControlNavigator<TControl>
 
 	private async Task DeferredInitialSelectionCheckAsync()
 	{
-		// Yield to the next dispatch cycle. On normal first load, the route cascade
-		// calls Show() in the current cycle, so _showCalled is already true by now.
-		// On XAML HR, no route cascade occurs, so _showCalled stays false.
-		await Dispatcher.ExecuteAsync(async ct =>
+		// Yield to the dispatcher. On normal first load, the route cascade calls
+		// Show() in the same dispatch cycle, so _showCalled is already true by
+		// now. On XAML HR — and on initial load when the selector's containers
+		// haven't materialised yet — _showCalled stays false and the framework
+		// is responsible for kicking the initial selection itself.
+		//
+		// The selector may not have populated SelectedItem yet when this check
+		// first runs (e.g. TabBar's default IsSelectable item is chosen on a
+		// later layout pass than its Loaded event). Poll a few times with a
+		// brief delay before giving up; if the regular route cascade arrives
+		// first it flips _showCalled and we stop early.
+		const int maxAttempts = 20;
+		for (var attempt = 0; attempt < maxAttempts; attempt++)
 		{
-			if (_showCalled || Region.View is not FrameworkElement view)
+			var done = await Dispatcher.ExecuteAsync(async ct =>
 			{
-				return;
-			}
+				if (_showCalled || Region.View is not FrameworkElement view)
+				{
+					return true;
+				}
 
-			// Only act on an already-selected item. During XAML HR the selector
-			// fires SelectionChanged before this navigator exists, so the item is
-			// selected but the event was lost. On normal first load, SelectedItem
-			// may be null because containers haven't been materialised yet; in that
-			// case the route cascade will handle initial selection — don't interfere.
-			var selected = SelectedItem;
+				var selected = SelectedItem;
+				if (selected is null)
+				{
+					return false;
+				}
 
-			if (selected is not null)
-			{
 				if (Logger.IsEnabled(LogLevel.Debug))
 				{
 					Logger.LogDebugMessage($"Triggering navigation for missed initial selection (XAML HR)");
 				}
 
 				await SelectionChanged(view, selected);
+				return true;
+			}, CancellationToken.None);
+
+			if (done)
+			{
+				return;
 			}
-		});
+
+			await Task.Delay(50);
+		}
 	}
 
 	protected abstract FrameworkElement? SelectedItem { get; set; }

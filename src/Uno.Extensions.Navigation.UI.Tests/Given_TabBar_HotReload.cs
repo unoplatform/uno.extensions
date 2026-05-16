@@ -20,7 +20,7 @@ namespace Uno.Extensions.Navigation.UI.Tests;
 
 [TestClass]
 [RunsInSecondaryApp(ignoreIfNotSupported: true)]
-public class Given_TabBarHotReload
+public class Given_TabBar_HotReload
 {
 	[TestInitialize]
 	public void Setup()
@@ -1273,6 +1273,118 @@ public class Given_TabBarHotReload
 			"After XAML HR adds TabBar and C# HR injects the route, TabThree should be navigable");
 	}
 
+	// ──────────────────────────────────────────────────────────────────────
+	// 22. Full developer flow — start with a bare MainPage, then via HR:
+	//     (a) add a TabBar with regions for two new pages,
+	//     (b) fill in the new page XAML, and
+	//     (c) register the routes for those pages.
+	//     After every HR step the default-tab (FirstPage) should be the one
+	//     selected and showing its content.
+	// ──────────────────────────────────────────────────────────────────────
+
+	/// <summary>
+	/// Simulates the full developer flow for adding tab-based navigation to a
+	/// blank page via hot-reload:
+	/// <list type="number">
+	///   <item><description>XAML HR injects a <c>TabBar</c> (with content area and two TabBarItems
+	///     whose <c>Region.Name</c>s are <c>FirstPage</c> and <c>SecondPage</c>)
+	///     into <see cref="HotReloadMainTabBarPage"/>.</description></item>
+	///   <item><description>XAML HR fills in <see cref="FirstPage"/>'s placeholder content.</description></item>
+	///   <item><description>XAML HR fills in <see cref="SecondPage"/>'s placeholder content.</description></item>
+	///   <item><description>C# HR flips <see cref="HotReloadMainPageRouteGate.IsAvailable"/> from
+	///     <c>false</c> to <c>true</c>; the route builder delegate (re-invoked by
+	///     <c>NavigationRouteUpdateHandler</c>) registers nested routes for
+	///     <c>FirstPage</c> (IsDefault) and <c>SecondPage</c>.</description></item>
+	/// </list>
+	/// After the full sequence, default navigation must land on the IsDefault
+	/// nested route (<c>FirstPage</c>) and the corresponding <c>TabBarItem</c>
+	/// (index 0) must be the selected one.
+	/// </summary>
+	[TestMethod]
+	[RunsOnUIThread]
+	public async Task When_MainPageGetsTabBarPagesAndRoutesAddedViaHR_Then_FirstPageIsDefaultlySelected(CancellationToken ct)
+	{
+		// Boot with the bare MainPage. Views for First/Second are pre-registered so the
+		// route builder can resolve them once the gate flips, but their RouteMaps are
+		// gated off — modelling "the routes don't exist yet".
+		await using var app = await SetupMainTabBarLateAddAppAsync(ct);
+
+		var hostPage = ResolveCurrentPage<HotReloadMainTabBarPage>(app.NavigationRoot);
+		hostPage.Should().NotBeNull("Frame should have navigated to HotReloadMainTabBarPage");
+
+		// Baseline: the page has neither a TabBar nor a content grid.
+		hostPage!.TabBar.Should().BeNull("page should start without a TabBar");
+		hostPage.ContentGrid.Should().BeNull("page should start without a content grid");
+
+		// Step 1 — XAML HR: add the TabBar layout to the MainPage.
+		var originalMain = """<TextBlock x:Name="_placeholder" Text="Main Page (No TabBar yet)" />""";
+		var replacementMain =
+			"""<Grid.RowDefinitions>""" + Environment.NewLine +
+			"\t\t\t" + """<RowDefinition />""" + Environment.NewLine +
+			"\t\t\t" + """<RowDefinition Height="Auto" />""" + Environment.NewLine +
+			"\t\t" + """</Grid.RowDefinitions>""" + Environment.NewLine +
+			"\t\t" + """<Grid x:Name="_contentGrid" Grid.Row="0" uen:Region.Attached="True" uen:Region.Navigator="Visibility" />""" + Environment.NewLine +
+			"\t\t" + """<utu:TabBar x:Name="TB" Grid.Row="1" uen:Region.Attached="True">""" + Environment.NewLine +
+			"\t\t\t" + """<utu:TabBarItem Content="First" uen:Region.Name="FirstPage" IsSelectable="True" />""" + Environment.NewLine +
+			"\t\t\t" + """<utu:TabBarItem Content="Second" uen:Region.Name="SecondPage" IsSelectable="True" />""" + Environment.NewLine +
+			"\t\t" + """</utu:TabBar>""";
+
+		await using var mainXamlRevert = await HotReloadHelper.UpdateSourceFile(
+			"../../Uno.Extensions.Navigation.UI.Tests/Pages/HotReloadMainTabBarPage.xaml",
+			originalMain,
+			replacementMain,
+			ct);
+
+		var pageWithTabBar = await WaitForPageMatchingAsync<HotReloadMainTabBarPage>(
+			app.NavigationRoot,
+			page => page.TabBar is not null && page.TabBar.Items.Count == 2,
+			TimeSpan.FromSeconds(30), ct);
+		pageWithTabBar.TabBar.Should().NotBeNull("XAML HR should have added a TabBar");
+		pageWithTabBar.ContentGrid.Should().NotBeNull("XAML HR should have added a content grid");
+
+		// Step 2 — XAML HR: fill in FirstPage's placeholder content.
+		await using var firstXamlRevert = await HotReloadHelper.UpdateSourceFile(
+			"../../Uno.Extensions.Navigation.UI.Tests/Pages/FirstPage.xaml",
+			"""<TextBlock x:Name="_label" Text="FirstPage placeholder" />""",
+			"""<TextBlock x:Name="_label" Text="First Page Content" />""",
+			ct);
+
+		// Step 3 — XAML HR: fill in SecondPage's placeholder content.
+		await using var secondXamlRevert = await HotReloadHelper.UpdateSourceFile(
+			"../../Uno.Extensions.Navigation.UI.Tests/Pages/SecondPage.xaml",
+			"""<TextBlock x:Name="_label" Text="SecondPage placeholder" />""",
+			"""<TextBlock x:Name="_label" Text="Second Page Content" />""",
+			ct);
+
+		// Step 4 — C# HR: flip the route gate so the route builder delegate
+		// registers nested FirstPage/SecondPage routes. NavigationRouteUpdateHandler
+		// re-invokes the delegate and the resolver is rebuilt with the new entries.
+		await using var routesRevert = await HotReloadHelper.UpdateSourceFile(
+			"../../Uno.Extensions.Navigation.UI.Tests/HotReloadMainPageRouteGate.cs",
+			"return false;",
+			"return true;",
+			ct);
+
+		// XAML HR can replace the page instance again as a side-effect of the
+		// dependent file reverts/updates — re-resolve to the live page.
+		var activePage = await WaitForPageMatchingAsync<HotReloadMainTabBarPage>(
+			app.NavigationRoot,
+			page => page.TabBar is not null && page.TabBar.Items.Count == 2,
+			TimeSpan.FromSeconds(30), ct);
+
+		// Assertion 1: default navigation lands on FirstPage (the IsDefault nested route).
+		var firstPageContent = await WaitForTabRegionContentAsync(
+			activePage.ContentGrid!, "FirstPage", typeof(FirstPage),
+			TimeSpan.FromSeconds(30), ct);
+		firstPageContent.Should().NotBeNull(
+			"After HR adds the TabBar and registers the routes, FirstPage (IsDefault) " +
+			"should auto-navigate into its region.");
+
+		// Assertion 2: the FirstPage TabBarItem (index 0) is the selected one.
+		activePage.TabBar!.SelectedIndex.Should().Be(0,
+			"The FirstPage TabBarItem should be selected by default after HR.");
+	}
+
 	#region Setup helpers
 
 	/// <summary>
@@ -1301,7 +1413,7 @@ public class Given_TabBarHotReload
 		{
 			host = await window.InitializeNavigationAsync(
 				buildHost: async () => UnoHost
-					.CreateDefaultBuilder(typeof(Given_TabBarHotReload).Assembly)
+					.CreateDefaultBuilder(typeof(Given_TabBar_HotReload).Assembly)
 					.UseToolkitNavigation()
 					.UseNavigation(viewRouteBuilder: registerViewsAndRoutes)
 					.Build(),
@@ -1660,6 +1772,45 @@ public class Given_TabBarHotReload
 					}));
 			},
 			"HotReloadTabBarLateAddPage",
+			ct);
+
+	/// <summary>
+	/// Bare MainPage host whose nested FirstPage/SecondPage routes are gated by
+	/// <see cref="HotReloadMainPageRouteGate.IsAvailable"/>. Initially the gate
+	/// is closed so no nested routes are registered; the route builder is
+	/// re-invoked by <c>NavigationRouteUpdateHandler</c> after a C# HR flips
+	/// the gate, at which point FirstPage (IsDefault) and SecondPage become
+	/// resolvable. Views for both pages are pre-registered so type lookup works
+	/// the moment the routes appear.
+	/// </summary>
+	private static Task<TabBarTestApp> SetupMainTabBarLateAddAppAsync(CancellationToken ct)
+		=> SetupTabBarAppAsync(
+			(views, routes) =>
+			{
+				views.Register(
+					new ViewMap<HotReloadMainTabBarPage>(),
+					new ViewMap<FirstPage>(),
+					new ViewMap<SecondPage>());
+
+				var nested = new List<RouteMap>();
+
+				if (HotReloadMainPageRouteGate.IsAvailable())
+				{
+					nested.Add(new RouteMap("FirstPage", View: views.FindByView<FirstPage>(), IsDefault: true));
+					nested.Add(new RouteMap("SecondPage", View: views.FindByView<SecondPage>()));
+				}
+
+				routes.Register(
+					new RouteMap("", Nested: new RouteMap[]
+					{
+						new RouteMap(
+							"HotReloadMainTabBarPage",
+							View: views.FindByView<HotReloadMainTabBarPage>(),
+							IsDefault: true,
+							Nested: nested.ToArray()),
+					}));
+			},
+			"HotReloadMainTabBarPage",
 			ct);
 
 	#endregion

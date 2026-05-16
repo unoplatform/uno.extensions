@@ -1,5 +1,6 @@
 using System.Collections.Immutable;
 using System.Reflection.Metadata;
+using Uno.Extensions.Navigation.Regions;
 
 [assembly: MetadataUpdateHandler(typeof(Uno.Extensions.Navigation.UI.NavigationRouteUpdateHandler))]
 
@@ -16,6 +17,14 @@ internal sealed class NavigationRouteContext
 	public required IViewRegistry Views { get; init; }
 	public required IRouteRegistry Routes { get; init; }
 	public RouteResolver? Resolver { get; set; }
+
+	/// <summary>
+	/// The root <see cref="IRegion"/> of the live navigator tree, populated by
+	/// <see cref="NavigationRegion.InitializeRootRegion"/>. Used by the C# hot-reload
+	/// route refresh to walk the live region tree and re-cascade the current route
+	/// when newly registered nested IsDefault routes become available.
+	/// </summary>
+	public IRegion? RootRegion { get; set; }
 }
 
 /// <summary>
@@ -78,6 +87,8 @@ internal static class NavigationRouteUpdateHandler
 			routeRegistry.Clear();
 		}
 
+		var rebuiltSuccessfully = false;
+
 		try
 		{
 			// Re-invoke the (potentially updated) delegate.
@@ -85,6 +96,7 @@ internal static class NavigationRouteUpdateHandler
 
 			// Rebuild the flat lookup tables from the new route data.
 			resolver.Rebuild();
+			rebuiltSuccessfully = true;
 		}
 		catch
 		{
@@ -105,5 +117,116 @@ internal static class NavigationRouteUpdateHandler
 
 			resolver.Rebuild();
 		}
+
+		// Newly registered nested IsDefault routes don't auto-navigate on their
+		// own — the existing navigator tree already finished its initial cascade
+		// before the routes existed. Walk the live region tree and, for each
+		// navigator whose RouteInfo now exposes an IsDefault nested route that
+		// isn't yet populated as a child region's active route, dispatch a
+		// navigation request into the matching child region.
+		//
+		// The walk is deferred onto the dispatcher: UpdateApplication runs
+		// synchronously on the UI thread under the .NET hot-reload pipeline,
+		// and the host's XAML HR processor may immediately follow with more
+		// deltas. Calling NavigateAsync directly here returns a task whose
+		// continuations are scheduled on the UI dispatcher — and that
+		// dispatcher is starved while the HR pipeline keeps the thread busy.
+		// TryEnqueue gives the HR pipeline time to drain before the navigation
+		// runs and lets its async continuations make progress.
+		if (rebuiltSuccessfully && ctx.RootRegion is { } root)
+		{
+			ScheduleCascade(root, resolver);
+		}
+	}
+
+	/// <summary>
+	/// Defers a cascade walk on the dispatcher. Public entry point for callers
+	/// outside the resolver-rebuild path (e.g. XAML hot-reload, which adds new
+	/// active navigation structure under an already-rooted region tree but does
+	/// not invoke this class's <see cref="UpdateApplication"/> hook).
+	/// </summary>
+	internal static void ScheduleCascadeForAllContexts()
+	{
+		foreach (var ctx in _contexts)
+		{
+			if (ctx.Resolver is { } resolver && ctx.RootRegion is { } root)
+			{
+				ScheduleCascade(root, resolver);
+			}
+		}
+	}
+
+	private static void ScheduleCascade(IRegion root, RouteResolver resolver)
+	{
+		var dispatcher = root.Services?.GetService<IDispatcher>();
+		if (dispatcher is not null)
+		{
+			dispatcher.TryEnqueue(() => CascadeNewDefaultsFromRoot(root, resolver));
+		}
+	}
+
+	private static void CascadeNewDefaultsFromRoot(IRegion region, RouteResolver resolver)
+	{
+		var navigator = region.Navigator();
+		var currentBase = navigator?.Route?.Base;
+
+		if (navigator is not null &&
+			!string.IsNullOrEmpty(currentBase) &&
+			resolver.FindByPath(currentBase) is { } routeInfo &&
+			routeInfo.Nested?.FirstOrDefault(n => n.IsDefault) is { Path.Length: > 0 } defaultNested &&
+			!HasActiveDescendantNestedRoute(region, routeInfo.Nested))
+		{
+			// Issue navigation on the matched navigator's CHILD region rather
+			// than the navigator itself. Targeting the matched navigator (e.g.
+			// the Frame) would tear down and rebuild its child region tree
+			// (Region.Children.Clear() + ReassignRegionParent) — which races
+			// with the freshly-added XAML-HR child controls (TabBar, content
+			// grid) on the same page. Going one level deeper lets the page
+			// region's composite navigator dispatch the IsDefault path to its
+			// own children (e.g. TabBarNavigator + PanelVisiblityNavigator)
+			// without disturbing the parent frame.
+			var pageRegion = region.Children.FirstOrDefault();
+			var pageNavigator = pageRegion?.Navigator();
+			if (pageNavigator is not null)
+			{
+				var route = new Route(Qualifiers.None, Base: defaultNested.Path);
+				var request = new NavigationRequest(pageNavigator, route.AsInternal());
+				_ = pageNavigator.NavigateAsync(request);
+				return;
+			}
+		}
+
+		foreach (var child in region.Children.ToArray())
+		{
+			CascadeNewDefaultsFromRoot(child, resolver);
+		}
+	}
+
+	/// <summary>
+	/// Returns true if any descendant region already has an active route whose Base
+	/// matches one of the navigator's nested route paths. Used to decide whether to
+	/// cascade an IsDefault nested route: if the user (or a prior cascade) has already
+	/// navigated to any sibling nested route, the current selection must be preserved
+	/// — re-asserting IsDefault here would clobber it (e.g. snapping a TabBar back
+	/// from TabTwo to TabOne after a C# hot-reload).
+	/// </summary>
+	private static bool HasActiveDescendantNestedRoute(IRegion region, RouteInfo[] nestedRoutes)
+	{
+		foreach (var child in region.Children)
+		{
+			var childBase = child.Navigator()?.Route?.Base;
+			if (!string.IsNullOrEmpty(childBase) &&
+				nestedRoutes.Any(n => string.Equals(n.Path, childBase, StringComparison.Ordinal)))
+			{
+				return true;
+			}
+
+			if (HasActiveDescendantNestedRoute(child, nestedRoutes))
+			{
+				return true;
+			}
+		}
+
+		return false;
 	}
 }

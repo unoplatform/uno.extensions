@@ -59,11 +59,22 @@ internal static class NavigationVisibilityUpdateHandler
 		}
 
 		// If the old element had active navigation, mark the new region so
-		// HandleLoaded will re-cascade the parent route and re-inject the ViewModel.
+		// HandleLoaded's re-cascade path (which checks _replacedByHotReload)
+		// can run on any subsequent reload of this region.
+		//
+		// In practice the new element's Loaded event has already fired by the
+		// time RestoreState reaches it (Uno's HR processor swaps the view
+		// before invoking RestoreState), so the flag set here is purely
+		// defensive — the actual cascade for this swap is kicked off via
+		// NavigationRouteUpdateHandler.ScheduleCascadeForAllContexts below,
+		// which walks the live region tree and dispatches any newly-needed
+		// IsDefault nested route onto the matching child region.
 		if (stateDictionary.ContainsKey(HadActiveNavigationKey)
 			&& element.GetInstance() is NavigationRegion newRegion)
 		{
 			newRegion.MarkReplacedByHotReload();
+
+			NavigationRouteUpdateHandler.ScheduleCascadeForAllContexts();
 		}
 
 		return Task.CompletedTask;

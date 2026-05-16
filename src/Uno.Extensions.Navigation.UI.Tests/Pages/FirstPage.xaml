@@ -1,0 +1,5 @@
+<Page x:Class="Uno.Extensions.Navigation.UI.Tests.Pages.FirstPage"
+	  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+	<TextBlock x:Name="_label" Text="FirstPage placeholder" />
+</Page>
