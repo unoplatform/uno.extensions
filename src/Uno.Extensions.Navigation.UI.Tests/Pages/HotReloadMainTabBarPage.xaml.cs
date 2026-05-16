@@ -5,7 +5,7 @@ namespace Uno.Extensions.Navigation.UI.Tests.Pages;
 
 /// <summary>
 /// "Main" host page used by the full-flow HR scenario in
-/// <see cref="Given_TabBarHotReload"/>. Starts as a simple placeholder Grid;
+/// <see cref="Given_TabBar_HotReload"/>. Starts as a simple placeholder Grid;
 /// XAML hot-reload injects a TabBar+content-region layout whose TabBarItems
 /// map to <see cref="FirstPage"/> and <see cref="SecondPage"/>. Distinct from
 /// <see cref="HotReloadTabBarLateAddPage"/> so the two late-add tests don't
