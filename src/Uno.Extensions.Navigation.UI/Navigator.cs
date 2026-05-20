@@ -1,4 +1,5 @@
 using Uno.Extensions.Diagnostics;
+using Uno.Extensions.Navigation.Regions;
 
 namespace Uno.Extensions.Navigation;
 
@@ -759,11 +760,28 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 			// sure all nested regions are available
 			await EnsureChildRegionsAreLoaded(); // Required for Test: Given_PageNavigation.When_PageNavigationXAML
 
-
+			// Safety net for the HR view-replacement race documented in
+			// NavigationRegion.ViewUnloaded: a still-in-flight navigation request
+			// can land here on a region whose backing view was just unloaded by
+			// HR's ReplaceViewInstance, which set Region.Parent = null. Forwarding
+			// the request would either no-op (no children) or, worse, mutate
+			// state on a detached element. If Parent is null AND this is not
+			// the engine root, the region has been disconnected from the live
+			// tree since the request was scheduled — abort silently rather than
+			// warn (the user-visible "Region X has no children" warning was a
+			// confusing symptom of this race, not a true misconfiguration).
+			if (Region.Parent is null && Region is NavigationRegion { IsRoot: false } orphan)
+			{
+				if (Logger.IsEnabled(LogLevel.Information))
+				{
+					Logger.LogInformationMessage($"[Nav] Region '{Region.Name}' is orphaned (Parent=null, !IsRoot) — silently aborting in-flight navigation for route '{request.Route}' (view: {orphan.View?.GetType().Name ?? "<null>"})");
+				}
+				return default;
+			}
 
 			if (Region.Children.Count == 0)
 			{
-				if (Logger.IsEnabled(LogLevel.Warning)) Logger.LogWarningMessage($"Region '{Region.Name}' has no children to forward request to (route: '{request.Route}', view loaded: {Region.View?.IsLoaded})");
+				if (Logger.IsEnabled(LogLevel.Warning)) Logger.LogWarningMessage($"Region '{Region.Name}' has no children to forward request to (route: '{request.Route}', view loaded: {Region.View?.IsLoaded}, parent: '{Region.Parent?.Name ?? "<root>"}', view type: {Region.View?.GetType().Name ?? "<null>"})");
 				return default;
 			}
 			if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"Region has {Region.Children.Count} children");

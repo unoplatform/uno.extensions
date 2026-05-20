@@ -59,6 +59,37 @@ public abstract class ControlNavigator<TControl> : ControlNavigator
 		{
 			if (Logger.IsEnabled(LogLevel.Warning))
 				Logger.LogWarningMessage($"Navigation to '{route.Base}' failed: Show() returned null. No matching view was found or created. Ensure a RouteMap is registered or a Page type named '{route.Base}Page' (or similar suffix) exists in the assembly.");
+
+			// Hot-reload may add the missing type after this point. Remember the
+			// request so NavigationRouteUpdateHandler can retry it once the
+			// resolver has been rebuilt with the newly-registered types. Cleared
+			// in the success branch below or when a superseding request arrives.
+			RememberPendingFailedRequest(request);
+
+			return Route.Empty;
+		}
+
+		ClearPendingFailedRequest();
+
+		if (executedPath.Length == 0)
+		{
+			// Benign success: Show mounted a wrapper view (e.g. the FrameView
+			// that ContentControlNavigator wraps a Page in) whose own navigator
+			// owns the actual page route. We deliberately skip the DataContext
+			// part of InitializeCurrentView — setting it on the wrapper would
+			// propagate the page's ViewModel down to the wrapper's children and
+			// break the FrameView contract (which intentionally nulls its
+			// DataContext to prevent inheritance). But we MUST still wait for
+			// FrameView.EnsureLoaded(): that call drives the inner Frame's
+			// activation, which is what populates the wrapper region's child
+			// region tree (the Frame's NavigationRegion) so the IsDefault
+			// cascade has something to dispatch into. Skipping EnsureLoaded
+			// leaves Region.Children empty and the next nav into this region
+			// trips the "Region has no children to forward request to" warning.
+			if (CurrentView is FrameView fv)
+			{
+				await fv.EnsureLoaded();
+			}
 			return Route.Empty;
 		}
 
@@ -140,6 +171,55 @@ public abstract class ControlNavigator<TControl> : ControlNavigator
 public abstract class ControlNavigator : Navigator
 {
 	public virtual bool CanGoBack => false;
+
+	// The most recent NavigationRequest whose Show() resolved to null because
+	// the target view type could not be created (typically the type doesn't
+	// exist yet in the loaded assembly — Studio Live / hot-reload scaffolding
+	// scenario). NavigationRouteUpdateHandler walks the live region tree after
+	// a C# or XAML hot-reload and re-issues these requests so an initial
+	// navigation that fired before the missing type was hot-reloaded in can
+	// self-heal without requiring a full app restart. Only accessed on the UI
+	// dispatcher thread (ExecuteRequestAsync runs under Dispatcher.ExecuteAsync;
+	// the HR retry walk is dispatched via TryEnqueue), so no synchronization
+	// is required.
+	private NavigationRequest? _pendingFailedRequest;
+
+	internal bool HasPendingFailedRequest => _pendingFailedRequest is not null;
+
+	protected void RememberPendingFailedRequest(NavigationRequest request)
+	{
+		_pendingFailedRequest = request;
+	}
+
+	protected void ClearPendingFailedRequest()
+	{
+		_pendingFailedRequest = null;
+	}
+
+	/// <summary>
+	/// Re-issues the most recent failed navigation request, if one is pending.
+	/// Called by <see cref="UI.NavigationRouteUpdateHandler"/> after a C# or
+	/// XAML hot-reload has potentially added the previously-missing type to
+	/// the running assembly. The pending slot is cleared before re-issuing so
+	/// a second failure cleanly re-arms it for the next hot-reload cycle.
+	/// </summary>
+	internal Task RetryPendingFailedRequestAsync()
+	{
+		var pending = _pendingFailedRequest;
+		if (pending is null)
+		{
+			return Task.CompletedTask;
+		}
+
+		_pendingFailedRequest = null;
+
+		if (Logger.IsEnabled(LogLevel.Information))
+		{
+			Logger.LogInformationMessage($"Retrying pending navigation '{pending.Route.Base}' after hot-reload");
+		}
+
+		return NavigateAsync(pending);
+	}
 
 	protected ControlNavigator(
 		ILogger logger,

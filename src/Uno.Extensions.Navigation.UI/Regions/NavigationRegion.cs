@@ -13,6 +13,16 @@ public sealed class NavigationRegion : IRegion
 	private bool _isRoot;
 	private bool _isLoaded;
 	private bool _wasUnloaded;
+
+	/// <summary>
+	/// True when this region was created as a root region by
+	/// <see cref="InitializeRootRegion"/>. Used by callers (e.g. the navigator
+	/// pipeline) to distinguish a legitimately-parentless region from one whose
+	/// parent was nulled by <see cref="ViewUnloaded"/> after an HR-driven view
+	/// replacement — the latter is an orphaned in-flight target and any
+	/// navigation against it should be silently aborted.
+	/// </summary>
+	internal bool IsRoot => _isRoot;
 	// Set by FrameNavigator before Children.Clear() to indicate this region is being
 	// unloaded due to navigation (not Hot Reload). When true, HandleLoaded skips the
 	// HR re-cascade because the parent navigator will cascade the correct route itself.
@@ -127,6 +137,11 @@ public sealed class NavigationRegion : IRegion
 			_logger.LogTraceMessage($"(Name: {Name}) Setting parent to null, to detach from region hierarchy");
 		}
 
+		if (_logger.IsEnabled(LogLevel.Information))
+		{
+			_logger.LogInformationMessage($"[NavRegion] '{Name ?? string.Empty}' DETACH() — Parent='{Parent?.Name ?? "<root>"}' nulled (view: {View?.GetType().Name})");
+		}
+
 		this.Parent = null;
 	}
 
@@ -196,6 +211,15 @@ public sealed class NavigationRegion : IRegion
 		View.Loaded += ViewLoaded;
 		View.Unloaded -= ViewUnloaded;
 
+		// Information-level diagnostic so the orphaning of in-flight navigation
+		// targets is visible in real-app logs without enabling Trace. When this
+		// fires for a Frame whose navigation is still in progress, the in-flight
+		// CoreNavigateAsync will see Region.Parent == null and warn.
+		if (_logger.IsEnabled(LogLevel.Information))
+		{
+			_logger.LogInformationMessage($"[NavRegion] '{Name ?? string.Empty}' VIEW UNLOADED — Parent='{Parent?.Name ?? "<root>"}' will be nulled (view: {View?.GetType().Name})");
+		}
+
 		Parent = null;
 	}
 
@@ -237,10 +261,19 @@ public sealed class NavigationRegion : IRegion
 			{
 				_logger.LogTraceMessage($"(Name: {Name}) Parent region found ({parent is not null}) with name ({Name})");
 			}
-      
+
 			if (parent is not null)
 			{
 				Parent = parent;
+
+				// Information-level diagnostic so the region-attach order is visible
+				// in real-app logs without enabling Trace. This is what lets us
+				// diagnose the race between an HR-triggered cascade and the
+				// not-yet-attached child regions it tries to walk into.
+				if (_logger.IsEnabled(LogLevel.Information))
+				{
+					_logger.LogInformationMessage($"[NavRegion] '{Name ?? string.Empty}' attached as child of parent region (parent now has {parent.Children.Count} child(ren); view: {View?.GetType().Name})");
+				}
 			}
 		}
 
@@ -251,8 +284,7 @@ public sealed class NavigationRegion : IRegion
 				_logger.LogTraceMessage($"(Name: {Name}) No parent, and root region hasn't been created, so assume this region should be root");
 			}
 
-
-			var sp = View.FindServiceProvider();
+			var sp = View?.FindServiceProvider();
 			var services = sp?.CreateNavigationScope();
 			if (services is null)
 			{
@@ -356,6 +388,18 @@ public sealed class NavigationRegion : IRegion
 			// Skip if this region was unloaded due to navigation (not HR) — the parent
 			// navigator (e.g., FrameNavigator) will cascade the correct route itself
 			// via AdjustRequestForChildNavigation / NavigateChildRegions.
+			//
+			// Note: when HR's ReplaceViewInstance recreates a page, every descendant
+			// region's HandleLoaded fires on a separate dispatcher tick (children
+			// load bottom-up after their parents) — so each sibling needs to re-issue
+			// the parent re-cascade in order for the parent's fan-out to include the
+			// newly-attached child. An earlier attempt to coalesce these calls (skip
+			// when an entry for parentNav is already in flight) regressed visible
+			// rendering because later-loading siblings never received their initial
+			// navigation: the first sibling's cascade fanned out before the later
+			// siblings were attached, and the coalescing made the later siblings
+			// skip their own re-cascade. The multi-attach noise from this loop is
+			// the correct behavior.
 			if ((_wasUnloaded || _replacedByHotReload) && !_suppressReCascadeOnReload && Parent is not null && navigator.Route is null)
 			{
 				var parentNav = Parent.Navigator();

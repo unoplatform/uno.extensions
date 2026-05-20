@@ -1,5 +1,6 @@
 using System.Collections.Immutable;
 using System.Reflection.Metadata;
+using Uno.Extensions.Navigation.Navigators;
 using Uno.Extensions.Navigation.Regions;
 
 [assembly: MetadataUpdateHandler(typeof(Uno.Extensions.Navigation.UI.NavigationRouteUpdateHandler))]
@@ -25,6 +26,18 @@ internal sealed class NavigationRouteContext
 	/// when newly registered nested IsDefault routes become available.
 	/// </summary>
 	public IRegion? RootRegion { get; set; }
+
+	/// <summary>
+	/// Coalescing flag set to 1 when a cascade-walk lambda is enqueued on the
+	/// dispatcher and reset to 0 once the lambda begins executing. While set,
+	/// further <see cref="NavigationRouteUpdateHandler.ScheduleCascade"/> calls
+	/// are no-ops — the already-pending walk will pick up the latest route
+	/// table when it runs. This prevents a burst of HR deltas (each Write
+	/// workspace file triggers a separate <c>UpdateApplication</c> call) from
+	/// stacking N cascades that race against each other and tear down/rebuild
+	/// dynamically-created FrameViews multiple times within a few milliseconds.
+	/// </summary>
+	public int CascadeScheduled;
 }
 
 /// <summary>
@@ -133,9 +146,9 @@ internal static class NavigationRouteUpdateHandler
 		// dispatcher is starved while the HR pipeline keeps the thread busy.
 		// TryEnqueue gives the HR pipeline time to drain before the navigation
 		// runs and lets its async continuations make progress.
-		if (rebuiltSuccessfully && ctx.RootRegion is { } root)
+		if (rebuiltSuccessfully && ctx.RootRegion is { })
 		{
-			ScheduleCascade(root, resolver);
+			ScheduleCascade(ctx);
 		}
 	}
 
@@ -149,19 +162,88 @@ internal static class NavigationRouteUpdateHandler
 	{
 		foreach (var ctx in _contexts)
 		{
-			if (ctx.Resolver is { } resolver && ctx.RootRegion is { } root)
+			if (ctx.Resolver is not null && ctx.RootRegion is not null)
 			{
-				ScheduleCascade(root, resolver);
+				ScheduleCascade(ctx);
 			}
 		}
 	}
 
-	private static void ScheduleCascade(IRegion root, RouteResolver resolver)
+	private static void ScheduleCascade(NavigationRouteContext ctx)
 	{
-		var dispatcher = root.Services?.GetService<IDispatcher>();
-		if (dispatcher is not null)
+		if (ctx.RootRegion is not { } root)
 		{
-			dispatcher.TryEnqueue(() => CascadeNewDefaultsFromRoot(root, resolver));
+			return;
+		}
+
+		var dispatcher = root.Services?.GetService<IDispatcher>();
+		if (dispatcher is null)
+		{
+			return;
+		}
+
+		// Coalesce: if a cascade lambda is already pending on the dispatcher,
+		// skip enqueueing a second one. The pending lambda runs *after* every
+		// currently-queued HR delta has been applied (TryEnqueue is FIFO), so
+		// it will observe the final route table and the final region tree from
+		// the burst — there is no information lost by skipping. This collapses
+		// the "Write workspace file → HR delta → cascade enqueued" cycle that
+		// fires N times per agent burst into a single cascade.
+		if (Interlocked.CompareExchange(ref ctx.CascadeScheduled, 1, 0) != 0)
+		{
+			return;
+		}
+
+		var enqueued = dispatcher.TryEnqueue(() =>
+		{
+			// Reset the flag at the start of execution so a fresh HR delta
+			// arriving while we are walking still gets its own follow-up
+			// cascade (this walk only sees the tree at scheduling time).
+			Interlocked.Exchange(ref ctx.CascadeScheduled, 0);
+
+			// Read the resolver from ctx at execution time, not at scheduling
+			// time: when this lambda was enqueued, a later HR delta may have
+			// landed and replaced ctx.Resolver with a freshly-rebuilt instance
+			// containing newly-registered routes. The coalescing flag absorbed
+			// that delta's ScheduleCascade call, so this single pending lambda
+			// is responsible for cascading the latest known resolver — capturing
+			// the parameter at scheduling time would freeze it to a stale view.
+			if (ctx.Resolver is not { } resolver)
+			{
+				return;
+			}
+
+			CascadeNewDefaultsFromRoot(root, resolver);
+
+			// Re-issue any navigation requests that were dropped earlier because
+			// their target view type was not yet present in the assembly. The
+			// resolver has now been rebuilt with the latest route table, so a
+			// previously-failed mapping may resolve successfully on retry.
+			// Walks the live region tree without short-circuiting (unlike the
+			// IsDefault cascade above) so every navigator with a pending request
+			// is given a chance to recover.
+			RetryPendingFailedRequestsFromRoot(root);
+		});
+
+		if (!enqueued)
+		{
+			// Dispatcher refused the work item — release the coalescing flag so
+			// the next HR delta can retry. Otherwise the flag would stay set
+			// indefinitely and no further cascades would run for this context.
+			Interlocked.Exchange(ref ctx.CascadeScheduled, 0);
+		}
+	}
+
+	private static void RetryPendingFailedRequestsFromRoot(IRegion region)
+	{
+		if (region.Navigator() is ControlNavigator { HasPendingFailedRequest: true } cn)
+		{
+			_ = cn.RetryPendingFailedRequestAsync();
+		}
+
+		foreach (var child in region.Children.ToArray())
+		{
+			RetryPendingFailedRequestsFromRoot(child);
 		}
 	}
 

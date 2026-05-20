@@ -68,17 +68,39 @@ public class ContentControlNavigator : ControlNavigator<ContentControl>
 			Region.Children.Clear();
 
 			if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Creating instance of type '{viewType.Name}'");
-			var content = CreateControlFromType(viewType); 
-			if (path is not null &&
-					content is UI.Controls.FrameView fe)
-			{
-				fe.SetName(path);
-			}
-			Control.Content = content;
-			_content = Control.Content as FrameworkElement;
+			var content = CreateControlFromType(viewType);
 
-			if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage("Instance created");
-			return path;
+			if (content is null)
+			{
+				// CreateControlFromType silently swallows construction exceptions and
+				// returns null when the view type cannot be instantiated. This is the
+				// hot-reload race surfaced by Studio Live: an initial navigation may
+				// fire before HR has finished loading the target type's dependencies,
+				// causing Activator.CreateInstance to throw. Fall through to the
+				// failure tail so ControlNavigator records the request for retry on
+				// the next HotReloadTypesUpdated signal.
+				if (Logger.IsEnabled(LogLevel.Warning))
+					Logger.LogWarningMessage($"CreateControlFromType returned null for view type '{viewType.Name}'");
+			}
+			else
+			{
+				if (path is not null &&
+						content is UI.Controls.FrameView fe)
+				{
+					fe.SetName(path);
+				}
+				Control.Content = content;
+				_content = Control.Content as FrameworkElement;
+
+				if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage("Instance created");
+
+				// The Page-wrap branch above intentionally null-ed out `path` because
+				// the inner FrameView's navigator owns the actual page route. Returning
+				// null here would conflate that benign case with a real failure and
+				// trip ControlNavigator's pending-retry tracking on every page nav.
+				// Report an empty path instead so callers see a successful Show().
+				return path ?? string.Empty;
+			}
 		}
 		catch (Exception ex)
 		{

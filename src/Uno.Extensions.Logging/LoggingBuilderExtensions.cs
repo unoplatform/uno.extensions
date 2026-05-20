@@ -205,4 +205,33 @@ public static class LoggingBuilderExtensions
 		builder.AddFilter("Uno.Foundation.WebAssemblyRuntime", logLevel);
 		return builder;
 	}
+
+	/// <summary>
+	/// Sets the log level for namespaces related to Uno.Extensions navigation —
+	/// navigators, regions, route resolution, and hot-reload re-cascade. Use this
+	/// to surface region-attach order, default-cascade behavior, and failure
+	/// modes such as "Region X has no children to forward request to" with
+	/// surrounding context.
+	/// <br/><br/>
+	/// This method configures the following namespaces:
+	/// <br/>Uno.Extensions.Navigation
+	/// <br/>Uno.Extensions.Navigation.UI
+	/// <br/>Uno.Extensions.Navigation.Toolkit
+	/// </summary>
+	/// <param name="builder">
+	/// The <see cref="ILoggingBuilder"/> to configure.
+	/// </param>
+	/// <param name="logLevel">
+	/// The desired <see cref="LogLevel"/> to filter which events are collected.
+	/// </param>
+	/// <returns>
+	/// The <see cref="ILoggingBuilder"/> to allow chaining.
+	/// </returns>
+	public static ILoggingBuilder NavigationLogLevel(this ILoggingBuilder builder, LogLevel logLevel)
+	{
+		builder.AddFilter("Uno.Extensions.Navigation", logLevel);
+		builder.AddFilter("Uno.Extensions.Navigation.UI", logLevel);
+		builder.AddFilter("Uno.Extensions.Navigation.Toolkit", logLevel);
+		return builder;
+	}
 }

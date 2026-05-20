@@ -140,7 +140,7 @@ public class PanelVisiblityNavigator : ControlNavigator<Panel>
 		}
 
 		// Only reassign region parents for the currently visible control,
-		// not the entire panel. This prevents collapsed/inactive tab content 
+		// not the entire panel. This prevents collapsed/inactive tab content
 		// regions from being re-added as children, which would cause
 		// GetRoute() to pick the wrong (deepest) route from an inactive tab.
 		if (controlToShow is not null)
@@ -148,7 +148,20 @@ public class PanelVisiblityNavigator : ControlNavigator<Panel>
 			controlToShow.ReassignRegionParent();
 		}
 
-		return path;
+		// If no control could be created (e.g. CreateControlFromType returned null
+		// because the type's constructor threw while a hot-reload was still in
+		// flight), report failure to ControlNavigator so the request is recorded
+		// for retry once HR delivers the missing piece.
+		if (controlToShow is null)
+		{
+			return default;
+		}
+
+		// FrameView-wrap branch null-ed out `path` by design — the inner Frame
+		// owns the actual page route. Return empty rather than null so callers
+		// see this as success (not a real failure) and skip pending-retry
+		// tracking + spurious "Show returned null" warnings.
+		return path ?? string.Empty;
 	}
 
 	protected override Task CheckLoadedAsync()

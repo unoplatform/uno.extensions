@@ -1070,6 +1070,76 @@ public class Given_NavigationHotReload
 			"After XAML HR page swap, the navigation framework should re-inject the ViewModel as DataContext");
 	}
 
+	// ──────────────────────────────────────────────────────────────────────
+	// 13. Pending failed-navigation retry after hot-reload
+	// ──────────────────────────────────────────────────────────────────────
+
+	/// <summary>
+	/// Regression test for the Studio Live scaffold-then-hot-reload scenario.
+	/// When an initial navigation fires before the target view type can be
+	/// constructed (e.g. the user prompts an AI agent to build a new page, the
+	/// route is registered but the type is not yet present in the assembly),
+	/// <c>FrameNavigator.Show</c> catches the construction exception and
+	/// returns null. Without recovery, the host stays on a blank/no-content
+	/// state forever — every subsequent HR delta patches types that are never
+	/// mounted in the visual tree.
+	///
+	/// This test reproduces the failure with a gate-controlled page whose
+	/// constructor throws while <see cref="HotReloadPendingRetryGate"/> is
+	/// closed, then verifies that <see cref="UI.NavigationRouteUpdateHandler"/>
+	/// re-issues the recorded pending request once HR flips the gate and the
+	/// resolver is rebuilt — without any explicit re-navigation by user code.
+	/// </summary>
+	[TestMethod]
+	[RunsOnUIThread]
+	public async Task When_NavTargetTypeNotYetConstructable_Then_HRTriggersPendingRetry(CancellationToken ct)
+	{
+		await using var app = await SetupPendingRetryAppAsync(ct);
+
+		// Baseline: HotReloadPageOne is the working initial route.
+		var firstPage = ResolveCurrentPage<HotReloadPageOne>(app.NavigationRoot);
+		firstPage.Should().NotBeNull("Initial route should land on HotReloadPageOne");
+
+		// Attempt to navigate to the gated page. Its constructor throws while
+		// the gate is closed, so FrameNavigator.Show catches the exception and
+		// returns null — ControlNavigator records the request as pending.
+		// We do not await the result: the navigation completes (with
+		// Route.Empty) but the visual tree is not updated to the target page.
+		_ = app.FrameNavigator.NavigateRouteAsync(this, "HotReloadPendingRetryPage");
+
+		// Give the failed navigation time to settle and the pending slot to be set.
+		await Task.Delay(500, ct);
+
+		ResolveCurrentPage<HotReloadPendingRetryPage>(app.NavigationRoot)
+			.Should().BeNull(
+				"With the gate closed the target page's constructor throws and the " +
+				"navigation must NOT have landed on the target page yet.");
+
+		// C# HR: flip the gate so the page constructor no longer throws.
+		// NavigationRouteUpdateHandler.UpdateApplication rebuilds the route
+		// resolver and the retry walk re-issues the pending failed request.
+		await using var _ = await HotReloadHelper.UpdateSourceFile(
+			"../../Uno.Extensions.Navigation.UI.Tests/HotReloadPendingRetryGate.cs",
+			"return false;",
+			"return true;",
+			ct);
+
+		await WaitForRouteAsync(
+			app.NavigationRoot,
+			app.FrameNavigator,
+			"HotReloadPendingRetryPage",
+			TimeSpan.FromSeconds(30),
+			ct);
+
+		var pendingPage = ResolveCurrentPage<HotReloadPendingRetryPage>(app.NavigationRoot);
+		pendingPage.Should().NotBeNull(
+			"After HR flips the gate, NavigationRouteUpdateHandler must re-issue " +
+			"the pending failed navigation request and the target page must mount " +
+			"in the visual tree without any explicit re-navigation by user code.");
+		pendingPage!.DisplayedValue.Should().Be("pending-retry-loaded",
+			"The retried page instance must have been constructed by the post-HR retry.");
+	}
+
 	#region Setup helpers
 
 	/// <summary>
@@ -1479,6 +1549,25 @@ public class Given_NavigationHotReload
 					{
 						new RouteMap("HotReloadPageOne", View: views.FindByView<HotReloadPageOne>(), IsDefault: true),
 						new RouteMap("ParamOrderPage", View: views.FindByView<HotReloadParamOrderPage>()),
+					}));
+			},
+			"HotReloadPageOne",
+			ct);
+
+	/// <summary>Pending failed-nav retry test → PageOne as initial, PendingRetryPage as gated target.</summary>
+	private static Task<HotReloadNavTestApp> SetupPendingRetryAppAsync(CancellationToken ct)
+		=> SetupAppAsync(
+			(views, routes) =>
+			{
+				views.Register(
+					new ViewMap<HotReloadPageOne>(),
+					new ViewMap<HotReloadPendingRetryPage>());
+
+				routes.Register(
+					new RouteMap("", Nested: new RouteMap[]
+					{
+						new RouteMap("HotReloadPageOne", View: views.FindByView<HotReloadPageOne>(), IsDefault: true),
+						new RouteMap("HotReloadPendingRetryPage", View: views.FindByView<HotReloadPendingRetryPage>()),
 					}));
 			},
 			"HotReloadPageOne",

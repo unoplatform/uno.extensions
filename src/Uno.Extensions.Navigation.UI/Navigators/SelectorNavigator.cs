@@ -208,7 +208,10 @@ public abstract class SelectorNavigator<TControl> : ControlNavigator<TControl>
 
 		if (Control is null)
 		{
-			return null;
+			// Empty (not null) so ControlNavigator does not interpret this as a
+			// real failure and record the request for hot-reload retry — there
+			// is no construction to retry; the host control simply isn't there.
+			return string.Empty;
 		}
 
 		// Invoke detach and clean up reference to the delegate
@@ -233,8 +236,12 @@ public abstract class SelectorNavigator<TControl> : ControlNavigator<TControl>
 				SelectedItem = item;
 			}
 
-			// Don't return path, as we need for path to be passed down to children
-			return default;
+			// Empty (not null) so the path is still passed down to children
+			// (ControlNavigator treats empty as success-no-route) while
+			// avoiding the spurious "Show returned null" warning and the
+			// pending-retry tracking, which do not apply to selection-only
+			// navigators.
+			return string.Empty;
 		}
 		finally
 		{

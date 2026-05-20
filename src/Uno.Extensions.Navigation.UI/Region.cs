@@ -84,7 +84,6 @@ public static class Region
 			Logger.LogTraceMessage($"Registering region for element {element.GetType().Name} IsActive ({active})");
 		}
 
-
 		var existingRegion = Region.GetInstance(element);
 		if (existingRegion is not null)
 		{
@@ -150,7 +149,6 @@ public static class Region
 
 	public static void ReassignRegionParent(this FrameworkElement element)
 	{
-
 		var childrenCount = VisualTreeHelper.GetChildrenCount(element);
 		for (int i = 0; i < childrenCount; i++)
 		{
