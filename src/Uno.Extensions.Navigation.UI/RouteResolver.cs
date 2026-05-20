@@ -48,6 +48,23 @@ public class RouteResolver : IRouteResolver
 		);
 		Mappings.Add(messageDialogRoute);
 
+		LogResolverState("ctor");
+	}
+
+	private void LogResolverState(string trigger)
+	{
+		try
+		{
+			System.Diagnostics.Debug.WriteLine($"[NavRouteResolver:{trigger}] First='{First?.Path ?? "<null>"}' MappingsCount={Mappings.Count} TopLevelRoutes={string.Join(",", Mappings.Where(m => m.Parent is null).Select(m => $"{m.Path}(nested={m.Nested?.Length ?? 0})"))}");
+		}
+		catch
+		{
+		}
+
+		if (Logger.IsEnabled(LogLevel.Information))
+		{
+			Logger.LogInformationMessage($"[NavRouteResolver:{trigger}] First='{First?.Path ?? "<null>"}' MappingsCount={Mappings.Count} TopLevelRoutes={string.Join(",", Mappings.Where(m => m.Parent is null).Select(m => $"{m.Path}(nested={m.Nested?.Length ?? 0})"))}");
+		}
 	}
 
 	/// <summary>
@@ -75,6 +92,8 @@ public class RouteResolver : IRouteResolver
 			View: () => typeof(MessageDialog),
 			ResultData: typeof(MessageDialog)
 		));
+
+		LogResolverState("Rebuild");
 	}
 
 	private void PrintViewMaps(IEnumerable<RouteInfo> maps, string prefix = "")

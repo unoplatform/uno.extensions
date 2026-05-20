@@ -57,10 +57,41 @@ public abstract class ControlNavigator<TControl> : ControlNavigator
 
 		if (executedPath is null)
 		{
+			// ContentControlNavigator/PanelVisiblityNavigator deliberately return
+			// null when they wrap a Page-subclass view in a FrameView — the page
+			// itself is the navigation target and the wrapper's DataContext is
+			// intentionally nulled (see FrameView ctor) to prevent ViewModel
+			// inheritance. Returning Route.Empty here is the right thing for the
+			// downstream pipeline (Trim keeps the request route intact, so the
+			// inner Frame's FrameNavigator receives the page navigation), but we
+			// MUST still wait for the FrameView to load — otherwise the inner
+			// Frame's NavigationRegion has no chance to register as a child of
+			// this region before the parent navigator forwards the request, and
+			// the cascade has nothing to dispatch into. Skip InitializeCurrentView
+			// itself — it would set DataContext on the FrameView wrapper and
+			// override FrameView's null DataContext invariant.
+			if (mapping?.RenderView is { } renderView && renderView.IsSubclassOf(typeof(Page))
+				&& CurrentView is FrameView fv)
+			{
+				await fv.EnsureLoaded();
+				ClearPendingFailedRequest();
+				return Route.Empty;
+			}
+
 			if (Logger.IsEnabled(LogLevel.Warning))
 				Logger.LogWarningMessage($"Navigation to '{route.Base}' failed: Show() returned null. No matching view was found or created. Ensure a RouteMap is registered or a Page type named '{route.Base}Page' (or similar suffix) exists in the assembly.");
+
+			// Hot-reload may add the missing type after this point. Remember the
+			// request so NavigationRouteUpdateHandler can retry it once the
+			// resolver has been rebuilt with the newly registered types. The
+			// retry is cleared on the success branch below, or replaced when a
+			// superseding request fails.
+			RememberPendingFailedRequest(request);
+
 			return Route.Empty;
 		}
+
+		ClearPendingFailedRequest();
 
 		var executedRoute = route with { Base = executedPath, Path = null };
 
@@ -140,6 +171,54 @@ public abstract class ControlNavigator<TControl> : ControlNavigator
 public abstract class ControlNavigator : Navigator
 {
 	public virtual bool CanGoBack => false;
+
+	// The most recent NavigationRequest whose Show() resolved to null because
+	// the target view type could not be created — typically the type doesn't
+	// exist yet in the loaded assembly (Studio Live / hot-reload scaffolding).
+	// NavigationRouteUpdateHandler walks the live region tree after a C# or
+	// XAML hot-reload and re-issues these requests so an initial navigation
+	// that fired before the missing type was hot-reloaded in can self-heal
+	// without requiring a full app restart. Only accessed on the UI dispatcher
+	// thread (ExecuteRequestAsync runs under Dispatcher.ExecuteAsync; the HR
+	// retry walk is dispatched via TryEnqueue), so no synchronization needed.
+	private NavigationRequest? _pendingFailedRequest;
+
+	internal bool HasPendingFailedRequest => _pendingFailedRequest is not null;
+
+	protected void RememberPendingFailedRequest(NavigationRequest request)
+	{
+		_pendingFailedRequest = request;
+	}
+
+	protected void ClearPendingFailedRequest()
+	{
+		_pendingFailedRequest = null;
+	}
+
+	/// <summary>
+	/// Re-issues the most recent failed navigation request, if one is pending.
+	/// Called by <see cref="UI.NavigationRouteUpdateHandler"/> after a C# or
+	/// XAML hot-reload has potentially added the previously-missing type to
+	/// the running assembly. The pending slot is cleared before re-issuing so
+	/// a second failure cleanly re-arms it for the next hot-reload cycle.
+	/// </summary>
+	internal Task RetryPendingFailedRequestAsync()
+	{
+		var pending = _pendingFailedRequest;
+		if (pending is null)
+		{
+			return Task.CompletedTask;
+		}
+
+		_pendingFailedRequest = null;
+
+		if (Logger.IsEnabled(LogLevel.Information))
+		{
+			Logger.LogInformationMessage($"Retrying pending navigation '{pending.Route.Base}' after hot-reload");
+		}
+
+		return NavigateAsync(pending);
+	}
 
 	protected ControlNavigator(
 		ILogger logger,
