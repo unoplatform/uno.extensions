@@ -112,12 +112,9 @@ public abstract class ControlNavigator<TControl> : ControlNavigator
 
 		// If we were in a pending-retry loop for this same route, the success
 		// here is the moment the missing type finally landed via hot-reload.
-		// Log it at Information so the bundle has a clear "recovered" marker
-		// that pairs with the original Warning, rather than the navigation
-		// silently going green with no log trail.
-		if (HasPendingFailedRequestFor(route) && Logger.IsEnabled(LogLevel.Information))
+		if (HasPendingFailedRequestFor(route) && Logger.IsEnabled(LogLevel.Debug))
 		{
-			Logger.LogInformationMessage($"Navigation to '{route.Base}' recovered after hot-reload (pending retry succeeded).");
+			Logger.LogDebugMessage($"Navigation to '{route.Base}' recovered after hot-reload (pending retry succeeded).");
 		}
 
 		ClearPendingFailedRequest();
@@ -260,9 +257,9 @@ public abstract class ControlNavigator : Navigator
 			return Task.CompletedTask;
 		}
 
-		if (Logger.IsEnabled(LogLevel.Information))
+		if (Logger.IsEnabled(LogLevel.Debug))
 		{
-			Logger.LogInformationMessage($"Retrying pending navigation '{pending.Route.Base}' after hot-reload");
+			Logger.LogDebugMessage($"Retrying pending navigation '{pending.Route.Base}' after hot-reload");
 		}
 
 		return NavigateAsync(pending);

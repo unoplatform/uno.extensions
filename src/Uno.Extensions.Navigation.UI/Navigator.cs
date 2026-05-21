@@ -779,7 +779,10 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 				var inPendingRetry = (Region.Navigator() as ControlNavigator)?.HasPendingFailedRequest ?? false;
 				if (inPendingRetry)
 				{
-					if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Region '{Region.Name}' has no children to forward request to (route: '{request.Route.Base}', view loaded: {Region.View?.IsLoaded}) — quiet because a pending HR retry is in flight on this region");
+					if (Logger.IsEnabled(LogLevel.Debug))
+					{
+						Logger.LogDebugMessage($"Region '{Region.Name}' has no children to forward request to (route: '{request.Route.Base}', view loaded: {Region.View?.IsLoaded}) — quiet because a pending HR retry is in flight on this region");
+					}
 				}
 				else if (Logger.IsEnabled(LogLevel.Warning))
 				{
