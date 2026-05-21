@@ -214,23 +214,20 @@ public abstract class ControlNavigator : Navigator
 
 	internal bool HasPendingFailedRequest => _pendingFailedRequest is not null;
 
-	protected void RememberPendingFailedRequest(NavigationRequest request)
+	internal void RememberPendingFailedRequest(NavigationRequest request)
 	{
 		_pendingFailedRequest = request;
 	}
 
-	protected void ClearPendingFailedRequest()
+	internal void ClearPendingFailedRequest()
 	{
 		_pendingFailedRequest = null;
 	}
 
-	/// <summary>
-	/// True when there is a pending failed request whose <see cref="Route.Base"/>
-	/// matches <paramref name="route"/>. Lets <c>ExecuteRequestAsync</c> in derived
-	/// generic class identify "this is a re-fire of the same HR poll" without
-	/// reaching into the private pending slot.
-	/// </summary>
-	protected bool HasPendingFailedRequestFor(Route route)
+	// True when there is a pending failed request whose Route.Base matches `route`.
+	// Lets ExecuteRequestAsync in the derived generic class identify "this is a
+	// re-fire of the same HR poll" without reaching into the private pending slot.
+	internal bool HasPendingFailedRequestFor(Route route)
 		=> string.Equals(_pendingFailedRequest?.Route.Base, route.Base, StringComparison.Ordinal);
 
 	/// <summary>
