@@ -63,9 +63,24 @@ internal static class NavigationRouteUpdateHandler
 			Region.Logger.LogInformationMessage($"Hot-reload UpdateApplication received {updatedTypes?.Length ?? 0} updated type(s); refreshing {_contexts.Count} navigation context(s)");
 		}
 
+		// Snapshot under iteration: _contexts is ImmutableList, but a per-context
+		// throw must not abort the loop — one broken context should not deny HR
+		// recovery to the others. The .NET HR pipeline also has no resilience to
+		// exceptions thrown back from a MetadataUpdateHandler, so swallow at this
+		// boundary and log instead.
 		foreach (var ctx in _contexts)
 		{
-			RebuildRoutes(ctx);
+			try
+			{
+				RebuildRoutes(ctx);
+			}
+			catch (Exception ex)
+			{
+				if (Region.Logger.IsEnabled(LogLevel.Error))
+				{
+					Region.Logger.LogErrorMessage($"Hot-reload RebuildRoutes failed for a navigation context: {ex.GetType().Name}: {ex.Message}. Other contexts will still be processed.");
+				}
+			}
 		}
 	}
 
@@ -217,12 +232,38 @@ internal static class NavigationRouteUpdateHandler
 	{
 		if (region.Navigator() is ControlNavigator { HasPendingFailedRequest: true } cn)
 		{
-			_ = cn.RetryPendingFailedRequestAsync();
+			SafeFireAndForget(cn.RetryPendingFailedRequestAsync(), "retry pending failed navigation");
 		}
 
 		foreach (var child in region.Children.ToArray())
 		{
 			RetryPendingFailedRequestsFromRoot(child);
+		}
+	}
+
+	// Awaits a fire-and-forget navigation task on the dispatcher and swallows
+	// any throw with a Warning. The HR cascade dispatches navigation work
+	// through TryEnqueue, so the caller cannot observe exceptions from the
+	// returned Task. An unhandled throw becomes an unobserved TaskException —
+	// silent on WASM, a TaskScheduler.UnobservedTaskException on desktop.
+	// AGENTS.md §10: every fire-and-forget MUST have a try/catch.
+	private static async void SafeFireAndForget(Task task, string operation)
+	{
+		try
+		{
+			await task;
+		}
+		catch (OperationCanceledException)
+		{
+			// Expected when the dispatcher is torn down mid-cascade (e.g. host
+			// shutdown immediately after HR delivery). Silent — not an error.
+		}
+		catch (Exception ex)
+		{
+			if (Region.Logger.IsEnabled(LogLevel.Warning))
+			{
+				Region.Logger.LogWarningMessage($"Hot-reload {operation} threw {ex.GetType().Name}: {ex.Message}. Region tree state is unchanged; subsequent HR deltas may recover.");
+			}
 		}
 	}
 
@@ -265,7 +306,7 @@ internal static class NavigationRouteUpdateHandler
 					}
 					var route = new Route(Qualifiers.None, Base: defaultNested.Path);
 					var request = new NavigationRequest(pageNavigator, route.AsInternal());
-					_ = pageNavigator.NavigateAsync(request);
+					SafeFireAndForget(pageNavigator.NavigateAsync(request), $"IsDefault cascade to '{defaultNested.Path}'");
 					return;
 				}
 			}

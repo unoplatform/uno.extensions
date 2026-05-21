@@ -54,7 +54,19 @@ internal class NavigationHostedService : IHostedService, IStartupService
 	{
 		if (_routeContext is not null)
 		{
-			NavigationRouteUpdateHandler.Unregister(_routeContext);
+			try
+			{
+				NavigationRouteUpdateHandler.Unregister(_routeContext);
+			}
+			catch (Exception ex)
+			{
+				// Unregister must not throw — IHostedService.StopAsync exceptions
+				// abort host shutdown in multi-host scenarios. Log and continue.
+				if (_regionLogger.IsEnabled(LogLevel.Warning))
+				{
+					_regionLogger.LogWarningMessage($"NavigationRouteUpdateHandler.Unregister threw {ex.GetType().Name}: {ex.Message}. Continuing host shutdown.");
+				}
+			}
 		}
 
 		if (_regionLogger.IsEnabled(LogLevel.Information))
