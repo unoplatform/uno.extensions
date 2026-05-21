@@ -21,11 +21,6 @@ internal class NavigationHostedService : IHostedService, IStartupService
 	{
 		Region.Logger = _regionLogger;
 
-		if (_regionLogger.IsEnabled(LogLevel.Information))
-		{
-			_regionLogger.LogInformationMessage($"[NavHostedService] StartAsync (routeContext={(_routeContext is not null ? "present" : "null")}, routeResolver={_routeResolver?.GetType().Name ?? "<null>"})");
-		}
-
 		if (_routeContext is not null)
 		{
 			// HostBuilderExtensions.UseNavigation registers IRouteResolver
@@ -41,13 +36,14 @@ internal class NavigationHostedService : IHostedService, IStartupService
 			if (_routeContext.Resolver is null && _routeResolver is RouteResolver rr)
 			{
 				_routeContext.Resolver = rr;
-				if (_regionLogger.IsEnabled(LogLevel.Information))
-				{
-					_regionLogger.LogInformationMessage($"[NavHostedService] Assigned routeContext.Resolver = {rr.GetType().Name}");
-				}
 			}
 
 			NavigationRouteUpdateHandler.Register(_routeContext);
+		}
+
+		if (_regionLogger.IsEnabled(LogLevel.Information))
+		{
+			_regionLogger.LogInformationMessage($"Navigation engine started (hot-reload route refresh: {(_routeContext is not null ? "enabled" : "disabled")}, resolver: {_routeResolver?.GetType().Name ?? "<none>"})");
 		}
 
 		_completion.SetResult(true);
@@ -56,14 +52,14 @@ internal class NavigationHostedService : IHostedService, IStartupService
 
 	public Task StopAsync(CancellationToken cancellationToken)
 	{
-		if (_regionLogger.IsEnabled(LogLevel.Information))
-		{
-			_regionLogger.LogInformationMessage("[NavHostedService] StopAsync");
-		}
-
 		if (_routeContext is not null)
 		{
 			NavigationRouteUpdateHandler.Unregister(_routeContext);
+		}
+
+		if (_regionLogger.IsEnabled(LogLevel.Information))
+		{
+			_regionLogger.LogInformationMessage("Navigation engine stopped");
 		}
 
 		return Task.CompletedTask;

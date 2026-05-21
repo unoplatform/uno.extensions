@@ -48,23 +48,34 @@ public class RouteResolver : IRouteResolver
 		);
 		Mappings.Add(messageDialogRoute);
 
-		LogResolverState("ctor");
+		LogResolverState("constructed");
 	}
 
+	/// <summary>
+	/// Emits an Information-level summary of the resolver's current state
+	/// (first route, total mapping count, top-level route count). Called once
+	/// after construction and once per <see cref="Rebuild"/>. Operational logs
+	/// here are intentionally compact — they should answer "did the resolver
+	/// pick up my routes?" without dumping every nested path. For per-route
+	/// dumps enable Debug on this category.
+	/// </summary>
 	private void LogResolverState(string trigger)
 	{
-		try
+		if (!Logger.IsEnabled(LogLevel.Information))
 		{
-			System.Diagnostics.Debug.WriteLine($"[NavRouteResolver:{trigger}] First='{First?.Path ?? "<null>"}' MappingsCount={Mappings.Count} TopLevelRoutes={string.Join(",", Mappings.Where(m => m.Parent is null).Select(m => $"{m.Path}(nested={m.Nested?.Length ?? 0})"))}");
-		}
-		catch
-		{
+			return;
 		}
 
-		if (Logger.IsEnabled(LogLevel.Information))
+		var topLevelCount = 0;
+		foreach (var map in Mappings)
 		{
-			Logger.LogInformationMessage($"[NavRouteResolver:{trigger}] First='{First?.Path ?? "<null>"}' MappingsCount={Mappings.Count} TopLevelRoutes={string.Join(",", Mappings.Where(m => m.Parent is null).Select(m => $"{m.Path}(nested={m.Nested?.Length ?? 0})"))}");
+			if (map.Parent is null)
+			{
+				topLevelCount++;
+			}
 		}
+
+		Logger.LogInformationMessage($"RouteResolver {trigger}: First='{First?.Path ?? "<none>"}', TopLevelRoutes={topLevelCount}, TotalMappings={Mappings.Count}");
 	}
 
 	/// <summary>
@@ -93,7 +104,7 @@ public class RouteResolver : IRouteResolver
 			ResultData: typeof(MessageDialog)
 		));
 
-		LogResolverState("Rebuild");
+		LogResolverState("rebuilt");
 	}
 
 	private void PrintViewMaps(IEnumerable<RouteInfo> maps, string prefix = "")

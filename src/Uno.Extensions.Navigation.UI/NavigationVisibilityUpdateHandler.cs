@@ -29,8 +29,6 @@ internal static class NavigationVisibilityUpdateHandler
 
 	public static void CaptureState(FrameworkElement element, IDictionary<string, object> stateDictionary, Type[]? updatedTypes)
 	{
-		NavRouteHandlerDiag.Log($"NavVisibility.CaptureState called for element type '{element.GetType().Name}' (Region.Name='{Region.GetName(element) ?? string.Empty}')");
-
 		if (IsNavigationManagedElement(element))
 		{
 			stateDictionary[VisibilityKey] = element.Visibility;
@@ -46,16 +44,12 @@ internal static class NavigationVisibilityUpdateHandler
 			if (navigator?.Route is { Base.Length: > 0 } || region.Parent.Navigator()?.Route is { Base.Length: > 0 })
 			{
 				stateDictionary[HadActiveNavigationKey] = true;
-				NavRouteHandlerDiag.Log($"NavVisibility.CaptureState: marked HadActiveNavigation for element '{element.GetType().Name}'");
 			}
 		}
 	}
 
 	public static Task RestoreState(FrameworkElement element, IDictionary<string, object> stateDictionary, Type[]? updatedTypes)
 	{
-		var hadActive = stateDictionary.ContainsKey(HadActiveNavigationKey);
-		NavRouteHandlerDiag.Log($"NavVisibility.RestoreState called for element type '{element.GetType().Name}' (Region.Name='{Region.GetName(element) ?? string.Empty}', hadActiveNavigation={hadActive})");
-
 		if (stateDictionary.TryGetValue(VisibilityKey, out var value) && value is Visibility savedVisibility)
 		{
 			if (element.Visibility != savedVisibility)
@@ -75,7 +69,7 @@ internal static class NavigationVisibilityUpdateHandler
 		// NavigationRouteUpdateHandler.ScheduleCascadeForAllContexts below,
 		// which walks the live region tree and dispatches any newly-needed
 		// IsDefault nested route onto the matching child region.
-		if (hadActive
+		if (stateDictionary.ContainsKey(HadActiveNavigationKey)
 			&& element.GetInstance() is NavigationRegion newRegion)
 		{
 			newRegion.MarkReplacedByHotReload();

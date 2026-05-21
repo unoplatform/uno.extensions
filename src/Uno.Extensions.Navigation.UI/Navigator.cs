@@ -1,4 +1,5 @@
 using Uno.Extensions.Diagnostics;
+using Uno.Extensions.Navigation.Navigators;
 
 namespace Uno.Extensions.Navigation;
 
@@ -763,7 +764,27 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 
 			if (Region.Children.Count == 0)
 			{
-				if (Logger.IsEnabled(LogLevel.Warning)) Logger.LogWarningMessage($"Region '{Region.Name}' has no children to forward request to (route: '{request.Route}', view loaded: {Region.View?.IsLoaded})");
+				// The "no children to forward" condition is a true misconfiguration
+				// in steady state, but during HR cold-start it's the symptom of a
+				// transient race: the parent navigator forwards the request while
+				// the inner navigators (e.g. FrameView's inner Frame, FrameView's
+				// child page region) are still mid-load. If THIS region's
+				// ControlNavigator has a pending failed request — i.e. an earlier
+				// Show() returned null and the request is parked waiting for HR to
+				// deliver the missing type — the retry path will re-issue the
+				// navigation once children attach. In that state, demote the warn
+				// to Debug so the bundle doesn't fill up with the same race-symptom
+				// across every HR delta. Real misconfigurations (no pending retry,
+				// no HR in flight) still surface at Warning.
+				var inPendingRetry = (Region.Navigator() as ControlNavigator)?.HasPendingFailedRequest ?? false;
+				if (inPendingRetry)
+				{
+					if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Region '{Region.Name}' has no children to forward request to (route: '{request.Route}', view loaded: {Region.View?.IsLoaded}) — quiet because a pending HR retry is in flight on this region");
+				}
+				else if (Logger.IsEnabled(LogLevel.Warning))
+				{
+					Logger.LogWarningMessage($"Region '{Region.Name}' has no children to forward request to (route: '{request.Route}', view loaded: {Region.View?.IsLoaded})");
+				}
 				return default;
 			}
 			if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"Region has {Region.Children.Count} children");

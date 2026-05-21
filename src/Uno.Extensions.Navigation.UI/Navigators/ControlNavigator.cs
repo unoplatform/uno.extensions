@@ -78,8 +78,27 @@ public abstract class ControlNavigator<TControl> : ControlNavigator
 				return Route.Empty;
 			}
 
-			if (Logger.IsEnabled(LogLevel.Warning))
+			// Only warn on the FIRST failure for a given route. Hot-reload's poll
+			// pattern fires this branch on every HR delta until the missing type
+			// finally loads — that's expected behavior of the pending-retry path,
+			// but logging at Warning every time floods the bundle with N repeats
+			// of the same diagnostic and drowns out real misconfigurations.
+			// Distinguish "first time we've seen this route fail" (real signal —
+			// might be a typo or missing RouteMap registration) from "this route
+			// is already in the pending-retry queue" (already known, just waiting
+			// for HR to deliver the type) by comparing against the pending slot's
+			// current route. A bare null check on the pending slot isn't enough
+			// because a different failing route would have replaced the slot.
+			var sameRouteRetrying = HasPendingFailedRequestFor(route);
+
+			if (!sameRouteRetrying && Logger.IsEnabled(LogLevel.Warning))
+			{
 				Logger.LogWarningMessage($"Navigation to '{route.Base}' failed: Show() returned null. No matching view was found or created. Ensure a RouteMap is registered or a Page type named '{route.Base}Page' (or similar suffix) exists in the assembly.");
+			}
+			else if (sameRouteRetrying && Logger.IsEnabled(LogLevel.Debug))
+			{
+				Logger.LogDebugMessage($"Navigation to '{route.Base}' failed again: Show() returned null (pending retry — type not yet hot-reloaded in).");
+			}
 
 			// Hot-reload may add the missing type after this point. Remember the
 			// request so NavigationRouteUpdateHandler can retry it once the
@@ -89,6 +108,16 @@ public abstract class ControlNavigator<TControl> : ControlNavigator
 			RememberPendingFailedRequest(request);
 
 			return Route.Empty;
+		}
+
+		// If we were in a pending-retry loop for this same route, the success
+		// here is the moment the missing type finally landed via hot-reload.
+		// Log it at Information so the bundle has a clear "recovered" marker
+		// that pairs with the original Warning, rather than the navigation
+		// silently going green with no log trail.
+		if (HasPendingFailedRequestFor(route) && Logger.IsEnabled(LogLevel.Information))
+		{
+			Logger.LogInformationMessage($"Navigation to '{route.Base}' recovered after hot-reload (pending retry succeeded).");
 		}
 
 		ClearPendingFailedRequest();
@@ -194,6 +223,15 @@ public abstract class ControlNavigator : Navigator
 	{
 		_pendingFailedRequest = null;
 	}
+
+	/// <summary>
+	/// True when there is a pending failed request whose <see cref="Route.Base"/>
+	/// matches <paramref name="route"/>. Lets <c>ExecuteRequestAsync</c> in derived
+	/// generic class identify "this is a re-fire of the same HR poll" without
+	/// reaching into the private pending slot.
+	/// </summary>
+	protected bool HasPendingFailedRequestFor(Route route)
+		=> string.Equals(_pendingFailedRequest?.Route.Base, route.Base, StringComparison.Ordinal);
 
 	/// <summary>
 	/// Re-issues the most recent failed navigation request, if one is pending.
