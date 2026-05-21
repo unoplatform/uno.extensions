@@ -241,7 +241,7 @@ public abstract class ControlNavigator : Navigator
 	/// </summary>
 	/// <remarks>
 	/// We deliberately do NOT clear <see cref="_pendingFailedRequest"/> before
-	/// invoking <see cref="NavigateAsync"/>. If the retry fails again (the type
+	/// invoking NavigateAsync. If the retry fails again (the type
 	/// is still missing on this HR delta), the failure path in
 	/// <see cref="ControlNavigator{TControl}.ExecuteRequestAsync"/> needs to
 	/// detect "this is the same route we already had pending" via
