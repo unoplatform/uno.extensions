@@ -40,7 +40,7 @@ Severity: **blocker** when new blocking primitives are added without a `#if !__W
 
 ### 2. Async discipline — no blocking waits
 
-Flag every new `.Result`, `.Wait()`, `.GetAwaiter().GetResult()` access on a `Task` or `ValueTask`. These are unconditionally banned by AGENTS.md §10 — "NEVER use `.Result` / `.GetAwaiter().GetResult()` outside a controlled, documented sync bridging point." WASM deadlocks silently; desktop starves under load. The defense "it works on desktop" is not accepted.
+Flag every new `.Result`, `.Wait()`, `.GetAwaiter().GetResult()` access on a `Task` or `ValueTask`. These are unconditionally banned by AGENTS.md §3 (Framework & Platform Usage) — "NEVER use `.Result` / `.GetAwaiter().GetResult()` outside a controlled, documented sync bridging point." WASM deadlocks silently; desktop starves under load. The defense "it works on desktop" is not accepted.
 
 If a sync bridge is genuinely required (e.g., a platform callback that cannot be made async), it must be documented with a comment explaining why and kept in a tightly scoped helper, not inlined in business logic.
 

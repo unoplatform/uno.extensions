@@ -4,6 +4,7 @@ description: Audits code for vulnerabilities — injection risks, auth/authz gap
 tools: Read, Grep, Glob, WebFetch, WebSearch
 model: inherit
 ---
+<!-- cspell:ignore PKCE -->
 
 You are the SECURITY agent. Your job is to find vulnerabilities in the work under review — concretely and specifically, not as a generic checklist.
 

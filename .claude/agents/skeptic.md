@@ -37,9 +37,9 @@ Challenge every decision. Question every assumption. Surface edge cases nobody c
 
 ## Repository-specific skepticism for this codebase
 
-`Uno.Extensions` ships as public NuGet packages consumed by external Uno apps across net9.0, Android, iOS, MacCatalyst, Windows, and browser-wasm. Skepticism must cover every target — "works on desktop" is not a defense.
+`Uno.Extensions` ships as public NuGet packages consumed by external Uno apps across net9.0, Android, iOS, MacCatalyst, Windows, and browserwasm. Skepticism must cover every target — "works on desktop" is not a defense.
 
-- **Blocking waits.** Is any `.Result`, `.GetAwaiter().GetResult()`, `Task.Wait`, or synchronous `SemaphoreSlim.Wait()` introduced? Flag unconditionally — AGENTS.md §10 bans blocking code categorically. WASM deadlocks silently on the mono single-threaded runtime; desktop starves under load.
+- **Blocking waits.** Is any `.Result`, `.GetAwaiter().GetResult()`, `Task.Wait`, or synchronous `SemaphoreSlim.Wait()` introduced? Flag unconditionally — AGENTS.md §3 (Framework & Platform Usage) bans blocking code categorically. WASM deadlocks silently on the mono single-threaded runtime; desktop starves under load.
 - **`async void`.** Is `async void` used outside an event handler? Does it have a full-body try/catch? (The per-call-site hunt is yours; the architect owns pattern-level verdicts.)
 - **Feed lifecycles.** New `IFeed`/`IListFeed`/`IState` implementations must complete or be cancellable. A feed that never terminates holds its observers indefinitely — leak on WASM, leak on desktop. Verify subscriptions are released on `Unloaded` / via `using` / via the `SourceContext` plumbing.
 - **Navigator subscription leaks.** A navigator or attached behavior that subscribes to `Loaded` without unsubscribing on `Unloaded` leaks the entire visual-tree branch. Verify symmetry.

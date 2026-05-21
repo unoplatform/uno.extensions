@@ -194,7 +194,7 @@ This repository targets WASM as a first-class platform (sample apps and runtime 
 ✅ Hosting-as-entry-point: every area exposes its public surface as `IHostBuilder UseFoo(this IHostBuilder, Action<IFooBuilder>? configure = null)`. Service registration goes through `IServiceCollection`; options through `IOptions<FooConfiguration>` bound to `IConfiguration`. Code that reaches into a static service locator, constructs an `IServiceProvider` ad-hoc, or registers services outside the `UseFoo` chain is a layering violation.
 ✅ Constructor injection only — no service locator, no `IServiceProvider.GetService<T>()` calls inside business logic. Keep constructor parameters under control (under 7 ideal); when a constructor grows past that, refactor into options/aggregates rather than adding more parameters.
 ✅ Correct DI lifetimes: `Singleton` only when stateless or thread-safe (be aware of WASM's single-thread model — captured state is fine, captured locks are not); `Scoped` where the consuming host establishes a scope (typically per-navigation/per-request in app code); `Transient` for lightweight stateless services. A new singleton that holds mutable state is a bug magnet on the public surface.
-✅ Multi-platform aware: code that compiles for net9.0, net9.0-android, net9.0-ios, net9.0-maccatalyst, net9.0-windows10.*, and browser-wasm. When platform behavior diverges, isolate it behind partial classes / conditional compilation symbols (`__WASM__`, `__ANDROID__`, `__IOS__`, `__MACCATALYST__`, `__WINDOWS__`) — don't sprinkle `#if` blocks across method bodies if a platform-specific partial would do the job.
+✅ Multi-platform aware: code that compiles for net9.0, net9.0-android, net9.0-ios, net9.0-maccatalyst, net9.0-windows10.*, and browserwasm. When platform behavior diverges, isolate it behind partial classes / conditional compilation symbols (`__WASM__`, `__ANDROID__`, `__IOS__`, `__MACCATALYST__`, `__WINDOWS__`) — don't sprinkle `#if` blocks across method bodies if a platform-specific partial would do the job.
 
 ---
 
@@ -347,7 +347,7 @@ The deliverable here is a public NuGet API consumed by external Uno apps. Stabil
 
 ## 10.bis Events
 
-🚫 **NEVER declare `event Action` or `event Action<T>`** on a public type. Always use `EventHandler` or `EventHandler<TEventArgs>`. Raw `Action` / `Func` delegates as event fields bypass the standard `add` / `remove` contract, do not interoperate cleanly across assembly boundaries, and confuse tooling / analyzers / consumer-side XAML event wiring that expects the canonical event shape. This matters more for a public-NuGet library than for an app: a wrong-shape event in our public surface forces every external consumer into the same non-idiomatic pattern.
+🚫 **NEVER declare `event Action` or `event Action<T>`** on a public type. Always use `EventHandler` or `EventHandler<TEventArgs>`. Raw `Action` / `Func` delegates as event fields do not follow the .NET event pattern (`sender` + `EventArgs`), do not interoperate cleanly across assembly boundaries, and confuse tooling / analyzers / consumer-side XAML event wiring that expects the canonical event shape. This matters more for a public-NuGet library than for an app: a wrong-shape event in our public surface forces every external consumer into the same non-idiomatic pattern.
 
 ✅ Correct:
 
