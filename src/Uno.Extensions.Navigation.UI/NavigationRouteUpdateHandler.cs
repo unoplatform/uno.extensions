@@ -1,5 +1,6 @@
 using System.Collections.Immutable;
 using System.Reflection.Metadata;
+using Uno.Extensions.Navigation.Navigators;
 using Uno.Extensions.Navigation.Regions;
 
 [assembly: MetadataUpdateHandler(typeof(Uno.Extensions.Navigation.UI.NavigationRouteUpdateHandler))]
@@ -39,12 +40,12 @@ internal static class NavigationRouteUpdateHandler
 
 	internal static void Register(NavigationRouteContext context)
 	{
-		ImmutableInterlocked.Update(ref _contexts, list => list.Add(context));
+		ImmutableInterlocked.Update(ref _contexts, l => l.Add(context));
 	}
 
 	internal static void Unregister(NavigationRouteContext context)
 	{
-		ImmutableInterlocked.Update(ref _contexts, list => list.Remove(context));
+		ImmutableInterlocked.Update(ref _contexts, l => l.Remove(context));
 	}
 
 	/// <summary>
@@ -57,9 +58,29 @@ internal static class NavigationRouteUpdateHandler
 	static void UpdateApplication(Type[]? updatedTypes)
 #pragma warning restore IDE0051
 	{
+		if (Region.Logger.IsEnabled(LogLevel.Information))
+		{
+			Region.Logger.LogInformationMessage($"Hot-reload UpdateApplication received {updatedTypes?.Length ?? 0} updated type(s); refreshing {_contexts.Count} navigation context(s)");
+		}
+
+		// Snapshot under iteration: _contexts is ImmutableList, but a per-context
+		// throw must not abort the loop — one broken context should not deny HR
+		// recovery to the others. The .NET HR pipeline also has no resilience to
+		// exceptions thrown back from a MetadataUpdateHandler, so swallow at this
+		// boundary and log instead.
 		foreach (var ctx in _contexts)
 		{
-			RebuildRoutes(ctx);
+			try
+			{
+				RebuildRoutes(ctx);
+			}
+			catch (Exception ex)
+			{
+				if (Region.Logger.IsEnabled(LogLevel.Error))
+				{
+					Region.Logger.LogErrorMessage($"Hot-reload RebuildRoutes failed for a navigation context: {ex.GetType().Name}: {ex.Message}. Other contexts will still be processed.");
+				}
+			}
 		}
 	}
 
@@ -68,6 +89,17 @@ internal static class NavigationRouteUpdateHandler
 		var resolver = ctx.Resolver;
 		if (resolver is null)
 		{
+			// Either the navigation engine was registered without an IRouteResolver
+			// (no UseNavigation builder), or the resolver-assignment path was broken
+			// (see NavigationHostedService.StartAsync for the historical bug where
+			// HostBuilderExtensions.UseNavigation's IRouteResolver override silently
+			// bypassed the factory delegate that assigned ctx.Resolver). Warning so
+			// future regressions of either condition surface immediately rather than
+			// degrading to "HR doesn't update routes" with no log trail.
+			if (Region.Logger.IsEnabled(LogLevel.Warning))
+			{
+				Region.Logger.LogWarningMessage("Hot-reload route rebuild skipped: NavigationRouteContext.Resolver is null. Route table will not be refreshed.");
+			}
 			return;
 		}
 
@@ -98,11 +130,19 @@ internal static class NavigationRouteUpdateHandler
 			resolver.Rebuild();
 			rebuiltSuccessfully = true;
 		}
-		catch
+		catch (Exception ex)
 		{
 			// The delegate may have been replaced and the old version could
 			// throw (e.g. HotReloadException). Restore the previous state
-			// so the navigation engine remains functional.
+			// so the navigation engine remains functional. Log at Warning —
+			// silently swallowing this is what made the original symptom of
+			// "navigation suddenly stopped finding routes after an HR cycle"
+			// unattributable in feedback bundles.
+			if (Region.Logger.IsEnabled(LogLevel.Warning))
+			{
+				Region.Logger.LogWarningMessage($"Hot-reload route rebuild threw {ex.GetType().Name}: {ex.Message}. Previous registry state restored; navigation continues with the pre-HR route table.");
+			}
+
 			if (previousViews is not null && ctx.Views is Registry<ViewMap> vr)
 			{
 				vr.Clear();
@@ -159,9 +199,71 @@ internal static class NavigationRouteUpdateHandler
 	private static void ScheduleCascade(IRegion root, RouteResolver resolver)
 	{
 		var dispatcher = root.Services?.GetService<IDispatcher>();
-		if (dispatcher is not null)
+		if (dispatcher is null)
 		{
-			dispatcher.TryEnqueue(() => CascadeNewDefaultsFromRoot(root, resolver));
+			if (Region.Logger.IsEnabled(LogLevel.Warning))
+			{
+				Region.Logger.LogWarningMessage("Cascade walk skipped: no IDispatcher available on the root region's services. IsDefault routes added by hot-reload will not auto-navigate.");
+			}
+			return;
+		}
+
+		if (Region.Logger.IsEnabled(LogLevel.Debug))
+		{
+			Region.Logger.LogDebugMessage($"Scheduling cascade walk on dispatcher (root region: '{root.Name ?? string.Empty}', children: {root.Children.Count})");
+		}
+
+		dispatcher.TryEnqueue(() =>
+		{
+			CascadeNewDefaultsFromRoot(root, resolver);
+
+			// Re-issue any navigation requests that were dropped earlier because
+			// their target view type was not yet present in the assembly. The
+			// resolver has now been rebuilt with the latest route table, so a
+			// previously-failed mapping may resolve successfully on retry. Walks
+			// the live region tree without short-circuiting (unlike the
+			// IsDefault cascade above) so every navigator with a pending request
+			// is given a chance to recover.
+			RetryPendingFailedRequestsFromRoot(root);
+		});
+	}
+
+	private static void RetryPendingFailedRequestsFromRoot(IRegion region)
+	{
+		if (region.Navigator() is ControlNavigator { HasPendingFailedRequest: true } cn)
+		{
+			SafeFireAndForget(cn.RetryPendingFailedRequestAsync(), "retry pending failed navigation");
+		}
+
+		foreach (var child in region.Children.ToArray())
+		{
+			RetryPendingFailedRequestsFromRoot(child);
+		}
+	}
+
+	// Awaits a fire-and-forget navigation task on the dispatcher and swallows
+	// any throw with a Warning. The HR cascade dispatches navigation work
+	// through TryEnqueue, so the caller cannot observe exceptions from the
+	// returned Task. An unhandled throw becomes an unobserved TaskException —
+	// silent on WASM, a TaskScheduler.UnobservedTaskException on desktop.
+	// AGENTS.md §10: every fire-and-forget MUST have a try/catch.
+	private static async void SafeFireAndForget(Task task, string operation)
+	{
+		try
+		{
+			await task;
+		}
+		catch (OperationCanceledException)
+		{
+			// Expected when the dispatcher is torn down mid-cascade (e.g. host
+			// shutdown immediately after HR delivery). Silent — not an error.
+		}
+		catch (Exception ex)
+		{
+			if (Region.Logger.IsEnabled(LogLevel.Warning))
+			{
+				Region.Logger.LogWarningMessage($"Hot-reload {operation} threw {ex.GetType().Name}: {ex.Message}. Region tree state is unchanged; subsequent HR deltas may recover.");
+			}
 		}
 	}
 
@@ -173,26 +275,44 @@ internal static class NavigationRouteUpdateHandler
 		if (navigator is not null &&
 			!string.IsNullOrEmpty(currentBase) &&
 			resolver.FindByPath(currentBase) is { } routeInfo &&
-			routeInfo.Nested?.FirstOrDefault(n => n.IsDefault) is { Path.Length: > 0 } defaultNested &&
-			!HasActiveDescendantNestedRoute(region, routeInfo.Nested))
+			routeInfo.Nested?.FirstOrDefault(n => n.IsDefault) is { Path.Length: > 0 } defaultNested)
 		{
-			// Issue navigation on the matched navigator's CHILD region rather
-			// than the navigator itself. Targeting the matched navigator (e.g.
-			// the Frame) would tear down and rebuild its child region tree
-			// (Region.Children.Clear() + ReassignRegionParent) — which races
-			// with the freshly-added XAML-HR child controls (TabBar, content
-			// grid) on the same page. Going one level deeper lets the page
-			// region's composite navigator dispatch the IsDefault path to its
-			// own children (e.g. TabBarNavigator + PanelVisiblityNavigator)
-			// without disturbing the parent frame.
-			var pageRegion = region.Children.FirstOrDefault();
-			var pageNavigator = pageRegion?.Navigator();
-			if (pageNavigator is not null)
+			// Before dispatching, check whether a descendant region already has an
+			// active route that matches one of the nested routes — if so, preserve
+			// that selection rather than clobbering it back to the IsDefault. The
+			// helper returns the matching descendant info so we can log WHICH
+			// region with WHICH route caused the short-circuit; without that, a
+			// future investigator chasing "why didn't IsDefault cascade fire" has
+			// no way to attribute the decision to a specific competing route.
+			var conflict = FindActiveDescendantNestedRoute(region, routeInfo.Nested);
+			if (conflict is null)
 			{
-				var route = new Route(Qualifiers.None, Base: defaultNested.Path);
-				var request = new NavigationRequest(pageNavigator, route.AsInternal());
-				_ = pageNavigator.NavigateAsync(request);
-				return;
+				// Issue navigation on the matched navigator's CHILD region rather
+				// than the navigator itself. Targeting the matched navigator (e.g.
+				// the Frame) would tear down and rebuild its child region tree
+				// (Region.Children.Clear() + ReassignRegionParent) — which races
+				// with the freshly-added XAML-HR child controls (TabBar, content
+				// grid) on the same page. Going one level deeper lets the page
+				// region's composite navigator dispatch the IsDefault path to its
+				// own children (e.g. TabBarNavigator + PanelVisiblityNavigator)
+				// without disturbing the parent frame.
+				var pageRegion = region.Children.FirstOrDefault();
+				var pageNavigator = pageRegion?.Navigator();
+				if (pageNavigator is not null)
+				{
+					if (Region.Logger.IsEnabled(LogLevel.Debug))
+					{
+						Region.Logger.LogDebugMessage($"Cascade dispatching IsDefault '{defaultNested.Path}' to first child '{pageRegion?.Name ?? string.Empty}' of region '{region.Name ?? string.Empty}'");
+					}
+					var route = new Route(Qualifiers.None, Base: defaultNested.Path);
+					var request = new NavigationRequest(pageNavigator, route.AsInternal());
+					SafeFireAndForget(pageNavigator.NavigateAsync(request), $"IsDefault cascade to '{defaultNested.Path}'");
+					return;
+				}
+			}
+			else if (Region.Logger.IsEnabled(LogLevel.Debug))
+			{
+				Region.Logger.LogDebugMessage($"Cascade skip on region '{region.Name ?? string.Empty}': IsDefault '{defaultNested.Path}' suppressed because descendant region '{conflict.Value.RegionName}' already has active route '{conflict.Value.ActiveRouteBase}' (matches nested path of '{currentBase}')");
 			}
 		}
 
@@ -203,14 +323,14 @@ internal static class NavigationRouteUpdateHandler
 	}
 
 	/// <summary>
-	/// Returns true if any descendant region already has an active route whose Base
-	/// matches one of the navigator's nested route paths. Used to decide whether to
-	/// cascade an IsDefault nested route: if the user (or a prior cascade) has already
-	/// navigated to any sibling nested route, the current selection must be preserved
-	/// — re-asserting IsDefault here would clobber it (e.g. snapping a TabBar back
-	/// from TabTwo to TabOne after a C# hot-reload).
+	/// Walks descendant regions looking for one whose active route matches one of
+	/// the supplied nested route paths. Returns the first match (region name +
+	/// active route base) or <c>null</c> if none. The caller uses the returned
+	/// region name + route to log WHICH descendant caused a cascade-skip decision;
+	/// a bool-only result would leave future investigators with no way to attribute
+	/// "IsDefault cascade didn't fire" to a specific competing route.
 	/// </summary>
-	private static bool HasActiveDescendantNestedRoute(IRegion region, RouteInfo[] nestedRoutes)
+	private static (string RegionName, string ActiveRouteBase)? FindActiveDescendantNestedRoute(IRegion region, RouteInfo[] nestedRoutes)
 	{
 		foreach (var child in region.Children)
 		{
@@ -218,15 +338,15 @@ internal static class NavigationRouteUpdateHandler
 			if (!string.IsNullOrEmpty(childBase) &&
 				nestedRoutes.Any(n => string.Equals(n.Path, childBase, StringComparison.Ordinal)))
 			{
-				return true;
+				return (child.Name ?? string.Empty, childBase);
 			}
 
-			if (HasActiveDescendantNestedRoute(child, nestedRoutes))
+			if (FindActiveDescendantNestedRoute(child, nestedRoutes) is { } deeper)
 			{
-				return true;
+				return deeper;
 			}
 		}
 
-		return false;
+		return null;
 	}
 }

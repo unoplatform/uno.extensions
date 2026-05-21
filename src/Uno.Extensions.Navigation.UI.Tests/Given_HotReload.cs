@@ -267,6 +267,93 @@ public class Given_HotReload
 			"RegionTwo's VM should read the post-HR method body");
 	}
 
+	/// <summary>
+	/// Regression test for the cascade-after-HR fix in <see cref="NavigationRouteUpdateHandler"/>:
+	/// after a C# hot-reload triggers <c>UpdateApplication</c>, the resolver-rebuild path
+	/// dispatches a cascade walk that re-evaluates nested <c>IsDefault</c> routes. The walk
+	/// must NOT clobber a non-default region that the user has already navigated to.
+	/// <para>
+	/// Without <c>FindActiveDescendantNestedRoute</c>, the cascade would re-dispatch
+	/// <c>RegionOne</c> (the <c>IsDefault</c> nested route) over the user's active
+	/// <c>RegionTwo</c> selection, producing a "blank content area / unexpected jump"
+	/// symptom on every HR delta.
+	/// </para>
+	/// </summary>
+	[TestMethod]
+	[RunsOnUIThread]
+	public async Task When_HRCascadeAfterUserSelection_Then_ActiveRegionPreserved(CancellationToken ct)
+	{
+		await using var app = await SetupAppAsync(
+			registerViewsAndRoutes: (views, routes) =>
+			{
+				views.Register(
+					new ViewMap<HotReloadRegionPage>(),
+					new ViewMap<HotReloadRegionContentPage, HotReloadRegionVm>());
+
+				routes.Register(
+					new RouteMap("", Nested: new RouteMap[]
+					{
+						new RouteMap(
+							"HotReloadRegionPage",
+							View: views.FindByView<HotReloadRegionPage>(),
+							IsDefault: true,
+							Nested: new RouteMap[]
+							{
+								new RouteMap("RegionOne", View: views.FindByView<HotReloadRegionContentPage>(), IsDefault: true),
+								new RouteMap("RegionTwo", View: views.FindByView<HotReloadRegionContentPage>()),
+							}),
+					}));
+			},
+			initialRoute: "HotReloadRegionPage",
+			ct);
+
+		var hostPage = ResolveCurrentPage<HotReloadRegionPage>(app.NavigationRoot);
+		hostPage.Should().NotBeNull("Frame should have navigated to HotReloadRegionPage");
+
+		// Drive the panel navigator off RegionOne (IsDefault) onto RegionTwo so the active
+		// nested route diverges from the IsDefault. The cascade-after-HR fix must respect
+		// this divergence.
+		//
+		// Note on verification: PanelVisiblityNavigator's own Route.Base is empty after
+		// navigating to a Page-subclass route — Show() wraps the page in a FrameView,
+		// returns null, and ExecuteRequestAsync falls into the Route.Empty branch
+		// (see ControlNavigator.cs). The "active region" is what the panel makes
+		// visible (PostNavigateAsync sets Visibility.Visible on the active child and
+		// Collapsed on the rest), so we assert on the visible child's Region.Name.
+		var panelNavigator = await WaitForPanelNavigatorAsync(hostPage!.ContentGrid, TimeSpan.FromSeconds(30), ct);
+		await panelNavigator.NavigateRouteAsync(hostPage, "RegionTwo");
+		await WaitForRegionVmAsync(hostPage.ContentGrid, "RegionTwo", TimeSpan.FromSeconds(30), ct);
+		GetActiveRegionName(hostPage.ContentGrid).Should().Be("RegionTwo",
+			"Pre-HR: PanelVisiblityNavigator should be showing RegionTwo after explicit navigation");
+
+		// Apply any HR source change to trigger UpdateApplication. The cascade dispatched
+		// by RebuildRoutes -> ScheduleCascade -> CascadeNewDefaultsFromRoot walks the live
+		// region tree. The fix ensures that walk respects RegionTwo's active selection
+		// and does NOT re-issue an IsDefault navigation back to RegionOne.
+		await using var _ = await HotReloadHelper.UpdateSourceFile(
+			"../../Uno.Extensions.Navigation.UI.Tests/HotReloadRegionTarget.cs",
+			"""return "original";""",
+			"""return "updated";""",
+			ct);
+
+		// Allow time for UpdateApplication + dispatched cascade walk to complete. The
+		// fix's TryEnqueue defers the walk onto the dispatcher; we need to wait long
+		// enough for the dispatched lambda to run.
+		await Task.Delay(1000, ct);
+
+		GetActiveRegionName(hostPage.ContentGrid).Should().Be("RegionTwo",
+			"Post-HR: the cascade walk must preserve RegionTwo (active selection) and NOT " +
+			"re-dispatch the IsDefault RegionOne. Without the FindActiveDescendantNestedRoute " +
+			"check, the cascade would clobber the user's selection on every HR delta.");
+	}
+
+	private static string? GetActiveRegionName(Grid contentGrid)
+		=> contentGrid.Children
+			.OfType<FrameworkElement>()
+			.Where(c => c.Visibility == Visibility.Visible)
+			.Select(c => Uno.Extensions.Navigation.UI.Region.GetName(c))
+			.FirstOrDefault(name => !string.IsNullOrEmpty(name));
+
 	private static async Task<global::Uno.Extensions.Navigation.INavigator> WaitForPanelNavigatorAsync(
 		Grid contentGrid,
 		TimeSpan timeout,

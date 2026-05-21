@@ -48,6 +48,34 @@ public class RouteResolver : IRouteResolver
 		);
 		Mappings.Add(messageDialogRoute);
 
+		LogResolverState("constructed");
+	}
+
+	/// <summary>
+	/// Emits an Information-level summary of the resolver's current state
+	/// (first route, total mapping count, top-level route count). Called once
+	/// after construction and once per <see cref="Rebuild"/>. Operational logs
+	/// here are intentionally compact — they should answer "did the resolver
+	/// pick up my routes?" without dumping every nested path. For per-route
+	/// dumps enable Debug on this category.
+	/// </summary>
+	private void LogResolverState(string trigger)
+	{
+		if (!Logger.IsEnabled(LogLevel.Information))
+		{
+			return;
+		}
+
+		var topLevelCount = 0;
+		foreach (var map in Mappings)
+		{
+			if (map.Parent is null)
+			{
+				topLevelCount++;
+			}
+		}
+
+		Logger.LogInformationMessage($"RouteResolver {trigger}: First='{First?.Path ?? "<none>"}', TopLevelRoutes={topLevelCount}, TotalMappings={Mappings.Count}");
 	}
 
 	/// <summary>
@@ -75,6 +103,8 @@ public class RouteResolver : IRouteResolver
 			View: () => typeof(MessageDialog),
 			ResultData: typeof(MessageDialog)
 		));
+
+		LogResolverState("rebuilt");
 	}
 
 	private void PrintViewMaps(IEnumerable<RouteInfo> maps, string prefix = "")

@@ -42,7 +42,7 @@ src/                          The 50 published packages, plus generators and tes
 samples/Playground/           End-to-end sample app exercising many features (Uno.Sdk-based head).
 samples/MauiEmbedding/        Sample showing MAUI controls embedded inside an Uno head.
 testing/TestHarness/          UI test harness app + UITest project (Uno.UITest / Selenium driver). Folders under TestHarness/Ext/<Area> mirror src/.
-specs/YYYY-MM-DD <topic>/spec.md   Living design docs for in-flight changes (e.g. MVUX SingleValueFeed). Read these before editing the area they describe — they capture intent that isn't in code yet.
+specs/NNN-<topic>/spec.md     Living design docs for in-flight changes (e.g. MVUX SingleValueFeed). Read these before editing the area they describe — they capture intent that isn't in code yet. See "Spec folder naming" below for the numbering convention.
 build/                        Sign-Package.ps1, tests.runsettings, Azure Pipelines YAML under build/ci/.
 doc/                          DocFX-flavored docs published to platform.uno (TOC files, xref ids).
 ```
@@ -73,7 +73,18 @@ The top-level `Directory.Build.props` exposes `Build_Android`, `Build_iOS`, `Bui
 - If something goes sideways, STOP and re-plan immediately - don't keep pushing
 - Use plan mode for verification steps, not just building
 - Write detailed specs upfront to reduce ambiguity
-- This repo's `specs/` directory is for **living design docs** for in-flight changes (`specs/2026-04-01 mvux-single-value-feed/spec.md`, `specs/2026-04-01 mvux-updatefeed-compaction/spec.md`). When you start a non-trivial change in an area, look for an existing spec first — implementation must match the spec, not the other way around.
+- This repo's `specs/` directory is for **living design docs** for in-flight changes (`specs/001-mvux-single-value-feed/spec.md`, `specs/002-mvux-updatefeed-compaction/spec.md`). When you start a non-trivial change in an area, look for an existing spec first — implementation must match the spec, not the other way around.
+
+#### Spec folder naming
+
+Spec folders MUST use the form `specs/NNN-<kebab-case-topic>/spec.md`, where `NNN` is a zero-padded three-digit sequence number assigned in registration order (oldest = `001`). When you create a new spec, pick the next available integer — do not reuse a deleted slot. Do NOT use date prefixes; the numeric prefix is the single source of truth for ordering and makes cross-referencing stable across rebases and authorship.
+
+Rules:
+
+- `NNN` is zero-padded to three digits (`001`, `002`, ... `010`, ... `100`).
+- The topic suffix is lowercase kebab-case and should be short but unambiguous.
+- One spec per folder, named `spec.md`. Supporting assets (diagrams, snippets) live alongside.
+- Once committed, a spec's number is permanent — don't renumber to "fill gaps" or reorder by topic.
 
 ### 2. Subagent Strategy
 
