@@ -313,11 +313,18 @@ public class Given_HotReload
 		// Drive the panel navigator off RegionOne (IsDefault) onto RegionTwo so the active
 		// nested route diverges from the IsDefault. The cascade-after-HR fix must respect
 		// this divergence.
+		//
+		// Note on verification: PanelVisiblityNavigator's own Route.Base is empty after
+		// navigating to a Page-subclass route — Show() wraps the page in a FrameView,
+		// returns null, and ExecuteRequestAsync falls into the Route.Empty branch
+		// (see ControlNavigator.cs). The "active region" is what the panel makes
+		// visible (PostNavigateAsync sets Visibility.Visible on the active child and
+		// Collapsed on the rest), so we assert on the visible child's Region.Name.
 		var panelNavigator = await WaitForPanelNavigatorAsync(hostPage!.ContentGrid, TimeSpan.FromSeconds(30), ct);
 		await panelNavigator.NavigateRouteAsync(hostPage, "RegionTwo");
 		await WaitForRegionVmAsync(hostPage.ContentGrid, "RegionTwo", TimeSpan.FromSeconds(30), ct);
-		panelNavigator.Route?.Base.Should().Be("RegionTwo",
-			"Pre-HR: PanelVisiblityNavigator should be on RegionTwo after explicit navigation");
+		GetActiveRegionName(hostPage.ContentGrid).Should().Be("RegionTwo",
+			"Pre-HR: PanelVisiblityNavigator should be showing RegionTwo after explicit navigation");
 
 		// Apply any HR source change to trigger UpdateApplication. The cascade dispatched
 		// by RebuildRoutes -> ScheduleCascade -> CascadeNewDefaultsFromRoot walks the live
@@ -334,11 +341,18 @@ public class Given_HotReload
 		// enough for the dispatched lambda to run.
 		await Task.Delay(1000, ct);
 
-		panelNavigator.Route?.Base.Should().Be("RegionTwo",
+		GetActiveRegionName(hostPage.ContentGrid).Should().Be("RegionTwo",
 			"Post-HR: the cascade walk must preserve RegionTwo (active selection) and NOT " +
 			"re-dispatch the IsDefault RegionOne. Without the FindActiveDescendantNestedRoute " +
 			"check, the cascade would clobber the user's selection on every HR delta.");
 	}
+
+	private static string? GetActiveRegionName(Grid contentGrid)
+		=> contentGrid.Children
+			.OfType<FrameworkElement>()
+			.Where(c => c.Visibility == Visibility.Visible)
+			.Select(c => Uno.Extensions.Navigation.UI.Region.GetName(c))
+			.FirstOrDefault(name => !string.IsNullOrEmpty(name));
 
 	private static async Task<global::Uno.Extensions.Navigation.INavigator> WaitForPanelNavigatorAsync(
 		Grid contentGrid,
