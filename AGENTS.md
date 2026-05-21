@@ -92,7 +92,7 @@ Rules:
 - Offload research, exploration, and parallel analysis to subagents
 - For complex problems, throw more compute at it via subagents
 - One tack per subagent for focused execution
-- The `architect`, `security`, and `skeptic` reviewers in `.claude/agents/` exist to be dispatched in parallel via the `/review-panel` command on a non-trivial change — use them before commit, not after
+- The seven reviewer subagents in `.claude/agents/` — `architect`, `security`, `skeptic`, `quality`, `operability`, `contract`, `performance` — exist to be dispatched in parallel via the `/review-panel` command on a non-trivial change. Use them before commit, not after. The panel is only meaningful when all seven lenses are applied.
 
 ### 3. Self-Improvement Loop
 
@@ -192,6 +192,8 @@ This repository targets WASM as a first-class platform (sample apps and runtime 
 ✅ ALWAYS prefer non-blocking async flow to remain WASM-safe; if a sync bridge is unavoidable, document why and keep it local.
 ✅ Prefer the WinUI/Uno-provided primitives (`DependencyProperty`, `VisualStateManager`, `ResourceDictionary` merging, `FrameworkElement.Loaded/Unloaded`) in UI projects over hand-rolled equivalents.
 ✅ Hosting-as-entry-point: every area exposes its public surface as `IHostBuilder UseFoo(this IHostBuilder, Action<IFooBuilder>? configure = null)`. Service registration goes through `IServiceCollection`; options through `IOptions<FooConfiguration>` bound to `IConfiguration`. Code that reaches into a static service locator, constructs an `IServiceProvider` ad-hoc, or registers services outside the `UseFoo` chain is a layering violation.
+✅ Constructor injection only — no service locator, no `IServiceProvider.GetService<T>()` calls inside business logic. Keep constructor parameters under control (under 7 ideal); when a constructor grows past that, refactor into options/aggregates rather than adding more parameters.
+✅ Correct DI lifetimes: `Singleton` only when stateless or thread-safe (be aware of WASM's single-thread model — captured state is fine, captured locks are not); `Scoped` where the consuming host establishes a scope (typically per-navigation/per-request in app code); `Transient` for lightweight stateless services. A new singleton that holds mutable state is a bug magnet on the public surface.
 ✅ Multi-platform aware: code that compiles for net9.0, net9.0-android, net9.0-ios, net9.0-maccatalyst, net9.0-windows10.*, and browser-wasm. When platform behavior diverges, isolate it behind partial classes / conditional compilation symbols (`__WASM__`, `__ANDROID__`, `__IOS__`, `__MACCATALYST__`, `__WINDOWS__`) — don't sprinkle `#if` blocks across method bodies if a platform-specific partial would do the job.
 
 ---
@@ -259,6 +261,9 @@ Files in `src/Uno.Extensions.Navigation.UI.Tests/` named `Given_HotReload.cs` (a
 ✅ Every new public behavior must include tests in the appropriate project (unit, UI, or runtime).
 ✅ Test class naming follows `Given_<Subject>` with `When_<Scenario>` methods (BDD-style); FluentAssertions (`.Should().BeXxx()`) for assertions.
 ✅ AAA pattern (Arrange / Act / Assert).
+✅ Namespace parity: implementation namespaces are mirrored in `*.Tests` / `*.UI.Tests` projects so a test's location maps to the type under test.
+✅ Use deterministic fakes for time, GUID, randomness, and any other source of non-determinism — flaky timing-driven tests are not acceptable.
+✅ Favor lightweight in-memory substitutes (a hand-rolled fake `IFooService`) over heavy mocking frameworks when the surface is small. Mock-heavy tests pin implementation details and rot on refactor.
 ✅ Lack of coverage for new logic blocks merge.
 ✅ **Every bug fix MUST follow red/fix/green**: first add a test that reproduces the bug and fails, then apply the fix, then confirm it passes. The failing test must be committed alongside the fix so the regression is permanently guarded.
 🚫 **Never use `Assert.Inconclusive`** (or equivalent). A test either asserts behavior and passes, or fails. Skipping via inconclusive hides regressions. If a scenario cannot run on a platform, gate it with an explicit platform attribute / `#if` instead.
@@ -304,6 +309,7 @@ The deliverable here is a public NuGet API consumed by external Uno apps. Stabil
 ## 7. Logging & Diagnostics
 
 ✅ Structured logging where applicable (`logger.LogInformation("Processed {Id}", id)`). Use the `Microsoft.Extensions.Logging` abstractions — the repo's `Uno.Extensions.Logging{,.Serilog}` packages plug into them.
+✅ Prefer injecting `ILogger<T>` via constructor; avoid static loggers and `LoggerFactory.CreateLogger(...)` calls inside business logic. Static loggers bypass the consumer's DI configuration and become silent on hosts that route logs differently.
 ✅ No PII / secrets / device identifiers in logs. **Tokens, refresh tokens, ID tokens, cookies, and Authorization headers must never appear in `Uno.Extensions.*` log output** — verify `ToString()` overrides on auth/HTTP types do not interpolate secrets.
 ✅ Correct level semantics (Trace/Debug/Info/Warning/Error/Critical).
 ✅ If values are computed only for logging (for example `ToList()`, `string.Join(...)`, projections, or expensive formatting), wrap that computation in `if (logger.IsEnabled(LogLevel.X))` for the corresponding level so disabled logs do not pay the allocation/computation cost.
@@ -336,6 +342,26 @@ The deliverable here is a public NuGet API consumed by external Uno apps. Stabil
 ✅ Every `async void` method **MUST** wrap its entire body in `try/catch` — unhandled exceptions in `async void` crash the runtime (especially critical on WASM where the runtime runs in a web worker).
 ✅ Prefer returning `Task`/`ValueTask` from async methods so callers can observe exceptions.
 ✅ Fire-and-forget patterns (`_ = SomeAsync()`) **MUST** have a `try/catch` inside the called method.
+
+---
+
+## 10.bis Events
+
+🚫 **NEVER declare `event Action` or `event Action<T>`** on a public type. Always use `EventHandler` or `EventHandler<TEventArgs>`. Raw `Action` / `Func` delegates as event fields bypass the standard `add` / `remove` contract, do not interoperate cleanly across assembly boundaries, and confuse tooling / analyzers / consumer-side XAML event wiring that expects the canonical event shape. This matters more for a public-NuGet library than for an app: a wrong-shape event in our public surface forces every external consumer into the same non-idiomatic pattern.
+
+✅ Correct:
+
+```csharp
+public event EventHandler<MyEventArgs>? SomethingHappened;
+```
+
+🚫 Wrong — every agent must reject this on a public surface:
+
+```csharp
+public event Action<MyData>? SomethingHappened; // NEVER on public API
+```
+
+If the payload doesn't have a natural args type, declare a small `record` ending in `EventArgs` that derives from `System.EventArgs`. Internal `Action`-shaped delegates inside private/internal plumbing are tolerated when no external consumer ever sees them, but the bar is "would I be embarrassed if a consumer saw this in IntelliSense?" — apply that test before exposing any new event.
 
 ---
 
