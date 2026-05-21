@@ -237,9 +237,24 @@ public abstract class ControlNavigator : Navigator
 	/// Re-issues the most recent failed navigation request, if one is pending.
 	/// Called by <see cref="UI.NavigationRouteUpdateHandler"/> after a C# or
 	/// XAML hot-reload has potentially added the previously-missing type to
-	/// the running assembly. The pending slot is cleared before re-issuing so
-	/// a second failure cleanly re-arms it for the next hot-reload cycle.
+	/// the running assembly.
 	/// </summary>
+	/// <remarks>
+	/// We deliberately do NOT clear <see cref="_pendingFailedRequest"/> before
+	/// invoking <see cref="NavigateAsync"/>. If the retry fails again (the type
+	/// is still missing on this HR delta), the failure path in
+	/// <see cref="ControlNavigator{TControl}.ExecuteRequestAsync"/> needs to
+	/// detect "this is the same route we already had pending" via
+	/// <see cref="HasPendingFailedRequestFor"/> so it can demote the warning to
+	/// Debug. Clearing the slot here would race the retry's own failure path:
+	/// by the time ExecuteRequestAsync reads the slot, it would be empty and
+	/// the retry's re-failure would log as if it were a brand-new failure,
+	/// re-flooding the bundle. On success, the success branch of
+	/// <see cref="ControlNavigator{TControl}.ExecuteRequestAsync"/> calls
+	/// <see cref="ClearPendingFailedRequest"/>; on failure, the failure branch
+	/// re-arms via <see cref="RememberPendingFailedRequest"/> (a self-overwrite
+	/// with the same request — net no-op).
+	/// </remarks>
 	internal Task RetryPendingFailedRequestAsync()
 	{
 		var pending = _pendingFailedRequest;
@@ -247,8 +262,6 @@ public abstract class ControlNavigator : Navigator
 		{
 			return Task.CompletedTask;
 		}
-
-		_pendingFailedRequest = null;
 
 		if (Logger.IsEnabled(LogLevel.Information))
 		{
