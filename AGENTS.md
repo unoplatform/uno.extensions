@@ -80,6 +80,7 @@ The top-level `Directory.Build.props` exposes `Build_Android`, `Build_iOS`, `Bui
 Spec folders MUST use the form `specs/NNN-<kebab-case-topic>/spec.md`, where `NNN` is a zero-padded three-digit sequence number assigned in registration order (oldest = `001`). When you create a new spec, pick the next available integer — do not reuse a deleted slot. Do NOT use date prefixes; the numeric prefix is the single source of truth for ordering and makes cross-referencing stable across rebases and authorship.
 
 Rules:
+
 - `NNN` is zero-padded to three digits (`001`, `002`, ... `010`, ... `100`).
 - The topic suffix is lowercase kebab-case and should be short but unambiguous.
 - One spec per folder, named `spec.md`. Supporting assets (diagrams, snippets) live alongside.

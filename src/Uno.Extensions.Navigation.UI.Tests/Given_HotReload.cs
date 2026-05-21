@@ -315,7 +315,7 @@ public class Given_HotReload
 		// this divergence.
 		var panelNavigator = await WaitForPanelNavigatorAsync(hostPage!.ContentGrid, TimeSpan.FromSeconds(30), ct);
 		await panelNavigator.NavigateRouteAsync(hostPage, "RegionTwo");
-		_ = await WaitForRegionVmAsync(hostPage.ContentGrid, "RegionTwo", TimeSpan.FromSeconds(30), ct);
+		await WaitForRegionVmAsync(hostPage.ContentGrid, "RegionTwo", TimeSpan.FromSeconds(30), ct);
 		panelNavigator.Route?.Base.Should().Be("RegionTwo",
 			"Pre-HR: PanelVisiblityNavigator should be on RegionTwo after explicit navigation");
 
