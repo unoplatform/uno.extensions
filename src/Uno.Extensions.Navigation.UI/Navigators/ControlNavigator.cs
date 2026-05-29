@@ -29,6 +29,18 @@ public abstract class ControlNavigator<TControl> : ControlNavigator
 
 	protected virtual FrameworkElement? CurrentView => default;
 
+	/// <summary>
+	/// When <c>true</c>, a <c>null</c> return from <see cref="Show"/> is treated as success
+	/// rather than a failed view resolution. Selection-based navigators
+	/// (<c>SelectorNavigator</c> — NavigationView/TabBar) deliberately return <c>null</c> after
+	/// selecting their item so the route is forwarded to the sibling content region; their
+	/// <see cref="CurrentView"/> is the selected item (never a FrameView), so the
+	/// FrameView-based null check below does not apply to them. Without this opt-out every
+	/// selector navigation would log the misleading "Show() returned null" warning and park a
+	/// spurious pending-failed request.
+	/// </summary>
+	protected virtual bool ShowReturnsNullOnSuccess => false;
+
 	protected abstract Task<string?> Show(
 		string? path,
 		[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor)]
@@ -74,6 +86,16 @@ public abstract class ControlNavigator<TControl> : ControlNavigator
 				&& CurrentView is FrameView fv)
 			{
 				await fv.EnsureLoaded();
+				ClearPendingFailedRequest();
+				return Route.Empty;
+			}
+
+			// Selection-based navigators (NavigationView/TabBar) return null from Show() by
+			// design after selecting their item — the route is handed to the sibling content
+			// region, not consumed here. That is success, not a missing view, so don't warn or
+			// park a pending-failed request.
+			if (ShowReturnsNullOnSuccess)
+			{
 				ClearPendingFailedRequest();
 				return Route.Empty;
 			}
@@ -200,7 +222,7 @@ public abstract class ControlNavigator : Navigator
 
 	// The most recent NavigationRequest whose Show() resolved to null because
 	// the target view type could not be created — typically the type doesn't
-	// exist yet in the loaded assembly (Studio Live / hot-reload scaffolding).
+	// exist yet in the loaded assembly (a downstream host / hot-reload scaffolding).
 	// NavigationRouteUpdateHandler walks the live region tree after a C# or
 	// XAML hot-reload and re-issues these requests so an initial navigation
 	// that fired before the missing type was hot-reloaded in can self-heal

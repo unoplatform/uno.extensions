@@ -475,7 +475,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 			// sure all nested regions are available
 			// Example: Navigating to a viewmodel from ShellViewModel constructor when using a ShellView.
 			// The nested FrameView won't have loaded at this point
-			await EnsureChildRegionsAreLoaded();
+			await EnsureChildRegionsAreLoaded(request.Cancellation ?? default);
 
 
 			request = request with { Route = request.Route.TrimQualifier(Qualifiers.Nested) };
@@ -758,7 +758,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 			// Nested regions (for example a frame inside a content control) aren't always loaded
 			// at this point. Need to wait for the current view of this region to load to make
 			// sure all nested regions are available
-			await EnsureChildRegionsAreLoaded(); // Required for Test: Given_PageNavigation.When_PageNavigationXAML
+			await EnsureChildRegionsAreLoaded(request.Cancellation ?? default); // Required for Test: Given_PageNavigation.When_PageNavigationXAML
 
 
 
@@ -902,7 +902,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 	/// the waiting behaviour
 	/// </summary>
 	/// <returns></returns>
-	private async Task EnsureChildRegionsAreLoaded()
+	private async Task EnsureChildRegionsAreLoaded(CancellationToken ct = default)
 	{
 		var loadId = Guid.NewGuid();
 		PerformanceTimer.Start(Logger, LogLevel.Trace, loadId);
@@ -910,27 +910,66 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 		// are loaded. This will ensure the Children collection is correctly populated
 		await CheckLoadedAsync();
 
-		// Child NavigationRegions attach themselves to parent.Children during their
-		// Loaded event handler (HandleLoading → AssignParent). In some hosting
-		// scenarios (e.g., in-process AssemblyLoadContext loading), these Loaded
-		// events may be queued on the dispatcher but not yet processed when this
-		// method returns. Re-schedule on the dispatcher to ensure its queue is
-		// drained and pending attachments complete before the caller checks
-		// Region.Children.
-		if (Region.Children.Count == 0 && Region.View?.IsLoaded == true)
+		// Child NavigationRegions attach to Region.Children during their host control's Loaded
+		// event (NavigationRegion.HandleLoading → AssignParent). When the app is hosted inside a
+		// collectible AssemblyLoadContext on WASM, those Loaded events are dispatched noticeably
+		// later than on a normal cold start, so a navigation cascading into a child can observe
+		// Children.Count == 0 and be silently dropped. Wait for the
+		// attachment — but ONLY when a child is genuinely expected, i.e. the loaded view subtree
+		// contains a Region.Attached descendant that has not attached yet. For a true leaf
+		// region (no region-attached descendants) we skip the wait entirely, so leaf navigations
+		// pay nothing.
+		if (Region.Children.Count == 0 &&
+			Region.View is { IsLoaded: true } view &&
+			HasUnattachedRegionDescendant(view))
 		{
-			const int maxAttempts = 5;
-			for (var attempt = 0; attempt < maxAttempts && Region.Children.Count == 0; attempt++)
+			try
 			{
-				if (Logger.IsEnabled(LogLevel.Trace))
+				var sw = System.Diagnostics.Stopwatch.StartNew();
+				while (Region.Children.Count == 0 &&
+					Region.View?.IsLoaded == true &&
+					sw.Elapsed < NavigationConstants.ChildRegionAttachWaitBudget &&
+					!ct.IsCancellationRequested)
 				{
-					Logger.LogTraceMessage($"Children not yet attached after view loaded (attempt {attempt + 1}/{maxAttempts}), re-scheduling on dispatcher");
+					if (Logger.IsEnabled(LogLevel.Trace))
+					{
+						Logger.LogTraceMessage($"Child regions not yet attached after view loaded (waited {sw.ElapsedMilliseconds}ms / {NavigationConstants.ChildRegionAttachWaitBudget.TotalMilliseconds:F0}ms budget); pumping dispatcher and waiting for late Loaded events");
+					}
+
+					// Pump the dispatcher so any already-queued Loaded handlers run, then yield
+					// real time for the not-yet-queued ones (the ALC case) before re-checking.
+					await Dispatcher.ExecuteAsync(async _ => true, ct);
+					await Task.Delay(NavigationConstants.ChildRegionAttachPollInterval, ct);
 				}
-				await Dispatcher.ExecuteAsync(async ct => true, CancellationToken.None);
+			}
+			catch (OperationCanceledException)
+			{
+				// Navigation was cancelled while waiting for child regions — degrade gracefully
+				// rather than throwing out of the navigation/layout path (AGENTS §8).
 			}
 		}
 
 		PerformanceTimer.Stop(Logger, LogLevel.Trace, loadId);
+	}
+
+	// True when the region's loaded view contains a descendant marked Region.Attached — i.e. a
+	// child NavigationRegion that is expected to attach to Region.Children. Lets
+	// EnsureChildRegionsAreLoaded distinguish "a child is attaching late" (worth waiting for) from
+	// a genuine leaf region that simply has no children (skip the wait so leaf navigations are not
+	// penalised). Walks the visual tree, returning at the first match.
+	private static bool HasUnattachedRegionDescendant(DependencyObject root)
+	{
+		var count = VisualTreeHelper.GetChildrenCount(root);
+		for (var i = 0; i < count; i++)
+		{
+			var child = VisualTreeHelper.GetChild(root, i);
+			if (child.GetAttached() || HasUnattachedRegionDescendant(child))
+			{
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	private async Task<NavigationResponse?> NavigateChildRegions(IEnumerable<IRegion>? children, NavigationRequest request)

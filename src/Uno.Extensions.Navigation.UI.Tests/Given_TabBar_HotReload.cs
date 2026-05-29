@@ -10,6 +10,7 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Uno.Extensions.Hosting;
 using Uno.Extensions.Navigation;
+using Uno.Extensions.Navigation.Regions;
 using Uno.Extensions.Navigation.UI.Controls;
 using Uno.Extensions.Navigation.UI.Tests.Pages;
 using Uno.Extensions.Navigation.UI.Tests.ViewModels;
@@ -1383,6 +1384,63 @@ public class Given_TabBar_HotReload
 		// Assertion 2: the FirstPage TabBarItem (index 0) is the selected one.
 		activePage.TabBar!.SelectedIndex.Should().Be(0,
 			"The FirstPage TabBarItem should be selected by default after HR.");
+	}
+
+	// ──────────────────────────────────────────────────────────────────────
+	// 23. Child region attaches late (collectible-ALC timing) — #2245
+	// ──────────────────────────────────────────────────────────────────────
+
+	/// <summary>
+	/// Regression test for the collectible-ALC late region-attachment race. When a host loads the
+	/// app inside a collectible
+	/// AssemblyLoadContext (WASM), every child <c>NavigationRegion</c> attaches to its parent's
+	/// <c>Region.Children</c> only when its host control's <c>Loaded</c> event fires — and under
+	/// ALC hosting those events are dispatched several dispatcher cycles of real time later than
+	/// on a normal cold start. A navigation that cascades into a region whose child has not yet
+	/// attached observes <c>Region.Children.Count == 0</c> in <c>Navigator.CoreNavigateAsync</c>
+	/// and is silently dropped — no page renders, no exception. On a fresh load no HR
+	/// metadata-update follows, so the HR-delta-driven retry never runs and it never self-heals.
+	///
+	/// The race is made deterministic with the <see cref="NavigationRegion.AttachDelayForTests"/>
+	/// seam, which delays every genuine child-region attachment by an interval that defeats the
+	/// legacy 5×zero-delay dispatcher pump (effectively instant) yet is well within the new
+	/// <c>NavigationConstants.ChildRegionAttachWaitBudget</c> (~1.5 s). On unpatched code the
+	/// initial cascade cannot reach the default tab — the descent stalls at the empty-children
+	/// guard and the page never lands. With the fix, <c>EnsureChildRegionsAreLoaded</c> waits for
+	/// each late attachment and the default tab (TabOne, IsDefault) renders.
+	/// </summary>
+	[TestMethod]
+	[RunsOnUIThread]
+	public async Task When_ChildRegionAttachesLate_Then_DefaultTabStillRenders(CancellationToken ct)
+	{
+		// Delay each genuine child-region attachment by an interval that defeats the legacy
+		// 5×zero-delay dispatcher pump (effectively instant) yet is comfortably under the new
+		// ChildRegionAttachWaitBudget (~1.5 s). Mirrors the late Loaded-event timing seen under
+		// collectible-ALC WASM hosting.
+		NavigationRegion.AttachDelayForTests = async _ => await Task.Delay(TimeSpan.FromMilliseconds(250), ct);
+		try
+		{
+			// On unpatched code the initial cascade is dropped: the page route never lands and
+			// SetupTwoTabAppAsync throws at its WaitForRouteAsync — the red signal. With the fix
+			// the bounded wait lets each late child attach, so the descent completes.
+			await using var app = await SetupTwoTabAppAsync(ct);
+
+			var hostPage = ResolveCurrentPage<HotReloadTabBarPage>(app.NavigationRoot);
+			hostPage.Should().NotBeNull(
+				"Frame should reach HotReloadTabBarPage even when child regions attach late");
+
+			// The IsDefault nested route (TabOne) must render despite the late child-region
+			// attachment.
+			var tabOneVm = await WaitForTabContentVmAsync(
+				hostPage!.ContentGrid, "TabOne", TimeSpan.FromSeconds(30), ct);
+			tabOneVm.Should().NotBeNull(
+				"The IsDefault tab must render even when child regions attach late " +
+				"(collectible-ALC timing)");
+		}
+		finally
+		{
+			NavigationRegion.AttachDelayForTests = null;
+		}
 	}
 
 	#region Setup helpers

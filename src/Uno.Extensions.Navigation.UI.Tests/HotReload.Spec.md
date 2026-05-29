@@ -258,6 +258,24 @@ Uses Uno Toolkit's `TabBar` + `TabBarItem` with `Region.Name` on each item. See 
 - **Goal**: Complementary direction to catch eager-instantiation caching.
 - **Risk**: Same as above.
 
+- **ID**: `When_ChildRegionAttachesLate_Then_DefaultTabStillRenders` (implemented in `Given_TabBar_HotReload`)
+- **Goal**: Regression guard for the collectible-ALC late region-attachment race.
+  Under ALC hosting (WASM live-preview/IDE host) a child `NavigationRegion`'s `Loaded` event
+  fires several dispatcher cycles of real time after its parent loads, so the initial cascade
+  observed `Region.Children.Count == 0` in `Navigator.CoreNavigateAsync`, silently dropped, and
+  the default page never rendered.
+- **Layout**: standard 2-tab `SetupTwoTabAppAsync` (TabBar + Visibility content region, nested
+  IsDefault TabOne).
+- **HR change**: none — this is a *timing* regression, not a source edit. The race is forced via
+  the `NavigationRegion.AttachDelayForTests` seam (delays each genuine child-region attachment
+  past the legacy zero-delay pump window, within the new `ChildRegionAttachWaitBudget`).
+- **Trigger / Assertion**: boot the app with the delay armed; assert the IsDefault tab (TabOne)
+  still renders. Red before the fix (cascade dropped → `WaitForRouteAsync` times out); green
+  after `Navigator.EnsureChildRegionsAreLoaded` waits (discriminated on a pending
+  `Region.Attached` descendant) for the late attachment. See `specs/004-...`.
+- **Risk**: the seam must stay null in production (zero cost) and the wait must not penalise
+  leaf-page navigations (guarded by `HasUnattachedRegionDescendant`).
+
 - **ID**: `When_MainPageGetsTabBarPagesAndRoutesAddedViaHR_Then_FirstPageIsDefaultlySelected`
 - **Goal**: End-to-end "developer authors tab navigation from scratch via HR" flow.
   Validates that after every HR step needed to add TabBar navigation has landed, the

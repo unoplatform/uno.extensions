@@ -66,6 +66,15 @@ public sealed class NavigationRegion : IRegion
 
 	public ICollection<IRegion> Children { get; } = new List<IRegion>();
 
+	// Test-only seam (see Given_LateRegionAttachment) used to make the collectible-ALC
+	// late-attachment race (#2245) deterministic. When set, a genuine child region awaits
+	// this delegate before attaching to its parent, so the parent's
+	// EnsureChildRegionsAreLoaded observes Children.Count == 0 — exactly the timing that
+	// occurs under WASM ALC hosting when the child's Loaded event fires late. Always null
+	// in production (no cost); visible to Uno.Extensions.Navigation.WinUI.Tests via
+	// InternalsVisibleTo.
+	internal static Func<NavigationRegion, Task>? AttachDelayForTests;
+
 	public NavigationRegion(ILogger logger, FrameworkElement? view = null, IServiceProvider? services = null)
 	{
 		_logger = logger;
@@ -199,7 +208,7 @@ public sealed class NavigationRegion : IRegion
 		Parent = null;
 	}
 
-	private Task HandleLoading()
+	private async Task HandleLoading()
 	{
 		if (View is null)
 		{
@@ -208,12 +217,24 @@ public sealed class NavigationRegion : IRegion
 				_logger.LogTraceMessage($"(Name: {Name}) View is null");
 			}
 
-			return Task.CompletedTask;
+			return;
+		}
+
+		// Test-only: inject a delay before a genuine (non-root, region-attached, not yet
+		// parented) child region attaches, reproducing the ALC late-attachment race (#2245).
+		// Null in production, so the await completes synchronously and the happy path is
+		// unchanged.
+		if (AttachDelayForTests is { } delay && !_isRoot && View.GetAttached() && Parent is null)
+		{
+			await delay(this);
 		}
 
 		AssignParent();
 
-		return View.IsLoaded ? HandleLoaded() : Task.CompletedTask;
+		if (View.IsLoaded)
+		{
+			await HandleLoaded();
+		}
 	}
 
 	private void AssignParent()
