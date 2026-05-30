@@ -72,7 +72,7 @@ internal static class NavigationRouteUpdateHandler
 		{
 			try
 			{
-				RebuildRoutes(ctx);
+				RebuildRoutes(ctx, updatedTypes);
 			}
 			catch (Exception ex)
 			{
@@ -84,7 +84,7 @@ internal static class NavigationRouteUpdateHandler
 		}
 	}
 
-	private static void RebuildRoutes(NavigationRouteContext ctx)
+	private static void RebuildRoutes(NavigationRouteContext ctx, Type[]? updatedTypes)
 	{
 		var resolver = ctx.Resolver;
 		if (resolver is null)
@@ -175,8 +175,48 @@ internal static class NavigationRouteUpdateHandler
 		// runs and lets its async continuations make progress.
 		if (rebuiltSuccessfully && ctx.RootRegion is { } root)
 		{
-			ScheduleCascade(root, resolver);
+			// Only cascade if at least one updated type is registered as a view or
+			// view-model in the (just-rebuilt) route table.  A XAML-only HR cycle
+			// (e.g. a Text change on a page with x:Uid) produces updatedTypes that
+			// contain only the page's generated partial class, which is not a
+			// navigation-registered type.  Cascading unconditionally on every such
+			// cycle re-mounts the page and lets x:Uid overwrite the edited value,
+			// making the edit appear to revert.  See studio.live#2293.
+			if (updatedTypes is null || HasRouteRegisteredType(updatedTypes, resolver))
+			{
+				ScheduleCascade(root, resolver);
+			}
+			else if (Region.Logger.IsEnabled(LogLevel.Debug))
+			{
+				Region.Logger.LogDebugMessage("Hot-reload cascade skipped: none of the updated types are registered navigation routes.");
+			}
 		}
+	}
+
+	/// <summary>
+	/// Returns <see langword="true"/> if at least one type in <paramref name="types"/>
+	/// is registered in the resolver as a view or view-model.
+	/// </summary>
+	private static bool HasRouteRegisteredType(Type[] types, RouteResolver resolver)
+	{
+		foreach (var t in types)
+		{
+			if (resolver.FindByView(t, navigator: null) is not null)
+			{
+				return true;
+			}
+
+			// IL2072: t comes from a Type[] whose elements don't carry DynamicallyAccessedMembers
+			// annotations, but FindByViewModel uses them only for lookup — no construction or
+			// property access is performed. The call is safe for this read-only, type-identity check.
+#pragma warning disable IL2072
+			if (resolver.FindByViewModel(t, navigator: null) is not null)
+#pragma warning restore IL2072
+			{
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/// <summary>
@@ -192,6 +232,30 @@ internal static class NavigationRouteUpdateHandler
 			if (ctx.Resolver is { } resolver && ctx.RootRegion is { } root)
 			{
 				ScheduleCascade(root, resolver);
+			}
+		}
+	}
+
+	/// <summary>
+	/// Like <see cref="ScheduleCascadeForAllContexts"/> but skips the cascade
+	/// when <paramref name="updatedTypes"/> contains no navigation-registered type.
+	/// Pass <see langword="null"/> to unconditionally cascade (same behaviour as
+	/// <see cref="ScheduleCascadeForAllContexts"/>).
+	/// </summary>
+	internal static void ScheduleCascadeForAllContextsIfRouteRelevant(Type[]? updatedTypes)
+	{
+		foreach (var ctx in _contexts)
+		{
+			if (ctx.Resolver is { } resolver && ctx.RootRegion is { } root)
+			{
+				if (updatedTypes is null || HasRouteRegisteredType(updatedTypes, resolver))
+				{
+					ScheduleCascade(root, resolver);
+				}
+				else if (Region.Logger.IsEnabled(LogLevel.Debug))
+				{
+					Region.Logger.LogDebugMessage("Hot-reload visibility-restore cascade skipped: none of the updated types are registered navigation routes.");
+				}
 			}
 		}
 	}
