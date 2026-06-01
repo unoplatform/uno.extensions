@@ -221,7 +221,7 @@ public abstract class ControlNavigator : Navigator
 	/// </summary>
 	/// <remarks>
 	/// A <see cref="SelectorNavigator{TControl}"/> (TabBar / NavigationView) verifies the
-	/// requested item exists in <see cref="RegionCanNavigate"/>, selects it in
+	/// requested item exists, selects it in
 	/// <c>Show()</c>, and intentionally returns <c>null</c> so the route flows to the
 	/// sibling content region that renders the page. Classifying that <c>null</c> as a
 	/// missing view wrongly arms <see cref="RememberPendingFailedRequest"/>, which the
