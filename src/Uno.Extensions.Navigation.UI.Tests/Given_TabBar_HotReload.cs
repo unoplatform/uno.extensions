@@ -152,6 +152,54 @@ public class Given_TabBar_HotReload
 	}
 
 	// ──────────────────────────────────────────────────────────────────────
+	// 3b. A successful selector navigation must not leave a phantom pending
+	//     failed request (studio.live#2245 / spec 004)
+	// ──────────────────────────────────────────────────────────────────────
+
+	/// <summary>
+	/// A <see cref="Uno.Extensions.Navigation.Navigators.SelectorNavigator{TControl}"/>
+	/// (TabBar / NavigationView) returns <c>null</c> from <c>Show()</c> by design — it
+	/// selects the matching item and delegates the page to the sibling content region.
+	/// The base <c>ControlNavigator</c> must classify that <c>null</c> as success, NOT as a
+	/// failed view resolution. If it is wrongly recorded as a pending failed request, spec
+	/// 003's hot-reload retry walk re-issues a phantom selector navigation on every later HR
+	/// delta, thrashing the active tab — the root cause of studio.live#2245 ("menu pages
+	/// silently fail to resolve after Hot Reload — Show() returned null with no exception").
+	///
+	/// This is a non-HR invariant test: the phantom pending request is recorded by the very
+	/// first selector navigation, independent of any delta, so it reproduces without
+	/// applying a hot-reload edit.
+	/// </summary>
+	[TestMethod]
+	[RunsOnUIThread]
+	public async Task When_TabNavigated_Then_NoPendingFailedRequestRecorded(CancellationToken ct)
+	{
+		await using var app = await SetupTwoTabAppAsync(ct);
+
+		var hostPage = ResolveCurrentPage<HotReloadTabBarPage>(app.NavigationRoot);
+		hostPage.Should().NotBeNull("Frame should have navigated to HotReloadTabBarPage");
+
+		var tabBarNavigator = await WaitForTabBarNavigatorAsync(
+			hostPage!.TabBar, TimeSpan.FromSeconds(30), ct);
+
+		// Navigate to TabTwo and confirm the page actually rendered (navigation succeeded).
+		await tabBarNavigator.NavigateRouteAsync(hostPage, "TabTwo");
+		var tabTwoVm = await WaitForTabContentVmAsync(
+			hostPage.ContentGrid, "TabTwo", TimeSpan.FromSeconds(30), ct);
+		tabTwoVm.Should().NotBeNull("TabTwo content should have rendered");
+
+		// The selector selected the item and delegated rendering to the sibling content
+		// region — nothing failed. It must therefore NOT be sitting in the hot-reload retry
+		// set, or the retry walk re-issues it on every later delta.
+		var controlNavigator = tabBarNavigator as Uno.Extensions.Navigation.Navigators.ControlNavigator;
+		controlNavigator.Should().NotBeNull(
+			"the TabBar's navigator is a SelectorNavigator, which derives from ControlNavigator");
+		controlNavigator!.HasPendingFailedRequest.Should().BeFalse(
+			"a successful tab navigation must not leave a phantom pending failed request " +
+			"(studio.live#2245 — otherwise the hot-reload retry walk re-issues it every delta)");
+	}
+
+	// ──────────────────────────────────────────────────────────────────────
 	// 4. Unvisited third tab shows updated content (3-tab)
 	// ──────────────────────────────────────────────────────────────────────
 

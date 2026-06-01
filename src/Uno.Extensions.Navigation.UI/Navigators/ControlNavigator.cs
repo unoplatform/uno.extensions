@@ -78,6 +78,22 @@ public abstract class ControlNavigator<TControl> : ControlNavigator
 				return Route.Empty;
 			}
 
+			// A SelectorNavigator (TabBar / NavigationView) returns null from Show() by
+			// design: RegionCanNavigate already verified the item exists, Show() selected
+			// it, and the page itself is rendered by the sibling content region. This is a
+			// successful delegation, not a missing view — so clear any stale pending slot
+			// and return Route.Empty WITHOUT warning and WITHOUT recording a pending HR
+			// retry. Recording one here would let the hot-reload retry walk re-issue a
+			// phantom selector navigation on every later delta, thrashing the active tab
+			// (studio.live#2245). The route flow is identical to the failure path below —
+			// both return Route.Empty, so Trim keeps the request route intact for the
+			// sibling/child regions. See spec 004.
+			if (IsNullShowResultExpected)
+			{
+				ClearPendingFailedRequest();
+				return Route.Empty;
+			}
+
 			// Only warn on the FIRST failure for a given route. Hot-reload's poll
 			// pattern fires this branch on every HR delta until the missing type
 			// finally loads — that's expected behavior of the pending-retry path,
@@ -197,6 +213,23 @@ public abstract class ControlNavigator<TControl> : ControlNavigator
 public abstract class ControlNavigator : Navigator
 {
 	public virtual bool CanGoBack => false;
+
+	/// <summary>
+	/// When <c>true</c>, a <c>null</c> result from <see cref="ControlNavigator{TControl}.Show"/>
+	/// is a successful delegation rather than a failed view resolution, so it must not be
+	/// recorded as a pending hot-reload retry.
+	/// </summary>
+	/// <remarks>
+	/// A <see cref="SelectorNavigator{TControl}"/> (TabBar / NavigationView) verifies the
+	/// requested item exists in <see cref="RegionCanNavigate"/>, selects it in
+	/// <c>Show()</c>, and intentionally returns <c>null</c> so the route flows to the
+	/// sibling content region that renders the page. Classifying that <c>null</c> as a
+	/// missing view wrongly arms <see cref="RememberPendingFailedRequest"/>, which the
+	/// hot-reload retry walk (<see cref="UI.NavigationRouteUpdateHandler"/>) then re-issues
+	/// on every later delta — thrashing the active selection — and logs a misleading
+	/// "Show() returned null" warning on every navigation. See spec 004.
+	/// </remarks>
+	protected virtual bool IsNullShowResultExpected => false;
 
 	// The most recent NavigationRequest whose Show() resolved to null because
 	// the target view type could not be created — typically the type doesn't
