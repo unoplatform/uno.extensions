@@ -3,11 +3,12 @@
 **Status:** In progress
 **Affects:** `Uno.Extensions.Navigation.UI`, `Uno.Extensions.Navigation.Toolkit.UI`
 **Follows:** [003-hot-reload-navigation-route-resolver](../003-hot-reload-navigation-route-resolver/spec.md)
-**Issue:** unoplatform/studio.live#2245 — "[Navigation] Menu pages silently fail to resolve after Hot Reload — Show() returned null with no exception thrown"
+
+Symptom: "[Navigation] Menu pages silently fail to resolve after Hot Reload — Show() returned null with no exception thrown".
 
 ## Problem
 
-A Studio Live app generated with a bottom-`TabBar` shell (or a sidebar `NavigationView`
+An app generated with a bottom-`TabBar` shell (or a sidebar `NavigationView`
 shell) renders its default tab, but after Hot Reload deltas are applied the menu items
 stop navigating: clicking any tab logs
 
@@ -57,15 +58,14 @@ a `FrameView`** — so this branch never matches. Every selector navigation ther
 through to the failure path, which:
 
 1. logs the misleading `"Show() returned null. No matching view was found or created."`
-   warning (the issue's smoking-gun line), and
+   warning (the smoking-gun line), and
 2. calls `RememberPendingFailedRequest(request)`.
 
 Step 2 is the damaging part. Spec 003's hot-reload self-heal (`Fix 3`) walks the live
 region tree on **every** hot-reload delta and re-issues every `ControlNavigator` with a
 pending failed request (`RetryPendingFailedRequestsFromRoot`). Because a selector records a
 phantom pending request on *every* tab switch, each subsequent HR delta re-issues a stale
-selector navigation. During a burst of deltas (e.g. the `LiveCharts` `PropertyValueBase`
-deserialization storm observed in the bundle) the retry walk repeatedly re-navigates the
+selector navigation. During a burst of deltas the retry walk repeatedly re-navigates the
 selector, thrashing the active tab — "navigation silently breaks after every Hot
 Reload pass."
 
@@ -139,13 +139,12 @@ Without the fix the selector records a phantom pending request on the successful
 navigation and the assertion fails (red). With the fix it passes (green). The existing
 TabBar HR tests continue to pass because the route flow is unchanged.
 
-### Product-level reproduction (studio.live)
+### Product-level reproduction
 
-`StudioLive.RuntimeTests.TabBarHotReloadNavigationRuntimeTests` is rewritten to scaffold
-the **real** shell shape (empty Visibility region + separate page *types* created on
-demand, as `TabBarShellStrategy` emits) instead of pre-instantiated named child panels, so
-it exercises the on-demand `FrameView` + selector path that the production scaffolding
-actually produces.
+A product-level runtime test scaffolds the **real** shell shape (empty Visibility region +
+separate page *types* created on demand, as a generated TabBar shell emits) instead of
+pre-instantiated named child panels, so it exercises the on-demand `FrameView` + selector
+path that the production scaffolding actually produces.
 
 ## How to apply
 

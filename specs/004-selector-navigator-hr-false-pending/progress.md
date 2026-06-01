@@ -2,11 +2,11 @@
 
 ## Plan
 
-- [x] Diagnose studio.live#2245 from the feedback bundle (TabBar shell, `Show() returned null`).
+- [x] Diagnose the reported symptom (TabBar shell, `Show() returned null`).
 - [x] Trace the cascade: confirm `SelectorNavigator.Show()` always returns `null` and the
       Fix-4 `FrameView` success branch never covers a selector.
 - [x] Confirm `TabBarNavigator` and `NavigationViewNavigator` both derive from
-      `SelectorNavigator` (issue reproduces on both shells).
+      `SelectorNavigator` (reproduces on both shells).
 - [x] Write spec.
 - [x] Add `IsNullShowResultExpected` virtual to `ControlNavigator`.
 - [x] Handle the expected-null case in `ControlNavigator<TControl>.ExecuteRequestAsync`.

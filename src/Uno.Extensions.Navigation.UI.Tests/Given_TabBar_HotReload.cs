@@ -153,7 +153,7 @@ public class Given_TabBar_HotReload
 
 	// ──────────────────────────────────────────────────────────────────────
 	// 3b. A successful selector navigation must not leave a phantom pending
-	//     failed request (studio.live#2245 / spec 004)
+	//     failed request (spec 004)
 	// ──────────────────────────────────────────────────────────────────────
 
 	/// <summary>
@@ -163,7 +163,7 @@ public class Given_TabBar_HotReload
 	/// The base <c>ControlNavigator</c> must classify that <c>null</c> as success, NOT as a
 	/// failed view resolution. If it is wrongly recorded as a pending failed request, spec
 	/// 003's hot-reload retry walk re-issues a phantom selector navigation on every later HR
-	/// delta, thrashing the active tab — the root cause of studio.live#2245 ("menu pages
+	/// delta, thrashing the active tab — the root cause of the reported symptom ("menu pages
 	/// silently fail to resolve after Hot Reload — Show() returned null with no exception").
 	///
 	/// This is a non-HR invariant test: the phantom pending request is recorded by the very
@@ -196,7 +196,7 @@ public class Given_TabBar_HotReload
 			"the TabBar's navigator is a SelectorNavigator, which derives from ControlNavigator");
 		controlNavigator!.HasPendingFailedRequest.Should().BeFalse(
 			"a successful tab navigation must not leave a phantom pending failed request " +
-			"(studio.live#2245 — otherwise the hot-reload retry walk re-issues it every delta)");
+			"(otherwise the hot-reload retry walk re-issues it every delta)");
 	}
 
 	// ──────────────────────────────────────────────────────────────────────

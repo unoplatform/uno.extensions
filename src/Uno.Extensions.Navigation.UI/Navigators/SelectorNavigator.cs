@@ -98,7 +98,7 @@ public abstract class SelectorNavigator<TControl> : ControlNavigator<TControl>
 	// sibling content region (see Show()). RegionCanNavigate has already confirmed the item
 	// exists, so that null is a successful delegation — never a missing view. Tell the base
 	// ExecuteRequestAsync not to treat it as a failed resolution (no warning, no phantom
-	// hot-reload pending retry). See spec 004 / studio.live#2245.
+	// hot-reload pending retry). See spec 004.
 	protected override bool IsNullShowResultExpected => true;
 
 	protected override async Task<bool> RegionCanNavigate(Route route, RouteInfo? routeMap)
