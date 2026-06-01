@@ -94,6 +94,13 @@ public abstract class SelectorNavigator<TControl> : ControlNavigator<TControl>
 
 	protected override FrameworkElement? CurrentView => SelectedItem;
 
+	// Show() selects the matching item and returns null so the route flows down to the
+	// sibling content region (see Show()). RegionCanNavigate has already confirmed the item
+	// exists, so that null is a successful delegation — never a missing view. Tell the base
+	// ExecuteRequestAsync not to treat it as a failed resolution (no warning, no phantom
+	// hot-reload pending retry). See spec 004.
+	protected override bool IsNullShowResultExpected => true;
+
 	protected override async Task<bool> RegionCanNavigate(Route route, RouteInfo? routeMap)
 	{
 		// When a tab item exists but has no registered route (e.g. added via XAML HR),
