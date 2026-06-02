@@ -2,7 +2,7 @@
 
 ## Plan
 
-- [x] Diagnose studio.live#2245 from the feedback bundle (TabBar shell, `Show() returned null`).
+- [x] Diagnose the reported regression from the feedback bundle (TabBar shell, `Show() returned null`).
 - [x] Trace the cascade: confirm `SelectorNavigator.Show()` always returns `null` and the
       Fix-4 `FrameView` success branch never covers a selector.
 - [x] Confirm `TabBarNavigator` and `NavigationViewNavigator` both derive from

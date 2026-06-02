@@ -85,7 +85,7 @@ public abstract class ControlNavigator<TControl> : ControlNavigator
 			// and return Route.Empty WITHOUT warning and WITHOUT recording a pending HR
 			// retry. Recording one here would let the hot-reload retry walk re-issue a
 			// phantom selector navigation on every later delta, thrashing the active tab
-			// (studio.live#2245). The route flow is identical to the failure path below —
+			// (see spec 004). The route flow is identical to the failure path below —
 			// both return Route.Empty, so Trim keeps the request route intact for the
 			// sibling/child regions. See spec 004.
 			if (IsNullShowResultExpected)
@@ -233,7 +233,7 @@ public abstract class ControlNavigator : Navigator
 
 	// The most recent NavigationRequest whose Show() resolved to null because
 	// the target view type could not be created — typically the type doesn't
-	// exist yet in the loaded assembly (Studio Live / hot-reload scaffolding).
+	// exist yet in the loaded assembly (hot-reload-driven scaffolding).
 	// NavigationRouteUpdateHandler walks the live region tree after a C# or
 	// XAML hot-reload and re-issues these requests so an initial navigation
 	// that fired before the missing type was hot-reloaded in can self-heal

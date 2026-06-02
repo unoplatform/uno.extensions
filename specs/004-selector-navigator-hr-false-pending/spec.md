@@ -3,11 +3,11 @@
 **Status:** In progress
 **Affects:** `Uno.Extensions.Navigation.UI`, `Uno.Extensions.Navigation.Toolkit.UI`
 **Follows:** [003-hot-reload-navigation-route-resolver](../003-hot-reload-navigation-route-resolver/spec.md)
-**Issue:** unoplatform/studio.live#2245 — "[Navigation] Menu pages silently fail to resolve after Hot Reload — Show() returned null with no exception thrown"
+**Symptom:** "[Navigation] Menu pages silently fail to resolve after Hot Reload — Show() returned null with no exception thrown"
 
 ## Problem
 
-A Studio Live app generated with a bottom-`TabBar` shell (or a sidebar `NavigationView`
+An app scaffolded via a hot-reload-driven generation pipeline with a bottom-`TabBar` shell (or a sidebar `NavigationView`
 shell) renders its default tab, but after Hot Reload deltas are applied the menu items
 stop navigating: clicking any tab logs
 
@@ -139,11 +139,11 @@ Without the fix the selector records a phantom pending request on the successful
 navigation and the assertion fails (red). With the fix it passes (green). The existing
 TabBar HR tests continue to pass because the route flow is unchanged.
 
-### Product-level reproduction (studio.live)
+### Product-level reproduction (downstream consumer)
 
-`StudioLive.RuntimeTests.TabBarHotReloadNavigationRuntimeTests` is rewritten to scaffold
+A downstream consumer's TabBar hot-reload navigation runtime test is rewritten to scaffold
 the **real** shell shape (empty Visibility region + separate page *types* created on
-demand, as `TabBarShellStrategy` emits) instead of pre-instantiated named child panels, so
+demand, as the shell-generation strategy emits) instead of pre-instantiated named child panels, so
 it exercises the on-demand `FrameView` + selector path that the production scaffolding
 actually produces.
 

@@ -12,7 +12,7 @@
 
 ## Problem
 
-After scaffolding a tabbed app via Studio Live's hot-reload-driven generation pipeline, the content area above the `TabBar` stayed blank forever. The shell rendered, but the `IsDefault` page (for example `HomePage` under the `Home` tab) never appeared. A full app rebuild fixed it; subsequent hot-reload deltas did not.
+After scaffolding a tabbed app via a hot-reload-driven generation pipeline, the content area above the `TabBar` stayed blank forever. The shell rendered, but the `IsDefault` page (for example `HomePage` under the `Home` tab) never appeared. A full app rebuild fixed it; subsequent hot-reload deltas did not.
 
 Every `[MetadataUpdateHandler] UpdateApplication` invocation fired by the CLR aborted at `RebuildRoutes: resolver is null, returning` — so the route resolver was never re-evaluated after hot-reload, and any pending navigation that landed before its target type was loaded had no chance to recover.
 
@@ -50,7 +50,7 @@ The symptom looks like "hot-reload doesn't work in the inner ALC", but the CLR m
 
 ### Secondary problem — initial navigation drops when the target type is not yet loaded
 
-In a hot-reload-driven scaffolding flow (Studio Live), the navigation system is brought up before the application's page types have been hot-reloaded into the running assembly. When `INavigator.NavigateRouteAsync` resolves a route whose `RouteMap` references a type that does not yet exist:
+In a hot-reload-driven scaffolding flow, the navigation system is brought up before the application's page types have been hot-reloaded into the running assembly. When `INavigator.NavigateRouteAsync` resolves a route whose `RouteMap` references a type that does not yet exist:
 
 1. `ControlNavigator.Show()` returns `null` (no matching view could be created).
 2. `ExecuteRequestAsync` logs a warning and returns `Route.Empty`.
@@ -188,7 +188,7 @@ if (mapping?.RenderView is { } renderView && renderView.IsSubclassOf(typeof(Page
 
 Diagnosing the original `ctx.Resolver is null` issue required adding logs at every static entry point of the route-update handler plus a snapshot of the resolver's top-level route count at construction and after `Rebuild()`. Those logs are retained because they make any future regression in this area immediately diagnosable.
 
-A single `NavRouteHandlerDiag.Log(message)` helper emits to both `Region.Logger` (filterable via the standard `ILogger` pipeline) **and** `System.Diagnostics.Debug.WriteLine` (so a missing `Region.Logger` or `NullLogger` fallback does not erase the trace through Studio Live's `DebugListenerForwarder`).
+A single `NavRouteHandlerDiag.Log(message)` helper emits to both `Region.Logger` (filterable via the standard `ILogger` pipeline) **and** `System.Diagnostics.Debug.WriteLine` (so a missing `Region.Logger` or `NullLogger` fallback does not erase the trace through a downstream consumer's debug listener forwarder).
 
 Coverage:
 
@@ -250,7 +250,7 @@ When a navigator wraps a delegate target (e.g. `FrameView` wrapping a `Page`), t
 
 ## Source
 
-This spec captures the lesson recorded in `studio.live/specs/lessons.md` under
+This spec captures the lesson recorded in a downstream consumer's lessons log under
 "Uno.Extensions.Navigation HR — `NavigationRouteContext.Resolver` Is Never Assigned After `UseNavigation`",
 along with the surrounding changes shipped on branch `dev/sb/hr-nav` in commit `307a75dff` (plus the
 `ControlNavigator.cs` warning-suppression follow-up still pending commit).
