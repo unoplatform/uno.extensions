@@ -259,6 +259,15 @@ public sealed class NavigationRegion : IRegion
 				if (_logger.IsEnabled(LogLevel.Warning))
 				{
 					_logger.LogWarningMessage($"(Name: {Name}) Unable to find service provider for root navigator");
+
+					// Diagnostic: walk the live visual tree from this region's view to the root and
+					// report each ancestor's type plus whether it carries a region instance ([region])
+					// or a service provider ([sp]). This distinguishes a timing failure (the navigation
+					// root with [sp] IS in the chain — re-driving AssignParent would recover) from a
+					// structural one (the root with [sp] is absent — the content is attached outside the
+					// navigation root, so re-driving cannot help). Loaded == connected to the live tree,
+					// so the chain reflects the real ancestry at the point of failure.
+					_logger.LogWarningMessage($"(Name: {Name}) Root-navigator SP not found. Visual ancestor chain: {BuildVisualAncestorDiagnostic(View)}");
 				}
 
 				return;
@@ -273,6 +282,55 @@ public sealed class NavigationRegion : IRegion
 				_ = services.Startup(start);
 			}
 		}
+	}
+
+	/// <summary>
+	/// Builds a compact, single-line description of the visual ancestor chain from
+	/// <paramref name="start"/> up to the visual root, annotating each ancestor with
+	/// <c>[region]</c> when it carries a <see cref="Region"/> instance and <c>[sp]</c> when it
+	/// carries a <c>Region.ServiceProvider</c>. Used purely for diagnostics when a region fails to
+	/// resolve a root service provider: the presence or absence of an ancestor marked <c>[sp]</c>
+	/// reveals whether the region is attached under the navigation root (recoverable by re-driving
+	/// <see cref="AssignParent"/>) or outside it (a structural attachment problem).
+	/// </summary>
+	internal static string BuildVisualAncestorDiagnostic(FrameworkElement? start)
+	{
+		const int maxDepth = 60;
+
+		var chain = new List<string>();
+		DependencyObject? current = start;
+		var depth = 0;
+
+		while (current is not null && depth < maxDepth)
+		{
+			var token = current.GetType().Name;
+
+			if (current is FrameworkElement { Name: { Length: > 0 } name })
+			{
+				token += $"#{name}";
+			}
+
+			if (current.GetInstance() is not null)
+			{
+				token += "[region]";
+			}
+
+			if (current.GetServiceProvider() is not null)
+			{
+				token += "[sp]";
+			}
+
+			chain.Add(token);
+			current = VisualTreeHelper.GetParent(current);
+			depth++;
+		}
+
+		if (current is not null)
+		{
+			chain.Add("…(truncated)");
+		}
+
+		return chain.Count > 0 ? string.Join(" <- ", chain) : "(no view)";
 	}
 
 	public void ReassignParent()
