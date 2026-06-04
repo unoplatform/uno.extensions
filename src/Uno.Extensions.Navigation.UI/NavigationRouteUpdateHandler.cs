@@ -182,7 +182,7 @@ internal static class NavigationRouteUpdateHandler
 			// navigation-registered type.  Cascading unconditionally on every such
 			// cycle re-mounts the page and lets x:Uid overwrite the edited value,
 			// making the edit appear to revert.  See studio.live#2293.
-			if (updatedTypes is null || HasRouteRegisteredType(updatedTypes, resolver))
+			if (ShouldCascadeForUpdatedTypes(updatedTypes, resolver))
 			{
 				ScheduleCascade(root, resolver);
 			}
@@ -192,6 +192,13 @@ internal static class NavigationRouteUpdateHandler
 			}
 		}
 	}
+
+	/// <summary>
+	/// Returns <see langword="true"/> when the hot-reload update should cascade
+	/// through the live region tree.
+	/// </summary>
+	internal static bool ShouldCascadeForUpdatedTypes(Type[]? updatedTypes, RouteResolver resolver)
+		=> updatedTypes is null || HasRouteRegisteredType(updatedTypes, resolver);
 
 	/// <summary>
 	/// Returns <see langword="true"/> if at least one type in <paramref name="types"/>
@@ -248,7 +255,7 @@ internal static class NavigationRouteUpdateHandler
 		{
 			if (ctx.Resolver is { } resolver && ctx.RootRegion is { } root)
 			{
-				if (updatedTypes is null || HasRouteRegisteredType(updatedTypes, resolver))
+				if (ShouldCascadeForUpdatedTypes(updatedTypes, resolver))
 				{
 					ScheduleCascade(root, resolver);
 				}
