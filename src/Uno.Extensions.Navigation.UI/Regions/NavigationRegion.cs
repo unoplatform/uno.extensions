@@ -21,6 +21,23 @@ public sealed class NavigationRegion : IRegion
 	// by HR's ReplaceViewInstance as a replacement for a region that had active navigation.
 	// Treated as equivalent to _wasUnloaded in HandleLoaded's re-cascade check.
 	private bool _replacedByHotReload;
+
+	// When the view is Loaded but its visual ancestry up to the navigation root is not yet
+	// connected (async tree construction, or a hot-reload view-swap that grafts the new subtree
+	// before its ancestry is linked), AssignParent resolves neither a parent region nor a root
+	// service provider. Committing to a loaded state then permanently orphans the region — a blank
+	// screen. Instead we watch LayoutUpdated (the framework's "element has settled" signal, quiet at
+	// idle — see FrameworkElementExtensions.EnsureElementLoaded) and re-attempt until the root
+	// becomes reachable. _resolveWatching tracks the subscription; _resolveAttempts bounds the watch
+	// so a region genuinely detached from any navigation root gives up (and logs) once.
+	private const int MaxResolveAttempts = 30;
+	private bool _resolveWatching;
+	private int _resolveAttempts;
+
+	// A region is fully resolved once it is the root or has a parent (either of which yields Services).
+	// While it is loaded but none of those hold, its place in the navigation tree is not established yet.
+	private bool IsLoadedButUnresolved =>
+		View is { IsLoaded: true } && !_isRoot && Parent is null && _services is null;
 	public IRegion? Parent
 	{
 		get => _parent;
@@ -197,6 +214,11 @@ public sealed class NavigationRegion : IRegion
 		View.Unloaded -= ViewUnloaded;
 
 		Parent = null;
+
+		// Drop any pending resolve watch and reset the budget so a later re-load that re-orphans gets a
+		// fresh allowance rather than inheriting a spent counter.
+		StopResolveWatch();
+		_resolveAttempts = 0;
 	}
 
 	private Task HandleLoading()
@@ -256,9 +278,13 @@ public sealed class NavigationRegion : IRegion
 			var services = sp?.CreateNavigationScope();
 			if (services is null)
 			{
-				if (_logger.IsEnabled(LogLevel.Warning))
+				// Transient during async tree construction / a hot-reload view-swap: the ancestry up to
+				// the navigation root is not connected yet. HandleLoaded watches for the tree to settle
+				// and re-attempts; a terminal Warning is logged only if that watch is exhausted
+				// (OnResolveLayoutUpdated), so this is Trace, not Warning, to avoid per-attempt spam.
+				if (_logger.IsEnabled(LogLevel.Trace))
 				{
-					_logger.LogWarningMessage($"(Name: {Name}) Unable to find service provider for root navigator");
+					_logger.LogTraceMessage($"(Name: {Name}) Root service provider not reachable yet; will re-attempt once the visual tree settles");
 				}
 
 				return;
@@ -321,6 +347,21 @@ public sealed class NavigationRegion : IRegion
 		{
 			return;
 		}
+
+		// The view is connected to the live tree, but if the navigation root is not yet reachable do NOT
+		// commit to a loaded/orphaned state. Keep the load-event subscriptions (so a re-parent recovers
+		// via ViewLoaded) and watch LayoutUpdated to re-attempt once the tree settles. Committing here is
+		// what previously produced the blank screen.
+		if (IsLoadedButUnresolved)
+		{
+			StartResolveWatch();
+			return;
+		}
+
+		// Resolution succeeded (root or parent found) — stop any pending resolve watch and commit.
+		StopResolveWatch();
+		_resolveAttempts = 0;
+
 		_isLoaded = true;
 
 		View.Loading -= ViewLoading;
@@ -373,6 +414,138 @@ public sealed class NavigationRegion : IRegion
 			_suppressReCascadeOnReload = false;
 			_replacedByHotReload = false;
 		}
+	}
+
+	// Watches for the visual tree to settle so an unresolved-but-loaded region can re-attempt to find its
+	// navigation root. LayoutUpdated is the framework's "element settled" signal and is quiet at idle, so
+	// this is event-driven, not a poll — EnsureElementLoaded relies on the same signal because Loaded
+	// alone is unreliable on WASM. Loaded/Loading stay subscribed too, so a re-parent recovers via ViewLoaded.
+	private void StartResolveWatch()
+	{
+		if (_resolveWatching || View is null)
+		{
+			return;
+		}
+
+		if (_logger.IsEnabled(LogLevel.Trace))
+		{
+			_logger.LogTraceMessage($"(Name: {Name}) Loaded but navigation root not reachable; watching for the visual tree to settle");
+		}
+
+		_resolveWatching = true;
+		View.LayoutUpdated += OnResolveLayoutUpdated;
+	}
+
+	private void StopResolveWatch()
+	{
+		if (!_resolveWatching || View is null)
+		{
+			return;
+		}
+
+		_resolveWatching = false;
+		View.LayoutUpdated -= OnResolveLayoutUpdated;
+	}
+
+	private void OnResolveLayoutUpdated(object? sender, object e)
+	{
+		var view = View;
+
+		// Resolved/committed/unloaded by another path (ViewLoaded re-parent, ReassignParent, HR cascade)
+		// in the meantime — nothing left to do.
+		if (view is null || !IsLoadedButUnresolved)
+		{
+			StopResolveWatch();
+			return;
+		}
+
+		// Cheap, non-mutating probe: has the ancestry up to the navigation root become reachable?
+		var reachable = view.FindParentRegion(out _) is not null || view.FindServiceProvider() is not null;
+		if (!reachable)
+		{
+			// Bound the watch so a region genuinely detached from any navigation root (a structural
+			// misconfiguration, not a timing race) gives up and logs once rather than watching forever.
+			if (++_resolveAttempts >= MaxResolveAttempts)
+			{
+				StopResolveWatch();
+
+				if (_logger.IsEnabled(LogLevel.Warning))
+				{
+					_logger.LogWarningMessage($"(Name: {Name}) Region remained unresolved after {MaxResolveAttempts} layout passes; it appears detached from any navigation root and will not host navigation. Visual ancestry: {DescribeAncestry(view)}");
+				}
+			}
+
+			return;
+		}
+
+		// Reachable. Stop watching and complete loading off the layout callback — navigation / visual-tree
+		// mutation must not run inside a LayoutUpdated handler (it can fire mid-layout on some platforms;
+		// cf. EnsureElementLoaded's Android yield). This is the only dispatcher hop, and only on success.
+		StopResolveWatch();
+		_resolveAttempts = 0;
+
+		var dispatcher = view.GetDispatcher();
+		if (dispatcher is not null)
+		{
+			dispatcher.TryEnqueue(() => _ = ResolveAndLoadAsync());
+		}
+		else
+		{
+			_ = ResolveAndLoadAsync();
+		}
+	}
+
+	// Re-runs the normal load flow (AssignParent + HandleLoaded) after a late resolution, swallowing any
+	// throw — the dispatcher callback is fire-and-forget so an exception would otherwise be unobserved
+	// (silent on WASM). AGENTS.md §10: every fire-and-forget MUST have a try/catch.
+	private async Task ResolveAndLoadAsync()
+	{
+		try
+		{
+			await HandleLoading();
+		}
+		catch (Exception ex)
+		{
+			if (_logger.IsEnabled(LogLevel.Error))
+			{
+				_logger.LogErrorMessage($"(Name: {Name}) Deferred load after late region resolution failed: {ex.GetType().Name}: {ex.Message}");
+			}
+		}
+	}
+
+	// Compact visual-ancestor description for the terminal "unresolved" diagnostic: walks up a bounded
+	// number of parents and lists each type, flagging the one (if any) carrying a service provider —
+	// distinguishing a missing navigation root (none flagged) from a deeper wiring problem.
+	private static string DescribeAncestry(FrameworkElement? start)
+	{
+		const int maxDepth = 12;
+
+		var sb = new StringBuilder();
+		DependencyObject? current = start;
+		var depth = 0;
+		while (current is not null && depth < maxDepth)
+		{
+			if (depth > 0)
+			{
+				sb.Append(" <- ");
+			}
+
+			sb.Append(current.GetType().Name);
+			if (current.GetServiceProvider() is not null)
+			{
+				sb.Append("[sp]");
+			}
+
+			current = VisualTreeHelper.GetParent(current);
+			depth++;
+		}
+
+		if (current is not null)
+		{
+			sb.Append(" <- …");
+		}
+
+		return sb.Length > 0 ? sb.ToString() : "(no view)";
 	}
 
 	public async Task<string> GetStringAsync()

@@ -106,7 +106,7 @@ public static class FrameworkElementExtensions
 		await postStartupTask;
 	}
 
-	private static DispatcherQueue? GetDispatcher(this FrameworkElement? element) =>
+	internal static DispatcherQueue? GetDispatcher(this FrameworkElement? element) =>
 #if WINUI
 		element?.DispatcherQueue;
 #else

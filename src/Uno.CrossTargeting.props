@@ -11,8 +11,8 @@
 		<PropertyGroup>
 			<_TargetNugetPackageId Condition="'$(PackageId)'!=''">$(PackageId)</_TargetNugetPackageId>
 			<_TargetNugetPackageId Condition="'$(PackageId)'==''">$(AssemblyName)</_TargetNugetPackageId>
-			<_TargetNugetFolder Condition="'$(ToolOfPackage)'!=''">$(USERPROFILE)\.nuget\packages\$(ToolOfPackage)\$(NugetOverrideVersion)\analyzers\dotnet\cs</_TargetNugetFolder>
-			<_TargetNugetFolder Condition="'$(ToolOfPackage)'==''">$(USERPROFILE)\.nuget\packages\$(_TargetNugetPackageId)\$(NugetOverrideVersion)\lib\$(TargetFramework)</_TargetNugetFolder>
+			<_TargetNugetFolder Condition="'$(ToolOfPackage)'!=''">$(NuGetPackageRoot)\$(ToolOfPackage)\$(NugetOverrideVersion)\analyzers\dotnet\cs</_TargetNugetFolder>
+			<_TargetNugetFolder Condition="'$(ToolOfPackage)'==''">$(NuGetPackageRoot)\$(_TargetNugetPackageId)\$(NugetOverrideVersion)\lib\$(TargetFramework)</_TargetNugetFolder>
 		</PropertyGroup>
 
 		<ItemGroup>
