@@ -74,7 +74,13 @@ internal static class NavigationVisibilityUpdateHandler
 		{
 			newRegion.MarkReplacedByHotReload();
 
-			NavigationRouteUpdateHandler.ScheduleCascadeForAllContexts();
+			// Only trigger a route cascade when at least one updated type is a
+			// navigation-registered view or view-model.  A XAML-only HR cycle
+			// (e.g. a Text or colour change) replaces the element instance but
+			// does not add new routes; cascading here re-mounts the page and
+			// lets x:Uid resolution overwrite property edits that Hot Design
+			// just wrote, making them appear to revert.  See studio.live#2293.
+			NavigationRouteUpdateHandler.ScheduleCascadeForAllContextsIfRouteRelevant(updatedTypes);
 		}
 
 		return Task.CompletedTask;
