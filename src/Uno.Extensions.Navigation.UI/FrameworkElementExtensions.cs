@@ -116,10 +116,11 @@ public static class FrameworkElementExtensions
 	/// <summary>
 	/// Waits for <paramref name="element"/> to load, but gives up as soon as
 	/// <paramref name="hostView"/> leaves the tree (or is already detached): a child
-	/// element cannot load while its hosting subtree is detached, and
-	/// <see cref="EnsureLoaded"/> has no timeout — waiting on a detached subtree hangs
-	/// the navigation pipeline forever (spec 006: the hosting tree being re-grafted
-	/// mid-navigation, e.g. Hot Design wrapping the app content during bootstrap).
+	/// element cannot load while its hosting subtree is detached — waiting on a
+	/// detached subtree hangs the navigation pipeline forever (spec 006: the hosting
+	/// tree being re-grafted mid-navigation, e.g. Hot Design wrapping the app content
+	/// during bootstrap). The wait is cancelled via the <see cref="EnsureLoaded"/>
+	/// cancellation token when the host unloads.
 	/// Callers fall through on <see langword="false"/>; the request is then parked by
 	/// the child-forwarding stage and resumed when the region re-attaches.
 	/// </summary>
@@ -135,19 +136,18 @@ public static class FrameworkElementExtensions
 			return await element.EnsureLoaded();
 		}
 
-		if (!hostView.IsLoaded)
-		{
-			return element.IsLoaded;
-		}
-
-		var unloaded = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
-		RoutedEventHandler onUnloaded = (_, _) => unloaded.TrySetResult(false);
+		using var hostUnloaded = new CancellationTokenSource();
+		RoutedEventHandler onUnloaded = (_, _) => hostUnloaded.Cancel();
 		hostView.Unloaded += onUnloaded;
 		try
 		{
-			var loadTask = element.EnsureLoaded();
-			var completed = await Task.WhenAny(loadTask, unloaded.Task);
-			return await completed;
+			// Checked after subscribing to Unloaded so a detach in between can't be missed.
+			if (!hostView.IsLoaded)
+			{
+				return element.IsLoaded;
+			}
+
+			return await element.EnsureLoaded(cancellation: hostUnloaded.Token);
 		}
 		finally
 		{
@@ -155,7 +155,7 @@ public static class FrameworkElementExtensions
 		}
 	}
 
-	internal static async Task<bool> EnsureLoaded(this FrameworkElement? element, int? timeoutInSeconds = default)
+	internal static async Task<bool> EnsureLoaded(this FrameworkElement? element, int? timeoutInSeconds = default, CancellationToken cancellation = default)
 	{
 		if (element is null)
 		{
@@ -166,19 +166,22 @@ public static class FrameworkElementExtensions
 		var success = true;
 		if (dispatcher is not null)
 		{
-			var timeoutToken = (timeoutInSeconds is not null ?
-								new CancellationTokenSource(TimeSpan.FromSeconds(timeoutInSeconds.Value)) :
-								new CancellationTokenSource()).Token;
+			using var cancelSource = CancellationTokenSource.CreateLinkedTokenSource(cancellation);
+			if (timeoutInSeconds is not null)
+			{
+				cancelSource.CancelAfter(TimeSpan.FromSeconds(timeoutInSeconds.Value));
+			}
+			var cancelToken = cancelSource.Token;
 			success = await dispatcher.ExecuteAsync(async () =>
 			{
 				try
 				{
-					await EnsureElementLoaded(element, timeoutToken);
+					await EnsureElementLoaded(element, cancelToken);
 					return true;
 				}
 				catch
 				{
-					if (timeoutToken.IsCancellationRequested)
+					if (cancelToken.IsCancellationRequested)
 					{
 						return false;
 					}
