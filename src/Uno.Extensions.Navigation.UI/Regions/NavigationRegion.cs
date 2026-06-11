@@ -339,6 +339,22 @@ public sealed class NavigationRegion : IRegion
 
 		if (navigator is not null)
 		{
+			// Requests can get parked while this region (or its children) are detached
+			// during a tree re-graft (e.g. Hot Design re-hosting the app content during
+			// bootstrap — spec 006). Now that this region is attached and routable again:
+			// resume a request that arrived while THIS region was detached, and ask the
+			// parent to resume a child-bound request it could not forward.
+			// Fire-and-forget: both methods guard their own bodies.
+			if (navigator is Navigator ownNavigator)
+			{
+				_ = ownNavigator.TryResumeDetachedRequestAsync();
+			}
+
+			if (Parent?.Navigator() is Navigator parentNavigator)
+			{
+				_ = parentNavigator.TryResumePendingChildRequestAsync();
+			}
+
 			foreach (var child in Children.OfType<NavigationRegion>())
 			{
 				if (child._isLoaded && child._services is null)
