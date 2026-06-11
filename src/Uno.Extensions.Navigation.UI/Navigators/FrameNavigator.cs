@@ -650,7 +650,7 @@ public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 		Route = lastRoute;
 	}
 
-	protected override Task CheckLoadedAsync() => _content is not null ? _content.EnsureLoaded() : Task.CompletedTask;
+	protected override Task CheckLoadedAsync() => _content is not null ? _content.EnsureLoadedWhileHostAttached(Region.View) : Task.CompletedTask;
 
 	/// <summary>
 	/// Captures the currently active nested route by checking child navigator routes

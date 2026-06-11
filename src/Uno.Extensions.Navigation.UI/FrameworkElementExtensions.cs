@@ -113,6 +113,48 @@ public static class FrameworkElementExtensions
 		Windows.ApplicationModel.Core.CoreApplication.MainView.DispatcherQueue;
 #endif
 
+	/// <summary>
+	/// Waits for <paramref name="element"/> to load, but gives up as soon as
+	/// <paramref name="hostView"/> leaves the tree (or is already detached): a child
+	/// element cannot load while its hosting subtree is detached, and
+	/// <see cref="EnsureLoaded"/> has no timeout — waiting on a detached subtree hangs
+	/// the navigation pipeline forever (spec 006: the hosting tree being re-grafted
+	/// mid-navigation, e.g. Hot Design wrapping the app content during bootstrap).
+	/// Callers fall through on <see langword="false"/>; the request is then parked by
+	/// the child-forwarding stage and resumed when the region re-attaches.
+	/// </summary>
+	internal static async Task<bool> EnsureLoadedWhileHostAttached(this FrameworkElement? element, FrameworkElement? hostView)
+	{
+		if (element is null)
+		{
+			return false;
+		}
+
+		if (hostView is null)
+		{
+			return await element.EnsureLoaded();
+		}
+
+		if (!hostView.IsLoaded)
+		{
+			return element.IsLoaded;
+		}
+
+		var unloaded = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+		RoutedEventHandler onUnloaded = (_, _) => unloaded.TrySetResult(false);
+		hostView.Unloaded += onUnloaded;
+		try
+		{
+			var loadTask = element.EnsureLoaded();
+			var completed = await Task.WhenAny(loadTask, unloaded.Task);
+			return await completed;
+		}
+		finally
+		{
+			hostView.Unloaded -= onUnloaded;
+		}
+	}
+
 	internal static async Task<bool> EnsureLoaded(this FrameworkElement? element, int? timeoutInSeconds = default)
 	{
 		if (element is null)

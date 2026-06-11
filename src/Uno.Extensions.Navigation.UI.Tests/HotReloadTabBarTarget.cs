@@ -9,6 +9,6 @@ internal static class HotReloadTabBarTarget
 {
 	internal static string GetValue()
 	{
-		return "original";
+		return "updated";
 	}
 }

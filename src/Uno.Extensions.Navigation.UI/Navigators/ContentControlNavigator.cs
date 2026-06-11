@@ -92,6 +92,6 @@ public class ContentControlNavigator : ControlNavigator<ContentControl>
 		return default;
 	}
 
-	protected override Task CheckLoadedAsync() => _content is not null ? _content.EnsureLoaded() : Task.CompletedTask;
+	protected override Task CheckLoadedAsync() => _content is not null ? _content.EnsureLoadedWhileHostAttached(Region.View) : Task.CompletedTask;
 
 }

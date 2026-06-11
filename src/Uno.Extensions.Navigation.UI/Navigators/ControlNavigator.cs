@@ -73,7 +73,10 @@ public abstract class ControlNavigator<TControl> : ControlNavigator
 			if (mapping?.RenderView is { } renderView && renderView.IsSubclassOf(typeof(Page))
 				&& CurrentView is FrameView fv)
 			{
-				await fv.EnsureLoaded();
+				// Host-aware wait (spec 006): if the region's view detaches while the
+				// FrameView is loading, give up — the request falls through and is
+				// parked by the child-forwarding stage, resumed on re-attach.
+				await fv.EnsureLoadedWhileHostAttached(Region.View);
 				ClearPendingFailedRequest();
 				return Route.Empty;
 			}
@@ -155,7 +158,8 @@ public abstract class ControlNavigator<TControl> : ControlNavigator
 
 		if (view is FrameView fv)
 		{
-			await fv.EnsureLoaded();
+			// Host-aware wait (spec 006) — see ExecuteRequestAsync.
+			await fv.EnsureLoadedWhileHostAttached(Region.View);
 			navigator = fv.Navigator;
 		}
 
@@ -362,6 +366,9 @@ public abstract class ControlNavigator : Navigator
 		var services = Region.Services;
 		if (services is null)
 		{
+			// Region detached mid-request (see Navigator.ParkDetachedRequest) — park so
+			// the region's reload resumes the request instead of dropping it (spec 006).
+			ParkDetachedRequest(request);
 			return default;
 		}
 
