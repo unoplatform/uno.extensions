@@ -345,7 +345,6 @@ public sealed class NavigationRegion : IRegion
 			// resume a request that arrived while THIS region was detached, and ask the
 			// parent to resume a child-bound request it could not forward.
 			// Fire-and-forget: both methods guard their own bodies.
-			Console.WriteLine($"[S6] HandleLoaded resume-hooks view={View?.GetType().Name} nav={navigator.GetType().Name} parent={(Parent is not null)}");
 			if (navigator is Navigator ownNavigator)
 			{
 				_ = ownNavigator.TryResumeDetachedRequestAsync();
