@@ -9,6 +9,6 @@ internal static class HotReloadRouteNotifierTarget
 {
 	internal static string ProcessRouteChange(string route)
 	{
-		return $"modified-{route}";
+		return $"handled-{route}";
 	}
 }
