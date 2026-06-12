@@ -103,6 +103,9 @@ internal static class NavigationRouteUpdateHandler
 			return;
 		}
 
+		// Snapshot to detect whether the rebuild actually changes the route table.
+		var previousSignature = resolver.GetMappingsSignature();
+
 		// Snapshot current state so we can restore on failure.
 		ViewMap[]? previousViews = null;
 		RouteMap[]? previousRoutes = null;
@@ -175,20 +178,16 @@ internal static class NavigationRouteUpdateHandler
 		// runs and lets its async continuations make progress.
 		if (rebuiltSuccessfully && ctx.RootRegion is { } root)
 		{
-			// Only cascade if at least one updated type is registered as a view or
-			// view-model in the (just-rebuilt) route table.  A XAML-only HR cycle
-			// (e.g. a Text change on a page with x:Uid) produces updatedTypes that
-			// contain only the page's generated partial class, which is not a
-			// navigation-registered type.  Cascading unconditionally on every such
-			// cycle re-mounts the page and lets x:Uid overwrite the edited value,
-			// making the edit appear to revert.  See studio.live#2293.
-			if (ShouldCascadeForUpdatedTypes(updatedTypes, resolver))
+			// Only cascade when the HR is navigation-relevant: the route table changed or an updated type
+			// is route-registered. Unconditional cascades re-mount pages (studio.live#2293) and race the region tree (studio.live#2716).
+			var routesChanged = !resolver.GetMappingsSignature().SetEquals(previousSignature);
+			if (routesChanged || ShouldCascadeForUpdatedTypes(updatedTypes, resolver))
 			{
 				ScheduleCascade(root, resolver);
 			}
 			else if (Region.Logger.IsEnabled(LogLevel.Debug))
 			{
-				Region.Logger.LogDebugMessage("Hot-reload cascade skipped: none of the updated types are registered navigation routes.");
+				Region.Logger.LogDebugMessage("Hot-reload cascade skipped: route table unchanged and none of the updated types are registered navigation routes.");
 			}
 		}
 	}
@@ -201,24 +200,14 @@ internal static class NavigationRouteUpdateHandler
 		=> updatedTypes is null || HasRouteRegisteredType(updatedTypes, resolver);
 
 	/// <summary>
-	/// Returns <see langword="true"/> if at least one type in <paramref name="types"/>
-	/// is registered in the resolver as a view or view-model.
+	/// True if at least one type is explicitly registered as a view or view-model. Avoids FindByView/
+	/// FindByViewModel, whose implicit-mapping fallback matches almost any class and mutates the route table (studio.live#2716).
 	/// </summary>
 	private static bool HasRouteRegisteredType(Type[] types, RouteResolver resolver)
 	{
 		foreach (var t in types)
 		{
-			if (resolver.FindByView(t, navigator: null) is not null)
-			{
-				return true;
-			}
-
-			// IL2072: t comes from a Type[] whose elements don't carry DynamicallyAccessedMembers
-			// annotations, but FindByViewModel uses them only for lookup — no construction or
-			// property access is performed. The call is safe for this read-only, type-identity check.
-#pragma warning disable IL2072
-			if (resolver.FindByViewModel(t, navigator: null) is not null)
-#pragma warning restore IL2072
+			if (resolver.IsRouteRegisteredType(t))
 			{
 				return true;
 			}
