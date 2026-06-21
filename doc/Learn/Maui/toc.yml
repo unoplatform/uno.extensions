@@ -5,8 +5,8 @@
   href: xref:Uno.Extensions.Maui.ThirdParty.EsriMaps
 - name: "How-To: Use DevExpress Controls"
   href: xref:Uno.Extensions.Maui.ThirdParty.DevExpress
-- name: "How-To: Use GrapeCity Controls"
-  href: xref:Uno.Extensions.Maui.ThirdParty.GrapeCity
+- name: "How-To: Use ComponentOne Controls"
+  href: xref:Uno.Extensions.Maui.ThirdParty.ComponentOne
 - name: "How-To: Use GrialKit Controls"
   href: xref:Uno.Extensions.Maui.ThirdParty.GrialKit
 - name: "How-To: Use .NET MAUI Community Toolkit"
