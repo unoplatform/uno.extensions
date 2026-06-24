@@ -1,9 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Uno.Extensions.Reactive.Utils;
 
-internal enum ReplayMode
+/// <summary>
+/// Enumeration of the possible replay modes for an <see cref="IAsyncEnumerable{T}"/>
+/// </summary>
+public enum AsyncEnumerableReplayMode
 {
 	/// <summary>
 	/// Does not replay any value
@@ -13,6 +17,9 @@ internal enum ReplayMode
 	/// <summary>
 	/// Replays the whole collection from the first item (like an async List&lt;T&gt;)
 	/// </summary>
+	/// <remarks>
+	/// Use with caution as this will leak all value produced by the <see cref="AsyncEnumerableSubject{T}"/>.
+	/// </remarks>
 	Enabled,
 
 	/// <summary>
