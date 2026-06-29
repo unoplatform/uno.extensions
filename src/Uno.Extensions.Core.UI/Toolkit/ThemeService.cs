@@ -133,9 +133,17 @@ internal class ThemeService : IThemeService, IDisposable
 	private bool InternalSetThemeOnUIThread(AppTheme theme)
 	{
 		var existingIsDark = IsDark;
-		var rootElement = RootElement?.XamlRoot?.Content as FrameworkElement;
 
-		if (rootElement is null)
+		// Apply the theme to the service's own root element (captured from window.Content),
+		// NOT to RootElement.XamlRoot.Content. The latter is the root visual of the XamlRoot,
+		// which differs from RootElement when the app is hosted under a XamlRoot it does not own
+		// (e.g. a secondary app whose Window.Content is re-parented into a host's shared XamlRoot,
+		// such as an app loaded into a collectible AssemblyLoadContext). Writing to XamlRoot.Content
+		// there re-themes the host instead of the app. The XamlRoot null-check is retained as the
+		// "is the element realized yet" gate that drives the Loaded-retry in InitializeAsync. See #3120.
+		var rootElement = RootElement as FrameworkElement;
+
+		if (rootElement?.XamlRoot is null)
 		{
 			return false;
 		}

@@ -145,4 +145,56 @@ public class Given_ThemeService
 		eventFired.Should().BeFalse(
 			because: "without a XamlRoot, InternalSetThemeAsync fails silently and ThemeChanged should not fire");
 	}
+
+	[TestMethod]
+	public async Task When_HostedUnderForeignXamlRoot_Then_ThemeAppliesToOwnRoot_NotHost()
+	{
+		// Regression guard for #3120: the theme must be applied to the service's own root element,
+		// not to RootElement.XamlRoot.Content (the root visual of the XamlRoot). The host owns the
+		// XamlRoot and the app root is a nested child — mirroring a secondary app whose Window.Content
+		// is re-parented into a host's shared XamlRoot (e.g. an app loaded into a collectible ALC).
+		using var cts = new CancellationTokenSource(DefaultTimeout);
+		var ct = cts.Token;
+
+		var settings = new InMemorySettings();
+		settings.Set("CurrentTheme", AppTheme.Light.ToString());
+		var dispatcher = new SynchronousDispatcher();
+
+		var hostRoot = new Grid { RequestedTheme = ElementTheme.Default };
+		var appRoot = new Grid();
+		hostRoot.Children.Add(appRoot);
+
+		UnitTestsUIContentHelper.SaveOriginalContent();
+		try
+		{
+			UnitTestsUIContentHelper.CurrentTestWindow!.Content = hostRoot;
+			await UIHelper.WaitFor(() => appRoot.XamlRoot is not null, ct);
+
+			// Precondition: the app root is NOT the XamlRoot's content — the host is.
+			appRoot.XamlRoot!.Content.Should().BeSameAs(hostRoot,
+				because: "the host, not the hosted app, owns the XamlRoot in this topology");
+
+			using var service = new ThemeService(appRoot, dispatcher, settings);
+			await service.InitializeAsync();
+
+			var changed = default(AppTheme?);
+			service.ThemeChanged += (_, theme) => changed = theme;
+
+			// Act
+			var result = await service.SetThemeAsync(AppTheme.Dark);
+
+			// Assert: the service's own root is themed; the host that owns the XamlRoot is untouched.
+			result.Should().BeTrue();
+			appRoot.RequestedTheme.Should().Be(ElementTheme.Dark,
+				because: "the theme must apply to the service's own root element");
+			hostRoot.RequestedTheme.Should().Be(ElementTheme.Default,
+				because: "the host that owns the XamlRoot must not be re-themed by a hosted app");
+			changed.Should().Be(AppTheme.Dark,
+				because: "ThemeChanged must fire when the effective theme flips");
+		}
+		finally
+		{
+			UnitTestsUIContentHelper.RestoreOriginalContent();
+		}
+	}
 }
