@@ -121,11 +121,12 @@ public class Given_ThemeService
 		var tcs = new TaskCompletionSource<AppTheme>();
 		service.ThemeChanged += (_, theme) => tcs.TrySetResult(theme);
 
-		// Act - Change to light; without XamlRoot, InternalSetThemeAsync will fail silently
+		// Act - Change to light. The Grid is not attached to any window, so it has no XamlRoot and
+		// the "element realized" gate in InternalSetThemeOnUIThread short-circuits before applying.
 		element.RequestedTheme = ElementTheme.Light;
 
-		// Assert - Without XamlRoot, InternalSetThemeAsync fails silently so no event fires.
-		// The key verification is that the System shortcut path is NOT taken for explicit themes.
+		// Assert - With no XamlRoot the realization gate returns false, so no theme is applied and no
+		// event fires. The key verification is that the System shortcut path is NOT taken for explicit themes.
 		using var cts = new CancellationTokenSource(TimeSpan.FromMilliseconds(200));
 		cts.Token.Register(() => tcs.TrySetCanceled());
 
@@ -139,11 +140,11 @@ public class Given_ThemeService
 		}
 		catch (TaskCanceledException)
 		{
-			// Expected: no event fires because InternalSetThemeAsync cannot succeed without XamlRoot
+			// Expected: no event fires because the realization gate (XamlRoot is null) short-circuits before applying a theme.
 		}
 
 		eventFired.Should().BeFalse(
-			because: "without a XamlRoot, InternalSetThemeAsync fails silently and ThemeChanged should not fire");
+			because: "with no XamlRoot the realization gate returns false before applying a theme, so ThemeChanged should not fire");
 	}
 
 	[TestMethod]
@@ -153,6 +154,9 @@ public class Given_ThemeService
 		// not to RootElement.XamlRoot.Content (the root visual of the XamlRoot). The host owns the
 		// XamlRoot and the app root is a nested child — mirroring a secondary app whose Window.Content
 		// is re-parented into a host's shared XamlRoot (e.g. an app loaded into a collectible ALC).
+		// Red direction: on the pre-fix code the write target resolved to appRoot.XamlRoot.Content,
+		// which IS hostRoot here — so toggling flipped hostRoot.RequestedTheme to Dark and left
+		// appRoot/appChild untouched, failing every assert below.
 		using var cts = new CancellationTokenSource(DefaultTimeout);
 		var ct = cts.Token;
 
@@ -162,6 +166,8 @@ public class Given_ThemeService
 
 		var hostRoot = new Grid { RequestedTheme = ElementTheme.Default };
 		var appRoot = new Grid();
+		var appChild = new Grid();
+		appRoot.Children.Add(appChild);
 		hostRoot.Children.Add(appRoot);
 
 		UnitTestsUIContentHelper.SaveOriginalContent();
@@ -177,8 +183,10 @@ public class Given_ThemeService
 			using var service = new ThemeService(appRoot, dispatcher, settings);
 			await service.InitializeAsync();
 
-			var changed = default(AppTheme?);
-			service.ThemeChanged += (_, theme) => changed = theme;
+			// Await the event rather than snapshotting it, so the assertion does not depend on
+			// ActualTheme propagating synchronously within SetThemeAsync.
+			var changed = new TaskCompletionSource<AppTheme>(TaskCreationOptions.RunContinuationsAsynchronously);
+			service.ThemeChanged += (_, theme) => changed.TrySetResult(theme);
 
 			// Act
 			var result = await service.SetThemeAsync(AppTheme.Dark);
@@ -189,7 +197,12 @@ public class Given_ThemeService
 				because: "the theme must apply to the service's own root element");
 			hostRoot.RequestedTheme.Should().Be(ElementTheme.Default,
 				because: "the host that owns the XamlRoot must not be re-themed by a hosted app");
-			changed.Should().Be(AppTheme.Dark,
+
+			// The theme cascades through the app's own subtree (proving it scopes to the app, not the host).
+			await UIHelper.WaitFor(() => appChild.ActualTheme == ElementTheme.Dark, ct);
+
+			var receivedTheme = await changed.Task.WaitAsync(ct);
+			receivedTheme.Should().Be(AppTheme.Dark,
 				because: "ThemeChanged must fire when the effective theme flips");
 		}
 		finally
