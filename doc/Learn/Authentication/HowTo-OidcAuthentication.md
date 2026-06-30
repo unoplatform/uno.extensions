@@ -111,6 +111,8 @@ Under the hood, `OidcAuthenticationProvider` relies on [Duende.IdentityModel.Oid
   >
   > When used, this setting will override the value set in the configuration file for both the redirect URI and the post-logout redirect URI.
   > **This setting is ON by default on WebAssembly but opt-in on other platforms.**
+  >
+  > On **Skia desktop targets** (Linux, macOS, Windows), the `SkiaWebAuthenticationBrokerProvider` supplies a local loopback URI (e.g. `http://localhost:{port}/authentication-callback`). Ensure your identity provider's redirect URI is configured to `http://localhost/authentication-callback` to allow dynamic port matching.
 
 - **Advanced settings**: some advanced settings may need to access directly the `OidcClientOptions` from `IdentityModel.OidcClient` used by this extension. This can be done by using the `.ConfigureOidcClientOptions()` extension method.
 
