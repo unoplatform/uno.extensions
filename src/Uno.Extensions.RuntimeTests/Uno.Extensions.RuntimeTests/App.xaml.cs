@@ -11,6 +11,7 @@ public partial class App : Application
 		var reactive_UI_Tests = new Given_FeedView();
 #if DEBUG // Hot-reload tests are only relevant in debug configuration
 		var reactive_HotReload_Tests = new Uno.Extensions.Reactive.WinUI.Tests.Given_HotReload();
+		var reactive_HotReloadListFeed_Tests = new Uno.Extensions.Reactive.WinUI.Tests.Given_ListFeedHotReload();
 		var navigation_HotReload_Tests = new Uno.Extensions.Navigation.UI.Tests.Given_HotReload();
 		var navigation_HotReloadNav_Tests = new Uno.Extensions.Navigation.UI.Tests.Given_NavigationHotReload();
 		var tabBar_HotReload_Tests = new Uno.Extensions.Navigation.UI.Tests.Given_TabBar_HotReload();
