@@ -14,7 +14,9 @@ using Uno.Extensions.Navigation;
 using Uno.Extensions.Navigation.UI;
 using Uno.Extensions.Navigation.UI.Controls;
 using Uno.Extensions.Navigation.UI.Tests.Pages;
+using Uno.Extensions.Navigation.UI.Tests.Pages.TabNav;
 using Uno.Extensions.Navigation.UI.Tests.ViewModels;
+using Uno.Toolkit.UI;
 using Uno.UI.RuntimeTests;
 
 namespace Uno.Extensions.Navigation.UI.Tests;
@@ -1070,6 +1072,90 @@ public class Given_NavigationHotReload
 			"After XAML HR page swap, the navigation framework should re-inject the ViewModel as DataContext");
 	}
 
+	// ──────────────────────────────────────────────────────────────────────
+	// 21. TabBar initial navigation — default tab visible after XAML HR
+	// ──────────────────────────────────────────────────────────────────────
+
+	/// <summary>
+	/// After XAML HR replaces a TabBar host page, the default tab content
+	/// must still be visible. This guards against the blank-screen regression
+	/// where child NavigationRegions fail to re-attach after page replacement.
+	/// </summary>
+	[TestMethod]
+	[RunsOnUIThread]
+	public async Task When_TabBarXamlHR_Then_DefaultTabContentStillVisible(CancellationToken ct)
+	{
+		await using var app = await SetupTabBarAppAsync(ct);
+
+		// Wait for the TabBar host page to appear.
+		var hostPage = await WaitForTabBarHostPageAsync<HotReloadTabBarXamlPage>(app.NavigationRoot, TimeSpan.FromSeconds(30), ct);
+		hostPage.Should().NotBeNull("Frame should have navigated to HotReloadTabBarXamlPage");
+
+		// Wait for default tab content to load.
+		await WaitForTabContentAsync(hostPage!.ContentGrid, TimeSpan.FromSeconds(30), ct);
+
+		hostPage.ContentGrid.Children.Count.Should().BeGreaterThan(0,
+			"Default tab content should be visible before HR");
+
+		// XAML HR: change the TabBarItem label to trigger a page swap.
+		await using var _ = await HotReloadHelper.UpdateSourceFile(
+			"../../Uno.Extensions.Navigation.UI.Tests/Pages/HotReloadTabBarXamlPage.xaml",
+			"""Content="Tab One" """,
+			"""Content="Tab One Updated" """,
+			ct);
+
+		// Wait for page replacement.
+		var newPage = await WaitForTabBarHostPageReplacementAsync<HotReloadTabBarXamlPage>(
+			app.NavigationRoot, hostPage, TimeSpan.FromSeconds(30), ct);
+		newPage.Should().NotBeNull("XAML HR should have replaced the TabBar page");
+
+		// Critical assertion: default tab content must still be visible after HR.
+		await WaitForTabContentAsync(newPage!.ContentGrid, TimeSpan.FromSeconds(30), ct);
+
+		newPage.ContentGrid.Children.Count.Should().BeGreaterThan(0,
+			"After XAML HR replaces the TabBar page, the default tab content should still be visible");
+	}
+
+	/// <summary>
+	/// After XAML HR replaces a TabBar host page, switching tabs should still work.
+	/// This verifies the full region tree is re-wired after page replacement.
+	/// </summary>
+	[TestMethod]
+	[RunsOnUIThread]
+	public async Task When_TabBarXamlHR_Then_TabSwitchStillWorks(CancellationToken ct)
+	{
+		await using var app = await SetupTabBarAppAsync(ct);
+
+		// Wait for the TabBar host page to appear.
+		var hostPage = await WaitForTabBarHostPageAsync<HotReloadTabBarXamlPage>(app.NavigationRoot, TimeSpan.FromSeconds(30), ct);
+		hostPage.Should().NotBeNull();
+
+		// Wait for default tab content.
+		await WaitForTabContentAsync(hostPage!.ContentGrid, TimeSpan.FromSeconds(30), ct);
+
+		// XAML HR: change the TabBarItem label to trigger a page swap.
+		await using var _ = await HotReloadHelper.UpdateSourceFile(
+			"../../Uno.Extensions.Navigation.UI.Tests/Pages/HotReloadTabBarXamlPage.xaml",
+			"""Content="Tab One" """,
+			"""Content="Tab One Updated" """,
+			ct);
+
+		// Wait for page replacement.
+		var newPage = await WaitForTabBarHostPageReplacementAsync<HotReloadTabBarXamlPage>(
+			app.NavigationRoot, hostPage, TimeSpan.FromSeconds(30), ct);
+		newPage.Should().NotBeNull();
+
+		// Wait for default tab to re-populate.
+		await WaitForTabContentAsync(newPage!.ContentGrid, TimeSpan.FromSeconds(30), ct);
+
+		// Get the TabBar's navigator and switch to TabTwo.
+		var tabBarNav = await WaitForTabBarNavigatorAsync(newPage.TabBar, TimeSpan.FromSeconds(30), ct);
+		await tabBarNav.NavigateRouteAsync(newPage, "TabTwo");
+
+		// Wait for TabTwo region to appear.
+		await WaitForNamedRegionAsync(newPage.ContentGrid, "TabTwo", TimeSpan.FromSeconds(30), ct);
+	}
+
 	#region Setup helpers
 
 	/// <summary>
@@ -1554,6 +1640,67 @@ public class Given_NavigationHotReload
 			"HotReloadPanelRegionNamesPage",
 			ct);
 
+	/// <summary>TabBar XAML page with toolkit navigation for TabBar HR tests.</summary>
+	private static async Task<HotReloadNavTestApp> SetupTabBarAppAsync(CancellationToken ct)
+	{
+		var window = UnitTestsUIContentHelper.CurrentTestWindow!;
+		var navigationRoot = new ContentControl
+		{
+			HorizontalAlignment = HorizontalAlignment.Stretch,
+			VerticalAlignment = VerticalAlignment.Stretch,
+			HorizontalContentAlignment = HorizontalAlignment.Stretch,
+			VerticalContentAlignment = VerticalAlignment.Stretch,
+		};
+
+		UnitTestsUIContentHelper.SaveOriginalContent();
+		window.Content = navigationRoot;
+
+		IHost? host = null;
+		try
+		{
+			host = await window.InitializeNavigationAsync(
+				buildHost: async () => UnoHost
+					.CreateDefaultBuilder(typeof(Given_NavigationHotReload).Assembly)
+					.UseToolkitNavigation()
+					.UseNavigation(viewRouteBuilder: (views, routes) =>
+					{
+						views.Register(
+							new ViewMap<HotReloadTabBarXamlPage>(),
+							new ViewMap<TabAPage>(),
+							new ViewMap<TabBPage>());
+
+						routes.Register(
+							new RouteMap("", Nested: new RouteMap[]
+							{
+								new RouteMap(
+									"HotReloadTabBarXamlPage",
+									View: views.FindByView<HotReloadTabBarXamlPage>(),
+									IsDefault: true,
+									Nested: new RouteMap[]
+									{
+										new RouteMap("TabOne", View: views.FindByView<TabAPage>(), IsDefault: true),
+										new RouteMap("TabTwo", View: views.FindByView<TabBPage>()),
+									}),
+							}));
+					})
+					.Build(),
+				navigationRoot: navigationRoot,
+				initialRoute: "HotReloadTabBarXamlPage");
+
+			var frameNav = await WaitForFrameNavigatorAsync(navigationRoot, TimeSpan.FromSeconds(30), ct);
+			return new HotReloadNavTestApp(navigationRoot, frameNav, host);
+		}
+		catch
+		{
+			if (host is not null)
+			{
+				await host.StopAsync();
+			}
+			UnitTestsUIContentHelper.RestoreOriginalContent();
+			throw;
+		}
+	}
+
 	#endregion
 
 	#region Infrastructure
@@ -1717,6 +1864,113 @@ public class Given_NavigationHotReload
 		throw new TimeoutException(
 			$"Region '{regionName}' did not populate within {timeout.TotalSeconds:F0}s. " +
 			$"Children: [{children}].");
+	}
+
+	private static async Task<TPage?> WaitForTabBarHostPageAsync<TPage>(
+		ContentControl root,
+		TimeSpan timeout,
+		CancellationToken ct) where TPage : class
+	{
+		TPage? result = null;
+		var sw = System.Diagnostics.Stopwatch.StartNew();
+		while (sw.Elapsed < timeout)
+		{
+			ct.ThrowIfCancellationRequested();
+			result = ResolveCurrentPage<TPage>(root);
+			if (result is not null)
+			{
+				return result;
+			}
+			await Task.Delay(50, ct);
+		}
+
+		throw new TimeoutException(
+			$"{typeof(TPage).Name} did not appear within {timeout.TotalSeconds:F0}s. " +
+			$"root.Content={root.Content?.GetType().FullName ?? "<null>"}.");
+	}
+
+	private static async Task<TPage> WaitForTabBarHostPageReplacementAsync<TPage>(
+		ContentControl root,
+		TPage oldPage,
+		TimeSpan timeout,
+		CancellationToken ct) where TPage : class
+	{
+		var sw = System.Diagnostics.Stopwatch.StartNew();
+		while (sw.Elapsed < timeout)
+		{
+			ct.ThrowIfCancellationRequested();
+			var current = ResolveCurrentPage<TPage>(root);
+			if (current is not null && !ReferenceEquals(current, oldPage))
+			{
+				return current;
+			}
+			await Task.Delay(50, ct);
+		}
+
+		throw new TimeoutException(
+			$"XAML HR did not replace the {typeof(TPage).Name} instance within {timeout.TotalSeconds:F0}s.");
+	}
+
+	private static async Task WaitForTabContentAsync(
+		Grid contentGrid,
+		TimeSpan timeout,
+		CancellationToken ct)
+	{
+		var sw = System.Diagnostics.Stopwatch.StartNew();
+		while (sw.Elapsed < timeout)
+		{
+			ct.ThrowIfCancellationRequested();
+			if (contentGrid.Children.Count > 0)
+			{
+				return;
+			}
+			await Task.Delay(50, ct);
+		}
+
+		throw new TimeoutException(
+			$"Tab content did not appear within {timeout.TotalSeconds:F0}s.");
+	}
+
+	private static async Task<INavigator> WaitForTabBarNavigatorAsync(
+		TabBar tabBar,
+		TimeSpan timeout,
+		CancellationToken ct)
+	{
+		var sw = System.Diagnostics.Stopwatch.StartNew();
+		while (sw.Elapsed < timeout)
+		{
+			ct.ThrowIfCancellationRequested();
+			if (tabBar.Navigator() is { } nav)
+			{
+				return nav;
+			}
+			await Task.Delay(50, ct);
+		}
+
+		throw new TimeoutException(
+			$"TabBar's navigator did not become available within {timeout.TotalSeconds:F0}s.");
+	}
+
+	private static async Task WaitForNamedRegionAsync(
+		Grid contentGrid,
+		string regionName,
+		TimeSpan timeout,
+		CancellationToken ct)
+	{
+		var sw = System.Diagnostics.Stopwatch.StartNew();
+		while (sw.Elapsed < timeout)
+		{
+			ct.ThrowIfCancellationRequested();
+			var frames = contentGrid.Children.OfType<FrameView>();
+			if (frames.Any(fv => Region.GetName(fv) == regionName))
+			{
+				return;
+			}
+			await Task.Delay(50, ct);
+		}
+
+		throw new TimeoutException(
+			$"Named region '{regionName}' did not appear within {timeout.TotalSeconds:F0}s.");
 	}
 
 	#endregion
