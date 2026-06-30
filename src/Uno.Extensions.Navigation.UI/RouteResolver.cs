@@ -311,6 +311,28 @@ public class RouteResolver : IRouteResolver
 		return BestNavigatorRouteInfo(maps, navigator);
 	}
 
+	/// <summary>
+	/// True when <paramref name="type"/> is explicitly registered as a view or view model.
+	/// Unlike FindByView/FindByViewModel, never falls back to implicit mapping (which mutates the mappings table).
+	/// </summary>
+	internal bool IsRouteRegisteredType(Type type)
+		=> FindRouteByType(type, map => map.RenderView).Length > 0 ||
+			FindRouteByType(type, map => map.ViewModel).Length > 0;
+
+	/// <summary>
+	/// Value signature of the current mappings (parent path, path, IsDefault), compared by the
+	/// hot-reload handler before/after a rebuild to detect whether the route table actually changed.
+	/// </summary>
+	internal HashSet<string> GetMappingsSignature()
+	{
+		var signature = new HashSet<string>(StringComparer.Ordinal);
+		foreach (var map in Mappings)
+		{
+			signature.Add($"{map.Parent?.Path}/{map.Path}:{map.IsDefault}");
+		}
+		return signature;
+	}
+
 	/// <inheritdoc />
 	public void InsertRoute(RouteInfo route)
 	{
