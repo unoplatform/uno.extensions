@@ -204,4 +204,49 @@ public class Given_ThemeService
 			UnitTestsUIContentHelper.RestoreOriginalContent();
 		}
 	}
+
+	[TestMethod]
+	public async Task When_HostedUnderForeignXamlRoot_WithRealDispatcher_Then_AppSubtreeBecomesDark_HostStaysLight()
+	{
+		// End-to-end-ish complement to the test above: with the REAL dispatcher (not the synchronous
+		// fake), confirm the app's own subtree actually settles on Dark and the host stays Light —
+		// i.e. #3120 is genuinely fixed, not merely "the write goes to a different element".
+		using var cts = new CancellationTokenSource(DefaultTimeout);
+		var ct = cts.Token;
+
+		var settings = new InMemorySettings();
+		settings.Set("CurrentTheme", AppTheme.Light.ToString());
+
+		var hostRoot = new Grid { RequestedTheme = ElementTheme.Light };
+		var appRoot = new Grid();
+		var appChild = new Grid();
+		appRoot.Children.Add(appChild);
+		hostRoot.Children.Add(appRoot);
+
+		UnitTestsUIContentHelper.SaveOriginalContent();
+		try
+		{
+			UnitTestsUIContentHelper.CurrentTestWindow!.Content = hostRoot;
+			await UIHelper.WaitFor(() => appRoot.XamlRoot is not null, ct);
+
+			var dispatcher = new Uno.Extensions.Dispatcher(appRoot);
+			using var service = new ThemeService(appRoot, dispatcher, settings);
+			await service.InitializeAsync();
+
+			// Act
+			await service.SetThemeAsync(AppTheme.Dark);
+
+			// The app's own subtree resolves to Dark...
+			await UIHelper.WaitFor(() => appChild.ActualTheme == ElementTheme.Dark, ct);
+			appChild.ActualTheme.Should().Be(ElementTheme.Dark,
+				because: "the hosted app's subtree must reflect the new theme");
+			// ...while the host that owns the XamlRoot stays Light.
+			hostRoot.ActualTheme.Should().Be(ElementTheme.Light,
+				because: "the host must not be re-themed by the hosted app");
+		}
+		finally
+		{
+			UnitTestsUIContentHelper.RestoreOriginalContent();
+		}
+	}
 }
