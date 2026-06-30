@@ -147,7 +147,11 @@ internal class ThemeService : IThemeService, IDisposable
 		{
 			// The bug this fixes (#3120) was a *silent* theme no-op, so make the unrealized case
 			// observable: without this log, "the theme just doesn't switch" leaves nothing to grep.
-			if (_logger?.IsEnabled(LogLevel.Debug) ?? false) _logger.LogDebugMessage("Theme not applied: root element is not realized yet (XamlRoot is null); InitializeAsync will retry once it is Loaded.");
+			if (_logger?.IsEnabled(LogLevel.Debug) ?? false)
+			{
+				_logger.LogDebugMessage("Theme not applied: root element is not realized yet (XamlRoot is null); InitializeAsync will retry once it is Loaded.");
+			}
+
 			return false;
 		}
 
@@ -163,7 +167,10 @@ internal class ThemeService : IThemeService, IDisposable
 
 		// Log the apply so "applied, but no visual flip" (effective theme unchanged) is
 		// distinguishable in the field from "silently did nothing".
-		if (_logger?.IsEnabled(LogLevel.Debug) ?? false) _logger.LogDebugMessage($"Applied theme {theme} to the service's own root element.");
+		if (_logger?.IsEnabled(LogLevel.Debug) ?? false)
+		{
+			_logger.LogDebugMessage($"Applied theme {theme} to the service's own root element.");
+		}
 
 		if (existingIsDark != IsDark)
 		{
