@@ -2,6 +2,9 @@
 
 namespace Uno.Extensions;
 
+/// <summary>
+/// Extension methods on <see cref="ServiceProvider" />.
+/// </summary>
 public static class ServiceProviderExtensions
 {
 	/// <summary>
@@ -48,7 +51,7 @@ public static class ServiceProviderExtensions
 					.CloneScopedInstance<IDispatcher>(services);
 	}
 
-	
+
 
 	/// <summary>
 	/// Initializes navigation for an application using a ContentControl
@@ -129,11 +132,12 @@ public static class ServiceProviderExtensions
 
 		await Task.Run(() => host.StartAsync());
 
-		// Fallback to make sure the window is activated
-		window.Activate();
+		window.ActivateWhenReady();
 
 		await startup;
 
 		return host;
 	}
+
+	private static void Content_Loaded(object sender, RoutedEventArgs e) => throw new NotImplementedException();
 }
