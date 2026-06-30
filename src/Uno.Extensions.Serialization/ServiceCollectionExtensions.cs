@@ -2,6 +2,7 @@
 using System.Text.Json.Serialization.Metadata;
 
 using Microsoft.Extensions.Options;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Uno.Extensions;
 
@@ -33,8 +34,9 @@ public static class ServiceCollectionExtensions
 		{
 			return services;
 		}
+		services.TryAddSingleton(sp => sp.GetJsonSerializationOptions());
+
 		return services
-			.AddSingleton(sp => sp.GetJsonSerializationOptions())
 			.AddSingleton<SystemTextJsonSerializer>()
 			.AddSingleton<ISerializer>(services => services.GetRequiredService<SystemTextJsonSerializer>())
 			.AddSingleton(typeof(ISerializer<>), typeof(SystemTextJsonGeneratedSerializer<>))
@@ -68,8 +70,9 @@ public static class ServiceCollectionExtensions
 			return services;
 		}
 
+		services.TryAddSingleton(sp => new JsonSerializerOptions(JsonSerializationOptions.DefaultSerializerOptions));
+
 		return services
-			.AddSingleton(sp => new JsonSerializerOptions(JsonSerializationOptions.DefaultSerializerOptions))
 			.AddSingleton<SystemTextJsonSerializer>()
 			.AddSingleton<ISerializer>(services => services.GetRequiredService<SystemTextJsonSerializer>())
 			.AddSingleton(typeof(ISerializer<>), typeof(SystemTextJsonGeneratedSerializer<>));
