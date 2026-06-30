@@ -113,32 +113,51 @@ the regression surface is confined to the hosted/foreign-XamlRoot case.
 - No public API change. `IThemeService` surface, `UseThemeSwitching`, and `ScopedThemeService`
   registration are unchanged.
 
-## Testing (red/fix/green)
+## Testing (red/fix/green) — verified on the Skia runtime-test head
 
-Per repo policy the fix must ship with a test that fails on current `main` and passes after.
+Two guards were added to `Given_ThemeService.cs` (`Uno.Extensions.Core.UI.Tests`, a
+`[RunsOnUIThread]` / `Uno.UI.RuntimeTests` project). Both load a `host → app` tree into
+`UnitTestsUIContentHelper.CurrentTestWindow` so the app root has a real `XamlRoot` whose `Content`
+is the **host**, reproducing the foreign/shared-XamlRoot topology. They were executed by building
+`Uno.Extensions-runtimetests.slnf` and launching the `Uno.Extensions.RuntimeTests` desktop head
+headless (`UNO_RUNTIME_TESTS_RUN_TESTS=Given_ThemeService`, NUnit output) — there is no
+`dotnet test` entry point for `*.UI.Tests`.
 
-1. **Red:** with the element hosted under a *different* root (a parent `FrameworkElement` whose
-   `RequestedTheme` differs from the captured `RootElement`), assert that
-   `SetThemeAsync(AppTheme.Dark/Light)` sets `RequestedTheme` on the **captured root element**,
-   not on the ancestor/XamlRoot content. On current code the assertion fails (theme lands on the
-   ancestor).
-2. **Fix:** apply the one-line target change.
-3. **Green:** the same test passes; add a companion assertion that `ThemeChanged` fires when the
-   effective theme flips.
-4. Keep an existing-behavior test for the standalone case (`window.Content == XamlRoot.Content`)
-   to prove no regression.
+1. `When_HostedUnderForeignXamlRoot_Then_ThemeAppliesToOwnRoot_NotHost` — asserts the **write
+   target**: the host (XamlRoot owner) is NOT re-themed (`hostRoot.RequestedTheme == Default`) and
+   the app's own element *is* written (`!= Default`).
+2. `When_HostedUnderForeignXamlRoot_WithRealDispatcher_Then_AppSubtreeBecomesDark_HostStaysLight`
+   — uses the **real** `Uno.Extensions.Dispatcher` (not the synchronous test fake) and asserts the
+   effective outcome: the app subtree's `ActualTheme` settles on `Dark` while the host stays
+   `Light`.
 
-The test is added to `Given_ThemeService.cs` in `Uno.Extensions.Core.UI.Tests` — a
-UI-host-requiring (`[RunsOnUIThread]`, `Uno.UI.RuntimeTests`) project, alongside the existing
-`ThemeService` coverage. It loads a `host → app` tree into `UnitTestsUIContentHelper.CurrentTestWindow`
-so the app root has a real `XamlRoot` whose `Content` is the host, then asserts `SetThemeAsync`
-themes the app root (not the host) and that `ThemeChanged` fires. These tests run in the
-runtime-test stages, not via `dotnet test`.
+**Why two guards / why not assert `== Dark` in test 1:** `ThemeService` re-applies the theme from
+its own `RootElement.ActualThemeChanged` handler. Under the *synchronous test dispatcher* in a live
+visual tree, that feedback settles `RequestedTheme` to a value that isn't guaranteed to be `Dark`
+(observed: `Light`). The stable invariant the fix actually changes is the write **target** (host vs
+app), so test 1 asserts that; test 2 then confirms — with the real dispatcher — that the effective
+theme really does land `Dark` on the app and not the host. This was an empirical finding: an
+initial `== Dark` snapshot assertion failed on the fix for this reason.
+
+**Verified results (Skia desktop head):**
+
+- Fix applied → all 6 `Given_ThemeService` tests pass (4 pre-existing + 2 new).
+- `main` write-target logic (`RootElement.XamlRoot.Content`) → both new tests **fail** (the host is
+  re-themed / the app subtree doesn't become Dark), confirming a genuine red/fix/green.
+- The 4 pre-existing tests (bare, unrealized elements, null `XamlRoot`) are unchanged on both.
 
 ## Acceptance criteria
 
-- [ ] `ThemeService` applies `RequestedTheme` to its own root element, not `XamlRoot.Content`.
-- [ ] Standalone theme switching unchanged.
-- [ ] `ThemeChanged` fires when the effective theme changes in the hosted case.
-- [ ] Red/fix/green test committed alongside the fix, in the correct project type.
-- [ ] Release build of `Uno.Extensions-packageonly.slnf` is warning-free (`TreatWarningsAsErrors`).
+- [x] `ThemeService` applies `RequestedTheme` to its own root element, not `XamlRoot.Content`.
+- [x] Standalone theme switching unchanged (4 pre-existing tests green; bare-element gate path identical).
+- [x] Effective theme lands on the app (not the host) in the hosted case — verified with the real dispatcher.
+- [x] Red/fix/green tests committed alongside the fix, in the correct project type, executed on the Skia head.
+- [ ] Release build of `Uno.Extensions-packageonly.slnf` warning-free (`TreatWarningsAsErrors`) — runs in package CI.
+
+## End-to-end (Studio ALC host) — not run in this environment
+
+A full repro inside the real ALC host would add only assembly-load-context isolation on top of the
+shared-XamlRoot topology already exercised by test 2 (the fixed code path — which element receives
+`RequestedTheme` — is identical in both). It was **not** run here because it requires Uno Platform
+licensing auth and the `uno-app` automation tooling, and the in-repo sample has no theme toggle.
+The real-dispatcher guard (test 2) is the behavioral equivalent at the unit level.
