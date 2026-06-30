@@ -12,11 +12,18 @@
 	<Grid RowDefinitions="Auto, *">
 		<utu:NavigationBar Content="Search"
 						   AutomationProperties.AutomationId="SearchNavigationBar" />
-		<StackPanel Grid.Row="1">
+		<StackPanel Grid.Row="1"
+					Spacing="16">
 			<TextBlock Text="ChefsSearch" />
 			<Button Command="{Binding NavigateToRecipeDetail}"
 					AutomationProperties.AutomationId="SearchRecipeDetails"
 					Content="Recipe Details" />
+			<TextBlock x:Name="TxtUrl"
+					   AutomationProperties.AutomationId="ChefsSearchPageTxtUrlFromBrowser" />
+
+			<Button AutomationProperties.AutomationId="ChefsSearchPageGetUrlFromBrowser"
+					Click="GetUrlFromBrowser"
+					Content="Get URL" />
 		</StackPanel>
 	</Grid>
 </Page>
