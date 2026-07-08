@@ -1,10 +1,14 @@
-﻿namespace Uno.Extensions.Navigation;
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace Uno.Extensions.Navigation;
 
 public interface IRouteResolver
 {
 	RouteInfo? FindByPath(string? path);
 
-	RouteInfo? FindByViewModel(Type? viewModelType, INavigator? navigator);
+	RouteInfo? FindByViewModel(
+		[DynamicallyAccessedMembers(Uno.Extensions.Diagnostics.Annotations.ViewModelRequirements)]
+		Type? viewModelType, INavigator? navigator);
 
 	RouteInfo? FindByView(Type? viewType, INavigator? navigator);
 

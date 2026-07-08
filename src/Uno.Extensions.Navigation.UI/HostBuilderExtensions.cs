@@ -1,10 +1,15 @@
-﻿namespace Uno.Extensions;
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace Uno.Extensions;
 
 /// <summary>
 /// Extensions for configuring navigation.
 /// </summary>
 public static class HostBuilderExtensions
 {
+	internal const string RequiresDynamicCodeMessage = "Binding strongly typed objects to configuration values may require generating dynamic code at runtime. [From Array.CreateInstance() and others.]";
+	internal const string RequiresUnreferencedCodeMessage = "Cannot statically analyze the type of instance so its members may be trimmed. [From TypeDescriptor.GetConverter() and others.]";
+
 	/// <summary>
 	/// Configures navigation services
 	/// </summary>
@@ -15,6 +20,7 @@ public static class HostBuilderExtensions
 	/// <param name="configure">Callback to adjust navigation configuration (default should be to use appsettings.json)</param>
 	/// <param name="configureServices">Callback to register other services related to navigation</param>
 	/// <returns>The host builder</returns>
+	[RequiresUnreferencedCode(RequiresUnreferencedCodeMessage)]
 	public static IHostBuilder UseNavigation(
 		this IHostBuilder hostBuilder,
 		Action<IViewRegistry, IRouteRegistry>? viewRouteBuilder,
@@ -41,6 +47,7 @@ public static class HostBuilderExtensions
 	/// <param name="configure">Callback to adjust navigation configuration (default should be to use appsettings.json)</param>
 	/// <param name="configureServices">Callback to register other services related to navigation</param>
 	/// <returns>The host builder</returns>
+	[RequiresUnreferencedCode(RequiresUnreferencedCodeMessage)]
 	public static IHostBuilder UseNavigation(
 		this IHostBuilder hostBuilder,
 		Action<IViewRegistry, IRouteRegistry>? viewRouteBuilder = null,
@@ -76,6 +83,7 @@ public static class HostBuilderExtensions
 	/// <param name="configure">Callback to adjust navigation configuration (default should be to use appsettings.json)</param>
 	/// <param name="configureServices">Callback to register other services related to navigation</param>
 	/// <returns>The host builder</returns>
+	[RequiresUnreferencedCode(RequiresUnreferencedCodeMessage)]
 	public static IHostBuilder UseNavigation(
 		this IHostBuilder hostBuilder,
 		IDictionary<Type, Type> viewModelMapping,

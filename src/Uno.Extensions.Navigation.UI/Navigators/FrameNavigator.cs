@@ -1,9 +1,27 @@
-﻿namespace Uno.Extensions.Navigation.Navigators;
+using System.Diagnostics.CodeAnalysis;
+
+namespace Uno.Extensions.Navigation.Navigators;
 
 public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 {
 	protected override FrameworkElement? CurrentView => _content;
 	private FrameworkElement? _content;
+
+	// Stores the full child route (including nested TabBar selections) for each page
+	// when navigating away, so it can be restored when navigating back.
+	// Key: PageStackEntry index in back stack
+	private readonly Dictionary<int, Route?> _childRoutesCache = new();
+
+	// Stores the INavigator instance (e.g. ResponseNavigator) that was active on a page
+	// when navigating away from it, so it can be restored when navigating back.
+	// This survives page re-creation (NavigationCacheMode=Disabled) unlike the
+	// NavigatorInstance attached property which is tied to the page instance.
+	// Key: PageStackEntry index in back stack
+	private readonly Dictionary<int, INavigator> _navigatorCache = new();
+
+	// Temporarily holds the child route to restore after back navigation.
+	// Set during NavigatedBackAsync and consumed by AdjustRequestForChildNavigation.
+	private Route? _pendingChildRoute;
 
 	public override bool CanGoBack => Control?.BackStackDepth > 0;
 
@@ -72,15 +90,39 @@ public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 	protected override Task<Route?> ExecuteRequestAsync(NavigationRequest request)
 	{
 		var route = request.Route;
+
+		// For forward navigation, capture the current child routes before clearing
+		// This allows us to restore the nested state (e.g., selected TabBar item) when navigating back
+		// See: https://github.com/unoplatform/uno.extensions/issues/3016
+		Route? childRoute = null;
+		if (route.FrameIsForwardNavigation() && Control?.BackStack is not null)
+		{
+			// Capture the active nested route by checking child navigators' routes
+			// against the route map. We don't use Region.GetRoute() because its Merge
+			// function picks children by string length, which can select the wrong
+			// child when multiple FrameViews exist (e.g., picking "Second" over "Third").
+			childRoute = CaptureActiveChildRoute();
+		}
+
+		// Close any active dialogs/flyouts before clearing children,
+		// otherwise they persist as overlays even after navigation
+		Region.CloseActiveClosableNavigators();
+
+		// Mark all descendant regions so they know the upcoming unload/reload is due to
+		// navigation (not Hot Reload). This prevents their HandleLoaded from spuriously
+		// re-cascading the parent route, which would override the restored child route
+		// (e.g., "Third" tab) set by AdjustRequestForChildNavigation.
+		SuppressReCascadeOnDescendants(Region);
+
 		// Detach all nested regions as we're moving away from the current view
 		Region.Children.Clear();
 
 		return route.FrameIsForwardNavigation() ?
-					NavigateForwardAsync(request) :
+					NavigateForwardAsync(request, childRoute) :
 					NavigatedBackAsync(request);
 	}
 
-	private async Task<Route?> NavigateForwardAsync(NavigationRequest request)
+	private async Task<Route?> NavigateForwardAsync(NavigationRequest request, Route? previousChildRoute = null)
 	{
 		if (Control is null)
 		{
@@ -89,6 +131,27 @@ public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 
 		var route = request.Route;
 		var segments = route.ForwardSegments(Resolver, this);
+
+		// After Hot Reload, the RenderView for a route may change while the
+		// FrameNavigator still considers itself "at" that route. ForwardSegments
+		// filters out routes already in navRoute, resulting in 0 segments.
+		// Detect this by checking if the resolver's current RenderView differs
+		// from what the Frame is actually showing, and bypass the filter.
+		// Guard: only apply when the navigator believes it is currently AT
+		// route.Base (Route.Base matches). Without this, normal tab switching
+		// with a deep back stack (e.g., Home→Details→LiveCooking) would
+		// incorrectly bypass the filter because SourcePageType (LiveCookingPage)
+		// differs from the tab's root mapping (HomePage).
+		if (segments.Length == 0 && !string.IsNullOrWhiteSpace(route.Base) &&
+			Route?.Base == route.Base)
+		{
+			var currentMapping = Resolver.FindByPath(route.Base);
+			if (currentMapping?.RenderView is not null &&
+				Control!.SourcePageType != currentMapping.RenderView)
+			{
+				segments = route.ForwardSegments(Resolver);
+			}
+		}
 
 		// As this is a forward navigation
 		if (segments.Length == 0)
@@ -100,7 +163,15 @@ public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 
 				await InitializeCurrentView(request, this.Route with { Data = request.Route.Data }, mapping, true);
 			}
-			return request.Route;
+
+			// Return only the Base (drop the Path) so that any nested sub-route is
+			// not consumed by Trim and can be forwarded to child navigators.
+			// For example, when both "ProductListsPage/AllProducts" and
+			// "ProductListsPage/Favorites" share the same parent page that is already
+			// showing, only "ProductListsPage" was handled here; the sub-route
+			// ("AllProducts" or "Favorites") must still reach the ContentControl
+			// (or other nested navigator) inside ProductListsPage.
+			return request.Route with { Path = null };
 		}
 
 
@@ -120,7 +191,34 @@ public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 		// displaying the correct page
 		if (Control!.SourcePageType != lastMap.RenderView)
 		{
+			// Capture the navigator of the page we're about to leave (before Frame.Navigate
+			// pushes it onto the back stack). This is needed because when navigating back,
+			// the Frame may create a new page instance (NavigationCacheMode=Disabled),
+			// losing the NavigatorInstance attached property on the old instance.
+			var previousNavigator = CurrentView?.GetNavigatorInstance();
+
 			await Show(lastMap.Path, lastMap.RenderView, request.Route.NavigationData());
+
+			if (Control.BackStack.Count > 0)
+			{
+				var backStackIndex = Control.BackStack.Count - 1;
+
+				// Store the child route for the page we just navigated away from
+				// This allows us to restore nested state (e.g., TabBar selection) when navigating back
+				// The entry was just added to the back stack by Frame.Navigate
+				if (previousChildRoute is not null)
+				{
+					_childRoutesCache[backStackIndex] = previousChildRoute;
+				}
+
+				// Store the navigator of the page we just left in a cache indexed by
+				// back stack position. This ensures it can be restored on back navigation
+				// even if the page instance is re-created.
+				if (previousNavigator is not null)
+				{
+					_navigatorCache[backStackIndex] = previousNavigator;
+				}
+			}
 		}
 		else
 		{
@@ -194,7 +292,8 @@ public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 
 		await InitializeCurrentView(request, lastMap.AsRoute() with { Data = request.Route.Data }, lastMap, refreshViewModel);
 
-		CurrentView?.SetNavigatorInstance(Region.Navigator()!);
+		var navToStore = Region.Navigator()!;
+		CurrentView?.SetNavigatorInstance(navToStore);
 
 		var responseRequest = navSegment with { Qualifier = route.Qualifier, Data = route.Data };
 
@@ -210,17 +309,94 @@ public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 
 		var route = request.Route;
 
+		// Retrieve the stored child route and navigator for the page we're navigating back to.
+		// This allows us to restore nested state (e.g., TabBar selection) and the correct
+		// INavigator instance (e.g., ResponseNavigator for chained GetDataAsync).
+		//
+		// There are two back-navigation paths:
+		//   1. Our code calls Frame.GoBack() - the back stack entry is still present,
+		//      so the stored route is at BackStack.Count - N, where N is the number
+		//      of pages being removed (typically 1 for a single-step back).
+		//   2. An external control (e.g., NavigationBar MainCommand) calls Frame.GoBack()
+		//      before our code runs - the back stack entry was already popped, so the
+		//      stored route is at BackStack.Count (the former BackStack.Count - N).
+		//
+		// We try the EXTERNAL index first (BackStack.Count) because in the internal case
+		// there is never an entry at BackStack.Count (the current page isn't stored in the
+		// cache - only back stack entries are). This prevents the internal path from
+		// accidentally consuming an earlier page's cached data when the back stack was
+		// already popped by an external GoBack.
+		Route? storedChildRoute = null;
+		INavigator? storedNavigator = null;
+
+
+		// Try external path first: if GoBack was already performed externally
+		// (e.g., NavigationBar MainCommand), the popped entry's former index
+		// equals the current BackStack.Count.
+		bool isExternalGoBack = false;
+		{
+			var externalBackIndex = Control.BackStack.Count;
+			if (_childRoutesCache.TryGetValue(externalBackIndex, out storedChildRoute))
+			{
+				_childRoutesCache.Remove(externalBackIndex);
+				isExternalGoBack = true;
+			}
+			if (_navigatorCache.TryGetValue(externalBackIndex, out storedNavigator))
+			{
+				_navigatorCache.Remove(externalBackIndex);
+				isExternalGoBack = true;
+			}
+		}
+
+		// Determine how many pages will be removed as part of this back navigation.
+		// We default to 1 to preserve existing behavior when the route does not
+		// specify a multi-step back (e.g., "--").
+		var pagesToRemove = route?.FrameNumberOfPagesToRemove() ?? 1;
+		if (pagesToRemove < 1)
+		{
+			pagesToRemove = 1;
+		}
+
+		// Fallback: internal back path. Only used when this is NOT an external GoBack.
+		// When an external GoBack pops the back stack before we run, the internal
+		// indices shift down by one. If we allowed the internal fallback, it would
+		// grab a child route belonging to a different (earlier) page, consuming it
+		// prematurely and causing the correct page to lose its nested state.
+		if (!isExternalGoBack && Control.BackStack.Count > 0)
+		{
+			var backStackIndex = Control.BackStack.Count - pagesToRemove;
+			if (backStackIndex >= 0 && backStackIndex < Control.BackStack.Count)
+			{
+				if (storedChildRoute is null && _childRoutesCache.TryGetValue(backStackIndex, out storedChildRoute))
+				{
+					_childRoutesCache.Remove(backStackIndex);
+				}
+				if (storedNavigator is null && _navigatorCache.TryGetValue(backStackIndex, out storedNavigator))
+				{
+					_navigatorCache.Remove(backStackIndex);
+				}
+			}
+		}
 
 		// Remove any excess items in the back stack
-		var numberOfPagesToRemove = route.FrameNumberOfPagesToRemove();
+		var numberOfPagesToRemove = route?.FrameNumberOfPagesToRemove() ?? 0;
 		while (numberOfPagesToRemove > 0)
 		{
 			// Don't remove the last context, as that's the current page
 			RemoveLastFromBackStack();
 			numberOfPagesToRemove--;
 		}
-		var responseRoute = route with { Path = null };
+		var responseRoute = route is not null ? route with { Path = null } : Route.Empty;
 		var previousRoute = FullRoute.ApplyFrameRoute(Resolver, responseRoute, this);
+
+		// Store the child route for injection into the child navigation request.
+		// AdjustRequestForChildNavigation will use this to restore TabBar selections
+		// and other nested state instead of navigating to the default child route.
+		if (storedChildRoute?.IsEmpty() == false)
+		{
+			_pendingChildRoute = storedChildRoute;
+		}
+
 		var previousBase = previousRoute?.Last()?.Base;
 		var currentBases = Resolver.FindByView(Control.Content.GetType(), this);
 		if (previousBase is not null)
@@ -232,7 +408,7 @@ public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 			{
 				var previousMapping = Resolver.FindByView(Control.BackStack.Last().SourcePageType, this);
 				// Invoke the navigation (which will be a back navigation)
-				if (await FrameGoBack(route.NavigationData(), previousMapping) is { } parameter)
+				if (await FrameGoBack(route?.NavigationData(), previousMapping) is { } parameter)
 				{
 					request = request.WithData(parameter);
 					responseRoute = CloneWithData(responseRoute, request.Route.Data);
@@ -253,16 +429,23 @@ public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 
 		var mapping = Resolver.FindByView(Control.Content.GetType(), this);
 
+		// Restore the INavigator BEFORE InitializeCurrentView so that the ViewModel
+		// created during initialization gets the correct navigator from DI.
+		// In chained GetDataAsync scenarios (TabOne→Sibling→SiblingTwo→back→Sibling),
+		// the page may be re-created (NavigationCacheMode=Disabled), so the attached
+		// property is lost. The _navigatorCache survives page re-creation.
+		if (storedNavigator is null)
+		{
+			// Fall back to the page's attached property (works when page instance is cached)
+			storedNavigator = CurrentView?.GetNavigatorInstance();
+		}
+
+		if (storedNavigator is not null)
+		{
+			Region.Services?.AddScopedInstance<INavigator>(storedNavigator);
+		}
 
 		await InitializeCurrentView(request, previousRoute ?? Route.Empty, mapping);
-
-
-		// Restore the INavigator instance
-		var navigator = CurrentView?.GetNavigatorInstance();
-		if (navigator is not null)
-		{
-			Region.Services?.AddScopedInstance<INavigator>(navigator);
-		}
 
 		return responseRoute;
 	}
@@ -348,7 +531,11 @@ public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 		return parameter;
 	}
 
-	protected override async Task<string?> Show(string? path, Type? viewType, object? data)
+	protected override async Task<string?> Show(
+		string? path,
+		[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor)]
+		Type? viewType,
+		object? data)
 	{
 		if (Control is null || viewType is null)
 		{
@@ -405,6 +592,11 @@ public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 		}
 	}
 
+	private static void SuppressReCascadeOnDescendants(IRegion region)
+	{
+		NavigationRegion.SuppressReCascadeOnDescendants(region);
+	}
+
 	private void RemoveLastFromBackStack()
 	{
 		if (Control is null)
@@ -412,7 +604,13 @@ public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 			return;
 		}
 		if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Removing last item from backstack (current count = {Control.BackStack.Count})");
-		Control.BackStack.RemoveAt(Control.BackStack.Count - 1);
+		
+		// Clean up the cached child route and navigator for the entry being removed
+		var indexToRemove = Control.BackStack.Count - 1;
+		_childRoutesCache.Remove(indexToRemove);
+		_navigatorCache.Remove(indexToRemove);
+		
+		Control.BackStack.RemoveAt(indexToRemove);
 		if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Item removed from backstack");
 	}
 
@@ -424,6 +622,11 @@ public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 		}
 
 		if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Clearing backstack");
+		
+		// Clear all cached child routes and navigators
+		_childRoutesCache.Clear();
+		_navigatorCache.Clear();
+		
 		Control.BackStack.Clear();
 		if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Backstack cleared");
 	}
@@ -447,5 +650,149 @@ public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 		Route = lastRoute;
 	}
 
-	protected override Task CheckLoadedAsync() => _content is not null ? _content.EnsureLoaded() : Task.CompletedTask;
+	protected override Task CheckLoadedAsync() => _content is not null ? _content.EnsureLoadedWhileHostAttached(Region.View) : Task.CompletedTask;
+
+	/// <summary>
+	/// Captures the currently active nested route by checking child navigator routes
+	/// against the route map's nested routes. This avoids using Region.GetRoute() which
+	/// uses a Merge function that picks children by string length and can select the
+	/// wrong child when multiple FrameViews exist in a PanelVisibilityNavigator.
+	/// </summary>
+	private Route? CaptureActiveChildRoute()
+	{
+		var currentBase = Route?.Base;
+		if (currentBase is null)
+		{
+			return null;
+		}
+
+		var routeMap = Resolver.FindByPath(currentBase);
+		if (routeMap?.Nested is not { Length: > 0 } nestedRoutes)
+		{
+			return null;
+		}
+
+		var nestedNames = new HashSet<string>(
+			nestedRoutes.Select(r => r.Path).Where(p => !string.IsNullOrWhiteSpace(p))!);
+		if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"CaptureActiveChildRoute: Looking for active nested route among: [{string.Join(", ", nestedNames)}]");
+
+		var activeNested = FindActiveNestedRoute(Region, nestedNames);
+		if (activeNested is null)
+		{
+			if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"CaptureActiveChildRoute: No active nested route found");
+			return null;
+		}
+
+		var result = new Route(Qualifiers.None, currentBase).Append(activeNested);
+		if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"CaptureActiveChildRoute: Captured active child route '{activeNested}' for base '{currentBase}'");
+		return result;
+	}
+
+	/// <summary>
+	/// Recursively walks child regions to find a navigator whose Route.Base matches
+	/// one of the expected nested route names. Skips regions whose view (or any visual
+	/// ancestor) is Collapsed, ensuring we only find the currently active/visible child
+	/// (e.g., the selected tab's content in a PanelVisibilityNavigator).
+	/// </summary>
+	private string? FindActiveNestedRoute(IRegion region, HashSet<string> nestedNames)
+	{
+		foreach (var child in region.Children)
+		{
+			// Skip regions whose view is effectively collapsed.
+			// PanelVisibilityNavigator keeps all FrameViews as visual children of its Grid
+			// but collapses inactive ones. The Frame region inside a collapsed FrameView
+			// would still have Route.Base set from previous navigation. We must skip it
+			// to avoid picking a stale (inactive) tab.
+			if (IsEffectivelyCollapsed(child.View))
+			{
+				if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"FindActiveNestedRoute: Skipping collapsed region '{child.Name}'");
+				continue;
+			}
+
+			var nav = child.Navigator();
+			var baseName = nav?.Route?.Base;
+			if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"FindActiveNestedRoute: child region name='{child.Name}', navigator type='{nav?.GetType().Name}', Route.Base='{baseName}'");
+
+			if (!string.IsNullOrEmpty(baseName) && nestedNames.Contains(baseName))
+			{
+				if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"FindActiveNestedRoute: Found match '{baseName}'");
+				return baseName;
+			}
+
+			var found = FindActiveNestedRoute(child, nestedNames);
+			if (found is not null)
+			{
+				return found;
+			}
+		}
+		return null;
+	}
+
+	/// <summary>
+	/// Checks whether the given element or any of its visual ancestors has
+	/// Visibility set to Collapsed. When a parent FrameView is collapsed by
+	/// PanelVisibilityNavigator, the Frame inside it is effectively hidden
+	/// even though its own Visibility property may still be Visible.
+	/// </summary>
+	private static bool IsEffectivelyCollapsed(FrameworkElement? element)
+	{
+		var current = element;
+		while (current is not null)
+		{
+			if (current.Visibility == Visibility.Collapsed)
+			{
+				return true;
+			}
+			current = VisualTreeHelper.GetParent(current) as FrameworkElement;
+		}
+		return false;
+	}
+
+	/// <inheritdoc />
+	protected override NavigationRequest AdjustRequestForChildNavigation(NavigationRequest request)
+	{
+		if (_pendingChildRoute is null || _pendingChildRoute.IsEmpty())
+		{
+			return request;
+		}
+
+		var storedRoute = _pendingChildRoute;
+		_pendingChildRoute = null;
+
+		// Only inject the child route if the remaining request has no explicit child route.
+		// Treat qualifier-only routes (e.g., multi-step back "--") as empty so we can restore
+		// the cached child/TabBar state when navigating back multiple steps.
+		var route = request.Route;
+		var hasExplicitChildRoute = !string.IsNullOrEmpty(route.Base) || !string.IsNullOrEmpty(route.Path);
+		if (hasExplicitChildRoute)
+		{
+			return request;
+		}
+
+		// Extract the child portion of the stored route.
+		// The stored route is the full region route (e.g., "Main/Third"),
+		// so we skip segments until we get past this navigator's own route base.
+		var childRoute = storedRoute;
+		if (childRoute.Base == Route?.Base)
+		{
+			childRoute = childRoute.Next();
+		}
+
+		if (childRoute.IsEmpty())
+		{
+			return request;
+		}
+
+		// Set qualifier to None so it's treated as a fresh forward navigation
+		// to the child region, not as a nested qualifier or back navigation.
+		childRoute = childRoute with { Qualifier = Qualifiers.None };
+
+		if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Restoring previously selected child route '{childRoute.Base}' after back navigation");
+
+		// Strip Result from child restoration requests. The Result type is only meaningful
+		// for the original navigate-for-result flow and should not leak into child region
+		// restoration. Without this, child navigators would create unnecessary
+		// ResponseNavigators that corrupt navigator scope registrations.
+		return request with { Route = childRoute, Result = null };
+	}
 }

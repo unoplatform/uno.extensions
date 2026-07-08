@@ -3,6 +3,12 @@ uid: Uno.Extensions.Navigation.Advanced.TabBar
 ---
 # How-To: Use a TabBar to Switch Views
 
+> **UnoFeatures:** `Navigation;Toolkit` (add to `<UnoFeatures>` in your `.csproj`)
+>
+> [!IMPORTANT]
+>
+> For TabBar navigation to function correctly, the root Grid must have `uen:Region.Attached="True"`.
+
 The navigation capabilities offered by Uno.Extensions include regions. Regions allow you to associate a specific sector of the view with an individual item on a navigation control from the same `Page`. Likewise, the Uno.Extensions library has built-in support for responding to navigation gestures from the [Toolkit](https://github.com/unoplatform/uno.toolkit.ui) `TabBar`. Follow the steps below to define a user interface centered around navigating with this control.
 
 Since `TabBar` comes from the `Uno.Toolkit` you need to make sure your project has `Toolkit` added to the `<UnoFeatures>` property in the Class Library (.csproj) file and that you call the `UseToolkitNavigation` extension method on the `IApplicationBuilder` (not `IHostBuilder`). For more information about `UnoFeatures` refer to our [Using the Uno.Sdk](xref:Uno.Features.Uno.Sdk) docs.

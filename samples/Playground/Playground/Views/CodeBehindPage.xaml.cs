@@ -1,12 +1,18 @@
 ﻿namespace Playground.Views;
 
-public sealed partial class CodeBehindPage : Page, IInjectable<INavigator>
+public sealed partial class CodeBehindPage : Page, IInjectable<INavigator>, IInjectable<IServiceProvider>
 {
 	private INavigator? Navigator { get; set; }
+	private IServiceProvider? ServiceProvider { get; set; }
 
 	public void Inject(INavigator entity)
 	{
 		Navigator = entity;
+	}
+
+	public void Inject(IServiceProvider entity)
+	{
+		ServiceProvider = entity;
 	}
 
 	public CodeBehindPage()
@@ -73,6 +79,11 @@ public sealed partial class CodeBehindPage : Page, IInjectable<INavigator>
 	public async void GetDataAsyncClick(object sender, RoutedEventArgs args)
 	{
 		var result = await Navigator!.GetDataAsync<Country>(this);
+		if (result == null)
+		{
+			var logger = ServiceProvider?.GetService<ILogger<CodeBehindPage>>();
+			logger?.LogError("GetDataAsyncClick: result is null; expected a Country!");
+		}
 	}
 
 	// Navigate to previous view (goback on frame or close dialog/popup)

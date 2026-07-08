@@ -338,3 +338,5 @@ DebugPlatforms.props
 **/.icons
 
 !build/ci/publish
+
+*.lscache

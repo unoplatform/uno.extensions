@@ -1,4 +1,6 @@
-﻿using Uno.Extensions.Navigation.Regions;
+﻿using System.Diagnostics;
+using Microsoft.Extensions.Logging.Abstractions;
+using Uno.Extensions.Navigation.Regions;
 
 namespace Uno.Extensions.Navigation.UI;
 
@@ -8,7 +10,12 @@ namespace Uno.Extensions.Navigation.UI;
 public static class Region
 {
 	private static ILogger? _logger;
-	internal static ILogger Logger { get => _logger ?? throw new NullReferenceException("Logger needs to be set"); set => _logger = value; }
+
+	internal static ILogger Logger
+	{
+		get => _logger ?? NullLogger<NavigationRegion>.Instance;
+		set => _logger = value;
+	}
 
 	public static readonly DependencyProperty InstanceProperty =
 	   DependencyProperty.RegisterAttached(

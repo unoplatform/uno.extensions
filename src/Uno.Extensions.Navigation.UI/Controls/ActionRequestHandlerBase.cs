@@ -1,4 +1,7 @@
-﻿namespace Uno.Extensions.Navigation.UI;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Reflection;
+
+namespace Uno.Extensions.Navigation.UI;
 
 /// <summary>
 /// Base class for request handlers that bind to a specific control type with an callback actions that should be
@@ -67,7 +70,7 @@ public abstract record ActionRequestHandlerBase<TView>(ILogger Logger, IRouteRes
 					{
 						Logger.LogTraceMessage($"Attempting to retrieve binding segment: {segment}");
 					}
-					var prop = dataObject.GetType().GetProperty(segment);
+					var prop = GetProperty(dataObject.GetType(), segment);
 					if (i == bindingPathSegments.Length - 1)
 					{
 						resultType = prop?.PropertyType;
@@ -174,5 +177,11 @@ public abstract record ActionRequestHandlerBase<TView>(ILogger Logger, IRouteRes
 		view.Unloaded += UnloadedHandler;
 
 		return new RequestBinding(viewToBind, LoadedHandler, UnloadedHandler);
+
+		[UnconditionalSuppressMessage("Trimming", "IL2070", Justification = "presence of property is optional")]
+		[UnconditionalSuppressMessage("Trimming", "IL2072", Justification = "presence of property is optional")]
+		[UnconditionalSuppressMessage("Trimming", "IL2075", Justification = "presence of property is optional")]
+		static PropertyInfo? GetProperty(Type type, string propertyName)
+			=> type.GetProperty(propertyName);
 	}
 }

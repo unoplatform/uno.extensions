@@ -4,6 +4,8 @@ uid: Uno.Extensions.Mvux.Advanced.Pagination
 
 # Pagination
 
+> **UnoFeatures:** `MVUX` (add to `<UnoFeatures>` in your `.csproj`)
+
 There are several ways to paginate data.
 
 > [!NOTE]

@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if NETSTANDARD2_0 || WINDOWS_UWP || NET461
+using System;
 
 namespace System.Diagnostics.CodeAnalysis
 {
@@ -31,3 +32,4 @@ namespace System.Diagnostics.CodeAnalysis
 		public string[] Members { get; }
 	}
 }
+#endif  // NETSTANDARD2_0 || WINDOWS_UWP || NET461

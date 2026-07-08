@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
@@ -19,7 +20,12 @@ namespace Uno.Extensions.Reactive.Bindings;
 /// <typeparam name="TItem">The type of the items.</typeparam>
 /// <typeparam name="TBindableItem">The type of the bindable of the item.</typeparam>
 [EditorBrowsable(EditorBrowsableState.Never)]
-public abstract class BindableEnumerable<TCollection, TItem, TBindableItem> : Bindable<TCollection>, IEnumerable<TBindableItem>, INotifyCollectionChanged, IList
+public abstract class BindableEnumerable<
+	[DynamicallyAccessedMembers(TRequirements)]
+	TCollection,
+	TItem,
+	TBindableItem
+> : Bindable<TCollection>, IEnumerable<TBindableItem>, INotifyCollectionChanged, IList
 	where TCollection : IEnumerable<TItem>
 	where TBindableItem : Bindable<TItem>
 	where TItem : notnull

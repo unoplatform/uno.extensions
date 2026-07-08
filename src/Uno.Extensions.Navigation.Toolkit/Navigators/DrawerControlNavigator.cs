@@ -1,4 +1,6 @@
-﻿using Uno.Extensions.Logging;
+﻿using System.Diagnostics.CodeAnalysis;
+
+using Uno.Extensions.Logging;
 using Uno.Extensions.Navigation.Regions;
 
 namespace Uno.Extensions.Navigation.Toolkit.Navigators;
@@ -42,7 +44,11 @@ public class DrawerControlNavigator : ControlNavigator<DrawerControl>
 		return base.RegionCanNavigate(route, routeMap);
 	}
 
-	protected override async Task<string?> Show(string? path, Type? viewType, object? data)
+	protected override async Task<string?> Show(
+		string? path,
+		[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor)]
+		Type? viewType,
+		object? data)
 	{
 		if (Control is null)
 		{

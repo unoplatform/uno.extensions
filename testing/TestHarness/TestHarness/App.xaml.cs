@@ -33,7 +33,7 @@ public partial class App : Application
 		// the correct locale for the app. This is required for the Localization
 		// tests to work when app is restarted
 		var host = UnoHost
-					.CreateDefaultBuilder()
+					.CreateDefaultBuilder<App>()
 					.UseConfiguration(
 						configureHostConfiguration: builder => builder.AddSectionFromEntity(new LocalizationConfiguration { Cultures = new[] { "es", "en", "en-AU", "fr" } }))
 					.UseLocalization()

@@ -8,7 +8,14 @@ public record NavigationRequest(object Sender, Route Route, CancellationToken? C
 
 	public override string ToString() => $"Request [Sender: {Sender.GetType().Name}, Route:{Route}, Result: {Result?.Name ?? "N/A"}]";
 
-	internal virtual IResponseNavigator? GetResponseNavigator(IResponseNavigatorFactory responseFactory, INavigator navigator) => default;
+	internal virtual IResponseNavigator? GetResponseNavigator(IResponseNavigatorFactory responseFactory, INavigator navigator)
+	{
+		if (Result is null)
+		{
+			return null;
+		}
+		return responseFactory.CreateForResultType<object>(navigator, this);
+	}
 }
 
 public record NavigationRequest<TResult>(object Sender, Route Route, CancellationToken? Cancellation = default) : NavigationRequest(Sender, Route, Cancellation, typeof(TResult))

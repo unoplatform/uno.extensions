@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RunSettings>
 	<TargetPlatform>x86</TargetPlatform>
-	<TargetFrameworkVersion>net8.0</TargetFrameworkVersion>
+	<TargetFrameworkVersion>net9.0</TargetFrameworkVersion>
 	<TestSessionTimeout>10000</TestSessionTimeout>
 	<TreatNoTestsAsError>true</TreatNoTestsAsError>
 </RunSettings>

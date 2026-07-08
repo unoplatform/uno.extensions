@@ -162,6 +162,7 @@ using System.Threading.Tasks;
 namespace {record.ContainingNamespace}
 {{
 	{this.GetCodeGenAttribute()}
+	[{NS.Bindings}.Bindable(typeof({record.ToFullString()}))]
 	{record.GetAccessibilityAsCSharpCodeString()} sealed class {vm} : {NS.Bindings}.Bindable<{record}>
 	{{
 		{properties.Select(prop => $"private readonly {prop.bindable} _{prop.symbol.GetCamelCaseName()};").Align(2)}

@@ -87,11 +87,13 @@ public partial record AnotherModelOrService
 
 ## MVUX integration with the messenger
 
+> **UnoFeatures:** `MVUX;Mvvm` (add to `<UnoFeatures>` in your `.csproj`)
+
 MVUX harnesses the power of the Community Toolkit messenger and adds extension methods that enable you to listen to entity changes received from the messenger and have them automatically applied to the state or list-state storing the entities in the current model. The following entity-change types are supported: created, updated, and deleted.
 
 For instance, when a command in the model creates a new entity and stores it in the database using a service, the service can send a 'created' entity-change message to the messenger, which can then be intercepted in the model to have the `State` or `ListState` update itself and display the newly created entity received from the messenger.
 
-These extensions are part of the [`Uno.Extensions.Reactive.Messaging`](https://www.nuget.org/packages/Uno.Extensions.Reactive.Messaging) NuGet package.
+These messaging extensions are included with the MVUX UnoFeature as part of the `Uno.Extensions.Reactive.Messaging` package.
 
 ### Observe
 

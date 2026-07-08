@@ -1,0 +1,12 @@
+<Project>
+	<Import Project="Directory.Build.props" />
+
+	<Target Name="DownloadPackageIcon"
+			Inputs="$(MSBuildThisFile)"
+			Outputs="$(MSBuildThisFileDirectory)\.icons\uno.png">
+
+		<DownloadFile SourceUrl="$(UnoIconUrl)" DestinationFolder="$(MSBuildThisFileDirectory)\.icons">
+			<Output TaskParameter="DownloadedFile" PropertyName="UnoPackageDownloadedIcon" />
+		</DownloadFile>
+	</Target>
+</Project>

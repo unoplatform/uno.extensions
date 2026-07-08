@@ -1,0 +1,8 @@
+<Page x:Class="Uno.Extensions.Navigation.UI.Tests.Pages.HotReloadNavRequestPage"
+	  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	  xmlns:uen="using:Uno.Extensions.Navigation.UI">
+	<Grid uen:Region.Attached="True">
+		<Button x:Name="_navButton" Content="Navigate" uen:Navigation.Request="PageOne" />
+	</Grid>
+</Page>

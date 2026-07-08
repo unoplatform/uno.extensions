@@ -1,0 +1,37 @@
+<Project Sdk="Uno.Sdk.Private">
+	<Import Project="..\tfms-ui-winui.props" />
+
+	<PropertyGroup>
+		<Description>Test library for the navigation extensions for the Uno Platform (WinUI)</Description>
+		<EnableDefaultPageItems>false</EnableDefaultPageItems>
+		<DefineConstants>$(DefineConstants);WINUI</DefineConstants>
+
+		<UnoSingleProject>true</UnoSingleProject>
+		<OutputType>Library</OutputType>
+	</PropertyGroup>
+
+	<ItemGroup Condition="'$(TargetFramework)'!='net9.0-windows10.0.19041'">
+		<Content Include="Assets\**" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="MSTest.TestFramework" />
+		<PackageReference Include="FluentAssertions" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Page Include="Pages\HotReloadNavRequestPage.xaml" />
+		<Page Include="Pages\HotReloadRegionAttachedPage.xaml" />
+		<Page Include="Pages\HotReloadRegionNavigatorPage.xaml" />
+		<Page Include="Pages\HotReloadTabBarXamlPage.xaml" />
+		<Page Include="Pages\HotReloadTabBarCommandPage.xaml" />
+		<Page Include="Pages\HotReloadVmXamlPage.xaml" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Uno.Extensions.Navigation.UI\Uno.Extensions.Navigation.WinUI.csproj" />
+		<ProjectReference Include="..\Uno.Extensions.Navigation.Toolkit\Uno.Extensions.Navigation.Toolkit.WinUI.csproj" />
+		<ProjectReference Include="..\Uno.Extensions.Hosting.UI\Uno.Extensions.Hosting.WinUI.csproj" />
+		<ProjectReference Include="..\Uno.Extensions.RuntimeTests\Uno.Extensions.RuntimeTests.Core\Uno.Extensions.RuntimeTests.Core.csproj" />
+	</ItemGroup>
+</Project>

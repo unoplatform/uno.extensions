@@ -3,6 +3,8 @@ uid: Uno.Extensions.Serialization.HowToSerialization
 ---
 # How-To: Serialize and Deserialize JSON Data
 
+> **UnoFeatures:** `Serialization` (add to `<UnoFeatures>` in your `.csproj`)
+
 Accessing the serialized and deserialized representation of an object can be important for dynamic, data-rich applications. Uno.Extensions supports the [new serialization technique](https://devblogs.microsoft.com/dotnet/try-the-new-system-text-json-source-generator) powered by code generation, but you can optionally revert to the previous one which uses reflection.
 
 ## Step-by-step
@@ -33,9 +35,27 @@ Accessing the serialized and deserialized representation of an object can be imp
         var appBuilder = this.CreateBuilder(args)
             .Configure(host => {
                 host
-                .UseSerialization();
+                .UseSerialization(...);
             });
     ...
+    ```
+
+    The `.UseSerialization()` extension method accepts an array of
+    `IJsonTypeInfoResolver` instances.  This can be "empty" if *your app is not trimmed*.
+    If your app *is* trimmed, e.g. you build with `-p:PublishTrimmed=true`, then you must
+    also use [System.Text.Json Source Generation](https://learn.microsoft.com/dotnet/standard/serialization/system-text-json/source-generation)
+    and provide ghe generated `IJsonTypeInfoResolver` values:
+
+    ```csharp
+    var appBuilder = this.CreateBuilder(args)
+        .Configure(host => {
+            host.UseSerialization([AppJsonSerializerContext.Default]);
+        });
+    
+    [JsonSerializable(typeof(…))]
+    internal partial class AppJsonSerializerContext : JsonSerializerContext
+    {
+    }
     ```
 
 ### 3. Preparing the class to be serialized efficiently
@@ -72,22 +92,26 @@ Accessing the serialized and deserialized representation of an object can be imp
     { }
     ```
 
-* The `JsonSerializable` attribute will generate several new members on the `PersonContext` class, allowing you to access the `JsonTypeInfo` in a static context. Get the `JsonTypeInfo` for your class using `PersonContext.Default.Person` and add it within the serializer registration from above:
+* The `JsonSerializable` attribute will generate several new members on the `PersonContext` class, allowing you to access the `JsonTypeInfo` in a static context. Get the `JsonTypeInfo` values for your class using `PersonContext.Default` and add it within the serializer registration from above:
 
     ```csharp
     protected override void OnLaunched(LaunchActivatedEventArgs e)
     {
         var appBuilder = this.CreateBuilder(args)
             .Configure(host => {
-                host
-                .UseSerialization(services => services.AddJsonTypeInfo(PersonContext.Default.Person));
+                host.UseSerialization([PersonContext.Default]);
+                // -or-
+                host.UseSerialization([], services =>
+                {
+                    services.AddJsonTypeInfo(PersonContext.Default);
+                });
             });
     ...
     ```
 
 ### 4. Configuring the serializer
 
-* The default serializer implementation uses `System.Text.Json`. The serialization can be configured by registering an instance of `JsonSerializerOptions`:
+* The default serializer implementation uses `System.Text.Json`. The serialization can be configured by using the `.ConfigureJsonSerializationOptions()` extension method to update `options.SerializerOptions`:
 
     ```csharp
     protected override void OnLaunched(LaunchActivatedEventArgs e)
@@ -95,10 +119,10 @@ Accessing the serialized and deserialized representation of an object can be imp
         var appBuilder = this.CreateBuilder(args)
             .Configure(host => {
                 host
-                .UseSerialization(services =>
+                .UseSerialization([PersonContext.Default])
+                .ConfigureServices((ctx, services) =>
                 {
-                    services.AddJsonTypeInfo(PersonContext.Default.Person);
-                    services.AddSingleton(new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                    services.ConfigureJsonSerializationOptions(options => options.SerializerOptions.PropertyNameCaseInsensitive = true);
                 });
             });
     ...

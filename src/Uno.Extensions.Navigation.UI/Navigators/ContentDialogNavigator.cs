@@ -1,4 +1,6 @@
-﻿namespace Uno.Extensions.Navigation.Navigators;
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace Uno.Extensions.Navigation.Navigators;
 
 public class ContentDialogNavigator : DialogNavigator
 {
@@ -44,7 +46,7 @@ public class ContentDialogNavigator : DialogNavigator
 			return null;
 		}
 
-		var dialog = Activator.CreateInstance(mapping.RenderView) as ContentDialog;
+		var dialog = mapping.RenderView.CreateInstance<ContentDialog>(Logger);
 		if (dialog is null)
 		{
 			return null;
@@ -83,6 +85,20 @@ public class ContentDialogNavigator : DialogNavigator
 		return showTask;
 	}
 
+
+	protected override Task CloseNavigator()
+	{
+		var dialog = _activeDialog;
+		_activeDialog = null;
+
+		// Cancel the ShowTask before calling Hide() so the ContinueWith
+		// continuation sees a canceled task and skips the back-navigation.
+		var result = base.CloseNavigator();
+
+		dialog?.Hide();
+
+		return result;
+	}
 
 	protected override Task CheckLoadedAsync() => _activeDialog is not null ? _activeDialog.EnsureLoaded() : Task.CompletedTask;
 }

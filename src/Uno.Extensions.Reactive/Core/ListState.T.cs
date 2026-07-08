@@ -64,11 +64,19 @@ public static class ListState<T>
 	/// <typeparam name="TOwner">Type of the owner of the state.</typeparam>
 	/// <param name="owner">The owner of the state.</param>
 	/// <param name="valueProvider">The provider of the initial value of the state.</param>
+	/// <param name="name">The caller member name, used as a stable cache key.</param>
+	/// <param name="line">The caller line number, used as a stable cache key.</param>
 	/// <returns>A feed that encapsulate the source.</returns>
-	public static IListState<T> Value<TOwner>(TOwner owner, Func<IImmutableList<T>> valueProvider)
+	public static IListState<T> Value<TOwner>(TOwner owner, Func<IImmutableList<T>> valueProvider, [CallerMemberName] string? name = null, [CallerLineNumber] int line = -1)
 		where TOwner : class
-		// Note: We force the usage of delegate so 2 properties which are doing State.Value(this, () => 42) will effectively have 2 distinct states.
-		=> AttachedProperty.GetOrCreate(owner, valueProvider, static (o, v) => SourceContext.GetOrCreate(o).CreateListState(Option<IImmutableList<T>>.Some(v())));
+		// Use CallerMemberName+line as stable cache key instead of delegate reference identity.
+		// Delegate instances can be recreated after MetadataUpdater.ApplyUpdate on WASM,
+		// which would cause cache misses and state recreation (spec 033).
+		=> AttachedProperty.GetOrCreate<TOwner, (string, int), Func<IImmutableList<T>>, IListState<T>>(
+			owner,
+			(name ?? throw new InvalidOperationException("The name of the list state must not be null"), line < 0 ? throw new InvalidOperationException("The provided line number is invalid.") : line),
+			valueProvider,
+			static (o, _, v) => SourceContext.GetOrCreate(o).CreateListState(Option<IImmutableList<T>>.Some(v())));
 
 	/// <summary>
 	/// Gets or creates a list state from a static initial list of items.
@@ -76,11 +84,16 @@ public static class ListState<T>
 	/// <typeparam name="TOwner">Type of the owner of the state.</typeparam>
 	/// <param name="owner">The owner of the state.</param>
 	/// <param name="valueProvider">The provider of the initial value of the state.</param>
+	/// <param name="name">The caller member name, used as a stable cache key.</param>
+	/// <param name="line">The caller line number, used as a stable cache key.</param>
 	/// <returns>A feed that encapsulate the source.</returns>
-	public static IListState<T> Value<TOwner>(TOwner owner, Func<ImmutableList<T>> valueProvider)
+	public static IListState<T> Value<TOwner>(TOwner owner, Func<ImmutableList<T>> valueProvider, [CallerMemberName] string? name = null, [CallerLineNumber] int line = -1)
 		where TOwner : class
-		// Note: We force the usage of delegate so 2 properties which are doing State.Value(this, () => 42) will effectively have 2 distinct states.
-		=> AttachedProperty.GetOrCreate(owner, valueProvider, static (o, v) => SourceContext.GetOrCreate(o).CreateListState(Option<IImmutableList<T>>.Some(v())));
+		=> AttachedProperty.GetOrCreate<TOwner, (string, int), Func<ImmutableList<T>>, IListState<T>>(
+			owner,
+			(name ?? throw new InvalidOperationException("The name of the list state must not be null"), line < 0 ? throw new InvalidOperationException("The provided line number is invalid.") : line),
+			valueProvider,
+			static (o, _, v) => SourceContext.GetOrCreate(o).CreateListState(Option<IImmutableList<T>>.Some(v())));
 
 	/// <summary>
 	/// Gets or creates a list state from a static initial list of items.
@@ -128,7 +141,7 @@ public static class ListState<T>
 	/// <returns>A feed that encapsulate the source.</returns>
 	public static IListState<T> Async<TOwner>(TOwner owner, AsyncFunc<Option<ImmutableList<T>>> valueProvider, Signal? refresh = null)
 		where TOwner : class
-		=> AttachedProperty.GetOrCreate(owner, (valueProvider, refresh), static (o, args) => S(o, new AsyncFeed<IImmutableList<T>>(async ct => (await args.valueProvider(ct).ConfigureAwait(false)).Map(l => l as IImmutableList<T>), args.refresh)));
+		=> AttachedProperty.GetOrCreate(owner, (valueProvider, refresh), static (o, args) => S(o, new AsyncFeed<IImmutableList<T>>(async ct => (await args.valueProvider(ct).ConfigureAwait(false)).Map(l => l as IImmutableList<T>), args.refresh, args.valueProvider)));
 
 	/// <summary>
 	/// Creates a custom feed from an async method.
@@ -140,7 +153,7 @@ public static class ListState<T>
 	/// <returns>A feed that encapsulate the source.</returns>
 	public static IListState<T> Async<TOwner>(TOwner owner, AsyncFunc<IImmutableList<T>> valueProvider, Signal? refresh = null)
 		where TOwner : class
-		=> AttachedProperty.GetOrCreate(owner, (valueProvider, refresh), static (o, args) => S(o, new AsyncFeed<IImmutableList<T>>(async ct => await args.valueProvider(ct).ConfigureAwait(false), args.refresh)));
+		=> AttachedProperty.GetOrCreate(owner, (valueProvider, refresh), static (o, args) => S(o, new AsyncFeed<IImmutableList<T>>(async ct => await args.valueProvider(ct).ConfigureAwait(false), args.refresh, args.valueProvider)));
 
 	/// <summary>
 	/// Creates a custom feed from an async method.
@@ -152,7 +165,7 @@ public static class ListState<T>
 	/// <returns>A feed that encapsulate the source.</returns>
 	public static IListState<T> Async<TOwner>(TOwner owner, AsyncFunc<ImmutableList<T>> valueProvider, Signal? refresh = null)
 		where TOwner : class
-		=> AttachedProperty.GetOrCreate(owner, (valueProvider, refresh), static (o, args) => S(o, new AsyncFeed<IImmutableList<T>>(async ct => await args.valueProvider(ct).ConfigureAwait(false) as IImmutableList<T>, args.refresh)));
+		=> AttachedProperty.GetOrCreate(owner, (valueProvider, refresh), static (o, args) => S(o, new AsyncFeed<IImmutableList<T>>(async ct => await args.valueProvider(ct).ConfigureAwait(false) as IImmutableList<T>, args.refresh, args.valueProvider)));
 
 	/// <summary>
 	/// Creates a custom feed from an async enumerable sequence of value.

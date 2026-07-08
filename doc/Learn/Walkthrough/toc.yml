@@ -1,0 +1,42 @@
+- name: Load Configuration Sections
+  href: Configuration.howto.md
+- name: Persist Writable Settings
+  href: WritableConfiguration.howto.md
+- name: Register and Consume Services
+  href: DependencyInjectionSetup.howto.md
+- name: Configure Uno Hosting
+  href: HostingSetup.howto.md
+- name: Use CommunityToolkit IoC
+  href: CommunityToolkit.howto.md
+- name: Add Structured Logging
+  href: Logging.howto.md
+- name: Tune Internal Logging
+  href: InternalLogging.howto.md
+- name: Localize Your App
+  href: Localization.howto.md
+- name: Switch Themes at Runtime
+  href: UseThemeService.howto.md
+- name: Centralize HTTP Endpoints
+  href: Http.howto.md
+- name: Customize Endpoint Options
+  href: HttpEndpointOptions.howto.md
+- name: Build Refit Clients
+  href: Refit.howto.md
+- name: Generate Kiota Clients
+  href: Kiota.howto.md
+- name: Serialize JSON with Source Generators
+  href: Serialization.howto.md
+- name: Authenticate Users with Custom Logic
+  href: Authentication.howto.md
+- name: Authenticate Users with a Web View
+  href: Authentication.Web.howto.md
+- name: Authenticate Users with MSAL
+  href: AuthenticationMSAL.howto.md
+- name: Authenticate Users with OIDC
+  href: Authentication.Oidc.howto.md
+- name: Persist Auth Tokens in Cookies
+  href: Cookies.howto.md
+- name: Enable Keychain Entitlements
+  href: RequiredEntitlements.howto.md
+
+

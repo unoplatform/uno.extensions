@@ -11,6 +11,7 @@ global using Microsoft.Extensions.Logging;
 global using Microsoft.Extensions.Options;
 global using Uno.Extensions.Configuration;
 global using Uno.Extensions.DependencyInjection;
+global using Uno.Extensions.Hosting;
 global using Uno.Extensions.Logging;
 global using Uno.Extensions.Serialization;
 global using Uno.Extensions.Storage;

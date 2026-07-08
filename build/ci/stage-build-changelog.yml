@@ -1,5 +1,6 @@
 jobs:
 - job: CHANGELOG_generation
+  cancelTimeoutInMinutes: 0
 
   pool:
     vmImage: 'ubuntu-24.04'

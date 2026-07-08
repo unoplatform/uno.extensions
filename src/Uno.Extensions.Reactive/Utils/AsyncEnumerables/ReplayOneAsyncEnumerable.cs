@@ -13,6 +13,12 @@ internal class ReplayOneAsyncEnumerable<T> : IAsyncEnumerable<T>, IDisposable, I
 	private readonly IAsyncEnumerable<T> _inner;
 	private readonly bool _isInitialSyncValuesSkippingAllowed;
 
+	// Resolved to the value of _current at the moment Enumerate first truly suspends
+	// (i.e. just before its first real await). This captures the end of the synchronous
+	// startup phase before any thread-pool continuation can race and advance _current.
+	// Always resolved by the time Enable() returns (Enumerate's sync phase has completed).
+	private readonly TaskCompletionSource<Node> _syncCheckpointTcs = new(TaskCreationOptions.None);
+
 	private Node _current = Node.Initial();
 	private int _state = State.Idle;
 	private Task? _enumeration; // Not used, only to keep ref
@@ -60,16 +66,42 @@ internal class ReplayOneAsyncEnumerable<T> : IAsyncEnumerable<T>, IDisposable, I
 	{
 		try
 		{
-			await foreach (var value in source.WithCancellation(ct).ConfigureAwait(false))
+			var enumerator = source.GetAsyncEnumerator(ct);
+			try
 			{
-				if (!MoveNext(Node.Next(value), ct))
+				while (true)
 				{
-					break;
+					var moveTask = enumerator.MoveNextAsync();
+					if (!moveTask.IsCompleted)
+					{
+						// About to truly suspend for the first time: capture the sync-phase
+						// checkpoint BEFORE awaiting. At this instant _current holds the last
+						// value produced during the synchronous startup phase and no thread-pool
+						// continuation can advance it yet because we have not yielded control.
+						_syncCheckpointTcs.TrySetResult(_current);
+					}
+
+					if (!await moveTask.ConfigureAwait(false))
+					{
+						break;
+					}
+
+					if (!MoveNext(Node.Next(enumerator.Current), ct))
+					{
+						break;
+					}
 				}
+			}
+			finally
+			{
+				await enumerator.DisposeAsync().ConfigureAwait(false);
 			}
 		}
 		finally
 		{
+			// Ensure the checkpoint is always resolved, e.g. when the source exhausts
+			// synchronously (no real async boundary) or throws before the loop sets it.
+			_syncCheckpointTcs.TrySetResult(_current);
 			Interlocked.CompareExchange(ref _state, State.Enumerating, State.Completed);
 			_current.TrySetNext(Node.Final());
 		}
@@ -99,14 +131,31 @@ internal class ReplayOneAsyncEnumerable<T> : IAsyncEnumerable<T>, IDisposable, I
 	{
 		try
 		{
+			// Use var so that subsequent assignments inside the do-while (which return Node?)
+			// do not trigger a nullability mismatch — the compiler widens the type from the
+			// while-condition context. This matches the original pattern.
+			var current = _current;
 			var needsToEnableEnumeration = true;
 			if (_isInitialSyncValuesSkippingAllowed)
 			{
-				Enable();
+				if (_state == State.Idle)
+				{
+					// First subscriber (enumeration not yet started):
+					// Enable() starts Enumerate, which captures _syncCheckpointTcs just
+					// before its first real await, so the TCS is always resolved by the
+					// time Enable() returns. The await below is therefore synchronous.
+					Enable();
+					current = await _syncCheckpointTcs.Task.ConfigureAwait(false);
+				}
+				else
+				{
+					// Late subscriber (enumeration already running): start from the latest
+					// replayed value. Enable() is a no-op here.
+					Enable();
+					current = _current;
+				}
 				needsToEnableEnumeration = false;
 			}
-
-			var current = _current;
 			do
 			{
 				if (current.TryGetValue(out var value))

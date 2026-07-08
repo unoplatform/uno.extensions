@@ -1,4 +1,6 @@
-﻿namespace Uno.Extensions;
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace Uno.Extensions;
 
 public static class ServiceProviderExtensions
 {
@@ -65,6 +67,7 @@ public static class ServiceProviderExtensions
 		ContentControl? navigationRoot = null,
 		string? initialRoute = "",
 		Type? initialView = null,
+		[DynamicallyAccessedMembers(Uno.Extensions.Diagnostics.Annotations.ViewModelRequirements)]
 		Type? initialViewModel = null,
 		Func<IServiceProvider, INavigator, Task>? initialNavigate = null)
 	{
@@ -90,6 +93,7 @@ public static class ServiceProviderExtensions
 		ContentControl navigationRoot,
 		string? initialRoute = "",
 		Type? initialView = null,
+		[DynamicallyAccessedMembers(Uno.Extensions.Diagnostics.Annotations.ViewModelRequirements)]
 		Type? initialViewModel = null,
 		Action<Window, FrameworkElement, Task>? initializeViewHost = null,
 		Func<IServiceProvider, INavigator, Task>? initialNavigate = null)
@@ -108,7 +112,10 @@ public static class ServiceProviderExtensions
 		this Window window,
 		FrameworkElement viewHost,
 		Func<Task<IHost>> buildHost,
-		string? initialRoute = "", Type? initialView = null, Type? initialViewModel = null,
+		string? initialRoute = "",
+		Type? initialView = null,
+		[DynamicallyAccessedMembers(Uno.Extensions.Diagnostics.Annotations.ViewModelRequirements)]
+		Type? initialViewModel = null,
 		Func<IServiceProvider, INavigator, Task>? initialNavigate = null)
 	{
 		// Force immediate return of Task to avoid synchronous execution of buildHost

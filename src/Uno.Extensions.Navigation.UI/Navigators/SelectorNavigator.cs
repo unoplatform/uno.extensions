@@ -1,15 +1,34 @@
-﻿namespace Uno.Extensions.Navigation.Navigators;
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace Uno.Extensions.Navigation.Navigators;
 
 public abstract class SelectorNavigator<TControl> : ControlNavigator<TControl>
 	where TControl : class
 {
 	private Action? _detachSelectionChanged;
 
+	// Tracks whether Show() has been called by the normal route cascade.
+	// Used to detect when the initial selection was missed during XAML HR.
+	private bool _showCalled;
+
+	// Stores the nested path from the current ExecuteRequestAsync call so that
+	// Show() → FindByPath() can use it to match composite region names like "Home/Favorites".
+	// AsyncLocal is used to ensure correct behavior across async execution contexts.
+	private static readonly AsyncLocal<string?> _currentNestedPath = new AsyncLocal<string?>();
+
 	public override void ControlInitialize()
 	{
+		_showCalled = false;
 		if (Control is not null)
 		{
 			_detachSelectionChanged = AttachSelectionChanged((sender, selected) => _ = SelectionChanged(sender, selected));
+
+			// Schedule a deferred check for missed initial selection. During XAML HR,
+			// the selector fires SelectionChanged before this navigator is created,
+			// so the event is lost and content stays blank. On normal first load,
+			// Show() is called by the route cascade in the same dispatch cycle,
+			// setting _showCalled=true before this deferred check runs (no-op).
+			_ = DeferredInitialSelectionCheckAsync();
 		}
 		else
 		{
@@ -17,6 +36,53 @@ public abstract class SelectorNavigator<TControl> : ControlNavigator<TControl>
 			{
 				Logger.LogWarningMessage($"Control is null, so unable to attach selection changed handler");
 			}
+		}
+	}
+
+	private async Task DeferredInitialSelectionCheckAsync()
+	{
+		// Yield to the dispatcher. On normal first load, the route cascade calls
+		// Show() in the same dispatch cycle, so _showCalled is already true by
+		// now. On XAML HR — and on initial load when the selector's containers
+		// haven't materialised yet — _showCalled stays false and the framework
+		// is responsible for kicking the initial selection itself.
+		//
+		// The selector may not have populated SelectedItem yet when this check
+		// first runs (e.g. TabBar's default IsSelectable item is chosen on a
+		// later layout pass than its Loaded event). Poll a few times with a
+		// brief delay before giving up; if the regular route cascade arrives
+		// first it flips _showCalled and we stop early.
+		const int maxAttempts = 20;
+		for (var attempt = 0; attempt < maxAttempts; attempt++)
+		{
+			var done = await Dispatcher.ExecuteAsync(async ct =>
+			{
+				if (_showCalled || Region.View is not FrameworkElement view)
+				{
+					return true;
+				}
+
+				var selected = SelectedItem;
+				if (selected is null)
+				{
+					return false;
+				}
+
+				if (Logger.IsEnabled(LogLevel.Debug))
+				{
+					Logger.LogDebugMessage($"Triggering navigation for missed initial selection (XAML HR)");
+				}
+
+				await SelectionChanged(view, selected);
+				return true;
+			}, CancellationToken.None);
+
+			if (done)
+			{
+				return;
+			}
+
+			await Task.Delay(50);
 		}
 	}
 
@@ -28,8 +94,33 @@ public abstract class SelectorNavigator<TControl> : ControlNavigator<TControl>
 
 	protected override FrameworkElement? CurrentView => SelectedItem;
 
+	// Show() selects the matching item and returns null so the route flows down to the
+	// sibling content region (see Show()). RegionCanNavigate has already confirmed the item
+	// exists, so that null is a successful delegation — never a missing view. Tell the base
+	// ExecuteRequestAsync not to treat it as a failed resolution (no warning, no phantom
+	// hot-reload pending retry). See spec 004.
+	protected override bool IsNullShowResultExpected => true;
+
 	protected override async Task<bool> RegionCanNavigate(Route route, RouteInfo? routeMap)
 	{
+		// When a tab item exists but has no registered route (e.g. added via XAML HR),
+		// lazily insert a route with a FrameView so that the sibling
+		// PanelVisiblityNavigator also accepts the navigation and the request
+		// propagates through the composite parent to all children.
+		if (routeMap is null && !string.IsNullOrWhiteSpace(route.Base))
+		{
+			var hasItem = await Dispatcher.ExecuteAsync(async cancellation =>
+			{
+				return FindByPath(route.Base) is not null;
+			});
+
+			if (hasItem)
+			{
+				EnsureRouteRegistered(route.Base);
+				routeMap = Resolver.FindByPath(route.Base);
+			}
+		}
+
 		if (!await base.RegionCanNavigate(route, routeMap))
 		{
 			return false;
@@ -37,8 +128,58 @@ public abstract class SelectorNavigator<TControl> : ControlNavigator<TControl>
 
 		return await Dispatcher.ExecuteAsync(async cancellation =>
 		{
-			return FindByPath(routeMap?.Path ?? route.Base) is not null;
+			var path = routeMap?.Path ?? route.Base;
+			var item = FindByPath(path, route.Path);
+			if (Logger.IsEnabled(LogLevel.Debug))
+			{
+				if (item is not null)
+					Logger.LogDebugMessage($"Selector: Found matching item for path '{path}'");
+				else
+					Logger.LogDebugMessage($"Selector: No item matches path '{path}' — navigation will not proceed through this selector");
+			}
+			return item is not null;
 		});
+	}
+
+	/// <summary>
+	/// Inserts a route for the given path if one does not already exist.
+	/// The new route is created as a sibling of existing tab routes (same Parent)
+	/// and inherits the View and ViewModel from a sibling so that the
+	/// <see cref="PanelVisiblityNavigator"/> can create a FrameView and the
+	/// inner FrameNavigator can navigate to the correct page type.
+	/// </summary>
+	private void EnsureRouteRegistered(string path)
+	{
+		if (Resolver.FindByPath(path) is not null)
+		{
+			return;
+		}
+
+		RouteInfo? siblingRoute = null;
+		foreach (var item in Items)
+		{
+			var itemPath = item.GetRegionOrElementName()?.WithoutQualifier();
+			if (string.IsNullOrEmpty(itemPath))
+			{
+				continue;
+			}
+
+			var existing = Resolver.FindByPath(itemPath);
+			if (existing is not null)
+			{
+				siblingRoute = existing;
+				break;
+			}
+		}
+
+		var newRoute = new RouteInfo(
+			path,
+			View: siblingRoute?.View,
+			ViewModel: siblingRoute?.ViewModel)
+		{
+			Parent = siblingRoute?.Parent
+		};
+		Resolver.InsertRoute(newRoute);
 	}
 
 	protected SelectorNavigator(
@@ -51,8 +192,27 @@ public abstract class SelectorNavigator<TControl> : ControlNavigator<TControl>
 	{
 	}
 
-	protected override async Task<string?> Show(string? path, Type? viewType, object? data)
+	protected override async Task<Route?> ExecuteRequestAsync(NavigationRequest request)
 	{
+		_currentNestedPath.Value = request.Route.Path;
+		try
+		{
+			return await base.ExecuteRequestAsync(request);
+		}
+		finally
+		{
+			_currentNestedPath.Value = null;
+		}
+	}
+
+	protected override async Task<string?> Show(
+		string? path,
+		[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor)]
+		Type? viewType,
+		object? data)
+	{
+		_showCalled = true;
+
 		if (Control is null)
 		{
 			return null;
@@ -64,7 +224,7 @@ public abstract class SelectorNavigator<TControl> : ControlNavigator<TControl>
 		detach?.Invoke();
 		try
 		{
-			var item = FindByPath(path);
+			var item = FindByPath(path, _currentNestedPath.Value);
 
 			if (Logger.IsEnabled(LogLevel.Trace))
 			{
@@ -129,7 +289,7 @@ public abstract class SelectorNavigator<TControl> : ControlNavigator<TControl>
 	}
 
 
-	private FrameworkElement? FindByPath(string? path)
+	private FrameworkElement? FindByPath(string? path, string? nestedPath = null)
 	{
 		if (string.IsNullOrWhiteSpace(path) || Control is null)
 		{
@@ -139,6 +299,25 @@ public abstract class SelectorNavigator<TControl> : ControlNavigator<TControl>
 			}
 
 			return default;
+		}
+
+		// If a nested path is provided, first try to find an item whose composite region name
+		// (e.g. "Home/Favorites") matches the combination of the base path and nested path.
+		// This allows NavigationViewItems and TabBarItems to target sub-routes of the same region.
+		if (!string.IsNullOrWhiteSpace(nestedPath))
+		{
+			var nestedPart = nestedPath.TrimStart('/');
+			if (!string.IsNullOrWhiteSpace(nestedPart))
+			{
+				var compositePath = $"{path}/{nestedPart}";
+				var compositeItem = (from mi in Items
+									 where mi.GetRegionOrElementName().WithoutQualifier() == compositePath
+									 select mi).FirstOrDefault();
+				if (compositeItem is not null)
+				{
+					return compositeItem;
+				}
+			}
 		}
 
 		var item = (from mi in Items

@@ -23,6 +23,13 @@ public enum HotReloadSupport
 	State = 1 << 2,
 
 	/// <summary>
+	/// Enables the hot-reload support for async feeds. The feed re-evaluates when the type that declares the
+	/// data provider is updated, OR when any type recorded in the source-generated <see cref="Core.HotReload.FeedDependencyRegistry"/>
+	/// for that property is updated (e.g. a helper class the lambda body calls into).
+	/// </summary>
+	AsyncFeed = 1 << 3,
+
+	/// <summary>
 	/// Globally enables the hot-reload support for the MVUX framework.
 	/// </summary>
 	Enabled = 255,

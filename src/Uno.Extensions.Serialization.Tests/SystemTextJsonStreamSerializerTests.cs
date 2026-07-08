@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 
@@ -15,8 +16,15 @@ public class SystemTextJsonSerializerTests
 	[TestInitialize]
 	public void InitializeTests()
 	{
-		var services = new ServiceCollection().BuildServiceProvider();
-		Serializer = new SystemTextJsonSerializer(services);
+		var context = new HostBuilderContext(new Dictionary<object, object>());
+		var services = new ServiceCollection();
+
+#if WITH_AOT_TRIMMING
+		services.AddJsonSerialization(context, SimpleClassContext.Default);
+#endif  // WITH_AOT_TRIMMING
+
+		var serviceProvider = services.BuildServiceProvider();
+		Serializer = new SystemTextJsonSerializer(serviceProvider);
 	}
 
 	[TestMethod]

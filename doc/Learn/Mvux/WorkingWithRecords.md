@@ -4,6 +4,8 @@ uid: Uno.Extensions.Mvux.Records
 
 # How to write Records with MVUX
 
+> **UnoFeatures:** `MVUX` (add to `<UnoFeatures>` in your `.csproj`)
+
 ## What is a Record
 
 A [record](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/builtin-types/record) behaves like a class*, offering the feature of **immutability**, where the values assigned to it remain unchanged once set. It's possible to create records using the `record` modifier, for example:

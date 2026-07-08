@@ -159,6 +159,7 @@ using System.Threading.Tasks;
 namespace {record.ContainingNamespace}
 {{
 	{this.GetCodeGenAttribute()}
+	[{NS.Bindings}.Bindable(typeof({record.ToFullString()}))]
 	{record.GetAccessibilityAsCSharpCodeString()} sealed class Bindable{record.GetPascalCaseName()} : {NS.Bindings}.Bindable<{record}>
 	{{
 		{properties.Select(prop => $"private readonly {prop.bindable} _{prop.symbol.GetCamelCaseName()};").Align(2)}

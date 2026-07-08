@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Reflection;
 
 namespace Uno.Extensions.Navigation;
 
@@ -26,7 +27,9 @@ public class RouteResolverDefault : RouteResolver
 		return map ?? DefaultMapping(path: path).FirstOrDefault();
 	}
 
-	protected override RouteInfo[] InternalFindByViewModel(Type? viewModel)
+	protected override RouteInfo[] InternalFindByViewModel(
+		[DynamicallyAccessedMembers(Uno.Extensions.Diagnostics.Annotations.ViewModelRequirements)]
+		Type? viewModel)
 	{
 		var map = base.InternalFindByViewModel(viewModel);
 		return map.Any() ? map : DefaultMapping(viewModel: viewModel);
@@ -39,7 +42,11 @@ public class RouteResolverDefault : RouteResolver
 	}
 
 
-	private RouteInfo[] DefaultMapping(string? path = null, Type? view = null, Type? viewModel = null)
+	private RouteInfo[] DefaultMapping(
+		string? path = null,
+		Type? view = null,
+		[DynamicallyAccessedMembers(Uno.Extensions.Diagnostics.Annotations.ViewModelRequirements)]
+		Type? viewModel = null)
 	{
 		var routeMap = InternalDefaultMapping(path, view, viewModel);
 		if (routeMap is not null)
@@ -53,7 +60,11 @@ public class RouteResolverDefault : RouteResolver
 		return Array.Empty<RouteInfo>();
 	}
 
-	protected virtual RouteInfo? InternalDefaultMapping(string? path = null, Type? view = null, Type? viewModel = null)
+	protected virtual RouteInfo? InternalDefaultMapping(
+		string? path = null,
+		Type? view = null,
+		[DynamicallyAccessedMembers(Uno.Extensions.Diagnostics.Annotations.ViewModelRequirements)]
+		Type? viewModel = null)
 	{
 		if (path is null && view is null && viewModel is null)
 		{
@@ -151,6 +162,8 @@ public class RouteResolverDefault : RouteResolver
 		return default;
 	}
 
+	[UnconditionalSuppressMessage("Trimming", "IL2072", Justification = "Codepath originally intended for non-trimming use. If this is the linchpin, we're doomed.")]
+	[return: DynamicallyAccessedMembers(Uno.Extensions.Diagnostics.Annotations.ViewModelRequirements)]
 	private Type? TypeFromPath(string path, bool allowMatchExact, IEnumerable<string> suffixes, Func<Type, bool>? condition = null)
 	{
 		if (string.IsNullOrWhiteSpace(path))
@@ -160,18 +173,26 @@ public class RouteResolverDefault : RouteResolver
 			return default;
 		}
 
-		if (allowMatchExact && LoadedTypes.TryGetValue(path, out var type))
+		if (allowMatchExact && TryGetLoadedType(path, out var type))
 		{
+			if (Logger.IsEnabled(LogLevel.Debug))
+				Logger.LogDebugMessage($"Auto-resolve: Exact type match found for path '{path}' → {type.FullName}");
 			return type;
 		}
 
 		foreach (var suffix in suffixes)
 		{
-			if (LoadedTypes.TryGetValue($"{path}{suffix}", out type))
+			if (TryGetLoadedType($"{path}{suffix}", out type))
 			{
 				if (condition?.Invoke(type) ?? true)
 				{
+					if (Logger.IsEnabled(LogLevel.Debug))
+						Logger.LogDebugMessage($"Auto-resolve: Found type '{path}{suffix}' → {type.FullName} (suffix match)");
 					return type;
+				}
+				else if (Logger.IsEnabled(LogLevel.Trace))
+				{
+					Logger.LogTraceMessage($"Auto-resolve: Type '{path}{suffix}' found but failed condition check (not a FrameworkElement subclass?)");
 				}
 			}
 		}
@@ -179,9 +200,18 @@ public class RouteResolverDefault : RouteResolver
 			Logger.LogWarningMessage($"Navigation failed: Could not resolve type for path '{path}'.");
 
 		return null;
+
+		[UnconditionalSuppressMessage("Trimming", "IL2026", Justification = "LoadedTypes has the message; suppress use to limit contagion.")]
+		bool TryGetLoadedType(string path, [NotNullWhen (true)] out Type? type)
+        {
+            return LoadedTypes.TryGetValue(path, out type);
+        }
 	}
 
-	private string PathFromTypes(Type? view, Type? viewModel)
+	private string PathFromTypes(
+		Type? view,
+		[DynamicallyAccessedMembers(Uno.Extensions.Diagnostics.Annotations.ViewModelRequirements)]
+		Type? viewModel)
 	{
 		if (view is null && viewModel is null)
 		{
@@ -235,6 +265,7 @@ public class RouteResolverDefault : RouteResolver
 
 	public IDictionary<string, Type> LoadedTypes
 	{
+		[RequiresUnreferencedCode("From Assembly.GetTypes(): Types might be removed")]
 		get
 		{
 			if (loadedTypes is null)
@@ -254,6 +285,8 @@ public class RouteResolverDefault : RouteResolver
 public static class AssemblyExtensions
 {
 	public static IList<string> Excludes { get; } = new List<string>();
+
+	[RequiresUnreferencedCode("From Assembly.GetTypes(): Types might be removed")]
 	public static Type[] SafeGetTypes(this Assembly assembly)
 	{
 		try

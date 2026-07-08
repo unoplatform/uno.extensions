@@ -1,4 +1,6 @@
-﻿namespace Uno.Extensions.Navigation.Navigators;
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace Uno.Extensions.Navigation.Navigators;
 
 public class PanelVisiblityNavigator : ControlNavigator<Panel>
 {
@@ -58,13 +60,28 @@ public class PanelVisiblityNavigator : ControlNavigator<Panel>
 
 		return await Dispatcher.ExecuteAsync(async cancellation =>
 		{
-			return FindByPath(routeMap?.Path ?? route.Base) is not null;
+			var path = routeMap?.Path ?? route.Base;
+			var found = FindByPath(path) is not null;
+			if (Logger.IsEnabled(LogLevel.Debug))
+			{
+				if (found)
+					Logger.LogDebugMessage($"PanelVisibility: Existing child found for path '{path}'");
+				else if (routeMap?.RenderView is not null)
+					Logger.LogDebugMessage($"PanelVisibility: No existing child for '{path}', but view type '{routeMap.RenderView.Name}' will be created");
+				else
+					Logger.LogDebugMessage($"PanelVisibility: No existing child for '{path}' and no view type resolved — a FrameView will be created as fallback");
+			}
+			return found;
 		});
 	}
 
 	private FrameworkElement? CurrentlyVisibleControl { get; set; }
 
-	protected override async Task<string?> Show(string? path, Type? viewType, object? data)
+	protected override async Task<string?> Show(
+		string? path,
+		[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor)]
+		Type? viewType,
+		object? data)
 	{
 		if (Control is null)
 		{
@@ -122,10 +139,22 @@ public class PanelVisiblityNavigator : ControlNavigator<Panel>
 			CurrentlyVisibleControl = controlToShow;
 		}
 
-		Control.ReassignRegionParent();
+		// Only reassign region parents for the currently visible control,
+		// not the entire panel. This prevents collapsed/inactive tab content 
+		// regions from being re-added as children, which would cause
+		// GetRoute() to pick the wrong (deepest) route from an inactive tab.
+		if (controlToShow is not null)
+		{
+			controlToShow.ReassignRegionParent();
+		}
 
 		return path;
 	}
+
+	protected override Task CheckLoadedAsync()
+		=> CurrentlyVisibleControl is { IsLoaded: false }
+			? CurrentlyVisibleControl.EnsureLoaded()
+			: Task.CompletedTask;
 
 	protected override async Task PostNavigateAsync()
 	{

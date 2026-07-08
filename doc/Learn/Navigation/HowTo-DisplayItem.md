@@ -3,6 +3,8 @@ uid: Uno.Extensions.Navigation.HowToDisplayItem
 ---
 # How-To: Display Item Details
 
+> **UnoFeatures:** `Navigation` (add to `<UnoFeatures>` in your `.csproj`)
+
 This topic walks through how to use Navigation to display the details of an item selected from a list. This demonstrates an important aspect of Navigation which is the ability to pass data as part of a navigation request.
 
 [!include[getting-help](../includes/mvvm-approach.md)]
@@ -75,6 +77,9 @@ Often it is necessary to pass a data item from one page to another. This scenari
     ```
 
 ### 5. Navigating for selected value in a `ListView`
+
+> [!IMPORTANT]
+> For navigation from `ListView` and `GridView`, **always use `uen:Navigation.Request`** attached property.
 
 A common application scenario is to present a list of items, for example presented in a `ListView`. When the user selects an item, the application navigates to a new view in order to display the details of that item.
 

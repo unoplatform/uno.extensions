@@ -75,7 +75,7 @@
 		</Otherwise>
 	</Choose>
 
-	<Target Name="AndroidResourceGenWorkaround" BeforeTargets="Build" Condition="'$(AndroidUseIntermediateDesignerFile)'=='True' and $(IsMonoAndroid) and '$(TargetFramework)'!='net8.0-android'">
+	<Target Name="AndroidResourceGenWorkaround" BeforeTargets="Build" Condition="'$(AndroidUseIntermediateDesignerFile)'=='True' and $(IsMonoAndroid) and '$(TargetFramework)'!='net9.0-android'">
 		<Message Importance="high" Text="************************* Making Resources DIR" />
 		<MakeDir Directories="obj\$(TargetFramework)\Resources" />
 		<WriteLinesToFile File="$(AndroidResgenFile)" Lines="// Empty Content from uno.ui Directory.Build.targets." />
@@ -88,6 +88,7 @@
 
 	<Import Project="winappsdk-workaround.targets" Condition="exists('winappsdk-workaround.targets') and $(TargetFramework.Contains('windows10'))" />
 	<Import Project="xamarinmac-workaround.targets" Condition="exists('xamarinmac-workaround.targets') and $(TargetFramework.ToLower().StartsWith('xamarin')) and $(TargetFramework.ToLower().Contains('mac'))" />
+	<Import Project="BannedSymbols.targets" />
 	<Import Project="Directory.UnoMetadata.targets" />
 
 	<ItemDefinitionGroup>

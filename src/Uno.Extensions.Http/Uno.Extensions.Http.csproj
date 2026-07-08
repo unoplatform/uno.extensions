@@ -4,6 +4,8 @@
 	<PropertyGroup>
 		<Description>HTTP Extensions for registering endpoints for Uno Platform, UWP and WinUI</Description>
 
+		<IsAotCompatible>true</IsAotCompatible>
+
 		<!--Temporary disable missing XML doc until fixed in the whole package-->
 		<WarningsNotAsErrors>$(WarningsNotAsErrors);CS1591</WarningsNotAsErrors>
 	</PropertyGroup>

@@ -9,6 +9,8 @@
 
 		<!-- As we are InternalsVisibleTo, we disable some compatibility types that are not used by package itself. -->
 		<UnoExtensionsGeneration_DisableModuleInitializerAttribute>True</UnoExtensionsGeneration_DisableModuleInitializerAttribute>
+
+		<IsAotCompatible>true</IsAotCompatible>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -25,12 +27,15 @@
 		<PackageReference Include="Microsoft.Extensions.Hosting" />
 		<PackageReference Include="Microsoft.Extensions.Logging" />
 		<PackageReference Include="Microsoft.Extensions.Localization.Abstractions" />
+		<PackageReference Include="Uno.Core.Extensions.Logging" />
+		<PackageReference Include="Uno.Core.Extensions.Logging.Singleton" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<InternalsVisibleTo Include="$(AssemblyName).Toolkit.UI" />
 		<InternalsVisibleTo Include="$(AssemblyName).Toolkit.WinUI" />
 		<InternalsVisibleTo Include="$(AssemblyName).Tests" />
+		<InternalsVisibleTo Include="$(AssemblyName).WinUI.Tests" />
 		<InternalsVisibleTo Include="Uno.Extensions.Authentication" />
 		<InternalsVisibleTo Include="Uno.Extensions.Authentication.UI" />
 		<InternalsVisibleTo Include="Uno.Extensions.Authentication.WinUI" />

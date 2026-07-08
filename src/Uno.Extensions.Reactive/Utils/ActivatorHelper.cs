@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -9,7 +10,11 @@ namespace Uno.Extensions.Reactive.Utils;
 
 internal static class ActivatorHelper
 {
-	internal static object CreateInstance(Type type, (Type type, string name, object? value)[] arguments, Func<Type, string, object?>? tryGetMissingArgument = null)
+	internal static object CreateInstance(
+		[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)]
+		Type type,
+		(Type type, string name, object? value)[] arguments,
+		Func<Type, string, object?>? tryGetMissingArgument = null)
 	{
 		var ctors = type
 			.GetConstructors(BindingFlags.Instance | BindingFlags.Public)

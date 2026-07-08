@@ -68,7 +68,31 @@ public static class DependencyObjectExtensions
             return default;
         }
 
+        // Stop at a navigation boundary: an element with Region.Attached explicitly set to false
+        // detaches its subtree from the navigation above it, so descendants resolve no region/SP.
+        if (element.IsNavigationBoundary())
+        {
+            if (Region.Logger.IsEnabled(LogLevel.Trace))
+            {
+                Region.Logger.LogTraceMessage($"Navigation boundary reached at {element.GetType().Name} (Region.Attached=false); stopping service-provider walk - the subtree below is isolated from the navigation above it.");
+            }
+
+            return default;
+        }
+
         var parent = VisualTreeHelper.GetParent(element);
         return parent.ServiceForControl(searchParent, retrieveFromElement);
     }
+
+    /// <summary>
+    /// True when Region.Attached marks this element as a navigation boundary: its subtree is not
+    /// attached to the navigation above it. Requires a <em>local</em> <c>false</c> (so the default
+    /// unset-false, which every element has, is not a boundary) <em>and</em> an effective value of
+    /// <c>false</c>. The latter excludes the responsive master-detail idiom where a pane is declared
+    /// <c>Region.Attached="false"</c> locally but flipped to <c>true</c> by a VisualState/Style setter
+    /// for the wide layout - that pane is a real region, not a boundary.
+    /// </summary>
+    internal static bool IsNavigationBoundary(this DependencyObject element)
+        => element.ReadLocalValue(Region.AttachedProperty) is bool local && !local
+            && !(bool)element.GetValue(Region.AttachedProperty);
 }

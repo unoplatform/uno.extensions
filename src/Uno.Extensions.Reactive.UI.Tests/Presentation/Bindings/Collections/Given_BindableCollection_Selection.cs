@@ -178,9 +178,9 @@ public partial class Given_BindableCollection_Selection : FeedTests
 		await TestHelper.WaitFor(async ct => ((ICollectionView)cb.ItemsSource).CurrentItem is MyItem { Value: 43 }, CT);
 	}
 
-	private async Task<(BindableGiven_BindableCollection_Selection_Model, ListView, ListViewItem[])> SetupListView(ListViewSelectionMode selectionMode)
+	private async Task<(Given_BindableCollection_Selection_ViewModel, ListView, ListViewItem[])> SetupListView(ListViewSelectionMode selectionMode)
 	{
-		var vm = new BindableGiven_BindableCollection_Selection_Model();
+		var vm = new Given_BindableCollection_Selection_ViewModel();
 		var lv = new ListView { ItemsSource = vm.Items, SelectionMode = selectionMode };
 
 		await UIHelper.Load(lv, CT);
@@ -195,9 +195,9 @@ public partial class Given_BindableCollection_Selection : FeedTests
 		return (vm, lv, lvItems);
 	}
 
-	private async Task<(BindableGiven_BindableCollection_Selection_Model, ComboBox)> SetupComboBox()
+	private async Task<(Given_BindableCollection_Selection_ViewModel, ComboBox)> SetupComboBox()
 	{
-		var vm = new BindableGiven_BindableCollection_Selection_Model();
+		var vm = new Given_BindableCollection_Selection_ViewModel();
 		var cb = new ComboBox { ItemsSource = vm.Items };
 
 		await UIHelper.Load(cb, CT);

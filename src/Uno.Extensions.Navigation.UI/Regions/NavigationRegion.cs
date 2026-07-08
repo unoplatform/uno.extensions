@@ -12,6 +12,15 @@ public sealed class NavigationRegion : IRegion
 	private IRegion? _parent;
 	private bool _isRoot;
 	private bool _isLoaded;
+	private bool _wasUnloaded;
+	// Set by FrameNavigator before Children.Clear() to indicate this region is being
+	// unloaded due to navigation (not Hot Reload). When true, HandleLoaded skips the
+	// HR re-cascade because the parent navigator will cascade the correct route itself.
+	internal bool _suppressReCascadeOnReload;
+	// Set by NavigationVisibilityUpdateHandler.RestoreState when this region was created
+	// by HR's ReplaceViewInstance as a replacement for a region that had active navigation.
+	// Treated as equivalent to _wasUnloaded in HandleLoaded's re-cascade check.
+	private bool _replacedByHotReload;
 	public IRegion? Parent
 	{
 		get => _parent;
@@ -131,6 +140,16 @@ public sealed class NavigationRegion : IRegion
 #pragma warning disable CS8603 // Possible null reference return.
 		_services.AddScopedInstance<INavigator>(() => navigator);
 #pragma warning restore CS8603 // Possible null reference return.
+
+		// Store root region reference for C# hot-reload route refresh. After
+		// NavigationRouteUpdateHandler rebuilds the resolver with newly registered
+		// routes, it walks down from this root to find navigators that need a
+		// default-route re-cascade. Mirrors the resolver wire-up in
+		// ServiceCollectionExtensions.AddNavigation.
+		if (_services.GetService<NavigationRouteContext>() is { } ctx)
+		{
+			ctx.RootRegion = this;
+		}
 	}
 
 	private async void ViewLoaded(object sender, RoutedEventArgs e)
@@ -171,6 +190,7 @@ public sealed class NavigationRegion : IRegion
 		}
 
 		_isLoaded = false;
+		_wasUnloaded = true;
 
 		View.Loading += ViewLoading;
 		View.Loaded += ViewLoaded;
@@ -266,6 +286,35 @@ public sealed class NavigationRegion : IRegion
 		AssignParent();
 	}
 
+	/// <summary>
+	/// Marks all descendant NavigationRegions so that when they reload after being
+	/// unloaded by navigation (e.g., Children.Clear()), they do not spuriously
+	/// re-cascade the parent route. This prevents overriding the correct child
+	/// route that the parent navigator restores via AdjustRequestForChildNavigation.
+	/// </summary>
+	internal static void SuppressReCascadeOnDescendants(IRegion region)
+	{
+		foreach (var child in region.Children)
+		{
+			if (child is NavigationRegion navRegion)
+			{
+				navRegion._suppressReCascadeOnReload = true;
+			}
+			SuppressReCascadeOnDescendants(child);
+		}
+	}
+
+	/// <summary>
+	/// Called by <see cref="NavigationVisibilityUpdateHandler.RestoreState"/> when this
+	/// region was created by hot-reload's <c>ReplaceViewInstance</c> as a replacement
+	/// for a region that had active navigation. Causes <see cref="HandleLoaded"/> to
+	/// re-cascade the parent route, re-injecting the ViewModel on the new page instance.
+	/// </summary>
+	internal void MarkReplacedByHotReload()
+	{
+		_replacedByHotReload = true;
+	}
+
 	private async Task HandleLoaded()
 	{
 		if (View is null || _isLoaded)
@@ -290,6 +339,22 @@ public sealed class NavigationRegion : IRegion
 
 		if (navigator is not null)
 		{
+			// Requests can get parked while this region (or its children) are detached
+			// during a tree re-graft (e.g. Hot Design re-hosting the app content during
+			// bootstrap — spec 006). Now that this region is attached and routable again:
+			// resume a request that arrived while THIS region was detached, and ask the
+			// parent to resume a child-bound request it could not forward.
+			// Fire-and-forget: both methods guard their own bodies.
+			if (navigator is Navigator ownNavigator)
+			{
+				_ = ownNavigator.TryResumeDetachedRequestAsync();
+			}
+
+			if (Parent?.Navigator() is Navigator parentNavigator)
+			{
+				_ = parentNavigator.TryResumePendingChildRequestAsync();
+			}
+
 			foreach (var child in Children.OfType<NavigationRegion>())
 			{
 				if (child._isLoaded && child._services is null)
@@ -299,6 +364,30 @@ public sealed class NavigationRegion : IRegion
 					_ = child.Navigator();
 				}
 			}
+
+			// If the parent already has an active route (e.g., after XAML HR
+			// recreated this region), re-trigger the route cascade from the parent
+			// so this navigator receives its initial navigation via the normal flow.
+			// Only applies on re-load after unload (HR scenario), not first-time load.
+			// Skip if this region was unloaded due to navigation (not HR) — the parent
+			// navigator (e.g., FrameNavigator) will cascade the correct route itself
+			// via AdjustRequestForChildNavigation / NavigateChildRegions.
+			if ((_wasUnloaded || _replacedByHotReload) && !_suppressReCascadeOnReload && Parent is not null && navigator.Route is null)
+			{
+				var parentNav = Parent.Navigator();
+				if (parentNav?.Route is { Base.Length: > 0 })
+				{
+					if (_logger.IsEnabled(LogLevel.Trace))
+					{
+						_logger.LogTraceMessage($"(Name: {Name}) Parent already has route '{parentNav.Route}', re-cascading");
+					}
+
+					var request = new NavigationRequest(parentNav, parentNav.Route.AsInternal());
+					_ = parentNav.NavigateAsync(request);
+				}
+			}
+			_suppressReCascadeOnReload = false;
+			_replacedByHotReload = false;
 		}
 	}
 

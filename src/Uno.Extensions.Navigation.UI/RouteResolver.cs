@@ -1,8 +1,10 @@
-﻿namespace Uno.Extensions.Navigation;
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace Uno.Extensions.Navigation;
 
 public class RouteResolver : IRouteResolver
 {
-	private RouteInfo? First { get; }
+	private RouteInfo? First { get; set; }
 	protected IList<RouteInfo> Mappings { get; } = new List<RouteInfo>();
 
 	protected ILogger Logger { get; }
@@ -46,6 +48,63 @@ public class RouteResolver : IRouteResolver
 		);
 		Mappings.Add(messageDialogRoute);
 
+		LogResolverState("constructed");
+	}
+
+	/// <summary>
+	/// Emits an Information-level summary of the resolver's current state
+	/// (first route, total mapping count, top-level route count). Called once
+	/// after construction and once per <see cref="Rebuild"/>. Operational logs
+	/// here are intentionally compact — they should answer "did the resolver
+	/// pick up my routes?" without dumping every nested path. For per-route
+	/// dumps enable Debug on this category.
+	/// </summary>
+	private void LogResolverState(string trigger)
+	{
+		if (!Logger.IsEnabled(LogLevel.Information))
+		{
+			return;
+		}
+
+		var topLevelCount = 0;
+		foreach (var map in Mappings)
+		{
+			if (map.Parent is null)
+			{
+				topLevelCount++;
+			}
+		}
+
+		Logger.LogInformationMessage($"RouteResolver {trigger}: First='{First?.Path ?? "<none>"}', TopLevelRoutes={topLevelCount}, TotalMappings={Mappings.Count}");
+	}
+
+	/// <summary>
+	/// Re-reads the route and view registries and rebuilds the internal mappings.
+	/// Called by the C# hot-reload handler after the route builder delegate is
+	/// re-invoked with updated code.
+	/// </summary>
+	internal void Rebuild()
+	{
+		Mappings.Clear();
+
+		var maps = ResolveViewMaps(RouteMaps.Items);
+		if (maps is not null)
+		{
+			First = maps.FirstOrDefault(x => x.IsDefault) ?? maps.FirstOrDefault();
+			Mappings.AddRange(maps.Flatten());
+		}
+		else
+		{
+			First = null;
+		}
+
+		Mappings.Add(new RouteInfo(
+			Path: RouteConstants.MessageDialogUri,
+			View: () => typeof(MessageDialog),
+			ResultData: typeof(MessageDialog)
+		));
+
+		LogResolverState("rebuilt");
 	}
 
 	private void PrintViewMaps(IEnumerable<RouteInfo> maps, string prefix = "")
@@ -196,13 +255,18 @@ public class RouteResolver : IRouteResolver
 		}
 	}
 
-	public RouteInfo? FindByViewModel(Type? viewModelType, INavigator? navigator)
+	public RouteInfo? FindByViewModel(
+		[DynamicallyAccessedMembers(Uno.Extensions.Diagnostics.Annotations.ViewModelRequirements)]
+		Type? viewModelType,
+		INavigator? navigator)
 	{
 		var maps = InternalFindByViewModel(viewModelType);
 		return BestNavigatorRouteInfo(maps, navigator);
 	}
 
-	protected virtual RouteInfo[] InternalFindByViewModel(Type? viewModelType)
+	protected virtual RouteInfo[] InternalFindByViewModel(
+		[DynamicallyAccessedMembers(Uno.Extensions.Diagnostics.Annotations.ViewModelRequirements)]
+		Type? viewModelType)
 		=> FindRouteByType(viewModelType, map => map.ViewModel);
 
 	public RouteInfo? FindByView(Type? viewType, INavigator? navigator)
@@ -223,6 +287,27 @@ public class RouteResolver : IRouteResolver
 	public RouteInfo? FindByResultData(Type? dataType, INavigator? navigator)
 	{
 		var maps = FindRouteByType(dataType, map => map.ResultData);
+
+		// When resolving by result data for navigation (e.g., GetDataAsync),
+		// exclude the route the navigator is currently on to avoid navigating
+		// to ourselves. Without this, BestNavigatorRouteInfo would prefer the
+		// current page because it has the highest ancestor intersection count.
+		if (navigator is not null && maps.Length > 1)
+		{
+			var currentRouteBase = (navigator is IStackNavigator stackNav)
+				? stackNav.FullRoute?.Last()?.Base
+				: navigator.Route?.Base;
+
+			if (!string.IsNullOrEmpty(currentRouteBase))
+			{
+				var filtered = maps.Where(m => m.Path != currentRouteBase).ToArray();
+				if (filtered.Length > 0)
+				{
+					maps = filtered;
+				}
+			}
+		}
+
 		return BestNavigatorRouteInfo(maps, navigator);
 	}
 

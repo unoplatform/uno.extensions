@@ -8,8 +8,7 @@ namespace Uno.Extensions.Reactive.Config;
 [AttributeUsage(AttributeTargets.Assembly)]
 public class BindableGenerationToolAttribute : Attribute
 {
-	// Latest version is 3, keeping version 2 as default for backward compatibility
-	private const int DefaultVersion = 2;
+	private const int DefaultVersion = 3;
 
 	/// <summary>
 	/// Creates a new BindableGenerationTool object.

@@ -4,6 +4,8 @@ uid: Uno.Extensions.Mvux.HowToListFeed
 
 # How to create a list feed
 
+> **UnoFeatures:** `MVUX` (add to `<UnoFeatures>` in your `.csproj`)
+
 In this tutorial, you will learn how to create an MVUX project that asynchronously requests
 and displays a collection of items from a service, and enables refreshing the data.
 
@@ -143,7 +145,7 @@ which exposes properties that the View can data bind to.
     ![A screenshot of the loaded data](../Assets/ListFeed-1.jpg)
 
 1. If you're using Visual-Studio 2022, Right-click the `PeopleApp` project, and navigate to *Dependencies*.
-    Open up *net8.0-windows10...* → *Analyzers*.
+    Open up *netX.0-windows10.0...* → *Analyzers*.
     Under *Uno.Extensions.Reactive.Generator*, expand *Uno.Extensions.Reactive.FeedGenerator*.
     Here you'll be able to inspect all files MVUX has generated for you, and learn more about how MVUX runs behind the scenes.
 

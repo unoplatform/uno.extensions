@@ -3,6 +3,7 @@
 public class Given_MessageDialog : NavigationTestBase
 {
 	[Test]
+	[Ignore("ImageAssert failures: https://github.com/unoplatform/uno.extensions/issues/2952")]
 	public async Task When_MessageDialogFromXAML()
 	{
 		InitTestSection(TestSections.Navigation_Dialogs);

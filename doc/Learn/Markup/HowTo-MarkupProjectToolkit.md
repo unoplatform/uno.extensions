@@ -4,6 +4,8 @@ uid: Uno.Extensions.Markup.HowToMarkupProjectToolkit
 
 # How to set up an C# Markup project for Toolkit
 
+> **UnoFeatures:** `CSharpMarkup` (add to `<UnoFeatures>` in your `.csproj`)
+
 In this tutorial, you'll learn how to set up an Uno Platform project to use C# Markup.
 
 1. Make sure your environment is set up properly by using [uno check](xref:UnoCheck.UsingUnoCheck).
@@ -54,17 +56,21 @@ In this tutorial, you'll learn how to set up an Uno Platform project to use C# M
 
 ## Toolkit References
 
-Looking in detail at the projects with the addition of the Toolkit, we can see the addition of some additional references.
-This allows an easy inclusion of the Toolkit in existing projects.
+> **Note:** The recommended way to add Toolkit to your project is using the `Toolkit` UnoFeature in your .csproj file.
 
-1. Add the references to the Directory.Packages.props file (with the updated version).
+Looking in detail at the projects with the addition of the Toolkit, we can see the addition of some additional references.
+This shows what happens when you enable the `Toolkit` UnoFeature, which automatically adds the necessary package references.
+
+When using the `Toolkit` UnoFeature, the following packages are automatically included:
+
+1. Package versions in Directory.Packages.props:
 
     ```xml
     <PackageVersion Include="Uno.Toolkit.WinUI" Version="0.0.0" />
     <PackageVersion Include="Uno.Toolkit.WinUI.Markup" Version="0.0.0" />
     ```
 
-1. Add the package to the following projects:
+2. Package references added to the following projects:
 
     - PROJECT_NAME.Wasm.csproj
     - PROJECT_NAME.Mobile.csproj (or PROJECT_NAME.iOS.csproj, PROJECT_NAME.Droid.csproj, PROJECT_NAME.macOS.csproj if you have an existing project)
@@ -75,7 +81,7 @@ This allows an easy inclusion of the Toolkit in existing projects.
     <PackageReference Include="Uno.Toolkit.WinUI.Markup" />
     ```
 
-Choose either:
+The UnoFeature automatically chooses:
 
 - The *Uno.Toolkit.UI* package when targeting Xamarin/UWP
 - The *Uno.Toolkit.WinUI* package when targeting net6.0+/WinUI

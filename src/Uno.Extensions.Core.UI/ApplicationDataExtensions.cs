@@ -30,7 +30,7 @@ internal static class ApplicationDataExtensions
 
 		if (string.IsNullOrWhiteSpace(dataFolder))
 		{
-			var appName = Assembly.GetEntryAssembly()?.GetName().Name ?? DefaultUnoAppName;
+			var appName = PlatformHelper.GetAppAssembly()?.GetName().Name ?? DefaultUnoAppName;
 			dataFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData, Environment.SpecialFolderOption.Create), appName);
 		}
 

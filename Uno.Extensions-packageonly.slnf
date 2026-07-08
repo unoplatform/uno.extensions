@@ -38,6 +38,7 @@
       "src\\Uno.Extensions.Reactive\\Uno.Extensions.Reactive.csproj",
       "src\\Uno.Extensions.Serialization.Http\\Uno.Extensions.Serialization.Http.csproj",
       "src\\Uno.Extensions.Serialization.Refit\\Uno.Extensions.Serialization.Refit.csproj",
+      "src\\Uno.Extensions.Serialization.AotTests\\Uno.Extensions.Serialization.AotTests.csproj",
       "src\\Uno.Extensions.Serialization.Tests\\Uno.Extensions.Serialization.Tests.csproj",
       "src\\Uno.Extensions.Serialization\\Uno.Extensions.Serialization.csproj",
       "src\\Uno.Extensions.Storage.UI\\Uno.Extensions.Storage.WinUI.csproj",

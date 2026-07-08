@@ -1,0 +1,24 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.2.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Uno.Extensions.Navigation.Toolkit.WinUI", "Uno.Extensions.Navigation.Toolkit.WinUI.csproj", "{8357FAE1-3069-E738-959E-A0F071347962}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8357FAE1-3069-E738-959E-A0F071347962}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8357FAE1-3069-E738-959E-A0F071347962}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8357FAE1-3069-E738-959E-A0F071347962}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8357FAE1-3069-E738-959E-A0F071347962}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {50F6D2BD-1418-44F7-A5B0-26C173F912AC}
+	EndGlobalSection
+EndGlobal

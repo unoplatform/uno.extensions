@@ -1,5 +1,6 @@
 jobs:
 - job: Wasm_UITests
+  cancelTimeoutInMinutes: 0
   displayName: 'UI Tests - WebAssembly'
   container: unoplatform/wasm-build:3.0
 
@@ -12,6 +13,8 @@ jobs:
   steps:
   - checkout: self
     clean: true
+
+  - template: templates/host-cleanup-linux.yml
 
   - template: templates/dotnet-install.yml
 
@@ -36,6 +39,7 @@ jobs:
       testResultsFormat: 'NUnit'
       testResultsFiles: '$(build.sourcesdirectory)/build/TestResult.xml'
       failTaskOnFailedTests: true
+      failTaskOnMissingResultsFile: true
 
   - task: PublishBuildArtifacts@1
     condition: always()

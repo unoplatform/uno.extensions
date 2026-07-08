@@ -1,4 +1,6 @@
-﻿namespace Uno.Extensions.Configuration;
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace Uno.Extensions.Configuration;
 
 /// <summary>
 /// Extension methods for registering a configuration source with an instance
@@ -112,6 +114,8 @@ public static class ConfigBuilderExtensions
 	/// <returns>
 	/// An instance of the <see cref="IConfigBuilder"/> for chaining.
 	/// </returns>
+	[RequiresDynamicCode(Uno.Extensions.Configuration.Internal.ConfigurationBinder.RequiresDynamicCodeMessage)]
+	[RequiresUnreferencedCode(Uno.Extensions.Configuration.Internal.ConfigurationBinder.RequiresUnreferencedCodeMessage)]
 	public static IConfigBuilder Section<TSettingsOptions>(
 		this IConfigBuilder hostBuilder,
 		string? configurationSection = "",
@@ -181,6 +185,8 @@ public static class ConfigBuilderExtensions
 	/// <returns>
 	/// An instance of the <see cref="IConfigBuilder"/> for chaining.
 	/// </returns>
+	[RequiresDynamicCode(Uno.Extensions.Configuration.Internal.ConfigurationBinder.RequiresDynamicCodeMessage)]
+	[RequiresUnreferencedCode(Uno.Extensions.Configuration.Internal.ConfigurationBinder.RequiresUnreferencedCodeMessage)]
 	public static IConfigBuilder WithConfigurationSectionFromEntity<TEntity>(
 		this IConfigBuilder hostBuilder,
 		TEntity entity,

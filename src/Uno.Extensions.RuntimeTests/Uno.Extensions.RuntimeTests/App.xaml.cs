@@ -1,5 +1,7 @@
+using Uno.Extensions.Navigation.UI.Tests;
 using Uno.Extensions.Reactive.WinUI.Tests;
 using Uno.Resizetizer;
+using Uno.UI.RuntimeTests;
 
 namespace Uno.Extensions.RuntimeTests;
 public partial class App : Application
@@ -7,6 +9,15 @@ public partial class App : Application
 	private static void ForceAssemblyLoading()
 	{
 		var reactive_UI_Tests = new Given_FeedView();
+#if DEBUG // Hot-reload tests are only relevant in debug configuration
+		var reactive_HotReload_Tests = new Uno.Extensions.Reactive.WinUI.Tests.Given_HotReload();
+		var navigation_HotReload_Tests = new Uno.Extensions.Navigation.UI.Tests.Given_HotReload();
+		var navigation_HotReloadNav_Tests = new Uno.Extensions.Navigation.UI.Tests.Given_NavigationHotReload();
+		var tabBar_HotReload_Tests = new Uno.Extensions.Navigation.UI.Tests.Given_TabBar_HotReload();
+#endif
+		var navigation_UI_Tests = new Given_RouteNotifier();
+		var navigation_ChainedResult_Tests = new Given_ChainedGetDataAsync();
+		var navigation_TabNavigation_Tests = new Given_TabNavigation();
 	}
 
 	/// <summary>
@@ -24,7 +35,7 @@ public partial class App : Application
 	{
 		MainWindow = new Window();
 #if DEBUG
-		MainWindow.EnableHotReload();
+		MainWindow.UseStudio();
 #endif
 
 
@@ -65,6 +76,8 @@ public partial class App : Application
 
 			// Default filters for Uno Platform namespaces
 			builder.AddFilter("Uno", LogLevel.Warning);
+			builder.AddFilter("Uno.UI.RuntimeTests", LogLevel.Trace);
+			builder.AddFilter("Uno.UI.RemoteControl", LogLevel.Trace);
 			builder.AddFilter("Windows", LogLevel.Warning);
 			builder.AddFilter("Microsoft", LogLevel.Warning);
 

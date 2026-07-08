@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Uno.Sdk">
 	<PropertyGroup>
-		<TargetFrameworks Condition="'$(Build_iOS)'=='true'">$(TargetFrameworks);net8.0-ios</TargetFrameworks>
-		<TargetFrameworks Condition="'$(Build_MacCatalyst)'=='true'">$(TargetFrameworks);net8.0-maccatalyst</TargetFrameworks>
-		<TargetFrameworks Condition="'$(Build_Android)'=='true'">$(TargetFrameworks);net8.0-android</TargetFrameworks>
+		<TargetFrameworks Condition="'$(Build_iOS)'=='true'">$(TargetFrameworks);net9.0-ios</TargetFrameworks>
+		<TargetFrameworks Condition="'$(Build_MacCatalyst)'=='true'">$(TargetFrameworks);net9.0-maccatalyst</TargetFrameworks>
+		<TargetFrameworks Condition="'$(Build_Android)'=='true'">$(TargetFrameworks);net9.0-android</TargetFrameworks>
 	</PropertyGroup>
 	<PropertyGroup>
 		<WindowsSdkPackageVersion>10.0.19041.57</WindowsSdkPackageVersion>

@@ -26,6 +26,7 @@
 		"Dismissable",
 		"Docfx",
 		"ellipsize",
+		"Entra",
 		"Expando",
 		"flyouts",
 		"Framebuffer",
@@ -58,6 +59,7 @@
 		"parameterless",
 		"pickable",
 		"Pluralsight",
+		"preconfigured",
 		"POSIX",
 		"reentrantly",
 		"Resizetizer",
@@ -99,7 +101,10 @@
 		"Validatable",
 		"backstack",
 		"viewmap",
-		"datamap"
+		"datamap",
+		"rollbackable",
+		"navigations",
+		"reparented"
 	],
 	"ignoreWords": [
 		"ADAL",

@@ -1,0 +1,10 @@
+<UserControl x:Class="TestHarness.Ext.Navigation.TabBar.TabBarBackNavigation.TabBarBackNavShell"
+			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:uen="using:Uno.Extensions.Navigation.UI"
+			 HorizontalAlignment="Stretch"
+			 VerticalAlignment="Stretch"
+			 HorizontalContentAlignment="Stretch"
+			 VerticalContentAlignment="Stretch">
+	<Frame uen:Region.Attached="True" />
+</UserControl>

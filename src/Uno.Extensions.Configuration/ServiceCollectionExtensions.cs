@@ -1,4 +1,5 @@
-﻿using Uno.Extensions.Serialization;
+﻿using System.Diagnostics.CodeAnalysis;
+using Uno.Extensions.Serialization;
 
 namespace Uno.Extensions.Configuration;
 
@@ -19,6 +20,8 @@ public static class ServiceCollectionExtensions
 	/// <param name="file">The full path to the file where updated section data will be written.</param>
 	/// <param name="name">The named options value to register</param>
 	/// <returns>The Microsoft.Extensions.DependencyInjection.IServiceCollection so that additional calls can be chained.</returns>
+	[RequiresDynamicCode(Uno.Extensions.Configuration.Internal.ConfigurationBinder.RequiresDynamicCodeMessage)]
+	[RequiresUnreferencedCode(Uno.Extensions.Configuration.Internal.ConfigurationBinder.RequiresUnreferencedCodeMessage)]
 	public static IServiceCollection ConfigureAsWritable<T>(
 		this IServiceCollection services,
 		IConfigurationSection section,

@@ -4,6 +4,7 @@
 	<PropertyGroup>
 		<PackageId>Uno.Extensions.Authentication.MSAL.WinUI</PackageId>
 		<DefineConstants>$(DefineConstants);WINUI</DefineConstants>
+		<IsAotCompatible>true</IsAotCompatible>
 
 		<Description>MSAL Authentication Extensions for the Uno Platform (WinUI)</Description>
 		<EnableDefaultPageItems>false</EnableDefaultPageItems>

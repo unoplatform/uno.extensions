@@ -62,13 +62,13 @@ internal class ViewModelGenTool_2 : ICodeGenTool
 
 		foreach (var model in models)
 		{
-			yield return (model + ".Bindable", GenerateViewModel(model));
-			yield return (model.ToString(), GeneratePartialModel(model));
+			yield return ($"{model}.Bindable", GenerateViewModel(model));
+			yield return ($"{model}.Reactive", GeneratePartialModel(model));
 		}
 
 		foreach (var (type, code) in _bindables.Generate())
 		{
-			yield return (type.ToString(), code: code);
+			yield return ($"{type}.Bindings", code);
 		}
 
 		yield return _viewModelsMapping.Generate();
@@ -84,6 +84,8 @@ internal class ViewModelGenTool_2 : ICodeGenTool
 	{
 		var vmName = GetViewModelName(model);
 		var hasBaseType = IsSupported(model.BaseType);
+		var canBeINPC = !model.IsSealed
+			|| model.IsOrImplements(_ctx.INotifyPropertyChanged, allowBaseTypes: true, out _);
 		var baseType = hasBaseType
 			? GetViewModelFullName(model.BaseType!)
 			: $"{NS.Bindings}.BindableViewModelBase";
@@ -111,6 +113,8 @@ internal class ViewModelGenTool_2 : ICodeGenTool
 								if ({NS.Config}.FeedConfiguration.EffectiveHotReload.HasFlag({NS.Config}.HotReloadSupport.State))
 								{{
 									__reactiveModelArgs = new (Type, string, object?)[] {{ {ctor.Parameters.Select(p => $"(typeof({p.Type.ToFullString()}), \"{p.Name}\", {p.Name} as object)").JoinBy(", ")} }};
+									// Self-patch from the outermost public ctor — after args are captured. Earlier (base/protected ctor) breaks ctor-deps + inheritance.
+									{NS.Core}.HotReload.HotReloadService.TryHotPatch(this);
 								}}
 							}}")
 						.Align(5)}
@@ -128,11 +132,11 @@ internal class ViewModelGenTool_2 : ICodeGenTool
 
 						{members.Select(member => member.GetInitialization()).Align(6)}
 
-						{(hasBaseType ? "" : $@"
+						{(!hasBaseType && canBeINPC ? $@"
 							if ({N.Ctor.Model} is global::System.ComponentModel.INotifyPropertyChanged npc)
 							{{
 								npc.PropertyChanged += __Reactive_OnModelPropertyChanged;
-							}}").Align(6)}
+							}}" : "").Align(6)}
 					}}
 
 					#region Hot-reload support
@@ -144,10 +148,12 @@ internal class ViewModelGenTool_2 : ICodeGenTool
 					#if {!hasBaseType}
 					protected override void __Reactive_UpdateModel(object updatedModel)
 					{{
+						#if {canBeINPC} // canBeINPC
 						if ({N.Model} is global::System.ComponentModel.INotifyPropertyChanged npc)
 						{{
 							npc.PropertyChanged -= __Reactive_OnModelPropertyChanged;
 						}}
+						#endif
 
 						var previousModel = (object){N.Model};
 
@@ -168,7 +174,8 @@ internal class ViewModelGenTool_2 : ICodeGenTool
 
 						dynamic {N.Ctor.Model} = updatedModel;
 
-						{N.Ctor.Model}.__reactiveBindableViewModel = this;
+						// `(dynamic)this` — required when inherited models shadow this field with a more-derived type.
+						{N.Ctor.Model}.__reactiveBindableViewModel = (dynamic)this;
 
 						{members.Select(member => $@"try
 							{{
@@ -185,11 +192,11 @@ internal class ViewModelGenTool_2 : ICodeGenTool
 								}}
 							}}").Align(6)}
 
-						{(hasBaseType ? "" : @$"
+						{(!hasBaseType && canBeINPC ? @$"
 							if ({N.Ctor.Model} is global::System.ComponentModel.INotifyPropertyChanged npc)
 							{{
 								npc.PropertyChanged += __Reactive_OnModelPropertyChanged;
-							}}").Align(6)}
+							}}" : "").Align(6)}
 					}}
 					#endregion
 

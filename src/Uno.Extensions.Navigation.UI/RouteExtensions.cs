@@ -31,6 +31,18 @@ public static class RouteExtensions
 		while (rm is not null &&
 			rm.IsPageRouteMap())
 		{
+			// Stop if this segment is a nested child of a segment already in the list.
+			// Nested children (e.g., a tab Page inside a parent Page) should NOT be
+			// included in the frame's forward segments — they are handled by child
+			// navigators (PanelVisibilityNavigator, etc.) inside the parent page.
+			// Without this check, the FrameNavigator navigates directly to the nested
+			// child Page, bypassing the parent page entirely (and losing its TabBar,
+			// NavigationView, or other container UI).
+			if (rm.Parent is not null && segments.Contains(rm.Parent))
+			{
+				break;
+			}
+
 			var dependsOn = rm.DependsOnSegments();
 			var newOnly = dependsOn.Where(x => !segments.Contains(x)).ToArray();
 			segments.AddRange(newOnly);

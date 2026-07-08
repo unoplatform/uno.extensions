@@ -1,4 +1,6 @@
-﻿namespace Uno.Extensions.Hosting;
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace Uno.Extensions.Hosting;
 
 /// <summary>
 /// Defines an abstraction for building your application and App Host
@@ -44,5 +46,7 @@ public interface IApplicationBuilder
 	/// and then calls the internal Build on the <see cref="IHostBuilder" />
 	/// </summary>
 	/// <returns>The <see cref="IHost" /></returns>
+	[RequiresDynamicCode(UnoHost.RequiresDynamicCodeMessage)]
+	[RequiresUnreferencedCode(UnoHost.RequiresUnreferencedCodeMessage)]
 	IHost Build();
 }

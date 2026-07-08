@@ -1,4 +1,6 @@
-﻿namespace Uno.Extensions.Configuration;
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace Uno.Extensions.Configuration;
 
 /// <summary>
 /// Extension methods for registering sources with the <see cref="IConfigurationBuilder"/> 
@@ -164,6 +166,8 @@ public static class ConfigurationBuilderExtensions
 	/// <param name="entity">An entity of the specified type parameter to be serialized</param>
 	/// <param name="sectionName">A name for the added configuration section. Optional</param>
 	/// <returns>The <see cref="IConfigurationBuilder"/>.</returns>
+	[RequiresDynamicCode(Uno.Extensions.Configuration.Internal.ConfigurationBinder.RequiresDynamicCodeMessage)]
+	[RequiresUnreferencedCode(Uno.Extensions.Configuration.Internal.ConfigurationBinder.RequiresUnreferencedCodeMessage)]
 	public static IConfigurationBuilder AddSectionFromEntity<TEntity>(
 		this IConfigurationBuilder configurationBuilder,
 		TEntity entity,

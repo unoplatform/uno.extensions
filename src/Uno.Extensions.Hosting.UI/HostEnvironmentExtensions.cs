@@ -12,7 +12,7 @@ public static class HostEnvironmentExtensions
 	/// <param name="appDataPath">The app data path</param>
 	/// <param name="hostAssembly">The host assembly</param>
 	/// <returns></returns>
-	public static IAppHostEnvironment FromHostEnvironment(this IHostEnvironment host, string? appDataPath, Assembly hostAssembly)
+	public static IAppHostEnvironment FromHostEnvironment(this IHostEnvironment host, string? appDataPath, Assembly? hostAssembly)
 	{
 		return new AppHostingEnvironment
 		{

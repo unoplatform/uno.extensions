@@ -4,6 +4,8 @@ uid: Uno.Extensions.Validation.Overview
 
 # Validation
 
+> **Note:** Validation is included when using the Extensions UnoFeature
+
 Uno.Extensions.Validation provides an `IValidator` service which enforces that properties of an object follow a set of characteristics or behaviors represented by [attributes](https://learn.microsoft.com/dotnet/api/system.componentmodel.dataannotations) declaratively applied to them. This is useful for ensuring that data entered by users is valid before it is saved to a database or sent to a web service.
 
 ## Service registration

@@ -1,4 +1,5 @@
-﻿using Uno.Extensions.Diagnostics;
+using Uno.Extensions.Diagnostics;
+using Uno.Extensions.Navigation.Navigators;
 
 namespace Uno.Extensions.Navigation;
 
@@ -243,11 +244,73 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 				Resolver.FindByPath(navAncestor.Route?.Base) is {  } ancestorMap &&
 				ancestorMap.Parent == rm.Parent)
 			{
+				// When the match is the current navigator itself, check whether
+				// the parent region already manages a visual child for the target
+				// route (e.g., a FrameView in a PanelVisibilityNavigator created
+				// for tabs). If so, skip the self-redirect so the request falls
+				// through to the parent, which handles it as a visibility switch
+				// (tab change) rather than a frame push.
+				if (navAncestor.Navigator == this &&
+					await IsSiblingTabRoute(rm))
+				{
+					continue;
+				}
+
 				return navAncestor.Navigator.NavigateAsync(internalRoute);
 			}
 		}
 
 		return default;
+	}
+
+	/// <summary>
+	/// Determines whether the target route is a tab managed by a sibling
+	/// SelectorNavigator (e.g., TabBar) under the same composite parent.
+	/// This handles both pre-existing FrameViews (already visited tabs)
+	/// and lazily-created tabs that haven't been visited yet.
+	/// </summary>
+	private async Task<bool> IsSiblingTabRoute(RouteInfo targetRoute)
+	{
+		// The parent must be a PanelVisibilityNavigator (visibility-based content switching)
+		if (Region.Parent?.Navigator() is not PanelVisiblityNavigator)
+		{
+			return false;
+		}
+
+		// Quick check: does the panel already contain a visual child for the target route?
+		if (Region.Parent?.View is Panel parentPanel &&
+			parentPanel.Children
+				.OfType<FrameworkElement>()
+				.Any(c => c.GetName() == targetRoute.Path))
+		{
+			return true;
+		}
+
+		// The target's FrameView may not exist yet (lazy tab creation).
+		// Check if any sibling SelectorNavigator (TabBar) under the composite
+		// parent region has an item matching the target route name.
+		var compositeRegion = Region.Parent?.Parent;
+		if (compositeRegion is null)
+		{
+			return false;
+		}
+
+		var tabRoute = new Route(Qualifiers.None, Base: targetRoute.Path ?? string.Empty);
+		foreach (var sibling in compositeRegion.Children)
+		{
+			var sibNavigator = sibling.Navigator();
+			if (sibNavigator is not null &&
+				sibNavigator.GetType().BaseType is { IsGenericType: true } baseType &&
+				baseType.GetGenericTypeDefinition() == typeof(SelectorNavigator<>))
+			{
+				if (await sibNavigator.CanNavigate(tabRoute))
+				{
+					return true;
+				}
+			}
+		}
+
+		return false;
 	}
 
 	private async Task<Task<NavigationResponse?>?> RedirectForDependsOn(NavigationRequest request, RouteInfo? rm)
@@ -337,6 +400,15 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 		// Required for Test: Given_PageNavigationRegistered.When_PageNavigationRegisteredRoot
 		if (request.Route.IsRoot())
 		{
+			// If we're inside a ClosableNavigator (dialog/flyout) whose region is not parented
+			// in the main region tree, delegate through CloseAndNavigateAsync so the request
+			// escapes to the navigator that opened the dialog.
+			if (Region.Parent is null && this is ClosableNavigator closable)
+			{
+				if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"Closing closable navigator and redirecting root request via source");
+				return closable.CloseAndNavigateAsync(request);
+			}
+
 			if (Region.Parent?.Parent is null)
 			{
 				// If parent's Parent is null, then parent is the root
@@ -623,8 +695,16 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 		var services = Region.Services;
 		if (services is null)
 		{
+			// No services almost always means the region detached from its parent while
+			// this request was in flight (ViewUnloaded on a tree re-graft clears Parent,
+			// and Services resolve through Parent). Dropping the request leaves the
+			// region permanently un-navigated (blank shell, spec 006) — park it so the
+			// region's reload resumes it once Parent/Services are re-resolved.
+			ParkDetachedRequest(request);
 			return default;
 		}
+
+		_pendingDetachedRequest = null;
 
 		var mapping = Resolver.FindByPath(request.Route.Last().Base);
 
@@ -638,7 +718,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 		dataFactor.Parameters = (request.Route?.Data) ?? new Dictionary<string, object>();
 
 		IResponseNavigator? responseNavigator = default;
-		if (request.Result is not null)
+		if (request.Result is not null && !(request.Route?.IsBackOrCloseNavigation() ?? false))
 		{
 			if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Attempting to create response navigator for result type {request.Result.Name}");
 			var responseFactory = services.GetRequiredService<IResponseNavigatorFactory>();
@@ -685,58 +765,234 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 
 			// Nested regions (for example a frame inside a content control) aren't always loaded
 			// at this point. Need to wait for the current view of this region to load to make
-			// sure all nested regions are available
+			// sure all nested regions are available.
+			// When this region's view is detached (the hosting tree was re-grafted while this
+			// request was in flight — spec 006), the host-aware waits inside return immediately
+			// instead of hanging, and the request is parked at the children checks below.
 			await EnsureChildRegionsAreLoaded(); // Required for Test: Given_PageNavigation.When_PageNavigationXAML
 
 
 
 			if (Region.Children.Count == 0)
 			{
-				if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"Region has no children to forward request to");
+				// The "no children to forward" condition is a true misconfiguration
+				// in steady state, but during HR cold-start it's the symptom of a
+				// transient race: the parent navigator forwards the request while
+				// the inner navigators (e.g. FrameView's inner Frame, FrameView's
+				// child page region) are still mid-load. If THIS region's
+				// ControlNavigator has a pending failed request — i.e. an earlier
+				// Show() returned null and the request is parked waiting for HR to
+				// deliver the missing type — the retry path will re-issue the
+				// navigation once children attach. In that state, demote the warn
+				// to Debug so the bundle doesn't fill up with the same race-symptom
+				// across every HR delta. Real misconfigurations (no pending retry,
+				// no HR in flight) still surface at Warning.
+				var inPendingRetry = (Region.Navigator() as ControlNavigator)?.HasPendingFailedRequest ?? false;
+				if (inPendingRetry)
+				{
+					if (Logger.IsEnabled(LogLevel.Debug))
+					{
+						Logger.LogDebugMessage($"Region '{Region.Name}' has no children to forward request to (route: '{request.Route.Base}', view loaded: {Region.View?.IsLoaded}) — quiet because a pending HR retry is in flight on this region");
+					}
+				}
+				else if (Logger.IsEnabled(LogLevel.Warning))
+				{
+					// Log Route.Base (not Route.ToString()) — the full Route renders
+					// Query() built from Data, which can carry tokens or PII that
+					// must never appear in Uno.Extensions.* log output.
+					Logger.LogWarningMessage($"Region '{Region.Name}' has no children to forward request to (route: '{request.Route.Base}', view loaded: {Region.View?.IsLoaded})");
+				}
+
+				ParkPendingChildRequest(request);
 				return default;
 			}
 			if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"Region has {Region.Children.Count} children");
 
-
-			// Retrieve all the navigators for the nested (child) regions
-			// This needs to be done on the UI thread as it will access
-			// the visual hierarchy to locate the IServiceProvider
-			var navigators = await NestedNavigatorsAsync();
-
-			if (request.Route.IsEmpty())
-			{
-				// Update the request to include any default routes before attempting
-				// to navigate child routes
-				request = DefaultRouteRequest(request, navigators);  // Required for Test: Given_ListToDetails.When_ListToDetails
-
-				if (request.Route.IsEmpty())
-				{
-					return default;
-				}
-			}
-
-			#region Unverified
-			if (request.Route.IsBackOrCloseNavigation() && !request.Route.IsClearBackstack())
-			{
-				return null;
-			}
-			#endregion
-
-			var children = Region.Children.Where(region =>
-										// Unnamed child regions
-										string.IsNullOrWhiteSpace(region.Name)   // Required for Test: Given_PageNavigation.When_PageNavigationXAML
-																				 // Regions whose name matches the next route segment
-										|| region.Name == request.Route.Base    // Required for Test: Given_Apps_Commerce.When_Commerce_Responsive
-																				// Regions whose name matches the current route
-																				// eg currently selected tab
-										|| region.Name == Route?.Base // Required for Test: Given_ContentDialog.When_ComplexContentDialog
-										).ToArray();
-			if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"Request is being forwarded to {children.Length} children");
-			return await NavigateChildRegions(children, request);
+			return await ForwardToChildrenAsync(request);
 		}
 		finally
 		{
 			await PostNavigateAsync();
+		}
+	}
+
+	private async Task<NavigationResponse?> ForwardToChildrenAsync(NavigationRequest request)
+	{
+		// Retrieve all the navigators for the nested (child) regions
+		// This needs to be done on the UI thread as it will access
+		// the visual hierarchy to locate the IServiceProvider
+		var navigators = await NestedNavigatorsAsync();
+
+		if (request.Route.IsEmpty())
+		{
+			// Update the request to include any default routes before attempting
+			// to navigate child routes
+			request = DefaultRouteRequest(request, navigators);  // Required for Test: Given_ListToDetails.When_ListToDetails
+
+			if (request.Route.IsEmpty())
+			{
+				if (Logger.IsEnabled(LogLevel.Warning)) Logger.LogWarningMessage($"Route is still empty after applying defaults - no default route could be resolved for region '{Region.Name}'");
+				return default;
+			}
+		}
+
+		#region Unverified
+		if (request.Route.IsBackOrCloseNavigation() && !request.Route.IsClearBackstack())
+		{
+			return null;
+		}
+		#endregion
+
+		var children = Region.Children.Where(region =>
+									// Unnamed child regions
+									string.IsNullOrWhiteSpace(region.Name)   // Required for Test: Given_PageNavigation.When_PageNavigationXAML
+																			 // Regions whose name matches the next route segment
+									|| region.Name == request.Route.Base    // Required for Test: Given_Apps_Commerce.When_Commerce_Responsive
+																			// Regions whose name matches the current route
+																			// eg currently selected tab
+									|| region.Name == Route?.Base // Required for Test: Given_ContentDialog.When_ComplexContentDialog
+									).ToArray();
+		if (children.Length == 0)
+		{
+			// The child set can empty out while the request is in flight: ViewUnloaded
+			// detaches child regions from Parent.Children when the hosting tree is
+			// re-grafted (e.g. Hot Design re-hosting an ALC-loaded app's content during
+			// bootstrap) across the dispatcher hop above. Dropping the request here
+			// leaves the region permanently un-navigated (blank shell, spec 006) —
+			// park it instead, so the re-attaching child region resumes it via
+			// NavigationRegion.HandleLoaded.
+			ParkPendingChildRequest(request);
+			return default;
+		}
+
+		_pendingChildRequest = null;
+		if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"Request is being forwarded to {children.Length} children");
+		return await NavigateChildRegions(children, request);
+	}
+
+	// A child-bound request that could not be dispatched because no eligible child
+	// regions were attached at that moment. Child regions detach from Parent.Children
+	// in ViewUnloaded when the hosting tree is re-grafted and re-attach on the next
+	// Loading/Loaded cycle — without parking, an initial navigation that loses that
+	// race dies silently and the region (e.g. the app shell's Frame) stays empty
+	// forever: a blank app (spec 006). Mirrors the _pendingFailedRequest pattern in
+	// ControlNavigator. Only accessed on the UI dispatcher thread.
+	private NavigationRequest? _pendingChildRequest;
+
+	private void ParkPendingChildRequest(NavigationRequest request)
+	{
+		if (request.Route.IsBackOrCloseNavigation())
+		{
+			return;
+		}
+
+		_pendingChildRequest = request;
+		if (Logger.IsEnabled(LogLevel.Information))
+		{
+			// Route.Base only — the full Route renders Query()/Data which can carry PII.
+			Logger.LogInformationMessage($"Parking navigation '{request.Route.Base}' for region '{Region.Name}' — no child regions attached; will resume when a child region attaches");
+		}
+	}
+
+	// A request that arrived while this region was detached (no Services because
+	// Parent was cleared by ViewUnloaded). Nothing was executed for it, so the
+	// whole request is safe to re-enter once the region re-attaches. Only accessed
+	// on the UI dispatcher thread.
+	private NavigationRequest? _pendingDetachedRequest;
+
+	private protected void ParkDetachedRequest(NavigationRequest request)
+	{
+		if (request.Route.IsBackOrCloseNavigation())
+		{
+			return;
+		}
+
+		_pendingDetachedRequest = request;
+		if (Logger.IsEnabled(LogLevel.Information))
+		{
+			// Route.Base only — the full Route renders Query()/Data which can carry PII.
+			Logger.LogInformationMessage($"Parking navigation '{request.Route.Base}' — region '{Region.Name}' is detached (no services); will resume when the region re-attaches");
+		}
+	}
+
+	/// <summary>
+	/// Re-issues a request that was parked because this region was detached (no
+	/// Services) when it arrived. Invoked by <see cref="Regions.NavigationRegion"/>
+	/// when the region (re-)attaches and becomes routable. Nothing was executed for
+	/// the parked request, so it is safe to re-enter the full navigation pipeline.
+	/// </summary>
+	internal async Task TryResumeDetachedRequestAsync()
+	{
+		var pending = _pendingDetachedRequest;
+		if (pending is null)
+		{
+			return;
+		}
+
+		_pendingDetachedRequest = null;
+
+		try
+		{
+			if (Logger.IsEnabled(LogLevel.Information))
+			{
+				Logger.LogInformationMessage($"Resuming parked navigation '{pending.Route.Base}' — region '{Region.Name}' re-attached");
+			}
+
+			await NavigateAsync(pending);
+		}
+		catch (OperationCanceledException)
+		{
+			// Resume raced an app shutdown / region teardown — nothing to recover.
+		}
+		catch (Exception ex)
+		{
+			// Invoked fire-and-forget from NavigationRegion's async void load chain —
+			// an unhandled exception here would crash the runtime (fatal on WASM).
+			if (Logger.IsEnabled(LogLevel.Error))
+			{
+				Logger.LogErrorMessage($"Error resuming parked navigation '{pending.Route.Base}': {ex.Message}");
+			}
+		}
+	}
+
+	/// <summary>
+	/// Re-issues a child-bound request that was parked because no child regions were
+	/// attached when it was forwarded. Invoked by <see cref="Regions.NavigationRegion"/>
+	/// when a child region (re-)attaches and becomes routable. Re-enters only the
+	/// child-forwarding stage — re-running the full <see cref="NavigateAsync"/> would
+	/// re-execute this region's own Show() and re-create its current view.
+	/// </summary>
+	internal async Task TryResumePendingChildRequestAsync()
+	{
+		var pending = _pendingChildRequest;
+		if (pending is null)
+		{
+			return;
+		}
+
+		_pendingChildRequest = null;
+
+		try
+		{
+			if (Logger.IsEnabled(LogLevel.Information))
+			{
+				Logger.LogInformationMessage($"Resuming parked navigation '{pending.Route.Base}' for region '{Region.Name}' after a child region attached");
+			}
+
+			await ForwardToChildrenAsync(pending);
+		}
+		catch (OperationCanceledException)
+		{
+			// Resume raced an app shutdown / region teardown — nothing to recover.
+		}
+		catch (Exception ex)
+		{
+			// Invoked fire-and-forget from NavigationRegion's async void load chain —
+			// an unhandled exception here would crash the runtime (fatal on WASM).
+			if (Logger.IsEnabled(LogLevel.Error))
+			{
+				Logger.LogErrorMessage($"Error resuming parked navigation '{pending.Route.Base}': {ex.Message}");
+			}
 		}
 	}
 
@@ -772,6 +1028,14 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 				request = request with { Route = request.Route.Append(defaultRoute.Path) };
 
 			}
+			else
+			{
+				if (Logger.IsEnabled(LogLevel.Warning)) Logger.LogWarningMessage($"Route '{route.Path}' has {route.Nested?.Length ?? 0} nested route(s) but none marked IsDefault");
+			}
+		}
+		else
+		{
+			if (Logger.IsEnabled(LogLevel.Warning)) Logger.LogWarningMessage($"No route info found for path '{this.Route?.Base}' - cannot determine default route");
 		}
 
 		return request;
@@ -802,6 +1066,27 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 		// This is required to ensure nested elements (eg Content in a ContentControl)
 		// are loaded. This will ensure the Children collection is correctly populated
 		await CheckLoadedAsync();
+
+		// Child NavigationRegions attach themselves to parent.Children during their
+		// Loaded event handler (HandleLoading → AssignParent). In some hosting
+		// scenarios (e.g., in-process AssemblyLoadContext loading), these Loaded
+		// events may be queued on the dispatcher but not yet processed when this
+		// method returns. Re-schedule on the dispatcher to ensure its queue is
+		// drained and pending attachments complete before the caller checks
+		// Region.Children.
+		if (Region.Children.Count == 0 && Region.View?.IsLoaded == true)
+		{
+			const int maxAttempts = 5;
+			for (var attempt = 0; attempt < maxAttempts && Region.Children.Count == 0; attempt++)
+			{
+				if (Logger.IsEnabled(LogLevel.Trace))
+				{
+					Logger.LogTraceMessage($"Children not yet attached after view loaded (attempt {attempt + 1}/{maxAttempts}), re-scheduling on dispatcher");
+				}
+				await Dispatcher.ExecuteAsync(async ct => true, CancellationToken.None);
+			}
+		}
+
 		PerformanceTimer.Stop(Logger, LogLevel.Trace, loadId);
 	}
 
@@ -845,6 +1130,13 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 
 	protected virtual Task CheckLoadedAsync()
 	{
-		return Task.CompletedTask;
+		// Wait for the region's view to be loaded so child regions have time to attach.
+		// Subclass navigators (Frame, ContentControl, Flyout, Dialog) override this to wait
+		// for their specific content element. The base implementation waits for the region's
+		// own view, which covers the root/composite navigator case (e.g., during startup
+		// navigation when the shell hasn't been added to the visual tree yet).
+		return Region.View is { IsLoaded: false } view
+			? view.EnsureLoaded(timeoutInSeconds: 5)
+			: Task.CompletedTask;
 	}
 }

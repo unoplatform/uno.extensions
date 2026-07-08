@@ -1,4 +1,6 @@
-﻿namespace Uno.Extensions.Navigation;
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace Uno.Extensions.Navigation;
 
 public static class NavigationRequestExtensions
 {
@@ -104,30 +106,9 @@ public static class NavigationRequestExtensions
 	{
 		if (hint.Result is null)
 		{
-			var request = new NavigationRequest(sender, hint.ToRoute(navigator, resolver, data), cancellation);
-			return request;
+			return new NavigationRequest(sender, hint.ToRoute(navigator, resolver, data), cancellation);
 		}
-		var navMethods = typeof(NavigationRequestExtensions)
-					.GetMethods(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)
-					.Where(m => m.Name == nameof(ToRequest) &&
-								m.IsGenericMethodDefinition).ToArray();
-		var navMethod = navMethods.First();
-		var constructedNavMethod = navMethod.MakeGenericMethod(hint.Result);
-		var nav = (NavigationRequest)constructedNavMethod.Invoke(null, new object?[] { hint, navigator, resolver, sender, data, cancellation })!;
-		return nav;
-
-	}
-
-	internal static NavigationRequest<TResult> ToRequest<TResult>(
-		this RouteHint hint,
-		INavigator navigator,
-		IRouteResolver resolver,
-		object sender,
-		object? data,
-		CancellationToken cancellation)
-	{
-		var request = new NavigationRequest<TResult>(sender, hint.ToRoute(navigator, resolver, data), cancellation);
-		return request;
+		return new NavigationRequest(sender, hint.ToRoute(navigator, resolver, data), cancellation, hint.Result);
 	}
 
 	public static bool SameRouteBase(this NavigationRequest request, NavigationRequest newRequest)
