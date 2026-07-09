@@ -206,8 +206,48 @@ factory so the suite still compiles). **Green (post-fix):** all three pass, and 
 Serialization suite stays green (no regressions). Verified via
 `dotnet test src/Uno.Extensions.Serialization.Tests`.
 
+---
+
+## Finding 6 — `HotReloadService._latestShadow` never released
+
+**Files touched:**
+
+- `src/Uno.Extensions.Reactive/Core/HotReload/HotReloadService.cs`
+- `src/Uno.Extensions.Reactive.Tests/Core/HotReload/Given_HotReloadService.cs` *(new red/fix/green test)*
+
+### Root cause
+
+`_latestShadow` is a `ConcurrentDictionary<Type, Type>` mapping each hot-reloaded model type to its
+latest shadow generation. It is only ever added to (from `UpdateApplication`); the `ClearCache(Type[])`
+callback was a **no-op** and there was no reset. Both key and value are strong `Type` references, so
+every previewed app's model types — and their collectible ALC — were pinned for the process lifetime.
+
+### Fix
+
+- Implement `ClearCache(Type[])` to actually remove the mappings for the supplied types (matched as
+  either the original key or the shadow value).
+- Add a public `Reset()` for the host to call on teardown, clearing the whole map.
+- Add a per-ALC unload sweep: `UpdateApplication` calls `WatchForUnload` for both the original and the
+  shadow type; when either lives in a **collectible** `AssemblyLoadContext`, the service subscribes
+  once (`_watchedContexts`) to `AssemblyLoadContext.Unloading` and drops that ALC's entries on unload —
+  so the map never pins a previewed app's ALC even without an explicit `Reset()`.
+
+### Testing (red/fix/green) — `Uno.Extensions.Reactive.Tests` (MSTest, net9.0, via existing `InternalsVisibleTo`)
+
+Internal test seams `TrackShadowForTest` (mirrors `UpdateApplication`'s map+watch) and
+`TrackedShadowCount` avoid fabricating the runtime metadata-update attributes.
+
+- `When_Reset_Then_ShadowMapIsCleared`
+- `When_ClearCache_Then_OnlyMatchingEntriesRemoved` (clearing by the shadow value drops the entry)
+- `When_TrackedTypeFromCollectibleAlc_Then_AlcIsCollectibleAfterUnload` — loads an on-disk assembly
+  into a collectible ALC, tracks a mapping keyed by a type from it, unloads, and asserts the ALC is
+  collected.
+
+**Red:** with the unload sweep disabled, the ALC test fails (the map pins the ALC). **Green:** with
+the sweep the ALC collects; all three pass. Verified via
+`dotnet test src/Uno.Extensions.Reactive.Tests --filter Given_HotReloadService`.
+
 ## Remaining (this branch)
 
-Findings 1 (`LogExtensions._unoLogger` / `Holder<T>` + ambient reset), 2 (`Region.Logger`),
-5 (`NavigationRouteUpdateHandler` retention), and 6 (`HotReloadService._latestShadow`) are tracked
-here and landed as follow-up commits.
+Findings 1 (`LogExtensions._unoLogger` / `Holder<T>` + ambient reset), 2 (`Region.Logger`), and
+5 (`NavigationRouteUpdateHandler` retention) are tracked here and landed as follow-up commits.
