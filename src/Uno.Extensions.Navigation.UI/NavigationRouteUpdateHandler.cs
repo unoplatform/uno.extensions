@@ -19,13 +19,26 @@ internal sealed class NavigationRouteContext
 	public required IRouteRegistry Routes { get; init; }
 	public RouteResolver? Resolver { get; set; }
 
+	private WeakReference<IRegion>? _rootRegion;
+
 	/// <summary>
 	/// The root <see cref="IRegion"/> of the live navigator tree, populated by
 	/// <see cref="NavigationRegion.InitializeRootRegion"/>. Used by the C# hot-reload
 	/// route refresh to walk the live region tree and re-cascade the current route
 	/// when newly registered nested IsDefault routes become available.
 	/// </summary>
-	public IRegion? RootRegion { get; set; }
+	/// <remarks>
+	/// Held via a <see cref="WeakReference{T}"/>: on a non-graceful teardown (where
+	/// <see cref="NavigationRouteUpdateHandler.Unregister"/> is not called) this context could
+	/// otherwise keep the entire region / navigator tree — and its service provider and previewed-app
+	/// ALC — alive through the static handler list. The hot-reload paths already treat a null root as
+	/// "nothing to cascade", so a collected root simply degrades to no cascade.
+	/// </remarks>
+	public IRegion? RootRegion
+	{
+		get => _rootRegion is not null && _rootRegion.TryGetTarget(out var region) ? region : null;
+		set => _rootRegion = value is null ? null : new WeakReference<IRegion>(value);
+	}
 }
 
 /// <summary>
@@ -46,6 +59,12 @@ internal static class NavigationRouteUpdateHandler
 	internal static void Unregister(NavigationRouteContext context)
 	{
 		ImmutableInterlocked.Update(ref _contexts, l => l.Remove(context));
+
+		// Proactively drop the live-tree references so a graceful teardown releases the region /
+		// navigator tree and its resolver even if the context object itself is still referenced
+		// elsewhere (e.g. captured by the DI container until the provider is disposed).
+		context.RootRegion = null;
+		context.Resolver = null;
 	}
 
 	/// <summary>

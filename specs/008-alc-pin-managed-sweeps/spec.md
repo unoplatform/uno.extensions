@@ -20,15 +20,15 @@ is torn down.
 
 ## Findings
 
-| # | Static | Project | Kind |
-| --- | --- | --- | --- |
-| 1 | `LogExtensions._unoLogger` / `_boundToUnoLogger` (+ `Holder<T>.Logger`); ambient factory reset on shutdown | Reactive / Logging | ALC pin (first `ILoggerFactory` + its `ServiceProvider`) |
-| 2 | `Region.Logger` | Navigation.UI | ALC pin (last host's logger/provider graph) |
-| 3 | `PlatformHelper._appAssembly` | Core | ALC pin (previewed app `Assembly`) |
-| 4 | `EmbeddedAppConfigurationFile.AllFiles<T>()` static cache | Configuration | **Functional bug** + ALC pin |
-| 5 | `NavigationRouteUpdateHandler` context / `RootRegion` / `Resolver` retention | Navigation.UI | ALC pin on non-graceful teardown |
-| 6 | `HotReloadService._latestShadow` | Reactive | ALC pin (previewed-app `Type`s) |
-| 7 | `JsonSerializationOptions.DefaultSerializerOptions` fallbacks | Serialization | ALC pin (cached `JsonTypeInfo` for app `Type`s) |
+| # | Static | Project | Kind | Status |
+| --- | --- | --- | --- | --- |
+| 1 | `LogExtensions._unoLogger` / `_boundToUnoLogger` (+ `Holder<T>.Logger`); ambient factory reset on shutdown | Reactive / Logging | ALC pin (first `ILoggerFactory` + its `ServiceProvider`) | Landed |
+| 2 | `Region.Logger` | Navigation.UI | ALC pin (last host's logger/provider graph) | Landed |
+| 3 | `PlatformHelper._appAssembly` | Core | ALC pin (previewed app `Assembly`) | Landed |
+| 4 | `EmbeddedAppConfigurationFile.AllFiles<T>()` static cache | Configuration | **Functional bug** + ALC pin | Landed |
+| 5 | `NavigationRouteUpdateHandler` context / `RootRegion` / `Resolver` retention | Navigation.UI | ALC pin on non-graceful teardown | Landed |
+| 6 | `HotReloadService._latestShadow` | Reactive | ALC pin (previewed-app `Type`s) | Landed |
+| 7 | `JsonSerializationOptions.DefaultSerializerOptions` fallbacks | Serialization | ALC pin (cached `JsonTypeInfo` for app `Type`s) | Landed |
 
 ## Out of scope (follow-ups)
 
@@ -291,7 +291,69 @@ The `HAS_UNO` ambient-reset in `HostExtensions` compiles on every non-Android TF
 (`net9.0-desktop` verified clean, 0/0); it is exercised by CI runtime heads (there is no headless
 unit path for the `HAS_UNO` block in this environment).
 
-## Remaining (this branch)
+---
 
-Findings 2 (`Region.Logger`) and 5 (`NavigationRouteUpdateHandler` retention) live in the `HAS_UNO`
-`Uno.Extensions.Navigation.UI` project and are covered separately (see below / follow-up).
+## Finding 2 — static `Region.Logger` never cleared
+
+**Files touched:**
+
+- `src/Uno.Extensions.Navigation.UI/Region.cs`
+- `src/Uno.Extensions.Navigation.UI/NavigationHostedService.cs`
+- `src/Uno.Extensions.Navigation.UI.Tests/Given_Region.cs` *(new test)*
+
+### Root cause
+
+`Region.Logger` is a process-wide static `ILogger` set from `NavigationHostedService.StartAsync`
+(`Region.Logger = _regionLogger`) and never reset. After the host stops, the static keeps the host's
+logger — and the service provider behind it — alive.
+
+### Fix
+
+Add `Region.ResetLogger(ILogger expected)` that clears the static back to `NullLogger` **only if it is
+still the expected instance**, and call it from `NavigationHostedService.StopAsync`. The reference
+guard prevents a stopping host from clobbering a concurrently running one that installed its own logger.
+
+### Testing — `Given_Region` (in `Uno.Extensions.Navigation.WinUI.Tests`)
+
+- `When_ResetLogger_WithMatchingInstance_Then_LoggerFallsBackToNull`
+- `When_ResetLogger_WithDifferentInstance_Then_CurrentLoggerKept`
+
+---
+
+## Finding 5 — `NavigationRouteUpdateHandler` retains the region / navigator tree
+
+**Files touched:**
+
+- `src/Uno.Extensions.Navigation.UI/NavigationRouteUpdateHandler.cs`
+- `src/Uno.Extensions.Navigation.UI.Tests/Given_NavigationRouteUpdateHandler.cs` *(added tests)*
+
+### Root cause
+
+`NavigationRouteContext` (held in the static `_contexts` list) exposed `RootRegion` as a **strong**
+`IRegion` reference and `Resolver` as a strong `RouteResolver`. `StopAsync` already removes the context
+from `_contexts` on a graceful teardown, but on a **non-graceful** teardown the context could keep the
+whole live region / navigator tree — and its service provider / previewed-app ALC — alive through the
+static list.
+
+### Fix
+
+- `RootRegion` is now held via `WeakReference<IRegion>` (get/set keep the same `IRegion?` API; the HR
+  paths already treat a null root as "nothing to cascade", so a collected root degrades gracefully).
+- `Unregister` now also nulls the context's `RootRegion` and `Resolver`, so a graceful teardown
+  releases the tree even if the context object itself is still referenced (e.g. by the DI container).
+
+### Testing — `Given_NavigationRouteUpdateHandler` (in `Uno.Extensions.Navigation.WinUI.Tests`)
+
+- `When_Unregister_Then_ContextLiveTreeReferencesCleared`
+- `When_RootRegionSet_Then_ItIsHeldWeakly` — assigns a root in a `[NoInlining]` frame, forces GC, and
+  asserts the region is collected and reads back as null.
+
+## Build / test coverage note
+
+Findings 4, 3, 7, 6, 1 (Reactive side) are covered by MSTest `net9.0` projects and were run locally
+(red/fix/green shown per finding). Findings 2, 5, and the `HAS_UNO` half of 1 live in Uno-SDK
+(`HAS_UNO`) projects whose tests run under the Uno runtime-test harness; those source + test files
+compile clean on `net9.0-desktop` here (verified: `Uno.Extensions.Navigation.WinUI`,
+`Uno.Extensions.Navigation.WinUI.Tests`, `Uno.Extensions.Logging.WinUI` desktop TFM all 0 errors) and
+are executed by CI runtime heads. No headless UI runtime is available in this environment, so those
+tests were not run locally.
