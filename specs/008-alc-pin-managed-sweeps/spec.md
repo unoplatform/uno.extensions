@@ -247,7 +247,51 @@ Internal test seams `TrackShadowForTest` (mirrors `UpdateApplication`'s map+watc
 the sweep the ALC collects; all three pass. Verified via
 `dotnet test src/Uno.Extensions.Reactive.Tests --filter Given_HotReloadService`.
 
+---
+
+## Finding 1 — Reactive ambient-logger cache pins the first host's factory
+
+**Files touched:**
+
+- `src/Uno.Extensions.Reactive/Utils/Logging/LogExtensions.cs`
+- `src/Uno.Extensions.Logging/HostExtensions.cs`
+- `src/Uno.Extensions.Reactive.Tests/Core/Logging/Given_LogExtensions.cs` *(new red/fix/green test)*
+
+### Root cause
+
+`LogExtensions` cached the first `LogExtensionPoint.AmbientLoggerFactory` in `_unoLogger` (bound once
+via `_boundToUnoLogger`), and `Holder<T>.Logger` was `= CreateLog(...)` — a logger **snapshotted at
+first touch**. Both retain the first host's `ILoggerFactory`, and through it the whole first host's
+`ServiceProvider`, for the process lifetime. `LogExtensionPoint.AmbientLoggerFactory` itself (external
+package) was set on host start (`HostExtensions.ConnectUnoLogging`) and never reset.
+
+### Fix
+
+- **Reactive (forwarding, in-repo):** `Holder<T>.Logger` is now a `ForwardingLogger` that re-resolves
+  the concrete logger via `CreateLog` on every `Log` / `IsEnabled` / `BeginScope` call, so it never
+  snapshots a factory. Add `LogExtensions.Reset()` to drop `_provider` / `_unoLogger` / the bind flag
+  so the next resolve re-binds — a host-shutdown seam.
+- **Logging (ambient reset):** `ConnectUnoLogging` registers an `IHostApplicationLifetime.ApplicationStopping`
+  callback that resets `AmbientLoggerFactory` to `NullLoggerFactory.Instance` — but only if it is still
+  the factory this host installed (guarded by reference check, so concurrent hosts don't clobber each
+  other). This lives in the `HAS_UNO` UI project.
+
+### Testing (red/fix/green) — `Uno.Extensions.Reactive.Tests` (MSTest, net9.0)
+
+- `When_ProviderChanges_Then_ForwardingLoggerUsesLatest` — a cached `Log<T>()` logger routes to the
+  provider configured **now**, not the one active at first touch.
+- `When_Reset_Then_ProviderIsReleased` — after `Reset`, the forwarder no longer routes to the released
+  provider.
+
+**Red:** with `Holder<T>.Logger` restored to the one-shot `CreateLog(...)` snapshot, the forwarding
+test fails (the cached logger keeps hitting the first provider). **Green:** with the forwarder both
+pass. Verified via `dotnet test src/Uno.Extensions.Reactive.Tests --filter Given_LogExtensions`.
+
+The `HAS_UNO` ambient-reset in `HostExtensions` compiles on every non-Android TFM
+(`net9.0-desktop` verified clean, 0/0); it is exercised by CI runtime heads (there is no headless
+unit path for the `HAS_UNO` block in this environment).
+
 ## Remaining (this branch)
 
-Findings 1 (`LogExtensions._unoLogger` / `Holder<T>` + ambient reset), 2 (`Region.Logger`), and
-5 (`NavigationRouteUpdateHandler` retention) are tracked here and landed as follow-up commits.
+Findings 2 (`Region.Logger`) and 5 (`NavigationRouteUpdateHandler` retention) live in the `HAS_UNO`
+`Uno.Extensions.Navigation.UI` project and are covered separately (see below / follow-up).
