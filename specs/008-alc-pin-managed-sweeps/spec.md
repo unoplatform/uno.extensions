@@ -109,3 +109,47 @@ must return **none**. This reproduces two apps resolving distinct assemblies.
 **Red (pre-fix):** the first two tests fail — the second assembly wrongly received
 `Uno.Extensions.Configuration.Tests.appsettings.json` (the first caller's file). **Green (post-fix):**
 all three pass. Verified via `dotnet test src/Uno.Extensions.Configuration.Tests`.
+
+---
+
+## Finding 3 — `PlatformHelper._appAssembly` strong reference pins the app assembly
+
+**Files touched:**
+
+- `src/Uno.Extensions.Core/PlatformHelper.cs`
+- `src/Uno.Extensions.Core.Tests/PlatformHelper/Given_PlatformHelper.cs` *(new red/fix/green test)*
+
+### Root cause
+
+`PlatformHelper` cached the app assembly in a strong static field, set either explicitly via
+`SetAppAssembly` or lazily via `GetAppAssembly` (`_appAssembly ??= Assembly.GetCallingAssembly()`):
+
+```csharp
+private static Assembly? _appAssembly;
+public static void SetAppAssembly(Assembly? assembly) => _appAssembly = assembly;
+```
+
+A downstream host calls `SetAppAssembly(previewedAppAssembly)` for each previewed app. The strong
+reference kept that assembly — and therefore its collectible ALC — alive for the process lifetime,
+so no previewed app's ALC could ever be collected.
+
+### Fix
+
+Hold the reference weakly (`WeakReference<Assembly>?`). `SetAppAssembly` wraps the assembly in a
+`WeakReference` (or clears the field on `null`); `GetAppAssembly` returns the target if still alive
+and otherwise re-derives the fallback (`GetEntryAssembly` / `GetCallingAssembly`) and re-caches it
+weakly. Behavior is unchanged while any strong reference to the assembly exists (the host holds one
+while the app is loaded); only the *pin* after the host drops its references is removed.
+
+### Testing (red/fix/green) — `Uno.Extensions.Core.Tests` (MSTest, net9.0)
+
+`When_SetAppAssembly_From_CollectibleAlc_Then_AlcIsCollectible` emits a tiny assembly with Roslyn,
+loads it into a **collectible** `AssemblyLoadContext`, registers it via `SetAppAssembly`, takes a
+`WeakReference` to the ALC, unloads it, and forces GC. The ALC must be collected.
+
+The load/register happens in a `[MethodImpl(NoInlining)]` helper so the ALC and assembly locals do
+not linger on the caller's stack.
+
+**Red (pre-fix):** the strong reference pins the assembly, the ALC stays alive, the test fails.
+**Green (post-fix):** the weak reference lets the ALC collect. Verified via
+`dotnet test src/Uno.Extensions.Core.Tests --filter Given_PlatformHelper`.
