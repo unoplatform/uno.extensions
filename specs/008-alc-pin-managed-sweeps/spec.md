@@ -153,3 +153,61 @@ not linger on the caller's stack.
 **Red (pre-fix):** the strong reference pins the assembly, the ALC stays alive, the test fails.
 **Green (post-fix):** the weak reference lets the ALC collect. Verified via
 `dotnet test src/Uno.Extensions.Core.Tests --filter Given_PlatformHelper`.
+
+---
+
+## Finding 7 — `JsonSerializationOptions.DefaultSerializerOptions` handed out as fallback
+
+**Files touched:**
+
+- `src/Uno.Extensions.Serialization/JsonSerializationOptions.cs`
+- `src/Uno.Extensions.Serialization/ServiceCollectionExtensions.cs`
+- `src/Uno.Extensions.Serialization/SystemTextJsonSerializer.cs`
+- `src/Uno.Extensions.Serialization/Uno.Extensions.Serialization.csproj` *(`InternalsVisibleTo` for tests)*
+- `src/Uno.Extensions.Serialization.Tests/Given_JsonSerializationOptions.cs` *(new red/fix/green test)*
+
+### Root cause
+
+`DefaultSerializerOptions` is a process-wide `static` `JsonSerializerOptions`. It is *mostly* used as
+a template (copied via `new JsonSerializerOptions(DefaultSerializerOptions)`), but two fallback paths
+returned the static **directly**:
+
+- `ServiceCollectionExtensions.GetJsonSerializationOptions` — when no `IOptions<JsonSerializationOptions>`
+  is registered.
+- `SystemTextJsonSerializer` constructor — final `??` fallback.
+
+`System.Text.Json` caches a `JsonTypeInfo` on the options instance for every type it (de)serializes
+via reflection. A serializer using the shared static therefore accumulates a `JsonTypeInfo` for every
+app type it touches, and each `JsonTypeInfo` holds a `Type`. For a downstream host that loads
+previewed apps into collectible ALCs, that pins the app types — and their ALC — on a process-wide
+object for the process lifetime.
+
+### Fix
+
+Keep `DefaultSerializerOptions` strictly as a template and add an internal
+`CreateSerializerOptions()` factory that returns a fresh `new JsonSerializerOptions(DefaultSerializerOptions)`.
+Both fallback paths now hand out a host-scoped copy, so the per-type cache is confined to the host
+and released with it. The already-copying registrations were normalized to the same factory.
+
+### Testing (red/fix/green) — `Uno.Extensions.Serialization.Tests` (MSTest, net9.0)
+
+`InternalsVisibleTo` was added so the tests can observe the internal template/factory.
+
+- `When_CreateSerializerOptions_Then_ReturnsFreshCopyNotTemplate` — the factory returns a distinct
+  instance (never the template) and preserves the template's configuration.
+- `When_NoOptionsConfigured_Then_FallbackDoesNotReturnTemplate` — the `GetJsonSerializationOptions`
+  fallback returns a copy, not the shared static.
+- `When_TwoHostsRegisterSerialization_Then_EachGetsIndependentOptions` — two hosts each own a distinct
+  options instance and serialization still works off the host-scoped copy.
+
+**Red (pre-fix):** `When_NoOptionsConfigured…` fails — the fallback returned the shared template
+by reference (demonstrated by temporarily reverting the single fallback line while keeping the new
+factory so the suite still compiles). **Green (post-fix):** all three pass, and the full 20-test
+Serialization suite stays green (no regressions). Verified via
+`dotnet test src/Uno.Extensions.Serialization.Tests`.
+
+## Remaining (this branch)
+
+Findings 1 (`LogExtensions._unoLogger` / `Holder<T>` + ambient reset), 2 (`Region.Logger`),
+5 (`NavigationRouteUpdateHandler` retention), and 6 (`HotReloadService._latestShadow`) are tracked
+here and landed as follow-up commits.
