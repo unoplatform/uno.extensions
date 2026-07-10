@@ -133,7 +133,7 @@ internal class ThemeService : IThemeService, IDisposable
 	private bool InternalSetThemeOnUIThread(AppTheme theme)
 	{
 		var existingIsDark = IsDark;
-		var rootElement = RootElement?.XamlRoot?.Content as FrameworkElement;
+		var rootElement = RootElement as FrameworkElement;
 
 		if (rootElement is null)
 		{
