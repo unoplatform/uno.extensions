@@ -1,4 +1,4 @@
-# 008 — PanelVisiblityNavigator hangs on detached host; NavigationView container crash swallows default-tab clicks
+# 008 — PanelVisiblityNavigator hangs on detached host; NavigationView container crash swallows default-tab clicks; NavigationRegion gives up when the provider isn't discoverable at load
 
 ## Symptom (as reported)
 
@@ -15,7 +15,7 @@ navigator` warnings fire, and every subsequent navigation is logged EXCEPT reque
 the default route, which vanish without a trace while the NavigationView shows the default
 item as selected.
 
-## Two distinct defects
+## Three distinct defects
 
 ### Defect A (this repo — fixed): PanelVisiblityNavigator's non-host-aware load wait
 
@@ -78,6 +78,31 @@ over a control defect. The control needs a `containerIndex >= 0` guard.
 
 Both fail with `Uno.UI NavigationView container crash during phase 'select-menu'`.
 
+### Defect C (this repo — fixed): NavigationRegion gives up when no provider is discoverable at load
+
+- Field signature (separate report, desktop TabBar shell): after the hosting environment
+  re-grafts the app content, the log shows `Unable to find service provider for root navigator`
+  and every navigation targeting the shell's default tab silently dies — the selector navigator
+  fires but no frame navigator ever receives the route, while other tabs keep working.
+- Root cause: when a region's view fires `Loading`/`Loaded` while `FindParentRegion` finds no
+  parent region and `FindServiceProvider()` returns nothing (a re-grafting host whose provider
+  becomes discoverable only after the graft completes), `AssignParent` logs the warning and
+  returns. `Loading`/`Loaded` never re-fire for a view that stays attached, so the region is
+  permanently detached — requests routed at it are parked forever with no child region to ever
+  resume them (dead default tab).
+- **Fix**: `HandleLoaded` detects the dead-region state (no navigator, not root, no parent, no
+  services) and starts `RetryAssignParentAsync` — a bounded backoff (10 × 200ms, covering the
+  observed re-graft window) that re-runs `AssignParent` until the provider becomes discoverable,
+  then re-enters `HandleLoaded` to resume parked requests and cascade the default route. The
+  retry stands down if the view unloads or a normal `Loaded` cascade wires the region first, and
+  never throws (fire-and-forget from `HandleLoaded`).
+- **Red/green test**:
+  `Given_RegionAssignParentRetry.When_ServiceProviderDiscoverableOnlyAfterLoad_Then_RegionRecoversAndNavigates`
+  — loads a `Region.Attached` element under a tree with no provider attached, attaches the
+  provider only after `Loaded`, and asserts the region wires up and shows its default route.
+  Red without the retry ("Region never recovered after the service provider became
+  discoverable"), green with it.
+
 ## Non-regression coverage added
 
 - `When_NestedShell_SelectOtherThenDefault_Then_DefaultContentShown` — scaffolded-shell layout
@@ -97,6 +122,11 @@ All three pass before and after the Defect A fix.
   `When_DefaultRouteConfigured_Then_NavigationSucceeds`, `When_NavigateBack_Then_RouteChanged_Has_Route`,
   and notably spec 006's `When_ContentDetachedDuringInitialNavigation_Then_RouteResumesOnReattach`)
   fail identically WITHOUT the fix — pre-existing local/suite-context issues, not regressions.
+- Defect C regression diff (same full `!_HotReload` suite, with vs without the retry fix):
+  identical failure sets (19 failed / 72 passed on both) except the new retry test, which fails
+  on the baseline by design. The post-HR re-graft pair (`When_Rehosted*`) passes with the fix.
+  `When_PreselectedItem_SelectedItems_ListView` flipped between the two full runs but fails in
+  isolation on BOTH baseline and fix — mouse-injection flake, not a regression.
 - **Seam determinism caveat**: the detach seam (hook the default tab's inner `Frame.Loaded`,
   detach `Window.Content`) is deterministic when the test class runs in isolation (hang test
   red twice consecutively pre-fix, green post-fix) but can land after the cascade completes
@@ -109,6 +139,5 @@ All three pass before and after the Defect A fix.
 
 - spec 004 (selector null-Show phantom pending), spec 006 (park/resume dropped navigation).
 - Host-side history: the consuming preview host closed its own workaround PR for the
-  AssignParent/sentinel race unmerged; `NavigationRegion.AssignParent` still gives up
-  permanently when `FindServiceProvider()` fails (no retry when the provider becomes
-  available later). Not addressed in this spec; noted for follow-up.
+  AssignParent/sentinel race unmerged; `NavigationRegion.AssignParent` used to give up
+  permanently when `FindServiceProvider()` failed. Fixed here as Defect C.

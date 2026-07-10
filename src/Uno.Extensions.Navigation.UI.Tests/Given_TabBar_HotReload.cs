@@ -1439,6 +1439,146 @@ public class Given_TabBar_HotReload
 	/// Generic setup: boots an Uno host with Toolkit navigation, mounts the nav root,
 	/// and waits for the initial route to land.
 	/// </summary>
+	// ──────────────────────────────────────────────────────────────────────
+	// 9. Host re-graft after HR (spec 008): default tab must stay reachable
+	// ──────────────────────────────────────────────────────────────────────
+
+	/// <summary>
+	/// Composes the two production ingredients of the "cannot navigate back to the default
+	/// tab" report: a REAL hot-reload delta (so the HR machinery — resolver rebuild, retry
+	/// walks, visibility update handler — is live) followed by the hosting environment
+	/// re-grafting the app content into a new wrapper element (what a designer/preview host
+	/// does when switching modes). After the re-host, selecting the default tab must still
+	/// switch the content region back to it. A pure HR delta never reproduces the field
+	/// failure (section 2's tests are green); the re-host is the trigger, HR is the
+	/// surrounding condition — this test fires both.
+	/// </summary>
+	[TestMethod]
+	[RunsOnUIThread]
+	public async Task When_RehostedWhileOnTabTwoAfterHR_Then_TabOneStillReachable(CancellationToken ct)
+	{
+		await using var app = await SetupTwoTabAppAsync(ct);
+
+		var hostPage = ResolveCurrentPage<HotReloadTabBarPage>(app.NavigationRoot);
+		hostPage.Should().NotBeNull("Frame should have navigated to HotReloadTabBarPage");
+
+		var tabOneVm = await WaitForTabContentVmAsync(
+			hostPage!.ContentGrid, "TabOne", TimeSpan.FromSeconds(30), ct);
+		tabOneVm.DisplayedValue.Should().Be("original");
+
+		// Leave the default tab so the return trip is meaningful.
+		var tabBarNavigator = await WaitForTabBarNavigatorAsync(
+			hostPage.TabBar, TimeSpan.FromSeconds(30), ct);
+		await tabBarNavigator.NavigateRouteAsync(hostPage, "TabTwo");
+		await WaitForTabContentVmAsync(hostPage.ContentGrid, "TabTwo", TimeSpan.FromSeconds(30), ct);
+
+		// Real HR delta: activates NavigationRouteUpdateHandler / retry walks, matching the
+		// field conditions where HR churn surrounds the failure.
+		await using var _ = await HotReloadHelper.UpdateSourceFile(
+			"../../Uno.Extensions.Navigation.UI.Tests/HotReloadTabBarTarget.cs",
+			"""return "original";""",
+			"""return "updated";""",
+			ct);
+
+		// Re-host: the window content is moved under a fresh wrapper element (designer-mode
+		// style re-graft). The old attachment point never returns.
+		var window = UnitTestsUIContentHelper.CurrentTestWindow!;
+		var content = window.Content;
+		window.Content = null;
+		window.Content = new Border { Child = content };
+
+		// Let the re-hosted tree settle: the current tab (TabTwo) must come back first.
+		await WaitForTabVisibleAsync(hostPage.ContentGrid, "TabTwo", TimeSpan.FromSeconds(30), ct);
+
+		// The reported bug: select the default tab again after the re-host.
+		await tabBarNavigator.NavigateRouteAsync(hostPage, "TabOne");
+
+		await WaitForTabVisibleAsync(hostPage.ContentGrid, "TabOne", TimeSpan.FromSeconds(30), ct);
+		var tabOneVmAfter = await WaitForTabContentVmAsync(
+			hostPage.ContentGrid, "TabOne", TimeSpan.FromSeconds(30), ct);
+		tabOneVmAfter.DisplayedValue.Should().Be("updated",
+			"after the re-host, selecting the default tab must show it (with the post-HR value)");
+	}
+
+	/// <summary>
+	/// Mid-flight variant: the re-host lands while a tab navigation is still in flight
+	/// (the field trigger is asynchronous to user input, so it can interleave anywhere).
+	/// The in-flight navigation must complete (not dangle — spec 008 defect A, TabBar
+	/// shape) and both tabs must remain reachable afterwards.
+	/// </summary>
+	[TestMethod]
+	[RunsOnUIThread]
+	public async Task When_RehostedDuringTabNavigationAfterHR_Then_TabsStillReachable(CancellationToken ct)
+	{
+		await using var app = await SetupTwoTabAppAsync(ct);
+
+		var hostPage = ResolveCurrentPage<HotReloadTabBarPage>(app.NavigationRoot);
+		hostPage.Should().NotBeNull("Frame should have navigated to HotReloadTabBarPage");
+
+		await WaitForTabContentVmAsync(hostPage!.ContentGrid, "TabOne", TimeSpan.FromSeconds(30), ct);
+
+		var tabBarNavigator = await WaitForTabBarNavigatorAsync(
+			hostPage.TabBar, TimeSpan.FromSeconds(30), ct);
+
+		await using var _ = await HotReloadHelper.UpdateSourceFile(
+			"../../Uno.Extensions.Navigation.UI.Tests/HotReloadTabBarTarget.cs",
+			"""return "original";""",
+			"""return "updated";""",
+			ct);
+
+		// Fire the navigation and re-host immediately, without awaiting the navigation
+		// first — the re-graft lands while the TabTwo cascade is in flight.
+		var navigationTask = tabBarNavigator.NavigateRouteAsync(hostPage, "TabTwo");
+
+		var window = UnitTestsUIContentHelper.CurrentTestWindow!;
+		var content = window.Content;
+		window.Content = null;
+		window.Content = new Border { Child = content };
+
+		// Defect A (TabBar shape): the in-flight navigation must complete, not dangle.
+		var completed = await Task.WhenAny(navigationTask, Task.Delay(TimeSpan.FromSeconds(30), ct)) == navigationTask;
+		completed.Should().BeTrue("the in-flight tab navigation must complete when the content is re-hosted mid-cascade");
+
+		// Both directions must work on the re-hosted tree.
+		await WaitForTabVisibleAsync(hostPage.ContentGrid, "TabTwo", TimeSpan.FromSeconds(30), ct);
+
+		await tabBarNavigator.NavigateRouteAsync(hostPage, "TabOne");
+		await WaitForTabVisibleAsync(hostPage.ContentGrid, "TabOne", TimeSpan.FromSeconds(30), ct);
+		var tabOneVm = await WaitForTabContentVmAsync(
+			hostPage.ContentGrid, "TabOne", TimeSpan.FromSeconds(30), ct);
+		tabOneVm.DisplayedValue.Should().Be("updated",
+			"the default tab must be reachable (with the post-HR value) after a mid-flight re-host");
+	}
+
+	/// <summary>
+	/// Waits until the FrameView named <paramref name="tabName"/> is the visible child of
+	/// the content grid and every other FrameView is collapsed (the settled state of
+	/// PanelVisiblityNavigator.PostNavigateAsync). Throws on timeout with a state dump.
+	/// </summary>
+	private static async Task WaitForTabVisibleAsync(Grid contentGrid, string tabName, TimeSpan timeout, CancellationToken ct)
+	{
+		var sw = System.Diagnostics.Stopwatch.StartNew();
+		while (sw.Elapsed < timeout)
+		{
+			ct.ThrowIfCancellationRequested();
+
+			var frameViews = contentGrid.Children.OfType<FrameView>().ToArray();
+			var target = frameViews.FirstOrDefault(fv =>
+				global::Uno.Extensions.Navigation.UI.Region.GetName(fv) == tabName || fv.Name == tabName);
+			if (target is { Visibility: Visibility.Visible } &&
+				frameViews.All(fv => ReferenceEquals(fv, target) || fv.Visibility == Visibility.Collapsed))
+			{
+				return;
+			}
+
+			await Task.Delay(50, ct);
+		}
+
+		var state = string.Join(", ", contentGrid.Children.OfType<FrameView>().Select(fv =>
+			$"{(global::Uno.Extensions.Navigation.UI.Region.GetName(fv) ?? fv.Name)}={fv.Visibility}"));
+		Assert.Fail($"Tab '{tabName}' did not become the visible tab within {timeout.TotalSeconds}s. FrameViews: [{state}]");
+	}
+
 	private static async Task<TabBarTestApp> SetupTabBarAppAsync(
 		Action<global::Uno.Extensions.Navigation.IViewRegistry, global::Uno.Extensions.Navigation.IRouteRegistry> registerViewsAndRoutes,
 		string initialRoute,
