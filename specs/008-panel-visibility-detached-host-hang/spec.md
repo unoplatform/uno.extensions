@@ -17,6 +17,10 @@ item as selected.
 
 ## Three distinct defects
 
+> **Branch state**: the Defect A and Defect C fixes are intentionally reverted on this branch —
+> the tests pin the defects red for review. The fixes remain in history (`360d0977a`,
+> `bdb24f9ca`) for restoration.
+
 ### Defect A (this repo — fixed): PanelVisiblityNavigator's non-host-aware load wait
 
 `PanelVisiblityNavigator.CheckLoadedAsync` awaited `CurrentlyVisibleControl.EnsureLoaded()`

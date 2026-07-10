@@ -37,17 +37,8 @@ public class Given_RegionAssignParentRetry
 		IHost? host = null;
 		try
 		{
-			// A regular navigation host with a single default route.
-			host = UnoHost
-				.CreateDefaultBuilder(typeof(Given_RegionAssignParentRetry).Assembly)
-				.UseNavigation(viewRouteBuilder: (views, routes) =>
-				{
-					views.Register(new ViewMap<NavHomePage>());
-					routes.Register(new RouteMap("NavHome", View: views.FindByView<NavHomePage>(), IsDefault: true));
-				})
-				.Build();
-			await Task.Run(() => host.StartAsync());
-			var services = await host.Services.RegisterWindowAsync(window);
+			IServiceProvider services;
+			(host, services) = await CreateNavHostAsync(window);
 
 			// The region element loads under a root that has NO service provider attached yet —
 			// the condition a re-grafting host produces at Loaded time.
@@ -104,6 +95,96 @@ public class Given_RegionAssignParentRetry
 				await Task.Run(() => host.StopAsync());
 			}
 		}
+	}
+
+	/// <summary>
+	/// The re-hosting variant observed in the field: the hosting environment grafts a FRESH
+	/// (never-wired) region into a chrome surface it owns — no region instance and no provider
+	/// anywhere above it — and propagates the provider only once its own bootstrap completes,
+	/// after any bounded retry would have expired. Late attachment must still wire the region:
+	/// polling-based recovery cannot cover this; the provider attachment itself has to nudge
+	/// the dead region.
+	/// </summary>
+	[TestMethod]
+	public async Task When_ProviderArrivesAfterRetryWindow_Then_RegionStillRecovers(CancellationToken ct)
+	{
+		var window = UnitTestsUIContentHelper.CurrentTestWindow!;
+		UnitTestsUIContentHelper.SaveOriginalContent();
+		IHost? host = null;
+		try
+		{
+			IServiceProvider services;
+			(host, services) = await CreateNavHostAsync(window);
+
+			// Fresh region under a provider-less foreign host (the re-graft surface).
+			var regionHost = new ContentControl
+			{
+				HorizontalContentAlignment = HorizontalAlignment.Stretch,
+				VerticalContentAlignment = VerticalAlignment.Stretch,
+			};
+			regionHost.SetAttached(true);
+			var foreignHost = new Grid();
+			foreignHost.Children.Add(regionHost);
+			window.Content = foreignHost;
+
+			using (var cts = CancellationTokenSource.CreateLinkedTokenSource(ct))
+			{
+				cts.CancelAfter(Timeout);
+				await WaitForAsync(() => regionHost.IsLoaded, cts.Token);
+			}
+
+			var region = regionHost.GetInstance();
+			region.Should().NotBeNull();
+			region!.Navigator().Should().BeNull("the region must have failed to wire while no provider was discoverable (scenario precondition)");
+
+			// The host's provider shows up only after any bounded retry has expired.
+			await Task.Delay(TimeSpan.FromSeconds(3), ct);
+			region.Navigator().Should().BeNull("nothing may have wired the region while the host had no provider");
+
+			foreignHost.SetServiceProvider(services);
+
+			using (var cts = CancellationTokenSource.CreateLinkedTokenSource(ct))
+			{
+				cts.CancelAfter(Timeout);
+				try
+				{
+					await WaitForAsync(() => ResolveContent<NavHomePage>(regionHost) is not null, cts.Token);
+				}
+				catch (OperationCanceledException) when (!ct.IsCancellationRequested)
+				{
+					Assert.Fail(
+						"Region never recovered after the provider was attached past the retry window " +
+						$"(navigator: {(region.Navigator() is null ? "null" : "created")}). " +
+						"Late provider attachment must wire dead regions event-driven; time-based retry cannot.");
+				}
+			}
+
+			region.Navigator().Should().NotBeNull();
+		}
+		finally
+		{
+			UnitTestsUIContentHelper.RestoreOriginalContent();
+			if (host is not null)
+			{
+				await Task.Run(() => host.StopAsync());
+			}
+		}
+	}
+
+	// A regular navigation host with a single default route, window-registered.
+	private static async Task<(IHost Host, IServiceProvider Services)> CreateNavHostAsync(Window window)
+	{
+		var host = UnoHost
+			.CreateDefaultBuilder(typeof(Given_RegionAssignParentRetry).Assembly)
+			.UseNavigation(viewRouteBuilder: (views, routes) =>
+			{
+				views.Register(new ViewMap<NavHomePage>());
+				routes.Register(new RouteMap("NavHome", View: views.FindByView<NavHomePage>(), IsDefault: true));
+			})
+			.Build();
+		await Task.Run(() => host.StartAsync());
+		var services = await host.Services.RegisterWindowAsync(window);
+		return (host, services);
 	}
 
 	// UIHelper.WaitFor has a short internal budget (1s undebugged) and throws TimeoutException;

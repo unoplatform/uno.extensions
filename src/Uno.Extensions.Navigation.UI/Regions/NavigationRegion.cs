@@ -337,18 +337,6 @@ public sealed class NavigationRegion : IRegion
 		// navigating forward/backward on frame, or switching tabs
 		var navigator = this.Navigator();
 
-		if (navigator is null && !_isRoot && Parent is null && _services is null)
-		{
-			// AssignParent gave up: no parent region was reachable and FindServiceProvider
-			// failed (e.g. the hosting environment re-grafts the tree while a boundary
-			// sentinel blocks the provider walk). Loading/Loaded have already fired, so
-			// without a retry this region stays detached forever — requests targeting its
-			// route are parked with no child region to ever resume them (dead default tab).
-			// Retry with backoff until the provider becomes discoverable.
-			_ = RetryAssignParentAsync();
-			return;
-		}
-
 		if (navigator is not null)
 		{
 			// Requests can get parked while this region (or its children) are detached
@@ -400,69 +388,6 @@ public sealed class NavigationRegion : IRegion
 			}
 			_suppressReCascadeOnReload = false;
 			_replacedByHotReload = false;
-		}
-	}
-
-	// Bounded backoff for a region whose AssignParent found neither a parent region nor a
-	// service provider at load time. 10 × 200ms covers the observed host re-graft window
-	// (provider propagates within ~1-2s of the failed attach) without keeping dead regions
-	// alive indefinitely.
-	private const int AssignParentRetryAttempts = 10;
-	private static readonly TimeSpan AssignParentRetryDelay = TimeSpan.FromMilliseconds(200);
-
-	private async Task RetryAssignParentAsync()
-	{
-		try
-		{
-			for (var attempt = 0; attempt < AssignParentRetryAttempts; attempt++)
-			{
-				await Task.Delay(AssignParentRetryDelay);
-
-				if (View is null || !_isLoaded)
-				{
-					// Unloaded while waiting — the next Loaded cycle re-runs AssignParent itself.
-					return;
-				}
-
-				if (Parent is not null || _services is not null)
-				{
-					// Wired by a normal Loaded cascade while waiting — that cascade already ran
-					// HandleLoaded; nothing left to redo.
-					return;
-				}
-
-				AssignParent();
-
-				if (Parent is not null || _services is not null)
-				{
-					if (_logger.IsEnabled(LogLevel.Information))
-					{
-						_logger.LogInformationMessage($"(Name: {Name}) Region attached on retry {attempt + 1} after initial AssignParent failure");
-					}
-
-					// Re-enter the loaded flow now that the region is wired: resume parked
-					// requests and give the parent a chance to re-cascade its route.
-					// Unsubscribe first so HandleLoaded's re-subscribe stays balanced.
-					_isLoaded = false;
-					View.Unloaded -= ViewUnloaded;
-					await HandleLoaded();
-					return;
-				}
-			}
-
-			if (_logger.IsEnabled(LogLevel.Warning))
-			{
-				_logger.LogWarningMessage($"(Name: {Name}) Region still detached after {AssignParentRetryAttempts} AssignParent retries");
-			}
-		}
-		catch (Exception ex)
-		{
-			// Fire-and-forget from HandleLoaded — an unhandled exception here would crash
-			// the runtime (fatal on WASM).
-			if (_logger.IsEnabled(LogLevel.Error))
-			{
-				_logger.LogErrorMessage($"(Name: {Name}) Error retrying AssignParent: {ex.Message}");
-			}
 		}
 	}
 

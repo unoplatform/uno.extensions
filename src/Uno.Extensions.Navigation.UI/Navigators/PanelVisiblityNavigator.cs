@@ -151,15 +151,9 @@ public class PanelVisiblityNavigator : ControlNavigator<Panel>
 		return path;
 	}
 
-	// Host-aware wait (spec 006): a bare EnsureLoaded() dangles forever when the hosting
-	// tree detaches mid-navigation (the panel's new child can never load while the subtree
-	// is out of the tree), wedging the whole navigation pipeline. Give up when the panel
-	// leaves the tree — the undeliverable part of the request is parked by the
-	// child-forwarding stage and resumed when the region re-attaches, matching
-	// FrameNavigator / ContentControlNavigator.
 	protected override Task CheckLoadedAsync()
-		=> CurrentlyVisibleControl is { IsLoaded: false } control
-			? control.EnsureLoadedWhileHostAttached(Region.View)
+		=> CurrentlyVisibleControl is { IsLoaded: false }
+			? CurrentlyVisibleControl.EnsureLoaded()
 			: Task.CompletedTask;
 
 	protected override async Task PostNavigateAsync()
