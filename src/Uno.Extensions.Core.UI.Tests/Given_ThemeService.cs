@@ -121,11 +121,12 @@ public class Given_ThemeService
 		var tcs = new TaskCompletionSource<AppTheme>();
 		service.ThemeChanged += (_, theme) => tcs.TrySetResult(theme);
 
-		// Act - Change to light; without XamlRoot, InternalSetThemeAsync will fail silently
+		// Act - Change to light. The Grid is not attached to any window, so it has no XamlRoot and
+		// the "element realized" gate in InternalSetThemeOnUIThread short-circuits before applying.
 		element.RequestedTheme = ElementTheme.Light;
 
-		// Assert - Without XamlRoot, InternalSetThemeAsync fails silently so no event fires.
-		// The key verification is that the System shortcut path is NOT taken for explicit themes.
+		// Assert - With no XamlRoot the realization gate returns false, so no theme is applied and no
+		// event fires. The key verification is that the System shortcut path is NOT taken for explicit themes.
 		using var cts = new CancellationTokenSource(TimeSpan.FromMilliseconds(200));
 		cts.Token.Register(() => tcs.TrySetCanceled());
 
@@ -139,10 +140,113 @@ public class Given_ThemeService
 		}
 		catch (TaskCanceledException)
 		{
-			// Expected: no event fires because InternalSetThemeAsync cannot succeed without XamlRoot
+			// Expected: no event fires because the realization gate (XamlRoot is null) short-circuits before applying a theme.
 		}
 
 		eventFired.Should().BeFalse(
-			because: "without a XamlRoot, InternalSetThemeAsync fails silently and ThemeChanged should not fire");
+			because: "with no XamlRoot the realization gate returns false before applying a theme, so ThemeChanged should not fire");
+	}
+
+	[TestMethod]
+	public async Task When_HostedUnderForeignXamlRoot_Then_ThemeAppliesToOwnRoot_NotHost()
+	{
+		// Regression guard for #3120: the theme must be applied to the service's own root element,
+		// not to RootElement.XamlRoot.Content (the root visual of the XamlRoot). The host owns the
+		// XamlRoot and the app root is a nested child — mirroring a secondary app whose Window.Content
+		// is re-parented into a host's shared XamlRoot (e.g. an app loaded into a collectible ALC).
+		// Red direction: on the pre-fix code the write target resolved to appRoot.XamlRoot.Content,
+		// which IS hostRoot here — so toggling flipped hostRoot.RequestedTheme to Dark and left
+		// appRoot/appChild untouched, failing every assert below.
+		using var cts = new CancellationTokenSource(DefaultTimeout);
+		var ct = cts.Token;
+
+		var settings = new InMemorySettings();
+		settings.Set("CurrentTheme", AppTheme.Light.ToString());
+		var dispatcher = new SynchronousDispatcher();
+
+		var hostRoot = new Grid { RequestedTheme = ElementTheme.Default };
+		var appRoot = new Grid();
+		hostRoot.Children.Add(appRoot);
+
+		UnitTestsUIContentHelper.SaveOriginalContent();
+		try
+		{
+			UnitTestsUIContentHelper.CurrentTestWindow!.Content = hostRoot;
+			await UIHelper.WaitFor(() => appRoot.XamlRoot is not null, ct);
+
+			// Precondition: the app root is NOT the XamlRoot's content — the host is.
+			appRoot.XamlRoot!.Content.Should().BeSameAs(hostRoot,
+				because: "the host, not the hosted app, owns the XamlRoot in this topology");
+
+			using var service = new ThemeService(appRoot, dispatcher, settings);
+			await service.InitializeAsync();
+
+			// Act
+			var result = await service.SetThemeAsync(AppTheme.Dark);
+
+			// Assert the write TARGET, which is what #3120 is about: the host that owns the XamlRoot
+			// must not be re-themed, and the theme must land on the service's own root element instead.
+			//
+			// We deliberately assert against ElementTheme.Default rather than == Dark: ThemeService
+			// re-applies the theme from its own RootElement.ActualThemeChanged handler, and under the
+			// fully-synchronous test dispatcher in a live visual tree that feedback settles RequestedTheme
+			// to a value that isn't guaranteed to be Dark. The target element (host vs app) is the
+			// invariant the fix changes and is stable; the end-to-end behavior (effective Dark theme +
+			// ThemeChanged) is exercised in the host integration test, not this unit.
+			result.Should().BeTrue();
+			hostRoot.RequestedTheme.Should().Be(ElementTheme.Default,
+				because: "the host that owns the XamlRoot must NOT be re-themed by a hosted app (the #3120 bug)");
+			appRoot.RequestedTheme.Should().NotBe(ElementTheme.Default,
+				because: "the theme must be applied to the service's own root element, not the host's");
+		}
+		finally
+		{
+			UnitTestsUIContentHelper.RestoreOriginalContent();
+		}
+	}
+
+	[TestMethod]
+	public async Task When_HostedUnderForeignXamlRoot_WithRealDispatcher_Then_AppSubtreeBecomesDark_HostStaysLight()
+	{
+		// End-to-end-ish complement to the test above: with the REAL dispatcher (not the synchronous
+		// fake), confirm the app's own subtree actually settles on Dark and the host stays Light —
+		// i.e. #3120 is genuinely fixed, not merely "the write goes to a different element".
+		using var cts = new CancellationTokenSource(DefaultTimeout);
+		var ct = cts.Token;
+
+		var settings = new InMemorySettings();
+		settings.Set("CurrentTheme", AppTheme.Light.ToString());
+
+		var hostRoot = new Grid { RequestedTheme = ElementTheme.Light };
+		var appRoot = new Grid();
+		var appChild = new Grid();
+		appRoot.Children.Add(appChild);
+		hostRoot.Children.Add(appRoot);
+
+		UnitTestsUIContentHelper.SaveOriginalContent();
+		try
+		{
+			UnitTestsUIContentHelper.CurrentTestWindow!.Content = hostRoot;
+			await UIHelper.WaitFor(() => appRoot.XamlRoot is not null, ct);
+
+			var dispatcher = new Uno.Extensions.Dispatcher(appRoot);
+			using var service = new ThemeService(appRoot, dispatcher, settings);
+			await service.InitializeAsync();
+
+			// Act
+			await service.SetThemeAsync(AppTheme.Dark);
+
+			// The app's own subtree resolves to Dark...
+			await UIHelper.WaitFor(() => appChild.ActualTheme == ElementTheme.Dark, ct);
+			appChild.ActualTheme.Should().Be(ElementTheme.Dark,
+				because: "the hosted app's subtree must reflect the new theme");
+			// ...while the host that owns the XamlRoot stays Light.
+			hostRoot.ActualTheme.Should().Be(ElementTheme.Light,
+				because: "the host must not be re-themed by the hosted app");
+		}
+		finally
+		{
+			UnitTestsUIContentHelper.RestoreOriginalContent();
+		}
 	}
 }
