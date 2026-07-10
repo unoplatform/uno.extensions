@@ -1550,6 +1550,109 @@ public class Given_TabBar_HotReload
 			"the default tab must be reachable (with the post-HR value) after a mid-flight re-host");
 	}
 
+	// ──────────────────────────────────────────────────────────────────────
+	// 10. Fresh shell in a provider-less host after HR (spec 008 defect C):
+	//     the field shape of "cannot navigate back to the default tab"
+	// ──────────────────────────────────────────────────────────────────────
+
+	/// <summary>
+	/// The field shape of the "cannot navigate back to the default tab" report. After a REAL
+	/// hot-reload delta, the hosting environment re-creates the app surface: a FRESH app-root
+	/// region (never wired — HR/designer surfaces instantiate new elements at runtime) inside
+	/// a wrapper of its own that carries no region instance and no service provider. The fresh
+	/// region fires Loading/Loaded while the provider walk finds nothing and gives up; the host
+	/// propagates the provider onto its wrapper only moments later. The root region must then
+	/// wire itself, cascade the default route (creating the shell page fresh), and the default
+	/// tab must stay reachable after visiting another tab.
+	///
+	/// Section 9's re-graft tests move the ALREADY-WIRED tree — regions keep their scope
+	/// across unload/reload, which is why those pass without any fix. A never-wired region in
+	/// a provider-less subtree is what dies in the field (12 provider-walk failures, then
+	/// requests dropped with "has no children to forward request to").
+	/// </summary>
+	[TestMethod]
+	[RunsOnUIThread]
+	public async Task When_FreshRootInProviderlessHostAfterHR_Then_DefaultTabReachable(CancellationToken ct)
+	{
+		await using var app = await SetupTwoTabAppAsync(ct);
+
+		var hostPage = ResolveCurrentPage<HotReloadTabBarPage>(app.NavigationRoot);
+		hostPage.Should().NotBeNull("Frame should have navigated to HotReloadTabBarPage");
+		await WaitForTabContentVmAsync(hostPage!.ContentGrid, "TabOne", TimeSpan.FromSeconds(30), ct);
+
+		// Real HR delta: the HR machinery (resolver rebuild, retry walks) is live, and the
+		// fresh surface below is created AFTER the delta.
+		await using var _ = await HotReloadHelper.UpdateSourceFile(
+			"../../Uno.Extensions.Navigation.UI.Tests/HotReloadTabBarTarget.cs",
+			"""return "original";""",
+			"""return "updated";""",
+			ct);
+
+		// The provider the original tree used — what the host must propagate to its surface.
+		var services = app.NavigationRoot.GetServiceProvider();
+		services.Should().NotBeNull("the navigation root must carry the app's service provider");
+
+		// The re-host: a fresh, never-wired app-root region under a provider-less wrapper.
+		// The old tree is discarded — its regions never come back.
+		var freshRoot = new ContentControl
+		{
+			HorizontalContentAlignment = HorizontalAlignment.Stretch,
+			VerticalContentAlignment = VerticalAlignment.Stretch,
+		};
+		freshRoot.SetAttached(true);
+		var wrapper = new Border { Child = freshRoot };
+		var window = UnitTestsUIContentHelper.CurrentTestWindow!;
+		window.Content = null;
+		window.Content = wrapper;
+
+		using (var loadedCts = CancellationTokenSource.CreateLinkedTokenSource(ct))
+		{
+			loadedCts.CancelAfter(TimeSpan.FromSeconds(30));
+			while (!freshRoot.IsLoaded)
+			{
+				loadedCts.Token.ThrowIfCancellationRequested();
+				await Task.Delay(50, loadedCts.Token);
+			}
+		}
+
+		// Field condition: Loading/Loaded have fired with no provider discoverable — the
+		// fresh region has given up. The host propagates the provider only now.
+		wrapper.SetServiceProvider(services!);
+
+		// Contract: the root region wires itself and cascades the default route, creating
+		// the shell page fresh at runtime.
+		HotReloadTabBarPage? freshShell = null;
+		var sw = System.Diagnostics.Stopwatch.StartNew();
+		while (sw.Elapsed < TimeSpan.FromSeconds(30))
+		{
+			ct.ThrowIfCancellationRequested();
+			freshShell = ResolveCurrentPage<HotReloadTabBarPage>(freshRoot);
+			if (freshShell is not null)
+			{
+				break;
+			}
+			await Task.Delay(50, ct);
+		}
+
+		freshShell.Should().NotBeNull(
+			"the fresh app-root region must wire itself once the provider becomes discoverable " +
+			"and cascade the default route — a region that loaded before the provider arrived " +
+			"must not stay permanently dead");
+
+		// The reported gesture: land on the default tab, leave it, come back to it.
+		var tabBarNavigator = await WaitForTabBarNavigatorAsync(freshShell!.TabBar, TimeSpan.FromSeconds(30), ct);
+		await WaitForTabVisibleAsync(freshShell.ContentGrid, "TabOne", TimeSpan.FromSeconds(30), ct);
+
+		await tabBarNavigator.NavigateRouteAsync(freshShell, "TabTwo");
+		await WaitForTabVisibleAsync(freshShell.ContentGrid, "TabTwo", TimeSpan.FromSeconds(30), ct);
+
+		await tabBarNavigator.NavigateRouteAsync(freshShell, "TabOne");
+		await WaitForTabVisibleAsync(freshShell.ContentGrid, "TabOne", TimeSpan.FromSeconds(30), ct);
+		var tabOneVm = await WaitForTabContentVmAsync(freshShell.ContentGrid, "TabOne", TimeSpan.FromSeconds(30), ct);
+		tabOneVm.DisplayedValue.Should().Be("updated",
+			"the default tab must be reachable on the freshly wired shell (with the post-HR value)");
+	}
+
 	/// <summary>
 	/// Waits until the FrameView named <paramref name="tabName"/> is the visible child of
 	/// the content grid and every other FrameView is collapsed (the settled state of
