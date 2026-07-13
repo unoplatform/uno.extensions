@@ -650,7 +650,23 @@ public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 		Route = lastRoute;
 	}
 
-	protected override Task CheckLoadedAsync() => _content is not null ? _content.EnsureLoadedWhileHostAttached(Region.View) : Task.CompletedTask;
+	protected override Task CheckLoadedAsync()
+	{
+		// The Frame's content can be swapped out-of-band: Hot Reload's ReplaceViewInstance
+		// sets Frame.Content = newPage directly (bypassing Frame.Navigate), which detaches the
+		// old page. Our cached _content would then still point at that old, now-detached page.
+		// Waiting on it via EnsureLoadedWhileHostAttached never completes — a detached element
+		// never loads, and the Frame host stays attached so the host-aware wait never gives up —
+		// hanging the navigation before it reaches child forwarding. The tab then appears to do
+		// nothing when navigated back to (nav-hotreload-active-tab-handoff). The Frame's live
+		// Content is the authoritative current view, so re-sync to it before waiting.
+		if (Control?.Content is FrameworkElement liveContent && !ReferenceEquals(liveContent, _content))
+		{
+			_content = liveContent;
+		}
+
+		return _content is not null ? _content.EnsureLoadedWhileHostAttached(Region.View) : Task.CompletedTask;
+	}
 
 	/// <summary>
 	/// Captures the currently active nested route by checking child navigator routes
