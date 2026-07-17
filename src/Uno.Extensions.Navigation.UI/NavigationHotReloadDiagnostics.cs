@@ -7,12 +7,11 @@ using Uno.Extensions.Navigation.Regions;
 namespace Uno.Extensions.Navigation.UI;
 
 /// <summary>
-/// TEMPORARY diagnostic instrumentation for unoplatform/uno.extensions#3130 —
-/// determines whether a live default page filled by an external Hot Reload is
-/// (a) never replaced in the visual tree, or (b) replaced but re-shown as the
-/// stale instance by navigation. Rides Uno's element-update pipeline
-/// (ElementUpdateAgent) so every callback is logged relative to the HR UI-update phase.
-/// All messages carry the [NAV-HR-DIAG] marker. DO NOT MERGE — debug only.
+/// Diagnostic logging for navigation across hot-reload cycles (uno.extensions#3130).
+/// Rides Uno's element-update pipeline (ElementUpdateAgent) and logs every callback —
+/// including full region-tree dumps with view instance identities — relative to the HR
+/// UI-update phase, so "was the live instance replaced, and what does navigation point
+/// at" can be answered from the logs alone. All messages carry the [NAV-HR-DIAG] marker.
 /// </summary>
 internal static class NavigationHotReloadDiagnostics
 {

@@ -52,8 +52,9 @@ internal static class NavigationRouteUpdateHandler
 	private static ImmutableList<NavigationRouteContext> _contexts = ImmutableList<NavigationRouteContext>.Empty;
 
 	/// <summary>
-	/// Snapshot of the registered contexts. TEMPORARY — exposed for
-	/// <see cref="NavigationHotReloadDiagnostics"/> (#3130 instrumentation).
+	/// Snapshot of the registered contexts, for the hot-reload handlers that walk the
+	/// live region trees (<see cref="NavigationHotReloadDiagnostics"/>,
+	/// <see cref="NavigationFrameContentUpdateHandler"/>).
 	/// </summary>
 	internal static IReadOnlyList<NavigationRouteContext> ActiveContexts => _contexts;
 
