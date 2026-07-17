@@ -224,6 +224,30 @@ Each child `Region.Name` is a selectable target. See docs:
 - **Risk**: `PanelVisiblityNavigator` reuses existing FrameViews, so the same VM instance is re-visible post-HR. The VM's property getter re-reads the HR'd method on each access — that's what makes the assertion work. If the VM cached the method return value, HR wouldn't be visible without re-instantiation.
 - **Status (2026-04-22)**: Implemented and passing end-to-end on Skia desktop.
 
+- **ID**: `When_PageXamlUpdatedWhileUnmaterialized_Then_RevealShowsUpdatedContent`
+- **Goal**: Deterministic repro for uno.extensions#3130 / studio.live#3079 — the "stranded
+  default page". A page created while its host panel cannot lay out exists only as
+  `Frame.Content` (never a materialized visual child, `Loaded` never fires). Uno's HR
+  visual-tree walk enumerates `VisualTreeHelper` children only, so a XAML HR of the page's
+  type replaces nothing; navigation then declines to refresh (the studio.live#2293 cascade
+  skip + `no segments to navigate`). Revealing the panel shows the pre-HR placeholder.
+- **Layout**: `HotReloadRegionPage` (visibility panel). The test collapses `ContentGrid`
+  BEFORE navigating `Stranded` → `HotReloadStrandedContentPage` into it — the deterministic
+  stand-in for "the app view gets no layout pass during generation", which is why the Studio
+  bug only reproduces on WASM (hidden app view) and not desktop (always-composited window).
+- **HR change**: XAML on `HotReloadStrandedContentPage.xaml` — `Text="placeholder"` →
+  `Text="filled"`.
+- **Trigger**: reveal the panel (`ContentGrid.Visibility = Visible`) after the HR delta.
+- **Assertion**: the materialized page shows `filled`. The test must NOT pin the stale
+  instance for this assertion — the fix is allowed to swap the instance.
+- **Risk / notes**: the navigation into the collapsed panel stalls at
+  `CheckLoadedAsync`/`EnsureLoaded` (same stall as the WASM repro) — the test fires it
+  without awaiting and polls for `Frame.Content` instead. Preconditions assert the
+  live-but-unmaterialized state so a harness regression can't silently turn this into a
+  test of nothing.
+- **Status (2026-07-17)**: RED by design — lands with the fix (Uno `Frame.HotReload.cs`
+  patching current `Content` like the BackStack + Extensions re-hooking the new instance).
+
 - **ID**: `When_UpdateStackPanelChildAfterHR_Then_NewlyShownChildReflectsUpdate`
 - **Goal**: Same as above but with a `StackPanel` instead of `Grid`.
 - **Risk**: `StackPanel` doesn't have rows/columns but the region mechanism is identical

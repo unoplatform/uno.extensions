@@ -347,6 +347,164 @@ public class Given_HotReload
 			"check, the cascade would clobber the user's selection on every HR delta.");
 	}
 
+	/// <summary>
+	/// Deterministic repro for unoplatform/uno.extensions#3130 / unoplatform/studio.live#3079
+	/// (RED until the stranded-page fix lands). A page that is live but NOT materialized —
+	/// its host panel is Collapsed, the deterministic stand-in for "the app view gets no
+	/// layout pass during generation" proven in the WASM investigation — exists only as
+	/// <c>Frame.Content</c>, never as a visual child. Uno's HR visual-tree walk enumerates
+	/// <c>VisualTreeHelper</c> children only, so a XAML hot reload of that page's type
+	/// replaces nothing, and navigation keeps the stale instance (the #2293 cascade skip +
+	/// "no segments to navigate" both decline to refresh). Revealing the panel afterwards
+	/// shows the pre-HR placeholder — the studio.live "default tab renders its scaffolded
+	/// placeholder" symptom.
+	/// </summary>
+	[TestMethod]
+	[RunsOnUIThread]
+	public async Task When_PageXamlUpdatedWhileUnmaterialized_Then_RevealShowsUpdatedContent(CancellationToken ct)
+	{
+		await using var app = await SetupAppAsync(
+			registerViewsAndRoutes: (views, routes) =>
+			{
+				views.Register(
+					new ViewMap<HotReloadRegionPage>(),
+					new ViewMap<HotReloadStrandedContentPage>());
+
+				routes.Register(
+					new RouteMap("", Nested: new RouteMap[]
+					{
+						new RouteMap(
+							"HotReloadRegionPage",
+							View: views.FindByView<HotReloadRegionPage>(),
+							IsDefault: true,
+							Nested: new RouteMap[]
+							{
+								// Deliberately NOT IsDefault: the test collapses the panel
+								// first and then populates it, so the page is created while
+								// the region cannot be laid out.
+								new RouteMap("Stranded", View: views.FindByView<HotReloadStrandedContentPage>()),
+							}),
+					}));
+			},
+			initialRoute: "HotReloadRegionPage",
+			ct);
+
+		var hostPage = ResolveCurrentPage<HotReloadRegionPage>(app.NavigationRoot);
+		hostPage.Should().NotBeNull("Frame should have navigated to HotReloadRegionPage");
+
+		var panelNavigator = await WaitForPanelNavigatorAsync(hostPage!.ContentGrid, TimeSpan.FromSeconds(30), ct);
+
+		// Hide the content area BEFORE populating it. Collapsed skips measure, so anything
+		// created inside never applies its template and never fires Loaded.
+		hostPage.ContentGrid.Visibility = Visibility.Collapsed;
+
+		// Fire the navigation without awaiting: with a collapsed panel the pipeline stalls
+		// at CheckLoadedAsync/EnsureLoaded (the FrameView never loads) — the same stall the
+		// WASM repro showed for 9.5 minutes. The page instance is still created synchronously
+		// enough for the poll below. Observe the task so a later fault is not unobserved.
+		var navTask = panelNavigator.NavigateRouteAsync(hostPage, "Stranded");
+		var navTaskObservation = navTask.ContinueWith(static t => t.Exception?.GetBaseException(), TaskScheduler.Default);
+
+		var strandedFrame = await WaitForStrandedFrameAsync(hostPage.ContentGrid, TimeSpan.FromSeconds(30), ct);
+		var stalePage = (HotReloadStrandedContentPage)strandedFrame.Content;
+
+		// Preconditions — this is the #3130 state; if these fail the harness is not
+		// producing the live-but-unmaterialized condition and the test proves nothing.
+		VisualDescendants(strandedFrame).Should().NotContain(stalePage,
+			"precondition: the page must exist only as Frame.Content, not as a visual child");
+		stalePage.Status?.Text.Should().Be("placeholder", "precondition: pre-HR XAML content");
+		navTask.IsFaulted.Should().BeFalse("the stalled navigation must not have faulted");
+
+		// XAML HR: fill the placeholder while the page is live but unmaterialized. The helper
+		// awaits delta delivery; disposal reverts the file on scope exit.
+		await using var _ = await HotReloadHelper.UpdateSourceFile(
+			"../../Uno.Extensions.Navigation.UI.Tests/Pages/HotReloadStrandedContentPage.xaml",
+			"Text=\"placeholder\"",
+			"Text=\"filled\"",
+			ct);
+
+		// Give the HR visual-tree update phase (dispatched onto the UI thread) time to run.
+		await Task.Delay(2000, ct);
+
+		// Reveal — the "user opens the App tab" moment.
+		hostPage.ContentGrid.Visibility = Visibility.Visible;
+
+		// Wait for ANY materialized HotReloadStrandedContentPage: the fix is allowed to swap
+		// the instance, so the test must not pin the stale reference here.
+		var visiblePage = await WaitForMaterializedPageAsync<HotReloadStrandedContentPage>(
+			hostPage.ContentGrid, TimeSpan.FromSeconds(30), ct);
+
+		// THE assertion this test exists for (red on main): content hot-reloaded while the
+		// page was unmaterialized must be visible once the page is revealed.
+		visiblePage.Status?.Text.Should().Be("filled",
+			"a page whose XAML was hot-reloaded while it was live-but-unmaterialized must show " +
+			"the updated content once revealed (#3130: the HR walk misses Frame.Content of a " +
+			"never-laid-out frame and navigation never refreshes the stale instance)");
+	}
+
+	private static async Task<Frame> WaitForStrandedFrameAsync(
+		Grid contentGrid,
+		TimeSpan timeout,
+		CancellationToken ct)
+	{
+		var sw = System.Diagnostics.Stopwatch.StartNew();
+		while (sw.Elapsed < timeout)
+		{
+			ct.ThrowIfCancellationRequested();
+			var frameView = contentGrid.Children
+				.OfType<FrameView>()
+				.FirstOrDefault(fv => Uno.Extensions.Navigation.UI.Region.GetName(fv) == "Stranded");
+			if (frameView?.FindName("NavigationFrame") is Frame frame &&
+				frame.Content is HotReloadStrandedContentPage)
+			{
+				return frame;
+			}
+			await Task.Delay(50, ct);
+		}
+
+		var children = string.Join(", ", contentGrid.Children
+			.OfType<FrameworkElement>()
+			.Select(c => $"{c.GetType().Name}[Region.Name='{Uno.Extensions.Navigation.UI.Region.GetName(c)}']"));
+		throw new TimeoutException(
+			$"The stranded page did not get created as Frame.Content within {timeout.TotalSeconds:F0}s. " +
+			$"ContentGrid children: [{children}].");
+	}
+
+	private static async Task<TPage> WaitForMaterializedPageAsync<TPage>(
+		Grid contentGrid,
+		TimeSpan timeout,
+		CancellationToken ct)
+		where TPage : FrameworkElement
+	{
+		var sw = System.Diagnostics.Stopwatch.StartNew();
+		while (sw.Elapsed < timeout)
+		{
+			ct.ThrowIfCancellationRequested();
+			if (VisualDescendants(contentGrid).OfType<TPage>().FirstOrDefault(p => p.IsLoaded) is { } page)
+			{
+				return page;
+			}
+			await Task.Delay(50, ct);
+		}
+
+		throw new TimeoutException(
+			$"No materialized {typeof(TPage).Name} appeared within {timeout.TotalSeconds:F0}s of revealing the panel.");
+	}
+
+	private static System.Collections.Generic.IEnumerable<DependencyObject> VisualDescendants(DependencyObject root)
+	{
+		var count = Microsoft.UI.Xaml.Media.VisualTreeHelper.GetChildrenCount(root);
+		for (var i = 0; i < count; i++)
+		{
+			var child = Microsoft.UI.Xaml.Media.VisualTreeHelper.GetChild(root, i);
+			yield return child;
+			foreach (var grandChild in VisualDescendants(child))
+			{
+				yield return grandChild;
+			}
+		}
+	}
+
 	private static string? GetActiveRegionName(Grid contentGrid)
 		=> contentGrid.Children
 			.OfType<FrameworkElement>()
