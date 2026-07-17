@@ -146,6 +146,14 @@ public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 			Route?.Base == route.Base)
 		{
 			var currentMapping = Resolver.FindByPath(route.Base);
+
+			// [NAV-HR-DIAG] #3130: the post-HR "RenderView changed" bypass — log the comparison
+			// inputs; a false negative here leaves the stale page in place.
+			if (Logger.IsEnabled(LogLevel.Warning))
+			{
+				Logger.LogWarningMessage($"[NAV-HR-DIAG] FrameNavigator forward: 0 segments at route '{route.Base}'. HR bypass check: resolver RenderView={currentMapping?.RenderView?.FullName ?? "<null>"} vs frame.SourcePageType={Control!.SourcePageType?.FullName ?? "<null>"} frame.Content={(Control.Content is null ? "<null>" : $"{Control.Content.GetType().FullName}#{System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(Control.Content):X8}")}");
+			}
+
 			if (currentMapping?.RenderView is not null &&
 				Control!.SourcePageType != currentMapping.RenderView)
 			{
@@ -156,6 +164,14 @@ public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 		// As this is a forward navigation
 		if (segments.Length == 0)
 		{
+			// [NAV-HR-DIAG] #3130: "already at this route" — navigation intentionally leaves
+			// the currently displayed instance alone. If that instance is the pre-HR
+			// placeholder, this is the moment the framework decided not to refresh it.
+			if (Logger.IsEnabled(LogLevel.Warning))
+			{
+				Logger.LogWarningMessage($"[NAV-HR-DIAG] FrameNavigator forward: no segments to navigate for route '{route.Base}' — keeping current content {(Control.Content is null ? "<null>" : $"{Control.Content.GetType().FullName}#{System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(Control.Content):X8}")}");
+			}
+
 			Control.ReassignRegionParent();
 			if (!(this.Route?.IsEmpty() ?? true) && (route.Data?.Any() ?? false))
 			{
@@ -545,11 +561,28 @@ public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 		Control.Navigated -= Frame_Navigated;
 		try
 		{
+			// [NAV-HR-DIAG] #3130: after an HR swap the live content is the CNOMU replacement
+			// type (e.g. MenuPage#1) while viewType from the route table is the original type —
+			// this comparison decides between "keep what's shown" and "re-instantiate", both of
+			// which can surface/revive a stale instance. Log the full identities.
+			if (Logger.IsEnabled(LogLevel.Warning))
+			{
+				var currentContent = Control.Content;
+				Logger.LogWarningMessage($"[NAV-HR-DIAG] FrameNavigator.Show path='{path}' viewType={viewType.FullName} frame.Content={(currentContent is null ? "<null>" : $"{currentContent.GetType().FullName}#{System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(currentContent):X8}")} willNavigate={Control.Content?.GetType() != viewType}");
+			}
+
 			if (Control.Content?.GetType() != viewType)
 			{
 				if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Invoking Frame.Navigate to type '{viewType.Name}'");
 				var nav = Control.Navigate(viewType, data);
 				_content = Control.Content as FrameworkElement;
+
+				// [NAV-HR-DIAG] #3130: identity of the freshly created page — if this hash
+				// replaces a newer HR-built instance, navigation just revived stale XAML.
+				if (Logger.IsEnabled(LogLevel.Warning) && Control.Content is { } newContent)
+				{
+					Logger.LogWarningMessage($"[NAV-HR-DIAG] FrameNavigator.Show NAVIGATED -> {newContent.GetType().FullName}#{System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(newContent):X8}");
+				}
 
 				var currentPage = Control.Content as Page;
 				if (currentPage is not null)

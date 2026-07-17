@@ -88,10 +88,18 @@ public class PanelVisiblityNavigator : ControlNavigator<Panel>
 			return string.Empty;
 		}
 
+		// [NAV-HR-DIAG] #3130: capture the identity of what is currently shown vs. what this
+		// Show pass resolves — proves whether navigation re-shows a stale (pre-HR) instance.
+		if (Logger.IsEnabled(LogLevel.Warning))
+		{
+			Logger.LogWarningMessage($"[NAV-HR-DIAG] PanelVisiblityNavigator.Show ENTER path='{path}' viewType={viewType?.FullName ?? "<null>"} current={DescribeInstance(CurrentlyVisibleControl)} clearing {Region.Children.Count} child region(s)");
+		}
+
 		// Clear all child navigation regions
 		Region.Children.Clear();
 
 		var controlToShow = FindByPath(path);
+		var reusedExistingChild = controlToShow is not null;
 		if (controlToShow is null)
 		{
 			try
@@ -122,6 +130,11 @@ public class PanelVisiblityNavigator : ControlNavigator<Panel>
 			{
 				if (Logger.IsEnabled(LogLevel.Error)) Logger.LogErrorMessage($"Unable to create instance - {ex.Message}");
 			}
+		}
+
+		if (Logger.IsEnabled(LogLevel.Warning))
+		{
+			Logger.LogWarningMessage($"[NAV-HR-DIAG] PanelVisiblityNavigator.Show RESOLVED path='{path}' -> {DescribeInstance(controlToShow)} (reused-existing-child={reusedExistingChild})");
 		}
 
 		if (controlToShow is UI.Controls.FrameView)
@@ -176,9 +189,30 @@ public class PanelVisiblityNavigator : ControlNavigator<Panel>
 
 					}
 				}
+
+				// [NAV-HR-DIAG] #3130: after visibility pass, dump each child (incl. what the
+				// FrameView's inner Frame is actually displaying) so the stale-vs-fresh instance
+				// on the visible tab is provable from the logs.
+				if (Logger.IsEnabled(LogLevel.Warning))
+				{
+					foreach (var child in Control.Children.OfType<FrameworkElement>())
+					{
+						var frameContent = child is UI.Controls.FrameView fv && fv.Content is Frame navFrame
+							? $" frame.Content={DescribeInstance(navFrame.Content as FrameworkElement)}"
+							: string.Empty;
+						Logger.LogWarningMessage($"[NAV-HR-DIAG] PanelVisiblityNavigator.PostNavigate child={DescribeInstance(child)} name='{child.GetName() ?? child.Name}' vis={child.Visibility} opacity={child.Opacity}{frameContent}");
+					}
+				}
 			});
 		}
 	}
+
+	// [NAV-HR-DIAG] #3130: identity string (type + identity hash) so two instances of the
+	// same page type (stale placeholder vs. HR-built) are distinguishable in the logs.
+	private static string DescribeInstance(FrameworkElement? element)
+		=> element is null
+			? "<null>"
+			: $"{element.GetType().FullName}#{System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(element):X8}";
 
 	private FrameworkElement? FindByPath(string? path)
 	{
