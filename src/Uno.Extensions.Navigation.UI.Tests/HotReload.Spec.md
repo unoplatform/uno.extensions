@@ -225,16 +225,17 @@ Each child `Region.Name` is a selectable target. See docs:
 - **Status (2026-04-22)**: Implemented and passing end-to-end on Skia desktop.
 
 - **ID**: `When_PageXamlUpdatedWhileUnmaterialized_Then_RevealShowsUpdatedContent`
-- **Goal**: Deterministic repro for uno.extensions#3130 / studio.live#3079 — the "stranded
-  default page". A page created while its host panel cannot lay out exists only as
-  `Frame.Content` (never a materialized visual child, `Loaded` never fires). Uno's HR
-  visual-tree walk enumerates `VisualTreeHelper` children only, so a XAML HR of the page's
-  type replaces nothing; navigation then declines to refresh (the studio.live#2293 cascade
-  skip + `no segments to navigate`). Revealing the panel shows the pre-HR placeholder.
+- **Goal**: Deterministic repro for uno.extensions#3130 — the "stranded default page".
+  A page created while its host panel cannot lay out exists only as `Frame.Content`
+  (never a materialized visual child, `Loaded` never fires). Uno's HR visual-tree walk
+  enumerates `VisualTreeHelper` children only, so a XAML HR of the page's type replaces
+  nothing; navigation then declines to refresh (the keep-active-instance cascade skip +
+  `no segments to navigate`). Revealing the panel shows the pre-HR placeholder.
 - **Layout**: `HotReloadRegionPage` (visibility panel). The test collapses `ContentGrid`
   BEFORE navigating `Stranded` → `HotReloadStrandedContentPage` into it — the deterministic
-  stand-in for "the app view gets no layout pass during generation", which is why the Studio
-  bug only reproduces on WASM (hidden app view) and not desktop (always-composited window).
+  stand-in for "the hosted app's view gets no layout pass while its pages are filled",
+  which is why the original bug only reproduced in a hidden hosted app view (WASM) and
+  not in an always-composited desktop window.
 - **HR change**: XAML on `HotReloadStrandedContentPage.xaml` — `Text="placeholder"` →
   `Text="filled"`.
 - **Trigger**: reveal the panel (`ContentGrid.Visibility = Visible`) after the HR delta.
@@ -245,8 +246,12 @@ Each child `Region.Name` is a selectable target. See docs:
   without awaiting and polls for `Frame.Content` instead. Preconditions assert the
   live-but-unmaterialized state so a harness regression can't silently turn this into a
   test of nothing.
-- **Status (2026-07-17)**: RED by design — lands with the fix (Uno `Frame.HotReload.cs`
-  patching current `Content` like the BackStack + Extensions re-hooking the new instance).
+- **Status (2026-07-17)**: red/fix/green verified locally. Red on stock Uno 6.6.0-dev.982;
+  green with the two-part fix: Uno `Frame.HotReload.cs` `PatchStrandedContent` (re-creates
+  unmaterialized `Frame.Content` when its type was updated — including in-place EnC updates
+  where the type identity is unchanged) + Extensions `NavigationFrameContentUpdateHandler`
+  (re-hooks `FrameNavigator` onto the replaced instance from `AfterVisualTreeUpdate`).
+  Goes green in CI once the Uno fix ships in the pinned Uno version.
 
 - **ID**: `When_UpdateStackPanelChildAfterHR_Then_NewlyShownChildReflectsUpdate`
 - **Goal**: Same as above but with a `StackPanel` instead of `Grid`.

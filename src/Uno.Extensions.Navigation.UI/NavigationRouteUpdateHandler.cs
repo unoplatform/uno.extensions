@@ -428,8 +428,8 @@ internal static class NavigationRouteUpdateHandler
 			}
 			else if (Region.Logger.IsEnabled(LogLevel.Warning))
 			{
-				// [NAV-HR-DIAG] #3130: this is the studio.live#2293 keep-active-instance skip —
-				// if the visible content is stale, this log proves the cascade declined to re-show.
+				// [NAV-HR-DIAG] #3130: this is the keep-active-instance skip (see the RebuildRoutes
+				// comment) — if the visible content is stale, this log proves the cascade declined to re-show.
 				Region.Logger.LogWarningMessage($"[NAV-HR-DIAG] Cascade skip on region '{region.Name ?? string.Empty}': IsDefault '{defaultNested.Path}' suppressed because descendant region '{conflict.Value.RegionName}' already has active route '{conflict.Value.ActiveRouteBase}' (matches nested path of '{currentBase}')");
 			}
 		}

@@ -7,10 +7,10 @@ using Uno.Extensions.Navigation.Regions;
 namespace Uno.Extensions.Navigation.UI;
 
 /// <summary>
-/// TEMPORARY diagnostic instrumentation for unoplatform/uno.extensions#3130 /
-/// unoplatform/studio.live#3079 — determines whether a live default page filled by an
-/// external Hot Reload is (a) never replaced in the visual tree, or (b) replaced but
-/// re-shown as the stale instance by navigation. Rides Uno's element-update pipeline
+/// TEMPORARY diagnostic instrumentation for unoplatform/uno.extensions#3130 —
+/// determines whether a live default page filled by an external Hot Reload is
+/// (a) never replaced in the visual tree, or (b) replaced but re-shown as the
+/// stale instance by navigation. Rides Uno's element-update pipeline
 /// (ElementUpdateAgent) so every callback is logged relative to the HR UI-update phase.
 /// All messages carry the [NAV-HR-DIAG] marker. DO NOT MERGE — debug only.
 /// </summary>

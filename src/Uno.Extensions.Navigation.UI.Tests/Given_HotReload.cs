@@ -348,16 +348,16 @@ public class Given_HotReload
 	}
 
 	/// <summary>
-	/// Deterministic repro for unoplatform/uno.extensions#3130 / unoplatform/studio.live#3079
-	/// (RED until the stranded-page fix lands). A page that is live but NOT materialized —
-	/// its host panel is Collapsed, the deterministic stand-in for "the app view gets no
-	/// layout pass during generation" proven in the WASM investigation — exists only as
+	/// Deterministic repro for unoplatform/uno.extensions#3130 (RED until the stranded-page
+	/// fix lands). A page that is live but NOT materialized — its host panel is Collapsed,
+	/// the deterministic stand-in for "the hosted app's view gets no layout pass while an
+	/// external tool fills its pages" proven in the WASM investigation — exists only as
 	/// <c>Frame.Content</c>, never as a visual child. Uno's HR visual-tree walk enumerates
 	/// <c>VisualTreeHelper</c> children only, so a XAML hot reload of that page's type
-	/// replaces nothing, and navigation keeps the stale instance (the #2293 cascade skip +
-	/// "no segments to navigate" both decline to refresh). Revealing the panel afterwards
-	/// shows the pre-HR placeholder — the studio.live "default tab renders its scaffolded
-	/// placeholder" symptom.
+	/// replaces nothing, and navigation keeps the stale instance (the keep-active-instance
+	/// cascade skip + "no segments to navigate" both decline to refresh). Revealing the
+	/// panel afterwards shows the pre-HR placeholder — the "default tab renders its
+	/// scaffolded placeholder" symptom from the original report.
 	/// </summary>
 	[TestMethod]
 	[RunsOnUIThread]

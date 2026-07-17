@@ -686,6 +686,69 @@ public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 	protected override Task CheckLoadedAsync() => _content is not null ? _content.EnsureLoadedWhileHostAttached(Region.View) : Task.CompletedTask;
 
 	/// <summary>
+	/// Re-hooks navigation state onto a frame content instance that was replaced outside
+	/// navigation. Uno's hot-reload element update can patch <c>Frame.Content</c> directly
+	/// (e.g. for a page that was never materialized in the visual tree — see
+	/// uno.extensions#3130); that path raises no <c>Frame.Navigated</c>, so
+	/// <see cref="CurrentView"/> would keep pointing at the dead instance and nested
+	/// regions would stay attached to it.
+	/// </summary>
+	internal void RehookCurrentViewAfterHotReload()
+	{
+		if (Control?.Content is not FrameworkElement current || ReferenceEquals(current, _content))
+		{
+			return;
+		}
+
+		if (Logger.IsEnabled(LogLevel.Warning))
+		{
+			Logger.LogWarningMessage($"[NAV-HR-DIAG] FrameNavigator re-hooking hot-reloaded content: {(_content is null ? "<null>" : $"{_content.GetType().FullName}#{System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(_content):X8}")} -> {current.GetType().FullName}#{System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(current):X8} (route '{Route?.Base}')");
+		}
+
+		_content = current;
+
+		if (current is Page page)
+		{
+			// Mirror EnsurePageLoaded for the externally created instance: the region name
+			// drives PanelVisiblityNavigator.FindByPath and route resolution.
+			page.SetName(Route?.Base ?? string.Empty);
+			page.ReassignRegionParent();
+		}
+
+		// The replaced instance carries the stale placeholder's DataContext (Uno's frame
+		// element-update handler copies it during the swap), so every binding targets a
+		// view model built from the pre-update types and renders empty. Rebuild the view
+		// model through the standard pipeline; refresh:true is required because an
+		// in-place (EnC) update keeps the type identity, which the default "wrong type"
+		// check would treat as still valid.
+		if (Route is { Base.Length: > 0 } route && Resolver.FindByPath(route.Base) is { } mapping)
+		{
+			_ = RefreshViewModelAfterHotReloadAsync(route, mapping);
+		}
+	}
+
+	private async Task RefreshViewModelAfterHotReloadAsync(Route route, RouteInfo mapping)
+	{
+		try
+		{
+			var request = new NavigationRequest(this, route);
+			await InitializeCurrentView(request, route, mapping, refresh: true);
+
+			if (Logger.IsEnabled(LogLevel.Warning))
+			{
+				Logger.LogWarningMessage($"[NAV-HR-DIAG] FrameNavigator refreshed view model for route '{route.Base}' after hot-reload content swap (vm={CurrentView?.DataContext?.GetType().FullName ?? "<null>"})");
+			}
+		}
+		catch (Exception ex)
+		{
+			if (Logger.IsEnabled(LogLevel.Warning))
+			{
+				Logger.LogWarningMessage($"[NAV-HR-DIAG] FrameNavigator view-model refresh after hot-reload failed for route '{route.Base}': {ex.GetType().Name}: {ex.Message}. The page keeps the copied (stale) DataContext.");
+			}
+		}
+	}
+
+	/// <summary>
 	/// Captures the currently active nested route by checking child navigator routes
 	/// against the route map's nested routes. This avoids using Region.GetRoute() which
 	/// uses a Merge function that picks children by string length and can select the
