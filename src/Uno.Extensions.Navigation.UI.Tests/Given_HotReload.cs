@@ -403,7 +403,7 @@ public class Given_HotReload
 		// WASM repro showed for 9.5 minutes. The page instance is still created synchronously
 		// enough for the poll below. Observe the task so a later fault is not unobserved.
 		var navTask = panelNavigator.NavigateRouteAsync(hostPage, "Stranded");
-		var navTaskObservation = navTask.ContinueWith(static t => t.Exception?.GetBaseException(), TaskScheduler.Default);
+		_ = navTask.ContinueWith(static t => t.Exception?.GetBaseException(), TaskScheduler.Default);
 
 		var strandedFrame = await WaitForStrandedFrameAsync(hostPage.ContentGrid, TimeSpan.FromSeconds(30), ct);
 		var stalePage = (HotReloadStrandedContentPage)strandedFrame.Content;
@@ -417,7 +417,7 @@ public class Given_HotReload
 
 		// XAML HR: fill the placeholder while the page is live but unmaterialized. The helper
 		// awaits delta delivery; disposal reverts the file on scope exit.
-		await using var _ = await HotReloadHelper.UpdateSourceFile(
+		await using var fileRevert = await HotReloadHelper.UpdateSourceFile(
 			"../../Uno.Extensions.Navigation.UI.Tests/Pages/HotReloadStrandedContentPage.xaml",
 			"Text=\"placeholder\"",
 			"Text=\"filled\"",

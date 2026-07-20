@@ -149,9 +149,9 @@ public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 
 			// [NAV-HR-DIAG] #3130: the post-HR "RenderView changed" bypass — log the comparison
 			// inputs; a false negative here leaves the stale page in place.
-			if (Logger.IsEnabled(LogLevel.Warning))
+			if (Logger.IsEnabled(LogLevel.Debug))
 			{
-				Logger.LogWarningMessage($"[NAV-HR-DIAG] FrameNavigator forward: 0 segments at route '{route.Base}'. HR bypass check: resolver RenderView={currentMapping?.RenderView?.FullName ?? "<null>"} vs frame.SourcePageType={Control!.SourcePageType?.FullName ?? "<null>"} frame.Content={(Control.Content is null ? "<null>" : $"{Control.Content.GetType().FullName}#{System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(Control.Content):X8}")}");
+				Logger.LogDebugMessage($"[NAV-HR-DIAG] FrameNavigator forward: 0 segments at route '{route.Base}'. HR bypass check: resolver RenderView={currentMapping?.RenderView?.FullName ?? "<null>"} vs frame.SourcePageType={Control!.SourcePageType?.FullName ?? "<null>"} frame.Content={(Control.Content is null ? "<null>" : $"{Control.Content.GetType().FullName}#{System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(Control.Content):X8}")}");
 			}
 
 			if (currentMapping?.RenderView is not null &&
@@ -167,9 +167,9 @@ public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 			// [NAV-HR-DIAG] #3130: "already at this route" — navigation intentionally leaves
 			// the currently displayed instance alone. If that instance is the pre-HR
 			// placeholder, this is the moment the framework decided not to refresh it.
-			if (Logger.IsEnabled(LogLevel.Warning))
+			if (Logger.IsEnabled(LogLevel.Debug))
 			{
-				Logger.LogWarningMessage($"[NAV-HR-DIAG] FrameNavigator forward: no segments to navigate for route '{route.Base}' — keeping current content {(Control.Content is null ? "<null>" : $"{Control.Content.GetType().FullName}#{System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(Control.Content):X8}")}");
+				Logger.LogDebugMessage($"[NAV-HR-DIAG] FrameNavigator forward: no segments to navigate for route '{route.Base}' — keeping current content {(Control.Content is null ? "<null>" : $"{Control.Content.GetType().FullName}#{System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(Control.Content):X8}")}");
 			}
 
 			Control.ReassignRegionParent();
@@ -565,10 +565,10 @@ public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 			// type (e.g. MenuPage#1) while viewType from the route table is the original type —
 			// this comparison decides between "keep what's shown" and "re-instantiate", both of
 			// which can surface/revive a stale instance. Log the full identities.
-			if (Logger.IsEnabled(LogLevel.Warning))
+			if (Logger.IsEnabled(LogLevel.Debug))
 			{
 				var currentContent = Control.Content;
-				Logger.LogWarningMessage($"[NAV-HR-DIAG] FrameNavigator.Show path='{path}' viewType={viewType.FullName} frame.Content={(currentContent is null ? "<null>" : $"{currentContent.GetType().FullName}#{System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(currentContent):X8}")} willNavigate={Control.Content?.GetType() != viewType}");
+				Logger.LogDebugMessage($"[NAV-HR-DIAG] FrameNavigator.Show path='{path}' viewType={viewType.FullName} frame.Content={(currentContent is null ? "<null>" : $"{currentContent.GetType().FullName}#{System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(currentContent):X8}")} willNavigate={Control.Content?.GetType() != viewType}");
 			}
 
 			if (Control.Content?.GetType() != viewType)
@@ -579,9 +579,9 @@ public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 
 				// [NAV-HR-DIAG] #3130: identity of the freshly created page — if this hash
 				// replaces a newer HR-built instance, navigation just revived stale XAML.
-				if (Logger.IsEnabled(LogLevel.Warning) && Control.Content is { } newContent)
+				if (Logger.IsEnabled(LogLevel.Debug) && Control.Content is { } newContent)
 				{
-					Logger.LogWarningMessage($"[NAV-HR-DIAG] FrameNavigator.Show NAVIGATED -> {newContent.GetType().FullName}#{System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(newContent):X8}");
+					Logger.LogDebugMessage($"[NAV-HR-DIAG] FrameNavigator.Show NAVIGATED -> {newContent.GetType().FullName}#{System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(newContent):X8}");
 				}
 
 				var currentPage = Control.Content as Page;
@@ -738,6 +738,11 @@ public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 			{
 				Logger.LogWarningMessage($"[NAV-HR-DIAG] FrameNavigator refreshed view model for route '{route.Base}' after hot-reload content swap (vm={CurrentView?.DataContext?.GetType().FullName ?? "<null>"})");
 			}
+		}
+		catch (OperationCanceledException)
+		{
+			// Expected when the dispatcher is torn down mid-refresh (e.g. host shutdown
+			// right after an HR delivery). Silent — not an error.
 		}
 		catch (Exception ex)
 		{

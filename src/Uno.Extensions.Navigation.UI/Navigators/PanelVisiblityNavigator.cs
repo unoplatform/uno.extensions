@@ -90,9 +90,9 @@ public class PanelVisiblityNavigator : ControlNavigator<Panel>
 
 		// [NAV-HR-DIAG] #3130: capture the identity of what is currently shown vs. what this
 		// Show pass resolves — proves whether navigation re-shows a stale (pre-HR) instance.
-		if (Logger.IsEnabled(LogLevel.Warning))
+		if (Logger.IsEnabled(LogLevel.Debug))
 		{
-			Logger.LogWarningMessage($"[NAV-HR-DIAG] PanelVisiblityNavigator.Show ENTER path='{path}' viewType={viewType?.FullName ?? "<null>"} current={DescribeInstance(CurrentlyVisibleControl)} clearing {Region.Children.Count} child region(s)");
+			Logger.LogDebugMessage($"[NAV-HR-DIAG] PanelVisiblityNavigator.Show ENTER path='{path}' viewType={viewType?.FullName ?? "<null>"} current={DescribeInstance(CurrentlyVisibleControl)} clearing {Region.Children.Count} child region(s)");
 		}
 
 		// Clear all child navigation regions
@@ -132,9 +132,9 @@ public class PanelVisiblityNavigator : ControlNavigator<Panel>
 			}
 		}
 
-		if (Logger.IsEnabled(LogLevel.Warning))
+		if (Logger.IsEnabled(LogLevel.Debug))
 		{
-			Logger.LogWarningMessage($"[NAV-HR-DIAG] PanelVisiblityNavigator.Show RESOLVED path='{path}' -> {DescribeInstance(controlToShow)} (reused-existing-child={reusedExistingChild})");
+			Logger.LogDebugMessage($"[NAV-HR-DIAG] PanelVisiblityNavigator.Show RESOLVED path='{path}' -> {DescribeInstance(controlToShow)} (reused-existing-child={reusedExistingChild})");
 		}
 
 		if (controlToShow is UI.Controls.FrameView)
@@ -193,14 +193,14 @@ public class PanelVisiblityNavigator : ControlNavigator<Panel>
 				// [NAV-HR-DIAG] #3130: after visibility pass, dump each child (incl. what the
 				// FrameView's inner Frame is actually displaying) so the stale-vs-fresh instance
 				// on the visible tab is provable from the logs.
-				if (Logger.IsEnabled(LogLevel.Warning))
+				if (Logger.IsEnabled(LogLevel.Debug))
 				{
 					foreach (var child in Control.Children.OfType<FrameworkElement>())
 					{
 						var frameContent = child is UI.Controls.FrameView fv && fv.Content is Frame navFrame
 							? $" frame.Content={DescribeInstance(navFrame.Content as FrameworkElement)}"
 							: string.Empty;
-						Logger.LogWarningMessage($"[NAV-HR-DIAG] PanelVisiblityNavigator.PostNavigate child={DescribeInstance(child)} name='{child.GetName() ?? child.Name}' vis={child.Visibility} opacity={child.Opacity}{frameContent}");
+						Logger.LogDebugMessage($"[NAV-HR-DIAG] PanelVisiblityNavigator.PostNavigate child={DescribeInstance(child)} name='{child.GetName() ?? child.Name}' vis={child.Visibility} opacity={child.Opacity}{frameContent}");
 					}
 				}
 			});

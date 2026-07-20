@@ -24,19 +24,20 @@ internal static class NavigationFrameContentUpdateHandler
 {
 	public static void AfterVisualTreeUpdate(Type[]? updatedTypes)
 	{
-		// Hot-Design-originated cycles arrive with an empty type list (the write is muted
-		// upstream) — nothing was replaced, so there is nothing to re-hook.
-		if (updatedTypes is null || updatedTypes.Length == 0)
+		// Hot-Design-originated cycles arrive with an EMPTY type list (the write is muted
+		// upstream) — nothing was replaced, so there is nothing to re-hook. A null list
+		// means "types unknown" and must still re-hook: the mismatch check below is what
+		// decides whether anything actually changed.
+		if (updatedTypes is { Length: 0 })
 		{
 			return;
 		}
 
-		foreach (var ctx in NavigationRouteUpdateHandler.ActiveContexts)
+		foreach (var root in NavigationRouteUpdateHandler.ActiveContexts
+			.Select(static ctx => ctx.RootRegion)
+			.OfType<IRegion>())
 		{
-			if (ctx.RootRegion is { } root)
-			{
-				RehookReplacedFrameContent(root);
-			}
+			RehookReplacedFrameContent(root);
 		}
 	}
 

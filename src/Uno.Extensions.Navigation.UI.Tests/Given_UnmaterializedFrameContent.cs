@@ -46,15 +46,18 @@ public class Given_UnmaterializedFrameContent
 			// "not materialized" assertion below is about steady state, not a race.
 			await Task.Delay(1000);
 
-			var page = frame.Content as TestPageOne;
-			page.Should().NotBeNull("Frame.Navigate must set Frame.Content even without a layout pass");
+			if (frame.Content is not TestPageOne page)
+			{
+				Assert.Fail("Frame.Navigate must set Frame.Content even without a layout pass");
+				return;
+			}
 
 			var descendants = Descendants(frame).ToArray();
 			var pageMaterialized = descendants.Contains(page);
 
 			pageMaterialized.Should().BeFalse(
 				"PROBE: a page under a Collapsed ancestor should exist only as Frame.Content, not as a " +
-				$"visual child (frame.IsLoaded={frame.IsLoaded}, page.IsLoaded={page!.IsLoaded}, " +
+				$"visual child (frame.IsLoaded={frame.IsLoaded}, page.IsLoaded={page.IsLoaded}, " +
 				$"frame visual descendants=[{string.Join(", ", descendants.Select(d => d.GetType().Name))}])");
 
 			// Sanity half: making the ancestor visible must materialize and load the page.
