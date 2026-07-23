@@ -1,5 +1,6 @@
 using System;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -73,12 +74,26 @@ public class Given_JsonSerializationOptions
 	{
 		var context = new HostBuilderContext(new System.Collections.Generic.Dictionary<object, object>());
 		var services = new ServiceCollection();
+
+		// Register HostedType through source generation so the serializer sanity check below still works
+		// when System.Text.Json reflection is disabled (the AOT/trimming test config), matching the repo
+		// rule to always use generated serializers. Mirrors the split in ServiceCollectionExtensionsTests.
+#if WITH_AOT_TRIMMING
+		services.AddJsonSerialization(context, HostedTypeContext.Default);
+#else
 		services.AddSystemTextJsonSerialization(context);
+#endif
 		return services.BuildServiceProvider();
 	}
+}
 
-	public sealed class HostedType
-	{
-		public int Value { get; set; }
-	}
+public sealed class HostedType
+{
+	public int Value { get; set; }
+}
+
+[JsonSourceGenerationOptions]
+[JsonSerializable(typeof(HostedType))]
+internal sealed partial class HostedTypeContext : JsonSerializerContext
+{
 }
