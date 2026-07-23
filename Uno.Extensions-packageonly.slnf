@@ -7,6 +7,7 @@
       "src\\Uno.Extensions.Authentication.UI\\Uno.Extensions.Authentication.WinUI.csproj",
       "src\\Uno.Extensions.Authentication\\Uno.Extensions.Authentication.csproj",
       "src\\Uno.Extensions.Configuration\\Uno.Extensions.Configuration.csproj",
+      "src\\Uno.Extensions.Configuration.Tests\\Uno.Extensions.Configuration.Tests.csproj",
       "src\\Uno.Extensions.Core.Generators\\Uno.Extensions.Core.Generators.csproj",
       "src\\Uno.Extensions.Core.Tests\\Uno.Extensions.Core.Tests.csproj",
       "src\\Uno.Extensions.Core.UI\\Uno.Extensions.Core.WinUI.csproj",

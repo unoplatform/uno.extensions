@@ -84,7 +84,7 @@ public static class HotReloadService
 		{
 			if (targets.Contains(entry.Key) || targets.Contains(entry.Value))
 			{
-				((IDictionary<Type, Type>)_latestShadow).Remove(entry.Key);
+				_latestShadow.TryRemove(entry.Key, out _);
 			}
 		}
 	}
@@ -111,7 +111,7 @@ public static class HotReloadService
 			if (AssemblyLoadContext.GetLoadContext(entry.Key.Assembly) == context ||
 				AssemblyLoadContext.GetLoadContext(entry.Value.Assembly) == context)
 			{
-				((IDictionary<Type, Type>)_latestShadow).Remove(entry.Key);
+				_latestShadow.TryRemove(entry.Key, out _);
 			}
 		}
 

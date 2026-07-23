@@ -23,8 +23,4 @@
 		<ProjectReference Include="..\Uno.Extensions.Hosting\Uno.Extensions.Hosting.csproj" />
 	</ItemGroup>
 
-	<ItemGroup>
-		<InternalsVisibleTo Include="Uno.Extensions.Serialization.Tests" />
-	</ItemGroup>
-
 </Project>
