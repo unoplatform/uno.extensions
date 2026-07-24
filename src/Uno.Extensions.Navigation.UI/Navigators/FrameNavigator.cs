@@ -675,6 +675,16 @@ public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 	/// The types applied by the hot-reload delta; used to decide whether the mapped view
 	/// model must be rebuilt. <see langword="null"/> means the delta's types are unknown.
 	/// </param>
+	/// <remarks>
+	/// Interplay with the HR cascade (<see cref="UI.NavigationRouteUpdateHandler"/>), which
+	/// may be queued on the dispatcher for the same HR cycle: the re-hook itself is
+	/// synchronous and issues no navigation, so it cannot interleave with one. The deferred
+	/// view-model refresh is superseded by any navigation that reaches this navigator —
+	/// <see cref="ExecuteRequestAsync"/> bumps <see cref="_hotReloadRefreshToken"/>, turning
+	/// a queued refresh into a no-op — and a cascade dispatched into a nested region (the
+	/// IsDefault path targets the page's child region) operates on that region's own scope
+	/// and never touches this page's DataContext, so the two cannot write the same state.
+	/// </remarks>
 	internal void RehookCurrentViewAfterHotReload(Type[]? updatedTypes)
 	{
 		if (Control?.Content is not FrameworkElement current || ReferenceEquals(current, _content))
