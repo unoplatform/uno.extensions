@@ -721,15 +721,7 @@ public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 		}
 
 		var canonicalViewModel = OriginalType(viewModelType);
-		foreach (var updatedType in updatedTypes)
-		{
-			if (OriginalType(updatedType) == canonicalViewModel)
-			{
-				return true;
-			}
-		}
-
-		return false;
+		return updatedTypes.Any(updatedType => OriginalType(updatedType) == canonicalViewModel);
 	}
 
 	private static Type OriginalType(Type type)

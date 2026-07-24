@@ -66,10 +66,13 @@ public class Given_FrameContentRehook
 
 		var frameView = (FrameView)root.Content!;
 		var frame = (Frame)frameView.FindName("NavigationFrame");
-		var frameNavigator = frameView.Navigator as FrameNavigator;
-		frameNavigator.Should().NotBeNull("the FrameView's navigator must be the inner Frame's FrameNavigator");
+		if (frameView.Navigator is not FrameNavigator frameNavigator)
+		{
+			throw new InvalidOperationException(
+				$"The FrameView's navigator must be the inner Frame's FrameNavigator (was {frameView.Navigator?.GetType().Name ?? "<null>"}).");
+		}
 
-		return (host, frame, frameNavigator!);
+		return (host, frame, frameNavigator);
 	}
 
 	/// <summary>
