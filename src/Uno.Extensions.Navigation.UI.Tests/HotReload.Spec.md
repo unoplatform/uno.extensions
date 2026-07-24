@@ -253,6 +253,20 @@ Each child `Region.Name` is a selectable target. See docs:
   (re-hooks `FrameNavigator` onto the replaced instance from `AfterVisualTreeUpdate`).
   Goes green in CI once the Uno fix ships in the pinned Uno version.
 
+- **ID**: `Given_FrameContentRehook` (4 tests)
+- **Goal**: Pin `FrameNavigator.RehookCurrentViewAfterHotReload`'s view-model refresh
+  decision without the HR harness: the external content swap is simulated by assigning
+  `Frame.Content` directly (which, like Uno's frame element-update handler, raises no
+  `Frame.Navigated`).
+- **Assertions**: a delta that does NOT contain the mapped VM type preserves the copied
+  DataContext (un-persisted VM state survives a XAML-only edit); a delta containing the
+  VM type rebuilds the VM (an in-place EnC update keeps the type identity, so the
+  wrong-type check alone cannot detect it); a replacement without a DataContext gets a
+  VM built through the standard pipeline (#3130 recovery); no swap → no-op.
+- **Notes**: runs in the primary test app (no `[RunsInSecondaryApp]`), because no real
+  HR delta is applied. The refresh itself is deferred onto the dispatcher and guarded by
+  a token + content-identity check so a navigation that lands first wins.
+
 - **ID**: `When_UpdateStackPanelChildAfterHR_Then_NewlyShownChildReflectsUpdate`
 - **Goal**: Same as above but with a `StackPanel` instead of `Grid`.
 - **Risk**: `StackPanel` doesn't have rows/columns but the region mechanism is identical

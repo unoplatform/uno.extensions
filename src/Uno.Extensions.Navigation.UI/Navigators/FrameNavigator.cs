@@ -89,6 +89,10 @@ public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 
 	protected override Task<Route?> ExecuteRequestAsync(NavigationRequest request)
 	{
+		// A real navigation supersedes any queued hot-reload view-model refresh
+		// (see RefreshViewModelAfterHotReloadAsync).
+		_hotReloadRefreshToken++;
+
 		var route = request.Route;
 
 		// For forward navigation, capture the current child routes before clearing
@@ -146,14 +150,6 @@ public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 			Route?.Base == route.Base)
 		{
 			var currentMapping = Resolver.FindByPath(route.Base);
-
-			// [NAV-HR-DIAG] #3130: the post-HR "RenderView changed" bypass — log the comparison
-			// inputs; a false negative here leaves the stale page in place.
-			if (Logger.IsEnabled(LogLevel.Debug))
-			{
-				Logger.LogDebugMessage($"[NAV-HR-DIAG] FrameNavigator forward: 0 segments at route '{route.Base}'. HR bypass check: resolver RenderView={currentMapping?.RenderView?.FullName ?? "<null>"} vs frame.SourcePageType={Control!.SourcePageType?.FullName ?? "<null>"} frame.Content={(Control.Content is null ? "<null>" : $"{Control.Content.GetType().FullName}#{System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(Control.Content):X8}")}");
-			}
-
 			if (currentMapping?.RenderView is not null &&
 				Control!.SourcePageType != currentMapping.RenderView)
 			{
@@ -164,14 +160,6 @@ public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 		// As this is a forward navigation
 		if (segments.Length == 0)
 		{
-			// [NAV-HR-DIAG] #3130: "already at this route" — navigation intentionally leaves
-			// the currently displayed instance alone. If that instance is the pre-HR
-			// placeholder, this is the moment the framework decided not to refresh it.
-			if (Logger.IsEnabled(LogLevel.Debug))
-			{
-				Logger.LogDebugMessage($"[NAV-HR-DIAG] FrameNavigator forward: no segments to navigate for route '{route.Base}' — keeping current content {(Control.Content is null ? "<null>" : $"{Control.Content.GetType().FullName}#{System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(Control.Content):X8}")}");
-			}
-
 			Control.ReassignRegionParent();
 			if (!(this.Route?.IsEmpty() ?? true) && (route.Data?.Any() ?? false))
 			{
@@ -561,28 +549,11 @@ public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 		Control.Navigated -= Frame_Navigated;
 		try
 		{
-			// [NAV-HR-DIAG] #3130: after an HR swap the live content is the CNOMU replacement
-			// type (e.g. MenuPage#1) while viewType from the route table is the original type —
-			// this comparison decides between "keep what's shown" and "re-instantiate", both of
-			// which can surface/revive a stale instance. Log the full identities.
-			if (Logger.IsEnabled(LogLevel.Debug))
-			{
-				var currentContent = Control.Content;
-				Logger.LogDebugMessage($"[NAV-HR-DIAG] FrameNavigator.Show path='{path}' viewType={viewType.FullName} frame.Content={(currentContent is null ? "<null>" : $"{currentContent.GetType().FullName}#{System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(currentContent):X8}")} willNavigate={Control.Content?.GetType() != viewType}");
-			}
-
 			if (Control.Content?.GetType() != viewType)
 			{
 				if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Invoking Frame.Navigate to type '{viewType.Name}'");
 				var nav = Control.Navigate(viewType, data);
 				_content = Control.Content as FrameworkElement;
-
-				// [NAV-HR-DIAG] #3130: identity of the freshly created page — if this hash
-				// replaces a newer HR-built instance, navigation just revived stale XAML.
-				if (Logger.IsEnabled(LogLevel.Debug) && Control.Content is { } newContent)
-				{
-					Logger.LogDebugMessage($"[NAV-HR-DIAG] FrameNavigator.Show NAVIGATED -> {newContent.GetType().FullName}#{System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(newContent):X8}");
-				}
 
 				var currentPage = Control.Content as Page;
 				if (currentPage is not null)
@@ -685,6 +656,13 @@ public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 
 	protected override Task CheckLoadedAsync() => _content is not null ? _content.EnsureLoadedWhileHostAttached(Region.View) : Task.CompletedTask;
 
+	// Monotonic token identifying the most recent hot-reload re-hook or navigation
+	// request. A queued view-model refresh only applies its result while its token is
+	// still current, so a navigation (or a newer HR cycle) that lands in the meantime
+	// wins. Only mutated on the UI thread (HR element updates and ExecuteRequestAsync
+	// both run on the dispatcher — same threading model as _pendingFailedRequest).
+	private int _hotReloadRefreshToken;
+
 	/// <summary>
 	/// Re-hooks navigation state onto a frame content instance that was replaced outside
 	/// navigation. Uno's hot-reload element update can patch <c>Frame.Content</c> directly
@@ -693,16 +671,20 @@ public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 	/// <see cref="CurrentView"/> would keep pointing at the dead instance and nested
 	/// regions would stay attached to it.
 	/// </summary>
-	internal void RehookCurrentViewAfterHotReload()
+	/// <param name="updatedTypes">
+	/// The types applied by the hot-reload delta; used to decide whether the mapped view
+	/// model must be rebuilt. <see langword="null"/> means the delta's types are unknown.
+	/// </param>
+	internal void RehookCurrentViewAfterHotReload(Type[]? updatedTypes)
 	{
 		if (Control?.Content is not FrameworkElement current || ReferenceEquals(current, _content))
 		{
 			return;
 		}
 
-		if (Logger.IsEnabled(LogLevel.Warning))
+		if (Logger.IsEnabled(LogLevel.Debug))
 		{
-			Logger.LogWarningMessage($"[NAV-HR-DIAG] FrameNavigator re-hooking hot-reloaded content: {(_content is null ? "<null>" : $"{_content.GetType().FullName}#{System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(_content):X8}")} -> {current.GetType().FullName}#{System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(current):X8} (route '{Route?.Base}')");
+			Logger.LogDebugMessage($"Re-hooking frame content replaced by hot-reload for route '{Route?.Base}'");
 		}
 
 		_content = current;
@@ -715,29 +697,92 @@ public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 			page.ReassignRegionParent();
 		}
 
-		// The replaced instance carries the stale placeholder's DataContext (Uno's frame
-		// element-update handler copies it during the swap), so every binding targets a
-		// view model built from the pre-update types and renders empty. Rebuild the view
-		// model through the standard pipeline; refresh:true is required because an
-		// in-place (EnC) update keeps the type identity, which the default "wrong type"
-		// check would treat as still valid.
 		if (Route is { Base.Length: > 0 } route && Resolver.FindByPath(route.Base) is { } mapping)
 		{
-			_ = RefreshViewModelAfterHotReloadAsync(route, mapping);
+			var token = ++_hotReloadRefreshToken;
+			_ = RefreshViewModelAfterHotReloadAsync(current, route, mapping, ViewModelUpdatedBy(updatedTypes, mapping), token);
 		}
 	}
 
-	private async Task RefreshViewModelAfterHotReloadAsync(Route route, RouteInfo mapping)
+	/// <summary>
+	/// True when the hot-reload delta updated the view model mapped to
+	/// <paramref name="mapping"/>. Both sides are canonicalized through
+	/// <see cref="OriginalType"/> so the comparison holds regardless of generation:
+	/// an in-place (EnC) update keeps the <see cref="Type"/> identity, while a
+	/// CreateNewOnMetadataUpdate replacement is a new type linked to the original via
+	/// <see cref="System.Runtime.CompilerServices.MetadataUpdateOriginalTypeAttribute"/> —
+	/// on either the delta side or the (possibly rebuilt) route-table side.
+	/// </summary>
+	private static bool ViewModelUpdatedBy(Type[]? updatedTypes, RouteInfo mapping)
+	{
+		if (updatedTypes is null || mapping.ViewModel is not { } viewModelType)
+		{
+			return false;
+		}
+
+		var canonicalViewModel = OriginalType(viewModelType);
+		foreach (var updatedType in updatedTypes)
+		{
+			if (OriginalType(updatedType) == canonicalViewModel)
+			{
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	private static Type OriginalType(Type type)
+		=> type.GetCustomAttributes(inherit: false)
+			.OfType<System.Runtime.CompilerServices.MetadataUpdateOriginalTypeAttribute>()
+			.FirstOrDefault()?.OriginalType ?? type;
+
+	private async Task RefreshViewModelAfterHotReloadAsync(FrameworkElement view, Route route, RouteInfo mapping, bool viewModelUpdated, int token)
 	{
 		try
 		{
-			var request = new NavigationRequest(this, route);
-			await InitializeCurrentView(request, route, mapping, refresh: true);
-
-			if (Logger.IsEnabled(LogLevel.Warning))
+			// Deferred onto the dispatcher queue — the same queue that executes control
+			// navigation (ControlCoreNavigateAsync) — so the refresh runs after the HR
+			// pipeline has drained instead of in the middle of the element-update walk.
+			await Dispatcher.ExecuteAsync(async _ =>
 			{
-				Logger.LogWarningMessage($"[NAV-HR-DIAG] FrameNavigator refreshed view model for route '{route.Base}' after hot-reload content swap (vm={CurrentView?.DataContext?.GetType().FullName ?? "<null>"})");
-			}
+				// A navigation or a newer HR cycle may have landed while this refresh was
+				// queued; its result must win, so bail out instead of stomping the newer
+				// page's DataContext or racing its view-model construction.
+				if (token != _hotReloadRefreshToken || !ReferenceEquals(Control?.Content, view))
+				{
+					return;
+				}
+
+				var navigator = Region.Navigator();
+				var services = navigator?.Get<IServiceProvider>();
+				if (navigator is null || services is null)
+				{
+					return;
+				}
+
+				// The replaced instance carries the previous instance's DataContext (Uno's
+				// frame element-update handler copies it during the swap). Rebuild the view
+				// model only when it is missing, of the wrong type, or its type was part of
+				// the delta — an in-place (EnC) update keeps the type identity, which the
+				// "wrong type" check alone would treat as still valid. For a XAML-only delta
+				// the copied DataContext IS the live view model and is preserved, along with
+				// any un-persisted state it holds.
+				var viewModel = view.DataContext;
+				if (viewModelUpdated || viewModel is null || viewModel.GetType() != mapping.ViewModel)
+				{
+					viewModel = await CreateViewModel(services, new NavigationRequest(this, route), route, mapping);
+
+					// Re-check before applying: CreateViewModel resumes off the dispatcher,
+					// and a navigation that completed meanwhile must win.
+					if (token != _hotReloadRefreshToken || !ReferenceEquals(Control?.Content, view))
+					{
+						return;
+					}
+				}
+
+				await view.InjectServicesAndSetDataContextAsync(services, navigator, viewModel);
+			});
 		}
 		catch (OperationCanceledException)
 		{
@@ -746,9 +791,11 @@ public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 		}
 		catch (Exception ex)
 		{
+			// Fire-and-forget boundary (nothing awaits this task): an unhandled throw would
+			// surface as an unobserved task exception, so log and keep the copied DataContext.
 			if (Logger.IsEnabled(LogLevel.Warning))
 			{
-				Logger.LogWarningMessage($"[NAV-HR-DIAG] FrameNavigator view-model refresh after hot-reload failed for route '{route.Base}': {ex.GetType().Name}: {ex.Message}. The page keeps the copied (stale) DataContext.");
+				Logger.LogWarningMessage($"View-model refresh after hot-reload failed for route '{route.Base}': {ex.GetType().Name}: {ex.Message}. The page keeps the copied DataContext.");
 			}
 		}
 	}

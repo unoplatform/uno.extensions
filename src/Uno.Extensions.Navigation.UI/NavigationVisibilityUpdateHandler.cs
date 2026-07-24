@@ -32,12 +32,6 @@ internal static class NavigationVisibilityUpdateHandler
 		if (IsNavigationManagedElement(element))
 		{
 			stateDictionary[VisibilityKey] = element.Visibility;
-
-			// [NAV-HR-DIAG] #3130: low-volume — only fires for navigation-managed elements.
-			if (Region.Logger.IsEnabled(LogLevel.Warning))
-			{
-				Region.Logger.LogWarningMessage($"[NAV-HR-DIAG] CaptureState element={element.GetType().FullName}#{System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(element):X8} name='{element.GetName() ?? element.Name}' vis={element.Visibility}");
-			}
 		}
 
 		// Capture whether this element (or any child) had a region with active navigation.
@@ -78,13 +72,6 @@ internal static class NavigationVisibilityUpdateHandler
 		if (stateDictionary.ContainsKey(HadActiveNavigationKey)
 			&& element.GetInstance() is NavigationRegion newRegion)
 		{
-			// [NAV-HR-DIAG] #3130: the new element made it to RestoreState — the swap DID happen
-			// for this element; what follows decides whether navigation reacts to it.
-			if (Region.Logger.IsEnabled(LogLevel.Warning))
-			{
-				Region.Logger.LogWarningMessage($"[NAV-HR-DIAG] RestoreState HadActiveNavigation element={element.GetType().FullName}#{System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(element):X8} name='{element.GetName() ?? element.Name}' — marking region replaced-by-HR and requesting route-relevant cascade");
-			}
-
 			newRegion.MarkReplacedByHotReload();
 
 			// Only trigger a route cascade when at least one updated type is a

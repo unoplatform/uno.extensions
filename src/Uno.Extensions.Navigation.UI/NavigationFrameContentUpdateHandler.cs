@@ -37,20 +37,20 @@ internal static class NavigationFrameContentUpdateHandler
 			.Select(static ctx => ctx.RootRegion)
 			.OfType<IRegion>())
 		{
-			RehookReplacedFrameContent(root);
+			RehookReplacedFrameContent(root, updatedTypes);
 		}
 	}
 
-	private static void RehookReplacedFrameContent(IRegion region)
+	private static void RehookReplacedFrameContent(IRegion region, Type[]? updatedTypes)
 	{
 		if (region.Navigator() is FrameNavigator frameNavigator)
 		{
-			frameNavigator.RehookCurrentViewAfterHotReload();
+			frameNavigator.RehookCurrentViewAfterHotReload(updatedTypes);
 		}
 
 		foreach (var child in region.Children.ToArray())
 		{
-			RehookReplacedFrameContent(child);
+			RehookReplacedFrameContent(child, updatedTypes);
 		}
 	}
 }

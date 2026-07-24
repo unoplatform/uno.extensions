@@ -53,8 +53,7 @@ internal static class NavigationRouteUpdateHandler
 
 	/// <summary>
 	/// Snapshot of the registered contexts, for the hot-reload handlers that walk the
-	/// live region trees (<see cref="NavigationHotReloadDiagnostics"/>,
-	/// <see cref="NavigationFrameContentUpdateHandler"/>).
+	/// live region trees (<see cref="NavigationFrameContentUpdateHandler"/>).
 	/// </summary>
 	internal static IReadOnlyList<NavigationRouteContext> ActiveContexts => _contexts;
 
@@ -84,13 +83,9 @@ internal static class NavigationRouteUpdateHandler
 	static void UpdateApplication(Type[]? updatedTypes)
 #pragma warning restore IDE0051
 	{
-		if (Region.Logger.IsEnabled(LogLevel.Warning))
+		if (Region.Logger.IsEnabled(LogLevel.Information))
 		{
-			// [NAV-HR-DIAG] #3130: log the actual type names (not just the count) plus the thread,
-			// so ordering relative to Uno's HR UI-update phase (ElementUpdateAgent callbacks)
-			// can be reconstructed from the logs.
-			var typeNames = updatedTypes is null ? "<null>" : string.Join(", ", updatedTypes.Select(t => t.FullName ?? t.Name));
-			Region.Logger.LogWarningMessage($"[NAV-HR-DIAG] UpdateApplication (raw MetadataUpdateHandler) types=[{typeNames}]; refreshing {_contexts.Count} navigation context(s) (thread={Environment.CurrentManagedThreadId})");
+			Region.Logger.LogInformationMessage($"Hot-reload UpdateApplication received {updatedTypes?.Length ?? 0} updated type(s); refreshing {_contexts.Count} navigation context(s)");
 		}
 
 		// Snapshot under iteration: _contexts is ImmutableList, but a per-context
@@ -214,15 +209,11 @@ internal static class NavigationRouteUpdateHandler
 			// making the edit appear to revert.  See studio.live#2293.
 			if (ShouldCascadeForUpdatedTypes(updatedTypes, resolver))
 			{
-				if (Region.Logger.IsEnabled(LogLevel.Warning))
-				{
-					Region.Logger.LogWarningMessage("[NAV-HR-DIAG] Cascade WILL be scheduled: at least one updated type is a registered navigation route (or updatedTypes is null).");
-				}
 				ScheduleCascade(root, resolver);
 			}
-			else if (Region.Logger.IsEnabled(LogLevel.Warning))
+			else if (Region.Logger.IsEnabled(LogLevel.Debug))
 			{
-				Region.Logger.LogWarningMessage("[NAV-HR-DIAG] Hot-reload cascade skipped: none of the updated types are registered navigation routes.");
+				Region.Logger.LogDebugMessage("Hot-reload cascade skipped: none of the updated types are registered navigation routes.");
 			}
 		}
 	}
@@ -291,15 +282,11 @@ internal static class NavigationRouteUpdateHandler
 			{
 				if (ShouldCascadeForUpdatedTypes(updatedTypes, resolver))
 				{
-					if (Region.Logger.IsEnabled(LogLevel.Warning))
-					{
-						Region.Logger.LogWarningMessage("[NAV-HR-DIAG] Visibility-restore cascade WILL be scheduled (RestoreState path).");
-					}
 					ScheduleCascade(root, resolver);
 				}
-				else if (Region.Logger.IsEnabled(LogLevel.Warning))
+				else if (Region.Logger.IsEnabled(LogLevel.Debug))
 				{
-					Region.Logger.LogWarningMessage("[NAV-HR-DIAG] Hot-reload visibility-restore cascade skipped: none of the updated types are registered navigation routes.");
+					Region.Logger.LogDebugMessage("Hot-reload visibility-restore cascade skipped: none of the updated types are registered navigation routes.");
 				}
 			}
 		}
@@ -317,21 +304,13 @@ internal static class NavigationRouteUpdateHandler
 			return;
 		}
 
-		if (Region.Logger.IsEnabled(LogLevel.Warning))
+		if (Region.Logger.IsEnabled(LogLevel.Debug))
 		{
-			Region.Logger.LogWarningMessage($"[NAV-HR-DIAG] Scheduling cascade walk on dispatcher (root region: '{root.Name ?? string.Empty}', children: {root.Children.Count}, thread={Environment.CurrentManagedThreadId})");
+			Region.Logger.LogDebugMessage($"Scheduling cascade walk on dispatcher (root region: '{root.Name ?? string.Empty}', children: {root.Children.Count})");
 		}
 
 		dispatcher.TryEnqueue(() =>
 		{
-			// [NAV-HR-DIAG] #3130: timestamp when the deferred cascade actually runs — the
-			// ordering race is between this callback and Uno's HR visual-tree swap.
-			if (Region.Logger.IsEnabled(LogLevel.Warning))
-			{
-				Region.Logger.LogWarningMessage($"[NAV-HR-DIAG] Deferred cascade RUNNING on dispatcher (root region: '{root.Name ?? string.Empty}', thread={Environment.CurrentManagedThreadId})");
-				NavigationHotReloadDiagnostics.DumpRegionTrees("cascade-start");
-			}
-
 			CascadeNewDefaultsFromRoot(root, resolver);
 
 			// Re-issue any navigation requests that were dropped earlier because
@@ -417,9 +396,9 @@ internal static class NavigationRouteUpdateHandler
 				var pageNavigator = pageRegion?.Navigator();
 				if (pageNavigator is not null)
 				{
-					if (Region.Logger.IsEnabled(LogLevel.Warning))
+					if (Region.Logger.IsEnabled(LogLevel.Debug))
 					{
-						Region.Logger.LogWarningMessage($"[NAV-HR-DIAG] Cascade dispatching IsDefault '{defaultNested.Path}' to first child '{pageRegion?.Name ?? string.Empty}' of region '{region.Name ?? string.Empty}' (navigator={pageNavigator.GetType().Name}, view={pageRegion?.View?.GetType().Name ?? "<null>"})");
+						Region.Logger.LogDebugMessage($"Cascade dispatching IsDefault '{defaultNested.Path}' to first child '{pageRegion?.Name ?? string.Empty}' of region '{region.Name ?? string.Empty}'");
 					}
 					var route = new Route(Qualifiers.None, Base: defaultNested.Path);
 					var request = new NavigationRequest(pageNavigator, route.AsInternal());
@@ -427,11 +406,9 @@ internal static class NavigationRouteUpdateHandler
 					return;
 				}
 			}
-			else if (Region.Logger.IsEnabled(LogLevel.Warning))
+			else if (Region.Logger.IsEnabled(LogLevel.Debug))
 			{
-				// [NAV-HR-DIAG] #3130: this is the keep-active-instance skip (see the RebuildRoutes
-				// comment) — if the visible content is stale, this log proves the cascade declined to re-show.
-				Region.Logger.LogWarningMessage($"[NAV-HR-DIAG] Cascade skip on region '{region.Name ?? string.Empty}': IsDefault '{defaultNested.Path}' suppressed because descendant region '{conflict.Value.RegionName}' already has active route '{conflict.Value.ActiveRouteBase}' (matches nested path of '{currentBase}')");
+				Region.Logger.LogDebugMessage($"Cascade skip on region '{region.Name ?? string.Empty}': IsDefault '{defaultNested.Path}' suppressed because descendant region '{conflict.Value.RegionName}' already has active route '{conflict.Value.ActiveRouteBase}' (matches nested path of '{currentBase}')");
 			}
 		}
 
