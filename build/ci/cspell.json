@@ -100,6 +100,9 @@
 		"usercontrol",
 		"Validatable",
 		"backstack",
+		"navigations",
+		"reparented",
+		"rollbackable",
 		"viewmap",
 		"datamap",
 		"rollbackable",
@@ -171,7 +174,8 @@
 		"Grial",
 		"Telerik",
 		"listfeed",
-		"Kiota"
+		"Kiota",
+		"Visiblity"
 	],
 	"patterns": [
 		{

@@ -93,6 +93,8 @@ When the `OidcAuthenticationProvider` is automatically built, there are platform
 
 **WebAssembly**: The `OidcAuthenticationProvider` will automatically use the `WebAuthenticationBroker` to obtain redirect URIs during the authentication process. This is done to avoid the need for a redirect to a custom URI scheme, which is not supported in the browser.
 
+**Desktop (Skia — Linux, macOS, Windows)**: On Skia desktop targets, a `SkiaWebAuthenticationBrokerProvider` launches the system's default browser for the OIDC sign-in flow and listens on a local HTTP loopback server (`http://localhost:{port}`) to capture the redirect callback. This enables OIDC authentication on Skia-rendered desktop targets where an in-app browser control is not available. To use this, add a reference to the `Uno.Extensions.Authentication.WinUI.Runtime.Skia` package and call `.AutoRedirectUriFromWebAuthenticationBroker()` on the OIDC builder.
+
 ### Web
 
 The `WebAuthenticationProvider` provides an implementation that displays a web view in order for the user to login. After login, the web view redirects back to the application, along with any tokens. Learn [Web Authentication](xref:Uno.Extensions.Authentication.HowToWebAuthentication)
