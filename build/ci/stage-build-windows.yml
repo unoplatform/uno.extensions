@@ -22,6 +22,10 @@ jobs:
   - template: templates/canary-updater.yml
   - template: templates/gitversion.yml
 
+  - script: dotnet workload install wasm-tools-net9
+    displayName: 'Install wasm-tools workload'
+    retryCountOnTaskFailure: 3
+
   - powershell: |
       dotnet tool update -g dotnet-vs
       $MSBUILDPATH="$(vs where release --prop=InstallationPath)\MSBuild\Current\Bin"
