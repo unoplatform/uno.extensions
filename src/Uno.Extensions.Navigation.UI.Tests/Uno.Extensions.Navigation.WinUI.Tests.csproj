@@ -26,6 +26,7 @@
 		<Page Include="Pages\HotReloadTabBarXamlPage.xaml" />
 		<Page Include="Pages\HotReloadTabBarCommandPage.xaml" />
 		<Page Include="Pages\HotReloadVmXamlPage.xaml" />
+		<Page Include="Pages\HotReloadStrandedContentPage.xaml" />
 	</ItemGroup>
 
 	<ItemGroup>
