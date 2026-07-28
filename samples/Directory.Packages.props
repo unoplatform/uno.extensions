@@ -1,13 +1,13 @@
 <Project ToolsVersion="15.0">
 	<PropertyGroup>
-		<SkiaSharpVersion>3.119.2</SkiaSharpVersion>
+		<SkiaSharpVersion>3.119.1</SkiaSharpVersion>
 		<SvgSkiaVersion>3.0.2</SvgSkiaVersion>
 		<WinAppSdkVersion>1.7.250909003</WinAppSdkVersion>
-		<WinAppSdkBuildToolsVersion>10.0.28000.1721</WinAppSdkBuildToolsVersion>
-		<MicrosoftLoggingVersion>9.0.18</MicrosoftLoggingVersion>
+		<WinAppSdkBuildToolsVersion>10.0.26100.7463</WinAppSdkBuildToolsVersion>
+		<MicrosoftLoggingVersion>9.0.14</MicrosoftLoggingVersion>
 		<WindowsCompatibilityVersion>8.0.15</WindowsCompatibilityVersion>
 		<MicrosoftIdentityClientVersion>4.72.1</MicrosoftIdentityClientVersion>
-		<CommunityToolkitMvvmVersion>8.4.2</CommunityToolkitMvvmVersion>
+		<CommunityToolkitMvvmVersion>8.4.0</CommunityToolkitMvvmVersion>
 		<PrismVersion>9.0.537</PrismVersion>
 		<AndroidMaterialVersion>1.12.0.3</AndroidMaterialVersion>
 		<AndroidXLegacySupportV4Version>1.0.0.33</AndroidXLegacySupportV4Version>

@@ -7,7 +7,7 @@
     <PackageVersion Include="DotNet.ReproducibleBuilds" Version="1.1.1" />
     <PackageVersion Include="FluentAssertions" Version="6.7.0" />
     <PackageVersion Include="Duende.IdentityModel.OidcClient" Version="6.0.1" />
-    <PackageVersion Include="Microsoft.Extensions.Hosting.Abstractions" Version="9.0.18" />
+    <PackageVersion Include="Microsoft.Extensions.Hosting.Abstractions" Version="9.0.14" />
     <PackageVersion Include="Microsoft.Kiota.Abstractions" Version="1.22.2" />
     <PackageVersion Include="Microsoft.Kiota.Http.HttpClientLibrary" Version="1.22.2" />
     <PackageVersion Include="Microsoft.Kiota.Serialization.Form" Version="1.22.2" />
@@ -18,13 +18,13 @@
     <PackageVersion Include="MSTest.TestFramework" Version="2.2.9" />
     <PackageVersion Include="Microsoft.Bcl.AsyncInterfaces" Version="8.0.0" />
     <PackageVersion Include="Microsoft.CodeAnalysis.CSharp" Version="4.1.0" />
-    <PackageVersion Include="Microsoft.Extensions.Configuration.Abstractions" Version="9.0.18" />
-    <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="9.0.18" />
-    <PackageVersion Include="Microsoft.Extensions.Hosting" Version="9.0.18" />
-    <PackageVersion Include="Microsoft.Extensions.Http" Version="9.0.18" />
-    <PackageVersion Include="Microsoft.Extensions.Localization.Abstractions" Version="9.0.18" />
-    <PackageVersion Include="Microsoft.Extensions.Logging" Version="9.0.18" />
-    <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.18" />
+    <PackageVersion Include="Microsoft.Extensions.Configuration.Abstractions" Version="9.0.14" />
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="9.0.14" />
+    <PackageVersion Include="Microsoft.Extensions.Hosting" Version="9.0.14" />
+    <PackageVersion Include="Microsoft.Extensions.Http" Version="9.0.14" />
+    <PackageVersion Include="Microsoft.Extensions.Localization.Abstractions" Version="9.0.14" />
+    <PackageVersion Include="Microsoft.Extensions.Logging" Version="9.0.14" />
+    <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.14" />
     <PackageVersion Include="Microsoft.Identity.Client" Version="4.72.1" />
     <PackageVersion Include="Microsoft.Identity.Client.Extensions.Msal" Version="4.72.1" />
     <PackageVersion Include="Microsoft.Identity.Client.Broker" Version="4.72.1" />
