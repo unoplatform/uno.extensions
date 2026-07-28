@@ -16,6 +16,12 @@ jobs:
   - template: templates/canary-updater.yml
   - template: templates/gitversion.yml
 
+  # SkiaSharp 3.x (pulled in by Uno 6.7+) ships native WebAssembly assets, which makes
+  # the bootstrapper relink the runtime — that requires the wasm-tools workload (UNOWA0001).
+  - script: dotnet workload install wasm-tools
+    displayName: 'Install wasm-tools workload'
+    retryCountOnTaskFailure: 3
+
   - script: |
       dotnet build "testing/TestHarness/TestHarness.sln" /p:Build_Web=true /p:Build_Android=false /p:Build_MacCatalyst=false /p:Build_iOS=false /p:Build_Windows=false /p:Build_Desktop=false /p:Configuration=Release "/p:InformationalVersion=$(NBGV_InformationalVersion)" /p:GeneratePackageOnBuild=false /detailedsummary "/bl:$(build.artifactstagingdirectory)/testharness-wasm.binlog"
 
