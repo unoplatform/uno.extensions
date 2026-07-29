@@ -13,7 +13,7 @@ jobs:
   - template: templates/host-cleanup-linux.yml
 
   - template: templates/dotnet-install.yml
-  - script: dotnet workload install wasm-tools-net9
+  - script: dotnet workload install wasm-tools
     displayName: 'Install wasm-tools workload'
     retryCountOnTaskFailure: 3
   - template: templates/canary-updater.yml
