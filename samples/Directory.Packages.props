@@ -1,6 +1,6 @@
 <Project ToolsVersion="15.0">
 	<PropertyGroup>
-		<SkiaSharpVersion>3.119.1</SkiaSharpVersion>
+		<SkiaSharpVersion>3.119.2</SkiaSharpVersion>
 		<SvgSkiaVersion>3.0.2</SvgSkiaVersion>
 		<WinAppSdkVersion>1.7.250909003</WinAppSdkVersion>
 		<WinAppSdkBuildToolsVersion>10.0.26100.7463</WinAppSdkBuildToolsVersion>
