@@ -1,0 +1,31 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net9.0</TargetFramework>
+		<IsPackable>false</IsPackable>
+		<Nullable>enable</Nullable>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Uno.Extensions.Configuration\Uno.Extensions.Configuration.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="MSTest.TestAdapter" />
+		<PackageReference Include="MSTest.TestFramework" />
+		<PackageReference Include="Microsoft.NET.Test.Sdk" />
+		<PackageReference Include="FluentAssertions" />
+	</ItemGroup>
+
+	<!--
+		This test assembly embeds a single appsettings.json so that
+		EmbeddedAppConfigurationFile.AllFiles<TRootInThisAssembly>() returns exactly one file,
+		while a type from another assembly (e.g. a framework type) returns none. That difference
+		is what proves the per-assembly cache no longer serves the first caller's files to a
+		second, unrelated assembly.
+	-->
+	<ItemGroup>
+		<EmbeddedResource Include="appsettings.json" />
+	</ItemGroup>
+
+</Project>

@@ -31,9 +31,12 @@ public class SystemTextJsonSerializer : ISerializer
 		_services = services;
 
 		// Need to use `.GetService<…>()` in order for `.ConfigureJsonSerializationOptions()` callbacks to be invoked.
+		// Never fall back to the shared `DefaultSerializerOptions` template: reflection-based (de)serialization
+		// caches a `JsonTypeInfo` per type on the options instance, so using the static would accumulate app
+		// types on a process-wide object and pin their (collectible) AssemblyLoadContexts. Use a host-scoped copy.
 		_serializerOptions = services.GetJsonSerializationOptions() ??
 			serializerOptions ??
-			JsonSerializationOptions.DefaultSerializerOptions;
+			JsonSerializationOptions.CreateSerializerOptions();
 	}
 
 	private bool TryGetJsonTypeInfo(Type type, [NotNullWhen(true)] out JsonTypeInfo? info)

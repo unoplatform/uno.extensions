@@ -1,11 +1,13 @@
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Runtime.Loader;
 using Microsoft.Extensions.Logging;
 using Uno.Extensions.Reactive.Bindings;
 using Uno.Extensions.Reactive.Logging;
@@ -32,10 +34,89 @@ public static class HotReloadService
 	// pick up the original type's stale lambdas / cached delegates) can be redirected to the
 	// freshest generation. Populated from `UpdateApplication` for every type that carries
 	// `MetadataUpdateOriginalTypeAttribute`.
+	//
+	// Both key and value are strong `Type` references. The map is only ever added to, so on its own
+	// it would keep every hot-reloaded model type — and therefore that type's (collectible)
+	// AssemblyLoadContext — alive for the process lifetime. A downstream host that loads previewed
+	// apps into their own collectible ALCs would leak the entire type graph of every app it ever
+	// previewed. `ClearCache`/`Reset` and the per-ALC unload sweep below release those entries.
 	private static readonly ConcurrentDictionary<Type, Type> _latestShadow = new();
 
+	// Collectible ALCs we have already subscribed to, so a single unload handler is attached per ALC.
+	private static readonly ConcurrentDictionary<AssemblyLoadContext, byte> _watchedContexts = new();
+
+	/// <summary>
+	/// Removes every tracked shadow mapping. Intended to be called when the host that owns the
+	/// previewed app is torn down, so no app type is retained past its lifetime.
+	/// </summary>
+	[EditorBrowsable(EditorBrowsableState.Never)]
+	public static void Reset()
+	{
+		_latestShadow.Clear();
+		_watchedContexts.Clear();
+		if (_trace) _log.Trace("Cleared all MVUX hot-patch shadow mappings.");
+	}
+
+	// Number of tracked shadow mappings. Exposed to tests so they can observe release without
+	// reaching into the private field.
+	internal static int TrackedShadowCount => _latestShadow.Count;
+
+	// Registers a shadow mapping exactly as `UpdateApplication` does (map entry + collectible-ALC
+	// unload watch), without requiring the runtime metadata-update attributes. Test seam only.
+	internal static void TrackShadowForTest(Type originalType, Type shadowType)
+	{
+		_latestShadow[originalType] = shadowType;
+		WatchForUnload(originalType);
+		WatchForUnload(shadowType);
+	}
+
+	// Invoked by the runtime's metadata-update pipeline. Drop the shadow mappings for the supplied
+	// types (both as original keys and as shadow values) so stale generations are not retained.
 	internal static void ClearCache(Type[]? types)
 	{
+		if (types is null or { Length: 0 })
+		{
+			return;
+		}
+
+		var targets = new HashSet<Type>(types);
+		foreach (var entry in _latestShadow)
+		{
+			if (targets.Contains(entry.Key) || targets.Contains(entry.Value))
+			{
+				_latestShadow.TryRemove(entry.Key, out _);
+			}
+		}
+	}
+
+	// Ensure the shadow entries keyed/valued by types from a collectible ALC are dropped when that
+	// ALC unloads, so the map never pins a previewed app's ALC.
+	private static void WatchForUnload(Type type)
+	{
+		if (AssemblyLoadContext.GetLoadContext(type.Assembly) is not { IsCollectible: true } context)
+		{
+			return;
+		}
+
+		if (_watchedContexts.TryAdd(context, 0))
+		{
+			context.Unloading += OnContextUnloading;
+		}
+	}
+
+	private static void OnContextUnloading(AssemblyLoadContext context)
+	{
+		foreach (var entry in _latestShadow)
+		{
+			if (AssemblyLoadContext.GetLoadContext(entry.Key.Assembly) == context ||
+				AssemblyLoadContext.GetLoadContext(entry.Value.Assembly) == context)
+			{
+				_latestShadow.TryRemove(entry.Key, out _);
+			}
+		}
+
+		_watchedContexts.TryRemove(context, out _);
+		context.Unloading -= OnContextUnloading;
 	}
 
 	[RequiresUnreferencedCode("`MetadataUpdateOriginalTypeAttribute` may be a per-assembly type, so it cannot be statically known.")]
@@ -67,6 +148,11 @@ public static class HotReloadService
 			// after this update can self-patch its (otherwise stale-lambda-bound) model to the
 			// freshest type. Cf. `TryHotPatch`.
 			_latestShadow[originalType] = type;
+
+			// If either type lives in a collectible ALC, make sure the mapping is dropped when that
+			// ALC unloads, so we never keep a previewed app's ALC alive.
+			WatchForUnload(originalType);
+			WatchForUnload(type);
 
 			if (_log.IsEnabled(LogLevel.Information)) _log.Info($"Hot-patching bindables of {originalType} to use the updated {type}.");
 

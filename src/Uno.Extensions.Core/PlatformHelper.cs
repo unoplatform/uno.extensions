@@ -14,7 +14,12 @@ public static class PlatformHelper
 	private static bool _initialized;
 	private static bool _isWebAssembly;
 
-	private static Assembly? _appAssembly;
+	// Held weakly so an app assembly supplied via SetAppAssembly (e.g. a previewed app loaded into a
+	// collectible AssemblyLoadContext by a downstream host) is not pinned for the process lifetime.
+	// Once the owning ALC unloads and drops its own references, this weak reference no longer keeps
+	// the assembly — and therefore the ALC — alive. GetAppAssembly re-derives a fallback if the
+	// reference has been collected.
+	private static WeakReference<Assembly>? _appAssembly;
 
 	/// <summary>
 	/// Determines if the platform is runnnig WebAssembly
@@ -71,7 +76,8 @@ public static class PlatformHelper
 	///   <see cref="GetAppAssembly"/> will follow its default algorithm.
 	///   </para>
 	/// </remarks>
-	public static void SetAppAssembly(Assembly? assembly) => _appAssembly = assembly;
+	public static void SetAppAssembly(Assembly? assembly)
+		=> _appAssembly = assembly is null ? null : new WeakReference<Assembly>(assembly);
 
 #pragma warning disable RS0030
 	/// <summary>
@@ -116,22 +122,34 @@ public static class PlatformHelper
 	/// </remarks>
 	public static Assembly? GetAppAssembly()
 	{
+		// Return the previously supplied/derived assembly if it is still alive.
+		if (_appAssembly is { } existing && existing.TryGetTarget(out var cached))
+		{
+			return cached;
+		}
+
 		if (!RuntimeFeature.IsDynamicCodeCompiled && !RuntimeFeature.IsDynamicCodeSupported)
 		{
 			// Assume NativeAOT. Might also be iOS+FullAOT…?
-			return _appAssembly ??= Assembly.GetEntryAssembly();
+			return CacheAppAssembly(Assembly.GetEntryAssembly());
 		}
 
 		try
 		{
-			return _appAssembly ??= Assembly.GetCallingAssembly();
+			return CacheAppAssembly(Assembly.GetCallingAssembly());
 		}
 		catch (Exception)
 		{
 			// Log?
-			return _appAssembly ??= Assembly.GetEntryAssembly();
+			return CacheAppAssembly(Assembly.GetEntryAssembly());
 		}
 #pragma warning restore RS0030
+	}
+
+	private static Assembly? CacheAppAssembly(Assembly? assembly)
+	{
+		_appAssembly = assembly is null ? null : new WeakReference<Assembly>(assembly);
+		return assembly;
 	}
 
 	/// <summary>

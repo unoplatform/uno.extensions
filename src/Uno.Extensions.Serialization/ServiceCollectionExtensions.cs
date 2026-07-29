@@ -43,7 +43,7 @@ public static class ServiceCollectionExtensions
 
 	internal static JsonSerializerOptions GetJsonSerializationOptions(this IServiceProvider services)
 		=> services.GetService<IOptions<JsonSerializationOptions>>()?.Value?.SerializerOptions ??
-			JsonSerializationOptions.DefaultSerializerOptions;
+			JsonSerializationOptions.CreateSerializerOptions();
 
 
 	/// <summary>
@@ -69,7 +69,7 @@ public static class ServiceCollectionExtensions
 		}
 
 		return services
-			.AddSingleton(sp => new JsonSerializerOptions(JsonSerializationOptions.DefaultSerializerOptions))
+			.AddSingleton(sp => JsonSerializationOptions.CreateSerializerOptions())
 			.AddSingleton<SystemTextJsonSerializer>()
 			.AddSingleton<ISerializer>(services => services.GetRequiredService<SystemTextJsonSerializer>())
 			.AddSingleton(typeof(ISerializer<>), typeof(SystemTextJsonGeneratedSerializer<>));

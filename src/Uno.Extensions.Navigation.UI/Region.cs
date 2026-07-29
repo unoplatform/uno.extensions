@@ -17,6 +17,20 @@ public static class Region
 		set => _logger = value;
 	}
 
+	/// <summary>
+	/// Clears the static logger back to the null logger, but only if it is still the
+	/// <paramref name="expected"/> instance. Called on navigation-host shutdown so the last host's
+	/// logger (and the service provider behind it) is not retained; the reference guard avoids a
+	/// stopping host clobbering a still-running one that installed its own logger.
+	/// </summary>
+	internal static void ResetLogger(ILogger expected)
+	{
+		if (ReferenceEquals(_logger, expected))
+		{
+			_logger = null;
+		}
+	}
+
 	public static readonly DependencyProperty InstanceProperty =
 	   DependencyProperty.RegisterAttached(
 		   "Instance",

@@ -1,4 +1,4 @@
-﻿
+﻿using System.Runtime.CompilerServices;
 
 namespace Uno.Extensions.Configuration;
 
@@ -7,8 +7,18 @@ namespace Uno.Extensions.Configuration;
 /// </summary>
 public class EmbeddedAppConfigurationFile
 {
-
-	private static EmbeddedAppConfigurationFile[]? _appConfigurationFiles;
+	// Cache keyed by the owning assembly rather than a single process-wide array.
+	//
+	// The previous single static array was first-caller-wins: once populated it was returned for
+	// every subsequent AllFiles<T>() call regardless of the type argument. In a downstream host that
+	// loads multiple apps into their own collectible AssemblyLoadContexts, that both (1) served the
+	// FIRST app's appsettings to every later app (a functional bug) and (2) pinned the first app's
+	// Assembly for the process lifetime, preventing its ALC from being collected.
+	//
+	// A ConditionalWeakTable keyed by Assembly gives each app its own entry and holds the key weakly,
+	// so once an app's ALC is unloaded the entry (and the cached Assembly reference) becomes eligible
+	// for collection.
+	private static readonly ConditionalWeakTable<Assembly, EmbeddedAppConfigurationFile[]> _appConfigurationFiles = new();
 
 	private readonly Assembly _assembly;
 
@@ -72,17 +82,14 @@ public class EmbeddedAppConfigurationFile
 	public static EmbeddedAppConfigurationFile[] AllFiles<TApplicationRoot>()
 		 where TApplicationRoot : class
 	{
-		if (_appConfigurationFiles is null)
-		{
-			var executingAssembly = typeof(TApplicationRoot).Assembly;
+		var executingAssembly = typeof(TApplicationRoot).Assembly;
 
-			_appConfigurationFiles = executingAssembly
+		return _appConfigurationFiles.GetValue(
+			executingAssembly,
+			static assembly => assembly
 				.GetManifestResourceNames()
 				.Where(fileName => fileName.ToLowerInvariant().Contains(AppConfiguration.Prefix.ToLowerInvariant()))
-				.Select(fileName => new EmbeddedAppConfigurationFile(fileName, executingAssembly))
-				.ToArray();
-		}
-
-		return _appConfigurationFiles;
+				.Select(fileName => new EmbeddedAppConfigurationFile(fileName, assembly))
+				.ToArray());
 	}
 }
