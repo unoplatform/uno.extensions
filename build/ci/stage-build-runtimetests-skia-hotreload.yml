@@ -24,6 +24,21 @@ jobs:
 
     displayName: 'Run uno-check'
 
+  - script: |
+        cat > DebugPlatforms.props <<'EOF'
+        <Project>
+          <PropertyGroup>
+            <Build_Android>false</Build_Android>
+            <Build_iOS>false</Build_iOS>
+            <Build_MacCatalyst>false</Build_MacCatalyst>
+            <Build_Windows>false</Build_Windows>
+            <Build_Web>false</Build_Web>
+          </PropertyGroup>
+        </Project>
+        EOF
+    displayName: 'Restrict target platforms (DebugPlatforms.props)'
+    workingDirectory: $(Build.SourcesDirectory)
+
   - script: dotnet build Uno.Extensions-runtimetests.slnf /p:Build_Android=false /p:Build_iOS=false /p:Build_Windows=false /p:Build_MacCatalyst=false /p:Build_Web=false -c Debug -p:GeneratePackageOnBuild=false -bl:$(Build.ArtifactStagingDirectory)/skia-hotreload-test-build.binlog
     displayName: 'Build Runtime Tests app (Debug)'
     workingDirectory: $(Build.SourcesDirectory)
