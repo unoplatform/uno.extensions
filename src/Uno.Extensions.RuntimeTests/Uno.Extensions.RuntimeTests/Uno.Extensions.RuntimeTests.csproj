@@ -32,10 +32,25 @@
     </UnoFeatures>
   </PropertyGroup>
 
-
   <ItemGroup>
     <!--<PackageReference Include="Uno.UI.RuntimeTests.Engine" />-->
     <PackageReference Include="SkiaSharp.Skottie" VersionOverride="2.88.8" Condition="$(TargetFramework.Contains('desktop'))" />
+  </ItemGroup>
+
+  <!--
+      Uno.Sdk.Private injects an implicit Microsoft.Extensions.Logging.Console reference whose
+      version (see the Sdk's packages.json) is ahead of the centrally pinned Microsoft.Extensions.*
+      versions in src/Directory.Packages.props. Re-pin them here, for this app head only, to avoid
+      NU1109 downgrades without raising the dependency versions of the published packages.
+  -->
+  <PropertyGroup>
+  		<MicrosoftLoggingVersion>9.0.18</MicrosoftLoggingVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageVersion Update="Microsoft.Extensions.Logging" Version="$(MicrosoftLoggingVersion)" />
+    <PackageVersion Update="Microsoft.Extensions.Logging.Abstractions" Version="$(MicrosoftLoggingVersion)" />
+    <PackageVersion Update="Microsoft.Extensions.Configuration.Abstractions" Version="$(MicrosoftLoggingVersion)" />
+    <PackageVersion Update="Microsoft.Extensions.DependencyInjection" Version="$(MicrosoftLoggingVersion)" />
   </ItemGroup>
 
   <ItemGroup>
