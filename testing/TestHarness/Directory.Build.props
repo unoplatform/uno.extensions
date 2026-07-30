@@ -30,6 +30,7 @@
 
   <PropertyGroup>
     <UnoToolkitVersion>8.4.2</UnoToolkitVersion>
+    <UnoThemesVersion>6.1.1</UnoThemesVersion>
   </PropertyGroup>
 	<PropertyGroup>
 		<DebugType>portable</DebugType>
