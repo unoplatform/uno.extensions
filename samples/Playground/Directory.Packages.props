@@ -1,6 +1,13 @@
 <Project ToolsVersion="15.0">
 	<Import Project="$(MSBuildThisFileDirectory)..\Directory.Packages.props" />
-
+	<PropertyGroup>
+		<!--
+			Uno.Sdk.Private 6.7.0-dev.* pins Uno.Toolkit.WinUI 8.5.0-dev.*, which is compiled against
+			Microsoft.iOS 26 while CI's .NET 9 iOS workload references Microsoft.iOS 18.2 (CS1705).
+			Pin the toolkit to the latest stable built against Microsoft.iOS 18.2.
+		-->
+		<UnoToolkitVersion>8.4.2</UnoToolkitVersion>
+	</PropertyGroup>
 	<ItemGroup>
 		<PackageVersion Include="Microsoft.Net.Compilers.Toolset" Version="4.2.0" />
 		<PackageVersion Include="Refit" Version="7.2.22" />
