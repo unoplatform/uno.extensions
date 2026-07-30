@@ -20,6 +20,13 @@
 		<AndroidXNavigationVersion>2.8.9.1</AndroidXNavigationVersion>
 		<AndroidXCollectionVersion>1.5.0.3</AndroidXCollectionVersion>
 		<MauiVersion>9.0.111</MauiVersion>
+				<!--
+			Uno.Sdk.Private 6.7.0-dev.* pins Uno.Toolkit.WinUI 8.5.0-dev.*, which is compiled against
+			Microsoft.iOS 26 while CI's .NET 9 iOS workload references Microsoft.iOS 18.2 (CS1705).
+			Pin the toolkit to the latest stable built against Microsoft.iOS 18.2.
+		-->
+		<UnoToolkitVersion>8.4.2</UnoToolkitVersion>
+		<UnoThemesVersion>6.1.1</UnoThemesVersion>
 	</PropertyGroup>
 
 	<ItemGroup>
