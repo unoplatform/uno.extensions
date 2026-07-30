@@ -22,7 +22,7 @@ jobs:
   - template: templates/canary-updater.yml
   - template: templates/gitversion.yml
 
-  - script: dotnet workload install wasm-tools-net9
+  - script: dotnet workload install wasm-tools
     displayName: 'Install wasm-tools workload'
     retryCountOnTaskFailure: 3
 
