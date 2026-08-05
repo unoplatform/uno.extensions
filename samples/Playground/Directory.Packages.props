@@ -1,6 +1,5 @@
 <Project ToolsVersion="15.0">
 	<Import Project="$(MSBuildThisFileDirectory)..\Directory.Packages.props" />
-
 	<ItemGroup>
 		<PackageVersion Include="Microsoft.Net.Compilers.Toolset" Version="4.2.0" />
 		<PackageVersion Include="Refit" Version="7.2.22" />
