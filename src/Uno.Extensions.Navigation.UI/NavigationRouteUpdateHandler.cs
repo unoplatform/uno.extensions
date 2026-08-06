@@ -51,6 +51,12 @@ internal static class NavigationRouteUpdateHandler
 {
 	private static ImmutableList<NavigationRouteContext> _contexts = ImmutableList<NavigationRouteContext>.Empty;
 
+	/// <summary>
+	/// Snapshot of the registered contexts, for the hot-reload handlers that walk the
+	/// live region trees (<see cref="NavigationFrameContentUpdateHandler"/>).
+	/// </summary>
+	internal static IReadOnlyList<NavigationRouteContext> ActiveContexts => _contexts;
+
 	internal static void Register(NavigationRouteContext context)
 	{
 		ImmutableInterlocked.Update(ref _contexts, l => l.Add(context));

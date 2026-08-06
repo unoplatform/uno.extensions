@@ -89,6 +89,10 @@ public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 
 	protected override Task<Route?> ExecuteRequestAsync(NavigationRequest request)
 	{
+		// A real navigation supersedes any queued hot-reload view-model refresh
+		// (see RefreshViewModelAfterHotReloadAsync).
+		_hotReloadRefreshToken++;
+
 		var route = request.Route;
 
 		// For forward navigation, capture the current child routes before clearing
@@ -651,6 +655,152 @@ public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 	}
 
 	protected override Task CheckLoadedAsync() => _content is not null ? _content.EnsureLoadedWhileHostAttached(Region.View) : Task.CompletedTask;
+
+	// Monotonic token identifying the most recent hot-reload re-hook or navigation
+	// request. A queued view-model refresh only applies its result while its token is
+	// still current, so a navigation (or a newer HR cycle) that lands in the meantime
+	// wins. Only mutated on the UI thread (HR element updates and ExecuteRequestAsync
+	// both run on the dispatcher — same threading model as _pendingFailedRequest).
+	private int _hotReloadRefreshToken;
+
+	/// <summary>
+	/// Re-hooks navigation state onto a frame content instance that was replaced outside
+	/// navigation. Uno's hot-reload element update can patch <c>Frame.Content</c> directly
+	/// (e.g. for a page that was never materialized in the visual tree — see
+	/// uno.extensions#3130); that path raises no <c>Frame.Navigated</c>, so
+	/// <see cref="CurrentView"/> would keep pointing at the dead instance and nested
+	/// regions would stay attached to it.
+	/// </summary>
+	/// <param name="updatedTypes">
+	/// The types applied by the hot-reload delta; used to decide whether the mapped view
+	/// model must be rebuilt. <see langword="null"/> means the delta's types are unknown.
+	/// </param>
+	/// <remarks>
+	/// Interplay with the HR cascade (<see cref="UI.NavigationRouteUpdateHandler"/>), which
+	/// may be queued on the dispatcher for the same HR cycle: the re-hook itself is
+	/// synchronous and issues no navigation, so it cannot interleave with one. The deferred
+	/// view-model refresh is superseded by any navigation that reaches this navigator —
+	/// <see cref="ExecuteRequestAsync"/> bumps <see cref="_hotReloadRefreshToken"/>, turning
+	/// a queued refresh into a no-op — and a cascade dispatched into a nested region (the
+	/// IsDefault path targets the page's child region) operates on that region's own scope
+	/// and never touches this page's DataContext, so the two cannot write the same state.
+	/// </remarks>
+	internal void RehookCurrentViewAfterHotReload(Type[]? updatedTypes)
+	{
+		if (Control?.Content is not FrameworkElement current || ReferenceEquals(current, _content))
+		{
+			return;
+		}
+
+		if (Logger.IsEnabled(LogLevel.Debug))
+		{
+			Logger.LogDebugMessage($"Re-hooking frame content replaced by hot-reload for route '{Route?.Base}'");
+		}
+
+		_content = current;
+
+		if (current is Page page)
+		{
+			// Mirror EnsurePageLoaded for the externally created instance: the region name
+			// drives PanelVisiblityNavigator.FindByPath and route resolution.
+			page.SetName(Route?.Base ?? string.Empty);
+			page.ReassignRegionParent();
+		}
+
+		if (Route is { Base.Length: > 0 } route && Resolver.FindByPath(route.Base) is { } mapping)
+		{
+			var token = ++_hotReloadRefreshToken;
+			_ = RefreshViewModelAfterHotReloadAsync(current, route, mapping, ViewModelUpdatedBy(updatedTypes, mapping), token);
+		}
+	}
+
+	/// <summary>
+	/// True when the hot-reload delta updated the view model mapped to
+	/// <paramref name="mapping"/>. Both sides are canonicalized through
+	/// <see cref="OriginalType"/> so the comparison holds regardless of generation:
+	/// an in-place (EnC) update keeps the <see cref="Type"/> identity, while a
+	/// CreateNewOnMetadataUpdate replacement is a new type linked to the original via
+	/// <see cref="System.Runtime.CompilerServices.MetadataUpdateOriginalTypeAttribute"/> —
+	/// on either the delta side or the (possibly rebuilt) route-table side.
+	/// </summary>
+	private static bool ViewModelUpdatedBy(Type[]? updatedTypes, RouteInfo mapping)
+	{
+		if (updatedTypes is null || mapping.ViewModel is not { } viewModelType)
+		{
+			return false;
+		}
+
+		var canonicalViewModel = OriginalType(viewModelType);
+		return updatedTypes.Any(updatedType => OriginalType(updatedType) == canonicalViewModel);
+	}
+
+	private static Type OriginalType(Type type)
+		=> type.GetCustomAttributes(inherit: false)
+			.OfType<System.Runtime.CompilerServices.MetadataUpdateOriginalTypeAttribute>()
+			.FirstOrDefault()?.OriginalType ?? type;
+
+	private async Task RefreshViewModelAfterHotReloadAsync(FrameworkElement view, Route route, RouteInfo mapping, bool viewModelUpdated, int token)
+	{
+		try
+		{
+			// Deferred onto the dispatcher queue — the same queue that executes control
+			// navigation (ControlCoreNavigateAsync) — so the refresh runs after the HR
+			// pipeline has drained instead of in the middle of the element-update walk.
+			await Dispatcher.ExecuteAsync(async _ =>
+			{
+				// A navigation or a newer HR cycle may have landed while this refresh was
+				// queued; its result must win, so bail out instead of stomping the newer
+				// page's DataContext or racing its view-model construction.
+				if (token != _hotReloadRefreshToken || !ReferenceEquals(Control?.Content, view))
+				{
+					return;
+				}
+
+				var navigator = Region.Navigator();
+				var services = navigator?.Get<IServiceProvider>();
+				if (navigator is null || services is null)
+				{
+					return;
+				}
+
+				// The replaced instance carries the previous instance's DataContext (Uno's
+				// frame element-update handler copies it during the swap). Rebuild the view
+				// model only when it is missing, of the wrong type, or its type was part of
+				// the delta — an in-place (EnC) update keeps the type identity, which the
+				// "wrong type" check alone would treat as still valid. For a XAML-only delta
+				// the copied DataContext IS the live view model and is preserved, along with
+				// any un-persisted state it holds.
+				var viewModel = view.DataContext;
+				if (viewModelUpdated || viewModel is null || viewModel.GetType() != mapping.ViewModel)
+				{
+					viewModel = await CreateViewModel(services, new NavigationRequest(this, route), route, mapping);
+
+					// Re-check before applying: CreateViewModel resumes off the dispatcher,
+					// and a navigation that completed meanwhile must win.
+					if (token != _hotReloadRefreshToken || !ReferenceEquals(Control?.Content, view))
+					{
+						return;
+					}
+				}
+
+				await view.InjectServicesAndSetDataContextAsync(services, navigator, viewModel);
+			});
+		}
+		catch (OperationCanceledException)
+		{
+			// Expected when the dispatcher is torn down mid-refresh (e.g. host shutdown
+			// right after an HR delivery). Silent — not an error.
+		}
+		catch (Exception ex)
+		{
+			// Fire-and-forget boundary (nothing awaits this task): an unhandled throw would
+			// surface as an unobserved task exception, so log and keep the copied DataContext.
+			if (Logger.IsEnabled(LogLevel.Warning))
+			{
+				Logger.LogWarningMessage($"View-model refresh after hot-reload failed for route '{route.Base}': {ex.GetType().Name}: {ex.Message}. The page keeps the copied DataContext.");
+			}
+		}
+	}
 
 	/// <summary>
 	/// Captures the currently active nested route by checking child navigator routes
