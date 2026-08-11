@@ -422,7 +422,23 @@ public abstract class ControlNavigator : Navigator
 
 					services.AddScopedInstance(request);
 
-					var created = services.GetService(mapping!.ViewModel);
+					object? created;
+					try
+					{
+						created = services.GetService(mapping!.ViewModel);
+					}
+					catch (Exception ex)
+					{
+						// A view-model constructor (or one of its DI dependencies) throwing
+						// here is app code failing, not a missing registration — don't fall
+						// through to the reflection path, which would run the same failing
+						// constructor again. Log before the fault propagates: no caller up
+						// the navigation chain logs it, and at startup the faulted task is
+						// typically unobserved, so this is the only diagnostic the app
+						// author ever gets (see #3136).
+						if (Logger.IsEnabled(LogLevel.Error)) Logger.LogErrorMessage(ex, $"Failed to create view model '{mapping!.ViewModel.Name}': the service provider threw while constructing it");
+						throw;
+					}
 
 					if (created is not null)
 					{
@@ -437,9 +453,9 @@ public abstract class ControlNavigator : Navigator
 							return ctr.Invoke(args);
 						}
 					}
-					catch
+					catch (Exception ex)
 					{
-						if (Logger.IsEnabled(LogLevel.Information)) Logger.LogInformationMessage("ViewModel not included in RouteMap, and unable to instance using Activator instead of ServiceProvider");
+						if (Logger.IsEnabled(LogLevel.Error)) Logger.LogErrorMessage(ex, $"Failed to create view model '{mapping.ViewModel.Name}' via the reflection fallback (type isn't registered with the service provider)");
 					}
 					return default;
 				});
