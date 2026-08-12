@@ -13,6 +13,7 @@
   -->
   <ItemGroup>
     <Compile Include="..\Uno.Extensions.Authentication.MSAL\MsalStorageDefaults.cs" Link="MsalStorageDefaults.cs" />
+    <Compile Include="..\Uno.Extensions.Authentication.MSAL\MsalRedirectDefaults.cs" Link="MsalRedirectDefaults.cs" />
   </ItemGroup>
 
   <ItemGroup>

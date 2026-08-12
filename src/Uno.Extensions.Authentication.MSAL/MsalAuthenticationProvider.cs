@@ -35,6 +35,9 @@ internal record MsalAuthenticationProvider(
 		var config = Configuration.Get(Name) ?? new MsalConfiguration();
 		var builder = PublicClientApplicationBuilder.CreateWithApplicationOptions(config);
 
+		// Before the app callback, so an app calling WithRedirectUri itself always wins.
+		ApplyPlatformRedirectUri(builder, config);
+
 		if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"Invoking settings Build callback");
 		Settings?.Build?.Invoke(builder);
 
@@ -45,14 +48,8 @@ internal record MsalAuthenticationProvider(
 			_scopes = Settings.Scopes;
 		}
 
-		if (PlatformHelper.IsWebAssembly)
-		{
-			if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"Configuring Web RedirectUri");
-			builder.WithWebRedirectUri();
-		}
-
 #if WINDOWS
-		
+
 		if (window is { })
 		{
 			builder.WithBroker(new BrokerOptions(BrokerOptions.OperatingSystems.Windows));
@@ -72,6 +69,77 @@ internal record MsalAuthenticationProvider(
 
 		_pca = builder.Build();
 		if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"Building MSAL Provider complete");
+	}
+
+	/// <summary>
+	/// Applies the platform's conventional redirect URI so apps don't have to hand-write a
+	/// per-platform <c>#if</c> block in their <c>Builder(...)</c> callback.
+	/// </summary>
+	/// <remarks>
+	/// Precedence, lowest to highest: this default, then <c>RedirectUri</c> from configuration,
+	/// then the app's <c>Builder(...)</c> callback (which runs after this and simply overwrites).
+	/// Set <see cref="MsalConfiguration.UseDefaultPlatformRedirectUri"/> to <c>false</c> to opt out
+	/// entirely and take MSAL's own default.
+	/// </remarks>
+	private void ApplyPlatformRedirectUri(PublicClientApplicationBuilder builder, MsalConfiguration config)
+	{
+		if (!config.UseDefaultPlatformRedirectUri)
+		{
+			if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"Default platform RedirectUri disabled by configuration");
+			return;
+		}
+
+		if (config.RedirectUri is { Length: > 0 })
+		{
+			// CreateWithApplicationOptions already applied it; don't overwrite a configured value.
+			if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"RedirectUri supplied by configuration, skipping platform default");
+			return;
+		}
+
+		if (PlatformHelper.IsWebAssembly)
+		{
+			// Derived from Uno's WebAuthenticationBroker rather than from the client id.
+			if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"Configuring Web RedirectUri");
+			builder.WithWebRedirectUri();
+			return;
+		}
+
+		string? bundleId = null;
+#if IOS
+		bundleId = global::Foundation.NSBundle.MainBundle.BundleIdentifier;
+#endif
+
+		var platformRedirectUri = MsalRedirectDefaults.GetPlatformRedirectUri(
+			config.ClientId,
+			bundleId,
+#if ANDROID
+			isAndroid: true,
+#else
+			isAndroid: false,
+#endif
+#if IOS
+			isIOS: true);
+#else
+			isIOS: false);
+#endif
+
+		if (platformRedirectUri is { Length: > 0 })
+		{
+			if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"Configuring platform RedirectUri '{platformRedirectUri}'");
+			builder.WithRedirectUri(platformRedirectUri);
+			return;
+		}
+
+#if WINDOWS
+		// WinAppSDK head only: the WAM broker configured below owns the redirect URI, so leave it
+		// alone rather than changing behaviour on a path this prototype hasn't exercised.
+		if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"Broker-managed RedirectUri, no platform default applied");
+#else
+		// Desktop and anything else: http://localhost on .NET, which is what the system-browser
+		// flow needs (https://aka.ms/msal-net-default-reply-uri).
+		if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"Configuring MSAL default RedirectUri");
+		builder.WithDefaultRedirectUri();
+#endif
 	}
 
 	protected async override ValueTask<IDictionary<string, string>?> InternalLoginAsync(IDispatcher? dispatcher, IDictionary<string, string>? credentials, CancellationToken cancellationToken)

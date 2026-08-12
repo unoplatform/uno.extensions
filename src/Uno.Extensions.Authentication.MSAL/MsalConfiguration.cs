@@ -20,6 +20,19 @@ internal class MsalConfiguration
 	public string? KeychainAccountName { get; init; }
 
 	/// <summary>
+	/// When true (the default), the provider applies the platform's conventional redirect URI when
+	/// none was supplied: <c>msal{ClientId}://auth</c> on Android, <c>msauth.{BundleId}://auth</c>
+	/// on iOS, the WebAuthenticationBroker callback on WebAssembly, and MSAL's own
+	/// <c>WithDefaultRedirectUri()</c> (<c>http://localhost</c>) elsewhere.
+	/// </summary>
+	/// <remarks>
+	/// A <c>RedirectUri</c> in configuration, or one set from the app's <c>Builder(...)</c>
+	/// callback, always wins over the default. Set this to <c>false</c> to suppress the default
+	/// entirely and take whatever MSAL itself would use.
+	/// </remarks>
+	public bool UseDefaultPlatformRedirectUri { get; init; } = true;
+
+	/// <summary>
 	/// When true, the token cache falls back to an unprotected (plaintext) cache file if the
 	/// platform's secure storage (keychain / keyring / DPAPI) isn't available, so sign-in state
 	/// still survives an app restart. When false (the default), the cache stays in memory for

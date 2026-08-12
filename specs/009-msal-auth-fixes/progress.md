@@ -128,6 +128,29 @@ contract, performance). Worst-case verdict was **fix-first**; all actionable fin
   runtime Uno.UI), so coverage is via the live rig; a runtime-test in
   `Uno.Extensions.RuntimeTests` is the proper long-term home.
 
+- **Platform redirect URIs — prototyped in this branch** (2026-08-12, prompted by "should the
+  extension handle this?" about the rig's `#if ANDROID / #elif IOS / #else` block). The provider
+  set a redirect URI on exactly one of four heads (wasm), so every app hand-wrote the other three.
+  Now `MsalAuthenticationProvider.ApplyPlatformRedirectUri` derives them:
+  `msal{ClientId}://auth` (Android), `msauth.{BundleId}://auth` (iOS), the broker URI (wasm),
+  `WithDefaultRedirectUri()` → `http://localhost` (desktop). WinAppSDK (`#if WINDOWS`) is
+  deliberately left alone — the WAM broker owns the redirect there and that path is unexercised.
+  New pure helper `MsalRedirectDefaults` (platform passed in, linked into
+  `Uno.Extensions.Authentication.MSAL.Tests` like `MsalStorageDefaults`), 9 tests in
+  `Given_MsalRedirectDefaults`.
+  - **Behaviour change, not purely additive:** the defaults are applied *before* the app's
+    `Builder(...)` callback, so the callback now wins. Previously `WithWebRedirectUri()` ran
+    *after* it and stomped the app on wasm, forcing apps to mutate
+    `WinRTFeatureConfiguration.WebAuthenticationBroker.DefaultReturnUri` before host build to
+    change the wasm callback path. Precedence is now: platform default < `RedirectUri` from
+    configuration < `Builder(...)` callback. Escape hatch:
+    `MsalConfiguration.UseDefaultPlatformRedirectUri = false`.
+  - Verified: all TFMs compile; `ANDROID`/`IOS` constants confirmed live (probe build + `NSBundle`
+    present only in the ios assembly — note `-getProperty:DefineConstants` does *not* show them,
+    the SDK merges `ImplicitDefineConstants` later, so don't re-chase that); desktop head logs
+    `ApplyPlatformRedirectUri - Configuring MSAL default RedirectUri` with the rig's per-platform
+    block deleted; 1540 unit tests green.
+  - Not verified: interactive sign-in completion on any head; iOS and WinAppSDK not built.
 - Live Skia sweep with interactive sign-in (needs patched uno.winui cache + human at the prompt).
 - #2640 WebAuthenticationBroker for Desktop/Skia (feature).
 - Measure actual WASM payload effect of `UNO_EXT_MSAL_NOSTORAGE` on a trimmed publish.

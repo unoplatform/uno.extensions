@@ -146,7 +146,56 @@ The set of identity scenarios (Microsoft accounts, work/school accounts, B2C, so
     No ClientId was specified.
     ```
 
-### 4. Token cache storage (optional)
+### 4. Redirect URIs
+
+`MsalAuthenticationProvider` applies the platform's conventional redirect URI for you, so a
+cross-platform app does not need a per-platform `#if` block in its `Builder(...)` callback:
+
+| Platform | Redirect URI applied |
+| --- | --- |
+| Android | `msal{ClientId}://auth` |
+| iOS | `msauth.{BundleId}://auth` |
+| WebAssembly | the `WebAuthenticationBroker` callback URI |
+| Desktop (Windows, macOS, Linux) | MSAL's `WithDefaultRedirectUri()` — `http://localhost` on .NET, for the system-browser flow |
+| WinAppSDK (`net9.0-windows10.*`) | none — the WAM broker owns the redirect URI |
+
+Each value still has to be registered in your app registration, and Android and iOS additionally
+require the app to declare the matching platform entry — an `Activity` deriving from
+`BrowserTabActivity` with an intent filter for scheme `msal{ClientId}` and host `auth` on Android,
+and a `CFBundleURLTypes` entry in `Info.plist` on iOS. The provider derives exactly the value those
+entries declare; it cannot create them for you.
+
+Precedence, lowest to highest:
+
+1. The platform default above.
+2. `RedirectUri` in the `Msal` configuration section.
+3. Whatever the app's `Builder(...)` callback sets — it runs last and simply overwrites.
+
+So overriding for a single platform stays a one-liner:
+
+```csharp
+builder.AddMsal(window, msal =>
+    msal.Builder(msalBuilder => msalBuilder.WithRedirectUri("myapp://auth")));
+```
+
+To suppress the default entirely and take whatever MSAL itself would use, set:
+
+```json
+{
+  "Msal": {
+    "ClientId": "161a9fb5-3b16-487a-81a2-ac45dcc0ad3b",
+    "UseDefaultPlatformRedirectUri": false
+  }
+}
+```
+
+> [!NOTE]
+> On WebAssembly the callback URI comes from Uno's `WebAuthenticationBroker`, whose default path is
+> `/authentication-callback`. If your registered SPA redirect uses a different path, set
+> `RedirectUri` in configuration or from the `Builder(...)` callback — both now win over the
+> broker-derived default.
+
+### 5. Token cache storage (optional)
 
 On desktop targets, `MsalAuthenticationProvider` persists the MSAL token cache so that users stay signed in across app restarts:
 
@@ -187,7 +236,7 @@ builder.AddMsal(window, msal =>
     msal.Storage(store => store.WithMacKeyChain("com.contoso.myapp.msal", "MyAppCache")));
 ```
 
-### 5. Use the provider in your application
+### 6. Use the provider in your application
 
 - Update the `MainPage` to include a `Button` labeled to sign in with Microsoft.
 
