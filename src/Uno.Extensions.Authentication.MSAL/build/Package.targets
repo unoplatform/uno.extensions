@@ -3,7 +3,16 @@
 		<Using Include="Uno.Extensions.Authentication.MSAL" />
 	</ItemGroup>
 
-	<PropertyGroup Condition="'$(_IsNetStd)'!='true' and '$(_IsMacOS)'!='true' and '$(_IsCatalyst)'!='true'" >
+	<!-- Define UNO_EXT_MSAL only for the platforms where this package ships a functional
+		provider (the plain .NET reference lib, macOS and Mac Catalyst carry a no-op stub).
+		The platform is derived from the TFM: repo-internal build properties are not available
+		in consuming projects. Keep this allow-list in sync with the same rule in
+		Uno.Extensions.Authentication.MSAL.WinUI.csproj. -->
+	<PropertyGroup>
+		<_UnoExtMsalTargetPlatform>$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)'))</_UnoExtMsalTargetPlatform>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(_UnoExtMsalTargetPlatform)'=='android' or '$(_UnoExtMsalTargetPlatform)'=='ios' or '$(_UnoExtMsalTargetPlatform)'=='windows' or '$(_UnoExtMsalTargetPlatform)'=='desktop' or '$(_UnoExtMsalTargetPlatform)'=='browserwasm'">
 		<DefineConstants>$(DefineConstants);UNO_EXT_MSAL</DefineConstants>
 	</PropertyGroup>
 
