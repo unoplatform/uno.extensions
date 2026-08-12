@@ -112,6 +112,17 @@ contract, performance). Worst-case verdict was **fix-first**; all actionable fin
 
 ## Follow-ups (not this change)
 
+- **Hidden `ISettings` dependency in the auth token cache** (found 2026-08-12 while building the
+  `authTestExt` rig): `TokenCache` → `IKeyValueStorage` → `ApplicationDataKeyValueStorage(...,
+  ISettings UnpackagedSettings)` requires `ISettings`, but the only registration lives in
+  `Uno.Extensions.Hosting.WinUI.UseToolkit()/UseThemeSwitching()` — a theme-switching API. Any
+  app that calls `UseAuthentication` without `UseToolkit()` gets
+  `InvalidOperationException: NoServiceRegistered (Uno.Extensions.ISettings)` on first
+  `LoginAsync`. Templates always call `UseToolkit`, which is why this never surfaced. Fix shape:
+  register `ISettings` from the storage/key-value registration path (or wherever
+  `AddKeyedStorage` wires the storages) instead of relying on theme switching; `Settings` is
+  internal to `Uno.Extensions.Core.UI` so apps can't self-serve. Consider filing as an issue.
+
 - Live Skia sweep with interactive sign-in (needs patched uno.winui cache + human at the prompt).
 - #2640 WebAuthenticationBroker for Desktop/Skia (feature).
 - Measure actual WASM payload effect of `UNO_EXT_MSAL_NOSTORAGE` on a trimmed publish.
