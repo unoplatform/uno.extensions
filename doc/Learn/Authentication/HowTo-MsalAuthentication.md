@@ -7,6 +7,24 @@ uid: Uno.Extensions.Authentication.HowToMsalAuthentication
 
 `MsalAuthenticationProvider` allows your users to sign in using their Microsoft identities. It wraps the [MSAL library](https://github.com/AzureAD/microsoft-authentication-library-for-dotnet) from Microsoft into an implementation of `IAuthenticationProvider`. This tutorial will use MSAL authorization to validate user credentials.
 
+## Platform support
+
+| Target | Interactive sign-in | Token cache persistence |
+|---|---|---|
+| Windows (WinAppSdk) | ✅ WAM broker (requires a `Window` — see below) | ✅ Encrypted file (DPAPI) |
+| Desktop (Skia) — Windows | ✅ System browser | ✅ Encrypted file (DPAPI) |
+| Desktop (Skia) — macOS | ✅ System browser | ✅ Keychain |
+| Desktop (Skia) — Linux | ✅ System browser | ✅ Keyring/libsecret |
+| Android | ✅ Browser / custom tab | ✅ Handled natively by MSAL |
+| iOS | ✅ Web authentication session | ✅ Handled natively by MSAL |
+| WebAssembly | ✅ Popup | In-memory only (tokens don't survive a page reload) |
+| Mac Catalyst | ❌ Not supported (`AddMsal` is a no-op) | — |
+
+> [!NOTE]
+> On Android, iOS, and WebAssembly heads that use `UnoFeatures=SkiaRenderer`, interactive sign-in requires an Uno Platform version containing the fix for [unoplatform/uno#20601](https://github.com/unoplatform/uno/issues/20601); with earlier versions the sign-in UI never appears on those targets.
+
+The set of identity scenarios (Microsoft accounts, work/school accounts, B2C, sovereign clouds, ...) is determined by MSAL itself — see [MSAL.NET supported platforms and scenarios](https://learn.microsoft.com/entra/msal/dotnet/getting-started/scenarios) for details.
+
 ## Step-by-step
 
 [!include[create-application](../includes/create-application.md)]
@@ -128,7 +146,48 @@ uid: Uno.Extensions.Authentication.HowToMsalAuthentication
     No ClientId was specified.
     ```
 
-### 4. Use the provider in your application
+### 4. Token cache storage (optional)
+
+On desktop targets, `MsalAuthenticationProvider` persists the MSAL token cache so that users stay signed in across app restarts:
+
+- **Windows** — an encrypted (DPAPI) cache file in the app's data folder.
+- **macOS** — the cache is protected by the macOS Keychain. By default the keychain entry uses the service name `uno.extensions.msal.{ClientId}` and the account name `MSALCache`. Both can be overridden in the `Msal` configuration section:
+
+    ```json
+    {
+      "Msal": {
+        "ClientId": "161a9fb5-3b16-487a-81a2-ac45dcc0ad3b",
+        "KeychainServiceName": "com.contoso.myapp.msal",
+        "KeychainAccountName": "MyAppCache"
+      }
+    }
+    ```
+
+- **Linux** — the cache is stored in the default keyring collection via `libsecret`.
+
+If the platform's secure storage isn't available (for example, a Linux session without a keyring), the provider logs an error and keeps the token cache in memory for the session — sign-in still works, but the user has to sign in again after an app restart. To persist the cache in an **unprotected (plaintext) file** in that situation instead, opt in explicitly:
+
+```json
+{
+  "Msal": {
+    "ClientId": "161a9fb5-3b16-487a-81a2-ac45dcc0ad3b",
+    "AllowUnprotectedTokenCacheFallback": true
+  }
+}
+```
+
+With the fallback enabled, the provider logs a warning (including the fallback file path) whenever it has to downgrade, and the plaintext cache uses a separate file from the protected one.
+
+On Android and iOS the token cache is persisted natively by MSAL, and on WebAssembly tokens are cached in memory only — no configuration is needed (or honored) on those platforms.
+
+For full control over the storage properties on desktop targets, use the `Storage()` extension method to configure the underlying `StorageCreationPropertiesBuilder`:
+
+```csharp
+builder.AddMsal(window, msal =>
+    msal.Storage(store => store.WithMacKeyChain("com.contoso.myapp.msal", "MyAppCache")));
+```
+
+### 5. Use the provider in your application
 
 - Update the `MainPage` to include a `Button` labeled to sign in with Microsoft.
 
