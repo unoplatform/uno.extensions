@@ -1,4 +1,6 @@
-﻿namespace Uno.Extensions;
+﻿using Microsoft.Extensions.DependencyInjection.Extensions;
+
+namespace Uno.Extensions;
 
 /// <summary>
 /// Extensions for <see cref="IHostBuilder"/> to register toolkit services
@@ -30,9 +32,10 @@ public static class HostBuilderExtensions
 		return hostBuilder
 			.ConfigureServices((ctx, services) =>
 			{
-				_ = services
-				.AddSingleton<ISettings, Settings>()
-				.AddScoped<IThemeService, ScopedThemeService>();
+				// ISettings is registered by the UnoHost default builder; TryAdd covers hosts
+				// that were built without it.
+				services.TryAddSingleton<ISettings, Settings>();
+				_ = services.AddScoped<IThemeService, ScopedThemeService>();
 			});
 	}
 }

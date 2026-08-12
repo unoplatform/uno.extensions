@@ -112,16 +112,21 @@ contract, performance). Worst-case verdict was **fix-first**; all actionable fin
 
 ## Follow-ups (not this change)
 
-- **Hidden `ISettings` dependency in the auth token cache** (found 2026-08-12 while building the
-  `authTestExt` rig): `TokenCache` → `IKeyValueStorage` → `ApplicationDataKeyValueStorage(...,
-  ISettings UnpackagedSettings)` requires `ISettings`, but the only registration lives in
-  `Uno.Extensions.Hosting.WinUI.UseToolkit()/UseThemeSwitching()` — a theme-switching API. Any
-  app that calls `UseAuthentication` without `UseToolkit()` gets
+- ~~Hidden `ISettings` dependency in the auth token cache~~ — **fixed in this branch**
+  (found 2026-08-12 while building the `authTestExt` rig): `TokenCache` → `IKeyValueStorage` →
+  `ApplicationDataKeyValueStorage(..., ISettings)` requires `ISettings`, but the only
+  registration lived in `UseToolkit()/UseThemeSwitching()` — a theme-switching API. Any app
+  calling `UseAuthentication` without `UseToolkit()` got
   `InvalidOperationException: NoServiceRegistered (Uno.Extensions.ISettings)` on first
-  `LoginAsync`. Templates always call `UseToolkit`, which is why this never surfaced. Fix shape:
-  register `ISettings` from the storage/key-value registration path (or wherever
-  `AddKeyedStorage` wires the storages) instead of relying on theme switching; `Settings` is
-  internal to `Uno.Extensions.Core.UI` so apps can't self-serve. Consider filing as an issue.
+  `LoginAsync` (templates always call `UseToolkit`, which is why it never surfaced). Fix:
+  `UnoHost.CreateDefaultBuilder` now `TryAdd`s `ISettings` alongside its `UseStorage()` call
+  (`Storage.WinUI` can't self-register it — no `Core.WinUI` reference, and `Settings` is
+  internal there); `UseThemeSwitching` switched to `TryAdd` for co-existence. Verified red/green
+  with the `authTestExt` rig (no `UseToolkit`): pre-fix startup fails resolving the token cache,
+  post-fix the `TokenCache`/`IsAuthenticated` traces appear. Unit-test exception (AGENTS §4):
+  `Hosting.WinUI` can't load in a plain test host (Uno.WinUI module initializer requires a
+  runtime Uno.UI), so coverage is via the live rig; a runtime-test in
+  `Uno.Extensions.RuntimeTests` is the proper long-term home.
 
 - Live Skia sweep with interactive sign-in (needs patched uno.winui cache + human at the prompt).
 - #2640 WebAuthenticationBroker for Desktop/Skia (feature).
