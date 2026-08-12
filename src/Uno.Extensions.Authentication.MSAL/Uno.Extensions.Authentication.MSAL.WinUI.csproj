@@ -55,8 +55,21 @@
 		<WarningsNotAsErrors>$(WarningsNotAsErrors);CS1591</WarningsNotAsErrors>
 	</PropertyGroup>
 
-	<PropertyGroup Condition="'$(_IsNetStd)'!='true' and '$(_IsMacOS)'!='true' and '$(_IsCatalyst)'!='true'" >
+	<!-- Define UNO_EXT_MSAL only for the platforms that ship a functional provider (the plain
+		.NET reference lib, macOS and Mac Catalyst carry a no-op stub). Keep this allow-list in
+		sync with build/Package.targets, which applies the same rule in consuming projects. -->
+	<PropertyGroup>
+		<_UnoExtMsalTargetPlatform>$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)'))</_UnoExtMsalTargetPlatform>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(_UnoExtMsalTargetPlatform)'=='android' or '$(_UnoExtMsalTargetPlatform)'=='ios' or '$(_UnoExtMsalTargetPlatform)'=='windows' or '$(_UnoExtMsalTargetPlatform)'=='desktop' or '$(_UnoExtMsalTargetPlatform)'=='browserwasm'">
 		<DefineConstants>$(DefineConstants);UNO_EXT_MSAL</DefineConstants>
+	</PropertyGroup>
+
+	<!-- Token-cache persistence isn't available in the browser; compiling it out keeps the
+		unused MsalCacheHelper code paths out of the WebAssembly assembly. -->
+	<PropertyGroup Condition="'$(_UnoExtMsalTargetPlatform)'=='browserwasm'">
+		<DefineConstants>$(DefineConstants);UNO_EXT_MSAL_NOSTORAGE</DefineConstants>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -74,10 +87,6 @@
 
 	<ItemGroup Condition="$(TargetFramework.Contains('windows10'))">
 		<PackageReference Include="Microsoft.Identity.Client.Broker" />
-	</ItemGroup>
-
-	<ItemGroup Condition="'$(IsBrowserWasm)'!='true'">
-		<Compile Remove="**\*.wasm.cs"/>
 	</ItemGroup>
 
 	<ItemGroup>
