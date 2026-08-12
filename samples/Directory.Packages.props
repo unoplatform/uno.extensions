@@ -6,7 +6,7 @@
 		<WinAppSdkBuildToolsVersion>10.0.28000.1721</WinAppSdkBuildToolsVersion>
 		<MicrosoftLoggingVersion>9.0.18</MicrosoftLoggingVersion>
 		<WindowsCompatibilityVersion>8.0.15</WindowsCompatibilityVersion>
-		<MicrosoftIdentityClientVersion>4.72.1</MicrosoftIdentityClientVersion>
+		<MicrosoftIdentityClientVersion>4.87.0</MicrosoftIdentityClientVersion>
 		<CommunityToolkitMvvmVersion>8.4.2</CommunityToolkitMvvmVersion>
 		<PrismVersion>9.0.537</PrismVersion>
 		<AndroidMaterialVersion>1.12.0.3</AndroidMaterialVersion>

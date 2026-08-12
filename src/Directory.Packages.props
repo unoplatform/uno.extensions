@@ -25,9 +25,18 @@
     <PackageVersion Include="Microsoft.Extensions.Localization.Abstractions" Version="9.0.14" />
     <PackageVersion Include="Microsoft.Extensions.Logging" Version="9.0.14" />
     <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.14" />
-    <PackageVersion Include="Microsoft.Identity.Client" Version="4.72.1" />
-    <PackageVersion Include="Microsoft.Identity.Client.Extensions.Msal" Version="4.72.1" />
-    <PackageVersion Include="Microsoft.Identity.Client.Broker" Version="4.72.1" />
+    <!--
+      MSAL must stay >= 4.80.0. .NET 10 reports macOS via the marketing string (e.g.
+      "macOS 26.5.2") instead of a Darwin string; MSAL 4.72.1's DesktopOsHelper.IsMac() did not
+      recognize that, so StartDefaultOsBrowserAsync fell through every OS branch and threw
+      PlatformNotSupportedException on any interactive sign-in from a desktop head running on
+      macOS (AzureAD/microsoft-authentication-library-for-dotnet#5590, fixed by #5541).
+      Only desktop was affected - Uno.Sdk already injects 4.87.0 on android/ios/wasm - so 4.87.0
+      keeps every head on one version.
+    -->
+    <PackageVersion Include="Microsoft.Identity.Client" Version="4.87.0" />
+    <PackageVersion Include="Microsoft.Identity.Client.Extensions.Msal" Version="4.87.0" />
+    <PackageVersion Include="Microsoft.Identity.Client.Broker" Version="4.87.0" />
     <PackageVersion Include="Microsoft.Maui.Controls" Version="9.0.111" />
     <PackageVersion Include="Microsoft.Maui.Controls.Compatibility" Version="9.0.111" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.6.2" />
