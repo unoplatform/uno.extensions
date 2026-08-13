@@ -30,6 +30,12 @@ if [[ ! -d "${RuntimeTestsArtifactPath}" ]]; then
   exit 1
 fi
 
+# The runner is a net10.0 tool; `dotnet tool install` resolves the asset from the SDK version, so a
+# .NET 10 SDK has to be on the box. Printed because the failure mode it produces otherwise claims
+# the package is malformed rather than that the SDK is too old.
+echo "SDKs visible to dotnet:"
+dotnet --list-sdks
+
 if dotnet tool list --tool-path "${tool_path}" 2>/dev/null | grep -q "uno.ui.runtimetests.engine.wasm.runner"; then
   dotnet tool update --tool-path "${tool_path}" Uno.UI.RuntimeTests.Engine.Wasm.Runner --version "${runner_version}"
 else

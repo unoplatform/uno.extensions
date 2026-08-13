@@ -19,16 +19,18 @@ jobs:
       # needs the SDK but no workloads; the shared template keeps the SDK version aligned anyway.
       - template: templates/dotnet-install-uno-check.yml
 
-      # Uno.UI.RuntimeTests.Engine.Wasm.Runner ships as tools/net10.0, so it cannot run on the
-      # .NET 9 SDK this repo pins - `dotnet tool install` reports the misleading
-      # "Settings file 'DotnetToolSettings.xml' was not found in the package" when no usable
-      # tools/<tfm> folder exists. Every published version of the runner is net10.0, so this is a
-      # runtime requirement rather than a version to pin around.
+      # Uno.UI.RuntimeTests.Engine.Wasm.Runner ships as tools/net10.0/any at every published
+      # version, and `dotnet tool install` picks the tool asset from the *SDK* version - not from
+      # the installed runtimes. A .NET 9 SDK finds no usable tools/<tfm> folder and reports the
+      # misleading "Settings file 'DotnetToolSettings.xml' was not found in the package" (the file
+      # is present). Installing the .NET 10 runtime alone is therefore not enough; the SDK is what
+      # matters. Safe here because this job only runs the tool - it builds nothing - and
+      # global.json pins no SDK version.
       - task: UseDotNet@2
-        displayName: 'Install .NET 10 runtime (for the WebAssembly runner tool)'
+        displayName: 'Install .NET 10 SDK (for the WebAssembly runner tool)'
         retryCountOnTaskFailure: 3
         inputs:
-          packageType: runtime
+          packageType: sdk
           version: '10.x'
           installationPath: $(DOTNET_INSTALL_DIR)
 
