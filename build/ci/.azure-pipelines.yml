@@ -19,9 +19,15 @@ variables:
   # runtime the .app is linked against in the build job must exist on the agent that runs it, and
   # splitting these across files is how that pairing silently drifts.
   IosVmImage: 'macOS-15'
-  IosXCodeRoot: '/Applications/Xcode_16.2.app'
+  # Xcode and the simulator runtime are a matched pair: actool refuses to compile the asset
+  # catalog unless a simulator runtime matching the selected Xcode's iphonesimulator SDK is
+  # installed. Build 227563 pinned Xcode 16.2 (iOS 18.2 SDK, build 22C146) on an agent whose only
+  # installed runtimes were 18.5, 18.6 and 26.0-26.2, and failed with
+  # "No simulator runtime version from [...] available to use with iphonesimulator SDK version".
+  # Xcode 16.4 ships the iOS 18.5 SDK, which matches the installed 18.5 runtime (22F77).
+  IosXCodeRoot: '/Applications/Xcode_16.4.app'
   IosSimulatorDevice: 'iPhone 16'
-  IosSimulatorRuntimePrefix: 'com.apple.CoreSimulator.SimRuntime.iOS-18'
+  IosSimulatorRuntimePrefix: 'com.apple.CoreSimulator.SimRuntime.iOS-18-5'
 
   # Which runtime tests the four device stages run. Scoped to the MSAL auth suite because the
   # wider non-hot-reload suite currently has 15 failing tests (verified against the pre-change
