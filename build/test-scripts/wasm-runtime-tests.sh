@@ -15,6 +15,10 @@ IFS=$'\n\t'
 # regardless of which one is pinned - see stage-runtime-tests-wasm.yml.
 runner_version="${UNO_WASM_RUNTIME_TESTS_RUNNER_VERSION:-2.0.0-dev.79}"
 
+# Same knob the android/ios scripts use, so all four lanes are driven by the pipeline's
+# RuntimeTestsFilter rather than each having its own idea of what to run.
+TEST_FILTER="${TEST_FILTER:-!_HotReload}"
+
 build_root="${BUILD_SOURCESDIRECTORY}/build"
 results_dir="${build_root}/wasm-runtime-tests"
 logs_dir="${results_dir}/logs"
@@ -57,12 +61,13 @@ popd >/dev/null
   echo "=========================="
 } | tee "${runner_log_path}"
 
-# Hot-reload tests need a build environment the browser doesn't have; the desktop stage owns them.
+echo "Test filter: ${TEST_FILTER}"
+
 uno-runtimetests-wasm \
   --app-path "${RuntimeTestsArtifactPath}" \
   --output "${results_path}" \
   --timeout 1800 \
-  --query-param 'UNO_RUNTIME_TESTS_RUN_TESTS={"Filter":{"Value":"!_HotReload"}}' \
+  --query-param "UNO_RUNTIME_TESTS_RUN_TESTS={\"Filter\":{\"Value\":\"${TEST_FILTER}\"}}" \
   --browser-log-level verbose \
   2>&1 | tee -a "${runner_log_path}"
 

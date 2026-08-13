@@ -52,6 +52,10 @@ jobs:
           RuntimeTestsArtifactPath: $(RuntimeTestsArtifactPath)
           SIMULATOR_DEVICE: $(IosSimulatorDevice)
           SIMULATOR_RUNTIME_PREFIX: $(IosSimulatorRuntimePrefix)
+          # Without this the script falls back to its own '!_HotReload' default and runs the whole
+          # suite - including the 15 known-failing tests and cases that need input injection, which
+          # hangs a simulator run until the 1800s timeout.
+          TEST_FILTER: $(RuntimeTestsFilter)
 
       - task: PublishTestResults@2
         condition: always()

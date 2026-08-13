@@ -38,6 +38,14 @@ jobs:
           UNO_RUNTIME_TESTS_RUN_TESTS: '{"Filter": {"Value": "$(RuntimeTestsFilter)"}}'
           UNO_RUNTIME_TESTS_OUTPUT_PATH: '$(Build.SourcesDirectory)/build/desktop-runtime-tests/desktop-runtime-tests-results.xml'
 
+      # PublishTestResults fails on a *missing* file but not an empty one, so a run that executed
+      # nothing would still go green here. The android/ios/wasm scripts call this validator; the
+      # inline desktop step is the only lane that did not.
+      - script: |
+          RUNTIME_TEST_RESULTS="$(Build.SourcesDirectory)/build/desktop-runtime-tests/desktop-runtime-tests-results.xml" \
+            python3 "$(Build.SourcesDirectory)/build/test-scripts/validate-runtime-test-results.py"
+        displayName: 'Validate desktop runtime test results'
+
       - task: PublishTestResults@2
         condition: always()
         inputs:

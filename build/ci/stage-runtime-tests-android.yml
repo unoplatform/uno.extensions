@@ -43,6 +43,9 @@ jobs:
         env:
           BUILD_SOURCESDIRECTORY: $(Build.SourcesDirectory)
           RuntimeTestsArtifactPath: $(RuntimeTestsArtifactPath)
+          # See the iOS stage: without this the script's own '!_HotReload' default runs the whole
+          # suite on the emulator.
+          TEST_FILTER: $(RuntimeTestsFilter)
 
       - task: PublishTestResults@2
         condition: always()
