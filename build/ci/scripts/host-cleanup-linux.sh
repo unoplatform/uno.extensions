@@ -38,37 +38,45 @@ $SUDO rm -rf /usr/share/swift || true
 $SUDO rm -rf /opt/microsoft/msedge || true
 $SUDO rm -rf /usr/local/.ghcup || true
 $SUDO rm -rf /usr/lib/mono || true
-$SUDO rm -rf /usr/local/lib/android || true
 $SUDO rm -rf /opt/ghc || true
+
+# The agent's Android SDK is ~10 GB and worth reclaiming for jobs that don't
+# build Android - but a job that does must keep it, or the build fails with
+# XA5300 ("The Android SDK directory could not be found"). Set
+# KEEP_ANDROID_SDK=1 in such a job.
+if [ "${KEEP_ANDROID_SDK:-0}" = "1" ]; then
+  echo "Keeping /usr/local/lib/android (KEEP_ANDROID_SDK=1)."
+else
+  $SUDO rm -rf /usr/local/lib/android || true
+fi
 $SUDO rm -rf /opt/hostedtoolcache/CodeQL || true
 
 # ── Hosted tool cache (non-.NET runtimes) ──────────────────────────────────
-# Note: jobs using NodeTool@0 re-download Node after this. That trade is worth
-# it on build jobs; it is why this script should not be added to jobs that only
-# validate pre-built binaries.
+# Node is deliberately left in place: several stages use NodeTool@0 and would
+# just re-download it.
 $SUDO rm -rf /opt/hostedtoolcache/Ruby   || true
 $SUDO rm -rf /opt/hostedtoolcache/PyPy   || true
 $SUDO rm -rf /opt/hostedtoolcache/Python || true
 $SUDO rm -rf /opt/hostedtoolcache/go     || true
-$SUDO rm -rf /opt/hostedtoolcache/node   || true
 
-# ── Large apt packages not used in .NET builds ─────────────────────────────
+# ── apt ────────────────────────────────────────────────────────────────────
+# Only snapd is purged here, plus a cache clean.
+#
+# studio.live's version of this script additionally purges firefox,
+# google-chrome-stable, libllvm*, clang-*, llvm-* and php*/ruby*. Do NOT copy
+# that list into this repo:
+#
+#   * Purging `libllvm*` cascades. apt removes reverse-dependencies even
+#     without --auto-remove, and Mesa's software rasteriser (llvmpipe) links
+#     LLVM, so `xvfb` goes with it. Both Skia desktop stages here run their
+#     tests under `xvfb-run`, which then fails with exit 127
+#     ("xvfb-run: command not found") - build 227556.
+#   * `google-chrome-stable` is needed by the WebAssembly UI tests, which drive
+#     a real Chrome through chromedriver.
+#
+# The Docker prune above already reclaims far more than this list would.
 if command -v apt-get >/dev/null 2>&1; then
-  # Purge only the explicitly listed packages — no --auto-remove. auto-remove
-  # would also pull out orphaned X11 libs (libx11-xcb1, libx11-6) that the
-  # Android emulator depends on, and the savings from orphaned deps are
-  # negligible next to the packages listed here.
-  DEBIAN_FRONTEND=noninteractive timeout 120s \
-    $SUDO apt-get purge -y \
-      snapd \
-      firefox \
-      google-chrome-stable \
-      'libllvm*' \
-      'clang-*' \
-      'llvm-*' \
-      'php*' \
-      'ruby*' \
-    2>/dev/null || true
+  DEBIAN_FRONTEND=noninteractive timeout 120s $SUDO apt-get purge -y snapd 2>/dev/null || true
   DEBIAN_FRONTEND=noninteractive timeout 60s $SUDO apt-get clean 2>/dev/null || true
 fi
 

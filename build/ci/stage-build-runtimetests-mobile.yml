@@ -9,6 +9,11 @@ jobs:
     pool:
       vmImage: 'ubuntu-24.04'
 
+    variables:
+      # Read by host-cleanup-linux.sh: this is the one Linux job that needs the agent's Android
+      # SDK, so the cleanup must not reclaim it (otherwise XA5300 at build time).
+      KEEP_ANDROID_SDK: 1
+
     steps:
       - checkout: self
         clean: true
