@@ -53,49 +53,65 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 	public async Task<NavigationResponse?> NavigateAsync(NavigationRequest request)
 	{
 		RouteUpdater.StartNavigation(this, Region, request);
-		NavigationResponse? response;
+		NavigationResponse? response = default;
+		var isNavigationEntryPoint = request.Source is null;
 
-		if (request.Source is null)
+		try
 		{
-			if (Logger.IsEnabled(LogLevel.Information)) Logger.LogInformationMessage($"Starting Navigation - Navigator: {this.GetType().Name} Request: {request.Route}");
-			request = request with { Source = this };
-		}
-
-		if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($" Navigator: {this.GetType().Name} Request: {request.Route}");
-
-		// Do any initialisation logic that may be
-		// defined for the route - allows for
-		// routes to be redirected
-		request = InitializeRequest(request);
-
-		// Redirect navigation if required
-		// eg route that matches a child, should be routed to that child
-		// eg route that doesn't match a page for frame nav should be sent to parent
-		var redirection = await RedirectNavigateAsync(request);
-		if (redirection is not null)
-		{
-			response = await redirection;
-		}
-		else
-		{
-
-			// Append Internal qualifier to avoid requests being sent back to parent
-			request = request.AsInternal();
-
-			if (request.Route.IsDialog())
+			if (request.Source is null)
 			{
-				// Dialogs will load a separate navigation hierarchy
-				// so there's no need to route the request to child regions
-				response = await DialogNavigateAsync(request);
+				if (Logger.IsEnabled(LogLevel.Information)) Logger.LogInformationMessage($"Starting Navigation - Navigator: {this.GetType().Name} Request: {request.Route}");
+				request = request with { Source = this };
+			}
+
+			if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($" Navigator: {this.GetType().Name} Request: {request.Route}");
+
+			// Do any initialisation logic that may be
+			// defined for the route - allows for
+			// routes to be redirected
+			request = InitializeRequest(request);
+
+			// Redirect navigation if required
+			// eg route that matches a child, should be routed to that child
+			// eg route that doesn't match a page for frame nav should be sent to parent
+			var redirection = await RedirectNavigateAsync(request);
+			if (redirection is not null)
+			{
+				response = await redirection;
 			}
 			else
 			{
-				// Invoke the region specific navigation
-				response = await RegionNavigateAsync(request);
+
+				// Append Internal qualifier to avoid requests being sent back to parent
+				request = request.AsInternal();
+
+				// Dialogs will load a separate navigation hierarchy
+				// so there's no need to route the request to child regions;
+				// otherwise invoke the region specific navigation
+				response = request.Route.IsDialog() ?
+					await DialogNavigateAsync(request) :
+					await RegionNavigateAsync(request);
 			}
+			return response;
 		}
-		RouteUpdater.EndNavigation(this, Region, request, response);
-		return response;
+		catch (Exception ex)
+		{
+			// Log at the request's entry navigator only — nested navigators rethrow
+			// through here too and would repeat the same exception at every level.
+			// Log Route.Base (not the full Route) to keep Data/query values, which
+			// can carry tokens or PII, out of Uno.Extensions.* log output.
+			if (isNavigationEntryPoint && Logger.IsEnabled(LogLevel.Error))
+			{
+				Logger.LogErrorMessage(ex, $"Navigation failed for route '{request.Route.Base}'");
+			}
+			throw;
+		}
+		finally
+		{
+			// Must run even when navigation faults: skipping it leaks the notifier's
+			// per-request tracking state and drops the RouteChanged notification.
+			RouteUpdater.EndNavigation(this, Region, request, response);
+		}
 	}
 
 	private async Task<Task<NavigationResponse?>?> RedirectNavigateAsync(NavigationRequest request)
