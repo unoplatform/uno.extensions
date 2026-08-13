@@ -13,6 +13,12 @@ jobs:
       - checkout: self
         clean: true
 
+      # Before anything writes to disk: the Android SDK, the workspace-local .dotnet and the cache
+      # tarball together exhaust a hosted agent's free space, which surfaces as
+      # "tar: Wrote only 8192 of 10240 bytes" in the cache post-job rather than as an obvious
+      # out-of-disk error.
+      - template: templates/host-cleanup-linux.yml
+
       # The whole project graph fails with NETSDK1147 without the android workload, including the
       # *.UI.Tests projects pulled in as ProjectReferences. InstallAndroidSdk additionally
       # provisions the platform jars the APK build needs.
@@ -50,6 +56,9 @@ jobs:
     steps:
       - checkout: self
         clean: true
+
+      # See the Android job: without this the cache post-job runs the agent out of disk.
+      - template: templates/host-cleanup-linux.yml
 
       # uno-check --fix installs the wasm-tools workload; without it the build fails UNOWA0001.
       - template: templates/dotnet-install-uno-check.yml
