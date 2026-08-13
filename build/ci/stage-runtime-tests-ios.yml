@@ -24,11 +24,24 @@ jobs:
           artifact: ios-runtime-tests
           path: $(RuntimeTestsArtifactPath)
 
-      # This job doesn't compile managed code - it boots a simulator and launches the .app - but it
-      # still needs a matching Xcode + simulator runtime, which is what the template installs.
-      - template: templates/ios-build-select-version.yml
-        parameters:
-          xCodeRoot: $(xCodeRoot)
+      # This job doesn't compile managed code - it boots a simulator and launches the .app - but the
+      # simulator runtime still has to match what the .app was linked against. See the note in
+      # stage-build-runtimetests-mobile.yml for why templates/ios-build-select-version.yml is not
+      # used here.
+      - bash: |
+          set -uo pipefail
+          if [ -d "$(xCodeRoot)" ]; then
+            sudo xcode-select --switch "$(xCodeRoot)"
+          else
+            echo "WARNING: $(xCodeRoot) not found - continuing with the agent default."
+            ls -d /Applications/Xcode*.app 2>/dev/null || true
+          fi
+          xcodebuild -version
+          echo "Installed simulator runtimes:"
+          xcrun simctl list runtimes || true
+          echo "Available devices:"
+          xcrun simctl list devices available || true
+        displayName: 'Select Xcode'
 
       - bash: |
           chmod +x build/test-scripts/ios-simulator-runtime-tests.sh

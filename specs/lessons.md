@@ -16,7 +16,7 @@ Domain lessons / postmortems for Uno.Extensions. See `AGENTS.md` §3 for when to
 
 **Correct pattern:** Distinguish "Show returned null because it delegated the view to another region (success)" from "Show returned null because the view could not be resolved (failure)". Added `ControlNavigator.IsNullShowResultExpected` (virtual, default `false`; `SelectorNavigator` overrides to `true`). When set, `ExecuteRequestAsync` clears any pending slot and returns `Route.Empty` without warning and without recording an HR retry. The route flow is unchanged — the failure path already returned `Route.Empty`, so `CoreNavigateAsync.Trim` keeps the request route intact for the sibling/child regions. The `FrameView` wrapper (spec 003) and the `SelectorNavigator` are two shapes of the same "intentionally null" contract; a third shape should reuse this hook.
 
-**Apply to:** any caller that keys a retry/queue/error path off a navigator's `null`/empty result. If `null` is a legitimate "handled, delegated downstream" signal for some navigator, the caller must recognise it explicitly — conflating it with "could not resolve" poisons everything downstream of the failure signal (here, the HR retry walk). Guarded by `Given_TabBar_HotReload.When_TabNavigated_Then_NoPendingFailedRequestRecorded`.
+**Apply to:** any caller that keys a retry/queue/error path off a navigator's `null`/empty result. If `null` is a legitimate "handled, delegated downstream" signal for some navigator, the caller must recognize it explicitly — conflating it with "could not resolve" poisons everything downstream of the failure signal (here, the HR retry walk). Guarded by `Given_TabBar_HotReload.When_TabNavigated_Then_NoPendingFailedRequestRecorded`.
 
 ## Hot-reload fixture files must be committed in their pre-HR baseline state
 
@@ -30,7 +30,7 @@ Domain lessons / postmortems for Uno.Extensions. See `AGENTS.md` §3 for when to
 
 **Correct pattern:** to test whether a symbol is live, compile something that depends on it. Either a temporary `#if !SYMBOL` + `#error` probe build, or check the emitted assembly for a type only that branch references (`Foundation.NSBundle` appears only in the iOS assembly). Do not infer symbol state from `-getProperty`.
 
-**Apply to:** any conditional-compilation change on a cross-targeted project. A branch that silently stops compiling does not fail the build — it changes behaviour and no test notices, because the other branch compiles fine. `Uno.Extensions.Authentication.MSAL.WinUI.csproj` now emits `UNO_EXT_MSAL_ANDROID_TFM` / `_IOS_TFM` from `_UnoExtMsalTargetPlatform` and `MsalAuthenticationProvider.cs` cross-checks them with `#error`, so the two can never drift apart again. Copy that pattern rather than trusting the symbol.
+**Apply to:** any conditional-compilation change on a cross-targeted project. A branch that silently stops compiling does not fail the build — it changes behavior and no test notices, because the other branch compiles fine. `Uno.Extensions.Authentication.MSAL.WinUI.csproj` now emits `UNO_EXT_MSAL_ANDROID_TFM` / `_IOS_TFM` from `_UnoExtMsalTargetPlatform` and `MsalAuthenticationProvider.cs` cross-checks them with `#error`, so the two can never drift apart again. Copy that pattern rather than trusting the symbol.
 
 ## MSAL's interactive modifiers are unreachable from `PublicClientApplicationBuilder`
 

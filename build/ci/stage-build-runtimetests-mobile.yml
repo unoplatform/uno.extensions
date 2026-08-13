@@ -17,6 +17,12 @@ jobs:
       - template: templates/canary-updater.yml
       - template: templates/jdk-setup.yml
 
+      # dotnet-install.yml only lays down the SDK; workloads are installed per stage in this repo
+      # (see stage-build-wasm.yml). Without this the whole project graph fails with NETSDK1147,
+      # including the *.UI.Tests projects pulled in as ProjectReferences.
+      - script: dotnet workload install android
+        displayName: 'Install android workload'
+
       - script: |
           dotnet publish src/Uno.Extensions.RuntimeTests/Uno.Extensions.RuntimeTests/Uno.Extensions.RuntimeTests.csproj \
             -c Debug -f net9.0-android \
@@ -47,6 +53,10 @@ jobs:
         clean: true
 
       - template: templates/dotnet-install.yml
+
+      - script: dotnet workload install wasm-tools
+        displayName: 'Install wasm-tools workload'
+
       - template: templates/canary-updater.yml
 
       - script: |
@@ -86,9 +96,28 @@ jobs:
 
       - template: templates/dotnet-install-mac.yml
       - template: templates/canary-updater.yml
-      - template: templates/ios-build-select-version.yml
-        parameters:
-          xCodeRoot: $(xCodeRoot)
+
+      # NOT templates/ios-build-select-version.yml: that template is Xamarin-era and `ls`es
+      # /Library/Frameworks/Xamarin.*.framework, which no longer exist on the hosted macOS images -
+      # it exits 1 before doing anything. Nothing in this repo built iOS in CI, so it went stale
+      # unnoticed. Select Xcode directly instead.
+      - bash: |
+          set -uo pipefail
+          echo "Xcode versions available on this agent:"
+          ls -d /Applications/Xcode*.app 2>/dev/null || true
+          if [ -d "$(xCodeRoot)" ]; then
+            sudo xcode-select --switch "$(xCodeRoot)"
+          else
+            echo "WARNING: $(xCodeRoot) not found - continuing with the agent default so the log"
+            echo "above shows what to pin IosXCodeRoot to."
+          fi
+          xcodebuild -version
+          echo "Installed simulator runtimes:"
+          xcrun simctl list runtimes || true
+        displayName: 'Select Xcode'
+
+      - script: dotnet workload install ios
+        displayName: 'Install ios workload'
 
       - script: |
           dotnet publish src/Uno.Extensions.RuntimeTests/Uno.Extensions.RuntimeTests/Uno.Extensions.RuntimeTests.csproj \

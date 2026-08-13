@@ -108,7 +108,7 @@ contract, performance). Worst-case verdict was **fix-first**; all actionable fin
 - **Removed type**: `Microsoft.Identity.Client.Extensions.Msal.Wasm.Storage` (public, browserwasm
   lib only) deleted — dead vendored code, never referenced or documented.
 - **Exception contract**: `LoginAsync` now propagates original MSAL exception types instead of
-  rewrapped `Exception` — intentional diagnosability fix.
+  rewrapped `Exception` — intentional triage fix.
 
 ## Follow-ups (not this change)
 
@@ -138,7 +138,7 @@ contract, performance). Worst-case verdict was **fix-first**; all actionable fin
   New pure helper `MsalRedirectDefaults` (platform passed in, linked into
   `Uno.Extensions.Authentication.MSAL.Tests` like `MsalStorageDefaults`), 9 tests in
   `Given_MsalRedirectDefaults`.
-  - **Behaviour change, not purely additive:** the defaults are applied *before* the app's
+  - **Behavior change, not purely additive:** the defaults are applied *before* the app's
     `Builder(...)` callback, so the callback now wins. Previously `WithWebRedirectUri()` ran
     *after* it and stomped the app on wasm, forcing apps to mutate
     `WinRTFeatureConfiguration.WebAuthenticationBroker.DefaultReturnUri` before host build to
@@ -154,7 +154,7 @@ contract, performance). Worst-case verdict was **fix-first**; all actionable fin
 - **MSAL auth test coverage — built out 2026-08-13.** The area had essentially no automated tests
   (two pure helpers; the one `Given_Msal` UI test was commented out). Now:
   - `Given_MsalRedirectDefaults_Apply` — precedence asserted through a real built
-    `IPublicClientApplication`, so it also pins MSAL's own `WithDefaultRedirectUri()` behaviour.
+    `IPublicClientApplication`, so it also pins MSAL's own `WithDefaultRedirectUri()` behavior.
   - `Uno.Extensions.Authentication.MSAL.UI.Tests` / `Given_MsalAuthentication` — login, silent
     refresh, logout, cancellation, token-leak and redirect-URI coverage driven against a stubbed
     Entra tenant (`StubEntra` + `StubWebUi`). Unattended: no network, no tenant, no human. This
@@ -172,7 +172,7 @@ contract, performance). Worst-case verdict was **fix-first**; all actionable fin
     pre-change baseline `31e7eb529` — rot accumulated while the runtime-test stage sat commented
     out. Widening `RuntimeTestsFilter` in `.azure-pipelines.yml` is blocked on fixing those.
   - Also unblocked, all pre-existing and all invisible because no CI stage built these heads:
-    two `Page` subclasses missing `partial` (android CS0260), two unresolvable doc-comment crefs
+    two `Page` subclasses missing `partial` (android CS0260), two unresolvable doc-comment cref attributes
     (android), and trim/AOT analysis failing the wasm build of every `*.UI.Tests` project (fixed
     once in `src/Directory.Build.props` under the existing `IsTestProject` condition).
 - Live Skia sweep with interactive sign-in (needs patched uno.winui cache + human at the prompt).
