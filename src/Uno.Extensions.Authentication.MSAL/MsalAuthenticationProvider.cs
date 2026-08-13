@@ -375,10 +375,17 @@ internal record MsalAuthenticationProvider(
 
 	private ValueTask<AuthenticationResult> AcquireInteractiveTokenAsync(IDispatcher dispatcher, CancellationToken cancellationToken)
 	{
-		return dispatcher.ExecuteAsync(async cancellation => await _pca!
-		  .AcquireTokenInteractive(_scopes)
-		  .WithUnoHelpers()
-		  .ExecuteAsync(cancellationToken));
+		return dispatcher.ExecuteAsync(async cancellation =>
+		{
+			var interactive = _pca!
+			  .AcquireTokenInteractive(_scopes)
+			  .WithUnoHelpers();
+
+			// After WithUnoHelpers so an app can override what the helpers set.
+			Settings?.InteractiveBuild?.Invoke(interactive);
+
+			return await interactive.ExecuteAsync(cancellationToken);
+		});
 	}
 
 

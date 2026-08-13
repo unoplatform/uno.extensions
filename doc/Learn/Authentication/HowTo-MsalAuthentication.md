@@ -195,7 +195,24 @@ To suppress the default entirely and take whatever MSAL itself would use, set:
 > `RedirectUri` in configuration or from the `Builder(...)` callback — both now win over the
 > broker-derived default.
 
-### 5. Token cache storage (optional)
+### 5. Customizing the interactive sign-in request (optional)
+
+`Builder(...)` configures the `PublicClientApplicationBuilder`, which MSAL builds once. The
+modifiers that apply to a *single* interactive sign-in — `WithPrompt`, `WithLoginHint`,
+`WithExtraScopeToConsent`, `WithSystemWebViewOptions` — hang off `AcquireTokenInteractiveParameterBuilder`
+instead, and are unreachable from `Builder(...)`. Use `InteractiveBuilder(...)` for those:
+
+```csharp
+builder.AddMsal(window, msal => msal
+    .InteractiveBuilder(interactive => interactive
+        .WithPrompt(Prompt.SelectAccount)
+        .WithLoginHint("user@contoso.com")));
+```
+
+The callback runs on every interactive sign-in, after the Uno helpers have been applied, so it can
+override what those set.
+
+### 6. Token cache storage (optional)
 
 On desktop targets, `MsalAuthenticationProvider` persists the MSAL token cache so that users stay signed in across app restarts:
 
@@ -236,7 +253,7 @@ builder.AddMsal(window, msal =>
     msal.Storage(store => store.WithMacKeyChain("com.contoso.myapp.msal", "MyAppCache")));
 ```
 
-### 6. Use the provider in your application
+### 7. Use the provider in your application
 
 - Update the `MainPage` to include a `Button` labeled to sign in with Microsoft.
 
