@@ -4,6 +4,16 @@
 		
 		<OutputType>Exe</OutputType>
     <UnoSingleProject>true</UnoSingleProject>
+  </PropertyGroup>
+
+  <!-- Surfaces UnoDisableHotDesign to the compiler so App.xaml.cs can skip the UseStudio() call
+       that Uno.UI.HotDesign.Client provides. Setting UnoDisableHotDesign alone removes the package
+       but leaves the call site, which then fails to compile. -->
+  <PropertyGroup Condition="'$(UnoDisableHotDesign)' == 'true'">
+    <DefineConstants>$(DefineConstants);UNO_HOT_DESIGN_DISABLED</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup>
 
     <!-- Display name -->
     <ApplicationTitle>Uno.Extensions.RuntimeTests</ApplicationTitle>

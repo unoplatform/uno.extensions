@@ -156,6 +156,7 @@ jobs:
           dotnet build src/Uno.Extensions.RuntimeTests/Uno.Extensions.RuntimeTests/Uno.Extensions.RuntimeTests.csproj \
             -c Debug -f net9.0-ios \
             -p:Build_Windows=false -p:Build_Android=false -p:Build_MacCatalyst=false -p:Build_Web=false \
+            -p:UnoDisableHotDesign=true \
             -bl:$(build.artifactstagingdirectory)/binlogs/build-ios-runtime-tests.binlog
         displayName: 'Build iOS simulator runtime tests'
 

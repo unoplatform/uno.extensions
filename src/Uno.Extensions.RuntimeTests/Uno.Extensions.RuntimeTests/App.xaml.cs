@@ -35,7 +35,11 @@ public partial class App : Application
 	protected override void OnLaunched(LaunchActivatedEventArgs args)
 	{
 		MainWindow = new Window();
-#if DEBUG
+		// UseStudio comes from Uno.UI.HotDesign.Client, which the iOS CI lane excludes via
+		// UnoDisableHotDesign - its iOS asset is built against Microsoft.iOS 26.0 while the
+		// installed workload is 18.2 (CS1705). Hot Design is a design-time tool with no role in
+		// an automated runtime-test run, so dropping it there costs nothing.
+#if DEBUG && !UNO_HOT_DESIGN_DISABLED
 		MainWindow.UseStudio();
 #endif
 
