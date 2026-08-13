@@ -10,8 +10,9 @@ IFS=$'\n\t'
 : "${BUILD_SOURCESDIRECTORY:?BUILD_SOURCESDIRECTORY is required}"
 : "${RuntimeTestsArtifactPath:?RuntimeTestsArtifactPath is required}"
 
-# Keep in sync with the Uno.UI.RuntimeTests.Engine version the app builds against; a runner older
-# than the engine silently fails to find the harness.
+# Roughly tracks the Uno.UI.RuntimeTests.Engine version the app builds against. Note the runner is
+# published as a net10.0 tool at every version, so the agent needs a .NET 10 runtime installed
+# regardless of which one is pinned - see stage-runtime-tests-wasm.yml.
 runner_version="${UNO_WASM_RUNTIME_TESTS_RUNNER_VERSION:-2.0.0-dev.79}"
 
 build_root="${BUILD_SOURCESDIRECTORY}/build"

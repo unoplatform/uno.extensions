@@ -23,7 +23,11 @@ jobs:
         displayName: 'Build desktop runtime tests'
 
       # xvfb because the Skia desktop head needs a display server even headless.
+      # The results directory must exist first: the engine writes UNO_RUNTIME_TESTS_OUTPUT_PATH
+      # directly and does not create parent directories, failing with DirectoryNotFoundException
+      # after the tests have already run.
       - script: |
+          mkdir -p "$(Build.SourcesDirectory)/build/desktop-runtime-tests"
           xvfb-run --auto-servernum --server-args='-screen 0 1280x1024x24' dotnet Uno.Extensions.RuntimeTests.dll
         displayName: 'Run desktop runtime tests'
         workingDirectory: $(Build.SourcesDirectory)/src/Uno.Extensions.RuntimeTests/Uno.Extensions.RuntimeTests/bin/Uno.Extensions.RuntimeTests/Debug/net9.0-desktop
