@@ -1,0 +1,50 @@
+jobs:
+  - job: RuntimeTestsDesktop
+    displayName: 'Runtime Tests - Desktop (Skia)'
+    timeoutInMinutes: 45
+    cancelTimeoutInMinutes: 0
+
+    pool:
+      vmImage: 'ubuntu-24.04'
+
+    steps:
+      - checkout: self
+        clean: true
+
+      - template: templates/host-cleanup-linux.yml
+      - template: templates/dotnet-install.yml
+      - template: templates/canary-updater.yml
+
+      - script: |
+          dotnet build src/Uno.Extensions.RuntimeTests/Uno.Extensions.RuntimeTests/Uno.Extensions.RuntimeTests.csproj \
+            -c Debug -f net9.0-desktop \
+            -p:Build_Windows=false -p:Build_Android=false -p:Build_iOS=false -p:Build_MacCatalyst=false -p:Build_Web=false \
+            -bl:$(build.artifactstagingdirectory)/binlogs/build-desktop-runtime-tests.binlog
+        displayName: 'Build desktop runtime tests'
+
+      # xvfb because the Skia desktop head needs a display server even headless.
+      - script: |
+          xvfb-run --auto-servernum --server-args='-screen 0 1280x1024x24' dotnet Uno.Extensions.RuntimeTests.dll
+        displayName: 'Run desktop runtime tests'
+        workingDirectory: $(Build.SourcesDirectory)/src/Uno.Extensions.RuntimeTests/Uno.Extensions.RuntimeTests/bin/Uno.Extensions.RuntimeTests/Debug/net9.0-desktop
+        env:
+          # Scoped filter, not the full suite. See the comment on stage-build-runtimetests-skia.yml
+          # in .azure-pipelines.yml: 15 pre-existing failures in the wider suite have to be fixed
+          # before this can become "!_HotReload".
+          UNO_RUNTIME_TESTS_RUN_TESTS: '{"Filter": {"Value": "$(RuntimeTestsFilter)"}}'
+          UNO_RUNTIME_TESTS_OUTPUT_PATH: '$(Build.SourcesDirectory)/build/desktop-runtime-tests/desktop-runtime-tests-results.xml'
+
+      - task: PublishTestResults@2
+        condition: always()
+        inputs:
+          testRunTitle: 'Desktop Runtime Tests'
+          testResultsFormat: 'NUnit'
+          testResultsFiles: '$(Build.SourcesDirectory)/build/desktop-runtime-tests/desktop-runtime-tests-results.xml'
+          failTaskOnFailedTests: true
+          failTaskOnMissingResultsFile: true
+
+      - task: PublishBuildArtifacts@1
+        condition: failed()
+        inputs:
+          PathtoPublish: $(build.artifactstagingdirectory)/binlogs
+          ArtifactName: desktop-runtime-tests-binlogs

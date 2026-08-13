@@ -1,0 +1,52 @@
+jobs:
+  - job: RuntimeTestsWasm
+    displayName: 'Runtime Tests - WebAssembly'
+    timeoutInMinutes: 45
+    cancelTimeoutInMinutes: 0
+
+    pool:
+      vmImage: 'ubuntu-24.04'
+
+    variables:
+      RuntimeTestsArtifactPath: $(Build.SourcesDirectory)/build/wasm-runtime-tests-app
+
+    steps:
+      - checkout: self
+        clean: true
+
+      - template: templates/host-cleanup-linux.yml
+      - template: templates/dotnet-install.yml
+
+      - task: NodeTool@0
+        inputs:
+          versionSpec: '18.x'
+
+      - task: DownloadPipelineArtifact@2
+        displayName: 'Download WebAssembly runtime tests artifact'
+        inputs:
+          artifact: wasm-runtime-tests
+          path: $(RuntimeTestsArtifactPath)
+
+      - bash: |
+          chmod +x build/test-scripts/wasm-runtime-tests.sh
+          build/test-scripts/wasm-runtime-tests.sh
+        displayName: 'Run WebAssembly runtime tests'
+        env:
+          BUILD_SOURCESDIRECTORY: $(Build.SourcesDirectory)
+          RuntimeTestsArtifactPath: $(RuntimeTestsArtifactPath)
+
+      - task: PublishTestResults@2
+        condition: always()
+        inputs:
+          testRunTitle: 'WebAssembly Runtime Tests'
+          testResultsFormat: 'NUnit'
+          testResultsFiles: '$(Build.SourcesDirectory)/build/wasm-runtime-tests/wasm-runtime-tests-results.xml'
+          failTaskOnFailedTests: true
+          failTaskOnMissingResultsFile: true
+
+      - task: PublishPipelineArtifact@1
+        condition: always()
+        inputs:
+          targetPath: '$(Build.SourcesDirectory)/build/wasm-runtime-tests/logs'
+          artifact: 'wasm-runtime-tests-logs-$(System.StageAttempt)'
+          publishLocation: 'pipeline'

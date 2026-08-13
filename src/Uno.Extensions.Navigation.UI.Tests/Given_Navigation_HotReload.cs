@@ -21,7 +21,7 @@ namespace Uno.Extensions.Navigation.UI.Tests;
 
 /// <summary>
 /// Hot Reload regression tests for general navigation scenarios.
-/// Every test either modifies a C# source file via <see cref="HotReloadHelper.UpdateSourceFile"/>
+/// Every test either modifies a C# source file via <c>HotReloadHelper.UpdateSourceFile</c>
 /// (C# HR) or a XAML source file (XAML HR) — then asserts the runtime effect.
 ///
 /// Covered sub-issues from epic #926:

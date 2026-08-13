@@ -1,0 +1,62 @@
+jobs:
+  - job: RuntimeTestsAndroid
+    displayName: 'Runtime Tests - Android Emulator'
+    timeoutInMinutes: 60
+    cancelTimeoutInMinutes: 0
+
+    pool:
+      vmImage: 'ubuntu-24.04'
+
+    variables:
+      RuntimeTestsArtifactPath: $(Build.SourcesDirectory)/build/android-runtime-tests-app
+
+    steps:
+      - checkout: self
+        clean: true
+
+      - template: templates/host-cleanup-linux.yml
+
+      - task: DownloadPipelineArtifact@2
+        displayName: 'Download Android runtime tests artifact'
+        inputs:
+          artifact: android-runtime-tests
+          path: $(RuntimeTestsArtifactPath)
+
+      # Hosted ubuntu agents don't grant the build user access to /dev/kvm; without this the
+      # emulator silently falls back to the TCG interpreter and runs roughly 10x slower, which
+      # turns into an opaque boot timeout rather than an obvious error.
+      - bash: |
+          if [ -e /dev/kvm ]; then
+            sudo chown "${USER}" /dev/kvm || true
+            sudo chmod 666 /dev/kvm || true
+            ls -l /dev/kvm
+          else
+            echo "ERROR: /dev/kvm is not exposed on this agent." >&2
+            exit 1
+          fi
+        displayName: 'Ensure KVM access'
+
+      - bash: |
+          chmod +x build/test-scripts/android-emulator-runtime-tests.sh
+          build/test-scripts/android-emulator-runtime-tests.sh
+        displayName: 'Run Android emulator runtime tests'
+        env:
+          BUILD_SOURCESDIRECTORY: $(Build.SourcesDirectory)
+          RuntimeTestsArtifactPath: $(RuntimeTestsArtifactPath)
+
+      - task: PublishTestResults@2
+        condition: always()
+        inputs:
+          testRunTitle: 'Android Emulator Runtime Tests'
+          testResultsFormat: 'NUnit'
+          testResultsFiles: '$(Build.SourcesDirectory)/build/android-runtime-tests/android-runtime-tests-results.xml'
+          failTaskOnFailedTests: true
+          failTaskOnMissingResultsFile: true
+
+      # Emulator + logcat logs are what make an emulator-only failure triageable at all.
+      - task: PublishPipelineArtifact@1
+        condition: always()
+        inputs:
+          targetPath: '$(Build.SourcesDirectory)/build/android-runtime-tests/logs'
+          artifact: 'android-runtime-tests-logs-$(System.StageAttempt)'
+          publishLocation: 'pipeline'

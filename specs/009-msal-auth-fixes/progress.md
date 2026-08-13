@@ -151,6 +151,30 @@ contract, performance). Worst-case verdict was **fix-first**; all actionable fin
     `ApplyPlatformRedirectUri - Configuring MSAL default RedirectUri` with the rig's per-platform
     block deleted; 1540 unit tests green.
   - Not verified: interactive sign-in completion on any head; iOS and WinAppSDK not built.
+- **MSAL auth test coverage — built out 2026-08-13.** The area had essentially no automated tests
+  (two pure helpers; the one `Given_Msal` UI test was commented out). Now:
+  - `Given_MsalRedirectDefaults_Apply` — precedence asserted through a real built
+    `IPublicClientApplication`, so it also pins MSAL's own `WithDefaultRedirectUri()` behaviour.
+  - `Uno.Extensions.Authentication.MSAL.UI.Tests` / `Given_MsalAuthentication` — login, silent
+    refresh, logout, cancellation, token-leak and redirect-URI coverage driven against a stubbed
+    Entra tenant (`StubEntra` + `StubWebUi`). Unattended: no network, no tenant, no human. This
+    replaces the "live Skia sweep needs a human at the prompt" blocker for everything except a
+    real-Entra integration check.
+  - Four runtime-test CI stages (desktop / wasm / android / ios) ported from `../studio.live`,
+    plus `MobileRuntimeTestsAutostart` + the Android intent bridge in the RuntimeTests head.
+  - **Two real token leaks fixed** (both pre-existing, found by the new guard):
+    `TokenCache.LogKeyValues` logged raw token values at Trace; `HeaderHandler` logged the bearer
+    token at Debug on every request.
+  - Required one additive API: `IMsalAuthenticationBuilder.InteractiveBuilder(...)` — see
+    `specs/lessons.md` for why `Builder(...)` could not reach `WithCustomWebUi`.
+  - **Known limitation:** the device stages run a filter scoped to `Given_MsalAuthentication`, not
+    `!_HotReload`. The wider runtime suite has 15 failing tests, verified identical at the
+    pre-change baseline `31e7eb529` — rot accumulated while the runtime-test stage sat commented
+    out. Widening `RuntimeTestsFilter` in `.azure-pipelines.yml` is blocked on fixing those.
+  - Also unblocked, all pre-existing and all invisible because no CI stage built these heads:
+    two `Page` subclasses missing `partial` (android CS0260), two unresolvable doc-comment crefs
+    (android), and trim/AOT analysis failing the wasm build of every `*.UI.Tests` project (fixed
+    once in `src/Directory.Build.props` under the existing `IsTestProject` condition).
 - Live Skia sweep with interactive sign-in (needs patched uno.winui cache + human at the prompt).
 - #2640 WebAuthenticationBroker for Desktop/Skia (feature).
 - Measure actual WASM payload effect of `UNO_EXT_MSAL_NOSTORAGE` on a trimmed publish.

@@ -46,6 +46,10 @@ public partial class App : Application
 
 		MainWindow!.Content ??= new Uno.UI.RuntimeTests.UnitTestsControl();
 		MainWindow!.Activate();
+
+		// No-op unless UITEST_RUNTIME_AUTOSTART_RESULT_FILE is set, which only the Android/iOS CI
+		// scripts do. Those heads can't use the engine's own UNO_RUNTIME_TESTS_RUN_TESTS runner.
+		MobileRuntimeTestsAutostart.StartIfRequested(MainWindow);
 	}
 
 

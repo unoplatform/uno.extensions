@@ -1,0 +1,59 @@
+jobs:
+  - job: RuntimeTestsIos
+    displayName: 'Runtime Tests - iOS Simulator'
+    timeoutInMinutes: 45
+    cancelTimeoutInMinutes: 0
+
+    pool:
+      vmImage: $(IosVmImage)
+
+    variables:
+      # Must match the pair used in stage-build-runtimetests-mobile.yml: the simulator runtime the
+      # .app was linked against has to exist on this agent too. Both come from pipeline.yml-level
+      # variables so they can only be changed together.
+      xCodeRoot: $(IosXCodeRoot)
+      RuntimeTestsArtifactPath: $(Build.SourcesDirectory)/build/ios-runtime-tests-app
+
+    steps:
+      - checkout: self
+        clean: true
+
+      - task: DownloadPipelineArtifact@2
+        displayName: 'Download iOS runtime tests artifact'
+        inputs:
+          artifact: ios-runtime-tests
+          path: $(RuntimeTestsArtifactPath)
+
+      # This job doesn't compile managed code - it boots a simulator and launches the .app - but it
+      # still needs a matching Xcode + simulator runtime, which is what the template installs.
+      - template: templates/ios-build-select-version.yml
+        parameters:
+          xCodeRoot: $(xCodeRoot)
+
+      - bash: |
+          chmod +x build/test-scripts/ios-simulator-runtime-tests.sh
+          build/test-scripts/ios-simulator-runtime-tests.sh
+        displayName: 'Run iOS simulator runtime tests'
+        env:
+          BUILD_SOURCESDIRECTORY: $(Build.SourcesDirectory)
+          RuntimeTestsArtifactPath: $(RuntimeTestsArtifactPath)
+          SIMULATOR_DEVICE: $(IosSimulatorDevice)
+          SIMULATOR_RUNTIME_PREFIX: $(IosSimulatorRuntimePrefix)
+
+      - task: PublishTestResults@2
+        condition: always()
+        inputs:
+          testRunTitle: 'iOS Simulator Runtime Tests'
+          testResultsFormat: 'NUnit'
+          testResultsFiles: '$(Build.SourcesDirectory)/build/ios-runtime-tests/ios-runtime-tests-results.xml'
+          failTaskOnFailedTests: true
+          failTaskOnMissingResultsFile: true
+
+      # Managed Console output never survives into `log show` filtering reliably, so the collected
+      # os_log archive is often the only diagnostic a simulator failure leaves behind.
+      - task: PublishPipelineArtifact@1
+        condition: always()
+        inputs:
+          targetPath: '$(Build.SourcesDirectory)/build/ios-runtime-tests/logs'
+          artifact: 'ios-runtime-tests-logs-$(System.StageAttempt)'
+          publishLocation: 'pipeline'

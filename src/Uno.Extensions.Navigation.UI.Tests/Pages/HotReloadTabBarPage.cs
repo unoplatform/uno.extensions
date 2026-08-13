@@ -14,7 +14,7 @@ namespace Uno.Extensions.Navigation.UI.Tests.Pages;
 ///       ├── TabBarItem [Region.Name="TabOne"]
 ///       └── TabBarItem [Region.Name="TabTwo"]
 ///
-/// The <see cref="TabBarNavigator"/> (registered via <c>UseToolkitNavigation</c>) handles
+/// The <c>TabBarNavigator</c> (registered via <c>UseToolkitNavigation</c>) handles
 /// the <c>TabBar</c> as a <c>SelectorNavigator</c>, selecting items by Region.Name. The
 /// sibling visibility-panel navigator materializes a FrameView per navigated route, identical
 /// to the region test in <see cref="HotReloadRegionPage"/>.

@@ -1,0 +1,111 @@
+# Builds the runtime-tests app for the mobile / wasm heads and publishes each as a pipeline
+# artifact. Split from the stages that *run* them so a Linux agent can build the Android APK while
+# the emulator job (and the macOS-hosted iOS job) consume the artifacts afterwards - the same
+# split Studio Live uses.
+jobs:
+  - job: Build_RuntimeTests_Android
+    displayName: 'Build Runtime Tests - Android'
+    timeoutInMinutes: 60
+    pool:
+      vmImage: 'ubuntu-24.04'
+
+    steps:
+      - checkout: self
+        clean: true
+
+      - template: templates/dotnet-install.yml
+      - template: templates/canary-updater.yml
+      - template: templates/jdk-setup.yml
+
+      - script: |
+          dotnet publish src/Uno.Extensions.RuntimeTests/Uno.Extensions.RuntimeTests/Uno.Extensions.RuntimeTests.csproj \
+            -c Debug -f net9.0-android \
+            -p:Build_Windows=false -p:Build_iOS=false -p:Build_MacCatalyst=false -p:Build_Web=false \
+            -o $(build.artifactstagingdirectory)/android-runtime-tests \
+            -bl:$(build.artifactstagingdirectory)/binlogs/build-android-runtime-tests.binlog
+        displayName: 'Publish Android runtime tests APK'
+
+      - task: PublishPipelineArtifact@1
+        inputs:
+          targetPath: $(build.artifactstagingdirectory)/android-runtime-tests
+          artifactName: android-runtime-tests
+
+      - task: PublishBuildArtifacts@1
+        condition: failed()
+        inputs:
+          PathtoPublish: $(build.artifactstagingdirectory)/binlogs
+          ArtifactName: android-runtime-tests-binlogs
+
+  - job: Build_RuntimeTests_Wasm
+    displayName: 'Build Runtime Tests - WebAssembly'
+    timeoutInMinutes: 60
+    pool:
+      vmImage: 'ubuntu-24.04'
+
+    steps:
+      - checkout: self
+        clean: true
+
+      - template: templates/dotnet-install.yml
+      - template: templates/canary-updater.yml
+
+      - script: |
+          dotnet publish src/Uno.Extensions.RuntimeTests/Uno.Extensions.RuntimeTests/Uno.Extensions.RuntimeTests.csproj \
+            -c Debug -f net9.0-browserwasm \
+            -p:Build_Windows=false -p:Build_iOS=false -p:Build_MacCatalyst=false -p:Build_Android=false \
+            -o $(build.artifactstagingdirectory)/wasm-runtime-tests \
+            -bl:$(build.artifactstagingdirectory)/binlogs/build-wasm-runtime-tests.binlog
+        displayName: 'Publish WebAssembly runtime tests'
+
+      - task: PublishPipelineArtifact@1
+        inputs:
+          targetPath: $(build.artifactstagingdirectory)/wasm-runtime-tests
+          artifactName: wasm-runtime-tests
+
+      - task: PublishBuildArtifacts@1
+        condition: failed()
+        inputs:
+          PathtoPublish: $(build.artifactstagingdirectory)/binlogs
+          ArtifactName: wasm-runtime-tests-binlogs
+
+  - job: Build_RuntimeTests_iOS
+    displayName: 'Build Runtime Tests - iOS'
+    timeoutInMinutes: 60
+    pool:
+      vmImage: $(IosVmImage)
+
+    variables:
+      # The simulator runtime this .app is linked against must also exist on the agent that runs
+      # it. Both the image and the Xcode root are pipeline-level variables so the build job and the
+      # test job can never drift apart - that pairing is the failure mode Studio Live hit most.
+      xCodeRoot: $(IosXCodeRoot)
+
+    steps:
+      - checkout: self
+        clean: true
+
+      - template: templates/dotnet-install-mac.yml
+      - template: templates/canary-updater.yml
+      - template: templates/ios-build-select-version.yml
+        parameters:
+          xCodeRoot: $(xCodeRoot)
+
+      - script: |
+          dotnet publish src/Uno.Extensions.RuntimeTests/Uno.Extensions.RuntimeTests/Uno.Extensions.RuntimeTests.csproj \
+            -c Debug -f net9.0-ios \
+            -p:RuntimeIdentifier=iossimulator-x64 \
+            -p:Build_Windows=false -p:Build_Android=false -p:Build_MacCatalyst=false -p:Build_Web=false \
+            -o $(build.artifactstagingdirectory)/ios-runtime-tests \
+            -bl:$(build.artifactstagingdirectory)/binlogs/build-ios-runtime-tests.binlog
+        displayName: 'Publish iOS simulator runtime tests'
+
+      - task: PublishPipelineArtifact@1
+        inputs:
+          targetPath: $(build.artifactstagingdirectory)/ios-runtime-tests
+          artifactName: ios-runtime-tests
+
+      - task: PublishBuildArtifacts@1
+        condition: failed()
+        inputs:
+          PathtoPublish: $(build.artifactstagingdirectory)/binlogs
+          ArtifactName: ios-runtime-tests-binlogs
