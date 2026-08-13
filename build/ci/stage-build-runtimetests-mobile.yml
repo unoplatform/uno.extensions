@@ -55,13 +55,26 @@ jobs:
       - template: templates/dotnet-install-uno-check.yml
       - template: templates/canary-updater.yml
 
+      # `build`, not `publish`, matching stage-build-wasm.yml and wasm-uitest-run.sh. Publishing a
+      # WebAssembly head runs the trimmer, and third-party assemblies (Uno.Toolkit.WinUI,
+      # Uno.UI.HotDesign.*, Uno.UI.App.Mcp.Client) emit IL2104 trim warnings that TreatWarningsAsErrors
+      # turns into build errors. Trimming a runtime-test host is the wrong thing to do anyway - the
+      # engine discovers tests by reflection, which is exactly what the trimmer removes.
       - script: |
-          dotnet publish src/Uno.Extensions.RuntimeTests/Uno.Extensions.RuntimeTests/Uno.Extensions.RuntimeTests.csproj \
+          dotnet build src/Uno.Extensions.RuntimeTests/Uno.Extensions.RuntimeTests/Uno.Extensions.RuntimeTests.csproj \
             -c Debug -f net9.0-browserwasm \
             -p:Build_Windows=false -p:Build_iOS=false -p:Build_MacCatalyst=false -p:Build_Android=false \
-            -o $(build.artifactstagingdirectory)/wasm-runtime-tests \
+            -p:UseWebAssemblyAOT=false \
             -bl:$(build.artifactstagingdirectory)/binlogs/build-wasm-runtime-tests.binlog
-        displayName: 'Publish WebAssembly runtime tests'
+        displayName: 'Build WebAssembly runtime tests'
+
+      # wwwroot is the served site root - the same output stage-build-wasm.yml publishes.
+      - task: CopyFiles@2
+        displayName: 'Stage WebAssembly output'
+        inputs:
+          SourceFolder: $(Build.SourcesDirectory)/src/Uno.Extensions.RuntimeTests/Uno.Extensions.RuntimeTests/bin/Uno.Extensions.RuntimeTests/Debug/net9.0-browserwasm/wwwroot
+          Contents: '**/*.*'
+          TargetFolder: $(build.artifactstagingdirectory)/wasm-runtime-tests
 
       - task: PublishPipelineArtifact@1
         inputs:
