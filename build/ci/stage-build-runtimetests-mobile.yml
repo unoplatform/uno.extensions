@@ -13,15 +13,14 @@ jobs:
       - checkout: self
         clean: true
 
-      - template: templates/dotnet-install.yml
-      - template: templates/canary-updater.yml
-      - template: templates/jdk-setup.yml
+      # dotnet-install.yml only lays down the SDK - the whole project graph fails with NETSDK1147
+      # without the android workload, including the *.UI.Tests projects pulled in as
+      # ProjectReferences. InstallAndroidSdk provisions the platform jars the APK build needs.
+      - template: templates/dotnet-install-linux.yml
+        parameters:
+          InstallAndroidSdk: true
 
-      # dotnet-install.yml only lays down the SDK; workloads are installed per stage in this repo
-      # (see stage-build-wasm.yml). Without this the whole project graph fails with NETSDK1147,
-      # including the *.UI.Tests projects pulled in as ProjectReferences.
-      - script: dotnet workload install android
-        displayName: 'Install android workload'
+      - template: templates/canary-updater.yml
 
       - script: |
           dotnet publish src/Uno.Extensions.RuntimeTests/Uno.Extensions.RuntimeTests/Uno.Extensions.RuntimeTests.csproj \
@@ -52,11 +51,8 @@ jobs:
       - checkout: self
         clean: true
 
-      - template: templates/dotnet-install.yml
-
-      - script: dotnet workload install wasm-tools
-        displayName: 'Install wasm-tools workload'
-
+      # uno-check --fix installs the wasm-tools workload; without it the build fails UNOWA0001.
+      - template: templates/dotnet-install-linux.yml
       - template: templates/canary-updater.yml
 
       - script: |

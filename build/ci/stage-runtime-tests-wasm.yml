@@ -15,7 +15,9 @@ jobs:
         clean: true
 
       - template: templates/host-cleanup-linux.yml
-      - template: templates/dotnet-install.yml
+      # This job only runs the Playwright-based runner tool against a published artifact, so it
+      # needs the SDK but no workloads; the shared template keeps the SDK version aligned anyway.
+      - template: templates/dotnet-install-linux.yml
 
       - task: NodeTool@0
         inputs:
