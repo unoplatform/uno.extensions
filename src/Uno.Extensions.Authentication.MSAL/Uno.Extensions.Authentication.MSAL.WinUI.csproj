@@ -66,6 +66,18 @@
 		<DefineConstants>$(DefineConstants);UNO_EXT_MSAL</DefineConstants>
 	</PropertyGroup>
 
+	<!-- TFM markers derived from the target platform itself, used only to cross-check that the
+		SDK's implicit ANDROID / IOS symbols are actually defined - see the #error guards in
+		MsalAuthenticationProvider.cs. Without this, a platform branch that silently stops
+		compiling degrades to the desktop path with no build error and no test failure. -->
+	<PropertyGroup Condition="'$(_UnoExtMsalTargetPlatform)'=='android'">
+		<DefineConstants>$(DefineConstants);UNO_EXT_MSAL_ANDROID_TFM</DefineConstants>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(_UnoExtMsalTargetPlatform)'=='ios'">
+		<DefineConstants>$(DefineConstants);UNO_EXT_MSAL_IOS_TFM</DefineConstants>
+	</PropertyGroup>
+
 	<!-- Token-cache persistence isn't available in the browser; compiling it out keeps the
 		unused MsalCacheHelper code paths out of the WebAssembly assembly. -->
 	<PropertyGroup Condition="'$(_UnoExtMsalTargetPlatform)'=='browserwasm'">

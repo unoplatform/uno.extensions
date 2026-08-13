@@ -1,4 +1,4 @@
-﻿#if WINDOWS
+#if WINDOWS
 using Microsoft.Identity.Client.Broker;
 #endif
 using Uno.Extensions.Logging;
@@ -8,6 +8,21 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.Json.Serialization.Metadata;
 using MsalCacheHelper = Microsoft.Identity.Client.Extensions.Msal.MsalCacheHelper;
+#endif
+
+// The platform redirect-URI branches below are selected with the SDK's implicit ANDROID / IOS
+// symbols. If either stopped being defined, the branch would not fail to compile - it would
+// silently fall through to the desktop path, shipping the wrong redirect URI with no build error
+// and no failing test. UNO_EXT_MSAL_*_TFM is derived independently in the .csproj from the target
+// platform, so these guards fail the build the moment the two disagree.
+//
+// Note for future debugging: `-getProperty:DefineConstants` does NOT list ANDROID / IOS, because
+// the SDK merges ImplicitDefineConstants after evaluation. That is not evidence they are missing.
+#if UNO_EXT_MSAL_ANDROID_TFM && !ANDROID
+#error The ANDROID symbol is not defined for the android TFM; the platform redirect branch in ApplyPlatformRedirectUri would be dead code.
+#endif
+#if UNO_EXT_MSAL_IOS_TFM && !IOS
+#error The IOS symbol is not defined for the ios TFM; the platform redirect branch in ApplyPlatformRedirectUri would be dead code.
 #endif
 
 namespace Uno.Extensions.Authentication.MSAL;
@@ -83,63 +98,46 @@ internal record MsalAuthenticationProvider(
 	/// </remarks>
 	private void ApplyPlatformRedirectUri(PublicClientApplicationBuilder builder, MsalConfiguration config)
 	{
-		if (!config.UseDefaultPlatformRedirectUri)
-		{
-			if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"Default platform RedirectUri disabled by configuration");
-			return;
-		}
-
-		if (config.RedirectUri is { Length: > 0 })
-		{
-			// CreateWithApplicationOptions already applied it; don't overwrite a configured value.
-			if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"RedirectUri supplied by configuration, skipping platform default");
-			return;
-		}
-
-		if (PlatformHelper.IsWebAssembly)
-		{
-			// Derived from Uno's WebAuthenticationBroker rather than from the client id.
-			if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"Configuring Web RedirectUri");
-			builder.WithWebRedirectUri();
-			return;
-		}
-
 		string? bundleId = null;
 #if IOS
 		bundleId = global::Foundation.NSBundle.MainBundle.BundleIdentifier;
 #endif
 
-		var platformRedirectUri = MsalRedirectDefaults.GetPlatformRedirectUri(
-			config.ClientId,
+		var decision = MsalRedirectDefaults.Apply(
+			builder,
+			config,
+			CurrentRedirectPlatform,
 			bundleId,
-#if ANDROID
-			isAndroid: true,
-#else
-			isAndroid: false,
-#endif
-#if IOS
-			isIOS: true);
-#else
-			isIOS: false);
-#endif
+			static b => b.WithWebRedirectUri());
 
-		if (platformRedirectUri is { Length: > 0 })
+		if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"RedirectUri resolution: {decision}");
+	}
+
+	/// <summary>
+	/// The platform whose redirect-URI convention applies, resolved from the compile-time target
+	/// plus the WebAssembly runtime check.
+	/// </summary>
+	private static MsalRedirectPlatform CurrentRedirectPlatform
+	{
+		get
 		{
-			if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"Configuring platform RedirectUri '{platformRedirectUri}'");
-			builder.WithRedirectUri(platformRedirectUri);
-			return;
-		}
+			// Runtime check rather than a symbol: WebAssembly shares the browserwasm TFM with the
+			// generic Skia stack, which is how the rest of this provider detects it too.
+			if (PlatformHelper.IsWebAssembly)
+			{
+				return MsalRedirectPlatform.WebAssembly;
+			}
 
-#if WINDOWS
-		// WinAppSDK head only: the WAM broker configured below owns the redirect URI, so leave it
-		// alone rather than changing behaviour on a path this prototype hasn't exercised.
-		if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"Broker-managed RedirectUri, no platform default applied");
+#if ANDROID
+			return MsalRedirectPlatform.Android;
+#elif IOS
+			return MsalRedirectPlatform.IOS;
+#elif WINDOWS
+			return MsalRedirectPlatform.BrokerManaged;
 #else
-		// Desktop and anything else: http://localhost on .NET, which is what the system-browser
-		// flow needs (https://aka.ms/msal-net-default-reply-uri).
-		if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"Configuring MSAL default RedirectUri");
-		builder.WithDefaultRedirectUri();
+			return MsalRedirectPlatform.Desktop;
 #endif
+		}
 	}
 
 	protected async override ValueTask<IDictionary<string, string>?> InternalLoginAsync(IDispatcher? dispatcher, IDictionary<string, string>? credentials, CancellationToken cancellationToken)
