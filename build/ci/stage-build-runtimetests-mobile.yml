@@ -138,18 +138,41 @@ jobs:
             echo "above shows what to pin IosXCodeRoot to."
           fi
           xcodebuild -version
+          echo "Agent architecture: $(uname -m)"
           echo "Installed simulator runtimes:"
           xcrun simctl list runtimes || true
+          echo "Available simulator devices:"
+          xcrun simctl list devices available || true
         displayName: 'Select Xcode'
 
+      # `build`, not `publish`. Publishing an iOS project requires a *device* runtime identifier -
+      # `dotnet publish` rejects a simulator RID outright:
+      #   "A runtime identifier for a device architecture must be specified in order to publish
+      #    this project. 'iossimulator-x64' is a simulator architecture."
+      # No explicit RID either: for a build, the iOS SDK defaults to the simulator RID matching the
+      # agent's own architecture, which is what the simulator in the test stage can actually run.
+      # Hard-coding x64 would produce an app the simulator has to translate on an arm64 agent.
       - script: |
-          dotnet publish src/Uno.Extensions.RuntimeTests/Uno.Extensions.RuntimeTests/Uno.Extensions.RuntimeTests.csproj \
+          dotnet build src/Uno.Extensions.RuntimeTests/Uno.Extensions.RuntimeTests/Uno.Extensions.RuntimeTests.csproj \
             -c Debug -f net9.0-ios \
-            -p:RuntimeIdentifier=iossimulator-x64 \
             -p:Build_Windows=false -p:Build_Android=false -p:Build_MacCatalyst=false -p:Build_Web=false \
-            -o $(build.artifactstagingdirectory)/ios-runtime-tests \
             -bl:$(build.artifactstagingdirectory)/binlogs/build-ios-runtime-tests.binlog
-        displayName: 'Publish iOS simulator runtime tests'
+        displayName: 'Build iOS simulator runtime tests'
+
+      # Locate the .app rather than hard-coding the RID subfolder, so this keeps working whichever
+      # simulator architecture the agent defaults to.
+      - bash: |
+          set -euo pipefail
+          app_bundle="$(find src/Uno.Extensions.RuntimeTests/Uno.Extensions.RuntimeTests/bin -type d -name '*.app' -print | head -n 1)"
+          if [ -z "${app_bundle}" ]; then
+            echo "ERROR: no .app bundle produced under bin/" >&2
+            find src/Uno.Extensions.RuntimeTests/Uno.Extensions.RuntimeTests/bin -maxdepth 4 -type d >&2 || true
+            exit 1
+          fi
+          echo "Staging ${app_bundle}"
+          mkdir -p "$(build.artifactstagingdirectory)/ios-runtime-tests"
+          cp -R "${app_bundle}" "$(build.artifactstagingdirectory)/ios-runtime-tests/"
+        displayName: 'Stage iOS .app bundle'
 
       - task: PublishPipelineArtifact@1
         inputs:
