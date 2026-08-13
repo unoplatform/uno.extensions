@@ -46,8 +46,11 @@ steps:
 
       echo "##vso[task.setvariable variable=WasmCachePath;]$emsdkPath"
 
-      # -Force so a pre-existing directory (self-hosted agent, re-run) isn't a hard error.
-      mkdir -Force $emsdkPath
+      # New-Item, not `mkdir -Force`: on Linux PowerShell has no mkdir function, so `mkdir`
+      # resolves to /usr/bin/mkdir, which rejects -Force ("invalid option -- 'F'") and fails the
+      # step on every Linux and macOS agent. -Force keeps this idempotent for a re-run or a
+      # self-hosted agent where the directory already exists.
+      New-Item -ItemType Directory -Force -Path $emsdkPath | Out-Null
     displayName: Set EMSDK Path
 
   - task: Cache@2
