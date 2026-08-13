@@ -12,7 +12,7 @@ jobs:
         clean: true
 
       - template: templates/host-cleanup-linux.yml
-      - template: templates/dotnet-install-linux.yml
+      - template: templates/dotnet-install-uno-check.yml
       - template: templates/canary-updater.yml
 
       - script: |

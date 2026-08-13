@@ -13,10 +13,10 @@ jobs:
       - checkout: self
         clean: true
 
-      # dotnet-install.yml only lays down the SDK - the whole project graph fails with NETSDK1147
-      # without the android workload, including the *.UI.Tests projects pulled in as
-      # ProjectReferences. InstallAndroidSdk provisions the platform jars the APK build needs.
-      - template: templates/dotnet-install-linux.yml
+      # The whole project graph fails with NETSDK1147 without the android workload, including the
+      # *.UI.Tests projects pulled in as ProjectReferences. InstallAndroidSdk additionally
+      # provisions the platform jars the APK build needs.
+      - template: templates/dotnet-install-uno-check.yml
         parameters:
           InstallAndroidSdk: true
 
@@ -52,7 +52,7 @@ jobs:
         clean: true
 
       # uno-check --fix installs the wasm-tools workload; without it the build fails UNOWA0001.
-      - template: templates/dotnet-install-linux.yml
+      - template: templates/dotnet-install-uno-check.yml
       - template: templates/canary-updater.yml
 
       - script: |
@@ -90,7 +90,10 @@ jobs:
       - checkout: self
         clean: true
 
-      - template: templates/dotnet-install-mac.yml
+      # Same cross-platform template as the Linux jobs - it installs the ios workload via
+      # uno-check. dotnet-install-mac.yml is not used: it additionally installs .NET 5 and 3.1,
+      # which nothing here needs, and until this stage existed it had no callers at all.
+      - template: templates/dotnet-install-uno-check.yml
       - template: templates/canary-updater.yml
 
       # NOT templates/ios-build-select-version.yml: that template is Xamarin-era and `ls`es
@@ -111,9 +114,6 @@ jobs:
           echo "Installed simulator runtimes:"
           xcrun simctl list runtimes || true
         displayName: 'Select Xcode'
-
-      - script: dotnet workload install ios
-        displayName: 'Install ios workload'
 
       - script: |
           dotnet publish src/Uno.Extensions.RuntimeTests/Uno.Extensions.RuntimeTests/Uno.Extensions.RuntimeTests.csproj \
