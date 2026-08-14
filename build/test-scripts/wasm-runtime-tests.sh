@@ -63,11 +63,15 @@ popd >/dev/null
 
 echo "Test filter: ${TEST_FILTER}"
 
+# --filter, NOT --query-param UNO_RUNTIME_TESTS_RUN_TESTS: the runner sets that parameter itself
+# (as `=true`) when building the test URL, so passing it again produced a URL carrying
+# UNO_RUNTIME_TESTS_RUN_TESTS twice and the app never started the run - it just sat there until the
+# 1800s timeout with the browser still open. The runner has a first-class filter option; use it.
 uno-runtimetests-wasm \
   --app-path "${RuntimeTestsArtifactPath}" \
   --output "${results_path}" \
   --timeout 1800 \
-  --query-param "UNO_RUNTIME_TESTS_RUN_TESTS={\"Filter\":{\"Value\":\"${TEST_FILTER}\"}}" \
+  --filter "${TEST_FILTER}" \
   --browser-log-level verbose \
   2>&1 | tee -a "${runner_log_path}"
 
