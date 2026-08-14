@@ -67,6 +67,8 @@ jobs:
       - task: PublishPipelineArtifact@1
         condition: always()
         inputs:
-          targetPath: '$(Build.SourcesDirectory)/build/wasm-runtime-tests/logs'
+          # The whole results directory, not just logs/: the NUnit XML carries the per-test failure
+          # messages, and without it a failing mobile run leaves nothing to diagnose from.
+          targetPath: '$(Build.SourcesDirectory)/build/wasm-runtime-tests'
           artifact: 'wasm-runtime-tests-logs-$(System.StageAttempt)'
           publishLocation: 'pipeline'

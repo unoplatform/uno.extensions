@@ -103,8 +103,12 @@ public class Given_MsalAuthentication
 						// No instance-discovery round trip: keeps the stub to two endpoints and
 						// removes a network-shaped failure mode from mobile CI.
 						.WithInstanceDiscovery(false)
-						.WithHttpClientFactory(tenant.HttpClientFactory)
-						.WithRedirectUri("http://localhost"))
+						.WithHttpClientFactory(tenant.HttpClientFactory))
+					// Deliberately no WithRedirectUri: the provider's platform default applies, which
+					// is the behaviour under test. Hard-coding http://localhost was desktop-shaped and
+					// is not a valid redirect on iOS, where MSAL expects the msauth scheme - a likely
+					// reason all 7 tests failed there once the harness finally ran (build 227612).
+					// StubWebUi echoes back whatever redirect URI MSAL hands it, so any value works.
 					.InteractiveBuilder(interactive => interactive
 						.WithCustomWebUi(webUi))))
 			.ConfigureServices(services => services

@@ -63,6 +63,8 @@ jobs:
       - task: PublishPipelineArtifact@1
         condition: always()
         inputs:
-          targetPath: '$(Build.SourcesDirectory)/build/android-runtime-tests/logs'
+          # The whole results directory, not just logs/: the NUnit XML carries the per-test failure
+          # messages, and without it a failing mobile run leaves nothing to diagnose from.
+          targetPath: '$(Build.SourcesDirectory)/build/android-runtime-tests'
           artifact: 'android-runtime-tests-logs-$(System.StageAttempt)'
           publishLocation: 'pipeline'
