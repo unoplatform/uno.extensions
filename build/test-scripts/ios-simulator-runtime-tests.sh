@@ -126,6 +126,19 @@ echo "Simulator booted in ${SECONDS}s."
 
 xcrun simctl install "${device_udid}" "${app_bundle}"
 
+# Write the results into the app's own data container rather than /tmp. Simulator apps run
+# natively, so the container path `simctl get_app_container` reports is the same path the app sees
+# and is directly readable from the host - no assumption about whether the simulator shares /tmp.
+app_container="$(xcrun simctl get_app_container "${device_udid}" "${BUNDLE_ID}" data 2>/dev/null || true)"
+if [[ -n "${app_container}" && -d "${app_container}" ]]; then
+  result_file="${app_container}/Documents/uno-extensions-rt-${timestamp}.xml"
+  mkdir -p "${app_container}/Documents"
+  echo "Using app data container for results: ${result_file}"
+else
+  echo "WARNING: could not resolve the app data container; falling back to ${result_file}"
+fi
+rm -f "${result_file}"
+
 # macOS base64 uses -b; GNU uses -w.
 encoded_filter="$(printf '%s' "${TEST_FILTER}" | base64 -b 0 2>/dev/null || printf '%s' "${TEST_FILTER}" | base64 -w 0)"
 

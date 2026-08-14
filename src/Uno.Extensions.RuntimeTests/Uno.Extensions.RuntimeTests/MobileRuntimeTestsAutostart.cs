@@ -50,6 +50,15 @@ internal static class MobileRuntimeTestsAutostart
 		ArgumentNullException.ThrowIfNull(window);
 
 		var resultFile = Environment.GetEnvironmentVariable(ResultFileVariable);
+
+		// Always say which branch was taken. Returning silently here is indistinguishable from
+		// "ran and produced nothing" in a device log, which cost a full CI round on iOS: the app
+		// launched, sat idle for the 1800s timeout and was killed by the harness, with no clue
+		// whether the variable had arrived.
+		Console.WriteLine(
+			$"MobileRuntimeTestsAutostart: {ResultFileVariable}=" +
+			(string.IsNullOrEmpty(resultFile) ? "<not set> - autostart disabled" : resultFile));
+
 		if (string.IsNullOrEmpty(resultFile))
 		{
 			return;
@@ -60,6 +69,7 @@ internal static class MobileRuntimeTestsAutostart
 			try
 			{
 				await RunAsync(window, resultFile).ConfigureAwait(false);
+				Console.WriteLine($"MobileRuntimeTestsAutostart: wrote results to {resultFile}");
 				Environment.Exit(0);
 			}
 			catch (Exception ex)
