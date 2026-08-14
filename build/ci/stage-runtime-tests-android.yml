@@ -1,7 +1,10 @@
 jobs:
   - job: RuntimeTestsAndroid
     displayName: 'Runtime Tests - Android Emulator'
-    timeoutInMinutes: 60
+    # 60 was not enough: build 227603 spent the whole hour provisioning the Android SDK (system
+    # image, platform-tools, build-tools are downloaded from scratch on a clean agent) and was
+    # cancelled with the emulator still booting, before a single test ran.
+    timeoutInMinutes: 120
     cancelTimeoutInMinutes: 0
 
     pool:

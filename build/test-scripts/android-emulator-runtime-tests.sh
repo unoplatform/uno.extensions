@@ -67,7 +67,15 @@ AVDMANAGER="${ANDROID_HOME}/cmdline-tools/latest/bin/avdmanager"
 export PATH="${ANDROID_HOME}/platform-tools:${ANDROID_HOME}/emulator:${ANDROID_HOME}/cmdline-tools/latest/bin:${PATH}"
 
 yes | "${SDKMANAGER}" --sdk_root="${ANDROID_HOME}" --licenses >/dev/null 2>&1 || true
-"${SDKMANAGER}" --sdk_root="${ANDROID_HOME}" --install "${AVD_IMAGE}" "platform-tools" "emulator" "build-tools;34.0.0" >/dev/null
+
+# Not silenced: this step downloads the system image, platform-tools and build-tools on a clean
+# agent and dominates the job's wall clock. When the job hit its timeout in build 227603 the log
+# showed nothing between "Provisioning" and "Emulator starting", which made a slow download look
+# indistinguishable from a hang.
+echo "Installing Android SDK packages (this is the slow step on a clean agent)..."
+date -u +"  start: %H:%M:%SZ"
+"${SDKMANAGER}" --sdk_root="${ANDROID_HOME}" --install "${AVD_IMAGE}" "platform-tools" "emulator" "build-tools;34.0.0"
+date -u +"  done:  %H:%M:%SZ"
 
 echo "no" | "${AVDMANAGER}" create avd -n "${AVD_NAME}" -k "${AVD_IMAGE}" --device "${AVD_DEVICE}" --force >/dev/null
 

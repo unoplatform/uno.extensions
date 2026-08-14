@@ -37,6 +37,7 @@ jobs:
           dotnet publish src/Uno.Extensions.RuntimeTests/Uno.Extensions.RuntimeTests/Uno.Extensions.RuntimeTests.csproj \
             -c Debug -f net9.0-android \
             -p:Build_Windows=false -p:Build_iOS=false -p:Build_MacCatalyst=false -p:Build_Web=false \
+            -p:UnoDisableHotDesign=true -p:UnoDisableMCPSupport=true \
             -o $(build.artifactstagingdirectory)/android-runtime-tests \
             -bl:$(build.artifactstagingdirectory)/binlogs/build-android-runtime-tests.binlog
         displayName: 'Publish Android runtime tests APK'
@@ -79,6 +80,7 @@ jobs:
             -c Debug -f net9.0-browserwasm \
             -p:Build_Windows=false -p:Build_iOS=false -p:Build_MacCatalyst=false -p:Build_Android=false \
             -p:UseWebAssemblyAOT=false \
+            -p:UnoDisableHotDesign=true -p:UnoDisableMCPSupport=true \
             -bl:$(build.artifactstagingdirectory)/binlogs/build-wasm-runtime-tests.binlog
         displayName: 'Build WebAssembly runtime tests'
 
@@ -156,7 +158,7 @@ jobs:
           dotnet build src/Uno.Extensions.RuntimeTests/Uno.Extensions.RuntimeTests/Uno.Extensions.RuntimeTests.csproj \
             -c Debug -f net9.0-ios \
             -p:Build_Windows=false -p:Build_Android=false -p:Build_MacCatalyst=false -p:Build_Web=false \
-            -p:UnoDisableHotDesign=true \
+            -p:UnoDisableHotDesign=true -p:UnoDisableMCPSupport=true \
             -bl:$(build.artifactstagingdirectory)/binlogs/build-ios-runtime-tests.binlog
         displayName: 'Build iOS simulator runtime tests'
 
