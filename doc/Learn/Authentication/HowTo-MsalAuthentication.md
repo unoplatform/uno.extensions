@@ -163,7 +163,7 @@ Each value still has to be registered in your app registration, and Android and 
 require the app to declare the matching platform entry — an `Activity` deriving from
 `BrowserTabActivity` with an intent filter for scheme `msal{ClientId}` and host `auth` on Android,
 and a `CFBundleURLTypes` entry in `Info.plist` on iOS. The provider derives exactly the value those
-entries declare; it cannot create them for you.
+entries declare; it cannot create them for you. Section 5 shows the complete set.
 
 Precedence, lowest to highest:
 
@@ -195,7 +195,108 @@ To suppress the default entirely and take whatever MSAL itself would use, set:
 > `RedirectUri` in configuration or from the `Builder(...)` callback — both now win over the
 > broker-derived default.
 
-### 5. Customizing the interactive sign-in request (optional)
+### 5. Android and iOS: deliver the sign-in callback
+
+On desktop the redirect comes back over a local HTTP listener, on WebAssembly through the
+`WebAuthenticationBroker`, and on WinAppSDK through the WAM broker — the provider handles the whole
+round-trip. On Android and iOS the redirect arrives as an *OS event delivered to the app*, so the
+app has to hand it to MSAL itself, using MSAL's own helper,
+[`AuthenticationContinuationHelper`](https://learn.microsoft.com/dotnet/api/microsoft.identity.client.authenticationcontinuationhelper).
+Without these entries the browser opens and sign-in succeeds there, but the app's `LoginAsync`
+never completes — the most common MSAL symptom on mobile.
+
+#### Android
+
+Declare the activity that catches the redirect. Intent filters are declared with attributes, which
+only accept compile-time constants, so the client id is repeated here literally — keep it in sync
+with `Msal:ClientId` in `appsettings.json`:
+
+```csharp
+// Platforms/Android/MsalActivity.Android.cs
+using Android.App;
+using Android.Content;
+using Microsoft.Identity.Client;
+
+[Activity(Exported = true, LaunchMode = LaunchMode.SingleTask, NoHistory = true)]
+[IntentFilter(
+    [Intent.ActionView],
+    Categories = [Intent.CategoryBrowsable, Intent.CategoryDefault],
+    DataScheme = "msal161a9fb5-3b16-487a-81a2-ac45dcc0ad3b", // msal{ClientId}
+    DataHost = "auth")]
+public class MsalActivity : BrowserTabActivity
+{
+}
+```
+
+Then forward activity results from your `MainActivity`, which is what resumes the pending
+`AcquireTokenInteractive` call:
+
+```csharp
+// Platforms/Android/MainActivity.Android.cs
+protected override void OnActivityResult(int requestCode, Result resultCode, Android.Content.Intent? data)
+{
+    base.OnActivityResult(requestCode, resultCode, data);
+    Microsoft.Identity.Client.AuthenticationContinuationHelper
+        .SetAuthenticationContinuationEventArgs(requestCode, resultCode, data);
+}
+```
+
+#### iOS
+
+Register the callback URL scheme in `Platforms/iOS/Info.plist` — the scheme is
+`msauth.` followed by your bundle identifier:
+
+```xml
+<key>CFBundleURLTypes</key>
+<array>
+    <dict>
+        <key>CFBundleURLName</key>
+        <string>com.microsoft.msal</string>
+        <key>CFBundleURLSchemes</key>
+        <array>
+            <string>msauth.com.example.myapp</string>
+        </array>
+    </dict>
+</array>
+```
+
+With Skia rendering the `App` class is no longer the `UIApplicationDelegate`, so URL handling goes
+in a type deriving from Uno's `UnoUIApplicationDelegate`:
+
+```csharp
+// Platforms/iOS/MsalAppDelegate.iOS.cs
+using Foundation;
+using Microsoft.Identity.Client;
+using UIKit;
+
+public class MsalAppDelegate : Uno.UI.Runtime.Skia.AppleUIKit.UnoUIApplicationDelegate
+{
+    public override bool OpenUrl(UIApplication application, NSUrl url, NSDictionary options)
+        => AuthenticationContinuationHelper.SetAuthenticationContinuationEventArgs(url)
+            || base.OpenUrl(application, url, options);
+}
+```
+
+registered from the entry point:
+
+```csharp
+// Platforms/iOS/Main.iOS.cs
+var host = UnoPlatformHostBuilder.Create()
+    .App(() => new App())
+    .UseAppleUIKit(builder => builder.UseUIApplicationDelegate<MsalAppDelegate>())
+    .Build();
+```
+
+> [!NOTE]
+> Recent iOS SDKs flag `OpenUrl` as deprecated (`CA1422`) in favor of the UIScene lifecycle. Apps
+> without a `UIApplicationSceneManifest` in `Info.plist` still run the application-delegate
+> lifecycle, so suppress the warning with `#pragma warning disable CA1422`; scene-based apps
+> forward the same call from their scene delegate's `OpenUrlContexts` instead.
+
+A complete working reference for all of the above is the
+[MSAL authentication sample](https://github.com/unoplatform/Uno.Samples/tree/master/UI/Authentication.MsalExtensionsDemo).
+
+### 6. Customizing the interactive sign-in request (optional)
 
 `Builder(...)` configures the `PublicClientApplicationBuilder`, which MSAL builds once. The
 modifiers that apply to a *single* interactive sign-in — `WithPrompt`, `WithLoginHint`,
@@ -212,7 +313,7 @@ builder.AddMsal(window, msal => msal
 The callback runs on every interactive sign-in, after the Uno helpers have been applied, so it can
 override what those set.
 
-### 6. Token cache storage (optional)
+### 7. Token cache storage (optional)
 
 On desktop targets, `MsalAuthenticationProvider` persists the MSAL token cache so that users stay signed in across app restarts:
 
@@ -253,7 +354,7 @@ builder.AddMsal(window, msal =>
     msal.Storage(store => store.WithMacKeyChain("com.contoso.myapp.msal", "MyAppCache")));
 ```
 
-### 7. Use the provider in your application
+### 8. Use the provider in your application
 
 - Update the `MainPage` to include a `Button` labeled to sign in with Microsoft.
 

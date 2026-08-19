@@ -41,6 +41,11 @@ internal record MsalAuthenticationProvider(
 	// the platform-protected accessor once secure storage becomes available again.
 	private const string UnprotectedCacheFileName = "msal.cache.plaintext-fallback";
 
+	// The system-browser flow can't detect an abandoned sign-in (closed browser window), so an
+	// unbounded wait leaves the awaiting login command busy forever. Five minutes matches Uno's
+	// WebAuthenticationBroker default (WinRTFeatureConfiguration.WebAuthenticationBroker).
+	private static readonly TimeSpan DefaultInteractiveTimeout = TimeSpan.FromMinutes(5);
+
 	private IPublicClientApplication? _pca;
 	private string[]? _scopes;
 
@@ -83,6 +88,15 @@ internal record MsalAuthenticationProvider(
 		builder.WithUnoHelpers();
 
 		_pca = builder.Build();
+
+		// The effective redirect URI (defaults, configuration and the Build callback applied) is
+		// the most common sign-in failure point, so surface it above Trace: this exact URI - path
+		// included, port ignored for localhost - must be registered on the Entra app registration.
+		if (Logger.IsEnabled(LogLevel.Information))
+		{
+			Logger.LogInformationMessage($"Using RedirectUri '{_pca.AppConfig.RedirectUri ?? "(none - platform managed)"}'; sign-in requires a matching redirect URI on the app registration");
+		}
+
 		if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"Building MSAL Provider complete");
 	}
 
@@ -384,7 +398,32 @@ internal record MsalAuthenticationProvider(
 			// After WithUnoHelpers so an app can override what the helpers set.
 			Settings?.InteractiveBuild?.Invoke(interactive);
 
-			return await interactive.ExecuteAsync(cancellationToken);
+			var timeout = Configuration.Get(Name)?.InteractiveTimeout ?? DefaultInteractiveTimeout;
+			if (timeout <= TimeSpan.Zero)
+			{
+				return await interactive.ExecuteAsync(cancellationToken);
+			}
+
+			using var timeoutCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+			timeoutCts.CancelAfter(timeout);
+			try
+			{
+				return await interactive.ExecuteAsync(timeoutCts.Token);
+			}
+			// MSAL surfaces a cancelled web UI as MsalClientException (authentication_canceled)
+			// rather than OperationCanceledException; match both so the timeout is logged whichever
+			// shape this MSAL version produces. A caller-requested cancellation is not logged.
+			catch (Exception ex) when (
+				timeoutCts.IsCancellationRequested &&
+				!cancellationToken.IsCancellationRequested &&
+				ex is OperationCanceledException or MsalClientException)
+			{
+				if (Logger.IsEnabled(LogLevel.Warning))
+				{
+					Logger.LogWarningMessage($"Interactive sign-in did not complete within {timeout} and was treated as cancelled (for example, the browser window was closed). Adjust via 'InteractiveTimeout' in the Msal configuration section");
+				}
+				throw;
+			}
 		});
 	}
 

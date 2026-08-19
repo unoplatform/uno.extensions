@@ -61,9 +61,9 @@ public class Given_MsalAuthentication
 	/// results. Logging out drives the same code path the product uses, so it also stays correct if
 	/// the storage location changes.
 	/// </remarks>
-	private static async Task<Harness> CreateHarnessAsync(TimeSpan? webUiDelay = null)
+	private static async Task<Harness> CreateHarnessAsync(TimeSpan? webUiDelay = null, TimeSpan? interactiveTimeout = null)
 	{
-		var harness = CreateHarness(webUiDelay);
+		var harness = CreateHarness(webUiDelay, interactiveTimeout);
 
 		using var purge = new CancellationTokenSource(Timeout);
 		await harness.Authentication.LogoutAsync(harness.Dispatcher, purge.Token);
@@ -78,24 +78,30 @@ public class Given_MsalAuthentication
 	/// Builds a host wired to the stub tenant. <c>InteractiveBuilder</c> is how the stub browser
 	/// reaches the per-request builder - <c>Builder</c> only sees the application builder.
 	/// </summary>
-	private static Harness CreateHarness(TimeSpan? webUiDelay = null)
+	private static Harness CreateHarness(TimeSpan? webUiDelay = null, TimeSpan? interactiveTimeout = null)
 	{
 		var window = new Window();
 		var tenant = new StubEntra();
 		var webUi = new StubWebUi(tenant, webUiDelay);
 		var logs = new CapturingLoggerProvider();
 
+		var configurationValues = new Dictionary<string, string?>
+		{
+			["Msal:ClientId"] = StubEntra.ClientId,
+			["Msal:TenantId"] = StubEntra.TenantId,
+			["Msal:Scopes:0"] = "User.Read",
+		};
+		if (interactiveTimeout is { } timeout)
+		{
+			configurationValues["Msal:InteractiveTimeout"] = timeout.ToString();
+		}
+
 		var host = UnoHost
 			.CreateDefaultBuilder(typeof(Given_MsalAuthentication).Assembly)
 			// AddMsal binds Section<MsalConfiguration>("Msal") itself, so the section just has to
 			// exist in configuration - which also keeps the config-binding path under test.
 			.ConfigureHostConfiguration(configuration => configuration
-				.AddInMemoryCollection(new Dictionary<string, string?>
-				{
-					["Msal:ClientId"] = StubEntra.ClientId,
-					["Msal:TenantId"] = StubEntra.TenantId,
-					["Msal:Scopes:0"] = "User.Read",
-				}))
+				.AddInMemoryCollection(configurationValues))
 			.UseAuthentication(auth => auth
 				.AddMsal(window, msal => msal
 					.Builder(pca => pca
@@ -221,6 +227,31 @@ public class Given_MsalAuthentication
 
 		(await harness.Tokens.HasTokenAsync(CancellationToken.None)).Should().BeFalse(
 			"a cancelled sign-in must not leave a partial token behind");
+	}
+
+	[TestMethod]
+	public async Task When_LoginAbandoned_Then_InteractiveTimeoutCancelsTheLogin()
+	{
+		// The system-browser flow can't detect a closed browser window: without the provider's
+		// interactive timeout, an abandoned sign-in never completes and the awaiting command stays
+		// busy (button disabled) forever. The stub browser's delay stands in for the abandoned
+		// sign-in; no caller cancellation is involved.
+		using var harness = await CreateHarnessAsync(
+			webUiDelay: TimeSpan.FromSeconds(30),
+			interactiveTimeout: TimeSpan.FromSeconds(1));
+		using var cts = Cts();
+
+		// Same shape as caller cancellation (see When_LoginCancelled): MSAL rethrows the web UI's
+		// OperationCanceledException as MsalClientException / authentication_canceled.
+		var thrown = await FluentActions.Awaiting(async () =>
+				await harness.Authentication.LoginAsync(harness.Dispatcher, cancellationToken: cts.Token))
+			.Should().ThrowAsync<MsalClientException>();
+		thrown.Which.ErrorCode.Should().Be(MsalError.AuthenticationCanceledError);
+
+		harness.Logs.Text.Should().Contain("did not complete within",
+			"the timeout must be distinguishable from a caller-requested cancellation in the logs");
+		(await harness.Tokens.HasTokenAsync(CancellationToken.None)).Should().BeFalse(
+			"an abandoned sign-in must not leave a partial token behind");
 	}
 
 	[TestMethod]

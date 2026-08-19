@@ -33,6 +33,18 @@ internal class MsalConfiguration
 	public bool UseDefaultPlatformRedirectUri { get; init; } = true;
 
 	/// <summary>
+	/// Maximum time an interactive sign-in may take before it is treated as abandoned and
+	/// cancelled. Defaults to 5 minutes. Set to <see cref="TimeSpan.Zero"/> or a negative value
+	/// to wait indefinitely.
+	/// </summary>
+	/// <remarks>
+	/// The system-browser flow used on desktop has no way to detect the browser window being
+	/// closed, so without this timeout an abandoned sign-in never completes and the awaiting
+	/// command stays busy forever.
+	/// </remarks>
+	public TimeSpan? InteractiveTimeout { get; init; }
+
+	/// <summary>
 	/// When true, the token cache falls back to an unprotected (plaintext) cache file if the
 	/// platform's secure storage (keychain / keyring / DPAPI) isn't available, so sign-in state
 	/// still survives an app restart. When false (the default), the cache stays in memory for
