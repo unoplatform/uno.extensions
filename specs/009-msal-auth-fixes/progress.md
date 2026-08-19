@@ -112,6 +112,14 @@ contract, performance). Worst-case verdict was **fix-first**; all actionable fin
 
 ## Follow-ups (not this change)
 
+- **REGRESSION found 2026-08-19, spec'd as `specs/010-msal-skia-mobile-runtime-dispatch/`**: the
+  "Define gates unified" allow-list makes the plain `netX.0` lib a stub, but Uno.Sdk's
+  `ReplaceUnoRuntime` substitutes exactly that lib on **Skia iOS/Android heads** (any package
+  referencing Uno.UI) → `AddMsal` silently registers nothing →
+  "No providers specified for the application" on every auth call. Verified live on the iOS
+  simulator via the Uno.Samples testbed. Fix (runtime platform dispatch) is designed and ready to
+  implement in spec 010. Also partially invalidates this spec's PR note about the consumer-side
+  `UNO_EXT_MSAL` define (plain TFM must be functional, hence defined, again).
 - ~~Hidden `ISettings` dependency in the auth token cache~~ — **fixed in this branch**
   (found 2026-08-12 while building the `authTestExt` rig): `TokenCache` → `IKeyValueStorage` →
   `ApplicationDataKeyValueStorage(..., ISettings)` requires `ISettings`, but the only
