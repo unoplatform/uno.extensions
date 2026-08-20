@@ -354,10 +354,17 @@ internal static class NavigationRouteUpdateHandler
 			return [];
 		}
 
+		// View types must never reach FindByViewModel — not merely because updated views are
+		// owned by the element-update walk: on a lookup miss, RouteResolverDefault's convention
+		// fallback derives the view's own route path from the type name and REPLACES the
+		// registered mapping with one whose ViewModel is the view type itself, corrupting every
+		// later navigation on that route (and making this walk "refresh" pages with a page
+		// instance as DataContext).
 		// IL2067: same read-only, type-identity lookup as HasRouteRegisteredType above (the
 		// lambda parameter shifts the trim diagnostic from IL2072 to IL2067).
 #pragma warning disable IL2067
 		return updatedTypes
+			.Where(t => !typeof(FrameworkElement).IsAssignableFrom(t))
 			.Select(t => resolver.FindByViewModel(t, navigator: null)?.ViewModel)
 			.OfType<Type>()
 			.ToHashSet();
