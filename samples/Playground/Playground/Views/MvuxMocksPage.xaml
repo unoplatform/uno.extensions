@@ -1,0 +1,225 @@
+<Page x:Class="Playground.Views.MvuxMocksPage"
+	  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	  mc:Ignorable="d"
+	  xmlns:mvux="using:Uno.Extensions.Reactive.UI"
+	  Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+	<Page.Resources>
+		<Style x:Key="CodeBlock"
+			   TargetType="TextBlock">
+			<Setter Property="FontFamily"
+					Value="Consolas" />
+			<Setter Property="FontSize"
+					Value="12" />
+			<Setter Property="IsTextSelectionEnabled"
+					Value="True" />
+			<Setter Property="Padding"
+					Value="12" />
+		</Style>
+		<Style x:Key="StateButton"
+			   TargetType="Button">
+			<Setter Property="Margin"
+					Value="0,0,4,4" />
+		</Style>
+
+		<DataTemplate x:Key="RecipeRowTemplate">
+			<StackPanel Orientation="Horizontal"
+						Spacing="8"
+						Padding="0,4">
+				<TextBlock Text="{Binding Name}"
+						   FontWeight="SemiBold" />
+				<TextBlock Text="{Binding Minutes}"
+						   Opacity="0.6" />
+				<TextBlock Text="min"
+						   Opacity="0.6" />
+			</StackPanel>
+		</DataTemplate>
+
+		<!-- All FeedView state templates receive the FeedViewState as DataContext. -->
+		<DataTemplate x:Key="RecipesValueTemplate">
+			<ListView ItemsSource="{Binding Data}"
+					  ItemTemplate="{StaticResource RecipeRowTemplate}"
+					  SelectionMode="None" />
+		</DataTemplate>
+
+		<!-- The ProgressTemplate's DataContext is the progress bool (cf. FeedView's control template). -->
+		<DataTemplate x:Key="RecipesProgressTemplate">
+			<StackPanel Orientation="Horizontal"
+						Spacing="12"
+						VerticalAlignment="Center"
+						HorizontalAlignment="Center">
+				<ProgressRing IsActive="{Binding}" />
+				<TextBlock Text="Loading recipes…"
+						   VerticalAlignment="Center" />
+			</StackPanel>
+		</DataTemplate>
+
+		<!-- The ErrorTemplate's DataContext is the Exception itself. -->
+		<DataTemplate x:Key="RecipesErrorTemplate">
+			<StackPanel VerticalAlignment="Center"
+						HorizontalAlignment="Center">
+				<TextBlock Text="Something went wrong 💥"
+						   FontSize="18" />
+				<TextBlock Text="{Binding Message}"
+						   Opacity="0.6"
+						   HorizontalAlignment="Center" />
+			</StackPanel>
+		</DataTemplate>
+
+		<DataTemplate x:Key="RecipesNoneTemplate">
+			<TextBlock Text="No recipes found (None)"
+					   VerticalAlignment="Center"
+					   HorizontalAlignment="Center" />
+		</DataTemplate>
+
+		<DataTemplate x:Key="RecipesUndefinedTemplate">
+			<TextBlock Text="Nothing loaded yet (Undefined)"
+					   VerticalAlignment="Center"
+					   HorizontalAlignment="Center"
+					   Opacity="0.6" />
+		</DataTemplate>
+
+		<!-- Section 1 host template: the DataContext is the mocked feed itself.
+			 A fresh FeedView is inflated per state so no visual state lingers from the previous one. -->
+		<DataTemplate x:Key="DirectFeedViewTemplate">
+			<mvux:FeedView Source="{Binding}"
+						   ValueTemplate="{StaticResource RecipesValueTemplate}"
+						   ProgressTemplate="{StaticResource RecipesProgressTemplate}"
+						   ErrorTemplate="{StaticResource RecipesErrorTemplate}"
+						   NoneTemplate="{StaticResource RecipesNoneTemplate}"
+						   UndefinedTemplate="{StaticResource RecipesUndefinedTemplate}" />
+		</DataTemplate>
+
+		<!-- Section 2 host template: the DataContext is the (mocked or real) MockRecipesViewModel.
+			 Note the bindings are plain {Binding Recipes} / {Binding Save} — a mocked instance IS the real VM type. -->
+		<DataTemplate x:Key="MockVmTemplate">
+			<Grid>
+				<Grid.RowDefinitions>
+					<RowDefinition Height="Auto"
+								   MinHeight="180" />
+					<RowDefinition Height="Auto" />
+				</Grid.RowDefinitions>
+				<mvux:FeedView Source="{Binding Recipes}"
+							   ValueTemplate="{StaticResource RecipesValueTemplate}"
+							   ProgressTemplate="{StaticResource RecipesProgressTemplate}"
+							   ErrorTemplate="{StaticResource RecipesErrorTemplate}"
+							   NoneTemplate="{StaticResource RecipesNoneTemplate}"
+							   UndefinedTemplate="{StaticResource RecipesUndefinedTemplate}" />
+				<Button Grid.Row="1"
+						Content="Save"
+						Command="{Binding Save}"
+						HorizontalAlignment="Right"
+						Margin="0,8,0,0" />
+			</Grid>
+		</DataTemplate>
+	</Page.Resources>
+
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition />
+		</Grid.RowDefinitions>
+		<TextBlock Text="MVUX Mocks"
+				   HorizontalAlignment="Center"
+				   FontSize="48" />
+		<ScrollViewer Grid.Row="1">
+			<StackPanel Padding="16"
+						Spacing="8"
+						MaxWidth="720">
+
+				<!-- ============ Section 1: mock feeds bound directly to a FeedView ============ -->
+				<TextBlock Text="1. Mock feeds on a FeedView"
+						   FontSize="24" />
+				<TextBlock Text="MockListFeed pins a feed to a chosen state — including states a real service can't produce, like an indefinite loading or stale data with a refresh in progress. Pick a state:"
+						   TextWrapping="Wrap" />
+
+				<StackPanel Orientation="Horizontal">
+					<Button Content="Undefined"
+							Click="OnDirectUndefined"
+							Style="{StaticResource StateButton}" />
+					<Button Content="Loading"
+							Click="OnDirectLoading"
+							Style="{StaticResource StateButton}" />
+					<Button Content="Empty"
+							Click="OnDirectEmpty"
+							Style="{StaticResource StateButton}" />
+					<Button Content="Value"
+							Click="OnDirectValue"
+							Style="{StaticResource StateButton}" />
+					<Button Content="Error"
+							Click="OnDirectError"
+							Style="{StaticResource StateButton}" />
+					<Button Content="Refreshing"
+							Click="OnDirectRefreshing"
+							Style="{StaticResource StateButton}" />
+					<Button Content="Script"
+							Click="OnDirectScript"
+							Style="{StaticResource StateButton}" />
+				</StackPanel>
+
+				<Border Background="{ThemeResource SystemControlBackgroundListLowBrush}"
+						CornerRadius="4">
+					<TextBlock x:Name="DirectCode"
+							   Style="{StaticResource CodeBlock}" />
+				</Border>
+
+				<Border BorderBrush="{ThemeResource SystemControlForegroundBaseMediumLowBrush}"
+						BorderThickness="1"
+						CornerRadius="4"
+						MinHeight="180"
+						Padding="12">
+					<ContentControl x:Name="DirectHost"
+									HorizontalContentAlignment="Stretch"
+									VerticalContentAlignment="Stretch" />
+				</Border>
+
+				<!-- ============ Section 2: CreateMock on the generated ViewModel ============ -->
+				<TextBlock Text="2. CreateMock on the generated ViewModel"
+						   FontSize="24"
+						   Margin="0,24,0,0" />
+				<TextBlock Text="With [assembly: GenerateModelMocks], the MVUX generator adds CreateMock to the generated MockRecipesViewModel. The mocked instance IS the real view model type — bindings below are plain {Binding Recipes} / {Binding Save} — but no model or service is ever constructed."
+						   TextWrapping="Wrap" />
+
+				<StackPanel Orientation="Horizontal">
+					<Button Content="Real model"
+							Click="OnVmReal"
+							Style="{StaticResource StateButton}" />
+					<Button Content="Loading"
+							Click="OnVmLoading"
+							Style="{StaticResource StateButton}" />
+					<Button Content="Empty"
+							Click="OnVmEmpty"
+							Style="{StaticResource StateButton}" />
+					<Button Content="Value"
+							Click="OnVmValue"
+							Style="{StaticResource StateButton}" />
+					<Button Content="Error"
+							Click="OnVmError"
+							Style="{StaticResource StateButton}" />
+					<Button Content="Refreshing + saving"
+							Click="OnVmRefreshing"
+							Style="{StaticResource StateButton}" />
+				</StackPanel>
+
+				<Border Background="{ThemeResource SystemControlBackgroundListLowBrush}"
+						CornerRadius="4">
+					<TextBlock x:Name="VmCode"
+							   Style="{StaticResource CodeBlock}" />
+				</Border>
+
+				<Border BorderBrush="{ThemeResource SystemControlForegroundBaseMediumLowBrush}"
+						BorderThickness="1"
+						CornerRadius="4"
+						Padding="12">
+					<ContentControl x:Name="VmHost"
+									HorizontalContentAlignment="Stretch"
+									VerticalContentAlignment="Stretch" />
+				</Border>
+
+			</StackPanel>
+		</ScrollViewer>
+	</Grid>
+</Page>

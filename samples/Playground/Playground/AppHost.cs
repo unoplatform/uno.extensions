@@ -131,6 +131,7 @@ internal static class AppHost
 			new ViewMap<AuthTokenDialog, AuthTokenViewModel>(),
 			new ViewMap<BasicFlyout, BasicViewModel>(),
 			new ViewMap<ThemeSwitchPage, ThemeSwitchViewModel>(),
+			new ViewMap<MvuxMocksPage>(),
 			confirmDialog,
 			localizedDialog
 		);
@@ -141,7 +142,7 @@ internal static class AppHost
 			new RouteMap("", View: views.FindByViewModel<ShellViewModel>(),
 			Nested: new[]
 			{
-					new RouteMap("Home",View: views.FindByView<HomePage>()),
+					new RouteMap("Home",View: views.FindByView<HomePage>(), IsDefault: true),
 					new RouteMap("CodeBehind",View: views.FindByView<CodeBehindPage>(), DependsOn: "Home"),
 					new RouteMap("VM",View: views.FindByView<VMPage>(), DependsOn: "Home"),
 					new RouteMap("Xaml",View: views.FindByView<XamlPage>(), DependsOn: "Home"),
@@ -186,6 +187,7 @@ internal static class AppHost
 					}),
 					new RouteMap("List",View: views.FindByViewModel<ListViewModel>()),
 					new RouteMap("ItemDetails",View: views.FindByViewModel<ItemDetailsViewModel>()),
+					new RouteMap("MvuxMocks", View: views.FindByView<MvuxMocksPage>(), DependsOn: "Home"),
 					new RouteMap("Confirm", View: confirmDialog),
 					new RouteMap("LocalizedConfirm", View: localizedDialog)
 			}));
