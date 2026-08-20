@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Immutable;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.UI.Xaml.Controls;
@@ -23,6 +24,9 @@ public partial class Given_FeedView_Mocks : FeedTests
 	public partial class MockedPageModel
 	{
 		public IListFeed<string> Items => ListFeed.Async(async ct => ImmutableList.Create("real") as IImmutableList<string>);
+
+		public ValueTask Save(CancellationToken ct)
+			=> default;
 	}
 	[TestMethod]
 	public async Task When_MockUndefined_Then_DataAxisReportedUndefined()
@@ -146,6 +150,23 @@ public partial class Given_FeedView_Mocks : FeedTests
 		sut.State.Data.Should().BeNull();
 		sut.State.Error.Should().BeNull();
 		sut.State.Progress.Should().BeFalse();
+	}
+
+	[TestMethod]
+	public async Task When_ValueWithSelectionMocked_Then_CollectionViewCurrentItemIsSelected()
+	{
+		// The bindable list applies incoming selection-axis changes (cf. BindableListFeed), so a
+		// pinned selection reaches ICollectionView.CurrentItem without the Selection operator.
+		await using var vm = MockedPageViewModel.CreateMock(m =>
+			m.Items = MockListFeed.Value(ImmutableList.Create("a", "b", "c") as IImmutableList<string>, SelectionInfo.Single(1)));
+
+		var view = vm.Items as Microsoft.UI.Xaml.Data.ICollectionView;
+		view.Should().NotBeNull();
+
+		// Subscribing is what a bound ListView does, and is what initializes the selection facet.
+		view!.CurrentChanged += (s, e) => { };
+
+		await UIHelper.WaitFor(() => Equals(view.CurrentItem, "b"), CT);
 	}
 
 	[TestMethod]

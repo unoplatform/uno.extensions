@@ -168,6 +168,17 @@ public partial class Given_ModelMocks : FeedUITests
 	}
 
 	[TestMethod]
+	public async Task When_CommandCallbackMocked_Then_ExecuteReachesCallback()
+	{
+		object? received = null;
+		await using var vm = MyMockableViewModel.CreateMock(m => m.DoSomething = MockCommand.Callback(p => received = p));
+
+		vm.DoSomething.Execute("some-parameter");
+
+		received.Should().Be("some-parameter");
+	}
+
+	[TestMethod]
 	public async Task When_CommandNotMocked_Then_IdleMock_And_RealAsyncCommandNotConstructed()
 	{
 		await using var vm = MyMockableViewModel.CreateMock();

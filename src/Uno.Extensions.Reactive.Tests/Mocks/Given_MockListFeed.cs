@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -79,6 +80,33 @@ public class Given_MockListFeed : FeedTests
 	{
 		// Like real list feeds, an empty list is normalized to None; EmptyList is the explicit opt-out.
 		var result = MockListFeed.Value<int>().Record();
+
+		await result.WaitForEnd(CT);
+
+		result.Should().Be(r => r
+			.Message(Changed.Data, Data.None, Error.No, Progress.Final)
+		);
+	}
+
+	[TestMethod]
+	public async Task When_ValueWithSelection_Then_SelectionAxisIsSet()
+	{
+		var items = ImmutableList.Create("a", "b", "c") as IImmutableList<string>;
+		var result = MockListFeed.Value(items, SelectionInfo.Single(1)).Record();
+
+		await result.WaitForEnd(CT);
+
+		result.Should().Be(r => r
+			.Message(Changed.Data & Changed.Selection, Items.Some("a", "b", "c"), Error.No, Progress.Final)
+		);
+		result.Single().Current.GetSelectedItem().Should().Be("b");
+	}
+
+	[TestMethod]
+	public async Task When_ValueWithSelectionButNoItems_Then_DataIsNone()
+	{
+		// Like real list feeds, an empty list is the empty state; the selection is ignored.
+		var result = MockListFeed.Value(ImmutableList<string>.Empty as IImmutableList<string>, SelectionInfo.Single(0)).Record();
 
 		await result.WaitForEnd(CT);
 

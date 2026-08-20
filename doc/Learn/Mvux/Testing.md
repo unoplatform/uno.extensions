@@ -65,6 +65,14 @@ Two states deserve a note:
 
 Consistently with real list feeds, `MockListFeed.Value(...)` with no items produces `None`.
 
+A pinned **selection** can accompany the data — useful for previewing a list with an item selected, without wiring the `Selection` operator:
+
+```csharp
+public IListFeed<Recipe> Recipes => MockListFeed.Value(SampleData.Recipes, SelectionInfo.Single(1));
+```
+
+The selection travels on the message's selection axis and reaches the generated bindable list's `ICollectionView.CurrentItem`. For multi-selection or ranges, build the `SelectionInfo` accordingly; arbitrary axes (selection included) can also be set through `MockFeed.Message(...)` with the `Selected(...)` builder extension.
+
 ## Mocking commands
 
 `MockCommand` pins an `IAsyncCommand` to a state:

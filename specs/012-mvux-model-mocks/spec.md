@@ -192,6 +192,8 @@ public static class MockListFeed
     public static IListFeed<T> EmptyList<T>();
     public static IListFeed<T> Value<T>(params T[] items);
     public static IListFeed<T> Value<T>(IImmutableList<T> items);
+    /// <summary>Items plus a pinned selection (post-v1 addition; see progress.md decisions).</summary>
+    public static IListFeed<T> Value<T>(IImmutableList<T> items, SelectionInfo selection);
     public static IListFeed<T> Error<T>(Exception error);
     public static IListFeed<T> Refreshing<T>(params T[] staleItems);
 }

@@ -83,6 +83,24 @@ public static class MockListFeed
 	}
 
 	/// <summary>
+	/// Gets a list feed pinned with the given items and a pinned selection.
+	/// </summary>
+	/// <typeparam name="T">The type of the items in the list.</typeparam>
+	/// <param name="items">The items of the list.</param>
+	/// <param name="selection">The selection to pin, e.g. <c>SelectionInfo.Single(1)</c>.</param>
+	/// <returns>A list feed pinned with the given items and selection.</returns>
+	/// <remarks>Like real list feeds, an empty list produces the empty state and the selection is ignored.</remarks>
+	public static IListFeed<T> Value<T>(IImmutableList<T> items, SelectionInfo selection)
+	{
+		items = items ?? throw new ArgumentNullException(nameof(items));
+		selection = selection ?? throw new ArgumentNullException(nameof(selection));
+
+		return items.Count == 0
+			? Empty<T>()
+			: Wrap(MockFeed.Message<IImmutableList<T>>(m => m.Data(items).Selected(selection)));
+	}
+
+	/// <summary>
 	/// Gets a list feed pinned in the error state.
 	/// </summary>
 	/// <typeparam name="T">The type of the items in the list.</typeparam>
