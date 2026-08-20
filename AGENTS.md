@@ -1,4 +1,4 @@
-# AI Agents Contribution & Coding Instructions
+﻿# AI Agents Contribution & Coding Instructions
 <!-- cspell:ignore PKCE -->
 
 This document defines strict guardrails for any AI-assisted or automated agent contributions (including Copilot, custom prompt runners, or scripted refactors) working in the **Uno.Extensions** repository. Human contributors must also ensure generated changes comply before merge. It is the single source of truth for repo-wide orientation *and* the rules agents must follow; `CLAUDE.md` at the repo root is a thin pointer that includes this file.
@@ -247,6 +247,10 @@ The repo has three distinct test surfaces — each with a different runner:
 - **Runtime tests** in `src/Uno.Extensions.RuntimeTests/` — **MSTest hosted inside an Uno UI head** via `Uno.UI.RuntimeTests.Engine`. There is no `dotnet test` entry point for these; they ride along with a sample-app head selected by the runtime-test stages (`stage-build-runtimetests-skia.yml`, `stage-build-runtimetests-skia-hotreload.yml`).
 
 Test-placement gotcha: a UI-host-requiring test placed in a `*.Tests` (not `*.UI.Tests`) project will be **picked up** locally by `dotnet test` (and likely fail or flake) but **excluded** by package CI — producing platform-dependent results. Match the project type to the host requirement.
+
+### Windows in UI / runtime tests
+
+`new Window()` is not portable. Android and iOS reject secondary windows outright (`InvalidOperationException: Creating secondary windows on this platform is not allowed`), so a test that constructs one passes on desktop and fails every mobile lane — this is what turned all 10 `Given_MsalAuthentication` cases red on the iOS simulator in build 228808. Take the host's window via `UnitTestsUIContentHelper.CurrentTestWindow` instead, and if you assign `Content`, bracket it with `SaveOriginalContent`/`RestoreOriginalContent`.
 
 ### Hot-reload tests
 

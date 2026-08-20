@@ -1,4 +1,4 @@
-trigger:
+﻿trigger:
   branches:
     include:
       - main
@@ -104,7 +104,14 @@ stages:
   dependsOn: Build_Tests
   jobs:
   - template: stage-runtime-tests-desktop.yml
-  - template: stage-runtime-tests-wasm.yml
+  # Disabled: blocked on Uno.UI.RuntimeTests.Engine, not on this repo. Its embedded runner guards
+  # the `Console.CancelKeyPress` registration with `#if !__WASM__`, but Uno.Sdk stopped defining
+  # `__WASM__` for consumer projects (Skia-WASM heads consume the plain netX.0 Uno.UI), so the
+  # registration is compiled in and throws PlatformNotSupportedException before any test runs -
+  # verified in build 228808. Defining `__WASM__` here does not work either: the engine's other
+  # `#if __WASM__` branches call `Uno.Foundation.WebAssemblyRuntime.InvokeJS`, which a Skia-WASM
+  # head does not reference (CS0234). Re-enable once the engine switches to a runtime check.
+  # - template: stage-runtime-tests-wasm.yml
   - template: stage-runtime-tests-android.yml
   - template: stage-runtime-tests-ios.yml
 

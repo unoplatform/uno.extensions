@@ -80,24 +80,24 @@ var md = pe.GetMetadataReader();
 
 foreach (var tdHandle in md.TypeDefinitions)
 {
-	var td = md.GetTypeDefinition(tdHandle);
-	if (md.GetString(td.Name) != "HostBuilderExtensions")
-	{
-		continue;
-	}
+    var td = md.GetTypeDefinition(tdHandle);
+    if (md.GetString(td.Name) != "HostBuilderExtensions")
+    {
+        continue;
+    }
 
-	foreach (var mHandle in td.GetMethods())
-	{
-		var m = md.GetMethodDefinition(mHandle);
-		if (md.GetString(m.Name) != "InternalAddMsal")
-		{
-			continue;
-		}
+    foreach (var mHandle in td.GetMethods())
+    {
+        var m = md.GetMethodDefinition(mHandle);
+        if (md.GetString(m.Name) != "InternalAddMsal")
+        {
+            continue;
+        }
 
-		var body = pe.GetMethodBody(m.RelativeVirtualAddress);
-		Console.WriteLine($"{path}: InternalAddMsal IL body = {body.GetILBytes()!.Length} bytes");
-		return;
-	}
+        var body = pe.GetMethodBody(m.RelativeVirtualAddress);
+        Console.WriteLine($"{path}: InternalAddMsal IL body = {body.GetILBytes()!.Length} bytes");
+        return;
+    }
 }
 
 Console.WriteLine($"{path}: InternalAddMsal not found");

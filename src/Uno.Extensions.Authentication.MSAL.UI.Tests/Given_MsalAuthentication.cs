@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -77,9 +77,14 @@ public class Given_MsalAuthentication
 	/// Builds a host wired to the stub tenant. <c>InteractiveBuilder</c> is how the stub browser
 	/// reaches the per-request builder - <c>Builder</c> only sees the application builder.
 	/// </summary>
+	/// <remarks>
+	/// The test host's own window is reused rather than <c>new Window()</c>: Android and iOS reject
+	/// secondary windows outright (<c>InvalidOperationException</c>), which failed all 10 tests on
+	/// the iOS simulator lane. Content is never assigned, so no save/restore is needed.
+	/// </remarks>
 	private static Harness CreateHarness(TimeSpan? webUiDelay = null, TimeSpan? interactiveTimeout = null)
 	{
-		var window = new Window();
+		var window = UnitTestsUIContentHelper.CurrentTestWindow!;
 		var tenant = new StubEntra();
 		var webUi = new StubWebUi(tenant, webUiDelay);
 		var logs = new CapturingLoggerProvider();

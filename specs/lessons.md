@@ -1,4 +1,4 @@
-# Lessons
+﻿# Lessons
 
 Domain lessons / postmortems for Uno.Extensions. See `AGENTS.md` §3 for when to add here.
 
@@ -47,3 +47,19 @@ Domain lessons / postmortems for Uno.Extensions. See `AGENTS.md` §3 for when to
 **Correct pattern:** `CreateHarnessAsync` calls `LogoutAsync` before handing the harness to the test, and asserts the purge itself neither prompted nor requested a token. Driving the product's own logout keeps this correct if the storage location changes.
 
 **Apply to:** any runtime test over a component with platform-backed persistence (token caches, `ApplicationData` settings, keychain/keyring entries). The `[TestMethod]` boundary isolates managed state, not the filesystem. A suite that only ever passes is as suspicious as one that fails.
+
+## `__WASM__` is no longer defined for consumer projects — code (ours or a package's) that branches on it is dead on Skia-WASM heads
+
+**Problem:** the WebAssembly runtime-test lane exited before running a single test with `PlatformNotSupportedException` from `Console.CancelKeyPress`. `Uno.UI.RuntimeTests.Engine`'s `RuntimeTestEmbeddedRunner` — which ships as **source** and compiles into `Uno.Extensions.RuntimeTests.Core` — guards that registration with `#if !__WASM__`. Uno.Sdk defines `IsBrowserWasm` (see `targets/Uno.IsPlatform.props`) but no `__WASM__` compilation symbol, so the guard never fires and the unsupported call is compiled in. A Skia-WASM head consumes the *plain* `netX.0` `Uno.UI` lib (there is no `browserwasm` lib in `uno.winui`), which is the same substitution spec 010 documents for Skia mobile.
+
+**Correct pattern:** don't add `__WASM__` back. Defining it locally fails to compile: the engine's other `#if __WASM__` branches call `Uno.Foundation.WebAssemblyRuntime.InvokeJS`, and `Uno.Foundation.Runtime.WebAssembly` is not referenced by a Skia-WASM head (`CS0234`, verified). Runtime checks are the portable form — `PlatformHelper.IsWebAssembly` / `OperatingSystem.IsBrowser()` — exactly as spec 010 concluded for `ANDROID`/`IOS`. The WASM device lane in `build/ci/.azure-pipelines.yml` is commented out until the engine converts its guards.
+
+**Apply to:** any `#if __WASM__` in this repo or in a source-shipping package we consume. Symbol-based platform branching is only reliable for symbols the SDK actually emits, and the Skia unification removed most of them. Cross-check with the `-getProperty:DefineConstants` lesson above: neither `-getProperty` nor "it compiled" proves a branch is live — only running it on the target does.
+
+## `new Window()` in a UI/runtime test is a desktop-only construct
+
+**Problem:** `Given_MsalAuthentication`'s harness created its own `Window` to pass to `AddMsal` and `Dispatcher`. All 10 tests passed on the desktop head and all 10 failed on the iOS simulator with `InvalidOperationException: Creating secondary windows on this platform is not allowed`. Android has the same restriction. The failure is invisible until a mobile lane actually runs, which is why it survived until the device stages were wired up.
+
+**Correct pattern:** take `UnitTestsUIContentHelper.CurrentTestWindow` — the host's own window, present on every head. Only bracket with `SaveOriginalContent`/`RestoreOriginalContent` if the test assigns `Content`; a test that just needs a `Window` reference does not. Recorded as a repo-wide rule in `AGENTS.md` § "Windows in UI / runtime tests"; the pre-existing `[RunsInSecondaryApp]` bullet was the same trap seen from one platform only.
+
+**Apply to:** every remaining `new Window()` under `src/**/*.UI.Tests/` (`Given_ChainedGetDataAsync`, `Given_FrameContentRehook`, `Given_NavigatorStartup`, `Given_NestedNavReloadRecovery`, `Given_RouteNotifier`, `Given_TabNavigation`). They are green today only because `RuntimeTestsFilter` scopes the device lanes to `Given_MsalAuthentication`; widening that filter fails them all.

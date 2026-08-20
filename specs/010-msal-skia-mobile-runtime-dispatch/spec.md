@@ -16,7 +16,7 @@ that 009's "Define gates unified" review item introduced, and reuses 009's test 
 On the demo app's `net10.0-ios` head (simulator, Skia renderer), **every** auth call fails —
 startup `RefreshAsync`, `LoginAsync`, `LogoutAsync` — with:
 
-```
+```text
 Uno.Extensions.Authentication.AuthenticationService: Error: AuthenticationProvider - No providers specified for the application
 ```
 
@@ -93,132 +93,132 @@ still platform-real:
 All changes in `src/Uno.Extensions.Authentication.MSAL/` unless noted.
 
 - [x] 1. **csproj allow-list: add the plain TFM** (empty platform identifier; `net9.0` is the only
-      TFM in `tfms-ui-winui.props` with one — there is no netstandard). Only `maccatalyst` remains
-      a stub. Update the comment to record *why* plain must be functional:
+  TFM in `tfms-ui-winui.props` with one — there is no netstandard). Only `maccatalyst` remains
+  a stub. Update the comment to record *why* plain must be functional:
 
-      ```xml
-      <!-- The plain netX.0 lib must be functional: on Skia iOS/Android heads, Uno.Sdk's
-           ReplaceUnoRuntime substitutes it for the platform lib for any package referencing
-           Uno.UI (RuntimeAssetsSelectorTask.HandleSkiaMobileForNonRuntimeEnabledPackages),
-           so it is the build that actually runs there. Platform behavior inside it is
-           selected at runtime via OperatingSystem.Is*(). Keep this allow-list in sync with
-           build/Package.targets. -->
-      <PropertyGroup Condition="'$(_UnoExtMsalTargetPlatform)'=='' or '$(_UnoExtMsalTargetPlatform)'=='android' or '$(_UnoExtMsalTargetPlatform)'=='ios' or '$(_UnoExtMsalTargetPlatform)'=='windows' or '$(_UnoExtMsalTargetPlatform)'=='desktop' or '$(_UnoExtMsalTargetPlatform)'=='browserwasm'">
-          <DefineConstants>$(DefineConstants);UNO_EXT_MSAL</DefineConstants>
-      </PropertyGroup>
-      ```
+  ```xml
+  <!-- The plain netX.0 lib must be functional: on Skia iOS/Android heads, Uno.Sdk's
+       ReplaceUnoRuntime substitutes it for the platform lib for any package referencing
+       Uno.UI (RuntimeAssetsSelectorTask.HandleSkiaMobileForNonRuntimeEnabledPackages),
+       so it is the build that actually runs there. Platform behavior inside it is
+       selected at runtime via OperatingSystem.Is*(). Keep this allow-list in sync with
+       build/Package.targets. -->
+  <PropertyGroup Condition="'$(_UnoExtMsalTargetPlatform)'=='' or '$(_UnoExtMsalTargetPlatform)'=='android' or '$(_UnoExtMsalTargetPlatform)'=='ios' or '$(_UnoExtMsalTargetPlatform)'=='windows' or '$(_UnoExtMsalTargetPlatform)'=='desktop' or '$(_UnoExtMsalTargetPlatform)'=='browserwasm'">
+      <DefineConstants>$(DefineConstants);UNO_EXT_MSAL</DefineConstants>
+  </PropertyGroup>
+  ```
 
 - [x] 2. **Mirror the `''` addition in `build/Package.targets`** (consuming-project allow-list),
-      same comment. Keeps plain-TFM shared class libraries that call `AddMsal` consistent.
+  same comment. Keeps plain-TFM shared class libraries that call `AddMsal` consistent.
 
 - [x] 3. **`MsalAuthenticationProvider.CurrentRedirectPlatform`: compile-time chain → runtime
-      checks.** Only `WINDOWS` stays compile-time — deliberately, because
-      `OperatingSystem.IsWindows()` is also true on Skia-desktop-on-Windows, where
-      Desktop/localhost (not the WAM broker) is correct:
+  checks.** Only `WINDOWS` stays compile-time — deliberately, because
+  `OperatingSystem.IsWindows()` is also true on Skia-desktop-on-Windows, where
+  Desktop/localhost (not the WAM broker) is correct:
 
-      ```csharp
-      private static MsalRedirectPlatform CurrentRedirectPlatform
+  ```csharp
+  private static MsalRedirectPlatform CurrentRedirectPlatform
+  {
+      get
       {
-          get
+          if (PlatformHelper.IsWebAssembly)
           {
-              if (PlatformHelper.IsWebAssembly)
-              {
-                  return MsalRedirectPlatform.WebAssembly;
-              }
-
-      #if WINDOWS
-              // WinAppSDK head: the WAM broker owns the redirect URI. Compile-time on purpose —
-              // IsWindows() is also true on Skia desktop, where Desktop/localhost is correct.
-              return MsalRedirectPlatform.BrokerManaged;
-      #else
-              // Runtime, not compile-time: on Skia iOS/Android heads Uno.Sdk substitutes the
-              // plain netX.0 build of this assembly, so the TFM no longer implies the OS.
-              if (OperatingSystem.IsAndroid())
-              {
-                  return MsalRedirectPlatform.Android;
-              }
-              if (OperatingSystem.IsIOS())
-              {
-                  return MsalRedirectPlatform.IOS;
-              }
-              return MsalRedirectPlatform.Desktop;
-      #endif
+              return MsalRedirectPlatform.WebAssembly;
           }
+
+  #if WINDOWS
+          // WinAppSDK head: the WAM broker owns the redirect URI. Compile-time on purpose —
+          // IsWindows() is also true on Skia desktop, where Desktop/localhost is correct.
+          return MsalRedirectPlatform.BrokerManaged;
+  #else
+          // Runtime, not compile-time: on Skia iOS/Android heads Uno.Sdk substitutes the
+          // plain netX.0 build of this assembly, so the TFM no longer implies the OS.
+          if (OperatingSystem.IsAndroid())
+          {
+              return MsalRedirectPlatform.Android;
+          }
+          if (OperatingSystem.IsIOS())
+          {
+              return MsalRedirectPlatform.IOS;
+          }
+          return MsalRedirectPlatform.Desktop;
+  #endif
       }
-      ```
+  }
+  ```
 
 - [x] 4. **`ApplyPlatformRedirectUri`: drop the `#if IOS` / `NSBundle` branch** in favor of the
-      WinRT-layer API, so the ios TFM and the plain TFM run *identical* code (native and Skia
-      heads exercise the same path — fewer divergence bugs):
+  WinRT-layer API, so the ios TFM and the plain TFM run *identical* code (native and Skia
+  heads exercise the same path — fewer divergence bugs):
 
-      ```csharp
-      // Package's Apple implementation returns CFBundleIdentifier. It lives in the WinRT
-      // layer (Uno.dll), which on Skia mobile heads is always the *native* build ("follows
-      // the WinRT layer" in RuntimeAssetsSelectorTask), so this works from the plain netX.0
-      // build of this assembly too — unlike Foundation.NSBundle, which only compiles on the
-      // ios TFM.
-      var bundleId = OperatingSystem.IsIOS()
-          ? global::Windows.ApplicationModel.Package.Current.Id.FamilyName
-          : null;
-      ```
+  ```csharp
+  // Package's Apple implementation returns CFBundleIdentifier. It lives in the WinRT
+  // layer (Uno.dll), which on Skia mobile heads is always the *native* build ("follows
+  // the WinRT layer" in RuntimeAssetsSelectorTask), so this works from the plain netX.0
+  // build of this assembly too — unlike Foundation.NSBundle, which only compiles on the
+  // ios TFM.
+  var bundleId = OperatingSystem.IsIOS()
+      ? global::Windows.ApplicationModel.Package.Current.Id.FamilyName
+      : null;
+  ```
 
-      `FamilyName` falls back to `string.Empty` if the plist key is missing;
-      `GetPlatformRedirectUri` already treats empty as "nothing to derive" →
-      `WithDefaultRedirectUri()` — acceptable degradation, no new handling needed.
+  `FamilyName` falls back to `string.Empty` if the plist key is missing;
+  `GetPlatformRedirectUri` already treats empty as "nothing to derive" →
+  `WithDefaultRedirectUri()` — acceptable degradation, no new handling needed.
 
 - [x] 5. **Delete `UNO_EXT_MSAL_ANDROID_TFM` / `UNO_EXT_MSAL_IOS_TFM` and their `#error` guards**
-      (csproj + the provider's file header). They guarded exactly one hazard — a compile-time
-      platform branch silently dying and falling through to the desktop path — which runtime
-      dispatch eliminates. The replacement safety net is behavioral (plan item 7).
+  (csproj + the provider's file header). They guarded exactly one hazard — a compile-time
+  platform branch silently dying and falling through to the desktop path — which runtime
+  dispatch eliminates. The replacement safety net is behavioral (plan item 7).
 
 - [x] 6. **Make the remaining stub loud.** In `HostBuilderExtensions.InternalAddMsal`'s
-      `#if !UNO_EXT_MSAL` branch (post-change: Mac Catalyst only), replace the silent
-      `return builder;` with `throw new PlatformNotSupportedException("MSAL authentication is
-      not supported on this target platform.")`. The silent no-op is what turned this bug into a
-      cross-repo debugging session — `AuthenticationService`'s "No providers specified" surfaces
-      far from the cause. **Behavior change** for Catalyst apps that call `AddMsal` today
-      (silent → throw): declare in PR notes; if the panel objects, the fallback position is an
-      `ILogger`-visible error via a registered startup diagnostic, but prefer the throw.
+  `#if !UNO_EXT_MSAL` branch (post-change: Mac Catalyst only), replace the silent
+  `return builder;` with `throw new PlatformNotSupportedException("MSAL authentication is
+  not supported on this target platform.")`. The silent no-op is what turned this bug into a
+  cross-repo debugging session — `AuthenticationService`'s "No providers specified" surfaces
+  far from the cause. **Behavior change** for Catalyst apps that call `AddMsal` today
+  (silent → throw): declare in PR notes; if the panel objects, the fallback position is an
+  `ILogger`-visible error via a registered startup diagnostic, but prefer the throw.
 
 - [x] 7. **Tests.**
-      - Unit layer (`Uno.Extensions.Authentication.MSAL.Tests`,
-        `Uno.Extensions.Authentication.MSAL.UI.Tests`): unaffected by design —
-        `MsalRedirectDefaults.Apply` takes the platform as a parameter, and the linked-source
-        harness defines `UNO_EXT_MSAL`. Run them; expect green (27 unit at 009 handoff, plus
-        `Given_MsalAuthentication`).
-      - Add runtime tests (the ios/android runtime-test stages built in 009) asserting on-device:
-        (a) resolving `IAuthenticationService` and calling `RefreshAsync` does **not** log/throw
-        "No providers specified" — i.e. the provider registered; (b) the redirect decision on
-        iOS/Android is `PlatformDerived` (surface `MsalRedirectDecision` to the test via logs or
-        an internal hook — `InternalsVisibleTo` already exists for the test projects).
-      - Note: the *packaged-artifact* behavior (the swap) can't be covered by unit tests at all —
-        only the live testbed run (item 8) proves it.
+  - Unit layer (`Uno.Extensions.Authentication.MSAL.Tests`,
+    `Uno.Extensions.Authentication.MSAL.UI.Tests`): unaffected by design —
+    `MsalRedirectDefaults.Apply` takes the platform as a parameter, and the linked-source
+    harness defines `UNO_EXT_MSAL`. Run them; expect green (27 unit at 009 handoff, plus
+    `Given_MsalAuthentication`).
+  - Add runtime tests (the ios/android runtime-test stages built in 009) asserting on-device:
+    (a) resolving `IAuthenticationService` and calling `RefreshAsync` does **not** log/throw
+    "No providers specified" — i.e. the provider registered; (b) the redirect decision on
+    iOS/Android is `PlatformDerived` (surface `MsalRedirectDecision` to the test via logs or
+    an internal hook — `InternalsVisibleTo` already exists for the test projects).
+  - Note: the *packaged-artifact* behavior (the swap) can't be covered by unit tests at all —
+    only the live testbed run (item 8) proves it.
 
 - [ ] 8. **Live validation on the testbed** — full agent run book in
-      [`macos-validation.md`](macos-validation.md) (this folder), written for hand-off to an
-      agent on the macOS machine. (`Uno.Samples` @ `dev/sb/msa-ext`,
-      `UI/Authentication.MsalExtensionsDemo`, iteration loop in its `HANDOFF-MACOS.md`): repack
-      `Uno.Extensions.Authentication.MSAL.WinUI` at `255.255.255.255-local`, purge
-      `~/.nuget/packages/uno.extensions.authentication.msal.winui/255.255.255.255-local`,
-      **delete `bin/obj` `net10.0-ios` trees** (incremental build will not refresh the swapped
-      dll), rebuild `-f net10.0-ios`, run the IL probe on the `.app` dll (expect ~113), deploy.
-      Expected at startup: Information log
-      `Using RedirectUri 'msauth.{bundleId}://auth'; sign-in requires a matching redirect URI...`
-      and no "No providers specified". Logout on MainPage navigates to LoginPage (back stack
-      cleared — already implemented demo-side in `MainModel.Logout`). Repeat the smoke test on
-      the android head if an emulator is at hand.
+  [`macos-validation.md`](macos-validation.md) (this folder), written for hand-off to an
+  agent on the macOS machine. (`Uno.Samples` @ `dev/sb/msa-ext`,
+  `UI/Authentication.MsalExtensionsDemo`, iteration loop in its `HANDOFF-MACOS.md`): repack
+  `Uno.Extensions.Authentication.MSAL.WinUI` at `255.255.255.255-local`, purge
+  `~/.nuget/packages/uno.extensions.authentication.msal.winui/255.255.255.255-local`,
+  **delete `bin/obj` `net10.0-ios` trees** (incremental build will not refresh the swapped
+  dll), rebuild `-f net10.0-ios`, run the IL probe on the `.app` dll (expect ~113), deploy.
+  Expected at startup: Information log
+  `Using RedirectUri 'msauth.{bundleId}://auth'; sign-in requires a matching redirect URI...`
+  and no "No providers specified". Logout on MainPage navigates to LoginPage (back stack
+  cleared — already implemented demo-side in `MainModel.Logout`). Repeat the smoke test on
+  the android head if an emulator is at hand.
 
 - [x] 9. **Docs** (`doc/Learn/Authentication/HowTo-MsalAuthentication.md` — note: this file has
-      uncommitted edits from an earlier session, per 009/HANDOFF): add that Skia iOS/Android
-      heads run the package's plain-TFM build, so app-side `#if ANDROID`/`#if IOS` blocks in
-      `Builder(...)` callbacks behave by TFM (they still compile per-head in the *app*, which
-      keeps its platform TFM — but library authors must not assume TFM==OS). Fold in the still
-      pending 009 checklist item 5 content (`InteractiveTimeout`, WASM SPA registration) if not
-      already done.
+  uncommitted edits from an earlier session, per 009/HANDOFF): add that Skia iOS/Android
+  heads run the package's plain-TFM build, so app-side `#if ANDROID`/`#if IOS` blocks in
+  `Builder(...)` callbacks behave by TFM (they still compile per-head in the *app*, which
+  keeps its platform TFM — but library authors must not assume TFM==OS). Fold in the still
+  pending 009 checklist item 5 content (`InteractiveTimeout`, WASM SPA registration) if not
+  already done.
 
 - [x] 10. **Cross-bookkeeping**: update `specs/009-msal-auth-fixes/progress.md` PR notes — the
-      "consumer MSBuild-surface change" bullet is now partially reverted (plain-TFM define
-      returns, by design); reference this spec.
+  "consumer MSBuild-surface change" bullet is now partially reverted (plain-TFM define
+  returns, by design); reference this spec.
 
 ## Verification (2026-08-19, implementation session)
 

@@ -22,8 +22,7 @@ uid: Uno.Extensions.Authentication.HowToMsalAuthentication
 
 > [!NOTE]
 > On Android, iOS, and WebAssembly heads that use `UnoFeatures=SkiaRenderer`, interactive sign-in requires an Uno Platform version containing the fix for [unoplatform/uno#20601](https://github.com/unoplatform/uno/issues/20601); with earlier versions the sign-in UI never appears on those targets.
-
-> [!NOTE]
+>
 > On Skia iOS/Android heads, the Uno.Sdk build substitutes the package's plain `netX.0` library
 > for the platform one, and the provider selects platform behavior at runtime
 > (`OperatingSystem.IsAndroid()`/`IsIOS()`), so everything above still applies. Your *app* keeps
