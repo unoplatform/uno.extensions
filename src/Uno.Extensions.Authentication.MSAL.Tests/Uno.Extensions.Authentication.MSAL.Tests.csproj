@@ -22,7 +22,6 @@
     <Compile Include="..\Uno.Extensions.Authentication.MSAL\MsalStorageDefaults.cs" Link="MsalStorageDefaults.cs" />
     <Compile Include="..\Uno.Extensions.Authentication.MSAL\MsalRedirectDefaults.cs" Link="MsalRedirectDefaults.cs" />
     <Compile Include="..\Uno.Extensions.Authentication.MSAL\MsalConfiguration.cs" Link="MsalConfiguration.cs" />
-    <Compile Include="..\Uno.Extensions.Authentication.MSAL\BrowserCacheLocation.cs" Link="BrowserCacheLocation.cs" />
     <Compile Include="..\Uno.Extensions.Authentication.MSAL\MsalTokenCacheStore.cs" Link="MsalTokenCacheStore.cs" />
   </ItemGroup>
 

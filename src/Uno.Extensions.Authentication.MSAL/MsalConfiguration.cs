@@ -44,17 +44,10 @@ internal class MsalConfiguration
 	/// </remarks>
 	public TimeSpan? InteractiveTimeout { get; init; }
 
-	/// <summary>
-	/// WebAssembly only: where the MSAL token cache is kept. Defaults to
-	/// <see cref="MSAL.BrowserCacheLocation.SessionStorage"/>, matching MSAL.js, so sign-in
-	/// survives a page reload but not closing the tab. Ignored on every other platform.
-	/// </summary>
-	/// <remarks>
-	/// Browser storage is readable by any script on the origin and the serialized cache contains
-	/// the refresh token, so this setting chooses how long a stolen cache stays useful rather than
-	/// whether it is protected. See specs/011-wasm-msal-token-cache/spec.md.
-	/// </remarks>
-	public BrowserCacheLocation BrowserCacheLocation { get; init; } = BrowserCacheLocation.SessionStorage;
+	// Where the token cache lives on WebAssembly is configured as
+	// KeyValueStorageConfiguration:BrowserCacheLocation, not here: it selects the host's single
+	// default IKeyValueStorage, which the Uno token cache shares with every other provider. See
+	// specs/011-wasm-msal-token-cache/spec.md.
 
 	/// <summary>
 	/// When true, the token cache falls back to an unprotected (plaintext) cache file if the
