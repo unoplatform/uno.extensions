@@ -509,6 +509,9 @@ If `CreateMock` is requested for a type the generator does not otherwise process
 ### 10.7 AOT / trimming
 `Uno.Extensions.Reactive` sets `IsAotCompatible=true`. Nothing in this design uses reflection. Keep it that way — do not add a reflection-based fallback for constructing models.
 
+### 10.8 Generated-name stability — Hot Design is a consumer
+Hot Design (unoplatform/uno.hotdesign, `specs/previews/spec.md` → *MVUX State Previews*) discovers this feature **by reflection over generated symbol names**: the static `CreateMock` method, the `{Vm}Mocks` bundle type (its name and its settable member-per-mockable-member shape), and the `Uno.Extensions.Reactive.Mocks` namespace. Those names are therefore **frozen public contract**, not an implementation detail of the generator: renaming any of them compiles every app cleanly while silently breaking the designer. Treat a rename as a breaking change requiring coordination with uno.hotdesign; additive evolution (new factories, new bundle members) is fine.
+
 ---
 
 ## 11. Test plan

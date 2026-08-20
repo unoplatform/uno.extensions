@@ -3,6 +3,7 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Microsoft.UI.Xaml.Controls;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Uno.Extensions;
 using Uno.Extensions.Reactive.Mocks;
@@ -45,6 +46,34 @@ public partial class Given_FeedView_Mocks : FeedTests
 
 		await UIHelper.WaitFor(() => sut.State.Progress, CT);
 		sutAsLoadable.IsExecuting.Should().BeTrue("a mocked loading feed completes while transient, pinning the FeedView in its loading state");
+	}
+
+	[TestMethod]
+	public async Task When_MockLoading_Then_PinnedStateSurvivesReparenting()
+	{
+		// Models the Hot Design preview-group activation path (uno.hotdesign, specs/previews
+		// "MVUX State Previews"): the FeedView subscribes once in an off-screen host, unloads,
+		// then is re-parented — a second subscription to the same, already-completed mock feed.
+		var feed = MockFeed.Loading<int>();
+		var sut = new FeedView { Source = feed };
+		var sutAsLoadable = (ILoadable)sut;
+
+		var firstHost = new Grid { Children = { sut } };
+		await UIHelper.Load(firstHost, CT);
+		await UIHelper.WaitFor(() => sut.State.Progress, CT);
+
+		firstHost.Children.Remove(sut);
+		await UIHelper.WaitForIdle(CT);
+
+		var secondHost = new Grid { Children = { sut } };
+		await UIHelper.Load(secondHost, CT);
+
+		// Settle so a wrongly-cleared transient state would have flipped the flags by now.
+		await UIHelper.WaitForIdle(CT);
+		await UIHelper.WaitForIdle(CT);
+
+		sut.State.Progress.Should().BeTrue("the pinned loading state must survive re-parenting");
+		sutAsLoadable.IsExecuting.Should().BeTrue("a second subscription to the completed mock must replay the transient state, not clear it");
 	}
 
 	[TestMethod]
