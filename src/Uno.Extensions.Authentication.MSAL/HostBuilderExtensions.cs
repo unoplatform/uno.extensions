@@ -1,4 +1,8 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Hosting;
+using Uno.Extensions.Storage.KeyValueStorage;
 
 namespace Uno.Extensions;
 
@@ -94,7 +98,12 @@ public static class HostBuilderExtensions
 			.UseConfiguration(configure: configBuilder =>
 					configBuilder
 						.Section<MsalConfiguration>(name)
-				);
+				)
+			.ConfigureServices(services =>
+				// Try*, so an app that registered its own wrapper keeps it. UseStorage is already
+				// a prerequisite for authentication at all - UseAuthentication builds ITokenCache
+				// from the same default instance - so this adds no new requirement.
+				services.TryAddSingleton(sp => new MsalKeyValueStorage(sp.GetRequiredDefaultInstance<IKeyValueStorage>())));
 
 
 		var authBuilder = builder.AsBuilder<MsalAuthenticationBuilder>();

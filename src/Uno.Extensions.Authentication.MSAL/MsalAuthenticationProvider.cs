@@ -17,6 +17,7 @@ internal record MsalAuthenticationProvider(
 		IOptionsSnapshot<MsalConfiguration> Configuration,
 		ITokenCache Tokens,
 		IStorage Storage,
+		MsalKeyValueStorage KeyValueStorage,
 		MsalAuthenticationSettings? Settings = null) : BaseAuthenticationProvider(ProviderLogger, DefaultName, Tokens)
 {
 	public const string DefaultName = "Msal";
@@ -260,11 +261,57 @@ internal record MsalAuthenticationProvider(
 		try
 		{
 #if UNO_EXT_MSAL_NOSTORAGE
-			// WebAssembly: MsalCacheHelper has no browser persistence; MSAL caches tokens
-			// in memory for the lifetime of the session.
-			if (Logger.IsEnabled(LogLevel.Information))
+			// WebAssembly: MsalCacheHelper knows only DPAPI, Keychain and libsecret, so the cache
+			// is serialized through IKeyValueStorage instead. Whether that survives a reload or a
+			// tab close is the storage layer's decision (KeyValueStorageConfiguration:BrowserCacheLocation
+			// default IKeyValueStorage in AddKeyedStorage); this side only reads and writes the
+			// blob, so MemoryStorage keeps the pre-011 in-memory behavior for free.
+			var cache = new MsalTokenCacheStore(KeyValueStorage.Storage, Logger, _pca!.AppConfig.ClientId);
+
+			_pca.UserTokenCache.SetBeforeAccessAsync(async args =>
 			{
-				Logger.LogInformationMessage($"Token cache persistence isn't supported on WebAssembly; tokens are cached in memory only");
+				// A cache read must never be the reason a sign-in fails: browser storage can be
+				// unavailable outright (private mode, a sandboxed iframe, storage disabled by
+				// policy), and the fallback - an empty cache - is exactly the pre-011 behavior.
+				try
+				{
+					if (await cache.LoadAsync(args.CancellationToken) is { } blob)
+					{
+						args.TokenCache.DeserializeMsalV3(blob);
+					}
+				}
+				catch (Exception ex)
+				{
+					if (Logger.IsEnabled(LogLevel.Warning))
+					{
+						Logger.LogWarningMessage($"Unable to read the stored token cache; continuing with an empty cache (the user will be asked to sign in again) - {ex.Message}");
+					}
+				}
+			});
+
+			_pca.UserTokenCache.SetAfterAccessAsync(async args =>
+			{
+				if (!args.HasStateChanged)
+				{
+					return;
+				}
+
+				try
+				{
+					await cache.SaveAsync(args.TokenCache.SerializeMsalV3(), args.CancellationToken);
+				}
+				catch (Exception ex)
+				{
+					if (Logger.IsEnabled(LogLevel.Warning))
+					{
+						Logger.LogWarningMessage($"Unable to persist the token cache; sign-in state won't survive a page reload - {ex.Message}");
+					}
+				}
+			});
+
+			if (Logger.IsEnabled(LogLevel.Trace))
+			{
+				Logger.LogTraceMessage($"MSAL token cache persisted through {KeyValueStorage.Storage.GetType().Name}");
 			}
 
 			return true;

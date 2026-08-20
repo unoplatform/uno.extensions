@@ -14,6 +14,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Uno.Extensions.Authentication;
 using Uno.Extensions.Hosting;
+using Uno.Extensions.Storage.KeyValueStorage;
 using Uno.UI.RuntimeTests;
 // Microsoft.Identity.Client also defines a LogLevel; the logging one is what's wanted here.
 using LogLevel = Microsoft.Extensions.Logging.LogLevel;
@@ -354,5 +355,34 @@ public class Given_MsalAuthentication
 		result.Should().BeTrue();
 		(await harness.Authentication.IsAuthenticated(cts.Token)).Should().BeFalse();
 		(await harness.Tokens.HasTokenAsync(cts.Token)).Should().BeFalse();
+	}
+
+	[TestMethod]
+	public async Task When_Login_Then_MsalCacheOnlyPersistedThroughStorageOnWebAssembly()
+	{
+		using var harness = await CreateHarnessAsync();
+		using var cts = Cts();
+
+		await harness.Authentication.LoginAsync(harness.Dispatcher, cancellationToken: cts.Token);
+
+		var keys = await harness.Host.Services
+			.GetRequiredDefaultInstance<IKeyValueStorage>()
+			.GetKeysAsync(cts.Token);
+
+		// The prefix is duplicated as a literal on purpose: MsalTokenCacheStore.KeyPrefix is
+		// internal to the provider assembly, and this test exists to fail if either side drifts.
+		if (PlatformHelper.IsWebAssembly)
+		{
+			// MsalCacheHelper has no browser backend, so the serialized cache goes through
+			// IKeyValueStorage instead - which is what makes a page reload survivable (spec 011).
+			keys.Should().Contain(key => key.StartsWith("MsalCache_", StringComparison.Ordinal));
+		}
+		else
+		{
+			// MsalCacheHelper (DPAPI / Keychain / keyring) or MSAL's own native cache owns
+			// persistence here. Writing the blob to key-value storage as well would duplicate
+			// refresh tokens into a store the platform doesn't protect.
+			keys.Should().NotContain(key => key.StartsWith("MsalCache_", StringComparison.Ordinal));
+		}
 	}
 }
