@@ -224,6 +224,7 @@ am_start_output="$(
 }
 printf '%s\n' "${am_start_output}"
 
+app_died=0
 echo "Waiting up to ${RUN_TIMEOUT_SECONDS}s for ${device_result_file}..."
 SECONDS=0
 while [[ ${SECONDS} -lt ${RUN_TIMEOUT_SECONDS} ]]; do
@@ -233,12 +234,24 @@ while [[ ${SECONDS} -lt ${RUN_TIMEOUT_SECONDS} ]]; do
   sleep 5
   if ! adb shell ps 2>/dev/null | grep -q "${PACKAGE_NAME}"; then
     echo "App process is gone; breaking out of the wait loop."
+    app_died=1
     break
   fi
 done
 
 if ! adb shell "[ -f \"${device_result_file}\" ] && echo found || true" 2>/dev/null | tr -d '\r' | grep -q '^found$'; then
-  echo "ERROR: ${device_result_file} did not appear within ${RUN_TIMEOUT_SECONDS}s." >&2
+  # Say which of the two exits happened. Reporting the timeout unconditionally described a
+  # crash 11s after launch as a 30-minute wait (build 228848), which sends the next reader
+  # looking at the wrong thing.
+  if [[ "${app_died}" == "1" ]]; then
+    echo "ERROR: the app exited after ${SECONDS}s without writing ${device_result_file}." >&2
+  else
+    echo "ERROR: ${device_result_file} did not appear within ${RUN_TIMEOUT_SECONDS}s." >&2
+  fi
+  # The app's own lines first: a startup abort (missing assemblies, a managed exception) shows
+  # up here and is otherwise buried in several thousand lines of system boot chatter.
+  echo "--- logcat, app + fatal lines ---" >&2
+  grep -E "${PACKAGE_NAME}|monodroid|AndroidRuntime|FATAL|DEBUG.*Abort message" "${logcat_log}" 2>/dev/null | tail -n 80 >&2 || true
   echo "--- emulator log (tail) ---" >&2
   tail -n 200 "${emulator_log}" >&2 || true
   echo "--- logcat (tail) ---" >&2

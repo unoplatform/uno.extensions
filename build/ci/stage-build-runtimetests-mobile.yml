@@ -33,9 +33,15 @@ jobs:
 
       - template: templates/canary-updater.yml
 
+      # EmbedAssembliesIntoApk: defaults to false in Debug, which is Fast Deployment - the
+      # assemblies stay out of the APK and are pushed separately by `dotnet build -t:Install`.
+      # A plain `adb install` of that APK produces an app with no managed code, which aborts at
+      # startup with "No assemblies found in .../.__override__/x86_64" (build 228848). The lane
+      # installs a standalone artifact, so the assemblies have to be inside it.
       - script: |
           dotnet publish src/Uno.Extensions.RuntimeTests/Uno.Extensions.RuntimeTests/Uno.Extensions.RuntimeTests.csproj \
             -c Debug -f net9.0-android \
+            -p:EmbedAssembliesIntoApk=true \
             -p:Build_Windows=false -p:Build_iOS=false -p:Build_MacCatalyst=false -p:Build_Web=false \
             -p:UnoDisableHotDesign=true -p:UnoDisableMCPSupport=true \
             -o $(build.artifactstagingdirectory)/android-runtime-tests \
