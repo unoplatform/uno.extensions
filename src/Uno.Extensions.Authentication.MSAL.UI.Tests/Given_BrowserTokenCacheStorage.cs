@@ -55,17 +55,35 @@ public class Given_BrowserTokenCacheStorage
 	}
 
 	[TestMethod]
-	public void When_Not_Configured_Then_Browser_Uses_SessionStorage()
+	public void When_Not_Configured_Then_Browser_Uses_LocalStorage()
 	{
 		var name = DefaultStorageName(null);
 
 		if (OperatingSystem.IsBrowser())
 		{
-			name.Should().Be("SessionStorageKeyValueStorage", "the default matches MSAL.js: survives a reload, dropped when the tab closes");
+			// ApplicationData.Current.LocalSettings is localStorage in the browser - the store
+			// WebAssembly used before this setting existed. Defaulting anywhere else would relocate
+			// every existing app's key-value data on a package upgrade.
+			name.Should().Be("ApplicationDataKeyValueStorage");
 		}
 		else
 		{
 			name.Should().NotBe("SessionStorageKeyValueStorage", "sessionStorage only exists in a browser");
+		}
+	}
+
+	[TestMethod]
+	public void When_SessionStorage_Then_Browser_Uses_SessionStorage()
+	{
+		var name = DefaultStorageName("SessionStorage");
+
+		if (OperatingSystem.IsBrowser())
+		{
+			name.Should().Be("SessionStorageKeyValueStorage", "the tighter session-scoped lifetime is opt-in");
+		}
+		else
+		{
+			name.Should().Be(DefaultStorageName(null), "the browser cache location must not move the store on any other platform");
 		}
 	}
 
@@ -76,7 +94,6 @@ public class Given_BrowserTokenCacheStorage
 
 		if (OperatingSystem.IsBrowser())
 		{
-			// ApplicationData.Current.LocalSettings is localStorage in the browser.
 			name.Should().Be("ApplicationDataKeyValueStorage");
 		}
 		else
@@ -103,13 +120,13 @@ public class Given_BrowserTokenCacheStorage
 	[TestMethod]
 	public void When_Configured_With_Other_Casing_Then_Still_Honored()
 	{
-		// Configuration binding is case-insensitive, so an app writing msal-browser's own
-		// "sessionStorage"/"localStorage" spelling must not silently fall back to the default.
-		var name = DefaultStorageName("localStorage");
+		// Case-insensitive to match what configuration binding would have accepted, so an app
+		// writing msal-browser's own "sessionStorage" spelling is not silently ignored.
+		var name = DefaultStorageName("sessionStorage");
 
 		if (OperatingSystem.IsBrowser())
 		{
-			name.Should().Be("ApplicationDataKeyValueStorage");
+			name.Should().Be("SessionStorageKeyValueStorage");
 		}
 		else
 		{
@@ -118,17 +135,28 @@ public class Given_BrowserTokenCacheStorage
 	}
 
 	[TestMethod]
-	public void When_Configured_With_Unknown_Value_Then_Fails_Loudly()
+	public void When_Configured_With_Unknown_Value_Then_Throws_Naming_The_Setting()
 	{
-		// The value is a bound enum on KeyValueStorageConfiguration, so configuration binding
-		// rejects a typo rather than quietly choosing for you. That is the right trade for a setting
-		// that decides where refresh tokens live: silently falling back to sessionStorage when the
-		// app asked for memoryStorage is a security-relevant surprise, and it would be invisible.
+		// A single strict reader in AddKeyedStorage rejects the value while the host is being built,
+		// rather than leaving it to whether something later happens to bind an options type. A typo
+		// silently choosing where credentials are kept is the one outcome worth failing startup for.
 		FluentActions.Invoking(() => DefaultStorageName("NotACacheLocation"))
-			.Should().Throw<Exception>()
-			// Literal, not nameof: the enum is internal to Uno.Extensions.Storage.
-			.Which.ToString().Should().Contain("BrowserCacheLocation",
-				"the failure has to name the setting that is wrong");
+			.Should().Throw<InvalidOperationException>()
+			// Literals, not nameof: the enum is internal to Uno.Extensions.Storage.
+			.WithMessage("*BrowserCacheLocation*")
+			.Which.Message.Should().Contain("SessionStorage").And.Contain("LocalStorage").And.Contain("MemoryStorage",
+				"the failure has to name the setting and its legal values");
+	}
+
+	[TestMethod]
+	public void When_Configured_With_Numeric_Value_Then_Throws()
+	{
+		// Enum.TryParse accepts any numeric string, in range or out of it, so "3" used to arrive as
+		// an undefined enum value and fall through to the default - the "invalid values are
+		// rejected" guarantee failed for exactly the input a hand-edited config is likeliest to
+		// contain. Enum.IsDefined is what closes it.
+		FluentActions.Invoking(() => DefaultStorageName("3"))
+			.Should().Throw<InvalidOperationException>().WithMessage("*BrowserCacheLocation*");
 	}
 
 	[TestMethod]

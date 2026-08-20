@@ -40,7 +40,7 @@ For more information about `UnoFeatures` refer to our [Using the Uno.Sdk](xref:U
 | Windows (WinAppSDK) | `ApplicationData` settings, DPAPI-encrypted |
 | Android | `KeyStore` |
 | iOS | Keychain |
-| WebAssembly | Browser storage — `sessionStorage` by default, see below |
+| WebAssembly | Browser storage — `localStorage` by default, see below |
 | Other (e.g. Skia Desktop) | `ApplicationData` settings (unencrypted file) |
 
 ### WebAssembly: choosing the browser store
@@ -50,17 +50,17 @@ The browser has no protected store, so on WebAssembly the choice is about *lifet
 ```json
 {
   "KeyValueStorageConfiguration": {
-    "BrowserCacheLocation": "SessionStorage"
+    "BrowserCacheLocation": "LocalStorage"
   }
 }
 ```
 
 | Value | Behavior |
 | --- | --- |
-| `SessionStorage` (default) | Survives a page reload; cleared when the tab closes. |
-| `LocalStorage` | Also survives closing the tab and restarting the browser. |
+| `LocalStorage` (default) | Survives a page reload, closing the tab, and restarting the browser. This is what WebAssembly used before the setting existed, so upgrading never relocates an app's existing data. |
+| `SessionStorage` | Survives a page reload; cleared when the tab closes. The tightest persistent lifetime — worth opting into for anything holding credentials. |
 | `MemoryStorage` | Nothing is written to browser storage; values live for the lifetime of the page only. |
 
-An invalid value fails at host build time rather than silently falling back — deliberate for a setting that decides where credentials live. The setting is ignored on every other platform.
+An invalid value throws while the host is being built rather than silently falling back — deliberate for a setting that decides where credentials live. Numeric values are rejected too. The setting is ignored on every other platform.
 
 Because this selects the single host-wide default store, it also governs the authentication token cache — whatever the authentication provider is, and whatever name it was registered under. For the security implications when tokens are involved (MSAL, refresh-token lifetime, the Entra `spa` registration), see [MSAL Authentication](xref:Uno.Extensions.Authentication.HowToMsalAuthentication).

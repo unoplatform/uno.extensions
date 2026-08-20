@@ -118,7 +118,11 @@ internal record SessionStorageKeyValueStorage(
 			// every caller of the storage.
 			if (Logger.IsEnabled(LogLevel.Warning))
 			{
-				Logger.LogWarningMessage($"Error getting value for key '{name}'.", ex.Message);
+				// LogWarning(ex, ...), not LogWarningMessage(msg, ex.Message): the helper's second
+				// parameter is [CallerMemberName], so passing ex.Message there dropped the reason
+				// and corrupted the caller tag. The sibling ApplicationDataKeyValueStorage still
+				// has that bug; don't copy it back.
+				Logger.LogWarning(ex, "Error getting value for key '{Key}'.", name);
 			}
 
 			return default;

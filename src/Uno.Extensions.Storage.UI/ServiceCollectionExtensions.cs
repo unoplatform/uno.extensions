@@ -25,39 +25,77 @@ internal static class ServiceCollectionExtensions
 	}
 
 	/// <summary>
-	/// Configuration key holding <see cref="KeyValueStorageConfiguration.BrowserCacheLocation"/>.
+	/// Configuration key selecting the browser store; see <see cref="BrowserCacheLocation"/>.
 	/// </summary>
 	/// <remarks>
-	/// Read from raw configuration rather than <c>IOptions</c> because the value picks a *named*
-	/// registration, which <c>SetDefaultInstance</c> resolves at registration time - before any
-	/// options are bound. The section is the one <c>UseStorage</c> already binds, so the value sits
-	/// with the rest of the storage settings and is independent of what an app calls its
-	/// authentication providers.
+	/// This is the ONLY reader of the value. It is read from raw configuration rather than through
+	/// <c>IOptions</c> because it picks a *named* registration, which <c>SetDefaultInstance</c>
+	/// resolves here at registration time - before any options are bound. Deliberately not also a
+	/// bound property on <see cref="KeyValueStorageConfiguration"/>: two readers of one key meant
+	/// two different answers for a bad value, and the "invalid values are rejected" guarantee was
+	/// an accident of whether anything happened to resolve the options type.
+	/// <para>
+	/// The section is the one <c>UseStorage</c> already binds, so the value sits with the rest of
+	/// the storage settings and is independent of what an app calls its authentication providers.
+	/// </para>
 	/// </remarks>
 	private const string BrowserCacheLocationKey =
-		$"{nameof(KeyValueStorageConfiguration)}:{nameof(KeyValueStorageConfiguration.BrowserCacheLocation)}";
+		$"{nameof(KeyValueStorageConfiguration)}:{nameof(BrowserCacheLocation)}";
 
 	/// <summary>
-	/// Name of the <see cref="IKeyValueStorage"/> the browser should default to, following
-	/// <see cref="BrowserCacheLocationKey"/>. Anything unparseable - including nothing configured -
-	/// takes the default, which is msal-browser's <c>sessionStorage</c>.
+	/// Name of the <see cref="IKeyValueStorage"/> the browser defaults to, per
+	/// <see cref="BrowserCacheLocationKey"/>.
 	/// </summary>
-	private static string BrowserStorageName(IConfiguration? configuration)
+	/// <remarks>
+	/// Absent means <see cref="BrowserCacheLocation.LocalStorage"/> - the store WebAssembly used
+	/// before this setting existed, so upgrading a package never relocates an app's data. Anything
+	/// present but not a defined member throws: this decides where credentials are kept, and a typo
+	/// silently choosing for you is the one outcome worth failing a startup over.
+	/// </remarks>
+	/// <exception cref="InvalidOperationException">The configured value is not a known location.</exception>
+	private static BrowserCacheLocation ResolveBrowserCacheLocation(IConfiguration? configuration)
 	{
-		// ignoreCase to match what configuration binding would have done, so an app writing
-		// msal-browser's own "sessionStorage" spelling gets the same result.
-		_ = Enum.TryParse<BrowserCacheLocation>(configuration?[BrowserCacheLocationKey], ignoreCase: true, out var location);
-
-		return location switch
+		var configured = configuration?[BrowserCacheLocationKey];
+		if (configured is not { Length: > 0 })
 		{
-			BrowserCacheLocation.LocalStorage => ApplicationDataKeyValueStorage.Name,
-			BrowserCacheLocation.MemoryStorage => InMemoryKeyValueStorage.Name,
-			_ => SessionStorageKeyValueStorage.Name,
-		};
+			return BrowserCacheLocation.LocalStorage;
+		}
+
+		// IsDefined as well as TryParse: TryParse succeeds for any numeric string, in range *or out*
+		// of it, so "3" would otherwise arrive as an undefined enum value and fall to a default -
+		// exactly the input a hand-edited config is likeliest to contain. ignoreCase matches what
+		// configuration binding would have accepted, so msal-browser's own "sessionStorage"
+		// spelling works.
+		if (!Enum.TryParse<BrowserCacheLocation>(configured, ignoreCase: true, out var location) ||
+			!Enum.IsDefined(location))
+		{
+			throw new InvalidOperationException(
+				$"'{configured}' is not a valid {nameof(BrowserCacheLocation)} for configuration key " +
+				$"'{BrowserCacheLocationKey}'. Expected one of: {string.Join(", ", Enum.GetNames<BrowserCacheLocation>())}.");
+		}
+
+		return location;
 	}
+
+	/// <summary>
+	/// Name of the <see cref="IKeyValueStorage"/> registration for a browser cache location.
+	/// </summary>
+	private static string BrowserStorageName(IConfiguration? configuration) =>
+		ResolveBrowserCacheLocation(configuration) switch
+		{
+			BrowserCacheLocation.SessionStorage => SessionStorageKeyValueStorage.Name,
+			BrowserCacheLocation.MemoryStorage => InMemoryKeyValueStorage.Name,
+			_ => ApplicationDataKeyValueStorage.Name,
+		};
 
 	public static IServiceCollection AddKeyedStorage(this IServiceCollection services, IConfiguration? configuration)
 	{
+		// Validated on every platform even though only the browser acts on it: a typo in a shared
+		// appsettings.json has to fail on the desktop run a developer actually does, not only in the
+		// one head that reads the value - which is also the only way the guarantee is testable,
+		// since the WebAssembly runtime-test lane cannot run today.
+		_ = ResolveBrowserCacheLocation(configuration);
+
 		return services
 				.AddNamedSingleton<IKeyValueStorage, InMemoryKeyValueStorage>(InMemoryKeyValueStorage.Name)
 				.AddNamedSingleton<IKeyValueStorage, ApplicationDataKeyValueStorage>(
