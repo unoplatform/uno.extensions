@@ -172,6 +172,32 @@ public class Given_NavigationRouteUpdateHandler
 				"(bindable) view model — the MVUX shape from #3142");
 	}
 
+	[TestMethod]
+	public void When_CollectUpdatedViewModels_WithViewTypeOnDefaultResolver_Then_EmptyAndRouteTableIntact()
+	{
+		var services = new ServiceCollection();
+		var views = new ViewRegistry(services);
+		var routes = new RouteRegistry(services);
+		var viewMap = new ViewMap<FrameworkElementPage>();
+		views.Register(viewMap);
+		// Route registered at the view type's full name — the same shape as the TabBar HR
+		// tests, where RouteResolverDefault's convention fallback derives that exact path
+		// from the type name on a FindByViewModel miss and would REPLACE the real mapping.
+		routes.Register(new RouteMap("FrameworkElementPage", View: viewMap));
+		var resolver = new RouteResolverDefault(NullLogger<RouteResolverDefault>.Instance, routes, views);
+
+		var collected = NavigationRouteUpdateHandler.CollectUpdatedViewModels([typeof(FrameworkElementPage)], resolver);
+
+		collected.Should().BeEmpty(
+			"view types are owned by the element-update walk and must not trigger view-model refreshes");
+		var mapping = resolver.FindByPath("FrameworkElementPage");
+		mapping.Should().NotBeNull();
+		mapping!.RenderView.Should().Be(typeof(FrameworkElementPage),
+			"the lookup must not let the convention fallback replace the registered mapping");
+		mapping.ViewModel.Should().BeNull(
+			"the registered route has no view model; a view-typed ViewModel here is route-table corruption");
+	}
+
 	private static RouteResolver CreateResolver()
 	{
 		var services = new ServiceCollection();
@@ -194,6 +220,10 @@ public class Given_NavigationRouteUpdateHandler
 	}
 
 	private sealed class GeneratedXamlPartial
+	{
+	}
+
+	private sealed partial class FrameworkElementPage : Microsoft.UI.Xaml.FrameworkElement
 	{
 	}
 

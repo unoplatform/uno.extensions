@@ -138,6 +138,20 @@ public class Given_ActiveRouteVmRefresh
 			page.DataContext.Should().BeSameAs(originalVm,
 				"a delta without the mapped view-model type must preserve the live view model " +
 				"and any un-persisted state it holds");
+
+			// The walk must not probe FindByViewModel with view types: on a miss,
+			// RouteResolverDefault's convention fallback derives the view's own route path
+			// from the type name and REPLACES the registered mapping with one whose
+			// ViewModel is the view type itself — corrupting every later navigation on
+			// that route (the CI regression across the XAML TabBar HR tests).
+			var context = NavigationRouteUpdateHandler.ActiveContexts.First(ctx => ctx.Resolver is not null);
+			var mapping = context.Resolver!.FindByPath("HotReloadVmPage");
+			mapping.Should().NotBeNull();
+			mapping!.RenderView.Should().Be(typeof(HotReloadVmPage),
+				"the registered route's view must survive a view-only delta");
+			mapping.ViewModel.Should().Be(typeof(HotReloadVm),
+				"the registered route's view model must survive a view-only delta — a " +
+				"view-typed ViewModel here means the convention fallback clobbered the mapping");
 		}
 		finally
 		{
