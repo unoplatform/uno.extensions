@@ -349,24 +349,18 @@ internal static class NavigationRouteUpdateHandler
 	/// </summary>
 	internal static HashSet<Type> CollectUpdatedViewModels(Type[]? updatedTypes, RouteResolver resolver)
 	{
-		var viewModels = new HashSet<Type>();
 		if (updatedTypes is null)
 		{
-			return viewModels;
+			return [];
 		}
 
-		foreach (var t in updatedTypes)
-		{
-			// IL2072: same read-only, type-identity lookup as HasRouteRegisteredType above.
+		// IL2072: same read-only, type-identity lookup as HasRouteRegisteredType above.
 #pragma warning disable IL2072
-			if (resolver.FindByViewModel(t, navigator: null)?.ViewModel is { } viewModel)
+		return updatedTypes
+			.Select(t => resolver.FindByViewModel(t, navigator: null)?.ViewModel)
+			.OfType<Type>()
+			.ToHashSet();
 #pragma warning restore IL2072
-			{
-				viewModels.Add(viewModel);
-			}
-		}
-
-		return viewModels;
 	}
 
 	/// <summary>
