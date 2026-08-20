@@ -138,6 +138,21 @@ public class Given_MsalTokenCacheStore
 	}
 
 	[TestMethod]
+	public void When_KeyPrefix_Then_It_Matches_The_Persisted_Contract()
+	{
+		// Pinned as a literal, in the project package CI actually runs. The prefix is a
+		// persisted-storage contract: renaming it orphans every user's serialized cache, signing
+		// them all out once. The other literal guards live in the runtime-test lanes, which are
+		// filter-scoped and two of which are currently disabled - so nothing there would have
+		// caught it.
+		MsalTokenCacheStore.KeyPrefix.Should().Be("MsalCache_");
+
+		// And it must not collide with Uno.Extensions.Authentication.TokenCache's own prefix, which
+		// returns every matching key from GetAsync straight into the outgoing bearer-token map.
+		MsalTokenCacheStore.KeyPrefix.Should().NotStartWith(TokenCachePrefix);
+	}
+
+	[TestMethod]
 	public async Task When_Saved_Twice_Then_Latest_Blob_Wins()
 	{
 		var storage = new FakeKeyValueStorage();

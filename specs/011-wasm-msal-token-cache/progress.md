@@ -70,6 +70,63 @@ items are fixed here; the medium/low findings are listed at the end of this sect
 the setting), `Given_MsalAuthentication` 14/14, MSAL unit tests, Release `packageonly`, and the full
 desktop suite against the pre-branch baseline.
 
+## Sixth pass — review-panel medium findings (2026-08-20)
+
+- **Cancelled sign-out no longer leaves token material.** `InternalLogoutAsync` checked
+  cancellation *between* account removals and before the blob delete, so an abandoned logout left
+  surviving accounts signed in, their refresh tokens in the serialized cache, the access token
+  cached, and `IsAuthenticated` still true — a user who asked to log out, was told it was cancelled,
+  and is still authenticated. Sign-out has no half-done state worth stopping at: the loop no longer
+  honours cancellation (it is all local cache mutation, nothing slow to interrupt), and the blob
+  delete moved into a `finally` with `CancellationToken.None` — an already-cancelled token would
+  otherwise make the delete itself the no-op the `finally` exists to prevent. Also `.ToArray()`
+  before the loop: `RemoveAsync` mutates the enumerable being walked.
+  Red/green: `When_LogoutCancelled_Then_SerializedMsalCacheStillRemoved` (verified failing with the
+  `finally` temporarily reverted).
+
+- **`IsEncrypted => true` is now true in practice on unpackaged Windows.**
+  `EncryptedApplicationDataKeyValueStorage.GetObjectValue` returned the DPAPI `byte[]`, but the
+  unpackaged path persists through `ISettings`, which is string-only, and the base class stores
+  `value?.ToString()` — so protected values were written as the literal `"System.Byte[]"` and read
+  back as `default`, while their keys survived and kept `HasTokenAsync` true with nothing to
+  recover. The same fail-open shape as the empty-token bug, on the *default Windows store*.
+  `GetObjectValue` now returns base64; `GetTypedValue` accepts `byte[]` as well so existing
+  **packaged** caches are not orphaned, and treats an undecodable string as absent rather than
+  throwing on every read.
+
+  Pre-existing, but item 6's `IsEncrypted` flip made the claim actively wrong there. **Not covered
+  by an automated test:** the type is `#if WINDOWS`-only, so it does not compile on the
+  `net9.0-desktop` runtime-test lane, and there is no WinAppSDK lane. Verifying it needs a packaged
+  *and* an unpackaged WinAppSDK run.
+
+- **Concurrent resolves can no longer double-build a provider.**
+  `ProviderFactory.AuthenticationProvider` was a bare `configuredProvider ??= ConfigureProvider(...)`.
+  Two concurrent resolves could both build; since `ConfigureProvider` returns a record *copy*, the
+  losing instance stayed subscribed to `ITokenCache.Cleared` for the host's lifetime with no
+  reference left to unsubscribe it — leaking that provider and its `IPublicClientApplication`, and
+  running the clear handler twice. Now a `Lazy` with `ExecutionAndPublication`. This is shared
+  `Uno.Extensions.Authentication` code, so it fixes the Oidc and Custom providers too. The code
+  comment in `MsalAuthenticationProvider.Build` that asserted this "cannot double-subscribe" was
+  simply wrong and now says what actually guarantees it.
+
+- **The `MsalCache_` prefix is pinned where package CI runs.**
+  `Given_MsalTokenCacheStore.When_KeyPrefix_Then_It_Matches_The_Persisted_Contract` asserts the
+  literal and that it does not collide with `TokenCache`'s `AuthToken_` prefix. The other literal
+  guards live in runtime-test lanes that are filter-scoped and two of which are disabled, so
+  renaming the prefix — which orphans every user's serialized cache — would not have been caught.
+
+### Still open after this pass
+
+`AuthenticationService._providers` is a plain `Dictionary` mutated from `BuildProviders()` without
+synchronization; the `Lazy` above removes the double-*build* consequence but concurrent
+`AuthenticationProvider(...)` calls still race on the dictionary itself. Fixing that means making
+`AuthenticationService` thread-safe, which is broader than this pass.
+
+`_SSKVS` is still unpinned — it lives in `Storage.UI`, which has no test project (see the
+namespace-parity item below). The `ITokenCache.Cleared` handler remains fire-and-forget, so a stale
+continuation can still delete a blob a *subsequent* login wrote; logout's own clear is awaited, so
+this is the narrow case only.
+
 ### Panel follow-ups NOT fixed here
 
 Medium: cancelled logout can leave a half-signed-out, still-authenticated state
