@@ -83,9 +83,11 @@ internal record MsalAuthenticationProvider(
 			Logger.LogInformationMessage($"Using RedirectUri '{_pca.AppConfig.RedirectUri ?? "(none - platform managed)"}'; sign-in requires a matching redirect URI on the app registration");
 		}
 
-		// After _pca is assigned, so the handler always has a client id to key the entry with. Build
-		// runs exactly once per provider (ProviderFactory caches the configured instance), so this
-		// cannot double-subscribe.
+		// After _pca is assigned, so the handler always has a client id to key the entry with.
+		// Subscribing here relies on Build running once per provider: ProviderFactory guarantees
+		// that with a thread-safe Lazy. It did not originally - a bare `??=` let two concurrent
+		// resolves both build, and because ConfigureProvider returns a record *copy* each time, the
+		// losing instance stayed subscribed with nothing left holding a reference to unsubscribe it.
 		Tokens.Cleared += OnTokensCleared;
 
 		if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"Building MSAL Provider complete");
@@ -216,12 +218,39 @@ internal record MsalAuthenticationProvider(
 		// Every account, not just the first: MSAL can hold several, and removing one left the rest
 		// signed in - with their refresh tokens still in the serialized cache. Silent sign-in then
 		// picks up whichever account survived, so a "logged out" user comes back authenticated.
+		//
+		// ToArray first: RemoveAsync mutates the cache this enumerable reads from.
+		var accounts = (await _pca!.GetAccountsAsync()).ToArray();
 		var removed = 0;
-		foreach (var account in await _pca!.GetAccountsAsync())
+		try
 		{
-			cancellationToken.ThrowIfCancellationRequested();
-			await _pca.RemoveAsync(account);
-			removed++;
+			foreach (var account in accounts)
+			{
+				// Deliberately NOT checking cancellation between removals. Sign-out has no
+				// half-done state worth stopping at: abandoning it after the second of three
+				// accounts leaves the rest signed in, their refresh tokens in the serialized cache,
+				// the access token cached, and IsAuthenticated still true - a user who asked to log
+				// out, told the operation was cancelled, and is still authenticated. The whole loop
+				// is local cache mutation, so there is nothing slow to interrupt.
+				await _pca.RemoveAsync(account);
+				removed++;
+			}
+		}
+		finally
+		{
+			// In finally so a failure part-way through still takes the serialized cache with it -
+			// leaving refresh-token material behind is the worse of the two outcomes.
+			//
+			// Removing the accounts already makes MSAL serialize an empty cache, which the
+			// after-access callback turns into a delete, but only when those callbacks were
+			// registered (SetupStorage can fail) and only when MSAL considered the cache changed.
+			// Deleting explicitly is what guarantees nothing outlives the sign-out. Not gated on
+			// WebAssembly: off the browser nothing ever writes this key, so it is a no-op rather
+			// than a special case.
+			//
+			// CancellationToken.None on purpose: an already-cancelled token would make the delete
+			// itself a no-op, which is the one outcome this finally exists to prevent.
+			await ClearTokenCacheStoreAsync(CancellationToken.None);
 		}
 
 		if (removed == 0)
@@ -232,13 +261,6 @@ internal record MsalAuthenticationProvider(
 		{
 			Logger.LogInformationMessage($"Removed {removed} account(s), user successfully logged out");
 		}
-
-		// Removing the accounts makes MSAL serialize an empty cache, which the after-access callback
-		// turns into a delete - but only when those callbacks were registered (SetupStorage can
-		// fail) and only when MSAL considered the cache changed. Deleting explicitly is what
-		// guarantees no refresh-token material outlives the sign-out. Not gated on WebAssembly: off
-		// the browser nothing ever writes this key, so it is a no-op rather than a special case.
-		await ClearTokenCacheStoreAsync(cancellationToken);
 
 		return true;
 	}

@@ -398,6 +398,36 @@ public class Given_MsalAuthentication
 	}
 
 	[TestMethod]
+	public async Task When_LogoutCancelled_Then_SerializedMsalCacheStillRemoved()
+	{
+		using var harness = await CreateHarnessAsync();
+		using var cts = Cts();
+
+		await harness.Authentication.LoginAsync(harness.Dispatcher, cancellationToken: cts.Token);
+		await SeedMsalCacheEntry(harness, cts.Token);
+
+		// Sign-out has no half-done state worth stopping at: abandoning it part-way used to leave
+		// surviving accounts signed in, their refresh tokens in the serialized cache, and
+		// IsAuthenticated still true - a user who asked to log out, was told it was cancelled, and
+		// is still authenticated. An already-cancelled token is the sharpest version of that.
+		using var cancelled = new CancellationTokenSource();
+		await cancelled.CancelAsync();
+
+		try
+		{
+			await harness.Authentication.LogoutAsync(harness.Dispatcher, cancelled.Token);
+		}
+		catch (OperationCanceledException)
+		{
+			// Whether the cancellation surfaces is not what this guards - what matters is that no
+			// refresh-token material survived it.
+		}
+
+		(await HasMsalCacheEntry(harness, cts.Token)).Should().BeFalse(
+			"a cancelled sign-out must not leave the serialized MSAL cache behind");
+	}
+
+	[TestMethod]
 	public async Task When_TokenCacheCleared_Then_SerializedMsalCacheRemoved()
 	{
 		using var harness = await CreateHarnessAsync();
