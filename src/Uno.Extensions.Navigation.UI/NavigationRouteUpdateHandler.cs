@@ -354,13 +354,14 @@ internal static class NavigationRouteUpdateHandler
 			return [];
 		}
 
-		// IL2072: same read-only, type-identity lookup as HasRouteRegisteredType above.
-#pragma warning disable IL2072
+		// IL2067: same read-only, type-identity lookup as HasRouteRegisteredType above (the
+		// lambda parameter shifts the trim diagnostic from IL2072 to IL2067).
+#pragma warning disable IL2067
 		return updatedTypes
 			.Select(t => resolver.FindByViewModel(t, navigator: null)?.ViewModel)
 			.OfType<Type>()
 			.ToHashSet();
-#pragma warning restore IL2072
+#pragma warning restore IL2067
 	}
 
 	/// <summary>
