@@ -37,9 +37,15 @@ results_path="${results_dir}/android-runtime-tests-results.xml"
 
 mkdir -p "${results_dir}" "${logs_dir}"
 
-apk_path="$(find "${RuntimeTestsArtifactPath}" -maxdepth 6 -type f \( -name '*-Signed.apk' -o -name '*.apk' \) -print | head -n 1 || true)"
+# The signed APK specifically: `dotnet publish` emits both, and `adb install` rejects the
+# unsigned one with INSTALL_PARSE_FAILED_NO_CERTIFICATES (build 228844). A single find with
+# `-name '*-Signed.apk' -o -name '*.apk'` does not express a preference - it returns whichever
+# the directory walk reaches first - so the two candidates are searched in order.
+apk_path="$(find "${RuntimeTestsArtifactPath}" -maxdepth 6 -type f -name '*-Signed.apk' -print | head -n 1 || true)"
 if [[ -z "${apk_path}" ]]; then
-  echo "ERROR: no APK found under ${RuntimeTestsArtifactPath}" >&2
+  echo "ERROR: no signed APK (*-Signed.apk) found under ${RuntimeTestsArtifactPath}" >&2
+  echo "APKs present:" >&2
+  find "${RuntimeTestsArtifactPath}" -maxdepth 6 -type f -name '*.apk' >&2 || true
   exit 1
 fi
 echo "Using APK: ${apk_path}"
