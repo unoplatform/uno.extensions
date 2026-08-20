@@ -10,21 +10,6 @@ using System.Text.Json.Serialization.Metadata;
 using MsalCacheHelper = Microsoft.Identity.Client.Extensions.Msal.MsalCacheHelper;
 #endif
 
-// The platform redirect-URI branches below are selected with the SDK's implicit ANDROID / IOS
-// symbols. If either stopped being defined, the branch would not fail to compile - it would
-// silently fall through to the desktop path, shipping the wrong redirect URI with no build error
-// and no failing test. UNO_EXT_MSAL_*_TFM is derived independently in the .csproj from the target
-// platform, so these guards fail the build the moment the two disagree.
-//
-// Note for future debugging: `-getProperty:DefineConstants` does NOT list ANDROID / IOS, because
-// the SDK merges ImplicitDefineConstants after evaluation. That is not evidence they are missing.
-#if UNO_EXT_MSAL_ANDROID_TFM && !ANDROID
-#error The ANDROID symbol is not defined for the android TFM; the platform redirect branch in ApplyPlatformRedirectUri would be dead code.
-#endif
-#if UNO_EXT_MSAL_IOS_TFM && !IOS
-#error The IOS symbol is not defined for the ios TFM; the platform redirect branch in ApplyPlatformRedirectUri would be dead code.
-#endif
-
 namespace Uno.Extensions.Authentication.MSAL;
 
 internal record MsalAuthenticationProvider(
@@ -112,15 +97,22 @@ internal record MsalAuthenticationProvider(
 	/// </remarks>
 	private void ApplyPlatformRedirectUri(PublicClientApplicationBuilder builder, MsalConfiguration config)
 	{
-		string? bundleId = null;
-#if IOS
-		bundleId = global::Foundation.NSBundle.MainBundle.BundleIdentifier;
-#endif
+		var platform = CurrentRedirectPlatform;
+
+		// Package's Apple implementation returns CFBundleIdentifier. It lives in the WinRT layer
+		// (Uno.dll), which on Skia mobile heads is always the *native* build (it "follows the
+		// WinRT layer" in Uno.Sdk's RuntimeAssetsSelectorTask), so this works from the plain
+		// netX.0 build of this assembly too - unlike Foundation.NSBundle, which only compiles on
+		// the ios TFM. FamilyName is string.Empty when the plist key is missing, which
+		// GetPlatformRedirectUri already treats as "nothing to derive".
+		var bundleId = platform == MsalRedirectPlatform.IOS
+			? global::Windows.ApplicationModel.Package.Current.Id.FamilyName
+			: null;
 
 		var decision = MsalRedirectDefaults.Apply(
 			builder,
 			config,
-			CurrentRedirectPlatform,
+			platform,
 			bundleId,
 			static b => b.WithWebRedirectUri());
 
@@ -128,8 +120,7 @@ internal record MsalAuthenticationProvider(
 	}
 
 	/// <summary>
-	/// The platform whose redirect-URI convention applies, resolved from the compile-time target
-	/// plus the WebAssembly runtime check.
+	/// The platform whose redirect-URI convention applies, resolved at runtime.
 	/// </summary>
 	private static MsalRedirectPlatform CurrentRedirectPlatform
 	{
@@ -142,13 +133,25 @@ internal record MsalAuthenticationProvider(
 				return MsalRedirectPlatform.WebAssembly;
 			}
 
-#if ANDROID
-			return MsalRedirectPlatform.Android;
-#elif IOS
-			return MsalRedirectPlatform.IOS;
-#elif WINDOWS
+#if WINDOWS
+			// WinAppSDK head: the WAM broker owns the redirect URI. Compile-time on purpose -
+			// OperatingSystem.IsWindows() is also true on Skia desktop, where Desktop/localhost
+			// is correct.
 			return MsalRedirectPlatform.BrokerManaged;
 #else
+			// Runtime, not compile-time: on Skia iOS/Android heads Uno.Sdk substitutes the plain
+			// netX.0 build of this assembly, so the TFM no longer implies the OS.
+			if (OperatingSystem.IsAndroid())
+			{
+				return MsalRedirectPlatform.Android;
+			}
+			// IsIOS() is documented to also return true on Mac Catalyst, where the msauth scheme
+			// would be wrong: MSAL has no catalyst build, so a Skia Catalyst head loads MSAL's
+			// desktop flavor, whose system-browser flow needs the Desktop/localhost convention.
+			if (OperatingSystem.IsIOS() && !OperatingSystem.IsMacCatalyst())
+			{
+				return MsalRedirectPlatform.IOS;
+			}
 			return MsalRedirectPlatform.Desktop;
 #endif
 		}

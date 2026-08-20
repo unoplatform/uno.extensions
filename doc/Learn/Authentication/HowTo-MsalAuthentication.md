@@ -18,10 +18,18 @@ uid: Uno.Extensions.Authentication.HowToMsalAuthentication
 | Android | ✅ Browser / custom tab | ✅ Handled natively by MSAL |
 | iOS | ✅ Web authentication session | ✅ Handled natively by MSAL |
 | WebAssembly | ✅ Popup | In-memory only (tokens don't survive a page reload) |
-| Mac Catalyst | ❌ Not supported (`AddMsal` is a no-op) | — |
+| Mac Catalyst | ❌ Not supported (`AddMsal` throws `PlatformNotSupportedException`) | — |
 
 > [!NOTE]
 > On Android, iOS, and WebAssembly heads that use `UnoFeatures=SkiaRenderer`, interactive sign-in requires an Uno Platform version containing the fix for [unoplatform/uno#20601](https://github.com/unoplatform/uno/issues/20601); with earlier versions the sign-in UI never appears on those targets.
+
+> [!NOTE]
+> On Skia iOS/Android heads, the Uno.Sdk build substitutes the package's plain `netX.0` library
+> for the platform one, and the provider selects platform behavior at runtime
+> (`OperatingSystem.IsAndroid()`/`IsIOS()`), so everything above still applies. Your *app* keeps
+> its platform TFM, so `#if ANDROID` / `#if IOS` blocks in your own code — including `Builder(...)`
+> callbacks — behave normally. Library authors whose packages reference `Uno.UI` are subject to the
+> same substitution and must not assume the TFM implies the OS.
 
 The set of identity scenarios (Microsoft accounts, work/school accounts, B2C, sovereign clouds, ...) is determined by MSAL itself — see [MSAL.NET supported platforms and scenarios](https://learn.microsoft.com/entra/msal/dotnet/getting-started/scenarios) for details.
 
@@ -312,6 +320,21 @@ builder.AddMsal(window, msal => msal
 
 The callback runs on every interactive sign-in, after the Uno helpers have been applied, so it can
 override what those set.
+
+An interactive sign-in that isn't completed times out after **5 minutes** by default — the
+system-browser flow used on desktop cannot detect a closed browser window, so without a timeout an
+abandoned sign-in would leave the awaiting login command busy forever. Configure it via
+`InteractiveTimeout` in the `Msal` configuration section (a `TimeSpan`; zero or negative waits
+indefinitely):
+
+```json
+{
+  "Msal": {
+    "ClientId": "161a9fb5-3b16-487a-81a2-ac45dcc0ad3b",
+    "InteractiveTimeout": "00:02:00"
+  }
+}
+```
 
 ### 7. Token cache storage (optional)
 

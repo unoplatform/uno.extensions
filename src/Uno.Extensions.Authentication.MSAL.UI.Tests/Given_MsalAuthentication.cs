@@ -27,9 +27,8 @@ namespace Uno.Extensions.Authentication.MSAL.UI.Tests;
 /// <remarks>
 /// Lives in a UI test project rather than the plain unit-test one because
 /// Uno.Extensions.Authentication.MSAL.WinUI can't load in a bare test host - its Uno.WinUI module
-/// initializer needs a live Uno.UI. Running here also means the real per-platform code paths
-/// execute on each head, which is the only way the <c>#if ANDROID</c> / <c>#if IOS</c> branches in
-/// the provider are exercised on a real device.
+/// initializer needs a live Uno.UI. Running here also means the provider's runtime platform
+/// dispatch (<c>OperatingSystem.Is*()</c>, spec 010) is exercised against a real OS on each head.
 /// </remarks>
 [TestClass]
 [RunsOnUIThread]
@@ -279,7 +278,7 @@ public class Given_MsalAuthentication
 	public async Task When_Built_Then_PlatformRedirectUriApplied()
 	{
 		// The runtime counterpart to Given_MsalRedirectDefaults_Apply: on a real device this is the
-		// only place the provider's #if ANDROID / #if IOS selection is proven live. The harness sets
+		// only place the provider's runtime platform selection is proven live. The harness sets
 		// an explicit redirect URI through Builder(...), so this also pins the documented
 		// precedence - the app callback wins over the platform default.
 		using var harness = await CreateHarnessAsync();
@@ -290,5 +289,45 @@ public class Given_MsalAuthentication
 		// The flow completing at all proves the redirect URI MSAL used matched what the stub
 		// browser echoed back; a mismatch fails redemption inside MSAL.
 		(await harness.Authentication.IsAuthenticated(cts.Token)).Should().BeTrue();
+	}
+
+	[TestMethod]
+	public async Task When_AddMsal_Then_ProviderRegistered()
+	{
+		// Guards spec 010's failure mode: a stubbed-out AddMsal registers nothing, and the only
+		// symptom is AuthenticationService's "No providers specified" error - logged far from the
+		// cause, on every auth call. RefreshAsync exercises the same startup path an app does.
+		using var harness = await CreateHarnessAsync();
+		using var cts = Cts();
+
+		await harness.Authentication.RefreshAsync(cts.Token);
+
+		harness.Logs.Text.Should().NotContain("No providers specified",
+			"AddMsal must register the MSAL provider on this platform");
+	}
+
+	[TestMethod]
+	public async Task When_Built_Then_RedirectDecisionMatchesRuntimePlatform()
+	{
+		// The provider selects the redirect platform at runtime (OperatingSystem.Is*) because on
+		// Skia iOS/Android heads Uno.Sdk substitutes the plain netX.0 build of the provider
+		// assembly, so the TFM no longer implies the OS (spec 010). The harness sets no redirect
+		// URI, so the platform default applies; asserted via the provider's trace log, using the
+		// MsalRedirectDecision member names.
+		using var harness = await CreateHarnessAsync();
+
+#if WINDOWS
+		// WinAppSDK stays compile-time in the provider: the WAM broker owns the redirect URI.
+		var expected = "BrokerManaged";
+#else
+		var expected =
+			PlatformHelper.IsWebAssembly ? "WebAuthenticationBroker"
+			: OperatingSystem.IsAndroid() ? "PlatformDerived"
+			// IsIOS() is also true on Mac Catalyst, which takes the Desktop path (no catalyst MSAL).
+			: OperatingSystem.IsIOS() && !OperatingSystem.IsMacCatalyst() ? "PlatformDerived"
+			: "MsalDefault";
+#endif
+
+		harness.Logs.Text.Should().Contain($"RedirectUri resolution: {expected}");
 	}
 }

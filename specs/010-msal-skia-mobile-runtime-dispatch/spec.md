@@ -1,6 +1,11 @@
 # 010 — MSAL: Skia-mobile heads load the stub lib; move platform selection to runtime dispatch
 
-**Status: handoff — diagnosed and designed, not implemented.** Written 2026-08-19 after live
+**Status: implemented 2026-08-19 (items 1–7, 9, 10); item 8 (live testbed validation) still
+pending — it needs the macOS iteration loop.** One deviation from the plan sketch: the runtime iOS
+check is `OperatingSystem.IsIOS() && !OperatingSystem.IsMacCatalyst()`, because `IsIOS()` is
+documented to also return true on Mac Catalyst — the bare `IsIOS()` in the item-3 sketch would
+have routed Skia Catalyst heads to the iOS msauth scheme, contradicting this spec's own caveat
+that they take the Desktop path. Written 2026-08-19 after live
 debugging on the iOS simulator against the `Uno.Samples` testbed (branch `dev/sb/msa-ext`,
 `UI/Authentication.MsalExtensionsDemo` — see its `HANDOFF-MACOS.md` for the pack/purge/rebuild
 iteration loop). Read `specs/009-msal-auth-fixes/progress.md` first: this spec fixes a regression
@@ -87,7 +92,7 @@ still platform-real:
 
 All changes in `src/Uno.Extensions.Authentication.MSAL/` unless noted.
 
-- [ ] 1. **csproj allow-list: add the plain TFM** (empty platform identifier; `net9.0` is the only
+- [x] 1. **csproj allow-list: add the plain TFM** (empty platform identifier; `net9.0` is the only
       TFM in `tfms-ui-winui.props` with one — there is no netstandard). Only `maccatalyst` remains
       a stub. Update the comment to record *why* plain must be functional:
 
@@ -103,10 +108,10 @@ All changes in `src/Uno.Extensions.Authentication.MSAL/` unless noted.
       </PropertyGroup>
       ```
 
-- [ ] 2. **Mirror the `''` addition in `build/Package.targets`** (consuming-project allow-list),
+- [x] 2. **Mirror the `''` addition in `build/Package.targets`** (consuming-project allow-list),
       same comment. Keeps plain-TFM shared class libraries that call `AddMsal` consistent.
 
-- [ ] 3. **`MsalAuthenticationProvider.CurrentRedirectPlatform`: compile-time chain → runtime
+- [x] 3. **`MsalAuthenticationProvider.CurrentRedirectPlatform`: compile-time chain → runtime
       checks.** Only `WINDOWS` stays compile-time — deliberately, because
       `OperatingSystem.IsWindows()` is also true on Skia-desktop-on-Windows, where
       Desktop/localhost (not the WAM broker) is correct:
@@ -142,7 +147,7 @@ All changes in `src/Uno.Extensions.Authentication.MSAL/` unless noted.
       }
       ```
 
-- [ ] 4. **`ApplyPlatformRedirectUri`: drop the `#if IOS` / `NSBundle` branch** in favor of the
+- [x] 4. **`ApplyPlatformRedirectUri`: drop the `#if IOS` / `NSBundle` branch** in favor of the
       WinRT-layer API, so the ios TFM and the plain TFM run *identical* code (native and Skia
       heads exercise the same path — fewer divergence bugs):
 
@@ -161,12 +166,12 @@ All changes in `src/Uno.Extensions.Authentication.MSAL/` unless noted.
       `GetPlatformRedirectUri` already treats empty as "nothing to derive" →
       `WithDefaultRedirectUri()` — acceptable degradation, no new handling needed.
 
-- [ ] 5. **Delete `UNO_EXT_MSAL_ANDROID_TFM` / `UNO_EXT_MSAL_IOS_TFM` and their `#error` guards**
+- [x] 5. **Delete `UNO_EXT_MSAL_ANDROID_TFM` / `UNO_EXT_MSAL_IOS_TFM` and their `#error` guards**
       (csproj + the provider's file header). They guarded exactly one hazard — a compile-time
       platform branch silently dying and falling through to the desktop path — which runtime
       dispatch eliminates. The replacement safety net is behavioral (plan item 7).
 
-- [ ] 6. **Make the remaining stub loud.** In `HostBuilderExtensions.InternalAddMsal`'s
+- [x] 6. **Make the remaining stub loud.** In `HostBuilderExtensions.InternalAddMsal`'s
       `#if !UNO_EXT_MSAL` branch (post-change: Mac Catalyst only), replace the silent
       `return builder;` with `throw new PlatformNotSupportedException("MSAL authentication is
       not supported on this target platform.")`. The silent no-op is what turned this bug into a
@@ -175,7 +180,7 @@ All changes in `src/Uno.Extensions.Authentication.MSAL/` unless noted.
       (silent → throw): declare in PR notes; if the panel objects, the fallback position is an
       `ILogger`-visible error via a registered startup diagnostic, but prefer the throw.
 
-- [ ] 7. **Tests.**
+- [x] 7. **Tests.**
       - Unit layer (`Uno.Extensions.Authentication.MSAL.Tests`,
         `Uno.Extensions.Authentication.MSAL.UI.Tests`): unaffected by design —
         `MsalRedirectDefaults.Apply` takes the platform as a parameter, and the linked-source
@@ -189,7 +194,9 @@ All changes in `src/Uno.Extensions.Authentication.MSAL/` unless noted.
       - Note: the *packaged-artifact* behavior (the swap) can't be covered by unit tests at all —
         only the live testbed run (item 8) proves it.
 
-- [ ] 8. **Live validation on the testbed** (`Uno.Samples` @ `dev/sb/msa-ext`,
+- [ ] 8. **Live validation on the testbed** — full agent run book in
+      [`macos-validation.md`](macos-validation.md) (this folder), written for hand-off to an
+      agent on the macOS machine. (`Uno.Samples` @ `dev/sb/msa-ext`,
       `UI/Authentication.MsalExtensionsDemo`, iteration loop in its `HANDOFF-MACOS.md`): repack
       `Uno.Extensions.Authentication.MSAL.WinUI` at `255.255.255.255-local`, purge
       `~/.nuget/packages/uno.extensions.authentication.msal.winui/255.255.255.255-local`,
@@ -201,7 +208,7 @@ All changes in `src/Uno.Extensions.Authentication.MSAL/` unless noted.
       cleared — already implemented demo-side in `MainModel.Logout`). Repeat the smoke test on
       the android head if an emulator is at hand.
 
-- [ ] 9. **Docs** (`doc/Learn/Authentication/HowTo-MsalAuthentication.md` — note: this file has
+- [x] 9. **Docs** (`doc/Learn/Authentication/HowTo-MsalAuthentication.md` — note: this file has
       uncommitted edits from an earlier session, per 009/HANDOFF): add that Skia iOS/Android
       heads run the package's plain-TFM build, so app-side `#if ANDROID`/`#if IOS` blocks in
       `Builder(...)` callbacks behave by TFM (they still compile per-head in the *app*, which
@@ -209,9 +216,23 @@ All changes in `src/Uno.Extensions.Authentication.MSAL/` unless noted.
       pending 009 checklist item 5 content (`InteractiveTimeout`, WASM SPA registration) if not
       already done.
 
-- [ ] 10. **Cross-bookkeeping**: update `specs/009-msal-auth-fixes/progress.md` PR notes — the
+- [x] 10. **Cross-bookkeeping**: update `specs/009-msal-auth-fixes/progress.md` PR notes — the
       "consumer MSBuild-surface change" bullet is now partially reverted (plain-TFM define
       returns, by design); reference this spec.
+
+## Verification (2026-08-19, implementation session)
+
+- All 7 TFMs of `Uno.Extensions.Authentication.MSAL.WinUI` build in Release with zero
+  project-local warnings.
+- **IL probe** (per "Fast re-verification probes"): plain `net9.0` `InternalAddMsal` = **113
+  bytes** (functional — was the 2-byte stub), ios/android/desktop = 113, maccatalyst = 11 (the
+  new throw). Probe script preserved conceptually in the probes section above.
+- Unit layer: `Uno.Extensions.Authentication.MSAL.Tests` 27/27 green, unchanged as designed.
+- Runtime layer: desktop head (`net9.0-desktop`, `UNO_RUNTIME_TESTS_RUN_TESTS` filter
+  `Given_MsalAuthentication`) — **10/10 passed**, including the two new tests
+  (`When_AddMsal_Then_ProviderRegistered`, `When_Built_Then_RedirectDecisionMatchesRuntimePlatform`);
+  the android/ios/wasm lanes run the same suite in CI.
+- Item 8 (live Uno.Samples testbed on the iOS simulator) remains open — macOS-only loop.
 
 ## Caveats / PR notes (declare in the PR description)
 
