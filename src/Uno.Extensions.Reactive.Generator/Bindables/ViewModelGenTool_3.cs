@@ -35,10 +35,10 @@ internal class ViewModelGenTool_3 : ICodeGenTool
 
 	public IEnumerable<(string fileName, string code)> Generate()
 	{
-		var models = from module in _assembly.Modules
+		var models = (from module in _assembly.Modules
 					 from type in module.GetNamespaceTypes()
 					 where IsSupported(type)
-					 select type;
+					 select type).ToList();
 
 		foreach (var model in models)
 		{
@@ -48,6 +48,34 @@ internal class ViewModelGenTool_3 : ICodeGenTool
 			if (GenerateFeedDependencies(model) is { } feedDependenciesCode)
 			{
 				yield return ($"{model}.FeedDependencies", feedDependenciesCode);
+			}
+
+			if (IsMockSupported(model))
+			{
+				yield return ($"{model}.Mocks", GenerateMocksBundle(model));
+			}
+			else if (_ctx.IsMockGenerationEnabled(model) && FindNonMockableBase(model) is { } nonMockableBase)
+			{
+				_ctx.Context.ReportDiagnostic(Rules.FEED3001.GetDiagnostic(model, nonMockableBase));
+			}
+		}
+
+		// Flag explicit GenerateModelMocks patterns that do not match any generated model (spec 012 §10.5).
+		if (_assembly.FindAttribute<GenerateModelMocksAttribute>() is { IsEnabled: true } mocksConfig)
+		{
+			var mocksConfigLocation = _assembly
+				.GetAttributes()
+				.FirstOrDefault(attr => attr.AttributeClass?.ToDisplayString() == typeof(GenerateModelMocksAttribute).FullName)
+				?.ApplicationSyntaxReference is { } syntax
+					? Location.Create(syntax.SyntaxTree, syntax.Span)
+					: Location.None;
+
+			foreach (var pattern in mocksConfig.Patterns.Where(pattern => pattern is not ".*"))
+			{
+				if (!models.Any(model => Regex.IsMatch(model.ToString(), pattern)))
+				{
+					_ctx.Context.ReportDiagnostic(Rules.FEED3002.GetDiagnostic(pattern, mocksConfigLocation));
+				}
 			}
 		}
 
@@ -82,6 +110,46 @@ internal class ViewModelGenTool_3 : ICodeGenTool
 		return false;
 	}
 
+#pragma warning disable RS1024 // Compare symbols correctly => FALSE POSITIVE (SymbolEqualityComparer is used)
+	private readonly Dictionary<INamedTypeSymbol, bool> _isMockSupportedCache = new(SymbolEqualityComparer.Default);
+#pragma warning restore RS1024
+
+	/// <summary>
+	/// Determines if mock factories can be generated for the given model: its assembly must opt-in
+	/// (cf. <see cref="GenerateModelMocksAttribute"/>) and, when the model derives from another generated
+	/// model, that whole base chain must be mock-enabled too (the mock constructors chain through it).
+	/// </summary>
+	private bool IsMockSupported(INamedTypeSymbol model)
+	{
+		if (_isMockSupportedCache.TryGetValue(model, out var isSupported))
+		{
+			return isSupported;
+		}
+
+		isSupported = _ctx.IsMockGenerationEnabled(model)
+			&& (!IsSupported(model.BaseType) || IsMockSupported(model.BaseType));
+
+		_isMockSupportedCache[model] = isSupported;
+
+		return isSupported;
+	}
+
+	/// <summary>
+	/// Gets the first base model in the chain that prevents mock generation, if any.
+	/// </summary>
+	private INamedTypeSymbol? FindNonMockableBase(INamedTypeSymbol model)
+	{
+		for (var baseType = model.BaseType; IsSupported(baseType); baseType = baseType.BaseType)
+		{
+			if (!_ctx.IsMockGenerationEnabled(baseType))
+			{
+				return baseType;
+			}
+		}
+
+		return null;
+	}
+
 	private static string GetModelName(INamedTypeSymbol type)
 		=> type.Name.TrimEnd("Model", StringComparison.Ordinal);
 
@@ -95,6 +163,8 @@ internal class ViewModelGenTool_3 : ICodeGenTool
 	{
 		var vmName = GetViewModelName(model);
 		var hasBaseType = IsSupported(model.BaseType);
+		var isMockSupported = IsMockSupported(model);
+		var mocksTypeFullName = $"{GetViewModelFullName(model)}Mocks";
 		var canBeINPC = !model.IsSealed
 			|| model.IsOrImplements(_ctx.INotifyPropertyChanged, allowBaseTypes: true, out _);
 
@@ -160,7 +230,38 @@ internal class ViewModelGenTool_3 : ICodeGenTool
 						#endif
 					}}
 
-					#region Hot-reload support
+					{(isMockSupported ? $@"#region Mocks support
+					/// <summary>
+					/// Creates an instance of <see cref=""{vmName}""/> whose members are pinned to the configured mock states,
+					/// without constructing the model or its dependencies. Note that <see cref=""{N.Model}""/> is null on such an
+					/// instance, so non-feed members (plain properties, methods) which forward to the model will throw.
+					/// </summary>
+					/// <param name=""configure"">Configures the mock states; unconfigured members are pinned in the Undefined state (commands default to an idle no-op).</param>
+					public static {vmName} CreateMock(global::System.Action<{mocksTypeFullName}>? configure = null)
+					{{
+						var mocks = new {mocksTypeFullName}();
+						configure?.Invoke(mocks);
+						return new {vmName}(mocks);
+					}}
+
+					/// <summary>
+					/// Creates an instance whose members are pinned to the given mock states. Use CreateMock instead.
+					/// </summary>
+					[global::System.ComponentModel.EditorBrowsable(global::System.ComponentModel.EditorBrowsableState.Never)]
+					protected {vmName}({mocksTypeFullName} __mocks)
+						: base({(hasBaseType ? "__mocks" : "registerForHotReload: false")})
+					{{
+						var {N.Ctor.Ctx} = {NS.Core}.SourceContext.GetOrCreate(this);
+
+						#if {!hasBaseType} // !hasBaseType
+						base.RegisterDisposable({N.Ctor.Ctx});
+						#endif
+
+						{members.Select(member => member.GetMockInitialization("__mocks")).Align(6)}
+					}}
+					#endregion
+
+					" : "")}#region Hot-reload support
 					private (Type type, string name, object? value)[]? __reactiveModelArgs;
 
 					protected override (Type type, string name, object? value)[] __Reactive_GetModelArguments()
@@ -277,6 +378,36 @@ internal class ViewModelGenTool_3 : ICodeGenTool
 				public global::System.Threading.Tasks.ValueTask DisposeAsync()
 					=> {NS.Core}.SourceContext.Find(this)?.DisposeAsync() ?? default;
 			");
+	}
+
+	/// <summary>
+	/// Generates the '{Vm}Mocks' bundle: one settable, nullable mock-override property per mockable member of the model.
+	/// </summary>
+	private string GenerateMocksBundle(INamedTypeSymbol model)
+	{
+		var vmFullName = GetViewModelFullName(model);
+		var mocksName = $"{GetViewModelName(model)}Mocks";
+		var hasBaseType = IsSupported(model.BaseType) && IsMockSupported(model.BaseType);
+		var members = GetMembers(model)
+			.Select(member => (member.Name, Type: member.GetMockPropertyType()))
+			.Where(member => member.Type is not null)
+			.ToList();
+
+		var bundle = this.InSameNamespaceOf(
+			model,
+			$@"
+				/// <summary>
+				/// Mock state overrides for the members of <see cref=""{vmFullName}""/>, cf. {vmFullName}.CreateMock.
+				/// A property left null lets the corresponding member default to the Undefined state (commands default to an idle no-op).
+				/// </summary>
+				{this.GetCodeGenAttribute()}
+				{model.DeclaredAccessibility.ToCSharpCodeString()} partial class {mocksName}{(hasBaseType ? $" : {GetViewModelFullName(model.BaseType!)}Mocks" : "")}
+				{{
+					{members.Select(member => $@"/// <summary>Mock override for {member.Name}; null pins the member in the Undefined state (commands: an idle no-op).</summary>
+					public {member.Type}? {member.Name} {{ get; set; }}").Align(5)}
+				}}");
+
+		return bundle.Align(0);
 	}
 
 	private string GetCtorAccessibility(IMethodSymbol ctor)

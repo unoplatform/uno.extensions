@@ -38,4 +38,12 @@ internal record BindableListFromListFeedProperty(IPropertySymbol _property, ITyp
 				var {_property.GetCamelCaseName()}SourceListState = {N.Ctor.Ctx}.GetOrCreateListState({_property.GetCamelCaseName()}Source);
 				{_property.Name} = {NS.Bindings}.BindableHelper.CreateBindableList(nameof({_property.Name}), {_property.GetCamelCaseName()}SourceListState);
 			}}";
+
+	/// <inheritdoc />
+	public string? GetMockPropertyType()
+		=> $"{NS.Reactive}.IListFeed<{_valueType.ToFullString()}>";
+
+	/// <inheritdoc />
+	public string? GetMockInitialization(string mocks)
+		=> $"{_property.Name} = {NS.Bindings}.BindableHelper.CreateBindableList(nameof({_property.Name}), {N.Ctor.Ctx}.GetOrCreateListState({mocks}.{_property.Name} ?? {NS.Mocks}.MockListFeed.Undefined<{_valueType.ToFullString()}>()));";
 }

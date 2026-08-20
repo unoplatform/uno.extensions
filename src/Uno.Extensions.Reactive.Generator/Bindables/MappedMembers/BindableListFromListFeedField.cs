@@ -34,4 +34,12 @@ internal record BindableListFromListFeedField(IFieldSymbol _field, ITypeSymbol _
 				var {_field.GetCamelCaseName()}SourceListState = {N.Ctor.Ctx}.GetOrCreateListState({_field.GetCamelCaseName()}Source);
 				{_field.Name} = {NS.Bindings}.BindableHelper.CreateBindableList(nameof({_field.Name}), {_field.GetCamelCaseName()}SourceListState);
 			}}";
+
+	/// <inheritdoc />
+	public string? GetMockPropertyType()
+		=> $"{NS.Reactive}.IListFeed<{_valueType.ToFullString()}>";
+
+	/// <inheritdoc />
+	public string? GetMockInitialization(string mocks)
+		=> $"{_field.Name} = {NS.Bindings}.BindableHelper.CreateBindableList(nameof({_field.Name}), {N.Ctor.Ctx}.GetOrCreateListState({mocks}.{_field.Name} ?? {NS.Mocks}.MockListFeed.Undefined<{_valueType.ToFullString()}>()));";
 }

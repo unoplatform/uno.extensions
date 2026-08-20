@@ -228,6 +228,14 @@ internal partial record CommandFromMethod : IMappedMember
 				);";
 	}
 
+	/// <inheritdoc />
+	public string? GetMockPropertyType()
+		=> $"{NS.Reactive}.IAsyncCommand";
+
+	/// <inheritdoc />
+	public string? GetMockInitialization(string mocks)
+		=> $"{Name} = {mocks}.{Name} ?? {NS.Mocks}.MockCommand.Idle();";
+
 	private static ImmutableArray<CommandParameter> ResolveParameters(INamedTypeSymbol type, IMethodSymbol method, BindableGenerationContext ctx)
 	{
 		var isImplicitParametersEnabled = type.FindAttributeValue<bool>(ctx.ImplicitCommandParametersAttribute, ctorPosition: 0).value

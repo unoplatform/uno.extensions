@@ -56,6 +56,14 @@ internal record BindableGenerationContext(
 	public bool IsGenerationNotDisable(ISymbol symbol)
 		=> IsGenerationEnabled(symbol) ?? true;
 
+	/// <summary>
+	/// Determines if mock factories (CreateMock + the mocks bundle) should be generated for the given model,
+	/// based on the <see cref="GenerateModelMocksAttribute"/> of its containing assembly.
+	/// </summary>
+	public bool IsMockGenerationEnabled(INamedTypeSymbol type)
+		=> type.ContainingAssembly.FindAttribute<GenerateModelMocksAttribute>() is { IsEnabled: true } mocks
+			&& mocks.Patterns.Any(pattern => System.Text.RegularExpressions.Regex.IsMatch(type.ToString(), pattern));
+
 	public bool? IsGenerationEnabled(ISymbol symbol)
 		=> symbol.FindAttributeValue<bool>(BindableAttribute, nameof(ReactiveBindableAttribute.IsEnabled), 0) is { isDefined: true } attribute
 			? attribute.value ?? true

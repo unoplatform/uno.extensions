@@ -36,4 +36,13 @@ internal record BindableListFromFeedOfListProperty(IPropertySymbol Property, ITy
 				var {Property.GetCamelCaseName()}SourceListState = {N.Ctor.Ctx}.GetOrCreateListState({Property.GetCamelCaseName()}SourceListFeed);
 				{Property.Name} = {NS.Bindings}.BindableHelper.CreateBindableList(nameof({Property.Name}), {Property.GetCamelCaseName()}SourceListState);
 			}}";
+
+	/// <inheritdoc />
+	// The mock override is an IListFeed (not the model's IFeed<TCollection>) so the MockListFeed factories can be used directly.
+	public string? GetMockPropertyType()
+		=> $"{NS.Reactive}.IListFeed<{ItemType.ToFullString()}>";
+
+	/// <inheritdoc />
+	public string? GetMockInitialization(string mocks)
+		=> $"{Property.Name} = {NS.Bindings}.BindableHelper.CreateBindableList(nameof({Property.Name}), {N.Ctor.Ctx}.GetOrCreateListState({mocks}.{Property.Name} ?? {NS.Mocks}.MockListFeed.Undefined<{ItemType.ToFullString()}>()));";
 }

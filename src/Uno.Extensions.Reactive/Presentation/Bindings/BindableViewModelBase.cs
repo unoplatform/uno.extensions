@@ -41,12 +41,27 @@ public abstract partial class BindableViewModelBase : IBindable, INotifyProperty
 	/// Creates a new instance of BindableViewModelBase
 	/// </summary>
 	protected BindableViewModelBase()
+		: this(registerForHotReload: true)
+	{
+	}
+
+	/// <summary>
+	/// Creates a new instance of BindableViewModelBase
+	/// </summary>
+	/// <param name="registerForHotReload">
+	/// Determines if this instance should be registered for hot-reload support.
+	/// False for mock instances, which have no model to reload.
+	/// </param>
+	protected BindableViewModelBase(bool registerForHotReload)
 	{
 		_propertyChanged = new(this, h => h.Invoke, isCoalescable: false, schedulersProvider: _dispatcher.FindDispatcher);
 
 		_dispatcher.TryResolve();
 
-		InitializeHotReload();
+		if (registerForHotReload)
+		{
+			InitializeHotReload();
+		}
 	}
 
 	/// <summary>

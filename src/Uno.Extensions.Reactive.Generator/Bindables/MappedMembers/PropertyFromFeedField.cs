@@ -29,4 +29,12 @@ internal record PropertyFromFeedField(IFieldSymbol _field, ITypeSymbol _valueTyp
 	/// <inheritdoc />
 	public string GetInitialization()
 		=> $"_{_field.Name} ??= new {NS.Bindings}.Bindable<{_valueType.ToFullString()}>(base.Property<{_valueType.ToFullString()}>(nameof({_field.Name}), ({NS.Reactive}.IFeed<{_valueType.ToFullString()}>) {N.Ctor.Model}.{_field.Name} ?? throw new NullReferenceException(\"The feed field '{_field.Name}' is null. Public feeds fields must be initialized in the constructor.\")));";
+
+	/// <inheritdoc />
+	public string? GetMockPropertyType()
+		=> $"{NS.Reactive}.IFeed<{_valueType.ToFullString()}>";
+
+	/// <inheritdoc />
+	public string? GetMockInitialization(string mocks)
+		=> $"_{_field.Name} = new {NS.Bindings}.Bindable<{_valueType.ToFullString()}>(base.Property<{_valueType.ToFullString()}>(nameof({_field.Name}), {mocks}.{_field.Name} ?? {NS.Mocks}.MockFeed.Undefined<{_valueType.ToFullString()}>()));";
 }

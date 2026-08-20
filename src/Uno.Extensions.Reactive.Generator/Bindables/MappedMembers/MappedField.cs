@@ -27,4 +27,12 @@ internal record MappedField(IFieldSymbol _field) : IMappedMember
 	/// <inheritdoc />
 	public virtual string? GetInitialization()
 		=> null;
+
+	/// <inheritdoc />
+	public string? GetMockPropertyType()
+		=> null; // Not mockable: forwards directly to the model.
+
+	/// <inheritdoc />
+	public string? GetMockInitialization(string mocks)
+		=> null;
 }

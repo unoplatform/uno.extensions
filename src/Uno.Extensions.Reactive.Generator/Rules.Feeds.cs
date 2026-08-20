@@ -65,4 +65,45 @@ internal static partial class Rules
 				@class.Name,
 				method.Name);
 	}
+
+	// Mocks [3000-3999]
+	public static class FEED3001
+	{
+		private const string message = "Mock generation is enabled for the model '{0}', but its base model '{1}' is not mock-enabled (its assembly must also match a GenerateModelMocks pattern). No mock factory will be generated for '{0}'.";
+
+		public static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
+			nameof(FEED3001),
+			"Mock generation skipped",
+			message,
+			Category.Usage,
+			DiagnosticSeverity.Warning,
+			helpLinkUri: "https://platform.uno/docs/articles/external/uno.extensions/doc/Overview/Reactive/rules.html#Feed3001",
+			isEnabledByDefault: true);
+
+		public static Diagnostic GetDiagnostic(INamedTypeSymbol model, INamedTypeSymbol baseModel)
+			=> Diagnostic.Create(
+				Descriptor,
+				model.DeclaringSyntaxReferences.FirstOrDefault() is { } syntax
+					? Location.Create(syntax.SyntaxTree, syntax.Span)
+					: Location.None,
+				model.Name,
+				baseModel.Name);
+	}
+
+	public static class FEED3002
+	{
+		private const string message = "The GenerateModelMocks pattern '{0}' does not match any generated bindable view model of this assembly";
+
+		public static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
+			nameof(FEED3002),
+			"Unmatched mock generation pattern",
+			message,
+			Category.Usage,
+			DiagnosticSeverity.Warning,
+			helpLinkUri: "https://platform.uno/docs/articles/external/uno.extensions/doc/Overview/Reactive/rules.html#Feed3002",
+			isEnabledByDefault: true);
+
+		public static Diagnostic GetDiagnostic(string pattern, Location location)
+			=> Diagnostic.Create(Descriptor, location, pattern);
+	}
 }

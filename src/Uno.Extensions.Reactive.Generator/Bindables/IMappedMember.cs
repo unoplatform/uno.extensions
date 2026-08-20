@@ -27,4 +27,20 @@ internal interface IMappedMember
 	/// </summary>
 	/// <returns>E.g. '_myField = "Hello world";'</returns>
 	public string? GetInitialization();
+
+	/// <summary>
+	/// Gets the type of the mock override property for this member in the mocks bundle,
+	/// or null if the member is not mockable (i.e. it forwards directly to the model).
+	/// </summary>
+	/// <returns>E.g. 'global::Uno.Extensions.Reactive.IListFeed&lt;MyItem&gt;'</returns>
+	public string? GetMockPropertyType();
+
+	/// <summary>
+	/// Gets the code to initialize the member in the mock constructor, from the mock override
+	/// when set, falling back to a feed pinned in the Undefined state (or an idle command).
+	/// Null when the member is not mockable. Unlike <see cref="GetInitialization"/>, this code
+	/// must not reference the model.
+	/// </summary>
+	/// <param name="mocks">Name of the non-null mocks-bundle variable.</param>
+	public string? GetMockInitialization(string mocks);
 }

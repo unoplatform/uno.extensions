@@ -29,4 +29,12 @@ internal record PropertyFromFeedProperty(IPropertySymbol _property, ITypeSymbol 
 	/// <inheritdoc />
 	public string? GetInitialization()
 		=> $"_{_property.GetCamelCaseName()} ??= new {NS.Bindings}.Bindable<{_valueType.ToFullString()}>(base.Property<{_valueType.ToFullString()}>(nameof({_property.Name}), ({NS.Reactive}.IFeed<{_valueType.ToFullString()}>) {N.Ctor.Model}.{_property.Name} ?? throw new NullReferenceException(\"The feed property '{_property.Name}' is null. Public feeds fields must be initialized in the constructor.\")));";
+
+	/// <inheritdoc />
+	public string? GetMockPropertyType()
+		=> $"{NS.Reactive}.IFeed<{_valueType.ToFullString()}>";
+
+	/// <inheritdoc />
+	public string? GetMockInitialization(string mocks)
+		=> $"_{_property.GetCamelCaseName()} = new {NS.Bindings}.Bindable<{_valueType.ToFullString()}>(base.Property<{_valueType.ToFullString()}>(nameof({_property.Name}), {mocks}.{_property.Name} ?? {NS.Mocks}.MockFeed.Undefined<{_valueType.ToFullString()}>()));";
 }

@@ -37,4 +37,12 @@ internal record MappedMethod(IMethodSymbol _method) : IMappedMember
 	/// <inheritdoc />
 	public string? GetInitialization()
 		=> null;
+
+	/// <inheritdoc />
+	public string? GetMockPropertyType()
+		=> null; // Not mockable: forwards directly to the model.
+
+	/// <inheritdoc />
+	public string? GetMockInitialization(string mocks)
+		=> null;
 }

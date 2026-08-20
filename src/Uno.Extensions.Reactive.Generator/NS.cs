@@ -10,4 +10,5 @@ internal static partial class NS
 	public const string Bindings = Reactive + ".Bindings";
 	public const string Commands = Reactive + ".Commands";
 	public const string Core = Reactive + ".Core";
+	public const string Mocks = Reactive + ".Mocks";
 }
