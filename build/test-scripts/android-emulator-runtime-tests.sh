@@ -49,6 +49,13 @@ echo "Using APK: ${apk_path}"
 # nothing. Owning our own location keeps this self-contained.
 export ANDROID_HOME="${build_root}/android-sdk"
 export ANDROID_SDK_ROOT="${ANDROID_HOME}"
+# Pin where AVDs live. avdmanager and emulator each fall back through their own list of
+# default locations ($ANDROID_AVD_HOME, $ANDROID_SDK_HOME/avd, $HOME/.android/avd) and in
+# build 228835 they disagreed: create reported success, then the emulator exited immediately
+# with "Unknown AVD name [uno-extensions-rt-avd]". Both honour ANDROID_AVD_HOME, so setting it
+# removes the guesswork.
+export ANDROID_AVD_HOME="${build_root}/android-avd"
+mkdir -p "${ANDROID_AVD_HOME}"
 
 if [[ ! -x "${ANDROID_HOME}/cmdline-tools/latest/bin/sdkmanager" ]]; then
   echo "Provisioning Android cmdline-tools under ${ANDROID_HOME}..."
@@ -77,7 +84,20 @@ date -u +"  start: %H:%M:%SZ"
 "${SDKMANAGER}" --sdk_root="${ANDROID_HOME}" --install "${AVD_IMAGE}" "platform-tools" "emulator" "build-tools;34.0.0"
 date -u +"  done:  %H:%M:%SZ"
 
-echo "no" | "${AVDMANAGER}" create avd -n "${AVD_NAME}" -k "${AVD_IMAGE}" --device "${AVD_DEVICE}" --force >/dev/null
+# Output is not discarded: avdmanager reports "success" on stdout but also reports several
+# real problems there while still exiting 0, which is how the location mismatch above stayed
+# invisible for two builds.
+echo "no" | "${AVDMANAGER}" create avd -n "${AVD_NAME}" -k "${AVD_IMAGE}" --device "${AVD_DEVICE}" --force
+
+if ! emulator -list-avds | grep -qx "${AVD_NAME}"; then
+  echo "ERROR: ${AVD_NAME} was created but the emulator cannot see it." >&2
+  echo "ANDROID_AVD_HOME=${ANDROID_AVD_HOME}" >&2
+  echo "emulator -list-avds:" >&2
+  emulator -list-avds >&2 || true
+  find "${ANDROID_AVD_HOME}" "${HOME}/.android/avd" -maxdepth 1 2>/dev/null >&2 || true
+  exit 1
+fi
+echo "AVD ${AVD_NAME} ready in ${ANDROID_AVD_HOME}."
 
 # Read package name + launcher activity from the APK so the script stays in sync with whatever
 # ApplicationId the csproj produced.
