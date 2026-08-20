@@ -344,3 +344,5 @@ DebugPlatforms.props
 /build/*-runtime-tests/
 /build/*-runtime-tests-app/
 /build/playwright-browsers/
+# --tool-path used by build/test-scripts/wasm-runtime-tests.sh for the WebAssembly runner
+/build/.dotnet-tools/
