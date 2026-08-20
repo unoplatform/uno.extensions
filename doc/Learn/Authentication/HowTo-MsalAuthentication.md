@@ -17,7 +17,7 @@ uid: Uno.Extensions.Authentication.HowToMsalAuthentication
 | Desktop (Skia) — Linux | ✅ System browser | ✅ Keyring/libsecret |
 | Android | ✅ Browser / custom tab | ✅ Handled natively by MSAL |
 | iOS | ✅ Web authentication session | ✅ Handled natively by MSAL |
-| WebAssembly | ✅ Popup | ✅ `sessionStorage` — survives a page reload, dropped when the tab closes ([configurable](#webassembly-token-cache)) |
+| WebAssembly | ✅ Popup | ✅ Browser storage, `localStorage` by default — cleartext, see [below](#webassembly-token-cache) |
 | Mac Catalyst | ❌ Not supported (`AddMsal` throws `PlatformNotSupportedException`) | — |
 
 The set of identity scenarios (Microsoft accounts, work/school accounts, B2C, sovereign clouds, ...) is determined by MSAL itself — see [MSAL.NET supported platforms and scenarios](https://learn.microsoft.com/entra/msal/dotnet/getting-started/scenarios) for details.
@@ -370,7 +370,9 @@ On Android and iOS the token cache is persisted natively by MSAL — no configur
 
 #### WebAssembly token cache
 
-In the browser there is no protected store to write to, so the cache goes to browser storage in cleartext and what bounds the exposure is *lifetime*, not encryption. The default matches MSAL.js: `sessionStorage`, so sign-in survives a page reload but not closing the tab.
+In the browser there is no protected store to write to, so the cache goes to browser storage in cleartext and what bounds the exposure is *lifetime*, not encryption.
+
+The default is `localStorage` — the store WebAssembly already used for the token cache before this setting existed, so upgrading the package never relocates an app's data. It is **not** MSAL.js's default: msal-browser defaults to `sessionStorage`, and if you are starting fresh that is the tighter choice, because the serialized cache is dropped when the tab closes rather than persisting across browser restarts. Opt into it explicitly:
 
 It is a **storage** setting, not an MSAL one — it selects the host's single default key-value store, which the token cache shares with everything else built on it:
 
@@ -384,16 +386,18 @@ It is a **storage** setting, not an MSAL one — it selects the host's single de
 
 | Value | Behavior |
 | --- | --- |
-| `SessionStorage` (default) | Survives a page reload; cleared when the tab closes. |
-| `LocalStorage` | Also survives closing the tab and restarting the browser — a wider window in which a stolen cache stays usable. Opt in deliberately. |
+| `LocalStorage` (default) | Survives a page reload, closing the tab, and restarting the browser — the widest window in which a stolen cache stays usable. The default only because it is what WebAssembly already used. |
+| `SessionStorage` | Survives a page reload; cleared when the tab closes. Matches MSAL.js and is the tighter choice for credentials. |
 | `MemoryStorage` | Nothing is written to browser storage; the user signs in again after every reload. |
+
+An invalid value throws while the host is being built rather than silently falling back.
 
 One setting covers the Uno token cache (the access token) and the MSAL cache (the refresh and ID tokens) — splitting them would let the access token outlive both the tab and the refresh token. Because it belongs to storage rather than to a provider, it applies whatever you name your provider (`AddMsal(window, name: "MyMsal")`) and whichever provider you use. It is ignored on every other platform, where the platform's own protected store applies.
 
-Signing out removes both: `LogoutAsync` removes every signed-in account and then deletes the serialized MSAL cache, so no refresh token is left behind for the next visitor to the browser profile. Clearing `ITokenCache` directly has the same effect.
+Signing out removes both: `LogoutAsync` removes every signed-in account and then deletes the serialized MSAL cache. Note this clears *our* storage, not the identity provider's session cookie — the next "Sign in" may complete without a prompt because the IdP still recognises the browser. Use the `end_session_endpoint` if you need a full sign-out. Clearing `ITokenCache` directly has the same storage effect.
 
 > [!IMPORTANT]
-> This is only appropriate because your WebAssembly redirect URI must be registered under the Entra **`spa`** platform (see [Prerequisites](#prerequisites)), which caps refresh tokens at **24 hours, non-sliding**. Browser storage is readable by any script on the origin, so a 90-day sliding refresh token — what a public-client registration issues — must not be persisted there. See [Refresh tokens in the Microsoft identity platform](https://learn.microsoft.com/entra/identity-platform/refresh-tokens).
+> Whichever persistent option you pick, the serialized cache holds the **refresh token** in cleartext, readable by any script on the origin. What bounds the exposure is that your WebAssembly redirect URI must be registered under the Entra **`spa`** platform (see [Prerequisites](#prerequisites)), which caps refresh tokens at **24 hours, non-sliding**. A public-client registration issues a **90-day sliding** token instead, and nothing in the library can detect which one your tenant issued — the provider logs a warning naming the store on every unprotected persist, but the registration type is yours to get right. See [Refresh tokens in the Microsoft identity platform](https://learn.microsoft.com/entra/identity-platform/refresh-tokens).
 
 For full control over the storage properties on desktop targets, use the `Storage()` extension method to configure the underlying `StorageCreationPropertiesBuilder`:
 

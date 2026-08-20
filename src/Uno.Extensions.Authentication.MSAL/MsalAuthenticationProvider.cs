@@ -175,10 +175,12 @@ internal record MsalAuthenticationProvider(
 			await SetupStorage(cancellationToken);
 
 			var result = await AcquireTokenAsync(dispatcher, cancellationToken);
-			return new Dictionary<string, string>
-							{
-								{ TokenCacheExtensions.AccessTokenKey, result?.AccessToken??string.Empty}
-							};
+
+			// No token means "not signed in", not "signed in with an empty token": TokenCache keys
+			// off the entry's presence, not its value, so storing string.Empty here would leave
+			// IsAuthenticated reporting true with nothing to send. Returning default clears the
+			// cache instead. See InternalRefreshAsync for the path this actually happens on.
+			return TokensOrNull(result);
 		}
 		catch (OperationCanceledException)
 		{
@@ -283,20 +285,29 @@ internal record MsalAuthenticationProvider(
 	{
 		await SetupStorage(cancellationToken);
 
-		if ((await _pca!.GetAccountsAsync()).Count() > 0)
+		if ((await _pca!.GetAccountsAsync()).Any())
 		{
-
-
-			var result = await AcquireSilentTokenAsync(cancellationToken);
-
-			return new Dictionary<string, string>
-			{
-				{ TokenCacheExtensions.AccessTokenKey, result?.AccessToken??string.Empty}
-			};
+			// null when AcquireTokenSilent failed - typically MsalUiRequiredException because the
+			// refresh token expired or was revoked. Answering with an empty access token made
+			// TokenCache.HasTokenAsync (which counts keys, not values) report the user as still
+			// authenticated forever, with no credential to send: signed-in UI, 401 on every call.
+			// On WebAssembly, where a spa-registered refresh token lasts 24 non-sliding hours, that
+			// is the ordinary daily path rather than an edge case.
+			return TokensOrNull(await AcquireSilentTokenAsync(cancellationToken));
 		}
 
 		return default;
 	}
+
+	/// <summary>
+	/// The token dictionary for <paramref name="result"/>, or <c>null</c> when there is no usable
+	/// access token - which <c>AuthenticationService</c> turns into a cleared cache and a
+	/// not-authenticated result.
+	/// </summary>
+	private static IDictionary<string, string>? TokensOrNull(AuthenticationResult? result) =>
+		result?.AccessToken is { Length: > 0 } accessToken
+			? new Dictionary<string, string> { { TokenCacheExtensions.AccessTokenKey, accessToken } }
+			: null;
 
 
 	private Task<bool>? _setupStorageTask;
@@ -337,11 +348,17 @@ internal record MsalAuthenticationProvider(
 						args.TokenCache.DeserializeMsalV3(blob);
 					}
 				}
+				catch (OperationCanceledException)
+				{
+					// Not a storage failure: the caller cancelled. Swallowing it here would report
+					// "browser storage unavailable" for something that never went wrong.
+					throw;
+				}
 				catch (Exception ex)
 				{
 					if (Logger.IsEnabled(LogLevel.Warning))
 					{
-						Logger.LogWarningMessage($"Unable to read the stored token cache; continuing with an empty cache (the user will be asked to sign in again) - {ex.Message}");
+						Logger.LogWarning(ex, "Unable to read the stored token cache; continuing with an empty cache (the user will be asked to sign in again)");
 					}
 				}
 			});
@@ -357,14 +374,28 @@ internal record MsalAuthenticationProvider(
 				{
 					await cache.SaveAsync(args.TokenCache.SerializeMsalV3(), args.CancellationToken);
 				}
+				catch (OperationCanceledException)
+				{
+					throw;
+				}
 				catch (Exception ex)
 				{
 					if (Logger.IsEnabled(LogLevel.Warning))
 					{
-						Logger.LogWarningMessage($"Unable to persist the token cache; sign-in state won't survive a page reload - {ex.Message}");
+						Logger.LogWarning(ex, "Unable to persist the token cache; sign-in state won't survive a page reload");
 					}
 				}
 			});
+
+			// The serialized cache holds the refresh token, not just the access token. On an
+			// unprotected store that makes the refresh token's lifetime the only thing bounding the
+			// exposure - 24 hours and non-sliding *only* if the redirect URI is registered under the
+			// Entra `spa` platform. A public-client registration yields a 90-day sliding token
+			// instead, and nothing here can detect which one the tenant issued, so say so once.
+			if (!KeyValueStorage.Storage.IsEncrypted && Logger.IsEnabled(LogLevel.Warning))
+			{
+				Logger.LogWarningMessage($"The MSAL token cache is being persisted to {KeyValueStorage.Storage.GetType().Name}, which does not protect its contents - the serialized cache includes the refresh token. Register the WebAssembly redirect URI under the Entra 'spa' platform so refresh tokens are capped at 24 non-sliding hours, or set KeyValueStorageConfiguration:BrowserCacheLocation to MemoryStorage to keep nothing in browser storage");
+			}
 
 			if (Logger.IsEnabled(LogLevel.Trace))
 			{
