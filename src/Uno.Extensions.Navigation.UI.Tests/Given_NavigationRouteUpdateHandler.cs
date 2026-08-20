@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -115,6 +116,62 @@ public class Given_NavigationRouteUpdateHandler
 		shouldCascade.Should().BeTrue();
 	}
 
+	[TestMethod]
+	public void When_CollectUpdatedViewModels_WithNullTypes_Then_Empty()
+	{
+		var resolver = CreateResolver();
+
+		NavigationRouteUpdateHandler.CollectUpdatedViewModels(null, resolver).Should().BeEmpty(
+			"an unknown delta must refresh nothing — conservative default");
+	}
+
+	[TestMethod]
+	public void When_CollectUpdatedViewModels_WithUnregisteredType_Then_Empty()
+	{
+		var resolver = CreateResolver();
+
+		NavigationRouteUpdateHandler.CollectUpdatedViewModels([typeof(GeneratedXamlPartial)], resolver).Should().BeEmpty();
+	}
+
+	[TestMethod]
+	public void When_CollectUpdatedViewModels_WithRegisteredViewModel_Then_ContainsViewModel()
+	{
+		var resolver = CreateResolver();
+
+		NavigationRouteUpdateHandler.CollectUpdatedViewModels([typeof(RegisteredViewModel)], resolver)
+			.Should().BeEquivalentTo(new[] { typeof(RegisteredViewModel) });
+	}
+
+	[TestMethod]
+	public void When_CollectUpdatedViewModels_WithRegisteredViewOnly_Then_Empty()
+	{
+		var resolver = CreateResolver();
+
+		// Updated views are owned by Uno's element-update walk; a view-only delta must not
+		// trigger a view-model rebuild (it would discard un-persisted view-model state on
+		// every page edit — the behavior Given_FrameContentRehook pins).
+		NavigationRouteUpdateHandler.CollectUpdatedViewModels([typeof(RegisteredPage)], resolver).Should().BeEmpty();
+	}
+
+	[TestMethod]
+	public void When_CollectUpdatedViewModels_WithMappedModel_Then_ContainsBindableViewModel()
+	{
+		var services = new ServiceCollection();
+		var views = new MappedViewRegistry(services, new Dictionary<Type, Type>
+		{
+			[typeof(MappedModel)] = typeof(BindableMappedModel),
+		});
+		var routes = new RouteRegistry(services);
+		views.Register(new ViewMap<RegisteredPage, MappedModel>());
+		routes.Register(new RouteMap("Mapped", View: views.FindByViewModel<MappedModel>()));
+		var resolver = new MappedRouteResolver(NullLogger<MappedRouteResolver>.Instance, routes, views);
+
+		NavigationRouteUpdateHandler.CollectUpdatedViewModels([typeof(MappedModel)], resolver)
+			.Should().BeEquivalentTo(new[] { typeof(BindableMappedModel) },
+				"the delta contains the model type, but the route table holds the mapped " +
+				"(bindable) view model — the MVUX shape from #3142");
+	}
+
 	private static RouteResolver CreateResolver()
 	{
 		var services = new ServiceCollection();
@@ -137,6 +194,14 @@ public class Given_NavigationRouteUpdateHandler
 	}
 
 	private sealed class GeneratedXamlPartial
+	{
+	}
+
+	private sealed class MappedModel
+	{
+	}
+
+	private sealed class BindableMappedModel
 	{
 	}
 }

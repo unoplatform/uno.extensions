@@ -145,6 +145,19 @@ public abstract class ControlNavigator<TControl> : ControlNavigator
 		return executedRoute;
 	}
 
+	/// <inheritdoc />
+	internal override async Task RefreshActiveRouteViewModelAsync()
+	{
+		var route = Route;
+		if (route is null || string.IsNullOrEmpty(route.Base))
+		{
+			return;
+		}
+
+		var mapping = Resolver.FindByPath(route.Base);
+		await InitializeCurrentView(new NavigationRequest(this, route), route, mapping, refresh: true);
+	}
+
 	protected async Task<object?> InitializeCurrentView(NavigationRequest request, Route route, RouteInfo? mapping, bool refresh = false)
 	{
 		var view = CurrentView;
@@ -301,6 +314,18 @@ public abstract class ControlNavigator : Navigator
 
 		return NavigateAsync(pending);
 	}
+
+	/// <summary>
+	/// Re-creates the view model of the route this navigator is currently on and rebinds it to
+	/// the current view, without issuing a navigation. Called by
+	/// <see cref="UI.NavigationRouteUpdateHandler"/> after a C# hot-reload delta updated the view
+	/// model mapped to the ACTIVE route (#3142): a metadata update never re-runs constructors or
+	/// property initializers on live instances, and no navigation-based path re-instantiates the
+	/// route the user is already on — the IsDefault cascade deliberately suppresses regions that
+	/// are already on their route, and re-issuing the same route short-circuits to a no-op
+	/// (0 forward segments, unchanged SourcePageType).
+	/// </summary>
+	internal virtual Task RefreshActiveRouteViewModelAsync() => Task.CompletedTask;
 
 	protected ControlNavigator(
 		ILogger logger,
