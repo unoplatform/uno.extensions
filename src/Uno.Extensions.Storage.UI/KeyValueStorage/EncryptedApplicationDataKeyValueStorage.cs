@@ -21,7 +21,14 @@ internal record EncryptedApplicationDataKeyValueStorage(
 	private const string DataProtectionProviderDescriptor = "LOCAL=user";
 
 	/// <inheritdoc />
-	public override bool IsEncrypted => false;
+	/// <remarks>
+	/// Values are DPAPI-protected by <see cref="DataProtectionProvider"/> before they reach the
+	/// settings container - see <see cref="GetObjectValue{T}"/>. This reported <c>false</c> until
+	/// spec 011 item 6: the property is on the public <see cref="IKeyValueStorage"/> surface and is
+	/// exactly the flag a consumer would branch on to decide whether a store is safe for tokens, so
+	/// under-reporting it pushes callers away from the one Windows store that does protect them.
+	/// </remarks>
+	public override bool IsEncrypted => true;
 
 
 #nullable disable
