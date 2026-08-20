@@ -1,4 +1,4 @@
-# Builds the runtime-tests app for the mobile / wasm heads and publishes each as a pipeline
+﻿# Builds the runtime-tests app for the mobile / wasm heads and publishes each as a pipeline
 # artifact. Split from the stages that *run* them so a Linux agent can build the Android APK while
 # the emulator job (and the macOS-hosted iOS job) consume the artifacts afterwards - the same
 # split Studio Live uses.
@@ -154,9 +154,16 @@ jobs:
       # No explicit RID either: for a build, the iOS SDK defaults to the simulator RID matching the
       # agent's own architecture, which is what the simulator in the test stage can actually run.
       # Hard-coding x64 would produce an app the simulator has to translate on an arm64 agent.
+      # CodesignRequireProvisioningProfile=false: the head's Entitlements.plist declares a
+      # keychain-access-group (MSAL cannot build a PublicClientApplication on iOS without one -
+      # see the plist for why), and a non-empty entitlements file makes the iOS SDK demand a
+      # provisioning profile, which a hosted agent with no Apple team cannot supply. The flag is
+      # passed here rather than set in the csproj so it applies only to this simulator-only CI
+      # build and never to a device build.
       - script: |
           dotnet build src/Uno.Extensions.RuntimeTests/Uno.Extensions.RuntimeTests/Uno.Extensions.RuntimeTests.csproj \
             -c Debug -f net9.0-ios \
+            -p:CodesignRequireProvisioningProfile=false \
             -p:Build_Windows=false -p:Build_Android=false -p:Build_MacCatalyst=false -p:Build_Web=false \
             -p:UnoDisableHotDesign=true -p:UnoDisableMCPSupport=true \
             -bl:$(build.artifactstagingdirectory)/binlogs/build-ios-runtime-tests.binlog
