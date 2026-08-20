@@ -20,16 +20,6 @@ uid: Uno.Extensions.Authentication.HowToMsalAuthentication
 | WebAssembly | ✅ Popup | In-memory only (tokens don't survive a page reload) |
 | Mac Catalyst | ❌ Not supported (`AddMsal` throws `PlatformNotSupportedException`) | — |
 
-> [!NOTE]
-> On Android, iOS, and WebAssembly heads that use `UnoFeatures=SkiaRenderer`, interactive sign-in requires an Uno Platform version containing the fix for [unoplatform/uno#20601](https://github.com/unoplatform/uno/issues/20601); with earlier versions the sign-in UI never appears on those targets.
->
-> On Skia iOS/Android heads, the Uno.Sdk build substitutes the package's plain `netX.0` library
-> for the platform one, and the provider selects platform behavior at runtime
-> (`OperatingSystem.IsAndroid()`/`IsIOS()`), so everything above still applies. Your *app* keeps
-> its platform TFM, so `#if ANDROID` / `#if IOS` blocks in your own code — including `Builder(...)`
-> callbacks — behave normally. Library authors whose packages reference `Uno.UI` are subject to the
-> same substitution and must not assume the TFM implies the OS.
-
 The set of identity scenarios (Microsoft accounts, work/school accounts, B2C, sovereign clouds, ...) is determined by MSAL itself — see [MSAL.NET supported platforms and scenarios](https://learn.microsoft.com/entra/msal/dotnet/getting-started/scenarios) for details.
 
 ## Step-by-step
