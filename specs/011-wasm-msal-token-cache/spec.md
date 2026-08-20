@@ -1,8 +1,17 @@
 # 011 — WebAssembly: persist the MSAL token cache, governed by an MSAL.js-shaped policy
 
-**Status: implemented 2026-08-20 — all items (1–7).** `progress.md` carries the verification
-trail (red/green runs, browser evidence, baseline-diffed suites) and the full history; the
-deviations from this spec's sketches are summarized just below. Originally written after tracing why
+**Status: implemented 2026-08-20 — all items (1-7), then hardened after a seven-agent review panel.**
+
+> [!IMPORTANT]
+> **The default is `LocalStorage`, not `SessionStorage`** — see "Default: `SessionStorage`, not off"
+> below, which is superseded. That section weighed the security delta of persisting at all; it did
+> not account for this setting selecting the *host-wide* default `IKeyValueStorage`, so defaulting
+> to `sessionStorage` silently relocated every existing WebAssembly app data on upgrade.
+> `progress.md`'s fifth-pass section has the full reasoning.
+
+`progress.md` carries the verification trail (red/green runs, browser evidence, baseline-diffed
+suites) and the full history; the deviations from this spec's sketches are summarized just below.
+Originally written after tracing why
 `doc/Learn/Authentication/HowTo-MsalAuthentication.md:20` says WebAssembly gets
 "In-memory only (tokens don't survive a page reload)", and evaluating
 `Microsoft.Authentication.WebAssembly.Msal` as an alternative. Read
@@ -26,8 +35,11 @@ first — this spec touches the same provider and reuses their test infrastructu
   instead of two that can disagree.
 - **Item 4 is gated at runtime, not compile time.** `OperatingSystem.IsBrowser()` inside the
   `SetDefaultInstance` `#else` branch — Skia desktop shares that branch and must keep
-  `ApplicationData` (this spec's Scope guard). An invalid configured value fails host build loudly
-  via enum binding rather than silently defaulting.
+  `ApplicationData` (this spec's Scope guard). The configured value is *validated* on every
+  platform, however, so a typo fails the desktop run a developer actually does; only the store
+  *selection* is browser-only. One strict reader owns both (`ResolveBrowserCacheLocation`), rejecting
+  anything `Enum.IsDefined` does not accept — including numerics, which a lenient `TryParse` let
+  through to a silent default.
 - **Item 5 also removes every account.** `RemoveAsync(firstAccount)` left other accounts' refresh
   tokens live; logout now loops all accounts, then deletes the blob explicitly and again from
   `ITokenCache.Cleared`.

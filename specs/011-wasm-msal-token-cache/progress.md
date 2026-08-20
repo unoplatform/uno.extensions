@@ -10,6 +10,87 @@ deviation summary. This file is the chronological record — read newest-first: 
 
 ---
 
+## Fifth pass — review-panel high-severity fixes (2026-08-20)
+
+A seven-agent review panel (`/review-panel`, `main..HEAD`) returned `fix-first`. The high-severity
+items are fixed here; the medium/low findings are listed at the end of this section as follow-ups.
+
+- **The default is now `LocalStorage`, not `SessionStorage`** — the panel's most consequential
+  finding (skeptic HIGH, operability, security). The setting selects the **host-wide** default
+  `IKeyValueStorage`, not just the token caches, so defaulting to `sessionStorage` silently
+  relocated *every* existing WebAssembly app's key-value data on a package upgrade:
+  `localStorage["UnoApplicationDataContainer_Local_*_ADCSSS"]` became unreadable, with no migration
+  and no read-through, and the pre-existing cleartext `AuthToken_*` entries were stranded there.
+  Defaulting to `LocalStorage` is byte-for-byte what WebAssembly already did, so upgrading is a
+  no-op and no migration is needed.
+
+  This is a **deliberate deviation from `spec.md`'s "Default: SessionStorage, not off"** section,
+  which argued for matching msal-browser's `DEFAULT_CACHE_OPTIONS`. That argument weighed the
+  security delta against shipping the fix switched off; it did not account for the setting also
+  governing non-token data. The trade accepted here: a refresh token now survives a tab close by
+  default. `SessionStorage` remains one line away and is documented as the tighter choice, and the
+  member names still mirror msal-browser so the migration path is unchanged.
+
+- **One strict config reader** (architect HIGH, quality HIGH, skeptic, contract, operability — 5/7,
+  the panel's most-agreed finding). `KeyValueStorageConfiguration.BrowserCacheLocation` was bound as
+  an options property that *no production code read*; the real reader was a lenient `Enum.TryParse`
+  with a silent fallback. So the documented "invalid values are rejected" guarantee was an accident
+  of whether anything happened to resolve `IOptions<KeyValueStorageConfiguration>` — and it did not
+  hold at all for numerics: `"3"` parsed to an undefined enum value and fell through to the default.
+  The bound property is gone; `ResolveBrowserCacheLocation` is the single reader, rejects anything
+  not `Enum.IsDefined`, and names the key plus its legal values.
+
+  It validates on **every** platform even though only the browser acts on the value: a typo in a
+  shared `appsettings.json` has to fail on the desktop run a developer actually does, and that is
+  also the only way the guarantee is testable while the WebAssembly lane is down.
+
+- **`spa`/24h prerequisite is now announced at runtime** (security HIGH). Nothing enforced the
+  registration type that spec 011's whole security position rests on, and `IsEncrypted` — sitting
+  right there on the store — was never consulted. `SetupStorageCore` now logs a Warning naming the
+  unprotected store, the `spa` requirement, and the `MemoryStorage` escape hatch. It cannot detect
+  the registration type, and says so.
+
+- **A failed silent refresh no longer reports success** (security HIGH; carried over from
+  `specs/009` as "latent"). It is not latent: security's reframing is that with a 24h non-sliding
+  refresh token this is the *ordinary daily* WebAssembly path — signed-in UI, no `Authorization`
+  header, 401 on every call. `TokensOrNull` returns `null` rather than an access token of
+  `string.Empty`, so `AuthenticationService` clears the cache and reports not-authenticated.
+  Applies to login and refresh.
+
+- **Cache callbacks rethrow cancellation and attach the exception** (operability HIGH). The
+  catch-all reported a cancelled operation as "browser storage unavailable" and logged `ex.Message`
+  with no stack (AGENTS.md §8 ordering, §7). Rider on the same defect class:
+  `SessionStorageKeyValueStorage` passed `ex.Message` into `LogWarningMessage`'s
+  `[CallerMemberName]` parameter, dropping the reason and corrupting the caller tag — the sibling
+  `ApplicationDataKeyValueStorage:155` still has that bug.
+
+### Verification
+
+`Given_BrowserTokenCacheStorage` 8/8 (two new: unknown-value and numeric-value both throw naming
+the setting), `Given_MsalAuthentication` 14/14, MSAL unit tests, Release `packageonly`, and the full
+desktop suite against the pre-branch baseline.
+
+### Panel follow-ups NOT fixed here
+
+Medium: cancelled logout can leave a half-signed-out, still-authenticated state
+(`ThrowIfCancellationRequested` mid-loop, before the blob clear); `Build()`/`Cleared` subscription is
+unsynchronized so concurrent auth can double-subscribe and leak a provider (the code comment
+claiming "Build runs exactly once" is wrong); `IsEncrypted => true` is untested and *false in
+practice* on unpackaged Windows, where `ApplicationDataKeyValueStorage:60` persists
+`"System.Byte[]"`; `MsalCache_` and `_SSKVS` are not pinned by any package-CI test; redundant blob
+deserialize on every MSAL access plus a base64→JSON double-encode (~5-6x transient peak, irreversible
+on WASM); the logout loop re-serializes per account and deletes the key twice; the
+`LoginAsync(credentials, provider, ct)` convenience overload still throws `ArgumentNullException`
+with MSAL — the unfixed sibling of the logout defect; linked-source test project papering over a
+missing MSAL core/UI split; no `Storage.UI.Tests` project for storage-owned behavior.
+
+Low/info: cross-app token pickup on a shared origin; sign-out does not clear the IdP session cookie
+(now documented); unreachable `DefaultKeySuffix`; `UNO_EXT_MSAL_NOSTORAGE` now names the opposite of
+what it does; `IEnumerable<IAccount>` enumerated while `RemoveAsync` mutates; unawaited clear can
+delete a fresh blob; CI lane hygiene (iOS liveness check, unpinned `playwright install`).
+
+---
+
 ## Next agent: start here
 
 The code is complete. What remains is confirmation and one coverage gap:
