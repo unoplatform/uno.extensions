@@ -193,13 +193,16 @@ internal record MsalAuthenticationProvider(
 		}
 	}
 
+	/// <remarks>
+	/// Deliberately does not require <paramref name="dispatcher"/>, unlike login: nothing here shows
+	/// UI - <c>RemoveAsync</c> only mutates MSAL's own cache. Requiring one made
+	/// <c>IAuthenticationService.LogoutAsync(CancellationToken)</c> - the documented overload, which
+	/// passes no dispatcher - throw <see cref="ArgumentNullException"/> every time, which callers see
+	/// as sign-out silently doing nothing once their command swallows the exception. The Oidc
+	/// provider ignores the parameter too.
+	/// </remarks>
 	protected async override ValueTask<bool> InternalLogoutAsync(IDispatcher? dispatcher, CancellationToken cancellationToken)
 	{
-		if (dispatcher is null)
-		{
-			throw new ArgumentNullException(nameof(dispatcher), "IDispatcher required to call LogoutAsync on MSAL provider");
-		}
-
 		await SetupStorage(cancellationToken);
 		var accounts = await _pca!.GetAccountsAsync();
 		var firstAccount = accounts.FirstOrDefault();

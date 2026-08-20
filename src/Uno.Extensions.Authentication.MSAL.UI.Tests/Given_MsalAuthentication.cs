@@ -335,4 +335,24 @@ public class Given_MsalAuthentication
 
 		harness.Logs.Text.Should().Contain($"RedirectUri resolution: {expected}");
 	}
+
+	[TestMethod]
+	public async Task When_LogoutWithoutDispatcher_Then_SignedOut()
+	{
+		using var harness = await CreateHarnessAsync();
+		using var cts = Cts();
+
+		await harness.Authentication.LoginAsync(harness.Dispatcher, cancellationToken: cts.Token);
+		(await harness.Authentication.IsAuthenticated(cts.Token)).Should().BeTrue("the test needs a signed-in state to log out of");
+
+		// The documented IAuthenticationService.LogoutAsync(CancellationToken) extension passes no
+		// dispatcher, and logout needs none - nothing in the provider's logout path shows UI.
+		// Requiring one turned that overload into a guaranteed ArgumentNullException, which every
+		// caller sees as "clicking logout does nothing" once the command swallows it.
+		var result = await harness.Authentication.LogoutAsync(cts.Token);
+
+		result.Should().BeTrue();
+		(await harness.Authentication.IsAuthenticated(cts.Token)).Should().BeFalse();
+		(await harness.Tokens.HasTokenAsync(cts.Token)).Should().BeFalse();
+	}
 }
