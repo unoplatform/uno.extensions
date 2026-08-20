@@ -30,3 +30,37 @@ Uno.Extensions.Storage facilitate local data storage across multiple platforms, 
 [!include[single-project](../includes/single-project.md)]
 
 For more information about `UnoFeatures` refer to our [Using the Uno.Sdk](xref:Uno.Features.Uno.Sdk) docs.
+
+## Key-value storage
+
+`UseStorage()` registers a default `IKeyValueStorage` per platform. Everything built on top of it — most visibly the authentication token cache — writes through this default:
+
+| Platform | Default store |
+|---|---|
+| Windows (WinAppSDK) | `ApplicationData` settings, DPAPI-encrypted |
+| Android | `KeyStore` |
+| iOS | Keychain |
+| WebAssembly | Browser storage — `sessionStorage` by default, see below |
+| Other (e.g. Skia Desktop) | `ApplicationData` settings (unencrypted file) |
+
+### WebAssembly: choosing the browser store
+
+The browser has no protected store, so on WebAssembly the choice is about *lifetime*, not encryption. Configure it in the storage section:
+
+```json
+{
+  "KeyValueStorageConfiguration": {
+    "BrowserCacheLocation": "SessionStorage"
+  }
+}
+```
+
+| Value | Behavior |
+| --- | --- |
+| `SessionStorage` (default) | Survives a page reload; cleared when the tab closes. |
+| `LocalStorage` | Also survives closing the tab and restarting the browser. |
+| `MemoryStorage` | Nothing is written to browser storage; values live for the lifetime of the page only. |
+
+An invalid value fails at host build time rather than silently falling back — deliberate for a setting that decides where credentials live. The setting is ignored on every other platform.
+
+Because this selects the single host-wide default store, it also governs the authentication token cache — whatever the authentication provider is, and whatever name it was registered under. For the security implications when tokens are involved (MSAL, refresh-token lifetime, the Entra `spa` registration), see [MSAL Authentication](xref:Uno.Extensions.Authentication.HowToMsalAuthentication).
