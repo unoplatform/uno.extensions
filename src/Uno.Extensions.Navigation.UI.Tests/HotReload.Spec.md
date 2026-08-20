@@ -267,6 +267,31 @@ Each child `Region.Name` is a selectable target. See docs:
   HR delta is applied. The refresh itself is deferred onto the dispatcher and guarded by
   a token + content-identity check so a navigation that lands first wins.
 
+- **ID**: `When_ActiveRouteViewModelUpdated_Then_ActiveRegionVmReinstantiated`
+- **Goal**: Regression guard for uno.extensions#3142 — a C# delta that updates the view model of
+  a region's **active** route must re-instantiate that view model in place. Constructor /
+  property-initializer edits are only visible on a fresh instance, and before the fix no HR path
+  created one: the IsDefault cascade deliberately suppresses regions already on their route, and
+  the frame-content re-hook only reacts to element replacement.
+- **Layout**: Same visibility-region shape as the preserved-selection test (`HotReloadRegionPage`
+  with `RegionOne` IsDefault / `RegionTwo`); the test navigates to `RegionTwo` so it also proves
+  the refresh does not re-issue the IsDefault cascade.
+- **HR change**: `HotReloadRegionVm.ComputeCtorSeed()` — the VM's **own file**, so the delta
+  contains a navigation-registered view-model type (editing a helper class would not exercise
+  the refresh gate). The edited method only runs from a property initializer.
+- **Trigger**: none — the refresh must happen with no navigation at all; the test polls for the
+  region's DataContext to become a *different* `HotReloadRegionVm` instance.
+- **Assertion**: new VM instance with `CtorSeededValue == "ctor-updated"` AND the active region
+  is still `RegionTwo`.
+- **Risk**: the refresh triggers on **view-model** membership only — view deltas stay owned by
+  Uno's element walk; including them would regress the state preservation pinned by
+  `Given_FrameContentRehook.When_XamlOnlyDelta_Then_CopiedViewModelIsPreserved`.
+- **Status (2026-08-20)**: Implemented alongside the fix (spec `specs/009-hr-active-route-vm-refresh`).
+  The harness-free companion `Given_ActiveRouteVmRefresh` (primary app, synthetic delta via
+  `ScheduleCascadeForAllContextsIfRouteRelevant`) was verified red/fix/green locally on Skia
+  desktop; unit coverage for the type→view-model mapping (incl. the MVUX mapped-model shape)
+  lives in `Given_NavigationRouteUpdateHandler`.
+
 - **ID**: `When_UpdateStackPanelChildAfterHR_Then_NewlyShownChildReflectsUpdate`
 - **Goal**: Same as above but with a `StackPanel` instead of `Grid`.
 - **Risk**: `StackPanel` doesn't have rows/columns but the region mechanism is identical

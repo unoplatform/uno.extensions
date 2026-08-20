@@ -348,6 +348,79 @@ public class Given_HotReload
 	}
 
 	/// <summary>
+	/// Regression test for uno.extensions#3142: a hot-reload delta that updates the view model
+	/// of a region's ACTIVE route must re-instantiate that view model in place. Constructor /
+	/// property-initializer edits are only visible on a fresh instance, and before the fix no HR
+	/// path created one: the IsDefault cascade deliberately suppresses regions already on their
+	/// route (<c>FindActiveDescendantNestedRoute</c>), and the frame-content re-hook only reacts
+	/// to element replacement — so the one page guaranteed not to refresh was the page the user
+	/// was looking at. The refresh must also NOT disturb the user's selection: RegionTwo
+	/// (non-default) stays active, guarding the same no-yank behavior as
+	/// <see cref="When_HRCascadeAfterUserSelection_Then_ActiveRegionPreserved"/>.
+	/// </summary>
+	[TestMethod]
+	[RunsOnUIThread]
+	public async Task When_ActiveRouteViewModelUpdated_Then_ActiveRegionVmReinstantiated(CancellationToken ct)
+	{
+		await using var app = await SetupAppAsync(
+			registerViewsAndRoutes: (views, routes) =>
+			{
+				views.Register(
+					new ViewMap<HotReloadRegionPage>(),
+					new ViewMap<HotReloadRegionContentPage, HotReloadRegionVm>());
+
+				routes.Register(
+					new RouteMap("", Nested: new RouteMap[]
+					{
+						new RouteMap(
+							"HotReloadRegionPage",
+							View: views.FindByView<HotReloadRegionPage>(),
+							IsDefault: true,
+							Nested: new RouteMap[]
+							{
+								new RouteMap("RegionOne", View: views.FindByView<HotReloadRegionContentPage>(), IsDefault: true),
+								new RouteMap("RegionTwo", View: views.FindByView<HotReloadRegionContentPage>()),
+							}),
+					}));
+			},
+			initialRoute: "HotReloadRegionPage",
+			ct);
+
+		var hostPage = ResolveCurrentPage<HotReloadRegionPage>(app.NavigationRoot);
+		hostPage.Should().NotBeNull("Frame should have navigated to HotReloadRegionPage");
+
+		// Move off the IsDefault route so the test also proves the refresh does not re-issue
+		// the IsDefault cascade (RegionTwo must stay active throughout).
+		var panelNavigator = await WaitForPanelNavigatorAsync(hostPage!.ContentGrid, TimeSpan.FromSeconds(30), ct);
+		await panelNavigator.NavigateRouteAsync(hostPage, "RegionTwo");
+		var vmBefore = await WaitForRegionVmAsync(hostPage.ContentGrid, "RegionTwo", TimeSpan.FromSeconds(30), ct);
+		vmBefore.CtorSeededValue.Should().Be("ctor-original",
+			"precondition: the pre-HR view model must carry the pre-HR constructor seed");
+
+		// HR: edit the ACTIVE route's view-model type itself (not a helper class), so the delta
+		// contains a navigation-registered view-model type. The edited method only runs from the
+		// property initializer, so the change is invisible unless a new instance is created.
+		// Disposal reverts the file on scope exit.
+		await using var _ = await HotReloadHelper.UpdateSourceFile(
+			"../../Uno.Extensions.Navigation.UI.Tests/ViewModels/HotReloadRegionVm.cs",
+			"""return "ctor-original";""",
+			"""return "ctor-updated";""",
+			ct);
+
+		// The refresh is dispatched onto the dispatcher and applied fire-and-forget; poll for
+		// the re-created view model on the active region.
+		var refreshedVm = await WaitForReinstantiatedRegionVmAsync(
+			hostPage.ContentGrid, "RegionTwo", vmBefore, TimeSpan.FromSeconds(30), ct);
+		refreshedVm.CtorSeededValue.Should().Be("ctor-updated",
+			"the active route's view model must be re-instantiated so constructor and " +
+			"property-initializer edits become visible (#3142)");
+
+		GetActiveRegionName(hostPage.ContentGrid).Should().Be("RegionTwo",
+			"the refresh must re-create the view model in place without yanking the selection " +
+			"back to the IsDefault RegionOne");
+	}
+
+	/// <summary>
 	/// Deterministic repro for unoplatform/uno.extensions#3130 (RED until the stranded-page
 	/// fix lands). A page that is live but NOT materialized — its host panel is Collapsed,
 	/// the deterministic stand-in for "the hosted app's view gets no layout pass while an
@@ -561,6 +634,41 @@ public class Given_HotReload
 		throw new TimeoutException(
 			$"Region '{regionName}' did not populate a HotReloadRegionContentPage within {timeout.TotalSeconds:F0}s. " +
 			$"ContentGrid children: [{children}].");
+	}
+
+	/// <summary>
+	/// Like <see cref="WaitForRegionVmAsync"/>, but only returns once the region's view model is
+	/// a DIFFERENT instance than <paramref name="previousVm"/> — the hot-reload refresh replaces
+	/// the DataContext asynchronously, so polling for type alone would return the stale instance.
+	/// </summary>
+	private static async Task<HotReloadRegionVm> WaitForReinstantiatedRegionVmAsync(
+		Grid contentGrid,
+		string regionName,
+		HotReloadRegionVm previousVm,
+		TimeSpan timeout,
+		CancellationToken ct)
+	{
+		var sw = System.Diagnostics.Stopwatch.StartNew();
+		while (sw.Elapsed < timeout)
+		{
+			ct.ThrowIfCancellationRequested();
+			var regionView = contentGrid.Children
+				.OfType<FrameworkElement>()
+				.FirstOrDefault(c => Uno.Extensions.Navigation.UI.Region.GetName(c) == regionName);
+			if (regionView is FrameView fv &&
+				fv.FindName("NavigationFrame") is Frame frame &&
+				frame.Content is HotReloadRegionContentPage page &&
+				page.DataContext is HotReloadRegionVm vm &&
+				!ReferenceEquals(vm, previousVm))
+			{
+				return vm;
+			}
+			await Task.Delay(50, ct);
+		}
+
+		throw new TimeoutException(
+			$"Region '{regionName}' still exposes the pre-HR view model instance after {timeout.TotalSeconds:F0}s — " +
+			"the active route's view model was not re-instantiated (#3142).");
 	}
 
 	/// <summary>
