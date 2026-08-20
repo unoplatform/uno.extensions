@@ -2,11 +2,13 @@
 
 Tracking the implementation of `spec.md`. Item numbers match the spec's "Implementation items".
 
-**State as of 2026-08-20 (fourth pass): every implementation item (1–7) is done, plus two logout
-fixes and a configuration relocation found by live testing.** `spec.md`'s header now carries the
-deviation summary. This file is the chronological record — read newest-first: fourth pass
-(config move to `KeyValueStorageConfiguration`), third pass (items 5+6, logout fixes), second pass
-(items 3+4+2b, "the trio"), first pass (items 1+2, the storage seam, committed as `5cd3bb484`).
+**State as of 2026-08-20 (sixth pass): every implementation item (1–7) is done, plus the logout
+fixes found by live testing and the high- and medium-severity findings from a seven-agent review
+panel.** `spec.md`'s header carries the deviation summary — most importantly that the default is
+`LocalStorage`, not `SessionStorage`. This file is the chronological record, oldest section last:
+sixth pass (panel mediums), fifth pass (panel highs), fourth pass (config move to
+`KeyValueStorageConfiguration`), third pass (items 5+6, logout fixes), second pass (items 3+4+2b,
+"the trio"), first pass (items 1+2, the storage seam, committed as `5cd3bb484`).
 
 ---
 
@@ -115,6 +117,35 @@ desktop suite against the pre-branch baseline.
   guards live in runtime-test lanes that are filter-scoped and two of which are disabled, so
   renaming the prefix — which orphans every user's serialized cache — would not have been caught.
 
+### Decided: `LoginAsync` without a dispatcher stays throwing, and is now documented
+
+The sibling of the logout defect — `AuthenticationServiceExtensions.LoginAsync(credentials,
+provider, ct)` passes `dispatcher: default`, so `MsalAuthenticationProvider.InternalLoginAsync`
+throws `ArgumentNullException` and that public overload can never work with MSAL.
+
+Analysed and **deliberately left as-is for now** (documented instead, 2026-08-20):
+
+- The guard is genuinely too strict, not merely correct-but-unfriendly. The dispatcher is used
+  *only* by the interactive leg: `AcquireTokenAsync` (`:541`) calls `AcquireSilentTokenAsync`, which
+  takes no dispatcher, and escalates to `AcquireInteractiveTokenAsync` only when there is no usable
+  token. The guard sits at the top of `InternalLoginAsync`, so it rejects the call before trying
+  silent — failing a sign-in that would have shown no UI at all.
+- Spec 011 sharpens it: WebAssembly sign-in now survives a reload, so "silent login succeeds" went
+  from impossible there to routine. The guard blocks the scenario this spec enabled.
+- The fix is *not* the logout fix. Logout never touched the dispatcher, so that guard was deleted;
+  login does need one for `AcquireTokenInteractive`, so the guard has to move to
+  `AcquireInteractiveTokenAsync` rather than disappear — with a message that says interactive
+  sign-in is what requires it.
+- Why not now: it changes public behaviour of a published package (`LoginAsync(ct)` starts
+  succeeding where it always threw) and the honest red/green test is "silent login succeeds with no
+  dispatcher", which needs a cached account and a working silent path — the same harness territory
+  where the shared on-disk MSAL cache already defeated one attempt (see the empty-token finding in
+  `specs/009`). Worth doing properly, not as a drive-by.
+
+Documented meanwhile: `<remarks>` on the extension overload naming the exception and pointing at the
+`IDispatcher` overload, and an IMPORTANT note in `doc/Learn/Authentication/HowTo-MsalAuthentication.md`
+§8 contrasting it with sign-out, which needs no dispatcher.
+
 ### Still open after this pass
 
 `AuthenticationService._providers` is a plain `Dictionary` mutated from `BuildProviders()` without
@@ -137,8 +168,8 @@ practice* on unpackaged Windows, where `ApplicationDataKeyValueStorage:60` persi
 `"System.Byte[]"`; `MsalCache_` and `_SSKVS` are not pinned by any package-CI test; redundant blob
 deserialize on every MSAL access plus a base64→JSON double-encode (~5-6x transient peak, irreversible
 on WASM); the logout loop re-serializes per account and deletes the key twice; the
-`LoginAsync(credentials, provider, ct)` convenience overload still throws `ArgumentNullException`
-with MSAL — the unfixed sibling of the logout defect; linked-source test project papering over a
+the `LoginAsync(credentials, provider, ct)` overload throwing with MSAL (analysed and documented
+above rather than fixed); linked-source test project papering over a
 missing MSAL core/UI split; no `Storage.UI.Tests` project for storage-owned behavior.
 
 Low/info: cross-app token pickup on a shared origin; sign-out does not clear the IdP session cookie

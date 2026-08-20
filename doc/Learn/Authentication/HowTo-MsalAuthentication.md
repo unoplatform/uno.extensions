@@ -408,6 +408,16 @@ builder.AddMsal(window, msal =>
 
 ### 8. Use the provider in your application
 
+> [!IMPORTANT]
+> Sign-in must be given an `IDispatcher`: call
+> `IAuthenticationService.LoginAsync(dispatcher, ...)`, not the `LoginAsync(credentials, provider, cancellationToken)`
+> convenience overload. That overload passes no dispatcher, and the MSAL provider throws
+> `ArgumentNullException` — including when the sign-in would have completed silently from a cached
+> account, because the check happens before the silent attempt. Inject `IDispatcher` into your view
+> model and pass it through.
+>
+> Sign-*out* needs no dispatcher: `LogoutAsync(cancellationToken)` works.
+
 - Update the `MainPage` to include a `Button` labeled to sign in with Microsoft.
 
     ```xml
