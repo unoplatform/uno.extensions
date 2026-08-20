@@ -123,6 +123,7 @@ trap cleanup EXIT
 emulator -avd "${AVD_NAME}" \
   -no-window -no-audio -no-boot-anim \
   -no-snapshot -wipe-data \
+  -no-metrics \
   -gpu swiftshader_indirect \
   -accel on \
   -port 5554 \
@@ -130,13 +131,27 @@ emulator -avd "${AVD_NAME}" \
 EMULATOR_PID=$!
 echo "Emulator starting (pid=${EMULATOR_PID}, log=${emulator_log})"
 
-adb wait-for-device
+# `adb wait-for-device` blocks forever when the emulator never registers. In build 228812 that
+# turned a dead emulator into the full 120-minute job timeout, and a canceled job skips even the
+# `condition: always()` artifact step - so the emulator log, the only place the reason appears,
+# was never published. The wait below is bounded, notices the emulator process dying, and prints
+# that log inline.
+emulator_died() {
+  echo "ERROR: $1" >&2
+  echo "----- ${emulator_log} (last 200 lines) -----" >&2
+  tail -n 200 "${emulator_log}" >&2 || true
+  echo "----- end emulator log -----" >&2
+  exit 1
+}
+
 echo "Waiting for emulator boot (timeout=${EMULATOR_BOOT_TIMEOUT}s)..."
 SECONDS=0
 while true; do
+  if ! kill -0 "${EMULATOR_PID}" 2>/dev/null; then
+    emulator_died "emulator process exited after ${SECONDS}s without booting"
+  fi
   if [[ ${SECONDS} -ge ${EMULATOR_BOOT_TIMEOUT} ]]; then
-    echo "ERROR: emulator did not boot within ${EMULATOR_BOOT_TIMEOUT}s" >&2
-    exit 1
+    emulator_died "emulator did not boot within ${EMULATOR_BOOT_TIMEOUT}s"
   fi
   if [[ "$(adb shell getprop sys.boot_completed 2>/dev/null | tr -d '\r')" == "1" ]]; then
     break
