@@ -83,6 +83,11 @@ internal record MsalAuthenticationProvider(
 			Logger.LogInformationMessage($"Using RedirectUri '{_pca.AppConfig.RedirectUri ?? "(none - platform managed)"}'; sign-in requires a matching redirect URI on the app registration");
 		}
 
+		// After _pca is assigned, so the handler always has a client id to key the entry with. Build
+		// runs exactly once per provider (ProviderFactory caches the configured instance), so this
+		// cannot double-subscribe.
+		Tokens.Cleared += OnTokensCleared;
+
 		if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"Building MSAL Provider complete");
 	}
 
@@ -205,22 +210,74 @@ internal record MsalAuthenticationProvider(
 	protected async override ValueTask<bool> InternalLogoutAsync(IDispatcher? dispatcher, CancellationToken cancellationToken)
 	{
 		await SetupStorage(cancellationToken);
-		var accounts = await _pca!.GetAccountsAsync();
-		var firstAccount = accounts.FirstOrDefault();
-		if (firstAccount == null)
-		{
-			Logger.LogInformation(
-			  "Unable to find any accounts to log out of.");
-		}
-		else
-		{
 
-			await _pca.RemoveAsync(firstAccount);
-			Logger.LogInformation("Removed account, user successfully logged out.");
+		// Every account, not just the first: MSAL can hold several, and removing one left the rest
+		// signed in - with their refresh tokens still in the serialized cache. Silent sign-in then
+		// picks up whichever account survived, so a "logged out" user comes back authenticated.
+		var removed = 0;
+		foreach (var account in await _pca!.GetAccountsAsync())
+		{
+			cancellationToken.ThrowIfCancellationRequested();
+			await _pca.RemoveAsync(account);
+			removed++;
 		}
+
+		if (removed == 0)
+		{
+			Logger.LogInformation("Unable to find any accounts to log out of.");
+		}
+		else if (Logger.IsEnabled(LogLevel.Information))
+		{
+			Logger.LogInformationMessage($"Removed {removed} account(s), user successfully logged out");
+		}
+
+		// Removing the accounts makes MSAL serialize an empty cache, which the after-access callback
+		// turns into a delete - but only when those callbacks were registered (SetupStorage can
+		// fail) and only when MSAL considered the cache changed. Deleting explicitly is what
+		// guarantees no refresh-token material outlives the sign-out. Not gated on WebAssembly: off
+		// the browser nothing ever writes this key, so it is a no-op rather than a special case.
+		await ClearTokenCacheStoreAsync(cancellationToken);
 
 		return true;
 	}
+
+	/// <summary>
+	/// Removes the serialized MSAL cache from the default <c>IKeyValueStorage</c>, swallowing failures.
+	/// </summary>
+	/// <remarks>
+	/// Never throws: this runs from logout and from <see cref="ITokenCache.Cleared"/>, and neither
+	/// should fail because browser storage was unavailable. A surviving blob is logged so it is
+	/// diagnosable rather than silent.
+	/// </remarks>
+	private async ValueTask ClearTokenCacheStoreAsync(CancellationToken cancellationToken)
+	{
+		try
+		{
+			await new MsalTokenCacheStore(KeyValueStorage.Storage, Logger, _pca?.AppConfig.ClientId)
+				.ClearAsync(cancellationToken);
+		}
+		catch (Exception ex)
+		{
+			if (Logger.IsEnabled(LogLevel.Warning))
+			{
+				Logger.LogWarningMessage($"Unable to remove the stored token cache; sign-in state may survive this sign-out - {ex.Message}");
+			}
+		}
+	}
+
+	/// <summary>
+	/// Belt and braces for <see cref="ClearTokenCacheStoreAsync"/>: anything that empties the Uno
+	/// token cache must not leave the MSAL cache behind, even when it did not come through
+	/// <see cref="InternalLogoutAsync"/>.
+	/// </summary>
+	/// <remarks>
+	/// Fire-and-forget because <see cref="ITokenCache.Cleared"/> is a synchronous event;
+	/// <see cref="ClearTokenCacheStoreAsync"/> owns the try/catch so nothing escapes (AGENTS.md §10).
+	/// Never unsubscribed - the provider and the token cache are both singletons for the host's
+	/// lifetime, so there is nothing to leak into.
+	/// </remarks>
+	private void OnTokensCleared(object? sender, EventArgs e) =>
+		_ = ClearTokenCacheStoreAsync(CancellationToken.None).AsTask();
 
 	protected async override ValueTask<IDictionary<string, string>?> InternalRefreshAsync(CancellationToken cancellationToken)
 	{

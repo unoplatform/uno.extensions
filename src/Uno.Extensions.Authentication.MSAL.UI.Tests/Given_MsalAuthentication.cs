@@ -357,6 +357,70 @@ public class Given_MsalAuthentication
 		(await harness.Tokens.HasTokenAsync(cts.Token)).Should().BeFalse();
 	}
 
+	/// <summary>
+	/// The key <c>MsalTokenCacheStore</c> writes the serialized cache under. Duplicated as a literal
+	/// because that type is internal to the provider assembly; this is the contract, so the test
+	/// should fail if either side moves.
+	/// </summary>
+	private static string MsalCacheKey => $"MsalCache_{StubEntra.ClientId}";
+
+	/// <summary>
+	/// Plants a serialized-cache entry in the host's default storage, standing in for the blob the
+	/// WebAssembly head writes. Every head can then assert on the removal, which is what matters:
+	/// this entry holds the refresh token.
+	/// </summary>
+	private static async Task SeedMsalCacheEntry(Harness harness, CancellationToken ct)
+	{
+		var storage = harness.Host.Services.GetRequiredDefaultInstance<IKeyValueStorage>();
+		await storage.SetAsync(MsalCacheKey, "c2VyaWFsaXplZC1tc2FsLWNhY2hl", ct);
+		(await storage.GetKeysAsync(ct)).Should().Contain(MsalCacheKey, "the test needs the entry to exist before it can assert it was removed");
+	}
+
+	private static async Task<bool> HasMsalCacheEntry(Harness harness, CancellationToken ct) =>
+		(await harness.Host.Services.GetRequiredDefaultInstance<IKeyValueStorage>().GetKeysAsync(ct))
+			.Contains(MsalCacheKey);
+
+	[TestMethod]
+	public async Task When_Logout_Then_SerializedMsalCacheRemoved()
+	{
+		using var harness = await CreateHarnessAsync();
+		using var cts = Cts();
+
+		await harness.Authentication.LoginAsync(harness.Dispatcher, cancellationToken: cts.Token);
+		await SeedMsalCacheEntry(harness, cts.Token);
+
+		await harness.Authentication.LogoutAsync(harness.Dispatcher, cts.Token);
+
+		// The serialized cache carries the refresh token, not just the access token, so leaving it
+		// behind means a signed-out user's session is still renewable from browser storage.
+		(await HasMsalCacheEntry(harness, cts.Token)).Should().BeFalse(
+			"logout must remove the serialized MSAL cache, not only the Uno token cache");
+	}
+
+	[TestMethod]
+	public async Task When_TokenCacheCleared_Then_SerializedMsalCacheRemoved()
+	{
+		using var harness = await CreateHarnessAsync();
+		using var cts = Cts();
+
+		await harness.Authentication.LoginAsync(harness.Dispatcher, cancellationToken: cts.Token);
+		await SeedMsalCacheEntry(harness, cts.Token);
+
+		// Clearing the token cache directly, without going through the provider's logout - the
+		// belt-and-braces path (ITokenCache.Cleared).
+		await harness.Tokens.ClearAsync(cts.Token);
+
+		// The handler is fire-and-forget off a synchronous event, so wait for the effect rather than
+		// assuming it already happened.
+		for (var i = 0; i < 50 && await HasMsalCacheEntry(harness, cts.Token); i++)
+		{
+			await Task.Delay(100, cts.Token);
+		}
+
+		(await HasMsalCacheEntry(harness, cts.Token)).Should().BeFalse(
+			"clearing the token cache must take the serialized MSAL cache with it");
+	}
+
 	[TestMethod]
 	public async Task When_Login_Then_MsalCacheOnlyPersistedThroughStorageOnWebAssembly()
 	{
