@@ -1,11 +1,37 @@
 # 011 — WebAssembly: persist the MSAL token cache, governed by an MSAL.js-shaped policy
 
-**Status: proposed 2026-08-20. Not implemented.** Written after tracing why
+**Status: implemented 2026-08-20 — all items (1–7).** `progress.md` carries the verification
+trail (red/green runs, browser evidence, baseline-diffed suites) and the full history; the
+deviations from this spec's sketches are summarized just below. Originally written after tracing why
 `doc/Learn/Authentication/HowTo-MsalAuthentication.md:20` says WebAssembly gets
 "In-memory only (tokens don't survive a page reload)", and evaluating
 `Microsoft.Authentication.WebAssembly.Msal` as an alternative. Read
 `specs/009-msal-auth-fixes/progress.md` and `specs/010-msal-skia-mobile-runtime-dispatch/spec.md`
 first — this spec touches the same provider and reuses their test infrastructure.
+
+## Implementation deviations (recorded 2026-08-20, after all items landed)
+
+- **The setting is owned by storage, not MSAL.** Configured as
+  `KeyValueStorageConfiguration:BrowserCacheLocation`; the enum lives in `Uno.Extensions.Storage`
+  (still `internal`). The `MsalConfiguration.BrowserCacheLocation` property sketched below was
+  implemented first and then removed: nothing ever read it (the provider writes through whatever
+  the default store is), a `Msal:`-keyed setting made apps with renamed providers configure two
+  sections, and an MSAL-named section would have governed the token-cache location of non-MSAL
+  providers. The member names still mirror msal-browser's, so the migration-path rationale holds.
+- **Item 2's adapter is not a type.** The `SetBeforeAccessAsync`/`SetAfterAccessAsync` registration
+  lives inline in `SetupStorageCore`'s `UNO_EXT_MSAL_NOSTORAGE` branch over `MsalTokenCacheStore`;
+  a `WasmMsalTokenCacheAdapter` class had nothing else to hold. The `MemoryStorage` early-return is
+  unnecessary: the provider never reads the setting — `MemoryStorage` simply makes
+  `InMemoryKeyValueStorage` the default store, giving in-memory-only with one decision point
+  instead of two that can disagree.
+- **Item 4 is gated at runtime, not compile time.** `OperatingSystem.IsBrowser()` inside the
+  `SetDefaultInstance` `#else` branch — Skia desktop shares that branch and must keep
+  `ApplicationData` (this spec's Scope guard). An invalid configured value fails host build loudly
+  via enum binding rather than silently defaulting.
+- **Item 5 also removes every account.** `RemoveAsync(firstAccount)` left other accounts' refresh
+  tokens live; logout now loops all accounts, then deletes the blob explicitly and again from
+  `ITokenCache.Cleared`.
+- **The enum is `internal`** — rationale under "Public surface" below.
 
 ## Symptom
 

@@ -112,6 +112,57 @@ contract, performance). Worst-case verdict was **fix-first**; all actionable fin
 - **Exception contract**: `LoginAsync` now propagates original MSAL exception types instead of
   rewrapped `Exception` — intentional triage fix.
 
+## Found by live testing in the demo app (2026-08-20)
+
+Reported from `Uno.Samples/UI/Authentication.MsalExtensionsDemo` running on locally-built packages:
+*"login works on wasm, but clicking logout does nothing; on desktop RefreshAsync always returns true
+and logout does nothing."* Both symptoms, both platforms, one root cause.
+
+- [x] **`InternalLogoutAsync` threw on a parameter it never used.** It opened with
+  `if (dispatcher is null) throw new ArgumentNullException(...)`, but nothing in the method needs a
+  dispatcher — `_pca.RemoveAsync` only mutates MSAL's own cache. Meanwhile the documented
+  convenience overload `IAuthenticationService.LogoutAsync(CancellationToken)`
+  (`AuthenticationServiceExtensions.cs:43`) passes `dispatcher: default`. So **every** call through
+  that overload threw, `BaseAuthenticationProvider.LogoutAsync` rethrew, and an app whose command
+  swallows the exception sees sign-out do nothing. `OidcAuthenticationProvider.InternalLogoutAsync`
+  ignores the parameter entirely — MSAL was the outlier.
+
+  Pre-existing on `main` (introduced in `4bd7bde31`), *not* from this branch. Fixed by dropping the
+  guard; `Given_MsalAuthentication.When_LogoutWithoutDispatcher_Then_SignedOut` is the red/green
+  guard, and it also covers the second symptom: with logout unable to clear the token cache,
+  `HasTokenAsync` stayed true forever, so `RefreshAsync` kept reporting success off the persisted
+  DPAPI account. Fixing logout fixes both.
+
+- [ ] **Latent: a failed silent acquisition is stored as an empty token.**
+  `InternalRefreshAsync` answers `result?.AccessToken ?? string.Empty`, and
+  `TokenCache.HasTokenAsync` tests for the *key*, not the value — so when
+  `AcquireSilentTokenAsync` returns null (it swallows `MsalUiRequiredException`: revoked or expired
+  refresh token, conditional access, password change), the provider writes
+  `AuthToken_AccessToken = ""` and `IsAuthenticated` reports **true** with nothing to send. That is
+  the same "worst of both" shape spec 011 describes for WebAssembly.
+
+  **Not fixed here, deliberately: no deterministic repro yet.** Four attempts against `StubEntra`
+  each showed MSAL behaving correctly instead (`expires_in: 0` still served the cached token; a
+  response with no refresh token means MSAL caches no *account*, so the provider's
+  `GetAccountsAsync().Count() > 0` guard short-circuits first — which is the correct path). A scope
+  mismatch does drive `AcquireTokenSilent` to fail, but the result varied between runs because the
+  desktop head's MSAL cache is a DPAPI file shared across runs. Fixing this without a red test would
+  ship an untested behaviour change to a published package; the honest next step is a repro that
+  isolates the on-disk cache per test (or asserting the contract below the provider, which needs
+  `InternalsVisibleTo` for a `Uno.Extensions.Authentication.Tests` project that does not exist yet).
+  Intended fix once red: return `default` rather than a dictionary holding an empty token, so
+  `AuthenticationService` clears the cache and reports not-authenticated.
+
+- [x] **Second report ("logout still does nothing") was sample-side, not library.** After the
+  dispatcher fix landed, the demo still looked broken for two reasons of its own: `MainModel.Logout`
+  no longer navigated after a fully successful sign-out (indistinguishable from a dead button), and
+  an earlier draft passed the `CancellationToken` as the `sender` argument of
+  `NavigateViewModelAsync<T>(object sender, ...)` — which compiles, `sender` being `object`, and
+  leaves navigation with no region source. Library behavior was separated from app behavior by
+  asserting on storage keys (`AuthToken_*`, `MsalCache_*`) instead of the UI. Logout completed with
+  spec 011 item 5 (all accounts removed + serialized cache deleted); see
+  `specs/011-wasm-msal-token-cache/progress.md`.
+
 ## Follow-ups (not this change)
 
 - ~~REGRESSION found 2026-08-19, spec'd as `specs/010-msal-skia-mobile-runtime-dispatch/`~~ —
