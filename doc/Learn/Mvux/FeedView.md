@@ -271,3 +271,22 @@ Typically, this template will only show for a very short period - a split second
     </UndefinedTemplate>
 </FeedView>
 ```
+
+## Template data contexts
+
+Each template receives a different `DataContext` (cf. the control's default template):
+
+| Template | DataContext |
+| --- | --- |
+| `ValueTemplate` | The `FeedViewState` — bind the value via `{Binding Data}`; `Progress`, `Error` and the `Refresh` command are also available |
+| `ErrorTemplate` | The `Exception` itself — e.g. `{Binding Message}` |
+| `ProgressTemplate` | The progress `bool` — e.g. `<ProgressRing IsActive="{Binding}" />` |
+| `NoneTemplate` / `UndefinedTemplate` | The `None` / `Undefined` content properties (null unless set) |
+
+Also note that the visual states of a `FeedView` are sticky across `Source` changes: the control transitions only on axes *changed* by incoming messages, so a new source whose messages never touch an axis (for example, the progress axis after a source that ended in a loading state) leaves the previous state applied. When swapping sources dynamically (state galleries, previews), re-create the `FeedView` rather than reusing it.
+
+## Previewing the FeedView visual states
+
+To pin a `FeedView` into any of its visual states — including an indefinite loading state or stale data with a refresh in progress — without standing up services, use the mocked feeds from `Uno.Extensions.Reactive.Mocks`. See [Previewing and testing MVUX states](xref:Uno.Extensions.Mvux.Testing).
+
+Note that a `FeedView` can only bind to a feed-shaped member: when a Model exposes an `IFeed<T>` of a scalar type (e.g. `IFeed<string>`), the generated bindable view model exposes it as a plain property, and a `FeedView` bound to it renders nothing — mocked or not.

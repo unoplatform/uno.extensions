@@ -1,6 +1,6 @@
 # 012 — MVUX Model Mocks
 
-**Status:** Proposed — not started
+**Status:** Implemented (2026-08-20) — all three phases; see [progress.md](progress.md) for what shipped, logged deviations, and follow-ups
 **Area:** `Uno.Extensions.Reactive`, `Uno.Extensions.Reactive.Generator`
 **Related:** [001 — MVUX SingleValueFeed](../001-mvux-single-value-feed/spec.md), [002 — UpdateFeed compaction](../002-mvux-updatefeed-compaction/spec.md)
 

@@ -50,5 +50,7 @@
       href: xref:Uno.Extensions.Mvux.Advanced.Commands
     - name: Inspecting the generated code
       href: xref:Uno.Extensions.Mvux.Advanced.InspectGeneratedCode
+- name: Previewing and testing MVUX states
+  href: xref:Uno.Extensions.Mvux.Testing
 - name: FAQ
   href: xref:Uno.Extensions.Mvux.FAQ
