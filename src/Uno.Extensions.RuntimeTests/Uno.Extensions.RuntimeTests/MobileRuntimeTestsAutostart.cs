@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -74,16 +74,16 @@ internal static class MobileRuntimeTestsAutostart
 			}
 			catch (Exception ex)
 			{
+				// finally, not a nested catch: logging is best-effort, but the non-zero exit is the
+				// real signal and must happen even if writing to the device console throws.
 				try
 				{
 					Console.Error.WriteLine($"MobileRuntimeTestsAutostart failed: {ex}");
 				}
-				catch (Exception)
+				finally
 				{
-					// Best-effort logging only; the exit code below is the real signal.
+					Environment.Exit(1);
 				}
-
-				Environment.Exit(1);
 			}
 		});
 	}
