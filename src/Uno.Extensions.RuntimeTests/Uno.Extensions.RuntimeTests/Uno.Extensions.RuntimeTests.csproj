@@ -1,9 +1,22 @@
-<Project Sdk="Uno.Sdk.Private">
+﻿<Project Sdk="Uno.Sdk.Private">
 	<Import Project="..\..\tfms-ui-winui.props" />
   <PropertyGroup>
 		
 		<OutputType>Exe</OutputType>
     <UnoSingleProject>true</UnoSingleProject>
+  </PropertyGroup>
+
+  <!--
+    Hot Design is not what this harness exists to test, and Uno.UI.HotDesign 1.20.0-dev.750 (the
+    version Uno.Sdk 6.8.0-dev.21 references implicitly) demands System.Text.Json >= 9.0.0 and
+    Uno.Toolkit.WinUI >= 9.0.0-dev.9, both of which collide with the pins this repo needs -
+    restore fails NU1109. Set here rather than per CI lane because two lanes (skia-hotreload and
+    runtime-tests-desktop) did not pass the flag and broke; the mobile lanes pass it too, which is
+    now redundant but harmless. It removes only the Uno.UI.HotDesign package reference - the
+    DevServer and hot-reload plumbing the [RunsInSecondaryApp] tests need are unaffected.
+  -->
+  <PropertyGroup>
+    <UnoDisableHotDesign>true</UnoDisableHotDesign>
   </PropertyGroup>
 
   <!-- Surfaces UnoDisableHotDesign to the compiler so App.xaml.cs can skip the UseStudio() call
