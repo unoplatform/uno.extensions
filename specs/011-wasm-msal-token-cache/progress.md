@@ -212,13 +212,18 @@ delete a fresh blob; CI lane hygiene (iOS liveness check, unpinned `playwright i
 
 ## Next agent: start here
 
-The code is complete. What remains is confirmation and one coverage gap:
+The code is complete, and the WebAssembly path has now been exercised by hand. What remains are
+coverage gaps, not unfinished work:
 
-1. **Manual sign-in pass on the WASM head** (`Uno.Samples` → `Authentication.MsalExtensionsDemo`,
-   branch `dev/sb/msa-ext`): sign in → `MsalCache_{ClientId}` appears in `sessionStorage`; reload →
-   session restored without a prompt; logout → the entry and every `AuthToken_*` entry disappear;
-   tab close → session gone. Needs the real ClientId (redacted in git) and a human click — the demo
-   renders through SkiaRenderer, one `<canvas>`, and synthetic pointer events don't reach it.
+1. ~~**Manual sign-in pass on the WASM head**~~ — **done 2026-08-21.** Confirmed working on
+   `Uno.Samples` → `Authentication.MsalExtensionsDemo` (branch `dev/sb/msa-ext`) with
+   `KeyValueStorageConfiguration:BrowserCacheLocation` set to `SessionStorage` and a real ClientId.
+   This is the only evidence that exists for the browser path: the WebAssembly runtime-test lane
+   cannot run (engine bug, see below), and the demo renders through SkiaRenderer as a single
+   `<canvas>`, so synthetic pointer events never reach the sign-in button — it had to be a human
+   click. **Re-run it by hand after any change to `SessionStorageKeyValueStorage`, the
+   `SetBeforeAccessAsync`/`SetAfterAccessAsync` callbacks, or the store selection**; nothing in CI
+   will tell you if one of those breaks.
 2. **The multi-account logout path has no automated guard** — see "What is still not covered" in
    the third-pass section.
 3. The empty-token refresh finding (`specs/009-msal-auth-fixes/progress.md`) is still open and
@@ -372,9 +377,11 @@ So the four `[JSImport]` bindings (`getItem` / `setItem` / `removeItem` / `key`)
 selection is honored from a real embedded `appsettings.development.json` — a different configuration
 source than the in-memory one the unit/UI tests use.
 
-**Still unverified: the MSAL blob itself** (`MsalCache_{ClientId}`, item 2b). That needs a completed
-sign-in, which needs the real ClientId (deliberately redacted from git) and a human click — the
-sample renders through SkiaRenderer, one `<canvas>`, and synthetic pointer events do not reach it.
+~~**Still unverified: the MSAL blob itself**~~ — **verified by hand 2026-08-21** (see "Next agent:
+start here"). The blob needed a completed sign-in, which needed the real ClientId (deliberately
+redacted from git) and a human click, because the sample renders through SkiaRenderer as one
+`<canvas>` and synthetic pointer events do not reach it. Confirmed working with
+`BrowserCacheLocation` set to `SessionStorage`.
 
 ### Why CI can't do the above
 
