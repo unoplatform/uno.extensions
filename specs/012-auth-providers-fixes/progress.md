@@ -13,10 +13,10 @@ committed alongside.
 
 ## Web
 
-- [ ] 5. Scaffold `Uno.Extensions.Authentication.UI.Tests` (stub `IWebAuthenticationBrokerProvider` via `ApiExtensibility.Register`)
-- [ ] 6. F4 red/fix/green: ct + interactive timeout plumbed to both broker paths (WinUIEx ct overload; `.AsTask(ct)`)
-- [ ] 7. F5 red/fix/green: `ResponseStatus.UserCancel` → OCE before any save; `ErrorHttp` → null
-- [ ] 8. F6 red/fix/green: logout honors the broker result
+- [x] 5. Scaffold `Uno.Extensions.Authentication.UI.Tests` (stub `IWebAuthenticationBrokerProvider` via `ApiExtensibility.Register`)
+- [x] 6. F4 red/fix/green: ct + interactive timeout plumbed to both broker paths (WinUIEx ct overload; `.AsTask(ct)`)
+- [x] 7. F5 red/fix/green: `ResponseStatus.UserCancel` → OCE before any save; `ErrorHttp` → null
+- [x] 8. F6 red/fix/green: logout honors the broker result
 - [ ] 9. F7 red/fix/green: ephemeral-session setting via runtime dispatch (spec-010 pattern), no `#if __IOS__`
 
 ## Desktop broker (F8)
@@ -39,3 +39,4 @@ committed alongside.
 (append per-item verification notes here)
 - 2026-08-21, items 1+2: desktop head (net9.0-desktop, Windows) — red run: `When_RefreshRejected_Then_NotAuthenticated` failed with "Expected refreshed to be false ... but found True" while both happy-path tests passed; after the fix: 3/3 passed. Harness note: `ProviderInformation.Validate()` requires a `KeySet` even with signature validation opted out — empty `JsonWebKeySet` satisfies it.
 - 2026-08-21, items 3+4: desktop head — red run: `When_LogoutCancelled_Then_StillAuthenticated` and `When_BrowserInvokeCancelled_Then_CancellationPropagates` failed while the 4 existing tests passed; after the fixes: 6/6 passed. F3's runtime-test covers the pre-launch cancellation check; the mid-flight broker path gets covered once item 5's stub broker exists.
+- 2026-08-21, items 5-8: desktop head — red run: `When_LoginCancelled_Then_PreviousSessionSurvives`, `When_LogoutCancelled_Then_StillAuthenticated`, `When_LoginAlreadyCancelled_Then_NoPrompt` failed; 3 baselines passed. After the fixes: Web suite 6/6, full auth filter (MSAL+Oidc+Web) 35/35, 0 failures. Deviations from the item-6 sketch: no new `InteractiveTimeout` config knob for Web — the caller's ct is plumbed to both paths and Uno's broker already enforces `WinRTFeatureConfiguration.WebAuthenticationBroker.AuthenticationTimeout` (5 min default); the WinUIEx path now uses its ct overload. Registration seam note: `ModuleInitializer` is CA2255-banned in libraries — the stub broker registers from the harness instead (idempotent, before first broker touch). Stub gotcha: the provider parses the callback with `WebAuthenticationSettings`' OAuth-standard key defaults (`access_token`/`refresh_token`), not TokenCache key names.

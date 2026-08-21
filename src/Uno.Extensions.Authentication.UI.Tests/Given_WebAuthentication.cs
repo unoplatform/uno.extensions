@@ -1,0 +1,202 @@
+using System;
+using System.Threading;
+using System.Threading.Tasks;
+using FluentAssertions;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Uno.Extensions.Authentication;
+using Uno.Extensions.Hosting;
+using Uno.UI.RuntimeTests;
+using Windows.Security.Authentication.Web;
+
+namespace Uno.Extensions.Authentication.UI.Tests;
+
+/// <summary>
+/// End-to-end coverage of the web provider against <see cref="StubWebAuthenticationBroker"/>:
+/// sign-in, sign-out and their cancellation/failure modes, with no browser and no network.
+/// </summary>
+/// <remarks>
+/// Lives in a UI test project rather than the plain unit-test one for the same reason as the MSAL
+/// and OIDC suites: Uno.Extensions.Authentication.WinUI can't load in a bare test host - its
+/// Uno.WinUI module initializer needs a live Uno.UI.
+/// </remarks>
+[TestClass]
+[RunsOnUIThread]
+public class Given_WebAuthentication
+{
+	private static readonly TimeSpan Timeout = TimeSpan.FromSeconds(30);
+
+	private const string LoginStartUri = "https://stub-idp.example/authorize";
+	private const string CallbackUri = "web-tests://callback";
+
+	private sealed record Harness(
+		IHost Host,
+		StubWebAuthenticationBroker Broker,
+		IAuthenticationService Authentication,
+		ITokenCache Tokens,
+		CapturingLoggerProvider Logs) : IDisposable
+	{
+		public void Dispose() => Host.Dispose();
+	}
+
+	/// <summary>
+	/// Builds a host wired to the stub broker, resets the broker's per-test state, and clears any
+	/// tokens left behind by an earlier test - the token cache's key-value storage is shared by
+	/// every test in the run and, on desktop, survives across runs.
+	/// </summary>
+	private static async Task<Harness> CreateHarnessAsync()
+	{
+		var harness = CreateHarness();
+
+		using var purge = new CancellationTokenSource(Timeout);
+		await harness.Tokens.ClearAsync(purge.Token);
+
+		return harness;
+	}
+
+	private static Harness CreateHarness()
+	{
+		StubWebAuthenticationBroker.EnsureRegistered();
+		var broker = StubWebAuthenticationBroker.Instance;
+		broker.Reset();
+		var logs = new CapturingLoggerProvider();
+
+		var host = UnoHost
+			.CreateDefaultBuilder(typeof(Given_WebAuthentication).Assembly)
+			.UseAuthentication(auth => auth
+				.AddWeb(web => web
+					.LoginStartUri(LoginStartUri)
+					.LoginCallbackUri(CallbackUri)
+					.LogoutStartUri("https://stub-idp.example/logout")
+					.LogoutCallbackUri(CallbackUri)))
+			.ConfigureServices(services => services
+				.AddLogging(logging => logging
+					.SetMinimumLevel(LogLevel.Trace)
+					.AddProvider(logs)))
+			.Build();
+
+		return new Harness(
+			host,
+			broker,
+			host.Services.GetRequiredService<IAuthenticationService>(),
+			host.Services.GetRequiredService<ITokenCache>(),
+			logs);
+	}
+
+	private static CancellationTokenSource Cts() => new(Timeout);
+
+	[TestMethod]
+	public async Task When_Login_Then_AccessTokenCached()
+	{
+		using var harness = await CreateHarnessAsync();
+		using var cts = Cts();
+
+		var result = await harness.Authentication.LoginAsync(default, cancellationToken: cts.Token);
+
+		harness.Broker.InvocationCount.Should().Be(1, "diagnostics: {0}", harness.Logs.Text);
+		result.Should().BeTrue("diagnostics: {0}", harness.Logs.Text);
+		harness.Broker.LastRequestUri!.OriginalString.Should().StartWith(LoginStartUri);
+
+		var tokens = await harness.Tokens.GetAsync(cts.Token);
+		tokens.Should().ContainKey(TokenCacheExtensions.AccessTokenKey);
+		tokens[TokenCacheExtensions.AccessTokenKey].Should().Be(harness.Broker.LastAccessToken);
+		tokens.Should().ContainKey(TokenCacheExtensions.RefreshTokenKey);
+	}
+
+	/// <summary>
+	/// Red test for spec 012 F5: the provider used to ignore
+	/// <see cref="WebAuthenticationResult.ResponseStatus"/> and return an empty (non-null) token
+	/// dictionary on cancel, which <c>TokenCache.SaveAsync</c> turns into a wipe of the previously
+	/// cached session. Cancellation must surface as <see cref="OperationCanceledException"/> before
+	/// any save - the same contract as the MSAL provider.
+	/// </summary>
+	[TestMethod]
+	public async Task When_LoginCancelled_Then_PreviousSessionSurvives()
+	{
+		using var harness = await CreateHarnessAsync();
+		using var cts = Cts();
+
+		await harness.Authentication.LoginAsync(default, cancellationToken: cts.Token);
+		harness.Broker.NextStatus = WebAuthenticationStatus.UserCancel;
+
+		Func<Task> act = () => harness.Authentication.LoginAsync(default, cancellationToken: cts.Token).AsTask();
+
+		await act.Should().ThrowAsync<OperationCanceledException>(
+			"backing out of the sign-in UI is a cancellation, not a failed login");
+		(await harness.Authentication.IsAuthenticated(cts.Token)).Should().BeTrue(
+			"a cancelled re-login must not wipe the session the user still has");
+	}
+
+	/// <summary>
+	/// Spec 012 F5, error branch: an HTTP error from the interactive flow is a failed login - no
+	/// exception, no tokens.
+	/// </summary>
+	[TestMethod]
+	public async Task When_LoginFails_Then_NotAuthenticated()
+	{
+		using var harness = await CreateHarnessAsync();
+		using var cts = Cts();
+
+		harness.Broker.NextStatus = WebAuthenticationStatus.ErrorHttp;
+
+		var result = await harness.Authentication.LoginAsync(default, cancellationToken: cts.Token);
+
+		result.Should().BeFalse();
+		(await harness.Authentication.IsAuthenticated(cts.Token)).Should().BeFalse();
+	}
+
+	[TestMethod]
+	public async Task When_Logout_Then_TokensCleared()
+	{
+		using var harness = await CreateHarnessAsync();
+		using var cts = Cts();
+
+		await harness.Authentication.LoginAsync(default, cancellationToken: cts.Token);
+
+		var loggedOut = await harness.Authentication.LogoutAsync(default, cts.Token);
+
+		loggedOut.Should().BeTrue();
+		harness.Broker.InvocationCount.Should().Be(2, "logout drives the end-session flow through the broker");
+		(await harness.Authentication.IsAuthenticated(cts.Token)).Should().BeFalse();
+	}
+
+	/// <summary>
+	/// Red test for spec 012 F6: the provider used to discard the broker result on logout and
+	/// return true unconditionally, so a cancelled end-session flow still flushed the local token
+	/// cache and reported the sign-out as successful.
+	/// </summary>
+	[TestMethod]
+	public async Task When_LogoutCancelled_Then_StillAuthenticated()
+	{
+		using var harness = await CreateHarnessAsync();
+		using var cts = Cts();
+
+		await harness.Authentication.LoginAsync(default, cancellationToken: cts.Token);
+		harness.Broker.NextStatus = WebAuthenticationStatus.UserCancel;
+
+		var loggedOut = await harness.Authentication.LogoutAsync(default, cts.Token);
+
+		loggedOut.Should().BeFalse("a cancelled sign-out must not report success");
+		(await harness.Authentication.IsAuthenticated(cts.Token)).Should().BeTrue(
+			"tokens must survive a sign-out the user backed out of");
+	}
+
+	/// <summary>
+	/// Red test for spec 012 F4: no <see cref="CancellationToken"/> used to reach the broker call,
+	/// so an already-cancelled login still drove the whole interactive flow to completion.
+	/// </summary>
+	[TestMethod]
+	public async Task When_LoginAlreadyCancelled_Then_NoPrompt()
+	{
+		using var harness = await CreateHarnessAsync();
+		using var cts = new CancellationTokenSource();
+		cts.Cancel();
+
+		Func<Task> act = () => harness.Authentication.LoginAsync(default, cancellationToken: cts.Token).AsTask();
+
+		await act.Should().ThrowAsync<OperationCanceledException>();
+		harness.Broker.InvocationCount.Should().Be(0, "a cancelled login must not open the sign-in UI");
+	}
+}
