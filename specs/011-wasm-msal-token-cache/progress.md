@@ -560,3 +560,90 @@ completion:
 also picks up classes added later, which a class-named one does not.
 
 Lesson recorded in `specs/lessons.md` ("A test filter naming a class silently drops its siblings").
+
+## Ninth pass — the WebAssembly lane runs, and iOS found a contract bug (2026-08-21)
+
+Three outcomes from asking why only two platforms were running the auth tests.
+
+### The browser lane is enabled, and the spec's own code is finally covered by CI
+
+The blocker was never this repo's: `Uno.UI.RuntimeTests.Engine` ships as source, and its embedded
+runner guards `Console.CancelKeyPress` - a `PlatformNotSupportedException` in the browser - with
+`#if !__WASM__`. Uno.Sdk stopped defining `__WASM__` for consumer projects, so the registration
+compiled in and killed the app before the first test (build 228808). Still true in the newest engine,
+`2.0.0-dev.81`, so there was nothing to wait for.
+
+What the earlier note got wrong: it concluded that defining `__WASM__` "does not work either" because
+the symbol's other branches call `Uno.Foundation.WebAssemblyRuntime.InvokeJS`, which the browser head
+cannot reference (CS0234, and `src/Directory.Build.props`' `__RemoveUnoRuntimeWasm` target drops that
+package for non-head projects on purpose). That is a reason to *supply* the type, not to give up: the
+engine's sources compile into `Uno.Extensions.RuntimeTests.Core`, so an internal one in the same
+assembly satisfies them. `WebAssemblyRuntimeShim.cs` is ~10 lines over a `[JSImport]` binding to
+`globalThis.eval`, which is what Uno's own `InvokeJS` did, and the three call sites pass
+self-contained IIFEs. The symbol and `AllowUnsafeBlocks` (SYSLIB1074) are scoped to the browserwasm
+TFM of that one project.
+
+Also worth recording, since it decided the approach: those `#if __WASM__` branches are only a
+*preference* for reading configuration from the URL query string. The engine's own comment says the
+environment-variable path "works on all platforms - on WASM, the test runner injects these into
+uno-config.js", so nothing about the lane depends on them.
+
+Verified locally, not on hope - the full auth namespace, in headless chromium via
+`build/test-scripts/wasm-runtime-tests.sh`:
+
+| Run | Result |
+| --- | --- |
+| Before | 0 tests; `PlatformNotSupportedException` before the first case |
+| Full namespace (`Authentication.MSAL.UI.Tests`) | 23 run, 13 pass, 10 fail |
+| Lane as configured (`Given_BrowserTokenCacheStorage`) | **8 run, 8 pass**, validator exit 0 |
+
+So the lane is scoped to `Given_BrowserTokenCacheStorage` rather than the pipeline-wide
+`$(RuntimeTestsFilter)`. All 10 failures are one harness limitation, not a product defect: MSAL's
+`.WithHttpClientFactory(StubEntra.HttpClientFactory)` is not honoured in the browser, so `StubWebUi`'s
+fabricated authorization code escapes to the real `login.microsoftonline.com` and returns
+`AADSTS9002313 "Invalid request. Request is malformed or invalid"`. The stub itself never produces
+that string - it reached Entra. The product path is fine; a manual sign-in on the WASM head works.
+Widening the lane needs the stub to apply in the browser first, which is its own piece of work.
+
+The 8 that do run are the ones that matter most here: they are the only automated coverage anywhere
+of what this spec added - browser store selection, the strict-reader rejection of a bad value, and a
+round trip through the selected store - and until now they had never executed in a browser at all.
+
+### iOS turned up a real inconsistency in `IKeyValueStorage`
+
+Widening `RuntimeTestsFilter` (eighth pass) ran `Given_BrowserTokenCacheStorage` on iOS for the first
+time and one case failed: `When_Value_Written_Then_Round_Trips_Through_Default_Storage` asserted
+`GetAsync` returns null after the key is cleared, and Keychain threw `KeyNotFoundException`.
+
+Keychain is right. `IKeyValueStorage.GetAsync` is documented as *"If that value does not exist, throws
+a `KeyNotFoundException`"*; `KeyChainKeyValueStorage` honours it and `ApplicationDataKeyValueStorage`
+returns `default` instead - so the default store on Windows, Skia desktop **and** the browser violates
+its own contract, and the assertion had encoded that violation because it was written on desktop.
+
+The test now asserts only what both stores agree on (`GetKeysAsync` no longer contains the key), which
+is also what `TokenCache.HasTokenAsync` actually relies on. **The divergence itself is left unfixed on
+purpose**: making the default store on three platforms start throwing is a public-surface behavior
+change that deserves its own PR and its own risk assessment, not a drive-by edit inside a
+storage-selection change. It is worth an issue.
+
+### Android is still disabled, but no longer for the reason the comment claimed
+
+Re-investigated from scratch; the old note ("bin/net9.0-android contains exactly one assembly") was
+measuring the wrong thing - Android does not copy to `bin` at all, and the APK does carry 329 entries
+per ABI. The real chain, all for the same head at net9.0-android/Debug:
+
+- `_ResolvedProjectReferencePaths` lists all 23 references, `Uno.Extensions.Reactive.dll` included -
+  so resolution is fine;
+- `ReferenceCopyLocalPaths` holds **no assemblies at all**, just two `.uprimarker` files, where
+  net9.0-desktop holds the full set;
+- so `ResolvedFileToPublish` (240 dlls) and Android's `ResolvedUserAssemblies` (161) contain only the
+  head's own assembly out of everything we build. Every managed assembly that does reach the APK comes
+  from the NuGet restore graph - which project references are not part of, leaving them no route in.
+
+Ruled out by experiment: `-o` (rebuilt without it, closure still absent - the earlier note was right
+to dismiss it), `EmbedAssembliesIntoApk`, the emulator, and the ABI split. Leading suspect is
+`src/Directory.Build.props`' `BaseOutputPath=bin\$(MSBuildProjectName)`: during an Android build every
+referenced project also emits into a second, *head-named* folder
+(`<ref>/bin/Uno.Extensions.RuntimeTests/Debug/net9.0-android/`), which means the head's output path is
+reaching its references as a global property. Unproven, and not a simple path mismatch - the expected
+folder is populated too. Re-enable the lane once `ReferenceCopyLocalPaths` carries the closure.

@@ -107,25 +107,33 @@ stages:
   dependsOn: Build_Tests
   jobs:
   - template: stage-runtime-tests-desktop.yml
-  # Disabled: blocked on Uno.UI.RuntimeTests.Engine, not on this repo. Its embedded runner guards
-  # the `Console.CancelKeyPress` registration with `#if !__WASM__`, but Uno.Sdk stopped defining
-  # `__WASM__` for consumer projects (Skia-WASM heads consume the plain netX.0 Uno.UI), so the
-  # registration is compiled in and throws PlatformNotSupportedException before any test runs -
-  # verified in build 228808. Defining `__WASM__` here does not work either: the engine's other
-  # `#if __WASM__` branches call `Uno.Foundation.WebAssemblyRuntime.InvokeJS`, which a Skia-WASM
-  # head does not reference (CS0234). Re-enable once the engine switches to a runtime check.
-  # - template: stage-runtime-tests-wasm.yml
-  # Disabled: the Android head does not package its ProjectReference closure, so the APK starts
-  # and then aborts in monodroid with "failed to load bundled assembly Uno.Extensions.Reactive.dll".
-  # Reproduced locally, independent of CI: for the same head and configuration,
-  # bin/.../net9.0-desktop contains 145 assemblies including the full project closure, while
-  # bin/.../net9.0-android contains exactly one (its own). Not caused by `-o`, by
-  # EmbedAssembliesIntoApk (which did fix a separate Fast Deployment abort - keep it), or by the
-  # emulator. This is a build-layout problem in the Android TFM, almost certainly the interaction
-  # between src/Directory.Build.props' BaseOutputPath=bin\$(MSBuildProjectName) redirection and
-  # the Android SDK's assembly collection; the desktop and iOS lanes are unaffected. The Android
-  # head is still *built* by `Build Runtime Tests - Android`, which is new coverage - it did not
-  # compile at all before this branch. Re-enable this line once the closure lands in the APK.
+  # Depends on a workaround: Uno.UI.RuntimeTests.Engine (source package, still true in 2.0.0-dev.81)
+  # guards its Console.CancelKeyPress registration with `#if !__WASM__`, and Uno.Sdk no longer defines
+  # __WASM__ for consumer projects, so the browser head used to throw PlatformNotSupportedException
+  # before the first test (build 228808). Uno.Extensions.RuntimeTests.Core defines the symbol for the
+  # browserwasm TFM and supplies the InvokeJS its other branches need - see WebAssemblyRuntimeShim.cs.
+  - template: stage-runtime-tests-wasm.yml
+  # Disabled: the Android head does not package its ProjectReference closure, so the APK starts and
+  # then aborts in monodroid with "failed to load bundled assembly Uno.Extensions.Reactive.dll".
+  # Traced as far as the item lists, all for net9.0-android / Debug on the same head:
+  #   * all 23 project references resolve correctly (_ResolvedProjectReferencePaths lists every one,
+  #     including Uno.Extensions.Reactive.dll), so this is not a resolution failure;
+  #   * ReferenceCopyLocalPaths holds NO assemblies at all - just two .uprimarker files - where the
+  #     net9.0-desktop build of the same project holds the full set. Android does not copy to bin;
+  #   * consequently ResolvedFileToPublish (240 dlls) and Android's own ResolvedUserAssemblies (161)
+  #     contain, of everything we build, only the head's own assembly. Every managed assembly that
+  #     does reach the APK comes from the NuGet restore graph, which project references are not part
+  #     of - so they have no route in.
+  # Ruled out by experiment, not by assumption: `-o` (rebuilt without it, closure still absent),
+  # EmbedAssembliesIntoApk (it fixed a separate Fast Deployment abort - keep it), the emulator, and
+  # the ABI split (both arm64-v8a and x86_64 carry the same 329 entries). Leading suspect is
+  # src/Directory.Build.props' BaseOutputPath=bin\$(MSBuildProjectName) redirection: during an
+  # Android build each referenced project also emits into a second, head-named folder
+  # (<ref>/bin/Uno.Extensions.RuntimeTests/Debug/net9.0-android/), which means the head's output path
+  # reaches its references as a global property. Unproven - the expected folder is populated too, so
+  # a plain path mismatch is not the failure. Desktop and iOS are unaffected. The head is still
+  # *built* by `Build Runtime Tests - Android`, which is coverage this branch added. Re-enable this
+  # line once ReferenceCopyLocalPaths carries the closure.
   # - template: stage-runtime-tests-android.yml
   - template: stage-runtime-tests-ios.yml
 
