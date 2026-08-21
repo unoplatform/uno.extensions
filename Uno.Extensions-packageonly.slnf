@@ -3,6 +3,7 @@
     "path": "Uno.Extensions.sln",
     "projects": [
       "src\\Uno.Extensions.Authentication.MSAL.Tests\\Uno.Extensions.Authentication.MSAL.Tests.csproj",
+      "src\\Uno.Extensions.Authentication.Tests\\Uno.Extensions.Authentication.Tests.csproj",
       "src\\Uno.Extensions.Authentication.MSAL\\Uno.Extensions.Authentication.MSAL.WinUI.csproj",
       "src\\Uno.Extensions.Authentication.Oidc\\Uno.Extensions.Authentication.Oidc.WinUI.csproj",
       "src\\Uno.Extensions.Authentication.Tests\\Uno.Extensions.Authentication.Tests.csproj",

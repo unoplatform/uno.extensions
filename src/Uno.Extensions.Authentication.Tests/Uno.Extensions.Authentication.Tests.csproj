@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
@@ -6,6 +6,11 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <!--
+    Uno.Extensions.Authentication is a plain net9.0 library with no Uno.UI dependency (unlike the
+    *.WinUI auth packages), so the Custom provider and the whole hosting chain load cleanly in a
+    bare test host.
+  -->
   <ItemGroup>
     <ProjectReference Include="..\Uno.Extensions.Authentication\Uno.Extensions.Authentication.csproj" />
   </ItemGroup>
