@@ -18,7 +18,16 @@ internal record ApplicationDataKeyValueStorage
 	/// <inheritdoc />
 	public override bool IsEncrypted => false;
 
-	private bool UseApplicationData =>
+	/// <summary>
+	/// Whether values go to <c>ApplicationData</c> settings (which hold arbitrary WinRT property
+	/// types) rather than <see cref="ISettings"/> (which is string-only).
+	/// </summary>
+	/// <remarks>
+	/// <c>protected</c> so a derived store can tell what its <see cref="GetObjectValue{T}"/> return
+	/// value will be persisted through: on the <see cref="ISettings"/> path the base class stores
+	/// <c>value?.ToString()</c>, so anything that is not already a string is lost.
+	/// </remarks>
+	protected bool UseApplicationData =>
 #if !WINDOWS
 		true;
 #else

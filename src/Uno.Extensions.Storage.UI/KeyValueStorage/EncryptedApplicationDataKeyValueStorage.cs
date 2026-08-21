@@ -34,8 +34,9 @@ internal record EncryptedApplicationDataKeyValueStorage(
 #nullable disable
 	protected override async Task<T> GetTypedValue<T>(object encryptedData, CancellationToken ct)
 	{
-		// byte[] is what packaged installs wrote before the base64 change below - keep reading it,
-		// or every existing packaged app's protected cache is orphaned on upgrade.
+		// byte[] on the packaged path, base64 on the unpackaged one - see GetObjectValue. Both are
+		// accepted here rather than branching on UseApplicationData, so a value written before this
+		// change still reads back whichever path it came from.
 		var protectedBytes = encryptedData switch
 		{
 			byte[] bytes => bytes,
@@ -85,12 +86,17 @@ internal record EncryptedApplicationDataKeyValueStorage(
 
 		CryptographicBuffer.CopyToByteArray(encryptedBuffer, out var encryptedData);
 
-		// base64, not the raw byte[]: unpackaged installs persist through ISettings, which is
-		// string-only, and the base class stores whatever this returns via value?.ToString(). A
-		// byte[] became the literal "System.Byte[]", so DPAPI-protected values silently never
-		// persisted there - while their keys did, leaving HasTokenAsync true with nothing to
-		// recover. The packaged ApplicationData path stores strings just as happily.
-		return Convert.ToBase64String(encryptedData);
+		// Packaged installs keep persisting the raw byte[] - ApplicationData settings hold it
+		// natively, it is what every existing install already contains, and this is the default
+		// store on Windows, so it is not worth changing on a path that works.
+		//
+		// Unpackaged installs go through ISettings, which is string-only: the base class stores
+		// whatever this returns via value?.ToString(), so a byte[] became the literal
+		// "System.Byte[]" and DPAPI-protected values silently never persisted - while their keys
+		// did, leaving HasTokenAsync true with nothing to recover. base64 round-trips there.
+		return UseApplicationData
+			? encryptedData
+			: Convert.ToBase64String(encryptedData);
 	}
 
 }
