@@ -125,6 +125,7 @@ internal static class AppHost
 			new ViewMap<ComplexDialogSecondPage>(),
 			new ViewMap<PanelVisibilityPage>(),
 			new ViewMap<VisualStatesPage>(),
+			new ViewMap<FeedViewMockPage>(),
 			new ViewMap<AdHocPage, AdHocViewModel>(),
 			new ViewMap<ListPage, ListViewModel>(),
 			new ViewMap<ItemDetailsPage, ItemDetailsViewModel>(),
@@ -141,7 +142,8 @@ internal static class AppHost
 			new RouteMap("", View: views.FindByViewModel<ShellViewModel>(),
 			Nested: new[]
 			{
-					new RouteMap("Home",View: views.FindByView<HomePage>()),
+					// IsDefault ensures the shell can resolve an initial route when the empty route is requested
+					new RouteMap("Home",View: views.FindByView<HomePage>(), IsDefault: true),
 					new RouteMap("CodeBehind",View: views.FindByView<CodeBehindPage>(), DependsOn: "Home"),
 					new RouteMap("VM",View: views.FindByView<VMPage>(), DependsOn: "Home"),
 					new RouteMap("Xaml",View: views.FindByView<XamlPage>(), DependsOn: "Home"),
@@ -179,6 +181,7 @@ internal static class AppHost
 					}),
 					new RouteMap("PanelVisibility",View: views.FindByView<PanelVisibilityPage>()),
 					new RouteMap("VisualStates",View: views.FindByView<VisualStatesPage>()),
+					new RouteMap("FeedViewMock",View: views.FindByView<FeedViewMockPage>(), DependsOn: "Home"),
 					new RouteMap("AdHoc",View: views.FindByViewModel<AdHocViewModel>(),
 					Nested: new[]
 					{
