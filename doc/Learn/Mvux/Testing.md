@@ -8,6 +8,9 @@ The `Uno.Extensions.Reactive.Mocks` namespace provides factories that produce an
 
 Unlike a feed backed by a never-completing task, a mocked feed emits its configured state once and then **completes**, so it pins the view in that state without leaking pending work or hanging test runs.
 
+> [!TIP]
+> This page is about *visual* states — putting a view into a given state. To assert the messages a feed produces in unit tests, use the `Uno.Extensions.Reactive.Testing` package instead, see [Test feed](xref:Uno.Extensions.Reactive.Testing).
+
 ## Mocking feeds
 
 ```csharp
@@ -119,7 +122,7 @@ Key behaviors:
 - **Plain members are unavailable.** Non-feed members (plain properties, methods) forward to the Model and therefore throw on a mocked instance. Only bind feed, state, and command members of a mocked view model — a `{x:Bind}` to a plain model property will fail at runtime.
 - **Mocked states are read-only.** Assigning an `IFeed<T>` to a state member pins its display value but drops two-way binding writes silently. To keep the member editable, assign a real state instead: `m.Search = State.Value(this, () => "initial")`.
 - **Hot reload is bypassed.** A mocked instance is not registered for hot reload, so editing the Model source does not clobber a live mocked view model (and, conversely, edits are not reflected while previewing with mocks).
-- **Opt-in only.** Without the attribute, the generated output is unchanged. The attribute optionally takes regex patterns (matched unanchored against the model's full name) restricting which models get mock factories: `[assembly: GenerateModelMocks("MainModel$", "Details.*")]`. Consider gating the attribute with `#if DEBUG` if mocks should not ship in release builds.
+- **Opt-in only.** Without the attribute, the generated output is unchanged. The attribute optionally takes regex patterns (matched unanchored against the model's full name) restricting which models get mock factories: `[assembly: GenerateModelMocks("MainModel$", "Details.*")]`. Consider gating the attribute with `#if DEBUG` if mocks should not ship in release builds. Generation can also be turned off without removing the attribute with `IsEnabled = false` (e.g. `[assembly: GenerateModelMocks(IsEnabled = false)]`).
 - **Inheritance.** A derived model's mocks bundle derives from its base model's bundle, so base members are configurable from the derived `CreateMock`. Every model in the base chain must be mock-enabled, otherwise the generator reports `FEED3001` and skips. Beware the inverse exclusion: if a pattern covers a base model but not a derived one, `DerivedViewModel.CreateMock(...)` still compiles — C# resolves it to the inherited base factory, which returns a *base* view-model instance.
 - **Dispose replaced mocks.** A mocked view model owns feed subscriptions; when re-creating mocks in a loop (e.g. a state-gallery picker), dispose the previous instance (`await previousVm.DisposeAsync()`) before assigning the new one — especially on WebAssembly, where peak allocations permanently grow the heap.
 

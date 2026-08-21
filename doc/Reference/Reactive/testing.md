@@ -3,6 +3,9 @@ uid: Uno.Extensions.Reactive.Testing
 ---
 # Test feed
 
+> [!TIP]
+> This page is about asserting the messages a *feed* produces. To pin a view into a given visual state for previews, galleries, or UI tests, use the mocks vocabulary instead, see [Previewing and testing MVUX states](xref:Uno.Extensions.Mvux.Testing).
+
 In order to test your reactive application, you should install the `Uno.Extensions.Reactive.Testing` package in your test project.
 
 Make your test class inherit from `FeedTests`, then in your tests methods, you can use the `.Record()` extensions method on the test you want to test.
