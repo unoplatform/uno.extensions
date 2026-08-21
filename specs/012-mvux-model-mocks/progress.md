@@ -2,8 +2,35 @@
 
 Tracker for [spec.md](spec.md). Mark items as they land; add a Review section at the end.
 
-**Status:** Phases 1 & 2 complete (runtime vocabulary + generator); Phase 3 (samples) not started
-**Recommended entry point:** Phase 1 — it ships value on its own with zero generator work.
+**Status:** All phases complete and committed (7 commits on `dev/sb/mvux-model-mocks-spec`, through `a6ab1fdb5`).
+**Recommended entry point:** the "In-flight (handoff)" section below, then the Follow-ups list.
+
+---
+
+## In-flight (handoff, 2026-08-21)
+
+In-flight change (committed just before this note, unfinished): `samples/Playground/Playground/Models/MockRecipesModel.cs`
+adds a scalar feed member — `public IFeed<Person> Person => Feed.Async<Person>(async (ct) => new());`
+(2 lines, compiles; `Person` already exists in `Models/Person.cs`).
+
+**Why (inferred, unconfirmed):** the mock-enabled model only had a list feed (`Recipes`) and a command
+(`Save`), so the generated `MockRecipesViewModelMocks` bundle / `CreateMock` gallery section never exercises
+a **scalar** `MockFeed` override through the generated path. Adding `Person` gives `CreateMock` a scalar
+member to pin.
+
+**What's missing to finish it:**
+
+1. Nothing consumes the new member yet — `Views/MvuxMocksPage.xaml{,.cs}` has no `Person` section.
+   Extend the page's `CreateMock` section (or add a state entry) pinning `Person` via `MockFeed.*`
+   (e.g. `Value`, `Loading`, `Error`) with the code snippet shown alongside, matching the existing entries.
+2. Re-verify interactively on the desktop (Skia) head like the rest of the gallery
+   (`dotnet run` on the Playground desktop head; route `MvuxMocks` from Home).
+3. Fold the page work into a `feat(playground): pin a scalar feed via CreateMock in the mocks gallery`
+   commit (squash with the stub commit on rebase) — or **revert the stub commit** if the scalar path is
+   judged already covered by the raw `MockFeed.Script` section.
+
+**Open decision:** keep-and-finish vs drop. The raw-vocabulary section of the gallery already shows scalar
+`MockFeed` states on a `FeedView`; the only gap is scalar-through-`CreateMock`. Confirm with Steve if unclear.
 
 ---
 
@@ -114,7 +141,6 @@ mocks/WASM, `#if DEBUG` gating, base-factory shadowing on derived exclusion, una
 
 - `When_RegisteredInDi_Then_NavigationResolvesMockedVm` (spec §11) needs a navigation-capable UI test host
   (TestHarness); not covered by `Uno.Extensions.Reactive.UI.Tests`.
-- Phase 3 — Playground state-gallery page (optional) not done.
 - `MockCommand` invocation recording (spec §14.2) still open; the API ships without it (additive later).
 - Null-tolerant forwarders for plain members on mock-enabled assemblies (would remove the documented NRE).
 - Committed golden-file guard for G5 (currently: reflection sweep in-suite + out-of-band 136-file byte-compare).
