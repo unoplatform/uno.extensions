@@ -24,6 +24,9 @@ The set of identity scenarios (Microsoft accounts, work/school accounts, B2C, so
 
 ## Prerequisites
 
+- **If you target Android, iOS, or WebAssembly with `UnoFeatures=SkiaRenderer`**, you need an Uno Platform version containing the fix for [unoplatform/uno#20601](https://github.com/unoplatform/uno/issues/20601) ([PR #24055](https://github.com/unoplatform/uno/pull/24055)). Before it, Uno's build-time runtime-asset selector replaced `Uno.UI.MSAL.dll` with its no-op Skia flavor on every head, so `WithUnoHelpers()` silently did nothing — no parent `Activity` on Android (MSAL fails with `activity_required`), no `UIViewController` on iOS, and no `WasmWebUi`/`WasmHttpFactory` on WebAssembly, so the sign-in UI never appeared at all. Two things make this easy to miss:
+  - The fix lives in `Uno.WinUI`'s build tasks, not in `Uno.WinUI.MSAL`, so **no package reference in your app expresses the requirement** and nothing warns you — sign-in just does nothing.
+  - It landed after the 6.7.x releases, so no 6.7.x version has it. Use 6.8.0 or later (or a `6.8.0-dev` build), unless it is backported to a 6.7.x servicing release.
 - An app registration on the Microsoft identity platform, with each platform's redirect URI registered — see [Redirect URIs](#4-redirect-uris) for the value the provider applies on each target.
 - **If you target WebAssembly**, the browser redirect URI must be registered under the **`spa`** platform of the app registration, not as a public-client/native URI. This is not a formality:
   - MSAL.NET issues the token request from the browser over `fetch`, which CORS only permits for a redirect URI registered as `spa`.
