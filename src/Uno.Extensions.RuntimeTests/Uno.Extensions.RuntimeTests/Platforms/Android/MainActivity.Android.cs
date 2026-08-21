@@ -47,6 +47,18 @@ public class MainActivity : Microsoft.UI.Xaml.ApplicationActivity
             }
         }
 
+        // The CI lane has MobileRuntimeTestsAutostart write its result file under the app's external
+        // files dir, and only the platform API can create the
+        // /storage/emulated/0/Android/data/<package> level of that path: Directory.CreateDirectory
+        // walks its parents and dies there with "Permission denied" (reproduced on API 34 and 36,
+        // so this is not a newer-scoped-storage quirk). Calling GetExternalFilesDir materializes the
+        // whole chain with the right ownership. Gated on the variable so a normal launch keeps its
+        // current behaviour and never touches external storage.
+        if (System.Environment.GetEnvironmentVariable("UITEST_RUNTIME_AUTOSTART_RESULT_FILE") is { Length: > 0 })
+        {
+            _ = GetExternalFilesDir(null);
+        }
+
         base.OnCreate(savedInstanceState);
     }
 }

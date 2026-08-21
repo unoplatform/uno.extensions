@@ -647,3 +647,53 @@ referenced project also emits into a second, *head-named* folder
 (`<ref>/bin/Uno.Extensions.RuntimeTests/Debug/net9.0-android/`), which means the head's output path is
 reaching its references as a global property. Unproven, and not a simple path mismatch - the expected
 folder is populated too. Re-enable the lane once `ReferenceCopyLocalPaths` carries the closure.
+
+## Tenth pass — the Android lane, fixed by diffing against studio.live (2026-08-21)
+
+The ninth pass left Android disabled with the loss traced to `ReferenceCopyLocalPaths` being empty
+of assemblies, and `BaseOutputPath` named as the leading suspect. **That suspect was wrong** -
+overriding it to the SDK default changed nothing, and so did Debug vs Release and single- vs
+multi-TFM graphs. What found it was comparing against `studio.live`, whose Android runtime-test lane
+works: 18 project references, 19 copy-local assemblies at `net10.0-android`, and no `Private`
+metadata on any of them. Ours carried `Private='false'`.
+
+The source is `src/Directory.Build.targets`:
+
+```xml
+<Private Condition="'$(OutputType)' == 'library' and '$(NugetOverrideVersion)'==''">false</Private>
+```
+
+which exists so our ~50 libraries don't each duplicate the closure into their own `bin`. **.NET
+Android rewrites an app head's `OutputType` to `Library`**, because an Android app has no managed
+entry point - measured on the one head, `net9.0-android` reports `OutputType=Library` and
+`AndroidApplication=true` while `net9.0-desktop` reports `Exe`. So the APK head matched a
+library-only rule, every project reference lost copy-local on Android alone, and NuGet-restored
+assemblies were unaffected only because they arrive as `RuntimeCopyLocalItems` instead. studio.live
+has no such `ItemDefinitionGroup`, which is the whole difference.
+
+Adding `and '$(AndroidApplication)' != 'true'` took copy-local from 0 to 23.
+
+That exposed a second, independent bug: with the closure packaged the app booted and
+`MobileRuntimeTestsAutostart` ran, then failed with `UnauthorizedAccessException` on
+`/storage/emulated/0/Android/data/<pkg>`. `Directory.CreateDirectory` walks parents and an app cannot
+create the `Android/data/<package>` level - only the platform API can. `MainActivity.OnCreate` now
+calls `GetExternalFilesDir(null)` when the result-file variable is set. studio.live's autostart has
+the same `Directory.CreateDirectory` call, so it only shows up where nothing has created that
+directory yet.
+
+Verified end to end on a local API 34 AVD, matching CI's `system-images;android-34;...;x86_64`:
+
+| Stage | Result |
+| --- | --- |
+| Before | 0 tests; `open_from_bundles: failed to load bundled assembly Uno.Extensions.Reactive.dll` |
+| APK contents after the fix | 24 `Uno.Extensions.*` assemblies, `Uno.Extensions.Reactive.dll` included |
+| CI's exact `dotnet publish -o` | 48 entries (24 assemblies x 2 ABIs) |
+| Emulator run, filter `Authentication.MSAL.UI.Tests` | **23 run, 23 passed, 0 failed**, validator exit 0 |
+
+Android runs the full auth suite, including the 15 `Given_MsalAuthentication` cases that cannot run
+on WebAssembly - the MSAL stub HTTP factory works there. All four device lanes are now enabled:
+desktop, WebAssembly (8 storage tests), Android (23) and iOS (23).
+
+Worth noting for whoever owns the sample heads: the same `Private=false` rule applied to every
+Android app head in this repo, so `samples/Playground` and `testing/TestHarness` were packaging
+APKs without their project closure too. Neither is built for Android in CI, so nothing caught it.

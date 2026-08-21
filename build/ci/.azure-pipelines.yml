@@ -113,28 +113,13 @@ stages:
   # before the first test (build 228808). Uno.Extensions.RuntimeTests.Core defines the symbol for the
   # browserwasm TFM and supplies the InvokeJS its other branches need - see WebAssemblyRuntimeShim.cs.
   - template: stage-runtime-tests-wasm.yml
-  # Disabled: the Android head does not package its ProjectReference closure, so the APK starts and
-  # then aborts in monodroid with "failed to load bundled assembly Uno.Extensions.Reactive.dll".
-  # Traced as far as the item lists, all for net9.0-android / Debug on the same head:
-  #   * all 23 project references resolve correctly (_ResolvedProjectReferencePaths lists every one,
-  #     including Uno.Extensions.Reactive.dll), so this is not a resolution failure;
-  #   * ReferenceCopyLocalPaths holds NO assemblies at all - just two .uprimarker files - where the
-  #     net9.0-desktop build of the same project holds the full set. Android does not copy to bin;
-  #   * consequently ResolvedFileToPublish (240 dlls) and Android's own ResolvedUserAssemblies (161)
-  #     contain, of everything we build, only the head's own assembly. Every managed assembly that
-  #     does reach the APK comes from the NuGet restore graph, which project references are not part
-  #     of - so they have no route in.
-  # Ruled out by experiment, not by assumption: `-o` (rebuilt without it, closure still absent),
-  # EmbedAssembliesIntoApk (it fixed a separate Fast Deployment abort - keep it), the emulator, and
-  # the ABI split (both arm64-v8a and x86_64 carry the same 329 entries). Leading suspect is
-  # src/Directory.Build.props' BaseOutputPath=bin\$(MSBuildProjectName) redirection: during an
-  # Android build each referenced project also emits into a second, head-named folder
-  # (<ref>/bin/Uno.Extensions.RuntimeTests/Debug/net9.0-android/), which means the head's output path
-  # reaches its references as a global property. Unproven - the expected folder is populated too, so
-  # a plain path mismatch is not the failure. Desktop and iOS are unaffected. The head is still
-  # *built* by `Build Runtime Tests - Android`, which is coverage this branch added. Re-enable this
-  # line once ReferenceCopyLocalPaths carries the closure.
-  # - template: stage-runtime-tests-android.yml
+  # Was disabled because the APK shipped without its ProjectReference closure and died at
+  # Application.OnCreate with `open_from_bundles: failed to load bundled assembly
+  # Uno.Extensions.Reactive.dll`. Root cause was ours: .NET Android rewrites an app head's
+  # OutputType to 'Library', so the head matched the library-only `Private=false` rule in
+  # src/Directory.Build.targets and every project reference stopped being copy-local on Android
+  # alone. See the lesson in specs/lessons.md before touching that ItemDefinitionGroup.
+  - template: stage-runtime-tests-android.yml
   - template: stage-runtime-tests-ios.yml
 
 ##
