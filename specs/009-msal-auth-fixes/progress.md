@@ -123,7 +123,7 @@ and logout does nothing."* Both symptoms, both platforms, one root cause.
   dispatcher — `_pca.RemoveAsync` only mutates MSAL's own cache. Meanwhile the documented
   convenience overload `IAuthenticationService.LogoutAsync(CancellationToken)`
   (`AuthenticationServiceExtensions.cs:43`) passes `dispatcher: default`. So **every** call through
-  that overload threw, `BaseAuthenticationProvider.LogoutAsync` rethrew, and an app whose command
+  that overload threw, `BaseAuthenticationProvider.LogoutAsync` re-raised it, and an app whose command
   swallows the exception sees sign-out do nothing. `OidcAuthenticationProvider.InternalLogoutAsync`
   ignores the parameter entirely — MSAL was the outlier.
 
@@ -147,7 +147,7 @@ and logout does nothing."* Both symptoms, both platforms, one root cause.
   `GetAccountsAsync().Count() > 0` guard short-circuits first — which is the correct path). A scope
   mismatch does drive `AcquireTokenSilent` to fail, but the result varied between runs because the
   desktop head's MSAL cache is a DPAPI file shared across runs. Fixing this without a red test would
-  ship an untested behaviour change to a published package; the honest next step is a repro that
+  ship an untested behavior change to a published package; the honest next step is a repro that
   isolates the on-disk cache per test (or asserting the contract below the provider, which needs
   `InternalsVisibleTo` for a `Uno.Extensions.Authentication.Tests` project that does not exist yet).
   Intended fix once red: return `default` rather than a dictionary holding an empty token, so

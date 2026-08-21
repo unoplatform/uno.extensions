@@ -115,7 +115,7 @@ encrypted one, so `Given_BrowserTokenCacheStorage.When_Value_Written_Then_Round_
 would have exercised exactly the round-trip that changed). It does not build:
 
 - `Uno.Extensions.Navigation.UI.Tests` fails that TFM with `InitializeComponent` /
-  `_contentGrid` not found across its XAML pages — the WinUI XAML codegen does not run there.
+  `_contentGrid` not found across its XAML pages — the WinUI XAML code generation does not run there.
 - Not caused by this branch: that project references only Navigation.UI, Navigation.Toolkit,
   Hosting.UI and RuntimeTests.Core — no Authentication or Storage code — and **every** CI lane
   passes `Build_Windows=false` (`stage-build-runtimetests-*.yml`, `stage-runtime-tests-desktop.yml`),
@@ -124,7 +124,7 @@ would have exercised exactly the round-trip that changed). It does not build:
   own `App.xaml.cs:1` opens with `using Uno.Extensions.Navigation.UI.Tests;`, so it hard-depends on
   the project that cannot compile.
 
-Worth its own issue: fixing XAML codegen for the WinAppSDK TFM would unlock a runtime-test lane for
+Worth its own issue: fixing XAML code generation for the WinAppSDK TFM would unlock a runtime-test lane for
 the one platform whose *default* store is the encrypted one — currently the least-covered store in
 the repo despite being the most security-relevant.
 
@@ -150,7 +150,7 @@ The sibling of the logout defect — `AuthenticationServiceExtensions.LoginAsync
 provider, ct)` passes `dispatcher: default`, so `MsalAuthenticationProvider.InternalLoginAsync`
 throws `ArgumentNullException` and that public overload can never work with MSAL.
 
-Analysed and **deliberately left as-is for now** (documented instead, 2026-08-20):
+Analyzed and **deliberately left as-is for now** (documented instead, 2026-08-20):
 
 - The guard is genuinely too strict, not merely correct-but-unfriendly. The dispatcher is used
   *only* by the interactive leg: `AcquireTokenAsync` (`:541`) calls `AcquireSilentTokenAsync`, which
@@ -163,7 +163,7 @@ Analysed and **deliberately left as-is for now** (documented instead, 2026-08-20
   login does need one for `AcquireTokenInteractive`, so the guard has to move to
   `AcquireInteractiveTokenAsync` rather than disappear — with a message that says interactive
   sign-in is what requires it.
-- Why not now: it changes public behaviour of a published package (`LoginAsync(ct)` starts
+- Why not now: it changes public behavior of a published package (`LoginAsync(ct)` starts
   succeeding where it always threw) and the honest red/green test is "silent login succeeds with no
   dispatcher", which needs a cached account and a working silent path — the same harness territory
   where the shared on-disk MSAL cache already defeated one attempt (see the empty-token finding in
@@ -182,7 +182,7 @@ corrupt it and the `providers.First()` fallback cannot observe a half-written di
 `Providers` deliberately still reports empty until something else has built them — it checks
 `IsValueCreated` rather than forcing the build, because building constructs real clients (MSAL builds
 an `IPublicClientApplication`) and `TestHarness` view models bind to that property during page
-construction. Making it build on read would be a separate, deliberate behaviour change.
+construction. Making it build on read would be a separate, deliberate behavior change.
 
 `_SSKVS` is still unpinned — it lives in `Storage.UI`, which has no test project (see the
 namespace-parity item below). The `ITokenCache.Cleared` handler remains fire-and-forget, so a stale
@@ -199,13 +199,13 @@ practice* on unpackaged Windows, where `ApplicationDataKeyValueStorage:60` persi
 `"System.Byte[]"`; `MsalCache_` and `_SSKVS` are not pinned by any package-CI test; redundant blob
 deserialize on every MSAL access plus a base64→JSON double-encode (~5-6x transient peak, irreversible
 on WASM); the logout loop re-serializes per account and deletes the key twice; the
-the `LoginAsync(credentials, provider, ct)` overload throwing with MSAL (analysed and documented
+the `LoginAsync(credentials, provider, ct)` overload throwing with MSAL (analyzed and documented
 above rather than fixed); linked-source test project papering over a
 missing MSAL core/UI split; no `Storage.UI.Tests` project for storage-owned behavior.
 
 Low/info: cross-app token pickup on a shared origin; sign-out does not clear the IdP session cookie
 (now documented); unreachable `DefaultKeySuffix`; `UNO_EXT_MSAL_NOSTORAGE` now names the opposite of
-what it does; `IEnumerable<IAccount>` enumerated while `RemoveAsync` mutates; unawaited clear can
+what it does; `IEnumerable<IAccount>` enumerated while `RemoveAsync` mutates; clear that is never awaited can
 delete a fresh blob; CI lane hygiene (iOS liveness check, unpinned `playwright install`).
 
 ---
@@ -366,7 +366,7 @@ resolves the default `IKeyValueStorage`, round-trips one key and logs the result
 | `LocalStorage` | `ApplicationDataKeyValueStorage` | `localStorage["UnoApplicationDataContainer_Local_Probe011_ADCSSS"]` present, `sessionStorage` empty |
 | `MemoryStorage` | `InMemoryKeyValueStorage` | both empty — nothing reaches browser storage |
 
-And the lifecycle behaviour the feature exists for, same tab vs. new browsing session:
+And the lifecycle behavior the feature exists for, same tab vs. new browsing session:
 
 1. first load → `value already stored: <none>`, key written
 2. **reload → `value already stored: written by ProbeTokenCacheStorage`** — survives a page reload
@@ -389,7 +389,7 @@ redacted from git) and a human click, because the sample renders through SkiaRen
 `"Application configured to start runtime-tests (Config=Given_BrowserTokenCacheStorage)"` and then
 dies in the engine before the first test:
 
-```
+```text
 System.PlatformNotSupportedException: Operation is not supported on this platform.
    at System.Runtime.InteropServices.PosixSignalRegistration.Register(...)
    at System.Console.add_CancelKeyPress(...)
@@ -429,7 +429,7 @@ Consequences worth knowing:
 
 - **The cross-assembly string contract is gone.** Storage.UI now parses its own enum with
   `Enum.TryParse<BrowserCacheLocation>(..., ignoreCase: true)`, so a rename is a compile error rather
-  than a silent behaviour change. `Given_BrowserCacheLocation` — which existed only to assert the
+  than a silent behavior change. `Given_BrowserCacheLocation` — which existed only to assert the
   enum's member names still matched the literals Storage.UI compared against — was deleted, since the
   coupling it guarded no longer exists. Coverage did not shrink: `Given_BrowserTokenCacheStorage`
   asserts the same mapping end to end on a real host, typed.
@@ -472,7 +472,7 @@ here — it would undo item 1's landed naming decision, whose msal-browser carry
 
   **Deliberately not `#if`-gated to browser-wasm.** Off the browser nothing ever writes that key, so
   the clear is a no-op there rather than a special case — one less conditional, and it makes the
-  behaviour testable on the only runtime-test lane that actually runs (see below).
+  behavior testable on the only runtime-test lane that actually runs (see below).
 
   The `Cleared` handler is fire-and-forget off a synchronous event; `ClearTokenCacheStoreAsync` owns
   the try/catch so nothing escapes (AGENTS.md §10), and it is never unsubscribed because the
@@ -486,7 +486,7 @@ here — it would undo item 1's landed naming decision, whose msal-browser carry
   them. Note `PasswordVaultKeyValueStorage` is behind `#if !WINUI && (...)` and so is not compiled
   in this repo at all today — corrected for consistency rather than effect.
 
-  Specced as a separate PR; kept as its own commit so it can still be split out.
+  Scoped as a separate PR; kept as its own commit so it can still be split out.
 
 ### Tests added, and why they run everywhere
 
@@ -496,7 +496,7 @@ here — it would undo item 1's landed naming decision, whose msal-browser carry
 | `When_TokenCacheCleared_Then_SerializedMsalCacheRemoved` | the `ITokenCache.Cleared` path does too |
 
 Both seed the entry through the host's default `IKeyValueStorage` rather than by signing in on a
-browser, which is what lets them assert the security-relevant behaviour — *refresh-token material
+browser, which is what lets them assert the security-relevant behavior — *refresh-token material
 does not outlive a sign-out* — on the Skia desktop lane. Verified red first (both reported
 `found True`, i.e. the entry survived) with the provider change stashed, then green.
 
@@ -504,7 +504,7 @@ does not outlive a sign-out* — on the Skia desktop lane. Verified red first (b
 accounts in MSAL's cache, and the provider's own login path cannot produce them — `AcquireTokenAsync`
 tries silent first, which succeeds for the existing account, so a second interactive sign-in never
 happens. Forcing silent to fail lands in the same non-determinism as the empty-token finding in
-`specs/009-msal-auth-fixes/progress.md`. The loop is a strictly smaller behaviour than
+`specs/009-msal-auth-fixes/progress.md`. The loop is a strictly smaller behavior than
 `FirstOrDefault()` (it removes a superset), so it cannot regress the single-account case the suite
 does cover.
 

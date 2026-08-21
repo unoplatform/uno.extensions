@@ -10,7 +10,7 @@ uid: Uno.Extensions.Authentication.HowToMsalAuthentication
 ## Platform support
 
 | Target | Interactive sign-in | Token cache persistence |
-|---|---|---|
+| --- | --- | --- |
 | Windows (WinAppSdk) | ✅ WAM broker (requires a `Window` — see below) | ✅ Encrypted file (DPAPI) |
 | Desktop (Skia) — Windows | ✅ System browser | ✅ Encrypted file (DPAPI) |
 | Desktop (Skia) — macOS | ✅ System browser | ✅ Keychain |

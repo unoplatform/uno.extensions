@@ -36,7 +36,7 @@ For more information about `UnoFeatures` refer to our [Using the Uno.Sdk](xref:U
 `UseStorage()` registers a default `IKeyValueStorage` per platform. Everything built on top of it — most visibly the authentication token cache — writes through this default:
 
 | Platform | Default store |
-|---|---|
+| --- | --- |
 | Windows (WinAppSDK) | `ApplicationData` settings, DPAPI-encrypted |
 | Android | `KeyStore` |
 | iOS | Keychain |
