@@ -43,16 +43,25 @@ internal sealed class StubWebAuthenticationBroker : IWebAuthenticationBrokerProv
 		?? throw new InvalidOperationException("No token has been issued yet.");
 
 	/// <summary>
-	/// Registers the stub with <see cref="ApiExtensibility"/>. Must run before anything touches
-	/// <see cref="WebAuthenticationBroker"/>'s static constructor, which resolves and caches the
-	/// provider exactly once - the harness calls this at creation, before any broker use.
-	/// Registration is idempotent and first-wins, so repeated calls are no-ops and the product's
-	/// own (runtime-gated) desktop registration is displaced in this process.
+	/// Registers the stub with <see cref="ApiExtensibility"/>. Registration is first-wins, so this
+	/// must beat the product's own registration - which <c>AddOidc</c>/<c>AddWeb</c> perform while
+	/// building a host, i.e. potentially during <em>another suite's</em> tests (the OIDC suite runs
+	/// before this one and registered the real desktop broker, which made every Web test drive a
+	/// real loopback listener and time out). Hence the module initializer below: it runs when the
+	/// test assembly loads, before any suite executes. The harness still calls this per-test as a
+	/// no-op belt-and-braces.
 	/// </summary>
 	public static void EnsureRegistered() =>
 		ApiExtensibility.Register(
 			typeof(IWebAuthenticationBrokerProvider),
 			_ => Instance);
+
+#pragma warning disable CA2255 // ModuleInitializer in a library: deliberate - this test library must
+	// pre-empt the product's first-wins ApiExtensibility registration, which another test suite can
+	// trigger before any code in this assembly's test classes runs. See EnsureRegistered's remarks.
+	[System.Runtime.CompilerServices.ModuleInitializer]
+	internal static void RegisterAtLoad() => EnsureRegistered();
+#pragma warning restore CA2255
 
 	public void Reset()
 	{
