@@ -72,7 +72,15 @@ internal record OidcAuthenticationProvider(
 			return true;
 		}
 
-		await _client.LogoutAsync();
+		var result = await _client.LogoutAsync(cancellationToken: cancellationToken);
+		if (result.IsError)
+		{
+			// Reporting failure keeps the local token cache intact - the user backed out of (or the
+			// IdP failed) the end-session flow, so they are still signed in.
+			ProviderLogger.LogError("Error logging out: {Error} - {ErrorDescription}", result.Error, result.ErrorDescription);
+			return false;
+		}
+
 		return true;
 	}
 
