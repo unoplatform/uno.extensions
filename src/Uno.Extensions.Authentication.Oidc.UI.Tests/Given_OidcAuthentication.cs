@@ -152,4 +152,57 @@ public class Given_OidcAuthentication
 			TokenCacheExtensions.AccessTokenKey,
 			"a failed refresh must not leave a dead access token behind");
 	}
+
+	[TestMethod]
+	public async Task When_Logout_Then_TokensCleared()
+	{
+		using var harness = await CreateHarnessAsync();
+		using var cts = Cts();
+
+		await harness.Authentication.LoginAsync(default, cancellationToken: cts.Token);
+
+		var loggedOut = await harness.Authentication.LogoutAsync(default, cts.Token);
+
+		loggedOut.Should().BeTrue();
+		(await harness.Authentication.IsAuthenticated(cts.Token)).Should().BeFalse();
+	}
+
+	/// <summary>
+	/// Red test for spec 012 F2: the provider used to ignore <c>LogoutResult.IsError</c> and return
+	/// true unconditionally, so a cancelled end-session flow still flushed the local token cache and
+	/// reported the sign-out as successful.
+	/// </summary>
+	[TestMethod]
+	public async Task When_LogoutCancelled_Then_StillAuthenticated()
+	{
+		using var harness = await CreateHarnessAsync();
+		using var cts = Cts();
+
+		await harness.Authentication.LoginAsync(default, cancellationToken: cts.Token);
+		harness.Browser.NextResultType = Duende.IdentityModel.OidcClient.Browser.BrowserResultType.UserCancel;
+
+		var loggedOut = await harness.Authentication.LogoutAsync(default, cts.Token);
+
+		loggedOut.Should().BeFalse("a cancelled sign-out must not report success");
+		(await harness.Authentication.IsAuthenticated(cts.Token)).Should().BeTrue(
+			"tokens must survive a sign-out the user backed out of");
+	}
+
+	/// <summary>
+	/// Red test for spec 012 F3: <see cref="WebAuthenticatorBrowser"/> used to swallow
+	/// <see cref="OperationCanceledException"/> into <c>BrowserResultType.UnknownError</c>, so a
+	/// caller-cancelled sign-in surfaced as "login failed" instead of propagating cancellation.
+	/// </summary>
+	[TestMethod]
+	public async Task When_BrowserInvokeCancelled_Then_CancellationPropagates()
+	{
+		var browser = new WebAuthenticatorBrowser();
+		using var cts = new CancellationTokenSource();
+		cts.Cancel();
+
+		var options = new BrowserOptions("https://stub-idp.example/connect/authorize", "oidc-tests://callback");
+		Func<Task> act = () => browser.InvokeAsync(options, cts.Token);
+
+		await act.Should().ThrowAsync<OperationCanceledException>();
+	}
 }

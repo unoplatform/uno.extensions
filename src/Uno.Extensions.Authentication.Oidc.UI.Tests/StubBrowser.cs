@@ -22,10 +22,26 @@ internal sealed class StubBrowser : IBrowser
 	/// <summary>Whether the interactive surface was reached at all.</summary>
 	public bool WasInvoked { get; private set; }
 
+	/// <summary>
+	/// When set, the next invocation reports this result type (e.g. <see cref="BrowserResultType.UserCancel"/>)
+	/// instead of completing the flow, then resets.
+	/// </summary>
+	public BrowserResultType? NextResultType { get; set; }
+
 	public Task<BrowserResult> InvokeAsync(BrowserOptions options, CancellationToken cancellationToken = default)
 	{
 		WasInvoked = true;
 		cancellationToken.ThrowIfCancellationRequested();
+
+		if (NextResultType is { } resultType && resultType != BrowserResultType.Success)
+		{
+			NextResultType = null;
+			return Task.FromResult(new BrowserResult
+			{
+				ResultType = resultType,
+				Error = "stub-configured failure",
+			});
+		}
 
 		var startUri = new Uri(options.StartUrl);
 		var state = GetQueryValue(startUri.Query, "state");
