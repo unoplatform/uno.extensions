@@ -697,3 +697,59 @@ desktop, WebAssembly (8 storage tests), Android (23) and iOS (23).
 Worth noting for whoever owns the sample heads: the same `Private=false` rule applied to every
 Android app head in this repo, so `samples/Playground` and `testing/TestHarness` were packaging
 APKs without their project closure too. Neither is built for Android in CI, so nothing caught it.
+
+## Eleventh pass — Uno.Sdk bumped so the packages require the Uno that has the fix (2026-08-21)
+
+Interactive MSAL sign-in on Skia Android/iOS/WebAssembly needs
+[unoplatform/uno#24055](https://github.com/unoplatform/uno/pull/24055), which fixes
+`RuntimeAssetsSelectorTask` replacing `Uno.UI.MSAL.dll` with its no-op Skia flavor and thereby making
+`WithUnoHelpers()` do nothing. That is an app-build-time task shipped in **`Uno.WinUI`**, and these
+packages already depend on `Uno.WinUI` - so raising `$(UnoVersion)` is enough to express the
+requirement, and `global.json` is the only place it has to change:
+
+| | before | after |
+| --- | --- | --- |
+| `Uno.Sdk` | 6.0.67 (UnoVersion 6.0.465) | **6.8.0-dev.21** (UnoVersion 6.8.0-dev.46) |
+| `Uno.Sdk.Private` | 6.7.0-dev.938 | **6.8.0-dev.51** |
+
+Both move together; leaving the private one behind puts the heads on a lower `Uno.WinUI` than the
+libraries they reference. Confirmed against the shipped binaries that Uno.WinUI 6.8.0-dev.46 contains
+the fix (the `uno.ui.msal` allowlist entry in `Uno.UI.Tasks`), and confirmed on the packed nuspec that
+the floor now reads `Uno.WinUI 6.8.0-dev.46`. Consumers below it get an NU1605 package-downgrade
+error instead of a silent no-op - the docs prerequisite was corrected accordingly, since it had said
+no package reference expressed the requirement.
+
+Note `dotnet build` cannot build this repo's XAML-bearing WinUI libraries at all (UNOB0008, true on
+6.0.67 as well) - use `msbuild`. Two real breaks came out of the bump.
+
+### Mac Catalyst dropped from Uno.Extensions.Navigation.Toolkit
+
+`Controls/ModalFlyout.xaml` uses `utu:NativeFramePresenter` inside an `<ios:ControlTemplate>`, and
+Uno's `ios` conditional XAML namespace also matches Mac Catalyst. `NativeFramePresenter` is
+platform-specific, and **Uno.Toolkit stopped shipping a maccatalyst assembly at 8.5.0-dev.29** - still
+true in stable 9.0.3 / 9.1.2 / 9.1.3, and 9.2.0-dev.18 ships only net9.0, android, ios and windows. So
+catalyst resolved the plain `net9.0` Toolkit flavor, which lacks the type: one `UXAML0001` plus five
+cascading generator errors, all on `net9.0-maccatalyst`. Not avoidable by choosing a different
+6.8.0-dev - any Sdk carrying Toolkit >= 8.5 has it.
+
+Fixed by setting `Build_MacCatalyst=false` in that one csproj, before the TFM props import. **This drops a
+published TFM** and belongs in the PR description: catalyst consumers now resolve the package's
+`net9.0` TFM, where the `not_mobile` template applies - the same presentation the desktop template
+already gave them. Scope was a single source file; `utu:TabBar` / `utu:TabBarItem` live in the
+cross-platform flavor and were unaffected.
+
+### IL2026 in Reactive.UI on WebAssembly
+
+`Utils/ButtonExtensions.cs` registers an attached DP of type `Exception`. On browserwasm - the only
+TFM where the trim analyzer runs - `RegisterAttached`'s `propertyType` is treated as reflected-over,
+which reaches `Exception.TargetSite`, whose getter is `[RequiresUnreferencedCode]` as of .NET 9.
+Suppressed at the field with a justification: the property only stores and returns the instance a
+command surfaced, so the metadata the trimmer may drop is never read.
+
+### Verification
+
+- `msbuild Uno.Extensions-packageonly.slnf -c Release`: **0 errors** (7 before the two fixes, in 2
+  project/TFM combos, nothing masked behind them).
+- `dotnet test Uno.Extensions-packageonly.slnf -c Release --no-build --filter "FullyQualifiedName!~UI.Tests"`:
+  **1562 passed, 0 failed, 19 skipped** across 6 projects.
+- Packed nuspec floors: `Uno.WinUI` / `Uno.WinUI.MSAL` 6.8.0-dev.46, `Microsoft.Identity.Client` 4.87.0.

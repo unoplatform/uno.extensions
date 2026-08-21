@@ -169,3 +169,22 @@ which exists so our ~50 libraries don't each duplicate the closure into their ow
 **Correct pattern:** when a test runs on every head, assert the part of the contract every implementation agrees on, and read the interface's XML docs before asserting a behavior you observed. Here `GetKeysAsync().Should().NotContain(key)` is the platform-stable "it is gone" check, and it is also what `TokenCache.HasTokenAsync` actually relies on. Where implementations genuinely disagree, that is a product finding to record, not a detail for a test to quietly pick a winner for.
 
 **Apply to:** any `*.UI.Tests` / RuntimeTests case, since those run on desktop, iOS, Android and WebAssembly from one source file. Also treat "documented to throw, one implementation returns default" as its own bug: the divergence in `ApplicationDataKeyValueStorage` is deliberately left alone here because making the default Windows/desktop/browser store start throwing is a public-surface behavior change that needs its own PR, not a drive-by fix inside a storage-selection change.
+
+## `OutputType` is not the only property a platform rewrites - check what an SDK bump drags with it
+
+**Problem:** bumping `Uno.Sdk` 6.0.67 -> 6.8.0-dev.21 to pick up an `Uno.WinUI` fix also moved
+`Uno.Toolkit.WinUI` 7.0.2 -> 9.2.0-dev.18, because the Sdk pins that too. Toolkit had dropped its Mac
+Catalyst assembly at 8.5.0-dev.29, so `utu:NativeFramePresenter` - used inside an `<ios:ControlTemplate>`,
+and Uno's `ios` conditional XAML namespace also matches catalyst - no longer existed for that TFM. One
+`UXAML0001` plus five cascading generator errors, none of them in code anyone had touched.
+
+**Correct pattern:** an SDK version is a bundle, not a single package. Before a bump, list what the
+Sdk pins (`targets/netstandard2.0/packages.json` in the Uno.Sdk package: `Core`, `Extensions`,
+`UnoToolkit`, `MsalClient`, ...) and diff the groups, not just the one you came for. Verify the claim
+you are relying on against the *shipped binary* rather than a branch name or release note - here, a
+UTF-16 search for the allowlist string in `Uno.UI.Tasks.dll` across cached versions established the
+exact floor, and disproved a "leading suspect" that had already been written down twice.
+
+**Apply to:** any `global.json` SDK bump in this repo. Also note `dotnet build` cannot build the
+XAML-bearing WinUI libraries here at all - it fails UNOB0008 on the current SDK too - so a bump has to
+be validated with `msbuild`, or the first error tells you nothing about the bump.
