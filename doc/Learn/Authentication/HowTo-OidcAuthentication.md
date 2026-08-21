@@ -181,3 +181,10 @@ Under the hood, `OidcAuthenticationProvider` relies on [Duende.IdentityModel.Oid
     })
 
   ```
+
+## Platform support
+
+`OidcAuthenticationProvider` drives its interactive flow through the same platform surfaces as the Web provider — see [Web Authentication: Platform support](xref:Uno.Extensions.Authentication.HowToWebAuthentication#platform-support) for the full matrix, including:
+
+- **Skia Desktop (Windows, macOS, Linux)**: `AddOidc()` automatically registers a loopback broker (system browser + `localhost` listener). Register a loopback HTTP redirect URI (e.g. `http://localhost:5001/authentication-callback`) with your identity provider, or rely on the default first-use port if your provider allows variable-port loopback redirects.
+- **Windows (WinAppSDK)**: packaged apps only — the OAuth redirect scheme must be declared as a Protocol in `Package.appxmanifest`.
