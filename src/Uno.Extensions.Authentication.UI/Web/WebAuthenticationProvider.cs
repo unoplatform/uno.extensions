@@ -82,9 +82,7 @@ internal record WebAuthenticationProvider
 			return default;
 		}
 
-#if __IOS__
-		WinRTFeatureConfiguration.WebAuthenticationBroker.PrefersEphemeralWebBrowserSession = InternalSettings.PrefersEphemeralWebBrowserSession;
-#endif
+		ApplyPrefersEphemeralWebBrowserSession();
 
 #if WINDOWS
 		var userResult = await WinUIEx.WebAuthenticator.AuthenticateAsync(new Uri(loginStartUri), new Uri(loginCallbackUri), cancellationToken);
@@ -131,6 +129,42 @@ internal record WebAuthenticationProvider
 		}
 
 		return await PostLogin(credentials, authData, tokens, cancellationToken);
+	}
+
+	/// <summary>
+	/// Applies <see cref="WebAuthenticationSettings.PrefersEphemeralWebBrowserSession"/> to Uno's
+	/// broker configuration - a setting that only exists on Apple targets.
+	/// </summary>
+	/// <remarks>
+	/// Spec 012 F7. On Skia iOS heads, Uno's runtime-asset selector substitutes this assembly's
+	/// plain-TFM build (spec 010's mechanism) while the WinRT layer stays native - so
+	/// <c>WinRTFeatureConfiguration.WebAuthenticationBroker.PrefersEphemeralWebBrowserSession</c>
+	/// exists in the loaded Uno.dll but not on the plain reference surface this build compiles
+	/// against. Runtime dispatch therefore has to go through reflection on that branch; the
+	/// property is public, stable API. Not exercisable by this repo's CI lanes (project references
+	/// are never substituted) - see the spec's exceptions note.
+	/// </remarks>
+	private void ApplyPrefersEphemeralWebBrowserSession()
+	{
+#if __IOS__
+		WinRTFeatureConfiguration.WebAuthenticationBroker.PrefersEphemeralWebBrowserSession = InternalSettings.PrefersEphemeralWebBrowserSession;
+#elif !WINDOWS
+		if (OperatingSystem.IsIOS() && !OperatingSystem.IsMacCatalyst())
+		{
+			var property = Type.GetType("Uno.WinRTFeatureConfiguration+WebAuthenticationBroker, Uno")
+				?.GetProperty("PrefersEphemeralWebBrowserSession");
+			if (property is null)
+			{
+				if (ProviderLogger.IsEnabled(LogLevel.Debug))
+				{
+					ProviderLogger.LogDebug("PrefersEphemeralWebBrowserSession is not available on the loaded Uno runtime; the setting is ignored");
+				}
+				return;
+			}
+
+			property.SetValue(null, InternalSettings.PrefersEphemeralWebBrowserSession);
+		}
+#endif
 	}
 
 	protected async virtual Task<string?> PrepareLoginStartUri(IDictionary<string, string>? credentials, string? loginStartUri, CancellationToken cancellationToken)
