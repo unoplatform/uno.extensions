@@ -84,26 +84,24 @@ internal record OidcAuthenticationProvider(
 			return default;
 		}
 
-		var result = await _client.RefreshTokenAsync(token);
-		var accessToken = result.AccessToken;
-		var refreshToken = result.RefreshToken;
-		var idToken = result.IdentityToken;
-
-		if (token is not null)
+		var result = await _client.RefreshTokenAsync(token, cancellationToken: cancellationToken);
+		if (result.IsError || string.IsNullOrWhiteSpace(result.AccessToken))
 		{
-			var creds = new Dictionary<string, string> { { TokenCacheExtensions.AccessTokenKey, accessToken } };
-			if (refreshToken is not null)
-			{
-				creds[TokenCacheExtensions.RefreshTokenKey] = refreshToken;
-			}
-
-			if (idToken is not null)
-			{
-				creds[TokenCacheExtensions.IdTokenKey] = idToken;
-			}
-
-			return creds;
+			ProviderLogger.LogError("Error refreshing tokens: {Error} - {ErrorDescription}", result.Error, result.ErrorDescription);
+			return default;
 		}
-		return default;
+
+		var creds = new Dictionary<string, string> { { TokenCacheExtensions.AccessTokenKey, result.AccessToken } };
+		if (result.RefreshToken is not null)
+		{
+			creds[TokenCacheExtensions.RefreshTokenKey] = result.RefreshToken;
+		}
+
+		if (result.IdentityToken is not null)
+		{
+			creds[TokenCacheExtensions.IdTokenKey] = result.IdentityToken;
+		}
+
+		return creds;
 	}
 }
