@@ -8,8 +8,8 @@ committed alongside.
 
 - [x] 1. Scaffold `Uno.Extensions.Authentication.Oidc.UI.Tests` (StubOidcServer, StubBrowser, harness) + wire into RuntimeTests head (not the slnf — MSAL.UI.Tests is not listed there either; the head’s ProjectReference is what CI builds)
 - [x] 2. F1 red/fix/green: refresh must fail when the token endpoint errors; plumb ct into `RefreshTokenAsync`
-- [ ] 3. F2 red/fix/green: logout honors `LogoutResult.IsError` and the cancellation token
-- [ ] 4. F3 red/fix/green: `WebAuthenticatorBrowser` propagates cancellation; dispose CTSes
+- [x] 3. F2 red/fix/green: logout honors `LogoutResult.IsError` and the cancellation token
+- [x] 4. F3 red/fix/green: `WebAuthenticatorBrowser` propagates cancellation; dispose CTSes
 
 ## Web
 
@@ -38,3 +38,4 @@ committed alongside.
 
 (append per-item verification notes here)
 - 2026-08-21, items 1+2: desktop head (net9.0-desktop, Windows) — red run: `When_RefreshRejected_Then_NotAuthenticated` failed with "Expected refreshed to be false ... but found True" while both happy-path tests passed; after the fix: 3/3 passed. Harness note: `ProviderInformation.Validate()` requires a `KeySet` even with signature validation opted out — empty `JsonWebKeySet` satisfies it.
+- 2026-08-21, items 3+4: desktop head — red run: `When_LogoutCancelled_Then_StillAuthenticated` and `When_BrowserInvokeCancelled_Then_CancellationPropagates` failed while the 4 existing tests passed; after the fixes: 6/6 passed. F3's runtime-test covers the pre-launch cancellation check; the mid-flight broker path gets covered once item 5's stub broker exists.
