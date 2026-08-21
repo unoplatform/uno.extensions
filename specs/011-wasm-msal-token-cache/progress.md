@@ -96,10 +96,37 @@ desktop suite against the pre-branch baseline.
   **packaged** caches are not orphaned, and treats an undecodable string as absent rather than
   throwing on every read.
 
-  Pre-existing, but item 6's `IsEncrypted` flip made the claim actively wrong there. **Not covered
-  by an automated test:** the type is `#if WINDOWS`-only, so it does not compile on the
-  `net9.0-desktop` runtime-test lane, and there is no WinAppSDK lane. Verifying it needs a packaged
-  *and* an unpackaged WinAppSDK run.
+  Pre-existing, but item 6's `IsEncrypted` flip made the claim actively wrong there.
+
+  **Scoped to the broken path after an attempt to verify it failed** (see below): the packaged path
+  still persists the raw `byte[]`, unchanged — it works, `ApplicationData` settings hold it
+  natively, it is what every existing install contains, and it is the default store on Windows. Only
+  the unpackaged path switched to base64, and that path provably stored `"System.Byte[]"` garbage
+  before, so there is no working data there to regress. `GetTypedValue` accepts both regardless of
+  which path is active, so a value written before this change still reads back.
+  `ApplicationDataKeyValueStorage.UseApplicationData` became `protected` so a derived store can tell
+  which backend its `GetObjectValue` return value will cross.
+
+### Attempted and abandoned: running the WinAppSDK runtime-test lane
+
+To get real execution coverage for the DPAPI change, the runtime-test head was built for
+`net9.0-windows10.0.19041` (it does target that TFM, and on Windows the default store is the
+encrypted one, so `Given_BrowserTokenCacheStorage.When_Value_Written_Then_Round_Trips_Through_Default_Storage`
+would have exercised exactly the round-trip that changed). It does not build:
+
+- `Uno.Extensions.Navigation.UI.Tests` fails that TFM with `InitializeComponent` /
+  `_contentGrid` not found across its XAML pages — the WinUI XAML codegen does not run there.
+- Not caused by this branch: that project references only Navigation.UI, Navigation.Toolkit,
+  Hosting.UI and RuntimeTests.Core — no Authentication or Storage code — and **every** CI lane
+  passes `Build_Windows=false` (`stage-build-runtimetests-*.yml`, `stage-runtime-tests-desktop.yml`),
+  so that TFM has never been built by anyone and nobody has noticed.
+- Substituting the product Navigation projects for the test project does not work either: the head's
+  own `App.xaml.cs:1` opens with `using Uno.Extensions.Navigation.UI.Tests;`, so it hard-depends on
+  the project that cannot compile.
+
+Worth its own issue: fixing XAML codegen for the WinAppSDK TFM would unlock a runtime-test lane for
+the one platform whose *default* store is the encrypted one — currently the least-covered store in
+the repo despite being the most security-relevant.
 
 - **Concurrent resolves can no longer double-build a provider.**
   `ProviderFactory.AuthenticationProvider` was a bare `configuredProvider ??= ConfigureProvider(...)`.
@@ -148,10 +175,14 @@ Documented meanwhile: `<remarks>` on the extension overload naming the exception
 
 ### Still open after this pass
 
-`AuthenticationService._providers` is a plain `Dictionary` mutated from `BuildProviders()` without
-synchronization; the `Lazy` above removes the double-*build* consequence but concurrent
-`AuthenticationProvider(...)` calls still race on the dictionary itself. Fixing that means making
-`AuthenticationService` thread-safe, which is broader than this pass.
+~~`AuthenticationService._providers` is a plain `Dictionary` mutated from `BuildProviders()` without
+synchronization~~ — **fixed in the seventh pass:** it is now a `Lazy<IDictionary<…>>` built once with
+`ExecutionAndPublication` and never mutated, so concurrent `AuthenticationProvider(...)` calls cannot
+corrupt it and the `providers.First()` fallback cannot observe a half-written dictionary.
+`Providers` deliberately still reports empty until something else has built them — it checks
+`IsValueCreated` rather than forcing the build, because building constructs real clients (MSAL builds
+an `IPublicClientApplication`) and `TestHarness` view models bind to that property during page
+construction. Making it build on read would be a separate, deliberate behaviour change.
 
 `_SSKVS` is still unpinned — it lives in `Storage.UI`, which has no test project (see the
 namespace-parity item below). The `ITokenCache.Cleared` handler remains fire-and-forget, so a stale
