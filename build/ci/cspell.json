@@ -1,4 +1,4 @@
-﻿{
+{
 	"version": "0.2",
 	"language": "en",
 	"words": [
@@ -93,6 +93,7 @@
 		"UI's",
 		"unmanaged",
 		"Uno's",
+		"UXAML",
 		"unoplatform",
 		"UWP's",
 		"VSIX",

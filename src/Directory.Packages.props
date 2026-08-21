@@ -1,5 +1,15 @@
-<Project ToolsVersion="15.0">
+﻿<Project ToolsVersion="15.0">
   <PropertyGroup>
+    <!--
+      Uno.Sdk 6.8.0-dev.* supplies Uno.Toolkit.WinUI 9.2.0-dev.18, whose iOS assembly is built
+      against Microsoft.iOS 26 while the .NET 9 iOS workload used here references 18.2. Building
+      Uno.Extensions.Reactive.UI.Markup for net9.0-ios against it fails CS1705 (build 229332).
+      Note the package folder is named net9.0-ios18.0, so the TFM name is not a safe signal - the
+      assembly reference is. 8.4.2 is the latest stable whose iOS flavor references 18.2, it keeps
+      the Mac Catalyst flavor that Controls/ModalFlyout.xaml needs, and it matches the pin
+      samples/Directory.Packages.props already carries. Remove once this repo targets net10/iOS 26.
+    -->
+    <UnoToolkitVersion>8.4.2</UnoToolkitVersion>
   </PropertyGroup>
   <ItemGroup>
     <PackageVersion Include="Microsoft.CodeAnalysis.BannedApiAnalyzers" Version="3.3.4" />

@@ -36,21 +36,6 @@ appears at all.
 `Microsoft.Identity.Client` also moves from 4.72.1 to 4.87.0. If your app pins that package
 explicitly, raise your pin to 4.87.0 or remove it and let the Uno SDK supply it.
 
-### Breaking: Uno.Extensions.Navigation.Toolkit.WinUI no longer targets Mac Catalyst
-
-`Uno.Extensions.Navigation.Toolkit.WinUI` no longer publishes a `net9.0-maccatalyst` target framework.
-Uno.Toolkit stopped shipping a Mac Catalyst assembly, so the `NativeFramePresenter` that this package's
-`ModalFlyout` uses for its mobile frame template no longer exists on that platform.
-
-**No change is required in your app.** A Mac Catalyst head resolves the package's `net9.0` target
-framework instead, where `ModalFlyout` uses the non-mobile frame template — the same presentation a
-desktop head already gets. Navigation behaviour, routes and regions are unaffected.
-
-You only need to act if your own code took a **direct dependency on the Mac Catalyst flavor** of this
-package — for example a `net9.0-maccatalyst`-conditioned `PackageReference`, or code under a
-`#if MACCATALYST` block that referenced types from it. Remove the platform condition and let the
-`net9.0` assembly apply.
-
 ## Upgrading to Extensions 7.0
 
 ### OidcClient Authentication

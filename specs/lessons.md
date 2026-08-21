@@ -170,21 +170,28 @@ which exists so our ~50 libraries don't each duplicate the closure into their ow
 
 **Apply to:** any `*.UI.Tests` / RuntimeTests case, since those run on desktop, iOS, Android and WebAssembly from one source file. Also treat "documented to throw, one implementation returns default" as its own bug: the divergence in `ApplicationDataKeyValueStorage` is deliberately left alone here because making the default Windows/desktop/browser store start throwing is a public-surface behavior change that needs its own PR, not a drive-by fix inside a storage-selection change.
 
-## `OutputType` is not the only property a platform rewrites - check what an SDK bump drags with it
+## A package's TFM folder name is not evidence of what its assembly references
 
-**Problem:** bumping `Uno.Sdk` 6.0.67 -> 6.8.0-dev.21 to pick up an `Uno.WinUI` fix also moved
-`Uno.Toolkit.WinUI` 7.0.2 -> 9.2.0-dev.18, because the Sdk pins that too. Toolkit had dropped its Mac
-Catalyst assembly at 8.5.0-dev.29, so `utu:NativeFramePresenter` - used inside an `<ios:ControlTemplate>`,
-and Uno's `ios` conditional XAML namespace also matches catalyst - no longer existed for that TFM. One
-`UXAML0001` plus five cascading generator errors, none of them in code anyone had touched.
+**Problem:** bumping `Uno.Sdk` 6.0.67 -> 6.8.0-dev.21 for an `Uno.WinUI` fix also moved
+`Uno.Toolkit.WinUI` 7.0.2 -> 9.2.0-dev.18, because the Sdk pins that too. `samples/Directory.Packages.props`
+already pinned the toolkit to 8.4.2 with a comment saying newer builds are compiled against
+Microsoft.iOS 26 while the .NET 9 iOS workload here references 18.2 (CS1705). I checked that Toolkit
+9.2.0-dev.18 ships a folder named `lib/net9.0-ios18.0`, concluded the pin was stale, removed it - and
+wrote that conclusion into the props file as justification. CI then failed the Packages job with
+exactly the CS1705 the comment predicted: the folder name is the TFM the package *declares*, while the
+assembly inside references `Microsoft.iOS 26.0.0.0`.
 
-**Correct pattern:** an SDK version is a bundle, not a single package. Before a bump, list what the
-Sdk pins (`targets/netstandard2.0/packages.json` in the Uno.Sdk package: `Core`, `Extensions`,
-`UnoToolkit`, `MsalClient`, ...) and diff the groups, not just the one you came for. Verify the claim
-you are relying on against the *shipped binary* rather than a branch name or release note - here, a
-UTF-16 search for the allowlist string in `Uno.UI.Tasks.dll` across cached versions established the
-exact floor, and disproved a "leading suspect" that had already been written down twice.
+**Correct pattern:** to test "is this pin still needed", read the assembly's references, not the lib
+folder name. And treat an existing pin's comment as a claim to *disprove with the same evidence it
+cites* - here the cited evidence was a compiler error on an iOS build, which cannot be reproduced on a
+Windows host at all, so the honest move was to keep the pin and let CI speak. Carrying the same pin
+into `src/Directory.Packages.props` fixed it, and because Toolkit 8.4.2 still ships a maccatalyst
+flavor containing `NativeFramePresenter`, it also made a breaking TFM removal unnecessary - the wrong
+fix I had already applied and documented.
 
-**Apply to:** any `global.json` SDK bump in this repo. Also note `dotnet build` cannot build the
-XAML-bearing WinUI libraries here at all - it fails UNOB0008 on the current SDK too - so a bump has to
-be validated with `msbuild`, or the first error tells you nothing about the bump.
+**Apply to:** any `global.json` SDK bump here. An SDK version is a bundle: list what it pins
+(`targets/netstandard2.0/packages.json` in the Uno.Sdk package - `Core`, `Extensions`, `Toolkit`,
+`Themes`, `WinAppSdkBuildTools`, `MsalClient`) and diff the groups, not just the one you came for. Also
+note the local package build cannot compile `net9.0-ios` on a Windows host, so a clean local build says
+nothing about the iOS TFM - and `dotnet build` cannot build the XAML-bearing WinUI libraries at all
+(UNOB0008, true on the old SDK too), so validate a bump with `msbuild` or the first error misleads.

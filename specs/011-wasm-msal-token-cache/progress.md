@@ -722,21 +722,43 @@ no package reference expressed the requirement.
 Note `dotnet build` cannot build this repo's XAML-bearing WinUI libraries at all (UNOB0008, true on
 6.0.67 as well) - use `msbuild`. Two real breaks came out of the bump.
 
-### Mac Catalyst dropped from Uno.Extensions.Navigation.Toolkit
+### Uno.Toolkit pinned to 8.4.2 - and the wrong fix that got there first
 
 `Controls/ModalFlyout.xaml` uses `utu:NativeFramePresenter` inside an `<ios:ControlTemplate>`, and
-Uno's `ios` conditional XAML namespace also matches Mac Catalyst. `NativeFramePresenter` is
-platform-specific, and **Uno.Toolkit stopped shipping a maccatalyst assembly at 8.5.0-dev.29** - still
-true in stable 9.0.3 / 9.1.2 / 9.1.3, and 9.2.0-dev.18 ships only net9.0, android, ios and windows. So
-catalyst resolved the plain `net9.0` Toolkit flavor, which lacks the type: one `UXAML0001` plus five
-cascading generator errors, all on `net9.0-maccatalyst`. Not avoidable by choosing a different
-6.8.0-dev - any Sdk carrying Toolkit >= 8.5 has it.
+Uno's `ios` conditional XAML namespace also matches Mac Catalyst. Uno.Sdk 6.8.0-dev.21 supplies
+Uno.Toolkit 9.2.0-dev.18, which ships no maccatalyst assembly, so catalyst fell back to the plain
+`net9.0` Toolkit flavor and the type was gone: `UXAML0001` plus five cascading generator errors.
 
-Fixed by setting `Build_MacCatalyst=false` in that one csproj, before the TFM props import. **This drops a
-published TFM** and belongs in the PR description: catalyst consumers now resolve the package's
-`net9.0` TFM, where the `not_mobile` template applies - the same presentation the desktop template
-already gave them. Scope was a single source file; `utu:TabBar` / `utu:TabBarItem` live in the
-cross-platform flavor and were unaffected.
+**The first fix was to drop the `net9.0-maccatalyst` TFM from that package, and it was wrong.** CI then
+failed the Packages job with the real problem:
+
+```console
+error CS1705: Assembly 'Uno.Toolkit.WinUI' uses 'Microsoft.iOS, Version=26.0.0.0' which has a higher
+version than referenced assembly 'Microsoft.iOS', Version=18.2.0.0
+```
+
+Toolkit 9.2.0-dev.18's **iOS** assembly is built against Microsoft.iOS 26, while the .NET 9 iOS
+workload used here references 18.2 - exactly what the existing `UnoToolkitVersion 8.4.2` pin in
+`samples/Directory.Packages.props` was already guarding against. I had read that pin's comment,
+checked that Toolkit 9.2.0-dev.18 ships a folder named `net9.0-ios18.0`, and concluded the rationale
+was stale. **The folder name is the TFM the package declares, not what the assembly references.** That
+wrong conclusion was briefly written into the samples props file as justification for removing the pin.
+
+The correct fix is to carry the same pin in `src/Directory.Packages.props`: Toolkit 8.4.2 is the latest
+stable whose iOS flavor references 18.2, **and it still ships a maccatalyst flavor containing
+`NativeFramePresenter`** - so pinning it removes the CS1705, removes the UXAML0001, and makes the TFM
+drop unnecessary. The published surface is unchanged and there is no breaking change. It also means the
+Navigation.Toolkit package declares a floor on stable 8.4.2 rather than on a prerelease 9.2.0-dev build.
+
+`Uno.WinUI` itself is not the problem: 6.8.0-dev.46 still ships `net9.0-ios18.0` and
+`net9.0-maccatalyst18.0` alongside its net10 flavors, which is why only the Toolkit needed pinning.
+Remove both pins when this repo moves to net10 / iOS 26.
+
+Two smaller items fell out of the same bump: `Uno.UI.HotDesign`, referenced implicitly by the Sdk,
+demands Toolkit >= 9.0.0-dev.9, System.Text.Json >= 9.0.0 and newer WinAppSdk build tools, so it is
+disabled in the Playground and TestHarness heads (`UnoDisableHotDesign`, no code guard needed - nothing
+calls `UseStudio()`); and `Microsoft.Windows.SDK.BuildTools` moved to 10.0.28000.2526 in
+`samples/Directory.Packages.props` because `Uno.Extensions.Hosting.WinUI` now requires it.
 
 ### IL2026 in Reactive.UI on WebAssembly
 

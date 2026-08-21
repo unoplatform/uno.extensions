@@ -1,20 +1,4 @@
 ﻿<Project Sdk="Uno.Sdk">
-	<!--
-		This package ships no Mac Catalyst TFM. Controls/ModalFlyout.xaml uses
-		utu:NativeFramePresenter inside an <ios:ControlTemplate>, and Uno's `ios` conditional XAML
-		namespace also matches Mac Catalyst - but Uno.Toolkit stopped shipping a maccatalyst assembly
-		at 8.5.0-dev.29 and still does not in stable 9.x, so catalyst resolves the plain net9.0 Toolkit
-		flavor, which does not contain that type (UXAML0001 plus five cascading generator errors).
-		Catalyst consumers fall back to this package's own net9.0 TFM, where the `not_mobile` template
-		applies - the same presentation the desktop template already gives them.
-
-		Set before the tfms import so the condition in there sees it. Note that a global
-		-p:Build_MacCatalyst=true would override this and re-break the build.
-	-->
-	<PropertyGroup>
-		<Build_MacCatalyst>false</Build_MacCatalyst>
-	</PropertyGroup>
-
 	<Import Project="..\tfms-ui-winui.props" />
 
 	<PropertyGroup>
