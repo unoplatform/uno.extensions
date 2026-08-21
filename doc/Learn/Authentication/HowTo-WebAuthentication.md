@@ -170,3 +170,25 @@ uid: Uno.Extensions.Authentication.HowToWebAuthentication
 - Finally, we can pass the login credentials to the `LoginAsync()` method and authenticate with the identity provider. The user will be prompted to sign in to their account when they tap the button in the application.
 
 - `WebAuthenticationProvider` will then store the user's access token in credential storage. The token will be automatically refreshed when it expires.
+
+## Platform support
+
+`WebAuthenticationProvider` drives the interactive flow through each platform's authentication surface:
+
+| Target | Sign-in surface | Notes |
+| --- | --- | --- |
+| Android | Custom Tabs via `WebAuthenticationBroker` | Redirect URI uses a custom scheme registered for the app. |
+| iOS / Mac Catalyst | `ASWebAuthenticationSession` via `WebAuthenticationBroker` | Redirect URI uses a custom scheme declared in `Info.plist`. |
+| WebAssembly | Browser popup/redirect via `WebAuthenticationBroker` | Redirect URI must share the app's origin (no custom schemes). |
+| Skia Desktop (Windows, macOS, Linux) | System browser + loopback listener | See below. |
+| Windows (WinAppSDK) | System browser via protocol activation | **Packaged apps only**: the OAuth redirect scheme must be declared as a Protocol in `Package.appxmanifest`; unpackaged apps are not supported. |
+
+On the `WebAuthenticationBroker`-backed targets the interactive flow is bounded by `WinRTFeatureConfiguration.WebAuthenticationBroker.AuthenticationTimeout` (5 minutes by default), and the `CancellationToken` passed to `LoginAsync`/`LogoutAsync` cancels the flow.
+
+### Skia Desktop
+
+Uno Platform has no built-in `WebAuthenticationBroker` on Skia Desktop, so `AddWeb()` (and `AddOidc()`) automatically register a loopback broker: the sign-in page opens in the system browser and the redirect returns to a one-shot HTTP listener on `localhost`, per [RFC 8252 §7.3](https://www.rfc-editor.org/rfc/rfc8252#section-7.3).
+
+- The redirect URI **must** be a loopback HTTP address, e.g. `http://localhost:5001/authentication-callback`, and be registered with your identity provider. If you rely on the default (`WebAuthenticationBroker.GetCurrentApplicationCallbackUri()`), a free port is picked on first use — your identity provider must then allow variable-port loopback redirects (Microsoft Entra and Duende IdentityServer do).
+- Only query-string responses reach the app (authorization-code flow); a URL fragment never leaves the browser, so implicit flows cannot work over a loopback redirect.
+- Apps that call `WebAuthenticationBroker` directly (without `AddWeb`/`AddOidc`) can register the broker themselves during startup with `DesktopWebAuthenticationBrokerProvider.TryRegister()`.

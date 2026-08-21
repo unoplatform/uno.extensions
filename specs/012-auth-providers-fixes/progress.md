@@ -32,7 +32,7 @@ committed alongside.
 ## CI / docs
 
 - [x] 14. Widen `RuntimeTestsFilter` (and, separately, the WASM lane's narrow filter once green)
-- [ ] 15. Docs: Skia Desktop support + loopback redirect registration; F9 packaged-only note; timeout setting (`HowTo-OidcAuthentication.md`, `HowTo-WebAuthentication.md`)
+- [x] 15. Docs: Skia Desktop support + loopback redirect registration; F9 packaged-only note; timeout setting (`HowTo-OidcAuthentication.md`, `HowTo-WebAuthentication.md`)
 
 ## Review log
 
@@ -44,3 +44,10 @@ committed alongside.
 - 2026-08-21, item 13: `Uno.Extensions.Authentication.Tests` (plain net9.0, bare Microsoft host + hand-rolled `FakeKeyValueStorage` via `SetDefaultInstance` - the product's InMemory storage is internal): 6/6 green via `dotnet test`. Coverage tests, not bug repros (F10 found the Custom provider sound), so no red phase. Added to `Uno.Extensions.sln` + `Uno.Extensions-packageonly.slnf` so package CI builds and discovers it.
 - 2026-08-21, item 14: `RuntimeTestsFilter` widened to `'Uno.Extensions.Authentication.'` (35 tests, verified green on the desktop head); wasm lane filter extended with the OIDC and Web suites. Engine filter discovery, verified empirically and in `UnitTestFilter.cs` (uno.ui.runtimetests.engine 2.0.0-dev.79): `;`/`|` are OR but the parser drops the character before an operator, so terms need a trailing space - `'A|B'` silently runs only `A` (truncated); `'A | B'` works. Desktop probe of the exact wasm string: 20 tests, 0 failures.
 - 2026-08-21, items 10-12: `DesktopWebAuthenticationBrokerProvider` (public, in Authentication.WinUI, `#if !WINDOWS`): loopback-only validation, root-prefix listener with manual path match (HttpListener prefixes need a trailing slash the IdP redirect never has), static completion page, launch via Process.Start with ArgumentList (no shell parsing), first-use ephemeral port cached per process, honors `WinRTFeatureConfiguration.WebAuthenticationBroker` timeout/DefaultReturnUri/DefaultCallbackPath. Registered from `AddWeb`/`AddOidc` behind a runtime desktop-OS allow-list (spec-010 hazard: compile-time gating can't work on substituted plain-TFM builds). 4 broker tests + 6 Web tests green on the desktop head (10/10); all-TFM Release compile clean after fixing CA1416 with explicit OS guards. Not separately verified: the registration path end-to-end without the test stub (first-wins registration means the stub always shades it in-process) - validate on a real Skia Desktop app alongside the docs work.
+- 2026-08-21, item 15: platform-support sections appended to HowTo-WebAuthentication.md (full matrix + Skia Desktop loopback details + WinAppSDK packaged-only note + broker timeout) and HowTo-OidcAuthentication.md (cross-link to the matrix + the two notes that differ). No TOC change needed - both pages already exist.
+
+## Review section
+
+All 15 items complete. Fixes: Oidc refresh IsError (F1), Oidc logout result+ct (F2), WebAuthenticatorBrowser cancellation (F3), Web ct plumbing (F4), Web cancelled-login token wipe (F5), Web logout result (F6), ephemeral-session runtime dispatch (F7, exceptions-process item), Skia Desktop loopback broker (F8, feature). Docs cover F9 (packaged-only WinAppSDK). Custom provider needed tests only (F10).
+Test infrastructure added: Oidc.UI.Tests (StubOidcServer/StubBrowser, 6), Authentication.UI.Tests (StubWebAuthenticationBroker + desktop broker suite, 10), Authentication.Tests (Custom, 6). Desktop head: 45 auth runtime tests green. CI: all four lanes now run the full auth namespace (wasm keeps MSAL excluded per its standing StubEntra limitation).
+Outstanding for CI to confirm: the new suites on the Android/iOS/wasm lanes (first run happens on this branch's pipeline); the desktop broker's registration path end-to-end in a real Skia Desktop app (in-process tests always see the stub via first-wins registration).
