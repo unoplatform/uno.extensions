@@ -24,6 +24,28 @@ public class Given_Feed : FeedTests
 		result.Should().Be(42);
 	}
 
+	[TestMethod]
+	public async Task When_Value()
+	{
+		var sut = Feed.Value(42);
+		var result = await sut;
+
+		result.Should().Be(42);
+	}
+
+	[TestMethod]
+	public async Task When_Value_Then_SingleMessageAndCompletes()
+	{
+		var sut = Feed.Value(42);
+		var result = sut.Record();
+
+		await result.WaitForEnd(CT);
+
+		result.Should().Be(r => r
+			.Message(42)
+		);
+	}
+
 		[TestMethod]
 		public async Task When_Async()
 		{

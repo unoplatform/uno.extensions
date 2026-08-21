@@ -49,6 +49,20 @@ public static partial class Feed
 		=> Feed<T>.Create(sourceProvider);
 
 	/// <summary>
+	/// Creates a feed which produces a single message with a constant value, then completes.
+	/// </summary>
+	/// <typeparam name="T">The type of the value of the resulting feed.</typeparam>
+	/// <param name="value">The value of the resulting feed.</param>
+	/// <returns>A feed which encapsulates the given value.</returns>
+	/// <remarks>
+	/// Unlike <see cref="Async{T}(AsyncFunc{T},Signal?)"/>, the resulting feed does not support refresh:
+	/// it completes immediately after emitting its value. This is designed for constant and mock/design-time data.
+	/// </remarks>
+	public static IFeed<T> Value<T>(T value)
+		where T : notnull
+		=> new ValueFeed<T>(Uno.Extensions.Option.Some(value));
+
+	/// <summary>
 	/// Gets or create a custom feed from an async method.
 	/// </summary>
 	/// <typeparam name="T">The type of the value of the resulting feed.</typeparam>

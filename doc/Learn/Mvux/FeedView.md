@@ -55,6 +55,50 @@ The `Source` property of the `FeedView` is data bound to the `CurrentContact` pr
 
 In the above example, [`Data`](#data) is a property of the `FeedViewState` instance that the `FeedView` creates from the `IFeed` and sets as the `DataContext` for the various templates.
 
+#### Mock data and design-time sources
+
+The `Source` property also accepts values which are not feeds, making it easy to preview a page with mock data without writing a Model. A plain object (a POCO, an anonymous object, or an `ExpandoObject`/dictionary created from JSON) is wrapped as a single-message feed whose value is the object, rendered by the [`ValueTemplate`](#valuetemplate-default-template):
+
+```xml
+<mvux:FeedView>
+    <mvux:FeedView.Source>
+        <models:Person Age="34" />
+    </mvux:FeedView.Source>
+    <DataTemplate>
+        <TextBlock Text="{Binding Data.Age}"/>
+    </DataTemplate>
+</mvux:FeedView>
+```
+
+To mock the other states of the `FeedView` (loading, error, empty), provide a mock *envelope*: an object whose members are limited to the following (matched case-insensitively, so camelCase JSON works):
+
+| Member | Aliases | Effect |
+| ------ | ------- | ------ |
+| `Data` | — | `null` renders the [`NoneTemplate`](#nonetemplate); any other value renders the `ValueTemplate` with that value. If the value is itself a feed, that feed is used directly. |
+| `Progress` | `IsProgress`, `InProgress` | `true` renders the [`ProgressTemplate`](#progresstemplate), mocking an in-flight load. |
+| `Error` | `Exception` | A non-null value renders the [`ErrorTemplate`](#errortemplate). An `Exception` is used as-is; any other value (such as a string coming from JSON) is wrapped in an exception carrying its text as the message. |
+
+An object is only treated as an envelope when **all** of its public properties (or dictionary keys) belong to the list above and at least one is present — a business object which merely happens to expose a `Data` property (alongside other properties) is still rendered as a plain value.
+
+```xml
+<!-- Mock the loading state -->
+<mvux:FeedView>
+    <mvux:FeedView.Source>
+        <models:FeedMock Progress="True" />
+    </mvux:FeedView.Source>
+    ...
+</mvux:FeedView>
+```
+
+> [!NOTE]
+> Envelope detection on POCOs relies on reflection over the object's public properties. On trimmed/AOT targets prefer `IDictionary<string, object?>`/`ExpandoObject` sources (e.g. converted from JSON), which are inspected without reflection. If property metadata has been trimmed, the object safely degrades to being rendered whole as a plain value.
+
+A constant feed can also be created explicitly with `Feed.Value(...)`:
+
+```csharp
+public IFeed<Person> CurrentContact => Feed.Value(new Person("Mock Mary", 34));
+```
+
 ### State
 
 The `State` property returns a `FeedViewState`, which exposes the current state of the `FeedView`'s underlying data Feed. It's unlikely that you'll need to access the `State` property directly since the `FeedViewState` is automatically set as the `DataContext` of the various templates.

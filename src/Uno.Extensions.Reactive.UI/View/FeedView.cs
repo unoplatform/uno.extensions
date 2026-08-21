@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Linq;
+using Uno.Extensions.Reactive.Sources;
 
 namespace Uno.Extensions.Reactive.UI;
 
@@ -18,16 +19,38 @@ public partial class FeedView : Control
 		"Source", typeof(object), typeof(FeedView), new PropertyMetadata(default(object), OnSourceChanged));
 
 	private static void OnSourceChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
-		=> (obj as FeedView)?.Subscribe(args.NewValue as ISignal<IMessage>);
+	{
+		if (obj is FeedView that)
+		{
+			// The coerced feed is cached so Enable / OnApplyTemplate re-use the same instance,
+			// preserving the Subscribe identity short-circuit (no re-subscription on each load).
+			that._coercedSource = CoerceSource(args.NewValue);
+			that.Subscribe(that._coercedSource);
+		}
+	}
 
 	/// <summary>
 	/// Gets or sets the <see cref="IFeed{T}"/> displayed by this control.
 	/// </summary>
+	/// <remarks>
+	/// A value which is not a feed is not discarded: it's wrapped as a single-message feed,
+	/// enabling mock/design-time data. An object exposing only Data / Progress / Error members
+	/// (a mock "envelope") drives the corresponding visual states of this control; any other
+	/// object is rendered as the value of the feed.
+	/// </remarks>
 	public object? Source
 	{
 		get => GetValue(SourceProperty);
 		set => SetValue(SourceProperty, value);
 	}
+
+	private static ISignal<IMessage>? CoerceSource(object? source)
+		=> source switch
+		{
+			null => null,
+			ISignal<IMessage> feed => feed,
+			_ => MockFeed.Create(source),
+		};
 	#endregion
 
 	#region VisualStateSelector DP
@@ -202,6 +225,7 @@ public partial class FeedView : Control
 
 	private ControlState _state;
 	private Subscription? _subscription;
+	private ISignal<IMessage>? _coercedSource;
 
 	[Flags]
 	private enum ControlState
@@ -246,7 +270,7 @@ public partial class FeedView : Control
 		if (snd is FeedView that)
 		{
 			that._state |= ControlState.IsLoaded;
-			if (that.Source is ISignal<IMessage> feed)
+			if (that._coercedSource is { } feed)
 			{
 				that.Subscribe(feed);
 			}
@@ -268,7 +292,7 @@ public partial class FeedView : Control
 		base.OnApplyTemplate();
 
 		_state |= ControlState.HasTemplate;
-		if (Source is ISignal<IMessage> feed)
+		if (_coercedSource is { } feed)
 		{
 			Subscribe(feed);
 		}

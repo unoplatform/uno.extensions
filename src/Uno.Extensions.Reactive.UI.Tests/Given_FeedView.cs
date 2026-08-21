@@ -77,4 +77,107 @@ public class Given_FeedView : FeedTests
 
 		(await result.Task).Should().BeTrue();
 	}
+
+	#region Mock (non-feed) sources
+	private record MockValue(string Name);
+
+	private record MockEnvelope
+	{
+		public object? Data { get; init; }
+		public bool Progress { get; init; }
+		public object? Error { get; init; }
+	}
+
+	[TestMethod]
+	public async Task When_SourceIsPoco_Then_RendersValue()
+	{
+		var value = new MockValue("42");
+		var sut = new FeedView { Source = value };
+
+		await UIHelper.Load(sut, CT);
+
+		await TestHelper.WaitFor(() => ReferenceEquals(sut.State.Data, value), CT);
+		(sut as ILoadable).IsExecuting.Should().BeFalse("a mocked value is not loading");
+	}
+
+	[TestMethod]
+	public async Task When_SourceIsEnvelopeWithData_Then_RendersDataValue()
+	{
+		var value = new MockValue("42");
+		var sut = new FeedView { Source = new MockEnvelope { Data = value } };
+
+		await UIHelper.Load(sut, CT);
+
+		await TestHelper.WaitFor(() => ReferenceEquals(sut.State.Data, value), CT);
+	}
+
+	[TestMethod]
+	public async Task When_SourceIsEnvelopeWithProgress_Then_StaysLoading()
+	{
+		var sut = new FeedView { Source = new MockEnvelope { Progress = true } };
+
+		await UIHelper.Load(sut, CT);
+
+		await TestHelper.WaitFor(() => sut.State.Progress, CT);
+		(sut as ILoadable).IsExecuting.Should().BeTrue("a progress mock models an in-flight load");
+	}
+
+	[TestMethod]
+	public async Task When_SourceIsEnvelopeWithError_Then_ExposesError()
+	{
+		var error = new InvalidOperationException("mocked failure");
+		var sut = new FeedView { Source = new MockEnvelope { Error = error } };
+
+		await UIHelper.Load(sut, CT);
+
+		await TestHelper.WaitFor(() => sut.State.Error == error, CT);
+	}
+
+	[TestMethod]
+	public async Task When_SourceIsEnvelopeWithNullData_Then_None()
+	{
+		var sut = new FeedView { Source = new MockEnvelope { Data = null } };
+		var sutAsLoadable = sut as ILoadable;
+
+		await UIHelper.Load(sut, CT);
+
+		await TestHelper.WaitFor(() => !sutAsLoadable.IsExecuting, CT);
+		sut.State.Data.Should().BeNull("a null Data member mocks the None state");
+		sut.State.Error.Should().BeNull();
+	}
+
+	[TestMethod]
+	public async Task When_MockSourceAndReloaded_Then_StillRenders()
+	{
+		var value = new MockValue("42");
+		var sut = new FeedView { Source = value };
+		var root = new Grid { Children = { sut } };
+
+		await UIHelper.Load(root, CT);
+		await TestHelper.WaitFor(() => ReferenceEquals(sut.State.Data, value), CT);
+
+		// Unload and reload the view: Enable must re-subscribe using the cached coerced source.
+		root.Children.Remove(sut);
+		await TestHelper.WaitFor(() => !sut.IsLoaded, CT);
+		root.Children.Add(sut);
+
+		await TestHelper.WaitFor(() => ReferenceEquals(sut.State.Data, value), CT);
+		(sut as ILoadable).IsExecuting.Should().BeFalse();
+	}
+
+	[TestMethod]
+	public async Task When_MockSourceAndRefresh_Then_RefreshCompletes()
+	{
+		var value = new MockValue("42");
+		var sut = new FeedView { Source = new MockEnvelope { Data = value } };
+
+		await UIHelper.Load(sut, CT);
+		await TestHelper.WaitFor(() => ReferenceEquals(sut.State.Data, value), CT);
+
+		sut.Refresh.Execute(null);
+
+		await TestHelper.WaitFor(() => !sut.Refresh.IsExecuting, CT);
+		sut.State.Data.Should().Be(value, "refreshing a mock re-emits the mocked value");
+	}
+	#endregion
 }
