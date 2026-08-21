@@ -68,6 +68,8 @@
 						Content="Flyouts Popups and Drawer page" />
 				<Button uen:Navigation.Request="VisualStates"
 						Content="Visual States" />
+				<Button uen:Navigation.Request="FeedViewMock"
+						Content="FeedView Mock Data" />
 				<Button uen:Navigation.Request="PanelVisibility"
 						Content="Visibility" />
 				<Button uen:Navigation.Request="AdHoc"

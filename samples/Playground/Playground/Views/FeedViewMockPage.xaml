@@ -1,0 +1,412 @@
+﻿<Page x:Class="Playground.Views.FeedViewMockPage"
+	  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	  xmlns:local="using:Playground.Views"
+	  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	  xmlns:ui="using:Uno.Toolkit.UI"
+	  xmlns:uer="using:Uno.Extensions.Reactive.UI"
+	  xmlns:models="using:Playground.Models"
+	  mc:Ignorable="d"
+	  Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+	<Page.Resources>
+		<DataTemplate x:Key="MockProgressTemplate">
+			<StackPanel Orientation="Horizontal"
+						Spacing="8">
+				<ProgressRing IsActive="True"
+							  Width="24"
+							  Height="24" />
+				<TextBlock Text="Loading (mocked)…"
+						   VerticalAlignment="Center" />
+			</StackPanel>
+		</DataTemplate>
+		<DataTemplate x:Key="MockErrorTemplate">
+			<TextBlock Text="{Binding Message}"
+					   Foreground="Red" />
+		</DataTemplate>
+		<DataTemplate x:Key="MockNoneTemplate">
+			<TextBlock Text="No data (mocked empty state)" />
+		</DataTemplate>
+
+		<Style x:Key="SectionHeaderStyle"
+			   TargetType="TextBlock">
+			<Setter Property="FontSize"
+					Value="18" />
+			<Setter Property="FontWeight"
+					Value="SemiBold" />
+			<Setter Property="Margin"
+					Value="0,12,0,0" />
+		</Style>
+		<Style x:Key="CodeBorderStyle"
+			   TargetType="Border">
+			<Setter Property="BorderBrush"
+					Value="Gray" />
+			<Setter Property="BorderThickness"
+					Value="1" />
+			<Setter Property="CornerRadius"
+					Value="4" />
+			<Setter Property="Padding"
+					Value="8" />
+			<Setter Property="VerticalAlignment"
+					Value="Top" />
+		</Style>
+		<Style x:Key="CodeTextStyle"
+			   TargetType="TextBlock">
+			<Setter Property="FontFamily"
+					Value="Consolas" />
+			<Setter Property="FontSize"
+					Value="11" />
+			<Setter Property="IsTextSelectionEnabled"
+					Value="True" />
+		</Style>
+	</Page.Resources>
+
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition />
+		</Grid.RowDefinitions>
+		<ui:NavigationBar Content="FeedView Mock Data"
+						  Style="{StaticResource MaterialNavigationBarStyle}" />
+		<ScrollViewer Grid.Row="1">
+			<StackPanel Spacing="8"
+						Margin="12">
+
+				<!-- 1. A plain POCO as Source: wrapped as a single-value feed (Some state). -->
+				<TextBlock Text="POCO value"
+						   Style="{StaticResource SectionHeaderStyle}" />
+				<Grid ColumnSpacing="12">
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="*" />
+						<ColumnDefinition Width="*" />
+					</Grid.ColumnDefinitions>
+					<uer:FeedView VerticalAlignment="Top">
+						<uer:FeedView.Source>
+							<!-- Note: Person.Name is set via a property element because a `Name` attribute
+								 is treated as x:Name by the XAML compiler. -->
+							<models:Person Age="34"
+										   Height="1.65"
+										   Weight="62">
+								<models:Person.Name>
+									<x:String>Poco Polly</x:String>
+								</models:Person.Name>
+							</models:Person>
+						</uer:FeedView.Source>
+						<DataTemplate>
+							<StackPanel>
+								<TextBlock Text="{Binding Data.Name}" />
+								<TextBlock Text="{Binding Data.Age}" />
+							</StackPanel>
+						</DataTemplate>
+					</uer:FeedView>
+					<Border Grid.Column="1"
+							Style="{StaticResource CodeBorderStyle}">
+						<TextBlock Style="{StaticResource CodeTextStyle}">
+							<TextBlock.Text>
+								<x:String xml:space="preserve">&lt;uer:FeedView>
+  &lt;uer:FeedView.Source>
+    &lt;!-- `Name` attribute = x:Name, so use a property element -->
+    &lt;models:Person Age="34" Height="1.65" Weight="62">
+      &lt;models:Person.Name>
+        &lt;x:String>Poco Polly&lt;/x:String>
+      &lt;/models:Person.Name>
+    &lt;/models:Person>
+  &lt;/uer:FeedView.Source>
+  &lt;DataTemplate>
+    &lt;StackPanel>
+      &lt;TextBlock Text="{Binding Data.Name}" />
+      &lt;TextBlock Text="{Binding Data.Age}" />
+    &lt;/StackPanel>
+  &lt;/DataTemplate>
+&lt;/uer:FeedView></x:String>
+							</TextBlock.Text>
+						</TextBlock>
+					</Border>
+				</Grid>
+
+				<!-- 2. A POCO envelope driving the progress (loading) state. -->
+				<TextBlock Text="POCO envelope — Progress"
+						   Style="{StaticResource SectionHeaderStyle}" />
+				<Grid ColumnSpacing="12">
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="*" />
+						<ColumnDefinition Width="*" />
+					</Grid.ColumnDefinitions>
+					<uer:FeedView ProgressTemplate="{StaticResource MockProgressTemplate}"
+								  VerticalAlignment="Top">
+						<uer:FeedView.Source>
+							<models:FeedMock Progress="True" />
+						</uer:FeedView.Source>
+						<DataTemplate>
+							<TextBlock Text="{Binding Data}" />
+						</DataTemplate>
+					</uer:FeedView>
+					<Border Grid.Column="1"
+							Style="{StaticResource CodeBorderStyle}">
+						<TextBlock Style="{StaticResource CodeTextStyle}">
+							<TextBlock.Text>
+								<x:String xml:space="preserve">&lt;uer:FeedView ProgressTemplate="{StaticResource MockProgressTemplate}">
+  &lt;uer:FeedView.Source>
+    &lt;models:FeedMock Progress="True" />
+  &lt;/uer:FeedView.Source>
+  &lt;DataTemplate>
+    &lt;TextBlock Text="{Binding Data}" />
+  &lt;/DataTemplate>
+&lt;/uer:FeedView></x:String>
+							</TextBlock.Text>
+						</TextBlock>
+					</Border>
+				</Grid>
+
+				<!-- 3. A POCO envelope driving the error state (a string is wrapped as the error message). -->
+				<TextBlock Text="POCO envelope — Error"
+						   Style="{StaticResource SectionHeaderStyle}" />
+				<Grid ColumnSpacing="12">
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="*" />
+						<ColumnDefinition Width="*" />
+					</Grid.ColumnDefinitions>
+					<uer:FeedView ErrorTemplate="{StaticResource MockErrorTemplate}"
+								  VerticalAlignment="Top">
+						<uer:FeedView.Source>
+							<models:FeedMock Error="Something went wrong (mocked)" />
+						</uer:FeedView.Source>
+						<DataTemplate>
+							<TextBlock Text="{Binding Data}" />
+						</DataTemplate>
+					</uer:FeedView>
+					<Border Grid.Column="1"
+							Style="{StaticResource CodeBorderStyle}">
+						<TextBlock Style="{StaticResource CodeTextStyle}">
+							<TextBlock.Text>
+								<x:String xml:space="preserve">&lt;uer:FeedView ErrorTemplate="{StaticResource MockErrorTemplate}">
+  &lt;uer:FeedView.Source>
+    &lt;!-- A string Error is wrapped as the exception message -->
+    &lt;models:FeedMock Error="Something went wrong (mocked)" />
+  &lt;/uer:FeedView.Source>
+  &lt;DataTemplate>
+    &lt;TextBlock Text="{Binding Data}" />
+  &lt;/DataTemplate>
+&lt;/uer:FeedView></x:String>
+							</TextBlock.Text>
+						</TextBlock>
+					</Border>
+				</Grid>
+
+				<!-- 4. A POCO envelope with null Data: the None (empty) state. -->
+				<TextBlock Text="POCO envelope — None (empty)"
+						   Style="{StaticResource SectionHeaderStyle}" />
+				<Grid ColumnSpacing="12">
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="*" />
+						<ColumnDefinition Width="*" />
+					</Grid.ColumnDefinitions>
+					<uer:FeedView NoneTemplate="{StaticResource MockNoneTemplate}"
+								  VerticalAlignment="Top">
+						<uer:FeedView.Source>
+							<models:FeedMock />
+						</uer:FeedView.Source>
+						<DataTemplate>
+							<TextBlock Text="{Binding Data}" />
+						</DataTemplate>
+					</uer:FeedView>
+					<Border Grid.Column="1"
+							Style="{StaticResource CodeBorderStyle}">
+						<TextBlock Style="{StaticResource CodeTextStyle}">
+							<TextBlock.Text>
+								<x:String xml:space="preserve">&lt;uer:FeedView NoneTemplate="{StaticResource MockNoneTemplate}">
+  &lt;uer:FeedView.Source>
+    &lt;!-- Data is null: renders the None (empty) state -->
+    &lt;models:FeedMock />
+  &lt;/uer:FeedView.Source>
+  &lt;DataTemplate>
+    &lt;TextBlock Text="{Binding Data}" />
+  &lt;/DataTemplate>
+&lt;/uer:FeedView></x:String>
+							</TextBlock.Text>
+						</TextBlock>
+					</Border>
+				</Grid>
+
+				<!-- 5. Raw JSON set as the DataContext in XAML: the JSON envelope keys (case-insensitive)
+					 drive the feed axes, and the Data object is rendered by the value template. -->
+				<TextBlock Text="JSON envelope — Value"
+						   Style="{StaticResource SectionHeaderStyle}" />
+				<Grid ColumnSpacing="12">
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="*" />
+						<ColumnDefinition Width="*" />
+					</Grid.ColumnDefinitions>
+					<StackPanel>
+						<StackPanel.DataContext>
+							<models:JsonDataContext>
+								<models:JsonDataContext.Json>
+									<x:String xml:space="preserve">
+									{
+										"data": { "Name": "Json Jane", "Company": "Contoso" },
+										"progress": false
+									}
+									</x:String>
+								</models:JsonDataContext.Json>
+							</models:JsonDataContext>
+						</StackPanel.DataContext>
+						<uer:FeedView Source="{Binding Value}">
+							<DataTemplate>
+								<StackPanel>
+									<TextBlock Text="{Binding Data.Name}" />
+									<TextBlock Text="{Binding Data.Company}" />
+								</StackPanel>
+							</DataTemplate>
+						</uer:FeedView>
+					</StackPanel>
+					<Border Grid.Column="1"
+							Style="{StaticResource CodeBorderStyle}">
+						<TextBlock Style="{StaticResource CodeTextStyle}">
+							<TextBlock.Text>
+								<x:String xml:space="preserve">&lt;StackPanel>
+  &lt;StackPanel.DataContext>
+    &lt;models:JsonDataContext>
+      &lt;models:JsonDataContext.Json>
+        &lt;x:String xml:space="preserve">
+        {
+          "data": { "Name": "Json Jane", "Company": "Contoso" },
+          "progress": false
+        }
+        &lt;/x:String>
+      &lt;/models:JsonDataContext.Json>
+    &lt;/models:JsonDataContext>
+  &lt;/StackPanel.DataContext>
+  &lt;uer:FeedView Source="{Binding Value}">
+    &lt;DataTemplate>
+      &lt;StackPanel>
+        &lt;TextBlock Text="{Binding Data.Name}" />
+        &lt;TextBlock Text="{Binding Data.Company}" />
+      &lt;/StackPanel>
+    &lt;/DataTemplate>
+  &lt;/uer:FeedView>
+&lt;/StackPanel></x:String>
+							</TextBlock.Text>
+						</TextBlock>
+					</Border>
+				</Grid>
+
+				<!-- 6. Raw JSON envelope mocking the error state. -->
+				<TextBlock Text="JSON envelope — Error"
+						   Style="{StaticResource SectionHeaderStyle}" />
+				<Grid ColumnSpacing="12">
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="*" />
+						<ColumnDefinition Width="*" />
+					</Grid.ColumnDefinitions>
+					<StackPanel>
+						<StackPanel.DataContext>
+							<models:JsonDataContext>
+								<models:JsonDataContext.Json>
+									<x:String xml:space="preserve">
+									{
+										"data": null,
+										"error": "Failed to load data (from JSON)"
+									}
+									</x:String>
+								</models:JsonDataContext.Json>
+							</models:JsonDataContext>
+						</StackPanel.DataContext>
+						<uer:FeedView Source="{Binding Value}"
+									  ErrorTemplate="{StaticResource MockErrorTemplate}"
+									  NoneTemplate="{StaticResource MockNoneTemplate}">
+							<DataTemplate>
+								<TextBlock Text="{Binding Data}" />
+							</DataTemplate>
+						</uer:FeedView>
+					</StackPanel>
+					<Border Grid.Column="1"
+							Style="{StaticResource CodeBorderStyle}">
+						<TextBlock Style="{StaticResource CodeTextStyle}">
+							<TextBlock.Text>
+								<x:String xml:space="preserve">&lt;StackPanel>
+  &lt;StackPanel.DataContext>
+    &lt;models:JsonDataContext>
+      &lt;models:JsonDataContext.Json>
+        &lt;x:String xml:space="preserve">
+        {
+          "data": null,
+          "error": "Failed to load data (from JSON)"
+        }
+        &lt;/x:String>
+      &lt;/models:JsonDataContext.Json>
+    &lt;/models:JsonDataContext>
+  &lt;/StackPanel.DataContext>
+  &lt;uer:FeedView Source="{Binding Value}"
+                ErrorTemplate="{StaticResource MockErrorTemplate}"
+                NoneTemplate="{StaticResource MockNoneTemplate}">
+    &lt;DataTemplate>
+      &lt;TextBlock Text="{Binding Data}" />
+    &lt;/DataTemplate>
+  &lt;/uer:FeedView>
+&lt;/StackPanel></x:String>
+							</TextBlock.Text>
+						</TextBlock>
+					</Border>
+				</Grid>
+
+				<!-- 7. Raw JSON that is NOT an envelope: the whole object becomes the feed value. -->
+				<TextBlock Text="JSON plain object"
+						   Style="{StaticResource SectionHeaderStyle}" />
+				<Grid ColumnSpacing="12">
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="*" />
+						<ColumnDefinition Width="*" />
+					</Grid.ColumnDefinitions>
+					<StackPanel>
+						<StackPanel.DataContext>
+							<models:JsonDataContext>
+								<models:JsonDataContext.Json>
+									<x:String xml:space="preserve">
+									{ "Name": "Raw Ray", "Role": "Not an envelope" }
+									</x:String>
+								</models:JsonDataContext.Json>
+							</models:JsonDataContext>
+						</StackPanel.DataContext>
+						<uer:FeedView Source="{Binding Value}">
+							<DataTemplate>
+								<StackPanel>
+									<TextBlock Text="{Binding Data.Name}" />
+									<TextBlock Text="{Binding Data.Role}" />
+								</StackPanel>
+							</DataTemplate>
+						</uer:FeedView>
+					</StackPanel>
+					<Border Grid.Column="1"
+							Style="{StaticResource CodeBorderStyle}">
+						<TextBlock Style="{StaticResource CodeTextStyle}">
+							<TextBlock.Text>
+								<x:String xml:space="preserve">&lt;StackPanel>
+  &lt;StackPanel.DataContext>
+    &lt;models:JsonDataContext>
+      &lt;models:JsonDataContext.Json>
+        &lt;!-- Not an envelope: whole object becomes the feed value -->
+        &lt;x:String xml:space="preserve">
+        { "Name": "Raw Ray", "Role": "Not an envelope" }
+        &lt;/x:String>
+      &lt;/models:JsonDataContext.Json>
+    &lt;/models:JsonDataContext>
+  &lt;/StackPanel.DataContext>
+  &lt;uer:FeedView Source="{Binding Value}">
+    &lt;DataTemplate>
+      &lt;StackPanel>
+        &lt;TextBlock Text="{Binding Data.Name}" />
+        &lt;TextBlock Text="{Binding Data.Role}" />
+      &lt;/StackPanel>
+    &lt;/DataTemplate>
+  &lt;/uer:FeedView>
+&lt;/StackPanel></x:String>
+							</TextBlock.Text>
+						</TextBlock>
+					</Border>
+				</Grid>
+
+			</StackPanel>
+		</ScrollViewer>
+	</Grid>
+</Page>
