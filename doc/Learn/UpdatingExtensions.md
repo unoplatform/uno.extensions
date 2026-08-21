@@ -4,6 +4,53 @@ uid: Uno.Extensions.Migration
 
 # Upgrading Extensions Version
 
+## Upgrading to Extensions 7.4
+
+### Minimum Uno Platform version
+
+Extensions 7.4 requires **Uno Platform 6.8.0 or later**. The packages declare a matching `Uno.WinUI`
+floor, so an older Uno fails at restore with a clear error rather than misbehaving at runtime:
+
+```console
+error NU1605: Detected package downgrade: Uno.WinUI from 6.8.0-dev.46 to 6.7.24
+```
+
+Update the Uno SDK version in your `global.json` — see [updating your Uno.Sdk](xref:Uno.Development.UpgradeUnoNuget):
+
+```diff
+ {
+   "msbuild-sdks": {
+-    "Uno.Sdk": "6.7.24"
++    "Uno.Sdk": "6.8.0"
+   }
+ }
+```
+
+For apps using [MSAL authentication](xref:Uno.Extensions.Authentication.HowToMsalAuthentication) this
+is not a formality. Interactive sign-in on Android, iOS and WebAssembly heads built with
+`UnoFeatures=SkiaRenderer` depends on the fix for
+[unoplatform/uno#20601](https://github.com/unoplatform/uno/issues/20601), which shipped in `Uno.WinUI`
+after the 6.7.x releases. Without it `WithUnoHelpers()` silently does nothing and the sign-in UI never
+appears at all.
+
+`Microsoft.Identity.Client` also moves from 4.72.1 to 4.87.0. If your app pins that package
+explicitly, raise your pin to 4.87.0 or remove it and let the Uno SDK supply it.
+
+### Breaking: Uno.Extensions.Navigation.Toolkit.WinUI no longer targets Mac Catalyst
+
+`Uno.Extensions.Navigation.Toolkit.WinUI` no longer publishes a `net9.0-maccatalyst` target framework.
+Uno.Toolkit stopped shipping a Mac Catalyst assembly, so the `NativeFramePresenter` that this package's
+`ModalFlyout` uses for its mobile frame template no longer exists on that platform.
+
+**No change is required in your app.** A Mac Catalyst head resolves the package's `net9.0` target
+framework instead, where `ModalFlyout` uses the non-mobile frame template — the same presentation a
+desktop head already gets. Navigation behaviour, routes and regions are unaffected.
+
+You only need to act if your own code took a **direct dependency on the Mac Catalyst flavor** of this
+package — for example a `net9.0-maccatalyst`-conditioned `PackageReference`, or code under a
+`#if MACCATALYST` block that referenced types from it. Remove the platform condition and let the
+`net9.0` assembly apply.
+
 ## Upgrading to Extensions 7.0
 
 ### OidcClient Authentication
