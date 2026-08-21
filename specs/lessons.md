@@ -169,3 +169,18 @@ which exists so our ~50 libraries don't each duplicate the closure into their ow
 **Correct pattern:** when a test runs on every head, assert the part of the contract every implementation agrees on, and read the interface's XML docs before asserting a behavior you observed. Here `GetKeysAsync().Should().NotContain(key)` is the platform-stable "it is gone" check, and it is also what `TokenCache.HasTokenAsync` actually relies on. Where implementations genuinely disagree, that is a product finding to record, not a detail for a test to quietly pick a winner for.
 
 **Apply to:** any `*.UI.Tests` / RuntimeTests case, since those run on desktop, iOS, Android and WebAssembly from one source file. Also treat "documented to throw, one implementation returns default" as its own bug: the divergence in `ApplicationDataKeyValueStorage` is deliberately left alone here because making the default Windows/desktop/browser store start throwing is a public-surface behavior change that needs its own PR, not a drive-by fix inside a storage-selection change.
+
+## Runtime-test suites share process-global registries (2026-08-21, spec 012)
+
+All `*.UI.Tests` suites run in one process inside the runtime-test head. A product-side
+`ApiExtensibility.Register` (first-wins) triggered while ONE suite builds its host - e.g.
+`AddOidc`/`AddWeb` registering the desktop `WebAuthenticationBroker` - is visible to every suite
+that runs later: the Web suite's stub broker lost the race to the Oidc suite's host building and
+all Web tests drove a real loopback listener. Two rules:
+
+- A test seam that depends on winning a first-wins registration must be installed at **assembly
+  load** (`[ModuleInitializer]`, with a justified CA2255 suppression - the banned-in-libraries rule
+  exists for consumer-facing libraries, and a test assembly pre-empting product registration is the
+  legitimate use), not in a harness or class initializer.
+- Per-suite filter runs are not sufficient verification: always finish with a **combined run using
+  the exact CI filter**, because cross-suite interference only shows up there.
