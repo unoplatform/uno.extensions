@@ -137,3 +137,11 @@ Domain lessons / postmortems for Uno.Extensions. See `AGENTS.md` §3 for when to
 **Correct pattern:** `Lazy<T>` with `LazyThreadSafetyMode.ExecutionAndPublication` for any single-instance cache whose factory has side effects. Do not hand-roll `??=` when the value owns a subscription, a native handle, or an HTTP client. And when a comment claims an invariant, follow the reference and check it — this one named `ProviderFactory` without reading it.
 
 **Apply to:** every `??=`/`if (x is null)` memoisation in shared code (`ProviderFactory` covered Msal, Oidc and Custom at once). Side-effect-free memoisation of a value type can race harmlessly; anything that registers, connects or allocates unmanaged state cannot.
+
+## A test filter naming a class silently drops its siblings — scope device lanes by namespace
+
+**Problem:** `.azure-pipelines.yml` set `RuntimeTestsFilter: 'Given_MsalAuthentication'` to scope the four device runtime-test stages away from the 15 pre-existing failures in the wider suite. `Uno.UI.RuntimeTests.Engine`'s filter is a plain substring match on the fully-qualified test name, so that string matched exactly one class. The 8 `Given_BrowserTokenCacheStorage` cases added in the same branch — the entire guard on which browser store the token cache lands in — matched nothing and never ran on any lane. Both device lanes were green and the check list read "Runtime Tests - Desktop (Skia): pass", so the gap was invisible; it surfaced only because a human read the check names and asked which platforms actually run the auth tests.
+
+**Correct pattern:** scope a substring filter by **namespace**, not class — `'Authentication.MSAL.UI.Tests'` picks up all 23 cases and keeps picking up classes added later. When a filter is narrowed to dodge unrelated failures, assert the resulting *count*: run the filter locally and confirm it matches the tests you think it does, because a filter that matches too little fails open, not closed.
+
+**Apply to:** `RuntimeTestsFilter` and any `dotnet test --filter` / engine filter in CI. The general shape — a green lane that silently ran a subset — also applies to VSTest `**/*.Tests.dll` globs and `[TestCategory]` selectors. `TreatNoTestsAsError` in `build/tests.runsettings` catches zero matches; nothing catches "half".

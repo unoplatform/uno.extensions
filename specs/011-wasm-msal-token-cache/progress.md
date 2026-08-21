@@ -512,7 +512,9 @@ does cover.
 
 Every implementation item in `spec.md` is now done. What is left is confirmation, not code:
 
-- [ ] **Sign-in pass on the WASM head.** Storage selection and the reload/session lifecycle are
+- [x] **Sign-in pass on the WASM head.** Confirmed manually by the user on 2026-08-20 with
+      `BrowserCacheLocation: SessionStorage`. The tab-close leg was not separately reported.
+      Original scope: Storage selection and the reload/session lifecycle are
       confirmed (see "Verified in a real browser"); what is left is the MSAL blob: sign in, confirm a
       `MsalCache_{ClientId}` entry appears in `sessionStorage`, reload and confirm the session is
       restored *without* a prompt, log out and confirm the entry is gone, then close the tab and
@@ -525,3 +527,36 @@ Every implementation item in `spec.md` is now done. What is left is confirmation
 `doc/Learn/Authentication/HowTo-MsalAuthentication.md` had an unrelated uncommitted edit in the
 working tree (removal of a NOTE about uno#20601 and the Skia-mobile assembly substitution) that
 predates this task; it was committed separately as `4a8c2ad0d` before this pass.
+
+## Eighth pass — the device lanes were only running half the auth suite (2026-08-21)
+
+Prompted by a question about CI coverage, not by a failure. The check list on PR #3139 shows five
+runtime-test entries, and only two of them run anything:
+
+| Check | What it does |
+| --- | --- |
+| `Runtime Tests - Devices Runtime Tests - Desktop (Skia)` | **Runs** the filtered suite |
+| `Runtime Tests - Devices Runtime Tests - iOS Simulator` | **Runs** the filtered suite |
+| `Build Tests Build Runtime Tests - Android` | Builds the head as an artifact; the run stage is commented out (head does not package its `ProjectReference` closure — `failed to load bundled assembly Uno.Extensions.Reactive.dll`) |
+| `Build Tests Build Runtime Tests - WebAssembly` | Builds the head; run stage commented out (`RuntimeTestEmbeddedRunner` calls `Console.CancelKeyPress`, which throws because Uno.Sdk no longer defines `__WASM__`) |
+| `Build Tests Hot-Reload Tests - Skia Desktop (Debug)` | Separate HR suite, unrelated to auth |
+
+The bug: `RuntimeTestsFilter` was `'Given_MsalAuthentication'`. The engine filter is a substring
+match on the fully-qualified test name, so it matched that one class and **nothing else** — the 8
+`Given_BrowserTokenCacheStorage` cases added by this spec never executed on any lane, on any
+platform, at any point in this branch. Both lanes were green throughout.
+
+Fixed by scoping the filter to the namespace instead: `'Authentication.MSAL.UI.Tests'`. Verified
+locally against the desktop head before committing — three candidate filters, each run to
+completion:
+
+| Filter | Tests matched |
+| --- | --- |
+| `Given_MsalAuthentication` (was) | 15 |
+| `MSAL.UI.Tests` | 23 |
+| `Authentication.MSAL.UI.Tests` (now) | 23, 0 failed |
+
+23 = 15 `Given_MsalAuthentication` + 8 `Given_BrowserTokenCacheStorage`. A namespace-scoped filter
+also picks up classes added later, which a class-named one does not.
+
+Lesson recorded in `specs/lessons.md` ("A test filter naming a class silently drops its siblings").

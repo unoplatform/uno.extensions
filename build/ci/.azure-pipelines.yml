@@ -29,11 +29,14 @@ variables:
   IosSimulatorDevice: 'iPhone 16'
   IosSimulatorRuntimePrefix: 'com.apple.CoreSimulator.SimRuntime.iOS-18-5'
 
-  # Which runtime tests the four device stages run. Scoped to the MSAL auth suite because the
-  # wider non-hot-reload suite currently has 15 failing tests (verified against the pre-change
-  # baseline, so they are rot rather than regressions). Widen to '!_HotReload' once those are
-  # fixed - that is the whole point of turning these stages back on.
-  RuntimeTestsFilter: 'Given_MsalAuthentication'
+  # Which runtime tests the four device stages run. Scoped to the MSAL auth namespace, which is
+  # Given_MsalAuthentication (15 cases) + Given_BrowserTokenCacheStorage (8), because the wider
+  # non-hot-reload suite currently has 15 failing tests (verified against the pre-change
+  # baseline, so they are rot rather than regressions). This MUST stay a namespace and not a
+  # class name: the engine filter is a substring match on the fully-qualified test name, so
+  # 'Given_MsalAuthentication' silently ran only half the auth suite. Widen to '!_HotReload'
+  # once those failures are fixed - that is the whole point of turning these stages back on.
+  RuntimeTestsFilter: 'Authentication.MSAL.UI.Tests'
 
 stages:
 - stage: Determine_Changes
