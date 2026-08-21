@@ -21,8 +21,6 @@ public partial class MockRecipesModel
 
 	public IListFeed<Recipe> Recipes => ListFeed.Async(LoadRecipes);
 
-	public IFeed<Person> Person => Feed.Async<Person>(async (ct) => new());
-
 	// The "real" load takes a moment so the difference with a pinned Loading mock is visible.
 	private async ValueTask<IImmutableList<Recipe>> LoadRecipes(CancellationToken ct)
 	{
