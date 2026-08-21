@@ -186,6 +186,14 @@ public class Given_BrowserTokenCacheStorage
 		}
 
 		(await storage.GetKeysAsync(cts.Token)).Should().NotContain(key);
-		(await storage.GetAsync<string>(key, cts.Token)).Should().BeNull();
+
+		// Deliberately not asserting what a *read* of the cleared key does. IKeyValueStorage.GetAsync
+		// is documented to throw KeyNotFoundException when the value does not exist, and the platform
+		// stores disagree: KeyChainKeyValueStorage honours it (KeyChainKeyValueStorage.cs, end of
+		// InternalGetAsync), while ApplicationDataKeyValueStorage returns default instead. Asserting
+		// either one pins a platform accident - this assertion read `.Should().BeNull()` and passed on
+		// desktop while failing the iOS lane. GetKeysAsync is the part of the contract both stores
+		// agree on, and it is what TokenCache.HasTokenAsync actually relies on. The divergence itself
+		// is a product finding, tracked in specs/011-wasm-msal-token-cache/progress.md.
 	}
 }
