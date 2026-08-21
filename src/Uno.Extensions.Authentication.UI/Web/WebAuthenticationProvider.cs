@@ -45,6 +45,9 @@ internal record WebAuthenticationProvider
 
 	protected async override ValueTask<IDictionary<string, string>?> InternalLoginAsync(IDispatcher? dispatcher, IDictionary<string, string>? credentials, CancellationToken cancellationToken)
 	{
+		// An already-cancelled login must not open the sign-in UI at all (spec 012 F4).
+		cancellationToken.ThrowIfCancellationRequested();
+
 		var loginStartUri = InternalSettings.LoginStartUri;
 		loginStartUri = await PrepareLoginStartUri(credentials, loginStartUri, cancellationToken);
 
@@ -84,10 +87,24 @@ internal record WebAuthenticationProvider
 #endif
 
 #if WINDOWS
-		var userResult = await WinUIEx.WebAuthenticator.AuthenticateAsync(new Uri(loginStartUri), new Uri(loginCallbackUri));
+		var userResult = await WinUIEx.WebAuthenticator.AuthenticateAsync(new Uri(loginStartUri), new Uri(loginCallbackUri), cancellationToken);
 		var authData = string.Join("&", userResult.Properties.Select(x => $"{x.Key}={x.Value}"))??string.Empty;
 #else
-		var userResult = await WebAuthenticationBroker.AuthenticateAsync(WebAuthenticationOptions.None, new Uri(loginStartUri), new Uri(loginCallbackUri));
+		var userResult = await WebAuthenticationBroker
+			.AuthenticateAsync(WebAuthenticationOptions.None, new Uri(loginStartUri), new Uri(loginCallbackUri))
+			.AsTask(cancellationToken);
+		if (userResult?.ResponseStatus == WebAuthenticationStatus.UserCancel)
+		{
+			// Surfacing cancellation (instead of returning a result) keeps AuthenticationService
+			// from saving over - and thereby clearing - the previously cached tokens: a login the
+			// user backed out of must not sign them out (spec 012 F5).
+			throw new OperationCanceledException("The user cancelled the sign-in flow.");
+		}
+		if (userResult?.ResponseStatus is { } responseStatus && responseStatus != WebAuthenticationStatus.Success)
+		{
+			ProviderLogger.LogError("Error signing in: {Status} (error detail {ErrorDetail})", responseStatus, userResult.ResponseErrorDetail);
+			return default;
+		}
 		var authData = userResult?.ResponseData ?? string.Empty;
 
 #endif
@@ -155,6 +172,9 @@ internal record WebAuthenticationProvider
 
 	protected async override ValueTask<bool> InternalLogoutAsync(IDispatcher? dispatcher, CancellationToken cancellationToken)
 	{
+		// An already-cancelled logout must not open the end-session UI at all (spec 012 F4).
+		cancellationToken.ThrowIfCancellationRequested();
+
 		var logoutStartUri = InternalSettings.LogoutStartUri;
 		logoutStartUri = await PrepareLogoutStartUri(await Tokens.GetAsync(cancellationToken), logoutStartUri, cancellationToken);
 
@@ -197,12 +217,18 @@ internal record WebAuthenticationProvider
 		}
 
 #if WINDOWS
-		var userResult = await WinUIEx.WebAuthenticator.AuthenticateAsync(new Uri(logoutStartUri), new Uri(logoutCallbackUri));
-		var authData = string.Join("&", userResult.Properties.Select(x => $"{x.Key}={x.Value}"));
+		await WinUIEx.WebAuthenticator.AuthenticateAsync(new Uri(logoutStartUri), new Uri(logoutCallbackUri), cancellationToken);
 #else
-		var userResult = await WebAuthenticationBroker.AuthenticateAsync(WebAuthenticationOptions.None, new Uri(logoutStartUri), new Uri(logoutCallbackUri));
-		var authData = userResult?.ResponseData;
-
+		var userResult = await WebAuthenticationBroker
+			.AuthenticateAsync(WebAuthenticationOptions.None, new Uri(logoutStartUri), new Uri(logoutCallbackUri))
+			.AsTask(cancellationToken);
+		if (userResult?.ResponseStatus is { } responseStatus && responseStatus != WebAuthenticationStatus.Success)
+		{
+			// Reporting failure keeps the local token cache intact - the user backed out of (or the
+			// IdP failed) the end-session flow, so they are still signed in (spec 012 F6).
+			ProviderLogger.LogError("Error signing out: {Status} (error detail {ErrorDetail})", responseStatus, userResult.ResponseErrorDetail);
+			return false;
+		}
 #endif
 		return true;
 
