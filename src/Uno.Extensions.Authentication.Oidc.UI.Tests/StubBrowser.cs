@@ -22,6 +22,9 @@ internal sealed class StubBrowser : IBrowser
 	/// <summary>Whether the interactive surface was reached at all.</summary>
 	public bool WasInvoked { get; private set; }
 
+	/// <summary>The URL the most recent invocation was asked to open.</summary>
+	public string? LastStartUrl { get; private set; }
+
 	/// <summary>
 	/// When set, the next invocation reports this result type (e.g. <see cref="BrowserResultType.UserCancel"/>)
 	/// instead of completing the flow, then resets.
@@ -31,6 +34,7 @@ internal sealed class StubBrowser : IBrowser
 	public Task<BrowserResult> InvokeAsync(BrowserOptions options, CancellationToken cancellationToken = default)
 	{
 		WasInvoked = true;
+		LastStartUrl = options.StartUrl;
 		cancellationToken.ThrowIfCancellationRequested();
 
 		if (NextResultType is { } resultType && resultType != BrowserResultType.Success)
