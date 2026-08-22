@@ -169,6 +169,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Uno.Extensions.Authenticati
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Uno.Extensions.Authentication.UI", "Uno.Extensions.Authentication.UI", "{D7301A90-CB56-0B29-07E7-9F046DA6FF23}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Uno.Extensions.Http.Tests", "src\Uno.Extensions.Http.Tests\Uno.Extensions.Http.Tests.csproj", "{F8622BAF-1DB2-4A62-B886-FA61F3584670}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -909,6 +911,22 @@ Global
 		{5A46AA84-27A0-44B1-843D-A0C339D698D4}.Release|x64.Build.0 = Release|Any CPU
 		{5A46AA84-27A0-44B1-843D-A0C339D698D4}.Release|x86.ActiveCfg = Release|Any CPU
 		{5A46AA84-27A0-44B1-843D-A0C339D698D4}.Release|x86.Build.0 = Release|Any CPU
+		{F8622BAF-1DB2-4A62-B886-FA61F3584670}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F8622BAF-1DB2-4A62-B886-FA61F3584670}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F8622BAF-1DB2-4A62-B886-FA61F3584670}.Debug|arm64.ActiveCfg = Debug|Any CPU
+		{F8622BAF-1DB2-4A62-B886-FA61F3584670}.Debug|arm64.Build.0 = Debug|Any CPU
+		{F8622BAF-1DB2-4A62-B886-FA61F3584670}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{F8622BAF-1DB2-4A62-B886-FA61F3584670}.Debug|x64.Build.0 = Debug|Any CPU
+		{F8622BAF-1DB2-4A62-B886-FA61F3584670}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{F8622BAF-1DB2-4A62-B886-FA61F3584670}.Debug|x86.Build.0 = Debug|Any CPU
+		{F8622BAF-1DB2-4A62-B886-FA61F3584670}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F8622BAF-1DB2-4A62-B886-FA61F3584670}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F8622BAF-1DB2-4A62-B886-FA61F3584670}.Release|arm64.ActiveCfg = Release|Any CPU
+		{F8622BAF-1DB2-4A62-B886-FA61F3584670}.Release|arm64.Build.0 = Release|Any CPU
+		{F8622BAF-1DB2-4A62-B886-FA61F3584670}.Release|x64.ActiveCfg = Release|Any CPU
+		{F8622BAF-1DB2-4A62-B886-FA61F3584670}.Release|x64.Build.0 = Release|Any CPU
+		{F8622BAF-1DB2-4A62-B886-FA61F3584670}.Release|x86.ActiveCfg = Release|Any CPU
+		{F8622BAF-1DB2-4A62-B886-FA61F3584670}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -970,6 +988,7 @@ Global
 		{0A9F418A-78D1-4645-45D6-A92F22FB7285} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
 		{5A46AA84-27A0-44B1-843D-A0C339D698D4} = {0A9F418A-78D1-4645-45D6-A92F22FB7285}
 		{D7301A90-CB56-0B29-07E7-9F046DA6FF23} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
+		{F8622BAF-1DB2-4A62-B886-FA61F3584670} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6E7B035D-9A64-4D95-89AA-9D4653F17C42}

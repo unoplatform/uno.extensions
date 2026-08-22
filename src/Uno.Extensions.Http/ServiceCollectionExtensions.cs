@@ -172,6 +172,187 @@ public static class ServiceCollectionExtensions
 	}
 
 	/// <summary>
+	/// Adds a typed client to the service collection with the specified service lifetime.
+	/// </summary>
+	/// <typeparam name="TClient">The type of client to add</typeparam>
+	/// <typeparam name="TImplementation">The type implementation</typeparam>
+	/// <param name="services">The service collection to register with</param>
+	/// <param name="context">The host builder context</param>
+	/// <param name="lifetime">
+	/// The service lifetime to register the client with. <see cref="ServiceLifetime.Transient"/>
+	/// behaves exactly like the overloads without a lifetime. A non-transient client captures its
+	/// <see cref="HttpClient"/> for the registration's lifetime, forgoing the factory's handler
+	/// rotation (stale-DNS mitigation) - which is why typed clients are transient by default.
+	/// Choose it when the client has to carry state across resolutions.
+	/// </param>
+	/// <param name="options">[optional] Endpoint information (loaded from appsettings if not specified)</param>
+	/// <param name="name">[optional] Name of the endpoint (used to load from appsettings)</param>
+	/// <param name="configure">[optional] Callback to configure the endpoint</param>
+	/// <returns>Updated service collection</returns>
+	[RequiresDynamicCode(RequiresDynamicCodeMessage)]
+	[RequiresUnreferencedCode(RequiresUnreferencedCodeMessage)]
+	public static IServiceCollection AddClient<
+		[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)]
+		TClient,
+		[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)]
+		TImplementation
+	>(
+		 this IServiceCollection services,
+		 HostBuilderContext context,
+		 ServiceLifetime lifetime,
+		 EndpointOptions? options = null,
+		 string? name = null,
+		 Func<IHttpClientBuilder, EndpointOptions?, IHttpClientBuilder>? configure = null
+	 )
+		where TClient : class
+		where TImplementation : class, TClient
+		=> services.AddClientWithEndpoint<TClient, TImplementation, EndpointOptions>(context, lifetime, options, name, configure);
+
+	/// <summary>
+	/// Adds a typed client to the service collection with the specified service lifetime.
+	/// </summary>
+	/// <typeparam name="TClient">The type of client to add</typeparam>
+	/// <typeparam name="TImplementation">The type implementation</typeparam>
+	/// <typeparam name="TEndpoint">The type of endpoint to register</typeparam>
+	/// <param name="services">The service collection to register with</param>
+	/// <param name="context">The host builder context</param>
+	/// <param name="lifetime">
+	/// The service lifetime to register the client with; see
+	/// <see cref="AddClient{TClient, TImplementation}(IServiceCollection, HostBuilderContext, ServiceLifetime, EndpointOptions?, string?, Func{IHttpClientBuilder, EndpointOptions?, IHttpClientBuilder}?)"/>.
+	/// </param>
+	/// <param name="options">[optional] Endpoint information (loaded from appsettings if not specified)</param>
+	/// <param name="name">[optional] Name of the endpoint (used to load from appsettings)</param>
+	/// <param name="configure">[optional] Callback to configure the endpoint</param>
+	/// <returns>Updated service collection</returns>
+	[RequiresDynamicCode(RequiresDynamicCodeMessage)]
+	[RequiresUnreferencedCode(RequiresUnreferencedCodeMessage)]
+	public static IServiceCollection AddClientWithEndpoint<
+		[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)]
+		TClient,
+		[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)]
+		TImplementation,
+		[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)]
+		TEndpoint
+	>(
+		 this IServiceCollection services,
+		 HostBuilderContext context,
+		 ServiceLifetime lifetime,
+		 TEndpoint? options = null,
+		 string? name = null,
+		 Func<IHttpClientBuilder, TEndpoint?, IHttpClientBuilder>? configure = null
+	 )
+		where TClient : class
+		where TImplementation : class, TClient
+		where TEndpoint : EndpointOptions, new()
+	{
+		if (lifetime == ServiceLifetime.Transient)
+		{
+			// Same typed (transient) registration as the lifetime-less overload, kept inline so the
+			// configure callback stays typed to TEndpoint.
+			Func<IServiceCollection, HostBuilderContext, IHttpClientBuilder> typedFactory =
+				(s, c) => (name is null || string.IsNullOrWhiteSpace(name)) ?
+							s.AddHttpClient<TClient, TImplementation>() :
+							s.AddHttpClient<TClient, TImplementation>(name);
+			return services.AddClientWithEndpoint<TClient, TEndpoint>(context, options, name, typedFactory, configure);
+		}
+
+		// Non-transient: register the endpoint pipeline as a NAMED client (base address, native
+		// handler, delegating handlers, configure callback), then register the client type with
+		// the requested lifetime, built through ITypedHttpClientFactory - the supported way to
+		// construct typed clients outside AddHttpClient<T>'s own (transient) registration.
+		var endpointName = EndpointNameForType<TClient>(name);
+
+		services.AddClientWithEndpoint<TClient, TEndpoint>(
+			context,
+			options,
+			endpointName,
+			httpClientFactory: (s, c) => s.AddHttpClient(endpointName),
+			configure);
+
+		services.Add(ServiceDescriptor.Describe(
+			typeof(TClient),
+			sp => sp.GetRequiredService<ITypedHttpClientFactory<TImplementation>>()
+					.CreateClient(sp.GetRequiredService<IHttpClientFactory>().CreateClient(endpointName)),
+			lifetime));
+
+		return services;
+	}
+
+	/// <summary>
+	/// Adds a typed client to the service collection with the specified service lifetime.
+	/// </summary>
+	/// <typeparam name="TInterface">The type of client to add</typeparam>
+	/// <param name="services">The service collection to register with</param>
+	/// <param name="context">The host builder context</param>
+	/// <param name="lifetime">
+	/// The service lifetime to register the client with; see
+	/// <see cref="AddClient{TClient, TImplementation}(IServiceCollection, HostBuilderContext, ServiceLifetime, EndpointOptions?, string?, Func{IHttpClientBuilder, EndpointOptions?, IHttpClientBuilder}?)"/>.
+	/// </param>
+	/// <param name="options">[optional] Endpoint information (loaded from appsettings if not specified)</param>
+	/// <param name="name">[optional] Name of the endpoint (used to load from appsettings)</param>
+	/// <param name="configure">[optional] Callback to configure the endpoint</param>
+	/// <returns>Updated service collection</returns>
+	[RequiresDynamicCode(RequiresDynamicCodeMessage)]
+	[RequiresUnreferencedCode(RequiresUnreferencedCodeMessage)]
+	public static IServiceCollection AddClient<
+		[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)]
+		TInterface
+	>(
+		  this IServiceCollection services,
+		  HostBuilderContext context,
+		  ServiceLifetime lifetime,
+		  EndpointOptions? options = null,
+		  string? name = null,
+		  Func<IHttpClientBuilder, EndpointOptions?, IHttpClientBuilder>? configure = null
+	  )
+		  where TInterface : class
+		=> services.AddClientWithEndpoint<TInterface, EndpointOptions>(context, lifetime, options, name, configure);
+
+	/// <summary>
+	/// Adds a typed client to the service collection with the specified service lifetime.
+	/// </summary>
+	/// <typeparam name="TInterface">The type of client to add</typeparam>
+	/// <typeparam name="TEndpoint">The type of endpoint to register</typeparam>
+	/// <param name="services">The service collection to register with</param>
+	/// <param name="context">The host builder context</param>
+	/// <param name="lifetime">
+	/// The service lifetime to register the client with; see
+	/// <see cref="AddClient{TClient, TImplementation}(IServiceCollection, HostBuilderContext, ServiceLifetime, EndpointOptions?, string?, Func{IHttpClientBuilder, EndpointOptions?, IHttpClientBuilder}?)"/>.
+	/// </param>
+	/// <param name="options">[optional] Endpoint information (loaded from appsettings if not specified)</param>
+	/// <param name="name">[optional] Name of the endpoint (used to load from appsettings)</param>
+	/// <param name="configure">[optional] Callback to configure the endpoint</param>
+	/// <returns>Updated service collection</returns>
+	[RequiresDynamicCode(RequiresDynamicCodeMessage)]
+	[RequiresUnreferencedCode(RequiresUnreferencedCodeMessage)]
+	public static IServiceCollection AddClientWithEndpoint<
+		[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)]
+		TInterface,
+		[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)]
+		TEndpoint
+	>(
+		  this IServiceCollection services,
+		  HostBuilderContext context,
+		  ServiceLifetime lifetime,
+		  TEndpoint? options = null,
+		  string? name = null,
+		  Func<IHttpClientBuilder, TEndpoint?, IHttpClientBuilder>? configure = null
+	  )
+		  where TInterface : class
+		where TEndpoint : EndpointOptions, new()
+		=> services.AddClientWithEndpoint<TInterface, TInterface, TEndpoint>(context, lifetime, options, name, configure);
+
+	/// <summary>
+	/// The endpoint name used when none is supplied: the client's type name, with a leading 'I'
+	/// stripped for interfaces - matching how the transient overloads resolve their configuration
+	/// section.
+	/// </summary>
+	private static string EndpointNameForType<TClient>(string? name) =>
+		(name is not null && !string.IsNullOrWhiteSpace(name))
+			? name
+			: (typeof(TClient).IsInterface ? typeof(TClient).Name.TrimStart(InterfaceNamePrefix) : typeof(TClient).Name);
+
+	/// <summary>
 	/// Configures the primary and inner http message handler.
 	/// </summary>
 	/// <typeparam name="THandler">The type to register as the primary message handler</typeparam>
