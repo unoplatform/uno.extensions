@@ -184,6 +184,82 @@ public class Given_WebAuthentication
 	}
 
 	/// <summary>
+	/// A service the typed AddWeb callbacks receive, standing in for an app's own OAuth client
+	/// (the shape the Authentication.WebExtensionsDemo sample uses): the login URI is prepared at
+	/// sign-in time and the "code" on the redirect is exchanged for tokens in PostLogin.
+	/// </summary>
+	private sealed class FakeOAuthService
+	{
+		public const string AuthorizeUri = "https://stub-idp.example/authorize?client_id=fake";
+		public const string ExchangedAccessToken = "typed-exchanged-access-token";
+
+		public int ExchangeCount { get; private set; }
+		public string? LastRedirectUri { get; private set; }
+
+		public string BuildAuthorizeUri() => AuthorizeUri;
+
+		public string CallbackUri => "web-tests://callback";
+
+		public Task<IDictionary<string, string>?> ExchangeCodeAsync(string redirectUri, CancellationToken ct)
+		{
+			ExchangeCount++;
+			LastRedirectUri = redirectUri;
+			return Task.FromResult<IDictionary<string, string>?>(new Dictionary<string, string>
+			{
+				[TokenCacheExtensions.AccessTokenKey] = ExchangedAccessToken,
+			});
+		}
+	}
+
+	/// <summary>
+	/// Repro for the sample-app configuration (Authentication.WebExtensionsDemo): everything is
+	/// supplied through AddWeb&lt;TService&gt;'s typed callbacks - no static LoginStartUri - and the
+	/// tokens come from PostLogin, not the redirect query.
+	/// </summary>
+	[TestMethod]
+	public async Task When_TypedCallbacksOnly_Then_LoginUsesThem()
+	{
+		StubWebAuthenticationBroker.EnsureRegistered();
+		var broker = StubWebAuthenticationBroker.Instance;
+		broker.Reset();
+		var logs = new CapturingLoggerProvider();
+
+		using var host = UnoHost
+			.CreateDefaultBuilder(typeof(Given_WebAuthentication).Assembly)
+			.UseAuthentication(auth => auth
+				.AddWeb<FakeOAuthService>(web => web
+					.PrepareLoginStartUri(async (oauth, services, cache, credentials, loginStartUri, ct) =>
+						oauth.BuildAuthorizeUri())
+					.PrepareLoginCallbackUri(async (oauth, services, cache, credentials, loginCallbackUri, ct) =>
+						oauth.CallbackUri)
+					.PostLogin(async (oauth, services, cache, credentials, redirectUri, tokens, ct) =>
+						await oauth.ExchangeCodeAsync(redirectUri, ct))))
+			.ConfigureServices(services => services
+				.AddSingleton<FakeOAuthService>()
+				.AddLogging(logging => logging
+					.SetMinimumLevel(LogLevel.Trace)
+					.AddProvider(logs)))
+			.Build();
+
+		var authentication = host.Services.GetRequiredService<IAuthenticationService>();
+		var tokens = host.Services.GetRequiredService<ITokenCache>();
+		var oauth = host.Services.GetRequiredService<FakeOAuthService>();
+		using var purge = Cts();
+		await tokens.ClearAsync(purge.Token);
+		using var cts = Cts();
+
+		var result = await authentication.LoginAsync(default, cancellationToken: cts.Token);
+
+		broker.InvocationCount.Should().Be(1, "diagnostics: {0}", logs.Text);
+		broker.LastRequestUri!.OriginalString.Should().Be(FakeOAuthService.AuthorizeUri,
+			"the login URI must come from the typed PrepareLoginStartUri callback");
+		oauth.ExchangeCount.Should().Be(1, "the typed PostLogin callback must run");
+		result.Should().BeTrue("diagnostics: {0}", logs.Text);
+		(await tokens.GetAsync(cts.Token))[TokenCacheExtensions.AccessTokenKey]
+			.Should().Be(FakeOAuthService.ExchangedAccessToken, "PostLogin's tokens must be the ones cached");
+	}
+
+	/// <summary>
 	/// Red test for spec 012 F4: no <see cref="CancellationToken"/> used to reach the broker call,
 	/// so an already-cancelled login still drove the whole interactive flow to completion.
 	/// </summary>
