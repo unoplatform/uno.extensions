@@ -14,18 +14,4 @@
     -->
 		<NoWarn>$(NoWarn);NU1507;NETSDK1201;PRI257</NoWarn>
 	</PropertyGroup>
-	<!--
-		Hot Design is a design-time tool and is not part of what these heads exist to validate, but
-		the Uno.Sdk references it implicitly and Uno.UI.HotDesign 1.20.0-dev.750 demands
-		Uno.Toolkit.WinUI >= 9.0.0-dev.9, System.Text.Json >= 9.0.0 and a newer
-		Microsoft.Windows.SDK.BuildTools. The toolkit floor collides head-on with the deliberate
-		UnoToolkitVersion 8.4.2 pin in samples/Directory.Packages.props, which exists because newer
-		toolkits are built against Microsoft.iOS 26 while the .NET 9 iOS workload here references
-		18.2 (CS1705). Dropping the implicit reference resolves all three without touching that pin.
-		No code guard is needed - nothing in these heads calls UseStudio().
-	-->
-	<PropertyGroup>
-		<UnoDisableHotDesign>true</UnoDisableHotDesign>
-	</PropertyGroup>
-
 </Project>

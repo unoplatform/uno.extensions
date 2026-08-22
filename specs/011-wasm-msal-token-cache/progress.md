@@ -754,11 +754,47 @@ Navigation.Toolkit package declares a floor on stable 8.4.2 rather than on a pre
 `net9.0-maccatalyst18.0` alongside its net10 flavors, which is why only the Toolkit needed pinning.
 Remove both pins when this repo moves to net10 / iOS 26.
 
-Two smaller items fell out of the same bump: `Uno.UI.HotDesign`, referenced implicitly by the Sdk,
-demands Toolkit >= 9.0.0-dev.9, System.Text.Json >= 9.0.0 and newer WinAppSdk build tools, so it is
-disabled in the Playground and TestHarness heads (`UnoDisableHotDesign`, no code guard needed - nothing
-calls `UseStudio()`); and `Microsoft.Windows.SDK.BuildTools` moved to 10.0.28000.2526 in
-`samples/Directory.Packages.props` because `Uno.Extensions.Hosting.WinUI` now requires it.
+### Hot Design is pinned, never disabled - its processor is what applies XAML hot reload
+
+`Uno.UI.HotDesign` is referenced implicitly by the Sdk, and the 1.20.0-dev.750 that 6.8.0-dev.21
+defaults to demands `Uno.Toolkit.WinUI >= 9.0.0-dev.9` and `System.Text.Json >= 9.0.0`, the first
+colliding with the toolkit pin above. **The first attempt disabled the package** in the runtime-test,
+Playground and TestHarness heads, on the reasoning that a design-time tool has no role in an automated
+test run. CI disagreed: the hot-reload lane went from 64/64 to **40/64**, and every one of the 24
+failures was a XamlHR case timing out with "XAML HR did not replace the ... instance within 30s".
+
+Diffing the dev-server output between the green and red runs shows why:
+
+```console
+pre-bump  (64/64):  Processor assembly location: .nuget/uno.ui.hotdesign/1.19.1...
+post-bump (40/64):  no hotdesign processor at all
+```
+
+**`Uno.UI.HotDesign` contributes a dev-server processor, and that processor is what applies XAML hot
+reload.** Removing the package removes XAML HR. Note the wrong turn in between: the package's own
+`Uno.WinUI.DevServer` dependency is 6.7.0-dev.688, *lower* than the 6.8.0-dev.51 the head references,
+which was used to argue the removal could not be at fault. Dependency versions were the wrong signal -
+the package's contribution is a server-side plugin.
+
+The fix keeps the feature and pins the version: `UnoHotDesignVersion 1.19.175`, the one in use before
+the bump, whose dependencies are exactly what this repo already pins - Toolkit 8.4.2, Themes 6.1.1,
+Uno.WinUI 6.6.166, and no System.Text.Json floor at all. So the toolkit pin, the 8.0.5
+System.Text.Json pin and Hot Design all coexist.
+
+Also worth recording, because it looked like the culprit and was not: the hot-reload lane's generated
+`DebugPlatforms.props` workaround is still doing its job. Its failure mode -
+`MSBuildWorkspace [Failure] ... Project does not contain 'Compile' target` - appears **152 times in
+both** the 64/64 and the 40/64 runs, so it is pre-existing noise rather than a regression.
+
+The mobile device lanes still pass `-p:UnoDisableHotDesign=true -p:UnoDisableMCPSupport=true`, and that
+is left alone deliberately: those flags were added for a diagnosed startup crash
+(`Uno.UI.App.Mcp.Client` -> `FileNotFoundException: SkiaSharp.Views.Windows`), Hot Design also ships
+`SkiaSharp.Views.WinUI`, and no XamlHR test runs on those lanes. Re-enabling it there would risk
+reintroducing that crash on three green lanes for no coverage gain.
+
+`Microsoft.Windows.SDK.BuildTools` moved to 10.0.28000.2526 in `samples/Directory.Packages.props`
+because `Uno.Extensions.Hosting.WinUI` now requires it, and the TestHarness UITest SkiaSharp pin moved
+from a duplicate `PackageVersion` to `VersionOverride` (NU1506).
 
 ### IL2026 in Reactive.UI on WebAssembly
 

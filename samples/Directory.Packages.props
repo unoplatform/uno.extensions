@@ -29,6 +29,9 @@
 			built against 18.2; src/Directory.Packages.props carries the same pin for the same reason.
 		-->
 		<UnoToolkitVersion>8.4.2</UnoToolkitVersion>
+		<!-- Keep Hot Design on the version that matches the toolkit pin above; see
+		     src/Directory.Packages.props for why. -->
+		<UnoHotDesignVersion>1.19.175</UnoHotDesignVersion>
 		<UnoThemesVersion>6.1.1</UnoThemesVersion>
 	</PropertyGroup>
 
