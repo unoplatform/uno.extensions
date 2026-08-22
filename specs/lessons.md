@@ -299,3 +299,15 @@ all Web tests drove a real loopback listener. Two rules:
   legitimate use), not in a harness or class initializer.
 - Per-suite filter runs are not sufficient verification: always finish with a **combined run using
   the exact CI filter**, because cross-suite interference only shows up there.
+
+## Silent no-ops hide DI failures; filtered build output hides failures (2026-08-21, spec 012 samples)
+
+- A view whose click handlers null-check the view model (`if (_viewModel is { } vm)`) turns a
+  navigation-time DI failure into "the button does nothing" with zero diagnostics. When the VM
+  can't activate (here: `IHttpClientFactory` unregistered - `UseHttp` only adds the factory when
+  clients are registered), the page still renders. When forking sample scaffolding, prefer failing
+  loudly (throw or log) over silently ignoring a missing DataContext.
+- Piping builds through `tail -1`/`grep "Time Elapsed"` reports success for a FAILED build - three
+  debugging iterations ran against a stale binary before this was noticed. Gate on `"N Error(s)"`
+  or the exit code, never on elapsed-time output. (Repeat offender this session: `grep|head` exit
+  codes; see the runtime-test filter entry above.)
