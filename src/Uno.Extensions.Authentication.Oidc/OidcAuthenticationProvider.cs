@@ -72,7 +72,14 @@ internal record OidcAuthenticationProvider(
 			return true;
 		}
 
-		var result = await _client.LogoutAsync(cancellationToken: cancellationToken);
+		// Pass the cached id_token as the end-session hint: without it the identity provider
+		// cannot trust the post-logout redirect, so it prompts the user for confirmation and never
+		// redirects back to the app - on desktop the loopback listener then waits until the broker
+		// timeout with the UI stuck (spec 012 F11).
+		var idToken = await Tokens.TokenAsync(TokenCacheExtensions.IdTokenKey, cancellationToken);
+		var result = await _client.LogoutAsync(
+			new LogoutRequest { IdTokenHint = string.IsNullOrWhiteSpace(idToken) ? null : idToken },
+			cancellationToken);
 		if (result.IsError)
 		{
 			// Reporting failure keeps the local token cache intact - the user backed out of (or the

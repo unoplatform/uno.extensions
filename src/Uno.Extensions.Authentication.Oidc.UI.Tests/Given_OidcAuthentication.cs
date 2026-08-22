@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Duende.IdentityModel.OidcClient.Browser;
@@ -151,6 +152,34 @@ public class Given_OidcAuthentication
 		(await harness.Tokens.GetAsync(cts.Token)).Should().NotContainKey(
 			TokenCacheExtensions.AccessTokenKey,
 			"a failed refresh must not leave a dead access token behind");
+	}
+
+	/// <summary>
+	/// Red test for spec 012 F11: the provider never passed the cached id_token as the
+	/// end-session <c>id_token_hint</c>. Without it the identity provider cannot trust the
+	/// post-logout redirect, so it prompts for confirmation and never redirects back to the app -
+	/// on desktop the loopback listener then waits until the broker timeout with the UI stuck.
+	/// </summary>
+	[TestMethod]
+	public async Task When_Logout_Then_EndSessionCarriesIdTokenHint()
+	{
+		using var harness = await CreateHarnessAsync();
+		using var cts = Cts();
+
+		await harness.Authentication.LoginAsync(default, cancellationToken: cts.Token);
+
+		// The stub token endpoint mints no id_token; plant one the way a real IdP would have.
+		var tokens = new Dictionary<string, string>(await harness.Tokens.GetAsync(cts.Token))
+		{
+			[TokenCacheExtensions.IdTokenKey] = "stub-id-token",
+		};
+		await harness.Tokens.SaveAsync(await harness.Tokens.GetCurrentProviderAsync(cts.Token) ?? "Oidc", tokens, cts.Token);
+
+		var loggedOut = await harness.Authentication.LogoutAsync(default, cts.Token);
+
+		loggedOut.Should().BeTrue();
+		harness.Browser.LastStartUrl.Should().Contain("id_token_hint=stub-id-token",
+			"without the hint the identity provider cannot trust the post-logout redirect and never returns to the app");
 	}
 
 	[TestMethod]
