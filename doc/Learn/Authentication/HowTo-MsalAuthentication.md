@@ -20,6 +20,8 @@ uid: Uno.Extensions.Authentication.HowToMsalAuthentication
 | WebAssembly | ✅ Popup | ✅ Browser storage, `localStorage` by default — cleartext, see [below](#webassembly-token-cache) |
 | Mac Catalyst | ❌ Not supported (`AddMsal` throws `PlatformNotSupportedException`) | — |
 
+MSAL's own cache (refresh and ID tokens) is what the last column describes. The access token that `IAuthenticationService` hands to HTTP handlers is kept separately, in the host's default `IKeyValueStorage` — `KeyStore` / Keychain on native Android and iOS, but plain `ApplicationData` on Android and iOS heads built with `UnoFeatures=SkiaRenderer`, where the Uno SDK loads the storage package's plain `netX.0` build. See [Key-value storage](xref:Uno.Extensions.Storage.Overview#key-value-storage).
+
 The set of identity scenarios (Microsoft accounts, work/school accounts, B2C, sovereign clouds, ...) is determined by MSAL itself — see [MSAL.NET supported platforms and scenarios](https://learn.microsoft.com/entra/msal/dotnet/getting-started/scenarios) for details.
 
 ## Prerequisites
@@ -320,13 +322,16 @@ builder.AddMsal(window, msal => msal
 ```
 
 The callback runs on every interactive sign-in, after the Uno helpers have been applied, so it can
-override what those set.
+override what those set. `Builder(...)` follows the same rule: it runs after the platform redirect
+URI, the Windows broker and `WithUnoHelpers()` have been applied, so anything it sets — including an
+`HttpClient` factory on WebAssembly — wins.
 
-An interactive sign-in that isn't completed times out after **5 minutes** by default — the
-system-browser flow used on desktop cannot detect a closed browser window, so without a timeout an
-abandoned sign-in would leave the awaiting login command busy forever. Configure it via
-`InteractiveTimeout` in the `Msal` configuration section (a `TimeSpan`; zero or negative waits
-indefinitely):
+On desktop (Skia) heads, an interactive sign-in that isn't completed times out after **5 minutes**
+by default — the system-browser flow cannot detect a closed browser window, so without a timeout
+an abandoned sign-in would leave the awaiting login command busy forever. The Windows broker, the
+mobile browsers and the WebAssembly popup all report a dismissed sign-in themselves, so no default
+applies there. Configure it on any platform via `InteractiveTimeout` in the `Msal` configuration
+section (a `TimeSpan`; zero or negative waits indefinitely):
 
 ```json
 {
