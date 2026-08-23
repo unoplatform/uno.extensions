@@ -17,22 +17,10 @@ jobs:
       - template: templates/host-cleanup-linux.yml
       # This job only runs the Playwright-based runner tool against a published artifact, so it
       # needs the SDK but no workloads; the shared template keeps the SDK version aligned anyway.
+      # Uno.UI.RuntimeTests.Engine.Wasm.Runner ships as tools/net10.0/any, and `dotnet tool
+      # install` picks the tool asset from the *SDK* version, so the shared template's .NET 10 SDK
+      # is also what makes the runner installable here.
       - template: templates/dotnet-install-uno-check.yml
-
-      # Uno.UI.RuntimeTests.Engine.Wasm.Runner ships as tools/net10.0/any at every published
-      # version, and `dotnet tool install` picks the tool asset from the *SDK* version - not from
-      # the installed runtimes. A .NET 9 SDK finds no usable tools/<tfm> folder and reports the
-      # misleading "Settings file 'DotnetToolSettings.xml' was not found in the package" (the file
-      # is present). Installing the .NET 10 runtime alone is therefore not enough; the SDK is what
-      # matters. Safe here because this job only runs the tool - it builds nothing - and
-      # global.json pins no SDK version.
-      - task: UseDotNet@2
-        displayName: 'Install .NET 10 SDK (for the WebAssembly runner tool)'
-        retryCountOnTaskFailure: 3
-        inputs:
-          packageType: sdk
-          version: '10.x'
-          installationPath: $(DOTNET_INSTALL_DIR)
 
       - task: NodeTool@0
         inputs:
@@ -51,18 +39,12 @@ jobs:
         env:
           BUILD_SOURCESDIRECTORY: $(Build.SourcesDirectory)
           RuntimeTestsArtifactPath: $(RuntimeTestsArtifactPath)
-          # Deliberately NARROWER than $(RuntimeTestsFilter), which the other three lanes use.
-          # The browser runs the whole 23-test auth namespace (verified locally: 13 pass, 10 fail),
-          # but every one of the 10 failures is the same harness limitation - MSAL's
-          # .WithHttpClientFactory(StubEntra) is not honoured in the browser, so StubWebUi's
-          # fabricated authorization code escapes to the real login.microsoftonline.com and comes
-          # back AADSTS9002313 ("Invalid request. Request is malformed or invalid"). Those tests
-          # need the stub to apply on WASM before they can run here; the product path itself is
-          # fine (a manual sign-in on the WASM head works). Given_BrowserTokenCacheStorage needs no
-          # network at all and is the class that covers what spec 011 added - browser store
-          # selection and the localStorage/sessionStorage/memory round trip - so this lane runs
-          # those 8, all green. Widen to $(RuntimeTestsFilter) once the stub reaches the browser.
-          TEST_FILTER: 'Given_BrowserTokenCacheStorage'
+          # Same filter as the other three lanes. This lane used to run only
+          # Given_BrowserTokenCacheStorage because the provider invoked the app's Builder callback
+          # before WithUnoHelpers(), which on WebAssembly replaced the stub HttpClient factory with
+          # Uno's - so StubWebUi's fabricated code escaped to the real login.microsoftonline.com
+          # (AADSTS9002313). The callback now runs last, so the stub applies in the browser too.
+          TEST_FILTER: '$(RuntimeTestsFilter)'
 
       - task: PublishTestResults@2
         condition: always()

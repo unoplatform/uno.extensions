@@ -7,7 +7,6 @@ using LogLevel = Microsoft.Extensions.Logging.LogLevel;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.Json.Serialization.Metadata;
-using MsalCacheHelper = Microsoft.Identity.Client.Extensions.Msal.MsalCacheHelper;
 #endif
 
 namespace Uno.Extensions.Authentication.MSAL;
@@ -41,21 +40,9 @@ internal record MsalAuthenticationProvider(
 		var config = Configuration.Get(Name) ?? new MsalConfiguration();
 		var builder = PublicClientApplicationBuilder.CreateWithApplicationOptions(config);
 
-		// Before the app callback, so an app calling WithRedirectUri itself always wins.
 		ApplyPlatformRedirectUri(builder, config);
 
-		if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"Invoking settings Build callback");
-		Settings?.Build?.Invoke(builder);
-
-		_scopes = config.Scopes ?? new string[] { };
-		if (_scopes.Length == 0 &&
-			Settings?.Scopes is not null)
-		{
-			_scopes = Settings.Scopes;
-		}
-
 #if WINDOWS
-
 		if (window is { })
 		{
 			builder.WithBroker(new BrokerOptions(BrokerOptions.OperatingSystems.Windows));
@@ -73,6 +60,20 @@ internal record MsalAuthenticationProvider(
 
 		builder.WithUnoHelpers();
 
+		// Last, so the app's callback wins over everything above it - the platform redirect URI,
+		// the broker, and what WithUnoHelpers sets (on WebAssembly that is the HttpClient factory;
+		// an app-supplied one was silently replaced when this ran earlier). Same ordering as
+		// InteractiveBuild in AcquireInteractiveTokenAsync.
+		if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"Invoking settings Build callback");
+		Settings?.Build?.Invoke(builder);
+
+		_scopes = config.Scopes ?? new string[] { };
+		if (_scopes.Length == 0 &&
+			Settings?.Scopes is not null)
+		{
+			_scopes = Settings.Scopes;
+		}
+
 		_pca = builder.Build();
 
 		// The effective redirect URI (defaults, configuration and the Build callback applied) is
@@ -84,10 +85,7 @@ internal record MsalAuthenticationProvider(
 		}
 
 		// After _pca is assigned, so the handler always has a client id to key the entry with.
-		// Subscribing here relies on Build running once per provider: ProviderFactory guarantees
-		// that with a thread-safe Lazy. It did not originally - a bare `??=` let two concurrent
-		// resolves both build, and because ConfigureProvider returns a record *copy* each time, the
-		// losing instance stayed subscribed with nothing left holding a reference to unsubscribe it.
+		// Relies on Build running once per provider, which ProviderFactory's Lazy guarantees.
 		Tokens.Cleared += OnTokensCleared;
 
 		if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"Building MSAL Provider complete");
@@ -204,21 +202,14 @@ internal record MsalAuthenticationProvider(
 	}
 
 	/// <remarks>
-	/// Deliberately does not require <paramref name="dispatcher"/>, unlike login: nothing here shows
-	/// UI - <c>RemoveAsync</c> only mutates MSAL's own cache. Requiring one made
-	/// <c>IAuthenticationService.LogoutAsync(CancellationToken)</c> - the documented overload, which
-	/// passes no dispatcher - throw <see cref="ArgumentNullException"/> every time, which callers see
-	/// as sign-out silently doing nothing once their command swallows the exception. The Oidc
-	/// provider ignores the parameter too.
+	/// <paramref name="dispatcher"/> is not required: nothing here shows UI, and the documented
+	/// <c>IAuthenticationService.LogoutAsync(CancellationToken)</c> overload passes none.
 	/// </remarks>
 	protected async override ValueTask<bool> InternalLogoutAsync(IDispatcher? dispatcher, CancellationToken cancellationToken)
 	{
 		await SetupStorage(cancellationToken);
 
-		// Every account, not just the first: MSAL can hold several, and removing one left the rest
-		// signed in - with their refresh tokens still in the serialized cache. Silent sign-in then
-		// picks up whichever account survived, so a "logged out" user comes back authenticated.
-		//
+		// Every account: a survivor keeps its refresh token and silent sign-in picks it up again.
 		// ToArray first: RemoveAsync mutates the cache this enumerable reads from.
 		var accounts = (await _pca!.GetAccountsAsync()).ToArray();
 		var removed = 0;
@@ -226,30 +217,20 @@ internal record MsalAuthenticationProvider(
 		{
 			foreach (var account in accounts)
 			{
-				// Deliberately NOT checking cancellation between removals. Sign-out has no
-				// half-done state worth stopping at: abandoning it after the second of three
-				// accounts leaves the rest signed in, their refresh tokens in the serialized cache,
-				// the access token cached, and IsAuthenticated still true - a user who asked to log
-				// out, told the operation was cancelled, and is still authenticated. The whole loop
-				// is local cache mutation, so there is nothing slow to interrupt.
+				// Cancellation is deliberately not checked between removals: a half-done sign-out
+				// leaves accounts, refresh tokens and IsAuthenticated behind, and each removal is a
+				// local cache mutation with nothing slow to interrupt.
 				await _pca.RemoveAsync(account);
 				removed++;
 			}
 		}
 		finally
 		{
-			// In finally so a failure part-way through still takes the serialized cache with it -
-			// leaving refresh-token material behind is the worse of the two outcomes.
-			//
-			// Removing the accounts already makes MSAL serialize an empty cache, which the
-			// after-access callback turns into a delete, but only when those callbacks were
-			// registered (SetupStorage can fail) and only when MSAL considered the cache changed.
-			// Deleting explicitly is what guarantees nothing outlives the sign-out. Not gated on
-			// WebAssembly: off the browser nothing ever writes this key, so it is a no-op rather
-			// than a special case.
-			//
-			// CancellationToken.None on purpose: an already-cancelled token would make the delete
-			// itself a no-op, which is the one outcome this finally exists to prevent.
+			// Explicit and in finally: MSAL's after-access callback only deletes the blob when it
+			// was registered and the cache changed. CancellationToken.None so an already-cancelled
+			// token cannot turn the delete into a no-op - refresh-token material surviving a
+			// sign-out is the outcome this guards. Off the browser nothing writes the key, so this
+			// is a no-op rather than a special case.
 			await ClearTokenCacheStoreAsync(CancellationToken.None);
 		}
 
@@ -307,18 +288,38 @@ internal record MsalAuthenticationProvider(
 	{
 		await SetupStorage(cancellationToken);
 
-		if ((await _pca!.GetAccountsAsync()).Any())
+		if (!(await _pca!.GetAccountsAsync()).Any())
 		{
-			// null when AcquireTokenSilent failed - typically MsalUiRequiredException because the
-			// refresh token expired or was revoked. Answering with an empty access token made
-			// TokenCache.HasTokenAsync (which counts keys, not values) report the user as still
-			// authenticated forever, with no credential to send: signed-in UI, 401 on every call.
-			// On WebAssembly, where a spa-registered refresh token lasts 24 non-sliding hours, that
-			// is the ordinary daily path rather than an edge case.
-			return TokensOrNull(await AcquireSilentTokenAsync(cancellationToken));
+			return default;
 		}
 
-		return default;
+		try
+		{
+			// null when the refresh token expired or was revoked (MsalUiRequiredException): the user
+			// has to sign in again. An empty access token here would leave TokenCache.HasTokenAsync
+			// - which counts keys, not values - reporting authenticated with nothing to send.
+			return TokensOrNull(await AcquireSilentTokenAsync(cancellationToken));
+		}
+		catch (OperationCanceledException)
+		{
+			throw;
+		}
+		catch (MsalUiRequiredException)
+		{
+			return default;
+		}
+		catch (Exception ex)
+		{
+			// Anything else - the token endpoint unreachable, a 5xx, a throttled request - says
+			// nothing about whether the session is still valid, so the cached tokens stand: signing
+			// the user out over a network blip is the wrong answer, and throwing would turn a
+			// startup RefreshAsync into a crash when offline.
+			if (Logger.IsEnabled(LogLevel.Warning))
+			{
+				Logger.LogWarning(ex, "Silent token refresh failed for a reason other than an expired session; keeping the current tokens");
+			}
+			return await Tokens.GetAsync(cancellationToken);
+		}
 	}
 
 	/// <summary>
@@ -350,176 +351,10 @@ internal record MsalAuthenticationProvider(
 	{
 		try
 		{
-#if UNO_EXT_MSAL_NOSTORAGE
-			// WebAssembly: MsalCacheHelper knows only DPAPI, Keychain and libsecret, so the cache
-			// is serialized through IKeyValueStorage instead. Whether that survives a reload or a
-			// tab close is the storage layer's decision (KeyValueStorageConfiguration:BrowserCacheLocation
-			// default IKeyValueStorage in AddKeyedStorage); this side only reads and writes the
-			// blob, so MemoryStorage keeps the pre-011 in-memory behavior for free.
-			var cache = new MsalTokenCacheStore(KeyValueStorage.Storage, Logger, _pca!.AppConfig.ClientId);
-
-			_pca.UserTokenCache.SetBeforeAccessAsync(async args =>
-			{
-				// A cache read must never be the reason a sign-in fails: browser storage can be
-				// unavailable outright (private mode, a sandboxed iframe, storage disabled by
-				// policy), and the fallback - an empty cache - is exactly the pre-011 behavior.
-				try
-				{
-					if (await cache.LoadAsync(args.CancellationToken) is { } blob)
-					{
-						args.TokenCache.DeserializeMsalV3(blob);
-					}
-				}
-				catch (OperationCanceledException)
-				{
-					// Not a storage failure: the caller cancelled. Swallowing it here would report
-					// "browser storage unavailable" for something that never went wrong.
-					throw;
-				}
-				catch (Exception ex)
-				{
-					if (Logger.IsEnabled(LogLevel.Warning))
-					{
-						Logger.LogWarning(ex, "Unable to read the stored token cache; continuing with an empty cache (the user will be asked to sign in again)");
-					}
-				}
-			});
-
-			_pca.UserTokenCache.SetAfterAccessAsync(async args =>
-			{
-				if (!args.HasStateChanged)
-				{
-					return;
-				}
-
-				try
-				{
-					await cache.SaveAsync(args.TokenCache.SerializeMsalV3(), args.CancellationToken);
-				}
-				catch (OperationCanceledException)
-				{
-					throw;
-				}
-				catch (Exception ex)
-				{
-					if (Logger.IsEnabled(LogLevel.Warning))
-					{
-						Logger.LogWarning(ex, "Unable to persist the token cache; sign-in state won't survive a page reload");
-					}
-				}
-			});
-
-			// The serialized cache holds the refresh token, not just the access token. On an
-			// unprotected store that makes the refresh token's lifetime the only thing bounding the
-			// exposure - 24 hours and non-sliding *only* if the redirect URI is registered under the
-			// Entra `spa` platform. A public-client registration yields a 90-day sliding token
-			// instead, and nothing here can detect which one the tenant issued, so say so once.
-			if (!KeyValueStorage.Storage.IsEncrypted && Logger.IsEnabled(LogLevel.Warning))
-			{
-				Logger.LogWarningMessage($"The MSAL token cache is being persisted to {KeyValueStorage.Storage.GetType().Name}, which does not protect its contents - the serialized cache includes the refresh token. Register the WebAssembly redirect URI under the Entra 'spa' platform so refresh tokens are capped at 24 non-sliding hours, or set KeyValueStorageConfiguration:BrowserCacheLocation to MemoryStorage to keep nothing in browser storage");
-			}
-
-			if (Logger.IsEnabled(LogLevel.Trace))
-			{
-				Logger.LogTraceMessage($"MSAL token cache persisted through {KeyValueStorage.Storage.GetType().Name}");
-			}
-
-			return true;
+#if UNO_EXT_MSAL_BROWSER
+			return SetupBrowserStorage();
 #else
-			if (OperatingSystem.IsAndroid() || OperatingSystem.IsIOS() || OperatingSystem.IsMacCatalyst())
-			{
-				// MSAL.NET persists the token cache natively on mobile targets; MsalCacheHelper
-				// only supports desktop platforms (Windows/macOS/Linux).
-				if (Logger.IsEnabled(LogLevel.Trace))
-				{
-					Logger.LogTraceMessage($"MSAL persists the token cache natively on this platform");
-				}
-
-				return true;
-			}
-
-			cancellationToken.ThrowIfCancellationRequested();
-
-			if (Logger.IsEnabled(LogLevel.Trace))
-			{
-				Logger.LogTraceMessage($"Setting up storage location");
-			}
-
-			var folderPath = await Storage.CreateFolderAsync(Name.ToLower()).ConfigureAwait(false);
-			if (folderPath is null)
-			{
-				if (Logger.IsEnabled(LogLevel.Warning))
-				{
-					Logger.LogWarningMessage($"Folder should not be null, exiting Msal storage setup; continuing with in-memory token cache (sign-in state won't survive an app restart)");
-				}
-				return false;
-			}
-
-			if (Logger.IsEnabled(LogLevel.Trace))
-			{
-				Logger.LogTraceMessage($"Folder: {folderPath}");
-			}
-
-			var filePath = Path.Combine(folderPath, CacheFileName);
-			if (Logger.IsEnabled(LogLevel.Trace))
-			{
-				Logger.LogTraceMessage($"MSAL cache {filePath}");
-			}
-
-			var config = Configuration.Get(Name);
-			var builder = new StorageCreationPropertiesBuilder(CacheFileName, folderPath);
-			MsalStorageDefaults.ApplyDefaults(
-				builder,
-				// AppConfig reflects the final builder state, including a ClientId supplied via
-				// the Settings.Build callback rather than configuration
-				_pca!.AppConfig.ClientId,
-				config?.KeychainServiceName,
-				config?.KeychainAccountName,
-				OperatingSystem.IsMacOS(),
-				OperatingSystem.IsLinux());
-			Settings?.Store?.Invoke(builder);
-			var storage = builder.Build();
-			try
-			{
-				var cacheHelper = await MsalCacheHelper.CreateAsync(storage).ConfigureAwait(false);
-				cacheHelper.VerifyPersistence();
-				cacheHelper.RegisterCache(_pca!.UserTokenCache);
-			}
-			catch (MsalCachePersistenceException ex)
-			{
-				if (config?.AllowUnprotectedTokenCacheFallback != true)
-				{
-					if (Logger.IsEnabled(LogLevel.Error))
-					{
-						Logger.LogErrorMessage(ex, $"Secure token-cache storage isn't available; continuing with in-memory token cache (sign-in state won't survive an app restart). Set 'AllowUnprotectedTokenCacheFallback' to true in the Msal configuration to persist tokens in an unprotected file instead, or configure storage explicitly via the Storage() builder extension");
-					}
-					return false;
-				}
-
-				// The app opted into keeping sign-in state at the cost of storing the cache in an
-				// unprotected file. A distinct file name keeps the plaintext cache apart from the
-				// protected one, so a later-recovered secure store never reads plaintext content.
-				if (Logger.IsEnabled(LogLevel.Warning))
-				{
-					Logger.LogWarning(ex, "Secure token-cache storage isn't available; falling back to an unprotected cache file at {CacheFilePath} (AllowUnprotectedTokenCacheFallback is enabled)", Path.Combine(folderPath, UnprotectedCacheFileName));
-				}
-
-				var fallbackBuilder = new StorageCreationPropertiesBuilder(UnprotectedCacheFileName, folderPath);
-				Settings?.Store?.Invoke(fallbackBuilder);
-				var fallback = fallbackBuilder
-					.WithUnprotectedFile()
-					.Build();
-				var cacheHelper = await MsalCacheHelper.CreateAsync(fallback).ConfigureAwait(false);
-				cacheHelper.VerifyPersistence();
-				cacheHelper.RegisterCache(_pca!.UserTokenCache);
-			}
-
-			if (Logger.IsEnabled(LogLevel.Trace))
-			{
-				Logger.LogTraceMessage($"MSAL storage setup completed");
-			}
-
-			return true;
+			return await SetupDesktopStorage(cancellationToken).ConfigureAwait(false);
 #endif
 		}
 		catch (OperationCanceledException)
@@ -538,9 +373,197 @@ internal record MsalAuthenticationProvider(
 		}
 	}
 
+#if UNO_EXT_MSAL_BROWSER
+	/// <summary>
+	/// WebAssembly: serializes the MSAL cache through the default <c>IKeyValueStorage</c>.
+	/// </summary>
+	/// <remarks>
+	/// MsalCacheHelper knows only DPAPI, Keychain and libsecret. Whether the blob survives a reload
+	/// or a tab close is the storage layer's decision (<c>KeyValueStorageConfiguration:BrowserCacheLocation</c>);
+	/// this side only reads and writes it, so <c>MemoryStorage</c> yields in-memory-only for free.
+	/// Storage failures never fail a sign-in - an empty cache is the pre-persistence behavior.
+	/// </remarks>
+	private bool SetupBrowserStorage()
+	{
+		var cache = new MsalTokenCacheStore(KeyValueStorage.Storage, Logger, _pca!.AppConfig.ClientId);
+
+		_pca.UserTokenCache.SetBeforeAccessAsync(async args =>
+		{
+			try
+			{
+				if (await cache.LoadAsync(args.CancellationToken) is { } blob)
+				{
+					args.TokenCache.DeserializeMsalV3(blob);
+				}
+			}
+			catch (OperationCanceledException)
+			{
+				throw;
+			}
+			catch (Exception ex)
+			{
+				if (Logger.IsEnabled(LogLevel.Warning))
+				{
+					Logger.LogWarning(ex, "Unable to read the stored token cache; continuing with an empty cache (the user will be asked to sign in again)");
+				}
+			}
+		});
+
+		_pca.UserTokenCache.SetAfterAccessAsync(async args =>
+		{
+			if (!args.HasStateChanged)
+			{
+				return;
+			}
+
+			try
+			{
+				await cache.SaveAsync(args.TokenCache.SerializeMsalV3(), args.CancellationToken);
+			}
+			catch (OperationCanceledException)
+			{
+				throw;
+			}
+			catch (Exception ex)
+			{
+				if (Logger.IsEnabled(LogLevel.Warning))
+				{
+					Logger.LogWarning(ex, "Unable to persist the token cache; sign-in state won't survive a page reload");
+				}
+			}
+		});
+
+		// The serialized cache holds the refresh token. On an unprotected store its lifetime is the
+		// only bound on the exposure - 24 non-sliding hours only under an Entra 'spa' registration,
+		// 90 sliding days under a public-client one, and nothing here can tell which was issued.
+		if (!KeyValueStorage.Storage.IsEncrypted && Logger.IsEnabled(LogLevel.Warning))
+		{
+			Logger.LogWarningMessage($"The MSAL token cache is being persisted to {KeyValueStorage.Storage.GetType().Name}, which does not protect its contents - the serialized cache includes the refresh token. Register the WebAssembly redirect URI under the Entra 'spa' platform so refresh tokens are capped at 24 non-sliding hours, or set KeyValueStorageConfiguration:BrowserCacheLocation to MemoryStorage to keep nothing in browser storage");
+		}
+
+		if (Logger.IsEnabled(LogLevel.Trace))
+		{
+			Logger.LogTraceMessage($"MSAL token cache persisted through {KeyValueStorage.Storage.GetType().Name}");
+		}
+
+		return true;
+	}
+#else
+	/// <summary>
+	/// Desktop: registers <see cref="MsalCacheHelper"/> (DPAPI / Keychain / libsecret) over a cache
+	/// file, falling back to an unprotected file only when the app opted in. Mobile targets return
+	/// immediately: MSAL.NET persists its cache natively there.
+	/// </summary>
+	private async Task<bool> SetupDesktopStorage(CancellationToken cancellationToken)
+	{
+		if (OperatingSystem.IsAndroid() || OperatingSystem.IsIOS() || OperatingSystem.IsMacCatalyst())
+		{
+			if (Logger.IsEnabled(LogLevel.Trace))
+			{
+				Logger.LogTraceMessage($"MSAL persists the token cache natively on this platform");
+			}
+
+			return true;
+		}
+
+		cancellationToken.ThrowIfCancellationRequested();
+
+		var folderPath = await Storage.CreateFolderAsync(Name.ToLower()).ConfigureAwait(false);
+		if (folderPath is null)
+		{
+			if (Logger.IsEnabled(LogLevel.Warning))
+			{
+				Logger.LogWarningMessage($"Folder should not be null, exiting Msal storage setup; continuing with in-memory token cache (sign-in state won't survive an app restart)");
+			}
+			return false;
+		}
+
+		if (Logger.IsEnabled(LogLevel.Trace))
+		{
+			Logger.LogTraceMessage($"MSAL cache {Path.Combine(folderPath, CacheFileName)}");
+		}
+
+		var config = Configuration.Get(Name);
+		var builder = new StorageCreationPropertiesBuilder(CacheFileName, folderPath);
+		MsalStorageDefaults.ApplyDefaults(
+			builder,
+			// AppConfig reflects the final builder state, including a ClientId supplied via
+			// the Settings.Build callback rather than configuration
+			_pca!.AppConfig.ClientId,
+			config?.KeychainServiceName,
+			config?.KeychainAccountName,
+			OperatingSystem.IsMacOS(),
+			OperatingSystem.IsLinux());
+		Settings?.Store?.Invoke(builder);
+		var storage = builder.Build();
+		try
+		{
+			var cacheHelper = await MsalCacheHelper.CreateAsync(storage).ConfigureAwait(false);
+			cacheHelper.VerifyPersistence();
+			cacheHelper.RegisterCache(_pca!.UserTokenCache);
+		}
+		catch (MsalCachePersistenceException ex)
+		{
+			if (config?.AllowUnprotectedTokenCacheFallback != true)
+			{
+				if (Logger.IsEnabled(LogLevel.Error))
+				{
+					Logger.LogErrorMessage(ex, $"Secure token-cache storage isn't available; continuing with in-memory token cache (sign-in state won't survive an app restart). Set 'AllowUnprotectedTokenCacheFallback' to true in the Msal configuration to persist tokens in an unprotected file instead, or configure storage explicitly via the Storage() builder extension");
+				}
+				return false;
+			}
+
+			// A distinct file name keeps the plaintext cache apart from the protected one, so a
+			// later-recovered secure store never reads plaintext content.
+			if (Logger.IsEnabled(LogLevel.Warning))
+			{
+				Logger.LogWarning(ex, "Secure token-cache storage isn't available; falling back to an unprotected cache file at {CacheFilePath} (AllowUnprotectedTokenCacheFallback is enabled)", Path.Combine(folderPath, UnprotectedCacheFileName));
+			}
+
+			var fallbackBuilder = new StorageCreationPropertiesBuilder(UnprotectedCacheFileName, folderPath);
+			Settings?.Store?.Invoke(fallbackBuilder);
+			var fallback = fallbackBuilder
+				.WithUnprotectedFile()
+				.Build();
+			var cacheHelper = await MsalCacheHelper.CreateAsync(fallback).ConfigureAwait(false);
+			cacheHelper.VerifyPersistence();
+			cacheHelper.RegisterCache(_pca!.UserTokenCache);
+		}
+
+		if (Logger.IsEnabled(LogLevel.Trace))
+		{
+			Logger.LogTraceMessage($"MSAL storage setup completed");
+		}
+
+		return true;
+	}
+#endif
+
 	private async Task<AuthenticationResult?> AcquireTokenAsync(IDispatcher dispatcher, CancellationToken cancellationToken)
 	{
-		var authentication = await AcquireSilentTokenAsync(cancellationToken);
+		AuthenticationResult? authentication;
+		try
+		{
+			authentication = await AcquireSilentTokenAsync(cancellationToken);
+		}
+		catch (OperationCanceledException)
+		{
+			throw;
+		}
+		catch (MsalUiRequiredException)
+		{
+			authentication = null;
+		}
+		catch (Exception ex)
+		{
+			// A sign-in is what the caller asked for, so a failed silent attempt - whatever the
+			// reason - is answered by prompting rather than by failing the login.
+			if (Logger.IsEnabled(LogLevel.Warning))
+			{
+				Logger.LogWarning(ex, "Silent sign-in failed; falling back to interactive sign-in");
+			}
+			authentication = null;
+		}
 
 		if (string.IsNullOrEmpty(authentication?.AccessToken))
 		{
@@ -561,13 +584,13 @@ internal record MsalAuthenticationProvider(
 			// After WithUnoHelpers so an app can override what the helpers set.
 			Settings?.InteractiveBuild?.Invoke(interactive);
 
-			var timeout = Configuration.Get(Name)?.InteractiveTimeout ?? DefaultInteractiveTimeout;
+			var timeout = InteractiveTimeout;
 			if (timeout <= TimeSpan.Zero)
 			{
-				return await interactive.ExecuteAsync(cancellationToken);
+				return await interactive.ExecuteAsync(cancellation);
 			}
 
-			using var timeoutCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+			using var timeoutCts = CancellationTokenSource.CreateLinkedTokenSource(cancellation);
 			timeoutCts.CancelAfter(timeout);
 			try
 			{
@@ -578,7 +601,7 @@ internal record MsalAuthenticationProvider(
 			// shape this MSAL version produces. A caller-requested cancellation is not logged.
 			catch (Exception ex) when (
 				timeoutCts.IsCancellationRequested &&
-				!cancellationToken.IsCancellationRequested &&
+				!cancellation.IsCancellationRequested &&
 				ex is OperationCanceledException or MsalClientException)
 			{
 				if (Logger.IsEnabled(LogLevel.Warning))
@@ -587,10 +610,27 @@ internal record MsalAuthenticationProvider(
 				}
 				throw;
 			}
-		});
+		}, cancellationToken);
 	}
 
+	/// <summary>
+	/// The interactive sign-in timeout in effect: the configured value, else
+	/// <see cref="DefaultInteractiveTimeout"/> on desktop only, else none.
+	/// </summary>
+	/// <remarks>
+	/// Only the desktop system-browser flow cannot tell that the user closed the browser; the
+	/// broker, the mobile browsers and the WebAssembly popup all report a dismissed sign-in, so an
+	/// unconfigured timeout there would only cut off a slow multi-factor sign-in.
+	/// </remarks>
+	private TimeSpan InteractiveTimeout =>
+		Configuration.Get(Name)?.InteractiveTimeout
+			?? (CurrentRedirectPlatform == MsalRedirectPlatform.Desktop ? DefaultInteractiveTimeout : TimeSpan.Zero);
 
+	/// <summary>
+	/// MSAL's cached token for the first account, refreshed if needed. Throws
+	/// <see cref="MsalUiRequiredException"/> when the session cannot be renewed silently; other
+	/// failures propagate for the caller to decide between prompting and keeping state.
+	/// </summary>
 	private async Task<AuthenticationResult?> AcquireSilentTokenAsync(CancellationToken cancellationToken)
 	{
 		var accounts = await _pca!.GetAccountsAsync();
@@ -616,25 +656,16 @@ internal record MsalAuthenticationProvider(
 			  .AcquireTokenSilent(_scopes, firstAccount)
 			  .ExecuteAsync(cancellationToken);
 		}
-		catch (OperationCanceledException)
-		{
-			// Don't treat cancellation as "silent sign-in unavailable" — that would
-			// escalate a cancelled login to an interactive prompt.
-			throw;
-		}
 		catch (MsalUiRequiredException ex)
 		{
-			Logger.LogWarning(ex, ex.Message);
-			Logger.LogWarning(
-			  "Unable to retrieve silent sign in Access Token");
+			// The refresh token expired, was revoked, or the tenant now demands interaction.
+			// Code, not message: the message can carry correlation and tenant details.
+			if (Logger.IsEnabled(LogLevel.Warning))
+			{
+				Logger.LogWarning("Silent sign-in requires user interaction [{ErrorCode}]", ex.ErrorCode);
+			}
+			throw;
 		}
-		catch (Exception ex)
-		{
-			Logger.LogWarning(ex, ex.Message);
-			Logger.LogWarning("Unable to retrieve silent sign in details");
-		}
-
-		return default;
 	}
 
 	static string? ToJson (string[]? values)

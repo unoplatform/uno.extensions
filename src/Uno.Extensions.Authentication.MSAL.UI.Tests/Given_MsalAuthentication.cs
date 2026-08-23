@@ -194,6 +194,61 @@ public class Given_MsalAuthentication
 	}
 
 	[TestMethod]
+	public async Task When_RefreshTokenRejected_Then_SignedOutAndLoggedOutRaised()
+	{
+		// The ordinary end of a session: the access token is inside MSAL's expiry buffer, the
+		// refresh token is no longer accepted (400 invalid_grant -> MsalUiRequiredException). The
+		// user must come out not authenticated - an empty access token used to leave IsAuthenticated
+		// true with nothing to send - and LoggedOut must fire, the same as an explicit sign-out.
+		using var harness = await CreateHarnessAsync();
+		using var cts = Cts();
+		harness.Tenant.ExpiresInSeconds = 10;
+		await harness.Authentication.LoginAsync(harness.Dispatcher, cancellationToken: cts.Token);
+		await SeedMsalCacheEntry(harness, cts.Token);
+		var loggedOut = 0;
+		harness.Authentication.LoggedOut += (_, _) => loggedOut++;
+
+		harness.Tenant.RejectRefreshTokens();
+		var refreshed = await harness.Authentication.RefreshAsync(cts.Token);
+
+		refreshed.Should().BeFalse();
+		harness.Tenant.TokenRequestCount.Should().Be(2, "the refresh must have gone to the token endpoint to be rejected");
+		(await harness.Authentication.IsAuthenticated(cts.Token)).Should().BeFalse();
+		(await harness.Tokens.HasTokenAsync(cts.Token)).Should().BeFalse("an unrenewable session must not leave a stale access token behind");
+		loggedOut.Should().Be(1, "losing the session is a sign-out");
+		// The blob removal hangs off ITokenCache.Cleared, which is fire-and-forget; wait for it.
+		for (var i = 0; i < 50 && await HasMsalCacheEntry(harness, cts.Token); i++)
+		{
+			await Task.Delay(100, cts.Token);
+		}
+		(await HasMsalCacheEntry(harness, cts.Token)).Should().BeFalse("the serialized MSAL cache goes with the session");
+	}
+
+	[TestMethod]
+	public async Task When_TokenEndpointUnavailable_Then_StillAuthenticated()
+	{
+		// A refresh that fails for a reason other than the session ending - the endpoint is down,
+		// the device is offline - must not sign the user out: the cached tokens stand and the next
+		// refresh tries again. It must not prompt either.
+		using var harness = await CreateHarnessAsync();
+		using var cts = Cts();
+		harness.Tenant.ExpiresInSeconds = 10;
+		await harness.Authentication.LoginAsync(harness.Dispatcher, cancellationToken: cts.Token);
+		var token = (await harness.Tokens.GetAsync(cts.Token))[TokenCacheExtensions.AccessTokenKey];
+		var loggedOut = 0;
+		harness.Authentication.LoggedOut += (_, _) => loggedOut++;
+
+		harness.Tenant.FailTokenRequests();
+		var refreshed = await harness.Authentication.RefreshAsync(cts.Token);
+
+		refreshed.Should().BeTrue();
+		harness.Tenant.TokenRequestCount.Should().BeGreaterThan(1, "the refresh must have tried the token endpoint");
+		(await harness.Authentication.IsAuthenticated(cts.Token)).Should().BeTrue();
+		(await harness.Tokens.GetAsync(cts.Token))[TokenCacheExtensions.AccessTokenKey].Should().Be(token, "a transient failure keeps the current token");
+		loggedOut.Should().Be(0);
+	}
+
+	[TestMethod]
 	public async Task When_Logout_Then_AccountRemovedAndCacheCleared()
 	{
 		using var harness = await CreateHarnessAsync();

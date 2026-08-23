@@ -34,13 +34,15 @@ internal class MsalConfiguration
 
 	/// <summary>
 	/// Maximum time an interactive sign-in may take before it is treated as abandoned and
-	/// cancelled. Defaults to 5 minutes. Set to <see cref="TimeSpan.Zero"/> or a negative value
-	/// to wait indefinitely.
+	/// cancelled. When not set, desktop (Skia) heads default to 5 minutes and every other platform
+	/// waits indefinitely. Set to <see cref="TimeSpan.Zero"/> or a negative value to wait
+	/// indefinitely everywhere.
 	/// </summary>
 	/// <remarks>
 	/// The system-browser flow used on desktop has no way to detect the browser window being
 	/// closed, so without this timeout an abandoned sign-in never completes and the awaiting
-	/// command stays busy forever.
+	/// command stays busy forever. The Windows broker, the mobile browsers and the WebAssembly
+	/// popup all report a dismissed sign-in themselves, which is why no default applies there.
 	/// </remarks>
 	public TimeSpan? InteractiveTimeout { get; init; }
 

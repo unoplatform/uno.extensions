@@ -41,11 +41,54 @@ internal sealed class StubEntra
 	/// <summary>Distinguishes the token minted for each request; see <see cref="LastAccessToken"/>.</summary>
 	private int _tokenCounter;
 
+	/// <summary>
+	/// Makes this instance's refresh tokens distinct from every other instance's. MSAL throttles
+	/// silent requests process-wide for two minutes after an invalid_grant, keyed on client id,
+	/// authority, scopes and the SHA-256 of the refresh token - so a counter alone let one test's
+	/// rejected refresh token sign the next test out without a request ever being made.
+	/// </summary>
+	private readonly string _instanceId = Guid.NewGuid().ToString("N");
+
 	/// <summary>Every access token this stub has minted, oldest first.</summary>
 	public List<string> IssuedAccessTokens { get; } = new();
 
 	/// <summary>Number of POSTs to the token endpoint, so tests can assert a network round-trip happened.</summary>
 	public int TokenRequestCount { get; private set; }
+
+	/// <summary>
+	/// Lifetime of the access tokens this stub mints. MSAL treats a token that expires within its
+	/// five-minute buffer as expired, so anything below that forces the next silent call through
+	/// the refresh token - and therefore through the token endpoint.
+	/// </summary>
+	public int ExpiresInSeconds { get; set; } = 3599;
+
+	/// <summary>
+	/// When set, every token request gets this response instead of a freshly minted token.
+	/// </summary>
+	public Func<HttpResponseMessage>? TokenEndpointResponse { get; set; }
+
+	/// <summary>
+	/// Answers token requests the way Entra does once a refresh token has expired or been revoked:
+	/// <c>400 invalid_grant</c>, which MSAL surfaces as <c>MsalUiRequiredException</c>.
+	/// </summary>
+	public void RejectRefreshTokens() => TokenEndpointResponse = () =>
+		new HttpResponseMessage(HttpStatusCode.BadRequest)
+		{
+			Content = new StringContent(
+				"""{"error":"invalid_grant","error_description":"AADSTS70008: The provided authorization code or refresh token has expired.","error_codes":[70008]}""",
+				Encoding.UTF8,
+				"application/json"),
+		};
+
+	/// <summary>
+	/// Answers token requests with <c>503</c>, standing in for an unreachable or struggling token
+	/// endpoint - a failure that says nothing about whether the session is still valid.
+	/// </summary>
+	public void FailTokenRequests() => TokenEndpointResponse = () =>
+		new HttpResponseMessage(HttpStatusCode.ServiceUnavailable)
+		{
+			Content = new StringContent("""{"error":"temporarily_unavailable"}""", Encoding.UTF8, "application/json"),
+		};
 
 	/// <summary>The most recently minted access token.</summary>
 	public string LastAccessToken => IssuedAccessTokens.Count > 0
@@ -101,7 +144,7 @@ internal sealed class StubEntra
 		if (path.EndsWith("/oauth2/v2.0/token", StringComparison.Ordinal))
 		{
 			TokenRequestCount++;
-			return Json(TokenResponse());
+			return TokenEndpointResponse?.Invoke() ?? Json(TokenResponse());
 		}
 
 		// Fail loudly: a silently-200'd unknown endpoint would surface as an unrelated MSAL error
@@ -144,10 +187,10 @@ internal sealed class StubEntra
 		{
 			TokenType = "Bearer",
 			Scope = "User.Read",
-			ExpiresIn = 3599,
-			ExtExpiresIn = 3599,
+			ExpiresIn = ExpiresInSeconds,
+			ExtExpiresIn = ExpiresInSeconds,
 			AccessToken = accessToken,
-			RefreshToken = $"stub-refresh-token-{_tokenCounter}",
+			RefreshToken = $"stub-refresh-token-{_instanceId}-{_tokenCounter}",
 			IdToken = BuildIdToken(),
 			ClientInfo = Base64UrlEncode($$"""{"uid":"{{ObjectId}}","utid":"{{TenantId}}"}"""),
 		};

@@ -71,10 +71,11 @@
 		<DefineConstants>$(DefineConstants);UNO_EXT_MSAL</DefineConstants>
 	</PropertyGroup>
 
-	<!-- Token-cache persistence isn't available in the browser; compiling it out keeps the
-		unused MsalCacheHelper code paths out of the WebAssembly assembly. -->
+	<!-- The browser persists the token cache through IKeyValueStorage (MsalTokenCacheStore) rather
+		than MsalCacheHelper, which has no browser backend; the symbol selects that path and keeps
+		the unused MsalCacheHelper code out of the WebAssembly assembly. -->
 	<PropertyGroup Condition="'$(_UnoExtMsalTargetPlatform)'=='browserwasm'">
-		<DefineConstants>$(DefineConstants);UNO_EXT_MSAL_NOSTORAGE</DefineConstants>
+		<DefineConstants>$(DefineConstants);UNO_EXT_MSAL_BROWSER</DefineConstants>
 	</PropertyGroup>
 
 	<ItemGroup>

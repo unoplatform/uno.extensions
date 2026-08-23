@@ -94,6 +94,17 @@ internal class AuthenticationService : IAuthenticationService
 			if (_logger.IsEnabled(LogLevel.Trace)) _logger.LogTraceMessage($"Attempting to refresh");
 			var tokens = await authProvider.RefreshAsync(ct);
 
+			if (tokens is not { Count: > 0 })
+			{
+				// The provider could not renew the session (an expired or revoked refresh token, say).
+				// Clear rather than save-empty so ITokenCache.Cleared fires: that is what raises
+				// LoggedOut and lets providers drop their own persisted state, exactly as an explicit
+				// sign-out would. The user was authenticated a moment ago and now is not.
+				if (_logger.IsEnabled(LogLevel.Trace)) _logger.LogTraceMessage($"Refresh produced no tokens, clearing token cache");
+				await _tokens.ClearAsync(ct);
+				return false;
+			}
+
 			if (_logger.IsEnabled(LogLevel.Trace)) _logger.LogTraceMessage($"Refresh complete, saving new tokens");
 			await _tokens.SaveAsync(authProvider.Name, tokens, ct);
 
