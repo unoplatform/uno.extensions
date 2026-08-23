@@ -811,3 +811,27 @@ command surfaced, so the metadata the trimmer may drop is never read.
 - `dotnet test Uno.Extensions-packageonly.slnf -c Release --no-build --filter "FullyQualifiedName!~UI.Tests"`:
   **1562 passed, 0 failed, 19 skipped** across 6 projects.
 - Packed nuspec floors: `Uno.WinUI` / `Uno.WinUI.MSAL` 6.8.0-dev.46, `Microsoft.Identity.Client` 4.87.0.
+
+### Verified in CI (build 229616)
+
+The bump lands green. Every runtime-test surface now runs on Uno.Sdk 6.8.0-dev.21:
+
+| Suite | Result |
+| --- | --- |
+| Hot-Reload Runtime Tests | 64/64 (was 40/64 while Hot Design was disabled) |
+| Desktop Runtime Tests | 23/23 |
+| Android Emulator Runtime Tests | 23/23 |
+| iOS Simulator Runtime Tests | 23/23 |
+| WebAssembly Runtime Tests | 8/8 |
+| Unit tests | 1562/1581, 19 skipped |
+
+24 checks pass. The one red check is `Build and Deploy Job` -> `Publish to Azure Static WebApps`,
+which has failed on every run of this PR (the Static Web App is at its staging-environment limit) and
+is unrelated to anything here. `WebAssembly Test Run` at 64/86 is the pre-existing UI-test baseline -
+identical in the pre-bump green run 229315, so not a regression from the bump.
+
+Note what this changes about the earlier passes: the Mac Catalyst TFM removal is gone, so **this branch
+carries no breaking change**, and the published floors move only where intended - `Uno.WinUI` and
+`Uno.WinUI.MSAL` to 6.8.0-dev.46 (the build containing unoplatform/uno#24055) and
+`Microsoft.Identity.Client` to 4.87.0. `Uno.Toolkit.WinUI` floors on stable 8.4.2 rather than a
+prerelease, and `System.Text.Json` stays at 8.0.5.
