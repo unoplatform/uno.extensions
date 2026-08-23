@@ -28,7 +28,8 @@ first — this spec touches the same provider and reuses their test infrastructu
   sections, and an MSAL-named section would have governed the token-cache location of non-MSAL
   providers. The member names still mirror msal-browser's, so the migration-path rationale holds.
 - **Item 2's adapter is not a type.** The `SetBeforeAccessAsync`/`SetAfterAccessAsync` registration
-  lives inline in `SetupStorageCore`'s `UNO_EXT_MSAL_NOSTORAGE` branch over `MsalTokenCacheStore`;
+  lives inline in `SetupStorageCore`'s browser branch (`UNO_EXT_MSAL_BROWSER`, renamed from
+  `UNO_EXT_MSAL_NOSTORAGE` on 2026-08-23; now `SetupBrowserStorage()`) over `MsalTokenCacheStore`;
   a `WasmMsalTokenCacheAdapter` class had nothing else to hold. The `MemoryStorage` early-return is
   unnecessary: the provider never reads the setting — `MemoryStorage` simply makes
   `InMemoryKeyValueStorage` the default store, giving in-memory-only with one decision point
@@ -57,7 +58,7 @@ than "nothing is persisted".
 (`MsalAuthenticationProvider.cs:326` and `:354`). `MsalCacheHelper` comes from
 `Microsoft.Identity.Client.Extensions.Msal` and knows exactly three backends: DPAPI file (Windows),
 Keychain (macOS), libsecret/keyring (Linux). It throws on browser-wasm, so the whole code path is
-compiled out via `UNO_EXT_MSAL_NOSTORAGE`
+compiled out via `UNO_EXT_MSAL_BROWSER`
 (`Uno.Extensions.Authentication.MSAL.WinUI.csproj:76`) and `SetupStorageCore` returns `true` after
 logging "not supported" (`:259-267`).
 
@@ -173,7 +174,7 @@ this correctly. Every change here sits behind the existing browser-wasm conditio
 Open item for implementation: the provider already prefers a runtime `PlatformHelper.IsWebAssembly`
 check over a compile-time symbol in `CurrentRedirectPlatform` (`:129-133`), with the comment that
 "WebAssembly shares the browserwasm TFM with the generic Skia stack". Confirm whether the
-browserwasm TFM can be loaded by a non-browser host before relying on `UNO_EXT_MSAL_NOSTORAGE`
+browserwasm TFM can be loaded by a non-browser host before relying on `UNO_EXT_MSAL_BROWSER`
 alone; if so, gate the storage selection at runtime the same way.
 
 ## Security position, stated plainly
@@ -222,7 +223,7 @@ lifetime.
 
 2. **`WasmMsalTokenCacheAdapter`** in `Uno.Extensions.Authentication.MSAL`, compiled only for
    browser-wasm. Registers `SetBeforeAccessAsync` / `SetAfterAccessAsync` on
-   `_pca.UserTokenCache` in `SetupStorageCore`'s `UNO_EXT_MSAL_NOSTORAGE` branch, backed by
+   `_pca.UserTokenCache` in `SetupStorageCore`'s `UNO_EXT_MSAL_BROWSER` branch, backed by
    `IKeyValueStorage`. `MemoryStorage` keeps today's early-return.
 
    **Key-collision hazard — must not be missed.** `TokenCache` uses the prefix `AuthToken_` and

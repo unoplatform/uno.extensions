@@ -30,7 +30,7 @@ Domain lessons / postmortems for Uno.Extensions. See `AGENTS.md` §3 for when to
 
 **Correct pattern:** to test whether a symbol is live, compile something that depends on it. Either a temporary `#if !SYMBOL` + `#error` probe build, or check the emitted assembly for a type only that branch references (`Foundation.NSBundle` appears only in the iOS assembly). Do not infer symbol state from `-getProperty`.
 
-**Apply to:** any conditional-compilation change on a cross-targeted project. A branch that silently stops compiling does not fail the build — it changes behavior and no test notices, because the other branch compiles fine. `Uno.Extensions.Authentication.MSAL.WinUI.csproj` now emits `UNO_EXT_MSAL_ANDROID_TFM` / `_IOS_TFM` from `_UnoExtMsalTargetPlatform` and `MsalAuthenticationProvider.cs` cross-checks them with `#error`, so the two can never drift apart again. Copy that pattern rather than trusting the symbol.
+**Apply to:** any conditional-compilation change on a cross-targeted project. A branch that silently stops compiling does not fail the build — it changes behavior and no test notices, because the other branch compiles fine. The `#error` cross-check this branch first added (`UNO_EXT_MSAL_ANDROID_TFM` / `_IOS_TFM`) is gone again: spec 010 moved platform selection to runtime `OperatingSystem.Is*()` because on Skia mobile heads the TFM no longer implies the OS, which also removed the hazard the guard existed for. Prefer runtime dispatch wherever TFM and OS can diverge; where a compile-time symbol is unavoidable, probe it as above rather than trusting the symbol.
 
 ## MSAL's interactive modifiers are unreachable from `PublicClientApplicationBuilder`
 
@@ -48,11 +48,11 @@ Domain lessons / postmortems for Uno.Extensions. See `AGENTS.md` §3 for when to
 
 **Apply to:** any runtime test over a component with platform-backed persistence (token caches, `ApplicationData` settings, keychain/keyring entries). The `[TestMethod]` boundary isolates managed state, not the filesystem. A suite that only ever passes is as suspicious as one that fails.
 
-## `__WASM__` is no longer defined for consumer projects — code (ours or a package's) that branches on it is dead on Skia-WASM heads
+## Uno.Sdk no longer defines `__WASM__` for consumer projects — source-shipping code that branches on it compiles its non-browser path into Skia-WASM heads
 
 **Problem:** the WebAssembly runtime-test lane exited before running a single test with `PlatformNotSupportedException` from `Console.CancelKeyPress`. `Uno.UI.RuntimeTests.Engine`'s `RuntimeTestEmbeddedRunner` — which ships as **source** and compiles into `Uno.Extensions.RuntimeTests.Core` — guards that registration with `#if !__WASM__`. Uno.Sdk defines `IsBrowserWasm` (see `targets/Uno.IsPlatform.props`) but no `__WASM__` compilation symbol, so the guard never fires and the unsupported call is compiled in. A Skia-WASM head consumes the *plain* `netX.0` `Uno.UI` lib (there is no `browserwasm` lib in `uno.winui`), which is the same substitution spec 010 documents for Skia mobile.
 
-**Correct pattern:** don't add `__WASM__` back. Defining it locally fails to compile: the engine's other `#if __WASM__` branches call `Uno.Foundation.WebAssemblyRuntime.InvokeJS`, and `Uno.Foundation.Runtime.WebAssembly` is not referenced by a Skia-WASM head (`CS0234`, verified). Runtime checks are the portable form — `PlatformHelper.IsWebAssembly` / `OperatingSystem.IsBrowser()` — exactly as spec 010 concluded for `ANDROID`/`IOS`. The WASM device lane in `build/ci/.azure-pipelines.yml` is commented out until the engine converts its guards.
+**Correct pattern:** define the symbol yourself only where you own every branch it turns on, and supply what those branches need. `Uno.Extensions.RuntimeTests.Core` defines `__WASM__` for its browserwasm TFM and ships a ~10-line `WebAssemblyRuntimeShim` (`[JSImport]` over `globalThis.eval`) for the engine's `Uno.Foundation.WebAssemblyRuntime.InvokeJS` call sites, which a Skia-WASM head cannot otherwise reference (`CS0234`). The WebAssembly lane (`build/ci/stage-runtime-tests-wasm.yml`) is enabled and runs the full `$(RuntimeTestsFilter)` — the whole `Authentication.MSAL.UI.Tests` namespace, no longer just `Given_BrowserTokenCacheStorage` — which became possible once `MsalAuthenticationProvider.Build` applied the app's `Builder(...)` callback *after* `WithUnoHelpers()`, so the stub `HttpClient` factory survives in the browser (expected; the CI run after that change is pending). For product code, runtime checks remain the portable form — `PlatformHelper.IsWebAssembly` / `OperatingSystem.IsBrowser()` — exactly as spec 010 concluded for `ANDROID`/`IOS`.
 
 **Apply to:** any `#if __WASM__` in this repo or in a source-shipping package we consume. Symbol-based platform branching is only reliable for symbols the SDK actually emits, and the Skia unification removed most of them. Cross-check with the `-getProperty:DefineConstants` lesson above: neither `-getProperty` nor "it compiled" proves a branch is live — only running it on the target does.
 
@@ -62,7 +62,7 @@ Domain lessons / postmortems for Uno.Extensions. See `AGENTS.md` §3 for when to
 
 **Correct pattern:** take `UnitTestsUIContentHelper.CurrentTestWindow` — the host's own window, present on every head. Only bracket with `SaveOriginalContent`/`RestoreOriginalContent` if the test assigns `Content`; a test that just needs a `Window` reference does not. Recorded as a repo-wide rule in `AGENTS.md` § "Windows in UI / runtime tests"; the pre-existing `[RunsInSecondaryApp]` bullet was the same trap seen from one platform only.
 
-**Apply to:** every remaining `new Window()` under `src/**/*.UI.Tests/` (`Given_ChainedGetDataAsync`, `Given_FrameContentRehook`, `Given_NavigatorStartup`, `Given_NestedNavReloadRecovery`, `Given_RouteNotifier`, `Given_TabNavigation`). They are green today only because `RuntimeTestsFilter` scopes the device lanes to `Given_MsalAuthentication`; widening that filter fails them all.
+**Apply to:** every remaining `new Window()` under `src/**/*.UI.Tests/` (`Given_ChainedGetDataAsync`, `Given_FrameContentRehook`, `Given_NavigatorStartup`, `Given_NestedNavReloadRecovery`, `Given_RouteNotifier`, `Given_TabNavigation`). They are green today only because `RuntimeTestsFilter` scopes the device lanes to the `Authentication.MSAL.UI.Tests` namespace; widening that filter fails them all.
 
 ## MSAL on iOS cannot build a `PublicClientApplication` without a keychain entitlement — and the entitlement drags in provisioning
 
@@ -195,3 +195,77 @@ fix I had already applied and documented.
 note the local package build cannot compile `net9.0-ios` on a Windows host, so a clean local build says
 nothing about the iOS TFM - and `dotnet build` cannot build the XAML-bearing WinUI libraries at all
 (UNOB0008, true on the old SDK too), so validate a bump with `msbuild` or the first error misleads.
+*(Superseded in part, 2026-08-23: the pin was itself masking a stale CI SDK — see the next lesson.
+The evidence rule stands; the remedy it reached did not.)*
+
+## A pin that makes CI green can be hiding a toolchain skew — fix the SDK, not the package
+
+**Problem:** the CS1705 above (`Uno.Toolkit.WinUI` built against `Microsoft.iOS 26` vs. a workload
+referencing 18.2) was not a Toolkit problem at all: CI was building with the .NET **9.0.200** SDK,
+whose iOS workload is Microsoft.iOS 18.2, against an `Uno.Sdk` whose Toolkit is built for
+Microsoft.iOS 26. Pinning `UnoToolkitVersion` 8.4.2 (and, to keep its dependencies consistent,
+`UnoHotDesignVersion` 1.19.175, `UnoThemesVersion` 6.1.1 and `System.Text.Json` 8.0.5) made the
+build pass by freezing three packages at the last versions the *stale* toolchain could compile —
+a workaround recorded as a fix, in two `Directory.Packages.props` files and the eleventh-pass notes.
+
+**Correct pattern:** a CS1705 in a package build names a mismatch between the package and the
+*toolchain*, so the first question is which SDK and workloads the failing job actually used. The
+fix is in `build/ci/templates/dotnet-install*.yml` (`DotNetVersion: '10.0.x'`, `UnoCheck_Version:
+'1.34.1'`, plus the .NET 9 runtime for the net9.0 test heads) and `.azure-pipelines.yml` (Xcode
+26.2 / iOS 26.2 simulator); the pins are removed. One property legitimately remains, in the root
+`Directory.Build.props`: `UnoToolkitVersion` 9.2.0-dev.18. That is not a workaround — the app heads
+(Playground, TestHarness, `Uno.Extensions.RuntimeTests`) build with `Uno.Sdk.Private`, whose
+Toolkit group lags the public `Uno.Sdk`'s, so without one floor-sync property a head referencing
+`Navigation.Toolkit` fails NU1605 against the libraries' higher floor. Verified locally: all four
+heads restore with zero NU1xxx and `Navigation.Toolkit` builds for `net9.0-maccatalyst` and
+`net9.0-ios` (catalyst via `_UnoExtensionsDropIosXamlOnCatalyst`, since Toolkit ships no catalyst
+assembly from 8.5). iOS/Android lanes not yet re-run.
+
+**Apply to:** any `src/Directory.Packages.props` / `samples/Directory.Packages.props` pin whose
+comment says "newer builds don't compile on CI". Check the CI SDK version first; a pin is only
+right when the *package* is wrong. And when `Uno.Sdk` and `Uno.Sdk.Private` disagree on a group
+(Toolkit, Themes, Core), sync the floor in one place rather than per head.
+
+## Any `*.WinUI` package whose platform assembly references `Uno.UI` and ships a plain `netX.0` lib is swapped on Skia-mobile heads — check the references, not the TFM list
+
+**Problem:** spec 010 established the swap for `Uno.Extensions.Authentication.MSAL.WinUI`; what
+was still a hypothesis was that `Uno.Extensions.Storage.UI` gets the same treatment, which would
+put the Android KeyStore / iOS KeyChain stores out of reach on Skia heads. Reading the assembly
+metadata settled it: `Uno.Extensions.Storage.UI.dll` for `net9.0-android` and `net9.0-ios`
+references `Uno.UI`, and the package ships a `lib/net9.0` build, so
+`RuntimeAssetsSelectorTask.HandleSkiaMobileForNonRuntimeEnabledPackages` replaces it. The default
+`IKeyValueStorage` on Skia Android/iOS is therefore `ApplicationDataKeyValueStorage` — plaintext,
+app-sandboxed — and it cannot be otherwise: KeyStore/KeyChain do not exist in the `net9.0` TFM.
+
+**Correct pattern:** before assuming a platform store (or any platform-specific code path) exists
+on a Skia mobile head, open the platform assembly with `System.Reflection.Metadata` and list its
+assembly references; `Uno.UI` present + a plain-TFM sibling in the package = the plain build is
+what runs. Where the plain build cannot do the platform thing, document it at the public surface
+(`doc/Learn/Storage/StorageOverview.md` table + note, `HowTo-MsalAuthentication.md`) rather than
+papering over it in code. Spec 010 item 8 (live device validation) is still the only proof that
+the rest of the dispatch holds end to end.
+
+**Apply to:** every `Uno.Extensions.*.UI` package: `Hosting.UI`, `Navigation.UI`, `Storage.UI`,
+`Authentication.*.UI`. Each one's plain `netX.0` build is the *primary* runtime artifact on Skia
+Android/iOS, so platform behavior belongs behind `OperatingSystem.Is*()` in that build, and the
+plain build must never be a stub.
+
+## A fake IdP must mint refresh tokens unique per instance — MSAL throttles by token hash, process-wide
+
+**Problem:** after adding `Given_MsalAuthentication.When_RefreshTokenRejected_Then_SignedOutAndLoggedOutRaised`
+(StubEntra answers the refresh with `400 invalid_grant`), the *next* test's silent acquisition
+failed too, with no request reaching the stub. MSAL.NET's `UiRequiredProvider` throttles silent
+requests for 120 s after an `invalid_grant`, process-wide, keyed on client id + authority + scopes
++ SHA-256 of the refresh token. `StubEntra` minted `stub-refresh-token-{counter}` in every
+instance, so a fresh harness presented a refresh token byte-identical to the one just rejected and
+was throttled without a network call. The failure moved between tests depending on order.
+
+**Correct pattern:** refresh tokens from a test IdP carry a per-instance GUID (`_instanceId`), so
+no two harnesses ever share one. More generally: a token-cache library has state that outlives
+the `[TestMethod]` boundary *and* the MSAL cache purge — throttling caches are keyed on request
+content, not on the cache you cleared. When a test starts failing only after a sibling ran, look
+for client-side negative caching before looking at the fake server.
+
+**Apply to:** `StubEntra` and any future fake IdP or token endpoint used across tests; also any
+test that deliberately drives an `invalid_grant`/`interaction_required` response — follow it by
+checking the next silent call still reaches the server.

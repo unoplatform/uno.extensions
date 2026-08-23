@@ -246,6 +246,15 @@ All changes in `src/Uno.Extensions.Authentication.MSAL/` unless noted.
   (HANDOFF-MACOS.md), now degraded-but-functional instead of silently broken.
 - **`#error` guard removal** is intentional: the guarded failure mode (dead compile-time platform
   branch) no longer exists once platform selection is runtime-based.
+- **Storage.WinUI is swapped too — confirmed 2026-08-23 by assembly-reference inspection, not
+  inferred.** `Uno.Extensions.Storage.UI.dll` for `net9.0-android` and `net9.0-ios` references
+  `Uno.UI` and the package ships a `lib/net9.0` build, so `HandleSkiaMobileForNonRuntimeEnabledPackages`
+  replaces it on Skia Android/iOS heads; the default `IKeyValueStorage` there is
+  `ApplicationDataKeyValueStorage` (plaintext, app-sandboxed). KeyStore/KeyChain cannot exist in
+  the `net9.0` TFM, so this is documented (`doc/Learn/Storage/StorageOverview.md` table + note,
+  `doc/Learn/Authentication/HowTo-MsalAuthentication.md`) rather than fixed in code. Item 8 (live
+  testbed validation) is still the only end-to-end proof of the rest of the dispatch and remains
+  open.
 - An upstream alternative was considered and rejected for now: adding this package to the uno
   repo's `IsWinRTAssembly`-style exemption so Skia heads keep the platform lib. That couples the
   repos, needs an uno release, and the runtime-dispatch design removes the need — the plain lib

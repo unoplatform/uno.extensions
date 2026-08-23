@@ -2,13 +2,12 @@
 
 Tracking the implementation of `spec.md`. Item numbers match the spec's "Implementation items".
 
-**State as of 2026-08-20 (sixth pass): every implementation item (1–7) is done, plus the logout
-fixes found by live testing and the high- and medium-severity findings from a seven-agent review
-panel.** `spec.md`'s header carries the deviation summary — most importantly that the default is
-`LocalStorage`, not `SessionStorage`. This file is the chronological record, oldest section last:
-sixth pass (panel mediums), fifth pass (panel highs), fourth pass (config move to
-`KeyValueStorageConfiguration`), third pass (items 5+6, logout fixes), second pass (items 3+4+2b,
-"the trio"), first pass (items 1+2, the storage seam, committed as `5cd3bb484`).
+**State as of 2026-08-23: every implementation item (1–7) is done, plus the logout fixes found by
+live testing, the findings from two seven-agent review panels (2026-08-20 and 2026-08-23), and
+runtime-test lanes for all four platforms.** `spec.md`'s header carries the deviation summary — most
+importantly that the default is `LocalStorage`, not `SessionStorage`. This file is the record of
+every pass; the sections are dated but not in strict order (the first passes sit under "Done",
+later ones were appended at the end). Newest first: the second review panel (last section).
 
 ---
 
@@ -189,24 +188,23 @@ namespace-parity item below). The `ITokenCache.Cleared` handler remains fire-and
 continuation can still delete a blob a *subsequent* login wrote; logout's own clear is awaited, so
 this is the narrow case only.
 
-### Panel follow-ups NOT fixed here
+### Panel follow-ups still open after this pass
 
-Medium: cancelled logout can leave a half-signed-out, still-authenticated state
-(`ThrowIfCancellationRequested` mid-loop, before the blob clear); `Build()`/`Cleared` subscription is
-unsynchronized so concurrent auth can double-subscribe and leak a provider (the code comment
-claiming "Build runs exactly once" is wrong); `IsEncrypted => true` is untested and *false in
-practice* on unpackaged Windows, where `ApplicationDataKeyValueStorage:60` persists
-`"System.Byte[]"`; `MsalCache_` and `_SSKVS` are not pinned by any package-CI test; redundant blob
-deserialize on every MSAL access plus a base64→JSON double-encode (~5-6x transient peak, irreversible
-on WASM); the logout loop re-serializes per account and deletes the key twice; the
-the `LoginAsync(credentials, provider, ct)` overload throwing with MSAL (analyzed and documented
-above rather than fixed); linked-source test project papering over a
-missing MSAL core/UI split; no `Storage.UI.Tests` project for storage-owned behavior.
+The first panel's medium findings on cancelled logout, the `Build()`/`Cleared` double-subscribe,
+`IsEncrypted` on unpackaged Windows, the `MsalCache_` pin and the `IEnumerable<IAccount>`
+enumerated-while-mutated loop are fixed above in this pass. Left open here:
+
+Medium: `_SSKVS` is not pinned by any package-CI test; redundant blob deserialize on every MSAL
+access plus a base64→JSON double-encode (~5-6x transient peak, irreversible on WASM); the logout
+loop re-serializes per account and deletes the key twice; the `LoginAsync(credentials, provider,
+ct)` overload throwing with MSAL (analyzed and documented above rather than fixed); linked-source
+test project papering over a missing MSAL core/UI split; no `Storage.UI.Tests` project for
+storage-owned behavior.
 
 Low/info: cross-app token pickup on a shared origin; sign-out does not clear the IdP session cookie
-(now documented); unreachable `DefaultKeySuffix`; `UNO_EXT_MSAL_NOSTORAGE` now names the opposite of
-what it does; `IEnumerable<IAccount>` enumerated while `RemoveAsync` mutates; clear that is never awaited can
-delete a fresh blob; CI lane hygiene (iOS liveness check, unpinned `playwright install`).
+(now documented); unreachable `DefaultKeySuffix`; `UNO_EXT_MSAL_NOSTORAGE` names the opposite of
+what it does (*renamed `UNO_EXT_MSAL_BROWSER` 2026-08-23*); clear that is never awaited can delete a
+fresh blob; CI lane hygiene (iOS liveness check, unpinned `playwright install`).
 
 ---
 
@@ -218,16 +216,18 @@ coverage gaps, not unfinished work:
 1. ~~**Manual sign-in pass on the WASM head**~~ — **done 2026-08-21.** Confirmed working on
    `Uno.Samples` → `Authentication.MsalExtensionsDemo` (branch `dev/sb/msa-ext`) with
    `KeyValueStorageConfiguration:BrowserCacheLocation` set to `SessionStorage` and a real ClientId.
-   This is the only evidence that exists for the browser path: the WebAssembly runtime-test lane
-   cannot run (engine bug, see below), and the demo renders through SkiaRenderer as a single
-   `<canvas>`, so synthetic pointer events never reach the sign-in button — it had to be a human
-   click. **Re-run it by hand after any change to `SessionStorageKeyValueStorage`, the
-   `SetBeforeAccessAsync`/`SetAfterAccessAsync` callbacks, or the store selection**; nothing in CI
-   will tell you if one of those breaks.
+   At the time this was the only evidence for the browser path: the WebAssembly runtime-test lane
+   could not run until the ninth pass, and until 2026-08-23 ran only `Given_BrowserTokenCacheStorage`
+   (see the second review panel section — it is now expected to run the full auth namespace). The
+   demo renders through SkiaRenderer as a single `<canvas>`, so synthetic pointer events never
+   reach the sign-in button — it had to be a human click. **Re-run it by hand after any change to
+   `SessionStorageKeyValueStorage`, the `SetBeforeAccessAsync`/`SetAfterAccessAsync` callbacks, or
+   the store selection** until the widened lane is confirmed green.
 2. **The multi-account logout path has no automated guard** — see "What is still not covered" in
    the third-pass section.
-3. The empty-token refresh finding (`specs/009-msal-auth-fixes/progress.md`) is still open and
-   still needs a deterministic repro before it is fixed.
+3. ~~The empty-token refresh finding (`specs/009-msal-auth-fixes/progress.md`) is still open and
+   still needs a deterministic repro before it is fixed.~~ **Fixed 2026-08-23** — see the second
+   review panel section and `specs/009-msal-auth-fixes/progress.md`.
 
 The sections below are history in reverse order; the warnings they open with were true when
 written and are superseded by the passes above them.
@@ -278,7 +278,8 @@ storage-level setting, and no ordering contract on apps, was needed.
   of `#if`, of Uno types and of `Microsoft.Identity.Client` types so the test project can compile it
   as linked source — that is the seam that makes the browser cache testable at all, since MSAL's
   `TokenCacheNotificationArgs` cannot be constructed by a test.
-- [x] **Item 2b — the MSAL half.** `SetupStorageCore`'s `UNO_EXT_MSAL_NOSTORAGE` branch now
+- [x] **Item 2b — the MSAL half.** `SetupStorageCore`'s browser branch (`UNO_EXT_MSAL_BROWSER`,
+  then still named `UNO_EXT_MSAL_NOSTORAGE`; since 2026-08-23 split out as `SetupBrowserStorage()`)
   registers `SetBeforeAccessAsync` / `SetAfterAccessAsync` over `MsalTokenCacheStore`
   (`MsalAuthenticationProvider.cs`). Both callbacks catch and log rather than propagate: browser
   storage can be unavailable outright (private mode, sandboxed iframe, storage disabled by policy),
@@ -384,6 +385,9 @@ redacted from git) and a human click, because the sample renders through SkiaRen
 `BrowserCacheLocation` set to `SessionStorage`.
 
 ### Why CI can't do the above
+
+*(Superseded: the ninth pass enabled the lane, and the second review panel widened it to the full
+auth namespace.)*
 
 `uno-runtimetests-wasm` against the published head reaches
 `"Application configured to start runtime-tests (Config=Given_BrowserTokenCacheStorage)"` and then
@@ -605,6 +609,10 @@ fabricated authorization code escapes to the real `login.microsoftonline.com` an
 that string - it reached Entra. The product path is fine; a manual sign-in on the WASM head works.
 Widening the lane needs the stub to apply in the browser first, which is its own piece of work.
 
+*Done 2026-08-23:* the factory was being replaced because `Build` applied the app's `Builder(...)`
+callback *before* `WithUnoHelpers()`; it now runs after, the lane runs `$(RuntimeTestsFilter)`
+(the full namespace), and the CI run is pending — see the second review panel section.
+
 The 8 that do run are the ones that matter most here: they are the only automated coverage anywhere
 of what this spec added - browser store selection, the strict-reader rejection of a bad value, and a
 round trip through the selected store - and until now they had never executed in a browser at all.
@@ -724,6 +732,10 @@ Note `dotnet build` cannot build this repo's XAML-bearing WinUI libraries at all
 
 ### Uno.Toolkit pinned to 8.4.2 - and the wrong fix that got there first
 
+*(Superseded 2026-08-23: the pin — and the Hot Design, Themes and `System.Text.Json` pins below —
+are removed; the CS1705 was CI building with the .NET 9.0.200 SDK. See the second review panel
+section and the "pin hiding a toolchain skew" lesson in `specs/lessons.md`.)*
+
 `Controls/ModalFlyout.xaml` uses `utu:NativeFramePresenter` inside an `<ios:ControlTemplate>`, and
 Uno's `ios` conditional XAML namespace also matches Mac Catalyst. Uno.Sdk 6.8.0-dev.21 supplies
 Uno.Toolkit 9.2.0-dev.18, which ships no maccatalyst assembly, so catalyst fell back to the plain
@@ -834,4 +846,105 @@ Note what this changes about the earlier passes: the Mac Catalyst TFM removal is
 carries no breaking change**, and the published floors move only where intended - `Uno.WinUI` and
 `Uno.WinUI.MSAL` to 6.8.0-dev.46 (the build containing unoplatform/uno#24055) and
 `Microsoft.Identity.Client` to 4.87.0. `Uno.Toolkit.WinUI` floors on stable 8.4.2 rather than a
-prerelease, and `System.Text.Json` stays at 8.0.5.
+prerelease, and `System.Text.Json` stays at 8.0.5. *(The last sentence no longer holds — see the
+second review panel section: Toolkit follows the Sdk again and `System.Text.Json` is 9.0.14.)*
+
+## Second review panel (2026-08-23)
+
+A second `/review-panel` run over the branch. The `quality`, `architect` and `skeptic` reviewers
+also flagged that several spec/lesson entries had fallen behind the code; those are reconciled in
+the same pass (`specs/lessons.md`, this file, `spec.md`, `specs/009`, `specs/010`). Fixed:
+
+- **`UNO_EXT_MSAL_NOSTORAGE` → `UNO_EXT_MSAL_BROWSER`** (csproj, `MsalAuthenticationProvider.cs`,
+  `MsalStorageDefaults.cs`) — the define had named the opposite of what it does since item 2b.
+  `SetupStorageCore` is split into `SetupBrowserStorage()` (`#if UNO_EXT_MSAL_BROWSER`) and
+  `SetupDesktopStorage(ct)` (`#else`).
+- **The WebAssembly lane runs the full auth namespace.** `MsalAuthenticationProvider.Build` now
+  applies the app's `Builder(...)` callback *after* `WithUnoHelpers()`, so the stub `HttpClient`
+  factory is no longer replaced in the browser (the ninth-pass limitation);
+  `stage-runtime-tests-wasm.yml` runs `$(RuntimeTestsFilter)` instead of
+  `Given_BrowserTokenCacheStorage`. `__WASM__` stays defined for `Uno.Extensions.RuntimeTests.Core`.
+  Expected 23/23; **the CI run is pending.**
+- **Empty-token / silent-refresh fix** (the security HIGH carried from `specs/009`, finally with a
+  red test): `InternalRefreshAsync` returns `null` only on `MsalUiRequiredException` (the session
+  cannot be renewed); any other failure keeps the current tokens (`Tokens.GetAsync`) and logs a
+  Warning. `AuthenticationService.RefreshAsync` calls `_tokens.ClearAsync` when the provider returns
+  no tokens, so `ITokenCache.Cleared` and `IAuthenticationService.LoggedOut` fire and the MSAL blob
+  is purged. New `src/Uno.Extensions.Authentication.Tests/` — `Given_AuthenticationService`
+  (`When_RefreshReturnsNoTokens_Then_SignedOutAndLoggedOutRaised`,
+  `When_RefreshReturnsEmptyTokens_Then_SignedOut`,
+  `When_RefreshReturnsTokens_Then_SavedAndStillAuthenticated`,
+  `When_NotAuthenticated_Then_RefreshDoesNotCallProvider`,
+  `When_CalledConcurrently_Then_ProvidersBuiltOnce`,
+  `When_NothingResolvedYet_Then_ProvidersIsEmptyWithoutBuilding`) and `Given_ProviderFactory`
+  (`When_ResolvedConcurrently_Then_ConfiguredOnceAndSameInstance`) — 7/7 green, 2 verified red
+  without the fix. Plus `Given_MsalAuthentication.When_RefreshTokenRejected_Then_SignedOutAndLoggedOutRaised`
+  (`StubEntra.RejectRefreshTokens` → 400 `invalid_grant`) and
+  `When_TokenEndpointUnavailable_Then_StillAuthenticated` (`StubEntra.FailTokenRequests` → 503),
+  both red before / green after on the desktop head; MSAL desktop suite 25/25.
+- **StubEntra refresh tokens are unique per instance.** MSAL.NET throttles silent requests
+  process-wide for 120 s after an `invalid_grant`, keyed on clientId + authority + scopes + SHA-256
+  of the refresh token; identical `stub-refresh-token-{counter}` values across instances let one
+  test's rejected RT throttle the next test's silent call. Tokens now carry a per-instance GUID.
+  Lesson recorded in `specs/lessons.md`.
+- **Interactive timeout is desktop-only by default.** `DefaultInteractiveTimeout` (5 min) applies
+  only when `CurrentRedirectPlatform == MsalRedirectPlatform.Desktop`; an explicit
+  `Msal:InteractiveTimeout` applies everywhere. The dispatcher call passes the cancellation token
+  through (`dispatcher.ExecuteAsync(..., cancellationToken)`).
+- **`ISettings` is registered by Storage.UI itself** (`AddKeyedStorage`,
+  `TryAddSingleton<ISettings, Settings>()`), so `UseStorage` works on any host; new ProjectReference
+  `Storage.WinUI` → `Core.WinUI` plus an `InternalsVisibleTo("Uno.Extensions.Storage.UI")` in
+  Core.WinUI. The interim registration in `UnoHost.CreateDefaultBuilder` is removed;
+  `UseThemeSwitching` keeps its own `TryAdd`.
+- **Storage on Skia-mobile heads is confirmed, not hypothesized.** `Uno.Extensions.Storage.UI.dll`
+  for `net9.0-android`/`net9.0-ios` references `Uno.UI` and the package ships `lib/net9.0`, so
+  `RuntimeAssetsSelectorTask` swaps it on Skia Android/iOS; the default `IKeyValueStorage` there is
+  `ApplicationDataKeyValueStorage` (plaintext, app-sandboxed). KeyStore/KeyChain cannot exist in
+  the `net9.0` TFM, so this is documented (`doc/Learn/Storage/StorageOverview.md`,
+  `doc/Learn/Authentication/HowTo-MsalAuthentication.md`), not fixed in code.
+- **`EncryptedApplicationDataKeyValueStorage.GetObjectValue` always returns the DPAPI `byte[]`**;
+  the base `ApplicationDataKeyValueStorage.SetSetting` base64-encodes `byte[]` on the string-only
+  `ISettings` path. `UseApplicationData` is private again (the sixth pass had made it protected).
+- **CI toolchain instead of pins.** `build/ci/templates/dotnet-install*.yml` default
+  `DotNetVersion: '10.0.x'` and `UnoCheck_Version: '1.34.1'` (`dotnet-install.yml` also installs the
+  .NET 9 runtime for the net9.0 test heads); `.azure-pipelines.yml` selects Xcode 26.2 / iOS 26.2
+  simulator. The eleventh pass's `UnoToolkitVersion` 8.4.2 and `UnoHotDesignVersion` 1.19.175 pins
+  (src + samples) and `UnoThemesVersion` 6.1.1 (samples) are **removed** — they worked around CI
+  building with the .NET 9.0.200 SDK (Microsoft.iOS 18.2) against an Sdk Toolkit built for
+  Microsoft.iOS 26. `System.Text.Json` 8.0.5 → 9.0.14 (src + TestHarness). One property remains, in
+  the root `Directory.Build.props`: `UnoToolkitVersion` 9.2.0-dev.18 — a floor sync, not a
+  workaround: the heads build with `Uno.Sdk.Private` (Toolkit group 9.1.0-dev.2 even at
+  6.8.0-dev.85) while the libraries' public `Uno.Sdk` 6.8.0-dev.21 carries 9.2.0-dev.18, and
+  without it heads referencing `Navigation.Toolkit` fail NU1605.
+  `Uno.Extensions.Navigation.Toolkit.WinUI.csproj` keeps `net9.0-maccatalyst` via
+  `_UnoExtensionsDropIosXamlOnCatalyst`, which removes the `ios` XAML prefix for the catalyst TFM
+  (Toolkit ships no catalyst assembly since 8.5; `NativeFramePresenter` is only in the `<ios:>`
+  template). Verified locally: Navigation.Toolkit builds for `net9.0-maccatalyst` + `net9.0-ios`
+  with Toolkit 9.2.0-dev.18; all four heads restore with zero NU1xxx. **iOS/Android CI lanes not yet
+  re-run.**
+- **Docs:** `doc/Learn/UpdatingExtensions.md` "Upgrading to Extensions 7.4" — `Uno.WinUI` floor
+  `6.8.0-dev.46` (no stable 6.8.0 on nuget.org yet); Mac Catalyst `AddMsal` throws (+ guard
+  sample); WASM redirect precedence change; WASM token cache persisted by default (key
+  `MsalCache_{ClientId}`, opt-out `MemoryStorage`, residue note); `Builder(...)` runs last;
+  interactive timeout desktop-only default; logout removes all accounts; unrenewable refresh →
+  `LoggedOut`; MSAL exceptions rethrown untouched; removed vendored
+  `Microsoft.Identity.Client.Extensions.Msal.Wasm.Storage`; `IsEncrypted` truthfulness; `ISettings`
+  registered by `UseStorage`.
+- **TestHarness:** the hard-coded `"uno-extensions://auth"` `RedirectUri` is removed from
+  `testing/TestHarness/TestHarness/Ext/Authentication/Msal/appsettings.msal.json` and
+  `appsettings.multi.json`, and the matching `.WithRedirectUri("uno-extensions://auth")` calls from
+  `MsalAuthenticationHostInit.cs` and `MsalAuthenticationMultiHostInit.cs` (commit a26d9a002).
+- **Test placement:** `Given_BrowserTokenCacheStorage` stays in
+  `Uno.Extensions.Authentication.MSAL.UI.Tests` — no `Uno.Extensions.Storage.UI.Tests` project
+  exists. Recorded exception to the namespace-parity rule, not an oversight.
+
+### Still open after this pass
+
+- Spec 010 item 8 — live testbed validation on a device (macOS loop).
+- iOS / Android / WebAssembly CI lanes have not been re-run since the toolchain change and the
+  wasm filter widening; the numbers above are local.
+- Low-severity panel findings, not addressed: `AuthenticationService.LogoutAsync` does not clear
+  `ITokenCache` when `_pca.RemoveAsync` throws; `IsEncrypted` warning noise on the InMemory store;
+  `Lazy` caches a throwing `Build`; `_setupStorageTask` check-then-set race;
+  `LogWarning(ex, ex.Message)` template misuse; CI script hardening items (iOS liveness check,
+  unpinned `playwright install`).

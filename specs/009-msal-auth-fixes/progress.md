@@ -40,7 +40,9 @@ still broken in this repo. Handoff: `HANDOFF-MSAL-AUTH.md` (repo root, untracked
 ## Plan
 
 - [x] 1. `SetupStorage` rework in `MsalAuthenticationProvider`:
-  - browserwasm TFM: compile-time skip (`UNO_EXT_MSAL_NOSTORAGE` define) — MSAL in-memory cache.
+  - browserwasm TFM: compile-time branch (`UNO_EXT_MSAL_BROWSER` define, originally named
+    `UNO_EXT_MSAL_NOSTORAGE`) — no `MsalCacheHelper`; since spec 011 the browser persists the
+    cache through `IKeyValueStorage` instead of keeping it in memory.
   - Android/iOS: runtime skip (`OperatingSystem.IsAndroid()/IsIOS()`) — MSAL native cache.
   - macOS: default `WithMacKeyChain` (service name from config override → else derived from
     ClientId; account name default) — fixes #3025.
@@ -93,7 +95,7 @@ contract, performance). Worst-case verdict was **fix-first**; all actionable fin
   same TFM-platform **allow-list** (android/ios/windows/desktop/browserwasm) — fail-safe for
   unknown future platforms; verified per-TFM via `msbuild -getProperty:DefineConstants` and in a
   net10.0-desktop consumer.
-- **`MsalStorageDefaults`** compiled out on wasm (`#if !UNO_EXT_MSAL_NOSTORAGE`), `ApplyDefaults`
+- **`MsalStorageDefaults`** compiled out on wasm (`#if !UNO_EXT_MSAL_BROWSER`), `ApplyDefaults`
   returns void, header documents the linked-source/dependency-free constraint (skeptic/quality Low).
 - **Log hygiene**: `ToJson`/`Count()` Information logs gated; account `Username` no longer logged
   (AGENTS §7 PII — was flagged by 3 reviewers as pre-existing; fixed while in the block).
@@ -133,25 +135,30 @@ and logout does nothing."* Both symptoms, both platforms, one root cause.
   `HasTokenAsync` stayed true forever, so `RefreshAsync` kept reporting success off the persisted
   DPAPI account. Fixing logout fixes both.
 
-- [ ] **Latent: a failed silent acquisition is stored as an empty token.**
-  `InternalRefreshAsync` answers `result?.AccessToken ?? string.Empty`, and
+- [x] **A failed silent acquisition was stored as an empty token.**
+  `InternalRefreshAsync` answered `result?.AccessToken ?? string.Empty`, and
   `TokenCache.HasTokenAsync` tests for the *key*, not the value — so when
-  `AcquireSilentTokenAsync` returns null (it swallows `MsalUiRequiredException`: revoked or expired
-  refresh token, conditional access, password change), the provider writes
-  `AuthToken_AccessToken = ""` and `IsAuthenticated` reports **true** with nothing to send. That is
+  `AcquireSilentTokenAsync` returned null (it swallows `MsalUiRequiredException`: revoked or expired
+  refresh token, conditional access, password change), the provider wrote
+  `AuthToken_AccessToken = ""` and `IsAuthenticated` reported **true** with nothing to send. That is
   the same "worst of both" shape spec 011 describes for WebAssembly.
 
-  **Not fixed here, deliberately: no deterministic repro yet.** Four attempts against `StubEntra`
-  each showed MSAL behaving correctly instead (`expires_in: 0` still served the cached token; a
-  response with no refresh token means MSAL caches no *account*, so the provider's
-  `GetAccountsAsync().Count() > 0` guard short-circuits first — which is the correct path). A scope
-  mismatch does drive `AcquireTokenSilent` to fail, but the result varied between runs because the
-  desktop head's MSAL cache is a DPAPI file shared across runs. Fixing this without a red test would
-  ship an untested behavior change to a published package; the honest next step is a repro that
-  isolates the on-disk cache per test (or asserting the contract below the provider, which needs
-  `InternalsVisibleTo` for a `Uno.Extensions.Authentication.Tests` project that does not exist yet).
-  Intended fix once red: return `default` rather than a dictionary holding an empty token, so
-  `AuthenticationService` clears the cache and reports not-authenticated.
+  Left open at first for want of a deterministic repro (four attempts against `StubEntra` showed
+  MSAL behaving correctly, and the desktop head's shared DPAPI cache made a scope-mismatch repro
+  vary between runs). **Fixed 2026-08-23 (second review panel):** `InternalRefreshAsync` returns
+  `null` only on `MsalUiRequiredException` — the session cannot be renewed; any other failure keeps
+  the current tokens (`Tokens.GetAsync`) and logs a Warning. `AuthenticationService.RefreshAsync`
+  calls `_tokens.ClearAsync` when the provider returns no tokens, so `ITokenCache.Cleared` and
+  `IAuthenticationService.LoggedOut` fire and the MSAL blob is purged. Red/green: the new
+  `src/Uno.Extensions.Authentication.Tests/` project (`Given_AuthenticationService.When_RefreshReturnsNoTokens_Then_SignedOutAndLoggedOutRaised`,
+  `When_RefreshReturnsEmptyTokens_Then_SignedOut`, `When_RefreshReturnsTokens_Then_SavedAndStillAuthenticated`
+  and four more — 7/7 green, 2 verified red without the fix) and
+  `Given_MsalAuthentication.When_RefreshTokenRejected_Then_SignedOutAndLoggedOutRaised`
+  (`StubEntra.RejectRefreshTokens` → 400 `invalid_grant`) / `When_TokenEndpointUnavailable_Then_StillAuthenticated`
+  (`StubEntra.FailTokenRequests` → 503), both red before / green after on the desktop head; MSAL
+  desktop suite 25/25. Found on the way: MSAL.NET throttles silent requests for 120 s after an
+  `invalid_grant`, keyed on the refresh token's hash, and `StubEntra` minted identical refresh
+  tokens in every instance — they now carry a per-instance GUID (`specs/lessons.md`).
 
 - [x] **Second report ("logout still does nothing") was sample-side, not library.** After the
   dispatcher fix landed, the demo still looked broken for two reasons of its own: `MainModel.Logout`
@@ -180,10 +187,12 @@ and logout does nothing."* Both symptoms, both platforms, one root cause.
   registration lived in `UseToolkit()/UseThemeSwitching()` — a theme-switching API. Any app
   calling `UseAuthentication` without `UseToolkit()` got
   `InvalidOperationException: NoServiceRegistered (Uno.Extensions.ISettings)` on first
-  `LoginAsync` (templates always call `UseToolkit`, which is why it never surfaced). Fix:
-  `UnoHost.CreateDefaultBuilder` now `TryAdd`s `ISettings` alongside its `UseStorage()` call
-  (`Storage.WinUI` can't self-register it — no `Core.WinUI` reference, and `Settings` is
-  internal there); `UseThemeSwitching` switched to `TryAdd` for co-existence. Verified red/green
+  `LoginAsync` (templates always call `UseToolkit`, which is why it never surfaced). Fix (final
+  form, 2026-08-23): `Uno.Extensions.Storage.UI` registers it itself — `AddKeyedStorage` does
+  `TryAddSingleton<ISettings, Settings>()`, which needed a `Storage.WinUI` → `Core.WinUI`
+  ProjectReference and an `InternalsVisibleTo("Uno.Extensions.Storage.UI")` in Core.WinUI (the
+  interim `TryAdd` in `UnoHost.CreateDefaultBuilder` is removed); `UseThemeSwitching` keeps its own
+  `TryAdd` for co-existence. Verified red/green
   with the `authTestExt` rig (no `UseToolkit`): pre-fix startup fails resolving the token cache,
   post-fix the `TokenCache`/`IsAuthenticated` traces appear. Unit-test exception (AGENTS §4):
   `Hosting.WinUI` can't load in a plain test host (Uno.WinUI module initializer requires a
@@ -229,7 +238,8 @@ and logout does nothing."* Both symptoms, both platforms, one root cause.
     token at Debug on every request.
   - Required one additive API: `IMsalAuthenticationBuilder.InteractiveBuilder(...)` — see
     `specs/lessons.md` for why `Builder(...)` could not reach `WithCustomWebUi`.
-  - **Known limitation:** the device stages run a filter scoped to `Given_MsalAuthentication`, not
+  - **Known limitation** *(since widened to the `Authentication.MSAL.UI.Tests` namespace — spec 011,
+    eighth pass)*: the device stages run a filter scoped to `Given_MsalAuthentication`, not
     `!_HotReload`. The wider runtime suite has 15 failing tests, verified identical at the
     pre-change baseline `31e7eb529` — rot accumulated while the runtime-test stage sat commented
     out. Widening `RuntimeTestsFilter` in `.azure-pipelines.yml` is blocked on fixing those.
@@ -239,7 +249,7 @@ and logout does nothing."* Both symptoms, both platforms, one root cause.
     once in `src/Directory.Build.props` under the existing `IsTestProject` condition).
 - Live Skia sweep with interactive sign-in (needs patched uno.winui cache + human at the prompt).
 - #2640 WebAuthenticationBroker for Desktop/Skia (feature).
-- Measure actual WASM payload effect of `UNO_EXT_MSAL_NOSTORAGE` on a trimmed publish.
+- Measure actual WASM payload effect of `UNO_EXT_MSAL_BROWSER` (no `MsalCacheHelper` path) on a trimmed publish.
 - Consider a nested storage-config section if Linux keyring settings are ever exposed.
 
 ## Not done here (needs a human / other repo)
