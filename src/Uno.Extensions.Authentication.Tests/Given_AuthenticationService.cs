@@ -78,6 +78,60 @@ public class Given_AuthenticationService
 	}
 
 	[TestMethod]
+	public async Task When_ProviderLogoutThrows_Then_TokensClearedAndLoggedOutRaised()
+	{
+		// A keychain or cache-file error part-way through the provider's sign-out must not leave the
+		// user signed in: the access token would survive, IsAuthenticated would stay true and the HTTP
+		// handlers would keep sending the bearer. The failure still surfaces to the caller.
+		var (service, tokens, provider, _) = Create();
+		await tokens.SaveAsync(provider.Name, SomeTokens, CancellationToken.None);
+		var loggedOut = 0;
+		service.LoggedOut += (_, _) => loggedOut++;
+		provider.OnLogout = () => throw new InvalidOperationException("keychain locked");
+
+		var act = async () => await service.LogoutAsync(dispatcher: null, CancellationToken.None);
+
+		await act.Should().ThrowAsync<InvalidOperationException>().WithMessage("keychain locked");
+		(await service.IsAuthenticated(CancellationToken.None)).Should().BeFalse();
+		(await tokens.GetAsync(CancellationToken.None)).Should().BeEmpty();
+		loggedOut.Should().Be(1);
+	}
+
+	[TestMethod]
+	public async Task When_ProviderLogoutThrowsWithCancelledToken_Then_TokensStillCleared()
+	{
+		// The clear must not itself be skipped because the caller's token was already cancelled.
+		var (service, tokens, provider, _) = Create();
+		await tokens.SaveAsync(provider.Name, SomeTokens, CancellationToken.None);
+		provider.OnLogout = () => throw new OperationCanceledException();
+		using var cancelled = new CancellationTokenSource();
+		cancelled.Cancel();
+
+		var act = async () => await service.LogoutAsync(dispatcher: null, cancelled.Token);
+
+		await act.Should().ThrowAsync<OperationCanceledException>();
+		(await tokens.GetAsync(CancellationToken.None)).Should().BeEmpty();
+	}
+
+	[TestMethod]
+	public async Task When_ProviderDeclinesLogout_Then_TokensKept()
+	{
+		// `false` is the provider saying the sign-out did not happen (the user dismissed a prompt,
+		// say) - not a failure; the session stands.
+		var (service, tokens, provider, _) = Create();
+		await tokens.SaveAsync(provider.Name, SomeTokens, CancellationToken.None);
+		var loggedOut = 0;
+		service.LoggedOut += (_, _) => loggedOut++;
+		provider.OnLogout = () => false;
+
+		var result = await service.LogoutAsync(dispatcher: null, CancellationToken.None);
+
+		result.Should().BeFalse();
+		(await service.IsAuthenticated(CancellationToken.None)).Should().BeTrue();
+		loggedOut.Should().Be(0);
+	}
+
+	[TestMethod]
 	public async Task When_NotAuthenticated_Then_RefreshDoesNotCallProvider()
 	{
 		var (service, _, provider, _) = Create();

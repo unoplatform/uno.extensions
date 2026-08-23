@@ -71,7 +71,24 @@ internal class AuthenticationService : IAuthenticationService
 		var authProvider = await AuthenticationProvider(default, ct);
 
 		if (_logger.IsEnabled(LogLevel.Trace)) _logger.LogTraceMessage($"Attempting to logout");
-		if (!await authProvider.LogoutAsync(dispatcher, ct))
+		bool loggedOut;
+		try
+		{
+			loggedOut = await authProvider.LogoutAsync(dispatcher, ct);
+		}
+		catch (Exception ex)
+		{
+			// The provider failed part-way (a keychain or cache-file error, say). The user asked to
+			// sign out, so nothing this service holds may keep the session alive: clear the tokens
+			// before surfacing the failure, or IsAuthenticated stays true and the HTTP handlers keep
+			// sending the bearer. CancellationToken.None so a cancelled token cannot turn the clear
+			// into a no-op - that is the one outcome this guards.
+			if (_logger.IsEnabled(LogLevel.Warning)) _logger.LogWarning(ex, "Logout failed; clearing the token cache regardless so the user is not left signed in");
+			await _tokens.ClearAsync(CancellationToken.None);
+			throw;
+		}
+
+		if (!loggedOut)
 		{
 			if (_logger.IsEnabled(LogLevel.Trace)) _logger.LogTraceMessage($"Logout failed (for example logout cancelled)");
 			return false;

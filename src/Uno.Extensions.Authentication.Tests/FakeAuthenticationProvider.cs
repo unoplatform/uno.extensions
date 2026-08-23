@@ -17,13 +17,16 @@ internal sealed class FakeAuthenticationProvider : IAuthenticationProvider
 	/// <summary>What <see cref="RefreshAsync"/> returns; <c>null</c> means "could not refresh".</summary>
 	public Func<IDictionary<string, string>?> OnRefresh { get; set; } = () => null;
 
+	/// <summary>What <see cref="LogoutAsync"/> does; throw to simulate a provider failing part-way.</summary>
+	public Func<bool> OnLogout { get; set; } = () => true;
+
 	public int RefreshCount { get; private set; }
 
 	public ValueTask<IDictionary<string, string>?> LoginAsync(IDispatcher? dispatcher, IDictionary<string, string>? credentials, CancellationToken cancellationToken) =>
 		new(credentials);
 
 	public ValueTask<bool> LogoutAsync(IDispatcher? dispatcher, CancellationToken cancellationToken) =>
-		new(true);
+		new(OnLogout());
 
 	public ValueTask<IDictionary<string, string>?> RefreshAsync(CancellationToken cancellationToken)
 	{

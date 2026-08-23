@@ -943,8 +943,8 @@ the same pass (`specs/lessons.md`, this file, `spec.md`, `specs/009`, `specs/010
 - Spec 010 item 8 — live testbed validation on a device (macOS loop).
 - iOS / Android / WebAssembly CI lanes have not been re-run since the toolchain change and the
   wasm filter widening; the numbers above are local.
-- Low-severity panel findings, not addressed: `AuthenticationService.LogoutAsync` does not clear
-  `ITokenCache` when `_pca.RemoveAsync` throws; `IsEncrypted` warning noise on the InMemory store;
+- Low-severity panel findings, not addressed (the logout-exception path - `LogoutAsync` not clearing
+  `ITokenCache` when the provider throws - was fixed afterwards by "fix(auth): clear the token cache when a provider's logout throws"): `IsEncrypted` warning noise on the InMemory store;
   `Lazy` caches a throwing `Build`; `_setupStorageTask` check-then-set race;
   `LogWarning(ex, ex.Message)` template misuse; CI script hardening items (iOS liveness check,
   unpinned `playwright install`).
