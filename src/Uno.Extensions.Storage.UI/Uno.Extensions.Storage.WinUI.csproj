@@ -25,6 +25,9 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\Uno.Extensions.Core\Uno.Extensions.Core.csproj" />
+		<!-- ISettings (Core) is implemented by Settings (Core.UI); the key-value stores need it for
+			unpackaged-Windows persistence, so the registration lives here with the dependency. -->
+		<ProjectReference Include="..\Uno.Extensions.Core.UI\Uno.Extensions.Core.WinUI.csproj" />
 		<ProjectReference Include="..\Uno.Extensions.Storage\Uno.Extensions.Storage.csproj" />
 		<ProjectReference Include="..\Uno.Extensions.Serialization\Uno.Extensions.Serialization.csproj" />
 		<ProjectReference Include="..\Uno.Extensions.Configuration\Uno.Extensions.Configuration.csproj" />

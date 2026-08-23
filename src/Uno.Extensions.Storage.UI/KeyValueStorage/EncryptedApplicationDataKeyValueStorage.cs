@@ -34,9 +34,9 @@ internal record EncryptedApplicationDataKeyValueStorage(
 #nullable disable
 	protected override async Task<T> GetTypedValue<T>(object encryptedData, CancellationToken ct)
 	{
-		// byte[] on the packaged path, base64 on the unpackaged one - see GetObjectValue. Both are
-		// accepted here rather than branching on UseApplicationData, so a value written before this
-		// change still reads back whichever path it came from.
+		// byte[] on the packaged path, base64 on the unpackaged one (the base store encodes binary
+		// values for the string-only ISettings - see ApplicationDataKeyValueStorage.SetSetting). Both
+		// are accepted here so a value written before that encoding existed still reads back.
 		var protectedBytes = encryptedData switch
 		{
 			byte[] bytes => bytes,
@@ -62,9 +62,9 @@ internal record EncryptedApplicationDataKeyValueStorage(
 	/// The protected bytes behind a base64 setting value, or <c>null</c> when it isn't base64.
 	/// </summary>
 	/// <remarks>
-	/// Unpackaged installs written before this change hold the literal <c>"System.Byte[]"</c> - see
-	/// <see cref="GetObjectValue{T}"/>. Those are unrecoverable by construction; treat them as absent
-	/// rather than throwing on every read.
+	/// Unpackaged installs written before the base store encoded binary values hold the literal
+	/// <c>"System.Byte[]"</c>. Those are unrecoverable by construction; treat them as absent rather
+	/// than throwing on every read.
 	/// </remarks>
 	private static byte[]? TryDecodeBase64(string text)
 	{
@@ -86,17 +86,10 @@ internal record EncryptedApplicationDataKeyValueStorage(
 
 		CryptographicBuffer.CopyToByteArray(encryptedBuffer, out var encryptedData);
 
-		// Packaged installs keep persisting the raw byte[] - ApplicationData settings hold it
-		// natively, it is what every existing install already contains, and this is the default
-		// store on Windows, so it is not worth changing on a path that works.
-		//
-		// Unpackaged installs go through ISettings, which is string-only: the base class stores
-		// whatever this returns via value?.ToString(), so a byte[] became the literal
-		// "System.Byte[]" and DPAPI-protected values silently never persisted - while their keys
-		// did, leaving HasTokenAsync true with nothing to recover. base64 round-trips there.
-		return UseApplicationData
-			? encryptedData
-			: Convert.ToBase64String(encryptedData);
+		// Raw bytes on both paths: packaged installs hold them natively in ApplicationData, and the
+		// base store base64-encodes them for the string-only ISettings path. GetTypedValue accepts
+		// either shape, so values written before that encoding existed still read back.
+		return encryptedData;
 	}
 
 }

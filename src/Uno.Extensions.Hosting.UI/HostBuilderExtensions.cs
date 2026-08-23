@@ -32,8 +32,8 @@ public static class HostBuilderExtensions
 		return hostBuilder
 			.ConfigureServices((ctx, services) =>
 			{
-				// ISettings is registered by the UnoHost default builder; TryAdd covers hosts
-				// that were built without it.
+				// ThemeService persists through ISettings. UseStorage registers the same
+				// implementation; TryAdd so whichever runs first wins and an app's own stays.
 				services.TryAddSingleton<ISettings, Settings>();
 				_ = services.AddScoped<IThemeService, ScopedThemeService>();
 			});

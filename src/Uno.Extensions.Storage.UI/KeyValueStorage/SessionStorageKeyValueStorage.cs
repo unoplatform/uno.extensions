@@ -9,8 +9,9 @@ namespace Uno.Extensions.Storage.KeyValueStorage;
 /// <c>ApplicationData.Current.LocalSettings</c>, which maps to <c>localStorage</c> in the browser,
 /// and there is no WinRT surface for <c>sessionStorage</c> - hence the direct JS interop.
 /// <para>
-/// Selected as the default <see cref="IKeyValueStorage"/> on WebAssembly unless the browser cache
-/// location says otherwise; see specs/011-wasm-msal-token-cache/spec.md.
+/// Opt-in: becomes the default <see cref="IKeyValueStorage"/> on WebAssembly when
+/// <c>KeyValueStorageConfiguration:BrowserCacheLocation</c> is <c>SessionStorage</c>; the default
+/// is <c>LocalStorage</c> (<see cref="ApplicationDataKeyValueStorage"/>).
 /// </para>
 /// </remarks>
 internal record SessionStorageKeyValueStorage(

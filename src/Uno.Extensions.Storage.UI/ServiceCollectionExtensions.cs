@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Uno.Extensions;
 
@@ -92,9 +93,12 @@ internal static class ServiceCollectionExtensions
 	{
 		// Validated on every platform even though only the browser acts on it: a typo in a shared
 		// appsettings.json has to fail on the desktop run a developer actually does, not only in the
-		// one head that reads the value - which is also the only way the guarantee is testable,
-		// since the WebAssembly runtime-test lane cannot run today.
+		// one head that reads the value.
 		_ = ResolveBrowserCacheLocation(configuration);
+
+		// The stores below persist through ISettings on unpackaged Windows; registered here, with
+		// the dependency, so UseStorage works on any host. TryAdd: an app's own ISettings wins.
+		services.TryAddSingleton<ISettings, Settings>();
 
 		return services
 				.AddNamedSingleton<IKeyValueStorage, InMemoryKeyValueStorage>(InMemoryKeyValueStorage.Name)

@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Uno.Extensions.Hosting;
 
@@ -81,12 +80,6 @@ public static class UnoHost
 			})
 			.ConfigureServices((ctx, services) =>
 			{
-				// The key-value storages registered by UseStorage below require ISettings for
-				// unpackaged-app persistence; register it here so storage (and everything on
-				// top of it, e.g. the authentication token cache) works without the app also
-				// having to call UseToolkit/UseThemeSwitching.
-				services.TryAddSingleton<ISettings, Settings>();
-
 				if (ctx.HostingEnvironment is IAppHostEnvironment appHost)
 				{
 					services.AddSingleton(appHost);
