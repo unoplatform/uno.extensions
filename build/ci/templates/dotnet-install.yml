@@ -1,5 +1,5 @@
 parameters:
-  DotNetVersion: '9.0.200'
+  DotNetVersion: '10.0.x'
   UnoCheck_Version: ''
   UnoCheckParameters: ''
 
@@ -65,4 +65,15 @@ steps:
     inputs:
       packageType: sdk
       version: ${{ parameters.DotNetVersion }}
+      installationPath: $(DOTNET_INSTALL_DIR)
+
+  # The .NET 10 SDK builds the net9.0 targets but does not carry the 9.0 runtime, and the desktop
+  # and hot-reload lanes *run* net9.0 heads (`dotnet Uno.Extensions.RuntimeTests.dll`) from this
+  # install. Without it those lanes fail at launch with "You must install .NET 9.0".
+  - task: UseDotNet@2
+    displayName: 'Use .NET 9 runtime (net9.0 test heads)'
+    retryCountOnTaskFailure: 3
+    inputs:
+      packageType: runtime
+      version: 9.0.x
       installationPath: $(DOTNET_INSTALL_DIR)

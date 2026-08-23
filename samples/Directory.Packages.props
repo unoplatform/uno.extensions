@@ -21,18 +21,8 @@
 		<AndroidXNavigationVersion>2.8.9.1</AndroidXNavigationVersion>
 		<AndroidXCollectionVersion>1.5.0.3</AndroidXCollectionVersion>
 		<MauiVersion>9.0.111</MauiVersion>
-		<!--
-			Uno.Sdk 6.8.0-dev.* supplies Uno.Toolkit.WinUI 9.2.0-dev.18, whose iOS assembly is built
-			against Microsoft.iOS 26 while the .NET 9 iOS workload here references 18.2 (CS1705, seen in
-			build 229332). The package folder is named net9.0-ios18.0, so do not read the TFM name as
-			evidence the pin is stale - check what the assembly references. 8.4.2 is the latest stable
-			built against 18.2; src/Directory.Packages.props carries the same pin for the same reason.
-		-->
-		<UnoToolkitVersion>8.4.2</UnoToolkitVersion>
-		<!-- Keep Hot Design on the version that matches the toolkit pin above; see
-		     src/Directory.Packages.props for why. -->
-		<UnoHotDesignVersion>1.19.175</UnoHotDesignVersion>
-		<UnoThemesVersion>6.1.1</UnoThemesVersion>
+		<!-- Uno.Themes and Hot Design versions come from Uno.Sdk.Private; Uno.Toolkit is kept level with
+		     the libraries by the root Directory.Build.props (see the comment there). -->
 	</PropertyGroup>
 
 	<ItemGroup>
