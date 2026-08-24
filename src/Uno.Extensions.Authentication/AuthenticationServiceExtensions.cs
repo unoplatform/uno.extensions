@@ -8,6 +8,19 @@ public static class AuthenticationServiceExtensions
 	/// <summary>
 	/// Logs in the user using the specified credentials.
 	/// </summary>
+	/// <remarks>
+	/// This overload passes no <see cref="IDispatcher"/>, so it only suits providers that never need
+	/// one. <c>MsalAuthenticationProvider</c> requires one and throws
+	/// <see cref="ArgumentNullException"/> here — use
+	/// <see cref="IAuthenticationService.LoginAsync(IDispatcher?, IDictionary{string, string}?, string?, CancellationToken?)"/>
+	/// and hand it the dispatcher instead.
+	/// <para>
+	/// MSAL rejects the call up front, even when the sign-in would have completed silently from a
+	/// cached account and shown no UI at all — its dispatcher is only used by the interactive leg.
+	/// Narrowing that guard to the interactive path would be a behaviour change to a published
+	/// package, so it is not done as a drive-by.
+	/// </para>
+	/// </remarks>
 	/// <param name="auth">
 	/// The <see cref="IAuthenticationService"/> to use.
 	/// </param>

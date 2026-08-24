@@ -111,11 +111,16 @@ internal record TokenCache : ITokenCache
 			try
 			{
 				var value = await _secureCache.GetAsync<string>(key, cancellation);
-				_logger.LogTraceMessage($">{key}{value}");
+
+				// Log the shape, never the value: every entry here is an access, refresh or id
+				// token, and this runs at Trace on a consumer's configured logging pipeline
+				// (AGENTS.md §7). The length still distinguishes "present" from "empty", which is
+				// all this diagnostic was ever useful for.
+				_logger.LogTraceMessage($">{key} ({(value is null ? "no value" : $"{value.Length} chars")})");
 			}
-			catch
+			catch (Exception ex)
 			{
-				_logger.LogTraceMessage($">Unable to log {key} (it may not be a string value)");
+				_logger.LogTraceMessage($">Unable to log {key} ({ex.GetType().Name}; it may not be a string value)");
 			}
 		}
 

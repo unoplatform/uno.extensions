@@ -31,5 +31,6 @@
 		<InternalsVisibleTo Include="$(AssemblyName).MSAL.WinUI" />
 		<InternalsVisibleTo Include="$(AssemblyName).Oidc.UI" />
 		<InternalsVisibleTo Include="$(AssemblyName).Oidc.WinUI" />
+		<InternalsVisibleTo Include="$(AssemblyName).Tests" />
 	</ItemGroup>
 </Project>
