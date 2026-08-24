@@ -24,6 +24,30 @@ Domain lessons / postmortems for Uno.Extensions. See `AGENTS.md` §3 for when to
 
 **Apply to:** before committing on any branch that ran HR tests locally, `git diff` the `HotReload*Target*.cs` / `MvuxHotReload*Model.cs` / `HotReload*Page.xaml` fixture files — any diff that flips a baseline literal ("original"→"updated", "handled-"→"modified-", `IFeed`→`IState`) is leftover test mutation, not an intentional change. Restore from `main` instead of committing. The baseline literal of each fixture is whatever its tests assert *before* calling `UpdateSourceFile`.
 
+## `-getProperty:DefineConstants` does not list the SDK's implicit symbols (`ANDROID`, `IOS`, ...)
+
+**Problem:** while adding platform branches to `MsalAuthenticationProvider` (spec 012), `dotnet build -getProperty:DefineConstants` was used to check whether `ANDROID` / `IOS` were defined for the `net9.0-android` / `net9.0-ios` TFMs. Neither appeared, which read as "the `#if ANDROID` branch is dead code". They are in fact defined: the .NET SDK merges `@(ImplicitDefineConstants)` into `DefineConstants` inside a target that runs *before* `CoreCompile` but *after* evaluation, and `-getProperty` reports the evaluation-time value.
+
+**Correct pattern:** to test whether a symbol is live, compile something that depends on it. Either a temporary `#if !SYMBOL` + `#error` probe build, or check the emitted assembly for a type only that branch references (`Foundation.NSBundle` appears only in the iOS assembly). Do not infer symbol state from `-getProperty`.
+
+**Apply to:** any conditional-compilation change on a cross-targeted project. A branch that silently stops compiling does not fail the build — it changes behavior and no test notices, because the other branch compiles fine. The `#error` cross-check this branch first added (`UNO_EXT_MSAL_ANDROID_TFM` / `_IOS_TFM`) is gone again: spec 010 moved platform selection to runtime `OperatingSystem.Is*()` because on Skia mobile heads the TFM no longer implies the OS, which also removed the hazard the guard existed for. Prefer runtime dispatch wherever TFM and OS can diverge; where a compile-time symbol is unavoidable, probe it as above rather than trusting the symbol.
+
+## MSAL's interactive modifiers are unreachable from `PublicClientApplicationBuilder`
+
+**Problem:** `IMsalAuthenticationBuilder.Builder(...)` exposes `PublicClientApplicationBuilder`, which MSAL builds once. Everything that customises a *single* interactive sign-in — `WithPrompt`, `WithLoginHint`, `WithExtraScopeToConsent`, `WithSystemWebViewOptions`, `WithCustomWebUi` — is an extension on `AcquireTokenInteractiveParameterBuilder`, constructed per request inside `MsalAuthenticationProvider.AcquireInteractiveTokenAsync`. Planning assumed `Builder(...)` could reach `WithCustomWebUi` and therefore that unattended interactive tests needed no library change; it cannot.
+
+**Correct pattern:** `InteractiveBuilder(...)` (added alongside `Builder`/`Storage`/`Scopes`) applies a callback to the per-request builder, after `WithUnoHelpers()` so an app can override what the helpers set. Test doubles reach MSAL through the same public surface an app would.
+
+**Apply to:** any wrapper over a builder-per-request API. Check which builder type a modifier hangs off before assuming an existing extension point reaches it.
+
+## MSAL persists its token cache across runtime-test runs — purge, don't assume isolation
+
+**Problem:** on desktop targets `MsalCacheHelper` writes the MSAL token cache to a file in the app data folder that is shared by every test in a run *and* survives across runs. The first draft of `Given_MsalAuthentication` had three tests that appeared to pass while doing nothing meaningful: each reused the account the previous test had signed in, so "login" never prompted, "refresh without login" found an account, and the token-leak assertion read a stub that had issued no tokens.
+
+**Correct pattern:** `CreateHarnessAsync` calls `LogoutAsync` before handing the harness to the test, and asserts the purge itself neither prompted nor requested a token. Driving the product's own logout keeps this correct if the storage location changes.
+
+**Apply to:** any runtime test over a component with platform-backed persistence (token caches, `ApplicationData` settings, keychain/keyring entries). The `[TestMethod]` boundary isolates managed state, not the filesystem. A suite that only ever passes is as suspicious as one that fails.
+
 ## Uno.Sdk no longer defines `__WASM__` for consumer projects — source-shipping code that branches on it compiles its non-browser path into Skia-WASM heads
 
 **Problem:** the WebAssembly runtime-test lane exited before running a single test with `PlatformNotSupportedException` from `Console.CancelKeyPress`. `Uno.UI.RuntimeTests.Engine`'s `RuntimeTestEmbeddedRunner` — which ships as **source** and compiles into `Uno.Extensions.RuntimeTests.Core` — guards that registration with `#if !__WASM__`. Uno.Sdk defines `IsBrowserWasm` (see `targets/Uno.IsPlatform.props`) but no `__WASM__` compilation symbol, so the guard never fires and the unsupported call is compiled in. A Skia-WASM head consumes the *plain* `netX.0` `Uno.UI` lib (there is no `browserwasm` lib in `uno.winui`), which is the same substitution spec 010 documents for Skia mobile.
@@ -98,6 +122,38 @@ which exists so our ~50 libraries don't each duplicate the closure into their ow
 
 **Apply to:** any repo-wide `ItemDefinitionGroup` or property condition keyed on `OutputType`. `OutputType` is not stable across target platforms - Android rewrites it, and a rule that reads "libraries only" silently becomes "and also every Android app". Prefer a platform-intent property (`AndroidApplication`, `IsUnoHead`) over inferring app-ness from `OutputType`.
 
+## `IAuthenticationService`'s convenience overloads pass a null `IDispatcher` — never demand one on a path that shows no UI
+
+**Problem:** `MsalAuthenticationProvider.InternalLogoutAsync` opened with a null-guard throwing `ArgumentNullException` for `dispatcher` — a parameter the method never uses (`RemoveAsync` only mutates MSAL's own cache). The documented `IAuthenticationService.LogoutAsync(CancellationToken)` extension (`AuthenticationServiceExtensions.cs:43`) always passes `dispatcher: default`, so *every* logout through it threw; an app whose command swallows exceptions sees "clicking logout does nothing", and because the token cache never cleared, `HasTokenAsync` stayed true and `RefreshAsync` kept reporting success forever. On `main` since `4bd7bde31`; found only by live app testing — every in-repo test passed a dispatcher.
+
+**Correct pattern:** require the dispatcher only where UI is actually shown (interactive login). Logout and refresh paths must accept null — `OidcAuthenticationProvider` already ignores the parameter. Guarded by `Given_MsalAuthentication.When_LogoutWithoutDispatcher_Then_SignedOut`, which calls the convenience overload the way an app does.
+
+**Apply to:** every `IAuthenticationProvider` implementation and any new `Internal*` override: read what `AuthenticationServiceExtensions` actually passes before adding a parameter guard. A guard on an unused parameter is not defensive — it converts a valid public call pattern into a guaranteed throw.
+
+## Same-version local-package loops: purge the NuGet cache, then verify the bytes that actually run
+
+**Problem:** validating this branch through `Uno.Samples/UI/Authentication.MsalExtensionsDemo` (which pins every `Uno.Extensions.*` package to `255.255.255.255-local` from `../uno.extensions/artifacts`): the version never changes, so NuGet's cache serves the stale copy after every repack, and even after purging, a fix was reported "still broken" while an older build output was being served. Separately, a *library* fix can look broken because of an *app* bug — the second "logout still does nothing" report was the sample's own `MainModel` not navigating after a fully successful sign-out, plus a draft that passed the `CancellationToken` as the `sender` argument of `NavigateViewModelAsync` (compiles — `sender` is `object`).
+
+**Correct pattern:** the loop is repack → `rm -rf ~/.nuget/packages/<id>/255.255.255.255-local` → rebuild the head → **verify the deployed artifact**, e.g. fetch `/_framework/<assembly>.wasm` from the running host and check it for a marker string of the change, before asking anyone to validate. And separate library behavior from app behavior by asserting on observable state (storage keys such as `AuthToken_*` / `MsalCache_*`), not on what the UI appears to do.
+
+**Apply to:** all local-feed validation against the demo apps (the full loop is in `Uno.Samples/UI/Authentication.MsalExtensionsDemo/HANDOFF-MACOS.md`). "The build succeeded" proves nothing about what the browser downloaded, and "the button did nothing" names a symptom, not a layer.
+
+## Cancellation is not always a courtesy — a half-done sign-out is worse than a slow one
+
+**Problem:** `MsalAuthenticationProvider.InternalLogoutAsync` checked `ThrowIfCancellationRequested()` between account removals and before deleting the serialized MSAL cache. Honouring cancellation there produced the worst reachable state: some accounts removed, the rest still signed in with their refresh tokens in the serialized cache, the access token still cached, `IsAuthenticated` still true — and the caller told the operation was cancelled. A user who asked to log out is left authenticated, believing they are not.
+
+**Correct pattern:** ask what a partial completion *means* before plumbing a token through a loop. Sign-out is all local cache mutation, so there is nothing slow to interrupt and no reason to offer an exit; the removal loop ignores cancellation and the cleanup moved into a `finally` so a mid-loop failure still takes the credential material with it. That `finally` passes `CancellationToken.None` deliberately — an already-cancelled token would make the delete itself the no-op the `finally` exists to prevent. Guarded by `Given_MsalAuthentication.When_LogoutCancelled_Then_SerializedMsalCacheStillRemoved`.
+
+**Apply to:** any teardown/revoke/clear path (logout, cache eviction, credential rotation, temp-file cleanup). AGENTS.md §10's "honour cancellation quickly" is about *work the caller is waiting for*, not about abandoning a cleanup halfway. If the operation removes something dangerous, cancellation between steps is a leak, not responsiveness.
+
+## A `??=` cache of an expensive object is a race, and record copies make it unrecoverable
+
+**Problem:** `ProviderFactory.AuthenticationProvider` was `configuredProvider ??= ConfigureProvider(Provider, Settings)`. Two concurrent resolves can both observe null and both invoke the callback — which builds an `IPublicClientApplication` and subscribes to `ITokenCache.Cleared`. Because `ConfigureProvider` does `provider with { … }`, each invocation returns a **different record instance**, so the losing one stays subscribed for the host's lifetime with no reference anywhere to `-=` it: a leaked provider, a leaked MSAL client, and the clear handler running twice. A code comment asserted the opposite ("Build runs exactly once per provider, so this cannot double-subscribe") and was believed.
+
+**Correct pattern:** `Lazy<T>` with `LazyThreadSafetyMode.ExecutionAndPublication` for any single-instance cache whose factory has side effects. Do not hand-roll `??=` when the value owns a subscription, a native handle, or an HTTP client. And when a comment claims an invariant, follow the reference and check it — this one named `ProviderFactory` without reading it.
+
+**Apply to:** every `??=`/`if (x is null)` memoisation in shared code (`ProviderFactory` covered Msal, Oidc and Custom at once). Side-effect-free memoisation of a value type can race harmlessly; anything that registers, connects or allocates unmanaged state cannot.
+
 ## A test filter naming a class silently drops its siblings — scope device lanes by namespace
 
 **Problem:** `.azure-pipelines.yml` set `RuntimeTestsFilter: 'Given_MsalAuthentication'` to scope the four device runtime-test stages away from the 15 pre-existing failures in the wider suite. `Uno.UI.RuntimeTests.Engine`'s filter is a plain substring match on the fully-qualified test name, so that string matched exactly one class. The 8 `Given_BrowserTokenCacheStorage` cases added in the same branch — the entire guard on which browser store the token cache lands in — matched nothing and never ran on any lane. Both device lanes were green and the check list read "Runtime Tests - Desktop (Skia): pass", so the gap was invisible; it surfaced only because a human read the check names and asked which platforms actually run the auth tests.
@@ -105,3 +161,55 @@ which exists so our ~50 libraries don't each duplicate the closure into their ow
 **Correct pattern:** scope a substring filter by **namespace**, not class — `'Authentication.MSAL.UI.Tests'` picks up all 23 cases and keeps picking up classes added later. When a filter is narrowed to dodge unrelated failures, assert the resulting *count*: run the filter locally and confirm it matches the tests you think it does, because a filter that matches too little fails open, not closed.
 
 **Apply to:** `RuntimeTestsFilter` and any `dotnet test --filter` / engine filter in CI. The general shape — a green lane that silently ran a subset — also applies to VSTest `**/*.Tests.dll` globs and `[TestCategory]` selectors. `TreatNoTestsAsError` in `build/tests.runsettings` catches zero matches; nothing catches "half".
+
+## A cross-platform test must assert the documented contract, not the platform it was written on
+
+**Problem:** `Given_BrowserTokenCacheStorage.When_Value_Written_Then_Round_Trips_Through_Default_Storage` ended with `(await storage.GetAsync<string>(key, ct)).Should().BeNull()` after clearing the key. That passes on Skia desktop and fails on iOS with `KeyNotFoundException`, because the two stores behind one interface disagree: `IKeyValueStorage.GetAsync` is documented as *"If that value does not exist, throws a `KeyNotFoundException`"*, `KeyChainKeyValueStorage` honours it, and `ApplicationDataKeyValueStorage` returns `default` instead. The assertion was written and verified on desktop, so it encoded the implementation that violates the contract — and it only surfaced when the CI filter was widened to actually run the class on a second platform.
+
+**Correct pattern:** when a test runs on every head, assert the part of the contract every implementation agrees on, and read the interface's XML docs before asserting a behavior you observed. Here `GetKeysAsync().Should().NotContain(key)` is the platform-stable "it is gone" check, and it is also what `TokenCache.HasTokenAsync` actually relies on. Where implementations genuinely disagree, that is a product finding to record, not a detail for a test to quietly pick a winner for.
+
+**Apply to:** any `*.UI.Tests` / RuntimeTests case, since those run on desktop, iOS, Android and WebAssembly from one source file. Also treat "documented to throw, one implementation returns default" as its own bug: the divergence in `ApplicationDataKeyValueStorage` is deliberately left alone here because making the default Windows/desktop/browser store start throwing is a public-surface behavior change that needs its own PR, not a drive-by fix inside a storage-selection change.
+
+## Any `*.WinUI` package whose platform assembly references `Uno.UI` and ships a plain `netX.0` lib is swapped on Skia-mobile heads — check the references, not the TFM list
+
+**Problem:** spec 010 established the swap for `Uno.Extensions.Authentication.MSAL.WinUI`; what
+was still a hypothesis was that `Uno.Extensions.Storage.UI` gets the same treatment, which would
+put the Android KeyStore / iOS KeyChain stores out of reach on Skia heads. Reading the assembly
+metadata settled it: `Uno.Extensions.Storage.UI.dll` for `net9.0-android` and `net9.0-ios`
+references `Uno.UI`, and the package ships a `lib/net9.0` build, so
+`RuntimeAssetsSelectorTask.HandleSkiaMobileForNonRuntimeEnabledPackages` replaces it. The default
+`IKeyValueStorage` on Skia Android/iOS is therefore `ApplicationDataKeyValueStorage` — plaintext,
+app-sandboxed — and it cannot be otherwise: KeyStore/KeyChain do not exist in the `net9.0` TFM.
+
+**Correct pattern:** before assuming a platform store (or any platform-specific code path) exists
+on a Skia mobile head, open the platform assembly with `System.Reflection.Metadata` and list its
+assembly references; `Uno.UI` present + a plain-TFM sibling in the package = the plain build is
+what runs. Where the plain build cannot do the platform thing, document it at the public surface
+(`doc/Learn/Storage/StorageOverview.md` table + note, `HowTo-MsalAuthentication.md`) rather than
+papering over it in code. Spec 010 item 8 (live device validation) is still the only proof that
+the rest of the dispatch holds end to end.
+
+**Apply to:** every `Uno.Extensions.*.UI` package: `Hosting.UI`, `Navigation.UI`, `Storage.UI`,
+`Authentication.*.UI`. Each one's plain `netX.0` build is the *primary* runtime artifact on Skia
+Android/iOS, so platform behavior belongs behind `OperatingSystem.Is*()` in that build, and the
+plain build must never be a stub.
+
+## A fake IdP must mint refresh tokens unique per instance — MSAL throttles by token hash, process-wide
+
+**Problem:** after adding `Given_MsalAuthentication.When_RefreshTokenRejected_Then_SignedOutAndLoggedOutRaised`
+(StubEntra answers the refresh with `400 invalid_grant`), the *next* test's silent acquisition
+failed too, with no request reaching the stub. MSAL.NET's `UiRequiredProvider` throttles silent
+requests for 120 s after an `invalid_grant`, process-wide, keyed on client id, authority, scopes
+and the SHA-256 of the refresh token. `StubEntra` minted `stub-refresh-token-{counter}` in every
+instance, so a fresh harness presented a refresh token byte-identical to the one just rejected and
+was throttled without a network call. The failure moved between tests depending on order.
+
+**Correct pattern:** refresh tokens from a test IdP carry a per-instance GUID (`_instanceId`), so
+no two harnesses ever share one. More generally: a token-cache library has state that outlives
+the `[TestMethod]` boundary *and* the MSAL cache purge — throttling caches are keyed on request
+content, not on the cache you cleared. When a test starts failing only after a sibling ran, look
+for client-side negative caching before looking at the fake server.
+
+**Apply to:** `StubEntra` and any future fake IdP or token endpoint used across tests; also any
+test that deliberately drives an `invalid_grant`/`interaction_required` response — follow it by
+checking the next silent call still reaches the server.

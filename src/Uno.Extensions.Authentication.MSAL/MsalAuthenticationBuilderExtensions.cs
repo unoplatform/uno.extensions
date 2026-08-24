@@ -38,6 +38,47 @@ public static class MsalAuthenticationBuilderExtensions
 	}
 
 	/// <summary>
+	/// Configures the modifiers applied to each interactive sign-in request.
+	/// </summary>
+	/// <remarks>
+	/// <see cref="Builder"/> configures the <see cref="PublicClientApplicationBuilder"/>, which is
+	/// built once. The interactive modifiers - <c>WithPrompt</c>, <c>WithLoginHint</c>,
+	/// <c>WithExtraScopeToConsent</c>, <c>WithSystemWebViewOptions</c>, <c>WithCustomWebUi</c> -
+	/// hang off <see cref="AcquireTokenInteractiveParameterBuilder"/> instead, which only exists
+	/// per request, so they are unreachable from <see cref="Builder"/>. This callback runs on every
+	/// interactive sign-in, after the Uno helpers have been applied.
+	/// </remarks>
+	/// <param name="builder">
+	/// The <see cref="IMsalAuthenticationBuilder"/> to configure.
+	/// </param>
+	/// <param name="build">
+	/// A delegate applied to the <see cref="AcquireTokenInteractiveParameterBuilder"/> for each
+	/// interactive sign-in.
+	/// </param>
+	/// <returns>
+	/// The <see cref="IMsalAuthenticationBuilder"/> that was passed in.
+	/// </returns>
+	public static IMsalAuthenticationBuilder InteractiveBuilder(
+		this IMsalAuthenticationBuilder builder,
+		Action<AcquireTokenInteractiveParameterBuilder> build
+		)
+	{
+#if !UNO_EXT_MSAL
+		return builder;
+#else
+		if (builder is IBuilder<MsalAuthenticationSettings> authBuilder)
+		{
+			authBuilder.Settings = authBuilder.Settings with
+			{
+				InteractiveBuild = build
+			};
+		}
+
+		return builder;
+#endif
+	}
+
+	/// <summary>
 	/// Configures the MSAL authentication feature to use an incremental builder for StorageCreationProperties objects.
 	/// </summary>
 	/// <param name="builder">

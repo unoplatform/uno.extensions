@@ -29,14 +29,15 @@ variables:
   IosSimulatorDevice: 'iPhone 16'
   IosSimulatorRuntimePrefix: 'com.apple.CoreSimulator.SimRuntime.iOS-18-5'
 
-  # Which runtime tests the four device stages run. Scoped to a namespace whose suite is green on
-  # every lane - Storage.UI.Tests: default key-value store selection and the browser-store round
-  # trip, 8 cases. The wider non-hot-reload suite has 15 failing tests (verified identical at the
-  # pre-change baseline, so they are rot rather than regressions); widen to '!_HotReload' once those
-  # are fixed - that is the whole point of turning these stages back on. The engine filter is a
-  # substring match on the fully-qualified test name with '|' for OR, so this MUST stay namespace
-  # fragments and never a class name, which silently drops sibling classes.
-  RuntimeTestsFilter: 'Storage.UI.Tests'
+  # Which runtime tests the four device stages run. Scoped to the namespaces whose suites are
+  # green on every lane: Storage.UI.Tests (default key-value store selection, browser-store
+  # round trip) and Authentication.MSAL.UI.Tests (the StubEntra-driven MSAL flows). The wider
+  # non-hot-reload suite has 15 failing tests (verified identical at the pre-change baseline, so
+  # they are rot rather than regressions); widen to '!_HotReload' once those are fixed - that is
+  # the whole point of turning these stages back on. The engine filter is a substring match on the
+  # fully-qualified test name with '|' for OR, so this MUST stay namespace fragments and never a
+  # class name: 'Given_MsalAuthentication' silently ran only half the auth suite.
+  RuntimeTestsFilter: 'Storage.UI.Tests | Authentication.MSAL.UI.Tests'
 
 stages:
 - stage: Determine_Changes

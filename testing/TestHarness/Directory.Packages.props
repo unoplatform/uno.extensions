@@ -1,4 +1,4 @@
-<Project ToolsVersion="15.0">
+﻿<Project ToolsVersion="15.0">
   <Import Project="$(MSBuildThisFileDirectory)..\..\samples\Directory.Packages.props" />
   <ItemGroup>
     <PackageVersion Include="CommunityToolkit.WinUI.UI" Version="7.1.2" />
@@ -13,7 +13,10 @@
     <PackageVersion Include="Microsoft.AspNetCore.Authentication.Facebook" Version="6.0.7" />
     <PackageVersion Include="Microsoft.AspNetCore.Authentication.Google" Version="6.0.7" />
     <PackageVersion Include="Microsoft.AspNetCore.Authentication.MicrosoftAccount" Version="6.0.7" />
-    <PackageVersion Include="Microsoft.Identity.Client" Version="4.72.1" />
+    <!-- Keep in sync with src/Directory.Packages.props: transitive pinning is enabled here, so
+         this pin would otherwise hold MSAL down to a version that throws
+         PlatformNotSupportedException on macOS desktop under .NET 10. -->
+    <PackageVersion Include="Microsoft.Identity.Client" Version="4.87.0" />
     <PackageVersion Include="Microsoft.Net.Compilers.Toolset" Version="4.2.0" />
     <PackageVersion Include="Microsoft.NETCore.UniversalWindowsPlatform" Version="6.2.11" />
     <PackageVersion Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.2" />

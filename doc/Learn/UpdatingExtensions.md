@@ -6,6 +6,64 @@ uid: Uno.Extensions.Migration
 
 ## Upgrading to Extensions 7.4
 
+### MSAL authentication behavior changes
+
+These are binary-compatible but observable. Read them if your app calls `AddMsal`.
+
+- **Mac Catalyst: `AddMsal` now throws.** MSAL has no Catalyst build, so the provider was always a
+  stub there; `AddMsal` used to return silently and every later auth call failed with
+  "No providers specified". It now throws `PlatformNotSupportedException` at host build, so a shared
+  `App.xaml.cs` that registers MSAL crashes at startup on a Catalyst head. Guard the registration:
+
+  ```csharp
+  .UseAuthentication(auth =>
+  {
+      if (!OperatingSystem.IsMacCatalyst())
+      {
+          auth.AddMsal(window);
+      }
+  })
+  ```
+
+- **WebAssembly: your redirect URI is no longer overridden.** The provider used to apply Uno's
+  `WebAuthenticationBroker` callback URI *after* your `Builder(...)` callback, so a
+  `WithRedirectUri(...)` or a configured `Msal:RedirectUri` was silently replaced in the browser. It
+  now applies the broker URI only when you set nothing — the
+  [documented precedence](xref:Uno.Extensions.Authentication.HowToMsalAuthentication#4-redirect-uris).
+  If you set a redirect URI unconditionally for another platform (for example an Android scheme),
+  either remove it — the provider derives the Android and iOS values — or guard it with
+  `OperatingSystem.IsBrowser()`; otherwise WebAssembly sign-in fails with a redirect-URI mismatch.
+
+- **`Builder(...)` runs last.** Your `PublicClientApplicationBuilder` callback now runs after the
+  platform redirect URI, the Windows broker and `WithUnoHelpers()` have been applied, so what it sets
+  wins. Previously `WithUnoHelpers()` ran after it and, on WebAssembly, replaced an `HttpClient`
+  factory set from the callback.
+
+- **Interactive sign-in timeout.** Desktop (Skia) heads now cancel an interactive sign-in that has
+  not completed after 5 minutes — the system-browser flow cannot see a closed browser window. No
+  default applies on Windows, Android, iOS or WebAssembly. Set `Msal:InteractiveTimeout` to change
+  or disable it on any platform.
+
+- **Sign-out removes every MSAL account**, not just the first, and also deletes the serialized cache
+  entry on WebAssembly.
+
+- **A refresh that cannot renew the session signs the user out.** When the refresh token has expired
+  or been revoked, `RefreshAsync` now returns `false`, clears the token cache and raises
+  `IAuthenticationService.LoggedOut` — the same as an explicit sign-out. It used to keep the user
+  "authenticated" with an empty access token. A refresh that fails for a *transient* reason (the
+  token endpoint unreachable, a 5xx) keeps the current tokens and does not sign out.
+
+- **`LoginAsync` rethrows MSAL exceptions untouched.** They used to be re-wrapped — an
+  `MsalClientException` into a new one carrying only the code and message, anything else into a
+  plain `Exception` with only the message. Callers now get the original type, error code and stack,
+  so `catch (MsalServiceException)` / `catch (MsalUiRequiredException)` work; a `catch (Exception)`
+  keeps working.
+
+- **Removed:** the vendored `Microsoft.Identity.Client.Extensions.Msal.Wasm.Storage` type that the
+  `browserwasm` build of `Uno.Extensions.Authentication.MSAL.WinUI` used to carry. It was dead code
+  — nothing in the package referenced it — and the browser cache now goes through
+  `IKeyValueStorage` as described above.
+
 ### Storage
 
 - `IKeyValueStorage.IsEncrypted` is now reported truthfully: the Windows `EncryptedApplicationDataKeyValueStorage` (DPAPI) and `PasswordVaultKeyValueStorage` (Credential Locker) return `true`; the browser and plain `ApplicationData` stores return `false`. Code that branched on it to decide whether a store is safe for tokens gets the right answer now.
