@@ -12,7 +12,7 @@ An app generated with a bottom-`TabBar` shell (or a sidebar `NavigationView`
 shell) renders its default tab, but after Hot Reload deltas are applied the menu items
 stop navigating: clicking any tab logs
 
-```
+```text
 warn: Uno.Extensions.Navigation.Toolkit.Navigators.TabBarNavigator[0]
       ExecuteRequestAsync - Navigation to 'Reading' failed: Show() returned null.
       No matching view was found or created. ...
