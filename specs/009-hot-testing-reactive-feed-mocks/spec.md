@@ -115,3 +115,22 @@ Validation on the issue branch:
   the .NET 10 runtime, so the net9.0 test host was run with DOTNET_ROLL_FORWARD=Major.
 - Release package creation succeeded for Uno.HotTesting.Reactive, including its net9.0
   assembly, XML documentation, symbols, and Uno.Extensions.Reactive dependency.
+
+## Delivery to origin (decision)
+
+David's decision: the change reaches the canonical GitHub repository
+(unoplatform/uno.extensions) exclusively through the Agent Outbox (ABO), and the outbox
+must do two things, not one. It must:
+
+1. synchronise/push the task branch to origin (never force-pushed), and
+2. open the corresponding GitHub pull request, filled according to the repository pull
+   request template at `.github/pull_request_template.md`.
+
+The worker never writes to origin directly. Every origin Git operation goes through ABO:
+`abo-git sync` performs the branch mirror, and `gh api` creates or updates the pull
+request. The submitted ABO script is declarative and idempotent: it re-syncs the branch,
+checks whether an origin PR already exists for this head/base, creates it as a draft when
+absent, and otherwise updates its title/body. The PR targets base `main` from head
+`dev/devid/issue-3149-feed-mocks` and follows the repository template. Origin PR creation
+is therefore an outbox responsibility, gated by ABO human approval, not a direct worker
+action.
