@@ -255,8 +255,8 @@ plain build must never be a stub.
 **Problem:** after adding `Given_MsalAuthentication.When_RefreshTokenRejected_Then_SignedOutAndLoggedOutRaised`
 (StubEntra answers the refresh with `400 invalid_grant`), the *next* test's silent acquisition
 failed too, with no request reaching the stub. MSAL.NET's `UiRequiredProvider` throttles silent
-requests for 120 s after an `invalid_grant`, process-wide, keyed on client id + authority + scopes
-+ SHA-256 of the refresh token. `StubEntra` minted `stub-refresh-token-{counter}` in every
+requests for 120 s after an `invalid_grant`, process-wide, keyed on client id, authority, scopes
+and the SHA-256 of the refresh token. `StubEntra` minted `stub-refresh-token-{counter}` in every
 instance, so a fresh harness presented a refresh token byte-identical to the one just rejected and
 was throttled without a network call. The failure moved between tests depending on order.
 

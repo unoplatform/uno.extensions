@@ -1,5 +1,12 @@
 parameters:
-  DotNetVersion: '10.0.x'
+  # Deliberately still .NET 9 by default. Only the lanes that compile an Apple TFM need the .NET 10
+  # SDK (the Sdk-supplied Uno.Toolkit is built against Microsoft.iOS 26), and they ask for it through
+  # dotnet-install-uno-check.yml / dotnet-install-windows.yml. The jobs that use this template
+  # directly run inside unoplatform/wasm-build, whose wasm-tools workload belongs to the SDK the
+  # image ships: side-loading a different one there fails the build with
+  # "UNOWA0001: Native WebAssembly assets were detected, but the wasm-tools workload could not be
+  # located" (build 229710).
+  DotNetVersion: '9.0.200'
   UnoCheck_Version: ''
   UnoCheckParameters: ''
 
@@ -67,13 +74,14 @@ steps:
       version: ${{ parameters.DotNetVersion }}
       installationPath: $(DOTNET_INSTALL_DIR)
 
-  # The .NET 10 SDK builds the net9.0 targets but does not carry the 9.0 runtime, and the desktop
-  # and hot-reload lanes *run* net9.0 heads (`dotnet Uno.Extensions.RuntimeTests.dll`) from this
-  # install. Without it those lanes fail at launch with "You must install .NET 9.0".
-  - task: UseDotNet@2
-    displayName: 'Use .NET 9 runtime (net9.0 test heads)'
-    retryCountOnTaskFailure: 3
-    inputs:
-      packageType: runtime
-      version: 9.0.x
-      installationPath: $(DOTNET_INSTALL_DIR)
+  # A .NET 10 SDK builds the net9.0 targets but does not carry the 9.0 runtime, and the desktop lane
+  # *runs* a net9.0 head (`dotnet Uno.Extensions.RuntimeTests.dll`) from this install - without it,
+  # it fails at launch with "You must install .NET 9.0". Skipped when the SDK is already a 9.x one.
+  - ${{ if not(startsWith(parameters.DotNetVersion, '9.')) }}:
+    - task: UseDotNet@2
+      displayName: 'Use .NET 9 runtime (net9.0 test heads)'
+      retryCountOnTaskFailure: 3
+      inputs:
+        packageType: runtime
+        version: 9.0.x
+        installationPath: $(DOTNET_INSTALL_DIR)

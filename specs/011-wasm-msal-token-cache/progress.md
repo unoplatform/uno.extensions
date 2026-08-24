@@ -926,7 +926,7 @@ the same pass (`specs/lessons.md`, this file, `spec.md`, `specs/009`, `specs/010
   `6.8.0-dev.46` (no stable 6.8.0 on nuget.org yet); Mac Catalyst `AddMsal` throws (+ guard
   sample); WASM redirect precedence change; WASM token cache persisted by default (key
   `MsalCache_{ClientId}`, opt-out `MemoryStorage`, residue note); `Builder(...)` runs last;
-  interactive timeout desktop-only default; logout removes all accounts; unrenewable refresh →
+  interactive timeout desktop-only default; logout removes all accounts; a refresh that cannot renew the session →
   `LoggedOut`; MSAL exceptions rethrown untouched; removed vendored
   `Microsoft.Identity.Client.Extensions.Msal.Wasm.Storage`; `IsEncrypted` truthfulness; `ISettings`
   registered by `UseStorage`.
