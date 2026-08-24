@@ -6,6 +6,39 @@ uid: Uno.Extensions.Migration
 
 ## Upgrading to Extensions 7.4
 
+### Minimum Uno Platform version
+
+Extensions 7.4 requires **Uno Platform 6.8**. Every `*.WinUI` package declares an `Uno.WinUI` floor
+of `6.8.0-dev.46` — that is, while 6.8 is in preview, a **`6.8.0-dev` build** is required (this
+release was built against `Uno.Sdk` `6.8.0-dev.21`); once a stable 6.8.0 ships it satisfies the floor
+too. An older Uno fails at restore with a clear error rather than misbehaving at runtime:
+
+```console
+error NU1605: Detected package downgrade: Uno.WinUI from 6.8.0-dev.46 to 6.7.24
+```
+
+Update the Uno SDK version in your `global.json` — see [updating your Uno.Sdk](xref:Uno.Development.UpgradeUnoNuget):
+
+```diff
+ {
+   "msbuild-sdks": {
+-    "Uno.Sdk": "6.7.24"
++    "Uno.Sdk": "6.8.0-dev.21"
+   }
+ }
+```
+
+For apps using [MSAL authentication](xref:Uno.Extensions.Authentication.HowToMsalAuthentication) this
+is not a formality. Interactive sign-in on Android, iOS and WebAssembly heads built with
+`UnoFeatures=SkiaRenderer` depends on the fix for
+[unoplatform/uno#20601](https://github.com/unoplatform/uno/issues/20601), which shipped in `Uno.WinUI`
+after the 6.7.x releases. Without it `WithUnoHelpers()` silently does nothing and the sign-in UI never
+appears at all.
+
+`Microsoft.Identity.Client` also moves from 4.72.1 to 4.87.0, and `System.Text.Json` from 8.0.x to
+9.0.x. If your app pins either package explicitly, raise the pin or remove it and let the Uno SDK
+supply it.
+
 ### MSAL authentication behavior changes
 
 These are binary-compatible but observable. Read them if your app calls `AddMsal`.

@@ -1,5 +1,24 @@
-<Project ToolsVersion="15.0">
+﻿<Project ToolsVersion="15.0">
   <PropertyGroup>
+    <!--
+      Uno.Sdk 6.8.0-dev.* supplies Uno.Toolkit.WinUI 9.2.0-dev.18, whose iOS assembly is built
+      against Microsoft.iOS 26 while the .NET 9 iOS workload used here references 18.2. Building
+      Uno.Extensions.Reactive.UI.Markup for net9.0-ios against it fails CS1705 (build 229332).
+      Note the package folder is named net9.0-ios18.0, so the TFM name is not a safe signal - the
+      assembly reference is. 8.4.2 is the latest stable whose iOS flavor references 18.2, it keeps
+      the Mac Catalyst flavor that Controls/ModalFlyout.xaml needs, and it matches the pin
+      samples/Directory.Packages.props already carries. Remove once this repo targets net10/iOS 26.
+    -->
+    <UnoToolkitVersion>8.4.2</UnoToolkitVersion>
+    <!--
+      Hot Design must keep working: its dev-server processor is what applies XAML hot reload, and
+      without it the 24 XamlHR cases in Given_Navigation_HotReload fail (40/64 in build 229339).
+      Uno.Sdk 6.8.0-dev.21 defaults to 1.20.0-dev.750, which requires Uno.Toolkit.WinUI >= 9.0.0-dev.9
+      and System.Text.Json >= 9.0.0 - the first collides with the toolkit pin above. 1.19.175 is the
+      version that was in use before the SDK bump and it asks for exactly what this repo pins:
+      Toolkit 8.4.2, Themes 6.1.1, Uno.WinUI 6.6.166 and no System.Text.Json floor.
+    -->
+    <UnoHotDesignVersion>1.19.175</UnoHotDesignVersion>
   </PropertyGroup>
   <ItemGroup>
     <PackageVersion Include="Microsoft.CodeAnalysis.BannedApiAnalyzers" Version="3.3.4" />

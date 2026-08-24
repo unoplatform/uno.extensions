@@ -1,9 +1,10 @@
-<Project ToolsVersion="15.0">
+﻿<Project ToolsVersion="15.0">
 	<PropertyGroup>
 		<SkiaSharpVersion>3.119.2</SkiaSharpVersion>
 		<SvgSkiaVersion>3.0.2</SvgSkiaVersion>
 		<WinAppSdkVersion>1.7.250909003</WinAppSdkVersion>
-		<WinAppSdkBuildToolsVersion>10.0.28000.1721</WinAppSdkBuildToolsVersion>
+		<!-- Matches what Uno.Sdk 6.8.0-dev.21 supplies; Uno.Extensions.Hosting.WinUI now requires it. -->
+		<WinAppSdkBuildToolsVersion>10.0.28000.2526</WinAppSdkBuildToolsVersion>
 		<MicrosoftLoggingVersion>9.0.18</MicrosoftLoggingVersion>
 		<WindowsCompatibilityVersion>8.0.15</WindowsCompatibilityVersion>
 		<MicrosoftIdentityClientVersion>4.87.0</MicrosoftIdentityClientVersion>
@@ -20,12 +21,17 @@
 		<AndroidXNavigationVersion>2.8.9.1</AndroidXNavigationVersion>
 		<AndroidXCollectionVersion>1.5.0.3</AndroidXCollectionVersion>
 		<MauiVersion>9.0.111</MauiVersion>
-				<!--
-			Uno.Sdk.Private 6.7.0-dev.* pins Uno.Toolkit.WinUI 8.5.0-dev.*, which is compiled against
-			Microsoft.iOS 26 while CI's .NET 9 iOS workload references Microsoft.iOS 18.2 (CS1705).
-			Pin the toolkit to the latest stable built against Microsoft.iOS 18.2.
+		<!--
+			Uno.Sdk 6.8.0-dev.* supplies Uno.Toolkit.WinUI 9.2.0-dev.18, whose iOS assembly is built
+			against Microsoft.iOS 26 while the .NET 9 iOS workload here references 18.2 (CS1705, seen in
+			build 229332). The package folder is named net9.0-ios18.0, so do not read the TFM name as
+			evidence the pin is stale - check what the assembly references. 8.4.2 is the latest stable
+			built against 18.2; src/Directory.Packages.props carries the same pin for the same reason.
 		-->
 		<UnoToolkitVersion>8.4.2</UnoToolkitVersion>
+		<!-- Keep Hot Design on the version that matches the toolkit pin above; see
+		     src/Directory.Packages.props for why. -->
+		<UnoHotDesignVersion>1.19.175</UnoHotDesignVersion>
 		<UnoThemesVersion>6.1.1</UnoThemesVersion>
 	</PropertyGroup>
 
