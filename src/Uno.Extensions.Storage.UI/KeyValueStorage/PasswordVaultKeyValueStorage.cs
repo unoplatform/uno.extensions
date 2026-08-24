@@ -18,7 +18,12 @@ internal record PasswordVaultKeyValueStorage(
 	private readonly PasswordVault _passwordVault = new PasswordVault();
 
 	/// <inheritdoc />
-	public bool IsEncrypted => false;
+	/// <remarks>
+	/// The Credential Locker encrypts what it stores and scopes it to the user - the whole reason to
+	/// pick this over <see cref="ApplicationDataKeyValueStorage"/>. Corrected under spec 011 item 6,
+	/// alongside <see cref="EncryptedApplicationDataKeyValueStorage"/>.
+	/// </remarks>
+	public bool IsEncrypted => true;
 
 	/// <inheritdoc/>
 	public async ValueTask ClearAsync(string? name, CancellationToken ct)

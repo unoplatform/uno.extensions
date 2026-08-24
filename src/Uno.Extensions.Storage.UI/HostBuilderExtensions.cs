@@ -52,9 +52,12 @@ public static class HostBuilderExtensions
 			{
 				if (!ctx.IsRegistered(nameof(UseStorage)))
 				{
+					// ctx.Configuration is complete here whatever order the app called UseStorage
+					// and AddMsal in: IHostBuilder.Build runs every ConfigureAppConfiguration
+					// delegate before the first ConfigureServices one.
 					_ = services
 						.AddFileStorage()
-						.AddKeyedStorage();
+						.AddKeyedStorage(ctx.Configuration);
 				}
 				configure?.Invoke(ctx, services);
 			});
