@@ -260,6 +260,76 @@ public class Given_WebAuthentication
 	}
 
 	/// <summary>
+	/// Red test for spec 014: the literal <c>{RedirectUri}</c> token in LoginStartUri must be
+	/// replaced with the URL-encoded effective callback, and with no LoginCallbackUri configured
+	/// the callback must come from <c>WebAuthenticationBroker.GetCurrentApplicationCallbackUri()</c>
+	/// - the platform-correct value, no per-platform configuration or callbacks needed.
+	/// </summary>
+	[TestMethod]
+	public async Task When_RedirectUriPlaceholder_Then_BrokerCallbackSubstituted()
+	{
+		StubWebAuthenticationBroker.EnsureRegistered();
+		var broker = StubWebAuthenticationBroker.Instance;
+		broker.Reset();
+
+		using var host = UnoHost
+			.CreateDefaultBuilder(typeof(Given_WebAuthentication).Assembly)
+			.UseAuthentication(auth => auth
+				.AddWeb(web => web
+					// No LoginCallbackUri anywhere: the provider must derive it from the broker
+					// and substitute it into the start URI.
+					.LoginStartUri($"{LoginStartUri}?client_id=demo&redirect_uri={{RedirectUri}}")))
+			.Build();
+
+		var authentication = host.Services.GetRequiredService<IAuthenticationService>();
+		var tokens = host.Services.GetRequiredService<ITokenCache>();
+		using var purge = Cts();
+		await tokens.ClearAsync(purge.Token);
+		using var cts = Cts();
+
+		var result = await authentication.LoginAsync(default, cancellationToken: cts.Token);
+
+		result.Should().BeTrue();
+		var derivedCallback = broker.GetCurrentApplicationCallbackUri().OriginalString;
+		broker.LastCallbackUri!.OriginalString.Should().Be(derivedCallback,
+			"the broker's own callback must be used when none is configured");
+		broker.LastRequestUri!.OriginalString.Should().Be(
+			$"{LoginStartUri}?client_id=demo&redirect_uri={Uri.EscapeDataString(derivedCallback)}",
+			"the placeholder must reach the identity provider as the URL-encoded callback");
+	}
+
+	/// <summary>
+	/// Spec 014, fallback without a placeholder: a start URI carrying no redirect at all used to
+	/// fail with "LoginCallbackUri not specified"; the broker-derived default now applies.
+	/// </summary>
+	[TestMethod]
+	public async Task When_NoCallbackConfigured_Then_BrokerCallbackUsed()
+	{
+		StubWebAuthenticationBroker.EnsureRegistered();
+		var broker = StubWebAuthenticationBroker.Instance;
+		broker.Reset();
+
+		using var host = UnoHost
+			.CreateDefaultBuilder(typeof(Given_WebAuthentication).Assembly)
+			.UseAuthentication(auth => auth
+				.AddWeb(web => web
+					.LoginStartUri(LoginStartUri)))
+			.Build();
+
+		var authentication = host.Services.GetRequiredService<IAuthenticationService>();
+		var tokens = host.Services.GetRequiredService<ITokenCache>();
+		using var purge = Cts();
+		await tokens.ClearAsync(purge.Token);
+		using var cts = Cts();
+
+		var result = await authentication.LoginAsync(default, cancellationToken: cts.Token);
+
+		result.Should().BeTrue();
+		broker.LastCallbackUri!.OriginalString.Should().Be(
+			broker.GetCurrentApplicationCallbackUri().OriginalString);
+	}
+
+	/// <summary>
 	/// Red test for spec 012 F4: no <see cref="CancellationToken"/> used to reach the broker call,
 	/// so an already-cancelled login still drove the whole interactive flow to completion.
 	/// </summary>

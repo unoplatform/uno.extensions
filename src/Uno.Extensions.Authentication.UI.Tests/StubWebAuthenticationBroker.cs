@@ -32,6 +32,9 @@ internal sealed class StubWebAuthenticationBroker : IWebAuthenticationBrokerProv
 	/// <summary>The authorization request URI most recently handed to the broker.</summary>
 	public Uri? LastRequestUri { get; private set; }
 
+	/// <summary>The callback URI most recently handed to the broker.</summary>
+	public Uri? LastCallbackUri { get; private set; }
+
 	/// <summary>
 	/// When set, the next authentication completes with this status (e.g.
 	/// <see cref="WebAuthenticationStatus.UserCancel"/>) instead of succeeding, then resets.
@@ -67,6 +70,7 @@ internal sealed class StubWebAuthenticationBroker : IWebAuthenticationBrokerProv
 	{
 		InvocationCount = 0;
 		LastRequestUri = null;
+		LastCallbackUri = null;
 		NextStatus = null;
 	}
 
@@ -76,6 +80,7 @@ internal sealed class StubWebAuthenticationBroker : IWebAuthenticationBrokerProv
 	{
 		InvocationCount++;
 		LastRequestUri = requestUri;
+		LastCallbackUri = callbackUri;
 		ct.ThrowIfCancellationRequested();
 
 		if (NextStatus is { } status && status != WebAuthenticationStatus.Success)
