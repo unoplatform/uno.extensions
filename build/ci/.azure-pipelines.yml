@@ -24,12 +24,14 @@ variables:
   # installed. Build 227563 pinned Xcode 16.2 (iOS 18.2 SDK, build 22C146) on an agent whose only
   # installed runtimes were 18.5, 18.6 and 26.0-26.2, and failed with
   # "No simulator runtime version from [...] available to use with iphonesimulator SDK version".
-  # The .NET 10 iOS workload (templates/dotnet-install*.yml) targets the iOS 26 SDK, so the Xcode
-  # has to be a 26.x one; 26.2 ships the iOS 26.2 SDK and the image carries that simulator runtime
-  # (actions/runner-images macos-15-Readme).
-  IosXCodeRoot: '/Applications/Xcode_26.2.app'
+  # The .NET 10 iOS workload (templates/dotnet-install*.yml) pins its Xcode exactly, not as a
+  # minimum: Microsoft.iOS.Sdk.net9.0_26.0/26.0.9777 rejects anything but Xcode 26.0 with
+  # "This version of .NET for iOS requires Xcode 26.0. The current version of Xcode is 26.2"
+  # (build 229713). Xcode 26.0.1 is the image's 26.0 (it symlinks /Applications/Xcode_26.0.app)
+  # and ships the iOS 26.0 SDK plus the matching simulator runtime.
+  IosXCodeRoot: '/Applications/Xcode_26.0.1.app'
   IosSimulatorDevice: 'iPhone 16'
-  IosSimulatorRuntimePrefix: 'com.apple.CoreSimulator.SimRuntime.iOS-26-2'
+  IosSimulatorRuntimePrefix: 'com.apple.CoreSimulator.SimRuntime.iOS-26-0'
 
   # Which runtime tests the four device stages run. Scoped to the MSAL auth namespace, which is
   # Given_MsalAuthentication (15 cases) + Given_BrowserTokenCacheStorage (8), because the wider

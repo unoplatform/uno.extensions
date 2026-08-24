@@ -18,6 +18,16 @@ jobs:
 
   - template: templates/dotnet-install.yml
 
+  # Uno.Wasm.Bootstrap relinks the SkiaSharp native WebAssembly assets, which needs the wasm-tools
+  # workload in the SDK this job installs (not the container's). Without it the build fails with
+  # "UNOWA0001: Native WebAssembly assets were detected, but the wasm-tools workload could not be
+  # located". Until now the job depended on a warm `Set Cache for dotnet install` entry happening to
+  # carry the workload - so any change to the cache key (the SDK version is part of it) broke it.
+  # Same step, same reason, as stage-build-wasm.yml.
+  - script: dotnet workload install wasm-tools
+    displayName: 'Install wasm-tools workload'
+    retryCountOnTaskFailure: 3
+
   - template: templates/canary-updater.yml
   
   - task: NodeTool@0
