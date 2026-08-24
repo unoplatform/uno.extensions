@@ -22,3 +22,9 @@ steps:
               Write-Host "components were not installed"
               exit 1
           }
+    displayName: 'Add VS components (Component.Xamarin)'
+    # The VS Installer occasionally hangs with no output; without a bound it burns the whole
+    # 90-minute job budget (#3139 build 229724, #3151 build 229783 - the sibling job ran the same
+    # step in under five minutes each time). vs_installer modify is idempotent, so a retry is safe.
+    timeoutInMinutes: 15
+    retryCountOnTaskFailure: 2
