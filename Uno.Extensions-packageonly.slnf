@@ -4,6 +4,7 @@
     "projects": [
       "src\\Uno.Extensions.Authentication.MSAL\\Uno.Extensions.Authentication.MSAL.WinUI.csproj",
       "src\\Uno.Extensions.Authentication.Oidc\\Uno.Extensions.Authentication.Oidc.WinUI.csproj",
+      "src\\Uno.Extensions.Authentication.Tests\\Uno.Extensions.Authentication.Tests.csproj",
       "src\\Uno.Extensions.Authentication.UI\\Uno.Extensions.Authentication.WinUI.csproj",
       "src\\Uno.Extensions.Authentication\\Uno.Extensions.Authentication.csproj",
       "src\\Uno.Extensions.Configuration\\Uno.Extensions.Configuration.csproj",
