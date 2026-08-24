@@ -4,6 +4,14 @@ uid: Uno.Extensions.Migration
 
 # Upgrading Extensions Version
 
+## Upgrading to Extensions 7.4
+
+### Storage
+
+- `IKeyValueStorage.IsEncrypted` is now reported truthfully: the Windows `EncryptedApplicationDataKeyValueStorage` (DPAPI) and `PasswordVaultKeyValueStorage` (Credential Locker) return `true`; the browser and plain `ApplicationData` stores return `false`. Code that branched on it to decide whether a store is safe for tokens gets the right answer now.
+- `ISettings` (used by the stores on unpackaged Windows) is registered by `UseStorage` itself, so storage no longer depends on the app also calling `UseToolkit` / `UseThemeSwitching`. An `ISettings` the app registers itself still wins.
+- On WebAssembly the default store is selectable via `KeyValueStorageConfiguration:BrowserCacheLocation` (`LocalStorage` — the default — `SessionStorage` or `MemoryStorage`); see [Key-value storage](xref:Uno.Extensions.Storage.Overview#key-value-storage). The default is what WebAssembly already used, so upgrading never relocates an app's data.
+
 ## Upgrading to Extensions 7.0
 
 ### OidcClient Authentication

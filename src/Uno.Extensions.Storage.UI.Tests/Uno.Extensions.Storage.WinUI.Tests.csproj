@@ -1,0 +1,23 @@
+<Project Sdk="Uno.Sdk.Private">
+	<Import Project="..\tfms-ui-winui.props" />
+
+	<PropertyGroup>
+		<Description>Test library for Storage extensions (WinUI)</Description>
+		<EnableDefaultPageItems>false</EnableDefaultPageItems>
+		<DefineConstants>$(DefineConstants);WINUI</DefineConstants>
+		<UnoSingleProject>true</UnoSingleProject>
+		<OutputType>Library</OutputType>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="MSTest.TestFramework" />
+		<PackageReference Include="FluentAssertions" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Uno.Extensions.Storage.UI\Uno.Extensions.Storage.WinUI.csproj" />
+		<!-- The tests build a host with UnoHost.CreateDefaultBuilder, which is where UseStorage runs. -->
+		<ProjectReference Include="..\Uno.Extensions.Hosting.UI\Uno.Extensions.Hosting.WinUI.csproj" />
+		<ProjectReference Include="..\Uno.Extensions.RuntimeTests\Uno.Extensions.RuntimeTests.Core\Uno.Extensions.RuntimeTests.Core.csproj" />
+	</ItemGroup>
+</Project>

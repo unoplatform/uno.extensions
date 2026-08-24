@@ -1,4 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Uno.Extensions;
 
@@ -23,8 +25,81 @@ internal static class ServiceCollectionExtensions
 		return creator(l, inmem, settings, s, unpackaged);
 	}
 
-	public static IServiceCollection AddKeyedStorage(this IServiceCollection services)
+	/// <summary>
+	/// Configuration key selecting the browser store; see <see cref="BrowserCacheLocation"/>.
+	/// </summary>
+	/// <remarks>
+	/// This is the ONLY reader of the value. It is read from raw configuration rather than through
+	/// <c>IOptions</c> because it picks a *named* registration, which <c>SetDefaultInstance</c>
+	/// resolves here at registration time - before any options are bound. Deliberately not also a
+	/// bound property on <see cref="KeyValueStorageConfiguration"/>: two readers of one key meant
+	/// two different answers for a bad value, and the "invalid values are rejected" guarantee was
+	/// an accident of whether anything happened to resolve the options type.
+	/// <para>
+	/// The section is the one <c>UseStorage</c> already binds, so the value sits with the rest of
+	/// the storage settings and is independent of what an app calls its authentication providers.
+	/// </para>
+	/// </remarks>
+	private const string BrowserCacheLocationKey =
+		$"{nameof(KeyValueStorageConfiguration)}:{nameof(BrowserCacheLocation)}";
+
+	/// <summary>
+	/// Name of the <see cref="IKeyValueStorage"/> the browser defaults to, per
+	/// <see cref="BrowserCacheLocationKey"/>.
+	/// </summary>
+	/// <remarks>
+	/// Absent means <see cref="BrowserCacheLocation.LocalStorage"/> - the store WebAssembly used
+	/// before this setting existed, so upgrading a package never relocates an app's data. Anything
+	/// present but not a defined member throws: this decides where credentials are kept, and a typo
+	/// silently choosing for you is the one outcome worth failing a startup over.
+	/// </remarks>
+	/// <exception cref="InvalidOperationException">The configured value is not a known location.</exception>
+	private static BrowserCacheLocation ResolveBrowserCacheLocation(IConfiguration? configuration)
 	{
+		var configured = configuration?[BrowserCacheLocationKey];
+		if (configured is not { Length: > 0 })
+		{
+			return BrowserCacheLocation.LocalStorage;
+		}
+
+		// IsDefined as well as TryParse: TryParse succeeds for any numeric string, in range *or out*
+		// of it, so "3" would otherwise arrive as an undefined enum value and fall to a default -
+		// exactly the input a hand-edited config is likeliest to contain. ignoreCase matches what
+		// configuration binding would have accepted, so msal-browser's own "sessionStorage"
+		// spelling works.
+		if (!Enum.TryParse<BrowserCacheLocation>(configured, ignoreCase: true, out var location) ||
+			!Enum.IsDefined(location))
+		{
+			throw new InvalidOperationException(
+				$"'{configured}' is not a valid {nameof(BrowserCacheLocation)} for configuration key " +
+				$"'{BrowserCacheLocationKey}'. Expected one of: {string.Join(", ", Enum.GetNames<BrowserCacheLocation>())}.");
+		}
+
+		return location;
+	}
+
+	/// <summary>
+	/// Name of the <see cref="IKeyValueStorage"/> registration for a browser cache location.
+	/// </summary>
+	private static string BrowserStorageName(IConfiguration? configuration) =>
+		ResolveBrowserCacheLocation(configuration) switch
+		{
+			BrowserCacheLocation.SessionStorage => SessionStorageKeyValueStorage.Name,
+			BrowserCacheLocation.MemoryStorage => InMemoryKeyValueStorage.Name,
+			_ => ApplicationDataKeyValueStorage.Name,
+		};
+
+	public static IServiceCollection AddKeyedStorage(this IServiceCollection services, IConfiguration? configuration)
+	{
+		// Validated on every platform even though only the browser acts on it: a typo in a shared
+		// appsettings.json has to fail on the desktop run a developer actually does, not only in the
+		// one head that reads the value.
+		_ = ResolveBrowserCacheLocation(configuration);
+
+		// The stores below persist through ISettings on unpackaged Windows; registered here, with
+		// the dependency, so UseStorage works on any host. TryAdd: an app's own ISettings wins.
+		services.TryAddSingleton<ISettings, Settings>();
+
 		return services
 				.AddNamedSingleton<IKeyValueStorage, InMemoryKeyValueStorage>(InMemoryKeyValueStorage.Name)
 				.AddNamedSingleton<IKeyValueStorage, ApplicationDataKeyValueStorage>(
@@ -32,6 +107,13 @@ internal static class ServiceCollectionExtensions
 					sp => sp.CreateKeyValueStorage<ApplicationDataKeyValueStorage>(
 								ApplicationDataKeyValueStorage.Name,
 								(l, inmem, settings, s, unpackaged) => new ApplicationDataKeyValueStorage(l, inmem, settings, s, unpackaged)
+								)
+					)
+				.AddNamedSingleton<IKeyValueStorage, SessionStorageKeyValueStorage>(
+					SessionStorageKeyValueStorage.Name,
+					sp => sp.CreateKeyValueStorage<SessionStorageKeyValueStorage>(
+								SessionStorageKeyValueStorage.Name,
+								(l, inmem, settings, s, unpackaged) => new SessionStorageKeyValueStorage(l, inmem, settings, s)
 								)
 					)
 #if __ANDROID__
@@ -73,10 +155,15 @@ internal static class ServiceCollectionExtensions
 #elif WINDOWS
 					EncryptedApplicationDataKeyValueStorage.Name
 #else
-					// For WASM and other platforms where we don't currently have
-					// a secure storage option, we default to ApplicationDataKeyValueStorage to avoid
-					// security concerns with saving plain text
-					ApplicationDataKeyValueStorage.Name
+					// Runtime, not compile-time: Skia desktop lands in this branch too, and there
+					// ApplicationData is a file rather than browser storage. Only the browser
+					// follows the configured cache location.
+					OperatingSystem.IsBrowser()
+						? BrowserStorageName(configuration)
+						// For platforms where we don't currently have a secure storage option, we
+						// default to ApplicationDataKeyValueStorage to avoid security concerns
+						// with saving plain text
+						: ApplicationDataKeyValueStorage.Name
 #endif
 					);
 	}
