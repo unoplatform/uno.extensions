@@ -30,3 +30,83 @@ You define each axis (`Data` / `Error` / `Progress`) in the `Message` you want t
 
 > [!NOTE]
 > When developing a new _feed_, we recommend that you systematically validate all axes.
+
+## Provide handwritten feed mocks to a page
+
+Install the `Uno.HotTesting.Reactive` package in the project that provides the
+mock page. Its `FeedMock` and `ListFeedMock` factories create feeds pinned to
+common MVUX states for previews and UI testing.
+
+In this initial scope, no view-model mock is generated. Write the record or class
+yourself, give its properties exactly the names and feed types expected by the
+page bindings, and assign an instance to the page's `DataContext`.
+
+For example, these bindings expect properties named `MyFeed` and `MyItems`:
+
+```xml
+<Page
+    x:Class="MyApp.MySuperPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mvux="using:Uno.Extensions.Reactive.UI">
+    <StackPanel>
+        <mvux:FeedView Source="{Binding MyFeed}">
+            <DataTemplate>
+                <TextBlock Text="{Binding Data}" />
+            </DataTemplate>
+        </mvux:FeedView>
+
+        <mvux:FeedView Source="{Binding MyItems}">
+            <DataTemplate>
+                <ListView ItemsSource="{Binding Data}">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Name}" />
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </DataTemplate>
+        </mvux:FeedView>
+    </StackPanel>
+</Page>
+```
+
+The handwritten mock and page initialization can then be:
+
+```csharp
+using Microsoft.UI.Xaml.Controls;
+using Uno.Extensions.Reactive;
+using Uno.HotTesting.Reactive;
+
+namespace MyApp;
+
+public sealed record Product(string Name);
+
+public sealed record MySuperPageViewModelMock
+{
+    public IFeed<string> MyFeed { get; init; } = FeedMock.Undefined<string>();
+
+    public IListFeed<Product> MyItems { get; init; } = ListFeedMock.Empty<Product>();
+}
+
+public sealed partial class MySuperPage : Page
+{
+    public MySuperPage()
+    {
+        InitializeComponent();
+
+        DataContext = new MySuperPageViewModelMock
+        {
+            MyFeed = FeedMock.Value("Ready"),
+            MyItems = ListFeedMock.Value(
+                new Product("First item"),
+                new Product("Second item"))
+        };
+    }
+}
+```
+
+The developer remains responsible for the property names, feed shapes, and
+`DataContext` injection. These factories are the reusable runtime base for the
+longer-term Hot Testing direction; this initial API does not promise or require a
+generator.

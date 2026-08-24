@@ -22,6 +22,25 @@ The name ListFeedMock is authoritative. An earlier conversation used ListViewMoc
 but the issue and the proven runtime work in PR #3147 both refer to a list feed rather
 than a view.
 
+## Handwritten page-mock contract
+
+For this first scope there is no generation. The developer:
+
+1. writes a record or class shaped like the view model the page expects;
+2. declares `IFeed<T>` and `IListFeed<T>` properties whose names exactly match
+   the page bindings;
+3. initializes those properties with `FeedMock` and `ListFeedMock`; and
+4. assigns the handwritten instance directly to `Page.DataContext`.
+
+Property naming, feed-shape compatibility, and injection remain explicit user
+responsibilities. The official user example is maintained in
+`doc/Reference/Reactive/testing.md`, the existing MVUX testing reference page,
+and shows both scalar and list feeds.
+
+This API is the reusable runtime base for the longer-term Hot Testing direction.
+That compatibility boundary does not promise, schedule, or require a generator,
+and documentation must not imply that handwritten mocks are generated.
+
 ## Public API
 
 FeedMock and ListFeedMock expose the same small state vocabulary:
@@ -72,13 +91,14 @@ view model, UI framework, reflection, naming convention, or source generator.
 
 ## Explicitly rejected scope
 
-The following are not part of issue #3149:
+Focused user documentation of the handwritten workflow is part of issue #3149.
+The following remain outside its scope:
 
 - source generators or generated view-model factories;
 - generated user records or automatic property-name matching;
 - MockCommand;
 - timed scripts or selection helpers;
-- gallery, marketing, or broad documentation work.
+- gallery, marketing, or unrelated broad documentation work.
 
 These exclusions keep this commit a reusable runtime foundation rather than a partial
 implementation of the full spec 013 system.
