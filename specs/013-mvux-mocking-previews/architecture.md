@@ -26,6 +26,23 @@ Every feed factory caches its instance via `AttachedProperty.GetOrCreate` keyed 
 - `StepsCount`'s `SelectFeed` composes on the same wrapper → **swap propagates through business logic** (live: a re-swap re-emits through `Select`);
 - no `dynamic`, no duck-typed re-init needed for feeds: **`SetModel` = a series of typed swaps** on hidden handles. (The HR `dynamic` path stays untouched, HR-only.)
 
+```mermaid
+flowchart TB
+    F["feed factory call
+    ListFeed.Async(...) in Model.Steps"] --> C{"AttachedProperty
+    feed identity cache"}
+    C -->|mockable flag ON| W["HotSwapFeed wrapper
+    (the wrapper IS the cached value)"]
+    C -->|flag OFF| RAW["raw feed — today's behavior,
+    byte-identical"]
+    W --> VMS["VM state subscription"]
+    W --> SEL["SelectFeed = StepsCount
+    (composes on the wrapper)"]
+    SWAP["__Mock_Swap_Steps(mockFeed)"] -->|"wrapper.Set(mockFeed)"| W
+    SEL --> UI2["FeedView"]
+    VMS --> UI1["FeedView"]
+```
+
 Identity risk (R6): lambdas capturing locals/params produce fresh delegate targets → unstable cache key. This pre-exists mocking (same constraint for state persistence); P0 canary + doc.
 
 ## 2. Split of responsibilities
@@ -186,17 +203,27 @@ Pure consumers of §2.2: named catalogs (`static RecipeViewModel BasicRecipe => 
 
 ## 5. End-to-end flow
 
-```
-Test/preview project refs Uno.Extensions.Reactive.Mocking
-  → its generator reads app metadata + [FeedDependency]/[CtorDependency]
-  → emits {Model}Mock (required inputs only) + Create/SetModel
-Create(steps)
-  → new {Vm}(default!…)            // real VM + real Model (ctor-eager params required as args)
-  → mockable flag ON → every Model feed-property cached as HotSwapFeed wrapper
-  → SetModel(Empty with { Steps = steps })
-      → vm.Model.__Mock_Swap_Steps(steps)   // typed, hidden
-      → StepsCount (SelectFeed over wrapper) recomputes  ✔ business logic
-  → FeedView renders pinned states; later SetModel(...) re-swaps live
+```mermaid
+sequenceDiagram
+    participant T as Test / preview project
+    participant MG as Generated mocking code
+    participant VM as RecipeViewModel (real)
+    participant M as RecipeModel (real, null-injected)
+    participant W as HotSwapFeed wrappers
+    participant UI as FeedView
+
+    Note over T,MG: build time — the Mocking generator reads app metadata<br/>+ FeedDependency / CtorDependency attributes and emits<br/>RecipeModelMock + Create(...) + SetModel
+    T->>MG: RecipeViewModel.Create(steps)
+    MG->>VM: new RecipeViewModel(default!, ...)
+    VM->>M: new RecipeModel(default!, ...)
+    Note over M,W: mockable flag ON — every Model feed property<br/>is cached as a HotSwapFeed wrapper
+    MG->>M: SetModel → __Mock_Swap_Steps(steps) (typed, hidden)
+    M->>W: wrapper.Set(steps)
+    W-->>UI: Steps emits the mock values
+    W-->>UI: StepsCount recomputes through the real Select
+    T->>M: SetModel(...) again — Loading / Value / Error
+    M->>W: re-swap
+    W-->>UI: live transition, no re-subscribe
 ```
 
 ## 6. Context-wide scope and ambient activation — UNRESOLVED
