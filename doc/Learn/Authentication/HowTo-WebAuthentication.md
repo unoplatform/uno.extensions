@@ -192,3 +192,18 @@ Uno Platform has no built-in `WebAuthenticationBroker` on Skia Desktop, so `AddW
 - The redirect URI **must** be a loopback HTTP address, e.g. `http://localhost:5001/authentication-callback`, and be registered with your identity provider. If you rely on the default (`WebAuthenticationBroker.GetCurrentApplicationCallbackUri()`), a free port is picked on first use — your identity provider must then allow variable-port loopback redirects (Microsoft Entra and Duende IdentityServer do).
 - Only query-string responses reach the app (authorization-code flow); a URL fragment never leaves the browser, so implicit flows cannot work over a loopback redirect.
 - Apps that call `WebAuthenticationBroker` directly (without `AddWeb`/`AddOidc`) can register the broker themselves during startup with `DesktopWebAuthenticationBrokerProvider.TryRegister()`.
+
+## One configuration for every platform
+
+The callback URI differs per platform, but a single configuration can serve all of them — the provider derives the platform callback at runtime:
+
+- When no `LoginCallbackUri` is configured (and `LoginStartUri` carries no `redirect_uri` value), the provider falls back to `WebAuthenticationBroker.GetCurrentApplicationCallbackUri()` — the custom scheme on Android/iOS, the app origin on WebAssembly, and the loopback listener on Skia Desktop. (WinAppSDK keeps requiring explicit configuration: its flow uses a protocol scheme the broker does not model.)
+- The literal token `{RedirectUri}` inside `LoginStartUri`/`LogoutStartUri` is replaced at sign-in/out time with the URL-encoded effective callback:
+
+  ```json
+  "Web": {
+    "LoginStartUri": "https://idp.example/authorize?client_id=...&response_type=token&redirect_uri={RedirectUri}"
+  }
+  ```
+
+Remember to register each platform's callback with the identity provider (see the table above).

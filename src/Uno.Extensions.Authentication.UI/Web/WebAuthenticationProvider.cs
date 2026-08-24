@@ -12,6 +12,14 @@ internal record WebAuthenticationProvider
 {
 	private const string OAuthRedirectUriParameter = "redirect_uri";
 
+	/// <summary>
+	/// The literal token a configured start URI can carry where the redirect belongs; replaced at
+	/// sign-in/out time with the URL-encoded effective callback. This is what lets one static
+	/// configuration serve every platform: the callback differs per platform (custom scheme,
+	/// origin, loopback), and only the provider knows it at runtime (spec 014).
+	/// </summary>
+	internal const string RedirectUriPlaceholder = "{RedirectUri}";
+
 	public WebAuthenticationSettings? Settings { get; init; }
 
 	public const string DefaultName = "Web";
@@ -66,12 +74,28 @@ internal record WebAuthenticationProvider
 		if (string.IsNullOrWhiteSpace(loginCallbackUri) &&
 			loginStartUri.Contains(OAuthRedirectUriParameter))
 		{
-			var args = AuthHttpUtility.ExtractArguments(loginStartUri);
-			loginCallbackUri = args[OAuthRedirectUriParameter];
+			var extracted = AuthHttpUtility.ExtractArguments(loginStartUri)[OAuthRedirectUriParameter];
+			if (extracted != RedirectUriPlaceholder)
+			{
+				// The placeholder is not a value; it is filled in below from whatever the
+				// callback resolves to (spec 014).
+				loginCallbackUri = extracted;
+			}
 		}
 
 
 		loginCallbackUri = await PrepareLoginCallbackUri(credentials, loginCallbackUri, cancellationToken);
+
+#if !WINDOWS
+		// Nothing configured: fall back to the platform's own callback - the custom scheme on
+		// Android/iOS, the app origin on WebAssembly, the loopback listener on Skia Desktop. Not
+		// on WinAppSDK, where the WinRT broker answers ms-app://, which is wrong for the WinUIEx
+		// protocol-activation flow (spec 014).
+		if (string.IsNullOrWhiteSpace(loginCallbackUri))
+		{
+			loginCallbackUri = GetBrokerCallbackUri();
+		}
+#endif
 
 		if (string.IsNullOrWhiteSpace(loginCallbackUri))
 		{
@@ -81,6 +105,10 @@ internal record WebAuthenticationProvider
 			}
 			return default;
 		}
+
+		// A static start URI cannot know the per-platform callback; the {RedirectUri} token
+		// carries it in URL-encoded form (spec 014).
+		loginStartUri = loginStartUri.Replace(RedirectUriPlaceholder, Uri.EscapeDataString(loginCallbackUri));
 
 		ApplyPrefersEphemeralWebBrowserSession();
 
@@ -130,6 +158,31 @@ internal record WebAuthenticationProvider
 
 		return await PostLogin(credentials, authData, tokens, cancellationToken);
 	}
+
+#if !WINDOWS
+	/// <summary>
+	/// The platform's own callback URI, used when configuration supplies none (spec 014): the
+	/// custom scheme on Android/iOS, the app origin on WebAssembly, the loopback listener on Skia
+	/// Desktop. Null when the broker cannot derive one (for example, no custom scheme registered),
+	/// which lands on the existing not-configured warning path.
+	/// </summary>
+	private string? GetBrokerCallbackUri()
+	{
+		try
+		{
+			return WebAuthenticationBroker.GetCurrentApplicationCallbackUri().OriginalString;
+		}
+		catch (Exception ex)
+		{
+			if (ProviderLogger.IsEnabled(LogLevel.Debug))
+			{
+				ProviderLogger.LogDebug("No broker-derived callback is available on this platform: {Error}", ex.Message);
+			}
+
+			return null;
+		}
+	}
+#endif
 
 	/// <summary>
 	/// Applies <see cref="WebAuthenticationSettings.PrefersEphemeralWebBrowserSession"/> to Uno's
@@ -227,19 +280,33 @@ internal record WebAuthenticationProvider
 		if (string.IsNullOrWhiteSpace(logoutCallbackUri) &&
 			logoutStartUri.Contains(OAuthRedirectUriParameter))
 		{
-			var args = AuthHttpUtility.ExtractArguments(logoutStartUri);
-			logoutCallbackUri = args[OAuthRedirectUriParameter];
+			var extracted = AuthHttpUtility.ExtractArguments(logoutStartUri)[OAuthRedirectUriParameter];
+			if (extracted != RedirectUriPlaceholder)
+			{
+				logoutCallbackUri = extracted;
+			}
 		}
 
 		if (string.IsNullOrWhiteSpace(logoutCallbackUri) &&
 			InternalSettings.LoginStartUri is { } loginStartUri &&
 			loginStartUri.Contains(OAuthRedirectUriParameter))
 		{
-			var args = AuthHttpUtility.ExtractArguments(loginStartUri);
-			logoutCallbackUri = args[OAuthRedirectUriParameter];
+			var extracted = AuthHttpUtility.ExtractArguments(loginStartUri)[OAuthRedirectUriParameter];
+			if (extracted != RedirectUriPlaceholder)
+			{
+				logoutCallbackUri = extracted;
+			}
 		}
 
 		logoutCallbackUri = await PrepareLogoutCallbackUri(await Tokens.GetAsync(cancellationToken), logoutCallbackUri, cancellationToken);
+
+#if !WINDOWS
+		// Same broker-derived default as sign-in (spec 014).
+		if (string.IsNullOrWhiteSpace(logoutCallbackUri))
+		{
+			logoutCallbackUri = GetBrokerCallbackUri();
+		}
+#endif
 
 		if (string.IsNullOrWhiteSpace(logoutCallbackUri))
 		{
@@ -249,6 +316,9 @@ internal record WebAuthenticationProvider
 			}
 			return false;
 		}
+
+		// A static logout URI cannot know the per-platform callback either (spec 014).
+		logoutStartUri = logoutStartUri.Replace(RedirectUriPlaceholder, Uri.EscapeDataString(logoutCallbackUri));
 
 #if WINDOWS
 		await WinUIEx.WebAuthenticator.AuthenticateAsync(new Uri(logoutStartUri), new Uri(logoutCallbackUri), cancellationToken);
