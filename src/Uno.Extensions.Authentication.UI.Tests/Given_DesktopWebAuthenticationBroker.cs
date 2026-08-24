@@ -71,6 +71,71 @@ public class Given_DesktopWebAuthenticationBroker
 		broker.LaunchedRequestUri.Should().Be(RequestUri);
 	}
 
+	/// <summary>
+	/// Red test for spec 012 F12: OAuth responses that ride the URL fragment (implicit flows)
+	/// never reach an HTTP listener - browsers do not send fragments to servers. The broker must
+	/// answer a bare callback request with a relay page whose script re-requests the callback
+	/// with the fragment as the query, and hand the result back as a fragment.
+	/// </summary>
+	[TestMethod]
+	public async Task When_FragmentResponse_Then_RelayedAndReturned()
+	{
+		var broker = new TestBroker();
+		var callback = broker.GetCurrentApplicationCallbackUri();
+		using var http = new HttpClient();
+		broker.OnLaunch = (request, ct) =>
+		{
+			_ = Task.Run(async () =>
+			{
+				// The "browser" lands on the callback with a fragment, which never reaches the
+				// listener: the first GET arrives bare and must serve the relay page...
+				var relay = await http.GetStringAsync(callback, ct);
+				relay.Should().Contain("location.replace", "a bare callback hit must serve the fragment relay page");
+
+				// ...whose script re-requests the callback with the fragment content as query.
+				(await http.GetAsync($"{callback}?uno-fragment=1&id_token=stub-id-token&scope=openid", ct)).EnsureSuccessStatusCode();
+			}, ct);
+			return Task.CompletedTask;
+		};
+		using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(30));
+
+		var result = await broker.AuthenticateAsync(WebAuthenticationOptions.None, RequestUri, callback, cts.Token);
+
+		result.ResponseStatus.Should().Be(WebAuthenticationStatus.Success);
+		result.ResponseData.Should().Be($"{callback}#id_token=stub-id-token&scope=openid",
+			"the relayed fragment must come back in its original response shape");
+	}
+
+	/// <summary>
+	/// Spec 012 F12, empty branch: a redirect with neither query nor fragment (a bare logout
+	/// callback) must still complete rather than loop on the relay page.
+	/// </summary>
+	[TestMethod]
+	public async Task When_NoQueryAndNoFragment_Then_CompletesEmpty()
+	{
+		var broker = new TestBroker();
+		var callback = broker.GetCurrentApplicationCallbackUri();
+		using var http = new HttpClient();
+		broker.OnLaunch = (request, ct) =>
+		{
+			_ = Task.Run(async () =>
+			{
+				// Bare hit: relay page comes back; its script finds no fragment and re-requests
+				// with the no-fragment sentinel.
+				await http.GetStringAsync(callback, ct);
+				(await http.GetAsync($"{callback}?uno-no-fragment=1", ct)).EnsureSuccessStatusCode();
+			}, ct);
+			return Task.CompletedTask;
+		};
+		using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(30));
+
+		var result = await broker.AuthenticateAsync(WebAuthenticationOptions.None, RequestUri, callback, cts.Token);
+
+		result.ResponseStatus.Should().Be(WebAuthenticationStatus.Success);
+		result.ResponseData.Should().Be(callback.OriginalString,
+			"the sentinel must be stripped - the caller sees a clean, parameterless callback");
+	}
+
 	[TestMethod]
 	public async Task When_CallbackNotLoopback_Then_Throws()
 	{
