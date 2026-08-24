@@ -13,6 +13,7 @@ Concrete surfaces, touch-list, phasing, tests. Names bikesheddable; semantics fi
 | Analysis + hidden hooks emission | `Uno.Extensions.Reactive.Generator` | on Model & VM partials, opt-in only |
 | Mock vocabulary (`MockFeed`/`MockListFeed`/`MockCommand`/`MockFeedState`) | **`Uno.Extensions.Reactive.Mocking`** (new) | referenced by test/preview projects only |
 | Mocking generator (`{Model}Mock`, `Create`, `SetModel`) | `Uno.Extensions.Reactive.Mocking` (analyzer asset) | runs in consumer project, reads app metadata |
+| `MockingService.Enable()` activation scope | `Uno.Extensions.Reactive.Mocking` | frozen name; the only way to turn the wrap on (§6) |
 
 ## 2. Core (`Uno.Extensions.Reactive`)
 
@@ -40,7 +41,7 @@ public sealed class CtorDependencyAttribute : Attribute
 (David's `[FeedShape("Steps", ModelParameter=…)]` idea, renamed. Multiple per member allowed.)
 
 ### 2.2 Mockable flag + swap anchor
-- `FeedConfiguration.Mockable` (flag, distinct from `HotReload`).
+- `FeedConfiguration.Mockable` (flag, distinct from `HotReload`) — **driven by the activation scope (§6), off by default**; no scope → no wrap, so a live app pays nothing (spec G9/R7).
 - When ON: feed factories wrap the cached instance in `HotSwapFeed<T>` (the wrapper IS the cached value → stable identity; derivations compose on the wrapper). Minimal wiring: wrap inside `AttachedProperty.GetOrCreate` call sites in `Core/Feed.cs` / `Core/ListFeed.cs` factories (one helper).
 
 ### 2.3 Tier-1 core surfaces
@@ -123,29 +124,35 @@ Rules:
 - XAML element syntax (`<reactive:MessageEntry IsProgress="True" />`, …) — examples in architecture §3.
 - **No converter implementation.** A converter at `FeedView.Source` returning `IMessageEntry` appears in docs/samples as an application-owned illustration only (D8/NG6).
 
-## 6. Activation/context spike — required before freezing the runtime hook (UNRESOLVED)
-
-Inspect the real State/subscription context API (believed `SourceContext`) and prototype:
+## 6. Scoped activation — API decided (D10), mechanism to spike
 
 ```csharp
-using (MockingService.Enable())
+namespace Uno.Extensions.Reactive.Mocking;
+
+public static class MockingService
 {
-    var model = new MyModel(...);
+    public static IDisposable Enable();     // frozen name; disposal ends the scope
 }
 ```
 
-The spike must prove:
-- which context owns States/subscriptions;
-- whether the mocking scope can apply to any context, not merely a VM;
-- exactly when the context captures the mockable registry/flag;
-- lazy-context behavior (context created after the `using` block?);
-- nested and concurrent scopes;
-- async flow (`AsyncLocal` candidate);
-- survival of created contexts after `Dispose`;
-- deterministic restoration and test isolation;
-- interaction with `FeedConfiguration.Mockable` (D4).
+```csharp
+// whole test run
+[AssemblyInitialize] public static void Init(TestContext _) => _scope = MockingService.Enable();
+[AssemblyCleanup]    public static void Cleanup()           => _scope.Dispose();
 
-Do not treat `AsyncLocal` or the disposal semantics as decided until the spike/source review is complete.
+// or a single test
+using (MockingService.Enable()) { var vm = RecipeViewModel.Create(MockListFeed.Value(steps)); }
+```
+
+**Non-negotiable constraint:** no activation scope → **no `HotSwapFeed` wrap at all**. The wrap is one indirection per feed; it may never be injected into the feeds of a live app (spec G9/R7). `FeedConfiguration.Mockable` (§2.2) is the internal gate the scope drives, not a switch app authors set.
+
+Spike (P0-e) — establish the *mechanism*, the API shape is fixed:
+- which context owns States/subscriptions (believed `SourceContext`) and where it is created;
+- eager (Model/VM construction) vs lazy (first subscription) context creation — **if lazy, the scope must be captured on the Model/context owner at construction**, an `AsyncLocal` alone being gone by then;
+- ambient propagation across async construction (`AsyncLocal` candidate) vs explicit token;
+- nested scopes, deterministic restoration, test isolation under concurrency;
+- survival of contexts/subscriptions created inside a disposed scope (expected: mockable for their own lifetime);
+- exact wiring from the scope to `FeedConfiguration.Mockable` (D4).
 
 ## 7. Phasing
 
@@ -154,7 +161,7 @@ Do not treat `AsyncLocal` or the disposal semantics as decided until the spike/s
   b. wrap-at-cache: swap `Steps` → `StepsCount` (`Select`) re-emits (D6 — THE gate);
   c. null-inject construction on a lazy model; eager-ctor fixture NREs as predicted;
   d. feed-identity stability matrix (capture patterns) → informs FEED3202;
-  e. context-wide `MockingService.Enable()` spike (§6).
+  e. `MockingService.Enable()` scope spike (§6) — mechanism only, API shape decided; must prove **no wrap when no scope is open**.
 - **P1 — Tier 1** (core+UI): `Feed.Value`, authorable `MessageEntry` + `AxisValue` (custom axes), `MessageEntryFeed` + push semantics, `FeedView` bridge, documentation-only converter illustration. Ships alone.
 - **P2 — Core mockable flag + wrap + hidden hooks + attributes + analysis** (MVUX gen).
 - **P3 — Mocking package**: typed vocabulary + consumer generator (`{Model}Mock`/`Create`/`SetModel`).
@@ -180,13 +187,15 @@ Do not treat `AsyncLocal` or the disposal semantics as decided until the spike/s
 - `SetModel` drives Loading → Value → Error live; derived member updates on-screen after an input swap (D6 end-to-end).
 - Command states drive `Button.IsEnabled`; hot reload does not clobber a mocked VM/context.
 
-### Context activation (with §6 spike)
+### Scoped activation (with §6 spike)
+- **No scope open → feeds are the raw instances** (no `HotSwapFeed` in the cache, no measurable overhead) — the G9 guard test.
+- Assembly-init scope covers every test of the run; a per-test scope covers only its own.
 - Nested `Enable()` scopes restore correctly; parallel tests do not leak mockability; async construction retains the intended scope; lazy first subscription after scope disposal has defined behavior; existing contexts remain deterministic after `Dispose`.
 
 ### Contract freeze
 - Reflection-discovery test for `{Model}Mock`/`Empty`/`Create`/`SetModel`/attribute names (Hot Design contract).
 
 ## 9. Docs
-- `doc/Learn/Mvux/Testing.md`: typed vocabulary, `Create`/`SetModel`, derived-feeds-survive concept, eager-ctor guidance, non-AOT constraint, R4/R5 caveats.
+- `doc/Learn/Mvux/Testing.md`: `MockingService.Enable()` scope (assembly-init vs per-test, and why it is never app-wide), typed vocabulary, `Create`/`SetModel`, derived-feeds-survive concept, eager-ctor guidance, non-AOT constraint, R4/R5 caveats.
 - `doc/Learn/Mvux/FeedView.md`: tier-1 entry authoring + custom axes; converter shown only as an application-owned illustration at `FeedView.Source` (not a deliverable).
 - `rules.md`: FEED3201–3203, MOCK0001.

@@ -21,27 +21,6 @@ Driving a page or a `FeedView` into a **non-happy feed state** (*Loading forever
 | **Transient error over stale data** | No |
 | **Per-feed, independently, on one VM** | No — a fake is per-service, not per-feed |
 
-Two audiences, and **two distinct needs that must stay separate**:
-
-```mermaid
-flowchart LR
-    P1["Previews / Hot Design
-    declare a feed state in XAML,
-    no view model"]
-    P2["App testing
-    pin each feed of a real VM,
-    no DI graph, driven from a test project"]
-    T1["Tier 1
-    UI authoring convenience
-    MessageEntry on FeedView.Source"]
-    T23["Tiers 2 and 3
-    strongly typed mocking engine
-    package Uno.Extensions.Reactive.Mocking"]
-    P1 --> T1
-    P2 --> T23
-    T1 -. isolated - never leaks into tiers 2/3 .- T23
-```
-
 **Crucially: mocking must be consumable from the OUTSIDE** — a test project that references the app — not injected into the app's own source.
 
 ## 2. Core principle — real VM, real Model, business logic survives
@@ -174,7 +153,50 @@ sequenceDiagram
 
 Full authoring surface (custom axes, XAML examples, evolution contract): [architecture.md §3](architecture.md).
 
-## 7. Goals / Non-goals
+## 7. Tier 2 at a glance
+
+The exhaustive route: build the **whole feed set** of the mock record, apply it with `SetModel`.
+
+```csharp
+// Test / preview project — no DI graph, no fake service
+var vm = RecipeViewModel.Create();          // real VM + real Model, services null-injected
+
+vm.SetModel(new RecipeModelMock             // required init → the compiler lists every input to fill
+{
+    Steps = MockListFeed.Loading<Step>(),   // pinned Loading, forever
+    Tags  = MockListFeed.Empty<Tag>(),
+});
+
+vm.SetModel(RecipeModelMock.Empty with { Steps = MockListFeed.Error<Step>(timeout) });   // live re-swap
+```
+
+- Required members = exactly the **service-dependent** feeds (compile-time completeness, G4).
+- Derived members (`StepsCount`) and commands (`Save`) are **optional**: left unset, the real logic runs over the mocked inputs; set, they are replaced.
+- `IListFeed<Step>` / `IFeed<int>` / `IAsyncCommand` throughout — never a `MessageEntry`.
+
+Generated surface, `Create` overload rules and diagnostics: [architecture.md §2.2](architecture.md), [implementation.md §4](implementation.md).
+
+## 8. Tier 3 at a glance
+
+The same engine, one call: `Create` takes **only the required feeds** — nothing else to fill in.
+
+```csharp
+var vm      = RecipeViewModel.Create(MockListFeed.Value(steps));    // one required input → one argument
+var loading = RecipeViewModel.Create(MockListFeed.Loading<Step>());
+var empty   = RecipeViewModel.Create();                             // = every input Empty
+
+// Named catalogs, hand-written in the test/preview project
+public static RecipeViewModel BasicRecipe => RecipeViewModel.Create(MockListFeed.Value(AvocadoToast));
+```
+
+```xml
+<!-- One-line preview binding — real page, real VM, pinned state -->
+<Page DataContext="{x:Bind catalog:RecipeCatalog.BasicRecipe}" />
+```
+
+No new mechanism: each overload is `Create()` + a `SetModel` of §7, so a preview head can keep re-issuing `SetModel` to walk states live (G6). Catalogs and pickers: [architecture.md §4](architecture.md).
+
+## 9. Goals / Non-goals
 
 **Goals**
 - G1. Pin any service-dependent feed / list-feed / state / command of a real generated VM.
@@ -185,6 +207,7 @@ Full authoring surface (custom axes, XAML examples, evolution contract): [archit
 - G6. Live re-swap to drive transitions.
 - G7. Tier-1 XAML state declaration with no VM, including custom axes.
 - G8. Tiers 2/3 **strongly typed end to end**.
+- G9. **Zero cost on a live app**: the `HotSwapFeed` wrap is created only for feeds built inside an explicit activation scope (§13). No wrapper is ever injected into the feeds of a running application.
 
 **Non-goals**
 - NG1. Behavioral/integration testing of services (this targets presentation state).
@@ -195,11 +218,11 @@ Full authoring surface (custom axes, XAML examples, evolution contract): [archit
 - NG6. Defining or implementing a JSON (or any) converter — converters are application-owned illustrations only.
 - NG7. Reusing tier-1 untyped authoring objects or conversion helpers in tiers 2/3.
 
-## 8. Frozen contracts (Hot Design + test code discover by name)
+## 10. Frozen contracts (Hot Design + test code discover by name)
 
-`{Model}Mock` record shape (required-init members, `Empty`, `with`-friendly), `{Vm}.Create(...)`, `SetModel`, the dependency attributes, hidden hook naming, and the `Uno.Extensions.Reactive.Mocking` namespace. Renames = breaking; additive evolution fine.
+`{Model}Mock` record shape (required-init members, `Empty`, `with`-friendly), `{Vm}.Create(...)`, `SetModel`, `MockingService.Enable()`, the dependency attributes, hidden hook naming, and the `Uno.Extensions.Reactive.Mocking` namespace. Renames = breaking; additive evolution fine.
 
-## 9. Risks
+## 11. Risks
 
 | # | Risk | Mitigation |
 | --- | --- | --- |
@@ -209,8 +232,9 @@ Full authoring surface (custom axes, XAML examples, evolution contract): [archit
 | R4 | Refresh axis is internal → `Refreshing` visually faithful, not axis-faithful | documented |
 | R5 | Scalar `IFeed<T>` → plain generated property, invisible to `FeedView` | documented |
 | R6 | Swap-anchor identity: exotic lambda captures → unstable cache key | P0 canary matrix + diagnostic |
+| R7 | The wrap has a **runtime cost** (an indirection per feed) → unacceptable if activation were global/always-on | activation is **scoped** (§13, D10): no scope, no wrap; the Mocking package is never referenced by a published head (D7) |
 
-## 10. Resolved decisions (log)
+## 12. Resolved decisions (log)
 
 | # | Decision |
 | --- | --- |
@@ -223,16 +247,28 @@ Full authoring surface (custom axes, XAML examples, evolution contract): [archit
 | D7 | AOT non-compliance of the mocking path accepted (dev/test only) |
 | D8 | Converters (JSON or other) are **application-owned illustrations** attached at `FeedView.Source`, returning `IMessageEntry`; this feature defines and implements none |
 | D9 | Tiers 2/3 are **strongly typed end to end**; the tier-1 authoring object is confined to tier 1 |
+| D10 | Activation is an **explicit scope** — `using (MockingService.Enable())` — never an ambient app-wide switch. A test assembly may open it once at assembly init to cover its whole run. **Rationale: the wrap costs at runtime; it must exist only on demand, never in the feeds of a live app** (G9, R7). The scope's internal mechanism is the only part still to be established by the spike (§13) |
 
-## 11. Open question — context scope & ambient activation (UNRESOLVED)
+## 13. Scoped activation — `MockingService.Enable()` (DECIDED shape, mechanism to spike)
 
-Tier 2 may not fundamentally be VM-scoped: the actual boundary may be the feed subscription/state **context** (believed to be `SourceContext`; must be verified in source). Desired call-site shape:
+**Decided.** Mocking is turned on by an **explicit scope**, and only inside it:
 
 ```csharp
 using (MockingService.Enable())
 {
-    var model = new MyModel(...);
+    var vm = RecipeViewModel.Create(MockListFeed.Value(steps));
 }
 ```
 
-Semantics to decide by spike (P0-e, see [implementation.md §6](implementation.md)): ambient (`AsyncLocal`) vs process-global; nested scopes; concurrency; eager vs lazy context creation; subscriptions outliving `Dispose`; interaction with the mockable flag (D4). **Nothing here is accepted until verified against source and reviewed.**
+- **On demand only.** Wrapping every Model feed in a `HotSwapFeed` costs at runtime (one indirection per feed, per subscription path). That cost is acceptable in a test/preview run and **not** in a live app: outside an activation scope nothing is wrapped, and no published app head ever references the Mocking package (G9, R7, D7).
+- **Whole-run activation is the caller's choice, not the default.** A test assembly that wants mocking at large opens the scope once in its **assembly init** (and disposes it at assembly cleanup); a single test opens it around one `Create`. Same API either way — never a global flag flipped inside the framework.
+- The scope, not the ViewModel, is the boundary: tier 2's VM scope was accidental. The real boundary is the feed subscription/state **context** that owns states and subscriptions (believed `SourceContext`, to be confirmed in source).
+- `FeedConfiguration.Mockable` (D4) stays the low-level gate the scope drives — it is not a knob for app authors.
+
+**Still to establish by spike** (P0-e, see [implementation.md §6](implementation.md)) — the *mechanism*, not the shape:
+
+- exact context type and where/when it is created (eager during Model/VM construction, or lazy at first subscription — if lazy after the `using` block, activation must be captured on the context owner at construction);
+- ambient propagation: `AsyncLocal` vs explicit token threading, and whether it survives async construction;
+- nested scopes and restoration; concurrent tests not leaking mockability into each other;
+- lifetime of contexts and subscriptions created inside a scope once it is disposed (expected: they stay mockable for their own lifetime);
+- exactly how the scope drives `FeedConfiguration.Mockable` (D4).
