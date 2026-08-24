@@ -34,6 +34,14 @@ jobs:
         with:
           dotnet-version: '9.0.308'
 
+      # setup-dotnet installs its own SDK rather than using the one the wasm-build image ships, and
+      # the workload belongs to the SDK, not the image - so Uno.Wasm.Bootstrap cannot relink
+      # SkiaSharp's native WebAssembly assets and the build fails with "UNOWA0001: Native
+      # WebAssembly assets were detected, but the wasm-tools workload could not be located".
+      # Same step, same reason, as build/ci/stage-build-wasm.yml.
+      - name: Install wasm-tools workload
+        run: dotnet workload install wasm-tools
+
       - uses: dotnet/nbgv@f088059084cb5d872e9d1a994433ca6440c2bf72 # v0.4.2
         id: nbgv
         with:
