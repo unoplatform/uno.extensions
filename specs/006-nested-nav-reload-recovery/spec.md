@@ -6,7 +6,7 @@ An app can come up **permanently blank** when its hosting tree is re-grafted whi
 navigation is in flight. Captured in vivo (WASM, ALC-hosted app whose content is re-hosted by
 Hot Design moments after launch; instrumented timeline):
 
-```
+```text
 t=17     root region ready (navigationRoot ContentControl, ContentControlNavigator)
 t=1268   FrameView's Frame created          ← initial "Main" navigation started
 t=1647   Frame Loaded, FrameNavigator ready ← nested hop into the Frame pending
