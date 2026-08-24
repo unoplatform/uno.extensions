@@ -5,7 +5,10 @@ uid: Uno.Extensions.Authentication.HowToWebAuthentication
 
 > **UnoFeatures:** `Authentication` (add to `<UnoFeatures>` in your `.csproj`)
 
-`WebAuthenticationProvider` provides an implementation that displays a web view in order for the user to login. After login, the web view redirects back to the application, along with any tokens. This tutorial will use web authorization to validate user credentials.
+`WebAuthenticationProvider` provides an implementation that opens the platform's browser surface for the user to log in. After login, the identity provider redirects back to the application, and the provider reads any tokens carried on that redirect. This tutorial will use web authorization to validate user credentials.
+
+> [!TIP]
+> The Web provider is deliberately protocol-agnostic: it drives the browser and stores whatever tokens your endpoint (or your callbacks) hand back, which is what makes it fit any browser-based login. If your identity provider speaks OpenID Connect, prefer the [OIDC provider](xref:Uno.Extensions.Authentication.HowToOidcAuthentication) instead — it owns the whole protocol (discovery, PKCE, code exchange, refresh) for you.
 
 ## Step-by-step
 
@@ -78,22 +81,31 @@ uid: Uno.Extensions.Authentication.HowToWebAuthentication
 
 - While the `WebAuthenticationProvider` is added using the `AddWeb()` extension method, you will need to add a configuration section for basic settings to appsettings.json.
 
-- We will be using the default name of `Web` for the configuration section.
+- We will be using the default name of `Web` for the configuration section (a custom provider name passed to `AddWeb(name: ...)` selects a section of that name instead).
 
     ```json
     {
         "Web": {
-            "LoginStartUri": "URI_TO_LOGIN",
+            "LoginStartUri": "https://idp.example/authorize?client_id=...&response_type=token&redirect_uri={RedirectUri}",
             "LogoutStartUri": "URI_TO_LOGOUT"
         }
     }
     ```
 
-- `LoginStartUri`: The URI that will be used to start the login process. This is the URI that will be opened in the web view.
+- The section supports the following values:
 
-- `LogoutStartUri`: The URI that will be used to start the logout process.
+  | Key | Purpose | Default when absent |
+  | --- | --- | --- |
+  | `LoginStartUri` | The login page opened in the platform's browser surface. Required. | — |
+  | `LoginCallbackUri` | The redirect the flow completes on. | Extracted from `redirect_uri` in `LoginStartUri` when present; otherwise the platform default (see [One configuration for every platform](#one-configuration-for-every-platform)). |
+  | `AccessTokenKey` / `RefreshTokenKey` | The query/fragment keys the tokens are read from on the redirect. | `access_token` / `refresh_token` |
+  | `LogoutStartUri` | The logout page for `LogoutAsync`. When absent, logout fails rather than silently clearing — clear `ITokenCache` directly for a local-only sign-out. | — |
+  | `LogoutCallbackUri` | The redirect the logout flow completes on. | `LoginCallbackUri`, then the same fallbacks as login. |
+  | `PrefersEphemeralWebBrowserSession` | iOS/Mac Catalyst: use a cookie-less `ASWebAuthenticationSession`. | `false` |
 
-- `WebAuthenticationProvider` will automatically redirect the user to the `LoginStartUri` when they are not authenticated. The `LoginStartUri` will then redirect the user to the identity provider's login page. After the user successfully logs in, the identity provider will redirect the user back to the application. The `WebAuthenticationProvider` will then store the user's access token in credential storage.
+- The literal token `{RedirectUri}` inside `LoginStartUri` (and `LogoutStartUri`) is replaced at sign-in time with the URL-encoded effective callback, so one static URI works on every platform.
+
+- After the user successfully logs in, the identity provider redirects back to the application; the provider reads the tokens from the redirect's query string **or URL fragment** using the configured keys, and stores them in credential storage. If the redirect carries something else — such as an authorization code that still needs exchanging — process it with the `PostLogin` callback below.
 
 ### 4. Process post-login tokens
 
@@ -169,7 +181,9 @@ uid: Uno.Extensions.Authentication.HowToWebAuthentication
 
 - Finally, we can pass the login credentials to the `LoginAsync()` method and authenticate with the identity provider. The user will be prompted to sign in to their account when they tap the button in the application.
 
-- `WebAuthenticationProvider` will then store the user's access token in credential storage. The token will be automatically refreshed when it expires.
+- `WebAuthenticationProvider` will then store the user's access token in credential storage.
+
+- Calling `IAuthenticationService.RefreshAsync()` re-serves the stored tokens by default; the provider is protocol-agnostic, so actual token renewal only happens when you supply a `Refresh` callback (`AddWeb(web => web.Refresh(...))`) that redeems the stored refresh token against your endpoint.
 
 ## Platform support
 
@@ -190,7 +204,7 @@ On the `WebAuthenticationBroker`-backed targets the interactive flow is bounded 
 Uno Platform has no built-in `WebAuthenticationBroker` on Skia Desktop, so `AddWeb()` (and `AddOidc()`) automatically register a loopback broker: the sign-in page opens in the system browser and the redirect returns to a one-shot HTTP listener on `localhost`, per [RFC 8252 §7.3](https://www.rfc-editor.org/rfc/rfc8252#section-7.3).
 
 - The redirect URI **must** be a loopback HTTP address, e.g. `http://localhost:5001/authentication-callback`, and be registered with your identity provider. If you rely on the default (`WebAuthenticationBroker.GetCurrentApplicationCallbackUri()`), a free port is picked on first use — your identity provider must then allow variable-port loopback redirects (Microsoft Entra and Duende IdentityServer do).
-- Only query-string responses reach the app (authorization-code flow); a URL fragment never leaves the browser, so implicit flows cannot work over a loopback redirect.
+- Responses on the URL **fragment** (implicit-style flows) work too: browsers never send fragments to a server, so when the redirect arrives bare, the listener serves a small static relay page whose script re-requests the callback carrying the fragment — the app then receives the response in its original fragment shape. Query-string responses (authorization-code flow) complete in a single request, unchanged.
 - Apps that call `WebAuthenticationBroker` directly (without `AddWeb`/`AddOidc`) can register the broker themselves during startup with `DesktopWebAuthenticationBrokerProvider.TryRegister()`.
 
 ## One configuration for every platform

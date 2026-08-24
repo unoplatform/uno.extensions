@@ -22,8 +22,11 @@ namespace Uno.Extensions.Authentication;
 /// <para>
 /// The redirect URI must be a loopback HTTP address (for example
 /// <c>http://localhost:{port}/authentication-callback</c>) registered with the identity provider.
-/// Only query-string responses reach the app (authorization-code flows); a fragment never leaves
-/// the browser, so implicit flows cannot work over a loopback redirect.
+/// Query-string responses (authorization-code flows) complete in a single request. Responses on
+/// the URL fragment (implicit-style flows) are supported through a relay: browsers never send
+/// fragments to a server, so a bare callback hit is answered with a static page whose script
+/// re-requests the callback carrying the fragment, and the result is handed back in its original
+/// fragment shape.
 /// <see cref="GetCurrentApplicationCallbackUri"/> picks a free port on first use and keeps it for
 /// the process lifetime, which requires the identity provider to allow variable-port loopback
 /// redirects (RFC 8252 mandates this; Microsoft Entra and Duende IdentityServer honor it) —
