@@ -204,6 +204,7 @@ public class Given_MsalAuthentication
 		using var cts = Cts();
 		harness.Tenant.ExpiresInSeconds = 10;
 		await harness.Authentication.LoginAsync(harness.Dispatcher, cancellationToken: cts.Token);
+		await SeedMsalCacheEntry(harness, cts.Token);
 		var loggedOut = 0;
 		harness.Authentication.LoggedOut += (_, _) => loggedOut++;
 
@@ -215,6 +216,12 @@ public class Given_MsalAuthentication
 		(await harness.Authentication.IsAuthenticated(cts.Token)).Should().BeFalse();
 		(await harness.Tokens.HasTokenAsync(cts.Token)).Should().BeFalse("an unrenewable session must not leave a stale access token behind");
 		loggedOut.Should().Be(1, "losing the session is a sign-out");
+		// The blob removal hangs off ITokenCache.Cleared, which is fire-and-forget; wait for it.
+		for (var i = 0; i < 50 && await HasMsalCacheEntry(harness, cts.Token); i++)
+		{
+			await Task.Delay(100, cts.Token);
+		}
+		(await HasMsalCacheEntry(harness, cts.Token)).Should().BeFalse("the serialized MSAL cache goes with the session");
 	}
 
 	[TestMethod]
@@ -405,4 +412,126 @@ public class Given_MsalAuthentication
 		(await harness.Tokens.HasTokenAsync(cts.Token)).Should().BeFalse();
 	}
 
+	/// <summary>
+	/// The key <c>MsalTokenCacheStore</c> writes the serialized cache under. Duplicated as a literal
+	/// because that type is internal to the provider assembly; this is the contract, so the test
+	/// should fail if either side moves.
+	/// </summary>
+	private static string MsalCacheKey => $"MsalCache_{StubEntra.ClientId}";
+
+	/// <summary>
+	/// Plants a serialized-cache entry in the host's default storage, standing in for the blob the
+	/// WebAssembly head writes. Every head can then assert on the removal, which is what matters:
+	/// this entry holds the refresh token.
+	/// </summary>
+	private static async Task SeedMsalCacheEntry(Harness harness, CancellationToken ct)
+	{
+		var storage = harness.Host.Services.GetRequiredDefaultInstance<IKeyValueStorage>();
+		await storage.SetAsync(MsalCacheKey, "c2VyaWFsaXplZC1tc2FsLWNhY2hl", ct);
+		(await storage.GetKeysAsync(ct)).Should().Contain(MsalCacheKey, "the test needs the entry to exist before it can assert it was removed");
+	}
+
+	private static async Task<bool> HasMsalCacheEntry(Harness harness, CancellationToken ct) =>
+		(await harness.Host.Services.GetRequiredDefaultInstance<IKeyValueStorage>().GetKeysAsync(ct))
+			.Contains(MsalCacheKey);
+
+	[TestMethod]
+	public async Task When_Logout_Then_SerializedMsalCacheRemoved()
+	{
+		using var harness = await CreateHarnessAsync();
+		using var cts = Cts();
+
+		await harness.Authentication.LoginAsync(harness.Dispatcher, cancellationToken: cts.Token);
+		await SeedMsalCacheEntry(harness, cts.Token);
+
+		await harness.Authentication.LogoutAsync(harness.Dispatcher, cts.Token);
+
+		// The serialized cache carries the refresh token, not just the access token, so leaving it
+		// behind means a signed-out user's session is still renewable from browser storage.
+		(await HasMsalCacheEntry(harness, cts.Token)).Should().BeFalse(
+			"logout must remove the serialized MSAL cache, not only the Uno token cache");
+	}
+
+	[TestMethod]
+	public async Task When_LogoutCancelled_Then_SerializedMsalCacheStillRemoved()
+	{
+		using var harness = await CreateHarnessAsync();
+		using var cts = Cts();
+
+		await harness.Authentication.LoginAsync(harness.Dispatcher, cancellationToken: cts.Token);
+		await SeedMsalCacheEntry(harness, cts.Token);
+
+		// Sign-out has no half-done state worth stopping at: abandoning it part-way used to leave
+		// surviving accounts signed in, their refresh tokens in the serialized cache, and
+		// IsAuthenticated still true - a user who asked to log out, was told it was cancelled, and
+		// is still authenticated. An already-cancelled token is the sharpest version of that.
+		using var cancelled = new CancellationTokenSource();
+		await cancelled.CancelAsync();
+
+		try
+		{
+			await harness.Authentication.LogoutAsync(harness.Dispatcher, cancelled.Token);
+		}
+		catch (OperationCanceledException)
+		{
+			// Whether the cancellation surfaces is not what this guards - what matters is that no
+			// refresh-token material survived it.
+		}
+
+		(await HasMsalCacheEntry(harness, cts.Token)).Should().BeFalse(
+			"a cancelled sign-out must not leave the serialized MSAL cache behind");
+	}
+
+	[TestMethod]
+	public async Task When_TokenCacheCleared_Then_SerializedMsalCacheRemoved()
+	{
+		using var harness = await CreateHarnessAsync();
+		using var cts = Cts();
+
+		await harness.Authentication.LoginAsync(harness.Dispatcher, cancellationToken: cts.Token);
+		await SeedMsalCacheEntry(harness, cts.Token);
+
+		// Clearing the token cache directly, without going through the provider's logout - the
+		// belt-and-braces path (ITokenCache.Cleared).
+		await harness.Tokens.ClearAsync(cts.Token);
+
+		// The handler is fire-and-forget off a synchronous event, so wait for the effect rather than
+		// assuming it already happened.
+		for (var i = 0; i < 50 && await HasMsalCacheEntry(harness, cts.Token); i++)
+		{
+			await Task.Delay(100, cts.Token);
+		}
+
+		(await HasMsalCacheEntry(harness, cts.Token)).Should().BeFalse(
+			"clearing the token cache must take the serialized MSAL cache with it");
+	}
+
+	[TestMethod]
+	public async Task When_Login_Then_MsalCacheOnlyPersistedThroughStorageOnWebAssembly()
+	{
+		using var harness = await CreateHarnessAsync();
+		using var cts = Cts();
+
+		await harness.Authentication.LoginAsync(harness.Dispatcher, cancellationToken: cts.Token);
+
+		var keys = await harness.Host.Services
+			.GetRequiredDefaultInstance<IKeyValueStorage>()
+			.GetKeysAsync(cts.Token);
+
+		// The prefix is duplicated as a literal on purpose: MsalTokenCacheStore.KeyPrefix is
+		// internal to the provider assembly, and this test exists to fail if either side drifts.
+		if (PlatformHelper.IsWebAssembly)
+		{
+			// MsalCacheHelper has no browser backend, so the serialized cache goes through
+			// IKeyValueStorage instead - which is what makes a page reload survivable (spec 011).
+			keys.Should().Contain(key => key.StartsWith("MsalCache_", StringComparison.Ordinal));
+		}
+		else
+		{
+			// MsalCacheHelper (DPAPI / Keychain / keyring) or MSAL's own native cache owns
+			// persistence here. Writing the blob to key-value storage as well would duplicate
+			// refresh tokens into a store the platform doesn't protect.
+			keys.Should().NotContain(key => key.StartsWith("MsalCache_", StringComparison.Ordinal));
+		}
+	}
 }

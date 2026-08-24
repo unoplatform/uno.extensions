@@ -34,6 +34,17 @@ These are binary-compatible but observable. Read them if your app calls `AddMsal
   either remove it — the provider derives the Android and iOS values — or guard it with
   `OperatingSystem.IsBrowser()`; otherwise WebAssembly sign-in fails with a redirect-URI mismatch.
 
+- **WebAssembly: the token cache is persisted by default.** Before 7.4 the MSAL cache lived in
+  memory only, so a page reload meant signing in again. It is now serialized through the host's
+  default `IKeyValueStorage` — `localStorage`, under the key `MsalCache_{ClientId}` — and therefore
+  holds the **refresh token** in cleartext browser storage. Register the redirect URI under the
+  Entra `spa` platform so that token is capped at 24 non-sliding hours (see the how-to's
+  [prerequisites](xref:Uno.Extensions.Authentication.HowToMsalAuthentication#prerequisites)). To
+  keep the pre-7.4 behavior set `KeyValueStorageConfiguration:BrowserCacheLocation` to
+  `MemoryStorage`; `SessionStorage` is the middle ground. Note that switching to `MemoryStorage`
+  (or downgrading) does not delete an entry a previous run left in `localStorage` — sign out first,
+  or clear the site's data.
+
 - **`Builder(...)` runs last.** Your `PublicClientApplicationBuilder` callback now runs after the
   platform redirect URI, the Windows broker and `WithUnoHelpers()` have been applied, so what it sets
   wins. Previously `WithUnoHelpers()` ran after it and, on WebAssembly, replaced an `HttpClient`

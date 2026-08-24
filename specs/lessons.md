@@ -122,6 +122,14 @@ which exists so our ~50 libraries don't each duplicate the closure into their ow
 
 **Apply to:** any repo-wide `ItemDefinitionGroup` or property condition keyed on `OutputType`. `OutputType` is not stable across target platforms - Android rewrites it, and a rule that reads "libraries only" silently becomes "and also every Android app". Prefer a platform-intent property (`AndroidApplication`, `IsUnoHead`) over inferring app-ness from `OutputType`.
 
+## `TryAdd*` cannot claim an interface `AddNamedSingleton` already seeded — inject a dedicated type instead
+
+**Problem:** planning for spec 011 assumed `services.TryAddSingleton<IKeyValueStorage>(sp => sp.GetRequiredDefaultInstance<IKeyValueStorage>())` inside `AddMsal` would make the platform-default store constructor-injectable. It is a silent no-op whenever `UseStorage` ran first: `AddNamedSingleton` calls `TryAddTransient<TService>(sp => sp.GetRequiredService<TImplementation>())` for every provider it registers (`Core/DependencyInjection/ServiceCollectionExtensions.cs:38`), and `AddKeyedStorage` registers `InMemoryKeyValueStorage` first — so plain `IKeyValueStorage` is already claimed and resolves to the *in-memory* store. The MSAL cache would have "persisted" to memory, order-dependently, with no error anywhere.
+
+**Correct pattern:** define a one-line wrapper record nobody else registers (`MsalKeyValueStorage(IKeyValueStorage Storage)`) and register it with a factory that calls `GetRequiredDefaultInstance<IKeyValueStorage>()` — the same shape `UseAuthentication` uses to build `TokenCache`. The named-instance system is the only correct resolution path for "the platform default"; the bare interface gets you whichever `TryAdd` ran first.
+
+**Apply to:** any constructor that needs the *default* named instance of a service `AddKeyedStorage`-style registration owns. Also note the standing consumer trap this leaves: an app that injects plain `IKeyValueStorage` silently gets `InMemoryKeyValueStorage`. Changing that is a public behavior change and needs its own issue — do not "fix" it as a side effect.
+
 ## `IAuthenticationService`'s convenience overloads pass a null `IDispatcher` — never demand one on a path that shows no UI
 
 **Problem:** `MsalAuthenticationProvider.InternalLogoutAsync` opened with a null-guard throwing `ArgumentNullException` for `dispatcher` — a parameter the method never uses (`RemoveAsync` only mutates MSAL's own cache). The documented `IAuthenticationService.LogoutAsync(CancellationToken)` extension (`AuthenticationServiceExtensions.cs:43`) always passes `dispatcher: default`, so *every* logout through it threw; an app whose command swallows exceptions sees "clicking logout does nothing", and because the token cache never cleared, `HasTokenAsync` stayed true and `RefreshAsync` kept reporting success forever. On `main` since `4bd7bde31`; found only by live app testing — every in-repo test passed a dispatcher.
@@ -145,6 +153,14 @@ which exists so our ~50 libraries don't each duplicate the closure into their ow
 **Correct pattern:** ask what a partial completion *means* before plumbing a token through a loop. Sign-out is all local cache mutation, so there is nothing slow to interrupt and no reason to offer an exit; the removal loop ignores cancellation and the cleanup moved into a `finally` so a mid-loop failure still takes the credential material with it. That `finally` passes `CancellationToken.None` deliberately — an already-cancelled token would make the delete itself the no-op the `finally` exists to prevent. Guarded by `Given_MsalAuthentication.When_LogoutCancelled_Then_SerializedMsalCacheStillRemoved`.
 
 **Apply to:** any teardown/revoke/clear path (logout, cache eviction, credential rotation, temp-file cleanup). AGENTS.md §10's "honour cancellation quickly" is about *work the caller is waiting for*, not about abandoning a cleanup halfway. If the operation removes something dangerous, cancellation between steps is a leak, not responsiveness.
+
+## `ISettings` is string-only — a non-string value silently persists as its type name
+
+**Problem:** `EncryptedApplicationDataKeyValueStorage.GetObjectValue` returned the DPAPI-protected `byte[]`. On **packaged** Windows that flows into `ApplicationData.Current.LocalSettings`, which stores `byte[]` fine. On **unpackaged** Windows `ApplicationDataKeyValueStorage.SetSetting` takes the other branch — `UnpackagedSettings.Set(name, value?.ToString())` — so the blob was written as the literal string `"System.Byte[]"`. Reads then failed the `is byte[]` test and returned `default`, but the *key* persisted, so `TokenCache.HasTokenAsync` (which counts keys, not values) reported the user authenticated with nothing recoverable. The encrypted store — the **default on Windows** — silently persisted nothing, and spec 011 item 6 had just flipped its `IsEncrypted` to `true`, advertising it as the safe choice.
+
+**Correct pattern:** values crossing `ISettings` must already be strings. `GetObjectValue` returns base64; `GetTypedValue` accepts `byte[]` too so existing packaged caches are not orphaned, and treats an undecodable string as absent rather than throwing on every read. When two storage backends sit behind one type, check that every value shape round-trips through *both* — `value?.ToString()` compiles for anything and fails silently for everything that isn't already a string.
+
+**Apply to:** `ApplicationDataKeyValueStorage` and anything deriving from it, plus any future `ISettings` consumer. Note this is only reachable on a WinAppSDK head (`#if WINDOWS`) with `PlatformHelper.IsAppPackaged == false`, which no runtime-test lane covers — the bug survived because the branch that has it never runs in CI. A round-trip assertion per platform is worth more than the type checking out.
 
 ## A `??=` cache of an expensive object is a race, and record copies make it unrecoverable
 
