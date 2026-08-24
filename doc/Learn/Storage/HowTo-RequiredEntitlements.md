@@ -27,6 +27,12 @@ The content of the file(s) should be:
 
 For more information see Apple's documentation related to the [Key Chain](https://developer.apple.com/documentation/security/keychain_services/keychain_items/sharing_access_to_keychain_items_among_a_collection_of_apps?language=objc).
 
+> [!NOTE]
+> An app that signs in with MSAL needs a second entry in that array. MSAL keeps its own token cache
+> under `$(AppIdentifierPrefix)com.microsoft.adalcache`, which the group above does not cover, and
+> without it the first token save fails with `missing_entitlements`. See
+> [iOS: keychain access group](xref:Uno.Extensions.Authentication.HowToMsalAuthentication#ios-keychain-access-group).
+
 The variables `$(AppIdentifierPrefix)` and `$(CFBundleIdentifier)` will be replaced with the correct values at build time. For more information about how the Microsoft .NET SDK works with entitlements you can consult:
 
 * [Microsoft iOS](https://learn.microsoft.com/en-us/dotnet/maui/ios/entitlements)
@@ -43,6 +49,11 @@ Adding the `Entitlements.plist` to your project is not enough. You must also add
 > You can use XCode to create a project, go to the **Signing and Capabilities**, use the same bundle identifier, add the **Keychain Sharing** capacity (again using the same bundle identifier) then ask Xcode to _fix_ your `Xcode Managed Profile`.
 
 ### 3. Modifying the `*.Mobile.csproj`
+
+> [!NOTE]
+> Single-project apps can skip the `CodesignEntitlements` line: the Uno SDK picks up
+> `Platforms/iOS/Entitlements.plist` (and `Platforms/MacCatalyst/Entitlements.plist`) automatically
+> when the file exists.
 
 A new property group should be added to your `*.csproj` project file. The example below will work for both iOS and Mac Catalyst targets.
 

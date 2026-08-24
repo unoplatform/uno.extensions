@@ -16,7 +16,7 @@ uid: Uno.Extensions.Authentication.HowToMsalAuthentication
 | Desktop (Skia) — macOS | ✅ System browser | ✅ Keychain |
 | Desktop (Skia) — Linux | ✅ System browser | ✅ Keyring/libsecret |
 | Android | ✅ Browser / custom tab | ✅ Handled natively by MSAL |
-| iOS | ✅ Web authentication session | ✅ Handled natively by MSAL |
+| iOS | ✅ Web authentication session | ✅ Handled natively by MSAL — [keychain entitlement required](#ios-keychain-access-group) |
 | WebAssembly | ✅ Popup | In-memory only (tokens don't survive a page reload) |
 | Mac Catalyst | ❌ Not supported (`AddMsal` throws `PlatformNotSupportedException`) | — |
 
@@ -199,7 +199,7 @@ To suppress the default entirely and take whatever MSAL itself would use, set:
 > set `RedirectUri` in configuration or from the `Builder(...)` callback — both now win over the
 > broker-derived default.
 
-### 5. Android and iOS: deliver the sign-in callback
+### 5. Android and iOS: platform setup
 
 On desktop the redirect comes back over a local HTTP listener, on WebAssembly through the
 `WebAuthenticationBroker`, and on WinAppSDK through the WAM broker — the provider handles the whole
@@ -207,7 +207,8 @@ round-trip. On Android and iOS the redirect arrives as an *OS event delivered to
 app has to hand it to MSAL itself, using MSAL's own helper,
 [`AuthenticationContinuationHelper`](https://learn.microsoft.com/dotnet/api/microsoft.identity.client.authenticationcontinuationhelper).
 Without these entries the browser opens and sign-in succeeds there, but the app's `LoginAsync`
-never completes — the most common MSAL symptom on mobile.
+never completes — the most common MSAL symptom on mobile. iOS needs one more thing: an entitlement
+granting the keychain group MSAL stores its token cache in.
 
 #### Android
 
@@ -297,6 +298,61 @@ var host = UnoPlatformHostBuilder.Create()
 > lifecycle, so suppress the warning with `#pragma warning disable CA1422`; scene-based apps
 > forward the same call from their scene delegate's `OpenUrlContexts` instead.
 
+#### iOS: keychain access group
+
+MSAL keeps its token cache in the iOS keychain, under the access group `com.microsoft.adalcache`
+unless told otherwise, and iOS only lets an app reach a group its entitlements grant. The Uno
+single-project template ships `Platforms/iOS/Entitlements.plist` with an empty `<dict/>`, so
+without this step sign-in itself succeeds and the first token save fails:
+
+```console
+MsalClientException: missing_entitlements
+The application does not have keychain access groups enabled in the Entitlements.plist ...
+The keychain access group '{TeamId}.com.microsoft.adalcache' is not enabled.
+```
+
+Depending on the MSAL version the failure can come earlier still, as
+`cannot_access_publisher_keychain`, while MSAL probes the keychain for the publisher's Team ID as
+it builds the `IPublicClientApplication`.
+
+Grant the group in `Platforms/iOS/Entitlements.plist`:
+
+```xml
+<key>keychain-access-groups</key>
+<array>
+    <string>$(AppIdentifierPrefix)$(CFBundleIdentifier)</string>
+    <string>$(AppIdentifierPrefix)com.microsoft.adalcache</string>
+</array>
+```
+
+`$(AppIdentifierPrefix)` is substituted at build time with the Team ID from the provisioning
+profile, so the second entry resolves to exactly the group MSAL derives on its own — nothing in
+code has to name it. The Uno SDK picks `Platforms/iOS/Entitlements.plist` up as
+`CodesignEntitlements` on its own, and entitlements are part of the signed app, so the change
+takes effect on the next deploy rather than at runtime.
+
+The order is deliberate. Once this entitlement exists, its first entry becomes the default access
+group for every keychain item the app writes without naming one, so keeping the bundle's own group
+first leaves anything else the app stores there — including `ITokenCache` on a native (non-Skia)
+iOS head, where the default `IKeyValueStorage` is the keychain — where it already was.
+
+Development provisioning profiles carry `keychain-access-groups` `{TeamId}.*`, so this signs
+without any extra capability; a distribution build needs Keychain Sharing enabled on the App ID.
+See [Add required entitlements](xref:Uno.Extensions.Storage.HowToRequiredEntitlements) for the
+Apple Developer portal side of that.
+
+To use a different group — private to this app, or shared for single sign-on with other apps signed
+by the same team — put it in the entitlement and pass the same value to MSAL. The provider owns the
+`IPublicClientApplication`, so that goes through the `Builder(...)` callback:
+
+```csharp
+builder.AddMsal(window, msal =>
+    msal.Builder(pca => pca.WithIosKeychainSecurityGroup("com.example.myapp")));
+```
+
+There is no configuration key for it: the `Msal` section binds to MSAL's
+`PublicClientApplicationOptions`, which has no keychain-group property.
+
 A complete working reference for all of the above is the
 [MSAL authentication sample](https://github.com/unoplatform/Uno.Samples/tree/master/UI/Authentication.MsalExtensionsDemo).
 
@@ -367,7 +423,7 @@ If the platform's secure storage isn't available (for example, a Linux session w
 
 With the fallback enabled, the provider logs a warning (including the fallback file path) whenever it has to downgrade, and the plaintext cache uses a separate file from the protected one.
 
-On Android and iOS the token cache is persisted natively by MSAL — no configuration is needed (or honored) on those platforms.
+On Android and iOS the token cache is persisted natively by MSAL — no configuration is needed (or honored) on those platforms. On iOS it lands in a keychain access group the app has to grant first; see [iOS: keychain access group](#ios-keychain-access-group).
 
 ### 8. Use the provider in your application
 

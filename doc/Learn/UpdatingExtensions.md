@@ -44,6 +44,13 @@ These are binary-compatible but observable. Read them if your app calls `AddMsal
   default applies on Windows, Android, iOS or WebAssembly. Set `Msal:InteractiveTimeout` to change
   or disable it on any platform.
 
+- **iOS: MSAL's keychain entitlement is now reachable.** On Skia iOS heads `AddMsal` used to
+  register a stub, so nothing ever touched MSAL's cache. Now that sign-in runs there,
+  `Platforms/iOS/Entitlements.plist` has to grant `keychain-access-groups`
+  `$(AppIdentifierPrefix)com.microsoft.adalcache` — the template ships that file empty, and without
+  the group the first token save fails with `missing_entitlements`. See
+  [iOS: keychain access group](xref:Uno.Extensions.Authentication.HowToMsalAuthentication#ios-keychain-access-group).
+
 - **Sign-out removes every MSAL account**, not just the first, and also deletes the serialized cache
   entry on WebAssembly.
 
