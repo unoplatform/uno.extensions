@@ -69,20 +69,4 @@
 			</ItemGroup>
 		</Otherwise>
 	</Choose>
-
-	<!-- Uno's XAML generator treats Mac Catalyst as `ios` (Uno.UI.SourceGenerators.props), but
-		Uno.Toolkit ships no catalyst assembly since 8.5 and its plain netX.0 lib has no
-		NativeFramePresenter, which Controls/ModalFlyout.xaml only uses inside an <ios:> template.
-		Catalyst takes the not_mobile template (above), so that resource is dropped there. A target
-		rather than a plain ItemGroup: Uno adds its Include/ExcludeXamlNamespaces items after this
-		project body is evaluated, and the generator lets an include win over an exclude, so the
-		removal has to run before Uno turns the items into properties. -->
-	<Target Name="_UnoExtensionsDropIosXamlOnCatalyst"
-			BeforeTargets="_FillSourceGeneratorItemGroups"
-			Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)'))=='maccatalyst'">
-		<ItemGroup>
-			<IncludeXamlNamespaces Remove="ios" />
-			<ExcludeXamlNamespaces Include="ios" />
-		</ItemGroup>
-	</Target>
 </Project>

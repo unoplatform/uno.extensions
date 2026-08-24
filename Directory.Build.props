@@ -28,18 +28,6 @@
 	</PropertyGroup>
 
 	<PropertyGroup>
-		<!--
-			The libraries take their Uno.Toolkit version from Uno.Sdk (global.json); this value must equal
-			that Sdk's Toolkit group. It is set here, not because the libraries need it, but because the
-			app heads (Playground, TestHarness, Uno.Extensions.RuntimeTests) build with Uno.Sdk.Private,
-			whose Toolkit group lags the public Sdk (9.1.0-dev.2 at 6.8.0-dev.85), and a head that
-			references Uno.Extensions.Navigation.Toolkit then fails restore with an NU1605 downgrade.
-			Update it together with the Uno.Sdk version.
-		-->
-		<UnoToolkitVersion>9.2.0-dev.18</UnoToolkitVersion>
-	</PropertyGroup>
-
-	<PropertyGroup>
 		<Build_Android>true</Build_Android>
 		<Build_iOS>true</Build_iOS>
 		<Build_MacCatalyst>true</Build_MacCatalyst>

@@ -2,12 +2,8 @@ parameters:
   # Same values as dotnet-install-windows.yml / dotnet-install-mac.yml - the lanes must install the
   # same SDK and run the same uno-check, or a stage builds against a different toolchain than the
   # one it is compared against.
-  # The .NET 10 SDK: these lanes compile an Apple TFM (Uno.Toolkit's iOS assembly is built against
-  # Microsoft.iOS 26, which only the .NET 10 iOS workload supplies) or need a net10.0 tool, and
-  # uno-check installs the matching workloads for whichever SDK is in use. Lanes that run inside
-  # unoplatform/wasm-build must NOT use this - see the note in dotnet-install.yml.
-  DotNetVersion: '10.0.x'
-  UnoCheck_Version: '1.34.1'
+  DotNetVersion: '9.0.200'
+  UnoCheck_Version: '1.30.1'
   UnoCheckParameters: ''
   # Opt-in: let uno-check install / validate the Android SDK. Defaults to skipped so the desktop
   # and WebAssembly lanes don't pay the cost. Android build stages set this to true so sdkmanager

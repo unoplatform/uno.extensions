@@ -17,14 +17,22 @@ jobs:
       - template: templates/host-cleanup-linux.yml
       # This job only runs the Playwright-based runner tool against a published artifact, so it
       # needs the SDK but no workloads; the shared template keeps the SDK version aligned anyway.
-      # The .NET 10 SDK on purpose: Uno.UI.RuntimeTests.Engine.Wasm.Runner ships as tools/net10.0/any
-      # and `dotnet tool install` picks the tool asset from the *SDK* version, so a .NET 9 SDK finds
-      # no usable tools/<tfm> folder and reports the misleading "Settings file
-      # 'DotnetToolSettings.xml' was not found in the package". Safe here because this job only runs
-      # the tool against a published artifact - it compiles nothing.
       - template: templates/dotnet-install-uno-check.yml
-        parameters:
-          DotNetVersion: '10.0.x'
+
+      # Uno.UI.RuntimeTests.Engine.Wasm.Runner ships as tools/net10.0/any at every published
+      # version, and `dotnet tool install` picks the tool asset from the *SDK* version - not from
+      # the installed runtimes. A .NET 9 SDK finds no usable tools/<tfm> folder and reports the
+      # misleading "Settings file 'DotnetToolSettings.xml' was not found in the package" (the file
+      # is present). Installing the .NET 10 runtime alone is therefore not enough; the SDK is what
+      # matters. Layered on top of the .NET 9 SDK above rather than replacing it, because this job
+      # only runs the tool - it builds nothing - and global.json pins no SDK version.
+      - task: UseDotNet@2
+        displayName: 'Install .NET 10 SDK (for the WebAssembly runner tool)'
+        retryCountOnTaskFailure: 3
+        inputs:
+          packageType: sdk
+          version: '10.x'
+          installationPath: $(DOTNET_INSTALL_DIR)
 
       - task: NodeTool@0
         inputs:
