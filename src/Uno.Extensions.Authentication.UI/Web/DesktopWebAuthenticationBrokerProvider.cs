@@ -37,6 +37,19 @@ public class DesktopWebAuthenticationBrokerProvider : IWebAuthenticationBrokerPr
 	private const string CompletionHtml =
 		"""<!DOCTYPE html><html><head><meta charset="utf-8"><title>Sign-in complete</title></head><body><p>Sign-in complete. You can close this window and return to the app.</p></body></html>""";
 
+	/// <summary>Marks a relayed fragment on the second callback request; see <see cref="FragmentRelayHtml"/>.</summary>
+	private const string RelayedFragmentQueryPrefix = "?uno-fragment=1&";
+
+	/// <summary>The second request when the redirect carried neither query nor fragment.</summary>
+	private const string NoFragmentSentinelQuery = "?uno-no-fragment=1";
+
+	// Served when the callback arrives with no query: a fragment (implicit-flow response) never
+	// reaches the server, so this page's script re-requests the callback carrying the fragment as
+	// a marked query. Static content only - the fragment travels in the browser's own request and
+	// is never reflected into HTML.
+	private const string FragmentRelayHtml =
+		"""<!DOCTYPE html><html><head><meta charset="utf-8"><title>Signing in…</title></head><body><p>Completing sign-in…</p><script>var h=window.location.hash;window.location.replace(window.location.pathname+(h&&h.length>1?"?uno-fragment=1&"+h.substring(1):"?uno-no-fragment=1"));</script></body></html>""";
+
 	/// <summary>
 	/// The loopback port used by <see cref="GetCurrentApplicationCallbackUri"/>: picked free on
 	/// first use, then fixed for the process lifetime so login and logout use the same redirect.
@@ -139,15 +152,31 @@ public class DesktopWebAuthenticationBrokerProvider : IWebAuthenticationBrokerPr
 					continue;
 				}
 
-				var body = Encoding.UTF8.GetBytes(CompletionHtml);
-				context.Response.ContentType = "text/html; charset=utf-8";
-				context.Response.ContentLength64 = body.Length;
-				await context.Response.OutputStream.WriteAsync(body, linked.Token);
-				context.Response.Close();
+				var query = context.Request.Url?.Query ?? string.Empty;
 
-				// Rebuild from the configured callback plus the received query rather than echoing
-				// the raw request URL, so the result matches what the caller registered.
-				var responseData = callbackUri.GetLeftPart(UriPartial.Path) + (context.Request.Url?.Query ?? string.Empty);
+				if (string.IsNullOrEmpty(query) || query == "?")
+				{
+					// The response may be riding the URL fragment (implicit flows), which browsers
+					// never send to a server. Serve the relay page, whose script re-requests this
+					// callback with the fragment as a marked query - or the no-fragment sentinel -
+					// and keep listening for that second request (spec 012 F12).
+					await RespondAsync(context.Response, FragmentRelayHtml, linked.Token);
+					continue;
+				}
+
+				await RespondAsync(context.Response, CompletionHtml, linked.Token);
+
+				// Rebuild from the configured callback rather than echoing the raw request URL, so
+				// the result matches what the caller registered. Relayed fragments are restored to
+				// their original response shape; the sentinel means the redirect was genuinely bare.
+				var callbackBase = callbackUri.GetLeftPart(UriPartial.Path);
+				var responseData = query switch
+				{
+					NoFragmentSentinelQuery => callbackBase,
+					_ when query.StartsWith(RelayedFragmentQueryPrefix, StringComparison.Ordinal) =>
+						$"{callbackBase}#{query[RelayedFragmentQueryPrefix.Length..]}",
+					_ => callbackBase + query,
+				};
 				return new WebAuthenticationResult(responseData, 0, WebAuthenticationStatus.Success);
 			}
 		}
@@ -155,6 +184,15 @@ public class DesktopWebAuthenticationBrokerProvider : IWebAuthenticationBrokerPr
 		{
 			listener.Stop();
 		}
+	}
+
+	private static async Task RespondAsync(HttpListenerResponse response, string html, CancellationToken ct)
+	{
+		var body = Encoding.UTF8.GetBytes(html);
+		response.ContentType = "text/html; charset=utf-8";
+		response.ContentLength64 = body.Length;
+		await response.OutputStream.WriteAsync(body, ct);
+		response.Close();
 	}
 
 	/// <summary>
