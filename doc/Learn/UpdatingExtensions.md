@@ -123,6 +123,19 @@ These are binary-compatible but observable. Read them if your app calls `AddMsal
 
 ## Upgrading to Extensions 7.0
 
+### Web and OIDC Authentication behavior changes
+
+The Web and OIDC providers received a set of deliberate behavior corrections and platform additions. Most apps need no code changes — the differences show up as more truthful outcomes:
+
+- **Failed silent refresh reports failure (OIDC).** A refresh the identity provider rejected used to be reported as success with an empty access token, leaving `IsAuthenticated` true with nothing to send. It now returns `false` and clears the session.
+- **Cancelled sign-in preserves the session (Web).** Backing out of the sign-in UI now surfaces as `OperationCanceledException` and leaves previously cached tokens untouched; it used to return an empty token set that wiped them. A failed flow (HTTP error) returns `false`.
+- **Cancelled or failed sign-out keeps the session (Web and OIDC).** `LogoutAsync` now returns `false` and keeps the token cache when the end-session flow is dismissed or fails; it used to clear the cache regardless.
+- **OIDC logout sends `id_token_hint`.** The cached id_token is passed to the end-session endpoint, so compliant identity providers skip the logout confirmation prompt and redirect back to the app. Without it, desktop logout could hang until the broker timeout.
+- **Cancellation reaches the interactive flow.** The `CancellationToken` passed to `LoginAsync`/`LogoutAsync` now cancels the browser interaction on every platform.
+- **Skia Desktop sign-in works out of the box.** `AddWeb()`/`AddOidc()` automatically register a loopback `WebAuthenticationBroker` (system browser + `localhost` listener), including relay support for URL-fragment responses. See [Web Authentication: Platform support](xref:Uno.Extensions.Authentication.HowToWebAuthentication#platform-support).
+- **Web callback defaults (behavior change).** When no callback is configured, `AddWeb` now derives it from `WebAuthenticationBroker.GetCurrentApplicationCallbackUri()` instead of failing with a warning, and the literal `{RedirectUri}` token in `LoginStartUri`/`LogoutStartUri` is replaced with the URL-encoded effective callback. A `redirect_uri={RedirectUri}` pair is no longer treated as a literal callback value. See [Web Authentication: One configuration for every platform](xref:Uno.Extensions.Authentication.HowToWebAuthentication#one-configuration-for-every-platform).
+- **`PrefersEphemeralWebBrowserSession` is honored on Skia iOS heads**, where it was previously lost to build-time platform selection.
+
 ### OidcClient Authentication
 
 When upgrading to Uno.Extensions 7.0 or later, the NuGet Package Dependency, before known as `IdentityModel.OidcClient`, which is used in the [Oidc Authentication Extension](xref:Uno.Extensions.Authentication.HowToOidcAuthentication), has been [rebranded](https://github.com/DuendeSoftware/foss/blob/main/README.md#relationship-to-identitymodel).
