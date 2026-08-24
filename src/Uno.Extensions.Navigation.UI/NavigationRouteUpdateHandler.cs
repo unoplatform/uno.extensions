@@ -209,7 +209,7 @@ internal static class NavigationRouteUpdateHandler
 			// making the edit appear to revert.  See studio.live#2293.
 			if (ShouldCascadeForUpdatedTypes(updatedTypes, resolver))
 			{
-				ScheduleCascade(root, resolver);
+				ScheduleCascade(root, resolver, updatedTypes);
 			}
 			else if (Region.Logger.IsEnabled(LogLevel.Debug))
 			{
@@ -263,7 +263,7 @@ internal static class NavigationRouteUpdateHandler
 		{
 			if (ctx.Resolver is { } resolver && ctx.RootRegion is { } root)
 			{
-				ScheduleCascade(root, resolver);
+				ScheduleCascade(root, resolver, updatedTypes: null);
 			}
 		}
 	}
@@ -282,7 +282,7 @@ internal static class NavigationRouteUpdateHandler
 			{
 				if (ShouldCascadeForUpdatedTypes(updatedTypes, resolver))
 				{
-					ScheduleCascade(root, resolver);
+					ScheduleCascade(root, resolver, updatedTypes);
 				}
 				else if (Region.Logger.IsEnabled(LogLevel.Debug))
 				{
@@ -292,7 +292,7 @@ internal static class NavigationRouteUpdateHandler
 		}
 	}
 
-	private static void ScheduleCascade(IRegion root, RouteResolver resolver)
+	private static void ScheduleCascade(IRegion root, RouteResolver resolver, Type[]? updatedTypes)
 	{
 		var dispatcher = root.Services?.GetService<IDispatcher>();
 		if (dispatcher is null)
@@ -313,6 +313,19 @@ internal static class NavigationRouteUpdateHandler
 		{
 			CascadeNewDefaultsFromRoot(root, resolver);
 
+			// A region already ON the route an updated type maps to is deliberately left
+			// alone by the cascade above (its suppression preserves the user's selection),
+			// and the frame-content re-hook only reacts to element replacement — so a
+			// metadata-only edit to the ACTIVE route's view model would otherwise never
+			// re-run its constructor or property initializers (#3142). Re-create just the
+			// view model, in place, for every region whose active route maps to an updated
+			// view-model type.
+			var updatedViewModels = CollectUpdatedViewModels(updatedTypes, resolver);
+			if (updatedViewModels.Count > 0)
+			{
+				RefreshUpdatedActiveRoutesFromRoot(root, resolver, updatedViewModels);
+			}
+
 			// Re-issue any navigation requests that were dropped earlier because
 			// their target view type was not yet present in the assembly. The
 			// resolver has now been rebuilt with the latest route table, so a
@@ -322,6 +335,67 @@ internal static class NavigationRouteUpdateHandler
 			// is given a chance to recover.
 			RetryPendingFailedRequestsFromRoot(root);
 		});
+	}
+
+	/// <summary>
+	/// Maps each updated type to the view-model type the (just-rebuilt) route table associates
+	/// with it. Resolving through <see cref="RouteResolver.FindByViewModel"/> — rather than
+	/// comparing raw types — makes the MVUX case work: <see cref="MappedRouteResolver"/>
+	/// translates a model type (which is what the delta contains) to its generated bindable view
+	/// model (which is what <see cref="RouteInfo.ViewModel"/> holds). View types are deliberately
+	/// NOT collected: updated views are owned by Uno's element-update walk (plus the
+	/// frame-content re-hook), and rebuilding view models on a view-only delta would discard
+	/// un-persisted view-model state on every page edit.
+	/// </summary>
+	internal static HashSet<Type> CollectUpdatedViewModels(Type[]? updatedTypes, RouteResolver resolver)
+	{
+		if (updatedTypes is null)
+		{
+			return [];
+		}
+
+		// View types must never reach FindByViewModel — not merely because updated views are
+		// owned by the element-update walk: on a lookup miss, RouteResolverDefault's convention
+		// fallback derives the view's own route path from the type name and REPLACES the
+		// registered mapping with one whose ViewModel is the view type itself, corrupting every
+		// later navigation on that route (and making this walk "refresh" pages with a page
+		// instance as DataContext).
+		// IL2067: same read-only, type-identity lookup as HasRouteRegisteredType above (the
+		// lambda parameter shifts the trim diagnostic from IL2072 to IL2067).
+#pragma warning disable IL2067
+		return updatedTypes
+			.Where(t => !typeof(FrameworkElement).IsAssignableFrom(t))
+			.Select(t => resolver.FindByViewModel(t, navigator: null)?.ViewModel)
+			.OfType<Type>()
+			.ToHashSet();
+#pragma warning restore IL2067
+	}
+
+	/// <summary>
+	/// Walks the live region tree and, for every region whose navigator's ACTIVE route maps to
+	/// one of <paramref name="updatedViewModels"/>, re-creates that view model in place via
+	/// <see cref="ControlNavigator.RefreshActiveRouteViewModelAsync"/>. No navigation is issued,
+	/// so the user's selection cannot move (#3142).
+	/// </summary>
+	private static void RefreshUpdatedActiveRoutesFromRoot(IRegion region, RouteResolver resolver, HashSet<Type> updatedViewModels)
+	{
+		if (region.Navigator() is ControlNavigator cn &&
+			cn.Route?.Base is { Length: > 0 } activeBase &&
+			resolver.FindByPath(activeBase) is { ViewModel: { } viewModel } &&
+			updatedViewModels.Contains(viewModel))
+		{
+			if (Region.Logger.IsEnabled(LogLevel.Information))
+			{
+				Region.Logger.LogInformationMessage($"Hot-reload refresh: active route '{activeBase}' on region '{region.Name ?? string.Empty}' maps to updated view model '{viewModel.Name}'; re-creating it in place");
+			}
+
+			SafeFireAndForget(cn.RefreshActiveRouteViewModelAsync(), $"view-model refresh for active route '{activeBase}'");
+		}
+
+		foreach (var child in region.Children.ToArray())
+		{
+			RefreshUpdatedActiveRoutesFromRoot(child, resolver, updatedViewModels);
+		}
 	}
 
 	private static void RetryPendingFailedRequestsFromRoot(IRegion region)
