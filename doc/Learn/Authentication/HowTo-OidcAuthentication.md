@@ -188,3 +188,9 @@ Under the hood, `OidcAuthenticationProvider` relies on [Duende.IdentityModel.Oid
 
 - **Skia Desktop (Windows, macOS, Linux)**: `AddOidc()` automatically registers a loopback broker (system browser + `localhost` listener). Register a loopback HTTP redirect URI (e.g. `http://localhost:5001/authentication-callback`) with your identity provider, or rely on the default first-use port if your provider allows variable-port loopback redirects.
 - **Windows (WinAppSDK)**: packaged apps only — the OAuth redirect scheme must be declared as a Protocol in `Package.appxmanifest`.
+
+Additional provider behavior worth knowing:
+
+- **Sign-out** drives the identity provider's end-session flow and passes the cached id_token as the `id_token_hint`, so compliant providers skip the logout confirmation prompt and redirect straight back to the app. A sign-out the user backs out of (or that fails) returns `false` and keeps the local session. For a local-only sign-out with no browser round trip, clear `ITokenCache` directly — the identity provider's browser session then survives, so the next sign-in may not prompt for credentials.
+- **Silent refresh** redeems the stored refresh token against the token endpoint; a rejected refresh returns `false` and signs the user out rather than reporting a stale success.
+- **id_token validation**: Duende's `OidcClient` requires either an `IIdentityTokenValidator` or `Policy.RequireIdentityTokenSignature = false` (configurable from the `Oidc` section, e.g. `"Policy": { "RequireIdentityTokenSignature": false }`) — without one of the two, sign-in against a provider that returns an id_token fails.
