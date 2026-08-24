@@ -20,7 +20,7 @@ Grounded in the current tree. File refs relative to repo root. (Restored after w
 
 Every feed factory caches its instance via `AttachedProperty.GetOrCreate` keyed on the provider delegate (stable when lambdas capture only `this` — the MVUX norm). A derived feed `StepsCount => Steps.Select(...)` is itself a cached `SelectFeed(sourceFeed, selector)` **composed on the instance returned by `Steps`**.
 
-**Anchor:** under the mockable flag, the feed returned for a Model feed-property is wrapped in a `HotSwapFeed<T>` **at this cache level** (stable identity preserved — the wrapper is what gets cached). Consequences:
+**Anchor:** inside an activation scope (§6 — the mockable flag it drives), the feed returned for a Model feed-property is wrapped in a `HotSwapFeed<T>` **at this cache level** (stable identity preserved — the wrapper is what gets cached). Consequences:
 
 - `Model.Steps` returns the wrapper → the VM state subscribes to it → **swap propagates to the VM member**;
 - `StepsCount`'s `SelectFeed` composes on the same wrapper → **swap propagates through business logic** (live: a re-swap re-emits through `Select`);
@@ -31,9 +31,9 @@ flowchart TB
     F["feed factory call
     ListFeed.Async(...) in Model.Steps"] --> C{"AttachedProperty
     feed identity cache"}
-    C -->|mockable flag ON| W["HotSwapFeed wrapper
+    C -->|inside activation scope| W["HotSwapFeed wrapper
     (the wrapper IS the cached value)"]
-    C -->|flag OFF| RAW["raw feed — today's behavior,
+    C -->|no scope — live app| RAW["raw feed — today's behavior,
     byte-identical"]
     W --> VMS["VM state subscription"]
     W --> SEL["SelectFeed = StepsCount
@@ -226,38 +226,39 @@ sequenceDiagram
     W-->>UI: live transition, no re-subscribe
 ```
 
-## 6. Context-wide scope and ambient activation — UNRESOLVED
+## 6. Scoped activation — decided shape, mechanism to spike
 
-Raised in the last exchange before the workspace loss. VM scope may be accidental: the more general boundary may be the context owning States/subscriptions, believed to be `SourceContext` but **not yet source-verified**.
-
-Desired creation scope:
+The activation API is **decided** (D10): mocking exists only inside an explicit scope.
 
 ```csharp
 using (MockingService.Enable())
 {
-    var model = new RecipeModel(...);
+    var vm = RecipeViewModel.Create(MockListFeed.Value(steps));
 }
 ```
 
-A plausible design is that `Enable()` establishes an ambient capture scope; any feed context created inside it is tagged/configured as mockable. Disposing the scope would stop capture for future contexts while already-created contexts remain mockable for their lifetime. **This is only a hypothesis, not an accepted decision.**
+Rationale — **the wrap is not free**. §1 wraps each Model feed in a `HotSwapFeed`; that is one indirection per feed on every subscription path. Acceptable in a test/preview run, not in a live app. So the wrap must be **opt-in per scope**, never a framework-wide default: outside a scope, `AttachedProperty.GetOrCreate` caches the raw feed exactly as today.
 
-The source review / spike must answer:
+Granularity is the caller's: a test assembly wanting mocking for its whole run opens the scope in **assembly init** and disposes it at cleanup; a single test wraps one `Create`. Same API.
 
-- exact context type and context-creation call;
-- whether context creation is eager during Model/VM construction or lazy at first subscription;
-- whether an `AsyncLocal` scope is sufficient across async construction;
-- nested scope semantics;
-- concurrent tests/model construction;
-- subscription lifetime after scope disposal;
-- whether activation attaches a mock registry/provider to a context;
-- interaction with the separate mockable configuration flag (D4).
+The scope — not the ViewModel — is the boundary: the context owning States/subscriptions (believed `SourceContext`, to be source-verified) is the natural carrier. Plausible design: `Enable()` establishes an ambient capture scope, any feed context created inside it is tagged mockable, and disposal stops tagging *future* contexts while already-created ones stay mockable for their own lifetime.
 
-If the context is created lazily after the `using` block, the desired syntax cannot work without either eager context capture during construction or transferring an activation token onto the Model/context owner.
+The spike must still answer:
+
+- exact context type and context-creation call site;
+- whether context creation is eager during Model/VM construction or lazy at first subscription — **if lazy after the `using` block, activation must be captured on the Model/context owner at construction time** (an activation token), since an `AsyncLocal` alone would already be gone;
+- whether `AsyncLocal` is sufficient across async construction;
+- nested scope semantics and deterministic restoration;
+- concurrent tests / concurrent Model construction (no cross-test leakage);
+- subscription and context lifetime after `Dispose`;
+- whether activation attaches a mock registry/provider to the context;
+- exactly how the scope drives `FeedConfiguration.Mockable` (D4) — the flag is the internal gate, not an app-author knob.
 
 ## 7. Constraints
 
 - **Non-AOT/trim-safe by design** (D7): dev/test-time only; document that the Mocking package must never be referenced by a published app head.
 - Tier 2/3 APIs remain generic and strongly typed; they do not depend on the non-generic tier-1 `MessageEntry`, source conversion, or an untyped feed abstraction.
 - Tier 1 stays an isolated UI convenience.
-- Frozen names (Hot Design + tests): `{Model}Mock`, `Empty`, `Create`, `SetModel`, attribute names, hidden hook prefixes.
+- **No wrap outside an activation scope** (§6, D10): the per-feed `HotSwapFeed` indirection must never exist in a live app.
+- Frozen names (Hot Design + tests): `{Model}Mock`, `Empty`, `Create`, `SetModel`, `MockingService.Enable`, attribute names, hidden hook prefixes.
 - MVUX output byte-identical when opt-in flag absent.

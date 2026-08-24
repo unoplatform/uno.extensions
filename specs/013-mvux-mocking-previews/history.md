@@ -63,6 +63,14 @@ Réponses de David à ma question « OK avec ce découpage ? » — par édition
 
 Puis : **perte du workspace ACO** (node détruit, branche non poussée — commits `8d589d9`, `292fb5f`, `2618def`, `cd4c9ad` perdus). Reconstruction → restauration dans ce dossier (spawn `ext-mvux-mock`, 23/08 soir).
 
+## v6 — décision de David (dim. 24/08) — activation scopée TRANCHÉE
+
+- **Le `using (MockingService.Enable())` est certain**, ce n'est plus une question ouverte : c'est **lui** qui active le mocking.
+- Granularité au choix de l'appelant : une assembly de tests qui veut le mocking « at large » ouvre le scope dans son **assembly init** ; sinon un scope par test.
+- **Motif : le `HotSwapFeed` a un coût.** Activation à la demande uniquement — *« on ne veut pas injecter ce feed dans TOUS les feeds d'une app live »*. Hors scope → aucun wrap, le feed brut est caché comme aujourd'hui.
+- Reste au spike (P0-e) le **mécanisme seul** (contexte propriétaire, eager/lazy, `AsyncLocal` vs token porté, imbrication, concurrence, survie après `Dispose`, câblage vers le flag D4) — plus la forme de l'API.
+- Répercuté dans les 3 volets : spec §13 + G9 + R7 + D10, archi §1/§6/§7, impl §1/§2.2/§6/§7/§8/§9.
+
 ---
 
 ## Registre final des décisions
@@ -78,4 +86,4 @@ Puis : **perte du workspace ACO** (node détruit, branche non poussée — commi
 | D7 | Non-AOT du path mocking accepté (dev/test only) | v1 |
 | D8 | Converters = illustrations app-owned à `FeedView.Source` (retournent `IMessageEntry`) ; rien d'implémenté par la feature | v4 |
 | D9 | Tiers 2/3 strictement typés ; l'objet tier-1 confiné au tier 1 | v4 |
-| — | **OUVERT** : scope contexte + activation ambiante `MockingService.Enable()` (spike P0-e requis) | v5 |
+| D10 | **Activation scopée** : `using (MockingService.Enable())` — jamais un switch app-wide ; assembly init possible pour couvrir tout un run. Hors scope → **aucun wrap** (le `HotSwapFeed` coûte, interdit dans une app live). Seul le mécanisme interne reste à établir par le spike P0-e | v6 |
