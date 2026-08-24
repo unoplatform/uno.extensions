@@ -1,4 +1,4 @@
-using Uno.Extensions.Navigation.UI.Tests;
+﻿using Uno.Extensions.Navigation.UI.Tests;
 using Uno.Extensions.Reactive.WinUI.Tests;
 using Uno.Resizetizer;
 using Uno.UI.RuntimeTests;
@@ -34,7 +34,11 @@ public partial class App : Application
 	protected override void OnLaunched(LaunchActivatedEventArgs args)
 	{
 		MainWindow = new Window();
-#if DEBUG
+		// UseStudio comes from Uno.UI.HotDesign.Client, which the iOS CI lane excludes via
+		// UnoDisableHotDesign - its iOS asset is built against Microsoft.iOS 26.0 while the
+		// installed workload is 18.2 (CS1705). Hot Design is a design-time tool with no role in
+		// an automated runtime-test run, so dropping it there costs nothing.
+#if DEBUG && !UNO_HOT_DESIGN_DISABLED
 		MainWindow.UseStudio();
 #endif
 
@@ -45,6 +49,10 @@ public partial class App : Application
 
 		MainWindow!.Content ??= new Uno.UI.RuntimeTests.UnitTestsControl();
 		MainWindow!.Activate();
+
+		// No-op unless UITEST_RUNTIME_AUTOSTART_RESULT_FILE is set, which only the Android/iOS CI
+		// scripts do. Those heads can't use the engine's own UNO_RUNTIME_TESTS_RUN_TESTS runner.
+		MobileRuntimeTestsAutostart.StartIfRequested(MainWindow);
 	}
 
 
