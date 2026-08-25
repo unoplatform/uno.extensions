@@ -14,7 +14,7 @@ using static Microsoft.CodeAnalysis.Accessibility;
 
 namespace Uno.Extensions.Reactive.Generator;
 
-internal class ViewModelGenTool_3 : ICodeGenTool
+internal partial class ViewModelGenTool_3 : ICodeGenTool
 {
 	private const string ViewModelSufix = "ViewModel";
 
@@ -261,9 +261,10 @@ internal class ViewModelGenTool_3 : ICodeGenTool
 	private string GeneratePartialModel(INamedTypeSymbol model)
 	{
 		var vm = GetViewModelFullName(model);
+		var mockingAttributes = GenerateMockingMetadata(model);
 		return this.AsPartialOf(
 			model,
-			attributes: $"[{NS.Bindings}.Model(typeof({vm}))]\r\n[global::System.Runtime.CompilerServices.CreateNewOnMetadataUpdate]",
+			attributes: $"[{NS.Bindings}.Model(typeof({vm}))]\r\n[global::System.Runtime.CompilerServices.CreateNewOnMetadataUpdate]{mockingAttributes}",
 			bases: $"global::System.IAsyncDisposable, {NS.Core}.ISourceContextAware, {NS.Bindings}.IModel<{vm}>",
 			code: $@"
 				[global::System.ComponentModel.EditorBrowsable(global::System.ComponentModel.EditorBrowsableState.Never)]
