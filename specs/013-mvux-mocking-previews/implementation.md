@@ -143,7 +143,7 @@ public static class MockingService
 [AssemblyCleanup]    public static void Cleanup()           => _scope.Dispose();
 
 // or a single test
-using (MockingService.Enable()) { var vm = RecipeViewModel.Create(ListFeedMock.Value(steps)); }
+using (MockingService.Enable()) { var vm = RecipeViewModelMock.Create(ListFeedMock.Value(steps)); }
 ```
 
 **Non-negotiable constraint:** context not mockable → **no `HotSwapFeed` wrap at all**. The wrap is one indirection per feed; it may never be injected into the feeds of a live app (spec G9/R7). `SourceContext.IsMockingActive` (§2.2, D12) is the internal per-context gate the scope drives, not a switch app authors set.

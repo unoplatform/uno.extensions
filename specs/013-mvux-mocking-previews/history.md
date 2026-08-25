@@ -124,6 +124,15 @@ Retour de David sur `SourceContext` : *« si on a besoin d'un AsyncLocal pour le
 
 Tests inchangés/verts : Given_MockingActivation 4/4, Given_MockingRuntime 4/4, Given_GeneratedMock 4/4, Tests.Generator 80/80, Uno.HotTesting.Reactive.Tests 22/22.
 
+
+## v11 — doc + sample + polish naming factory (mar. 25/08)
+
+- **Doc** : `doc/Reference/Reactive/testing.md` (celle de #3149 sur `FeedMock` hand-written) étendue avec la couche générée tier 2/3 : scope `MockingService.Enable()`, `record {Model}Mock` (inputs required, derived + commandes optionnels), `{Vm}Mock.Create(...)`, `vm.SetModel(...)`, `CommandMock`, derived-survives, one-liners + catalogs nommés (tier 3), opt-out `[assembly: EnableFeedMocking(IsEnabled = false)]`. La phrase « no generator » de #3149 est mise à jour.
+- **Sample** : `RecipeCatalog` (catalog nommé tier-3 : Loading/Empty/Basic/Failed) dans le projet de tests, + test `When_CatalogEntry_Then_PinnedState` (Given_GeneratedMock 5/5).
+- **Polish naming (générateur consumer)** : la classe factory générée passe de `{Model}MockExtensions` à **`{Vm}Mock`** (`RecipeViewModelMock.Create(...)`) — lecture propre, proche de l'intention spec §7/§8 (le `{Vm}.Create` littéral est impossible cross-assembly). `Empty` déplacé **sur le record** (`RecipeModelMock.Empty`) pour la compo `with`. Spec §7/§8 alignée sur l'API réelle.
+
+Tests : MockingActivation 4/4, MockingRuntime 4/4, GeneratedMock 5/5, Uno.HotTesting.Reactive.Tests 22/22, Tests.Generator 80/80.
+
 ---
 
 ## Registre final des décisions

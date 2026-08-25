@@ -159,6 +159,7 @@ public sealed class FeedsMockGenerator : ISourceGenerator
 
 		var vmFull = vm.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
 		var mockName = $"{model.Name}Mock";
+		var vmMockName = $"{vm.Name}Mock";
 		var ns = model.ContainingNamespace.IsGlobalNamespace ? null : model.ContainingNamespace.ToDisplayString();
 
 		// Record members.
@@ -182,6 +183,10 @@ public sealed class FeedsMockGenerator : ISourceGenerator
 			: $"{m.Name} = {HotTesting}.FeedMock.Empty<{m.ItemOrValueFullName}>()"));
 		var createParams = string.Join(", ", inputs.Select(m => $"{m.FeedTypeFullName} {Camel(m.Name)}"));
 		var createInits = string.Join(", ", inputs.Select(m => $"{m.Name} = {Camel(m.Name)}"));
+
+		// Empty state lives on the record so it composes with `with` (spec §8).
+		recordMembers.AppendLine();
+		recordMembers.AppendLine($"\tpublic static {mockName} Empty {{ get; }} = new() {{ {emptyInits} }};");
 
 		// SetModel body.
 		var setBody = new StringBuilder();
@@ -219,11 +224,9 @@ public sealed class FeedsMockGenerator : ISourceGenerator
 			{{recordMembers.ToString().TrimEnd()}}
 			}
 
-			public static class {{mockName}}Extensions
+			public static class {{vmMockName}}
 			{
-				public static {{mockName}} Empty { get; } = new() { {{emptyInits}} };
-
-				public static {{vmFull}} Create() => Create(Empty);
+				public static {{vmFull}} Create() => Create({{mockName}}.Empty);
 			{{createFromInputs}}
 				public static {{vmFull}} Create({{mockName}} mock)
 				{
