@@ -40,7 +40,7 @@ public class Given_GeneratedMock : FeedUITests
 	{
 		using (MockingService.Enable())
 		{
-			var vm = RecipeModelMockExtensions.Create(ListFeedMock.Value(1, 2, 3));
+			var vm = RecipeViewModelMock.Create(ListFeedMock.Value(1, 2, 3));
 			using var _ = SourceContext.GetOrCreate(vm.Model).AsCurrent();
 
 			var items = await CurrentItems(SourceContext.GetOrCreate(vm.Model), vm.Model.Steps);
@@ -53,7 +53,7 @@ public class Given_GeneratedMock : FeedUITests
 	{
 		using (MockingService.Enable())
 		{
-			var vm = RecipeModelMockExtensions.Create(ListFeedMock.Value(1));
+			var vm = RecipeViewModelMock.Create(ListFeedMock.Value(1));
 			using var _ = SourceContext.GetOrCreate(vm.Model).AsCurrent();
 
 			(await CurrentItems(SourceContext.GetOrCreate(vm.Model), vm.Model.Steps))
@@ -71,7 +71,7 @@ public class Given_GeneratedMock : FeedUITests
 	{
 		using (MockingService.Enable())
 		{
-			var vm = RecipeModelMockExtensions.Create(); // Empty → Steps = None
+			var vm = RecipeViewModelMock.Create(); // Empty → Steps = None
 			using var _ = SourceContext.GetOrCreate(vm.Model).AsCurrent();
 
 			var items = await CurrentItems(SourceContext.GetOrCreate(vm.Model), vm.Model.Steps);
@@ -85,7 +85,7 @@ public class Given_GeneratedMock : FeedUITests
 		using (MockingService.Enable())
 		{
 			var executed = false;
-			var vm = RecipeModelMockExtensions.Create(new RecipeModelMock
+			var vm = RecipeViewModelMock.Create(new RecipeModelMock
 			{
 				Steps = ListFeedMock.Value(1),
 				Save = CommandMock.Callback(_ => executed = true),
@@ -95,6 +95,20 @@ public class Given_GeneratedMock : FeedUITests
 			vm.Save.CanExecute(null).Should().BeTrue();
 			vm.Save.Execute(null);
 			executed.Should().BeTrue("SetModel routed the mock command through __Mock_SetCommand");
+		}
+	}
+
+	[TestMethod]
+	public async Task When_CatalogEntry_Then_PinnedState()
+	{
+		// Tier-3 sample: a named catalog entry builds a real VM pinned to a state.
+		using (MockingService.Enable())
+		{
+			var vm = RecipeCatalog.Basic;
+			using var _ = SourceContext.GetOrCreate(vm.Model).AsCurrent();
+
+			var items = await CurrentItems(SourceContext.GetOrCreate(vm.Model), vm.Model.Steps);
+			items.Should().BeEquivalentTo(new[] { 1, 2, 3 });
 		}
 	}
 }

@@ -80,7 +80,7 @@ public record RecipeModelMock
     public IFeed<int>? StepsCount { get; init; }              // Derived → optional override; null = real business logic
     public IAsyncCommand? Save { get; init; }                 // command → optional; null = idle no-op
 }
-public static class RecipeViewModelMockExtensions
+public static class RecipeViewModelMock
 {
     public static RecipeViewModel Create();                                  // null-inject + SetModel(Empty)
     public static RecipeViewModel Create(IListFeed<Step> steps);             // required inputs as params
@@ -214,7 +214,7 @@ sequenceDiagram
     participant UI as FeedView
 
     Note over T,MG: build time — the Mocking generator reads app metadata<br/>+ FeedDependency / CtorDependency attributes and emits<br/>RecipeModelMock + Create(...) + SetModel
-    T->>MG: RecipeViewModel.Create(steps)
+    T->>MG: RecipeViewModelMock.Create(steps)
     MG->>VM: new RecipeViewModel(default!, ...)
     VM->>M: new RecipeModel(default!, ...)
     Note over M,W: context.IsMockingActive ON — every Model feed property<br/>is cached as a HotSwapFeed wrapper
@@ -234,7 +234,7 @@ The activation API is **decided** (D10): mocking exists only inside an explicit 
 ```csharp
 using (MockingService.Enable())
 {
-    var vm = RecipeViewModel.Create(ListFeedMock.Value(steps));
+    var vm = RecipeViewModelMock.Create(ListFeedMock.Value(steps));
 }
 ```
 
