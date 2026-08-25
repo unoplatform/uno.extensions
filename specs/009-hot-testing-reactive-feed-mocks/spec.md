@@ -1,0 +1,136 @@
+# Spec 009: Hot Testing Reactive feed mocks
+
+Status: Implemented for issue #3149
+
+## Product direction
+
+This is the deliberately small runtime foundation requested for
+[uno.extensions #3149](https://github.com/unoplatform/uno.extensions/issues/3149).
+
+- The assembly, package, and namespace are exactly Uno.HotTesting.Reactive, even
+  though the project lives in the uno.extensions repository for now.
+- The public vocabulary is FeedMock and ListFeedMock.
+- There is no generated code.
+- Users hand-write a view-model-shaped record or class, make its property names and
+  feed shapes match their XAML bindings, and assign that object to Page.DataContext.
+- Name matching, binding shape correctness, and DataContext injection are the user's
+  responsibility.
+- This runtime layer must remain reusable by the fuller spec 013 generation and
+  architecture work later.
+
+The name ListFeedMock is authoritative. An earlier conversation used ListViewMock once,
+but the issue and the proven runtime work in PR #3147 both refer to a list feed rather
+than a view.
+
+## Handwritten page-mock contract
+
+For this first scope there is no generation. The developer:
+
+1. writes a record or class shaped like the view model the page expects;
+2. declares `IFeed<T>` and `IListFeed<T>` properties whose names exactly match
+   the page bindings;
+3. initializes those properties with `FeedMock` and `ListFeedMock`; and
+4. assigns the handwritten instance directly to `Page.DataContext`.
+
+Property naming, feed-shape compatibility, and injection remain explicit user
+responsibilities. The official user example is maintained in
+`doc/Reference/Reactive/testing.md`, the existing MVUX testing reference page,
+and shows both scalar and list feeds.
+
+This API is the reusable runtime base for the longer-term Hot Testing direction.
+That compatibility boundary does not promise, schedule, or require a generator,
+and documentation must not imply that handwritten mocks are generated.
+
+## Public API
+
+FeedMock and ListFeedMock expose the same small state vocabulary:
+
+- Undefined<T>()
+- Loading<T>()
+- Empty<T>()
+- Value<T>(...)
+- Error<T>(Exception)
+- Refreshing<T>(...)
+- Message<T>(...)
+
+Message is retained as the low-level escape hatch because MVUX messages have
+independent data, error, progress, and other axes. It keeps this runtime usable by
+future generated factories without adding state scripting or generator policy now.
+
+There is intentionally no public state enum in this first slice. The factories are
+the reusable primitive; an enum would add a second abstraction before there is a
+consumer that needs it.
+
+## Semantics
+
+Every factory returns a cold, finite feed. Each subscription receives its pinned
+message state and completes. Loading and refreshing therefore remain visually pinned
+without a never-ending task, timer, or background operation. A later subscription
+(such as a view being unloaded and reparented) receives the same state again.
+
+Undefined<T>() emits a None data message followed by Undefined. MVUX's initial message
+is already undefined, so this transition is required for the final undefined value to
+remain an observable data-axis change through state replay.
+
+Refreshing sets data plus transient progress. It does not set the internal refresh
+axis, which cannot be produced outside a refreshable source feed.
+
+Scalar FeedMock.Empty<T>() means Option<T>.None.
+
+ListFeedMock.Empty<T>() means a present empty immutable list (Some(empty)). The list
+adapter forwards the message rather than using the normal list-feed adapter, which
+would coerce Some(empty) to None. Empty Value and Refreshing inputs preserve the same
+Some(empty) behavior. Callers that need None for a list can express it explicitly
+through ListFeedMock.Message.
+
+## Reuse boundary
+
+Future generator or Hot Design work may consume these factories, but must not fork
+their message construction semantics. The runtime has no dependency on a generated
+view model, UI framework, reflection, naming convention, or source generator.
+
+## Explicitly rejected scope
+
+Focused user documentation of the handwritten workflow is part of issue #3149.
+The following remain outside its scope:
+
+- source generators or generated view-model factories;
+- generated user records or automatic property-name matching;
+- MockCommand;
+- timed scripts or selection helpers;
+- gallery, marketing, or unrelated broad documentation work.
+
+These exclusions keep this commit a reusable runtime foundation rather than a partial
+implementation of the full spec 013 system.
+
+## Verification
+
+Focused tests cover scalar and list common states, all configured message axes, finite
+completion, repeated subscriptions, undefined replay through state, Some(empty) list
+behavior, assembly/namespace naming, and the public API shape.
+
+Validation on the issue branch:
+
+- Release test build and execution: 22 passed, 0 failed. The uno-dev image has only
+  the .NET 10 runtime, so the net9.0 test host was run with DOTNET_ROLL_FORWARD=Major.
+- Release package creation succeeded for Uno.HotTesting.Reactive, including its net9.0
+  assembly, XML documentation, symbols, and Uno.Extensions.Reactive dependency.
+
+## Delivery to origin (decision)
+
+David's decision: the change reaches the canonical GitHub repository
+(unoplatform/uno.extensions) exclusively through the Agent Outbox (ABO), and the outbox
+must do two things, not one. It must:
+
+1. synchronise/push the task branch to origin (never force-pushed), and
+2. open the corresponding GitHub pull request, filled according to the repository pull
+   request template at `.github/pull_request_template.md`.
+
+The worker never writes to origin directly. Every origin Git operation goes through ABO:
+`abo-git sync` performs the branch mirror, and `gh api` creates or updates the pull
+request. The submitted ABO script is declarative and idempotent: it re-syncs the branch,
+checks whether an origin PR already exists for this head/base, creates it as a draft when
+absent, and otherwise updates its title/body. The PR targets base `main` from head
+`dev/devid/issue-3149-feed-mocks` and follows the repository template. Origin PR creation
+is therefore an outbox responsibility, gated by ABO human approval, not a direct worker
+action.

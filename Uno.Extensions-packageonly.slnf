@@ -7,8 +7,8 @@
       "src\\Uno.Extensions.Authentication.Tests\\Uno.Extensions.Authentication.Tests.csproj",
       "src\\Uno.Extensions.Authentication.UI\\Uno.Extensions.Authentication.WinUI.csproj",
       "src\\Uno.Extensions.Authentication\\Uno.Extensions.Authentication.csproj",
-      "src\\Uno.Extensions.Configuration\\Uno.Extensions.Configuration.csproj",
       "src\\Uno.Extensions.Configuration.Tests\\Uno.Extensions.Configuration.Tests.csproj",
+      "src\\Uno.Extensions.Configuration\\Uno.Extensions.Configuration.csproj",
       "src\\Uno.Extensions.Core.Generators\\Uno.Extensions.Core.Generators.csproj",
       "src\\Uno.Extensions.Core.Tests\\Uno.Extensions.Core.Tests.csproj",
       "src\\Uno.Extensions.Core.UI\\Uno.Extensions.Core.WinUI.csproj",
@@ -38,9 +38,9 @@
       "src\\Uno.Extensions.Reactive.UI.Markup\\Uno.Extensions.Reactive.WinUI.Markup.csproj",
       "src\\Uno.Extensions.Reactive.UI\\Uno.Extensions.Reactive.WinUI.csproj",
       "src\\Uno.Extensions.Reactive\\Uno.Extensions.Reactive.csproj",
+      "src\\Uno.Extensions.Serialization.AotTests\\Uno.Extensions.Serialization.AotTests.csproj",
       "src\\Uno.Extensions.Serialization.Http\\Uno.Extensions.Serialization.Http.csproj",
       "src\\Uno.Extensions.Serialization.Refit\\Uno.Extensions.Serialization.Refit.csproj",
-      "src\\Uno.Extensions.Serialization.AotTests\\Uno.Extensions.Serialization.AotTests.csproj",
       "src\\Uno.Extensions.Serialization.Tests\\Uno.Extensions.Serialization.Tests.csproj",
       "src\\Uno.Extensions.Serialization\\Uno.Extensions.Serialization.csproj",
       "src\\Uno.Extensions.Storage.UI\\Uno.Extensions.Storage.WinUI.csproj",
@@ -48,7 +48,9 @@
       "src\\Uno.Extensions.Toolkit.UI\\Uno.Extensions.Toolkit.WinUI.csproj",
       "src\\Uno.Extensions.Toolkit\\Uno.Extensions.Toolkit.csproj",
       "src\\Uno.Extensions.Validation.Fluent\\Uno.Extensions.Validation.Fluent.csproj",
-      "src\\Uno.Extensions.Validation\\Uno.Extensions.Validation.csproj"
+      "src\\Uno.Extensions.Validation\\Uno.Extensions.Validation.csproj",
+      "src\\Uno.HotTesting.Reactive.Tests\\Uno.HotTesting.Reactive.Tests.csproj",
+      "src\\Uno.HotTesting.Reactive\\Uno.HotTesting.Reactive.csproj"
     ]
   }
 }
