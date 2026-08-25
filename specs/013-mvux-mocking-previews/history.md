@@ -80,6 +80,26 @@ Puis : **perte du workspace ACO** (node détruit, branche non poussée — commi
   - Point AOT (David) : un split 2-assemblies impose la réflexion de toute façon (générer `{Model}Mock` à côté du `Model` rendrait l'assembly mock creuse) → réflexion-core assumée, path dev/test-only non-AOT (D7/NG2).
 - Le « spike P0-e » (mécanisme du scope) est **résolu**, plus un spike : il ride `SourceContext`.
 - Répercuté : spec §13/§10/§5/§4 + D4(superseded)/D11/D12, archi §0/§1/§2.1/§5/§6/§7, impl §1/§2.2/§3/§6/§7/§8.
+
+## v8 — implémentation tier 2/3 (mar. 25/08)
+
+Landée sur `dev/devid/spec-013-mvux-mocking` (poussée staging PR #1), après la spec (`b029713cb`) :
+
+- **Substrat core** (`62af49aa0`) : `SourceContext.IsMockingActive` (bit per-contexte hérité, pas de static séparé, pas d'AsyncLocal maison), `EnableMocking()` scope ambient, gate wrap dans `StateImpl` ctor (`|| context.IsMockingActive`). Swap réflexif via `IHotSwapState<T>`.
+- **Fix fail-hard (D11)** (`4b68b7e93`) : `StateImpl<T>` implémente TOUJOURS `IHotSwapState<T>` → ajout `IHotSwapState<T>.CanHotSwap` (`=> _hotSwap is not null`) ; `MockModel` throw sur `!CanHotSwap` (un test manquant, jamais exécuté au départ, cachait ce bug — corrigé).
+- **Passe générateur MVUX** (`4d02e6553`) : classification `FeedDependency` (service-dependent `OnParameter` / derived `OnFeed` / independent nu) + instrumentation ctor `CtorDependency(Eager=true)` ; opt-in `[assembly: EnableFeedMocking]`, byte-identique si absent. Seam VM `__Mock_SetCommand` (commandes, R2 ; pas de `__Mock_Create` — ctors publics + scope ambient, D12).
+- **2e assembly `Uno.Extensions.Reactive.Mocking`** (`4b68b7e93`, `b6caeee03`, `6384a4d48`) : `MockingService.Enable()`, `MockModel.SwapFeed/SwapListFeed` (fail-hard), vocab `MockFeed`/`MockListFeed` (Value/Empty/EmptyList/Undefined/Loading/Error/Refreshing), `MockCommand` (Idle/Disabled/Executing/Callback).
+- **Générateur consumer `Uno.Extensions.Reactive.Mocking.Generator`** (`4b68b7e93`, `6384a4d48`) : lit les métadonnées (assemblies référencées + compilation courante) → émet `record {Model}Mock` (inputs required, derived + commandes optionnels), `Empty`, `Create()`/`Create(inputs)`/`Create(mock)` (null-inject), `SetModel` (swaps typés + `__Mock_SetCommand`).
+- **App-fixture `Uno.Extensions.Reactive.Tests.MockingApp`** : modèle réel + opt-in, pour tester le vrai flux 2-assemblies (les générateurs ne se chaînent pas en une compilation).
+
+**Tests (réellement exécutés) :** Given_MockingActivation 4/4, Given_MockingRuntime 4/4, Given_GeneratedMock 4/4 (Create+SetModel → VM réel → feed mické ; live re-swap ; `Create()` Empty→None ; override commande), Tests.Generator 80/80 (byte-identique préservé), Given_HotReload 8/8 (Core inchangé).
+
+**Reste (hors périmètre du cœur tier 2/3, à planifier avec David) :**
+- `MockFeed.Message`/`Script` (dépendent du vocabulaire de #3147, non mergé).
+- Diagnostics `FEED3201–3203` / `MOCK0001` (analyse en place, diagnostics non émis).
+- Docs `doc/Learn/Mvux/Testing.md` + `FeedView.md` (§9), Tier 1 (on hold).
+- Remontée github : outbox ABO → PR #3165 (après review David).
+
 ---
 
 ## Registre final des décisions
