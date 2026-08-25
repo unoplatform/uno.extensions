@@ -2,6 +2,9 @@
 	"version": "0.2",
 	"language": "en",
 	"words": [
+		"refreshable",
+		"rehook",
+		"synchronise",
 		"nuspecs",
 		"unmaterialized",
 		"Avalonia",
