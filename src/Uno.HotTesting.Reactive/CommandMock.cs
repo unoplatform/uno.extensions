@@ -1,13 +1,14 @@
 using System;
 using System.ComponentModel;
+using Uno.Extensions.Reactive;
 
-namespace Uno.Extensions.Reactive.Mocking;
+namespace Uno.HotTesting.Reactive;
 
 /// <summary>
-/// Typed vocabulary to build mocked commands (spec 013 §4.1). All produce a strongly-typed
+/// Typed vocabulary to build mocked commands (spec 013). All produce a strongly-typed
 /// <see cref="IAsyncCommand"/> suitable for a <c>{Model}Mock</c> command override.
 /// </summary>
-public static class MockCommand
+public static class CommandMock
 {
 	/// <summary>An idle, executable no-op command.</summary>
 	public static IAsyncCommand Idle() => new MockAsyncCommand(canExecute: true);
@@ -25,17 +26,12 @@ public static class MockCommand
 	private sealed class MockAsyncCommand : IAsyncCommand
 	{
 		private readonly bool _canExecute;
-		private bool _isExecuting;
 
 		public MockAsyncCommand(bool canExecute) => _canExecute = canExecute;
 
 		public Action<object?>? OnExecute { get; init; }
 
-		public bool IsExecuting
-		{
-			get => _isExecuting;
-			init => _isExecuting = value;
-		}
+		public bool IsExecuting { get; init; }
 
 		public event EventHandler? CanExecuteChanged;
 		public event EventHandler? IsExecutingChanged;

@@ -4,43 +4,40 @@ using System.Linq;
 using System.Text;
 using Microsoft.CodeAnalysis;
 
-namespace Uno.Extensions.Reactive.Mocking.Generator;
+namespace Uno.HotTesting.Reactive.Generator;
 
 /// <summary>
 /// Consumer-side generator (spec 013, tiers 2/3). Runs in a test/preview project, reads the app
 /// metadata (models carrying <c>FeedDependency</c>/<c>CtorDependency</c> attributes + their generated
 /// view-models) and emits, per model:
-///   - <c>record {Model}Mock</c> — required service-dependent inputs, optional derived overrides;
+///   - <c>record {Model}Mock</c> — required service-dependent inputs, optional derived + command overrides;
 ///   - <c>{Vm}.Create(...)</c> — null-inject construction (under the ambient MockingService scope);
-///   - <c>SetModel(this {Vm}, {Model}Mock)</c> — typed swaps via the <c>MockModel</c> reflection engine.
-/// Strongly typed end to end (D9); no tier-1 surface. Commands and the zero-arg <c>Create()</c>/<c>Empty</c>
-/// come in a later increment.
+///   - <c>SetModel(this {Vm}, {Model}Mock)</c> — strongly-typed swaps via <c>MockingService</c>.
+/// Strongly typed end to end (D9); reuses the <c>Uno.HotTesting.Reactive</c> vocabulary (FeedMock /
+/// ListFeedMock / CommandMock).
 /// </summary>
 [Generator]
 public sealed class FeedsMockGenerator : ISourceGenerator
 {
 	private const string FeedDependencyAttribute = "Uno.Extensions.Reactive.Config.FeedDependencyAttribute";
-	private const string CtorDependencyAttribute = "Uno.Extensions.Reactive.Config.CtorDependencyAttribute";
 	private const string ModelAttribute = "Uno.Extensions.Reactive.Bindings.ModelAttribute";
-	private const string FeedInterface = "Uno.Extensions.Reactive.IFeed`1";
-	private const string ListFeedInterface = "Uno.Extensions.Reactive.IListFeed`1";
+	private const string HotTesting = "global::Uno.HotTesting.Reactive";
 
 	public void Initialize(GeneratorInitializationContext context) { }
 
 	public void Execute(GeneratorExecutionContext context)
 	{
 		var compilation = context.Compilation;
-		var feedDepSymbol = compilation.GetTypeByMetadataName(FeedDependencyAttribute);
-		var ctorDepSymbol = compilation.GetTypeByMetadataName(CtorDependencyAttribute);
-		var modelAttrSymbol = compilation.GetTypeByMetadataName(ModelAttribute);
-		if (feedDepSymbol is null || modelAttrSymbol is null)
+		var feedDep = compilation.GetTypeByMetadataName(FeedDependencyAttribute);
+		var modelAttr = compilation.GetTypeByMetadataName(ModelAttribute);
+		if (feedDep is null || modelAttr is null)
 		{
 			return; // Core not referenced → nothing to do.
 		}
 
-		foreach (var model in EnumerateModels(compilation, feedDepSymbol))
+		foreach (var model in EnumerateModels(compilation, feedDep))
 		{
-			if (GenerateFor(model, feedDepSymbol, ctorDepSymbol, modelAttrSymbol) is { } generated)
+			if (GenerateFor(model, feedDep, modelAttr) is { } generated)
 			{
 				context.AddSource($"{model.ToDisplayString().Replace('.', '_')}.Mock.g.cs", generated);
 			}
@@ -71,10 +68,8 @@ public sealed class FeedsMockGenerator : ISourceGenerator
 			}
 		}
 
-		// Current compilation.
 		foreach (var t in Walk(compilation.Assembly.GlobalNamespace)) yield return t;
 
-		// Referenced assemblies (the app).
 		foreach (var reference in compilation.References)
 		{
 			if (compilation.GetAssemblyOrModuleSymbol(reference) is IAssemblySymbol asm)
@@ -87,22 +82,19 @@ public sealed class FeedsMockGenerator : ISourceGenerator
 	private sealed class FeedMember
 	{
 		public string Name = "";
-		public string FeedTypeFullName = "";   // e.g. global::Uno...IListFeed<global::App.Step>
-		public string ItemOrValueFullName = ""; // T
+		public string FeedTypeFullName = "";
+		public string ItemOrValueFullName = "";
 		public bool IsList;
-		public bool IsDerived;                  // OnFeed set → optional override
 	}
 
-	private string? GenerateFor(INamedTypeSymbol model, INamedTypeSymbol feedDep, INamedTypeSymbol? ctorDep, INamedTypeSymbol modelAttr)
+	private string? GenerateFor(INamedTypeSymbol model, INamedTypeSymbol feedDep, INamedTypeSymbol modelAttr)
 	{
-		// Resolve the generated view-model via [Model(typeof(Vm))].
 		var modelAttrData = model.GetAttributes().FirstOrDefault(a => SymbolEqualityComparer.Default.Equals(a.AttributeClass, modelAttr));
 		if (modelAttrData?.ConstructorArguments is not { Length: 1 } args || args[0].Value is not INamedTypeSymbol vm)
 		{
 			return null;
 		}
 
-		// Classify members from FeedDependency attributes.
 		var inputs = new List<FeedMember>();   // OnParameter set
 		var derived = new List<FeedMember>();  // OnFeed set
 
@@ -115,7 +107,6 @@ public sealed class FeedsMockGenerator : ISourceGenerator
 
 			var onParameter = attr.NamedArguments.FirstOrDefault(n => n.Key == "OnParameter").Value.Value as string;
 			var onFeed = attr.NamedArguments.FirstOrDefault(n => n.Key == "OnFeed").Value.Value as string;
-
 			if (onParameter is null && onFeed is null)
 			{
 				continue; // independent → not part of the mock
@@ -143,25 +134,22 @@ public sealed class FeedsMockGenerator : ISourceGenerator
 				FeedTypeFullName = memberType.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat),
 				ItemOrValueFullName = valueType!.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat),
 				IsList = isList,
-				IsDerived = onFeed is not null,
 			};
 
 			(onFeed is not null ? derived : inputs).Add(fm);
 		}
 
 		// Commands: the generated VM exposes them as public IAsyncCommand properties, overridable via
-		// the __Mock_SetCommand seam (emitted by the MVUX generator under opt-in).
+		// the __Mock_SetCommand seam (emitted by the MVUX generator).
 		var commands = vm.GetMembers()
 			.OfType<IPropertySymbol>()
 			.Where(pr => !pr.IsStatic && pr.DeclaredAccessibility == Accessibility.Public
 				&& pr.Type.ToDisplayString() == "Uno.Extensions.Reactive.IAsyncCommand")
 			.Select(pr => pr.Name)
 			.ToList();
-
-		var hasMockCommandSeam = vm.GetMembers("__Mock_SetCommand").Any();
-		if (!hasMockCommandSeam)
+		if (!vm.GetMembers("__Mock_SetCommand").Any())
 		{
-			commands.Clear(); // no seam → cannot override commands
+			commands.Clear();
 		}
 
 		if (inputs.Count == 0 && derived.Count == 0 && commands.Count == 0)
@@ -170,92 +158,88 @@ public sealed class FeedsMockGenerator : ISourceGenerator
 		}
 
 		var vmFull = vm.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
-		var modelFull = model.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
 		var mockName = $"{model.Name}Mock";
 		var ns = model.ContainingNamespace.IsGlobalNamespace ? null : model.ContainingNamespace.ToDisplayString();
 
-		var sb = new StringBuilder();
-		sb.AppendLine("// <auto-generated />");
-		sb.AppendLine("#nullable enable");
-		if (ns is not null)
-		{
-			sb.AppendLine($"namespace {ns};");
-			sb.AppendLine();
-		}
-
-		// The mock record.
-		sb.AppendLine($"public sealed record {mockName}");
-		sb.AppendLine("{");
+		// Record members.
+		var recordMembers = new StringBuilder();
 		foreach (var m in inputs)
 		{
-			sb.AppendLine($"\tpublic required {m.FeedTypeFullName} {m.Name} {{ get; init; }}");
+			recordMembers.AppendLine($"\tpublic required {m.FeedTypeFullName} {m.Name} {{ get; init; }}");
 		}
 		foreach (var m in derived)
 		{
-			sb.AppendLine($"\tpublic {m.FeedTypeFullName}? {m.Name} {{ get; init; }}");
+			recordMembers.AppendLine($"\tpublic {m.FeedTypeFullName}? {m.Name} {{ get; init; }}");
 		}
 		foreach (var c in commands)
 		{
-			sb.AppendLine($"\tpublic global::Uno.Extensions.Reactive.IAsyncCommand? {c} {{ get; init; }}");
+			recordMembers.AppendLine($"\tpublic global::Uno.Extensions.Reactive.IAsyncCommand? {c} {{ get; init; }}");
 		}
-		sb.AppendLine("}");
-		sb.AppendLine();
 
-		// The factory + facade.
-		sb.AppendLine($"public static class {mockName}Extensions");
-		sb.AppendLine("{");
-
-		// Empty — every service-dependent input set to its type's Empty state.
+		// Empty initializer + Create(inputs) params/inits.
 		var emptyInits = string.Join(", ", inputs.Select(m => m.IsList
-			? $"{m.Name} = global::Uno.Extensions.Reactive.Mocking.MockListFeed.Empty<{m.ItemOrValueFullName}>()"
-			: $"{m.Name} = global::Uno.Extensions.Reactive.Mocking.MockFeed.Empty<{m.ItemOrValueFullName}>()"));
-		sb.AppendLine($"\tpublic static {mockName} Empty {{ get; }} = new() {{ {emptyInits} }};");
-		sb.AppendLine();
-
-		// Create() — every input Empty.
-		sb.AppendLine($"\tpublic static {vmFull} Create() => Create(Empty);");
-		sb.AppendLine();
-
-		// Create(inputs...) — required inputs as parameters.
+			? $"{m.Name} = {HotTesting}.ListFeedMock.Empty<{m.ItemOrValueFullName}>()"
+			: $"{m.Name} = {HotTesting}.FeedMock.Empty<{m.ItemOrValueFullName}>()"));
 		var createParams = string.Join(", ", inputs.Select(m => $"{m.FeedTypeFullName} {Camel(m.Name)}"));
-		var mockInit = string.Join(", ", inputs.Select(m => $"{m.Name} = {Camel(m.Name)}"));
-		sb.AppendLine($"\tpublic static {vmFull} Create({createParams})");
-		sb.AppendLine($"\t\t=> Create(new {mockName} {{ {mockInit} }});");
-		sb.AppendLine();
+		var createInits = string.Join(", ", inputs.Select(m => $"{m.Name} = {Camel(m.Name)}"));
 
-		// Create(mock) — null-inject construction + SetModel.
-		sb.AppendLine($"\tpublic static {vmFull} Create({mockName} mock)");
-		sb.AppendLine("\t{");
-		sb.AppendLine($"\t\tvar vm = new {vmFull}(default!);");
-		sb.AppendLine("\t\tvm.SetModel(mock);");
-		sb.AppendLine("\t\treturn vm;");
-		sb.AppendLine("\t}");
-		sb.AppendLine();
-
-		// SetModel — typed swaps via the reflection engine.
-		sb.AppendLine($"\tpublic static void SetModel(this {vmFull} vm, {mockName} mock)");
-		sb.AppendLine("\t{");
-		sb.AppendLine($"\t\tvar model = vm.Model;");
+		// SetModel body.
+		var setBody = new StringBuilder();
 		foreach (var m in inputs)
 		{
 			var swap = m.IsList ? "SwapListFeed" : "SwapFeed";
-			sb.AppendLine($"\t\tglobal::Uno.Extensions.Reactive.Mocking.MockModel.{swap}<{m.ItemOrValueFullName}>(model, model.{m.Name}, mock.{m.Name});");
+			setBody.AppendLine($"\t\t{HotTesting}.MockingService.{swap}<{m.ItemOrValueFullName}>(model, model.{m.Name}, mock.{m.Name});");
 		}
 		foreach (var m in derived)
 		{
 			var swap = m.IsList ? "SwapListFeed" : "SwapFeed";
-			sb.AppendLine($"\t\tif (mock.{m.Name} is not null)");
-			sb.AppendLine($"\t\t\tglobal::Uno.Extensions.Reactive.Mocking.MockModel.{swap}<{m.ItemOrValueFullName}>(model, model.{m.Name}, mock.{m.Name});");
+			setBody.AppendLine($"\t\tif (mock.{m.Name} is not null)");
+			setBody.AppendLine($"\t\t\t{HotTesting}.MockingService.{swap}<{m.ItemOrValueFullName}>(model, model.{m.Name}, mock.{m.Name});");
 		}
 		foreach (var c in commands)
 		{
-			sb.AppendLine($"\t\tif (mock.{c} is not null)");
-			sb.AppendLine($"\t\t\tvm.__Mock_SetCommand(\"{c}\", mock.{c});");
+			setBody.AppendLine($"\t\tif (mock.{c} is not null)");
+			setBody.AppendLine($"\t\t\tvm.__Mock_SetCommand(\"{c}\", mock.{c});");
 		}
-		sb.AppendLine("\t}");
-		sb.AppendLine("}");
 
-		return sb.ToString();
+		var nsHeader = ns is null ? "" : $"namespace {ns};\n\n";
+		var createFromInputs = inputs.Count == 0
+			? ""
+			: $$"""
+
+				public static {{vmFull}} Create({{createParams}})
+					=> Create(new {{mockName}} { {{createInits}} });
+			""";
+
+		return $$"""
+			// <auto-generated />
+			#nullable enable
+			{{nsHeader}}public sealed record {{mockName}}
+			{
+			{{recordMembers.ToString().TrimEnd()}}
+			}
+
+			public static class {{mockName}}Extensions
+			{
+				public static {{mockName}} Empty { get; } = new() { {{emptyInits}} };
+
+				public static {{vmFull}} Create() => Create(Empty);
+			{{createFromInputs}}
+				public static {{vmFull}} Create({{mockName}} mock)
+				{
+					var vm = new {{vmFull}}(default!);
+					vm.SetModel(mock);
+					return vm;
+				}
+
+				public static void SetModel(this {{vmFull}} vm, {{mockName}} mock)
+				{
+					var model = vm.Model;
+			{{setBody.ToString().TrimEnd()}}
+				}
+			}
+
+			""";
 	}
 
 	private static bool TryGetFeed(ITypeSymbol type, out bool isList, out ITypeSymbol? valueType)
@@ -264,8 +248,7 @@ public sealed class FeedsMockGenerator : ISourceGenerator
 		valueType = null;
 		foreach (var intf in type.AllInterfaces.Concat(type is INamedTypeSymbol nt ? new[] { nt } : Array.Empty<INamedTypeSymbol>()))
 		{
-			var def = intf.OriginalDefinition.ToDisplayString();
-			if (def == "Uno.Extensions.Reactive.IListFeed<T>" || intf.OriginalDefinition.MetadataName == "IListFeed`1")
+			if (intf.OriginalDefinition.MetadataName == "IListFeed`1")
 			{
 				isList = true;
 				valueType = intf.TypeArguments.FirstOrDefault();

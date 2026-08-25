@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Uno.Extensions.Reactive.Core;
-using Uno.Extensions.Reactive.Mocking;
+using Uno.HotTesting.Reactive;
 using Uno.Extensions.Reactive.Testing;
 using Uno.Extensions.Reactive.Tests.MockingApp;
 
@@ -40,7 +40,7 @@ public class Given_GeneratedMock : FeedUITests
 	{
 		using (MockingService.Enable())
 		{
-			var vm = RecipeModelMockExtensions.Create(MockListFeed.Value(1, 2, 3));
+			var vm = RecipeModelMockExtensions.Create(ListFeedMock.Value(1, 2, 3));
 			using var _ = SourceContext.GetOrCreate(vm.Model).AsCurrent();
 
 			var items = await CurrentItems(SourceContext.GetOrCreate(vm.Model), vm.Model.Steps);
@@ -53,13 +53,13 @@ public class Given_GeneratedMock : FeedUITests
 	{
 		using (MockingService.Enable())
 		{
-			var vm = RecipeModelMockExtensions.Create(MockListFeed.Value(1));
+			var vm = RecipeModelMockExtensions.Create(ListFeedMock.Value(1));
 			using var _ = SourceContext.GetOrCreate(vm.Model).AsCurrent();
 
 			(await CurrentItems(SourceContext.GetOrCreate(vm.Model), vm.Model.Steps))
 				.Should().BeEquivalentTo(new[] { 1 });
 
-			vm.SetModel(new RecipeModelMock { Steps = MockListFeed.Value(7, 8) });
+			vm.SetModel(new RecipeModelMock { Steps = ListFeedMock.Value(7, 8) });
 
 			(await CurrentItems(SourceContext.GetOrCreate(vm.Model), vm.Model.Steps))
 				.Should().BeEquivalentTo(new[] { 7, 8 });
@@ -87,8 +87,8 @@ public class Given_GeneratedMock : FeedUITests
 			var executed = false;
 			var vm = RecipeModelMockExtensions.Create(new RecipeModelMock
 			{
-				Steps = MockListFeed.Value(1),
-				Save = MockCommand.Callback(_ => executed = true),
+				Steps = ListFeedMock.Value(1),
+				Save = CommandMock.Callback(_ => executed = true),
 			});
 
 			vm.Save.Should().NotBeNull();

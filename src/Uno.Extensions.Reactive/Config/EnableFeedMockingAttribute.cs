@@ -4,10 +4,11 @@ using System.Linq;
 namespace Uno.Extensions.Reactive.Config;
 
 /// <summary>
-/// Opt-in for the MVUX mocking metadata generation (spec 013). When present on an assembly, the MVUX
-/// generator emits the mocking seams (dependency attributes, the view-model null-inject construction
-/// path and the command seam) required by the external mocking generator. When absent, MVUX output is
-/// byte-identical to the non-mocking output (additive, zero-cost opt-out).
+/// Configures MVUX mocking metadata generation (spec 013). The instrumentation (dependency attributes
+/// + the command seam) is emitted <b>by default</b> — the runtime, not the generator, decides whether
+/// mocking is active (via <c>MockingService.Enable()</c>). Add <c>[assembly: EnableFeedMocking(IsEnabled = false)]</c>
+/// to opt out and restore byte-identical MVUX output. Follows the same on-by-default / opt-out model as
+/// the other MVUX generation attributes.
 /// </summary>
 [AttributeUsage(AttributeTargets.Assembly)]
 public sealed class EnableFeedMockingAttribute : Attribute

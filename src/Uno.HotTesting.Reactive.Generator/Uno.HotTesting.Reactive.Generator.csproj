@@ -5,8 +5,8 @@
 		<IsPackable>false</IsPackable>
 		<ImplicitUsings>false</ImplicitUsings>
 
-		<!-- Ships as the analyzer/tool of the Mocking package -->
-		<ToolOfPackage>Uno.Extensions.Reactive.Mocking</ToolOfPackage>
+		<!-- Ships as the analyzer/tool of the Uno.HotTesting.Reactive package -->
+		<ToolOfPackage>Uno.HotTesting.Reactive</ToolOfPackage>
 
 		<NoWarn>$(NoWarn);RS2008</NoWarn>
 	</PropertyGroup>
