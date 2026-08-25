@@ -99,6 +99,46 @@ internal partial class ViewModelGenTool_3
 		return sb.ToString();
 	}
 
+	/// <summary>
+	/// Emits the view-model mocking seam (spec 013, gated by opt-in). Commands have no
+	/// <c>IHotSwapState&lt;T&gt;</c> backing, so the reflection swap (D11) cannot reach them: a dedicated
+	/// public <c>__Mock_SetCommand</c> hook lets the external mocking generator override a command
+	/// after construction. Fail-hard: an unknown command name throws (strict mocking, like D11).
+	///
+	/// Construction itself needs NO seam: the generated public constructors + the ambient
+	/// <c>MockingService.Enable()</c> scope (D12) already produce a mockable <c>SourceContext</c>
+	/// (the bit is captured on the context instance at creation, so a lazy first subscription after
+	/// the scope is disposed still wraps).
+	/// </summary>
+	private string GenerateVmMockingSeam(IEnumerable<IMappedMember> members)
+	{
+		if (!_ctx.IsMockingEnabled())
+		{
+			return string.Empty; // opt-out → byte-identical output (G5)
+		}
+
+		var commands = members.OfType<CommandFromMethod>().ToList();
+		if (commands.Count == 0)
+		{
+			return string.Empty;
+		}
+
+		var cases = commands
+			.Select(c => $"case \"{c.Name}\": {c.Name} = command; break;")
+			.JoinBy("\r\n");
+
+		return $@"
+			[global::System.ComponentModel.EditorBrowsable(global::System.ComponentModel.EditorBrowsableState.Never)]
+			public void __Mock_SetCommand(string name, {NS.Reactive}.IAsyncCommand command)
+			{{
+				switch (name)
+				{{
+					{cases}
+					default: throw new global::System.ArgumentException($""No mockable command '{{name}}' on this view model."", nameof(name));
+				}}
+			}}";
+	}
+
 	private bool IsFeedMember(ISymbol member)
 	{
 		var type = member switch

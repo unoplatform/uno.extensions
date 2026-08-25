@@ -239,6 +239,8 @@ internal partial class ViewModelGenTool_3 : ICodeGenTool
 					public {(hasBaseType ? "new ":"")}{model.ToFullString()} {N.Model} => global::System.Runtime.CompilerServices.Unsafe.As<{model.ToFullString()}>(__reactiveModel!);
 
 					{members.Select(member => member.GetDeclaration()).Align(5)}
+
+					{GenerateVmMockingSeam(members).Align(5)}
 				}}");
 
 
