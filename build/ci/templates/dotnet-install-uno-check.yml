@@ -1,0 +1,40 @@
+parameters:
+  # Same values as dotnet-install-windows.yml / dotnet-install-mac.yml - the lanes must install the
+  # same SDK and run the same uno-check, or a stage builds against a different toolchain than the
+  # one it is compared against.
+  DotNetVersion: '9.0.200'
+  UnoCheck_Version: '1.30.1'
+  UnoCheckParameters: ''
+  # Opt-in: let uno-check install / validate the Android SDK. Defaults to skipped so the desktop
+  # and WebAssembly lanes don't pay the cost. Android build stages set this to true so sdkmanager
+  # provisions platform-tools + platforms + build-tools on the runner.
+  InstallAndroidSdk: false
+
+steps:
+  - template: dotnet-install.yml
+    parameters:
+      DotNetVersion: '${{ parameters.DotNetVersion }}'
+      UnoCheck_Version: '${{ parameters.UnoCheck_Version }}'
+      UnoCheckParameters: '${{ parameters.UnoCheckParameters }}'
+
+  - template: jdk-setup.yml
+
+  # pwsh rather than powershell: this template runs on Linux and macOS agents too, where the
+  # `powershell` shortcut (Windows PowerShell) is not available.
+  - ${{ if eq(parameters.InstallAndroidSdk, true) }}:
+    - pwsh: |
+        & dotnet tool update --global uno.check --version ${{ parameters.UnoCheck_Version }} --add-source https://api.nuget.org/v3/index.json
+        & uno-check -v --ci --non-interactive --fix --skip xcode --skip gtk3 --skip vswin --skip vsmac --skip androidemulator ${{ parameters.UnoCheckParameters }}
+      displayName: 'Install .NET Workloads (with Android SDK)'
+      errorActionPreference: continue
+      ignoreLASTEXITCODE: true
+      retryCountOnTaskFailure: 3
+
+  - ${{ if ne(parameters.InstallAndroidSdk, true) }}:
+    - pwsh: |
+        & dotnet tool update --global uno.check --version ${{ parameters.UnoCheck_Version }} --add-source https://api.nuget.org/v3/index.json
+        & uno-check -v --ci --non-interactive --fix --skip xcode --skip gtk3 --skip vswin --skip vsmac --skip androidsdk --skip androidemulator ${{ parameters.UnoCheckParameters }}
+      displayName: 'Install .NET Workloads'
+      errorActionPreference: continue
+      ignoreLASTEXITCODE: true
+      retryCountOnTaskFailure: 3

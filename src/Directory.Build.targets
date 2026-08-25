@@ -1,4 +1,4 @@
-<Project ToolsVersion="15.0">
+﻿<Project ToolsVersion="15.0">
 
 	<PropertyGroup>
 		<!--
@@ -93,8 +93,20 @@
 
 	<ItemDefinitionGroup>
 		<ProjectReference>
-			 <!--Prevent projects from duplicating assemblies in every output folder-->
-			<Private Condition="'$(OutputType)' == 'library' and '$(NugetOverrideVersion)'==''">false</Private>
+			<!--
+				Prevent projects from duplicating assemblies in every output folder.
+
+				AndroidApplication is excluded deliberately: .NET Android rewrites an app head's
+				OutputType to 'Library' (an Android app has no managed entry point), so without that
+				clause an APK head matches this condition while the same head at net9.0-desktop
+				(OutputType=Exe) does not. Every ProjectReference then became Private=false on
+				Android only, which emptied ReferenceCopyLocalPaths, which left the closure out of
+				ResolvedFileToPublish and therefore out of the APK - the app died at
+				Application.OnCreate with `open_from_bundles: failed to load bundled assembly
+				Uno.Extensions.Reactive.dll`. Android *libraries* still get Private=false, which is
+				what this rule is for; only app heads are exempt.
+			-->
+			<Private Condition="'$(OutputType)' == 'library' and '$(NugetOverrideVersion)'=='' and '$(AndroidApplication)' != 'true'">false</Private>
 		</ProjectReference>
 	</ItemDefinitionGroup>
 </Project>

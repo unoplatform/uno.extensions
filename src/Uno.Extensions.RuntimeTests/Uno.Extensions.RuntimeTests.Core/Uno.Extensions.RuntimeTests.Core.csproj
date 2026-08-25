@@ -1,4 +1,4 @@
-<Project Sdk="Uno.Sdk.Private">
+﻿<Project Sdk="Uno.Sdk.Private">
   <Import Project="..\..\tfms-ui-winui.props" />
 
 	<PropertyGroup>
@@ -7,6 +7,23 @@
 		<DefineConstants>$(DefineConstants);WINUI</DefineConstants>
 		<DefineConstants Condition="'$(_IsWinUI)'=='true'">$(DefineConstants);WINDOWS_WINUI</DefineConstants>
 		<WarningsNotAsErrors>$(WarningsNotAsErrors);Uno0001</WarningsNotAsErrors>
+	</PropertyGroup>
+
+	<!--
+		Uno.UI.RuntimeTests.Engine compiles from source and guards its Console.CancelKeyPress
+		registration - unsupported in the browser - with `#if !__WASM__`. Uno.Sdk stopped defining
+		__WASM__ for consumer projects, so without this the WebAssembly runtime-test head throws
+		PlatformNotSupportedException before the first test runs (build 228808). The symbol also switches
+		on branches that call WebAssemblyRuntime.InvokeJS, which WebAssemblyRuntimeShim.cs supplies.
+		Remove both once the engine uses a runtime check instead.
+	-->
+	<PropertyGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'browserwasm'">
+		<DefineConstants>$(DefineConstants);__WASM__</DefineConstants>
+		<!-- The JS interop generator emits unsafe marshalling code (SYSLIB1074). -->
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+	</PropertyGroup>
+
+	<PropertyGroup>
 		<!--<ManagePackageVersionsCentrally>false</ManagePackageVersionsCentrally>-->
 
     <UnoSingleProject>true</UnoSingleProject>

@@ -12,7 +12,7 @@ using Uno.Extensions.Navigation.UI;
 namespace Uno.Extensions.Navigation.UI.Tests;
 
 [TestClass]
-public class Given_NavigationRouteUpdateHandler
+public partial class Given_NavigationRouteUpdateHandler
 {
 	[TestMethod]
 	public void When_Unregister_Then_ContextLiveTreeReferencesCleared()

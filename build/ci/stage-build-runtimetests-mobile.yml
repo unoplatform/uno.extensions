@@ -1,0 +1,202 @@
+﻿# Builds the runtime-tests app for the mobile / wasm heads and publishes each as a pipeline
+# artifact. Split from the stages that *run* them so a Linux agent can build the Android APK while
+# the emulator job (and the macOS-hosted iOS job) consume the artifacts afterwards - the same
+# split Studio Live uses.
+jobs:
+  - job: Build_RuntimeTests_Android
+    displayName: 'Build Runtime Tests - Android'
+    timeoutInMinutes: 60
+    pool:
+      vmImage: 'ubuntu-24.04'
+
+    variables:
+      # Read by host-cleanup-linux.sh: this is the one Linux job that needs the agent's Android
+      # SDK, so the cleanup must not reclaim it (otherwise XA5300 at build time).
+      KEEP_ANDROID_SDK: 1
+
+    steps:
+      - checkout: self
+        clean: true
+
+      # Before anything writes to disk: the Android SDK, the workspace-local .dotnet and the cache
+      # tarball together exhaust a hosted agent's free space, which surfaces as
+      # "tar: Wrote only 8192 of 10240 bytes" in the cache post-job rather than as an obvious
+      # out-of-disk error.
+      - template: templates/host-cleanup-linux.yml
+
+      # The whole project graph fails with NETSDK1147 without the android workload, including the
+      # *.UI.Tests projects pulled in as ProjectReferences. InstallAndroidSdk additionally
+      # provisions the platform jars the APK build needs.
+      - template: templates/dotnet-install-uno-check.yml
+        parameters:
+          InstallAndroidSdk: true
+
+      - template: templates/canary-updater.yml
+
+      # EmbedAssembliesIntoApk: defaults to false in Debug, which is Fast Deployment - the
+      # assemblies stay out of the APK and are pushed separately by `dotnet build -t:Install`.
+      # A plain `adb install` of that APK produces an app with no managed code, which aborts at
+      # startup with "No assemblies found in .../.__override__/x86_64" (build 228848). The lane
+      # installs a standalone artifact, so the assemblies have to be inside it.
+      - script: |
+          dotnet publish src/Uno.Extensions.RuntimeTests/Uno.Extensions.RuntimeTests/Uno.Extensions.RuntimeTests.csproj \
+            -c Debug -f net9.0-android \
+            -p:EmbedAssembliesIntoApk=true \
+            -p:Build_Windows=false -p:Build_iOS=false -p:Build_MacCatalyst=false -p:Build_Web=false \
+            -p:UnoDisableHotDesign=true -p:UnoDisableMCPSupport=true \
+            -o $(build.artifactstagingdirectory)/android-runtime-tests \
+            -bl:$(build.artifactstagingdirectory)/binlogs/build-android-runtime-tests.binlog
+        displayName: 'Publish Android runtime tests APK'
+
+      - task: PublishPipelineArtifact@1
+        inputs:
+          targetPath: $(build.artifactstagingdirectory)/android-runtime-tests
+          artifactName: android-runtime-tests
+
+      - task: PublishBuildArtifacts@1
+        condition: failed()
+        inputs:
+          PathtoPublish: $(build.artifactstagingdirectory)/binlogs
+          ArtifactName: android-runtime-tests-binlogs
+
+  - job: Build_RuntimeTests_Wasm
+    displayName: 'Build Runtime Tests - WebAssembly'
+    timeoutInMinutes: 60
+    pool:
+      vmImage: 'ubuntu-24.04'
+
+    steps:
+      - checkout: self
+        clean: true
+
+      # See the Android job: without this the cache post-job runs the agent out of disk.
+      - template: templates/host-cleanup-linux.yml
+
+      # uno-check --fix installs the wasm-tools workload; without it the build fails UNOWA0001.
+      - template: templates/dotnet-install-uno-check.yml
+      - template: templates/canary-updater.yml
+
+      # `build`, not `publish`, matching stage-build-wasm.yml and wasm-uitest-run.sh. Publishing a
+      # WebAssembly head runs the trimmer, and third-party assemblies (Uno.Toolkit.WinUI,
+      # Uno.UI.HotDesign.*, Uno.UI.App.Mcp.Client) emit IL2104 trim warnings that TreatWarningsAsErrors
+      # turns into build errors. Trimming a runtime-test host is the wrong thing to do anyway - the
+      # engine discovers tests by reflection, which is exactly what the trimmer removes.
+      - script: |
+          dotnet build src/Uno.Extensions.RuntimeTests/Uno.Extensions.RuntimeTests/Uno.Extensions.RuntimeTests.csproj \
+            -c Debug -f net9.0-browserwasm \
+            -p:Build_Windows=false -p:Build_iOS=false -p:Build_MacCatalyst=false -p:Build_Android=false \
+            -p:UseWebAssemblyAOT=false \
+            -p:UnoDisableHotDesign=true -p:UnoDisableMCPSupport=true \
+            -bl:$(build.artifactstagingdirectory)/binlogs/build-wasm-runtime-tests.binlog
+        displayName: 'Build WebAssembly runtime tests'
+
+      # wwwroot is the served site root - the same output stage-build-wasm.yml publishes.
+      - task: CopyFiles@2
+        displayName: 'Stage WebAssembly output'
+        inputs:
+          SourceFolder: $(Build.SourcesDirectory)/src/Uno.Extensions.RuntimeTests/Uno.Extensions.RuntimeTests/bin/Uno.Extensions.RuntimeTests/Debug/net9.0-browserwasm/wwwroot
+          Contents: '**/*.*'
+          TargetFolder: $(build.artifactstagingdirectory)/wasm-runtime-tests
+
+      - task: PublishPipelineArtifact@1
+        inputs:
+          targetPath: $(build.artifactstagingdirectory)/wasm-runtime-tests
+          artifactName: wasm-runtime-tests
+
+      - task: PublishBuildArtifacts@1
+        condition: failed()
+        inputs:
+          PathtoPublish: $(build.artifactstagingdirectory)/binlogs
+          ArtifactName: wasm-runtime-tests-binlogs
+
+  - job: Build_RuntimeTests_iOS
+    displayName: 'Build Runtime Tests - iOS'
+    timeoutInMinutes: 60
+    pool:
+      vmImage: $(IosVmImage)
+
+    variables:
+      # The simulator runtime this .app is linked against must also exist on the agent that runs
+      # it. Both the image and the Xcode root are pipeline-level variables so the build job and the
+      # test job can never drift apart - that pairing is the failure mode Studio Live hit most.
+      xCodeRoot: $(IosXCodeRoot)
+
+    steps:
+      - checkout: self
+        clean: true
+
+      # Same cross-platform template as the Linux jobs - it installs the ios workload via
+      # uno-check. dotnet-install-mac.yml is not used: it additionally installs .NET 5 and 3.1,
+      # which nothing here needs, and until this stage existed it had no callers at all.
+      - template: templates/dotnet-install-uno-check.yml
+      - template: templates/canary-updater.yml
+
+      # NOT templates/ios-build-select-version.yml: that template is Xamarin-era and `ls`es
+      # /Library/Frameworks/Xamarin.*.framework, which no longer exist on the hosted macOS images -
+      # it exits 1 before doing anything. Nothing in this repo built iOS in CI, so it went stale
+      # unnoticed. Select Xcode directly instead.
+      - bash: |
+          set -uo pipefail
+          echo "Xcode versions available on this agent:"
+          ls -d /Applications/Xcode*.app 2>/dev/null || true
+          if [ -d "$(xCodeRoot)" ]; then
+            sudo xcode-select --switch "$(xCodeRoot)"
+          else
+            echo "WARNING: $(xCodeRoot) not found - continuing with the agent default so the log"
+            echo "above shows what to pin IosXCodeRoot to."
+          fi
+          xcodebuild -version
+          echo "Agent architecture: $(uname -m)"
+          echo "Installed simulator runtimes:"
+          xcrun simctl list runtimes || true
+          echo "Available simulator devices:"
+          xcrun simctl list devices available || true
+        displayName: 'Select Xcode'
+
+      # `build`, not `publish`. Publishing an iOS project requires a *device* runtime identifier -
+      # `dotnet publish` rejects a simulator RID outright:
+      #   "A runtime identifier for a device architecture must be specified in order to publish
+      #    this project. 'iossimulator-x64' is a simulator architecture."
+      # No explicit RID either: for a build, the iOS SDK defaults to the simulator RID matching the
+      # agent's own architecture, which is what the simulator in the test stage can actually run.
+      # Hard-coding x64 would produce an app the simulator has to translate on an arm64 agent.
+      # CodesignRequireProvisioningProfile=false: the head's Entitlements.plist declares a
+      # keychain-access-group (MSAL cannot build a PublicClientApplication on iOS without one -
+      # see the plist for why), and a non-empty entitlements file makes the iOS SDK demand a
+      # provisioning profile, which a hosted agent with no Apple team cannot supply. The flag is
+      # passed here rather than set in the csproj so it applies only to this simulator-only CI
+      # build and never to a device build.
+      - script: |
+          dotnet build src/Uno.Extensions.RuntimeTests/Uno.Extensions.RuntimeTests/Uno.Extensions.RuntimeTests.csproj \
+            -c Debug -f net9.0-ios \
+            -p:CodesignRequireProvisioningProfile=false \
+            -p:Build_Windows=false -p:Build_Android=false -p:Build_MacCatalyst=false -p:Build_Web=false \
+            -p:UnoDisableHotDesign=true -p:UnoDisableMCPSupport=true \
+            -bl:$(build.artifactstagingdirectory)/binlogs/build-ios-runtime-tests.binlog
+        displayName: 'Build iOS simulator runtime tests'
+
+      # Locate the .app rather than hard-coding the RID subfolder, so this keeps working whichever
+      # simulator architecture the agent defaults to.
+      - bash: |
+          set -euo pipefail
+          app_bundle="$(find src/Uno.Extensions.RuntimeTests/Uno.Extensions.RuntimeTests/bin -type d -name '*.app' -print | head -n 1)"
+          if [ -z "${app_bundle}" ]; then
+            echo "ERROR: no .app bundle produced under bin/" >&2
+            find src/Uno.Extensions.RuntimeTests/Uno.Extensions.RuntimeTests/bin -maxdepth 4 -type d >&2 || true
+            exit 1
+          fi
+          echo "Staging ${app_bundle}"
+          mkdir -p "$(build.artifactstagingdirectory)/ios-runtime-tests"
+          cp -R "${app_bundle}" "$(build.artifactstagingdirectory)/ios-runtime-tests/"
+        displayName: 'Stage iOS .app bundle'
+
+      - task: PublishPipelineArtifact@1
+        inputs:
+          targetPath: $(build.artifactstagingdirectory)/ios-runtime-tests
+          artifactName: ios-runtime-tests
+
+      - task: PublishBuildArtifacts@1
+        condition: failed()
+        inputs:
+          PathtoPublish: $(build.artifactstagingdirectory)/binlogs
+          ArtifactName: ios-runtime-tests-binlogs
