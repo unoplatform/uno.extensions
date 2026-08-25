@@ -361,8 +361,7 @@ internal record MsalAuthenticationProvider(
 			_pca!.AppConfig.ClientId,
 			config?.KeychainServiceName,
 			config?.KeychainAccountName,
-			OperatingSystem.IsMacOS(),
-			OperatingSystem.IsLinux());
+			MsalStorageDefaults.ForCurrentOS());
 		Settings?.Store?.Invoke(builder);
 		var storage = builder.Build();
 		try

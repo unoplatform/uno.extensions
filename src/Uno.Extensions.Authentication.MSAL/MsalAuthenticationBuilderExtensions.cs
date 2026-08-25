@@ -22,9 +22,6 @@ public static class MsalAuthenticationBuilderExtensions
 		Action<PublicClientApplicationBuilder> build
 		)
 	{
-#if !UNO_EXT_MSAL
-		return builder;
-#else
 		if (builder is IBuilder<MsalAuthenticationSettings> authBuilder)
 		{
 			authBuilder.Settings = authBuilder.Settings with
@@ -34,7 +31,6 @@ public static class MsalAuthenticationBuilderExtensions
 		}
 
 		return builder;
-#endif
 	}
 
 	/// <summary>
@@ -63,9 +59,6 @@ public static class MsalAuthenticationBuilderExtensions
 		Action<AcquireTokenInteractiveParameterBuilder> build
 		)
 	{
-#if !UNO_EXT_MSAL
-		return builder;
-#else
 		if (builder is IBuilder<MsalAuthenticationSettings> authBuilder)
 		{
 			authBuilder.Settings = authBuilder.Settings with
@@ -75,7 +68,6 @@ public static class MsalAuthenticationBuilderExtensions
 		}
 
 		return builder;
-#endif
 	}
 
 	/// <summary>
@@ -95,9 +87,6 @@ public static class MsalAuthenticationBuilderExtensions
 		Action<StorageCreationPropertiesBuilder> store
 		)
 	{
-#if !UNO_EXT_MSAL
-		return builder;
-#else
 		if (builder is IBuilder<MsalAuthenticationSettings> authBuilder)
 		{
 			authBuilder.Settings = authBuilder.Settings with
@@ -107,7 +96,6 @@ public static class MsalAuthenticationBuilderExtensions
 		}
 
 		return builder;
-#endif
 	}
 
 	/// <summary>
@@ -127,9 +115,6 @@ public static class MsalAuthenticationBuilderExtensions
 		string[] scopes
 		)
 	{
-#if !UNO_EXT_MSAL
-		return builder;
-#else
 		if (builder is IBuilder<MsalAuthenticationSettings> authBuilder)
 		{
 			authBuilder.Settings = authBuilder.Settings with
@@ -139,7 +124,6 @@ public static class MsalAuthenticationBuilderExtensions
 		}
 
 		return builder;
-#endif
 	}
 
 	/// <summary>

@@ -20,7 +20,7 @@ public class Given_MsalStorageDefaults
 	{
 		var builder = CreateBuilder();
 
-		MsalStorageDefaults.ApplyDefaults(builder, ClientId, configuredServiceName: null, configuredAccountName: null, isMacOS: true, isLinux: false);
+		MsalStorageDefaults.ApplyDefaults(builder, ClientId, configuredServiceName: null, configuredAccountName: null, MsalSecureStore.MacKeychain);
 		var properties = builder.Build();
 
 		properties.MacKeyChainServiceName.Should().Be($"uno.extensions.msal.{ClientId}");
@@ -32,7 +32,7 @@ public class Given_MsalStorageDefaults
 	{
 		var builder = CreateBuilder();
 
-		MsalStorageDefaults.ApplyDefaults(builder, ClientId, configuredServiceName: "com.contoso.myapp", configuredAccountName: "ContosoCache", isMacOS: true, isLinux: false);
+		MsalStorageDefaults.ApplyDefaults(builder, ClientId, configuredServiceName: "com.contoso.myapp", configuredAccountName: "ContosoCache", MsalSecureStore.MacKeychain);
 		var properties = builder.Build();
 
 		properties.MacKeyChainServiceName.Should().Be("com.contoso.myapp");
@@ -44,7 +44,7 @@ public class Given_MsalStorageDefaults
 	{
 		var builder = CreateBuilder();
 
-		MsalStorageDefaults.ApplyDefaults(builder, ClientId, configuredServiceName: "", configuredAccountName: "", isMacOS: true, isLinux: false);
+		MsalStorageDefaults.ApplyDefaults(builder, ClientId, configuredServiceName: "", configuredAccountName: "", MsalSecureStore.MacKeychain);
 		var properties = builder.Build();
 
 		properties.MacKeyChainServiceName.Should().Be($"uno.extensions.msal.{ClientId}");
@@ -56,7 +56,7 @@ public class Given_MsalStorageDefaults
 	{
 		var builder = CreateBuilder();
 
-		MsalStorageDefaults.ApplyDefaults(builder, clientId: null, configuredServiceName: null, configuredAccountName: null, isMacOS: true, isLinux: false);
+		MsalStorageDefaults.ApplyDefaults(builder, clientId: null, configuredServiceName: null, configuredAccountName: null, MsalSecureStore.MacKeychain);
 		var properties = builder.Build();
 
 		properties.MacKeyChainServiceName.Should().Be("uno.extensions.msal");
@@ -69,7 +69,7 @@ public class Given_MsalStorageDefaults
 		// so an app calling WithMacKeyChain itself must win over the defaults.
 		var builder = CreateBuilder();
 
-		MsalStorageDefaults.ApplyDefaults(builder, ClientId, configuredServiceName: null, configuredAccountName: null, isMacOS: true, isLinux: false);
+		MsalStorageDefaults.ApplyDefaults(builder, ClientId, configuredServiceName: null, configuredAccountName: null, MsalSecureStore.MacKeychain);
 		builder.WithMacKeyChain("app.custom.service", "AppCustomAccount");
 		var properties = builder.Build();
 
@@ -82,7 +82,7 @@ public class Given_MsalStorageDefaults
 	{
 		var builder = CreateBuilder();
 
-		MsalStorageDefaults.ApplyDefaults(builder, ClientId, configuredServiceName: null, configuredAccountName: null, isMacOS: false, isLinux: true);
+		MsalStorageDefaults.ApplyDefaults(builder, ClientId, configuredServiceName: null, configuredAccountName: null, MsalSecureStore.LinuxKeyring);
 		var properties = builder.Build();
 
 		properties.KeyringSchemaName.Should().Be("com.unoplatform.extensions.tokencache");
@@ -97,7 +97,7 @@ public class Given_MsalStorageDefaults
 	{
 		var builder = CreateBuilder();
 
-		MsalStorageDefaults.ApplyDefaults(builder, ClientId, configuredServiceName: null, configuredAccountName: null, isMacOS: false, isLinux: false);
+		MsalStorageDefaults.ApplyDefaults(builder, ClientId, configuredServiceName: null, configuredAccountName: null, MsalSecureStore.None);
 		var properties = builder.Build();
 
 		// Windows relies on DPAPI file protection; no keychain/keyring properties are required.

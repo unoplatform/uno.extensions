@@ -6,6 +6,20 @@
 namespace Uno.Extensions.Authentication.MSAL;
 
 /// <summary>
+/// The OS secure store that <see cref="MsalCacheHelper"/> must be told about before it can
+/// persist the token cache on desktop. One value per platform: the two are never both true.
+/// </summary>
+internal enum MsalSecureStore
+{
+	/// <summary>Windows (DPAPI file protection) and everything else: no extra properties.</summary>
+	None,
+	/// <summary>The macOS keychain.</summary>
+	MacKeychain,
+	/// <summary>The Linux keyring (libsecret).</summary>
+	LinuxKeyring,
+}
+
+/// <summary>
 /// Computes the default token-cache storage properties used by MsalAuthenticationProvider
 /// when the app doesn't supply its own via <see cref="MsalAuthenticationBuilderExtensions.Storage"/>.
 /// </summary>
@@ -44,25 +58,32 @@ internal static class MsalStorageDefaults
 		string? clientId,
 		string? configuredServiceName,
 		string? configuredAccountName,
-		bool isMacOS,
-		bool isLinux)
+		MsalSecureStore store)
 	{
-		if (isMacOS)
+		switch (store)
 		{
-			builder.WithMacKeyChain(
-				GetMacKeychainServiceName(configuredServiceName, clientId),
-				GetMacKeychainAccountName(configuredAccountName));
-		}
-
-		if (isLinux)
-		{
-			builder.WithLinuxKeyring(
-				LinuxKeyringSchemaName,
-				MsalCacheHelper.LinuxKeyRingDefaultCollection,
-				LinuxKeyringSecretLabel,
-				new KeyValuePair<string, string>(LinuxKeyringClientIdAttributeKey, clientId ?? string.Empty),
-				new KeyValuePair<string, string>(LinuxKeyringProductAttributeKey, LinuxKeyringProductAttributeValue));
+			case MsalSecureStore.MacKeychain:
+				builder.WithMacKeyChain(
+					GetMacKeychainServiceName(configuredServiceName, clientId),
+					GetMacKeychainAccountName(configuredAccountName));
+				break;
+			case MsalSecureStore.LinuxKeyring:
+				builder.WithLinuxKeyring(
+					LinuxKeyringSchemaName,
+					MsalCacheHelper.LinuxKeyRingDefaultCollection,
+					LinuxKeyringSecretLabel,
+					new KeyValuePair<string, string>(LinuxKeyringClientIdAttributeKey, clientId ?? string.Empty),
+					new KeyValuePair<string, string>(LinuxKeyringProductAttributeKey, LinuxKeyringProductAttributeValue));
+				break;
 		}
 	}
+
+	/// <summary>
+	/// The store <see cref="MsalCacheHelper"/> needs configured on the current desktop OS.
+	/// </summary>
+	internal static MsalSecureStore ForCurrentOS() =>
+		OperatingSystem.IsMacOS() ? MsalSecureStore.MacKeychain
+		: OperatingSystem.IsLinux() ? MsalSecureStore.LinuxKeyring
+		: MsalSecureStore.None;
 }
 #endif
