@@ -27,7 +27,7 @@ public static class MockModel
 	{
 		var ctx = SourceContext.GetOrCreate(owner);
 		var state = ctx.GetOrCreateState(current);
-		if (state is not IHotSwapState<T> hotSwap)
+		if (state is not IHotSwapState<T> hotSwap || !hotSwap.CanHotSwap)
 		{
 			throw new InvalidOperationException(
 				$"The feed for the mocked member is not swappable (no HotSwapFeed wrapper). "
@@ -46,7 +46,7 @@ public static class MockModel
 		var ctx = SourceContext.GetOrCreate(owner);
 		var currentFeed = ListFeed.AsFeed(current);
 		var state = ctx.GetOrCreateState(currentFeed);
-		if (state is not IHotSwapState<IImmutableList<T>> hotSwap)
+		if (state is not IHotSwapState<IImmutableList<T>> hotSwap || !hotSwap.CanHotSwap)
 		{
 			throw new InvalidOperationException(
 				$"The list-feed for the mocked member is not swappable (no HotSwapFeed wrapper). "
