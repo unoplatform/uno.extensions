@@ -65,4 +65,36 @@ public class Given_GeneratedMock : FeedUITests
 				.Should().BeEquivalentTo(new[] { 7, 8 });
 		}
 	}
+
+	[TestMethod]
+	public async Task When_CreateDefault_Then_InputsAreEmpty()
+	{
+		using (MockingService.Enable())
+		{
+			var vm = RecipeModelMockExtensions.Create(); // Empty → Steps = None
+			using var _ = SourceContext.GetOrCreate(vm.Model).AsCurrent();
+
+			var items = await CurrentItems(SourceContext.GetOrCreate(vm.Model), vm.Model.Steps);
+			items.Should().BeNull("Empty pins the input to None");
+		}
+	}
+
+	[TestMethod]
+	public void When_CommandOverridden_Then_VmCommandInvokesMock()
+	{
+		using (MockingService.Enable())
+		{
+			var executed = false;
+			var vm = RecipeModelMockExtensions.Create(new RecipeModelMock
+			{
+				Steps = MockListFeed.Value(1),
+				Save = MockCommand.Callback(_ => executed = true),
+			});
+
+			vm.Save.Should().NotBeNull();
+			vm.Save.CanExecute(null).Should().BeTrue();
+			vm.Save.Execute(null);
+			executed.Should().BeTrue("SetModel routed the mock command through __Mock_SetCommand");
+		}
+	}
 }

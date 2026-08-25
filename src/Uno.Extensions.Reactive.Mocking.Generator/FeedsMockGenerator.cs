@@ -149,7 +149,22 @@ public sealed class FeedsMockGenerator : ISourceGenerator
 			(onFeed is not null ? derived : inputs).Add(fm);
 		}
 
-		if (inputs.Count == 0 && derived.Count == 0)
+		// Commands: the generated VM exposes them as public IAsyncCommand properties, overridable via
+		// the __Mock_SetCommand seam (emitted by the MVUX generator under opt-in).
+		var commands = vm.GetMembers()
+			.OfType<IPropertySymbol>()
+			.Where(pr => !pr.IsStatic && pr.DeclaredAccessibility == Accessibility.Public
+				&& pr.Type.ToDisplayString() == "Uno.Extensions.Reactive.IAsyncCommand")
+			.Select(pr => pr.Name)
+			.ToList();
+
+		var hasMockCommandSeam = vm.GetMembers("__Mock_SetCommand").Any();
+		if (!hasMockCommandSeam)
+		{
+			commands.Clear(); // no seam → cannot override commands
+		}
+
+		if (inputs.Count == 0 && derived.Count == 0 && commands.Count == 0)
 		{
 			return null;
 		}
@@ -179,12 +194,27 @@ public sealed class FeedsMockGenerator : ISourceGenerator
 		{
 			sb.AppendLine($"\tpublic {m.FeedTypeFullName}? {m.Name} {{ get; init; }}");
 		}
+		foreach (var c in commands)
+		{
+			sb.AppendLine($"\tpublic global::Uno.Extensions.Reactive.IAsyncCommand? {c} {{ get; init; }}");
+		}
 		sb.AppendLine("}");
 		sb.AppendLine();
 
 		// The factory + facade.
 		sb.AppendLine($"public static class {mockName}Extensions");
 		sb.AppendLine("{");
+
+		// Empty — every service-dependent input set to its type's Empty state.
+		var emptyInits = string.Join(", ", inputs.Select(m => m.IsList
+			? $"{m.Name} = global::Uno.Extensions.Reactive.Mocking.MockListFeed.Empty<{m.ItemOrValueFullName}>()"
+			: $"{m.Name} = global::Uno.Extensions.Reactive.Mocking.MockFeed.Empty<{m.ItemOrValueFullName}>()"));
+		sb.AppendLine($"\tpublic static {mockName} Empty {{ get; }} = new() {{ {emptyInits} }};");
+		sb.AppendLine();
+
+		// Create() — every input Empty.
+		sb.AppendLine($"\tpublic static {vmFull} Create() => Create(Empty);");
+		sb.AppendLine();
 
 		// Create(inputs...) — required inputs as parameters.
 		var createParams = string.Join(", ", inputs.Select(m => $"{m.FeedTypeFullName} {Camel(m.Name)}"));
@@ -216,6 +246,11 @@ public sealed class FeedsMockGenerator : ISourceGenerator
 			var swap = m.IsList ? "SwapListFeed" : "SwapFeed";
 			sb.AppendLine($"\t\tif (mock.{m.Name} is not null)");
 			sb.AppendLine($"\t\t\tglobal::Uno.Extensions.Reactive.Mocking.MockModel.{swap}<{m.ItemOrValueFullName}>(model, model.{m.Name}, mock.{m.Name});");
+		}
+		foreach (var c in commands)
+		{
+			sb.AppendLine($"\t\tif (mock.{c} is not null)");
+			sb.AppendLine($"\t\t\tvm.__Mock_SetCommand(\"{c}\", mock.{c});");
 		}
 		sb.AppendLine("\t}");
 		sb.AppendLine("}");
