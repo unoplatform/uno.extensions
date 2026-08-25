@@ -64,18 +64,18 @@ Identity risk (R6): lambdas capturing locals/params produce fresh delegate targe
 
 (Names to bikeshed; semantics fixed: *input vs derived vs independent*, plus *ctor-eager* flags.)
 
-**c) Hidden hooks** (`EditorBrowsable(Never)`, emitted only under the opt-in flag):
+**c) Hidden hooks** (`EditorBrowsable(Never)`, emitted by default — opt-out via `EnableFeedMocking(IsEnabled = false)`):
 - on the **Model partial**: **nothing per-feed** — the swap is reflection over `IHotSwapState<T>` members at runtime (D11), reusing the hot-reload driver, fail-hard. The generator emits no `__Mock_Swap_{Member}`;
 - on the **VM partial**: **no construction seam** — null-inject uses the existing public ctors (`new {Vm}(default!, …)`) under an ambient `MockingService.Enable()` scope (D12: the `SourceContext` built at construction is mockable, captured on the instance). The only emitted seam is `__Mock_SetCommand(string name, IAsyncCommand)` (public, `EditorBrowsable(Never)`, fail-hard) which reassigns a command property post-construction — commands have no `IHotSwapState<T>` and are unreachable by the reflection swap (R2).
 
-### 2.2 Mocking generator (ships in `Uno.Extensions.Reactive.Mocking`, runs in the test/preview project)
+### 2.2 Mocking generator (ships in `Uno.HotTesting.Reactive`, runs in the test/preview project)
 
 Reads the app assembly **metadata** (generated VM/Model types + the attributes above). No syntax trees needed → cross-assembly by construction. Emits **external, generic and strongly typed types/extensions** (partial injection impossible and not needed):
 
 ```csharp
 public record RecipeModelMock
 {
-    public static RecipeModelMock Empty { get; } = new() { Steps = MockListFeed.Empty<Step>() };
+    public static RecipeModelMock Empty { get; } = new() { Steps = ListFeedMock.Empty<Step>() };
     public required IListFeed<Step> Steps { get; init; }     // ServiceDependent input → required
     public IFeed<int>? StepsCount { get; init; }              // Derived → optional override; null = real business logic
     public IAsyncCommand? Save { get; init; }                 // command → optional; null = idle no-op
@@ -200,7 +200,7 @@ The `FeedView.Source` converter above is only an illustration of normal XAML com
 
 ## 4. Tier 3 — complete-model helpers
 
-Pure consumers of §2.2: named catalogs (`static RecipeViewModel BasicRecipe => Create(ListFeed.Value(...))`), selection posed via states (`vm.Selected.Set(1)`), gallery pickers over `MockFeedState`. Hand-written in the test/preview project, optionally scaffolded.
+Pure consumers of §2.2: named catalogs (`static RecipeViewModel BasicRecipe => Create(ListFeed.Value(...))`), selection posed via states (`vm.Selected.Set(1)`), gallery pickers over `FeedMockState`. Hand-written in the test/preview project, optionally scaffolded.
 
 ## 5. End-to-end flow
 
@@ -234,7 +234,7 @@ The activation API is **decided** (D10): mocking exists only inside an explicit 
 ```csharp
 using (MockingService.Enable())
 {
-    var vm = RecipeViewModel.Create(MockListFeed.Value(steps));
+    var vm = RecipeViewModel.Create(ListFeedMock.Value(steps));
 }
 ```
 
@@ -260,4 +260,4 @@ Resolved against the source:
 - **No wrap unless `SourceContext.IsMockingActive`** (§6, D10/D12): the per-feed `HotSwapFeed` indirection must never exist in a live app; a live-app context never has the bit set.
 - **Swap is reflection over `IHotSwapState<T>`, fail-hard** (D11): no per-member generated hook; an un-swappable mocked member throws.
 - Frozen names (Hot Design + tests): `{Model}Mock`, `Empty`, `Create`, `SetModel`, `MockingService.Enable`, `SourceContext.IsMockingActive`, attribute names, the `__Mock_SetCommand` command seam.
-- MVUX output byte-identical when opt-in flag absent.
+- MVUX output byte-identical only when explicitly opted out (`EnableFeedMocking(IsEnabled = false)`); instrumentation is emitted by default.

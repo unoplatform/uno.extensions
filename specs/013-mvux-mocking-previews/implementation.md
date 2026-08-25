@@ -10,11 +10,11 @@ Concrete surfaces, touch-list, phasing, tests. Names bikesheddable; semantics fi
 | Mockable gate + HotSwap wrap at feed cache | core | **`SourceContext.IsMockingActive`** (new per-context bit, D12) read in `StateImpl` ctor; wrap wired at the `AttachedProperty`/factory cache |
 | Authorable `MessageEntry` + `AxisValue` (plain CLR) + internal `MessageEntryFeed` | core | tier-1, AOT-safe, **not** a `DependencyObject` |
 | `FeedView.Source` coercion bridge | `Uno.Extensions.Reactive.UI` | tier-1 |
-| Analysis + hidden hooks emission | `Uno.Extensions.Reactive.Generator` | on Model & VM partials, opt-in only |
-| Mock vocabulary (`MockFeed`/`MockListFeed`/`MockCommand`/`MockFeedState`) | **`Uno.Extensions.Reactive.Mocking`** (new) | referenced by test/preview projects only |
-| Mocking generator (`{Model}Mock`, `Create`, `SetModel`) | `Uno.Extensions.Reactive.Mocking` (analyzer asset) | runs in consumer project, reads app metadata |
+| Analysis + hidden hooks emission | `Uno.Extensions.Reactive.Generator` | on Model & VM partials, on by default (opt-out) |
+| Mock vocabulary (`FeedMock`/`ListFeedMock`/`CommandMock`/`FeedMockState`) | **`Uno.HotTesting.Reactive`** (new) | referenced by test/preview projects only |
+| Mocking generator (`{Model}Mock`, `Create`, `SetModel`) | `Uno.HotTesting.Reactive` (analyzer asset) | runs in consumer project, reads app metadata |
 | Reflection swap driver (reused, fail-hard) | core | reuse hot-reload's `IHotSwapState<T>` iteration; **throw on un-swappable member** (D11) |
-| `MockingService.Enable()` activation scope | `Uno.Extensions.Reactive.Mocking` | frozen name; sets `SourceContext.IsMockingActive` on the ambient/pre-seeded context (§6) |
+| `MockingService.Enable()` activation scope | `Uno.HotTesting.Reactive` | frozen name; sets `SourceContext.IsMockingActive` on the ambient/pre-seeded context (§6) |
 
 ## 2. Core (`Uno.Extensions.Reactive`)
 
@@ -54,7 +54,7 @@ public sealed class CtorDependencyAttribute : Attribute
 
 ## 3. MVUX generator changes (`Uno.Extensions.Reactive.Generator`)
 
-Opt-in: `[assembly: EnableFeedMocking]` (or MSBuild prop). When absent → byte-identical output.
+On by default (the runtime decides activation). Opt-out: `[assembly: EnableFeedMocking(IsEnabled = false)]` → byte-identical MVUX output.
 
 1. **Analysis pass** (per Model): classify members `ServiceDependent(param) | DerivedFrom(feed) | Independent`; lambda/anonymous/local-function bodies = deferred boundary. **Ctor instrumentation**: walk ctor bodies + field/property initializers + primary-ctor eager captures → mark `CtorDependency(Eager=true)` per offending parameter. Hand-declared attributes override/merge (author is the escape hatch).
 2. **Emit attributes** (§2.1) on the generated Model partial.
@@ -63,11 +63,11 @@ Opt-in: `[assembly: EnableFeedMocking]` (or MSBuild prop). When absent → byte-
    - VM partial: **no dedicated construction seam** — null-inject construction reuses the existing public constructors (`new {Vm}(default!, …)`); under an ambient `MockingService.Enable()` scope the `SourceContext` created at construction is mockable (D12), and the bit is captured on the context instance so a lazy first subscription after the scope is disposed still wraps. Commands have no `IHotSwapState<T>` and are unreachable by the reflection swap, so a **dedicated public `__Mock_SetCommand(string name, IAsyncCommand)`** seam (`EditorBrowsable(Never)`) reassigns the command property post-construction (R2). Fail-hard: an unknown command name throws (strict, like D11).
 4. Diagnostics: `FEED3201` eager ctor access detected (info: `Create` will require the service), `FEED3202` unstable feed identity (capture pattern defeats caching), `FEED3203` explicit attribute contradicts analysis.
 
-## 4. Mocking package (`Uno.Extensions.Reactive.Mocking`)
+## 4. Mocking package (`Uno.HotTesting.Reactive`)
 
 ### 4.1 Runtime vocabulary (all generic and strongly typed)
 ```csharp
-public static class MockFeed
+public static class FeedMock
 {
     public static IFeed<T> Undefined<T>();
     public static IFeed<T> Loading<T>();       // transient → Indeterminate, IsExecuting stays true
@@ -78,19 +78,19 @@ public static class MockFeed
     public static IFeed<T> Message<T>(Action<MessageBuilder<T>> configure);
     public static IFeed<T> Script<T>(params (TimeSpan after, Action<MessageBuilder<T>> step)[] steps); // from #3147
 }
-public static class MockListFeed
+public static class ListFeedMock
 {
     // Typed list equivalents: Undefined, Loading, Empty (None), EmptyList (Some(empty)),
     // Value(params/list), Value(list, SelectionInfo), Error, Refreshing.
 }
-public static class MockCommand
+public static class CommandMock
 {
     public static IAsyncCommand Idle();
     public static IAsyncCommand Disabled();
     public static IAsyncCommand Executing();
     public static IAsyncCommand Callback(Action<object?> onExecute, bool canExecute = true);
 }
-public enum MockFeedState { Undefined, Loading, Empty, Value, Error, Refreshing }
+public enum FeedMockState { Undefined, Loading, Empty, Value, Error, Refreshing }
 ```
 Built over public `Feed.Create` + `MessageBuilder` (vocabulary from #3147). **These APIs never accept the non-generic tier-1 `MessageEntry` or untyped envelopes.** Never referenced by a published app head (non-AOT, dev/test only — NG2/D7).
 
@@ -99,7 +99,7 @@ For each Model/VM pair found in referenced assemblies with `__Mock_*` hooks + at
 ```csharp
 public record RecipeModelMock
 {
-    public static RecipeModelMock Empty { get; }              // ServiceDependent → MockFeed/MockListFeed.Empty
+    public static RecipeModelMock Empty { get; }              // ServiceDependent → FeedMock/ListFeedMock.Empty
     public required IListFeed<Step> Steps { get; init; }      // exactly the ServiceDependent set
     public IFeed<int>? StepsCount { get; init; }               // Derived → optional override; null = real derivation
     public IAsyncCommand? Save { get; init; }                  // optional; default idle no-op
@@ -129,7 +129,7 @@ Rules:
 ## 6. Scoped activation — API decided (D10), mechanism resolved (D12)
 
 ```csharp
-namespace Uno.Extensions.Reactive.Mocking;
+namespace Uno.HotTesting.Reactive;
 
 public static class MockingService
 {
@@ -143,7 +143,7 @@ public static class MockingService
 [AssemblyCleanup]    public static void Cleanup()           => _scope.Dispose();
 
 // or a single test
-using (MockingService.Enable()) { var vm = RecipeViewModel.Create(MockListFeed.Value(steps)); }
+using (MockingService.Enable()) { var vm = RecipeViewModel.Create(ListFeedMock.Value(steps)); }
 ```
 
 **Non-negotiable constraint:** context not mockable → **no `HotSwapFeed` wrap at all**. The wrap is one indirection per feed; it may never be injected into the feeds of a live app (spec G9/R7). `SourceContext.IsMockingActive` (§2.2, D12) is the internal per-context gate the scope drives, not a switch app authors set.
@@ -171,7 +171,7 @@ Mechanism (resolved against source — `Core/Internal/SourceContext.cs`, D12):
 ## 8. Test plan
 
 ### Core
-- Every typed `MockFeed`/`MockListFeed`/`MockCommand` state emits expected axes.
+- Every typed `FeedMock`/`ListFeedMock`/`CommandMock` state emits expected axes.
 - Authorable entry maps to Data/Error/Progress/Undefined correctly; custom axes map and diff correctly.
 - Consecutive entry instances produce correct core + custom axis diffs.
 - Wrap identity (`AttachedProperty` returns the same wrapper); swap propagation through `Select`/`Where` and chained derived feeds; live re-swap.
@@ -179,7 +179,7 @@ Mechanism (resolved against source — `Core/Internal/SourceContext.cs`, D12):
 ### Generators
 - Classification fixtures (lazy/eager/derived/independent; ctor bodies, field/property initializers, primary-ctor captures).
 - Attribute emission; explicit-attribute override/merge; FEED3201–3203.
-- Byte-identical output when opt-in absent; hooks hidden (`EditorBrowsable`) and typed (concrete generics).
+- Byte-identical output when opted out; hooks hidden (`EditorBrowsable`) and typed (concrete generics).
 - Consumer generation against a compiled fixture assembly; required-input set = ServiceDependent set; eager-ctor → required service parameter; MOCK0001; **no tier-1/untyped surface in tier-2/3 output**.
 
 ### Runtime / UI (Skia)

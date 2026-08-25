@@ -1,7 +1,7 @@
 # 013 — MVUX Mocking & Previews
 
 **Status:** Draft — under review
-**Area:** `Uno.Extensions.Reactive` (attributes + hooks), `Uno.Extensions.Reactive.UI` (tier-1 bridge), **new package `Uno.Extensions.Reactive.Mocking`** (typed vocabulary + facade + its own generator)
+**Area:** `Uno.Extensions.Reactive` (attributes + hooks), `Uno.Extensions.Reactive.UI` (tier-1 bridge), **new package `Uno.HotTesting.Reactive`** (typed vocabulary + facade + its own generator)
 **Prior art (POCs):** #3148 / spec 009, #3147 / spec 012
 **Primary consumers:** app **test projects** (referencing the app), and Uno **Hot Design** *MVUX State Previews*
 **Decision history:** [history.md](history.md)
@@ -35,7 +35,7 @@ public IFeed<int> StepsCount => Steps.Select(steps => steps.Count);   // busines
 
 ```mermaid
 flowchart LR
-    MOCK["MockListFeed.Value(steps)
+    MOCK["ListFeedMock.Value(steps)
     applied via SetModel"]
     subgraph MODEL["Real RecipeModel — services null-injected"]
         W["Steps
@@ -71,7 +71,7 @@ flowchart TB
 ```
 
 1. **Tier 1 — Static/XAML, no VM:** `FeedView.Source` accepts a declared **`MessageEntry`** — a new authorable non-generic entry in **Core**, a **plain CLR object (deliberately NOT a `DependencyObject`)**, XAML element syntax; core axes as direct convenience properties and **custom axes first-class** via an axis collection (MVUX's open axis model). **Replacing** the `Source` entry instance pushes the new entry through the existing wrapper feed: the stream evolves like a real feed (no re-subscribe, no loading flash). The entry itself is **not observable** — a new instance is the unit of change. No heuristic envelope, no parallel DTO, no converter deliverable (an application-owned converter at `FeedView.Source` is illustration only). Tier 1 is an **isolated UI convenience** and never leaks into tiers 2/3.
-2. **Tier 2 — Externally-generated mocks over the real VM:** referencing `Uno.Extensions.Reactive.Mocking` in a **test/preview project** generates, per reachable Model: `record {Model}Mock` (required-init, compile-time completeness), `{Vm}.Create(...)` factories (null-inject + apply mock), and `SetModel(vm, mock)` which **swaps** each mocked feed at the Model-feed anchor. Commands via a `??` seam. Contracts remain `IFeed<T>` / `IListFeed<T>`, typed states and typed commands **end to end** — tier 2 never accepts `MessageEntry` or any untyped envelope.
+2. **Tier 2 — Externally-generated mocks over the real VM:** referencing `Uno.HotTesting.Reactive` in a **test/preview project** generates, per reachable Model: `record {Model}Mock` (required-init, compile-time completeness), `{Vm}.Create(...)` factories (null-inject + apply mock), and `SetModel(vm, mock)` which **swaps** each mocked feed at the Model-feed anchor. Commands via a `??` seam. Contracts remain `IFeed<T>` / `IListFeed<T>`, typed states and typed commands **end to end** — tier 2 never accepts `MessageEntry` or any untyped envelope.
 3. **Tier 3 — Complete-model ergonomics:** `{Model}Mock.Empty`, `Create()` overloads whose **required parameters are exactly the service-dependent feeds**; **derived members are optional overrides** (unset → the real business logic runs over the mocked inputs; set → replaced — useful for tests); hand-extensible named catalogs (`BasicRecipe`, `RecipeWithSelection`…) for one-line preview binding. Strongly typed, no tier-1 abstractions.
 
 ## 4. Split of responsibilities
@@ -92,7 +92,7 @@ flowchart TB
     end
     subgraph TEST["Test / preview project — references the app"]
         MG["Mocking generator
-        (ships in Uno.Extensions.Reactive.Mocking)"]
+        (ships in Uno.HotTesting.Reactive)"]
         OUT["RecipeModelMock record
         Create(...) factories · SetModel facade"]
         MG --> OUT
@@ -104,8 +104,8 @@ flowchart TB
 - **MVUX generator (runs in the Model's assembly, on the partial Model):**
   a. **Dependency analysis** of each feed/command member + **ctor instrumentation** (detect eager service access that would NRE under null-inject);
   b. emits results as **metadata attributes** (also hand-declarable by the author — explicit declarations win/merge);
-  c. emits **only** the seams the reflection swap cannot synthesize (`EditorBrowsable(Never)`, under the opt-in): the VM `__Mock_SetCommand` seam for commands (R2 — commands have no `IHotSwapState<T>`). Construction needs no seam (public ctors + ambient scope, D12). **No per-feed `__Mock_Swap_{Member}` handles** — the swap itself is reflection over the Model's `IHotSwapState<T>` members at runtime (D11), reusing the hot-reload driver. It must **not** reuse `__Reactive_UpdateModel` (which reassigns `__reactiveModel`/INPC and is unsafe here).
-- **Mocking generator (ships in `Uno.Extensions.Reactive.Mocking`, runs in the consuming test/preview project):** reads the app assembly **metadata** (types + attributes — no syntax trees needed), generates `{Model}Mock` records, `Create` factories and the `SetModel` facade as **new external, generic and strongly typed types/extensions** (no cross-assembly partial).
+  c. emits **only** the seams the reflection swap cannot synthesize (`EditorBrowsable(Never)`, on by default — opt-out): the VM `__Mock_SetCommand` seam for commands (R2 — commands have no `IHotSwapState<T>`). Construction needs no seam (public ctors + ambient scope, D12). **No per-feed `__Mock_Swap_{Member}` handles** — the swap itself is reflection over the Model's `IHotSwapState<T>` members at runtime (D11), reusing the hot-reload driver. It must **not** reuse `__Reactive_UpdateModel` (which reassigns `__reactiveModel`/INPC and is unsafe here).
+- **Mocking generator (ships in `Uno.HotTesting.Reactive`, runs in the consuming test/preview project):** reads the app assembly **metadata** (types + attributes — no syntax trees needed), generates `{Model}Mock` records, `Create` factories and the `SetModel` facade as **new external, generic and strongly typed types/extensions** (no cross-assembly partial).
 
 ## 5. End-to-end — a test drives a page through its states
 
@@ -164,11 +164,11 @@ var vm = RecipeViewModel.Create();          // real VM + real Model, services nu
 
 vm.SetModel(new RecipeModelMock             // required init → the compiler lists every input to fill
 {
-    Steps = MockListFeed.Loading<Step>(),   // pinned Loading, forever
-    Tags  = MockListFeed.Empty<Tag>(),
+    Steps = ListFeedMock.Loading<Step>(),   // pinned Loading, forever
+    Tags  = ListFeedMock.Empty<Tag>(),
 });
 
-vm.SetModel(RecipeModelMock.Empty with { Steps = MockListFeed.Error<Step>(timeout) });   // live re-swap
+vm.SetModel(RecipeModelMock.Empty with { Steps = ListFeedMock.Error<Step>(timeout) });   // live re-swap
 ```
 
 - Required members = exactly the **service-dependent** feeds (compile-time completeness, G4).
@@ -182,12 +182,12 @@ Generated surface, `Create` overload rules and diagnostics: [architecture.md §2
 The same engine, one call: `Create` takes **only the required feeds** — nothing else to fill in.
 
 ```csharp
-var vm      = RecipeViewModel.Create(MockListFeed.Value(steps));    // one required input → one argument
-var loading = RecipeViewModel.Create(MockListFeed.Loading<Step>());
+var vm      = RecipeViewModel.Create(ListFeedMock.Value(steps));    // one required input → one argument
+var loading = RecipeViewModel.Create(ListFeedMock.Loading<Step>());
 var empty   = RecipeViewModel.Create();                             // = every input Empty
 
 // Named catalogs, hand-written in the test/preview project
-public static RecipeViewModel BasicRecipe => RecipeViewModel.Create(MockListFeed.Value(AvocadoToast));
+public static RecipeViewModel BasicRecipe => RecipeViewModel.Create(ListFeedMock.Value(AvocadoToast));
 ```
 
 ```xml
@@ -204,7 +204,7 @@ No new mechanism: each overload is `Create()` + a `SetModel` of §7, so a previe
 - G2. **Derived feeds recompute over mocked inputs** (business logic survives); derived members remain individually overridable for tests.
 - G3. Mock generation happens **in the consumer project** (test/preview), against app metadata.
 - G4. Compile-time completeness (`required init`) and compile-time surfacing of eager-ctor constraints.
-- G5. Opt-in; byte-identical MVUX output when disabled. Additive only.
+- G5. Instrumentation emitted **by default** (opt-out via `[assembly: EnableFeedMocking(IsEnabled = false)]`, restoring byte-identical MVUX output). Additive only; the runtime (`MockingService.Enable()`) decides activation.
 - G6. Live re-swap to drive transitions.
 - G7. Tier-1 XAML state declaration with no VM, including custom axes.
 - G8. Tiers 2/3 **strongly typed end to end**.
@@ -221,7 +221,7 @@ No new mechanism: each overload is `Create()` + a `SetModel` of §7, so a previe
 
 ## 10. Frozen contracts (Hot Design + test code discover by name)
 
-`{Model}Mock` record shape (required-init members, `Empty`, `with`-friendly), `{Vm}.Create(...)`, `SetModel`, `MockingService.Enable()`, `SourceContext.IsMockingActive`, the dependency attributes, the VM `__Mock_SetCommand` command seam, and the `Uno.Extensions.Reactive.Mocking` namespace. Renames = breaking; additive evolution fine.
+`{Model}Mock` record shape (required-init members, `Empty`, `with`-friendly), `{Vm}.Create(...)`, `SetModel`, `MockingService.Enable()`, `SourceContext.IsMockingActive`, the dependency attributes, the VM `__Mock_SetCommand` command seam, and the `Uno.HotTesting.Reactive` namespace. Renames = breaking; additive evolution fine.
 
 ## 11. Risks
 
@@ -259,7 +259,7 @@ No new mechanism: each overload is `Create()` + a `SetModel` of §7, so a previe
 ```csharp
 using (MockingService.Enable())
 {
-    var vm = RecipeViewModel.Create(MockListFeed.Value(steps));
+    var vm = RecipeViewModel.Create(ListFeedMock.Value(steps));
 }
 ```
 

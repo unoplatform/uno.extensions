@@ -100,6 +100,19 @@ Landée sur `dev/devid/spec-013-mvux-mocking` (poussée staging PR #1), après l
 - Docs `doc/Learn/Mvux/Testing.md` + `FeedView.md` (§9), Tier 1 (on hold).
 - Remontée github : outbox ABO → PR #3165 (après review David).
 
+
+## v9 — réconciliation avec #3149 (FeedMock mergé) + review David (mar. 25/08)
+
+Rebase sur `main` (PR #3154 / issue #3149 mergée) : **le vocabulaire de feeds mockés existe déjà** dans une assembly dédiée `Uno.HotTesting.Reactive` (`FeedMock`/`ListFeedMock`, namespace + assembly `Uno.HotTesting.Reactive`, spec 009). Mon `Uno.Extensions.Reactive.Mocking` le dupliquait → **supprimé**. Décisions de naming/namespace suite à la review de David sur la staging PR #1 :
+
+- **Assembly unique `Uno.HotTesting.Reactive`** : tout le mocking runtime y vit (le `FeedMock`/`ListFeedMock` existants + les ajouts tier 2/3). Suppression de `Uno.Extensions.Reactive.Mocking`.
+- **Naming `<Thing>Mock`** (suffixe, cohérent avec `FeedMock`) : `MockFeed`→`FeedMock` (réutilisé), `MockListFeed`→`ListFeedMock` (réutilisé), `MockCommand`→**`CommandMock`** (ajouté). Surface publique de `FeedMock`/`ListFeedMock` verrouillée par `Given_PublicApi` (7 primitives : Empty/Error/Loading/Message/Refreshing/Undefined/Value) → réutilisée telle quelle (mon `EmptyList` retiré, `Empty`=None suffit).
+- **Moteur de swap dans `MockingService`** (drop du type `MockModel`, jugé « mêlant ») : `MockingService.Enable()` + `MockingService.SwapFeed<T>`/`SwapListFeed<T>` (public `EditorBrowsable(Never)`, fail-hard). Le swap est **fortement typé généré** (pas de réflexion runtime) → **AOT-safe**, l'assembly garde `IsAotCompatible=true`.
+- **Générateur consumer → `Uno.HotTesting.Reactive.Generator`** (analyzer/tool du package `Uno.HotTesting.Reactive`) ; émission en **raw string literals** (cohérence codegen) ; émet `FeedMock`/`ListFeedMock`/`CommandMock` + `MockingService.Swap` + `__Mock_SetCommand`.
+- **Instrumentation MVUX émise par DÉFAUT** (plus opt-in) : les attributs `FeedDependency`/`CtorDependency` + le seam `__Mock_SetCommand` sont toujours émis ; c'est le **runtime** (`MockingService.Enable()`) qui décide l'activation. Opt-out possible : `[assembly: EnableFeedMocking(IsEnabled = false)]` → sortie MVUX byte-identique. Modèle on-par-défaut/opt-out comme les autres attributs MVUX.
+
+**Tests après refactor (verts) :** Given_MockingActivation 4/4, Given_MockingRuntime 4/4, Given_GeneratedMock 4/4, Tests.Generator 80/80, `Uno.HotTesting.Reactive.Tests` 22/22 (FeedMock existant non régressé).
+
 ---
 
 ## Registre final des décisions

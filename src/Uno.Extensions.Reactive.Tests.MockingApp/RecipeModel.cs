@@ -2,11 +2,7 @@ using System.Collections.Immutable;
 using System.Threading;
 using System.Threading.Tasks;
 using Uno.Extensions.Reactive;
-using Uno.Extensions.Reactive.Config;
 
-// Opt-in: the MVUX generator emits FeedDependency/CtorDependency + [Model] into this assembly's metadata,
-// which the consumer mocking generator (in the Tests assembly) reads.
-[assembly: EnableFeedMocking]
 
 namespace Uno.Extensions.Reactive.Tests.MockingApp;
 

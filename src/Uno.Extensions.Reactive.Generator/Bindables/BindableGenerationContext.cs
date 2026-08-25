@@ -67,19 +67,22 @@ internal record BindableGenerationContext(
 			: null;
 
 	/// <summary>
-	/// Spec 013 — whether the current assembly opted-in to mocking metadata generation
-	/// via <c>[assembly: EnableFeedMocking]</c>. When false, MVUX output is byte-identical.
+	/// Spec 013 — whether the MVUX mocking instrumentation should be emitted. On by default (the runtime
+	/// decides activation); emit is skipped only when <c>[assembly: EnableFeedMocking(IsEnabled = false)]</c>
+	/// explicitly opts out.
 	/// </summary>
 	public bool IsMockingEnabled()
 	{
 		if (EnableFeedMockingAttribute is null)
 		{
-			return false;
+			return true; // attribute type not referenced → default on
 		}
 
-		return Context.Compilation.Assembly.GetAttributes().Any(a =>
+		var optOut = Context.Compilation.Assembly.GetAttributes().Any(a =>
 			SymbolEqualityComparer.Default.Equals(a.AttributeClass, EnableFeedMockingAttribute)
-			&& (a.NamedArguments.FirstOrDefault(na => na.Key == "IsEnabled").Value.Value as bool? ?? true));
+			&& (a.NamedArguments.FirstOrDefault(na => na.Key == "IsEnabled").Value.Value as bool?) == false);
+
+		return !optOut;
 	}
 
 	public bool IsFeed(ITypeSymbol type)
