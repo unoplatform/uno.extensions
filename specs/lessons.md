@@ -122,6 +122,14 @@ which exists so our ~50 libraries don't each duplicate the closure into their ow
 
 **Apply to:** any repo-wide `ItemDefinitionGroup` or property condition keyed on `OutputType`. `OutputType` is not stable across target platforms - Android rewrites it, and a rule that reads "libraries only" silently becomes "and also every Android app". Prefer a platform-intent property (`AndroidApplication`, `IsUnoHead`) over inferring app-ness from `OutputType`.
 
+## `TryAdd*` cannot claim an interface `AddNamedSingleton` already seeded — inject a dedicated type instead
+
+**Problem:** planning for spec 011 assumed `services.TryAddSingleton<IKeyValueStorage>(sp => sp.GetRequiredDefaultInstance<IKeyValueStorage>())` inside `AddMsal` would make the platform-default store constructor-injectable. It is a silent no-op whenever `UseStorage` ran first: `AddNamedSingleton` calls `TryAddTransient<TService>(sp => sp.GetRequiredService<TImplementation>())` for every provider it registers (`Core/DependencyInjection/ServiceCollectionExtensions.cs:38`), and `AddKeyedStorage` registers `InMemoryKeyValueStorage` first — so plain `IKeyValueStorage` is already claimed and resolves to the *in-memory* store. The MSAL cache would have "persisted" to memory, order-dependently, with no error anywhere.
+
+**Correct pattern:** define a one-line wrapper record nobody else registers (`MsalKeyValueStorage(IKeyValueStorage Storage)`) and register it with a factory that calls `GetRequiredDefaultInstance<IKeyValueStorage>()` — the same shape `UseAuthentication` uses to build `TokenCache`. The named-instance system is the only correct resolution path for "the platform default"; the bare interface gets you whichever `TryAdd` ran first.
+
+**Apply to:** any constructor that needs the *default* named instance of a service `AddKeyedStorage`-style registration owns. Also note the standing consumer trap this leaves: an app that injects plain `IKeyValueStorage` silently gets `InMemoryKeyValueStorage`. Changing that is a public behavior change and needs its own issue — do not "fix" it as a side effect.
+
 ## `IAuthenticationService`'s convenience overloads pass a null `IDispatcher` — never demand one on a path that shows no UI
 
 **Problem:** `MsalAuthenticationProvider.InternalLogoutAsync` opened with a null-guard throwing `ArgumentNullException` for `dispatcher` — a parameter the method never uses (`RemoveAsync` only mutates MSAL's own cache). The documented `IAuthenticationService.LogoutAsync(CancellationToken)` extension (`AuthenticationServiceExtensions.cs:43`) always passes `dispatcher: default`, so *every* logout through it threw; an app whose command swallows exceptions sees "clicking logout does nothing", and because the token cache never cleared, `HasTokenAsync` stayed true and `RefreshAsync` kept reporting success forever. On `main` since `4bd7bde31`; found only by live app testing — every in-repo test passed a dispatcher.
@@ -146,6 +154,14 @@ which exists so our ~50 libraries don't each duplicate the closure into their ow
 
 **Apply to:** any teardown/revoke/clear path (logout, cache eviction, credential rotation, temp-file cleanup). AGENTS.md §10's "honour cancellation quickly" is about *work the caller is waiting for*, not about abandoning a cleanup halfway. If the operation removes something dangerous, cancellation between steps is a leak, not responsiveness.
 
+## `ISettings` is string-only — a non-string value silently persists as its type name
+
+**Problem:** `EncryptedApplicationDataKeyValueStorage.GetObjectValue` returned the DPAPI-protected `byte[]`. On **packaged** Windows that flows into `ApplicationData.Current.LocalSettings`, which stores `byte[]` fine. On **unpackaged** Windows `ApplicationDataKeyValueStorage.SetSetting` takes the other branch — `UnpackagedSettings.Set(name, value?.ToString())` — so the blob was written as the literal string `"System.Byte[]"`. Reads then failed the `is byte[]` test and returned `default`, but the *key* persisted, so `TokenCache.HasTokenAsync` (which counts keys, not values) reported the user authenticated with nothing recoverable. The encrypted store — the **default on Windows** — silently persisted nothing, and spec 011 item 6 had just flipped its `IsEncrypted` to `true`, advertising it as the safe choice.
+
+**Correct pattern:** values crossing `ISettings` must already be strings. `GetObjectValue` returns base64; `GetTypedValue` accepts `byte[]` too so existing packaged caches are not orphaned, and treats an undecodable string as absent rather than throwing on every read. When two storage backends sit behind one type, check that every value shape round-trips through *both* — `value?.ToString()` compiles for anything and fails silently for everything that isn't already a string.
+
+**Apply to:** `ApplicationDataKeyValueStorage` and anything deriving from it, plus any future `ISettings` consumer. Note this is only reachable on a WinAppSDK head (`#if WINDOWS`) with `PlatformHelper.IsAppPackaged == false`, which no runtime-test lane covers — the bug survived because the branch that has it never runs in CI. A round-trip assertion per platform is worth more than the type checking out.
+
 ## A `??=` cache of an expensive object is a race, and record copies make it unrecoverable
 
 **Problem:** `ProviderFactory.AuthenticationProvider` was `configuredProvider ??= ConfigureProvider(Provider, Settings)`. Two concurrent resolves can both observe null and both invoke the callback — which builds an `IPublicClientApplication` and subscribes to `ITokenCache.Cleared`. Because `ConfigureProvider` does `provider with { … }`, each invocation returns a **different record instance**, so the losing one stays subscribed for the host's lifetime with no reference anywhere to `-=` it: a leaked provider, a leaked MSAL client, and the clear handler running twice. A code comment asserted the opposite ("Build runs exactly once per provider, so this cannot double-subscribe") and was believed.
@@ -169,6 +185,62 @@ which exists so our ~50 libraries don't each duplicate the closure into their ow
 **Correct pattern:** when a test runs on every head, assert the part of the contract every implementation agrees on, and read the interface's XML docs before asserting a behavior you observed. Here `GetKeysAsync().Should().NotContain(key)` is the platform-stable "it is gone" check, and it is also what `TokenCache.HasTokenAsync` actually relies on. Where implementations genuinely disagree, that is a product finding to record, not a detail for a test to quietly pick a winner for.
 
 **Apply to:** any `*.UI.Tests` / RuntimeTests case, since those run on desktop, iOS, Android and WebAssembly from one source file. Also treat "documented to throw, one implementation returns default" as its own bug: the divergence in `ApplicationDataKeyValueStorage` is deliberately left alone here because making the default Windows/desktop/browser store start throwing is a public-surface behavior change that needs its own PR, not a drive-by fix inside a storage-selection change.
+
+## A package's TFM folder name is not evidence of what its assembly references
+
+**Problem:** bumping `Uno.Sdk` 6.0.67 -> 6.8.0-dev.21 for an `Uno.WinUI` fix also moved
+`Uno.Toolkit.WinUI` 7.0.2 -> 9.2.0-dev.18, because the Sdk pins that too. `samples/Directory.Packages.props`
+already pinned the toolkit to 8.4.2 with a comment saying newer builds are compiled against
+Microsoft.iOS 26 while the .NET 9 iOS workload here references 18.2 (CS1705). I checked that Toolkit
+9.2.0-dev.18 ships a folder named `lib/net9.0-ios18.0`, concluded the pin was stale, removed it - and
+wrote that conclusion into the props file as justification. CI then failed the Packages job with
+exactly the CS1705 the comment predicted: the folder name is the TFM the package *declares*, while the
+assembly inside references `Microsoft.iOS 26.0.0.0`.
+
+**Correct pattern:** to test "is this pin still needed", read the assembly's references, not the lib
+folder name. And treat an existing pin's comment as a claim to *disprove with the same evidence it
+cites* - here the cited evidence was a compiler error on an iOS build, which cannot be reproduced on a
+Windows host at all, so the honest move was to keep the pin and let CI speak. Carrying the same pin
+into `src/Directory.Packages.props` fixed it, and because Toolkit 8.4.2 still ships a maccatalyst
+flavor containing `NativeFramePresenter`, it also made a breaking TFM removal unnecessary - the wrong
+fix I had already applied and documented.
+
+**Apply to:** any `global.json` SDK bump here. An SDK version is a bundle: list what it pins
+(`targets/netstandard2.0/packages.json` in the Uno.Sdk package - `Core`, `Extensions`, `Toolkit`,
+`Themes`, `WinAppSdkBuildTools`, `MsalClient`) and diff the groups, not just the one you came for. Also
+note the local package build cannot compile `net9.0-ios` on a Windows host, so a clean local build says
+nothing about the iOS TFM - and `dotnet build` cannot build the XAML-bearing WinUI libraries at all
+(UNOB0008, true on the old SDK too), so validate a bump with `msbuild` or the first error misleads.
+*(Superseded in part, 2026-08-23: the pin was itself masking a stale CI SDK — see the next lesson.
+The evidence rule stands; the remedy it reached did not.)*
+
+## A pin that makes CI green can be hiding a toolchain skew — fix the SDK, not the package
+
+**Problem:** the CS1705 above (`Uno.Toolkit.WinUI` built against `Microsoft.iOS 26` vs. a workload
+referencing 18.2) was not a Toolkit problem at all: CI was building with the .NET **9.0.200** SDK,
+whose iOS workload is Microsoft.iOS 18.2, against an `Uno.Sdk` whose Toolkit is built for
+Microsoft.iOS 26. Pinning `UnoToolkitVersion` 8.4.2 (and, to keep its dependencies consistent,
+`UnoHotDesignVersion` 1.19.175, `UnoThemesVersion` 6.1.1 and `System.Text.Json` 8.0.5) made the
+build pass by freezing three packages at the last versions the *stale* toolchain could compile —
+a workaround recorded as a fix, in two `Directory.Packages.props` files and the eleventh-pass notes.
+
+**Correct pattern:** a CS1705 in a package build names a mismatch between the package and the
+*toolchain*, so the first question is which SDK and workloads the failing job actually used. The
+fix is in `build/ci/templates/dotnet-install*.yml` (`DotNetVersion: '10.0.x'`, `UnoCheck_Version:
+'1.34.1'`, plus the .NET 9 runtime for the net9.0 test heads) and `.azure-pipelines.yml` (Xcode
+26.2 / iOS 26.2 simulator); the pins are removed. One property legitimately remains, in the root
+`Directory.Build.props`: `UnoToolkitVersion` 9.2.0-dev.18. That is not a workaround — the app heads
+(Playground, TestHarness, `Uno.Extensions.RuntimeTests`) build with `Uno.Sdk.Private`, whose
+Toolkit group lags the public `Uno.Sdk`'s, so without one floor-sync property a head referencing
+`Navigation.Toolkit` fails NU1605 against the libraries' higher floor. Verified locally: all four
+heads restore with zero NU1xxx and `Navigation.Toolkit` builds for `net9.0-maccatalyst` and
+`net9.0-ios` (catalyst via `_UnoExtensionsDropIosXamlOnCatalyst`, since Toolkit ships no catalyst
+assembly from 8.5). iOS/Android lanes not yet re-run.
+
+**Apply to:** any `src/Directory.Packages.props` / `samples/Directory.Packages.props` pin whose
+comment says "newer builds don't compile on CI". Check the CI SDK version first; a pin is only
+right when the *package* is wrong. And when `Uno.Sdk` and `Uno.Sdk.Private` disagree on a group
+(Toolkit, Themes, Core), sync the floor in one place rather than per head.
 
 ## Any `*.WinUI` package whose platform assembly references `Uno.UI` and ships a plain `netX.0` lib is swapped on Skia-mobile heads — check the references, not the TFM list
 

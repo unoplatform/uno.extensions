@@ -46,6 +46,11 @@ internal class MsalConfiguration
 	/// </remarks>
 	public TimeSpan? InteractiveTimeout { get; init; }
 
+	// Where the token cache lives on WebAssembly is configured as
+	// KeyValueStorageConfiguration:BrowserCacheLocation, not here: it selects the host's single
+	// default IKeyValueStorage, which the Uno token cache shares with every other provider. See
+	// specs/011-wasm-msal-token-cache/spec.md.
+
 	/// <summary>
 	/// When true, the token cache falls back to an unprotected (plaintext) cache file if the
 	/// platform's secure storage (keychain / keyring / DPAPI) isn't available, so sign-in state

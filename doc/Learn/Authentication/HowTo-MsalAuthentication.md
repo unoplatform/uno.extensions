@@ -17,7 +17,7 @@ uid: Uno.Extensions.Authentication.HowToMsalAuthentication
 | Desktop (Skia) — Linux | ✅ System browser | ✅ Keyring/libsecret |
 | Android | ✅ Browser / custom tab | ✅ Handled natively by MSAL |
 | iOS | ✅ Web authentication session | ✅ Handled natively by MSAL — [keychain entitlement required](#ios-keychain-access-group) |
-| WebAssembly | ✅ Popup | In-memory only (tokens don't survive a page reload) |
+| WebAssembly | ✅ Popup | ✅ Browser storage, `localStorage` by default — cleartext, see [below](#webassembly-token-cache) |
 | Mac Catalyst | ❌ Not supported (`AddMsal` throws `PlatformNotSupportedException`) | — |
 
 MSAL's own cache (refresh and ID tokens) is what the last column describes. The access token that `IAuthenticationService` hands to HTTP handlers is kept separately, in the host's default `IKeyValueStorage` — `KeyStore` / Keychain on native Android and iOS, but plain `ApplicationData` on Android and iOS heads built with `UnoFeatures=SkiaRenderer`, where the Uno SDK loads the storage package's plain `netX.0` build. See [Key-value storage](xref:Uno.Extensions.Storage.Overview#key-value-storage).
@@ -26,7 +26,14 @@ The set of identity scenarios (Microsoft accounts, work/school accounts, B2C, so
 
 ## Prerequisites
 
+- **If you target Android, iOS, or WebAssembly with `UnoFeatures=SkiaRenderer`**, you need an Uno Platform version containing the fix for [unoplatform/uno#20601](https://github.com/unoplatform/uno/issues/20601) ([PR #24055](https://github.com/unoplatform/uno/pull/24055)). Before it, Uno's build-time runtime-asset selector replaced `Uno.UI.MSAL.dll` with its no-op Skia flavor on every head, so `WithUnoHelpers()` silently did nothing — no parent `Activity` on Android (MSAL fails with `activity_required`), no `UIViewController` on iOS, and no `WasmWebUi`/`WasmHttpFactory` on WebAssembly, so the sign-in UI never appeared at all. Two things make this easy to miss:
+  - The fix lives in `Uno.WinUI`'s build tasks, not in `Uno.WinUI.MSAL`. These packages declare a `Uno.WinUI` floor that includes it, so an older Uno shows up as an NU1605 package-downgrade error rather than a silent no-op. If you pin or override `Uno.WinUI` below that floor, sign-in goes back to doing nothing, with no diagnostic pointing at the cause.
+  - It landed after the 6.7.x releases, so no 6.7.x version has it. Use 6.8.0 or later (or a `6.8.0-dev` build), unless it is backported to a 6.7.x servicing release.
 - An app registration on the Microsoft identity platform, with each platform's redirect URI registered — see [Redirect URIs](#4-redirect-uris) for the value the provider applies on each target.
+- **If you target WebAssembly**, the browser redirect URI must be registered under the **`spa`** platform of the app registration, not as a public-client/native URI. This is not a formality:
+  - MSAL.NET issues the token request from the browser over `fetch`, which CORS only permits for a redirect URI registered as `spa`.
+  - A `spa` registration caps refresh tokens at **24 hours, non-sliding** — as opposed to the 90-day sliding tokens a public-client registration issues. That cap is what makes it acceptable to keep the token cache in browser storage at all, since browser storage is readable by any script on the origin. See [Refresh tokens](https://learn.microsoft.com/entra/identity-platform/refresh-tokens) and [the SPA cookie reference](https://learn.microsoft.com/entra/identity-platform/reference-third-party-cookies-spas).
+  - Consequence to design for: re-authentication has to happen in the top-level frame, and users sign in again at least daily.
 
 ## Step-by-step
 
@@ -424,6 +431,44 @@ If the platform's secure storage isn't available (for example, a Linux session w
 With the fallback enabled, the provider logs a warning (including the fallback file path) whenever it has to downgrade, and the plaintext cache uses a separate file from the protected one.
 
 On Android and iOS the token cache is persisted natively by MSAL — no configuration is needed (or honored) on those platforms. On iOS it lands in a keychain access group the app has to grant first; see [iOS: keychain access group](#ios-keychain-access-group).
+
+#### WebAssembly token cache
+
+In the browser there is no protected store to write to, so the cache goes to browser storage in cleartext and what bounds the exposure is *lifetime*, not encryption.
+
+The default is `localStorage` — the store WebAssembly already used for the token cache before this setting existed, so upgrading the package never relocates an app's data. It is **not** MSAL.js's default: msal-browser defaults to `sessionStorage`, and if you are starting fresh that is the tighter choice, because the serialized cache is dropped when the tab closes rather than persisting across browser restarts. Opt into it explicitly:
+
+It is a **storage** setting, not an MSAL one — it selects the host's single default key-value store, which the token cache shares with everything else built on it:
+
+```json
+{
+  "KeyValueStorageConfiguration": {
+    "BrowserCacheLocation": "SessionStorage"
+  }
+}
+```
+
+| Value | Behavior |
+| --- | --- |
+| `LocalStorage` (default) | Survives a page reload, closing the tab, and restarting the browser — the widest window in which a stolen cache stays usable. The default only because it is what WebAssembly already used. |
+| `SessionStorage` | Survives a page reload; cleared when the tab closes. Matches MSAL.js and is the tighter choice for credentials. |
+| `MemoryStorage` | Nothing is written to browser storage; the user signs in again after every reload. |
+
+An invalid value throws while the host is being built rather than silently falling back.
+
+One setting covers the Uno token cache (the access token) and the MSAL cache (the refresh and ID tokens) — splitting them would let the access token outlive both the tab and the refresh token. Because it belongs to storage rather than to a provider, it applies whatever you name your provider (`AddMsal(window, name: "MyMsal")`) and whichever provider you use. It is ignored on every other platform, where the platform's own protected store applies.
+
+Signing out removes both: `LogoutAsync` removes every signed-in account and then deletes the serialized MSAL cache. Note this clears *our* storage, not the identity provider's session cookie — the next "Sign in" may complete without a prompt because the IdP still recognises the browser. Use the `end_session_endpoint` if you need a full sign-out. Clearing `ITokenCache` directly has the same storage effect.
+
+> [!IMPORTANT]
+> Whichever persistent option you pick, the serialized cache holds the **refresh token** in cleartext, readable by any script on the origin. What bounds the exposure is that your WebAssembly redirect URI must be registered under the Entra **`spa`** platform (see [Prerequisites](#prerequisites)), which caps refresh tokens at **24 hours, non-sliding**. A public-client registration issues a **90-day sliding** token instead, and nothing in the library can detect which one your tenant issued — the provider logs a warning naming the store on every unprotected persist, but the registration type is yours to get right. See [Refresh tokens in the Microsoft identity platform](https://learn.microsoft.com/entra/identity-platform/refresh-tokens).
+
+For full control over the storage properties on desktop targets, use the `Storage()` extension method to configure the underlying `StorageCreationPropertiesBuilder`:
+
+```csharp
+builder.AddMsal(window, msal =>
+    msal.Storage(store => store.WithMacKeyChain("com.contoso.myapp.msal", "MyAppCache")));
+```
 
 ### 8. Use the provider in your application
 
