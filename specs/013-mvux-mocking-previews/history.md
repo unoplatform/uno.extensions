@@ -71,6 +71,15 @@ Puis : **perte du workspace ACO** (node détruit, branche non poussée — commi
 - Reste au spike (P0-e) le **mécanisme seul** (contexte propriétaire, eager/lazy, `AsyncLocal` vs token porté, imbrication, concurrence, survie après `Dispose`, câblage vers le flag D4) — plus la forme de l'API.
 - Répercuté dans les 3 volets : spec §13 + G9 + R7 + D10, archi §1/§6/§7, impl §1/§2.2/§6/§7/§8/§9.
 
+
+## v7 — décision de David (dim. 24/08, soir) — gate per-context + swap réflexif
+
+- **Question tranchée (« où vit le flag mockable ? »)** : investigation source demandée par David.
+  - Constat code : le hot reload wrappe dans `StateImpl.cs:74-77` (`EffectiveHotReload.HasFlag(State)` → `new HotSwapFeed<T>`), gate = **static global** `FeedConfiguration.EffectiveHotReload` ; driver de swap **déjà réflexif** sur `IHotSwapState<T>` (`BindableViewModelBase.HotReload.cs:457-467`). `SourceContext` porte déjà `AsyncLocal<SourceContext> Current`, contextes par-owner (`GetOrCreate`), seam eager `PreConfigure`/`Set`, et un `IStateStore States` par contexte.
+  - **Décision David** : *« flag sur le SourceContext (`IsMockingActive`) + réflexion pour le swap avec fail-hard »*. Le static `FeedConfiguration.Mockable` (D4) est abandonné : c'est le **contexte** qui a besoin de l'info (D12). Pas d'`AsyncLocal` maison. Swap réflexif strict (D11).
+  - Point AOT (David) : un split 2-assemblies impose la réflexion de toute façon (générer `{Model}Mock` à côté du `Model` rendrait l'assembly mock creuse) → réflexion-core assumée, path dev/test-only non-AOT (D7/NG2).
+- Le « spike P0-e » (mécanisme du scope) est **résolu**, plus un spike : il ride `SourceContext`.
+- Répercuté : spec §13/§10/§5/§4 + D4(superseded)/D11/D12, archi §0/§1/§2.1/§5/§6/§7, impl §1/§2.2/§3/§6/§7/§8.
 ---
 
 ## Registre final des décisions
@@ -80,10 +89,12 @@ Puis : **perte du workspace ACO** (node détruit, branche non poussée — commi
 | D1 | Tier-1 = `MessageEntry` authorable non-générique **dans Core**, plain CLR (pas DO), **non observable**, axes core en propriétés directes + axes custom via `Axes`/`Set` ; remplacement d'instance = push dans le wrapper existant (évolution naturelle, pas de loading flash) | v2→v4 |
 | D2 | Commandes via seam `??` (pas de swap analog) | v1 |
 | D3 | Façade (`SetModel`/setters générés) devant les hooks ; `HotSwapFeed`/handles non publics | v1 |
-| D4 | Flag mockable dédié dans `FeedConfiguration` (découplé du hot reload) | v1 |
+| D4 | ~~Flag mockable dédié dans `FeedConfiguration`~~ **remplacé v7** → gate per-context `SourceContext.IsMockingActive` (D12) | v1→v7 |
 | D5 | Codegen de mocking **externe** (projet consommateur) ; gen MVUX = analyse + attributs + hooks cachés | v1 |
 | D6 | Swap ancré au **cache Model-feed** → les dérivés survivent (non négociable) ; dérivés néanmoins **overridables** individuellement | v1+v2 |
 | D7 | Non-AOT du path mocking accepté (dev/test only) | v1 |
 | D8 | Converters = illustrations app-owned à `FeedView.Source` (retournent `IMessageEntry`) ; rien d'implémenté par la feature | v4 |
 | D9 | Tiers 2/3 strictement typés ; l'objet tier-1 confiné au tier 1 | v4 |
 | D10 | **Activation scopée** : `using (MockingService.Enable())` — jamais un switch app-wide ; assembly init possible pour couvrir tout un run. Hors scope → **aucun wrap** (le `HotSwapFeed` coûte, interdit dans une app live). Seul le mécanisme interne reste à établir par le spike P0-e | v6 |
+| D11 | **Swap réflexif fail-hard** : réutilise le driver hot-reload (`BindableViewModelBase.HotReload`, itération `IHotSwapState<T>`) ; le générateur MVUX **n'émet aucun `__Mock_Swap_{Member}`**, seulement métadonnées + seam ctor null-inject/commande. **Delta vs hot reload : un membre non-swappable throw** (mocking strict, pas best-effort) | v7 |
+| D12 | **Gate mockable = bit per-contexte `SourceContext.IsMockingActive`**, lu dans le ctor de `StateImpl` **au lieu** du static global `EffectiveHotReload` → seuls les contextes sous scope wrappent, le reste paie zéro (G9/R7 par construction). Pas de static séparé, pas d'`AsyncLocal` maison (on réutilise `AsyncLocal<SourceContext> Current`). **Réflexion-core assumée vs AOT-strict** : le split 2-assemblies impose la réflexion de toute façon ; path mocking dev/test-only non-AOT (NG2/D7) | v7 |
