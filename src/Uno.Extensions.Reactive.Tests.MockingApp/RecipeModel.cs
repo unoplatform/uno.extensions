@@ -29,4 +29,9 @@ public partial class RecipeModel
 
 	// independent scalar input
 	public IFeed<string> Title => Feed.Async(async ct => "Recipe");
+
+	// command → IAsyncCommand Save on the VM + __Mock_SetCommand seam (opt-in)
+	public async ValueTask Save(CancellationToken ct)
+	{
+	}
 }
