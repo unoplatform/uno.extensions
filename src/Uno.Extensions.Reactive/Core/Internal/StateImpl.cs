@@ -96,6 +96,8 @@ internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, ISta
 		}
 	}
 
+	bool IHotSwapState<T>.CanHotSwap => _hotSwap is not null;
+
 	void IHotSwapState<T>.HotSwap(IFeed<T>? source)
 	{
 		if (source is IState<T>)
