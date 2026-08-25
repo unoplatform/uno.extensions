@@ -32,6 +32,12 @@ public sealed class SourceContext : IAsyncDisposable
 
 	private static readonly SourceContext _none = new();
 	private static readonly AsyncLocal<SourceContext> _current = new();
+
+	// Mocking (spec 013): ambient flag driving whether newly created contexts are mockable.
+	// Reuses the AsyncLocal ambient model already used for Current (no bespoke AsyncLocal in the mocking layer).
+	// A context inherits IsMockingActive at creation time (root <- ambient, child <- parent) so the bit
+	// survives a lazy first subscription even after the activation scope's `using` block has exited.
+	private static readonly AsyncLocal<bool> _isMockingAmbient = new();
 	private static readonly ConditionalWeakTable<object, SourceContext> _contexts = new();
 
 	/// <summary>
@@ -210,6 +216,7 @@ public sealed class SourceContext : IAsyncDisposable
 		RootId = (uint)Interlocked.Increment(ref _nextRootId);
 		States = _localStates = new StateStore(this);
 		RequestSource = _localRequests = new NoneRequestSource(); // Currently we do not support messages directly on the root, using None allows AsyncFeed to complete enumeration
+		IsMockingActive = _isMockingAmbient.Value; // spec 013: inherit ambient mocking activation
 	}
 
 	// Creates a sub context
@@ -230,6 +237,7 @@ public sealed class SourceContext : IAsyncDisposable
 		Owner = owner;
 		States = states ?? parent.States; // Note: A child StateStore should forward request to its parent store!
 		RequestSource = requests ?? parent.RequestSource;
+		IsMockingActive = parent.IsMockingActive; // spec 013: mocking activation flows down the context tree
 	}
 
 	/// <summary>
@@ -267,6 +275,30 @@ public sealed class SourceContext : IAsyncDisposable
 	/// you have to create your own context if you want to send request.
 	/// </remarks>
 	internal IRequestSource RequestSource { get; }
+
+	/// <summary>
+	/// Gets a value indicating whether feeds/states created under this context must be wrapped so their source
+	/// can be swapped at runtime (mocking — spec 013). Off by default; a live app context never has it set,
+	/// so no <see cref="Operators.HotSwapFeed{T}"/> indirection is ever injected into a running application (G9/R7).
+	/// </summary>
+	/// <remarks>
+	/// This is the per-context gate that <c>MockingService.Enable()</c> drives, read at wrap time in
+	/// <see cref="StateImpl{T}"/>'s constructor instead of the global <see cref="Config.FeedConfiguration.EffectiveHotReload"/>.
+	/// </remarks>
+	internal bool IsMockingActive { get; }
+
+	/// <summary>
+	/// Opens an ambient mocking-activation scope: every <see cref="SourceContext"/> created while the returned
+	/// disposable is alive (and their descendants) is marked <see cref="IsMockingActive"/>. Disposal stops marking
+	/// <em>future</em> contexts; already-created contexts stay mockable for their own lifetime.
+	/// </summary>
+	/// <remarks>Backing mechanism for <c>MockingService.Enable()</c> (spec 013 §13, D12).</remarks>
+	internal static IDisposable EnableMocking()
+	{
+		var previous = _isMockingAmbient.Value;
+		_isMockingAmbient.Value = true;
+		return Utils.Disposable.Create(() => _isMockingAmbient.Value = previous);
+	}
 
 	/// <summary>
 	/// Sets the context as <see cref="Current"/>.
