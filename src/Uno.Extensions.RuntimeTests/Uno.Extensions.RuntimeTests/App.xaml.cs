@@ -1,4 +1,4 @@
-﻿using Uno.Extensions.Navigation.UI.Tests;
+using Uno.Extensions.Navigation.UI.Tests;
 using Uno.Extensions.Reactive.WinUI.Tests;
 using Uno.Resizetizer;
 using Uno.UI.RuntimeTests;
@@ -18,6 +18,7 @@ public partial class App : Application
 		var navigation_UI_Tests = new Given_RouteNotifier();
 		var navigation_ChainedResult_Tests = new Given_ChainedGetDataAsync();
 		var navigation_TabNavigation_Tests = new Given_TabNavigation();
+		var msal_UI_Tests = new Uno.Extensions.Authentication.MSAL.UI.Tests.Given_MsalAuthentication();
 	}
 
 	/// <summary>

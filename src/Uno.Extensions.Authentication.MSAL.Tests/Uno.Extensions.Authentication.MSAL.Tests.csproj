@@ -1,0 +1,43 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <IsPackable>false</IsPackable>
+    <Nullable>enable</Nullable>
+    <!--
+      The linked sources below are written for the platforms that ship a functional provider, which
+      is what UNO_EXT_MSAL selects in Uno.Extensions.Authentication.MSAL.WinUI.csproj. Defining it
+      here makes MsalConfiguration derive PublicClientApplicationOptions, so the tests can exercise
+      the real precedence between a configured RedirectUri and the platform default.
+    -->
+    <DefineConstants>$(DefineConstants);UNO_EXT_MSAL</DefineConstants>
+  </PropertyGroup>
+
+  <!--
+    Uno.Extensions.Authentication.MSAL.WinUI cannot be loaded in a plain test host (its
+    Uno.WinUI-injected module initializer requires a runtime Uno.UI), so the pure storage-defaults
+    helper is compiled into this project instead of referencing the assembly.
+  -->
+  <ItemGroup>
+    <Compile Include="..\Uno.Extensions.Authentication.MSAL\MsalStorageDefaults.cs" Link="MsalStorageDefaults.cs" />
+    <Compile Include="..\Uno.Extensions.Authentication.MSAL\MsalRedirectDefaults.cs" Link="MsalRedirectDefaults.cs" />
+    <Compile Include="..\Uno.Extensions.Authentication.MSAL\MsalConfiguration.cs" Link="MsalConfiguration.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="Microsoft.Identity.Client" />
+    <Using Include="Microsoft.Identity.Client.Extensions.Msal" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Identity.Client.Extensions.Msal" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MSTest.TestAdapter" />
+    <PackageReference Include="MSTest.TestFramework" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="FluentAssertions" />
+  </ItemGroup>
+
+</Project>
