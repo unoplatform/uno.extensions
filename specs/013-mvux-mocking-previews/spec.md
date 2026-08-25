@@ -86,7 +86,8 @@ flowchart TB
         FeedDependency / CtorDependency
         (also hand-declarable — explicit wins)"]
         GEN --> HOOKS["emitted seams (no per-feed hook)
-        VM null-inject ctor + command ?? seam
+        __Mock_SetCommand on the VM (commands only)
+        construction = public ctors + ambient scope
         swap = reflection over IHotSwapState (D11)"]
     end
     subgraph TEST["Test / preview project — references the app"]
@@ -103,7 +104,7 @@ flowchart TB
 - **MVUX generator (runs in the Model's assembly, on the partial Model):**
   a. **Dependency analysis** of each feed/command member + **ctor instrumentation** (detect eager service access that would NRE under null-inject);
   b. emits results as **metadata attributes** (also hand-declarable by the author — explicit declarations win/merge);
-  c. emits **only** the seams the reflection swap cannot synthesize (`EditorBrowsable(Never)`, under the opt-in): the VM null-inject construction path + the command `??` seam (R2). **No per-feed `__Mock_Swap_{Member}` handles** — the swap itself is reflection over the Model's `IHotSwapState<T>` members at runtime (D11), reusing the hot-reload driver. It must **not** reuse `__Reactive_UpdateModel` (which reassigns `__reactiveModel`/INPC and is unsafe here).
+  c. emits **only** the seams the reflection swap cannot synthesize (`EditorBrowsable(Never)`, under the opt-in): the VM `__Mock_SetCommand` seam for commands (R2 — commands have no `IHotSwapState<T>`). Construction needs no seam (public ctors + ambient scope, D12). **No per-feed `__Mock_Swap_{Member}` handles** — the swap itself is reflection over the Model's `IHotSwapState<T>` members at runtime (D11), reusing the hot-reload driver. It must **not** reuse `__Reactive_UpdateModel` (which reassigns `__reactiveModel`/INPC and is unsafe here).
 - **Mocking generator (ships in `Uno.Extensions.Reactive.Mocking`, runs in the consuming test/preview project):** reads the app assembly **metadata** (types + attributes — no syntax trees needed), generates `{Model}Mock` records, `Create` factories and the `SetModel` facade as **new external, generic and strongly typed types/extensions** (no cross-assembly partial).
 
 ## 5. End-to-end — a test drives a page through its states
@@ -220,7 +221,7 @@ No new mechanism: each overload is `Create()` + a `SetModel` of §7, so a previe
 
 ## 10. Frozen contracts (Hot Design + test code discover by name)
 
-`{Model}Mock` record shape (required-init members, `Empty`, `with`-friendly), `{Vm}.Create(...)`, `SetModel`, `MockingService.Enable()`, `SourceContext.IsMockingActive`, the dependency attributes, the VM null-inject ctor/command seam, and the `Uno.Extensions.Reactive.Mocking` namespace. Renames = breaking; additive evolution fine.
+`{Model}Mock` record shape (required-init members, `Empty`, `with`-friendly), `{Vm}.Create(...)`, `SetModel`, `MockingService.Enable()`, `SourceContext.IsMockingActive`, the dependency attributes, the VM `__Mock_SetCommand` command seam, and the `Uno.Extensions.Reactive.Mocking` namespace. Renames = breaking; additive evolution fine.
 
 ## 11. Risks
 
@@ -248,7 +249,7 @@ No new mechanism: each overload is `Create()` + a `SetModel` of §7, so a previe
 | D8 | Converters (JSON or other) are **application-owned illustrations** attached at `FeedView.Source`, returning `IMessageEntry`; this feature defines and implements none |
 | D9 | Tiers 2/3 are **strongly typed end to end**; the tier-1 authoring object is confined to tier 1 |
 | D10 | Activation is an **explicit scope** — `using (MockingService.Enable())` — never an ambient app-wide switch. A test assembly may open it once at assembly init to cover its whole run. **Rationale: the wrap costs at runtime; it must exist only on demand, never in the feeds of a live app** (G9, R7). The scope's internal mechanism is now **resolved** — it rides `SourceContext` (§13) |
-| D11 | **Swap is reflection-driven over the members, fail-hard** — reuse the existing hot-reload reflection path (`BindableViewModelBase.HotReload`, iterating `IHotSwapState<T>`); the MVUX generator emits **no per-member `__Mock_Swap_{Member}` hooks**, only metadata attributes + the VM null-inject ctor/command seam. **Delta vs hot reload: a member that cannot be swapped throws — no silent skip** (hot reload is best-effort; mocking is strict) |
+| D11 | **Swap is reflection-driven over the members, fail-hard** — reuse the existing hot-reload reflection path (`BindableViewModelBase.HotReload`, iterating `IHotSwapState<T>`); the MVUX generator emits **no per-member `__Mock_Swap_{Member}` hooks**, only metadata attributes + the VM `__Mock_SetCommand` command seam (construction uses public ctors + ambient scope). **Delta vs hot reload: a member that cannot be swapped throws — no silent skip** (hot reload is best-effort; mocking is strict) |
 | D12 | **The mockable gate is a per-context bit on `SourceContext.IsMockingActive`**, read at wrap time in `StateImpl` ctor **instead of** the global `EffectiveHotReload` static — so only contexts created under an open scope wrap, every other context pays zero (G9/R7 by construction). **Reflection-core accepted over AOT-strict**: a 2-assembly split needs reflection anyway (generating the mock beside the Model would make the mocking assembly hollow); the mocking path stays dev/test-only, non-AOT (NG2/D7) |
 
 ## 13. Scoped activation — `MockingService.Enable()` (DECIDED shape AND mechanism)

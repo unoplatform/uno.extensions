@@ -60,7 +60,7 @@ Opt-in: `[assembly: EnableFeedMocking]` (or MSBuild prop). When absent → byte-
 2. **Emit attributes** (§2.1) on the generated Model partial.
 3. **Emitted seams** (`EditorBrowsable(Never)`) — only what reflection cannot synthesize:
    - Model partial: **no per-feed `__Mock_Swap_{Member}`** — swap is reflection over `IHotSwapState<T>` at runtime (D11). (The `HotSwapFeed` wrappers already expose the swap seam the reflection driver uses.)
-   - VM partial: `static {Vm} __Mock_Create(object?[] ctorArgs)` → `new {Vm}(…)` null-inject path (dedicated — NOT `__Reactive_UpdateModel`); command seam `Save = __mockCommands?.Save ?? new AsyncCommand(...)` + `__Mock_SetCommand(name, IAsyncCommand)`.
+   - VM partial: **no dedicated construction seam** — null-inject construction reuses the existing public constructors (`new {Vm}(default!, …)`); under an ambient `MockingService.Enable()` scope the `SourceContext` created at construction is mockable (D12), and the bit is captured on the context instance so a lazy first subscription after the scope is disposed still wraps. Commands have no `IHotSwapState<T>` and are unreachable by the reflection swap, so a **dedicated public `__Mock_SetCommand(string name, IAsyncCommand)`** seam (`EditorBrowsable(Never)`) reassigns the command property post-construction (R2). Fail-hard: an unknown command name throws (strict, like D11).
 4. Diagnostics: `FEED3201` eager ctor access detected (info: `Create` will require the service), `FEED3202` unstable feed identity (capture pattern defeats caching), `FEED3203` explicit attribute contradicts analysis.
 
 ## 4. Mocking package (`Uno.Extensions.Reactive.Mocking`)
@@ -164,7 +164,7 @@ Mechanism (resolved against source — `Core/Internal/SourceContext.cs`, D12):
   d. feed-identity stability matrix (capture patterns) → informs FEED3202;
   e. `MockingService.Enable()` → `IsMockingActive` on the pre-seeded context: prove **no wrap when the context is not mockable**, and reflection swap is **fail-hard** on an un-swappable member (D11).
 - **P1 — Tier 1** (core+UI): `Feed.Value`, authorable `MessageEntry` + `AxisValue` (custom axes), `MessageEntryFeed` + push semantics, `FeedView` bridge, documentation-only converter illustration. Ships alone.
-- **P2 — Core: `SourceContext.IsMockingActive` + wrap gate in `StateImpl` + fail-hard reflection swap + attributes + analysis + VM null-inject/command seam** (MVUX gen). No per-feed swap hooks.
+- **P2 — Core: `SourceContext.IsMockingActive` + wrap gate in `StateImpl` + fail-hard reflection swap + attributes + analysis + `__Mock_SetCommand` seam** (MVUX gen). No per-feed swap hooks; no `__Mock_Create` (public ctors + ambient scope).
 - **P3 — Mocking package**: typed vocabulary + consumer generator (`{Model}Mock`/`Create`/`SetModel`).
 - **P4 — Tier 3 catalogs + Hot Design checkpoint** (name freeze), docs.
 

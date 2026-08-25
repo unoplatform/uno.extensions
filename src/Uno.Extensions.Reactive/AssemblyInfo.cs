@@ -8,3 +8,4 @@ using Uno.Extensions.Equality;
 [assembly: InternalsVisibleTo("Uno.Extensions.Reactive.UI")]
 [assembly: InternalsVisibleTo("Uno.Extensions.Reactive.WinUI")]
 [assembly: InternalsVisibleTo("Uno.Extensions.Reactive.Messaging")]
+[assembly: InternalsVisibleTo("Uno.Extensions.Reactive.Mocking")]

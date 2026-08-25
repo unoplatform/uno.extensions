@@ -66,7 +66,7 @@ Identity risk (R6): lambdas capturing locals/params produce fresh delegate targe
 
 **c) Hidden hooks** (`EditorBrowsable(Never)`, emitted only under the opt-in flag):
 - on the **Model partial**: **nothing per-feed** — the swap is reflection over `IHotSwapState<T>` members at runtime (D11), reusing the hot-reload driver, fail-hard. The generator emits no `__Mock_Swap_{Member}`;
-- on the **VM partial**: `__Mock_Initialize()` (dedicated; NOT `__Reactive_UpdateModel` — must not reassign `__reactiveModel`, rebind INPC, nor let `Model`'s `Unsafe.As` see a foreign type) + command seam `Save = __mockCommands?.Save ?? new AsyncCommand(...)` (R2). These are the only seams reflection cannot synthesize.
+- on the **VM partial**: **no construction seam** — null-inject uses the existing public ctors (`new {Vm}(default!, …)`) under an ambient `MockingService.Enable()` scope (D12: the `SourceContext` built at construction is mockable, captured on the instance). The only emitted seam is `__Mock_SetCommand(string name, IAsyncCommand)` (public, `EditorBrowsable(Never)`, fail-hard) which reassigns a command property post-construction — commands have no `IHotSwapState<T>` and are unreachable by the reflection swap (R2).
 
 ### 2.2 Mocking generator (ships in `Uno.Extensions.Reactive.Mocking`, runs in the test/preview project)
 
@@ -259,5 +259,5 @@ Resolved against the source:
 - Tier 1 stays an isolated UI convenience.
 - **No wrap unless `SourceContext.IsMockingActive`** (§6, D10/D12): the per-feed `HotSwapFeed` indirection must never exist in a live app; a live-app context never has the bit set.
 - **Swap is reflection over `IHotSwapState<T>`, fail-hard** (D11): no per-member generated hook; an un-swappable mocked member throws.
-- Frozen names (Hot Design + tests): `{Model}Mock`, `Empty`, `Create`, `SetModel`, `MockingService.Enable`, `SourceContext.IsMockingActive`, attribute names, VM null-inject ctor/command seam.
+- Frozen names (Hot Design + tests): `{Model}Mock`, `Empty`, `Create`, `SetModel`, `MockingService.Enable`, `SourceContext.IsMockingActive`, attribute names, the `__Mock_SetCommand` command seam.
 - MVUX output byte-identical when opt-in flag absent.
