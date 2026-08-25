@@ -113,6 +113,17 @@ Rebase sur `main` (PR #3154 / issue #3149 mergée) : **le vocabulaire de feeds m
 
 **Tests après refactor (verts) :** Given_MockingActivation 4/4, Given_MockingRuntime 4/4, Given_GeneratedMock 4/4, Tests.Generator 80/80, `Uno.HotTesting.Reactive.Tests` 22/22 (FeedMock existant non régressé).
 
+
+## v10 — review David (commentaire 31) : AsyncLocal hors de Core
+
+Retour de David sur `SourceContext` : *« si on a besoin d'un AsyncLocal pour le mocking, ça n'apporte rien de le mettre dans le SourceContext, on devrait le garder dans le MockingService »*. Juste — l'état d'activation ambient est une préoccupation **mocking**, pas Core.
+
+- **`MockingService` (dans `Uno.HotTesting.Reactive`) possède l'`AsyncLocal<bool>` ambient** + `Enable()`.
+- **`SourceContext` (Core) ne garde que** le bit d'instance `IsMockingActive` + un **seam** `internal static Func<bool>? IsMockingActiveProbe`. À la création d'un contexte racine, `IsMockingActive = IsMockingActiveProbe?.Invoke() ?? false` ; un enfant hérite du parent. `MockingService` enregistre la probe (static ctor).
+- **App live** : `MockingService` jamais touché → probe nulle → `IsMockingActive` toujours false → zéro coût (G9/R7 conservé). Le mécanisme reste D12 (bit per-contexte capturé à la construction, survit à une souscription lazy après dispose du scope).
+
+Tests inchangés/verts : Given_MockingActivation 4/4, Given_MockingRuntime 4/4, Given_GeneratedMock 4/4, Tests.Generator 80/80, Uno.HotTesting.Reactive.Tests 22/22.
+
 ---
 
 ## Registre final des décisions
