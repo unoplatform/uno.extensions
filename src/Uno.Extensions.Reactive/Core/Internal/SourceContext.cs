@@ -33,11 +33,11 @@ public sealed class SourceContext : IAsyncDisposable
 	private static readonly SourceContext _none = new();
 	private static readonly AsyncLocal<SourceContext> _current = new();
 
-	// Mocking (spec 013): ambient flag driving whether newly created contexts are mockable.
-	// Reuses the AsyncLocal ambient model already used for Current (no bespoke AsyncLocal in the mocking layer).
-	// A context inherits IsMockingActive at creation time (root <- ambient, child <- parent) so the bit
-	// survives a lazy first subscription even after the activation scope's `using` block has exited.
-	private static readonly AsyncLocal<bool> _isMockingAmbient = new();
+	// Mocking (spec 013): the mocking layer (MockingService, in Uno.HotTesting.Reactive) owns the ambient
+	// activation state and registers this probe. A context captures IsMockingActive at creation from the
+	// probe (root) or its parent (child), so the bit survives a lazy first subscription even after the
+	// activation scope has exited. Null in a live app -> IsMockingActive is always false -> zero cost.
+	internal static Func<bool>? IsMockingActiveProbe;
 	private static readonly ConditionalWeakTable<object, SourceContext> _contexts = new();
 
 	/// <summary>
@@ -216,7 +216,7 @@ public sealed class SourceContext : IAsyncDisposable
 		RootId = (uint)Interlocked.Increment(ref _nextRootId);
 		States = _localStates = new StateStore(this);
 		RequestSource = _localRequests = new NoneRequestSource(); // Currently we do not support messages directly on the root, using None allows AsyncFeed to complete enumeration
-		IsMockingActive = _isMockingAmbient.Value; // spec 013: inherit ambient mocking activation
+		IsMockingActive = IsMockingActiveProbe?.Invoke() ?? false; // spec 013: capture ambient mocking activation
 	}
 
 	// Creates a sub context
@@ -287,18 +287,6 @@ public sealed class SourceContext : IAsyncDisposable
 	/// </remarks>
 	internal bool IsMockingActive { get; }
 
-	/// <summary>
-	/// Opens an ambient mocking-activation scope: every <see cref="SourceContext"/> created while the returned
-	/// disposable is alive (and their descendants) is marked <see cref="IsMockingActive"/>. Disposal stops marking
-	/// <em>future</em> contexts; already-created contexts stay mockable for their own lifetime.
-	/// </summary>
-	/// <remarks>Backing mechanism for <c>MockingService.Enable()</c> (spec 013 §13, D12).</remarks>
-	internal static IDisposable EnableMocking()
-	{
-		var previous = _isMockingAmbient.Value;
-		_isMockingAmbient.Value = true;
-		return Utils.Disposable.Create(() => _isMockingAmbient.Value = previous);
-	}
 
 	/// <summary>
 	/// Sets the context as <see cref="Current"/>.

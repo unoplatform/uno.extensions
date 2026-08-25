@@ -7,6 +7,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Uno.Extensions.Reactive.Core;
 using Uno.Extensions.Reactive.Operators;
 using Uno.Extensions.Reactive.Testing;
+using Uno.HotTesting.Reactive;
 
 namespace Uno.Extensions.Reactive.Tests.Core;
 
@@ -36,7 +37,7 @@ public class Given_MockingActivation : FeedTests
 	public void When_UnderScope_Then_ContextMockable_And_Wrapped()
 	{
 		FeedTestContext ctx;
-		using (SourceContext.EnableMocking())
+		using (MockingService.Enable())
 		{
 			ctx = new FeedTestContext();
 		}
@@ -54,7 +55,7 @@ public class Given_MockingActivation : FeedTests
 	public void When_ScopeDisposed_Then_AlreadyCreatedContextStaysMockable_ButNewOnesDont()
 	{
 		FeedTestContext inside;
-		using (SourceContext.EnableMocking())
+		using (MockingService.Enable())
 		{
 			inside = new FeedTestContext();
 		}
@@ -70,7 +71,7 @@ public class Given_MockingActivation : FeedTests
 	public async Task When_MockableStateSwapped_Then_ReEmits()
 	{
 		FeedTestContext ctxHolder;
-		using (SourceContext.EnableMocking())
+		using (MockingService.Enable())
 		{
 			ctxHolder = new FeedTestContext();
 		}
