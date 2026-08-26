@@ -41,6 +41,13 @@ internal sealed class StubWebAuthenticationBroker : IWebAuthenticationBrokerProv
 	/// </summary>
 	public WebAuthenticationStatus? NextStatus { get; set; }
 
+	/// <summary>
+	/// When set, <see cref="GetCurrentApplicationCallbackUri"/> throws with this message - what a
+	/// real broker does on a platform that has no callback to derive, such as an iOS app whose
+	/// Info.plist declares no custom scheme.
+	/// </summary>
+	public string? CallbackUriError { get; set; }
+
 	/// <summary>The most recently minted access token.</summary>
 	public string LastAccessToken => _lastAccessToken
 		?? throw new InvalidOperationException("No token has been issued yet.");
@@ -72,9 +79,13 @@ internal sealed class StubWebAuthenticationBroker : IWebAuthenticationBrokerProv
 		LastRequestUri = null;
 		LastCallbackUri = null;
 		NextStatus = null;
+		CallbackUriError = null;
 	}
 
-	public Uri GetCurrentApplicationCallbackUri() => new("web-tests://callback");
+	public Uri GetCurrentApplicationCallbackUri() =>
+		CallbackUriError is { Length: > 0 } error
+			? throw new InvalidOperationException(error)
+			: new Uri("web-tests://callback");
 
 	public Task<WebAuthenticationResult> AuthenticateAsync(WebAuthenticationOptions options, Uri requestUri, Uri callbackUri, CancellationToken ct)
 	{

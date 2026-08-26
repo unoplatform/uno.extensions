@@ -86,6 +86,7 @@ internal record WebAuthenticationProvider
 
 		loginCallbackUri = await PrepareLoginCallbackUri(credentials, loginCallbackUri, cancellationToken);
 
+		string? brokerError = null;
 #if !WINDOWS
 		// Nothing configured: fall back to the platform's own callback - the custom scheme on
 		// Android/iOS, the app origin on WebAssembly, the loopback listener on Skia Desktop. Not
@@ -93,7 +94,7 @@ internal record WebAuthenticationProvider
 		// protocol-activation flow (spec 014).
 		if (string.IsNullOrWhiteSpace(loginCallbackUri))
 		{
-			loginCallbackUri = GetBrokerCallbackUri();
+			(loginCallbackUri, brokerError) = TryGetBrokerCallbackUri();
 		}
 #endif
 
@@ -101,7 +102,9 @@ internal record WebAuthenticationProvider
 		{
 			if (ProviderLogger.IsEnabled(LogLevel.Warning))
 			{
-				ProviderLogger.LogWarning($"{nameof(InternalSettings.LoginCallbackUri)} not specified and {OAuthRedirectUriParameter} not set in {nameof(InternalSettings.LoginStartUri)}, unable to start login flow");
+				ProviderLogger.LogWarning(
+					"Unable to start login flow: {Reason}",
+					NoCallbackReason(nameof(InternalSettings.LoginCallbackUri), nameof(InternalSettings.LoginStartUri), brokerError));
 			}
 			return default;
 		}
@@ -163,26 +166,53 @@ internal record WebAuthenticationProvider
 	/// <summary>
 	/// The platform's own callback URI, used when configuration supplies none (spec 014): the
 	/// custom scheme on Android/iOS, the app origin on WebAssembly, the loopback listener on Skia
-	/// Desktop. Null when the broker cannot derive one (for example, no custom scheme registered),
-	/// which lands on the existing not-configured warning path.
+	/// Desktop. Returns a null URI plus the broker's own message when it cannot derive one (for
+	/// example, no custom scheme registered), which lands on the not-configured warning path.
 	/// </summary>
-	private string? GetBrokerCallbackUri()
+	/// <returns>
+	/// The callback URI, or the reason the broker could not supply one. The reason is carried back
+	/// rather than logged here because this is the last source tried: the caller reports it as the
+	/// cause of a flow that cannot start, where it is visible at Warning level (the flow is over)
+	/// instead of at Debug, where the one message explaining the dead end was invisible by default.
+	/// </returns>
+	private (string? CallbackUri, string? Error) TryGetBrokerCallbackUri()
 	{
 		try
 		{
-			return WebAuthenticationBroker.GetCurrentApplicationCallbackUri().OriginalString;
+			return (WebAuthenticationBroker.GetCurrentApplicationCallbackUri().OriginalString, null);
 		}
 		catch (Exception ex)
 		{
-			if (ProviderLogger.IsEnabled(LogLevel.Debug))
-			{
-				ProviderLogger.LogDebug("No broker-derived callback is available on this platform: {Error}", ex.Message);
-			}
-
-			return null;
+			return (null, ex.Message);
 		}
 	}
 #endif
+
+	/// <summary>
+	/// Why no callback URI could be resolved, naming every source that was tried: configuration,
+	/// the start URI's <c>redirect_uri</c>, and - off WinAppSDK - the platform broker (spec 014).
+	/// </summary>
+	/// <remarks>
+	/// Naming all three matters because the two-source message this replaced read as "you forgot
+	/// redirect_uri" even when the start URI carried <see cref="RedirectUriPlaceholder"/> and the
+	/// real cause was a platform with no callback to derive - an iOS <c>Info.plist</c> declaring no
+	/// <c>CFBundleURLTypes</c> entry, for instance, where the broker's own message says so.
+	/// </remarks>
+	private static string NoCallbackReason(string callbackSetting, string startUriSetting, string? brokerError)
+	{
+		var reason =
+			$"{callbackSetting} is not configured and {startUriSetting} carries no {OAuthRedirectUriParameter} value " +
+			$"(the {RedirectUriPlaceholder} placeholder is replaced with the callback, it is not one)";
+
+#if !WINDOWS
+		reason += brokerError is { Length: > 0 }
+			? $", and WebAuthenticationBroker could not derive one for this platform: {brokerError}"
+			: ", and WebAuthenticationBroker derived no callback for this platform";
+		reason += ". A broker-derived callback needs a custom scheme registered for the app - CFBundleURLTypes/CFBundleURLSchemes in Info.plist on iOS and Mac Catalyst, an intent filter on Android - or configure the callback explicitly";
+#endif
+
+		return reason;
+	}
 
 	/// <summary>
 	/// Applies <see cref="WebAuthenticationSettings.PrefersEphemeralWebBrowserSession"/> to Uno's
@@ -300,11 +330,12 @@ internal record WebAuthenticationProvider
 
 		logoutCallbackUri = await PrepareLogoutCallbackUri(await Tokens.GetAsync(cancellationToken), logoutCallbackUri, cancellationToken);
 
+		string? brokerError = null;
 #if !WINDOWS
 		// Same broker-derived default as sign-in (spec 014).
 		if (string.IsNullOrWhiteSpace(logoutCallbackUri))
 		{
-			logoutCallbackUri = GetBrokerCallbackUri();
+			(logoutCallbackUri, brokerError) = TryGetBrokerCallbackUri();
 		}
 #endif
 
@@ -312,7 +343,9 @@ internal record WebAuthenticationProvider
 		{
 			if (ProviderLogger.IsEnabled(LogLevel.Warning))
 			{
-				ProviderLogger.LogWarning($"{nameof(InternalSettings.LogoutCallbackUri)} not specified and {OAuthRedirectUriParameter} not set in {nameof(InternalSettings.LogoutStartUri)}, unable to start logout flow");
+				ProviderLogger.LogWarning(
+					"Unable to start logout flow: {Reason}",
+					NoCallbackReason(nameof(InternalSettings.LogoutCallbackUri), nameof(InternalSettings.LogoutStartUri), brokerError));
 			}
 			return false;
 		}
