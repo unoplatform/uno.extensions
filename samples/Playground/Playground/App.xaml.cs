@@ -103,7 +103,9 @@ public partial class App : Application
 
                                 // Uncomment to view splashscreen for longer
                                 // await Task.Delay(5000);
-                                return appBuilder.Build();
+                                var host = appBuilder.Build();
+                                PlatformProbeService.Report(host.Services, "after Build()");
+                                return host;
                             },
                             navigationRoot: appRoot.SplashScreen,
                             // Option 1: This requires Shell to be the first RouteMap - best for perf as no reflection required
