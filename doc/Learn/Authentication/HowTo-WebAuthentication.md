@@ -181,7 +181,7 @@ uid: Uno.Extensions.Authentication.HowToWebAuthentication
 
 - Finally, we can pass the login credentials to the `LoginAsync()` method and authenticate with the identity provider. The user will be prompted to sign in to their account when they tap the button in the application.
 
-- `WebAuthenticationProvider` will then store the user's access token in credential storage.
+- `WebAuthenticationProvider` then stores the tokens in the host's default `IKeyValueStorage`: the OS secure store where the storage package has one (DPAPI on WinAppSDK, the Keychain on iOS and Mac Catalyst, `KeyStore` on Android), plain `ApplicationData` on Skia Desktop and on Android/iOS heads built with `UnoFeatures=SkiaRenderer`, and browser storage on WebAssembly. When the selected store does not encrypt, the token cache logs a `Warning` naming it at startup — register your own `IKeyValueStorage` as the default if the app sandbox is not enough on that platform. See [Key-value storage](xref:Uno.Extensions.Storage.Overview#key-value-storage) for the per-platform table.
 
 - Calling `IAuthenticationService.RefreshAsync()` re-serves the stored tokens by default; the provider is protocol-agnostic, so actual token renewal only happens when you supply a `Refresh` callback (`AddWeb(web => web.Refresh(...))`) that redeems the stored refresh token against your endpoint.
 
@@ -191,8 +191,8 @@ uid: Uno.Extensions.Authentication.HowToWebAuthentication
 
 | Target | Sign-in surface | Notes |
 | --- | --- | --- |
-| Android | Custom Tabs via `WebAuthenticationBroker` | Redirect URI uses a custom scheme registered for the app. |
-| iOS / Mac Catalyst | `ASWebAuthenticationSession` via `WebAuthenticationBroker` | Redirect URI uses a custom scheme declared in `Info.plist`. |
+| Android | Custom Tabs via `WebAuthenticationBroker` | Redirect URI uses a custom scheme, declared with an intent filter on the activity that receives the redirect — the same shape as [the MSAL setup](xref:Uno.Extensions.Authentication.HowToMsalAuthentication#5-android-and-ios-platform-setup), with your own scheme. |
+| iOS / Mac Catalyst | `ASWebAuthenticationSession` via `WebAuthenticationBroker` | Redirect URI uses a custom scheme declared under `CFBundleURLTypes` / `CFBundleURLSchemes` in `Info.plist` — the same shape as [the MSAL setup](xref:Uno.Extensions.Authentication.HowToMsalAuthentication#5-android-and-ios-platform-setup), with your own scheme. A scheme declared elsewhere in the plist is ignored by iOS, and the flow then cannot start. |
 | WebAssembly | Browser popup/redirect via `WebAuthenticationBroker` | Redirect URI must share the app's origin (no custom schemes). |
 | Skia Desktop (Windows, macOS, Linux) | System browser + loopback listener | See below. |
 | Windows (WinAppSDK) | System browser via protocol activation | **Packaged apps only**: the OAuth redirect scheme must be declared as a Protocol in `Package.appxmanifest`; unpackaged apps are not supported. |
@@ -203,7 +203,7 @@ On the `WebAuthenticationBroker`-backed targets the interactive flow is bounded 
 
 Uno Platform has no built-in `WebAuthenticationBroker` on Skia Desktop, so `AddWeb()` (and `AddOidc()`) automatically register a loopback broker: the sign-in page opens in the system browser and the redirect returns to a one-shot HTTP listener on `localhost`, per [RFC 8252 §7.3](https://www.rfc-editor.org/rfc/rfc8252#section-7.3).
 
-- The redirect URI **must** be a loopback HTTP address, e.g. `http://localhost:5001/authentication-callback`, and be registered with your identity provider. If you rely on the default (`WebAuthenticationBroker.GetCurrentApplicationCallbackUri()`), a free port is picked on first use — your identity provider must then allow variable-port loopback redirects (Microsoft Entra and Duende IdentityServer do).
+- The redirect URI **must** be a loopback HTTP address and be registered with your identity provider. To pin the port, configure the callback explicitly — `LoginCallbackUri` (or a `redirect_uri` inside `LoginStartUri`) for the Web provider, `RedirectUri` for OIDC — e.g. `http://localhost:5001/authentication-callback`; the listener binds whichever port the callback names. If you rely on the default instead (`WebAuthenticationBroker.GetCurrentApplicationCallbackUri()`), a free port is picked on first use and kept for the process lifetime, so your identity provider must allow variable-port loopback redirects (Microsoft Entra and Duende IdentityServer do). The default's path comes from `WinRTFeatureConfiguration.WebAuthenticationBroker.DefaultCallbackPath` (`/authentication-callback`), and `DefaultReturnUri`, when set, replaces the default entirely.
 - Responses on the URL **fragment** (implicit-style flows) work too: browsers never send fragments to a server, so when the redirect arrives bare, the listener serves a small static relay page whose script re-requests the callback carrying the fragment — the app then receives the response in its original fragment shape. Query-string responses (authorization-code flow) complete in a single request, unchanged.
 - Apps that call `WebAuthenticationBroker` directly (without `AddWeb`/`AddOidc`) can register the broker themselves during startup with `DesktopWebAuthenticationBrokerProvider.TryRegister()`.
 
