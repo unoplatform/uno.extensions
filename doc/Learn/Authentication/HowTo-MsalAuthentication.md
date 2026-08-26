@@ -15,12 +15,12 @@ uid: Uno.Extensions.Authentication.HowToMsalAuthentication
 | Desktop (Skia) — Windows | ✅ System browser | ✅ Encrypted file (DPAPI) |
 | Desktop (Skia) — macOS | ✅ System browser | ✅ Keychain |
 | Desktop (Skia) — Linux | ✅ System browser | ✅ Keyring/libsecret |
-| Android | ✅ Browser / custom tab | ✅ Handled natively by MSAL |
-| iOS | ✅ Web authentication session | ✅ Handled natively by MSAL — [keychain entitlement required](#ios-keychain-access-group) |
+| Android | ✅ Browser / custom tab | ⚠️ Plain `SharedPreferences` file, written by MSAL — app sandbox only, not encrypted, see [below](#android) |
+| iOS | ✅ Web authentication session | ✅ iOS Keychain, written by MSAL — [keychain entitlement required](#ios-keychain-access-group) |
 | WebAssembly | ✅ Popup | ✅ Browser storage, `localStorage` by default — cleartext, see [below](#webassembly-token-cache) |
 | Mac Catalyst | ❌ Not supported (`AddMsal` throws `PlatformNotSupportedException`) | — |
 
-MSAL's own cache (refresh and ID tokens) is what the last column describes. The access token that `IAuthenticationService` hands to HTTP handlers is kept separately, in the host's default `IKeyValueStorage` — `KeyStore` / Keychain on native Android and iOS, but plain `ApplicationData` on Android and iOS heads built with `UnoFeatures=SkiaRenderer`, where the Uno SDK loads the storage package's plain `netX.0` build. See [Key-value storage](xref:Uno.Extensions.Storage.Overview#key-value-storage).
+MSAL's own cache (refresh and ID tokens) is what the last column describes. The access token that `IAuthenticationService` hands to HTTP handlers is kept separately, in the host's default `IKeyValueStorage` — `KeyStore` / Keychain on native Android and iOS, but plain `ApplicationData` on Android and iOS heads built with `UnoFeatures=SkiaRenderer`, where the Uno SDK loads the storage package's plain `netX.0` build. When the default store is not encrypted, the token cache logs a `Warning` naming the store at startup, so the downgrade is visible in the app's log output. See [Key-value storage](xref:Uno.Extensions.Storage.Overview#key-value-storage).
 
 The set of identity scenarios (Microsoft accounts, work/school accounts, B2C, sovereign clouds, ...) is determined by MSAL itself — see [MSAL.NET supported platforms and scenarios](https://learn.microsoft.com/entra/msal/dotnet/getting-started/scenarios) for details.
 
@@ -252,6 +252,13 @@ protected override void OnActivityResult(int requestCode, Result resultCode, And
         .SetAuthenticationContinuationEventArgs(requestCode, resultCode, data);
 }
 ```
+
+MSAL.NET keeps its Android token cache — refresh token included — in a plain `SharedPreferences`
+file under the app's private data directory. The app sandbox is its only protection: the .NET
+accessor does not encrypt it (the Java MSAL library does, MSAL.NET's does not), so anything that can
+read the app's data can read the tokens, and by default that includes device backups. Set
+`android:allowBackup="false"` on the `<application>` element of `AndroidManifest.xml` to keep the
+file out of backups, and treat a rooted device as compromised.
 
 #### iOS
 
