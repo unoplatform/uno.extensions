@@ -1,4 +1,4 @@
-# 013 — Http: choose the typed client's service lifetime in AddClient
+# 014 — Http: choose the typed client's service lifetime in AddClient
 
 **Status: in progress.** Written 2026-08-22 on branch `dev/sb/auth-providers-fixes` (self-contained
 commit, intended to be cherry-picked into its own PR - it touches only `Uno.Extensions.Http`).

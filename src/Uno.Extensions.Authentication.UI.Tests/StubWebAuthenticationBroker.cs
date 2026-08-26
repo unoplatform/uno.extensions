@@ -11,7 +11,7 @@ namespace Uno.Extensions.Authentication.UI.Tests;
 /// A stand-in <see cref="WebAuthenticationBroker"/> implementation: completes the interactive flow
 /// instantly with canned tokens on the callback URI, so the whole <c>WebAuthenticationProvider</c>
 /// pipeline runs with no browser and no network on every head - including the Skia Desktop lane,
-/// where the built-in broker throws <see cref="NotImplementedException"/> (spec 012 F8).
+/// where the built-in broker throws <see cref="NotImplementedException"/> (spec 013 F8).
 /// </summary>
 /// <remarks>
 /// A process-wide singleton by necessity: <see cref="WebAuthenticationBroker"/> resolves its

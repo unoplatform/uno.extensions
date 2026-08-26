@@ -131,7 +131,7 @@ public class Given_OidcAuthentication
 	}
 
 	/// <summary>
-	/// Red test for spec 012 F1: the provider used to ignore <c>RefreshTokenResult.IsError</c> and
+	/// Red test for spec 013 F1: the provider used to ignore <c>RefreshTokenResult.IsError</c> and
 	/// cache the (null) access token from the failed response, leaving the user looking
 	/// authenticated with a dead token - the OIDC mirror of MSAL fix b3a3e3093.
 	/// </summary>
@@ -155,7 +155,7 @@ public class Given_OidcAuthentication
 	}
 
 	/// <summary>
-	/// Red test for spec 012 F11: the provider never passed the cached id_token as the
+	/// Red test for spec 013 F11: the provider never passed the cached id_token as the
 	/// end-session <c>id_token_hint</c>. Without it the identity provider cannot trust the
 	/// post-logout redirect, so it prompts for confirmation and never redirects back to the app -
 	/// on desktop the loopback listener then waits until the broker timeout with the UI stuck.
@@ -197,7 +197,7 @@ public class Given_OidcAuthentication
 	}
 
 	/// <summary>
-	/// Red test for spec 012 F2: the provider used to ignore <c>LogoutResult.IsError</c> and return
+	/// Red test for spec 013 F2: the provider used to ignore <c>LogoutResult.IsError</c> and return
 	/// true unconditionally, so a cancelled end-session flow still flushed the local token cache and
 	/// reported the sign-out as successful.
 	/// </summary>
@@ -218,7 +218,7 @@ public class Given_OidcAuthentication
 	}
 
 	/// <summary>
-	/// Red test for spec 012 F3: <see cref="WebAuthenticatorBrowser"/> used to swallow
+	/// Red test for spec 013 F3: <see cref="WebAuthenticatorBrowser"/> used to swallow
 	/// <see cref="OperationCanceledException"/> into <c>BrowserResultType.UnknownError</c>, so a
 	/// caller-cancelled sign-in surfaced as "login failed" instead of propagating cancellation.
 	/// </summary>

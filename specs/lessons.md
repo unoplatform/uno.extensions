@@ -26,7 +26,7 @@ Domain lessons / postmortems for Uno.Extensions. See `AGENTS.md` §3 for when to
 
 ## `-getProperty:DefineConstants` does not list the SDK's implicit symbols (`ANDROID`, `IOS`, ...)
 
-**Problem:** while adding platform branches to `MsalAuthenticationProvider` (spec 012), `dotnet build -getProperty:DefineConstants` was used to check whether `ANDROID` / `IOS` were defined for the `net9.0-android` / `net9.0-ios` TFMs. Neither appeared, which read as "the `#if ANDROID` branch is dead code". They are in fact defined: the .NET SDK merges `@(ImplicitDefineConstants)` into `DefineConstants` inside a target that runs *before* `CoreCompile` but *after* evaluation, and `-getProperty` reports the evaluation-time value.
+**Problem:** while adding platform branches to `MsalAuthenticationProvider` (spec 013), `dotnet build -getProperty:DefineConstants` was used to check whether `ANDROID` / `IOS` were defined for the `net9.0-android` / `net9.0-ios` TFMs. Neither appeared, which read as "the `#if ANDROID` branch is dead code". They are in fact defined: the .NET SDK merges `@(ImplicitDefineConstants)` into `DefineConstants` inside a target that runs *before* `CoreCompile` but *after* evaluation, and `-getProperty` reports the evaluation-time value.
 
 **Correct pattern:** to test whether a symbol is live, compile something that depends on it. Either a temporary `#if !SYMBOL` + `#error` probe build, or check the emitted assembly for a type only that branch references (`Foundation.NSBundle` appears only in the iOS assembly). Do not infer symbol state from `-getProperty`.
 
@@ -285,7 +285,7 @@ for client-side negative caching before looking at the fake server.
 **Apply to:** `StubEntra` and any future fake IdP or token endpoint used across tests; also any
 test that deliberately drives an `invalid_grant`/`interaction_required` response — follow it by
 checking the next silent call still reaches the server.
-## Runtime-test suites share process-global registries (2026-08-21, spec 012)
+## Runtime-test suites share process-global registries (2026-08-21, spec 013)
 
 All `*.UI.Tests` suites run in one process inside the runtime-test head. A product-side
 `ApiExtensibility.Register` (first-wins) triggered while ONE suite builds its host - e.g.
@@ -300,7 +300,7 @@ all Web tests drove a real loopback listener. Two rules:
 - Per-suite filter runs are not sufficient verification: always finish with a **combined run using
   the exact CI filter**, because cross-suite interference only shows up there.
 
-## Silent no-ops hide DI failures; filtered build output hides failures (2026-08-21, spec 012 samples)
+## Silent no-ops hide DI failures; filtered build output hides failures (2026-08-21, spec 013 samples)
 
 - A view whose click handlers null-check the view model (`if (_viewModel is { } vm)`) turns a
   navigation-time DI failure into "the button does nothing" with zero diagnostics. When the VM

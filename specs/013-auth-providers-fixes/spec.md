@@ -1,4 +1,4 @@
-# 012 — Oidc / Web / Custom auth providers: port the 009–011 MSAL fixes, close the Skia Desktop sign-in gap
+# 013 — Oidc / Web / Custom auth providers: port the 010–012 MSAL fixes, close the Skia Desktop sign-in gap
 
 **Status: in progress.** Written 2026-08-21 on branch `dev/sb/auth-providers-fixes` (forked from
 `dev/sb/msal-auth-fixes`). Read `specs/009-msal-auth-fixes/`, `specs/010-msal-skia-mobile-runtime-dispatch/`

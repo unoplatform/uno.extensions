@@ -13,7 +13,7 @@ using Windows.Security.Authentication.Web;
 namespace Uno.Extensions.Authentication.UI.Tests;
 
 /// <summary>
-/// End-to-end coverage of <see cref="DesktopWebAuthenticationBrokerProvider"/> (spec 012 F8): the
+/// End-to-end coverage of <see cref="DesktopWebAuthenticationBrokerProvider"/> (spec 013 F8): the
 /// loopback listener round trip, callback validation, and cancellation - the "browser" is an HTTP
 /// GET against the callback, standing in for the IdP's post-sign-in redirect.
 /// </summary>
@@ -72,7 +72,7 @@ public class Given_DesktopWebAuthenticationBroker
 	}
 
 	/// <summary>
-	/// Red test for spec 012 F12: OAuth responses that ride the URL fragment (implicit flows)
+	/// Red test for spec 013 F12: OAuth responses that ride the URL fragment (implicit flows)
 	/// never reach an HTTP listener - browsers do not send fragments to servers. The broker must
 	/// answer a bare callback request with a relay page whose script re-requests the callback
 	/// with the fragment as the query, and hand the result back as a fragment.

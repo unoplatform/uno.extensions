@@ -35,7 +35,7 @@ public class WebAuthenticatorBrowser : IBrowser
 		}
 		catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
 		{
-			// The caller cancelled: propagate rather than reporting a failed login (spec 012 F3).
+			// The caller cancelled: propagate rather than reporting a failed login (spec 013 F3).
 			throw;
 		}
 		catch (OperationCanceledException)
