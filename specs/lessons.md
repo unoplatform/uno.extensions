@@ -285,6 +285,7 @@ for client-side negative caching before looking at the fake server.
 **Apply to:** `StubEntra` and any future fake IdP or token endpoint used across tests; also any
 test that deliberately drives an `invalid_grant`/`interaction_required` response — follow it by
 checking the next silent call still reaches the server.
+
 ## Runtime-test suites share process-global registries (2026-08-21, spec 013)
 
 All `*.UI.Tests` suites run in one process inside the runtime-test head. A product-side
@@ -295,7 +296,7 @@ all Web tests drove a real loopback listener. Two rules:
 
 - A test seam that depends on winning a first-wins registration must be installed at **assembly
   load** (`[ModuleInitializer]`, with a justified CA2255 suppression - the banned-in-libraries rule
-  exists for consumer-facing libraries, and a test assembly pre-empting product registration is the
+  exists for consumer-facing libraries, and a test assembly preempting product registration is the
   legitimate use), not in a harness or class initializer.
 - Per-suite filter runs are not sufficient verification: always finish with a **combined run using
   the exact CI filter**, because cross-suite interference only shows up there.
@@ -332,6 +333,7 @@ of them real (a CI filter to union, a wasm filter where `main` was newer, a refa
 duplicate `.sln` entry to drop).
 
 **Apply to:** any branch that has had PRs split out of it. Also worth knowing:
+
 - The overlap is *not* symmetric. Take `main`'s side where it refined the same code (the
   `MsalSecureStore` refactor), the branch's side where it is new (the persistence check), and the
   union where both added independently (CI filters, `lessons.md`).
