@@ -14,7 +14,7 @@ namespace Uno.Extensions.Http.Tests;
 
 /// <summary>
 /// Registration coverage for AddClient/AddClientWithEndpoint, including the ServiceLifetime
-/// overloads added by spec 013.
+/// overloads added by spec 014.
 /// </summary>
 [TestClass]
 public class Given_AddClient

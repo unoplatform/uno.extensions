@@ -16,7 +16,7 @@ internal record WebAuthenticationProvider
 	/// The literal token a configured start URI can carry where the redirect belongs; replaced at
 	/// sign-in/out time with the URL-encoded effective callback. This is what lets one static
 	/// configuration serve every platform: the callback differs per platform (custom scheme,
-	/// origin, loopback), and only the provider knows it at runtime (spec 014).
+	/// origin, loopback), and only the provider knows it at runtime (spec 015).
 	/// </summary>
 	internal const string RedirectUriPlaceholder = "{RedirectUri}";
 
@@ -53,7 +53,7 @@ internal record WebAuthenticationProvider
 
 	protected async override ValueTask<IDictionary<string, string>?> InternalLoginAsync(IDispatcher? dispatcher, IDictionary<string, string>? credentials, CancellationToken cancellationToken)
 	{
-		// An already-cancelled login must not open the sign-in UI at all (spec 012 F4).
+		// An already-cancelled login must not open the sign-in UI at all (spec 013 F4).
 		cancellationToken.ThrowIfCancellationRequested();
 
 		var loginStartUri = InternalSettings.LoginStartUri;
@@ -78,7 +78,7 @@ internal record WebAuthenticationProvider
 			if (extracted != RedirectUriPlaceholder)
 			{
 				// The placeholder is not a value; it is filled in below from whatever the
-				// callback resolves to (spec 014).
+				// callback resolves to (spec 015).
 				loginCallbackUri = extracted;
 			}
 		}
@@ -91,7 +91,7 @@ internal record WebAuthenticationProvider
 		// Nothing configured: fall back to the platform's own callback - the custom scheme on
 		// Android/iOS, the app origin on WebAssembly, the loopback listener on Skia Desktop. Not
 		// on WinAppSDK, where the WinRT broker answers ms-app://, which is wrong for the WinUIEx
-		// protocol-activation flow (spec 014).
+		// protocol-activation flow (spec 015).
 		if (string.IsNullOrWhiteSpace(loginCallbackUri))
 		{
 			(loginCallbackUri, brokerError) = TryGetBrokerCallbackUri();
@@ -110,7 +110,7 @@ internal record WebAuthenticationProvider
 		}
 
 		// A static start URI cannot know the per-platform callback; the {RedirectUri} token
-		// carries it in URL-encoded form (spec 014).
+		// carries it in URL-encoded form (spec 015).
 		loginStartUri = loginStartUri.Replace(RedirectUriPlaceholder, Uri.EscapeDataString(loginCallbackUri));
 
 		ApplyPrefersEphemeralWebBrowserSession();
@@ -126,7 +126,7 @@ internal record WebAuthenticationProvider
 		{
 			// Surfacing cancellation (instead of returning a result) keeps AuthenticationService
 			// from saving over - and thereby clearing - the previously cached tokens: a login the
-			// user backed out of must not sign them out (spec 012 F5).
+			// user backed out of must not sign them out (spec 013 F5).
 			throw new OperationCanceledException("The user cancelled the sign-in flow.");
 		}
 		if (userResult?.ResponseStatus is { } responseStatus && responseStatus != WebAuthenticationStatus.Success)
@@ -164,7 +164,7 @@ internal record WebAuthenticationProvider
 
 #if !WINDOWS
 	/// <summary>
-	/// The platform's own callback URI, used when configuration supplies none (spec 014): the
+	/// The platform's own callback URI, used when configuration supplies none (spec 015): the
 	/// custom scheme on Android/iOS, the app origin on WebAssembly, the loopback listener on Skia
 	/// Desktop. Returns a null URI plus the broker's own message when it cannot derive one (for
 	/// example, no custom scheme registered), which lands on the not-configured warning path.
@@ -190,7 +190,7 @@ internal record WebAuthenticationProvider
 
 	/// <summary>
 	/// Why no callback URI could be resolved, naming every source that was tried: configuration,
-	/// the start URI's <c>redirect_uri</c>, and - off WinAppSDK - the platform broker (spec 014).
+	/// the start URI's <c>redirect_uri</c>, and - off WinAppSDK - the platform broker (spec 015).
 	/// </summary>
 	/// <remarks>
 	/// Naming all three matters because the two-source message this replaced read as "you forgot
@@ -289,7 +289,7 @@ internal record WebAuthenticationProvider
 
 	protected async override ValueTask<bool> InternalLogoutAsync(IDispatcher? dispatcher, CancellationToken cancellationToken)
 	{
-		// An already-cancelled logout must not open the end-session UI at all (spec 012 F4).
+		// An already-cancelled logout must not open the end-session UI at all (spec 013 F4).
 		cancellationToken.ThrowIfCancellationRequested();
 
 		var logoutStartUri = InternalSettings.LogoutStartUri;
@@ -332,7 +332,7 @@ internal record WebAuthenticationProvider
 
 		string? brokerError = null;
 #if !WINDOWS
-		// Same broker-derived default as sign-in (spec 014).
+		// Same broker-derived default as sign-in (spec 015).
 		if (string.IsNullOrWhiteSpace(logoutCallbackUri))
 		{
 			(logoutCallbackUri, brokerError) = TryGetBrokerCallbackUri();
@@ -350,7 +350,7 @@ internal record WebAuthenticationProvider
 			return false;
 		}
 
-		// A static logout URI cannot know the per-platform callback either (spec 014).
+		// A static logout URI cannot know the per-platform callback either (spec 015).
 		logoutStartUri = logoutStartUri.Replace(RedirectUriPlaceholder, Uri.EscapeDataString(logoutCallbackUri));
 
 #if WINDOWS
@@ -362,7 +362,7 @@ internal record WebAuthenticationProvider
 		if (userResult?.ResponseStatus is { } responseStatus && responseStatus != WebAuthenticationStatus.Success)
 		{
 			// Reporting failure keeps the local token cache intact - the user backed out of (or the
-			// IdP failed) the end-session flow, so they are still signed in (spec 012 F6).
+			// IdP failed) the end-session flow, so they are still signed in (spec 013 F6).
 			ProviderLogger.LogError("Error signing out: {Status} (error detail {ErrorDetail})", responseStatus, userResult.ResponseErrorDetail);
 			return false;
 		}

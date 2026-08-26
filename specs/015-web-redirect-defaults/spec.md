@@ -1,4 +1,4 @@
-# 014 — Web provider: broker-derived redirect defaults and the {RedirectUri} placeholder
+# 015 — Web provider: broker-derived redirect defaults and the {RedirectUri} placeholder
 
 **Status: in progress.** Written 2026-08-24 on branch `dev/sb/auth-providers-fixes`, following the
 spec-012 work. Motivation: PR #3139 gave MSAL per-platform redirect derivation and AddOidc has
