@@ -1,4 +1,4 @@
-// Compiled out on WebAssembly (UNO_EXT_MSAL_BROWSER), where the cache goes through
+﻿// Compiled out on WebAssembly (UNO_EXT_MSAL_BROWSER), where the cache goes through
 // MsalTokenCacheStore rather than MsalCacheHelper. Keep this file free of other #if branches and of
 // dependencies beyond Microsoft.Identity.Client.Extensions.Msal: Uno.Extensions.Authentication.MSAL.Tests
 // compiles it as linked source (the WinUI assembly can't load in a plain test host).
@@ -85,5 +85,25 @@ internal static class MsalStorageDefaults
 		OperatingSystem.IsMacOS() ? MsalSecureStore.MacKeychain
 		: OperatingSystem.IsLinux() ? MsalSecureStore.LinuxKeyring
 		: MsalSecureStore.None;
+
+	/// <summary>
+	/// Whether <c>MsalCacheHelper.VerifyPersistence()</c> should run for a cache whose secure store
+	/// has already accepted a write (<paramref name="cacheAlreadyPersisted"/>).
+	/// </summary>
+	/// <remarks>
+	/// Under <see cref="MsalCachePersistenceCheck.Auto"/> the check runs only when nothing has been
+	/// persisted at this location yet. The caller establishes that from the cache file: every
+	/// <c>ICacheAccessor</c> touches it when it writes (<c>FileIOWithRetries.TouchFile</c>) and
+	/// deletes it in <c>Clear</c>, so the file existing means a write already succeeded with this
+	/// configuration - on macOS too, where the payload itself lives in the keychain rather than in
+	/// that file.
+	/// </remarks>
+	internal static bool ShouldVerifyPersistence(MsalCachePersistenceCheck mode, bool cacheAlreadyPersisted) =>
+		mode switch
+		{
+			MsalCachePersistenceCheck.Always => true,
+			MsalCachePersistenceCheck.Never => false,
+			_ => !cacheAlreadyPersisted,
+		};
 }
 #endif

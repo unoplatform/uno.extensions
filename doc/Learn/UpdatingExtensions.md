@@ -160,6 +160,7 @@ The MSAL provider received a set of deliberate behavior corrections and platform
 - **Sign-out removes every MSAL account** and the serialized cache — previously only the first account was removed, leaving the rest silently renewable — and the token cache is cleared even when the provider throws.
 - **MSAL exceptions propagate untouched** (`MsalClientException`, `MsalServiceException`, …), so callers can inspect the MSAL error codes; they were previously flattened.
 - **Abandoned interactive sign-ins are cancelled** after 5 minutes by default — closing the system browser is undetectable on desktop — configurable via `InteractiveTimeout` in the `Msal` configuration section.
+- **The token-cache persistence check runs once per cache, not once per launch.** It used to probe the platform's secure store on every storage setup. On macOS that probe is a keychain entry whose service name MSAL randomizes each run, so the OS asked for keychain access on every single launch and "Always Allow" could never take effect. The check now runs only when nothing has been persisted yet, and a write that the store silently rejects is detected and reported instead. Restore the old behavior with `"VerifyCachePersistence": "Always"` in the `Msal` configuration section.
 
 ## Upgrading to Extensions 6.0
 
