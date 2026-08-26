@@ -311,3 +311,34 @@ all Web tests drove a real loopback listener. Two rules:
   debugging iterations ran against a stale binary before this was noticed. Gate on `"N Error(s)"`
   or the exit code, never on elapsed-time output. (Repeat offender this session: `grep|head` exit
   codes; see the runtime-test filter entry above.)
+
+## `git cherry` cannot see a commit main absorbed under a different message (2026-08-26, spec 013)
+
+**Problem:** `dev/sb/auth-providers-fixes` was 36 commits behind `main` with 90 of its own, and about
+forty of those had already reached `main` through the split PRs carved out of it - reworded and
+squashed on the way in. `git cherry main <branch>` marked all 90 as `+` (not upstream), because it
+compares patch-ids and a reword changes nothing about the patch but a squash changes everything. Read
+literally, that says "the branch has 90 commits to replay". `git rebase main` then conflicted on
+commit 1 of 90 across six files, replaying an MSAL fix `main` had already shipped in refined form -
+and the failure mode of pushing through is not a mess, it is silently reverting `main`'s newer version
+of every overlapping file.
+
+**Correct pattern:** before rebasing a long-lived branch whose work has been split upstream, find the
+boundary rather than trusting `git cherry`. `git log --reverse --format='%h %ad %s'` over
+`main..branch` and match subjects against `merge-base..main` by hand: here the branch's own history
+was chronological, so commits 1-69 were the split-out work and 70+ were the genuinely new commits. A
+21-commit cherry-pick of that tail onto `main` produced a clean linear branch with six conflicts, all
+of them real (a CI filter to union, a wasm filter where `main` was newer, a refactor to graft onto, a
+duplicate `.sln` entry to drop).
+
+**Apply to:** any branch that has had PRs split out of it. Also worth knowing:
+- The overlap is *not* symmetric. Take `main`'s side where it refined the same code (the
+  `MsalSecureStore` refactor), the branch's side where it is new (the persistence check), and the
+  union where both added independently (CI filters, `lessons.md`).
+- Two projects with the same name in a `.sln` is a hard MSBuild stop (MSB5004), not a warning, and
+  `dotnet build`'s output does not obviously say which solution or GUIDs are involved - `grep` the
+  name in the `.sln` and compare against `main`'s GUID.
+- Spec numbers collide when a spec is renumbered during a split. `main`'s copy keeps its number; the
+  branch's renumber has to carry the "spec NNN" references in source comments with it. Blanket
+  replacement is not safe: an unrelated spec here referenced a *planned* "spec 013" that means
+  something else entirely.

@@ -57,3 +57,49 @@ Outstanding for CI to confirm: the new suites on the Android/iOS/wasm lanes (fir
 - 2026-08-24, F12: the desktop loopback broker never saw URL fragments (browsers do not send them to servers), so implicit-flow responses - the only shape the basic AddWeb can consume without app-side exchange code - could not complete on Skia Desktop. A bare callback hit now serves a static relay page whose script re-requests the callback with the fragment as a marked query (`?uno-fragment=1&...`, or `?uno-no-fragment=1` when bare), and the broker restores the original fragment shape in ResponseData. Red/fix/green: `When_FragmentResponse_Then_RelayedAndReturned` + `When_NoQueryAndNoFragment_Then_CompletesEmpty`; full Authentication.UI.Tests suite 13/13. Enables a zero-code live demo of AddWeb against demo.duendesoftware.com's `interactive.implicit` client (id_token on the fragment, arbitrary redirect URIs accepted).
 - 2026-08-24, spec 015 (Web redirect defaults): AddWeb now falls back to `WebAuthenticationBroker.GetCurrentApplicationCallbackUri()` when no callback is configured, and replaces the literal `{RedirectUri}` token in LoginStartUri/LogoutStartUri with the URL-encoded effective callback - one static configuration now serves every platform (WinAppSDK excluded: the WinRT broker answers ms-app://, wrong for the WinUIEx flow, so it keeps requiring explicit config). Red/fix/green: `When_RedirectUriPlaceholder_Then_BrokerCallbackSubstituted` + `When_NoCallbackConfigured_Then_BrokerCallbackUsed`; Web suite 15/15. Details in specs/015-web-redirect-defaults/spec.md.
 - 2026-08-24, documentation pass over specs 013/015: HowTo-WebAuthentication rewritten for coherence (full config-key table incl. token keys and per-key defaults, {RedirectUri} placeholder in the walkthrough, corrected "web view" and "auto-refresh" claims, fragment-relay note replacing the stale "implicit flows cannot work over a loopback redirect" claim - also fixed in DesktopWebAuthenticationBrokerProvider's XML remarks); HowTo-OidcAuthentication gains sign-out (id_token_hint, cancel-keeps-session, local-only alternative), silent-refresh, and id_token-validation notes; AuthenticationOverview gains the Skia Desktop broker note; UpdatingExtensions.md gains the "Web and OIDC Authentication behavior changes" section for 7.0 upgraders covering every deliberate behavior change from specs 013 and 015.
+
+## Rebuilt on main (2026-08-26)
+
+The branch had drifted 36 commits behind `main`, and `main` had meanwhile absorbed roughly forty of
+its own 90 commits through the msal-1..4 and storage-fixes split PRs - reworded and squashed, so
+`git cherry` recognised none of them and a literal `git rebase main` conflicted on commit 1 of 90,
+replaying work `main` already shipped. Rebuilt instead as the net diff: a fresh branch off `main`
+carrying the 21 non-merge commits from `898e864f1` onward (everything after the last commit `main`
+already had), which is exactly the Oidc/Web/Custom/broker/http work plus its docs and specs.
+
+Resolutions worth knowing, in case this is ever redone:
+
+- **`.azure-pipelines.yml` `RuntimeTestsFilter`** - unioned rather than either side:
+  `'Storage.UI.Tests | Uno.Extensions.Authentication.'`. `main` had added the storage suite; the
+  branch had widened to the whole auth namespace. Both are wanted.
+- **`stage-runtime-tests-wasm.yml`** - took `main`. The branch still carried the narrow
+  `Given_BrowserTokenCacheStorage`-only filter with its StubEntra explanation; `main` fixed the
+  underlying cause (the provider's Builder callback now runs after `WithUnoHelpers()`, so the stub
+  applies in the browser) and runs the full filter there.
+- **`MsalAuthenticationProvider` / `MsalStorageDefaults`** - kept `main`'s structure (the
+  `SetupBrowserStorage` / `SetupDesktopStorage` split and the `MsalSecureStore` / `ForCurrentOS()`
+  refactor) and grafted this branch's persistence-check behaviour into it: `filePath` hoisted,
+  `VerifyPersistenceIfNeeded` in place of the unconditional `VerifyPersistence()`,
+  `ArmWriteVerification` after `RegisterCache`, and the four new members moved from the branch's
+  `#if !UNO_EXT_MSAL_NOSTORAGE` guard into `main`'s non-browser branch, where `MsalCacheHelper`
+  actually exists. The unprotected fallback keeps verifying unconditionally.
+- **`specs/lessons.md`** - both sides kept; the two additions were unrelated.
+- **Spec renumbering** - this spec was 012 on the branch, but `main`'s msal work took 012 when it was
+  split out (it was 009 here). 012->013, 013->014, 014->015, 015->016.
+- **Duplicate solution entry** - `Uno.Extensions.Authentication.Tests` ended up registered twice
+  (`main`'s auth-core-fixes plus this branch's Custom-provider commit, each with its own GUID), which
+  MSBuild rejects outright with MSB5004. `main`'s GUID kept.
+
+Verification on the rebuilt branch:
+
+| Check | Result |
+| --- | --- |
+| `Uno.Extensions-packageonly.slnf` Release (MSBuild) | 0 errors |
+| Unit tests, `dotnet test` over the same filter package CI uses | **1612 passed, 0 failed** (19 pre-existing Reactive skips) |
+| Runtime tests, Skia desktop head, the exact CI filter | **48/48 passed** |
+
+They cover the Storage default-store suite, the desktop-broker suite (including the fragment relay),
+the Web suite (including the `{RedirectUri}` placeholder and the broker-derived default), the Oidc
+suite (including the `id_token_hint` end-session case) and the MSAL suite. What is still unconfirmed
+is unchanged by the rebuild: the Android, iOS and WebAssembly lanes have never run the Oidc/Web
+suites.
