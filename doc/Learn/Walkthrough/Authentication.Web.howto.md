@@ -1,17 +1,17 @@
 ---
 uid: Uno.Extensions.Authentication.Web.HowTo
-title: Authenticate Users with a Web View
+title: Authenticate Users with Web Authentication
 tags: [authentication, web, navigation]
 ---
 
 > **UnoFeatures:** `Authentication` (add to `<UnoFeatures>` in your `.csproj`)
 
-# Let users sign in from a web view
+# Let users sign in with web authentication
 
 ## 1. Show a web page to sign users in
 
 **Goal**
-Open a web view, let the user sign in with your identity provider, and get redirected back to the app.
+Open a system authentication window (which may use a system browser), let the user sign in with your identity provider, and get redirected back to the app.
 
 **When to use**
 
@@ -72,7 +72,7 @@ Requires the `Authentication` UnoFeature.
 
 **What happens**
 
-* The `WebAuthenticationProvider` opens that login URL in an in-app web view.
+* The `WebAuthenticationProvider` opens that login URL using the system's `WebAuthenticationBroker` API, which displays an authentication window.
 * After the provider finishes the external login, it redirects back to the app and the provider stores the tokens.
 
 ---
@@ -112,7 +112,7 @@ protected override void OnLaunched(LaunchActivatedEventArgs args)
 
 **Notes**
 
-* `AddWeb()` wires an `IAuthenticationProvider` backed by a web view.
+* `AddWeb()` wires an `IAuthenticationProvider` that uses the `WebAuthenticationBroker` API for authentication.
 * Tokens are persisted by the provider.
 
 ---
@@ -241,7 +241,7 @@ public class MainViewModel
 
     private async Task LoginAsync()
     {
-        // This shows the web view and goes through the configured flow
+        // This triggers the web authentication flow
         await _auth.LoginAsync();
     }
 }
@@ -251,7 +251,7 @@ public class MainViewModel
 
 **What happens**
 
-* Button → command → `IAuthenticationService.LoginAsync()` → provider opens web view → user signs in → provider stores tokens.
+* Button → command → `IAuthenticationService.LoginAsync()` → provider uses `WebAuthenticationBroker` → user signs in → provider stores tokens.
 
 ---
 
