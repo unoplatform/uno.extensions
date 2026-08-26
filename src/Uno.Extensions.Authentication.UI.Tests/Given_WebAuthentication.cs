@@ -330,6 +330,49 @@ public class Given_WebAuthentication
 	}
 
 	/// <summary>
+	/// Spec 014 diagnostics: when nothing configures a callback and the broker cannot derive one
+	/// either, the warning must name the broker and carry its reason. The message this replaced
+	/// said only that LoginCallbackUri and redirect_uri were missing - which reads as a
+	/// configuration slip even when the start URI carries {RedirectUri} and the real cause is a
+	/// platform with no callback to derive (an iOS app with no CFBundleURLTypes entry, say).
+	/// </summary>
+	[TestMethod]
+	public async Task When_BrokerCannotDeriveCallback_Then_WarningNamesBroker()
+	{
+		StubWebAuthenticationBroker.EnsureRegistered();
+		var broker = StubWebAuthenticationBroker.Instance;
+		broker.Reset();
+		broker.CallbackUriError = "No custom scheme found for this application.";
+		var logs = new CapturingLoggerProvider();
+
+		using var host = UnoHost
+			.CreateDefaultBuilder(typeof(Given_WebAuthentication).Assembly)
+			.UseAuthentication(auth => auth
+				.AddWeb(web => web
+					.LoginStartUri($"{LoginStartUri}?client_id=demo&redirect_uri={{RedirectUri}}")))
+			.ConfigureServices(services => services
+				.AddLogging(logging => logging
+					.SetMinimumLevel(LogLevel.Trace)
+					.AddProvider(logs)))
+			.Build();
+
+		var authentication = host.Services.GetRequiredService<IAuthenticationService>();
+		var tokens = host.Services.GetRequiredService<ITokenCache>();
+		using var purge = Cts();
+		await tokens.ClearAsync(purge.Token);
+		using var cts = Cts();
+
+		var result = await authentication.LoginAsync(default, cancellationToken: cts.Token);
+
+		result.Should().BeFalse("no callback means no flow to start");
+		broker.InvocationCount.Should().Be(0, "the sign-in UI must not open without a callback");
+		logs.Text.Should().Contain("WebAuthenticationBroker",
+			"the warning must name the source that failed, not just the two configuration settings");
+		logs.Text.Should().Contain(broker.CallbackUriError,
+			"the broker's own reason is what tells the developer what to fix");
+	}
+
+	/// <summary>
 	/// Red test for spec 012 F4: no <see cref="CancellationToken"/> used to reach the broker call,
 	/// so an already-cancelled login still drove the whole interactive flow to completion.
 	/// </summary>
