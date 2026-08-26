@@ -16,7 +16,7 @@ namespace Uno.Extensions.Authentication;
 /// </remarks>
 internal sealed class FakeKeyValueStorage : IKeyValueStorage
 {
-	public bool IsEncrypted => false;
+	public bool IsEncrypted { get; init; }
 
 	/// <summary>
 	/// The backing store, keyed exactly as the caller wrote it.
