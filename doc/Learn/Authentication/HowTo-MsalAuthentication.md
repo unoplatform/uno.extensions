@@ -356,6 +356,29 @@ On desktop targets, `MsalAuthenticationProvider` persists the MSAL token cache s
 
 - **Linux** — the cache is stored in the default keyring collection via `libsecret`.
 
+The provider checks once that the secure store can round-trip the cache, the first time it persists
+one at a given location. It does **not** re-check on every launch: on macOS the check probes with a keychain entry whose service name MSAL randomizes on
+every run, so re-checking asks the user to grant keychain access on every single start and there is
+no entry for "Always Allow" to be remembered against. A write the store silently rejects is caught
+instead — the provider notices the cache never reached disk, logs an error, and retries the setup.
+
+Set `VerifyCachePersistence` in the `Msal` configuration section to change when the check runs:
+
+| Value | Behavior |
+| --- | --- |
+| `Auto` (default) | Check only when nothing has been persisted at this location yet. |
+| `Always` | Check on every storage setup. Expect a keychain prompt on every launch on macOS. |
+| `Never` | Never check, not even on a first run. A store that cannot be written to is reported after the first real write is attempted. |
+
+```json
+{
+  "Msal": {
+    "ClientId": "161a9fb5-3b16-487a-81a2-ac45dcc0ad3b",
+    "VerifyCachePersistence": "Always"
+  }
+}
+```
+
 If the platform's secure storage isn't available (for example, a Linux session without a keyring), the provider logs an error and keeps the token cache in memory for the session — sign-in still works, but the user has to sign in again after an app restart. To persist the cache in an **unprotected (plaintext) file** in that situation instead, opt in explicitly:
 
 ```json
