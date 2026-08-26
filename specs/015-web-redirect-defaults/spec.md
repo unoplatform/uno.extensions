@@ -45,19 +45,19 @@ broker default. Red first, per AGENTS.
 
 ## Diagnostics
 
-3. **The dead end names its cause.** When neither configuration nor the start URI nor the broker
-   yields a callback, the flow cannot start. The warning used to say only that `LoginCallbackUri`
-   was unset and `redirect_uri` was missing from `LoginStartUri` - which reads as a configuration
-   slip even when the start URI carries `{RedirectUri}` and the real cause is a platform with no
-   callback to derive. The broker's own failure message was logged at `Debug`, i.e. invisible at
-   the log level an app actually runs with, so the one line explaining the dead end never appeared.
+**Item 3 - the dead end names its cause.** When neither configuration nor the start URI nor the broker
+yields a callback, the flow cannot start. The warning used to say only that `LoginCallbackUri`
+was unset and `redirect_uri` was missing from `LoginStartUri` - which reads as a configuration
+slip even when the start URI carries `{RedirectUri}` and the real cause is a platform with no
+callback to derive. The broker's own failure message was logged at `Debug`, i.e. invisible at
+the log level an app actually runs with, so the one line explaining the dead end never appeared.
 
-   The warning now names all three sources tried and carries the broker's message, plus what makes
-   a broker-derived callback possible (a custom scheme registered for the app: `CFBundleURLTypes`
-   in `Info.plist` on iOS/Mac Catalyst, an intent filter on Android). Found the hard way: an iOS
-   head whose `Info.plist` declared `CFBundleURLSchemes` at the root instead of inside
-   `CFBundleURLTypes` - so iOS ignored the scheme entirely - reported only "redirect_uri not set",
-   which is the one thing that was not wrong.
+The warning now names all three sources tried and carries the broker's message, plus what makes
+a broker-derived callback possible (a custom scheme registered for the app: `CFBundleURLTypes`
+in `Info.plist` on iOS/Mac Catalyst, an intent filter on Android). Found the hard way: an iOS
+head whose `Info.plist` declared `CFBundleURLSchemes` at the root instead of inside
+`CFBundleURLTypes` - so iOS ignored the scheme entirely - reported only "redirect_uri not set",
+which is the one thing that was not wrong.
 
-   Guarded by `Given_WebAuthentication.When_BrokerCannotDeriveCallback_Then_WarningNamesBroker`
-   (stub broker throwing from `GetCurrentApplicationCallbackUri`).
+Guarded by `Given_WebAuthentication.When_BrokerCannotDeriveCallback_Then_WarningNamesBroker`
+(stub broker throwing from `GetCurrentApplicationCallbackUri`).
