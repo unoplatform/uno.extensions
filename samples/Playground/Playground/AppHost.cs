@@ -61,7 +61,8 @@ internal static class AppHost
 							)
 
 					.AddHostedService<SimpleStartupService>()
-					.AddHostedService<LongStartHostedService>();
+					.AddHostedService<LongStartHostedService>()
+					.AddHostedService<PlatformProbeService>();
 			})
 
 
