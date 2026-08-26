@@ -113,4 +113,54 @@ public class Given_MsalStorageDefaults
 
 		first.Should().NotBe(second);
 	}
+
+	[TestMethod]
+	public void When_AutoAndNothingPersistedYet_Then_PersistenceVerified()
+	{
+		// A first run has no evidence the store works, so it is worth the probe.
+		MsalStorageDefaults
+			.ShouldVerifyPersistence(MsalCachePersistenceCheck.Auto, cacheAlreadyPersisted: false)
+			.Should().BeTrue();
+	}
+
+	[TestMethod]
+	public void When_AutoAndCacheAlreadyPersisted_Then_PersistenceNotVerified()
+	{
+		// The whole point of Auto: a store that already accepted a write is not re-probed, so
+		// macOS stops asking for keychain access on every launch.
+		MsalStorageDefaults
+			.ShouldVerifyPersistence(MsalCachePersistenceCheck.Auto, cacheAlreadyPersisted: true)
+			.Should().BeFalse();
+	}
+
+	[TestMethod]
+	public void When_Always_Then_PersistenceVerifiedRegardlessOfExistingCache()
+	{
+		MsalStorageDefaults
+			.ShouldVerifyPersistence(MsalCachePersistenceCheck.Always, cacheAlreadyPersisted: true)
+			.Should().BeTrue();
+		MsalStorageDefaults
+			.ShouldVerifyPersistence(MsalCachePersistenceCheck.Always, cacheAlreadyPersisted: false)
+			.Should().BeTrue();
+	}
+
+	[TestMethod]
+	public void When_Never_Then_PersistenceNeverVerified()
+	{
+		MsalStorageDefaults
+			.ShouldVerifyPersistence(MsalCachePersistenceCheck.Never, cacheAlreadyPersisted: false)
+			.Should().BeFalse();
+		MsalStorageDefaults
+			.ShouldVerifyPersistence(MsalCachePersistenceCheck.Never, cacheAlreadyPersisted: true)
+			.Should().BeFalse();
+	}
+
+	[TestMethod]
+	public void When_ModeUnset_Then_DefaultsToAuto()
+	{
+		// The provider reads this straight off configuration, so the default has to be the cheap
+		// mode rather than whatever `default(MsalCachePersistenceCheck)` happens to land on.
+		new MsalConfiguration().VerifyCachePersistence.Should().Be(MsalCachePersistenceCheck.Auto);
+		default(MsalCachePersistenceCheck).Should().Be(MsalCachePersistenceCheck.Auto);
+	}
 }
