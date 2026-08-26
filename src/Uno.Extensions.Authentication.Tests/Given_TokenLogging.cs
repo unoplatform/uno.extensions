@@ -5,6 +5,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Uno.Extensions.Authentication.Handlers;
 
@@ -64,6 +65,28 @@ public class Given_TokenLogging
 		request.Headers.Authorization!.Parameter.Should().Be(AccessToken, "the header itself must still carry the token");
 		log.Text.Should().Contain("Bearer", "the scheme is safe to log");
 		log.Text.Should().NotContain(AccessToken);
+	}
+
+	[TestMethod]
+	public void When_StoreUnencrypted_Then_WarningNamesTheStore()
+	{
+		// Skia desktop on Windows/Linux and Skia-renderer Android/iOS fall back to a cleartext store;
+		// this warning is the only signal an app author gets that tokens land there unprotected.
+		var log = new CapturingLogger<TokenCache>();
+
+		_ = new TokenCache(log, new FakeKeyValueStorage());
+
+		log.Text.Should().Contain(nameof(LogLevel.Warning)).And.Contain(nameof(FakeKeyValueStorage));
+	}
+
+	[TestMethod]
+	public void When_StoreEncrypted_Then_NoWarning()
+	{
+		var log = new CapturingLogger<TokenCache>();
+
+		_ = new TokenCache(log, new FakeKeyValueStorage { IsEncrypted = true });
+
+		log.Text.Should().NotContain(nameof(LogLevel.Warning));
 	}
 
 	private sealed class OkHandler : HttpMessageHandler
