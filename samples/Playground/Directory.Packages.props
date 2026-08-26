@@ -5,5 +5,27 @@
 		<PackageVersion Include="Refit" Version="7.2.22" />
 		<PackageVersion Include="Refit.HttpClientFactory" Version="7.2.22" />
 		<PackageVersion Include="System.Text.Json" Version="8.0.5" />
+		<!-- Scratch: consume the locally packed Uno.Extensions packages (artifacts/) instead of project references. -->
+		<PackageVersion Include="Uno.Extensions.Configuration" Version="255.255.255.255-local" />
+		<PackageVersion Include="Uno.Extensions.Core" Version="255.255.255.255-local" />
+		<PackageVersion Include="Uno.Extensions.Hosting.WinUI" Version="255.255.255.255-local" />
+		<PackageVersion Include="Uno.Extensions.Hosting" Version="255.255.255.255-local" />
+		<PackageVersion Include="Uno.Extensions.Http.Refit" Version="255.255.255.255-local" />
+		<PackageVersion Include="Uno.Extensions.Http.WinUI" Version="255.255.255.255-local" />
+		<PackageVersion Include="Uno.Extensions.Http" Version="255.255.255.255-local" />
+		<PackageVersion Include="Uno.Extensions.Localization.WinUI" Version="255.255.255.255-local" />
+		<PackageVersion Include="Uno.Extensions.Logging.WinUI" Version="255.255.255.255-local" />
+		<PackageVersion Include="Uno.Extensions.Navigation.Toolkit.WinUI" Version="255.255.255.255-local" />
+		<PackageVersion Include="Uno.Extensions.Navigation.WinUI" Version="255.255.255.255-local" />
+		<PackageVersion Include="Uno.Extensions.Navigation" Version="255.255.255.255-local" />
+		<PackageVersion Include="Uno.Extensions.Reactive.WinUI" Version="255.255.255.255-local" />
+		<PackageVersion Include="Uno.Extensions.Reactive" Version="255.255.255.255-local" />
+		<PackageVersion Include="Uno.Extensions.Serialization.Http" Version="255.255.255.255-local" />
+		<PackageVersion Include="Uno.Extensions.Serialization.Refit" Version="255.255.255.255-local" />
+		<PackageVersion Include="Uno.Extensions.Serialization" Version="255.255.255.255-local" />
+		<PackageVersion Include="Uno.Extensions.Storage.WinUI" Version="255.255.255.255-local" />
+		<PackageVersion Include="Uno.Extensions.Storage" Version="255.255.255.255-local" />
+		<PackageVersion Include="Uno.Extensions.Validation.Fluent" Version="255.255.255.255-local" />
+		<PackageVersion Include="Uno.Extensions.Validation" Version="255.255.255.255-local" />
 	</ItemGroup>
 </Project>
