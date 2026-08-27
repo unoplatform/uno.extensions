@@ -89,7 +89,7 @@ public class DesktopWebAuthenticationBrokerProvider : IWebAuthenticationBrokerPr
 	private static readonly Lazy<int> _defaultPort = new(
 		() =>
 		{
-			var probe = new TcpListener(IPAddress.Loopback, 0);
+			using var probe = new TcpListener(IPAddress.Loopback, 0);
 			probe.Start();
 			var port = ((IPEndPoint)probe.LocalEndpoint).Port;
 			probe.Stop();

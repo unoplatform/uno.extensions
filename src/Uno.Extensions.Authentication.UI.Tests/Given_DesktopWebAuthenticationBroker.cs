@@ -85,13 +85,13 @@ public class Given_DesktopWebAuthenticationBroker
 		var broker = new TestBroker();
 		var callback = broker.GetCurrentApplicationCallbackUri();
 		using var http = new HttpClient();
+		// Owned by the test method, not the lambda: the POST is still in flight when the lambda
+		// returns, so a using inside it would dispose the content mid-send.
+		using var form = new FormUrlEncodedContent(new Dictionary<string, string> { ["code"] = "stub-code", ["state"] = "xyz" });
 		Task<HttpResponseMessage>? browser = null;
 		broker.OnLaunch = (request, ct) =>
 		{
-			browser = http.PostAsync(
-				callback,
-				new FormUrlEncodedContent(new Dictionary<string, string> { ["code"] = "stub-code", ["state"] = "xyz" }),
-				ct);
+			browser = http.PostAsync(callback, form, ct);
 			return Task.CompletedTask;
 		};
 		using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(30));
