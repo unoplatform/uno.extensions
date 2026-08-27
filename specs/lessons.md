@@ -344,3 +344,20 @@ duplicate `.sln` entry to drop).
   branch's renumber has to carry the "spec NNN" references in source comments with it. Blanket
   replacement is not safe: an unrelated spec here referenced a *planned* "spec 013" that means
   something else entirely.
+
+## A desktop-only runtime-test build invalidates the package build's restore (2026-08-27, spec 013)
+
+**Problem:** `dotnet build Uno.Extensions-runtimetests.slnf -p:Build_Android=false ...` (the local
+way to build the Skia desktop head) re-restores every shared project with desktop-only target
+frameworks. The next `MSBuild.exe Uno.Extensions-packageonly.slnf -t:Build` then fails with
+`NETSDK1005: Assets file ... doesn't have a target for 'net9.0-android'` on the first multi-TFM
+project - which reads as a broken project, not a stale restore. The same applies to any
+`-p:TargetFramework=...` build: the global property leaks into every referenced project and their
+`project.assets.json` files are rewritten for that one target.
+
+**Correct pattern:** always `-t:Restore,Build` the package filter after a runtime-test build, and
+never run the two concurrently - they race on the same `obj/*/project.assets.json` files. Gate on
+the exit code, not on filtered output (`grep | head` masks failures).
+
+**Apply to:** any session that alternates between the package build and a desktop runtime-test
+build, which is every verification loop in the Authentication area.

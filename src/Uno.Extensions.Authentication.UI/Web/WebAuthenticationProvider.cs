@@ -251,8 +251,13 @@ internal record WebAuthenticationProvider
 		{
 			return (WebAuthenticationBroker.GetCurrentApplicationCallbackUri().OriginalString, null);
 		}
-		catch (Exception ex)
+		catch (Exception ex) when (ex is not OperationCanceledException)
 		{
+			// Deliberately broad: what the broker throws when it has no callback is a property of
+			// the platform implementation (InvalidOperationException on iOS with no URL scheme,
+			// NotImplementedException from the Skia flavor, ...), and this handler swallows
+			// nothing - the message becomes the Warning's stated reason for a flow that cannot
+			// start. Narrowing it would turn an unlisted exception type back into a crash.
 			return (null, ex.Message);
 		}
 	}
