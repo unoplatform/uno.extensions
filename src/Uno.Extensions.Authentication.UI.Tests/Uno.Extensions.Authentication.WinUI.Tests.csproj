@@ -1,6 +1,15 @@
 <Project Sdk="Uno.Sdk.Private">
 	<Import Project="..\tfms-ui-winui.props" />
 
+	<!--
+		Uno.Sdk no longer defines __WASM__ (see Uno.Extensions.RuntimeTests.Core.csproj). The desktop
+		broker suite gates on it to stay out of the browser head, where HttpListener throws
+		PlatformNotSupportedException - so it has to be defined here for that gate to hold.
+	-->
+	<PropertyGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'browserwasm'">
+		<DefineConstants>$(DefineConstants);__WASM__</DefineConstants>
+	</PropertyGroup>
+
 	<PropertyGroup>
 		<Description>Test library for the web authentication extensions for the Uno Platform (WinUI)</Description>
 		<EnableDefaultPageItems>false</EnableDefaultPageItems>

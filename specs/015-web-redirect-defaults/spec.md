@@ -61,3 +61,26 @@ which is the one thing that was not wrong.
 
 Guarded by `Given_WebAuthentication.When_BrokerCannotDeriveCallback_Then_WarningNamesBroker`
 (stub broker throwing from `GetCurrentApplicationCallbackUri`).
+
+## The `{State}` placeholder (2026-08-27, review panel M1)
+
+The desktop loopback broker completes on the first request to the callback path from any origin;
+top-level navigations to loopback are not blocked by browsers, so while a Web sign-in is pending,
+any page the user has open could navigate to `http://localhost:{port}/authentication-callback?access_token=...`
+and the provider would cache it - session fixation. The OIDC provider is not exposed (Duende
+validates `state` and PKCE); the Web provider had no notion of `state` at all.
+
+`{State}` mirrors `{RedirectUri}`: a `LoginStartUri` carrying the literal token gets a fresh
+128-bit hex value from `RandomNumberGenerator` per sign-in, and after the broker returns the
+provider rejects (returns `null` - a failed login) any response whose `state` does not match. The
+check runs before token extraction. Opt-in because a start URI that does not carry the token cannot
+be bound retroactively; documented as the recommended shape, and the desktop broker's XML docs
+point at it.
+
+Guarded by `When_StatePlaceholder_Then_FreshStateSentAndVerified` and
+`When_StateMismatch_Then_LoginRejected` (stub broker echoing the request's `state`, or a forged one
+via `NextState`).
+
+Also folded in: the three copies of the extract-`redirect_uri`-unless-placeholder rule and the two
+copies of the broker-fallback-and-warn block became `ExtractRedirectUri` and `ResolveCallbackUri`,
+shared by sign-in and sign-out.

@@ -37,8 +37,23 @@ internal record OidcAuthenticationProvider(
 
 		var authenticationResult = await _client.LoginAsync(cancellationToken: cancellationToken);
 
-		if(authenticationResult.IsError)
+		if (authenticationResult.IsError)
 		{
+			if (authenticationResult.Error == nameof(BrowserResultType.UserCancel))
+			{
+				// OidcClient reports a browser result type by its name when the IBrowser supplies
+				// no error text (WebAuthenticatorBrowser leaves it null on purpose). Surfacing
+				// cancellation instead of returning null keeps AuthenticationService from clearing
+				// the previously cached tokens: a login the user backed out of must not sign them
+				// out (spec 013 F5) - the same contract as the Web and MSAL providers.
+				if (ProviderLogger.IsEnabled(LogLevel.Information))
+				{
+					ProviderLogger.LogInformation("Sign-in flow was cancelled by the user; the previous session is kept");
+				}
+
+				throw new OperationCanceledException("The user cancelled the sign-in flow.");
+			}
+
 			ProviderLogger.LogError("Error logging in: {Error} - {ErrorDescription}", authenticationResult.Error, authenticationResult.ErrorDescription);
 			return default;
 		}
@@ -100,8 +115,24 @@ internal record OidcAuthenticationProvider(
 		}
 
 		var result = await _client.RefreshTokenAsync(token, cancellationToken: cancellationToken);
+		if (result.IsError && !IsTokenEndpointError(result.Error))
+		{
+			// The token endpoint unreachable, a 5xx, a throttled request: none of these says the
+			// session is over, so the cached tokens stand - signing the user out over a network
+			// blip is the wrong answer, and a startup RefreshAsync must not sign out an offline
+			// user. Same rule as the MSAL provider. OidcClient folds the transport error into the
+			// Error text, so "not a token-endpoint error code" is the test.
+			if (ProviderLogger.IsEnabled(LogLevel.Warning))
+			{
+				ProviderLogger.LogWarning("Silent token refresh failed for a reason other than a rejected refresh token ({Error}); keeping the current tokens", result.Error);
+			}
+
+			return await Tokens.GetAsync(cancellationToken);
+		}
+
 		if (result.IsError || string.IsNullOrWhiteSpace(result.AccessToken))
 		{
+			// The identity provider answered and rejected the refresh token: the session is over.
 			ProviderLogger.LogError("Error refreshing tokens: {Error} - {ErrorDescription}", result.Error, result.ErrorDescription);
 			return default;
 		}
@@ -119,4 +150,12 @@ internal record OidcAuthenticationProvider(
 
 		return creds;
 	}
+
+	/// <summary>
+	/// Whether <paramref name="error"/> is an error code the token endpoint itself returns
+	/// (RFC 6749 §5.2) - a verdict on the refresh token - as opposed to the transport or exception
+	/// text OidcClient reports when no such verdict was reached.
+	/// </summary>
+	private static bool IsTokenEndpointError(string? error) =>
+		error is "invalid_request" or "invalid_client" or "invalid_grant" or "unauthorized_client" or "unsupported_grant_type" or "invalid_scope";
 }

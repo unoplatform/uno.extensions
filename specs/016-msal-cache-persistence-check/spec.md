@@ -77,3 +77,29 @@ Steady-state macOS launches now make **zero** extra secure-store round-trips.
 
 `Given_MsalStorageDefaults` covers the decision table (`Auto` both ways, `Always`, `Never`) and pins
 `Auto` as both the configuration default and `default(MsalCachePersistenceCheck)`.
+
+Not covered by a test: the write watchdog and the read check below run against a real
+`MsalCacheHelper`, which is sealed and owns its accessors; the user-visible outcome ("no second
+prompt on the next launch") was observed on a Mac, not asserted.
+
+## Review-panel follow-ups (2026-08-27)
+
+Three gaps in the design above, closed together:
+
+- **The cache file proves a past write, not a readable store.** A Linux session that later has no
+  keyring daemon, or a macOS grant the user revoked, left `Auto` skipping the probe and the first
+  read throwing out of `GetAccountsAsync()` in a startup `RefreshAsync` - past every fallback, where
+  `main`'s unconditional probe would have degraded to in-memory. `VerifyReadableAsync` now runs
+  `GetAccountsAsync()` during setup whenever the probe was skipped, unregisters the helper on
+  failure and rethrows as `MsalCachePersistenceException`, so the existing fallback path applies.
+  This is the read every sign-in performs anyway, moved to where it can still be handled: no extra
+  secure-store round-trip, no extra prompt.
+- **The re-arm was unbounded.** If `TouchFile` ever disappears from MSAL, every write would fail
+  the check, null `_setupStorageTask`, and re-run the probe - the prompt storm this spec removes,
+  per write. `_storageRetryConsumed` bounds the retry to one per process; the second failure logs a
+  Warning and stops. The reset is a `Volatile.Write` rather than a plain store from MSAL's callback
+  thread.
+- **The watchdog logged the symptom, not the cause.** `MsalCacheHelper` logs the exception a
+  rejected write failed with to its own `TraceSource` and swallows it. `CacheHelperTrace()` hands
+  `CreateAsync` a `TraceSource` whose listener forwards Warning and above into the provider's
+  logger, so the keychain or keyring reason appears next to the watchdog's error.

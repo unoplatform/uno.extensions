@@ -3,6 +3,7 @@
 // suite compiles only for the TFMs that can exercise it (net9.0 / net9.0-desktop).
 #if !__ANDROID__ && !__IOS__ && !__WASM__ && !WINDOWS && !__MACCATALYST__
 using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -55,20 +56,94 @@ public class Given_DesktopWebAuthenticationBroker
 		var broker = new TestBroker();
 		var callback = broker.GetCurrentApplicationCallbackUri();
 		using var http = new HttpClient();
+		Task<HttpResponseMessage>? browser = null;
 		broker.OnLaunch = (request, ct) =>
 		{
-			// Fire-and-forget like a real browser: the GET's response only arrives once the
-			// broker's listener answers it, so awaiting here would deadlock the flow.
-			_ = http.GetAsync($"{callback}?code=stub-code&state=xyz", ct);
+			// Like a real browser, the GET only completes once the broker's listener answers it -
+			// so it is started here and awaited after the broker returns, where a failure inside
+			// it fails the test instead of vanishing.
+			browser = http.GetAsync($"{callback}?code=stub-code&state=xyz", ct);
 			return Task.CompletedTask;
 		};
 		using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(30));
 
 		var result = await broker.AuthenticateAsync(WebAuthenticationOptions.None, RequestUri, callback, cts.Token);
 
+		(await browser!).EnsureSuccessStatusCode();
 		result.ResponseStatus.Should().Be(WebAuthenticationStatus.Success);
 		result.ResponseData.Should().Be($"{callback}?code=stub-code&state=xyz");
 		broker.LaunchedRequestUri.Should().Be(RequestUri);
+	}
+
+	/// <summary>
+	/// <c>response_mode=form_post</c>: the identity provider's auto-submitting form POSTs the
+	/// response to the callback instead of redirecting with a query. Same result shape.
+	/// </summary>
+	[TestMethod]
+	public async Task When_FormPostResponse_Then_CompletedFromBody()
+	{
+		var broker = new TestBroker();
+		var callback = broker.GetCurrentApplicationCallbackUri();
+		using var http = new HttpClient();
+		Task<HttpResponseMessage>? browser = null;
+		broker.OnLaunch = (request, ct) =>
+		{
+			browser = http.PostAsync(
+				callback,
+				new FormUrlEncodedContent(new Dictionary<string, string> { ["code"] = "stub-code", ["state"] = "xyz" }),
+				ct);
+			return Task.CompletedTask;
+		};
+		using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(30));
+
+		var result = await broker.AuthenticateAsync(WebAuthenticationOptions.None, RequestUri, callback, cts.Token);
+
+		(await browser!).EnsureSuccessStatusCode();
+		result.ResponseStatus.Should().Be(WebAuthenticationStatus.Success);
+		result.ResponseData.Should().Be($"{callback}?code=stub-code&state=xyz",
+			"a posted response must complete the flow in the same shape as a query-string one");
+	}
+
+	[TestMethod]
+	public async Task When_RequestUriNotHttp_Then_Throws()
+	{
+		var broker = new TestBroker();
+
+		Func<Task> act = () => broker.AuthenticateAsync(
+			WebAuthenticationOptions.None,
+			new Uri("file:///etc/passwd"),
+			broker.GetCurrentApplicationCallbackUri(),
+			CancellationToken.None);
+
+		await act.Should().ThrowAsync<ArgumentException>(
+			"only a web URL may be handed to the OS's URL handler, which dispatches on scheme");
+		broker.LaunchedRequestUri.Should().BeNull("nothing must be launched for a rejected request URI");
+	}
+
+	/// <summary>
+	/// WinRT has no timeout status, so the broker's own AuthenticationTimeout is reported as
+	/// UserCancel - marked by the error detail, which is how the providers tell the two apart.
+	/// </summary>
+	[TestMethod]
+	public async Task When_BrokerTimesOut_Then_UserCancelWithTimeoutDetail()
+	{
+		var broker = new TestBroker();
+		var callback = broker.GetCurrentApplicationCallbackUri();
+		var original = WinRTFeatureConfiguration.WebAuthenticationBroker.AuthenticationTimeout;
+		WinRTFeatureConfiguration.WebAuthenticationBroker.AuthenticationTimeout = TimeSpan.FromMilliseconds(200);
+		try
+		{
+			// The fake browser never redirects; only the broker's own timeout can end this.
+			var result = await broker.AuthenticateAsync(WebAuthenticationOptions.None, RequestUri, callback, CancellationToken.None);
+
+			result.ResponseStatus.Should().Be(WebAuthenticationStatus.UserCancel);
+			result.ResponseErrorDetail.Should().Be(DesktopWebAuthenticationBrokerProvider.TimeoutErrorDetail,
+				"the detail is the only thing distinguishing a timeout from a cancel");
+		}
+		finally
+		{
+			WinRTFeatureConfiguration.WebAuthenticationBroker.AuthenticationTimeout = original;
+		}
 	}
 
 	/// <summary>
@@ -83,9 +158,10 @@ public class Given_DesktopWebAuthenticationBroker
 		var broker = new TestBroker();
 		var callback = broker.GetCurrentApplicationCallbackUri();
 		using var http = new HttpClient();
+		Task? browser = null;
 		broker.OnLaunch = (request, ct) =>
 		{
-			_ = Task.Run(async () =>
+			browser = Task.Run(async () =>
 			{
 				// The "browser" lands on the callback with a fragment, which never reaches the
 				// listener: the first GET arrives bare and must serve the relay page...
@@ -101,13 +177,14 @@ public class Given_DesktopWebAuthenticationBroker
 
 		var result = await broker.AuthenticateAsync(WebAuthenticationOptions.None, RequestUri, callback, cts.Token);
 
+		await browser!;
 		result.ResponseStatus.Should().Be(WebAuthenticationStatus.Success);
 		result.ResponseData.Should().Be($"{callback}#id_token=stub-id-token&scope=openid",
 			"the relayed fragment must come back in its original response shape");
 	}
 
 	/// <summary>
-	/// Spec 012 F12, empty branch: a redirect with neither query nor fragment (a bare logout
+	/// Spec 013 F12, empty branch: a redirect with neither query nor fragment (a bare logout
 	/// callback) must still complete rather than loop on the relay page.
 	/// </summary>
 	[TestMethod]
@@ -116,9 +193,10 @@ public class Given_DesktopWebAuthenticationBroker
 		var broker = new TestBroker();
 		var callback = broker.GetCurrentApplicationCallbackUri();
 		using var http = new HttpClient();
+		Task? browser = null;
 		broker.OnLaunch = (request, ct) =>
 		{
-			_ = Task.Run(async () =>
+			browser = Task.Run(async () =>
 			{
 				// Bare hit: relay page comes back; its script finds no fragment and re-requests
 				// with the no-fragment sentinel.
@@ -131,6 +209,7 @@ public class Given_DesktopWebAuthenticationBroker
 
 		var result = await broker.AuthenticateAsync(WebAuthenticationOptions.None, RequestUri, callback, cts.Token);
 
+		await browser!;
 		result.ResponseStatus.Should().Be(WebAuthenticationStatus.Success);
 		result.ResponseData.Should().Be(callback.OriginalString,
 			"the sentinel must be stripped - the caller sees a clean, parameterless callback");

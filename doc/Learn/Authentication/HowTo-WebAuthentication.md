@@ -104,6 +104,7 @@ uid: Uno.Extensions.Authentication.HowToWebAuthentication
   | `PrefersEphemeralWebBrowserSession` | iOS/Mac Catalyst: use a cookie-less `ASWebAuthenticationSession`. | `false` |
 
 - The literal token `{RedirectUri}` inside `LoginStartUri` (and `LogoutStartUri`) is replaced at sign-in time with the URL-encoded effective callback, so one static URI works on every platform.
+- The literal token `{State}` inside `LoginStartUri` is replaced with a fresh random value on every sign-in, and a response whose `state` does not echo it is rejected. Use it: it is what ties the redirect to the request this app started (see [One configuration for every platform](#one-configuration-for-every-platform)).
 
 - After the user successfully logs in, the identity provider redirects back to the application; the provider reads the tokens from the redirect's query string **or URL fragment** using the configured keys, and stores them in credential storage. If the redirect carries something else — such as an authorization code that still needs exchanging — process it with the `PostLogin` callback below.
 
@@ -204,8 +205,10 @@ On the `WebAuthenticationBroker`-backed targets the interactive flow is bounded 
 Uno Platform has no built-in `WebAuthenticationBroker` on Skia Desktop, so `AddWeb()` (and `AddOidc()`) automatically register a loopback broker: the sign-in page opens in the system browser and the redirect returns to a one-shot HTTP listener on `localhost`, per [RFC 8252 §7.3](https://www.rfc-editor.org/rfc/rfc8252#section-7.3).
 
 - The redirect URI **must** be a loopback HTTP address and be registered with your identity provider. To pin the port, configure the callback explicitly — `LoginCallbackUri` (or a `redirect_uri` inside `LoginStartUri`) for the Web provider, `RedirectUri` for OIDC — e.g. `http://localhost:5001/authentication-callback`; the listener binds whichever port the callback names. If you rely on the default instead (`WebAuthenticationBroker.GetCurrentApplicationCallbackUri()`), a free port is picked on first use and kept for the process lifetime, so your identity provider must allow variable-port loopback redirects (Microsoft Entra and Duende IdentityServer do). The default's path comes from `WinRTFeatureConfiguration.WebAuthenticationBroker.DefaultCallbackPath` (`/authentication-callback`), and `DefaultReturnUri`, when set, replaces the default entirely.
-- Responses on the URL **fragment** (implicit-style flows) work too: browsers never send fragments to a server, so when the redirect arrives bare, the listener serves a small static relay page whose script re-requests the callback carrying the fragment — the app then receives the response in its original fragment shape. Query-string responses (authorization-code flow) complete in a single request, unchanged.
-- Apps that call `WebAuthenticationBroker` directly (without `AddWeb`/`AddOidc`) can register the broker themselves during startup with `DesktopWebAuthenticationBrokerProvider.TryRegister()`.
+- Responses on the URL **fragment** (implicit-style flows) work too: browsers never send fragments to a server, so when the redirect arrives bare, the listener serves a small static relay page whose script re-requests the callback carrying the fragment — the app then receives the response in its original fragment shape. Query-string responses (authorization-code flow) and `response_mode=form_post` responses complete in a single request.
+- **Bind the response to the request.** The listener completes on the first request to the callback path, and on a desktop that path is reachable by any page open in the same browser or any local process — the broker cannot know which request it started. The OIDC provider binds every response with `state` and PKCE itself; the Web provider is protocol-agnostic, so put the literal `{State}` token in `LoginStartUri` (`&state={State}`) and the provider generates a fresh value per sign-in and rejects any response that does not echo it. Without it, a page the user happens to be visiting during sign-in could hand the app a token of its choosing.
+- If no redirect arrives within `WinRTFeatureConfiguration.WebAuthenticationBroker.AuthenticationTimeout`, the flow is reported as cancelled (WinRT has no timeout status) with `ResponseErrorDetail` set to `DesktopWebAuthenticationBrokerProvider.TimeoutErrorDetail`; the Web and OIDC providers turn that into an `OperationCanceledException` whose message says it timed out, and a `Warning` names the callback that never fired.
+- Apps that call `WebAuthenticationBroker` directly (without `AddWeb`/`AddOidc`) can register the broker themselves during startup with `DesktopWebAuthenticationBrokerProvider.TryRegister()`. The type only exists in the non-WinAppSDK builds of the package — guard the call with `#if !WINDOWS` in code shared with a WinAppSDK head.
 
 ## One configuration for every platform
 
@@ -216,8 +219,10 @@ The callback URI differs per platform, but a single configuration can serve all 
 
   ```json
   "Web": {
-    "LoginStartUri": "https://idp.example/authorize?client_id=...&response_type=token&redirect_uri={RedirectUri}"
+    "LoginStartUri": "https://idp.example/authorize?client_id=...&response_type=token&redirect_uri={RedirectUri}&state={State}"
   }
   ```
+
+- The literal token `{State}` is replaced with a fresh random value on every sign-in, and the provider accepts only a response that echoes it back — a replayed, stale or foreign response is rejected as a failed login. Every OAuth identity provider echoes `state`, so there is no reason to leave it out; on Skia Desktop it is what keeps the loopback callback from being fed by another page.
 
 Remember to register each platform's callback with the identity provider (see the table above).

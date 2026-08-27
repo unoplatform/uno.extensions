@@ -19,8 +19,9 @@ internal record TokenCache : ITokenCache
 		// Access and refresh tokens are written here as-is. On a head whose default store is not
 		// encrypted (Skia desktop on Windows/Linux, Skia-renderer Android/iOS, WebAssembly) that is a
 		// cleartext store and nothing else says so - mirror the MSAL provider's warning so the app
-		// author knows to register a protected IKeyValueStorage as the default.
-		if (!secureCache.IsEncrypted && logger.IsEnabled(LogLevel.Warning))
+		// author knows to register a protected IKeyValueStorage as the default. The in-memory store
+		// persists nothing, so there is nothing to protect and nothing to warn about.
+		if (!secureCache.IsEncrypted && secureCache is not InMemoryKeyValueStorage && logger.IsEnabled(LogLevel.Warning))
 		{
 			logger.LogWarningMessage($"Tokens are being stored in {secureCache.GetType().Name}, which does not protect its contents. Register an encrypted IKeyValueStorage as the default if the app sandbox is not enough on this platform");
 		}

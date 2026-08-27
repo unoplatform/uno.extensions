@@ -105,3 +105,53 @@ the Web suite (including the `{RedirectUri}` placeholder and the broker-derived 
 suite (including the `id_token_hint` end-session case) and the MSAL suite. What is still unconfirmed
 is unchanged by the rebuild: the Android, iOS and WebAssembly lanes have never run the Oidc/Web
 suites.
+
+## Review panel (2026-08-27)
+
+The seven-lens panel (`/review-panel`) on PR #3169 returned fix-first. Findings addressed in one
+follow-up commit, keyed to the panel's numbering:
+
+- [x] H1 — `__WASM__` is not defined by Uno.Sdk, so the desktop-broker suite would have compiled
+  into the browser head and thrown `PlatformNotSupportedException` on the WASM lane. The test csproj
+  now defines it for browserwasm, as `RuntimeTests.Core` does.
+- [x] H2 — Oidc cancelled login wiped the session (F5 was fixed for Web only). `WebAuthenticatorBrowser`
+  maps `ResponseStatus` to `BrowserResultType` (UserCancel with a null error, Timeout via the
+  broker's error detail, HttpError otherwise); the provider throws `OperationCanceledException` on
+  `Error == "UserCancel"`. Red test `When_LoginCancelled_Then_PreviousSessionSurvives`.
+- [x] H3 — MSAL persistence watchdog: read check when the probe is skipped, retry bounded to one,
+  `MsalCacheHelper` trace forwarded into the logger (spec 016, "Review-panel follow-ups").
+- [x] H4 — Oidc refresh signed the user out on any error, including offline. Only token-endpoint
+  error codes (RFC 6749 §5.2) end the session now; transport errors keep the tokens with a Warning.
+  Red test `When_RefreshFailsOffline_Then_SessionKept`. (Web's `ErrorHttp` still returns null and
+  the service-level wipe on a failed login stays out of scope, as the spec records.)
+- [x] H5 — the desktop broker logs: Error on bind failure naming the prefix, Warning on timeout
+  naming the callback and timeout, Debug on stray requests and dropped connections. Ambient
+  `this.Log()`, since the broker is built outside DI.
+- [x] M1 — `{State}` placeholder with per-sign-in verification (spec 015).
+- [x] M2 — timeout vs cancel: the broker marks its timeout with `ResponseErrorDetail = 408`; both
+  providers log Information and word the `OperationCanceledException` accordingly; upgrade notes
+  list the `WebAuthenticatorBrowser` result types.
+- [x] M3 — the broker builds the result before writing the completion page and treats a dropped
+  connection as Debug, not as a failed sign-in; a failed relay-page write keeps listening.
+- [x] M4 — `response_mode=form_post` is read from the POST body; a callback that carries its own
+  query still relays fragments (bare = "no parameters beyond the callback's own"); `127.0.0.1`
+  binds without elevation on Windows (checked empirically with a scratch `HttpListener`).
+- [x] M5 — `TryRegister` returns `bool`; docs state the `#if !WINDOWS` guard.
+- [x] M6 — `AddWeb`/`AddOidc` document the first-wins ordering rule (no opt-out added).
+- [x] M7 — stale `Spec 012`/`Spec 014` breadcrumbs corrected.
+- [x] M8 — callback resolution deduplicated (`ExtractRedirectUri`, `ResolveCallbackUri`).
+- [x] M9 — token-leak assertions in the Web and Oidc suites, a Web `Refresh` callback case, the
+  nested `FakeKeyValueStorage` removed, `CapturingLoggerProvider` linked into the Oidc suite.
+- [x] L1 — the broker refuses non-http(s) request URIs before launching anything.
+- [x] L2 — `TokenCache` does not warn for `InMemoryKeyValueStorage`.
+- [x] L3 — the single-generic lifetime overload rejects interfaces at registration; the typed
+  factory lambda is shared. The `AddClient<T>(context, default)` ambiguity is accepted and noted.
+- [x] L4 — response data is matched to the callback as URIs (case/default-port normalized).
+- [x] L5 — a trimmed/missing `PrefersEphemeralWebBrowserSession` setter logs Warning, not Debug.
+- [x] L6 — abandoned `GetContextAsync` observed, `ConfigureAwait(false)` throughout the broker,
+  `Process` handle disposed, response pages pre-encoded.
+- [x] L7 — browser tasks in the broker tests are awaited so their assertions fail the test.
+- [x] L8 — `HttpOverview.md` samples now match real overloads.
+- [ ] Not done: an opt-out for the broker registration (M6), the MSAL double warning on WASM (L2),
+  the third `CapturingLoggerProvider` copy in the MSAL suite, and the interface/implementation
+  `HttpClient` naming difference between transient and non-transient `AddClient` (L3) — follow-ups.

@@ -6,8 +6,10 @@ using Duende.IdentityModel.OidcClient.Browser;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Uno.Extensions.Authentication;
+using Uno.Extensions.Authentication.UI.Tests;
 using Uno.Extensions.Hosting;
 using Uno.UI.RuntimeTests;
 
@@ -33,7 +35,8 @@ public class Given_OidcAuthentication
 		StubOidcServer Server,
 		StubBrowser Browser,
 		IAuthenticationService Authentication,
-		ITokenCache Tokens) : IDisposable
+		ITokenCache Tokens,
+		CapturingLoggerProvider Logs) : IDisposable
 	{
 		public void Dispose() => Host.Dispose();
 	}
@@ -57,6 +60,7 @@ public class Given_OidcAuthentication
 	{
 		var server = new StubOidcServer();
 		var browser = new StubBrowser();
+		var logs = new CapturingLoggerProvider();
 
 		var host = UnoHost
 			.CreateDefaultBuilder(typeof(Given_OidcAuthentication).Assembly)
@@ -81,7 +85,12 @@ public class Given_OidcAuthentication
 					})))
 			// Last registration wins: replaces the WebAuthenticationBroker-backed browser that
 			// AddOidc registers, so no window ever opens.
-			.ConfigureServices(services => services.AddSingleton<IBrowser>(browser))
+			.ConfigureServices(services => services
+				.AddSingleton<IBrowser>(browser)
+				// Trace is the worst case for token leaks, so everything is captured.
+				.AddLogging(logging => logging
+					.SetMinimumLevel(LogLevel.Trace)
+					.AddProvider(logs)))
 			.Build();
 
 		return new Harness(
@@ -89,7 +98,8 @@ public class Given_OidcAuthentication
 			server,
 			browser,
 			host.Services.GetRequiredService<IAuthenticationService>(),
-			host.Services.GetRequiredService<ITokenCache>());
+			host.Services.GetRequiredService<ITokenCache>(),
+			logs);
 	}
 
 	private static CancellationTokenSource Cts() => new(Timeout);
@@ -215,6 +225,72 @@ public class Given_OidcAuthentication
 		loggedOut.Should().BeFalse("a cancelled sign-out must not report success");
 		(await harness.Authentication.IsAuthenticated(cts.Token)).Should().BeTrue(
 			"tokens must survive a sign-out the user backed out of");
+	}
+
+	/// <summary>
+	/// Red test, the Oidc mirror of the Web provider's F5 case: the browser adapter used to report
+	/// a cancelled sign-in as a plain error, so the provider returned null and AuthenticationService
+	/// cleared the session the user still had.
+	/// </summary>
+	[TestMethod]
+	public async Task When_LoginCancelled_Then_PreviousSessionSurvives()
+	{
+		using var harness = await CreateHarnessAsync();
+		using var cts = Cts();
+
+		await harness.Authentication.LoginAsync(default, cancellationToken: cts.Token);
+		harness.Browser.NextResultType = BrowserResultType.UserCancel;
+
+		Func<Task> act = () => harness.Authentication.LoginAsync(default, cancellationToken: cts.Token).AsTask();
+
+		await act.Should().ThrowAsync<OperationCanceledException>(
+			"backing out of the sign-in UI is a cancellation, not a failed login");
+		(await harness.Authentication.IsAuthenticated(cts.Token)).Should().BeTrue(
+			"a cancelled re-login must not wipe the session the user still has");
+	}
+
+	/// <summary>
+	/// A refresh that never reached a verdict - the token endpoint unreachable - says nothing about
+	/// the session, so signing an offline user out at startup is the wrong answer (the MSAL
+	/// provider's rule). Only the identity provider rejecting the refresh token ends the session.
+	/// </summary>
+	[TestMethod]
+	public async Task When_RefreshFailsOffline_Then_SessionKept()
+	{
+		using var harness = await CreateHarnessAsync();
+		using var cts = Cts();
+
+		await harness.Authentication.LoginAsync(default, cancellationToken: cts.Token);
+		var issued = harness.Server.LastAccessToken;
+		harness.Server.RefreshUnavailable = true;
+
+		var refreshed = await harness.Authentication.RefreshAsync(cts.Token);
+
+		refreshed.Should().BeTrue("the previous tokens are still the session");
+		(await harness.Tokens.GetAsync(cts.Token))[TokenCacheExtensions.AccessTokenKey].Should().Be(issued,
+			"the cached tokens must stand until the identity provider actually rejects them");
+		(await harness.Authentication.IsAuthenticated(cts.Token)).Should().BeTrue();
+	}
+
+	/// <summary>
+	/// AGENTS.md section 7: tokens must never reach Uno.Extensions log output - asserted on a
+	/// Trace-level capture across sign-in and refresh, the two paths that handle every token.
+	/// </summary>
+	[TestMethod]
+	public async Task When_LoginAndRefresh_Then_TokenValuesAbsentFromLogs()
+	{
+		using var harness = await CreateHarnessAsync();
+		using var cts = Cts();
+
+		await harness.Authentication.LoginAsync(default, cancellationToken: cts.Token);
+		await harness.Authentication.RefreshAsync(cts.Token);
+
+		harness.Logs.Text.Should().NotBeEmpty("Trace logging is on, so the providers must have said something");
+		harness.Server.IssuedAccessTokens.Should().HaveCountGreaterThan(1, "sign-in and refresh each mint a token");
+		foreach (var token in harness.Server.IssuedAccessTokens)
+		{
+			harness.Logs.Text.Should().NotContain(token, "tokens must never reach the log output");
+		}
 	}
 
 	/// <summary>
