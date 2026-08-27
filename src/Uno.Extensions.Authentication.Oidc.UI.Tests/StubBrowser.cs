@@ -43,7 +43,9 @@ internal sealed class StubBrowser : IBrowser
 			return Task.FromResult(new BrowserResult
 			{
 				ResultType = resultType,
-				Error = "stub-configured failure",
+				// Null for a cancel, as WebAuthenticatorBrowser leaves it: OidcClient then reports
+				// the result type by name, which is what the provider keys on.
+				Error = resultType == BrowserResultType.UserCancel ? null : "stub-configured failure",
 			});
 		}
 

@@ -48,6 +48,12 @@ internal sealed class StubWebAuthenticationBroker : IWebAuthenticationBrokerProv
 	/// </summary>
 	public string? CallbackUriError { get; set; }
 
+	/// <summary>
+	/// When set, the next successful response carries this <c>state</c> instead of echoing the
+	/// request's - what a forged, replayed or stale response looks like. Resets after use.
+	/// </summary>
+	public string? NextState { get; set; }
+
 	/// <summary>The most recently minted access token.</summary>
 	public string LastAccessToken => _lastAccessToken
 		?? throw new InvalidOperationException("No token has been issued yet.");
@@ -80,6 +86,7 @@ internal sealed class StubWebAuthenticationBroker : IWebAuthenticationBrokerProv
 		LastCallbackUri = null;
 		NextStatus = null;
 		CallbackUriError = null;
+		NextState = null;
 	}
 
 	public Uri GetCurrentApplicationCallbackUri() =>
@@ -110,6 +117,30 @@ internal sealed class StubWebAuthenticationBroker : IWebAuthenticationBrokerProv
 		// key names, which default to the OAuth-standard "access_token"/"refresh_token".
 		var separator = string.IsNullOrEmpty(callbackUri.Query) ? "?" : "&";
 		var response = $"{callbackUri}{separator}access_token={accessToken}&refresh_token=stub-refresh-token-{_tokenCounter}";
+
+		// Echo the request's state like a real identity provider - or the override, for tests of
+		// what happens when the response is not the one the provider asked for.
+		var state = NextState ?? GetQueryValue(requestUri.Query, "state");
+		NextState = null;
+		if (state is not null)
+		{
+			response += $"&state={Uri.EscapeDataString(state)}";
+		}
+
 		return Task.FromResult(new WebAuthenticationResult(response, 0, WebAuthenticationStatus.Success));
+	}
+
+	private static string? GetQueryValue(string query, string key)
+	{
+		foreach (var pair in query.TrimStart('?').Split('&'))
+		{
+			var separatorIndex = pair.IndexOf('=');
+			if (separatorIndex > 0 && pair.Substring(0, separatorIndex) == key)
+			{
+				return Uri.UnescapeDataString(pair.Substring(separatorIndex + 1));
+			}
+		}
+
+		return null;
 	}
 }

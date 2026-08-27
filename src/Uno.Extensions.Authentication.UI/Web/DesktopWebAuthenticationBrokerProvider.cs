@@ -17,24 +17,42 @@ namespace Uno.Extensions.Authentication;
 /// <para>
 /// Registered automatically by <c>AddWeb</c>/<c>AddOidc</c> via <see cref="TryRegister"/> when the
 /// process runs on a desktop OS; apps that call <see cref="WebAuthenticationBroker"/> directly can
-/// call <see cref="TryRegister"/> themselves during startup, before the broker's first use.
+/// call <see cref="TryRegister"/> themselves during startup, before the broker's first use. The
+/// type only exists in the non-WinAppSDK builds of this package: guard direct references with
+/// <c>#if !WINDOWS</c> in code shared with a WinAppSDK head.
 /// </para>
 /// <para>
 /// The redirect URI must be a loopback HTTP address (for example
 /// <c>http://localhost:{port}/authentication-callback</c>) registered with the identity provider.
-/// Query-string responses (authorization-code flows) complete in a single request. Responses on
-/// the URL fragment (implicit-style flows) are supported through a relay: browsers never send
-/// fragments to a server, so a bare callback hit is answered with a static page whose script
-/// re-requests the callback carrying the fragment, and the result is handed back in its original
-/// fragment shape.
+/// Query-string responses (authorization-code flows) and <c>response_mode=form_post</c> responses
+/// complete in a single request. Responses on the URL fragment (implicit-style flows) are
+/// supported through a relay: browsers never send fragments to a server, so a bare callback hit
+/// is answered with a static page whose script re-requests the callback carrying the fragment,
+/// and the result is handed back in its original fragment shape.
 /// <see cref="GetCurrentApplicationCallbackUri"/> picks a free port on first use and keeps it for
 /// the process lifetime, which requires the identity provider to allow variable-port loopback
 /// redirects (RFC 8252 mandates this; Microsoft Entra and Duende IdentityServer honor it) —
 /// configure an explicit redirect URI to pin the port instead.
 /// </para>
+/// <para>
+/// The listener accepts the first request to the callback path from any page in the system
+/// browser or any local process; it cannot know which request it started. Flows that carry no
+/// protocol-level binding of their own (the Web provider's plain token-on-redirect shape) should
+/// bind the response with an OAuth <c>state</c> value - see the Web provider's <c>{State}</c>
+/// placeholder.
+/// </para>
 /// </remarks>
 public class DesktopWebAuthenticationBrokerProvider : IWebAuthenticationBrokerProvider
 {
+	/// <summary>
+	/// The <see cref="WebAuthenticationResult.ResponseErrorDetail"/> reported alongside
+	/// <see cref="WebAuthenticationStatus.UserCancel"/> when the broker's own
+	/// <see cref="WinRTFeatureConfiguration.WebAuthenticationBroker.AuthenticationTimeout"/>
+	/// elapsed rather than the user backing out. WinRT has no distinct timeout status, so this is
+	/// how callers tell the two apart.
+	/// </summary>
+	public const uint TimeoutErrorDetail = (uint)HttpStatusCode.RequestTimeout;
+
 	// Static response page only: reflecting anything from the callback request into the response
 	// would be a reflected-XSS vector on a page served from localhost.
 	private const string CompletionHtml =
@@ -46,12 +64,22 @@ public class DesktopWebAuthenticationBrokerProvider : IWebAuthenticationBrokerPr
 	/// <summary>The second request when the redirect carried neither query nor fragment.</summary>
 	private const string NoFragmentSentinelQuery = "?uno-no-fragment=1";
 
-	// Served when the callback arrives with no query: a fragment (implicit-flow response) never
-	// reaches the server, so this page's script re-requests the callback carrying the fragment as
-	// a marked query. Static content only - the fragment travels in the browser's own request and
-	// is never reflected into HTML.
+	// Served when the callback arrives with no response parameters: a fragment (implicit-flow
+	// response) never reaches the server, so this page's script re-requests the callback carrying
+	// the fragment as a marked query. Static content only - the fragment travels in the browser's
+	// own request and is never reflected into HTML. The markers are interpolated from the same
+	// constants the parser below matches on, so the two cannot drift apart.
 	private const string FragmentRelayHtml =
-		"""<!DOCTYPE html><html><head><meta charset="utf-8"><title>Signing in…</title></head><body><p>Completing sign-in…</p><script>var h=window.location.hash;window.location.replace(window.location.pathname+(h&&h.length>1?"?uno-fragment=1&"+h.substring(1):"?uno-no-fragment=1"));</script></body></html>""";
+		$$"""<!DOCTYPE html><html><head><meta charset="utf-8"><title>Signing in…</title></head><body><p>Completing sign-in…</p><script>var h=window.location.hash;window.location.replace(window.location.pathname+(h&&h.length>1?"{{RelayedFragmentQueryPrefix}}"+h.substring(1):"{{NoFragmentSentinelQuery}}"));</script></body></html>""";
+
+	private static readonly byte[] CompletionBody = Encoding.UTF8.GetBytes(CompletionHtml);
+	private static readonly byte[] FragmentRelayBody = Encoding.UTF8.GetBytes(FragmentRelayHtml);
+
+	/// <summary>
+	/// Built outside DI (Uno's extensibility registry creates it), so this is the ambient logger
+	/// <c>UseLogging()</c> installs; <c>NullLogger</c> until then.
+	/// </summary>
+	private ILogger Logger => this.Log();
 
 	/// <summary>
 	/// The loopback port used by <see cref="GetCurrentApplicationCallbackUri"/>: picked free on
@@ -76,13 +104,19 @@ public class DesktopWebAuthenticationBrokerProvider : IWebAuthenticationBrokerPr
 	/// Positive desktop allow-list: Android, iOS, Mac Catalyst and WebAssembly have working native
 	/// brokers that must keep winning. This matters because the plain-TFM build of this assembly is
 	/// what Uno's runtime-asset selector loads on Skia mobile heads (spec 010's mechanism), so a
-	/// compile-time gate cannot make this decision. Registration is idempotent and first-wins.
+	/// compile-time gate cannot make this decision. Registration is idempotent and first-wins: an
+	/// app that supplies its own <see cref="IWebAuthenticationBrokerProvider"/> must register it
+	/// before <c>AddWeb</c>/<c>AddOidc</c> run.
 	/// </remarks>
-	public static void TryRegister()
+	/// <returns>
+	/// <see langword="true"/> when the process is on a desktop OS and the registration was
+	/// attempted; <see langword="false"/> on the platforms that keep their native broker.
+	/// </returns>
+	public static bool TryRegister()
 	{
 		if (OperatingSystem.IsAndroid() || OperatingSystem.IsIOS() || OperatingSystem.IsMacCatalyst() || OperatingSystem.IsBrowser())
 		{
-			return;
+			return false;
 		}
 
 		if (OperatingSystem.IsWindows() || OperatingSystem.IsLinux() || OperatingSystem.IsMacOS())
@@ -90,7 +124,10 @@ public class DesktopWebAuthenticationBrokerProvider : IWebAuthenticationBrokerPr
 			ApiExtensibility.Register(
 				typeof(IWebAuthenticationBrokerProvider),
 				_ => new DesktopWebAuthenticationBrokerProvider());
+			return true;
 		}
+
+		return false;
 	}
 
 	/// <inheritdoc />
@@ -110,6 +147,15 @@ public class DesktopWebAuthenticationBrokerProvider : IWebAuthenticationBrokerPr
 				nameof(callbackUri));
 		}
 
+		if (requestUri.Scheme != Uri.UriSchemeHttp && requestUri.Scheme != Uri.UriSchemeHttps)
+		{
+			// The request URI goes to the OS's URL handler, which dispatches on scheme: anything but
+			// http(s) would reach some other protocol handler rather than a browser.
+			throw new ArgumentException(
+				$"The desktop web authentication broker only opens http or https request URIs; got '{requestUri.Scheme}:'.",
+				nameof(requestUri));
+		}
+
 		using var timeout = new CancellationTokenSource(WinRTFeatureConfiguration.WebAuthenticationBroker.AuthenticationTimeout);
 		using var linked = CancellationTokenSource.CreateLinkedTokenSource(timeout.Token, ct);
 
@@ -118,56 +164,81 @@ public class DesktopWebAuthenticationBrokerProvider : IWebAuthenticationBrokerPr
 		// trailing slash, and the IdP redirects to the exact configured path (no slash) - a prefix
 		// of "/authentication-callback/" would never see it. The port is ours alone, so the wider
 		// binding adds no exposure beyond the 404 branch below.
-		listener.Prefixes.Add($"http://{callbackUri.Host}:{callbackUri.Port}/");
-		listener.Start();
+		var prefix = $"http://{callbackUri.Host}:{callbackUri.Port}/";
+		listener.Prefixes.Add(prefix);
+		try
+		{
+			listener.Start();
+		}
+		catch (HttpListenerException ex)
+		{
+			if (Logger.IsEnabled(LogLevel.Error))
+			{
+				Logger.LogError(ex, "Unable to listen on {Prefix} for the sign-in redirect: the port is in use, or this user may not bind it. Pin a different port through the callback URI, or free the port", prefix);
+			}
+
+			throw;
+		}
 
 		try
 		{
 			// Fire the browser and keep listening immediately: launch failures (no browser
 			// installed, no shell) throw synchronously from Process.Start and propagate here.
-			await LaunchBrowserAsync(requestUri, linked.Token);
+			await LaunchBrowserAsync(requestUri, linked.Token).ConfigureAwait(false);
 
 			while (true)
 			{
 				HttpListenerContext context;
+				// GetContextAsync has no cancellation of its own; WaitAsync abandons the wait and
+				// the finally's Stop() faults the abandoned task, which is observed so it never
+				// surfaces as an UnobservedTaskException.
+				var pending = listener.GetContextAsync();
 				try
 				{
-					// GetContextAsync has no cancellation of its own; WaitAsync abandons the wait
-					// and the finally's Stop() releases the binding.
-					context = await listener.GetContextAsync().WaitAsync(linked.Token);
+					context = await pending.WaitAsync(linked.Token).ConfigureAwait(false);
 				}
 				catch (OperationCanceledException) when (ct.IsCancellationRequested)
 				{
 					// The caller cancelled: propagate so WebAuthenticationBroker's task cancels.
+					Observe(pending);
 					throw;
 				}
 				catch (OperationCanceledException)
 				{
 					// Only the broker's own AuthenticationTimeout can be left; WinRT has no
-					// distinct timeout status, and the wasm broker reports the same way.
-					return new WebAuthenticationResult(null, 0, WebAuthenticationStatus.UserCancel);
+					// distinct timeout status, so the detail carries the distinction.
+					Observe(pending);
+					if (Logger.IsEnabled(LogLevel.Warning))
+					{
+						Logger.LogWarning("No redirect reached {Callback} within the broker's AuthenticationTimeout ({Timeout}); reporting the flow as cancelled", callbackUri, WinRTFeatureConfiguration.WebAuthenticationBroker.AuthenticationTimeout);
+					}
+
+					return new WebAuthenticationResult(null, TimeoutErrorDetail, WebAuthenticationStatus.UserCancel);
 				}
 
 				if (!string.Equals(context.Request.Url?.AbsolutePath, callbackUri.AbsolutePath, StringComparison.OrdinalIgnoreCase))
 				{
-					context.Response.StatusCode = (int)HttpStatusCode.NotFound;
-					context.Response.Close();
+					if (Logger.IsEnabled(LogLevel.Debug))
+					{
+						Logger.LogDebug("Ignoring a request to {Path} on the sign-in listener; waiting for {CallbackPath}", context.Request.Url?.AbsolutePath, callbackUri.AbsolutePath);
+					}
+
+					TryClose(context.Response, HttpStatusCode.NotFound);
 					continue;
 				}
 
-				var query = context.Request.Url?.Query ?? string.Empty;
+				var query = await ReadResponseQueryAsync(context.Request, linked.Token).ConfigureAwait(false);
 
-				if (string.IsNullOrEmpty(query) || query == "?")
+				if (IsBare(query, callbackUri))
 				{
 					// The response may be riding the URL fragment (implicit flows), which browsers
 					// never send to a server. Serve the relay page, whose script re-requests this
 					// callback with the fragment as a marked query - or the no-fragment sentinel -
-					// and keep listening for that second request (spec 013 F12).
-					await RespondAsync(context.Response, FragmentRelayHtml, linked.Token);
+					// and keep listening for that second request (spec 013 F12). A write the
+					// browser dropped is not fatal either: it retries, or the timeout ends the flow.
+					await TryRespondAsync(context.Response, FragmentRelayBody, linked.Token).ConfigureAwait(false);
 					continue;
 				}
-
-				await RespondAsync(context.Response, CompletionHtml, linked.Token);
 
 				// Rebuild from the configured callback rather than echoing the raw request URL, so
 				// the result matches what the caller registered. Relayed fragments are restored to
@@ -180,7 +251,13 @@ public class DesktopWebAuthenticationBrokerProvider : IWebAuthenticationBrokerPr
 						$"{callbackBase}#{query[RelayedFragmentQueryPrefix.Length..]}",
 					_ => callbackBase + query,
 				};
-				return new WebAuthenticationResult(responseData, 0, WebAuthenticationStatus.Success);
+				var result = new WebAuthenticationResult(responseData, 0, WebAuthenticationStatus.Success);
+
+				// The sign-in is complete at this point; the completion page is a courtesy to the
+				// user, and a connection the browser dropped while it was written must not discard
+				// the response that already arrived.
+				await TryRespondAsync(context.Response, CompletionBody, linked.Token).ConfigureAwait(false);
+				return result;
 			}
 		}
 		finally
@@ -189,13 +266,76 @@ public class DesktopWebAuthenticationBrokerProvider : IWebAuthenticationBrokerPr
 		}
 	}
 
-	private static async Task RespondAsync(HttpListenerResponse response, string html, CancellationToken ct)
+	/// <summary>
+	/// The response parameters carried by a callback request: the query string, or the body of a
+	/// <c>response_mode=form_post</c> POST in query form, so both shapes complete the flow.
+	/// </summary>
+	private static async Task<string> ReadResponseQueryAsync(HttpListenerRequest request, CancellationToken ct)
 	{
-		var body = Encoding.UTF8.GetBytes(html);
-		response.ContentType = "text/html; charset=utf-8";
-		response.ContentLength64 = body.Length;
-		await response.OutputStream.WriteAsync(body, ct);
-		response.Close();
+		if (request.HttpMethod == "POST" &&
+			request.HasEntityBody &&
+			request.ContentType?.StartsWith("application/x-www-form-urlencoded", StringComparison.OrdinalIgnoreCase) == true)
+		{
+			using var reader = new StreamReader(request.InputStream, request.ContentEncoding);
+			var body = await reader.ReadToEndAsync(ct).ConfigureAwait(false);
+			return body.Length == 0 ? string.Empty : "?" + body;
+		}
+
+		return request.Url?.Query ?? string.Empty;
+	}
+
+	/// <summary>
+	/// Whether a callback request carries no response parameters beyond the callback's own
+	/// configured query - the shape a fragment response (never sent to a server) arrives in.
+	/// </summary>
+	private static bool IsBare(string query, Uri callbackUri) =>
+		string.Equals(query.TrimStart('?'), callbackUri.Query.TrimStart('?'), StringComparison.Ordinal);
+
+	private static void Observe(Task task) =>
+		_ = task.ContinueWith(
+			static t => _ = t.Exception,
+			CancellationToken.None,
+			TaskContinuationOptions.OnlyOnFaulted | TaskContinuationOptions.ExecuteSynchronously,
+			TaskScheduler.Default);
+
+	private async Task<bool> TryRespondAsync(HttpListenerResponse response, byte[] body, CancellationToken ct)
+	{
+		try
+		{
+			response.ContentType = "text/html; charset=utf-8";
+			response.ContentLength64 = body.Length;
+			await response.OutputStream.WriteAsync(body, ct).ConfigureAwait(false);
+			response.Close();
+			return true;
+		}
+		catch (Exception ex) when (ex is HttpListenerException or IOException or ObjectDisposedException)
+		{
+			if (Logger.IsEnabled(LogLevel.Debug))
+			{
+				Logger.LogDebug(ex, "The browser dropped the connection before the response page was written");
+			}
+
+			response.Abort();
+			return false;
+		}
+	}
+
+	private void TryClose(HttpListenerResponse response, HttpStatusCode status)
+	{
+		try
+		{
+			response.StatusCode = (int)status;
+			response.Close();
+		}
+		catch (Exception ex) when (ex is HttpListenerException or IOException or ObjectDisposedException)
+		{
+			if (Logger.IsEnabled(LogLevel.Debug))
+			{
+				Logger.LogDebug(ex, "The browser dropped the connection before the {Status} response was written", status);
+			}
+
+			response.Abort();
+		}
 	}
 
 	/// <summary>
@@ -209,17 +349,18 @@ public class DesktopWebAuthenticationBrokerProvider : IWebAuthenticationBrokerPr
 	{
 		// ProcessStartInfo.ArgumentList (not a concatenated argument string) so nothing in the URL
 		// is ever interpreted by a shell.
+		// The launcher's Process handle is not needed once the browser is open.
 		if (OperatingSystem.IsWindows())
 		{
-			Process.Start(new ProcessStartInfo(requestUri.AbsoluteUri) { UseShellExecute = true });
+			Process.Start(new ProcessStartInfo(requestUri.AbsoluteUri) { UseShellExecute = true })?.Dispose();
 		}
 		else if (OperatingSystem.IsMacOS())
 		{
-			Process.Start(new ProcessStartInfo("open") { ArgumentList = { requestUri.AbsoluteUri } });
+			Process.Start(new ProcessStartInfo("open") { ArgumentList = { requestUri.AbsoluteUri } })?.Dispose();
 		}
 		else if (OperatingSystem.IsLinux())
 		{
-			Process.Start(new ProcessStartInfo("xdg-open") { ArgumentList = { requestUri.AbsoluteUri } });
+			Process.Start(new ProcessStartInfo("xdg-open") { ArgumentList = { requestUri.AbsoluteUri } })?.Dispose();
 		}
 		else
 		{

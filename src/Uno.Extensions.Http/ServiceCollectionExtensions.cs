@@ -80,14 +80,23 @@ public static class ServiceCollectionExtensions
 		where TClient : class
 		where TImplementation : class, TClient
 		where TEndpoint : EndpointOptions, new()
-	{
-		Func<IServiceCollection, HostBuilderContext, IHttpClientBuilder> httpClientFactory =
-			(s, c) => (name is null || string.IsNullOrWhiteSpace(name)) ?
+		=> services.AddClientWithEndpoint<TClient, TEndpoint>(context, options, name, TypedClientFactory<TClient, TImplementation>(name), configure);
+
+	/// <summary>
+	/// The typed-client registration shared by the transient overloads: <c>AddHttpClient</c>'s own
+	/// (transient) typed registration, named when a name is supplied.
+	/// </summary>
+	private static Func<IServiceCollection, HostBuilderContext, IHttpClientBuilder> TypedClientFactory<
+		[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)]
+		TClient,
+		[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)]
+		TImplementation
+	>(string? name)
+		where TClient : class
+		where TImplementation : class, TClient
+		=> (s, c) => (name is null || string.IsNullOrWhiteSpace(name)) ?
 						s.AddHttpClient<TClient, TImplementation>() :
 						s.AddHttpClient<TClient, TImplementation>(name);
-
-		return services.AddClientWithEndpoint<TClient, TEndpoint>(context, options, name, httpClientFactory, configure);
-	}
 
 	/// <summary>
 	/// Adds a typed client to the service collection.
@@ -247,13 +256,9 @@ public static class ServiceCollectionExtensions
 	{
 		if (lifetime == ServiceLifetime.Transient)
 		{
-			// Same typed (transient) registration as the lifetime-less overload, kept inline so the
-			// configure callback stays typed to TEndpoint.
-			Func<IServiceCollection, HostBuilderContext, IHttpClientBuilder> typedFactory =
-				(s, c) => (name is null || string.IsNullOrWhiteSpace(name)) ?
-							s.AddHttpClient<TClient, TImplementation>() :
-							s.AddHttpClient<TClient, TImplementation>(name);
-			return services.AddClientWithEndpoint<TClient, TEndpoint>(context, options, name, typedFactory, configure);
+			// Same typed (transient) registration as the lifetime-less overload; the configure
+			// callback stays typed to TEndpoint.
+			return services.AddClientWithEndpoint<TClient, TEndpoint>(context, options, name, TypedClientFactory<TClient, TImplementation>(name), configure);
 		}
 
 		// Non-transient: register the endpoint pipeline as a NAMED client (base address, native
@@ -340,7 +345,18 @@ public static class ServiceCollectionExtensions
 	  )
 		  where TInterface : class
 		where TEndpoint : EndpointOptions, new()
-		=> services.AddClientWithEndpoint<TInterface, TInterface, TEndpoint>(context, lifetime, options, name, configure);
+	{
+		if (typeof(TInterface).IsInterface)
+		{
+			// The single-generic shape registers the type as its own implementation, which for an
+			// interface only fails at the first resolve, far from the registration that caused it.
+			throw new ArgumentException(
+				$"{typeof(TInterface).Name} is an interface and cannot be built as its own implementation. Use the AddClient<TInterface, TImplementation>(..., lifetime, ...) overload.",
+				nameof(TInterface));
+		}
+
+		return services.AddClientWithEndpoint<TInterface, TInterface, TEndpoint>(context, lifetime, options, name, configure);
+	}
 
 	/// <summary>
 	/// The endpoint name used when none is supplied: the client's type name, with a leading 'I'

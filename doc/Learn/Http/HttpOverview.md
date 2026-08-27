@@ -32,7 +32,7 @@ protected override void OnLaunched(LaunchActivatedEventArgs args)
             .UseHttp((context, services) =>
             {
                 services
-                .AddClient<IShowService, ShowService>(context, "configsectionname");
+                .AddClient<IShowService, ShowService>(context, name: "configsectionname");
             });
         });
     ...
@@ -76,7 +76,7 @@ protected override void OnLaunched(LaunchActivatedEventArgs args)
         .Configure(hostBuilder =>
         {
             hostBuilder.UseHttp((ctx, services) => {
-                services.AddClientWithEndpoint<IShowService, ShowService, CustomEndpointOptions>();
+                services.AddClientWithEndpoint<IShowService, ShowService, CustomEndpointOptions>(ctx);
             });
         });
     ...

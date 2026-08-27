@@ -49,6 +49,12 @@ internal sealed class StubOidcServer
 	/// <summary>When set, the refresh_token grant fails with this OAuth error code (e.g. "invalid_grant").</summary>
 	public string? RefreshError { get; set; }
 
+	/// <summary>
+	/// When set, the refresh_token grant fails at the transport level - the token endpoint is
+	/// unreachable - so no verdict on the refresh token is ever reached.
+	/// </summary>
+	public bool RefreshUnavailable { get; set; }
+
 	/// <summary>The most recently minted access token.</summary>
 	public string LastAccessToken => IssuedAccessTokens.Count > 0
 		? IssuedAccessTokens[IssuedAccessTokens.Count - 1]
@@ -89,6 +95,11 @@ internal sealed class StubOidcServer
 			if (grantType == "refresh_token")
 			{
 				RefreshRequestCount++;
+				if (RefreshUnavailable)
+				{
+					throw new HttpRequestException("StubOidcServer: the token endpoint is unreachable");
+				}
+
 				if (RefreshError is { } error)
 				{
 					return Json(

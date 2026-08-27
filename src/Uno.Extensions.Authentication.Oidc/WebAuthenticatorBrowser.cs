@@ -27,9 +27,26 @@ public class WebAuthenticatorBrowser : IBrowser
 				.AuthenticateAsync(WebAuthenticationOptions.None, new Uri(options.StartUrl), new Uri(options.EndUrl))
 				.AsTask(linkedCts.Token);
 
-			return new BrowserResult
+			return userResult.ResponseStatus switch
 			{
-				Response = userResult.ResponseData
+				WebAuthenticationStatus.Success => new BrowserResult { Response = userResult.ResponseData },
+				// The desktop broker reports its own AuthenticationTimeout as UserCancel (WinRT has
+				// no timeout status), marked by the error detail.
+				WebAuthenticationStatus.UserCancel when userResult.ResponseErrorDetail == DesktopWebAuthenticationBrokerProvider.TimeoutErrorDetail =>
+					new BrowserResult
+					{
+						ResultType = BrowserResultType.Timeout,
+						Error = "The browser interaction did not complete within the broker's AuthenticationTimeout.",
+					},
+				// Error deliberately left null: OidcClient then reports the result type by name,
+				// which is how OidcAuthenticationProvider tells a cancelled sign-in from a failed
+				// one and keeps the previous session (spec 013 F5).
+				WebAuthenticationStatus.UserCancel => new BrowserResult { ResultType = BrowserResultType.UserCancel },
+				_ => new BrowserResult
+				{
+					ResultType = BrowserResultType.HttpError,
+					Error = $"{userResult.ResponseStatus} (error detail {userResult.ResponseErrorDetail})",
+				},
 			};
 #endif
 		}

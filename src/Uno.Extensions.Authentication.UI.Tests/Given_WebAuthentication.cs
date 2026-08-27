@@ -102,6 +102,7 @@ public class Given_WebAuthentication
 		var tokens = await harness.Tokens.GetAsync(cts.Token);
 		tokens.Should().ContainKey(TokenCacheExtensions.AccessTokenKey);
 		tokens[TokenCacheExtensions.AccessTokenKey].Should().Be(harness.Broker.LastAccessToken);
+		harness.Logs.Text.Should().NotContain(harness.Broker.LastAccessToken, "tokens must never reach the log output (AGENTS.md section 7)");
 		tokens.Should().ContainKey(TokenCacheExtensions.RefreshTokenKey);
 	}
 
@@ -130,7 +131,7 @@ public class Given_WebAuthentication
 	}
 
 	/// <summary>
-	/// Spec 012 F5, error branch: an HTTP error from the interactive flow is a failed login - no
+	/// Spec 013 F5, error branch: an HTTP error from the interactive flow is a failed login - no
 	/// exception, no tokens.
 	/// </summary>
 	[TestMethod]
@@ -299,7 +300,7 @@ public class Given_WebAuthentication
 	}
 
 	/// <summary>
-	/// Spec 014, fallback without a placeholder: a start URI carrying no redirect at all used to
+	/// Spec 015, fallback without a placeholder: a start URI carrying no redirect at all used to
 	/// fail with "LoginCallbackUri not specified"; the broker-derived default now applies.
 	/// </summary>
 	[TestMethod]
@@ -330,7 +331,7 @@ public class Given_WebAuthentication
 	}
 
 	/// <summary>
-	/// Spec 014 diagnostics: when nothing configures a callback and the broker cannot derive one
+	/// Spec 015 diagnostics: when nothing configures a callback and the broker cannot derive one
 	/// either, the warning must name the broker and carry its reason. The message this replaced
 	/// said only that LoginCallbackUri and redirect_uri were missing - which reads as a
 	/// configuration slip even when the start URI carries {RedirectUri} and the real cause is a
@@ -370,6 +371,137 @@ public class Given_WebAuthentication
 			"the warning must name the source that failed, not just the two configuration settings");
 		logs.Text.Should().Contain(broker.CallbackUriError,
 			"the broker's own reason is what tells the developer what to fix");
+	}
+
+	/// <summary>
+	/// The <c>{State}</c> placeholder binds the response to the request: a fresh value per
+	/// sign-in goes out in the start URI, and only a response echoing it is accepted.
+	/// </summary>
+	[TestMethod]
+	public async Task When_StatePlaceholder_Then_FreshStateSentAndVerified()
+	{
+		StubWebAuthenticationBroker.EnsureRegistered();
+		var broker = StubWebAuthenticationBroker.Instance;
+		broker.Reset();
+
+		using var host = UnoHost
+			.CreateDefaultBuilder(typeof(Given_WebAuthentication).Assembly)
+			.UseAuthentication(auth => auth
+				.AddWeb(web => web
+					.LoginStartUri($"{LoginStartUri}?client_id=demo&redirect_uri={{RedirectUri}}&state={{State}}")))
+			.Build();
+
+		var authentication = host.Services.GetRequiredService<IAuthenticationService>();
+		var tokens = host.Services.GetRequiredService<ITokenCache>();
+		using var purge = Cts();
+		await tokens.ClearAsync(purge.Token);
+		using var cts = Cts();
+
+		(await authentication.LoginAsync(default, cancellationToken: cts.Token)).Should().BeTrue();
+		var firstState = StateOf(broker.LastRequestUri!);
+		(await authentication.LoginAsync(default, cancellationToken: cts.Token)).Should().BeTrue();
+		var secondState = StateOf(broker.LastRequestUri!);
+
+		firstState.Should().NotBeNullOrEmpty("the placeholder must be replaced with a generated value");
+		firstState.Should().NotContain("{", "the literal placeholder must never reach the identity provider");
+		secondState.Should().NotBe(firstState, "every sign-in must carry a fresh state");
+	}
+
+	/// <summary>
+	/// A response whose state does not match is not the response to the request this provider
+	/// started - a foreign navigation to the loopback callback, a replay, a stale tab - and must
+	/// sign nobody in.
+	/// </summary>
+	[TestMethod]
+	public async Task When_StateMismatch_Then_LoginRejected()
+	{
+		StubWebAuthenticationBroker.EnsureRegistered();
+		var broker = StubWebAuthenticationBroker.Instance;
+		broker.Reset();
+		var logs = new CapturingLoggerProvider();
+
+		using var host = UnoHost
+			.CreateDefaultBuilder(typeof(Given_WebAuthentication).Assembly)
+			.UseAuthentication(auth => auth
+				.AddWeb(web => web
+					.LoginStartUri($"{LoginStartUri}?client_id=demo&redirect_uri={{RedirectUri}}&state={{State}}")))
+			.ConfigureServices(services => services
+				.AddLogging(logging => logging
+					.SetMinimumLevel(LogLevel.Trace)
+					.AddProvider(logs)))
+			.Build();
+
+		var authentication = host.Services.GetRequiredService<IAuthenticationService>();
+		var tokens = host.Services.GetRequiredService<ITokenCache>();
+		using var purge = Cts();
+		await tokens.ClearAsync(purge.Token);
+		using var cts = Cts();
+		broker.NextState = "forged-state";
+
+		var result = await authentication.LoginAsync(default, cancellationToken: cts.Token);
+
+		result.Should().BeFalse("a response carrying a state this provider never issued must be rejected");
+		(await tokens.HasTokenAsync(cts.Token)).Should().BeFalse("nothing from a rejected response may be cached");
+		logs.Text.Should().Contain("state", "the rejection must be diagnosable from the log");
+		logs.Text.Should().NotContain(broker.LastAccessToken, "not even a rejected token may reach the log");
+	}
+
+	/// <summary>
+	/// The Web provider is protocol-agnostic, so renewal is whatever the app's Refresh callback
+	/// returns - and that result is what ends up cached, with no token in the log on the way.
+	/// </summary>
+	[TestMethod]
+	public async Task When_RefreshCallback_Then_ItsTokensCached()
+	{
+		StubWebAuthenticationBroker.EnsureRegistered();
+		var broker = StubWebAuthenticationBroker.Instance;
+		broker.Reset();
+		var logs = new CapturingLoggerProvider();
+		const string RenewedAccessToken = "renewed-access-token-value";
+
+		using var host = UnoHost
+			.CreateDefaultBuilder(typeof(Given_WebAuthentication).Assembly)
+			.UseAuthentication(auth => auth
+				.AddWeb(web => web
+					.LoginStartUri(LoginStartUri)
+					.LoginCallbackUri(CallbackUri)
+					.Refresh(async (services, cache, current, ct) =>
+						new Dictionary<string, string>(current) { [TokenCacheExtensions.AccessTokenKey] = RenewedAccessToken })))
+			.ConfigureServices(services => services
+				.AddLogging(logging => logging
+					.SetMinimumLevel(LogLevel.Trace)
+					.AddProvider(logs)))
+			.Build();
+
+		var authentication = host.Services.GetRequiredService<IAuthenticationService>();
+		var tokens = host.Services.GetRequiredService<ITokenCache>();
+		using var purge = Cts();
+		await tokens.ClearAsync(purge.Token);
+		using var cts = Cts();
+
+		(await authentication.LoginAsync(default, cancellationToken: cts.Token)).Should().BeTrue();
+		var issued = broker.LastAccessToken;
+
+		(await authentication.RefreshAsync(cts.Token)).Should().BeTrue();
+
+		(await tokens.GetAsync(cts.Token))[TokenCacheExtensions.AccessTokenKey].Should().Be(RenewedAccessToken,
+			"the Refresh callback's tokens must be the ones cached");
+		logs.Text.Should().NotContain(issued).And.NotContain(RenewedAccessToken, "tokens must never reach the log output");
+	}
+
+	/// <summary>The <c>state</c> value a request URI carries, if any.</summary>
+	private static string? StateOf(Uri requestUri)
+	{
+		foreach (var pair in requestUri.Query.TrimStart('?').Split('&'))
+		{
+			var separatorIndex = pair.IndexOf('=');
+			if (separatorIndex > 0 && pair.Substring(0, separatorIndex) == "state")
+			{
+				return Uri.UnescapeDataString(pair.Substring(separatorIndex + 1));
+			}
+		}
+
+		return null;
 	}
 
 	/// <summary>

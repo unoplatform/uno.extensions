@@ -427,8 +427,12 @@ On desktop targets, `MsalAuthenticationProvider` persists the MSAL token cache s
 The provider checks once that the secure store can round-trip the cache, the first time it persists
 one at a given location. It does **not** re-check on every launch: on macOS the check probes with a keychain entry whose service name MSAL randomizes on
 every run, so re-checking asks the user to grant keychain access on every single start and there is
-no entry for "Always Allow" to be remembered against. A write the store silently rejects is caught
-instead — the provider notices the cache never reached disk, logs an error, and retries the setup.
+no entry for "Always Allow" to be remembered against. Two cheaper checks stand in for it: when the
+probe is skipped, the first cache read — which every sign-in performs anyway — runs during setup,
+so a store that has since become unreadable (a Linux session without its keyring, a revoked macOS
+grant) takes the same in-memory or unprotected-file fallback a failed probe does; and a write the
+store silently rejects is caught — the provider notices the cache never reached disk, logs an error
+alongside the cause `MsalCacheHelper` reported, and retries the setup once.
 
 Set `VerifyCachePersistence` in the `Msal` configuration section to change when the check runs:
 

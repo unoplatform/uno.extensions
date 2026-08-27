@@ -15,7 +15,7 @@ namespace Uno.Extensions.Authentication.Tests;
 
 /// <summary>
 /// Coverage of the Custom provider through the hosting API - login, refresh, logout and
-/// cancellation - in a bare (non-Uno) host with in-memory storage. Spec 012, item 13.
+/// cancellation - in a bare (non-Uno) host with in-memory storage. Spec 013, item 13.
 /// </summary>
 [TestClass]
 public class Given_CustomAuthentication
@@ -32,35 +32,6 @@ public class Given_CustomAuthentication
 				.SetDefaultInstance<IKeyValueStorage, FakeKeyValueStorage>())
 			.UseAuthentication(auth => auth.AddCustom(configure))
 			.Build();
-
-	/// <summary>
-	/// Hand-rolled in-memory storage: the product's InMemoryKeyValueStorage is internal to the
-	/// Storage assembly, and a small fake is the repo-preferred substitute anyway.
-	/// </summary>
-	private sealed class FakeKeyValueStorage : IKeyValueStorage
-	{
-		private readonly Dictionary<string, object> _values = new();
-
-		public bool IsEncrypted => false;
-
-		public ValueTask ClearAsync(string key, CancellationToken ct)
-		{
-			_values.Remove(key);
-			return default;
-		}
-
-		public ValueTask<TValue?> GetAsync<TValue>(string key, CancellationToken ct) =>
-			ValueTask.FromResult(_values.TryGetValue(key, out var value) ? (TValue?)value : default);
-
-		public ValueTask SetAsync<TValue>(string key, TValue value, CancellationToken ct) where TValue : notnull
-		{
-			_values[key] = value;
-			return default;
-		}
-
-		public ValueTask<string[]> GetKeysAsync(CancellationToken ct) =>
-			ValueTask.FromResult(System.Linq.Enumerable.ToArray(_values.Keys));
-	}
 
 	[TestMethod]
 	public async Task When_Login_Then_TokensCached()
