@@ -25,7 +25,7 @@ Every feed factory caches its instance via `AttachedProperty.GetOrCreate` keyed 
 
 - `Model.Steps` returns the wrapper → the VM state subscribes to it → **swap propagates to the VM member**;
 - `StepsCount`'s `SelectFeed` composes on the same wrapper → **swap propagates through business logic** (live: a re-swap re-emits through `Select`);
-- no `dynamic`, no duck-typed re-init needed for feeds: **`SetModel` = reflection over the context's `IHotSwapState<T>` members**, calling `HotSwap` per mocked feed (D11), reusing the hot-reload driver but **fail-hard** — a member that cannot be swapped throws. No per-member generated handle. (The HR `dynamic` path stays untouched, HR-only.)
+- no `dynamic`, no duck-typed re-init needed for feeds: **`SetMock` = reflection over the context's `IHotSwapState<T>` members**, calling `HotSwap` per mocked feed (D11), reusing the hot-reload driver but **fail-hard** — a member that cannot be swapped throws. No per-member generated handle. (The HR `dynamic` path stays untouched, HR-only.)
 
 ```mermaid
 flowchart TB
@@ -78,18 +78,18 @@ public record RecipeModelMock
     public static RecipeModelMock Empty { get; } = new() { Steps = ListFeedMock.Empty<Step>() };
     public required IListFeed<Step> Steps { get; init; }     // ServiceDependent input → required
     public IFeed<int>? StepsCount { get; init; }              // Derived → optional override; null = real business logic
-    public IAsyncCommand? Save { get; init; }                 // command → optional; null = idle no-op
+    // Command mocking is deferred to vNext — the record carries no command member for now.
 }
-public static class RecipeViewModelMock
+public static partial class RecipeViewModelMock
 {
-    public static RecipeViewModel Create();                                  // null-inject + SetModel(Empty)
-    public static RecipeViewModel Create(IListFeed<Step> steps);             // required inputs as params
-    public static void SetModel(this RecipeViewModel vm, RecipeModelMock mock); // typed swaps via hidden handles
+    public static RecipeViewModel Create();                                  // = Create(RecipeModelMock.Empty)
+    public static RecipeViewModel Create(RecipeModelMock mock);              // opens MockingService.Enable() internally
+    public static void SetMock(this RecipeViewModel vm, RecipeModelMock mock); // typed swaps
 }
 ```
 
 - `Create()` constructs the **real VM** via `new {Vm}(default!, …)`; **compile-time guard**: if `[CtorDependency(Eager=true)]` names parameter `p`, `Create` **requires** a real/fake `p` argument (or the generator emits an error diagnostic if no safe overload is possible).
-- `SetModel` may be called repeatedly (live transitions, G6); `with`-expressions on the record make variants cheap (`Empty with { Steps = … }`).
+- `SetMock` may be called repeatedly (live transitions, G6); `with`-expressions on the record make variants cheap (`Empty with { Steps = … }`).
 - `required init` on service-dependent inputs = compile-time completeness. **Derived members are optional overrides**: `null` (default) → the real derivation recomputes over the swapped inputs; non-null → that member's own wrapper is swapped too (the cache-level anchor wraps *every* feed property when the context is mockable, derived included) — lets a test pin a derived value without caring about its inputs.
 - **Tier 2 and tier 3 never accept `MessageEntry`, an untyped feed envelope, or any other tier-1 authoring abstraction. Their contracts remain `IFeed<T>`, `IListFeed<T>`, typed states and typed commands end to end.**
 
@@ -213,16 +213,16 @@ sequenceDiagram
     participant W as HotSwapFeed wrappers
     participant UI as FeedView
 
-    Note over T,MG: build time — the Mocking generator reads app metadata<br/>+ FeedDependency / CtorDependency attributes and emits<br/>RecipeModelMock + Create(...) + SetModel
+    Note over T,MG: build time — the Mocking generator reads app metadata<br/>+ FeedDependency / CtorDependency attributes and emits<br/>RecipeModelMock + Create(...) + SetMock
     T->>MG: RecipeViewModelMock.Create(steps)
     MG->>VM: new RecipeViewModel(default!, ...)
     VM->>M: new RecipeModel(default!, ...)
     Note over M,W: context.IsMockingActive ON — every Model feed property<br/>is cached as a HotSwapFeed wrapper
-    MG->>M: SetModel → reflection HotSwap over IHotSwapState members (fail-hard)
+    MG->>M: SetMock → reflection HotSwap over IHotSwapState members (fail-hard)
     M->>W: wrapper.Set(steps)
     W-->>UI: Steps emits the mock values
     W-->>UI: StepsCount recomputes through the real Select
-    T->>M: SetModel(...) again — Loading / Value / Error
+    T->>M: SetMock(...) again — Loading / Value / Error
     M->>W: re-swap
     W-->>UI: live transition, no re-subscribe
 ```
@@ -232,10 +232,8 @@ sequenceDiagram
 The activation API is **decided** (D10): mocking exists only inside an explicit scope.
 
 ```csharp
-using (MockingService.Enable())
-{
-    var vm = RecipeViewModelMock.Create(ListFeedMock.Value(steps));
-}
+// Create opens the MockingService.Enable() scope internally, around construction:
+var vm = RecipeViewModelMock.Create(new RecipeModelMock { Steps = ListFeedMock.Value(steps) });
 ```
 
 Rationale — **the wrap is not free**. §1 wraps each Model feed in a `HotSwapFeed`; that is one indirection per feed on every subscription path. Acceptable in a test/preview run, not in a live app. So the wrap must be **opt-in per scope**, never a framework-wide default: outside a scope, `AttachedProperty.GetOrCreate` caches the raw feed exactly as today.
@@ -250,7 +248,7 @@ Resolved against the source:
 - **Eager vs lazy:** `Create(...)` pre-seeds a mockable context on the VM/Model owner (via the `PreConfigure`/`Set` seam) so a lazy first subscription **after** the `using` block still wraps — the bit lives on the context instance, not only on the ambient `AsyncLocal`.
 - **Wrap gate:** `StateImpl` ctor reads `context.IsMockingActive` instead of `FeedConfiguration.EffectiveHotReload` (D12).
 - **Nested / concurrent / lifetime:** the bit is per-context-instance → concurrent tests don't leak; contexts created inside a scope stay mockable for their own lifetime after `Dispose`.
-- **No mock registry on the context needed:** swap is reflection over the context's `IHotSwapState<T>` members (D11); overrides are applied by `SetModel` at swap time.
+- **No mock registry on the context needed:** swap is reflection over the context's `IHotSwapState<T>` members (D11); overrides are applied by `SetMock` at swap time.
 
 ## 7. Constraints
 
@@ -259,5 +257,5 @@ Resolved against the source:
 - Tier 1 stays an isolated UI convenience.
 - **No wrap unless `SourceContext.IsMockingActive`** (§6, D10/D12): the per-feed `HotSwapFeed` indirection must never exist in a live app; a live-app context never has the bit set.
 - **Swap is reflection over `IHotSwapState<T>`, fail-hard** (D11): no per-member generated hook; an un-swappable mocked member throws.
-- Frozen names (Hot Design + tests): `{Model}Mock`, `Empty`, `Create`, `SetModel`, `MockingService.Enable`, `SourceContext.IsMockingActive`, attribute names, the `__Mock_SetCommand` command seam.
+- Frozen names (Hot Design + tests): `{Model}Mock`, `Empty`, `Create`, `SetMock`, `MockingService.Enable`, `SourceContext.IsMockingActive`, attribute names, the `__Mock_SetCommand` command seam.
 - MVUX output byte-identical only when explicitly opted out (`EnableFeedMocking(IsEnabled = false)`); instrumentation is emitted by default.

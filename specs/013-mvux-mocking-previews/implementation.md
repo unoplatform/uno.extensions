@@ -12,7 +12,7 @@ Concrete surfaces, touch-list, phasing, tests. Names bikesheddable; semantics fi
 | `FeedView.Source` coercion bridge | `Uno.Extensions.Reactive.UI` | tier-1 |
 | Analysis + hidden hooks emission | `Uno.Extensions.Reactive.Generator` | on Model & VM partials, on by default (opt-out) |
 | Mock vocabulary (`FeedMock`/`ListFeedMock`/`CommandMock`/`FeedMockState`) | **`Uno.HotTesting.Reactive`** (new) | referenced by test/preview projects only |
-| Mocking generator (`{Model}Mock`, `Create`, `SetModel`) | `Uno.HotTesting.Reactive` (analyzer asset) | runs in consumer project, reads app metadata |
+| Mocking generator (`{Model}Mock`, `Create`, `SetMock`) | `Uno.HotTesting.Reactive` (analyzer asset) | runs in consumer project, reads app metadata |
 | Reflection swap driver (reused, fail-hard) | core | reuse hot-reload's `IHotSwapState<T>` iteration; **throw on un-swappable member** (D11) |
 | `MockingService.Enable()` activation scope | `Uno.HotTesting.Reactive` | frozen name; sets `SourceContext.IsMockingActive` on the ambient/pre-seeded context (§6) |
 
@@ -102,21 +102,21 @@ public record RecipeModelMock
     public static RecipeModelMock Empty { get; }              // ServiceDependent → FeedMock/ListFeedMock.Empty
     public required IListFeed<Step> Steps { get; init; }      // exactly the ServiceDependent set
     public IFeed<int>? StepsCount { get; init; }               // Derived → optional override; null = real derivation
-    public IAsyncCommand? Save { get; init; }                  // optional; default idle no-op
+
+    public static RecipeModelMock Empty { get; }               // every input pinned to its Empty state
 }
-public static class RecipeViewModelMocking
+public static partial class RecipeViewModelMock   // partial → user extends with named catalogs
 {
-    public static RecipeViewModel Create();                                       // null-inject + SetModel(Empty)
-    public static RecipeViewModel Create(IListFeed<Step> steps);                  // per required input
-    public static RecipeViewModel Create(IRecipeService svc, IListFeed<Step> steps); // when CtorDependency(Eager) → service required
-    public static void SetModel(this RecipeViewModel vm, RecipeModelMock mock);   // reflection HotSwap over IHotSwapState (fail-hard)
+    public static RecipeViewModel Create();                                      // = Create(RecipeModelMock.Empty)
+    public static RecipeViewModel Create(RecipeModelMock mock);                 // opens MockingService.Enable() internally
+    public static void SetMock(this RecipeViewModel vm, RecipeModelMock mock);  // typed swaps (fail-hard)
 }
 ```
 Rules:
-- Required properties/parameters = the **ServiceDependent** input set.
+- Required properties = the **ServiceDependent** input set; `Create` takes only the record (no denormalized per-input overloads).
 - **Derived members: optional overrides** — `null` (default) → real derivation recomputes over swapped inputs; set → that member's wrapper is swapped too. Independent members: untouched.
-- Commands optional; default is an idle no-op.
-- `SetModel` callable repeatedly → live transitions (`vm.SetModel(mock with { Steps = ... })`).
+- **Command mocking is deferred to vNext**: the record carries no command member and `SetMock` wires none (the MVUX `__Mock_SetCommand` seam stays available for that future work).
+- `Create` opens the `MockingService.Enable()` scope around construction, so user code never opens it. `SetMock` callable repeatedly → live transitions (`vm.SetMock(RecipeModelMock.Empty with { Steps = ... })`).
 - Concrete generic types preserved throughout; **no tier-1 type or conversion path is emitted**.
 - Diagnostic `MOCK0001` when a VM is reachable but its assembly lacks hooks (opt-in missing).
 
@@ -143,7 +143,7 @@ public static class MockingService
 [AssemblyCleanup]    public static void Cleanup()           => _scope.Dispose();
 
 // or a single test
-using (MockingService.Enable()) { var vm = RecipeViewModelMock.Create(ListFeedMock.Value(steps)); }
+var vm = RecipeViewModelMock.Create(new RecipeModelMock { Steps = ListFeedMock.Value(steps) }); // Create opens the scope internally
 ```
 
 **Non-negotiable constraint:** context not mockable → **no `HotSwapFeed` wrap at all**. The wrap is one indirection per feed; it may never be injected into the feeds of a live app (spec G9/R7). `SourceContext.IsMockingActive` (§2.2, D12) is the internal per-context gate the scope drives, not a switch app authors set.
@@ -165,7 +165,7 @@ Mechanism (resolved against source — `Core/Internal/SourceContext.cs`, D12):
   e. `MockingService.Enable()` → `IsMockingActive` on the pre-seeded context: prove **no wrap when the context is not mockable**, and reflection swap is **fail-hard** on an un-swappable member (D11).
 - **P1 — Tier 1** (core+UI): `Feed.Value`, authorable `MessageEntry` + `AxisValue` (custom axes), `MessageEntryFeed` + push semantics, `FeedView` bridge, documentation-only converter illustration. Ships alone.
 - **P2 — Core: `SourceContext.IsMockingActive` + wrap gate in `StateImpl` + fail-hard reflection swap + attributes + analysis + `__Mock_SetCommand` seam** (MVUX gen). No per-feed swap hooks; no `__Mock_Create` (public ctors + ambient scope).
-- **P3 — Mocking package**: typed vocabulary + consumer generator (`{Model}Mock`/`Create`/`SetModel`).
+- **P3 — Mocking package**: typed vocabulary + consumer generator (`{Model}Mock`/`Create`/`SetMock`).
 - **P4 — Tier 3 catalogs + Hot Design checkpoint** (name freeze), docs.
 
 ## 8. Test plan
@@ -185,7 +185,7 @@ Mechanism (resolved against source — `Core/Internal/SourceContext.cs`, D12):
 ### Runtime / UI (Skia)
 - Each pinned state renders; Loading keeps `IsExecuting`.
 - Successive `Source` entries evolve without re-subscribe (no loading flash); **mutating an assigned entry does not emit** — assigning a replacement does.
-- `SetModel` drives Loading → Value → Error live; derived member updates on-screen after an input swap (D6 end-to-end).
+- `SetMock` drives Loading → Value → Error live; derived member updates on-screen after an input swap (D6 end-to-end).
 - Command states drive `Button.IsEnabled`; hot reload does not clobber a mocked VM/context.
 
 ### Scoped activation (with §6 spike)
@@ -195,9 +195,9 @@ Mechanism (resolved against source — `Core/Internal/SourceContext.cs`, D12):
 - Nested `Enable()` scopes restore correctly; parallel tests do not leak mockability; async construction retains the intended scope; lazy first subscription after scope disposal has defined behavior; existing contexts remain deterministic after `Dispose`.
 
 ### Contract freeze
-- Reflection-discovery test for `{Model}Mock`/`Empty`/`Create`/`SetModel`/attribute names (Hot Design contract).
+- Reflection-discovery test for `{Model}Mock`/`Empty`/`Create`/`SetMock`/attribute names (Hot Design contract).
 
 ## 9. Docs
-- `doc/Learn/Mvux/Testing.md`: `MockingService.Enable()` scope (assembly-init vs per-test, and why it is never app-wide), typed vocabulary, `Create`/`SetModel`, derived-feeds-survive concept, eager-ctor guidance, non-AOT constraint, R4/R5 caveats.
+- `doc/Learn/Mvux/Testing.md`: `MockingService.Enable()` scope (assembly-init vs per-test, and why it is never app-wide), typed vocabulary, `Create`/`SetMock`, derived-feeds-survive concept, eager-ctor guidance, non-AOT constraint, R4/R5 caveats.
 - `doc/Learn/Mvux/FeedView.md`: tier-1 entry authoring + custom axes; converter shown only as an application-owned illustration at `FeedView.Source` (not a deliverable).
 - `rules.md`: FEED3201–3203, MOCK0001.
