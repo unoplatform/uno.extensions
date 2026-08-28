@@ -12,10 +12,10 @@ using Uno.Extensions.Reactive.Tests.MockingApp;
 namespace Uno.Extensions.Reactive.Tests.Mocking;
 
 /// <summary>
-/// Spec 013 step B — end-to-end: the consumer generator's {Model}Mock / Create / SetModel drive a real
-/// VM (real Model, null-injected service) through mocked feed states via the reflection swap engine.
-/// Observation goes through the cached list-state (same state the bindable VM subscribes to), which the
-/// swap targets — not a fresh subscription to the raw feed.
+/// Spec 013 — end-to-end: the consumer generator's {Model}Mock / {Vm}Mock.Create / SetMock drive a real
+/// VM (real Model, null-injected service) through mocked feed states. The activation scope lives inside
+/// Create, so user code never opens it. Observation goes through the cached list-state (the same state
+/// the bindable VM subscribes to), which the swap targets — not a fresh subscription to the raw feed.
 /// </summary>
 [TestClass]
 public class Given_GeneratedMock : FeedUITests
@@ -23,7 +23,6 @@ public class Given_GeneratedMock : FeedUITests
 	private static async Task<IImmutableList<int>?> CurrentItems(SourceContext ctx, IListFeed<int> feed)
 	{
 		var (result, _) = ctx.GetOrCreateListState(feed).Record();
-		// Wait until a defined (Some) message is observed.
 		for (var i = 0; i < 50; i++)
 		{
 			if (result.Count > 0 && result.Last().Current.Data.IsSome(out var v))
@@ -38,77 +37,48 @@ public class Given_GeneratedMock : FeedUITests
 	[TestMethod]
 	public async Task When_CreateWithMock_Then_FeedEmitsMockedValues()
 	{
-		using (MockingService.Enable())
-		{
-			var vm = RecipeViewModelMock.Create(ListFeedMock.Value(1, 2, 3));
-			using var _ = SourceContext.GetOrCreate(vm.Model).AsCurrent();
+		// No MockingService.Enable() here — Create opens the scope internally.
+		var vm = RecipeViewModelMock.Create(new RecipeModelMock { Steps = ListFeedMock.Value(1, 2, 3) });
+		using var _ = SourceContext.GetOrCreate(vm.Model).AsCurrent();
 
-			var items = await CurrentItems(SourceContext.GetOrCreate(vm.Model), vm.Model.Steps);
-			items.Should().BeEquivalentTo(new[] { 1, 2, 3 });
-		}
+		var items = await CurrentItems(SourceContext.GetOrCreate(vm.Model), vm.Model.Steps);
+		items.Should().BeEquivalentTo(new[] { 1, 2, 3 });
 	}
 
 	[TestMethod]
-	public async Task When_SetModelReSwaps_Then_ReEmitsLive()
+	public async Task When_SetMockReSwaps_Then_ReEmitsLive()
 	{
-		using (MockingService.Enable())
-		{
-			var vm = RecipeViewModelMock.Create(ListFeedMock.Value(1));
-			using var _ = SourceContext.GetOrCreate(vm.Model).AsCurrent();
+		var vm = RecipeViewModelMock.Create(new RecipeModelMock { Steps = ListFeedMock.Value(1) });
+		using var _ = SourceContext.GetOrCreate(vm.Model).AsCurrent();
 
-			(await CurrentItems(SourceContext.GetOrCreate(vm.Model), vm.Model.Steps))
-				.Should().BeEquivalentTo(new[] { 1 });
+		(await CurrentItems(SourceContext.GetOrCreate(vm.Model), vm.Model.Steps))
+			.Should().BeEquivalentTo(new[] { 1 });
 
-			vm.SetModel(new RecipeModelMock { Steps = ListFeedMock.Value(7, 8) });
+		// Live re-swap — still works after Create's scope has closed (the context stays mockable).
+		vm.SetMock(RecipeModelMock.Empty with { Steps = ListFeedMock.Value(7, 8) });
 
-			(await CurrentItems(SourceContext.GetOrCreate(vm.Model), vm.Model.Steps))
-				.Should().BeEquivalentTo(new[] { 7, 8 });
-		}
+		(await CurrentItems(SourceContext.GetOrCreate(vm.Model), vm.Model.Steps))
+			.Should().BeEquivalentTo(new[] { 7, 8 });
 	}
 
 	[TestMethod]
 	public async Task When_CreateDefault_Then_InputsAreEmpty()
 	{
-		using (MockingService.Enable())
-		{
-			var vm = RecipeViewModelMock.Create(); // Empty → Steps = None
-			using var _ = SourceContext.GetOrCreate(vm.Model).AsCurrent();
+		var vm = RecipeViewModelMock.Create(); // = RecipeModelMock.Empty → Steps = None
+		using var _ = SourceContext.GetOrCreate(vm.Model).AsCurrent();
 
-			var items = await CurrentItems(SourceContext.GetOrCreate(vm.Model), vm.Model.Steps);
-			items.Should().BeNull("Empty pins the input to None");
-		}
-	}
-
-	[TestMethod]
-	public void When_CommandOverridden_Then_VmCommandInvokesMock()
-	{
-		using (MockingService.Enable())
-		{
-			var executed = false;
-			var vm = RecipeViewModelMock.Create(new RecipeModelMock
-			{
-				Steps = ListFeedMock.Value(1),
-				Save = CommandMock.Callback(_ => executed = true),
-			});
-
-			vm.Save.Should().NotBeNull();
-			vm.Save.CanExecute(null).Should().BeTrue();
-			vm.Save.Execute(null);
-			executed.Should().BeTrue("SetModel routed the mock command through __Mock_SetCommand");
-		}
+		var items = await CurrentItems(SourceContext.GetOrCreate(vm.Model), vm.Model.Steps);
+		items.Should().BeNull("Empty pins the input to None");
 	}
 
 	[TestMethod]
 	public async Task When_CatalogEntry_Then_PinnedState()
 	{
-		// Tier-3 sample: a named catalog entry builds a real VM pinned to a state.
-		using (MockingService.Enable())
-		{
-			var vm = RecipeCatalog.Basic;
-			using var _ = SourceContext.GetOrCreate(vm.Model).AsCurrent();
+		// Tier-3 sample: a named catalog entry (a partial of the generated RecipeViewModelMock).
+		var vm = RecipeViewModelMock.Basic;
+		using var _ = SourceContext.GetOrCreate(vm.Model).AsCurrent();
 
-			var items = await CurrentItems(SourceContext.GetOrCreate(vm.Model), vm.Model.Steps);
-			items.Should().BeEquivalentTo(new[] { 1, 2, 3 });
-		}
+		var items = await CurrentItems(SourceContext.GetOrCreate(vm.Model), vm.Model.Steps);
+		items.Should().BeEquivalentTo(new[] { 1, 2, 3 });
 	}
 }

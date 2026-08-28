@@ -133,6 +133,20 @@ Tests inchangés/verts : Given_MockingActivation 4/4, Given_MockingRuntime 4/4, 
 
 Tests : MockingActivation 4/4, MockingRuntime 4/4, GeneratedMock 5/5, Uno.HotTesting.Reactive.Tests 22/22, Tests.Generator 80/80.
 
+
+## v12 — review David (post-discussion staging PR #1, ven. 28/08)
+
+Six retours de David sur la PR, tous appliqués :
+
+1. **`{Vm}Mock` généré `partial`** — l'app étend la classe factory avec ses catalogs nommés (tier 3) dans son propre fichier, même namespace.
+2. **`SetModel` → `SetMock`** (facade renommée).
+3. **`Create` prend uniquement le record** — suppression des surcharges dénormalisées `Create(input…)`. Reste `Create()` (= `{Model}Mock.Empty`) et `Create({Model}Mock)`.
+4. **`{Model}Mock.Empty`** confirmé (sur le record, tous inputs Empty) + exemple `vm.SetMock(RecipeModelMock.Empty with { Steps = ListFeedMock.Loading<Step>() })`.
+5. **Scope d'activation déplacé DANS `Create`** — `Create` ouvre `MockingService.Enable()` autour de la construction ; le code utilisateur n'ouvre plus de scope (le bit mockable capturé sur le contexte survit aux `SetMock` ultérieurs et souscriptions lazy, D12).
+6. **Mocking de commande différé à vNext** — le générateur consumer n'émet plus de membre commande ni de câblage `__Mock_SetCommand` ; le seam MVUX reste disponible pour ce travail futur. `CommandMock` (vocabulaire) reste dans l'assembly, non câblé.
+
+Répercuté : doc `doc/Reference/Reactive/testing.md`, spec §7/§8/§10/§13 + archi §2.2/§5/§6, sample `RecipeViewModelMock` partial. Tests : MockingActivation 4/4, MockingRuntime 4/4, GeneratedMock 4/4, Tests.Generator 80/80, Uno.HotTesting.Reactive.Tests 22/22.
+
 ---
 
 ## Registre final des décisions
