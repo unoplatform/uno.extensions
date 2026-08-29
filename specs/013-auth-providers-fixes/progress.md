@@ -155,3 +155,136 @@ follow-up commit, keyed to the panel's numbering:
 - [ ] Not done: an opt-out for the broker registration (M6), the MSAL double warning on WASM (L2),
   the third `CapturingLoggerProvider` copy in the MSAL suite, and the interface/implementation
   `HttpClient` naming difference between transient and non-transient `AddClient` (L3) — follow-ups.
+
+A second commit (`b5563ca16 fix(auth): address the code-quality bot comments on PR #3169`)
+answered the three `github-code-quality` inline comments: `using var` on the port-probe
+`TcpListener`; the broad catch in `TryGetBrokerCallbackUri` kept but filtered
+(`when (ex is not OperationCanceledException)`) with the rationale in a comment - what the broker
+throws with no callback is platform-specific and the handler swallows nothing; and the form_post
+test's `FormUrlEncodedContent` disposed at method scope, because the bot's suggested `using` inside
+the `OnLaunch` lambda would dispose the body while the POST is still in flight.
+
+## Continuation notes (2026-08-29)
+
+Everything needed to pick this up in a fresh session. The untracked `HANDOFF.md` at the repo root
+duplicates some of this; this section is the checked-in copy.
+
+### State
+
+| | |
+| --- | --- |
+| Branch | `dev/sb/auth-providers-onmain`, 29 commits on `main` (`8548c462c`), tip `b5563ca16`, pushed |
+| PR | [#3169](https://github.com/unoplatform/uno.extensions/pull/3169) against `main`, open, no issue linked (the earlier split PRs each had a sub-issue under #3155 - create one and fill the `closes #` line if the checklist item matters) |
+| Superseded branch | `origin/dev/sb/auth-providers-fixes` at `981f2f9e9`, untouched; #3166 and #3167 merged into it and are included here |
+| Split out | `dev/sb/macos-keychain-storage` (local only, `main` + `b5768670a`): the macOS keychain-backed `IKeyValueStorage`, spec 017. Removed from this PR because it makes an unexecuted `SecKeychain*` P/Invoke the default store for every Skia macOS app. Needs a first run on a real Mac, then its own PR |
+
+### CI
+
+- Build 230485 (`e607a6d67`, the review-panel commit): **every Azure lane green**, including the
+  first-ever Android-emulator, iOS-simulator and WebAssembly runs of the Oidc/Web suites.
+- Build 230609 (`b5563ca16`): green except the Skia Desktop hot-reload job, which failed on its
+  results-publish step with `Too Many Requests` (Azure DevOps throttling, zero test failures);
+  that skipped the "Runtime Tests - Devices" stage. The commit changes nothing those lanes run.
+  **"Rerun failed jobs" on 230609** in the Azure portal clears it.
+- Builds 230470/230474 (pre-panel) failed on the WebAssembly runtime lane: the `__WASM__` gate
+  (H1 above). Fixed.
+- The GitHub "Azure Static Web Apps CI/CD" check fails on every PR branch with *"This Static Web
+  App already has the maximum number of staging environments"* - an Azure quota on PR previews,
+  fixed only by deleting stale staging environments in the portal.
+
+### Left on the PR
+
+1. Rerun build 230609's failed job (portal) so the device stage runs on the final commit.
+2. SWA staging-environment quota (portal).
+3. Optional: link an issue.
+4. The four review-panel follow-ups listed under "Not done" above.
+
+### Follow-up work, ranked
+
+1. **OIDC out-of-the-box sign-in throws against any signing IdP.** Duende `OidcClient` 6 needs an
+   `IIdentityTokenValidator` or `Policy.RequireIdentityTokenSignature = false`, and `AddOidc`
+   configures neither. Pre-existing on `main` (the 6.0.1 bump is there), documented as a workaround
+   in `HowTo-OidcAuthentication.md`. If Web/OIDC is the headline of the release, fix before the
+   release note says "works out of the box".
+2. **Token storage hardening** - the audit below has cleartext cells that are closable here:
+   - Skia Windows access-token store: DPAPI via P/Invoke `CryptProtectData`/`CryptUnprotectData` in
+     the plain/desktop build, gated on `OperatingSystem.IsWindows()`, same `Protect`/`Unprotect`
+     override shape as the macOS store. Small, no new dependency, fully verifiable on a Windows box
+     (the Skia desktop runtime-test head runs there). Do this first.
+   - Skia iOS/Android access-token store: the `KeyChain`/`KeyStore` stores exist but live in
+     `Storage.UI`, which the Uno SDK substitutes with its plain build on Skia heads. Preferred
+     route: move them (and `BaseKeyValueStorageWithCaching`) into an assembly that does not
+     reference Uno.UI and multi-targets `net9.0-ios`/`-android`, so it is not substituted -
+     MSAL itself proves non-Uno.UI packages load their platform build on Skia heads. First step is
+     confirming the SDK substitutes *Uno.UI-referencing* packages specifically. Alternative:
+     `SecItem*` CoreFoundation interop in the plain build (iOS/Catalyst/macOS only). Spec 018.
+   - Skia Linux: libsecret P/Invoke, key in the Secret Service, same AES-GCM envelope as the
+     macOS store; `MsalCacheHelper` is the reference implementation. No Linux lane.
+   - Android's MSAL cache (plain `SharedPreferences`) is MSAL.NET's and not redirectable
+     ("custom serialization isn't available on mobile platforms"); WebAssembly has no secure store.
+     Both are documented, not fixable here.
+3. **Unpackaged WinAppSDK Web/OIDC** is documented as unsupported, not fixed - the WinRT broker
+   answers `ms-app://`, wrong for the WinUIEx flow.
+4. macOS keychain store (spec 017, other branch): first run on a Mac, then decide `SecKeychain*`
+   vs going straight to `SecItem*`; key rotation and deletion are unaddressed.
+5. Linux desktop key-value storage cleartext fall-through is asserted by a test so it cannot
+   regress silently; `MsalStorageDefaults`' libsecret constants are the precedent.
+
+### Token storage across platforms (audit, 2026-08-26)
+
+Two caches, answered per cache and per head. "MSAL cache" is MSAL.NET's own (refresh + ID tokens);
+"access token" is what `IAuthenticationService` keeps in the host's default `IKeyValueStorage`,
+which the Web/OIDC/Custom providers use for everything.
+
+| Head | MSAL's own cache | Access token via `IKeyValueStorage` |
+| --- | --- | --- |
+| Windows, WinAppSDK | DPAPI encrypted file | DPAPI (`EncryptedApplicationData`) |
+| Skia Desktop, Windows | DPAPI encrypted file | **cleartext `ApplicationData`** |
+| Skia Desktop, macOS | Keychain via `MsalCacheHelper` | **cleartext** (keychain store is on the split-out branch) |
+| Skia Desktop, Linux | Keyring / libsecret | **cleartext `ApplicationData`** |
+| iOS, native renderer | iOS Keychain | iOS Keychain |
+| Android, native renderer | **plain `SharedPreferences`** | Android `KeyStore` |
+| iOS, `SkiaRenderer` | iOS Keychain | **cleartext `ApplicationData`** |
+| Android, `SkiaRenderer` | **plain `SharedPreferences`** | **cleartext `ApplicationData`** |
+| Mac Catalyst | not supported (`AddMsal` throws) | iOS Keychain |
+| WebAssembly | browser storage, cleartext | browser storage, cleartext |
+
+Evidence for the MSAL rows: `SetupDesktopStorage` early-returns on Android/iOS/Catalyst, so those
+rows are properties of `Microsoft.Identity.Client` 4.87.0. Its `lib/net8.0-ios18.0` uses
+`SecKeyChain`/`SecRecord` (real keychain, entitlement required); its `lib/net8.0-android34.0` uses
+`SharedPreferences` with no encryption primitives at all. The Skia rows lose the secure stores
+because `Storage.UI` registers them under `#if __ANDROID__`/`#if __IOS__` and the SDK loads the
+plain build on Skia heads - forced, since the stores are built on Xamarin bindings. Since this
+branch, `TokenCache` logs a Warning naming the store whenever the default is unencrypted, so none
+of the cleartext cells is silent any more.
+
+Sites where the `#if` handling is *correct* and must not be "fixed": `MsalRedirectDefaults`
+(`#if WINDOWS` is compile-time on purpose - `IsWindows()` is also true on Skia desktop),
+`WebAuthenticationProvider.ApplyPrefersEphemeralWebBrowserSession` (runtime dispatch plus
+reflection), `DesktopWebAuthenticationBrokerProvider.TryRegister` (runtime allow-list), and
+`SetupDesktopStorage`'s mobile early-return (runtime, because a Skia Android head must not fall
+through to `MsalCacheHelper`).
+
+### Environment
+
+See `specs/lessons.md`: `dotnet build` cannot build the XAML-bearing solutions (use `MSBuild.exe`
+from VS 18), gate on exit codes not filtered output, the runtime-test engine's filter needs
+`'A | B'` with spaces, a desktop-only runtime-test build invalidates the package build's restore
+(`-t:Restore,Build` afterwards, never concurrently), and `jq` is not installed - use `gh --jq` or
+PowerShell for JSON. `127.0.0.1` binds without elevation on Windows `HttpListener`.
+
+Verification loop that matches CI (57 runtime tests as of `b5563ca16`; docs lint is the two
+commands in `build/ci/stage-docs-validations.yml`):
+
+```powershell
+& "C:\Program Files\Microsoft Visual Studio\18\Professional\MSBuild\Current\Bin\MSBuild.exe" `
+  Uno.Extensions-packageonly.slnf -t:Restore,Build -p:Configuration=Release -v:m -nologo -m
+dotnet test Uno.Extensions-packageonly.slnf -c Release --no-build --filter "FullyQualifiedName!~UI.Tests"
+
+dotnet build Uno.Extensions-runtimetests.slnf -p:Build_Android=false -p:Build_iOS=false `
+  -p:Build_Windows=false -p:Build_MacCatalyst=false -p:Build_Web=false -c Debug -p:GeneratePackageOnBuild=false
+$env:UNO_RUNTIME_TESTS_RUN_TESTS = '{"Filter": {"Value": "Storage.UI.Tests | Uno.Extensions.Authentication."}}'
+$env:UNO_RUNTIME_TESTS_OUTPUT_PATH = "<some path>\results.xml"
+Push-Location src\Uno.Extensions.RuntimeTests\Uno.Extensions.RuntimeTests\bin\Uno.Extensions.RuntimeTests\Debug\net9.0-desktop
+dotnet Uno.Extensions.RuntimeTests.dll; Pop-Location   # then parse the NUnit XML, not the console
+```
