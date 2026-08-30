@@ -7,51 +7,89 @@ using System.Threading.Tasks;
 
 namespace Uno.Extensions.Reactive.Utils;
 
-internal class AsyncEnumerableSubject<T> : IAsyncEnumerable<T>
+/// <summary>
+/// A push-pull adapter for <see cref="IAsyncEnumerable{T}"/>.
+/// </summary>
+/// <typeparam name="T">Type of the value produced.</typeparam>
+public class AsyncEnumerableSubject<T> : IAsyncEnumerable<T>
 {
-	private readonly ReplayMode _mode;
+	private readonly AsyncEnumerableReplayMode _mode;
 	private TaskCompletionSource<Node>? _head; // This is set only for replay
 	private TaskCompletionSource<Node>? _current = new();
 
-	public AsyncEnumerableSubject(bool replay = false)
+	internal AsyncEnumerableSubject(bool replay = false)
 	{
 		if (replay)
 		{
-			_mode = ReplayMode.Enabled;
+			_mode = AsyncEnumerableReplayMode.Enabled;
 			_head = _current;
 		}
 	}
 
-	internal AsyncEnumerableSubject(ReplayMode mode)
+	/// <summary>
+	/// Creates a new instance.
+	/// </summary>
+	/// <param name="mode">Specify the replay mode used for this push-pull adapter.</param>
+	public AsyncEnumerableSubject(AsyncEnumerableReplayMode mode)
 	{
 		_mode = mode;
-		if (mode != ReplayMode.Disabled)
+		if (mode != AsyncEnumerableReplayMode.Disabled)
 		{
 			_head = _current;
 		}
 	}
 
+	/// <summary>
+	/// Appends a new item into this async enumerable sequence.
+	/// </summary>
+	/// <param name="item">The next item.</param>
 	public void SetNext(T item)
 		=> MoveNext(true, item, error: null, mightHaveNext: true);
 
+	/// <summary>
+	/// Appends a new  value and completes this async enumerable sequence.
+	/// </summary>
+	/// <param name="lastItem">The last item to append to this sequence.</param>
 	public void Complete(T lastItem)
 		=> MoveNext(true, lastItem, error: null, mightHaveNext: false);
 
+	/// <summary>
+	/// Completes this async enumerable sequence.
+	/// </summary>
 	public void Complete()
 		=> MoveNext(false, default, error: null, mightHaveNext: false);
 
+	/// <summary>
+	/// Completes this async enumerable sequence by throwing an exception.
+	/// </summary>
+	/// <param name="error">The exception to throw.</param>
 	public void Fail(Exception error)
 		=> MoveNext(false, default, error: error, mightHaveNext: false);
 
+	/// <summary>
+	/// Attempts to append a new item into this async enumerable sequence if not already completed.
+	/// </summary>
+	/// <param name="item">The next item.</param>
 	public void TrySetNext(T item)
 		=> MoveNext(true, item, error: null, mightHaveNext: true, throwOnError: false);
 
+	/// <summary>
+	/// Attempts to append a new  value and completes this async enumerable sequence if not already completed.
+	/// </summary>
+	/// <param name="lastItem">The last item to append to this sequence.</param>
 	public void TryComplete(T lastItem)
 		=> MoveNext(true, lastItem, error: null, mightHaveNext: false, throwOnError: false);
 
+	/// <summary>
+	/// Attempts to complete this async enumerable sequence if not already completed.
+	/// </summary>
 	public void TryComplete()
 		=> MoveNext(false, default, error: null, mightHaveNext: false, throwOnError: false);
 
+	/// <summary>
+	/// Attempts to complete this async enumerable sequence by throwing an exception.
+	/// </summary>
+	/// <param name="error">The exception to throw.</param>
 	public void TryFail(Exception error)
 		=> MoveNext(false, default, error: error, mightHaveNext: false, throwOnError: false);
 
@@ -86,9 +124,9 @@ internal class AsyncEnumerableSubject<T> : IAsyncEnumerable<T>
 	{
 		var nextNode = _mode switch
 		{
-			ReplayMode.Disabled => _current,
-			ReplayMode.Enabled => _head,
-			ReplayMode.EnabledForFirstEnumeratorOnly => Interlocked.Exchange(ref _head, null) ?? _current,
+			AsyncEnumerableReplayMode.Disabled => _current,
+			AsyncEnumerableReplayMode.Enabled => _head,
+			AsyncEnumerableReplayMode.EnabledForFirstEnumeratorOnly => Interlocked.Exchange(ref _head, null) ?? _current,
 			_ => throw new NotSupportedException($"Unknown replay mode '{_mode}'"),
 		};
 

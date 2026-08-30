@@ -98,17 +98,49 @@ public static partial class ListFeed
 		Predicate<TSource> predicate)
 		=> AttachedProperty.GetOrCreate(source, predicate, static (src, p) => new WhereListFeed<TSource>(src, p));
 
-	//public static IListFeed<TResult> Select<TSource, TResult>(
-	//	this IListFeed<TSource> source,
-	//	Func<TSource?, TResult?> selector)
-	//	=> default!;
+	/// <summary>
+	/// Gets or create a feed that synchronously projects each item of a source list feed.
+	/// </summary>
+	/// <typeparam name="TSource">Type of the items of the list feed.</typeparam>
+	/// <typeparam name="TResult">Type of the items of the resulting feed.</typeparam>
+	/// <param name="source">The source feed to project.</param>
+	/// <param name="selector">The projection method.</param>
+	/// <returns>A feed that projects each item of the source list feed.</returns>
+	public static IListFeed<TResult> Select<TSource, TResult>(
+		this IListFeed<TSource> source,
+		Func<TSource, TResult> selector)
+		=> AttachedProperty.GetOrCreate(source, selector, static (src, s) => new SelectAsyncListFeed<TSource, TResult>(src, s, static async (_, r, _) => r));
 
-	/*
-	public static IFeed<TResult> SelectAsync<TSource, TResult>(
-		this IFeed<TSource> source,
-		AsyncFunc<TSource?, TResult?> selector)
-		=> default!);
-	*/
+	/// <summary>
+	/// Gets or create a feed that asynchronously projects each item of a source list feed.
+	/// </summary>
+	/// <typeparam name="TSource">Type of the items of the list feed.</typeparam>
+	/// <param name="source">The source feed to project.</param>
+	/// <param name="selector">The projection method.</param>
+	/// <returns>A feed that projects each item of the source list feed.</returns>
+	public static IListFeed<TSource> SelectAsync<TSource>(
+		this IListFeed<TSource> source,
+		AsyncFunc<TSource, TSource> selector)
+		=> AttachedProperty.GetOrCreate(source, selector, static (src, s) => new SelectAsyncListFeed<TSource, TSource>(src, static i => i, (_, i, ct) => s(i, ct)));
+
+	/// <summary>
+	/// Gets or create a feed that asynchronously projects each item of a source list feed in a 2 step process.
+	/// </summary>
+	/// <typeparam name="TSource">Type of the items of the list feed.</typeparam>
+	/// <typeparam name="TResult">Type of the items of the resulting feed.</typeparam>
+	/// <param name="source">The source feed to project.</param>
+	/// <param name="syncSelector">The synchronous projection method that will be executed first.</param>
+	/// <param name="asyncSelector">The asynchronous projection method that will be executed after.</param>
+	/// <returns>A feed that projects each item of the source list feed.</returns>
+	/// <remarks>
+	/// The projection is made in 2 steps: first <paramref name="syncSelector"/> will be executed to build a placeholder item,
+	/// then <paramref name="asyncSelector"/> will be invoked to complete the item.
+	/// </remarks>
+	public static IListFeed<TResult> SelectAsync<TSource, TResult>(
+		this IListFeed<TSource> source,
+		Func<TSource, TResult> syncSelector,
+		AsyncFunc<TSource, TResult, TResult> asyncSelector)
+		=> AttachedProperty.GetOrCreate(source, (syncSelector, asyncSelector), static (src, args) => new SelectAsyncListFeed<TSource, TResult>(src, args.syncSelector, args.asyncSelector));
 
 	/// <summary>
 	/// Creates a ListState from a ListFeed onto which the selected items is being synced with the provided external state.
