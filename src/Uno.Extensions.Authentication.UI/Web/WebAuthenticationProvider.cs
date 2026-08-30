@@ -1,5 +1,7 @@
 ﻿using Microsoft.Extensions.Options;
-
+#if !WINDOWS
+using Uno.AuthenticationBroker;
+#endif
 namespace Uno.Extensions.Authentication.Web;
 
 internal record WebAuthenticationProvider
@@ -8,7 +10,10 @@ internal record WebAuthenticationProvider
 	IOptionsSnapshot<WebConfiguration> Configuration,
 	IServiceProvider Services,
 	ITokenCache Tokens
-) : BaseAuthenticationProvider(ProviderLogger, DefaultName, Tokens)
+#if !WINDOWS
+	,IWebAuthenticationBrokerProvider? WebAuthBroker = null
+#endif
+	) : BaseAuthenticationProvider(ProviderLogger, DefaultName, Tokens)
 {
 	private const string OAuthRedirectUriParameter = "redirect_uri";
 
@@ -87,7 +92,16 @@ internal record WebAuthenticationProvider
 		var userResult = await WinUIEx.WebAuthenticator.AuthenticateAsync(new Uri(loginStartUri), new Uri(loginCallbackUri));
 		var authData = string.Join("&", userResult.Properties.Select(x => $"{x.Key}={x.Value}"))??string.Empty;
 #else
-		var userResult = await WebAuthenticationBroker.AuthenticateAsync(WebAuthenticationOptions.None, new Uri(loginStartUri), new Uri(loginCallbackUri));
+		WebAuthenticationResult? userResult;
+		if (WebAuthBroker is null)
+		{
+			userResult = await WebAuthenticationBroker.AuthenticateAsync(WebAuthenticationOptions.None, new Uri(loginStartUri), new Uri(loginCallbackUri));
+		}
+		else
+		{
+			// Use the DI provided IWebAuthenticationBrokerProvider if available 
+			userResult = await WebAuthBroker.AuthenticateAsync(WebAuthenticationOptions.None,new Uri(loginStartUri), new Uri(loginCallbackUri), cancellationToken);
+		}
 		var authData = userResult?.ResponseData ?? string.Empty;
 
 #endif
@@ -200,8 +214,17 @@ internal record WebAuthenticationProvider
 		var userResult = await WinUIEx.WebAuthenticator.AuthenticateAsync(new Uri(logoutStartUri), new Uri(logoutCallbackUri));
 		var authData = string.Join("&", userResult.Properties.Select(x => $"{x.Key}={x.Value}"));
 #else
-		var userResult = await WebAuthenticationBroker.AuthenticateAsync(WebAuthenticationOptions.None, new Uri(logoutStartUri), new Uri(logoutCallbackUri));
-		var authData = userResult?.ResponseData;
+		WebAuthenticationResult? userResult;
+		if (WebAuthBroker is null) 
+		{
+			userResult = await WebAuthenticationBroker.AuthenticateAsync(WebAuthenticationOptions.None, new Uri(logoutStartUri), new Uri(logoutCallbackUri));
+		}
+		else
+		{
+			// Use the DI provided IWebAuthenticationBrokerProvider if available 
+			userResult = await WebAuthBroker.AuthenticateAsync(WebAuthenticationOptions.None, new Uri(logoutStartUri), new Uri(logoutCallbackUri), cancellationToken);
+		}
+		var authData = userResult?.ResponseData; 
 
 #endif
 		return true;
@@ -234,7 +257,14 @@ internal record WebAuthenticationProvider<TService>
 	IOptionsSnapshot<WebConfiguration> Configuration,
 	IServiceProvider Services,
 	ITokenCache Tokens
-) : WebAuthenticationProvider(ServiceLogger, Configuration, Services, Tokens)
+#if !WINDOWS
+	,IWebAuthenticationBrokerProvider? WebAuthBroker = null
+#endif
+) : WebAuthenticationProvider(ServiceLogger, Configuration, Services, Tokens
+#if !WINDOWS 
+	, WebAuthBroker
+#endif
+	)
 	where TService : notnull
 {
 	public WebAuthenticationSettings<TService>? TypedSettings
