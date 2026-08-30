@@ -1,6 +1,7 @@
 ---
 uid: Uno.Extensions.ThemeService.Overview
 ---
+<!--markdownlint-disable MD051 -->
 # How to use Theme Service
 
 > **UnoFeatures:** `ThemeService` (add to `<UnoFeatures>` in your `.csproj`)
@@ -14,13 +15,15 @@ This topic explains how to use the `ThemeService` for runtime theme switching an
 
 ## Step-by-step (Typical Usage with DI)
 
+### [MVVM](#tab/mvvm)
+
 1. **Consume ThemeService**: Inject the `ThemeService` into your view models or other services where you need to manipulate the theme.
 
     ```csharp
     public class SettingsViewModel
     {
         private readonly IThemeService _themeService;
-        
+
         public SettingsViewModel(IThemeService themeService)
         {
             _themeService = themeService;
@@ -34,6 +37,67 @@ This topic explains how to use the `ThemeService` for runtime theme switching an
         }
     }
     ```
+
+### [MVUX](#tab/mvux)
+
+1. **Consume ThemeService**: Inject the `ThemeService` into your models or other services where you need to manipulate the theme.
+2. **Bind to View**: Use a State or Command to bind your UI in your XAML. <!-- TODO: Add Links to each of the tabs -->
+
+   ### [Model](#tab/mvux/csharp)
+
+    In case you want to use it together with a State, e.g. to bind a control to the current theme trigger a Task with each Time, the Value changes, here is a simple example:
+
+    ```csharp
+    namespace UnoAppName.Presentation.ViewModels;
+    public partial record MainModel
+    {
+        private readonly IThemeService _themeService;
+
+        public MainModel(
+            IThemeService themeService)
+        {
+            _themeService = themeService;
+        }
+
+    public IState<bool> IsDarkMode => State<bool>.Value(this, () => _themeService.Theme == AppTheme.Dark)
+                                                 .ForEach(SwitchThemeAsync);
+
+    public async ValueTask SwitchThemeAsync(bool item, CancellationToken ctk = default)
+    {
+
+        _ = item switch
+        {
+            true => await _themeService.SetThemeAsync(AppTheme.Dark),
+            false => await _themeService.SetThemeAsync(AppTheme.Light)
+        };
+    }
+    ```
+
+   ### [View](#tab/mvux/xaml)
+
+    With this, you can bind the `IsDarkMode` state to a toggle switch in your XAML:
+
+    ```xml
+    <ToggleSwitch x:Name="ThemeSwitch"
+                Grid.Row="1"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Top"
+                Margin="0,0,10,0"
+                IsOn="{Binding Path=IsDarkMode, Mode=TwoWay}"
+                Foreground="{ThemeResource OnPrimaryContainerBrush}"
+                Style="{ThemeResource ToggleSwitchStyle}">
+    <ToggleSwitch.OnContent>
+        <FontIcon Glyph="&#xE708;"/>
+    </ToggleSwitch.OnContent>
+    <ToggleSwitch.OffContent>
+        <FontIcon Glyph="&#xE706;"/>
+    </ToggleSwitch.OffContent>
+    </ToggleSwitch>
+    ```
+
+    <!-- TODO: Check if IsOn can get changed to CommandBinding Extensions usage of #1391 #1309 #1310 -->
+
+---
 
 ## Step-by-step (Manual Registration without DI or Advanced Scenarios)
 
@@ -60,4 +124,4 @@ If you are *not* using DI, Extensions, or require more control over the registra
 
 ## Source Code
 
-[ThemeService Implementation](https://github.com/unoplatform/uno.extensions/blob/51c9c1ef14f686363f946588733faecc5a1863ff/src/Uno.Extensions.Core.UI/Toolkit/ThemeService.cs)
+[!code-csharp [ThemeService Implementation](https://github.com/unoplatform/uno.extensions/blob/51c9c1ef14f686363f946588733faecc5a1863ff/src/Uno.Extensions.Core.UI/Toolkit/ThemeService.cs)]
