@@ -163,9 +163,8 @@ internal partial class ViewModelGenTool_3
 
 		foreach (var ctor in AccessibleInstanceCtors(model))
 		{
-			foreach (var syntaxRef in ctor.DeclaringSyntaxReferences)
+			foreach (var node in ctor.DeclaringSyntaxReferences.Select(syntaxRef => syntaxRef.GetSyntax()))
 			{
-				var node = syntaxRef.GetSyntax();
 				var body = (SyntaxNode?)(node as ConstructorDeclarationSyntax)?.Body
 					?? (node as ConstructorDeclarationSyntax)?.ExpressionBody?.Expression;
 				if (body is null)
@@ -225,9 +224,11 @@ internal partial class ViewModelGenTool_3
 		foreach (var body in GetMemberBodies(member, compilation, out var semanticModelByTree))
 		{
 			var semanticModel = semanticModelByTree(body.SyntaxTree);
-			foreach (var id in body.DescendantNodesAndSelf().OfType<SimpleNameSyntax>())
+			foreach (var symbol in body
+				.DescendantNodesAndSelf()
+				.OfType<SimpleNameSyntax>()
+				.Select(id => semanticModel.GetSymbolInfo(id).Symbol))
 			{
-				var symbol = semanticModel.GetSymbolInfo(id).Symbol;
 				if (symbol is null)
 				{
 					continue;
@@ -265,12 +266,10 @@ internal partial class ViewModelGenTool_3
 				};
 				if (backingName is not null
 					&& SymbolEqualityComparer.Default.Equals(symbol.ContainingType, model)
-					&& fieldToParam.TryGetValue(backingName, out var paramName))
+					&& fieldToParam.TryGetValue(backingName, out var paramName)
+					&& seenServices.Add(paramName))
 				{
-					if (seenServices.Add(paramName))
-					{
-						services.Add(paramName);
-					}
+					services.Add(paramName);
 				}
 			}
 		}
@@ -354,9 +353,8 @@ internal partial class ViewModelGenTool_3
 
 		foreach (var ctor in AccessibleInstanceCtors(model))
 		{
-			foreach (var syntaxRef in ctor.DeclaringSyntaxReferences)
+			foreach (var node in ctor.DeclaringSyntaxReferences.Select(syntaxRef => syntaxRef.GetSyntax()))
 			{
-				var node = syntaxRef.GetSyntax();
 				var body = (SyntaxNode?)(node as ConstructorDeclarationSyntax)?.Body
 					?? (node as ConstructorDeclarationSyntax)?.ExpressionBody?.Expression;
 				if (body is null)
@@ -374,15 +372,18 @@ internal partial class ViewModelGenTool_3
 
 	private void InspectEager(SyntaxNode body, SemanticModel semanticModel, HashSet<string> ctorParamNames, Action<string, string?> mark, string? enclosingMember)
 	{
-		foreach (var access in body.DescendantNodesAndSelf())
-		{
-			// The receiver of a member-access / element-access is an eager dereference.
-			ExpressionSyntax? receiver = access switch
+		// The receiver of a member-access / element-access is an eager dereference.
+		var receivers = body
+			.DescendantNodesAndSelf()
+			.Select(access => access switch
 			{
 				MemberAccessExpressionSyntax mae => mae.Expression,
 				ElementAccessExpressionSyntax eae => eae.Expression,
-				_ => null,
-			};
+				_ => (ExpressionSyntax?)null,
+			});
+
+		foreach (var receiver in receivers)
+		{
 			if (receiver is not IdentifierNameSyntax id)
 			{
 				continue;
