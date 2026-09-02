@@ -60,9 +60,9 @@ public sealed class FeedsMockGenerator : ISourceGenerator
 				else if (member is INamedTypeSymbol type)
 				{
 					if (HasFeedDep(type)) yield return type;
-					foreach (var nested in type.GetTypeMembers())
+					foreach (var nested in type.GetTypeMembers().Where(HasFeedDep))
 					{
-						if (HasFeedDep(nested)) yield return nested;
+						yield return nested;
 					}
 				}
 			}
@@ -70,12 +70,9 @@ public sealed class FeedsMockGenerator : ISourceGenerator
 
 		foreach (var t in Walk(compilation.Assembly.GlobalNamespace)) yield return t;
 
-		foreach (var reference in compilation.References)
+		foreach (var asm in compilation.References.Select(compilation.GetAssemblyOrModuleSymbol).OfType<IAssemblySymbol>())
 		{
-			if (compilation.GetAssemblyOrModuleSymbol(reference) is IAssemblySymbol asm)
-			{
-				foreach (var t in Walk(asm.GlobalNamespace)) yield return t;
-			}
+			foreach (var t in Walk(asm.GlobalNamespace)) yield return t;
 		}
 	}
 
