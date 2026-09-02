@@ -1,6 +1,7 @@
 # 013 — Historique des versions et décisions
 
 Reconstruction après la perte du workspace ACO (`devid-feat-uno-extensions-architecture`, détruit avec la branche `dev/devid/spec-013-mvux-mocking` non poussée). Sources du merge :
+
 - fichiers **recovery** locaux (reconstruits depuis les transcripts) — portaient la question ouverte « context scope » et la référence au commit `cd4c9ad` ;
 - fichiers **VS Code de David** (joints le 23/08 18:22) — `spec.md`/`impl.md` = état v1 (`8d589d9`, non rechargés), `archi.md` = état le plus récent (v4, post-`2618def`) ;
 - transcript Telegram complet de la discussion.
@@ -12,6 +13,7 @@ Reconstruction après la perte du workspace ACO (`devid-feat-uno-extensions-arch
 **Contexte.** Objectif posé par David : helpers de mocking pour les previews UI (Hot Design) et le testing d'apps consommant des feeds (simuler les états des feeds, pas tester les feeds). Deux POCs existants : PR **#3148** (Nick, spec 009 — XAML only, enveloppe POCO/JSON coercée dans `FeedView.Source`) et PR **#3147** (Steve, spec 012 — vocabulaire `Mocks` + générateur `{Vm}Mocks`/`CreateMock`). Vision à 3 niveaux de David : (1) statique dans le XAML, (2) structures de mock par-feed d'un VM, (3) helpers « modèle complet ».
 
 **Discussion & décisions :**
+
 - Mon premier retour (socle 3147 + markup extension + catalogue) recadré par David : partir de **SON design** — `MessageEntry` pour la couche 1 (pas d'enveloppe magique, JSON→dynamic) et le **SwapFeed du hot-reload** pour la couche 2 (contrôle total, système 100 % malléable ; la couche 3 ne devient que des helpers au-dessus).
 - Faisabilité vérifiée dans le code : `MessageEntry<T>`/`IMessageEntry` publics ; `MessageEntry.Empty` force l'axe Data → tue le canari « Undefined » (spec 012 §10.2) ; `HotSwapFeed`/`IHotSwapState`/`StateImpl` = seam existant (seul appelant : hot-reload) ; gate `HotReloadSupport.State` ; commandes non swap-backed (gap identifié).
 - Construction du VM : ni « vrai VM via DI » ni « ctor sans modèle » → **vrai VM + vrai Model**, services **null-injectés**, prouvé sûr par **analyse de dépendances au codegen** (« option 2 » de David). Fondement : les feeds MVUX sont des arrow-getters lazy (service capturé en closure, touché à l'énumération seulement) ; cas bloquant = accès service **eager dans le ctor**. « On ne contrôle pas comment nos users utilisent notre archi » → l'analyse + diagnostics sont obligatoires.
@@ -21,6 +23,7 @@ Reconstruction après la perte du workspace ACO (`devid-feat-uno-extensions-arch
 ## v1 — commit `8d589d9` (dim. 23/08 10:42) — le pivot « génération extérieure » + checkpoint
 
 **Discussion (23/08 matin) :** David réalise en review que le mocking doit être **consommable de l'extérieur** (projet de test qui référence l'app) → on ne peut pas injecter le code dans le VM/Model ; le gen MVUX ajoute des **hooks cachés** (sur le modèle de HR) et le gen de mocking prend le contrôle depuis l'extérieur. Son dump : `RecipeModelMock` record `required init` + `Empty`, `Create()`/`Create(steps)` (null-inject + `SetModel`), `SetModel` ≈ `__Reactive_UpdateModel`. Mes vérifications ont ajouté :
+
 - `__Reactive_UpdateModel` inutilisable tel quel (réassigne `__reactiveModel`, `Unsafe.As` sur type étranger = UB) → **méthode dédiée cachée** (confirmé par David, pt 3).
 - **Dérivés doivent survivre** (pt « c'est tout le concept ») → découverte de l'ancrage : les feeds sont cachés par `AttachedProperty.GetOrCreate` avec identité stable → **wrap `HotSwapFeed` au niveau du cache Model-feed** ; les dérivations composent sur le wrapper → le swap traverse la logique métier ; `SetModel` = swaps typés, **plus de `dynamic`**.
 - **Attributs de dépendances** émis par l'analyse ET déclarables à la main (idée `[FeedShape(...)]` de David, renommée `[FeedDependency]`/`[CtorDependency]`) — nécessaires car le gen externe n'a pas les syntax trees.
@@ -47,6 +50,7 @@ Reconstruction après la perte du workspace ACO (`devid-feat-uno-extensions-arch
 ## v4 — révisions de David dans VS Code (commit `cd4c9ad`, perdu ; contenu = son `archi.md` joint)
 
 Réponses de David à ma question « OK avec ce découpage ? » — par édition directe de l'architecture :
+
 - **`MessageEntry` reste un plain CLR object dans Core** — délibérément **PAS** un `DependencyObject` (aucune complexité property-system UI dans le message model).
 - **L'entry n'est pas observable** : muter `Data`/`Error`/`IsProgress`/`Axes` après assignation ne pousse rien ; **remplacer l'instance** est l'unité de changement.
 - Le converter JSON **n'est plus un livrable** : illustration **app-owned** attachée à `FeedView.Source`, doit retourner `IMessageEntry` ; la spec ne définit ni n'implémente de converter.
@@ -71,7 +75,6 @@ Puis : **perte du workspace ACO** (node détruit, branche non poussée — commi
 - Reste au spike (P0-e) le **mécanisme seul** (contexte propriétaire, eager/lazy, `AsyncLocal` vs token porté, imbrication, concurrence, survie après `Dispose`, câblage vers le flag D4) — plus la forme de l'API.
 - Répercuté dans les 3 volets : spec §13 + G9 + R7 + D10, archi §1/§6/§7, impl §1/§2.2/§6/§7/§8/§9.
 
-
 ## v7 — décision de David (dim. 24/08, soir) — gate per-context + swap réflexif
 
 - **Question tranchée (« où vit le flag mockable ? »)** : investigation source demandée par David.
@@ -95,11 +98,11 @@ Landée sur `dev/devid/spec-013-mvux-mocking` (poussée staging PR #1), après l
 **Tests (réellement exécutés) :** Given_MockingActivation 4/4, Given_MockingRuntime 4/4, Given_GeneratedMock 4/4 (Create+SetModel → VM réel → feed mické ; live re-swap ; `Create()` Empty→None ; override commande), Tests.Generator 80/80 (byte-identique préservé), Given_HotReload 8/8 (Core inchangé).
 
 **Reste (hors périmètre du cœur tier 2/3, à planifier avec David) :**
+
 - `MockFeed.Message`/`Script` (dépendent du vocabulaire de #3147, non mergé).
 - Diagnostics `FEED3201–3203` / `MOCK0001` (analyse en place, diagnostics non émis).
 - Docs `doc/Learn/Mvux/Testing.md` + `FeedView.md` (§9), Tier 1 (on hold).
 - Remontée github : outbox ABO → PR #3165 (après review David).
-
 
 ## v9 — réconciliation avec #3149 (FeedMock mergé) + review David (mar. 25/08)
 
@@ -113,7 +116,6 @@ Rebase sur `main` (PR #3154 / issue #3149 mergée) : **le vocabulaire de feeds m
 
 **Tests après refactor (verts) :** Given_MockingActivation 4/4, Given_MockingRuntime 4/4, Given_GeneratedMock 4/4, Tests.Generator 80/80, `Uno.HotTesting.Reactive.Tests` 22/22 (FeedMock existant non régressé).
 
-
 ## v10 — review David (commentaire 31) : AsyncLocal hors de Core
 
 Retour de David sur `SourceContext` : *« si on a besoin d'un AsyncLocal pour le mocking, ça n'apporte rien de le mettre dans le SourceContext, on devrait le garder dans le MockingService »*. Juste — l'état d'activation ambient est une préoccupation **mocking**, pas Core.
@@ -124,7 +126,6 @@ Retour de David sur `SourceContext` : *« si on a besoin d'un AsyncLocal pour le
 
 Tests inchangés/verts : Given_MockingActivation 4/4, Given_MockingRuntime 4/4, Given_GeneratedMock 4/4, Tests.Generator 80/80, Uno.HotTesting.Reactive.Tests 22/22.
 
-
 ## v11 — doc + sample + polish naming factory (mar. 25/08)
 
 - **Doc** : `doc/Reference/Reactive/testing.md` (celle de #3149 sur `FeedMock` hand-written) étendue avec la couche générée tier 2/3 : scope `MockingService.Enable()`, `record {Model}Mock` (inputs required, derived + commandes optionnels), `{Vm}Mock.Create(...)`, `vm.SetModel(...)`, `CommandMock`, derived-survives, one-liners + catalogs nommés (tier 3), opt-out `[assembly: EnableFeedMocking(IsEnabled = false)]`. La phrase « no generator » de #3149 est mise à jour.
@@ -132,7 +133,6 @@ Tests inchangés/verts : Given_MockingActivation 4/4, Given_MockingRuntime 4/4, 
 - **Polish naming (générateur consumer)** : la classe factory générée passe de `{Model}MockExtensions` à **`{Vm}Mock`** (`RecipeViewModelMock.Create(...)`) — lecture propre, proche de l'intention spec §7/§8 (le `{Vm}.Create` littéral est impossible cross-assembly). `Empty` déplacé **sur le record** (`RecipeModelMock.Empty`) pour la compo `with`. Spec §7/§8 alignée sur l'API réelle.
 
 Tests : MockingActivation 4/4, MockingRuntime 4/4, GeneratedMock 5/5, Uno.HotTesting.Reactive.Tests 22/22, Tests.Generator 80/80.
-
 
 ## v12 — review David (post-discussion staging PR #1, ven. 28/08)
 

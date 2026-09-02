@@ -23,8 +23,10 @@ public sealed class FeedsMockGenerator : ISourceGenerator
 	private const string ModelAttribute = "Uno.Extensions.Reactive.Bindings.ModelAttribute";
 	private const string HotTesting = "global::Uno.HotTesting.Reactive";
 
+	/// <inheritdoc />
 	public void Initialize(GeneratorInitializationContext context) { }
 
+	/// <inheritdoc />
 	public void Execute(GeneratorExecutionContext context)
 	{
 		var compilation = context.Compilation;
