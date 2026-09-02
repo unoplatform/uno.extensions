@@ -51,6 +51,7 @@ Identity risk (R6): lambdas capturing locals/params produce fresh delegate targe
 ### 2.1 MVUX generator (Model's assembly — analysis + attributes + hidden hooks)
 
 **a) Dependency analysis** (Roslyn, source available):
+
 - per feed/command member: walk initializer/getter body; **lambda/anonymous/local-function bodies = deferred boundary**; eager remainder binding to a ctor param (or param-assigned field) → `ServiceDependent(param)`; reference to another feed member → `DerivedFrom(member)`; else `Independent`.
 - **ctor instrumentation**: walk ctor bodies (incl. field/property initializers, primary-ctor captures used eagerly); any eager service dereference → the ctor is **unsafe under null-inject for that parameter**.
 
@@ -65,6 +66,7 @@ Identity risk (R6): lambdas capturing locals/params produce fresh delegate targe
 (Names to bikeshed; semantics fixed: *input vs derived vs independent*, plus *ctor-eager* flags.)
 
 **c) Hidden hooks** (`EditorBrowsable(Never)`, emitted by default — opt-out via `EnableFeedMocking(IsEnabled = false)`):
+
 - on the **Model partial**: **nothing per-feed** — the swap is reflection over `IHotSwapState<T>` members at runtime (D11), reusing the hot-reload driver, fail-hard. The generator emits no `__Mock_Swap_{Member}`;
 - on the **VM partial**: **no construction seam** — null-inject uses the existing public ctors (`new {Vm}(default!, …)`) under an ambient `MockingService.Enable()` scope (D12: the `SourceContext` built at construction is mockable, captured on the instance). The only emitted seam is `__Mock_SetCommand(string name, IAsyncCommand)` (public, `EditorBrowsable(Never)`, fail-hard) which reassigns a command property post-construction — commands have no `IHotSwapState<T>` and are unreachable by the reflection swap (R2).
 
@@ -127,6 +129,7 @@ public sealed class AxisValue
 ### Coercion & evolution semantics
 
 `FeedView.OnSourceChanged`:
+
 1. `ISignal<IMessage>` (any feed/state) → passthrough, unchanged.
 2. `IMessageEntry` → the view lazily creates **one entry-driven wrapper feed** (`MessageEntryFeed`, internal) and keeps it for the lifetime of the subscription.
 3. anything else → today's behavior (ignored). No heuristic.

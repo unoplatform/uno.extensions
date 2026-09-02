@@ -19,6 +19,7 @@ Concrete surfaces, touch-list, phasing, tests. Names bikesheddable; semantics fi
 ## 2. Core (`Uno.Extensions.Reactive`)
 
 ### 2.1 Dependency attributes (emitted by MVUX gen AND hand-declarable; explicit wins/merges)
+
 ```csharp
 namespace Uno.Extensions.Reactive.Config;
 
@@ -39,14 +40,17 @@ public sealed class CtorDependencyAttribute : Attribute
     public bool Eager { get; init; }            // true → NRE under null-inject; Create must require it
 }
 ```
+
 (David's `[FeedShape("Steps", ModelParameter=…)]` idea, renamed. Multiple per member allowed.)
 
 ### 2.2 Mockable gate + swap anchor
+
 - **`SourceContext.IsMockingActive`** (per-context bit, D12 — distinct from `HotReload`, no global static, no bespoke `AsyncLocal`) — **set by the activation scope (§6), off by default**; context not mockable → no wrap, so a live app pays nothing (spec G9/R7). Read at wrap time in `StateImpl` ctor **instead of** `FeedConfiguration.EffectiveHotReload`.
 - When the owning context is mockable: feed factories wrap the cached instance in `HotSwapFeed<T>` (the wrapper IS the cached value → stable identity; derivations compose on the wrapper). Minimal wiring: wrap inside `AttachedProperty.GetOrCreate` call sites in `Core/Feed.cs` / `Core/ListFeed.cs` factories (one helper reading the context bit).
 - **Swap = reflection over the context's `IHotSwapState<T>` members** (D11), reusing the hot-reload driver (`BindableViewModelBase.HotReload`), **fail-hard**: a mocked member that cannot be swapped throws (no silent skip — the hot-reload delta).
 
 ### 2.3 Tier-1 core surfaces
+
 - `Feed.Value<T>` public factory (from #3148, additive).
 - Authorable non-generic `MessageEntry : IMessageEntry` — **plain CLR object, not a `DependencyObject`, not observable**; settable `Data` / `IsUndefined` / `Error` / `IsProgress`; `Axes` (`AxisValueCollection` of `AxisValue { string Axis; object? Value }`) + `Set(MessageAxis, object?)` code path.
 - Axis-identifier resolution against core + registered app axes; **unknown identifier → diagnostic**, never a silent drop.
@@ -66,6 +70,7 @@ On by default (the runtime decides activation). Opt-out: `[assembly: EnableFeedM
 ## 4. Mocking package (`Uno.HotTesting.Reactive`)
 
 ### 4.1 Runtime vocabulary (all generic and strongly typed)
+
 ```csharp
 public static class FeedMock
 {
@@ -92,10 +97,13 @@ public static class CommandMock
 }
 public enum FeedMockState { Undefined, Loading, Empty, Value, Error, Refreshing }
 ```
+
 Built over public `Feed.Create` + `MessageBuilder` (vocabulary from #3147). **These APIs never accept the non-generic tier-1 `MessageEntry` or untyped envelopes.** Never referenced by a published app head (non-AOT, dev/test only — NG2/D7).
 
 ### 4.2 Generator (runs in the consumer/test project, metadata-driven)
+
 For each Model/VM pair found in referenced assemblies with `__Mock_*` hooks + attributes:
+
 ```csharp
 public record RecipeModelMock
 {
@@ -112,7 +120,9 @@ public static partial class RecipeViewModelMock   // partial → user extends wi
     public static void SetMock(this RecipeViewModel vm, RecipeModelMock mock);  // typed swaps (fail-hard)
 }
 ```
+
 Rules:
+
 - Required properties = the **ServiceDependent** input set; `Create` takes only the record (no denormalized per-input overloads).
 - **Derived members: optional overrides** — `null` (default) → real derivation recomputes over swapped inputs; set → that member's wrapper is swapped too. Independent members: untouched.
 - **Command mocking is deferred to vNext**: the record carries no command member and `SetMock` wires none (the MVUX `__Mock_SetCommand` seam stays available for that future work).
@@ -121,6 +131,7 @@ Rules:
 - Diagnostic `MOCK0001` when a VM is reachable but its assembly lacks hooks (opt-in missing).
 
 ## 5. UI (`Uno.Extensions.Reactive.UI`) — tier 1
+
 - `FeedView.OnSourceChanged`: typed branch `IMessageEntry` → lazily create ONE `MessageEntryFeed` wrapper kept across `Source` changes; a subsequent `IMessageEntry` instance is **pushed** into the wrapper (subscription preserved, no state reset — natural-evolution contract, architecture §3). No heuristic.
 - **Mutations of an already-assigned entry are not observed** (plain CLR, not observable); a new instance is the unit of change.
 - XAML element syntax (`<reactive:MessageEntry IsProgress="True" />`, …) — examples in architecture §3.
@@ -149,6 +160,7 @@ var vm = RecipeViewModelMock.Create(new RecipeModelMock { Steps = ListFeedMock.V
 **Non-negotiable constraint:** context not mockable → **no `HotSwapFeed` wrap at all**. The wrap is one indirection per feed; it may never be injected into the feeds of a live app (spec G9/R7). `SourceContext.IsMockingActive` (§2.2, D12) is the internal per-context gate the scope drives, not a switch app authors set.
 
 Mechanism (resolved against source — `Core/Internal/SourceContext.cs`, D12):
+
 - **Owner context = `SourceContext`** — already owns `States`/subscriptions, already ambient via `AsyncLocal<SourceContext> Current`, already per-owner via `GetOrCreate(owner)`, with an eager pre-seed seam `PreConfigure(type, ctx)` / `Set(owner, ctx)`. It gains `bool IsMockingActive`.
 - **Eager vs lazy = solved by pre-seed**: `Create(...)` pre-seeds a mockable context on the VM/Model owner (`PreConfigure`/`Set`), so a lazy first subscription after the `using` block still wraps — the bit is on the context instance, not only on the ambient `AsyncLocal`.
 - **Ambient propagation**: the existing `AsyncLocal<SourceContext> Current` carries mockability across async construction; no bespoke `AsyncLocal`.
@@ -171,33 +183,39 @@ Mechanism (resolved against source — `Core/Internal/SourceContext.cs`, D12):
 ## 8. Test plan
 
 ### Core
+
 - Every typed `FeedMock`/`ListFeedMock`/`CommandMock` state emits expected axes.
 - Authorable entry maps to Data/Error/Progress/Undefined correctly; custom axes map and diff correctly.
 - Consecutive entry instances produce correct core + custom axis diffs.
 - Wrap identity (`AttachedProperty` returns the same wrapper); swap propagation through `Select`/`Where` and chained derived feeds; live re-swap.
 
 ### Generators
+
 - Classification fixtures (lazy/eager/derived/independent; ctor bodies, field/property initializers, primary-ctor captures).
 - Attribute emission; explicit-attribute override/merge; FEED3201–3203.
 - Byte-identical output when opted out; hooks hidden (`EditorBrowsable`) and typed (concrete generics).
 - Consumer generation against a compiled fixture assembly; required-input set = ServiceDependent set; eager-ctor → required service parameter; MOCK0001; **no tier-1/untyped surface in tier-2/3 output**.
 
 ### Runtime / UI (Skia)
+
 - Each pinned state renders; Loading keeps `IsExecuting`.
 - Successive `Source` entries evolve without re-subscribe (no loading flash); **mutating an assigned entry does not emit** — assigning a replacement does.
 - `SetMock` drives Loading → Value → Error live; derived member updates on-screen after an input swap (D6 end-to-end).
 - Command states drive `Button.IsEnabled`; hot reload does not clobber a mocked VM/context.
 
 ### Scoped activation (with §6 spike)
+
 - **Context not mockable → feeds are the raw instances** (no `HotSwapFeed` in the cache, no measurable overhead) — the G9 guard test.
 - **Fail-hard swap**: a mocked member with no `IHotSwapState<T>` throws (D11), asserted.
 - Assembly-init scope covers every test of the run; a per-test scope covers only its own.
 - Nested `Enable()` scopes restore correctly; parallel tests do not leak mockability; async construction retains the intended scope; lazy first subscription after scope disposal has defined behavior; existing contexts remain deterministic after `Dispose`.
 
 ### Contract freeze
+
 - Reflection-discovery test for `{Model}Mock`/`Empty`/`Create`/`SetMock`/attribute names (Hot Design contract).
 
 ## 9. Docs
+
 - `doc/Learn/Mvux/Testing.md`: `MockingService.Enable()` scope (assembly-init vs per-test, and why it is never app-wide), typed vocabulary, `Create`/`SetMock`, derived-feeds-survive concept, eager-ctor guidance, non-AOT constraint, R4/R5 caveats.
 - `doc/Learn/Mvux/FeedView.md`: tier-1 entry authoring + custom axes; converter shown only as an application-owned illustration at `FeedView.Source` (not a deliverable).
 - `rules.md`: FEED3201–3203, MOCK0001.

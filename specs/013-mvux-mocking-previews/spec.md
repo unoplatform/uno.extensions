@@ -204,6 +204,7 @@ No new mechanism: each overload is `Create()` + a `SetMock` of §7, so a preview
 ## 9. Goals / Non-goals
 
 **Goals**
+
 - G1. Pin any service-dependent feed / list-feed / state / command of a real generated VM.
 - G2. **Derived feeds recompute over mocked inputs** (business logic survives); derived members remain individually overridable for tests.
 - G3. Mock generation happens **in the consumer project** (test/preview), against app metadata.
@@ -215,6 +216,7 @@ No new mechanism: each overload is `Create()` + a `SetMock` of §7, so a preview
 - G9. **Zero cost on a live app**: the `HotSwapFeed` wrap is created only for feeds built inside an explicit activation scope (§13). No wrapper is ever injected into the feeds of a running application.
 
 **Non-goals**
+
 - NG1. Behavioral/integration testing of services (this targets presentation state).
 - NG2. **AOT/trim compliance of the mocking path.** Mocking is dynamic injection, dev/test-time only (JIT). Accepted and documented; never ships in a published app.
 - NG3. Making arbitrary JSON graphs bindable on every platform (WinAppSDK dynamic-binding caveat).
