@@ -1,6 +1,6 @@
 # 013 — Implementation
 
-Concrete surfaces, touch-list, phasing, tests. Names bikesheddable; semantics fixed per `spec.md`. (Restored after workspace loss.)
+Concrete surfaces, touch-list, phasing, tests. Names negotiable; semantics fixed per `spec.md`. (Restored after workspace loss.)
 
 ## 1. Packages & where things live
 
@@ -8,7 +8,7 @@ Concrete surfaces, touch-list, phasing, tests. Names bikesheddable; semantics fi
 | --- | --- | --- |
 | Dependency attributes | `Uno.Extensions.Reactive` (core) | must survive as metadata in the app assembly |
 | Mockable gate + HotSwap wrap at feed cache | core | **`SourceContext.IsMockingActive`** (new per-context bit, D12) read in `StateImpl` ctor; wrap wired at the `AttachedProperty`/factory cache |
-| Authorable `MessageEntry` + `AxisValue` (plain CLR) + internal `MessageEntryFeed` | core | tier-1, AOT-safe, **not** a `DependencyObject` |
+| Author-declared `MessageEntry` + `AxisValue` (plain CLR) + internal `MessageEntryFeed` | core | tier-1, AOT-safe, **not** a `DependencyObject` |
 | `FeedView.Source` coercion bridge | `Uno.Extensions.Reactive.UI` | tier-1 |
 | Analysis + hidden hooks emission | `Uno.Extensions.Reactive.Generator` | on Model & VM partials, on by default (opt-out) |
 | Mock vocabulary (`FeedMock`/`ListFeedMock`/`CommandMock`/`FeedMockState`) | **`Uno.HotTesting.Reactive`** (new) | referenced by test/preview projects only |
@@ -52,7 +52,7 @@ public sealed class CtorDependencyAttribute : Attribute
 ### 2.3 Tier-1 core surfaces
 
 - `Feed.Value<T>` public factory (from #3148, additive).
-- Authorable non-generic `MessageEntry : IMessageEntry` — **plain CLR object, not a `DependencyObject`, not observable**; settable `Data` / `IsUndefined` / `Error` / `IsProgress`; `Axes` (`AxisValueCollection` of `AxisValue { string Axis; object? Value }`) + `Set(MessageAxis, object?)` code path.
+- Author-declared non-generic `MessageEntry : IMessageEntry` — **plain CLR object, not a `DependencyObject`, not observable**; settable `Data` / `IsUndefined` / `Error` / `IsProgress`; `Axes` (`AxisValueCollection` of `AxisValue { string Axis; object? Value }`) + `Set(MessageAxis, object?)` code path.
 - Axis-identifier resolution against core + registered app axes; **unknown identifier → diagnostic**, never a silent drop.
 - Internal `MessageEntryFeed` — entry-driven wrapper with `Push(IMessageEntry)`; each pushed entry emitted as the **axis diff** vs the previous one, **custom axes included**.
 
@@ -163,7 +163,7 @@ Mechanism (resolved against source — `Core/Internal/SourceContext.cs`, D12):
 
 - **Owner context = `SourceContext`** — already owns `States`/subscriptions, already ambient via `AsyncLocal<SourceContext> Current`, already per-owner via `GetOrCreate(owner)`, with an eager pre-seed seam `PreConfigure(type, ctx)` / `Set(owner, ctx)`. It gains `bool IsMockingActive`.
 - **Eager vs lazy = solved by pre-seed**: `Create(...)` pre-seeds a mockable context on the VM/Model owner (`PreConfigure`/`Set`), so a lazy first subscription after the `using` block still wraps — the bit is on the context instance, not only on the ambient `AsyncLocal`.
-- **Ambient propagation**: the existing `AsyncLocal<SourceContext> Current` carries mockability across async construction; no bespoke `AsyncLocal`.
+- **Ambient propagation**: the existing `AsyncLocal<SourceContext> Current` carries mocking activation across async construction; no bespoke `AsyncLocal`.
 - **Nested / concurrency / lifetime**: per-context-instance bit → concurrent tests don't leak; contexts created inside a scope stay mockable for their own lifetime after `Dispose`.
 - **Wiring**: `StateImpl` ctor reads `context.IsMockingActive` (replaces the `EffectiveHotReload` read); swap is reflection over `IHotSwapState<T>` (D11).
 
@@ -175,7 +175,7 @@ Mechanism (resolved against source — `Core/Internal/SourceContext.cs`, D12):
   c. null-inject construction on a lazy model; eager-ctor fixture NREs as predicted;
   d. feed-identity stability matrix (capture patterns) → informs FEED3202;
   e. `MockingService.Enable()` → `IsMockingActive` on the pre-seeded context: prove **no wrap when the context is not mockable**, and reflection swap is **fail-hard** on an un-swappable member (D11).
-- **P1 — Tier 1** (core+UI): `Feed.Value`, authorable `MessageEntry` + `AxisValue` (custom axes), `MessageEntryFeed` + push semantics, `FeedView` bridge, documentation-only converter illustration. Ships alone.
+- **P1 — Tier 1** (core+UI): `Feed.Value`, author-declared `MessageEntry` + `AxisValue` (custom axes), `MessageEntryFeed` + push semantics, `FeedView` bridge, documentation-only converter illustration. Ships alone.
 - **P2 — Core: `SourceContext.IsMockingActive` + wrap gate in `StateImpl` + fail-hard reflection swap + attributes + analysis + `__Mock_SetCommand` seam** (MVUX gen). No per-feed swap hooks; no `__Mock_Create` (public ctors + ambient scope).
 - **P3 — Mocking package**: typed vocabulary + consumer generator (`{Model}Mock`/`Create`/`SetMock`).
 - **P4 — Tier 3 catalogs + Hot Design checkpoint** (name freeze), docs.
@@ -185,7 +185,7 @@ Mechanism (resolved against source — `Core/Internal/SourceContext.cs`, D12):
 ### Core
 
 - Every typed `FeedMock`/`ListFeedMock`/`CommandMock` state emits expected axes.
-- Authorable entry maps to Data/Error/Progress/Undefined correctly; custom axes map and diff correctly.
+- Author-declared entry maps to Data/Error/Progress/Undefined correctly; custom axes map and diff correctly.
 - Consecutive entry instances produce correct core + custom axis diffs.
 - Wrap identity (`AttachedProperty` returns the same wrapper); swap propagation through `Select`/`Where` and chained derived feeds; live re-swap.
 
@@ -208,7 +208,7 @@ Mechanism (resolved against source — `Core/Internal/SourceContext.cs`, D12):
 - **Context not mockable → feeds are the raw instances** (no `HotSwapFeed` in the cache, no measurable overhead) — the G9 guard test.
 - **Fail-hard swap**: a mocked member with no `IHotSwapState<T>` throws (D11), asserted.
 - Assembly-init scope covers every test of the run; a per-test scope covers only its own.
-- Nested `Enable()` scopes restore correctly; parallel tests do not leak mockability; async construction retains the intended scope; lazy first subscription after scope disposal has defined behavior; existing contexts remain deterministic after `Dispose`.
+- Nested `Enable()` scopes restore correctly; parallel tests do not leak mocking activation; async construction retains the intended scope; lazy first subscription after scope disposal has defined behavior; existing contexts remain deterministic after `Dispose`.
 
 ### Contract freeze
 
