@@ -26,7 +26,7 @@ Domain lessons / postmortems for Uno.Extensions. See `AGENTS.md` §3 for when to
 
 ## `-getProperty:DefineConstants` does not list the SDK's implicit symbols (`ANDROID`, `IOS`, ...)
 
-**Problem:** while adding platform branches to `MsalAuthenticationProvider` (spec 012), `dotnet build -getProperty:DefineConstants` was used to check whether `ANDROID` / `IOS` were defined for the `net9.0-android` / `net9.0-ios` TFMs. Neither appeared, which read as "the `#if ANDROID` branch is dead code". They are in fact defined: the .NET SDK merges `@(ImplicitDefineConstants)` into `DefineConstants` inside a target that runs *before* `CoreCompile` but *after* evaluation, and `-getProperty` reports the evaluation-time value.
+**Problem:** while adding platform branches to `MsalAuthenticationProvider` (spec 013), `dotnet build -getProperty:DefineConstants` was used to check whether `ANDROID` / `IOS` were defined for the `net9.0-android` / `net9.0-ios` TFMs. Neither appeared, which read as "the `#if ANDROID` branch is dead code". They are in fact defined: the .NET SDK merges `@(ImplicitDefineConstants)` into `DefineConstants` inside a target that runs *before* `CoreCompile` but *after* evaluation, and `-getProperty` reports the evaluation-time value.
 
 **Correct pattern:** to test whether a symbol is live, compile something that depends on it. Either a temporary `#if !SYMBOL` + `#error` probe build, or check the emitted assembly for a type only that branch references (`Foundation.NSBundle` appears only in the iOS assembly). Do not infer symbol state from `-getProperty`.
 
@@ -285,3 +285,79 @@ for client-side negative caching before looking at the fake server.
 **Apply to:** `StubEntra` and any future fake IdP or token endpoint used across tests; also any
 test that deliberately drives an `invalid_grant`/`interaction_required` response — follow it by
 checking the next silent call still reaches the server.
+
+## Runtime-test suites share process-global registries (2026-08-21, spec 013)
+
+All `*.UI.Tests` suites run in one process inside the runtime-test head. A product-side
+`ApiExtensibility.Register` (first-wins) triggered while ONE suite builds its host - e.g.
+`AddOidc`/`AddWeb` registering the desktop `WebAuthenticationBroker` - is visible to every suite
+that runs later: the Web suite's stub broker lost the race to the Oidc suite's host building and
+all Web tests drove a real loopback listener. Two rules:
+
+- A test seam that depends on winning a first-wins registration must be installed at **assembly
+  load** (`[ModuleInitializer]`, with a justified CA2255 suppression - the banned-in-libraries rule
+  exists for consumer-facing libraries, and a test assembly preempting product registration is the
+  legitimate use), not in a harness or class initializer.
+- Per-suite filter runs are not sufficient verification: always finish with a **combined run using
+  the exact CI filter**, because cross-suite interference only shows up there.
+
+## Silent no-ops hide DI failures; filtered build output hides failures (2026-08-21, spec 013 samples)
+
+- A view whose click handlers null-check the view model (`if (_viewModel is { } vm)`) turns a
+  navigation-time DI failure into "the button does nothing" with zero diagnostics. When the VM
+  can't activate (here: `IHttpClientFactory` unregistered - `UseHttp` only adds the factory when
+  clients are registered), the page still renders. When forking sample scaffolding, prefer failing
+  loudly (throw or log) over silently ignoring a missing DataContext.
+- Piping builds through `tail -1`/`grep "Time Elapsed"` reports success for a FAILED build - three
+  debugging iterations ran against a stale binary before this was noticed. Gate on `"N Error(s)"`
+  or the exit code, never on elapsed-time output. (Repeat offender this session: `grep|head` exit
+  codes; see the runtime-test filter entry above.)
+
+## `git cherry` cannot see a commit main absorbed under a different message (2026-08-26, spec 013)
+
+**Problem:** `dev/sb/auth-providers-fixes` was 36 commits behind `main` with 90 of its own, and about
+forty of those had already reached `main` through the split PRs carved out of it - reworded and
+squashed on the way in. `git cherry main <branch>` marked all 90 as `+` (not upstream), because it
+compares patch-ids and a reword changes nothing about the patch but a squash changes everything. Read
+literally, that says "the branch has 90 commits to replay". `git rebase main` then conflicted on
+commit 1 of 90 across six files, replaying an MSAL fix `main` had already shipped in refined form -
+and the failure mode of pushing through is not a mess, it is silently reverting `main`'s newer version
+of every overlapping file.
+
+**Correct pattern:** before rebasing a long-lived branch whose work has been split upstream, find the
+boundary rather than trusting `git cherry`. `git log --reverse --format='%h %ad %s'` over
+`main..branch` and match subjects against `merge-base..main` by hand: here the branch's own history
+was chronological, so commits 1-69 were the split-out work and 70+ were the genuinely new commits. A
+21-commit cherry-pick of that tail onto `main` produced a clean linear branch with six conflicts, all
+of them real (a CI filter to union, a wasm filter where `main` was newer, a refactor to graft onto, a
+duplicate `.sln` entry to drop).
+
+**Apply to:** any branch that has had PRs split out of it. Also worth knowing:
+
+- The overlap is *not* symmetric. Take `main`'s side where it refined the same code (the
+  `MsalSecureStore` refactor), the branch's side where it is new (the persistence check), and the
+  union where both added independently (CI filters, `lessons.md`).
+- Two projects with the same name in a `.sln` is a hard MSBuild stop (MSB5004), not a warning, and
+  `dotnet build`'s output does not obviously say which solution or GUIDs are involved - `grep` the
+  name in the `.sln` and compare against `main`'s GUID.
+- Spec numbers collide when a spec is renumbered during a split. `main`'s copy keeps its number; the
+  branch's renumber has to carry the "spec NNN" references in source comments with it. Blanket
+  replacement is not safe: an unrelated spec here referenced a *planned* "spec 013" that means
+  something else entirely.
+
+## A desktop-only runtime-test build invalidates the package build's restore (2026-08-27, spec 013)
+
+**Problem:** `dotnet build Uno.Extensions-runtimetests.slnf -p:Build_Android=false ...` (the local
+way to build the Skia desktop head) re-restores every shared project with desktop-only target
+frameworks. The next `MSBuild.exe Uno.Extensions-packageonly.slnf -t:Build` then fails with
+`NETSDK1005: Assets file ... doesn't have a target for 'net9.0-android'` on the first multi-TFM
+project - which reads as a broken project, not a stale restore. The same applies to any
+`-p:TargetFramework=...` build: the global property leaks into every referenced project and their
+`project.assets.json` files are rewritten for that one target.
+
+**Correct pattern:** always `-t:Restore,Build` the package filter after a runtime-test build, and
+never run the two concurrently - they race on the same `obj/*/project.assets.json` files. Gate on
+the exit code, not on filtered output (`grep | head` masks failures).
+
+**Apply to:** any session that alternates between the package build and a desktop runtime-test
+build, which is every verification loop in the Authentication area.

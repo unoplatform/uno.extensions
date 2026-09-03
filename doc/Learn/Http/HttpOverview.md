@@ -32,7 +32,7 @@ protected override void OnLaunched(LaunchActivatedEventArgs args)
             .UseHttp((context, services) =>
             {
                 services
-                .AddClient<IShowService, ShowService>(context, "configsectionname");
+                .AddClient<IShowService, ShowService>(context, name: "configsectionname");
             });
         });
     ...
@@ -76,7 +76,7 @@ protected override void OnLaunched(LaunchActivatedEventArgs args)
         .Configure(hostBuilder =>
         {
             hostBuilder.UseHttp((ctx, services) => {
-                services.AddClientWithEndpoint<IShowService, ShowService, CustomEndpointOptions>();
+                services.AddClientWithEndpoint<IShowService, ShowService, CustomEndpointOptions>(ctx);
             });
         });
     ...
@@ -84,6 +84,28 @@ protected override void OnLaunched(LaunchActivatedEventArgs args)
 ```
 
 For more information about configuring `HttpClient` with custom endpoint options, see the [Configure `HttpClient` with Custom Endpoint Options tutorial](xref:Uno.Extensions.Http.HowToEndpointOptions).
+
+### Choosing the client's service lifetime
+
+Typed clients are registered as **transient** by default — the shape `IHttpClientFactory` is designed around, since a fresh client per resolution keeps message-handler rotation (stale-DNS mitigation) working. A client that has to carry state across resolutions can instead be registered with an explicit `ServiceLifetime` using the overloads that take one:
+
+```csharp
+protected override void OnLaunched(LaunchActivatedEventArgs args)
+{
+    var builder = this.CreateBuilder(args)
+        .Configure(host => {
+            host
+            .UseHttp((context, services) =>
+            {
+                services
+                .AddClient<IShowService, ShowService>(context, ServiceLifetime.Singleton, name: "configsectionname");
+            });
+        });
+    ...
+}
+```
+
+The endpoint configuration (`Url`, `UseNativeHandler`, delegating handlers) still applies: for non-transient lifetimes it is registered as a named pipeline the client instance is built from. Note that a singleton client captures its `HttpClient` for the application's lifetime, so prefer the default transient registration unless the client genuinely needs to hold state.
 
 ## Refit
 

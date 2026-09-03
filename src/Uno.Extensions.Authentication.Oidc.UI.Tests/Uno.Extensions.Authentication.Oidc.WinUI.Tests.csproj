@@ -1,0 +1,32 @@
+<Project Sdk="Uno.Sdk.Private">
+	<Import Project="..\tfms-ui-winui.props" />
+
+	<PropertyGroup>
+		<Description>Test library for the OIDC authentication extensions for the Uno Platform (WinUI)</Description>
+		<EnableDefaultPageItems>false</EnableDefaultPageItems>
+		<DefineConstants>$(DefineConstants);WINUI</DefineConstants>
+
+		<UnoSingleProject>true</UnoSingleProject>
+		<OutputType>Library</OutputType>
+
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="MSTest.TestFramework" />
+		<PackageReference Include="FluentAssertions" />
+		<!-- IBrowser / ProviderInformation / OidcClientOptions are used directly by the stubs;
+			referenced explicitly rather than relied on transitively through the provider package. -->
+		<PackageReference Include="Duende.IdentityModel.OidcClient" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<!-- Shared with the Web suite rather than copied. -->
+		<Compile Include="..\Uno.Extensions.Authentication.UI.Tests\CapturingLoggerProvider.cs" Link="CapturingLoggerProvider.cs" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Uno.Extensions.Authentication.Oidc\Uno.Extensions.Authentication.Oidc.WinUI.csproj" />
+		<ProjectReference Include="..\Uno.Extensions.Hosting.UI\Uno.Extensions.Hosting.WinUI.csproj" />
+		<ProjectReference Include="..\Uno.Extensions.RuntimeTests\Uno.Extensions.RuntimeTests.Core\Uno.Extensions.RuntimeTests.Core.csproj" />
+	</ItemGroup>
+</Project>

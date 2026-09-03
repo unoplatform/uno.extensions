@@ -102,7 +102,7 @@ host
     .UseAuthentication(auth =>
     {
         auth.AddOidc()
-            .AutoRedirectUriFromAuthenticationBroker(); // 👈 takes URI from WAB
+            .AutoRedirectUriFromWebAuthenticationBroker(); // 👈 takes URI from WAB
     });
 ```
 
@@ -267,7 +267,7 @@ A: Not for the basic flow; config is enough.
 A: Yes, the OIDC provider stores and refreshes tokens. ([Uno Platform][1])
 
 **Q: Can I do platform-specific redirect URIs?**
-A: Yes—use `.AutoRedirectUriFromAuthenticationBroker()` so the platform decides. ([Uno Platform][1])
+A: Yes—use `.AutoRedirectUriFromWebAuthenticationBroker()` so the platform decides. ([Uno Platform][1])
 
 ---
 
