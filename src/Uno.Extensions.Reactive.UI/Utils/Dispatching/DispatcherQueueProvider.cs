@@ -19,8 +19,26 @@ public static class DispatcherQueueProvider
 	/// Gets a dispatcher queue instance that will execute tasks serially on the current thread, or null if no such queue exists.
 	/// </summary>
 	/// <returns>The dispatcher associated to the current thread if the thread is a UI thread.</returns>
+	/// <remarks>
+	/// Returns null rather than throwing once <see cref="_value"/> has been disposed. Nothing disposes
+	/// it explicitly -- <see cref="ThreadLocal{T}"/> disposes itself from its own finalizer, which
+	/// runs once this static becomes collectable. That happens when the assembly owning it is loaded
+	/// into a collectible <c>AssemblyLoadContext</c> and the context is unloaded: the ThreadLocal is
+	/// then finalized alongside the objects that still call in here, in no defined order, and those
+	/// calls can come from finalizers. Throwing from a finalizer is unrecoverable and terminates the
+	/// process, whereas null is the ordinary answer for a non-UI thread.
+	/// </remarks>
 	public static IDispatcher? GetForCurrentThread()
-		=> _value.Value;
+	{
+		try
+		{
+			return _value.Value;
+		}
+		catch (ObjectDisposedException)
+		{
+			return null;
+		}
+	}
 
 	private static IDispatcher? CreateForCurrentThread()
 		=> DispatcherQueue.GetForCurrentThread() is { } dispatcher ? new Dispatcher(dispatcher) : null;

@@ -75,7 +75,7 @@ internal sealed class DispatcherLocal<T>
 	{
 		get
 		{
-			var current = _schedulersProvider();
+			var current = FindCurrentDispatcher();
 			var (hasValue, value, error) = GetValueCore(current, current);
 
 			if (hasValue)
@@ -87,7 +87,7 @@ internal sealed class DispatcherLocal<T>
 				throw new InvalidOperationException(error);
 			}
 		}
-		set => SetValueCore(_schedulersProvider(), value);
+		set => SetValueCore(FindCurrentDispatcher(), value);
 	}
 
 	/// <summary>
@@ -97,7 +97,7 @@ internal sealed class DispatcherLocal<T>
 	{
 		var (hasValue, value, error) = GetValueCore(
 			owner: scheduler,
-			current: _schedulersProvider());
+			current: FindCurrentDispatcher());
 
 		if (hasValue)
 		{
@@ -119,9 +119,44 @@ internal sealed class DispatcherLocal<T>
 	{
 		(var hasValue, value, _) = GetValueCore(
 			owner: scheduler,
-			current: _schedulersProvider());
+			current: FindCurrentDispatcher());
 
 		return hasValue;
+	}
+
+	/// <summary>
+	/// Resolves the dispatcher of the current thread, reporting "no dispatcher" instead of throwing
+	/// when the provider's backing state has already been disposed.
+	/// </summary>
+	/// <remarks>
+	/// A provider can legitimately be disposed while instances of this class are still reachable. The
+	/// UI package's <c>DispatcherQueueProvider</c> resolves the dispatcher from a static
+	/// <see cref="ThreadLocal{T}"/>, and <see cref="ThreadLocal{T}"/> disposes itself from its own
+	/// finalizer. When the assembly owning that static lives in a collectible
+	/// <c>AssemblyLoadContext</c>, unloading the context makes the static collectable, so the
+	/// ThreadLocal is finalized in the same pass as the objects that still hold a
+	/// <see cref="DispatcherLocal{T}"/> -- in no defined order.
+	///
+	/// Those objects reach this class from their own finalizers: removing an event handler from a
+	/// bindable collection resolves the current dispatcher to find the layer to unsubscribe from. If
+	/// the ThreadLocal was finalized first, that read threw <see cref="ObjectDisposedException"/> out
+	/// of a finalizer, which is unrecoverable and terminates the process.
+	///
+	/// Reporting null instead lets the caller take the background-value path, which is what a
+	/// finalizer thread would have got anyway -- it is not a UI thread, so there is no dispatcher to
+	/// find. Only <see cref="ObjectDisposedException"/> is treated this way: any other failure to
+	/// resolve a dispatcher is a real fault and still propagates.
+	/// </remarks>
+	private IDispatcher? FindCurrentDispatcher()
+	{
+		try
+		{
+			return _schedulersProvider();
+		}
+		catch (ObjectDisposedException)
+		{
+			return null;
+		}
 	}
 
 	private (bool hasValue, T? value, string? errorMessage) GetValueCore(IDispatcher? owner, IDispatcher? current)
