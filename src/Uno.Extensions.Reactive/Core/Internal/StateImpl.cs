@@ -71,7 +71,11 @@ internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, ISta
 		_mode = mode;
 		_updatesKind = updatesKind;
 
-		if (FeedConfiguration.EffectiveHotReload.HasFlag(HotReloadSupport.State))
+		// Wrap the source in a HotSwapFeed when either:
+		//  - hot-reload is enabled globally (existing behavior), or
+		//  - this context is a mocking context (spec 013, D12): the per-context gate, so only contexts
+		//    created under a MockingService.Enable() scope wrap — a live app pays nothing (G9/R7).
+		if (FeedConfiguration.EffectiveHotReload.HasFlag(HotReloadSupport.State) || context.IsMockingActive)
 		{
 			// It's valid to use the HotSwap feed here, as we are caching it internally and the subscription is managed by the State itself on its own Context.
 			feed = _hotSwap = new HotSwapFeed<T>(feed);
@@ -91,6 +95,8 @@ internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, ISta
 			Enable();
 		}
 	}
+
+	bool IHotSwapState<T>.CanHotSwap => _hotSwap is not null;
 
 	void IHotSwapState<T>.HotSwap(IFeed<T>? source)
 	{
