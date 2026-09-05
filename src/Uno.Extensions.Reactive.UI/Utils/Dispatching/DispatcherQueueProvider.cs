@@ -22,7 +22,7 @@ public static class DispatcherQueueProvider
 	/// <remarks>
 	/// Returns null rather than throwing once <see cref="_value"/> has been disposed. Nothing disposes
 	/// it explicitly -- <see cref="ThreadLocal{T}"/> disposes itself from its own finalizer, which
-	/// runs once this static becomes collectable. That happens when the assembly owning it is loaded
+	/// runs once this static becomes collectible. That happens when the assembly owning it is loaded
 	/// into a collectible <c>AssemblyLoadContext</c> and the context is unloaded: the ThreadLocal is
 	/// then finalized alongside the objects that still call in here, in no defined order, and those
 	/// calls can come from finalizers. Throwing from a finalizer is unrecoverable and terminates the
