@@ -133,7 +133,7 @@ internal sealed class DispatcherLocal<T>
 	/// UI package's <c>DispatcherQueueProvider</c> resolves the dispatcher from a static
 	/// <see cref="ThreadLocal{T}"/>, and <see cref="ThreadLocal{T}"/> disposes itself from its own
 	/// finalizer. When the assembly owning that static lives in a collectible
-	/// <c>AssemblyLoadContext</c>, unloading the context makes the static collectable, so the
+	/// <c>AssemblyLoadContext</c>, unloading the context makes the static collectible, so the
 	/// ThreadLocal is finalized in the same pass as the objects that still hold a
 	/// <see cref="DispatcherLocal{T}"/> -- in no defined order.
 	///
