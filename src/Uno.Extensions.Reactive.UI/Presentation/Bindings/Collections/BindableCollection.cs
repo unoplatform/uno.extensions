@@ -232,17 +232,31 @@ namespace Uno.Extensions.Reactive.Bindings.Collections
 			remove => RemoveVectorChangedHandler(value);
 		}
 
+		/// <summary>
+		/// Gets a facet of the current thread's data layer, but only if that layer has already been created.
+		/// </summary>
+		/// <remarks>
+		/// Used by ALL handler-removal paths, which must NOT create a data layer. A layer that was never materialized
+		/// cannot be holding the handler being removed, so there is nothing to do. This also keeps removal safe on the
+		/// finalizer thread: <c>ItemsSourceView.Finalize()</c> unsubscribes from the collection, and resolving a
+		/// dispatcher there can hit an already-finalized <see cref="System.Threading.ThreadLocal{T}"/>, whose
+		/// exception would escape the finalizer and terminate the process.
+		/// </remarks>
+		private TFacet? GetExistingFacet<TFacet>()
+			where TFacet : class
+			=> _holder.TryGetCurrentValue(out var layer) ? layer.GetFacet<TFacet>() : null;
+
 		/// <inheritdoc />
 		public event NotifyCollectionChangedEventHandler? CollectionChanged
 		{
 			add => _holder.Value.GetFacet<CollectionChangedFacet>().AddCollectionChangedHandler(value!);
-			remove => _holder.Value.GetFacet<CollectionChangedFacet>().RemoveCollectionChangedHandler(value!);
+			remove => GetExistingFacet<CollectionChangedFacet>()?.RemoveCollectionChangedHandler(value!);
 		}
 
 		public event PropertyChangedEventHandler? PropertyChanged
 		{
 			add => _holder.Value.GetFacet<CollectionChangedFacet>().AddPropertyChangedHandler(value!);
-			remove => _holder.Value.GetFacet<CollectionChangedFacet>().RemovePropertyChangedHandler(value!);
+			remove => GetExistingFacet<CollectionChangedFacet>()?.RemovePropertyChangedHandler(value!);
 		}
 
 		/// <inheritdoc />
@@ -332,28 +346,28 @@ namespace Uno.Extensions.Reactive.Bindings.Collections
 		internal EventRegistrationToken AddVectorChangedHandler(VectorChangedEventHandler<object?>? handler)
 			=> handler is null ? default : _holder.Value.GetFacet<CollectionChangedFacet>().AddVectorChangedHandler(handler);
 		internal void RemoveVectorChangedHandler(VectorChangedEventHandler<object?>? handler)
-			=> _holder.Value.GetFacet<CollectionChangedFacet>().RemoveVectorChangedHandler(handler!);
+			=> GetExistingFacet<CollectionChangedFacet>()?.RemoveVectorChangedHandler(handler!);
 #if USE_EVENT_TOKEN
 		internal void RemoveVectorChangedHandler(EventRegistrationToken token)
-			=> _holder.Value.GetFacet<CollectionChangedFacet>().RemoveVectorChangedHandler(token);
+			=> GetExistingFacet<CollectionChangedFacet>()?.RemoveVectorChangedHandler(token);
 #endif
 
 		internal EventRegistrationToken AddCurrentChangedHandler(CurrentChangedEventHandler? handler)
 			=> _holder.Value.GetFacet<SelectionFacet>().AddCurrentChangedHandler(handler!);
 		internal void RemoveCurrentChangedHandler(CurrentChangedEventHandler? handler)
-			=> _holder.Value.GetFacet<SelectionFacet>().RemoveCurrentChangedHandler(handler!);
+			=> GetExistingFacet<SelectionFacet>()?.RemoveCurrentChangedHandler(handler!);
 #if USE_EVENT_TOKEN
 		internal void RemoveCurrentChangedHandler(EventRegistrationToken token)
-			=> _holder.Value.GetFacet<SelectionFacet>().RemoveCurrentChangedHandler(token);
+			=> GetExistingFacet<SelectionFacet>()?.RemoveCurrentChangedHandler(token);
 #endif
 
 		internal EventRegistrationToken AddCurrentChangingHandler(CurrentChangingEventHandler? handler)
 			=> _holder.Value.GetFacet<SelectionFacet>().AddCurrentChangingHandler(handler!);
 		internal void RemoveCurrentChangingHandler(CurrentChangingEventHandler? handler)
-			=> _holder.Value.GetFacet<SelectionFacet>().RemoveCurrentChangingHandler(handler!);
+			=> GetExistingFacet<SelectionFacet>()?.RemoveCurrentChangingHandler(handler!);
 #if USE_EVENT_TOKEN
 		internal void RemoveCurrentChangingHandler(EventRegistrationToken token)
-			=> _holder.Value.GetFacet<SelectionFacet>().RemoveCurrentChangingHandler(token);
+			=> GetExistingFacet<SelectionFacet>()?.RemoveCurrentChangingHandler(token);
 #endif
 
 		/// <summary>

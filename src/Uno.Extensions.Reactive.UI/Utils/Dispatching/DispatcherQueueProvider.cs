@@ -20,7 +20,21 @@ public static class DispatcherQueueProvider
 	/// </summary>
 	/// <returns>The dispatcher associated to the current thread if the thread is a UI thread.</returns>
 	public static IDispatcher? GetForCurrentThread()
-		=> _value.Value;
+	{
+		try
+		{
+			return _value.Value;
+		}
+		catch (ObjectDisposedException)
+		{
+			// _value is a static that is never disposed explicitly: it is reclaimed by its OWN finalizer once the
+			// AssemblyLoadContext holding it is collected. Finalization order is unspecified, so another finalizer
+			// running in the same pass can reach this after the ThreadLocal is gone. Throwing here would escape the
+			// finalizer thread and terminate the process; null is already a documented result of this method, and
+			// means the same thing in practice — there is no dispatcher for this thread any more.
+			return null;
+		}
+	}
 
 	private static IDispatcher? CreateForCurrentThread()
 		=> DispatcherQueue.GetForCurrentThread() is { } dispatcher ? new Dispatcher(dispatcher) : null;

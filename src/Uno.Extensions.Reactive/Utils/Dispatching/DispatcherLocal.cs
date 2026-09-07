@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
@@ -122,6 +123,43 @@ internal sealed class DispatcherLocal<T>
 			current: _schedulersProvider());
 
 		return hasValue;
+	}
+
+	/// <summary>
+	/// Tries to get the value of the current thread, **without creating it** if it does not exist yet.
+	/// </summary>
+	/// <param name="value">The value already associated to the current thread, if any.</param>
+	/// <returns>True if a value had already been created for the current thread, false otherwise.</returns>
+	/// <remarks>
+	/// Unlike <see cref="Value"/> and <see cref="TryGetValue"/>, this never invokes the factory.
+	/// It is intended for tear-down paths (e.g. removing an event handler), which must not materialize state:
+	/// a value that was never created cannot be holding the state being removed. Those paths are also reachable
+	/// from the finalizer thread, where the dispatcher is unavailable and creating a value is unsafe.
+	/// </remarks>
+	public bool TryGetCurrentValue([MaybeNullWhen(false)] out T value)
+	{
+		var current = _schedulersProvider();
+		if (current is null)
+		{
+			if (_allowBackgroundValue && _backgroundValue is { } background)
+			{
+				value = background.Value;
+				return true;
+			}
+		}
+		else if (_mainUiValue is { } main && main.Scheduler == current)
+		{
+			value = main.Value;
+			return true;
+		}
+		else if (_otherUiValues is { } others && others.TryGetValue(current, out var existing))
+		{
+			value = existing.Value;
+			return true;
+		}
+
+		value = default;
+		return false;
 	}
 
 	private (bool hasValue, T? value, string? errorMessage) GetValueCore(IDispatcher? owner, IDispatcher? current)

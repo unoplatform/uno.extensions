@@ -151,6 +151,87 @@ public class Given_DispatcherLocal
 		enumeration.Result.Should().Be(1, because: "we should have got the value created for UI thread (on which we have waited on)");
 	}
 
+	[TestMethod]
+	public void When_TryGetCurrentValue_And_NotCreatedYet_Then_DoesNotCreate()
+	{
+		var current = default(IDispatcher?);
+		using var ui = new TestDispatcher("ui");
+		var factoryInvocations = 0;
+
+		var sut = new DispatcherLocal<string>(
+			factory: d =>
+			{
+				factoryInvocations++;
+				return d is TestDispatcher td ? td.Name : "background";
+			},
+			schedulersProvider: () => current);
+
+		current = ui;
+
+		sut.TryGetCurrentValue(out var value).Should().BeFalse();
+		value.Should().BeNull();
+		factoryInvocations.Should().Be(0, because: "a removal path must never materialize a value");
+		CountValues(sut).Should().Be(0);
+	}
+
+	[TestMethod]
+	public void When_TryGetCurrentValue_And_AlreadyCreated_Then_ReturnsIt()
+	{
+		var current = default(IDispatcher?);
+		using var ui = new TestDispatcher("ui");
+
+		var sut = new DispatcherLocal<string>(
+			factory: d => d is TestDispatcher td ? td.Name : "background",
+			schedulersProvider: () => current);
+
+		current = ui;
+		sut.Value.Should().Be("ui");
+
+		sut.TryGetCurrentValue(out var value).Should().BeTrue();
+		value.Should().Be("ui");
+		CountValues(sut).Should().Be(1, because: "no additional value should have been created");
+	}
+
+	[TestMethod]
+	public void When_TryGetCurrentValue_OnAnotherThread_Then_DoesNotCreate()
+	{
+		var current = default(IDispatcher?);
+		using var ui1 = new TestDispatcher("ui1");
+		using var ui2 = new TestDispatcher("ui2");
+
+		var sut = new DispatcherLocal<string>(
+			factory: d => d is TestDispatcher td ? td.Name : "background",
+			schedulersProvider: () => current);
+
+		current = ui1;
+		sut.Value.Should().Be("ui1");
+
+		current = ui2;
+
+		sut.TryGetCurrentValue(out var value).Should().BeFalse();
+		value.Should().BeNull();
+		CountValues(sut).Should().Be(1, because: "the value of another thread must not be returned, nor a new one created");
+	}
+
+	[TestMethod]
+	public void When_TryGetCurrentValue_OnBackgroundThread_Then_ReturnsExistingValueOnly()
+	{
+		var current = default(IDispatcher?);
+
+		var sut = new DispatcherLocal<string>(
+			factory: d => d is TestDispatcher td ? td.Name : "background",
+			schedulersProvider: () => current);
+
+		sut.TryGetCurrentValue(out _).Should().BeFalse();
+		CountValues(sut).Should().Be(0);
+
+		sut.Value.Should().Be("background");
+
+		sut.TryGetCurrentValue(out var value).Should().BeTrue();
+		value.Should().Be("background");
+		CountValues(sut).Should().Be(1);
+	}
+
 	private int CountValues<T>(DispatcherLocal<T> sut, bool includeBackground = true)
 	{
 		// note : This method MUST use ForEachValue for test When_EnumerateWhileCreatingValue_Then_Lock to be useful!
