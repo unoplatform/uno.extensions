@@ -26,3 +26,15 @@ but the property _property_name_ is not of type `IFeed<T>` (nor `IState<T>`).
 > [!NOTE]
 > If your property is synchronous (i.e. not a `Feed` nor a `State`), you don't need to use the `[FeedParameter]` attribute.
 > Remove the parameter from the method and get your value from the property directly.
+
+## Mock0001
+
+**No mock is generated for a model whose view-model has no public constructor.**
+
+`Uno.HotTesting.Reactive` builds the real view-model with every constructor parameter null-injected
+(`{Vm}Mock.Create`). The generated view-model mirrors the model's constructors, so a model whose constructors
+are all `internal` or `private` leaves nothing for `Create` to call: the generator reports this warning and
+emits no `{Model}Mock` / `{Vm}Mock` for that model.
+
+Make one of the model's constructors public to get the mock back, or suppress the warning for a model that is
+not meant to be mocked.
