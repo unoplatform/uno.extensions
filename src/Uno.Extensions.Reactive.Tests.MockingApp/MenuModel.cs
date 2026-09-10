@@ -15,9 +15,17 @@ public interface IMenuNavigator
 	ValueTask GoBack(CancellationToken ct);
 }
 
+public interface IMenuSnapshot
+{
+	IImmutableList<string> Items { get; }
+}
+
 /// <summary>
-/// Fixture for a model whose constructor takes more than one dependency: the generated Create must
-/// null-inject each parameter. Also carries a derived feed and an independent state for later coverage.
+/// Fixture for the constructor shapes the generated Create must handle: more than one dependency (each
+/// parameter null-injected) and two public constructors of equal arity (the parameter type must be spelled
+/// out, otherwise <c>new MenuViewModel(default!, default!)</c> is ambiguous, CS0121). The derived feed and
+/// the independent state pin the record's member classification: the derived feed is an optional override,
+/// the independent state is left out.
 /// </summary>
 public partial class MenuModel
 {
@@ -28,6 +36,11 @@ public partial class MenuModel
 	{
 		_service = service;
 		_navigator = navigator;
+	}
+
+	public MenuModel(IMenuSnapshot snapshot, IMenuNavigator navigator)
+		: this(new SnapshotMenuService(snapshot), navigator)
+	{
 	}
 
 	// service-dependent input (list)
@@ -41,4 +54,16 @@ public partial class MenuModel
 
 	// command → IAsyncCommand GoBack on the VM; the navigator is only reached when it executes
 	public ValueTask GoBack(CancellationToken ct) => _navigator.GoBack(ct);
+}
+
+internal sealed class SnapshotMenuService : IMenuService
+{
+	private readonly IMenuSnapshot _snapshot;
+
+	public SnapshotMenuService(IMenuSnapshot snapshot)
+	{
+		_snapshot = snapshot;
+	}
+
+	public Task<IImmutableList<string>> GetItems(CancellationToken ct) => Task.FromResult(_snapshot.Items);
 }

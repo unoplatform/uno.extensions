@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Immutable;
 using System.Linq;
+using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -83,14 +85,33 @@ public class Given_GeneratedMock : FeedUITests
 	}
 
 	[TestMethod]
-	public async Task When_ModelHasSeveralCtorParameters_Then_CreateNullInjectsEachOne()
+	public async Task When_ModelHasSeveralCtorParametersAndOverloads_Then_CreateCompilesAndInputFlows()
 	{
-		// MenuModel takes a service and a navigator: Create passes default for both, so it compiles and the
-		// mocked input flows without either dependency.
+		// MenuModel takes a service and a navigator, and offers a second constructor of the same arity. This file
+		// compiling is the proof that Create passes a typed default for each parameter (a bare `default!` leaves
+		// the call ambiguous, CS0121); the assertion checks that the mocked input flows without any dependency.
 		var vm = MenuViewModelMock.Create(new MenuModelMock { Items = ListFeedMock.Value("a", "b") });
 		using var _ = SourceContext.GetOrCreate(vm.Model).AsCurrent();
 
 		var items = await CurrentItems(SourceContext.GetOrCreate(vm.Model), vm.Model.Items);
 		items.Should().BeEquivalentTo(new[] { "a", "b" });
+	}
+
+	[TestMethod]
+	public void When_ModelHasDerivedAndIndependentMembers_Then_MockExposesOnlyTheDerivedOneAsOptional()
+	{
+		// MenuModel also declares a derived feed (ItemsCount) and an independent state (Filter): the record requires
+		// the input, offers the derived feed as an optional override and leaves the independent state out.
+		var mock = typeof(MenuModelMock);
+
+		IsRequired(mock.GetProperty(nameof(MenuModel.Items))).Should().BeTrue();
+		IsRequired(mock.GetProperty(nameof(MenuModel.ItemsCount))).Should().BeFalse();
+		mock.GetProperty(nameof(MenuModel.Filter)).Should().BeNull();
+	}
+
+	private static bool IsRequired(PropertyInfo? property)
+	{
+		property.Should().NotBeNull();
+		return property!.IsDefined(typeof(RequiredMemberAttribute), inherit: false);
 	}
 }

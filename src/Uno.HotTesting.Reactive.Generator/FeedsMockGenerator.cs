@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Microsoft.CodeAnalysis;
+using Uno.Extensions.Generators;
 
 namespace Uno.HotTesting.Reactive.Generator;
 
@@ -23,6 +24,16 @@ public sealed class FeedsMockGenerator : ISourceGenerator
 	private const string ModelAttribute = "Uno.Extensions.Reactive.Bindings.ModelAttribute";
 	private const string HotTesting = "global::Uno.HotTesting.Reactive";
 
+	// MOCK0001: a reachable model whose view-model Create cannot build. Reported, never silently skipped.
+	private static readonly DiagnosticDescriptor NoPublicConstructor = new DiagnosticDescriptor(
+		"MOCK0001",
+		"Mock not generated",
+		"No mock is generated for the model '{0}': its view-model '{1}' exposes no public constructor for Create to null-inject",
+		"Usage",
+		DiagnosticSeverity.Warning,
+		isEnabledByDefault: true,
+		helpLinkUri: "https://platform.uno/docs/articles/external/uno.extensions/doc/Reference/Reactive/rules.html#Mock0001");
+
 	/// <inheritdoc />
 	public void Initialize(GeneratorInitializationContext context) { }
 
@@ -39,7 +50,7 @@ public sealed class FeedsMockGenerator : ISourceGenerator
 
 		foreach (var model in EnumerateModels(compilation, feedDep))
 		{
-			if (GenerateFor(model, feedDep, modelAttr) is { } generated)
+			if (GenerateFor(context, model, feedDep, modelAttr) is { } generated)
 			{
 				context.AddSource($"{model.ToDisplayString().Replace('.', '_')}.Mock.g.cs", generated);
 			}
@@ -86,7 +97,7 @@ public sealed class FeedsMockGenerator : ISourceGenerator
 		public bool IsList;
 	}
 
-	private string? GenerateFor(INamedTypeSymbol model, INamedTypeSymbol feedDep, INamedTypeSymbol modelAttr)
+	private static string? GenerateFor(GeneratorExecutionContext context, INamedTypeSymbol model, INamedTypeSymbol feedDep, INamedTypeSymbol modelAttr)
 	{
 		var modelAttrData = model.GetAttributes().FirstOrDefault(a => SymbolEqualityComparer.Default.Equals(a.AttributeClass, modelAttr));
 		if (modelAttrData?.ConstructorArguments is not { Length: 1 } args || args[0].Value is not INamedTypeSymbol vm)
@@ -147,17 +158,25 @@ public sealed class FeedsMockGenerator : ISourceGenerator
 		}
 
 		// Create null-injects the public view-model constructor with the fewest parameters. The generated VM
-		// mirrors the model's constructors; its protected model-wrapping constructor is never a candidate.
+		// mirrors the model's constructors; its protected model-wrapping constructor is never a candidate. Ties on
+		// arity are broken on the parameter type list so the emitted code does not depend on symbol order.
 		var ctor = vm.Constructors
 			.Where(c => !c.IsStatic && c.DeclaredAccessibility == Accessibility.Public)
 			.OrderBy(c => c.Parameters.Length)
+			.ThenBy(ParameterTypes, StringComparer.Ordinal)
 			.FirstOrDefault();
 		if (ctor is null)
 		{
+			context.ReportDiagnostic(Diagnostic.Create(
+				NoPublicConstructor,
+				model.Locations.FirstOrDefault(location => location.IsInSource) ?? Location.None,
+				model.Name,
+				vm.Name));
 			return null;
 		}
 
-		var ctorArguments = string.Join(", ", ctor.Parameters.Select(p => $"default! /* {p.Name} */"));
+		// Typed defaults: a bare `default!` cannot pick between constructors of equal arity (CS0121).
+		var ctorArguments = string.Join(", ", ctor.Parameters.Select(p => $"default({FullName(p.Type)})! /* {p.Name} */"));
 		var vmFull = vm.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
 		var mockName = $"{model.Name}Mock";
 		var vmMockName = $"{vm.Name}Mock";
@@ -257,6 +276,12 @@ public sealed class FeedsMockGenerator : ISourceGenerator
 		}
 		return false;
 	}
+
+	private static string ParameterTypes(IMethodSymbol ctor)
+		=> string.Join(",", ctor.Parameters.Select(p => FullName(p.Type)));
+
+	private static string FullName(ITypeSymbol type)
+		=> type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
 
 	private static string Camel(string name)
 		=> string.IsNullOrEmpty(name) ? name : char.ToLowerInvariant(name[0]) + name.Substring(1);

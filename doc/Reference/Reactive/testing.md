@@ -130,6 +130,9 @@ emits, next to the model:
   navigator, ...), then apply the mock;
 - a `SetMock(this {Vm}, {Model}Mock)` extension that swaps each mocked feed.
 
+A view-model whose constructors are all non-public cannot be built this way:
+the generator reports the `MOCK0001` warning for that model and emits no mock.
+
 Given this model:
 
 ```csharp
