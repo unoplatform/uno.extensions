@@ -126,7 +126,8 @@ emits, next to the model:
   service-dependent feeds, and whose **optional** members are the derived feeds
   (a `{Model}Mock.Empty` pins every input to its empty state);
 - a `partial class {Vm}Mock` with `Create(...)` factories that build the **real
-  view-model** with its services null-injected, then apply the mock;
+  view-model** with every constructor parameter null-injected (services,
+  navigator, ...), then apply the mock;
 - a `SetMock(this {Vm}, {Model}Mock)` extension that swaps each mocked feed.
 
 Given this model:

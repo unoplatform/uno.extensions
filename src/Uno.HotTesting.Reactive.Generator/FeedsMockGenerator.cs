@@ -146,6 +146,18 @@ public sealed class FeedsMockGenerator : ISourceGenerator
 			return null;
 		}
 
+		// Create null-injects the public view-model constructor with the fewest parameters. The generated VM
+		// mirrors the model's constructors; its protected model-wrapping constructor is never a candidate.
+		var ctor = vm.Constructors
+			.Where(c => !c.IsStatic && c.DeclaredAccessibility == Accessibility.Public)
+			.OrderBy(c => c.Parameters.Length)
+			.FirstOrDefault();
+		if (ctor is null)
+		{
+			return null;
+		}
+
+		var ctorArguments = string.Join(", ", ctor.Parameters.Select(p => $"default! /* {p.Name} */"));
 		var vmFull = vm.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
 		var mockName = $"{model.Name}Mock";
 		var vmMockName = $"{vm.Name}Mock";
@@ -205,7 +217,7 @@ public sealed class FeedsMockGenerator : ISourceGenerator
 					// (and lazy first subscriptions) still swap even after the scope is disposed.
 					using (global::Uno.HotTesting.Reactive.MockingService.Enable())
 					{
-						var vm = new {{vmFull}}(default!);
+						var vm = new {{vmFull}}({{ctorArguments}});
 						vm.SetMock(mock);
 						return vm;
 					}
