@@ -20,18 +20,18 @@ namespace Uno.Extensions.Reactive.Tests.Mocking;
 [TestClass]
 public class Given_GeneratedMock : FeedUITests
 {
-	private static async Task<IImmutableList<int>?> CurrentItems(SourceContext ctx, IListFeed<int> feed)
+	private static async Task<IImmutableList<T>?> CurrentItems<T>(SourceContext ctx, IListFeed<T> feed)
 	{
 		var (result, _) = ctx.GetOrCreateListState(feed).Record();
 		for (var i = 0; i < 50; i++)
 		{
 			if (result.Count > 0 && result.Last().Current.Data.IsSome(out var v))
 			{
-				return (IImmutableList<int>)v!;
+				return (IImmutableList<T>)v!;
 			}
 			await Task.Delay(20);
 		}
-		return result.Count > 0 && result.Last().Current.Data.IsSome(out var last) ? (IImmutableList<int>)last! : null;
+		return result.Count > 0 && result.Last().Current.Data.IsSome(out var last) ? (IImmutableList<T>)last! : null;
 	}
 
 	[TestMethod]
@@ -80,5 +80,17 @@ public class Given_GeneratedMock : FeedUITests
 
 		var items = await CurrentItems(SourceContext.GetOrCreate(vm.Model), vm.Model.Steps);
 		items.Should().BeEquivalentTo(new[] { 1, 2, 3 });
+	}
+
+	[TestMethod]
+	public async Task When_ModelHasSeveralCtorParameters_Then_CreateNullInjectsEachOne()
+	{
+		// MenuModel takes a service and a navigator: Create passes default for both, so it compiles and the
+		// mocked input flows without either dependency.
+		var vm = MenuViewModelMock.Create(new MenuModelMock { Items = ListFeedMock.Value("a", "b") });
+		using var _ = SourceContext.GetOrCreate(vm.Model).AsCurrent();
+
+		var items = await CurrentItems(SourceContext.GetOrCreate(vm.Model), vm.Model.Items);
+		items.Should().BeEquivalentTo(new[] { "a", "b" });
 	}
 }

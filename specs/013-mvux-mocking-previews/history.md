@@ -149,6 +149,17 @@ Propagated: documentation `doc/Reference/Reactive/testing.md`, spec §7/§8/§10
 
 ---
 
+## v13 — `Create` null-injects every constructor parameter
+
+The consumer generator emitted exactly one `default!`, so a model whose constructor takes more than one
+dependency (a service plus a navigator, a messenger, ...) produced a `Create` that did not compile. `Create`
+now targets the public view-model constructor with the fewest parameters (the generated VM mirrors the model's
+constructors; the protected model-wrapping constructor is never a candidate) and passes `default!` for each
+parameter. Fixture: `MenuModel` (two constructor parameters) in the two-project app; test
+`When_ModelHasSeveralCtorParameters_Then_CreateNullInjectsEachOne`.
+
+---
+
 ## Final decision register
 
 | # | Decision | Version |
