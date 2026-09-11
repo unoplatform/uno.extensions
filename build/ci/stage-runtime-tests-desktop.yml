@@ -17,7 +17,7 @@ jobs:
 
       - script: |
           dotnet build src/Uno.Extensions.RuntimeTests/Uno.Extensions.RuntimeTests/Uno.Extensions.RuntimeTests.csproj \
-            -c Debug -f net9.0-desktop \
+            -c Debug -f net10.0-desktop \
             -p:Build_Windows=false -p:Build_Android=false -p:Build_iOS=false -p:Build_MacCatalyst=false -p:Build_Web=false \
             -bl:$(build.artifactstagingdirectory)/binlogs/build-desktop-runtime-tests.binlog
         displayName: 'Build desktop runtime tests'
@@ -30,7 +30,7 @@ jobs:
           mkdir -p "$(Build.SourcesDirectory)/build/desktop-runtime-tests"
           xvfb-run --auto-servernum --server-args='-screen 0 1280x1024x24' dotnet Uno.Extensions.RuntimeTests.dll
         displayName: 'Run desktop runtime tests'
-        workingDirectory: $(Build.SourcesDirectory)/src/Uno.Extensions.RuntimeTests/Uno.Extensions.RuntimeTests/bin/Uno.Extensions.RuntimeTests/Debug/net9.0-desktop
+        workingDirectory: $(Build.SourcesDirectory)/src/Uno.Extensions.RuntimeTests/Uno.Extensions.RuntimeTests/bin/Uno.Extensions.RuntimeTests/Debug/net10.0-desktop
         env:
           # Scoped filter, not the full suite. See the comment on stage-build-runtimetests-skia.yml
           # in .azure-pipelines.yml: 15 pre-existing failures in the wider suite have to be fixed

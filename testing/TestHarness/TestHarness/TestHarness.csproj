@@ -1,5 +1,5 @@
 ﻿<Project Sdk="Uno.Sdk.Private">
-	<Import Project="..\..\..\src\tfms-ui-winui.props" />
+	<Import Project="..\..\..\src\tfms-ui-winui-apps.props" />
 
 	<PropertyGroup>
 

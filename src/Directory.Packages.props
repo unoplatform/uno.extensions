@@ -3,8 +3,8 @@
     <!--
       Uno.Sdk 6.8.0-dev.* supplies Uno.Toolkit.WinUI 9.2.0-dev.18, whose iOS assembly is built
       against Microsoft.iOS 26 while the .NET 9 iOS workload used here references 18.2. Building
-      Uno.Extensions.Reactive.UI.Markup for net9.0-ios against it fails CS1705 (build 229332).
-      Note the package folder is named net9.0-ios18.0, so the TFM name is not a safe signal - the
+      Uno.Extensions.Reactive.UI.Markup for net10.0-ios against it fails CS1705 (build 229332).
+      Note the package folder is named net10.0-ios18.0, so the TFM name is not a safe signal - the
       assembly reference is. 8.4.2 is the latest stable whose iOS flavor references 18.2, it keeps
       the Mac Catalyst flavor that Controls/ModalFlyout.xaml needs, and it matches the pin
       samples/Directory.Packages.props already carries. Remove once this repo targets net10/iOS 26.
@@ -26,7 +26,7 @@
     <PackageVersion Include="DotNet.ReproducibleBuilds" Version="1.1.1" />
     <PackageVersion Include="FluentAssertions" Version="6.7.0" />
     <PackageVersion Include="Duende.IdentityModel.OidcClient" Version="6.0.1" />
-    <PackageVersion Include="Microsoft.Extensions.Hosting.Abstractions" Version="9.0.14" />
+    <PackageVersion Include="Microsoft.Extensions.Hosting.Abstractions" Version="10.0.12" />
     <PackageVersion Include="Microsoft.Kiota.Abstractions" Version="1.22.2" />
     <PackageVersion Include="Microsoft.Kiota.Http.HttpClientLibrary" Version="1.22.2" />
     <PackageVersion Include="Microsoft.Kiota.Serialization.Form" Version="1.22.2" />
@@ -37,13 +37,13 @@
     <PackageVersion Include="MSTest.TestFramework" Version="2.2.9" />
     <PackageVersion Include="Microsoft.Bcl.AsyncInterfaces" Version="8.0.0" />
     <PackageVersion Include="Microsoft.CodeAnalysis.CSharp" Version="4.1.0" />
-    <PackageVersion Include="Microsoft.Extensions.Configuration.Abstractions" Version="9.0.14" />
-    <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="9.0.14" />
-    <PackageVersion Include="Microsoft.Extensions.Hosting" Version="9.0.14" />
-    <PackageVersion Include="Microsoft.Extensions.Http" Version="9.0.14" />
-    <PackageVersion Include="Microsoft.Extensions.Localization.Abstractions" Version="9.0.14" />
-    <PackageVersion Include="Microsoft.Extensions.Logging" Version="9.0.14" />
-    <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.14" />
+    <PackageVersion Include="Microsoft.Extensions.Configuration.Abstractions" Version="10.0.12" />
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="10.0.12" />
+    <PackageVersion Include="Microsoft.Extensions.Hosting" Version="10.0.12" />
+    <PackageVersion Include="Microsoft.Extensions.Http" Version="10.0.12" />
+    <PackageVersion Include="Microsoft.Extensions.Localization.Abstractions" Version="10.0.12" />
+    <PackageVersion Include="Microsoft.Extensions.Logging" Version="10.0.12" />
+    <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.12" />
     <!--
       MSAL must stay >= 4.80.0. .NET 10 reports macOS via the marketing string (e.g.
       "macOS 26.5.2") instead of a Darwin string; MSAL 4.72.1's DesktopOsHelper.IsMac() did not
@@ -56,8 +56,8 @@
     <PackageVersion Include="Microsoft.Identity.Client" Version="4.87.0" />
     <PackageVersion Include="Microsoft.Identity.Client.Extensions.Msal" Version="4.87.0" />
     <PackageVersion Include="Microsoft.Identity.Client.Broker" Version="4.87.0" />
-    <PackageVersion Include="Microsoft.Maui.Controls" Version="9.0.111" />
-    <PackageVersion Include="Microsoft.Maui.Controls.Compatibility" Version="9.0.111" />
+    <PackageVersion Include="Microsoft.Maui.Controls" Version="10.0.90" />
+    <PackageVersion Include="Microsoft.Maui.Controls.Compatibility" Version="10.0.90" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.6.2" />
     <PackageVersion Include="Microsoft.Net.Compilers.Toolset" Version="4.2.0" />
     <PackageVersion Include="Microsoft.SourceLink.GitHub" Version="1.1.1" />
@@ -72,26 +72,23 @@
     <PackageVersion Include="Serilog.Sinks.Debug" Version="2.0.0" />
     <PackageVersion Include="Serilog.Sinks.File" Version="5.0.0" />
     <PackageVersion Include="Serilog.Sinks.Xamarin" Version="1.0.0" />
-    <PackageVersion Include="System.Collections.Immutable" Version="8.0.0" />
-    <PackageVersion Include="System.Linq.Async" Version="4.0.0" />
+    <PackageVersion Include="SkiaSharp.Skottie" Version="4.151.1" />
     <PackageVersion Include="System.Net.Http.WinHttpHandler" Version="6.0.1" />
-    <PackageVersion Include="System.Text.Json" Version="8.0.5" />
-    <PackageVersion Include="System.Threading.Tasks.Extensions" Version="4.5.4" />
     <PackageVersion Include="Uno.Core" Version="4.1.1" />
     <PackageVersion Include="Uno.Core.Extensions" Version="4.1.1" />
     <PackageVersion Include="Uno.Core.Extensions.Collections" Version="4.1.1" />
-    <PackageVersion Include="Uno.Core.Extensions.Logging" Version="4.1.1" />
-    <PackageVersion Include="Uno.Core.Extensions.Logging.Singleton" Version="4.1.1" />
+    <PackageVersion Include="Uno.Core.Extensions.Logging" Version="5.0.0-dev.28" />
+    <PackageVersion Include="Uno.Core.Extensions.Logging.Singleton" Version="5.0.0-dev.28" />
     <PackageVersion Include="Uno.Extensions.Logging.OSLog" Version="1.7.0" />
     <PackageVersion Include="Uno.Extensions.Logging.WebAssembly.Console" Version="1.7.0" />
-    <PackageVersion Include="Uno.Extensions.Markup.Generators" Version="5.3.12" />
-    <PackageVersion Include="Uno.Extensions.Markup.WinUI" Version="5.3.12" />
+    <PackageVersion Include="Uno.Extensions.Markup.Generators" Version="7.0.0-dev.9" />
+    <PackageVersion Include="Uno.Extensions.Markup.WinUI" Version="7.0.0-dev.9" />
     <PackageVersion Include="Uno.Roslyn" Version="1.3.0-dev.12" />
     <PackageVersion Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="$(UnoVersion)" />
     <PackageVersion Include="Uno.UI.RuntimeTests.Engine" Version="2.0.0-dev.79" />
     <PackageVersion Include="Uno.WinUI" Version="$(UnoVersion)" />
     <PackageVersion Include="Uno.WinUI.DevServer" Version="$(UnoVersion)" />
-    <PackageVersion Include="Uno.WinUI.Markup" Version="5.3.12" />
+    <PackageVersion Include="Uno.WinUI.Markup" Version="7.0.0-dev.9" />
     <PackageVersion Include="Uno.WinUI.MSAL" Version="$(UnoVersion)" />
     <PackageVersion Include="coverlet.collector" Version="3.1.2" />
     <PackageVersion Include="xunit" Version="2.4.1" />

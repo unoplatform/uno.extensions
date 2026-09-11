@@ -1,5 +1,5 @@
 parameters:
-  DotNetVersion: '9.0.200'
+  DotNetVersion: '10.0.102'
   UnoCheck_Version: ''
   UnoCheckParameters: ''
 

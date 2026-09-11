@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <IsPackable>false</IsPackable>
     <Nullable>enable</Nullable>
     <!--
@@ -28,7 +28,7 @@
 
   <!--
     MsalTokenCacheStore is written against IKeyValueStorage (Uno.Extensions.Storage) and the
-    ILogger extensions (Uno.Extensions.Core). Both are plain net9.0 libraries with no Uno.UI
+    ILogger extensions (Uno.Extensions.Core). Both are plain net10.0 libraries with no Uno.UI
     dependency, so they reference cleanly from this test host - unlike the MSAL.WinUI assembly.
   -->
   <ItemGroup>

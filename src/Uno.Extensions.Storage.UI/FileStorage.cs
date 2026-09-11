@@ -2,7 +2,7 @@
 
 internal record FileStorage(ILogger<FileStorage> Logger, IDataFolderProvider DataFolderProvider) : IStorage
 {
-	private Task<bool> FileExistsInPackage(string fileName) => Uno.UI.Toolkit.StorageFileHelper.ExistsInPackage(fileName);
+	private Task<bool> FileExistsInPackage(string fileName) => Uno.Storage.StorageFileHelper.ExistsInPackage(fileName);
 
 	public async Task<string?> CreateFolderAsync(string foldername)
 	{

@@ -1,5 +1,5 @@
-<Project Sdk="Uno.Sdk.Private">
-	<Import Project="..\tfms-ui-winui.props" />
+﻿<Project Sdk="Uno.Sdk.Private">
+	<Import Project="..\tfms-ui-winui-apps.props" />
 
 	<PropertyGroup>
 		<Description>Test library for the navigation extensions for the Uno Platform (WinUI)</Description>
@@ -10,7 +10,7 @@
 		<OutputType>Library</OutputType>
 	</PropertyGroup>
 
-	<ItemGroup Condition="'$(TargetFramework)'!='net9.0-windows10.0.19041'">
+	<ItemGroup Condition="'$(TargetFramework)'!='net10.0-windows10.0.19041'">
 		<Content Include="Assets\**" />
 	</ItemGroup>
 
@@ -27,6 +27,14 @@
 		<Page Include="Pages\HotReloadTabBarCommandPage.xaml" />
 		<Page Include="Pages\HotReloadVmXamlPage.xaml" />
 		<Page Include="Pages\HotReloadStrandedContentPage.xaml" />
+		<Page Include="Pages\FirstPage.xaml" />
+		<Page Include="Pages\HotReloadMainTabBarPage.xaml" />
+		<Page Include="Pages\HotReloadNavDataBindingPage.xaml" />
+		<Page Include="Pages\HotReloadPanelRegionNamesPage.xaml" />
+		<Page Include="Pages\HotReloadRegionNameAddRemovePage.xaml" />
+		<Page Include="Pages\HotReloadRegionRenamePage.xaml" />
+		<Page Include="Pages\HotReloadTabBarLateAddPage.xaml" />
+		<Page Include="Pages\SecondPage.xaml" />
 	</ItemGroup>
 
 	<ItemGroup>
