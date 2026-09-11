@@ -20,7 +20,7 @@
 		<AndroidXSwipeRefreshLayoutVersion>1.1.0.28</AndroidXSwipeRefreshLayoutVersion>
 		<AndroidXNavigationVersion>2.8.9.1</AndroidXNavigationVersion>
 		<AndroidXCollectionVersion>1.5.0.3</AndroidXCollectionVersion>
-		<MauiVersion>9.0.111</MauiVersion>
+		<MauiVersion>10.0.90</MauiVersion>
 		<!--
 			Uno.Sdk 6.8.0-dev.* supplies Uno.Toolkit.WinUI 9.2.0-dev.18, whose iOS assembly is built
 			against Microsoft.iOS 26 while the .NET 9 iOS workload here references 18.2 (CS1705, seen in
