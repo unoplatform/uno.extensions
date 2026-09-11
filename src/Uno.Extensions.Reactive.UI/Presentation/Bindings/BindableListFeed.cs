@@ -13,6 +13,7 @@ using Uno.Extensions.Reactive.Bindings.Collections;
 using Uno.Extensions.Reactive.Bindings.Collections.Services;
 using Uno.Extensions.Reactive.Core;
 using Uno.Extensions.Reactive.UI.Utils;
+using Uno.Extensions.Reactive.Utils;
 
 namespace Uno.Extensions.Reactive.Bindings;
 
