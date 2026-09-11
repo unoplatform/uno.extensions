@@ -107,7 +107,7 @@ Under the hood, `OidcAuthenticationProvider` relies on [Duende.IdentityModel.Oid
 - `Scope`: The scope of the access token.
 
 - `RedirectUri`: The URL that the identity provider will redirect to after the user has authenticated.
-  > It is also possible to populate this setting automatically from the WebAuthenticationBroker using the `.AutoRedirectUriFromAuthenticationBroker()` extension method, which will set the redirect URI to the value returned by the `WebAuthenticationBroker.GetCurrentApplicationCallbackUri()` method, which should discover the correct redirect URI for the application/platform. More information can be found in the [Web Authentication Broker documentation](xref:Uno.Features.WAB).
+  > It is also possible to populate this setting automatically from the WebAuthenticationBroker using the `.AutoRedirectUriFromWebAuthenticationBroker()` extension method, which will set the redirect URI to the value returned by the `WebAuthenticationBroker.GetCurrentApplicationCallbackUri()` method, which should discover the correct redirect URI for the application/platform. More information can be found in the [Web Authentication Broker documentation](xref:Uno.Features.WAB).
   >
   > When used, this setting will override the value set in the configuration file for both the redirect URI and the post-logout redirect URI.
   > **This setting is ON by default on WebAssembly but opt-in on other platforms.**
@@ -168,7 +168,7 @@ Under the hood, `OidcAuthenticationProvider` relies on [Duende.IdentityModel.Oid
 
 - Finally, we can pass the login credentials to the `LoginAsync()` method and authenticate with the identity provider. The user will be prompted to sign in to their account when they tap the button in the application.
 
-- `OidcAuthenticationProvider` will then store the user's access token in credential storage. The token will be automatically refreshed when it expires.
+- `OidcAuthenticationProvider` then stores the tokens in the host's default `IKeyValueStorage` — the OS secure store where the storage package has one, plain `ApplicationData` on Skia Desktop and on Skia-renderer Android/iOS heads, browser storage on WebAssembly. When the selected store does not encrypt, the token cache logs a `Warning` naming it at startup; register your own `IKeyValueStorage` as the default if the app sandbox is not enough there. See [Key-value storage](xref:Uno.Extensions.Storage.Overview#key-value-storage) for the per-platform table. The access token is refreshed automatically when it expires.
 
 ## Advanced Customizations
 
@@ -181,3 +181,17 @@ Under the hood, `OidcAuthenticationProvider` relies on [Duende.IdentityModel.Oid
     })
 
   ```
+
+## Platform support
+
+`OidcAuthenticationProvider` drives its interactive flow through the same platform surfaces as the Web provider — see [Web Authentication: Platform support](xref:Uno.Extensions.Authentication.HowToWebAuthentication#platform-support) for the full matrix, including:
+
+- **Skia Desktop (Windows, macOS, Linux)**: `AddOidc()` automatically registers a loopback broker (system browser + `localhost` listener) but, unlike the Web provider, does not derive the redirect URI on desktop by default. Either set `RedirectUri` to a fixed loopback address (e.g. `http://localhost:5001/authentication-callback`) and register it with your identity provider, or call `.AutoRedirectUriFromWebAuthenticationBroker()` to use the broker's default — which picks a free port on first use, so the provider must allow variable-port loopback redirects.
+- **Windows (WinAppSDK)**: packaged apps only — the OAuth redirect scheme must be declared as a Protocol in `Package.appxmanifest`.
+
+Additional provider behavior worth knowing:
+
+- **Sign-out** drives the identity provider's end-session flow and passes the cached id_token as the `id_token_hint`, so compliant providers skip the logout confirmation prompt and redirect straight back to the app. A sign-out the user backs out of (or that fails) returns `false` and keeps the local session. For a local-only sign-out with no browser round trip, clear `ITokenCache` directly — the identity provider's browser session then survives, so the next sign-in may not prompt for credentials.
+- **Cancelled sign-in** — the user backing out of the browser surface — surfaces as `OperationCanceledException` from `LoginAsync` and leaves any previously cached session untouched; a failed sign-in (an identity-provider error) returns `false`.
+- **Silent refresh** redeems the stored refresh token against the token endpoint. A refresh the identity provider *rejects* (`invalid_grant` and the other token-endpoint error codes) returns `false` and signs the user out rather than reporting a stale success. A refresh that never reached a verdict — the endpoint unreachable, a server error — keeps the current tokens and logs a `Warning`, so an offline start does not sign the user out.
+- **id_token validation**: Duende's `OidcClient` requires either an `IIdentityTokenValidator` or `Policy.RequireIdentityTokenSignature = false` (configurable from the `Oidc` section, e.g. `"Policy": { "RequireIdentityTokenSignature": false }`) — without one of the two, sign-in against a provider that returns an id_token fails.

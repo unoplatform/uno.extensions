@@ -123,6 +123,22 @@ These are binary-compatible but observable. Read them if your app calls `AddMsal
 
 ## Upgrading to Extensions 7.0
 
+### Web and OIDC Authentication behavior changes
+
+The Web and OIDC providers received a set of deliberate behavior corrections and platform additions. Most apps need no code changes — the differences show up as more truthful outcomes:
+
+- **Failed silent refresh reports failure (OIDC).** A refresh the identity provider rejected used to be reported as success with an empty access token, leaving `IsAuthenticated` true with nothing to send. It now returns `false` and clears the session — but only when the token endpoint actually answered with an OAuth error (`invalid_grant` and its siblings). A refresh that never reached a verdict — the endpoint unreachable, a 5xx — keeps the current tokens and logs a `Warning`, so an offline start does not sign the user out; this is the MSAL provider's rule applied to OIDC.
+- **Cancelled sign-in preserves the session (Web and OIDC).** Backing out of the sign-in UI now surfaces as `OperationCanceledException` and leaves previously cached tokens untouched; it used to return an empty token set that wiped them. A failed flow (HTTP error) returns `false`. On Skia Desktop the broker's `AuthenticationTimeout` is reported the same way, with a message that says it timed out.
+- **`WebAuthenticatorBrowser` reports outcomes by type (OIDC).** The `IBrowser` adapter now returns `BrowserResultType.UserCancel` for a dismissed sign-in, `BrowserResultType.Timeout` when its own timeout or the desktop broker's elapses, and `BrowserResultType.HttpError` for a broker error; a caller-cancelled invocation throws `OperationCanceledException`. Every one of these used to be `UnknownError`. Apps that wrap or replace `IBrowser` and switch on `ResultType` see the new values.
+- **`{State}` placeholder (Web).** A `LoginStartUri` carrying the literal `{State}` token gets a fresh random `state` per sign-in, and the provider rejects any response whose `state` does not match. Opt-in, but strongly recommended on Skia Desktop, where the loopback callback is reachable by any page in the system browser. See [Web Authentication: One configuration for every platform](xref:Uno.Extensions.Authentication.HowToWebAuthentication#one-configuration-for-every-platform).
+- **Cancelled or failed sign-out keeps the session (Web and OIDC).** `LogoutAsync` now returns `false` and keeps the token cache when the end-session flow is dismissed or fails; it used to clear the cache regardless.
+- **OIDC logout sends `id_token_hint`.** The cached id_token is passed to the end-session endpoint, so compliant identity providers skip the logout confirmation prompt and redirect back to the app. Without it, desktop logout could hang until the broker timeout.
+- **Cancellation reaches the interactive flow.** The `CancellationToken` passed to `LoginAsync`/`LogoutAsync` now cancels the browser interaction on every platform.
+- **Skia Desktop sign-in works out of the box.** `AddWeb()`/`AddOidc()` automatically register a loopback `WebAuthenticationBroker` (system browser + `localhost` listener), including relay support for URL-fragment responses. See [Web Authentication: Platform support](xref:Uno.Extensions.Authentication.HowToWebAuthentication#platform-support).
+- **Web callback defaults (behavior change).** When no callback is configured, `AddWeb` now derives it from `WebAuthenticationBroker.GetCurrentApplicationCallbackUri()` instead of failing with a warning, and the literal `{RedirectUri}` token in `LoginStartUri`/`LogoutStartUri` is replaced with the URL-encoded effective callback. A `redirect_uri={RedirectUri}` pair is no longer treated as a literal callback value. See [Web Authentication: One configuration for every platform](xref:Uno.Extensions.Authentication.HowToWebAuthentication#one-configuration-for-every-platform).
+- **`PrefersEphemeralWebBrowserSession` is honored on Skia iOS heads**, where it was previously lost to build-time platform selection.
+- **Unencrypted token stores are reported.** The token cache behind `IAuthenticationService` now logs a `Warning` at startup naming the store when the host's default `IKeyValueStorage` does not encrypt — plain `ApplicationData` on Skia Desktop and on Skia-renderer Android/iOS heads, browser storage on WebAssembly. Where tokens go is unchanged; the warning makes the downgrade visible so a protected store can be registered instead. See [Key-value storage](xref:Uno.Extensions.Storage.Overview#key-value-storage).
+
 ### OidcClient Authentication
 
 When upgrading to Uno.Extensions 7.0 or later, the NuGet Package Dependency, before known as `IdentityModel.OidcClient`, which is used in the [Oidc Authentication Extension](xref:Uno.Extensions.Authentication.HowToOidcAuthentication), has been [rebranded](https://github.com/DuendeSoftware/foss/blob/main/README.md#relationship-to-identitymodel).
@@ -133,6 +149,21 @@ When upgrading to later versions, you must make sure to update the Namespaces in
 - global using IdentityModel.OidcClient
 + global using Duende.IdentityModel.OidcClient
 ```
+
+### MSAL Authentication behavior changes
+
+The MSAL provider received a set of deliberate behavior corrections and platform additions. Most apps need no code changes — the differences show up as more truthful outcomes and working platforms:
+
+- **Minimum Uno Platform 6.8.** Below it, the runtime-asset selector replaces `Uno.UI.MSAL` with a no-op build on Skia mobile and WebAssembly heads, so `WithUnoHelpers()` silently does nothing and interactive sign-in never appears. The package floor turns that silent no-op into an `NU1605` restore error. See [MSAL prerequisites](xref:Uno.Extensions.Authentication.HowToMsalAuthentication).
+- **Redirect URIs are derived per platform** when configuration does not supply one: `msal{ClientId}://auth` on Android, `msauth.{BundleId}://auth` on iOS, the `WebAuthenticationBroker` URI on WebAssembly, and MSAL's default loopback redirect on desktop. WinAppSDK is untouched (the WAM broker owns it there). An app-supplied `RedirectUri` always wins.
+- **The app's `Builder(...)` callback wins** over the platform defaults and `WithUnoHelpers()`; it used to be overwritten on WebAssembly.
+- **Mac Catalyst throws at registration.** `AddMsal` now fails immediately with `PlatformNotSupportedException` instead of silently registering nothing and failing far from the cause.
+- **The WebAssembly token cache is persisted by default**, so sign-in survives a page reload. Select the store with `KeyValueStorageConfiguration:BrowserCacheLocation` (`LocalStorage` default, `SessionStorage`, or `MemoryStorage`); browser storage is origin-readable, so prefer `SessionStorage` for the tightest lifetime. The WebAssembly redirect URI must be registered under the **spa** platform of the app registration.
+- **An unrenewable refresh signs the user out.** When MSAL reports that interaction is required, `RefreshAsync` now returns `false`, clears the session, and raises `LoggedOut`; it used to report success with an empty access token, leaving `IsAuthenticated` true with nothing to send. Transient failures keep the tokens.
+- **Sign-out removes every MSAL account** and the serialized cache — previously only the first account was removed, leaving the rest silently renewable — and the token cache is cleared even when the provider throws.
+- **MSAL exceptions propagate untouched** (`MsalClientException`, `MsalServiceException`, …), so callers can inspect the MSAL error codes; they were previously flattened.
+- **Abandoned interactive sign-ins are cancelled** after 5 minutes by default — closing the system browser is undetectable on desktop — configurable via `InteractiveTimeout` in the `Msal` configuration section.
+- **The token-cache persistence check runs once per cache, not once per launch.** It used to probe the platform's secure store on every storage setup. On macOS that probe is a keychain entry whose service name MSAL randomizes each run, so the OS asked for keychain access on every single launch and "Always Allow" could never take effect. The check now runs only when nothing has been persisted yet, and a write that the store silently rejects is detected and reported instead. Restore the old behavior with `"VerifyCachePersistence": "Always"` in the `Msal` configuration section.
 
 ## Upgrading to Extensions 6.0
 
