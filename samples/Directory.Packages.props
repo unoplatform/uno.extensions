@@ -24,7 +24,7 @@
 		<!--
 			Uno.Sdk 6.8.0-dev.* supplies Uno.Toolkit.WinUI 9.2.0-dev.18, whose iOS assembly is built
 			against Microsoft.iOS 26 while the .NET 9 iOS workload here references 18.2 (CS1705, seen in
-			build 229332). The package folder is named net9.0-ios18.0, so do not read the TFM name as
+			build 229332). The package folder is named net10.0-ios18.0, so do not read the TFM name as
 			evidence the pin is stale - check what the assembly references. 8.4.2 is the latest stable
 			built against 18.2; src/Directory.Packages.props carries the same pin for the same reason.
 		-->
