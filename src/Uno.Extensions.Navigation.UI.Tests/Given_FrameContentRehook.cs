@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -98,7 +98,7 @@ public class Given_FrameContentRehook
 
 		try
 		{
-			var originalVm = (HotReloadVm)((HotReloadVmPage)frame.Content).DataContext;
+			var originalVm = ((HotReloadVmPage)frame.Content).DataContext.Should().BeOfType<HotReloadVm>().Subject;
 
 			var replacement = SwapFrameContent(frame, originalVm);
 
@@ -131,7 +131,7 @@ public class Given_FrameContentRehook
 
 		try
 		{
-			var originalVm = (HotReloadVm)((HotReloadVmPage)frame.Content).DataContext;
+			var originalVm = ((HotReloadVmPage)frame.Content).DataContext.Should().BeOfType<HotReloadVm>().Subject;
 
 			var replacement = SwapFrameContent(frame, originalVm);
 
@@ -161,7 +161,7 @@ public class Given_FrameContentRehook
 
 		try
 		{
-			var originalVm = (HotReloadVm)((HotReloadVmPage)frame.Content).DataContext;
+			var originalVm = ((HotReloadVmPage)frame.Content).DataContext.Should().BeOfType<HotReloadVm>().Subject;
 
 			// The #3130 shape: the replacement carries no usable DataContext, and the delta
 			// does not name the view model — the missing-VM check must still recover it.
@@ -195,7 +195,7 @@ public class Given_FrameContentRehook
 		try
 		{
 			var page = (HotReloadVmPage)frame.Content;
-			var originalVm = (HotReloadVm)page.DataContext;
+			var originalVm = page.DataContext.Should().BeOfType<HotReloadVm>().Subject;
 
 			// No external swap happened — the re-hook must leave everything untouched even
 			// when the delta names the view model (mismatch check gates the whole path).
