@@ -1,4 +1,4 @@
-<Project Sdk="Uno.Sdk.Private">
+﻿<Project Sdk="Uno.Sdk.Private">
 	<Import Project="..\tfms-ui-winui-apps.props" />
 
 	<PropertyGroup>
@@ -27,6 +27,14 @@
 		<Page Include="Pages\HotReloadTabBarCommandPage.xaml" />
 		<Page Include="Pages\HotReloadVmXamlPage.xaml" />
 		<Page Include="Pages\HotReloadStrandedContentPage.xaml" />
+		<Page Include="Pages\FirstPage.xaml" />
+		<Page Include="Pages\HotReloadMainTabBarPage.xaml" />
+		<Page Include="Pages\HotReloadNavDataBindingPage.xaml" />
+		<Page Include="Pages\HotReloadPanelRegionNamesPage.xaml" />
+		<Page Include="Pages\HotReloadRegionNameAddRemovePage.xaml" />
+		<Page Include="Pages\HotReloadRegionRenamePage.xaml" />
+		<Page Include="Pages\HotReloadTabBarLateAddPage.xaml" />
+		<Page Include="Pages\SecondPage.xaml" />
 	</ItemGroup>
 
 	<ItemGroup>

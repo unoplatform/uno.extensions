@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -90,7 +90,7 @@ public class Given_ActiveRouteVmRefresh
 		try
 		{
 			var page = (HotReloadVmPage)frame.Content;
-			var originalVm = (HotReloadVm)page.DataContext;
+			var originalVm = page.DataContext.Should().BeOfType<HotReloadVm>().Subject;
 
 			// The delta contains the view model mapped to the route the frame is currently on
 			// (an in-place EnC update keeps the type identity). #3142: the region is already on
@@ -124,7 +124,7 @@ public class Given_ActiveRouteVmRefresh
 		try
 		{
 			var page = (HotReloadVmPage)frame.Content;
-			var originalVm = (HotReloadVm)page.DataContext;
+			var originalVm = page.DataContext.Should().BeOfType<HotReloadVm>().Subject;
 
 			// A view-only delta (XAML or code-behind edit on the page type) must NOT rebuild the
 			// view model: updated views are owned by Uno's element-update walk, and re-creating
