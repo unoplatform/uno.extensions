@@ -1,5 +1,5 @@
 <Project Sdk="Uno.Sdk.Private">
-	<Import Project="..\tfms-ui-winui.props" />
+	<Import Project="..\tfms-ui-winui-apps.props" />
 
 	<PropertyGroup>
 		<Description>Test library for Storage extensions (WinUI)</Description>

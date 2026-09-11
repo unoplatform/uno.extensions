@@ -1,5 +1,5 @@
 ﻿<Project Sdk="Uno.Sdk.Private">
-  <Import Project="..\..\tfms-ui-winui.props" />
+  <Import Project="..\..\tfms-ui-winui-apps.props" />
 
 	<PropertyGroup>
 		<Description>Internal core project that could be used by runtime tests projects</Description>
