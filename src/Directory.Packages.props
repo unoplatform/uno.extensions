@@ -72,6 +72,7 @@
     <PackageVersion Include="Serilog.Sinks.Debug" Version="2.0.0" />
     <PackageVersion Include="Serilog.Sinks.File" Version="5.0.0" />
     <PackageVersion Include="Serilog.Sinks.Xamarin" Version="1.0.0" />
+    <PackageVersion Include="SkiaSharp.Skottie" Version="4.151.1" />
     <PackageVersion Include="System.Net.Http.WinHttpHandler" Version="6.0.1" />
     <PackageVersion Include="Uno.Core" Version="4.1.1" />
     <PackageVersion Include="Uno.Core.Extensions" Version="4.1.1" />
