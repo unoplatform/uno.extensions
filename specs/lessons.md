@@ -26,7 +26,7 @@ Domain lessons / postmortems for Uno.Extensions. See `AGENTS.md` §3 for when to
 
 ## `-getProperty:DefineConstants` does not list the SDK's implicit symbols (`ANDROID`, `IOS`, ...)
 
-**Problem:** while adding platform branches to `MsalAuthenticationProvider` (spec 013), `dotnet build -getProperty:DefineConstants` was used to check whether `ANDROID` / `IOS` were defined for the `net9.0-android` / `net9.0-ios` TFMs. Neither appeared, which read as "the `#if ANDROID` branch is dead code". They are in fact defined: the .NET SDK merges `@(ImplicitDefineConstants)` into `DefineConstants` inside a target that runs *before* `CoreCompile` but *after* evaluation, and `-getProperty` reports the evaluation-time value.
+**Problem:** while adding platform branches to `MsalAuthenticationProvider` (spec 017), `dotnet build -getProperty:DefineConstants` was used to check whether `ANDROID` / `IOS` were defined for the `net9.0-android` / `net9.0-ios` TFMs. Neither appeared, which read as "the `#if ANDROID` branch is dead code". They are in fact defined: the .NET SDK merges `@(ImplicitDefineConstants)` into `DefineConstants` inside a target that runs *before* `CoreCompile` but *after* evaluation, and `-getProperty` reports the evaluation-time value.
 
 **Correct pattern:** to test whether a symbol is live, compile something that depends on it. Either a temporary `#if !SYMBOL` + `#error` probe build, or check the emitted assembly for a type only that branch references (`Foundation.NSBundle` appears only in the iOS assembly). Do not infer symbol state from `-getProperty`.
 
@@ -286,7 +286,7 @@ for client-side negative caching before looking at the fake server.
 test that deliberately drives an `invalid_grant`/`interaction_required` response — follow it by
 checking the next silent call still reaches the server.
 
-## Runtime-test suites share process-global registries (2026-08-21, spec 013)
+## Runtime-test suites share process-global registries (2026-08-21, spec 017)
 
 All `*.UI.Tests` suites run in one process inside the runtime-test head. A product-side
 `ApiExtensibility.Register` (first-wins) triggered while ONE suite builds its host - e.g.
@@ -301,7 +301,7 @@ all Web tests drove a real loopback listener. Two rules:
 - Per-suite filter runs are not sufficient verification: always finish with a **combined run using
   the exact CI filter**, because cross-suite interference only shows up there.
 
-## Silent no-ops hide DI failures; filtered build output hides failures (2026-08-21, spec 013 samples)
+## Silent no-ops hide DI failures; filtered build output hides failures (2026-08-21, spec 017 samples)
 
 - A view whose click handlers null-check the view model (`if (_viewModel is { } vm)`) turns a
   navigation-time DI failure into "the button does nothing" with zero diagnostics. When the VM
@@ -313,7 +313,7 @@ all Web tests drove a real loopback listener. Two rules:
   or the exit code, never on elapsed-time output. (Repeat offender this session: `grep|head` exit
   codes; see the runtime-test filter entry above.)
 
-## `git cherry` cannot see a commit main absorbed under a different message (2026-08-26, spec 013)
+## `git cherry` cannot see a commit main absorbed under a different message (2026-08-26, spec 017)
 
 **Problem:** `dev/sb/auth-providers-fixes` was 36 commits behind `main` with 90 of its own, and about
 forty of those had already reached `main` through the split PRs carved out of it - reworded and
@@ -344,8 +344,11 @@ duplicate `.sln` entry to drop).
   branch's renumber has to carry the "spec NNN" references in source comments with it. Blanket
   replacement is not safe: an unrelated spec here referenced a *planned* "spec 013" that means
   something else entirely.
+  That planned spec has since landed on `main` as `013-mvux-mocking-previews`, which is what forced
+  `013-auth-providers-fixes` to become `017` on the 2026-09-11 rebase - and the same blanket
+  replacement rewrote this very line before it was caught.
 
-## A desktop-only runtime-test build invalidates the package build's restore (2026-08-27, spec 013)
+## A desktop-only runtime-test build invalidates the package build's restore (2026-08-27, spec 017)
 
 **Problem:** `dotnet build Uno.Extensions-runtimetests.slnf -p:Build_Android=false ...` (the local
 way to build the Skia desktop head) re-restores every shared project with desktop-only target

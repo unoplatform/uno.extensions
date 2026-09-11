@@ -40,7 +40,7 @@ public class WebAuthenticatorBrowser : IBrowser
 					},
 				// Error deliberately left null: OidcClient then reports the result type by name,
 				// which is how OidcAuthenticationProvider tells a cancelled sign-in from a failed
-				// one and keeps the previous session (spec 013 F5).
+				// one and keeps the previous session (spec 017 F5).
 				WebAuthenticationStatus.UserCancel => new BrowserResult { ResultType = BrowserResultType.UserCancel },
 				_ => new BrowserResult
 				{
@@ -52,7 +52,7 @@ public class WebAuthenticatorBrowser : IBrowser
 		}
 		catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
 		{
-			// The caller cancelled: propagate rather than reporting a failed login (spec 013 F3).
+			// The caller cancelled: propagate rather than reporting a failed login (spec 017 F3).
 			throw;
 		}
 		catch (OperationCanceledException)

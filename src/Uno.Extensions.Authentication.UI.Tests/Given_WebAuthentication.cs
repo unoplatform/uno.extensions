@@ -107,7 +107,7 @@ public class Given_WebAuthentication
 	}
 
 	/// <summary>
-	/// Red test for spec 013 F5: the provider used to ignore
+	/// Red test for spec 017 F5: the provider used to ignore
 	/// <see cref="WebAuthenticationResult.ResponseStatus"/> and return an empty (non-null) token
 	/// dictionary on cancel, which <c>TokenCache.SaveAsync</c> turns into a wipe of the previously
 	/// cached session. Cancellation must surface as <see cref="OperationCanceledException"/> before
@@ -164,7 +164,7 @@ public class Given_WebAuthentication
 	}
 
 	/// <summary>
-	/// Red test for spec 013 F6: the provider used to discard the broker result on logout and
+	/// Red test for spec 017 F6: the provider used to discard the broker result on logout and
 	/// return true unconditionally, so a cancelled end-session flow still flushed the local token
 	/// cache and reported the sign-out as successful.
 	/// </summary>
@@ -505,7 +505,7 @@ public class Given_WebAuthentication
 	}
 
 	/// <summary>
-	/// Red test for spec 013 F4: no <see cref="CancellationToken"/> used to reach the broker call,
+	/// Red test for spec 017 F4: no <see cref="CancellationToken"/> used to reach the broker call,
 	/// so an already-cancelled login still drove the whole interactive flow to completion.
 	/// </summary>
 	[TestMethod]

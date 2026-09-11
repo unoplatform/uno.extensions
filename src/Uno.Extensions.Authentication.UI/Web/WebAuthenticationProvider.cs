@@ -64,7 +64,7 @@ internal record WebAuthenticationProvider
 
 	protected async override ValueTask<IDictionary<string, string>?> InternalLoginAsync(IDispatcher? dispatcher, IDictionary<string, string>? credentials, CancellationToken cancellationToken)
 	{
-		// An already-cancelled login must not open the sign-in UI at all (spec 013 F4).
+		// An already-cancelled login must not open the sign-in UI at all (spec 017 F4).
 		cancellationToken.ThrowIfCancellationRequested();
 
 		var loginStartUri = InternalSettings.LoginStartUri;
@@ -117,7 +117,7 @@ internal record WebAuthenticationProvider
 		{
 			// Surfacing cancellation (instead of returning a result) keeps AuthenticationService
 			// from saving over - and thereby clearing - the previously cached tokens: a login the
-			// user backed out of must not sign them out (spec 013 F5). The desktop broker reports
+			// user backed out of must not sign them out (spec 017 F5). The desktop broker reports
 			// its own timeout the same way, marked by the error detail.
 			var timedOut = userResult.ResponseErrorDetail == DesktopWebAuthenticationBrokerProvider.TimeoutErrorDetail;
 			if (ProviderLogger.IsEnabled(LogLevel.Information))
@@ -364,7 +364,7 @@ internal record WebAuthenticationProvider
 
 	protected async override ValueTask<bool> InternalLogoutAsync(IDispatcher? dispatcher, CancellationToken cancellationToken)
 	{
-		// An already-cancelled logout must not open the end-session UI at all (spec 013 F4).
+		// An already-cancelled logout must not open the end-session UI at all (spec 017 F4).
 		cancellationToken.ThrowIfCancellationRequested();
 
 		var logoutStartUri = InternalSettings.LogoutStartUri;
@@ -405,7 +405,7 @@ internal record WebAuthenticationProvider
 		if (userResult?.ResponseStatus == WebAuthenticationStatus.UserCancel)
 		{
 			// Reporting failure keeps the local token cache intact - the user backed out of the
-			// end-session flow (or it timed out), so they are still signed in (spec 013 F6).
+			// end-session flow (or it timed out), so they are still signed in (spec 017 F6).
 			if (ProviderLogger.IsEnabled(LogLevel.Information))
 			{
 				ProviderLogger.LogInformation("Sign-out flow {Outcome} before completing; the session is kept", userResult.ResponseErrorDetail == DesktopWebAuthenticationBrokerProvider.TimeoutErrorDetail ? "timed out" : "was cancelled by the user");

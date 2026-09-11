@@ -45,7 +45,7 @@ internal record OidcAuthenticationProvider(
 				// no error text (WebAuthenticatorBrowser leaves it null on purpose). Surfacing
 				// cancellation instead of returning null keeps AuthenticationService from clearing
 				// the previously cached tokens: a login the user backed out of must not sign them
-				// out (spec 013 F5) - the same contract as the Web and MSAL providers.
+				// out (spec 017 F5) - the same contract as the Web and MSAL providers.
 				if (ProviderLogger.IsEnabled(LogLevel.Information))
 				{
 					ProviderLogger.LogInformation("Sign-in flow was cancelled by the user; the previous session is kept");
@@ -90,7 +90,7 @@ internal record OidcAuthenticationProvider(
 		// Pass the cached id_token as the end-session hint: without it the identity provider
 		// cannot trust the post-logout redirect, so it prompts the user for confirmation and never
 		// redirects back to the app - on desktop the loopback listener then waits until the broker
-		// timeout with the UI stuck (spec 013 F11).
+		// timeout with the UI stuck (spec 017 F11).
 		var idToken = await Tokens.TokenAsync(TokenCacheExtensions.IdTokenKey, cancellationToken);
 		var result = await _client.LogoutAsync(
 			new LogoutRequest { IdTokenHint = string.IsNullOrWhiteSpace(idToken) ? null : idToken },

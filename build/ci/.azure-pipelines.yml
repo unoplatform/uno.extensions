@@ -35,7 +35,7 @@ variables:
   # green on every lane: Storage.UI.Tests (default key-value store selection, browser-store round
   # trip) and the whole Uno.Extensions.Authentication. namespace - the MSAL suite
   # (Given_MsalAuthentication + Given_BrowserTokenCacheStorage) plus the OIDC, Web and desktop-broker
-  # suites spec 013 added. The wider non-hot-reload suite has 15 failing tests (verified identical at
+  # suites spec 017 added. The wider non-hot-reload suite has 15 failing tests (verified identical at
   # the pre-change baseline, so they are rot rather than regressions); widen to '!_HotReload' once
   # those are fixed - that is the whole point of turning these stages back on.
   #

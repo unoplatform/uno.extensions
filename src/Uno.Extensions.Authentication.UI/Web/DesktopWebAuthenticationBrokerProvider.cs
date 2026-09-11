@@ -234,7 +234,7 @@ public class DesktopWebAuthenticationBrokerProvider : IWebAuthenticationBrokerPr
 					// The response may be riding the URL fragment (implicit flows), which browsers
 					// never send to a server. Serve the relay page, whose script re-requests this
 					// callback with the fragment as a marked query - or the no-fragment sentinel -
-					// and keep listening for that second request (spec 013 F12). A write the
+					// and keep listening for that second request (spec 017 F12). A write the
 					// browser dropped is not fatal either: it retries, or the timeout ends the flow.
 					await TryRespondAsync(context.Response, FragmentRelayBody, linked.Token).ConfigureAwait(false);
 					continue;
