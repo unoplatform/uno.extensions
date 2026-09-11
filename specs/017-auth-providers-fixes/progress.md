@@ -288,3 +288,58 @@ $env:UNO_RUNTIME_TESTS_OUTPUT_PATH = "<some path>\results.xml"
 Push-Location src\Uno.Extensions.RuntimeTests\Uno.Extensions.RuntimeTests\bin\Uno.Extensions.RuntimeTests\Debug\net9.0-desktop
 dotnet Uno.Extensions.RuntimeTests.dll; Pop-Location   # then parse the NUnit XML, not the console
 ```
+
+## Rebased onto main, and renumbered to 017 (2026-09-11)
+
+The branch had gone 25 commits behind `main` and the PR had flipped to `CONFLICTING`. Unlike the
+2026-08-26 rebuild, a real `git rebase origin/main` was the right instrument this time: `main`'s new
+work is the MVUX mocking feature, which touches nothing this branch touches. Two files overlapped and
+only one conflicted.
+
+- **`Uno.Extensions.sln`** - two add/add hunks (the project-configuration block and the nested-project
+  block), `main`'s four mocking projects against this branch's auth test projects. Resolved as a
+  union both times. The conflict then recurred on `fix(build): drop the duplicated
+  Authentication.Tests solution entry`, whose whole job is to delete the `{633B02DE-...}` duplicate:
+  resolution there is keep `main`'s mocking lines, drop the `633B02DE` ones. Verified afterwards that
+  no two projects in the solution share a name, which is what MSB5004 rejects.
+- **`build/ci/.azure-pipelines.yml`** - auto-merged; `main` had not touched `RuntimeTestsFilter`.
+
+The diff between the rebased branch and its pre-rebase tip contains only `main`'s new files, so no
+work was dropped in the replay.
+
+### Why this spec is now 017
+
+`main` landed `specs/013-mvux-mocking-previews` while this branch was open, so both sides had a
+`013` and both carry `spec 013` comments in source. `main`'s copy keeps the number (AGENTS.md: a
+committed spec number is permanent), so `013-auth-providers-fixes` moved to the next free slot, 017,
+carrying its 24 branch-side `spec 013` references.
+
+Two traps, both hit:
+
+- `specs/009-hot-testing-reactive-feed-mocks` references a *planned* "spec 013" that means the MVUX
+  generation spec - which is precisely what `main` just landed as `013-mvux-mocking-previews`. It is
+  correct as written and must not be renumbered. `specs/lessons.md` already warned about this file.
+- The blanket replacement rewrote that very warning in `lessons.md` before it was caught. The lesson
+  has been extended to say so.
+
+`dev/sb/macos-keychain-storage` had claimed 017 for its keychain spec; it has not been pushed and now needs
+018. The auth PR lands first.
+
+### Encoding cleanup done at the same time
+
+Four files carried a BOM that disagrees with `main` and showed as phantom first-line diffs:
+`build/ci/.azure-pipelines.yml` had lost the BOM `main` gives it, and
+`MsalAuthenticationProvider.cs`, `MsalStorageDefaults.cs` and
+`Uno.Extensions.Authentication.Tests.csproj` had gained one `main` does not. Both directions fixed,
+no content change. `lessons.md`'s rule stands: preserve each file's existing state, do not normalize.
+
+### Verification on the rebased tip
+
+| Check | Result |
+| --- | --- |
+| `Uno.Extensions-packageonly.slnf` Release via `MSBuild.exe` | exit 0; NETSDK1202 (EOL android workload) and 3x CS1591 in `WebAuthenticatorBrowser.cs`, both pre-existing on `main` |
+| Unit tests, the package-CI filter | 1626 passed, 0 failed, 19 skipped - includes `main`'s new `Uno.HotTesting.Reactive.Tests` |
+| markdownlint + cspell on the touched markdown | clean |
+
+Runtime tests were not re-run locally: the rebase changes no UI or navigator behavior, and the device
+lanes were green on the pre-rebase tip. CI on the force-push is the check.
