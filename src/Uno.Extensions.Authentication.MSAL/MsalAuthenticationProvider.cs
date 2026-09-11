@@ -1,4 +1,4 @@
-﻿#if WINDOWS
+#if WINDOWS
 using Microsoft.Identity.Client.Broker;
 #endif
 using System.Diagnostics;

@@ -1,4 +1,4 @@
-﻿// Compiled out on WebAssembly (UNO_EXT_MSAL_BROWSER), where the cache goes through
+// Compiled out on WebAssembly (UNO_EXT_MSAL_BROWSER), where the cache goes through
 // MsalTokenCacheStore rather than MsalCacheHelper. Keep this file free of other #if branches and of
 // dependencies beyond Microsoft.Identity.Client.Extensions.Msal: Uno.Extensions.Authentication.MSAL.Tests
 // compiles it as linked source (the WinUI assembly can't load in a plain test host).
