@@ -10,7 +10,7 @@
 		<OutputType>Library</OutputType>
 	</PropertyGroup>
 
-	<ItemGroup Condition="'$(TargetFramework)'!='net9.0-windows10.0.19041'">
+	<ItemGroup Condition="'$(TargetFramework)'!='net10.0-windows10.0.19041'">
 		<Content Include="Assets\**" />
 	</ItemGroup>
 
