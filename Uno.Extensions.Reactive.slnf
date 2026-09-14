@@ -21,6 +21,7 @@
       "src\\Uno.Extensions.RuntimeTests\\Uno.Extensions.RuntimeTests.Skia.Wpf\\Uno.Extensions.RuntimeTests.Skia.Wpf.csproj",
       "src\\Uno.Extensions.RuntimeTests\\Uno.Extensions.RuntimeTests.Wasm\\Uno.Extensions.RuntimeTests.Wasm.csproj",
       "src\\Uno.Extensions.RuntimeTests\\Uno.Extensions.RuntimeTests.Windows\\Uno.Extensions.RuntimeTests.Windows.csproj",
+      "src\\Uno.HotTesting.Reactive.Generator\\Uno.HotTesting.Reactive.Generator.csproj",
       "src\\Uno.HotTesting.Reactive.Tests\\Uno.HotTesting.Reactive.Tests.csproj",
       "src\\Uno.HotTesting.Reactive\\Uno.HotTesting.Reactive.csproj"
     ]

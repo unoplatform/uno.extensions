@@ -14,4 +14,10 @@
 	<ItemGroup>
 		<ProjectReference Include="..\Uno.Extensions.Reactive\Uno.Extensions.Reactive.csproj" />
 	</ItemGroup>
+
+	<ItemGroup>
+		<!-- The consumer generator (spec 013, tiers 2/3) ships as the analyzer of this package, the way the MVUX generator ships in Uno.Extensions.Reactive. -->
+		<ProjectReference Include="..\Uno.HotTesting.Reactive.Generator\Uno.HotTesting.Reactive.Generator.csproj" ReferenceOutputAssembly="false" />
+		<None Include="..\Uno.HotTesting.Reactive.Generator\bin\Uno.HotTesting.Reactive.Generator\$(Configuration)\netstandard2.0\Uno.HotTesting.Reactive.Generator.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+	</ItemGroup>
 </Project>

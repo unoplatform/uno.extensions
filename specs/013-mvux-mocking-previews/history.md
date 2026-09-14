@@ -149,6 +149,23 @@ Propagated: documentation `doc/Reference/Reactive/testing.md`, spec §7/§8/§10
 
 ---
 
+## v13 — `Create` null-injects every constructor parameter
+
+The consumer generator emitted exactly one `default!`, so a model whose constructor takes more than one
+dependency (a service plus a navigator, a messenger, ...) produced a `Create` that did not compile. `Create`
+now targets the public view-model constructor with the fewest parameters (the generated VM mirrors the model's
+constructors; the protected model-wrapping constructor is never a candidate) and passes a typed
+`default({ParameterType})!` for each parameter: a bare `default!` fixes the arity but leaves two constructors
+of equal arity ambiguous (CS0121). Ties on arity are broken on the ordinal parameter type list, so the emitted
+code does not depend on the compiler's symbol order. A view-model with no public constructor reports the
+`MOCK0001` warning instead of silently emitting nothing. Fixture in the two-project app: `MenuModel` (two
+constructor parameters plus a second constructor of equal arity; its derived feed and independent state pin the
+record's member classification). Tests: `Given_GeneratedMock`
+(`..._Then_CreateCompilesAndInputFlows`, `..._Then_MockExposesOnlyTheDerivedOneAsOptional`) and the
+generator-driver tests of `Given_FeedsMockGenerator` (typed defaults, tie-break, `MOCK0001`).
+
+---
+
 ## Final decision register
 
 | # | Decision | Version |
