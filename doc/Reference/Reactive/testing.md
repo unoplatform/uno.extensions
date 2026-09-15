@@ -118,10 +118,11 @@ soon as you want to drive a **real generated view-model** — its real `Model`, 
 real business logic — through mocked states, let the `Uno.HotTesting.Reactive`
 generator build the plumbing for you.
 
-Reference the `Uno.HotTesting.Reactive` package either in a **test or preview
-project** (one that references the app) or in the **app project itself** — a
-single-project app, as created by the templates, gets its mocks the same way. For
-every MVUX model it finds, the generator emits, next to the model:
+Reference the `Uno.HotTesting.Reactive` package in a **test or preview project**
+(one that references the app), or in the **app project itself** — a single-project
+app, as created by the templates, has nowhere else to put it.
+
+For every MVUX model it finds, the generator emits, next to the model:
 
 - a `record {Model}Mock` whose **required** members are exactly the
   service-dependent feeds, and whose **optional** members are the derived feeds
@@ -134,9 +135,12 @@ every MVUX model it finds, the generator emits, next to the model:
 A view-model whose constructors are all non-public cannot be built this way:
 the generator reports the `MOCK0001` warning for that model and emits no mock.
 
-When the app references the package and a test project references both, the mocks
-are emitted once, in the app: a project that can already see them does not generate
-a second copy.
+> [!NOTE]
+> A model declared as a positional record (`record RecipeModel(IRecipeService Service)`)
+> previously had its feeds classified as independent, so its mock came out with no
+> required members — or was not generated at all. Those feeds are now recognized as
+> service-dependent, so such a mock gains `required` members and existing
+> `new RecipeModelMock { }` / `Create()` call sites need the inputs supplied.
 
 Given this model:
 
@@ -172,8 +176,8 @@ vm.SetMock(RecipeModelMock.Empty with { Steps = ListFeedMock.Error<Step>(new Tim
 > [!IMPORTANT]
 > Mocking is only active for a view-model built by `Create` (which opens a
 > `MockingService.Enable()` scope around construction). Outside such a scope
-> nothing is wrapped, so a shipping application pays no cost — never reference
-> `Uno.HotTesting.Reactive` from a published app head.
+> nothing is wrapped, so a shipping application pays no cost, including one that
+> carries the reference itself.
 
 ### Only fill what matters
 
@@ -225,8 +229,8 @@ public static partial class RecipeViewModelMock
 ### Turning the instrumentation off
 
 The metadata the consumer generator reads is emitted **by default** (the runtime,
-not the generator, decides activation). To restore byte-identical MVUX output,
-opt out at the assembly level:
+not the generator, decides activation). To restore byte-identical MVUX output and
+stop the mocks being generated, opt out at the assembly level:
 
 ```csharp
 [assembly: EnableFeedMocking(IsEnabled = false)]

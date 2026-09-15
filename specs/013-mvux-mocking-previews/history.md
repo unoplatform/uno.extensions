@@ -198,6 +198,30 @@ through the synthesized property, a derived feed, an independent feed). Tests: `
 (the mock exists at all, the input is required, the derived feed stays optional, the independent feed is
 absent, the mocked input flows, and the referencing project does not re-emit).
 
+**Alternatives weighed.** Moving emission into the MVUX generator was rejected: it already holds the
+analysis and the view-model name, but mock codegen would then ship in Core and change on Core's release
+cadence, against D5. Having the MVUX generator publish its metadata in a form a sibling generator could
+read was rejected because no such form exists — generator outputs are not visible within a compilation,
+whatever shape they take. What remained was to give the mocking generator a second intake, which is what
+D13 records.
+
+**Consumer-visible change.** The positional-record classification is a fix, but it is not invisible: a
+model of that shape produced a mock with no required members, or none at all, and now produces one with
+`required` inputs. Existing `new {Model}Mock { }` / `Create()` call sites must supply them. Noted in
+`doc/Reference/Reactive/testing.md`.
+
+**Review follow-ups.** The mock member is typed by the *feed interface* rather than by the member's own
+type: a state is an `IFeed`, but the mock vocabulary produces an `IFeed`, so a member typed as the state
+could not accept it. Emitted types carry the model's accessibility, since the generated view-model does.
+Nested models are left to the metadata path, because their view-model is generated inside the containing
+partial and cannot be named from the namespace. The opt-out
+(`[assembly: EnableFeedMocking(IsEnabled = false)]`) gates both paths. `MOCK0002` reports a model that was
+considered but carries no mockable input, so the silent no-op this version set out to remove does not
+survive in another form. The analysis caches bound syntax trees across models, and the walk skips
+assemblies that do not reference `Uno.Extensions.Reactive`, so an app build does not realize the whole
+metadata closure. Constructor selection honours `[ReactiveBindable(false)]` and may pick an internal
+constructor on the source path, where the mirrored one is reachable.
+
 ---
 
 ## Final decision register

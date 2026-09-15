@@ -110,6 +110,116 @@ public class Given_FeedsMockGenerator
 		diagnostic.GetMessage().Should().Contain("ItemsModel").And.Contain("ItemsViewModel");
 	}
 
+	[TestMethod]
+	public void When_ModelCarriesNoMetadata_Then_MockIsGeneratedFromSource()
+	{
+		// The single-project shape: no [Model]/[FeedDependency] to read, because in a real app they are
+		// emitted by a sibling generator. The service reaches the feed through the record's synthesized
+		// property, and the view-model is named and constructed from the model.
+		var (sources, diagnostics) = Run("""
+			using Uno.Extensions.Reactive;
+
+			namespace App;
+
+			public interface IPantryService { IListFeed<string> Items { get; } }
+
+			public partial record PantryModel(IPantryService Service)
+			{
+				public IListFeed<string> Items => Service.Items;
+			}
+			""");
+
+		diagnostics.Should().BeEmpty();
+
+		var mock = sources.Should().ContainSingle().Subject;
+		mock.Should().Contain("public required global::Uno.Extensions.Reactive.IListFeed<string> Items");
+		mock.Should().Contain("new global::App.PantryViewModel(default(global::App.IPantryService)! /* Service */)");
+	}
+
+	[TestMethod]
+	public void When_MockingIsDisabled_Then_SourcePathGeneratesNothing()
+	{
+		var (sources, diagnostics) = Run("""
+			using Uno.Extensions.Reactive;
+			using Uno.Extensions.Reactive.Config;
+
+			[assembly: EnableFeedMocking(IsEnabled = false)]
+
+			namespace App;
+
+			public interface IPantryService { IListFeed<string> Items { get; } }
+
+			public partial record PantryModel(IPantryService Service)
+			{
+				public IListFeed<string> Items => Service.Items;
+			}
+			""");
+
+		sources.Should().BeEmpty();
+		diagnostics.Should().BeEmpty();
+	}
+
+	[TestMethod]
+	public void When_ModelIsInternal_Then_MockCarriesTheSameAccessibility()
+	{
+		// The generated view-model is as visible as the model, so a public mock over it would not compile.
+		var (sources, _) = Run("""
+			using Uno.Extensions.Reactive;
+
+			namespace App;
+
+			public interface IPantryService { IListFeed<string> Items { get; } }
+
+			internal partial record PantryModel(IPantryService Service)
+			{
+				public IListFeed<string> Items => Service.Items;
+			}
+			""");
+
+		var mock = sources.Should().ContainSingle().Subject;
+		mock.Should().Contain("internal sealed record PantryModelMock");
+		mock.Should().Contain("internal static partial class PantryViewModelMock");
+	}
+
+	[TestMethod]
+	public void When_StateIsServiceDependent_Then_MockExposesItsFeedInterface()
+	{
+		// FeedMock.Empty hands back an IFeed, so a member typed as the state itself could not accept it.
+		var (sources, _) = Run("""
+			using Uno.Extensions.Reactive;
+
+			namespace App;
+
+			public interface IPantryService { IState<string> Filter { get; } }
+
+			public partial record PantryModel(IPantryService Service)
+			{
+				public IState<string> Filter => Service.Filter;
+			}
+			""");
+
+		sources.Should().ContainSingle()
+			.Which.Should().Contain("public required global::Uno.Extensions.Reactive.IFeed<string> Filter");
+	}
+
+	[TestMethod]
+	public void When_NoFeedIsServiceDependent_Then_ReportsMock0002AndEmitsNothing()
+	{
+		var (sources, diagnostics) = Run("""
+			using Uno.Extensions.Reactive;
+
+			namespace App;
+
+			public partial record PantryModel
+			{
+				public IFeed<string> Title => null!;
+			}
+			""");
+
+		sources.Should().BeEmpty();
+		diagnostics.Should().ContainSingle().Which.Id.Should().Be("MOCK0002");
+	}
+
 	private static (string[] Sources, Diagnostic[] Diagnostics) Run(string source)
 	{
 		// The framework plus the Uno.Extensions assemblies of the test host: enough for the fixture source to

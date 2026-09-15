@@ -15,28 +15,30 @@ namespace Uno.Extensions.Reactive.Tests.Mocking;
 /// <summary>
 /// Spec 013 — the single-project shape: the model and the mocking generator sit in one compilation, so
 /// the MVUX metadata attributes are emitted by a sibling generator and cannot be read back. The mock
-/// below exists only because the generator analysed the source instead, and its <c>Items</c> member is
-/// required only because the service reaching the feed through a positional record's synthesized
-/// property is recognized as a service dependency.
+/// below exists only because the generator analysed the source instead, and its inputs are required only
+/// because the service reaching them through a positional record's synthesized property is recognized as
+/// a service dependency.
 ///
 /// The types come from the fixture assembly, where they were generated; this project references it and
-/// must NOT generate a second copy of them (same name, same namespace, two assemblies).
+/// must not generate a second copy of them.
 /// </summary>
 [TestClass]
 public class Given_SingleProjectMock : FeedUITests
 {
-	private static async Task<IImmutableList<T>?> CurrentItems<T>(SourceContext ctx, IListFeed<T> feed)
+	private static async Task<IImmutableList<T>> CurrentItems<T>(SourceContext ctx, IListFeed<T> feed)
 	{
 		var (result, _) = ctx.GetOrCreateListState(feed).Record();
 		for (var i = 0; i < 50; i++)
 		{
-			if (result.Count > 0 && result.Last().Current.Data.IsSome(out var v))
+			if (result.Count > 0 && result.Last().Current.Data.IsSome(out var value))
 			{
-				return (IImmutableList<T>)v!;
+				return (IImmutableList<T>)value!;
 			}
+
 			await Task.Delay(20);
 		}
-		return result.Count > 0 && result.Last().Current.Data.IsSome(out var last) ? (IImmutableList<T>)last! : null;
+
+		throw new AssertFailedException("The feed produced no value: the mocked input was never observed.");
 	}
 
 	[TestMethod]
@@ -53,29 +55,44 @@ public class Given_SingleProjectMock : FeedUITests
 		mock.GetProperty(nameof(PantryModel.Title)).Should().BeNull();
 	}
 
-	private static bool IsRequired(PropertyInfo? property)
+	[TestMethod]
+	public void When_InputIsState_Then_MockExposesItAsItsFeedInterface()
 	{
-		property.Should().NotBeNull();
-		return property!.IsDefined(typeof(RequiredMemberAttribute), inherit: false);
+		// A state is an IFeed, but the mock vocabulary hands back an IFeed, so a member typed as the
+		// state itself could not accept FeedMock.Empty (CS0266). The mock is typed by the feed interface.
+		var filter = typeof(PantryModelMock).GetProperty(nameof(PantryModel.Filter));
+
+		IsRequired(filter).Should().BeTrue();
+		filter!.PropertyType.Should().Be(typeof(IFeed<string>));
 	}
 
 	[TestMethod]
 	public void When_MockGeneratedInReferencedAssembly_Then_NotGeneratedAgainHere()
 	{
-		// Both copies would carry the same full name, so the duplicate would only surface as an ambiguity
-		// at the use site: assert on the declaring assembly instead.
-		typeof(PantryModelMock).Assembly
-			.Should().NotBeSameAs(typeof(Given_SingleProjectMock).Assembly);
+		// A second copy would carry the same full name, so it would only surface as an ambiguity at the
+		// use site: assert that this assembly declares no such type at all.
+		typeof(Given_SingleProjectMock).Assembly
+			.GetTypes()
+			.Should().NotContain(type => type.Name == nameof(PantryModelMock));
 	}
 
 	[TestMethod]
 	public async Task When_CreateWithMock_Then_FeedEmitsMockedValues()
 	{
-		var vm = PantryViewModelMock.Create(new PantryModelMock { Items = global::Uno.HotTesting.Reactive.ListFeedMock.Value("flour", "sugar") });
+		var vm = PantryViewModelMock.Create(new PantryModelMock
+		{
+			Items = global::Uno.HotTesting.Reactive.ListFeedMock.Value("flour", "sugar"),
+			Filter = global::Uno.HotTesting.Reactive.FeedMock.Value("dry"),
+		});
 		using var _ = SourceContext.GetOrCreate(vm.Model).AsCurrent();
 
 		var items = await CurrentItems(SourceContext.GetOrCreate(vm.Model), vm.Model.Items);
 		items.Should().BeEquivalentTo(new[] { "flour", "sugar" });
 	}
 
+	private static bool IsRequired(PropertyInfo? property)
+	{
+		property.Should().NotBeNull();
+		return property!.IsDefined(typeof(RequiredMemberAttribute), inherit: false);
+	}
 }
