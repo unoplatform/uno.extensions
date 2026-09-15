@@ -128,7 +128,8 @@ public sealed class FeedsMockGenerator : ISourceGenerator
 		=> compilation.Assembly
 			.GetAttributes()
 			.Any(a => a.AttributeClass?.Name == EnableFeedMockingAttribute
-				&& (a.NamedArguments.FirstOrDefault(na => na.Key == "IsEnabled").Value.Value as bool?) == false);
+				&& a.NamedArguments.FirstOrDefault(na => na.Key == "IsEnabled").Value.Value is bool isEnabled
+				&& !isEnabled);
 
 	private static void AddSource(GeneratorExecutionContext context, ModelMock described, HashSet<string> emitted)
 	{
@@ -348,8 +349,8 @@ public sealed class FeedsMockGenerator : ISourceGenerator
 		/// </summary>
 		public IMethodSymbol? Constructor;
 
-		public List<FeedMember> Inputs = new();
-		public List<FeedMember> Derived = new();
+		public readonly List<FeedMember> Inputs = new();
+		public readonly List<FeedMember> Derived = new();
 	}
 
 	private static ModelMock? DescribeFromMetadata(INamedTypeSymbol model, INamedTypeSymbol feedDep, INamedTypeSymbol modelAttr)
