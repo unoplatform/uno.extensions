@@ -199,7 +199,7 @@ through the synthesized property, a derived feed, an independent feed). Tests: `
 absent, the mocked input flows, and the referencing project does not re-emit).
 
 **Alternatives weighed.** Moving emission into the MVUX generator was rejected: it already holds the
-analysis and the view-model name, but mock codegen would then ship in Core and change on Core's release
+analysis and the view-model name, but mock generation would then ship in Core and change on Core's release
 cadence, against D5. Having the MVUX generator publish its metadata in a form a sibling generator could
 read was rejected because no such form exists — generator outputs are not visible within a compilation,
 whatever shape they take. What remained was to give the mocking generator a second intake, which is what
