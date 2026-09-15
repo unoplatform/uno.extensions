@@ -11,6 +11,8 @@
       href: xref:Uno.Extensions.Markup.Binding101
     - name: Source and Relative Source
       href: xref:Uno.Extensions.Markup.SourceUsage
+    - name: Binding to DataTemplates
+      href: xref:Uno.Extensions.Markup.BindToDataTemplate
     - name: Converters
       href: xref:Uno.Extensions.Markup.Converters
     - name: Using Static & Theme Resources
