@@ -70,9 +70,14 @@ Identity risk (R6): lambdas capturing locals/params produce fresh delegate targe
 - on the **Model partial**: **nothing per-feed** — the swap is reflection over `IHotSwapState<T>` members at runtime (D11), reusing the hot-reload driver, fail-hard. The generator emits no `__Mock_Swap_{Member}`;
 - on the **VM partial**: **no construction seam** — null-inject uses the existing public ctors (`new {Vm}(default!, …)`) under an ambient `MockingService.Enable()` scope (D12: the `SourceContext` built at construction is mockable, captured on the instance). The only emitted seam is `__Mock_SetCommand(string name, IAsyncCommand)` (public, `EditorBrowsable(Never)`, fail-hard) which reassigns a command property post-construction — commands have no `IHotSwapState<T>` and are unreachable by the reflection swap (R2).
 
-### 2.2 Mocking generator (ships in `Uno.HotTesting.Reactive`, runs in the test/preview project)
+### 2.2 Mocking generator (ships in `Uno.HotTesting.Reactive`, runs in the consuming project)
 
-Reads the app assembly **metadata** (generated VM/Model types + the attributes above). No syntax trees needed → cross-assembly by construction. Emits **external, generic and strongly typed types/extensions** (partial injection impossible and not needed):
+Reaches models two ways (D13):
+
+- **The app is a compiled reference** (a test/preview project): reads the app assembly **metadata** — generated VM/Model types plus the attributes above. No syntax trees needed.
+- **The models are in the compilation being generated** (an app referencing the package directly — the single-project shape the templates create): the attributes are emitted by a sibling generator and are therefore unreadable here, so it runs `FeedMockingAnalysis` — the same analysis that produces those attributes, compiled into both generators so the two cannot drift — over the source. The view-model is not a symbol on this path either; it is named and constructed from the model, exactly as the MVUX generator derives it. Declared attributes still take precedence, and a project that can already see mocks generated in a reference does not emit a second copy.
+
+Emits **external, generic and strongly typed types/extensions** (partial injection impossible and not needed):
 
 ```csharp
 public record RecipeModelMock

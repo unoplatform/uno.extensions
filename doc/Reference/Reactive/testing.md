@@ -118,9 +118,10 @@ soon as you want to drive a **real generated view-model** — its real `Model`, 
 real business logic — through mocked states, let the `Uno.HotTesting.Reactive`
 generator build the plumbing for you.
 
-Reference the `Uno.HotTesting.Reactive` package in the **test or preview project**
-(the one that references the app). For every MVUX model it finds, the generator
-emits, next to the model:
+Reference the `Uno.HotTesting.Reactive` package either in a **test or preview
+project** (one that references the app) or in the **app project itself** — a
+single-project app, as created by the templates, gets its mocks the same way. For
+every MVUX model it finds, the generator emits, next to the model:
 
 - a `record {Model}Mock` whose **required** members are exactly the
   service-dependent feeds, and whose **optional** members are the derived feeds
@@ -132,6 +133,10 @@ emits, next to the model:
 
 A view-model whose constructors are all non-public cannot be built this way:
 the generator reports the `MOCK0001` warning for that model and emits no mock.
+
+When the app references the package and a test project references both, the mocks
+are emitted once, in the app: a project that can already see them does not generate
+a second copy.
 
 Given this model:
 
