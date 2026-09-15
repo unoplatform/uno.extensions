@@ -27,6 +27,12 @@ namespace Uno.Extensions.Reactive.Generator;
 /// </summary>
 internal partial class ViewModelGenTool_3
 {
+	// One per run, not per model: the analysis caches bound syntax trees, which the models share.
+	private FeedMockingAnalysis? _mockingAnalysis;
+
+	private FeedMockingAnalysis MockingAnalysis
+		=> _mockingAnalysis ??= new FeedMockingAnalysis(_ctx.Context.Compilation, IsFeedMember);
+
 	private string GenerateMockingMetadata(INamedTypeSymbol model)
 	{
 		if (!_ctx.IsMockingEnabled())
@@ -34,7 +40,7 @@ internal partial class ViewModelGenTool_3
 			return string.Empty; // opt-out → byte-identical output (G5)
 		}
 
-		var analysis = new FeedMockingAnalysis(_ctx.Context.Compilation, IsFeedMember);
+		var analysis = MockingAnalysis;
 
 		var feedMembers = analysis.GetFeedMembers(model);
 		var feedMemberNames = new HashSet<string>(feedMembers.Select(m => m.Name), StringComparer.Ordinal);

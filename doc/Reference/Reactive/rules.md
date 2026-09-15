@@ -38,3 +38,16 @@ emits no `{Model}Mock` / `{Vm}Mock` for that model.
 
 Make one of the model's constructors public to get the mock back, or suppress the warning for a model that is
 not meant to be mocked.
+
+## Mock0002
+
+**No mock is generated for a model none of whose feeds is fed by a constructor parameter.**
+
+A `{Model}Mock` replaces the model's *inputs* — the feeds reading a service the model takes as a constructor
+parameter — and the feeds derived from them. A model whose feeds are all independent has nothing a mock could
+drive, so the generator emits none and says so rather than leaving you to wonder why nothing appeared.
+
+If you expected a mock, check that the feed really reaches a constructor parameter: a service obtained through
+a helper method or a locator is not visible to the analysis. Declaring
+`[FeedDependency("Member", OnParameter = "service")]` on the model states the dependency explicitly and takes
+precedence over what is inferred.

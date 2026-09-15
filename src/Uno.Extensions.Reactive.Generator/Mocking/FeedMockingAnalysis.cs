@@ -37,6 +37,10 @@ internal sealed class FeedMockingAnalysis
 	private readonly Compilation _compilation;
 	private readonly Func<ISymbol, bool> _isFeedMember;
 
+	// Binding a tree is expensive and every model of an assembly tends to sit in a handful of trees, so
+	// the models share one cache for the lifetime of the analysis rather than re-binding per member.
+	private readonly Dictionary<SyntaxTree, SemanticModel> _semanticModels = new Dictionary<SyntaxTree, SemanticModel>();
+
 	/// <param name="compilation">The compilation the models are read from.</param>
 	/// <param name="isFeedMember">
 	/// Whether a field/property is a feed. Injected because the two callers resolve the feed
@@ -109,7 +113,7 @@ internal sealed class FeedMockingAnalysis
 					continue;
 				}
 
-				var semanticModel = _compilation.GetSemanticModel(node.SyntaxTree);
+				var semanticModel = GetSemanticModel(node.SyntaxTree);
 				foreach (var assignment in body.DescendantNodes().OfType<AssignmentExpressionSyntax>())
 				{
 					if (!assignment.IsKind(SyntaxKind.SimpleAssignmentExpression))
@@ -165,9 +169,9 @@ internal sealed class FeedMockingAnalysis
 		var seenDerived = new HashSet<string>(StringComparer.Ordinal);
 		var seenServices = new HashSet<string>(StringComparer.Ordinal);
 
-		foreach (var body in GetMemberBodies(member, out var semanticModelByTree))
+		foreach (var body in GetMemberBodies(member))
 		{
-			var semanticModel = semanticModelByTree(body.SyntaxTree);
+			var semanticModel = GetSemanticModel(body.SyntaxTree);
 			foreach (var symbol in body
 				.DescendantNodesAndSelf()
 				.OfType<SimpleNameSyntax>()
@@ -233,19 +237,18 @@ internal sealed class FeedMockingAnalysis
 	/// Returns the getter/initializer body syntax nodes of a feed member (property expression body,
 	/// getter body, or field initializer).
 	/// </summary>
-	private IEnumerable<SyntaxNode> GetMemberBodies(ISymbol member, out Func<SyntaxTree, SemanticModel> semanticModelByTree)
+	private SemanticModel GetSemanticModel(SyntaxTree tree)
 	{
-		var cache = new Dictionary<SyntaxTree, SemanticModel>();
-		var compilation = _compilation;
-		semanticModelByTree = tree =>
+		if (!_semanticModels.TryGetValue(tree, out var semanticModel))
 		{
-			if (!cache.TryGetValue(tree, out var sm))
-			{
-				cache[tree] = sm = compilation.GetSemanticModel(tree);
-			}
-			return sm;
-		};
+			_semanticModels[tree] = semanticModel = _compilation.GetSemanticModel(tree);
+		}
 
+		return semanticModel;
+	}
+
+	private IEnumerable<SyntaxNode> GetMemberBodies(ISymbol member)
+	{
 		var bodies = new List<SyntaxNode>();
 		foreach (var syntaxRef in member.DeclaringSyntaxReferences)
 		{
@@ -307,7 +310,7 @@ internal sealed class FeedMockingAnalysis
 					continue;
 				}
 
-				var semanticModel = _compilation.GetSemanticModel(node.SyntaxTree);
+				var semanticModel = GetSemanticModel(node.SyntaxTree);
 				InspectEager(body, semanticModel, ctorParamNames, Mark, enclosingMember: null);
 			}
 		}
