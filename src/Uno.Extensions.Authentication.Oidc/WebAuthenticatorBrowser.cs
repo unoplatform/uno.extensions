@@ -1,5 +1,4 @@
 ﻿using Duende.IdentityModel.OidcClient.Browser;
-using System.Diagnostics;
 using Windows.Foundation;
 
 namespace Uno.Extensions.Authentication.Oidc;
@@ -55,22 +54,28 @@ public class WebAuthenticatorBrowser : IBrowser
 			// The caller cancelled: propagate rather than reporting a failed login (spec 017 F3).
 			throw;
 		}
-		catch (OperationCanceledException)
+		catch (OperationCanceledException) when (cts.IsCancellationRequested)
 		{
-			// Only the per-invocation timeout can be left: surface it as such.
 			return new BrowserResult()
 			{
 				ResultType = BrowserResultType.Timeout,
 				Error = $"The browser interaction did not complete within {options.Timeout}."
 			};
 		}
+		catch (OperationCanceledException)
+		{
+			// Neither the caller nor the timeout: the flow cancelled itself, which is how WinUIEx
+			// reports a sign-in the user backed out of.
+			return new BrowserResult { ResultType = BrowserResultType.UserCancel };
+		}
 		catch (Exception ex)
 		{
-			Debug.WriteLine(ex);
+			// The message, not ToString(): Error ends up in the provider's log line, and a stack
+			// trace there buries the one sentence that names the cause.
 			return new BrowserResult()
 			{
 				ResultType = BrowserResultType.UnknownError,
-				Error = ex.ToString()
+				Error = ex.Message
 			};
 		}
 	}

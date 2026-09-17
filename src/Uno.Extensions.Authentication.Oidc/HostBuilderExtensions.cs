@@ -42,8 +42,7 @@ public static class HostBuilderExtensions
 #if WINDOWS
 		WinUIEx.WebAuthenticator.CheckOAuthRedirectionActivation();
 #else
-		// Skia Desktop has no built-in WebAuthenticationBroker; register the loopback one when the
-		// process is actually on a desktop OS (no-op elsewhere, first-registration wins). Spec 013 F8.
+		// No-op off Skia Desktop, and first registration wins - see TryRegister.
 		DesktopWebAuthenticationBrokerProvider.TryRegister();
 #endif
 

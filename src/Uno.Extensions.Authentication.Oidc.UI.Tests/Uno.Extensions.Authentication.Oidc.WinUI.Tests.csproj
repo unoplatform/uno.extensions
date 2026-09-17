@@ -26,6 +26,9 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\Uno.Extensions.Authentication.Oidc\Uno.Extensions.Authentication.Oidc.WinUI.csproj" />
+		<!-- For StubWebAuthenticationBroker. Referenced, not linked: the broker registration is
+			process-wide and first-wins, so a second copy of the stub would never be consulted. -->
+		<ProjectReference Include="..\Uno.Extensions.Authentication.UI.Tests\Uno.Extensions.Authentication.WinUI.Tests.csproj" />
 		<ProjectReference Include="..\Uno.Extensions.Hosting.UI\Uno.Extensions.Hosting.WinUI.csproj" />
 		<ProjectReference Include="..\Uno.Extensions.RuntimeTests\Uno.Extensions.RuntimeTests.Core\Uno.Extensions.RuntimeTests.Core.csproj" />
 	</ItemGroup>

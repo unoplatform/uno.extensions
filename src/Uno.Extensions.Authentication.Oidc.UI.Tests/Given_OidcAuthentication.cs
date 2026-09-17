@@ -165,6 +165,45 @@ public class Given_OidcAuthentication
 	}
 
 	/// <summary>
+	/// Identity providers reject refresh tokens with codes of their own, outside RFC 6749 §5.2
+	/// (Entra's <c>interaction_required</c>, for one). Treating an unlisted code as a network blip
+	/// keeps the user "authenticated" on a refresh token the provider has already refused.
+	/// </summary>
+	[TestMethod]
+	public async Task When_RefreshRejectedWithProviderSpecificCode_Then_NotAuthenticated()
+	{
+		using var harness = await CreateHarnessAsync();
+		using var cts = Cts();
+
+		await harness.Authentication.LoginAsync(default, cancellationToken: cts.Token);
+		harness.Server.RefreshError = "interaction_required";
+
+		var refreshed = await harness.Authentication.RefreshAsync(cts.Token);
+
+		refreshed.Should().BeFalse("the token endpoint answered, and the answer was no");
+		(await harness.Authentication.IsAuthenticated(cts.Token)).Should().BeFalse();
+	}
+
+	/// <summary>
+	/// The one OAuth answer that is not a verdict on the refresh token: the server asking to be
+	/// tried again later. Same outcome as not reaching it at all.
+	/// </summary>
+	[TestMethod]
+	public async Task When_RefreshTemporarilyUnavailable_Then_SessionKept()
+	{
+		using var harness = await CreateHarnessAsync();
+		using var cts = Cts();
+
+		await harness.Authentication.LoginAsync(default, cancellationToken: cts.Token);
+		harness.Server.RefreshError = "temporarily_unavailable";
+
+		var refreshed = await harness.Authentication.RefreshAsync(cts.Token);
+
+		refreshed.Should().BeTrue("the previous tokens are still the session");
+		(await harness.Authentication.IsAuthenticated(cts.Token)).Should().BeTrue();
+	}
+
+	/// <summary>
 	/// Red test for spec 017 F11: the provider never passed the cached id_token as the
 	/// end-session <c>id_token_hint</c>. Without it the identity provider cannot trust the
 	/// post-logout redirect, so it prompts for confirmation and never redirects back to the app -
@@ -239,14 +278,35 @@ public class Given_OidcAuthentication
 		using var cts = Cts();
 
 		await harness.Authentication.LoginAsync(default, cancellationToken: cts.Token);
+		var session = harness.Server.LastAccessToken;
 		harness.Browser.NextResultType = BrowserResultType.UserCancel;
 
-		Func<Task> act = () => harness.Authentication.LoginAsync(default, cancellationToken: cts.Token).AsTask();
+		var result = await harness.Authentication.LoginAsync(default, cancellationToken: cts.Token);
 
-		await act.Should().ThrowAsync<OperationCanceledException>(
-			"backing out of the sign-in UI is a cancellation, not a failed login");
-		(await harness.Authentication.IsAuthenticated(cts.Token)).Should().BeTrue(
+		result.Should().BeFalse("backing out of the sign-in UI is a login that did not happen");
+		(await harness.Tokens.GetAsync(cts.Token))[TokenCacheExtensions.AccessTokenKey].Should().Be(session,
 			"a cancelled re-login must not wipe the session the user still has");
+	}
+
+	/// <summary>
+	/// The same rule when the browser reports anything else - a timeout, an HTTP error, or an
+	/// app-supplied <see cref="IBrowser"/> that puts its own text in <c>Error</c> on a cancel: the
+	/// session must not depend on how the failure was worded.
+	/// </summary>
+	[TestMethod]
+	public async Task When_ReLoginFails_Then_PreviousSessionSurvives()
+	{
+		using var harness = await CreateHarnessAsync();
+		using var cts = Cts();
+
+		await harness.Authentication.LoginAsync(default, cancellationToken: cts.Token);
+		var session = harness.Server.LastAccessToken;
+		harness.Browser.NextResultType = BrowserResultType.Timeout;
+
+		var result = await harness.Authentication.LoginAsync(default, cancellationToken: cts.Token);
+
+		result.Should().BeFalse();
+		(await harness.Tokens.GetAsync(cts.Token))[TokenCacheExtensions.AccessTokenKey].Should().Be(session);
 	}
 
 	/// <summary>
