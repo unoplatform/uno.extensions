@@ -29,10 +29,10 @@ jobs:
       - name: Free disk space (Linux)
         uses: ./.github/actions/host-cleanup-linux
 
-      - name: Setup dotnet 9.0.308
+      - name: Setup dotnet 10.0.101
         uses: actions/setup-dotnet@v5
         with:
-          dotnet-version: '9.0.308'
+          dotnet-version: '10.0.101'
 
       # setup-dotnet installs its own SDK rather than using the one the wasm-build image ships, and
       # the workload belongs to the SDK, not the image - so Uno.Wasm.Bootstrap cannot relink

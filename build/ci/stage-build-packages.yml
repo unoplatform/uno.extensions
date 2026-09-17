@@ -59,7 +59,7 @@ jobs:
     retryCountOnTaskFailure: 3
     inputs:
       packageType: sdk
-      version: 10.0.102
+      version: 10.0.101
 
   - task: VSTest@2
     inputs:
