@@ -175,9 +175,12 @@ vm.SetMock(RecipeModelMock.Empty with { Steps = ListFeedMock.Error<Step>(new Tim
 
 > [!IMPORTANT]
 > Mocking is only active for a view-model built by `Create` (which opens a
-> `MockingService.Enable()` scope around construction). Outside such a scope
-> nothing is wrapped, so a shipping application pays no cost, including one that
-> carries the reference itself.
+> `MockingService.Enable()` scope around construction): outside such a scope
+> nothing is wrapped, so there is no runtime cost.
+>
+> That is the runtime only. An app carrying the reference itself also ships what
+> the generator emits — a `{Model}Mock` record and a `{Vm}Mock` class per model —
+> along with the `Uno.HotTesting.Reactive` assembly they call into.
 
 ### Only fill what matters
 

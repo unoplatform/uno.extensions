@@ -220,6 +220,35 @@ public class Given_FeedsMockGenerator
 		diagnostics.Should().ContainSingle().Which.Id.Should().Be("MOCK0002");
 	}
 
+	[TestMethod]
+	public void When_ViewModelReachedThroughMetadataIsInternal_Then_MockCarriesItsAccessibility()
+	{
+		// Roslyn exposes the internal types of a metadata reference, so an internal model is enumerated on
+		// this path too. A public mock over it would return an inaccessible view-model (CS0122).
+		var (sources, diagnostics) = Run(Preamble + """
+			[Model(typeof(ItemsViewModel))]
+			[FeedDependency("Items", OnParameter = "service")]
+			internal class ItemsModel
+			{
+				public ItemsModel(IService service) { }
+				public IListFeed<string> Items => null!;
+			}
+
+			internal class ItemsViewModel
+			{
+				public ItemsViewModel(IService service) { }
+				protected ItemsViewModel(ItemsModel model) { }
+				public ItemsModel Model => null!;
+			}
+			""");
+
+		diagnostics.Should().BeEmpty();
+
+		var mock = sources.Should().ContainSingle().Subject;
+		mock.Should().Contain("internal sealed record ItemsModelMock");
+		mock.Should().Contain("internal static partial class ItemsViewModelMock");
+	}
+
 	private static (string[] Sources, Diagnostic[] Diagnostics) Run(string source)
 	{
 		// The framework plus the Uno.Extensions assemblies of the test host: enough for the fixture source to

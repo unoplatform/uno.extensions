@@ -51,3 +51,16 @@ If you expected a mock, check that the feed really reaches a constructor paramet
 a helper method or a locator is not visible to the analysis. Declaring
 `[FeedDependency("Member", OnParameter = "service")]` on the model states the dependency explicitly and takes
 precedence over what is inferred.
+
+This one is reported at information level, so that a model whose feeds are legitimately all independent cannot
+fail a build treating warnings as errors. `dotnet build` hides it at default verbosity: read it in the IDE's
+error list, build with `-v normal`, or raise it in `.editorconfig` with
+`dotnet_diagnostic.MOCK0002.severity = warning`.
+
+## Mock0003
+
+**An implicit model pattern is not a valid regular expression.**
+
+`[assembly: ImplicitBindables("…")]` decides which types are treated as models. A pattern that cannot compile
+matches nothing, so the types you expected to be models silently are not — and neither view-models nor mocks
+are generated for them. The warning names the offending pattern; fix or remove it.

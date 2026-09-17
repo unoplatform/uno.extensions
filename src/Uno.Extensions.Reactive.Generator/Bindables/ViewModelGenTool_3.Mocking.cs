@@ -16,7 +16,7 @@ namespace Uno.Extensions.Reactive.Generator;
 ///   - <c>[CtorDependency(param, Eager=true)]</c> for constructor parameters dereferenced eagerly,
 ///     so the generated <c>Create(...)</c> can require them (R1 — would NRE under null-inject).
 ///
-/// The analysis itself lives in <see cref="FeedMockingAnalysis"/>, shared with the mocking generator
+/// The analysis itself lives in <see cref="FeedDependencyAnalysis"/>, shared with the mocking generator
 /// so the two cannot disagree about what a model's inputs are.
 ///
 /// There are deliberately NO per-feed swap hooks (D11): the runtime swap is reflection over the
@@ -36,7 +36,7 @@ internal partial class ViewModelGenTool_3
 
 		// Scoped to this model rather than held on the generator: the analysis caches bound syntax trees,
 		// which is worth it across one model's members but must not outlive the compilation it read.
-		var analysis = new FeedMockingAnalysis(_ctx.Context.Compilation, IsFeedMember);
+		var analysis = new FeedDependencyAnalysis(_ctx.Context.Compilation, IsFeedMember);
 
 		var feedMembers = analysis.GetFeedMembers(model);
 		var feedMemberNames = new HashSet<string>(feedMembers.Select(m => m.Name), StringComparer.Ordinal);
@@ -73,13 +73,9 @@ internal partial class ViewModelGenTool_3
 		}
 
 		// 2) Ctor instrumentation — eager parameter dereference (R1).
-		var eager = analysis.FindEagerCtorParameters(model, ctorParamNames);
-		foreach (var kvp in eager.OrderBy(k => k.Key, StringComparer.Ordinal))
+		foreach (var parameter in analysis.FindEagerCtorParameters(model, ctorParamNames).OrderBy(p => p, StringComparer.Ordinal))
 		{
-			var members = kvp.Value.Count > 0
-				? $", Members = new[] {{ {string.Join(", ", kvp.Value.OrderBy(m => m, StringComparer.Ordinal).Select(m => $"\"{m}\""))} }}"
-				: string.Empty;
-			sb.Append($"\r\n[{NS.Config}.CtorDependency(\"{kvp.Key}\", Eager = true{members})]");
+			sb.Append($"\r\n[{NS.Config}.CtorDependency(\"{parameter}\", Eager = true)]");
 		}
 
 		return sb.ToString();

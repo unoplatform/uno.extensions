@@ -28,17 +28,14 @@ public class Given_SingleProjectMock : FeedUITests
 	private static async Task<IImmutableList<T>> CurrentItems<T>(SourceContext ctx, IListFeed<T> feed)
 	{
 		var (result, _) = ctx.GetOrCreateListState(feed).Record();
-		for (var i = 0; i < 50; i++)
-		{
-			if (result.Count > 0 && result.Last().Current.Data.IsSome(out var value))
-			{
-				return (IImmutableList<T>)value!;
-			}
 
-			await Task.Delay(20);
-		}
+		// Awaits the recorder rather than polling: the deadline is the test library's, and a slow agent
+		// fails on the deadline instead of on an assertion that blames the mock.
+		await result.WaitForMessages(1);
 
-		throw new AssertFailedException("The feed produced no value: the mocked input was never observed.");
+		result.Last().Current.Data.IsSome(out var value).Should().BeTrue("the mocked input should have been observed");
+
+		return (IImmutableList<T>)value!;
 	}
 
 	[TestMethod]
