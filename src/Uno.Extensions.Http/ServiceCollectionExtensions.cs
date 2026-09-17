@@ -265,19 +265,21 @@ public static class ServiceCollectionExtensions
 		// handler, delegating handlers, configure callback), then register the client type with
 		// the requested lifetime, built through ITypedHttpClientFactory - the supported way to
 		// construct typed clients outside AddHttpClient<T>'s own (transient) registration.
-		var endpointName = EndpointNameForType<TClient>(name);
+		// The name is passed through untouched so the configuration section resolves exactly as it
+		// does for the transient overloads; only the HttpClient's own name is decided here.
+		var clientName = HttpClientNameFor<TClient>(name);
 
 		services.AddClientWithEndpoint<TClient, TEndpoint>(
 			context,
 			options,
-			endpointName,
-			httpClientFactory: (s, c) => s.AddHttpClient(endpointName),
+			name,
+			httpClientFactory: (s, c) => s.AddHttpClient(clientName),
 			configure);
 
 		services.Add(ServiceDescriptor.Describe(
 			typeof(TClient),
 			sp => sp.GetRequiredService<ITypedHttpClientFactory<TImplementation>>()
-					.CreateClient(sp.GetRequiredService<IHttpClientFactory>().CreateClient(endpointName)),
+					.CreateClient(sp.GetRequiredService<IHttpClientFactory>().CreateClient(clientName)),
 			lifetime));
 
 		return services;
@@ -346,27 +348,37 @@ public static class ServiceCollectionExtensions
 		  where TInterface : class
 		where TEndpoint : EndpointOptions, new()
 	{
+		if (lifetime == ServiceLifetime.Transient)
+		{
+			// Exactly the overload without a lifetime, interfaces included.
+			return services.AddClientWithEndpoint<TInterface, TEndpoint>(context, options, name, httpClientFactory: null, configure);
+		}
+
 		if (typeof(TInterface).IsInterface)
 		{
 			// The single-generic shape registers the type as its own implementation, which for an
 			// interface only fails at the first resolve, far from the registration that caused it.
 			throw new ArgumentException(
-				$"{typeof(TInterface).Name} is an interface and cannot be built as its own implementation. Use the AddClient<TInterface, TImplementation>(..., lifetime, ...) overload.",
-				nameof(TInterface));
+				$"{typeof(TInterface).Name} is an interface and cannot be built as its own implementation. Use the AddClient<TInterface, TImplementation>(..., lifetime, ...) overload.");
 		}
 
 		return services.AddClientWithEndpoint<TInterface, TInterface, TEndpoint>(context, lifetime, options, name, configure);
 	}
 
 	/// <summary>
-	/// The endpoint name used when none is supplied: the client's type name, with a leading 'I'
-	/// stripped for interfaces - matching how the transient overloads resolve their configuration
-	/// section.
+	/// The <see cref="HttpClient"/> name a non-transient client's pipeline is registered under: the
+	/// supplied name, else the client's full type name.
 	/// </summary>
-	private static string EndpointNameForType<TClient>(string? name) =>
+	/// <remarks>
+	/// The full name, not the short one: a named <c>AddHttpClient(name)</c> has none of
+	/// <c>AddHttpClient&lt;T&gt;</c>'s duplicate-name checking, so two clients called <c>Api</c> in
+	/// different namespaces would silently merge into one pipeline - one client's base address and
+	/// delegating handlers, authorization included, applied to the other's requests.
+	/// </remarks>
+	private static string HttpClientNameFor<TClient>(string? name) =>
 		(name is not null && !string.IsNullOrWhiteSpace(name))
 			? name
-			: (typeof(TClient).IsInterface ? typeof(TClient).Name.TrimStart(InterfaceNamePrefix) : typeof(TClient).Name);
+			: typeof(TClient).FullName ?? typeof(TClient).Name;
 
 	/// <summary>
 	/// Configures the primary and inner http message handler.

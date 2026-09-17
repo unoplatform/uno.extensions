@@ -110,6 +110,95 @@ public class Given_AddClient
 		first.Http.BaseAddress.Should().Be(new Uri(EndpointUrl));
 	}
 
+	/// <summary>Named after the configuration section, for the no-name path.</summary>
+	public class TestClient : EchoClient
+	{
+		public TestClient(HttpClient client) : base(client)
+		{
+		}
+	}
+
+	public static class Alpha
+	{
+		public class Api : EchoClient
+		{
+			public Api(HttpClient client) : base(client)
+			{
+			}
+		}
+	}
+
+	public static class Beta
+	{
+		public class Api : EchoClient
+		{
+			public Api(HttpClient client) : base(client)
+			{
+			}
+		}
+	}
+
+	[TestMethod]
+	public void When_TransientLifetime_Then_SameAsNoLifetime()
+	{
+		using var host = BuildHost((context, services) =>
+			services.AddClient<EchoClient>(context, ServiceLifetime.Transient, name: EndpointName));
+
+		var first = host.Services.GetRequiredService<EchoClient>();
+
+		first.Should().NotBeSameAs(host.Services.GetRequiredService<EchoClient>());
+		first.Http.BaseAddress.Should().Be(new Uri(EndpointUrl));
+	}
+
+	[TestMethod]
+	public void When_SingletonWithoutName_Then_SectionIsTheTypeName()
+	{
+		using var host = BuildHost((context, services) =>
+			services.AddClient<TestClient>(context, ServiceLifetime.Singleton));
+
+		host.Services.GetRequiredService<TestClient>().Http.BaseAddress.Should().Be(
+			new Uri(EndpointUrl),
+			"with no name the configuration section is the type's name, as for a transient client");
+	}
+
+	/// <summary>
+	/// Two clients with the same short type name must not share an HttpClient pipeline: whichever
+	/// registered last would set the base address - and the delegating handlers, authorization
+	/// included - for both.
+	/// </summary>
+	[TestMethod]
+	public void When_TwoSingletonsShareAShortTypeName_Then_PipelinesStaySeparate()
+	{
+		using var host = BuildHost((context, services) => services
+			.AddClient<Alpha.Api>(context, ServiceLifetime.Singleton, new EndpointOptions { Url = "https://alpha.test/", UseNativeHandler = false })
+			.AddClient<Beta.Api>(context, ServiceLifetime.Singleton, new EndpointOptions { Url = "https://beta.test/", UseNativeHandler = false }));
+
+		host.Services.GetRequiredService<Alpha.Api>().Http.BaseAddress.Should().Be(new Uri("https://alpha.test/"));
+		host.Services.GetRequiredService<Beta.Api>().Http.BaseAddress.Should().Be(new Uri("https://beta.test/"));
+	}
+
+	[TestMethod]
+	public void When_SingletonInterfaceWithoutImplementation_Then_RejectedAtRegistration()
+	{
+		var act = () => BuildHost((context, services) =>
+			services.AddClient<IEchoClient>(context, ServiceLifetime.Singleton, name: EndpointName));
+
+		act.Should().Throw<ArgumentException>().WithMessage("*IEchoClient*AddClient<TInterface, TImplementation>*");
+	}
+
+	/// <summary>
+	/// Transient "behaves exactly like the overloads without a lifetime" - which accept an interface
+	/// (Refit and Kiota supply the implementation through their own registration).
+	/// </summary>
+	[TestMethod]
+	public void When_TransientInterfaceWithoutImplementation_Then_RegistersLikeNoLifetime()
+	{
+		var act = () => BuildHost((context, services) =>
+			services.AddClient<IEchoClient>(context, ServiceLifetime.Transient, name: EndpointName)).Dispose();
+
+		act.Should().NotThrow();
+	}
+
 	[TestMethod]
 	public void When_CustomEndpointOptions_Then_BoundFromConfiguration()
 	{

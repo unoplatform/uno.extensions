@@ -27,12 +27,22 @@ sites keep binding to the old overloads and nothing is ambiguous.
 
 Behavior:
 
-- `Transient`: delegates to the existing overloads - identical behavior.
+- `Transient`: delegates to the existing overloads - identical behavior, including
+  `AddClient<TInterface>` accepting an interface (Refit and Kiota supply the implementation).
 - `Singleton`/`Scoped`: the endpoint pipeline (base address, native handler, delegating handlers,
   `configure`) is registered as a **named** client, and the client type is registered with the
   requested lifetime as a factory that builds the instance through
   `ITypedHttpClientFactory<TImplementation>` over `IHttpClientFactory.CreateClient(name)` - the
   supported way to construct typed clients manually.
+- The named client is `name` when one is supplied, else the client type's **full** name. A bare
+  `AddHttpClient(name)` has none of `AddHttpClient<T>`'s duplicate-name checking, so short names
+  would let two `Api` types in different namespaces silently share one pipeline - base address,
+  delegating handlers and authorization included. The configuration section is resolved exactly
+  as the transient overloads resolve it (`name`, else the short type name less a leading `I`);
+  only the `HttpClient` name differs.
+- `AddClient<TInterface>(..., Singleton|Scoped)` with an interface throws `ArgumentException` at
+  registration: that shape registers the type as its own implementation, which for an interface
+  would otherwise fail only at the first resolve.
 - XML docs call out the trade-off: a non-transient client captures its `HttpClient`, forgoing the
   factory's handler rotation (stale-DNS mitigation), which is the reason typed clients default to
   transient.
@@ -42,4 +52,6 @@ Behavior:
 New `Uno.Extensions.Http.Tests` (plain net9.0, package CI's `**/*.Tests.dll` filter): transient
 default unchanged, singleton returns the same instance with the endpoint's `Url` applied, scoped
 varies across scopes, interface/implementation pair resolves through the interface, custom
-`TEndpoint` binds from configuration.
+`TEndpoint` binds from configuration, an explicit `Transient` matches the default, the no-name
+path binds the type-named section, two same-named singletons keep separate pipelines, and an
+interface is rejected for a non-transient lifetime but accepted for `Transient`.
