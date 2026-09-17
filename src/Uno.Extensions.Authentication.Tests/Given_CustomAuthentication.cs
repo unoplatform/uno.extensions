@@ -15,7 +15,7 @@ namespace Uno.Extensions.Authentication.Tests;
 
 /// <summary>
 /// Coverage of the Custom provider through the hosting API - login, refresh, logout and
-/// cancellation - in a bare (non-Uno) host with in-memory storage. Spec 013, item 13.
+/// cancellation - in a bare (non-Uno) host with in-memory storage. Spec 017, item 13.
 /// </summary>
 [TestClass]
 public class Given_CustomAuthentication
