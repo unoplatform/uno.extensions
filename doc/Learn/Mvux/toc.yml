@@ -38,6 +38,8 @@
   href: xref:Uno.Extensions.Mvux.HowToPushListFeed
 - name: "How-To: Create a State"
   href: xref:Uno.Extensions.Mvux.HowToSimpleState
+- name: "How-To: Use Custom Controls with MVUX"
+  href: xref:Uno.Extensions.Mvux.HowToCustomControls
 - name: Advanced topics
   items:
     - name: Selection
