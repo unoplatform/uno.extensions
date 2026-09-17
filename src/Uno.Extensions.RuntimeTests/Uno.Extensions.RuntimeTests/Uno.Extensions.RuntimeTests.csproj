@@ -47,6 +47,16 @@
     <PackageReference Include="SkiaSharp.Skottie" Condition="$(TargetFramework.Contains('desktop'))" />
   </ItemGroup>
 
+  <ItemGroup>
+    <!--
+      AndroidX Emoji2 still depends on Lifecycle.Process 2.9.2.1, which caps Lifecycle.Runtime below 2.9.3,
+      while the AndroidX Core and Activity versions Uno 7 pins need Lifecycle.Runtime 2.10.0.2 (NU1608).
+      Pinned in this head only, so the shipped packages' dependency floors are unaffected. Transitive
+      pinning only applies it where the package is in the graph (the Android target).
+    -->
+    <PackageVersion Include="Xamarin.AndroidX.Lifecycle.Process" Version="2.10.0.2" />
+  </ItemGroup>
+
 
   <ItemGroup>
     <!--
