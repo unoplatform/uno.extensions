@@ -180,7 +180,7 @@ single project, this is the shape most consumers have.
 Rather than move emission into the MVUX generator (which would put mock codegen in Core, against D5), the
 mocking generator gained a second way in: for models declared in the compilation being generated it runs the
 analysis over the source instead of reading metadata. The analysis now lives in one place,
-`FeedMockingAnalysis`, compiled into both generators, so the classification behind the emitted attributes and
+`FeedDependencyAnalysis`, compiled into both generators, so the classification behind the emitted attributes and
 the classification used directly cannot drift apart. The view-model is not a symbol on that path either — it
 is named and constructed from the model, which is what the MVUX generator derives it from. Declared
 attributes still take precedence, so the hand-declaration escape hatch is unaffected. When a project can
@@ -222,6 +222,27 @@ assemblies that do not reference `Uno.Extensions.Reactive`, so an app build does
 metadata closure. Constructor selection honours `[ReactiveBindable(false)]` and may pick an internal
 constructor on the source path, where the mirrored one is reachable.
 
+## v15 — review: one rule, one place
+
+The sharing introduced in v14 covered the feed classification but not the two rules around it, and review
+found the ones left copied were the ones whose divergence is expensive. Model discovery and the view-model
+naming are now shared too, and the analysis moved out of the MVUX generator's own folder into
+`Uno.Extensions.Core.Generators/Common`, which both generator projects already compile: the previous layout
+made a folder of one project part of another package's compilation, with no reference expressing it. The type
+is named for what it computes, `FeedDependencyAnalysis`, since the classification describes an MVUX model
+whether or not anything mocks it.
+
+Correctness found in the same pass: the metadata path never set the emitted accessibility, so an internal
+model of a referenced assembly produced a public mock over an inaccessible view-model; the duplicate guard
+used a single-name lookup, which returns null exactly when two references declare the name, failing open in
+the case it exists for; the mock's name dropped the containing types, so two nested models sharing a simple
+name collided; the hint name was not unique for every input, and a collision throws and drops every mock in the
+compilation rather than one; the three attributes governing discovery, construction and the opt-out were
+matched on their simple name, so any same-named attribute drove them; a constructor that is
+`protected internal` was treated as unreachable although the generated view-model mirrors it; and a model
+rejected by both intake paths was diagnosed twice. A malformed implicit-model pattern is now reported as
+MOCK0003 on the attribute rather than swallowed.
+
 ---
 
 ## Final decision register
@@ -240,4 +261,4 @@ constructor on the source path, where the mirrored one is reachable.
 | D10 | **Scoped activation**: `using (MockingService.Enable())` — never an app-wide switch; an assembly init can cover a whole run. Outside a scope there is **no wrap** (`HotSwapFeed` has a cost and is forbidden in a live app). Only the internal mechanism was left to the P0-e spike | v6 |
 | D11 | **Fail-hard reflection swap**: reuse the hot-reload driver (`BindableViewModelBase.HotReload`, iterating `IHotSwapState<T>`); the MVUX generator emits **no `__Mock_Swap_{Member}`**, only metadata plus the null-inject constructor and command seam. **Difference from hot reload: a member that cannot be swapped throws** (mocking is strict, not best-effort) | v7 |
 | D12 | **The mockable gate is the per-context bit `SourceContext.IsMockingActive`**, read in the `StateImpl` constructor **instead of** the global `EffectiveHotReload` static, so only contexts under a scope wrap and everything else pays nothing (G9/R7 by construction). No separate static and no home-grown `AsyncLocal` (we reuse `AsyncLocal<SourceContext> Current`). **Core reflection accepted over strict AOT**: the two-assembly split forces reflection anyway, and the mocking path is development and test only, non-AOT (NG2/D7) | v7 |
-| D13 | **Mocks are generated for models of the consuming compilation too**, not only for compiled references: D5 still holds (emission stays in the consumer, never in Core), but where the metadata is unreadable because a sibling generator produces it, the mocking generator runs the shared `FeedMockingAnalysis` over the source. Declared attributes win over the inferred classification, and a project that can already see generated mocks does not emit a second copy | v14 |
+| D13 | **Mocks are generated for models of the consuming compilation too**, not only for compiled references: D5 still holds (emission stays in the consumer, never in Core), but where the metadata is unreadable because a sibling generator produces it, the mocking generator runs the shared `FeedDependencyAnalysis` over the source. Declared attributes win over the inferred classification, and a project that can already see generated mocks does not emit a second copy | v14 |

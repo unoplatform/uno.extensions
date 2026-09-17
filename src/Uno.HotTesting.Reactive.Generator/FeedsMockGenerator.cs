@@ -5,7 +5,6 @@ using System.Text;
 using System.Text.RegularExpressions;
 using Microsoft.CodeAnalysis;
 using Uno.Extensions.Generators;
-using Uno.Extensions.Reactive.Generator;
 
 namespace Uno.HotTesting.Reactive.Generator;
 
@@ -23,7 +22,7 @@ namespace Uno.HotTesting.Reactive.Generator;
 ///     <c>FeedDependency</c>/<c>Model</c> attributes are metadata, so they are read directly;
 ///   - <b>the current compilation</b> (a single-project app referencing this package itself) — those
 ///     attributes are emitted by a sibling generator and a generator cannot observe another
-///     generator's output, so the shared <see cref="FeedMockingAnalysis"/> is run over the source
+///     generator's output, so the shared <see cref="FeedDependencyAnalysis"/> is run over the source
 ///     instead. The view-model does not exist as a symbol there either; it is named and constructed
 ///     from the model, which is what the MVUX generator derives it from.
 /// </summary>
@@ -32,16 +31,11 @@ public sealed class FeedsMockGenerator : ISourceGenerator
 {
 	private const string FeedDependencyAttribute = "Uno.Extensions.Reactive.Config.FeedDependencyAttribute";
 	private const string ModelAttribute = "Uno.Extensions.Reactive.Bindings.ModelAttribute";
-	private const string ImplicitBindablesAttribute = "ImplicitBindablesAttribute";
-	private const string ReactiveBindableAttribute = "ReactiveBindableAttribute";
-	private const string EnableFeedMockingAttribute = "EnableFeedMockingAttribute";
+	private const string EnableFeedMockingAttribute = "Uno.Extensions.Reactive.Config.EnableFeedMockingAttribute";
 	private const string ReactiveAssemblyName = "Uno.Extensions.Reactive";
-	private const string DefaultModelPattern = "Model$";
-	private const string ViewModelSuffix = "ViewModel";
 	private const string HotTesting = "global::Uno.HotTesting.Reactive";
 
-	private static readonly Regex InvalidHintNameCharacters = new Regex("[^A-Za-z0-9_.]", RegexOptions.CultureInvariant);
-	private static readonly TimeSpan RegexMatchTimeout = TimeSpan.FromSeconds(1);
+	private static readonly Regex UnsafeHintNameCharacters = new Regex("[^A-Za-z0-9_.]", RegexOptions.CultureInvariant);
 
 	// MOCK0001: a reachable model whose view-model Create cannot build. Reported, never silently skipped.
 	private static readonly DiagnosticDescriptor NoPublicConstructor = new DiagnosticDescriptor(
@@ -64,6 +58,17 @@ public sealed class FeedsMockGenerator : ISourceGenerator
 		isEnabledByDefault: true,
 		helpLinkUri: "https://platform.uno/docs/articles/external/uno.extensions/doc/Reference/Reactive/rules.html#Mock0002");
 
+	// MOCK0003: an implicit-model pattern that cannot compile. Without this the malformed pattern
+	// surfaces as a failure raised by another component, naming neither the attribute nor the pattern.
+	private static readonly DiagnosticDescriptor InvalidModelPattern = new DiagnosticDescriptor(
+		"MOCK0003",
+		"Invalid model pattern",
+		"The implicit model pattern '{0}' is not a valid regular expression, so no model is matched through it",
+		"Usage",
+		DiagnosticSeverity.Warning,
+		isEnabledByDefault: true,
+		helpLinkUri: "https://platform.uno/docs/articles/external/uno.extensions/doc/Reference/Reactive/rules.html#Mock0003");
+
 	/// <inheritdoc />
 	public void Initialize(GeneratorInitializationContext context) { }
 
@@ -78,14 +83,22 @@ public sealed class FeedsMockGenerator : ISourceGenerator
 			return; // Core not referenced → nothing to do.
 		}
 
-		if (IsMockingDisabled(compilation))
+		var reactiveBindable = compilation.GetTypeByMetadataName(FeedModelDiscovery.ReactiveBindableAttributeName);
+		var implicitBindables = compilation.GetTypeByMetadataName(FeedModelDiscovery.ImplicitBindablesAttributeName);
+		var enableFeedMocking = compilation.GetTypeByMetadataName(EnableFeedMockingAttribute);
+
+		if (IsMockingDisabled(compilation, enableFeedMocking))
 		{
 			// The same opt-out the MVUX generator honours: without it the metadata it emits disappears but
 			// the mocks would not, leaving swaps pointed at a seam that was never generated.
 			return;
 		}
 
+		ReportInvalidPatterns(context, compilation, implicitBindables);
+
 		var emitted = new HashSet<string>(StringComparer.Ordinal);
+		var diagnosed = new HashSet<string>(StringComparer.Ordinal);
+		var hintNames = new HashSet<string>(StringComparer.Ordinal);
 
 		// Declared metadata first, so a hand-written [FeedDependency]/[Model] wins over the inferred
 		// classification, as the spec's explicit-declaration escape hatch requires.
@@ -96,23 +109,23 @@ public sealed class FeedsMockGenerator : ISourceGenerator
 				continue;
 			}
 
-			if (DescribeFromMetadata(model, feedDep, modelAttr) is { } described)
+			if (DescribeFromMetadata(model, feedDep, modelAttr, reactiveBindable) is { } described)
 			{
-				AddSource(context, described, emitted);
+				AddSource(context, described, emitted, diagnosed, hintNames);
 			}
 		}
 
-		var analysis = new FeedMockingAnalysis(compilation, IsFeedMember);
-		foreach (var model in EnumerateSourceModels(compilation))
+		var analysis = new FeedDependencyAnalysis(compilation, IsFeedMember);
+		foreach (var model in EnumerateSourceModels(compilation, reactiveBindable, implicitBindables))
 		{
 			if (IsAlreadyDeclared(compilation, model))
 			{
 				continue;
 			}
 
-			if (DescribeFromSource(model, analysis) is { } described)
+			if (DescribeFromSource(model, analysis, reactiveBindable) is { } described)
 			{
-				AddSource(context, described, emitted);
+				AddSource(context, described, emitted, diagnosed, hintNames);
 			}
 		}
 	}
@@ -120,18 +133,63 @@ public sealed class FeedsMockGenerator : ISourceGenerator
 	/// <summary>
 	/// The mock type already exists — generated in a referenced assembly that also has this package, or
 	/// hand-written. Emitting a second one would collide (CS0101) or be ambiguous at the use site.
+	///
+	/// A single-name lookup returns null exactly when two references declare the name, which is the case
+	/// this guard exists for, so each assembly is asked individually.
 	/// </summary>
 	private static bool IsAlreadyDeclared(Compilation compilation, INamedTypeSymbol model)
-		=> compilation.GetTypeByMetadataName(MockMetadataName(model)) is not null;
+	{
+		var name = MockMetadataName(model);
 
-	private static bool IsMockingDisabled(Compilation compilation)
-		=> compilation.Assembly
+		return compilation.Assembly.GetTypeByMetadataName(name) is not null
+			|| compilation.References
+				.Select(compilation.GetAssemblyOrModuleSymbol)
+				.OfType<IAssemblySymbol>()
+				.Any(assembly => assembly.GetTypeByMetadataName(name) is not null);
+	}
+
+	private static bool IsMockingDisabled(Compilation compilation, INamedTypeSymbol? enableFeedMocking)
+		=> enableFeedMocking is not null
+			&& compilation.Assembly
+				.GetAttributes()
+				.Any(a => SymbolEqualityComparer.Default.Equals(a.AttributeClass, enableFeedMocking)
+					&& a.NamedArguments.FirstOrDefault(na => na.Key == "IsEnabled").Value.Value is bool isEnabled
+					&& !isEnabled);
+
+	/// <summary>
+	/// Reports the implicit-model patterns that cannot compile. Once per compilation, on the attribute
+	/// itself: a malformed pattern otherwise surfaces only as an absence of mocks.
+	/// </summary>
+	private static void ReportInvalidPatterns(GeneratorExecutionContext context, Compilation compilation, INamedTypeSymbol? implicitBindables)
+	{
+		if (implicitBindables is null)
+		{
+			return;
+		}
+
+		var attribute = compilation.Assembly
 			.GetAttributes()
-			.Any(a => a.AttributeClass?.Name == EnableFeedMockingAttribute
-				&& a.NamedArguments.FirstOrDefault(na => na.Key == "IsEnabled").Value.Value is bool isEnabled
-				&& !isEnabled);
+			.FirstOrDefault(a => SymbolEqualityComparer.Default.Equals(a.AttributeClass, implicitBindables));
+		if (attribute is null)
+		{
+			return;
+		}
 
-	private static void AddSource(GeneratorExecutionContext context, ModelMock described, HashSet<string> emitted)
+		var location = attribute.ApplicationSyntaxReference?.GetSyntax().GetLocation() ?? Location.None;
+		var (_, patterns) = FeedModelDiscovery.ReadImplicitBindables(compilation.Assembly, implicitBindables);
+
+		foreach (var pattern in patterns.Where(pattern => !FeedModelDiscovery.IsValidPattern(pattern)))
+		{
+			context.ReportDiagnostic(Diagnostic.Create(InvalidModelPattern, location, pattern));
+		}
+	}
+
+	private static void AddSource(
+		GeneratorExecutionContext context,
+		ModelMock described,
+		HashSet<string> emitted,
+		HashSet<string> diagnosed,
+		HashSet<string> hintNames)
 	{
 		// Keyed on the model, and only once it actually produced something: a model the metadata path
 		// could not describe must stay available to the source path.
@@ -141,23 +199,55 @@ public sealed class FeedsMockGenerator : ISourceGenerator
 			return;
 		}
 
-		if (Generate(context, described) is not { } generated)
+		if (Generate(context, described, diagnosed) is not { } generated)
 		{
 			return;
 		}
 
 		emitted.Add(key);
+		context.AddSource(HintName(key, hintNames), generated);
+	}
 
-		// A generic model's display string carries characters Roslyn rejects in a hint name, and it
-		// rejects them by throwing — which would drop every remaining mock, not just this one.
-		var fileName = InvalidHintNameCharacters.Replace(key.Replace('.', '_'), "_") + ".Mock.g.cs";
-		context.AddSource(fileName, generated);
+	/// <summary>
+	/// Hint names have to be unique within a generator, and Roslyn enforces that by throwing, which would
+	/// drop every remaining mock rather than one. Sanitizing is not injective, so a repeat takes an ordinal.
+	/// </summary>
+	private static string HintName(string modelDisplayString, HashSet<string> taken)
+	{
+		var sanitized = UnsafeHintNameCharacters.Replace(PathHelper.SanitizeFileName(modelDisplayString.Replace('.', '_')), "_");
+
+		var unique = sanitized;
+		for (var ordinal = 2; !taken.Add(unique); ordinal++)
+		{
+			unique = $"{sanitized}_{ordinal}";
+		}
+
+		return unique + ".Mock.g.cs";
 	}
 
 	private static string MockMetadataName(INamedTypeSymbol model)
 		=> model.ContainingNamespace.IsGlobalNamespace
-			? $"{model.Name}Mock"
-			: $"{model.ContainingNamespace.ToDisplayString()}.{model.Name}Mock";
+			? MockTypeName(model)
+			: $"{model.ContainingNamespace.ToDisplayString()}.{MockTypeName(model)}";
+
+	/// <summary>
+	/// The emitted mock's own name. The mock sits at namespace scope even for a nested model, so the
+	/// containing types are folded into the name: without them two nested models sharing a simple name in
+	/// one namespace would emit the same type twice.
+	/// </summary>
+	private static string MockTypeName(INamedTypeSymbol model)
+		=> $"{ContainingTypeChain(model)}{model.Name}Mock";
+
+	private static string ContainingTypeChain(INamedTypeSymbol model)
+	{
+		var chain = new StringBuilder();
+		for (var containing = model.ContainingType; containing is not null; containing = containing.ContainingType)
+		{
+			chain.Insert(0, containing.Name);
+		}
+
+		return chain.ToString();
+	}
 
 	private static bool IsFeedMember(ISymbol member)
 	{
@@ -176,39 +266,26 @@ public sealed class FeedsMockGenerator : ISourceGenerator
 	/// </summary>
 	private static IEnumerable<INamedTypeSymbol> EnumerateAttributedModels(Compilation compilation, INamedTypeSymbol feedDep)
 	{
-		bool HasFeedDep(INamedTypeSymbol t)
-			=> t.GetAttributes().Any(a => SymbolEqualityComparer.Default.Equals(a.AttributeClass, feedDep));
+		bool HasFeedDep(INamedTypeSymbol type)
+			=> type.GetAttributes().Any(a => SymbolEqualityComparer.Default.Equals(a.AttributeClass, feedDep));
 
-		IEnumerable<INamedTypeSymbol> Walk(INamespaceOrTypeSymbol ns)
+		foreach (var type in Walk(compilation.Assembly.GlobalNamespace, HasFeedDep))
 		{
-			foreach (var member in ns.GetMembers())
-			{
-				if (member is INamespaceSymbol childNs)
-				{
-					foreach (var t in Walk(childNs)) yield return t;
-				}
-				else if (member is INamedTypeSymbol type)
-				{
-					if (HasFeedDep(type)) yield return type;
-					foreach (var nested in type.GetTypeMembers().Where(HasFeedDep))
-					{
-						yield return nested;
-					}
-				}
-			}
+			yield return type;
 		}
-
-		foreach (var t in Walk(compilation.Assembly.GlobalNamespace)) yield return t;
 
 		// A model carries attributes defined by Uno.Extensions.Reactive, so an assembly that does not
 		// reference it cannot declare one. Skipping those avoids realizing the whole metadata closure
 		// (the framework and every transitive package) on each compilation.
-		foreach (var asm in compilation.References
+		foreach (var assembly in compilation.References
 			.Select(compilation.GetAssemblyOrModuleSymbol)
 			.OfType<IAssemblySymbol>()
 			.Where(MayDeclareModels))
 		{
-			foreach (var t in Walk(asm.GlobalNamespace)) yield return t;
+			foreach (var type in Walk(assembly.GlobalNamespace, HasFeedDep))
+			{
+				yield return type;
+			}
 		}
 	}
 
@@ -216,111 +293,49 @@ public sealed class FeedsMockGenerator : ISourceGenerator
 		=> assembly.Modules.Any(module => module.ReferencedAssemblies.Any(reference => reference.Name == ReactiveAssemblyName));
 
 	/// <summary>
-	/// Models declared in the compilation being generated. The MVUX metadata is not readable here, so
-	/// this mirrors how the MVUX generator decides a type is a model: an explicit
-	/// <c>[ReactiveBindable]</c>, or a partial type whose full name matches the assembly's implicit
-	/// patterns (<c>Model$</c> unless overridden).
+	/// Models declared in the compilation being generated, recognized by the same rule the MVUX generator
+	/// applies. Nested ones are left to the metadata path: their view-model is generated inside the
+	/// containing partial, so it cannot be named from the namespace the way a top-level one can.
 	/// </summary>
-	private static IEnumerable<INamedTypeSymbol> EnumerateSourceModels(Compilation compilation)
+	private static IEnumerable<INamedTypeSymbol> EnumerateSourceModels(
+		Compilation compilation,
+		INamedTypeSymbol? reactiveBindable,
+		INamedTypeSymbol? implicitBindables)
+		=> Walk(
+			compilation.Assembly.GlobalNamespace,
+			type => type.ContainingType is null && FeedModelDiscovery.IsModel(type, reactiveBindable, implicitBindables));
+
+	/// <summary>Every type of a namespace tree, nested ones included, that satisfies <paramref name="predicate"/>.</summary>
+	private static IEnumerable<INamedTypeSymbol> Walk(INamespaceOrTypeSymbol root, Func<INamedTypeSymbol, bool> predicate)
 	{
-		var (implicitEnabled, patterns) = ReadImplicitBindables(compilation.Assembly);
-
-		bool IsModel(INamedTypeSymbol type)
+		foreach (var member in root.GetMembers())
 		{
-			// A nested model's view-model is generated nested inside its containing partial, so its name
-			// cannot be derived from the namespace the way a top-level one can. Left to the metadata path.
-			if (type.ContainingType is not null)
+			if (member is INamespaceSymbol childNamespace)
 			{
-				return false;
-			}
-
-			if (ReadReactiveBindable(type) is { } explicitlyEnabled)
-			{
-				// When the attribute is set the `partial` is not checked: the build must fail if it is missing.
-				return explicitlyEnabled;
-			}
-
-			return type.IsPartial()
-				&& implicitEnabled
-				&& patterns.Any(pattern => IsMatch(pattern, type.ToString()));
-		}
-
-		IEnumerable<INamedTypeSymbol> Walk(INamespaceOrTypeSymbol ns)
-		{
-			foreach (var member in ns.GetMembers())
-			{
-				if (member is INamespaceSymbol childNs)
-				{
-					foreach (var t in Walk(childNs)) yield return t;
-				}
-				else if (member is INamedTypeSymbol type && IsModel(type))
+				foreach (var type in Walk(childNamespace, predicate))
 				{
 					yield return type;
 				}
 			}
-		}
+			else if (member is INamedTypeSymbol type)
+			{
+				if (predicate(type))
+				{
+					yield return type;
+				}
 
-		return Walk(compilation.Assembly.GlobalNamespace);
-	}
-
-	/// <summary>
-	/// The patterns come from an attribute in user code. A malformed one must not take the whole
-	/// generator down with it (every mock would vanish behind a CS8785), and a pathological one must not
-	/// hang the compiler, so matching is bounded and failures simply do not match.
-	/// </summary>
-	private static bool IsMatch(string pattern, string typeName)
-	{
-		try
-		{
-			return Regex.IsMatch(typeName, pattern, RegexOptions.CultureInvariant, RegexMatchTimeout);
-		}
-		catch (ArgumentException)
-		{
-			return false; // Not a valid expression — the MVUX generator reports on the attribute itself.
-		}
-		catch (RegexMatchTimeoutException)
-		{
-			return false;
+				foreach (var nested in Walk(type, predicate))
+				{
+					yield return nested;
+				}
+			}
 		}
 	}
 
-	private static (bool isEnabled, string[] patterns) ReadImplicitBindables(IAssemblySymbol assembly)
-	{
-		var attribute = assembly
-			.GetAttributes()
-			.FirstOrDefault(a => a.AttributeClass?.Name == ImplicitBindablesAttribute);
-		if (attribute is null)
-		{
-			return (true, new[] { DefaultModelPattern });
-		}
-
-		var isEnabled = attribute.NamedArguments.FirstOrDefault(na => na.Key == "IsEnabled").Value.Value as bool? ?? true;
-
-		var patterns = attribute.ConstructorArguments
-			.SelectMany(arg => arg.Kind == TypedConstantKind.Array ? (IEnumerable<TypedConstant>)arg.Values : new[] { arg })
-			.Select(value => value.Value as string)
-			.Where(value => !string.IsNullOrEmpty(value))
-			.Select(value => value!)
-			.ToArray();
-
-		return (isEnabled, patterns.Length > 0 ? patterns : new[] { DefaultModelPattern });
-	}
-
-	/// <summary>Reads <c>[ReactiveBindable]</c> off a type or a constructor; null when it is absent.</summary>
-	private static bool? ReadReactiveBindable(ISymbol symbol)
-	{
-		var attribute = symbol
-			.GetAttributes()
-			.FirstOrDefault(a => a.AttributeClass?.Name == ReactiveBindableAttribute);
-		if (attribute is null)
-		{
-			return null;
-		}
-
-		return attribute.ConstructorArguments.FirstOrDefault().Value as bool?
-			?? attribute.NamedArguments.FirstOrDefault(na => na.Key == "IsEnabled").Value.Value as bool?
-			?? true;
-	}
+	/// <summary>Whether generation was explicitly disabled on <paramref name="symbol"/>.</summary>
+	private static bool IsGenerationDisabled(ISymbol symbol, INamedTypeSymbol? reactiveBindable)
+		=> reactiveBindable is not null
+			&& symbol.FindAttributeValue<bool>(reactiveBindable, "IsEnabled", 0) is { isDefined: true, value: false };
 
 	private sealed class FeedMember
 	{
@@ -336,6 +351,11 @@ public sealed class FeedsMockGenerator : ISourceGenerator
 		public INamedTypeSymbol Model = null!;
 		public string ViewModelName = "";
 		public string ViewModelFullName = "";
+
+		/// <summary>The emitted record's name, and the name of the static class carrying <c>Create</c>.</summary>
+		public string MockName = "";
+
+		public string VmMockName = "";
 
 		/// <summary>
 		/// What the emitted types are declared as. The generated view-model carries the model's own
@@ -353,7 +373,11 @@ public sealed class FeedsMockGenerator : ISourceGenerator
 		public readonly List<FeedMember> Derived = new();
 	}
 
-	private static ModelMock? DescribeFromMetadata(INamedTypeSymbol model, INamedTypeSymbol feedDep, INamedTypeSymbol modelAttr)
+	private static ModelMock? DescribeFromMetadata(
+		INamedTypeSymbol model,
+		INamedTypeSymbol feedDep,
+		INamedTypeSymbol modelAttr,
+		INamedTypeSymbol? reactiveBindable)
 	{
 		var modelAttrData = model.GetAttributes().FirstOrDefault(a => SymbolEqualityComparer.Default.Equals(a.AttributeClass, modelAttr));
 		if (modelAttrData?.ConstructorArguments is not { Length: 1 } args || args[0].Value is not INamedTypeSymbol vm)
@@ -364,9 +388,14 @@ public sealed class FeedsMockGenerator : ISourceGenerator
 		var described = new ModelMock
 		{
 			Model = model,
+			MockName = MockTypeName(model),
 			ViewModelName = vm.Name,
+			VmMockName = $"{ContainingTypeChain(model)}{vm.Name}Mock",
 			ViewModelFullName = vm.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat),
-			Constructor = PickConstructor(vm.Constructors),
+			// The generated view-model carries the model's accessibility, so a public mock over an
+			// internal view-model would expose an inaccessible type (CS0122, or CS0050/CS0051).
+			Accessibility = vm.DeclaredAccessibility == Microsoft.CodeAnalysis.Accessibility.Public ? "public" : "internal",
+			Constructor = PickConstructor(vm.Constructors, reactiveBindable),
 		};
 
 		foreach (var attr in model.GetAttributes().Where(a => SymbolEqualityComparer.Default.Equals(a.AttributeClass, feedDep)))
@@ -399,7 +428,7 @@ public sealed class FeedsMockGenerator : ISourceGenerator
 		return described;
 	}
 
-	private static ModelMock? DescribeFromSource(INamedTypeSymbol model, FeedMockingAnalysis analysis)
+	private static ModelMock? DescribeFromSource(INamedTypeSymbol model, FeedDependencyAnalysis analysis, INamedTypeSymbol? reactiveBindable)
 	{
 		var feedMembers = analysis.GetFeedMembers(model);
 		if (feedMembers.Count == 0)
@@ -407,19 +436,21 @@ public sealed class FeedsMockGenerator : ISourceGenerator
 			return null;
 		}
 
-		var modelName = model.Name.TrimEnd("Model", StringComparison.Ordinal);
-		var viewModelName = $"{modelName}{ViewModelSuffix}";
-		var ns = model.ContainingNamespace.IsGlobalNamespace ? null : model.ContainingNamespace.ToDisplayString();
+		var viewModelName = FeedModelDiscovery.GetViewModelName(model);
 
 		var described = new ModelMock
 		{
 			Model = model,
+			MockName = MockTypeName(model),
 			ViewModelName = viewModelName,
-			ViewModelFullName = ns is null ? $"global::{viewModelName}" : $"global::{ns}.{viewModelName}",
+			VmMockName = $"{viewModelName}Mock",
+			// Named the same way the MVUX generator names it, from the shared rule: the view-model is not
+			// a symbol here, so the emitted code refers to it by name. Already global-qualified.
+			ViewModelFullName = FeedModelDiscovery.GetViewModelFullName(model),
 			Accessibility = model.DeclaredAccessibility == Microsoft.CodeAnalysis.Accessibility.Public ? "public" : "internal",
 			// The generated view-model mirrors the model's constructors, so selecting here is equivalent.
 			// Internal ones count on this path: the mock is emitted into the model's own assembly.
-			Constructor = PickConstructor(analysis.AccessibleInstanceCtors(model).ToArray(), includeInternal: true),
+			Constructor = PickConstructor(analysis.AccessibleInstanceCtors(model).ToArray(), reactiveBindable, includeInternal: true),
 		};
 
 		var feedMemberNames = new HashSet<string>(feedMembers.Select(m => m.Name), StringComparer.Ordinal);
@@ -475,22 +506,36 @@ public sealed class FeedsMockGenerator : ISourceGenerator
 	/// a candidate here either.
 	/// </summary>
 	/// <param name="constructors">The candidate constructors, already filtered of the clone constructor.</param>
+	/// <param name="reactiveBindable">The resolved <c>ReactiveBindableAttribute</c>, or null when unavailable.</param>
 	/// <param name="includeInternal">
 	/// Whether an internal constructor can be selected — true only when the mock is emitted into the
 	/// model's own assembly, where the mirrored internal constructor is reachable.
 	/// </param>
-	private static IMethodSymbol? PickConstructor(IReadOnlyCollection<IMethodSymbol> constructors, bool includeInternal = false)
+	private static IMethodSymbol? PickConstructor(
+		IReadOnlyCollection<IMethodSymbol> constructors,
+		INamedTypeSymbol? reactiveBindable,
+		bool includeInternal = false)
 		=> constructors
-			.Where(c => !c.IsStatic && IsCandidate(c, includeInternal) && ReadReactiveBindable(c) is not false)
+			.Where(c => !c.IsStatic && IsCandidate(c, includeInternal) && !IsGenerationDisabled(c, reactiveBindable))
 			.OrderBy(c => c.Parameters.Length)
 			.ThenBy(ParameterTypes, StringComparer.Ordinal)
 			.FirstOrDefault();
 
+	/// <summary>
+	/// Mirrors which constructors the MVUX generator carries onto the view-model: everything but private
+	/// and protected. Internal and protected-internal ones are reachable only from the declaring assembly.
+	/// </summary>
 	private static bool IsCandidate(IMethodSymbol ctor, bool includeInternal)
 		=> ctor.DeclaredAccessibility == Accessibility.Public
-			|| (includeInternal && ctor.DeclaredAccessibility == Accessibility.Internal);
+			|| (includeInternal && ctor.DeclaredAccessibility is Accessibility.Internal or Accessibility.ProtectedOrInternal);
 
-	private static string? Generate(GeneratorExecutionContext context, ModelMock described)
+	/// <param name="context">The generation context the sources and diagnostics are reported to.</param>
+	/// <param name="described">The model to emit.</param>
+	/// <param name="diagnosed">
+	/// The models already reported on. A model reached by both intake paths and rejected by both would
+	/// otherwise be diagnosed twice for one build.
+	/// </param>
+	private static string? Generate(GeneratorExecutionContext context, ModelMock described, HashSet<string> diagnosed)
 	{
 		var model = described.Model;
 
@@ -502,28 +547,36 @@ public sealed class FeedsMockGenerator : ISourceGenerator
 			// The original defect this generator had was producing nothing without saying so. A model with
 			// feeds but no mockable one is a misclassification often enough to be worth reporting; Info so a
 			// legitimately all-independent model cannot fail a warnings-as-errors build.
-			context.ReportDiagnostic(Diagnostic.Create(
-				NoMockableInput,
-				model.Locations.FirstOrDefault(location => location.IsInSource) ?? Location.None,
-				model.Name));
+			if (diagnosed.Add(model.ToDisplayString()))
+			{
+				context.ReportDiagnostic(Diagnostic.Create(
+					NoMockableInput,
+					model.Locations.FirstOrDefault(location => location.IsInSource) ?? Location.None,
+					model.Name));
+			}
+
 			return null;
 		}
 
 		if (described.Constructor is not { } ctor)
 		{
-			context.ReportDiagnostic(Diagnostic.Create(
-				NoPublicConstructor,
-				model.Locations.FirstOrDefault(location => location.IsInSource) ?? Location.None,
-				model.Name,
-				described.ViewModelName));
+			if (diagnosed.Add(model.ToDisplayString()))
+			{
+				context.ReportDiagnostic(Diagnostic.Create(
+					NoPublicConstructor,
+					model.Locations.FirstOrDefault(location => location.IsInSource) ?? Location.None,
+					model.Name,
+					described.ViewModelName));
+			}
+
 			return null;
 		}
 
 		// Typed defaults: a bare `default!` cannot pick between constructors of equal arity (CS0121).
 		var ctorArguments = string.Join(", ", ctor.Parameters.Select(p => $"default({FullName(p.Type)})! /* {p.Name} */"));
 		var vmFull = described.ViewModelFullName;
-		var mockName = $"{model.Name}Mock";
-		var vmMockName = $"{described.ViewModelName}Mock";
+		var mockName = described.MockName;
+		var vmMockName = described.VmMockName;
 		var ns = model.ContainingNamespace.IsGlobalNamespace ? null : model.ContainingNamespace.ToDisplayString();
 
 		// Record members.

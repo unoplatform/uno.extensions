@@ -4,9 +4,8 @@ using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Uno.Extensions.Generators;
 
-namespace Uno.Extensions.Reactive.Generator;
+namespace Uno.Extensions.Generators;
 
 /// <summary>How a feed member of a model relates to the model's inputs.</summary>
 internal enum FeedKind
@@ -22,17 +21,18 @@ internal enum FeedKind
 }
 
 /// <summary>
-/// Spec 013 — the model-side analysis behind MVUX mocking: which feed members are service-dependent
-/// inputs, which are derived, and which constructor parameters are dereferenced eagerly.
+/// The model-side dependency analysis behind <c>[FeedDependency]</c> and <c>[CtorDependency]</c>: which
+/// feed members are fed by a constructor parameter, which are derived from another feed, and which
+/// constructor parameters are dereferenced eagerly. It describes an MVUX model whether or not anything
+/// ever mocks it.
 ///
-/// It is shared by the two generators that need the same answers and must not drift apart:
-/// <c>ViewModelGenTool_3</c> emits it as <c>[FeedDependency]</c>/<c>[CtorDependency]</c>
-/// metadata for consumers that read the app as a compiled reference, and the mocking generator in
-/// <c>Uno.HotTesting.Reactive</c> (which links this file) runs it directly when the models sit in the
-/// compilation being generated — there the attributes are emitted by a sibling generator and a
-/// generator cannot observe another generator's output.
+/// It lives in the shared folder because two generators must answer these questions identically: the
+/// MVUX generator emits the answers as metadata for consumers that read the app as a compiled
+/// reference, and the mocking generator runs the analysis directly when the models sit in the
+/// compilation being generated — there the attributes come from a sibling generator, and a generator
+/// cannot observe another generator's output.
 /// </summary>
-internal sealed class FeedMockingAnalysis
+internal sealed class FeedDependencyAnalysis
 {
 	private readonly Compilation _compilation;
 	private readonly Func<ISymbol, bool> _isFeedMember;
@@ -46,7 +46,7 @@ internal sealed class FeedMockingAnalysis
 	/// Whether a field/property is a feed. Injected because the two callers resolve the feed
 	/// interfaces through different plumbing.
 	/// </param>
-	public FeedMockingAnalysis(Compilation compilation, Func<ISymbol, bool> isFeedMember)
+	public FeedDependencyAnalysis(Compilation compilation, Func<ISymbol, bool> isFeedMember)
 	{
 		_compilation = compilation ?? throw new ArgumentNullException(nameof(compilation));
 		_isFeedMember = isFeedMember ?? throw new ArgumentNullException(nameof(isFeedMember));
@@ -233,10 +233,6 @@ internal sealed class FeedMockingAnalysis
 		return (FeedKind.Independent, derivedFrom, services);
 	}
 
-	/// <summary>
-	/// Returns the getter/initializer body syntax nodes of a feed member (property expression body,
-	/// getter body, or field initializer).
-	/// </summary>
 	private SemanticModel GetSemanticModel(SyntaxTree tree)
 	{
 		if (!_semanticModels.TryGetValue(tree, out var semanticModel))
@@ -247,6 +243,10 @@ internal sealed class FeedMockingAnalysis
 		return semanticModel;
 	}
 
+	/// <summary>
+	/// Returns the getter/initializer body syntax nodes of a feed member (property expression body,
+	/// getter body, or field initializer).
+	/// </summary>
 	private IEnumerable<SyntaxNode> GetMemberBodies(ISymbol member)
 	{
 		var bodies = new List<SyntaxNode>();
@@ -280,24 +280,12 @@ internal sealed class FeedMockingAnalysis
 
 	/// <summary>
 	/// Constructor instrumentation (R1): finds constructor parameters that are dereferenced eagerly
-	/// (member access / invocation receiver) in a ctor body or an instance field/property initializer,
-	/// excluding references nested in a lambda / anonymous method / local function (deferred boundary).
+	/// (member access / invocation receiver) in a constructor body, excluding references nested in a
+	/// lambda / anonymous method / local function, which are deferred rather than eager.
 	/// </summary>
-	public Dictionary<string, HashSet<string>> FindEagerCtorParameters(INamedTypeSymbol model, HashSet<string> ctorParamNames)
+	public HashSet<string> FindEagerCtorParameters(INamedTypeSymbol model, HashSet<string> ctorParamNames)
 	{
-		var eager = new Dictionary<string, HashSet<string>>(StringComparer.Ordinal);
-
-		void Mark(string param, string? member)
-		{
-			if (!eager.TryGetValue(param, out var set))
-			{
-				eager[param] = set = new HashSet<string>(StringComparer.Ordinal);
-			}
-			if (member is not null)
-			{
-				set.Add(member);
-			}
-		}
+		var eager = new HashSet<string>(StringComparer.Ordinal);
 
 		foreach (var ctor in AccessibleInstanceCtors(model))
 		{
@@ -311,14 +299,14 @@ internal sealed class FeedMockingAnalysis
 				}
 
 				var semanticModel = GetSemanticModel(node.SyntaxTree);
-				InspectEager(body, semanticModel, ctorParamNames, Mark, enclosingMember: null);
+				InspectEager(body, semanticModel, ctorParamNames, eager);
 			}
 		}
 
 		return eager;
 	}
 
-	private static void InspectEager(SyntaxNode body, SemanticModel semanticModel, HashSet<string> ctorParamNames, Action<string, string?> mark, string? enclosingMember)
+	private static void InspectEager(SyntaxNode body, SemanticModel semanticModel, HashSet<string> ctorParamNames, HashSet<string> eager)
 	{
 		// The receiver of a member-access / element-access is an eager dereference.
 		var receivers = body
@@ -344,7 +332,7 @@ internal sealed class FeedMockingAnalysis
 
 			if (semanticModel.GetSymbolInfo(id).Symbol is IParameterSymbol param && ctorParamNames.Contains(param.Name))
 			{
-				mark(param.Name, enclosingMember);
+				eager.Add(param.Name);
 			}
 		}
 	}
